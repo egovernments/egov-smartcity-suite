@@ -51,8 +51,12 @@ import org.hibernate.Query;
 public class FinancialYearService extends PersistenceService<CFinancialYear, Long>
 {
 
-    public FinancialYearService(final Class<CFinancialYear> financialYear) {
-        this.type = financialYear;
+    public FinancialYearService() {
+        super(CFinancialYear.class);
+    }
+
+    public FinancialYearService(final Class<CFinancialYear> type) {
+        super(type);
     }
 
     public List<CFinancialYear> getAll() {

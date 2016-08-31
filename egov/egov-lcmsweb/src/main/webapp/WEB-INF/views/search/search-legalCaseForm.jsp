@@ -58,7 +58,7 @@
 				</div>
 
 			</div>
-				</div><div class="form-group">
+				<div class="form-group">
 								<label for="field-1" class="col-sm-3 control-label">Case Number</label>
 								<div class="col-sm-3 add-margin">
 									<input type="text" name="caseNumber" class="form-control patternvalidation" 

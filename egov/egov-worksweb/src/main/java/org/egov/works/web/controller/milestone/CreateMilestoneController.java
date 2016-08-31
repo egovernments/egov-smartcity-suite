@@ -39,10 +39,6 @@
  */
 package org.egov.works.web.controller.milestone;
 
-import java.io.IOException;
-
-import javax.servlet.http.HttpServletRequest;
-
 import org.egov.commons.dao.EgwStatusHibernateDAO;
 import org.egov.commons.dao.EgwTypeOfWorkHibernateDAO;
 import org.egov.infra.exception.ApplicationException;
@@ -57,13 +53,17 @@ import org.egov.works.models.workorder.WorkOrder;
 import org.egov.works.models.workorder.WorkOrderEstimate;
 import org.egov.works.workorderestimate.service.WorkOrderEstimateService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.support.ResourceBundleMessageSource;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.context.MessageSource;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+
+import javax.servlet.http.HttpServletRequest;
+import java.io.IOException;
 
 @Controller
 @RequestMapping(value = "/milestone")
@@ -88,7 +88,8 @@ public class CreateMilestoneController {
     private WorkOrderEstimateService workOrderEstimateService;
     
     @Autowired
-    private ResourceBundleMessageSource messageSource;
+    @Qualifier("messageSource")
+    private MessageSource messageSource;
     
     @Autowired
     private EstimateService estimateService;

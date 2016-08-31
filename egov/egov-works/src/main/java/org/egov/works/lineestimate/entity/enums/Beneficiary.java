@@ -44,10 +44,10 @@ import org.apache.commons.lang.StringUtils;
 
 public enum Beneficiary {
 
-    SC_ST, BC, GENERAL, OTHERS;
+    SC,ST, BC, MINORITY,WOMEN_CHILDREN_WELFARE,GENERAL;
 
     @Override
     public String toString() {
-        return StringUtils.replace(name(), "_", "/");
+        return StringUtils.replace(name(), "_C", "/C").replace("_", " ");
     }
 }

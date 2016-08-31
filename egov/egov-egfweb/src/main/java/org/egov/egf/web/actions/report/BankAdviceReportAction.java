@@ -39,6 +39,19 @@
  */
 package org.egov.egf.web.actions.report;
 
+import java.io.ByteArrayInputStream;
+import java.io.InputStream;
+import java.math.BigDecimal;
+import java.math.BigInteger;
+import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.TreeMap;
+
 import org.apache.log4j.Logger;
 import org.apache.struts2.convention.annotation.Action;
 import org.apache.struts2.convention.annotation.ParentPackage;
@@ -69,19 +82,6 @@ import org.hibernate.FlushMode;
 import org.hibernate.Query;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
-
-import java.io.ByteArrayInputStream;
-import java.io.InputStream;
-import java.math.BigDecimal;
-import java.math.BigInteger;
-import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.TreeMap;
 
 @ParentPackage("egov")
 @Results({
@@ -344,7 +344,6 @@ public class BankAdviceReportAction extends BaseFormAction {
             {
                 LOGGER.error("Exception to get EntityType=" + e.getMessage());
             }
-
             final BankAdviceReportInfo bankAdviceReportInfo = new BankAdviceReportInfo();
             bankAdviceReportInfo.setPartyName(subDetail.getName().toUpperCase());
             bankAdviceReportInfo.setAccountNumber(subDetail.getBankaccount());
@@ -359,24 +358,34 @@ public class BankAdviceReportAction extends BaseFormAction {
         return subLedgerList;
     }
 
+    /*
+     * @ValidationErrorPage(NEW)
+     * @Action(value = "/report/bankAdviceReport-exportExcel") public String exportExcel() { final Map<String, Object>
+     * reportParams = new HashMap<String, Object>(); final StringBuffer letterContext = new StringBuffer(); letterContext
+     * .append("             I request you to transfer the amount indicated below through RTGS duly debiting from the")
+     * .append("  Current Account No: ") .append(getBankAccountNumber(bankaccount.getId()) != null ?
+     * getBankAccountNumber(bankaccount.getId()) : "") .append("  under your bank to the following bank accounts:");
+     * reportParams.put("bankName", getBankName(bank.getId())); reportParams.put("letterContext", letterContext.toString());
+     * reportParams.put("branchName", getBankBranchName(bankbranch.getId())); reportParams.put("accountNumber",
+     * getBankAccountNumber(bankaccount.getId())); reportParams.put("chequeNumber", "RTGS Ref. No: " +
+     * getInstrumentNumber(instrumentnumber.getId())); reportParams.put("chequeDate",
+     * getInstrumentDate(instrumentnumber.getId())); final List<BankAdviceReportInfo> subLedgerList = getBankAdviceReportList();
+     * final ReportRequest reportInput = new ReportRequest("bankAdviceReport", subLedgerList, reportParams);
+     * reportInput.setReportFormat(FileFormat.XLS); contentType = ReportViewerUtil.getContentType(FileFormat.XLS); fileName =
+     * "BankAdviceReport." + FileFormat.XLS.toString().toLowerCase(); final ReportOutput reportOutput =
+     * reportService.createReport(reportInput); if (reportOutput != null && reportOutput.getReportOutputData() != null)
+     * inputStream = new ByteArrayInputStream(reportOutput.getReportOutputData()); return "reportview"; }
+     */
+
     @ValidationErrorPage(NEW)
     @Action(value = "/report/bankAdviceReport-exportExcel")
     public String exportExcel() {
         final Map<String, Object> reportParams = new HashMap<String, Object>();
-        final StringBuffer letterContext = new StringBuffer();
-        letterContext
-                .append("             I request you to transfer the amount indicated below through RTGS duly debiting from the")
-                .append("  Current Account No: ")
-                .append(getBankAccountNumber(bankaccount.getId()) != null ? getBankAccountNumber(bankaccount.getId()) : "")
-                .append("  under your bank to the following bank accounts:");
         reportParams.put("bankName", getBankName(bank.getId()));
-        reportParams.put("letterContext", letterContext.toString());
         reportParams.put("branchName", getBankBranchName(bankbranch.getId()));
         reportParams.put("accountNumber", getBankAccountNumber(bankaccount.getId()));
-        reportParams.put("chequeNumber", "RTGS Ref. No: " + getInstrumentNumber(instrumentnumber.getId()));
-        reportParams.put("chequeDate", getInstrumentDate(instrumentnumber.getId()));
         final List<BankAdviceReportInfo> subLedgerList = getBankAdviceReportList();
-        final ReportRequest reportInput = new ReportRequest("bankAdviceReport", subLedgerList, reportParams);
+        final ReportRequest reportInput = new ReportRequest("bankAdviceExcelReport", subLedgerList, reportParams);
         reportInput.setReportFormat(FileFormat.XLS);
         contentType = ReportViewerUtil.getContentType(FileFormat.XLS);
         fileName = "BankAdviceReport." + FileFormat.XLS.toString().toLowerCase();

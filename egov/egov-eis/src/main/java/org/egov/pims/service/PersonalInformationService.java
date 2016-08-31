@@ -86,7 +86,15 @@ public class PersonalInformationService extends PersistenceService<PersonalInfor
 	private final String EMPVIEWDEPTIDSLOGGEDINUSER="EMPVIEW-DEPTIDS-LOGGEDINUSER";
 	private static final String EMPVIEWACTIVEEMPS="EMPVIEW-ACTIVE-EMPS"; 
 	private static final String EMPVIEWEMPSLASTASSPRD="EMPVIEW-EMPS-LASTASSPRD";
-	
+
+	public PersonalInformationService() {
+		super(PersonalInformation.class);
+	}
+
+	public PersonalInformationService(Class<PersonalInformation> type) {
+		super(type);
+	}
+
 	@PersistenceContext
 	private EntityManager entityManager;
 	

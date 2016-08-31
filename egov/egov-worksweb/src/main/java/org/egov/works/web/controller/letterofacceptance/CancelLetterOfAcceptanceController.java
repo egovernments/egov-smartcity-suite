@@ -39,10 +39,6 @@
  */
 package org.egov.works.web.controller.letterofacceptance;
 
-import java.util.List;
-
-import javax.servlet.http.HttpServletRequest;
-
 import org.egov.eis.web.controller.workflow.GenericWorkFlowController;
 import org.egov.infra.admin.master.entity.Department;
 import org.egov.infra.exception.ApplicationException;
@@ -52,12 +48,16 @@ import org.egov.works.letterofacceptance.service.LetterOfAcceptanceService;
 import org.egov.works.lineestimate.service.LineEstimateService;
 import org.egov.works.models.workorder.WorkOrder;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.support.ResourceBundleMessageSource;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.context.MessageSource;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+
+import javax.servlet.http.HttpServletRequest;
+import java.util.List;
 
 @Controller
 @RequestMapping(value = "/letterofacceptance")
@@ -72,7 +72,8 @@ public class CancelLetterOfAcceptanceController extends GenericWorkFlowControlle
     private SecurityUtils securityUtils;
 
     @Autowired
-    private ResourceBundleMessageSource messageSource;
+    @Qualifier("messageSource")
+    private MessageSource messageSource;
 
     @RequestMapping(value = "/cancel/search", method = RequestMethod.GET)
     public String showSearchLetterOfAcceptanceForm(

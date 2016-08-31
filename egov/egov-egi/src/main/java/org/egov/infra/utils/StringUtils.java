@@ -99,4 +99,8 @@ public class StringUtils extends org.apache.commons.lang.StringUtils {
 		return org.apache.commons.lang3.StringUtils.toEncodedString(string.getBytes(), Charset.forName("UTF-8"));
 	}
 
+	public static String [] listToStringArray(List<String> values) {
+		return values.stream().toArray(String[]::new);
+	}
+
 }

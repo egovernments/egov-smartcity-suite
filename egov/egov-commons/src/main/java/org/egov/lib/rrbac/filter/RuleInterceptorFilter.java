@@ -43,12 +43,12 @@ import org.apache.commons.lang.StringUtils;
 import org.egov.infra.admin.master.entity.Action;
 import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.admin.master.service.ActionService;
-import org.egov.infra.admin.master.service.UserService;
+import org.egov.infra.config.core.ApplicationThreadLocals;
 import org.egov.infra.exception.ApplicationRuntimeException;
 import org.egov.infra.exception.AuthorizationException;
 import org.egov.infra.script.entity.Script;
 import org.egov.infra.script.service.ScriptService;
-import org.egov.infra.config.core.ApplicationThreadLocals;
+import org.egov.infra.security.utils.SecurityUtils;
 import org.egov.infstr.services.PersistenceService;
 import org.egov.lib.rrbac.model.AuthorizationRule;
 import org.slf4j.Logger;
@@ -74,13 +74,15 @@ import java.util.List;
 public class RuleInterceptorFilter implements Filter {
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(RuleInterceptorFilter.class);
-	private transient PersistenceService daoService;
-	private transient PersistenceService<AuthorizationRule, Long> authRuleService;
-	private transient UserService userService;
+
+	private PersistenceService daoService;
+	private PersistenceService<AuthorizationRule, Long> authRuleService;
 	@Autowired
 	private ActionService actionService;
 	@Autowired
 	private ScriptService scriptExecuter;
+    @Autowired
+    private SecurityUtils securityUtils;
 
 	@Override
 	public void init(final FilterConfig config) {
@@ -100,7 +102,7 @@ public class RuleInterceptorFilter implements Filter {
 			final List<AuthorizationRule> authRuleList = this.authRuleService.findAllByNamedQuery("authRulesByAction", action);
 			for (final AuthorizationRule authRule : authRuleList) {
 				final Object object = this.getEntity(httpRequest, authRule);
-				final List authResList = this.getRuleAuthentication(this.getCurrentUser(Long.valueOf(ApplicationThreadLocals.getUserId())), authRule, object);
+				final List authResList = this.getRuleAuthentication(securityUtils.getCurrentUser(), authRule, object);
 				final boolean authorized = Boolean.valueOf(authResList.get(0).toString());
 				if (!authorized) {
 					// if authorization fails throwing AuthorizationException
@@ -136,14 +138,7 @@ public class RuleInterceptorFilter implements Filter {
 		}
 	}
 
-	/**
-	 * Gets the current user.
-	 * @param useId the use id
-	 * @return the current user
-	 */
-	public User getCurrentUser(final Long useId) {
-		return this.userService.getUserById(useId);
-	}
+
 
 	/**
 	 * Gets the action.
@@ -184,14 +179,6 @@ public class RuleInterceptorFilter implements Filter {
 	 */
 	public void setDaoService(final PersistenceService<Script, Long> daoService) {
 		this.daoService = daoService;
-	}
-
-	/**
-	 * Sets the script executer.
-	 * @param scriptExecuter the new script executer
-	 */
-	public void setScriptExecuter(final ScriptService scriptExecuter) {
-		this.scriptExecuter = scriptExecuter;
 	}
 
 	/**

@@ -39,20 +39,9 @@
  */
 package org.egov.works.services;
 
-import java.math.BigDecimal;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
-import java.util.Set;
-
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
+import org.apache.poi.ss.formula.functions.T;
 import org.egov.common.entity.UOM;
 import org.egov.commons.Accountdetailkey;
 import org.egov.commons.Accountdetailtype;
@@ -86,6 +75,18 @@ import org.egov.works.models.estimate.ProjectCode;
 import org.egov.works.models.estimate.ProjectCodeGenerator;
 import org.egov.works.utils.WorksConstants;
 import org.springframework.beans.factory.annotation.Autowired;
+
+import java.math.BigDecimal;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Locale;
+import java.util.Map;
+import java.util.Set;
 
 public class AbstractEstimateService extends PersistenceService<AbstractEstimate, Long> {
     private static final Logger logger = Logger.getLogger(AbstractEstimateService.class);
@@ -133,8 +134,12 @@ public class AbstractEstimateService extends PersistenceService<AbstractEstimate
         this.budgetNumberGenerator = budgetNumberGenerator;
     }
 
+    public AbstractEstimateService(Class<AbstractEstimate> type) {
+        super(type);
+    }
+
     public AbstractEstimateService() {
-        setType(AbstractEstimate.class);
+        super(AbstractEstimate.class);
     }
 
     /**

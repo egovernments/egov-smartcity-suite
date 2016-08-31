@@ -39,6 +39,10 @@
  */
 package org.egov.collection.integration.services;
 
+import java.util.Calendar;
+import java.util.Date;
+import java.util.List;
+
 import org.apache.log4j.Logger;
 import org.egov.collection.constants.CollectionConstants;
 import org.egov.collection.entity.OnlinePayment;
@@ -54,10 +58,6 @@ import org.hibernate.Query;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.Calendar;
-import java.util.Date;
-import java.util.List;
-
 @Transactional(readOnly = true)
 public class SchedularService {
 
@@ -67,7 +67,7 @@ public class SchedularService {
     private PaymentResponse paymentResponse;
     private ReconciliationService reconciliationService;
     @Autowired
-    private  CityService cityService;
+    private CityService cityService;
     @Autowired
     AxisAdaptor axisAdaptor;
 
@@ -77,19 +77,18 @@ public class SchedularService {
         LOGGER.debug("Inside reconcileAXIS");
         final Calendar cal = Calendar.getInstance();
         cal.add(Calendar.MINUTE, -30);
-        Query queryCity = persistenceService.getSession().createSQLQuery("select domainurl from eg_city");
-        List<Object> cityList = queryCity.list();
-        if(cityList.size()>1){
+        final Query queryCity = persistenceService.getSession().createSQLQuery("select domainurl from eg_city");
+        final List<Object> cityList = queryCity.list();
+        if (cityList.size() > 1)
             ApplicationThreadLocals.setDomainName("localhost");
-        }else{
+        else
             ApplicationThreadLocals.setDomainName(cityList.get(0).toString());
-        }
         final Query qry = persistenceService
                 .getSession()
                 .createQuery(
                         "select receipt from org.egov.collection.entity.OnlinePayment as receipt where receipt.status.code=:onlinestatuscode"
                                 + " and receipt.service.code=:paymentservicecode and receipt.createdDate<:thirtyminslesssysdate")
-                .setMaxResults(50);
+                                .setMaxResults(50);
         qry.setString("onlinestatuscode", CollectionConstants.ONLINEPAYMENT_STATUS_CODE_PENDING);
         qry.setString("paymentservicecode", CollectionConstants.SERVICECODE_AXIS);
         qry.setParameter("thirtyminslesssysdate", new Date(cal.getTimeInMillis()));
@@ -104,13 +103,15 @@ public class SchedularService {
                 LOGGER.info("AXIS Receiptid::::" + onlinePaymentObj.getReceiptHeader().getId());
                 paymentResponse = axisAdaptor.createOfflinePaymentRequest(paymentService, onlinePaymentObj);
 
-                if (null != paymentResponse && paymentResponse.getReceiptId()!=null && !paymentResponse.getReceiptId().equals("")) {
+                if (null != paymentResponse && paymentResponse.getReceiptId() != null
+                        && !paymentResponse.getReceiptId().equals("")) {
                     LOGGER.info("paymentResponse.getReceiptId():" + paymentResponse.getReceiptId());
                     LOGGER.info("paymentResponse.getAdditionalInfo6():" + paymentResponse.getAdditionalInfo6());
                     LOGGER.info("paymentResponse.getAuthStatus():" + paymentResponse.getAuthStatus());
                     final City cityWebsite = cityService.getCityByURL(ApplicationThreadLocals.getDomainName());
                     onlinePaymentReceiptHeader = (ReceiptHeader) persistenceService.findByNamedQuery(
-                            CollectionConstants.QUERY_RECEIPT_BY_ID_AND_CITYCODE, Long.valueOf(paymentResponse.getReceiptId()), cityWebsite.getCode());
+                            CollectionConstants.QUERY_RECEIPT_BY_ID_AND_CITYCODE, Long.valueOf(paymentResponse.getReceiptId()),
+                            cityWebsite.getCode());
                     if (CollectionConstants.PGI_AUTHORISATION_CODE_SUCCESS.equals(paymentResponse.getAuthStatus()))
                         reconciliationService.processSuccessMsg(onlinePaymentReceiptHeader, paymentResponse);
                     else
@@ -121,7 +122,7 @@ public class SchedularService {
                             + onlinePaymentReceiptHeader.getReceiptnumber()
                             + (onlinePaymentReceiptHeader.getConsumerCode() != null ? " and consumer code: "
                                     + onlinePaymentReceiptHeader.getConsumerCode() : "") + "; Time taken(ms) = "
-                            + elapsedTimeInMillis);
+                                    + elapsedTimeInMillis);
                 }
             }
         }

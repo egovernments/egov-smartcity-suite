@@ -68,8 +68,8 @@ public class IncomeExpenditureService extends ReportService {
     private static final String I = "I";
     private static final String E = "E";
     private static final String IE = "IE";
-    Date fromDate;
-    Date toDate;
+   // Date fromDate;
+    //Date toDate;
     private static final BigDecimal NEGATIVE = new BigDecimal(-1);
     private FunctionwiseIEService functionwiseIEService;
 
@@ -109,8 +109,8 @@ public class IncomeExpenditureService extends ReportService {
         minorCodeLength = Integer.valueOf(getAppConfigValueFor(Constants.EGF, "coa_minorcode_length"));
         coaType.add('I');
         coaType.add('E');
-        fromDate = getFromDate(ie);
-        toDate = getToDate(ie);
+        Date  fromDate = getFromDate(ie);
+        Date  toDate = getToDate(ie);
         final String filterQuery = getFilterQuery(ie);
         populateCurrentYearAmountPerFund(ie, filterQuery, toDate, fromDate, IE);
         // populateSchedule(ie,IE);
@@ -510,20 +510,5 @@ public class IncomeExpenditureService extends ReportService {
         return list;
     }
 
-    public Date getFromDate() {
-        return fromDate;
-    }
-
-    public void setFromDate(final Date fromDate) {
-        this.fromDate = fromDate;
-    }
-
-    public Date getToDate() {
-        return toDate;
-    }
-
-    public void setToDate(final Date toDate) {
-        this.toDate = toDate;
-    }
-
+    
 }

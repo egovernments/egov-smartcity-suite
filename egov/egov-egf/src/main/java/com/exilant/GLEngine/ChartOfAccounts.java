@@ -531,7 +531,6 @@ public class ChartOfAccounts {
 			paramMap.put("mis.budgetcheckreq", voucherHeader.getVouchermis()
 					.isBudgetCheckReq());
 			paramMap.put("voucherHeader", voucherHeader);
-			paramMap.put("allowNegetive", txnObj.getAllowNegetiveBudgetAmount()); 
 			if (txnObj.getBillId() != null)
 				paramMap.put("bill", txnObj.getBillId());
 			if (!budgetDetailsDAO.budgetaryCheck(paramMap))

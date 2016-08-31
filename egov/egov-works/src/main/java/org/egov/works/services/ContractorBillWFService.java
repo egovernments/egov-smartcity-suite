@@ -45,7 +45,10 @@ import org.egov.works.contractorbill.entity.ContractorBillRegister;
 public class ContractorBillWFService extends PersistenceService<ContractorBillRegister, Long> {
 
     public ContractorBillWFService() {
-        setType(ContractorBillRegister.class);
+        super(ContractorBillRegister.class);
     }
 
+    public ContractorBillWFService(Class<ContractorBillRegister> type) {
+        super(type);
+    }
 }

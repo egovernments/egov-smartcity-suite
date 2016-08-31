@@ -166,6 +166,7 @@ public class PTBillServiceImpl extends BillServiceInterface {
             billdetail.setEgInstallmentMaster(currInstallment);
             billdetail.setAdditionalFlag(Integer.valueOf(1));
             billdetail.setPurpose(PURPOSE.OTHERS.toString());
+            billdetail.setFunctionCode(financialUtil.getFunctionCode());
             billDetails.add(billdetail);
             return billDetails;
         }

@@ -79,6 +79,14 @@ public class PropertyPersistenceService extends PersistenceService<BasicProperty
     @Autowired
     private ReportService reportService;
 
+    public PropertyPersistenceService() {
+        super(BasicProperty.class);
+    }
+
+    public PropertyPersistenceService(Class<BasicProperty> type) {
+        super(type);
+    }
+
     @SuppressWarnings("unchecked")
     public void createOwners(final Property property, final BasicProperty basicProperty, final Address ownerAddress) {
 

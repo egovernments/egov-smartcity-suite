@@ -83,10 +83,12 @@ public class Department extends AbstractAuditable {
     @SafeHtml
     private String code;
 
+    @Override
     public Long getId() {
         return id;
     }
 
+    @Override
     public void setId(final Long id) {
         this.id = id;
     }

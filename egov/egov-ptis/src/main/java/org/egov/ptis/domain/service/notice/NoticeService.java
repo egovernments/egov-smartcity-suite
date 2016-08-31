@@ -75,9 +75,14 @@ public class NoticeService extends PersistenceService<PtNotice, Long> {
     @Autowired
     @Qualifier("fileStoreService")
     protected FileStoreService fileStoreService;
-    /*
-     * @Autowired PersistenceService persistenceService;
-     */
+
+    public NoticeService() {
+        super(PtNotice.class);
+    }
+
+    public NoticeService(Class<PtNotice> type) {
+        super(type);
+    }
 
     /**
      * This method populates the <code>PtNotice</code> object along with notice

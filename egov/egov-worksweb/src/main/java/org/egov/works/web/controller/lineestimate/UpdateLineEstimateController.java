@@ -55,10 +55,11 @@ import org.egov.commons.dao.EgwTypeOfWorkHibernateDAO;
 import org.egov.commons.dao.FunctionHibernateDAO;
 import org.egov.commons.dao.FundHibernateDAO;
 import org.egov.dao.budget.BudgetDetailsDAO;
+import org.egov.egf.budget.model.BudgetControlType;
+import org.egov.egf.budget.service.BudgetControlTypeService;
 import org.egov.eis.service.AssignmentService;
 import org.egov.eis.web.contract.WorkflowContainer;
 import org.egov.eis.web.controller.workflow.GenericWorkFlowController;
-import org.egov.infra.admin.master.entity.AppConfigValues;
 import org.egov.infra.admin.master.service.AppConfigValueService;
 import org.egov.infra.admin.master.service.BoundaryService;
 import org.egov.infra.admin.master.service.DepartmentService;
@@ -73,7 +74,6 @@ import org.egov.works.lineestimate.entity.LineEstimate;
 import org.egov.works.lineestimate.entity.LineEstimateDetails;
 import org.egov.works.lineestimate.entity.enums.Beneficiary;
 import org.egov.works.lineestimate.entity.enums.LineEstimateStatus;
-import org.egov.works.lineestimate.entity.enums.TypeOfSlum;
 import org.egov.works.lineestimate.entity.enums.WorkCategory;
 import org.egov.works.lineestimate.service.LineEstimateService;
 import org.egov.works.master.service.LineEstimateUOMService;
@@ -82,7 +82,8 @@ import org.egov.works.master.service.NatureOfWorkService;
 import org.egov.works.utils.WorksConstants;
 import org.egov.works.utils.WorksUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.support.ResourceBundleMessageSource;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.context.MessageSource;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -125,25 +126,26 @@ public class UpdateLineEstimateController extends GenericWorkFlowController {
     protected AssignmentService assignmentService;
 
     @Autowired
-    private ResourceBundleMessageSource messageSource;
+    @Qualifier("messageSource")
+    private MessageSource messageSource;
 
     @Autowired
     private BudgetDetailsDAO budgetDetailsDAO;
 
     @Autowired
-    private AppConfigValueService appConfigValuesService;
+    private SecurityUtils securityUtils;
 
     @Autowired
-    private SecurityUtils securityUtils;
-    
-    @Autowired
     private BoundaryService boundaryService;
-    
+
     @Autowired
     private ModeOfAllotmentService modeOfAllotmentService;
-    
+
     @Autowired
     private LineEstimateUOMService lineEstimateUOMService;
+
+    @Autowired
+    private BudgetControlTypeService budgetControlTypeService;
 
     @ModelAttribute
     public LineEstimate getLineEstimate(@PathVariable final String lineEstimateId) {
@@ -224,10 +226,8 @@ public class UpdateLineEstimateController extends GenericWorkFlowController {
 
         if (lineEstimate.getStatus().getCode().equals(LineEstimateStatus.CHECKED.toString())
                 && !workFlowAction.equalsIgnoreCase(WorksConstants.REJECT_ACTION.toString())) {
-            final List<AppConfigValues> values = appConfigValuesService.getConfigValuesByModuleAndKey(
-                    WorksConstants.EGF_MODULE_NAME, WorksConstants.APPCONFIG_KEY_BUDGETCHECK_REQUIRED);
-            final AppConfigValues value = values.get(0);
-            if (value.getValue().equalsIgnoreCase("Y"))
+            if (BudgetControlType.BudgetCheckOption.MANDATORY.toString()
+                    .equalsIgnoreCase(budgetControlTypeService.getConfigValue()))
                 validateBudgetAmount(lineEstimate, errors);
         }
         if (errors.hasErrors()) {
@@ -284,7 +284,8 @@ public class UpdateLineEstimateController extends GenericWorkFlowController {
             List<CChartOfAccountDetail> accountDetails = new ArrayList<CChartOfAccountDetail>();
             accountDetails.addAll(lineEstimate.getBudgetHead().getMaxCode().getChartOfAccountDetails());
             for (CChartOfAccountDetail detail : accountDetails) {
-                if (detail.getDetailTypeId() != null && detail.getDetailTypeId().getName().equalsIgnoreCase(WorksConstants.PROJECTCODE))
+                if (detail.getDetailTypeId() != null
+                        && detail.getDetailTypeId().getName().equalsIgnoreCase(WorksConstants.PROJECTCODE))
                     check = true;
             }
             if (!check) {
@@ -296,6 +297,7 @@ public class UpdateLineEstimateController extends GenericWorkFlowController {
     }
 
     private void validateBudgetAmount(final LineEstimate lineEstimate, final BindingResult errors) {
+
         final List<Long> budgetheadid = new ArrayList<Long>();
         budgetheadid.add(lineEstimate.getBudgetHead().getId());
 
@@ -370,7 +372,6 @@ public class UpdateLineEstimateController extends GenericWorkFlowController {
         model.addAttribute("functions", functionHibernateDAO.getAllActiveFunctions());
         model.addAttribute("schemes", schemeService.findAll());
         model.addAttribute("departments", lineEstimateService.getUserDepartments(securityUtils.getCurrentUser()));
-        model.addAttribute("typeOfSlum", TypeOfSlum.values());
         model.addAttribute("beneficiary", Beneficiary.values());
         model.addAttribute("modeOfAllotment", modeOfAllotmentService.findAll());
         model.addAttribute("lineEstimateUOMs", lineEstimateUOMService.findAll());

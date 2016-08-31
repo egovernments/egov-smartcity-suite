@@ -96,8 +96,12 @@ public class BudgetService extends PersistenceService<Budget, Long> {
         this.eisCommonService = eisCommonService;
     }
 
-    public BudgetService(final Class<Budget> budget) {
-        this.type = budget;
+    public BudgetService() {
+        super(Budget.class);
+    }
+
+    public BudgetService(final Class<Budget> type) {
+        super(type);
     }
 
     public Budget getByName(final String name) {

@@ -57,3 +57,17 @@
 		</div>
 	</div>
 </form:form>
+<script>
+	$('#buttonSubmit').click(function(e) {
+		if ($('form').valid()) {
+		} else {
+			e.preventDefault();
+		}
+	});
+	var alphanumerichyphenbackslashwithspace = /[^a-zA-Z0-9-\/ ]/g ;
+	jQuery('.pattern').on("input", function(e){
+		if(jQuery(this).val().match(alphanumerichyphenbackslashwithspace)){
+			jQuery(this).val( jQuery(this).val().replace(alphanumerichyphenbackslashwithspace,'') );
+		}
+	});
+</script>

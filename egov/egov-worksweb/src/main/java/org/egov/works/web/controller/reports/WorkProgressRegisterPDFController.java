@@ -40,15 +40,25 @@
 
 package org.egov.works.web.controller.reports;
 
+import java.io.IOException;
+import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
+
 import org.egov.infra.admin.master.service.DepartmentService;
 import org.egov.infra.filestore.service.FileStoreService;
 import org.egov.infra.reporting.engine.ReportConstants.FileFormat;
 import org.egov.infra.reporting.engine.ReportOutput;
 import org.egov.infra.reporting.engine.ReportRequest;
 import org.egov.infra.reporting.engine.ReportService;
+import org.egov.infra.utils.DateUtils;
 import org.egov.works.contractorbill.entity.enums.BillTypes;
-import org.egov.works.lineestimate.entity.enums.TypeOfSlum;
-import org.egov.works.lineestimate.entity.enums.WorkCategory;
 import org.egov.works.reports.entity.WorkProgressRegister;
 import org.egov.works.reports.entity.WorkProgressRegisterPdf;
 import org.egov.works.reports.entity.WorkProgressRegisterSearchRequest;
@@ -66,18 +76,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
-
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpSession;
-
-import java.io.IOException;
-import java.math.BigDecimal;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 
 @Controller
 @RequestMapping(value = "/reports/workprogressregister")
@@ -115,7 +113,6 @@ public class WorkProgressRegisterPDFController {
             @RequestParam("contentType") final String contentType,
             final HttpSession session) throws IOException {
         final WorkProgressRegisterSearchRequest searchRequest = new WorkProgressRegisterSearchRequest();
-        final SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
         searchRequest.setAdminSanctionFromDate(adminSanctionFromDate);
         searchRequest.setAdminSanctionToDate(adminSanctionToDate);
         searchRequest.setContractor(contractor);
@@ -136,7 +133,7 @@ public class WorkProgressRegisterPDFController {
             queryParameters += "for ";
 
         if (adminSanctionFromDate != null && adminSanctionToDate != null)
-            queryParameters += "Date Range : " + sdf.format(adminSanctionFromDate) + " - " + sdf.format(adminSanctionToDate)
+            queryParameters += "Date Range : " + DateUtils.getFormattedDate(adminSanctionFromDate,"dd/MM/yyyy") + " - " + DateUtils.getFormattedDate(adminSanctionToDate,"dd/MM/yyyy")
                     + ", ";
         if (adminSanctionFromDate != null && adminSanctionToDate == null)
             queryParameters += "Admin Sanction From Date : " + adminSanctionFromDate + ", ";
@@ -161,8 +158,6 @@ public class WorkProgressRegisterPDFController {
             final HttpServletRequest request,
             final HttpSession session, final String contentType) {
         final List<WorkProgressRegisterPdf> workProgressRegisterPdfList = new ArrayList<WorkProgressRegisterPdf>();
-        final SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
-        final SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy hh:mm a");
 
         String dataRunDate = "";
 
@@ -177,17 +172,12 @@ public class WorkProgressRegisterPDFController {
                     pdf.setLocation(wpr.getLocation().getName());
                 else
                     pdf.setLocation("");
-                if (wpr.getWorkCategory() != null
-                        && wpr.getWorkCategory().toString().equals(WorkCategory.SLUM_WORK.toString())) {
-                    if (wpr.getTypeOfSlum() != null
-                            && wpr.getTypeOfSlum().toString().equals(TypeOfSlum.NOTIFIED.toString()))
-                        pdf.setTypeOfSlum("Notified Slum");
-                    else
-                        pdf.setTypeOfSlum("Non Notified Slum");
-                } else
-                    pdf.setTypeOfSlum("Non slum work");
+                if (wpr.getWorkCategory() != null)
+                    pdf.setWorkCategory(wpr.getWorkCategory().toString().replace("_", " "));
+                else
+                    pdf.setWorkCategory("NA");
                 if (wpr.getBeneficiary() != null)
-                    pdf.setBeneficiary(wpr.getBeneficiary().toString());
+                    pdf.setBeneficiary(wpr.getBeneficiary().toString().replaceAll("_C", "/C").replace("_", " "));
                 else
                     pdf.setBeneficiary("NA");
                 if (wpr.getWinCode() != null)
@@ -217,7 +207,7 @@ public class WorkProgressRegisterPDFController {
                 if (wpr.getAdminSanctionBy() != null)
                     pdf.setAdminSanctionAuthorityDate(worksUtils.getUserDesignation(wpr.getAdminSanctionBy()) + " - "
                             + wpr.getAdminSanctionBy().getName() + ", "
-                            + sdf.format(wpr.getAdminSanctionDate()));
+                            + DateUtils.getFormattedDate(wpr.getAdminSanctionDate(),"dd/MM/yyyy"));
                 else
                     pdf.setAdminSanctionAuthorityDate("");
                 if (wpr.getAdminSanctionAmount() != null)
@@ -227,7 +217,7 @@ public class WorkProgressRegisterPDFController {
                 if (wpr.getTechnicalSanctionBy() != null)
                     pdf.setTechnicalSanctionAuthorityDate(worksUtils.getUserDesignation(wpr.getTechnicalSanctionBy()) + " - "
                             + wpr.getTechnicalSanctionBy().getName() + ", "
-                            + sdf.format(wpr.getTechnicalSanctionDate()));
+                            + DateUtils.getFormattedDate(wpr.getTechnicalSanctionDate(),"dd/MM/yyyy"));
                 else
                     pdf.setTechnicalSanctionAuthorityDate("");
                 if (wpr.getEstimateAmount() != null)
@@ -239,7 +229,7 @@ public class WorkProgressRegisterPDFController {
                 else
                     pdf.setModeOfAllotment("");
                 if (wpr.getAgreementNumber() != null)
-                    pdf.setAgreementNumberDate(wpr.getAgreementNumber() + " - " + sdf.format(wpr.getAgreementDate()));
+                    pdf.setAgreementNumberDate(wpr.getAgreementNumber() + " - " + DateUtils.getFormattedDate(wpr.getAgreementDate(),"dd/MM/yyyy"));
                 else
                     pdf.setAgreementNumberDate("");
                 if (wpr.getContractor() != null)
@@ -252,11 +242,11 @@ public class WorkProgressRegisterPDFController {
                 else
                     pdf.setAgreementAmount("NA");
                 if (wpr.getLatestMbNumber() != null && wpr.getLatestMbDate() != null)
-                    pdf.setLatestMbNumberDate(wpr.getLatestMbNumber() + " - " + sdf.format(wpr.getLatestMbDate()));
+                    pdf.setLatestMbNumberDate(wpr.getLatestMbNumber() + " - " + DateUtils.getFormattedDate(wpr.getLatestMbDate(),"dd/MM/yyyy"));
                 else
                     pdf.setLatestMbNumberDate("");
                 if (wpr.getLatestBillNumber() != null)
-                    pdf.setLatestBillNumberDate(wpr.getLatestBillNumber() + " - " + sdf.format(wpr.getLatestBillDate()));
+                    pdf.setLatestBillNumberDate(wpr.getLatestBillNumber() + " - " + DateUtils.getFormattedDate(wpr.getLatestBillDate(),"dd/MM/yyyy"));
                 else
                     pdf.setLatestBillNumberDate("");
                 if (wpr.getBilltype() != null)
@@ -288,13 +278,13 @@ public class WorkProgressRegisterPDFController {
                 } else
                     pdf.setBalanceValueOfWorkToBill("NA");
 
-                dataRunDate = formatter.format(wpr.getCreatedDate());
+                dataRunDate = DateUtils.getFormattedDate(wpr.getCreatedDate(),"dd/MM/yyyy hh:mm a");
 
                 workProgressRegisterPdfList.add(pdf);
             }
 
         reportParams.put("heading", WorksConstants.HEADING_WORK_PROGRESS_REGISTER_REPORT);
-        reportParams.put("reportRunDate", formatter.format(new Date()));
+        reportParams.put("reportRunDate", DateUtils.getFormattedDate(new Date(),"dd/MM/yyyy hh:mm a"));
         reportParams.put("dataRunDate", dataRunDate);
 
         reportInput = new ReportRequest(WORKPROGRESSREGISTERPDF, workProgressRegisterPdfList, reportParams);

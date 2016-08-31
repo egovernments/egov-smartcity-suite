@@ -193,7 +193,7 @@ public class UpdatePropertyDemolitionController extends GenericWorkFlowControlle
                 Assignment assignment = new Assignment();
                 if (workFlowAction.equalsIgnoreCase(WFLOW_ACTION_STEP_APPROVE)) {
                     model.addAttribute("successMessage", "Property Demolition approved successfully and forwarded to  "
-                            + propertyTaxUtil.getApproverUserName(approvalPosition) + " with assessment number "
+                            + propertyTaxUtil.getApproverUserName(((PropertyImpl) property).getState().getOwnerPosition().getId()) + " with assessment number "
                             + property.getBasicProperty().getUpicNo());
                 } else if (workFlowAction.equalsIgnoreCase(WFLOW_ACTION_STEP_REJECT)) {
                     assignment = assignmentService.getPrimaryAssignmentForUser(property.getCreatedBy().getId());

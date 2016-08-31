@@ -50,6 +50,7 @@ import org.egov.infra.admin.master.service.ModuleService;
 import org.egov.infra.admin.master.service.UserService;
 import org.egov.infra.config.properties.ApplicationProperties;
 import org.egov.infra.persistence.entity.enums.UserType;
+import org.egov.infra.persistence.utils.PersistenceUtils;
 import org.egov.infra.security.utils.SecurityUtils;
 import org.egov.infra.validation.ValidatorUtils;
 import org.egov.infra.web.support.ui.Menu;
@@ -159,7 +160,7 @@ public class HomeController {
 
     @ModelAttribute("user")
     public User user() {
-        return securityUtils.getCurrentUser();
+        return PersistenceUtils.unproxy(securityUtils.getCurrentUser());
     }
 
     @RequestMapping(value = "profile/edit", method = GET)

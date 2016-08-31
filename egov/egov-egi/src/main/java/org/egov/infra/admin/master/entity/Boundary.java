@@ -139,10 +139,12 @@ public class Boundary extends AbstractAuditable {
     @Searchable(name = "boundaryLocation", group = Searchable.Group.COMMON)
     private transient GeoPoint boundaryLocation;
 
+    @Override
     public Long getId() {
         return id;
     }
 
+    @Override
     public void setId(final Long id) {
         this.id = id;
     }
@@ -272,7 +274,7 @@ public class Boundary extends AbstractAuditable {
     
     public GeoPoint getBoundaryLocation() {
         if (this.getLatitude() != null && this.getLongitude() != null) {
-            this.boundaryLocation =(new GeoPoint(this.getLatitude(), this.getLongitude()));
+            this.boundaryLocation = new GeoPoint(this.getLatitude(), this.getLongitude());
         }
         return boundaryLocation;
     }

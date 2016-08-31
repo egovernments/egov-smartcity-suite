@@ -47,11 +47,11 @@ import org.springframework.stereotype.Service;
 public class ChartOfAccountDetailService extends PersistenceService<CChartOfAccountDetail, Long>
 {
     public ChartOfAccountDetailService() {
-        this.type=CChartOfAccountDetail.class;
+        super(CChartOfAccountDetail.class);
     }
 
-	public ChartOfAccountDetailService(Class<CChartOfAccountDetail> type) {
-		super(type);
-	}
+    public ChartOfAccountDetailService(Class<CChartOfAccountDetail> type) {
+        super(type);
+    }
 
 }

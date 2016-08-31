@@ -74,6 +74,13 @@ public class FundFlowService extends PersistenceService {
     private static final String START_FINANCIALYEAR_DATE = "01-Apr-2012";
     private @Autowired AppConfigValueService appConfigValuesService;
 
+    public FundFlowService() {
+        super(null);
+    }
+
+    public FundFlowService(Class type) {
+        super(type);
+    }
     /**
      * All amounts is in lakhs
      */

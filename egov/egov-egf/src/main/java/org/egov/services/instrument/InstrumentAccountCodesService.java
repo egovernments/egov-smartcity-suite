@@ -47,7 +47,11 @@ import org.springframework.transaction.annotation.Transactional;
 @Transactional(readOnly = true)
 public class InstrumentAccountCodesService extends PersistenceService<InstrumentAccountCodes, Long> {
 
-    public InstrumentAccountCodesService(final Class<InstrumentAccountCodes> instrumentAccountCodes) {
-        this.type = instrumentAccountCodes;
+    public InstrumentAccountCodesService() {
+        super(InstrumentAccountCodes.class);
+    }
+
+    public InstrumentAccountCodesService(final Class<InstrumentAccountCodes> type) {
+        super(type);
     }
 }

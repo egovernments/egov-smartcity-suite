@@ -77,9 +77,10 @@ import java.util.TreeMap;
             + AutoRemittanceSchedulerReportAction.NEW + ".jsp")
 })
 public class AutoRemittanceSchedulerReportAction extends SearchFormAction {
- @Autowired
- @Qualifier("persistenceService")
- private PersistenceService persistenceService;
+
+    @Autowired
+    @Qualifier("persistenceService")
+    private PersistenceService persistenceService;
 
 
     private static final long serialVersionUID = 1L;
@@ -87,6 +88,8 @@ public class AutoRemittanceSchedulerReportAction extends SearchFormAction {
     public static final Locale LOCALE = new Locale("en", "IN");
     public static final SimpleDateFormat DDMMYYYYFORMATS = new SimpleDateFormat("dd/MM/yyyy", LOCALE);
     private AutoRemittanceSchedulerReportBean reportBean;
+    @Autowired
+    @Qualifier("recoveryPersistenceService")
     private RecoveryService recoveryService;
     private String recoveryId;
     private String schedulerType;
@@ -225,14 +228,6 @@ public class AutoRemittanceSchedulerReportAction extends SearchFormAction {
     public Object getModel() {
         // TODO Auto-generated method stub
         return null;
-    }
-
-    public RecoveryService getRecoveryService() {
-        return recoveryService;
-    }
-
-    public void setRecoveryService(final RecoveryService recoveryService) {
-        this.recoveryService = recoveryService;
     }
 
     public String getRecoveryId() {

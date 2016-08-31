@@ -40,21 +40,29 @@
 
 package org.egov.works.web.controller.lineestimate;
 
-import org.egov.infra.filestore.service.FileStoreService;
+import java.io.IOException;
+import java.math.BigDecimal;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
+
+import org.egov.infra.config.core.ApplicationThreadLocals;
 import org.egov.infra.reporting.engine.ReportConstants;
 import org.egov.infra.reporting.engine.ReportOutput;
 import org.egov.infra.reporting.engine.ReportRequest;
 import org.egov.infra.reporting.engine.ReportService;
+import org.egov.infra.utils.DateUtils;
 import org.egov.infra.utils.NumberUtil;
 import org.egov.infra.web.utils.WebUtils;
 import org.egov.works.lineestimate.entity.LineEstimate;
 import org.egov.works.lineestimate.entity.LineEstimateAppropriation;
 import org.egov.works.lineestimate.entity.LineEstimateDetails;
-import org.egov.works.lineestimate.entity.enums.WorkCategory;
 import org.egov.works.lineestimate.service.LineEstimateService;
 import org.egov.works.utils.WorksUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -64,15 +72,6 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
-
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpSession;
-import java.io.IOException;
-import java.math.BigDecimal;
-import java.text.SimpleDateFormat;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 
 @Controller
 @RequestMapping(value = "/lineestimate")
@@ -88,13 +87,6 @@ public class LineEstimatePDFController {
     private LineEstimateService lineEstimateService;
 
     public static final String LINEESTIMATEPDF = "lineEstimatePDF";
-    private final Map<String, Object> reportParams = new HashMap<String, Object>();
-    private ReportRequest reportInput = null;
-    private ReportOutput reportOutput = null;
-
-    @Autowired
-    @Qualifier("fileStoreService")
-    protected FileStoreService fileStoreService;
 
     @RequestMapping(value = "/lineEstimatePDF/{lineEstimateId}", method = RequestMethod.GET)
     public @ResponseBody ResponseEntity<byte[]> generateLineEstimatePDF(final HttpServletRequest request,
@@ -106,31 +98,28 @@ public class LineEstimatePDFController {
 
     private ResponseEntity<byte[]> generateReport(final LineEstimate lineEstimate, final HttpServletRequest request,
             final HttpSession session) {
-        if (lineEstimate != null) {
+        final Map<String, Object> reportParams = new HashMap<String, Object>();
+        ReportRequest reportInput = null;
+        ReportOutput reportOutput = null;
 
-            final SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
+        if (lineEstimate != null) {
 
             final String url = WebUtils.extractRequestDomainURL(request, false);
             reportParams.put("cityLogo", url.concat(ReportConstants.IMAGE_CONTEXT_PATH)
                     .concat((String) request.getSession().getAttribute("citylogo")));
 
-            final String cityName = request.getSession().getAttribute("citymunicipalityname").toString();
-            reportParams.put("cityName", cityName);
+            reportParams.put("cityName", ApplicationThreadLocals.getMunicipalityName());
             reportParams.put("proNo", lineEstimate.getAdminSanctionNumber() != null ? lineEstimate.getAdminSanctionNumber() : "");
             reportParams.put("sub", lineEstimate.getSubject());
             reportParams.put("ref", lineEstimate.getReference());
             reportParams.put("dated",
-                    lineEstimate.getAdminSanctionDate() != null ? formatter.format(lineEstimate.getAdminSanctionDate()) : "");
+                    lineEstimate.getAdminSanctionDate() != null ? DateUtils.getFormattedDate(lineEstimate.getAdminSanctionDate(),"dd/MM/yyyy") : "");
             reportParams.put("scheme", lineEstimate.getScheme() != null ? lineEstimate.getScheme().getName() : "");
             reportParams.put("function", lineEstimate.getFunction() != null ? lineEstimate.getFunction().getName() : "");
             reportParams.put("account", lineEstimate.getBudgetHead() != null ? lineEstimate.getBudgetHead().getName() : "");
             // reportParams.put("lineEstimateDetails",lineEstimate.getLineEstimateDetails() );
             reportParams.put("modeOfAllotment", lineEstimate.getModeOfAllotment());
-            if (lineEstimate.getWorkCategory().toString().equals(WorkCategory.NON_SLUM_WORK.toString()))
-                reportParams.put("typeOfSlum", "No");
-            else
-                reportParams.put("typeOfSlum", "Yes - " + lineEstimate.getTypeOfSlum().toString().replace("_", " ") + " Slum - "
-                        + lineEstimate.getBeneficiary().toString());
+            reportParams.put("workCategory",lineEstimate.getWorkCategory().toString().replace("_", " ") + " - " + lineEstimate.getBeneficiary().toString().replaceAll("_C", "/C").replace("_", " "));
             reportParams.put("present",
                     lineEstimate.getAdminSanctionBy() != null ? lineEstimate.getAdminSanctionBy().getName() : "");
             final String zonalCommissioner = worksUtils.getUserDesignation(lineEstimate.getAdminSanctionBy());

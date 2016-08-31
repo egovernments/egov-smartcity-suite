@@ -39,17 +39,17 @@
  */
 package org.egov.commons.service;
 
-import java.util.List;
-
 import org.egov.commons.CChartOfAccounts;
 import org.egov.infstr.services.PersistenceService;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
+
 @Transactional(readOnly = true)
 public class ChartOfAccountsService extends PersistenceService<CChartOfAccounts, Long>
 {
-    public ChartOfAccountsService(final Class<CChartOfAccounts> chartOfAccounts) {
-        super(chartOfAccounts);
+    public ChartOfAccountsService(final Class<CChartOfAccounts> type) {
+        super(type);
     }
 
     public List<CChartOfAccounts> getActiveCodeList() {

@@ -92,10 +92,12 @@ public class HierarchyType extends AbstractAuditable {
     @SafeHtml
     private String localName;
 
+    @Override
     public Long getId() {
         return id;
     }
 
+    @Override
     public void setId(final Long id) {
         this.id = id;
     }

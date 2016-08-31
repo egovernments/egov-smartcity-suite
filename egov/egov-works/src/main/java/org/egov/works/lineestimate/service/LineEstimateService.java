@@ -55,14 +55,14 @@ import org.egov.commons.CFinancialYear;
 import org.egov.commons.dao.EgwStatusHibernateDAO;
 import org.egov.commons.dao.FinancialYearHibernateDAO;
 import org.egov.dao.budget.BudgetDetailsDAO;
+import org.egov.egf.budget.model.BudgetControlType;
+import org.egov.egf.budget.service.BudgetControlTypeService;
 import org.egov.eis.entity.Assignment;
 import org.egov.eis.service.AssignmentService;
 import org.egov.eis.service.EisCommonService;
 import org.egov.eis.service.PositionMasterService;
-import org.egov.infra.admin.master.entity.AppConfigValues;
 import org.egov.infra.admin.master.entity.Department;
 import org.egov.infra.admin.master.entity.User;
-import org.egov.infra.admin.master.service.AppConfigValueService;
 import org.egov.infra.admin.master.service.UserService;
 import org.egov.infra.reporting.engine.ReportOutput;
 import org.egov.infra.security.utils.SecurityUtils;
@@ -88,7 +88,6 @@ import org.egov.works.lineestimate.entity.LineEstimateForLoaSearchRequest;
 import org.egov.works.lineestimate.entity.LineEstimateForLoaSearchResult;
 import org.egov.works.lineestimate.entity.LineEstimateSearchRequest;
 import org.egov.works.lineestimate.entity.enums.LineEstimateStatus;
-import org.egov.works.lineestimate.entity.enums.WorkCategory;
 import org.egov.works.lineestimate.repository.LineEstimateAppropriationRepository;
 import org.egov.works.lineestimate.repository.LineEstimateDetailsRepository;
 import org.egov.works.lineestimate.repository.LineEstimateRepository;
@@ -158,9 +157,6 @@ public class LineEstimateService {
     private LineEstimateDetailService lineEstimateDetailService;
 
     @Autowired
-    private AppConfigValueService appConfigValuesService;
-
-    @Autowired
     private UserService userService;
 
     @Autowired
@@ -168,6 +164,9 @@ public class LineEstimateService {
 
     @Autowired
     private LetterOfAcceptanceService letterOfAcceptanceService;
+
+    @Autowired
+    private BudgetControlTypeService budgetControlTypeService;
 
     public Session getCurrentSession() {
         return entityManager.unwrap(Session.class);
@@ -213,7 +212,7 @@ public class LineEstimateService {
                 approvalPosition, approvalComent, additionalRule, workFlowAction);
 
         lineEstimateRepository.save(newLineEstimate);
-        
+
         final List<DocumentDetails> documentDetails = worksUtils.getDocumentDetails(files, newLineEstimate,
                 WorksConstants.MODULE_NAME_LINEESTIMATE);
         if (!documentDetails.isEmpty()) {
@@ -491,10 +490,8 @@ public class LineEstimateService {
         if (lineEstimate.getStatus().getCode().equals(LineEstimateStatus.REJECTED.toString())) {
             updatedLineEstimate = update(lineEstimate, removedLineEstimateDetailsIds, files, financialYear);
             try {
-                if (workFlowAction.equals(WorksConstants.FORWARD_ACTION) &&
-                        lineEstimate.getWorkCategory().toString().equals(WorkCategory.NON_SLUM_WORK.toString()))
-                    resetWorkCategoryDetailsOnModify(lineEstimate);
-                lineEstimateStatusChange(updatedLineEstimate, workFlowAction, mode);
+                if (workFlowAction.equals(WorksConstants.FORWARD_ACTION))
+                    lineEstimateStatusChange(updatedLineEstimate, workFlowAction, mode);
             } catch (final ValidationException e) {
                 throw new ValidationException(e.getErrors());
             }
@@ -521,17 +518,14 @@ public class LineEstimateService {
                 }
                 if (lineEstimate.getStatus().getCode()
                         .equals(LineEstimateStatus.CHECKED.toString()) && !workFlowAction.equals(WorksConstants.REJECT_ACTION)) {
-                    final List<AppConfigValues> values = appConfigValuesService.getConfigValuesByModuleAndKey(
-                            WorksConstants.EGF_MODULE_NAME, WorksConstants.APPCONFIG_KEY_BUDGETCHECK_REQUIRED);
-                    final AppConfigValues value = values.get(0);
-                    if (value.getValue().equalsIgnoreCase("Y"))
+
+                    if (!BudgetControlType.BudgetCheckOption.NONE.toString()
+                            .equalsIgnoreCase(budgetControlTypeService.getConfigValue()))
                         doBudgetoryAppropriation(lineEstimate);
                 } else if (workFlowAction.equals(WorksConstants.REJECT_ACTION) && lineEstimate.getStatus().getCode()
                         .equals(LineEstimateStatus.BUDGET_SANCTIONED.toString())) {
-                    final List<AppConfigValues> values = appConfigValuesService.getConfigValuesByModuleAndKey(
-                            WorksConstants.EGF_MODULE_NAME, WorksConstants.APPCONFIG_KEY_BUDGETCHECK_REQUIRED);
-                    final AppConfigValues value = values.get(0);
-                    if (value.getValue().equalsIgnoreCase("Y"))
+                    if (!BudgetControlType.BudgetCheckOption.NONE.toString()
+                            .equalsIgnoreCase(budgetControlTypeService.getConfigValue()))
                         for (final LineEstimateDetails led : lineEstimate.getLineEstimateDetails())
                             releaseBudgetOnReject(led, null, null);
                 }
@@ -544,15 +538,10 @@ public class LineEstimateService {
 
         createLineEstimateWorkflowTransition(updatedLineEstimate,
                 approvalPosition, approvalComent, additionalRule, workFlowAction);
-        
-        updatedLineEstimate = lineEstimateRepository.save(updatedLineEstimate);
-        
-        return updatedLineEstimate;
-    }
 
-    private void resetWorkCategoryDetailsOnModify(final LineEstimate lineEstimate) {
-        lineEstimate.setTypeOfSlum(null);
-        lineEstimate.setBeneficiary(null);
+        updatedLineEstimate = lineEstimateRepository.save(updatedLineEstimate);
+
+        return updatedLineEstimate;
     }
 
     private void resetAdminSanctionDetails(final LineEstimate lineEstimate) {
@@ -812,13 +801,10 @@ public class LineEstimateService {
 
         for (final LineEstimateDetails led : lineEstimate.getLineEstimateDetails())
             lineEstimateDetailService.setProjectCode(led);
-        
-        final LineEstimate newLineEstimate = lineEstimateRepository.save(lineEstimate);
 
-        final List<AppConfigValues> values = appConfigValuesService.getConfigValuesByModuleAndKey(WorksConstants.EGF_MODULE_NAME,
-                WorksConstants.APPCONFIG_KEY_BUDGETCHECK_REQUIRED);
-        final AppConfigValues value = values.get(0);
-        if (value.getValue().equalsIgnoreCase("Y"))
+        final LineEstimate newLineEstimate = lineEstimateRepository.save(lineEstimate);
+        if (!BudgetControlType.BudgetCheckOption.NONE.toString()
+                .equalsIgnoreCase(budgetControlTypeService.getConfigValue()))
             doBudgetoryAppropriation(lineEstimate);
 
         final List<DocumentDetails> documentDetails = worksUtils.getDocumentDetails(files, newLineEstimate,
@@ -869,7 +855,8 @@ public class LineEstimateService {
             }
             if (lineEstimateSearchRequest.getWorkIdentificationNumber() != null)
                 criteria.add(
-                        Restrictions.ilike("pc.code", lineEstimateSearchRequest.getWorkIdentificationNumber(), MatchMode.ANYWHERE));
+                        Restrictions.ilike("pc.code", lineEstimateSearchRequest.getWorkIdentificationNumber(),
+                                MatchMode.ANYWHERE));
         }
         if (lineEstimateSearchRequest.getCreatedBy() != null) {
             criteria.add(Restrictions.eq("createdBy.id", lineEstimateSearchRequest.getCreatedBy()));
@@ -898,10 +885,8 @@ public class LineEstimateService {
     public LineEstimate cancel(final LineEstimate lineEstimate) {
         lineEstimate.setStatus(egwStatusHibernateDAO.getStatusByModuleAndCode(WorksConstants.MODULETYPE,
                 LineEstimateStatus.CANCELLED.toString()));
-        final List<AppConfigValues> values = appConfigValuesService.getConfigValuesByModuleAndKey(
-                WorksConstants.EGF_MODULE_NAME, WorksConstants.APPCONFIG_KEY_BUDGETCHECK_REQUIRED);
-        final AppConfigValues value = values.get(0);
-        if (value.getValue().equalsIgnoreCase("Y"))
+        if (!BudgetControlType.BudgetCheckOption.NONE.toString()
+                .equalsIgnoreCase(budgetControlTypeService.getConfigValue()))
             for (final LineEstimateDetails led : lineEstimate.getLineEstimateDetails())
                 releaseBudgetOnReject(led, null, null);
 

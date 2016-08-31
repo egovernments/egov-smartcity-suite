@@ -104,8 +104,12 @@ public class ChequeAssignmentService extends PersistenceService<Paymentheader, L
     @Autowired
     private EgwStatusHibernateDAO egwStatusDAO;
 
-    public ChequeAssignmentService(final Class<Paymentheader> paymentheader) {
-        this.type = paymentheader;
+    public ChequeAssignmentService() {
+        super(Paymentheader.class);
+    }
+
+    public ChequeAssignmentService(final Class<Paymentheader> type) {
+        super(type);
     }
 
     @SuppressWarnings("unchecked")

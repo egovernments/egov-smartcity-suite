@@ -43,6 +43,7 @@
 <%@ taglib uri="http://www.springframework.org/tags" prefix="spring"%>
 <%@ taglib uri="http://www.springframework.org/tags/form" prefix="form"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
+<%@ taglib uri="/WEB-INF/taglibs/cdn.tld" prefix="cdn"%>
 		<form:form name="SearchRequest" role="form" action="" modelAttribute="searchRequestContractor" id="searchRequestContractor" class="form-horizontal form-groups-bordered">
 			<div class="row">
 				<div class="col-md-12">
@@ -68,4 +69,4 @@
 		}
 	});
 </script>
-<script src="<c:url value='/resources/js/searchcontractorhelper.js?rnd=${app_release_no}'/>"></script>
+<script src="<cdn:url value='/resources/js/searchcontractorhelper.js?rnd=${app_release_no}'/>"></script>

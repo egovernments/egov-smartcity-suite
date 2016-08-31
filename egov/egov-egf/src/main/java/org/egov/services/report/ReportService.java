@@ -83,11 +83,13 @@ public abstract class ReportService {
  private PersistenceService persistenceService;
  @Autowired
     AppConfigValueService appConfigValuesService;
+   //even though it is instance variable it is fine to make it prototype.
+  //Minor code length is constant for implementation
     int minorCodeLength;
     List<Character> coaType = new ArrayList<Character>();
     @Autowired
     private FinancialYearHibernateDAO financialYearDAO;
-    String voucherStatusToExclude;
+  
     final static Logger LOGGER = Logger.getLogger(ReportService.class);
 
     public Date getPreviousYearFor(final Date date) {
@@ -280,7 +282,7 @@ public abstract class ReportService {
 
     List<StatementResultObject> getTransactionAmount(final String filterQuery,
             final Date toDate, final Date fromDate, final String coaType, final String subReportType) {
-        voucherStatusToExclude = getAppConfigValueFor("EGF",
+    	String    voucherStatusToExclude = getAppConfigValueFor("EGF",
                 "statusexcludeReport");
         
         final Query query = persistenceService.getSession()

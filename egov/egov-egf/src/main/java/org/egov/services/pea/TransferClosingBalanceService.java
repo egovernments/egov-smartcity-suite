@@ -40,8 +40,6 @@
 
 package org.egov.services.pea;
 
-import java.text.SimpleDateFormat;
-
 import org.egov.commons.CFinancialYear;
 import org.egov.commons.dao.FinancialYearHibernateDAO;
 import org.egov.infra.config.core.ApplicationThreadLocals;
@@ -52,6 +50,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.text.SimpleDateFormat;
+
 @Transactional(readOnly = true)
 public class TransferClosingBalanceService extends PersistenceService {
 
@@ -60,6 +60,15 @@ public class TransferClosingBalanceService extends PersistenceService {
     @Autowired
     @Qualifier("financialYearDAO")
     private FinancialYearHibernateDAO financialYearDAO;
+
+    public TransferClosingBalanceService() {
+        super(null);
+    }
+
+    public TransferClosingBalanceService(Class type) {
+        super(type);
+    }
+
 
     @Transactional
     public void transfer(Long financialYear, CFinancialYear fy,

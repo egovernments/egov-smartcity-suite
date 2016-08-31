@@ -39,20 +39,10 @@
  */
 package org.egov.services.voucher;
 
-import java.math.BigDecimal;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-
-import javax.persistence.EntityManager;
-
+import com.exilant.GLEngine.Transaxtion;
+import com.exilant.GLEngine.TransaxtionParameter;
+import com.exilant.eGov.src.common.EGovernCommon;
+import com.exilant.eGov.src.transactions.VoucherTypeForULB;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.egov.commons.Accountdetailtype;
@@ -121,10 +111,18 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.exilant.GLEngine.Transaxtion;
-import com.exilant.GLEngine.TransaxtionParameter;
-import com.exilant.eGov.src.common.EGovernCommon;
-import com.exilant.eGov.src.transactions.VoucherTypeForULB;
+import javax.persistence.EntityManager;
+import java.math.BigDecimal;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 @Service
 public class VoucherService extends PersistenceService<CVoucherHeader, Long> {
@@ -196,6 +194,10 @@ public class VoucherService extends PersistenceService<CVoucherHeader, Long> {
 	private EntityManager entityManager;
 	@Autowired
 	private AccountdetailtypeHibernateDAO accountdetailtypeHibernateDAO;
+
+	@Autowired
+	@Qualifier("recordStatusPersistenceService")
+	private PersistenceService recordStatusPersistenceService;
 
 	public Boundary getBoundaryForUser(final CVoucherHeader rv) {
 		return egovCommon.getBoundaryForUser(rv.getCreatedBy());
@@ -1029,9 +1031,6 @@ public class VoucherService extends PersistenceService<CVoucherHeader, Long> {
 			throws Exception {
 		try {
 			final EgfRecordStatus recordStatus = new EgfRecordStatus();
-			PersistenceService<EgfRecordStatus, Long> recordStatusSer;
-			recordStatusSer = new PersistenceService<EgfRecordStatus, Long>();
-			// recordStatusSer.setType(EgfRecordStatus.class);
 			final String code = EGovConfig.getProperty("egf_config.xml",
 					"confirmoncreate", "", voucherHeader.getType());
 			if ("N".equalsIgnoreCase(code))
@@ -1043,7 +1042,7 @@ public class VoucherService extends PersistenceService<CVoucherHeader, Long> {
 			recordStatus.setRecordType(voucherHeader.getType());
 			recordStatus.setUserid(ApplicationThreadLocals.getUserId()
 					.intValue());
-			recordStatusSer.persist(recordStatus);
+            recordStatusPersistenceService.persist(recordStatus);
 		} catch (final HibernateException he) {
 			LOGGER.error(he.getMessage());
 			throw new HibernateException(he);
@@ -1193,7 +1192,7 @@ public class VoucherService extends PersistenceService<CVoucherHeader, Long> {
 				validScript, ScriptService.createContext(
 						"eisCommonServiceBean", eisCommonService, "userId",
 						ApplicationThreadLocals.getUserId().intValue(), "DATE",
-						new Date(), "type", type, "wfitem", wfitem, "deptId",
+						new Date(), "wfitem", wfitem, "deptId",
 						deptId, "persistenceService", persistenceService));
 		Map<String, Object> desgFuncryMap;
 		List<Map<String, Object>> designationList = new ArrayList<Map<String, Object>>();

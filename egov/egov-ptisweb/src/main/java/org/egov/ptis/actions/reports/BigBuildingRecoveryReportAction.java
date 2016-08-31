@@ -64,7 +64,6 @@ import java.util.Map;
 import static org.egov.ptis.constants.PropertyTaxConstants.REPORT_TEMPLATENAME_BIGBUILDINGRECOVERY;
 
 @ParentPackage("egov")
-@Transactional(readOnly = true)
 public class BigBuildingRecoveryReportAction extends ReportFormAction {
 	private final Logger LOGGER = Logger.getLogger(getClass());
 	private Date fromDate;
@@ -112,8 +111,7 @@ public class BigBuildingRecoveryReportAction extends ReportFormAction {
 		ReportInfo reportInfo = new ReportInfo();
 		Integer totalNoProps = 0;
 		
-		getPersistenceService().setType(InstDmdCollMaterializeView.class);
-		List<InstDmdCollMaterializeView> instDmdCollList = getPersistenceService()
+		List<InstDmdCollMaterializeView> instDmdCollList = (List<InstDmdCollMaterializeView>) getPersistenceService()
 				.getSession()
 				.createQuery(
 						"from InstDmdCollMaterializeView instDmdColl left join fetch instDmdColl.installment where instDmdColl.createdDate between ? and ? and instDmdColl.bigBldgTaxColl != 0 ")

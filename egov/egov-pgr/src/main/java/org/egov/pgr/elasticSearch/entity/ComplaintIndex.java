@@ -207,7 +207,21 @@ public class ComplaintIndex extends Complaint {
     
     @Searchable(group = Searchable.Group.CLAUSES)
     private String reasonForRejection;
-
+    
+    @Searchable(group = Searchable.Group.CLAUSES)
+    private int registered;
+    
+    @Searchable(group = Searchable.Group.CLAUSES)
+    private int inProcess;
+    
+    @Searchable(group = Searchable.Group.CLAUSES)
+    private int addressed;
+    
+    @Searchable(group = Searchable.Group.CLAUSES)
+    private int rejected;
+    
+    @Searchable(group = Searchable.Group.CLAUSES)
+    private int reOpened;
     
     public City getCitydetails() {
         return citydetails;
@@ -637,6 +651,46 @@ public class ComplaintIndex extends Complaint {
 
 	public void setComplaintIsClosed(char complaintIsClosed) {
 		this.complaintIsClosed = complaintIsClosed;
+	}
+
+	public int getRegistered() {
+		return registered;
+	}
+
+	public void setRegistered(int registered) {
+		this.registered = registered;
+	}
+
+	public int getInProcess() {
+		return inProcess;
+	}
+
+	public void setInProcess(int inProcess) {
+		this.inProcess = inProcess;
+	}
+
+	public int getAddressed() {
+		return addressed;
+	}
+
+	public void setAddressed(int addressed) {
+		this.addressed = addressed;
+	}
+
+	public int getRejected() {
+		return rejected;
+	}
+
+	public void setRejected(int rejected) {
+		this.rejected = rejected;
+	}
+
+	public int getReOpened() {
+		return reOpened;
+	}
+
+	public void setReOpened(int reOpened) {
+		this.reOpened = reOpened;
 	}
 
 	public Filters searchFilters() {

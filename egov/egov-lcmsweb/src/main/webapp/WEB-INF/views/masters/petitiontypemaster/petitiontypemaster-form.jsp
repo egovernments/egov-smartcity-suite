@@ -64,8 +64,8 @@
 								code="lbl.code" /> :<span class="mandatory"></span> </label>
 						<div class="col-sm-3 add-margin">
 							<form:input path="code"
-								class="form-control text-left patternvalidation"
-								data-pattern="alphanumericwithspecialcharacters" maxlength="25"
+								class="form-control text-left aaa"
+								maxlength="25"
 								required="required" />
 							<form:errors path="code" cssClass="error-msg" />
 						</div>
@@ -76,8 +76,8 @@
 								code="lbl.petitiontype" /> :<span class="mandatory"></span> </label>
 						<div class="col-sm-3 add-margin">
 							<form:input path="petitionType"
-								class="form-control text-left patternvalidation"
-								data-pattern="alphanumericwithspecialcharacterswithspace" maxlength="128"
+								class="form-control text-left pattern"
+								maxlength="128"
 								required="required" />
 							<form:errors path="petitionType" cssClass="error-msg" />
 						</div>
@@ -86,7 +86,7 @@
 						<div class="col-sm-3 add-margin">
 							<form:input path="orderNumber"
 								class="form-control text-left patternvalidation"
-								data-pattern="number" maxlength="4"/>
+								data-pattern="number" maxlength="3"/>
 							<form:errors path="orderNumber" cssClass="error-msg" />
 						</div>
 					</div>

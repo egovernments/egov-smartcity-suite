@@ -58,7 +58,8 @@ import org.egov.wtms.utils.PropertyExtnUtils;
 import org.egov.wtms.utils.WaterTaxUtils;
 import org.egov.wtms.utils.constants.WaterTaxConstants;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.support.ResourceBundleMessageSource;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.context.MessageSource;
 import org.springframework.stereotype.Service;
 
 import java.io.ByteArrayInputStream;
@@ -74,7 +75,8 @@ import java.util.Set;
 public class ReportGenerationService {
 
     @Autowired
-    private ResourceBundleMessageSource messageSource;
+    @Qualifier("parentMessageSource")
+    private MessageSource wcmsMessageSource;
 
     @Autowired
     private PropertyExtnUtils propertyExtnUtils;
@@ -116,11 +118,11 @@ public class ReportGenerationService {
                     break;
                 }
             if (WaterTaxConstants.NEWCONNECTION.equalsIgnoreCase(connectionDetails.getApplicationType().getCode()))
-                reportParams.put("applicationtype", messageSource.getMessage("msg.new.watertap.conn", null, null));
+                reportParams.put("applicationtype", wcmsMessageSource.getMessage("msg.new.watertap.conn", null, null));
             else if (WaterTaxConstants.ADDNLCONNECTION.equalsIgnoreCase(connectionDetails.getApplicationType().getCode()))
-                reportParams.put("applicationtype", messageSource.getMessage("msg.add.watertap.conn", null, null));
+                reportParams.put("applicationtype", wcmsMessageSource.getMessage("msg.add.watertap.conn", null, null));
             else
-                reportParams.put("applicationtype", messageSource.getMessage("msg.changeofuse.watertap.conn", null, null));
+                reportParams.put("applicationtype", wcmsMessageSource.getMessage("msg.changeofuse.watertap.conn", null, null));
             reportParams.put("conntitle", WordUtils.capitalize(connectionDetails.getApplicationType().getName()).toString());
             reportParams.put("municipality", cityMunicipalityName);
             reportParams.put("district", districtName);

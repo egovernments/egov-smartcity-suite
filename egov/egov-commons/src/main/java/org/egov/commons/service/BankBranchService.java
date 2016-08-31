@@ -61,8 +61,12 @@ public class BankBranchService extends PersistenceService<Bankbranch, Integer> {
         return entityManager.unwrap(Session.class);
     }
 
-    public BankBranchService(final Class<Bankbranch> bankBranch) {
-        this.type = bankBranch;
+    public BankBranchService() {
+       super(Bankbranch.class);
+    }
+
+    public BankBranchService(final Class<Bankbranch> type) {
+        super(type);
     }
 
     public List<Bankbranch> getAllBankBranchsByBank(Integer bankId) {

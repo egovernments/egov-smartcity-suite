@@ -75,16 +75,16 @@ public class GovernmentDepartment extends AbstractAuditable {
     @Audited
     @SafeHtml
     @NotNull
-    @Length(min = 1, max = 25)
+    @Length(max = 25)
     private String code;
 
     @Audited
     @NotNull
-    @Length(min = 1, max = 256)
+    @Length(max = 256)
     private String name;
 
     @SafeHtml
-    @Length(min = 3, max = 256)
+    @Length(max = 256)
     private String description;
 
     @Min(1)

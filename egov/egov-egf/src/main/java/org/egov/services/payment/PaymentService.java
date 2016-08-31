@@ -3501,6 +3501,14 @@ public class PaymentService extends PersistenceService<Paymentheader, Long> {
 			LOGGER.debug("Completed createPaymentHeader.");
 		return paymentheader;
 	}
+	
+	public Paymentheader getPaymentHeaderByVoucherHeaderId(Long voucherHeaderId)
+	{
+        Paymentheader paymentheader = (Paymentheader) persistenceService.find(" from Paymentheader where voucherheader.id=?",
+                voucherHeaderId);
+	    
+	    return paymentheader;
+	}
 
 	public Paymentheader updatePaymentHeader(final Paymentheader paymentheader,
 			final CVoucherHeader voucherHeader, final Integer bankaccountId,

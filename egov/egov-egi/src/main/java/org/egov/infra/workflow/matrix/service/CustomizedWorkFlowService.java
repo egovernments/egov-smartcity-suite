@@ -45,6 +45,10 @@ import org.egov.infra.workflow.matrix.entity.WorkFlowMatrix;
 import org.egov.infra.workflow.service.WorkflowService;
 import org.egov.infstr.services.PersistenceService;
 import org.egov.pims.commons.Designation;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
@@ -53,10 +57,17 @@ import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 
-public class CustomizedWorkFlowService extends PersistenceService<WorkFlowMatrix, Long> {
+@Service
+@Transactional(readOnly = true)
+public class CustomizedWorkFlowService {
 
 	private static final String DESGQUERY = "getDesignationForListOfDesgNames";
-	private PersistenceService persistenceService;
+	@Autowired
+	@Qualifier("entityQueryService")
+	private PersistenceService entityQueryService;
+
+    @Autowired
+    @Qualifier("workflowService")
 	private WorkflowService<? extends StateAware> workflowService;
 
 	public List<Designation> getNextDesignations(final String type, final String department, final BigDecimal businessRule, final String additionalRule, final String currentState, final String pendingAction, final Date date) {
@@ -73,7 +84,7 @@ public class CustomizedWorkFlowService extends PersistenceService<WorkFlowMatrix
 		}
 		List<Designation> designationList = Collections.EMPTY_LIST;
 		if (!designationNames.isEmpty()) {
-			designationList = this.persistenceService.findAllByNamedQuery(DESGQUERY, designationNames);
+			designationList = entityQueryService.findAllByNamedQuery(DESGQUERY, designationNames);
 		}
 		return designationList;
 	}
@@ -107,13 +118,4 @@ public class CustomizedWorkFlowService extends PersistenceService<WorkFlowMatrix
 	public WorkFlowMatrix getWfMatrix(final String type, final String department, final BigDecimal businessRule, final String additionalRule, final String currentState, final String pendingAction) {
 		return this.workflowService.getWfMatrix(type, department, businessRule, additionalRule, currentState, pendingAction);
 	}
-
-	public void setPersistenceService(final PersistenceService persistenceService) {
-		this.persistenceService = persistenceService;
-	}
-
-	public void setWorkflowService(final WorkflowService<StateAware> workflowService) {
-		this.workflowService = workflowService;
-	}
-
 }

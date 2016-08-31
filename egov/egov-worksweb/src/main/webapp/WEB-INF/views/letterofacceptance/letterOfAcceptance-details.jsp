@@ -93,7 +93,7 @@
 	<div class="col-sm-3 add-margin">
 		<c:choose>
 			<c:when test="${lineEstimateDetails.lineEstimate.spillOverFlag && lineEstimateDetails.lineEstimate.workOrderCreated }">
-				<form:input path="workOrderDate" id="workOrderDate" type="text" class="form-control datepicker" data-date-end-date="0d" value="${workOrderDate}" />
+				<form:input path="workOrderDate" id="workOrderDate" type="text" class="form-control datepicker" data-date-end-date="0d"/>
 			</c:when>
 			<c:otherwise>
 				<form:input path="workOrderDate" id="workOrderDate" type="text" class="form-control" value="${workOrderDate}" readonly="true" />

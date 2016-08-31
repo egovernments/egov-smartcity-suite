@@ -44,8 +44,12 @@ import org.egov.model.budget.BudgetGroup;
 
 public class BudgetGroupService extends PersistenceService<BudgetGroup, Long>
 {
-    public BudgetGroupService(final Class<BudgetGroup> budgetGroup) {
-        this.type = budgetGroup;
+    public BudgetGroupService() {
+        super(BudgetGroup.class);
+    }
+
+    public BudgetGroupService(final Class<BudgetGroup> type) {
+        super(type);
     }
 
     public BudgetGroup getBudgetGroup(final Long coaId) {

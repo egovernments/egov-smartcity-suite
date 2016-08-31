@@ -160,3 +160,35 @@ $('#bankId').blur(function(){
 			});
 			}
 	});
+$('#monthlyRenumeration').keyup(function(e) { // validate two decimal points
+	var regex = /^\d+(\.\d{0,2})?$/g;
+	if (!regex.test(this.value)) {
+		$(this).val($(this).getNum());
+	}
+});
+jQuery.fn.getNum = function() {
+	var val = $.trim($(this).val());
+	if (val.indexOf(',') > -1) {
+		val = val.replace(',', '.');
+	}
+	var num = parseFloat(val);
+	var num = num.toFixed(2);
+	if (isNaN(num)) {
+		num = '';
+	}
+	return num;
+}
+function checkPanNumber() {
+	var text =document.getElementById('panNumber').value;
+	var panNumber = document.getElementById('panNumber').value.length;
+    if( text != text.toUpperCase() || panNumber<10 && panNumber!='' )
+        {
+    	bootbox.alert("Enter valid Pan Number.")
+        window.scroll(0,0);
+        return false;
+        }
+    return true;
+} 
+$('#panNumber').keyup(function() {
+    this.value = this.value.toUpperCase();
+});

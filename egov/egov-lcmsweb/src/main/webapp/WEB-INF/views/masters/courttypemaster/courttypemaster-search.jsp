@@ -65,7 +65,7 @@
 							<div class="col-sm-3 add-margin">
 								<form:input path="courtType"
 									class="form-control text-left patternvalidation"
-									data-pattern="alphabetwithspace" maxlength="100" />
+									data-pattern="alphanumericspecialcharacters" maxlength="100" />
 								<form:errors path="courtType" cssClass="error-msg" />
 							</div>
 						</div>

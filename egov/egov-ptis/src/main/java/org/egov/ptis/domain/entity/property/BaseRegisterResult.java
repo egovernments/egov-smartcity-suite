@@ -66,6 +66,9 @@ public class BaseRegisterResult {
     private String classificationOfBuilding;
     private BigDecimal plinthArea;
     private String propertyType;
+    private BigDecimal arrearColl;
+    private BigDecimal currentColl;
+    private BigDecimal totalColl;
  
     public String getAssessmentNo() {
         return assessmentNo;
@@ -237,5 +240,28 @@ public class BaseRegisterResult {
     public void setPropertyType(String propertyType) {
         this.propertyType = propertyType;
     }
-    
+
+	public BigDecimal getArrearColl() {
+		return arrearColl;
+	}
+
+	public void setArrearColl(BigDecimal arrearColl) {
+		this.arrearColl = arrearColl;
+	}
+
+	public BigDecimal getCurrentColl() {
+		return currentColl;
+	}
+
+	public void setCurrentColl(BigDecimal currentColl) {
+		this.currentColl = currentColl;
+	}
+
+	public BigDecimal getTotalColl() {
+		return totalColl;
+	}
+
+	public void setTotalColl(BigDecimal totalColl) {
+		this.totalColl = totalColl;
+	}
 }

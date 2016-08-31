@@ -43,6 +43,7 @@
 <%@ taglib uri="http://www.springframework.org/tags/form" prefix="form"%>
 <%@ taglib uri="http://www.springframework.org/tags" prefix="spring"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt"%>
+<%@ taglib uri="/WEB-INF/taglibs/cdn.tld" prefix="cdn"%>
 <form:form name="loaViewForm" action="" role="form"
 	modelAttribute="workOrder" id="workOrder"
 	class="form-horizontal form-groups-bordered" method="post">
@@ -303,4 +304,4 @@
 </form:form>
 
 <script
-	src="<c:url value='/resources/js/viewletterofacceptancehelper.js?rnd=${app_release_no}'/>"></script>
+	src="<cdn:url value='/resources/js/viewletterofacceptancehelper.js?rnd=${app_release_no}'/>"></script>

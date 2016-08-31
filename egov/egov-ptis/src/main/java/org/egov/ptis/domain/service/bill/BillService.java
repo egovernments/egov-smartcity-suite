@@ -68,6 +68,7 @@ import org.egov.ptis.wtms.WaterChargesIntegrationService;
 import org.hibernate.Query;
 import org.hibernate.Session;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.EntityManager;
@@ -123,6 +124,10 @@ public class BillService {
     private CityService cityService;
     @Autowired
     private PropertyTaxCommonUtils propertyTaxCommonUtils;
+
+    @Autowired
+    @Qualifier("bulkBillGenerationPersistenceService")
+    private PersistenceService bulkBillGenerationPersistenceService;
 
     /**
      * Generates a Demand Notice or the Bill giving the break up of the tax
@@ -380,8 +385,7 @@ public class BillService {
         bulkBill.setZone(boundaryService.getBoundaryById(zoneId));
         bulkBill.setWard(boundaryService.getBoundaryById(wardId));
         bulkBill.setInstallment(currentInstallment);
-        persistenceService.setType(BulkBillGeneration.class);
-        getPersistenceService().persist(bulkBill);
+        bulkBillGenerationPersistenceService.persist(bulkBill);
         return bulkBill;
     }
 

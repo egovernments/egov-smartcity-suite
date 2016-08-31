@@ -51,29 +51,31 @@
 								code="lbl.iscomplied" />:<span class="mandatory"></span></label>
 
 						<div class="col-sm-2 col-xs-12 add-margin">
-						
-						<div class="radio">
-							  <label><form:radiobutton path="judgmentImplIsComplied"
-								id="IsCompliedYes" value="YES" required="required" checked="checked" />Yes</label>
-							</div>
-							
-						</div>
-						<div class="col-sm-2 col-xs-12 add-margin">
-						
-						    <div class="radio">
-							  <label><form:radiobutton path="judgmentImplIsComplied" id="IsCompliedNo"
-								value="NO"  required="required"/>No</label>
-							</div>
-							
-						</div>
-						
-						<div class="col-sm-2 col-xs-12 add-margin">
-						
+
 							<div class="radio">
-							  <label><form:radiobutton path="judgmentImplIsComplied"
-								id="IsCompliedInProgress" value="INPROGRESS" required="required" />In Progress</label>
+								<label><form:radiobutton path="judgmentImplIsComplied"
+										id="IsCompliedYes" value="YES" required="required"
+										checked="checked" />Yes</label>
 							</div>
-							
+
+						</div>
+						<div class="col-sm-2 col-xs-12 add-margin">
+
+							<div class="radio">
+								<label><form:radiobutton path="judgmentImplIsComplied"
+										id="IsCompliedNo" value="NO" required="required" />No</label>
+							</div>
+
+						</div>
+
+						<div class="col-sm-2 col-xs-12 add-margin">
+
+							<div class="radio">
+								<label><form:radiobutton path="judgmentImplIsComplied"
+										id="IsCompliedInProgress" value="INPROGRESS"
+										required="required" />In Progress</label>
+							</div>
+
 						</div>
 						<form:errors path="judgmentImplIsComplied" cssClass="error-msg" />
 					</div>
@@ -83,7 +85,8 @@
 						<div class="col-sm-3 add-margin">
 							<form:input path="dateOfCompliance"
 								class="form-control datepicker" data-date-end-date="0d"
-								data-inputmask="'mask': 'd/m/y'" id="dateOfCompliance"  required="required"/>
+								data-inputmask="'mask': 'd/m/y'" id="dateOfCompliance"
+								required="required" />
 							<form:errors path="dateOfCompliance" cssClass="error-msg " />
 						</div>
 					</div>
@@ -94,7 +97,7 @@
 							<form:textarea path="complianceReport" id="complianceReport"
 								class="form-control text-left patternvalidation"
 								data-pattern="alphanumericwithspecialcharacterswithspace"
-								maxlength="1024" required="required"/>
+								maxlength="1024" required="required" />
 							<form:errors path="complianceReport" cssClass="error-msg" />
 						</div>
 					</div>
@@ -128,9 +131,9 @@
 						<label class="col-sm-3 control-label text-right"><spring:message
 								code="lbl.srnumber" />:<span class="mandatory"></span></label>
 						<div class="col-sm-3 add-margin">
-							<form:input id="appeal[0].srNumber" path="appeal[0].srNumber" 
+							<form:input id="appeal[0].srNumber" path="appeal[0].srNumber"
 								class="form-control text-left patternvalidation"
-								data-pattern="alphanumeric" maxlength="50" required="required"/>
+								data-pattern="alphanumeric" maxlength="50" required="required" />
 							<form:errors path="appeal[0].srNumber" cssClass="error-msg" />
 						</div>
 						<label class="col-sm-3 control-label text-right"><spring:message
@@ -138,7 +141,7 @@
 						<div class="col-sm-3 add-margin">
 							<form:input path="appeal[0].appealFiledOn"
 								class="form-control datepicker" data-date-end-date="0d"
-								data-inputmask="'mask': 'd/m/y'" required="required"/>
+								data-inputmask="'mask': 'd/m/y'" required="required" />
 							<form:errors path="appeal[0].appealFiledOn" cssClass="error-msg" />
 						</div>
 					</div>
@@ -151,7 +154,43 @@
 								data-pattern="alphanumeric" maxlength="36" required="required" />
 							<form:errors path="appeal[0].appealFiledBy" cssClass="error-msg" />
 						</div>
-						<input type="hidden" name="judgmentImpl.appeal" value="${appeal[0].id}" />
+						<!-- <label class="col-sm-3 control-label text-right"><font
+							size="2"><spring:message code="lbl.mesg.document" />:</font></label>
+						<div class="col-sm-3 add-margin">
+							<input type="file" id="file"
+								path="appeal[0].appealDocuments[0].files"
+								class="file-ellipsis upload-file">
+							<form:errors path="appeal[0].appealDocuments[0].files"
+								cssClass="add-margin error-msg" />
+						</div> -->
+								<c:choose>
+		<c:when test="${not empty appealDocList}">
+		
+			<jsp:include page="appealdocuments-view.jsp"></jsp:include>
+		
+		</c:when>
+		<c:otherwise>
+			<div class="form-group">
+	<label class="col-sm-3 control-label text-right"><font
+							size="2"><spring:message code="lbl.mesg.document" />:</font></label>
+	<div class="col-sm-3 add-margin">
+
+		<input type="file" id="file" name="appeal[0].appealDocuments[0].files"
+			class="file-ellipsis upload-file">
+
+		<form:errors path="appeal[0].appealDocuments[0].files"
+			cssClass="add-margin error-msg" />
+		
+	</div>
+	<input type="hidden" name="appealDocList" value="${appealDocList}" />
+</div>
+		
+		</c:otherwise>
+		</c:choose>
+						<input type="hidden" name="judgmentImpl.appeal"
+							value="${appeal[0].id}" />
+							<input type="hidden" name="judgmentImpl.appeal[0].appealDocuments"
+							value="${appealDocuments[0].id}" />
 					</div>
 
 					<div class="form-group" id="contempFields1" style="display: none">
@@ -160,7 +199,7 @@
 						<div class="col-sm-3 add-margin">
 							<form:input id="contempt[0].caNumber" path="contempt[0].caNumber"
 								class="form-control text-left patternvalidation"
-								data-pattern="alphanumeric" maxlength="36" required="required"/>
+								data-pattern="alphanumeric" maxlength="36" required="required" />
 							<form:errors path="contempt[0].caNumber" cssClass="error-msg" />
 						</div>
 						<label class="col-sm-3 control-label text-right"><spring:message
@@ -168,7 +207,7 @@
 						<div class="col-sm-3 add-margin">
 							<form:input path="contempt[0].receivingDate"
 								class="form-control datepicker" data-date-end-date="0d"
-								data-inputmask="'mask': 'd/m/y'" required="required"/>
+								data-inputmask="'mask': 'd/m/y'" required="required" />
 							<form:errors path="contempt[0].receivingDate"
 								cssClass="error-msg" />
 						</div>
@@ -189,6 +228,7 @@
 								data-inputmask="'mask': 'd/m/y'" />
 							<form:errors path="contempt[0].commappDate" cssClass="error-msg" />
 						</div>
-						<input type="hidden" name="judgmentImpl.contempt" value="${contempt[0].id}" />
+						<input type="hidden" name="judgmentImpl.contempt"
+							value="${contempt[0].id}" />
 					</div>
 					<input type="hidden" name="judgmentImpl" value="${judgmentImpl.id}" />

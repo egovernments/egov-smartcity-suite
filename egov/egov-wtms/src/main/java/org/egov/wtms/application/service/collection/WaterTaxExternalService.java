@@ -104,12 +104,9 @@ import org.egov.wtms.masters.entity.enums.ConnectionType;
 import org.egov.wtms.utils.PropertyExtnUtils;
 import org.egov.wtms.utils.constants.WaterTaxConstants;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.context.ApplicationContext;
-import org.springframework.context.annotation.Scope;
 import org.springframework.transaction.annotation.Transactional;
 
-@Scope(ConfigurableBeanFactory.SCOPE_PROTOTYPE)
 public class WaterTaxExternalService {
 
     @Autowired
@@ -158,7 +155,7 @@ public class WaterTaxExternalService {
         WaterConnectionDetails waterConnectionDetails = null;
         if (payWaterTaxDetails.getApplicaionNumber() != null && !"".equals(payWaterTaxDetails.getApplicaionNumber()))
             waterConnectionDetails = waterConnectionDetailsService
-                    .findByApplicationNumber(payWaterTaxDetails.getApplicaionNumber());
+            .findByApplicationNumber(payWaterTaxDetails.getApplicaionNumber());
         else if (payWaterTaxDetails.getConsumerNo() != null)
             waterConnectionDetails = waterConnectionDetailsService.findByApplicationNumberOrConsumerCodeAndStatus(
                     payWaterTaxDetails.getConsumerNo(), ConnectionStatus.ACTIVE);
@@ -219,7 +216,7 @@ public class WaterTaxExternalService {
         ErrorDetails errorDetails = null;
         if (payWaterTaxDetails.getApplicaionNumber() != null && !"".equals(payWaterTaxDetails.getApplicaionNumber()))
             waterConnectionDetails = waterConnectionDetailsService
-                    .findByApplicationNumber(payWaterTaxDetails.getApplicaionNumber());
+            .findByApplicationNumber(payWaterTaxDetails.getApplicaionNumber());
         else if (payWaterTaxDetails.getConsumerNo() != null)
             waterConnectionDetails = waterConnectionDetailsService.findByApplicationNumberOrConsumerCodeAndStatus(
                     payWaterTaxDetails.getConsumerNo(), ConnectionStatus.ACTIVE);
@@ -229,7 +226,7 @@ public class WaterTaxExternalService {
             errorDetails.setErrorMessage(WaterTaxConstants.WTAXDETAILS_CONSUMER_CODE_NOT_EXIST_ERR_MSG_PREFIX
                     + (payWaterTaxDetails.getConsumerNo() != null ? payWaterTaxDetails.getConsumerNo()
                             : payWaterTaxDetails.getApplicaionNumber())
-                    + WaterTaxConstants.WTAXDETAILS_NOT_EXIST_ERR_MSG_SUFFIX);
+                            + WaterTaxConstants.WTAXDETAILS_NOT_EXIST_ERR_MSG_SUFFIX);
             waterTaxDetails.setErrorDetails(errorDetails);
         } else {
             waterTaxDetails.setConsumerNo(waterConnectionDetails.getConnection().getConsumerCode());
@@ -299,7 +296,7 @@ public class WaterTaxExternalService {
             if (arrearDetails != null) {
                 arrearDetails.setTaxAmount(total);
                 arrearDetails
-                        .setTotalAmount(total.add(arrearDetails.getPenalty()).add(arrearDetails.getChqBouncePenalty()));
+                .setTotalAmount(total.add(arrearDetails.getPenalty()).add(arrearDetails.getChqBouncePenalty()));
                 waterTaxDetails.getTaxDetails().add(arrearDetails);
             }
 
@@ -350,9 +347,8 @@ public class WaterTaxExternalService {
     }
 
     /**
-     * Apportions the paid amount amongst the appropriate GL codes and returns
-     * the collections object that can be sent to the collections API for
-     * processing.
+     * Apportions the paid amount amongst the appropriate GL codes and returns the collections object that can be sent to the
+     * collections API for processing.
      *
      * @param bill
      * @param amountPaid
@@ -424,7 +420,7 @@ public class WaterTaxExternalService {
         else if (billDet.getEgDemandReason().getEgInstallmentMaster().getFromDate()
                 .compareTo(finYear.getStartingDate()) >= 0
                 && billDet.getEgDemandReason().getEgInstallmentMaster().getFromDate()
-                        .compareTo(finYear.getEndingDate()) < 0)
+                .compareTo(finYear.getEndingDate()) < 0)
             return PURPOSE.CURRENT_AMOUNT;
         else
             return PURPOSE.OTHERS;
@@ -480,7 +476,7 @@ public class WaterTaxExternalService {
         if (PropertyTaxConstants.THIRD_PARTY_PAYMENT_MODE_CHEQUE
                 .equalsIgnoreCase(payWaterTaxDetails.getPaymentMode().toLowerCase())
                 || PropertyTaxConstants.THIRD_PARTY_PAYMENT_MODE_DD
-                        .equalsIgnoreCase(payWaterTaxDetails.getPaymentMode().toLowerCase())) {
+                .equalsIgnoreCase(payWaterTaxDetails.getPaymentMode().toLowerCase())) {
             paymentDetailsMap.put(ChequePayment.INSTRUMENTNUMBER, payWaterTaxDetails.getChqddNo());
             paymentDetailsMap.put(ChequePayment.INSTRUMENTDATE, payWaterTaxDetails.getChqddDate());
             paymentDetailsMap.put(ChequePayment.BRANCHNAME, payWaterTaxDetails.getBranchName());
