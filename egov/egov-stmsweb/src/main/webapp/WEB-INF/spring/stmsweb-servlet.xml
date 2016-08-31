@@ -76,11 +76,9 @@
 		</mvc:interceptor>
 	</mvc:interceptors>
 	
-	<bean id="conversionService" class="org.springframework.format.support.FormattingConversionServiceFactoryBean"/>
+	<bean id="conversionService" class="org.springframework.core.convert.support.DefaultConversionService"/>
         
-   
-	
-	<bean class="org.springframework.beans.factory.config.MethodInvokingFactoryBean">
+   	<bean class="org.springframework.beans.factory.config.MethodInvokingFactoryBean">
 		<property name="targetClass" value="org.springframework.core.convert.support.ConversionServiceFactory"/>
 		<property name="targetMethod" value="registerConverters"/>
 		<property name="arguments">
@@ -109,10 +107,9 @@
         <property name="validationMessageSource" ref="messageSource"/>
     </bean>
 
-    <bean id="messageSource"
-          class="org.springframework.context.support.ResourceBundleMessageSource">
-        <property name="parentMessageSource" ref="parentMessageSource" />
-        <property name="basenames">
+	<bean id="messageSource" name="messageSource" class="org.springframework.context.support.ResourceBundleMessageSource">
+		<property name="parentMessageSource" ref="parentMessageSource" />
+		<property name="basenames">
             <list>
                 <value>messages/labels</value>
                 <value>messages/errors</value>

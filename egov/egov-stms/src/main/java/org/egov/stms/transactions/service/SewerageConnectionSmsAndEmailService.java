@@ -84,10 +84,11 @@ import org.egov.stms.transactions.entity.SewerageApplicationDetails;
 import org.egov.stms.transactions.entity.SewerageConnectionFee;
 import org.egov.stms.utils.SewerageTaxUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
+import org.springframework.context.MessageSource;
 import org.springframework.context.annotation.Scope;
 import org.springframework.context.i18n.LocaleContextHolder;
-import org.springframework.context.support.ResourceBundleMessageSource;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -97,7 +98,8 @@ public class SewerageConnectionSmsAndEmailService {
     private String muncipalityName;
 
     @Autowired
-    private ResourceBundleMessageSource messageSource;
+    @Qualifier("parentMessageSource")
+    private MessageSource stmsMessageSource;
 
     @Autowired
     private SewerageTaxUtils sewerageTaxUtils;
@@ -323,7 +325,7 @@ public class SewerageConnectionSmsAndEmailService {
 
     public String smsAndEmailBodyByCodeAndArgs(final String code,
             final SewerageApplicationDetails SewerageApplicationDetails, final String applicantName) {
-        final String smsMsg = messageSource.getMessage(code,
+        final String smsMsg = stmsMessageSource.getMessage(code,
                 new String[] { applicantName, SewerageApplicationDetails.getApplicationNumber(), muncipalityName },
                 null);
         return smsMsg;
@@ -343,17 +345,17 @@ public class SewerageConnectionSmsAndEmailService {
         String emailBody = "";
         if (type.equalsIgnoreCase(SMSEMAILTYPENEWCONNCREATE)
                 || type.equalsIgnoreCase(SMSEMAILTYPE_CHANGEINCLOSETS_CONN))
-            emailBody = messageSource.getMessage(code,
+            emailBody = stmsMessageSource.getMessage(code,
                     new String[] { applicantName, sewerageApplicationDetails.getApplicationNumber(), muncipalityName,
                             String.valueOf(getInspectionFeeForSewerage(sewerageApplicationDetails)),
                             sewerageApplicationDetails.getConnection().getShscNumber() }, null);
         else if (type.equalsIgnoreCase(SMSEMAILTYPENEWCONNCREATEFORNOINSFEE)
                 || type.equalsIgnoreCase(SMSEMAILTYPE_CHANGEINCLOSETS_CONN_NOINSFEE))
-            emailBody = messageSource.getMessage(code,
+            emailBody = stmsMessageSource.getMessage(code,
                     new String[] { applicantName, sewerageApplicationDetails.getApplicationNumber(), muncipalityName,
                             sewerageApplicationDetails.getConnection().getShscNumber() }, null);
         else if (type.equalsIgnoreCase(SMSEMAILTYPENEWCONNDEEAPPROVE)) {
-            emailBody = messageSource.getMessage(
+            emailBody = stmsMessageSource.getMessage(
                     code,
                     new String[] { applicantName, sewerageApplicationDetails.getApplicationNumber(),
                             String.valueOf(sumOfSewerageApplnCharges(sewerageApplicationDetails)), muncipalityName,
@@ -361,7 +363,7 @@ public class SewerageConnectionSmsAndEmailService {
 
         } 
         else if(type.equalsIgnoreCase(SMSEMAILTYPE_CHANGEINCLOSETS_CONN_DEEAPPROVE)){
-            emailBody = messageSource.getMessage(
+            emailBody = stmsMessageSource.getMessage(
                     code,
                     new String[] { applicantName, sewerageApplicationDetails.getApplicationNumber(),
                             String.valueOf(sumOfChangeClosetSewerageApplnCharges(sewerageApplicationDetails)), muncipalityName,
@@ -369,28 +371,28 @@ public class SewerageConnectionSmsAndEmailService {
         }
         else if (type.equalsIgnoreCase(SMSEMAILTYPENEWCONNFEEPAID)
                 || type.equalsIgnoreCase(SMSEMAILTYPE_CHANGEINCLOSETS_CONN_FEEPAID)) {
-            emailBody = messageSource.getMessage(code,
+            emailBody = stmsMessageSource.getMessage(code,
                     new String[] { applicantName,
                             String.valueOf(sumOfSewerageApplnCharges(sewerageApplicationDetails)),
                             sewerageApplicationDetails.getApplicationNumber(), muncipalityName,
                             sewerageApplicationDetails.getConnection().getShscNumber() }, null);
         } else if (type.equalsIgnoreCase(SMSEMAILTYPENEWCONNFINALAPPROVE)
                 || type.equalsIgnoreCase(SMSEMAILTYPE_CHANGEINCLOSETS_CONN_FINALAPPROVE)) {
-            emailBody = messageSource.getMessage(code,
+            emailBody = stmsMessageSource.getMessage(code,
                     new String[] { applicantName, sewerageApplicationDetails.getApplicationNumber(),
                             sewerageApplicationDetails.getConnection().getShscNumber(), muncipalityName }, null);
         } else if (SMSEMAILTYPECLOSINGCONNAPPROVE.equalsIgnoreCase(type))
-            emailBody = messageSource.getMessage(code,
+            emailBody = stmsMessageSource.getMessage(code,
                     new String[] { applicantName, sewerageApplicationDetails.getApplicationNumber(), muncipalityName },
                     null);
         else if (SMSEMAILTYPECLOSINGCONNSANCTIONED.equalsIgnoreCase(type)
                 || type.equalsIgnoreCase(SMSEMAILTYPE_CHANGEINCLOSETS_CONN_SANCTIONED))
-            emailBody = messageSource.getMessage(code,
+            emailBody = stmsMessageSource.getMessage(code,
                     new String[] { applicantName, sewerageApplicationDetails.getApplicationNumber(), muncipalityName,
                             sewerageApplicationDetails.getConnection().getShscNumber() }, null);
         else if (SMSEMAILTYPENEWCONNREJECT.equalsIgnoreCase(type)
                 || type.equalsIgnoreCase(SMSEMAILTYPE_CHANGEINCLOSETS_CONN_REJECT))
-            emailBody = messageSource.getMessage(code,
+            emailBody = stmsMessageSource.getMessage(code,
                     new String[] { applicantName, sewerageApplicationDetails.getApprovalComent(), muncipalityName,
                             sewerageApplicationDetails.getApplicationNumber(),
                             sewerageApplicationDetails.getConnection().getShscNumber() }, null);
@@ -489,26 +491,26 @@ public class SewerageConnectionSmsAndEmailService {
         String smsMsg = "";
         if (type.equalsIgnoreCase(SMSEMAILTYPENEWCONNCREATE)
                 || type.equalsIgnoreCase(SMSEMAILTYPE_CHANGEINCLOSETS_CONN))
-            smsMsg = messageSource.getMessage(code,
+            smsMsg = stmsMessageSource.getMessage(code,
                     new String[] { applicantName, sewerageApplicationDetails.getApplicationNumber(), muncipalityName,
                             String.valueOf(getInspectionFeeForSewerage(sewerageApplicationDetails)),
                             sewerageApplicationDetails.getConnection().getShscNumber() }, null);
 
         else if (type.equalsIgnoreCase(SMSEMAILTYPENEWCONNCREATEFORNOINSFEE)
                 || type.equalsIgnoreCase(SMSEMAILTYPE_CHANGEINCLOSETS_CONN_NOINSFEE))
-            smsMsg = messageSource.getMessage(code,
+            smsMsg = stmsMessageSource.getMessage(code,
                     new String[] { applicantName, sewerageApplicationDetails.getApplicationNumber(), muncipalityName,
                             sewerageApplicationDetails.getConnection().getShscNumber() }, null);
 
           if(type.equalsIgnoreCase(SMSEMAILTYPENEWCONNDEEAPPROVE)){
-            smsMsg = messageSource.getMessage(
+            smsMsg = stmsMessageSource.getMessage(
                     code,
                     new String[] { applicantName, sewerageApplicationDetails.getApplicationNumber(),
                             String.valueOf(sumOfSewerageApplnCharges(sewerageApplicationDetails)), muncipalityName,
                             sewerageApplicationDetails.getConnection().getShscNumber() }, null);
           }
           else if (type.equalsIgnoreCase(SMSEMAILTYPE_CHANGEINCLOSETS_CONN_DEEAPPROVE)){
-              smsMsg = messageSource.getMessage(
+              smsMsg = stmsMessageSource.getMessage(
                       code,
                       new String[] { applicantName, sewerageApplicationDetails.getApplicationNumber(),
                               String.valueOf(sumOfChangeClosetSewerageApplnCharges(sewerageApplicationDetails)), muncipalityName,
@@ -517,7 +519,7 @@ public class SewerageConnectionSmsAndEmailService {
 
         else if (type.equalsIgnoreCase(SMSEMAILTYPENEWCONNFEEPAID)
                 || type.equalsIgnoreCase(SMSEMAILTYPE_CHANGEINCLOSETS_CONN_FEEPAID)) {
-            smsMsg = messageSource.getMessage(code,
+            smsMsg = stmsMessageSource.getMessage(code,
                     new String[] { applicantName,
                             String.valueOf(sumOfSewerageApplnCharges(sewerageApplicationDetails)),
                             sewerageApplicationDetails.getApplicationNumber(), muncipalityName,
@@ -526,22 +528,22 @@ public class SewerageConnectionSmsAndEmailService {
 
         else if (SMSEMAILTYPECLOSINGCONNAPPROVE.equalsIgnoreCase(type)
                 || type.equalsIgnoreCase(SMSEMAILTYPE_CHANGEINCLOSETS_CONN_FINALAPPROVE))
-            smsMsg = messageSource.getMessage(code,
+            smsMsg = stmsMessageSource.getMessage(code,
                     new String[] { applicantName, sewerageApplicationDetails.getApplicationNumber(), muncipalityName,
                             sewerageApplicationDetails.getConnection().getShscNumber() }, null);
         else if (type.equalsIgnoreCase(SMSEMAILTYPENEWCONNFINALAPPROVE)
                 || type.equalsIgnoreCase(SMSEMAILTYPE_CHANGEINCLOSETS_CONN_FINALAPPROVE))
-            smsMsg = messageSource.getMessage(code,
+            smsMsg = stmsMessageSource.getMessage(code,
                     new String[] { applicantName, sewerageApplicationDetails.getApplicationNumber(),
                             sewerageApplicationDetails.getConnection().getShscNumber(), muncipalityName }, null);
         else if (SMSEMAILTYPECLOSINGCONNSANCTIONED.equalsIgnoreCase(type)
                 || type.equalsIgnoreCase(SMSEMAILTYPE_CHANGEINCLOSETS_CONN_SANCTIONED))
-            smsMsg = messageSource.getMessage(code,
+            smsMsg = stmsMessageSource.getMessage(code,
                     new String[] { applicantName, sewerageApplicationDetails.getApplicationNumber(), muncipalityName,
                             sewerageApplicationDetails.getConnection().getShscNumber() }, null);
         else if (SMSEMAILTYPENEWCONNREJECT.equalsIgnoreCase(type)
                 || type.equalsIgnoreCase(SMSEMAILTYPE_CHANGEINCLOSETS_CONN_REJECT))
-            smsMsg = messageSource.getMessage(code,
+            smsMsg = stmsMessageSource.getMessage(code,
                     new String[] { applicantName, sewerageApplicationDetails.getApprovalComent(), muncipalityName,
                             sewerageApplicationDetails.getApplicationNumber(),
                             sewerageApplicationDetails.getConnection().getShscNumber() }, null);
@@ -564,7 +566,7 @@ public class SewerageConnectionSmsAndEmailService {
     public String smsAndEmailBodyByCodeAndArgsForRejection(final String code, final String approvalComment,
             final String applicantName) {
         final Locale locale = LocaleContextHolder.getLocale();
-        final String smsMsg = messageSource.getMessage(code, new String[] { applicantName, approvalComment,
+        final String smsMsg = stmsMessageSource.getMessage(code, new String[] { applicantName, approvalComment,
                 muncipalityName }, locale);
         return smsMsg;
     }
@@ -572,7 +574,7 @@ public class SewerageConnectionSmsAndEmailService {
     public String emailBodyforApprovalEmailByCodeAndArgs(final String code,
             final SewerageApplicationDetails sewerageApplicationDetails, final String applicantName) {
         final Locale locale = LocaleContextHolder.getLocale();
-        final String smsMsg = messageSource.getMessage(code,
+        final String smsMsg = stmsMessageSource.getMessage(code,
                 new String[] { applicantName, sewerageApplicationDetails.getApplicationNumber(),
                         sewerageApplicationDetails.getConnection().getShscNumber(), muncipalityName }, locale);
         return smsMsg;
@@ -580,7 +582,7 @@ public class SewerageConnectionSmsAndEmailService {
 
     public String emailSubjectforEmailByCodeAndArgs(final String code, final String applicationNumber) {
         final Locale locale = LocaleContextHolder.getLocale();
-        final String emailSubject = messageSource.getMessage(code, new String[] { applicationNumber }, locale);
+        final String emailSubject = stmsMessageSource.getMessage(code, new String[] { applicationNumber }, locale);
         return emailSubject;
     }
 

@@ -92,8 +92,8 @@ import org.egov.stms.utils.constants.SewerageTaxConstants;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
+import org.springframework.context.MessageSource;
 import org.springframework.context.annotation.Scope;
-import org.springframework.context.support.ResourceBundleMessageSource;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -134,7 +134,8 @@ public class SewerageNoticeService {
     private SewerageConnectionFeeService SewerageConnectionFeeService;
 
     @Autowired
-    private ResourceBundleMessageSource messageSource;
+    @Qualifier("parentMessageSource")
+    private MessageSource stmsMessageSource;
 
     @Autowired
     private AssignmentService assignmentService;
@@ -315,7 +316,7 @@ public class SewerageNoticeService {
             else
                 reportParams.put("conntitle",
                         WordUtils.capitalize(sewerageApplicationDetails.getApplicationType().getName()).toString());
-            reportParams.put("applicationtype", messageSource.getMessage("msg.new.sewerage.conn", null, null));
+            reportParams.put("applicationtype", stmsMessageSource.getMessage("msg.new.sewerage.conn", null, null));
             reportParams.put("municipality", session.getAttribute("citymunicipalityname"));
             reportParams.put("district", session.getAttribute("districtName"));
             reportParams.put("purpose", null);

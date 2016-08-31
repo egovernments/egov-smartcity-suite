@@ -60,7 +60,7 @@ import org.egov.stms.utils.SewerageTaxUtils;
 import org.egov.stms.utils.constants.SewerageTaxConstants;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.context.support.ResourceBundleMessageSource;
+import org.springframework.context.MessageSource;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -79,7 +79,7 @@ public class SewerageWorkOrderNoticeController {
     private ReportService reportService;
 
     @Autowired
-    private ResourceBundleMessageSource messageSource;
+    private MessageSource messageSource ;
 
     @Autowired
     private SewerageTaxUtils sewerageTaxUtils;

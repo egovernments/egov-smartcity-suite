@@ -91,7 +91,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.ApplicationContext;
-import org.springframework.context.support.ResourceBundleMessageSource;
+import org.springframework.context.MessageSource;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -105,7 +105,8 @@ public class SewerageApplicationDetailsService {
     private SewerageTaxUtils sewerageTaxUtils;
 
     @Autowired
-    private ResourceBundleMessageSource messageSource;
+    @Qualifier("parentMessageSource")
+    private MessageSource stmsMessageSource;
 
     protected SewerageApplicationDetailsRepository sewerageApplicationDetailsRepository;
 
@@ -129,9 +130,6 @@ public class SewerageApplicationDetailsService {
 
     @PersistenceContext
     private EntityManager entityManager;
-
-    @Autowired
-    private SimpleWorkflowService<SewerageApplicationDetails> sewerageApplicationWorkflowService;
 
     @Autowired
     private AutonumberServiceBeanResolver beanResolver;
@@ -324,7 +322,7 @@ public class SewerageApplicationDetailsService {
              * created even though there is Property Tax Due present.
              **/
             if (!sewerageTaxUtils.isNewConnectionAllowedIfPTDuePresent())
-                errorMessage = messageSource.getMessage("err.validate.property.taxdue", new String[] {
+                errorMessage = stmsMessageSource.getMessage("err.validate.property.taxdue", new String[] {
                         assessmentDetails.getPropertyDetails().getTaxDue().toString(), asessmentNumber, "new" }, null);
         return errorMessage;
     }
@@ -335,19 +333,19 @@ public class SewerageApplicationDetailsService {
         if (sewerageApplicationDetails != null && !sewerageApplicationDetails.isEmpty())
             if (sewerageApplicationDetails.get(0).getConnection().getStatus().toString()
                     .equalsIgnoreCase(SewerageConnectionStatus.ACTIVE.toString()))
-                validationMessage = messageSource.getMessage("err.validate.newconnection.active", new String[] {
+                validationMessage = stmsMessageSource.getMessage("err.validate.newconnection.active", new String[] {
                         sewerageApplicationDetails.get(0).getConnection().getShscNumber(), propertyID }, null);
             else if (sewerageApplicationDetails.get(0).getConnection().getStatus().toString()
                     .equalsIgnoreCase(SewerageConnectionStatus.INPROGRESS.toString()))
-                validationMessage = messageSource.getMessage("err.validate.newconnection.application.inprocess",
+                validationMessage = stmsMessageSource.getMessage("err.validate.newconnection.application.inprocess",
                         new String[] { propertyID, sewerageApplicationDetails.get(0).getApplicationNumber() }, null);
             else if (sewerageApplicationDetails.get(0).getConnection().getStatus().toString()
                     .equalsIgnoreCase(SewerageConnectionStatus.CLOSED.toString()))
-                validationMessage = messageSource.getMessage("err.validate.newconnection.closed", new String[] {
+                validationMessage = stmsMessageSource.getMessage("err.validate.newconnection.closed", new String[] {
                         sewerageApplicationDetails.get(0).getConnection().getShscNumber(), propertyID }, null);
             else if (sewerageApplicationDetails.get(0).getConnection().getStatus().toString()
                     .equalsIgnoreCase(SewerageConnectionStatus.INACTIVE.toString()))
-                validationMessage = messageSource.getMessage("err.validate.newconnection.inactive", new String[] {
+                validationMessage = stmsMessageSource.getMessage("err.validate.newconnection.inactive", new String[] {
                         sewerageApplicationDetails.get(0).getConnection().getShscNumber(), propertyID }, null);
         return validationMessage; 
     }

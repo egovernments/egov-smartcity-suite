@@ -40,24 +40,27 @@
 package org.egov.stms.masters.service;
 
 import java.math.BigDecimal;
-import java.util.Date;
-import java.util.List;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
+
+import org.egov.stms.masters.entity.DonationDetailMaster;
+import org.egov.stms.masters.entity.DonationMaster;
+import org.egov.stms.masters.entity.enums.PropertyType;
 import org.egov.stms.masters.pojo.DonationMasterSearch;
+import org.egov.stms.masters.repository.DonationMasterRepository;
 import org.hibernate.Criteria;
 import org.hibernate.Session;
 import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Restrictions;
-import org.egov.stms.masters.entity.DonationDetailMaster;
-import org.egov.stms.masters.entity.DonationMaster;
-import org.egov.stms.masters.entity.enums.PropertyType;
-import org.egov.stms.masters.repository.DonationMasterRepository;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.support.ResourceBundleMessageSource;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.context.MessageSource;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -76,7 +79,8 @@ public class DonationMasterService {
     private EntityManager entityManager;
 
     @Autowired
-    private ResourceBundleMessageSource messageSource;
+    @Qualifier("parentMessageSource")
+    private MessageSource stmsMessageSource;
 
     @Autowired
     public DonationMasterService(DonationMasterRepository donationMasterRepository) {
@@ -216,7 +220,7 @@ public class DonationMasterService {
         final DonationDetailMaster donationDetailMaster = donationMasterRepository
                 .getDonationDetailMasterByNoOfClosetsAndPropertytypeForCurrentDate(propertyType, noofclosets);
         if (donationDetailMaster == null)
-            validationMessage = messageSource.getMessage("err.validate.sewerage.closets.isPresent", new String[] {
+            validationMessage = stmsMessageSource.getMessage("err.validate.sewerage.closets.isPresent", new String[] {
                     propertyType.toString(), noofclosets.toString() }, null);
 
         return validationMessage;

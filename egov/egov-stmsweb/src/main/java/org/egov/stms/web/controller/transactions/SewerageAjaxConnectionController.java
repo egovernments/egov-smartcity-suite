@@ -65,7 +65,7 @@ import org.egov.stms.transactions.service.SewerageThirdPartyServices;
 import org.egov.stms.utils.SewerageTaxUtils;
 import org.egov.stms.utils.constants.SewerageTaxConstants;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.support.ResourceBundleMessageSource;
+import org.springframework.context.MessageSource;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -87,7 +87,7 @@ public class SewerageAjaxConnectionController {
     private SewerageThirdPartyServices sewerageThirdPartyServices;
     
     @Autowired
-    private ResourceBundleMessageSource messageSource;
+    private MessageSource messageSource;
     
     @Autowired
     private SewerageTaxUtils sewerageTaxUtils;

@@ -1,20 +1,12 @@
-INSERT INTO eg_roleaction(roleid, actionid) VALUES ((select id from eg_role where name = 'ULB Operator'), (select id from eg_action where name = 'AjaxDesignationsByDepartment' and contextroot = 'eis')); 
-
-INSERT INTO eg_roleaction(roleid, actionid) VALUES ((select id from eg_role where name = 'ULB Operator'), (select id from eg_action where name = 'AjaxApproverByDesignationAndDepartment' and contextroot = 'eis')); 
-
 INSERT INTO EG_ROLEACTION (roleid, actionid) values ((select id from eg_role where name = 'ULB Operator'),(select id from eg_action where name ='AjaxSewerageClosetsCheck' and contextroot = 'stms'));
 
 INSERT INTO  EG_ROLEACTION (actionid, roleid) select (select id from eg_action where name = 'viewSewerageConnectionDCBReport'),id from eg_role where name in ('ULB Operator');
 
 INSERT INTO EG_ROLEACTION (roleid, actionid) values ((select id from eg_role where name = 'ULB Operator'),(select id from eg_action where name ='SewerageChangeInClosets' and contextroot = 'stms'));
 
-INSERT INTO EG_ROLEACTION (roleid, actionid) values ((select id from eg_role where name = 'ULB Operator'),(select id from eg_action where name ='SewerageChangeInClosetsSuccess' and contextroot = 'stms'));
-
 INSERT INTO eg_roleaction(roleid, actionid) VALUES ((select id from eg_role where name = 'ULB Operator'), (select id from eg_action where name = 'SearchNotice'));
 
 INSERT INTO eg_roleaction(roleid, actionid) VALUES ((select id from eg_role where name = 'ULB Operator'), (select id from eg_action where name = 'ShowNotice'));
-
-INSERT INTO eg_roleaction(roleid, actionid) VALUES ((select id from eg_role where name = 'ULB Operator'), (select id from eg_action where name = 'STZipAndDownload'));
 
 INSERT INTO eg_roleaction(roleid, actionid) VALUES ((select id from eg_role where name = 'ULB Operator'), (select id from eg_action where name = 'STMergeAndDownload'));
 
@@ -33,8 +25,6 @@ INSERT INTO eg_roleaction (roleid, actionid) values ((select id from eg_role whe
 INSERT INTO EG_ROLEACTION (roleid, actionid) values ((select id from eg_role where name = 'ULB Operator'),(select id from eg_action where name ='SewerageConnectionChangeInClosetsValidation' and contextroot = 'stms'));
 
 INSERT INTO EG_ROLEACTION (roleid, actionid) values ((select id from eg_role where name = 'ULB Operator'),(select id from eg_action where name ='SearchSewerageCharges' and contextroot = 'stms'));
- 
-INSERT INTO EG_ROLEACTION (roleid, actionid) values ((select id from eg_role where name = 'ULB Operator'),(select id from eg_action where name ='CloseSewerageConnection' and contextroot = 'stms'));
 
 INSERT INTO eg_feature_role (ROLE, FEATURE) VALUES ((select id from eg_role where name = 'ULB Operator') ,(select id FROM eg_feature WHERE name = 'Apply for New Sewerage Connection'));
 INSERT INTO eg_feature_role (ROLE, FEATURE) VALUES ((select id from eg_role where name = 'ULB Operator') ,(select id FROM eg_feature WHERE name = 'Search Sewerage Connection'));
