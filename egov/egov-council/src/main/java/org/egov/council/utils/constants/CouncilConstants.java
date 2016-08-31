@@ -45,6 +45,7 @@ public class CouncilConstants {
     
     public static final String CREATED = "CREATED";
     public static final String MODULE_NAME = "COUNCIL";
+    public static final String MODULE_FULLNAME ="Council Management";
     public static final String COUNCILMEETING="COUNCILMEETING";
     public final static String PREAMBLE_STATUS_CREATED="CREATED";
     public final static String PREAMBLE_STATUS_APPROVED="APPROVED";
@@ -89,8 +90,8 @@ public class CouncilConstants {
         }
     };
     
-    public static final String SENDSMSFORCOUNCIL = "SENDSMSFORCOUNCIL";
-    public static final String SENDEMAILFORCOUNCIL = "SENDEMAILFORCOUNCIL";
+    public static final String SENDSMSFORCOUNCIL = "SENDSMSFORCOUNCILMEMBER";
+    public static final String SENDEMAILFORCOUNCIL = "SENDEMAILFORCOUNCILMEMBER";
     
     public static final String SMSEMAILTYPEFORCOUNCILMEETING="COUNCILMEETING";
     public static final String WF_STATE_REJECT =  "Reject";

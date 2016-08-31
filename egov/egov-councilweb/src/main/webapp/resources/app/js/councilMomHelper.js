@@ -28,7 +28,7 @@ function callAjaxSearch() {
 		reportdatatable = drillDowntableContainer
 			.dataTable({
 				ajax : {
-					url : "/council/councilmeeting/ajaxsearch/"+$('#mode').val(),      
+					url : "/council/councilmom/searchcreated-mom/"+$('#mode').val(),      
 					type: "POST",
 					"data":  getFormData(jQuery('form'))
 				},

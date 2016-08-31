@@ -43,7 +43,7 @@ package org.egov.council.service;
 import static org.egov.council.utils.constants.CouncilConstants.ADJOURNED;
 import static org.egov.council.utils.constants.CouncilConstants.APPROVED;
 import static org.egov.council.utils.constants.CouncilConstants.PREAMBLE_MODULENAME;
-
+import static org.egov.council.utils.constants.CouncilConstants.MEETINGUSEDINRMOM;
 import java.util.List;
 
 import javax.persistence.EntityManager;
@@ -79,7 +79,6 @@ public class CouncilMeetingService {
     @Autowired
     public CouncilMeetingService(CouncilMeetingRepository councilMeetingRepository,
             MeetingAttendanceRepository meetingAttendance) {
-        super();
         this.councilMeetingRepository = councilMeetingRepository;
         this.meetingAttendanceRepository = meetingAttendance;
     }
@@ -129,6 +128,12 @@ public class CouncilMeetingService {
     @SuppressWarnings("unchecked")
     public List<CouncilMeeting> searchMeeting(CouncilMeeting councilMeeting) {
         return buildSearchCriteria(councilMeeting).list();
+    }
+    
+    @SuppressWarnings("unchecked")
+    public List<CouncilMeeting> searchCreatedMOM(CouncilMeeting councilMeeting) {
+        return buildSearchCriteria(councilMeeting)
+                .add(Restrictions.in("status.code", new String[] { MEETINGUSEDINRMOM})).list();
     }
 
     public Criteria buildSearchCriteria(CouncilMeeting councilMeeting) {
