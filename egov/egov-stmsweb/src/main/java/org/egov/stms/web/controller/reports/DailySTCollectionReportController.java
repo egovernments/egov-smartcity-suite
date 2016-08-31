@@ -117,7 +117,6 @@ public class DailySTCollectionReportController {
         collectionModeMap.put(Source.APONLINE.toString(), Source.APONLINE.toString());
         collectionModeMap.put(Source.SOFTTECH.toString(), Source.SOFTTECH.toString());
         collectionModeMap.put(Source.SYSTEM.toString(), Source.SYSTEM.toString());
-        collectionModeMap.put("CASH", "CASH");
         return collectionModeMap;
     }
 
