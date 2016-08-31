@@ -56,7 +56,6 @@ import org.egov.dcb.bean.DCBDisplayInfo;
 import org.egov.dcb.bean.DCBReport;
 import org.egov.dcb.bean.Receipt;
 import org.egov.dcb.service.DCBService;
-import org.egov.demand.model.EgdmCollectedReceipt;
 import org.egov.infra.admin.master.entity.Role;
 import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.admin.master.service.UserService;
@@ -88,7 +87,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 public class CurrentViewDcbController {
     @Autowired
     private DCBService dcbService;
-    
+
     @Autowired
     private CurrentDcbService currentDcbService;
 
@@ -141,7 +140,8 @@ public class CurrentViewDcbController {
         final SQLQuery query = currentDcbService.getMigratedReceipttDetails(consumerNumber);
         waterChargesReceiptInfo = query.list();
         final SQLQuery sqlQuery = currentDcbService.getMigratedReceiptDetails(
-                waterConnectionDetailsService.findByConsumerCodeAndConnectionStatus(consumerNumber,ConnectionStatus.ACTIVE).getId());
+                waterConnectionDetailsService.findByConsumerCodeAndConnectionStatus(consumerNumber, ConnectionStatus.ACTIVE)
+                .getId());
         waterChargesReceiptInfoList = sqlQuery.list();
         waterChargesReceiptInfoList.addAll(waterChargesReceiptInfo);
         model.addAttribute("waterChargesReceiptInfo", waterChargesReceiptInfoList);
@@ -209,7 +209,7 @@ public class CurrentViewDcbController {
         final List<Receipt> rcpts = new ArrayList<Receipt>();
         BigDecimal totalRcptAmt = BigDecimal.ZERO;
         for (final Receipt r : cancelRcpt)
-            if (!rcpts.contains(r) && r.getReceiptStatus().equals(EgdmCollectedReceipt.RCPT_CANCEL_STATUS)) {
+            if (!rcpts.contains(r) && r.getReceiptStatus().equals(RCPT_CANCEL_STATUS)) {
                 rcpts.add(r);
                 totalRcptAmt = totalRcptAmt.add(r.getReceiptAmt());
             }
@@ -219,8 +219,7 @@ public class CurrentViewDcbController {
     /**
      * This method populates Active receipts only.
      *
-     * @param Map
-     *            <Installment, List<Receipt>> receipts
+     * @param Map <Installment, List<Receipt>> receipts
      * @return List<Receipt>
      */
 
@@ -244,8 +243,7 @@ public class CurrentViewDcbController {
     /**
      * This method populates cancelled receipts only.
      *
-     * @param Map
-     *            <Installment, List<Receipt>> receipts
+     * @param Map <Installment, List<Receipt>> receipts
      * @return List<Receipt>
      */
 
