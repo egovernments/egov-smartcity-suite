@@ -473,6 +473,7 @@ public class LetterOfAcceptanceService {
         final Criteria criteria = entityManager.unwrap(Session.class).createCriteria(WorkOrder.class, "wo")
                 .addOrder(Order.asc("workOrderDate")).createAlias("wo.contractor", "woc")
                 .createAlias("egwStatus", "status");
+                criteria.add(Restrictions.isNull("parent.id"));
         if (searchRequestLetterOfAcceptance != null) {
             if (searchRequestLetterOfAcceptance.getWorkOrderNumber() != null)
                 criteria.add(Restrictions.eq("workOrderNumber", searchRequestLetterOfAcceptance.getWorkOrderNumber())
@@ -568,7 +569,7 @@ public class LetterOfAcceptanceService {
     private void getWorkOrdersWhereBoqIsCreated(final SearchRequestLetterOfAcceptance searchRequestLetterOfAcceptance,
             final StringBuilder queryStr) {
         queryStr.append(
-                " select distinct woe from WorkOrderEstimate woe where woe.workOrder.egwStatus.code = :woStatus and  not exists (select distinct(cbr.workOrderEstimate) from ContractorBillRegister as cbr where woe.id = cbr.workOrderEstimate.id and upper(cbr.billstatus) !=:billStatus and cbr.billtype =:billType and cbr.workOrderEstimate.id is not null) ");
+                " select distinct woe from WorkOrderEstimate woe where woe.workOrder.parent is null and woe.workOrder.egwStatus.code = :woStatus and  not exists (select distinct(cbr.workOrderEstimate) from ContractorBillRegister as cbr where woe.id = cbr.workOrderEstimate.id and upper(cbr.billstatus) !=:billStatus and cbr.billtype =:billType and cbr.workOrderEstimate.id is not null) ");
         queryStr.append(
                 " and exists (select workOrderEstimate  from WorkOrderActivity where woe.id =workOrderEstimate.id ) ");
 
@@ -716,6 +717,7 @@ public class LetterOfAcceptanceService {
                 .createAlias("woeestimate.executingDepartment", "executingDepartment")
                 .createAlias("wo.contractor", "woc").createAlias("wo.egwStatus", "status")
                 .createAlias("woe.milestone", "ms", JoinType.LEFT_OUTER_JOIN).addOrder(Order.asc("wo.workOrderDate"));
+                criteria.add(Restrictions.isNull("wo.parent.id"));
         if (searchRequestLetterOfAcceptance != null) {
             if (searchRequestLetterOfAcceptance.getWorkIdentificationNumber() != null)
                 criteria.add(Restrictions
@@ -871,7 +873,7 @@ public class LetterOfAcceptanceService {
     public List<WorkOrder> searchLOAsToCancel(final SearchRequestLetterOfAcceptance searchRequestLetterOfAcceptance) {
         List<WorkOrder> workOrderList = new ArrayList<WorkOrder>();
         final StringBuilder queryStr = new StringBuilder(500);
-        queryStr.append("select distinct(wo) from WorkOrder wo where wo.egwStatus.code =:workOrderStatus");
+        queryStr.append("select distinct(wo) from WorkOrder wo where  wo.parent.id is null and wo.egwStatus.code =:workOrderStatus");
         if (searchRequestLetterOfAcceptance != null) {
             if (searchRequestLetterOfAcceptance.getWorkOrderNumber() != null)
                 queryStr.append(" and upper(wo.workOrderNumber) like upper(:workOrderNumber)");
@@ -1005,7 +1007,7 @@ public class LetterOfAcceptanceService {
         List<WorkOrderEstimate> workOrderList = new ArrayList<WorkOrderEstimate>();
         final StringBuilder queryStr = new StringBuilder(500);
         queryStr.append(
-                "select distinct(woe) from WorkOrderEstimate as woe where woe.workOrder.egwStatus.code =:workOrderStatus ");
+                "select distinct(woe) from WorkOrderEstimate as woe where woe.workOrder.parent.id is null and  woe.workOrder.egwStatus.code =:workOrderStatus ");
         queryStr.append(
                 " and exists (select woa.workOrderEstimate from WorkOrderActivity as woa where woe.id = woa.workOrderEstimate.id )");
         if (searchRequestLetterOfAcceptance != null) {

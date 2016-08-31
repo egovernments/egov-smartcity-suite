@@ -831,6 +831,7 @@ public class EstimateService {
             final Criteria criteria = entityManager.unwrap(Session.class).createCriteria(AbstractEstimate.class)
                     .createAlias("egwStatus", "status")
                     .createAlias("projectCode", "pc");
+            criteria.add(Restrictions.isNull("parent.id"));
             if (searchAbstractEstimate.getAbstractEstimateNumber() != null)
                 criteria.add(Restrictions.eq("estimateNumber", searchAbstractEstimate.getAbstractEstimateNumber()));
             if (searchAbstractEstimate.getDepartment() != null)
@@ -862,7 +863,7 @@ public class EstimateService {
         List<AbstractEstimate> abstractEstimates = new ArrayList<AbstractEstimate>();
         final StringBuilder queryStr = new StringBuilder(500);
         queryStr.append(
-                "select distinct(estimate) from AbstractEstimate estimate where estimate.egwStatus.code = :aeStatus and not exists (select distinct(woe.estimate) from WorkOrderEstimate as woe where estimate.id = woe.estimate.id and upper(woe.workOrder.egwStatus.code) != upper(:woStatus) and upper(estimate.egwStatus.code) = upper(:aeStatus))");
+                "select distinct(estimate) from AbstractEstimate estimate where estimate.parent.id is null and estimate.egwStatus.code = :aeStatus and not exists (select distinct(woe.estimate) from WorkOrderEstimate as woe where estimate.id = woe.estimate.id and upper(woe.workOrder.egwStatus.code) != upper(:woStatus) and upper(estimate.egwStatus.code) = upper(:aeStatus))");
 
         queryStr.append(
                 " and exists (select act.abstractEstimate from Activity as act where estimate.id = act.abstractEstimate.id )");
@@ -1111,6 +1112,9 @@ public class EstimateService {
         final StringBuilder queryStr = new StringBuilder(500);
         queryStr.append(
                 "select distinct(ae) from AbstractEstimate ae where exists (select distinct(activity.id) from Activity activity where activity.abstractEstimate.id = ae.id) and not exists (select distinct(woe) from WorkOrderEstimate as woe where woe.estimate.id = ae.id and woe.workOrder.egwStatus.code != :workOrderStatus) ");
+        
+        queryStr.append(" and ae.parent.id is null ");
+            
         if (searchRequestCancelEstimate != null) {
             if (searchRequestCancelEstimate.getEstimateNumber() != null)
                 queryStr.append(" and upper(ae.estimateNumber) = upper(:estimateNumber)");
@@ -1164,7 +1168,7 @@ public class EstimateService {
         List<AbstractEstimate> abstractEstimateList = new ArrayList<AbstractEstimate>();
         final StringBuilder queryStr = new StringBuilder(500);
         queryStr.append(
-                "select distinct(ae) from AbstractEstimate ae where ae.egwStatus.code =:abstractEstimateStatus and not exists (select distinct(woe.estimate) from WorkOrderEstimate as woe where woe.estimate.id = ae.id and woe.workOrder.egwStatus.code != :workOrderStatus )");
+                "select distinct(ae) from AbstractEstimate ae where ae.parent is null and ae.egwStatus.code =:abstractEstimateStatus and not exists (select distinct(woe.estimate) from WorkOrderEstimate as woe where woe.estimate.id = ae.id and woe.workOrder.egwStatus.code != :workOrderStatus )");
         if (abstractEstimateForLoaSearchRequest != null) {
             if (abstractEstimateForLoaSearchRequest.getAbstractEstimateNumber() != null)
                 queryStr.append(" and upper(ae.estimateNumber) =:abstractEstimateNumber");
