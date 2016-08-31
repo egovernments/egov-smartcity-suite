@@ -66,15 +66,21 @@
 								</form:select>
 								<form:errors path="committeeType" cssClass="error-msg" />
 							</div>
-							
-							<label class="col-sm-2 control-label text-right"><spring:message
-							code="lbl.agendaNumber" /> </label>
-							<div class="col-sm-3 add-margin">
-								<form:input type="text" cssClass="form-control"
-									path="agendaNumber" id="agendaNumber"/>
-								<form:errors path="agendaNumber" cssClass="error-msg" />
-							</div>
 						</div>
+							<%-- <label class="col-sm-3 control-label text-right"><spring:message
+									code="lbl.status" /> </label>
+							<div class="col-sm-3 add-margin">
+								<form:select path="status" id="status"
+									cssClass="form-control" cssErrorClass="form-control error">
+									<form:option value="">
+										<spring:message code="lbl.select" />
+									</form:option>
+									<form:options items="${status}" itemValue="id"
+										itemLabel="name" />
+								</form:select>
+								<form:errors path="status" cssClass="error-msg" />
+							</div> --%>
+						
 						<div class="form-group">
 							 <label class="col-sm-2 control-label text-right"><spring:message
 									code="lbl.fromdate" /> </label>
@@ -85,7 +91,7 @@
 									<form:errors path="fromDate" cssClass="error-msg" />
 							</div> 
 							
-							<label class="col-sm-2 control-label text-right"><spring:message
+							<label class="col-sm-2 control-label text-left"><spring:message
 							code="lbl.todate" /> </label>
 							<div class="col-sm-3 add-margin">
 								<form:input type="text" cssClass="form-control datepicker"
@@ -93,20 +99,19 @@
 								<form:errors path="toDate" cssClass="error-msg" />
 							</div>
 						</div>
-							
-						<input type="hidden" id="mode" name="mode" value="${mode}" />
+						<input type="hidden" id="mode" name="mode" value="${mode}"/>
 				</div>
 			</div>
 		</div>
-		<div class="form-group">
-							<div class="text-center">
-								<button type='button' class='btn btn-primary' id="btnsearch">
-									<spring:message code='lbl.search' />
-								</button>
-								<a href='javascript:void(0)' class='btn btn-default'
-									onclick='self.close()'><spring:message code='lbl.close' /></a>
-							</div>
-				</div>
+	</div>
+	<div class="form-group">
+			<div class="text-center">
+				<button type='button' class='btn btn-primary' id="btnsearch">
+					<spring:message code='lbl.search' />
+				</button>
+				<a href='javascript:void(0)' class='btn btn-default'
+					onclick='self.close()'><spring:message code='lbl.close' /></a>
+			</div>
 	</div>
 </form:form>
 <div class="row display-hide report-section">
@@ -157,4 +162,4 @@
 	src="<c:url value='/resources/global/js/jquery/plugins/jquery.validate.min.js' context='/egi'/>"></script>
 <script src="<c:url value='/resources/global/js/jquery/plugins/datatables/datetime-moment.js' context='/egi'/>"></script>
 <script type="text/javascript"
-	src="<c:url value='/resources/app/js/councilAgendaHelper.js'/>"></script>
+	src="<c:url value='/resources/app/js/searchApprovedCouncilAgenda.js'/>"></script>

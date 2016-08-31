@@ -48,7 +48,6 @@
 	id="councilPreambleform"
 	cssClass="form-horizontal form-groups-bordered"
 	enctype="multipart/form-data">
-	<div class="main-content">
 		<div class="row">
 			<div class="col-md-12">
 				<div class="panel panel-primary" data-collapsed="0">
@@ -125,7 +124,6 @@
 				</div>
 			</div>
 		</div>
-	</div>
 </form:form>
 <div class="row display-hide report-section">
 	<div class="col-md-12 table-header text-left">Preamble Search
@@ -141,13 +139,15 @@
 	enctype="multipart/form-data">
 	
 	<!-- <div class="row display-hide agenda-section"> -->
-	<div class="col-md-6 table-header text-left">Update Agenda</div>
+	
 	<!-- <div class="col-md-6 text-right pull-right"><button type="button" class="btn btn-primary" id="add-agenda">Add Row</button></div> -->
 	<div class="row ">
 
-		<label class="col-sm-2 control-label text-right"><spring:message
+		<div class="col-md-7 table-header text-left">Update Agenda</div>
+		
+		<label class="col-md-2 control-label text-right"><spring:message
 				code="lbl.committeetype" /> </label>
-		<div class="col-sm-3 add-margin">
+		<div class="col-md-3 add-margin">
 			<form:select path="committeeType" id="committeeType"
 				cssClass="form-control" cssErrorClass="form-control error">
 				<form:option value="">
@@ -156,11 +156,13 @@
 				<form:options items="${committeeType}" itemValue="id"
 					itemLabel="name" />
 			</form:select>
-			<form:errors path="committeeType" cssClass="error-msg" />
-		</div>
+			<form:errors path="committeeType" cssClass="error-msg" /> 
+		
 	</div>
-
-	<div class="col-md-12 form-group report-table-container">
+	
+	</div>
+	<div clas="row">
+	<div class="report-table-container">
 		<table class="table table-bordered table-hover multiheadertbl"
 			id=agendaTable>
 			<thead>
@@ -262,6 +264,8 @@
 		<%-- <input type="hidden" name="CouncilAgendaDetails" value="${CouncilAgendaDetails.id}" />
 			<form:hidden path="agenda" id="agenda"
 				value="${CouncilAgendaDetails.agenda}" /> --%>
+	</div>
+	
 	</div>
 	
 	

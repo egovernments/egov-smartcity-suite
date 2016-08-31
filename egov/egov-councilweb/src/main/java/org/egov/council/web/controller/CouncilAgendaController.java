@@ -41,6 +41,7 @@ package org.egov.council.web.controller;
 
 import static org.egov.council.utils.constants.CouncilConstants.PREAMBLE_MODULENAME;
 import static org.egov.council.utils.constants.CouncilConstants.PREAMBLE_STATUS_APPROVED;
+import static org.egov.council.utils.constants.CouncilConstants.PREAMBLEUSEDINAGENDA;
 import static org.egov.infra.web.utils.WebUtils.toJSON;
 
 import java.io.IOException;
@@ -51,6 +52,7 @@ import javax.validation.Valid;
 
 import org.egov.commons.dao.EgwStatusHibernateDAO;
 import org.egov.council.autonumber.AgendaNumberGenerator;
+import org.egov.council.entity.CommitteeType;
 import org.egov.council.entity.CouncilAgenda;
 import org.egov.council.entity.CouncilAgendaDetails;
 import org.egov.council.entity.CouncilPreamble;
@@ -59,6 +61,7 @@ import org.egov.council.service.CouncilAgendaService;
 import org.egov.council.service.CouncilPreambleService;
 import org.egov.council.web.adaptor.CouncilAgendaJsonAdaptor;
 import org.egov.council.web.adaptor.CouncilPreambleJsonAdaptor;
+import org.egov.infra.admin.master.entity.Department;
 import org.egov.infra.admin.master.service.DepartmentService;
 import org.egov.infra.utils.autonumber.AutonumberServiceBeanResolver;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -83,6 +86,7 @@ public class CouncilAgendaController {
     private final static String COUNCILAGENDA_EDIT = "agenda-edit";
     private final static String COUNCILAGENDA_VIEW = "agenda-view";
     private final static String COUNCILAGENDA_SEARCH = "agenda-search";
+    private final static String COUNCILAGENDA_SEARCH_APPROVED = "council-agendaSearch";
 
     @Autowired
     protected DepartmentService departmentService;
@@ -105,14 +109,16 @@ public class CouncilAgendaController {
     @Autowired
     private MessageSource messageSource;
 
-    private void prepareNewForm(Model model) {
-        model.addAttribute("departmentList", departmentService.getAllDepartments());
-        model.addAttribute("committeeType", committeeTypeService.getActiveCommiteeType());
+    public @ModelAttribute("departmentList") List<Department> getDepartmentList() {
+        return departmentService.getAllDepartments();
+    }
+    
+    public @ModelAttribute("committeeType") List<CommitteeType> getCommitteTypeList() {
+        return committeeTypeService.getActiveCommiteeType();
     }
 
     @RequestMapping(value = "/new", method = RequestMethod.GET)
     public String newForm(final Model model) {
-        prepareNewForm(model);
         model.addAttribute("councilAgenda", new CouncilAgenda());
         model.addAttribute("councilPreamble", new CouncilPreamble());
         return COUNCILAGENDA_NEW;
@@ -122,7 +128,6 @@ public class CouncilAgendaController {
     public String create(@Valid @ModelAttribute final CouncilAgenda councilAgenda, final BindingResult errors,
             final Model model, final RedirectAttributes redirectAttrs) {
          if (errors.hasErrors()) {
-            prepareNewForm(model);
             return COUNCILAGENDA_NEW;
         }
         Long itemNumber = Long.valueOf(1);
@@ -133,6 +138,8 @@ public class CouncilAgendaController {
                 councilAgendaDetails.setAgenda(councilAgenda);
                 councilAgendaDetails.setItemNumber(itemNumber.toString());
                 councilAgendaDetails.setOrder(itemNumber);
+                councilAgendaDetails.getPreamble().setStatus(egwStatusHibernateDAO.getStatusByModuleAndCode(PREAMBLE_MODULENAME,
+                		PREAMBLEUSEDINAGENDA));
                 itemNumber++;
             }
         }
@@ -159,7 +166,6 @@ public class CouncilAgendaController {
     @RequestMapping(value = "/view/{id}", method = RequestMethod.GET)
     public String view(@PathVariable("id") final Long id, Model model) {
         CouncilAgenda councilAgenda = councilAgendaService.findOne(id);
-        prepareNewForm(model);
         model.addAttribute("councilAgenda", councilAgenda);
 
         return COUNCILAGENDA_VIEW;
@@ -167,31 +173,33 @@ public class CouncilAgendaController {
 
     @RequestMapping(value = "/search/{mode}", method = RequestMethod.GET)
     public String search(@PathVariable("mode") final String mode, Model model) {
-        prepareNewForm(model);
         model.addAttribute("councilAgenda", new CouncilAgenda());
         return COUNCILAGENDA_SEARCH;
 
     }
+    
+    @RequestMapping(value = "/searchagenda/{mode}", method = RequestMethod.GET)
+    public String editAgenda(@PathVariable("mode") final String mode, Model model) {
+        model.addAttribute("councilAgenda", new CouncilAgenda());
+        return COUNCILAGENDA_SEARCH_APPROVED;
+
+    }
+    
 
     @RequestMapping(value = "/edit/{id}", method = RequestMethod.GET)
     public String edit(@PathVariable("id") final Long id, final Model model, final HttpServletResponse response)
             throws IOException {
         CouncilAgenda councilAgenda = councilAgendaService.findOne(id);
-        prepareNewForm(model);
         model.addAttribute("councilAgenda", councilAgenda);
         model.addAttribute("councilPreamble", new CouncilPreamble());
-        if (councilAgenda.getStatus().getCode().equals("AGENDAAPPROVEDFORMOM")) {
-            return COUNCILAGENDA_VIEW;
-        } else {
-            return COUNCILAGENDA_EDIT;
-        }
+        
+        return COUNCILAGENDA_EDIT;
     }
 
     @RequestMapping(value = "/update", method = RequestMethod.POST)
     public String update(@ModelAttribute final CouncilAgenda councilAgenda, final Model model,
             final BindingResult errors, final RedirectAttributes redirectAttrs) {
         if (errors.hasErrors()) {
-            prepareNewForm(model);
             return COUNCILAGENDA_EDIT;
         }
         Long itemNumber = Long.valueOf(1);
@@ -225,18 +233,16 @@ public class CouncilAgendaController {
     @RequestMapping(value = "/ajaxsearch", method = RequestMethod.POST, produces = MediaType.TEXT_PLAIN_VALUE)
     public @ResponseBody String searchPreamble(Model model, @ModelAttribute final CouncilPreamble councilPreamble) {
         List<CouncilPreamble> searchResultList = councilPreambleService.searchForPreamble(councilPreamble);
-
         final String result = new StringBuilder("{\"data\":")
                 .append(toJSON(searchResultList, CouncilPreamble.class, CouncilPreambleJsonAdaptor.class)).append("}")
                 .toString();
         return result;
     }
 
-    @RequestMapping(value = "/searchagendaformeeting/{mode}", method = RequestMethod.POST, produces = MediaType.TEXT_PLAIN_VALUE)
-    public @ResponseBody String agendaAjaxSearch(@PathVariable("mode") final String mode, Model model,
+    @RequestMapping(value = "/searchagenda-tocreatemeeting", method = RequestMethod.POST, produces = MediaType.TEXT_PLAIN_VALUE)
+    public @ResponseBody String searchAgendaToCreateMeeting( Model model,
             @ModelAttribute final CouncilAgenda councilAgenda) {
-        List<CouncilAgenda> searchResultList = councilAgendaService.search(councilAgenda);
-
+        List<CouncilAgenda> searchResultList = councilAgendaService.searchForAgendaToCreateMeeting(councilAgenda);
         final String result = new StringBuilder("{\"data\":")
                 .append(toJSON(searchResultList, CouncilAgenda.class, CouncilAgendaJsonAdaptor.class)).append("}")
                 .toString();

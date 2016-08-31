@@ -45,7 +45,6 @@
 	id="councilPreambleform"
 	cssClass="form-horizontal form-groups-bordered"
 	enctype="multipart/form-data">
-	<div class="main-content">
 		<div class="row">
 			<div class="col-md-12">
 				<div class="panel panel-primary" data-collapsed="0">
@@ -54,7 +53,7 @@
 					</div>
 					<div class="panel-body">
 						<div class="form-group">
-							<label class="col-sm-3 control-label text-right"><spring:message
+							<label class="col-sm-2 control-label text-right"><spring:message
 									code="lbl.gist.preamble" /> </label>
 							<div class="col-sm-3 add-margin">
 									<form:input path="gistOfPreamble"
@@ -63,35 +62,6 @@
 									<form:errors path="gistOfPreamble" cssClass="error-msg" />
 							</div>
 							<label class="col-sm-2 control-label text-right"><spring:message
-									code="lbl.preamble.number" /> </label>
-							<div class="col-sm-3 add-margin">
-									<form:input path="preambleNumber"
-										class="form-control text-left patternvalidation"
-										data-pattern="alphanumeric"  />
-									<form:errors path="preambleNumber" cssClass="error-msg" />
-							</div>
-						</div>
-						<div class="form-group">
-							<label class="col-sm-3 control-label text-right"><spring:message
-									code="lbl.preamble.from" /> </label>
-							<div class="col-sm-3 add-margin">
-									<form:input path=""
-										class="form-control text-left patternvalidation dateval"
-										 data-date-end-date="0d"  />
-									<form:errors path="" cssClass="error-msg" />
-							</div>
-							<label class="col-sm-2 control-label text-right"><spring:message
-									code="lbl.preamble.to" /> </label>
-							<div class="col-sm-3 add-margin">
-								<form:input path=""
-									class="form-control text-left patternvalidation dateval"
-									data-date-end-date="0d" />
-								<form:errors path="" cssClass="error-msg" />
-							</div>
-						</div>
-						
-						<div>
-							<label class="col-sm-3 control-label text-right"><spring:message
 									code="lbl.department" /> </label>
 							<div class="col-sm-3 add-margin">
 								<form:select path="department" data-first-option="false" name="approvalDepartment"
@@ -106,7 +76,24 @@
 								</form:select>
 							</div>
 						</div>
-						
+						<div class="form-group">
+							<label class="col-sm-2 control-label text-right"><spring:message
+									code="lbl.preamble.from" /> </label>
+							<div class="col-sm-3 add-margin">
+									<form:input path=""
+										class="form-control text-left patternvalidation datepicker"
+										 data-date-end-date="0d"  />
+									<form:errors path="" cssClass="error-msg" />
+							</div>
+							<label class="col-sm-2 control-label text-right"><spring:message
+									code="lbl.preamble.to" /> </label>
+							<div class="col-sm-3 add-margin">
+								<form:input path=""
+									class="form-control text-left patternvalidation datepicker"
+									data-date-end-date="0d" />
+								<form:errors path="" cssClass="error-msg" />
+							</div>
+						</div>
 						
 					</div>
 				</div>
@@ -122,7 +109,6 @@
 				</div>
 			</div>
 		</div>
-	</div>
 </form:form>
 <div class="row display-hide report-section">
 	<div class="col-md-12 table-header text-left">Preamble
@@ -192,7 +178,7 @@
 	});
 
 	$('#btnsearchPreamble').click(function(e) {
-		console.log('valid1111111');
+	
 		if ($('form').valid()) {
 			return true;
 		} else {

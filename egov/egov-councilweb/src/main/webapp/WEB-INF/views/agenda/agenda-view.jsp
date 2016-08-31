@@ -43,13 +43,33 @@
 <%@ taglib uri="http://www.springframework.org/tags" prefix="spring"%>
 <%@ taglib uri="http://www.springframework.org/tags/form" prefix="form"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt"%>
-<div class="main-content">
 	<div class="row">
 		<div class="col-md-12">
-			<div class="panel panel-primary" data-collapsed="0">
+			<div class="panel" >
 				<div class="panel-heading">
 					<div class="panel-title">Council Agenda</div>
+				<div class="panel-body">
+					
+					<div class="form-group">
+					<label class="col-sm-3 control-label text-right"><spring:message
+								code="lbl.status" /> </label>
+						<div class="col-sm-3 add-margin">
+							${councilAgenda.status.code}</div>
+
+						<label class="col-sm-3 control-label ">Committee Type: </label>
+						<div class="col-sm-3 add-margin">
+							${councilAgenda.committeeType.name}</div>
+					</div>
+					<div class="form-group">
+						<label class="col-sm-2 control-label ">Agend Number : </label>
+						<div class="col-sm-3 add-margin">
+							${councilAgenda.agendaNumber}</div>
+						<label class="col-sm-2 control-label ">&nbsp; </label>
+						<div class="col-sm-3 add-margin">&nbsp;</div>
+					</div>
 				</div>
+
+		
 				<div class="panel-body custom">
 					<div class="panel-body">
 						<div class="panel-heading">
@@ -57,20 +77,15 @@
 								<spring:message code="lbl.preamble.details" />
 							</div>
 						</div>
-						<div class="row display-hide agenda-section">
-							<label class="col-sm-2 control-label text-right"><spring:message
-									code="lbl.status" /> </label>
-							<div class="col-sm-3 add-margin">
-								${councilAgenda.status.code}
-							</div>
-						</div>
 						<table class="table table-bordered">
 							<thead>
+							<tr>
 								<th align="center"><spring:message code="lbl.serial.number" /></th>
 								<th><spring:message code="lbl.agenda.item" /></th>
 								<th><spring:message code="lbl.agenda.number" /></th>
 								<th><spring:message code="lbl.preamble.number" /></th>
 								<th><spring:message code="lbl.department" /></th>
+							</tr>
 							</thead>
 							<tbody>
 								<c:choose>
@@ -78,13 +93,11 @@
 										<c:forEach items="${councilAgenda.agendaDetails}"
 											var="contact" varStatus="counter">
 											<tr>
-												<div class="row add-margin">
 													<td align="center">${counter.count}</td>
 													<td><c:out value="${contact.preamble.gistOfPreamble}" /></td>
 													<td><c:out value="${contact.agenda.agendaNumber}" /></td>
 													<td><c:out value="${contact.preamble.preambleNumber}" /></td>
 													<td><c:out value="${contact.preamble.department.name}" /></td>
-												</div>
 											</tr>
 										</c:forEach>
 									</c:when>
@@ -101,6 +114,7 @@
 				</div>
 			</div>
 		</div>
+	</div>
 		<div class="row text-center">
 			<div class="add-margin">
 				<a href="javascript:void(0)" class="btn btn-default"
