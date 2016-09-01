@@ -97,7 +97,11 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <build.number>${timestamp}</build.number>
         <app.version>${project.version}</app.version>
-
+        <versioneye.key></versioneye.key>
+        <db.driver></db.driver>
+        <db.url></db.url>
+        <db.user></db.user>
+        <db.password></db.password>
         <!-- Sonar properties -->
         <sonar.core.codeCoveragePlugin>jacoco</sonar.core.codeCoveragePlugin>
         <sonar.dynamicAnalysis>reuseReports</sonar.dynamicAnalysis>
@@ -1348,6 +1352,9 @@
                 <groupId>com.versioneye</groupId>
                 <artifactId>versioneye-maven-plugin</artifactId>
                 <version>3.10.2</version>
+                <configuration>
+                    <apiKey>${versioneye.key}</apiKey>
+                </configuration>
             </plugin>
         </plugins>
     </build>
