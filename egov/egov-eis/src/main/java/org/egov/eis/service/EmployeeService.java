@@ -93,14 +93,11 @@ import org.springframework.transaction.annotation.Transactional;
 @Transactional(readOnly = true)
 public class EmployeeService implements EntityTypeService {
 
+    private final EmployeeRepository employeeRepository;
+
     @PersistenceContext
     private EntityManager entityManager;
 
-    public Session getCurrentSession() {
-        return entityManager.unwrap(Session.class);
-    }
-
-    private final EmployeeRepository employeeRepository;
     @Autowired
     private UserRepository userRepository;
 
@@ -140,6 +137,10 @@ public class EmployeeService implements EntityTypeService {
     @Autowired
     public EmployeeService(final EmployeeRepository employeeRepository) {
         this.employeeRepository = employeeRepository;
+    }
+
+    public Session getCurrentSession() {
+        return entityManager.unwrap(Session.class);
     }
 
     @SuppressWarnings("unchecked")
