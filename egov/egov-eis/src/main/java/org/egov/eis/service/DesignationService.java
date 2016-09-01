@@ -103,8 +103,12 @@ public class DesignationService {
     public Set<Role> getRolesByDesignation(final String designationName) {
         return designationRepository.getRolesByDesignation(designationName);
     }
-    
+
     public List<Designation> getDesignationsByNames(final List<String> names) {
         return designationRepository.getDesignationsByNames(names);
+    }
+
+    public List<Designation> getDesignationsByName(final String name) {
+        return designationRepository.getDesignationsByName("%" + name + "%");
     }
 }

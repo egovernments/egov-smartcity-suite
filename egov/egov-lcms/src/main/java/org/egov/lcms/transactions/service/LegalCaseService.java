@@ -118,6 +118,7 @@ public class LegalCaseService {
         final List<LegalCaseDocuments> legalDoc = legalCaseUtil.getLegalCaseDocumentList(legalcase);
         legalcase = prepareChildEntities(legalcase);
         processAndStoreApplicationDocuments(legalcase, legalDoc);
+        updateNextDate(legalcase,legalcase.getEglcPwrs());
         return legalCaseRepository.save(legalcase);
     }
 
@@ -207,7 +208,7 @@ public class LegalCaseService {
         if (!legalcase.getEglcPwrs().isEmpty()) {
             for (final Pwr legalpwr : legalcase.getEglcPwrs()) {
                 legalpwr.setLegalCase(legalcase);
-                legalpwr.setCaFilingdate(new Date());
+               // legalpwr.setCaFilingdate(new Date());
                 pwrListtemp.add(legalpwr);
             }
             legalcase.getEglcPwrs().clear();
@@ -307,4 +308,19 @@ public class LegalCaseService {
     public LegalCase save(final LegalCase legalcase) {
         return legalCaseRepository.save(legalcase);
     }
+    
+    
+    public void updateNextDate(final LegalCase legalCase, final List<Pwr> pwr) {
+  
+        if (pwr.get(0).getCaFilingdate() != null) {
+            legalCase.setNextDate(pwr.get(0).getCaFilingdate());
+        } else if (pwr.get(0) .getCaDueDate()!= null) {
+            legalCase.setNextDate(pwr.get(0).getCaDueDate());
+        } else if (pwr.get(0).getPwrDueDate()!= null) {
+            legalCase.setNextDate(pwr.get(0).getPwrDueDate());
+        } else {
+            legalCase.setNextDate(legalCase.getCaseDate());
+        }
+
+}
 }

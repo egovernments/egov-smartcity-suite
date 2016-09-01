@@ -107,7 +107,7 @@
 		<form:input class="form-control" data-pattern="" maxlength="50"
 			id="caseNumber" required="required" path="caseNumber" />
 	</div>
-	<div class="col-sm-2 add-margin text-center">
+	<div class="col-sm-1 add-margin text-center">
 		<form:select path="wpYear" data-first-option="false" id="wpYear"
 			cssClass="form-control">
 			<form:option value="">
@@ -138,7 +138,7 @@
 			<form:input path="lcNumber" class="form-control patternvalidation"
 				data-pattern="string" maxlength="50" id="lcNumber" />
 		</div>
-		<div class="col-sm-2 add-margin text-center">
+		<div class="col-sm-1 add-margin text-center">
 			<form:select path="finwpYear" data-first-option="false"
 				id="finwpYear" cssClass="form-control">
 				<form:option value="">

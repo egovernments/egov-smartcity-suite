@@ -62,7 +62,6 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 @RequestMapping("/crosshierarchy/update")
 public class SearchCrossHierarchyController {
 
-    private static final String REVENUE_HIERARCHY_TYPE = "REVENUE";
     private static final String ADMIN_HIERARCHY_TYPE = "ADMIN";
 
     @Autowired
@@ -76,7 +75,6 @@ public class SearchCrossHierarchyController {
     @ModelAttribute(value = "boundaryTypeList")
     public List<BoundaryType> findAllBoundaryType() {
         final Set<String> hierarchyNames = new HashSet<String>();
-        hierarchyNames.add(REVENUE_HIERARCHY_TYPE);
         hierarchyNames.add(ADMIN_HIERARCHY_TYPE);
         final List<BoundaryType> boundaryType = boundaryTypeService.getBoundaryTypeByHierarchyTypeNames(hierarchyNames);
         return boundaryType;

@@ -43,47 +43,47 @@ import java.io.Serializable;
 
 @SuppressWarnings("serial")
 public class ConstructionTypeDetails implements Serializable {
-	private String floorTypeCode;
-	private String roofTypeCode;
-	private String wallTypeCode;
-	private String woodTypeCode;
+	private String floorTypeId;
+	private String roofTypeId;
+	private String wallTypeId;
+	private String woodTypeId;
 
-	public String getFloorTypeCode() {
-		return floorTypeCode;
+	public String getFloorTypeId() {
+		return floorTypeId;
 	}
 
-	public void setFloorTypeCode(String floorTypeCode) {
-		this.floorTypeCode = floorTypeCode;
+	public void setFloorTypeId(String floorTypeId) {
+		this.floorTypeId = floorTypeId;
 	}
 
-	public String getRoofTypeCode() {
-		return roofTypeCode;
+	public String getRoofTypeId() {
+		return roofTypeId;
 	}
 
-	public void setRoofTypeCode(String roofTypeCode) {
-		this.roofTypeCode = roofTypeCode;
+	public void setRoofTypeId(String roofTypeId) {
+		this.roofTypeId = roofTypeId;
 	}
 
-	public String getWallTypeCode() {
-		return wallTypeCode;
+	public String getWallTypeId() {
+		return wallTypeId;
 	}
 
-	public void setWallTypeCode(String wallTypeCode) {
-		this.wallTypeCode = wallTypeCode;
+	public void setWallTypeId(String wallTypeId) {
+		this.wallTypeId = wallTypeId;
 	}
 
-	public String getWoodTypeCode() {
-		return woodTypeCode;
+	public String getWoodTypeId() {
+		return woodTypeId;
 	}
 
-	public void setWoodTypeCode(String woodTypeCode) {
-		this.woodTypeCode = woodTypeCode;
+	public void setWoodTypeId(String woodTypeId) {
+		this.woodTypeId = woodTypeId;
 	}
 
 	@Override
 	public String toString() {
-		return "ConstructionTypesRequest [floorTypeCode=" + floorTypeCode + ", roofTypeCode=" + roofTypeCode
-				+ ", wallTypeCode=" + wallTypeCode + ", woodTypeCode=" + woodTypeCode + "]";
+		return "ConstructionTypesRequest [floorTypeId=" + floorTypeId + ", roofTypeId=" + roofTypeId
+				+ ", wallTypeId=" + wallTypeId + ", woodTypeId=" + woodTypeId + "]";
 	}
 
 }

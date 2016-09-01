@@ -1141,7 +1141,7 @@ public class ModifyPropertyAction extends PropertyTaxBaseAction {
                 propOccId, floorTypeId, roofTypeId, wallTypeId, woodTypeId, modifyRsn, propCompletionDate);
         validateApproverDetails();
         if (!propertyByEmployee) {
-            if (null != basicProp && null == propService.getUserPositionByZone(basicProp)) {
+            if (null != basicProp && null == propService.getUserPositionByZone(basicProp,basicProp.getSource())) {
                 addActionError(getText("notexists.position"));
             }
         }

@@ -46,7 +46,7 @@ public class LcmsConstants {
     public static final String CIVIL_COURT_KEY = "Civil Court";
     public static final String EX_PARTE_KEY = "Ex-parte";
     public static final String DATE_FILTER_KEY = "DateFilterKey";
-    public static final String JUDGMENTIMPLEMENT_STATUS = "Judgment_Implemented";
+    public static final String JUDGMENTIMPLEMENT_STATUS = "JUDGEMENT_IMPL";
     public static final String JUDGMENTIMPLEMENT_INPROGRESS_STATUS = "Implementation In Progress";
     public static final String START_CASE_YEAR_KEY = "START_CASE_YEAR";
     public static final String LC_NUMBER_TYPE_KEY = "LC_NUMBER_TYPE";
@@ -120,7 +120,8 @@ public class LcmsConstants {
     public static final String LEGALCASE_STATUS_ORDER = "ORDER";
     public static final String LEGALCASE_STATUS_CREATED = "LCCREATED";
     public static final String LEGALCASE_STATUS_JUDGMENT = "JUDGMENT";
-    public static final String LEGALCASE_STATUS_CLOSE = "CLOSE_CASE";
+    public static final String LEGALCASE_STATUS_JUDGMENT_IMPLIMENTED = "JUDGEMENT_IMPL";
+    public static final String LEGALCASE_STATUS_CLOSED = "CLOSED";
     public static final String LEGALCASE_STATUS_HEARING_REPLYTOTI = "HEARING_REPLY_TO_TI";
     public static final String LEGALCASE_STATUS_ORDER_REPLYTOTI = "ORDER_REPLY_TO_TI";
     public static final String ADVOCATEBILL_REJECTED_STATUS = "PROSECUTOR_REJECTED";

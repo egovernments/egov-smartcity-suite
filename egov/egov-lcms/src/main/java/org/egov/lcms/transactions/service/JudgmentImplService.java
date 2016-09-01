@@ -104,7 +104,7 @@ public class JudgmentImplService {
     public void saveOrUpdate(final JudgmentImpl judgmentImpl) {
         persist(judgmentImpl);
         final EgwStatus statusObj = legalCaseUtil.getStatusForModuleAndCode(LcmsConstants.MODULE_TYPE_LEGALCASE,
-                LcmsConstants.JUDGMENTIMPLEMENT_STATUS);
+                LcmsConstants.LEGALCASE_STATUS_JUDGMENT_IMPLIMENTED);
         judgmentImpl.getJudgment().getLegalCase().setStatus(statusObj);
         legalCaseService.save(judgmentImpl.getJudgment().getLegalCase());
 

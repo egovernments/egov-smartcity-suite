@@ -46,6 +46,7 @@ import java.io.Serializable;
 public class OwnershipCategoryDetails implements Serializable {
 
 	private String ownershipCategoryCode;
+	//private String ulbCode;
 
 	public String getOwnershipCategoryCode() {
 		return ownershipCategoryCode;
@@ -58,6 +59,15 @@ public class OwnershipCategoryDetails implements Serializable {
 	@Override
 	public String toString() {
 		return "OwnershipCategoryDetails [ownershipCategoryCode=" + ownershipCategoryCode + "]";
+		//return "OwnershipCategoryDetails [ownershipCategoryCode=" + ownershipCategoryCode + ", ulbCode=" + ulbCode + "]";
 	}
+
+	/*public String getUlbCode() {
+		return ulbCode;
+	}
+
+	public void setUlbCode(String ulbCode) {
+		this.ulbCode = ulbCode;
+	}*/
 
 }

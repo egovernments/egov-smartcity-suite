@@ -659,7 +659,8 @@ public class CreatePropertyAction extends PropertyTaxBaseAction {
         approverName = "";
         buildEmailandSms(property, APPLICATION_TYPE_NEW_ASSESSENT);
         Assignment assignment;
-        if(property.getBasicProperty().getSource().equals(PropertyTaxConstants.SOURCEOFDATA_ONLINE)){
+        if(property.getBasicProperty().getSource().equals(PropertyTaxConstants.SOURCEOFDATA_ONLINE) ||
+        		property.getBasicProperty().getSource().equals(PropertyTaxConstants.SOURCEOFDATA_MOBILE)){
         	propertyInitiatedBy = propertyTaxUtil.getApproverUserName(property.getStateHistory().get(0)
                     .getOwnerPosition().getId());
         } else {
@@ -1176,7 +1177,7 @@ public class CreatePropertyAction extends PropertyTaxBaseAction {
             propertyid.setElectionBoundary(boundaryService.getBoundaryById(getElectionWardId()));
             property.getBasicProperty().setPropertyID(propertyid);
             if (null != getElectionWardId() && getElectionWardId() != -1 && null != property.getBasicProperty()
-                    && null == propService.getUserPositionByZone(property.getBasicProperty())) {
+                    && null == propService.getUserPositionByZone(property.getBasicProperty(),PropertyTaxConstants.SOURCEOFDATA_MEESEWA)) {
                 addActionError(getText("notexists.position"));
             }
         }

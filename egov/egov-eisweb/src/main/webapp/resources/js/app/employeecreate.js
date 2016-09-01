@@ -106,6 +106,8 @@ $(document).ready(function(){
 	
 	$("#deptId").blur(function (){
 		var deptId = $("#deptId").val();
+		$("#positionId").val("");
+		$("#positionName").val("");
 		if(null!=deptId || ''!=deptId){
 			$('.departmenterror').hide();
 		}
@@ -113,6 +115,8 @@ $(document).ready(function(){
 	
 	$("#designationName").blur(function (){
 		var desigId = $("#designationName").val();
+		$("#positionId").val("");
+		$("#positionName").val("");
 		if(null!=desigId || ''!=desigId){
 			$('.designationerror').hide();
 		}

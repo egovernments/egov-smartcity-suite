@@ -636,7 +636,7 @@ public class PropertyTransferAction extends GenericWorkFlowAction {
         }
 
         if (loggedUserIsMeesevaUser || !propertyByEmployee) {
-            if (null != basicproperty && null == propertyService.getUserPositionByZone(basicproperty)) {
+            if (null != basicproperty && null == propertyService.getUserPositionByZone(basicproperty,basicproperty.getSource())) {
                 addActionError(getText("notexists.position"));
             }
         }
@@ -652,7 +652,7 @@ public class PropertyTransferAction extends GenericWorkFlowAction {
 
         if (!propertyByEmployee) {
             currentState = "Created";
-            final Assignment assignment = propertyService.getUserPositionByZone(basicproperty);
+            final Assignment assignment = propertyService.getUserPositionByZone(basicproperty,basicproperty.getSource());
             approverPositionId = assignment.getPosition().getId();
             approverName = assignment.getEmployee().getName().concat("~").concat(assignment.getPosition().getName());
         } else

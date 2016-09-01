@@ -88,6 +88,7 @@ import static org.egov.ptis.constants.PropertyTaxConstants.STATUS_WORKFLOW;
 import static org.egov.ptis.constants.PropertyTaxConstants.VACANT_PROPERTY;
 import static org.egov.ptis.constants.PropertyTaxConstants.WFLOW_ACTION_NAME_MODIFY;
 import static org.egov.ptis.constants.PropertyTaxConstants.WF_STATE_APPROVAL_PENDING;
+import static org.egov.ptis.constants.PropertyTaxConstants.PT_WORKFLOWDESIGNATION_MOBILE;
 
 import java.io.File;
 import java.math.BigDecimal;
@@ -2313,8 +2314,8 @@ public class PropertyService {
      * @param basicProperty
      * @return
      */
-    public Assignment getUserPositionByZone(final BasicProperty basicProperty) {
-        final String designationStr = getDesignationForThirdPartyUser();
+    public Assignment getUserPositionByZone(final BasicProperty basicProperty, Character source) {
+        final String designationStr = getDesignationForThirdPartyUser(source);
         final String departmentStr = getDepartmentForWorkFlow();
         final String[] department = departmentStr.split(",");
         final String[] designation = designationStr.split(",");
@@ -2352,9 +2353,14 @@ public class PropertyService {
      *
      * @return
      */
-    public String getDesignationForThirdPartyUser() {
+    public String getDesignationForThirdPartyUser(Character source) {
+    	String appConfigKey = StringUtils.EMPTY;
+    	if(source.equals(PropertyTaxConstants.SOURCEOFDATA_MOBILE))
+    		appConfigKey = PT_WORKFLOWDESIGNATION_MOBILE;
+    	else
+    		appConfigKey = PROPERTYTAX_WORKFLOWDESIGNATION;
         final List<AppConfigValues> appConfigValue = appConfigValuesService.getConfigValuesByModuleAndKey(PTMODULENAME,
-                PROPERTYTAX_WORKFLOWDESIGNATION);
+        		appConfigKey);
         return null != appConfigValue ? appConfigValue.get(0).getValue() : null;
     }
 
@@ -2504,7 +2510,8 @@ public class PropertyService {
 
     public Assignment getWorkflowInitiator(final PropertyImpl property) {
         Assignment wfInitiator = null;
-        if(property.getBasicProperty().getSource().equals(PropertyTaxConstants.SOURCEOFDATA_ONLINE)){
+        if(property.getBasicProperty().getSource().equals(PropertyTaxConstants.SOURCEOFDATA_ONLINE) ||
+        	property.getBasicProperty().getSource().equals(PropertyTaxConstants.SOURCEOFDATA_MOBILE)){
         	if(!property.getStateHistory().isEmpty())
         		wfInitiator = assignmentService.getPrimaryAssignmentForPositon(property.getStateHistory().get(0)
                     .getOwnerPosition().getId());

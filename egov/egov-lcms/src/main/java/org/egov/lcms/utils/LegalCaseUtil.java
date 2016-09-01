@@ -43,7 +43,6 @@ import java.util.List;
 
 import org.egov.commons.EgwStatus;
 import org.egov.commons.dao.EgwStatusHibernateDAO;
-import org.egov.commons.dao.FunctionaryHibernateDAO;
 import org.egov.eis.service.PositionMasterService;
 import org.egov.infra.admin.master.entity.Department;
 import org.egov.infra.admin.master.service.DepartmentService;
@@ -51,6 +50,7 @@ import org.egov.lcms.transactions.entity.BipartisanDetails;
 import org.egov.lcms.transactions.entity.LegalCase;
 import org.egov.lcms.transactions.entity.LegalCaseDocuments;
 import org.egov.lcms.transactions.repository.LegalCaseRepository;
+import org.egov.lcms.utils.constants.LcmsConstants;
 import org.egov.pims.commons.Position;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -66,8 +66,6 @@ public class LegalCaseUtil {
     @Autowired
     private LegalCaseRepository legalCaseRepository;
 
-    @Autowired
-    private FunctionaryHibernateDAO functionaryDAO;
 
     @Autowired
     private PositionMasterService positionMasterService;
@@ -81,6 +79,11 @@ public class LegalCaseUtil {
         return status;
     }
 
+    @Transactional(propagation = Propagation.REQUIRES_NEW, readOnly = true)
+    public List<EgwStatus> getStatusForModule() {
+        final List<EgwStatus> statusList = egwStatusDAO.getStatusByModule(LcmsConstants.MODULE_TYPE_LEGALCASE);
+        return statusList;
+    }
     @Transactional(propagation = Propagation.REQUIRES_NEW, readOnly = true)
     public Position getPositionByName(final String name) {
         return positionMasterService.getPositionByName(name);

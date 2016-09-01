@@ -203,7 +203,7 @@ public class TaxExemptionController extends GenericWorkFlowController {
         String target = "";
         loggedUserIsMeesevaUser = propertyService.isMeesevaUser(securityUtils.getCurrentUser());
         if ((!propertyByEmployee || loggedUserIsMeesevaUser)
-                && null == propertyService.getUserPositionByZone(property.getBasicProperty())) {
+                && null == propertyService.getUserPositionByZone(property.getBasicProperty(),property.getBasicProperty().getSource())) {
             model.addAttribute("errorMsg", "No Senior or Junior assistants exists,Please check");
             model.addAttribute("stateType", propertyImpl.getClass().getSimpleName());
             taxExemptionService.addModelAttributes(model, basicProperty);
@@ -240,7 +240,7 @@ public class TaxExemptionController extends GenericWorkFlowController {
                             + propertyTaxUtil.getApproverUserName(((PropertyImpl) property).getState()
                                     .getOwnerPosition().getId()) + " with application number "
                             + property.getApplicationNo());
-            if (loggedUserIsMeesevaUser)
+           if (loggedUserIsMeesevaUser)
                 target = "redirect:/exemption/generate-meesevareceipt/"
                         + ((PropertyImpl) property).getBasicProperty().getUpicNo() + "?transactionServiceNumber="
                         + ((PropertyImpl) property).getApplicationNo();

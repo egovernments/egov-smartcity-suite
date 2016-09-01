@@ -199,6 +199,57 @@ public class RestApiConstants {
 	
 	public static final String PTIS_DEMAND_AMOUNT_GREATER_CODE = "60";
     public static final String PTIS_DEMAND_AMOUNT_GREATER_MSG= "Paid Amount is greater than Total Amount to be paid";
+    
+    public static final String AREA_GREATER_THAN_ZERO_CODE = "61";
+	public static final String AREA_GREATER_THAN_ZERO_MSG = "Area/Extent of site should be greate than 0.";
+	
+	public static final String MARKET_VALUE_GREATER_THAN_ZERO_CODE = "62";
+	public static final String MARKET_VALUE_GREATER_THAN_ZERO_MSG = "Market Value should be greate than 0.";
+	
+	public static final String CURRENT_CAPITAL_VALUE_GREATER_THAN_ZERO_CODE = "63";
+	public static final String CURRENT_CAPITAL_VALUE_GREATER_THAN_ZERO_MSG = "Current Capital Value should be greate than 0.";
+	
+	public static final String FIRMNAME_REQ_CODE = "64";
+	public static final String FIRMNAME_REQ_MSG = "Area/Extent of site should be greate than 0.";
+	
+	public static final String OCCUPANCY_DATE_REQ_CODE = "65";
+	public static final String OCCUPANCY_DATE_REQ_MSG = "Occupancy Date is required.";
+	
+	public static final String PLINTH_AREA_GREATER_THAN_ZERO_CODE = "66";
+	public static final String PLINTH_AREA_GREATER_THAN_ZERO_MSG = "Plinth area should be greater than 0.";
+	
+	public static final String PLINTH_LENGTH_REQ_CODE = "67";
+	public static final String PLINTH_LENGTH_REQ_MSG = "Plinth length is required.";
+	
+	public static final String PLINTH_LENGTH_GREATER_THAN_ZERO_CODE = "68";
+	public static final String PLINTH_LENGTH_GREATER_THAN_ZERO_MSG = "Plinth length should be greater than 0.";
+	
+	public static final String PLINTH_BREADTH_REQ_CODE = "69";
+	public static final String PLINTH_BREADTH_REQ_MSG = "Plinth breadth is required.";
+	
+	public static final String PLINTH_BREADTH_GREATER_THAN_CODE = "70";
+	public static final String PLINTH_BREADTH_GREATER_THAN_MSG = "Plinth breadth should be greater than 0.";
+	
+	public static final String ADDRESS_DETAILS_REQ_CODE = "71";
+	public static final String ADDRESS_DETAILS_REQ_MSG = "Property address details are required.";
+	
+	public static final String ELECTION_WARD_REQ_CODE = "72";
+	public static final String ELECTION_WARD_REQ_MSG = "Election Ward is required.";
+	
+	public static final String DOOR_NO_REQ_CODE = "73";
+	public static final String DOOR_NO_REQ_MSG = "Door Number is required.";
+	
+	public static final String CONSTRUCTION_DETAILS_REQ_CODE = "74";
+	public static final String CONSTRUCTION_DETAILS_REQ_MSG = "Please enter the construction details.";
+	
+	public static final String FUTURE_DATES_NOT_ALLOWED_CODE = "75";
+	public static final String FUTURE_DATES_NOT_ALLOWED_MSG = "Registration Doc Date/Construction Date/Occupancy Date cannot be greater than current date.";
+	
+	public static final String OCCUPANCY_DATE_BEFORE_CONSTRUCTION_DATE_CODE = "76";
+	public static final String OCCUPANCY_DATE_BEFORE_CONSTRUCTION_DATE_MSG = "Occupancy Date cannot be before Construction Date.";
+	
+	public static final String PLINTH_AREA_GREATER_THAN_PLOT_AREA_CODE = "77";
+	public static final String PLINTH_AREA_GREATER_THAN_PLOT_AREA_MSG = "Plinth Area cannot be greater than Extent of Site.";
 	
 	//Water TAx
 	public static final String PROPERTY_USAGETYPE_COMBINATION_VALID_CODE="42";

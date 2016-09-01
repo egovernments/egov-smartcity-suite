@@ -193,6 +193,7 @@ public class LegalCase extends AbstractAuditable {
 
     @Transient
     private String finwpYear;
+    
 
     @OneToMany(mappedBy = "legalCase", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Judgment> judgment = new ArrayList<Judgment>(0);
@@ -383,6 +384,7 @@ public class LegalCase extends AbstractAuditable {
 
     }
 
+    
     public List<BipartisanDetails> getRespondents() {
         // iterate through this.getBipartisan and return only petitioners (based
         // on isRespondent=1)
@@ -394,7 +396,35 @@ public class LegalCase extends AbstractAuditable {
         bipartisanRespondentDetailsList = new ArrayList<BipartisanDetails>(tempset);
         return bipartisanRespondentDetailsList;
     }
+    public String getRespondantNames() {
+		StringBuilder tempStr = new StringBuilder();
+        for (final BipartisanDetails temp : bipartisanDetails)
+            if (temp.getIsRepondent()){
+            	if(tempStr.length()==0){
+            		tempStr.append(temp.getName());
+            	}
+            	else
+            	{
+            		tempStr.append(",\n"+temp.getName());
+            	}
+            }
+        return tempStr.toString();
+	}
 
+	public String getPetitionersNames() {
+		StringBuilder tempStr = new StringBuilder();
+        for (final BipartisanDetails temp : bipartisanDetails)
+            if (!temp.getIsRepondent()){
+            	if(tempStr.length()==0){
+            		tempStr.append(temp.getName());
+            	}
+            	else
+            	{
+            		tempStr.append(",\n"+temp.getName());
+            	}
+            }
+        return tempStr.toString();
+	}
     public Judgment getJudgmentValue() {
         Judgment judgmentValue = null;
         for (final Judgment j : getJudgment())
@@ -884,5 +914,7 @@ public class LegalCase extends AbstractAuditable {
     public void setIsfiledbycorporation(final Boolean isfiledbycorporation) {
         this.isfiledbycorporation = isfiledbycorporation;
     }
+
+	
 
 }

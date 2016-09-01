@@ -39,15 +39,9 @@
  */
 package org.egov.eis.entity;
 
-import org.egov.commons.CFunction;
-import org.egov.commons.Functionary;
-import org.egov.commons.Fund;
-import org.egov.infra.admin.master.entity.Department;
-import org.egov.infra.persistence.entity.AbstractAuditable;
-import org.egov.pims.commons.Designation;
-import org.egov.pims.commons.Position;
-import org.egov.pims.model.GradeMaster;
-import org.hibernate.search.annotations.DocumentId;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -62,9 +56,16 @@ import javax.persistence.OneToMany;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
+
+import org.egov.commons.CFunction;
+import org.egov.commons.Functionary;
+import org.egov.commons.Fund;
+import org.egov.infra.admin.master.entity.Department;
+import org.egov.infra.persistence.entity.AbstractAuditable;
+import org.egov.pims.commons.Designation;
+import org.egov.pims.commons.Position;
+import org.egov.pims.model.GradeMaster;
+import org.hibernate.search.annotations.DocumentId;
 
 @Entity
 @Table(name = "egeis_assignment")
@@ -125,13 +126,15 @@ public class Assignment extends AbstractAuditable {
     @JoinColumn(name = "employee")
     private Employee employee;
 
-    @OneToMany(mappedBy = "assignment", orphanRemoval = true, fetch = FetchType.LAZY, cascade = CascadeType.ALL)
-    private List<HeadOfDepartments> deptSet = new ArrayList<HeadOfDepartments>(0);
+    @OneToMany(mappedBy = "assignment", orphanRemoval = true, fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+    private final List<HeadOfDepartments> deptSet = new ArrayList<HeadOfDepartments>(0);
 
+    @Override
     public Long getId() {
         return id;
     }
 
+    @Override
     public void setId(final Long id) {
         this.id = id;
     }
@@ -230,9 +233,8 @@ public class Assignment extends AbstractAuditable {
 
     public void setDeptSet(final List<HeadOfDepartments> deptSet) {
         this.deptSet.clear();
-        if(deptSet !=null ){
+        if (deptSet != null)
             this.deptSet.addAll(deptSet);
-        }
     }
 
 }
