@@ -87,7 +87,7 @@
 						<div class="col-sm-3 add-margin">
 							<input type="text" name="fromDate"
 								class="form-control datepicker" data-date-end-date="0d"
-								id="fromDate" data-inputmask="'mask': 'd/m/y'"/>
+								id="fromDate" data-inputmask="'mask': 'd/m/y' onblur="onchnageofDate()"/>
 						</div>
 						<label class="col-sm-2 control-label text-right"> <spring:message
 								code="lbl.toDate" />:</label>

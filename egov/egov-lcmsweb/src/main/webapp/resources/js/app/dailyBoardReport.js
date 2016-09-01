@@ -60,7 +60,6 @@ jQuery(document).ready(
 		
 function submitForm() {
 	if($('form').valid()){
-	var caseType = $("#caseCatogory").val();
 	
 	$('.report-section').removeClass('display-hide');
 	$('#report-footer').show();
@@ -70,9 +69,9 @@ function submitForm() {
 					
 					url : "/lcms/reports/dailyBoardReportresults",
 					data : {
-						'caseType' : caseType,
-						'caseNumber' :$("#caseNumber").val(),
-						'court': $("#courtName").val(),
+						'caseType' :$("#caseCatogory").val(),
+						'fromDate' :$("#fromDate").val(),
+						'toDate': $("#toDate").val(),
 						'officerIncharge' : $("#officerIncharge").val(),
 						'standingCouncil': $("#standingCouncil").val()
 					}
@@ -91,14 +90,17 @@ function submitForm() {
 				},
 				columns :[{"title" : "S.no"},
 				             
-					       { "data" : "casetitle" , "title": "Case Title"},  
-						  { "data" : "courtname", "title": "Court Name"},
-						  { "data" : "casenumber", "title": "Case Number"},
-						  { "data" : "petitiontype", "title": "Petition Type"},
-						  { "data" : "standingcouncil", "title": "Standing Council"},
+					       { "data" : "caseTitle" , "title": "Case Title"},  
+						  { "data" : "courtName", "title": "Court Name"},
+						  { "data" : "caseNumber", "title": "Case Number"},
+						  { "data" : "petitioners", "title": "Petitioners"},
+						  { "data" : "respondants", "title": "Respondants"},
+						  { "data" : "petitionType", "title": "Petition Type"},
+						  { "data" : "standingCouncil", "title": "Standing Council"},
 						  { "data" : "officerIncharge", "title": "In Charge Officer"},
-						  { "data" : "casestatus", "title": "Status"},
-						  { "data" : "nextdate", "title": "Next Imp Date"}],
+						  { "data" : "caseStatus", "title": "Status"},
+						  { "data" : "nextDate", "title": "Next Imp Date"}
+						  ],
 						  
 			  
 						  "footerCallback" : function(row, data, start, end, display) {
@@ -135,6 +137,24 @@ function submitForm() {
 		
 	}
 	
+
+}
+
+function onchnageofDate() {
+	var date;
+	var d = new Date();
+	var curr_month = d.getMonth();
+	var curr_date = d.getDate();
+	if (curr_date <= 9) {
+		curr_date = ("0" + curr_date);
+	}
+	curr_month++;
+	if (!(curr_month > 9)) {
+		curr_month = ("0" + curr_month);
+	}
+	var curr_year = d.getFullYear();
+	date = curr_date + "/" + (curr_month) + "/" + curr_year;
+	$("#toDate").val(date);
 
 }
 

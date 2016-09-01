@@ -37,32 +37,39 @@
  *
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
-
 package org.egov.lcms.reports.entity;
 
 import java.util.Date;
 
-public class DailyBoardReportResults {
+import org.egov.lcms.transactions.entity.LegalCase;
 
-    private Date fromDate;
-    private Date toDate;
-    private String caseCategory;
-    private String courtName;
+public class DailyBoardReportResults {
     private String caseNumber;
-    private String petitionType;
+    private Date fromDate;
+    private LegalCase legalCase;
+    private Date toDate;
     private String standingCouncil;
-    private String officerIncharge;
-    private String caseTitle ;
-    private String petitioner;
-    private String respondent;
-    private String nextDate;
+    private Integer casecategory;
+    private String petitionType;
+    private Integer petitionTypeId;
+    private Integer courtType;
+    private String courtName;
+    private Integer courtId;
+    private String govtDept;
+    private String caseTitle;
+    private String petName;
+    private String resName;
     private String caseStatus;
+    private Integer statusId;
+    private String assignDept;
+    private Date nextDate;
+    private String officerIncharge;
 
     public Date getFromDate() {
         return fromDate;
     }
 
-    public void setFromDate(final Date fromDate) {
+    public void setFromDate(Date fromDate) {
         this.fromDate = fromDate;
     }
 
@@ -70,25 +77,32 @@ public class DailyBoardReportResults {
         return toDate;
     }
 
-    public void setToDate(final Date toDate) {
+    public void setToDate(Date toDate) {
         this.toDate = toDate;
     }
 
-    
-    public String getCaseCategory() {
-        return caseCategory;
+    public Date getNextDate() {
+        return nextDate;
     }
 
-    public void setCaseCategory(String caseCategory) {
-        this.caseCategory = caseCategory;
+    public void setNextDate(Date nextDate) {
+        this.nextDate = nextDate;
     }
 
-    public String getCourtName() {
-        return courtName;
+    public String getOfficerIncharge() {
+        return officerIncharge;
     }
 
-    public void setCourtName(final String courtName) {
-        this.courtName = courtName;
+    public void setOfficerIncharge(String officerIncharge) {
+        this.officerIncharge = officerIncharge;
+    }
+
+    public String getStandingCouncil() {
+        return standingCouncil;
+    }
+
+    public void setStandingCouncil(final String standingCouncil) {
+        this.standingCouncil = standingCouncil;
     }
 
     public String getCaseNumber() {
@@ -99,73 +113,128 @@ public class DailyBoardReportResults {
         this.caseNumber = caseNumber;
     }
 
-   
-    public String getStandingCouncil() {
-        return standingCouncil;
-    }
 
-    public void setStandingCouncil(final String standingCouncil) {
-        this.standingCouncil = standingCouncil;
-    }
 
-    public String getPetitionType() {
+    
+
+        public String getPetitionType() {
         return petitionType;
     }
 
-    public void setPetitionType(String petitionType) {
+    public void setPetitionType(final String petitionType) {
         this.petitionType = petitionType;
     }
 
-   
+    
 
-    public String getOfficerIncharge() {
-        return officerIncharge;
+    public Integer getCasecategory() {
+                return casecategory;
+        }
+
+        public void setCasecategory(Integer casecategory) {
+                this.casecategory = casecategory;
+        }
+
+        public Integer getCourtType() {
+                return courtType;
+        }
+
+        public void setCourtType(Integer courtType) {
+                this.courtType = courtType;
+        }
+
+        
+
+        public String getCourtName() {
+                return courtName;
+        }
+
+        public void setCourtName(String courtName) {
+                this.courtName = courtName;
+        }
+
+        public Integer getCourtId() {
+                return courtId;
+        }
+
+        public void setCourtId(Integer courtId) {
+                this.courtId = courtId;
+        }
+
+        public String getGovtDept() {
+        return govtDept;
     }
 
-    public void setOfficerIncharge(String officerIncharge) {
-        this.officerIncharge = officerIncharge;
+    public void setGovtDept(final String govtDept) {
+        this.govtDept = govtDept;
     }
+
+    public String getPetName() {
+        return petName;
+    }
+
+    public void setPetName(final String petName) {
+        this.petName = petName;
+    }
+
+    public String getCaseStatus() {
+        return caseStatus;
+    }
+
+    public void setCaseStatus(final String caseStatus) {
+        this.caseStatus = caseStatus;
+    }
+
 
     public String getCaseTitle() {
         return caseTitle;
     }
 
-    public void setCaseTitle(String caseTitle) {
+    public void setCaseTitle(final String caseTitle) {
         this.caseTitle = caseTitle;
     }
 
-    public String getPetitioner() {
-        return petitioner;
+    public String getAssignDept() {
+        return assignDept;
     }
 
-    public void setPetitioner(String petitioner) {
-        this.petitioner = petitioner;
+    public void setAssignDept(final String assignDept) {
+        this.assignDept = assignDept;
     }
 
-    public String getRespondent() {
-        return respondent;
-    }
+    
 
-    public void setRespondent(String respondent) {
-        this.respondent = respondent;
-    }
+        public Integer getStatusId() {
+                return statusId;
+        }
 
-   
-    public String getCaseStatus() {
-        return caseStatus;
-    }
+        public void setStatusId(Integer statusId) {
+                this.statusId = statusId;
+        }
 
-    public void setCaseStatus(String caseStatus) {
-        this.caseStatus = caseStatus;
-    }
+        public Integer getPetitionTypeId() {
+                return petitionTypeId;
+        }
 
-    public String getNextDate() {
-        return nextDate;
-    }
+        public void setPetitionTypeId(Integer petitionTypeId) {
+                this.petitionTypeId = petitionTypeId;
+        }
 
-    public void setNextDate(String nextDate) {
-        this.nextDate = nextDate;
-    }
+        public String getResName() {
+                return resName;
+        }
 
-   
+        public void setResName(String resName) {
+                this.resName = resName;
+        }
+
+        public LegalCase getLegalCase() {
+                return legalCase;
+        }
+
+        public void setLegalCase(LegalCase legalCase) {
+                this.legalCase = legalCase;
+        }
+    
+
 }

@@ -42,29 +42,31 @@ package org.egov.lcms.web.adaptor;
 import java.lang.reflect.Type;
 
 import org.egov.lcms.reports.entity.DailyBoardReportResults;
-import org.springframework.stereotype.Component;
 
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonSerializationContext;
 import com.google.gson.JsonSerializer;
 
-@Component
-public class DailyBoardReportAdapter implements JsonSerializer<DailyBoardReportResults> {
+public class DailyBoardReportJsonAdapter implements JsonSerializer<DailyBoardReportResults> {
 
     @Override
     public JsonElement serialize(final DailyBoardReportResults dailyboardresult, final Type typeOfSrc,
             final JsonSerializationContext context) {
         final JsonObject jsonObject = new JsonObject();
-        jsonObject.addProperty("casenumber", dailyboardresult.getCaseNumber());
-        jsonObject.addProperty("casetitle", dailyboardresult.getCaseTitle());
-        jsonObject.addProperty("courtname", dailyboardresult.getCourtName());
-        jsonObject.addProperty("petitiontype", dailyboardresult.getPetitionType());
-        // jsonObject.addProperty("Respondants", legalcaseresult.get);
-        jsonObject.addProperty("standingcouncil", dailyboardresult.getStandingCouncil());
-        jsonObject.addProperty("officerIncharge", dailyboardresult.getOfficerIncharge());
-        jsonObject.addProperty("casestatus", dailyboardresult.getCaseStatus());
-        jsonObject.addProperty("nextdate", dailyboardresult.getNextDate());
+        jsonObject.addProperty("caseNumber", dailyboardresult.getLegalCase().getCaseNumber());
+        jsonObject.addProperty("caseTitle", dailyboardresult.getLegalCase().getCaseTitle());
+        jsonObject.addProperty("courtName", dailyboardresult.getCourtName());
+        jsonObject.addProperty("petitionType", dailyboardresult.getPetitionTypeId());
+        jsonObject.addProperty("petitioners", dailyboardresult.getLegalCase().getPetitionersNames());
+        jsonObject.addProperty("respondants", dailyboardresult.getLegalCase().getRespondantNames());
+        jsonObject.addProperty("standingCouncil", dailyboardresult.getLegalCase().getOppPartyAdvocate());
+        jsonObject.addProperty("officerIncharge", dailyboardresult.getLegalCase().getOfficerIncharge());
+        jsonObject.addProperty("caseStatus", dailyboardresult.getCaseStatus());
+        // jsonObject.addProperty("nextDate",
+        // dailyboardresult.getLegalCase().getNextDate() + " - "
+        // + DateUtils.getFormattedDate(dailyboardresult.getNextDate(),
+        // "dd/MM/yyyy"));
         return jsonObject;
     }
 

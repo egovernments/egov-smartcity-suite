@@ -41,6 +41,7 @@ package org.egov.lcms.transactions.service;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Date;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -50,6 +51,7 @@ import org.egov.commons.EgwStatus;
 import org.egov.infra.exception.ApplicationRuntimeException;
 import org.egov.infra.filestore.entity.FileStoreMapper;
 import org.egov.infra.filestore.service.FileStoreService;
+import org.egov.infra.utils.DateUtils;
 import org.egov.lcms.transactions.entity.Judgment;
 import org.egov.lcms.transactions.entity.JudgmentDocuments;
 import org.egov.lcms.transactions.repository.JudgmentRepository;
@@ -91,6 +93,7 @@ public class JudgmentService {
         processAndStoreApplicationDocuments(judgment);
         final EgwStatus statusObj = legalCaseUtil.getStatusForModuleAndCode(LcmsConstants.MODULE_TYPE_LEGALCASE,
                 LcmsConstants.LEGALCASE_STATUS_JUDGMENT);
+        updateNextDate(judgment);
         judgment.getLegalCase().setStatus(statusObj);
         legalCaseRepository.save(judgment.getLegalCase());
         return judgmentRepository.save(judgment);
@@ -135,9 +138,19 @@ public class JudgmentService {
             return null;
     }
 
-    @Transactional(propagation=Propagation.REQUIRES_NEW,readOnly=true)
+    @Transactional(propagation = Propagation.REQUIRES_NEW, readOnly = true)
     public Judgment findByLcNumber(final String lcNumber) {
         return judgmentRepository.findByLegalCase_lcNumber(lcNumber);
+    }
+
+    public void updateNextDate(final Judgment judgment) {
+        final Date nextDate = judgment.getEnquiryDate() != null ? judgment.getEnquiryDate() : judgment.getOrderDate();
+        if (!DateUtils.compareDates(judgment.getLegalCase().getNextDate(), nextDate))
+            judgment.getLegalCase().setNextDate(nextDate);
+        else if (judgment.getEnquiryDate() != null)
+            judgment.getLegalCase().setNextDate(judgment.getEnquiryDate());
+        else
+            judgment.getLegalCase().setNextDate(judgment.getOrderDate());
     }
 
 }

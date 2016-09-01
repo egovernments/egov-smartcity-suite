@@ -39,13 +39,14 @@
  */
 package org.egov.lcms.transactions.service;
 
-import java.util.Date;
+import java.util.List;
 
 import javax.persistence.EntityManager;
 
-import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang.StringUtils;
 import org.egov.lcms.reports.entity.DailyBoardReportResults;
-import org.hibernate.SQLQuery;
+import org.egov.lcms.utils.constants.LcmsConstants;
+import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.transform.AliasToBeanResultTransformer;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -55,42 +56,83 @@ import org.springframework.transaction.annotation.Transactional;
 @Service
 @Transactional(readOnly = true)
 public class DailyBoardReportService {
-
     @Autowired
     private EntityManager entityManager;
 
-    public SQLQuery getDailyBoardReport(final String caseNumber, final String court, final String casetype,
-            final String standingcouncil,final String officerIncharge, final String status,final Date nextDate) {
+    public Session getCurrentSession() {
+        return entityManager.unwrap(Session.class);
+    }
 
+    public List<DailyBoardReportResults> getdailyBoardReportResults(
+            final DailyBoardReportResults dailyBoardReportResults) {
         final StringBuilder queryStr = new StringBuilder();
-        queryStr.append("select distinct legalObj.casetitle as \"caseTitle\",courtmaster.name  as \"courtName\",legalObj.casenumber as \"caseNumber\",petmaster.petitionType as \"petitionType\",")
-        .append(" legalObj.appealnum  as \"standingCouncil\",egwStatus.description  as \"caseStatus\", legalObj.officerincharge  as \"officerIncharge\",legalObj.nextdate  as \"nextDate\" ")
-        .append(" from EGLC_LEGALCASE legalObj,EGLC_BIPARTISANDETAILS bipart,eglc_court_master courtmaster,eglc_casetype_master casetypemaster,")
-        .append(" eglc_petitiontype_master petmaster,egw_status egwStatus where  bipart.legalcase=legalObj.id and legalObj.court=courtmaster.id and ")
-        .append(" legalObj.casetype=casetypemaster.id and legalObj.petitiontype=petmaster.id and ")
-        .append(" legalObj.status=egwStatus.id and egwStatus.moduletype='Legal Case' ");
+        queryStr.append("select distinct legalObj  as  legalCase ,courtmaster.name  as  courtName ,");
+        queryStr.append(" egwStatus.description  as  caseStatus ");
+        queryStr.append(" from LegalCase legalObj,CourtMaster courtmaster,CaseTypeMaster casetypemaster,");
+        queryStr.append(" PetitionTypeMaster petmaster,EgwStatus egwStatus");
+        queryStr.append(" where legalObj.courtMaster.id=courtmaster.id and ");
+        queryStr.append( " legalObj.caseTypeMaster.id=casetypemaster.id and legalObj.petitionTypeMaster.id=petmaster.id and ");
+        queryStr.append(" legalObj.status.id=egwStatus.id and egwStatus.moduletype =:moduleType ");
 
+        getAppendQuery(dailyBoardReportResults, queryStr);
+        Query queryResult = getCurrentSession().createQuery(queryStr.toString());
+        queryResult = setParameterForDailyBoardReportResults(dailyBoardReportResults, queryResult);
+        final List<DailyBoardReportResults> dailyBoardReportResultsList = queryResult.list();
+        return dailyBoardReportResultsList;
 
-        if (caseNumber != null && !caseNumber.isEmpty())
-            queryStr.append(" and legalObj.casenumber = " + "'" + caseNumber + "'");
-        if (StringUtils.isNotBlank(court))
-            queryStr.append(" and courtmaster.id = " + "'" + court + "'");
-     /* if (StringUtils.isNotBlank(court))
-            queryStr.append(" and courtmaster.id = " + "'" + court + "'");*/
-        if (casetype != null && StringUtils.isNotBlank(casetype))
-            queryStr.append(" and casetypemaster.id = " + "'" + casetype + "'");
-        if (standingcouncil != null && StringUtils.isNotBlank(standingcouncil))
-            queryStr.append(" and legalObj.appealnum  like  " + "'" + standingcouncil + "%'");
-        if (officerIncharge != null && !officerIncharge.isEmpty())
-            queryStr.append(" and legalObj.officerIncharge = " + "'" + officerIncharge + "'");
-        if (status != null && StringUtils.isNotBlank(status))
-            queryStr.append(" and egwStatus.id = " + "'" + status + "'");
-        if (nextDate != null )
-            queryStr.append(" and legalObj.nextDate = " + "'" + nextDate + "'");
+    }
 
-        final SQLQuery finalQuery = entityManager.unwrap(Session.class).createSQLQuery(queryStr.toString());
-        finalQuery.setResultTransformer(new AliasToBeanResultTransformer(DailyBoardReportResults.class));
-        return finalQuery;
+    private Query setParameterForDailyBoardReportResults(final DailyBoardReportResults dailyBoardReportObj,
+            final Query queryResult) {
+        queryResult.setString("moduleType", LcmsConstants.MODULE_TYPE_LEGALCASE);
+
+        if (StringUtils.isNotBlank(dailyBoardReportObj.getCaseNumber()))
+            queryResult.setString("caseNumber", dailyBoardReportObj.getCaseNumber() + "%");
+        if (dailyBoardReportObj.getCourtId() != null)
+            queryResult.setInteger("court", dailyBoardReportObj.getCourtId());
+        if (StringUtils.isNotBlank(dailyBoardReportObj.getOfficerIncharge()))
+            queryResult.setString("officerIncharge", dailyBoardReportObj.getOfficerIncharge());
+        if (dailyBoardReportObj.getCasecategory() != null)
+            queryResult.setInteger("casetype", dailyBoardReportObj.getCasecategory());
+        if (StringUtils.isNotBlank(dailyBoardReportObj.getStandingCouncil()))
+            queryResult.setString("standingCouncil", dailyBoardReportObj.getStandingCouncil() + "%");
+        if (dailyBoardReportObj.getStatusId() != null)
+            queryResult.setInteger("status", dailyBoardReportObj.getStatusId());
+        if (dailyBoardReportObj.getNextDate() != null)
+            queryResult.setDate("nextDate", dailyBoardReportObj.getNextDate());
+        if (dailyBoardReportObj.getFromDate() != null)
+            queryResult.setDate("fromdate", dailyBoardReportObj.getFromDate());
+        if (dailyBoardReportObj.getToDate() != null)
+            queryResult.setDate("toDate", dailyBoardReportObj.getToDate());
+        if (dailyBoardReportObj.getPetitionTypeId() != null)
+            queryResult.setInteger("petiontionType", dailyBoardReportObj.getPetitionTypeId());
+
+        queryResult.setResultTransformer(new AliasToBeanResultTransformer(DailyBoardReportResults.class));
+        return queryResult;
+    }
+
+    private void getAppendQuery(final DailyBoardReportResults dailyBoardReportObj, final StringBuilder queryStr) {
+
+        if (StringUtils.isNotBlank(dailyBoardReportObj.getCaseNumber()))
+            queryStr.append(" and legalObj.caseNumber like :caseNumber ");
+        if (dailyBoardReportObj.getCourtId() != null)
+            queryStr.append(" and courtmaster.id =:court ");
+        if (dailyBoardReportObj.getCasecategory() != null)
+            queryStr.append(" and casetypemaster.id =:casetype");
+        if (StringUtils.isNotBlank(dailyBoardReportObj.getStandingCouncil()))
+            queryStr.append(" and legalObj.oppPartyAdvocate like :standingCouncil ");
+        if (dailyBoardReportObj.getStatusId() != null)
+            queryStr.append(" and egwStatus.id =:status ");
+        if (dailyBoardReportObj.getFromDate() != null)
+            queryStr.append(" and legalObj.caseDate >=:fromdate ");
+        if (dailyBoardReportObj.getToDate() != null)
+            queryStr.append(" and legalObj.caseDate <=:toDate ");
+        if (dailyBoardReportObj.getPetitionTypeId() != null)
+            queryStr.append(" and petmaster.id =:petiontionType ");
+        if (dailyBoardReportObj.getNextDate() != null)
+            queryStr.append(" and legalObj.nextDate=:nextDate");
+        if (StringUtils.isNotBlank(dailyBoardReportObj.getOfficerIncharge()))
+            queryStr.append(" and legalObj.officerIncharge =:officerIncharge ");
 
     }
 
