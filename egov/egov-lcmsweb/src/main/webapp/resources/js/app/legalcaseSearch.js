@@ -125,9 +125,14 @@ function submitForm() {
 							"className" : "text-right"
 						},
 						{
-							"data" : "casestatus",
+							"data" : "statusDesc",
 							"sTitle" : "Case Status",
 							"className" : "text-right"
+						},
+						{
+							"data" : "casestatus",
+							"sTitle" : "Case Status1",
+							"bVisible" : false
 						},
 						{
 							"data" : "petitioners",

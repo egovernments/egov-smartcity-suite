@@ -87,7 +87,7 @@ public class SearchLegalCaseService {
 
 	}
 
-	private Query setParametersToQuery(LegalCaseSearchResult legalCaseSearchResultOblj, Boolean isStatusExcluded,
+	private Query setParametersToQuery(final LegalCaseSearchResult legalCaseSearchResultOblj, Boolean isStatusExcluded,
 			Query queryResult) {
 		queryResult.setString("mdoculeType", LcmsConstants.MODULE_TYPE_LEGALCASE);
 		if (StringUtils.isNotBlank(legalCaseSearchResultOblj.getLcNumber()))
@@ -129,8 +129,8 @@ public class SearchLegalCaseService {
 	}
 
 
-	private void getAppendQuery( LegalCaseSearchResult legalCaseSearchResultOblj  ,
-			final Boolean isStatusExcluded, final StringBuilder queryStr) {
+	private void getAppendQuery(final LegalCaseSearchResult legalCaseSearchResultOblj,final Boolean isStatusExcluded, 
+			final StringBuilder queryStr) {
 		if (StringUtils.isNotBlank(legalCaseSearchResultOblj.getLcNumber()))
 			queryStr.append(" and legalObj.lcNumber =:lcNumber");
 		if (StringUtils.isNotBlank(legalCaseSearchResultOblj.getCaseNumber()))

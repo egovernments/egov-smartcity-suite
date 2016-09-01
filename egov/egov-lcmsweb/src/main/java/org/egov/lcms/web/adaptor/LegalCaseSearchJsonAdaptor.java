@@ -62,7 +62,9 @@ public class LegalCaseSearchJsonAdaptor implements JsonSerializer<LegalCaseSearc
         jsonObject.addProperty("respondants", legalcaseresult.getLegalCase().getRespondantNames());
         jsonObject.addProperty("department", legalcaseresult.getAssignDept());
         jsonObject.addProperty("standingcouncil", legalcaseresult.getLegalCase().getOppPartyAdvocate());
-        jsonObject.addProperty("casestatus", legalcaseresult.getCaseStatus());
+        jsonObject.addProperty("casestatus", (legalcaseresult.getCaseStatus()));
+        jsonObject.addProperty("statusDesc", (legalcaseresult.getLegalCase().getStatus()!=null?legalcaseresult.getLegalCase().getStatus().getDescription():null));
+
         return jsonObject;
     }
 
