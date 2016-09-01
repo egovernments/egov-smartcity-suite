@@ -41,6 +41,7 @@ package org.egov.council.web.adaptor;
 import java.lang.reflect.Type;
 
 import org.egov.council.entity.CouncilPreamble;
+import org.egov.infra.utils.StringUtils;
 
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
@@ -55,27 +56,32 @@ public class CouncilPreambleJsonAdaptor implements JsonSerializer<CouncilPreambl
             if (councilPreamble.getDepartment() != null)
                 jsonObject.addProperty("department", councilPreamble.getDepartment().getName());
             else
-                jsonObject.addProperty("department", "");
+                jsonObject.addProperty("department", StringUtils.EMPTY);
             if (councilPreamble.getPreambleNumber() != null)
                 jsonObject.addProperty("preambleNumber", councilPreamble.getPreambleNumber());
             else
-                jsonObject.addProperty("department", "");
+                jsonObject.addProperty("department", StringUtils.EMPTY);
             if(councilPreamble.getGistOfPreamble() !=null)
                 jsonObject.addProperty("gistOfPreamble", councilPreamble.getGistOfPreamble());
             else
-                jsonObject.addProperty("gistOfPreamble", "");
+                jsonObject.addProperty("gistOfPreamble", StringUtils.EMPTY);
             if(councilPreamble.getSanctionAmount()!=null)
                 jsonObject.addProperty("sanctionAmount", councilPreamble.getSanctionAmount());
             else
-                jsonObject.addProperty("sanctionAmount", "");
+                jsonObject.addProperty("sanctionAmount", StringUtils.EMPTY);
             if(councilPreamble.getCreatedDate()!=null)
                 jsonObject.addProperty("createdDate", councilPreamble.getCreatedDate().toString());
             else
-                jsonObject.addProperty("createdDate", "");
+                jsonObject.addProperty("createdDate", StringUtils.EMPTY);
             if(councilPreamble.getCreatedDate()!=null)
                 jsonObject.addProperty("createdDate", councilPreamble.getCreatedDate().toString());
             else
-                jsonObject.addProperty("createdDate", "");
+                jsonObject.addProperty("createdDate", StringUtils.EMPTY);
+            if(councilPreamble.getCreatedDate()!=null)
+                jsonObject.addProperty("status", councilPreamble.getStatus().getCode());
+            else
+                jsonObject.addProperty("status", StringUtils.EMPTY);
+            
             jsonObject.addProperty("id", councilPreamble.getId());
         }
         return jsonObject;

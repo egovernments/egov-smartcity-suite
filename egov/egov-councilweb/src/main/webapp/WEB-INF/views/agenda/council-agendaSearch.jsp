@@ -66,6 +66,14 @@
 								</form:select>
 								<form:errors path="committeeType" cssClass="error-msg" />
 							</div>
+							
+							<label class="col-sm-2 control-label text-right"><spring:message
+							code="lbl.agendaNumber" /> </label>
+							<div class="col-sm-3 add-margin">
+								<form:input type="text" cssClass="form-control"
+									path="agendaNumber" id="agendaNumber"/>
+								<form:errors path="agendaNumber" cssClass="error-msg" />
+							</div>
 						</div>
 							<%-- <label class="col-sm-3 control-label text-right"><spring:message
 									code="lbl.status" /> </label>
@@ -105,13 +113,14 @@
 		</div>
 	</div>
 	<div class="form-group">
-			<div class="text-center">
-				<button type='button' class='btn btn-primary' id="btnsearch">
-					<spring:message code='lbl.search' />
-				</button>
-				<a href='javascript:void(0)' class='btn btn-default'
-					onclick='self.close()'><spring:message code='lbl.close' /></a>
-			</div>
+		<div class="text-center">
+			<button type='button' class='btn btn-primary' id="btnsearch">
+				<spring:message code='lbl.search' />
+			</button>
+			<button type="reset" class="btn btn-danger"><spring:message code="lbl.reset"/></button>
+			<a href='javascript:void(0)' class='btn btn-default'
+				onclick='self.close()'><spring:message code='lbl.close' /></a>
+		</div>
 	</div>
 </form:form>
 <div class="row display-hide report-section">

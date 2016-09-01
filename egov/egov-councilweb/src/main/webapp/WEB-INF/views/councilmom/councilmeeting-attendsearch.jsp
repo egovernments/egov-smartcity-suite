@@ -46,7 +46,6 @@
 	id="councilMeetingsearchform"
 	cssClass="form-horizontal form-groups-bordered"
 	enctype="multipart/form-data">
-	<div class="main-content">
 		<div class="row">
 			<div class="col-md-12">
 				<div class="panel panel-primary" data-collapsed="0">
@@ -90,17 +89,18 @@
 						</div>
 
 						<input type="hidden" id="mode" name="mode" value="${mode}" />
-						<div class="form-group">
-							<div class="text-center">
-								<button type='button' class='btn btn-primary' id="btnsearch">
-									<spring:message code='lbl.search' />
-								</button>
-								<a href='javascript:void(0)' class='btn btn-default'
-									onclick='self.close()'><spring:message code='lbl.close' /></a>
-							</div>
-						</div>
 					</div>
 				</div>
+			</div>
+		</div>
+		<div class="form-group">
+			<div class="text-center">
+				<button type='button' class='btn btn-primary' id="btnsearch">
+					<spring:message code='lbl.search' />
+				</button>
+				<button type="reset" class="btn btn-danger"><spring:message code="lbl.reset"/></button>
+				<a href='javascript:void(0)' class='btn btn-default'
+					onclick='self.close()'><spring:message code='lbl.close' /></a>
 			</div>
 		</div>
 </form:form>

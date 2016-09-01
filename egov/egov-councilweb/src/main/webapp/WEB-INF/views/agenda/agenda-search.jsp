@@ -103,6 +103,7 @@
 								<button type='button' class='btn btn-primary' id="btnsearch">
 									<spring:message code='lbl.search' />
 								</button>
+								<button type="reset" class="btn btn-danger"><spring:message code="lbl.reset"/></button>
 								<a href='javascript:void(0)' class='btn btn-default'
 									onclick='self.close()'><spring:message code='lbl.close' /></a>
 							</div>

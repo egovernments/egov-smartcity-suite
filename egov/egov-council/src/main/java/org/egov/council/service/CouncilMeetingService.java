@@ -42,8 +42,9 @@ package org.egov.council.service;
 
 import static org.egov.council.utils.constants.CouncilConstants.ADJOURNED;
 import static org.egov.council.utils.constants.CouncilConstants.APPROVED;
-import static org.egov.council.utils.constants.CouncilConstants.PREAMBLE_MODULENAME;
 import static org.egov.council.utils.constants.CouncilConstants.MEETINGUSEDINRMOM;
+import static org.egov.council.utils.constants.CouncilConstants.PREAMBLE_MODULENAME;
+
 import java.util.List;
 
 import javax.persistence.EntityManager;
@@ -141,6 +142,9 @@ public class CouncilMeetingService {
                 .createAlias("councilMeeting.status", "status");
         if (councilMeeting.getCommitteeType() != null)
             criteria.add(Restrictions.eq("committeeType", councilMeeting.getCommitteeType()));
+        
+        if (councilMeeting.getMeetingNumber() != null)
+            criteria.add(Restrictions.eq("meetingNumber", councilMeeting.getMeetingNumber()));
 
         if (councilMeeting.getFromDate() != null && councilMeeting.getToDate() != null) {
             criteria.add(Restrictions.between("meetingDate", councilMeeting.getFromDate(),

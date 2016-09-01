@@ -104,8 +104,10 @@ function callAjaxSearch() {
 						{
 							"data" : "sanctionAmount",
 							"sClass" : "text-left"
-						},
-						{
+						},{
+							"data" : "status",
+							"sClass" : "text-left"
+						},{
 							"data" : null,
 							"target" : -1,
 

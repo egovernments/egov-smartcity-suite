@@ -56,7 +56,7 @@
 					<div class="panel-body">
 
 						<div class="form-group">
-							<label class="col-sm-3 control-label text-right"><spring:message
+							<label class="col-sm-2 control-label text-right"><spring:message
 									code="lbl.meeting.type" /> </label>
 							<div class="col-sm-3 add-margin">
 								<form:select path="committeeType" id="committeeType"
@@ -69,10 +69,17 @@
 								</form:select>
 								<form:errors path="committeeType" cssClass="error-msg" />
 							</div>
+							<label class="col-sm-2 control-label text-right"><spring:message
+							code="lbl.meeting.number" /> </label>
+							<div class="col-sm-3 add-margin">
+								<form:input type="text" cssClass="form-control"
+									path="meetingNumber" id="meetingNumber"/>
+								<form:errors path="meetingNumber" cssClass="error-msg" />
+							</div>
 						</div>
 
 						<div class="form-group">
-							<label class="col-sm-3 control-label text-right"><spring:message
+							<label class="col-sm-2 control-label text-right"><spring:message
 									code="lbl.meeting.date" /> </label>
 							<div class="col-sm-3 add-margin">
 								<form:input path="fromDate"
@@ -80,7 +87,7 @@
 									data-date-end-date="0d" />
 								<form:errors path="fromDate" cssClass="error-msg" />
 							</div>
-							<label class="col-sm-3 control-label text-right"><spring:message
+							<label class="col-sm-2 control-label text-right"><spring:message
 									code="lbl.meeting.date" /> </label>
 							<div class="col-sm-3 add-margin">
 								<form:input type="text" cssClass="form-control datepicker"
@@ -89,17 +96,18 @@
 							</div>
 						</div>
 						<input type="hidden" id="mode" name="mode" value="${mode}" />
-						<div class="form-group">
-							<div class="text-center">
-								<button type='button' class='btn btn-primary' id="btnsearch">
-									<spring:message code='lbl.search' />
-								</button>
-								<a href='javascript:void(0)' class='btn btn-default'
-									onclick='self.close()'><spring:message code='lbl.close' /></a>
-							</div>
-						</div>
 					</div>
 				</div>
+			</div>
+		</div>
+		<div class="form-group">
+			<div class="text-center">
+				<button type='button' class='btn btn-primary' id="btnsearch">
+					<spring:message code='lbl.search' />
+				</button>
+				<button type="reset" class="btn btn-danger"><spring:message code="lbl.reset"/></button>
+				<a href='javascript:void(0)' class='btn btn-default'
+					onclick='self.close()'><spring:message code='lbl.close' /></a>
 			</div>
 		</div>
 </form:form>

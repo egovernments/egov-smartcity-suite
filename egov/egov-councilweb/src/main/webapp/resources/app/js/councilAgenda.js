@@ -215,6 +215,11 @@ function callAjaxSearch() {
 							'sTitle' : "Amount"
 						},
 						{
+							"data" : "status",
+							"sClass" : "text-right",
+							'sTitle' : "Status"
+						},
+						{
 							"data" : null,
 							"target" : -1,
 							"sortable" : false,

@@ -95,18 +95,19 @@
 							</div>
 						</div>
 						<input type="hidden" id="mode" name="mode" value="${mode}" />
-						<div class="form-group">
-							<div class="text-center">
-								<button type='button' class='btn btn-primary' id="btnsearch">
-									<spring:message code='lbl.search' />
-								</button>
-								<a href='javascript:void(0)' class='btn btn-default'
-									onclick='self.close()'><spring:message code='lbl.close' /></a>
-							</div>
-						</div>
 					</div>
 				</div>
 			</div>
+		</div>
+	</div>
+	<div class="form-group">
+		<div class="text-center">
+			<button type='button' class='btn btn-primary' id="btnsearch">
+				<spring:message code='lbl.search' />
+			</button>
+			<button type="reset" class="btn btn-danger"><spring:message code="lbl.reset"/></button>
+			<a href='javascript:void(0)' class='btn btn-default'
+				onclick='self.close()'><spring:message code='lbl.close' /></a>
 		</div>
 	</div>
 </form:form>
@@ -122,6 +123,7 @@
 						<th><spring:message code="lbl.preamble.number" /></th>
 					<th><spring:message code="lbl.gistofpreamble" /></th>
 					<th><spring:message code="lbl.amount"/>
+					<th><spring:message code="lbl.status"/></th>
 					<th><spring:message code="lbl.view"/></th>
 					<th>&nbsp;</th>
 				</tr>
