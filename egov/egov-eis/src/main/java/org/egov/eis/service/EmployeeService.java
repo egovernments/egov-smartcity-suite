@@ -49,6 +49,7 @@ import java.util.stream.Collectors;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 
+import org.apache.commons.lang3.StringUtils;
 import org.egov.commons.CFunction;
 import org.egov.commons.Functionary;
 import org.egov.commons.Fund;
@@ -73,7 +74,10 @@ import org.egov.infra.admin.master.service.RoleService;
 import org.egov.infra.admin.master.service.UserService;
 import org.egov.infra.config.properties.ApplicationProperties;
 import org.egov.infra.validation.exception.ValidationException;
+import org.egov.infra.workflow.service.StateHistoryService;
+import org.egov.infra.workflow.service.StateService;
 import org.egov.pims.commons.Designation;
+import org.egov.pims.commons.Position;
 import org.hibernate.Criteria;
 import org.hibernate.Session;
 import org.hibernate.criterion.CriteriaSpecification;
@@ -97,7 +101,6 @@ public class EmployeeService implements EntityTypeService {
     }
 
     private final EmployeeRepository employeeRepository;
-
     @Autowired
     private UserRepository userRepository;
 
@@ -124,6 +127,15 @@ public class EmployeeService implements EntityTypeService {
 
     @Autowired
     private RoleService roleService;
+
+    @Autowired
+    private StateService stateService;
+
+    @Autowired
+    private StateHistoryService stateHistoryService;
+
+    @Autowired
+    private PositionMasterService positionMasterService;
 
     @Autowired
     public EmployeeService(final EmployeeRepository employeeRepository) {
@@ -460,6 +472,37 @@ public class EmployeeService implements EntityTypeService {
 
     public List<Employee> findEmployeeByCodeLike(final String code) {
         return employeeRepository.findEmployeeByCodeLike(code);
+    }
+
+    public String validatePosition(final Employee employee, final String removedassignIds) {
+        boolean positionExistsInWF = false;
+        boolean positionExistsInWFHistory = false;
+        final List<Position> updatedPositionList = positionMasterService.getPositionsForEmployee(employee.getId());
+        if (StringUtils.isNotBlank(removedassignIds)) {
+            final String[] deletedAssignIds = removedassignIds.split(",");
+            for (final String assignId : deletedAssignIds) {
+                final Assignment assignment = assignmentService.getAssignmentById(Long.valueOf(assignId));
+                if (assignment != null && !assignment.equals("")) {
+                    positionExistsInWF = stateService.isPositionUnderWorkflow(assignment.getPosition().getId());
+                    positionExistsInWFHistory = stateHistoryService
+                            .isPositionUnderWorkflowHistory(assignment.getPosition().getId());
+                }
+                if (positionExistsInWF || positionExistsInWFHistory)
+                    return assignment.getPosition().getName();
+            }
+        }
+        assignmentService.removeDeletedAssignments(employee, removedassignIds);
+        getCurrentSession().evict(employee);
+        final Employee updatedEmployee = getEmployeeById(employee.getId());
+        final List<Position> oldPositionList = positionMasterService.getPositionsForEmployee(updatedEmployee.getId());
+        oldPositionList.removeAll(updatedPositionList);
+        for (final Position position : oldPositionList) {
+            positionExistsInWF = stateService.isPositionUnderWorkflow(position.getId());
+            positionExistsInWFHistory = stateHistoryService.isPositionUnderWorkflowHistory(position.getId());
+            if (positionExistsInWF || positionExistsInWFHistory)
+                return position.getName();
+        }
+        return StringUtils.EMPTY;
     }
 
 }

@@ -45,17 +45,18 @@ import java.util.List;
 
 import javax.validation.Valid;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
 import org.egov.eis.entity.Employee;
 import org.egov.eis.entity.enums.EmployeeStatus;
 import org.egov.eis.repository.EmployeeTypeRepository;
-import org.egov.eis.service.AssignmentService;
 import org.egov.eis.service.EmployeeService;
 import org.egov.eis.service.JurisdictionService;
 import org.egov.infra.admin.master.service.BoundaryTypeService;
 import org.egov.infra.admin.master.service.DepartmentService;
 import org.postgresql.util.Base64;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.MessageSource;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -81,13 +82,13 @@ public class ViewAndUpdateEmployeController {
     private EmployeeService employeeService;
 
     @Autowired
-    private AssignmentService assignmentService;
-
-    @Autowired
     private BoundaryTypeService boundaryTypeService;
 
     @Autowired
     private JurisdictionService jurisdictionService;
+
+    @Autowired
+    private MessageSource messageSource;
 
     @ModelAttribute
     public Employee employeeModel(@PathVariable final String code) {
@@ -108,7 +109,7 @@ public class ViewAndUpdateEmployeController {
     }
 
     @RequestMapping(value = "/update/{code}", method = RequestMethod.POST)
-    public String update(@Valid @ModelAttribute Employee employee, final BindingResult errors,
+    public String update(@Valid @ModelAttribute final Employee employee, final BindingResult errors,
             final RedirectAttributes redirectAttrs, final Model model, @RequestParam final MultipartFile file,
             @RequestParam final String removedJurisdictionIds, @RequestParam final String removedassignIds) {
 
@@ -135,12 +136,20 @@ public class ViewAndUpdateEmployeController {
         } catch (final IOException e) {
             LOGGER.error("Error in loading Employee Signature" + e.getMessage(), e);
         }
+        jurisdictionService.removeDeletedJurisdictions(employee, removedJurisdictionIds);
+        final String positionName = employeeService.validatePosition(employee, removedassignIds);
+        if (StringUtils.isNotBlank(positionName)) {
+            setDropDownValues(model);
+            final String fieldError = messageSource.getMessage("position.exists.workflow",
+                    new String[] { positionName }, null);
+            model.addAttribute("error", fieldError);
+            return "employee-form";
+        }
         String image = null;
         if (null != employee.getSignature())
             image = Base64.encodeBytes(employee.getSignature());
         model.addAttribute("image", image);
-        employee = jurisdictionService.removeDeletedJurisdictions(employee, removedJurisdictionIds);
-        employee = assignmentService.removeDeletedAssignments(employee, removedassignIds);
+
         employeeService.update(employee);
         redirectAttrs.addFlashAttribute("employee", employee);
         model.addAttribute("message", "Employee updated successfully");
