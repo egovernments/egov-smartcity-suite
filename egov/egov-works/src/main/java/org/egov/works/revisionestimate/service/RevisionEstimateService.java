@@ -1190,7 +1190,7 @@ public class RevisionEstimateService {
     public void deriveWorkOrderActivityQuantity(final WorkOrderActivity workOrderActivity) {
         if (!workOrderActivity.getWorkOrderMeasurementSheets().isEmpty())
             for (final WorkOrderMeasurementSheet woms : workOrderActivity.getWorkOrderMeasurementSheets()) {
-                final List<WorkOrderMeasurementSheet> rewomsList = workOrderMeasurementSheetService.findByParentId(woms.getId());
+                final List<WorkOrderMeasurementSheet> rewomsList = workOrderMeasurementSheetService.findByMeasurementSheetParentId(woms.getMeasurementSheet().getId());
                 Double no = woms.getNo() == null ? 0 : woms.getNo().doubleValue();
                 Double length = woms.getLength() == null ? 0 : woms.getLength().doubleValue();
                 Double width = woms.getWidth() == null ? 0 : woms.getWidth().doubleValue();

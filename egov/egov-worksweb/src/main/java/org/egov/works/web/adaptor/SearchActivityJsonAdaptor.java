@@ -44,13 +44,10 @@ import java.lang.reflect.Type;
 
 import org.egov.works.abstractestimate.entity.Activity;
 import org.egov.works.abstractestimate.entity.MeasurementSheet;
-import org.egov.works.abstractestimate.service.EstimateService;
-import org.egov.works.abstractestimate.service.MeasurementSheetService;
 import org.egov.works.letterofacceptance.service.WorkOrderActivityService;
 import org.egov.works.mb.service.MBHeaderService;
 import org.egov.works.revisionestimate.service.RevisionEstimateService;
 import org.egov.works.workorder.entity.WorkOrderActivity;
-import org.egov.works.workorder.service.WorkOrderMeasurementSheetService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -64,34 +61,19 @@ import com.google.gson.JsonSerializer;
 public class SearchActivityJsonAdaptor implements JsonSerializer<Activity> {
 
     @Autowired
-    WorkOrderActivityService workOrderActivityService;
+    private WorkOrderActivityService workOrderActivityService;
 
     @Autowired
-    MBHeaderService mbHeaderService;
+    private MBHeaderService mbHeaderService;
 
     @Autowired
-    EstimateService estimateService;
-
-    @Autowired
-    MeasurementSheetService measurementSheetService;
-
-    @Autowired
-    WorkOrderMeasurementSheetService workOrderMeasurementSheetService;
-
-    @Autowired
-    RevisionEstimateService revisionEstimateService;
+    private RevisionEstimateService revisionEstimateService;
 
     @Override
     public JsonElement serialize(final Activity activity, final Type typeOfSrc,
             final JsonSerializationContext context) {
         final JsonObject jsonObject = new JsonObject();
         final WorkOrderActivity workOrderActivity = workOrderActivityService.getWorkOrderActivityByActivity(activity.getId());
-        Double rate = null;
-        if (activity.getAbstractEstimate().getParent() == null)
-            if (activity.getSchedule() != null)
-                rate = activity.getSORRateForDate(activity.getAbstractEstimate().getEstimateDate()).getValue();
-            else
-                rate = activity.getRate();
         if (activity.getSchedule() != null) {
             jsonObject.addProperty("description", activity.getSchedule().getDescription());
             jsonObject.addProperty("summary", activity.getSchedule().getSummary());
@@ -121,19 +103,13 @@ public class SearchActivityJsonAdaptor implements JsonSerializer<Activity> {
             jsonObject.addProperty("estimateQuantity", workOrderActivity.getApprovedQuantity());
             final Double consumedQuantity = mbHeaderService.getPreviousCumulativeQuantity(-1L, workOrderActivity.getId());
             jsonObject.addProperty("consumedQuantity", consumedQuantity == null ? "0" : consumedQuantity.toString());
-            if (activity.getAbstractEstimate().getParent() != null)
-                if (activity.getSchedule() != null)
-                    rate = activity.getSORRateForDate(workOrderActivity.getWorkOrderEstimate().getWorkOrder().getWorkOrderDate())
-                            .getValue();
-                else
-                    rate = activity.getRate();
         } else {
             jsonObject.addProperty("estimateQuantity", 0);
             jsonObject.addProperty("consumedQuantity", 0);
         }
 
         if (activity.getRate() > 0)
-            jsonObject.addProperty("rate", rate);
+            jsonObject.addProperty("rate", activity.getRate());
         else
             jsonObject.addProperty("rate", "");
 

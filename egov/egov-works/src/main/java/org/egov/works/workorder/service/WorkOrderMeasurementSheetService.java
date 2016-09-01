@@ -88,7 +88,7 @@ public class WorkOrderMeasurementSheetService {
         return workOrderMeasurementSheetRepository.findAll();
     }
 
-    public List<WorkOrderMeasurementSheet> findByParentId(final Long parentId) {
-        return workOrderMeasurementSheetRepository.findByParent_Id(parentId, RevisionEstimateStatus.APPROVED.toString());
+    public List<WorkOrderMeasurementSheet> findByMeasurementSheetParentId(final Long parentId) {
+        return workOrderMeasurementSheetRepository.findByMeasurementSheetParent_Id(parentId, RevisionEstimateStatus.APPROVED.toString());
     }
 }

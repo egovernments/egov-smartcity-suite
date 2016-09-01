@@ -98,10 +98,10 @@ public class UpdateRevisionEstimateController extends GenericWorkFlowController 
     private EstimateService estimateService;
 
     @Autowired
-    WorkOrderActivityService workOrderActivityService;
+    private WorkOrderActivityService workOrderActivityService;
 
     @Autowired
-    MBHeaderService mbHeaderService;
+    private MBHeaderService mbHeaderService;
 
     @Autowired
     private MessageSource messageSource;
@@ -201,18 +201,8 @@ public class UpdateRevisionEstimateController extends GenericWorkFlowController 
                     final Double consumedQuantity = mbHeaderService.getPreviousCumulativeQuantity(-1L, workOrderActivity.getId());
                     activity.setConsumedQuantity(consumedQuantity == null ? 0 : consumedQuantity);
                     activity.setEstimateQuantity(workOrderActivity.getApprovedQuantity());
-
-                    if (activity.getSchedule() != null)
-                        activity.setRate(activity
-                                .getSORRateForDate(workOrderActivity.getWorkOrderEstimate().getWorkOrder().getWorkOrderDate())
-                                .getValue());
-                    ;
                 }
                 revisionEstimate.getChangeQuantityActivities().add(activity);
-            } else {
-                if (activity.getSchedule() != null)
-                    activity.setRate(activity.getSORRateForDate(activity.getAbstractEstimate().getEstimateDate()).getValue());
-                ;
             }
 
             if (!activity.getMeasurementSheetList().isEmpty())

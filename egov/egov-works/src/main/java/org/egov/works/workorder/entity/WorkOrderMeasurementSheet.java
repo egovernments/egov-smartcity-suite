@@ -88,10 +88,6 @@ public class WorkOrderMeasurementSheet extends AbstractAuditable {
     @JoinColumn(name = "msheetid")
     private MeasurementSheet measurementSheet;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "parent")
-    private WorkOrderMeasurementSheet parent;
-
     @Transient
     private BigDecimal cumulativeQuantity;
 
@@ -168,13 +164,4 @@ public class WorkOrderMeasurementSheet extends AbstractAuditable {
     public BigDecimal getLength() {
         return length;
     }
-
-    public WorkOrderMeasurementSheet getParent() {
-        return parent;
-    }
-
-    public void setParent(final WorkOrderMeasurementSheet parent) {
-        this.parent = parent;
-    }
-
 }
