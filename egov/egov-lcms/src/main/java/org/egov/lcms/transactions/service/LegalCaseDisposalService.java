@@ -64,7 +64,7 @@ public class LegalCaseDisposalService {
     public LegalCaseDisposal persist(final LegalCaseDisposal legalCaseDisposal) {
 
         final EgwStatus statusobj = legalCaseUtil.getStatusForModuleAndCode(LcmsConstants.MODULE_TYPE_LEGALCASE,
-                LcmsConstants.LEGALCASE_STATUS_CLOSE);
+                LcmsConstants.LEGALCASE_STATUS_CLOSED);
         legalCaseDisposal.getLegalCase().setStatus(statusobj);
         return legalCaseDisposalRepository.save(legalCaseDisposal);
     }

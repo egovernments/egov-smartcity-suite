@@ -39,6 +39,7 @@
  */
 package org.egov.lcms.transactions.service;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.persistence.EntityManager;
@@ -65,74 +66,102 @@ public class SearchLegalCaseService {
 	}
 	
 
-	public List<LegalCaseSearchResult> getLegalCaseReport(final String caseNumber, final String lcNumber, final String court,
-			final String casetype, final String standingcouncil, final String courttype, final String status,
+	public List<LegalCaseSearchResult> getLegalCaseReport(LegalCaseSearchResult legalCaseSearchResultOblj, 
 			final Boolean isStatusExcluded) {
 		final StringBuilder queryStr = new StringBuilder();
-		queryStr.append("select distinct legalObj.casenumber as \"caseNumber\",courtmaster.name  as \"courtName\",");
-		queryStr.append(" legalObj.casetitle  as \"caseTitle\",");
-		queryStr.append(" legalObj.appealnum  as \"standingCouncil\",egwStatus.description  as \"caseStatus\",legalObj.lcNumber as \"lcNumber\" ");
-		queryStr.append(" from EGLC_LEGALCASE legalObj,EGLC_BIPARTISANDETAILS bipart,eglc_court_master courtmaster,eglc_casetype_master casetypemaster,");
-		queryStr.append(" eglc_petitiontype_master petmaster,egw_status egwStatus");
-		queryStr.append(" where  bipart.legalcase=legalObj.id and legalObj.court=courtmaster.id and ");
-		queryStr.append(" legalObj.casetype=casetypemaster.id and legalObj.petitiontype=petmaster.id and ");
-		queryStr.append(" legalObj.status=egwStatus.id and egwStatus.moduletype =:mdoculeType ");
+		queryStr.append("select distinct legalObj  as  legalCase ,courtmaster.name  as  courtName ,");
+		queryStr.append(" egwStatus.code  as  caseStatus ");
+		queryStr.append(" from LegalCase legalObj,CourtMaster courtmaster,CaseTypeMaster casetypemaster,");
+		queryStr.append(" PetitionTypeMaster petmaster,EgwStatus egwStatus");
+		queryStr.append(" where legalObj.courtMaster.id=courtmaster.id and ");
+		queryStr.append(" legalObj.caseTypeMaster.id=casetypemaster.id and legalObj.petitionTypeMaster.id=petmaster.id and ");
+		queryStr.append(" legalObj.status.id=egwStatus.id and egwStatus.moduletype =:mdoculeType ");
 		
-		getAppendQuery(caseNumber, lcNumber, court, casetype, standingcouncil, courttype, status, isStatusExcluded,
+		
+		getAppendQuery(legalCaseSearchResultOblj, isStatusExcluded,
 				queryStr);
-		Query queryResult= getCurrentSession().createSQLQuery(queryStr.toString());
-		queryResult=setParametersToQuery(caseNumber, lcNumber, court, casetype, standingcouncil, courttype, status, queryResult);
+		Query queryResult= getCurrentSession().createQuery(queryStr.toString());
+		queryResult=setParametersToQuery(legalCaseSearchResultOblj, isStatusExcluded,queryResult);
 		List<LegalCaseSearchResult>  legalcaseSearchList=queryResult.list();
 		return legalcaseSearchList;
 
 	}
 
-	private Query setParametersToQuery(final String caseNumber, final String lcNumber, final String court,
-			final String casetype, final String standingcouncil, final String courttype, final String status,
+	private Query setParametersToQuery(LegalCaseSearchResult legalCaseSearchResultOblj, Boolean isStatusExcluded,
 			Query queryResult) {
 		queryResult.setString("mdoculeType", LcmsConstants.MODULE_TYPE_LEGALCASE);
-		if (StringUtils.isNotBlank(lcNumber))
-			queryResult.setString("lcNumber", lcNumber);
-		if (StringUtils.isNotBlank(caseNumber))
-			queryResult.setString("caseNumber", caseNumber);
-		if (StringUtils.isNotBlank(court))
-			queryResult.setString("court", court);
-		if (StringUtils.isNotBlank(casetype))
-			queryResult.setString("casetype",casetype);
-		if (StringUtils.isNotBlank(courttype))
-			queryResult.setString("courttype", courttype);
-		if (StringUtils.isNotBlank(standingcouncil))
-			queryResult.setString("standingcoouncil", standingcouncil);
-		if (status != null && !"".equals(status))
-			queryResult.setString("status",status);
-		if (StringUtils.isNotBlank(lcNumber) && StringUtils.isNotBlank(caseNumber) )
-			queryResult.setString("caseNumber", caseNumber);
+		if (StringUtils.isNotBlank(legalCaseSearchResultOblj.getLcNumber()))
+			queryResult.setString("lcNumber", legalCaseSearchResultOblj.getLcNumber());
+		if (StringUtils.isNotBlank(legalCaseSearchResultOblj.getCaseNumber()))
+			queryResult.setString("caseNumber", legalCaseSearchResultOblj.getCaseNumber() + "%" );
+		if (legalCaseSearchResultOblj.getCourtId()!=null )
+			queryResult.setInteger("court", legalCaseSearchResultOblj.getCourtId());
+		if (legalCaseSearchResultOblj.getCasecategory()!=null)
+			queryResult.setInteger("casetype",legalCaseSearchResultOblj.getCasecategory());
+		if (legalCaseSearchResultOblj.getCourtType()!=null)
+			queryResult.setInteger("courttype", legalCaseSearchResultOblj.getCourtType());
+		if (StringUtils.isNotBlank(legalCaseSearchResultOblj.getStandingCouncil()))
+			queryResult.setString("standingcoouncil",  legalCaseSearchResultOblj.getStandingCouncil() + "%");
+		if (legalCaseSearchResultOblj.getStatusId()!=null)
+			queryResult.setInteger("status",legalCaseSearchResultOblj.getStatusId());
+		  
+		if(legalCaseSearchResultOblj.getCaseFromDate()!=null)
+		{
+			queryResult.setDate("fromdate" ,legalCaseSearchResultOblj.getCaseFromDate());
+		}
+		if(legalCaseSearchResultOblj.getCaseToDate()!=null)
+		{
+			queryResult.setDate("toDate" ,legalCaseSearchResultOblj.getCaseToDate());
+		}
+		if(legalCaseSearchResultOblj.getPetitionTypeId()!=null)
+		{
+			queryResult.setInteger("petiontionType", legalCaseSearchResultOblj.getPetitionTypeId());
+		}
+		if(isStatusExcluded)
+		{
+			List<String>statusCodeList=new ArrayList<String>();
+			statusCodeList.add(LcmsConstants.LEGALCASE_STATUS_CLOSED);
+			statusCodeList.add(LcmsConstants.LEGALCASE_STATUS_JUDGMENT_IMPLIMENTED);
+			queryResult.setParameterList("statusCodeList",statusCodeList );
+		}
 		queryResult.setResultTransformer(new AliasToBeanResultTransformer(LegalCaseSearchResult.class));
 		return queryResult;
 	}
 
 
-	private void getAppendQuery(final String caseNumber, final String lcNumber, final String court,
-			final String casetype, final String standingcouncil, final String courttype, final String status,
+	private void getAppendQuery( LegalCaseSearchResult legalCaseSearchResultOblj  ,
 			final Boolean isStatusExcluded, final StringBuilder queryStr) {
-		if (StringUtils.isNotBlank(lcNumber))
+		if (StringUtils.isNotBlank(legalCaseSearchResultOblj.getLcNumber()))
 			queryStr.append(" and legalObj.lcNumber =:lcNumber");
-		if (StringUtils.isNotBlank(caseNumber))
-			queryStr.append(" and legalObj.casenumber =:caseNumber ");
-		if (StringUtils.isNotBlank(court))
+		if (StringUtils.isNotBlank(legalCaseSearchResultOblj.getCaseNumber()))
+			queryStr.append(" and legalObj.caseNumber like :caseNumber ");
+		if (legalCaseSearchResultOblj.getCourtId()!=null)
 			queryStr.append(" and courtmaster.id =:court ");
-		if (StringUtils.isNotBlank(casetype))
+		if (legalCaseSearchResultOblj.getCasecategory()!=null)
 			queryStr.append(" and casetypemaster.id =:casetype");
-		if (StringUtils.isNotBlank(courttype))
-			queryStr.append(" and courtmaster.courttype =:courttype ");
-		if (StringUtils.isNotBlank(standingcouncil))
-			queryStr.append(" and legalObj.appealnum  =:standingcoouncil ");
-		if (status != null && !"".equals(status))
+		if (legalCaseSearchResultOblj.getCourtType()!=null)
+			queryStr.append(" and courtmaster.id =:courttype ");
+		if (StringUtils.isNotBlank(legalCaseSearchResultOblj.getStandingCouncil()))
+			queryStr.append(" and legalObj.oppPartyAdvocate like :standingcoouncil ");
+		if (legalCaseSearchResultOblj.getStatusId()!=null)
 			queryStr.append(" and egwStatus.id =:status ");
-		if (StringUtils.isNotBlank(lcNumber) && StringUtils.isNotBlank(caseNumber) )
-			queryStr.append(" and legalObj.casenumber =:caseNumber");
-		if (isStatusExcluded)
-			queryStr.append(" and egwStatus.code NOT IN ('CANCELLED') ");
+		if(legalCaseSearchResultOblj.getCaseFromDate()!=null)
+		{
+			queryStr.append(" and legalObj.caseDate >=:fromdate " );
+		}
+		if(legalCaseSearchResultOblj.getCaseToDate()!=null)
+		{
+			queryStr.append(" and legalObj.caseDate <=:toDate " );
+		}
+		if(legalCaseSearchResultOblj.getPetitionTypeId()!=null)
+		{
+			queryStr.append(" and petmaster.id =:petiontionType " );
+		}
+		
+		if(isStatusExcluded)
+		{
+			queryStr.append(" and egwStatus.code not in (:statusCodeList ) ");
+		}
 	}
 
 }

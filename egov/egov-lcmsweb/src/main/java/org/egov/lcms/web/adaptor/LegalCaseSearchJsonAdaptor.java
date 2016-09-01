@@ -54,14 +54,14 @@ public class LegalCaseSearchJsonAdaptor implements JsonSerializer<LegalCaseSearc
     public JsonElement serialize(final LegalCaseSearchResult legalcaseresult, final Type typeOfSrc,
             final JsonSerializationContext context) {
         final JsonObject jsonObject = new JsonObject();
-        jsonObject.addProperty("casenumber", legalcaseresult.getCaseNumber());
-        jsonObject.addProperty("legalcaseno", legalcaseresult.getLcNumber());
-        jsonObject.addProperty("casetitle", legalcaseresult.getCaseTitle());
+        jsonObject.addProperty("casenumber", legalcaseresult.getLegalCase().getCaseNumber());
+        jsonObject.addProperty("legalcaseno", legalcaseresult.getLegalCase().getLcNumber());
+        jsonObject.addProperty("casetitle", legalcaseresult.getLegalCase().getCaseTitle());
         jsonObject.addProperty("courtname", legalcaseresult.getCourtName());
-        jsonObject.addProperty("petitioners", legalcaseresult.getPetName());
-        // jsonObject.addProperty("Respondants", legalcaseresult.get);
+        jsonObject.addProperty("petitioners", legalcaseresult.getLegalCase().getPetitionersNames());
+        jsonObject.addProperty("respondants", legalcaseresult.getLegalCase().getRespondantNames());
         jsonObject.addProperty("department", legalcaseresult.getAssignDept());
-        jsonObject.addProperty("standingcouncil", legalcaseresult.getStandingCouncil());
+        jsonObject.addProperty("standingcouncil", legalcaseresult.getLegalCase().getOppPartyAdvocate());
         jsonObject.addProperty("casestatus", legalcaseresult.getCaseStatus());
         return jsonObject;
     }
