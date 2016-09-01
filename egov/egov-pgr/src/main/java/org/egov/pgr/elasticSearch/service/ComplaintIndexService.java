@@ -123,7 +123,7 @@ public class ComplaintIndexService {
 		final Position position = complaintIndex.getAssignee();
 		User assignedUser = eisCommonService.getUserForPosition(position.getId(), new Date());
 		complaintIndex.setComplaintPeriod(0);
-		complaintIndex.setComplaintSLADays((complaintIndex.getComplaintType().getSlaHours()));
+		complaintIndex.setComplaintSLADays(complaintIndex.getComplaintType().getSlaHours());
 		complaintIndex.setComplaintAgeingFromDue(0);
 		complaintIndex.setIsSLA('Y');
 		complaintIndex.setIfSLA(1);

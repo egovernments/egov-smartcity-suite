@@ -43,6 +43,7 @@ package org.egov.pgr.service;
 import static org.egov.pgr.entity.enums.ComplaintStatus.FORWARDED;
 import static org.egov.pgr.entity.enums.ComplaintStatus.REGISTERED;
 import static org.egov.pgr.entity.enums.ComplaintStatus.REOPENED;
+import static org.egov.pgr.entity.enums.ComplaintStatus.PROCESSING;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -310,6 +311,7 @@ public class ComplaintService {
 
         criteria.add(Restrictions.disjunction().add(Restrictions.eq("complaintStatus.name", REOPENED.name()))
                 .add(Restrictions.eq("complaintStatus.name", FORWARDED.name()))
+                .add(Restrictions.eq("complaintStatus.name", PROCESSING.name()))
                 .add(Restrictions.eq("complaintStatus.name", REGISTERED.name())))
                 .add(Restrictions.lt("complaint.escalationDate", new DateTime().toDate()))
                 .setResultTransformer(CriteriaSpecification.DISTINCT_ROOT_ENTITY);

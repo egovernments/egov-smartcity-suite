@@ -37,19 +37,21 @@
  *
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
-package org.egov.lcms.transactions.entity;
+package org.egov.lcms.web.adaptor;
 
 import java.lang.reflect.Type;
+
+import org.egov.lcms.reports.entity.LegalCaseSearchResult;
 
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonSerializationContext;
 import com.google.gson.JsonSerializer;
 
-public class LegalCaseReportResultAdaptor implements JsonSerializer<LegalCaseReportResult> {
+public class LegalCaseSearchJsonAdaptor implements JsonSerializer<LegalCaseSearchResult> {
 
     @Override
-    public JsonElement serialize(final LegalCaseReportResult legalcaseresult, final Type typeOfSrc,
+    public JsonElement serialize(final LegalCaseSearchResult legalcaseresult, final Type typeOfSrc,
             final JsonSerializationContext context) {
         final JsonObject jsonObject = new JsonObject();
         jsonObject.addProperty("casenumber", legalcaseresult.getCaseNumber());
@@ -61,7 +63,6 @@ public class LegalCaseReportResultAdaptor implements JsonSerializer<LegalCaseRep
         jsonObject.addProperty("department", legalcaseresult.getAssignDept());
         jsonObject.addProperty("standingcouncil", legalcaseresult.getStandingCouncil());
         jsonObject.addProperty("casestatus", legalcaseresult.getCaseStatus());
-        // jsonObject.addProperty("Actions", legalcaseresult.getCourtName());
         return jsonObject;
     }
 

@@ -52,15 +52,17 @@ import java.util.Set;
 
 import javax.servlet.http.HttpServletRequest;
 
-import org.apache.commons.lang3.StringUtils;
 import org.egov.commons.Accountdetailtype;
 import org.egov.commons.CChartOfAccounts;
 import org.egov.commons.dao.ChartOfAccountsHibernateDAO;
+import org.egov.egf.budget.model.BudgetControlType;
+import org.egov.egf.budget.service.BudgetControlTypeService;
 import org.egov.eis.web.contract.WorkflowContainer;
 import org.egov.eis.web.controller.workflow.GenericWorkFlowController;
 import org.egov.infra.admin.master.entity.AppConfigValues;
 import org.egov.infra.admin.master.service.AppConfigValueService;
 import org.egov.infra.exception.ApplicationRuntimeException;
+import org.egov.infra.utils.StringUtils;
 import org.egov.infra.utils.autonumber.AutonumberServiceBeanResolver;
 import org.egov.infra.validation.exception.ValidationException;
 import org.egov.model.bills.EgBillPayeedetails;
@@ -130,6 +132,9 @@ public class CreateContractorBillController extends GenericWorkFlowController {
 
     @Autowired
     private MBHeaderService mBHeaderService;
+  
+    @Autowired
+    private BudgetControlTypeService budgetControlTypeService;
 
     @RequestMapping(value = "/newform", method = RequestMethod.GET)
     public String showNewForm(
@@ -493,10 +498,10 @@ public class CreateContractorBillController extends GenericWorkFlowController {
             final String nextDesign) {
         String message = "";
 
-        if (contractorBillRegister.getStatus().getCode()
-                .equalsIgnoreCase(ContractorBillRegister.BillStatus.CREATED.toString())) {
-            if (org.apache.commons.lang.StringUtils
-                    .isNotBlank(contractorBillRegister.getEgBillregistermis().getBudgetaryAppnumber()))
+        if (contractorBillRegister.getStatus().getCode().equals(ContractorBillRegister.BillStatus.CREATED.toString())
+                && !BudgetControlType.BudgetCheckOption.NONE.toString()
+                        .equalsIgnoreCase(budgetControlTypeService.getConfigValue())) {
+            if (StringUtils.isNotBlank(contractorBillRegister.getEgBillregistermis().getBudgetaryAppnumber()))
                 message = messageSource.getMessage("msg.contractorbill.create.success.with.budgetappropriation",
                         new String[] { contractorBillRegister.getBillnumber(), approverName, nextDesign,
                                 contractorBillRegister.getEgBillregistermis().getBudgetaryAppnumber() },

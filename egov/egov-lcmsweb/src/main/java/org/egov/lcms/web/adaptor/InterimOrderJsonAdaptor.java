@@ -63,7 +63,7 @@ public class InterimOrderJsonAdaptor implements JsonSerializer<InterimOrder> {
             else
                 jsonObject.addProperty("code", "");
             if (interimOrder.getActive() != null)
-                jsonObject.addProperty("active", interimOrder.getActive() == true ? "YES" : "NO");
+                jsonObject.addProperty("active", interimOrder.getActive() ? "YES" : "NO");
             else
                 jsonObject.addProperty("active", "");
             jsonObject.addProperty("id", interimOrder.getId());

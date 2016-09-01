@@ -39,10 +39,14 @@
  */
 package org.egov.lcms.transactions.service;
 
+import java.util.List;
+
 import javax.persistence.EntityManager;
 
-import org.egov.lcms.transactions.entity.LegalCaseReportResult;
-import org.hibernate.SQLQuery;
+import org.apache.commons.lang.StringUtils;
+import org.egov.lcms.reports.entity.LegalCaseSearchResult;
+import org.egov.lcms.utils.constants.LcmsConstants;
+import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.transform.AliasToBeanResultTransformer;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -54,46 +58,81 @@ import org.springframework.transaction.annotation.Transactional;
 public class SearchLegalCaseService {
 	@Autowired
 	private EntityManager entityManager;
+	
+	public Session getCurrentSession()
+	{
+        return entityManager.unwrap(Session.class);
+	}
+	
 
-	public SQLQuery getLegalCaseReport(final String caseNumber, final String lcNumber, final String court,
-			final String casetype, final String standingcpouncil, final String courttype, final String status,
+	public List<LegalCaseSearchResult> getLegalCaseReport(final String caseNumber, final String lcNumber, final String court,
+			final String casetype, final String standingcouncil, final String courttype, final String status,
 			final Boolean isStatusExcluded) {
-
 		final StringBuilder queryStr = new StringBuilder();
-		queryStr.append("select distinct legalObj.casenumber as \"caseNumber\",courtmaster.name  as \"courtName\","
-				+ "legalObj.casetitle  as \"caseTitle\","
-				+ " legalObj.appealnum  as \"standingCouncil\",egwStatus.description  as \"caseStatus\",legalObj.lcNumber as \"lcNumber\" "
-				+ "from EGLC_LEGALCASE legalObj,EGLC_BIPARTISANDETAILS bipart,eglc_court_master courtmaster,eglc_casetype_master casetypemaster,"
-				+ "eglc_petitiontype_master petmaster,egw_status egwStatus");
+		queryStr.append("select distinct legalObj.casenumber as \"caseNumber\",courtmaster.name  as \"courtName\",");
+		queryStr.append(" legalObj.casetitle  as \"caseTitle\",");
+		queryStr.append(" legalObj.appealnum  as \"standingCouncil\",egwStatus.description  as \"caseStatus\",legalObj.lcNumber as \"lcNumber\" ");
+		queryStr.append(" from EGLC_LEGALCASE legalObj,EGLC_BIPARTISANDETAILS bipart,eglc_court_master courtmaster,eglc_casetype_master casetypemaster,");
+		queryStr.append(" eglc_petitiontype_master petmaster,egw_status egwStatus");
+		queryStr.append(" where  bipart.legalcase=legalObj.id and legalObj.court=courtmaster.id and ");
+		queryStr.append(" legalObj.casetype=casetypemaster.id and legalObj.petitiontype=petmaster.id and ");
+		queryStr.append(" legalObj.status=egwStatus.id and egwStatus.moduletype =:mdoculeType ");
+		
+		getAppendQuery(caseNumber, lcNumber, court, casetype, standingcouncil, courttype, status, isStatusExcluded,
+				queryStr);
+		Query queryResult= getCurrentSession().createSQLQuery(queryStr.toString());
+		queryResult=setParametersToQuery(caseNumber, lcNumber, court, casetype, standingcouncil, courttype, status, queryResult);
+		List<LegalCaseSearchResult>  legalcaseSearchList=queryResult.list();
+		return legalcaseSearchList;
 
-		queryStr.append(" where  bipart.legalcase=legalObj.id and legalObj.court=courtmaster.id and "
-				+ "legalObj.casetype=casetypemaster.id and legalObj.petitiontype=petmaster.id and "
-				+ "legalObj.status=egwStatus.id and egwStatus.moduletype='Legal Case' ");
-		if (lcNumber != null && !lcNumber.isEmpty())
-			queryStr.append(" and legalObj.lcNumber = " + "'" + lcNumber + "'");
-		if (lcNumber.isEmpty() && caseNumber != null && !caseNumber.isEmpty())
-			queryStr.append(" and legalObj.casenumber = " + "'" + caseNumber + "'");
-		if (court != null && !"".equals(court))
-			queryStr.append(" and courtmaster.id = " + "'" + court + "'");
-		if (court != null && !"".equals(court))
-			queryStr.append(" and courtmaster.id = " + "'" + court + "'");
-		if (casetype != null && !"".equals(casetype))
-			queryStr.append(" and casetypemaster.id = " + "'" + casetype + "'");
+	}
 
-		if (courttype != null && !"".equals(courttype))
-			queryStr.append(" and courtmaster.courttype = " + "'" + courttype + "'");
-		if (standingcpouncil != null && !"".equals(standingcpouncil))
-			queryStr.append(" and legalObj.appealnum  like  " + "'" + standingcpouncil + "%'");
+	private Query setParametersToQuery(final String caseNumber, final String lcNumber, final String court,
+			final String casetype, final String standingcouncil, final String courttype, final String status,
+			Query queryResult) {
+		queryResult.setString("mdoculeType", LcmsConstants.MODULE_TYPE_LEGALCASE);
+		if (StringUtils.isNotBlank(lcNumber))
+			queryResult.setString("lcNumber", lcNumber);
+		if (StringUtils.isNotBlank(caseNumber))
+			queryResult.setString("caseNumber", caseNumber);
+		if (StringUtils.isNotBlank(court))
+			queryResult.setString("court", court);
+		if (StringUtils.isNotBlank(casetype))
+			queryResult.setString("casetype",casetype);
+		if (StringUtils.isNotBlank(courttype))
+			queryResult.setString("courttype", courttype);
+		if (StringUtils.isNotBlank(standingcouncil))
+			queryResult.setString("standingcoouncil", standingcouncil);
 		if (status != null && !"".equals(status))
-			queryStr.append(" and egwStatus.id = " + "'" + status + "'");
-		if (lcNumber != null && !lcNumber.isEmpty() && caseNumber != null && !caseNumber.isEmpty())
-			queryStr.append(" and legalObj.casenumber = " + "'" + caseNumber + "'");
+			queryResult.setString("status",status);
+		if (StringUtils.isNotBlank(lcNumber) && StringUtils.isNotBlank(caseNumber) )
+			queryResult.setString("caseNumber", caseNumber);
+		queryResult.setResultTransformer(new AliasToBeanResultTransformer(LegalCaseSearchResult.class));
+		return queryResult;
+	}
+
+
+	private void getAppendQuery(final String caseNumber, final String lcNumber, final String court,
+			final String casetype, final String standingcouncil, final String courttype, final String status,
+			final Boolean isStatusExcluded, final StringBuilder queryStr) {
+		if (StringUtils.isNotBlank(lcNumber))
+			queryStr.append(" and legalObj.lcNumber =:lcNumber");
+		if (StringUtils.isNotBlank(caseNumber))
+			queryStr.append(" and legalObj.casenumber =:caseNumber ");
+		if (StringUtils.isNotBlank(court))
+			queryStr.append(" and courtmaster.id =:court ");
+		if (StringUtils.isNotBlank(casetype))
+			queryStr.append(" and casetypemaster.id =:casetype");
+		if (StringUtils.isNotBlank(courttype))
+			queryStr.append(" and courtmaster.courttype =:courttype ");
+		if (StringUtils.isNotBlank(standingcouncil))
+			queryStr.append(" and legalObj.appealnum  =:standingcoouncil ");
+		if (status != null && !"".equals(status))
+			queryStr.append(" and egwStatus.id =:status ");
+		if (StringUtils.isNotBlank(lcNumber) && StringUtils.isNotBlank(caseNumber) )
+			queryStr.append(" and legalObj.casenumber =:caseNumber");
 		if (isStatusExcluded)
 			queryStr.append(" and egwStatus.code NOT IN ('CANCELLED') ");
-		final SQLQuery finalQuery = entityManager.unwrap(Session.class).createSQLQuery(queryStr.toString());
-		finalQuery.setResultTransformer(new AliasToBeanResultTransformer(LegalCaseReportResult.class));
-		return finalQuery;
-
 	}
 
 }
