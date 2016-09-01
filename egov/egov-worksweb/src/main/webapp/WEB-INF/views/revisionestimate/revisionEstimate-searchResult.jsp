@@ -56,7 +56,7 @@
 					<th><spring:message code="lbl.estimatenumber" /></th>
 					<th><spring:message code="lbl.revalue" /></th>
 					<th><spring:message code="lbl.status" /></th>
-					<th><spring:message code="lbl.currentowner" /></th>
+					<th><spring:message code="lbl.owner" /></th>
 					<th><spring:message code="lbl.action" /></th>
 				</tr>
 			</thead>

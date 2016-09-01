@@ -104,17 +104,20 @@ function callAjaxSearch() {
 					    {
 					    	"sExtends": "pdf",
 					    	"sTitle": "Search Revision Estimate",
-                            "sPdfOrientation": "landscape"
+                            "sPdfOrientation": "landscape",
+                            "mColumns": [0,1,2,3,4,5,6,7]
 		                },
 		                {
 				             "sExtends": "xls",
                              "sPdfMessage": "Search Revision Estimate",
-                             "sTitle": "Search Revision Estimate"
+                             "sTitle": "Search Revision Estimate",
+                             "mColumns": [0,1,2,3,4,5,6,7]
 			             },
 			             {
 				             "sExtends": "print",
                              "sPdfMessage": "Search Revision Estimate",
-                             "sTitle": "Search Revision Estimate"
+                             "sTitle": "Search Revision Estimate",
+                             "mColumns": [0,1,2,3,4,5,6,7]
 			             }],
 				},
 				"fnRowCallback" : function(row, data, index) {
@@ -145,7 +148,11 @@ function callAjaxSearch() {
 									+ data + '">' + data + '</a>';
 							}
 						} ,{	
-					"data" : "reValue", "sClass" : "text-right"} ,{
+					"data" : "reValue", "sClass" : "text-right",
+					"render" : function(data, type, row) {
+						return data.toFixed(2);
+						}
+					} ,{
 					"data" : "status","sWidth" : "10"} ,{
 					"data" : "currentOwner"},{
 					"data" : "","width": "7%"} ]				

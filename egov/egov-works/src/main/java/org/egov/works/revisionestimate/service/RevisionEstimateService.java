@@ -926,7 +926,7 @@ public class RevisionEstimateService {
                 filterConditions.append(" AND aec.estimateDate <=:toDate ");
 
             if (searchRevisionEstimate.getLoaNumber() != null)
-                filterConditions.append(" AND wo.workOrder_Number like =:loaNumber ");
+                filterConditions.append(" AND lower(wo.workOrder_Number) like :loaNumber ");
 
             if (searchRevisionEstimate.getCreatedBy() != null)
                 filterConditions.append(" AND aec.createdBy =:createdBy ");
@@ -946,7 +946,7 @@ public class RevisionEstimateService {
         query.append(" aep.estimateNumber               AS estimateNumber,  ");
         query.append(" aec.estimateValue                AS reValue,  ");
         query.append(" status.description               AS revisionEstimateStatus, ");
-        query.append(" u.username                       AS currentOwner  ");
+        query.append(" u.name                           AS currentOwner  ");
         query.append(" FROM egw_revision_estimate re,egw_abstractestimate aec,egw_abstractestimate aep,");
         query.append(" egw_workorder wo,egw_workorder_estimate woe,egw_contractor contractor,egw_status status,eg_user u ");
         query.append(" WHERE aec.parent = aep.id ");
@@ -974,7 +974,7 @@ public class RevisionEstimateService {
                 query.setDate("toDate", searchRevisionEstimate.getToDate());
 
             if (searchRevisionEstimate.getLoaNumber() != null)
-                query.setString("loaNumber", searchRevisionEstimate.getLoaNumber());
+                query.setString("loaNumber", "%"+searchRevisionEstimate.getLoaNumber().toLowerCase()+"%");
 
             if (searchRevisionEstimate.getCreatedBy() != null)
                 query.setLong("createdBy", searchRevisionEstimate.getCreatedBy());
