@@ -48,39 +48,22 @@ import javax.servlet.http.HttpSession;
 import javax.validation.Valid;
 import javax.validation.ValidationException;
 
-import org.egov.commons.service.UOMService;
 import org.egov.eis.entity.Assignment;
 import org.egov.eis.service.AssignmentService;
 import org.egov.eis.web.contract.WorkflowContainer;
 import org.egov.eis.web.controller.workflow.GenericWorkFlowController;
 import org.egov.infra.admin.master.service.DepartmentService;
-import org.egov.infra.admin.master.service.UserService;
 import org.egov.infra.filestore.service.FileStoreService;
-import org.egov.infra.reporting.engine.ReportOutput;
 import org.egov.infra.security.utils.SecurityUtils;
 import org.egov.ptis.domain.model.AssessmentDetails;
-import org.egov.ptis.domain.service.property.PropertyExternalService;
 import org.egov.stms.masters.entity.enums.PropertyType;
-import org.egov.stms.masters.service.DocumentTypeMasterService;
-import org.egov.stms.masters.service.FeesDetailMasterService;
-import org.egov.stms.masters.service.SewerageApplicationTypeService;
-import org.egov.stms.notice.service.SewerageNoticeService;
-import org.egov.stms.transactions.charges.SewerageChargeCalculationService;
 import org.egov.stms.transactions.entity.SewerageApplicationDetails;
 import org.egov.stms.transactions.service.SewerageApplicationDetailsService;
-import org.egov.stms.transactions.service.SewerageConnectionFeeService;
-import org.egov.stms.transactions.service.SewerageConnectionService;
-import org.egov.stms.transactions.service.SewerageEstimationDetailsService;
-import org.egov.stms.transactions.service.SewerageFieldInspectionDetailsService;
 import org.egov.stms.transactions.service.SewerageThirdPartyServices;
 import org.egov.stms.utils.SewerageTaxUtils;
 import org.egov.stms.utils.constants.SewerageTaxConstants;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -89,28 +72,24 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 @Controller
 @RequestMapping(value = "/transactions")
 public class SewerageCloseUpdateConnectionController extends GenericWorkFlowController {
-    
+
     @Autowired
-    private  SewerageApplicationDetailsService sewerageApplicationDetailsService;
-    
+    private SewerageApplicationDetailsService sewerageApplicationDetailsService;
+
     @Autowired
-    private  DepartmentService departmentService;
+    private DepartmentService departmentService;
 
     @Autowired
     private SewerageTaxUtils sewerageTaxUtils;
 
     @Autowired
     private SecurityUtils securityUtils;
-
-    @Autowired
-    private UserService userService;
 
     @Autowired
     private AssignmentService assignmentService;
@@ -120,40 +99,7 @@ public class SewerageCloseUpdateConnectionController extends GenericWorkFlowCont
     protected FileStoreService fileStoreService;
 
     @Autowired
-    private FeesDetailMasterService feesDetailMasterService;
-
-    @Autowired
-    private UOMService uOMService;
-    
-    @Autowired
-    private SewerageChargeCalculationService sewerageChargeCalculationService;
-    
-    @Autowired
-    private SewerageApplicationTypeService sewerageApplicationTypeService;
-    
-    @Autowired
-    private DocumentTypeMasterService documentTypeMasterService;
-    
-    @Autowired
-    private SewerageConnectionFeeService SewerageConnectionFeeService;
-    
-    @Autowired
-    private SewerageConnectionService sewerageConnectionService;
-    
-    @Autowired
-    private SewerageEstimationDetailsService sewerageEstimationDetailsService;
- 
-    @Autowired
-    private SewerageFieldInspectionDetailsService sewerageFieldInspectionDetailsService;
-    
-    @Autowired
-    private PropertyExternalService propertyExternalService;
-
-    @Autowired
     private SewerageThirdPartyServices sewerageThirdPartyServices;
-    
-    @Autowired
-    private SewerageNoticeService sewerageNoticeService;
     
 
     @ModelAttribute("sewerageApplicationDetails")
@@ -182,6 +128,7 @@ public class SewerageCloseUpdateConnectionController extends GenericWorkFlowCont
         WorkflowContainer container = new WorkflowContainer();
         container.setAdditionalRule(sewerageApplicationDetails.getApplicationType().getCode()); 
         prepareWorkflow(model, sewerageApplicationDetails, container);
+        model.addAttribute("additionalRule", sewerageApplicationDetails.getApplicationType().getCode());
         model.addAttribute("propertyTypes", PropertyType.values());
         return "closeSewerageConnection";
     }
@@ -200,6 +147,9 @@ public class SewerageCloseUpdateConnectionController extends GenericWorkFlowCont
 
         if (request.getParameter("approvalPosition") != null && !request.getParameter("approvalPosition").isEmpty())
             approvalPosition = Long.valueOf(request.getParameter("approvalPosition"));
+
+        if (request.getParameter("workFlowAction") != null)
+            workFlowAction = request.getParameter("workFlowAction");
 
         try {
             if (workFlowAction != null && !workFlowAction.isEmpty()
