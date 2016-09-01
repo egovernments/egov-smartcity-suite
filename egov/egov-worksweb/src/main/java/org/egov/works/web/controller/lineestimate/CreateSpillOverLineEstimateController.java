@@ -245,8 +245,8 @@ public class CreateSpillOverLineEstimateController {
                 && lineEstimate.getAdminSanctionDate().before(lineEstimate.getLineEstimateDate()))
             errors.rejectValue("adminSanctionDate", "error.adminsanctiondate");
         if (lineEstimate.getCouncilResolutionDate() != null
-                && lineEstimate.getCouncilResolutionDate().after(lineEstimate.getAdminSanctionDate()))
-            errors.rejectValue("councilResolutionDate", "error.spillover.councilresolutiondate");
+                && lineEstimate.getCouncilResolutionDate().before(lineEstimate.getLineEstimateDate()))
+            errors.rejectValue("councilResolutionDate", "error.councilresolutiondate");
         if (StringUtils.isBlank(lineEstimate.getAdminSanctionNumber()))
             errors.rejectValue("adminSanctionNumber", "error.adminsanctionnumber.notnull");
         if (lineEstimate.getAdminSanctionNumber() != null) {

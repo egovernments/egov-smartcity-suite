@@ -46,7 +46,7 @@
 <%@ taglib uri="http://www.springframework.org/tags/form" prefix="form"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
-<script src="<cdn:url value='resources/js/documentsupload.js?rnd=${app_release_no}'/>"></script>
+<script src="<cdn:url value='/resources/js/documentsupload.js?rnd=${app_release_no}'/>"></script>
 <style>
 	.file-ellipsis {
 		width : auto !Important;

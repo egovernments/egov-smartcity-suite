@@ -527,8 +527,8 @@ function validateWorkFlowApprover(name) {
 		
 		var lineEstimateStatus = $('#lineEstimateStatus').val();
 		if(lineEstimateStatus == 'BUDGET_SANCTIONED') {
-			var lineEstimateDate = $('#lineEstimateDate').val();
-			var councilResolutionDate = $('#councilResolutionDate').val()
+			var lineEstimateDate = new Date($('#lineEstimateDate').val());
+			var councilResolutionDate = $('#councilResolutionDate').data('datepicker').date;	
 			if (councilResolutionDate != "") {
 				if (councilResolutionDate < lineEstimateDate) {
 					bootbox.alert($('#errorCouncilResolutionDate').val());
