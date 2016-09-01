@@ -37,38 +37,35 @@
  *
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
-package org.egov.eis.repository;
+package org.egov.eis.web.controller.reports;
 
-import org.egov.infra.admin.master.entity.Role;
-import org.egov.pims.commons.Designation;
-import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.data.jpa.repository.Query;
-import org.springframework.data.repository.query.Param;
-import org.springframework.stereotype.Repository;
+import java.util.Date;
 
-import java.util.List;
-import java.util.Set;
+import org.egov.eis.reports.entity.EmployeeAssignmentSearch;
+import org.egov.infra.admin.master.service.DepartmentService;
+import org.egov.infra.exception.ApplicationException;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
 
-/**
- * @author Vaibhav.K
- */
-@Repository
-public interface DesignationRepository extends JpaRepository<Designation, Long>, DesignationCustomRepository {
-
-    @Query("select d from Designation d where upper(d.name)=:designationname")
-    Designation findByNameUpperCase(@Param("designationname") String designationName);
-
-    List<Designation> findByNameContainingIgnoreCaseOrderByNameAsc(String designationName);
-
-    List<Designation> findAllByOrderByNameAsc();
-
-    @Query("select distinct d.roles from Designation d where d.name=:designationName ")
-    Set<Role> getRolesByDesignation(@Param("designationName") String designationName);
+@Controller
+@RequestMapping("/reports/employeeassignments")
+public class EmployeeAssignmentReportController {
     
-    @Query("select d from Designation d where upper(d.name) in :designationnames")
-    List<Designation> getDesignationsByNames(@Param("designationnames") List<String> designationNames);
+    @Autowired
+    private DepartmentService departmentService;
     
-    @Query("select d from Designation d where upper(d.name) like upper(:name)")
-    List<Designation> getDesignationsByName(@Param("name") final String name);
+    @RequestMapping(value = "/searchform", method = RequestMethod.GET)
+    public String showSearchLineEstimateForm(
+            @ModelAttribute final EmployeeAssignmentSearch employeeAssignmentSearch,
+            final Model model) throws ApplicationException {
+        model.addAttribute("departments",departmentService.getAllDepartments());
+        employeeAssignmentSearch.setAssignmentDate(new Date());
+        model.addAttribute("employeeAssignmentSearch", employeeAssignmentSearch);
+        return "employeeassignment-search";
+    }
 
 }
