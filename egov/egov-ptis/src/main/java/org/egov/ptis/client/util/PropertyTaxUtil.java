@@ -213,6 +213,7 @@ import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.criterion.CriteriaSpecification;
 import org.joda.time.DateTime;
+import org.joda.time.Days;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -830,18 +831,11 @@ public class PropertyTaxUtil {
      */
     public static Long getNumberOfDays(final Date fromDate, final Date toDate) {
         LOGGER.debug("Entered into getNumberOfDays, fromDate=" + fromDate + ", toDate=" + toDate);
-        final Calendar fromDateCalendar = Calendar.getInstance();
-        final Calendar toDateCalendar = Calendar.getInstance();
-        fromDateCalendar.setTime(fromDate);
-        toDateCalendar.setTime(toDate);
-        Long days = 0L;
-        while (fromDateCalendar.before(toDateCalendar)) {
-            fromDateCalendar.add(Calendar.DAY_OF_MONTH, 1);
-            days++;
-        }
-        LOGGER.debug("getNumberOfDays - days: " + days);
-        LOGGER.debug("Exiting from getNumberOfDays");
-        return days;
+        DateTime startDate = new DateTime(fromDate);
+        DateTime endDate = new DateTime(toDate);
+        Integer days = Days.daysBetween(startDate, endDate).getDays();
+        days = days < 0 ? 0 : days;
+        return Long.valueOf(days.longValue());
     }
 
     /**
