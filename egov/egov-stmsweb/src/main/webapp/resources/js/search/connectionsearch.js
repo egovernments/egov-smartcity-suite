@@ -118,9 +118,25 @@ $(document).on('change', 'select.actiondropdown', function() {
 		});
 		}  
 	else if($(this).find(":selected").text()=="Close Sewerage Connection"){
-		// TODO : add validation to check whether already close connection is in workflow.
-		// shld not allow multiple close connection process
-		callurl($(this).val(), $(this).data('consumer-no'),ptassessmentno,shscnumber);
+		var closeconnectionurl=$(this).val();
+		jQuery.ajax({
+			url: "/stms/ajaxconnection/check-application-inworkflow/"+shscnumber,
+			type: "GET",
+			data: {
+				shscnumber : shscnumber,
+			},
+			datatype: "text",
+			success: function (response){
+				if(response!=""){
+				bootbox.alert(response);
+				return false;
+				}
+				else{
+					callurl(closeconnectionurl, $(this).data('consumer-no'),ptassessmentno,shscnumber);
+				}
+			},
+			
+		});
 	}
 	else{  
 		if($(this).find(":selected").index()>0){
@@ -205,8 +221,24 @@ $("#viewDCB").click(function(){
 });
   
 $("#closeConnection").click(function(){
-	// TODO : add validation to check whether already close connection is in workflow.
-	// shld not allow multiple close connection process
-	var shscNumber=document.getElementById("shscNumber").value;
-	window.open("/stms/transactions/closeConnection/"+shscNumber, '_blank', "width=800, height=600, scrollbars=yes");
+	var shscnumber=document.getElementById("shscNumber").value;
+	jQuery.ajax({
+		url: "/stms/ajaxconnection/check-application-inworkflow/"+shscnumber,
+		type: "GET",
+		data: {
+			shscnumber : shscnumber,
+		},
+		datatype: "text",
+		success: function (response){
+			if(response!=""){
+			bootbox.alert(response);
+			return false;
+			}
+			else{
+				window.open("/stms/transactions/closeConnection/"+shscnumber, '_blank', "width=800, height=600, scrollbars=yes");
+			}
+		},
+		
+	});
+	
 });

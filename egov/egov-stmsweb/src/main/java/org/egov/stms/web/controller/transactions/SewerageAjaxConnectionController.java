@@ -73,6 +73,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
+import static org.egov.stms.utils.constants.SewerageTaxConstants.CHANGEINCLOSETS;
+import static org.egov.stms.utils.constants.SewerageTaxConstants.CLOSESEWERAGECONNECTION;
 
 @Controller
 public class SewerageAjaxConnectionController {
@@ -126,9 +128,13 @@ public class SewerageAjaxConnectionController {
         String validationMessage="";
         SewerageApplicationDetails sewerageAppDtl = new SewerageApplicationDetails();
         sewerageAppDtl = sewerageApplicationDetailsService.checkModifyClosetInProgress(shscNumber);
-        if(sewerageAppDtl!=null){
+        if(sewerageAppDtl!=null && sewerageAppDtl.getApplicationType().getCode().equalsIgnoreCase(CHANGEINCLOSETS)){
             validationMessage = messageSource.getMessage("err.validate.changenoofclosets.application.inprogress", new String[] {sewerageAppDtl.getConnectionDetail().getPropertyIdentifier(), sewerageAppDtl.getApplicationNumber()},null);
             return validationMessage;
+        }
+        else if(sewerageAppDtl!=null && sewerageAppDtl.getApplicationType().getCode().equalsIgnoreCase(CLOSESEWERAGECONNECTION)){
+            validationMessage = messageSource.getMessage("err.validate.closeconnection.application.inprogress", new String[] {sewerageAppDtl.getConnectionDetail().getPropertyIdentifier(), sewerageAppDtl.getApplicationNumber()}, null);
+            return validationMessage; 
         }
         else
             return validationMessage; 
