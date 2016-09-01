@@ -141,7 +141,8 @@ public class SewerageDCBReporService {
      
             receiptMap = new TreeMap<String, Map<Date, BigDecimal>>();
            for(SewerageApplicationDetails detail : sewerageApplicationDetails.getConnection().getApplicationDetails()){
-            for (EgDemandDetails demandDetail : detail.getCurrentDemand().getEgDemandDetails()) {
+            if(detail.getCurrentDemand()!=null && !detail.getCurrentDemand().getEgDemandDetails().isEmpty())
+               for (EgDemandDetails demandDetail : detail.getCurrentDemand().getEgDemandDetails()) {
                 receiptDtlMap = new HashMap<Date, BigDecimal>();
 
                 for (EgdmCollectedReceipt receipt : demandDetail.getEgdmCollectedReceipts()) {
