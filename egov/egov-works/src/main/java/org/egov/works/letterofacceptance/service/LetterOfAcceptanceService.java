@@ -693,7 +693,7 @@ public class LetterOfAcceptanceService {
 
     public List<String> findLoaWorkOrderNumberForMilestone(final String workOrderNumber) {
         final List<WorkOrder> workorders = letterOfAcceptanceRepository
-                .findByWorkOrderNumberContainingIgnoreCaseAndEgwStatus_codeEquals(workOrderNumber,
+                .findByWorkOrderNumberContainingIgnoreCaseAndEgwStatus_codeEqualsAndParent_idIsNull(workOrderNumber,
                         WorksConstants.APPROVED);
         final List<String> results = new ArrayList<String>();
         for (final WorkOrder details : workorders)

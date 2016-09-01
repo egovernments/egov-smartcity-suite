@@ -53,15 +53,15 @@ public interface LetterOfAcceptanceRepository extends JpaRepository<WorkOrder, L
 
     WorkOrder findById(final Long id);
 
-    @Query("select distinct(wo.workOrderNumber) from WorkOrder as wo where upper(wo.workOrderNumber) like upper(:workOrderNumber)")
+    @Query("select distinct(wo.workOrderNumber) from WorkOrder as wo where wo.parent.id is null and upper(wo.workOrderNumber) like upper(:workOrderNumber)")
     List<String> findDistinctWorkOrderNumberContainingIgnoreCase(@Param("workOrderNumber") final String workOrderNumber);
 
-    @Query("select distinct(wo.estimateNumber) from WorkOrder as wo where upper(wo.estimateNumber) like upper(:estimateNumber)")
+    @Query("select distinct(wo.estimateNumber) from WorkOrder as wo where wo.parent.id is null and upper(wo.estimateNumber) like upper(:estimateNumber)")
     List<String> findDistinctEstimateNumberNumberContainingIgnoreCase(@Param("estimateNumber") final String estimateNumber);
 
     List<WorkOrder> findByEstimateNumberAndEgwStatus_codeEquals(final String estimateNumber, final String statusCode);
 
-    List<WorkOrder> findByWorkOrderNumberContainingIgnoreCaseAndEgwStatus_codeEquals(final String workOrderNumber,
+    List<WorkOrder> findByWorkOrderNumberContainingIgnoreCaseAndEgwStatus_codeEqualsAndParent_idIsNull(final String workOrderNumber,
             final String statusCode);
 
     List<WorkOrder> findByEstimateNumberContainingIgnoreCaseAndEgwStatus_codeEquals(final String estimateNumber,
@@ -76,19 +76,19 @@ public interface LetterOfAcceptanceRepository extends JpaRepository<WorkOrder, L
 
     WorkOrder findByWorkOrderNumberAndEgwStatus_codeEquals(final String workOrderNumber, final String statusCode);
 
-    @Query("select distinct(woe.workOrder.workOrderNumber) from WorkOrderEstimate as woe where upper(woe.workOrder.workOrderNumber) like upper(:workOrderNumber) and woe.workOrder.egwStatus.code = :approvedStatus and not exists (select distinct(cbr.workOrderEstimate) from ContractorBillRegister as cbr where woe.id = cbr.workOrderEstimate.id and upper(cbr.billstatus) != :status and cbr.billtype = :billtype) ")
+    @Query("select distinct(woe.workOrder.workOrderNumber) from WorkOrderEstimate as woe where woe.workOrder.parent.id is null and upper(woe.workOrder.workOrderNumber) like upper(:workOrderNumber) and woe.workOrder.egwStatus.code = :approvedStatus and not exists (select distinct(cbr.workOrderEstimate) from ContractorBillRegister as cbr where woe.id = cbr.workOrderEstimate.id and upper(cbr.billstatus) != :status and cbr.billtype = :billtype) ")
     List<String> findWorkOrderNumberForContractorBill(@Param("workOrderNumber") String workOrderNumber,
             @Param("approvedStatus") String approvedStatus, @Param("status") String status, @Param("billtype") String billtype);
 
-    @Query("select distinct(woe.workOrder.workOrderNumber) from WorkOrderEstimate as woe where upper(woe.workOrder.workOrderNumber) like upper(:workOrderNumber) and woe.workOrder.egwStatus.code = :approvedStatus and not exists (select distinct(cbr.workOrderEstimate) from ContractorBillRegister as cbr where woe.id = cbr.workOrderEstimate.id and upper(cbr.billstatus) != :status and cbr.billtype = :billtype) and exists (select distinct mh.workOrderEstimate from MBHeader mh where mh.egwStatus.code =:approvedStatus )")
+    @Query("select distinct(woe.workOrder.workOrderNumber) from WorkOrderEstimate as woe where woe.workOrder.parent.id is null and upper(woe.workOrder.workOrderNumber) like upper(:workOrderNumber) and woe.workOrder.egwStatus.code = :approvedStatus and not exists (select distinct(cbr.workOrderEstimate) from ContractorBillRegister as cbr where woe.id = cbr.workOrderEstimate.id and upper(cbr.billstatus) != :status and cbr.billtype = :billtype) and exists (select distinct mh.workOrderEstimate from MBHeader mh where mh.egwStatus.code =:approvedStatus )")
     List<String> findWorkOrderNumberForContractorBillWithMB(@Param("workOrderNumber") String workOrderNumber,
             @Param("approvedStatus") String approvedStatus, @Param("status") String status, @Param("billtype") String billtype);
 
-    @Query("select distinct(woe.workOrder.estimateNumber) from WorkOrderEstimate as woe where upper(woe.workOrder.estimateNumber) like upper(:estimateNumber) and woe.workOrder.egwStatus.code = :approvedStatus and not exists (select distinct(cbr.workOrderEstimate) from ContractorBillRegister as cbr where woe.id = cbr.workOrderEstimate.id and upper(cbr.billstatus) != :status and cbr.billtype = :billtype)")
+    @Query("select distinct(woe.workOrder.estimateNumber) from WorkOrderEstimate as woe where woe.workOrder.parent.id is null and upper(woe.workOrder.estimateNumber) like upper(:estimateNumber) and woe.workOrder.egwStatus.code = :approvedStatus and not exists (select distinct(cbr.workOrderEstimate) from ContractorBillRegister as cbr where woe.id = cbr.workOrderEstimate.id and upper(cbr.billstatus) != :status and cbr.billtype = :billtype)")
     List<String> findEstimateNumberForContractorBill(@Param("estimateNumber") String estimateNumber,
             @Param("approvedStatus") String approvedStatus, @Param("status") String status, @Param("billtype") String billtype);
 
-    @Query("select distinct(woe.workOrder.estimateNumber) from WorkOrderEstimate as woe where upper(woe.workOrder.estimateNumber) like upper(:estimateNumber) and woe.workOrder.egwStatus.code = :approvedStatus and not exists (select distinct(cbr.workOrderEstimate) from ContractorBillRegister as cbr where woe.id = cbr.workOrderEstimate.id and upper(cbr.billstatus) != :status and cbr.billtype = :billtype) and exists (select distinct mh.workOrderEstimate from MBHeader mh where mh.egwStatus.code =:approvedStatus )")
+    @Query("select distinct(woe.workOrder.estimateNumber) from WorkOrderEstimate as woe where woe.workOrder.parent.id is null and upper(woe.workOrder.estimateNumber) like upper(:estimateNumber) and woe.workOrder.egwStatus.code = :approvedStatus and not exists (select distinct(cbr.workOrderEstimate) from ContractorBillRegister as cbr where woe.id = cbr.workOrderEstimate.id and upper(cbr.billstatus) != :status and cbr.billtype = :billtype) and exists (select distinct mh.workOrderEstimate from MBHeader mh where mh.egwStatus.code =:approvedStatus )")
     List<String> findEstimateNumberForContractorBillWithMB(@Param("estimateNumber") String estimateNumber,
             @Param("approvedStatus") String approvedStatus, @Param("status") String status, @Param("billtype") String billtype);
 
@@ -133,19 +133,19 @@ public interface LetterOfAcceptanceRepository extends JpaRepository<WorkOrder, L
     @Query("select distinct(wo.id) from WorkOrder as wo where wo.id = (select distinct(os.objectId) from OfflineStatus as os where os.id = (select max(status.id) from OfflineStatus status where status.objectType = :objectType and os.objectId = wo.id) and os.objectId = wo.id and os.egwStatus.code = :offlineStatus and os.objectType = :objectType )")
     List<Long> findWorkOrderForLoaStatus(@Param("offlineStatus") String offlineStatus, @Param("objectType") String objectType);
 
-    @Query("select distinct(woe.estimate.estimateNumber) from WorkOrderEstimate as woe where woe.workOrder.egwStatus.code = :workOrderStatus and upper(woe.estimate.estimateNumber) like upper(:estimateNumber) and not exists(select distinct(woa.workOrderEstimate.estimate.estimateNumber) from WorkOrderActivity woa where woa.workOrderEstimate = woe)")
+    @Query("select distinct(woe.estimate.estimateNumber) from WorkOrderEstimate as woe where woe.workOrder.parent.id is null and woe.workOrder.egwStatus.code = :workOrderStatus and upper(woe.estimate.estimateNumber) like upper(:estimateNumber) and not exists(select distinct(woa.workOrderEstimate.estimate.estimateNumber) from WorkOrderActivity woa where woa.workOrderEstimate = woe)")
     List<String> findEstimateNumbersToModifyLOA(@Param("estimateNumber") String estimateNumber,
             @Param("workOrderStatus") String workOrderStatus);
 
-    @Query("select distinct(woe.workOrder.workOrderNumber) from WorkOrderEstimate as woe where woe.workOrder.egwStatus.code = :workOrderStatus and upper(woe.workOrder.workOrderNumber) like upper(:workOrderNumber) and not exists(select distinct(woa.workOrderEstimate.workOrder.workOrderNumber) from WorkOrderActivity woa where woa.workOrderEstimate = woe)")
+    @Query("select distinct(woe.workOrder.workOrderNumber) from WorkOrderEstimate as woe where woe.workOrder.parent.id is null and woe.workOrder.egwStatus.code = :workOrderStatus and upper(woe.workOrder.workOrderNumber) like upper(:workOrderNumber) and not exists(select distinct(woa.workOrderEstimate.workOrder.workOrderNumber) from WorkOrderActivity woa where woa.workOrderEstimate = woe)")
     List<String> findWorkOrderNumbersToModifyLOA(@Param("workOrderNumber") String workOrderNumber,
             @Param("workOrderStatus") String workOrderStatus);
 
-    @Query("select distinct(woe.estimate.estimateNumber) from WorkOrderEstimate as woe where woe.workOrder.egwStatus.code = :workOrderStatus and upper(woe.estimate.estimateNumber) like upper(:estimateNumber) and exists(select distinct(woa.workOrderEstimate.estimate.estimateNumber) from WorkOrderActivity woa where woa.workOrderEstimate = woe)")
+    @Query("select distinct(woe.estimate.estimateNumber) from WorkOrderEstimate as woe where woe.workOrder.parent.id is null and woe.workOrder.egwStatus.code = :workOrderStatus and upper(woe.estimate.estimateNumber) like upper(:estimateNumber) and exists(select distinct(woa.workOrderEstimate.estimate.estimateNumber) from WorkOrderActivity woa where woa.workOrderEstimate = woe)")
     List<String> findEstimateNumbersToSetOfflineStatus(@Param("estimateNumber") String estimateNumber,
             @Param("workOrderStatus") String workOrderStatus);
 
-    @Query("select distinct(woe.workOrder.workOrderNumber) from WorkOrderEstimate as woe where woe.workOrder.egwStatus.code = :workOrderStatus and upper(woe.workOrder.workOrderNumber) like upper(:workOrderNumber) and exists(select distinct(woa.workOrderEstimate.workOrder.workOrderNumber) from WorkOrderActivity woa where woa.workOrderEstimate = woe)")
+    @Query("select distinct(woe.workOrder.workOrderNumber) from WorkOrderEstimate as woe where woe.workOrder.parent.id is null and woe.workOrder.egwStatus.code = :workOrderStatus and upper(woe.workOrder.workOrderNumber) like upper(:workOrderNumber) and exists(select distinct(woa.workOrderEstimate.workOrder.workOrderNumber) from WorkOrderActivity woa where woa.workOrderEstimate = woe)")
     List<String> findWorkOrderNumbersToSetOfflineStatus(@Param("workOrderNumber") String workOrderNumber,
             @Param("workOrderStatus") String workOrderStatus);
 

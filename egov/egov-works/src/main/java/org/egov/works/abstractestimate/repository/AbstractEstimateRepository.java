@@ -53,7 +53,7 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface AbstractEstimateRepository extends JpaRepository<AbstractEstimate, Long> {
 
-    @Query("select distinct(ae.estimateNumber) from AbstractEstimate as ae where upper(ae.estimateNumber) like upper(:estimateNumber)")
+    @Query("select distinct(ae.estimateNumber) from AbstractEstimate as ae where ae.parent.id is null and upper(ae.estimateNumber) like upper(:estimateNumber)")
     List<String> findDistinctEstimateNumberContainingIgnoreCase(@Param("estimateNumber") final String estimateNumber);
 
     List<AbstractEstimate> findByEstimateNumberAndEgwStatus_codeEquals(final String estimateNumber, final String statusCode);
@@ -84,12 +84,12 @@ public interface AbstractEstimateRepository extends JpaRepository<AbstractEstima
     List<String> findAbstractEstimateNumbersToCancelEstimate(@Param("code") final String code,
             @Param("status") final String status);
 
-    @Query("select distinct(ae.estimateNumber) from AbstractEstimate as ae where upper(ae.estimateNumber) like upper(:code) and ae.egwStatus.code = :abstractEstimateStatus and not exists (select distinct(woe.estimate) from WorkOrderEstimate as woe where ae.id = woe.workOrder.id and woe.workOrder.egwStatus.code != upper(:workOrderStatus))")
+    @Query("select distinct(ae.estimateNumber) from AbstractEstimate as ae where ae.parent.id is null and upper(ae.estimateNumber) like upper(:code) and ae.egwStatus.code = :abstractEstimateStatus and not exists (select distinct(woe.estimate) from WorkOrderEstimate as woe where ae.id = woe.workOrder.id and woe.workOrder.egwStatus.code != upper(:workOrderStatus))")
     List<String> findAbstractEstimateNumbersToSetOfflineStatus(@Param("code") final String code,
             @Param("abstractEstimateStatus") final String abstractEstimateStatus,
             @Param("workOrderStatus") final String workOrderStatus);
 
-    @Query("select distinct(estimate.estimateNumber) from AbstractEstimate estimate where estimate.egwStatus.code = :abstractEstimateStatus and upper(estimate.estimateNumber) like upper(:estimateNumber) and not exists (select distinct(woe.estimate) from WorkOrderEstimate as woe where estimate.id = woe.estimate.id and upper(woe.workOrder.egwStatus.code) != upper(:workOrderStatus) and upper(estimate.egwStatus.code) = upper(:abstractEstimateStatus)) and exists (select act.abstractEstimate from Activity as act where estimate.id = act.abstractEstimate.id ) and exists (select off.id from OfflineStatus as off where off.objectId = estimate.id and off.objectType = :objectType and upper(off.egwStatus.code) = upper(:offlineStatus) )")
+    @Query("select distinct(estimate.estimateNumber) from AbstractEstimate estimate where estimate.parent.id is null and estimate.egwStatus.code = :abstractEstimateStatus and upper(estimate.estimateNumber) like upper(:estimateNumber) and not exists (select distinct(woe.estimate) from WorkOrderEstimate as woe where estimate.id = woe.estimate.id and upper(woe.workOrder.egwStatus.code) != upper(:workOrderStatus) and upper(estimate.egwStatus.code) = upper(:abstractEstimateStatus)) and exists (select act.abstractEstimate from Activity as act where estimate.id = act.abstractEstimate.id ) and exists (select off.id from OfflineStatus as off where off.objectId = estimate.id and off.objectType = :objectType and upper(off.egwStatus.code) = upper(:offlineStatus) )")
     List<String> findEstimateNumbersToCreateLOA(@Param("estimateNumber") final String estimateNumber,
             @Param("abstractEstimateStatus") final String abstractEstimateStatus,
             @Param("workOrderStatus") final String workOrderStatus, @Param("objectType") final String objectType,
