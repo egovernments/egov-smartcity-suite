@@ -172,4 +172,6 @@ public class Constants {
     public static final String GRANT_TYPE_CFC = "Central Finance Commission";
     public static final String GRANT_TYPE_ET = "Entertainment Tax";
     public static final String GRANT_TYPE_SD = "Stamp Duty";
+    
+    public static final String VIEW_COA = "view coa";
 }

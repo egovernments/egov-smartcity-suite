@@ -45,24 +45,6 @@
 <head>
 <title><s:text name="chartOfAccount" /></title>
 
-<script type="text/javascript">
-	function submitForm() {
-		var id = '<s:property value="coaId"/>';
-		document.chartOfAccountsForm.action = '${pageContext.request.contextPath}/masters/chartOfAccounts-modify.action?model.id='
-				+ id;
-		document.chartOfAccountsForm.submit();
-
-		return true;
-	}
-	function submitForAdd() {
-		var id = '<s:property value="coaId"/>';
-		document.chartOfAccountsForm.action = '${pageContext.request.contextPath}/masters/chartOfAccounts-addNewCoa.action?parentId='
-				+ id + "&model.id=" + id;
-		document.chartOfAccountsForm.submit();
-
-		return true;
-	}
-</script>
 </head>
 <body>
 	<jsp:include page="../budget/budgetHeader.jsp" />
@@ -161,14 +143,6 @@
 			<br /> <br />
 		</div>
 		<div class="buttonbottom">
-			<s:if test="%{coaId !=null || coaId!=''}">
-				<s:if test="%{shouldAllowCreation()}">
-					<s:submit name="Add" value="Add" cssClass="buttonsubmit"
-						onclick="submitForAdd()" />
-				</s:if>
-				<input type="submit" class="buttonsubmit" value="Modify" id="Modify"
-					name="Modify" onclick="return submitForm();" />
-			</s:if>
 			<input type="button" value="Close"
 				onclick="javascript:window.close()" class="button" />
 		</div>

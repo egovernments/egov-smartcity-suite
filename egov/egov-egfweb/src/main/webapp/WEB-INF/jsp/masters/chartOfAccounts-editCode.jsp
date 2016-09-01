@@ -46,23 +46,14 @@
 <title>Detailed Chart Of Accounts</title>
 
 <script type="text/javascript">
-		function addNew(){
-			window.open('/EGF/masters/chartOfAccounts-addNew.action','','height=650,width=900,scrollbars=yes,left=30,top=30,status=no');
-			return true;
-		}
 		function validateAndSubmit(obj){
 			if(document.getElementById('glCode').value == null || document.getElementById('glCode').value==''){
 				bootbox.alert("Please enter account code");
 				return false;
 			}
 			var value = obj.value;
-			if(value == "Search and Modify"){
 				document.chartOfAccountsForm.action='${pageContext.request.contextPath}/masters/chartOfAccounts-modifySearch.action';
 	    		document.chartOfAccountsForm.submit();
-				}else{
-					document.chartOfAccountsForm.action='${pageContext.request.contextPath}/masters/chartOfAccounts-viewSearch.action';
-		    		document.chartOfAccountsForm.submit();
-					}
 			return true;
 		}
 
@@ -99,11 +90,7 @@
 	<div class="buttonbottom" style="padding-bottom: 10px;">
 		<input type="submit" class="buttonsubmit" value="Search and Modify"
 			id="Search" name="Search" onclick="return validateAndSubmit(this);" />
-		<input type="submit" class="buttonsubmit" value="Search and View"
-			id="Search" name="Search" onclick="return validateAndSubmit(this);" />
-		<input type="button" name="add" value="Add New" method="addNew"
-			class="buttonsubmit" onClick="return addNew();" /> <input
-			type="button" value="Close" onclick="javascript:window.close()"
+		<input type="button" value="Close" onclick="javascript:window.close()"
 			class="button" />
 	</div>
 	</s:form>

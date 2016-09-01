@@ -40,9 +40,12 @@
 package org.egov.egf.web.actions.masters;
 
 
-import com.exilant.GLEngine.ChartOfAccounts;
-import com.exilant.GLEngine.CoaCache;
-import com.exilant.exility.common.TaskFailedException;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
@@ -55,6 +58,7 @@ import org.egov.commons.Accountdetailtype;
 import org.egov.commons.CChartOfAccountDetail;
 import org.egov.commons.CChartOfAccounts;
 import org.egov.commons.EgfAccountcodePurpose;
+import org.egov.commons.dao.ChartOfAccountsHibernateDAO;
 import org.egov.infra.admin.master.service.AppConfigValueService;
 import org.egov.infra.validation.exception.ValidationError;
 import org.egov.infra.validation.exception.ValidationException;
@@ -66,20 +70,18 @@ import org.hibernate.SQLQuery;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
+import com.exilant.GLEngine.ChartOfAccounts;
+import com.exilant.GLEngine.CoaCache;
 
 @ParentPackage("egov")
 @Results({
-    @Result(name = "detailed-code", location = "chartOfAccounts-detailed-code.jsp"),
     @Result(name = "detailed", location = "chartOfAccounts-detailed.jsp"),
     @Result(name = Constants.EDIT, location = "chartOfAccounts-edit.jsp"),
     @Result(name = Constants.VIEW, location = "chartOfAccounts-view.jsp"),
+    @Result(name = Constants.VIEW_COA, location = "chartOfAccounts-viewCoa.jsp"),
     @Result(name = "new", location = "chartOfAccounts-new.jsp"),
+    @Result(name = "detailed-editCode", location = "chartOfAccounts-editCode.jsp"),
+    @Result(name = "detailed-viewCode", location = "chartOfAccounts-viewCode.jsp"),
     @Result(name = "generated-glcode", location = "chartOfAccounts-generated-glcode.jsp") })
 public class ChartOfAccountsAction extends BaseFormAction {
     private static final long serialVersionUID = 3393565721493478018L;
@@ -123,6 +125,8 @@ public class ChartOfAccountsAction extends BaseFormAction {
     private boolean updateOnly = false;
     @Autowired
 	private CoaCache coaCache;
+    @Autowired
+    private ChartOfAccountsHibernateDAO chartOfAccountsHibernateDAO;
 
     @Override
     public Object getModel() {
@@ -488,10 +492,17 @@ public class ChartOfAccountsAction extends BaseFormAction {
         return false;
     }
 
-    @Action(value = "/masters/chartOfAccounts-detailed")
-    public String detailed() throws Exception {
-        allChartOfAccounts = chartOfAccountsService.findAllBy("from CChartOfAccounts where classification=4");
-        return "detailed-code";
+
+    @Action(value = "/masters/chartOfAccounts-editDetailedCode")
+    public String editDetailedCode() throws Exception {
+        allChartOfAccounts = chartOfAccountsHibernateDAO.getDetailedAccountCodeList();
+        return "detailed-editCode";
+    }
+
+    @Action(value = "/masters/chartOfAccounts-viewDetailedCode")
+    public String viewDetailedCode() throws Exception {
+        allChartOfAccounts = chartOfAccountsHibernateDAO.getDetailedAccountCodeList();
+        return "detailed-viewCode";
     }
 
     @SkipValidation
@@ -502,7 +513,7 @@ public class ChartOfAccountsAction extends BaseFormAction {
                     glCode.split("-")[0]);
             if (model == null) {
                 addActionMessage(getText("charOfAccount.no.record"));
-                return detailed();
+                return editDetailedCode();
             }
             populateAccountDetailTypeList();
             populateCoaRequiredFields();
@@ -510,7 +521,7 @@ public class ChartOfAccountsAction extends BaseFormAction {
             return Constants.EDIT;
         } else {
             addActionMessage(getText("charOfAccount.no.record"));
-            return detailed();
+            return editDetailedCode();
         }
     }
 
@@ -522,16 +533,16 @@ public class ChartOfAccountsAction extends BaseFormAction {
                     glCode.split("-")[0]);
             if (model == null) {
                 addActionMessage(getText("charOfAccount.no.record"));
-                return detailed();
+                return viewDetailedCode();
             }
             coaId = model.getId();
             populateAccountDetailTypeList();
             populateCoaRequiredFields();
             populateAccountCodePurpose();
-            return Constants.VIEW;
+            return Constants.VIEW_COA;
         } else {
             addActionMessage(getText("charOfAccount.no.record"));
-            return detailed();
+            return viewDetailedCode();
         }
     }
 
@@ -549,7 +560,7 @@ public class ChartOfAccountsAction extends BaseFormAction {
                     glCode.split("-")[0]);
             if (parent == null) {
                 addActionMessage(getText("chartOfAccount.no.data"));
-                return detailed();
+                return addNew();
             }
             if (generatedGlcode == null || newGlcode == null) {
                 addActionMessage(getText("chartOfAccount.invalid.glcode"));
@@ -578,7 +589,7 @@ public class ChartOfAccountsAction extends BaseFormAction {
         } else
             addActionMessage(getText("chartOfAccount.no.data"));
         clearCache();
-        return detailed();
+        return Constants.VIEW_COA;
     }
 
     public void setGeneratedGlcode(final String generatedGlcode) {
