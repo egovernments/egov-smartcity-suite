@@ -39,6 +39,9 @@
  */
 package org.egov.restapi.web.rest;
 
+import static org.egov.ptis.constants.PropertyTaxConstants.ADMIN_HIERARCHY_TYPE;
+import static org.egov.ptis.constants.PropertyTaxConstants.WARD;
+
 import java.io.IOException;
 import java.text.ParseException;
 import java.util.ArrayList;
@@ -86,6 +89,7 @@ import org.egov.restapi.model.ConstructionTypeDetails;
 import org.egov.restapi.model.CorrespondenceAddressDetails;
 import org.egov.restapi.model.CreatePropertyDetails;
 import org.egov.restapi.model.LocalityCodeDetails;
+import org.egov.restapi.model.OwnerInformation;
 import org.egov.restapi.model.OwnershipCategoryDetails;
 import org.egov.restapi.model.PropertyAddressDetails;
 import org.egov.restapi.model.PropertyTaxBoundaryDetails;
@@ -145,7 +149,6 @@ public class AssessmentService {
     @RequestMapping(value = "/property/propertytaxdetails", method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON, produces = MediaType.APPLICATION_JSON)
     public String getPropertyTaxDetails(@RequestBody String assessmentRequest)
             throws JsonGenerationException, JsonMappingException, IOException {
-
         PropertyTaxDetails propertyTaxDetails = new PropertyTaxDetails();
         AssessmentRequest assessmentReq = (AssessmentRequest) getObjectFromJSONRequest(assessmentRequest,
                 AssessmentRequest.class);
@@ -465,7 +468,8 @@ public class AssessmentService {
      */
     @RequestMapping(value = "/property/localities", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON)
     public String getLocalities() throws JsonGenerationException, JsonMappingException, IOException {
-        List<MasterCodeNamePairDetails> mstrCodeNamePairDetailsList = propertyExternalService.getLocalities();
+        List<MasterCodeNamePairDetails> mstrCodeNamePairDetailsList = propertyExternalService.getBoundariesByBoundaryTypeAndHierarchyType(
+        		PropertyTaxConstants.LOCALITY, PropertyTaxConstants.LOCATION_HIERARCHY_TYPE);
         return getJSONResponse(mstrCodeNamePairDetailsList);
     }
 
@@ -497,7 +501,8 @@ public class AssessmentService {
      */
     @RequestMapping(value = "/property/electionWards", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON)
     public String getElectionWards() throws JsonGenerationException, JsonMappingException, IOException {
-        List<MasterCodeNamePairDetails> mstrCodeNamePairDetailsList = propertyExternalService.getElectionBoundaries();
+        List<MasterCodeNamePairDetails> mstrCodeNamePairDetailsList = propertyExternalService.getBoundariesByBoundaryTypeAndHierarchyType(
+        		WARD, ADMIN_HIERARCHY_TYPE);
         return getJSONResponse(mstrCodeNamePairDetailsList);
     }
 
@@ -684,111 +689,6 @@ public class AssessmentService {
     public String getApproverDepartments() throws JsonGenerationException, JsonMappingException, IOException {
         List<MasterCodeNamePairDetails> mstrCodeNamePairDetailsList = propertyExternalService.getApproverDepartments();
         return getJSONResponse(mstrCodeNamePairDetailsList);
-    }
-
-    /**
-     * This method is used to create property.
-     * 
-     * @param createPropertyDetails - Property details request
-     * @return
-     * @throws JsonGenerationException
-     * @throws JsonMappingException
-     * @throws IOException
-     * @throws ParseException
-     */
-    @RequestMapping(value = "/property/createProperty", method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON, produces = MediaType.APPLICATION_JSON)
-    public String createProperty(@RequestBody String createPropertyDetails)
-            throws JsonGenerationException, JsonMappingException, IOException, ParseException {
-        ApplicationThreadLocals.setUserId(Long.valueOf("40"));
-        CreatePropertyDetails createPropDetails = (CreatePropertyDetails) getObjectFromJSONRequest(
-                createPropertyDetails, CreatePropertyDetails.class);
-
-        ErrorDetails errorDetails = ValidationUtil.validateCreateRequest(createPropDetails);
-        if (errorDetails != null) {
-            return getJSONResponse(errorDetails);
-        } else {
-            String propertyTypeMasterCode = createPropDetails.getPropertyTypeMasterCode();
-            String propertyCategoryCode = createPropDetails.getPropertyCategoryCode();
-            String apartmentCmplxCode = createPropDetails.getApartmentCmplxCode();
-            List<OwnerDetails> ownerDetailsList = createPropDetails.getOwnerDetails();
-
-            AssessmentsDetails assessmentsDetails = createPropDetails.getAssessmentDetails();
-            String mutationReasonCode = assessmentsDetails.getMutationReasonCode();
-            // TODO : Need to verify whether this values has to be used or not
-            String parentPropertyAssessmentNo = assessmentsDetails.getParentPropertyAssessmentNo();
-            String extentOfSite = assessmentsDetails.getExtentOfSite();
-            Boolean isExtentAppurtenantLand = assessmentsDetails.getIsExtentAppurtenantLand();
-            String occupancyCertificationNo = assessmentsDetails.getOccupancyCertificationNo();
-            Boolean isSuperStructure = assessmentsDetails.getIsSuperStructure();
-            String siteOwnerName = assessmentsDetails.getSiteOwnerName();
-            Boolean isBuildingPlanDetails = assessmentsDetails.getIsBuildingPlanDetails();
-
-            BuildingPlanDetails buildingPlanDetails = assessmentsDetails.getBuildingPlanDetails();
-            String buildingPermissionNo = buildingPlanDetails.getBuildingPermissionNo();
-            String buildingPermissionDate = buildingPlanDetails.getBuildingPermissionDate();
-            String percentageDeviation = buildingPlanDetails.getPercentageDeviation();
-
-            String regdDocNo = assessmentsDetails.getRegdDocNo();
-            String regdDocDate = assessmentsDetails.getRegdDocDate();
-
-            PropertyAddressDetails propAddressDetails = createPropDetails.getPropertyAddressDetails();
-            String localityCode = propAddressDetails.getLocalityCode();
-            String street = propAddressDetails.getStreet();
-            String electionWardCode = propAddressDetails.getElectionWardCode();
-            String doorNo = propAddressDetails.getDoorNo();
-            String enumerationBlockCode = propAddressDetails.getEnumerationBlockCode();
-            String pinCode = propAddressDetails.getPinCode();
-            Boolean isCorrAddrDiff = propAddressDetails.getIsCorrAddrDiff();
-            CorrespondenceAddressDetails corrAddressDetails = propAddressDetails.getCorrAddressDetails();
-            String corrAddr1 = corrAddressDetails.getCorrAddr1();
-            String corrAddr2 = corrAddressDetails.getCorrAddr2();
-            String corrPinCode = corrAddressDetails.getCorrPinCode();
-
-            AmenitiesDetails amenitiesDetails = createPropDetails.getAmenitiesDetails();
-            Boolean hasLift = amenitiesDetails.hasLift();
-            Boolean hasToilet = amenitiesDetails.hasToilet();
-            Boolean hasWaterTap = amenitiesDetails.hasWaterTap();
-            Boolean hasElectricity = amenitiesDetails.hasElectricity();
-            Boolean hasAttachedBathroom = amenitiesDetails.hasAttachedBathroom();
-            Boolean hasWaterHarvesting = amenitiesDetails.hasWaterHarvesting();
-            Boolean hasCable = amenitiesDetails.hasCableConnection();
-
-            ConstructionTypeDetails constructionTypeDetails = createPropDetails.getConstructionTypeDetails();
-            String floorTypeCode = constructionTypeDetails.getFloorTypeCode();
-            String roofTypeCode = constructionTypeDetails.getRoofTypeCode();
-            String wallTypeCode = constructionTypeDetails.getWallTypeCode();
-            String woodTypeCode = constructionTypeDetails.getWoodTypeCode();
-
-            List<FloorDetails> floorDetailsList = createPropDetails.getFloorDetails();
-            String completionDate = floorDetailsList.get(0).getConstructionDate();
-
-            VacantLandDetails vacantLandDetails = createPropDetails.getVacantLandDetails();
-            String surveyNumber = vacantLandDetails.getSurveyNumber();
-            String pattaNumber = vacantLandDetails.getPattaNumber();
-            Float vacantLandArea = vacantLandDetails.getVacantLandArea();
-            Double marketValue = vacantLandDetails.getMarketValue();
-            Double currentCapitalValue = vacantLandDetails.getCurrentCapitalValue();
-            String effectiveDate = vacantLandDetails.getEffectiveDate();
-
-            SurroundingBoundaryDetails surroundingBoundaryDetails = createPropDetails.getSurroundingBoundaryDetails();
-            String northBoundary = surroundingBoundaryDetails.getNorthBoundary();
-            String southBoundary = surroundingBoundaryDetails.getSouthBoundary();
-            String eastBoundary = surroundingBoundaryDetails.getEastBoundary();
-            String westBoundary = surroundingBoundaryDetails.getWestBoundary();
-
-            List<Document> documents = null;
-            NewPropertyDetails newPropertyDetails = propertyExternalService.createNewProperty(propertyTypeMasterCode,
-                    propertyCategoryCode, apartmentCmplxCode, ownerDetailsList, mutationReasonCode, extentOfSite,
-                    isExtentAppurtenantLand, occupancyCertificationNo, isSuperStructure, siteOwnerName,
-                    isBuildingPlanDetails, buildingPermissionNo, buildingPermissionDate, percentageDeviation, regdDocNo,
-                    regdDocDate, localityCode, street, electionWardCode, doorNo, enumerationBlockCode, pinCode,
-                    isCorrAddrDiff, corrAddr1, corrAddr2, corrPinCode, hasLift, hasToilet, hasWaterTap, hasElectricity,
-                    hasAttachedBathroom, hasWaterHarvesting, hasCable, floorTypeCode, roofTypeCode, wallTypeCode,
-                    woodTypeCode, floorDetailsList, surveyNumber, pattaNumber, vacantLandArea, marketValue,
-                    currentCapitalValue, effectiveDate, completionDate, northBoundary, southBoundary, eastBoundary,
-                    westBoundary, documents);
-            return getJSONResponse(newPropertyDetails);
-        }
     }
 
     /**

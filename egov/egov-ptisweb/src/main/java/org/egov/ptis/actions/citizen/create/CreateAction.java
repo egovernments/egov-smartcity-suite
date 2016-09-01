@@ -473,7 +473,7 @@ public class CreateAction extends PropertyTaxBaseAction{
         propertyid.setElectionBoundary(boundaryService.getBoundaryById(getElectionWardId()));
         property.getBasicProperty().setPropertyID(propertyid);
         if (null != getElectionWardId() && getElectionWardId() != -1 && null != property.getBasicProperty()
-        		&& null == propService.getUserPositionByZone(property.getBasicProperty())) {
+        		&& null == propService.getUserPositionByZone(property.getBasicProperty(),PropertyTaxConstants.SOURCEOFDATA_ONLINE)) {
         	addActionError(getText("notexists.position"));
         }
         super.validate();

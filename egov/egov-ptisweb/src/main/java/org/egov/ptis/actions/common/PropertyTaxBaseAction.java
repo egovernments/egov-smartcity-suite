@@ -79,6 +79,7 @@ import static org.egov.ptis.constants.PropertyTaxConstants.WF_STATE_ASSISTANT_AP
 import static org.egov.ptis.constants.PropertyTaxConstants.WF_STATE_ASSISTANT_APPROVED;
 import static org.egov.ptis.constants.PropertyTaxConstants.WF_STATE_COMMISSIONER_APPROVED;
 import static org.egov.ptis.constants.PropertyTaxConstants.WF_STATE_REJECTED;
+import static org.egov.ptis.constants.PropertyTaxConstants.UD_REVENUE_INSPECTOR_APPROVAL_PENDING;
 
 import java.io.File;
 import java.math.BigDecimal;
@@ -577,7 +578,7 @@ public abstract class PropertyTaxBaseAction extends GenericWorkFlowAction {
 
         if (!propertyByEmployee) {
             currentState = "Created";
-            final Assignment assignment = propertyService.getUserPositionByZone(property.getBasicProperty());
+            final Assignment assignment = propertyService.getUserPositionByZone(property.getBasicProperty(),property.getBasicProperty().getSource());
             if (null != assignment) {
                 approverPositionId = assignment.getPosition().getId();
                 approverName = (assignment.getEmployee().getName()).concat("~").concat(
@@ -605,7 +606,9 @@ public abstract class PropertyTaxBaseAction extends GenericWorkFlowAction {
                 final String stateValue = property.getCurrentState().getValue().split(":")[0] + ":" + WF_STATE_REJECTED;
                 property.transition(true).withSenderName(user.getUsername() + "::" + user.getName())
                         .withComments(approverComments).withStateValue(stateValue).withDateInfo(currentDate.toDate())
-                        .withOwner(wfInitiator.getPosition()).withNextAction(WF_STATE_ASSISTANT_APPROVAL_PENDING);
+                        .withOwner(wfInitiator.getPosition()).withNextAction(
+                        		property.getBasicProperty().getSource().equals(PropertyTaxConstants.SOURCEOFDATA_MOBILE)?
+                        				UD_REVENUE_INSPECTOR_APPROVAL_PENDING : WF_STATE_ASSISTANT_APPROVAL_PENDING);
             }
 
         } else {

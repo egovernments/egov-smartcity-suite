@@ -176,7 +176,8 @@ public class VacancyRemissionService {
 
         if (!propertyByEmployee) {
             currentState = "Created";
-            final Assignment assignment = propertyService.getUserPositionByZone(vacancyRemission.getBasicProperty());
+            final Assignment assignment = propertyService.getUserPositionByZone(vacancyRemission.getBasicProperty(),
+            		vacancyRemission.getBasicProperty().getSource());
             if (null != assignment)
                 approvalPosition = assignment.getPosition().getId();
         } else
