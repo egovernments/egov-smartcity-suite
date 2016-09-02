@@ -57,7 +57,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @Transactional(readOnly = true)
-public class AgendaPDFGenerationService {
+public class CouncilReportService {
 
 	public static final String AGENDA = "agenda";
 	private final Map<String, Object> reportParams = new HashMap<String, Object>();
