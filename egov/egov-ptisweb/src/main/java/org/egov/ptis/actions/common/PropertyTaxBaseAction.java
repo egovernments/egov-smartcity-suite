@@ -79,7 +79,6 @@ import static org.egov.ptis.constants.PropertyTaxConstants.WF_STATE_ASSISTANT_AP
 import static org.egov.ptis.constants.PropertyTaxConstants.WF_STATE_ASSISTANT_APPROVED;
 import static org.egov.ptis.constants.PropertyTaxConstants.WF_STATE_COMMISSIONER_APPROVED;
 import static org.egov.ptis.constants.PropertyTaxConstants.WF_STATE_REJECTED;
-import static org.egov.ptis.constants.PropertyTaxConstants.UD_REVENUE_INSPECTOR_APPROVAL_PENDING;
 
 import java.io.File;
 import java.math.BigDecimal;
@@ -99,12 +98,10 @@ import org.egov.eis.entity.Assignment;
 import org.egov.eis.service.AssignmentService;
 import org.egov.eis.service.DesignationService;
 import org.egov.eis.service.EisCommonService;
-import org.egov.eis.service.EmployeeService;
 import org.egov.eis.service.PositionMasterService;
 import org.egov.eis.web.actions.workflow.GenericWorkFlowAction;
 import org.egov.infra.admin.master.entity.Department;
 import org.egov.infra.admin.master.entity.User;
-import org.egov.infra.admin.master.service.UserService;
 import org.egov.infra.config.core.ApplicationThreadLocals;
 import org.egov.infra.filestore.entity.FileStoreMapper;
 import org.egov.infra.filestore.service.FileStoreService;
@@ -129,6 +126,7 @@ import org.egov.ptis.domain.entity.property.Property;
 import org.egov.ptis.domain.entity.property.PropertyDetail;
 import org.egov.ptis.domain.entity.property.PropertyDocs;
 import org.egov.ptis.domain.entity.property.PropertyImpl;
+import org.egov.ptis.domain.entity.property.PropertyOwnerInfo;
 import org.egov.ptis.domain.entity.property.PropertyTypeMaster;
 import org.egov.ptis.domain.entity.property.PropertyUsage;
 import org.egov.ptis.domain.entity.property.WorkflowBean;
@@ -173,14 +171,10 @@ public abstract class PropertyTaxBaseAction extends GenericWorkFlowAction {
     private PtDemandDao ptDemandDAO;
     @Autowired
     private PropertyService propertyService;
-    @Autowired
-    private EmployeeService employeeService;
     private SMSEmailService sMSEmailService;
     protected PropertyTaxUtil propertyTaxUtil;
     @Autowired
     private SecurityUtils securityUtils;
-    @Autowired
-    private UserService userService;
     @Autowired
     private PositionMasterService positionMasterService;
     private PropertyImpl propertyModel;
@@ -673,7 +667,12 @@ public abstract class PropertyTaxBaseAction extends GenericWorkFlowAction {
      * @param applicationType
      */
     public void buildEmailandSms(final PropertyImpl property, final String applicationType) {
-        final User user = property.getBasicProperty().getPrimaryOwner();
+        for (PropertyOwnerInfo ownerInfo : property.getBasicProperty().getPropertyOwnerInfo()) {
+            buildEmailAndSms(property, ownerInfo.getOwner(), applicationType);
+        }
+    }
+
+    private void buildEmailAndSms(final PropertyImpl property, final User user, final String applicationType) {
         final String mobileNumber = user.getMobileNumber();
         final String emailid = user.getEmailId();
         final String applicantName = user.getName();
@@ -768,9 +767,9 @@ public abstract class PropertyTaxBaseAction extends GenericWorkFlowAction {
                 }
             }
         }
-        if (mobileNumber != null)
+        if (StringUtils.isNotBlank(mobileNumber)) 
             messagingService.sendSMS(mobileNumber, smsMsg);
-        if (emailid != null)
+        if (StringUtils.isNotBlank(emailid))
             messagingService.sendEmail(emailid, emailSubject, emailBody);
 
     }
