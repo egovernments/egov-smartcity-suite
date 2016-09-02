@@ -67,7 +67,7 @@ public class LegalCaseDisposalController {
     private LegalCaseService legalCaseService;
     
     @ModelAttribute
-    private LegalCase getLegalCase(@RequestParam("lcNumber") final String lcNumber, final HttpServletRequest request) {
+    private LegalCase getLegalCase(@RequestParam("lcNumber") final String lcNumber) {
         final LegalCase legalCase = legalCaseService.findByLcNumber(lcNumber);
         return legalCase;
     }
@@ -75,7 +75,7 @@ public class LegalCaseDisposalController {
     @RequestMapping(value = "/new/", method = RequestMethod.GET)
     public String newForm(@ModelAttribute final LegalCaseDisposal legalCaseDisposal, final Model model,
             @RequestParam("lcNumber") final String lcNumber, final HttpServletRequest request) {
-        final LegalCase legalCase = getLegalCase(lcNumber, request);
+        final LegalCase legalCase = getLegalCase(lcNumber);
         model.addAttribute("legalCase", legalCase);
         model.addAttribute("legalCaseDisposal", legalCaseDisposal);
         model.addAttribute("mode", "create");
@@ -86,7 +86,7 @@ public class LegalCaseDisposalController {
     public String create(@Valid @ModelAttribute final LegalCaseDisposal legalCaseDisposal, final BindingResult errors,
             @RequestParam("lcNumber") final String lcNumber, final RedirectAttributes redirectAttrs, final Model model,
             final HttpServletRequest request) {
-        final LegalCase legalCase = getLegalCase(lcNumber, request);
+        final LegalCase legalCase = getLegalCase(lcNumber);
         if (errors.hasErrors()){
             model.addAttribute("legalcase", legalCase);
             return "legalcaseDisposal-new";
