@@ -111,7 +111,7 @@
 	<label class="col-sm-3 control-label text-right"><spring:message code="lbl.nameofagency" /><span class="mandatory"></span></label>
 	<div class="col-sm-3 add-margin" style="margin-bottom: 0;">
 		<div class="input-group">
-			<input id="contractorSearch" name="contractorSearch" value="${contractorSearch}" class="form-control patternvalidation" autocomplete="off" data-pattern="alphanumericspecialcharacters" maxlength="50" required="required" type="text" placeholder="Type first 3 letters of Contractor Name/Code" > 
+			<input id="contractorSearch" name="contractorSearch" value="${contractorSearch}" class="form-control patternvalidation" autocomplete="off" data-pattern="alphanumericspecialcharacters" maxlength="100" required="required" type="text" placeholder="Type first 3 letters of Contractor Name/Code" > 
 			<span class="input-group-addon"> <i class="fa fa-search specific" onclick="searchContractor();"></i></span>
 			<form:hidden path="contractor.id" name="contractor" id="contractor" />
 		</div>	
