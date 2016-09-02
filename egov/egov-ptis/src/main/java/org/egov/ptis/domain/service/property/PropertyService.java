@@ -52,6 +52,7 @@ import static org.egov.ptis.constants.PropertyTaxConstants.BIGDECIMAL_100;
 import static org.egov.ptis.constants.PropertyTaxConstants.BUILT_UP_PROPERTY;
 import static org.egov.ptis.constants.PropertyTaxConstants.CURR_COLL_STR;
 import static org.egov.ptis.constants.PropertyTaxConstants.CURR_DMD_STR;
+import static org.egov.ptis.constants.PropertyTaxConstants.DATE_FORMAT_DDMMYYY;
 import static org.egov.ptis.constants.PropertyTaxConstants.DEMANDRSN_CODE_ADVANCE;
 import static org.egov.ptis.constants.PropertyTaxConstants.DEMANDRSN_CODE_CHQ_BOUNCE_PENALTY;
 import static org.egov.ptis.constants.PropertyTaxConstants.DEMANDRSN_CODE_EDUCATIONAL_CESS;
@@ -80,6 +81,7 @@ import static org.egov.ptis.constants.PropertyTaxConstants.PROP_CREATE_RSN;
 import static org.egov.ptis.constants.PropertyTaxConstants.PROP_CREATE_RSN_BIFUR;
 import static org.egov.ptis.constants.PropertyTaxConstants.PROP_SOURCE;
 import static org.egov.ptis.constants.PropertyTaxConstants.PTMODULENAME;
+import static org.egov.ptis.constants.PropertyTaxConstants.PT_WORKFLOWDESIGNATION_MOBILE;
 import static org.egov.ptis.constants.PropertyTaxConstants.QUERY_PROPSTATVALUE_BY_UPICNO_CODE_ISACTIVE;
 import static org.egov.ptis.constants.PropertyTaxConstants.REVISIONPETITION_STATUS_CODE;
 import static org.egov.ptis.constants.PropertyTaxConstants.SQUARE_YARD_TO_SQUARE_METER_VALUE;
@@ -88,7 +90,7 @@ import static org.egov.ptis.constants.PropertyTaxConstants.STATUS_WORKFLOW;
 import static org.egov.ptis.constants.PropertyTaxConstants.VACANT_PROPERTY;
 import static org.egov.ptis.constants.PropertyTaxConstants.WFLOW_ACTION_NAME_MODIFY;
 import static org.egov.ptis.constants.PropertyTaxConstants.WF_STATE_APPROVAL_PENDING;
-import static org.egov.ptis.constants.PropertyTaxConstants.PT_WORKFLOWDESIGNATION_MOBILE;
+import static org.egov.ptis.constants.PropertyTaxConstants.WTMS_TAXDUE_RESTURL;
 
 import java.io.File;
 import java.math.BigDecimal;
@@ -126,7 +128,6 @@ import org.egov.eis.entity.Assignment;
 import org.egov.eis.service.AssignmentService;
 import org.egov.eis.service.DesignationService;
 import org.egov.eis.service.EisCommonService;
-import org.egov.eis.service.EmployeeService;
 import org.egov.infra.admin.master.entity.AppConfigValues;
 import org.egov.infra.admin.master.entity.Module;
 import org.egov.infra.admin.master.entity.Role;
@@ -142,7 +143,6 @@ import org.egov.infra.rest.client.SimpleRestClient;
 import org.egov.infra.search.elastic.entity.ApplicationIndex;
 import org.egov.infra.search.elastic.entity.ApplicationIndexBuilder;
 import org.egov.infra.search.elastic.service.ApplicationIndexService;
-import org.egov.infra.security.utils.SecurityUtils;
 import org.egov.infra.utils.ApplicationNumberGenerator;
 import org.egov.infra.utils.DateUtils;
 import org.egov.infra.utils.MoneyUtils;
@@ -200,7 +200,6 @@ import org.egov.ptis.domain.model.calculator.MiscellaneousTax;
 import org.egov.ptis.domain.model.calculator.TaxCalculationInfo;
 import org.egov.ptis.domain.model.calculator.UnitTaxCalculationInfo;
 import org.egov.ptis.exceptions.TaxCalculatorExeption;
-import org.egov.ptis.service.collection.PropertyTaxCollection;
 import org.egov.ptis.service.utils.PropertyTaxCommonUtils;
 import org.hibernate.Query;
 import org.joda.time.DateTime;
@@ -216,7 +215,6 @@ import org.springframework.transaction.annotation.Transactional;
 @Transactional(readOnly = true)
 public class PropertyService {
     private static final Logger LOGGER = Logger.getLogger(PropertyService.class);
-    private static final String WTMS_TAXDUE_RESTURL = "%s/wtms/rest/watertax/due/byptno/%s";
     private static final String PROPERTY_WORKFLOW_STARTED = "Property Workflow Started";
     private PersistenceService propPerServ;
     private Installment currentInstall;
@@ -224,6 +222,7 @@ public class PropertyService {
     protected PersistenceService<BasicProperty, Long> basicPropertyService;
     private final Map<Installment, Set<EgDemandDetails>> demandDetails = new HashMap<Installment, Set<EgDemandDetails>>();
     private Map<Installment, Map<String, BigDecimal>> excessCollAmtMap = new LinkedHashMap<Installment, Map<String, BigDecimal>>();
+    
     @Autowired
     private APTaxCalculator taxCalculator;
     private HashMap<Installment, TaxCalculationInfo> instTaxMap;
@@ -238,8 +237,6 @@ public class PropertyService {
     @Autowired
     private UserService userService;
 
-    @Autowired
-    private SecurityUtils securityUtils;
     @Autowired
     private ApplicationNumberGenerator applicationNumberGenerator;
     @Autowired
@@ -265,11 +262,7 @@ public class PropertyService {
     @Autowired
     private DepartmentService departmentService;
     @Autowired
-    private EmployeeService employeeService;
-    @Autowired
     protected AssignmentService assignmentService;
-    @Autowired
-    private PropertyTaxCollection propertyTaxCollection;
     @Autowired
     private PropertyTaxCommonUtils propertyTaxCommonUtils;
     @Autowired
@@ -526,7 +519,7 @@ public class PropertyService {
         }
         if (!statusCode.equals(PROP_CREATE_RSN) && propCompletionDate != null) {
             // persist the DateOfCompletion in case of modify property for future reference
-            final String propCompDateStr = dateFormatter.format(propCompletionDate);
+            final String propCompDateStr = DateUtils.getFormattedDate(propCompletionDate, DATE_FORMAT_DDMMYYY);
             propStatVal.setExtraField1(propCompDateStr);
         }
         propStatVal.setBasicProperty(basicProperty);
@@ -2166,7 +2159,7 @@ public class PropertyService {
      * @return
      */
     public BigDecimal getWaterTaxDues(final String assessmentNo, final HttpServletRequest request) {
-        final String wtmsRestURL = String.format(WTMS_TAXDUE_RESTURL, WebUtils.extractRequestDomainURL(request, false),
+        final String wtmsRestURL = String.format(PropertyTaxConstants.WTMS_TAXDUE_RESTURL, WebUtils.extractRequestDomainURL(request, false),
                 assessmentNo);
         final HashMap<String, Object> waterTaxInfo = simpleRestClient.getRESTResponseAsMap(wtmsRestURL);
         return waterTaxInfo.get("totalTaxDue") == null ? BigDecimal.ZERO : new BigDecimal(

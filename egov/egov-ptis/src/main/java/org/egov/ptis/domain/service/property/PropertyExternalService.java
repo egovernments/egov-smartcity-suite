@@ -40,7 +40,87 @@
 package org.egov.ptis.domain.service.property;
 
 import static java.math.BigDecimal.ZERO;
-import org.egov.ptis.constants.PropertyTaxConstants;
+import static org.egov.ptis.constants.PropertyTaxConstants.ADMIN_HIERARCHY_TYPE;
+import static org.egov.ptis.constants.PropertyTaxConstants.APPROVAL_COMMENTS_SUCCESS;
+import static org.egov.ptis.constants.PropertyTaxConstants.ARR_COLL_STR;
+import static org.egov.ptis.constants.PropertyTaxConstants.ARR_DMD_STR;
+import static org.egov.ptis.constants.PropertyTaxConstants.BILLTYPE_AUTO;
+import static org.egov.ptis.constants.PropertyTaxConstants.BLOCK;
+import static org.egov.ptis.constants.PropertyTaxConstants.CATEGORY_TYPE_PROPERTY_TAX;
+import static org.egov.ptis.constants.PropertyTaxConstants.CATEGORY_TYPE_VACANTLAND_TAX;
+import static org.egov.ptis.constants.PropertyTaxConstants.CURRENT_STATE_BILL_COLLECTOR_APPROVED;
+import static org.egov.ptis.constants.PropertyTaxConstants.CURR_FIRSTHALF_COLL_STR;
+import static org.egov.ptis.constants.PropertyTaxConstants.CURR_FIRSTHALF_DMD_STR;
+import static org.egov.ptis.constants.PropertyTaxConstants.DEMANDRSN_CODE_CHQ_BOUNCE_PENALTY;
+import static org.egov.ptis.constants.PropertyTaxConstants.DEMANDRSN_CODE_PENALTY_FINES;
+import static org.egov.ptis.constants.PropertyTaxConstants.DOCS_CREATE_PROPERTY;
+import static org.egov.ptis.constants.PropertyTaxConstants.ELECTIONWARD_BNDRY_TYPE;
+import static org.egov.ptis.constants.PropertyTaxConstants.ELECTION_HIERARCHY_TYPE;
+import static org.egov.ptis.constants.PropertyTaxConstants.FILESTORE_MODULE_NAME;
+import static org.egov.ptis.constants.PropertyTaxConstants.LOCALITY_BNDRY_TYPE;
+import static org.egov.ptis.constants.PropertyTaxConstants.LOCATION_HIERARCHY_TYPE;
+import static org.egov.ptis.constants.PropertyTaxConstants.MARK_DEACTIVE;
+import static org.egov.ptis.constants.PropertyTaxConstants.NATURE_NEW_ASSESSMENT;
+import static org.egov.ptis.constants.PropertyTaxConstants.NEW_ASSESSMENT;
+import static org.egov.ptis.constants.PropertyTaxConstants.NON_VAC_LAND_PROPERTY_TYPE_CATEGORY;
+import static org.egov.ptis.constants.PropertyTaxConstants.OWNERSHIP_TYPE_VAC_LAND;
+import static org.egov.ptis.constants.PropertyTaxConstants.PAID_BY;
+import static org.egov.ptis.constants.PropertyTaxConstants.PROPERTY_ACTIVE_ERR_CODE;
+import static org.egov.ptis.constants.PropertyTaxConstants.PROPERTY_ACTIVE_NOT_EXISTS;
+import static org.egov.ptis.constants.PropertyTaxConstants.PROPERTY_DEACTIVATE_ERR_CODE;
+import static org.egov.ptis.constants.PropertyTaxConstants.PROPERTY_DEACTIVATE_ERR_MSG;
+import static org.egov.ptis.constants.PropertyTaxConstants.PROPERTY_EXEMPTED_ERR_CODE;
+import static org.egov.ptis.constants.PropertyTaxConstants.PROPERTY_EXEMPTED_ERR_MSG;
+import static org.egov.ptis.constants.PropertyTaxConstants.PROPERTY_INACTIVE_ERR_CODE;
+import static org.egov.ptis.constants.PropertyTaxConstants.PROPERTY_INACTIVE_ERR_MSG;
+import static org.egov.ptis.constants.PropertyTaxConstants.PROPERTY_MARK_DEACTIVATE_ERR_CODE;
+import static org.egov.ptis.constants.PropertyTaxConstants.PROPERTY_MARK_DEACTIVATE_ERR_MSG;
+import static org.egov.ptis.constants.PropertyTaxConstants.PROPERTY_NOT_EXIST_ERR_CODE;
+import static org.egov.ptis.constants.PropertyTaxConstants.PROPERTY_NOT_EXIST_ERR_MSG_PREFIX;
+import static org.egov.ptis.constants.PropertyTaxConstants.PROPERTY_NOT_EXIST_ERR_MSG_SUFFIX;
+import static org.egov.ptis.constants.PropertyTaxConstants.PROPERTY_STATUS_WORKFLOW;
+import static org.egov.ptis.constants.PropertyTaxConstants.PROP_CREATE_RSN;
+import static org.egov.ptis.constants.PropertyTaxConstants.PROP_CREATE_RSN_BIFUR;
+import static org.egov.ptis.constants.PropertyTaxConstants.PTIS_COLLECTION_SERVICE_CODE;
+import static org.egov.ptis.constants.PropertyTaxConstants.REVENUE_HIERARCHY_TYPE;
+import static org.egov.ptis.constants.PropertyTaxConstants.SOURCEOFDATA_MOBILE;
+import static org.egov.ptis.constants.PropertyTaxConstants.STATUS_BILL_NOTCREATED;
+import static org.egov.ptis.constants.PropertyTaxConstants.STATUS_DEMAND_INACTIVE;
+import static org.egov.ptis.constants.PropertyTaxConstants.STATUS_ISACTIVE;
+import static org.egov.ptis.constants.PropertyTaxConstants.STATUS_YES_XML_MIGRATION;
+import static org.egov.ptis.constants.PropertyTaxConstants.THIRD_PARTY_ATTESTED_COPY_PROPERTY_DOCUMENT_CODE;
+import static org.egov.ptis.constants.PropertyTaxConstants.THIRD_PARTY_BUILDING_PERMISSION_COPY_CODE;
+import static org.egov.ptis.constants.PropertyTaxConstants.THIRD_PARTY_CONTENT_TYPE;
+import static org.egov.ptis.constants.PropertyTaxConstants.THIRD_PARTY_DEATH_CERTIFICATE_COPY_CODE;
+import static org.egov.ptis.constants.PropertyTaxConstants.THIRD_PARTY_ERR_CODE_ASSESSMENT_NO_LEN;
+import static org.egov.ptis.constants.PropertyTaxConstants.THIRD_PARTY_ERR_CODE_ASSESSMENT_NO_NOT_FOUND;
+import static org.egov.ptis.constants.PropertyTaxConstants.THIRD_PARTY_ERR_CODE_ASSESSMENT_NO_REQUIRED;
+import static org.egov.ptis.constants.PropertyTaxConstants.THIRD_PARTY_ERR_CODE_PAYMENT_MODE_INVALID;
+import static org.egov.ptis.constants.PropertyTaxConstants.THIRD_PARTY_ERR_CODE_PAYMENT_MODE_REQUIRED;
+import static org.egov.ptis.constants.PropertyTaxConstants.THIRD_PARTY_ERR_CODE_PROPERTY_TAX_ASSESSMENT_NOT_FOUND;
+import static org.egov.ptis.constants.PropertyTaxConstants.THIRD_PARTY_ERR_CODE_SUCCESS;
+import static org.egov.ptis.constants.PropertyTaxConstants.THIRD_PARTY_ERR_CODE_VACANTLAND_ASSESSMENT_NOT_FOUND;
+import static org.egov.ptis.constants.PropertyTaxConstants.THIRD_PARTY_ERR_CODE_WRONG_CATEGORY;
+import static org.egov.ptis.constants.PropertyTaxConstants.THIRD_PARTY_ERR_MSG_ASSESSMENT_NO_LEN;
+import static org.egov.ptis.constants.PropertyTaxConstants.THIRD_PARTY_ERR_MSG_ASSESSMENT_NO_NOT_FOUND;
+import static org.egov.ptis.constants.PropertyTaxConstants.THIRD_PARTY_ERR_MSG_ASSESSMENT_NO_REQUIRED;
+import static org.egov.ptis.constants.PropertyTaxConstants.THIRD_PARTY_ERR_MSG_PAYMENT_MODE_INVALID;
+import static org.egov.ptis.constants.PropertyTaxConstants.THIRD_PARTY_ERR_MSG_PAYMENT_MODE_REQUIRED;
+import static org.egov.ptis.constants.PropertyTaxConstants.THIRD_PARTY_ERR_MSG_PROPERTY_TAX_ASSESSMENT_NOT_FOUND;
+import static org.egov.ptis.constants.PropertyTaxConstants.THIRD_PARTY_ERR_MSG_SUCCESS;
+import static org.egov.ptis.constants.PropertyTaxConstants.THIRD_PARTY_ERR_MSG_VACANTLAND_ASSESSMENT_NOT_FOUND;
+import static org.egov.ptis.constants.PropertyTaxConstants.THIRD_PARTY_ERR_MSG_WRONG_CATEGORY;
+import static org.egov.ptis.constants.PropertyTaxConstants.THIRD_PARTY_NON_JUDICIAL_STAMP_PAPERS_CODE;
+import static org.egov.ptis.constants.PropertyTaxConstants.THIRD_PARTY_NOTARIZED_AFFIDAVIT_CUM_IDEMNITY_BOND_CODE;
+import static org.egov.ptis.constants.PropertyTaxConstants.THIRD_PARTY_PAYMENT_MODE_CASH;
+import static org.egov.ptis.constants.PropertyTaxConstants.THIRD_PARTY_PAYMENT_MODE_CHEQUE;
+import static org.egov.ptis.constants.PropertyTaxConstants.THIRD_PARTY_PAYMENT_MODE_DD;
+import static org.egov.ptis.constants.PropertyTaxConstants.THIRD_PARTY_PHOTO_OF_ASSESSMENT_CODE;
+import static org.egov.ptis.constants.PropertyTaxConstants.TOTAL_AMOUNT;
+import static org.egov.ptis.constants.PropertyTaxConstants.UD_REVENUE_INSPECTOR_APPROVAL_PENDING;
+import static org.egov.ptis.constants.PropertyTaxConstants.VAC_LAND_PROPERTY_TYPE_CATEGORY;
+import static org.egov.ptis.constants.PropertyTaxConstants.WARD;
+import static org.egov.ptis.constants.PropertyTaxConstants.ZONE;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -99,7 +179,6 @@ import org.egov.ptis.client.bill.PTBillServiceImpl;
 import org.egov.ptis.client.integration.utils.CollectionHelper;
 import org.egov.ptis.client.model.PenaltyAndRebate;
 import org.egov.ptis.client.util.PropertyTaxNumberGenerator;
-
 import org.egov.ptis.domain.bill.PropertyTaxBillable;
 import org.egov.ptis.domain.dao.demand.PtDemandDao;
 import org.egov.ptis.domain.dao.property.BasicPropertyDAO;
@@ -289,25 +368,25 @@ public class PropertyExternalService {
                 if (basicProperty.isActive()) {
                     checkStatusValues(basicProperty, errorDetails);
                 } else {
-                    errorDetails.setErrorCode(PropertyTaxConstants.PROPERTY_ACTIVE_ERR_CODE);
-                    errorDetails.setErrorMessage(PropertyTaxConstants.PROPERTY_ACTIVE_NOT_EXISTS);
+                    errorDetails.setErrorCode(PROPERTY_ACTIVE_ERR_CODE);
+                    errorDetails.setErrorMessage(PROPERTY_ACTIVE_NOT_EXISTS);
                     assessmentDetail.setErrorDetails(errorDetails);
                 }
             } else if (status.equals(BasicPropertyStatus.INACTIVE)) {
                 if (!basicProperty.isActive()) {
                     checkStatusValues(basicProperty, errorDetails);
                 } else {
-                    errorDetails.setErrorCode(PropertyTaxConstants.PROPERTY_INACTIVE_ERR_CODE);
-                    errorDetails.setErrorMessage(PropertyTaxConstants.PROPERTY_INACTIVE_ERR_MSG);
+                    errorDetails.setErrorCode(PROPERTY_INACTIVE_ERR_CODE);
+                    errorDetails.setErrorMessage(PROPERTY_INACTIVE_ERR_MSG);
                     assessmentDetail.setErrorDetails(errorDetails);
                 }
             } else {
                 checkStatusValues(basicProperty, errorDetails);
             }
         } else {
-            errorDetails.setErrorCode(PropertyTaxConstants.PROPERTY_NOT_EXIST_ERR_CODE);
-            errorDetails.setErrorMessage(PropertyTaxConstants.PROPERTY_NOT_EXIST_ERR_MSG_PREFIX
-                    + assessmentDetail.getPropertyID() + PropertyTaxConstants.PROPERTY_NOT_EXIST_ERR_MSG_SUFFIX);
+            errorDetails.setErrorCode(PROPERTY_NOT_EXIST_ERR_CODE);
+            errorDetails.setErrorMessage(PROPERTY_NOT_EXIST_ERR_MSG_PREFIX
+                    + assessmentDetail.getPropertyID() + PROPERTY_NOT_EXIST_ERR_MSG_SUFFIX);
         }
         assessmentDetail.setErrorDetails(errorDetails);
     }
@@ -316,9 +395,9 @@ public class PropertyExternalService {
         final Set<PropertyStatusValues> statusValues = basicProperty.getPropertyStatusValuesSet();
         if (null != statusValues && !statusValues.isEmpty())
             for (final PropertyStatusValues statusValue : statusValues)
-                if (statusValue.getPropertyStatus().getStatusCode() == PropertyTaxConstants.MARK_DEACTIVE) {
-                    errorDetails.setErrorCode(PropertyTaxConstants.PROPERTY_MARK_DEACTIVATE_ERR_CODE);
-                    errorDetails.setErrorMessage(PropertyTaxConstants.PROPERTY_MARK_DEACTIVATE_ERR_MSG);
+                if (statusValue.getPropertyStatus().getStatusCode() == MARK_DEACTIVE) {
+                    errorDetails.setErrorCode(PROPERTY_MARK_DEACTIVATE_ERR_CODE);
+                    errorDetails.setErrorMessage(PROPERTY_MARK_DEACTIVATE_ERR_MSG);
                 }
     }
 
@@ -331,10 +410,10 @@ public class PropertyExternalService {
     private void loadPropertyDues() {
         final Map<String, BigDecimal> resultmap = ptDemandDAO.getDemandCollMap(property);
         if (null != resultmap && !resultmap.isEmpty()) {
-            final BigDecimal currDmd = resultmap.get(PropertyTaxConstants.CURR_FIRSTHALF_DMD_STR);
-            final BigDecimal arrDmd = resultmap.get(PropertyTaxConstants.ARR_DMD_STR);
-            final BigDecimal currCollection = resultmap.get(PropertyTaxConstants.CURR_FIRSTHALF_COLL_STR);
-            final BigDecimal arrColelection = resultmap.get(PropertyTaxConstants.ARR_COLL_STR);
+            final BigDecimal currDmd = resultmap.get(CURR_FIRSTHALF_DMD_STR);
+            final BigDecimal arrDmd = resultmap.get(ARR_DMD_STR);
+            final BigDecimal currCollection = resultmap.get(CURR_FIRSTHALF_COLL_STR);
+            final BigDecimal arrColelection = resultmap.get(ARR_COLL_STR);
 
             final BigDecimal taxDue = currDmd.add(arrDmd).subtract(currCollection).subtract(arrColelection);
             assessmentDetail.getPropertyDetails().setTaxDue(taxDue);
@@ -429,22 +508,22 @@ public class PropertyExternalService {
         	Property property = basicProperty.getProperty();
         	if(property != null && property.getIsExemptedFromTax()){
         		propertyTaxDetails = new PropertyTaxDetails();
-                    errorDetails.setErrorCode(PropertyTaxConstants.PROPERTY_EXEMPTED_ERR_CODE);
-                    errorDetails.setErrorMessage(PropertyTaxConstants.PROPERTY_EXEMPTED_ERR_MSG);
+                    errorDetails.setErrorCode(PROPERTY_EXEMPTED_ERR_CODE);
+                    errorDetails.setErrorMessage(PROPERTY_EXEMPTED_ERR_MSG);
                     propertyTaxDetails.setErrorDetails(errorDetails);
         	} else {
 	            propertyTaxDetails = getPropertyTaxDetails(basicProperty, category);
 	            if (propertyTaxDetails.getErrorDetails() == null) {
-	                errorDetails.setErrorCode(PropertyTaxConstants.THIRD_PARTY_ERR_CODE_SUCCESS);
-	                errorDetails.setErrorMessage(PropertyTaxConstants.THIRD_PARTY_ERR_MSG_SUCCESS);
+	                errorDetails.setErrorCode(THIRD_PARTY_ERR_CODE_SUCCESS);
+	                errorDetails.setErrorMessage(THIRD_PARTY_ERR_MSG_SUCCESS);
 	                propertyTaxDetails.setErrorDetails(errorDetails);
 	            }
         	}
         } else {
             propertyTaxDetails = new PropertyTaxDetails();
-            errorDetails.setErrorCode(PropertyTaxConstants.PROPERTY_NOT_EXIST_ERR_CODE);
-            errorDetails.setErrorMessage(PropertyTaxConstants.PROPERTY_NOT_EXIST_ERR_MSG_PREFIX + assessmentNo
-                    + PropertyTaxConstants.PROPERTY_NOT_EXIST_ERR_MSG_SUFFIX);
+            errorDetails.setErrorCode(PROPERTY_NOT_EXIST_ERR_CODE);
+            errorDetails.setErrorMessage(PROPERTY_NOT_EXIST_ERR_MSG_PREFIX + assessmentNo
+                    + PROPERTY_NOT_EXIST_ERR_MSG_SUFFIX);
             propertyTaxDetails.setErrorDetails(errorDetails);
         }
         return propertyTaxDetails;
@@ -463,9 +542,9 @@ public class PropertyExternalService {
         } else {
             PropertyTaxDetails propertyTaxDetails = new PropertyTaxDetails();
             final ErrorDetails errorDetails = new ErrorDetails();
-            errorDetails.setErrorCode(PropertyTaxConstants.PROPERTY_NOT_EXIST_ERR_CODE);
+            errorDetails.setErrorCode(PROPERTY_NOT_EXIST_ERR_CODE);
             errorDetails.setErrorMessage(ASSESSMENT
-                    + PropertyTaxConstants.PROPERTY_NOT_EXIST_ERR_MSG_SUFFIX);
+                    + PROPERTY_NOT_EXIST_ERR_MSG_SUFFIX);
             propertyTaxDetails.setErrorDetails(errorDetails);
             propTxDetailsList.add(propertyTaxDetails);
         }
@@ -511,16 +590,16 @@ public class PropertyExternalService {
         if (null != basicProperty) {
             final String assessmentNo = basicProperty.getUpicNo();
             if (!basicProperty.isActive()) {
-                errorDetails.setErrorCode(PropertyTaxConstants.PROPERTY_DEACTIVATE_ERR_CODE);
-                errorDetails.setErrorMessage(PropertyTaxConstants.PROPERTY_DEACTIVATE_ERR_MSG);
+                errorDetails.setErrorCode(PROPERTY_DEACTIVATE_ERR_CODE);
+                errorDetails.setErrorMessage(PROPERTY_DEACTIVATE_ERR_MSG);
                 propertyTaxDetails.setErrorDetails(errorDetails);
             } else {
                 final Set<PropertyStatusValues> statusValues = basicProperty.getPropertyStatusValuesSet();
                 if (null != statusValues && !statusValues.isEmpty())
                     for (final PropertyStatusValues statusValue : statusValues)
-                        if (statusValue.getPropertyStatus().getStatusCode() == PropertyTaxConstants.MARK_DEACTIVE) {
-                            errorDetails.setErrorCode(PropertyTaxConstants.PROPERTY_MARK_DEACTIVATE_ERR_CODE);
-                            errorDetails.setErrorMessage(PropertyTaxConstants.PROPERTY_MARK_DEACTIVATE_ERR_MSG);
+                        if (statusValue.getPropertyStatus().getStatusCode() == MARK_DEACTIVE) {
+                            errorDetails.setErrorCode(PROPERTY_MARK_DEACTIVATE_ERR_CODE);
+                            errorDetails.setErrorMessage(PROPERTY_MARK_DEACTIVATE_ERR_MSG);
                         }
             }
             final Property property = basicProperty.getProperty();
@@ -528,23 +607,23 @@ public class PropertyExternalService {
             
             if (!StringUtils.isBlank(category)) {
                 String propType = property.getPropertyDetail().getPropertyTypeMaster().getCode();
-                if (PropertyTaxConstants.CATEGORY_TYPE_PROPERTY_TAX.equals(category)) {
-                    if (propType.equals(PropertyTaxConstants.PROPERTY_TYPE_CODE_VACANT)) {
-                        errorDetails.setErrorCode(PropertyTaxConstants.THIRD_PARTY_ERR_CODE_PROPERTY_TAX_ASSESSMENT_NOT_FOUND);
-                        errorDetails.setErrorMessage(PropertyTaxConstants.THIRD_PARTY_ERR_MSG_PROPERTY_TAX_ASSESSMENT_NOT_FOUND);
+                if (CATEGORY_TYPE_PROPERTY_TAX.equals(category)) {
+                    if (propType.equals(OWNERSHIP_TYPE_VAC_LAND)) {
+                        errorDetails.setErrorCode(THIRD_PARTY_ERR_CODE_PROPERTY_TAX_ASSESSMENT_NOT_FOUND);
+                        errorDetails.setErrorMessage(THIRD_PARTY_ERR_MSG_PROPERTY_TAX_ASSESSMENT_NOT_FOUND);
                         propertyTaxDetails.setErrorDetails(errorDetails);
                         return propertyTaxDetails;
                     }
-                } else if (PropertyTaxConstants.CATEGORY_TYPE_VACANTLAND_TAX.equals(category)) {
-                    if (!propType.equals(PropertyTaxConstants.PROPERTY_TYPE_CODE_VACANT)) {
-                        errorDetails.setErrorCode(PropertyTaxConstants.THIRD_PARTY_ERR_CODE_VACANTLAND_ASSESSMENT_NOT_FOUND);
-                        errorDetails.setErrorMessage(PropertyTaxConstants.THIRD_PARTY_ERR_MSG_VACANTLAND_ASSESSMENT_NOT_FOUND);
+                } else if (CATEGORY_TYPE_VACANTLAND_TAX.equals(category)) {
+                    if (!propType.equals(OWNERSHIP_TYPE_VAC_LAND)) {
+                        errorDetails.setErrorCode(THIRD_PARTY_ERR_CODE_VACANTLAND_ASSESSMENT_NOT_FOUND);
+                        errorDetails.setErrorMessage(THIRD_PARTY_ERR_MSG_VACANTLAND_ASSESSMENT_NOT_FOUND);
                         propertyTaxDetails.setErrorDetails(errorDetails);
                         return propertyTaxDetails;
                     }
                 } else {
-                    errorDetails.setErrorCode(PropertyTaxConstants.THIRD_PARTY_ERR_CODE_WRONG_CATEGORY);
-                    errorDetails.setErrorMessage(PropertyTaxConstants.THIRD_PARTY_ERR_MSG_WRONG_CATEGORY);
+                    errorDetails.setErrorCode(THIRD_PARTY_ERR_CODE_WRONG_CATEGORY);
+                    errorDetails.setErrorMessage(THIRD_PARTY_ERR_MSG_WRONG_CATEGORY);
                     propertyTaxDetails.setErrorDetails(errorDetails);
                     return propertyTaxDetails;
                 }
@@ -596,9 +675,9 @@ public class PropertyExternalService {
                 }
                 if (loopInstallment.equals(installment)) {
 
-                    if (PropertyTaxConstants.DEMANDRSN_CODE_PENALTY_FINES.equalsIgnoreCase(taxType))
+                    if (DEMANDRSN_CODE_PENALTY_FINES.equalsIgnoreCase(taxType))
                         arrearDetails.setPenalty(demand.subtract(collection));
-                    else if (PropertyTaxConstants.DEMANDRSN_CODE_CHQ_BOUNCE_PENALTY.equalsIgnoreCase(taxType))
+                    else if (DEMANDRSN_CODE_CHQ_BOUNCE_PENALTY.equalsIgnoreCase(taxType))
                         arrearDetails.setChqBouncePenalty(demand.subtract(collection));
                     else
                         total = total.add(demand.subtract(collection));
@@ -615,9 +694,9 @@ public class PropertyExternalService {
                     arrearDetails = new RestPropertyTaxDetails();
                     arrearDetails.setInstallment(installment);
                     total = BigDecimal.ZERO;
-                    if (PropertyTaxConstants.DEMANDRSN_CODE_PENALTY_FINES.equalsIgnoreCase(taxType))
+                    if (DEMANDRSN_CODE_PENALTY_FINES.equalsIgnoreCase(taxType))
                         arrearDetails.setPenalty(demand.subtract(collection));
-                    else if (PropertyTaxConstants.DEMANDRSN_CODE_CHQ_BOUNCE_PENALTY.equalsIgnoreCase(taxType))
+                    else if (DEMANDRSN_CODE_CHQ_BOUNCE_PENALTY.equalsIgnoreCase(taxType))
                         arrearDetails.setChqBouncePenalty(demand.subtract(collection));
                     else
                         total = total.add(demand.subtract(collection));
@@ -665,18 +744,18 @@ public class PropertyExternalService {
         propertyTaxBillable.setReferenceNumber(propertyTaxNumberGenerator.generateBillNumber(basicProperty
                 .getPropertyID().getWard().getBoundaryNum().toString()));
         // propertyTaxBillable.setBillType(propertyTaxUtil.getBillTypeByCode(BILLTYPE_MANUAL));
-        propertyTaxBillable.setBillType(egBillDAO.getBillTypeByCode(PropertyTaxConstants.BILLTYPE_AUTO));
+        propertyTaxBillable.setBillType(egBillDAO.getBillTypeByCode(BILLTYPE_AUTO));
         propertyTaxBillable.setLevyPenalty(Boolean.TRUE);
         propertyTaxBillable.setTransanctionReferenceNumber(payPropertyTaxDetails.getTransactionId());
         final EgBill egBill = ptBillServiceImpl.generateBill(propertyTaxBillable);
 
         final CollectionHelper collectionHelper = new CollectionHelper(egBill);
         final Map<String, String> paymentDetailsMap = new HashMap<String, String>();
-        paymentDetailsMap.put(PropertyTaxConstants.TOTAL_AMOUNT, payPropertyTaxDetails.getPaymentAmount().toString());
-        paymentDetailsMap.put(PropertyTaxConstants.PAID_BY, payPropertyTaxDetails.getPaidBy());
-        if (PropertyTaxConstants.THIRD_PARTY_PAYMENT_MODE_CHEQUE.equalsIgnoreCase(payPropertyTaxDetails
+        paymentDetailsMap.put(TOTAL_AMOUNT, payPropertyTaxDetails.getPaymentAmount().toString());
+        paymentDetailsMap.put(PAID_BY, payPropertyTaxDetails.getPaidBy());
+        if (THIRD_PARTY_PAYMENT_MODE_CHEQUE.equalsIgnoreCase(payPropertyTaxDetails
                 .getPaymentMode().toLowerCase())
-                || PropertyTaxConstants.THIRD_PARTY_PAYMENT_MODE_DD.equalsIgnoreCase(payPropertyTaxDetails
+                || THIRD_PARTY_PAYMENT_MODE_DD.equalsIgnoreCase(payPropertyTaxDetails
                         .getPaymentMode().toLowerCase())) {
             paymentDetailsMap.put(ChequePayment.INSTRUMENTNUMBER, payPropertyTaxDetails.getChqddNo());
             paymentDetailsMap.put(ChequePayment.INSTRUMENTDATE,
@@ -703,8 +782,8 @@ public class PropertyExternalService {
             receiptDetails.setPaymentMode(payPropertyTaxDetails.getPaymentMode());
             receiptDetails.setTransactionId(billReceiptInfo.getManualReceiptNumber());
             errorDetails = new ErrorDetails();
-            errorDetails.setErrorCode(PropertyTaxConstants.THIRD_PARTY_ERR_CODE_SUCCESS);
-            errorDetails.setErrorMessage(PropertyTaxConstants.THIRD_PARTY_ERR_MSG_SUCCESS);
+            errorDetails.setErrorCode(THIRD_PARTY_ERR_CODE_SUCCESS);
+            errorDetails.setErrorMessage(THIRD_PARTY_ERR_MSG_SUCCESS);
 
             receiptDetails.setErrorDetails(errorDetails);
         }
@@ -728,8 +807,8 @@ public class PropertyExternalService {
             return errorDetails;
         else {
             errorDetails = new ErrorDetails();
-            errorDetails.setErrorCode(PropertyTaxConstants.THIRD_PARTY_ERR_CODE_SUCCESS);
-            errorDetails.setErrorMessage(PropertyTaxConstants.THIRD_PARTY_ERR_MSG_SUCCESS);
+            errorDetails.setErrorCode(THIRD_PARTY_ERR_CODE_SUCCESS);
+            errorDetails.setErrorMessage(THIRD_PARTY_ERR_MSG_SUCCESS);
         }
         return errorDetails;
     }
@@ -760,10 +839,10 @@ public class PropertyExternalService {
         Map<String, String> codeNameMap = null;
         final PropertyTypeMaster propertyTypeMasters = propertyTypeMasterDAO.getPropertyTypeMasterByCode(categoryCode);
         if (null != propertyTypeMasters) {
-            if (propertyTypeMasters.getCode().equalsIgnoreCase(PropertyTaxConstants.OWNERSHIP_TYPE_VAC_LAND))
-                codeNameMap = PropertyTaxConstants.VAC_LAND_PROPERTY_TYPE_CATEGORY;
+            if (propertyTypeMasters.getCode().equalsIgnoreCase(OWNERSHIP_TYPE_VAC_LAND))
+                codeNameMap = VAC_LAND_PROPERTY_TYPE_CATEGORY;
             else
-                codeNameMap = PropertyTaxConstants.NON_VAC_LAND_PROPERTY_TYPE_CATEGORY;
+                codeNameMap = NON_VAC_LAND_PROPERTY_TYPE_CATEGORY;
             if (null != codeNameMap && !codeNameMap.isEmpty())
                 for (final String code : codeNameMap.keySet()) {
                     final MasterCodeNamePairDetails mstrCodeNamepairDetails = new MasterCodeNamePairDetails();
@@ -778,8 +857,8 @@ public class PropertyExternalService {
     public List<MasterCodeNamePairDetails> getPropertyTypes() {
         final List<MasterCodeNamePairDetails> mstrCodeNamePairDetailsList = new ArrayList<MasterCodeNamePairDetails>();
         MasterCodeNamePairDetails mstrCodeNamepairDetails = null;
-        final Map<String, String> vacLandMap = PropertyTaxConstants.VAC_LAND_PROPERTY_TYPE_CATEGORY;
-        final Map<String, String> nonVacLandMap = PropertyTaxConstants.NON_VAC_LAND_PROPERTY_TYPE_CATEGORY;
+        final Map<String, String> vacLandMap = VAC_LAND_PROPERTY_TYPE_CATEGORY;
+        final Map<String, String> nonVacLandMap = NON_VAC_LAND_PROPERTY_TYPE_CATEGORY;
 
         for (final String key : vacLandMap.keySet()) {
             mstrCodeNamepairDetails = new MasterCodeNamePairDetails();
@@ -802,10 +881,10 @@ public class PropertyExternalService {
         Map<String, String> codeNameMap = null;
         final PropertyTypeMaster propertyTypeMasters = propertyTypeMasterDAO.getPropertyTypeMasterByCode(categoryCode);
         if (null != propertyTypeMasters) {
-            if (propertyTypeMasters.getCode().equalsIgnoreCase(PropertyTaxConstants.OWNERSHIP_TYPE_VAC_LAND))
-                codeNameMap = PropertyTaxConstants.VAC_LAND_PROPERTY_TYPE_CATEGORY;
+            if (propertyTypeMasters.getCode().equalsIgnoreCase(OWNERSHIP_TYPE_VAC_LAND))
+                codeNameMap = VAC_LAND_PROPERTY_TYPE_CATEGORY;
             else
-                codeNameMap = PropertyTaxConstants.NON_VAC_LAND_PROPERTY_TYPE_CATEGORY;
+                codeNameMap = NON_VAC_LAND_PROPERTY_TYPE_CATEGORY;
             if (null != codeNameMap && !codeNameMap.isEmpty())
                 for (final String code : codeNameMap.keySet()) {
                     final MasterCodeNamePairDetails mstrCodeNamepairDetails = new MasterCodeNamePairDetails();
@@ -913,8 +992,8 @@ public class PropertyExternalService {
     public List<MasterCodeNamePairDetails> getEnumerationBlocks() {
         final List<MasterCodeNamePairDetails> mstrCodeNamePairDetailsList = new ArrayList<MasterCodeNamePairDetails>();
         final List<Boundary> enumerationBlockList = boundaryService
-                .getActiveBoundariesByBndryTypeNameAndHierarchyTypeName(PropertyTaxConstants.ELECTIONWARD_BNDRY_TYPE,
-                		PropertyTaxConstants.ELECTION_HIERARCHY_TYPE);
+                .getActiveBoundariesByBndryTypeNameAndHierarchyTypeName(ELECTIONWARD_BNDRY_TYPE,
+                		ELECTION_HIERARCHY_TYPE);
         for (final Boundary boundary : enumerationBlockList) {
             final MasterCodeNamePairDetails mstrCodeNamePairDetails = new MasterCodeNamePairDetails();
             mstrCodeNamePairDetails.setCode(boundary.getBoundaryNum().toString());
@@ -1103,8 +1182,8 @@ public class PropertyExternalService {
                 roofTypeCode, wallTypeCode, woodTypeCode, floorDetailsList, surveyNumber, pattaNumber, vacantLandArea,
                 marketValue, currentCapitalValue, effectiveDate, northBoundary, southBoundary,
                 eastBoundary, westBoundary, parentPropertyNumber, documents);
-        basicProperty.setIsTaxXMLMigrated(PropertyTaxConstants.STATUS_YES_XML_MIGRATION);
-        processAndStoreDocumentsWithReason(basicProperty, PropertyTaxConstants.DOCS_CREATE_PROPERTY);
+        basicProperty.setIsTaxXMLMigrated(STATUS_YES_XML_MIGRATION);
+        processAndStoreDocumentsWithReason(basicProperty, DOCS_CREATE_PROPERTY);
         basicProperty.setPropertyOwnerInfoProxy(getPropertyOwnerInfoList(ownerDetailsList));
         basicPropertyService.createOwners(property, basicProperty, basicProperty.getAddress());
         transitionWorkFlow(property);
@@ -1114,8 +1193,8 @@ public class PropertyExternalService {
             newPropertyDetails = new NewPropertyDetails();
             newPropertyDetails.setApplicationNo(basicProperty.getProperty().getApplicationNo());
             final ErrorDetails errorDetails = new ErrorDetails();
-            errorDetails.setErrorCode(PropertyTaxConstants.THIRD_PARTY_ERR_CODE_SUCCESS);
-            errorDetails.setErrorMessage(PropertyTaxConstants.THIRD_PARTY_ERR_MSG_SUCCESS);
+            errorDetails.setErrorCode(THIRD_PARTY_ERR_CODE_SUCCESS);
+            errorDetails.setErrorMessage(THIRD_PARTY_ERR_MSG_SUCCESS);
             newPropertyDetails.setErrorDetails(errorDetails);
         }
         return newPropertyDetails;
@@ -1139,9 +1218,9 @@ public class PropertyExternalService {
         basicProperty.setRegdDocNo(regdDocNo);
         basicProperty.setRegdDocDate(convertStringToDate(regdDocDate));
         basicProperty.setActive(Boolean.TRUE);
-        basicProperty.setSource(PropertyTaxConstants.SOURCEOFDATA_MOBILE);
+        basicProperty.setSource(SOURCEOFDATA_MOBILE);
         // Creating Property Address object
-        final Boundary block = getBoundaryByNumberAndType(blockNum, PropertyTaxConstants.BLOCK,PropertyTaxConstants.REVENUE_HIERARCHY_TYPE);
+        final Boundary block = getBoundaryByNumberAndType(blockNum, BLOCK,REVENUE_HIERARCHY_TYPE);
         final PropertyAddress propAddress = createPropAddress(localityNum, block, doorNo, pinCode,
                 isCorrAddrDiff, corrAddr1, corrAddr2, corrPinCode);
         basicProperty.setAddress(propAddress);
@@ -1161,11 +1240,11 @@ public class PropertyExternalService {
         basicProperty.setPropertyMutationMaster(propertyMutationMaster);
         final PropertyService propService = beanProvider.getBean("propService", PropertyService.class);
         //need to pass parent property index, in case of bifurcation
-        if (propertyMutationMaster.getCode().equals(PropertyTaxConstants.PROP_CREATE_RSN_BIFUR))
-            basicProperty.addPropertyStatusValues(propService.createPropStatVal(basicProperty, PropertyTaxConstants.PROP_CREATE_RSN, null, null,
+        if (propertyMutationMaster.getCode().equals(PROP_CREATE_RSN_BIFUR))
+            basicProperty.addPropertyStatusValues(propService.createPropStatVal(basicProperty, PROP_CREATE_RSN, null, null,
                     null, null, parentPropertyNumber));
         // Set isBillCreated property value as false
-        basicProperty.setIsBillCreated(PropertyTaxConstants.STATUS_BILL_NOTCREATED);
+        basicProperty.setIsBillCreated(STATUS_BILL_NOTCREATED);
         
         final PropertyTypeMaster propertyTypeMaster = getPropertyTypeMasterByCode(propertyTypeMasterCode);
         final PropertyImpl propertyImpl = createPropertyWithBasicDetails(propertyTypeMasterCode);
@@ -1192,7 +1271,7 @@ public class PropertyExternalService {
         if (isSuperStructure)
             propertyImpl.getPropertyDetail().setSiteOwner(siteOwnerName);*/
 
-        if(!propertyTypeMasterCode.equalsIgnoreCase(PropertyTaxConstants.OWNERSHIP_TYPE_VAC_LAND)){
+        if(!propertyTypeMasterCode.equalsIgnoreCase(OWNERSHIP_TYPE_VAC_LAND)){
         	final FloorType floorType = floorTypeService.getFloorTypeById(Long.valueOf(floorTypeId));
             final RoofType roofType = roofTypeService.getRoofTypeById(Long.valueOf(roofTypeId));
             WallType wallType = null;
@@ -1212,7 +1291,7 @@ public class PropertyExternalService {
             propertyImpl.getPropertyDetail().setCable(cable);
             
             property = propService.createProperty(propertyImpl, extentOfSite, mutationReasonCode, propertyTypeMaster.getId().toString(),
-            		null, null, PropertyTaxConstants.STATUS_ISACTIVE, regdDocNo, null, (floorType != null ? floorType.getId() : null), 
+            		null, null, STATUS_ISACTIVE, regdDocNo, null, (floorType != null ? floorType.getId() : null), 
             		(roofType != null ? roofType.getId() : null),(wallType != null ? wallType.getId() : null),
                     (woodType != null ? woodType.getId() : null), null);
         } else {
@@ -1225,17 +1304,17 @@ public class PropertyExternalService {
             propertyImpl.getPropertyDetail().setSitalArea(area);
             propertyImpl.getPropertyDetail().setMarketValue(marketValue);
         	property = propService.createProperty(propertyImpl, extentOfSite, mutationReasonCode, propertyTypeMaster.getId().toString(),
-            		null, null, PropertyTaxConstants.STATUS_ISACTIVE, regdDocNo, null, null, null,
+            		null, null, STATUS_ISACTIVE, regdDocNo, null, null, null,
                     null, null, null);
         }
         
-        property.setStatus(PropertyTaxConstants.STATUS_DEMAND_INACTIVE);
-        property.setPropertyModifyReason(PropertyTaxConstants.PROP_CREATE_RSN);
+        property.setStatus(STATUS_DEMAND_INACTIVE);
+        property.setPropertyModifyReason(PROP_CREATE_RSN);
         property.getPropertyDetail().setCategoryType(propertyCategoryCode);
         basicProperty.addProperty(property);
 
         Date propCompletionDate = null;
-        if (!property.getPropertyDetail().getPropertyTypeMaster().getCode().equalsIgnoreCase(PropertyTaxConstants.OWNERSHIP_TYPE_VAC_LAND))
+        if (!property.getPropertyDetail().getPropertyTypeMaster().getCode().equalsIgnoreCase(OWNERSHIP_TYPE_VAC_LAND))
             propCompletionDate = propService.getLowestDtOfCompFloorWise(property.getPropertyDetail()
                     .getFloorDetailsProxy());
         else
@@ -1256,7 +1335,7 @@ public class PropertyExternalService {
 
     private PropertyStatus getPropertyStatus() {
         final Query qry = entityManager.createQuery("from PropertyStatus where statusCode = :statusCode");
-        qry.setParameter("statusCode", PropertyTaxConstants.PROPERTY_STATUS_WORKFLOW);
+        qry.setParameter("statusCode", PROPERTY_STATUS_WORKFLOW);
         final PropertyStatus propertyStatus = (PropertyStatus) qry.getSingleResult();
         return propertyStatus;
     }
@@ -1267,7 +1346,7 @@ public class PropertyExternalService {
 
         final Address propAddr = new PropertyAddress();
         propAddr.setHouseNoBldgApt(doorNo);
-        propAddr.setAreaLocalitySector(getBoundaryByNumberAndType(localityNum,PropertyTaxConstants.LOCALITY_BNDRY_TYPE,PropertyTaxConstants.LOCATION_HIERARCHY_TYPE).getName());
+        propAddr.setAreaLocalitySector(getBoundaryByNumberAndType(localityNum,LOCALITY_BNDRY_TYPE,LOCATION_HIERARCHY_TYPE).getName());
         String cityName = ApplicationThreadLocals.getCityName();
         propAddr.setStreetRoadLine(block.getParent().getName());
         propAddr.setCityTownVillage(cityName);
@@ -1305,14 +1384,14 @@ public class PropertyExternalService {
 
     	final PropertyID propertyID = new PropertyID();
         final Boundary ward = block.getParent();
-        final Boundary zone = getBoundaryByNumberAndType(zoneNum,PropertyTaxConstants.ZONE,PropertyTaxConstants.REVENUE_HIERARCHY_TYPE);
-        final Boundary locality = getBoundaryByNumberAndType(localityNum, PropertyTaxConstants.LOCALITY_BNDRY_TYPE,PropertyTaxConstants.LOCATION_HIERARCHY_TYPE);
+        final Boundary zone = getBoundaryByNumberAndType(zoneNum,ZONE,REVENUE_HIERARCHY_TYPE);
+        final Boundary locality = getBoundaryByNumberAndType(localityNum, LOCALITY_BNDRY_TYPE,LOCATION_HIERARCHY_TYPE);
         propertyID.setArea(block);
         propertyID.setWard(ward);
         propertyID.setZone(zone);
         propertyID.setLocality(locality);
         propertyID.setBasicProperty(basicProperty);
-        final Boundary electionBoundary = getBoundaryByNumberAndType(electionBoundaryNum,PropertyTaxConstants.WARD,PropertyTaxConstants.ADMIN_HIERARCHY_TYPE);
+        final Boundary electionBoundary = getBoundaryByNumberAndType(electionBoundaryNum,WARD,ADMIN_HIERARCHY_TYPE);
         if (electionBoundary != null){
             propertyID.setElectionBoundary(electionBoundary);
             basicProperty.setBoundary(electionBoundary);
@@ -1355,31 +1434,31 @@ public class PropertyExternalService {
         ErrorDetails errorDetails = null;
         if (assessmentNo == null || assessmentNo.trim().length() == 0) {
             errorDetails = new ErrorDetails();
-            errorDetails.setErrorCode(PropertyTaxConstants.THIRD_PARTY_ERR_CODE_ASSESSMENT_NO_REQUIRED);
-            errorDetails.setErrorMessage(PropertyTaxConstants.THIRD_PARTY_ERR_MSG_ASSESSMENT_NO_REQUIRED);
+            errorDetails.setErrorCode(THIRD_PARTY_ERR_CODE_ASSESSMENT_NO_REQUIRED);
+            errorDetails.setErrorMessage(THIRD_PARTY_ERR_MSG_ASSESSMENT_NO_REQUIRED);
         } else {
             if (assessmentNo.trim().length() > 0 && assessmentNo.trim().length() < 10) {
                 errorDetails = new ErrorDetails();
-                errorDetails.setErrorCode(PropertyTaxConstants.THIRD_PARTY_ERR_CODE_ASSESSMENT_NO_LEN);
-                errorDetails.setErrorMessage(PropertyTaxConstants.THIRD_PARTY_ERR_MSG_ASSESSMENT_NO_LEN);
+                errorDetails.setErrorCode(THIRD_PARTY_ERR_CODE_ASSESSMENT_NO_LEN);
+                errorDetails.setErrorMessage(THIRD_PARTY_ERR_MSG_ASSESSMENT_NO_LEN);
             }
             if (!basicPropertyDAO.isAssessmentNoExist(assessmentNo)) {
                 errorDetails = new ErrorDetails();
-                errorDetails.setErrorCode(PropertyTaxConstants.THIRD_PARTY_ERR_CODE_ASSESSMENT_NO_NOT_FOUND);
-                errorDetails.setErrorMessage(PropertyTaxConstants.THIRD_PARTY_ERR_MSG_ASSESSMENT_NO_NOT_FOUND);
+                errorDetails.setErrorCode(THIRD_PARTY_ERR_CODE_ASSESSMENT_NO_NOT_FOUND);
+                errorDetails.setErrorMessage(THIRD_PARTY_ERR_MSG_ASSESSMENT_NO_NOT_FOUND);
             }
         }
 
         if (paymentMode == null || paymentMode.trim().length() == 0) {
             errorDetails = new ErrorDetails();
-            errorDetails.setErrorCode(PropertyTaxConstants.THIRD_PARTY_ERR_CODE_PAYMENT_MODE_REQUIRED);
-            errorDetails.setErrorMessage(PropertyTaxConstants.THIRD_PARTY_ERR_MSG_PAYMENT_MODE_REQUIRED);
-        } else if (!PropertyTaxConstants.THIRD_PARTY_PAYMENT_MODE_CASH.equalsIgnoreCase(paymentMode.trim())
-                && !PropertyTaxConstants.THIRD_PARTY_PAYMENT_MODE_CHEQUE.equalsIgnoreCase(paymentMode.trim())
-                && !PropertyTaxConstants.THIRD_PARTY_PAYMENT_MODE_DD.equalsIgnoreCase(paymentMode.trim())) {
+            errorDetails.setErrorCode(THIRD_PARTY_ERR_CODE_PAYMENT_MODE_REQUIRED);
+            errorDetails.setErrorMessage(THIRD_PARTY_ERR_MSG_PAYMENT_MODE_REQUIRED);
+        } else if (!THIRD_PARTY_PAYMENT_MODE_CASH.equalsIgnoreCase(paymentMode.trim())
+                && !THIRD_PARTY_PAYMENT_MODE_CHEQUE.equalsIgnoreCase(paymentMode.trim())
+                && !THIRD_PARTY_PAYMENT_MODE_DD.equalsIgnoreCase(paymentMode.trim())) {
             errorDetails = new ErrorDetails();
-            errorDetails.setErrorCode(PropertyTaxConstants.THIRD_PARTY_ERR_CODE_PAYMENT_MODE_INVALID);
-            errorDetails.setErrorMessage(PropertyTaxConstants.THIRD_PARTY_ERR_MSG_PAYMENT_MODE_INVALID);
+            errorDetails.setErrorCode(THIRD_PARTY_ERR_CODE_PAYMENT_MODE_INVALID);
+            errorDetails.setErrorMessage(THIRD_PARTY_ERR_MSG_PAYMENT_MODE_INVALID);
         }
         return errorDetails;
     }
@@ -1400,7 +1479,7 @@ public class PropertyExternalService {
             int fileCount = 0;
             for (final File file : uploads) {
                 final FileStoreMapper fileStore = fileStoreService.store(file, uploadFileNames.get(fileCount),
-                        uploadContentTypes.get(fileCount++), PropertyTaxConstants.FILESTORE_MODULE_NAME);
+                        uploadContentTypes.get(fileCount++), FILESTORE_MODULE_NAME);
                 final PropertyDocs propertyDoc = new PropertyDocs();
                 propertyDoc.setSupportDoc(fileStore);
                 propertyDoc.setBasicProperty(basicProperty);
@@ -1412,7 +1491,7 @@ public class PropertyExternalService {
 
     private PropertyImpl createPropertyWithBasicDetails(final String propertyType) {
         final PropertyImpl propertyImpl = new PropertyImpl();
-        if(propertyType.equalsIgnoreCase(PropertyTaxConstants.OWNERSHIP_TYPE_VAC_LAND))
+        if(propertyType.equalsIgnoreCase(OWNERSHIP_TYPE_VAC_LAND))
         	propertyImpl.setPropertyDetail(new VacantProperty());
         else
         	propertyImpl.setPropertyDetail(new BuiltUpProperty());
@@ -1563,42 +1642,42 @@ public class PropertyExternalService {
         DocumentType documentType = null;
         Document document = null;
         if (photoAsmntStream != null && photoAsmntDisp != null) {
-            documentType = getDocumentTypeByCode(PropertyTaxConstants.THIRD_PARTY_PHOTO_OF_ASSESSMENT_CODE);
+            documentType = getDocumentTypeByCode(THIRD_PARTY_PHOTO_OF_ASSESSMENT_CODE);
             document = createDocument(photoAsmntStream, photoAsmntDisp);
             document.setType(documentType);
             documents.add(document);
         }
 
         if (bldgPermCopyStream != null && bldgPermCopyDisp != null) {
-            documentType = getDocumentTypeByCode(PropertyTaxConstants.THIRD_PARTY_BUILDING_PERMISSION_COPY_CODE);
+            documentType = getDocumentTypeByCode(THIRD_PARTY_BUILDING_PERMISSION_COPY_CODE);
             document = createDocument(bldgPermCopyStream, bldgPermCopyDisp);
             document.setType(documentType);
             documents.add(document);
         }
 
         if (atstdCopyPropDocStream != null && atstdCopyPropDocDisp != null) {
-            documentType = getDocumentTypeByCode(PropertyTaxConstants.THIRD_PARTY_ATTESTED_COPY_PROPERTY_DOCUMENT_CODE);
+            documentType = getDocumentTypeByCode(THIRD_PARTY_ATTESTED_COPY_PROPERTY_DOCUMENT_CODE);
             document = createDocument(atstdCopyPropDocStream, atstdCopyPropDocDisp);
             document.setType(documentType);
             documents.add(document);
         }
 
         if (nonJudcStampStream != null && nonJudcStampDisp != null) {
-            documentType = getDocumentTypeByCode(PropertyTaxConstants.THIRD_PARTY_NON_JUDICIAL_STAMP_PAPERS_CODE);
+            documentType = getDocumentTypeByCode(THIRD_PARTY_NON_JUDICIAL_STAMP_PAPERS_CODE);
             document = createDocument(nonJudcStampStream, nonJudcStampDisp);
             document.setType(documentType);
             documents.add(document);
         }
 
         if (afdvtBondStream != null && afdvtBondDisp != null) {
-            documentType = getDocumentTypeByCode(PropertyTaxConstants.THIRD_PARTY_NOTARIZED_AFFIDAVIT_CUM_IDEMNITY_BOND_CODE);
+            documentType = getDocumentTypeByCode(THIRD_PARTY_NOTARIZED_AFFIDAVIT_CUM_IDEMNITY_BOND_CODE);
             document = createDocument(afdvtBondStream, afdvtBondDisp);
             document.setType(documentType);
             documents.add(document);
         }
 
         if (deathCertCopyStream != null && deathCertCopyDisp != null) {
-            documentType = getDocumentTypeByCode(PropertyTaxConstants.THIRD_PARTY_DEATH_CERTIFICATE_COPY_CODE);
+            documentType = getDocumentTypeByCode(THIRD_PARTY_DEATH_CERTIFICATE_COPY_CODE);
             document = createDocument(deathCertCopyStream, deathCertCopyDisp);
             document.setType(documentType);
             documents.add(document);
@@ -1614,42 +1693,42 @@ public class PropertyExternalService {
         Document document = null;
 
         if (!photoAsmntDisp.isEmpty() && photoAsmntDisp != null) {
-            documentType = getDocumentTypeByCode(PropertyTaxConstants.THIRD_PARTY_PHOTO_OF_ASSESSMENT_CODE);
+            documentType = getDocumentTypeByCode(THIRD_PARTY_PHOTO_OF_ASSESSMENT_CODE);
             document = createDocument(photoAsmntDisp.getInputStream(), photoAsmntDisp.getName());
             document.setType(documentType);
             documents.add(document);
         }
 
         if (!bldgPermCopyDisp.isEmpty() && bldgPermCopyDisp != null) {
-            documentType = getDocumentTypeByCode(PropertyTaxConstants.THIRD_PARTY_BUILDING_PERMISSION_COPY_CODE);
+            documentType = getDocumentTypeByCode(THIRD_PARTY_BUILDING_PERMISSION_COPY_CODE);
             document = createDocument(bldgPermCopyDisp.getInputStream(), bldgPermCopyDisp.getName());
             document.setType(documentType);
             documents.add(document);
         }
 
         if (!atstdCopyPropDocDisp.isEmpty() && atstdCopyPropDocDisp != null) {
-            documentType = getDocumentTypeByCode(PropertyTaxConstants.THIRD_PARTY_ATTESTED_COPY_PROPERTY_DOCUMENT_CODE);
+            documentType = getDocumentTypeByCode(THIRD_PARTY_ATTESTED_COPY_PROPERTY_DOCUMENT_CODE);
             document = createDocument(atstdCopyPropDocDisp.getInputStream(), atstdCopyPropDocDisp.getName());
             document.setType(documentType);
             documents.add(document);
         }
 
         if (!nonJudcStampDisp.isEmpty() && nonJudcStampDisp != null) {
-            documentType = getDocumentTypeByCode(PropertyTaxConstants.THIRD_PARTY_NON_JUDICIAL_STAMP_PAPERS_CODE);
+            documentType = getDocumentTypeByCode(THIRD_PARTY_NON_JUDICIAL_STAMP_PAPERS_CODE);
             document = createDocument(nonJudcStampDisp.getInputStream(), nonJudcStampDisp.getName());
             document.setType(documentType);
             documents.add(document);
         }
 
         if (!afdvtBondDisp.isEmpty() && afdvtBondDisp != null) {
-            documentType = getDocumentTypeByCode(PropertyTaxConstants.THIRD_PARTY_NOTARIZED_AFFIDAVIT_CUM_IDEMNITY_BOND_CODE);
+            documentType = getDocumentTypeByCode(THIRD_PARTY_NOTARIZED_AFFIDAVIT_CUM_IDEMNITY_BOND_CODE);
             document = createDocument(afdvtBondDisp.getInputStream(), afdvtBondDisp.getName());
             document.setType(documentType);
             documents.add(document);
         }
 
         if (!deathCertCopyDisp.isEmpty() && deathCertCopyDisp != null) {
-            documentType = getDocumentTypeByCode(PropertyTaxConstants.THIRD_PARTY_DEATH_CERTIFICATE_COPY_CODE);
+            documentType = getDocumentTypeByCode(THIRD_PARTY_DEATH_CERTIFICATE_COPY_CODE);
             document = createDocument(deathCertCopyDisp.getInputStream(), deathCertCopyDisp.getName());
             document.setType(documentType);
             documents.add(document);
@@ -1679,7 +1758,7 @@ public class PropertyExternalService {
             file = writeToFile(inputStream, formDataContentDisposition.getFileName());
             files.add(file);
             document.setUploads(files);
-            contentTypes.add(MessageFormat.format(PropertyTaxConstants.THIRD_PARTY_CONTENT_TYPE,
+            contentTypes.add(MessageFormat.format(THIRD_PARTY_CONTENT_TYPE,
                     FilenameUtils.getExtension(file.getPath())));
             document.setUploadsContentType(contentTypes);
         }
@@ -1687,7 +1766,7 @@ public class PropertyExternalService {
     }
 
     public BillReceiptInfo validateTransanctionIdPresent(final String transantion) {
-        return collectionService.getReceiptInfo(PropertyTaxConstants.PTIS_COLLECTION_SERVICE_CODE, transantion);
+        return collectionService.getReceiptInfo(PTIS_COLLECTION_SERVICE_CODE, transantion);
     }
 
     private Document createDocument(final InputStream inputStream, final String fileName) {
@@ -1702,7 +1781,7 @@ public class PropertyExternalService {
             file = writeToFile(inputStream, fileName);
             files.add(file);
             document.setUploads(files);
-            contentTypes.add(MessageFormat.format(PropertyTaxConstants.THIRD_PARTY_CONTENT_TYPE,
+            contentTypes.add(MessageFormat.format(THIRD_PARTY_CONTENT_TYPE,
                     FilenameUtils.getExtension(file.getPath())));
             document.setUploadsContentType(contentTypes);
         }
@@ -1737,17 +1816,17 @@ public class PropertyExternalService {
     private PropertyImpl transitionWorkFlow(final PropertyImpl property) {
         final DateTime currentDate = new DateTime();
         final User user = userService.getUserById(ApplicationThreadLocals.getUserId());
-        final String approverComments = PropertyTaxConstants.APPROVAL_COMMENTS_SUCCESS;
-        final String currentState = PropertyTaxConstants.CURRENT_STATE_BILL_COLLECTOR_APPROVED;
+        final String approverComments = APPROVAL_COMMENTS_SUCCESS;
+        final String currentState = CURRENT_STATE_BILL_COLLECTOR_APPROVED;
         final PropertyService propService = beanProvider.getBean("propService", PropertyService.class);
         final Assignment assignment = propService.getUserPositionByZone(property.getBasicProperty(),property.getBasicProperty().getSource());
         final Position pos = assignment.getPosition();
 
         final WorkFlowMatrix wfmatrix = propertyWorkflowService.getWfMatrix(property.getStateType(), null, null,
-        		PropertyTaxConstants.NEW_ASSESSMENT, currentState, null);
+        		NEW_ASSESSMENT, currentState, null);
         property.transition().start().withSenderName(user.getName()).withComments(approverComments)
                 .withStateValue(wfmatrix.getCurrentState()).withDateInfo(currentDate.toDate()).withOwner(pos)
-                .withNextAction(PropertyTaxConstants.UD_REVENUE_INSPECTOR_APPROVAL_PENDING).withNatureOfTask(PropertyTaxConstants.NATURE_NEW_ASSESSMENT);
+                .withNextAction(UD_REVENUE_INSPECTOR_APPROVAL_PENDING).withNatureOfTask(NATURE_NEW_ASSESSMENT);
         return property;
     }
 
@@ -1898,11 +1977,11 @@ public class PropertyExternalService {
         final EgBill egBill = ptBillServiceImpl.generateBill(propertyTaxBillable);
         final CollectionHelper collectionHelper = new CollectionHelper(egBill);
         final Map<String, String> paymentDetailsMap = new HashMap<String, String>();
-        paymentDetailsMap.put(PropertyTaxConstants.TOTAL_AMOUNT, payPropertyTaxDetails.getPaymentAmount().toString());
-        paymentDetailsMap.put(PropertyTaxConstants.PAID_BY, egBill.getCitizenName());
-        if (PropertyTaxConstants.THIRD_PARTY_PAYMENT_MODE_CHEQUE.equalsIgnoreCase(payPropertyTaxDetails
+        paymentDetailsMap.put(TOTAL_AMOUNT, payPropertyTaxDetails.getPaymentAmount().toString());
+        paymentDetailsMap.put(PAID_BY, egBill.getCitizenName());
+        if (THIRD_PARTY_PAYMENT_MODE_CHEQUE.equalsIgnoreCase(payPropertyTaxDetails
                 .getPaymentMode().toLowerCase())
-                || PropertyTaxConstants.THIRD_PARTY_PAYMENT_MODE_DD.equalsIgnoreCase(payPropertyTaxDetails
+                || THIRD_PARTY_PAYMENT_MODE_DD.equalsIgnoreCase(payPropertyTaxDetails
                         .getPaymentMode().toLowerCase())) {
             paymentDetailsMap.put(ChequePayment.INSTRUMENTNUMBER, payPropertyTaxDetails.getChqddNo());
             paymentDetailsMap.put(ChequePayment.INSTRUMENTDATE,
@@ -1930,8 +2009,8 @@ public class PropertyExternalService {
             receiptDetails.setPaymentMode(payPropertyTaxDetails.getPaymentMode());
             receiptDetails.setTransactionId(billReceiptInfo.getManualReceiptNumber());
             errorDetails = new ErrorDetails();
-            errorDetails.setErrorCode(PropertyTaxConstants.THIRD_PARTY_ERR_CODE_SUCCESS);
-            errorDetails.setErrorMessage(PropertyTaxConstants.THIRD_PARTY_ERR_MSG_SUCCESS);
+            errorDetails.setErrorCode(THIRD_PARTY_ERR_CODE_SUCCESS);
+            errorDetails.setErrorMessage(THIRD_PARTY_ERR_MSG_SUCCESS);
 
             receiptDetails.setErrorDetails(errorDetails);
         }
@@ -1988,9 +2067,9 @@ public class PropertyExternalService {
     			+ " where ch.parent.id = parent.id  and ch.child.id = child.id  and ch.parentType.name=:block and ch.childType.name=:locality "
     			+ " and parent.parent.boundaryType.hierarchyType.name=:hierarchyType";
     	List<Object[]> boundaryDetails = entityManager.unwrap(Session.class).createQuery(query)
-    			.setParameter("block", PropertyTaxConstants.BLOCK)
-    			.setParameter("locality", PropertyTaxConstants.LOCALITY_BNDRY_TYPE)
-    			.setParameter("hierarchyType", PropertyTaxConstants.REVENUE_HIERARCHY_TYPE).list();
+    			.setParameter("block", BLOCK)
+    			.setParameter("locality", LOCALITY_BNDRY_TYPE)
+    			.setParameter("hierarchyType", REVENUE_HIERARCHY_TYPE).list();
     	return boundaryDetails;
     }
     

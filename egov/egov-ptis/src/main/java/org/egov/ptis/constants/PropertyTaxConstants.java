@@ -72,6 +72,7 @@ public interface PropertyTaxConstants {
     public static final String APPCONFIG_ISSEASHORE_ULB = "IS_SEASHORE_ULB";
     public static final String APPCONFIG_IS_PRIMARY_SERVICECHARGES_APPLICABLE = "IS_PRIMARYSERVICECHARGES_APPLICABLE";
     public static final Float SQUARE_YARD_TO_SQUARE_METER_VALUE = 0.836127f;
+    
     // General constants used across Clients
     public static final String PTMODULENAME = "Property Tax";
     public static final String DEACTIVATION = "DEACTIVATION";
@@ -1461,16 +1462,17 @@ public interface PropertyTaxConstants {
     public static final String REG_DEPT_WEBSERVICE_USERNAME = "CMDAService1";
     public static final String REG_DEPT_WEBSERVICE_PASSWORD = "CMDAService1";
     
+    public static final String MOBILE_PAYMENT_INCORRECT_BILL_DATA = "Bill data is incorrect";
+    public static final String APPROVAL_COMMENTS_SUCCESS = "Property has been successfully forwarded.";
+    public static final String CURRENT_STATE_BILL_COLLECTOR_APPROVED ="Create:Bill Collector Approved";
+    public static final String UD_REVENUE_INSPECTOR_APPROVAL_PENDING = "UD Revenue Inspector Approval Pending";
+    	
+    //Collection services
     public static final String CATEGORY_TYPE_PROPERTY_TAX = "PT";
     public static final String CATEGORY_TYPE_VACANTLAND_TAX = "VLT";
-    public static final String PROPERTY_TYPE_CODE_VACANT = "VAC_LAND";
+    public static final String INDEX_COLLECTION_CLAUSES_BILLINGSERVICE_NON_VACANT_LAND ="Property Tax";
+    public static final String INDEX_COLLECTION_CLAUSES_BILLINGSERVICE_VACANT_LAND ="Property Tax (On Land)";
     
-	public static final String MOBILE_PAYMENT_INCORRECT_BILL_DATA = "Bill data is incorrect";
-	
-	public static final String APPROVAL_COMMENTS_SUCCESS = "Property has been successfully forwarded.";
-	public static final String CURRENT_STATE_BILL_COLLECTOR_APPROVED ="Create:Bill Collector Approved";
-	public static final String UD_REVENUE_INSPECTOR_APPROVAL_PENDING = "UD Revenue Inspector Approval Pending";
-	
-	public static final String INDEX_COLLECTION_CLAUSES_BILLINGSERVICE_NON_VACANT_LAND ="Property Tax";
-	public static final String INDEX_COLLECTION_CLAUSES_BILLINGSERVICE_VACANT_LAND ="Property Tax (On Land)";
+    //urls	
+    public String WTMS_TAXDUE_RESTURL = "%s/wtms/rest/watertax/due/byptno/%s";
 }
