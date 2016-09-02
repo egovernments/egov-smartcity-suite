@@ -40,7 +40,17 @@
 package org.egov.ptis.web.controller.mobile;
 
 import static org.egov.ptis.constants.PropertyTaxConstants.BILLTYPE_AUTO;
+import static org.egov.ptis.constants.PropertyTaxConstants.CATEGORY_TYPE_PROPERTY_TAX;
+import static org.egov.ptis.constants.PropertyTaxConstants.CATEGORY_TYPE_VACANTLAND_TAX;
+import static org.egov.ptis.constants.PropertyTaxConstants.MOBILE_PAYMENT_INCORRECT_BILL_DATA;
+import static org.egov.ptis.constants.PropertyTaxConstants.OWNERSHIP_TYPE_VAC_LAND;
 import static org.egov.ptis.constants.PropertyTaxConstants.PROPERTY_VALIDATION;
+import static org.egov.ptis.constants.PropertyTaxConstants.THIRD_PARTY_DEMAND_AMOUNT_GREATER_MSG;
+import static org.egov.ptis.constants.PropertyTaxConstants.THIRD_PARTY_ERR_MSG_ASSESSMENT_NO_NOT_FOUND;
+import static org.egov.ptis.constants.PropertyTaxConstants.THIRD_PARTY_ERR_MSG_EXEMPTED_PROPERTY;
+import static org.egov.ptis.constants.PropertyTaxConstants.THIRD_PARTY_ERR_MSG_PROPERTY_TAX_ASSESSMENT_NOT_FOUND;
+import static org.egov.ptis.constants.PropertyTaxConstants.THIRD_PARTY_ERR_MSG_VACANTLAND_ASSESSMENT_NOT_FOUND;
+import static org.egov.ptis.constants.PropertyTaxConstants.THIRD_PARTY_ERR_MSG_WRONG_CATEGORY;
 
 import java.math.BigDecimal;
 import java.text.ParseException;
@@ -60,7 +70,6 @@ import org.egov.ptis.client.bill.PTBillServiceImpl;
 import org.egov.ptis.client.integration.utils.CollectionHelper;
 import org.egov.ptis.client.integration.utils.SpringBeanUtil;
 import org.egov.ptis.client.util.PropertyTaxNumberGenerator;
-import org.egov.ptis.constants.PropertyTaxConstants;
 import org.egov.ptis.domain.bill.PropertyTaxBillable;
 import org.egov.ptis.domain.dao.demand.PtDemandDao;
 import org.egov.ptis.domain.dao.property.BasicPropertyDAO;
@@ -118,7 +127,7 @@ public class MobilePaymentController {
             throws ParseException {
 		String redirectUrl = "";
 		if (!basicPropertyDAO.isAssessmentNoExist(assessmentNo)) {
-			model.addAttribute("errorMsg", PropertyTaxConstants.THIRD_PARTY_ERR_MSG_ASSESSMENT_NO_NOT_FOUND);
+			model.addAttribute("errorMsg", THIRD_PARTY_ERR_MSG_ASSESSMENT_NO_NOT_FOUND);
             return PROPERTY_VALIDATION;
         }
 		BasicProperty basicProperty = basicPropertyDAO.getBasicPropertyByPropertyID(assessmentNo);
@@ -126,7 +135,7 @@ public class MobilePaymentController {
         	Property property = basicProperty.getProperty();
         	if(property != null){
         		if(property.getIsExemptedFromTax()){
-        			model.addAttribute("errorMsg", PropertyTaxConstants.THIRD_PARTY_ERR_MSG_EXEMPTED_PROPERTY);
+        			model.addAttribute("errorMsg", THIRD_PARTY_ERR_MSG_EXEMPTED_PROPERTY);
                     return PROPERTY_VALIDATION;
         		}
         		Ptdemand currentPtdemand = ptDemandDAO.getNonHistoryCurrDmdForProperty(property);
@@ -140,21 +149,21 @@ public class MobilePaymentController {
             	    }
             	}
             	if(amountToBePaid.compareTo(totalTaxDue) > 0){
-            		model.addAttribute("errorMsg", PropertyTaxConstants.THIRD_PARTY_DEMAND_AMOUNT_GREATER_MSG);
+            		model.addAttribute("errorMsg", THIRD_PARTY_DEMAND_AMOUNT_GREATER_MSG);
                     return PROPERTY_VALIDATION;
             	}
-            	if(!propType.equalsIgnoreCase(PropertyTaxConstants.PROPERTY_TYPE_CODE_VACANT) 
-            			&& category.equalsIgnoreCase(PropertyTaxConstants.CATEGORY_TYPE_VACANTLAND_TAX)){
-            		model.addAttribute("errorMsg", PropertyTaxConstants.THIRD_PARTY_ERR_MSG_VACANTLAND_ASSESSMENT_NOT_FOUND);
+            	if(!propType.equalsIgnoreCase(OWNERSHIP_TYPE_VAC_LAND) 
+            			&& category.equalsIgnoreCase(CATEGORY_TYPE_VACANTLAND_TAX)){
+            		model.addAttribute("errorMsg", THIRD_PARTY_ERR_MSG_VACANTLAND_ASSESSMENT_NOT_FOUND);
                     return PROPERTY_VALIDATION;
-            	} else if(propType.equalsIgnoreCase(PropertyTaxConstants.PROPERTY_TYPE_CODE_VACANT) 
-            			&& category.equalsIgnoreCase(PropertyTaxConstants.CATEGORY_TYPE_PROPERTY_TAX)){
-            		model.addAttribute("errorMsg", PropertyTaxConstants.THIRD_PARTY_ERR_MSG_PROPERTY_TAX_ASSESSMENT_NOT_FOUND);
+            	} else if(propType.equalsIgnoreCase(OWNERSHIP_TYPE_VAC_LAND) 
+            			&& category.equalsIgnoreCase(CATEGORY_TYPE_PROPERTY_TAX)){
+            		model.addAttribute("errorMsg", THIRD_PARTY_ERR_MSG_PROPERTY_TAX_ASSESSMENT_NOT_FOUND);
                     return PROPERTY_VALIDATION;
             	}
-            	if(!category.equalsIgnoreCase(PropertyTaxConstants.CATEGORY_TYPE_PROPERTY_TAX) 
-            			&& !category.equalsIgnoreCase(PropertyTaxConstants.CATEGORY_TYPE_VACANTLAND_TAX)){
-            		model.addAttribute("errorMsg", PropertyTaxConstants.THIRD_PARTY_ERR_MSG_WRONG_CATEGORY);
+            	if(!category.equalsIgnoreCase(CATEGORY_TYPE_PROPERTY_TAX) 
+            			&& !category.equalsIgnoreCase(CATEGORY_TYPE_VACANTLAND_TAX)){
+            		model.addAttribute("errorMsg", THIRD_PARTY_ERR_MSG_WRONG_CATEGORY);
                     return PROPERTY_VALIDATION;
             	}
         	}
@@ -170,7 +179,7 @@ public class MobilePaymentController {
 			        model.addAttribute("redirectUrl", redirectUrl);
 		        }
 			}else{
-				model.addAttribute("errorMsg", PropertyTaxConstants.MOBILE_PAYMENT_INCORRECT_BILL_DATA);
+				model.addAttribute("errorMsg", MOBILE_PAYMENT_INCORRECT_BILL_DATA);
 	            return PROPERTY_VALIDATION;
 			}
         } catch (ValidationException e) {
@@ -199,7 +208,7 @@ public class MobilePaymentController {
                 .getPropertyID().getWard().getBoundaryNum().toString()));
         propertyTaxBillable.setBillType(egBillDAO.getBillTypeByCode(BILLTYPE_AUTO));
         propertyTaxBillable.setLevyPenalty(Boolean.TRUE);
-        if(StringUtils.isNotBlank(category) && category.equalsIgnoreCase(PropertyTaxConstants.CATEGORY_TYPE_VACANTLAND_TAX))
+        if(StringUtils.isNotBlank(category) && category.equalsIgnoreCase(CATEGORY_TYPE_VACANTLAND_TAX))
         	propertyTaxBillable.setVacantLandTaxPayment(true);
 
         final EgBill egBill = ptBillServiceImpl.generateBill(propertyTaxBillable);
