@@ -106,6 +106,7 @@ import org.egov.works.reports.service.WorkProgressRegisterService;
 import org.egov.works.revisionestimate.entity.RevisionAbstractEstimate.RevisionEstimateStatus;
 import org.egov.works.utils.WorksConstants;
 import org.egov.works.utils.WorksUtils;
+import org.egov.works.workorder.entity.WorkOrderEstimate;
 import org.hibernate.Criteria;
 import org.hibernate.Session;
 import org.hibernate.criterion.CriteriaSpecification;
@@ -1369,4 +1370,7 @@ public class EstimateService {
         return abstractEstimateRepository.findActivitiesByParent(activityId, RevisionEstimateStatus.APPROVED.toString());
     }
 
+    public List<WorkOrderEstimate> getBySorIdAndWorkOrderDate(final Long sorId, final Date workOrderDate) {
+        return abstractEstimateRepository.findBySorIdAndWorkOrderDate(sorId, workOrderDate, WorksConstants.CANCELLED_STATUS);
+    }
 }

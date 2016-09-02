@@ -63,6 +63,7 @@ import org.egov.works.models.masters.SORRate;
 import org.egov.works.models.masters.ScheduleOfRate;
 import org.egov.works.services.WorksService;
 import org.egov.works.uploadsor.UploadScheduleOfRate;
+import org.egov.works.workorder.entity.WorkOrderEstimate;
 import org.hibernate.Session;
 import org.joda.time.LocalDate;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -330,6 +331,7 @@ public class ScheduleOfRateService {
     public Boolean validateRates(List<UploadScheduleOfRate> uploadSORRatesList) {
         Boolean errorInMasterData = false;
         List<AbstractEstimate> estimates = null;
+        List<WorkOrderEstimate> woe = null;
         Period checkPeriod = null;
         String error = "";
         LocalDate existingStartDate = null;
@@ -387,11 +389,19 @@ public class ScheduleOfRateService {
 
                         estimates = estimateService.getBySorIdAndEstimateDate(obj.getScheduleOfRate().getId(),
                                 obj.getFromDate());
-
+                        woe = estimateService.getBySorIdAndWorkOrderDate(obj.getScheduleOfRate().getId(),
+                                obj.getFromDate());
+                        
+                        if (woe != null && !woe.isEmpty())
+                            error = error + " " + messageSource
+                            .getMessage("error.active.revisionestimate.exist.for.given.date.range", null, null)
+                            + ",";
+                        
                         if (estimates != null && !estimates.isEmpty())
                             error = error + " " + messageSource
                                     .getMessage("error.active.estimates.exist.for.given.date.range", null, null)
                                     + ",";
+                        
                         else if (!toDateUpdated && isLatestRate) {
                             LocalDate rateFromDate = new LocalDate(rate.getValidity().getStartDate());
                             LocalDate previousDay = new LocalDate(obj.getFromDate()).minusDays(1);
