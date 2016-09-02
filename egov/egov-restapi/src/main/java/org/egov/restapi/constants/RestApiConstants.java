@@ -288,6 +288,12 @@ public class RestApiConstants {
         public static final String THIRD_PARTY_ERR_CODE_INACTIVE_CONSUMERNO = "WCMS-REST-14";
         public static final String THIRD_PARTY_ERR_MSG_INACTIVE_CONSUMERNO = "Consumer number is InActive";
         
+        public static final String THIRD_PARTY_ERR_CODE_WATERTAXDETAILS_SIZE = "WCMS-REST-15";
+        public static final String THIRD_PARTY_ERR_MSG_WATERTAXDETAILS_SIZE = "Water Tax Details is empty or morethan 100";
+        
+        public static final String THIRD_PARTY_ERR_CODE_CONSUMERCODE_NOT_EXIST = "WCMS-REST-16";
+        public static final String THIRD_PARTY_ERR_MSG_CONSUMERCODE_NOT_EXIST = "Entered Consumer Code doesn't exist";
+        
         public static final String THIRD_PARTY_ERR_CODE_APPLICATION_NO_LEN = "WTMS-REST-10";
         public static final String THIRD_PARTY_ERR_MSG_APPLICATION_NO_LEN = "Application number length can not less than 13 digits";
 	
