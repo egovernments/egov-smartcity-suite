@@ -62,7 +62,6 @@ import org.egov.council.entity.CouncilAgendaDetails;
 import org.egov.council.entity.CouncilMeeting;
 import org.egov.council.entity.MeetingAttendence;
 import org.egov.council.entity.MeetingMOM;
-import org.egov.council.service.AgendaPDFGenerationService;
 import org.egov.council.service.CommitteeTypeService;
 import org.egov.council.service.CouncilAgendaService;
 import org.egov.council.service.CouncilMeetingService;
@@ -118,8 +117,7 @@ public class CouncilMeetingController {
 	private DepartmentService departmentService;
 	@Autowired
 	private CouncilSmsAndEmailService councilSmsAndEmailService;
-	@Autowired
-	private AgendaPDFGenerationService agendaPDFGenerationService;
+	
 
 	public @ModelAttribute("committeeType") List<CommitteeType> getCommitteTypeList() {
 		return committeeTypeService.getActiveCommiteeType();
