@@ -602,7 +602,7 @@ public abstract class PropertyTaxBaseAction extends GenericWorkFlowAction {
                         .withComments(approverComments).withStateValue(stateValue).withDateInfo(currentDate.toDate())
                         .withOwner(wfInitiator.getPosition()).withNextAction(
                         		property.getBasicProperty().getSource().equals(PropertyTaxConstants.SOURCEOFDATA_MOBILE)?
-                        				UD_REVENUE_INSPECTOR_APPROVAL_PENDING : WF_STATE_ASSISTANT_APPROVAL_PENDING);
+                        				PropertyTaxConstants.UD_REVENUE_INSPECTOR_APPROVAL_PENDING : WF_STATE_ASSISTANT_APPROVAL_PENDING);
             }
 
         } else {
