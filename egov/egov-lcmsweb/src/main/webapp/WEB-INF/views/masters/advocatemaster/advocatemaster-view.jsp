@@ -127,8 +127,10 @@
 						<div class="col-sm-3 add-margin view-content">
 							${advocateMaster.isRetaineradvocate}</div>
 					</div>
+					<c:choose>
+						<c:when test="${advocateMaster.paymentmode == 'RTGS'}">
 					<div class="row add-border">
-						<div class="col-xs-3 add-margin">
+					<div class="col-xs-3 add-margin">
 							<spring:message code="lbl.bankname" />
 						</div>
 						<div class="col-sm-3 add-margin view-content">
@@ -160,6 +162,8 @@
 							${advocateMaster.tinumber}</div>
 					
 				</div>
+					</c:when>
+					</c:choose>
 			</div>
 		</div>
 	</div>
@@ -169,3 +173,5 @@
 				onclick="self.close()">Close</a>
 		</div>
 	</div>
+</div>
+	
