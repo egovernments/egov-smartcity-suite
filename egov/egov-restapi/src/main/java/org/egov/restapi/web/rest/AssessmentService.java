@@ -43,7 +43,6 @@ import static org.egov.ptis.constants.PropertyTaxConstants.ADMIN_HIERARCHY_TYPE;
 import static org.egov.ptis.constants.PropertyTaxConstants.WARD;
 
 import java.io.IOException;
-import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
@@ -60,20 +59,16 @@ import org.codehaus.jackson.map.JsonMappingException;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.codehaus.jackson.map.SerializationConfig;
 import org.egov.dcb.bean.ChequePayment;
-import org.egov.infra.config.core.ApplicationThreadLocals;
 import org.egov.infra.utils.StringUtils;
 import org.egov.infra.validation.exception.ValidationError;
 import org.egov.infra.validation.exception.ValidationException;
 import org.egov.ptis.constants.PropertyTaxConstants;
-import org.egov.ptis.domain.entity.property.Document;
 import org.egov.ptis.domain.entity.property.PropertyTypeMaster;
 import org.egov.ptis.domain.model.AssessmentDetails;
 import org.egov.ptis.domain.model.DrainageEnum;
 import org.egov.ptis.domain.model.ErrorDetails;
-import org.egov.ptis.domain.model.FloorDetails;
 import org.egov.ptis.domain.model.LocalityDetails;
 import org.egov.ptis.domain.model.MasterCodeNamePairDetails;
-import org.egov.ptis.domain.model.NewPropertyDetails;
 import org.egov.ptis.domain.model.OwnerDetails;
 import org.egov.ptis.domain.model.PayPropertyTaxDetails;
 import org.egov.ptis.domain.model.PropertyTaxDetails;
@@ -81,23 +76,15 @@ import org.egov.ptis.domain.model.ReceiptDetails;
 import org.egov.ptis.domain.model.RestPropertyTaxDetails;
 import org.egov.ptis.domain.model.enums.BasicPropertyStatus;
 import org.egov.ptis.domain.service.property.PropertyExternalService;
-import org.egov.restapi.model.AmenitiesDetails;
 import org.egov.restapi.model.AssessmentRequest;
-import org.egov.restapi.model.AssessmentsDetails;
-import org.egov.restapi.model.BuildingPlanDetails;
-import org.egov.restapi.model.ConstructionTypeDetails;
-import org.egov.restapi.model.CorrespondenceAddressDetails;
-import org.egov.restapi.model.CreatePropertyDetails;
 import org.egov.restapi.model.LocalityCodeDetails;
-import org.egov.restapi.model.OwnerInformation;
 import org.egov.restapi.model.OwnershipCategoryDetails;
-import org.egov.restapi.model.PropertyAddressDetails;
 import org.egov.restapi.model.PropertyTaxBoundaryDetails;
-import org.egov.restapi.model.SurroundingBoundaryDetails;
-import org.egov.restapi.model.VacantLandDetails;
 import org.egov.restapi.util.JsonConvertor;
 import org.egov.restapi.util.ValidationUtil;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.config.ConfigurableBeanFactory;
+import org.springframework.context.annotation.Scope;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -110,6 +97,7 @@ import org.springframework.web.bind.annotation.RestController;
  *
  */
 @RestController
+@Scope(scopeName=ConfigurableBeanFactory.SCOPE_PROTOTYPE)
 public class AssessmentService {
 
     @Autowired
