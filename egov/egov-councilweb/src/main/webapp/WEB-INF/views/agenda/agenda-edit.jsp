@@ -179,26 +179,26 @@
 
 			<tbody>
 				<c:choose>
-					<c:when test="${!councilAgenda.agendaDetails.isEmpty()}">
-						<c:forEach items="${councilAgenda.agendaDetails}" var="contact"
+					<c:when test="${!councilAgenda.councilAgendaDetailsForUpdate.isEmpty()}">
+						<c:forEach items="${councilAgenda.councilAgendaDetailsForUpdate}" var="contact"
 							varStatus="counter">
 							<tr>
 								<!--  /* <td><span class="sno">{{sno}}</span></td>+*/ -->
 								<td><input type="text" class="form-control" data-unique
-									name="agendaDetails.preamble.preambleNumber"
+									name="councilAgendaDetailsForUpdate[${counter.index}].preamble.preambleNumber" 
 									readonly="readonly" value="${contact.preamble.preambleNumber}" /></td>
 								<td><input type="text" class="form-control"
-									name="agendaDetails.preamble.department.name"
+									name="councilAgendaDetailsForUpdate[${counter.index}].preamble.department.name"
 									readonly="readonly" value="${contact.preamble.department.name}" /></td>
 								<td><input type="text" class="form-control"
-									name="agendaDetails.preamble.gistOfPreamble"
+									name="councilAgendaDetailsForUpdate[${counter.index}].preamble.gistOfPreamble"
 									readonly="readonly" value="${contact.preamble.gistOfPreamble}" /></td>
 								<td><input type="text" class="form-control"
-									name="agendaDetails.preamble.sanctionAmount"
+									name="councilAgendaDetailsForUpdate[${counter.index}].preamble.sanctionAmount"
 									readonly="readonly" value="${contact.preamble.sanctionAmount}" /></td>
 								<!--  <td><input type="hidden" class="form-control" name="agendaDetails[{{idx}}].preamble.department.id" {{readonly}} value="{{departmentId}}"/> -->
 								<td><input type="hidden" class="form-control"
-									name="agendaDetails.preamble.id" readonly="readonly"
+									name="councilAgendaDetailsForUpdate[${counter.index}].preamble.id" readonly="readonly"
 									value="${contact.preamble.id}" />
 									<button type="button" class="btn btn-xs btn-secondary delete">
 										<span class="glyphicon glyphicon-trash"></span>&nbsp;Delete
@@ -213,37 +213,8 @@
 						</div>
 					</c:otherwise>
 				</c:choose>
-
-
-				<%-- <c:choose>
-									<c:when test="${!councilAgenda.agendaDetails.isEmpty()}">
-										<c:forEach items="${councilAgenda.agendaDetails}" var="contact"
-											varStatus="counter">
-											<tr>
-												<div class="row add-margin">
-													<td align="center">${counter.count}</td>
-													<td><c:out value="${contact.preamble.preambleNumber}"/></td>
-													<td><c:out value="${contact.preamble.department.name}"/></td>
-													<td><c:out value="${contact.preamble.gistOfPreamble}"/></td>
-													<td><c:out value="${contact.preamble.sanctionAmount}"/></td>
-													<td><button type="button" class="btn btn-xs btn-secondary delete"><span class="glyphicon glyphicon-trash"></span>&nbsp;Delete</button></td>
-													
-												</div>
-											</tr>
-										</c:forEach>
-									</c:when>
-									<c:otherwise>
-									
-										<div class="col-md-3 col-xs-6 add-margin">
-											<spring:message code="lbl.noAgenda.Detail" />
-										</div>
-									</c:otherwise>
-								</c:choose> --%>
 			</tbody>
-
 		</table>
-		
-		
 		<div class="form-group">
 		<div class="text-center">
 			<button type='submit' class='btn btn-primary' id="buttonSubmit">
@@ -257,7 +228,7 @@
 		<input type="hidden" name="councilAgenda" value="${councilAgenda.id}" />
 			<form:hidden path="agendaNumber" id="agendaNumber"
 				value="${councilAgenda.agendaNumber}" />
-		<input type="hidden" name="councilAgenda" value="${councilAgenda.agendaDetails}" />
+		<%-- <input type="hidden" name="councilAgenda" value="${councilAgenda.agendaDetails}" /> --%>
 			<%-- <form:hidden path="agendaDetails" id="agendaDetails"
 				value="${councilAgenda.agendaDetails.id}" /> --%>
 		

@@ -50,13 +50,15 @@ String.prototype.compose = (function (){
 var tbody = $('#agendaTable').children('tbody');
 var table = tbody.length ? tbody : $('#agendaTable');
 var row = '<tr>'+
-  /* '<td><span class="sno">{{sno}}</span></td>'+*/
-   '<td><input type="text" class="form-control" data-unique name="agendaDetails[{{idx}}].preamble.preambleNumber" {{readonly}} value="{{pnoTextBoxValue}}"/></td>'+
-   '<td><input type="text" class="form-control" name="agendaDetails[{{idx}}].preamble.department.name" {{readonly}} value="{{deptTextBoxValue}}"/></td>'+
-   '<td><input type="text" class="form-control" name="agendaDetails[{{idx}}].preamble.gistOfPreamble" {{readonly}} value="{{gistTextBoxValue}}"/></td>'+
-   '<td><input type="text" class="form-control" name="agendaDetails[{{idx}}].preamble.sanctionAmount" {{readonly}} value="{{amountTextBoxValue}}"/></td>'+
- //  '<td><input type="hidden" class="form-control" name="agendaDetails[{{idx}}].preamble.department.id" {{readonly}} value="{{departmentId}}"/>'+
-   '<td><input type="hidden" class="form-control" name="agendaDetails[{{idx}}].preamble.id" {{readonly}} value="{{preamableId}}"/> <button type="button" class="btn btn-xs btn-secondary delete"><span class="glyphicon glyphicon-trash"></span>&nbsp;Delete</button></td>'+
+/* '<td><span class="sno">{{sno}}</span></td>'+*/
+ '<td><input type="text" class="form-control" data-unique name="councilAgendaDetailsForUpdate[{{idx}}].preamble.preambleNumber" {{readonly}} value="{{pnoTextBoxValue}}"/></td>'+
+ '<td><input type="text" class="form-control" name="councilAgendaDetailsForUpdate[{{idx}}].preamble.department.name" {{readonly}} value="{{deptTextBoxValue}}"/></td>'+
+ '<td><input type="text" class="form-control" name="councilAgendaDetailsForUpdate[{{idx}}].preamble.gistOfPreamble" {{readonly}} value="{{gistTextBoxValue}}"/></td>'+
+ '<td><input type="text" class="form-control" name="councilAgendaDetailsForUpdate[{{idx}}].preamble.sanctionAmount" {{readonly}} value="{{amountTextBoxValue}}"/></td>'+
+//  '<td><input type="hidden" class="form-control" name="agendaDetails[{{idx}}].preamble.department.id" {{readonly}} value="{{departmentId}}"/>'+
+ '<td><input type="hidden" class="form-control" name="councilAgendaDetailsForUpdate[{{idx}}].preamble.id" {{readonly}} value="{{preamableId}}"/>'+
+/* '<td><input type="hidden" class="form-control" name="agendaDetails[{{idx}}].markedForRemoval" {{readonly}} value="{{removevalue}}"/>'+*/
+ '<button type="button" class="btn btn-xs btn-secondary delete"><span class="glyphicon glyphicon-trash"></span>&nbsp;Delete</button></td>'+
 '</tr>';
 
 

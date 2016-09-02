@@ -57,14 +57,14 @@
 						<div class="col-sm-3 add-margin view-content">
 							${councilAgenda.status.code}</div>
 						<div class="col-xs-3 add-margin">
-							<spring:message code="lbl.meeting.type" />
+							<spring:message code="lbl.committeetype" />
 						</div>
 						<div class="col-sm-3 add-margin view-content">
 							${councilAgenda.committeeType.name}</div>
 					</div>
 					<div class="row add-border">
 						<div class="col-xs-3 add-margin">
-							<spring:message code="lbl.meeting.place" />
+							<spring:message code="lbl.agendaNumber" />
 						</div>
 						<div class="col-sm-3 add-margin view-content">
 							${councilAgenda.agendaNumber}</div>

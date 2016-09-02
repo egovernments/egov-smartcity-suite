@@ -100,7 +100,10 @@ public class CouncilAgenda extends StateAware {
     @OneToMany(mappedBy = "agenda", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<CouncilAgendaDetails> agendaDetails = new ArrayList<CouncilAgendaDetails>(0);
 
-    
+    @Transient
+    private List<CouncilAgendaDetails> councilAgendaDetailsForUpdate = new ArrayList<CouncilAgendaDetails>(
+            0);
+  
     public Long getId() {
         return id;
     }
@@ -162,5 +165,14 @@ public class CouncilAgenda extends StateAware {
         return String.format("Agenda Number %s ", agendaNumber);
 
     }
+
+	public List<CouncilAgendaDetails> getCouncilAgendaDetailsForUpdate() {
+		return councilAgendaDetailsForUpdate;
+	}
+
+	public void setCouncilAgendaDetailsForUpdate(
+			List<CouncilAgendaDetails> councilAgendaDetailsForUpdate) {
+		this.councilAgendaDetailsForUpdate = councilAgendaDetailsForUpdate;
+	}
 
 }

@@ -49,6 +49,8 @@ import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 
 import org.egov.council.entity.CouncilAgenda;
+import org.egov.council.entity.CouncilAgendaDetails;
+import org.egov.council.repository.CouncilAgendaDetailsRepository;
 import org.egov.council.repository.CouncilAgendaRepository;
 import org.egov.infra.utils.DateUtils;
 import org.hibernate.Criteria;
@@ -63,7 +65,8 @@ import org.springframework.transaction.annotation.Transactional;
 @Service
 @Transactional(readOnly = true)
 public class CouncilAgendaService {
-
+	
+	private final CouncilAgendaDetailsRepository councilAgendaDetailsRepository;
     private final CouncilAgendaRepository councilAgendaRepository;
     @PersistenceContext
     private EntityManager entityManager;
@@ -73,9 +76,12 @@ public class CouncilAgendaService {
     }
 
     @Autowired
-    public CouncilAgendaService(final CouncilAgendaRepository councilAgendaRepository) {
+    public CouncilAgendaService(final CouncilAgendaRepository councilAgendaRepository,final CouncilAgendaDetailsRepository councilAgendaDetailsRepository) {
         this.councilAgendaRepository = councilAgendaRepository;
+        this.councilAgendaDetailsRepository= councilAgendaDetailsRepository;
     }
+    
+    
 
     @Transactional
     public CouncilAgenda create(final CouncilAgenda councilAgenda) {
@@ -86,7 +92,13 @@ public class CouncilAgendaService {
     public CouncilAgenda update(final CouncilAgenda councilAgenda) {
         return councilAgendaRepository.save(councilAgenda);
     }
-
+    
+    @Transactional
+    public void deleteAllInBatch(List<CouncilAgendaDetails> existingPreambleList) {
+		councilAgendaDetailsRepository.deleteInBatch(existingPreambleList);
+		
+	}
+    
     public List<CouncilAgenda> findAll() {
         return councilAgendaRepository.findAll(new Sort(Sort.Direction.DESC, "agendaNumber"));
     }
@@ -119,4 +131,5 @@ public class CouncilAgendaService {
 
     return criteria;
     }
+
 }

@@ -40,11 +40,14 @@
 package org.egov.council.web.controller;
 
 import static org.egov.council.utils.constants.CouncilConstants.PREAMBLE_MODULENAME;
+import static org.egov.council.utils.constants.CouncilConstants.AGENDA_MODULENAME;
 import static org.egov.council.utils.constants.CouncilConstants.PREAMBLE_STATUS_APPROVED;
 import static org.egov.council.utils.constants.CouncilConstants.PREAMBLEUSEDINAGENDA;
+import static org.egov.council.utils.constants.CouncilConstants.AGENDA_STATUS_APPROVED;
 import static org.egov.infra.web.utils.WebUtils.toJSON;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.servlet.http.HttpServletResponse;
@@ -81,172 +84,217 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 @RequestMapping("/agenda")
 public class CouncilAgendaController {
 
-    private final static String COUNCILAGENDA_NEW = "create-agenda";
-    private final static String COUNCILAGENDA_RESULT = "agenda-result";
-    private final static String COUNCILAGENDA_EDIT = "agenda-edit";
-    private final static String COUNCILAGENDA_VIEW = "agenda-view";
-    private final static String COUNCILAGENDA_SEARCH = "agenda-search";
-    private final static String COUNCILAGENDA_SEARCH_APPROVED = "council-agendaSearch";
+	private final static String COUNCILAGENDA_NEW = "create-agenda";
+	private final static String COUNCILAGENDA_RESULT = "agenda-result";
+	private final static String COUNCILAGENDA_EDIT = "agenda-edit";
+	private final static String COUNCILAGENDA_VIEW = "agenda-view";
+	private final static String COUNCILAGENDA_SEARCH = "agenda-search";
+	private final static String COUNCILAGENDA_SEARCH_APPROVED = "council-agendaSearch";
 
-    @Autowired
-    protected DepartmentService departmentService;
+	@Autowired
+	protected DepartmentService departmentService;
 
-    @Autowired
-    protected CommitteeTypeService committeeTypeService;
+	@Autowired
+	protected CommitteeTypeService committeeTypeService;
 
-    @Autowired
-    protected CouncilAgendaService councilAgendaService;
+	@Autowired
+	protected CouncilAgendaService councilAgendaService;
 
-    @Autowired
-    protected CouncilPreambleService councilPreambleService;
+	@Autowired
+	protected CouncilPreambleService councilPreambleService;
 
-    @Autowired
-    private EgwStatusHibernateDAO egwStatusHibernateDAO;
+	@Autowired
+	private EgwStatusHibernateDAO egwStatusHibernateDAO;
 
-    @Autowired
-    private AutonumberServiceBeanResolver autonumberServiceBeanResolver;
+	@Autowired
+	private AutonumberServiceBeanResolver autonumberServiceBeanResolver;
 
-    @Autowired
-    private MessageSource messageSource;
+	@Autowired
+	private MessageSource messageSource;
 
-    public @ModelAttribute("departmentList") List<Department> getDepartmentList() {
-        return departmentService.getAllDepartments();
-    }
-    
-    public @ModelAttribute("committeeType") List<CommitteeType> getCommitteTypeList() {
-        return committeeTypeService.getActiveCommiteeType();
-    }
+	public @ModelAttribute("departmentList") List<Department> getDepartmentList() {
+		return departmentService.getAllDepartments();
+	}
 
-    @RequestMapping(value = "/new", method = RequestMethod.GET)
-    public String newForm(final Model model) {
-        model.addAttribute("councilAgenda", new CouncilAgenda());
-        model.addAttribute("councilPreamble", new CouncilPreamble());
-        return COUNCILAGENDA_NEW;
-    }
+	public @ModelAttribute("committeeType") List<CommitteeType> getCommitteTypeList() {
+		return committeeTypeService.getActiveCommiteeType();
+	}
 
-    @RequestMapping(value = "/create", method = RequestMethod.POST)
-    public String create(@Valid @ModelAttribute final CouncilAgenda councilAgenda, final BindingResult errors,
-            final Model model, final RedirectAttributes redirectAttrs) {
-         if (errors.hasErrors()) {
-            return COUNCILAGENDA_NEW;
-        }
-        Long itemNumber = Long.valueOf(1);
-        for (CouncilAgendaDetails councilAgendaDetails : councilAgenda.getAgendaDetails()) {
-            if (councilAgendaDetails != null && councilAgendaDetails.getPreamble() != null) {
-                councilAgendaDetails.setPreamble(councilPreambleService.findOne(councilAgendaDetails.getPreamble()
-                        .getId()));
-                councilAgendaDetails.setAgenda(councilAgenda);
-                councilAgendaDetails.setItemNumber(itemNumber.toString());
-                councilAgendaDetails.setOrder(itemNumber);
-                councilAgendaDetails.getPreamble().setStatus(egwStatusHibernateDAO.getStatusByModuleAndCode(PREAMBLE_MODULENAME,
-                		PREAMBLEUSEDINAGENDA));
-                itemNumber++;
-            }
-        }
+	@RequestMapping(value = "/new", method = RequestMethod.GET)
+	public String newForm(final Model model) {
+		model.addAttribute("councilAgenda", new CouncilAgenda());
+		model.addAttribute("councilPreamble", new CouncilPreamble());
+		return COUNCILAGENDA_NEW;
+	}
 
-        AgendaNumberGenerator agendaNumberGenerator = autonumberServiceBeanResolver
-                .getAutoNumberServiceFor(AgendaNumberGenerator.class);
-        councilAgenda.setAgendaNumber(agendaNumberGenerator.getNextNumber(councilAgenda));
+	@RequestMapping(value = "/create", method = RequestMethod.POST)
+	public String create(
+			@Valid @ModelAttribute final CouncilAgenda councilAgenda,
+			final BindingResult errors, final Model model,
+			final RedirectAttributes redirectAttrs) {
+		if (errors.hasErrors()) {
+			return COUNCILAGENDA_NEW;
+		}
+		List<CouncilAgendaDetails> preambleList = new ArrayList<CouncilAgendaDetails>();
 
-        councilAgenda.setStatus(egwStatusHibernateDAO.getStatusByModuleAndCode(PREAMBLE_MODULENAME,
-                PREAMBLE_STATUS_APPROVED));
+		Long itemNumber = Long.valueOf(1);
+		for (CouncilAgendaDetails councilAgendaDetails : councilAgenda
+				.getCouncilAgendaDetailsForUpdate()) {
+			if (councilAgendaDetails != null
+					&& councilAgendaDetails.getPreamble() != null) {
+				itemNumber = buildCouncilAgendaDetails(councilAgenda,
+						itemNumber, councilAgendaDetails);
+				preambleList.add(councilAgendaDetails);
+			}
+		}
 
-        councilAgendaService.create(councilAgenda);
-        redirectAttrs.addFlashAttribute("message", messageSource.getMessage("msg.agenda.success", null, null));
-        return "redirect:/agenda/result/" + councilAgenda.getId();
-    }
+		AgendaNumberGenerator agendaNumberGenerator = autonumberServiceBeanResolver
+				.getAutoNumberServiceFor(AgendaNumberGenerator.class);
+		councilAgenda.setAgendaNumber(agendaNumberGenerator
+				.getNextNumber(councilAgenda));
 
-    @RequestMapping(value = "/result/{id}", method = RequestMethod.GET)
-    public String result(@PathVariable("id") final Long id, Model model) {
-        CouncilAgenda councilagenda = councilAgendaService.findOne(id);
-        model.addAttribute("councilAgenda", councilagenda);
-        return COUNCILAGENDA_RESULT;
-    }
+		councilAgenda.setStatus(egwStatusHibernateDAO.getStatusByModuleAndCode(
+				AGENDA_MODULENAME, AGENDA_STATUS_APPROVED));
+		councilAgenda.setAgendaDetails(preambleList);
+		councilAgendaService.create(councilAgenda);
 
-    @RequestMapping(value = "/view/{id}", method = RequestMethod.GET)
-    public String view(@PathVariable("id") final Long id, Model model) {
-        CouncilAgenda councilAgenda = councilAgendaService.findOne(id);
-        model.addAttribute("councilAgenda", councilAgenda);
+		redirectAttrs.addFlashAttribute("message",
+				messageSource.getMessage("msg.agenda.success", null, null));
+		return "redirect:/agenda/result/" + councilAgenda.getId();
+	}
 
-        return COUNCILAGENDA_VIEW;
-    }
+	private Long buildCouncilAgendaDetails(final CouncilAgenda councilAgenda,
+			Long itemNumber, CouncilAgendaDetails councilAgendaDetails) {
+		councilAgendaDetails.setPreamble(councilPreambleService
+				.findOne(councilAgendaDetails.getPreamble().getId()));
+		councilAgendaDetails.setAgenda(councilAgenda);
+		councilAgendaDetails.setItemNumber(itemNumber.toString());
+		councilAgendaDetails.setOrder(itemNumber);
+		itemNumber++;
+		councilAgendaDetails.getPreamble().setStatus(
+				egwStatusHibernateDAO.getStatusByModuleAndCode(
+						PREAMBLE_MODULENAME, PREAMBLEUSEDINAGENDA));
+		return itemNumber;
+	}
 
-    @RequestMapping(value = "/search/{mode}", method = RequestMethod.GET)
-    public String search(@PathVariable("mode") final String mode, Model model) {
-        model.addAttribute("councilAgenda", new CouncilAgenda());
-        return COUNCILAGENDA_SEARCH;
+	@RequestMapping(value = "/result/{id}", method = RequestMethod.GET)
+	public String result(@PathVariable("id") final Long id, Model model) {
+		CouncilAgenda councilagenda = councilAgendaService.findOne(id);
+		model.addAttribute("councilAgenda", councilagenda);
+		return COUNCILAGENDA_RESULT;
+	}
 
-    }
-    
-    @RequestMapping(value = "/searchagenda/{mode}", method = RequestMethod.GET)
-    public String editAgenda(@PathVariable("mode") final String mode, Model model) {
-        model.addAttribute("councilAgenda", new CouncilAgenda());
-        return COUNCILAGENDA_SEARCH_APPROVED;
+	@RequestMapping(value = "/view/{id}", method = RequestMethod.GET)
+	public String view(@PathVariable("id") final Long id, Model model) {
+		CouncilAgenda councilAgenda = councilAgendaService.findOne(id);
+		model.addAttribute("councilAgenda", councilAgenda);
 
-    }
-    
+		return COUNCILAGENDA_VIEW;
+	}
 
-    @RequestMapping(value = "/edit/{id}", method = RequestMethod.GET)
-    public String edit(@PathVariable("id") final Long id, final Model model, final HttpServletResponse response)
-            throws IOException {
-        CouncilAgenda councilAgenda = councilAgendaService.findOne(id);
-        model.addAttribute("councilAgenda", councilAgenda);
-        model.addAttribute("councilPreamble", new CouncilPreamble());
-        
-        return COUNCILAGENDA_EDIT;
-    }
+	@RequestMapping(value = "/search/{mode}", method = RequestMethod.GET)
+	public String search(@PathVariable("mode") final String mode, Model model) {
+		model.addAttribute("councilAgenda", new CouncilAgenda());
+		return COUNCILAGENDA_SEARCH;
 
-    @RequestMapping(value = "/update", method = RequestMethod.POST)
-    public String update(@ModelAttribute final CouncilAgenda councilAgenda, final Model model,
-            final BindingResult errors, final RedirectAttributes redirectAttrs) {
-        if (errors.hasErrors()) {
-            return COUNCILAGENDA_EDIT;
-        }
-        Long itemNumber = Long.valueOf(1);
-        for (CouncilAgendaDetails councilAgendaDetails : councilAgenda.getAgendaDetails()) {
-            if (councilAgendaDetails != null && councilAgendaDetails.getPreamble() != null) {
-                councilAgendaDetails.setPreamble(councilPreambleService.findOne(councilAgendaDetails.getPreamble()
-                        .getId()));
-                councilAgendaDetails.setAgenda(councilAgenda);
-                councilAgendaDetails.setItemNumber(itemNumber.toString());
-                councilAgendaDetails.setOrder(itemNumber);
-                itemNumber++;
+	}
 
-            }
-        }
+	@RequestMapping(value = "/searchagenda/{mode}", method = RequestMethod.GET)
+	public String editAgenda(@PathVariable("mode") final String mode,
+			Model model) {
+		model.addAttribute("councilAgenda", new CouncilAgenda());
+		return COUNCILAGENDA_SEARCH_APPROVED;
 
-        councilAgendaService.update(councilAgenda);
-        redirectAttrs.addFlashAttribute("message", messageSource.getMessage("msg.agenda.success", null, null));
-        return "redirect:/agenda/result/" + councilAgenda.getId();
-    }
+	}
 
-    @RequestMapping(value = "/ajaxsearch/{mode}", method = RequestMethod.POST, produces = MediaType.TEXT_PLAIN_VALUE)
-    public @ResponseBody String searchPreamble(@PathVariable("mode") final String mode, Model model,
-            @ModelAttribute final CouncilAgenda councilAgenda) {
-        List<CouncilAgenda> searchResultList = councilAgendaService.search(councilAgenda);
-        final String result = new StringBuilder("{\"data\":")
-                .append(toJSON(searchResultList, CouncilAgenda.class, CouncilAgendaJsonAdaptor.class)).append("}")
-                .toString();
-        return result;
-    }
+	@RequestMapping(value = "/edit/{id}", method = RequestMethod.GET)
+	public String edit(@PathVariable("id") final Long id, final Model model,
+			final HttpServletResponse response) throws IOException {
+		CouncilAgenda councilAgenda = councilAgendaService.findOne(id);
+		councilAgenda.setCouncilAgendaDetailsForUpdate(councilAgenda
+				.getAgendaDetails());
+		model.addAttribute("councilAgenda", councilAgenda);
+		model.addAttribute("councilPreamble", new CouncilPreamble());
 
-    @RequestMapping(value = "/ajaxsearch", method = RequestMethod.POST, produces = MediaType.TEXT_PLAIN_VALUE)
-    public @ResponseBody String searchPreamble(Model model, @ModelAttribute final CouncilPreamble councilPreamble) {
-        List<CouncilPreamble> searchResultList = councilPreambleService.searchForPreamble(councilPreamble);
-        final String result = new StringBuilder("{\"data\":")
-                .append(toJSON(searchResultList, CouncilPreamble.class, CouncilPreambleJsonAdaptor.class)).append("}")
-                .toString();
-        return result;
-    }
+		return COUNCILAGENDA_EDIT;
+	}
 
-    @RequestMapping(value = "/searchagenda-tocreatemeeting", method = RequestMethod.POST, produces = MediaType.TEXT_PLAIN_VALUE)
-    public @ResponseBody String searchAgendaToCreateMeeting( Model model,
-            @ModelAttribute final CouncilAgenda councilAgenda) {
-        List<CouncilAgenda> searchResultList = councilAgendaService.searchForAgendaToCreateMeeting(councilAgenda);
-        final String result = new StringBuilder("{\"data\":")
-                .append(toJSON(searchResultList, CouncilAgenda.class, CouncilAgendaJsonAdaptor.class)).append("}")
-                .toString();
-        return result;
-    }
+	@RequestMapping(value = "/update", method = RequestMethod.POST)
+	public String update(@ModelAttribute final CouncilAgenda councilAgenda,
+			final Model model, final BindingResult errors,
+			final RedirectAttributes redirectAttrs) {
+		if (errors.hasErrors()) {
+			return COUNCILAGENDA_EDIT;
+		}
+		final List<CouncilAgendaDetails> existingPreambleList = new ArrayList<CouncilAgendaDetails>();
+		List<CouncilAgendaDetails> preambleList = new ArrayList<CouncilAgendaDetails>();
+		if (!councilAgenda.getCouncilAgendaDetailsForUpdate().isEmpty()) {
+			for (final CouncilAgendaDetails councilAgendaDetails : councilAgenda
+					.getAgendaDetails()) {
+				councilAgendaDetails.getPreamble().setStatus(
+						egwStatusHibernateDAO.getStatusByModuleAndCode(
+								PREAMBLE_MODULENAME, PREAMBLE_STATUS_APPROVED));
+				existingPreambleList.add(councilAgendaDetails);
+			}
+		}
+
+		Long itemNumber = Long.valueOf(1);
+		for (CouncilAgendaDetails councilAgendaDetails : councilAgenda
+				.getCouncilAgendaDetailsForUpdate()) {
+			if (councilAgendaDetails != null
+					&& councilAgendaDetails.getPreamble() != null) {
+				itemNumber = buildCouncilAgendaDetails(councilAgenda,
+						itemNumber, councilAgendaDetails);
+				preambleList.add(councilAgendaDetails);
+			}
+		}
+		councilAgenda.setAgendaDetails(preambleList);
+		councilAgendaService.update(councilAgenda);
+		if (existingPreambleList != null && !existingPreambleList.isEmpty())
+			councilAgendaService.deleteAllInBatch(existingPreambleList); // UPDATE
+																			// STATUS
+																			// OF
+																			// THESE
+																			// RECORDS.
+
+		redirectAttrs.addFlashAttribute("message",
+				messageSource.getMessage("msg.agenda.success", null, null));
+		return "redirect:/agenda/result/" + councilAgenda.getId();
+	}
+
+	@RequestMapping(value = "/ajaxsearch/{mode}", method = RequestMethod.POST, produces = MediaType.TEXT_PLAIN_VALUE)
+	public @ResponseBody String searchPreamble(
+			@PathVariable("mode") final String mode, Model model,
+			@ModelAttribute final CouncilAgenda councilAgenda) {
+		List<CouncilAgenda> searchResultList = councilAgendaService
+				.search(councilAgenda);
+		final String result = new StringBuilder("{\"data\":")
+				.append(toJSON(searchResultList, CouncilAgenda.class,
+						CouncilAgendaJsonAdaptor.class)).append("}").toString();
+		return result;
+	}
+
+	@RequestMapping(value = "/ajaxsearch", method = RequestMethod.POST, produces = MediaType.TEXT_PLAIN_VALUE)
+	public @ResponseBody String searchPreamble(Model model,
+			@ModelAttribute final CouncilPreamble councilPreamble) {
+		List<CouncilPreamble> searchResultList = councilPreambleService
+				.searchForPreamble(councilPreamble);
+		final String result = new StringBuilder("{\"data\":")
+				.append(toJSON(searchResultList, CouncilPreamble.class,
+						CouncilPreambleJsonAdaptor.class)).append("}")
+				.toString();
+		return result;
+	}
+
+	@RequestMapping(value = "/searchagenda-tocreatemeeting", method = RequestMethod.POST, produces = MediaType.TEXT_PLAIN_VALUE)
+	public @ResponseBody String searchAgendaToCreateMeeting(Model model,
+			@ModelAttribute final CouncilAgenda councilAgenda) {
+		List<CouncilAgenda> searchResultList = councilAgendaService
+				.searchForAgendaToCreateMeeting(councilAgenda);
+		final String result = new StringBuilder("{\"data\":")
+				.append(toJSON(searchResultList, CouncilAgenda.class,
+						CouncilAgendaJsonAdaptor.class)).append("}").toString();
+		return result;
+	}
 
 }
