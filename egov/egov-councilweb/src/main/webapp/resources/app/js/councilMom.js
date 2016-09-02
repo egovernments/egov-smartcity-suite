@@ -128,12 +128,12 @@ var table = tbody.length ? tbody : $('#sumotoTable');
 var row = '<tr>'+
 /* '<td><span class="sno">{{sno}}</span></td>'+ '<td><input type="text" class="form-control" data-unique name="meetingMOMs[{{idx}}].preamble.preambleNumber" {{readonly}} value="{{pnoTextBoxValue}}"/></td>'+*/
  
- '<td><select name="meetingMOMs[{{idx}}].preamble.department" class="form-control"> <option value="">Loading...</option></select></td>'+
+ '<td><select name="meetingMOMs[{{idx}}].preamble.department" class="form-control" required="required"> <option value="">Loading...</option></select></td>'+
  /*'<td><select multiple="multiple" name="meetingMOMs[{{idx}}].preamble.wardNumber" class="form-control"> <option value="">Loading...</option></select></td>'+*/
- '<td><input type="textarea" class="form-control" name="meetingMOMs[{{idx}}].preamble.gistOfPreamble" {{readonly}} value="{{gistTextBoxValue}}"/></td>'+
+ '<td><input type="textarea" class="form-control" required="required" name="meetingMOMs[{{idx}}].preamble.gistOfPreamble" {{readonly}} value="{{gistTextBoxValue}}"/></td>'+
  '<td><input type="text" class="form-control" name="meetingMOMs[{{idx}}].preamble.sanctionAmount" {{readonly}} value="{{amountTextBoxValue}}"/></td>'+
- '<td><input type="text" class="form-control" name="meetingMOMs[{{idx}}].resolutionDetail" {{readonly}} value="{{amountTextBoxValue}}"/></td>'+
- '<td><select name="meetingMOMs[{{idx}}].resolutionStatus" class="form-control"><option value="">Loading...</option></select></td>'+
+ '<td><input type="text" class="form-control" required="required" name="meetingMOMs[{{idx}}].resolutionDetail" {{readonly}} value="{{amountTextBoxValue}}"/></td>'+
+ '<td><select name="meetingMOMs[{{idx}}].resolutionStatus" required="required" class="form-control"><option value="">Loading...</option></select></td>'+
  /*'<td><input type="hidden" class="form-control" name="meetingMOMs[{{idx}}].preamble.id" {{readonly}} value="{{departmentId}}"/>'+*/
 '</tr>';
 jQuery('#add-sumoto').click(function(){
@@ -291,3 +291,37 @@ $("#buttonSubmit").click(function(e){
 		}
 		return true;
 });  
+
+$('#buttonFinalSubmit')
+.click(
+		function(e) {
+			if ($('form').valid()) {
+				bootbox
+						.confirm({
+							message : 'Information entered in this screen will not be modified once submitted,Please confirm yes to save',
+							buttons : {
+								'cancel' : {
+									label : 'No',
+									className : 'btn-danger pull-right'
+								},
+								'confirm' : {
+									label : 'Yes',
+									className : 'btn-danger pull-right'
+								}
+							},
+							callback : function(result) {
+								if (result) {
+									 var action = '/council/councilmom/councilmom/generateresolution';
+							 			$('#councilMomform').attr('method', 'get');
+							 			$('#councilMomform').attr('action', action); 
+							 			//$('#councilMomform').submit();
+									document.forms["councilMomform"].submit();
+								} else {
+									e.preventDefault();
+								}
+							}
+						});
+			} else {
+				e.preventDefault();
+			}
+});

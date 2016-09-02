@@ -37,28 +37,30 @@
  *
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
-package org.egov.council.web.adaptor;
+package org.egov.council.autonumber.impl;
 
-import java.lang.reflect.Type;
+import java.io.Serializable;
 
-import org.egov.infra.admin.master.entity.Department;
-import org.egov.infra.utils.StringUtils;
+import org.egov.council.autonumber.SumotoNumberGenerator;
+import org.egov.council.entity.CouncilPreamble;
+import org.egov.infra.persistence.utils.ApplicationSequenceNumberGenerator;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
-import com.google.gson.JsonElement;
-import com.google.gson.JsonObject;
-import com.google.gson.JsonSerializationContext;
-import com.google.gson.JsonSerializer;
-public class CouncilDepartmentJsonAdaptor implements JsonSerializer<Department>{
-	 @Override
-	    public JsonElement serialize(final Department department, final Type type, final JsonSerializationContext jsc) {
-	        final JsonObject jsonObject = new JsonObject();
-	        if (department != null) {
-	            if (department.getName() != null)
-	                jsonObject.addProperty("name", department.getName());
-	            else
-	                jsonObject.addProperty("name", StringUtils.EMPTY);
-	            jsonObject.addProperty("id", department.getId());
-	        }
-	        return jsonObject;
-	    }
+@Service
+public class SumotoNumberGeneratorImpl implements SumotoNumberGenerator {
+	 private static final String SUMOTO_NUMBER_SEQ = "SEQ_EGCNCL_SUMOTO_NUMBER";
+	 
+	 @Autowired
+	 private ApplicationSequenceNumberGenerator applicationSequenceNumberGenerator;
+	 
+	@Override
+	public String getNextNumber(CouncilPreamble councilpreamble) {
+        final String sequenceName = SUMOTO_NUMBER_SEQ;
+        Serializable sequenceNumber = applicationSequenceNumberGenerator.getNextSequence(sequenceName);
+        final String result = String.format("%s/%d", "SR", sequenceNumber);
+        return result;
+		
+	}
+
 }

@@ -99,8 +99,9 @@
 								<th><spring:message code="lbl.agenda.number" /></th>
 								<th><spring:message code="lbl.preamble.number" /></th>
 								<th><spring:message code="lbl.resolution.comment" /></th>
-								<th><spring:message code="lbl.mom.status" /></th>
+								<th><spring:message code="lbl.status" /></th>
 								<th><spring:message code="lbl.department" /></th>
+								<th><spring:message code="lbl.resolutionNumber" /></th>
 							</thead>
 							<tbody>
 								<c:choose>
@@ -116,6 +117,7 @@
 													<td><c:out value="${mom.resolutionDetail}" /></td>
 													<td><c:out value="${mom.resolutionStatus.code}" /></td>
 													<td><c:out value="${mom.preamble.department.name}" /></td>
+													<td><c:out value="${mom.resolutionNumber}"></c:out>
 												</div>
 											</tr>
 										</c:forEach>

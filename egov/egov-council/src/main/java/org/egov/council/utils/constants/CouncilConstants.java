@@ -49,10 +49,12 @@ public class CouncilConstants {
     public static final String COUNCILMEETING="COUNCILMEETING";
     public final static String PREAMBLE_STATUS_CREATED="CREATED";
     public final static String PREAMBLE_STATUS_APPROVED="APPROVED";
+    public final static String PREAMBLE_STATUS_ADJOURNED="ADJOURNED";
     public final static String PREAMBLE_MODULENAME = "COUNCILPREAMBLE";
     public final static String AGENDA_STATUS_APPROVED ="APPROVED";
     public final static String AGENDA_STATUS_INWORKFLOW ="INWORKFLOW";
     public final static String COUNCIL_RESOLUTION ="COUNCILRESOLUTION";	
+    public final static String MOM_FINALISED="MOM FINALISED";
     public static final String REVENUE_HIERARCHY_TYPE = "REVENUE";
     public static final String WARD = "Ward";
     
@@ -61,6 +63,9 @@ public class CouncilConstants {
     public static final String PREAMBLEUSEDINAGENDA = "PREAMBLE USED IN AGENDA";
     public static final String AGENDAUSEDINMEETING = "AGENDA USED IN MEETING";
     public static final String MEETINGUSEDINRMOM = "MOM CREATED";
+    public static final String MOM_STATUS_APPROVED ="APPROVED";
+    public static final String RESOLUTION_STATUS_APPROVED ="APPROVED";
+    public static final String RESOLUTION_STATUS_ADJURNED ="ADJOURNED";
     public final static String APPROVED ="APPROVED";
     public final static String REJECTED ="REJECTED";
     public final static String ADJOURNED ="ADJOURNED";

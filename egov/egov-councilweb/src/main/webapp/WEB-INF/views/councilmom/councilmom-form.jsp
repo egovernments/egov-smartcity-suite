@@ -121,14 +121,14 @@
 													<td><c:out value="${mom.preamble.gistOfPreamble}" /></td>
 													<td><c:out value="${mom.agenda.agendaNumber}" /></td>
 													<td><c:out value="${mom.preamble.preambleNumber}" /></td>
-													<td><input type="textarea" class="form-control"
+													<td><input type="textarea" class="form-control" required="required"
 														data-unique
 														name="meetingMOMs[${counter.index}].resolutionDetail"
 														minlength="5" maxlength="512"
 														value="${mom.resolutionDetail}" /></td>
 													<td>
 													<form:select path="meetingMOMs[${counter.index}].resolutionStatus"
-																	id="resolutionStatus" cssClass="form-control"
+																	id="resolutionStatus" cssClass="form-control" required="required"
 																	cssErrorClass="form-control error">
 																	<form:option value="${mom.resolutionStatus}">
 																		<spring:message code="lbl.select" />
@@ -181,60 +181,7 @@
 				
 			</thead>
 			 <tbody data-existing-len="${fn:length(councilMeeting.meetingMOMs)}"> 
-			<%-- <tbody>
-			<c:choose>
-									<c:when test="${!councilMeeting.meetingMOMs.isEmpty()}">
-										<c:forEach items="${councilMeeting.meetingMOMs}" var="mom"
-											varStatus="counter">
-			<td></td>
-			<td><form:select path="meetingMOMs[${counter.index}].preamble.department"
-																	id="department" cssClass="form-control"
-																	cssErrorClass="form-control error">
-																	<form:option value="">
-																		<spring:message code="lbl.select" />
-																	</form:option>
-																	<form:options items="${departments}"
-																		itemValue="id" itemLabel="name" />
-																</form:select>
-																
-														</td>
-			<td><input type="textarea" class="form-control"
-														data-unique
-														name="meetingMOMs[${counter.index}].preamble.gistOfPreamble"
-														minlength="5" maxlength="512"
-														value="" /></td>
-			<td><input type="textarea" class="form-control"
-														data-unique
-														name="meetingMOMs[${counter.index}].preamble.sanctionAmount"
-														minlength="5" maxlength="512"
-														value="" /></td>
-			<td><input type="textarea" class="form-control"
-														data-unique
-														name="meetingMOMs[${counter.index}].resolutionDetail"
-														minlength="5" maxlength="512"
-														value="" /></td>
-			<td><form:select path="meetingMOMs[${counter.index}].resolutionStatus"
-																	id="resolutionStatus" cssClass="form-control"
-																	cssErrorClass="form-control error">
-																	<form:option value="">
-																		<spring:message code="lbl.select" />
-																	</form:option>
-																	<form:options items="${resolutionStatus}"
-																		itemValue="id" itemLabel="code" />
-																</form:select>
-																<form:errors
-																	path="meetingMOMs[${counter.index}].resolutionStatus"
-																	cssClass="error-msg" />
-														</div></td>
-														</c:forEach>
-									</c:when>
-									<c:otherwise>
-										<div class="col-md-3 col-xs-6 add-margin">
-											<spring:message code="lbl.noAgenda.Detail" />
-										</div>
-									</c:otherwise>
-								</c:choose>
-			</tbody> --%>
+			 
 			</tbody>
 		</table>
 		

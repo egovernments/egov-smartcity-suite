@@ -46,7 +46,11 @@ import java.util.List;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 
+import org.egov.commons.EgwStatus;
+import org.egov.council.autonumber.SumotoNumberGenerator;
 import org.egov.council.entity.CouncilPreamble;
+import org.egov.council.entity.MeetingMOM;
+import org.egov.council.entity.enums.PreambleType;
 import org.egov.council.repository.CouncilPreambleRepository;
 import org.egov.council.service.workflow.PreambleWorkflowCustomImpl;
 import org.egov.infra.utils.DateUtils;
@@ -73,7 +77,7 @@ public class CouncilPreambleService {
     
     @Autowired
     protected AutonumberServiceBeanResolver autonumberServiceBeanResolver;
-
+    
     public Session getCurrentSession() {
         return entityManager.unwrap(Session.class);
     }
@@ -119,7 +123,26 @@ public class CouncilPreambleService {
         final Criteria criteria = buildSearchCriteria(councilPreamble);
         return criteria.list();
     }
+    
+	public CouncilPreamble buildSumotoPreamble(MeetingMOM meetingMOM,
+			EgwStatus preambleStatus) {
+		CouncilPreamble councilPreamble = new CouncilPreamble();
+		SumotoNumberGenerator sumotoResolutionNumberGenerator = autonumberServiceBeanResolver
+				.getAutoNumberServiceFor(SumotoNumberGenerator.class);
+		councilPreamble.setPreambleNumber(sumotoResolutionNumberGenerator
+				.getNextNumber(councilPreamble));
+		councilPreamble.setStatus(preambleStatus);
+		councilPreamble.setDepartment(meetingMOM.getPreamble().getDepartment());
+		councilPreamble.setGistOfPreamble(meetingMOM.getPreamble()
+				.getGistOfPreamble());
+		councilPreamble.setSanctionAmount(meetingMOM.getPreamble()
+				.getSanctionAmount());
+		councilPreamble.setType(PreambleType.SUMOTO);
 
+		return councilPreamble;
+
+	}
+    
     public Criteria buildSearchCriteria(CouncilPreamble councilPreamble) {
         final Criteria criteria = getCurrentSession().createCriteria(CouncilPreamble.class, "councilPreamble")
                 .createAlias("councilPreamble.status", "status");

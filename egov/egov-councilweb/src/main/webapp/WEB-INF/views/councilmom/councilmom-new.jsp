@@ -68,6 +68,7 @@
 			<spring:message code='lbl.update' />
 		</button>
 		<button type="button" id="add-sumoto" class='btn btn-primary'><spring:message code='lbl.AddSumoto'/></button>
+		<button type="button" id="buttonFinalSubmit" class='btn btn-primary'><spring:message code='lbl.submit'/></button>
 		<a href='javascript:void(0)' class='btn btn-default'
 			onclick='self.close()'><spring:message code='lbl.close' /></a>
 	</div>
@@ -83,6 +84,8 @@
 	src="<c:url value='/resources/app/js/councilCommitteeMember.js?rnd=${app_release_no}'/>"></script>
 <link rel="stylesheet"
 	href="<c:url value='/resources/global/css/bootstrap/bootstrap-datepicker.css' context='/egi'/>">
+	<script type="text/javascript"
+	src="<c:url value='/resources/app/js/councilMom.js'/>"></script>
 <script>
 	$('#buttonSubmit').click(function(e) {
 		if ($('form').valid()) {

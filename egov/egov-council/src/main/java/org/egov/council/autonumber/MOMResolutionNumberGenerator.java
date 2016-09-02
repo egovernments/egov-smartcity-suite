@@ -37,28 +37,14 @@
  *
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
-package org.egov.council.web.adaptor;
+package org.egov.council.autonumber;
 
-import java.lang.reflect.Type;
+import org.egov.council.entity.MeetingMOM;
+import org.springframework.stereotype.Service;
 
-import org.egov.infra.admin.master.entity.Department;
-import org.egov.infra.utils.StringUtils;
+@Service
+public interface MOMResolutionNumberGenerator {
+	
+	public String getNextNumber(MeetingMOM meetingMOM);
 
-import com.google.gson.JsonElement;
-import com.google.gson.JsonObject;
-import com.google.gson.JsonSerializationContext;
-import com.google.gson.JsonSerializer;
-public class CouncilDepartmentJsonAdaptor implements JsonSerializer<Department>{
-	 @Override
-	    public JsonElement serialize(final Department department, final Type type, final JsonSerializationContext jsc) {
-	        final JsonObject jsonObject = new JsonObject();
-	        if (department != null) {
-	            if (department.getName() != null)
-	                jsonObject.addProperty("name", department.getName());
-	            else
-	                jsonObject.addProperty("name", StringUtils.EMPTY);
-	            jsonObject.addProperty("id", department.getId());
-	        }
-	        return jsonObject;
-	    }
 }
