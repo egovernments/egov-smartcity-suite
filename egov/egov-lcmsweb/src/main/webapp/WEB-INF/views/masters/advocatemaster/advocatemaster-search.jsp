@@ -92,7 +92,6 @@
 					</div>
 				</div>
 			</div>
-		</div>
 </form:form>
 <div class="row display-hide report-section">
 	<div class="col-md-12 table-header text-left">Standing Counsel

@@ -99,7 +99,6 @@ public class AdvocateMaster extends AbstractAuditable {
     private String contactPhone;
 
     @Audited
-    @Length(max = 20)
     private String specilization;
 
     @Audited
