@@ -39,6 +39,7 @@
  */
 package org.egov.council.service;
 
+import static org.egov.council.utils.constants.CouncilConstants.MODULE_FULLNAME;
 import static org.egov.council.utils.constants.CouncilConstants.SENDEMAILFORCOUNCIL;
 import static org.egov.council.utils.constants.CouncilConstants.SENDSMSFORCOUNCIL;
 import static org.egov.council.utils.constants.CouncilConstants.SMSEMAILTYPEFORCOUNCILMEETING;
@@ -55,167 +56,171 @@ import org.egov.infra.utils.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.MessageSource;
+import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.stereotype.Service;
 
 @Service
 public class CouncilSmsAndEmailService {
+	
+	private static String AGENDAATTACHFILENAME = "agendadetails";
 
-   private static String AT = "at ";
-   private static String COUNCIL_MEETING_SCHEDULED_ON = ",Council meeting scheduled on ";
-   private static  String DEAR = "Dear ";
-   private static String AGENDA_SENTTO_YOUR_MAIL = ".Agenda sent to your email.";
-    @Autowired
-    private MessagingService messagingService;
+	@Autowired
+	private MessagingService messagingService;
 
-    @Autowired
-    @Qualifier("parentMessageSource")
-    private MessageSource councilMessageSource;
+	@Autowired
+	@Qualifier("parentMessageSource")
+	private MessageSource councilMessageSource;
 
-    
-    @Autowired
-    private AppConfigValueService appConfigValuesService;
+	@Autowired
+	private AppConfigValueService appConfigValuesService;
 
-    /**
-     * @return this method will send SMS and Email is isSmsEnabled is true
-     * @param CouncilMeeting
-     * @param workFlowAction
-     */
+	@Autowired
+	private CouncilCommitteeMemberService committeeMemberService;
 
-    public void sendSmsAndEmail(CouncilMeeting councilMeeting,String customMessage) {
-        String email_id = StringUtils.EMPTY;
-        String mobileno = StringUtils.EMPTY;
+	/**
+	 * @return this method will send SMS and Email is isSmsEnabled is true
+	 * @param CouncilMeeting
+	 * @param workFlowAction
+	 */
+	public void sendSms(CouncilMeeting councilMeeting, String customMessage) {
+		String mobileno = StringUtils.EMPTY;
+		Boolean smsEnabled = isSmsEnabled();
+		if (smsEnabled) {
+			for (CommitteeMembers committeeMembers : committeeMemberService
+					.findAllByCommitteType(councilMeeting.getCommitteeType())) {
+				mobileno = committeeMembers.getCouncilMember().getMobileNumber();
+				if (mobileno != null) {
+					buildSmsForMeeting(mobileno, councilMeeting, customMessage);
+				}
+			}
+		}
+	}
 
-        List<CommitteeMembers> committeeMembersList = councilMeeting.getCommitteeType().getCommiteemembers();
-        for (CommitteeMembers committeeMembers : committeeMembersList) {
-            email_id = committeeMembers.getCouncilMember().getEmailId();
-            mobileno = committeeMembers.getCouncilMember().getMobileNumber();
-            if (email_id != null || mobileno != null) {
-                getSmsAndEmailForMeeting(email_id, mobileno, councilMeeting,customMessage);
-            }
-        }
+	public void sendEmail(CouncilMeeting councilMeeting, String customMessage, final byte[] attachment) {
+		String email_id = StringUtils.EMPTY;
+		Boolean emailEnabled = isEmailEnabled();
+		if (emailEnabled) {
+			for (CommitteeMembers committeeMembers : committeeMemberService
+					.findAllByCommitteType(councilMeeting.getCommitteeType())) {
+				email_id = committeeMembers.getCouncilMember().getEmailId();
+				if (email_id != null) {
+					buildEmailForMeeting(email_id, councilMeeting, customMessage, attachment);
+				}
+			}
+		}
+	}
 
-    }
+	/**
+	 * @return SMS AND EMAIL body and subject For Committee Members
+	 * @param CouncilMeeting
+	 * @param email
+	 * @param mobileNumber
+	 * @param smsMsg
+	 * @param body
+	 * @param subject
+	 */
 
-    /**
-     * @return SMS AND EMAIL body and subject For New Connection
-     * @param CouncilMeeting
-     * @param email
-     * @param mobileNumber
-     * @param smsMsg
-     * @param body
-     * @param subject
-     */
-    public void getSmsAndEmailForMeeting(final String email, final String mobileNumber,
-            final CouncilMeeting councilMeeting,final String customMessage) {
-        String smsMsg = StringUtils.EMPTY;
-        String body = StringUtils.EMPTY;
-        String subject = StringUtils.EMPTY;
+	public void buildSmsForMeeting(final String mobileNumber, final CouncilMeeting councilMeeting,
+			final String customMessage) {
+		String smsMsg = StringUtils.EMPTY;
+		smsMsg = SmsBodyByCodeAndArgsWithType("msg.meeting.sms", councilMeeting, SMSEMAILTYPEFORCOUNCILMEETING,
+				customMessage);
+		if (mobileNumber != null && smsMsg != null)
+			sendSMSOnSewerageForMeeting(mobileNumber, smsMsg);
+	}
 
-        if (isSmsEnabled()) {
-            smsMsg = SmsBodyByCodeAndArgsWithType("msg.meeting.sms", councilMeeting,
-                    SMSEMAILTYPEFORCOUNCILMEETING,customMessage);
-            if (mobileNumber != null && smsMsg != null)
-                sendSMSOnSewerageForMeeting(mobileNumber, smsMsg);
-        }
-        if (isEmailEnabled()) {
-            body = EmailBodyByCodeAndArgsWithType("email.meeting.subject", councilMeeting,
-                    SMSEMAILTYPEFORCOUNCILMEETING,customMessage);
-            subject = emailSubjectforEmailByCodeAndArgs("email.meeting.body", councilMeeting);
+	public void buildEmailForMeeting(final String email, final CouncilMeeting councilMeeting,
+			final String customMessage, final byte[] attachment) {
+		String body = StringUtils.EMPTY;
+		String subject = StringUtils.EMPTY;
+		body = EmailBodyByCodeAndArgsWithType("email.meeting.body", councilMeeting, SMSEMAILTYPEFORCOUNCILMEETING,
+				customMessage);
+		subject = emailSubjectforEmailByCodeAndArgs("email.meeting.subject", councilMeeting);
+		if (email != null && body != null)
+			sendEmailOnSewerageForMeetingWithAttachment(email, body, subject, attachment);
+	}
 
-            if (email != null && body != null)
-                sendEmailOnSewerageForMeeting(email, body, subject);
-        }
-    }
+	/**
+	 * .
+	 * 
+	 * @param code
+	 * @param CouncilMeeting
+	 * @param applicantName
+	 * @param type
+	 * @return EmailBody for All Connection based on Type
+	 */
+	public String EmailBodyByCodeAndArgsWithType(final String code, final CouncilMeeting councilMeeting,
+			final String type, final String customMessage) {
+		String emailBody = StringUtils.EMPTY;
 
-    /**
-     * .
-     * 
-     * @param code
-     * @param CouncilMeeting
-     * @param applicantName
-     * @param type
-     * @return EmailBody for All Connection based on Type
-     */
-    public String EmailBodyByCodeAndArgsWithType(final String code, final CouncilMeeting councilMeeting,
-            final String type,final String customMessage) {
-        StringBuilder emailBody  = new StringBuilder();
+		if (SMSEMAILTYPEFORCOUNCILMEETING.equalsIgnoreCase(type)) {
+			emailBody = councilMessageSource.getMessage(code,
+					new String[] { String.valueOf(councilMeeting.getCommitteeType().getName()),
+							String.valueOf(councilMeeting.getMeetingDate()),
+							String.valueOf(councilMeeting.getMeetingTime()),
+							String.valueOf(councilMeeting.getMeetingLocation()), customMessage },
+					LocaleContextHolder.getLocale());
+		}
+		return emailBody;
+	}
 
-        if (type.equalsIgnoreCase(CouncilConstants.SMSEMAILTYPEFORCOUNCILMEETING)) {
-                    emailBody
-                    .append(DEAR)
-                    .append(councilMeeting.getCommitteeType().getName())
-                    .append(COUNCIL_MEETING_SCHEDULED_ON)
-                    .append(councilMeeting.getMeetingDate())
-                    .append(AT)
-                    .append(councilMeeting.getMeetingTime())
-                    .append(AT)
-                    .append(councilMeeting.getMeetingLocation())
-                    .append(customMessage);
-        }
+	/**
+	 * @param code
+	 * @param CouncilMeeting
+	 * @param applicantName
+	 * @param type
+	 */
+	public String SmsBodyByCodeAndArgsWithType(final String code, final CouncilMeeting councilMeeting,
+			final String type, final String customMessage) {
+		String smsMsg = StringUtils.EMPTY;
+		if (SMSEMAILTYPEFORCOUNCILMEETING.equalsIgnoreCase(type)) {
+			smsMsg = councilMessageSource.getMessage(code,
+					new String[] { String.valueOf(councilMeeting.getCommitteeType().getName()),
+							String.valueOf(councilMeeting.getMeetingDate()),
+							String.valueOf(councilMeeting.getMeetingTime()),
+							String.valueOf(councilMeeting.getMeetingLocation()), customMessage },
+					LocaleContextHolder.getLocale());
+		}
+		return smsMsg;
+	}
 
-        return emailBody.toString();
-    }
+	public Boolean isSmsEnabled() {
 
-    /**
-     * @param code
-     * @param CouncilMeeting
-     * @param applicantName
-     * @param type
-     */
-    public String SmsBodyByCodeAndArgsWithType(final String code, final CouncilMeeting councilMeeting,
-            final String type,final String customMessage) {
-        StringBuilder smsMsg  = new StringBuilder();
+		return getAppConfigValueByPassingModuleAndType(CouncilConstants.MODULE_FULLNAME, SENDSMSFORCOUNCIL);
+	}
 
-        if (type.equalsIgnoreCase(CouncilConstants.SMSEMAILTYPEFORCOUNCILMEETING)) {
-            
-            smsMsg
-                .append(DEAR)
-                .append(councilMeeting.getCommitteeType().getName())
-                .append(COUNCIL_MEETING_SCHEDULED_ON)
-                .append(councilMeeting.getMeetingDate())
-                .append(AT)
-                .append(councilMeeting.getMeetingTime())
-                .append(AT)
-                .append(councilMeeting.getMeetingLocation())
-                .append(AGENDA_SENTTO_YOUR_MAIL)
-                .append(customMessage);
-            }
-        return smsMsg.toString();
-    }
+	private Boolean getAppConfigValueByPassingModuleAndType(String moduleName, String sendsmsoremail) {
+		final List<AppConfigValues> appConfigValue = appConfigValuesService.getConfigValuesByModuleAndKey(moduleName,
+				sendsmsoremail);
 
-    public Boolean isSmsEnabled() {
+		return "YES".equalsIgnoreCase(
+				appConfigValue != null && appConfigValue.size() > 0 ? appConfigValue.get(0).getValue() : "NO");
+	}
 
-        return getAppConfigValueByPassingModuleAndType(CouncilConstants.MODULE_NAME, SENDSMSFORCOUNCIL);
-    }
+	public Boolean isEmailEnabled() {
 
-    private Boolean getAppConfigValueByPassingModuleAndType(String moduleName, String sendsmsoremail) {
-        final List<AppConfigValues> appConfigValue = appConfigValuesService.getConfigValuesByModuleAndKey(moduleName,
-                sendsmsoremail);
+		return getAppConfigValueByPassingModuleAndType(MODULE_FULLNAME, SENDEMAILFORCOUNCIL);
 
-        return "YES".equalsIgnoreCase(
-                appConfigValue != null && appConfigValue.size() > 0 ? appConfigValue.get(0).getValue() : "NO");
-    }
+	}
 
-    public Boolean isEmailEnabled() {
+	public String emailSubjectforEmailByCodeAndArgs(final String code, final CouncilMeeting councilMeeting) {
+		final String emailSubject = councilMessageSource.getMessage(code,
+				new String[] { String.valueOf(councilMeeting.getCommitteeType().getName()),
+						String.valueOf(councilMeeting.getMeetingDate()),
+						String.valueOf(councilMeeting.getMeetingTime()),
+						String.valueOf(councilMeeting.getMeetingLocation()) },
+				LocaleContextHolder.getLocale());
+		return emailSubject;
+	}
 
-        return getAppConfigValueByPassingModuleAndType(CouncilConstants.MODULE_NAME, SENDEMAILFORCOUNCIL);
+	public void sendSMSOnSewerageForMeeting(final String mobileNumber, final String smsBody) {
+		messagingService.sendSMS(mobileNumber, smsBody);
+	}
 
-    }
-
-    public String emailSubjectforEmailByCodeAndArgs(final String code, final CouncilMeeting councilMeeting) {
-        StringBuilder emailSubject = new StringBuilder();
-
-        emailSubject.append(COUNCIL_MEETING_SCHEDULED_ON).append(councilMeeting.getMeetingDate()).append(AT)
-                .append(councilMeeting.getMeetingTime()).append(AT).append(councilMeeting.getMeetingLocation());
-        return emailSubject.toString();
-    }
-
-    public void sendSMSOnSewerageForMeeting(final String mobileNumber, final String smsBody) {
-        messagingService.sendSMS(mobileNumber, smsBody);
-    }
-
-    public void sendEmailOnSewerageForMeeting(final String email, final String emailBody, final String emailSubject) {
-        messagingService.sendEmail(email, emailSubject, emailBody);
-    }
+	public void sendEmailOnSewerageForMeetingWithAttachment(final String email, final String emailBody,
+			final String emailSubject, final byte[] attachment) {
+		messagingService.sendEmailWithAttachment(email, emailSubject, emailBody, "application/pdf", AGENDAATTACHFILENAME,
+				attachment);
+	}
 
 }

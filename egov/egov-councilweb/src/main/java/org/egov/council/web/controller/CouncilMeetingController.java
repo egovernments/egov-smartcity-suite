@@ -62,6 +62,7 @@ import org.egov.council.entity.CouncilAgendaDetails;
 import org.egov.council.entity.CouncilMeeting;
 import org.egov.council.entity.MeetingAttendence;
 import org.egov.council.entity.MeetingMOM;
+import org.egov.council.service.AgendaPDFGenerationService;
 import org.egov.council.service.CommitteeTypeService;
 import org.egov.council.service.CouncilAgendaService;
 import org.egov.council.service.CouncilMeetingService;
@@ -117,6 +118,8 @@ public class CouncilMeetingController {
 	private DepartmentService departmentService;
 	@Autowired
 	private CouncilSmsAndEmailService councilSmsAndEmailService;
+	@Autowired
+	private AgendaPDFGenerationService agendaPDFGenerationService;
 
 	public @ModelAttribute("committeeType") List<CommitteeType> getCommitteTypeList() {
 		return committeeTypeService.getActiveCommiteeType();
@@ -264,7 +267,8 @@ public class CouncilMeetingController {
     public @ResponseBody String sendSmsAndEmailDetailsForCouncilMeeting(@RequestParam("id") Long id,
             @RequestParam("msg") String msg,final Model model) {
         CouncilMeeting councilMeeting = councilMeetingService.findOne(id);
-        councilSmsAndEmailService.sendSmsAndEmail(councilMeeting,msg);
+        councilSmsAndEmailService.sendSms(councilMeeting,msg);
+        //councilSmsAndEmailService.sendEmail(councilMeeting,msg,attachment);
         String result = new StringBuilder("{ \"success\":true }").toString();
         return result;
     }
