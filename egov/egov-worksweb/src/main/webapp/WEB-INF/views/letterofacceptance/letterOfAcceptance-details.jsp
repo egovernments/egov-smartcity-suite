@@ -89,11 +89,15 @@
 		 <form:input path="workOrderAmount" name="workOrderAmount" id="workOrderAmount"  type="text" class="form-control text-right patternvalidation" maxlength="12" data-pattern="decimalvalue" required="required"/>
 		 <form:errors path="workOrderAmount" cssClass="add-margin error-msg" />
 	</div>
-	<label class="col-sm-2 control-label text-right"><spring:message code="lbl.dateofagreement" /></label>
+	<label class="col-sm-2 control-label text-right"><spring:message code="lbl.dateofagreement" />
+		<c:if test="${lineEstimateDetails.lineEstimate.spillOverFlag && lineEstimateDetails.lineEstimate.workOrderCreated }">
+			<span class="mandatory"></span>
+		</c:if>
+	</label>
 	<div class="col-sm-3 add-margin">
 		<c:choose>
 			<c:when test="${lineEstimateDetails.lineEstimate.spillOverFlag && lineEstimateDetails.lineEstimate.workOrderCreated }">
-				<form:input path="workOrderDate" id="workOrderDate" type="text" class="form-control datepicker" data-date-end-date="0d"/>
+				<form:input path="workOrderDate" id="workOrderDate" type="text" class="form-control datepicker" data-date-end-date="0d" required="required"/>
 			</c:when>
 			<c:otherwise>
 				<form:input path="workOrderDate" id="workOrderDate" type="text" class="form-control" value="${workOrderDate}" readonly="true" />
