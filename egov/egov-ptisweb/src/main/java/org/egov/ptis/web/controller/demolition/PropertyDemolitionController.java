@@ -164,7 +164,7 @@ public class PropertyDemolitionController extends GenericWorkFlowController {
     @RequestMapping(method = RequestMethod.POST)
     public String demoltionFormSubmit(@ModelAttribute Property property, final BindingResult errors,
             final RedirectAttributes redirectAttrs, final Model model, final HttpServletRequest request,
-            @RequestParam String workFlowAction) {
+            @RequestParam String workFlowAction) throws TaxCalculatorExeption {
 
         propertyDemolitionService.validateProperty(property, errors, request);
 
@@ -186,13 +186,8 @@ public class PropertyDemolitionController extends GenericWorkFlowController {
             if (request.getParameter("approvalPosition") != null && !request.getParameter("approvalPosition").isEmpty())
                 approvalPosition = Long.valueOf(request.getParameter("approvalPosition"));
 
-            try {
-                propertyDemolitionService.saveProperty(oldProperty, property, status, approvalComent, workFlowAction,
-                        approvalPosition, DEMOLITION);
-            } catch (TaxCalculatorExeption e) {
-                // TODO Auto-generated catch block
-                e.printStackTrace();
-            }
+            propertyDemolitionService.saveProperty(oldProperty, property, status, approvalComent, workFlowAction,
+                    approvalPosition, DEMOLITION);
 
             model.addAttribute(
                     "successMessage",
