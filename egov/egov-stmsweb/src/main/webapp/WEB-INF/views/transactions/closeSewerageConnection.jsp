@@ -84,7 +84,7 @@
 						</c:otherwise>	
 						</c:choose>	
 				 		</div>
-				 		
+				 		<c:if test="${sewerageApplicationDetails!=null && sewerageApplicationDetails.appDetailsDocument[0].fileStore == null}">
 				 		<label class="col-sm-2 control-label text-right">
 							<spring:message code="lbl.attachdocument"/>
 						</label>
@@ -94,20 +94,31 @@
 								<spring:message code="lbl.mesg.document"/>	
 								</font></div>
 						</div>
+						</c:if>
+						<c:if test="${sewerageApplicationDetails!=null && sewerageApplicationDetails.appDetailsDocument[0].fileStore != null}">
+							<c:choose>
+								<c:when test="${not empty documentNamesList}">
+									<c:forEach var="document" varStatus="serialNo" items="${documentNamesList}">
+										<div class="row">
+											<div class="col-sm-3 add-margin"></div>
+											<div class="col-sm-3 add-margin"></div>
+								
+											<label class="col-sm-3 control-label"><spring:message  code="lbl.fileattached"/></label> 
+											<div class="col-sm-3 add-margin">
+											<c:forEach var="file" items="${document.getFileStore()}">
+												<a href="/egi/downloadfile?fileStoreId=${file.fileStoreId}&moduleName=STMS" target="_blank"> 
+												<c:out value="${file.fileName}"/></a>
+											</c:forEach>
+											</div>
+										</div> 
+									</c:forEach>
+								</c:when>
+								<c:otherwise>
+								
+								</c:otherwise>
+							</c:choose>
+					</c:if>
 				</div>
-			 	<c:if test="${sewerageApplicationDetails!=null && sewerageApplicationDetails.appDetailsDocument[0].fileStore != null}">
-					<div class="row">
-					<div class="col-sm-3 add-margin"></div>
-					<div class="col-sm-3 add-margin"></div>
-					
-					<label class="col-sm-3 control-label"><spring:message  code="lbl.fileattached"/></label> 
-						<div class="col-sm-3 add-margin">
-							<a href="/egi/downloadfile?fileStoreId=${sewerageApplicationDetails.appDetailsDocument[0].fileStore.fileStoreId}&moduleName=STMS" target="_blank"> 
-												<c:out value="${sewerageApplicationDetails.appDetailsDocument[0].fileStore.fileName}"/></a>
-						</div>
-					</div> 
-				</c:if> 
-				
 			</div>
 			<jsp:include page="../common/commonWorkflowMatrix.jsp"/>
 	 		<jsp:include page="../common/commonWorkflowMatrix-button.jsp"/>

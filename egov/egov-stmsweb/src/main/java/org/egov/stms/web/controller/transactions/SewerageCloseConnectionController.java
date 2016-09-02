@@ -90,9 +90,6 @@ public class SewerageCloseConnectionController extends GenericWorkFlowController
     private SewerageThirdPartyServices sewerageThirdPartyServices;
     
     @Autowired
-    private DocumentTypeMasterService documentTypeMasterService;
-    
-    @Autowired
     private SewerageConnectionService sewerageConnectionService;
     
     @Autowired
@@ -188,16 +185,8 @@ public class SewerageCloseConnectionController extends GenericWorkFlowController
 
         final SewerageApplicationDetails newSewerageApplicationDetails = sewerageApplicationDetailsService
                 .createNewSewerageConnection(sewerageApplicationDetails, approvalPosition, approvalComment,
-                        sewerageApplicationDetails.getApplicationType().getCode(), workFlowAction, request);
-       
-        final Set<FileStoreMapper> fileStoreSet = sewerageTaxUtils.addToFileStore(files);
-        if (fileStoreSet != null && !fileStoreSet.isEmpty()){
-            SewerageApplicationDetailsDocument  appDetailDoc = new SewerageApplicationDetailsDocument();
-            appDetailDoc.setApplicationDetails(newSewerageApplicationDetails);
-            appDetailDoc.setDocumentTypeMaster(documentTypeMasterService.findByApplicationTypeAndDescription(newSewerageApplicationDetails.getApplicationType(),SewerageTaxConstants.DOCTYPE_OTHERS));
-            appDetailDoc.setFileStore(fileStoreSet);
-        }
-
+                        sewerageApplicationDetails.getApplicationType().getCode(), files, workFlowAction, request);
+ 
         final Assignment currentUserAssignment = assignmentService.getPrimaryAssignmentForGivenRange(securityUtils
                 .getCurrentUser().getId(), new Date(), new Date());
 

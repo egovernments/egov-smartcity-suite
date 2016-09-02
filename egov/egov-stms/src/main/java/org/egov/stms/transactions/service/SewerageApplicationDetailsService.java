@@ -40,6 +40,7 @@ import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
 import javax.persistence.EntityManager;
@@ -55,6 +56,7 @@ import org.egov.eis.service.AssignmentService;
 import org.egov.eis.service.EisCommonService;
 import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.admin.master.service.UserService;
+import org.egov.infra.filestore.entity.FileStoreMapper;
 import org.egov.infra.reporting.engine.ReportOutput;
 import org.egov.infra.search.elastic.entity.ApplicationIndex;
 import org.egov.infra.search.elastic.entity.ApplicationIndexBuilder;
@@ -77,9 +79,11 @@ import org.egov.stms.autonumber.SewerageWorkOrderNumberGenerator;
 import org.egov.stms.elasticSearch.service.SewerageIndexService;
 import org.egov.stms.masters.entity.enums.SewerageConnectionStatus;
 import org.egov.stms.masters.repository.SewerageApplicationTypeRepository;
+import org.egov.stms.masters.service.DocumentTypeMasterService;
 import org.egov.stms.notice.entity.SewerageNotice;
 import org.egov.stms.notice.service.SewerageNoticeService;
 import org.egov.stms.transactions.entity.SewerageApplicationDetails;
+import org.egov.stms.transactions.entity.SewerageApplicationDetailsDocument;
 import org.egov.stms.transactions.entity.SewerageDemandConnection;
 import org.egov.stms.transactions.repository.SewerageApplicationDetailsRepository;
 import org.egov.stms.transactions.workflow.ApplicationWorkflowCustomDefaultImpl;
@@ -94,6 +98,7 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.context.MessageSource;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
 @Service
 @Transactional(readOnly = true)
@@ -152,6 +157,9 @@ public class SewerageApplicationDetailsService {
     
     @Autowired
     private SewerageNoticeService sewerageNoticeService;
+    
+    @Autowired
+    private DocumentTypeMasterService documentTypeMasterService;
 
     @Autowired
     public SewerageApplicationDetailsService(
@@ -218,7 +226,7 @@ public class SewerageApplicationDetailsService {
     @Transactional
     public SewerageApplicationDetails createNewSewerageConnection(
             final SewerageApplicationDetails sewerageApplicationDetails, final Long approvalPosition,
-            final String approvalComent, final String additionalRule, final String workFlowAction,
+            final String approvalComent, final String additionalRule, final MultipartFile[] files, final String workFlowAction, 
             final HttpServletRequest request) {
 
         if (sewerageApplicationDetails.getApplicationNumber() == null) {
@@ -246,6 +254,18 @@ public class SewerageApplicationDetailsService {
                     sewerageApplicationDetails.addDemandConnections(sdc);
                 }
             }
+        }
+        
+
+        final Set<FileStoreMapper> fileStoreSet = sewerageTaxUtils.addToFileStore(files);
+        if (fileStoreSet != null && !fileStoreSet.isEmpty()){
+            List<SewerageApplicationDetailsDocument> appDetailDocList = new ArrayList<>();
+            SewerageApplicationDetailsDocument  appDetailDoc = new SewerageApplicationDetailsDocument();
+            appDetailDoc.setApplicationDetails(sewerageApplicationDetails);
+            appDetailDoc.setDocumentTypeMaster(documentTypeMasterService.findByApplicationTypeAndDescription(sewerageApplicationDetails.getApplicationType(),SewerageTaxConstants.DOCTYPE_OTHERS));
+            appDetailDoc.setFileStore(fileStoreSet);
+            appDetailDocList.add(appDetailDoc);
+            sewerageApplicationDetails.setAppDetailsDocument(appDetailDocList);
         }
         sewerageApplicationDetailsRepository.save(sewerageApplicationDetails);
 

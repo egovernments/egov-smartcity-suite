@@ -58,7 +58,9 @@ import org.egov.infra.security.utils.SecurityUtils;
 import org.egov.ptis.domain.model.AssessmentDetails;
 import org.egov.stms.masters.entity.enums.PropertyType;
 import org.egov.stms.transactions.entity.SewerageApplicationDetails;
+import org.egov.stms.transactions.entity.SewerageApplicationDetailsDocument;
 import org.egov.stms.transactions.service.SewerageApplicationDetailsService;
+import org.egov.stms.transactions.service.SewerageConnectionService;
 import org.egov.stms.transactions.service.SewerageThirdPartyServices;
 import org.egov.stms.utils.SewerageTaxUtils;
 import org.egov.stms.utils.constants.SewerageTaxConstants;
@@ -101,6 +103,9 @@ public class SewerageCloseUpdateConnectionController extends GenericWorkFlowCont
     @Autowired
     private SewerageThirdPartyServices sewerageThirdPartyServices;
     
+    @Autowired
+    private SewerageConnectionService sewerageConnectionService;
+    
 
     @ModelAttribute("sewerageApplicationDetails")
     public SewerageApplicationDetails getSewerageApplicationDetails(@PathVariable final String applicationNumber) {
@@ -130,6 +135,8 @@ public class SewerageCloseUpdateConnectionController extends GenericWorkFlowCont
         prepareWorkflow(model, sewerageApplicationDetails, container);
         model.addAttribute("additionalRule", sewerageApplicationDetails.getApplicationType().getCode());
         model.addAttribute("propertyTypes", PropertyType.values());
+        List<SewerageApplicationDetailsDocument> docList = sewerageConnectionService.getSewerageApplicationDoc(sewerageApplicationDetails);
+        model.addAttribute("documentNamesList", docList);
         return "closeSewerageConnection";
     }
     

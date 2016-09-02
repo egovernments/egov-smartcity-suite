@@ -266,7 +266,7 @@ public class SewerageConnectionController extends GenericWorkFlowController {
 
         final SewerageApplicationDetails newSewerageApplicationDetails = sewerageApplicationDetailsService
                 .createNewSewerageConnection(sewerageApplicationDetails, approvalPosition, approvalComment,
-                        sewerageApplicationDetails.getApplicationType().getCode(), workFlowAction, request);
+                        sewerageApplicationDetails.getApplicationType().getCode(),files, workFlowAction, request);
 
         final Assignment currentUserAssignment = assignmentService.getPrimaryAssignmentForGivenRange(securityUtils
                 .getCurrentUser().getId(), new Date(), new Date());
