@@ -50,6 +50,7 @@ import org.egov.infra.web.utils.WebUtils;
 import org.egov.lcms.reports.entity.DailyBoardReportResults;
 import org.egov.lcms.transactions.service.DailyBoardReportService;
 import org.egov.lcms.web.adaptor.DailyBoardReportJsonAdapter;
+import org.egov.lcms.web.controller.transactions.GenericLegalCaseController;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
@@ -63,7 +64,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 @Controller
 @RequestMapping(value = "/reports")
-public class DailyBoardReportsController  {
+public class DailyBoardReportsController extends GenericLegalCaseController {
 
     @Autowired
     private DailyBoardReportService dailyBoardReportService;
@@ -93,8 +94,8 @@ public class DailyBoardReportsController  {
       dailyBoardReportObj.setOfficerIncharge(officerIncharge);
       dailyBoardReportObj.setFromDate(fromDate);
       dailyBoardReportObj.setToDate(toDate);
-        List<DailyBoardReportResults>  dailyBoardReportList = dailyBoardReportService.getdailyBoardReportResults( dailyBoardReportObj);
-        String result = new StringBuilder("{ \"data\":")
+      final  List<DailyBoardReportResults>  dailyBoardReportList = dailyBoardReportService.getDailyBoardReports( dailyBoardReportObj);
+       final String result = new StringBuilder("{ \"data\":")
                 .append(WebUtils.toJSON(dailyBoardReportList, DailyBoardReportResults.class, 
                         DailyBoardReportJsonAdapter.class)).append("}")
                 .toString();

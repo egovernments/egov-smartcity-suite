@@ -60,7 +60,7 @@ jQuery(document).ready(
 		
 function submitForm() {
 	if($('form').valid()){
-	
+		var caseType = $("#caseCategory").val();
 	$('.report-section').removeClass('display-hide');
 	$('#report-footer').show();
 	reportdatatable = tableContainer
@@ -69,7 +69,7 @@ function submitForm() {
 					
 					url : "/lcms/reports/dailyBoardReportresults",
 					data : {
-						'caseType' :$("#caseCatogory").val(),
+						'caseType' :caseType,
 						'fromDate' :$("#fromDate").val(),
 						'toDate': $("#toDate").val(),
 						'officerIncharge' : $("#officerIncharge").val(),

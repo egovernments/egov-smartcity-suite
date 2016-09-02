@@ -41,6 +41,7 @@ package org.egov.lcms.web.adaptor;
 
 import java.lang.reflect.Type;
 
+import org.egov.infra.utils.DateUtils;
 import org.egov.lcms.reports.entity.DailyBoardReportResults;
 
 import com.google.gson.JsonElement;
@@ -57,16 +58,13 @@ public class DailyBoardReportJsonAdapter implements JsonSerializer<DailyBoardRep
         jsonObject.addProperty("caseNumber", dailyboardresult.getLegalCase().getCaseNumber());
         jsonObject.addProperty("caseTitle", dailyboardresult.getLegalCase().getCaseTitle());
         jsonObject.addProperty("courtName", dailyboardresult.getCourtName());
-        jsonObject.addProperty("petitionType", dailyboardresult.getPetitionTypeId());
+        jsonObject.addProperty("petitionType", dailyboardresult.getPetitionType());
         jsonObject.addProperty("petitioners", dailyboardresult.getLegalCase().getPetitionersNames());
         jsonObject.addProperty("respondants", dailyboardresult.getLegalCase().getRespondantNames());
         jsonObject.addProperty("standingCouncil", dailyboardresult.getLegalCase().getOppPartyAdvocate());
         jsonObject.addProperty("officerIncharge", dailyboardresult.getLegalCase().getOfficerIncharge());
         jsonObject.addProperty("caseStatus", dailyboardresult.getCaseStatus());
-        // jsonObject.addProperty("nextDate",
-        // dailyboardresult.getLegalCase().getNextDate() + " - "
-        // + DateUtils.getFormattedDate(dailyboardresult.getNextDate(),
-        // "dd/MM/yyyy"));
+        jsonObject.addProperty("nextDate",dailyboardresult.getLegalCase().getNextDate() == null ? "" : DateUtils.getDefaultFormattedDate(dailyboardresult.getLegalCase().getNextDate()));
         return jsonObject;
     }
 

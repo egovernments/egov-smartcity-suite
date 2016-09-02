@@ -94,7 +94,6 @@ public class HearingsController {
             return "hearings-new";
         }
         hearings.setLegalCase(legalCase);
-
         hearingsService.persist(hearings);
         redirectAttrs.addFlashAttribute("hearings", hearings);
         model.addAttribute("message", "Hearing created successfully.");

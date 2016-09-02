@@ -41,6 +41,9 @@ package org.egov.lcms.transactions.service;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
+import java.util.Date;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -50,7 +53,9 @@ import org.egov.commons.EgwStatus;
 import org.egov.infra.exception.ApplicationRuntimeException;
 import org.egov.infra.filestore.entity.FileStoreMapper;
 import org.egov.infra.filestore.service.FileStoreService;
+import org.egov.infra.utils.DateUtils;
 import org.egov.lcms.transactions.entity.LcInterimOrderDocuments;
+import org.egov.lcms.transactions.entity.LegalCase;
 import org.egov.lcms.transactions.entity.LegalCaseInterimOrder;
 import org.egov.lcms.transactions.repository.LegalCaseInterimOrderRepository;
 import org.egov.lcms.transactions.repository.LegalCaseRepository;
@@ -88,6 +93,7 @@ public class LegalCaseInterimOrderService {
     public LegalCaseInterimOrder persist(final LegalCaseInterimOrder legalCaseInterimOrder) {
         final EgwStatus statusObj = legalCaseUtil.getStatusForModuleAndCode(LcmsConstants.MODULE_TYPE_LEGALCASE,
                 LcmsConstants.LEGALCASE_STATUS_IN_PROGRESS);
+        updateNextDate(legalCaseInterimOrder, legalCaseInterimOrder.getLegalCase());
         legalCaseInterimOrder.getLegalCase().setStatus(statusObj);
         legalCaseRepository.save(legalCaseInterimOrder.getLegalCase());
         processAndStoreApplicationDocuments(legalCaseInterimOrder);
@@ -135,6 +141,25 @@ public class LegalCaseInterimOrderService {
 
     public List<LegalCaseInterimOrder> findBYLcNumber(final String lcNumber) {
         return legalCaseInterimOrderRepository.findByLegalCase_lcNumber(lcNumber);
+    }
+
+    public void updateNextDate(final LegalCaseInterimOrder legalCaseInterimOrder, final LegalCase legalCase) {
+
+        if (!DateUtils.compareDates(legalCase.getNextDate(), legalCaseInterimOrder.getIoDate()))
+            legalCase.setNextDate(legalCaseInterimOrder.getIoDate());
+        else {
+            final List<Date> ioDateList = new ArrayList<Date>(0);
+            ioDateList.add(legalCaseInterimOrder.getIoDate());
+            final Iterator<LegalCaseInterimOrder> iteratorInterimOrder = legalCase.getLegalCaseInterimOrder()
+                    .iterator();
+            while (iteratorInterimOrder.hasNext()) {
+                final LegalCaseInterimOrder lcinterimorderObj = iteratorInterimOrder.next();
+                if (!lcinterimorderObj.getId().equals(legalCaseInterimOrder.getId()))
+                    ioDateList.add(lcinterimorderObj.getIoDate());
+            }
+
+            legalCase.setNextDate(Collections.max(ioDateList));
+        }
     }
 
 }

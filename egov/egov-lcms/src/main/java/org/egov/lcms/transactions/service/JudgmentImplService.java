@@ -93,7 +93,6 @@ public class JudgmentImplService {
     @Transactional
     public JudgmentImpl persist(final JudgmentImpl judgmentImpl) {
         persistAppealOrContempt(judgmentImpl);
-
         if (judgmentImpl.getImplementationFailure() != null
                 && judgmentImpl.getImplementationFailure().toString().equals("Appeal"))
             processAndStoreAppealDocuments(judgmentImpl);
@@ -103,9 +102,15 @@ public class JudgmentImplService {
     @Transactional
     public void saveOrUpdate(final JudgmentImpl judgmentImpl) {
         persist(judgmentImpl);
+        if (judgmentImpl.getJudgment().getImplementByDate() != null)
+            judgmentImpl.getJudgment().getLegalCase().setNextDate(judgmentImpl.getJudgment().getImplementByDate());
+        else{
+            judgmentImpl.getJudgment().getLegalCase().setNextDate(judgmentImpl.getJudgment().getOrderDate());
+        }
         final EgwStatus statusObj = legalCaseUtil.getStatusForModuleAndCode(LcmsConstants.MODULE_TYPE_LEGALCASE,
                 LcmsConstants.LEGALCASE_STATUS_JUDGMENT_IMPLIMENTED);
         judgmentImpl.getJudgment().getLegalCase().setStatus(statusObj);
+        judgmentImpl.getJudgment().getLegalCase().setNextDate(judgmentImpl.getDateOfCompliance());
         legalCaseService.save(judgmentImpl.getJudgment().getLegalCase());
 
     }
@@ -115,11 +120,13 @@ public class JudgmentImplService {
         if (judgmentImpl.getContempt().get(0).getCaNumber() != null) {
             for (final Contempt contemptObj : judgmentImpl.getContempt())
                 contemptObj.setJudgmentImpl(judgmentImpl);
+            judgmentImpl.getJudgment().getLegalCase().setNextDate(judgmentImpl.getContempt().get(0).getReceivingDate());
             judgmentImpl.getAppeal().clear();
         } else if (judgmentImpl.getAppeal().get(0).getSrNumber() != null) {
             for (final Appeal appealObj : judgmentImpl.getAppeal())
                 if (appealObj.getSrNumber() != null && !"".equals(appealObj.getSrNumber()))
                     appealObj.setJudgmentImpl(judgmentImpl);
+            judgmentImpl.getJudgment().getLegalCase().setNextDate(judgmentImpl.getAppeal().get(0).getAppealFiledOn());
             judgmentImpl.getContempt().clear();
         } else {
             judgmentImpl.getAppeal().clear();

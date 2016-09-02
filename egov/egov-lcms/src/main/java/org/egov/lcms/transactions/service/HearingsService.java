@@ -39,10 +39,16 @@
  */
 package org.egov.lcms.transactions.service;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Date;
+import java.util.Iterator;
 import java.util.List;
 
 import org.egov.commons.EgwStatus;
+import org.egov.infra.utils.DateUtils;
 import org.egov.lcms.transactions.entity.Hearings;
+import org.egov.lcms.transactions.entity.LegalCase;
 import org.egov.lcms.transactions.repository.HearingsRepository;
 import org.egov.lcms.utils.LegalCaseUtil;
 import org.egov.lcms.utils.constants.LcmsConstants;
@@ -52,6 +58,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 @Service
+@Transactional(readOnly = true)
 public class HearingsService {
 
     @Autowired
@@ -62,6 +69,7 @@ public class HearingsService {
 
     @Transactional
     public Hearings persist(final Hearings hearings) {
+        updateNextDate(hearings, hearings.getLegalCase());
         final EgwStatus statusObj = legalCaseUtil.getStatusForModuleAndCode(LcmsConstants.MODULE_TYPE_LEGALCASE,
                 LcmsConstants.LEGALCASE_STATUS_IN_PROGRESS);
         hearings.setStatus(statusObj);
@@ -79,6 +87,25 @@ public class HearingsService {
 
     public List<Hearings> findBYLcNumber(final String lcNumber) {
         return hearingsRepository.findByLegalCase_lcNumber(lcNumber);
+    }
+
+    public void updateNextDate(final Hearings hearings, final LegalCase legalCase) {
+
+        if (!DateUtils.compareDates(legalCase.getNextDate(), hearings.getHearingDate()))
+            legalCase.setNextDate(hearings.getHearingDate());
+        else {
+            final List<Date> hearingDateList = new ArrayList<Date>(0);
+            hearingDateList.add(hearings.getHearingDate());
+            final Iterator<Hearings> iteratorHearings = legalCase.getHearings().iterator();
+            while (iteratorHearings.hasNext()) {
+                final Hearings hearingsObj = iteratorHearings.next();
+                if (!hearingsObj.getId().equals(hearings.getId()))
+                    hearingDateList.add(hearingsObj.getHearingDate());
+            }
+
+            legalCase.setNextDate(Collections.max(hearingDateList));
+        }
+
     }
 
 }

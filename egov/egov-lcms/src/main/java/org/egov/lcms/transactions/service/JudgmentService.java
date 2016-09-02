@@ -93,7 +93,6 @@ public class JudgmentService {
         processAndStoreApplicationDocuments(judgment);
         final EgwStatus statusObj = legalCaseUtil.getStatusForModuleAndCode(LcmsConstants.MODULE_TYPE_LEGALCASE,
                 LcmsConstants.LEGALCASE_STATUS_JUDGMENT);
-        updateNextDate(judgment);
         judgment.getLegalCase().setStatus(statusObj);
         legalCaseRepository.save(judgment.getLegalCase());
         return judgmentRepository.save(judgment);
