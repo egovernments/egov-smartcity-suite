@@ -13,4 +13,4 @@ services:
   - postgresql
 addons:
   postgresql: "9.4"
-install: mvn clean install -q -V -B -s settings.xml -Dmaven.javadoc.skip=true -Dbuild.number=1 -Ddb.url=jdbc:postgresql://localhost:5432/postgres -Ddb.password= -Ddb.user=postgres  -Ddb.driver=org.postgresql.Driver
+install: travis_wait 60 mvn clean install -q -V -B -s settings.xml -Dmaven.javadoc.skip=true -Dbuild.number=1 -Ddb.url=jdbc:postgresql://localhost:5432/postgres -Ddb.password= -Ddb.user=postgres  -Ddb.driver=org.postgresql.Driver
