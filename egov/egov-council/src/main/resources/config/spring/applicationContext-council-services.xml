@@ -50,7 +50,7 @@
         <constructor-arg name="type" value="org.egov.council.entity.CouncilPreamble" />
     </bean>
 
-    <bean id="councilPreambleInboxRenderService" class="org.egov.infra.workflow.inbox.DefaultInboxRenderServiceImpl">
+    <bean id="CouncilPreambleInboxRenderService" class="org.egov.infra.workflow.inbox.DefaultInboxRenderServiceImpl">
         <constructor-arg index="0" ref="councilPreamblePersistenceService"/>
     </bean>
     
