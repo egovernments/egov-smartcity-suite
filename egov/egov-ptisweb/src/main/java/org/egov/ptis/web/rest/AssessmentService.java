@@ -41,6 +41,10 @@ package org.egov.ptis.web.rest;
 
 import com.sun.jersey.core.header.FormDataContentDisposition;
 import com.sun.jersey.multipart.FormDataParam;
+
+import net.sf.json.JSONObject;
+
+import org.apache.commons.lang.StringUtils;
 import org.codehaus.jackson.JsonGenerationException;
 import org.codehaus.jackson.annotate.JsonAutoDetect.Visibility;
 import org.codehaus.jackson.annotate.JsonMethod;
@@ -1230,6 +1234,48 @@ public class AssessmentService {
 		return null;
 	}
 
+	/**
+	 * This method is used to get list of all Ward-Block-Locality Mappings 
+	 * @return responseJson - server response in JSON format
+	 * @throws JsonGenerationException
+	 * @throws JsonMappingException
+	 * @throws IOException
+	 */
+	@GET
+	@Path("/wardBlockLocalityMapping")
+	@Produces(MediaType.APPLICATION_JSON)
+	public String getWardBlockLocalityMappings()
+			throws JsonGenerationException, JsonMappingException, IOException {
+		String responseJson = StringUtils.EMPTY;
+		ErrorDetails errorDetails = null;
+		//Boolean isAuthenticatedUser = propertyExternalService.authenticateUser(username, password);
+		//Authentication may be added later
+		Boolean isAuthenticatedUser = true;
+		if (isAuthenticatedUser) {
+			List<Object[]> boundaryDetailsList = propertyExternalService.getWardBlockLocalityMapping();
+			List<JSONObject> boundaryJsonObjs = new ArrayList<JSONObject>();
+			if(!boundaryDetailsList.isEmpty()){
+				for(Object[] obj : boundaryDetailsList){
+					JSONObject jsonObject = new JSONObject();
+					jsonObject.put("wardNum", obj[0]);
+					jsonObject.put("wardName", obj[1]);
+					jsonObject.put("blockNum", obj[2]);
+					jsonObject.put("blockName", obj[3]);
+					jsonObject.put("localityNum", obj[4]);
+					jsonObject.put("localityName", obj[5]);
+					
+					boundaryJsonObjs.add(jsonObject);
+				}
+				responseJson = getJSONResponse(boundaryJsonObjs);
+			}
+			
+		} else {
+			errorDetails = getInvalidCredentialsErrorDetails();
+			responseJson = getJSONResponse(errorDetails);
+		}
+		return responseJson;
+	}
+	
 	/**
 	 * This method is used to prepare jSON response.
 	 * 
