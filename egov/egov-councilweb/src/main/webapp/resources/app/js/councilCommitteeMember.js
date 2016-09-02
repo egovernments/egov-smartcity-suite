@@ -80,7 +80,7 @@ $(document).ready(function() {
 $("#buttonSubmit").click(function(e){ 
 		var chkbxLength = $('.councilcommitmem:checked').length;
 		if(chkbxLength <= 0){
-			bootbox.alert('Please select atleast one value');
+			bootbox.alert('Please select atleast one committee member into committee type');
 			return false;
 		}
 		return true;

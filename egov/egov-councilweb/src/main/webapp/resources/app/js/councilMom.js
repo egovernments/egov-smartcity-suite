@@ -286,7 +286,7 @@ $(document).ready(function() {
 $("#buttonSubmit").click(function(e){ 
 		var chkbxLength = $('.councilcommitmem:checked').length;
 		if(chkbxLength <= 0){
-			bootbox.alert('Please select atleast one value');
+			bootbox.alert('Please enter attendance details');
 			return false;
 		}
 		return true;

@@ -137,18 +137,19 @@ public class CouncilMeetingController {
 
 		CouncilAgenda councilAgenda = councilAgendaService.findOne(id);
 		model.addAttribute("councilMeeting", councilMeeting);
-		if (councilAgenda != null) {
-			// TODO: CHECK AGENDA STATUS. THROW ERROR IF AGENDA ALREADY USED IN
-			// MEETING.
+		if(councilAgenda != null && AGENDAUSEDINMEETING.equals(councilAgenda.getStatus().getCode())){
+			model.addAttribute("message", "msg.agenda.exist");
+			return COMMONERRORPAGE;
+		} else if (councilAgenda != null) {
 			councilMeeting.setCommitteeType(councilAgenda.getCommitteeType());
 			buildMeetingMomByUsingAgendaDetails(councilMeeting, councilAgenda);
+			return COUNCILMEETING_NEW;
 
 		} else {
 			model.addAttribute("message", "msg.invalid.agenda.details");
 			return COMMONERRORPAGE;
 		}
 
-		return COUNCILMEETING_NEW;
 	}
 
     private void buildMeetingMomByUsingAgendaDetails(final CouncilMeeting councilMeeting, CouncilAgenda councilAgenda) {
