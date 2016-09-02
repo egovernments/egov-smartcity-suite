@@ -102,21 +102,6 @@
 		class="org.egov.collection.integration.services.BillingIntegrationServiceStub">
 	</bean>
 
-	<bean id="PTCollectionsInterface" class="org.egov.ptis.service.collection.PropertyTaxCollection"
-		scope="prototype">
-		<property name="persistenceService" ref="persistenceService" />
-		<property name="ptBillServiceImpl" ref="ptBillServiceImpl" />
-	</bean>
-
-	<bean id="VLTCollectionsInterface" class="org.egov.ptis.service.collection.PropertyTaxCollection"
-		scope="prototype">
-		<property name="persistenceService" ref="persistenceService" />
-		<property name="ptBillServiceImpl" ref="ptBillServiceImpl" />
-	</bean>
-
-	<bean id="PTMFCollectionsInterface" class="org.egov.ptis.service.collection.MutationFeeCollection"
-		scope="prototype" />
-
 	<bean id="receiptHeaderPersistenceService" parent="abstractPersistenceService">
 		<constructor-arg name="type"
 			value="org.egov.collection.entity.ReceiptHeader" />
@@ -159,14 +144,6 @@
 	</bean>
 
 	<bean id="xmlHandler" class="org.egov.collection.handler.BillCollectXmlHandler">
-	</bean>
-
-	<bean id="WTCollectionsInterface"
-		class="org.egov.wtms.application.service.collection.WaterTaxCollection">
-	</bean>
-
-	<bean id="WESCollectionsInterface"
-		class="org.egov.wtms.application.service.collection.WaterTaxCollection">
 	</bean>
 
 	<bean id="AXISPaymentGatewayAdaptor" class="org.egov.collection.integration.pgi.AxisAdaptor" />

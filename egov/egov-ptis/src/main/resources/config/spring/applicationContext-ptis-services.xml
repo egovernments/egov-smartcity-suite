@@ -141,8 +141,6 @@
     
     <bean id="propertyExternalService" class="org.egov.ptis.domain.service.property.PropertyExternalService" scope="prototype"/>
     
-    <bean id="PTMFCollectionsInterface" class="org.egov.ptis.service.collection.MutationFeeCollection" scope="prototype"/>
-    
     <bean id="transferOwnerService" class="org.egov.ptis.domain.service.transfer.PropertyTransferService"  scope="prototype"/>
      
      <bean id="propertyMutationService" parent="abstractPersistenceService" scope="prototype">
@@ -197,4 +195,19 @@
     <bean id="bulkBillGenerationPersistenceService" parent="abstractPersistenceService">
         <constructor-arg name="type" value="org.egov.ptis.domain.entity.demand.BulkBillGeneration"/>
     </bean>
+
+    <!-- Collection Integration Service Bean Starts-->
+    <bean id="PTCollectionsInterface" class="org.egov.ptis.service.collection.PropertyTaxCollection" scope="prototype">
+        <property name="persistenceService" ref="persistenceService" />
+        <property name="ptBillServiceImpl" ref="ptBillServiceImpl" />
+    </bean>
+
+    <bean id="VLTCollectionsInterface" class="org.egov.ptis.service.collection.PropertyTaxCollection" scope="prototype">
+        <property name="persistenceService" ref="persistenceService" />
+        <property name="ptBillServiceImpl" ref="ptBillServiceImpl" />
+    </bean>
+
+    <bean id="PTMFCollectionsInterface" class="org.egov.ptis.service.collection.MutationFeeCollection" scope="prototype" />
+
+    <!-- Collection Integration Service Bean Ends-->
 </beans>

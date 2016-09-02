@@ -73,4 +73,11 @@
 
 	<bean id="applicationWorkflowCustomDefaultImpl"
 		class="org.egov.wtms.application.workflow.ApplicationWorkflowCustomDefaultImpl" />
+
+	<!-- Collection Integration Service Bean Starts-->
+	<bean id="WTCollectionsInterface" class="org.egov.wtms.application.service.collection.WaterTaxCollection"/>
+
+	<bean id="WESCollectionsInterface" class="org.egov.wtms.application.service.collection.WaterTaxCollection"/>
+	<!-- Collection Integration Service Bean Ends-->
+
 </beans>
