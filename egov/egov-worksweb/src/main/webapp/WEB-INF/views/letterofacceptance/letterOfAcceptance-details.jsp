@@ -95,7 +95,11 @@
 </div>
 
 <div class="form-group">
-<label class="col-sm-3 control-label text-right"><spring:message code="lbl.dateofagreement" /><c:if test="${abstractEstimate.lineEstimateDetails !=null && abstractEstimate.lineEstimateDetails.lineEstimate.spillOverFlag && abstractEstimate.lineEstimateDetails.lineEstimate.workOrderCreated }"><span class="mandatory"></span></c:if></label>
+	<label class="col-sm-3 control-label text-right"><spring:message code="lbl.dateofagreement" />
+		<c:if test="${lineEstimateDetails.lineEstimate.spillOverFlag && lineEstimateDetails.lineEstimate.workOrderCreated }">
+			<span class="mandatory"></span>
+		</c:if>
+	</label>
 	<div class="col-sm-3 add-margin">
 		<c:choose>
 			<c:when test="${lineEstimateDetails.lineEstimate.spillOverFlag && lineEstimateDetails.lineEstimate.workOrderCreated }">

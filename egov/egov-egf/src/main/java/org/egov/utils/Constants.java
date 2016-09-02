@@ -174,4 +174,5 @@ public class Constants {
     public static final String GRANT_TYPE_SD = "Stamp Duty";
     
     public static final String VIEW_COA = "view coa";
+    public static final String VIEW_MODIFY_COA = "view-modify coa";
 }

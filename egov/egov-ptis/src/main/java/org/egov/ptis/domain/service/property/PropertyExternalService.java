@@ -156,6 +156,7 @@ import org.egov.ptis.master.service.FloorTypeService;
 import org.egov.ptis.master.service.RoofTypeService;
 import org.egov.ptis.master.service.WallTypeService;
 import org.egov.ptis.master.service.WoodTypeService;
+import org.hibernate.Session;
 import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -1975,6 +1976,22 @@ public class PropertyExternalService {
     public PropertyMutation getLatestPropertyMutationByAssesmentNo(String assessmentNo){
         PropertyMutation propertyMutation = propertyMutationDAO.getPropertyLatestMutationForAssessmentNo(assessmentNo);
         return propertyMutation;
+    }
+    
+    /**
+     * API provides List of ward-block-locality mapping for Revenue Wards
+     * @return List
+     */
+    public List<Object[]> getWardBlockLocalityMapping(){
+    	String query = "select parent.parent.boundaryNum as wardnum, parent.parent.name as wardname, parent.boundaryNum as blocknum, parent.name as blockname, child.boundaryNum as localitynum, child.name as localityname"
+    			+ " from CrossHierarchy ch, Boundary parent, Boundary child"
+    			+ " where ch.parent.id = parent.id  and ch.child.id = child.id  and ch.parentType.name=:block and ch.childType.name=:locality "
+    			+ " and parent.parent.boundaryType.hierarchyType.name=:hierarchyType";
+    	List<Object[]> boundaryDetails = entityManager.unwrap(Session.class).createQuery(query)
+    			.setParameter("block", PropertyTaxConstants.BLOCK)
+    			.setParameter("locality", PropertyTaxConstants.LOCALITY_BNDRY_TYPE)
+    			.setParameter("hierarchyType", PropertyTaxConstants.REVENUE_HIERARCHY_TYPE).list();
+    	return boundaryDetails;
     }
     
 }

@@ -79,6 +79,7 @@ import com.exilant.GLEngine.CoaCache;
     @Result(name = Constants.EDIT, location = "chartOfAccounts-edit.jsp"),
     @Result(name = Constants.VIEW, location = "chartOfAccounts-view.jsp"),
     @Result(name = Constants.VIEW_COA, location = "chartOfAccounts-viewCoa.jsp"),
+    @Result(name = Constants.VIEW_MODIFY_COA, location = "chartOfAccounts-viewModifyCoa.jsp"),
     @Result(name = "new", location = "chartOfAccounts-new.jsp"),
     @Result(name = "detailed-editCode", location = "chartOfAccounts-editCode.jsp"),
     @Result(name = "detailed-viewCode", location = "chartOfAccounts-viewCode.jsp"),
@@ -196,6 +197,14 @@ public class ChartOfAccountsAction extends BaseFormAction {
         return Constants.VIEW;
     }
 
+    @Action(value = "/masters/chartOfAccounts-viewChartOfAccounts")
+    public String viewChartOfAccounts() throws Exception {
+        populateAccountCodePurpose();
+        populateAccountDetailTypeList();
+        populateCoaRequiredFields();
+        coaId = model.getId();
+        return Constants.VIEW_MODIFY_COA;
+    }
     public boolean shouldAllowCreation() {
         return !Long.valueOf("4").equals(model.getClassification());
     }
@@ -232,7 +241,7 @@ public class ChartOfAccountsAction extends BaseFormAction {
         addActionMessage(getText("chartOfAccount.modified.successfully"));
         clearCache();
         coaId = model.getId();
-        return Constants.VIEW;
+        return Constants.VIEW_MODIFY_COA;
     }
 
     private void setPurposeOnCoa() {

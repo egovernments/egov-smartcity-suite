@@ -47,10 +47,6 @@
 	<input type="hidden" id="bankBranchId"
 		value="${advocateMaster.bankBranch.id }" />
 	<input type="hidden" name="advocateMaster" value="${advocateMaster.id}" />
-	</div>
-	</div>
-	</div>
-	</div>
 	<div class="form-group">
 		<div class="text-center">
 			<button type='submit' class='btn btn-primary' id="buttonSubmit">
@@ -63,6 +59,8 @@
 </form:form>
 <script>
 	$('#buttonSubmit').click(function(e) {
+		if(!checkPanNumber())
+			return false;
 		if ($('form').valid()) {
 		} else {
 			e.preventDefault();

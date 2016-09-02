@@ -43,10 +43,7 @@
 	id="interimOrderform" cssClass="form-horizontal form-groups-bordered"
 	enctype="multipart/form-data">
 	<%@ include file="interimorder-form.jsp"%>
-	</div>
-	</div>
-	</div>
-	</div>
+
 	<div class="form-group">
 		<div class="text-center">
 			<button type='submit' class='btn btn-primary' id="buttonSubmit">

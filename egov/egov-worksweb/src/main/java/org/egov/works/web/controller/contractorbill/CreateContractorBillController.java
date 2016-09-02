@@ -498,10 +498,10 @@ public class CreateContractorBillController extends GenericWorkFlowController {
             final String nextDesign) {
         String message = "";
 
-        if (contractorBillRegister.getStatus().getCode().equals(ContractorBillRegister.BillStatus.CREATED.toString())
-                && !BudgetControlType.BudgetCheckOption.NONE.toString()
-                        .equalsIgnoreCase(budgetControlTypeService.getConfigValue())) {
-            if (StringUtils.isNotBlank(contractorBillRegister.getEgBillregistermis().getBudgetaryAppnumber()))
+        if (contractorBillRegister.getStatus().getCode().equals(ContractorBillRegister.BillStatus.CREATED.toString())) {
+            if (StringUtils.isNotBlank(contractorBillRegister.getEgBillregistermis().getBudgetaryAppnumber())
+                    && !BudgetControlType.BudgetCheckOption.NONE.toString()
+                            .equalsIgnoreCase(budgetControlTypeService.getConfigValue()))
                 message = messageSource.getMessage("msg.contractorbill.create.success.with.budgetappropriation",
                         new String[] { contractorBillRegister.getBillnumber(), approverName, nextDesign,
                                 contractorBillRegister.getEgBillregistermis().getBudgetaryAppnumber() },

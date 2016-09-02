@@ -37,8 +37,7 @@
   ~
   ~   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
   --%>
-<div class="main-content">
-	<div class="row">
+ <div class="row">
 		<div class="col-md-12">
 			<div class="panel panel-primary" data-collapsed="0">
 				<div class="panel-heading">
@@ -96,4 +95,9 @@
 						<input type="hidden" name="interimOrder"
 							value="${interimOrder.id}" />
 							
+	                </div>
+	          </div>
+	    </div>
+	</div>
+</div>
 							

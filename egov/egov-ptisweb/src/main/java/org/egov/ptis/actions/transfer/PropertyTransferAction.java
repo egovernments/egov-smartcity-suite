@@ -55,7 +55,6 @@ import static org.egov.ptis.constants.PropertyTaxConstants.NOTICE_TYPE_MUTATION_
 import static org.egov.ptis.constants.PropertyTaxConstants.TARGET_WORKFLOW_ERROR;
 import static org.egov.ptis.constants.PropertyTaxConstants.TRANSFER_FEE_COLLECTED;
 import static org.egov.ptis.constants.PropertyTaxConstants.WFLOW_ACTION_NEW;
-import static org.egov.ptis.constants.PropertyTaxConstants.WFLOW_ACTION_READY_FOR_PAYMENT;
 import static org.egov.ptis.constants.PropertyTaxConstants.WFLOW_ACTION_STEP_APPROVE;
 import static org.egov.ptis.constants.PropertyTaxConstants.WFLOW_ACTION_STEP_REJECT;
 import static org.egov.ptis.constants.PropertyTaxConstants.WFLOW_ACTION_STEP_SIGN;
@@ -107,7 +106,6 @@ import org.egov.infra.workflow.entity.State;
 import org.egov.infra.workflow.entity.StateAware;
 import org.egov.infra.workflow.matrix.entity.WorkFlowMatrix;
 import org.egov.infra.workflow.service.SimpleWorkflowService;
-import org.egov.pims.commons.Designation;
 import org.egov.pims.commons.Position;
 import org.egov.ptis.client.util.PropertyTaxUtil;
 import org.egov.ptis.constants.PropertyTaxConstants;
@@ -728,8 +726,6 @@ public class PropertyTransferAction extends GenericWorkFlowAction {
     }
 
     public void buildSMS(final PropertyMutation propertyMutation) {
-        String transferorMobileNumber = propertyMutation.getPrimaryTransferor().getMobileNumber();
-        final String transfereeMobileNumber = propertyMutation.getPrimaryTransferee().getMobileNumber();
         final List<String> argsForTransferor = new ArrayList<String>();
         final List<String> argsForTransferee = new ArrayList<String>();
         String smsMsgForTransferor = "";
@@ -771,13 +767,19 @@ public class PropertyTransferAction extends GenericWorkFlowAction {
                 smsMsgForTransferee = getText("msg.approvetransferproperty.sms", argsForTransferee);
             }
         }
-        messagingService.sendSMS(transferorMobileNumber, smsMsgForTransferor);
-        messagingService.sendSMS(transfereeMobileNumber, smsMsgForTransferee);
+        for (User transferor : propertyMutation.getTransferorInfos()) {
+            if (StringUtils.isNotBlank(transferor.getMobileNumber())) {
+                messagingService.sendSMS(transferor.getMobileNumber(), smsMsgForTransferor);
+            }
+        }
+        for (PropertyMutationTransferee transferee : propertyMutation.getTransfereeInfos()) {
+            if (StringUtils.isNotBlank(transferee.getTransferee().getMobileNumber())) {
+                messagingService.sendSMS(transferee.getTransferee().getMobileNumber(), smsMsgForTransferee);
+            }
+        }
     }
 
     public void buildEmail(final PropertyMutation propertyMutation) {
-        String transferorEmailId = propertyMutation.getPrimaryTransferor().getEmailId();
-        final String transfereeEmailId = propertyMutation.getPrimaryTransferee().getEmailId();
         String emailBodyTransferor = "";
         String emailBodyTransferee = "";
         String subject = "";
@@ -831,8 +833,16 @@ public class PropertyTransferAction extends GenericWorkFlowAction {
                 emailBodyTransferee = getText("body.approvetransferproperty", argsForTransferee);
             }
         }
-        messagingService.sendEmail(transferorEmailId, subject, emailBodyTransferor);
-        messagingService.sendEmail(transfereeEmailId, subject, emailBodyTransferee);
+        for (User transferor : propertyMutation.getTransferorInfos()) {
+            if (StringUtils.isNotBlank(transferor.getEmailId())) {
+                messagingService.sendEmail(transferor.getEmailId(), subject, emailBodyTransferor);
+            }
+        }
+        for (PropertyMutationTransferee transferee : propertyMutation.getTransfereeInfos()) {
+            if (StringUtils.isNotBlank(transferee.getTransferee().getEmailId())) {
+                messagingService.sendEmail(transferee.getTransferee().getEmailId(), subject, emailBodyTransferee);
+            }
+        }
     }
     
     private String getNatureOfTask() {

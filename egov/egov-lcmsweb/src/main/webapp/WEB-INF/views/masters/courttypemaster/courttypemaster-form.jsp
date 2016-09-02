@@ -37,59 +37,67 @@
   ~
   ~   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
   --%>
-<div class="main-content">
-	<div class="row">
-		<div class="col-md-12">
-			<div class="panel panel-primary" data-collapsed="0">
-				<div class="panel-heading">
-					<div class="panel-title">Court Type </div>
+<div class="row">
+	<div class="col-md-12">
+		<div class="panel panel-primary" data-collapsed="0">
+			<div class="panel-heading">
+				<div class="panel-title">Court Type</div>
+			</div>
+			<div class="panel-body">
+				<div class="form-group">
+					<label class="col-sm-3 control-label text-right"><spring:message
+							code="lbl.code" /> :<span class="mandatory"></span> </label>
+					<div class="col-sm-3 add-margin">
+						<form:input path="code" class="form-control text-left aaa"
+							maxlength="25" required="required" />
+						<form:errors path="code" cssClass="error-msg" />
+					</div>
+					<label class="col-sm-3 control-label text-right"><spring:message
+							code="lbl.courttype" /> :<span class="mandatory"></span> </label>
+					<div class="col-sm-3 add-margin">
+						<form:input path="courtType"
+							class="form-control text-left patternvalidation"
+							data-pattern="alphanumericspecialcharacters" maxlength="32"
+							required="required" />
+						<form:errors path="courtType" cssClass="error-msg" />
+					</div>
 				</div>
-				<div class="panel-body">
-					<div class="form-group">
-						<label class="col-sm-3 control-label text-right"><spring:message
-								code="lbl.code" /> :<span class="mandatory"></span> </label>
-						<div class="col-sm-3 add-margin">
-							<form:input path="code"
-								class="form-control text-left aaa"
-								maxlength="25" required="required" />
-							<form:errors path="code" cssClass="error-msg" />
-						</div>
-						<label class="col-sm-3 control-label text-right"><spring:message
-								code="lbl.courttype" /> :<span class="mandatory"></span> </label>
-						<div class="col-sm-3 add-margin">
-							<form:input path="courtType"
-								class="form-control text-left patternvalidation"
-								data-pattern="alphanumericspecialcharacters" maxlength="32" required="required" />
-							<form:errors path="courtType" cssClass="error-msg" />
-						</div>
+				<div class="form-group">
+					<label class="col-sm-3 control-label text-right"><spring:message
+							code="lbl.description" /> :</label>
+					<div class="col-sm-3 add-margin">
+						<form:textarea class="form-control text-left patternvalidation"
+							path="notes" id="notes" name="notes"
+							data-pattern="alphanumericspecialcharacters" maxlength="256" />
+						<form:errors path="notes" cssClass="error-msg" />
 					</div>
-					<div class="form-group">
-						<label class="col-sm-3 control-label text-right"><spring:message
-								code="lbl.description" /> :</label>
-						<div class="col-sm-3 add-margin">
-						<form:textarea class="form-control text-left patternvalidation" path="notes" id="notes"
-							name="notes" data-pattern="alphanumericspecialcharacters" maxlength="256"/>
-							<form:errors path="notes" cssClass="error-msg" />
-						</div>
-						<label class="col-sm-3 control-label text-right"><spring:message
-								code="lbl.ordernumber" /> :</label>
-						<div class="col-sm-3 add-margin">
-							<form:input path="orderNumber"
-								class="form-control text-left patternvalidation"
-								data-pattern="number" maxlength="3"/>
-							<form:errors path="orderNumber" cssClass="error-msg" />
-						</div>
+					<label class="col-sm-3 control-label text-right"><spring:message
+							code="lbl.ordernumber" /> :</label>
+					<div class="col-sm-3 add-margin">
+						<form:input path="orderNumber"
+							class="form-control text-left patternvalidation"
+							data-pattern="number" maxlength="3" />
+						<form:errors path="orderNumber" cssClass="error-msg" />
 					</div>
-					<div class="form-group">
-						<label class="col-sm-3 control-label text-right"><spring:message code="lbl.active" />:<span class="mandatory"></span></label>
-							<div class="col-sm-2 add-margin">
-								<form:select path="active" id="active" 
-										cssClass="form-control" cssErrorClass="form-control error" required="required">
-									<form:option value=""><spring:message code="lbl.select"/></form:option>
-									<form:option value="true">YES</form:option>
-									<form:option value="false">NO</form:option>
-									<form:errors path="active" cssClass="error-msg" />
-								</form:select>
-							</div>
-						<input type="hidden" name="courtTypeMaster"
-							value="${courtTypeMaster.id}" />
+				</div>
+				<div class="form-group">
+					<label class="col-sm-3 control-label text-right"><spring:message
+							code="lbl.active" />:<span class="mandatory"></span></label>
+					<div class="col-sm-2 add-margin">
+						<form:select path="active" id="active" cssClass="form-control"
+							cssErrorClass="form-control error" required="required">
+							<form:option value="">
+								<spring:message code="lbl.select" />
+							</form:option>
+							<form:option value="true">YES</form:option>
+							<form:option value="false">NO</form:option>
+							<form:errors path="active" cssClass="error-msg" />
+						</form:select>
+					</div>
+					<input type="hidden" name="courtTypeMaster"
+						value="${courtTypeMaster.id}" />
+				</div>
+			</div>
+		</div>
+	</div>
+</div>

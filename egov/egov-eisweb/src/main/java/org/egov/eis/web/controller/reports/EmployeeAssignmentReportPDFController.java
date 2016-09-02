@@ -158,7 +158,7 @@ public class EmployeeAssignmentReportPDFController {
 
         String searchString = StringUtils.EMPTY;
         if (searchCriteria.toString().endsWith(","))
-            searchString = searchCriteria.substring(0, searchCriteria.length() - 2);
+            searchString = searchCriteria.substring(0, searchCriteria.length() - 1);
 
         final List<EmployeeAssignmentSearch> searchResult = new ArrayList<EmployeeAssignmentSearch>();
         Map<String, String> tempAssignments = null;

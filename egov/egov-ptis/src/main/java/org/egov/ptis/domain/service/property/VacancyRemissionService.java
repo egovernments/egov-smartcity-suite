@@ -61,6 +61,7 @@ import org.egov.ptis.domain.dao.demand.PtDemandDao;
 import org.egov.ptis.domain.entity.demand.Ptdemand;
 import org.egov.ptis.domain.entity.property.BasicProperty;
 import org.egov.ptis.domain.entity.property.Property;
+import org.egov.ptis.domain.entity.property.PropertyOwnerInfo;
 import org.egov.ptis.domain.entity.property.VacancyRemission;
 import org.egov.ptis.domain.entity.property.VacancyRemissionApproval;
 import org.egov.ptis.domain.entity.property.VacancyRemissionDetails;
@@ -458,7 +459,14 @@ public class VacancyRemissionService {
     }
     
     public void buildSMS(VacancyRemission vacancyRemission, String workFlowAction) {
-        final User user = vacancyRemission.getBasicProperty().getPrimaryOwner();
+        for (PropertyOwnerInfo ownerInfo : vacancyRemission.getBasicProperty().getPropertyOwnerInfo()) {
+            if (StringUtils.isNotBlank(ownerInfo.getOwner().getMobileNumber())) {
+                buildSms(vacancyRemission, ownerInfo.getOwner(), workFlowAction);
+            }
+        }
+    }
+
+    private void buildSms(VacancyRemission vacancyRemission, User user, String workFlowAction) {
         final String assessmentNo = vacancyRemission.getBasicProperty().getUpicNo();
         final String mobileNumber = user.getMobileNumber();
         final String applicantName = user.getName();

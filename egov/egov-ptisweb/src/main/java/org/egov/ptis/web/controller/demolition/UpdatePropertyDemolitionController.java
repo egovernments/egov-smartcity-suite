@@ -138,7 +138,7 @@ public class UpdatePropertyDemolitionController extends GenericWorkFlowControlle
     @RequestMapping(method = RequestMethod.POST)
     public String update(@Valid @ModelAttribute Property property, final BindingResult errors,
             final RedirectAttributes redirectAttributes, final HttpServletRequest request, final Model model,
-            @RequestParam String workFlowAction) {
+            @RequestParam String workFlowAction) throws TaxCalculatorExeption {
 
         propertyDemolitionService.validateProperty(property, errors, request);
         if (errors.hasErrors()) {
@@ -182,13 +182,8 @@ public class UpdatePropertyDemolitionController extends GenericWorkFlowControlle
                     propertyDemolitionService.updateProperty(property, approvalComent, workFlowAction,
                             approvalPosition, DEMOLITION);
                 } else {
-                    try {
-                        propertyDemolitionService.saveProperty(oldProperty, property, status, approvalComent,
-                                workFlowAction, approvalPosition, DEMOLITION);
-                    } catch (TaxCalculatorExeption e) {
-                        // TODO Auto-generated catch block
-                        e.printStackTrace();
-                    }
+                    propertyDemolitionService.saveProperty(oldProperty, property, status, approvalComent,
+                            workFlowAction, approvalPosition, DEMOLITION);
                 }
                 Assignment assignment = new Assignment();
                 if (workFlowAction.equalsIgnoreCase(WFLOW_ACTION_STEP_APPROVE)) {
