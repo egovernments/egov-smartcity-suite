@@ -453,6 +453,14 @@ public class ScheduleOfRateService {
 
                             estimates = estimateService.getBySorIdAndEstimateDate(obj.getScheduleOfRate().getId(),
                                     obj.getFromDate());
+                            
+                            woe = estimateService.getBySorIdAndWorkOrderDate(obj.getScheduleOfRate().getId(),
+                                    obj.getFromDate());
+                            
+                            if (woe != null && !woe.isEmpty())
+                                error = error + " " + messageSource
+                                .getMessage("error.active.revisionestimate.exist.for.given.date.range", null, null)
+                                + ",";
 
                             if (estimates != null && !estimates.isEmpty())
                                 error = error + " " + messageSource
