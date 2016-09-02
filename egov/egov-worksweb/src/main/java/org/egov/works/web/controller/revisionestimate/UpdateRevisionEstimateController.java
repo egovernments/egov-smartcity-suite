@@ -208,14 +208,6 @@ public class UpdateRevisionEstimateController extends GenericWorkFlowController 
             if (!activity.getMeasurementSheetList().isEmpty())
                 for (final MeasurementSheet ms : activity.getMeasurementSheetList())
                     revisionEstimateService.deriveMeasurementSheetQuantity(ms);
-            Double qty = 0d;
-            for (final MeasurementSheet ms : activity.getMeasurementSheetList())
-                if (ms.getIdentifier() == 'A')
-                    qty = qty + ms.getQuantity().doubleValue();
-                else
-                    qty = qty - ms.getQuantity().doubleValue();
-            if (!activity.getMeasurementSheetList().isEmpty())
-                activity.setQuantity(qty);
         }
     }
 

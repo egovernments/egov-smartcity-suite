@@ -94,22 +94,22 @@
 			                    </td>
 			                    <td>
 			                        <form:input path="changeQuantityActivities[${item.index }].measurementSheetList[${index.index }].no" onkeyup="limitCharatersBy3_2(this);" id="changeQuantityActivities[${item.index }].measurementSheetList[${index.index }].no" class="form-control text-right patternvalidation runtime-update"
-			                               data-pattern="decimalvalue" data-idx="0" />
+			                               data-pattern="decimalvalue" data-idx="0" data-no="${activity.parent.measurementSheetList.get(index.index).no }" />
 			
 			                    </td>
 			                    <td>                                                                     
 			                        <form:input path="changeQuantityActivities[${item.index }].measurementSheetList[${index.index }].length" onkeyup="limitCharatersBy10_4(this);" id="changeQuantityActivities[${item.index }].measurementSheetList[${index.index }].length" class="form-control text-right patternvalidation runtime-update"
-			                               data-pattern="decimalvalue" data-idx="0" />
+			                               data-pattern="decimalvalue" data-idx="0" data-length="${activity.parent.measurementSheetList.get(index.index).length }" />
 			
 			                    </td>
 			                    <td>
 			                        <form:input path="changeQuantityActivities[${item.index }].measurementSheetList[${index.index }].width" onkeyup="limitCharatersBy10_4(this);" id="changeQuantityActivities[${item.index }].measurementSheetList[${index.index }].width" class="form-control text-right patternvalidation runtime-update"
-			                               data-pattern="decimalvalue"  data-idx="0" />
+			                               data-pattern="decimalvalue"  data-idx="0" data-width="${activity.parent.measurementSheetList.get(index.index).width }" />
 			
 			                    </td>
 			                    <td>
 				                    <form:input path="changeQuantityActivities[${item.index }].measurementSheetList[${index.index }].depthOrHeight" onkeyup="limitCharatersBy10_4(this);" id="changeQuantityActivities[${item.index }].measurementSheetList[${index.index }].depthOrHeight" class="form-control text-right patternvalidation runtime-update"
-				                           data-pattern="decimalvalue"  data-idx="0" />
+				                           data-pattern="decimalvalue"  data-idx="0" data-depthOrHeight="${activity.parent.measurementSheetList.get(index.index).depthOrHeight }" />
 			
 			                	</td>
 			                	<td>

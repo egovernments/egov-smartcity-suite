@@ -179,7 +179,7 @@ public class RevisionEstimateService {
     private LineEstimateAppropriationService lineEstimateAppropriationService;
 
     @Autowired
-    WorkOrderMeasurementSheetService workOrderMeasurementSheetService;
+    private WorkOrderMeasurementSheetService workOrderMeasurementSheetService;
 
     @Autowired
     public RevisionEstimateService(final RevisionEstimateRepository revisionEstimateRepository) {
@@ -313,6 +313,13 @@ public class RevisionEstimateService {
             RevisionWorkOrder revisionWorkOrder = new RevisionWorkOrder();
             revisionWorkOrder = createRevisionWorkOrder(updateRevisionEstimate, revisionWorkOrder, workOrderEstimate);
             revisionWorkOrderService.create(revisionWorkOrder);
+
+            final List<RevisionAbstractEstimate> revisionAbstractEstimates = findApprovedRevisionEstimatesByParent(
+                    updateRevisionEstimate.getParent().getId());
+            double totalIncludingRE = 0d;
+            for (final RevisionAbstractEstimate re : revisionAbstractEstimates)
+                totalIncludingRE += re.getWorkValue();
+            updateRevisionEstimate.getParent().setTotalIncludingRE(totalIncludingRE);
         }
 
         revisionEstimateRepository.save(updateRevisionEstimate);
@@ -336,6 +343,13 @@ public class RevisionEstimateService {
         revisionWorkOrder.setEmdAmountDeposited(0.00001);
         revisionWorkOrder.setEgwStatus(worksUtils.getStatusByModuleAndCode(WorksConstants.WORKORDER, WorksConstants.APPROVED));
         populateWorkOrderActivities(revisionWorkOrder, revisionEstimate);
+
+        final List<RevisionWorkOrder> revisionWorkOrders = revisionWorkOrderService.findApprovedRevisionEstimatesByParent(
+                revisionWorkOrder.getParent().getId());
+        double totalIncludingRE = 0d;
+        for (final RevisionWorkOrder rw : revisionWorkOrders)
+            totalIncludingRE += rw.getWorkOrderAmount();
+        revisionWorkOrder.getParent().setTotalIncludingRE(totalIncludingRE);
         return revisionWorkOrder;
     }
 
@@ -724,12 +738,6 @@ public class RevisionEstimateService {
                     measurementsPresent = measurementSheetService.existsByEstimate(re.getId());
             }
 
-        // Calculating activity quantity after merging measurement sheets by volume
-        calculateActivityQuantity(sorActivities);
-        calculateActivityQuantity(nonSorActivities);
-        calculateActivityQuantity(nonTenderedActivities);
-        calculateActivityQuantity(lumpSumActivities);
-
         revisionEstimate.getSorActivities().addAll(sorActivities);
         revisionEstimate.getNonSorActivities().addAll(nonSorActivities);
         revisionEstimate.getChangeQuantityNTActivities().addAll(nonTenderedActivities);
@@ -781,62 +789,6 @@ public class RevisionEstimateService {
                     sa.setQuantity(sa.getQuantity() - activity.getQuantity());
                     sa.setQuantityChanged(true);
                 }
-    }
-
-    private void calculateActivityQuantity(final List<Activity> activities) {
-        for (final Activity activity : activities) {
-            Double qty = 0d;
-            for (final MeasurementSheet ms : activity.getMeasurementSheetList()) {
-                populateMeasurementSheet(ms);
-                if (ms.getIdentifier() == 'A')
-                    qty = qty + ms.getQuantity().doubleValue();
-                else
-                    qty = qty - ms.getQuantity().doubleValue();
-            }
-            if (!activity.getMeasurementSheetList().isEmpty())
-                activity.setQuantity(qty);
-        }
-    }
-
-    private void populateMeasurementSheet(final MeasurementSheet ms) {
-        final List<MeasurementSheet> remsList = measurementSheetService.findByParentId(ms.getId());
-        Double no = ms.getNo() == null ? 0 : ms.getNo().doubleValue();
-        Double length = ms.getLength() == null ? 0 : ms.getLength().doubleValue();
-        Double width = ms.getWidth() == null ? 0 : ms.getWidth().doubleValue();
-        Double depthOrHeight = ms.getDepthOrHeight() == null ? 0 : ms.getDepthOrHeight().doubleValue();
-        for (final MeasurementSheet rems : remsList)
-            if (ms.getIdentifier() == 'A') {
-                if (rems.getNo() != null)
-                    no = no + rems.getNo().doubleValue();
-                if (rems.getLength() != null)
-                    length = length + rems.getLength().doubleValue();
-                if (rems.getWidth() != null)
-                    width = width + rems.getWidth().doubleValue();
-                if (rems.getDepthOrHeight() != null)
-                    depthOrHeight = depthOrHeight + rems.getDepthOrHeight().doubleValue();
-            } else {
-                if (rems.getNo() != null)
-                    no = no - rems.getNo().doubleValue();
-                if (rems.getLength() != null)
-                    length = length - rems.getLength().doubleValue();
-                if (rems.getWidth() != null)
-                    width = width - rems.getWidth().doubleValue();
-                if (rems.getDepthOrHeight() != null)
-                    depthOrHeight = depthOrHeight - rems.getDepthOrHeight().doubleValue();
-            }
-        if (no != null && no != 0)
-            ms.setNo(new BigDecimal(no));
-        if (length != null && length != 0)
-            ms.setLength(new BigDecimal(length));
-        if (width != null && width != 0)
-            ms.setWidth(new BigDecimal(width));
-        if (depthOrHeight != null && depthOrHeight != 0)
-            ms.setDepthOrHeight(new BigDecimal(depthOrHeight));
-
-        ms.setQuantity(new BigDecimal(
-                (no == null || no == 0 ? 1 : no.doubleValue()) * (length == null || length == 0 ? 1 : length.doubleValue())
-                        * (width == null || width == 0 ? 1 : width.doubleValue())
-                        * (depthOrHeight == null || depthOrHeight == 0 ? 1 : depthOrHeight.doubleValue())));
     }
 
     public void loadViewData(final RevisionAbstractEstimate revisionEstimate, final WorkOrderEstimate workOrderEstimate,
@@ -974,7 +926,7 @@ public class RevisionEstimateService {
                 query.setDate("toDate", searchRevisionEstimate.getToDate());
 
             if (searchRevisionEstimate.getLoaNumber() != null)
-                query.setString("loaNumber", "%"+searchRevisionEstimate.getLoaNumber().toLowerCase()+"%");
+                query.setString("loaNumber", "%" + searchRevisionEstimate.getLoaNumber().toLowerCase() + "%");
 
             if (searchRevisionEstimate.getCreatedBy() != null)
                 query.setLong("createdBy", searchRevisionEstimate.getCreatedBy());
@@ -1190,7 +1142,8 @@ public class RevisionEstimateService {
     public void deriveWorkOrderActivityQuantity(final WorkOrderActivity workOrderActivity) {
         if (!workOrderActivity.getWorkOrderMeasurementSheets().isEmpty())
             for (final WorkOrderMeasurementSheet woms : workOrderActivity.getWorkOrderMeasurementSheets()) {
-                final List<WorkOrderMeasurementSheet> rewomsList = workOrderMeasurementSheetService.findByMeasurementSheetParentId(woms.getMeasurementSheet().getId());
+                final List<WorkOrderMeasurementSheet> rewomsList = workOrderMeasurementSheetService
+                        .findByMeasurementSheetParentId(woms.getMeasurementSheet().getId());
                 Double no = woms.getNo() == null ? 0 : woms.getNo().doubleValue();
                 Double length = woms.getLength() == null ? 0 : woms.getLength().doubleValue();
                 Double width = woms.getWidth() == null ? 0 : woms.getWidth().doubleValue();

@@ -136,15 +136,6 @@ public class SearchActivityJsonAdaptor implements JsonSerializer<Activity> {
         } else
             jsonObject.add("ms", new JsonArray());
 
-        Double qty = 0d;
-        for (final MeasurementSheet ms : activity.getMeasurementSheetList())
-            if (ms.getIdentifier() == 'A')
-                qty = qty + ms.getQuantity().doubleValue();
-            else
-                qty = qty - ms.getQuantity().doubleValue();
-        if (!activity.getMeasurementSheetList().isEmpty())
-            activity.setQuantity(qty);
-
         jsonObject.addProperty("approvedQuantity", activity.getQuantity());
 
         return jsonObject;

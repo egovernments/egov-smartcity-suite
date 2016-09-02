@@ -39,11 +39,17 @@
  */
 package org.egov.works.revisionestimate.repository;
 
+import java.util.List;
+
 import org.egov.works.revisionestimate.entity.RevisionWorkOrder;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 @Repository
 public interface RevisionWorkOrderRepository extends JpaRepository<RevisionWorkOrder, Long> {
 
+    @Query("from RevisionWorkOrder rw where rw.parent.id=:id and rw.egwStatus.code=:status order by rw.id")
+    List<RevisionWorkOrder> findByParent_IdAndStatus(@Param("id") final Long id, @Param("status") final String status);
 }

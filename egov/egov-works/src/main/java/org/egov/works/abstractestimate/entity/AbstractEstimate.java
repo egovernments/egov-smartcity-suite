@@ -304,6 +304,9 @@ public class AbstractEstimate extends StateAware implements Auditable {
 
     private String cancellationRemarks;
 
+    @Column(name = "TOTAL_INCLUDING_RE")
+    private Double totalIncludingRE;
+
     @Override
     public Long getId() {
         return id;
@@ -846,6 +849,14 @@ public class AbstractEstimate extends StateAware implements Auditable {
 
     public void setTempAssetValues(final List<AssetsForEstimate> tempAssetValues) {
         this.tempAssetValues = tempAssetValues;
+    }
+
+    public Double getTotalIncludingRE() {
+        return totalIncludingRE;
+    }
+
+    public void setTotalIncludingRE(final Double totalIncludingRE) {
+        this.totalIncludingRE = totalIncludingRE;
     }
 
 }

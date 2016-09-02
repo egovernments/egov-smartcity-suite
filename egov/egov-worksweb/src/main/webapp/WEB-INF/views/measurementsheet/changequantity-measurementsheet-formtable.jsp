@@ -81,22 +81,22 @@
 	                    <td id="msrowidentifier_0_0"></td>
 	                    <td>
 	                        <input name="templatesorActivities[0].measurementSheetList[0].no" value="" onkeyup="limitCharatersBy3_2(this);"  id="templatesorActivities[0].measurementSheetList[0].no" class="form-control text-right patternvalidation runtime-update"
-	                               data-pattern="decimalvalue" data-idx="0" />
+	                               data-pattern="decimalvalue" data-idx="0" data-no="" />
 	
 	                    </td>
 	                    <td>                                                                     
 	                        <input name="templatesorActivities[0].measurementSheetList[0].length" onkeyup="limitCharatersBy10_4(this);" id="templatesorActivities[0].measurementSheetList[0].length" class="form-control text-right patternvalidation runtime-update"
-	                               data-pattern="decimalvalue" data-idx="0" />
+	                               data-pattern="decimalvalue" data-idx="0" data-length="" />
 	
 	                    </td>
 	                    <td>
 	                        <input name="templatesorActivities[0].measurementSheetList[0].width" onkeyup="limitCharatersBy10_4(this);" id="templatesorActivities[0].measurementSheetList[0].width" class="form-control text-right patternvalidation runtime-update"
-	                               data-pattern="decimalvalue"  data-idx="0" />
+	                               data-pattern="decimalvalue"  data-idx="0" data-width="" />
 	
 	                    </td>
 	                    <td>
 		                    <input name="templatesorActivities[0].measurementSheetList[0].depthOrHeight" onkeyup="limitCharatersBy10_4(this);" id="templatesorActivities[0].measurementSheetList[0].depthOrHeight" class="form-control text-right patternvalidation runtime-update"
-		                           data-pattern="decimalvalue"  data-idx="0" />
+		                           data-pattern="decimalvalue"  data-idx="0" data-depthOrHeight="" />
 	
 	                	</td>
 	                	<td>

@@ -268,6 +268,9 @@ public class WorkOrder extends StateAware implements Auditable {
     @Transient
     private String approvalComent;
 
+    @Column(name = "TOTAL_INCLUDING_RE")
+    private Double totalIncludingRE;
+
     @Override
     public Long getId() {
         return id;
@@ -639,6 +642,14 @@ public class WorkOrder extends StateAware implements Auditable {
 
     public void setApprovalComent(final String approvalComent) {
         this.approvalComent = approvalComent;
+    }
+
+    public Double getTotalIncludingRE() {
+        return totalIncludingRE;
+    }
+
+    public void setTotalIncludingRE(final Double totalIncludingRE) {
+        this.totalIncludingRE = totalIncludingRE;
     }
 
 }

@@ -1,8 +1,11 @@
 package org.egov.works.revisionestimate.service;
 
+import java.util.List;
+
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 
+import org.egov.works.revisionestimate.entity.RevisionAbstractEstimate;
 import org.egov.works.revisionestimate.entity.RevisionWorkOrder;
 import org.egov.works.revisionestimate.repository.RevisionWorkOrderRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,9 +26,13 @@ public class RevisionWorkOrderService {
     }
 
     @Transactional
-    public RevisionWorkOrder create(RevisionWorkOrder revisionWorkOrder) {
+    public RevisionWorkOrder create(final RevisionWorkOrder revisionWorkOrder) {
 
         return revisionWorkOrderRepository.save(revisionWorkOrder);
     }
 
+    public List<RevisionWorkOrder> findApprovedRevisionEstimatesByParent(final Long id) {
+        return revisionWorkOrderRepository.findByParent_IdAndStatus(id,
+                RevisionAbstractEstimate.RevisionEstimateStatus.APPROVED.toString());
+    }
 }

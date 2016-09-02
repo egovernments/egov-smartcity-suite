@@ -1429,28 +1429,86 @@ var sorSearch = new Bloodhound({
 		var no=$('input[id="'+name[0]+'.'+name[1]+'.no'+'"]').attr('value');
 		var depthOrHeight=$('input[id="'+name[0]+'.'+name[1]+'.depthOrHeight'+'"]').attr('value');
 		var width=$('input[id="'+name[0]+'.'+name[1]+'.width'+'"]').attr('value');
+		
+		var oldLength=$(lent).attr('data-length');
+		var oldNo=$('input[id="'+name[0]+'.'+name[1]+'.no'+'"]').attr('data-no');
+		var oldDepthOrHeight=$('input[id="'+name[0]+'.'+name[1]+'.depthOrHeight'+'"]').attr('data-depthOrHeight');
+		var oldWidth=$('input[id="'+name[0]+'.'+name[1]+'.width'+'"]').attr('data-width');
+		
+		var totalNo = 0;
+		var totalLength = 0;
+		var totalWidth = 0;
+		var totalDepthOrHeight = 0;
 
-		if(isEmpty(length) && isEmpty(no) && isEmpty(depthOrHeight)  && isEmpty(width))
-			$('input[id="'+name[0]+'.'+name[1]+'.quantity'+'"]').attr('value',0);
-		else {
-			if (length === undefined || length == '' || length == 0)
-				length = 1;
-			if (no === undefined || no == '' || no == 0)
-				no = 1;
-			if (depthOrHeight === undefined || depthOrHeight == '' || depthOrHeight == 0)
-				depthOrHeight = 1;
-			if (width === undefined || width == '' || width == 0)
-				width = 1;
-			var net=length * no * width * depthOrHeight;
-			var x=net+"";
-			var y=x.split(".");
-			if(y.length>1)
-			  if(y[1].length>4)
-				  net=net.toFixed(4);  
-			
-			document.getElementById(name[0]+'.'+name[1]+'.quantity').value=net;
-			$('input[id="'+name[0]+'.'+name[1]+'.quantity'+'"]').attr('value',net);
+		if(name[0].indexOf("changeQuantityActivities") == 0) {
+			if(isEmpty(length) && isEmpty(no) && isEmpty(depthOrHeight)  && isEmpty(width))
+				$('input[id="'+name[0]+'.'+name[1]+'.quantity'+'"]').attr('value',0);
+			else {
+				if (length === undefined || length == '' || length == 0)
+					length = 0;
+				if (no === undefined || no == '' || no == 0)
+					no = 0;
+				if (depthOrHeight === undefined || depthOrHeight == '' || depthOrHeight == 0)
+					depthOrHeight = 0;
+				if (width === undefined || width == '' || width == 0)
+					width = 0;
+				
+				if (oldLength === undefined || oldLength == '' || oldLength == 0)
+					oldLength = 0;
+				if (oldNo === undefined || oldNo == '' || oldNo == 0)
+					oldNo = 0;
+				if (oldDepthOrHeight === undefined || oldDepthOrHeight == '' || oldDepthOrHeight == 0)
+					oldDepthOrHeight = 0;
+				if (oldWidth === undefined || oldWidth == '' || oldWidth == 0)
+					oldWidth = 0;
+				
+				totalNo = parseFloat(parseFloat(no) + parseFloat(oldNo));
+				totalLength = parseFloat(parseFloat(length) + parseFloat(oldLength));
+				totalWidth = parseFloat(parseFloat(width) + parseFloat(oldWidth));
+				totalDepthOrHeight = parseFloat(parseFloat(depthOrHeight) + parseFloat(oldDepthOrHeight));
+				
+				if (totalLength === undefined || totalLength == '' || totalLength == 0)
+					totalLength = 1;
+				if (totalNo === undefined || totalNo == '' || totalNo == 0)
+					totalNo = 1;
+				if (totalDepthOrHeight === undefined || totalDepthOrHeight == '' || totalDepthOrHeight == 0)
+					totalDepthOrHeight = 1;
+				if (totalWidth === undefined || totalWidth == '' || totalWidth == 0)
+					totalWidth = 1;
 
+				var net = parseFloat(totalLength * totalNo * totalWidth * totalDepthOrHeight);
+				
+				var x=net+"";
+				var y=x.split(".");
+				if(y.length>1)
+				  if(y[1].length>4)
+					  net=net.toFixed(4);  
+				
+				document.getElementById(name[0]+'.'+name[1]+'.quantity').value=net;
+				$('input[id="'+name[0]+'.'+name[1]+'.quantity'+'"]').attr('value',net);
+			}
+		} else {
+			if(isEmpty(length) && isEmpty(no) && isEmpty(depthOrHeight)  && isEmpty(width))
+				$('input[id="'+name[0]+'.'+name[1]+'.quantity'+'"]').attr('value',0);
+			else {
+				if (length === undefined || length == '' || length == 0)
+					length = 1;
+				if (no === undefined || no == '' || no == 0)
+					no = 1;
+				if (depthOrHeight === undefined || depthOrHeight == '' || depthOrHeight == 0)
+					depthOrHeight = 1;
+				if (width === undefined || width == '' || width == 0)
+					width = 1;
+				var net=length * no * width * depthOrHeight;
+				var x=net+"";
+				var y=x.split(".");
+				if(y.length>1)
+				  if(y[1].length>4)
+					  net=net.toFixed(4);  
+				
+				document.getElementById(name[0]+'.'+name[1]+'.quantity').value=net;
+				$('input[id="'+name[0]+'.'+name[1]+'.quantity'+'"]').attr('value',net);
+			}
 		}
 		var netObj=document.getElementById(name[0]+'.'+name[1]+'.quantity');
 		$(netObj).attr('value', document.getElementById(name[0] + '.' + name[1] + '.quantity').value);
@@ -1726,8 +1784,11 @@ function populateActivities(data, selectedActivities){
 								$('#msrowidentifier_' + activityCount + '_' + index).html('No');
 							else
 								$('#msrowidentifier_' + activityCount + '_' + index).html('Yes');
-						} else
+						} else {
 							$('#msrow' + key + '_' + activityCount + '_' + index).html(value);
+							if(key != "slNo" && key != "remarks" && key != "quantity")
+								document.getElementById('changeQuantityActivities[' + activityCount + '].measurementSheetList[' + index + '].' + key).setAttribute('data-' + key, value);
+						}
 					});
 				});
 			} else {
