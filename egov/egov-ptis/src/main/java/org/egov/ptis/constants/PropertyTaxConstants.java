@@ -1470,4 +1470,7 @@ public interface PropertyTaxConstants {
 	public static final String APPROVAL_COMMENTS_SUCCESS = "Property has been successfully forwarded.";
 	public static final String CURRENT_STATE_BILL_COLLECTOR_APPROVED ="Create:Bill Collector Approved";
 	public static final String UD_REVENUE_INSPECTOR_APPROVAL_PENDING = "UD Revenue Inspector Approval Pending";
+	
+	public static final String INDEX_COLLECTION_CLAUSES_BILLINGSERVICE_NON_VACANT_LAND ="Property Tax";
+	public static final String INDEX_COLLECTION_CLAUSES_BILLINGSERVICE_VACANT_LAND ="Property Tax (On Land)";
 }
