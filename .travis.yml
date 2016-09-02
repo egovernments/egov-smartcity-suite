@@ -1,4 +1,7 @@
 language: java
+notifications:
+  email:
+    - phoenix-dev@egovernments.org
 env:
   global:
   - TERM=dumb
