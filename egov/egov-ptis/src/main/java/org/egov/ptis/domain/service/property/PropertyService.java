@@ -84,6 +84,7 @@ import static org.egov.ptis.constants.PropertyTaxConstants.PTMODULENAME;
 import static org.egov.ptis.constants.PropertyTaxConstants.PT_WORKFLOWDESIGNATION_MOBILE;
 import static org.egov.ptis.constants.PropertyTaxConstants.QUERY_PROPSTATVALUE_BY_UPICNO_CODE_ISACTIVE;
 import static org.egov.ptis.constants.PropertyTaxConstants.REVISIONPETITION_STATUS_CODE;
+import static org.egov.ptis.constants.PropertyTaxConstants.SOURCEOFDATA_MOBILE;
 import static org.egov.ptis.constants.PropertyTaxConstants.SQUARE_YARD_TO_SQUARE_METER_VALUE;
 import static org.egov.ptis.constants.PropertyTaxConstants.STATUS_CANCELLED;
 import static org.egov.ptis.constants.PropertyTaxConstants.STATUS_WORKFLOW;
@@ -2347,8 +2348,8 @@ public class PropertyService {
      * @return
      */
     public String getDesignationForThirdPartyUser(Character source) {
-    	String appConfigKey = StringUtils.EMPTY;
-    	if(source.equals(PropertyTaxConstants.SOURCEOFDATA_MOBILE))
+    	String appConfigKey;
+    	if(source.equals(SOURCEOFDATA_MOBILE))
     		appConfigKey = PT_WORKFLOWDESIGNATION_MOBILE;
     	else
     		appConfigKey = PROPERTYTAX_WORKFLOWDESIGNATION;

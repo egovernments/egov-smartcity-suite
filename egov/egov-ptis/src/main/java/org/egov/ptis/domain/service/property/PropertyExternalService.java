@@ -827,11 +827,6 @@ public class PropertyExternalService {
 
     public PropertyTypeMaster getPropertyTypeMasterByCode(final String propertyTypeMasterCode) {
         return propertyTypeMasterDAO.getPropertyTypeMasterByCode(propertyTypeMasterCode);
-        		/*entityManager
-                .createQuery("from PropertyTypeMaster ptm where ptm.code = :propertyTypeMasterCode");
-        qry.setParameter("propertyTypeMasterCode", propertyTypeMasterCode);
-        final PropertyTypeMaster propertyTypeMaster = (PropertyTypeMaster) qry.getSingleResult();
-        return propertyTypeMaster;*/
     }
 
     public List<MasterCodeNamePairDetails> getPropertyTypeCategoryDetails(final String categoryCode) {
@@ -1267,10 +1262,6 @@ public class PropertyExternalService {
         
         propertyImpl.getPropertyDetail().setOccupancyCertificationNo(occupancyCertificationNo);
         
-        /*propertyImpl.getPropertyDetail().setStructure(isSuperStructure);
-        if (isSuperStructure)
-            propertyImpl.getPropertyDetail().setSiteOwner(siteOwnerName);*/
-
         if(!propertyTypeMasterCode.equalsIgnoreCase(OWNERSHIP_TYPE_VAC_LAND)){
         	final FloorType floorType = floorTypeService.getFloorTypeById(Long.valueOf(floorTypeId));
             final RoofType roofType = roofTypeService.getRoofTypeById(Long.valueOf(roofTypeId));
@@ -1290,10 +1281,11 @@ public class PropertyExternalService {
             propertyImpl.getPropertyDetail().setWaterHarvesting(waterHarvesting);
             propertyImpl.getPropertyDetail().setCable(cable);
             
-            property = propService.createProperty(propertyImpl, extentOfSite, mutationReasonCode, propertyTypeMaster.getId().toString(),
-            		null, null, STATUS_ISACTIVE, regdDocNo, null, (floorType != null ? floorType.getId() : null), 
-            		(roofType != null ? roofType.getId() : null),(wallType != null ? wallType.getId() : null),
-                    (woodType != null ? woodType.getId() : null), null);
+            property = propService.createProperty(propertyImpl, extentOfSite, mutationReasonCode,
+                    propertyTypeMaster.getId().toString(),
+                    null, null, STATUS_ISACTIVE, regdDocNo, null, floorType != null ? floorType.getId() : null,
+                    roofType != null ? roofType.getId() : null, wallType != null ? wallType.getId() : null,
+                    woodType != null ? woodType.getId() : null, null);
         } else {
         	propertyImpl.getPropertyDetail().setDateOfCompletion(convertStringToDate(effectiveDate));
         	propertyImpl.getPropertyDetail().setCurrentCapitalValue(currentCapitalValue);
@@ -1303,8 +1295,9 @@ public class PropertyExternalService {
             area.setArea(vacantLandArea);
             propertyImpl.getPropertyDetail().setSitalArea(area);
             propertyImpl.getPropertyDetail().setMarketValue(marketValue);
-        	property = propService.createProperty(propertyImpl, extentOfSite, mutationReasonCode, propertyTypeMaster.getId().toString(),
-            		null, null, STATUS_ISACTIVE, regdDocNo, null, null, null,
+            property = propService.createProperty(propertyImpl, extentOfSite, mutationReasonCode,
+                    propertyTypeMaster.getId().toString(),
+                    null, null, STATUS_ISACTIVE, regdDocNo, null, null, null,
                     null, null, null);
         }
         
