@@ -114,11 +114,10 @@ public class ReportService {
    
     @Autowired
     private RegionalHeirarchyService regionalHeirarchyService;
-
     @Autowired
     private UserService userService;
-
-    private @Autowired FinancialYearDAO financialYearDAO;
+    @Autowired
+    private FinancialYearDAO financialYearDAO;
     @Autowired
     private PropertyTaxCommonUtils propertyTaxCommonUtils;
     @Autowired

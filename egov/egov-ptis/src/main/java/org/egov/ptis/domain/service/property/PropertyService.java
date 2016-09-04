@@ -217,9 +217,11 @@ import org.springframework.transaction.annotation.Transactional;
 public class PropertyService {
     private static final Logger LOGGER = Logger.getLogger(PropertyService.class);
     private static final String PROPERTY_WORKFLOW_STARTED = "Property Workflow Started";
+    final SimpleDateFormat dateFormatter = new SimpleDateFormat("dd/MM/yyyy");
+    
     private PersistenceService propPerServ;
     private Installment currentInstall;
-    final SimpleDateFormat dateFormatter = new SimpleDateFormat("dd/MM/yyyy");
+    private BigDecimal totalAlv = BigDecimal.ZERO;
     protected PersistenceService<BasicProperty, Long> basicPropertyService;
     private final Map<Installment, Set<EgDemandDetails>> demandDetails = new HashMap<Installment, Set<EgDemandDetails>>();
     private Map<Installment, Map<String, BigDecimal>> excessCollAmtMap = new LinkedHashMap<Installment, Map<String, BigDecimal>>();
@@ -237,7 +239,6 @@ public class PropertyService {
     private InstallmentHibDao installmentDao;
     @Autowired
     private UserService userService;
-
     @Autowired
     private ApplicationNumberGenerator applicationNumberGenerator;
     @Autowired
@@ -272,8 +273,6 @@ public class PropertyService {
     private PTBillServiceImpl ptBillServiceImpl;
     @Autowired
     private EisCommonService eisCommonService;
-
-    private BigDecimal totalAlv = BigDecimal.ZERO;
 
     /**
      * Creates a new property if property is in transient state else updates persisted property

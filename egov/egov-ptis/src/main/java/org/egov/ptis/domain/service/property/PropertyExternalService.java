@@ -140,6 +140,7 @@ import java.util.Map;
 import java.util.Set;
 
 import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
 
 import org.apache.commons.io.FilenameUtils;
@@ -250,18 +251,22 @@ public class PropertyExternalService {
     public static final Integer FLAG_TAX_DETAILS = 1;
     public static final Integer FLAG_FULL_DETAILS = 2;
     public static final int FLAG_NONE = 0;
+
+    private BasicProperty basicProperty;
+    private PropertyImpl property;
+    private AssessmentDetails assessmentDetail;
+    private RestAssessmentDetails assessmentDetails;
+    
+    private final List<File> uploads = new ArrayList<File>(0);
+    private final List<String> uploadContentTypes = new ArrayList<String>(0);
+    private final List<String> uploadFileNames = new ArrayList<String>(0);
+
     @Autowired
     private BasicPropertyDAO basicPropertyDAO;
     @Autowired
     private PtDemandDao ptDemandDAO;
     @Autowired
     private ApplicationContext beanProvider;
-    private Long userId;
-    private BasicProperty basicProperty;
-    private PropertyImpl property;
-    AssessmentDetails assessmentDetail;
-    private RestAssessmentDetails assessmentDetails;
-
     @Autowired
     private PropertyTaxNumberGenerator propertyTaxNumberGenerator;
     @Autowired
@@ -273,23 +278,17 @@ public class PropertyExternalService {
     private PropertyTaxBillable propertyTaxBillable;
     @Autowired
     private PropertyTypeMasterDAO propertyTypeMasterDAO;
-    @Autowired
+    @PersistenceContext
     private EntityManager entityManager;
     @Autowired
     private BoundaryService boundaryService;
-
-    private final List<File> uploads = new ArrayList<File>(0);
-    private final List<String> uploadContentTypes = new ArrayList<String>(0);
     @Autowired
     @Qualifier("fileStoreService")
     protected FileStoreService fileStoreService;
-
     @Autowired
     private CollectionIntegrationService collectionService;
     @Autowired
     private PropertyPersistenceService basicPropertyService;
-    private final List<String> uploadFileNames = new ArrayList<String>(0);
-
     @Autowired
     private BoundaryTypeService boundaryTypeService;
     @Autowired
@@ -299,22 +298,16 @@ public class PropertyExternalService {
     private SimpleWorkflowService<PropertyImpl> propertyWorkflowService;
     @Autowired
     private UserService userService;
-
     @Autowired
-    BankHibernateDAO bankHibernateDAO;
-    
+    private BankHibernateDAO bankHibernateDAO;
     @Autowired
     private PropertyMutationDAO propertyMutationDAO;
-    
     @Autowired
     private FloorTypeService floorTypeService;
-    
     @Autowired
     private RoofTypeService roofTypeService;
-    
     @Autowired
     private WallTypeService wallTypeService;
-    
     @Autowired
     private WoodTypeService woodTypeService;
 
@@ -574,14 +567,6 @@ public class PropertyExternalService {
         if (username.equals("mahesh") && password.equals("demo"))
             isAuthenticated = true;
         return isAuthenticated;
-    }
-
-    public Long getUserId() {
-        return userId;
-    }
-
-    public void setUserId(final Long userId) {
-        this.userId = userId;
     }
 
     private PropertyTaxDetails getPropertyTaxDetails(final BasicProperty basicProperty, String category) {
