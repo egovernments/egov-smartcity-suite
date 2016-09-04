@@ -76,6 +76,8 @@ import org.egov.works.mb.entity.SearchRequestMBHeader;
 import org.egov.works.mb.repository.MBHeaderRepository;
 import org.egov.works.models.tender.OfflineStatus;
 import org.egov.works.offlinestatus.service.OfflineStatusService;
+import org.egov.works.revisionestimate.entity.RevisionAbstractEstimate;
+import org.egov.works.revisionestimate.entity.enums.RevisionType;
 import org.egov.works.utils.WorksConstants;
 import org.egov.works.utils.WorksUtils;
 import org.egov.works.workorder.entity.WorkOrder;
@@ -931,8 +933,8 @@ public class MBHeaderService {
         return mbHeaderRepository.findMBHeadersTillDate(contractorBillId, workOrderEstimateId);
     }
     
-    public List<MBHeader> getMBHeadersToCancelRE(final WorkOrderEstimate workOrderEstimate) { 
-        return mbHeaderRepository.findByWorkOrderEstimate_IdAndEgwStatus_codeNotOrderById(workOrderEstimate.getId(),
-                WorksConstants.CANCELLED_STATUS);
+    public List<MBHeader> getMBHeadersForTenderedLumpSumAcivitiesToCancelRE(final RevisionAbstractEstimate revisionEstimate,final WorkOrderEstimate workOrderEstimate) { 
+         return  mbHeaderRepository.findMBHeadersForRevisionEstimate(revisionEstimate.getId(),workOrderEstimate.getId(),
+                RevisionType.NON_TENDERED_ITEM,RevisionType.LUMP_SUM_ITEM,WorksConstants.CANCELLED);
     }
 }

@@ -113,4 +113,4 @@
 	</div>
 </form:form>
 <jsp:include page="cancelrevisionEstimate-searchResult.jsp"/>
-<script type="text/javascript" src="<cdn:url cdn='${applicationScope.cdn}' value='/resources/js/revisionestimate/cancelrevisionestimate.js?rnd=${app_release_no}'/>"></script>
+<script type="text/javascript" src="<cdn:url value='/resources/js/revisionestimate/cancelrevisionestimate.js?rnd=${app_release_no}'/>"></script>

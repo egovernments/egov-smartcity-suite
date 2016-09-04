@@ -20,5 +20,11 @@ public interface MBDetailsRepository extends JpaRepository<MBDetails, Long> {
     
     @Query("select distinct(mbdetails) from MBDetails as mbdetails where mbdetails.workOrderActivity.id =:woaId and mbHeader.egwStatus.code =:status")
     List<MBDetails> getMBDetailsByWorkOrderActivity(@Param("woaId") Long woaId, @Param("status") String status);
+    
+    @Query("select mbDetails.workOrderActivity.activity.id,sum(mbDetails.quantity) from MBDetails mbDetails where mbHeader.egwStatus.code!='CANCELLED' and mbDetails.workOrderActivity.activity.id in (:activityIdList) group by mbDetails.workOrderActivity.activity.id")
+    List<Object[]> getMBActivitiesForRevisionEstimate(@Param("activityIdList") List<Long> activityIdList);
+    
+    @Query("select mbd from MBDetails mbd where mbd.mbHeader.egwStatus.code !=:status and mbd.workOrderActivity.activity.id =:activityId")
+    MBDetails getMBDetailsForREActivity(@Param ("activityId") Long activityId,@Param ("status") String status);
 
 }

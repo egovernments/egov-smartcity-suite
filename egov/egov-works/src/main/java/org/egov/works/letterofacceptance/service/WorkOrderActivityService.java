@@ -44,9 +44,13 @@ import java.util.List;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 
+import org.egov.works.abstractestimate.entity.Activity;
 import org.egov.works.letterofacceptance.repository.WorkOrderActivityRepository;
+import org.egov.works.revisionestimate.entity.RevisionAbstractEstimate;
+import org.egov.works.revisionestimate.entity.enums.RevisionType;
 import org.egov.works.utils.WorksConstants;
 import org.egov.works.workorder.entity.WorkOrderActivity;
+import org.egov.works.workorder.entity.WorkOrderEstimate;
 import org.hibernate.Criteria;
 import org.hibernate.Session;
 import org.hibernate.criterion.Restrictions;
@@ -102,6 +106,18 @@ public class WorkOrderActivityService {
     public WorkOrderActivity getWorkOrderActivityByActivity(final Long activityId) {
         return workOrderActivityRepository.findByActivity_IdAndWorkOrderEstimate_WorkOrder_EgwStatus_Code(activityId,
                 WorksConstants.APPROVED);
+    }
+    
+    public List<WorkOrderActivity> getChangedQuantityActivities(final RevisionAbstractEstimate revisionEstimate,final WorkOrderEstimate workOrderEstimate) {
+        return workOrderActivityRepository.findChangedQuantityActivitiesForEstimate(revisionEstimate.getId(), workOrderEstimate.getId(), RevisionType.ADDITIONAL_QUANTITY);
+    }
+    
+    public Object getQuantityForActivity(final Long activityId) {
+        return workOrderActivityRepository.getActivityQuantity(activityId);
+    }
+    
+    public Object getREActivityQuantity(final Long reId,final Long parentId) {
+        return workOrderActivityRepository.getREActivityQuantity(reId, parentId);
     }
 
 }

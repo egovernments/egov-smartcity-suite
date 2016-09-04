@@ -39,7 +39,6 @@
  */
 package org.egov.works.web.controller.letterofacceptance;
 
-
 import java.util.ArrayList;
 import java.util.List;
 
@@ -54,6 +53,7 @@ import org.egov.infra.security.utils.SecurityUtils;
 import org.egov.works.letterofacceptance.entity.SearchRequestLetterOfAcceptance;
 import org.egov.works.letterofacceptance.service.LetterOfAcceptanceService;
 import org.egov.works.lineestimate.service.LineEstimateService;
+import org.egov.works.revisionestimate.service.RevisionWorkOrderService;
 import org.egov.works.utils.WorksConstants;
 import org.egov.works.workorder.entity.WorkOrder;
 import org.egov.works.workorder.entity.WorkOrderEstimate;
@@ -65,7 +65,6 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
-
 
 @Controller
 @RequestMapping(value = "/letterofacceptance")
@@ -85,6 +84,9 @@ public class CancelLetterOfAcceptanceController extends GenericWorkFlowControlle
 
     @Autowired
     private EgwStatusHibernateDAO egwStatusHibernateDAO;
+
+    @Autowired
+    private RevisionWorkOrderService revisionWorkOrderService;
 
     @RequestMapping(value = "/cancel/search", method = RequestMethod.GET)
     public String showSearchLetterOfAcceptanceForm(
@@ -130,7 +132,16 @@ public class CancelLetterOfAcceptanceController extends GenericWorkFlowControlle
                         null);
                 model.addAttribute("errorMessage", message);
                 return "letterofacceptance-success";
+            } else if (!workOrderEstimate.getWorkOrderActivities().isEmpty()) {
+                final String revisionEstimates = revisionWorkOrderService.getRevisionEstimatesForWorkOrder(workOrder.getId());
+                if (!revisionEstimates.equals("")) {
+                    final String message = messageSource.getMessage("error.revisionestimates.created",
+                            new String[] { revisionEstimates }, null);
+                    model.addAttribute("errorMessage", message);
+                    return "letterofacceptance-success";
+                }
             }
+
         }
 
         if (letterOfAcceptanceService.checkIfMileStonesCreated(workOrder)) {

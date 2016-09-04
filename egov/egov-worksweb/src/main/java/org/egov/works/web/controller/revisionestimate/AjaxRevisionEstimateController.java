@@ -48,7 +48,9 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.io.IOUtils;
+import org.egov.eis.entity.Employee;
 import org.egov.infra.exception.ApplicationRuntimeException;
+import org.egov.infra.web.utils.WebUtils;
 import org.egov.works.abstractestimate.entity.Activity;
 import org.egov.works.revisionestimate.entity.RevisionAbstractEstimate;
 import org.egov.works.revisionestimate.entity.SearchRevisionEstimate;
@@ -82,9 +84,6 @@ public class AjaxRevisionEstimateController {
     private RevisionEstimateService revisionEstimateService;
 
     @Autowired
-    private RevisionEstimateJsonAdaptor revisionEstimateJsonAdaptor;
-
-    @Autowired
     private SearchActivityJsonAdaptor searchActivityJsonAdaptor;
 
     @Autowired
@@ -104,17 +103,9 @@ public class AjaxRevisionEstimateController {
             @ModelAttribute final SearchRevisionEstimate searchRevisionEstimate, final Model model) {
         final List<SearchRevisionEstimate> searchRevisionEstimates = revisionEstimateService
                 .searchRevisionEstimates(searchRevisionEstimate);
-        final String result = new StringBuilder("{ \"data\":").append(toJson(searchRevisionEstimates)).append("}")
+        final String result = new StringBuilder("{ \"data\":").append(WebUtils.toJSON(searchRevisionEstimates, SearchRevisionEstimate.class, RevisionEstimateJsonAdaptor.class)).append("}")
                 .toString();
         return result;
-    }
-
-    public Object toJson(final Object object) {
-        final GsonBuilder gsonBuilder = new GsonBuilder();
-        final Gson gson = gsonBuilder.registerTypeAdapter(SearchRevisionEstimate.class, revisionEstimateJsonAdaptor)
-                .create();
-        final String json = gson.toJson(object);
-        return json;
     }
 
     @RequestMapping(value = "/ajax-searchactivities", method = RequestMethod.POST, produces = MediaType.TEXT_PLAIN_VALUE)
@@ -186,7 +177,7 @@ public class AjaxRevisionEstimateController {
         return json;
     }
 
-    @RequestMapping(value = "/ajaxsearchretocancel", method = RequestMethod.GET, produces = MediaType.TEXT_PLAIN_VALUE)
+    @RequestMapping(value = "/ajaxsearchretocancel", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
     public @ResponseBody List<String> searchREToCancel(final String estimateNumber) {
         return revisionEstimateService.findRENumbersToCancel(estimateNumber);
     }
@@ -194,28 +185,19 @@ public class AjaxRevisionEstimateController {
     @RequestMapping(value = "/cancel/ajax-search", method = RequestMethod.POST, produces = MediaType.TEXT_PLAIN_VALUE)
     public @ResponseBody String searchRevisionEstimatesToCancel(
             @ModelAttribute final SearchRevisionEstimate searchRevisionEstimate, final Model model) {
-        final List<SearchRevisionEstimate> searchRevisionEstimates = revisionEstimateService
+        final List<SearchRevisionEstimate> revisionEstimates = revisionEstimateService
                 .searchRevisionEstimatesToCancel(searchRevisionEstimate);
-        final String result = new StringBuilder("{ \"data\":").append(revisionEstimatesToJson(searchRevisionEstimates))
+        final String result = new StringBuilder("{ \"data\":").append(WebUtils.toJSON(revisionEstimates, SearchRevisionEstimate.class, RevisionEstimateJsonAdaptor.class))
                 .append("}").toString();
         return result;
-    }
-
-    public Object revisionEstimatesToJson(final Object object) {
-        final GsonBuilder gsonBuilder = new GsonBuilder();
-        final Gson gson = gsonBuilder.registerTypeAdapter(SearchRevisionEstimate.class, revisionEstimateJsonAdaptor)
-                .create();
-        final String json = gson.toJson(object);
-        return json;
     }
 
     @RequestMapping(value = "/ajax-checkifdependantObjectscreated", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
     public @ResponseBody String checkIfBillsCreated(@RequestParam final Long reId) {
         String message = "";
         final RevisionAbstractEstimate revisionEstimate = revisionEstimateService.getRevisionEstimateById(reId);
-        final WorkOrderEstimate workOrderEstimate = workOrderEstimateService
-                .findWorkOrderByRevisionEstimateNumber(revisionEstimate.getEstimateNumber());
-        final String mbRefNumbers = revisionEstimateService.checkIfMBCreatedForRE(workOrderEstimate);
+        final WorkOrderEstimate workOrderEstimate = workOrderEstimateService.getWorkOrderEstimateByAbstractEstimateId(revisionEstimate.getId());
+        final String mbRefNumbers = revisionEstimateService.checkIfMBCreatedForRE(revisionEstimate,workOrderEstimate);
         if (!mbRefNumbers.equals(""))
             message = messageSource.getMessage("error.re.mb.created", new String[] { mbRefNumbers }, null);
         else {

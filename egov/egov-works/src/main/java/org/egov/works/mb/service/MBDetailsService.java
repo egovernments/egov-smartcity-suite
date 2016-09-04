@@ -33,5 +33,13 @@ public class MBDetailsService {
     public List<MBDetails> getMBDetailsByWorkOrderActivity(Long woaId) {
         return mBDetailsRepository.getMBDetailsByWorkOrderActivity(woaId, MeasurementBookStatus.APPROVED.toString());
     }
+    
+    public List<Object[]> getMBDetailsByWorkOrderActivity(final List<Long> activityIdList) {
+        return mBDetailsRepository.getMBActivitiesForRevisionEstimate(activityIdList);
+    }
+    
+    public MBDetails getMBDetailsForREActivity(final Long activityId) {
+        return mBDetailsRepository.getMBDetailsForREActivity(activityId,WorksConstants.CANCELLED);
+    }
 
 }

@@ -51,6 +51,7 @@ import org.egov.works.letterofacceptance.service.LetterOfAcceptanceService;
 import org.egov.works.master.service.ContractorService;
 import org.egov.works.models.masters.Contractor;
 import org.egov.works.models.masters.ContractorDetail;
+import org.egov.works.revisionestimate.service.RevisionWorkOrderService;
 import org.egov.works.web.adaptor.LetterOfAcceptanceForMilestoneJSONAdaptor;
 import org.egov.works.web.adaptor.SearchContractorJsonAdaptor;
 import org.egov.works.web.adaptor.SearchLetterOfAcceptanceForOfflineStatusJsonAdaptor;
@@ -119,6 +120,9 @@ public class AjaxLetterOfAcceptanceController {
 
     @Autowired
     private SearchWorkOrderForREJsonAdaptor searchWorkOrderForREJsonAdaptor;
+    
+    @Autowired
+    private RevisionWorkOrderService revisionWorkOrderService;
 
     @RequestMapping(value = "/ajaxcontractors-loa", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
     public @ResponseBody List<Contractor> findContractorsByCodeOrName(@RequestParam final String name) {
@@ -304,7 +308,7 @@ public class AjaxLetterOfAcceptanceController {
         final WorkOrder workOrder = letterOfAcceptanceService.getWorkOrderById(id);
         final WorkOrderEstimate workOrderEstimate = workOrder.getWorkOrderEstimates().get(0);
         String message = "";
-        if (workOrderEstimate.getWorkOrderActivities().isEmpty()) {
+       if (workOrderEstimate.getWorkOrderActivities().isEmpty()) {
             final String billNumbers = letterOfAcceptanceService.checkIfBillsCreated(id);
             if (!billNumbers.equals(""))
                 message = messageSource.getMessage("error.loa.bills.created", new String[] { billNumbers }, null);
@@ -312,6 +316,11 @@ public class AjaxLetterOfAcceptanceController {
             final String mbRefNumbers = letterOfAcceptanceService.checkIfMBCreatedForLOA(workOrderEstimate);
             if (!mbRefNumbers.equals(""))
                 message = messageSource.getMessage("error.loa.mb.created", new String[] { mbRefNumbers }, null);
+            else if(!workOrderEstimate.getWorkOrderActivities().isEmpty()) {
+                final String revisionEstimates = revisionWorkOrderService.getRevisionEstimatesForWorkOrder(workOrder.getId());
+                if (!revisionEstimates.equals(""))
+                    message = messageSource.getMessage("error.revisionestimates.created", new String[] { revisionEstimates }, null);
+            }
         }
         return message;
     }

@@ -45,6 +45,7 @@ import java.util.List;
 import org.egov.infra.admin.master.entity.User;
 import org.egov.works.contractorbill.entity.ContractorBillRegister;
 import org.egov.works.mb.entity.MBHeader;
+import org.egov.works.revisionestimate.entity.enums.RevisionType;
 import org.egov.works.workorder.entity.WorkOrder;
 import org.egov.works.workorder.entity.WorkOrderEstimate;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -130,5 +131,8 @@ public interface MBHeaderRepository extends JpaRepository<MBHeader, Long> {
     
     @Query("select mbh from MBHeader mbh where mbh.workOrderEstimate.id = :workOrderEstimateId and mbh.egBillregister.id < :contractorBillId ")
     List<MBHeader> findMBHeadersTillDate(@Param("contractorBillId") final Long contractorBillId,@Param("workOrderEstimateId") final Long workOrderEstimateId);
+    
+    @Query("select mbh from MBHeader mbh where exists (select mbd.mbHeader from MBDetails mbd where mbd.workOrderActivity.workOrderEstimate.estimate.id =:revisionEstimateId and mbd.workOrderActivity.workOrderEstimate.id =:revisionWorkOrderId and mbd.workOrderActivity.activity.revisionType in(:nonTenderderRevisionType,:lumpSumRevisionType) and mbd.mbHeader.egwStatus.code != :mbStatus)")
+    List<MBHeader> findMBHeadersForRevisionEstimate(@Param("revisionEstimateId") Long revisionEstimateId,@Param("revisionWorkOrderId") Long revisionWorkOrderEstimateId,@Param("nonTenderderRevisionType") RevisionType nonTenderderRevisionType,@Param("lumpSumRevisionType") RevisionType lumpSumRevisionType,@Param("mbStatus") String mbStatus);
     
 }

@@ -52,7 +52,6 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonSerializationContext;
 import com.google.gson.JsonSerializer;
 
-@Component
 public class RevisionEstimateJsonAdaptor implements JsonSerializer<SearchRevisionEstimate> {
 
     @Override
