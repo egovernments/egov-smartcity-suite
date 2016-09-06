@@ -170,7 +170,7 @@ public class SewerageConnectionSmsAndEmailService {
                             getSmsAndEmailForChangeInClosets(sewerageApplicationDetails, email_id, mobileno,
                                     applicantName);
                         }else if(CLOSESEWERAGECONNECTION.equalsIgnoreCase(sewerageApplicationDetails.getApplicationType().getCode())){
-                            getSmsAndEmailForCloseConnection(sewerageApplicationDetails, email_id, mobileNumber, applicantName);
+                            getSmsAndEmailForCloseConnection(sewerageApplicationDetails, email_id, mobileno, applicantName);
                         }
 
                     }
