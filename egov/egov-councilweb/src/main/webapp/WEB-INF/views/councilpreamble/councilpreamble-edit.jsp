@@ -58,7 +58,7 @@
 </form:form>
 
 	<script src="<c:url value='/resources/app/js/councilPreambleHelper.js?rnd=${app_release_no}'/>"></script>	
-	
+	<script src="<c:url value='/resources/global/js/egov/inbox.js' context='/egi'/>"></script>
 <script>
 	$('#buttonSubmit').click(function(e) {
 		if ($('form').valid()) {
