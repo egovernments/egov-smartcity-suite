@@ -13,6 +13,7 @@ import org.apache.log4j.Logger;
 import org.egov.commons.dao.EgwStatusHibernateDAO;
 import org.egov.council.autonumber.PreambleNumberGenerator;
 import org.egov.council.entity.CouncilPreamble;
+import org.egov.council.entity.enums.PreambleType;
 import org.egov.council.service.CouncilPreambleService;
 import org.egov.council.service.CouncilThirdPartyService;
 import org.egov.council.utils.constants.CouncilConstants;
@@ -87,6 +88,7 @@ public class CouncilPreambleController extends GenericWorkFlowController {
     public String newForm(final Model model) {
         prepareNewForm(model);
         CouncilPreamble councilPreamble = new CouncilPreamble();
+        councilPreamble.setType(PreambleType.GENERAL);
         model.addAttribute("councilPreamble",councilPreamble);
         prepareWorkFlowOnLoad(model, councilPreamble);
         model.addAttribute("currentState", "NEW");
@@ -121,6 +123,7 @@ public class CouncilPreambleController extends GenericWorkFlowController {
         councilPreamble.setPreambleNumber(preamblenumbergenerator.getNextNumber(councilPreamble));
         councilPreamble.setStatus(egwStatusHibernateDAO.getStatusByModuleAndCode(CouncilConstants.PREAMBLE_MODULENAME,
                 CouncilConstants.PREAMBLE_STATUS_CREATED));
+        councilPreamble.setType(PreambleType.GENERAL);
         
         
         Long approvalPosition = 0l;

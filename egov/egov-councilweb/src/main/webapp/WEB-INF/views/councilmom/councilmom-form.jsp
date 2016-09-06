@@ -45,7 +45,6 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt"%>
  <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
  
-<div class="main-content">
 	<div class="row">
 		<div class="col-md-12">
 			<div class="panel panel-primary" data-collapsed="0">
@@ -88,13 +87,14 @@
 						<div class="col-sm-3 add-margin view-content">
 							${councilMeeting.meetingTime}</div>
 					</div>
-					<div class="panel-body">
+					</div>
+					
 						<div class="panel-heading">
 							<div class="panel-title">
 								<spring:message code="lbl.agenda.details" />
 							</div>
 						</div>
-						
+						<div class="panel-body custom">
 						<p>The length of the companies collection is : ${fn:length(councilMeeting.meetingMOMs)}</p>
 						
 						<table class="table table-bordered">
@@ -122,15 +122,15 @@
 													<td><c:out value="${mom.agenda.agendaNumber}" /></td>
 													<td><c:out value="${mom.preamble.preambleNumber}" /></td>
 													<td><input type="textarea" class="form-control" required="required"
-														data-unique
+														data-unique id="resoltionDetail"
 														name="meetingMOMs[${counter.index}].resolutionDetail"
 														minlength="5" maxlength="512"
 														value="${mom.resolutionDetail}" /></td>
 													<td>
-													<form:select path="meetingMOMs[${counter.index}].resolutionStatus"
-																	id="resolutionStatus" cssClass="form-control" required="required"
-																	cssErrorClass="form-control error">
-																	<form:option value="${mom.resolutionStatus}">
+													<form:select  path="meetingMOMs[${counter.index}].resolutionStatus"
+																	id="resolutionStatus" cssClass="form-control" 
+																	cssErrorClass="form-control error"  required="required">
+																	<form:option value="">
 																		<spring:message code="lbl.select" />
 																	</form:option>
 																	<form:options items="${resolutionStatus}"
@@ -158,15 +158,14 @@
 				</div>
 			</div>
 		</div>
-	</div>
-</div>
+	
 <input type="hidden" name="councilMeeting" value="${councilMeeting.id}" />
 
 <div class="row display-hide agenda-section">
 	<div class="col-md-6 table-header text-left">Sumoto Resolution</div>
 	<!-- <div class="col-md-6 text-right pull-right"><button type="button" class="btn btn-primary" id="add-agenda">Add Row</button></div> -->
-
-		<div class="col-md-12 form-group report-table-container">
+		<div class="panel-body custom">	
+		<!-- <div class="col-md-12 form-group report-table-container"> -->
 		<table id="sumotoTable" class="table table-bordered">
 			<thead>
 				
@@ -182,17 +181,16 @@
 			</thead>
 			 <tbody data-existing-len="${fn:length(councilMeeting.meetingMOMs)}"> 
 			 
+			 
 			</tbody>
 		</table>
 		
-	</div>
+	<!-- </div> -->
+</div>
 </div>
 <script>
 	$('#buttonSubmit').click(function(e) {
-		if ($('form').valid()) {
-		} else {
-			e.preventDefault();
-		}
+		document.forms["councilMomform"].submit();
 	});
 </script>
 

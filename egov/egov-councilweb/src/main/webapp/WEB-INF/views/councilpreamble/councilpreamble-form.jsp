@@ -36,7 +36,7 @@
 					<form:textarea path="gistOfPreamble" class="form-control text-left patternvalidation" maxlength="5000" required ="required"/>
 					<form:errors path="gistOfPreamble" cssClass="error-msg" />
 				</div>
-				<label class="col-sm-2 control-label text-right"><spring:message
+				<%-- <label class="col-sm-2 control-label text-right"><spring:message
 						code="lbl.PreambleType" /> <span class="mandatory"></span></label>
 				<div class="col-sm-3 add-margin">
 					<form:select path="type" id="type" required="required"
@@ -47,7 +47,7 @@
 						<form:options items="${type}" />
 					</form:select>
 					<form:errors path="type" cssClass="error-msg" />
-				</div>
+				</div> --%>
 			</div>
 				
 				<div class="form-group">
@@ -104,6 +104,8 @@
 				</div>
 				<input type="hidden" name="councilPreamble" value="${councilPreamble.id}" />
 					<form:hidden path="preambleNumber" id="preambleNumber" value="${councilPreamble.preambleNumber}" />
+					<form:hidden path="type" id="type" value="${councilPreamble.type}" />
+					
 			</div>
 		</div>
 	</div>

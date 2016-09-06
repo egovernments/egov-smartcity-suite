@@ -133,7 +133,7 @@ var row = '<tr>'+
  '<td><input type="textarea" class="form-control" required="required" name="meetingMOMs[{{idx}}].preamble.gistOfPreamble" {{readonly}} value="{{gistTextBoxValue}}"/></td>'+
  '<td><input type="text" class="form-control" name="meetingMOMs[{{idx}}].preamble.sanctionAmount" {{readonly}} value="{{amountTextBoxValue}}"/></td>'+
  '<td><input type="text" class="form-control" required="required" name="meetingMOMs[{{idx}}].resolutionDetail" {{readonly}} value="{{amountTextBoxValue}}"/></td>'+
- '<td><select name="meetingMOMs[{{idx}}].resolutionStatus" required="required" class="form-control"><option value="">Loading...</option></select></td>'+
+ '<td><select name="meetingMOMs[{{idx}}].resolutionStatus" class="form-control" required="required"><option value="">Loading...</option></select></td>'+
  /*'<td><input type="hidden" class="form-control" name="meetingMOMs[{{idx}}].preamble.id" {{readonly}} value="{{departmentId}}"/>'+*/
 '</tr>';
 jQuery('#add-sumoto').click(function(){
@@ -292,10 +292,12 @@ $("#buttonSubmit").click(function(e){
 		return true;
 });  
 
+
+
 $('#buttonFinalSubmit')
 .click(
 		function(e) {
-			if ($('form').valid()) {
+					if ($('form').valid()) {
 				bootbox
 						.confirm({
 							message : 'Information entered in this screen will not be modified once submitted,Please confirm yes to save',
@@ -311,7 +313,7 @@ $('#buttonFinalSubmit')
 							},
 							callback : function(result) {
 								if (result) {
-									 var action = '/council/councilmom/councilmom/generateresolution';
+									 var action = '/council/councilmom/generateresolution';
 							 			$('#councilMomform').attr('method', 'get');
 							 			$('#councilMomform').attr('action', action); 
 							 			//$('#councilMomform').submit();
@@ -325,3 +327,22 @@ $('#buttonFinalSubmit')
 				e.preventDefault();
 			}
 });
+
+
+/*$(document).ready(function() {
+    $("#councilMomform").validate({
+        rules: {
+        	resolutionStatus: "required"
+        },
+        messages: {
+        	resolutionStatus: "Please select the status"
+        },
+        rules: {
+        	resolutionDetail: "required"
+        },
+        messages: {
+        	resolutionDetail: "Please fill the resolution details"
+        }
+    })
+});
+*/

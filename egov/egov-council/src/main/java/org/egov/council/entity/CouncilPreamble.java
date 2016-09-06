@@ -68,7 +68,7 @@ public class CouncilPreamble extends StateAware {
     @JoinColumn(name = "status", nullable = false)
     private EgwStatus status;
 
-    @NotNull
+    
     @Enumerated(EnumType.ORDINAL)
     private PreambleType type;
 
