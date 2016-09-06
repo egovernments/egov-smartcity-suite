@@ -89,6 +89,7 @@ public class HearingsController {
             @RequestParam("lcNumber") final String lcNumber, final RedirectAttributes redirectAttrs, final Model model,
             final HttpServletRequest request) {
         final LegalCase legalCase = getLegalCase(lcNumber, request);
+        hearingsService.validateDate(hearings,legalCase, errors);
         if (errors.hasErrors()) {
             model.addAttribute("legalCase", legalCase);
             return "hearings-new";

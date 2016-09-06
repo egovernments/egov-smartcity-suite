@@ -56,6 +56,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.validation.BindingResult;
 
 @Service
 @Transactional(readOnly = true)
@@ -107,5 +108,22 @@ public class HearingsService {
         }
 
     }
+
+    public BindingResult validateDate(final Hearings hearings, final LegalCase legalCase, final BindingResult errors)
+            {
+
+        if (!DateUtils.compareDates(hearings.getHearingDate(), hearings.getLegalCase().getCaseDate())) {
+            errors.rejectValue("hearingDate", "ValidateDate.hearing.casedate");
+        }
+        final List<Hearings> hearingsList = legalCase.getHearings();
+        int count = 0;
+        for (final Hearings hearings2 : hearingsList)
+            if (DateUtils.compareDates(hearings2.getHearingDate(), new Date()))
+                count++;
+        if (count >= 1)
+            errors.rejectValue("hearingDate", "ValidateDate.hearing.futuredate");
+        return errors;
+    }
+    
 
 }

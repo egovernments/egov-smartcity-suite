@@ -54,10 +54,6 @@
 		value="${legalCase.caseDate}" <fmt pattern="dd/MM/yyyy"/>  />	 
 	<jsp:include page="../transactions/viewSummarizedCase.jsp"/>
 	<%@ include file="hearings-form.jsp"%>
-	</div>
-	</div>
-	</div>
-	</div>
 	<div class="form-group">
 		<div class="text-center">
 			<form:button type="submit" name="button" id="buttonid"
