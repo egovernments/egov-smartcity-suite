@@ -70,7 +70,7 @@ public class StandingCouncilController {
     public String viewForm(@ModelAttribute("legalCaseAdvocate") LegalCaseAdvocate legalCaseAdvocate,
             @RequestParam("lcNumber") final String lcNumber, final Model model, final HttpServletRequest request) {
         final LegalCase legalCase = getLegalCase(lcNumber);
-        final List<LegalCaseAdvocate> legalAdvocateList = getLegalCase(lcNumber).getEglcLegalcaseAdvocates();
+        final List<LegalCaseAdvocate> legalAdvocateList = getLegalCase(lcNumber).getLegalCaseAdvocates();
         if (!legalAdvocateList.isEmpty())
             legalCaseAdvocate = legalAdvocateList.get(0);
         model.addAttribute("legalCase", legalCase);

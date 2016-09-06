@@ -42,7 +42,6 @@ package org.egov.lcms.transactions.service;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
-import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
@@ -118,13 +117,13 @@ public class LegalCaseService {
         final List<LegalCaseDocuments> legalDoc = legalCaseUtil.getLegalCaseDocumentList(legalcase);
         legalcase = prepareChildEntities(legalcase);
         processAndStoreApplicationDocuments(legalcase, legalDoc);
-        updateNextDate(legalcase,legalcase.getEglcPwrs());
+        updateNextDate(legalcase, legalcase.getPwrList());
         return legalCaseRepository.save(legalcase);
     }
 
     @Transactional
     public LegalCase update(final LegalCase legalcase) {
-        updateLegalCaseDeptAndPwr(legalcase, legalcase.getEglcPwrs(), legalcase.getLegalCaseDepartment());
+        updateLegalCaseDeptAndPwr(legalcase, legalcase.getPwrList(), legalcase.getLegalCaseDepartment());
         processAndStorePwrDocuments(legalcase);
         return legalCaseRepository.save(legalcase);
     }
@@ -140,14 +139,14 @@ public class LegalCaseService {
             legalpwr.setCaFilingdate(new Date());
             pwrListtemp.add(legalpwr);
         }
-        legalcase.getEglcPwrs().clear();
-        legalcase.setEglcPwrs(pwrListtemp);
-        for (final CounterAffidavit counterAffidavit : legalcase.getEglcCounterAffidavit()) {
+        legalcase.getPwrList().clear();
+        legalcase.setPwrList(pwrListtemp);
+        for (final CounterAffidavit counterAffidavit : legalcase.getCounterAffidavits()) {
             counterAffidavit.setLegalCase(legalcase);
             caListtemp.add(counterAffidavit);
         }
-        legalcase.getEglcCounterAffidavit().clear();
-        legalcase.setEglcCounterAffidavit(caListtemp);
+        legalcase.getCounterAffidavits().clear();
+        legalcase.setCounterAffidavits(caListtemp);
         for (final LegalCaseDepartment legaldeptObj : legalDept) {
             legaldeptObj.setLegalCase(legalcase);
             legaldeptObj.setPosition(legalCaseUtil.getPositionByName(legaldeptObj.getPosition().getName()));
@@ -160,21 +159,11 @@ public class LegalCaseService {
     }
 
     public List<LegalCaseDocuments> getLegalCaseDocList(final LegalCase legalCase) {
-        List<LegalCaseDocuments> legalDOc = null;
-        final Set<LegalCaseDocuments> legalDOcSet = new HashSet<LegalCaseDocuments>();
-        for (final LegalCaseDocuments legalDoc : legalCase.getLegalCaseDocuments())
-            legalDOcSet.add(legalDoc);
-        legalDOc = new ArrayList<LegalCaseDocuments>(legalDOcSet);
-        return legalDOc;
+        return legalCase.getLegalCaseDocuments();
     }
 
     public List<PwrDocuments> getPwrDocList(final LegalCase legalCase) {
-        List<PwrDocuments> legalPwrDOc = null;
-        final Set<PwrDocuments> legalDOcSet = new HashSet<PwrDocuments>();
-        for (final PwrDocuments legalDoc1 : legalCase.getEglcPwrs().get(0).getPwrDocuments())
-            legalDOcSet.add(legalDoc1);
-        legalPwrDOc = new ArrayList<PwrDocuments>(legalDOcSet);
-        return legalPwrDOc;
+        return legalCase.getPwrList().get(0).getPwrDocuments();
     }
 
     public LegalCase prepareChildEntities(final LegalCase legalcase) {
@@ -205,14 +194,14 @@ public class LegalCaseService {
         final Set<BipartisanDetails> uniqueSet = new LinkedHashSet<BipartisanDetails>(legalcase.getBipartisanDetails());
         legalcase.getBipartisanDetails().clear();
         legalcase.getBipartisanDetails().addAll(uniqueSet);
-        if (!legalcase.getEglcPwrs().isEmpty()) {
-            for (final Pwr legalpwr : legalcase.getEglcPwrs()) {
+        if (!legalcase.getPwrList().isEmpty()) {
+            for (final Pwr legalpwr : legalcase.getPwrList()) {
                 legalpwr.setLegalCase(legalcase);
-               // legalpwr.setCaFilingdate(new Date());
+                // legalpwr.setCaFilingdate(new Date());
                 pwrListtemp.add(legalpwr);
             }
-            legalcase.getEglcPwrs().clear();
-            legalcase.setEglcPwrs(pwrListtemp);
+            legalcase.getPwrList().clear();
+            legalcase.setPwrList(pwrListtemp);
         }
         return legalcase;
     }
@@ -223,11 +212,11 @@ public class LegalCaseService {
         AdvocateMaster seniorLegalMaster = null;
         final AdvocateMaster advocateName = advocateMasterService
                 .findByName(legalCaseAdvocate.getAdvocateMaster().getName());
-        if (legalCaseAdvocate.getEglcSeniorAdvocateMaster().getName() != null)
+        if (legalCaseAdvocate.getSeniorAdvocate().getName() != null)
             seniorLegalMaster = advocateMasterService
-                    .findByName(legalCaseAdvocate.getEglcSeniorAdvocateMaster().getName());
-        if (!legalCaseAdvocate.getLegalCase().getEglcLegalcaseAdvocates().isEmpty()) {
-            legalCaseAdvocatetemp = legalCaseAdvocate.getLegalCase().getEglcLegalcaseAdvocates().get(0);
+            .findByName(legalCaseAdvocate.getSeniorAdvocate().getName());
+        if (!legalCaseAdvocate.getLegalCase().getLegalCaseAdvocates().isEmpty()) {
+            legalCaseAdvocatetemp = legalCaseAdvocate.getLegalCase().getLegalCaseAdvocates().get(0);
             legalCaseAdvocatetemp.setAdvocateMaster(advocateName);
             legalCaseAdvocatetemp.setAssignedtodate(legalCaseAdvocate.getAssignedtodate());
             legalCaseAdvocatetemp.setVakalatdate(legalCaseAdvocate.getVakalatdate());
@@ -235,20 +224,20 @@ public class LegalCaseService {
             legalCaseAdvocatetemp.setIsActive(Boolean.TRUE);
             legalCaseAdvocatetemp.setChangeAdvocate(legalCaseAdvocate.getChangeAdvocate());
             legalCaseAdvocatetemp.setChangeSeniorAdvocate(legalCaseAdvocate.getChangeSeniorAdvocate());
-            legalCaseAdvocatetemp.setEglcSeniorAdvocateMaster(seniorLegalMaster);
+            legalCaseAdvocatetemp.setSeniorAdvocate(seniorLegalMaster);
             legalCaseAdvocatetemp.setAssignedtodateForsenior(legalCaseAdvocate.getAssignedtodateForsenior());
             legalCaseAdvocatetemp.setOrderdate(legalCaseAdvocate.getOrderdate());
             legalCaseAdvocatetemp.setOrdernumber(legalCaseAdvocate.getOrdernumber());
             legalCaseAdvocatetemp.setOrderdateJunior(legalCaseAdvocate.getOrderdateJunior());
             legalCaseAdvocatetemp.setOrdernumberJunior(legalCaseAdvocate.getOrdernumberJunior());
-            legalCaseAdvocate.getLegalCase().getEglcLegalcaseAdvocates().add(legalCaseAdvocatetemp);
+            legalCaseAdvocate.getLegalCase().getLegalCaseAdvocates().add(legalCaseAdvocatetemp);
 
         } else {
             legalCaseAdvocate.setAdvocateMaster(advocateName);
             legalCaseAdvocate.getLegalCase().setIsSenioradvrequired(legalCaseAdvocate.getIsSeniorAdvocate());
-            legalCaseAdvocate.setEglcSeniorAdvocateMaster(seniorLegalMaster);
+            legalCaseAdvocate.setSeniorAdvocate(seniorLegalMaster);
             legalCaseAdvocate.setIsActive(Boolean.TRUE);
-            legalCaseAdvocate.getLegalCase().getEglcLegalcaseAdvocates().add(legalCaseAdvocate);
+            legalCaseAdvocate.getLegalCase().getLegalCaseAdvocates().add(legalCaseAdvocate);
         }
         return legalCaseRepository.save(legalCaseAdvocate.getLegalCase());
 
@@ -279,10 +268,10 @@ public class LegalCaseService {
     @Transactional
     public void processAndStorePwrDocuments(final LegalCase legalcase) {
         final List<PwrDocuments> pwrDocList = new ArrayList<PwrDocuments>();
-        if (!legalcase.getEglcPwrs().get(0).getPwrDocuments().isEmpty())
-            for (final PwrDocuments pwr : legalcase.getEglcPwrs().get(0).getPwrDocuments())
+        if (!legalcase.getPwrList().get(0).getPwrDocuments().isEmpty())
+            for (final PwrDocuments pwr : legalcase.getPwrList().get(0).getPwrDocuments())
                 if (pwr != null && pwr.getId() == null) {
-                    pwr.setPwr(legalcase.getEglcPwrs().get(0));
+                    pwr.setPwr(legalcase.getPwrList().get(0));
                     pwr.setDocumentName("Pwr");
                     pwr.setSupportDocs(addToFileStore(pwr.getFiles()));
                     pwrDocList.add(pwr);
@@ -308,19 +297,17 @@ public class LegalCaseService {
     public LegalCase save(final LegalCase legalcase) {
         return legalCaseRepository.save(legalcase);
     }
-    
-    
-    public void updateNextDate(final LegalCase legalCase, final List<Pwr> pwr) {
-  
-        if (pwr.get(0).getCaFilingdate() != null) {
-            legalCase.setNextDate(pwr.get(0).getCaFilingdate());
-        } else if (pwr.get(0) .getCaDueDate()!= null) {
-            legalCase.setNextDate(pwr.get(0).getCaDueDate());
-        } else if (pwr.get(0).getPwrDueDate()!= null) {
-            legalCase.setNextDate(pwr.get(0).getPwrDueDate());
-        } else {
-            legalCase.setNextDate(legalCase.getCaseDate());
-        }
 
-}
+    public void updateNextDate(final LegalCase legalCase, final List<Pwr> pwr) {
+
+        if (pwr.get(0).getCaFilingdate() != null)
+            legalCase.setNextDate(pwr.get(0).getCaFilingdate());
+        else if (pwr.get(0).getCaDueDate() != null)
+            legalCase.setNextDate(pwr.get(0).getCaDueDate());
+        else if (pwr.get(0).getPwrDueDate() != null)
+            legalCase.setNextDate(pwr.get(0).getPwrDueDate());
+        else
+            legalCase.setNextDate(legalCase.getCaseDate());
+
+    }
 }

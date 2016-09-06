@@ -183,7 +183,7 @@ public class Hearings extends AbstractAuditable {
 
     public Date getCaDueDate() {
         Date caDueDate = null;
-        for (final Pwr pwr : getLegalCase().getEglcPwrs())
+        for (final Pwr pwr : getLegalCase().getPwrList())
             caDueDate = pwr.getCaDueDate();
         return caDueDate;
     }

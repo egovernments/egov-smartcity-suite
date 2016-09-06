@@ -386,7 +386,7 @@
 			</div>
 		</div>
 		<div class="row form-group">
-			<c:if test="${not empty legalCase.eglcLegalcaseAdvocates }">
+			<c:if test="${not empty legalCase.legalCaseAdvocates }">
 				<div class="panel-heading">
 					<div class="panel-title" align="center" style="font-weight: bold">
 						Standing Council Details:</div>
@@ -404,13 +404,13 @@
 													Council: </label>
 												<div class="col-sm-3 add-margin">
 													<c:out
-														value="${legalCase.eglcLegalcaseAdvocates[0].advocateMaster.name}" />
+														value="${legalCase.legalCaseAdvocates[0].advocateMaster.name}" />
 												</div>
 												<label class="col-sm-2 control-label text-right">Assigned
 													Date: </label>
 												<div class="col-sm-3 add-margin">
 													<fmt:formatDate pattern="dd/MM/yyyy"
-														value="${legalCase.eglcLegalcaseAdvocates[0].assignedtodate}"
+														value="${legalCase.legalCaseAdvocates[0].assignedtodate}"
 														var="assignDate" />
 													<c:out value="${assignDate}" />
 												</div>
@@ -420,7 +420,7 @@
 													on which Vakalaat filed:</label>
 												<div class="col-sm-3 add-margin">
 													<fmt:formatDate pattern="dd/MM/yyyy"
-														value="${legalCase.eglcLegalcaseAdvocates[0].vakalatdate}"
+														value="${legalCase.legalCaseAdvocates[0].vakalatdate}"
 														var="assignDate" />
 													<c:out value="${assignDate}" />
 												</div>
@@ -446,7 +446,7 @@
 														Standing Council: </label>
 													<div class="col-sm-3 add-margin">
 														<c:out
-															value="${legalCase.eglcLegalcaseAdvocates[0].eglcSeniorAdvocateMaster.name}" />
+															value="${legalCase.legalCaseAdvocates[0].seniorAdvocate.name}" />
 
 													</div>
 													<div class="form-group" id="seniordov3">
@@ -455,7 +455,7 @@
 														<div class="col-sm-3 add-margin">
 
 															<fmt:formatDate pattern="dd/MM/yyyy"
-																value="${legalCase.eglcLegalcaseAdvocates[0].assignedtodateForsenior}"
+																value="${legalCase.legalCaseAdvocates[0].assignedtodateForsenior}"
 																var="assignDate" />
 															<c:out value="${assignDate}" />
 														</div>
@@ -467,7 +467,7 @@
 													<div class="col-sm-3 add-margin">
 
 														<fmt:formatDate pattern="dd/MM/yyyy"
-															value="${legalCase.eglcLegalcaseAdvocates[0].orderdate}"
+															value="${legalCase.legalCaseAdvocates[0].orderdate}"
 															var="assignDate" />
 														<c:out value="${assignDate}" />
 													</div>
@@ -475,7 +475,7 @@
 														Number: </label>
 													<div class="col-sm-3 add-margin">
 														<c:out
-															value="${legalCase.eglcLegalcaseAdvocates[0].ordernumber}" />
+															value="${legalCase.legalCaseAdvocates[0].ordernumber}" />
 													</div>
 											</c:if>
 										</div>
