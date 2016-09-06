@@ -96,13 +96,13 @@
 
 <div class="form-group">
 	<label class="col-sm-3 control-label text-right"><spring:message code="lbl.dateofagreement" />
-		<c:if test="${lineEstimateDetails.lineEstimate.spillOverFlag && lineEstimateDetails.lineEstimate.workOrderCreated }">
+		<c:if test="${abstractEstimate.lineEstimateDetails.lineEstimate.spillOverFlag && abstractEstimate.lineEstimateDetails.lineEstimate.workOrderCreated }">
 			<span class="mandatory"></span>
 		</c:if>
 	</label>
 	<div class="col-sm-3 add-margin">
 		<c:choose>
-			<c:when test="${lineEstimateDetails.lineEstimate.spillOverFlag && lineEstimateDetails.lineEstimate.workOrderCreated }">
+			<c:when test="${abstractEstimate.lineEstimateDetails.lineEstimate.spillOverFlag && abstractEstimate.lineEstimateDetails.lineEstimate.workOrderCreated }">
 				<form:input path="workOrderDate" id="workOrderDate" type="text" class="form-control datepicker" data-date-end-date="0d" required="required"/>
 			</c:when>
 			<c:otherwise>
