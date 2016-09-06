@@ -83,7 +83,7 @@ public class DailyBoardReportsController extends GenericLegalCaseController {
     }
     @ExceptionHandler(Exception.class)
     @RequestMapping(value = "/dailyBoardReportresults", method = RequestMethod.GET, produces = MediaType.TEXT_PLAIN_VALUE)
-    public @ResponseBody String getLegalCaseSearchResult(
+    public @ResponseBody String getDailyBoardReportResult(
            @RequestParam final Integer caseType,@RequestParam final Date fromDate,
             @RequestParam final Date toDate,
             @RequestParam final String officerIncharge, final HttpServletRequest request,
