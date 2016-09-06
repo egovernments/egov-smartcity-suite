@@ -267,6 +267,11 @@ public class SewerageTaxConstants {
     public static final String SMSEMAILTYPE_CHANGEINCLOSETS_CONN_SANCTIONED = "changeinclosetsofconnectionsanctioned";
     public static final String SMSEMAILTYPE_CHANGEINCLOSETS_CONN_REJECT = "changeinclosetsofconnectionreject";
     
+    // Sms And Email Code For Close Sewerage Connection
+    public static final String SMSEMAILTYPE_CLOSESEWERAGE_CONN_CREATE = "closesewerageconnectioncreate";
+    public static final String SMSEMAILTYPE_CLOSESEWERAGE_CONN_EEAPPROVE = "closesewerageconnectioneeapprove";
+    public static final String SMSEMAILTYPE_CLOSESEWERAGE_CONN_REJECT = "closesewerageconnectionreject";
+    
     public static final String DEMANDISHISTORY = "N";
     
  // Notice Types
