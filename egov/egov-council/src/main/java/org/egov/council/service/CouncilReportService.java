@@ -63,7 +63,7 @@ import org.springframework.transaction.annotation.Transactional;
 public class CouncilReportService {
 
     private final String AGENDA = "agenda";
-    String subReportPath = "agendaDetails.jasper";
+    private final String subReportPath = "agendaDetails.jasper";
     private final Map<String, Object> reportParams = new HashMap<String, Object>();
     private ReportRequest reportInput = null;
 
@@ -101,11 +101,11 @@ public class CouncilReportService {
         reportParams.put("meetingNumber", WordUtils.capitalize(councilMeeting.getMeetingNumber()).toString());
         meetingDateTimeLocation.append(DateUtils.getDefaultFormattedDate(councilMeeting.getMeetingDate()));
         if (null != councilMeeting.getMeetingTime()) {
-            meetingDateTimeLocation.append(" ");
+            meetingDateTimeLocation.append(' ');
             meetingDateTimeLocation.append(councilMeeting.getMeetingTime());
         }
         if (null != councilMeeting.getMeetingLocation()) {
-            meetingDateTimeLocation.append(" ");
+            meetingDateTimeLocation.append(' ');
             meetingDateTimeLocation.append(councilMeeting.getMeetingLocation());
         }
         reportParams.put("meetingDateTimePlace", meetingDateTimeLocation.toString());
