@@ -89,7 +89,7 @@ public class HearingsController {
             @RequestParam("lcNumber") final String lcNumber, final RedirectAttributes redirectAttrs, final Model model,
             final HttpServletRequest request) {
         final LegalCase legalCase = getLegalCase(lcNumber, request);
-        hearingsService.validateDate(hearings,legalCase, errors);
+        hearingsService.validateDate(hearings, legalCase, errors);
         if (errors.hasErrors()) {
             model.addAttribute("legalCase", legalCase);
             return "hearings-new";
@@ -106,7 +106,7 @@ public class HearingsController {
     public String getHearingsList(final Model model, @RequestParam("lcNumber") final String lcNumber,
             @Valid @ModelAttribute final Hearings hearings, final HttpServletRequest request) {
         final LegalCase legalCase = getLegalCase(lcNumber, request);
-        final List<Hearings> hearingsList = hearingsService.findBYLcNumber(lcNumber);
+        final List<Hearings> hearingsList = hearingsService.findByLCNumber(lcNumber);
         model.addAttribute("legalCase", legalCase);
         model.addAttribute("lcNumber", legalCase.getLcNumber());
         model.addAttribute("hearingsId", legalCase.getHearings());

@@ -65,7 +65,7 @@ public class LegalCaseDisposalController {
 
     @Autowired
     private LegalCaseService legalCaseService;
-    
+
     @ModelAttribute
     private LegalCase getLegalCase(@RequestParam("lcNumber") final String lcNumber) {
         final LegalCase legalCase = legalCaseService.findByLcNumber(lcNumber);
@@ -87,10 +87,10 @@ public class LegalCaseDisposalController {
             @RequestParam("lcNumber") final String lcNumber, final RedirectAttributes redirectAttrs, final Model model,
             final HttpServletRequest request) {
         final LegalCase legalCase = getLegalCase(lcNumber);
-        if (errors.hasErrors()){
+        if (errors.hasErrors()) {
             model.addAttribute("legalcase", legalCase);
             return "legalcaseDisposal-new";
-        }else
+        } else
             legalCaseDisposal.setLegalCase(legalCase);
         legalCaseDisposalService.persist(legalCaseDisposal);
         redirectAttrs.addFlashAttribute("legalCaseDisposal", legalCaseDisposal);

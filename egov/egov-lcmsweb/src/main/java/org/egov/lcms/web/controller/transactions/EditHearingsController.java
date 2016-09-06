@@ -62,11 +62,10 @@ public class EditHearingsController {
     @Autowired
     private HearingsService hearingsService;
 
-
     @RequestMapping(value = "/edit/{hearingsId}", method = RequestMethod.GET)
     public String edit(@PathVariable("hearingsId") final String hearingsId,
-    final Model model) {
-        
+            final Model model) {
+
         final Hearings hearings = hearingsService.findById(Long.parseLong(hearingsId));
 
         model.addAttribute("legalCase", hearings.getLegalCase());
@@ -76,14 +75,13 @@ public class EditHearingsController {
     }
 
     @RequestMapping(value = "/edit/{hearingsId}", method = RequestMethod.POST)
-    public String update(@PathVariable("hearingsId") final String hearingsId,@Valid @ModelAttribute final Hearings hearings,
+    public String update(@PathVariable("hearingsId") final String hearingsId, @Valid @ModelAttribute final Hearings hearings,
             final BindingResult errors, final Model model,
             final RedirectAttributes redirectAttrs, final HttpServletRequest request) {
-        LegalCase legalcase = hearings.getLegalCase();
-        
-        if(!DateUtils.compareDates(hearings.getHearingDate(),hearings.getLegalCase().getCaseDate())){
-            errors.rejectValue("hearingDate", "ValidateDate.hearing.casedate"); 
-        }
+        final LegalCase legalcase = hearings.getLegalCase();
+
+        if (!DateUtils.compareDates(hearings.getHearingDate(), hearings.getLegalCase().getCaseDate()))
+            errors.rejectValue("hearingDate", "ValidateDate.hearing.casedate");
         hearings.setLegalCase(legalcase);
         if (errors.hasErrors()) {
             model.addAttribute("legalCase", legalcase);

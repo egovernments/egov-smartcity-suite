@@ -86,7 +86,7 @@ public class HearingsService {
         return hearingsRepository.findOne(id);
     }
 
-    public List<Hearings> findBYLcNumber(final String lcNumber) {
+    public List<Hearings> findByLCNumber(final String lcNumber) {
         return hearingsRepository.findByLegalCase_lcNumber(lcNumber);
     }
 
@@ -110,11 +110,10 @@ public class HearingsService {
     }
 
     public BindingResult validateDate(final Hearings hearings, final LegalCase legalCase, final BindingResult errors)
-            {
+    {
 
-        if (!DateUtils.compareDates(hearings.getHearingDate(), hearings.getLegalCase().getCaseDate())) {
+        if (!DateUtils.compareDates(hearings.getHearingDate(), hearings.getLegalCase().getCaseDate()))
             errors.rejectValue("hearingDate", "ValidateDate.hearing.casedate");
-        }
         final List<Hearings> hearingsList = legalCase.getHearings();
         int count = 0;
         for (final Hearings hearings2 : hearingsList)
@@ -124,6 +123,5 @@ public class HearingsService {
             errors.rejectValue("hearingDate", "ValidateDate.hearing.futuredate");
         return errors;
     }
-    
 
 }

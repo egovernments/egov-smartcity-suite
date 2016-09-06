@@ -40,19 +40,12 @@
 package org.egov.lcms.transactions.service;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Set;
-import java.util.stream.Collectors;
 
-import org.apache.commons.lang3.ArrayUtils;
 import org.egov.commons.EgwStatus;
-import org.egov.infra.exception.ApplicationRuntimeException;
-import org.egov.infra.filestore.entity.FileStoreMapper;
-import org.egov.infra.filestore.service.FileStoreService;
 import org.egov.infra.utils.DateUtils;
 import org.egov.lcms.transactions.entity.LcInterimOrderDocuments;
 import org.egov.lcms.transactions.entity.LegalCase;
@@ -62,11 +55,9 @@ import org.egov.lcms.transactions.repository.LegalCaseRepository;
 import org.egov.lcms.utils.LegalCaseUtil;
 import org.egov.lcms.utils.constants.LcmsConstants;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.multipart.MultipartFile;
 
 @Service
 @Transactional(readOnly = true)
@@ -79,10 +70,6 @@ public class LegalCaseInterimOrderService {
 
     @Autowired
     private LegalCaseRepository legalCaseRepository;
-
-    @Autowired
-    @Qualifier("fileStoreService")
-    protected FileStoreService fileStoreService;
 
     @Autowired
     public LegalCaseInterimOrderService(final LegalCaseInterimOrderRepository legalCaseInterimOrderRepository) {
@@ -121,25 +108,11 @@ public class LegalCaseInterimOrderService {
                     .getLcInterimOrderDocuments()) {
                 applicationDocument.setLegalCaseInterimOrder(legalCaseInterimOrder);
                 applicationDocument.setDocumentName("LcInterimOrder");
-                applicationDocument.setSupportDocs(addToFileStore(applicationDocument.getFiles()));
+                applicationDocument.setSupportDocs(legalCaseUtil.addToFileStore(applicationDocument.getFiles()));
             }
     }
 
-    protected Set<FileStoreMapper> addToFileStore(final MultipartFile[] files) {
-        if (ArrayUtils.isNotEmpty(files))
-            return Arrays.asList(files).stream().filter(file -> !file.isEmpty()).map(file -> {
-                try {
-                    return fileStoreService.store(file.getInputStream(), file.getOriginalFilename(),
-                            file.getContentType(), LcmsConstants.FILESTORE_MODULECODE);
-                } catch (final Exception e) {
-                    throw new ApplicationRuntimeException("Error occurred while getting inputstream", e);
-                }
-            }).collect(Collectors.toSet());
-        else
-            return null;
-    }
-
-    public List<LegalCaseInterimOrder> findBYLcNumber(final String lcNumber) {
+    public List<LegalCaseInterimOrder> findByLCNumber(final String lcNumber) {
         return legalCaseInterimOrderRepository.findByLegalCase_lcNumber(lcNumber);
     }
 
