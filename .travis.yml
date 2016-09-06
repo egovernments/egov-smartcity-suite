@@ -1,0 +1,25 @@
+language: java
+notifications:
+  email:
+    - phoenix-dev@egovernments.org
+env:
+  global:
+  - TERM=dumb
+cache:
+  directories:
+    - $HOME/.m2
+before_install:
+ - cd egov
+addons:
+  postgresql: "9.4"
+services:
+  - postgresql
+install:
+  -
+
+matrix:
+  fast_finish: true
+  include:
+    - jdk: oraclejdk8
+      env: DESC="tests and package" CMD="travis_wait 60 mvn clean package -q -V -B -s settings.xml -DskipTests -Dmaven.javadoc.skip=true -Ddb.url=jdbc:postgresql://localhost:5432/travis -Ddb.password= -Ddb.user=postgres -Ddb.driver=org.postgresql.Driver -Dbuild.number=1"
+script: eval $CMD
