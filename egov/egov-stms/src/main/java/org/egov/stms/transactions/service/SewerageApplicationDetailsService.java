@@ -369,7 +369,7 @@ public class SewerageApplicationDetailsService {
              * created even though there is Property Tax Due present.
              **/
             if (!sewerageTaxUtils.isNewConnectionAllowedIfPTDuePresent())
-                errorMessage = stmsMessageSource.getMessage("err.validate.property.taxdue", new String[] {
+                errorMessage = stmsMessageSource.getMessage("err.validate.seweragenewconnection.property.taxdue", new String[] {
                         assessmentDetails.getPropertyDetails().getTaxDue().toString(), asessmentNumber, "new" }, null);
         return errorMessage;
     }
@@ -380,19 +380,19 @@ public class SewerageApplicationDetailsService {
         if (sewerageApplicationDetails != null && !sewerageApplicationDetails.isEmpty())
             if (sewerageApplicationDetails.get(0).getConnection().getStatus().toString()
                     .equalsIgnoreCase(SewerageConnectionStatus.ACTIVE.toString()))
-                validationMessage = stmsMessageSource.getMessage("err.validate.newconnection.active", new String[] {
+                validationMessage = stmsMessageSource.getMessage("err.validate.seweragenewconnection.active", new String[] {
                         sewerageApplicationDetails.get(0).getConnection().getShscNumber(), propertyID }, null);
             else if (sewerageApplicationDetails.get(0).getConnection().getStatus().toString()
                     .equalsIgnoreCase(SewerageConnectionStatus.INPROGRESS.toString()))
-                validationMessage = stmsMessageSource.getMessage("err.validate.newconnection.application.inprocess",
+                validationMessage = stmsMessageSource.getMessage("err.validate.seweragenewconnection.application.inprocess",
                         new String[] { propertyID, sewerageApplicationDetails.get(0).getApplicationNumber() }, null);
             else if (sewerageApplicationDetails.get(0).getConnection().getStatus().toString()
                     .equalsIgnoreCase(SewerageConnectionStatus.CLOSED.toString()))
-                validationMessage = stmsMessageSource.getMessage("err.validate.newconnection.closed", new String[] {
+                validationMessage = stmsMessageSource.getMessage("err.validate.seweragenewconnection.closed", new String[] {
                         sewerageApplicationDetails.get(0).getConnection().getShscNumber(), propertyID }, null);
             else if (sewerageApplicationDetails.get(0).getConnection().getStatus().toString()
                     .equalsIgnoreCase(SewerageConnectionStatus.INACTIVE.toString()))
-                validationMessage = stmsMessageSource.getMessage("err.validate.newconnection.inactive", new String[] {
+                validationMessage = stmsMessageSource.getMessage("err.validate.seweragenewconnection.inactive", new String[] {
                         sewerageApplicationDetails.get(0).getConnection().getShscNumber(), propertyID }, null);
         return validationMessage; 
     }
