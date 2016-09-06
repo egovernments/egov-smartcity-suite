@@ -1,8 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="agenda" language="groovy" pageWidth="595" pageHeight="842" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="cee583e3-a0f8-4d29-92e7-b2c0afa5f324">
+<!-- Created with Jaspersoft Studio version 6.2.2.final using JasperReports Library version 6.2.2  -->
+<!-- 2016-09-06T20:45:09 -->
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="agenda" pageWidth="595" pageHeight="842" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="cee583e3-a0f8-4d29-92e7-b2c0afa5f324">
 	<property name="ireport.zoom" value="1.0"/>
 	<property name="ireport.x" value="0"/>
-	<property name="ireport.y" value="101"/>
+	<property name="ireport.y" value="112"/>
 	<import value="org.egov.infra.reporting.util.*"/>
 	<import value="org.egov.infstr.utils.*"/>
 	<parameter name="cityName" class="java.lang.String"/>
@@ -10,13 +12,10 @@
 	<parameter name="meetingNumber" class="java.lang.String"/>
 	<parameter name="commiteeType" class="java.lang.String"/>
 	<parameter name="meetingDateTimePlace" class="java.lang.String"/>
-	<parameter name="agendaList" class="java.util.List"/>
-	<parameter name="agendaDetailsJasper" class="java.io.InputStream"/>
+	<parameter name="agendaSubReportPath" class="java.io.InputStream"/>
+	<field name="agendaList" class="java.util.List"/>
 	<title>
 		<band height="82">
-			<rectangle>
-				<reportElement x="8" y="-8" width="555" height="82" uuid="888db5b3-0766-48b6-8c1d-5ca90c1b783e"/>
-			</rectangle>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
 				<reportElement x="127" y="13" width="366" height="33" uuid="c62d110f-2237-4e88-a1b5-0d9f40bc358a"/>
 				<textElement textAlignment="Center" verticalAlignment="Middle">
@@ -31,7 +30,7 @@
 			<staticText>
 				<reportElement x="127" y="46" width="366" height="28" uuid="4343c9c0-cf2d-4b36-b5a7-11b2fa411403"/>
 				<textElement textAlignment="Center" verticalAlignment="Middle">
-					<font size="12"/>
+					<font size="13" isBold="true"/>
 				</textElement>
 				<text><![CDATA[Meeting Details]]></text>
 			</staticText>
@@ -76,7 +75,7 @@
 				<textFieldExpression><![CDATA[$P{meetingDateTimePlace}]]></textFieldExpression>
 			</textField>
 			<staticText>
-				<reportElement x="110" y="130" width="344" height="35" uuid="c5e775cf-c880-4588-bd9d-7ffec1da3faf"/>
+				<reportElement x="94" y="130" width="367" height="35" uuid="c5e775cf-c880-4588-bd9d-7ffec1da3faf"/>
 				<textElement textAlignment="Center" verticalAlignment="Middle">
 					<font size="12" isBold="true"/>
 				</textElement>
@@ -85,35 +84,35 @@
 		</band>
 	</pageHeader>
 	<columnHeader>
-		<band height="50">
+		<band height="37">
 			<staticText>
-				<reportElement x="0" y="15" width="82" height="35" uuid="a9b1c6f2-6792-4b66-bdde-f872c14e3727"/>
-				<textElement textAlignment="Center" verticalAlignment="Middle"/>
+				<reportElement mode="Opaque" x="0" y="2" width="79" height="35" uuid="a9b1c6f2-6792-4b66-bdde-f872c14e3727"/>
+				<textElement textAlignment="Center" verticalAlignment="Bottom"/>
 				<text><![CDATA[Item Number]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="82" y="15" width="82" height="35" uuid="7fdd4da2-c6ef-49fe-9792-c525da4b5388"/>
-				<textElement textAlignment="Center" verticalAlignment="Middle"/>
+				<reportElement mode="Opaque" x="82" y="2" width="102" height="35" uuid="7fdd4da2-c6ef-49fe-9792-c525da4b5388"/>
+				<textElement textAlignment="Center" verticalAlignment="Bottom"/>
 				<text><![CDATA[Department]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="164" y="15" width="268" height="35" uuid="99e1e320-6845-47e0-8e3c-707a28909e85"/>
-				<textElement textAlignment="Center" verticalAlignment="Middle"/>
-				<text><![CDATA[Agenda Gist]]></text>
+				<reportElement mode="Opaque" x="187" y="2" width="285" height="35" uuid="99e1e320-6845-47e0-8e3c-707a28909e85"/>
+				<textElement textAlignment="Center" verticalAlignment="Bottom"/>
+				<text><![CDATA[Details of Agenda]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="432" y="15" width="97" height="35" uuid="245b92d1-b96b-4958-a403-94ad25c1d90a"/>
-				<textElement textAlignment="Center" verticalAlignment="Middle"/>
+				<reportElement mode="Opaque" x="472" y="2" width="83" height="35" uuid="245b92d1-b96b-4958-a403-94ad25c1d90a"/>
+				<textElement textAlignment="Center" verticalAlignment="Bottom"/>
 				<text><![CDATA[Sanction Amount]]></text>
 			</staticText>
 		</band>
 	</columnHeader>
 	<detail>
-		<band height="50" splitType="Stretch">
-			<subreport isUsingCache="false">
-				<reportElement stretchType="RelativeToBandHeight" x="0" y="3" width="555" height="47" uuid="4b57bfd1-6948-4845-bef2-f916233b7f53"/>
-				<dataSourceExpression><![CDATA[new net.sf.jasperreports.engine.data.JRBeanCollectionDataSource($P{agendaList},false)]]></dataSourceExpression>
-				<subreportExpression><![CDATA[$P{agendaDetailsJasper}]]></subreportExpression>
+		<band height="48" splitType="Stretch">
+			<subreport isUsingCache="true">
+				<reportElement stretchType="RelativeToBandHeight" x="0" y="1" width="555" height="47" uuid="4b57bfd1-6948-4845-bef2-f916233b7f53"/>
+				<dataSourceExpression><![CDATA[new net.sf.jasperreports.engine.data.JRBeanCollectionDataSource($F{agendaList},false)]]></dataSourceExpression>
+				<subreportExpression><![CDATA[ReportUtil.getTemplateAsStream("agendaDetails.jasper")]]></subreportExpression>
 			</subreport>
 		</band>
 	</detail>

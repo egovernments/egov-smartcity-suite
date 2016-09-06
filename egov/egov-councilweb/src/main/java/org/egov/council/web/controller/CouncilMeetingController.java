@@ -44,13 +44,14 @@ import static org.egov.council.utils.constants.CouncilConstants.AGENDA_MODULENAM
 import static org.egov.council.utils.constants.CouncilConstants.APPROVED;
 import static org.egov.council.utils.constants.CouncilConstants.COUNCILMEETING;
 import static org.egov.council.utils.constants.CouncilConstants.MEETING_TIMINGS;
-import static  org.egov.infra.web.utils.WebUtils.toJSON;
+import static org.egov.infra.web.utils.WebUtils.toJSON;
 
 import java.io.IOException;
 import java.util.Date;
 import java.util.LinkedHashMap;
 import java.util.List;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
 
@@ -65,12 +66,15 @@ import org.egov.council.entity.MeetingMOM;
 import org.egov.council.service.CommitteeTypeService;
 import org.egov.council.service.CouncilAgendaService;
 import org.egov.council.service.CouncilMeetingService;
+import org.egov.council.service.CouncilReportService;
 import org.egov.council.service.CouncilSmsAndEmailService;
 import org.egov.council.web.adaptor.CouncilMeetingJsonAdaptor;
 import org.egov.council.web.adaptor.MeetingAttendanceJsonAdaptor;
 import org.egov.infra.admin.master.entity.Department;
 import org.egov.infra.admin.master.service.DepartmentService;
+import org.egov.infra.reporting.engine.ReportConstants;
 import org.egov.infra.utils.autonumber.AutonumberServiceBeanResolver;
+import org.egov.infra.web.utils.WebUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
 import org.springframework.http.MediaType;
@@ -117,7 +121,8 @@ public class CouncilMeetingController {
 	private DepartmentService departmentService;
 	@Autowired
 	private CouncilSmsAndEmailService councilSmsAndEmailService;
-	
+	@Autowired  private CouncilReportService councilReportService;
+	        
 
 	public @ModelAttribute("committeeType") List<CommitteeType> getCommitteTypeList() {
 		return committeeTypeService.getActiveCommiteeType();
@@ -264,10 +269,14 @@ public class CouncilMeetingController {
     
     @RequestMapping(value = "/sendsmsemail", method = RequestMethod.GET)
     public @ResponseBody String sendSmsAndEmailDetailsForCouncilMeeting(@RequestParam("id") Long id,
-            @RequestParam("msg") String msg,final Model model) {
+            @RequestParam("msg") String msg, final Model model, final HttpServletRequest request) {
         CouncilMeeting councilMeeting = councilMeetingService.findOne(id);
-        councilSmsAndEmailService.sendSms(councilMeeting,msg);
-        //councilSmsAndEmailService.sendEmail(councilMeeting,msg,attachment);
+        councilSmsAndEmailService.sendSms(councilMeeting, msg);
+        final String url = WebUtils.extractRequestDomainURL(request, false);
+        String logoPath = url.concat(ReportConstants.IMAGE_CONTEXT_PATH).concat(
+                (String) request.getSession().getAttribute("citylogo"));
+        councilSmsAndEmailService.sendEmail(councilMeeting, msg,
+                councilReportService.generatePDFForAgendaDetails(councilMeeting, logoPath));
         String result = new StringBuilder("{ \"success\":true }").toString();
         return result;
     }

@@ -39,7 +39,8 @@
  */
 package org.egov.council.service;
 
-import java.text.SimpleDateFormat;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -51,6 +52,8 @@ import org.egov.infra.reporting.engine.ReportConstants;
 import org.egov.infra.reporting.engine.ReportOutput;
 import org.egov.infra.reporting.engine.ReportRequest;
 import org.egov.infra.reporting.engine.ReportService;
+import org.egov.infra.reporting.util.ReportUtil;
+import org.egov.infra.utils.DateUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -59,35 +62,60 @@ import org.springframework.transaction.annotation.Transactional;
 @Transactional(readOnly = true)
 public class CouncilReportService {
 
-	public static final String AGENDA = "agenda";
-	private final Map<String, Object> reportParams = new HashMap<String, Object>();
-	private ReportRequest reportInput = null;
+    private final String AGENDA = "agenda";
+    String subReportPath = "agendaDetails.jasper";
+    private final Map<String, Object> reportParams = new HashMap<String, Object>();
+    private ReportRequest reportInput = null;
 
-	@Autowired
-	private ReportService reportService;
+    @Autowired
+    private ReportService reportService;
 
-	public byte[] generatePDFForAgendaDetails(CouncilMeeting councilMeeting) {
-		if (councilMeeting != null) {
-			final SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
-			reportParams.put("committeeType",
-					WordUtils.capitalize(councilMeeting.getCommitteeType().getName()).toString());
-			reportParams.put("meetingNumber", WordUtils.capitalize(councilMeeting.getMeetingNumber()).toString());
-			reportParams.put("meetingDate", formatter.format(councilMeeting.getMeetingDate()));
-			reportParams.put("meetingLocation", councilMeeting.getMeetingLocation());
-			reportParams.put("meetingTime", councilMeeting.getMeetingTime());
-			List<CouncilAgendaDetails> agendaList = councilMeeting.getMeetingMOMs().get(0).getAgenda()
-					.getAgendaDetails();
-			reportInput = new ReportRequest(AGENDA, agendaList, reportParams);
-		}
-		reportInput.setReportFormat(ReportConstants.FileFormat.PDF);
-		reportInput.setPrintDialogOnOpenReport(false);
-		if (createReport(reportInput) != null)
-			return createReport(reportInput).getReportOutputData();
-		return null;
-	}
+    public byte[] generatePDFForAgendaDetails(CouncilMeeting councilMeeting, String logoPath) {
+        if (councilMeeting != null) {
+            final Map<String, Object> agendaDetails = new HashMap<String, Object>();
+            List<CouncilAgendaDetails> agendaDetailsList = councilMeeting.getMeetingMOMs().get(0).getAgenda()
+                    .getAgendaDetails();
 
-	public ReportOutput createReport(final ReportRequest reportRequest) {
-		return reportService.createReport(reportRequest);
-	}
+            Collections.sort(agendaDetailsList, new Comparator<CouncilAgendaDetails>() {
+                @Override
+                public int compare(CouncilAgendaDetails f1, CouncilAgendaDetails f2) {
+                    return f1.getItemNumber().compareTo(f2.getItemNumber());
+                }
+            });
+
+            agendaDetails.put("agendaList", agendaDetailsList);
+            reportInput = new ReportRequest(AGENDA, agendaDetails, buildReportParameters(councilMeeting, logoPath));
+        }
+        reportInput.setReportFormat(ReportConstants.FileFormat.PDF);
+        reportInput.setPrintDialogOnOpenReport(false);
+      return createReport(reportInput).getReportOutputData();
+
+    }
+
+    private Map<String, Object> buildReportParameters(CouncilMeeting councilMeeting, String logoPath) {
+
+        StringBuffer meetingDateTimeLocation = new StringBuffer();
+
+        reportParams.put("logoPath", logoPath);
+        reportParams.put("commiteeType", WordUtils.capitalize(councilMeeting.getCommitteeType().getName()).toString());
+        reportParams.put("meetingNumber", WordUtils.capitalize(councilMeeting.getMeetingNumber()).toString());
+        meetingDateTimeLocation.append(DateUtils.getDefaultFormattedDate(councilMeeting.getMeetingDate()));
+        if (null != councilMeeting.getMeetingTime()) {
+            meetingDateTimeLocation.append(" ");
+            meetingDateTimeLocation.append(councilMeeting.getMeetingTime());
+        }
+        if (null != councilMeeting.getMeetingLocation()) {
+            meetingDateTimeLocation.append(" ");
+            meetingDateTimeLocation.append(councilMeeting.getMeetingLocation());
+        }
+        reportParams.put("meetingDateTimePlace", meetingDateTimeLocation.toString());
+        reportParams.put("cityName", ReportUtil.getCityName());
+        reportParams.put("agendaSubReportPath", ReportUtil.getTemplateAsStream(subReportPath));
+        return reportParams;
+    }
+
+    public ReportOutput createReport(final ReportRequest reportRequest) {
+        return reportService.createReport(reportRequest);
+    }
 
 }
