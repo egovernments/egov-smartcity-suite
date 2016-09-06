@@ -768,12 +768,13 @@ public class PropertyTransferAction extends GenericWorkFlowAction {
             }
         }
         for (User transferor : propertyMutation.getTransferorInfos()) {
-            if (StringUtils.isNotBlank(transferor.getMobileNumber())) {
+            if (StringUtils.isNotBlank(transferor.getMobileNumber()) && StringUtils.isNotBlank(smsMsgForTransferor)) {
                 messagingService.sendSMS(transferor.getMobileNumber(), smsMsgForTransferor);
             }
         }
         for (PropertyMutationTransferee transferee : propertyMutation.getTransfereeInfos()) {
-            if (StringUtils.isNotBlank(transferee.getTransferee().getMobileNumber())) {
+            if (StringUtils.isNotBlank(transferee.getTransferee().getMobileNumber())
+                    && StringUtils.isNotBlank(smsMsgForTransferee)) {
                 messagingService.sendSMS(transferee.getTransferee().getMobileNumber(), smsMsgForTransferee);
             }
         }
@@ -834,12 +835,14 @@ public class PropertyTransferAction extends GenericWorkFlowAction {
             }
         }
         for (User transferor : propertyMutation.getTransferorInfos()) {
-            if (StringUtils.isNotBlank(transferor.getEmailId())) {
+            if (StringUtils.isNotBlank(transferor.getEmailId()) && StringUtils.isNotBlank(subject)
+                    && StringUtils.isNotBlank(emailBodyTransferor)) {
                 messagingService.sendEmail(transferor.getEmailId(), subject, emailBodyTransferor);
             }
         }
         for (PropertyMutationTransferee transferee : propertyMutation.getTransfereeInfos()) {
-            if (StringUtils.isNotBlank(transferee.getTransferee().getEmailId())) {
+            if (StringUtils.isNotBlank(transferee.getTransferee().getEmailId()) && StringUtils.isNotBlank(subject)
+                    && StringUtils.isNotBlank(emailBodyTransferee)) {
                 messagingService.sendEmail(transferee.getTransferee().getEmailId(), subject, emailBodyTransferee);
             }
         }

@@ -207,20 +207,23 @@ public class TaxExemptionService extends PersistenceService<PropertyImpl, Long> 
         Set<EgDemandDetails> demandDetailSet = new HashSet<EgDemandDetails>();
 
         if (StringUtils.isNotBlank(taxExemptedReason) && !taxExemptedReason.equals("-1")) {
-        	//Do not do anything
-        }else{
-        	//Remove all the previous demands until the current installment
-        	if(StringUtils.isNotBlank(workFlowAction) && !workFlowAction.equalsIgnoreCase(WFLOW_ACTION_STEP_REJECT)){
-        	for(Ptdemand ptdemand : newPtdemandSet){
-            	for(EgDemandDetails demandDetails : ptdemand.getEgDemandDetails()){
-            		if(demandDetails.getInstallmentStartDate().equals(effectiveDate) || demandDetails.getInstallmentStartDate().after(effectiveDate)){
-            			demandDetailSet.add(demandDetails);
-            		}
-            	}
-            	ptdemand.getEgDemandDetails().clear();
-            	ptdemand.getEgDemandDetails().addAll(demandDetailSet);
+            // Do not do anything
+        } else {
+            // Remove all the previous demands until the current installment
+            if (StringUtils.isNotBlank(workFlowAction) && !workFlowAction.equalsIgnoreCase(WFLOW_ACTION_STEP_REJECT)) {
+                for (Ptdemand ptdemand : newPtdemandSet) {
+                    if (ptdemand.getEgInstallmentMaster().equals(installmentFirstHalf)) {
+                        for (EgDemandDetails demandDetails : ptdemand.getEgDemandDetails()) {
+                            if (demandDetails.getInstallmentStartDate().equals(effectiveDate)
+                                    || demandDetails.getInstallmentStartDate().after(effectiveDate)) {
+                                demandDetailSet.add(demandDetails);
+                            }
+                        }
+                        ptdemand.getEgDemandDetails().clear();
+                        ptdemand.getEgDemandDetails().addAll(demandDetailSet);
+                    }
+                }
             }
-        	}
         }
 
         for (Ptdemand ptdemand : newPtdemandSet) {

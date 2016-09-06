@@ -40,17 +40,10 @@
 package org.egov.lcms.transactions.service;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
-import java.util.Set;
-import java.util.stream.Collectors;
 
-import org.apache.commons.lang3.ArrayUtils;
 import org.egov.commons.EgwStatus;
-import org.egov.infra.exception.ApplicationRuntimeException;
-import org.egov.infra.filestore.entity.FileStoreMapper;
-import org.egov.infra.filestore.service.FileStoreService;
 import org.egov.infra.utils.DateUtils;
 import org.egov.lcms.transactions.entity.Judgment;
 import org.egov.lcms.transactions.entity.JudgmentDocuments;
@@ -59,12 +52,10 @@ import org.egov.lcms.transactions.repository.LegalCaseRepository;
 import org.egov.lcms.utils.LegalCaseUtil;
 import org.egov.lcms.utils.constants.LcmsConstants;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.multipart.MultipartFile;
 
 @Service
 @Transactional(readOnly = true)
@@ -80,10 +71,6 @@ public class JudgmentService {
     private LegalCaseUtil legalCaseUtil;
 
     @Autowired
-    @Qualifier("fileStoreService")
-    protected FileStoreService fileStoreService;
-
-    @Autowired
     public JudgmentService(final JudgmentRepository judgmentRepository) {
         this.judgmentRepository = judgmentRepository;
     }
@@ -93,7 +80,6 @@ public class JudgmentService {
         processAndStoreApplicationDocuments(judgment);
         final EgwStatus statusObj = legalCaseUtil.getStatusForModuleAndCode(LcmsConstants.MODULE_TYPE_LEGALCASE,
                 LcmsConstants.LEGALCASE_STATUS_JUDGMENT);
-        updateNextDate(judgment);
         judgment.getLegalCase().setStatus(statusObj);
         legalCaseRepository.save(judgment.getLegalCase());
         return judgmentRepository.save(judgment);
@@ -120,26 +106,12 @@ public class JudgmentService {
             for (final JudgmentDocuments applicationDocument : judgment.getJudgmentDocuments()) {
                 applicationDocument.setJudgment(judgment);
                 applicationDocument.setDocumentName("Judgment");
-                applicationDocument.setSupportDocs(addToFileStore(applicationDocument.getFiles()));
+                applicationDocument.setSupportDocs(legalCaseUtil.addToFileStore(applicationDocument.getFiles()));
             }
     }
 
-    protected Set<FileStoreMapper> addToFileStore(final MultipartFile[] files) {
-        if (ArrayUtils.isNotEmpty(files))
-            return Arrays.asList(files).stream().filter(file -> !file.isEmpty()).map(file -> {
-                try {
-                    return fileStoreService.store(file.getInputStream(), file.getOriginalFilename(),
-                            file.getContentType(), LcmsConstants.FILESTORE_MODULECODE);
-                } catch (final Exception e) {
-                    throw new ApplicationRuntimeException("Error occurred while getting inputstream", e);
-                }
-            }).collect(Collectors.toSet());
-        else
-            return null;
-    }
-
     @Transactional(propagation = Propagation.REQUIRES_NEW, readOnly = true)
-    public Judgment findByLcNumber(final String lcNumber) {
+    public Judgment findByLCNumber(final String lcNumber) {
         return judgmentRepository.findByLegalCase_lcNumber(lcNumber);
     }
 

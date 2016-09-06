@@ -125,12 +125,8 @@ public class LcInterimOrderDocuments extends AbstractPersistable<Long> {
         return legalCaseInterimOrder;
     }
 
-    public void setLegalCaseInterimOrder(LegalCaseInterimOrder legalCaseInterimOrder) {
+    public void setLegalCaseInterimOrder(final LegalCaseInterimOrder legalCaseInterimOrder) {
         this.legalCaseInterimOrder = legalCaseInterimOrder;
     }
-
-   
-
-   
 
 }

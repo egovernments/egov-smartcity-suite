@@ -60,7 +60,7 @@ jQuery(document).ready(
 		
 function submitForm() {
 	if($('form').valid()){
-	
+		var caseType = $("#caseCategory").val();
 	$('.report-section').removeClass('display-hide');
 	$('#report-footer').show();
 	reportdatatable = tableContainer
@@ -69,7 +69,7 @@ function submitForm() {
 					
 					url : "/lcms/reports/dailyBoardReportresults",
 					data : {
-						'caseType' :$("#caseCatogory").val(),
+						'caseType' :caseType,
 						'fromDate' :$("#fromDate").val(),
 						'toDate': $("#toDate").val(),
 						'officerIncharge' : $("#officerIncharge").val(),
@@ -93,8 +93,8 @@ function submitForm() {
 					       { "data" : "caseTitle" , "title": "Case Title"},  
 						  { "data" : "courtName", "title": "Court Name"},
 						  { "data" : "caseNumber", "title": "Case Number"},
-						  { "data" : "petitioners", "title": "Petitioners"},
-						  { "data" : "respondants", "title": "Respondants"},
+						  { "data" : "petitionerName", "title": "Petitioners"},
+						  { "data" : "respondantName", "title": "Respondants"},
 						  { "data" : "petitionType", "title": "Petition Type"},
 						  { "data" : "standingCouncil", "title": "Standing Council"},
 						  { "data" : "officerIncharge", "title": "In Charge Officer"},

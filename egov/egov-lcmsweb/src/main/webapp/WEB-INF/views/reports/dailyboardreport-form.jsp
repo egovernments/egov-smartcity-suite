@@ -61,8 +61,8 @@
 						<label class="col-sm-2 control-label"><spring:message
 								code="lbl.casecategory" />:</label>
 						<div class="col-sm-3 add-margin">
-							<form:select name="caseCatogory" path=""
-								data-first-option="false" id="caseCatogory"
+							<form:select name="caseCategory" path=""
+								data-first-option="false" id="caseCategory"
 								cssClass="form-control">
 								<form:option value="">
 									<spring:message code="lbls.select" />

@@ -642,7 +642,7 @@ public class AjaxContractorBillAction extends BaseFormAction {
     }
 
     public CFinancialYear getCurrentFinancialYear(final Date billDate) {
-        return finHibernateDao.getFinancialYearByDate(billDate);
+        return finHibernateDao.getFinYearByDate(billDate);
     }
 
     public String getStatutoryDeductionAmount() throws Exception {

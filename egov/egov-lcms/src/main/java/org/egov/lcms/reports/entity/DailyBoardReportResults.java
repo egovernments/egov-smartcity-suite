@@ -57,8 +57,8 @@ public class DailyBoardReportResults {
     private Integer courtId;
     private String govtDept;
     private String caseTitle;
-    private String petName;
-    private String resName;
+    private String petitionerName;
+    private String respondantName;
     private String caseStatus;
     private Integer statusId;
     private String assignDept;
@@ -69,7 +69,7 @@ public class DailyBoardReportResults {
         return fromDate;
     }
 
-    public void setFromDate(Date fromDate) {
+    public void setFromDate(final Date fromDate) {
         this.fromDate = fromDate;
     }
 
@@ -77,7 +77,7 @@ public class DailyBoardReportResults {
         return toDate;
     }
 
-    public void setToDate(Date toDate) {
+    public void setToDate(final Date toDate) {
         this.toDate = toDate;
     }
 
@@ -85,7 +85,7 @@ public class DailyBoardReportResults {
         return nextDate;
     }
 
-    public void setNextDate(Date nextDate) {
+    public void setNextDate(final Date nextDate) {
         this.nextDate = nextDate;
     }
 
@@ -93,7 +93,7 @@ public class DailyBoardReportResults {
         return officerIncharge;
     }
 
-    public void setOfficerIncharge(String officerIncharge) {
+    public void setOfficerIncharge(final String officerIncharge) {
         this.officerIncharge = officerIncharge;
     }
 
@@ -113,11 +113,7 @@ public class DailyBoardReportResults {
         this.caseNumber = caseNumber;
     }
 
-
-
-    
-
-        public String getPetitionType() {
+    public String getPetitionType() {
         return petitionType;
     }
 
@@ -125,56 +121,44 @@ public class DailyBoardReportResults {
         this.petitionType = petitionType;
     }
 
-    
-
     public Integer getCasecategory() {
-                return casecategory;
-        }
+        return casecategory;
+    }
 
-        public void setCasecategory(Integer casecategory) {
-                this.casecategory = casecategory;
-        }
+    public void setCasecategory(final Integer casecategory) {
+        this.casecategory = casecategory;
+    }
 
-        public Integer getCourtType() {
-                return courtType;
-        }
+    public Integer getCourtType() {
+        return courtType;
+    }
 
-        public void setCourtType(Integer courtType) {
-                this.courtType = courtType;
-        }
+    public void setCourtType(final Integer courtType) {
+        this.courtType = courtType;
+    }
 
-        
+    public String getCourtName() {
+        return courtName;
+    }
 
-        public String getCourtName() {
-                return courtName;
-        }
+    public void setCourtName(final String courtName) {
+        this.courtName = courtName;
+    }
 
-        public void setCourtName(String courtName) {
-                this.courtName = courtName;
-        }
+    public Integer getCourtId() {
+        return courtId;
+    }
 
-        public Integer getCourtId() {
-                return courtId;
-        }
+    public void setCourtId(final Integer courtId) {
+        this.courtId = courtId;
+    }
 
-        public void setCourtId(Integer courtId) {
-                this.courtId = courtId;
-        }
-
-        public String getGovtDept() {
+    public String getGovtDept() {
         return govtDept;
     }
 
     public void setGovtDept(final String govtDept) {
         this.govtDept = govtDept;
-    }
-
-    public String getPetName() {
-        return petName;
-    }
-
-    public void setPetName(final String petName) {
-        this.petName = petName;
     }
 
     public String getCaseStatus() {
@@ -184,7 +168,6 @@ public class DailyBoardReportResults {
     public void setCaseStatus(final String caseStatus) {
         this.caseStatus = caseStatus;
     }
-
 
     public String getCaseTitle() {
         return caseTitle;
@@ -202,39 +185,44 @@ public class DailyBoardReportResults {
         this.assignDept = assignDept;
     }
 
-    
+    public Integer getStatusId() {
+        return statusId;
+    }
 
-        public Integer getStatusId() {
-                return statusId;
-        }
+    public void setStatusId(final Integer statusId) {
+        this.statusId = statusId;
+    }
 
-        public void setStatusId(Integer statusId) {
-                this.statusId = statusId;
-        }
+    public Integer getPetitionTypeId() {
+        return petitionTypeId;
+    }
 
-        public Integer getPetitionTypeId() {
-                return petitionTypeId;
-        }
+    public void setPetitionTypeId(final Integer petitionTypeId) {
+        this.petitionTypeId = petitionTypeId;
+    }
 
-        public void setPetitionTypeId(Integer petitionTypeId) {
-                this.petitionTypeId = petitionTypeId;
-        }
+    public String getPetitionerName() {
+        return petitionerName;
+    }
 
-        public String getResName() {
-                return resName;
-        }
+    public void setPetitionerName(final String petitionerName) {
+        this.petitionerName = petitionerName;
+    }
 
-        public void setResName(String resName) {
-                this.resName = resName;
-        }
+    public String getRespondantName() {
+        return respondantName;
+    }
 
-        public LegalCase getLegalCase() {
-                return legalCase;
-        }
+    public void setRespondantName(final String respondantName) {
+        this.respondantName = respondantName;
+    }
 
-        public void setLegalCase(LegalCase legalCase) {
-                this.legalCase = legalCase;
-        }
-    
+    public LegalCase getLegalCase() {
+        return legalCase;
+    }
+
+    public void setLegalCase(final LegalCase legalCase) {
+        this.legalCase = legalCase;
+    }
 
 }

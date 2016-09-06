@@ -58,7 +58,6 @@ import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import javax.validation.constraints.NotNull;
 
-import org.egov.infra.persistence.entity.AbstractAuditable;
 import org.egov.infra.persistence.entity.AbstractPersistable;
 import org.egov.infra.persistence.validator.annotation.ValidateDate;
 import org.egov.infra.utils.DateUtils;
@@ -69,7 +68,7 @@ import org.hibernate.validator.constraints.Length;
 @Entity
 @Table(name = "EGLC_CONTEMPT")
 @SequenceGenerator(name = Contempt.SEQ_EGLC_CONTEMPT, sequenceName = Contempt.SEQ_EGLC_CONTEMPT, allocationSize = 1)
-public class Contempt extends  AbstractPersistable<Long> {
+public class Contempt extends AbstractPersistable<Long> {
     private static final long serialVersionUID = 1517694643078084884L;
     public static final String SEQ_EGLC_CONTEMPT = "SEQ_EGLC_CONTEMPT";
 
@@ -77,18 +76,16 @@ public class Contempt extends  AbstractPersistable<Long> {
     @GeneratedValue(generator = SEQ_EGLC_CONTEMPT, strategy = GenerationType.SEQUENCE)
     private Long id;
 
-    @ManyToOne(cascade=CascadeType.ALL,fetch=FetchType.LAZY)
+    @ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @NotNull
     @JoinColumn(name = "judgmentimpl")
     private JudgmentImpl judgmentImpl;
 
-  
     @Length(max = 50)
     @NotNull
     @Column(name = "canumber")
     private String caNumber;
 
-   
     @Temporal(TemporalType.DATE)
     @ValidateDate(allowPast = true, dateFormat = LcmsConstants.DATE_FORMAT)
     @Column(name = "receivingdate")

@@ -44,6 +44,7 @@ import static java.math.BigDecimal.ZERO;
 import static org.apache.commons.lang3.StringUtils.isBlank;
 import static org.egov.ptis.constants.PropertyTaxConstants.ADDTIONAL_RULE_ALTER_ASSESSMENT;
 import static org.egov.ptis.constants.PropertyTaxConstants.ADDTIONAL_RULE_BIFURCATE_ASSESSMENT;
+import static org.egov.ptis.constants.PropertyTaxConstants.ALTERATION_OF_ASSESSMENT;
 import static org.egov.ptis.constants.PropertyTaxConstants.APPLICATION_TYPE_ALTER_ASSESSENT;
 import static org.egov.ptis.constants.PropertyTaxConstants.APPLICATION_TYPE_GRP;
 import static org.egov.ptis.constants.PropertyTaxConstants.APPLICATION_TYPE_NEW_ASSESSENT;
@@ -122,7 +123,6 @@ import org.egov.infra.workflow.service.SimpleWorkflowService;
 import org.egov.pims.commons.Designation;
 import org.egov.pims.commons.Position;
 import org.egov.ptis.client.util.PropertyTaxUtil;
-import org.egov.ptis.constants.PropertyTaxConstants;
 import org.egov.ptis.domain.dao.demand.PtDemandDao;
 import org.egov.ptis.domain.entity.demand.Ptdemand;
 import org.egov.ptis.domain.entity.property.BasicProperty;
@@ -701,7 +701,8 @@ public abstract class PropertyTaxBaseAction extends GenericWorkFlowAction {
                                 new String[] { property.getApplicationNo() });
                         emailBody = getText("msg.newpropertycreate.email", args);
                     }
-                } else if (APPLICATION_TYPE_ALTER_ASSESSENT.equals(applicationType)) {
+                } else if (ALTERATION_OF_ASSESSMENT.equals(applicationType)
+                        || APPLICATION_TYPE_ALTER_ASSESSENT.equals(applicationType)) {
 
                     if (mobileNumber != null)
                         smsMsg = getText("msg.alterAssessmentForward.sms", args);
@@ -729,7 +730,8 @@ public abstract class PropertyTaxBaseAction extends GenericWorkFlowAction {
                                 new String[] { property.getApplicationNo() });
                         emailBody = getText("msg.newpropertyreject.email", args);
                     }
-                } else if (APPLICATION_TYPE_ALTER_ASSESSENT.equals(applicationType)) {
+                } else if (ALTERATION_OF_ASSESSMENT.equals(applicationType)
+                        || APPLICATION_TYPE_ALTER_ASSESSENT.equals(applicationType)) {
                     if (mobileNumber != null)
                         smsMsg = getText("msg.alterAssessmentReject.sms", args);
 
@@ -757,7 +759,8 @@ public abstract class PropertyTaxBaseAction extends GenericWorkFlowAction {
                                 .getBasicProperty().getUpicNo() });
                         emailBody = getText("msg.newpropertyapprove.email", args);
                     }
-                } else if (APPLICATION_TYPE_ALTER_ASSESSENT.equals(applicationType)) {
+                } else if (ALTERATION_OF_ASSESSMENT.equals(applicationType)
+                        || APPLICATION_TYPE_ALTER_ASSESSENT.equals(applicationType)) {
                     if (mobileNumber != null)
                         smsMsg = getText("msg.alterAssessmentApprove.sms", args);
                     if (emailid != null) {
@@ -772,9 +775,9 @@ public abstract class PropertyTaxBaseAction extends GenericWorkFlowAction {
                 }
             }
         }
-        if (StringUtils.isNotBlank(mobileNumber)) 
+        if (StringUtils.isNotBlank(mobileNumber) && StringUtils.isNotBlank(smsMsg))
             messagingService.sendSMS(mobileNumber, smsMsg);
-        if (StringUtils.isNotBlank(emailid))
+        if (StringUtils.isNotBlank(emailid) && StringUtils.isNotBlank(emailSubject) && StringUtils.isNotBlank(emailBody))
             messagingService.sendEmail(emailid, emailSubject, emailBody);
 
     }

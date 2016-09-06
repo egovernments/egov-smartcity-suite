@@ -229,22 +229,11 @@ public class EmployeeService implements EntityTypeService {
     public void update(final Employee employee) {
         // Following is added to prevent null values and empty assignment
         // objects getting persisted
-        employee.setAssignments(employee.getAssignments().parallelStream()
-                .filter(assignment -> assignment.getPosition() != null).collect(Collectors.toList()));
-        List<User> user = new ArrayList<User>();
 
         for (final Assignment assign : employee.getAssignments()) {
             assign.setEmployee(employee);
             assign.setDepartment(assign.getDepartment());
 
-            final Set<Role> roles = designationService.getRolesByDesignation(assign.getDesignation().getName());
-            for (final Role role : roles) {
-                user = userService.getUsersByUsernameAndRolename(employee.getUsername(),
-                        roleService.getRoleByName(role.getName()).getName());
-                if (assign.getFromDate().before(new Date()) && assign.getToDate().after(new Date()))
-                    if (user.isEmpty() || user == null)
-                        employee.addRole(roleService.getRoleByName(role.getName()));
-            }
             for (final HeadOfDepartments hod : assign.getDeptSet())
                 hod.setAssignment(assign);
         }
@@ -493,6 +482,21 @@ public class EmployeeService implements EntityTypeService {
             }
         }
         assignmentService.removeDeletedAssignments(employee, removedassignIds);
+        // user role mapping based on designation
+        employee.setAssignments(employee.getAssignments().parallelStream()
+                .filter(assignment -> assignment.getPosition() != null).collect(Collectors.toList()));
+        List<User> user = new ArrayList<User>();
+        for (final Assignment assign : employee.getAssignments()) {
+            final Set<Role> roles = designationService.getRolesByDesignation(assign.getDesignation().getName());
+            for (final Role role : roles) {
+                user = userService.getUsersByUsernameAndRolename(employee.getUsername(),
+                        roleService.getRoleByName(role.getName()).getName());
+                if (assign.getFromDate().before(new Date()) && assign.getToDate().after(new Date()))
+                    if (user.isEmpty())
+                        employee.addRole(roleService.getRoleByName(role.getName()));
+            }
+        }
+
         getCurrentSession().evict(employee);
         final Employee updatedEmployee = getEmployeeById(employee.getId());
         final List<Position> oldPositionList = positionMasterService.getPositionsForEmployee(updatedEmployee.getId());

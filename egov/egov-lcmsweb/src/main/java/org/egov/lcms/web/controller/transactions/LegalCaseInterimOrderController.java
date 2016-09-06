@@ -117,7 +117,7 @@ public class LegalCaseInterimOrderController {
     public String getInterimOrderList(final Model model, @RequestParam("lcNumber") final String lcNumber,
             final HttpServletRequest request) {
         final LegalCase legalCase = getLegalCase(lcNumber, request);
-        final List<LegalCaseInterimOrder> lcInterimOrderList = legalCaseInterimOrderService.findBYLcNumber(lcNumber);
+        final List<LegalCaseInterimOrder> lcInterimOrderList = legalCaseInterimOrderService.findByLCNumber(lcNumber);
         model.addAttribute("legalCase", legalCase);
         model.addAttribute("lcNumber", legalCase.getLcNumber());
         model.addAttribute("lcInterimOrderId", legalCase.getLegalCaseInterimOrder());

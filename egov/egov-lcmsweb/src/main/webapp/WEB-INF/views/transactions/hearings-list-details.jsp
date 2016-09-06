@@ -100,7 +100,7 @@
 						<div align="center">
 							<a href="javascript:void(0);"
 								onclick="edit('<c:out value="${hearings.id}" />');">Edit</a> <input
-								type="hidden" id="hearingsId" name="hearingsId"
+								type="hidden" id="hearings.id" name="hearings.id"
 								value="${hearings.id}" />
 						</div>
 					</td>

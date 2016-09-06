@@ -74,7 +74,6 @@ import org.egov.ptis.client.bill.PTBillServiceImpl;
 import org.egov.ptis.client.util.PropertyTaxNumberGenerator;
 import org.egov.ptis.constants.PropertyTaxConstants;
 import org.egov.ptis.domain.dao.property.BasicPropertyDAO;
-import org.egov.ptis.domain.dao.property.PropertyDAO;
 import org.egov.ptis.domain.entity.property.BasicProperty;
 import org.egov.ptis.domain.entity.property.Property;
 import org.egov.ptis.domain.entity.property.PropertyImpl;
@@ -117,7 +116,6 @@ public class BillGenerationAction extends PropertyTaxBaseAction {
     private static final long serialVersionUID = -6600897692089941070L;
 
     private final Logger LOGGER = Logger.getLogger(getClass());
-    private static final String DEMAND_BILL = "demandBill";
     protected static final String COMMON_FORM = "commonForm";
     public static final String BILL = "bill";
     public static final String STATUS_BILLGEN = "billsGenStatus";
@@ -155,9 +153,6 @@ public class BillGenerationAction extends PropertyTaxBaseAction {
     @Autowired
     @Qualifier("fileStoreService")
     protected FileStoreService fileStoreService;
-
-    @Autowired
-    private PropertyDAO propertyDao;
 
     @Autowired
     private ApplicationContext beanProvider;
@@ -237,12 +232,17 @@ public class BillGenerationAction extends PropertyTaxBaseAction {
 
     @Action(value = "/bills/billGeneration-generateDemandBill")
     public String generateDemandBill() {
-        DemandBillService demandBillService = (DemandBillService) beanProvider.getBean("demandBillService");
-        ReportOutput reportOutput = demandBillService.generateDemandBill(indexNumber);
-        reportId = reportViewerUtil.addReportToTempCache(reportOutput);
+        if (beanProvider.containsBean("demandBillService")) {
+            DemandBillService demandBillService = (DemandBillService) beanProvider.getBean("demandBillService");
+            ReportOutput reportOutput = demandBillService.generateDemandBill(indexNumber);
+            reportId = reportViewerUtil.addReportToTempCache(reportOutput);
+        } else {
+            generateBill();
+        }
         return BILL;
     }
 
+    @SuppressWarnings("unchecked")
     @Action(value = "/bills/billGeneration-billsGenStatus")
     public String billsGenStatus() {
         ReportInfo reportInfo;
@@ -250,7 +250,6 @@ public class BillGenerationAction extends PropertyTaxBaseAction {
         Integer totalBillsGen = 0;
         final Installment currInst = installmentDAO.getInsatllmentByModuleForGivenDate(ptBillServiceImpl.getModule(),
                 new Date());
-        final StringBuilder billQueryString = new StringBuilder();
         final StringBuilder propQueryString = new StringBuilder();
 
         propQueryString
@@ -300,6 +299,7 @@ public class BillGenerationAction extends PropertyTaxBaseAction {
         return STATUS_BILLGEN;
     }
 
+    @SuppressWarnings("unchecked")
     @Action(value = "/bills/billGeneration-billGenStatusByPartNo")
     public String billGenStatusByPartNo() {
         LOGGER.debug("Entered into billGenStatusByPartNo, wardNum=" + wardNum);

@@ -43,7 +43,6 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -58,8 +57,6 @@ import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 
 import org.apache.commons.lang.StringUtils;
-import org.egov.infra.persistence.entity.AbstractAuditable;
-import org.egov.infra.persistence.entity.AbstractPersistable;
 import org.egov.infra.persistence.validator.annotation.OptionalPattern;
 import org.egov.infra.validation.exception.ValidationError;
 import org.egov.lcms.masters.entity.GovernmentDepartment;
@@ -89,33 +86,33 @@ public class BipartisanDetails implements Serializable {
     @Id
     @GeneratedValue(generator = SEQ_EGLC_BIPARTISANDETAILS, strategy = GenerationType.SEQUENCE)
     private Long id;
-    
+
     @ManyToOne(fetch = FetchType.LAZY)
     @NotNull
     @JoinColumn(name = "legalcase")
     private LegalCase legalCase;
-    
+
     @Length(max = 128, message = "petitionerName.length")
     @OptionalPattern(regex = LcmsConstants.mixedCharType1, message = "petitionerName.name.mixedChar")
     private String name;
-    
+
     @Length(max = 256, message = "address.length")
     private String address;
-    
+
     @OptionalPattern(regex = LcmsConstants.numericiValForPhoneNo, message = "contactNumber.numeric")
     private Long contactNumber;
-    
+
     @Column(name = "isrespondent")
     private Boolean isRepondent = false;
-    
+
     @ManyToOne
     @Valid
     @JoinColumn(name = "respondentgovtdept")
     private GovernmentDepartment governmentDepartment;
-    
+
     @Column(name = "isrespondentgovernment", nullable = false)
     private Boolean isRespondentGovernment = false;
-    
+
     @Column(name = "serialnumber")
     private Long serialNumber;
 
@@ -151,12 +148,10 @@ public class BipartisanDetails implements Serializable {
         this.contactNumber = contactNumber;
     }
 
-    
     public Long getId() {
         return id;
     }
 
-    
     public void setId(final Long id) {
         this.id = id;
     }

@@ -205,7 +205,7 @@ public class ContractorwiseAbstractReportAction extends BaseFormAction {
                 getPersistenceService()
                         .findAllBy(
                                 "select distinct(fd.budgetGroup) from FinancialDetail fd where fd.abstractEstimate in ( select woe.estimate from WorkOrderEstimate woe where woe.workOrder.egwStatus.code='APPROVED' ) order by name  "));
-        final CFinancialYear financialYear = finHibernateDao.getFinancialYearByDate(new Date());
+        final CFinancialYear financialYear = finHibernateDao.getFinYearByDate(new Date());
         if (financialYear != null)
             currentFinancialYearId = financialYear.getId().toString();
         finYearRangeStr = generateFinYrList(finYrList);

@@ -44,6 +44,7 @@ import java.util.List;
 import javax.persistence.EntityManager;
 
 import org.apache.commons.lang.StringUtils;
+import org.egov.infra.utils.DateUtils;
 import org.egov.lcms.reports.entity.DailyBoardReportResults;
 import org.egov.lcms.utils.constants.LcmsConstants;
 import org.hibernate.Query;
@@ -63,10 +64,10 @@ public class DailyBoardReportService {
         return entityManager.unwrap(Session.class);
     }
 
-    public List<DailyBoardReportResults> getdailyBoardReportResults(
+    public List<DailyBoardReportResults> getDailyBoardReports(
             final DailyBoardReportResults dailyBoardReportResults) {
         final StringBuilder queryStr = new StringBuilder();
-        queryStr.append("select distinct legalObj  as  legalCase ,courtmaster.name  as  courtName ,");
+        queryStr.append("select distinct legalObj  as  legalCase ,courtmaster.name  as  courtName ,petmaster.petitionType as petitionType,");
         queryStr.append(" egwStatus.description  as  caseStatus ");
         queryStr.append(" from LegalCase legalObj,CourtMaster courtmaster,CaseTypeMaster casetypemaster,");
         queryStr.append(" PetitionTypeMaster petmaster,EgwStatus egwStatus");
@@ -76,13 +77,13 @@ public class DailyBoardReportService {
 
         getAppendQuery(dailyBoardReportResults, queryStr);
         Query queryResult = getCurrentSession().createQuery(queryStr.toString());
-        queryResult = setParameterForDailyBoardReportResults(dailyBoardReportResults, queryResult);
-        final List<DailyBoardReportResults> dailyBoardReportResultsList = queryResult.list();
-        return dailyBoardReportResultsList;
+        queryResult = setParameterToQuery(dailyBoardReportResults, queryResult);
+        final List<DailyBoardReportResults> dailyBoardReportList = queryResult.list();
+        return dailyBoardReportList;
 
     }
 
-    private Query setParameterForDailyBoardReportResults(final DailyBoardReportResults dailyBoardReportObj,
+    private Query setParameterToQuery(final DailyBoardReportResults dailyBoardReportObj,
             final Query queryResult) {
         queryResult.setString("moduleType", LcmsConstants.MODULE_TYPE_LEGALCASE);
 
@@ -99,7 +100,7 @@ public class DailyBoardReportService {
         if (dailyBoardReportObj.getStatusId() != null)
             queryResult.setInteger("status", dailyBoardReportObj.getStatusId());
         if (dailyBoardReportObj.getNextDate() != null)
-            queryResult.setDate("nextDate", dailyBoardReportObj.getNextDate());
+            queryResult.setString("nextDate", DateUtils.getDefaultFormattedDate(dailyBoardReportObj.getNextDate()));
         if (dailyBoardReportObj.getFromDate() != null)
             queryResult.setDate("fromdate", dailyBoardReportObj.getFromDate());
         if (dailyBoardReportObj.getToDate() != null)
@@ -130,7 +131,7 @@ public class DailyBoardReportService {
         if (dailyBoardReportObj.getPetitionTypeId() != null)
             queryStr.append(" and petmaster.id =:petiontionType ");
         if (dailyBoardReportObj.getNextDate() != null)
-            queryStr.append(" and legalObj.nextDate=:nextDate");
+            queryStr.append(" and legalObj.nextDate=:DateUtils.getDefaultFormattedDate(nextDate)");
         if (StringUtils.isNotBlank(dailyBoardReportObj.getOfficerIncharge()))
             queryStr.append(" and legalObj.officerIncharge =:officerIncharge ");
 
