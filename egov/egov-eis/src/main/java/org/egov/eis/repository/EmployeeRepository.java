@@ -73,4 +73,7 @@ public interface EmployeeRepository extends JpaRepository<Employee, Long> {
     @Query("from Employee  where  upper(code) like '%'||upper(:code)||'%' order by id")
     List<Employee> findEmployeeByCodeLike(@Param("code") String code);
 
+    @Query("from Employee  where  upper(code) like '%'||upper(:code)||'%'  and active=true order by id")
+    List<Employee> findActiveEmployeeByCodeLike(@Param("code") String code);
+
 }
