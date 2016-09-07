@@ -132,7 +132,7 @@ $(document).on('change', 'select.actiondropdown', function() {
 				return false;
 				}
 				else{
-					callurl(closeconnectionurl, $(this).data('consumer-no'),ptassessmentno,shscnumber);
+					loadPropertyDetails(shscnumber,ptassessmentno);
 				}
 			},
 			
@@ -222,6 +222,7 @@ $("#viewDCB").click(function(){
   
 $("#closeConnection").click(function(){
 	var shscnumber=document.getElementById("shscNumber").value;
+	propertyID=$('#assessmentNo').val();
 	jQuery.ajax({
 		url: "/stms/ajaxconnection/check-application-inworkflow/"+shscnumber,
 		type: "GET",
@@ -235,7 +236,7 @@ $("#closeConnection").click(function(){
 			return false;
 			}
 			else{
-				loadPropertyDetails();
+				loadPropertyDetails(shscnumber,propertyID);
 			}
 		},
 		
@@ -244,9 +245,7 @@ $("#closeConnection").click(function(){
 });
 
 
-function loadPropertyDetails() {
-	var shscnumber=document.getElementById("shscNumber").value;
-	propertyID=$('#assessmentNo').val()
+function loadPropertyDetails(shscnumber, propertyID) {
 	var errorMessage=""; 
 	if(propertyID != '') {
 		$.ajax({
