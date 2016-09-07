@@ -49,6 +49,8 @@ public class BaseRegisterResult {
     private String period;
     private Double arrears;
     private Double current;
+    private Double arrearsCollection;
+    private Double currentCollection;
     private Double penalty;
     private Double totalDemand;
 
@@ -56,7 +58,7 @@ public class BaseRegisterResult {
         return consumerNo;
     }
 
-    public void setConsumerNo(String consumerNo) {
+    public void setConsumerNo(final String consumerNo) {
         this.consumerNo = consumerNo;
     }
 
@@ -64,7 +66,7 @@ public class BaseRegisterResult {
         return doorNo;
     }
 
-    public void setDoorNo(String doorNo) {
+    public void setDoorNo(final String doorNo) {
         this.doorNo = doorNo;
     }
 
@@ -72,7 +74,7 @@ public class BaseRegisterResult {
         return assementNo;
     }
 
-    public void setAssementNo(String assementNo) {
+    public void setAssementNo(final String assementNo) {
         this.assementNo = assementNo;
     }
 
@@ -80,7 +82,7 @@ public class BaseRegisterResult {
         return ownerName;
     }
 
-    public void setOwnerName(String ownerName) {
+    public void setOwnerName(final String ownerName) {
         this.ownerName = ownerName;
     }
 
@@ -88,7 +90,7 @@ public class BaseRegisterResult {
         return categoryType;
     }
 
-    public void setCategoryType(String categoryType) {
+    public void setCategoryType(final String categoryType) {
         this.categoryType = categoryType;
     }
 
@@ -96,7 +98,7 @@ public class BaseRegisterResult {
         return period;
     }
 
-    public void setPeriod(String period) {
+    public void setPeriod(final String period) {
         this.period = period;
     }
 
@@ -104,7 +106,7 @@ public class BaseRegisterResult {
         return current;
     }
 
-    public void setCurrent(Double current) {
+    public void setCurrent(final Double current) {
         this.current = current;
     }
 
@@ -112,7 +114,7 @@ public class BaseRegisterResult {
         return arrears;
     }
 
-    public void setArrears(Double arrears) {
+    public void setArrears(final Double arrears) {
         this.arrears = arrears;
     }
 
@@ -120,7 +122,7 @@ public class BaseRegisterResult {
         return penalty;
     }
 
-    public void setPenalty(Double penalty) {
+    public void setPenalty(final Double penalty) {
         this.penalty = penalty;
     }
 
@@ -128,7 +130,24 @@ public class BaseRegisterResult {
         return totalDemand;
     }
 
-    public void setTotalDemand(Double totalDemand) {
+    public void setTotalDemand(final Double totalDemand) {
         this.totalDemand = totalDemand;
     }
+
+    public Double getArrearsCollection() {
+        return arrearsCollection;
+    }
+
+    public void setArrearsCollection(final Double arrearsCollection) {
+        this.arrearsCollection = arrearsCollection;
+    }
+
+    public Double getCurrentCollection() {
+        return currentCollection;
+    }
+
+    public void setCurrentCollection(final Double currentCollection) {
+        this.currentCollection = currentCollection;
+    }
+
 }
