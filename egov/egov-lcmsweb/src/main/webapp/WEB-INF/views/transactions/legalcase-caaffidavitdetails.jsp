@@ -109,9 +109,9 @@
 			<div class="col-sm-3 add-margin">
 				<form:input id="seniorAdvocateName" type="text"
 					class="form-control " autocomplete="off"
-					path="eglcSeniorAdvocateMaster.name"
-					name="eglcSeniorAdvocateMaster.name"
-					value="${eglcSeniorAdvocateMaster.name}" placeholder="" />
+					path="seniorAdvocate.name"
+					name="seniorAdvocate.name"
+					value="${seniorAdvocate.name}" placeholder="" />
 				<input type="hidden" id="senioradvocateId" value="" />
 				<c:forEach items="${departments}" var="advocate">
 

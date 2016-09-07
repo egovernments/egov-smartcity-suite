@@ -103,6 +103,16 @@ $('#Save').click(function(){
 			status = true;
 		}
 	});
+	var lineEstimateDate = $('#lineEstimateDate').val();
+	var councilResolutionDate = $('#councilResolutionDate').val();
+	if (councilResolutionDate != "") {
+		if (councilResolutionDate < lineEstimateDate) {
+			bootbox.alert($('#errorCouncilResolutionDate').val());
+			$('#councilResolutionDate').val("");
+			return false;
+		}
+		return true;
+	}
 	if (button != null && button == 'Save' && !status) {
 		var flag = true;
 		

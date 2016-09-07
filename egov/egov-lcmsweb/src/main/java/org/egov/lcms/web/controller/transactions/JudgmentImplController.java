@@ -69,7 +69,7 @@ public class JudgmentImplController {
     @ModelAttribute
     private JudgmentImpl getJudgment(@RequestParam("lcNumber") final String lcNumber,
             final HttpServletRequest request) {
-        final Judgment judgment = judgmentService.findByLcNumber(lcNumber);
+        final Judgment judgment = judgmentService.findByLCNumber(lcNumber);
         if (judgment.getJudgmentImpl().isEmpty()) {
             final JudgmentImpl judgemnetImpl = new JudgmentImpl();
             return judgemnetImpl;
@@ -80,7 +80,7 @@ public class JudgmentImplController {
     @RequestMapping(value = "/new/", method = RequestMethod.GET)
     public String viewForm(@ModelAttribute("judgmentImpl") JudgmentImpl judgmentImpl,
             @RequestParam("lcNumber") final String lcNumber, final Model model, final HttpServletRequest request) {
-        final Judgment judgment = judgmentService.findByLcNumber(lcNumber);
+        final Judgment judgment = judgmentService.findByLCNumber(lcNumber);
         judgmentImpl = getJudgment(lcNumber, request);
         model.addAttribute("legalCase", judgment.getLegalCase());
         model.addAttribute("judgmentImpl", judgmentImpl);
@@ -93,7 +93,7 @@ public class JudgmentImplController {
     public String create(@Valid @ModelAttribute("judgmentImpl") final JudgmentImpl judgmentImpl,
             final BindingResult errors, final RedirectAttributes redirectAttrs,
             @RequestParam("lcNumber") final String lcNumber, final HttpServletRequest request, final Model model) {
-        final Judgment judgment = judgmentService.findByLcNumber(lcNumber);
+        final Judgment judgment = judgmentService.findByLCNumber(lcNumber);
         if (errors.hasErrors()) {
             model.addAttribute("judgment", judgment);
             model.addAttribute("legalCase", judgment.getLegalCase());

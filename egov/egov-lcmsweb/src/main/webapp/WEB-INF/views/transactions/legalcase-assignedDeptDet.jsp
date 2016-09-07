@@ -108,23 +108,23 @@
 			<label class="col-sm-3 control-label text-right">
 				 Date of submission of PWR to GP/MSC:</label>
 			<div class="col-sm-3 add-margin">
-				<form:input name="eglcPwrs[0].pwrDueDate"
-					path="eglcPwrs[0].pwrDueDate"
+				<form:input name="pwrList[0].pwrDueDate"
+					path="pwrList[0].pwrDueDate"
 					 class="form-control datepicker"
 					title="Please enter a valid date" pattern="\d{1,2}/\d{1,2}/\d{4}"
-					data-date-end-date="-1d" id="eglcPwrs[0].pwrDueDate"
+					data-date-end-date="-1d" id="pwrList[0].pwrDueDate"
 					data-inputmask="'mask': 'd/m/y'" />
-				<form:errors path="eglcPwrs[0].pwrDueDate" cssClass="add-margin error-msg" />
+				<form:errors path="pwrList[0].pwrDueDate" cssClass="add-margin error-msg" />
 			</div>
 		<label class="col-sm-2 control-label text-right">
 		Date of Approval of PWR to GP/MSC:</label>
 		<div class="col-sm-3 add-margin">
-				<form:input name="eglcPwrs[0].pwrApprovalDate"
-					path="eglcPwrs[0].pwrApprovalDate" class="form-control datepicker"
+				<form:input name="pwrList[0].pwrApprovalDate"
+					path="pwrList[0].pwrApprovalDate" class="form-control datepicker"
 					title="Please enter a valid date" pattern="\d{1,2}/\d{1,2}/\d{4}"
-					 id="eglcPwrs[0].pwrApprovalDate"
+					 id="pwrList[0].pwrApprovalDate"
 					data-inputmask="'mask': 'd/m/y'" />
-				<form:errors path="eglcPwrs[0].pwrApprovalDate" cssClass="add-margin error-msg" />
+				<form:errors path="pwrList[0].pwrApprovalDate" cssClass="add-margin error-msg" />
 			</div>
 		</div>
 	
@@ -140,10 +140,10 @@
 				code="lbl.mesg.document" /></font> </label>
 	<div class="col-sm-3 add-margin">
 
-		<input type="file" id="file" name="eglcPwrs[0].pwrDocuments[0].files"
+		<input type="file" id="file" name="pwrList[0].pwrDocuments[0].files"
 			class="file-ellipsis upload-file">
 
-		<form:errors path="eglcPwrs[0].pwrDocuments[0].files"
+		<form:errors path="pwrList[0].pwrDocuments[0].files"
 			cssClass="add-margin error-msg" />
 		
 	</div>
@@ -159,22 +159,22 @@
 			<label class="col-sm-3 control-label text-right">
 				 Date of submission of CA to GP/MSC:</label>
 			<div class="col-sm-3 add-margin">
-				<form:input name="eglcCounterAffidavit[0].counterAffidavitDueDate"
-					path="eglcCounterAffidavit[0].counterAffidavitDueDate"
+				<form:input name="counterAffidavits[0].counterAffidavitDueDate"
+					path="counterAffidavits[0].counterAffidavitDueDate"
 					 class="form-control datepicker"
 					title="Please enter a valid date" pattern="\d{1,2}/\d{1,2}/\d{4}"
-					data-date-end-date="-1d" id="eglcCounterAffidavit[0].counterAffidavitDueDate"
+					data-date-end-date="-1d" id="counterAffidavits[0].counterAffidavitDueDate"
 					data-inputmask="'mask': 'd/m/y'" />
-				<form:errors path="eglcCounterAffidavit[0].counterAffidavitDueDate" cssClass="add-margin error-msg" />
+				<form:errors path="counterAffidavits[0].counterAffidavitDueDate" cssClass="add-margin error-msg" />
 			</div>
 		<label class="col-sm-2 control-label text-right">
 		Date of Approval of CA to GP/MSC:</label>
 		<div class="col-sm-3 add-margin">
-				<form:input name="eglcCounterAffidavit[0].counterAffidavitApprovalDate"
-					path="eglcCounterAffidavit[0].counterAffidavitApprovalDate" class="form-control datepicker"
+				<form:input name="counterAffidavits[0].counterAffidavitApprovalDate"
+					path="counterAffidavits[0].counterAffidavitApprovalDate" class="form-control datepicker"
 					title="Please enter a valid date" pattern="\d{1,2}/\d{1,2}/\d{4}"
-					id="eglcCounterAffidavit[0].counterAffidavitApprovalDate"
+					id="counterAffidavits[0].counterAffidavitApprovalDate"
 					data-inputmask="'mask': 'd/m/y'" />
-				<form:errors path="eglcCounterAffidavit[0].counterAffidavitApprovalDate" cssClass="add-margin error-msg" />
+				<form:errors path="counterAffidavits[0].counterAffidavitApprovalDate" cssClass="add-margin error-msg" />
 			</div>
 		</div>

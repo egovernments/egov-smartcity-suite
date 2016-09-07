@@ -311,6 +311,7 @@ public class CreatePropertyAction extends PropertyTaxBaseAction {
         return RESULT_NEW;
     }
 
+    @SuppressWarnings("unchecked")
     private void getMutationListByCode(String code) {
         List<PropertyMutationMaster> mutationList = getPersistenceService().findAllBy(
                 "from PropertyMutationMaster pmm where pmm.type=? and pmm.code=?", PROP_CREATE_RSN, code);
@@ -626,14 +627,6 @@ public class CreatePropertyAction extends PropertyTaxBaseAction {
             propertyInitiatedBy = (userAssignment.getEmployee().getName()).concat("~").concat(
                     userAssignment.getPosition().getName());
         }
-        /*
-         * if (propService.isEmployee(property.getCreatedBy()))
-         * propertyInitiatedBy = property.getCreatedBy().getName(); else
-         * propertyInitiatedBy = assignmentService
-         * .getPrimaryAssignmentForPositon
-         * (property.getStateHistory().get(0).getOwnerPosition().getId())
-         * .getEmployee().getUsername();
-         */
         setAckMessage("Property Created Successfully in the System and Forwarded to : ");
         setAssessmentNoMessage(" for Digital Signature with assessment number : ");
         if (LOGGER.isDebugEnabled()) {
@@ -659,7 +652,8 @@ public class CreatePropertyAction extends PropertyTaxBaseAction {
         approverName = "";
         buildEmailandSms(property, APPLICATION_TYPE_NEW_ASSESSENT);
         Assignment assignment;
-        if(property.getBasicProperty().getSource().equals(PropertyTaxConstants.SOURCEOFDATA_ONLINE)){
+        if(property.getBasicProperty().getSource().equals(PropertyTaxConstants.SOURCEOFDATA_ONLINE) ||
+        		property.getBasicProperty().getSource().equals(PropertyTaxConstants.SOURCEOFDATA_MOBILE)){
         	propertyInitiatedBy = propertyTaxUtil.getApproverUserName(property.getStateHistory().get(0)
                     .getOwnerPosition().getId());
         } else {
@@ -834,14 +828,6 @@ public class CreatePropertyAction extends PropertyTaxBaseAction {
                     + (getDropdownData().get("taxExemptedList") != null ? getDropdownData().get("taxExemptedList")
                             : "List is NULL"));
 
-        if (null != property && null != property.getId()) {
-            final Map<String, BigDecimal> demandCollMap = null;
-            /*
-             * final Map<String, BigDecimal> demandCollMap =
-             * propertyTaxUtil.prepareDemandDetForView(property,
-             * propertyTaxUtil.getCurrentInstallment());
-             */
-        }
         LOGGER.debug("Exiting from prepare");
     }
 
@@ -1176,7 +1162,7 @@ public class CreatePropertyAction extends PropertyTaxBaseAction {
             propertyid.setElectionBoundary(boundaryService.getBoundaryById(getElectionWardId()));
             property.getBasicProperty().setPropertyID(propertyid);
             if (null != getElectionWardId() && getElectionWardId() != -1 && null != property.getBasicProperty()
-                    && null == propService.getUserPositionByZone(property.getBasicProperty())) {
+                    && null == propService.getUserPositionByZone(property.getBasicProperty(),PropertyTaxConstants.SOURCEOFDATA_MEESEWA)) {
                 addActionError(getText("notexists.position"));
             }
         }
@@ -1253,7 +1239,6 @@ public class CreatePropertyAction extends PropertyTaxBaseAction {
     @ValidationErrorPage("dataEntry")
     @Action(value = "/createProperty-createDataEntry")
     public String save() {
-        final HttpServletRequest request = ServletActionContext.getRequest();
         if (LOGGER.isDebugEnabled())
             LOGGER.debug("create: Property creation started, Property: " + property + ", zoneId: " + zoneId
                     + ", wardId: " + wardId + ", blockId: " + blockId + ", areaOfPlot: " + areaOfPlot

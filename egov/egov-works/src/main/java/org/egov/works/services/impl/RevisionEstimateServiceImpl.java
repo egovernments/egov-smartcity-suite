@@ -160,7 +160,7 @@ public class RevisionEstimateServiceImpl extends BaseServiceImpl<RevisionAbstrac
     private boolean consumeBudgetForNormalWorks(final RevisionAbstractEstimate revisionEstimate,
             final String appropriationNumber) {
         boolean flag = false;
-        final Long finYearId = finHibernateDao.getFinancialYearByDate(new Date()).getId();
+        final Long finYearId = finHibernateDao.getFinYearByDate(new Date()).getId();
         final List<Long> budgetHeadId = new ArrayList<Long>();
         final FinancialDetail financialDetail = revisionEstimate.getParent().getFinancialDetails().get(0);
         budgetHeadId.add(financialDetail.getBudgetGroup().getId());
@@ -234,7 +234,7 @@ public class RevisionEstimateServiceImpl extends BaseServiceImpl<RevisionAbstrac
 
         if (balance.doubleValue() >= depApprAmnt) {
             DepositWorksUsage depositWorksUsage = new DepositWorksUsage();
-            final CFinancialYear budgetApprDate_finYear = finHibernateDao.getFinancialYearByDate(appDate);
+            final CFinancialYear budgetApprDate_finYear = finHibernateDao.getFinYearByDate(appDate);
             depositWorksUsage.setTotalDepositAmount(creditBalance);
             depositWorksUsage.setConsumedAmount(new BigDecimal(depApprAmnt));
             depositWorksUsage.setReleasedAmount(BigDecimal.ZERO);
@@ -257,7 +257,7 @@ public class RevisionEstimateServiceImpl extends BaseServiceImpl<RevisionAbstrac
     private void persistDepositCodeAppDetails(final DepositWorksUsage depositWorksUsage,
             final FinancialDetail financialDetail) {
         AbstractEstimateAppropriation estimateAppropriation = null;
-        final int finYearId = finHibernateDao.getFinancialYearByDate(new Date()).getId().intValue();
+        final int finYearId = finHibernateDao.getFinYearByDate(new Date()).getId().intValue();
         final BigDecimal creditBalance = depositWorksUsage.getTotalDepositAmount();
         final AbstractEstimate abstractEstimate = depositWorksUsage.getAbstractEstimate();
         BigDecimal utilizedAmt = depositWorksUsageService.getTotalUtilizedAmountForDepositWorks(financialDetail,

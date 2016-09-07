@@ -44,10 +44,13 @@ import static java.math.BigDecimal.ZERO;
 import static org.apache.commons.lang3.StringUtils.isBlank;
 import static org.egov.ptis.constants.PropertyTaxConstants.ADDTIONAL_RULE_ALTER_ASSESSMENT;
 import static org.egov.ptis.constants.PropertyTaxConstants.ADDTIONAL_RULE_BIFURCATE_ASSESSMENT;
+import static org.egov.ptis.constants.PropertyTaxConstants.ALTERATION_OF_ASSESSMENT;
 import static org.egov.ptis.constants.PropertyTaxConstants.APPLICATION_TYPE_ALTER_ASSESSENT;
 import static org.egov.ptis.constants.PropertyTaxConstants.APPLICATION_TYPE_GRP;
 import static org.egov.ptis.constants.PropertyTaxConstants.APPLICATION_TYPE_NEW_ASSESSENT;
 import static org.egov.ptis.constants.PropertyTaxConstants.ARR_DMD_STR;
+import static org.egov.ptis.constants.PropertyTaxConstants.CURRENTYEAR_FIRST_HALF;
+import static org.egov.ptis.constants.PropertyTaxConstants.CURRENTYEAR_SECOND_HALF;
 import static org.egov.ptis.constants.PropertyTaxConstants.CURR_FIRSTHALF_DMD_STR;
 import static org.egov.ptis.constants.PropertyTaxConstants.DEMANDRSN_STR_EDUCATIONAL_CESS;
 import static org.egov.ptis.constants.PropertyTaxConstants.DEMANDRSN_STR_GENERAL_TAX;
@@ -70,7 +73,10 @@ import static org.egov.ptis.constants.PropertyTaxConstants.NEW_ASSESSMENT;
 import static org.egov.ptis.constants.PropertyTaxConstants.OWNERSHIP_TYPE_VAC_LAND;
 import static org.egov.ptis.constants.PropertyTaxConstants.PROPERTY_MODIFY_REASON_ADD_OR_ALTER;
 import static org.egov.ptis.constants.PropertyTaxConstants.PROPERTY_MODIFY_REASON_BIFURCATE;
+import static org.egov.ptis.constants.PropertyTaxConstants.SOURCEOFDATA_MOBILE;
 import static org.egov.ptis.constants.PropertyTaxConstants.STATUS_CANCELLED;
+import static org.egov.ptis.constants.PropertyTaxConstants.UD_REVENUE_INSPECTOR_APPROVAL_PENDING;
+import static org.egov.ptis.constants.PropertyTaxConstants.VACANTLAND_MIN_CUR_CAPITALVALUE;
 import static org.egov.ptis.constants.PropertyTaxConstants.WFLOW_ACTION_STEP_APPROVE;
 import static org.egov.ptis.constants.PropertyTaxConstants.WFLOW_ACTION_STEP_FORWARD;
 import static org.egov.ptis.constants.PropertyTaxConstants.WFLOW_ACTION_STEP_REJECT;
@@ -98,12 +104,10 @@ import org.egov.eis.entity.Assignment;
 import org.egov.eis.service.AssignmentService;
 import org.egov.eis.service.DesignationService;
 import org.egov.eis.service.EisCommonService;
-import org.egov.eis.service.EmployeeService;
 import org.egov.eis.service.PositionMasterService;
 import org.egov.eis.web.actions.workflow.GenericWorkFlowAction;
 import org.egov.infra.admin.master.entity.Department;
 import org.egov.infra.admin.master.entity.User;
-import org.egov.infra.admin.master.service.UserService;
 import org.egov.infra.config.core.ApplicationThreadLocals;
 import org.egov.infra.filestore.entity.FileStoreMapper;
 import org.egov.infra.filestore.service.FileStoreService;
@@ -119,7 +123,6 @@ import org.egov.infra.workflow.service.SimpleWorkflowService;
 import org.egov.pims.commons.Designation;
 import org.egov.pims.commons.Position;
 import org.egov.ptis.client.util.PropertyTaxUtil;
-import org.egov.ptis.constants.PropertyTaxConstants;
 import org.egov.ptis.domain.dao.demand.PtDemandDao;
 import org.egov.ptis.domain.entity.demand.Ptdemand;
 import org.egov.ptis.domain.entity.property.BasicProperty;
@@ -128,6 +131,7 @@ import org.egov.ptis.domain.entity.property.Property;
 import org.egov.ptis.domain.entity.property.PropertyDetail;
 import org.egov.ptis.domain.entity.property.PropertyDocs;
 import org.egov.ptis.domain.entity.property.PropertyImpl;
+import org.egov.ptis.domain.entity.property.PropertyOwnerInfo;
 import org.egov.ptis.domain.entity.property.PropertyTypeMaster;
 import org.egov.ptis.domain.entity.property.PropertyUsage;
 import org.egov.ptis.domain.entity.property.WorkflowBean;
@@ -172,14 +176,10 @@ public abstract class PropertyTaxBaseAction extends GenericWorkFlowAction {
     private PtDemandDao ptDemandDAO;
     @Autowired
     private PropertyService propertyService;
-    @Autowired
-    private EmployeeService employeeService;
     private SMSEmailService sMSEmailService;
     protected PropertyTaxUtil propertyTaxUtil;
     @Autowired
     private SecurityUtils securityUtils;
-    @Autowired
-    private UserService userService;
     @Autowired
     private PositionMasterService positionMasterService;
     private PropertyImpl propertyModel;
@@ -327,7 +327,7 @@ public abstract class PropertyTaxBaseAction extends GenericWorkFlowAction {
             addActionError(getText("mandatory.marketValue"));
         if (propertyDetail.getCurrentCapitalValue() != null
                 && propertyDetail.getCurrentCapitalValue() < Double
-                        .parseDouble(PropertyTaxConstants.VACANTLAND_MIN_CUR_CAPITALVALUE))
+                        .parseDouble(VACANTLAND_MIN_CUR_CAPITALVALUE))
             addActionError(getText("minvalue.capitalValue"));
         if (isBlank(eastBoundary))
             addActionError(getText("mandatory.eastBoundary"));
@@ -577,7 +577,7 @@ public abstract class PropertyTaxBaseAction extends GenericWorkFlowAction {
 
         if (!propertyByEmployee) {
             currentState = "Created";
-            final Assignment assignment = propertyService.getUserPositionByZone(property.getBasicProperty());
+            final Assignment assignment = propertyService.getUserPositionByZone(property.getBasicProperty(),property.getBasicProperty().getSource());
             if (null != assignment) {
                 approverPositionId = assignment.getPosition().getId();
                 approverName = (assignment.getEmployee().getName()).concat("~").concat(
@@ -605,7 +605,9 @@ public abstract class PropertyTaxBaseAction extends GenericWorkFlowAction {
                 final String stateValue = property.getCurrentState().getValue().split(":")[0] + ":" + WF_STATE_REJECTED;
                 property.transition(true).withSenderName(user.getUsername() + "::" + user.getName())
                         .withComments(approverComments).withStateValue(stateValue).withDateInfo(currentDate.toDate())
-                        .withOwner(wfInitiator.getPosition()).withNextAction(WF_STATE_ASSISTANT_APPROVAL_PENDING);
+                        .withOwner(wfInitiator.getPosition()).withNextAction(
+                        		property.getBasicProperty().getSource().equals(SOURCEOFDATA_MOBILE)?
+                        				UD_REVENUE_INSPECTOR_APPROVAL_PENDING : WF_STATE_ASSISTANT_APPROVAL_PENDING);
             }
 
         } else {
@@ -670,7 +672,12 @@ public abstract class PropertyTaxBaseAction extends GenericWorkFlowAction {
      * @param applicationType
      */
     public void buildEmailandSms(final PropertyImpl property, final String applicationType) {
-        final User user = property.getBasicProperty().getPrimaryOwner();
+        for (PropertyOwnerInfo ownerInfo : property.getBasicProperty().getPropertyOwnerInfo()) {
+            buildEmailAndSms(property, ownerInfo.getOwner(), applicationType);
+        }
+    }
+
+    private void buildEmailAndSms(final PropertyImpl property, final User user, final String applicationType) {
         final String mobileNumber = user.getMobileNumber();
         final String emailid = user.getEmailId();
         final String applicantName = user.getName();
@@ -694,7 +701,8 @@ public abstract class PropertyTaxBaseAction extends GenericWorkFlowAction {
                                 new String[] { property.getApplicationNo() });
                         emailBody = getText("msg.newpropertycreate.email", args);
                     }
-                } else if (APPLICATION_TYPE_ALTER_ASSESSENT.equals(applicationType)) {
+                } else if (ALTERATION_OF_ASSESSMENT.equals(applicationType)
+                        || APPLICATION_TYPE_ALTER_ASSESSENT.equals(applicationType)) {
 
                     if (mobileNumber != null)
                         smsMsg = getText("msg.alterAssessmentForward.sms", args);
@@ -722,7 +730,8 @@ public abstract class PropertyTaxBaseAction extends GenericWorkFlowAction {
                                 new String[] { property.getApplicationNo() });
                         emailBody = getText("msg.newpropertyreject.email", args);
                     }
-                } else if (APPLICATION_TYPE_ALTER_ASSESSENT.equals(applicationType)) {
+                } else if (ALTERATION_OF_ASSESSMENT.equals(applicationType)
+                        || APPLICATION_TYPE_ALTER_ASSESSENT.equals(applicationType)) {
                     if (mobileNumber != null)
                         smsMsg = getText("msg.alterAssessmentReject.sms", args);
 
@@ -750,7 +759,8 @@ public abstract class PropertyTaxBaseAction extends GenericWorkFlowAction {
                                 .getBasicProperty().getUpicNo() });
                         emailBody = getText("msg.newpropertyapprove.email", args);
                     }
-                } else if (APPLICATION_TYPE_ALTER_ASSESSENT.equals(applicationType)) {
+                } else if (ALTERATION_OF_ASSESSMENT.equals(applicationType)
+                        || APPLICATION_TYPE_ALTER_ASSESSENT.equals(applicationType)) {
                     if (mobileNumber != null)
                         smsMsg = getText("msg.alterAssessmentApprove.sms", args);
                     if (emailid != null) {
@@ -765,17 +775,17 @@ public abstract class PropertyTaxBaseAction extends GenericWorkFlowAction {
                 }
             }
         }
-        if (mobileNumber != null)
+        if (StringUtils.isNotBlank(mobileNumber) && StringUtils.isNotBlank(smsMsg))
             messagingService.sendSMS(mobileNumber, smsMsg);
-        if (emailid != null)
+        if (StringUtils.isNotBlank(emailid) && StringUtils.isNotBlank(emailSubject) && StringUtils.isNotBlank(emailBody))
             messagingService.sendEmail(emailid, emailSubject, emailBody);
 
     }
 
     public void preparePropertyTaxDetails(Property property) {
     	Map<String, Installment> installmentMap = propertyTaxUtil.getInstallmentsForCurrYear(new Date());
-        Installment installmentFirstHalf = installmentMap.get(PropertyTaxConstants.CURRENTYEAR_FIRST_HALF);
-        Installment installmentSecondHalf = installmentMap.get(PropertyTaxConstants.CURRENTYEAR_SECOND_HALF);
+        Installment installmentFirstHalf = installmentMap.get(CURRENTYEAR_FIRST_HALF);
+        Installment installmentSecondHalf = installmentMap.get(CURRENTYEAR_SECOND_HALF);
         Map<String, BigDecimal> demandCollMap = null;
         //Based on the current date, the tax details will be fetched for the respective installment
         if(DateUtils.between(new Date(), installmentFirstHalf.getFromDate(), installmentFirstHalf.getToDate()))

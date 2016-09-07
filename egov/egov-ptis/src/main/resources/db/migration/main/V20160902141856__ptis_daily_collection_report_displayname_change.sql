@@ -1,0 +1,1 @@
+update eg_action set displayname ='Daily collection report(PT)' where name = 'Daily collection report' and contextroot='ptis';

@@ -1,4 +1,7 @@
-# [eGov Opensource][GHPAGE] [![Build Status](http://ci.egovernments.org/buildStatus/icon?job=eGov-Github-Master)](http://ci.egovernments.org/job/eGov-Github-Master/) [![Join the chat at https://gitter.im/egovernments/eGov](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/egovernments/eGov?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
+# [eGov Opensource][GHPAGE] 
+[![Join the chat at https://gitter.im/egovernments/eGov](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/egovernments/eGov?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
+
+[![Build Status](http://ci.egovernments.org/buildStatus/icon?job=eGov-Github-Master)](http://ci.egovernments.org/job/eGov-Github-Master/) [![][codacy img]][codacy] [![][versioneye img]][versioneye]
 
 eGovernments Foundation transforms urban governance with the use of scalable and replicable technology solutions that enable efficient and effective municipal operations, better decision making, and contact-less urban service delivery.
 
@@ -282,3 +285,7 @@ Browser:-
 [GPL]: http://www.gnu.org/licenses/
 [FAQ]:http://confluence.egovernments.org/display/FAQ/FAQ
 [GHPAGE]:http://egovernments.github.io/eGov/
+[versioneye]:https://www.versioneye.com/user/projects/57c7bed0968d640049e125d8
+[versioneye img]:https://www.versioneye.com/user/projects/57c7bed0968d640049e125d8/badge.svg
+[codacy]:https://www.codacy.com/app/egovernments/eGov
+[codacy img]:https://api.codacy.com/project/badge/Grade/5415cc7717a349c3a72c349a24dace35

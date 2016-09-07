@@ -70,23 +70,25 @@ public class GenericLegalCaseController {
 
     @Autowired
     private GovernmentDepartmentService governmentDepartmentService;
-    
+
     @Autowired
     private PetitionTypeMasterService petitionTypeMasterService;
-    
+
     @Autowired
     private CourtMasterService courtMasterService;
 
     public @ModelAttribute("courtTypeList") List<CourtTypeMaster> courtTypeList() {
         return courtTypeMasterService.getActiveCourtTypes();
     }
+
     public @ModelAttribute("petitiontypeList") List<PetitionTypeMaster> getPetitionList() {
         return petitionTypeMasterService.getActivePetitionTypes();
     }
-    
+
     public @ModelAttribute("courtsList") List<CourtMaster> getCourtNameList() {
         return courtMasterService.getActiveCourtMaster();
     }
+
     public @ModelAttribute("govtDeptList") List<GovernmentDepartment> getGovtDeptList() {
         return governmentDepartmentService.getActiveGovernmentDepartment();
     }

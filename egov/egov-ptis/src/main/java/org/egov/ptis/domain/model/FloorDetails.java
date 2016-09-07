@@ -47,17 +47,30 @@ public class FloorDetails implements Serializable {
         private String floorNoCode;
         private String buildClassificationCode;
         private String natureOfUsageCode;
+        private String firmName;
         private String occupancyCode;
         private String occupantName;
         private String constructionDate;
+        private String occupancyDate;
         private Float plinthArea;
         private Float plinthLength;
         private Float plinthBreadth;
-        private String exemptionCategoryCode;
-        private Boolean drainageCode;
         private Boolean unstructuredLand;
-        private Integer noOfSeats;
+        private String buildingPermissionNo;
+        private String buildingPermissionDate;
+        private Float buildingPlanPlinthArea;
 
+        @Override
+        public String toString() {
+                return "FloorDetails [floorNoCode=" + floorNoCode + ", buildClassificationCode=" + buildClassificationCode
+                                + ", natureOfUsageCode=" + natureOfUsageCode + ", occupancyCode=" + occupancyCode 
+                                + ", occupantName=" + occupantName + ", constructionDate=" + constructionDate 
+                                + ", occupancyDate=" + occupancyDate + ", unstructuredLand=" + unstructuredLand + ", firmName=" + firmName 
+                                + ", plinthArea=" + plinthArea + ", plinthLength=" + plinthLength + ", plinthBreadth=" + plinthBreadth
+                                + ", buildingPermissionNo=" + buildingPermissionNo + ", buildingPermissionDate=" + buildingPermissionDate 
+                                + ", buildingPlanPlinthArea=" + buildingPlanPlinthArea + "]";
+        }
+        
         public String getFloorNoCode() {
                 return floorNoCode;
         }
@@ -114,61 +127,68 @@ public class FloorDetails implements Serializable {
                 this.plinthArea = plinthArea;
         }
 
-        public String getExemptionCategoryCode() {
-                return exemptionCategoryCode;
-        }
-
-        public void setExemptionCategoryCode(String exemptionCategoryCode) {
-                this.exemptionCategoryCode = exemptionCategoryCode;
-        }
-
-        public Boolean getDrainageCode() {
-                return drainageCode;
-        }
-
-        public void setDrainageCode(Boolean drainageCode) {
-                this.drainageCode = drainageCode;
-        }
-
-        public Integer getNoOfSeats() {
-                return noOfSeats;
-        }
-
-        public void setNoOfSeats(Integer noOfSeats) {
-                this.noOfSeats = noOfSeats;
-        }
-
-        @Override
-        public String toString() {
-                return "FloorDetails [floorNoCode=" + floorNoCode + ", buildClassificationCode=" + buildClassificationCode
-                                + ", natureOfUsageCode=" + natureOfUsageCode + ", occupancyCode=" + occupancyCode + ", occupantName="
-                                + occupantName + ", constructionDate=" + constructionDate + ", plinthArea=" + plinthArea
-                                + ", exemptionCategoryCode=" + exemptionCategoryCode + ", drainageCode=" + drainageCode + ", noOfSeats="
-                                + noOfSeats + "]";
-        }
-
-    public Float getPlinthLength() {
-        return plinthLength;
-    }
-
-    public void setPlinthLength(Float plinthLength) {
-        this.plinthLength = plinthLength;
-    }
-
-    public Float getPlinthBreadth() {
-        return plinthBreadth;
-    }
-
-    public void setPlinthBreadth(Float plinthBreadth) {
-        this.plinthBreadth = plinthBreadth;
-    }
-
-    public Boolean getUnstructuredLand() {
-        return unstructuredLand;
-    }
-
-    public void setUnstructuredLand(Boolean unstructuredLand) {
-        this.unstructuredLand = unstructuredLand;
-    }
+	    public Float getPlinthLength() {
+	        return plinthLength;
+	    }
+	
+	    public void setPlinthLength(Float plinthLength) {
+	        this.plinthLength = plinthLength;
+	    }
+	
+	    public Float getPlinthBreadth() {
+	        return plinthBreadth;
+	    }
+	
+	    public void setPlinthBreadth(Float plinthBreadth) {
+	        this.plinthBreadth = plinthBreadth;
+	    }
+	
+	    public Boolean getUnstructuredLand() {
+	        return unstructuredLand;
+	    }
+	
+	    public void setUnstructuredLand(Boolean unstructuredLand) {
+	        this.unstructuredLand = unstructuredLand;
+	    }
+	
+		public String getFirmName() {
+			return firmName;
+		}
+	
+		public void setFirmName(String firmName) {
+			this.firmName = firmName;
+		}
+	
+		public String getOccupancyDate() {
+			return occupancyDate;
+		}
+	
+		public void setOccupancyDate(String occupancyDate) {
+			this.occupancyDate = occupancyDate;
+		}
+	
+		public String getBuildingPermissionNo() {
+			return buildingPermissionNo;
+		}
+	
+		public void setBuildingPermissionNo(String buildingPermissionNo) {
+			this.buildingPermissionNo = buildingPermissionNo;
+		}
+	
+		public String getBuildingPermissionDate() {
+			return buildingPermissionDate;
+		}
+	
+		public void setBuildingPermissionDate(String buildingPermissionDate) {
+			this.buildingPermissionDate = buildingPermissionDate;
+		}
+	
+		public Float getBuildingPlanPlinthArea() {
+			return buildingPlanPlinthArea;
+		}
+	
+		public void setBuildingPlanPlinthArea(Float buildingPlanPlinthArea) {
+			this.buildingPlanPlinthArea = buildingPlanPlinthArea;
+		}
 
 }

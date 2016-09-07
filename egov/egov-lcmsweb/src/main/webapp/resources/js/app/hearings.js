@@ -145,9 +145,8 @@ $(document).ready(function() {
 	  $('#employeeDetails tbody tr:last').find('input').val($("#positionName").val());
 	}	
 });
-function edit(hearings){    
-	var lcNumber = $('#lcNumber').val();
-	var url = '/lcms/hearing/edit/?lcNumber='+lcNumber;
+function edit(hearingId){    
+	var url = '/lcms/hearing/edit/'+hearingId
 	window.location = url;
    }
 $('#createnewhearings').click(function() {

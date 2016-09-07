@@ -37,29 +37,32 @@
  *
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
-package org.egov.lcms.transactions.entity;
+package org.egov.lcms.reports.entity;
 
-import java.util.ArrayList;
 import java.util.Date;
-import java.util.List;
 
-public class LegalCaseReportResult {
+import org.egov.lcms.transactions.entity.LegalCase;
+
+public class LegalCaseSearchResult {
     private String caseNumber;
     private String lcNumber;
     private Date caseFromDate;
+    private LegalCase legalCase;
     private Date caseToDate;
     private String standingCouncil;
-    private String casecategory;
-    private String courttype;
+    private Integer casecategory;
     private String petitionType;
-    private String courtType;
+    private Integer petitionTypeId;
+    private Integer courtType;
     private String courtName;
+    private Integer courtId;
     private String govtDept;
     private String caseTitle;
     private String petName;
+    private String resName;
     private Boolean isStatusExcluded;
     private String caseStatus;
-    private List<String> actionList = new ArrayList<String>(0);
+    private Integer statusId;
     private String assignDept;
 
     public String getStandingCouncil() {
@@ -82,43 +85,29 @@ public class LegalCaseReportResult {
         return lcNumber;
     }
 
-    public void setLcNumber(final String lcNumber) {
+    public Date getCaseFromDate() {
+		return caseFromDate;
+	}
+
+	public void setCaseFromDate(Date caseFromDate) {
+		this.caseFromDate = caseFromDate;
+	}
+
+	public Date getCaseToDate() {
+		return caseToDate;
+	}
+
+	public void setCaseToDate(Date caseToDate) {
+		this.caseToDate = caseToDate;
+	}
+
+	public void setLcNumber(final String lcNumber) {
         this.lcNumber = lcNumber;
     }
 
-    public Date getCaseFromDate() {
-        return caseFromDate;
-    }
+    
 
-    public void setCaseFromDate(final Date caseFromDate) {
-        this.caseFromDate = caseFromDate;
-    }
-
-    public Date getCaseToDate() {
-        return caseToDate;
-    }
-
-    public void setCaseToDate(final Date caseToDate) {
-        this.caseToDate = caseToDate;
-    }
-
-    public String getCasecategory() {
-        return casecategory;
-    }
-
-    public void setCasecategory(final String casecategory) {
-        this.casecategory = casecategory;
-    }
-
-    public String getCourttype() {
-        return courttype;
-    }
-
-    public void setCourttype(final String courttype) {
-        this.courttype = courttype;
-    }
-
-    public String getPetitionType() {
+	public String getPetitionType() {
         return petitionType;
     }
 
@@ -126,23 +115,43 @@ public class LegalCaseReportResult {
         this.petitionType = petitionType;
     }
 
-    public String getCourtType() {
-        return courtType;
-    }
+    
 
-    public void setCourtType(final String courtType) {
-        this.courtType = courtType;
-    }
+    public Integer getCasecategory() {
+		return casecategory;
+	}
 
-    public String getCourtName() {
-        return courtName;
-    }
+	public void setCasecategory(Integer casecategory) {
+		this.casecategory = casecategory;
+	}
 
-    public void setCourtName(final String courtName) {
-        this.courtName = courtName;
-    }
+	public Integer getCourtType() {
+		return courtType;
+	}
 
-    public String getGovtDept() {
+	public void setCourtType(Integer courtType) {
+		this.courtType = courtType;
+	}
+
+	
+
+	public String getCourtName() {
+		return courtName;
+	}
+
+	public void setCourtName(String courtName) {
+		this.courtName = courtName;
+	}
+
+	public Integer getCourtId() {
+		return courtId;
+	}
+
+	public void setCourtId(Integer courtId) {
+		this.courtId = courtId;
+	}
+
+	public String getGovtDept() {
         return govtDept;
     }
 
@@ -166,13 +175,6 @@ public class LegalCaseReportResult {
         this.caseStatus = caseStatus;
     }
 
-    public List<String> getActionList() {
-        return actionList;
-    }
-
-    public void setActionList(final List<String> actionList) {
-        this.actionList = actionList;
-    }
 
     public String getCaseTitle() {
         return caseTitle;
@@ -197,5 +199,38 @@ public class LegalCaseReportResult {
     public void setIsStatusExcluded(final Boolean isStatusExcluded) {
         this.isStatusExcluded = isStatusExcluded;
     }
+
+	public Integer getStatusId() {
+		return statusId;
+	}
+
+	public void setStatusId(Integer statusId) {
+		this.statusId = statusId;
+	}
+
+	public Integer getPetitionTypeId() {
+		return petitionTypeId;
+	}
+
+	public void setPetitionTypeId(Integer petitionTypeId) {
+		this.petitionTypeId = petitionTypeId;
+	}
+
+	public String getResName() {
+		return resName;
+	}
+
+	public void setResName(String resName) {
+		this.resName = resName;
+	}
+
+	public LegalCase getLegalCase() {
+		return legalCase;
+	}
+
+	public void setLegalCase(LegalCase legalCase) {
+		this.legalCase = legalCase;
+	}
+    
 
 }

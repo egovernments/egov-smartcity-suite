@@ -39,12 +39,69 @@
  */
 package org.egov.ptis.web.rest;
 
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
-import com.sun.jersey.core.header.ContentDisposition;
-import com.sun.jersey.multipart.FormDataBodyPart;
-import com.sun.jersey.multipart.FormDataMultiPart;
-import com.sun.jersey.multipart.FormDataParam;
+import static org.egov.ptis.constants.PropertyTaxConstants.ARR_COLL_STR;
+import static org.egov.ptis.constants.PropertyTaxConstants.ARR_DMD_STR;
+import static org.egov.ptis.constants.PropertyTaxConstants.CURR_COLL_STR;
+import static org.egov.ptis.constants.PropertyTaxConstants.CURR_DMD_STR;
+import static org.egov.ptis.constants.PropertyTaxConstants.NATURE_TITLE_TRANSFER;
+import static org.egov.ptis.constants.PropertyTaxConstants.THIRD_PARTY_CONTENT_TYPE;
+import static org.egov.ptis.constants.PropertyTaxConstants.THIRD_PARTY_ERR_CODE_AADHAAR_NUMBER_NOTEXISTS;
+import static org.egov.ptis.constants.PropertyTaxConstants.THIRD_PARTY_ERR_CODE_ASSESSMENT_NO_LEN;
+import static org.egov.ptis.constants.PropertyTaxConstants.THIRD_PARTY_ERR_CODE_ASSESSMENT_NO_NOT_FOUND;
+import static org.egov.ptis.constants.PropertyTaxConstants.THIRD_PARTY_ERR_CODE_ASSESSMENT_NO_REQUIRED;
+import static org.egov.ptis.constants.PropertyTaxConstants.THIRD_PARTY_ERR_CODE_INVALIDCREDENTIALS;
+import static org.egov.ptis.constants.PropertyTaxConstants.THIRD_PARTY_ERR_CODE_PROPERTYTRANSFER_ALREADYINWORKFLOW;
+import static org.egov.ptis.constants.PropertyTaxConstants.THIRD_PARTY_ERR_CODE_PROPERTYTRANSFER_MUTATIONDEEDNUMBER_MANDATORY;
+import static org.egov.ptis.constants.PropertyTaxConstants.THIRD_PARTY_ERR_CODE_PROPERTYTRANSFER_MUTATIONRDEEDDATE_MANDATORY;
+import static org.egov.ptis.constants.PropertyTaxConstants.THIRD_PARTY_ERR_CODE_PROPERTYTRANSFER_MUTATIONREASON_MANDATORY;
+import static org.egov.ptis.constants.PropertyTaxConstants.THIRD_PARTY_ERR_CODE_PROPERTYTRANSFER_REQUIREDDOCUMENTMISSING;
+import static org.egov.ptis.constants.PropertyTaxConstants.THIRD_PARTY_ERR_CODE_PROPERTYTRANSFER_SALEDETAIL_MANDATORY;
+import static org.egov.ptis.constants.PropertyTaxConstants.THIRD_PARTY_ERR_CODE_PROPERTYTRANSFER_TAXPENDING;
+import static org.egov.ptis.constants.PropertyTaxConstants.THIRD_PARTY_ERR_CODE_PROPERTYTRANSFER_TRANSFEREENAME_MANDATORY;
+import static org.egov.ptis.constants.PropertyTaxConstants.THIRD_PARTY_ERR_CODE_PROPERTYTRANSFER_TRANSFEREE_GENDERMANDATORY;
+import static org.egov.ptis.constants.PropertyTaxConstants.THIRD_PARTY_ERR_CODE_PROPERTYTRANSFER_TRANSFEREE_MOBILENUMBERMANDATORY;
+import static org.egov.ptis.constants.PropertyTaxConstants.THIRD_PARTY_ERR_CODE_PROPERTYTRANSFER_TRANSFEREE_NAMEMANDATORY;
+import static org.egov.ptis.constants.PropertyTaxConstants.THIRD_PARTY_ERR_MSG_AADHAAR_NUMBER_NOTEXISTS;
+import static org.egov.ptis.constants.PropertyTaxConstants.THIRD_PARTY_ERR_MSG_ASSESSMENT_NO_LEN;
+import static org.egov.ptis.constants.PropertyTaxConstants.THIRD_PARTY_ERR_MSG_ASSESSMENT_NO_NOT_FOUND;
+import static org.egov.ptis.constants.PropertyTaxConstants.THIRD_PARTY_ERR_MSG_ASSESSMENT_NO_REQUIRED;
+import static org.egov.ptis.constants.PropertyTaxConstants.THIRD_PARTY_ERR_MSG_INVALIDCREDENTIALS;
+import static org.egov.ptis.constants.PropertyTaxConstants.THIRD_PARTY_ERR_MSG_PROPERTYTRANSFER_ALREADYINWORKFLOW;
+import static org.egov.ptis.constants.PropertyTaxConstants.THIRD_PARTY_ERR_MSG_PROPERTYTRANSFER_MUTATIONDEEDNUMBER_MANDATORY;
+import static org.egov.ptis.constants.PropertyTaxConstants.THIRD_PARTY_ERR_MSG_PROPERTYTRANSFER_MUTATIONRDEEDDATE_MANDATORY;
+import static org.egov.ptis.constants.PropertyTaxConstants.THIRD_PARTY_ERR_MSG_PROPERTYTRANSFER_MUTATIONREASON_MANDATORY;
+import static org.egov.ptis.constants.PropertyTaxConstants.THIRD_PARTY_ERR_MSG_PROPERTYTRANSFER_REQUIREDDOCUMENTMISSING;
+import static org.egov.ptis.constants.PropertyTaxConstants.THIRD_PARTY_ERR_MSG_PROPERTYTRANSFER_SALEDETAIL_MANDATORY;
+import static org.egov.ptis.constants.PropertyTaxConstants.THIRD_PARTY_ERR_MSG_PROPERTYTRANSFER_TAXPENDING;
+import static org.egov.ptis.constants.PropertyTaxConstants.THIRD_PARTY_ERR_MSG_PROPERTYTRANSFER_TRANSFEREENAME_MANDATORY;
+import static org.egov.ptis.constants.PropertyTaxConstants.THIRD_PARTY_ERR_MSG_PROPERTYTRANSFER_TRANSFEREE_GENDERMANDATORY;
+import static org.egov.ptis.constants.PropertyTaxConstants.THIRD_PARTY_ERR_MSG_PROPERTYTRANSFER_TRANSFEREE_MOBILENUMBERMANDATORY;
+import static org.egov.ptis.constants.PropertyTaxConstants.THIRD_PARTY_ERR_MSG_PROPERTYTRANSFER_TRANSFEREE_NAMEMANDATORY;
+
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.math.BigDecimal;
+import java.text.MessageFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Date;
+import java.util.List;
+import java.util.Map;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.ws.rs.Consumes;
+import javax.ws.rs.FormParam;
+import javax.ws.rs.POST;
+import javax.ws.rs.Path;
+import javax.ws.rs.Produces;
+import javax.ws.rs.core.Context;
+import javax.ws.rs.core.MediaType;
+
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang.StringUtils;
 import org.codehaus.jackson.JsonGenerationException;
@@ -60,12 +117,9 @@ import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.config.core.ApplicationThreadLocals;
 import org.egov.infra.persistence.entity.enums.Gender;
 import org.egov.infra.persistence.entity.enums.UserType;
-import org.egov.infra.rest.client.SimpleRestClient;
-import org.egov.infra.web.utils.WebUtils;
 import org.egov.infra.workflow.matrix.entity.WorkFlowMatrix;
 import org.egov.infra.workflow.service.SimpleWorkflowService;
 import org.egov.pims.commons.Position;
-import org.egov.ptis.constants.PropertyTaxConstants;
 import org.egov.ptis.domain.entity.property.BasicProperty;
 import org.egov.ptis.domain.entity.property.Document;
 import org.egov.ptis.domain.entity.property.DocumentType;
@@ -82,31 +136,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Component;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.ws.rs.Consumes;
-import javax.ws.rs.FormParam;
-import javax.ws.rs.POST;
-import javax.ws.rs.Path;
-import javax.ws.rs.Produces;
-import javax.ws.rs.core.Context;
-import javax.ws.rs.core.MediaType;
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
-import java.math.BigDecimal;
-import java.text.MessageFormat;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
-import static org.egov.ptis.constants.PropertyTaxConstants.NATURE_TITLE_TRANSFER;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import com.sun.jersey.core.header.ContentDisposition;
+import com.sun.jersey.multipart.FormDataBodyPart;
+import com.sun.jersey.multipart.FormDataMultiPart;
+import com.sun.jersey.multipart.FormDataParam;
 
 /**
  * The PropertyTransferRestService class is used as the RESTFul service to
@@ -117,7 +152,6 @@ import static org.egov.ptis.constants.PropertyTaxConstants.NATURE_TITLE_TRANSFER
 @Component
 @Path("/transfer")
 public class PropertyTransferRestService {
-    private static final String WTMS_TAXDUE_RESTURL = "%s/wtms/rest/watertax/due/byptno/%s";
     private static final String DOCUMENT_TYPE_ADDRESSPROOF = "Address Proof Of Parties";
     private static final String DOCUMENT_TYPE_PROPERTYDOCUMENT = "Attested Copies Of Property Documents";
     private static final String DOCUMENT_TYPE_DEEDISSUEDBYREVENUEDEPT = "Title Deeds Issued By Revenue Department";
@@ -131,8 +165,6 @@ public class PropertyTransferRestService {
     private SimpleWorkflowService<PropertyMutation> transferWorkflowService;
     @Autowired
     private AadhaarInfoServiceClient aadhaarInfoServiceClient;
-    @Autowired
-    private SimpleRestClient simpleRestClient;
     @Autowired
     private EisCommonService eisCommonService;
 
@@ -375,7 +407,7 @@ public class PropertyTransferRestService {
             file = writeToFile(fileInputStream, headerOfFilePart.getFileName());
             files.add(file);
             document.setUploads(files);
-            contentTypes.add(MessageFormat.format(PropertyTaxConstants.THIRD_PARTY_CONTENT_TYPE,
+            contentTypes.add(MessageFormat.format(THIRD_PARTY_CONTENT_TYPE,
                     FilenameUtils.getExtension(file.getPath())));
             document.setUploadsContentType(contentTypes);
         }
@@ -417,18 +449,7 @@ public class PropertyTransferRestService {
         }
         return null;
     }
-/**
- * 
- * @param assessmentNo
- * @return
- */
-    public BigDecimal getWaterTaxDues(final String assessmentNo) {
-        final String wtmsRestURL = String.format(WTMS_TAXDUE_RESTURL, WebUtils.extractRequestDomainURL(context, false),
-                assessmentNo);
-        final HashMap<String, Object> waterTaxInfo = simpleRestClient.getRESTResponseAsMap(wtmsRestURL);
-        return waterTaxInfo.get("totalTaxDue") == null ? BigDecimal.ZERO : new BigDecimal(
-                Double.valueOf((Double) waterTaxInfo.get("totalTaxDue")));
-    }
+
 /**
  * 
  * @param mutationReason
@@ -465,7 +486,7 @@ public class PropertyTransferRestService {
         Position pos = null;
         DateTime currentDate = new DateTime();
         User user = propertyTransferService.getLoggedInUser();
-        Assignment assignment = propertyService.getUserPositionByZone(basicProperty);
+        Assignment assignment = propertyService.getUserPositionByZone(basicProperty,basicProperty.getSource());
         pos = assignment.getPosition();
 
         if (null == propertyMutation.getState()) {
@@ -530,38 +551,38 @@ public class PropertyTransferRestService {
         ErrorDetails errorDetails = null;
         if (accessmentnumber == null || accessmentnumber.trim().length() == 0) {
             errorDetails = new ErrorDetails();
-            errorDetails.setErrorCode(PropertyTaxConstants.THIRD_PARTY_ERR_CODE_ASSESSMENT_NO_REQUIRED);
-            errorDetails.setErrorMessage(PropertyTaxConstants.THIRD_PARTY_ERR_MSG_ASSESSMENT_NO_REQUIRED);
+            errorDetails.setErrorCode(THIRD_PARTY_ERR_CODE_ASSESSMENT_NO_REQUIRED);
+            errorDetails.setErrorMessage(THIRD_PARTY_ERR_MSG_ASSESSMENT_NO_REQUIRED);
         } else {
 
             if (basicProperty == null) {
                 errorDetails = new ErrorDetails();
-                errorDetails.setErrorCode(PropertyTaxConstants.THIRD_PARTY_ERR_CODE_ASSESSMENT_NO_NOT_FOUND);
-                errorDetails.setErrorMessage(PropertyTaxConstants.THIRD_PARTY_ERR_MSG_ASSESSMENT_NO_NOT_FOUND);
+                errorDetails.setErrorCode(THIRD_PARTY_ERR_CODE_ASSESSMENT_NO_NOT_FOUND);
+                errorDetails.setErrorMessage(THIRD_PARTY_ERR_MSG_ASSESSMENT_NO_NOT_FOUND);
             } else if (accessmentnumber.trim().length() > 0 && accessmentnumber.trim().length() < 10) {
                 errorDetails = new ErrorDetails();
-                errorDetails.setErrorCode(PropertyTaxConstants.THIRD_PARTY_ERR_CODE_ASSESSMENT_NO_LEN);
-                errorDetails.setErrorMessage(PropertyTaxConstants.THIRD_PARTY_ERR_MSG_ASSESSMENT_NO_LEN);
+                errorDetails.setErrorCode(THIRD_PARTY_ERR_CODE_ASSESSMENT_NO_LEN);
+                errorDetails.setErrorMessage(THIRD_PARTY_ERR_MSG_ASSESSMENT_NO_LEN);
             } else if (basicProperty != null && basicProperty.isUnderWorkflow()) {
                 errorDetails = new ErrorDetails();
-                errorDetails.setErrorCode(PropertyTaxConstants.THIRD_PARTY_ERR_CODE_PROPERTYTRANSFER_ALREADYINWORKFLOW);
+                errorDetails.setErrorCode(THIRD_PARTY_ERR_CODE_PROPERTYTRANSFER_ALREADYINWORKFLOW);
                 errorDetails
-                        .setErrorMessage(PropertyTaxConstants.THIRD_PARTY_ERR_MSG_PROPERTYTRANSFER_ALREADYINWORKFLOW);
+                        .setErrorMessage(THIRD_PARTY_ERR_MSG_PROPERTYTRANSFER_ALREADYINWORKFLOW);
             }
 
-            currentWaterTaxDue = getWaterTaxDues(accessmentnumber);
+            currentWaterTaxDue = propertyService.getWaterTaxDues(accessmentnumber);
             Map<String, BigDecimal> propertyTaxDetails = propertyService.getCurrentPropertyTaxDetails(basicProperty
                     .getActiveProperty());
-            currentPropertyTaxDue = propertyTaxDetails.get(PropertyTaxConstants.CURR_DMD_STR).subtract(
-                    propertyTaxDetails.get(PropertyTaxConstants.CURR_COLL_STR));
-            arrearPropertyTaxDue = propertyTaxDetails.get(PropertyTaxConstants.ARR_DMD_STR).subtract(
-                    propertyTaxDetails.get(PropertyTaxConstants.ARR_COLL_STR));
+            currentPropertyTaxDue = propertyTaxDetails.get(CURR_DMD_STR).subtract(
+                    propertyTaxDetails.get(CURR_COLL_STR));
+            arrearPropertyTaxDue = propertyTaxDetails.get(ARR_DMD_STR).subtract(
+                    propertyTaxDetails.get(ARR_COLL_STR));
 
             if (currentWaterTaxDue.add(currentPropertyTaxDue).add(arrearPropertyTaxDue).longValue() > 0) {
 
                 errorDetails = new ErrorDetails();
-                errorDetails.setErrorCode(PropertyTaxConstants.THIRD_PARTY_ERR_CODE_PROPERTYTRANSFER_TAXPENDING);
-                errorDetails.setErrorMessage(PropertyTaxConstants.THIRD_PARTY_ERR_MSG_PROPERTYTRANSFER_TAXPENDING);
+                errorDetails.setErrorCode(THIRD_PARTY_ERR_CODE_PROPERTYTRANSFER_TAXPENDING);
+                errorDetails.setErrorMessage(THIRD_PARTY_ERR_MSG_PROPERTYTRANSFER_TAXPENDING);
 
             }
 
@@ -574,9 +595,9 @@ public class PropertyTransferRestService {
                         if (!checkDocumentDetailsAvailable(DOCUMENT_TYPE_ADDRESSPROOF, formTransferDocument)) {
                             errorDetails = new ErrorDetails();
                             errorDetails
-                                    .setErrorCode(PropertyTaxConstants.THIRD_PARTY_ERR_CODE_PROPERTYTRANSFER_REQUIREDDOCUMENTMISSING);
+                                    .setErrorCode(THIRD_PARTY_ERR_CODE_PROPERTYTRANSFER_REQUIREDDOCUMENTMISSING);
                             errorDetails
-                                    .setErrorMessage(PropertyTaxConstants.THIRD_PARTY_ERR_MSG_PROPERTYTRANSFER_REQUIREDDOCUMENTMISSING
+                                    .setErrorMessage(THIRD_PARTY_ERR_MSG_PROPERTYTRANSFER_REQUIREDDOCUMENTMISSING
                                             + DOCUMENT_TYPE_ADDRESSPROOF);
 
                             break;
@@ -586,9 +607,9 @@ public class PropertyTransferRestService {
                         if (!checkDocumentDetailsAvailable(DOCUMENT_TYPE_PROPERTYDOCUMENT, formTransferDocument)) {
                             errorDetails = new ErrorDetails();
                             errorDetails
-                                    .setErrorCode(PropertyTaxConstants.THIRD_PARTY_ERR_CODE_PROPERTYTRANSFER_REQUIREDDOCUMENTMISSING);
+                                    .setErrorCode(THIRD_PARTY_ERR_CODE_PROPERTYTRANSFER_REQUIREDDOCUMENTMISSING);
                             errorDetails
-                                    .setErrorMessage(PropertyTaxConstants.THIRD_PARTY_ERR_MSG_PROPERTYTRANSFER_REQUIREDDOCUMENTMISSING
+                                    .setErrorMessage(THIRD_PARTY_ERR_MSG_PROPERTYTRANSFER_REQUIREDDOCUMENTMISSING
                                             + DOCUMENT_TYPE_ADDRESSPROOF);
                             break;
                         }
@@ -598,9 +619,9 @@ public class PropertyTransferRestService {
                         if (!checkDocumentDetailsAvailable(DOCUMENT_TYPE_DEEDISSUEDBYREVENUEDEPT, formTransferDocument)) {
                             errorDetails = new ErrorDetails();
                             errorDetails
-                                    .setErrorCode(PropertyTaxConstants.THIRD_PARTY_ERR_CODE_PROPERTYTRANSFER_REQUIREDDOCUMENTMISSING);
+                                    .setErrorCode(THIRD_PARTY_ERR_CODE_PROPERTYTRANSFER_REQUIREDDOCUMENTMISSING);
                             errorDetails
-                                    .setErrorMessage(PropertyTaxConstants.THIRD_PARTY_ERR_MSG_PROPERTYTRANSFER_REQUIREDDOCUMENTMISSING
+                                    .setErrorMessage(THIRD_PARTY_ERR_MSG_PROPERTYTRANSFER_REQUIREDDOCUMENTMISSING
                                             + DOCUMENT_TYPE_ADDRESSPROOF);
                             break;
                         }
@@ -614,15 +635,15 @@ public class PropertyTransferRestService {
         if (mutationMaster == null) {
             errorDetails = new ErrorDetails();
             errorDetails
-                    .setErrorCode(PropertyTaxConstants.THIRD_PARTY_ERR_CODE_PROPERTYTRANSFER_MUTATIONREASON_MANDATORY);
+                    .setErrorCode(THIRD_PARTY_ERR_CODE_PROPERTYTRANSFER_MUTATIONREASON_MANDATORY);
             errorDetails
-                    .setErrorMessage(PropertyTaxConstants.THIRD_PARTY_ERR_MSG_PROPERTYTRANSFER_MUTATIONREASON_MANDATORY);
+                    .setErrorMessage(THIRD_PARTY_ERR_MSG_PROPERTYTRANSFER_MUTATIONREASON_MANDATORY);
         } else if (ownerDetailsList == null || ownerDetailsList.size() == 0) {
             errorDetails = new ErrorDetails();
             errorDetails
-                    .setErrorCode(PropertyTaxConstants.THIRD_PARTY_ERR_CODE_PROPERTYTRANSFER_TRANSFEREENAME_MANDATORY);
+                    .setErrorCode(THIRD_PARTY_ERR_CODE_PROPERTYTRANSFER_TRANSFEREENAME_MANDATORY);
             errorDetails
-                    .setErrorMessage(PropertyTaxConstants.THIRD_PARTY_ERR_MSG_PROPERTYTRANSFER_TRANSFEREENAME_MANDATORY);
+                    .setErrorMessage(THIRD_PARTY_ERR_MSG_PROPERTYTRANSFER_TRANSFEREENAME_MANDATORY);
         } else if (ownerDetailsList != null && ownerDetailsList.size() > 0) {
             for (OwnerDetails owner : ownerDetailsList) {
 
@@ -631,63 +652,63 @@ public class PropertyTransferRestService {
                         if (aadhaarInfoServiceClient.getAadhaarInfo(owner.getAadhaarNo()) != null) {
                             errorDetails = new ErrorDetails();
                             errorDetails
-                                    .setErrorCode(PropertyTaxConstants.THIRD_PARTY_ERR_CODE_AADHAAR_NUMBER_NOTEXISTS);
+                                    .setErrorCode(THIRD_PARTY_ERR_CODE_AADHAAR_NUMBER_NOTEXISTS);
                             errorDetails
-                                    .setErrorMessage(PropertyTaxConstants.THIRD_PARTY_ERR_MSG_AADHAAR_NUMBER_NOTEXISTS
+                                    .setErrorMessage(THIRD_PARTY_ERR_MSG_AADHAAR_NUMBER_NOTEXISTS
                                             + owner.getAadhaarNo());
                         }
                     } catch (Exception e) {
                         e.printStackTrace();
                         errorDetails = new ErrorDetails();
-                        errorDetails.setErrorCode(PropertyTaxConstants.THIRD_PARTY_ERR_CODE_AADHAAR_NUMBER_NOTEXISTS);
-                        errorDetails.setErrorMessage(PropertyTaxConstants.THIRD_PARTY_ERR_MSG_AADHAAR_NUMBER_NOTEXISTS
+                        errorDetails.setErrorCode(THIRD_PARTY_ERR_CODE_AADHAAR_NUMBER_NOTEXISTS);
+                        errorDetails.setErrorMessage(THIRD_PARTY_ERR_MSG_AADHAAR_NUMBER_NOTEXISTS
                                 + owner.getAadhaarNo());
                     }
                 } else if (StringUtils.isBlank(owner.getName())) {
                     errorDetails = new ErrorDetails();
                     errorDetails
-                            .setErrorCode(PropertyTaxConstants.THIRD_PARTY_ERR_CODE_PROPERTYTRANSFER_TRANSFEREE_NAMEMANDATORY);
+                            .setErrorCode(THIRD_PARTY_ERR_CODE_PROPERTYTRANSFER_TRANSFEREE_NAMEMANDATORY);
                     errorDetails
-                            .setErrorMessage(PropertyTaxConstants.THIRD_PARTY_ERR_MSG_PROPERTYTRANSFER_TRANSFEREE_NAMEMANDATORY);
+                            .setErrorMessage(THIRD_PARTY_ERR_MSG_PROPERTYTRANSFER_TRANSFEREE_NAMEMANDATORY);
                 } else if (StringUtils.isBlank(owner.getMobileNumber())) {
                     errorDetails = new ErrorDetails();
                     errorDetails
-                            .setErrorCode(PropertyTaxConstants.THIRD_PARTY_ERR_CODE_PROPERTYTRANSFER_TRANSFEREE_MOBILENUMBERMANDATORY);
+                            .setErrorCode(THIRD_PARTY_ERR_CODE_PROPERTYTRANSFER_TRANSFEREE_MOBILENUMBERMANDATORY);
                     errorDetails
-                            .setErrorMessage(PropertyTaxConstants.THIRD_PARTY_ERR_MSG_PROPERTYTRANSFER_TRANSFEREE_MOBILENUMBERMANDATORY);
+                            .setErrorMessage(THIRD_PARTY_ERR_MSG_PROPERTYTRANSFER_TRANSFEREE_MOBILENUMBERMANDATORY);
                 } else if (StringUtils.isBlank(owner.getGender())) {
                     errorDetails = new ErrorDetails();
                     errorDetails
-                            .setErrorCode(PropertyTaxConstants.THIRD_PARTY_ERR_CODE_PROPERTYTRANSFER_TRANSFEREE_GENDERMANDATORY);
+                            .setErrorCode(THIRD_PARTY_ERR_CODE_PROPERTYTRANSFER_TRANSFEREE_GENDERMANDATORY);
                     errorDetails
-                            .setErrorMessage(PropertyTaxConstants.THIRD_PARTY_ERR_MSG_PROPERTYTRANSFER_TRANSFEREE_GENDERMANDATORY);
+                            .setErrorMessage(THIRD_PARTY_ERR_MSG_PROPERTYTRANSFER_TRANSFEREE_GENDERMANDATORY);
                 }
             }
 
         } else if (mutationReason == null || mutationReason.trim().length() == 0) {
             errorDetails = new ErrorDetails();
             errorDetails
-                    .setErrorCode(PropertyTaxConstants.THIRD_PARTY_ERR_CODE_PROPERTYTRANSFER_MUTATIONREASON_MANDATORY);
+                    .setErrorCode(THIRD_PARTY_ERR_CODE_PROPERTYTRANSFER_MUTATIONREASON_MANDATORY);
             errorDetails
-                    .setErrorMessage(PropertyTaxConstants.THIRD_PARTY_ERR_MSG_PROPERTYTRANSFER_MUTATIONREASON_MANDATORY);
+                    .setErrorMessage(THIRD_PARTY_ERR_MSG_PROPERTYTRANSFER_MUTATIONREASON_MANDATORY);
         } else if (mutationReason != null && mutationReason.equalsIgnoreCase("SALE")
                 && (saleDetail == null || saleDetail.trim().length() == 0)) {
             errorDetails = new ErrorDetails();
-            errorDetails.setErrorCode(PropertyTaxConstants.THIRD_PARTY_ERR_CODE_PROPERTYTRANSFER_SALEDETAIL_MANDATORY);
+            errorDetails.setErrorCode(THIRD_PARTY_ERR_CODE_PROPERTYTRANSFER_SALEDETAIL_MANDATORY);
             errorDetails
-                    .setErrorMessage(PropertyTaxConstants.THIRD_PARTY_ERR_MSG_PROPERTYTRANSFER_SALEDETAIL_MANDATORY);
+                    .setErrorMessage(THIRD_PARTY_ERR_MSG_PROPERTYTRANSFER_SALEDETAIL_MANDATORY);
         } else if (deedNo == null || deedNo.trim().length() == 0) {
             errorDetails = new ErrorDetails();
             errorDetails
-                    .setErrorCode(PropertyTaxConstants.THIRD_PARTY_ERR_CODE_PROPERTYTRANSFER_MUTATIONDEEDNUMBER_MANDATORY);
+                    .setErrorCode(THIRD_PARTY_ERR_CODE_PROPERTYTRANSFER_MUTATIONDEEDNUMBER_MANDATORY);
             errorDetails
-                    .setErrorMessage(PropertyTaxConstants.THIRD_PARTY_ERR_MSG_PROPERTYTRANSFER_MUTATIONDEEDNUMBER_MANDATORY);
+                    .setErrorMessage(THIRD_PARTY_ERR_MSG_PROPERTYTRANSFER_MUTATIONDEEDNUMBER_MANDATORY);
         } else if (deedDate == null || deedDate.trim().length() == 0) {
             errorDetails = new ErrorDetails();
             errorDetails
-                    .setErrorCode(PropertyTaxConstants.THIRD_PARTY_ERR_CODE_PROPERTYTRANSFER_MUTATIONRDEEDDATE_MANDATORY);
+                    .setErrorCode(THIRD_PARTY_ERR_CODE_PROPERTYTRANSFER_MUTATIONRDEEDDATE_MANDATORY);
             errorDetails
-                    .setErrorMessage(PropertyTaxConstants.THIRD_PARTY_ERR_MSG_PROPERTYTRANSFER_MUTATIONRDEEDDATE_MANDATORY);
+                    .setErrorMessage(THIRD_PARTY_ERR_MSG_PROPERTYTRANSFER_MUTATIONRDEEDDATE_MANDATORY);
         }
 
         return errorDetails;
@@ -742,8 +763,8 @@ public class PropertyTransferRestService {
      */
     private ErrorDetails getInvalidCredentialsErrorDetails() {
         ErrorDetails errorDetails = new ErrorDetails();
-        errorDetails.setErrorCode(PropertyTaxConstants.THIRD_PARTY_ERR_CODE_INVALIDCREDENTIALS);
-        errorDetails.setErrorMessage(PropertyTaxConstants.THIRD_PARTY_ERR_MSG_INVALIDCREDENTIALS);
+        errorDetails.setErrorCode(THIRD_PARTY_ERR_CODE_INVALIDCREDENTIALS);
+        errorDetails.setErrorMessage(THIRD_PARTY_ERR_MSG_INVALIDCREDENTIALS);
         return errorDetails;
     }
 

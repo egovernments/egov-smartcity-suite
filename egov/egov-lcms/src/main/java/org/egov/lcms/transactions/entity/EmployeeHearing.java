@@ -61,7 +61,6 @@ public class EmployeeHearing extends AbstractAuditable {
 
     private static final long serialVersionUID = 1517694643078084884L;
 
-   
     @ManyToOne(fetch = FetchType.LAZY)
     @NotNull
     @JoinColumn(name = "employee")
@@ -71,28 +70,33 @@ public class EmployeeHearing extends AbstractAuditable {
     @NotNull
     @JoinColumn(name = "hearing")
     private Hearings hearing;
+
     public Employee getEmployee() {
         return employee;
     }
-    public void setEmployee(Employee employee) {
+
+    public void setEmployee(final Employee employee) {
         this.employee = employee;
     }
+
     public Hearings getHearing() {
         return hearing;
     }
-    public void setHearing(Hearings hearing) {
+
+    public void setHearing(final Hearings hearing) {
         this.hearing = hearing;
     }
+
     @Override
-    protected void setId(Long id) {
+    protected void setId(final Long id) {
         // TODO Auto-generated method stub
-        
+
     }
+
     @Override
     public Long getId() {
         // TODO Auto-generated method stub
         return null;
     }
-    
-    
+
 }
