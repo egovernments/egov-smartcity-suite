@@ -1,9 +1,8 @@
-package org.egov.pgr.elasticSearch.service.advice;
+package org.egov.pgr.elasticsearch.service.advice;
 
 import org.aspectj.lang.JoinPoint;
 import org.aspectj.lang.annotation.AfterReturning;
 import org.aspectj.lang.annotation.Aspect;
-import org.aspectj.lang.annotation.Pointcut;
 import org.egov.infra.config.properties.ApplicationProperties;
 import org.egov.pgr.elasticSearch.entity.ComplaintIndex;
 import org.egov.pgr.elasticSearch.service.ComplaintIndexService;
@@ -26,17 +25,8 @@ public class ComplaintIndexingAdvice {
 	
 	@Autowired
     private ApplicationProperties applicationProperties;
-
-	@Pointcut("execution(*  org.egov.pgr.service.ComplaintService.createComplaint (..))")
-	private void createComplaintPointCut(){	
-	}
-
-	@Pointcut("execution(* org.egov.pgr.service.ComplaintService.update (..))")
-	private void updateComplaintPointCut(){
-
-	}
-
-	@AfterReturning(pointcut = "createComplaintPointCut()", returning = "retVal")
+	
+	@AfterReturning(pointcut = "execution(*  org.egov.pgr.service.ComplaintService.createComplaint (..))", returning = "retVal")
 	public void createComplaintIndex(final Object retVal){
 		Complaint savedComplaint = (Complaint)retVal;
 		final ComplaintIndex savedComplaintIndex = new ComplaintIndex();
@@ -52,7 +42,7 @@ public class ComplaintIndexingAdvice {
 		}
 	}
 
-	@AfterReturning(pointcut = "updateComplaintPointCut()", returning = "retVal")
+	@AfterReturning(pointcut = "execution(* org.egov.pgr.service.ComplaintService.update (..))", returning = "retVal")
 	public void updateComplaintIndex(JoinPoint joinPoint, final Object retVal){
 		Complaint savedComplaint = (Complaint)retVal;
 		Object[] arguments = joinPoint.getArgs();
