@@ -155,7 +155,7 @@ function callurl(url, consumernumber, ptassessmentno, shscnumber){
 }
 
 function openPopup(url){
-	window.open(url,'window','_blank','scrollbars=yes,resizable=yes,height=600,width=800,status=yes');
+	window.open(url,'window','_blank','scrollbars=1,resizable=yes,height=600,width=800,status=yes');
 }
 
 function submitButton() {
@@ -235,10 +235,63 @@ $("#closeConnection").click(function(){
 			return false;
 			}
 			else{
-				window.open("/stms/transactions/closeConnection/"+shscnumber, '_blank', "width=800, height=600, scrollbars=yes");
+				loadPropertyDetails();
 			}
 		},
 		
 	});
 	
 });
+
+
+function loadPropertyDetails() {
+	var shscnumber=document.getElementById("shscNumber").value;
+	propertyID=$('#assessmentNo').val()
+	var errorMessage=""; 
+	if(propertyID != '') {
+		$.ajax({
+			url: "/ptis/rest/property/"+propertyID,      
+			type: "GET",
+			dataType: "json",
+			success: function (response) { 
+				var waterTaxDue = getWaterTaxDue(propertyID);
+				//console.log(waterTaxDue['CURRENTWATERCHARGE']);  
+					if(response.propertyDetails.taxDue > 0) {
+						errorMessage = "For entered Property tax Assessment number "+propertyID+" linked water tap connection demand is due Rs."+ response.propertyDetails.taxDue+"/-. Please clear demand and"+subErrorMessage;
+					}
+					if(waterTaxDue['WATERTAXDUE'] > 0) {
+						errorMessage += "For entered Property tax Assessment number "+propertyID+" linked water tap connection demand with Consumer code:"+waterTaxDue['CONSUMERCODE'][0]+" is due Rs."+ waterTaxDue['WATERTAXDUE']+"/- . Please clear demand and"+subErrorMessage;
+					}
+					if(response.propertyDetails.taxDue > 0 || waterTaxDue['WATERTAXDUE'] > 0) {
+						bootbox.alert(errorMessage);
+					}
+					else {	
+						window.open("/stms/transactions/closeConnection/"+shscnumber, '_blank', "width=800, height=600, scrollbars=yes");
+					}
+				
+			}, 
+			error: function (response) {
+				console.log("failed");
+			}
+		});
+	}		
+}
+
+function getWaterTaxDue(propertyID) {
+	var result;
+	if(propertyID != "") {
+		$.ajax({
+			url: "/stms/ajaxconnection/check-watertax-due",
+				type: "GET",
+				'async':false,
+				cache: true,
+				data: {
+					assessmentNo : propertyID
+				},
+				dataType: "json",
+		}).done(function(value) {
+				result = value; 
+		});
+		return result;
+	}
+}
