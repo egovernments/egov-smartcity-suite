@@ -48,6 +48,7 @@ import java.util.Map;
 import org.apache.commons.lang.WordUtils;
 import org.egov.council.entity.CouncilAgendaDetails;
 import org.egov.council.entity.CouncilMeeting;
+import org.egov.council.entity.MeetingMOM;
 import org.egov.infra.reporting.engine.ReportConstants;
 import org.egov.infra.reporting.engine.ReportOutput;
 import org.egov.infra.reporting.engine.ReportRequest;
@@ -63,6 +64,7 @@ import org.springframework.transaction.annotation.Transactional;
 public class CouncilReportService {
 
     private final String AGENDA = "agenda";
+    private final String MEETINGMOM = "meetingMom";
     private final String subReportPath = "agendaDetails.jasper";
     private final Map<String, Object> reportParams = new HashMap<String, Object>();
     private ReportRequest reportInput = null;
@@ -91,6 +93,28 @@ public class CouncilReportService {
       return createReport(reportInput).getReportOutputData();
 
     }
+    public byte[] generatePDFForMom(CouncilMeeting councilMeeting, String logoPath) {
+        if (councilMeeting != null) {
+            final Map<String, Object> momDetails = new HashMap<String, Object>();
+            List<MeetingMOM> meetingMomList = councilMeeting.getMeetingMOMs();
+
+            Collections.sort(meetingMomList, new Comparator<MeetingMOM>() {
+                @Override
+                public int compare(MeetingMOM f1, MeetingMOM f2) {
+                    return f1.getItemNumber().compareTo(f2.getItemNumber());
+                }
+            });
+
+            momDetails.put("meetingMOMList", meetingMomList);
+            momDetails.put("meetingAttendenceList", councilMeeting.getMeetingAttendence());
+            reportInput = new ReportRequest(MEETINGMOM, momDetails, buildReportParameters(councilMeeting, logoPath));
+        }
+        reportInput.setReportFormat(ReportConstants.FileFormat.PDF);
+        reportInput.setPrintDialogOnOpenReport(false);
+      return createReport(reportInput).getReportOutputData();
+
+    }
+
 
     private Map<String, Object> buildReportParameters(CouncilMeeting councilMeeting, String logoPath) {
 
@@ -110,7 +134,7 @@ public class CouncilReportService {
         }
         reportParams.put("meetingDateTimePlace", meetingDateTimeLocation.toString());
         reportParams.put("cityName", ReportUtil.getCityName());
-        reportParams.put("agendaSubReportPath", ReportUtil.getTemplateAsStream(subReportPath));
+        //reportParams.put("agendaSubReportPath", ReportUtil.getTemplateAsStream(subReportPath));
         return reportParams;
     }
 

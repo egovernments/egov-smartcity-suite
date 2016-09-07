@@ -47,12 +47,15 @@ import static org.egov.council.utils.constants.CouncilConstants.MEETING_TIMINGS;
 import static org.egov.infra.web.utils.WebUtils.toJSON;
 
 import java.io.IOException;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.LinkedHashMap;
 import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 import javax.validation.Valid;
 
 import org.egov.commons.dao.EgwStatusHibernateDAO;
@@ -77,7 +80,10 @@ import org.egov.infra.utils.autonumber.AutonumberServiceBeanResolver;
 import org.egov.infra.web.utils.WebUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -158,12 +164,13 @@ public class CouncilMeetingController {
 	}
 
     private void buildMeetingMomByUsingAgendaDetails(final CouncilMeeting councilMeeting, CouncilAgenda councilAgenda) {
+        Long itemNumber = Long.valueOf(1);
         for (CouncilAgendaDetails councilAgendaDetail : councilAgenda.getAgendaDetails()) {
             MeetingMOM meetingMom = new MeetingMOM();
             meetingMom.setMeeting(councilMeeting);
             meetingMom.setAgenda(councilAgendaDetail.getAgenda());
             meetingMom.setPreamble(councilAgendaDetail.getPreamble());
-
+            meetingMom.setItemNumber(itemNumber.toString());itemNumber++;
             councilMeeting.addMeetingMoms(meetingMom);
         }
     }
@@ -196,6 +203,7 @@ public class CouncilMeetingController {
     public String edit(@PathVariable("id") final Long id, final Model model, final HttpServletResponse response)
             throws IOException {
         CouncilMeeting councilMeeting = councilMeetingService.findOne(id);
+        sortMeetingMomByItemNumber(councilMeeting);
         model.addAttribute("councilMeeting", councilMeeting);
         
         return COUNCILMEETING_EDIT;
@@ -215,8 +223,18 @@ public class CouncilMeetingController {
     @RequestMapping(value = "/view/{id}", method = RequestMethod.GET)
     public String view(@PathVariable("id") final Long id, Model model) {
         CouncilMeeting councilMeeting = councilMeetingService.findOne(id);
+        sortMeetingMomByItemNumber(councilMeeting);
         model.addAttribute("councilMeeting", councilMeeting);
         return COUNCILMEETING_VIEW;
+    }
+
+    private void sortMeetingMomByItemNumber(CouncilMeeting councilMeeting) {
+        Collections.sort(councilMeeting.getMeetingMOMs(), new Comparator<MeetingMOM>() {
+                @Override
+                public int compare(MeetingMOM f1, MeetingMOM f2) {
+                    return f1.getItemNumber().compareTo(f2.getItemNumber());
+                }
+            });
     }
 
     @RequestMapping(value = "/result/{id}", method = RequestMethod.GET)
@@ -244,10 +262,19 @@ public class CouncilMeetingController {
     @RequestMapping(value = "/ajaxsearch/{mode}", method = RequestMethod.POST, produces = MediaType.TEXT_PLAIN_VALUE)
     public @ResponseBody String ajaxsearch(@PathVariable("mode") final String mode, Model model,
             @ModelAttribute final CouncilMeeting councilMeeting) {
-        List<CouncilMeeting> searchResultList = councilMeetingService.searchMeeting(councilMeeting);
-        String result = new StringBuilder("{ \"data\":").append(toJSON(searchResultList,CouncilMeeting.class,  CouncilMeetingJsonAdaptor.class)).append("}")
-                .toString();
-        return result;
+        if (null != mode && !mode.equals("")) {
+            List<CouncilMeeting> searchResultList;
+
+            if (mode.equalsIgnoreCase("edit")) {
+                searchResultList = councilMeetingService.searchMeetingForEdit(councilMeeting);
+            } else {
+                searchResultList = councilMeetingService.searchMeeting(councilMeeting);
+            }
+            return new StringBuilder("{ \"data\":")
+                    .append(toJSON(searchResultList, CouncilMeeting.class, CouncilMeetingJsonAdaptor.class))
+                    .append("}").toString();
+        }
+      return null;
     }
     
     @RequestMapping(value = "/searchmeeting-tocreatemom", method = RequestMethod.POST, produces = MediaType.TEXT_PLAIN_VALUE)
@@ -281,6 +308,24 @@ public class CouncilMeetingController {
         return result;
     }
 
+    @RequestMapping(value = "/generateresolution/{id}", method = RequestMethod.GET)
+    public @ResponseBody ResponseEntity<byte[]> viewDemandNoticeReport(@PathVariable final Long id,
+            final HttpSession session,HttpServletRequest request) {
+     
+        byte[] reportOutput = null;
+        CouncilMeeting councilMeeting =councilMeetingService.findOne(id);
+        final String url = WebUtils.extractRequestDomainURL(request, false);
+        
+        String logoPath = url.concat(ReportConstants.IMAGE_CONTEXT_PATH).concat(
+                (String) request.getSession().getAttribute("citylogo"));
+        reportOutput= councilReportService.generatePDFForMom(councilMeeting, logoPath);
+        
+        final HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.parseMediaType("application/pdf"));
+        headers.add("content-disposition", "inline;filename=Resolution.pdf");
+        return new ResponseEntity<byte[]>(reportOutput, headers, HttpStatus.CREATED);
+    }
+    
     @RequestMapping(value = "/attendance/search", method = RequestMethod.GET)
     public String getSearchAttendance(final Model model) {
         CouncilMeeting councilMeeting = new CouncilMeeting();

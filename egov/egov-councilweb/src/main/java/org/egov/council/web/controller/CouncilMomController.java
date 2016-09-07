@@ -55,6 +55,8 @@ import static org.egov.infra.web.utils.WebUtils.toJSON;
 
 import java.lang.reflect.Type;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.LinkedHashMap;
 import java.util.List;
 
@@ -160,11 +162,19 @@ public class CouncilMomController {
 			}
 			councilMeeting.setMeetingAttendence(attendencesList);
 		}
+		sortMeetingMomByItemNumber(councilMeeting);
 		model.addAttribute("councilMeeting", councilMeeting);
 
 		return COUNCILMOM_NEW;
 	}
-
+	 private void sortMeetingMomByItemNumber(CouncilMeeting councilMeeting) {
+	        Collections.sort(councilMeeting.getMeetingMOMs(), new Comparator<MeetingMOM>() {
+	                @Override
+	                public int compare(MeetingMOM f1, MeetingMOM f2) {
+	                    return f1.getItemNumber().compareTo(f2.getItemNumber());
+	                }
+	            });
+	    }
 	@RequestMapping(value = "/update", method = RequestMethod.POST)
 	public String update(
 			@Valid @ModelAttribute final CouncilMeeting councilMeeting,
@@ -174,7 +184,7 @@ public class CouncilMomController {
 			return COUNCILMEETING_EDIT;
 		}
 		EgwStatus preambleApprovedStatus  =egwStatusHibernateDAO.getStatusByModuleAndCode(PREAMBLE_MODULENAME,	PREAMBLE_STATUS_APPROVED);
-		
+		    Long itemNumber = Long.valueOf(councilMeeting.getMeetingMOMs().size()); 
 		for (MeetingMOM meetingMOM : councilMeeting.getMeetingMOMs()) {
 			if (meetingMOM.getPreamble().getId() == null) {
 				meetingMOM
@@ -182,6 +192,7 @@ public class CouncilMomController {
 								.buildSumotoPreamble(meetingMOM,
 										preambleApprovedStatus));
 				meetingMOM.setMeeting(councilMeeting);
+				meetingMOM.setItemNumber(itemNumber.toString());itemNumber++;
 			}
 		}
 		for (MeetingAttendence attendence : councilMeeting
@@ -205,6 +216,7 @@ public class CouncilMomController {
 	@RequestMapping(value = "/result/{id}", method = RequestMethod.GET)
 	public String result(@PathVariable("id") final Long id, Model model) {
 		CouncilMeeting councilMeeting = councilMeetingService.findOne(id);
+		sortMeetingMomByItemNumber(councilMeeting);
 		model.addAttribute("councilMeeting", councilMeeting);
 		return COUNCILMOM_RESULT;
 	}
@@ -220,6 +232,7 @@ public class CouncilMomController {
 	@RequestMapping(value = "/view/{id}", method = RequestMethod.GET)
 	public String view(@PathVariable("id") final Long id, Model model) {
 		CouncilMeeting councilMeeting = councilMeetingService.findOne(id);
+		sortMeetingMomByItemNumber(councilMeeting);
 		model.addAttribute("councilMeeting", councilMeeting);
 
 		return COUNCILMOM_VIEW;
@@ -237,13 +250,23 @@ public class CouncilMomController {
 	public @ResponseBody String searchCreatedMOM(
 			@PathVariable("mode") final String mode, Model model,
 			@ModelAttribute final CouncilMeeting councilMeeting) {
-		List<CouncilMeeting> searchResultList = councilMeetingService
-				.searchCreatedMOM(councilMeeting);
-		String result = new StringBuilder("{ \"data\":")
-				.append(toJSON(searchResultList, CouncilMeeting.class,
-						CouncilMeetingJsonAdaptor.class)).append("}")
-				.toString();
-		return result;
+	    
+	    if (null != mode && !mode.equals("")) {
+	        List<CouncilMeeting> searchResultList;
+
+	            if (mode.equalsIgnoreCase("edit")) {
+	                searchResultList = councilMeetingService.searchMeetingWithMomCreatedStatus(councilMeeting);
+	            } else {
+	                searchResultList = councilMeetingService.searchMeeting(councilMeeting);
+	            }
+	            return  new StringBuilder("{ \"data\":")
+                    .append(toJSON(searchResultList, CouncilMeeting.class,
+                                    CouncilMeetingJsonAdaptor.class)).append("}")
+                    .toString();
+	    }
+	
+		
+		return null;
 	}
 
 	@RequestMapping(value = "/departmentlist", method = RequestMethod.GET, produces = MediaType.TEXT_PLAIN_VALUE)
@@ -293,8 +316,10 @@ public class CouncilMomController {
 		EgwStatus resoulutionApprovedStatus  =egwStatusHibernateDAO.getStatusByModuleAndCode(COUNCIL_RESOLUTION,RESOLUTION_STATUS_APPROVED);
 		EgwStatus resoulutionAdjurnedStatus  =	egwStatusHibernateDAO.getStatusByModuleAndCode(COUNCIL_RESOLUTION,RESOLUTION_STATUS_ADJURNED);
 		EgwStatus preambleAdjurnedStatus  = egwStatusHibernateDAO.getStatusByModuleAndCode(	PREAMBLE_MODULENAME,PREAMBLE_STATUS_ADJOURNED);
+		 Long itemNumber = Long.valueOf(councilMeeting.getMeetingMOMs().size());
 		for (MeetingMOM meetingMOM : councilMeeting.getMeetingMOMs()) {
 			if (meetingMOM.getPreamble().getId() == null) {
+			        meetingMOM.setItemNumber(itemNumber.toString());itemNumber++;
 				meetingMOM.setPreamble(councilPreambleService
 						.buildSumotoPreamble(meetingMOM,preambleApprovedStatus));
 				meetingMOM.setMeeting(councilMeeting);
@@ -317,6 +342,6 @@ public class CouncilMomController {
 				.getStatusByModuleAndCode(MEETING_MODULENAME, MOM_FINALISED));
 		councilMeetingService.update(councilMeeting);
 
-		return COUNCILMOM_VIEW;
+		 return "redirect:/councilmeeting/generateresolution/" + councilMeeting.getId();
 	}
 }

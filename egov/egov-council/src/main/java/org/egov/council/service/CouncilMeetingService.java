@@ -44,6 +44,7 @@ import static org.egov.council.utils.constants.CouncilConstants.ADJOURNED;
 import static org.egov.council.utils.constants.CouncilConstants.APPROVED;
 import static org.egov.council.utils.constants.CouncilConstants.MEETINGUSEDINRMOM;
 import static org.egov.council.utils.constants.CouncilConstants.PREAMBLE_MODULENAME;
+import static org.egov.council.utils.constants.CouncilConstants.MEETINGSTATUSCREATED;
 
 import java.util.List;
 
@@ -132,7 +133,12 @@ public class CouncilMeetingService {
     }
     
     @SuppressWarnings("unchecked")
-    public List<CouncilMeeting> searchCreatedMOM(CouncilMeeting councilMeeting) {
+    public List<CouncilMeeting> searchMeetingForEdit(CouncilMeeting councilMeeting) {
+        return buildSearchCriteria(councilMeeting).add(Restrictions.in("status.code", new String[] { MEETINGSTATUSCREATED})).list();
+    }
+    
+    @SuppressWarnings("unchecked")
+    public List<CouncilMeeting> searchMeetingWithMomCreatedStatus(CouncilMeeting councilMeeting) {
         return buildSearchCriteria(councilMeeting)
                 .add(Restrictions.in("status.code", new String[] { MEETINGUSEDINRMOM})).list();
     }

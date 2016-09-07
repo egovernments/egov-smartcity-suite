@@ -115,8 +115,9 @@
 											<tr>
 												<div class="row add-margin">
 													<td align="center">
-													  ${counter.count} 
+													  ${mom.itemNumber}
 													  <input type="hidden" name="meetingMOMs[${counter.index}].preamable.id" value="${mom.preamble.id}" />
+													   <input type="hidden" name="meetingMOMs[${counter.index}].itemNumber" value="${mom.itemNumber}" />
 													</td>
 													<td><c:out value="${mom.preamble.gistOfPreamble}" /></td>
 													<td><c:out value="${mom.agenda.agendaNumber}" /></td>

@@ -131,6 +131,9 @@
 							</tbody>
 						</table>
 					</div>
+						<c:choose>
+									<c:when test="${!councilMeeting.meetingAttendence.isEmpty()}">
+							
 					<div class="panel-body">
 						<div class="panel-heading">
 							<div class="panel-title">
@@ -151,9 +154,9 @@
 								</tr>
 							</thead>
 							<tbody>
-								<c:choose>
+							<%-- 	<c:choose>
 									<c:when test="${!councilMeeting.meetingAttendence.isEmpty()}">
-										<c:forEach items="${councilMeeting.meetingAttendence}"
+							 --%>			<c:forEach items="${councilMeeting.meetingAttendence}"
 											var="meetingAttend" varStatus="counter">
 											<tr>
 												<td>${counter.index+1}</td>
@@ -170,16 +173,23 @@
 												<td><c:out value="${meetingAttend.attendedMeeting}" /></td>
 											</tr>
 										</c:forEach>
-									</c:when>
+									<%-- </c:when>
 									<c:otherwise>
 										<div class="col-md-3 col-xs-6 add-margin">
-											<spring:message code="lbl.noAgenda.Detail" />
+											<spring:message code="lbl.attendence.Detail" />
 										</div>
 									</c:otherwise>
-								</c:choose>
+								</c:choose> --%>
 							</tbody>
 						</table>
 					</div>
+					</c:when>
+								<%-- 	<c:otherwise>
+										<div class="col-md-3 col-xs-6 add-margin">
+											<spring:message code="lbl.attendence.Detail" />
+										</div>
+									</c:otherwise> --%>
+								</c:choose>
 				</div>
 			</div>
 		</div>

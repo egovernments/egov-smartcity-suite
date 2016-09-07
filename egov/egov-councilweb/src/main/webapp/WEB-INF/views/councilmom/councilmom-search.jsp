@@ -123,8 +123,6 @@
 					<th><spring:message code="lbl.meeting.date" />
 					<th><spring:message code="lbl.meeting.place" /></th>
 					<th><spring:message code="lbl.meeting.time" /></th>
-					<th><spring:message code="lbl.resolution.comment" /></th>
-					<th><spring:message code="lbl.mom.status" /></th>
 					<th><spring:message code="lbl.view" /></th>
 					<th>&nbsp;</th>
 				</tr>

@@ -80,7 +80,14 @@ public class CouncilMeetingJsonAdaptor implements JsonSerializer<CouncilMeeting>
                 jsonObject.addProperty("meetingTime", councilMeeting.getMeetingTime());
             else
                 jsonObject.addProperty("meetingTime", StringUtils.EMPTY);
-            if (councilMeeting.getMeetingMOMs() != null)
+            
+            if (councilMeeting.getStatus() != null)
+                jsonObject.addProperty("meetingStatus", councilMeeting.getStatus().getCode());
+            else
+                jsonObject.addProperty("meetingStatus", StringUtils.EMPTY);
+            
+            
+          /*  if (councilMeeting.getMeetingMOMs() != null)
                 for (MeetingMOM meetingMOM : councilMeeting.getMeetingMOMs()) {
                     if (meetingMOM.getResolutionDetail() != null)
                         jsonObject.addProperty("resolutionDetail", meetingMOM.getResolutionDetail());
@@ -94,7 +101,7 @@ public class CouncilMeetingJsonAdaptor implements JsonSerializer<CouncilMeeting>
                         jsonObject.addProperty("department", meetingMOM.getPreamble().getDepartment().getName());
                     else
                         jsonObject.addProperty("department", StringUtils.EMPTY);
-                }
+                }*/
             if (councilMeeting.getMeetingAttendence() != null)
                 jsonObject.addProperty("totCommitteMemCount", councilMeeting.getMeetingAttendence().size());
             else

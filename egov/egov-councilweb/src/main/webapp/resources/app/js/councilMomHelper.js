@@ -49,10 +49,7 @@ function callAjaxSearch() {
 "data" : "meetingNumber", "sClass" : "text-left"} ,{ 
 "data" : "meetingDate", "sClass" : "text-left"},{
 "data" : "meetingLocation", "sClass" : "text-left"},{
-"data" : "meetingTime", "sClass" : "text-left"},{
-"data" : "resolutionDetail", "sClass" : "text-left", 'sTitle': "resolutionDetail"},{
-"data" : "resolutionStatus", "sClass" : "text-left", 'sTitle': "resolutionStatus"
-}
+"data" : "meetingTime", "sClass" : "text-left"}
 ,{ "data" : null, "target":-1,
 	
     sortable: false,
@@ -72,12 +69,12 @@ function callAjaxSearch() {
 
 
 $("#resultTable").on('click','tbody tr td  .view',function(event) {
-	var id = reportdatatable.fnGetData($(this).parent().parent(),8);
+	var id = reportdatatable.fnGetData($(this).parent().parent(),6);
 	window.open('/council/councilmom/'+ $('#mode').val() + '/'+id,'','width=800, height=600,scrollbars=yes');
 });
 
 $("#resultTable").on('click','tbody tr td  .edit',function(event) {
-	var id = reportdatatable.fnGetData($(this).parent().parent(),8);
+	var id = reportdatatable.fnGetData($(this).parent().parent(),6);
 	window.open('/council/councilmom/new' + '/'+id,'','width=800, height=600,scrollbars=yes');
 	
 });
