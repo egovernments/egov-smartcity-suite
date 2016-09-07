@@ -10,7 +10,6 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
-import javax.validation.constraints.NotNull;
 
 import org.egov.commons.EgwStatus;
 import org.egov.infra.persistence.validator.annotation.Unique;
@@ -49,6 +48,8 @@ public class MeetingMOM {
     @JoinColumn(name = "resolutionStatus")
     private EgwStatus resolutionStatus;
     
+    @Column(name = "itemnumber")
+    private String itemNumber;
 
     public CouncilMeeting getMeeting() {
         return meeting;
@@ -108,5 +109,13 @@ public class MeetingMOM {
     public void setResolutionNumber(String resolutionNumber) {
         this.resolutionNumber = resolutionNumber;
     }
+
+	public String getItemNumber() {
+		return itemNumber;
+	}
+
+	public void setItemNumber(String itemNumber) {
+		this.itemNumber = itemNumber;
+	}
 
 }
