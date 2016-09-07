@@ -113,8 +113,7 @@
 					onclick='self.close()'><spring:message code='lbl.close' /></a>
 			</div>
 		</div>
-	</div>
-</div>
+	
 	
 </form:form>
 <div class="row display-hide report-section">
