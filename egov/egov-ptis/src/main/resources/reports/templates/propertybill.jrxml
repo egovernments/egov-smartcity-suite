@@ -1,0 +1,515 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Created with Jaspersoft Studio version 6.2.2.final using JasperReports Library version 6.2.2  -->
+<!-- 2016-09-02T15:14:50 -->
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="DemandBill" language="groovy" pageWidth="595" pageHeight="820" columnWidth="535" leftMargin="30" rightMargin="30" topMargin="20" bottomMargin="10" isSummaryWithPageHeaderAndFooter="true" uuid="2e14b1c4-96c4-48e5-bdde-ad0e8161ae2b">
+	<property name="ireport.zoom" value="1.0"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="189"/>
+	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="One Empty Record"/>
+	<property name="com.jaspersoft.studio.unit." value="pixel"/>
+	<import value="org.egov.infra.admin.master.entity.Boundary"/>
+	<import value="org.egov.infra.reporting.util.ReportUtil"/>
+	<parameter name="cityName" class="java.lang.String"/>
+	<parameter name="districtName" class="java.lang.String"/>
+	<parameter name="currDate" class="java.lang.String"/>
+	<parameter name="financialYear" class="java.lang.String"/>
+	<parameter name="cityUrl" class="java.lang.String"/>
+	<parameter name="ownerType" class="java.lang.String"/>
+	<field name="assessmentNo" class="java.lang.String"/>
+	<field name="houseNo" class="java.lang.String"/>
+	<field name="name" class="java.lang.String"/>
+	<field name="locality" class="java.lang.String"/>
+	<field name="wardNo" class="java.lang.String"/>
+	<field name="billNo" class="java.lang.String"/>
+	<background>
+		<band height="759" splitType="Stretch">
+			<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
+			<rectangle>
+				<reportElement x="0" y="0" width="535" height="750" uuid="87144255-8783-4543-8929-2a78e5313bd4">
+					<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
+				</reportElement>
+			</rectangle>
+		</band>
+	</background>
+	<title>
+		<band height="134" splitType="Stretch">
+			<textField>
+				<reportElement x="55" y="118" width="310" height="15" uuid="6035b30b-2bbe-4a9f-be95-8b18ae4ca5ee">
+					<property name="com.jaspersoft.studio.unit.width" value="pixel"/>
+				</reportElement>
+				<textElement markup="none">
+					<font isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{locality}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="4" y="118" width="56" height="15" uuid="033bac9b-e2bb-40a5-8202-750dced13626">
+					<property name="com.jaspersoft.studio.unit.x" value="pixel"/>
+				</reportElement>
+				<text><![CDATA[Locality : ]]></text>
+			</staticText>
+			<staticText>
+				<reportElement key="" x="4" y="105" width="68" height="15" uuid="34390365-be73-4a11-8ed6-b083a41aeb29">
+					<property name="com.jaspersoft.studio.unit.width" value="pixel"/>
+				</reportElement>
+				<text><![CDATA[House No : ]]></text>
+			</staticText>
+			<textField>
+				<reportElement x="255" y="105" width="275" height="15" uuid="648690a9-3d41-42fe-a7d1-e23c5f76fb72">
+					<property name="com.jaspersoft.studio.unit.x" value="pixel"/>
+					<property name="com.jaspersoft.studio.unit.width" value="pixel"/>
+				</reportElement>
+				<textElement markup="none">
+					<font isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{wardNo}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="62" y="105" width="109" height="15" uuid="8bf1457b-0308-4cf5-bf2e-e3603003b6dc">
+					<property name="com.jaspersoft.studio.unit.x" value="pixel"/>
+					<property name="com.jaspersoft.studio.unit.width" value="pixel"/>
+				</reportElement>
+				<textElement markup="none">
+					<font isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{houseNo}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="171" y="105" width="86" height="15" uuid="ca303958-c917-4d16-906a-5032160143ef">
+					<property name="com.jaspersoft.studio.unit.width" value="pixel"/>
+				</reportElement>
+				<text><![CDATA[Ward : ]]></text>
+			</staticText>
+			<textField>
+				<reportElement x="213" y="91" width="322" height="16" uuid="625fad4c-413c-427e-bfbf-4982ec18bf77">
+					<property name="com.jaspersoft.studio.unit.x" value="pixel"/>
+					<property name="com.jaspersoft.studio.unit.width" value="pixel"/>
+				</reportElement>
+				<textElement markup="none">
+					<font isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{name}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="171" y="91" width="40" height="15" uuid="280e0f73-2b5f-418c-8649-f6b3760eb521">
+					<property name="com.jaspersoft.studio.unit.width" value="pixel"/>
+				</reportElement>
+				<text><![CDATA[Name :]]></text>
+			</staticText>
+			<textField>
+				<reportElement x="90" y="91" width="81" height="15" uuid="a30ba0c1-5c9f-4fcd-98ab-b184cf2dd6c1">
+					<property name="com.jaspersoft.studio.unit.x" value="pixel"/>
+					<property name="com.jaspersoft.studio.unit.width" value="pixel"/>
+					<property name="com.jaspersoft.studio.unit.y" value="pixel"/>
+				</reportElement>
+				<textElement markup="none">
+					<font isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{assessmentNo}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="4" y="91" width="90" height="15" uuid="d2026317-0b9d-44de-8b5f-51fe0ad49dff">
+					<property name="com.jaspersoft.studio.unit.y" value="pixel"/>
+				</reportElement>
+				<text><![CDATA[Assessment No : ]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="0" y="72" width="535" height="16" uuid="c257ab72-315f-495c-9f56-da7cebd38aa3"/>
+				<textElement textAlignment="Center">
+					<font fontName="Verdana" isBold="true" pdfFontName="Helvetica-Bold" pdfEncoding=""/>
+				</textElement>
+				<text><![CDATA[Remittance into the Account of Commissioner]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="4" y="59" width="86" height="15" uuid="cec13b87-9789-4d8d-9d00-f5d6dc0d0bfa"/>
+				<text><![CDATA[Demand Bill No :]]></text>
+			</staticText>
+			<textField>
+				<reportElement x="90" y="59" width="127" height="15" uuid="510b5fe0-86b3-45d3-a1f1-b2941d3c502f"/>
+				<textElement markup="none">
+					<font isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{billNo}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="387" y="59" width="37" height="15" uuid="20a90d74-58a1-40a1-ad89-4a747e57e756"/>
+				<textElement>
+					<font fontName="Verdana"/>
+				</textElement>
+				<text><![CDATA[Date :]]></text>
+			</staticText>
+			<textField>
+				<reportElement x="424" y="59" width="72" height="15" uuid="a94b0e26-f84a-4f30-8533-38a393c1775d"/>
+				<textElement markup="none">
+					<font isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{currDate}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="0" y="2" width="536" height="16" uuid="fa255317-fefb-475a-81cd-70a3c4506a94">
+					<property name="com.jaspersoft.studio.unit.x" value="pixel"/>
+					<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
+				</reportElement>
+				<textElement textAlignment="Center" verticalAlignment="Middle" markup="none">
+					<font fontName="Times New Roman" size="12" isBold="true" pdfFontName="Helvetica-Bold" pdfEncoding="" isPdfEmbedded="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{cityName}.toUpperCase()]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="0" y="15" width="535" height="17" uuid="db2eed36-4c9c-4a15-9a92-6fa816d7ac74"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle" markup="none">
+					<font fontName="Times New Roman" size="12" isBold="true" pdfFontName="Helvetica-Bold" pdfEncoding="" isPdfEmbedded="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{districtName}.toUpperCase()+" DISTRICT"]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="0" y="30" width="534" height="17" uuid="479d25cc-5e78-4652-8e34-6b3d2aa911d4">
+					<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
+				</reportElement>
+				<textElement textAlignment="Center" verticalAlignment="Middle" markup="styled">
+					<font fontName="Times New Roman" size="14" isBold="true" pdfFontName="Helvetica-Bold" pdfEncoding="" isPdfEmbedded="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA["PROPERTY TAX " + $P{ownerType}+" DEMAND BILL for "+$P{financialYear}]]></textFieldExpression>
+			</textField>
+			<line>
+				<reportElement x="0" y="133" width="535" height="1" uuid="bee709fd-f101-4922-b2e6-a8694895e7b1">
+					<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
+				</reportElement>
+			</line>
+			<line>
+				<reportElement x="0" y="86" width="535" height="1" uuid="04dd878c-b4c8-4501-8794-55289ccf1918">
+					<property name="com.jaspersoft.studio.unit.x" value="pixel"/>
+					<property name="com.jaspersoft.studio.unit.width" value="pixel"/>
+				</reportElement>
+			</line>
+		</band>
+	</title>
+	<columnHeader>
+		<band height="32">
+			<textField>
+				<reportElement x="4" y="1" width="533" height="16" uuid="61bb3572-8974-4ff7-ac09-e13a44a21a6e">
+					<property name="com.jaspersoft.studio.unit.x" value="pixel"/>
+				</reportElement>
+				<textElement markup="styled">
+					<font isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA["PROPERTY TAX DEMAND BILL FOR THE YEAR "+$P{financialYear}]]></textFieldExpression>
+			</textField>
+		</band>
+	</columnHeader>
+	<detail>
+		<band height="43" splitType="Stretch"/>
+		<band height="52">
+			<line>
+				<reportElement x="0" y="36" width="535" height="1" uuid="b1919361-4585-4391-bb5d-5caaf1ab4f87">
+					<property name="com.jaspersoft.studio.unit.width" value="pixel"/>
+					<property name="com.jaspersoft.studio.unit.x" value="pixel"/>
+				</reportElement>
+			</line>
+			<line>
+				<reportElement x="0" y="51" width="535" height="1" uuid="470ccd69-2ea7-4a8b-97b3-770d0a6ccf39">
+					<property name="com.jaspersoft.studio.unit.width" value="pixel"/>
+				</reportElement>
+			</line>
+		</band>
+		<band height="40">
+			<staticText>
+				<reportElement x="290" y="25" width="69" height="14" uuid="88ac234d-99b2-42c3-8916-8d6b6d08365a"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font isBold="false"/>
+				</textElement>
+				<text><![CDATA[1st Half]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="374" y="25" width="73" height="14" uuid="3e66521d-f71a-4a73-a130-67f36bfa6170"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font isBold="false"/>
+				</textElement>
+				<text><![CDATA[2nd Half]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="142" y="10" width="121" height="19" uuid="ed203d00-433d-49e4-847c-0df7f80f1fbc"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font isBold="false"/>
+				</textElement>
+				<text><![CDATA[Arrear with Interest]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="455" y="10" width="79" height="19" uuid="cf9cd87f-92a0-4c58-8de7-d2ec73c95059"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font isBold="false"/>
+				</textElement>
+				<text><![CDATA[Total]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="0" y="0" width="536" height="16" uuid="9fd8aacf-c9c5-46e0-a120-648a8d8b3feb"/>
+				<textElement textAlignment="Center">
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[NET AMOUNT PAYABLE WITH PENALTY]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="2" y="10" width="122" height="19" uuid="9bcf20cd-86e2-416a-a5c1-31ff01932946"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font isBold="false"/>
+				</textElement>
+				<text><![CDATA[If paid before]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="274" y="10" width="176" height="19" uuid="1d297626-664c-4f92-97d5-c93ad9b2bf4c"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font isBold="false"/>
+				</textElement>
+				<text><![CDATA[Current Year Tax with Interest]]></text>
+			</staticText>
+		</band>
+		<band height="30"/>
+	</detail>
+	<summary>
+		<band height="234" splitType="Stretch">
+			<textField isBlankWhenNull="false">
+				<reportElement x="0" y="144" width="534" height="15" uuid="6bfeeb92-a0f8-4814-9b9b-43aa8a5b98b1"/>
+				<textElement textAlignment="Center" markup="styled">
+					<font isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA["ACKNOWLEDGEMENT FOR DEMAND BILL FROM "+$P{cityName}.toUpperCase()]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="44" y="189" width="228" height="15" uuid="0f4a3d3e-5848-4f81-ba4e-d0a4da618769">
+					<property name="com.jaspersoft.studio.unit.width" value="pixel"/>
+					<property name="com.jaspersoft.studio.unit.y" value="pixel"/>
+				</reportElement>
+				<textElement markup="none">
+					<font isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{name}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="4" y="189" width="40" height="15" uuid="5b0bdb46-5b33-4663-af2b-c2b8f49c570c">
+					<property name="com.jaspersoft.studio.unit.width" value="pixel"/>
+					<property name="com.jaspersoft.studio.unit.y" value="pixel"/>
+				</reportElement>
+				<text><![CDATA[Name : ]]></text>
+			</staticText>
+			<staticText>
+				<reportElement positionType="FixRelativeToBottom" x="172" y="165" width="68" height="15" isPrintWhenDetailOverflows="true" uuid="b2d111d9-4ec3-42c1-a928-18d755f2f0a4">
+					<property name="com.jaspersoft.studio.unit.width" value="pixel"/>
+					<property name="com.jaspersoft.studio.unit.y" value="pixel"/>
+				</reportElement>
+				<textElement>
+					<font size="10"/>
+				</textElement>
+				<text><![CDATA[House No : ]]></text>
+			</staticText>
+			<textField>
+				<reportElement x="91" y="165" width="81" height="15" uuid="b51c50bd-fe7f-48f5-a531-abda112b951d">
+					<property name="com.jaspersoft.studio.unit.y" value="pixel"/>
+				</reportElement>
+				<textElement markup="none">
+					<font isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{assessmentNo}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="230" y="165" width="105" height="15" uuid="87819027-144d-4ef3-8ec0-c7738649d2c7">
+					<property name="com.jaspersoft.studio.unit.y" value="pixel"/>
+				</reportElement>
+				<textElement markup="none">
+					<font isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{houseNo}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="4" y="165" width="86" height="15" uuid="2ac3f82b-6649-45fd-b333-2bccd4d1fb97">
+					<property name="com.jaspersoft.studio.unit.x" value="pixel"/>
+					<property name="com.jaspersoft.studio.unit.y" value="pixel"/>
+				</reportElement>
+				<text><![CDATA[Assessment No :]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="358" y="165" width="86" height="15" uuid="03868f4d-90a3-497a-af27-eb14e0edd2b9">
+					<property name="com.jaspersoft.studio.unit.y" value="pixel"/>
+				</reportElement>
+				<text><![CDATA[Demand Bill No :]]></text>
+			</staticText>
+			<textField>
+				<reportElement x="444" y="165" width="90" height="15" uuid="d70521b2-c059-4643-a130-8640e5b319ac">
+					<property name="com.jaspersoft.studio.unit.y" value="pixel"/>
+					<property name="com.jaspersoft.studio.unit.width" value="pixel"/>
+				</reportElement>
+				<textElement markup="none">
+					<font isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{billNo}]]></textFieldExpression>
+			</textField>
+			<line>
+				<reportElement x="0" y="140" width="535" height="1" uuid="d80599a8-8896-4e42-8555-1685e84fd593">
+					<property name="com.jaspersoft.studio.unit.width" value="pixel"/>
+				</reportElement>
+				<graphicElement>
+					<pen lineStyle="Dashed"/>
+				</graphicElement>
+			</line>
+			<staticText>
+				<reportElement x="290" y="191" width="246" height="15" uuid="cb80713e-af46-476b-aa79-176a8a272ffb">
+					<property name="com.jaspersoft.studio.unit.y" value="pixel"/>
+				</reportElement>
+				<textElement textAlignment="Center">
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[Signature of the Receiver]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="315" y="201" width="45" height="15" uuid="b37c4590-d399-4259-a4ed-99297d5af4dc">
+					<property name="com.jaspersoft.studio.unit.y" value="pixel"/>
+				</reportElement>
+				<textElement>
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[Name : ]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="294" y="213" width="69" height="15" uuid="1ba3989b-2b43-425b-b1d2-a7fb0801e42c">
+					<property name="com.jaspersoft.studio.unit.y" value="pixel"/>
+				</reportElement>
+				<textElement>
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[Mobile No :]]></text>
+			</staticText>
+			<line>
+				<reportElement x="0" y="121" width="535" height="1" uuid="62f04357-575e-4eed-8006-67c5b386fca9">
+					<property name="com.jaspersoft.studio.unit.width" value="pixel"/>
+				</reportElement>
+			</line>
+			<staticText>
+				<reportElement positionType="Float" stretchType="RelativeToBandHeight" x="4" y="8" width="261" height="22" isPrintWhenDetailOverflows="true" uuid="e043250f-67a7-4e6c-8271-4658b2e29c73">
+					<property name="com.jaspersoft.studio.unit.x" value="pixel"/>
+					<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
+					<property name="com.jaspersoft.studio.unit.width" value="pixel"/>
+				</reportElement>
+				<textElement>
+					<font size="8"/>
+				</textElement>
+				<text><![CDATA[1. The Single Demand Bill for both 1st half and 2nd half years is issued for the convenience of the public.]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="4" y="28" width="263" height="22" isPrintWhenDetailOverflows="true" uuid="652454eb-654f-416d-8a01-a28d9f191de7">
+					<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
+				</reportElement>
+				<textElement>
+					<font size="8"/>
+				</textElement>
+				<text><![CDATA[2. Tax payers are at liberty to pay tax either half year wise or both at a time.]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="4" y="46" width="263" height="22" isPrintWhenDetailOverflows="true" uuid="ec022de5-bede-4788-8ad2-298fc860baea"/>
+				<textElement>
+					<font size="8"/>
+				</textElement>
+				<text><![CDATA[3. 5% rebate will be given if tax is paid for both half years at a time before 30th April of current financial year.]]></text>
+			</staticText>
+			<staticText>
+				<reportElement stretchType="RelativeToBandHeight" x="4" y="64" width="263" height="30" isPrintWhenDetailOverflows="true" uuid="61f09d3a-8fa1-49cf-b22a-fdd058134117"/>
+				<textElement>
+					<font size="8"/>
+					<paragraph lineSpacing="Single"/>
+				</textElement>
+				<text><![CDATA[4.Property tax can be paid through: Cash or cheque at e Seva, Mee Seva centres or Municipal office or online through Creditcard/Debitcard/Net Banking.]]></text>
+			</staticText>
+			<textField>
+				<reportElement x="270" y="28" width="260" height="41" isPrintWhenDetailOverflows="true" uuid="d27b0c1d-d62b-4e24-9502-b728873d15f9">
+					<property name="com.jaspersoft.studio.unit.y" value="pixel"/>
+					<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
+				</reportElement>
+				<textElement>
+					<font size="8"/>
+					<paragraph lineSpacing="Single"/>
+				</textElement>
+				<textFieldExpression><![CDATA["7. If the tax payers fail to pay the property tax with in 15 days from the date of receipt of this Demand Bill the same amount can be collected by issuing a distraint warrant."]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="270" y="8" width="260" height="22" isPrintWhenDetailOverflows="true" uuid="fa3601c0-70ed-4241-a37e-085c70a6a519">
+					<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
+				</reportElement>
+				<box rightPadding="1"/>
+				<textElement markup="html">
+					<font size="8"/>
+					<paragraph lineSpacing="Single"/>
+				</textElement>
+				<text><![CDATA[6. A Simple interest @2% per month will be charged in case of failure to pay property tax by due dates as above.]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="4" y="92" width="261" height="32" isPrintWhenDetailOverflows="true" uuid="1a40b7d0-727f-4768-8540-dc1de259f378"/>
+				<textElement>
+					<font size="8"/>
+				</textElement>
+				<text><![CDATA[5. Due dates for payment of property tax with out interest for current financial year: First half year 30th June, Second Half year : 31st December.]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="270" y="67" width="261" height="22" isPrintWhenDetailOverflows="true" uuid="faaa607e-2626-454f-b709-9f8aa2e2500a">
+					<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
+				</reportElement>
+				<textElement>
+					<font size="8"/>
+				</textElement>
+				<text><![CDATA[8. Please bring this bill while paying at Office counter or eSeva or Mee Seva centers.]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="7" y="-5" width="528" height="20" uuid="9c56ad5f-4392-47a7-83a7-9b9f29920c05"/>
+				<textElement textAlignment="Center">
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[Guidelines for the Tax Payer]]></text>
+			</staticText>
+			<line>
+				<reportElement x="0" y="-5" width="535" height="1" uuid="be844ccb-556d-45c9-9d1a-a5c5b69802ee">
+					<property name="com.jaspersoft.studio.unit.width" value="pixel"/>
+					<property name="com.jaspersoft.studio.unit.x" value="pixel"/>
+				</reportElement>
+			</line>
+			<textField>
+				<reportElement x="160" y="121" width="372" height="14" uuid="bc4b0e2d-6188-4647-95ce-43b870b8ac37">
+					<property name="com.jaspersoft.studio.unit.x" value="pixel"/>
+					<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
+				</reportElement>
+				<textElement textAlignment="Right" verticalAlignment="Middle" markup="styled">
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA["Visit your city portal at <style isBold=\"true\">"+$P{cityUrl}+"</style>"]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="7" y="121" width="305" height="14" uuid="fd6abbf5-9038-46ae-9875-ffb0b44996c8">
+					<property name="com.jaspersoft.studio.unit.x" value="pixel"/>
+					<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
+				</reportElement>
+				<textElement textAlignment="Left" verticalAlignment="Middle" markup="styled">
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA["Powered by <style isBold=\"true\">www.egovernments.org</style>"]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="85" y="155" width="244" height="15" uuid="9377c449-8d45-4fe1-a9eb-93bef69373e4">
+					<property name="com.jaspersoft.studio.unit.y" value="pixel"/>
+				</reportElement>
+				<textElement textAlignment="Right" markup="none">
+					<font isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{districtName}+" DISTRICT"]]></textFieldExpression>
+			</textField>
+			<line>
+				<reportElement x="0" y="135" width="535" height="1" uuid="ed5208fe-9138-452b-9945-e393be25c9ac">
+					<property name="com.jaspersoft.studio.unit.width" value="pixel"/>
+					<property name="com.jaspersoft.studio.unit.x" value="pixel"/>
+				</reportElement>
+			</line>
+			<staticText>
+				<reportElement x="340" y="104" width="188" height="15" isPrintWhenDetailOverflows="true" uuid="b6b63faa-7467-41ce-a71a-9e1412f2569a"/>
+				<textElement textAlignment="Center">
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[Commissioner.]]></text>
+			</staticText>
+		</band>
+	</summary>
+</jasperReport>

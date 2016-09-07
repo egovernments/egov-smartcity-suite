@@ -591,10 +591,6 @@ public class PreApprovedVoucherAction extends GenericWorkFlowAction
                         "Voucher could not be permitted in the current year for the Bill prepared in the previous financial year/s",
                         "Voucher could not be permitted in the current year for the Bill prepared in the previous financial year/s");
             getMasterDataForBill();
-            // Check if budgetary Appropriation is enabled for the application. Only if required we need to do the check.
-            final List<AppConfigValues> list = appConfigValuesService.getConfigValuesByModuleAndKey(EGF, "budgetCheckRequired");
-            if (list.isEmpty())
-                throw new ValidationException(EMPTY_STRING, "budgetCheckRequired is not defined in AppConfig");
             populateWorkflowBean();
             voucherHeader = preApprovedActionHelper.createVoucherFromBill(voucherHeader, workflowBean,
                     Long.parseLong(parameters.get(BILLID)[0]), voucherNumber, voucherHeader.getVoucherDate());
@@ -624,12 +620,9 @@ public class PreApprovedVoucherAction extends GenericWorkFlowAction
 
         } catch (final ValidationException e)
         {
-            LOGGER.error(e.getErrors());
             voucher();
             mode = "";
-            final List<ValidationError> errors = new ArrayList<ValidationError>();
-            errors.add(new ValidationError("exp", e.getErrors().get(0).getMessage()));
-            throw new ValidationException(errors);
+           throw e;
         } catch (final ApplicationRuntimeException e)
         {
             voucher();

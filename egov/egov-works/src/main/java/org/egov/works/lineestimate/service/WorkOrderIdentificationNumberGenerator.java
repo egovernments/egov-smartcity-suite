@@ -74,7 +74,7 @@ public class WorkOrderIdentificationNumberGenerator {
     public String generateWorkOrderIdentificationNumber(final LineEstimateDetails lineEstimateDetails) {
         try {
             final CFinancialYear financialYear = financialYearHibernateDAO
-                    .getFinancialYearByDate(lineEstimateDetails.getLineEstimate().getLineEstimateDate());
+                    .getFinYearByDate(lineEstimateDetails.getLineEstimate().getLineEstimateDate());
             final String finYearRange[] = financialYear.getFinYearRange().split("-");
             final String sequenceName = PROJECTCODE_SEQ_PREFIX + "_" + finYearRange[0] + "_" + finYearRange[1];
             final String workCategory;

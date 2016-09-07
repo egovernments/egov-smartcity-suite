@@ -41,7 +41,6 @@
 package org.egov.restapi.model;
 
 import org.egov.ptis.domain.model.FloorDetails;
-import org.egov.ptis.domain.model.OwnerDetails;
 
 import java.io.Serializable;
 import java.util.List;
@@ -49,11 +48,11 @@ import java.util.List;
 @SuppressWarnings("serial")
 public class CreatePropertyDetails implements Serializable {
 	
+	private String ulbCode;
 	private String propertyTypeMasterCode;
-	private String propertyCategoryCode;
+	private String categoryCode;
 	private String apartmentCmplxCode;
-	private String exemptionCategory;
-	private List<OwnerDetails> ownerDetails;
+	private List<OwnerInformation> ownerDetails;
 	private AssessmentsDetails assessmentDetails;
 	private PropertyAddressDetails propertyAddressDetails;
 	private AmenitiesDetails amenitiesDetails;
@@ -61,17 +60,28 @@ public class CreatePropertyDetails implements Serializable {
 	private List<FloorDetails> floorDetails;
 	private VacantLandDetails vacantLandDetails;
 	private SurroundingBoundaryDetails surroundingBoundaryDetails;
+	
+	@Override
+	public String toString() {
+		return "CreatePropertyDetails [propertyTypeMasterCode=" + propertyTypeMasterCode + ", categoryCode=" + categoryCode 
+				+ ", apartmentCmplxCode=" + apartmentCmplxCode + ", ownerDetails=" + ownerDetails + ", assessmentDetails=" + assessmentDetails
+				+ ", propertyAddressDetails=" + propertyAddressDetails + ", amenitiesDetails=" + amenitiesDetails
+				+ ", constructionTypeDetails=" + constructionTypeDetails + ", floorDetails=" + floorDetails
+				+ ", vacantLandDetails=" + vacantLandDetails + ", surroundingBoundaryDetails="
+				+ surroundingBoundaryDetails + "]";
+	}
+	
 	public String getPropertyTypeMasterCode() {
 		return propertyTypeMasterCode;
 	}
 	public void setPropertyTypeMasterCode(String propertyTypeMasterCode) {
 		this.propertyTypeMasterCode = propertyTypeMasterCode;
 	}
-	public String getPropertyCategoryCode() {
-		return propertyCategoryCode;
+	public String getCategoryCode() {
+		return categoryCode;
 	}
-	public void setPropertyCategoryCode(String propertyCategoryCode) {
-		this.propertyCategoryCode = propertyCategoryCode;
+	public void setCategoryCode(String categoryCode) {
+		this.categoryCode = categoryCode;
 	}
 	public String getApartmentCmplxCode() {
 		return apartmentCmplxCode;
@@ -79,16 +89,10 @@ public class CreatePropertyDetails implements Serializable {
 	public void setApartmentCmplxCode(String apartmentCmplxCode) {
 		this.apartmentCmplxCode = apartmentCmplxCode;
 	}
-	public String getExemptionCategory() {
-		return exemptionCategory;
-	}
-	public void setExemptionCategory(String exemptionCategory) {
-		this.exemptionCategory = exemptionCategory;
-	}
-	public List<OwnerDetails> getOwnerDetails() {
+	public List<OwnerInformation> getOwnerDetails() {
 		return ownerDetails;
 	}
-	public void setOwnerDetails(List<OwnerDetails> ownerDetails) {
+	public void setOwnerDetails(List<OwnerInformation> ownerDetails) {
 		this.ownerDetails = ownerDetails;
 	}
 	public AssessmentsDetails getAssessmentDetails() {
@@ -133,15 +137,11 @@ public class CreatePropertyDetails implements Serializable {
 	public void setSurroundingBoundaryDetails(SurroundingBoundaryDetails surroundingBoundaryDetails) {
 		this.surroundingBoundaryDetails = surroundingBoundaryDetails;
 	}
-	@Override
-	public String toString() {
-		return "CreatePropertyDetails [propertyTypeMasterCode=" + propertyTypeMasterCode + ", propertyCategoryCode="
-				+ propertyCategoryCode + ", apartmentCmplxCode=" + apartmentCmplxCode + ", exemptionCategory="
-				+ exemptionCategory + ", ownerDetails=" + ownerDetails + ", assessmentDetails=" + assessmentDetails
-				+ ", propertyAddressDetails=" + propertyAddressDetails + ", amenitiesDetails=" + amenitiesDetails
-				+ ", constructionTypeDetails=" + constructionTypeDetails + ", floorDetails=" + floorDetails
-				+ ", vacantLandDetails=" + vacantLandDetails + ", surroundingBoundaryDetails="
-				+ surroundingBoundaryDetails + "]";
+	public String getUlbCode() {
+		return ulbCode;
+	}
+	public void setUlbCode(String ulbCode) {
+		this.ulbCode = ulbCode;
 	}
 
 }

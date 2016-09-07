@@ -40,17 +40,11 @@
 package org.egov.lcms.transactions.service;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
-import java.util.stream.Collectors;
 
-import org.apache.commons.lang3.ArrayUtils;
 import org.egov.commons.EgwStatus;
-import org.egov.infra.exception.ApplicationRuntimeException;
-import org.egov.infra.filestore.entity.FileStoreMapper;
-import org.egov.infra.filestore.service.FileStoreService;
 import org.egov.lcms.transactions.entity.Appeal;
 import org.egov.lcms.transactions.entity.AppealDocuments;
 import org.egov.lcms.transactions.entity.Contempt;
@@ -60,21 +54,15 @@ import org.egov.lcms.transactions.repository.JudgmentImplRepository;
 import org.egov.lcms.utils.LegalCaseUtil;
 import org.egov.lcms.utils.constants.LcmsConstants;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.multipart.MultipartFile;
 
 @Service
 @Transactional(readOnly = true)
 public class JudgmentImplService {
 
     private final JudgmentImplRepository judgmentImplRepository;
-
-    @Autowired
-    @Qualifier("fileStoreService")
-    protected FileStoreService fileStoreService;
 
     @Autowired
     private AppealDocumentsRepository appealDocumentsRepository;
@@ -93,7 +81,6 @@ public class JudgmentImplService {
     @Transactional
     public JudgmentImpl persist(final JudgmentImpl judgmentImpl) {
         persistAppealOrContempt(judgmentImpl);
-
         if (judgmentImpl.getImplementationFailure() != null
                 && judgmentImpl.getImplementationFailure().toString().equals("Appeal"))
             processAndStoreAppealDocuments(judgmentImpl);
@@ -103,9 +90,14 @@ public class JudgmentImplService {
     @Transactional
     public void saveOrUpdate(final JudgmentImpl judgmentImpl) {
         persist(judgmentImpl);
+        if (judgmentImpl.getJudgment().getImplementByDate() != null)
+            judgmentImpl.getJudgment().getLegalCase().setNextDate(judgmentImpl.getJudgment().getImplementByDate());
+        else
+            judgmentImpl.getJudgment().getLegalCase().setNextDate(judgmentImpl.getJudgment().getOrderDate());
         final EgwStatus statusObj = legalCaseUtil.getStatusForModuleAndCode(LcmsConstants.MODULE_TYPE_LEGALCASE,
-                LcmsConstants.JUDGMENTIMPLEMENT_STATUS);
+                LcmsConstants.LEGALCASE_STATUS_JUDGMENT_IMPLIMENTED);
         judgmentImpl.getJudgment().getLegalCase().setStatus(statusObj);
+        judgmentImpl.getJudgment().getLegalCase().setNextDate(judgmentImpl.getDateOfCompliance());
         legalCaseService.save(judgmentImpl.getJudgment().getLegalCase());
 
     }
@@ -115,11 +107,13 @@ public class JudgmentImplService {
         if (judgmentImpl.getContempt().get(0).getCaNumber() != null) {
             for (final Contempt contemptObj : judgmentImpl.getContempt())
                 contemptObj.setJudgmentImpl(judgmentImpl);
+            judgmentImpl.getJudgment().getLegalCase().setNextDate(judgmentImpl.getContempt().get(0).getReceivingDate());
             judgmentImpl.getAppeal().clear();
         } else if (judgmentImpl.getAppeal().get(0).getSrNumber() != null) {
             for (final Appeal appealObj : judgmentImpl.getAppeal())
                 if (appealObj.getSrNumber() != null && !"".equals(appealObj.getSrNumber()))
                     appealObj.setJudgmentImpl(judgmentImpl);
+            judgmentImpl.getJudgment().getLegalCase().setNextDate(judgmentImpl.getAppeal().get(0).getAppealFiledOn());
             judgmentImpl.getContempt().clear();
         } else {
             judgmentImpl.getAppeal().clear();
@@ -146,25 +140,11 @@ public class JudgmentImplService {
                 if (appealDocument.getFiles() != null) {
                     appealDocument.setAppeal(judgmentImpl.getAppeal().get(0));
                     appealDocument.setDocumentName("Appeal");
-                    appealDocument.setSupportDocs(addToFileStore(appealDocument.getFiles()));
+                    appealDocument.setSupportDocs(legalCaseUtil.addToFileStore(appealDocument.getFiles()));
                     appealDocList.add(appealDocument);
                     appealDocumentsRepository.save(appealDocument);
 
                 }
-    }
-
-    protected Set<FileStoreMapper> addToFileStore(final MultipartFile[] files) {
-        if (ArrayUtils.isNotEmpty(files))
-            return Arrays.asList(files).stream().filter(file -> !file.isEmpty()).map(file -> {
-                try {
-                    return fileStoreService.store(file.getInputStream(), file.getOriginalFilename(),
-                            file.getContentType(), LcmsConstants.FILESTORE_MODULECODE);
-                } catch (final Exception e) {
-                    throw new ApplicationRuntimeException("Error occurred while getting inputstream", e);
-                }
-            }).collect(Collectors.toSet());
-        else
-            return null;
     }
 
     public List<JudgmentImpl> findAll() {

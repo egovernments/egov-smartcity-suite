@@ -114,11 +114,10 @@ public class ReportService {
    
     @Autowired
     private RegionalHeirarchyService regionalHeirarchyService;
-
     @Autowired
     private UserService userService;
-
-    private @Autowired FinancialYearDAO financialYearDAO;
+    @Autowired
+    private FinancialYearDAO financialYearDAO;
     @Autowired
     private PropertyTaxCommonUtils propertyTaxCommonUtils;
     @Autowired
@@ -194,9 +193,9 @@ public class ReportService {
         BigDecimal totalCurrEduCess = BigDecimal.ZERO;
         BigDecimal totalCurrLibCess = BigDecimal.ZERO;
         BigDecimal currPenaltyFine = BigDecimal.ZERO;
-        BigDecimal arrColl = BigDecimal.ZERO;
-        BigDecimal totalColl=BigDecimal.ZERO;
-        BigDecimal currColl=BigDecimal.ZERO;
+        BigDecimal arrColl;
+        BigDecimal totalColl;
+        BigDecimal currColl;
         
         List<InstDmdCollMaterializeView> instDemandCollList = new LinkedList<InstDmdCollMaterializeView>(
                 propMatView.getInstDmdColl());
@@ -245,12 +244,8 @@ public class ReportService {
         arrColl=propMatView.getAggrArrColl()!=null ? propMatView.getAggrArrColl():BigDecimal.ZERO;
         baseRegisterResultObj.setArrearColl(arrColl);
         
-        totalColl=totalColl.add(arrColl);
-        if(propMatView.getAggrCurrFirstHalfColl()!=null){
-        	currColl=currColl.add(propMatView.getAggrCurrFirstHalfColl());
-        }if(propMatView.getAggrCurrSecondHalfColl()!=null){
-        	currColl=currColl.add(propMatView.getAggrCurrSecondHalfColl());
-        }
+        totalColl=arrColl;
+        currColl=(propMatView.getAggrCurrFirstHalfColl()!=null ? propMatView.getAggrCurrFirstHalfColl():BigDecimal.ZERO).add(propMatView.getAggrCurrSecondHalfColl()!=null ? propMatView.getAggrCurrSecondHalfColl():BigDecimal.ZERO);
         totalColl=totalColl.add(currColl);
         baseRegisterResultObj.setCurrentColl(currColl);
         baseRegisterResultObj.setTotalColl(totalColl);
@@ -1006,18 +1001,14 @@ public class ReportService {
                     baseRegisterVLTResultObj.setArrearPropertyTax(propMatView.getAggrArrDmd()!=null && propMatView.getAggrArrDmd().compareTo(BigDecimal.ZERO)>=1 ? (propMatView.getAggrArrDmd()).subtract(arrLibCess) : BigDecimal.ZERO);
                     baseRegisterVLTResultObj.setArrearPenaltyFines(propMatView.getAggrArrearPenaly()!=null?propMatView.getAggrArrearPenaly():BigDecimal.ZERO);
                     baseRegisterVLTResultObj.setArrearTotal(propMatView.getAggrArrDmd()!=null ? propMatView.getAggrArrDmd() : BigDecimal.ZERO);
-                    BigDecimal arrColl = BigDecimal.ZERO;
-                    BigDecimal totalColl=BigDecimal.ZERO;
-                    BigDecimal currColl=BigDecimal.ZERO;
+                    BigDecimal arrColl;
+                    BigDecimal totalColl;
+                    BigDecimal currColl;
                     arrColl=propMatView.getAggrArrColl()!=null ? propMatView.getAggrArrColl():BigDecimal.ZERO;
                     baseRegisterVLTResultObj.setArrearColl(arrColl);
                     
-                    totalColl=totalColl.add(arrColl);
-                    if(propMatView.getAggrCurrFirstHalfColl()!=null){
-                    	currColl=currColl.add(propMatView.getAggrCurrFirstHalfColl());
-                    }if(propMatView.getAggrCurrSecondHalfColl()!=null){
-                    	currColl=currColl.add(propMatView.getAggrCurrSecondHalfColl());
-                    }
+                    totalColl=arrColl;
+                    currColl=(propMatView.getAggrCurrFirstHalfColl()!=null?propMatView.getAggrCurrFirstHalfColl():BigDecimal.ZERO).add(propMatView.getAggrCurrSecondHalfColl()!=null?propMatView.getAggrCurrSecondHalfColl():BigDecimal.ZERO);
                     totalColl=totalColl.add(currColl);
                     baseRegisterVLTResultObj.setCurrentColl(currColl);
                     baseRegisterVLTResultObj.setTotalColl(totalColl);

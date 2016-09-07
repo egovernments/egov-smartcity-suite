@@ -62,23 +62,23 @@ public class BaseRegisterResultAdaptor implements JsonSerializer<BaseRegisterRes
         jsonObject.addProperty("exemption", baseRegisterResultObj.getIsExempted());
         jsonObject.addProperty("courtCase", baseRegisterResultObj.getCourtCase());
         jsonObject.addProperty("arrearPeriod", baseRegisterResultObj.getArrearPeriod());
-        jsonObject.addProperty("generalTax", (null != baseRegisterResultObj.getPropertyTax() ? baseRegisterResultObj
+        jsonObject.addProperty("generalTax", (baseRegisterResultObj.getPropertyTax() !=null ? baseRegisterResultObj
                 .getPropertyTax().toString() : ""));
-        jsonObject.addProperty("libraryCessTax",(null != baseRegisterResultObj.getLibraryCessTax() ? baseRegisterResultObj.getLibraryCessTax().toString() : ""));
-        jsonObject.addProperty("eduCessTax", (null != baseRegisterResultObj.getEduCessTax() ? baseRegisterResultObj.getEduCessTax().toString() : ""));
-        jsonObject.addProperty("penaltyFinesTax",(null != baseRegisterResultObj.getPenaltyFines() ? baseRegisterResultObj.getPenaltyFines().toString() : ""));
-        jsonObject.addProperty("currTotal", (null != baseRegisterResultObj.getCurrTotal() ? baseRegisterResultObj.getCurrTotal().toString() : ""));
-        jsonObject.addProperty("arrearPropertyTax",(null != baseRegisterResultObj.getArrearPropertyTax() ? baseRegisterResultObj.getArrearPropertyTax().toString() : ""));
-        jsonObject.addProperty("arrearlibCess",(null != baseRegisterResultObj.getArrearLibraryTax() ? baseRegisterResultObj.getArrearLibraryTax().toString() : ""));
-        jsonObject.addProperty("arrearEduCess", (null != baseRegisterResultObj.getArrearEduCess() ? baseRegisterResultObj.getArrearEduCess().toString() : ""));
-        jsonObject.addProperty("arrearTotal", (null != baseRegisterResultObj.getArrearTotal() ? baseRegisterResultObj.getArrearTotal().toString() : ""));
-        jsonObject.addProperty("arrearPenaltyFines",(null != baseRegisterResultObj.getArrearPenaltyFines() ? baseRegisterResultObj.getArrearPenaltyFines().toString() : ""));
-        jsonObject.addProperty("arrearColl", (null != baseRegisterResultObj.getArrearColl() ? baseRegisterResultObj.getArrearColl().toString() : ""));
-        jsonObject.addProperty("currentColl", (null != baseRegisterResultObj.getCurrentColl() ? baseRegisterResultObj.getCurrentColl().toString() : ""));
-        jsonObject.addProperty("totalColl", (null != baseRegisterResultObj.getTotalColl() ? baseRegisterResultObj.getTotalColl().toString() : ""));
-        jsonObject.addProperty("propertyUsage",(null != baseRegisterResultObj.getPropertyUsage()) ? baseRegisterResultObj.getPropertyUsage().toString() : "");
-        jsonObject.addProperty("classification",(null != baseRegisterResultObj.getClassificationOfBuilding()) ? baseRegisterResultObj.getClassificationOfBuilding().toString() : "");
-        jsonObject.addProperty("area", (null != baseRegisterResultObj.getPlinthArea()) ? baseRegisterResultObj
+        jsonObject.addProperty("libraryCessTax",(baseRegisterResultObj.getLibraryCessTax() !=null ? baseRegisterResultObj.getLibraryCessTax().toString() : ""));
+        jsonObject.addProperty("eduCessTax", (baseRegisterResultObj.getEduCessTax() != null ? baseRegisterResultObj.getEduCessTax().toString() : ""));
+        jsonObject.addProperty("penaltyFinesTax",(baseRegisterResultObj.getPenaltyFines() != null ? baseRegisterResultObj.getPenaltyFines().toString() : ""));
+        jsonObject.addProperty("currTotal", (baseRegisterResultObj.getCurrTotal() != null ? baseRegisterResultObj.getCurrTotal().toString() : ""));
+        jsonObject.addProperty("arrearPropertyTax",(baseRegisterResultObj.getArrearPropertyTax() != null ? baseRegisterResultObj.getArrearPropertyTax().toString() : ""));
+        jsonObject.addProperty("arrearlibCess",(baseRegisterResultObj.getArrearLibraryTax() != null ? baseRegisterResultObj.getArrearLibraryTax().toString() : ""));
+        jsonObject.addProperty("arrearEduCess", (baseRegisterResultObj.getArrearEduCess() != null ? baseRegisterResultObj.getArrearEduCess().toString() : ""));
+        jsonObject.addProperty("arrearTotal", (baseRegisterResultObj.getArrearTotal() != null ? baseRegisterResultObj.getArrearTotal().toString() : ""));
+        jsonObject.addProperty("arrearPenaltyFines",(baseRegisterResultObj.getArrearPenaltyFines() != null ? baseRegisterResultObj.getArrearPenaltyFines().toString() : ""));
+        jsonObject.addProperty("arrearColl", (baseRegisterResultObj.getArrearColl() != null ? baseRegisterResultObj.getArrearColl().toString() : ""));
+        jsonObject.addProperty("currentColl", (baseRegisterResultObj.getCurrentColl() != null ? baseRegisterResultObj.getCurrentColl().toString() : ""));
+        jsonObject.addProperty("totalColl", (baseRegisterResultObj.getTotalColl() != null ? baseRegisterResultObj.getTotalColl().toString() : ""));
+        jsonObject.addProperty("propertyUsage",(baseRegisterResultObj.getPropertyUsage() != null) ? baseRegisterResultObj.getPropertyUsage().toString() : "");
+        jsonObject.addProperty("classification",(baseRegisterResultObj.getClassificationOfBuilding() != null) ? baseRegisterResultObj.getClassificationOfBuilding().toString() : "");
+        jsonObject.addProperty("area", (baseRegisterResultObj.getPlinthArea() != null) ? baseRegisterResultObj
                 .getPlinthArea().setScale(2, BigDecimal.ROUND_HALF_UP).toString() : "");
         return jsonObject;
     }

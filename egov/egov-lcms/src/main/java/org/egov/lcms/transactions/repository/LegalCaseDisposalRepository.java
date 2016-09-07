@@ -41,7 +41,9 @@ package org.egov.lcms.transactions.repository;
 
 import org.egov.lcms.transactions.entity.LegalCaseDisposal;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.stereotype.Repository;
 
+@Repository
 public interface LegalCaseDisposalRepository extends JpaRepository<LegalCaseDisposal, Long> {
 
 }

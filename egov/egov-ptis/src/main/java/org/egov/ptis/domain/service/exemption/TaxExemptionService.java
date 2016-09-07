@@ -58,7 +58,6 @@ import org.egov.eis.entity.Assignment;
 import org.egov.eis.service.AssignmentService;
 import org.egov.eis.service.PositionMasterService;
 import org.egov.infra.admin.master.entity.User;
-import org.egov.infra.admin.master.service.UserService;
 import org.egov.infra.config.core.ApplicationThreadLocals;
 import org.egov.infra.exception.ApplicationRuntimeException;
 import org.egov.infra.messaging.MessagingService;
@@ -71,13 +70,13 @@ import org.egov.infstr.services.PersistenceService;
 import org.egov.pims.commons.Position;
 import org.egov.ptis.client.util.PropertyTaxUtil;
 import org.egov.ptis.domain.dao.demand.PtDemandDao;
-import org.egov.ptis.domain.dao.property.PropertyTypeMasterDAO;
 import org.egov.ptis.domain.entity.demand.Ptdemand;
 import org.egov.ptis.domain.entity.property.BasicProperty;
 import org.egov.ptis.domain.entity.property.Floor;
 import org.egov.ptis.domain.entity.property.Property;
 import org.egov.ptis.domain.entity.property.PropertyDetail;
 import org.egov.ptis.domain.entity.property.PropertyImpl;
+import org.egov.ptis.domain.entity.property.PropertyOwnerInfo;
 import org.egov.ptis.domain.entity.property.TaxExeptionReason;
 import org.egov.ptis.domain.service.property.PropertyPersistenceService;
 import org.egov.ptis.domain.service.property.PropertyService;
@@ -92,23 +91,11 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.ui.Model;
 
-import java.math.BigDecimal;
-import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.Map;
-
-import static java.lang.Boolean.FALSE;
-import static org.egov.ptis.constants.PropertyTaxConstants.*;
-
 @Service
 @Transactional
 public class TaxExemptionService extends PersistenceService<PropertyImpl, Long> {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(TaxExemptionService.class);
-
-    @Autowired
-    private PropertyTypeMasterDAO propertyTypeMasterDAO;
 
     @Autowired
     private PropertyService propService;
@@ -136,9 +123,6 @@ public class TaxExemptionService extends PersistenceService<PropertyImpl, Long> 
     private PropertyTaxCommonUtils propertyTaxCommonUtils;
 
     PropertyImpl propertyModel = new PropertyImpl();
-
-    @Autowired
-    private UserService userService;
 
     @Autowired
     private ApplicationNumberGenerator applicationNumberGenerator;
@@ -223,20 +207,23 @@ public class TaxExemptionService extends PersistenceService<PropertyImpl, Long> 
         Set<EgDemandDetails> demandDetailSet = new HashSet<EgDemandDetails>();
 
         if (StringUtils.isNotBlank(taxExemptedReason) && !taxExemptedReason.equals("-1")) {
-        	//Do not do anything
-        }else{
-        	//Remove all the previous demands until the current installment
-        	if(StringUtils.isNotBlank(workFlowAction) && !workFlowAction.equalsIgnoreCase(WFLOW_ACTION_STEP_REJECT)){
-        	for(Ptdemand ptdemand : newPtdemandSet){
-            	for(EgDemandDetails demandDetails : ptdemand.getEgDemandDetails()){
-            		if(demandDetails.getInstallmentStartDate().equals(effectiveDate) || demandDetails.getInstallmentStartDate().after(effectiveDate)){
-            			demandDetailSet.add(demandDetails);
-            		}
-            	}
-            	ptdemand.getEgDemandDetails().clear();
-            	ptdemand.getEgDemandDetails().addAll(demandDetailSet);
+            // Do not do anything
+        } else {
+            // Remove all the previous demands until the current installment
+            if (StringUtils.isNotBlank(workFlowAction) && !workFlowAction.equalsIgnoreCase(WFLOW_ACTION_STEP_REJECT)) {
+                for (Ptdemand ptdemand : newPtdemandSet) {
+                    if (ptdemand.getEgInstallmentMaster().equals(installmentFirstHalf)) {
+                        for (EgDemandDetails demandDetails : ptdemand.getEgDemandDetails()) {
+                            if (demandDetails.getInstallmentStartDate().equals(effectiveDate)
+                                    || demandDetails.getInstallmentStartDate().after(effectiveDate)) {
+                                demandDetailSet.add(demandDetails);
+                            }
+                        }
+                        ptdemand.getEgDemandDetails().clear();
+                        ptdemand.getEgDemandDetails().addAll(demandDetailSet);
+                    }
+                }
             }
-        	}
         }
 
         for (Ptdemand ptdemand : newPtdemandSet) {
@@ -274,7 +261,7 @@ public class TaxExemptionService extends PersistenceService<PropertyImpl, Long> 
 
         if (!propertyByEmployee) {
             currentState = "Created";
-            final Assignment assignment = propService.getUserPositionByZone(property.getBasicProperty());
+            final Assignment assignment = propService.getUserPositionByZone(property.getBasicProperty(),property.getBasicProperty().getSource());
             if (null != assignment)
                 approverPosition = assignment.getPosition().getId();
         } else
@@ -398,7 +385,14 @@ public class TaxExemptionService extends PersistenceService<PropertyImpl, Long> 
     }
 
     public void buildSMS(Property property, String workFlowAction) {
-        final User user = property.getBasicProperty().getPrimaryOwner();
+        for (PropertyOwnerInfo ownerInfo : property.getBasicProperty().getPropertyOwnerInfo()) {
+            if (StringUtils.isNotBlank(ownerInfo.getOwner().getMobileNumber())) {
+                buildSms(property, ownerInfo.getOwner(), workFlowAction);
+            }
+        }
+    }
+
+    private void buildSms(Property property, User user, String workFlowAction) {
         final String assessmentNo = property.getBasicProperty().getUpicNo();
         final String mobileNumber = user.getMobileNumber();
         final String applicantName = user.getName();

@@ -39,9 +39,23 @@
  */
 package org.egov.works.web.controller.contractorbill;
 
+import java.io.IOException;
+import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+
+import javax.servlet.http.HttpServletRequest;
+
 import org.egov.commons.Accountdetailtype;
 import org.egov.commons.CChartOfAccounts;
 import org.egov.commons.dao.ChartOfAccountsHibernateDAO;
+import org.egov.egf.budget.model.BudgetControlType;
+import org.egov.egf.budget.service.BudgetControlTypeService;
 import org.egov.eis.web.contract.WorkflowContainer;
 import org.egov.eis.web.controller.workflow.GenericWorkFlowController;
 import org.egov.infra.exception.ApplicationRuntimeException;
@@ -76,17 +90,6 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
 
-import javax.servlet.http.HttpServletRequest;
-import java.io.IOException;
-import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-
 @Controller
 @RequestMapping(value = "/contractorbill")
 public class CreateContractorBillController extends GenericWorkFlowController {
@@ -118,6 +121,9 @@ public class CreateContractorBillController extends GenericWorkFlowController {
 
     @Autowired
     private EstimateService estimateService;
+
+    @Autowired
+    private BudgetControlTypeService budgetControlTypeService;
 
     @RequestMapping(value = "/newform", method = RequestMethod.GET)
     public String showNewForm(
@@ -228,12 +234,9 @@ public class CreateContractorBillController extends GenericWorkFlowController {
                 // with errors.reject
                 throw new ApplicationRuntimeException("error.contractorbill.budgetcheck.insufficient.amount");
                 /*
-                 * for (final ValidationError error : e.getErrors()) {
-                 * if(error.getMessage().contains("Budget Check failed for ")) {
-                 * errors.reject(messageSource.getMessage(
-                 * "error.contractorbill.budgetcheck.insufficient.amount",null,
-                 * null)+". " +error.getMessage()); } else
-                 * errors.reject(error.getMessage()); }
+                 * for (final ValidationError error : e.getErrors()) { if(error.getMessage().contains("Budget Check failed for "))
+                 * { errors.reject(messageSource.getMessage( "error.contractorbill.budgetcheck.insufficient.amount",null, null)+
+                 * ". " +error.getMessage()); } else errors.reject(error.getMessage()); }
                  */
             }
             final String pathVars = worksUtils.getPathVars(savedContractorBillRegister.getStatus(),
@@ -426,7 +429,9 @@ public class CreateContractorBillController extends GenericWorkFlowController {
         String message = "";
 
         if (contractorBillRegister.getStatus().getCode().equals(ContractorBillRegister.BillStatus.CREATED.toString())) {
-            if (StringUtils.isNotBlank(contractorBillRegister.getEgBillregistermis().getBudgetaryAppnumber()))
+            if (StringUtils.isNotBlank(contractorBillRegister.getEgBillregistermis().getBudgetaryAppnumber())
+                    && !BudgetControlType.BudgetCheckOption.NONE.toString()
+                            .equalsIgnoreCase(budgetControlTypeService.getConfigValue()))
                 message = messageSource.getMessage("msg.contractorbill.create.success.with.budgetappropriation",
                         new String[] { contractorBillRegister.getBillnumber(), approverName, nextDesign,
                                 contractorBillRegister.getEgBillregistermis().getBudgetaryAppnumber() },

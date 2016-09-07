@@ -47,7 +47,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -55,7 +54,6 @@ import org.springframework.security.oauth2.common.exceptions.OAuth2Exception;
 import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 @Component
@@ -65,12 +63,11 @@ public class CustomAuthenticationProvider implements AuthenticationProvider {
     private UserService userService;
 
     @Override
-    public Authentication authenticate(Authentication authentication)
-            throws AuthenticationException {
+    public Authentication authenticate(Authentication authentication) {
 
         String userName = authentication.getName();
         String password = authentication.getCredentials().toString();
-        User user = null;
+        User user;
         if (userName.contains("@") && userName.contains(".")) {
             user = userService.getUserByEmailId(userName);
         } else {
@@ -93,8 +90,7 @@ public class CustomAuthenticationProvider implements AuthenticationProvider {
              */
             List<GrantedAuthority> grantedAuths = new ArrayList<>();
             grantedAuths.add(new SimpleGrantedAuthority("ROLE_" + user.getType()));
-            Authentication auth = new UsernamePasswordAuthenticationToken(new SecureUser(user), password, grantedAuths);
-            return auth;
+            return  new UsernamePasswordAuthenticationToken(new SecureUser(user), password, grantedAuths);
         } else {
             throw new OAuth2Exception("Invalid login credentials");
         }

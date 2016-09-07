@@ -37,104 +37,107 @@
   ~
   ~   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
   --%>
-<div class="main-content">
-	<div class="row">
-		<div class="col-md-12">
-			<div class="panel panel-primary" data-collapsed="0">
+<div class="row">
+	<div class="col-md-12">
+		<div class="panel panel-primary" data-collapsed="0">
 			<c:if test="${mode == 'create'}">
 				<div class="panel-heading">
 					<div class="panel-title">Hearing Details</div>
 				</div>
-				</c:if>
-				<c:if test="${mode == 'edit'}">
+			</c:if>
+			<c:if test="${mode == 'edit'}">
 				<div class="panel-heading">
 					<div class="panel-title">Edit Hearing Details</div>
 				</div>
-				</c:if>
-				<div class="panel-body">
-					<div class="form-group">
-						<label class="col-sm-2 control-label text-left"><spring:message
-								code="lbl.hearingdate" /> :<span class="mandatory"></span> </label>
-						<div class="col-sm-3 add-margin">
-							<form:input path="hearingDate" class="form-control datepicker" id="hearingDate"
-								data-date-end-date="" data-inputmask="'mask': 'd/m/y'"
-								required="required" />
-							<form:errors path="hearingDate" cssClass="error-msg" />
-						</div>
-
+			</c:if>
+			<div class="panel-body">
+				<div class="form-group">
+					<label class="col-sm-2 control-label text-left"><spring:message
+							code="lbl.hearingdate" /> :<span class="mandatory"></span> </label>
+					<div class="col-sm-3 add-margin">
+						<form:input path="hearingDate" class="form-control datepicker"
+							id="hearingDate" data-date-end-date=""
+							data-inputmask="'mask': 'd/m/y'" required="required" />
+						<form:errors path="hearingDate" cssClass="error-msg" />
 					</div>
 
-					<div class="form-group">
-						<label class="col-sm-2 control-label text-left"><spring:message
-								code="lbl.purposeofhearing" /> :<span class="mandatory"></span>
-						</label>
-						<div class="col-sm-3 add-margin">
-							<form:textarea path="purposeofHearings"
-								class="form-control text-left patternvalidation"
-								data-pattern="alphanumeric" maxlength="1024" required="required" />
-							<form:errors path="purposeofHearings" cssClass="error-msg" />
-						</div>
+				</div>
 
-						<label class="col-sm-3 control-label text-right"><spring:message
-								code="lbl.outcomeofhearing" /> :</label>
-						<div class="col-sm-3 add-margin">
-							<form:textarea path="hearingOutcome"
-								class="form-control text-left patternvalidation"
-								data-pattern="alphanumeric" maxlength="2056" />
-							<form:errors path="hearingOutcome" cssClass="error-msg" />
-						</div>
+				<div class="form-group">
+					<label class="col-sm-2 control-label text-left"><spring:message
+							code="lbl.purposeofhearing" /> :<span class="mandatory"></span>
+					</label>
+					<div class="col-sm-3 add-margin">
+						<form:textarea path="purposeofHearings"
+							class="form-control text-left patternvalidation"
+							data-pattern="alphanumeric" maxlength="1024" required="required" />
+						<form:errors path="purposeofHearings" cssClass="error-msg" />
+					</div>
+
+					<label class="col-sm-3 control-label text-right"><spring:message
+							code="lbl.outcomeofhearing" /> :</label>
+					<div class="col-sm-3 add-margin">
+						<form:textarea path="hearingOutcome"
+							class="form-control text-left patternvalidation"
+							data-pattern="alphanumeric" maxlength="2056" />
+						<form:errors path="hearingOutcome" cssClass="error-msg" />
+					</div>
+				</div>
+				<div class="form-group">
+					<label class="col-sm-2 control-label text-right"><spring:message
+							code="lbl.additionallawyer" /> :</label>
+					<div class="col-sm-3 add-margin">
+						<form:input path="additionalLawyers"
+							class="form-control text-left patternvalidation"
+							data-pattern="alphabetwithspace" maxlength="50" />
+						<form:errors path="additionalLawyers" cssClass="error-msg" />
+					</div>
+					<label class="col-sm-3 control-label text-right"><spring:message
+							code="lbl.standingcounsel" /></label>
+					<div class="col-sm-2 add-margin">
+						<form:checkbox path="isStandingCounselPresent"
+							value="${isStandingCounselPresent}" />
+						<form:errors path="isStandingCounselPresent" cssClass="error-msg" />
+					</div>
+				</div>
+				<div class="form-group">
+					<div class="panel-heading">
+						<div class="panel-title">Employee Details</div>
 					</div>
 					<div class="form-group">
 						<label class="col-sm-2 control-label text-right"><spring:message
-								code="lbl.additionallawyer" /> :</label>
+								code="lbl.positionofemployee" /> :</label>
 						<div class="col-sm-3 add-margin">
-							<form:input path="additionalLawyers"
-								class="form-control text-left patternvalidation"
-								data-pattern="alphabetwithspace" maxlength="50" />
-							<form:errors path="additionalLawyers" cssClass="error-msg" />
+							<form:input id="positionName" type="text" class="form-control "
+								autocomplete="off" path="" name="" value="" placeholder="" />
+							<input type="hidden" id="positionId" value="" />
+							<c:forEach items="${position}" var="position">
+								<a onclick="setPositionId(<c:out value="${position.id}"/>)"
+									href="javascript:void(0)"
+									class="btn btn-secondary btn-xs tag-element freq-ct"><c:out
+										value="${position.name }" /> </a>
+							</c:forEach>
 						</div>
-						<label class="col-sm-3 control-label text-right"><spring:message
-								code="lbl.standingcounsel" /></label>
-						<div class="col-sm-2 add-margin">
-							<form:checkbox path="isStandingCounselPresent"
-								value="${isStandingCounselPresent}" />
-							<form:errors path="isStandingCounselPresent" cssClass="error-msg" />
-						</div>
+						<button type="button" class="btn btn-default" value="Add"
+							id="addid">Add</button>
 					</div>
-					<div class="form-group">
-						<div class="panel-heading">
-							<div class="panel-title">Employee Details</div>
-						</div>
-						<div class="form-group">
-							<label class="col-sm-2 control-label text-right"><spring:message
-									code="lbl.positionofemployee" /> :</label>
-							<div class="col-sm-3 add-margin">
-								<form:input id="positionName" type="text" class="form-control "
-									autocomplete="off" path="" name="" value="" placeholder="" />
-								<input type="hidden" id="positionId" value="" />
-								<c:forEach items="${position}" var="position">
-									<a onclick="setPositionId(<c:out value="${position.id}"/>)"
-										href="javascript:void(0)"
-										class="btn btn-secondary btn-xs tag-element freq-ct"><c:out
-											value="${position.name }" /> </a>
-								</c:forEach>
-							</div>
-							<button type="button" class="btn btn-default" value="Add"
-								id="addid">Add</button>
-						</div>
-						<table class="table table-striped table-bordered"
-							id="employeeDetails">
-							<thead>
-								<tr>
-									<th class="text-center">Position-Employee</th>
-									<th class="text-center">Delete</th>
-								</tr>
-							</thead>
+					<table class="table table-striped table-bordered"
+						id="employeeDetails">
+						<thead>
+							<tr>
+								<th class="text-center">Position-Employee</th>
+								<th class="text-center">Delete</th>
+							</tr>
+						</thead>
 
-							<tbody>
-								
-							</tbody>
-						</table>
-					</div>
+						<tbody>
 
-					<input type="hidden" name="hearings" value="${hearings.id}" />
+						</tbody>
+					</table>
+				</div>
+
+				<input type="hidden" name="hearings" value="${hearings.id}" />
+			</div>
+		</div>
+	</div>
+</div>

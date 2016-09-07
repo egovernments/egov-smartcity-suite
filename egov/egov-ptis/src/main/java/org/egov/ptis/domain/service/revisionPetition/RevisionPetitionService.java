@@ -39,7 +39,7 @@
  */
 package org.egov.ptis.domain.service.revisionPetition;
 
-import org.apache.log4j.Logger;
+import org.apache.commons.lang3.StringUtils;
 import org.egov.commons.EgwStatus;
 import org.egov.commons.dao.EgwStatusHibernateDAO;
 import org.egov.commons.entity.Source;
@@ -62,6 +62,7 @@ import org.egov.pims.commons.Position;
 import org.egov.ptis.constants.PropertyTaxConstants;
 import org.egov.ptis.domain.dao.property.PropertyStatusDAO;
 import org.egov.ptis.domain.entity.objection.RevisionPetition;
+import org.egov.ptis.domain.entity.property.PropertyOwnerInfo;
 import org.egov.ptis.domain.service.property.SMSEmailService;
 import org.hibernate.Criteria;
 import org.hibernate.criterion.Restrictions;
@@ -74,7 +75,6 @@ import java.util.Date;
 import java.util.List;
 
 public class RevisionPetitionService extends PersistenceService<RevisionPetition, Long> {
-    private static final Logger LOGGER = Logger.getLogger(RevisionPetitionService.class);
     @Autowired
     private ApplicationNumberGenerator applicationNumberGenerator;
     @Autowired
@@ -267,35 +267,38 @@ public class RevisionPetitionService extends PersistenceService<RevisionPetition
      * @param applicationType
      */
     public void sendEmailandSms(final RevisionPetition objection, final String applicationType) {
-
         if (objection != null) {
-            final User user = objection.getBasicProperty().getPrimaryOwner();
-            final String mobileNumber = user.getMobileNumber();
-            final String emailid = user.getEmailId();
-            final String applicantName = user.getName();
-            final List<String> args = new ArrayList<String>();
-            args.add(applicantName);
-            String smsMsg = "";
-            String emailSubject = "";
-            String emailBody = "";
-
-            if (applicationType != null && applicationType.equalsIgnoreCase(REVISION_PETITION_CREATED)) {
-
-                args.add(objection.getObjectionNumber());
-                if (mobileNumber != null)
-                    smsMsg = "Revision petition created. Use " + objection.getObjectionNumber()
-                            + " for future reference";
-                if (emailid != null) {
-                    emailSubject = "Revision petition created.";
-                    emailBody = "Revision petition created. Use " + objection.getObjectionNumber()
-                            + " for future reference";
-                }
+            for (PropertyOwnerInfo ownerInfo : objection.getBasicProperty().getPropertyOwnerInfo()) {
+                sendEmailAndSms(objection, ownerInfo.getOwner(), applicationType);
             }
-            if (mobileNumber != null && !smsMsg.equals(""))
-                messagingService.sendSMS(mobileNumber, smsMsg);
-            if (emailid != null && !emailBody.equals(""))
-                messagingService.sendEmail(emailid, emailSubject, emailBody);
         }
+    }
+
+    private void sendEmailAndSms(final RevisionPetition objection, final User user, final String applicationType) {
+        final String mobileNumber = user.getMobileNumber();
+        final String emailid = user.getEmailId();
+        final String applicantName = user.getName();
+        final List<String> args = new ArrayList<String>();
+        args.add(applicantName);
+        String smsMsg = "";
+        String emailSubject = "";
+        String emailBody = "";
+
+        if (applicationType != null && applicationType.equalsIgnoreCase(REVISION_PETITION_CREATED)) {
+            args.add(objection.getObjectionNumber());
+            if (mobileNumber != null)
+                smsMsg = "Revision petition created. Use " + objection.getObjectionNumber()
+                        + " for future reference";
+            if (emailid != null) {
+                emailSubject = "Revision petition created.";
+                emailBody = "Revision petition created. Use " + objection.getObjectionNumber()
+                        + " for future reference";
+            }
+        }
+        if (StringUtils.isNotBlank(mobileNumber) && StringUtils.isNotBlank(smsMsg))
+            messagingService.sendSMS(mobileNumber, smsMsg);
+        if (StringUtils.isNotBlank(emailid) && StringUtils.isNotBlank(emailBody))
+            messagingService.sendEmail(emailid, emailSubject, emailBody);
     }
 
     public SMSEmailService getsMSEmailService() {

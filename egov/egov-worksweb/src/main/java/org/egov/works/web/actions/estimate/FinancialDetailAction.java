@@ -403,7 +403,7 @@ public class FinancialDetailAction extends BaseFormAction {
         addDropdownData("finYearList", finYrList);
         finYearRangeStr = generateFinYrList(finYrList);
 
-        final CFinancialYear financialYear = finHibernateDao.getFinancialYearByDate(new Date());
+        final CFinancialYear financialYear = finHibernateDao.getFinYearByDate(new Date());
         if (financialYear != null)
             currentFinancialYearId = financialYear.getId().toString();
 

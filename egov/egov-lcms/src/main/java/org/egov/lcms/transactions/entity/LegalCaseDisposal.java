@@ -52,11 +52,11 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
-import javax.validation.Valid;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
+import javax.validation.constraints.NotNull;
 
 import org.egov.infra.persistence.entity.AbstractAuditable;
-import org.egov.infra.persistence.validator.annotation.DateFormat;
-import org.egov.infra.persistence.validator.annotation.Required;
 import org.egov.infra.utils.DateUtils;
 import org.egov.infra.validation.exception.ValidationError;
 import org.egov.lcms.utils.constants.LcmsConstants;
@@ -72,18 +72,22 @@ public class LegalCaseDisposal extends AbstractAuditable {
     @Id
     @GeneratedValue(generator = SEQ_EGLC_LEGALCASEDISPOSAL, strategy = GenerationType.SEQUENCE)
     private Long id;
+
     @ManyToOne
-    @Valid
+    @NotNull
     @JoinColumn(name = "legalcase", nullable = false)
     private LegalCase legalCase;
-    @Required(message = "disposalDate.null")
-    @DateFormat(message = "invalid.fieldvalue.model.disposalDate")
+
+    @NotNull
+    @Temporal(TemporalType.DATE)
     @Column(name = "disposaldate")
     private Date disposalDate;
-    @Length(max = 1024, message = "io.disposalDetails.length")
+
+    @Length(max = 1024)
     @Column(name = "disposaldetails")
     private String disposalDetails;
-    @DateFormat(message = "invalid.fieldvalue.model.consignmentDate")
+
+    @Temporal(TemporalType.DATE)
     @Column(name = "consignmenttorecordroomdate")
     private Date consignmentDate;
 

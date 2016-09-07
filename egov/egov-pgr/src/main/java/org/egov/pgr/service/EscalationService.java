@@ -189,7 +189,8 @@ public class EscalationService {
                         return;
                     }
                 }
-                if (superiorPosition != null) {
+                //&& condition is to avoid escalation if a user does not have superior position.
+                if (superiorPosition != null && !superiorUser.equals(previoususer)) {
                     complaint.setEscalationDate(getExpiryDate(complaint));
                     complaint.setAssignee(superiorPosition);
                     complaint.transition().withOwner(superiorPosition).withComments("Complaint is escalated")

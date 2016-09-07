@@ -107,7 +107,7 @@
 		<form:input class="form-control" data-pattern="" maxlength="50"
 			id="caseNumber" required="required" path="caseNumber" />
 	</div>
-	<div class="col-sm-2 add-margin text-center">
+	<div class="col-sm-1 add-margin text-center">
 		<form:select path="wpYear" data-first-option="false" id="wpYear"
 			cssClass="form-control">
 			<form:option value="">
@@ -138,7 +138,7 @@
 			<form:input path="lcNumber" class="form-control patternvalidation"
 				data-pattern="string" maxlength="50" id="lcNumber" />
 		</div>
-		<div class="col-sm-2 add-margin text-center">
+		<div class="col-sm-1 add-margin text-center">
 			<form:select path="finwpYear" data-first-option="false"
 				id="finwpYear" cssClass="form-control">
 				<form:option value="">
@@ -204,11 +204,11 @@
 	<label class="col-sm-2 control-label text-right"><spring:message
 			code="lbl.caDue.date" /></label>
 	<div class="col-sm-3 add-margin">
-		<form:input path="eglcPwrs[0].caDueDate" class="form-control datepicker"
+		<form:input path="pwrList[0].caDueDate" class="form-control datepicker"
 			title="Please enter a valid date" pattern="\d{1,2}/\d{1,2}/\d{4}"
 		 id="caDueDate"
 			data-inputmask="'mask': 'd/m/y'" />
-		<form:errors path="eglcPwrs[0].caDueDate" cssClass="add-margin error-msg" />
+		<form:errors path="pwrList[0].caDueDate" cssClass="add-margin error-msg" />
 	</div>
 </div>
 <div class="form-group">

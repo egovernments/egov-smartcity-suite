@@ -108,6 +108,7 @@ public class AppConfigValues extends AbstractAuditable {
         return id;
     }
 
+    @Override
     public void setId(final Long id) {
         this.id = id;
     }

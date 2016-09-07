@@ -40,18 +40,17 @@
 package org.egov.lcms.web.controller.reports;
 
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.egov.infra.web.utils.WebUtils;
 import org.egov.lcms.reports.entity.DailyBoardReportResults;
 import org.egov.lcms.transactions.service.DailyBoardReportService;
-import org.egov.lcms.web.adaptor.DailyBoardReportAdapter;
+import org.egov.lcms.web.adaptor.DailyBoardReportJsonAdapter;
 import org.egov.lcms.web.controller.transactions.GenericLegalCaseController;
-import org.hibernate.SQLQuery;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
@@ -63,19 +62,14 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
-
 @Controller
 @RequestMapping(value = "/reports")
 public class DailyBoardReportsController extends GenericLegalCaseController {
 
     @Autowired
     private DailyBoardReportService dailyBoardReportService;
-
-    @Autowired
-    private DailyBoardReportAdapter dailyBoardReportAdapter;
-
+    
+    
     @ModelAttribute
     private void getDailyBoardReport(final Model model) {
         final DailyBoardReportResults dailyBoardReportResult = new DailyBoardReportResults();
@@ -87,28 +81,24 @@ public class DailyBoardReportsController extends GenericLegalCaseController {
         model.addAttribute("currDate", new Date());
         return "dailyboardreport-form";
     }
-
     @ExceptionHandler(Exception.class)
     @RequestMapping(value = "/dailyBoardReportresults", method = RequestMethod.GET, produces = MediaType.TEXT_PLAIN_VALUE)
-    public @ResponseBody String getDailyBoardReportResult(@RequestParam final String caseType,
+    public @ResponseBody String getDailyBoardReportResult(
+           @RequestParam final Integer caseType,@RequestParam final Date fromDate,
+            @RequestParam final Date toDate,
             @RequestParam final String officerIncharge, final HttpServletRequest request,
             final HttpServletResponse response) throws IOException {
-        List<DailyBoardReportResults> daildBoardReportsList = new ArrayList<DailyBoardReportResults>();
-        final SQLQuery query = dailyBoardReportService.getDailyBoardReport(request.getParameter("caseNumber"),
-                request.getParameter("court"), request.getParameter("caseType"),
-                request.getParameter("officerIncharge"), request.getParameter("petitionType"),
-                request.getParameter("standingCouncil"), null);
-        daildBoardReportsList = query.list();
-        final String result = new StringBuilder("{ \"data\":")
-                .append(toSearchDailyBoardReportsJson(daildBoardReportsList)).append("}").toString();
+    
+      final  DailyBoardReportResults dailyBoardReportObj=new DailyBoardReportResults();
+      dailyBoardReportObj.setCasecategory(caseType);
+      dailyBoardReportObj.setOfficerIncharge(officerIncharge);
+      dailyBoardReportObj.setFromDate(fromDate);
+      dailyBoardReportObj.setToDate(toDate);
+      final  List<DailyBoardReportResults>  dailyBoardReportList = dailyBoardReportService.getDailyBoardReports( dailyBoardReportObj);
+       final String result = new StringBuilder("{ \"data\":")
+                .append(WebUtils.toJSON(dailyBoardReportList, DailyBoardReportResults.class, 
+                        DailyBoardReportJsonAdapter.class)).append("}")
+                .toString();
         return result;
-    }
-
-    public Object toSearchDailyBoardReportsJson(final Object object) {
-        final GsonBuilder gsonBuilder = new GsonBuilder();
-        final Gson gson = gsonBuilder.registerTypeAdapter(DailyBoardReportResults.class, dailyBoardReportAdapter)
-                .create();
-        final String json = gson.toJson(object);
-        return json;
     }
 }

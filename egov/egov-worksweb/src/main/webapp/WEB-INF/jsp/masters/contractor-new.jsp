@@ -58,7 +58,8 @@ body {
 	font-family: regular;
 }
 </style>
-<script src="<egov:url path='resources/js/works.js?${app_release_no}'/>"></script> 
+<script src="<cdn:url value='/resources/js/works.js?rnd=${app_release_no}'/>"></script>
+
 <html>
 <head>
 <title><s:text name="contractor.header" /></title>

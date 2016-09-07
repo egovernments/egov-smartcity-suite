@@ -89,11 +89,15 @@
 		 <form:input path="workOrderAmount" name="workOrderAmount" id="workOrderAmount"  type="text" class="form-control text-right patternvalidation" maxlength="12" data-pattern="decimalvalue" required="required"/>
 		 <form:errors path="workOrderAmount" cssClass="add-margin error-msg" />
 	</div>
-	<label class="col-sm-2 control-label text-right"><spring:message code="lbl.dateofagreement" /></label>
+	<label class="col-sm-2 control-label text-right"><spring:message code="lbl.dateofagreement" />
+		<c:if test="${lineEstimateDetails.lineEstimate.spillOverFlag && lineEstimateDetails.lineEstimate.workOrderCreated }">
+			<span class="mandatory"></span>
+		</c:if>
+	</label>
 	<div class="col-sm-3 add-margin">
 		<c:choose>
 			<c:when test="${lineEstimateDetails.lineEstimate.spillOverFlag && lineEstimateDetails.lineEstimate.workOrderCreated }">
-				<form:input path="workOrderDate" id="workOrderDate" type="text" class="form-control datepicker" data-date-end-date="0d"/>
+				<form:input path="workOrderDate" id="workOrderDate" type="text" class="form-control datepicker" data-date-end-date="0d" required="required"/>
 			</c:when>
 			<c:otherwise>
 				<form:input path="workOrderDate" id="workOrderDate" type="text" class="form-control" value="${workOrderDate}" readonly="true" />
@@ -107,7 +111,7 @@
 	<label class="col-sm-3 control-label text-right"><spring:message code="lbl.nameofagency" /><span class="mandatory"></span></label>
 	<div class="col-sm-3 add-margin" style="margin-bottom: 0;">
 		<div class="input-group">
-			<input id="contractorSearch" name="contractorSearch" value="${contractorSearch}" class="form-control patternvalidation" autocomplete="off" data-pattern="alphanumericspecialcharacters" maxlength="50" required="required" type="text" placeholder="Type first 3 letters of Contractor Name/Code" > 
+			<input id="contractorSearch" name="contractorSearch" value="${contractorSearch}" class="form-control patternvalidation" autocomplete="off" data-pattern="alphanumericspecialcharacters" maxlength="100" required="required" type="text" placeholder="Type first 3 letters of Contractor Name/Code" > 
 			<span class="input-group-addon"> <i class="fa fa-search specific" onclick="searchContractor();"></i></span>
 			<form:hidden path="contractor.id" name="contractor" id="contractor" />
 		</div>	

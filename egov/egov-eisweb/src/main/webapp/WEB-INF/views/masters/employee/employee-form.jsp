@@ -44,15 +44,17 @@
 <%@ taglib uri="http://www.springframework.org/tags/form" prefix="form"%>
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
 <%@ include file="/includes/taglibs.jsp" %>
-<script src="<c:url value='/resources/js/app/employeecreate.js'/>"></script>
+<%@ taglib uri="/WEB-INF/taglib/cdn.tld" prefix="cdn" %>
+<script src="<cdn:url value='/resources/js/app/employeecreate.js'/>"></script>
 
-<link rel="stylesheet" href="<c:url value='/resources/global/css/bootstrap/typeahead.css' context='/egi'/>">
-<link rel="stylesheet" href="<c:url value='/resources/global/css/bootstrap/bootstrap-datepicker.css' context='/egi'/>"/>
 
-<script src="<c:url value='/resources/global/js/bootstrap/bootstrap-datepicker.js' context='/egi'/>"></script>
-<script src="<c:url value='/resources/global/js/bootstrap/typeahead.bundle.js' context='/egi'/>"></script>
+<link rel="stylesheet" href="<cdn:url value='/resources/global/css/bootstrap/typeahead.css' context='/egi'/>">
+<link rel="stylesheet" href="<cdn:url value='/resources/global/css/bootstrap/bootstrap-datepicker.css' context='/egi'/>"/>
 
-<script src="<c:url value='/resources/js/app/ajaxCommonFunctions.js'/>"></script>
+<script src="<cdn:url value='/resources/global/js/bootstrap/bootstrap-datepicker.js' context='/egi'/>"></script>
+<script src="<cdn:url value='/resources/global/js/bootstrap/typeahead.bundle.js' context='/egi'/>"></script>
+
+<script src="<cdn:url value='/resources/js/app/ajaxCommonFunctions.js'/>"></script>
 
 		
 		
@@ -480,6 +482,9 @@
 										</thead>
 											<tbody>
 											<div class="error-msg assignmentserror all-errors display-hide" align="center"></div>
+											   <c:if test="${not empty error}"> 
+                                                 <div class="alert alert-danger" role="alert"><strong>${error}</strong></div>
+                                             </c:if> 
 											<c:forEach var="assign" items="${employee.assignments}" varStatus="status">
 												<tr>
 													<td>
@@ -675,4 +680,4 @@
              </form:form>
     </div>
 </div>
-<script src="<c:url value='/resources/js/app/fileuploadndmaps.js'/>"></script>
+<script src="<cdn:url value='/resources/js/app/fileuploadndmaps.js'/>"></script>

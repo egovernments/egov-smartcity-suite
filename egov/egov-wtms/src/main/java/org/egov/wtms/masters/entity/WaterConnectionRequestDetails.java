@@ -37,32 +37,67 @@
  *
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
-package org.egov.lcms.transactions.entity;
+package org.egov.wtms.masters.entity;
 
-import java.lang.reflect.Type;
+import java.io.Serializable;
 
-import com.google.gson.JsonElement;
-import com.google.gson.JsonObject;
-import com.google.gson.JsonSerializationContext;
-import com.google.gson.JsonSerializer;
+import org.codehaus.jackson.annotate.JsonIgnore;
 
-public class LegalCaseReportResultAdaptor implements JsonSerializer<LegalCaseReportResult> {
+/**
+ * The WaterTaxDetails class is used to contain water tax details, arrears
+ * details and the corresponding error details if any.
+ *
+ * @author eGov-Dev
+ */
+@SuppressWarnings("serial")
+public class WaterConnectionRequestDetails implements Serializable {
+    /**
+     *
+     */
+    private static final long serialVersionUID = -9178106359243528750L;
+    @JsonIgnore
+
+    private String consumerNo;
+    private String ownerName;
+    private String mobileNo;
+    private String ulbCode;
 
     @Override
-    public JsonElement serialize(final LegalCaseReportResult legalcaseresult, final Type typeOfSrc,
-            final JsonSerializationContext context) {
-        final JsonObject jsonObject = new JsonObject();
-        jsonObject.addProperty("casenumber", legalcaseresult.getCaseNumber());
-        jsonObject.addProperty("legalcaseno", legalcaseresult.getLcNumber());
-        jsonObject.addProperty("casetitle", legalcaseresult.getCaseTitle());
-        jsonObject.addProperty("courtname", legalcaseresult.getCourtName());
-        jsonObject.addProperty("petitioners", legalcaseresult.getPetName());
-        // jsonObject.addProperty("Respondants", legalcaseresult.get);
-        jsonObject.addProperty("department", legalcaseresult.getAssignDept());
-        jsonObject.addProperty("standingcouncil", legalcaseresult.getStandingCouncil());
-        jsonObject.addProperty("casestatus", legalcaseresult.getCaseStatus());
-        // jsonObject.addProperty("Actions", legalcaseresult.getCourtName());
-        return jsonObject;
+    public String toString() {
+        return "WaterConnectionRequestDetails [consumerNo=" + consumerNo + "ownerName=" + ownerName + "mobileNo="
+                + mobileNo + "]";
+    }
+
+    public String getConsumerNo() {
+        return consumerNo;
+    }
+
+    public void setConsumerNo(final String consumerNo) {
+        this.consumerNo = consumerNo;
+    }
+
+    public String getOwnerName() {
+        return ownerName;
+    }
+
+    public void setOwnerName(final String ownerName) {
+        this.ownerName = ownerName;
+    }
+
+    public String getMobileNo() {
+        return mobileNo;
+    }
+
+    public void setMobileNo(final String mobileNo) {
+        this.mobileNo = mobileNo;
+    }
+
+    public String getUlbCode() {
+        return ulbCode;
+    }
+
+    public void setUlbCode(final String ulbCode) {
+        this.ulbCode = ulbCode;
     }
 
 }

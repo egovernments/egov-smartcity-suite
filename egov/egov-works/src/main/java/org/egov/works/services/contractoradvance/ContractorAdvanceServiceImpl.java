@@ -198,7 +198,7 @@ public class ContractorAdvanceServiceImpl extends PersistenceService<ContractorA
      */
     public void setARFNumber(final ContractorAdvanceRequisition contractorAdvanceRequisition) {
         try {
-            final CFinancialYear financialYear = financialYearHibernateDAO.getFinancialYearByDate(contractorAdvanceRequisition
+            final CFinancialYear financialYear = financialYearHibernateDAO.getFinYearByDate(contractorAdvanceRequisition
                     .getAdvanceRequisitionDate());
             if (financialYear == null)
                 throw new ValidationException(Arrays.asList(new ValidationError(

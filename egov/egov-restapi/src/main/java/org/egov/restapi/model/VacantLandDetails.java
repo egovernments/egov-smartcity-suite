@@ -51,6 +51,13 @@ public class VacantLandDetails implements Serializable {
 	private Double currentCapitalValue;
 	private String effectiveDate;
 
+	@Override
+	public String toString() {
+		return "VacantLandDetailsRequest [surveyNumber=" + surveyNumber + ", pattaNumber=" + pattaNumber
+				+ ", vacantLandArea=" + vacantLandArea + ", marketValue=" + marketValue + ", currentCapitalValue="
+				+ currentCapitalValue + ", effectiveDate=" + effectiveDate + "]";
+	}
+	
 	public String getSurveyNumber() {
 		return surveyNumber;
 	}
@@ -97,13 +104,6 @@ public class VacantLandDetails implements Serializable {
 
 	public void setEffectiveDate(String effectiveDate) {
 		this.effectiveDate = effectiveDate;
-	}
-
-	@Override
-	public String toString() {
-		return "VacantLandDetailsRequest [surveyNumber=" + surveyNumber + ", pattaNumber=" + pattaNumber
-				+ ", vacantLandArea=" + vacantLandArea + ", marketValue=" + marketValue + ", currentCapitalValue="
-				+ currentCapitalValue + ", effectiveDate=" + effectiveDate + "]";
 	}
 
 }

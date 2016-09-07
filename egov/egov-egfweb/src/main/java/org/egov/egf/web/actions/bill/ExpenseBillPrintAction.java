@@ -41,6 +41,7 @@ package org.egov.egf.web.actions.bill;
 
 
 import net.sf.jasperreports.engine.JRException;
+
 import org.apache.log4j.Logger;
 import org.apache.struts2.convention.annotation.Action;
 import org.apache.struts2.convention.annotation.Result;
@@ -54,6 +55,8 @@ import org.egov.commons.CVoucherHeader;
 import org.egov.commons.dao.FinancialYearDAO;
 import org.egov.commons.utils.EntityType;
 import org.egov.dao.budget.BudgetDetailsHibernateDAO;
+import org.egov.egf.budget.model.BudgetControlType;
+import org.egov.egf.budget.service.BudgetControlTypeService;
 import org.egov.egf.commons.EgovCommon;
 import org.egov.eis.service.EisCommonService;
 import org.egov.infra.admin.master.entity.AppConfigValues;
@@ -154,6 +157,8 @@ public class ExpenseBillPrintAction extends BaseFormAction {
     List<EgBillPayeedetails> billPayeeDetails = new ArrayList<EgBillPayeedetails>();
     private static final String ACCDETAILTYPEQUERY = " from Accountdetailtype where id=?";
     EgBillregister cbill = new EgBillregister();
+    @Autowired
+    private BudgetControlTypeService budgetControlTypeService;
 
     // private InboxService inboxService;
 
@@ -458,14 +463,13 @@ public class ExpenseBillPrintAction extends BaseFormAction {
 
         final Set<EgBilldetails> egBilldetailes = cbill.getEgBilldetailes();
         boolean budgetcheck = false;
-        final List<AppConfigValues> list = appConfigValuesService.getConfigValuesByModuleAndKey("EGF", "budgetCheckRequired");
-        if (!list.isEmpty())
-        {
-            final String value = list.get(0).getValue();
-            if (value.equalsIgnoreCase("Y"))
-                budgetcheck = true;
-            getRequiredDataForBudget(cbill);
-        }
+        
+            if (!BudgetControlType.BudgetCheckOption.NONE.toString().equalsIgnoreCase(budgetControlTypeService.getConfigValue()))
+            {	
+             budgetcheck = true;
+             getRequiredDataForBudget(cbill);
+            }
+      
         final List<Map<String, Object>> budget = new ArrayList<Map<String, Object>>();
         for (final EgBilldetails detail : egBilldetailes)
             if (detail.getDebitamount() != null && detail.getDebitamount().compareTo(BigDecimal.ZERO) != 0)

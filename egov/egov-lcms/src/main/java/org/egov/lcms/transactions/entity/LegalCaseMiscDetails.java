@@ -133,7 +133,7 @@ public class LegalCaseMiscDetails extends AbstractAuditable {
         return legalCase;
     }
 
-    public void setLegalCase(LegalCase legalCase) {
+    public void setLegalCase(final LegalCase legalCase) {
         this.legalCase = legalCase;
     }
 

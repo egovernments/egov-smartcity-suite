@@ -39,23 +39,21 @@
  */
 package org.egov.lcms.web.controller.transactions;
 
-import java.util.List;
-
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 
+import org.egov.infra.utils.DateUtils;
 import org.egov.lcms.transactions.entity.Hearings;
 import org.egov.lcms.transactions.entity.LegalCase;
 import org.egov.lcms.transactions.service.HearingsService;
-import org.egov.lcms.transactions.service.LegalCaseService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 @Controller
@@ -64,33 +62,26 @@ public class EditHearingsController {
     @Autowired
     private HearingsService hearingsService;
 
-    @Autowired
-    private LegalCaseService legalCaseService;
+    @RequestMapping(value = "/edit/{hearingsId}", method = RequestMethod.GET)
+    public String edit(@PathVariable("hearingsId") final String hearingsId,
+            final Model model) {
 
-    @ModelAttribute
-    private LegalCase getLegalCase(@RequestParam("lcNumber") final String lcNumber, final HttpServletRequest request) {
-        final LegalCase legalCase = legalCaseService.findByLcNumber(lcNumber);
-        return legalCase;
-    }
+        final Hearings hearings = hearingsService.findById(Long.parseLong(hearingsId));
 
-    @RequestMapping(value = "/edit/", method = RequestMethod.GET)
-    public String edit(@RequestParam("lcNumber") final String lcNumber, final Model model) {
-        final LegalCase legalcase = legalCaseService.findByLcNumber(lcNumber);
-        final List<Hearings> hearingsList = legalcase.getHearings();
-        final Hearings hearingsObj = hearingsList.get(0);
-
-        model.addAttribute("legalCase", legalcase);
-        model.addAttribute("hearings", hearingsObj);
+        model.addAttribute("legalCase", hearings.getLegalCase());
+        model.addAttribute("hearings", hearings);
         model.addAttribute("mode", "edit");
         return "hearings-edit";
     }
 
-    @RequestMapping(value = "/edit/", method = RequestMethod.POST)
-    public String update(@Valid @ModelAttribute final Hearings hearings,
-            @RequestParam("lcNumber") final String lcNumber, final BindingResult errors, final Model model,
-            final RedirectAttributes redirectAttrs) {
+    @RequestMapping(value = "/edit/{hearingsId}", method = RequestMethod.POST)
+    public String update(@PathVariable("hearingsId") final String hearingsId, @Valid @ModelAttribute final Hearings hearings,
+            final BindingResult errors, final Model model,
+            final RedirectAttributes redirectAttrs, final HttpServletRequest request) {
+        final LegalCase legalcase = hearings.getLegalCase();
 
-        final LegalCase legalcase = legalCaseService.findByLcNumber(lcNumber);
+        if (!DateUtils.compareDates(hearings.getHearingDate(), hearings.getLegalCase().getCaseDate()))
+            errors.rejectValue("hearingDate", "ValidateDate.hearing.casedate");
         hearings.setLegalCase(legalcase);
         if (errors.hasErrors()) {
             model.addAttribute("legalCase", legalcase);

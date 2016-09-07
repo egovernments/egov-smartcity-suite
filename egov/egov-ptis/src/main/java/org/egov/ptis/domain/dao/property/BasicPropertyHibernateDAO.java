@@ -41,7 +41,7 @@ package org.egov.ptis.domain.dao.property;
 
 import static org.egov.ptis.constants.PropertyTaxConstants.CATEGORY_TYPE_PROPERTY_TAX;
 import static org.egov.ptis.constants.PropertyTaxConstants.CATEGORY_TYPE_VACANTLAND_TAX;
-import static org.egov.ptis.constants.PropertyTaxConstants.PROPERTY_TYPE_CODE_VACANT;
+import static org.egov.ptis.constants.PropertyTaxConstants.OWNERSHIP_TYPE_VAC_LAND;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -510,7 +510,7 @@ public class BasicPropertyHibernateDAO implements BasicPropertyDAO {
                     params.put("DoorNo", "%"+(StringUtils.isNotBlank(doorNo) ? doorNo.trim() : "")+"%");
                 }
             }
-            params.put("propertyType", PROPERTY_TYPE_CODE_VACANT);
+            params.put("propertyType", OWNERSHIP_TYPE_VAC_LAND);
         }
 
         final Query query = getCurrentSession().createQuery(sb.toString());

@@ -77,10 +77,12 @@ public class Device extends AbstractAuditable {
 	@SafeHtml
 	private String OSVersion;
 
+	@Override
 	public Long getId() {
 		return id;
 	}
 
+	@Override
 	public void setId(Long id) {
 		this.id = id;
 	}

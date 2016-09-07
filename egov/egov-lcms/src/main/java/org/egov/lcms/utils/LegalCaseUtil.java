@@ -40,22 +40,26 @@
 package org.egov.lcms.utils;
 
 import java.util.List;
+import java.util.Set;
 
 import org.egov.commons.EgwStatus;
 import org.egov.commons.dao.EgwStatusHibernateDAO;
-import org.egov.commons.dao.FunctionaryHibernateDAO;
 import org.egov.eis.service.PositionMasterService;
 import org.egov.infra.admin.master.entity.Department;
 import org.egov.infra.admin.master.service.DepartmentService;
+import org.egov.infra.filestore.entity.FileStoreMapper;
+import org.egov.infra.utils.FileStoreUtils;
 import org.egov.lcms.transactions.entity.BipartisanDetails;
 import org.egov.lcms.transactions.entity.LegalCase;
 import org.egov.lcms.transactions.entity.LegalCaseDocuments;
 import org.egov.lcms.transactions.repository.LegalCaseRepository;
+import org.egov.lcms.utils.constants.LcmsConstants;
 import org.egov.pims.commons.Position;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
 @Service
 public class LegalCaseUtil {
@@ -67,18 +71,24 @@ public class LegalCaseUtil {
     private LegalCaseRepository legalCaseRepository;
 
     @Autowired
-    private FunctionaryHibernateDAO functionaryDAO;
-
-    @Autowired
     private PositionMasterService positionMasterService;
 
     @Autowired
     private DepartmentService departmentService;
 
+    @Autowired
+    private FileStoreUtils fileStoreUtils;
+
     @Transactional(propagation = Propagation.REQUIRES_NEW, readOnly = true)
     public EgwStatus getStatusForModuleAndCode(final String moduleName, final String statusCode) {
         final EgwStatus status = egwStatusDAO.getStatusByModuleAndCode(moduleName, statusCode);
         return status;
+    }
+
+    @Transactional(propagation = Propagation.REQUIRES_NEW, readOnly = true)
+    public List<EgwStatus> getStatusForModule() {
+        final List<EgwStatus> statusList = egwStatusDAO.getStatusByModule(LcmsConstants.MODULE_TYPE_LEGALCASE);
+        return statusList;
     }
 
     @Transactional(propagation = Propagation.REQUIRES_NEW, readOnly = true)
@@ -100,5 +110,9 @@ public class LegalCaseUtil {
     public List<LegalCaseDocuments> getLegalCaseDocumentList(final LegalCase legalcase) {
         final List<LegalCaseDocuments> legalDoc = legalCaseRepository.getLegalCaseDocumentList(legalcase.getId());
         return legalDoc;
+    }
+
+    public Set<FileStoreMapper> addToFileStore(final MultipartFile[] files) {
+        return fileStoreUtils.addToFileStore(files, LcmsConstants.FILESTORE_MODULECODE);
     }
 }
