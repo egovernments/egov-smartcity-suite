@@ -201,6 +201,18 @@
 								</div>
        						</div>
 				        </div>
+				        
+				        <div class="col-md-4">
+				        	<div class="panel panel-default">
+       		        			<div class="panel-heading">
+       		        				Employee Management
+       		        			</div>
+								<div class="panel-body">
+				                    <li class="report-li"><a href="/eis/reports/employeeassignments/searchform" class="open-popup">Employee Assignment Report<span class="lock"> <i class="fa fa-lock"></i></span></a></li>
+								</div>
+       						</div>
+				        </div>
+				        
 				    </div> 
 
 				</div>
