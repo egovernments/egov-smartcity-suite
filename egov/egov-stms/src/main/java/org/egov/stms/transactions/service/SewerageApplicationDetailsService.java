@@ -387,10 +387,6 @@ public class SewerageApplicationDetailsService {
                 validationMessage = stmsMessageSource.getMessage("err.validate.seweragenewconnection.application.inprocess",
                         new String[] { propertyID, sewerageApplicationDetails.get(0).getApplicationNumber() }, null);
             else if (sewerageApplicationDetails.get(0).getConnection().getStatus().toString()
-                    .equalsIgnoreCase(SewerageConnectionStatus.CLOSED.toString()))
-                validationMessage = stmsMessageSource.getMessage("err.validate.seweragenewconnection.closed", new String[] {
-                        sewerageApplicationDetails.get(0).getConnection().getShscNumber(), propertyID }, null);
-            else if (sewerageApplicationDetails.get(0).getConnection().getStatus().toString()
                     .equalsIgnoreCase(SewerageConnectionStatus.INACTIVE.toString()))
                 validationMessage = stmsMessageSource.getMessage("err.validate.seweragenewconnection.inactive", new String[] {
                         sewerageApplicationDetails.get(0).getConnection().getShscNumber(), propertyID }, null);
