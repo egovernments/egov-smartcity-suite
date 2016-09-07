@@ -52,7 +52,6 @@ import org.egov.eis.web.controller.workflow.GenericWorkFlowController;
 import org.egov.infra.exception.ApplicationException;
 import org.egov.works.abstractestimate.entity.AbstractEstimate.EstimateStatus;
 import org.egov.works.abstractestimate.entity.Activity;
-import org.egov.works.abstractestimate.entity.MeasurementSheet;
 import org.egov.works.abstractestimate.service.EstimateService;
 import org.egov.works.abstractestimate.service.MeasurementSheetService;
 import org.egov.works.letterofacceptance.service.WorkOrderActivityService;
@@ -192,7 +191,7 @@ public class UpdateRevisionEstimateController extends GenericWorkFlowController 
     }
 
     private void prepareChangeQuantityActivities(final RevisionAbstractEstimate revisionEstimate) {
-        for (final Activity activity : revisionEstimate.getActivities()) {
+        for (final Activity activity : revisionEstimate.getActivities())
             if (activity.getParent() != null) {
                 final WorkOrderActivity workOrderActivity = workOrderActivityService
                         .getWorkOrderActivityByActivity(activity.getParent().getId());
@@ -204,11 +203,6 @@ public class UpdateRevisionEstimateController extends GenericWorkFlowController 
                 }
                 revisionEstimate.getChangeQuantityActivities().add(activity);
             }
-
-            if (!activity.getMeasurementSheetList().isEmpty())
-                for (final MeasurementSheet ms : activity.getMeasurementSheetList())
-                    revisionEstimateService.deriveMeasurementSheetQuantity(ms);
-        }
     }
 
     @RequestMapping(value = "/update/{revisionEstimateId}", method = RequestMethod.POST)
@@ -279,14 +273,12 @@ public class UpdateRevisionEstimateController extends GenericWorkFlowController 
 
             redirectAttributes.addFlashAttribute("revisionEstimate", updatedRevisionEstimate);
 
-            if (EstimateStatus.NEW.toString().equals(updatedRevisionEstimate.getEgwStatus().getCode())) {
+            if (EstimateStatus.NEW.toString().equals(updatedRevisionEstimate.getEgwStatus().getCode()))
                 return "redirect:/revisionestimate/update/" + updatedRevisionEstimate.getId() + "?mode=save";
-            }
 
-            if (approvalPosition == null) {
+            if (approvalPosition == null)
                 return "redirect:/revisionestimate/revisionestimate-success?revisionEstimate=" + updatedRevisionEstimate.getId()
-                + "&approvalPosition=";
-            }
+                        + "&approvalPosition=";
 
             return "redirect:/revisionestimate/revisionestimate-success?revisionEstimate=" + updatedRevisionEstimate.getId()
                     + "&approvalPosition=" + approvalPosition;

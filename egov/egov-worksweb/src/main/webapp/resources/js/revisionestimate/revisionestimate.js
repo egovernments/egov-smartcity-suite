@@ -43,6 +43,7 @@ var nonTenderedMsArray=new Array(200);
 var lumpSumMsArray=new Array(200);
 
 var sorMsArray=new Array(200);
+var cqMsArray=new Array(200);
 var headstart="<!--only for validity head start -->";
 var headend="<!--only for validity head end -->";
 var tailstart="<!--only for validity tail start -->";
@@ -222,7 +223,7 @@ var sorSearch = new Bloodhound({
 					$('.' + id + "_" + key).html(val);
 			});
 			$('#rate_' + key).val(getUnitRate($('.uom_' + key).html(),$('#estimateRate_' + key).val()));
-
+			generateSlno("spannontenderedslno");
 		}
 		$('#sorSearch').typeahead('val','');
 	});
@@ -1086,8 +1087,15 @@ var sorSearch = new Bloodhound({
 		{
 			var qname=name[0]+'.measurementSheetList['+i+'].quantity';
 			var quantity=eval(document.getElementById(qname).value);
-			var oname= '#msrowidentifier_' + index + '_' + i;
-			var operation=$(oname).html().trim();
+			
+			if(name[0].indexOf("changeQuantityActivities") >= 0) {
+				var oname= '#msrowidentifier_' + index + '_' + i;
+				var operation=$(oname).html().trim();
+			} else {
+				var oname=name[0]+'.measurementSheetList['+i+'].identifier';
+				var operationObj=document.getElementById(oname);
+				var operation=operationObj.options[operationObj.selectedIndex].value;
+			}
 			//console.log(quantity+"---"+operation);
 			if(quantity===undefined)
 				quantity=0;
@@ -1095,10 +1103,17 @@ var sorSearch = new Bloodhound({
 				quantity=0;
 			if(quantity=='')
 				quantity=0;
-			if(operation=='No')
-				sum=sum+quantity;
-			else
-				sum=sum-quantity;
+			if(name[0].indexOf("changeQuantityActivities") >= 0) {
+				if(operation=='No')
+					sum=sum+quantity;
+				else
+					sum=sum-quantity;
+			} else {
+				if(operation=='A')
+					sum=sum+quantity;
+				else
+					sum=sum-quantity;
+			}
 		}
 		//var fname=obj.name.split(".");
 		var netName=name[0]+'.msnet';
@@ -1358,6 +1373,12 @@ var sorSearch = new Bloodhound({
 			if(lumpSumMsArray[idx].length==0)
 				document.getElementById(sid.split(".")[0]+".mspresent").value="0";
 				}
+		} else if(sid.split(".")[0].indexOf("changeQuantityActivities") >= 0) {
+			if(cqMsArray[idx]) {
+				document.getElementById(sid.split(".")[0]+".mstd").innerHTML=cqMsArray[idx];
+				if(cqMsArray[idx].length==0)
+					document.getElementById(sid.split(".")[0]+".mspresent").value="0";
+			}
 		} else {
 			if(sorMsArray[idx]) {
 				document.getElementById(sid.split(".")[0]+".mstd").innerHTML=sorMsArray[idx];
@@ -1434,6 +1455,7 @@ var sorSearch = new Bloodhound({
 		var oldNo=$('input[id="'+name[0]+'.'+name[1]+'.no'+'"]').attr('data-no');
 		var oldDepthOrHeight=$('input[id="'+name[0]+'.'+name[1]+'.depthOrHeight'+'"]').attr('data-depthOrHeight');
 		var oldWidth=$('input[id="'+name[0]+'.'+name[1]+'.width'+'"]').attr('data-width');
+		var oldQuantity=$('input[id="'+name[0]+'.'+name[1]+'.quantity'+'"]').attr('data-quantity');
 		
 		var totalNo = 0;
 		var totalLength = 0;
@@ -1476,7 +1498,7 @@ var sorSearch = new Bloodhound({
 				if (totalWidth === undefined || totalWidth == '' || totalWidth == 0)
 					totalWidth = 1;
 
-				var net = parseFloat(totalLength * totalNo * totalWidth * totalDepthOrHeight);
+				var net = parseFloat(totalLength * totalNo * totalWidth * totalDepthOrHeight) - parseFloat(oldQuantity);
 				
 				var x=net+"";
 				var y=x.split(".");
@@ -1786,7 +1808,7 @@ function populateActivities(data, selectedActivities){
 								$('#msrowidentifier_' + activityCount + '_' + index).html('Yes');
 						} else {
 							$('#msrow' + key + '_' + activityCount + '_' + index).html(value);
-							if(key != "slNo" && key != "remarks" && key != "quantity")
+							if(key != "slNo" && key != "remarks")
 								document.getElementById('changeQuantityActivities[' + activityCount + '].measurementSheetList[' + index + '].' + key).setAttribute('data-' + key, value);
 						}
 					});
@@ -1847,7 +1869,7 @@ function deleteActivity(obj) {
 		$('#activityRow').attr('sorinvisible', true);
 		$('#activityMessage').removeAttr('hidden');
 		document.getElementById('changeQuantityActivities[' + rowId + '].mstd').innerHTML = "";
-		sorMsArray[rowId]="";
+		cqMsArray[rowId]="";
 	} else {
 		deleteRow('tblchangequantity',obj);
 	}
@@ -2001,7 +2023,7 @@ function addCQMSheet(obj) {
 		if(document.getElementById(rowid.replace("msadd","msopen")))
 			document.getElementById(rowid.replace("msadd","msopen")).value="1";
 		var idx=sortable.substr(sortable.indexOf("["),sortable.indexOf("]"));
-		sorMsArray[idx]=mscontent;
+		cqMsArray[idx]=mscontent;
 	}else
 	{
 
@@ -2016,7 +2038,7 @@ function addCQMSheet(obj) {
 			document.getElementById(rowid.replace("msadd","mspresent")).value="1";
 		curRow.after(newrow);
 		var idx=sortable.substr(sortable.indexOf("["),sortable.indexOf("]"));
-		sorMsArray[idx]="";
+		cqMsArray[idx]="";
 	}
 	patternvalidation();
 }

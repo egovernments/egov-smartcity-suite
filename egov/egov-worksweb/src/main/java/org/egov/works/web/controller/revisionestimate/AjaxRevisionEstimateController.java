@@ -48,13 +48,11 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.io.IOUtils;
-import org.egov.eis.entity.Employee;
 import org.egov.infra.exception.ApplicationRuntimeException;
 import org.egov.infra.web.utils.WebUtils;
 import org.egov.works.abstractestimate.entity.Activity;
 import org.egov.works.revisionestimate.entity.RevisionAbstractEstimate;
 import org.egov.works.revisionestimate.entity.SearchRevisionEstimate;
-import org.egov.works.revisionestimate.entity.enums.RevisionType;
 import org.egov.works.revisionestimate.service.RevisionEstimateService;
 import org.egov.works.web.adaptor.RevisionEstimateJsonAdaptor;
 import org.egov.works.web.adaptor.SearchActivityJsonAdaptor;
@@ -103,7 +101,9 @@ public class AjaxRevisionEstimateController {
             @ModelAttribute final SearchRevisionEstimate searchRevisionEstimate, final Model model) {
         final List<SearchRevisionEstimate> searchRevisionEstimates = revisionEstimateService
                 .searchRevisionEstimates(searchRevisionEstimate);
-        final String result = new StringBuilder("{ \"data\":").append(WebUtils.toJSON(searchRevisionEstimates, SearchRevisionEstimate.class, RevisionEstimateJsonAdaptor.class)).append("}")
+        final String result = new StringBuilder("{ \"data\":")
+                .append(WebUtils.toJSON(searchRevisionEstimates, SearchRevisionEstimate.class, RevisionEstimateJsonAdaptor.class))
+                .append("}")
                 .toString();
         return result;
     }
@@ -146,7 +146,7 @@ public class AjaxRevisionEstimateController {
             activities.addAll(activityList);
         }
 
-        final List<Activity> updatedActivities = mergeChangedQuantities(activities);
+        final List<Activity> updatedActivities = mergeChangedQuantities(new ArrayList<>(activities));
 
         final String result = new StringBuilder("{ \"data\":").append(toSearchActivityResultJson(updatedActivities))
                 .append("}").toString();
@@ -158,15 +158,6 @@ public class AjaxRevisionEstimateController {
         for (final Activity activity : activities)
             if (activity.getParent() == null)
                 updatedActivities.add(activity);
-            else if (updatedActivities.isEmpty())
-                updatedActivities.add(activity);
-            else
-                for (final Activity act : updatedActivities)
-                    if (act.getId().equals(activity.getParent().getId()))
-                        if (activity.getRevisionType().equals(RevisionType.ADDITIONAL_QUANTITY))
-                            act.setQuantity(act.getQuantity() + activity.getQuantity());
-                        else
-                            act.setQuantity(act.getQuantity() - activity.getQuantity());
         return updatedActivities;
     }
 
@@ -187,7 +178,8 @@ public class AjaxRevisionEstimateController {
             @ModelAttribute final SearchRevisionEstimate searchRevisionEstimate, final Model model) {
         final List<SearchRevisionEstimate> revisionEstimates = revisionEstimateService
                 .searchRevisionEstimatesToCancel(searchRevisionEstimate);
-        final String result = new StringBuilder("{ \"data\":").append(WebUtils.toJSON(revisionEstimates, SearchRevisionEstimate.class, RevisionEstimateJsonAdaptor.class))
+        final String result = new StringBuilder("{ \"data\":")
+                .append(WebUtils.toJSON(revisionEstimates, SearchRevisionEstimate.class, RevisionEstimateJsonAdaptor.class))
                 .append("}").toString();
         return result;
     }
@@ -196,8 +188,9 @@ public class AjaxRevisionEstimateController {
     public @ResponseBody String checkIfBillsCreated(@RequestParam final Long reId) {
         String message = "";
         final RevisionAbstractEstimate revisionEstimate = revisionEstimateService.getRevisionEstimateById(reId);
-        final WorkOrderEstimate workOrderEstimate = workOrderEstimateService.getWorkOrderEstimateByAbstractEstimateId(revisionEstimate.getId());
-        final String mbRefNumbers = revisionEstimateService.checkIfMBCreatedForRE(revisionEstimate,workOrderEstimate);
+        final WorkOrderEstimate workOrderEstimate = workOrderEstimateService
+                .getWorkOrderEstimateByAbstractEstimateId(revisionEstimate.getId());
+        final String mbRefNumbers = revisionEstimateService.checkIfMBCreatedForRE(revisionEstimate, workOrderEstimate);
         if (!mbRefNumbers.equals(""))
             message = messageSource.getMessage("error.re.mb.created", new String[] { mbRefNumbers }, null);
         else {

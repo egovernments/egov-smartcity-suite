@@ -101,7 +101,7 @@
 	                	</td>
 	                	<td>
 		                    <input name="templatesorActivities[0].measurementSheetList[0].quantity" onkeyup="limitCharatersBy10_4(this);" id="templatesorActivities[0].measurementSheetList[0].quantity" class="form-control text-right patternvalidation runtime-update"
-		                           data-pattern="decimalvalue" onblur="findNet(this)" />
+		                           data-pattern="decimalvalue" onblur="findNet(this)" data-quantity="" />
 	
 	                	</td>
 	                </tr>

@@ -37,17 +37,38 @@
  *
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
-package org.egov.works.abstractestimate.repository;
+package org.egov.works.abstractestimate.service;
 
 import java.util.List;
 
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+
 import org.egov.works.abstractestimate.entity.Activity;
-import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.stereotype.Repository;
+import org.egov.works.abstractestimate.repository.ActivityRepository;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
-@Repository
-public interface ActivityRepository extends JpaRepository<Activity, Long> {
+@Service
+@Transactional(readOnly = true)
+public class ActivityService {
 
-    List<Activity> findByParent_Id(Long parentId);
+    private final ActivityRepository activityRepository;
 
+    @PersistenceContext
+    private EntityManager entityManager;
+
+    @Autowired
+    public ActivityService(final ActivityRepository activityRepository) {
+        this.activityRepository = activityRepository;
+    }
+
+    public Activity findOne(final Long id) {
+        return activityRepository.findOne(id);
+    }
+
+    public List<Activity> findByParentId(final Long parentId) {
+        return activityRepository.findByParent_Id(parentId);
+    }
 }

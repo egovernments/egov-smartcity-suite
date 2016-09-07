@@ -41,13 +41,20 @@
 package org.egov.works.web.adaptor;
 
 import java.lang.reflect.Type;
+import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.List;
 
 import org.egov.works.abstractestimate.entity.Activity;
 import org.egov.works.abstractestimate.entity.MeasurementSheet;
+import org.egov.works.abstractestimate.service.ActivityService;
+import org.egov.works.abstractestimate.service.MeasurementSheetService;
 import org.egov.works.letterofacceptance.service.WorkOrderActivityService;
 import org.egov.works.mb.service.MBHeaderService;
-import org.egov.works.revisionestimate.service.RevisionEstimateService;
+import org.egov.works.revisionestimate.entity.enums.RevisionType;
 import org.egov.works.workorder.entity.WorkOrderActivity;
+import org.egov.works.workorder.entity.WorkOrderMeasurementSheet;
+import org.egov.works.workorder.service.WorkOrderMeasurementSheetService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -67,7 +74,13 @@ public class SearchActivityJsonAdaptor implements JsonSerializer<Activity> {
     private MBHeaderService mbHeaderService;
 
     @Autowired
-    private RevisionEstimateService revisionEstimateService;
+    private ActivityService activityService;
+
+    @Autowired
+    private WorkOrderMeasurementSheetService workOrderMeasurementSheetService;
+
+    @Autowired
+    private MeasurementSheetService measurementSheetService;
 
     @Override
     public JsonElement serialize(final Activity activity, final Type typeOfSrc,
@@ -98,8 +111,20 @@ public class SearchActivityJsonAdaptor implements JsonSerializer<Activity> {
         else
             jsonObject.addProperty("uom", "");
 
+        Double quantity = activity.getQuantity();
+
+        final List<Activity> cqActivities = activityService.findByParentId(activity.getId());
+
+        for (final Activity act : cqActivities)
+            if (act.getRevisionType().equals(RevisionType.ADDITIONAL_QUANTITY))
+                quantity = quantity + act.getQuantity();
+            else
+                quantity = quantity - act.getQuantity();
+
+        jsonObject.addProperty("approvedQuantity", quantity);
+
         if (workOrderActivity != null) {
-            revisionEstimateService.deriveWorkOrderActivityQuantity(workOrderActivity);
+            deriveWorkOrderActivityQuantity(workOrderActivity);
             jsonObject.addProperty("estimateQuantity", workOrderActivity.getApprovedQuantity());
             final Double consumedQuantity = mbHeaderService.getPreviousCumulativeQuantity(-1L, workOrderActivity.getId());
             jsonObject.addProperty("consumedQuantity", consumedQuantity == null ? "0" : consumedQuantity.toString());
@@ -120,7 +145,7 @@ public class SearchActivityJsonAdaptor implements JsonSerializer<Activity> {
             final JsonArray jsonArray = new JsonArray();
             for (final MeasurementSheet ms : activity.getMeasurementSheetList()) {
                 final JsonObject child = new JsonObject();
-                revisionEstimateService.deriveMeasurementSheetQuantity(ms);
+                deriveMeasurementSheetQuantity(ms);
                 child.addProperty("parent", ms.getId());
                 child.addProperty("slNo", ms.getSlNo());
                 child.addProperty("remarks", ms.getRemarks());
@@ -136,9 +161,103 @@ public class SearchActivityJsonAdaptor implements JsonSerializer<Activity> {
         } else
             jsonObject.add("ms", new JsonArray());
 
-        jsonObject.addProperty("approvedQuantity", activity.getQuantity());
-
         return jsonObject;
     }
 
+    private void deriveWorkOrderActivityQuantity(final WorkOrderActivity workOrderActivity) {
+        if (!workOrderActivity.getWorkOrderMeasurementSheets().isEmpty())
+            for (final WorkOrderMeasurementSheet woms : workOrderActivity.getWorkOrderMeasurementSheets()) {
+                final List<WorkOrderMeasurementSheet> rewomsList = workOrderMeasurementSheetService
+                        .findByMeasurementSheetParentId(woms.getMeasurementSheet().getId());
+                Double no = woms.getNo() == null ? 0 : woms.getNo().doubleValue();
+                Double length = woms.getLength() == null ? 0 : woms.getLength().doubleValue();
+                Double width = woms.getWidth() == null ? 0 : woms.getWidth().doubleValue();
+                Double depthOrHeight = woms.getDepthOrHeight() == null ? 0 : woms.getDepthOrHeight().doubleValue();
+                for (final WorkOrderMeasurementSheet rems : rewomsList)
+                    if (woms.getMeasurementSheet().getIdentifier() == 'A') {
+                        if (rems.getNo() != null)
+                            no = no + rems.getNo().doubleValue();
+                        if (rems.getLength() != null)
+                            length = length + rems.getLength().doubleValue();
+                        if (rems.getWidth() != null)
+                            width = width + rems.getWidth().doubleValue();
+                        if (rems.getDepthOrHeight() != null)
+                            depthOrHeight = depthOrHeight + rems.getDepthOrHeight().doubleValue();
+                    } else {
+                        if (rems.getNo() != null)
+                            no = no - rems.getNo().doubleValue();
+                        if (rems.getLength() != null)
+                            length = length - rems.getLength().doubleValue();
+                        if (rems.getWidth() != null)
+                            width = width - rems.getWidth().doubleValue();
+                        if (rems.getDepthOrHeight() != null)
+                            depthOrHeight = depthOrHeight - rems.getDepthOrHeight().doubleValue();
+                    }
+                if (no != null && no != 0)
+                    woms.setNo(new BigDecimal(no));
+                if (length != null && length != 0)
+                    woms.setLength(new BigDecimal(length));
+                if (width != null && width != 0)
+                    woms.setWidth(new BigDecimal(width));
+                if (depthOrHeight != null && depthOrHeight != 0)
+                    woms.setDepthOrHeight(new BigDecimal(depthOrHeight));
+
+                woms.setQuantity(new BigDecimal(
+                        (no == null || no == 0 ? 1 : no.doubleValue())
+                                * (length == null || length == 0 ? 1 : length.doubleValue())
+                                * (width == null || width == 0 ? 1 : width.doubleValue())
+                                * (depthOrHeight == null || depthOrHeight == 0 ? 1 : depthOrHeight.doubleValue())));
+            }
+        Double qty = 0d;
+        for (final WorkOrderMeasurementSheet woms : workOrderActivity.getWorkOrderMeasurementSheets())
+            if (woms.getMeasurementSheet().getIdentifier() == 'A')
+                qty = qty + woms.getQuantity().doubleValue();
+            else
+                qty = qty - woms.getQuantity().doubleValue();
+        if (!workOrderActivity.getWorkOrderMeasurementSheets().isEmpty())
+            workOrderActivity.setApprovedQuantity(qty);
+    }
+
+    private void deriveMeasurementSheetQuantity(final MeasurementSheet measurementSheet) {
+        List<MeasurementSheet> remsList = new ArrayList<>();
+        remsList = measurementSheetService.findByParentId(measurementSheet.getId());
+        Double no = measurementSheet.getNo() == null ? 0 : measurementSheet.getNo().doubleValue();
+        Double length = measurementSheet.getLength() == null ? 0 : measurementSheet.getLength().doubleValue();
+        Double width = measurementSheet.getWidth() == null ? 0 : measurementSheet.getWidth().doubleValue();
+        Double depthOrHeight = measurementSheet.getDepthOrHeight() == null ? 0
+                : measurementSheet.getDepthOrHeight().doubleValue();
+        for (final MeasurementSheet rems : remsList)
+            if (measurementSheet.getIdentifier() == 'A') {
+                if (rems.getNo() != null)
+                    no = no + rems.getNo().doubleValue();
+                if (rems.getLength() != null)
+                    length = length + rems.getLength().doubleValue();
+                if (rems.getWidth() != null)
+                    width = width + rems.getWidth().doubleValue();
+                if (rems.getDepthOrHeight() != null)
+                    depthOrHeight = depthOrHeight + rems.getDepthOrHeight().doubleValue();
+            } else {
+                if (rems.getNo() != null)
+                    no = no - rems.getNo().doubleValue();
+                if (rems.getLength() != null)
+                    length = length - rems.getLength().doubleValue();
+                if (rems.getWidth() != null)
+                    width = width - rems.getWidth().doubleValue();
+                if (rems.getDepthOrHeight() != null)
+                    depthOrHeight = depthOrHeight - rems.getDepthOrHeight().doubleValue();
+            }
+        if (no != null && no != 0)
+            measurementSheet.setNo(new BigDecimal(no));
+        if (length != null && length != 0)
+            measurementSheet.setLength(new BigDecimal(length));
+        if (width != null && width != 0)
+            measurementSheet.setWidth(new BigDecimal(width));
+        if (depthOrHeight != null && depthOrHeight != 0)
+            measurementSheet.setDepthOrHeight(new BigDecimal(depthOrHeight));
+
+        measurementSheet.setQuantity(new BigDecimal(
+                (no == null || no == 0 ? 1 : no.doubleValue()) * (length == null || length == 0 ? 1 : length.doubleValue())
+                        * (width == null || width == 0 ? 1 : width.doubleValue())
+                        * (depthOrHeight == null || depthOrHeight == 0 ? 1 : depthOrHeight.doubleValue())));
+    }
 }

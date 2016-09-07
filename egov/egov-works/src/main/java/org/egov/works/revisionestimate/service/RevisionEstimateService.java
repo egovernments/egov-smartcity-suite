@@ -632,12 +632,13 @@ public class RevisionEstimateService {
                     msold.setDepthOrHeight(msnew.getDepthOrHeight());
                     msold.setNo(msnew.getNo());
                     msold.setActivity(msnew.getActivity());
-                    msold.setIdentifier(msnew.getParent().getIdentifier());
-                    msold.setRemarks(msnew.getParent().getRemarks());
-                    msold.setSlNo(msnew.getParent().getSlNo());
+                    if (msnew.getParent() != null) {
+                        msold.setIdentifier(msnew.getParent().getIdentifier());
+                        msold.setRemarks(msnew.getParent().getRemarks());
+                        msold.setSlNo(msnew.getParent().getSlNo());
+                    }
                     msold.setQuantity(msnew.getQuantity());
                     newMsList.add(msold);
-
                 }
 
         }
@@ -749,6 +750,16 @@ public class RevisionEstimateService {
                     measurementsPresent = measurementSheetService.existsByEstimate(re.getId());
             }
 
+        for (final Activity sa : sorActivities)
+            if (!sa.getMeasurementSheetList().isEmpty())
+                for (final MeasurementSheet ms : sa.getMeasurementSheetList())
+                    deriveMeasurementSheetQuantity(ms);
+
+        for (final Activity sa : nonSorActivities)
+            if (!sa.getMeasurementSheetList().isEmpty())
+                for (final MeasurementSheet ms : sa.getMeasurementSheetList())
+                    deriveMeasurementSheetQuantity(ms);
+
         revisionEstimate.getSorActivities().addAll(sorActivities);
         revisionEstimate.getNonSorActivities().addAll(nonSorActivities);
         revisionEstimate.getChangeQuantityNTActivities().addAll(nonTenderedActivities);
@@ -789,6 +800,7 @@ public class RevisionEstimateService {
                     sa.setQuantity(sa.getQuantity() - activity.getQuantity());
                     sa.setQuantityChanged(true);
                 }
+
         for (final Activity sa : nonTenderedLumpSumActivities)
             if (activity.getParent().getId().equals(sa.getId()))
                 if (activity.getRevisionType() != null
@@ -998,7 +1010,8 @@ public class RevisionEstimateService {
     }
 
     public List<String> findRENumbersToCancel(final String estimateNumber) {
-        return revisionEstimateRepository.getRENumbersToCancel("%" + estimateNumber + "%",AbstractEstimate.EstimateStatus.APPROVED.toString(),
+        return revisionEstimateRepository.getRENumbersToCancel("%" + estimateNumber + "%",
+                AbstractEstimate.EstimateStatus.APPROVED.toString(),
                 AbstractEstimate.EstimateStatus.CANCELLED.toString());
     }
 
@@ -1125,7 +1138,7 @@ public class RevisionEstimateService {
                             else {
                                 final MBDetails mbDetails = mBDetailsService.getMBDetailsForREActivity(activityId);
                                 if (mbDetails != null) {
-                                    //TO DO Read maxPercent from appconfig
+                                    // TO DO Read maxPercent from appconfig
                                     Double maxPercent = Double.valueOf("1");
                                     if (maxPercent != null)
                                         maxPercent += 100;
@@ -1155,7 +1168,8 @@ public class RevisionEstimateService {
         final RevisionWorkOrder revisionWorkOrder = revisionWorkOrderService
                 .getRevisionWorkOrderById(workOrderEstimate.getWorkOrder().getId());
         if (revisionWorkOrder != null) {
-            revisionWorkOrder.setEgwStatus(worksUtils.getStatusByModuleAndCode(WorksConstants.WORKORDER, WorksConstants.CANCELLED_STATUS));
+            revisionWorkOrder
+                    .setEgwStatus(worksUtils.getStatusByModuleAndCode(WorksConstants.WORKORDER, WorksConstants.CANCELLED_STATUS));
             revisionWorkOrderService.create(revisionWorkOrder);
         }
         final String appropriationNumber = lineEstimateAppropriationService
@@ -1167,7 +1181,8 @@ public class RevisionEstimateService {
 
     public String getRevisionEstimatesGreaterThanCurrent(final Long parentId, final Date createdDate) {
         final List<RevisionAbstractEstimate> revisionEstimatesList = revisionEstimateRepository
-                .findByParent_idAndCreatedDateAfterAndEgwStatus_codeNotLike(parentId, createdDate, WorksConstants.CANCELLED_STATUS);
+                .findByParent_idAndCreatedDateAfterAndEgwStatus_codeNotLike(parentId, createdDate,
+                        WorksConstants.CANCELLED_STATUS);
         final StringBuilder revisionEstimates = new StringBuilder();
         for (final RevisionAbstractEstimate revisionAbstractEstimate : revisionEstimatesList)
             revisionEstimates.append(revisionAbstractEstimate.getEstimateNumber()).append(",");
@@ -1262,33 +1277,35 @@ public class RevisionEstimateService {
             workOrderActivity.setApprovedQuantity(qty);
     }
 
-    public void deriveMeasurementSheetQuantity(final MeasurementSheet measurementSheet) {
-        final List<MeasurementSheet> remsList = measurementSheetService.findByParentId(measurementSheet.getId());
+    private void deriveMeasurementSheetQuantity(final MeasurementSheet measurementSheet) {
+        List<MeasurementSheet> remsList = new ArrayList<>();
+        remsList = measurementSheetService.findByParentId(measurementSheet.getId());
         Double no = measurementSheet.getNo() == null ? 0 : measurementSheet.getNo().doubleValue();
         Double length = measurementSheet.getLength() == null ? 0 : measurementSheet.getLength().doubleValue();
         Double width = measurementSheet.getWidth() == null ? 0 : measurementSheet.getWidth().doubleValue();
         Double depthOrHeight = measurementSheet.getDepthOrHeight() == null ? 0
                 : measurementSheet.getDepthOrHeight().doubleValue();
         for (final MeasurementSheet rems : remsList)
-            if (measurementSheet.getIdentifier() == 'A') {
-                if (rems.getNo() != null)
-                    no = no + rems.getNo().doubleValue();
-                if (rems.getLength() != null)
-                    length = length + rems.getLength().doubleValue();
-                if (rems.getWidth() != null)
-                    width = width + rems.getWidth().doubleValue();
-                if (rems.getDepthOrHeight() != null)
-                    depthOrHeight = depthOrHeight + rems.getDepthOrHeight().doubleValue();
-            } else {
-                if (rems.getNo() != null)
-                    no = no - rems.getNo().doubleValue();
-                if (rems.getLength() != null)
-                    length = length - rems.getLength().doubleValue();
-                if (rems.getWidth() != null)
-                    width = width - rems.getWidth().doubleValue();
-                if (rems.getDepthOrHeight() != null)
-                    depthOrHeight = depthOrHeight - rems.getDepthOrHeight().doubleValue();
-            }
+            if (rems.getId() != measurementSheet.getId())
+                if (measurementSheet.getIdentifier() == 'A') {
+                    if (rems.getNo() != null)
+                        no = no + rems.getNo().doubleValue();
+                    if (rems.getLength() != null)
+                        length = length + rems.getLength().doubleValue();
+                    if (rems.getWidth() != null)
+                        width = width + rems.getWidth().doubleValue();
+                    if (rems.getDepthOrHeight() != null)
+                        depthOrHeight = depthOrHeight + rems.getDepthOrHeight().doubleValue();
+                } else {
+                    if (rems.getNo() != null)
+                        no = no - rems.getNo().doubleValue();
+                    if (rems.getLength() != null)
+                        length = length - rems.getLength().doubleValue();
+                    if (rems.getWidth() != null)
+                        width = width - rems.getWidth().doubleValue();
+                    if (rems.getDepthOrHeight() != null)
+                        depthOrHeight = depthOrHeight - rems.getDepthOrHeight().doubleValue();
+                }
         if (no != null && no != 0)
             measurementSheet.setNo(new BigDecimal(no));
         if (length != null && length != 0)
@@ -1303,8 +1320,9 @@ public class RevisionEstimateService {
                         * (width == null || width == 0 ? 1 : width.doubleValue())
                         * (depthOrHeight == null || depthOrHeight == 0 ? 1 : depthOrHeight.doubleValue())));
     }
-    
+
     public List<RevisionAbstractEstimate> findRevisionEstimatesByParentAndStatus(final Long parentId) {
-        return revisionEstimateRepository.findByParent_IdAndEgwStatus_codeNotLike(parentId, "%" + WorksConstants.CANCELLED_STATUS + "%");
+        return revisionEstimateRepository.findByParent_IdAndEgwStatus_codeNotLike(parentId,
+                "%" + WorksConstants.CANCELLED_STATUS + "%");
     }
 }

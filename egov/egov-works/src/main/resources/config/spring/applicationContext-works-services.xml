@@ -214,10 +214,6 @@
                   value="org.egov.works.models.tender.TenderResponseActivity"/>
     </bean>
    
-    <bean id="activityService" parent="abstractPersistenceService" scope="prototype">
-        <constructor-arg name="type" value="org.egov.works.abstractestimate.entity.Activity"/>
-    </bean>
-   
     <bean id="cancelBillService" parent="abstractPersistenceService" scope="prototype">
         <constructor-arg name="type"
                   value="org.egov.works.mb.entity.MBForCancelledBill" />

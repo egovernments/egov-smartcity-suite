@@ -114,7 +114,7 @@
 			                	</td>
 			                	<td>
 				                    <form:input path="changeQuantityActivities[${item.index }].measurementSheetList[${index.index }].quantity" id="changeQuantityActivities[${item.index }].measurementSheetList[${index.index }].quantity" class="form-control text-right patternvalidation runtime-update"
-				                           data-pattern="decimalvalue" onblur="findNet(this)" />
+				                           data-pattern="decimalvalue" onblur="findNet(this)" data-quantity="${activity.parent.measurementSheetList.get(index.index).quantity }" />
 									<c:if test="${activity.parent.measurementSheetList.get(index.index).identifier == 'A'}">
 										<c:set var="net" value="${net + activity.measurementSheetList.get(index.index).quantity}" />
 									</c:if>
