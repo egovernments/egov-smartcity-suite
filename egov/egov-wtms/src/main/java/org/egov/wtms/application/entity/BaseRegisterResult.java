@@ -47,6 +47,7 @@ public class BaseRegisterResult {
     private String ownerName;
     private String categoryType;
     private String period;
+    private String connectionType;
     private Double arrears;
     private Double current;
     private Double arrearsCollection;
@@ -148,6 +149,14 @@ public class BaseRegisterResult {
 
     public void setCurrentCollection(final Double currentCollection) {
         this.currentCollection = currentCollection;
+    }
+
+    public String getConnectionType() {
+        return connectionType;
+    }
+
+    public void setConnectionType(String connectionType) {
+        this.connectionType = connectionType;
     }
 
 }
