@@ -160,8 +160,8 @@ public class LetterOfAcceptanceService {
         return letterOfAcceptanceRepository.findById(id);
     }
 
-    public List<String> getWorkOrderByNumber(final String name) {
-        return letterOfAcceptanceRepository.findDistinctWorkorderNumber("%" + name + "%", WorksConstants.APPROVED,
+    public List<String> getApprovedWorkOrderByNumberToModifyLOA(final String name) {
+        return letterOfAcceptanceRepository.findDistinctWorkorderNumberToModifyLOA("%" + name + "%", WorksConstants.APPROVED,
                 ContractorBillRegister.BillStatus.CANCELLED.toString(),
                 BillTypes.Final_Bill.toString());
     }
@@ -319,8 +319,8 @@ public class LetterOfAcceptanceService {
         return criteria.list();
     }
 
-    public List<String> findLoaEstimateNumbers(final String name) {
-        return letterOfAcceptanceRepository.findDistinctEstimateNumber("%" + name + "%", WorksConstants.APPROVED,
+    public List<String> getApprovedEstimateNumbersToModifyLOA(final String name) {
+        return letterOfAcceptanceRepository.findDistinctEstimateNumberToModifyLOA("%" + name + "%", WorksConstants.APPROVED,
                 ContractorBillRegister.BillStatus.CANCELLED.toString(),
                 BillTypes.Final_Bill.toString());
     }
