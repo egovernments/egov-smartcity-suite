@@ -275,7 +275,29 @@
 									onblur="validateDateFormat(this);" cssClass="datepicker" /></td>
 						</tr>
 					</s:if>
-					<tr>
+					<s:if test="%{(model.state.value.equalsIgnoreCase(@org.egov.ptis.constants.PropertyTaxConstants@WF_STATE_REJECTED) && !mutationFeePaid) 
+					||(model.state.value.equalsIgnoreCase(@org.egov.ptis.constants.PropertyTaxConstants@WF_STATE_REJECTED) && receiptCanceled)}">
+						<tr>
+						<td class="bluebox2">&nbsp;</td>
+						<td class="bluebox"><s:text name="label.parties.value" /> :</td>
+						<td class="bluebox"><s:textfield name="partyValue"
+								value="%{partyValue}" id="partyValue" maxlength="16"
+								onblur="validNumber(this);checkZero(this);calculateMutationFee();" /></td>
+						<td class="bluebox"><s:text name="label.department.value" />:</td>
+						<td class="bluebox"><s:textfield name="departmentValue"
+								value="%{departmentValue}" id="departmentValue" maxlength="16"
+								onblur="validNumber(this);checkZero(this);calculateMutationFee();" /></td>
+						</tr>
+						<tr>
+						<td class="bluebox2">&nbsp;</td>
+						<td class="bluebox"><s:text name="payablefee" /> :</td>
+						<td class="bluebox"><s:textfield name="mutationFee"
+								value="%{mutationFee}" id="mutationFee" maxlength="16" readonly="true"/></td>
+						<td class="bluebox" colspan="2" />
+						</tr>		
+					</s:if>
+					<s:else>
+						<tr>
 							<td class="bluebox2">&nbsp;</td>
 							<td class="bluebox"><s:text name="label.parties.value" /> :</td>
 							<td class="bluebox"><span class="bold"><s:property
@@ -294,6 +316,7 @@
 							<td class="bluebox"><span class="bold"><s:property
 										value="%{mutationFee}" default="N/A" /></span></td>
 						</tr>
+					</s:else>
 					</table>
 				</table>
 				<s:if test="%{!documentTypes.isEmpty()}">
@@ -389,5 +412,6 @@
 		}
 	</script>
 	<script src="<cdn:url value='/resources/global/js/egov/inbox.js' context='/egi'/>"></script>
+	<script type="text/javascript" src="<cdn:url value='/resources/javascript/transferProperty.js'/>"></script>
 </body>
 </html>
