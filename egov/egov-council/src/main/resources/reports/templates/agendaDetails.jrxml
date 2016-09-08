@@ -1,12 +1,41 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!-- Created with Jaspersoft Studio version 6.2.2.final using JasperReports Library version 6.2.2  -->
-<!-- 2016-09-06T20:45:25 -->
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="agendaDetails" pageWidth="595" pageHeight="842" orientation="Landscape" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="178aa26f-47e8-4c10-ad9c-659d25ab0e00">
 	<property name="ireport.zoom" value="1.1"/>
-	<property name="ireport.x" value="32"/>
+	<property name="ireport.x" value="0"/>
 	<property name="ireport.y" value="0"/>
 	<field name="itemNumber" class="java.lang.String"/>
 	<field name="preamble" class="org.egov.council.entity.CouncilPreamble"/>
+	<columnHeader>
+		<band height="73">
+			<staticText>
+				<reportElement mode="Opaque" x="0" y="38" width="49" height="35" uuid="ed74b3f8-57e4-4eb1-bd22-e3644e3a0f5f"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle"/>
+				<text><![CDATA[Item Number]]></text>
+			</staticText>
+			<staticText>
+				<reportElement mode="Opaque" x="49" y="38" width="121" height="35" uuid="9fd049ac-e9ae-48cc-8851-58fbe82a3092"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle"/>
+				<text><![CDATA[Department]]></text>
+			</staticText>
+			<staticText>
+				<reportElement mode="Opaque" x="171" y="38" width="292" height="35" uuid="42aeb3e6-139d-473c-965f-1a1ae7ebc002"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle"/>
+				<text><![CDATA[Details of Agenda]]></text>
+			</staticText>
+			<staticText>
+				<reportElement mode="Opaque" x="463" y="38" width="80" height="35" uuid="ef873e26-37ee-4da5-9a3d-d6bc925eb8c5"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle"/>
+				<text><![CDATA[Sanction Amount]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="0" y="0" width="555" height="35" uuid="dd016ced-a5b1-41cf-a766-a0428a67822b"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="12" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Agenda Details]]></text>
+			</staticText>
+		</band>
+	</columnHeader>
 	<detail>
 		<band height="44" splitType="Stretch">
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
@@ -26,7 +55,7 @@
 				<textFieldExpression><![CDATA[$F{itemNumber}]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="true">
-				<reportElement stretchType="RelativeToBandHeight" mode="Opaque" x="49" y="1" width="122" height="43" isPrintWhenDetailOverflows="true" uuid="e4b859bf-a6a0-42c8-9885-8609bfe20215"/>
+				<reportElement stretchType="RelativeToBandHeight" mode="Transparent" x="49" y="1" width="122" height="43" isPrintWhenDetailOverflows="true" uuid="e4b859bf-a6a0-42c8-9885-8609bfe20215"/>
 				<box>
 					<pen lineWidth="0.5"/>
 					<topPen lineWidth="0.5"/>
@@ -38,7 +67,7 @@
 				<textFieldExpression><![CDATA[$F{preamble}.getDepartment().getName()]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
-				<reportElement stretchType="RelativeToBandHeight" mode="Opaque" x="170" y="1" width="293" height="43" isPrintWhenDetailOverflows="true" uuid="35207553-d99e-457f-bf8f-9c9ba38ddbaa"/>
+				<reportElement stretchType="RelativeToBandHeight" mode="Transparent" x="170" y="1" width="293" height="43" isPrintWhenDetailOverflows="true" uuid="35207553-d99e-457f-bf8f-9c9ba38ddbaa"/>
 				<box leftPadding="5">
 					<pen lineWidth="0.5"/>
 					<topPen lineWidth="0.5"/>
@@ -50,7 +79,7 @@
 				<textFieldExpression><![CDATA[$F{preamble}.getGistOfPreamble()]]></textFieldExpression>
 			</textField>
 			<textField pattern="#,##0.00;#,##0.00-" isBlankWhenNull="true">
-				<reportElement mode="Opaque" x="463" y="1" width="80" height="43" isPrintWhenDetailOverflows="true" uuid="547ffac2-9e37-4fd9-82db-5c66fea33726"/>
+				<reportElement stretchType="RelativeToBandHeight" mode="Transparent" x="463" y="1" width="80" height="43" isPrintWhenDetailOverflows="true" uuid="547ffac2-9e37-4fd9-82db-5c66fea33726"/>
 				<box leftPadding="5">
 					<pen lineWidth="0.5"/>
 					<topPen lineWidth="0.5"/>
