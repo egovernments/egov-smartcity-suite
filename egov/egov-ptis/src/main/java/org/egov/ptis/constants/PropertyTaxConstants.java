@@ -1446,6 +1446,8 @@ public interface PropertyTaxConstants {
     public static final String REVISIONPETITION_STATUS_CODE = "RP";
 
     public static final String APPCONFIG_DIGITAL_SIGNATURE = "PTIS_DIGITAL_SIGNATURE_REQUIRED";
+    
+    public static final String APPCONFIG_CLIENT_SPECIFIC_DMD_BILL = "IS_CLIENT_SPECIFIC_DEMANDBILL";
  
     public static final String SERVICE_CODE_VACANTLANDTAX = "VLT";
     public static final String SERVICE_CODE_PROPERTYTAX = "PT";
