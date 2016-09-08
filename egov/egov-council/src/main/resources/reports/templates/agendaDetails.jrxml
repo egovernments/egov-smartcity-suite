@@ -23,7 +23,7 @@
 				<text><![CDATA[Details of Agenda]]></text>
 			</staticText>
 			<staticText>
-				<reportElement mode="Opaque" x="463" y="38" width="80" height="35" uuid="ef873e26-37ee-4da5-9a3d-d6bc925eb8c5"/>
+				<reportElement mode="Opaque" x="463" y="38" width="92" height="35" uuid="ef873e26-37ee-4da5-9a3d-d6bc925eb8c5"/>
 				<textElement textAlignment="Center" verticalAlignment="Middle"/>
 				<text><![CDATA[Sanction Amount]]></text>
 			</staticText>
@@ -54,7 +54,7 @@
 				</textElement>
 				<textFieldExpression><![CDATA[$F{itemNumber}]]></textFieldExpression>
 			</textField>
-			<textField isBlankWhenNull="true">
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
 				<reportElement stretchType="RelativeToBandHeight" mode="Transparent" x="49" y="1" width="122" height="43" isPrintWhenDetailOverflows="true" uuid="e4b859bf-a6a0-42c8-9885-8609bfe20215"/>
 				<box>
 					<pen lineWidth="0.5"/>
@@ -63,7 +63,7 @@
 					<bottomPen lineWidth="0.5"/>
 					<rightPen lineWidth="0.5"/>
 				</box>
-				<textElement verticalAlignment="Middle"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle"/>
 				<textFieldExpression><![CDATA[$F{preamble}.getDepartment().getName()]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
@@ -75,10 +75,10 @@
 					<bottomPen lineWidth="0.5"/>
 					<rightPen lineWidth="0.5"/>
 				</box>
-				<textElement textAlignment="Justified" verticalAlignment="Middle"/>
+				<textElement textAlignment="Left" verticalAlignment="Middle"/>
 				<textFieldExpression><![CDATA[$F{preamble}.getGistOfPreamble()]]></textFieldExpression>
 			</textField>
-			<textField pattern="#,##0.00;#,##0.00-" isBlankWhenNull="true">
+			<textField isStretchWithOverflow="true" pattern="#,##0.00;#,##0.00-" isBlankWhenNull="true">
 				<reportElement stretchType="RelativeToBandHeight" mode="Transparent" x="463" y="1" width="80" height="43" isPrintWhenDetailOverflows="true" uuid="547ffac2-9e37-4fd9-82db-5c66fea33726"/>
 				<box leftPadding="5">
 					<pen lineWidth="0.5"/>
