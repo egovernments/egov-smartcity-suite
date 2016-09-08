@@ -128,7 +128,7 @@ public class SewerageCollectFeeSearchRequest {
         andFilters.add(termsStringFilter(SewerageTaxConstants.CLAUSES_CITYNAME, ulbName));
         andFilters.add(queryStringFilter(SewerageTaxConstants.SEARCHABLE_CONSUMER_NAME, applicantName));
         andFilters.add(queryStringFilter(SewerageTaxConstants.CLAUSES_MOBILENO , mobileNumber));
-        andFilters.add(queryStringFilter(SewerageTaxConstants.CLAUSES_DOORNO, doorNumber));
+        andFilters.add(termsStringFilter(SewerageTaxConstants.CLAUSES_DOORNO, doorNumber));
         andFilters.add(termsStringFilter(SewerageTaxConstants.CLAUSES_REVWARD_NAME, revenueWard));
         andFilters.add(queryStringFilter(SewerageTaxConstants.CLAUSES_APPLICATION_DATE,applicationDate));
         andFilters.add(termsStringFilter(SewerageTaxConstants.CLAUSES_APPLICATIONNO,consumerNumber));
