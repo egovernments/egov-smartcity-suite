@@ -110,7 +110,7 @@
 											varStatus="counter">
 											<tr>
 												<div class="row add-margin">
-													<td align="center">${counter.count}</td>
+													<td align="center">${mom.itemNumber} </td>
 													<td><c:out value="${mom.preamble.gistOfPreamble}" /></td>
 													<td><c:out value="${mom.agenda.agendaNumber}" /></td>
 													<td><c:out value="${mom.preamble.preambleNumber}" /></td>
