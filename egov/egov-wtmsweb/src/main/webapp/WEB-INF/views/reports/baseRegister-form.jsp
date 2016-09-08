@@ -73,7 +73,7 @@
 									<spring:message code="lbl.select" />
 								</form:option>
 								<c:forEach items="${wards}" var="ward">
-									<form:option value="${ward.name}"> ${ward.name} </form:option>
+									<form:option value="${ward.id}"> ${ward.name} </form:option>
 								</c:forEach>
 							</form:select>
 						</div>

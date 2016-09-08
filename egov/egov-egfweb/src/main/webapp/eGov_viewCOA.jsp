@@ -1,7 +1,3 @@
-<%@ page language="java"%>
-<%@page import="org.egov.utils.FinancialConstants"%>
-<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
-
 
 <%--
   ~ eGov suite of products aim to improve the internal efficiency,transparency,
@@ -42,6 +38,9 @@
   ~
   ~   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
   --%>
+<%@ page language="java"%>
+<%@page import="org.egov.utils.FinancialConstants"%>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
 <html>
@@ -177,7 +176,7 @@ function loadSelectDataForChartOfacounts(url,sourceobj,destobj)
 				{
 			
 			url = url +'?'+actionidstr;
-				url="/EGF/masters/chartOfAccounts-modifyChartOfAccounts.action?model.id="+id;
+				url="/EGF/masters/chartOfAccounts-viewChartOfAccounts.action?model.id="+id;
 				}
 				openPopupWindow(url, windowname , 900, 650)
 		}			
@@ -188,7 +187,7 @@ function loadNodeData(node, fnLoadComplete){
 	var nodeUrl =  node.data.url;
 	var url = '/EGF/voucher/common-ajaxloadcoa.action';
 	var moduleQuery = url+'?glCode='+nodeId;
-	url="/EGF/masters/chartOfAccounts-modifyChartOfAccounts.action?model.id="+nodeId;
+	url="/EGF/masters/chartOfAccounts-viewChartOfAccounts.action?model.id="+nodeId;
 	//prepare our callback object
 	var callback = {
 	

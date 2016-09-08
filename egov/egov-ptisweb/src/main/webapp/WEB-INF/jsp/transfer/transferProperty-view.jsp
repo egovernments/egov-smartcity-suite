@@ -75,11 +75,18 @@
 		document.forms[0].submit;
 		return true;
 	}
+	
+	function loadOnStartUp() {
+		var state='<s:property value="%{@org.egov.ptis.constants.PropertyTaxConstants@WF_STATE_REVENUE_OFFICER_APPROVAL_PENDING}" />';
+		if(<s:property value="%{!mutationFeePaid}"/> && state == '<s:property value="%{model.state.nextAction}"/>'){
+			document.getElementById('Forward').style.visibility = 'hidden';
+		}
+	}
 </script>
 <script
 	src="<cdn:url value='/resources/global/js/egov/inbox.js' context='/egi'/>"></script>
 </head>
-<body>
+<body onload="loadOnStartUp();">
 	<div class="formmainbox">
 		<s:if test="%{hasErrors()}">
 			<div class="errorstyle" id="property_error_area">
@@ -454,9 +461,7 @@
 				</s:if>
 				<br />
 				<s:if
-					test="%{!(!mutationFeePaid && 
-				 model.state.nextAction.equalsIgnoreCase(@org.egov.ptis.constants.PropertyTaxConstants@WF_STATE_REVENUE_OFFICER_APPROVAL_PENDING)) &&
-				!model.state.nextAction.equalsIgnoreCase(@org.egov.ptis.constants.PropertyTaxConstants@WFLOW_ACTION_READY_FOR_PAYMENT) &&
+					test="%{!model.state.nextAction.equalsIgnoreCase(@org.egov.ptis.constants.PropertyTaxConstants@WFLOW_ACTION_READY_FOR_PAYMENT) &&
 				!model.state.value.equalsIgnoreCase(@org.egov.ptis.constants.PropertyTaxConstants@WF_STATE_REVENUE_OFFICER_APPROVED) && 
 				!model.state.value.equalsIgnoreCase(@org.egov.ptis.constants.PropertyTaxConstants@WF_STATE_COMMISSIONER_APPROVED) &&
 				!model.state.value.equalsIgnoreCase(@org.egov.ptis.constants.PropertyTaxConstants@WF_STATE_REGISTRATION_COMPLETED)  &&

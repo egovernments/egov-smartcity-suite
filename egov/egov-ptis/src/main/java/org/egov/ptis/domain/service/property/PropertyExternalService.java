@@ -157,7 +157,6 @@ import org.egov.demand.dao.EgBillDao;
 import org.egov.demand.model.EgBill;
 import org.egov.demand.model.EgDemandDetails;
 import org.egov.eis.entity.Assignment;
-import org.egov.eis.service.AssignmentService;
 import org.egov.infra.admin.master.entity.Boundary;
 import org.egov.infra.admin.master.entity.BoundaryType;
 import org.egov.infra.admin.master.entity.CrossHierarchy;
@@ -252,15 +251,6 @@ public class PropertyExternalService {
     public static final Integer FLAG_FULL_DETAILS = 2;
     public static final int FLAG_NONE = 0;
 
-    private BasicProperty basicProperty;
-    private PropertyImpl property;
-    private AssessmentDetails assessmentDetail;
-    private RestAssessmentDetails assessmentDetails;
-    
-    private final List<File> uploads = new ArrayList<File>(0);
-    private final List<String> uploadContentTypes = new ArrayList<String>(0);
-    private final List<String> uploadFileNames = new ArrayList<String>(0);
-
     @Autowired
     private BasicPropertyDAO basicPropertyDAO;
     @Autowired
@@ -292,8 +282,6 @@ public class PropertyExternalService {
     @Autowired
     private BoundaryTypeService boundaryTypeService;
     @Autowired
-    protected AssignmentService assignmentService;
-    @Autowired
     @Qualifier("workflowService")
     private SimpleWorkflowService<PropertyImpl> propertyWorkflowService;
     @Autowired
@@ -313,28 +301,29 @@ public class PropertyExternalService {
 
     public AssessmentDetails loadAssessmentDetails(final String propertyId, final Integer flag,
             final BasicPropertyStatus status) {
-        assessmentDetail = new AssessmentDetails();
+        PropertyImpl property;
+        AssessmentDetails assessmentDetail = new AssessmentDetails();
         assessmentDetail.setPropertyID(propertyId);
         assessmentDetail.setFlag(flag);
-        validate();
-        initiateBasicProperty(status);
+        validate(assessmentDetail);
+        BasicProperty basicProperty = initiateBasicProperty(status, assessmentDetail);
         if (basicProperty != null) {
-            property = (PropertyImpl) basicProperty.getProperty();
+            property = (PropertyImpl)basicProperty.getProperty();
             if (basicProperty.getLatitude() != null && basicProperty.getLongitude() != null) {
                 assessmentDetail.setLatitude(basicProperty.getLatitude());
                 assessmentDetail.setLongitude(basicProperty.getLongitude());
             }
             if (flag.equals(FLAG_MOBILE_EMAIL))
-                loadPrimaryMobileAndEmail();
+                loadPrimaryMobileAndEmail(basicProperty, assessmentDetail);
             if (property != null) {
                 final PropertyDetails propertyDetails = new PropertyDetails();
                 assessmentDetail.setPropertyDetails(propertyDetails);
                 if (flag.equals(FLAG_FULL_DETAILS)) {
-                    getAsssessmentDetails();
-                    loadPropertyDues();
+                    getAsssessmentDetails(basicProperty, assessmentDetail);
+                    loadPropertyDues(property, assessmentDetail);
                 }
                 if (flag.equals(FLAG_TAX_DETAILS))
-                    loadPropertyDues();
+                    loadPropertyDues(property, assessmentDetail);
                 if (assessmentDetail.isExempted()) {
                     assessmentDetail.getPropertyDetails().setTaxDue(ZERO);
                     assessmentDetail.getPropertyDetails().setCurrentTax(ZERO);
@@ -345,15 +334,15 @@ public class PropertyExternalService {
         return assessmentDetail;
     }
 
-    private void validate() {
+    private void validate(AssessmentDetails assessmentDetail) {
         if (assessmentDetail.getPropertyID() == null || assessmentDetail.getPropertyID().trim().equals(""))
             throw new ApplicationRuntimeException("PropertyID is null or empty!");
         if (assessmentDetail.getFlag() == null || assessmentDetail.getFlag() > 3)
             throw new ApplicationRuntimeException("Invalid Flag");
     }
 
-    private void initiateBasicProperty(BasicPropertyStatus status) {
-        basicProperty = basicPropertyDAO.getAllBasicPropertyByPropertyID(assessmentDetail.getPropertyID());
+    private BasicProperty initiateBasicProperty(BasicPropertyStatus status, AssessmentDetails assessmentDetail) {
+        BasicProperty basicProperty = basicPropertyDAO.getAllBasicPropertyByPropertyID(assessmentDetail.getPropertyID());
         final ErrorDetails errorDetails = new ErrorDetails();
         if (null != basicProperty) {
             assessmentDetail.setStatus(basicProperty.isActive());
@@ -382,6 +371,7 @@ public class PropertyExternalService {
                     + assessmentDetail.getPropertyID() + PROPERTY_NOT_EXIST_ERR_MSG_SUFFIX);
         }
         assessmentDetail.setErrorDetails(errorDetails);
+        return basicProperty;
     }
 
     private void checkStatusValues(BasicProperty basicProperty, ErrorDetails errorDetails) {
@@ -394,13 +384,13 @@ public class PropertyExternalService {
                 }
     }
 
-    private void loadPrimaryMobileAndEmail() {
+    private void loadPrimaryMobileAndEmail(BasicProperty basicProperty, AssessmentDetails assessmentDetail) {
         final User primaryOwner = basicProperty.getPrimaryOwner();
         assessmentDetail.setPrimaryEmail(primaryOwner.getEmailId());
         assessmentDetail.setPrimaryMobileNo(primaryOwner.getMobileNumber());
     }
 
-    private void loadPropertyDues() {
+    private void loadPropertyDues(PropertyImpl property, AssessmentDetails assessmentDetail) {
         final Map<String, BigDecimal> resultmap = ptDemandDAO.getDemandCollMap(property);
         if (null != resultmap && !resultmap.isEmpty()) {
             final BigDecimal currDmd = resultmap.get(CURR_FIRSTHALF_DMD_STR);
@@ -415,12 +405,13 @@ public class PropertyExternalService {
         }
     }
 
-    private void getAsssessmentDetails() {
+    private void getAsssessmentDetails(BasicProperty basicProperty, AssessmentDetails assessmentDetail) {
 
         // Owner Details
         assessmentDetail.setBoundaryDetails(prepareBoundaryInfo(basicProperty));
         assessmentDetail.setHouseNo(basicProperty.getAddress().getHouseNoBldgApt());
         assessmentDetail.setPropertyAddress(basicProperty.getAddress().toString());
+        PropertyImpl property = (PropertyImpl)basicProperty.getProperty();
         if (null != property) {
             assessmentDetail.setOwnerNames(prepareOwnerInfo(property));
             assessmentDetail.setExempted(property.getIsExemptedFromTax());
@@ -494,10 +485,10 @@ public class PropertyExternalService {
     }
 
     public PropertyTaxDetails getPropertyTaxDetails(final String assessmentNo, final String category) {
+        PropertyTaxDetails propertyTaxDetails;
         final BasicProperty basicProperty = basicPropertyDAO.getBasicPropertyByPropertyID(assessmentNo);
-        PropertyTaxDetails propertyTaxDetails = null;
         final ErrorDetails errorDetails = new ErrorDetails();
-        if (null != basicProperty) {
+        if (basicProperty != null) {
         	Property property = basicProperty.getProperty();
         	if(property != null && property.getIsExemptedFromTax()){
         		propertyTaxDetails = new PropertyTaxDetails();
@@ -728,7 +719,6 @@ public class PropertyExternalService {
         ApplicationThreadLocals.setUserId(2L);
         propertyTaxBillable.setReferenceNumber(propertyTaxNumberGenerator.generateBillNumber(basicProperty
                 .getPropertyID().getWard().getBoundaryNum().toString()));
-        // propertyTaxBillable.setBillType(propertyTaxUtil.getBillTypeByCode(BILLTYPE_MANUAL));
         propertyTaxBillable.setBillType(egBillDAO.getBillTypeByCode(BILLTYPE_AUTO));
         propertyTaxBillable.setLevyPenalty(Boolean.TRUE);
         propertyTaxBillable.setTransanctionReferenceNumber(payPropertyTaxDetails.getTransactionId());
@@ -1162,8 +1152,12 @@ public class PropertyExternalService {
                 roofTypeCode, wallTypeCode, woodTypeCode, floorDetailsList, surveyNumber, pattaNumber, vacantLandArea,
                 marketValue, currentCapitalValue, effectiveDate, northBoundary, southBoundary,
                 eastBoundary, westBoundary, parentPropertyNumber, documents);
+        PropertyImpl property = (PropertyImpl)basicProperty.getProperty();
+        List<File> fileAttachments = new ArrayList<File>(0);
+        List<String> uploadContentTypes = new ArrayList<String>(0);
+        List<String> uploadFileNames = new ArrayList<String>(0);
         basicProperty.setIsTaxXMLMigrated(STATUS_YES_XML_MIGRATION);
-        processAndStoreDocumentsWithReason(basicProperty, DOCS_CREATE_PROPERTY);
+        processAndStoreDocumentsWithReason(basicProperty, DOCS_CREATE_PROPERTY, fileAttachments, uploadFileNames, uploadContentTypes);
         basicProperty.setPropertyOwnerInfoProxy(getPropertyOwnerInfoList(ownerDetailsList));
         basicPropertyService.createOwners(property, basicProperty, basicProperty.getAddress());
         transitionWorkFlow(property);
@@ -1195,6 +1189,7 @@ public class PropertyExternalService {
             final String northBoundary, final String southBoundary, final String eastBoundary,
             final String westBoundary, final String parentPropertyNumber, final List<Document> documents) throws ParseException {
         final BasicProperty basicProperty = new BasicPropertyImpl();
+        final PropertyImpl property;
         basicProperty.setRegdDocNo(regdDocNo);
         basicProperty.setRegdDocDate(convertStringToDate(regdDocDate));
         basicProperty.setActive(Boolean.TRUE);
@@ -1452,10 +1447,11 @@ public class PropertyExternalService {
         return stringToDate;
     }
 
-    private void processAndStoreDocumentsWithReason(final BasicProperty basicProperty, final String reason) {
-        if (!uploads.isEmpty()) {
+    private void processAndStoreDocumentsWithReason(final BasicProperty basicProperty, final String reason,
+            final List<File> fileAttachments, final List<String> uploadFileNames, final List<String> uploadContentTypes) {
+        if (!fileAttachments.isEmpty()) {
             int fileCount = 0;
-            for (final File file : uploads) {
+            for (final File file : fileAttachments) {
                 final FileStoreMapper fileStore = fileStoreService.store(file, uploadFileNames.get(fileCount),
                         uploadContentTypes.get(fileCount++), FILESTORE_MODULE_NAME);
                 final PropertyDocs propertyDoc = new PropertyDocs();
@@ -1835,12 +1831,13 @@ public class PropertyExternalService {
      * @return
      */
     public RestAssessmentDetails fetchAssessmentDetails(final String assessmentNo) {
-        assessmentDetails = new RestAssessmentDetails();
-        basicProperty = basicPropertyDAO.getAllBasicPropertyByPropertyID(assessmentNo);
+        PropertyImpl property;
+        RestAssessmentDetails assessmentDetails = new RestAssessmentDetails();
+        BasicProperty basicProperty = basicPropertyDAO.getAllBasicPropertyByPropertyID(assessmentNo);
         if(basicProperty != null){
         	assessmentDetails.setAssessmentNo(basicProperty.getUpicNo());
     		assessmentDetails.setPropertyAddress(basicProperty.getAddress().toString());
-            property = (PropertyImpl) basicProperty.getProperty();
+    		property = (PropertyImpl) basicProperty.getProperty();
             assessmentDetails.setLocalityName(basicProperty.getPropertyID().getLocality().getName());
             if (property != null) {
             	assessmentDetails.setOwnerDetails(prepareOwnerInfo(property));
@@ -1889,44 +1886,48 @@ public class PropertyExternalService {
      * @return RestAssessmentDetails
      */
     public RestAssessmentDetails loadAssessmentDetails(final String applicationNo) {
-        assessmentDetails = new RestAssessmentDetails();
+        RestAssessmentDetails assessmentDetails = new RestAssessmentDetails();
         PropertyMutation propertyMutation = getPropertyMutationByAssesmentNoAndApplicationNo(null, applicationNo);
-        if(propertyMutation != null){
-        	basicProperty = propertyMutation.getBasicProperty();
-        	if (basicProperty != null) {
-        		assessmentDetails.setAssessmentNo(basicProperty.getUpicNo());
-        		assessmentDetails.setPropertyAddress(basicProperty.getAddress().toString());
+        BasicProperty basicProperty;
+        PropertyImpl property;
+        if (propertyMutation != null) {
+            basicProperty = propertyMutation.getBasicProperty();
+            if (basicProperty != null) {
+                assessmentDetails.setAssessmentNo(basicProperty.getUpicNo());
+                assessmentDetails.setPropertyAddress(basicProperty.getAddress().toString());
                 property = (PropertyImpl) basicProperty.getProperty();
                 assessmentDetails.setLocalityName(basicProperty.getPropertyID().getLocality().getName());
                 if (property != null) {
-                	assessmentDetails.setOwnerDetails(prepareOwnerInfo(property));
-                	if(property.getPropertyDetail().getTotalBuiltupArea() != null && property.getPropertyDetail().getTotalBuiltupArea().getArea() != null)
-                		assessmentDetails.setPlinthArea(property.getPropertyDetail().getTotalBuiltupArea().getArea());
-                	Ptdemand currentPtdemand = ptDemandDAO.getNonHistoryCurrDmdForProperty(property);
-                	BigDecimal totalTaxDue = BigDecimal.ZERO;
-                	if(currentPtdemand != null){
-                		for(EgDemandDetails demandDetails : currentPtdemand.getEgDemandDetails()){
-                			if(demandDetails.getAmount().compareTo(demandDetails.getAmtCollected()) > 0){
-                				totalTaxDue = totalTaxDue.add(demandDetails.getAmount().subtract(demandDetails.getAmtCollected()));
-                			}
-                		}
-                	}
-                	assessmentDetails.setTotalTaxDue(totalTaxDue);
+                    assessmentDetails.setOwnerDetails(prepareOwnerInfo(property));
+                    if (property.getPropertyDetail().getTotalBuiltupArea() != null
+                            && property.getPropertyDetail().getTotalBuiltupArea().getArea() != null)
+                        assessmentDetails.setPlinthArea(property.getPropertyDetail().getTotalBuiltupArea().getArea());
+                    Ptdemand currentPtdemand = ptDemandDAO.getNonHistoryCurrDmdForProperty(property);
+                    BigDecimal totalTaxDue = BigDecimal.ZERO;
+                    if (currentPtdemand != null) {
+                        for (EgDemandDetails demandDetails : currentPtdemand.getEgDemandDetails()) {
+                            if (demandDetails.getAmount().compareTo(demandDetails.getAmtCollected()) > 0) {
+                                totalTaxDue = totalTaxDue
+                                        .add(demandDetails.getAmount().subtract(demandDetails.getAmtCollected()));
+                            }
+                        }
+                    }
+                    assessmentDetails.setTotalTaxDue(totalTaxDue);
                 }
-        	}
-        	if(StringUtils.isNotBlank(propertyMutation.getReceiptNum())){
-	        	assessmentDetails.setFeeReceipt(propertyMutation.getReceiptNum());
-	        	assessmentDetails.setIsMutationFeePaid("Y");
-	        	assessmentDetails.setMutationFee(BigDecimal.ZERO);
-        	}else{
-        		assessmentDetails.setIsMutationFeePaid("N");
-        		assessmentDetails.setMutationFee(propertyMutation.getMutationFee());
-        	}
-        	
-    		assessmentDetails.setApplicationNo(propertyMutation.getApplicationNo());
-        }else{
-    		assessmentDetails.setIsMutationFeePaid("N");
-    	}
+            }
+            if (StringUtils.isNotBlank(propertyMutation.getReceiptNum())) {
+                assessmentDetails.setFeeReceipt(propertyMutation.getReceiptNum());
+                assessmentDetails.setIsMutationFeePaid("Y");
+                assessmentDetails.setMutationFee(BigDecimal.ZERO);
+            } else {
+                assessmentDetails.setIsMutationFeePaid("N");
+                assessmentDetails.setMutationFee(propertyMutation.getMutationFee());
+            }
+
+            assessmentDetails.setApplicationNo(propertyMutation.getApplicationNo());
+        } else {
+            assessmentDetails.setIsMutationFeePaid("N");
+        }
         return assessmentDetails;
     }
     
@@ -2001,17 +2002,17 @@ public class PropertyExternalService {
      * @param paymentAmount
      * @return boolean
      */
-    public boolean validateMutationFee(String assessmentNo, BigDecimal paymentAmount){
-    	boolean validFee = true;
-    	PropertyMutation propertyMutation = getLatestPropertyMutationByAssesmentNo(assessmentNo);
-    	if(propertyMutation != null){
-    		if(paymentAmount.compareTo(propertyMutation.getMutationFee()) > 0){
-    			validFee = false;
-    		}
-    	}else{
-    		validFee = false;
-    	}
-    	return validFee;
+    public boolean validateMutationFee(String assessmentNo, BigDecimal paymentAmount) {
+        boolean validFee = true;
+        PropertyMutation propertyMutation = getLatestPropertyMutationByAssesmentNo(assessmentNo);
+        if (propertyMutation != null) {
+            if (paymentAmount.compareTo(propertyMutation.getMutationFee()) > 0) {
+                validFee = false;
+            }
+        } else {
+            validFee = false;
+        }
+        return validFee;
     }
     
     /**
@@ -2020,9 +2021,10 @@ public class PropertyExternalService {
      * @param applicationNo
      * @return PropertyMutation
      */
-    public PropertyMutation getPropertyMutationByAssesmentNoAndApplicationNo(String assessmentNo, String applicationNo){
-    	PropertyMutation propertyMutation = propertyMutationDAO.getPropertyMutationForAssessmentNoAndApplicationNumber(assessmentNo, applicationNo);
-    	return propertyMutation;
+    public PropertyMutation getPropertyMutationByAssesmentNoAndApplicationNo(String assessmentNo, String applicationNo) {
+        PropertyMutation propertyMutation = propertyMutationDAO
+                .getPropertyMutationForAssessmentNoAndApplicationNumber(assessmentNo, applicationNo);
+        return propertyMutation;
     }
     
     /**
@@ -2040,11 +2042,13 @@ public class PropertyExternalService {
      * @return List
      */
     public List<Object[]> getWardBlockLocalityMapping(){
-    	String query = "select parent.parent.boundaryNum as wardnum, parent.parent.name as wardname, parent.boundaryNum as blocknum, parent.name as blockname, child.boundaryNum as localitynum, child.name as localityname"
-    			+ " from CrossHierarchy ch, Boundary parent, Boundary child"
-    			+ " where ch.parent.id = parent.id  and ch.child.id = child.id  and ch.parentType.name=:block and ch.childType.name=:locality "
-    			+ " and parent.parent.boundaryType.hierarchyType.name=:hierarchyType";
-    	List<Object[]> boundaryDetails = entityManager.unwrap(Session.class).createQuery(query)
+    	StringBuilder queryString = new StringBuilder();
+        queryString.append("select parent.parent.boundaryNum as wardnum, parent.parent.name as wardname, parent.boundaryNum as blocknum,");
+        queryString.append(" parent.name as blockname, child.boundaryNum as localitynum, child.name as localityname");
+        queryString.append(" from CrossHierarchy ch, Boundary parent, Boundary child");
+        queryString.append(" where ch.parent.id = parent.id  and ch.child.id = child.id  and ch.parentType.name=:block and");
+        queryString.append(" ch.childType.name=:locality and parent.parent.boundaryType.hierarchyType.name=:hierarchyType");
+    	List<Object[]> boundaryDetails = entityManager.unwrap(Session.class).createQuery(queryString.toString())
     			.setParameter("block", BLOCK)
     			.setParameter("locality", LOCALITY_BNDRY_TYPE)
     			.setParameter("hierarchyType", REVENUE_HIERARCHY_TYPE).list();

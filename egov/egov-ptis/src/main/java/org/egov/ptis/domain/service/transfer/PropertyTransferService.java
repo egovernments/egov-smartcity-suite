@@ -39,6 +39,7 @@ l * eGov suite of products aim to improve the internal efficiency,transparency,
  */
 package org.egov.ptis.domain.service.transfer;
 
+import static org.egov.ptis.constants.PropertyTaxConstants.ADDTIONAL_RULE_REGISTERED_TRANSFER;
 import static org.egov.ptis.constants.PropertyTaxConstants.APPLICATION_TYPE_TRANSFER_OF_OWNERSHIP;
 import static org.egov.ptis.constants.PropertyTaxConstants.FILESTORE_MODULE_NAME;
 import static org.egov.ptis.constants.PropertyTaxConstants.NATURE_TITLE_TRANSFER;
@@ -247,7 +248,8 @@ public class PropertyTransferService {
     public void updatePropertyTransfer(final BasicProperty basicProperty, final PropertyMutation propertyMutation) {
         processAndStoreDocument(propertyMutation.getDocuments());
         checkAllMandatoryDocumentsAttached(propertyMutation);
-     defineDocumentValue(propertyMutation);
+        updateMutationFee(propertyMutation);
+        defineDocumentValue(propertyMutation);
         createUserIfNotExist(propertyMutation,propertyMutation.getTransfereeInfosProxy());
         basicProperty.setUnderWorkflow(true);
         propertyService.updateIndexes(propertyMutation, APPLICATION_TYPE_TRANSFER_OF_OWNERSHIP);
@@ -257,6 +259,7 @@ public class PropertyTransferService {
 
     @Transactional
     public void viewPropertyTransfer(final BasicProperty basicProperty, final PropertyMutation propertyMutation) {
+        updateMutationFee(propertyMutation);
         propertyService.updateIndexes(propertyMutation, APPLICATION_TYPE_TRANSFER_OF_OWNERSHIP);
         basicPropertyService.persist(basicProperty);
     }
@@ -699,4 +702,14 @@ public class PropertyTransferService {
                 (propertyMutation.getPartyValue().compareTo(propertyMutation.getDepartmentValue()) > 0)
                         ? propertyMutation.getPartyValue() : propertyMutation.getDepartmentValue());
     }
+    
+    public void updateMutationFee(final PropertyMutation propertyMutation) {
+        if (propertyMutation.getMutationFee() == null
+                && propertyMutation.getType().equalsIgnoreCase(ADDTIONAL_RULE_REGISTERED_TRANSFER)) {
+            propertyMutation.setMutationFee(
+                    calculateMutationFee(propertyMutation.getPartyValue(), propertyMutation.getDepartmentValue()));
+        }
+    }
+    
+    
 }

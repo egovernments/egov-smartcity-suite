@@ -219,6 +219,7 @@ public class PropertyService {
     private static final String PROPERTY_WORKFLOW_STARTED = "Property Workflow Started";
     final SimpleDateFormat dateFormatter = new SimpleDateFormat("dd/MM/yyyy");
     
+    @SuppressWarnings("rawtypes")
     private PersistenceService propPerServ;
     private Installment currentInstall;
     private BigDecimal totalAlv = BigDecimal.ZERO;
@@ -235,6 +236,7 @@ public class PropertyService {
     protected EisCommonsService eisCommonsService;
     @Autowired
     private ModuleService moduleDao;
+    @SuppressWarnings("rawtypes")
     @Autowired
     private InstallmentHibDao installmentDao;
     @Autowired
@@ -626,6 +628,7 @@ public class PropertyService {
      * @param dateOfCompletion
      * @return newProperty
      */
+    @SuppressWarnings({ "unchecked", "rawtypes" })
     public Property createDemandForModify(final Property oldProperty, final Property newProperty,
             final Date dateOfCompletion) {
         LOGGER.debug("Entered into createDemandForModify");
@@ -897,7 +900,7 @@ public class PropertyService {
      * @param instList
      * @param instTaxMap
      */
-    @SuppressWarnings("unchecked")
+    @SuppressWarnings({ "unchecked", "rawtypes" })
     private void createAllDmdDetails(final Property oldProperty, final Property newProperty,
             final Installment installment, final List<Installment> instList,
             final HashMap<Installment, TaxCalculationInfo> instTaxMap) {
@@ -995,9 +998,6 @@ public class PropertyService {
                     if (edd.getEgDemandReason().getEgInstallmentMaster().equals(inst))
                         newEgDemandDetailsSet.add((EgDemandDetails) edd.clone());
 
-                final PropertyTypeMaster newPropTypeMaster = newProperty.getPropertyDetail()
-                        .getPropertyTypeMaster();
-
                 LOGGER.info("Old Demand Set:" + inst + "=" + oldEgDemandDetailsSet);
                 LOGGER.info("New Demand set:" + inst + "=" + newEgDemandDetailsSet);
 
@@ -1013,15 +1013,7 @@ public class PropertyService {
                         newEgDmndDetails = getEgDemandDetailsForReason(newEgDemandDetailsSet, oldPropRsn);
 
                         if (newEgDmndDetails == null) {
-                            /*
-                             * if (newPropTypeMaster.getCode().equalsIgnoreCase (PROPTYPE_RESD))
-                             */
                             newPropRsn = rsnsForNewResProp.get(i);
-                            /*
-                             * else if (newPropTypeMaster.getCode().equalsIgnoreCase (PROPTYPE_NON_RESD)) newPropRsn =
-                             * rsnsForNewNonResProp.get(i);
-                             */
-
                             oldEgdmndDetails = getEgDemandDetailsForReason(oldEgDemandDetailsSet, oldPropRsn);
                             newEgDmndDetails = getEgDemandDetailsForReason(newEgDemandDetailsSet, newPropRsn);
 
@@ -1040,9 +1032,6 @@ public class PropertyService {
                 // of this method, bcoz it has to be invoked in all usecases
                 // and not only when there is property type change
 
-                /*newEgDemandDetailsSet = carryForwardCollection(newProperty, inst, newEgDemandDetailsSet,
-                        ptDemandOld, oldProperty.getPropertyDetail().getPropertyTypeMaster(), newPropTypeMaster);
-                LOGGER.info("Adjusted set:" + inst + ":" + newEgDemandDetailsSet);*/
                 adjustedDmdDetailsSet.addAll(newEgDemandDetailsSet);
                 demandDetails.put(inst, newEgDemandDetailsSet);
             }
@@ -1478,6 +1467,7 @@ public class PropertyService {
      * @param amalgPropIds
      * @param parentBasicProperty
      */
+    @SuppressWarnings({ "unchecked"})
     public void createAmalgPropStatVal(final String[] amalgPropIds, final BasicProperty parentBasicProperty) {
         LOGGER.debug("Entered into createAmalgPropStatVal, amalgPropIds(length): "
                 + (amalgPropIds != null ? amalgPropIds.length : ZERO) + ", parentBasicProperty: " + parentBasicProperty);
@@ -1585,6 +1575,7 @@ public class PropertyService {
         LOGGER.debug("Exiting from addArrDmdDetToCurrentDmd");
     }
 
+    @SuppressWarnings({ "rawtypes", "unchecked" })
     public PropertyImpl creteNewPropertyForObjectionWorkflow(final BasicProperty basicProperty2,
             final String objectionNum, final Date objectionDate, final User objWfInitiator, final String docNumber,
             final String modifyRsn) {
@@ -2376,6 +2367,7 @@ public class PropertyService {
      * @param toDemand
      * @return List of property having demand between fromDemand and toDemand
      */
+    @SuppressWarnings("unchecked")
     public List<PropertyMaterlizeView> getPropertyByDemand(final String fromDemand, final String toDemand) {
         final StringBuilder queryStr = new StringBuilder();
         queryStr.append(
@@ -2392,7 +2384,8 @@ public class PropertyService {
      * @param assessmentNum,ownerName,doorNo
      * @return List of property matching the input params
     */
-   public List<PropertyMaterlizeView> getPropertyByAssessmentAndOwnerDetails(final String assessmentNum, final String ownerName,final String doorNo) {
+   @SuppressWarnings("unchecked")
+public List<PropertyMaterlizeView> getPropertyByAssessmentAndOwnerDetails(final String assessmentNum, final String ownerName,final String doorNo) {
        final StringBuilder queryStr = new StringBuilder();
        queryStr.append("select distinct pmv from PropertyMaterlizeView pmv ").append(
                " where pmv.isActive = true ");
@@ -2420,6 +2413,7 @@ public class PropertyService {
      * @param ownerName
      * @return List of property matching the input params
      */
+    @SuppressWarnings("unchecked")
     public List<PropertyMaterlizeView> getPropertyByLocation(final Integer locationId, final String houseNo,
             final String ownerName) {
         final StringBuilder queryStr = new StringBuilder();
@@ -2447,6 +2441,7 @@ public class PropertyService {
      * @param houseNum
      * @return List of property matching the input params
      */
+    @SuppressWarnings("unchecked")
     public List<PropertyMaterlizeView> getPropertyByBoundary(final Long zoneId, final Long wardId,
             final String ownerName, final String houseNum) {
         final StringBuilder queryStr = new StringBuilder();
@@ -2477,6 +2472,7 @@ public class PropertyService {
         return propertyList;
     }
 
+    @SuppressWarnings("unchecked")
     public List<PropertyMaterlizeView> getPropertyByDoorNo(final String doorNo) {
         final StringBuilder queryStr = new StringBuilder();
         queryStr.append("select distinct pmv from PropertyMaterlizeView pmv where pmv.isActive = true ");
@@ -2489,6 +2485,7 @@ public class PropertyService {
         return propertyList;
     }
 
+    @SuppressWarnings("unchecked")
     public List<PropertyMaterlizeView> getPropertyByMobileNumber(final String MobileNo) {
         final StringBuilder queryStr = new StringBuilder();
         queryStr.append("select distinct pmv from PropertyMaterlizeView pmv where pmv.isActive = true ");
@@ -2554,7 +2551,7 @@ public class PropertyService {
                     ownerPosition = historyState.getOwnerPosition();
                     user = historyState.getOwnerUser();
                     if (null != ownerPosition) {
-                         User approverUser = eisCommonService.getUserForPosition(ownerPosition.getId(), historyState.getCreatedDate());
+                         User approverUser = eisCommonService.getUserForPosition(ownerPosition.getId(), historyState.getLastModifiedDate());
                         HistoryMap.put("user", null != approverUser ? approverUser.getUsername() + "::" + approverUser.getName() : "");
                     } else if (null != user)
                         HistoryMap.put("user", user.getUsername() + "::" + user.getName());

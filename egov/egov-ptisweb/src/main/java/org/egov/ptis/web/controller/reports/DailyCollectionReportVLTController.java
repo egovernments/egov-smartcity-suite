@@ -29,6 +29,7 @@ import org.egov.search.domain.SearchResult;
 import org.egov.search.domain.Sort;
 import org.egov.search.service.SearchService;
 import org.elasticsearch.search.sort.SortOrder;
+import org.jboss.logging.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -43,7 +44,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 public class DailyCollectionReportVLTController {
 
     private static final String DAILY_COLLECTION_FORM = "dailyCollectionVLT-form";
-
+    private static final Logger logger = Logger.getLogger(DailyCollectionReportVLTController.class);
     @Autowired
     private ReportService reportService;
 
@@ -121,6 +122,7 @@ public class DailyCollectionReportVLTController {
 
     private SearchResult getCollectionIndex(final DailyCollectionReportSearchVLT searchRequest) {
         final Sort sortByReceiptDate = Sort.by().field("searchable.receiptdate", SortOrder.ASC);
+        logger.info("getCollectionIndex, searchRequest fromDate:" + searchRequest.getFromDate()+"|searchRequest toDate:"+searchRequest.getToDate()+"|searchRequest ulbname:"+searchRequest.getUlbName());
         return searchService.search(asList(Index.COLLECTION.toString()),
                 asList(IndexType.COLLECTION_BIFURCATION.toString()), searchRequest.searchQuery(),
                 searchRequest.searchCollectionFilters(), sortByReceiptDate, Page.NULL);

@@ -42,6 +42,12 @@
  */
 package org.egov.egf.web.actions.masters;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
 import org.apache.log4j.Logger;
 import org.apache.struts2.convention.annotation.Action;
 import org.apache.struts2.convention.annotation.Result;
@@ -49,6 +55,7 @@ import org.apache.struts2.convention.annotation.Results;
 import org.egov.commons.Bankaccount;
 import org.egov.commons.CFinancialYear;
 import org.egov.commons.dao.FinancialYearDAO;
+import org.egov.commons.service.BankAccountService;
 import org.egov.egf.commons.EgovCommon;
 import org.egov.infra.web.struts.actions.BaseFormAction;
 import org.egov.infra.web.struts.annotation.ValidationErrorPage;
@@ -63,14 +70,10 @@ import org.hibernate.Session;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
 @Results({
         @Result(name = "new", location = "accountCheque-new.jsp"),
+        @Result(name = "view", location = "accountCheque-view.jsp"),
+        @Result(name = "viewCheques", location = "accountCheque-viewCheques.jsp"),
         @Result(name = "manipulateCheques", location = "accountCheque-manipulateCheques.jsp")
 })
 public class AccountChequeAction extends BaseFormAction {
@@ -94,6 +97,8 @@ public class AccountChequeAction extends BaseFormAction {
 
     @Autowired
     private FinancialYearDAO financialYearDAO;
+    @Autowired
+    BankAccountService bankAccountService;
 
     private String deletedChqDeptId;
 
@@ -122,6 +127,15 @@ public class AccountChequeAction extends BaseFormAction {
         return "new";
 
     }
+    
+    @Action(value = "/masters/accountCheque-view")
+    public String view() {
+        addDropdownData("bankList", Collections.EMPTY_LIST);
+        addDropdownData("accNumList", Collections.EMPTY_LIST);
+        addDropdownData("fundList", masterDataCache.get("egi-fund"));
+        return "view";
+
+    }
 
     @ValidationErrorPage(value = "manipulateCheques")
     @SuppressWarnings("unchecked")
@@ -130,17 +144,24 @@ public class AccountChequeAction extends BaseFormAction {
         if (LOGGER.isDebugEnabled())
             LOGGER.debug("AccountChequeAction | manipulateCheques | Start");
         final Long bankAccId = Long.valueOf(parameters.get("bankAccId")[0]);
-        bankaccount = (Bankaccount) persistenceService.find("from Bankaccount where id = " + bankAccId);
-
         // Get cheque leafs presents for this particular account number
-        final StringBuffer query = new StringBuffer(200);
-        query.append("select cd from ChequeDeptMapping cd where accountCheque.bankAccountId.id =?");
-        if (LOGGER.isDebugEnabled())
-            LOGGER.debug("AccountChequeAction | manipulateCheques | query = " + query.toString());
-        chequeList = persistenceService.findAllBy(query.toString(), bankAccId);
+        bankaccount =bankAccountService.findById(bankAccId, false);
+        chequeList = accountChequesService.getChequeListByBankAccId(bankAccId);
         if (chequeList.size() > 0)
             prepareChequeDetails(chequeList);
         return "manipulateCheques";
+    }
+    
+    @Action(value = "/masters/accountCheque-viewCheques")
+    public String viewCheques() {
+        if (LOGGER.isDebugEnabled())
+            LOGGER.debug("AccountChequeAction | manipulateCheques | Start");
+        final Long bankAccId = Long.valueOf(parameters.get("bankAccId")[0]);
+        bankaccount =bankAccountService.findById(bankAccId, false);
+        chequeList = accountChequesService.getChequeListByBankAccId(bankAccId);
+        if (chequeList.size() > 0)
+            prepareChequeDetails(chequeList);
+        return "viewCheques";
     }
 
     private void prepareChequeDetails(final List<ChequeDeptMapping> chequeList) {

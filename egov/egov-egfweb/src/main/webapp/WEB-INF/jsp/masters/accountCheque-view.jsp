@@ -78,8 +78,8 @@
 		<br>
 		<%@include file="accountCheque-form.jsp"%>
 		<div class="buttonbottom" style="padding-bottom: 10px;">
-			<input type="button" id="Close" value="Add/Modify Cheque"
-				onclick="addModifyChq();" class="buttonsubmit" />
+			<input type="button" id="Close" value="View Cheque"
+				onclick="viewChq();" class="buttonsubmit" />
 			<s:reset id="Reset" value="Cancel" cssClass="buttonsubmit" />
 			<input type="button" id="Close" value="Close"
 				onclick="javascript:window.close()" class="button" />
