@@ -80,8 +80,7 @@
 	src="<c:url value='/resources/global/js/bootstrap/bootstrap-datepicker.js' context='/egi'/>"></script>
 <script
 	src="<c:url value='/resources/app/js/councilMomHelper.js?rnd=${app_release_no}'/>"></script>
-<script
-	src="<c:url value='/resources/app/js/councilCommitteeMember.js?rnd=${app_release_no}'/>"></script>
+
 <link rel="stylesheet"
 	href="<c:url value='/resources/global/css/bootstrap/bootstrap-datepicker.css' context='/egi'/>">
 	<script type="text/javascript"

@@ -170,7 +170,7 @@
 														value="${meetingAttend.committeeMembers.councilMember.qualification.name}" /></td>
 												<td><c:out
 														value="${meetingAttend.committeeMembers.councilMember.partyAffiliation.name}" /></td>
-												<td><c:out value="${meetingAttend.attendedMeeting}" /></td>
+												<td><c:out value="${meetingAttend.attendedMeeting?'Yes':'No'}" /></td>
 											</tr>
 										</c:forEach>
 									<%-- </c:when>

@@ -42,7 +42,6 @@
 <%@ taglib uri="http://www.springframework.org/tags/form" prefix="form"%>
 
 
-	<div class="main-content">
 		<div class="row">
 			<div class="col-md-12">
 				<div class="panel panel-primary" data-collapsed="0">
@@ -108,8 +107,10 @@
 					</div>
 				</div>
 			</div>
-		</div>
-		
+			<div class="error-msg">
+				<div>Note :- </div> <label class="checkbox-inline"><input type="checkbox" value="" checked disabled>Attended</label>
+				<label class="checkbox-inline"><input type="checkbox" value="" disabled>Not Attended</label>
+			</div>
 	<script>
 	$('#buttonSubmit').click(function(e) {
 		if ($('form').valid()) {

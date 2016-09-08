@@ -71,7 +71,7 @@
 							code="lbl.agendaNumber" /> </label>
 							<div class="col-sm-3 add-margin">
 								<form:input type="text" cssClass="form-control"
-									path="agendaNumber" id="agendaNumber"/>
+									path="agendaNumber" id="agendaNumber" data-pattern="number"/>
 								<form:errors path="agendaNumber" cssClass="error-msg" />
 							</div>
 						</div>

@@ -72,7 +72,7 @@
 						code="lbl.meeting.date" /> <span class="mandatory"></span> </label>
 				<div class="col-sm-2 add-margin">
 					<form:input type="text" cssClass="form-control datepicker"
-						path="meetingDate" id="meetingDate" required="required" />
+						path="meetingDate" id="meetingDate" data-date-start-date="0d" required="required" />
 					<form:errors path="meetingDate" cssClass="error-msg" />
 
 

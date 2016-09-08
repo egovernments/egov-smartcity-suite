@@ -46,7 +46,6 @@
 	id="councilMeetingsearchform"
 	cssClass="form-horizontal form-groups-bordered"
 	enctype="multipart/form-data">
-	<div class="main-content">
 		<div class="row">
 			<div class="col-md-12">
 				<div class="panel panel-primary" data-collapsed="0">
@@ -80,7 +79,7 @@
 
 						<div class="form-group">
 							<label class="col-sm-3 control-label text-right"><spring:message
-									code="lbl.meeting.date" /> </label>
+									code="lbl.fromdate" /> </label>
 							<div class="col-sm-3 add-margin">
 								<form:input path="fromDate"
 									class="form-control text-left patternvalidation dateval"
@@ -88,7 +87,7 @@
 								<form:errors path="fromDate" cssClass="error-msg" />
 							</div>
 							<label class="col-sm-3 control-label text-right"><spring:message
-									code="lbl.meeting.date" /> </label>
+									code="lbl.todate" /> </label>
 							<div class="col-sm-3 add-margin">
 								<form:input type="text" cssClass="form-control datepicker"
 									path="toDate" id="meetingDate" />
@@ -96,18 +95,18 @@
 							</div>
 						</div>
 						<input type="hidden" id="mode" name="mode" value="${mode}" />
-						<div class="form-group">
-							<div class="text-center">
-								<button type='button' class='btn btn-primary' id="btnsearch">
-									<spring:message code='lbl.search' />
-								</button>
-								<button type="reset" class="btn btn-danger"><spring:message code="lbl.reset"/></button>
-								<a href='javascript:void(0)' class='btn btn-default'
-									onclick='self.close()'><spring:message code='lbl.close' /></a>
-							</div>
-						</div>
 					</div>
 				</div>
+			</div>
+		</div>
+		<div class="form-group">
+			<div class="text-center">
+				<button type='button' class='btn btn-primary' id="btnsearch">
+					<spring:message code='lbl.search' />
+				</button>
+				<button type="reset" class="btn btn-danger"><spring:message code="lbl.reset"/></button>
+				<a href='javascript:void(0)' class='btn btn-default'
+					onclick='self.close()'><spring:message code='lbl.close' /></a>
 			</div>
 		</div>
 </form:form>

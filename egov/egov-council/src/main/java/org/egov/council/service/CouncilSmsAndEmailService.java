@@ -42,13 +42,11 @@ package org.egov.council.service;
 import static org.egov.council.utils.constants.CouncilConstants.MODULE_FULLNAME;
 import static org.egov.council.utils.constants.CouncilConstants.SENDEMAILFORCOUNCIL;
 import static org.egov.council.utils.constants.CouncilConstants.SENDSMSFORCOUNCIL;
-import static org.egov.council.utils.constants.CouncilConstants.SMSEMAILTYPEFORCOUNCILMEETING;
 
 import java.util.List;
 
 import org.egov.council.entity.CommitteeMembers;
 import org.egov.council.entity.CouncilMeeting;
-import org.egov.council.utils.constants.CouncilConstants;
 import org.egov.infra.admin.master.entity.AppConfigValues;
 import org.egov.infra.admin.master.service.AppConfigValueService;
 import org.egov.infra.messaging.MessagingService;
@@ -123,8 +121,8 @@ public class CouncilSmsAndEmailService {
 	public void buildSmsForMeeting(final String mobileNumber, final CouncilMeeting councilMeeting,
 			final String customMessage) {
 		String smsMsg = StringUtils.EMPTY;
-		smsMsg = SmsBodyByCodeAndArgsWithType("msg.meeting.sms", councilMeeting, SMSEMAILTYPEFORCOUNCILMEETING,
-				customMessage);
+		smsMsg = SmsBodyByCodeAndArgsWithType("msg.meeting.sms", councilMeeting, customMessage);
+
 		if (mobileNumber != null && smsMsg != null)
 			sendSMSOnSewerageForMeeting(mobileNumber, smsMsg);
 	}
@@ -133,8 +131,7 @@ public class CouncilSmsAndEmailService {
 			final String customMessage, final byte[] attachment) {
 		String body = StringUtils.EMPTY;
 		String subject = StringUtils.EMPTY;
-		body = EmailBodyByCodeAndArgsWithType("email.meeting.body", councilMeeting, SMSEMAILTYPEFORCOUNCILMEETING,
-				customMessage);
+		body = EmailBodyByCodeAndArgsWithType("email.meeting.body", councilMeeting, customMessage);
 		subject = emailSubjectforEmailByCodeAndArgs("email.meeting.subject", councilMeeting);
 		if (email != null && body != null)
 			sendEmailOnSewerageForMeetingWithAttachment(email, body, subject, attachment);
@@ -149,18 +146,16 @@ public class CouncilSmsAndEmailService {
 	 * @param type
 	 * @return EmailBody for All Connection based on Type
 	 */
-	public String EmailBodyByCodeAndArgsWithType(final String code, final CouncilMeeting councilMeeting,
-			final String type, final String customMessage) {
+	public String EmailBodyByCodeAndArgsWithType(final String code, final CouncilMeeting councilMeeting, final String customMessage) {
 		String emailBody = StringUtils.EMPTY;
 
-		if (SMSEMAILTYPEFORCOUNCILMEETING.equalsIgnoreCase(type)) {
 			emailBody = councilMessageSource.getMessage(code,
 					new String[] { String.valueOf(councilMeeting.getCommitteeType().getName()),
 							String.valueOf(councilMeeting.getMeetingDate()),
 							String.valueOf(councilMeeting.getMeetingTime()),
-							String.valueOf(councilMeeting.getMeetingLocation()), customMessage },
+							String.valueOf(councilMeeting.getMeetingLocation()), (customMessage != null?customMessage:" ") },
 					LocaleContextHolder.getLocale());
-		}
+		
 		return emailBody;
 	}
 
@@ -170,23 +165,21 @@ public class CouncilSmsAndEmailService {
 	 * @param applicantName
 	 * @param type
 	 */
-	public String SmsBodyByCodeAndArgsWithType(final String code, final CouncilMeeting councilMeeting,
-			final String type, final String customMessage) {
+	public String SmsBodyByCodeAndArgsWithType(final String code, final CouncilMeeting councilMeeting, final String customMessage) {
 		String smsMsg = StringUtils.EMPTY;
-		if (SMSEMAILTYPEFORCOUNCILMEETING.equalsIgnoreCase(type)) {
 			smsMsg = councilMessageSource.getMessage(code,
-					new String[] { String.valueOf(councilMeeting.getCommitteeType().getName()),
-							String.valueOf(councilMeeting.getMeetingDate()),
-							String.valueOf(councilMeeting.getMeetingTime()),
-							String.valueOf(councilMeeting.getMeetingLocation()), customMessage },
-					LocaleContextHolder.getLocale());
-		}
+				new String[] { String.valueOf(councilMeeting.getCommitteeType().getName()),
+						String.valueOf(councilMeeting.getMeetingDate()),
+						String.valueOf(councilMeeting.getMeetingTime()),
+						String.valueOf(councilMeeting.getMeetingLocation()),(customMessage != null?customMessage:" ")},
+				LocaleContextHolder.getLocale());
+		
 		return smsMsg;
 	}
 
 	public Boolean isSmsEnabled() {
 
-		return getAppConfigValueByPassingModuleAndType(CouncilConstants.MODULE_FULLNAME, SENDSMSFORCOUNCIL);
+		return getAppConfigValueByPassingModuleAndType(MODULE_FULLNAME, SENDSMSFORCOUNCIL);
 	}
 
 	private Boolean getAppConfigValueByPassingModuleAndType(String moduleName, String sendsmsoremail) {

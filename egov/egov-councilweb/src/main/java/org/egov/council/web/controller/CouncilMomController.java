@@ -325,6 +325,14 @@ public class CouncilMomController {
 				meetingMOM.setMeeting(councilMeeting);
 			}
 		}
+		for (MeetingAttendence attendence : councilMeeting
+				.getMeetingAttendence()) {
+			if (attendence.getChecked()) {
+				attendence.setAttendedMeeting(true);
+			} else {
+				attendence.setAttendedMeeting(false);
+			}
+		}
 		for (MeetingMOM meetingMOM : councilMeeting.getMeetingMOMs()) {
 			// if mom status is approved, generate resolution number 
 			if (meetingMOM.getResolutionStatus().getCode().equals(resoulutionApprovedStatus.getCode())) {

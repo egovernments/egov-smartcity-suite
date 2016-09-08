@@ -93,36 +93,3 @@ $("#resultTable").on('click','tbody tr td  .generateMom',function(event) {
 	
 });
 
-$(document).ready(function() {
-	
-	jQuery( ".dateval" ).datepicker({ 
-   	 format: 'dd/mm/yyyy',
-   	 autoclose:true,
-        onRender: function(date) {
-     	    return date.valueOf() < now.valueOf() ? 'disabled' : '';
-     	  }
-	  }).on('changeDate', function(ev) {
-		  var electiondate = jQuery('#electionDate').val();
-		  var oathdate = jQuery('#oathDate').val();
-		  if(electiondate && oathdate){
-			  DateValidation1(electiondate , oathdate);
-		  }
-		 
-	  }).data('datepicker');
-	
-	function DateValidation1(start , end){
-	    if (start != "" && end != "") {
-			var stsplit = start.split("/");
-			var ensplit = end.split("/");
-			
-			start = stsplit[1] + "/" + stsplit[0] + "/" + stsplit[2];
-			end = ensplit[1] + "/" + ensplit[0] + "/" + ensplit[2];
-			
-			return ValidRange(start, end);
-		}else{
-			return true;
-		}
-	}
-
-	
-});

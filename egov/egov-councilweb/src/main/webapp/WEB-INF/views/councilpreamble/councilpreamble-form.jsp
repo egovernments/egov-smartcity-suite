@@ -25,7 +25,7 @@
 				<label class="col-sm-2 control-label text-right"><spring:message
 						code="lbl.amount" /></label>
 				<div class="col-sm-3 add-margin">
-					<form:input path="sanctionAmount" class="form-control text-left patternvalidation" />
+					<form:input path="sanctionAmount" class="form-control text-left patternvalidation" data-pattern="number" />
 					<form:errors path="sanctionAmount" cssClass="error-msg" />
 				</div>
 				</div>
