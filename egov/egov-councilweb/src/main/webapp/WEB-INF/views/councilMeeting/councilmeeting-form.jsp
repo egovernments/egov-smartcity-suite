@@ -41,7 +41,7 @@
 <%@ taglib uri="http://www.springframework.org/tags" prefix="spring"%>
 <%@ taglib uri="http://www.springframework.org/tags/form" prefix="form"%>
 
-<div class="col-md-12">
+<div>
 	<div class="panel panel-primary" data-collapsed="0">
 		<div class="panel-heading">
 			<div class="panel-title">
@@ -97,7 +97,7 @@
 				<div class="col-sm-3 add-margin">
 					<form:textarea path="meetingLocation" id="meetingLocation" cols="5"
 						rows="2" class="form-control patternvalidation"
-						data-pattern="alphanumericwithspace" minlength="5" maxlength="100" />
+						data-pattern="alphanumericwithspace" minlength="5" maxlength="32" />
 
 					<form:errors path="meetingLocation" cssClass="error-msg" />
 				</div>
