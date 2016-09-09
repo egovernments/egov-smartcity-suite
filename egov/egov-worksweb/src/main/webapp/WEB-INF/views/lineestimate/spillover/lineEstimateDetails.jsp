@@ -101,7 +101,7 @@
 								<form:errors path="lineEstimateDetails[0].projectCode.code" cssClass="add-margin error-msg" />
 							</td>
 							<td>
-								<form:input path="lineEstimateDetails[0].actualEstimateAmount" id="actualEstimateAmount0" data-errormsg="Actual Amount is mandatory!" data-pattern="decimalvalue" data-idx="0" data-optional="0" class="form-control table-input text-right estimateAmount" onkeyup="calculateActualEstimatedAmountTotal(this);" onblur="calculateActualEstimatedAmountTotal(this);"/>
+								<form:input path="lineEstimateDetails[0].actualEstimateAmount" id="actualEstimateAmount0" data-errormsg="Actual Estimate Amount is mandatory!" data-pattern="decimalvalue" data-idx="0" data-optional="0" class="form-control table-input text-right estimateAmount" onkeyup="calculateActualEstimatedAmountTotal(this);" onblur="calculateActualEstimatedAmountTotal(this);" required="required"/>
 								<form:errors path="lineEstimateDetails[0].actualEstimateAmount" cssClass="add-margin error-msg" />
 							</td>
 							<td class="tdGrossAmount" style="display: none;">
