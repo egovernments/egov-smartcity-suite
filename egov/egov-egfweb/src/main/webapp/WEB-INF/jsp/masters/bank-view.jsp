@@ -42,75 +42,53 @@
 <%@ taglib prefix="s" uri="/WEB-INF/tags/struts-tags.tld"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 <%@ taglib prefix="egov" tagdir="/WEB-INF/tags"%>
+
+<%@ page language="java"%>
 <html>
 <head>
-<title><s:text name="bank.search.new" /></title>
+<title><s:text name="bank.modify.new" /></title>
 <link rel="stylesheet" type="text/css"
 	href="/EGF/resources/css/jquery-ui/css/smoothness/jquery-ui-1.8.4.custom.css" />
+<link rel="stylesheet" type="text/css" media="screen"
+	href="../resources/css/jquery/ui.jqgrid.css" />
+<script>
+    var fundJson = "<s:property value='getFundsJSON()'/>";
+    var accTypeJson = <s:property value='getAccountTypesJSON()' escapeHtml='false'/>;
+    var bankAccTypeJson = "<s:property value='getBankAccountTypesJSON()'/>";
+    var autoBankGLCode =  "<s:property value='isAutoBankAccountGLCodeEnabled()'/>";
+	</script>
 <style>
-.autoComContainer {
-	width: auto;
-	padding-bottom: 2em;
-	z-index: 999;
+.EditTable td {
+	text-align: left;
+}
+
+.center {
+	width: 800px;
+	margin-left: auto;
+	margin-right: auto;
 }
 </style>
 </head>
 <body>
+
 	<div class="formmainbox">
 		<div class="subheadnew">
-			<s:text name="bank.search.new" />
+			<s:text name="bank.view.new" />
 		</div>
-		<div style="color: red">
-			<s:actionerror />
-			<s:fielderror />
-		</div>
-		<s:form name="bankForm" action="bank" theme="simple">
-			<table width="100%" border="0" cellspacing="0" cellpadding="0">
-				<tr height="25px">
-					<td class="bluebox"></td>
-				</tr>
-				<tr>
-					<td class="greybox" width="20%"></td>
-					<td class="greybox" style="text-align: center;"><span
-						class="mandatory1">*</span> <s:text name="bank.create.name" /></td>
-
-					<td class="bluebox"><s:select name="name" id="bankName"
-							list="dropdownData.bankList" listKey="name" listValue="name"
-							headerKey="-1" headerValue="----Choose----" /></td>
-				</tr>
-			</table>
-			<br />
+		<jsp:include page="bank-form.jsp"></jsp:include>
 	</div>
-	<div class="buttonbottom" style="padding-bottom: 10px;">
-		<s:hidden name="mode"></s:hidden>
-		<s:if test="%{mode.equals('MODIFY')}">
-			<input type="submit" class="buttonsubmit" value="Modify"
-				id="modifyButton" name="Modify"
-				onclick="return validateAndSubmit();" />
-		</s:if>
-		<s:else>
-			<input type="submit" class="buttonsubmit" value="View"
-				id="modifyButton" name="View" onclick="return validateAndSubmit();" />
-		</s:else>
+	<div class="buttonbottom">
 		<input type="button" id="Close" value="Close"
 			onclick="javascript:window.close()" class="button" />
 	</div>
-	</s:form>
-	<script type="text/javascript">
-		/* jQuery( "#bankName" ).autocomplete({
-		   source: "bank.action?mode=AUTO_COMP_BANK_NAME",
-		   minLength: 2
-		 });  */
-
-		function validateAndSubmit() {
-			if (document.getElementById('bankName').value == -1) {
-				bootbox.alert("Please select Bank Name");
-				return false;
-			}
-			document.bankForm.action = '/EGF/masters/bank-execute.action';
-			document.bankForm.submit();
-		}
-	</script>
+	<script src="../resources/javascript/jquery/grid.locale-en.js"
+		type="text/javascript"></script>
+	<script src="../resources/javascript/jquery/jquery.jqGrid.min.js"
+		type="text/javascript"></script>
+	<script>
+	existingCode = '${model.code}';
+    existingName = '${model.name}';
+	viewGrid();
+    </script>
 </body>
-
 </html>
