@@ -49,6 +49,7 @@
 			<form:hidden path="" name="lineEstimateId" id="lineEstimateId" value="${lineEstimate.id}" class="form-control table-input hidden-input"/>
 			<form:hidden path="" id="workFlowAction" name="workFlowAction"/>
 			<input type="hidden" value="<spring:message code="error.actualestimateamount.required" />" id="erroractualestimateamount" />
+			<input type="hidden" value="<spring:message code="error.quantity.required" />" id="errorQuantityValue" />
 			<div class="row">
 				<div class="col-md-12">
 					<jsp:include page="lineEstimateHeader.jsp"/>

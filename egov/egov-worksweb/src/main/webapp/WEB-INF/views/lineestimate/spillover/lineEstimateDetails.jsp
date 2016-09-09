@@ -109,7 +109,7 @@
 								<form:errors path="lineEstimateDetails[0].grossAmountBilled" cssClass="add-margin error-msg" />
 							</td>
 							<td>
-								<form:input path="lineEstimateDetails[0].quantity" name="lineEstimateDetails[0].quantity" data-errormsg="quantity is mandatory!" data-idx="0" data-optional="0" class="form-control table-input text-right estimateAmount" maxlength="8" onkeyup="validateQuantity();" required="required"/>
+								<form:input path="lineEstimateDetails[0].quantity" name="lineEstimateDetails[0].quantity" id="quantity0" data-errormsg="quantity is mandatory!" data-idx="0" data-optional="0" class="form-control table-input text-right estimateAmount" maxlength="8" onkeyup="validateQuantity();" required="required"/>
 								<form:errors path="lineEstimateDetails[0].quantity" cssClass="add-margin error-msg" />
 							</td>
 							<td>
@@ -152,7 +152,7 @@
 									<form:errors path="lineEstimateDetails[${item.index}].projectCode.code" cssClass="add-margin error-msg" />
 								</td>
 								<td>
-									<form:input path="lineEstimateDetails[${item.index}].actualEstimateAmount" id="actualEstimateAmount${item.index}" data-errormsg="Actual Amount is mandatory!" data-pattern="decimalvalue" data-idx="0" data-optional="0" class="form-control table-input text-right estimateAmount" onkeyup="calculateActualEstimatedAmountTotal(this);" onblur="calculateActualEstimatedAmountTotal(this);" required="required"/>
+									<form:input path="lineEstimateDetails[${item.index}].actualEstimateAmount" id="actualEstimateAmount${item.index}" data-errormsg="Actual Estimate Amount is mandatory!" data-pattern="decimalvalue" data-idx="0" data-optional="0" class="form-control table-input text-right estimateAmount" onkeyup="calculateActualEstimatedAmountTotal(this);" onblur="calculateActualEstimatedAmountTotal(this);" required="required"/>
 									<form:errors path="lineEstimateDetails[${item.index}].actualEstimateAmount" cssClass="add-margin error-msg" />
 								</td>
 								<td class="tdGrossAmount" style="display: none;">
@@ -160,7 +160,7 @@
 									<form:errors path="lineEstimateDetails[${item.index}].grossAmountBilled" cssClass="add-margin error-msg" />
 								</td>
 								<td>
-									<form:input path="lineEstimateDetails[${item.index}].quantity" name="lineEstimateDetails[${item.index}].quantity" data-errormsg="quantity is mandatory!" data-idx="0" data-optional="0" class="form-control table-input text-right estimateAmount" maxlength="8" onkeyup="validateQuantity();" required="required"/>
+									<form:input path="lineEstimateDetails[${item.index}].quantity" name="lineEstimateDetails[${item.index}].quantity" id="quantity${item.index}" data-errormsg="quantity is mandatory!" data-idx="0" data-optional="0" class="form-control table-input text-right estimateAmount" maxlength="8" onkeyup="validateQuantity();" required="required"/>
 									<form:errors path="lineEstimateDetails[${item.index}].quantity" cssClass="add-margin error-msg" />
 								</td>
 								<td>

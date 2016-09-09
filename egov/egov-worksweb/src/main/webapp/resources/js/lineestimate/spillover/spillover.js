@@ -136,6 +136,13 @@ $('#Save').click(function(){
 							'#estimateAmount' + index).val();
 					var actualAmount = $(
 							'#actualEstimateAmount' + index).val();
+					var quantity = $(
+							'#quantity' + index).val();
+					if(parseFloat(quantity) <= 0 ){
+						bootbox.alert($('#errorQuantityValue').val());
+						isValidationSuccess = false;
+						return false;
+					}
 					if(parseFloat(actualAmount) <= 0 ){
 						bootbox.alert($('#erroractualestimateamount').val());
 						isValidationSuccess = false;
@@ -174,7 +181,7 @@ $('#Save').click(function(){
 				});
 		message = message.replace(/,\s*$/, ". ");
 		message += $('#errorActualAmountContinued').val();
-		if (!flag) {
+		if (!flag ) {
 			bootbox.alert(message);
 			return false;
 		}

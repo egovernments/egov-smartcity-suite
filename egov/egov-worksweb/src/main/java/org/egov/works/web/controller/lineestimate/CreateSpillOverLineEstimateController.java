@@ -224,6 +224,8 @@ public class CreateSpillOverLineEstimateController {
             	errors.rejectValue("lineEstimateDetails[" + index + "].actualEstimateAmount",  "error.actualestimateamount.required");
             if(led.getEstimateAmount().compareTo(led.getActualEstimateAmount()) == -1)
             	errors.rejectValue("lineEstimateDetails[" + index + "].actualEstimateAmount", "error.actualamount");
+            if (led.getQuantity() <= 0)
+                errors.rejectValue("lineEstimateDetails[" + index + "].quantity", "error.quantity.required");
             index++;
         }
     }
