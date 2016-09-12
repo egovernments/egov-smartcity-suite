@@ -155,7 +155,7 @@ function callurl(url, consumernumber, ptassessmentno, shscnumber){
 }
 
 function openPopup(url){
-	window.open(url,'window','_blank','scrollbars=1,resizable=yes,height=600,width=800,status=yes');
+	window.open(url,'window','scrollbars=1,resizable=yes,height=600,width=800,status=yes');
 }
 
 function submitButton() {
