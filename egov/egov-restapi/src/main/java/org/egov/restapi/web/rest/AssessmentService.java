@@ -74,6 +74,7 @@ import org.egov.ptis.domain.model.PayPropertyTaxDetails;
 import org.egov.ptis.domain.model.PropertyTaxDetails;
 import org.egov.ptis.domain.model.ReceiptDetails;
 import org.egov.ptis.domain.model.RestPropertyTaxDetails;
+import org.egov.ptis.domain.model.ViewPropertyDetails;
 import org.egov.ptis.domain.model.enums.BasicPropertyStatus;
 import org.egov.ptis.domain.service.property.PropertyExternalService;
 import org.egov.restapi.model.AssessmentRequest;
@@ -679,6 +680,19 @@ public class AssessmentService {
         return getJSONResponse(mstrCodeNamePairDetailsList);
     }
 
+    /**
+     * This method provides ward-wise property details
+     * @throws IOException 
+     * @throws JsonMappingException 
+     * @throws JsonParseException 
+     */
+    @RequestMapping(value = "/property/wardWisePropertyDetails", method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON, produces = MediaType.APPLICATION_JSON)
+    public String getWardWisePropertyDetails(@RequestBody String assessmentRequest) throws JsonParseException, JsonMappingException, IOException {
+    	AssessmentRequest assessmentReq = (AssessmentRequest) getObjectFromJSONRequest(assessmentRequest,
+                AssessmentRequest.class);
+    	List<ViewPropertyDetails> propertyDetails = propertyExternalService.getPropertyDetails(assessmentReq.getUlbCode(), assessmentReq.getWardNum());
+    	return getJSONResponse(propertyDetails);
+    }
     /**
      * This method is used to prepare jSON response.
      * 

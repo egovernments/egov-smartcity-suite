@@ -59,6 +59,7 @@ public class FloorDetails implements Serializable {
         private String buildingPermissionNo;
         private String buildingPermissionDate;
         private Float buildingPlanPlinthArea;
+        private Double unitRate;
 
         @Override
         public String toString() {
@@ -189,6 +190,14 @@ public class FloorDetails implements Serializable {
 	
 		public void setBuildingPlanPlinthArea(Float buildingPlanPlinthArea) {
 			this.buildingPlanPlinthArea = buildingPlanPlinthArea;
+		}
+
+		public Double getUnitRate() {
+			return unitRate;
+		}
+
+		public void setUnitRate(Double unitRate) {
+			this.unitRate = unitRate;
 		}
 
 }

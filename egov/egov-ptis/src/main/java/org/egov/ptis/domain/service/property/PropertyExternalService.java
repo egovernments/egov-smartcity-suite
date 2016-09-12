@@ -57,12 +57,14 @@ import static org.egov.ptis.constants.PropertyTaxConstants.DOCS_CREATE_PROPERTY;
 import static org.egov.ptis.constants.PropertyTaxConstants.ELECTIONWARD_BNDRY_TYPE;
 import static org.egov.ptis.constants.PropertyTaxConstants.ELECTION_HIERARCHY_TYPE;
 import static org.egov.ptis.constants.PropertyTaxConstants.FILESTORE_MODULE_NAME;
+import static org.egov.ptis.constants.PropertyTaxConstants.FLOOR_MAP;
 import static org.egov.ptis.constants.PropertyTaxConstants.LOCALITY_BNDRY_TYPE;
 import static org.egov.ptis.constants.PropertyTaxConstants.LOCATION_HIERARCHY_TYPE;
 import static org.egov.ptis.constants.PropertyTaxConstants.MARK_DEACTIVE;
 import static org.egov.ptis.constants.PropertyTaxConstants.NATURE_NEW_ASSESSMENT;
 import static org.egov.ptis.constants.PropertyTaxConstants.NEW_ASSESSMENT;
 import static org.egov.ptis.constants.PropertyTaxConstants.NON_VAC_LAND_PROPERTY_TYPE_CATEGORY;
+import static org.egov.ptis.constants.PropertyTaxConstants.NOT_AVAILABLE;
 import static org.egov.ptis.constants.PropertyTaxConstants.OWNERSHIP_TYPE_VAC_LAND;
 import static org.egov.ptis.constants.PropertyTaxConstants.PAID_BY;
 import static org.egov.ptis.constants.PropertyTaxConstants.PROPERTY_ACTIVE_ERR_CODE;
@@ -172,6 +174,7 @@ import org.egov.infra.filestore.service.FileStoreService;
 import org.egov.infra.persistence.entity.Address;
 import org.egov.infra.persistence.entity.CorrespondenceAddress;
 import org.egov.infra.persistence.entity.enums.Gender;
+import org.egov.infra.utils.DateUtils;
 import org.egov.infra.workflow.matrix.entity.WorkFlowMatrix;
 import org.egov.infra.workflow.service.SimpleWorkflowService;
 import org.egov.pims.commons.Position;
@@ -179,6 +182,7 @@ import org.egov.ptis.client.bill.PTBillServiceImpl;
 import org.egov.ptis.client.integration.utils.CollectionHelper;
 import org.egov.ptis.client.model.PenaltyAndRebate;
 import org.egov.ptis.client.util.PropertyTaxNumberGenerator;
+import org.egov.ptis.constants.PropertyTaxConstants;
 import org.egov.ptis.domain.bill.PropertyTaxBillable;
 import org.egov.ptis.domain.dao.demand.PtDemandDao;
 import org.egov.ptis.domain.dao.property.BasicPropertyDAO;
@@ -222,6 +226,7 @@ import org.egov.ptis.domain.model.LocalityDetails;
 import org.egov.ptis.domain.model.MasterCodeNamePairDetails;
 import org.egov.ptis.domain.model.NewPropertyDetails;
 import org.egov.ptis.domain.model.OwnerDetails;
+import org.egov.ptis.domain.model.OwnerInformation;
 import org.egov.ptis.domain.model.OwnerName;
 import org.egov.ptis.domain.model.PayPropertyTaxDetails;
 import org.egov.ptis.domain.model.PropertyDetails;
@@ -229,6 +234,7 @@ import org.egov.ptis.domain.model.PropertyTaxDetails;
 import org.egov.ptis.domain.model.ReceiptDetails;
 import org.egov.ptis.domain.model.RestAssessmentDetails;
 import org.egov.ptis.domain.model.RestPropertyTaxDetails;
+import org.egov.ptis.domain.model.ViewPropertyDetails;
 import org.egov.ptis.domain.model.enums.BasicPropertyStatus;
 import org.egov.ptis.exceptions.TaxCalculatorExeption;
 import org.egov.ptis.master.service.FloorTypeService;
@@ -1128,7 +1134,7 @@ public class PropertyExternalService {
     }
 
     public NewPropertyDetails createNewProperty(final String propertyTypeMasterCode, final String propertyCategoryCode,
-    		final String exemptionCode, final String apartmentCmplxCode, final List<OwnerDetails> ownerDetailsList,
+    		final String exemptionCode, final String apartmentCmplxCode, final List<OwnerInformation> ownerDetailsList,
             final String mutationReasonCode, final String extentOfSite, final Boolean isExtentAppurtenantLand,
             final String occupancyCertificationNo, final String regdDocNo, final String regdDocDate, 
             final String localityCode, final String blockNum, final String zoneNum, final String street, final String electionWardCode,
@@ -1176,7 +1182,7 @@ public class PropertyExternalService {
 
     private BasicProperty createBasicProperty(final String propertyTypeMasterCode, final String propertyCategoryCode,
     		final String exemptionCode, final String apartmentCmplxCode, final String mutationReasonCode,
-            final List<OwnerDetails> ownerDetailsList, final String extentOfSite,
+            final List<OwnerInformation> ownerDetailsList, final String extentOfSite,
             final Boolean isExtentAppurtenantLand, final String occupancyCertificationNo, final String regdDocNo, final String regdDocDate,
             final String localityNum,final String blockNum, final String zoneNum, final String street,
             final String doorNo, final String electionWardCode, final String pinCode, final Boolean isCorrAddrDiff,
@@ -1504,21 +1510,21 @@ public class PropertyExternalService {
         return floorList;
     }
 
-    private List<PropertyOwnerInfo> getPropertyOwnerInfoList(final List<OwnerDetails> ownerDetailsList) {
+    private List<PropertyOwnerInfo> getPropertyOwnerInfoList(final List<OwnerInformation> ownerInfoList) {
         final List<PropertyOwnerInfo> proeprtyOwnerInfoList = new ArrayList<PropertyOwnerInfo>(0);
-        for (final OwnerDetails ownerDetais : ownerDetailsList) {
-            final PropertyOwnerInfo ownerInfo = new PropertyOwnerInfo();
+        for (final OwnerInformation ownerInfo : ownerInfoList) {
+            final PropertyOwnerInfo propOwner = new PropertyOwnerInfo();
             final User owner = new User();
-            owner.setAadhaarNumber(ownerDetais.getAadhaarNo());
-            owner.setSalutation(ownerDetais.getSalutationCode());
-            owner.setName(ownerDetais.getName());
-            owner.setGender(Gender.valueOf(ownerDetais.getGender()));
-            owner.setMobileNumber(ownerDetais.getMobileNumber());
-            owner.setEmailId(ownerDetais.getEmailId());
-            owner.setGuardianRelation(ownerDetais.getGuardianRelation());
-            owner.setGuardian(ownerDetais.getGuardian());
-            ownerInfo.setOwner(owner);
-            proeprtyOwnerInfoList.add(ownerInfo);
+            owner.setAadhaarNumber(ownerInfo.getAadhaarNo());
+            owner.setSalutation(ownerInfo.getSalutationCode());
+            owner.setName(ownerInfo.getName());
+            owner.setGender(Gender.valueOf(ownerInfo.getGender()));
+            owner.setMobileNumber(ownerInfo.getMobileNumber());
+            owner.setEmailId(ownerInfo.getEmailId());
+            owner.setGuardianRelation(ownerInfo.getGuardianRelation());
+            owner.setGuardian(ownerInfo.getGuardian());
+            propOwner.setOwner(owner);
+            proeprtyOwnerInfoList.add(propOwner);
         }
         return proeprtyOwnerInfoList;
     }
@@ -2055,4 +2061,200 @@ public class PropertyExternalService {
     	return boundaryDetails;
     }
     
+    /**
+     * API provides ward-wise property details 
+     * @param ulbCode
+     * @param wardNum
+     * @return List
+     */
+    public List<ViewPropertyDetails> getPropertyDetails(String ulbCode, String wardNum){
+    	Boundary ward = getBoundaryByNumberAndType(wardNum,WARD,REVENUE_HIERARCHY_TYPE);
+    	List<ViewPropertyDetails> propertyDetails = new ArrayList<>(); 
+    	List<BasicProperty> basicProperties = basicPropertyDAO.getActiveBasicPropertiesForWard(ward.getId());
+    	if(!basicProperties.isEmpty()){
+    		ViewPropertyDetails viewPropDetails;
+    		for(BasicProperty basicProperty : basicProperties){
+    			viewPropDetails = new ViewPropertyDetails();
+    			viewPropDetails.setUlbCode(ulbCode);
+    			prepareProperyDetailsInfo(basicProperty,viewPropDetails);
+    			propertyDetails.add(viewPropDetails);
+    		}
+    	}
+    	return propertyDetails;
+    }
+    
+    /**
+     * API to set each property details
+     * @param basicProperty
+     * @param viewPropertyDetails
+     */
+    private void prepareProperyDetailsInfo(BasicProperty basicProperty, ViewPropertyDetails viewPropertyDetails){
+    	String ownerAddress = StringUtils.EMPTY;
+    	Property property = basicProperty.getProperty();
+    	viewPropertyDetails.setOldAssessmentNumber(basicProperty.getOldMuncipalNum());
+    	viewPropertyDetails.setAssessmentNumber(basicProperty.getUpicNo());
+    	viewPropertyDetails.setPropertyTypeMaster(basicProperty.getProperty().getPropertyDetail().getPropertyTypeMaster().getType());
+    	PropertyID propertyID = basicProperty.getPropertyID();
+    	if(property != null){
+    		PropertyDetail propertyDetail = property.getPropertyDetail();
+    		viewPropertyDetails.setExemption(property.getTaxExemptedReason() == null ? NOT_AVAILABLE : property.getTaxExemptedReason().getName());
+    		Ptdemand ptDemand = ptDemandDAO.getNonHistoryCurrDmdForProperty(property);
+    		if(ptDemand != null){
+    			if (ptDemand.getDmdCalculations() != null && ptDemand.getDmdCalculations().getAlv() != null)
+    				viewPropertyDetails.setArv(ptDemand.getDmdCalculations().getAlv());
+                else
+                	viewPropertyDetails.setArv(BigDecimal.ZERO);
+    		}
+    		populatePropertyDetails(basicProperty, viewPropertyDetails, propertyID, propertyDetail);
+    	}
+    	
+    	populateOwnerAndAddressDetails(basicProperty, viewPropertyDetails, ownerAddress, propertyID);
+    }
+
+    /**
+     * API to populate owner and address details
+     * @param basicProperty
+     * @param viewPropertyDetails
+     * @param ownerAddress
+     * @param propertyID
+     */
+	public void populateOwnerAndAddressDetails(BasicProperty basicProperty, ViewPropertyDetails viewPropertyDetails,
+			String ownerAddress, PropertyID propertyID) {
+		if (!basicProperty.getPropertyOwnerInfo().isEmpty()) {
+            for (PropertyOwnerInfo propOwner : basicProperty.getPropertyOwnerInfo()) {
+                List<Address> addrSet = propOwner.getOwner().getAddress();
+                for (final Address address : addrSet) {
+                    ownerAddress = address.toString();
+                    viewPropertyDetails.setDoorNo(address.getHouseNoBldgApt() == null ? NOT_AVAILABLE : address.getHouseNoBldgApt());
+                    break;
+                }
+            }
+            viewPropertyDetails.setPropertyAddress(basicProperty.getAddress().toString());
+            viewPropertyDetails.setCorrAddress(StringUtils.isBlank(ownerAddress)? NOT_AVAILABLE : ownerAddress);
+            viewPropertyDetails.setOwnerDetails(getOwnerDetails(basicProperty));
+        }
+    	viewPropertyDetails.setZoneName(propertyID.getZone().getName());
+    	viewPropertyDetails.setWardName(propertyID.getWard().getName());
+    	viewPropertyDetails.setBlockName(propertyID.getArea().getName());
+    	viewPropertyDetails.setLocalityName(propertyID.getLocality().getName());
+    	viewPropertyDetails.setElectionWardName(propertyID.getElectionBoundary().getName());
+    	viewPropertyDetails.setEnumerationBlockName(NOT_AVAILABLE);
+	}
+
+    /**
+     * API to set property level details
+     * @param basicProperty
+     * @param viewPropertyDetails
+     * @param propertyID
+     * @param propertyDetail
+     */
+	public void populatePropertyDetails(BasicProperty basicProperty, ViewPropertyDetails viewPropertyDetails,
+			PropertyID propertyID, PropertyDetail propertyDetail) {
+		viewPropertyDetails.setEffectiveDate(DateUtils.getDefaultFormattedDate(basicProperty.getPropOccupationDate()));
+		viewPropertyDetails.setCategory(PropertyTaxConstants.PROPERTY_TYPE_CATEGORIES.get(propertyDetail.getCategoryType()));
+		viewPropertyDetails.setApartmentCmplx(propertyDetail.getApartment() == null ? NOT_AVAILABLE : 
+			propertyDetail.getApartment().getName());
+		viewPropertyDetails.setExtentOfSite(propertyDetail.getSitalArea() == null ? NOT_AVAILABLE : 
+			propertyDetail.getSitalArea().getArea().toString());
+		viewPropertyDetails.setExtentAppartenauntLand(propertyDetail.getExtentAppartenauntLand() == null ? NOT_AVAILABLE :
+			propertyDetail.getExtentAppartenauntLand().toString());
+		viewPropertyDetails.setRegdDocNo(basicProperty.getRegdDocNo());
+		viewPropertyDetails.setRegdDocDate(DateUtils.getDefaultFormattedDate(basicProperty.getRegdDocDate()));
+		viewPropertyDetails.setMutationReason(propertyDetail.getPropertyMutationMaster().getMutationName());
+		viewPropertyDetails.setAssessmentDate(DateUtils.getDefaultFormattedDate(basicProperty.getAssessmentdate()));
+		
+		if(!propertyDetail.getPropertyTypeMaster().getCode().equalsIgnoreCase(OWNERSHIP_TYPE_VAC_LAND)){
+			viewPropertyDetails.setHasLift(propertyDetail.isLift());
+			viewPropertyDetails.setHasToilet(propertyDetail.isToilets());
+			viewPropertyDetails.setHasWaterTap(propertyDetail.isWaterTap());
+			viewPropertyDetails.setHasElectricity(propertyDetail.isElectricity());
+			viewPropertyDetails.setHasAttachedBathroom(propertyDetail.isAttachedBathRoom());
+			viewPropertyDetails.setHasWaterHarvesting(propertyDetail.isWaterHarvesting());
+			viewPropertyDetails.setHasCableConnection(propertyDetail.isCable());
+			viewPropertyDetails.setFloorType(propertyDetail.getFloorType().getName());
+			viewPropertyDetails.setRoofType(propertyDetail.getRoofType().getName());
+			viewPropertyDetails.setWallType(propertyDetail.getWallType() == null ? NOT_AVAILABLE : propertyDetail.getWallType().getName());
+			viewPropertyDetails.setWoodType(propertyDetail.getWoodType() == null ? NOT_AVAILABLE : propertyDetail.getWoodType().getName());
+			viewPropertyDetails.setFloorDetails(getFloorDetails(propertyDetail));
+		} else{
+			getVacantLandDetails(viewPropertyDetails, propertyDetail, propertyID);
+		}
+	}
+    
+	/**
+	 * API to set owner details
+	 * @param basicProperty
+	 * @return List
+	 */
+    private List<OwnerInformation> getOwnerDetails(BasicProperty basicProperty){
+    	List<OwnerInformation> ownerDetails = new ArrayList<>();
+    	OwnerInformation ownerInfo;
+    	User owner;
+    	for(PropertyOwnerInfo propOwnerInfo : basicProperty.getPropertyOwnerInfo()){
+    		ownerInfo = new OwnerInformation();
+    		owner = propOwnerInfo.getOwner();
+    		ownerInfo.setAadhaarNo(owner.getAadhaarNumber());
+    		ownerInfo.setMobileNumber(owner.getMobileNumber());
+    		ownerInfo.setName(owner.getName());
+    		ownerInfo.setGender(owner.getGender().name());
+    		ownerInfo.setEmailId(owner.getEmailId());
+    		ownerInfo.setGuardianRelation(owner.getGuardianRelation());
+    		ownerInfo.setGuardian(owner.getGuardian());
+    		
+    		ownerDetails.add(ownerInfo);
+    	}
+    	return ownerDetails;
+    }
+    
+    /**
+     * API to set floor details
+     * @param propertyDetail
+     * @return List
+     */
+    private List<FloorDetails> getFloorDetails(PropertyDetail propertyDetail){
+    	List<FloorDetails> floorDetails = new ArrayList<>();
+    	FloorDetails floorDet;
+    	for(Floor floor : propertyDetail.getFloorDetails()){
+    		floorDet = new FloorDetails();
+    		floorDet.setFloorNoCode(FLOOR_MAP.get(floor.getFloorNo()));
+    		floorDet.setBuildClassificationCode(floor.getStructureClassification().getDescription());
+    		floorDet.setNatureOfUsageCode(floor.getPropertyUsage().getUsageName());
+    		floorDet.setFirmName(StringUtils.isBlank(floor.getFirmName()) ? NOT_AVAILABLE : floor.getFirmName()); 
+    		floorDet.setOccupancyCode(floor.getPropertyOccupation().getOccupation());
+    		floorDet.setOccupantName(StringUtils.isBlank(floor.getOccupantName()) ? NOT_AVAILABLE : floor.getOccupantName());
+    		floorDet.setConstructionDate(floor.getConstructionDate() == null ? NOT_AVAILABLE : DateUtils.getDefaultFormattedDate(floor.getConstructionDate()));
+    		floorDet.setOccupancyDate(DateUtils.getDefaultFormattedDate(floor.getOccupancyDate()));
+    		floorDet.setPlinthLength(floor.getBuiltUpArea().getLength());
+    		floorDet.setPlinthBreadth(floor.getBuiltUpArea().getBreadth());
+    		floorDet.setPlinthArea(floor.getBuiltUpArea().getArea());
+    		floorDet.setBuildingPermissionNo(floor.getBuildingPermissionNo());
+    		floorDet.setBuildingPermissionDate(floor.getBuildingPermissionDate() == null ? NOT_AVAILABLE : DateUtils.getDefaultFormattedDate(floor.getBuildingPermissionDate()));
+    		floorDet.setBuildingPlanPlinthArea(floor.getBuildingPlanPlinthArea() == null ? 0.0F : floor.getBuildingPlanPlinthArea().getArea());
+    		floorDet.setUnitRate(floor.getFloorDmdCalc().getCategoryAmt().doubleValue());
+    		
+    		floorDetails.add(floorDet);
+    	}
+    	return floorDetails;
+    }
+    
+    /**
+     * API to set Vacant land details
+     * @param viewPropertyDetails
+     * @param propertyDetail
+     * @param propertyID
+     */
+    private void getVacantLandDetails(ViewPropertyDetails viewPropertyDetails, PropertyDetail propertyDetail, PropertyID propertyID){
+    	viewPropertyDetails.setSurveyNumber(propertyDetail.getSurveyNumber());
+    	viewPropertyDetails.setPattaNumber(propertyDetail.getPattaNumber());
+    	viewPropertyDetails.setVacantLandArea(propertyDetail.getSitalArea().getArea());
+    	viewPropertyDetails.setMarketValue(propertyDetail.getMarketValue());
+    	viewPropertyDetails.setCurrentCapitalValue(propertyDetail.getCurrentCapitalValue());
+    	viewPropertyDetails.setEffectiveDate(DateUtils.getDefaultFormattedDate(propertyDetail.getDateOfCompletion()));
+    	
+    	viewPropertyDetails.setNorthBoundary(propertyID.getNorthBoundary());
+    	viewPropertyDetails.setEastBoundary(propertyID.getEastBoundary());
+    	viewPropertyDetails.setWestBoundary(propertyID.getWestBoundary());
+    	viewPropertyDetails.setSouthBoundary(propertyID.getSouthBoundary());
+    	
+    }
 }
