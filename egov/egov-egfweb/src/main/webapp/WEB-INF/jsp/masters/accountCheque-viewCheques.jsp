@@ -139,26 +139,21 @@
 									<tr>
 										<td class="blueborderfortd"><div align="center">
 												<s:property value="fromChqNo" />
-												&nbsp;
 											</div></td>
 										<td class="blueborderfortd"><div align="center">
 												<s:property value="toChqNo" />
-											</div>&nbsp;</td>
+											</div></td>
 										<td class="blueborderfortd"><div align="center">
 												<s:property value="deptName" />
-												&nbsp;
 											</div></td>
 										<td class="blueborderfortd"><div align="center">
 												<s:property value="receivedDate" />
-												&nbsp;
 											</div></td>
 										<td class="blueborderfortd"><div align="center">
 												<s:property value="serialNoH" />
-												&nbsp;
 											</div></td>
 										<td class="blueborderfortd"><div align="center">
 												<s:property value="isExhusted" />
-												&nbsp;
 											</div></td>
 
 									</tr>

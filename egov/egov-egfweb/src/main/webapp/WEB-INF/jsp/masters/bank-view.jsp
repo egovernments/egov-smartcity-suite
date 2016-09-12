@@ -38,34 +38,57 @@
   ~   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
   --%>
 
-<%@ page contentType="text/html;charset=UTF-8" language="java"%>
+
+<%@ taglib prefix="s" uri="/WEB-INF/tags/struts-tags.tld"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
-<%@ taglib uri="http://www.springframework.org/tags" prefix="spring"%>
-<%@ taglib uri="http://www.springframework.org/tags/form" prefix="form"%>
-<%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
-<%@ taglib uri="/WEB-INF/taglibs/cdn.tld" prefix="cdn"%>
-		<form:form name="lineEstimateForm" action="create-spillover" role="form" modelAttribute="lineEstimate" id="lineEstimateForm" class="form-horizontal form-groups-bordered" method="POST" enctype="multipart/form-data">
-			<form:hidden path="" name="removedLineEstimateDetailsIds" id="removedLineEstimateDetailsIds" value="" class="form-control table-input hidden-input"/>
-			<form:hidden path="" name="lineEstimateId" id="lineEstimateId" value="${lineEstimate.id}" class="form-control table-input hidden-input"/>
-			<form:hidden path="" id="workFlowAction" name="workFlowAction"/>
-			<input type="hidden" value="<spring:message code="error.quantity.required" />" id="errorQuantityValue" />
-			<div class="row">
-				<div class="col-md-12">
-					<jsp:include page="lineEstimateHeader.jsp"/>
-					<jsp:include page="lineEstimateDetails.jsp"/>
-				</div>
-			</div>
-			<jsp:include page="lineEstimateAdminSanctionDetails.jsp"></jsp:include>
-			<jsp:include page="../../common/uploadDocuments.jsp"/>
-			<div class="buttonbottom" align="center">
-				<table>
-					<tr>
-						<td id="actionButtons">
-							<input type="submit" id="<spring:message code="lbl.save" />" class="btn btn-primary"  value="<spring:message code="lbl.save" />" />
-							<input type="button" value="<spring:message code="lbl.close" />"
-							class="btn btn-default" onclick="window.close();" /></td>
-					</tr>
-				</table>
-			</div>
-		</form:form>  
-<script src="<cdn:url value='/resources/js/lineestimate/spillover/spillover.js?rnd=${app_release_no}'/>"></script>
+<%@ taglib prefix="egov" tagdir="/WEB-INF/tags"%>
+
+<%@ page language="java"%>
+<html>
+<head>
+<title><s:text name="bank.modify.new" /></title>
+<link rel="stylesheet" type="text/css"
+	href="/EGF/resources/css/jquery-ui/css/smoothness/jquery-ui-1.8.4.custom.css" />
+<link rel="stylesheet" type="text/css" media="screen"
+	href="../resources/css/jquery/ui.jqgrid.css" />
+<script>
+    var fundJson = "<s:property value='getFundsJSON()'/>";
+    var accTypeJson = <s:property value='getAccountTypesJSON()' escapeHtml='false'/>;
+    var bankAccTypeJson = "<s:property value='getBankAccountTypesJSON()'/>";
+    var autoBankGLCode =  "<s:property value='isAutoBankAccountGLCodeEnabled()'/>";
+	</script>
+<style>
+.EditTable td {
+	text-align: left;
+}
+
+.center {
+	width: 800px;
+	margin-left: auto;
+	margin-right: auto;
+}
+</style>
+</head>
+<body>
+
+	<div class="formmainbox">
+		<div class="subheadnew">
+			<s:text name="bank.view.new" />
+		</div>
+		<jsp:include page="bank-form.jsp"></jsp:include>
+	</div>
+	<div class="buttonbottom">
+		<input type="button" id="Close" value="Close"
+			onclick="javascript:window.close()" class="button" />
+	</div>
+	<script src="../resources/javascript/jquery/grid.locale-en.js"
+		type="text/javascript"></script>
+	<script src="../resources/javascript/jquery/jquery.jqGrid.min.js"
+		type="text/javascript"></script>
+	<script>
+	existingCode = '${model.code}';
+    existingName = '${model.name}';
+	viewGrid();
+    </script>
+</body>
+</html>

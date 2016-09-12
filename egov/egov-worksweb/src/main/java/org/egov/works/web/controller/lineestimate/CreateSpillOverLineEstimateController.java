@@ -221,7 +221,9 @@ public class CreateSpillOverLineEstimateController {
             if (estimateNumber != null)
                 errors.rejectValue("lineEstimateDetails[" + index + "].estimateNumber", "error.estimatenumber.unique");
             if (workIdentificationNumber != null)
-                errors.rejectValue("lineEstimateDetails[" + index + "].projectCode.code", "error.win.unique");
+                errors.rejectValue("lineEstimateDetails[" + index + "].projectCode.code", "error.win.unique");          
+            if (led.getQuantity() <= 0)
+                errors.rejectValue("lineEstimateDetails[" + index + "].quantity", "error.quantity.required");
             index++;
         }
         final SimpleDateFormat dateformatter = new SimpleDateFormat("dd/MM/yyyy");

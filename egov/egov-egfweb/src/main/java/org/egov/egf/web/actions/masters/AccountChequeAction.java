@@ -98,7 +98,7 @@ public class AccountChequeAction extends BaseFormAction {
     @Autowired
     private FinancialYearDAO financialYearDAO;
     @Autowired
-    BankAccountService bankAccountService;
+    private BankAccountService bankAccountService;
 
     private String deletedChqDeptId;
 

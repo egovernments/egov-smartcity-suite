@@ -598,12 +598,11 @@ public class LineEstimateService {
                             .equalsIgnoreCase(budgetControlTypeService.getConfigValue()))
                         doBudgetoryAppropriation(lineEstimate);
                 } else if (workFlowAction.equals(WorksConstants.REJECT_ACTION) && lineEstimate.getStatus().getCode()
-                        .equals(LineEstimateStatus.BUDGET_SANCTIONED.toString())) {
+                        .equals(LineEstimateStatus.BUDGET_SANCTIONED.toString()))
                     if (!BudgetControlType.BudgetCheckOption.NONE.toString()
                             .equalsIgnoreCase(budgetControlTypeService.getConfigValue()))
                         for (final LineEstimateDetails led : lineEstimate.getLineEstimateDetails())
                             releaseBudgetOnReject(led, null, null);
-                }
 
                 lineEstimateStatusChange(lineEstimate, workFlowAction, mode);
             } catch (final ValidationException e) {
@@ -714,7 +713,6 @@ public class LineEstimateService {
             LOG.debug(" Create WorkFlow Transition Started  ...");
         final User user = securityUtils.getCurrentUser();
         final DateTime currentDate = new DateTime();
-        final Assignment userAssignment = assignmentService.getPrimaryAssignmentForUser(user.getId());
         Position pos = null;
         Assignment wfInitiator = null;
         final String currState = "";
@@ -723,15 +721,13 @@ public class LineEstimateService {
         if (null != lineEstimate.getId())
             wfInitiator = assignmentService.getPrimaryAssignmentForUser(lineEstimate.getCreatedBy().getId());
         if (WorksConstants.REJECT_ACTION.toString().equalsIgnoreCase(workFlowAction)) {
-            if (wfInitiator.equals(userAssignment))
-                lineEstimate.transition(true).end().withSenderName(user.getUsername() + "::" + user.getName())
-                        .withComments(approvalComent).withDateInfo(currentDate.toDate()).withNatureOfTask(natureOfwork);
-            else {
-                final String stateValue = WorksConstants.WF_STATE_REJECTED;
-                lineEstimate.transition(true).withSenderName(user.getUsername() + "::" + user.getName())
-                        .withComments(approvalComent).withStateValue(stateValue).withDateInfo(currentDate.toDate())
-                        .withOwner(wfInitiator.getPosition()).withNextAction("").withNatureOfTask(natureOfwork);
-            }
+            final String stateValue = WorksConstants.WF_STATE_REJECTED;
+            lineEstimate.transition(true).withSenderName(user.getUsername() + "::" + user.getName())
+                    .withComments(approvalComent)
+                    .withStateValue(stateValue).withDateInfo(currentDate.toDate())
+                    .withOwner(wfInitiator.getPosition())
+                    .withNextAction("")
+                    .withNatureOfTask(natureOfwork);
         } else {
             if (null != approvalPosition && approvalPosition != -1 && !approvalPosition.equals(Long.valueOf(0)))
                 pos = positionMasterService.getPositionById(approvalPosition);
