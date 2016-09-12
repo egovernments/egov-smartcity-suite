@@ -45,71 +45,9 @@
 	id="councilPreambleform"
 	cssClass="form-horizontal form-groups-bordered"
 	enctype="multipart/form-data">
-		<div class="row">
-			<div class="col-md-12">
-				<div class="panel panel-primary" data-collapsed="0">
-					<div class="panel-heading">
-						<div class="panel-title">Search Preamble</div>
-					</div>
-					<div class="panel-body">
-						<div class="form-group">
-							<label class="col-sm-2 control-label text-right"><spring:message
-									code="lbl.gist.preamble" /> </label>
-							<div class="col-sm-3 add-margin">
-									<form:input path="gistOfPreamble"
-										class="form-control text-left patternvalidation"
-										data-pattern="alphanumeric" maxlength="100"  />
-									<form:errors path="gistOfPreamble" cssClass="error-msg" />
-							</div>
-							<label class="col-sm-2 control-label text-right"><spring:message
-									code="lbl.department" /> </label>
-							<div class="col-sm-3 add-margin">
-								<form:select path="department" data-first-option="false" name="approvalDepartment"
-								id="department" cssClass="form-control"
-								cssErrorClass="form-control error" >
-								<form:option value="">
-									<spring:message code="lbl.select" />
-								</form:option>
-								<form:options items="${departmentList}" itemValue="id"
-									itemLabel="name" />  
-									<form:errors path="department" cssClass="error-msg" />   
-								</form:select>
-							</div>
-						</div>
-						<div class="form-group">
-							<label class="col-sm-2 control-label text-right"><spring:message
-									code="lbl.preamble.from" /> </label>
-							<div class="col-sm-3 add-margin">
-									<form:input path=""
-										class="form-control text-left patternvalidation datepicker"
-										 data-date-end-date="0d"  />
-									<form:errors path="" cssClass="error-msg" />
-							</div>
-							<label class="col-sm-2 control-label text-right"><spring:message
-									code="lbl.preamble.to" /> </label>
-							<div class="col-sm-3 add-margin">
-								<form:input path=""
-									class="form-control text-left patternvalidation datepicker"
-									data-date-end-date="0d" />
-								<form:errors path="" cssClass="error-msg" />
-							</div>
-						</div>
-						
-					</div>
-				</div>
-				<div class="row">
-					<div class="text-center">
-						<button type='button' class='btn btn-primary ' id="btnsearchPreamble">
-							<spring:message code='lbl.search' />
-						</button>
-						<button type="reset" class="btn btn-danger"><spring:message code="lbl.reset"/></button>
-						<a href='javascript:void(0)' class='btn btn-default'
-							onclick='self.close()'><spring:message code='lbl.close' /></a>
-					</div>
-					<div class="col-md-12 text-center"> <b style="color:red"> (Search and add preamble to create agenda)</b></div>
-				</div>
-			</div>
-		</div>
+	
+		<jsp:include page="../councilpreamble/councilpreamble-search-form.jsp"/>
+		
 </form:form>
 <div class="row display-hide report-section">
 	<div class="col-md-12 table-header text-left">Preamble
@@ -163,14 +101,14 @@
 		</table>
 		<div class="row">
 					<div class="text-center">
-						<input type="submit" class='btn btn-primary' value='Save' id="btnsearch">
+						<input type="submit" class='btn btn-primary' value='Save' id="btnsave">
 					</div>
 				</div>
 	</div>
 </div>
 </form:form>
 <script>
-	$('#btnsearch').click(function(e) {
+	$('#btnsave').click(function(e) {
 		if ($('#committeeType').val()=="") {
 			alert("Please select committe type");
 			e.preventDefault();
@@ -178,7 +116,7 @@
 		}
 	});
 
-	$('#btnsearchPreamble').click(function(e) {
+	$('#btnsearch').click(function(e) {
 	
 		if ($('form').valid()) {
 			return true;

@@ -46,70 +46,9 @@
 	id="councilMeetingsearchform"
 	cssClass="form-horizontal form-groups-bordered"
 	enctype="multipart/form-data">
-	<div class="main-content">
-		<div class="row">
-			<div class="col-md-12">
-				<div class="panel panel-primary" data-collapsed="0">
-					<div class="panel-heading">
-						<div class="panel-title">Search Meeting</div>
-					</div>
-					<div class="panel-body">
+	
+	<jsp:include page="../councilMeeting/councilmeeting-search-form.jsp"/>
 
-						<div class="form-group">
-							<label class="col-sm-2 control-label text-right"><spring:message
-									code="lbl.meeting.type" /> </label>
-							<div class="col-sm-3 add-margin">
-								<form:select path="committeeType" id="committeeType"
-									cssClass="form-control" cssErrorClass="form-control error">
-									<form:option value="">
-										<spring:message code="lbl.select" />
-									</form:option>
-									<form:options items="${committeeType}" itemValue="id"
-										itemLabel="name" />
-								</form:select>
-								<form:errors path="committeeType" cssClass="error-msg" />
-							</div>
-							<label class="col-sm-2 control-label text-right"><spring:message
-							code="lbl.meeting.number" /> </label>
-							<div class="col-sm-3 add-margin">
-								<form:input type="text" cssClass="form-control"
-									path="meetingNumber" id="meetingNumber"/>
-								<form:errors path="meetingNumber" cssClass="error-msg" />
-							</div>
-						</div>
-
-						<div class="form-group">
-							<label class="col-sm-2 control-label text-right"><spring:message
-									code="lbl.meeting.date" /> </label>
-							<div class="col-sm-3 add-margin">
-								<form:input path="fromDate"
-									class="form-control text-left patternvalidation dateval"
-									data-date-end-date="0d" />
-								<form:errors path="fromDate" cssClass="error-msg" />
-							</div>
-							<label class="col-sm-2 control-label text-right"><spring:message
-									code="lbl.meeting.date" /> </label>
-							<div class="col-sm-3 add-margin">
-								<form:input type="text" cssClass="form-control datepicker"
-									path="toDate" id="meetingDate" />
-								<form:errors path="toDate" cssClass="error-msg" />
-							</div>
-						</div>
-						<input type="hidden" id="mode" name="mode" value="${mode}" />
-					</div>
-				</div>
-			</div>
-		</div>
-		<div class="form-group">
-			<div class="text-center">
-				<button type='button' class='btn btn-primary' id="btnsearch">
-					<spring:message code='lbl.search' />
-				</button>
-				<button type="reset" class="btn btn-danger"><spring:message code="lbl.reset"/></button>
-				<a href='javascript:void(0)' class='btn btn-default'
-					onclick='self.close()'><spring:message code='lbl.close' /></a>
-			</div>
-		</div>
 </form:form>
 <div class="row display-hide report-section">
 	<div class="col-md-12 table-header text-left">Council Meeting

@@ -158,7 +158,7 @@ function addReadOnlyRow(btn)
 }
 
 
-jQuery('#btnsearchPreamble').click(function(e) {
+jQuery('#btnsearch').click(function(e) {
 	callAjaxSearch();
 });
 
@@ -243,52 +243,6 @@ function callAjaxSearch() {
 
 $(document).ready(function() {
 	
-	/*jQuery( ".dateval" ).datepicker({ 
-   	 format: 'dd/mm/yyyy',
-   	 autoclose:true,
-        onRender: function(date) {
-     	    return date.valueOf() < now.valueOf() ? 'disabled' : '';
-     	  }
-	  }).on('changeDate', function(ev) {
-		  var electiondate = jQuery('#electionDate').val();
-		  var oathdate = jQuery('#oathDate').val();
-		  if(electiondate && oathdate){
-			  DateValidation1(electiondate , oathdate);
-		  }
-		 
-	  }).data('datepicker');*/
-/*	
-	function DateValidation1(start , end){
-	    if (start != "" && end != "") {
-			var stsplit = start.split("/");
-			var ensplit = end.split("/");
-			
-			start = stsplit[1] + "/" + stsplit[0] + "/" + stsplit[2];
-			end = ensplit[1] + "/" + ensplit[0] + "/" + ensplit[2];
-			
-			return ValidRange(start, end);
-		}else{
-			return true;
-		}
-	}
-
-	function ValidRange(start, end) {
-		var retvalue = false;
-	    var startDate = Date.parse(start);
-	    var endDate = Date.parse(end);
-		
-	    // Check the date range, 86400000 is the number of milliseconds in one day
-	    var difference = (endDate - startDate) / (86400000 * 7);
-	    if (difference < 0) {
-			bootbox.alert("Oath date should be greater than Election date");
-			$('#oathDate').val('').datepicker("refresh");
-			
-			} else {
-			retvalue = true;
-		}
-	    return retvalue;
-	}*/
-
 	$("#agendaTable tbody").on('click','tr td .delete',function(event) {
 		if($(tbody).find('tr').length==1)
 		{	bootbox.alert("You cannot delete this row.");
