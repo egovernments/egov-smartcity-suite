@@ -109,13 +109,13 @@
 							<td>
 								<span class="activityUom_0"></span>
 							</td>
-							<td align="right">
+							<td class="text-right">
 								<span class="activityRate_0"></span>
 							</td>
-							<td>
+							<td class="text-right">
 								<span class="activityEstimateQuantity_0"></span>
 							</td>
-							<td>
+							<td class="text-right">
 								<span class="activityConsumedQuantity_0"></span>
 							</td>
 							<td>
@@ -139,10 +139,10 @@
 	                            <input class="classmsopen" type="hidden" disabled="disabled" name="changeQuantityActivities[0].msopen" id="changeQuantityActivities[0].msopen" data-idx="0"/>
 								<span  class="changeQuantityActivities[0].mstd" id="changeQuantityActivities[0].mstd" data-idx="0"></span>
 							</td>
-							<td>
+							<td class="text-right">
 								<span class="reActivityTotal activityEstimatedAmount_0"></span>
 							</td>
-							<td>
+							<td class="text-right">
 								<span class="activityTotal activityTotal_0"></span>
 							</td>
 							<td>
@@ -177,13 +177,13 @@
 								<td>
 									<span class="activityUom_${item.index }">${activity.uom.uom }</span>
 								</td>
-								<td align="right">
+								<td class="text-right">
 									<span class="activityRate_${item.index }"><fmt:formatNumber groupingUsed="false" minFractionDigits="2" maxFractionDigits="4">${activity.estimateRate }</fmt:formatNumber></span>
 								</td>
 								<td>
 									<span class="activityEstimateQuantity_${item.index }"><fmt:formatNumber groupingUsed="false" minFractionDigits="2" maxFractionDigits="4">${activity.estimateQuantity }</fmt:formatNumber></span>
 								</td>
-								<td>
+								<td class="text-right">
 									<span class="activityConsumedQuantity_${item.index }"><fmt:formatNumber groupingUsed="false" minFractionDigits="2" maxFractionDigits="4">${activity.consumedQuantity }</fmt:formatNumber></span>
 								</td>
 								<td>
@@ -240,10 +240,10 @@
 										<%@ include file="../measurementsheet/changequantity-measurementsheet-formtableedit.jsp"%>
 									</span>
 								</td>
-								<td>
+								<td class="text-right">
 									<span class="reActivityTotal activityEstimatedAmount_${item.index }"><fmt:formatNumber groupingUsed="false" minFractionDigits="2" maxFractionDigits="4">${activity.rate * activity.quantity }</fmt:formatNumber></span>
 								</td>
-								<td>
+								<td class="text-right">
 									<c:if test="${activity.revisionType == 'ADDITIONAL_QUANTITY' }">
 										<span class="activityTotal activityTotal_${item.index }"><fmt:formatNumber groupingUsed="false" minFractionDigits="2" maxFractionDigits="4">${activity.rate * (activity.quantity + activity.estimateQuantity) }</fmt:formatNumber></span>
 									</c:if>

@@ -120,14 +120,6 @@ function callAjaxSearch() {
                              "mColumns": [0,1,2,3,4,5,6,7]
 			             }],
 				},
-				"fnRowCallback" : function(row, data, index) {
-					$('td:eq(8)', row)
-					.html(
-							'<select id="actionDropdown" class="form-control" onchange="renderAction('
-									+ data.id
-									+ ', this.value)"><option value="">Select from below</option><option value="1">View Revision Estimate</option></select>');
-					return row;
-				},
 				aaSorting: [],				
 				columns : [
 				   {	
@@ -155,7 +147,12 @@ function callAjaxSearch() {
 					} ,{
 					"data" : "status","sWidth" : "10"} ,{
 					"data" : "currentOwner"},{
-					"data" : "","width": "7%"} ]				
+					"data" : "","width": "14%",
+					"render" : function(data, type, row) {
+						return '<a href="javascript:void(0);" onclick="renderAction('+row.id+');" data-hiddenele="viewRE" data-eleval="'
+						+ 'View Revision Estimate' + '">' + 'View Revision Estimate' + '</a>';
+						}
+					} ]				
 				});
 		
 }

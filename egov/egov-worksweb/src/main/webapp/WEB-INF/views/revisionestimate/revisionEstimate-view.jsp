@@ -123,13 +123,18 @@
 				<jsp:include page="../common/commonWorkflowhistory-view.jsp"></jsp:include>
 			</div>
 		</c:if>
-		<c:if test="${mode != 'view' }">
+	<c:choose>
+		<c:when test="${mode != 'view' }">
 			<jsp:include page="../common/commonWorkflowMatrix.jsp"/>
 			<div class="buttonbottom" align="center">
 				<jsp:include page="../common/commonWorkflowMatrix-button.jsp" />
 	                   
 			</div>
-		</c:if>	
+		</c:when>
+		<c:otherwise>
+			<a href="javascript:void(0)" class="btn btn-default" onclick="self.close()"><spring:message code="lbl.close" /></a>
+		</c:otherwise>
+	</c:choose>
 </form:form> 
 <script type="text/javascript" src="<cdn:url value='/resources/js/revisionestimate/revisionestimate.js?rnd=${app_release_no}'/>"></script>
 <script src="<cdn:url value='/resources/global/js/egov/inbox.js?rnd=${app_release_no}' context='/egi'/>"></script>

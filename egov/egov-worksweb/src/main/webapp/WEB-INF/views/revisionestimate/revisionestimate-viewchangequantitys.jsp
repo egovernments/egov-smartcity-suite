@@ -104,10 +104,10 @@
 								 	</td> 
 								 	<td><c:out value="${sorDtls.uom.uom}"></c:out></td>
 								 	<td class="text-right"><fmt:formatNumber groupingUsed="false" minFractionDigits="2" maxFractionDigits="2"><c:out value="${sorDtls.rate}"></c:out></fmt:formatNumber></td>
-								 	<td>
+								 	<td class="text-right">
 										<span class="activityEstimateQuantity_${item.index }"><fmt:formatNumber groupingUsed="false" minFractionDigits="2" maxFractionDigits="4">${sorDtls.estimateQuantity }</fmt:formatNumber></span>
 									</td>
-									<td>
+									<td class="text-right">
 										<span class="activityConsumedQuantity_${item.index }"><fmt:formatNumber groupingUsed="false" minFractionDigits="2" maxFractionDigits="4">${sorDtls.consumedQuantity }</fmt:formatNumber></span>
 									</td>
 								 	<td class="text-right">
@@ -124,7 +124,7 @@
 										<td class="text-right"><c:out value="${sorDtls.serviceTaxPerc}"></c:out></td>
 										<td class="text-right"><fmt:formatNumber groupingUsed="false" minFractionDigits="2" maxFractionDigits="2">${(sorDtls.getAmount().value) * (sorDtls.serviceTaxPerc / 100) }</fmt:formatNumber></td>
 									</c:if>
-									<td>
+									<td class="text-right">
 										<c:if test="${sorDtls.revisionType == 'ADDITIONAL_QUANTITY' }">
 											<span class="activityTotal activityTotal_${item.index }"><fmt:formatNumber groupingUsed="false" minFractionDigits="2" maxFractionDigits="4">${sorDtls.rate * (sorDtls.quantity + sorDtls.estimateQuantity) }</fmt:formatNumber></span>
 										</c:if>
