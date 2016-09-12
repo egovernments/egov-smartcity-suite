@@ -930,8 +930,10 @@ public class EstimateService {
         final List<AbstractEstimateForLoaSearchResult> abstractEstimateForLoaSearchResults = new ArrayList<AbstractEstimateForLoaSearchResult>();
         for (final AbstractEstimate ae : abstractEstimates) {
             final AbstractEstimateForLoaSearchResult result = new AbstractEstimateForLoaSearchResult();
-            if (ae.getLineEstimateDetails() != null)
+            if (ae.getLineEstimateDetails() != null){
                 result.setAdminSanctionNumber(ae.getLineEstimateDetails().getLineEstimate().getAdminSanctionNumber());
+                result.setLeId(ae.getLineEstimateDetails().getLineEstimate().getId());
+            }
             result.setAeId(ae.getId());
             result.setCreatedBy(ae.getCreatedBy().getName());
             result.setEstimateAmount(ae.getEstimateValue());
