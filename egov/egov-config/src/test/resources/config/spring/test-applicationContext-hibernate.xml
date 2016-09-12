@@ -47,12 +47,12 @@
           class="org.springframework.beans.factory.config.PropertiesFactoryBean">
         <property name="locations">
             <list>
-                <value>classpath*:config/persistence-config.properties</value>
                 <value>classpath*:config/egov-erp-${user.name}.properties</value>
             </list>
         </property>
 
         <property name="ignoreResourceNotFound" value="true"/>
+		<property name="localOverride" value="true"/>
     </bean> 
 
     <bean id="globalPropertyConfigurer" class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
@@ -97,7 +97,7 @@
 		<property name="driverClassName" value="${db.driver}" />
 		<property name="url" value="${db.url}" />
 		<property name="initialSize" value="1" />
-		<property name="username" value="${db.username}" />
+		<property name="username" value="${db.user}" />
 		<property name="password" value="${db.password}" />
 	</bean>
 
