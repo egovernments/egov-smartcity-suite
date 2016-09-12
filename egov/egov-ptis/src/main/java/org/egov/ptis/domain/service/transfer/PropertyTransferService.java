@@ -41,6 +41,7 @@ package org.egov.ptis.domain.service.transfer;
 
 import static org.egov.ptis.constants.PropertyTaxConstants.ADDTIONAL_RULE_REGISTERED_TRANSFER;
 import static org.egov.ptis.constants.PropertyTaxConstants.APPLICATION_TYPE_TRANSFER_OF_OWNERSHIP;
+import static org.egov.ptis.constants.PropertyTaxConstants.COMMISSIONER_DESGN;
 import static org.egov.ptis.constants.PropertyTaxConstants.FILESTORE_MODULE_NAME;
 import static org.egov.ptis.constants.PropertyTaxConstants.NATURE_TITLE_TRANSFER;
 import static org.egov.ptis.constants.PropertyTaxConstants.NOTICE_TYPE_MUTATION_CERTIFICATE;
@@ -66,6 +67,8 @@ import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang.StringUtils;
 import org.egov.demand.utils.DemandConstants;
 import org.egov.eis.entity.Assignment;
+import org.egov.eis.service.DesignationService;
+import org.egov.eis.service.EisCommonService;
 import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.admin.master.service.CityService;
 import org.egov.infra.admin.master.service.UserService;
@@ -206,6 +209,12 @@ public class PropertyTransferService {
     @Autowired
     @Qualifier("mutationRegistrationService")
     private PersistenceService<MutationRegistrationDetails, Long> mutationRegistrationService;
+    
+    @Autowired
+    private EisCommonService eisCommonService;
+    
+    @Autowired
+    private DesignationService designationService;
     
     @Transactional
     public void initiatePropertyTransfer(final BasicProperty basicProperty, final PropertyMutation propertyMutation) {
@@ -396,8 +405,12 @@ public class PropertyTransferService {
             noticeBean.setMunicipalityName(cityName);
             BasicProperty basicProp = propertyMutation.getBasicProperty();
             final Map<String, Object> reportParams = new HashMap<String, Object>();
+            final List<User> users = eisCommonService.getAllActiveUsersByGivenDesig(designationService
+                    .getDesignationByName(COMMISSIONER_DESGN).getId());
+            noticeBean.setApproverName(users.get(0).getName());
             reportParams.put("userSignature", securityUtils.getCurrentUser().getSignature() != null ? new ByteArrayInputStream(securityUtils.getCurrentUser().getSignature()) : null);
             reportParams.put("isCorporation", isCorporation);
+            noticeBean.setNoticeNumber(notice!=null ? notice.getNoticeNo() : "N/A");
             noticeBean.setOldOwnerName(propertyMutation.getFullTranferorName());
             noticeBean.setOldOwnerParentName(propertyMutation.getFullTransferorGuardianName());
             noticeBean.setNewOwnerName(propertyMutation.getFullTranfereeName());
