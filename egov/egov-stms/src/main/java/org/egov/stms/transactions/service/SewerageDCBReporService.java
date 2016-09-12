@@ -89,10 +89,12 @@ public class SewerageDCBReporService {
         List<SewerageRateDCBResult> rateResultList = new ArrayList<SewerageRateDCBResult>();
         Map<String, Map<Date, BigDecimal>> receiptMap = null;
         Map<Date, BigDecimal> receiptDtlMap  = null;
+        Map<String, Map<String, Map<Date, BigDecimal>>> receiptApplDtlMap = null;
         final HashMap<String, SewerageRateDCBResult> sewerageReportMap = new HashMap<String, SewerageRateDCBResult>();
         if (sewerageApplicationDetails.getConnection() != null ) {
            
             SewerageRateDCBResult dcbResult = new SewerageRateDCBResult();
+            if(sewerageApplicationDetails.getCurrentDemand()!=null && sewerageApplicationDetails.getCurrentDemand().getEgDemandDetails()!=null){
             for (EgDemandDetails demandDtl : sewerageApplicationDetails.getCurrentDemand().getEgDemandDetails()) {
                 final SewerageRateDCBResult rateResult = sewerageReportMap
                         .get(demandDtl.getEgDemandReason().getEgInstallmentMaster().getDescription());
@@ -138,23 +140,24 @@ public class SewerageDCBReporService {
                     sewerageReportMap.put(demandDtl.getEgDemandReason().getEgInstallmentMaster().getDescription(), dcbResult);
                 }
             }
-     
-            receiptMap = new TreeMap<String, Map<Date, BigDecimal>>();
+        }
+           
+            receiptApplDtlMap = new TreeMap<String, Map<String, Map<Date, BigDecimal>>>();
+           
            for(SewerageApplicationDetails detail : sewerageApplicationDetails.getConnection().getApplicationDetails()){
+               receiptMap = new TreeMap<String, Map<Date, BigDecimal>>();
             if(detail.getCurrentDemand()!=null && !detail.getCurrentDemand().getEgDemandDetails().isEmpty())
                for (EgDemandDetails demandDetail : detail.getCurrentDemand().getEgDemandDetails()) {
-                receiptDtlMap = new HashMap<Date, BigDecimal>();
-
+                   receiptDtlMap = new HashMap<Date, BigDecimal>();
                 for (EgdmCollectedReceipt receipt : demandDetail.getEgdmCollectedReceipts()) {
                     receiptDtlMap.put(receipt.getReceiptDate(), receipt.getAmount().setScale(2, BigDecimal.ROUND_HALF_UP));
                     receiptMap.put(receipt.getReceiptNumber(), receiptDtlMap);
+                    
                 }
-
+                receiptApplDtlMap.put(detail.getApplicationNumber(), receiptMap);
             }
            }
-            
-            dcbResult.setReceipts(receiptMap);
-            dcbResult.setApplicationNumber(sewerageApplicationDetails.getApplicationNumber());
+           dcbResult.setReceipts(receiptApplDtlMap);
             
             if (sewerageReportMap.size() > 0) {
                 sewerageReportMap.forEach((key, value) -> {

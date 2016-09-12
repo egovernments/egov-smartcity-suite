@@ -257,15 +257,17 @@
 										</thead>
 										<c:set var="totalReceiptAmount" value="${0}" />
 										
-										<c:forEach var="egdmCollectedReceipts" items="${dcb.receipts}">
-											<tr>
-												<td align="center"><a class="open-popup" href="/collection/citizen/onlineReceipt-viewReceipt.action?receiptNumber=${egdmCollectedReceipts.key}&consumerCode=${dcb.applicationNumber}&serviceCode=STAX" >${egdmCollectedReceipts.key}</a></td>
-												<c:forEach var="receiptObject" items="${egdmCollectedReceipts.value}">
-													<td align="center">${receiptObject.value}</td> 
-													<td align="center">${receiptObject.key}</td>
-													<c:set var="totalReceiptAmount" value="${totalReceiptAmount+receiptObject.value}" />
-												</c:forEach>
-											</tr>
+										<c:forEach var="receiptApplMap" items="${dcb.receipts}">
+											<c:forEach var="egdmCollectedReceipts" items = "${receiptApplMap.value}">
+												<tr>
+													<td align="center"><a class="open-popup" href="/collection/citizen/onlineReceipt-viewReceipt.action?receiptNumber=${egdmCollectedReceipts.key}&consumerCode=${receiptApplMap.key}&serviceCode=STAX" >${egdmCollectedReceipts.key}</a></td>
+													<c:forEach var="receiptObject" items="${egdmCollectedReceipts.value}">
+														<td align="center">${receiptObject.value}</td> 
+														<td align="center">${receiptObject.key}</td>
+														<c:set var="totalReceiptAmount" value="${totalReceiptAmount+receiptObject.value}" />
+													</c:forEach>
+												</tr>
+											</c:forEach>
 										</c:forEach>
 										<tfoot>
 											<td align="right">TOTAL</td>

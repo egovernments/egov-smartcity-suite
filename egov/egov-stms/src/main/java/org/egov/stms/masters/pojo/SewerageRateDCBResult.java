@@ -30,7 +30,7 @@ public class SewerageRateDCBResult {
     
     private BigDecimal advanceAmount = BigDecimal.ZERO.setScale(2, BigDecimal.ROUND_HALF_UP);
     
-    private Map<String, Map<Date, BigDecimal>> receipts=new HashMap<String, Map<Date, BigDecimal>>();
+    private Map<String, Map<String, Map<Date, BigDecimal>>> receipts = new HashMap <String, Map<String, Map<Date, BigDecimal>>>();
     
     public String getInstallmentYearDescription() {
         return installmentYearDescription;
@@ -93,12 +93,6 @@ public class SewerageRateDCBResult {
     public void setRecieptAmountCollected(BigDecimal recieptAmountCollected) {
         this.recieptAmountCollected = recieptAmountCollected;
     }
-    /*public List<EgdmCollectedReceipt> getReceipts() {
-        return receipts;
-    }
-    public void setReceipts(List<EgdmCollectedReceipt> receipts) {
-        this.receipts = receipts;
-    }*/
     public Integer getInstallmentYearId() {
         return installmentYearId;
     }
@@ -111,17 +105,16 @@ public class SewerageRateDCBResult {
     public void setApplicationNumber(String applicationNumber) {
         this.applicationNumber = applicationNumber;
     }
-    public Map<String, Map<Date, BigDecimal>> getReceipts() {
-        return receipts;
-    }
-    public void setReceipts(Map<String, Map<Date, BigDecimal>> receipts) {
-        this.receipts = receipts;
-    }
     public BigDecimal getAdvanceAmount() {
         return advanceAmount;
     }
     public void setAdvanceAmount(BigDecimal advanceAmount) {
         this.advanceAmount = advanceAmount;
     }
-   
+    public Map<String, Map<String, Map<Date, BigDecimal>>> getReceipts() {
+        return receipts;
+    }
+    public void setReceipts(Map<String, Map<String, Map<Date, BigDecimal>>> receipts) {
+        this.receipts = receipts;
+    }
 }
