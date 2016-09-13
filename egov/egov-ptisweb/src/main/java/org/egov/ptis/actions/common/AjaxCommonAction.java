@@ -509,6 +509,7 @@ public class AjaxCommonAction extends BaseFormAction implements ServletResponseA
     					mutationFee = (documentValue.multiply(mutationFeeDetails.getPercentage())).divide(PropertyTaxConstants.BIGDECIMAL_100);
     				}
     			}
+    			mutationFee = mutationFee.setScale(2, BigDecimal.ROUND_HALF_UP);
     		}
     	}
     	return RESULT_MUTATION_FEE;

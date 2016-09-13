@@ -702,7 +702,7 @@ public class PropertyTransferService {
     			}
     		}
     	}
-    	return mutationFee;
+    	return mutationFee.setScale(2, BigDecimal.ROUND_HALF_UP);
     }
     
     /**
