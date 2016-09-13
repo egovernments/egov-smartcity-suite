@@ -67,6 +67,8 @@ import org.egov.works.models.contractorBill.ContractorBillCertificateInfo;
 import org.egov.works.models.tender.OfflineStatus;
 import org.egov.works.offlinestatus.service.OfflineStatusService;
 import org.egov.works.utils.WorksConstants;
+import org.egov.works.utils.WorksUtils;
+import org.egov.works.workorder.entity.WorkOrder.OfflineStatuses;
 import org.egov.works.workorder.entity.WorkOrderActivity;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
@@ -97,6 +99,9 @@ public class CompletionCertificatePDFController {
     
     @Autowired
     private MBDetailsService mbDetailsService;
+    
+    @Autowired
+    private WorksUtils worksUtils;
 
     public static final String CONTRACTORCOMPLETIONBILLPDF = "completionCertificate";
 
@@ -120,21 +125,25 @@ public class CompletionCertificatePDFController {
 
             final String url = WebUtils.extractRequestDomainURL(request, false);
             
-            final OfflineStatus offlineStatusses = offlineStatusService.getLastOfflineStatusByObjectIdAndObjectType(
-            		contractorBillRegister.getWorkOrderEstimate().getWorkOrder().getId(), WorksConstants.WORKORDER);
-            
+            final OfflineStatus offlineStatusses = offlineStatusService.getOfflineStatusByObjectIdAndObjectTypeAndStatus(
+            		contractorBillRegister.getWorkOrderEstimate().getWorkOrder().getId(), WorksConstants.WORKORDER,
+                    OfflineStatuses.WORK_COMMENCED.toString().toUpperCase());
+            		
             reportParams.put("nameOfWork",
                     contractorBillRegister.getWorkOrderEstimate().getEstimate().getName() != null
                             ? contractorBillRegister.getWorkOrderEstimate().getEstimate().getName() : "");
-            if(contractorBillRegister.getWorkOrderEstimate().getEstimate().getLineEstimateDetails() != null)
+            if(contractorBillRegister.getWorkOrderEstimate().getEstimate().getLineEstimateDetails() != null){
             	reportParams.put("estimateNumber",
                     contractorBillRegister.getWorkOrderEstimate().getEstimate().getLineEstimateDetails().getEstimateNumber());
-            else
+            	reportParams.put("winCode",contractorBillRegister.getWorkOrderEstimate().getEstimate().getLineEstimateDetails().getProjectCode().getCode());
+            }
+            else {
             	reportParams.put("estimateNumber","NA");
+            	reportParams.put("winCode","NA");
+            }
 
             reportParams.put("estimateValue",df.format(contractorBillRegister.getWorkOrderEstimate().getEstimate().getEstimateValue()));
 
-            reportParams.put("winCode",contractorBillRegister.getWorkOrderEstimate().getWorkOrder().getWorkOrderNumber());
             reportParams.put("contractorName",
                     contractorBillRegister.getWorkOrderEstimate().getWorkOrder().getContractor().getName() != null
                             ? contractorBillRegister.getWorkOrderEstimate().getWorkOrder().getContractor().getName() : "");
@@ -146,6 +155,9 @@ public class CompletionCertificatePDFController {
             reportParams.put("workCommencedOn", DateUtils.getFormattedDate(offlineStatusses.getStatusDate(), "dd/MM/yyyy"));
             reportParams.put("workCompletedDate", DateUtils.getFormattedDate(contractorBillRegister.getWorkOrderEstimate().getWorkCompletionDate(), "dd/MM/yyyy"));
             
+            reportParams.put("crearedBy", worksUtils.getUserDesignation(contractorBillRegister.getCreatedBy()));
+            reportParams.put("approvedBy", worksUtils.getUserDesignation(contractorBillRegister.getApprovedBy()));
+            reportParams.put("ward", contractorBillRegister.getWorkOrderEstimate().getEstimate().getWard().getName());
             reportParams.put("cityLogo", url.concat(ReportConstants.IMAGE_CONTEXT_PATH)
                     .concat((String) request.getSession().getAttribute("citylogo")));
 

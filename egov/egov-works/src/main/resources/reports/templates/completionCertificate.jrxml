@@ -39,7 +39,7 @@
   ~   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
   -->
 <!-- Created with Jaspersoft Studio version 6.3.0.final using JasperReports Library version 6.3.0  -->
-<!-- 2016-08-26T15:42:19 -->
+<!-- 2016-09-13T16:20:58 -->
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="completionCertificate" pageWidth="842" pageHeight="595" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" isFloatColumnFooter="true" resourceBundle="custom" uuid="1bd30b92-7e6e-4bbd-aa76-f4a63208a99c">
 	<property name="ireport.zoom" value="1.0"/>
 	<property name="ireport.x" value="0"/>
@@ -61,6 +61,9 @@
 	<parameter name="workOrderNumber" class="java.lang.String"/>
 	<parameter name="workCommencedOn" class="java.lang.String"/>
 	<parameter name="workCompletedDate" class="java.lang.String"/>
+	<parameter name="crearedBy" class="java.lang.String"/>
+	<parameter name="approvedBy" class="java.lang.String"/>
+	<parameter name="ward" class="java.lang.String"/>
 	<field name="workOrderActivity" class="org.egov.works.workorder.entity.WorkOrderActivity"/>
 	<field name="executionQuantity" class="java.lang.Double"/>
 	<field name="tenderQuantity" class="java.lang.Double"/>
@@ -151,7 +154,9 @@
 			</band>
 			<band height="30">
 				<textField isStretchWithOverflow="true">
-					<reportElement stretchType="RelativeToTallestObject" x="20" y="0" width="264" height="30" uuid="95a2d6b8-a1b3-4d07-9ee4-e47e7bb4494d"/>
+					<reportElement stretchType="RelativeToTallestObject" x="286" y="0" width="264" height="30" uuid="95a2d6b8-a1b3-4d07-9ee4-e47e7bb4494d">
+						<property name="com.jaspersoft.studio.unit.x" value="pixel"/>
+					</reportElement>
 					<box>
 						<topPen lineStyle="Solid" lineColor="#000000"/>
 						<leftPen lineStyle="Solid" lineColor="#000000"/>
@@ -162,8 +167,9 @@
 					<textFieldExpression><![CDATA["<style forecolor=\"#000000\" isBold=\"true\" pdfEncoding=\"Cp1252\" isPdfEmbedded=\"true\">Work completed on : </style>"+$P{workCompletedDate}]]></textFieldExpression>
 				</textField>
 				<textField>
-					<reportElement stretchType="RelativeToTallestObject" x="286" y="0" width="264" height="30" uuid="a8cef7fe-1620-473c-94dc-8c55ff86c9a3">
+					<reportElement stretchType="RelativeToTallestObject" x="20" y="0" width="264" height="30" uuid="a8cef7fe-1620-473c-94dc-8c55ff86c9a3">
 						<property name="com.jaspersoft.studio.unit.width" value="pixel"/>
+						<property name="com.jaspersoft.studio.unit.x" value="pixel"/>
 					</reportElement>
 					<box>
 						<topPen lineStyle="Solid" lineColor="#000000"/>
@@ -172,7 +178,7 @@
 						<rightPen lineStyle="Solid" lineColor="#000000"/>
 					</box>
 					<textElement verticalAlignment="Middle" markup="styled"/>
-					<textFieldExpression><![CDATA["<style forecolor=\"#000000\" isBold=\"true\" pdfEncoding=\"Cp1252\" isPdfEmbedded=\"true\">Work completed on : </style>"+$P{workCommencedOn}]]></textFieldExpression>
+					<textFieldExpression><![CDATA["<style forecolor=\"#000000\" isBold=\"true\" pdfEncoding=\"Cp1252\" isPdfEmbedded=\"true\">Work commenced on : </style>"+$P{workCommencedOn}]]></textFieldExpression>
 				</textField>
 			</band>
 			<band height="50">
@@ -596,6 +602,39 @@
 		</band>
 	</pageFooter>
 	<summary>
-		<band height="20" splitType="Stretch"/>
+		<band height="103" splitType="Stretch">
+			<textField>
+				<reportElement x="336" y="51" width="100" height="30" uuid="53f10ef4-59be-4b11-9053-c518bdf43a05">
+					<property name="com.jaspersoft.studio.unit.x" value="pixel"/>
+				</reportElement>
+				<textFieldExpression><![CDATA[$P{crearedBy}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="336" y="26" width="100" height="30" uuid="dbeb1cd6-900c-4c2e-895b-bbadeb6d6f7a"/>
+				<text><![CDATA[Yours Faithfullly]]></text>
+			</staticText>
+			<textField>
+				<reportElement x="337" y="67" width="100" height="30" uuid="55b2c177-5fb7-44c7-9595-10d50ba244bb">
+					<property name="com.jaspersoft.studio.unit.x" value="pixel"/>
+				</reportElement>
+				<textFieldExpression><![CDATA[$P{ward} +" , "+ $P{cityName}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="641" y="67" width="100" height="30" uuid="1c07b68e-c88d-4387-ba5d-35f417212448">
+					<property name="com.jaspersoft.studio.unit.x" value="pixel"/>
+				</reportElement>
+				<textFieldExpression><![CDATA[$P{ward} +" , "+ $P{cityName}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="640" y="51" width="100" height="30" uuid="9dbc41be-b80b-45fc-b5d1-73808b2c4c71">
+					<property name="com.jaspersoft.studio.unit.x" value="pixel"/>
+				</reportElement>
+				<textFieldExpression><![CDATA[$P{approvedBy}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="640" y="26" width="100" height="30" uuid="9e641e95-5bd9-43b6-9c22-022a1a5fbf23"/>
+				<text><![CDATA[Yours Faithfullly]]></text>
+			</staticText>
+		</band>
 	</summary>
 </jasperReport>
