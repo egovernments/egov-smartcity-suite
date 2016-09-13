@@ -112,14 +112,11 @@ public class DefaultersReport {
         this.locality = locality;
     }
 
-
-  
-
     public BigInteger getDemandId() {
         return demandId;
     }
 
-    public void setDemandId(BigInteger demandId) {
+    public void setDemandId(final BigInteger demandId) {
         this.demandId = demandId;
     }
 
