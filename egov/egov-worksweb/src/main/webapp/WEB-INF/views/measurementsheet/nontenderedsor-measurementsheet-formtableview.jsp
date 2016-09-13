@@ -45,10 +45,10 @@
 <c:when test="${sorDtls.measurementSheetList.size() > 0 }">
 <c:set var="net" value="0" />      
  <td hidden="true">
-                             <input class="classmspresent" type="hidden" disabled="disabled" name="nonTenderedActivities[${item.index }].mspresent" value="1" id="nonTenderedActivities[${item.index }].mspresent" data-idx="0"/>
-                             <input class="classmsopen" type="hidden" disabled="disabled" name="nonTenderedActivities[${item.index }].msopen" value="0" id="nonTenderedActivities[${item.index }].msopen" data-idx="0"/>
+                             <input class="classmspresent" type="hidden" disabled="disabled" name="nonTenderedSORActivities[${item.index }].mspresent" value="1" id="nonTenderedSORActivities[${item.index }].mspresent" data-idx="0"/>
+                             <input class="classmsopen" type="hidden" disabled="disabled" name="nonTenderedSORActivities[${item.index }].msopen" value="0" id="nonTenderedSORActivities[${item.index }].msopen" data-idx="0"/>
                        
-                             <span name="nonTenderedActivities[${item.index }].mstd" class="nonTenderedActivities[${item.index }].mstd" id="nonTenderedActivities[${item.index }].mstd" data-idx="0">
+                             <span name="nonTenderedSORActivities[${item.index }].mstd" class="nonTenderedSORActivities[${item.index }].mstd" id="nonTenderedSORActivities[${item.index }].mstd" data-idx="0">
     <!--only for validity head start -->                         
     <table>
     <tr>  
@@ -56,7 +56,7 @@
             <div class="view-content" style="color:#f2851f"><spring:message code="lbl.measurementsheet" /> <div class="pull-right"><span class="glyphicon glyphicon-remove-circle error-msg hide-ms" style="cursor:pointer;font-size:16px;"></span></div>
             </div>
 
-            <table class=" table table-bordered msheet-table" id="nonTenderedActivities[${item.index }].mstable">
+            <table class=" table table-bordered msheet-table" id="nonTenderedSORActivities[${item.index }].mstable">
                 <thead>
                 <th><spring:message code="lbl.slno" /></th>
                 <th><spring:message code="lbl.identifier" /></th>
@@ -114,7 +114,7 @@
                         
                     </td>
                     <td class="text-right"><spring:message code="lbl.subtotal" /></td>
-                    <td id="nonTenderedActivities[${item.index }].msnet"  class="text-right">${net}</td>
+                    <td id="nonTenderedSORActivities[${item.index }].msnet"  class="text-right">${net}</td>
                 </tr>
                 
                 <tbody>
@@ -129,9 +129,9 @@
 </c:when>
 <c:otherwise>
 <td hidden="true">
-<input class="classmspresent" type="hidden" disabled="disabled" name="nonTenderedActivities[${item.index }].mspresent" value="0" id="nonTenderedActivities[${item.index }].mspresent" data-idx="0"/>
-<input class="classmsopen" type="hidden" disabled="disabled" name="nonTenderedActivities[${item.index }].msopen" value="0" id="nonTenderedActivities[${item.index }].msopen" data-idx="0"/>
-<span  class="nonTenderedActivities[${item.index }].mstd" id="nonTenderedActivities[${item.index }].mstd" data-idx="${item.index }"></span>
+<input class="classmspresent" type="hidden" disabled="disabled" name="nonTenderedSORActivities[${item.index }].mspresent" value="0" id="nonTenderedSORActivities[${item.index }].mspresent" data-idx="0"/>
+<input class="classmsopen" type="hidden" disabled="disabled" name="nonTenderedSORActivities[${item.index }].msopen" value="0" id="nonTenderedSORActivities[${item.index }].msopen" data-idx="0"/>
+<span  class="nonTenderedSORActivities[${item.index }].mstd" id="nonTenderedSORActivities[${item.index }].mstd" data-idx="${item.index }"></span>
 </td>
 </c:otherwise>
 </c:choose>

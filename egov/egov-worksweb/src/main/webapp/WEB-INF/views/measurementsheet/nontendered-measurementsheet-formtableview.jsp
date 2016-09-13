@@ -42,21 +42,21 @@
 
  
 <c:choose>
-<c:when test="${nonSorDtls.measurementSheetList.size() > 0 }">
+<c:when test="${sorDtls.measurementSheetList.size() > 0 }">
 <c:set var="net" value="0" />      
  <td hidden="true">
-                             <input class="classmspresent" type="hidden" disabled="disabled" name="lumpSumNONSORActivities[${item.index }].mspresent" value="1" id="lumpSumNONSORActivities[${item.index }].mspresent" data-idx="0"/>
-                             <input class="classmsopen" type="hidden" disabled="disabled" name="lumpSumNONSORActivities[${item.index }].msopen" value="0" id="lumpSumNONSORActivities[${item.index }].msopen" data-idx="0"/>
+                             <input class="classmspresent" type="hidden" disabled="disabled" name="nonTenderedActivities[${item.index }].mspresent" value="1" id="nonTenderedActivities[${item.index }].mspresent" data-idx="0"/>
+                             <input class="classmsopen" type="hidden" disabled="disabled" name="nonTenderedActivities[${item.index }].msopen" value="0" id="nonTenderedActivities[${item.index }].msopen" data-idx="0"/>
                        
-                             <span name="lumpSumNONSORActivities[${item.index }].mstd" class="lumpSumNONSORActivities[${item.index }].mstd" id="lumpSumNONSORActivities[${item.index }].mstd" data-idx="0">
+                             <span name="nonTenderedActivities[${item.index }].mstd" class="nonTenderedActivities[${item.index }].mstd" id="nonTenderedActivities[${item.index }].mstd" data-idx="0">
     <!--only for validity head start -->                         
     <table>
-    <tr>
+    <tr>  
         <td colspan="9"><!--only for validity head end -->
-            <div class="view-content" style="color:#f2851f" ><spring:message code="lbl.measurementsheet" /><div class="pull-right"><span class="glyphicon glyphicon-remove-circle error-msg hide-ms" style="cursor:pointer;font-size:16px;"></span></div>
+            <div class="view-content" style="color:#f2851f"><spring:message code="lbl.measurementsheet" /> <div class="pull-right"><span class="glyphicon glyphicon-remove-circle error-msg hide-ms" style="cursor:pointer;font-size:16px;"></span></div>
             </div>
 
-            <table class=" table table-bordered  msheet-table" id="lumpSumNONSORActivities[${item.index }].mstable">
+            <table class=" table table-bordered msheet-table" id="nonTenderedActivities[${item.index }].mstable">
                 <thead>
                 <th><spring:message code="lbl.slno" /></th>
                 <th><spring:message code="lbl.identifier" /></th>
@@ -68,7 +68,7 @@
                 <th><spring:message code="lbl.quantity" /> </span></th>
                 </thead>
                 <tbody id="msrow1">
-                <c:forEach items="${nonSorDtls.measurementSheetList}" var="ms" varStatus="msindex" >
+                <c:forEach items="${sorDtls.measurementSheetList}" var="ms" varStatus="msindex" >
                 <tr id="msrow">
                     <td class="text-right">
                         <c:out value="${ms.slNo}" />
@@ -96,7 +96,7 @@
                     </td><td class="text-right">
                     <c:out  value="${ms.depthOrHeight}" />
 
-                </td><td class="text-right">
+                </td><td  class="text-right">
                     <c:out  value="${ms.quantity}" />
                    
 			<c:if test="${ms.identifier=='A'}">
@@ -106,6 +106,7 @@
 				<c:set var="net" value="${net - ms.quantity}" />
 			</c:if>
 											</td>
+                   
                 </tr>
                 </c:forEach>
                 <tr>
@@ -113,7 +114,7 @@
                         
                     </td>
                     <td class="text-right"><spring:message code="lbl.subtotal" /></td>
-                    <td id="lumpSumNONSORActivities[${item.index }].msnet"  class="text-right">${net}</td>
+                    <td id="nonTenderedActivities[${item.index }].msnet"  class="text-right">${net}</td>
                 </tr>
                 
                 <tbody>
@@ -128,9 +129,9 @@
 </c:when>
 <c:otherwise>
 <td hidden="true">
-<input class="classmspresent" type="hidden" disabled="disabled" name="lumpSumNONSORActivities[${item.index }].mspresent" value="0" id="lumpSumNONSORActivities[${item.index }].mspresent" data-idx="0"/>
-<input class="classmsopen" type="hidden" disabled="disabled" name="lumpSumNONSORActivities[${item.index }].msopen" value="0" id="lumpSumNONSORActivities[${item.index }].msopen" data-idx="0"/>
-<span  class="lumpSumNONSORActivities[${item.index }].mstd" id="lumpSumNONSORActivities[${item.index }].mstd" data-idx="${item.index }"></span>
+<input class="classmspresent" type="hidden" disabled="disabled" name="nonTenderedActivities[${item.index }].mspresent" value="0" id="nonTenderedActivities[${item.index }].mspresent" data-idx="0"/>
+<input class="classmsopen" type="hidden" disabled="disabled" name="nonTenderedActivities[${item.index }].msopen" value="0" id="nonTenderedActivities[${item.index }].msopen" data-idx="0"/>
+<span  class="nonTenderedActivities[${item.index }].mstd" id="nonTenderedActivities[${item.index }].mstd" data-idx="${item.index }"></span>
 </td>
 </c:otherwise>
 </c:choose>

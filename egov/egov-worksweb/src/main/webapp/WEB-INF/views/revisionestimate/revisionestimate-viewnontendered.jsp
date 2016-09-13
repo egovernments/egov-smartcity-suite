@@ -87,9 +87,9 @@
 								 	<td class="text-right"><c:out value="${sorDtls.quantity}"></c:out>
 								 	<c:if test="${sorDtls.measurementSheetList.size() > 0 }">
 								 		 <button class="btn btn-default openmsheet" name="nonTenderedActivities[${item.index}].msadd" id="nonTenderedActivities[${item.index}].msadd" data-idx="0" onclick="addMSheet(this);return false;"><i  class="fa fa-plus-circle" aria-hidden="true"></i></button>
-								 	 </c:if>
+								 	</c:if>
 								 	</td>
-								 		<%@ include file="../measurementsheet/nontenderedsor-measurementsheet-formtableview.jsp" %>  
+								 		<%@ include file="../measurementsheet/nontendered-measurementsheet-formtableview.jsp" %>  
 								 	<td class="text-right"><fmt:formatNumber groupingUsed="false" minFractionDigits="2" maxFractionDigits="2"><c:out value="${sorDtls.getAmount().value}" /></fmt:formatNumber></td>
 								 	<c:if test="${isServiceVATRequired == true }">
 										<td class="text-right"><c:out value="${sorDtls.serviceTaxPerc}"></c:out></td>

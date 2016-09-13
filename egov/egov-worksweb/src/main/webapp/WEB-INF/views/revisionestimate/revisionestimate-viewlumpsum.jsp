@@ -78,7 +78,7 @@
 									 	 <button class="btn btn-default openmsheet" name="lumpSumActivities[${item.index}].msadd" id="lumpSumActivities[${item.index}].msadd" data-idx="0" onclick="addMSheet(this);return false;"><i  class="fa fa-plus-circle" aria-hidden="true"></i></button>
 									 	</c:if>
 									 	</td>
-									 		<%@ include file="../measurementsheet/nontenderednonsor-measurementsheet-formtableview.jsp"%>  
+									 		<%@ include file="../measurementsheet/lumpsum-measurementsheet-formtableview.jsp"%>  
 									 	<td class="text-right"><fmt:formatNumber groupingUsed="false" minFractionDigits="2" maxFractionDigits="2"><c:out value="${nonSorDtls.getAmount().value}" /></fmt:formatNumber></td>
 									 	<c:if test="${isServiceVATRequired == true }">
 											<td class="text-right"><c:out value="${nonSorDtls.serviceTaxPerc}"></c:out></td>

@@ -84,7 +84,7 @@
 								 		<c:out value="${nonSorDtls.quantity}">
 								 	</c:out>
 								 	<c:if test="${nonSorDtls.measurementSheetList.size() > 0 }">
-								 	 <button class="btn btn-default openmsheet" name="lumpSumActivities[${item.index}].msadd" id="lumpSumActivities[${item.index}].msadd" data-idx="0" onclick="addMSheet(this);return false;"><i  class="fa fa-plus-circle" aria-hidden="true"></i></button>
+								 	 <button class="btn btn-default openmsheet" name="lumpSumNONSORActivities[${item.index}].msadd" id="lumpSumNONSORActivities[${item.index}].msadd" data-idx="0" onclick="addMSheet(this);return false;"><i  class="fa fa-plus-circle" aria-hidden="true"></i></button>
 								 	</c:if>
 								 	</td>
 								 		<%@ include file="../measurementsheet/nontenderednonsor-measurementsheet-formtableview.jsp"%>  

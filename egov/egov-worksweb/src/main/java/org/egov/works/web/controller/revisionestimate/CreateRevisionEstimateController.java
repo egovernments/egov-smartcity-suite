@@ -123,11 +123,9 @@ public class CreateRevisionEstimateController extends GenericWorkFlowController 
         revisionEstimateService.loadViewData(revisionEstimate, workOrderEstimate, model);
         final WorkflowContainer workflowContainer = new WorkflowContainer();
         prepareWorkflow(model, revisionEstimate, workflowContainer);
-        List<String> validActions = Collections.emptyList();
-        validActions = customizedWorkFlowService.getNextValidActions(revisionEstimate.getStateType(),
-                workflowContainer.getWorkFlowDepartment(), workflowContainer.getAmountRule(),
-                workflowContainer.getAdditionalRule(), WorksConstants.NEW, workflowContainer.getPendingActions(),
-                revisionEstimate.getCreatedDate());
+        List<String> validActions = new ArrayList<String>();
+        validActions.add(WorksConstants.SAVE_ACTION);
+        validActions.add(WorksConstants.FORWARD_ACTION.toString());
         if (revisionEstimate.getState() != null && revisionEstimate.getState().getNextAction() != null)
             model.addAttribute("nextAction", revisionEstimate.getState().getNextAction());
         model.addAttribute("validActionList", validActions);
