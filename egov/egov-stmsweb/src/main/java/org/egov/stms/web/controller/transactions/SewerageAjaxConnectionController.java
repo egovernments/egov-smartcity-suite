@@ -143,7 +143,9 @@ public class SewerageAjaxConnectionController {
 
     @RequestMapping(value = "/ajaxconnection/check-shscnumber-exists", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
     public @ResponseBody String isSHSCNumberUnique(@RequestParam final String shscNumber) { 
-        if(sewerageApplicationDetailsService.checkSHSCNumberExists(shscNumber)!=null)
+        List<SewerageApplicationDetails> appDetailList = new ArrayList<>();
+        appDetailList=sewerageApplicationDetailsService.findByConnectionShscNumber(shscNumber);
+        if(appDetailList.get(0).getConnection().getShscNumber()!=null)
             return messageSource.getMessage("err.validate.shscnumber.exists", new String[] {shscNumber},null);
         else 
             return "";

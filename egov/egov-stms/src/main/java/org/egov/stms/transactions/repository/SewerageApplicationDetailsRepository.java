@@ -63,7 +63,7 @@ public interface SewerageApplicationDetailsRepository extends JpaRepository<Sewe
     SewerageApplicationDetails findByConnection_ShscNumberAndConnection_Status(String shscNumber,
             SewerageConnectionStatus connectionStatus);
 
-    SewerageApplicationDetails findByConnection_ShscNumber(String shscNumber);
+    List<SewerageApplicationDetails> findByConnection_ShscNumber(String shscNumber);
 
     SewerageApplicationDetails findByConnection(SewerageConnection sewerageConnection);
 

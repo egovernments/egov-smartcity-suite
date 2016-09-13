@@ -216,7 +216,7 @@ public class SewerageApplicationDetailsService {
                 status);
     }
     
-    public SewerageApplicationDetails findByConnectionShscNumber(final String shscNumber){
+    public List<SewerageApplicationDetails> findByConnectionShscNumber(final String shscNumber){
         return sewerageApplicationDetailsRepository.findByConnection_ShscNumber(shscNumber);
     }
     
@@ -891,10 +891,6 @@ public class SewerageApplicationDetailsService {
     
     public SewerageApplicationDetails checkModifyClosetInProgress(final String shscNumber){
       return sewerageApplicationDetailsRepository.getSewerageApplicationInWorkFlow(shscNumber);
-    }
-    
-    public SewerageApplicationDetails checkSHSCNumberExists(final String shscNumber) {
-        return sewerageApplicationDetailsRepository.findByConnection_ShscNumber(shscNumber);
     }
 
 }
