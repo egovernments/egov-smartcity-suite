@@ -2078,6 +2078,14 @@ public class PropertyService {
                     .getObjectionNumber());
             final String url = "/ptis/view/viewProperty-viewForm.action?applicationNo=" + property.getObjectionNumber()
                     + "&applicationType=" + applictionType;
+            if(property.getBasicProperty().getSource().equals(PropertyTaxConstants.SOURCEOFDATA_MEESEWA))
+             	source=Source.MEESEVA.toString();
+             else if(property.getBasicProperty().getSource().equals(PropertyTaxConstants.SOURCEOFDATA_ESEVA))
+             	source=Source.ESEVA.toString();
+             else if (property.getBasicProperty().getSource().equals(PropertyTaxConstants.SOURCEOFDATA_MOBILE))
+             	source=Source.MOBILE.toString();
+             else
+             	source=Source.SYSTEM.toString();
             if (null == applicationIndex) {
                 owner = property.getBasicProperty().getPrimaryOwner();
                 final ApplicationIndexBuilder applicationIndexBuilder = new ApplicationIndexBuilder(PTMODULENAME,
@@ -2102,6 +2110,14 @@ public class PropertyService {
             final String url = "/ptis/view/viewProperty-viewForm.action?applicationNo=" + property.getApplicationNo()
                     + "&applicationType=" + applictionType;
             owner = property.getBasicProperty().getPrimaryOwner();
+            if(property.getBasicProperty().getSource().equals(PropertyTaxConstants.SOURCEOFDATA_MEESEWA))
+             	source=Source.MEESEVA.toString();
+             else if(property.getBasicProperty().getSource().equals(PropertyTaxConstants.SOURCEOFDATA_ESEVA))
+             	source=Source.ESEVA.toString();
+             else if (property.getBasicProperty().getSource().equals(PropertyTaxConstants.SOURCEOFDATA_MOBILE))
+             	source=Source.MOBILE.toString();
+             else
+             	source=Source.SYSTEM.toString();
             if (null == applicationIndex) {
                 final ApplicationIndexBuilder applicationIndexBuilder = new ApplicationIndexBuilder(PTMODULENAME,
                         property.getApplicationNo(), property.getCreatedDate() != null ? property.getCreatedDate()
