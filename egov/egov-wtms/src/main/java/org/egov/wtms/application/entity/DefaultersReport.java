@@ -40,6 +40,7 @@
 package org.egov.wtms.application.entity;
 
 import java.math.BigDecimal;
+import java.math.BigInteger;
 
 public class DefaultersReport {
 
@@ -51,6 +52,7 @@ public class DefaultersReport {
     private String locality;
     private String mobileNumber;
     private double arrearsDue;
+    private BigInteger demandId;
 
     private double currentDue;
     private double totalDue;
@@ -108,6 +110,17 @@ public class DefaultersReport {
 
     public void setLocality(final String locality) {
         this.locality = locality;
+    }
+
+
+  
+
+    public BigInteger getDemandId() {
+        return demandId;
+    }
+
+    public void setDemandId(BigInteger demandId) {
+        this.demandId = demandId;
     }
 
     public String getMobileNumber() {

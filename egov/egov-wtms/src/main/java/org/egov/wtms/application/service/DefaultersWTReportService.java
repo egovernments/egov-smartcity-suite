@@ -69,7 +69,7 @@ public class DefaultersWTReportService {
             throws ParseException {
         final StringBuilder queryStr = new StringBuilder();
         queryStr.append(
-                "select dcbinfo.hscno as \"hscNo\", dcbinfo.username as \"ownerName\",wardboundary.name as \"wardName\","
+                "select dcbinfo.hscno as \"hscNo\", dcbinfo.demand as \"demandId\", dcbinfo.username as \"ownerName\",wardboundary.name as \"wardName\","
                         + "dcbinfo.houseno as \"houseNo\" , localboundary.localname as \"locality\", dcbinfo.mobileno as \"mobileNumber\", "
                         + "dcbinfo.arr_balance as \"arrearsDue\" ,  dcbinfo.curr_balance as \"currentDue\" , dcbinfo.arr_balance+dcbinfo.curr_balance as \"totalDue\"  "
                         + "from egwtr_mv_dcb_view dcbinfo"
