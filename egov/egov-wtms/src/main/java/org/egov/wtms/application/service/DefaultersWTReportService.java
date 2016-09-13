@@ -67,7 +67,7 @@ public class DefaultersWTReportService {
 
     public List<DefaultersReport> getDefaultersReportDetails(final String fromAmount, final String toAmount,
             final String ward, final String topDefaulters, final int startsFrom, final int maxResults)
-                    throws ParseException {
+            throws ParseException {
         StringBuilder queryStr = new StringBuilder();
         queryStr = queryStr
                 .append("select dcbinfo.hscno as \"hscNo\", dcbinfo.demand as \"demandId\", dcbinfo.username as \"ownerName\",wardboundary.name as \"wardName\", ")
@@ -95,16 +95,17 @@ public class DefaultersWTReportService {
     public long getTotalCount(final String fromAmount, final String toAmount, final String ward,
             final String topDefaulters) throws ParseException {
 
-        final StringBuilder queryStr = new StringBuilder();
-        queryStr.append("select count(dcbinfo.hscno) "
-                + "from egwtr_mv_dcb_view dcbinfo"
-                + " INNER JOIN eg_boundary wardboundary on dcbinfo.wardid = wardboundary.id INNER JOIN eg_boundary localboundary on dcbinfo.locality = localboundary.id");
+        StringBuilder queryStr = new StringBuilder();
+        queryStr = queryStr
+                .append("select count(dcbinfo.hscno) from egwtr_mv_dcb_view dcbinfo")
+                .append(" INNER JOIN eg_boundary wardboundary on dcbinfo.wardid = wardboundary.id INNER JOIN eg_boundary localboundary")
+                .append(" on dcbinfo.locality = localboundary.id");
         if (Double.parseDouble(toAmount) == 0)
             queryStr.append(" where dcbinfo.arr_balance+dcbinfo.curr_balance >" + fromAmount);
         else
             queryStr.append(" where dcbinfo.arr_balance+dcbinfo.curr_balance >" + fromAmount
                     + " and dcbinfo.arr_balance+dcbinfo.curr_balance <" + toAmount);
-        queryStr.append(" and dcbinfo.connectionstatus = 'ACTIVE'");
+        queryStr.append(" and dcbinfo.connectionstatus = '" + ConnectionStatus.ACTIVE.toString() + "'");
         if (ward != null && !ward.isEmpty())
             queryStr.append(" and wardboundary.name = '" + ward + "'");
         if (!topDefaulters.isEmpty())
