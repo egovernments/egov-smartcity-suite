@@ -191,10 +191,11 @@ function validateNoticeForm()
 		        	   if(full!=null && full.resource!= undefined && full.resource.searchable.estimationnumber != undefined && noticetype =='EM') {
 		        			   data = full.resource.searchable.estimationnumber;
 		        		   
-		           } else {
-		        	   if(full!=null && full.resource!= undefined && full.resource.searchable.workordernumber != undefined && noticetype =='WO') {
+		           } else if(full!=null && full.resource!= undefined && full.resource.searchable.workordernumber != undefined && noticetype =='WO') {
 		        		   data = full.resource.searchable.workordernumber;
 		        	   }
+		           else if(full!=null && full.resource!= undefined && full.resource.searchable.shscnumber != undefined && noticetype =='CC') {
+		        	      data = full.resource.searchable.closurenoticenumber;
 		           }
 		        			   
 		        	   

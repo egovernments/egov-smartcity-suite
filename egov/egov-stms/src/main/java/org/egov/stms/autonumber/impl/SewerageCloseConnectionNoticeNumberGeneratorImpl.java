@@ -50,7 +50,7 @@ import org.springframework.stereotype.Service;
 
 @Service
 public class SewerageCloseConnectionNoticeNumberGeneratorImpl implements SewerageCloseConnectionNoticeNumberGenerator {
-    private static final String CLOSERNOTICE_NUMBER_SEQ_PREFIX = "SEQ_EGSWTAX_NOTICE";
+    private static final String CLOSERNOTICE_NUMBER_SEQ_PREFIX = "SEQ_SWTAX_CLOSECONNECTION_NOTICENUMBER";
     
     @Autowired
     private ApplicationSequenceNumberGenerator applicationSequenceNumberGenerator;

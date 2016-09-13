@@ -174,6 +174,7 @@ public class SewerageTaxConstants {
     public static final String CLAUSES_ISACTIVE="clauses.isactive";
     public static final String SEARCHABLE_APPLICATIONNO="searchable.consumernumber";
     public static final String CLAUSES_APPLICATIONNO="clauses.applicationnumber";
+    public static final String CLAUSES_CC_NOTICE_DATE="clauses.closurenoticedate";
 
     public static final LinkedHashMap<Integer, Integer> PIPE_SCREW_SIZE = new LinkedHashMap<Integer, Integer>() {
         /**
@@ -281,6 +282,7 @@ public class SewerageTaxConstants {
     public static final String NOTICE_TYPE_DEMAND_BILL_NOTICE = "Demand Bill";
     public static final String NOTICE_ESTIMATION = "EM";
     public static final String NOTICE_WORK_ORDER = "WO";
+    public static final String NOTICE_CLOSE_CONNECTION = "CC";
     
     public static final String DOCTYPE_OTHERS = "Others";
     

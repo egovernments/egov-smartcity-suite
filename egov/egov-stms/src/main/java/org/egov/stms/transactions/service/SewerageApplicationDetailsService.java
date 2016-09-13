@@ -74,6 +74,7 @@ import org.egov.ptis.domain.model.OwnerName;
 import org.egov.ptis.domain.service.property.PropertyExternalService;
 import org.egov.stms.autonumber.SHSCNumberGenerator;
 import org.egov.stms.autonumber.SewerageApplicationNumberGenerator;
+import org.egov.stms.autonumber.SewerageCloseConnectionNoticeNumberGenerator;
 import org.egov.stms.autonumber.SewerageEstimationNumberGenerator;
 import org.egov.stms.autonumber.SewerageWorkOrderNumberGenerator;
 import org.egov.stms.elasticSearch.service.SewerageIndexService;
@@ -126,6 +127,8 @@ import static org.egov.stms.utils.constants.SewerageTaxConstants.WFLOW_ACTION_ST
 import static org.egov.stms.utils.constants.SewerageTaxConstants.MODULETYPE;
 import static org.egov.stms.utils.constants.SewerageTaxConstants.APPLICATION_STATUS_CLOSERSANCTIONED;
 import static org.egov.stms.utils.constants.SewerageTaxConstants.APPL_INDEX_MODULE_NAME;
+import static org.egov.stms.utils.constants.SewerageTaxConstants.WF_STATE_CONNECTION_CLOSE_BUTTON;
+import static org.egov.stms.utils.constants.SewerageTaxConstants.APPROVEWORKFLOWACTION;
 
 @Service
 @Transactional(readOnly = true)
@@ -759,6 +762,16 @@ public class SewerageApplicationDetailsService {
             final String approvalComent, final String additionalRule, final String workFlowAction, 
             final ReportOutput reportOutput, final HttpServletRequest request,final HttpSession session) throws ValidationException {
 
+        //Generate closure notice number and date
+        if(sewerageApplicationDetails.getStatus().getCode().equalsIgnoreCase(APPLICATION_STATUS_DEEAPPROVED)
+                && sewerageApplicationDetails.getApplicationType().getCode().equalsIgnoreCase(CLOSESEWERAGECONNECTION) && (APPROVEWORKFLOWACTION.equalsIgnoreCase(workFlowAction))){
+            SewerageCloseConnectionNoticeNumberGenerator closeConnectionNoticeNumberGenerator = beanResolver.getAutoNumberServiceFor(SewerageCloseConnectionNoticeNumberGenerator.class);
+            if(closeConnectionNoticeNumberGenerator != null && sewerageApplicationDetails.getClosureNoticeNumber()==null){
+               sewerageApplicationDetails.setClosureNoticeNumber(closeConnectionNoticeNumberGenerator.generateCloserNoticeNumber());
+               sewerageApplicationDetails.setClosureNoticeDate(new Date());
+            }
+        }
+        
         //Application status change
         if (null != sewerageApplicationDetails && null != sewerageApplicationDetails.getStatus()
                 && null != sewerageApplicationDetails.getStatus().getCode())
@@ -781,7 +794,7 @@ public class SewerageApplicationDetailsService {
             }
         
         // Generate the sewerage notices based on type of notice and save into DB.
-           if (sewerageApplicationDetails.getStatus().getCode().equalsIgnoreCase(APPLICATION_STATUS_CLOSERSANCTIONED)) {
+           if (sewerageApplicationDetails.getStatus().getCode().equalsIgnoreCase(APPLICATION_STATUS_CLOSERSANCTIONED) && (APPROVEWORKFLOWACTION.equalsIgnoreCase(workFlowAction))) {
                SewerageNotice sewerageNotice = sewerageNoticeService.generateReportForCloseConnection(sewerageApplicationDetails, session);
                if (sewerageNotice != null)
                    sewerageApplicationDetails.addNotice(sewerageNotice);
@@ -802,9 +815,8 @@ public class SewerageApplicationDetailsService {
        updateIndexes(sewerageApplicationDetails);
       
        //TODO support sms and email for close connection 
-       if (APPLICATION_STATUS_CLOSERSANCTIONED.equalsIgnoreCase(sewerageApplicationDetails.getStatus().getCode()) || 
+       if ((APPLICATION_STATUS_CLOSERSANCTIONED.equalsIgnoreCase(sewerageApplicationDetails.getStatus().getCode()) && (APPROVEWORKFLOWACTION.equalsIgnoreCase(workFlowAction))) || 
                APPLICATION_STATUS_CREATED.equalsIgnoreCase(sewerageApplicationDetails.getStatus().getCode()) || 
-               APPLICATION_STATUS_FINALAPPROVED.equalsIgnoreCase(sewerageApplicationDetails.getStatus().getCode()) || 
                APPLICATION_STATUS_REJECTED.equalsIgnoreCase(sewerageApplicationDetails.getStatus().getCode())){
            sewerageApplicationDetails.setApprovalComent(approvalComent);
            sewerageConnectionSmsAndEmailService.sendSmsAndEmail(sewerageApplicationDetails, request);

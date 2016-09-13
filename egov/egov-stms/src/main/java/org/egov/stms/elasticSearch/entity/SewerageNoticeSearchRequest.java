@@ -52,8 +52,20 @@ import java.util.List;
 
 import org.egov.search.domain.Filter;
 import org.egov.search.domain.Filters;
-import org.egov.stms.utils.constants.SewerageTaxConstants;
 import org.jboss.logging.Logger;
+import static org.egov.stms.utils.constants.SewerageTaxConstants.SEARCHABLE_SHSCNO;
+import static org.egov.stms.utils.constants.SewerageTaxConstants.CLAUSES_CITYNAME;
+import static org.egov.stms.utils.constants.SewerageTaxConstants.SEARCHABLE_CONSUMER_NAME;
+import static org.egov.stms.utils.constants.SewerageTaxConstants.CLAUSES_MOBILENO;
+import static org.egov.stms.utils.constants.SewerageTaxConstants.CLAUSES_DOORNO;
+import static org.egov.stms.utils.constants.SewerageTaxConstants.CLAUSES_REVWARD_NAME;
+import static org.egov.stms.utils.constants.SewerageTaxConstants.CLAUSES_APPLICATION_DATE;
+import static org.egov.stms.utils.constants.SewerageTaxConstants.NOTICE_WORK_ORDER;
+import static org.egov.stms.utils.constants.SewerageTaxConstants.CLAUSES_WO_NOTICE_DATE;
+import static org.egov.stms.utils.constants.SewerageTaxConstants.NOTICE_ESTIMATION;
+import static org.egov.stms.utils.constants.SewerageTaxConstants.CLAUSES_EM_NOTICE_DATE;
+import static org.egov.stms.utils.constants.SewerageTaxConstants.NOTICE_CLOSE_CONNECTION;
+import static org.egov.stms.utils.constants.SewerageTaxConstants.CLAUSES_CC_NOTICE_DATE;
 
 public class SewerageNoticeSearchRequest {
     private String searchText;
@@ -132,22 +144,25 @@ public class SewerageNoticeSearchRequest {
 
     public Filters searchFilters() {
         final List<Filter> andFilters = new ArrayList<>(0);
-        andFilters.add(termsStringFilter(SewerageTaxConstants.SEARCHABLE_SHSCNO, shscNumber));
-        andFilters.add(termsStringFilter(SewerageTaxConstants.CLAUSES_CITYNAME, ulbName));
-        andFilters.add(queryStringFilter(SewerageTaxConstants.SEARCHABLE_CONSUMER_NAME, applicantName));
-        andFilters.add(queryStringFilter(SewerageTaxConstants.CLAUSES_MOBILENO, mobileNumber));
-        andFilters.add(termsStringFilter(SewerageTaxConstants.CLAUSES_DOORNO, doorNumber));
-        andFilters.add(termsStringFilter(SewerageTaxConstants.CLAUSES_REVWARD_NAME, revenueWard));
-        andFilters.add(queryStringFilter(SewerageTaxConstants.CLAUSES_APPLICATION_DATE, applicationDate));
+        andFilters.add(termsStringFilter(SEARCHABLE_SHSCNO, shscNumber));
+        andFilters.add(termsStringFilter(CLAUSES_CITYNAME, ulbName));
+        andFilters.add(queryStringFilter(SEARCHABLE_CONSUMER_NAME, applicantName));
+        andFilters.add(queryStringFilter(CLAUSES_MOBILENO, mobileNumber));
+        andFilters.add(termsStringFilter(CLAUSES_DOORNO, doorNumber));
+        andFilters.add(termsStringFilter(CLAUSES_REVWARD_NAME, revenueWard));
+        andFilters.add(queryStringFilter(CLAUSES_APPLICATION_DATE, applicationDate));
         if (noticeType != null) {
-            if (noticeType.equals(SewerageTaxConstants.NOTICE_WORK_ORDER)) {
+            if (noticeType.equals(NOTICE_WORK_ORDER)) {
               //  andFilters.add(queryStringFilter(SewerageTaxConstants.SEARCHABLE_WO_NOTICE, noticeType));
-                andFilters.add(rangeFilter(SewerageTaxConstants.CLAUSES_WO_NOTICE_DATE, noticeGeneratedFrom,
+                andFilters.add(rangeFilter(CLAUSES_WO_NOTICE_DATE, noticeGeneratedFrom,
                         noticeGeneratedTo));//TODO: CHECK WHETHER NOTICEGENERATEDFROM DATE IS MANDATORY TO CHECK IN RANGEFILTER METHOD.
-            } else if (noticeType.equals(SewerageTaxConstants.NOTICE_ESTIMATION)) {  
+            } else if (noticeType.equals(NOTICE_ESTIMATION)) {  
               //  andFilters.add(queryStringFilter(SewerageTaxConstants.SEARCHABLE_EM_NOTICE, noticeType));
-                andFilters.add(rangeFilter(SewerageTaxConstants.CLAUSES_EM_NOTICE_DATE, noticeGeneratedFrom,
+                andFilters.add(rangeFilter(CLAUSES_EM_NOTICE_DATE, noticeGeneratedFrom,
                         noticeGeneratedTo));
+            }
+            else if(noticeType.equals(NOTICE_CLOSE_CONNECTION)){
+                andFilters.add(rangeFilter(CLAUSES_CC_NOTICE_DATE, noticeGeneratedFrom, noticeGeneratedTo));
             }
         }
         if (logger.isDebugEnabled())

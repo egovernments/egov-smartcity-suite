@@ -179,6 +179,8 @@ public class SewerageNoticeController {
                 noticeNo = searchableObjects.get("workordernumber");
             } else if(noticeTypeInput != null && noticeTypeInput.equals(SewerageTaxConstants.NOTICE_ESTIMATION)){
                 noticeNo = searchableObjects.get("estimationnumber");
+            }else if(noticeTypeInput !=null && noticeTypeInput.equals(SewerageTaxConstants.NOTICE_CLOSE_CONNECTION)){
+                noticeNo = searchableObjects.get("closurenoticenumber");
             }
             if(noticeNo != null){
                 getSewerageNoticeType(noticeNo,noticeTypeInput);
@@ -262,6 +264,8 @@ public class SewerageNoticeController {
                 noticeNo = searchableObjects.get("workordernumber");
             } else if(noticeTypeInput != null && noticeTypeInput.equals(SewerageTaxConstants.NOTICE_ESTIMATION)){
                 noticeNo = searchableObjects.get("estimationnumber");
+            }else if(noticeTypeInput !=null && noticeTypeInput.equals(SewerageTaxConstants.NOTICE_CLOSE_CONNECTION)){
+                noticeNo = searchableObjects.get("closurenoticenumber");
             }
             if(noticeNo != null){
                 getSewerageNoticeType(noticeNo,noticeTypeInput);
@@ -322,6 +326,8 @@ public class SewerageNoticeController {
             noticeType = SewerageTaxConstants.NOTICE_TYPE_WORK_ORDER_NOTICE;
         } else if(noticeNo != null && noticeTypeInput.equals(SewerageTaxConstants.NOTICE_ESTIMATION)){
             noticeType = SewerageTaxConstants.NOTICE_TYPE_ESTIMATION_NOTICE;
+        }else if (noticeNo !=null && noticeTypeInput.equals(SewerageTaxConstants.NOTICE_CLOSE_CONNECTION)){
+            noticeType = SewerageTaxConstants.NOTICE_TYPE_CLOSER_NOTICE;
         }
     }
     

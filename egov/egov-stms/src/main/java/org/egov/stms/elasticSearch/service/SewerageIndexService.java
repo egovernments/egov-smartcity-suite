@@ -96,7 +96,10 @@ public class SewerageIndexService {
                 sewarageSearch
                         .setWorkOrderNumber(sewerageApplicationDetails.getWorkOrderNumber() != null ? sewerageApplicationDetails
                                 .getWorkOrderNumber() : "");
-        
+                sewarageSearch.setClosureNoticeDate(sewerageApplicationDetails.getClosureNoticeDate());
+                sewarageSearch
+                .setClosureNoticeNumber(sewerageApplicationDetails.getClosureNoticeNumber() != null ? sewerageApplicationDetails
+                        .getClosureNoticeNumber() : "");
                 Iterator<OwnerName> ownerNameItr = null;
 	        if (null != assessmentDetails.getOwnerNames())
 	            ownerNameItr = assessmentDetails.getOwnerNames().iterator();

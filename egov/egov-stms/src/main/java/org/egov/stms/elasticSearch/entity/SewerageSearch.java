@@ -84,6 +84,12 @@ public class SewerageSearch implements Indexable {
 	@Searchable(name = "workorderdate", group = Searchable.Group.CLAUSES)
 	private Date workOrderDate;
 	
+	@Searchable(name= "closurenoticenumber", group=Searchable.Group.SEARCHABLE)
+	private String closureNoticeNumber;
+	
+	@Searchable(name= "closurenoticedate", group=Searchable.Group.CLAUSES)
+	private Date closureNoticeDate;
+	
 	@Searchable(name = "createdby", group = Searchable.Group.CLAUSES)
 	private String applicationCreatedBy;
 
@@ -410,5 +416,21 @@ public class SewerageSearch implements Indexable {
 
         public void setConsumerNumber(String consumerNumber) {
             this.consumerNumber = consumerNumber;
+        }
+
+        public String getClosureNoticeNumber() {
+            return closureNoticeNumber;
+        }
+
+        public void setClosureNoticeNumber(String closureNoticeNumber) {
+            this.closureNoticeNumber = closureNoticeNumber;
+        }
+
+        public Date getClosureNoticeDate() {
+            return closureNoticeDate;
+        }
+
+        public void setClosureNoticeDate(Date closureNoticeDate) {
+            this.closureNoticeDate = closureNoticeDate;
         }
 }

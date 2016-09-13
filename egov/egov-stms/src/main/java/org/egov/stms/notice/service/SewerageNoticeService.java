@@ -588,12 +588,9 @@ public class SewerageNoticeService {
 
         if (sewerageApplicationDetails != null) {
             sewerageNotice = new SewerageNotice();
-            SewerageCloseConnectionNoticeNumberGenerator sewerageCloseConnectionNoticeNumberGenerator = beanResolver
-                    .getAutoNumberServiceFor(SewerageCloseConnectionNoticeNumberGenerator.class);
-            String closeConnNoticeNo = sewerageCloseConnectionNoticeNumberGenerator.generateCloserNoticeNumber();
-            buildSewerageNotice(sewerageApplicationDetails, sewerageNotice, closeConnNoticeNo,
+            buildSewerageNotice(sewerageApplicationDetails, sewerageNotice, sewerageApplicationDetails.getClosureNoticeNumber(),
                     new Date(), SewerageTaxConstants.NOTICE_TYPE_CLOSER_NOTICE);
-            final String fileName = closeConnNoticeNo + ".pdf";
+            final String fileName = sewerageApplicationDetails.getClosureNoticeNumber() + ".pdf";
             final FileStoreMapper fileStore = fileStoreService.store(fileStream, fileName, "application/pdf",
                     SewerageTaxConstants.FILESTORE_MODULECODE);
             sewerageNotice.setFileStore(fileStore);

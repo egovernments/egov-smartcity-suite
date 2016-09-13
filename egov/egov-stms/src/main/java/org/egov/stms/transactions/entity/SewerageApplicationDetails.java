@@ -128,6 +128,12 @@ public class SewerageApplicationDetails extends StateAware {
     @Temporal(value = TemporalType.DATE)
     private Date workOrderDate;
     
+    @SafeHtml
+    private String closureNoticeNumber;
+    
+    @Temporal (value=TemporalType.DATE)
+    private Date closureNoticeDate;
+    
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "parent")
     private SewerageApplicationDetails parent;
@@ -448,6 +454,22 @@ public class SewerageApplicationDetails extends StateAware {
 
     public void setCloseConnectionReason(String closeConnectionReason) {
         this.closeConnectionReason = closeConnectionReason;
+    }
+
+    public String getClosureNoticeNumber() {
+        return closureNoticeNumber;
+    }
+
+    public void setClosureNoticeNumber(String closureNoticeNumber) {
+        this.closureNoticeNumber = closureNoticeNumber;
+    }
+
+    public Date getClosureNoticeDate() {
+        return closureNoticeDate;
+    }
+
+    public void setClosureNoticeDate(Date closureNoticeDate) {
+        this.closureNoticeDate = closureNoticeDate;
     }
     
 }

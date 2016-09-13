@@ -98,6 +98,7 @@
 								<option value=""></option>
                                 <option value="EM">Estimation Notice</option>
                                 <option value="WO">WorkOrder Notice</option>
+                                <option value="CC">Close Connection Notice</option>
 					     	</select>
 						</div>
 				</div>
