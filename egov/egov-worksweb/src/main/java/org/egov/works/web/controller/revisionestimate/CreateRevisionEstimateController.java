@@ -48,6 +48,8 @@ import java.util.List;
 import javax.servlet.http.HttpServletRequest;
 
 import org.egov.dao.budget.BudgetDetailsDAO;
+import org.egov.egf.budget.model.BudgetControlType;
+import org.egov.egf.budget.service.BudgetControlTypeService;
 import org.egov.eis.web.contract.WorkflowContainer;
 import org.egov.eis.web.controller.workflow.GenericWorkFlowController;
 import org.egov.infra.admin.master.entity.AppConfigValues;
@@ -56,6 +58,7 @@ import org.egov.infra.exception.ApplicationRuntimeException;
 import org.egov.infra.validation.exception.ValidationError;
 import org.egov.infra.validation.exception.ValidationException;
 import org.egov.infra.workflow.matrix.service.CustomizedWorkFlowService;
+import org.egov.works.abstractestimate.entity.FinancialDetail;
 import org.egov.works.abstractestimate.entity.AbstractEstimate.EstimateStatus;
 import org.egov.works.lineestimate.entity.LineEstimate;
 import org.egov.works.lineestimate.entity.LineEstimateAppropriation;
@@ -100,9 +103,6 @@ public class CreateRevisionEstimateController extends GenericWorkFlowController 
     protected CustomizedWorkFlowService customizedWorkFlowService;
 
     @Autowired
-    private AppConfigValueService appConfigValuesService;
-
-    @Autowired
     private MessageSource messageSource;
 
     @Autowired
@@ -113,6 +113,9 @@ public class CreateRevisionEstimateController extends GenericWorkFlowController 
 
     @Autowired
     private LineEstimateAppropriationService lineEstimateAppropriationService;
+
+    @Autowired
+    private BudgetControlTypeService budgetControlTypeService;
 
     @RequestMapping(value = "/create", method = RequestMethod.GET)
     public String showForm(@ModelAttribute("revisionEstimate") final RevisionAbstractEstimate revisionEstimate,
@@ -180,20 +183,24 @@ public class CreateRevisionEstimateController extends GenericWorkFlowController 
                     revisionEstimate.setEgwStatus(
                             worksUtils.getStatusByModuleAndCode(WorksConstants.REVISIONABSTRACTESTIMATE,
                                     EstimateStatus.CREATED.toString()));
-                    final List<AppConfigValues> values = appConfigValuesService.getConfigValuesByModuleAndKey(
-                            WorksConstants.EGF_MODULE_NAME, WorksConstants.APPCONFIG_KEY_BUDGETCHECK_REQUIRED);
-                    final AppConfigValues value = values.get(0);
-                    if ("Y".equalsIgnoreCase(value.getValue()))
-                        validateBudgetAmount(revisionEstimate.getParent().getLineEstimateDetails().getLineEstimate(), bindErrors);
                 } else {
                     revisionEstimate.setEgwStatus(
                             worksUtils.getStatusByModuleAndCode(WorksConstants.REVISIONABSTRACTESTIMATE,
                                     EstimateStatus.NEW.toString()));
                 }
 
-            savedRevisionEstimate = revisionEstimateService.createRevisionEstimate(revisionEstimate, approvalPosition,
-                    approvalComment, null, workFlowAction);
-
+            if (BudgetControlType.BudgetCheckOption.MANDATORY.toString()
+                    .equalsIgnoreCase(budgetControlTypeService.getConfigValue()))
+                validateBudgetAmount(revisionEstimate.getParent().getLineEstimateDetails().getLineEstimate(), bindErrors);
+            try {
+                savedRevisionEstimate = revisionEstimateService.createRevisionEstimate(revisionEstimate, approvalPosition,
+                        approvalComment, null, workFlowAction);
+            } catch (final ValidationException e) {
+                final String errorMessage = messageSource.getMessage("error.budgetappropriation.insufficient.amount",
+                        new String[] {}, null);
+                model.addAttribute("message", errorMessage);
+                return "revisionEstimate-success";
+            }
         }
 
         if (EstimateStatus.NEW.toString().equals(savedRevisionEstimate.getEgwStatus().getCode()))

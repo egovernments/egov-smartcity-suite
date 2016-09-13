@@ -50,6 +50,7 @@ import javax.servlet.http.HttpServletRequest;
 import org.egov.eis.web.contract.WorkflowContainer;
 import org.egov.eis.web.controller.workflow.GenericWorkFlowController;
 import org.egov.infra.exception.ApplicationException;
+import org.egov.infra.validation.exception.ValidationException;
 import org.egov.works.abstractestimate.entity.AbstractEstimate.EstimateStatus;
 import org.egov.works.abstractestimate.entity.Activity;
 import org.egov.works.abstractestimate.service.EstimateService;
@@ -267,10 +268,16 @@ public class UpdateRevisionEstimateController extends GenericWorkFlowController 
             model.addAttribute("removedActivityIds", removedActivityIds);
             return "revisionEstimate-form";
         } else {
+            try {
             if (null != workFlowAction)
                 updatedRevisionEstimate = revisionEstimateService.updateRevisionEstimate(revisionEstimate, approvalPosition,
                         approvalComment, null, workFlowAction, removedActivityIds, workOrderEstimate);
-
+            } catch (final ValidationException e) {
+                final String errorMessage = messageSource.getMessage("error.budgetappropriation.insufficient.amount",
+                        new String[] {}, null);
+                model.addAttribute("message", errorMessage);
+                return "revisionEstimate-success";
+            }
             redirectAttributes.addFlashAttribute("revisionEstimate", updatedRevisionEstimate);
 
             if (EstimateStatus.NEW.toString().equals(updatedRevisionEstimate.getEgwStatus().getCode())) {

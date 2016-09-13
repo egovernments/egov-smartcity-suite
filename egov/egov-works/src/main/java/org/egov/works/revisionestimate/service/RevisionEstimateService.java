@@ -54,6 +54,8 @@ import javax.persistence.PersistenceContext;
 import org.apache.commons.lang3.StringUtils;
 import org.egov.commons.dao.EgwStatusHibernateDAO;
 import org.egov.commons.service.UOMService;
+import org.egov.egf.budget.model.BudgetControlType;
+import org.egov.egf.budget.service.BudgetControlTypeService;
 import org.egov.eis.entity.Assignment;
 import org.egov.eis.service.AssignmentService;
 import org.egov.eis.service.PositionMasterService;
@@ -192,6 +194,9 @@ public class RevisionEstimateService {
     private MBDetailsService mBDetailsService;
 
     @Autowired
+    private BudgetControlTypeService budgetControlTypeService;
+
+    @Autowired
     public RevisionEstimateService(final RevisionEstimateRepository revisionEstimateRepository) {
         this.revisionEstimateRepository = revisionEstimateRepository;
     }
@@ -230,7 +235,7 @@ public class RevisionEstimateService {
             revisionEstimate.setParent(abstractEstimate);
             revisionEstimate.setEstimateDate(new Date());
             revisionEstimate.setEstimateNumber(abstractEstimate.getEstimateNumber()
-                    + "/RE".concat(Integer.toString(reCount)));
+                    + "/RE".concat(Integer.toString(++reCount)));
             revisionEstimate.setName("Revision Estimate for: " + abstractEstimate.getName());
             revisionEstimate.setDescription("Revision Estimate for: " + abstractEstimate.getDescription());
             revisionEstimate.setNatureOfWork(abstractEstimate.getNatureOfWork());
@@ -241,7 +246,10 @@ public class RevisionEstimateService {
             revisionEstimate.setFundSource(abstractEstimate.getFundSource());
             revisionEstimate.setParentCategory(abstractEstimate.getParentCategory());
         }
-        doBudgetoryAppropriation(workFlowAction, revisionEstimate);
+
+        if (!BudgetControlType.BudgetCheckOption.NONE.toString()
+                .equalsIgnoreCase(budgetControlTypeService.getConfigValue()))
+            doBudgetoryAppropriation(workFlowAction, revisionEstimate);
 
         mergeChangeQuantityActivities(revisionEstimate);
 
@@ -254,32 +262,28 @@ public class RevisionEstimateService {
         return revisionEstimate;
     }
 
-    private void doBudgetoryAppropriation(final String workFlowAction, final RevisionAbstractEstimate revisionEstimate) {
-        final List<AppConfigValues> values = appConfigValuesService.getConfigValuesByModuleAndKey(
-                WorksConstants.EGF_MODULE_NAME, WorksConstants.APPCONFIG_KEY_BUDGETCHECK_REQUIRED);
-        final AppConfigValues value = values.get(0);
-        if (WorksConstants.FORWARD_ACTION.toString().equalsIgnoreCase(workFlowAction))
-            if ("Y".equalsIgnoreCase(value.getValue())) {
-                final List<Long> budgetheadid = new ArrayList<Long>();
-                budgetheadid.add(revisionEstimate.getParent().getLineEstimateDetails().getLineEstimate().getBudgetHead().getId());
-                final boolean flag = lineEstimateDetailService.checkConsumeEncumbranceBudget(
-                        revisionEstimate.getParent().getLineEstimateDetails(),
-                        lineEstimateService.getCurrentFinancialYear(new Date()).getId(),
-                        revisionEstimate.getEstimateValue().doubleValue(),
-                        budgetheadid);
+    private void releaseBudgetOnReject(final RevisionAbstractEstimate revisionEstimate) {
 
-                if (!flag)
-                    throw new ValidationException(org.apache.commons.lang.StringUtils.EMPTY,
-                            "error.budgetappropriation.insufficient.amount");
-            }
-        if (WorksConstants.REJECT_ACTION.toString().equalsIgnoreCase(workFlowAction))
-            if ("Y".equalsIgnoreCase(value.getValue())) {
-                final String appropriationNumber = lineEstimateAppropriationService
-                        .generateBudgetAppropriationNumber(revisionEstimate.getParent().getLineEstimateDetails());
-                lineEstimateService.releaseBudgetOnReject(revisionEstimate.getParent().getLineEstimateDetails(),
-                        revisionEstimate.getEstimateValue().doubleValue(),
-                        appropriationNumber);
-            }
+        final String appropriationNumber = lineEstimateAppropriationService
+                .generateBudgetAppropriationNumber(revisionEstimate.getParent().getLineEstimateDetails());
+        lineEstimateService.releaseBudgetOnReject(revisionEstimate.getParent().getLineEstimateDetails(),
+                revisionEstimate.getEstimateValue().doubleValue(),
+                appropriationNumber);
+    }
+
+    private void doBudgetoryAppropriation(final String workFlowAction, final RevisionAbstractEstimate revisionEstimate) {
+        final List<Long> budgetheadid = new ArrayList<Long>();
+        budgetheadid.add(revisionEstimate.getParent().getLineEstimateDetails().getLineEstimate().getBudgetHead().getId());
+        final boolean flag = lineEstimateDetailService.checkConsumeEncumbranceBudget(
+                revisionEstimate.getParent().getLineEstimateDetails(),
+                lineEstimateService.getCurrentFinancialYear(new Date()).getId(),
+                revisionEstimate.getEstimateValue().doubleValue(),
+                budgetheadid);
+
+        if (!flag)
+            throw new ValidationException(org.apache.commons.lang.StringUtils.EMPTY,
+                    "error.budgetappropriation.insufficient.amount");
+
     }
 
     private void removeEmptyMS(final Activity activity) {
@@ -311,7 +315,17 @@ public class RevisionEstimateService {
             activities = removeDeletedActivities(activities, removedActivityIds);
             revisionEstimate.setActivities(activities);
         }
-        doBudgetoryAppropriation(workFlowAction, revisionEstimate);
+        if (RevisionEstimateStatus.REJECTED.toString().equals(revisionEstimate.getEgwStatus().getCode())
+                && WorksConstants.FORWARD_ACTION.equals(workFlowAction)) {
+            if (!BudgetControlType.BudgetCheckOption.NONE.toString()
+                    .equalsIgnoreCase(budgetControlTypeService.getConfigValue()))
+                doBudgetoryAppropriation(workFlowAction, updateRevisionEstimate);
+        }
+        if (WorksConstants.REJECT_ACTION.toString().equalsIgnoreCase(workFlowAction)) {
+            if (!BudgetControlType.BudgetCheckOption.NONE.toString()
+                    .equalsIgnoreCase(budgetControlTypeService.getConfigValue()))
+                releaseBudgetOnReject(revisionEstimate);
+        }
         updateRevisionEstimate = revisionEstimateRepository.save(revisionEstimate);
 
         revisionEstimateStatusChange(updateRevisionEstimate, workFlowAction);
