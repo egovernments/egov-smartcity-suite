@@ -45,6 +45,7 @@ import static org.egov.ptis.constants.PropertyTaxConstants.APPLICATION_TYPE_ALTE
 import static org.egov.ptis.constants.PropertyTaxConstants.APPLICATION_TYPE_BIFURCATE_ASSESSENT;
 import static org.egov.ptis.constants.PropertyTaxConstants.APPLICATION_TYPE_NEW_ASSESSENT;
 import static org.egov.ptis.constants.PropertyTaxConstants.APPLICATION_TYPE_REVISION_PETITION;
+import static org.egov.ptis.constants.PropertyTaxConstants.APPLICATION_TYPE_GRP;
 import static org.egov.ptis.constants.PropertyTaxConstants.APPLICATION_TYPE_TRANSFER_OF_OWNERSHIP;
 import static org.egov.ptis.constants.PropertyTaxConstants.ARR_COLL_STR;
 import static org.egov.ptis.constants.PropertyTaxConstants.ARR_DMD_STR;
@@ -2029,6 +2030,7 @@ public class PropertyService {
         else
             user = assignmentService.getAssignmentsForPosition(position.getId(), new Date()).get(0).getEmployee();
         User owner = null;
+        String source=null;
         if (applictionType != null
                 && (applictionType.equalsIgnoreCase(APPLICATION_TYPE_NEW_ASSESSENT)
                         || applictionType.equalsIgnoreCase(APPLICATION_TYPE_ALTER_ASSESSENT) || applictionType
@@ -2039,27 +2041,38 @@ public class PropertyService {
             final String url = "/ptis/view/viewProperty-viewForm.action?applicationNo=" + property.getApplicationNo()
                     + "&applicationType=" + applictionType;
             owner = property.getBasicProperty().getPrimaryOwner();
+            if(property.getBasicProperty().getSource().equals(PropertyTaxConstants.SOURCEOFDATA_MEESEWA))
+            	source=Source.MEESEVA.toString();
+            else if(property.getBasicProperty().getSource().equals(PropertyTaxConstants.SOURCEOFDATA_ESEVA))
+            	source=Source.ESEVA.toString();
+            else if (property.getBasicProperty().getSource().equals(PropertyTaxConstants.SOURCEOFDATA_MOBILE))
+            	source=Source.MOBILE.toString();
+            else
+            	source=Source.SYSTEM.toString();
             if (null == applicationIndex) {
                 final ApplicationIndexBuilder applicationIndexBuilder = new ApplicationIndexBuilder(PTMODULENAME,
                         property.getApplicationNo(), new Date(), applictionType, owner.getName(), property
                                 .getState().getValue(), url, property.getBasicProperty().getAddress().toString(),
-                        user.getUsername() + "::" + user.getName(), Source.SYSTEM.toString());
+                        user.getUsername() + "::" + user.getName(), source);
                 applicationIndexBuilder.consumerCode(property.getBasicProperty().getUpicNo());
                 applicationIndexBuilder.mobileNumber(owner.getMobileNumber());
                 applicationIndexBuilder.aadharNumber(owner.getAadhaarNumber());
                 applicationIndexService.createApplicationIndex(applicationIndexBuilder.build());
             } else {
                 applicationIndex.setStatus(property.getState().getValue());
-                if (applictionType.equalsIgnoreCase(APPLICATION_TYPE_NEW_ASSESSENT)) {
+                if (applictionType.equalsIgnoreCase(APPLICATION_TYPE_NEW_ASSESSENT)
+                        || applictionType.equalsIgnoreCase(APPLICATION_TYPE_ALTER_ASSESSENT) || applictionType
+                        .equalsIgnoreCase(APPLICATION_TYPE_BIFURCATE_ASSESSENT)) {
                     applicationIndex.setConsumerCode(property.getBasicProperty().getUpicNo());
                     applicationIndex.setApplicantName(owner.getName());
+                    applicationIndex.setOwnername(user.getUsername()+"::"+user.getName());
                     applicationIndex.setMobileNumber(owner.getMobileNumber());
                     applicationIndex.setAadharNumber(owner.getAadhaarNumber());
                 }
                 applicationIndexService.updateApplicationIndex(applicationIndex);
             }
 
-        } else if (applictionType != null && applictionType.equalsIgnoreCase(APPLICATION_TYPE_REVISION_PETITION)) {
+        } else if (applictionType != null && applictionType.equalsIgnoreCase(APPLICATION_TYPE_REVISION_PETITION) || applictionType.equalsIgnoreCase(APPLICATION_TYPE_GRP)) {
             final RevisionPetition property = (RevisionPetition) stateAwareObject;
             final ApplicationIndex applicationIndex = applicationIndexService.findByApplicationNumber(property
                     .getObjectionNumber());
@@ -2071,13 +2084,14 @@ public class PropertyService {
                         property.getObjectionNumber(), property.getCreatedDate() != null ? property.getCreatedDate()
                                 : new Date(), applictionType, owner.getName(),
                         property.getState().getValue(), url, property.getBasicProperty().getAddress().toString(),
-                        user.getUsername() + "::" + user.getName(), Source.SYSTEM.toString());
+                        user.getUsername() + "::" + user.getName(), source);
                 applicationIndexBuilder.consumerCode(property.getBasicProperty().getUpicNo());
                 applicationIndexBuilder.mobileNumber(owner.getMobileNumber());
                 applicationIndexBuilder.aadharNumber(owner.getAadhaarNumber());
                 applicationIndexService.createApplicationIndex(applicationIndexBuilder.build());
             } else {
                 applicationIndex.setStatus(property.getState().getValue());
+                applicationIndex.setOwnername(user.getUsername()+"::"+user.getName());
                 applicationIndexService.updateApplicationIndex(applicationIndex);
             }
 
@@ -2093,7 +2107,7 @@ public class PropertyService {
                         property.getApplicationNo(), property.getCreatedDate() != null ? property.getCreatedDate()
                                 : new Date(), applictionType, owner.getName(),
                         property.getState().getValue(), url, property.getBasicProperty().getAddress().toString(),
-                        user.getUsername() + "::" + user.getName(), Source.SYSTEM.toString());
+                        user.getUsername() + "::" + user.getName(), source);
                 applicationIndexBuilder.consumerCode(property.getBasicProperty().getUpicNo());
                 applicationIndexBuilder.mobileNumber(owner.getMobileNumber());
                 applicationIndexBuilder.aadharNumber(owner.getAadhaarNumber());
@@ -2101,6 +2115,7 @@ public class PropertyService {
             } else {
                 applicationIndex.setStatus(property.getState().getValue());
                 applicationIndex.setApplicantName(owner.getName());
+                applicationIndex.setOwnername(user.getUsername()+"::"+user.getName());
                 applicationIndex.setMobileNumber(owner.getMobileNumber());
                 applicationIndex.setAadharNumber(owner.getAadhaarNumber());
                 applicationIndexService.updateApplicationIndex(applicationIndex);
