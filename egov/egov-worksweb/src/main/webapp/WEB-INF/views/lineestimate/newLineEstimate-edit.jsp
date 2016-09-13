@@ -70,14 +70,7 @@
 			<jsp:include page="lineEstimateTechnicalSanctionDetails.jsp"/>
 		</c:if>
 		<c:if test="${!workflowHistory.isEmpty()}">
-			<div class="panel panel-primary" data-collapsed="0">
-				<div class="panel-heading">
-					<div class="panel-title">
-						<spring:message  code="lbl.apphistory"/>
-					</div>
-				</div>
-				<jsp:include page="../common/commonWorkflowhistory-view.jsp"></jsp:include>
-			</div>
+			<jsp:include page="../common/commonWorkflowhistory-view.jsp"></jsp:include>
 		</c:if>
 		<c:if test="${mode != 'readOnly' }">
 			<jsp:include page="../common/commonWorkflowMatrix.jsp"/>

@@ -42,8 +42,18 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
 <%@ taglib uri="http://www.springframework.org/tags" prefix="spring" %>
-<div class="panel-body history-slide">
-					<div class="row add-margin hidden-xs visible-sm visible-md visible-lg header-color">
+<%@ taglib uri="/WEB-INF/taglibs/cdn.tld" prefix="cdn"%>
+<div class="panel panel-primary" data-collapsed="0">
+				<div class="panel-heading slide-history-menu">
+					<div class="panel-title">
+						<spring:message  code="lbl.apphistory"/>
+					</div>
+					<div class="history-icon">
+						<i class="fa fa-angle-up fa-2x" id="toggle-his-icon"></i>
+					</div>
+				</div>
+<div class="panel-body history-slide display-hide">
+		<div class="row add-margin hidden-xs visible-sm visible-md visible-lg header-color">
 						<div class="col-sm-2 col-xs-6 add-margin"><spring:message code="lbl.date"/></div>
 						<div class="col-sm-2 col-xs-6 add-margin"><spring:message code="lbl.updatedby"/></div>
 						<div class="col-sm-2 col-xs-6 add-margin"><spring:message code="lbl.status" /></div>
@@ -84,3 +94,5 @@
 						</c:choose>
 					
 				</div>
+				</div>
+				<script src="<cdn:url value='/resources/js/common/workflowhistory.js?rnd=${app_release_no}'/>"></script>
