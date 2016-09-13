@@ -119,8 +119,10 @@ var sorSearch = new Bloodhound({
 				var scheduleCategories = $('#scheduleCategory').val();
 				var workOrderDate = $('#workOrderDate').val();
 				var estimateId = $('#estimateId').val();
-				if(scheduleCategories == null)
+				if(scheduleCategories == null){
 					bootbox.alert($('#msgschedulecategory').val());
+					$('#sorSearch').typeahead('val','');
+				}
 				if(workOrderDate == "" || workOrderDate == null)
 					bootbox.alert($('#msgworkorderdate').val());
 				return url + query + '&scheduleCategories=' + scheduleCategories + "&estimateDate=" + workOrderDate+ "&estimateId=" + estimateId;
@@ -156,6 +158,7 @@ var sorSearch = new Bloodhound({
 		if(ismsheetOpen())
 		{
 			bootbox.alert("Measurement Sheet is open Please close it first");
+			$('#sorSearch').typeahead('val','');
 			return ;
 		}
 		var flag = false;

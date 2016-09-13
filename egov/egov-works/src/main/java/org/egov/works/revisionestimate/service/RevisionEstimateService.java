@@ -350,7 +350,7 @@ public class RevisionEstimateService {
                 workOrderEstimate.getWorkOrder().getWorkOrderNumber() + "/RW".concat(Integer.toString(reCount)));
         revisionWorkOrder.setContractor(workOrderEstimate.getWorkOrder().getContractor());
         revisionWorkOrder.setEngineerIncharge(workOrderEstimate.getWorkOrder().getEngineerIncharge());
-        revisionWorkOrder.setEmdAmountDeposited(0.00001);
+        revisionWorkOrder.setEmdAmountDeposited(0);
         revisionWorkOrder.setEgwStatus(worksUtils.getStatusByModuleAndCode(WorksConstants.WORKORDER, WorksConstants.APPROVED));
         populateWorkOrderActivities(revisionWorkOrder, revisionEstimate);
 
