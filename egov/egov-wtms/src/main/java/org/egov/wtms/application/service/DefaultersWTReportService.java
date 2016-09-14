@@ -83,6 +83,9 @@ public class DefaultersWTReportService {
         queryStr.append(" and dcbinfo.connectionstatus = '" + ConnectionStatus.ACTIVE.toString() + "'");
         if (ward != null && !ward.isEmpty())
             queryStr.append(" and wardboundary.name = '" + ward + "'");
+        
+        
+        queryStr.append(" and dcbinfo.demand IS NOT NULL");
         if (!topDefaulters.isEmpty())
             queryStr.append(" order by dcbinfo.arr_balance+dcbinfo.curr_balance desc limit " + topDefaulters);
         final SQLQuery finalQuery = getCurrentSession().createSQLQuery(queryStr.toString());
