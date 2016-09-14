@@ -69,7 +69,9 @@
 	{key:"detailTypeId",hidden:true,formatter:createHiddenField(RECOVERYLIST,".detailTypeId","hidden")},
 	{key:"detailKeyid",hidden:true,formatter:createHiddenField(RECOVERYLIST,".detailKeyid","hidden")},
 	{key:"chkremit",label:'Select', formatter:createcheckbox(RECOVERYLIST,".chkremit")},
-	{key:"remittance_gl_dtlId",hidden:true, formatter:createTextFieldFormatter(RECOVERYLIST,".remittance_gl_dtlId","hidden")}
+	{key:"remittance_gl_dtlId",hidden:true, formatter:createTextFieldFormatter(RECOVERYLIST,".remittance_gl_dtlId","hidden")},
+	{key:"departmentId",hidden:true, formatter:createHiddenField(RECOVERYLIST,".departmentId","hidden")},
+	{key:"functionId",hidden:true, formatter:createHiddenField(RECOVERYLIST,".functionId","hidden")}
 	];
 	 var recoveryDetailDS = new YAHOO.util.DataSource(); 
 	 var recoveryDetailsTable = new YAHOO.widget.DataTable("recoveryDetailsTable",recoveryDetailColumns, recoveryDetailDS);
@@ -99,6 +101,8 @@
 		updateFieldValue('remittance_gl_dtlId',index,'<s:property value="remittance_gl_dtlId"/>');
 		updateFieldValue('detailTypeId',index,'<s:property value="detailTypeId"/>');
 		updateFieldValue('detailKeyid',index,'<s:property value="detailKeyid"/>');
+		updateFieldValue('departmentId',index,'<s:property value="departmentId"/>');
+		updateFieldValue('functionId',index,'<s:property value="functionId"/>');
 		recoveryTableIndex = recoveryTableIndex +1;
 		</s:iterator>
 	}
@@ -198,19 +202,23 @@ function validateSearch()
 	document.getElementById('lblError').innerHTML ="";
 	
 	if(document.getElementById('recoveryId').value==-1){
-		document.getElementById('lblError').innerHTML = "Please select a recovery code";
+		bootbox.alert("Please select a recovery code");
 		return false;
 	}
 	if(document.getElementById('voucherDate').value.trim().length == 0){
-		document.getElementById('lblError').innerHTML = "Please select date";
+		bootbox.alert("Please select date");
 		return false;
 	}
-	if(!validateMisAttributes())
-	  return false;
+	var fund = document.getElementById('fundId').value;
+	if(fund == "-1"){
+		bootbox.alert("Please select fund");
+		return false;
+	}
 	document.remitRecoveryForm.action='/EGF/deduction/remitRecovery-search.action';
 	document.remitRecoveryForm.submit();
 	return true;
 }
+
 
 
 // Javascript validation of the MIS Manadate attributes.
