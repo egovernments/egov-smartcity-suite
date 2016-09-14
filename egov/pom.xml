@@ -1346,6 +1346,7 @@
                     <url>${db.url}</url>
                     <user>${db.user}</user>
                     <password>${db.password}</password>
+                    <skip>true</skip>
                 </configuration>
             </plugin>
             <plugin>

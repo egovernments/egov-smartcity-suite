@@ -96,6 +96,9 @@
 						<version>${postgres-version}</version>
 					</dependency>
 				</dependencies>
+                <configuration>
+                    <skip>false</skip>
+                </configuration>
 				<executions>
 					<execution>
 						<phase>process-resources</phase>
