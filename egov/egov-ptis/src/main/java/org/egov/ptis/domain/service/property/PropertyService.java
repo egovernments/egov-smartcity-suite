@@ -2034,7 +2034,7 @@ public class PropertyService {
         if (applictionType != null
                 && (applictionType.equalsIgnoreCase(APPLICATION_TYPE_NEW_ASSESSENT)
                         || applictionType.equalsIgnoreCase(APPLICATION_TYPE_ALTER_ASSESSENT) || applictionType
-                            .equalsIgnoreCase(APPLICATION_TYPE_BIFURCATE_ASSESSENT))) {
+                            .equalsIgnoreCase(APPLICATION_TYPE_BIFURCATE_ASSESSENT))|| applictionType.equalsIgnoreCase(APPLICATION_TYPE_GRP)) {
             final PropertyImpl property = (PropertyImpl) stateAwareObject;
             final ApplicationIndex applicationIndex = applicationIndexService.findByApplicationNumber(property
                     .getApplicationNo());
@@ -2062,7 +2062,7 @@ public class PropertyService {
                 applicationIndex.setStatus(property.getState().getValue());
                 if (applictionType.equalsIgnoreCase(APPLICATION_TYPE_NEW_ASSESSENT)
                         || applictionType.equalsIgnoreCase(APPLICATION_TYPE_ALTER_ASSESSENT) || applictionType
-                        .equalsIgnoreCase(APPLICATION_TYPE_BIFURCATE_ASSESSENT)) {
+                        .equalsIgnoreCase(APPLICATION_TYPE_BIFURCATE_ASSESSENT)|| applictionType.equalsIgnoreCase(APPLICATION_TYPE_GRP)) {
                     applicationIndex.setConsumerCode(property.getBasicProperty().getUpicNo());
                     applicationIndex.setApplicantName(owner.getName());
                     applicationIndex.setOwnername(user.getUsername()+"::"+user.getName());
@@ -2072,7 +2072,7 @@ public class PropertyService {
                 applicationIndexService.updateApplicationIndex(applicationIndex);
             }
 
-        } else if (applictionType != null && applictionType.equalsIgnoreCase(APPLICATION_TYPE_REVISION_PETITION) || applictionType.equalsIgnoreCase(APPLICATION_TYPE_GRP)) {
+        } else if (applictionType != null && applictionType.equalsIgnoreCase(APPLICATION_TYPE_REVISION_PETITION)) {
             final RevisionPetition property = (RevisionPetition) stateAwareObject;
             final ApplicationIndex applicationIndex = applicationIndexService.findByApplicationNumber(property
                     .getObjectionNumber());
