@@ -145,7 +145,7 @@ public class SewerageAjaxConnectionController {
     public @ResponseBody String isSHSCNumberUnique(@RequestParam final String shscNumber) { 
         List<SewerageApplicationDetails> appDetailList = new ArrayList<>();
         appDetailList=sewerageApplicationDetailsService.findByConnectionShscNumber(shscNumber);
-        if(appDetailList.get(0).getConnection().getShscNumber()!=null)
+        if(!appDetailList.isEmpty() && appDetailList.get(0).getConnection().getShscNumber()!=null)
             return messageSource.getMessage("err.validate.shscnumber.exists", new String[] {shscNumber},null);
         else 
             return "";
