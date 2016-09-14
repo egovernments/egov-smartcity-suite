@@ -180,7 +180,7 @@
 								<td class="text-right">
 									<span class="activityRate_${item.index }"><fmt:formatNumber groupingUsed="false" minFractionDigits="2" maxFractionDigits="4">${activity.estimateRate }</fmt:formatNumber></span>
 								</td>
-								<td>
+								<td class="text-right">
 									<span class="activityEstimateQuantity_${item.index }"><fmt:formatNumber groupingUsed="false" minFractionDigits="2" maxFractionDigits="4">${activity.estimateQuantity }</fmt:formatNumber></span>
 								</td>
 								<td class="text-right">

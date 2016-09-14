@@ -81,19 +81,20 @@ function callAjaxSearch() {
 						$('td:eq(1)',row).html('<input type="checkbox" name="selectActivity" class="selectActivity" data="'+ data.id +'">');
 					if(data.summary != null)
 						$('td:eq(4)',row).html('<span>'+ data.summary +'</span><span/><a href="#" class="hintanchor" title="'+ data.description +'"><i class="fa fa-question-circle" aria-hidden="true"></i></a></span>');
-					$('td:eq(8)',row).html(parseFloat(data.rate).toFixed(2));
+					$('td:eq(7)',row).html(parseFloat(data.rate).toFixed(2));
+					$('td:eq(8)',row).html(parseFloat(data.approvedQuantity).toFixed(2));
 				},
 				aaSorting : [],
 				columns : [ { 
-						"data" : "", "sClass" : "text-center"} , {
+						"data" : ""} , {
 						"data" : "", "sClass" : "text-center", "bSortable": false} ,{
-						"data" : "sorCode", "sClass" : "text-right"},{
-						"data" : "categoryType", "sClass" : "text-center"},{
-						"data" : "", "sClass" : "text-center"},{
-						"data" : "sorNonSorType", "sClass" : "text-center"},{
-						"data" : "uom", "sClass" : "text-center"},{
-						"data" : "approvedQuantity", "sClass" : "text-center"},{
-						"data" : "", "sClass" : "text-center"}],
+						"data" : "sorCode"},{
+						"data" : "categoryType"},{
+						"data" : ""},{
+						"data" : "sorNonSorType"},{
+						"data" : "uom"},{
+						"data" : "", "sClass" : "text-right"},{
+						"data" : "approvedQuantity", "sClass" : "text-right"}],
 				"fnInitComplete": function(oSettings, json) {
 					$activities = json;
 			    }

@@ -134,7 +134,7 @@
 					                    <td class="text-right"><spring:message code="lbl.total" /></td>
 					                    <td class="text-right view-content">${total }</td>
 					                    <td colspan="4" class="text-right"></td>
-					                    <td class="text-right"><spring:message code="lbl.total" /></td>
+					                    <td class="text-right"><spring:message code="lbl.subtotal" /></td>
 					                    <td id="changeQuantityActivities[${item.index }].msnet" class="text-right">${net}</td>
 					                </tr>
 				                </tbody>

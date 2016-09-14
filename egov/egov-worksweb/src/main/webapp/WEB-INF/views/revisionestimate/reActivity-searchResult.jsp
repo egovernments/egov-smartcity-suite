@@ -55,8 +55,8 @@
 					<th><spring:message code="lbl.description" /></th>
 					<th><spring:message code="lbl.sor.nonsor.type" /></th>
 					<th><spring:message code="lbl.uom" /></th>
-					<th><spring:message code="lbl.approved.quantity" /></th>
 					<th><spring:message code="lbl.rate" /></th>
+					<th><spring:message code="lbl.approved.quantity" /></th>
 				</tr>
 			</thead>
 		</table>
@@ -66,8 +66,6 @@
 			<button type='button' class='btn btn-primary' id="btnadd">
 				<spring:message code='lbl.add' />
 			</button>
-			<a href='javascript:void(0)' class='btn btn-default'
-				onclick='self.close()'><spring:message code='lbl.close' /></a>
 		</div>
 	</div>
 </div>

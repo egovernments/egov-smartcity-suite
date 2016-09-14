@@ -2048,4 +2048,6 @@ function addCQMSheet(obj) {
 
 $(document).on('click','.reset-cq',function () {
 	var len=$(this).closest('table').find('.runtime-update').val("");
+	$(this).closest('table').find('.runtime-update').attr('value', null);
+	$('.changequantity-msnet').html('');
 });

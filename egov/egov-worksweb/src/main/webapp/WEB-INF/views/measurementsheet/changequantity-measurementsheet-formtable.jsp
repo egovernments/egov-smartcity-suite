@@ -113,8 +113,8 @@
 	                        <input type="button" name="resetButton" value="Reset" id="resetButton" class="btn btn-xs btn-danger reset-cq" />
 	                        <input type="button" value="Submit"  id="templatesorActivities[0].mssubmit" class="btn btn-xs btn-primary ms-submit templatemssubmit_0"/> 
 	                    </td>
-	                    <td class="text-right"><spring:message code="lbl.total" /></td>
-	                    <td id="templatesorActivities[0].msnet" class="text-right"></td>
+	                    <td class="text-right"><spring:message code="lbl.subtotal" /></td>
+	                    <td id="templatesorActivities[0].msnet" class="text-right changequantity-msnet"></td>
 	                </tr>
                 </tbody>
             </table>
