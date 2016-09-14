@@ -54,15 +54,15 @@ import org.springframework.web.bind.annotation.RequestMethod;
 @Controller
 @RequestMapping("/reports/employeeassignments")
 public class EmployeeAssignmentReportController {
-    
+
     @Autowired
     private DepartmentService departmentService;
-    
+
     @RequestMapping(value = "/searchform", method = RequestMethod.GET)
-    public String showSearchLineEstimateForm(
-            @ModelAttribute final EmployeeAssignmentSearch employeeAssignmentSearch,
-            final Model model) throws ApplicationException {
-        model.addAttribute("departments",departmentService.getAllDepartments());
+    public String showSearchEmployeeAssignmentForm(
+            @ModelAttribute final EmployeeAssignmentSearch employeeAssignmentSearch, final Model model)
+            throws ApplicationException {
+        model.addAttribute("departments", departmentService.getAllDepartments());
         employeeAssignmentSearch.setAssignmentDate(new Date());
         model.addAttribute("employeeAssignmentSearch", employeeAssignmentSearch);
         return "employeeassignment-search";
