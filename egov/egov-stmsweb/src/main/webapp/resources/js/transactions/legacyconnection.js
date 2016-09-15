@@ -60,7 +60,13 @@ $(document).ready(function(){
 	}
 	
 	$('#shscNumber').blur(function(){
+		if($('#shscNumber').val()!= "" && $('#shscNumber').val().length!=10){
+			bootbox.alert("Please enter 10 digit value of SHSC Number", function(){
+			});
+		}
+		else{
 		validateSewerageConnectionNumber();
+		}
 	});
 	
 	function validateSewerageConnection() {
@@ -267,14 +273,16 @@ function validateDemandDetailsOnSubmit(){
     } 
     return true;
 }
-
-$(".btn-primary").click(function() { 
-	if(!validateDemandDetailsOnSubmit()){
+$("#submit").click(function() { 
+	if($('form').valid()){
+		if(!validateDemandDetailsOnSubmit()){
 		return false;
+		}
+		else{
+			return true;
+		}
 	}
-	if($('form').valid())
-		document.forms[0].submit();	
-	return;
+	return false;
 });	
 
 
