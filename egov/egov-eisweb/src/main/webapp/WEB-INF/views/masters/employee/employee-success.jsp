@@ -43,7 +43,8 @@
 <%@taglib uri="http://www.joda.org/joda/time/tags" prefix="joda"%>
 <%@ taglib uri="http://www.springframework.org/tags/form" prefix="form"%>
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
-<script src="<c:url value='/resources/js/app/designation.js'/>"></script>
+<%@ taglib uri="/WEB-INF/taglib/cdn.tld" prefix="cdn" %>
+<script src="<cdn:url value='/resources/js/app/designation.js'/>"></script>
 		 
 			
 			<form:form  method ="post" action="create" class="form-horizontal form-groups-bordered" modelAttribute="employee" id="employeeForm" >

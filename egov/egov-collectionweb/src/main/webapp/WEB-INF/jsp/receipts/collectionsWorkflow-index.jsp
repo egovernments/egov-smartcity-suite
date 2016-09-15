@@ -281,7 +281,7 @@ function readOnlyCheckBox() {
 	    	<s:actionmessage theme="simple"/>
 	    </div>
 	</s:if>
-	<s:if test="%{!receiptHeaders.isEmpty()}">
+	<s:if test="%{!receiptHeaders.isEmpty() && !hasErrors()}">
 		<table width="100%" border="0" align="center" cellpadding="0"
 			cellspacing="0" class="tablebottom">
 			<s:hidden name="inboxItemDetails" id="inboxItemDetails" value="%{inboxItemDetails}"/>	

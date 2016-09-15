@@ -636,12 +636,12 @@ public class ModifyPropertyAction extends PropertyTaxBaseAction {
     }
 
     private String getApplicationType() {
-        final String applicationType = PROPERTY_MODIFY_REASON_ADD_OR_ALTER.equals(modifyRsn) ? ALTERATION_OF_ASSESSMENT
+        final String applicationType = PROPERTY_MODIFY_REASON_ADD_OR_ALTER.equals(modifyRsn) ? APPLICATION_TYPE_ALTER_ASSESSENT
                 : PROPERTY_MODIFY_REASON_BIFURCATE.equals(modifyRsn) ? APPLICATION_TYPE_BIFURCATE_ASSESSENT
                         : APPLICATION_TYPE_GRP;
         return applicationType;
     }
-
+   
     /**
      * Modifies and Forwards the assessment to next user when form is submitted
      * in read only mode

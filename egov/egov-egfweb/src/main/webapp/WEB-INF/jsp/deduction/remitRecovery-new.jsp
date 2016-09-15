@@ -84,7 +84,7 @@ function loadBank(obj)
 						class="mandatory"></span></td>
 					<td class="greybox"><s:select name="remittanceBean.recoveryId"
 							id="recoveryId" list="dropdownData.recoveryList" listKey="id"
-							listValue="type" headerKey="-1" headerValue="----Choose----"
+							listValue="type+'-'+recoveryName" headerKey="-1" headerValue="----Choose----"
 							value="%{remittanceBean.recoveryId}" /></td>
 					<td class="greybox" width="10%">
 					<td class="greybox">
@@ -92,29 +92,26 @@ function loadBank(obj)
 					<td class="bluebox"></td>
 					<td class="bluebox"><s:text
 							name="remit.recovery.search.fromdate" /></td>
-					<td class="bluebox"><s:date name="remittanceBean.fromVhDate"
+					<td class="greybox"><s:date name="remittanceBean.fromVhDate"
 							var="fromVhDateId" format="dd/MM/yyyy" /> <s:textfield
-							name="remittanceBean.fromVhDate" id="fromVhDate"
-							value="%{remittanceBean.fromVhDateId}" maxlength="10"
-							onkeyup="DateFormat(this,this.value,event,false,'3')" /> <a
-						href="javascript:show_calendar('remitRecoveryForm.fromVhDate',null,null,'DD/MM/YYYY');"
-						style="text-decoration: none">&nbsp;<img
-							src="/egi/resources/erp2/images/calendaricon.gif" border="0" /></a>(dd/mm/yyyy)</td>
+							id="fromVhDate" name="remittanceBean.fromVhDate"
+							value="%{voucherDateId}"
+							onkeyup="DateFormat(this,this.value,event,false,'3')"
+							placeholder="DD/MM/YYYY" cssClass="form-control datepicker"
+							data-inputmask="'mask': 'd/m/y'" /></td>
 
 					<td class="bluebox"><s:text
 							name="remit.recovery.search.todate" /><span class="mandatory"></span></td>
-					<td class="bluebox"><s:date name="voucherDate"
+					<td class="greybox"><s:date name="voucherDate"
 							var="voucherDateId" format="dd/MM/yyyy" /> <s:textfield
-							name="voucherDate" id="voucherDate" value="%{voucherDateId}"
-							maxlength="10"
-							onkeyup="DateFormat(this,this.value,event,false,'3')" /> <a
-						href="javascript:show_calendar('remitRecoveryForm.voucherDate',null,null,'DD/MM/YYYY');"
-						style="text-decoration: none">&nbsp;<img
-							src="/egi/resources/erp2/images/calendaricon.gif" border="0" /></a>(dd/mm/yyyy)</td>
+							id="voucherDate" name="voucherDate" value="%{voucherDateId}"
+							onkeyup="DateFormat(this,this.value,event,false,'3')"
+							placeholder="DD/MM/YYYY" cssClass="form-control datepicker"
+							data-inputmask="'mask': 'd/m/y'" /></td>
 				</tr>
 
 				</tr>
-				<%@ include file="../voucher/vouchertrans-filter-new.jsp"%>
+				<%@ include file="../payment/paymenttrans-filter.jsp"%>
 
 			</table>
 			<jsp:include page="remitRecovery-form.jsp" />

@@ -261,7 +261,7 @@ public class LegalCaseInterimOrder extends AbstractAuditable {
                 && getReportFilingDue() == null)
             errors.add(new ValidationError("reportFilingDue", "reportFilingDue.required"));
 
-        if (!DateUtils.compareDates(getIoDate(), legalCase.getCasedate()))
+        if (!DateUtils.compareDates(getIoDate(), legalCase.getCaseDate()))
             errors.add(new ValidationError("ioDate", "ioDate.greaterThan.caseDate"));
 
         if (!DateUtils.compareDates(getPetitionFiledOn(), getSendtoStandingCounsel()))

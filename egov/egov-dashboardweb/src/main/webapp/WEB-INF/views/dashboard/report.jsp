@@ -183,7 +183,7 @@
        		        			</div>
 								<div class="panel-body">
 									<li class="report-li"><a href="/adtax/reports/search-for-dcbreport" class="open-popup">Advertisement Collection Report</a></li>
-				                    <li class="report-li"><a href="/adtax/reports/search-dcbreport" class="open-popup">Agency wise Collection Report</a></li>
+				                    <li class="report-li"><a href="/adtax/reports/dcbreport-search" class="open-popup">Agency wise Collection Report</a></li>
 								</div>
        						</div>
 				        </div>

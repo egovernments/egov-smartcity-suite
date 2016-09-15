@@ -44,7 +44,7 @@
 
 	<persistence-unit name="egov-test-jpa-unit" transaction-type="RESOURCE_LOCAL">
 		<properties>
-			<property name="hibernate.dialect" value="org.hibernate.dialect.PostgresPlusDialect"/>
+			<property name="hibernate.dialect" value="org.hibernate.dialect.PostgreSQL94Dialect"/>
 			<property name="hibernate.current_session_context_class" value="thread"/>
 			<property name="hibernate.show_sql" value="false"/>
 			<property name="hibernate.cache.use_second_level_cache" value="false"/>

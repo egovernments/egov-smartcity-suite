@@ -9,6 +9,13 @@
 	<name>e-governments database</name>
 	<artifactId>egov-database</artifactId>
 	<build>
+		<resources>
+			<!-- This way we instruct maven to inject values from filters into the resources -->
+			<resource>
+				<directory>src/main/resources</directory>
+				<filtering>true</filtering>
+			</resource>
+		</resources>
 		<plugins>
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
@@ -81,14 +88,17 @@
 			<plugin>
 				<groupId>org.flywaydb</groupId>
 				<artifactId>flyway-maven-plugin</artifactId>
-				<version>3.2.1</version>
+				<version>${flyway-core-version}</version>
 				<dependencies>
 					<dependency>
 						<groupId>org.postgresql</groupId>
 						<artifactId>postgresql</artifactId>
-						<version>9.3-1102-jdbc41</version>
+						<version>${postgres-version}</version>
 					</dependency>
 				</dependencies>
+                <configuration>
+                    <skip>false</skip>
+                </configuration>
 				<executions>
 					<execution>
 						<phase>process-resources</phase>
@@ -96,10 +106,6 @@
 							<goal>migrate</goal>
 						</goals>
 						<configuration>
-							<driver>${db.driver}</driver>
-							<url>${db.url}</url>
-							<user>${db.user}</user>
-							<password>${db.password}</password>
 							<configFile>src/main/resources/flyway.properties</configFile>
 						</configuration>
 					</execution>
