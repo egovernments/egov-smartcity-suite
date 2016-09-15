@@ -42,10 +42,6 @@ jQuery(document).ready(function() {
 $('#baseRegisterReportSearch').click(function(e){
 	  
 		var ward = $("#ward").val();
-		if ((ward == "" )) {
-			bootbox.alert('Please select the revenue ward');
-			return false;
-		}
 		
 		oTable= $('#baseRegisterReport-table');
 		$('#baseRegister-header').show();
@@ -86,6 +82,8 @@ $('#baseRegisterReportSearch').click(function(e){
 						  { "data" : "period", "title": "Period"},
 						  { "data" : "arrears", "title": "Arrears", class : 'text-right'},
 						  { "data" : "current", "title": "Current", class : 'text-right'},
+						  { "data" : "arrearsCollection", "title": "Arrears Collection", class : 'text-right'},
+						  { "data" : "currentCollection", "title": "Current Collection", class : 'text-right'},
 						  { "data" : "penalty", "title": "Penalty", class : 'text-center',
 							  "render": function(data, type, row){
 								  return (!data || parseInt(data)==0 ? "-" : data);

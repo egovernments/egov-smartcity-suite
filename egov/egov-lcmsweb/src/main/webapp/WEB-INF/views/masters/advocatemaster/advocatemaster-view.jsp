@@ -97,7 +97,7 @@
 						<div class="col-sm-3 add-margin view-content">
 							${advocateMaster.panNumber}</div>
 					<div class="col-xs-3 add-margin">
-							<spring:message code="lbl.specilization" />
+							<spring:message code="lbl.specialization" />
 						</div>
 						<div class="col-sm-3 add-margin view-content">
 							${advocateMaster.specilization}</div>

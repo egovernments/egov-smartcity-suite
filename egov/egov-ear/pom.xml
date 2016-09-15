@@ -24,14 +24,14 @@
 			<artifactId>egov-commonsweb</artifactId>
 			<version>${project.parent.version}</version>
 			<type>war</type>
-		</dependency>
+		</dependency> 
 		<dependency>
 			<groupId>org.egov</groupId>
 			<artifactId>egov-eisweb</artifactId>
 			<version>${project.parent.version}</version>
 			<type>war</type>
 		</dependency>
-		<dependency>
+	    <dependency>
 			<groupId>org.egov</groupId>
 			<artifactId>egov-egfweb</artifactId>
 			<version>${project.parent.version}</version>
@@ -108,7 +108,7 @@
 			<artifactId>egov-councilweb</artifactId>
 			<version>${project.parent.version}</version>
 			<type>war</type>
-		</dependency>
+		</dependency> 
 		<dependency>
 			<groupId>org.egov</groupId>
 			<artifactId>egov-stmsweb</artifactId>
@@ -213,6 +213,11 @@
 			<artifactId>egov-council</artifactId>
 			<version>${project.parent.version}</version>
 		</dependency>
+	<!-- 	<dependency>
+			<groupId>org.egov</groupId>
+			<artifactId>egov-inventory</artifactId>
+			<version>${project.parent.version}</version>
+		</dependency> -->
 		<dependency>
 			<groupId>org.egov</groupId>
 			<artifactId>egov-restapi</artifactId>
@@ -352,6 +357,11 @@
 							<artifactId>egov-councilweb</artifactId>
 							<contextRoot>/council</contextRoot>
 						</webModule>
+				<!-- 	<webModule>
+							<groupId>org.egov</groupId>
+							<artifactId>egov-inventoryweb</artifactId>
+							<contextRoot>/inventory</contextRoot>
+						</webModule> -->
 						<webModule>
 							<groupId>org.egov</groupId>
 							<artifactId>egov-restapi</artifactId>

@@ -40,8 +40,11 @@
 
 package org.egov.infra.admin.master.service;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
+import org.apache.commons.lang.StringUtils;
 import org.egov.infra.admin.master.entity.Boundary;
 import org.egov.infra.admin.master.entity.BoundaryType;
 import org.egov.infra.admin.master.entity.CrossHierarchy;
@@ -54,14 +57,20 @@ import org.springframework.transaction.annotation.Transactional;
 @Transactional(readOnly = true)
 public class CrossHierarchyService {
 
+    private static final String CROSSHIERARCHY_BOUNDARYTYPES = "CrosshierarchyBoundaryTypes";
+    private static final String ADMINISTRATION = "Administration";
+
     private final CrossHierarchyRepository crossHierarchyRepository;
 
     @Autowired
     private BoundaryTypeService boundaryTypeService;
-    
+
     @Autowired
     private BoundaryService boundaryService;
-    
+
+    @Autowired
+    private AppConfigValueService appConfigValueService;
+
     @Autowired
     public CrossHierarchyService(final CrossHierarchyRepository crossHierarchyRepository) {
         this.crossHierarchyRepository = crossHierarchyRepository;
@@ -71,7 +80,7 @@ public class CrossHierarchyService {
     public CrossHierarchy create(final CrossHierarchy crossHierarchy) {
         return crossHierarchyRepository.save(crossHierarchy);
     }
-    
+
     @Transactional
     public CrossHierarchy update(final CrossHierarchy crossHierarchy) {
         return crossHierarchyRepository.save(crossHierarchy);
@@ -124,11 +133,31 @@ public class CrossHierarchyService {
     public CrossHierarchy findAllByParentAndChildBoundary(final Long parentId, final Long childId) {
         return crossHierarchyRepository.findBoundariesByParentAndChildBoundary(parentId, childId);
     }
-    
+
     public List<Boundary> getBoundaryByBoundaryType() {
         final BoundaryType boundaryType = boundaryTypeService.getBoundaryTypeByName("Locality");
         final List<Boundary> boundaryList = boundaryService.getAllBoundariesByBoundaryTypeId(boundaryType.getId());
         return boundaryList;
     }
 
+    public List<BoundaryType> getCrossHierarchyBoundaryTypes() {
+        final List<BoundaryType> boundaryTypes = new ArrayList<BoundaryType>();
+
+        final String appConfigValue = appConfigValueService
+                .getConfigValuesByModuleAndKey(ADMINISTRATION, CROSSHIERARCHY_BOUNDARYTYPES).get(0).getValue();
+        final List<String> configList = new ArrayList<String>();
+
+        if (StringUtils.isNotBlank(appConfigValue)) {
+            final List<String> boundaryHierarchyType = Arrays.asList(appConfigValue.split(","));
+            for (final String bhType : boundaryHierarchyType)
+                configList.add(bhType);
+            for (final String bhType : configList) {
+                final List<String> boundaryTypeList = Arrays.asList(bhType.split("-"));
+                final BoundaryType boundaryType = boundaryTypeService
+                        .getBoundaryTypeByNameAndHierarchyTypeName(boundaryTypeList.get(1), boundaryTypeList.get(0));
+                boundaryTypes.add(boundaryType);
+            }
+        }
+        return boundaryTypes;
+    }
 }

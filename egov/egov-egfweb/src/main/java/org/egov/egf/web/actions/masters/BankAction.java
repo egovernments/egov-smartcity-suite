@@ -75,6 +75,7 @@ import java.util.List;
 @Results({
     @Result(name = BankAction.MODIFY, location = "bank-modify.jsp"),
     @Result(name = BankAction.SUCCESS, location = "bank.jsp"),
+    @Result(name = BankAction.VIEW, location = "bank-view.jsp"),
     @Result(name = BankAction.SEARCH, location = "bank-search.jsp") })
 public class BankAction extends BaseFormAction {
     private static final long serialVersionUID = 1L;
@@ -100,25 +101,29 @@ public class BankAction extends BaseFormAction {
     })
     public String execute() {
     	
-        if ("MODIFY".equals(mode)) {
+        if ("MODIFY".equals(mode) || "VIEW".equals(mode)) {
             if (StringUtils.isBlank(bank.getName()))
             {
             	addDropdownData("bankList",bankService.findAll("name"));
-                return "search";
+                return SEARCH;
             }
             else {
                 bank = bankService.find("FROM Bank WHERE name = ?", bank.getName());
                 if (bank == null)
-                    return "search";
+                    return SEARCH;
                 else {
                     if (bank.getIsactive() != false)
                         isActive = true;
                     else
                         isActive = false;
-                    return "modify";
+                    if("MODIFY".equals(mode))
+                    return MODIFY;
+                    else
+                    return VIEW;  
                 }
             }
-        } else if ("UNQ_NAME".equals(mode))
+        } 
+        else if ("UNQ_NAME".equals(mode))
             checkUniqueBankName();
         else if ("UNQ_CODE".equals(mode))
             checkUniqueBankCode();

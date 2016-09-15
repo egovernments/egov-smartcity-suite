@@ -125,7 +125,7 @@ public class ChartOfAccountsAction extends BaseFormAction {
     private final Map<Long, Integer> glCodeLengths = new HashMap<Long, Integer>();
     private boolean updateOnly = false;
     @Autowired
-	private CoaCache coaCache;
+    private CoaCache coaCache;
     @Autowired
     private ChartOfAccountsHibernateDAO chartOfAccountsHibernateDAO;
 
@@ -199,6 +199,14 @@ public class ChartOfAccountsAction extends BaseFormAction {
 
     @Action(value = "/masters/chartOfAccounts-viewChartOfAccounts")
     public String viewChartOfAccounts() throws Exception {
+        populateAccountCodePurpose();
+        populateAccountDetailTypeList();
+        populateCoaRequiredFields();
+        coaId = model.getId();
+        return Constants.VIEW_COA;
+    }
+    @Action(value = "/masters/chartOfAccounts-modifyChartOfAccounts")
+    public String modifyChartOfAccounts() throws Exception {
         populateAccountCodePurpose();
         populateAccountDetailTypeList();
         populateCoaRequiredFields();
@@ -382,7 +390,15 @@ public class ChartOfAccountsAction extends BaseFormAction {
         else
             generatedGlcode = parent.getGlcode();
         if (glCode == null) {
-            populateGlcode(parent.getClassification());
+            Long classification=0l;
+            if(glCodeLengths.get(parent.getClassification()+1)==0)
+            {
+                classification=parent.getClassification()+2;
+            }else
+            {
+                classification=parent.getClassification()+1; 
+            }
+            populateGlcode(classification);
             newGlcode = model.getGlcode();
         } else {
             newGlcode = String.valueOf(glCode + 1);
@@ -431,6 +447,7 @@ public class ChartOfAccountsAction extends BaseFormAction {
     }
 
     void populateGlcode(final Long classification) {
+        
         model.setGlcode(StringUtils.leftPad("", glCodeLengths.get(classification), '0'));
     }
 
@@ -504,13 +521,13 @@ public class ChartOfAccountsAction extends BaseFormAction {
 
     @Action(value = "/masters/chartOfAccounts-editDetailedCode")
     public String editDetailedCode() throws Exception {
-        allChartOfAccounts = chartOfAccountsHibernateDAO.getDetailedAccountCodeList();
+        allChartOfAccounts = chartOfAccountsHibernateDAO.getDetailedCodesList();
         return "detailed-editCode";
     }
 
     @Action(value = "/masters/chartOfAccounts-viewDetailedCode")
     public String viewDetailedCode() throws Exception {
-        allChartOfAccounts = chartOfAccountsHibernateDAO.getDetailedAccountCodeList();
+        allChartOfAccounts = chartOfAccountsHibernateDAO.getDetailedCodesList();
         return "detailed-viewCode";
     }
 

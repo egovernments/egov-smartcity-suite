@@ -193,14 +193,14 @@ public class LineEstimateService {
                 LineEstimateStatus.CREATED.toString()));
         final CFinancialYear financialYear = getCurrentFinancialYear(lineEstimate.getLineEstimateDate());
         for (final LineEstimateDetails lineEstimateDetail : lineEstimate.getLineEstimateDetails()) {
-            EstimateNumberGenerator e = beanResolver.getAutoNumberServiceFor(EstimateNumberGenerator.class);
+            final EstimateNumberGenerator e = beanResolver.getAutoNumberServiceFor(EstimateNumberGenerator.class);
             final String estimateNumber = e.getNextNumber(lineEstimate, financialYear);
             lineEstimateDetail.setEstimateNumber(estimateNumber);
             lineEstimateDetail.setLineEstimate(lineEstimate);
         }
         if (lineEstimate.getLineEstimateNumber() == null || lineEstimate.getLineEstimateNumber().isEmpty()) {
 
-            LineEstimateNumberGenerator l = beanResolver.getAutoNumberServiceFor(LineEstimateNumberGenerator.class);
+            final LineEstimateNumberGenerator l = beanResolver.getAutoNumberServiceFor(LineEstimateNumberGenerator.class);
 
             final String lineEstimateNumber = l.getNextNumber(lineEstimate);
             lineEstimate.setLineEstimateNumber(lineEstimateNumber);
@@ -226,7 +226,7 @@ public class LineEstimateService {
             final MultipartFile[] files, final CFinancialYear financialYear) throws IOException {
         for (final LineEstimateDetails lineEstimateDetails : lineEstimate.getLineEstimateDetails())
             if (lineEstimateDetails != null && lineEstimateDetails.getId() == null) {
-                EstimateNumberGenerator e = beanResolver.getAutoNumberServiceFor(EstimateNumberGenerator.class);
+                final EstimateNumberGenerator e = beanResolver.getAutoNumberServiceFor(EstimateNumberGenerator.class);
                 final String estimateNumber = e.getNextNumber(lineEstimate, financialYear);
                 lineEstimateDetails.setEstimateNumber(estimateNumber);
                 lineEstimateDetails.setLineEstimate(lineEstimate);
@@ -523,12 +523,11 @@ public class LineEstimateService {
                             .equalsIgnoreCase(budgetControlTypeService.getConfigValue()))
                         doBudgetoryAppropriation(lineEstimate);
                 } else if (workFlowAction.equals(WorksConstants.REJECT_ACTION) && lineEstimate.getStatus().getCode()
-                        .equals(LineEstimateStatus.BUDGET_SANCTIONED.toString())) {
+                        .equals(LineEstimateStatus.BUDGET_SANCTIONED.toString()))
                     if (!BudgetControlType.BudgetCheckOption.NONE.toString()
                             .equalsIgnoreCase(budgetControlTypeService.getConfigValue()))
                         for (final LineEstimateDetails led : lineEstimate.getLineEstimateDetails())
                             releaseBudgetOnReject(led, null, null);
-                }
 
                 lineEstimateStatusChange(lineEstimate, workFlowAction, mode);
             } catch (final ValidationException e) {
@@ -648,7 +647,6 @@ public class LineEstimateService {
             LOG.debug(" Create WorkFlow Transition Started  ...");
         final User user = securityUtils.getCurrentUser();
         final DateTime currentDate = new DateTime();
-        final Assignment userAssignment = assignmentService.getPrimaryAssignmentForUser(user.getId());
         Position pos = null;
         Assignment wfInitiator = null;
         final String currState = "";
@@ -657,18 +655,14 @@ public class LineEstimateService {
         if (null != lineEstimate.getId())
             wfInitiator = assignmentService.getPrimaryAssignmentForUser(lineEstimate.getCreatedBy().getId());
         if (WorksConstants.REJECT_ACTION.toString().equalsIgnoreCase(workFlowAction)) {
-            if (wfInitiator.equals(userAssignment))
-                lineEstimate.transition(true).end().withSenderName(user.getUsername() + "::" + user.getName())
-                        .withComments(approvalComent).withDateInfo(currentDate.toDate()).withNatureOfTask(natureOfwork);
-            else {
-                final String stateValue = WorksConstants.WF_STATE_REJECTED;
-                lineEstimate.transition(true).withSenderName(user.getUsername() + "::" + user.getName())
-                        .withComments(approvalComent)
-                        .withStateValue(stateValue).withDateInfo(currentDate.toDate())
-                        .withOwner(wfInitiator.getPosition())
-                        .withNextAction("")
-                        .withNatureOfTask(natureOfwork);
-            }
+            final String stateValue = WorksConstants.WF_STATE_REJECTED;
+            lineEstimate.transition(true).withSenderName(user.getUsername() + "::" + user.getName())
+                    .withComments(approvalComent)
+                    .withStateValue(stateValue).withDateInfo(currentDate.toDate())
+                    .withOwner(wfInitiator.getPosition())
+                    .withNextAction("")
+                    .withNatureOfTask(natureOfwork);
+
         } else {
             if (null != approvalPosition && approvalPosition != -1 && !approvalPosition.equals(Long.valueOf(0)))
                 pos = positionMasterService.getPositionById(approvalPosition);
@@ -734,7 +728,8 @@ public class LineEstimateService {
 
             if (appropriationnumber == null)
                 appropriationnumber = lineEstimateAppropriation.getBudgetUsage().getAppropriationnumber();
-            BudgetAppropriationNumberGenerator b = beanResolver.getAutoNumberServiceFor(BudgetAppropriationNumberGenerator.class);
+            final BudgetAppropriationNumberGenerator b = beanResolver
+                    .getAutoNumberServiceFor(BudgetAppropriationNumberGenerator.class);
             budgetUsage = budgetDetailsDAO.releaseEncumbranceBudget(
                     lineEstimateAppropriation.getBudgetUsage() == null ? null
                             : b.generateCancelledBudgetAppropriationNumber(appropriationnumber),
@@ -791,7 +786,7 @@ public class LineEstimateService {
 
         if (lineEstimate.getLineEstimateNumber() == null || lineEstimate.getLineEstimateNumber().isEmpty()) {
 
-            LineEstimateNumberGenerator l = beanResolver.getAutoNumberServiceFor(LineEstimateNumberGenerator.class);
+            final LineEstimateNumberGenerator l = beanResolver.getAutoNumberServiceFor(LineEstimateNumberGenerator.class);
             final String lineEstimateNumber = l.getNextNumber(lineEstimate);
             lineEstimate.setLineEstimateNumber(lineEstimateNumber);
         }
@@ -849,32 +844,28 @@ public class LineEstimateService {
         if (lineEstimateSearchRequest != null) {
             if (lineEstimateSearchRequest.getExecutingDepartment() != null)
                 criteria.add(Restrictions.eq("ed.id", lineEstimateSearchRequest.getExecutingDepartment()));
-            if (lineEstimateSearchRequest.getLineEstimateNumber() != null) {
+            if (lineEstimateSearchRequest.getLineEstimateNumber() != null)
                 criteria.add(Restrictions.eq("lineEstimateNumber", lineEstimateSearchRequest.getLineEstimateNumber())
                         .ignoreCase());
-            }
             if (lineEstimateSearchRequest.getWorkIdentificationNumber() != null)
                 criteria.add(
                         Restrictions.ilike("pc.code", lineEstimateSearchRequest.getWorkIdentificationNumber(),
                                 MatchMode.ANYWHERE));
         }
-        if (lineEstimateSearchRequest.getCreatedBy() != null) {
+        if (lineEstimateSearchRequest.getCreatedBy() != null)
             criteria.add(Restrictions.eq("createdBy.id", lineEstimateSearchRequest.getCreatedBy()));
-        }
-        if (lineEstimateSearchRequest.isSpillOverFlag()) {
+        if (lineEstimateSearchRequest.isSpillOverFlag())
             criteria.add(Restrictions.eq("spillOverFlag", lineEstimateSearchRequest.isSpillOverFlag()));
-        }
         criteria.add(Restrictions.eq("status.code", LineEstimateStatus.TECHNICAL_SANCTIONED.toString()).ignoreCase());
         criteria.setResultTransformer(CriteriaSpecification.DISTINCT_ROOT_ENTITY);
         return criteria.list();
     }
 
     public String checkIfLOAsCreated(final Long lineEstimateId) {
-        List<String> listString = letterOfAcceptanceService.getEstimateNumbersToSearchLOAToCancel(lineEstimateId);
+        final List<String> listString = letterOfAcceptanceService.getEstimateNumbersToSearchLOAToCancel(lineEstimateId);
         String estimateNumbers = "";
-        for (String estimateNumber : listString) {
+        for (final String estimateNumber : listString)
             estimateNumbers += estimateNumber + ", ";
-        }
         if (estimateNumbers.equals(""))
             return "";
         else

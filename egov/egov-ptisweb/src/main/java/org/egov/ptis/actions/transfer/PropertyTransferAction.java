@@ -68,6 +68,7 @@ import static org.egov.ptis.constants.PropertyTaxConstants.WF_STATE_REVENUE_OFFI
 import static org.egov.ptis.constants.PropertyTaxConstants.WF_STATE_REVENUE_OFFICER_APPROVED;
 import static org.egov.ptis.constants.PropertyTaxConstants.WF_STATE_UD_REVENUE_INSPECTOR_APPROVAL_PENDING;
 import static org.egov.ptis.constants.PropertyTaxConstants.WF_STATE_UD_REVENUE_INSPECTOR_APPROVED;
+
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.math.BigDecimal;
@@ -147,6 +148,9 @@ import com.opensymphony.xwork2.ActionContext;
 @Namespace("/property/transfer")
 public class PropertyTransferAction extends GenericWorkFlowAction {
     protected static final String COMMON_FORM = "commonForm";
+    protected static final String REDIRECT = "redirect";
+    protected static final String DIGITAL_SIGNATURE_REDIRECTION = "digitalSignatureRedirection";
+
     private static final String PROPERTY_TRANSFER = "property transfer";
     private static final long serialVersionUID = 1L;
     public static final String ACK = "ack";
@@ -158,9 +162,7 @@ public class PropertyTransferAction extends GenericWorkFlowAction {
     public static final String REDIRECT_SUCCESS = "redirect-success";
     public static final String COLLECT_FEE = "collect-fee";
     public static final String MEESEVA_RESULT_ACK = "meesevaAck";
-    protected static final String REDIRECT = "redirect";
-    protected static final String DIGITAL_SIGNATURE_REDIRECTION = "digitalSignatureRedirection";
-
+    
     // Form Binding Model
     private PropertyMutation propertyMutation = new PropertyMutation();
 
@@ -239,6 +241,7 @@ public class PropertyTransferAction extends GenericWorkFlowAction {
     private String actionType;
     private boolean digitalSignEnabled;
     private boolean mutationFeePaid = Boolean.FALSE;
+    private boolean receiptCanceled = Boolean.FALSE;
 
     public PropertyTransferAction() {
         addRelatedEntity("mutationReason", PropertyMutationMaster.class);
@@ -292,7 +295,6 @@ public class PropertyTransferAction extends GenericWorkFlowAction {
                         propertyMutation.setMeesevaApplicationNumber(getMeesevaApplicationNumber());
                     }
                 }
-
                 return NEW;
             }
         }
@@ -337,14 +339,10 @@ public class PropertyTransferAction extends GenericWorkFlowAction {
                 || (nextAction != null && nextAction.equalsIgnoreCase(WF_STATE_UD_REVENUE_INSPECTOR_APPROVAL_PENDING))
                 || currState.equals(WFLOW_ACTION_NEW)) {
             mode = EDIT;
-            return EDIT;
         } else {
             mode = VIEW;
-            if(null != propertyMutation.getReceiptDate())
-                setMutationFeePaid(Boolean.TRUE);
-            return VIEW;
         }
-
+        return mode;
     }
 
     @SkipValidation
@@ -407,6 +405,12 @@ public class PropertyTransferAction extends GenericWorkFlowAction {
     @SkipValidation
     @Action(value = "/reject")
     public String reject() {
+        if (propertyMutation.getState().getValue().equals("Rejected")
+                && (propertyMutation.getReceiptNum() != null && !propertyMutation.getReceiptNum().isEmpty())
+                && !receiptCanceled) {
+            addActionError(getText("error.mutation.reject.notallowed"));
+            return EDIT;
+        }
         transitionWorkFlow(propertyMutation);
         transferOwnerService.viewPropertyTransfer(basicproperty, propertyMutation);
         buildSMS(propertyMutation);
@@ -556,6 +560,14 @@ public class PropertyTransferAction extends GenericWorkFlowAction {
             documentTypes = transferOwnerService.getPropertyTransferDocumentTypes();
             addDropdownData("MutationReason", transferOwnerService.getPropertyTransferReasons());
             setGuardianRelationMap(GUARDIAN_RELATION);
+            if (propertyMutation.getReceiptNum() != null) {
+                boolean isCanceled = propertyTaxCommonUtils.isReceiptCanceled(propertyMutation.getReceiptNum());
+                setReceiptCanceled(isCanceled);
+                if (isCanceled)
+                    setMutationFeePaid(Boolean.FALSE);
+                else
+                    setMutationFeePaid(Boolean.TRUE);
+            }
         }
         digitalSignEnabled = propertyTaxCommonUtils.isDigitalSignatureEnabled();
     }
@@ -742,7 +754,7 @@ public class PropertyTransferAction extends GenericWorkFlowAction {
                 } else {
                     argsForTransferee.add(propertyMutation.getDepartmentValue().toString());
                 }
-                argsForTransferee.add(propertyMutation.getMutationFee().toString());
+                argsForTransferee.add(propertyMutation.getMutationFee()!=null ? propertyMutation.getMutationFee().toString() : "N/A");
                 smsMsgForTransferor = getText("msg.createtransferproperty.sms", argsForTransferor);
                 smsMsgForTransferee = getText("msg.createtransferproperty.sms", argsForTransferee);
             } else if (mutationState.getValue().equals(WF_STATE_REJECTED)) {
@@ -803,7 +815,7 @@ public class PropertyTransferAction extends GenericWorkFlowAction {
                 } else {
                     argsForTransferee.add(propertyMutation.getDepartmentValue().toString());
                 }
-                argsForTransferee.add(propertyMutation.getMutationFee().toString());
+                argsForTransferee.add(propertyMutation.getMutationFee()!=null ? propertyMutation.getMutationFee().toString() : "N/A");
                 emailBodyTransferee = getText("body.createtransferproperty", argsForTransferee);
             } else if (mutationState.getValue().equals(WF_STATE_REJECTED)) {
                 subject = getText("subject.rejecttransferproperty");
@@ -1090,4 +1102,11 @@ public class PropertyTransferAction extends GenericWorkFlowAction {
         this.mutationFeePaid = mutationFeePaid;
     }
 
+    public boolean getReceiptCanceled() {
+        return receiptCanceled;
+    }
+
+    public void setReceiptCanceled(boolean receiptCanceled) {
+        this.receiptCanceled = receiptCanceled;
+    }
 }

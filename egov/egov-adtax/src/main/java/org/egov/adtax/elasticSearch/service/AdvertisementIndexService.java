@@ -89,13 +89,14 @@ public class AdvertisementIndexService {
 	public AdvertisementSearch createOrUpdateAdvIndex(final AdvertisementPermitDetail advertisementPermitDetail){
 		final City cityWebsite = cityService.getCityByURL(ApplicationThreadLocals.getDomainName());
 		final AdvertisementSearch advertisementSearch = new AdvertisementSearch(advertisementPermitDetail.getAdvertisement().getAdvertisementNumber(),
-				 cityWebsite.getName(),cityWebsite.getGrade(), advertisementPermitDetail.getCreatedDate(), cityWebsite.getDistrictName(), cityWebsite.getRegionName(),
+				 cityWebsite.getName(),cityWebsite.getCode(), advertisementPermitDetail.getCreatedDate(), cityWebsite.getDistrictName(), cityWebsite.getRegionName(),
 					cityWebsite.getGrade());
 		advertisementSearch.setAddress(advertisementPermitDetail.getAdvertisement().getAddress()!=null?advertisementPermitDetail.getAdvertisement().getAddress():"");
 		advertisementSearch.setAdvertisementClass(advertisementPermitDetail.getAdvertisement().getRateClass().getDescription());
 		advertisementSearch.setAdvertisementCreatedBy(advertisementPermitDetail.getAdvertisement().getCreatedBy().getName());
 		advertisementSearch.setAdvertisement_duration(advertisementPermitDetail.getAdvertisementDuration().name());
 		advertisementSearch.setAdvertisementNumber(advertisementPermitDetail.getAdvertisement().getAdvertisementNumber());
+		
 		advertisementSearch.setAdvertisement_status(advertisementPermitDetail.getAdvertisement().getStatus().name());
 		advertisementSearch.setType(advertisementPermitDetail.getAdvertisement().getType().name());
 		advertisementSearch.setAdvertiser(advertisementPermitDetail.getAdvertiser()!=null?advertisementPermitDetail.getAdvertiser():"");
@@ -103,6 +104,7 @@ public class AdvertisementIndexService {
 		advertisementSearch.setAgencyName(advertisementPermitDetail.getAgency()!=null?advertisementPermitDetail.getAgency().getName():"");
 		advertisementSearch.setApplicationDate(advertisementPermitDetail.getApplicationDate());
 		advertisementSearch.setApplicationNumber(advertisementPermitDetail.getApplicationNumber());
+		
 		advertisementSearch.setBlock(advertisementPermitDetail.getAdvertisement().getBlock()!=null?advertisementPermitDetail.getAdvertisement().getBlock().getName():"");
 		advertisementSearch.setBreadth(advertisementPermitDetail.getBreadth()!=null?advertisementPermitDetail.getBreadth():0.0);
 		advertisementSearch.setCategory(advertisementPermitDetail.getAdvertisement().getCategory().getName());  
@@ -130,8 +132,15 @@ public class AdvertisementIndexService {
 		advertisementSearch.setUom(advertisementPermitDetail.getUnitOfMeasure().getCode());
 		advertisementSearch.setWard(advertisementPermitDetail.getAdvertisement().getWard()!=null?advertisementPermitDetail.getAdvertisement().getWard().getName():"");
 		advertisementSearch.setWidth(advertisementPermitDetail.getWidth()!=null?advertisementPermitDetail.getWidth():0.0);
-		advertisementSearch.setConsumerName(advertisementPermitDetail.getAgency()!=null?advertisementPermitDetail.getAgency().getName():
-       	advertisementPermitDetail.getOwnerDetail());
+		String consumerName=advertisementPermitDetail.getAgency()!=null?advertisementPermitDetail.getAgency().getName():
+		        advertisementPermitDetail.getOwnerDetail();
+		advertisementSearch.setConsumerName(consumerName);
+		//added to support dashboard reports
+		advertisementSearch.setConsumerName_Clauses(consumerName);
+		advertisementSearch.setConsumerNumber(advertisementPermitDetail.getApplicationNumber());
+		advertisementSearch.setAdvertisementNumber_Clauses(advertisementPermitDetail.getAdvertisement().getAdvertisementNumber());
+		advertisementSearch.setPermissionNumber_Clauses(advertisementPermitDetail.getPermissionNumber());
+		advertisementSearch.setAgencyName_Clauses(advertisementPermitDetail.getAgency()!=null?advertisementPermitDetail.getAgency().getName():"");
 		
 		// Demand and Collection Details
 		advertisementSearch.setTax_demand(advertisementPermitDetail.getAdvertisement().getDemandId().getBaseDemand());

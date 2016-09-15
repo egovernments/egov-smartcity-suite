@@ -80,9 +80,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 @Service
-@Transactional(readOnly = true)
 public class ComplaintIndexService {
-
 	@Autowired
 	private CityService cityService;
 
@@ -244,8 +242,7 @@ public class ComplaintIndexService {
 		complaintIndex = updateComplaintLevelIndexFields(complaintIndex);
 		int escalationLevel = complaintIndex.getEscalationLevel();
 		//For Escalation level1
-		if(escalationLevel == 0)
-		{
+		if(escalationLevel == 0){
 			complaintIndex.setEscalation1FunctionaryName(assignedUser.getName());
 			complaintIndex.setEscalation1FunctionaryAssigneddate(new Date());
 			complaintIndex.setEscalation1FunctionarySLADays(getFunctionarySlaDays(complaintIndex));
@@ -254,8 +251,7 @@ public class ComplaintIndexService {
 			complaintIndex.setEscalation1FunctionaryIfSLA(1);
 			complaintIndex.setEscalationLevel(++escalationLevel);
 		}
-		else if(escalationLevel == 1)
-		{	
+		else if(escalationLevel == 1){	
 			//update escalation level 2 fields
 			complaintIndex.setEscalation2FunctionaryName(assignedUser.getName());
 			complaintIndex.setEscalation2FunctionaryAssigneddate(new Date());
@@ -265,8 +261,7 @@ public class ComplaintIndexService {
 			complaintIndex.setEscalation2FunctionaryIfSLA(1);
 			complaintIndex.setEscalationLevel(++escalationLevel);
 		}
-		else if(escalationLevel == 2)
-		{	
+		else if(escalationLevel == 2){	
 			//update escalation level 3 fields
 			complaintIndex.setEscalation3FunctionaryName(assignedUser.getName());
 			complaintIndex.setEscalation3FunctionaryAssigneddate(new Date());
@@ -306,8 +301,7 @@ public class ComplaintIndexService {
 
 	public ComplaintIndex updateComplaintLevelIndexFields(ComplaintIndex complaintIndex){
 		//Update complaint level index variables
-		long days = Math.abs(new Date().getTime() - complaintIndex.getCreatedDate().getTime())
-				/ (24 * 60 * 60 * 1000);   
+		long days = Math.abs(new Date().getTime() - complaintIndex.getCreatedDate().getTime())/ (24 * 60 * 60 * 1000);   
 		complaintIndex.setComplaintPeriod(days);
 		Date lastDateToResolve = DateUtils.addHours(complaintIndex.getCreatedDate(),(int)complaintIndex.getComplaintSLADays());
 		Date currentDate = new Date();
@@ -317,10 +311,8 @@ public class ComplaintIndexService {
 			complaintIndex.setIsSLA('Y');
 			complaintIndex.setIfSLA(1);
 		}
-		else
-		{
-			long ageingDuehours = Math.abs(currentDate.getTime() - lastDateToResolve.getTime())
-					/ (60 * 60 * 1000);
+		else{
+			long ageingDuehours = Math.abs(currentDate.getTime() - lastDateToResolve.getTime())/ (60 * 60 * 1000);
 			complaintIndex.setComplaintAgeingFromDue(ageingDuehours);
 			complaintIndex.setIsSLA('N');
 			complaintIndex.setIfSLA(0);
@@ -335,10 +327,8 @@ public class ComplaintIndexService {
 				complaintIndex.setInitialFunctionaryIsSLA('Y');
 				complaintIndex.setInitialFunctionaryIfSLA(1);
 			}
-			else
-			{
-				long initialFunctionaryAgeingDueHours = Math.abs(new Date().getTime() - lastDateToResolve.getTime())
-						/ (60 * 60 * 1000);
+			else{
+				long initialFunctionaryAgeingDueHours = Math.abs(new Date().getTime() - lastDateToResolve.getTime())/ (60 * 60 * 1000);
 				complaintIndex.setInitialFunctionaryAgeingFromDue(initialFunctionaryAgeingDueHours);
 				complaintIndex.setInitialFunctionaryIsSLA('N');
 				complaintIndex.setInitialFunctionaryIfSLA(0);
@@ -354,10 +344,8 @@ public class ComplaintIndexService {
 				complaintIndex.setCurrentFunctionaryIsSLA('Y');
 				complaintIndex.setCurrentFunctionaryIfSLA(1);
 			}
-			else
-			{
-				long currentFunctionaryAgeingDueHours = Math.abs(new Date().getTime() - lastDateToResolve.getTime())
-						/ (60 * 60 * 1000);
+			else{
+				long currentFunctionaryAgeingDueHours = Math.abs(new Date().getTime() - lastDateToResolve.getTime())/ (60 * 60 * 1000);
 				complaintIndex.setCurrentFunctionaryAgeingFromDue(currentFunctionaryAgeingDueHours);
 				complaintIndex.setCurrentFunctionaryIsSLA('N');
 				complaintIndex.setCurrentFunctionaryIfSLA(0);
@@ -376,10 +364,8 @@ public class ComplaintIndexService {
 				complaintIndex.setEscalation1FunctionaryIsSLA('Y');
 				complaintIndex.setEscalation1FunctionaryIfSLA(1);
 			}
-			else
-			{
-				long escalation1FunctionaryAgeingDueHours = Math.abs(new Date().getTime() - lastDateToResolve.getTime())
-						/ (60 * 60 * 1000);
+			else{
+				long escalation1FunctionaryAgeingDueHours = Math.abs(new Date().getTime() - lastDateToResolve.getTime())/ (60 * 60 * 1000);
 				complaintIndex.setEscalation1FunctionaryAgeingFromDue(escalation1FunctionaryAgeingDueHours);
 				complaintIndex.setEscalation1FunctionaryIsSLA('N');
 				complaintIndex.setEscalation1FunctionaryIfSLA(0);
@@ -395,10 +381,8 @@ public class ComplaintIndexService {
 				complaintIndex.setEscalation2FunctionaryIsSLA('Y');
 				complaintIndex.setEscalation2FunctionaryIfSLA(1);
 			}
-			else
-			{
-				long escalation2FunctionaryAgeingDueHours = Math.abs(new Date().getTime() - lastDateToResolve.getTime())
-						/ (60 * 60 * 1000);
+			else{
+				long escalation2FunctionaryAgeingDueHours = Math.abs(new Date().getTime() - lastDateToResolve.getTime())/ (60 * 60 * 1000);
 				complaintIndex.setEscalation2FunctionaryAgeingFromDue(escalation2FunctionaryAgeingDueHours);
 				complaintIndex.setEscalation2FunctionaryIsSLA('N');
 				complaintIndex.setEscalation2FunctionaryIfSLA(0);
@@ -414,10 +398,8 @@ public class ComplaintIndexService {
 				complaintIndex.setEscalation3FunctionaryIsSLA('Y');
 				complaintIndex.setEscalation3FunctionaryIfSLA(1);
 			}
-			else
-			{
-				long escalation3FunctionaryAgeingDueHours = Math.abs(new Date().getTime() - lastDateToResolve.getTime())
-						/ (60 * 60 * 1000);
+			else{
+				long escalation3FunctionaryAgeingDueHours = Math.abs(new Date().getTime() - lastDateToResolve.getTime())/ (60 * 60 * 1000);
 				complaintIndex.setEscalation3FunctionaryAgeingFromDue(escalation3FunctionaryAgeingDueHours);
 				complaintIndex.setEscalation3FunctionaryIsSLA('N');
 				complaintIndex.setEscalation3FunctionaryIfSLA(0);
@@ -499,6 +481,8 @@ public class ComplaintIndexService {
 			complaintIndex.setInitialFunctionaryName(initialFunctionaryName);
 			if(searchableObject.get("initialFunctionaryAssigneddate") != null)
 				complaintIndex.setInitialFunctionaryAssigneddate(formatDate(searchableObject.get("initialFunctionaryAssigneddate").toString()));
+			else
+				complaintIndex.setInitialFunctionaryAssigneddate(complaintIndex.getCreatedDate());
 			complaintIndex.setInitialFunctionarySLADays(initialFunctionarySlaDays);
 			complaintIndex.setInitialFunctionaryAgeingFromDue(initialAgeingFromDue);
 			complaintIndex.setInitialFunctionaryIsSLA(initialFunctionaryIsSla);

@@ -58,7 +58,6 @@ import java.util.Map;
 import java.util.TreeMap;
 
 import org.egov.commons.Installment;
-import org.egov.commons.dao.InstallmentDao;
 import org.egov.demand.dao.DemandGenericDao;
 import org.egov.demand.dao.EgBillDao;
 import org.egov.demand.dao.EgDemandDao;
@@ -83,7 +82,6 @@ import org.egov.ptis.domain.dao.demand.PtDemandDao;
 import org.egov.ptis.domain.dao.property.PropertyDAO;
 import org.egov.ptis.domain.entity.property.BasicProperty;
 import org.egov.ptis.domain.entity.property.PropertyMutation;
-import org.egov.ptis.domain.service.property.RebatePeriodService;
 import org.egov.ptis.service.utils.PropertyTaxCommonUtils;
 import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -101,9 +99,26 @@ public class PropertyTaxBillable extends AbstractBillable implements Billable, L
         RebateCalculator {
 
     private static final String STRING_DEPARTMENT_CODE = "REV";
+    
+    private Boolean isCallbackForApportion = Boolean.TRUE;
+    private LPPenaltyCalcType penaltyCalcType = SIMPLE;
+    private Boolean mutationFeePayment = Boolean.FALSE;
+    private Boolean vacantLandTaxPayment = Boolean.FALSE;
+    
     private BasicProperty basicProperty;
     private Long userId;
-    EgBillType egBillType;
+    private String referenceNumber;
+    private EgBillType billType;
+    private Boolean levyPenalty;
+    private Map<Installment, PenaltyAndRebate> instTaxBean = new HashMap<Installment, PenaltyAndRebate>();
+    private String collType;
+    private String pgType;
+    private Map<Installment, EgDemandDetails> installmentWisePenaltyDemandDetail = new TreeMap<Installment, EgDemandDetails>();
+    private BigDecimal mutationFee;
+    private String mutationApplicationNo;
+    private String transanctionReferenceNumber;
+    private Boolean isNagarPanchayat;
+    
     @Autowired
     private EgDemandDao egDemandDAO;
     @Autowired
@@ -124,31 +139,9 @@ public class PropertyTaxBillable extends AbstractBillable implements Billable, L
     @Autowired
     private PenaltyCalculationService penaltyCalculationService;
     @Autowired
-    private InstallmentDao installmentDao;
-    @Autowired
     private PropertyTaxCommonUtils propertyTaxCommonUtil;
     @Autowired
     private FinancialUtil financialUtil;
-
-    private Boolean isCallbackForApportion = Boolean.TRUE;
-    private LPPenaltyCalcType penaltyCalcType = SIMPLE;
-    private final PropertyTaxUtil ptUtils = new PropertyTaxUtil();
-    private String referenceNumber;
-    private EgBillType billType;
-    private Boolean levyPenalty;
-    private Map<Installment, PenaltyAndRebate> instTaxBean = new HashMap<Installment, PenaltyAndRebate>();
-    private String collType;
-    private String pgType;
-    private Map<Installment, EgDemandDetails> installmentWisePenaltyDemandDetail = new TreeMap<Installment, EgDemandDetails>();
-    private Boolean mutationFeePayment = Boolean.FALSE;
-    private Boolean vacantLandTaxPayment = Boolean.FALSE;
-    private BigDecimal mutationFee;
-    private String mutationApplicationNo;
-    private String transanctionReferenceNumber;
-    private Boolean isNagarPanchayat;
-
-    @Autowired
-    private RebatePeriodService rebatePeriodService;
 
     @Override
     public Boolean getOverrideAccountHeadsAllowed() {
@@ -480,8 +473,9 @@ public class PropertyTaxBillable extends AbstractBillable implements Billable, L
                     installmentPenaltyAndRebate.put(installment, penaltyAndRebate);
                 }
             }
-            // calculating early payment rebate if rebate period active and
-            // there is no partial payment for current installment
+            /*
+             * calculating early payment rebate if rebate period active and there is no partial payment for current installment
+             */
             calculateRebate(installmentPenaltyAndRebate, instWiseDmdMap, instWiseAmtCollMap);
         }
 
@@ -603,10 +597,6 @@ public class PropertyTaxBillable extends AbstractBillable implements Billable, L
 
     public void setPenaltyCalculationService(PenaltyCalculationService penaltyCalculationService) {
         this.penaltyCalculationService = penaltyCalculationService;
-    }
-
-    public void setInstallmentDao(InstallmentDao installmentDao) {
-        this.installmentDao = installmentDao;
     }
 
     public void setModuleDao(ModuleService moduleDao) {

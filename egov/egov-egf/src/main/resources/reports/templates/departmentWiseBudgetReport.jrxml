@@ -1,52 +1,53 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
-  ~ eGov suite of products aim to improve the internal efficiency,transparency,
-  ~    accountability and the service delivery of the government  organizations.
-  ~
-  ~     Copyright (C) <2015>  eGovernments Foundation
-  ~
-  ~     The updated version of eGov suite of products as by eGovernments Foundation
-  ~     is available at http://www.egovernments.org
-  ~
-  ~     This program is free software: you can redistribute it and/or modify
-  ~     it under the terms of the GNU General Public License as published by
-  ~     the Free Software Foundation, either version 3 of the License, or
-  ~     any later version.
-  ~
-  ~     This program is distributed in the hope that it will be useful,
-  ~     but WITHOUT ANY WARRANTY; without even the implied warranty of
-  ~     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-  ~     GNU General Public License for more details.
-  ~
-  ~     You should have received a copy of the GNU General Public License
-  ~     along with this program. If not, see http://www.gnu.org/licenses/ or
-  ~     http://www.gnu.org/licenses/gpl.html .
-  ~
-  ~     In addition to the terms of the GPL license to be adhered to in using this
-  ~     program, the following additional terms are to be complied with:
-  ~
-  ~         1) All versions of this program, verbatim or modified must carry this
-  ~            Legal Notice.
-  ~
-  ~         2) Any misrepresentation of the origin of the material is prohibited. It
-  ~            is required that all modified versions of this material be marked in
-  ~            reasonable ways as different from the original version.
-  ~
-  ~         3) This license does not grant any rights to any user of the program
-  ~            with regards to rights under trademark law for use of the trade names
-  ~            or trademarks of eGovernments Foundation.
-  ~
-  ~   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
-  -->
-
-<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="departmentWiseBudgetReport" pageWidth="595" pageHeight="842" columnWidth="535" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20">
+   ~ eGov suite of products aim to improve the internal efficiency,transparency,
+   ~    accountability and the service delivery of the government  organizations.
+   ~
+   ~     Copyright (C) <2015>  eGovernments Foundation
+   ~
+   ~     The updated version of eGov suite of products as by eGovernments Foundation
+   ~     is available at http://www.egovernments.org
+   ~
+   ~     This program is free software: you can redistribute it and/or modify
+   ~     it under the terms of the GNU General Public License as published by
+   ~     the Free Software Foundation, either version 3 of the License, or
+   ~     any later version.
+   ~
+   ~     This program is distributed in the hope that it will be useful,
+   ~     but WITHOUT ANY WARRANTY; without even the implied warranty of
+   ~     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+   ~     GNU General Public License for more details.
+   ~
+   ~     You should have received a copy of the GNU General Public License
+   ~     along with this program. If not, see http://www.gnu.org/licenses/ or
+   ~     http://www.gnu.org/licenses/gpl.html .
+   ~
+   ~     In addition to the terms of the GPL license to be adhered to in using this
+   ~     program, the following additional terms are to be complied with:
+   ~
+   ~         1) All versions of this program, verbatim or modified must carry this
+   ~            Legal Notice.
+   ~
+   ~         2) Any misrepresentation of the origin of the material is prohibited. It
+   ~            is required that all modified versions of this material be marked in
+   ~            reasonable ways as different from the original version.
+   ~
+   ~         3) This license does not grant any rights to any user of the program
+   ~            with regards to rights under trademark law for use of the trade names
+   ~            or trademarks of eGovernments Foundation.
+   ~
+   ~   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
+   -->
+<!-- Created with Jaspersoft Studio version 6.2.0.final using JasperReports Library version 6.2.0  -->
+<!-- 2016-08-28T22:10:18 -->
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="departmentWiseBudgetReport" pageWidth="595" pageHeight="842" columnWidth="535" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="dc74b75f-a60f-4e9b-b870-918a995b4fbb">
 	<property name="net.sf.jasperreports.export.pdf.exclude.origin.keep.first.band.columnHeader" value="columnHeader"/>
 	<property name="net.sf.jasperreports.export.xls.exclude.origin.keep.first.band.columnHeader" value="columnHeader"/>
 	<property name="net.sf.jasperreports.export.html.exclude.origin.keep.first.band.columnHeader" value="columnHeader"/>
-	<style name="narration" isDefault="false" fontName="SansSerif">
+	<style name="narration" fontName="SansSerif">
 		<conditionalStyle>
 			<conditionExpression><![CDATA[new Boolean($F{glCode}=="" || $F{glCode} == null)]]></conditionExpression>
-			<style isDefault="false" style="narration" fontSize="10" isBold="true" isItalic="false" isUnderline="false" isStrikeThrough="false"/>
+			<style fontSize="10" isBold="true" isItalic="false" isUnderline="false" isStrikeThrough="false"/>
 		</conditionalStyle>
 	</style>
 	<parameter name="finYear" class="java.lang.String" isForPrompting="false"/>
@@ -75,20 +76,20 @@
 	<title>
 		<band height="37" splitType="Stretch">
 			<frame>
-				<reportElement x="14" y="0" width="539" height="37"/>
+				<reportElement x="14" y="0" width="539" height="37" uuid="4fe42627-9e00-45e1-a48a-c7d81397488c"/>
 				<box>
 					<pen lineWidth="1.0" lineStyle="Solid"/>
 				</box>
 				<textField isBlankWhenNull="true">
-					<reportElement x="171" y="21" width="202" height="16"/>
+					<reportElement x="171" y="21" width="202" height="16" uuid="641273bd-ae87-4fa8-9b01-205c67b1f65a"/>
 					<textElement textAlignment="Center">
 						<font size="12" isBold="true"/>
 					</textElement>
-					<textFieldExpression class="java.lang.String"><![CDATA[( $P{type} )]]></textFieldExpression>
+					<textFieldExpression><![CDATA[( $P{type} )]]></textFieldExpression>
 				</textField>
 			</frame>
 			<staticText>
-				<reportElement x="149" y="0" width="304" height="21"/>
+				<reportElement x="149" y="0" width="304" height="21" uuid="bfb85223-9982-4da9-8cc3-3cb714d5cd66"/>
 				<textElement>
 					<font size="14" isBold="true"/>
 				</textElement>
@@ -99,7 +100,7 @@
 	<columnHeader>
 		<band height="50" splitType="Stretch">
 			<staticText>
-				<reportElement x="14" y="0" width="62" height="50"/>
+				<reportElement x="14" y="0" width="86" height="50" uuid="b3002690-d7e3-477e-90ff-a2dc8567ad57"/>
 				<box>
 					<pen lineWidth="1.0"/>
 					<topPen lineWidth="1.0"/>
@@ -110,10 +111,10 @@
 				<textElement textAlignment="Center" verticalAlignment="Middle">
 					<font isBold="true"/>
 				</textElement>
-				<text><![CDATA[D.P Code]]></text>
+				<text><![CDATA[Account Code]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="76" y="0" width="169" height="50"/>
+				<reportElement x="100" y="0" width="170" height="50" uuid="5144a4e3-29d3-4c4c-9d86-e59043c9a9bc"/>
 				<box>
 					<pen lineWidth="1.0"/>
 					<topPen lineWidth="1.0"/>
@@ -124,24 +125,10 @@
 				<textElement textAlignment="Center" verticalAlignment="Middle">
 					<font isBold="true"/>
 				</textElement>
-				<text><![CDATA[Narration]]></text>
-			</staticText>
-			<staticText>
-				<reportElement x="245" y="0" width="65" height="50"/>
-				<box>
-					<pen lineWidth="1.0"/>
-					<topPen lineWidth="1.0"/>
-					<leftPen lineWidth="1.0"/>
-					<bottomPen lineWidth="1.0"/>
-					<rightPen lineWidth="1.0"/>
-				</box>
-				<textElement textAlignment="Center" verticalAlignment="Middle">
-					<font isBold="true"/>
-				</textElement>
-				<text><![CDATA[Reference]]></text>
+				<text><![CDATA[Description]]></text>
 			</staticText>
 			<textField isBlankWhenNull="true">
-				<reportElement x="310" y="0" width="96" height="50"/>
+				<reportElement x="270" y="0" width="136" height="50" uuid="b1e21985-a548-454d-b83d-ad0d77b550f7"/>
 				<box>
 					<pen lineWidth="1.0"/>
 					<topPen lineWidth="1.0"/>
@@ -152,10 +139,10 @@
 				<textElement textAlignment="Center" verticalAlignment="Middle">
 					<font isBold="true"/>
 				</textElement>
-				<textFieldExpression class="java.lang.String"><![CDATA["Budget Estimate "+$P{finYear}+" (Rs.)"]]></textFieldExpression>
+				<textFieldExpression><![CDATA["Budget Estimate "+$P{finYear}+" (Rs.)"]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="true">
-				<reportElement x="406" y="0" width="79" height="50"/>
+				<reportElement x="406" y="0" width="79" height="50" uuid="2a73bcf0-4af9-44e7-8bab-4aef8971ab6d"/>
 				<box>
 					<pen lineWidth="1.0"/>
 					<topPen lineWidth="1.0"/>
@@ -166,10 +153,10 @@
 				<textElement textAlignment="Center" verticalAlignment="Middle">
 					<font isBold="true"/>
 				</textElement>
-				<textFieldExpression class="java.lang.String"><![CDATA["ReAppropriation "+$P{finYear}+" (Rs.)"]]></textFieldExpression>
+				<textFieldExpression><![CDATA["ReAppropriation "+$P{finYear}+" (Rs.)"]]></textFieldExpression>
 			</textField>
 			<staticText>
-				<reportElement x="485" y="0" width="68" height="50"/>
+				<reportElement x="485" y="0" width="68" height="50" uuid="c37ff73a-f51d-4541-9576-e962bb11f49c"/>
 				<box>
 					<pen lineWidth="1.0"/>
 					<topPen lineWidth="1.0"/>
@@ -187,7 +174,7 @@
 	<detail>
 		<band height="33" splitType="Stretch">
 			<textField isBlankWhenNull="true">
-				<reportElement x="14" y="0" width="62" height="33"/>
+				<reportElement x="14" y="0" width="86" height="33" uuid="f7a5273a-749b-472c-a7ae-b277273e090a"/>
 				<box>
 					<pen lineWidth="1.0"/>
 					<topPen lineWidth="1.0"/>
@@ -198,10 +185,10 @@
 				<textElement verticalAlignment="Middle">
 					<font size="9"/>
 				</textElement>
-				<textFieldExpression class="java.lang.String"><![CDATA[$F{glCode}==null?" ":$F{glCode}+" "]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$F{glCode}==null?" ":$F{glCode}+" "]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="true">
-				<reportElement x="76" y="0" width="169" height="33"/>
+				<reportElement x="100" y="0" width="170" height="33" uuid="ad66ca5e-c4bf-47da-ac36-167c70e0595b"/>
 				<box>
 					<pen lineWidth="1.0"/>
 					<topPen lineWidth="1.0"/>
@@ -212,24 +199,10 @@
 				<textElement verticalAlignment="Middle">
 					<font size="9"/>
 				</textElement>
-				<textFieldExpression class="java.lang.String"><![CDATA[$F{narration}==null?" ":$F{narration}+" "]]></textFieldExpression>
-			</textField>
-			<textField isBlankWhenNull="true">
-				<reportElement x="245" y="0" width="65" height="33"/>
-				<box>
-					<pen lineWidth="1.0"/>
-					<topPen lineWidth="1.0"/>
-					<leftPen lineWidth="1.0"/>
-					<bottomPen lineWidth="1.0"/>
-					<rightPen lineWidth="1.0"/>
-				</box>
-				<textElement verticalAlignment="Middle">
-					<font size="9"/>
-				</textElement>
-				<textFieldExpression class="java.lang.String"><![CDATA[$F{referenceNo}==null?" ":$F{referenceNo}+" "]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$F{narration}==null?" ":$F{narration}+" "]]></textFieldExpression>
 			</textField>
 			<textField pattern="###0.00" isBlankWhenNull="true">
-				<reportElement x="310" y="0" width="96" height="33"/>
+				<reportElement x="270" y="0" width="136" height="33" uuid="c04ae8e5-bb3c-41e7-9691-52fbbb84cb47"/>
 				<box>
 					<pen lineWidth="1.0"/>
 					<topPen lineWidth="1.0"/>
@@ -240,10 +213,10 @@
 				<textElement textAlignment="Right" verticalAlignment="Middle">
 					<font size="9"/>
 				</textElement>
-				<textFieldExpression class="java.lang.String"><![CDATA[$F{amount}==null?" ":$F{amount}+" "]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$F{amount}==null?" ":$F{amount}+" "]]></textFieldExpression>
 			</textField>
 			<textField pattern="###0.00" isBlankWhenNull="true">
-				<reportElement x="406" y="0" width="79" height="33"/>
+				<reportElement x="406" y="0" width="79" height="33" uuid="b31ad7d3-34d6-40cc-b7e6-b77837916304"/>
 				<box>
 					<pen lineWidth="1.0"/>
 					<topPen lineWidth="1.0"/>
@@ -254,10 +227,10 @@
 				<textElement textAlignment="Right" verticalAlignment="Middle">
 					<font size="9"/>
 				</textElement>
-				<textFieldExpression class="java.lang.String"><![CDATA[$F{appropriationAmount}==null?" ":$F{appropriationAmount}+" "]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$F{appropriationAmount}==null?" ":$F{appropriationAmount}+" "]]></textFieldExpression>
 			</textField>
 			<textField pattern="###0.00" isBlankWhenNull="true">
-				<reportElement x="485" y="0" width="68" height="33"/>
+				<reportElement x="485" y="0" width="68" height="33" uuid="19b36837-4e6e-4347-ad9f-60ff37f3e9b2"/>
 				<box>
 					<pen lineWidth="1.0"/>
 					<topPen lineWidth="1.0"/>
@@ -268,7 +241,7 @@
 				<textElement textAlignment="Right" verticalAlignment="Middle">
 					<font size="9"/>
 				</textElement>
-				<textFieldExpression class="java.lang.String"><![CDATA[$F{totalAmount}==null?" ":$F{totalAmount}+" "]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$F{totalAmount}==null?" ":$F{totalAmount}+" "]]></textFieldExpression>
 			</textField>
 		</band>
 	</detail>

@@ -67,11 +67,6 @@ import org.egov.lcms.masters.entity.CaseStage;
 import org.egov.lcms.utils.constants.LcmsConstants;
 import org.hibernate.validator.constraints.Length;
 
-/**
- * LegalcaseAdvocate entity.
- *
- * @author MyEclipse Persistence Tools
- */
 @Entity
 @Table(name = "EGLC_LEGALCASE_ADVOCATE")
 @SequenceGenerator(name = LegalCaseAdvocate.SEQ_EGLC_LEGALCASE_ADVOCATE, sequenceName = LegalCaseAdvocate.SEQ_EGLC_LEGALCASE_ADVOCATE, allocationSize = 1)
@@ -233,7 +228,7 @@ public class LegalCaseAdvocate extends AbstractPersistable<Long> {
                 errors.add(new ValidationError("orderDate", "legalcase.orderdate.null"));
             if (!DateUtils.compareDates(getOrderdate(), legalCase.getCaseReceivingDate()))
                 errors.add(new ValidationError("orderDate", "orderdate.less.casereceivingdate"));
-            if (!DateUtils.compareDates(getOrderdate(), legalCase.getCasedate()))
+            if (!DateUtils.compareDates(getOrderdate(), legalCase.getCaseDate()))
                 errors.add(new ValidationError("orderDate", "orderdate.less.casedate"));
             if (!DateUtils.compareDates(getAssignedtodateForsenior(), getOrderdate()))
                 errors.add(new ValidationError("assignedtodatesenior", "assignedon.less.orderdate"));
@@ -241,9 +236,9 @@ public class LegalCaseAdvocate extends AbstractPersistable<Long> {
 
         if (!DateUtils.compareDates(getAssignedtodate(), legalCase.getCaseReceivingDate()))
             errors.add(new ValidationError("assignedon", "assignedon.less.casereceivingdate"));
-        if (!DateUtils.compareDates(getAssignedtodate(), legalCase.getCasedate()))
+        if (!DateUtils.compareDates(getAssignedtodate(), legalCase.getCaseDate()))
             errors.add(new ValidationError("assignedon", "assignedon.less.casedate"));
-        if (!DateUtils.compareDates(getVakalatdate(), legalCase.getCasedate()))
+        if (!DateUtils.compareDates(getVakalatdate(), legalCase.getCaseDate()))
             errors.add(new ValidationError("vakalatdate", "vakalatdate.less.casedate"));
         if (!DateUtils.compareDates(getVakalatdate(), legalCase.getCaseReceivingDate()))
             errors.add(new ValidationError("vakalatdate", "vakalatdate.less.caserecdate"));

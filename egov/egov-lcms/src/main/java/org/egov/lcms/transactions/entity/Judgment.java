@@ -370,7 +370,7 @@ public class Judgment extends AbstractAuditable {
 
     public List<ValidationError> validate() {
         final List<ValidationError> errors = new ArrayList<ValidationError>();
-        if (legalCase != null && !DateUtils.compareDates(getOrderDate(), legalCase.getCasedate()))
+        if (legalCase != null && !DateUtils.compareDates(getOrderDate(), legalCase.getCaseDate()))
             errors.add(new ValidationError("orderDate", "orderdate.less.casedate"));
         if (!DateUtils.compareDates(getImplementByDate(), getOrderDate()))
             errors.add(new ValidationError("implementByDate", "implementByDate.less.orderDate"));

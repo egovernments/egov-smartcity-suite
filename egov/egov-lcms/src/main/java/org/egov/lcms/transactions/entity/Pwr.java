@@ -135,11 +135,11 @@ public class Pwr extends AbstractPersistable<Long> {
 
     public List<ValidationError> validate() {
         final List<ValidationError> errors = new ArrayList<ValidationError>();
-        if (!DateUtils.compareDates(getCaDueDate(), legalCase.getCasedate()))
+        if (!DateUtils.compareDates(getCaDueDate(), legalCase.getCaseDate()))
             errors.add(new ValidationError("caDueDate", "caDueDate.less.casedate"));
-        if (!DateUtils.compareDates(getCaFilingdate(), legalCase.getCasedate()))
+        if (!DateUtils.compareDates(getCaFilingdate(), legalCase.getCaseDate()))
             errors.add(new ValidationError("caFilingDate", "caFilingDate.less.casedate"));
-        if (!DateUtils.compareDates(getPwrDueDate(), legalCase.getCasedate()))
+        if (!DateUtils.compareDates(getPwrDueDate(), legalCase.getCaseDate()))
             errors.add(new ValidationError("pwrDueDate", "pwrDueDate.less.casedate"));
         if (!DateUtils.compareDates(getCaDueDate(), getPwrDueDate()))
             errors.add(new ValidationError("caDueDate", "caDueDate.greaterThan.pwrDueDate"));

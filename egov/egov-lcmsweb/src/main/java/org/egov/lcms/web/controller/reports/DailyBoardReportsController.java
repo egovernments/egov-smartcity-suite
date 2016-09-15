@@ -78,7 +78,7 @@ public class DailyBoardReportsController extends GenericLegalCaseController {
 
     @RequestMapping(method = RequestMethod.GET, value = "/dailyBoardReport")
     public String searchForm(final Model model) {
-        model.addAttribute("currDate", new Date());
+        model.addAttribute("currentDate", new Date());
         return "dailyboardreport-form";
     }
     @ExceptionHandler(Exception.class)

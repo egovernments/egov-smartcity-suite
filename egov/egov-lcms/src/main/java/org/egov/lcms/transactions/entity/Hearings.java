@@ -197,7 +197,7 @@ public class Hearings extends AbstractAuditable {
             if (legalCase.getCaseReceivingDate() != null
                     && !DateUtils.compareDates(getHearingDate(), legalCase.getCaseReceivingDate()))
                 errors.add(new ValidationError("hearingDate", "hearingDate.greaterThan.caseReceivingDate"));
-            if (!DateUtils.compareDates(getHearingDate(), legalCase.getCasedate()))
+            if (!DateUtils.compareDates(getHearingDate(), legalCase.getCaseDate()))
                 errors.add(new ValidationError("hearingDate", "hearingDate.greaterThan.caseDate"));
 
         }

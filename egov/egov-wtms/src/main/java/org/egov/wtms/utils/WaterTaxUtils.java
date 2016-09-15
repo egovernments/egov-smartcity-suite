@@ -39,6 +39,16 @@
  */
 package org.egov.wtms.utils;
 
+import static org.egov.ptis.constants.PropertyTaxConstants.MEESEVA_OPERATOR_ROLE;
+import static org.egov.ptis.constants.PropertyTaxConstants.PTMODULENAME;
+import static org.egov.ptis.constants.PropertyTaxConstants.QUERY_INSTALLMENTLISTBY_MODULE_AND_STARTYEAR;
+
+import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+import java.util.Locale;
+
 import org.egov.commons.EgwStatus;
 import org.egov.commons.Installment;
 import org.egov.commons.dao.InstallmentDao;
@@ -82,16 +92,6 @@ import org.springframework.context.MessageSource;
 import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.ModelAttribute;
-
-import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.Locale;
-
-import static org.egov.ptis.constants.PropertyTaxConstants.MEESEVA_OPERATOR_ROLE;
-import static org.egov.ptis.constants.PropertyTaxConstants.PTMODULENAME;
-import static org.egov.ptis.constants.PropertyTaxConstants.QUERY_INSTALLMENTLISTBY_MODULE_AND_STARTYEAR;
 
 @Service
 public class WaterTaxUtils {
@@ -156,24 +156,31 @@ public class WaterTaxUtils {
     @Autowired
     private InstallmentDao installmentDao;
 
+    public List<AppConfigValues> getAppConfigValueByModuleNameAndKeyName(String moduleName,String keyName) {
+        final List<AppConfigValues> appconfigValuesList = appConfigValuesService.getConfigValuesByModuleAndKey(
+                moduleName,keyName);
+        return appconfigValuesList;
+    }
+    
     public Boolean isSmsEnabled() {
-        final AppConfigValues appConfigValue = appConfigValuesService.getConfigValuesByModuleAndKey(
+        final AppConfigValues appConfigValue = getAppConfigValueByModuleNameAndKeyName(
                 WaterTaxConstants.MODULE_NAME, WaterTaxConstants.SENDSMSFORWATERTAX).get(0);
         return WaterTaxConstants.APPCONFIGVALUEOFENABLED.equalsIgnoreCase(appConfigValue.getValue());
     }
 
     public String getDepartmentForWorkFlow() {
         String department = "";
-        final List<AppConfigValues> appConfigValue = appConfigValuesService.getConfigValuesByModuleAndKey(
+        final List<AppConfigValues> appConfigValue = getAppConfigValueByModuleNameAndKeyName(
                 WaterTaxConstants.MODULE_NAME, WaterTaxConstants.WATERTAXWORKFLOWDEPARTEMENT);
         if (null != appConfigValue && !appConfigValue.isEmpty())
             department = appConfigValue.get(0).getValue();
         return department;
     }
+  
 
     public String getDesignationForThirdPartyUser() {
         String designation = "";
-        final List<AppConfigValues> appConfigValue = appConfigValuesService.getConfigValuesByModuleAndKey(
+        final List<AppConfigValues> appConfigValue = getAppConfigValueByModuleNameAndKeyName(
                 WaterTaxConstants.MODULE_NAME, WaterTaxConstants.CLERKDESIGNATIONFORCSCOPERATOR);
         if (null != appConfigValue && !appConfigValue.isEmpty())
             designation = appConfigValue.get(0).getValue();
@@ -182,7 +189,7 @@ public class WaterTaxUtils {
 
     public List<AppConfigValues> getThirdPartyUserRoles() {
 
-        final List<AppConfigValues> appConfigValueList = appConfigValuesService.getConfigValuesByModuleAndKey(
+        final List<AppConfigValues> appConfigValueList = getAppConfigValueByModuleNameAndKeyName(
                 WaterTaxConstants.MODULE_NAME, WaterTaxConstants.ROLEFORNONEMPLOYEEINWATERTAX);
 
         return !appConfigValueList.isEmpty() ? appConfigValueList : null;
@@ -239,26 +246,26 @@ public class WaterTaxUtils {
     }
 
     public Boolean isEmailEnabled() {
-        final AppConfigValues appConfigValue = appConfigValuesService.getConfigValuesByModuleAndKey(
+        final AppConfigValues appConfigValue = getAppConfigValueByModuleNameAndKeyName(
                 WaterTaxConstants.MODULE_NAME, WaterTaxConstants.SENDEMAILFORWATERTAX).get(0);
         return WaterTaxConstants.APPCONFIGVALUEOFENABLED.equalsIgnoreCase(appConfigValue.getValue());
     }
 
     public Boolean isNewConnectionAllowedIfPTDuePresent() {
-        final AppConfigValues appConfigValue = appConfigValuesService.getConfigValuesByModuleAndKey(
+        final AppConfigValues appConfigValue = getAppConfigValueByModuleNameAndKeyName(
                 WaterTaxConstants.MODULE_NAME, WaterTaxConstants.NEWCONNECTIONALLOWEDIFPTDUE).get(0);
         return WaterTaxConstants.APPCONFIGVALUEOFENABLED.equalsIgnoreCase(appConfigValue.getValue());
     }
 
     public Boolean isMultipleNewConnectionAllowedForPID() {
-        final AppConfigValues appConfigValue = appConfigValuesService.getConfigValuesByModuleAndKey(
+        final AppConfigValues appConfigValue = getAppConfigValueByModuleNameAndKeyName(
                 WaterTaxConstants.MODULE_NAME, WaterTaxConstants.MULTIPLENEWCONNECTIONFORPID).get(0);
         return WaterTaxConstants.APPCONFIGVALUEOFENABLED.equalsIgnoreCase(appConfigValue.getValue());
     }
 
     public Boolean isConnectionAllowedIfWTDuePresent(final String connectionType) {
         final Boolean isAllowed = false;
-        final List<AppConfigValues> appConfigValue = appConfigValuesService.getConfigValuesByModuleAndKey(
+        final List<AppConfigValues> appConfigValue = getAppConfigValueByModuleNameAndKeyName(
                 WaterTaxConstants.MODULE_NAME, connectionType);
         if (null != appConfigValue && !appConfigValue.isEmpty())
             return WaterTaxConstants.APPCONFIGVALUEOFENABLED.equalsIgnoreCase(appConfigValue.get(0).getValue());
@@ -268,7 +275,7 @@ public class WaterTaxUtils {
 
     public String documentRequiredForBPLCategory() {
         String documentName = null;
-        final List<AppConfigValues> appConfigValue = appConfigValuesService.getConfigValuesByModuleAndKey(
+        final List<AppConfigValues> appConfigValue = getAppConfigValueByModuleNameAndKeyName(
                 WaterTaxConstants.MODULE_NAME, WaterTaxConstants.DOCUMENTREQUIREDFORBPL);
         if (appConfigValue != null && !appConfigValue.isEmpty())
             documentName = appConfigValue.get(0).getValue();
@@ -559,7 +566,7 @@ public class WaterTaxUtils {
     }
 
     public Boolean isDigitalSignatureEnabled() {
-        final List<AppConfigValues> appConfigValue = appConfigValuesService.getConfigValuesByModuleAndKey(
+        final List<AppConfigValues> appConfigValue = getAppConfigValueByModuleNameAndKeyName(
                 WaterTaxConstants.MODULE_NAME, WaterTaxConstants.ENABLEDIGITALSIGNATURE);
         if (null != appConfigValue && !appConfigValue.isEmpty())
             return WaterTaxConstants.APPCONFIGVALUEOFENABLED.equalsIgnoreCase(appConfigValue.get(0).getValue());

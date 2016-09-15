@@ -118,7 +118,7 @@ public class LegalCaseDisposal extends AbstractAuditable {
     public List<ValidationError> validate() {
         final List<ValidationError> errors = new ArrayList<ValidationError>();
 
-        if (!DateUtils.compareDates(getDisposalDate(), getLegalCase().getCasedate()))
+        if (!DateUtils.compareDates(getDisposalDate(), getLegalCase().getCaseDate()))
             errors.add(new ValidationError(LcmsConstants.DISPOSAL_DATE, "disposalDate.greaterthan.caseDate"));
 
         for (final Hearings hearingsObj : legalCase.getHearings()) {
