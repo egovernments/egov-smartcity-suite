@@ -277,6 +277,9 @@ public class RestApiConstants {
         public static final String CONSUMERCODE_IS_NOT_VALID_CONNECTION_CODE="50";
         public static final String CONSUMERCODE_IS_NOT_VALID_CONNECTION = "Either ConsumerCode is not valid or Due is present";
         
+        public static final String THIRD_PARTY_ERR_CODE_SUCCESS = "WCMS-REST-0";
+        public static final String THIRD_PARTY_ERR_MSG_SUCCESS = "SUCCESS";
+        
         public static final String THIRD_PARTY_ERR_CODE_CONSUMER_NO_VALID= "WCMS-REST-8";
         public static final String THIRD_PARTY_ERR_MSG_CONSUMER_NO_VALID= "Either ConsumerCode is not valid or ApplicationNumber not valid";
         
