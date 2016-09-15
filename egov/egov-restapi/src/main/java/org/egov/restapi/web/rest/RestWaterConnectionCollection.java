@@ -183,12 +183,16 @@ public class RestWaterConnectionCollection {
     public String getWaterTaxDetailsByAppLicationOrConsumerNumberByOwnerDetails(
             @Valid @RequestBody final WaterConnectionRequestDetails waterConnectionRequestDetails)
             throws JsonGenerationException, JsonMappingException, IOException, BindException {
+        final List<WaterTaxDetails> waterTaxDetailsList = new ArrayList<WaterTaxDetails>();
         ErrorDetails errorDetails = null;
         if (waterConnectionRequestDetails.getConsumerNo() != null)
             errorDetails = validateConsumerNumber(waterConnectionRequestDetails.getConsumerNo());
-        if (null != errorDetails)
-            return JsonConvertor.convert(errorDetails);
-        else {
+        if (null != errorDetails) {
+            final WaterTaxDetails watertaxDetails = new WaterTaxDetails();
+            watertaxDetails.setErrorDetails(errorDetails);
+            waterTaxDetailsList.add(watertaxDetails);
+            return JsonConvertor.convert(waterTaxDetailsList);
+        } else {
             List<PropertyTaxDetails> propertyTaxDetailsList = new ArrayList<PropertyTaxDetails>();
             String assessmentNo = "";
             if (!waterConnectionRequestDetails.getConsumerNo().isEmpty())
@@ -222,7 +226,7 @@ public class RestWaterConnectionCollection {
                 errordetails.setErrorMessage(RestApiConstants.THIRD_PARTY_ERR_MSG_WATERTAXDETAILS_SIZE);
                 return JsonConvertor.convert(errordetails);
             } else {
-                final List<WaterTaxDetails> waterTaxDetailsList = new ArrayList<WaterTaxDetails>();
+
                 WaterTaxDetails watertaxdetails = new WaterTaxDetails();
                 for (final String consumerCode : consumerCodesList) {
                     watertaxdetails = waterTaxExternalService.getWaterTaxDemandDetByConsumerCode(consumerCode);
@@ -241,6 +245,12 @@ public class RestWaterConnectionCollection {
                         watertaxdetails.setTaxDetails(taxDetails);
                     }
                     waterTaxDetailsList.add(watertaxdetails);
+                    if (watertaxdetails.getErrorDetails() == null) {
+                        final ErrorDetails errordetails = new ErrorDetails();
+                        errordetails.setErrorCode(RestApiConstants.THIRD_PARTY_ERR_CODE_SUCCESS);
+                        errordetails.setErrorMessage(RestApiConstants.THIRD_PARTY_ERR_MSG_SUCCESS);
+                        watertaxdetails.setErrorDetails(errorDetails);
+                    }
                 }
                 return JsonConvertor.convert(waterTaxDetailsList);
             }
