@@ -115,6 +115,7 @@ $('#Save').click(function(){
 	}
 	if (button != null && button == 'Save' && !status) {
 		var flag = true;
+		var isValidationSuccess=true;
 		
 		var adminSanctionDate = $('#adminSanctionDate').data('datepicker').date;
 		var technicalSanctionDate = $('#technicalSanctionDate').data('datepicker').date;
@@ -127,7 +128,6 @@ $('#Save').click(function(){
 		}
 
 		var message = $('#errorActualAmount').val() + " ";
-
 		$("input[name$='actualEstimateAmount']")
 		.each(
 				function() {
@@ -136,6 +136,18 @@ $('#Save').click(function(){
 							'#estimateAmount' + index).val();
 					var actualAmount = $(
 							'#actualEstimateAmount' + index).val();
+					var quantity = $(
+							'#quantity' + index).val();
+					if(parseFloat(quantity) <= 0 ){
+						bootbox.alert($('#errorQuantityValue').val());
+						isValidationSuccess = false;
+						return false;
+					}
+					if(parseFloat(actualAmount) <= 0 ){
+						bootbox.alert($('#erroractualestimateamount').val());
+						isValidationSuccess = false;
+						return false;
+					}
 					if (parseFloat(estimateAmount.trim()) < parseFloat(actualAmount)) {
 						var estimateNumber = $(
 								'#estimateNumber' + index).val();
@@ -169,7 +181,7 @@ $('#Save').click(function(){
 				});
 		message = message.replace(/,\s*$/, ". ");
 		message += $('#errorActualAmountContinued').val();
-		if (!flag) {
+		if (!flag ) {
 			bootbox.alert(message);
 			return false;
 		}
@@ -179,7 +191,7 @@ $('#Save').click(function(){
 			return false;
 		}
 		
-		if(!flag)
+		if(!flag || !isValidationSuccess)
 			return false;
 	}
 	else {
@@ -196,6 +208,7 @@ function validateEstimateNumber(obj) {
 					$(obj).val("");
 				}
 			});
+	
 }
 
 function validateWINNumber(obj) {

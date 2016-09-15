@@ -1309,6 +1309,10 @@ public interface PropertyTaxConstants {
     public static final Character SOURCEOFDATA_MEESEWA = 'T';
     public static final Character SOURCEOFDATA_ONLINE = 'O';
     public static final Character SOURCEOFDATA_MOBILE = 'S';
+    public static final Character SOURCEOFDATA_ESEVA = 'E';
+    public static final Character SOURCEOFDATA_CARD = 'D';
+    
+    
 
     public static final String ALTERATION_OF_ASSESSMENT = "Alteration of Assessment";
     public static final String BIFURCATION_OF_ASSESSMENT = "Bifurcation of Assessment";
@@ -1446,6 +1450,8 @@ public interface PropertyTaxConstants {
     public static final String REVISIONPETITION_STATUS_CODE = "RP";
 
     public static final String APPCONFIG_DIGITAL_SIGNATURE = "PTIS_DIGITAL_SIGNATURE_REQUIRED";
+    
+    public static final String APPCONFIG_CLIENT_SPECIFIC_DMD_BILL = "IS_CLIENT_SPECIFIC_DEMANDBILL";
  
     public static final String SERVICE_CODE_VACANTLANDTAX = "VLT";
     public static final String SERVICE_CODE_PROPERTYTAX = "PT";

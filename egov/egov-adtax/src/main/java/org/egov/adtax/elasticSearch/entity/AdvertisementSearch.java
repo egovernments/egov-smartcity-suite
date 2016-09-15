@@ -116,7 +116,7 @@ public class AdvertisementSearch implements Indexable {
 	private Date applicationDate;
 
 	@Searchable(name = "consumernumber", group = Searchable.Group.SEARCHABLE)
-	private String applicationNumber;
+	private String consumerNumber; 
 
 	@Searchable(name = "permissionnumber", group = Searchable.Group.SEARCHABLE)
 	private String permissionNumber;
@@ -232,7 +232,21 @@ public class AdvertisementSearch implements Indexable {
 	@Searchable(name = "consumername", group = Searchable.Group.SEARCHABLE)
 	private String consumerName;
 
+	@Searchable(name = "consumername", group = Searchable.Group.CLAUSES)
+        private String consumerName_Clauses;
 
+	@Searchable(name = "agencyname", group = Searchable.Group.CLAUSES)
+        private String agencyName_Clauses;
+	
+	@Searchable(name = "applicationnumber", group = Searchable.Group.CLAUSES)
+        private String applicationNumber;
+	
+	@Searchable(name = "permissionnumber", group = Searchable.Group.CLAUSES)
+        private String permissionNumber_Clauses;
+	
+	@Searchable(name = "advertisementnumber", group = Searchable.Group.CLAUSES)
+        private String advertisementNumber_Clauses;
+	
 	public AdvertisementSearch(final String advertisementNumber,
 			final String ulbName, final String ulbCode, final Date createdDate,
 			final String districtName, final String regionName,
@@ -722,4 +736,46 @@ public class AdvertisementSearch implements Indexable {
 	public void setConsumerName(String consumerName) {
 		this.consumerName = consumerName;
 	}
+
+    public String getConsumerNumber() {
+        return consumerNumber;
+    }
+
+    public void setConsumerNumber(String consumerNumber) {
+        this.consumerNumber = consumerNumber;
+    }
+
+    public String getConsumerName_Clauses() {
+        return consumerName_Clauses;
+    }
+
+    public void setConsumerName_Clauses(String consumerName_Clauses) {
+        this.consumerName_Clauses = consumerName_Clauses;
+    }
+
+    public String getAgencyName_Clauses() {
+        return agencyName_Clauses;
+    }
+
+    public void setAgencyName_Clauses(String agencyName_Clauses) {
+        this.agencyName_Clauses = agencyName_Clauses;
+    }
+
+    public String getPermissionNumber_Clauses() {
+        return permissionNumber_Clauses;
+    }
+
+    public void setPermissionNumber_Clauses(String permissionNumber_Clauses) {
+        this.permissionNumber_Clauses = permissionNumber_Clauses;
+    }
+
+    public String getAdvertisementNumber_Clauses() {
+        return advertisementNumber_Clauses;
+    }
+
+    public void setAdvertisementNumber_Clauses(String advertisementNumber_Clauses) {
+        this.advertisementNumber_Clauses = advertisementNumber_Clauses;
+    }
+
+   
 }

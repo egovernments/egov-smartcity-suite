@@ -349,6 +349,9 @@ public class CreatePropertyAction extends PropertyTaxBaseAction {
         // this should be appending to messgae
         transitionWorkFlow(property);
         basicPropertyService.applyAuditing(property.getState());
+        if (loggedUserIsMeesevaUser && property.getMeesevaApplicationNumber() != null) {
+        	 basicProperty.setSource(PropertyTaxConstants.SOURCEOFDATA_MEESEWA);        
+        }
         propService.updateIndexes(property, APPLICATION_TYPE_NEW_ASSESSENT);
 
         if (!loggedUserIsMeesevaUser)
@@ -357,7 +360,6 @@ public class CreatePropertyAction extends PropertyTaxBaseAction {
             HashMap<String, String> meesevaParams = new HashMap<String, String>();
             meesevaParams.put("ADMISSIONFEE", "0");
             meesevaParams.put("APPLICATIONNUMBER", property.getMeesevaApplicationNumber());
-            basicProperty.setSource(PropertyTaxConstants.SOURCEOFDATA_MEESEWA);
             basicPropertyService.createBasicProperty(basicProperty, meesevaParams);
         }
         buildEmailandSms(property, APPLICATION_TYPE_NEW_ASSESSENT);

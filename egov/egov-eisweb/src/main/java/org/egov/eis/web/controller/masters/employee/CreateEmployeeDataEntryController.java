@@ -144,17 +144,10 @@ public class CreateEmployeeDataEntryController {
     public String createEmployee(@Valid @ModelAttribute final Employee employee, final BindingResult errors,
             final RedirectAttributes redirectAttrs, @RequestParam final MultipartFile file,
             @RequestParam final String designationName, @RequestParam final Long deptId, final Model model) {
-        final String employeeCode = employee.getCode().replaceFirst("^0+(?!$)", "");
 
-        final List<Employee> employeeList = employeeService.findEmployeeByCodeLike(employeeCode);
-
-        if (employeeList.size() != 0 && !employeeList.isEmpty())
-            for (final Employee emp : employeeList) {
-                final String empCode = emp.getCode().replaceFirst("^0+(?!$)", "");
-                if (!emp.getCode().equals(employee.getCode()))
-                    if (employeeCode.equals(empCode))
-                        errors.rejectValue("code", "Unique.employee.code");
-            }
+        final Boolean codeExists = employeeService.validateEmployeeCode(employee);
+        if (codeExists)
+            errors.rejectValue("code", "Unique.employee.code");
 
         if (errors.hasErrors()) {
             setDropDownValues(model);

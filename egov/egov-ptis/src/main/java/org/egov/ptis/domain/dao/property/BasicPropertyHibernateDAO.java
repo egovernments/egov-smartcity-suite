@@ -526,4 +526,15 @@ public class BasicPropertyHibernateDAO implements BasicPropertyDAO {
         }
         return basicProperties;
     }
+    
+    /**
+     * API to fetch properties belonging to a particular ward
+     */
+    @Override
+    public List<BasicProperty> getActiveBasicPropertiesForWard(Long wardId){
+    	String queryStr = "select bp from BasicPropertyImpl bp where bp.propertyID.ward.id=:wardId and bp.active = 'Y' and bp.upicNo is not null order by bp.id ";
+    	Query query = getCurrentSession().createQuery(queryStr);
+    	query.setLong("wardId", wardId);
+    	return query.list();
+    }
 }

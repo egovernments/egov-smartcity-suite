@@ -41,6 +41,7 @@
 package org.egov.restapi.model;
 
 import org.egov.ptis.domain.model.FloorDetails;
+import org.egov.ptis.domain.model.OwnerInformation;
 
 import java.io.Serializable;
 import java.util.List;

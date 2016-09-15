@@ -79,6 +79,7 @@ import org.egov.demand.interfaces.Billable;
 import org.egov.demand.model.EgBill;
 import org.egov.demand.model.EgBillDetails;
 import org.egov.demand.model.EgDemand;
+import org.egov.infra.admin.master.entity.AppConfigValues;
 import org.egov.infra.config.core.ApplicationThreadLocals;
 import org.egov.infra.exception.ApplicationRuntimeException;
 import org.egov.infra.utils.autonumber.AutonumberServiceBeanResolver;
@@ -102,6 +103,7 @@ import org.egov.wtms.masters.entity.WaterTaxDetails;
 import org.egov.wtms.masters.entity.enums.ConnectionStatus;
 import org.egov.wtms.masters.entity.enums.ConnectionType;
 import org.egov.wtms.utils.PropertyExtnUtils;
+import org.egov.wtms.utils.WaterTaxUtils;
 import org.egov.wtms.utils.constants.WaterTaxConstants;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
@@ -111,12 +113,16 @@ public class WaterTaxExternalService {
 
     @Autowired
     private PropertyExtnUtils propertyExtnUtils;
-
+    
+    
     @Autowired
     private WaterConnectionDetailsService waterConnectionDetailsService;
 
     @Autowired
     private ApplicationContext context;
+    
+    @Autowired
+    private WaterTaxUtils waterTaxUtils;
 
     @Autowired
     private CollectionIntegrationService collectionService;
@@ -312,7 +318,7 @@ public class WaterTaxExternalService {
             receiptDetails.add(initReceiptDetail(billDet.getGlcode(), BigDecimal.ZERO, // billDet.getCrAmount(),
                     billDet.getCrAmount(), billDet.getDrAmount(), billDet.getDescription()));
         Boolean isActualDemand = false;
-        new WaterTaxCollection().apportionPaidAmount(String.valueOf(bill.getId()), amountPaid, receiptDetails);
+        new WaterTaxCollection(waterTaxUtils).apportionPaidAmount(String.valueOf(bill.getId()), amountPaid, receiptDetails);
 
         for (final EgBillDetails billDet : bill.getEgBillDetails())
             for (final ReceiptDetail rd : receiptDetails)
@@ -407,7 +413,16 @@ public class WaterTaxExternalService {
     private boolean thereIsCurrentBalanceToBePaid(final EgBill bill) {
         boolean result = false;
         BigDecimal currentBal = BigDecimal.ZERO;
-        for (final Map.Entry<String, String> entry : WaterTaxConstants.GLCODEMAP_FOR_CURRENTTAX.entrySet())
+        final List<AppConfigValues> demandreasonGlcode = waterTaxUtils.getAppConfigValueByModuleNameAndKeyName(WaterTaxConstants.MODULE_NAME, WaterTaxConstants.DEMANDREASONANDGLCODEMAP);
+        Map<String, String> demandReasonGlCodePairmap = new HashMap<String, String>();
+        for (AppConfigValues appConfig : demandreasonGlcode) {
+            String rows[] = appConfig.getValue().split("\n");
+            for (String row : rows) {
+                String value[] = row.split("=");
+                demandReasonGlCodePairmap.put(value[0], value[1]);
+            }
+        }
+        for (final Map.Entry<String, String> entry :demandReasonGlCodePairmap.entrySet())
             currentBal = currentBal.add(bill.balanceForGLCode(entry.getValue()));
         if (currentBal != null && currentBal.compareTo(BigDecimal.ZERO) > 0)
             result = true;

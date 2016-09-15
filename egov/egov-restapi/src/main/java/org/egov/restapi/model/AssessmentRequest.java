@@ -49,6 +49,7 @@ public class AssessmentRequest {
     private String applicationNo;
     private String category;
     private String doorNo;
+    private String wardNum;
 
     public String getAssessmentNo() {
         return assessmentNo;
@@ -111,6 +112,14 @@ public class AssessmentRequest {
 
 	public void setDoorNo(String doorNo) {
 		this.doorNo = doorNo;
+	}
+
+	public String getWardNum() {
+		return wardNum;
+	}
+
+	public void setWardNum(String wardNum) {
+		this.wardNum = wardNum;
 	}
 
 }

@@ -42,9 +42,20 @@
  */
 package org.egov.egf.web.actions.deduction;
 
-import com.exilant.GLEngine.ChartOfAccounts;
-import com.exilant.GLEngine.Transaxtion;
-import com.opensymphony.xwork2.validator.annotations.Validation;
+import java.math.BigDecimal;
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
+import java.util.Set;
+
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.Predicate;
 import org.apache.log4j.Logger;
@@ -56,6 +67,7 @@ import org.apache.struts2.interceptor.validation.SkipValidation;
 import org.egov.billsaccounting.services.CreateVoucher;
 import org.egov.billsaccounting.services.VoucherConstant;
 import org.egov.commons.Bankaccount;
+import org.egov.commons.CFunction;
 import org.egov.commons.CVoucherHeader;
 import org.egov.commons.Functionary;
 import org.egov.commons.Fund;
@@ -65,6 +77,7 @@ import org.egov.commons.SubScheme;
 import org.egov.commons.Vouchermis;
 import org.egov.commons.dao.FinancialYearHibernateDAO;
 import org.egov.commons.service.BankAccountService;
+import org.egov.commons.service.FunctionService;
 import org.egov.commons.utils.EntityType;
 import org.egov.dao.voucher.VoucherHibernateDAO;
 import org.egov.deduction.model.EgRemittance;
@@ -74,6 +87,7 @@ import org.egov.egf.web.actions.payment.BasePaymentAction;
 import org.egov.infra.admin.master.entity.AppConfigValues;
 import org.egov.infra.admin.master.entity.Boundary;
 import org.egov.infra.admin.master.entity.Department;
+import org.egov.infra.admin.master.service.DepartmentService;
 import org.egov.infra.script.entity.Script;
 import org.egov.infra.script.service.ScriptService;
 import org.egov.infra.validation.exception.ValidationError;
@@ -104,19 +118,9 @@ import org.egov.utils.FinancialConstants;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 
-import java.math.BigDecimal;
-import java.text.DateFormat;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Map.Entry;
-import java.util.Set;
+import com.exilant.GLEngine.ChartOfAccounts;
+import com.exilant.GLEngine.Transaxtion;
+import com.opensymphony.xwork2.validator.annotations.Validation;
 
 @ParentPackage("egov")
 @Validation
@@ -154,6 +158,10 @@ public class RemitRecoveryAction extends BasePaymentAction {
     public boolean showApprove = false;
     private CommonBean commonBean;
     private String modeOfPayment;
+    @Autowired
+    private DepartmentService departmentService;
+    @Autowired
+    private FunctionService functionService;
 
     @Autowired
     @Qualifier("persistenceService")
@@ -263,10 +271,9 @@ public class RemitRecoveryAction extends BasePaymentAction {
         listRemitBean = new ArrayList<RemittanceBean>();
         if (LOGGER.isDebugEnabled())
             LOGGER.debug("RemitRecoveryAction | Search | Start");
-        validateFields();
         listRemitBean = remitRecoveryService.getRecoveryDetails(remittanceBean, voucherHeader);
         if (listRemitBean == null)
-            listRemitBean = new ArrayList<RemittanceBean>();
+            listRemitBean = new ArrayList<RemittanceBean>(); 
 
         return NEW;
     }
@@ -292,6 +299,16 @@ public class RemitRecoveryAction extends BasePaymentAction {
             }
         }
         voucherHeader.setType(FinancialConstants.STANDARD_VOUCHER_TYPE_PAYMENT);
+        if(voucherHeader.getVouchermis().getDepartmentid()==null )
+        {
+            Department department=departmentService.getDepartmentById(listRemitBean.get(0).getDepartmentId());
+            voucherHeader.getVouchermis().setDepartmentid(department);
+        }
+        if(voucherHeader.getVouchermis().getFunction()==null)
+        {
+            CFunction function=functionService.findOne(listRemitBean.get(0).getFunctionId());
+            voucherHeader.getVouchermis().setFunction(function); 
+        }
         if (LOGGER.isDebugEnabled())
             LOGGER.debug("RemitRecoveryAction | remit | start");
         if (LOGGER.isDebugEnabled())
@@ -320,7 +337,7 @@ public class RemitRecoveryAction extends BasePaymentAction {
             Date date1 = sdf1.parse(vdate);
             String voucherDate = formatter1.format(date1);
             String cutOffDate1 = null;
-            validateFields();
+            validateFields(); 
             voucherHeader.setType(FinancialConstants.STANDARD_VOUCHER_TYPE_PAYMENT);
             voucherHeader.setName(FinancialConstants.PAYMENTVOUCHER_NAME_REMITTANCE);
             final HashMap<String, Object> headerDetails = createHeaderAndMisDetails();

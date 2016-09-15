@@ -44,6 +44,8 @@ import static org.egov.restapi.constants.RestApiConstants.*;
 import java.text.ParseException;
 import java.util.Date;
 import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import org.apache.commons.lang3.StringUtils;
 import org.egov.collection.integration.models.BillReceiptInfo;
@@ -56,13 +58,13 @@ import org.egov.ptis.domain.entity.property.Property;
 import org.egov.ptis.domain.entity.property.PropertyMutation;
 import org.egov.ptis.domain.model.ErrorDetails;
 import org.egov.ptis.domain.model.FloorDetails;
+import org.egov.ptis.domain.model.OwnerInformation;
 import org.egov.ptis.domain.model.PayPropertyTaxDetails;
 import org.egov.ptis.domain.service.property.PropertyExternalService;
 import org.egov.restapi.model.AssessmentRequest;
 import org.egov.restapi.model.AssessmentsDetails;
 import org.egov.restapi.model.ConstructionTypeDetails;
 import org.egov.restapi.model.CreatePropertyDetails;
-import org.egov.restapi.model.OwnerInformation;
 import org.egov.restapi.model.PropertyAddressDetails;
 import org.egov.restapi.model.PropertyTransferDetails;
 import org.egov.restapi.model.SurroundingBoundaryDetails;
@@ -251,6 +253,21 @@ public class ValidationUtil {
                     errorDetails.setErrorCode(MOBILE_NO_REQ_CODE);
                     errorDetails.setErrorMessage(MOBILE_NO_REQ_MSG);
                     return errorDetails;
+                } else {
+                	if(ownerDetails.getMobileNumber().trim().length() != 10){
+                		errorDetails = new ErrorDetails();
+                        errorDetails.setErrorCode(MOBILENO_MAX_LENGTH_ERROR_CODE);
+                        errorDetails.setErrorMessage(MOBILENO_MAX_LENGTH_ERROR_MSG);
+                        return errorDetails;
+                	}
+                	Pattern pattern = Pattern.compile("\\d{3}-\\d{7}");
+                    Matcher matcher = pattern.matcher(ownerDetails.getMobileNumber());
+                    if(!matcher.matches()){
+                    	errorDetails = new ErrorDetails();
+                        errorDetails.setErrorCode(MOBILENO_ALPHANUMERIC_ERROR_CODE);
+                        errorDetails.setErrorMessage(MOBILENO_ALPHANUMERIC_ERROR_MSG);
+                        return errorDetails;
+                    }
                 }
                 if (StringUtils.isBlank(ownerDetails.getName())) {
                     errorDetails = new ErrorDetails();

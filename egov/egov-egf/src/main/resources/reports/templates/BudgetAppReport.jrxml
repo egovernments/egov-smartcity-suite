@@ -1,45 +1,45 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
-  ~ eGov suite of products aim to improve the internal efficiency,transparency,
-  ~    accountability and the service delivery of the government  organizations.
-  ~
-  ~     Copyright (C) <2015>  eGovernments Foundation
-  ~
-  ~     The updated version of eGov suite of products as by eGovernments Foundation
-  ~     is available at http://www.egovernments.org
-  ~
-  ~     This program is free software: you can redistribute it and/or modify
-  ~     it under the terms of the GNU General Public License as published by
-  ~     the Free Software Foundation, either version 3 of the License, or
-  ~     any later version.
-  ~
-  ~     This program is distributed in the hope that it will be useful,
-  ~     but WITHOUT ANY WARRANTY; without even the implied warranty of
-  ~     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-  ~     GNU General Public License for more details.
-  ~
-  ~     You should have received a copy of the GNU General Public License
-  ~     along with this program. If not, see http://www.gnu.org/licenses/ or
-  ~     http://www.gnu.org/licenses/gpl.html .
-  ~
-  ~     In addition to the terms of the GPL license to be adhered to in using this
-  ~     program, the following additional terms are to be complied with:
-  ~
-  ~         1) All versions of this program, verbatim or modified must carry this
-  ~            Legal Notice.
-  ~
-  ~         2) Any misrepresentation of the origin of the material is prohibited. It
-  ~            is required that all modified versions of this material be marked in
-  ~            reasonable ways as different from the original version.
-  ~
-  ~         3) This license does not grant any rights to any user of the program
-  ~            with regards to rights under trademark law for use of the trade names
-  ~            or trademarks of eGovernments Foundation.
-  ~
-  ~   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
-  -->
+   ~ eGov suite of products aim to improve the internal efficiency,transparency,
+   ~    accountability and the service delivery of the government  organizations.
+   ~
+   ~     Copyright (C) <2015>  eGovernments Foundation
+   ~
+   ~     The updated version of eGov suite of products as by eGovernments Foundation
+   ~     is available at http://www.egovernments.org
+   ~
+   ~     This program is free software: you can redistribute it and/or modify
+   ~     it under the terms of the GNU General Public License as published by
+   ~     the Free Software Foundation, either version 3 of the License, or
+   ~     any later version.
+   ~
+   ~     This program is distributed in the hope that it will be useful,
+   ~     but WITHOUT ANY WARRANTY; without even the implied warranty of
+   ~     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+   ~     GNU General Public License for more details.
+   ~
+   ~     You should have received a copy of the GNU General Public License
+   ~     along with this program. If not, see http://www.gnu.org/licenses/ or
+   ~     http://www.gnu.org/licenses/gpl.html .
+   ~
+   ~     In addition to the terms of the GPL license to be adhered to in using this
+   ~     program, the following additional terms are to be complied with:
+   ~
+   ~         1) All versions of this program, verbatim or modified must carry this
+   ~            Legal Notice.
+   ~
+   ~         2) Any misrepresentation of the origin of the material is prohibited. It
+   ~            is required that all modified versions of this material be marked in
+   ~            reasonable ways as different from the original version.
+   ~
+   ~         3) This license does not grant any rights to any user of the program
+   ~            with regards to rights under trademark law for use of the trade names
+   ~            or trademarks of eGovernments Foundation.
+   ~
+   ~   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
+   -->
 <!-- Created with Jaspersoft Studio version 6.2.0.final using JasperReports Library version 6.2.0  -->
-<!-- 2016-08-30T12:54:06 -->
+<!-- 2016-09-07T11:34:24 -->
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="report1" pageWidth="842" pageHeight="595" orientation="Landscape" columnWidth="802" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="9a20dc06-2178-449a-82b3-e97e7b0a0b82">
 	<property name="ireport.zoom" value="1.0"/>
 	<property name="ireport.x" value="0"/>
@@ -225,7 +225,7 @@
 	<columnHeader>
 		<band height="64" splitType="Stretch">
 			<staticText>
-				<reportElement x="197" y="0" width="335" height="20" uuid="2c141fe4-bfcd-41f7-b437-744f0feaa7d8"/>
+				<reportElement x="208" y="0" width="324" height="20" uuid="2c141fe4-bfcd-41f7-b437-744f0feaa7d8"/>
 				<box>
 					<topPen lineWidth="1.0"/>
 					<leftPen lineWidth="1.0"/>
@@ -238,7 +238,7 @@
 				<text><![CDATA[Description]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="146" y="0" width="51" height="57" uuid="4ceef873-bb4c-40cd-bc47-4810c4883c6c"/>
+				<reportElement x="130" y="0" width="78" height="57" uuid="4ceef873-bb4c-40cd-bc47-4810c4883c6c"/>
 				<box>
 					<topPen lineWidth="1.0"/>
 					<leftPen lineWidth="1.0"/>
@@ -251,7 +251,7 @@
 				<text><![CDATA[BA Date]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="0" y="0" width="56" height="58" uuid="e2c20535-1261-4e21-b3f7-c4719e776392"/>
+				<reportElement x="0" y="0" width="40" height="58" uuid="e2c20535-1261-4e21-b3f7-c4719e776392"/>
 				<box>
 					<topPen lineWidth="1.0"/>
 					<leftPen lineWidth="1.0"/>
@@ -264,7 +264,7 @@
 				<text><![CDATA[SI.NO.]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="57" y="0" width="89" height="57" uuid="4e041a0a-51f3-44d1-ae46-f15c8608a112"/>
+				<reportElement x="40" y="0" width="90" height="58" uuid="4e041a0a-51f3-44d1-ae46-f15c8608a112"/>
 				<box>
 					<topPen lineWidth="1.0"/>
 					<leftPen lineWidth="1.0"/>
@@ -275,7 +275,7 @@
 					<font isBold="true"/>
 				</textElement>
 				<text><![CDATA[Budget
-Appropriation #]]></text>
+Allocation #]]></text>
 			</staticText>
 			<staticText>
 				<reportElement x="463" y="20" width="69" height="37" uuid="edfd0e6b-643d-41f5-b200-1e8131b8394f"/>
@@ -291,7 +291,7 @@ Appropriation #]]></text>
 				<text><![CDATA[Voucher Date]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="197" y="20" width="97" height="37" uuid="185b76fc-2ebf-40a5-8912-46e7a704b0c7"/>
+				<reportElement x="208" y="20" width="86" height="37" uuid="185b76fc-2ebf-40a5-8912-46e7a704b0c7"/>
 				<box>
 					<topPen lineWidth="1.0"/>
 					<leftPen lineWidth="1.0"/>
@@ -374,7 +374,7 @@ Appropriation #]]></text>
 	<detail>
 		<band height="45" splitType="Stretch">
 			<frame>
-				<reportElement x="0" y="-6" width="56" height="44" uuid="5907b96b-4c45-475c-8405-4691c8c3a193"/>
+				<reportElement x="0" y="-6" width="40" height="44" uuid="5907b96b-4c45-475c-8405-4691c8c3a193"/>
 				<box>
 					<pen lineWidth="1.0" lineStyle="Solid"/>
 					<topPen lineWidth="1.0" lineStyle="Solid"/>
@@ -383,7 +383,7 @@ Appropriation #]]></text>
 					<rightPen lineWidth="1.0" lineStyle="Solid"/>
 				</box>
 				<textField isBlankWhenNull="true">
-					<reportElement x="1" y="0" width="54" height="44" uuid="bd410bfd-00ac-4295-bc3d-6cf46a04447b"/>
+					<reportElement x="1" y="0" width="39" height="44" uuid="bd410bfd-00ac-4295-bc3d-6cf46a04447b"/>
 					<textElement textAlignment="Center" verticalAlignment="Middle">
 						<font size="10"/>
 					</textElement>
@@ -391,7 +391,7 @@ Appropriation #]]></text>
 				</textField>
 			</frame>
 			<frame>
-				<reportElement x="57" y="-6" width="89" height="44" uuid="55e1a5fc-821b-444e-a649-a1501a5269ac"/>
+				<reportElement x="40" y="-6" width="90" height="44" uuid="55e1a5fc-821b-444e-a649-a1501a5269ac"/>
 				<box>
 					<pen lineWidth="1.0" lineStyle="Solid"/>
 					<topPen lineWidth="1.0" lineStyle="Solid"/>
@@ -408,7 +408,7 @@ Appropriation #]]></text>
 				</textField>
 			</frame>
 			<frame>
-				<reportElement x="197" y="-6" width="97" height="44" uuid="56429083-378f-4c6c-afaf-d1b86bf31f09"/>
+				<reportElement x="208" y="-6" width="86" height="44" uuid="56429083-378f-4c6c-afaf-d1b86bf31f09"/>
 				<box>
 					<pen lineWidth="1.0" lineStyle="Solid"/>
 					<topPen lineWidth="1.0" lineStyle="Solid"/>
@@ -417,7 +417,7 @@ Appropriation #]]></text>
 					<rightPen lineWidth="1.0" lineStyle="Solid"/>
 				</box>
 				<textField isBlankWhenNull="true">
-					<reportElement x="0" y="0" width="97" height="44" uuid="34cdbb37-49c4-4b76-8ece-c6eddd82578b"/>
+					<reportElement x="0" y="0" width="86" height="44" uuid="34cdbb37-49c4-4b76-8ece-c6eddd82578b"/>
 					<textElement textAlignment="Center" verticalAlignment="Middle">
 						<font size="10"/>
 					</textElement>
@@ -527,7 +527,7 @@ Appropriation #]]></text>
 				</textField>
 			</frame>
 			<frame>
-				<reportElement x="146" y="-6" width="51" height="44" uuid="55e1a5fc-821b-444e-a649-a1501a5269ac"/>
+				<reportElement x="130" y="-6" width="78" height="44" uuid="55e1a5fc-821b-444e-a649-a1501a5269ac"/>
 				<box>
 					<pen lineWidth="1.0" lineStyle="Solid"/>
 					<topPen lineWidth="1.0" lineStyle="Solid"/>
@@ -536,7 +536,7 @@ Appropriation #]]></text>
 					<rightPen lineWidth="1.0" lineStyle="Solid"/>
 				</box>
 				<textField pattern="dd/MM/yyyy">
-					<reportElement x="1" y="0" width="50" height="44" uuid="66f71b75-6767-4770-a95f-434a0f1239c6"/>
+					<reportElement x="0" y="0" width="78" height="44" uuid="66f71b75-6767-4770-a95f-434a0f1239c6"/>
 					<textElement textAlignment="Center" verticalAlignment="Middle">
 						<font size="10"/>
 					</textElement>

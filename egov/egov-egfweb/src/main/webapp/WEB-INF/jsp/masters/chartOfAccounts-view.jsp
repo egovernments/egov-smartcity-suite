@@ -166,8 +166,6 @@
 					<s:submit name="Add" value="Add" cssClass="buttonsubmit"
 						onclick="submitForAdd()" />
 				</s:if>
-				<input type="submit" class="buttonsubmit" value="Modify" id="Modify"
-					name="Modify" onclick="return submitForm();" />
 			</s:if>
 			<input type="button" value="Close"
 				onclick="javascript:window.close()" class="button" />

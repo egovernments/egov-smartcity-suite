@@ -131,7 +131,15 @@ public class ChartOfAccountsHibernateDAO implements ChartOfAccountsDAO {
                 .setCacheable(true).list();
 
     }
+    public List<CChartOfAccounts> getDetailedCodesList() {
+        return getCurrentSession()
+                .createQuery(
+                        "from CChartOfAccounts where classification=4")
+                .setCacheable(true).list();
 
+    }
+
+    
     public List<CChartOfAccounts> findDetailedAccountCodesByGlcodeOrNameLike(String searchString) {
         final Query qry = getCurrentSession()
                 .createQuery(

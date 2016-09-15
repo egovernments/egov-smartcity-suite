@@ -132,7 +132,7 @@
 						<form:errors path="panNumber" cssClass="error-msg" />
 					</div>
 					<label class="col-sm-2 control-label text-right"><spring:message
-							code="lbl.specilization" />:</label>
+							code="lbl.specialization" />:</label>
 					<div class="col-sm-3 add-margin">
 						<form:input path="specilization"
 							class="form-control text-left patternvalidation"

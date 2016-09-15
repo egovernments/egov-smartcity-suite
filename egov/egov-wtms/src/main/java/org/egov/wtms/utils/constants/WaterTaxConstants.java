@@ -39,12 +39,10 @@
  */
 package org.egov.wtms.utils.constants;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
-import java.util.Map;
 
 public class WaterTaxConstants {
     public static final String FILESTORE_MODULECODE = "WTMS";
@@ -60,6 +58,7 @@ public class WaterTaxConstants {
     public static final String METERED = "Metered";
     public static final String CONNECTIONTYPE_METERED = "METERED";
     public static final String NON_METERED = "Non-metered";
+    public static final String NON_METERED_CODE = "NON_METERED";
     public static final String EGMODULES_NAME = "Water Tax";
     public static final String EGMODULE_NAME = "Water Tax Management";
     public static final String WATERTAX_SECURITY_CHARGE = "WTAXSECURITY";
@@ -243,6 +242,7 @@ public class WaterTaxConstants {
     public static final String  GENERATEBILL ="GENERATEBILL";
     public static final String  PREVIOUS_SECOND_HALF ="Previous 2nd Half";
 
+    public static final String  DEMANDREASONANDGLCODEMAP ="DemandReasonGlcodeMap";
     // HashMap map b/n Demand reason string and code
     public static final LinkedHashMap<String, String> NON_METERED_DMDRSN_CODE_MAP = new LinkedHashMap<String, String>() {
         /**
@@ -256,22 +256,6 @@ public class WaterTaxConstants {
     };
     public static final String TOTAL_AMOUNT = "amount";
     public final static String PAID_BY = "paidBy";
-    public static final HashMap<String, String> GLCODEMAP_FOR_CURRENTTAX = new HashMap<String, String>() {
-        /**
-         *
-         */
-        private static final long serialVersionUID = 540382999962934138L;
-
-        {
-
-            put(WATERTAX_DONATION_CHARGE, "1100201");
-            put(WATERTAX_SECURITY_CHARGE, "1100201");
-            put(WATERTAX_FIELDINSPECTION_CHARGE, "1407011");
-            put(WATERTAXREASONCODE, "1405016");
-            put(DEMANDRSN_CODE_ADVANCE, "3504106");
-
-        }
-    };
     public static final String DEMANDRSN_CODE_ADVANCE = "WTADVANCE";
     public static final String DEMANDRSN_REASON_ADVANCE = "Advance";
     public static final String CURRENTYEAR_FIRST_HALF = "Current 1st Half";
@@ -292,17 +276,6 @@ public class WaterTaxConstants {
         }
     };
     public static final Integer MAX_ADVANCES_ALLOWED = 10;
-    public static final List<String> GLCODES_FOR_CURRENTTAX = new ArrayList<String>() {
-        /**
-         *
-         */
-        private static final long serialVersionUID = -6532281844201057959L;
-
-        {
-            for (final Map.Entry<String, String> glCode : GLCODEMAP_FOR_CURRENTTAX.entrySet())
-                add(glCode.getValue());
-        }
-    };
     public static final String THIRD_PARTY_ERR_CODE_SUCCESS = "WTMS-REST-0";
     public static final String THIRD_PARTY_ERR_MSG_SUCCESS = "SUCCESS";
     public static final String MEESEVA_REDIRECT_URL = "/meeseva/generatereceipt?transactionServiceNumber=";

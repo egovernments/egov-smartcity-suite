@@ -41,7 +41,6 @@ package org.egov.restapi.web.rest;
 
 import java.io.IOException;
 import java.text.ParseException;
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
@@ -61,14 +60,12 @@ import org.egov.ptis.domain.entity.property.Document;
 import org.egov.ptis.domain.model.ErrorDetails;
 import org.egov.ptis.domain.model.FloorDetails;
 import org.egov.ptis.domain.model.NewPropertyDetails;
-import org.egov.ptis.domain.model.OwnerDetails;
 import org.egov.ptis.domain.service.property.PropertyExternalService;
 import org.egov.restapi.model.AmenitiesDetails;
 import org.egov.restapi.model.AssessmentsDetails;
 import org.egov.restapi.model.ConstructionTypeDetails;
 import org.egov.restapi.model.CorrespondenceAddressDetails;
 import org.egov.restapi.model.CreatePropertyDetails;
-import org.egov.restapi.model.OwnerInformation;
 import org.egov.restapi.model.PropertyAddressDetails;
 import org.egov.restapi.model.SurroundingBoundaryDetails;
 import org.egov.restapi.model.VacantLandDetails;
@@ -113,7 +110,6 @@ public class CreateAssessmentController {
 			responseJson = JsonConvertor.convert(errorDetails);
         } else {
 		
-        List<OwnerDetails> ownerDetailsList = getOwnerDetails(createPropDetails.getOwnerDetails());
         AssessmentsDetails assessmentsDetails = createPropDetails.getAssessmentDetails();
         PropertyAddressDetails propAddressDetails = createPropDetails.getPropertyAddressDetails();
         Boolean isCorrAddrDiff = propAddressDetails.getIsCorrAddrDiff();
@@ -134,11 +130,11 @@ public class CreateAssessmentController {
             SurroundingBoundaryDetails surroundingBoundaryDetails = createPropDetails.getSurroundingBoundaryDetails();
 
             newPropertyDetails = propertyExternalService.createNewProperty(createPropDetails.getPropertyTypeMasterCode(),
-            		createPropDetails.getCategoryCode(), null, createPropDetails.getApartmentCmplxCode(), ownerDetailsList, assessmentsDetails.getMutationReasonCode(), null,
+            		createPropDetails.getCategoryCode(), null, createPropDetails.getApartmentCmplxCode(), createPropDetails.getOwnerDetails(), assessmentsDetails.getMutationReasonCode(), null,
             		false, null, assessmentsDetails.getRegdDocNo(), assessmentsDetails.getRegdDocDate(), propAddressDetails.getLocalityNum(), propAddressDetails.getBlockNum(),
             		propAddressDetails.getZoneNum(), propAddressDetails.getStreetNum(), propAddressDetails.getElectionWardNum(), propAddressDetails.getDoorNo(), propAddressDetails.getEnumerationBlockCode(),
             		propAddressDetails.getPinCode(), isCorrAddrDiff, corrAddr1, corrAddr2, corrPinCode, false, false, false, false,
-            		false, false, false, null, null, null, null, Collections.EMPTY_LIST,
+            		false, false, false, null, null, null, null, Collections.emptyList(),
             		vacantLandDetails.getSurveyNumber(), vacantLandDetails.getPattaNumber(), vacantLandDetails.getVacantLandArea(), vacantLandDetails.getMarketValue(),
             		vacantLandDetails.getCurrentCapitalValue(), vacantLandDetails.getEffectiveDate(), surroundingBoundaryDetails.getNorthBoundary(), 
             		surroundingBoundaryDetails.getSouthBoundary(), surroundingBoundaryDetails.getEastBoundary(),
@@ -149,7 +145,7 @@ public class CreateAssessmentController {
             List<FloorDetails> floorDetailsList = createPropDetails.getFloorDetails();
             
             newPropertyDetails = propertyExternalService.createNewProperty(createPropDetails.getPropertyTypeMasterCode(),
-            		createPropDetails.getCategoryCode(), null, createPropDetails.getApartmentCmplxCode(), ownerDetailsList, 
+            		createPropDetails.getCategoryCode(), null, createPropDetails.getApartmentCmplxCode(), createPropDetails.getOwnerDetails(), 
             		assessmentsDetails.getMutationReasonCode(), assessmentsDetails.getExtentOfSite(), assessmentsDetails.getIsExtentAppurtenantLand(),
             		assessmentsDetails.getOccupancyCertificationNo(), assessmentsDetails.getRegdDocNo(),assessmentsDetails.getRegdDocDate(), 
             		propAddressDetails.getLocalityNum(), propAddressDetails.getBlockNum(), propAddressDetails.getZoneNum(), 
@@ -164,29 +160,6 @@ public class CreateAssessmentController {
         responseJson = JsonConvertor.convert(newPropertyDetails);
         }
         return responseJson;
-	}
-	
-	/**
-	 * Prepares list of OwnerDetails from OwnerInformation
-	 * @param ownerInfoList
-	 * @return
-	 */
-	private List<OwnerDetails> getOwnerDetails(List<OwnerInformation> ownerInfoList){
-		List<OwnerDetails> ownerDetailsList = new ArrayList<OwnerDetails>();
-		OwnerDetails ownerDetails ;
-		for(OwnerInformation ownerInfo : ownerInfoList){
-			ownerDetails = new OwnerDetails();
-			ownerDetails.setAadhaarNo(ownerInfo.getAadhaarNo());
-			ownerDetails.setSalutationCode(ownerInfo.getSalutationCode());
-			ownerDetails.setName(ownerInfo.getName());
-			ownerDetails.setGender(ownerInfo.getGender());
-			ownerDetails.setMobileNumber(ownerInfo.getMobileNumber());
-			ownerDetails.setEmailId(ownerInfo.getEmailId());
-			ownerDetails.setGuardianRelation(ownerInfo.getGuardianRelation());
-			ownerDetails.setGuardian(ownerInfo.getGuardian());
-			ownerDetailsList.add(ownerDetails);
-		}
-		return ownerDetailsList;
 	}
 	
 	/**

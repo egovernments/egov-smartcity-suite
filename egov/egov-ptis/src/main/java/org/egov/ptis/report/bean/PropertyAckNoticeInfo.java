@@ -108,8 +108,10 @@ public class PropertyAckNoticeInfo {
     private String applicationType;
     private String transferpropertyText;
     private String transferpropertyTextEnd;
+    private String approverName;
+    private String noticeNumber;
 
-	public String getCreationReason() {
+    public String getCreationReason() {
         return creationReason;
     }
 
@@ -429,13 +431,13 @@ public class PropertyAckNoticeInfo {
         this.amount = amount;
     }
 
-	public BigDecimal getRate() {
-		return rate;
-	}
+    public BigDecimal getRate() {
+        return rate;
+    }
 
-	public void setRate(BigDecimal rate) {
-		this.rate = rate;
-	}
+    public void setRate(BigDecimal rate) {
+        this.rate = rate;
+    }
 
     public String getAssessmentDate() {
         return assessmentDate;
@@ -446,179 +448,195 @@ public class PropertyAckNoticeInfo {
     }
 
     public String getBldngFloorNo() {
-		return bldngFloorNo;
-	}
+        return bldngFloorNo;
+    }
 
-	public void setBldngFloorNo(String bldngFloorNo) {
-		this.bldngFloorNo = bldngFloorNo;
-	}
-	
-	public String getMeesevaNo() {
-		return meesevaNo;
-	}
+    public void setBldngFloorNo(String bldngFloorNo) {
+        this.bldngFloorNo = bldngFloorNo;
+    }
 
-	public void setMeesevaNo(String meesevaNo) {
-		this.meesevaNo = meesevaNo;
-	}
+    public String getMeesevaNo() {
+        return meesevaNo;
+    }
 
-	public BigDecimal getNew_rev_ARV() {
-		return (new_rev_ARV.compareTo(BigDecimal.ZERO)==0) ? null : new_rev_ARV ;
-	}
-	
-	public void setNew_rev_ARV(BigDecimal new_rev_ARV) {
-		this.new_rev_ARV = new_rev_ARV;
-	}
-	
-	public BigDecimal getNewPropertyTax() {
-		return (newPropertyTax.compareTo(BigDecimal.ZERO)==0) ? null : newPropertyTax ;
-	}
+    public void setMeesevaNo(String meesevaNo) {
+        this.meesevaNo = meesevaNo;
+    }
 
-	public void setNewPropertyTax(BigDecimal newPropertyTax) {
-		this.newPropertyTax = newPropertyTax;
-	}
+    public BigDecimal getNew_rev_ARV() {
+        return (new_rev_ARV.compareTo(BigDecimal.ZERO) == 0) ? null : new_rev_ARV;
+    }
 
-	public BigDecimal getNewLibraryCess() {
-		return (newLibraryCess.compareTo(BigDecimal.ZERO)==0) ? null : newLibraryCess ;
-	}
+    public void setNew_rev_ARV(BigDecimal new_rev_ARV) {
+        this.new_rev_ARV = new_rev_ARV;
+    }
 
-	public void setNewLibraryCess(BigDecimal newLibraryCess) {
-		this.newLibraryCess = newLibraryCess;
-	}
+    public BigDecimal getNewPropertyTax() {
+        return (newPropertyTax.compareTo(BigDecimal.ZERO) == 0) ? null : newPropertyTax;
+    }
 
-	public BigDecimal getNewUCPenalty() {
-		return (newUCPenalty.compareTo(BigDecimal.ZERO)==0) ? null : newUCPenalty ;
-	}
+    public void setNewPropertyTax(BigDecimal newPropertyTax) {
+        this.newPropertyTax = newPropertyTax;
+    }
 
-	public void setNewUCPenalty(BigDecimal newUCPenalty) {
-		this.newUCPenalty = newUCPenalty;
-	}
+    public BigDecimal getNewLibraryCess() {
+        return (newLibraryCess.compareTo(BigDecimal.ZERO) == 0) ? null : newLibraryCess;
+    }
 
-	public BigDecimal getNewTotalTax() {
-		return (newTotalTax.compareTo(BigDecimal.ZERO)==0) ? null : newTotalTax ;
-	}
+    public void setNewLibraryCess(BigDecimal newLibraryCess) {
+        this.newLibraryCess = newLibraryCess;
+    }
 
-	public void setNewTotalTax(BigDecimal newTotalTax) {
-		this.newTotalTax = newTotalTax;
-	}
+    public BigDecimal getNewUCPenalty() {
+        return (newUCPenalty.compareTo(BigDecimal.ZERO) == 0) ? null : newUCPenalty;
+    }
 
-	public BigDecimal getRevPropertyTax() {
-		return (revPropertyTax.compareTo(BigDecimal.ZERO)==0) ? null : revPropertyTax ;
-	}
+    public void setNewUCPenalty(BigDecimal newUCPenalty) {
+        this.newUCPenalty = newUCPenalty;
+    }
 
-	public void setRevPropertyTax(BigDecimal revPropertyTax) {
-		this.revPropertyTax = revPropertyTax;
-	}
+    public BigDecimal getNewTotalTax() {
+        return (newTotalTax.compareTo(BigDecimal.ZERO) == 0) ? null : newTotalTax;
+    }
 
-	public BigDecimal getRevLibraryCess() {
-		return (revLibraryCess.compareTo(BigDecimal.ZERO)==0) ? null : revLibraryCess ;
-	}
+    public void setNewTotalTax(BigDecimal newTotalTax) {
+        this.newTotalTax = newTotalTax;
+    }
 
-	public void setRevLibraryCess(BigDecimal revLibraryCess) {
-		this.revLibraryCess = revLibraryCess;
-	}
+    public BigDecimal getRevPropertyTax() {
+        return (revPropertyTax.compareTo(BigDecimal.ZERO) == 0) ? null : revPropertyTax;
+    }
 
-	public BigDecimal getRevUCPenalty() {
-		return (revUCPenalty.compareTo(BigDecimal.ZERO)==0) ? null : revUCPenalty ;
-	}
+    public void setRevPropertyTax(BigDecimal revPropertyTax) {
+        this.revPropertyTax = revPropertyTax;
+    }
 
-	public void setRevUCPenalty(BigDecimal revUCPenalty) {
-		this.revUCPenalty = revUCPenalty;
-	}
+    public BigDecimal getRevLibraryCess() {
+        return (revLibraryCess.compareTo(BigDecimal.ZERO) == 0) ? null : revLibraryCess;
+    }
 
-	public BigDecimal getRevTotalTax() {
-		return (revTotalTax.compareTo(BigDecimal.ZERO)==0) ? null : revTotalTax ;
-	}
+    public void setRevLibraryCess(BigDecimal revLibraryCess) {
+        this.revLibraryCess = revLibraryCess;
+    }
 
-	public void setRevTotalTax(BigDecimal revTotalTax) {
-		this.revTotalTax = revTotalTax;
-	}
+    public BigDecimal getRevUCPenalty() {
+        return (revUCPenalty.compareTo(BigDecimal.ZERO) == 0) ? null : revUCPenalty;
+    }
 
-	public BigDecimal getExistingPropertyTax() {
-		return (existingPropertyTax.compareTo(BigDecimal.ZERO)==0) ? null : existingPropertyTax ;
-	}
+    public void setRevUCPenalty(BigDecimal revUCPenalty) {
+        this.revUCPenalty = revUCPenalty;
+    }
 
-	public void setExistingPropertyTax(BigDecimal existingPropertyTax) {
-		this.existingPropertyTax = existingPropertyTax;
-	}
+    public BigDecimal getRevTotalTax() {
+        return (revTotalTax.compareTo(BigDecimal.ZERO) == 0) ? null : revTotalTax;
+    }
 
-	public BigDecimal getExistingLibraryCess() {
-		return (existingLibraryCess.compareTo(BigDecimal.ZERO)==0) ? null : existingLibraryCess ;
-	}
+    public void setRevTotalTax(BigDecimal revTotalTax) {
+        this.revTotalTax = revTotalTax;
+    }
 
-	public void setExistingLibraryCess(BigDecimal existingLibraryCess) {
-		this.existingLibraryCess = existingLibraryCess;
-	}
+    public BigDecimal getExistingPropertyTax() {
+        return (existingPropertyTax.compareTo(BigDecimal.ZERO) == 0) ? null : existingPropertyTax;
+    }
 
-	public BigDecimal getExistingUCPenalty() {
-		return (existingUCPenalty.compareTo(BigDecimal.ZERO)==0) ? null : existingUCPenalty ;
-	}
+    public void setExistingPropertyTax(BigDecimal existingPropertyTax) {
+        this.existingPropertyTax = existingPropertyTax;
+    }
 
-	public void setExistingUCPenalty(BigDecimal existingUCPenalty) {
-		this.existingUCPenalty = existingUCPenalty;
-	}
+    public BigDecimal getExistingLibraryCess() {
+        return (existingLibraryCess.compareTo(BigDecimal.ZERO) == 0) ? null : existingLibraryCess;
+    }
 
-	public BigDecimal getExistingTotalTax() {
-		return (existingTotalTax.compareTo(BigDecimal.ZERO)==0) ? null : existingTotalTax ;
-	}
+    public void setExistingLibraryCess(BigDecimal existingLibraryCess) {
+        this.existingLibraryCess = existingLibraryCess;
+    }
 
-	public void setExistingTotalTax(BigDecimal existingTotalTax) {
-		this.existingTotalTax = existingTotalTax;
-	}
+    public BigDecimal getExistingUCPenalty() {
+        return (existingUCPenalty.compareTo(BigDecimal.ZERO) == 0) ? null : existingUCPenalty;
+    }
 
-	public BigDecimal getExistingARV() {
-		return (existingARV.compareTo(BigDecimal.ZERO)==0) ? null : existingARV ;
-	}
+    public void setExistingUCPenalty(BigDecimal existingUCPenalty) {
+        this.existingUCPenalty = existingUCPenalty;
+    }
 
-	public void setExistingARV(BigDecimal existingARV) {
-		this.existingARV = existingARV;
-	}
+    public BigDecimal getExistingTotalTax() {
+        return (existingTotalTax.compareTo(BigDecimal.ZERO) == 0) ? null : existingTotalTax;
+    }
 
-	public String getNewOwnerGuardianRelation() {
-		return newOwnerGuardianRelation;
-	}
+    public void setExistingTotalTax(BigDecimal existingTotalTax) {
+        this.existingTotalTax = existingTotalTax;
+    }
 
-	public void setNewOwnerGuardianRelation(String newOwnerGuardianRelation) {
-		this.newOwnerGuardianRelation = newOwnerGuardianRelation;
-	}
+    public BigDecimal getExistingARV() {
+        return (existingARV.compareTo(BigDecimal.ZERO) == 0) ? null : existingARV;
+    }
 
-	public String getOldOwnerGuardianRelation() {
-		return oldOwnerGuardianRelation;
-	}
+    public void setExistingARV(BigDecimal existingARV) {
+        this.existingARV = existingARV;
+    }
 
-	public void setOldOwnerGuardianRelation(String oldOwnerGuardianRelation) {
-		this.oldOwnerGuardianRelation = oldOwnerGuardianRelation;
-	}
+    public String getNewOwnerGuardianRelation() {
+        return newOwnerGuardianRelation;
+    }
 
-	public String getOwnerTypeForReport() {
-		return ownerTypeForReport;
-	}
+    public void setNewOwnerGuardianRelation(String newOwnerGuardianRelation) {
+        this.newOwnerGuardianRelation = newOwnerGuardianRelation;
+    }
 
-	public void setOwnerTypeForReport(String ownerTypeForReport) {
-		this.ownerTypeForReport = ownerTypeForReport;
-	}
+    public String getOldOwnerGuardianRelation() {
+        return oldOwnerGuardianRelation;
+    }
 
-	public String getApplicationType() {
-		return applicationType;
-	}
+    public void setOldOwnerGuardianRelation(String oldOwnerGuardianRelation) {
+        this.oldOwnerGuardianRelation = oldOwnerGuardianRelation;
+    }
 
-	public void setApplicationType(String applicationType) {
-		this.applicationType = applicationType;
-	}
+    public String getOwnerTypeForReport() {
+        return ownerTypeForReport;
+    }
 
-	public String getTransferpropertyText() {
-		return transferpropertyText;
-	}
+    public void setOwnerTypeForReport(String ownerTypeForReport) {
+        this.ownerTypeForReport = ownerTypeForReport;
+    }
 
-	public void setTransferpropertyText(String transferpropertyText) {
-		this.transferpropertyText = transferpropertyText;
-	}
+    public String getApplicationType() {
+        return applicationType;
+    }
 
-	public String getTransferpropertyTextEnd() {
-		return transferpropertyTextEnd;
-	}
+    public void setApplicationType(String applicationType) {
+        this.applicationType = applicationType;
+    }
 
-	public void setTransferpropertyTextEnd(String transferpropertyTextEnd) {
-		this.transferpropertyTextEnd = transferpropertyTextEnd;
-	}
-	
+    public String getTransferpropertyText() {
+        return transferpropertyText;
+    }
+
+    public void setTransferpropertyText(String transferpropertyText) {
+        this.transferpropertyText = transferpropertyText;
+    }
+
+    public String getTransferpropertyTextEnd() {
+        return transferpropertyTextEnd;
+    }
+
+    public void setTransferpropertyTextEnd(String transferpropertyTextEnd) {
+        this.transferpropertyTextEnd = transferpropertyTextEnd;
+    }
+
+    public String getApproverName() {
+        return approverName;
+    }
+
+    public void setApproverName(String approverName) {
+        this.approverName = approverName;
+    }
+
+    public String getNoticeNumber() {
+        return noticeNumber;
+    }
+
+    public void setNoticeNumber(String noticeNumber) {
+        this.noticeNumber = noticeNumber;
+    }
+
 }

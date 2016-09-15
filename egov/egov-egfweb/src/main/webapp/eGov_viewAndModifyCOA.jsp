@@ -177,7 +177,7 @@ function loadSelectDataForChartOfacounts(url,sourceobj,destobj)
 				{
 			
 			url = url +'?'+actionidstr;
-				url="/EGF/masters/chartOfAccounts-viewChartOfAccounts.action?model.id="+id;
+				url="/EGF/masters/chartOfAccounts-modifyChartOfAccounts.action?model.id="+id;
 				}
 				openPopupWindow(url, windowname , 900, 650)
 		}			
@@ -188,7 +188,7 @@ function loadNodeData(node, fnLoadComplete){
 	var nodeUrl =  node.data.url;
 	var url = '/EGF/voucher/common-ajaxloadcoa.action';
 	var moduleQuery = url+'?glCode='+nodeId;
-	url="/EGF/masters/chartOfAccounts-viewChartOfAccounts.action?model.id="+nodeId;
+	url="/EGF/masters/chartOfAccounts-modifyChartOfAccounts.action?model.id="+nodeId;
 	//prepare our callback object
 	var callback = {
 	

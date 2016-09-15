@@ -251,6 +251,12 @@ public class RestApiConstants {
 	public static final String PLINTH_AREA_GREATER_THAN_PLOT_AREA_CODE = "77";
 	public static final String PLINTH_AREA_GREATER_THAN_PLOT_AREA_MSG = "Plinth Area cannot be greater than Extent of Site.";
 	
+	public static final String MOBILENO_ALPHANUMERIC_ERROR_CODE = "78";
+	public static final String MOBILENO_ALPHANUMERIC_ERROR_MSG = "Mobile number cannot be alphanumeric.";
+	
+	public static final String MOBILENO_MAX_LENGTH_ERROR_CODE = "79";
+	public static final String MOBILENO_MAX_LENGTH_ERROR_MSG = "Maximum of 10 digits can be entered for the mobile number.";
+	
 	//Water TAx
 	public static final String PROPERTY_USAGETYPE_COMBINATION_VALID_CODE="42";
 	public static final String PROPERTY_USAGETYPE_COMBINATION_VALID = "PropertyType and UsageType Combination is not valid";

@@ -96,6 +96,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
+import static org.egov.ptis.constants.PropertyTaxConstants.APPCONFIG_CLIENT_SPECIFIC_DMD_BILL;
 import static org.egov.ptis.constants.PropertyTaxConstants.BILLTYPE_MANUAL;
 import static org.egov.ptis.constants.PropertyTaxConstants.FILESTORE_MODULE_NAME;
 import static org.egov.ptis.constants.PropertyTaxConstants.NOTICE_TYPE_BILL;
@@ -232,7 +233,9 @@ public class BillGenerationAction extends PropertyTaxBaseAction {
 
     @Action(value = "/bills/billGeneration-generateDemandBill")
     public String generateDemandBill() {
-        if (beanProvider.containsBean("demandBillService")) {
+        String clientSpecificDmdBill = propertyTaxCommonUtils.getAppConfigValue(APPCONFIG_CLIENT_SPECIFIC_DMD_BILL,
+                PTMODULENAME);
+        if ("Y".equalsIgnoreCase(clientSpecificDmdBill)) {
             DemandBillService demandBillService = (DemandBillService) beanProvider.getBean("demandBillService");
             ReportOutput reportOutput = demandBillService.generateDemandBill(indexNumber);
             reportId = reportViewerUtil.addReportToTempCache(reportOutput);

@@ -42,6 +42,10 @@
  */
 package org.egov.services.cheque;
 
+import java.text.ParseException;
+import java.util.List;
+import java.util.Map;
+
 import org.apache.log4j.Logger;
 import org.egov.commons.Bankaccount;
 import org.egov.infra.admin.master.entity.Department;
@@ -55,10 +59,6 @@ import org.hibernate.Session;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.text.ParseException;
-import java.util.List;
-import java.util.Map;
 
 public class AccountChequesService extends PersistenceService<AccountCheques, Long> {
 
@@ -151,5 +151,10 @@ public class AccountChequesService extends PersistenceService<AccountCheques, Lo
         delqry.setLong("bankAccId", bankaccount.getId());
         delqry.executeUpdate();
 
+    }
+    
+    public List<ChequeDeptMapping> getChequeListByBankAccId(Long bankAccountId)
+    {
+        return persistenceService.findAllBy("from ChequeDeptMapping where accountCheque.bankAccountId.id =?", bankAccountId);
     }
 }

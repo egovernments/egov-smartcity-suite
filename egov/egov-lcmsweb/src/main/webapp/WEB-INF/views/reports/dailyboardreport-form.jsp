@@ -39,11 +39,19 @@
   --%>
 
 <%@ page contentType="text/html" language="java"%>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 <%@ taglib uri="http://www.springframework.org/tags/form" prefix="form"%>
 <%@ taglib uri="http://www.springframework.org/tags" prefix="spring"%>
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt"%>
 <%@ taglib uri="/WEB-INF/taglib/cdn.tld" prefix="cdn"%>
-<div class="row">
+<style>
+body
+{
+  font-family:regular !important;
+  font-size:14px;
+}
+</style>
+<div class="row" id="page-content">
 	<div class="col-md-12">
 		<form:form method="get" modelAttribute="dailyBoardReportResult"
 			id="dailyboardreportForm"
@@ -51,10 +59,8 @@
 			enctype="multipart/form-data">
 			<div class="row">
 				<div class="panel panel-primary" data-collapsed="0">
-
 					<div class="panel-heading">
 						<div class="panel-title">Daily Board Report</div>
-
 					</div>
 
 					<div class="form-group">
@@ -83,25 +89,26 @@
 
 					<div class="form-group">
 						<label class="col-sm-2 control-label text-right"> <spring:message
-								code="lbl.fromDate" />:</label>
+								code="lbl.fromDate" />:
+						</label>
 						<div class="col-sm-3 add-margin">
 							<input type="text" name="fromDate"
 								class="form-control datepicker" data-date-end-date="0d"
-								id="fromDate" data-inputmask="'mask': 'd/m/y' onblur="onchnageofDate()"/>
+								id="fromDate" data-inputmask="'mask': 'd/m/y' onblur=" onchnageofDate()"/>
 						</div>
 						<label class="col-sm-2 control-label text-right"> <spring:message
-								code="lbl.toDate" />:</label>
+								code="lbl.toDate" />:
+						</label>
 						<div class="col-sm-3 add-margin">
 							<input type="text" name="toDate"
 								class="form-control datepicker today" data-date-end-date="0d"
 								id="toDate" data-inputmask="'mask': 'd/m/y'" />
 						</div>
-
+					</div>
 					</div>
 
 
 					<div class="row">
-
 						<div class="text-center">
 							<button type="button" id="dailyBoardReportSearch"
 								class="btn btn-primary">Search</button>
@@ -111,34 +118,28 @@
 					</div>
 				</div>
 		</form:form>
-
-		<div class="row">
-			<div class="col-md-6 col-xs-6 table-header">The Search result
-				is</div>
-			<div class="col-md-12" id="searchResultDiv">
-				<table class="table table-bordered datatable dt-responsive"
-					id="dailyBoardReportsResults">
-
-				</table>
-			</div>
+		<div id="reportgeneration-header"
+			class="col-md-12 table-header text-left">
+			<fmt:formatDate value="${currentDate}" var="currDate"
+				pattern="dd-MM-yyyy" />
+			<spring:message code="lbl.reportgeneration" />:
+			<c:out value="${currDate}"></c:out>
 		</div>
+		<table class="table table-bordered table-hover multiheadertbl"
+			id="dailyBoardReportResult-table" width="200%">
+		</table>
+
+
 	</div>
 </div>
 
 
 <link rel="stylesheet"
-	href="<cdn:url value='/resources/global/js/jquery/plugins/datatables/responsive/css/datatables.responsive.css' context='/egi'/>">
-<script
-	src="<cdn:url value='/resources/global/js/bootstrap/bootstrap-datepicker.js' context='/egi'/>"></script>
-<link rel="stylesheet"
-	href="<cdn:url value='/resources/global/css/bootstrap/bootstrap-datepicker.css' context='/egi'/>">
-
+	href="<cdn:url value='/resources/global/css/bootstrap/bootstrap-datepicker.css' context='/egi'/>" />
 <script type="text/javascript"
 	src="<cdn:url value='/resources/global/js/jquery/plugins/datatables/jquery.dataTables.min.js' context='/egi'/>"></script>
 <script type="text/javascript"
 	src="<cdn:url value='/resources/global/js/jquery/plugins/datatables/dataTables.bootstrap.js' context='/egi'/>"></script>
-<script type="text/javascript"
-	src="<cdn:url value='/resources/global/js/jquery/plugins/datatables/responsive/js/datatables.responsive.js' context='/egi'/>"></script>
 <script type="text/javascript"
 	src="<cdn:url value='/resources/global/js/jquery/plugins/datatables/dataTables.tableTools.js' context='/egi'/>"></script>
 <script type="text/javascript"
@@ -152,8 +153,7 @@
 <script type="text/javascript"
 	src="<cdn:url value='/resources/global/js/jquery/plugins/jquery.validate.min.js' context='/egi'/>"></script>
 <script
-	src="<cdn:url value='/resources/global/js/egov/custom.js?rnd=${app_release_no}' context='/egi'/>"></script>
-
+	src="<cdn:url value='/resources/global/js/bootstrap/bootstrap-datepicker.js' context='/egi'/>"></script>
 <script
 	src="<cdn:url value='/resources/js/app/dailyBoardReport.js?rnd=${app_release_no}'/>"
 	type="text/javascript"></script>

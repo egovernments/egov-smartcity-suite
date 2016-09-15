@@ -172,6 +172,7 @@ public class CreateLineEstimateController extends GenericWorkFlowController {
             throws ApplicationException, IOException {
         setDropDownValues(model);
         validateBudgetHead(lineEstimate, errors);
+        validateLineEstimateDetails(lineEstimate, errors);
         if (errors.hasErrors()) {
             model.addAttribute("stateType", lineEstimate.getClass().getSimpleName());
 
@@ -376,5 +377,14 @@ public class CreateLineEstimateController extends GenericWorkFlowController {
                     new String[] { lineEstimate.getLineEstimateNumber() }, null);
 
         return message;
+    }
+    
+    private void validateLineEstimateDetails(final LineEstimate lineEstimate, final BindingResult errors) {
+        Integer index = 0;
+        for (final LineEstimateDetails led : lineEstimate.getLineEstimateDetails()) {
+            if (led.getQuantity() <= 0)
+                errors.rejectValue("lineEstimateDetails[" + index + "].quantity", "error.quantity.required");
+            index++;
+        }
     }
 }

@@ -170,7 +170,7 @@
 			</display:column>
 
 			<display:column headerClass="bluebgheadtd" class="blueborderfortd"
-				title="Notice" style="text-align:center;width:10%;">
+				title="Proceeding" style="text-align:center;width:10%;">
 
 				<a
 					href="javascript:displayNotice('<s:property value="#attr.currentRowObject.notice"/>','<s:property value="#attr.currentRowObject.isBlob"/>')">
