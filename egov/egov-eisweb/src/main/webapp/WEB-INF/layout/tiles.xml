@@ -106,4 +106,16 @@
 		<put-attribute name="page-title" value="title.searchemployee" cascade="true"/>
 		<put-attribute name="body" value="/WEB-INF/views/masters/employee/employeesearch-form.jsp"/>
 	</definition>
+	
+	<definition name="employeeassignment-search" extends="base_layout">
+		<put-attribute name="page-title" value="title.employeeassignmentreport" cascade="true"/>
+		<put-attribute name="body" value="/WEB-INF/views/reports/employeeassignmentreport-searchform.jsp"/>
+	</definition>  
+	
+	<definition name="employeeassignmentpdf-result" extends="base_layout">
+		<put-attribute name="page-title" value="title.employeeassignmentreport" cascade="true"/>
+		<put-attribute name="body" value="/WEB-INF/views/reports/employeeassignmentpdf-result.jsp"/>
+	</definition>  
+	
+	
 </tiles-definitions>

@@ -75,13 +75,13 @@ public class InterimOrder extends AbstractAuditable {
 
     @NotNull
     @SafeHtml
-    @Length(min = 1, max = 32)
+    @Length(max = 32)
     @Audited
     private String interimOrderType;
 
     @NotNull
     @SafeHtml
-    @Length(min = 1, max = 25)
+    @Length(max = 25)
     @Audited
     private String code;
 

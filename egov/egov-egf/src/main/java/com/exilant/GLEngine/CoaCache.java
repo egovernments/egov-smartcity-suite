@@ -40,6 +40,7 @@
 
 package com.exilant.GLEngine;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -63,11 +64,10 @@ import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.exilant.exility.common.TaskFailedException;
-import com.exilant.exility.dataservice.DataExtractor;
+ 
 
 @Component
-public class CoaCache {
+public class CoaCache implements Serializable {
 
     @Autowired
     @Qualifier("persistenceService")
@@ -87,7 +87,7 @@ public class CoaCache {
     private static final String EXILRPERROR = "exilRPError";
 
     @Transactional(propagation = Propagation.REQUIRES_NEW)
-    public void loadAccountData() throws TaskFailedException {
+    public void loadAccountData()   {
 
         /*
          * 1.Loads all the account codes and details of that as GLAccount objects in theGLAccountCode,theGLAccountId HashMap's
@@ -97,8 +97,6 @@ public class CoaCache {
         final HashMap glAccountCodes = new HashMap();
         final HashMap glAccountIds = new HashMap();
         final HashMap accountDetailType = new HashMap();
-
-        DataExtractor.getExtractor();
 
         String sql = "select id as \"id\",name as \"name\",tableName as \"tableName\"," +
                 "description as \"description\",columnName as \"columnName\",attributeName as \"attributeName\"" +
@@ -143,22 +141,19 @@ public class CoaCache {
             final HashMap<String, HashMap> hm = new HashMap<String, HashMap>();
             hm.put(ACCOUNTDETAILTYPENODE, accountDetailType);
             hm.put(GLACCCODENODE, glAccountCodes);
-            if (LOGGER.isDebugEnabled())
-                LOGGER.debug("Loading size:" + glAccountCodes.size());
+            if (LOGGER.isDebugEnabled()) 
+            	LOGGER.debug("Loading size:" + glAccountCodes.size());
             hm.put(GLACCIDNODE, glAccountIds);
-            // cache.put(ROOTNODE+"/"+FilterName.get(),ACCOUNTDETAILTYPENODE,accountDetailType);
-            // cache.put(ROOTNODE+"/"+FilterName.get(),GLACCCODENODE,glAccountCodes);
-            // cache.put(ROOTNODE+"/"+FilterName.get(),GLACCIDNODE,glAccountIds);
             applicationCacheManager.put(ROOTNODE, hm);
         } catch (final Exception e) {
-            LOGGER.error(EXP + e.getMessage(), e);
-            throw new TaskFailedException();
-
+            throw e;
         }
+        
+        
     }
 
     private synchronized void loadParameters(final HashMap glAccountCodes, final HashMap glAccountIds)
-            throws TaskFailedException {
+             {
         final List<CChartOfAccountDetail> chList = chartOfAccountDetailService.findAllBy("from CChartOfAccountDetail");
         for (final CChartOfAccountDetail chartOfAccountDetail : chList) {
             final GLParameter parameter = new GLParameter();
@@ -185,5 +180,20 @@ public class CoaCache {
             if (key.toString().equalsIgnoreCase(glCodeId.getId().toString()))
                 return (GLAccount) glAccountIds.get(key);
         return null;
+    }
+    /**
+     * CLeans the cache
+     */
+    private void clear()
+    {
+    	applicationCacheManager.remove(ROOTNODE);
+    }
+    /**
+     * reloads the cache
+     */
+    public void reLoad()
+    {
+    	applicationCacheManager.remove(ROOTNODE);
+        loadAccountData();
     }
 }

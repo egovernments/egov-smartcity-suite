@@ -1147,4 +1147,10 @@ public class WaterConnectionDetailsService {
         }
         return balance;
     }
+    
+    @Transactional
+    public void saveAndFlushWaterConnectionDetail(final WaterConnectionDetails waterConnectionDetails)
+    {
+        waterConnectionDetailsRepository.saveAndFlush(waterConnectionDetails);
+    }
 }

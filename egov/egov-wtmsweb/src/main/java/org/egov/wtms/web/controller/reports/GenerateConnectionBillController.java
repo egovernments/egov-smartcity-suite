@@ -92,7 +92,6 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.lowagie.text.Document;
@@ -162,7 +161,7 @@ public class GenerateConnectionBillController {
         return applicationTypeService.findAll();
     }
 
-    @RequestMapping(value = "/result", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+    @RequestMapping(value = "/result", method = GET, produces = MediaType.APPLICATION_JSON_VALUE)
     public @ResponseBody void searchResult(final HttpServletRequest request, final HttpServletResponse response)
             throws IOException, ParseException {
         String result = null;
@@ -187,7 +186,7 @@ public class GenerateConnectionBillController {
                 .append(foundRows).append(", \"recordsFiltered\":").append(foundRows).append(", \"data\":")
                 .append(toJSON(generateConnectionBillList, GenerateConnectionBill.class,
                         GenerateConnectionBillAdaptor.class))
-                .append(", \"recordsCount\":").append(Long.valueOf(count)).append("}").toString();
+                        .append(", \"recordsCount\":").append(Long.valueOf(count)).append("}").toString();
         response.setContentType(MediaType.APPLICATION_JSON_VALUE);
         IOUtils.write(result, response.getWriter());
 
@@ -198,7 +197,7 @@ public class GenerateConnectionBillController {
             @PathVariable final String consumerCode) {
         final List<Long> waterChargesDocumentslist = generateConnectionBillService.getDocuments(consumerCode,
                 waterConnectionDetailsService.findByApplicationNumberOrConsumerCode(consumerCode).getApplicationType()
-                        .getName());
+                .getName());
         response.setHeader("content-disposition", "attachment; filename=\"" + consumerCode + ".pdf" + "\"");
         if (!waterChargesDocumentslist.isEmpty() && waterChargesDocumentslist.get(0) != null)
             try {
@@ -222,7 +221,7 @@ public class GenerateConnectionBillController {
             throw new ValidationException("err.demand.notice");
     }
 
-    @RequestMapping(value = "/mergeAndDownload", method = RequestMethod.GET)
+    @RequestMapping(value = "/mergeAndDownload", method = GET)
     public String mergeAndDownload(final HttpServletRequest request, final HttpServletResponse response)
             throws IOException, ParseException, ValidationException {
         final long startTime = System.currentTimeMillis();
@@ -340,7 +339,7 @@ public class GenerateConnectionBillController {
         return outputStream.toByteArray();
     }
 
-    @RequestMapping(value = "/zipAndDownload", method = RequestMethod.GET)
+    @RequestMapping(value = "/zipAndDownload", method = GET)
     public String zipAndDownload(final HttpServletRequest request, final HttpServletResponse response)
             throws IOException, ParseException, ValidationException {
         final long startTime = System.currentTimeMillis();
@@ -354,7 +353,7 @@ public class GenerateConnectionBillController {
                     + (generateConnectionBillList != null ? generateConnectionBillList.size() : ZERO));
         try {
             ZipOutputStream zipOutputStream = null;
-            if (null != generateConnectionBillList || generateConnectionBillList.size() >= 0) {
+            if (null != generateConnectionBillList && generateConnectionBillList.size() >= 0) {
 
                 zipOutputStream = new ZipOutputStream(response.getOutputStream());
                 response.setHeader("Content-disposition", "attachment;filename=" + "searchbill" + ".zip");

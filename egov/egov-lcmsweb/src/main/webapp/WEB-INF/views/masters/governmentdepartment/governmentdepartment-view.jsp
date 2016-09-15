@@ -39,7 +39,6 @@
   --%>
 <%@ page contentType="text/html;charset=UTF-8" language="java"%>
 <%@ include file="/includes/taglibs.jsp"%>
-<div class="main-content">
 	<div class="row">
 		<div class="col-md-12">
 			<div class="panel panel-primary" data-collapsed="0">
@@ -54,7 +53,7 @@
 						<div class="col-sm-3 add-margin view-content">
 							${governmentDepartment.code}</div>
 						<div class="col-xs-3 add-margin">
-							<spring:message code="lbl.name" />
+							<spring:message code="lbl.departmentname" />
 						</div>
 						<div class="col-sm-3 add-margin view-content">
 							${governmentDepartment.name}</div>
@@ -95,3 +94,4 @@
 					onclick="self.close()">Close</a>
 			</div>
 		</div>
+</div>	

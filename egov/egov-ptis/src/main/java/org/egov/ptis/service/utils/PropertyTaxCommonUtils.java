@@ -39,6 +39,7 @@
  */
 package org.egov.ptis.service.utils;
 
+import static org.egov.collection.constants.CollectionConstants.QUERY_RECEIPTS_BY_RECEIPTNUM;
 import static org.egov.ptis.constants.PropertyTaxConstants.APPCONFIG_DIGITAL_SIGNATURE;
 import static org.egov.ptis.constants.PropertyTaxConstants.ARREARS;
 import static org.egov.ptis.constants.PropertyTaxConstants.ARR_COLL_STR;
@@ -70,6 +71,8 @@ import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 
 import org.apache.log4j.Logger;
+import org.egov.collection.constants.CollectionConstants;
+import org.egov.collection.entity.ReceiptHeader;
 import org.egov.commons.CFinancialYear;
 import org.egov.commons.Installment;
 import org.egov.commons.dao.FinancialYearDAO;
@@ -108,6 +111,7 @@ public class PropertyTaxCommonUtils {
 
     @Autowired
     private PositionMasterService positionMasterService;
+    
 
     /**
      * Gives the first half of the current financial year
@@ -271,6 +275,19 @@ public class PropertyTaxCommonUtils {
         }
 
         return listString.toString();
+    }
+    
+    /**
+     * API to check if a receipt is cancelled or not 
+     * @param receiptNumber
+     * @return boolean
+     */
+    public boolean isReceiptCanceled(String receiptNumber) {
+        final javax.persistence.Query qry = entityManager.createNamedQuery(QUERY_RECEIPTS_BY_RECEIPTNUM);
+        qry.setParameter(1, receiptNumber);
+        ReceiptHeader receiptHeader = (ReceiptHeader) qry.getSingleResult();
+        return receiptHeader.getStatus().getCode().equals(CollectionConstants.RECEIPT_STATUS_CODE_CANCELLED)
+                ? Boolean.TRUE : Boolean.FALSE;
     }
 
 }

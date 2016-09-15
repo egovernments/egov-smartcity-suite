@@ -120,7 +120,7 @@ public class CourtMasterService {
             if (courtMaster.getCourtType() != null)
                 predicates.add(cb.equal(courtMasterobj.get("courtType"), courtMaster.getCourtType()));
             if (courtMaster.getActive() != null)
-                if (courtMaster.getActive() == true)
+                if (courtMaster.getActive())
                     predicates.add(cb.equal(
                             courtMasterobj.get(CourtMaster.getDeclaredSingularAttribute("active", Boolean.class)),
                             true));

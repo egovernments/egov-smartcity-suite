@@ -39,10 +39,23 @@
  */
 package org.egov.works.web.controller.lineestimate;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.OutputStream;
+import java.util.ArrayList;
+import java.util.List;
+
+import javax.servlet.ServletContext;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
 import org.egov.commons.CChartOfAccountDetail;
 import org.egov.commons.dao.EgwStatusHibernateDAO;
 import org.egov.commons.dao.EgwTypeOfWorkHibernateDAO;
 import org.egov.commons.dao.FundHibernateDAO;
+import org.egov.egf.budget.model.BudgetControlType;
+import org.egov.egf.budget.service.BudgetControlTypeService;
 import org.egov.eis.web.contract.WorkflowContainer;
 import org.egov.eis.web.controller.workflow.GenericWorkFlowController;
 import org.egov.infra.admin.master.entity.Department;
@@ -79,16 +92,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
-
-import javax.servlet.ServletContext;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.io.OutputStream;
-import java.util.ArrayList;
-import java.util.List;
 
 @Controller
 @RequestMapping(value = "/lineestimate")
@@ -138,6 +141,9 @@ public class CreateLineEstimateController extends GenericWorkFlowController {
     
     @Autowired
     private LineEstimateUOMService lineEstimateUOMService;
+    
+    @Autowired
+    private BudgetControlTypeService budgetControlTypeService;
 
     @RequestMapping(value = "/newform", method = RequestMethod.GET)
     public String showNewLineEstimateForm(@ModelAttribute("lineEstimate") final LineEstimate lineEstimate,
@@ -166,6 +172,7 @@ public class CreateLineEstimateController extends GenericWorkFlowController {
             throws ApplicationException, IOException {
         setDropDownValues(model);
         validateBudgetHead(lineEstimate, errors);
+        validateLineEstimateDetails(lineEstimate, errors);
         if (errors.hasErrors()) {
             model.addAttribute("stateType", lineEstimate.getClass().getSimpleName());
 
@@ -319,8 +326,8 @@ public class CreateLineEstimateController extends GenericWorkFlowController {
         final String message = getMessageByStatus(lineEstimate, approverName, nextDesign);
 
         model.addAttribute("message", message);
-
-        if (lineEstimate.getStatus().getCode().equals(LineEstimateStatus.BUDGET_SANCTIONED.toString())) {
+        if (lineEstimate.getStatus().getCode().equals(LineEstimateStatus.BUDGET_SANCTIONED.toString()) && !BudgetControlType.BudgetCheckOption.NONE.toString()
+                .equalsIgnoreCase(budgetControlTypeService.getConfigValue())) {
             final List<String> basMessages = new ArrayList<String>();
             Integer count = 1;
             for (final LineEstimateDetails led : lineEstimate.getLineEstimateDetails()) {
@@ -370,5 +377,14 @@ public class CreateLineEstimateController extends GenericWorkFlowController {
                     new String[] { lineEstimate.getLineEstimateNumber() }, null);
 
         return message;
+    }
+    
+    private void validateLineEstimateDetails(final LineEstimate lineEstimate, final BindingResult errors) {
+        Integer index = 0;
+        for (final LineEstimateDetails led : lineEstimate.getLineEstimateDetails()) {
+            if (led.getQuantity() <= 0)
+                errors.rejectValue("lineEstimateDetails[" + index + "].quantity", "error.quantity.required");
+            index++;
+        }
     }
 }

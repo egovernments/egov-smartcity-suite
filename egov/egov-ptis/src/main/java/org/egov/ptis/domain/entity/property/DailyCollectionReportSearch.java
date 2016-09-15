@@ -41,6 +41,7 @@ package org.egov.ptis.domain.entity.property;
 
 import static org.egov.search.domain.Filter.rangeFilter;
 import static org.egov.search.domain.Filter.termsStringFilter;
+import org.egov.ptis.constants.PropertyTaxConstants;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -165,7 +166,7 @@ public class DailyCollectionReportSearch {
         andFilters.add(termsStringFilter("clauses.channel", collectionMode));
         andFilters.add(termsStringFilter("clauses.status", status));
         andFilters.add(termsStringFilter("clauses.receiptcreator", collectionOperator));
-        andFilters.add(termsStringFilter("clauses.billingservice", "Property Tax"));
+        andFilters.add(termsStringFilter("clauses.billingservice", PropertyTaxConstants.INDEX_COLLECTION_CLAUSES_BILLINGSERVICE_NON_VACANT_LAND));
         if (!consumerCode.isEmpty()) {
             String[] consumerCodes = consumerCode.toArray(new String[consumerCode.size()]);
             andFilters.add(termsStringFilter("common.consumercode", consumerCodes));

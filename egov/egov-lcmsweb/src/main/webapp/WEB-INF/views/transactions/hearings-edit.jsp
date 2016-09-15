@@ -48,11 +48,6 @@
 	<jsp:include page="../transactions/viewSummarizedCase.jsp" />
 	<%@ include file="hearings-form.jsp"%>
 	<input type="hidden" name="hearings" value="${hearings.id}" />
-
-	</div>
-	</div>
-	</div>
-	</div>
 	<div class="form-group">
 		<div class="text-center">
 			<button type='submit' class='btn btn-primary' id="buttonid">

@@ -94,10 +94,12 @@ public class Action extends AbstractAuditable {
     private boolean enabled;
     private String contextRoot;
 
+    @Override
     public Long getId() {
         return id;
     }
 
+    @Override
     public void setId(Long id) {
         this.id = id;
     }

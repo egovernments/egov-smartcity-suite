@@ -43,7 +43,6 @@
 	id="courttypeMastersearchform"
 	cssClass="form-horizontal form-groups-bordered"
 	enctype="multipart/form-data">
-	<div class="main-content">
 		<div class="row">
 			<div class="col-md-12">
 				<div class="panel panel-primary" data-collapsed="0">
@@ -65,7 +64,7 @@
 							<div class="col-sm-3 add-margin">
 								<form:input path="courtType"
 									class="form-control text-left patternvalidation"
-									data-pattern="alphabetwithspace" maxlength="100" />
+									data-pattern="alphanumericspecialcharacters" maxlength="100" />
 								<form:errors path="courtType" cssClass="error-msg" />
 							</div>
 						</div>

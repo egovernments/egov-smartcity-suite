@@ -57,6 +57,8 @@ public class BudgetAppDisplay {
     private String VoucherNumber;
     private Date billDate;
     private String bdgApprNumber;
+    private Date createdDate;
+    private Date billCreatedDate;
 
     public String getSerailNumber() {
         return serailNumber;
@@ -160,6 +162,22 @@ public class BudgetAppDisplay {
 
     public void setBdgApprNumber(final String bdgApprNumber) {
         this.bdgApprNumber = bdgApprNumber;
+    }
+
+    public Date getCreatedDate() {
+        return createdDate;
+    }
+
+    public void setCreatedDate(Date createdDate) {
+        this.createdDate = createdDate;
+    }
+
+    public Date getBillCreatedDate() {
+        return billCreatedDate;
+    }
+
+    public void setBillCreatedDate(Date billCreatedDate) {
+        this.billCreatedDate = billCreatedDate;
     }
 
 }

@@ -1,4 +1,7 @@
-# [eGov Opensource][GHPAGE] [![Build Status](http://ci.egovernments.org/buildStatus/icon?job=eGov-Github-Master)](http://ci.egovernments.org/job/eGov-Github-Master/) [![Join the chat at https://gitter.im/egovernments/eGov](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/egovernments/eGov?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
+# [eGov Opensource][GHPAGE] 
+[![Join the chat at https://gitter.im/egovernments/eGov](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/egovernments/eGov?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
+
+[![Build Status](http://ci.egovernments.org/buildStatus/icon?job=eGov-Github-Master)](http://ci.egovernments.org/job/eGov-Github-Master/) [![][codacy img]][codacy] [![][versioneye img]][versioneye]
 
 eGovernments Foundation transforms urban governance with the use of scalable and replicable technology solutions that enable efficient and effective municipal operations, better decision making, and contact-less urban service delivery.
 
@@ -23,10 +26,10 @@ FAQ related to various deployment and development issues are discussed [here][FA
 
 * Install [maven v3.2.x][Maven]
 * Install [PostgreSQL v9.4][PostgreSQL]
-* Install [Elastic Search v2.1.2][Elastic Search]
+* Install [Elastic Search v2.3.x][Elastic Search]
 * Install [Jboss Wildfly v10.0.x][Wildfly Customized]
 * Install [Git 2.8.3][Git]
-* Install [JDK 8 update 92 or later][JDK8 build]
+* Install [JDK 8 update 92 or higher][JDK8 build]
 
 #### Database Setup
 Create a database and user in postgres
@@ -87,15 +90,6 @@ $ git checkout develop
 
  ```
 One can override any default settings available in `/egov/egov-egi/src/main/resources/config/application-config.properties` by adding an entry in `egov-erp-<username>.properties`.
-
-  Database properties are defined in the `persistence-config.properties`. **Do not update this at all.**
-
-  ```properties
-  db.url=jdbc:postgresql://localhost:5432/postgres
-  db.username=erp_owner
-  db.password=erp_owner
-  ```
-
 3. Change directory back to `<CLONED_REPO_DIR>/egov`
 4. Run the following commands, this will cleans, compiles, tests, migrates database and generates ear artifact along with jars and wars appropriately
 
@@ -282,3 +276,7 @@ Browser:-
 [GPL]: http://www.gnu.org/licenses/
 [FAQ]:http://confluence.egovernments.org/display/FAQ/FAQ
 [GHPAGE]:http://egovernments.github.io/eGov/
+[versioneye]:https://www.versioneye.com/user/projects/57c7bed0968d640049e125d8
+[versioneye img]:https://www.versioneye.com/user/projects/57c7bed0968d640049e125d8/badge.svg
+[codacy]:https://www.codacy.com/app/egovernments/eGov
+[codacy img]:https://api.codacy.com/project/badge/Grade/5415cc7717a349c3a72c349a24dace35

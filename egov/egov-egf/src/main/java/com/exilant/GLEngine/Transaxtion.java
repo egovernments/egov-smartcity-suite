@@ -88,7 +88,6 @@ public class Transaxtion
     protected String asOnDate;
     protected Long billId;
 
-    protected Boolean allowNegetiveBudgetAmount;
     /**
      * @return the billId
      */
@@ -325,12 +324,4 @@ public class Transaxtion
      * public String getfunctionId1() { return functionId1; } public void setFunctionId1(String afunctionId) { functionId1 =
      * afunctionId; }
      */
-
-	public Boolean getAllowNegetiveBudgetAmount() {
-		return allowNegetiveBudgetAmount;
-	}
-
-	public void setAllowNegetiveBudgetAmount(Boolean allowNegetiveBudgetAmount) {
-		this.allowNegetiveBudgetAmount = allowNegetiveBudgetAmount;
-	}
 }

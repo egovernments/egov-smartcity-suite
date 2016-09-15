@@ -138,6 +138,49 @@
             <groupId>javax.mail</groupId>
             <artifactId>javax.mail-api</artifactId>
         </dependency>
+        <!-- REPORTS START -->
+		<dependency>
+			<groupId>net.sf.jasperreports</groupId>
+			<artifactId>jasperreports-fonts</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>net.sf.jasperreports</groupId>
+			<artifactId>jasperreports-functions</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>net.sf.jasperreports</groupId>
+			<artifactId>jasperreports-javaflow</artifactId>
+		</dependency>
+		<dependency>
+		    <groupId>commons-javaflow</groupId>
+		    <artifactId>commons-javaflow</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.jfree</groupId>
+			<artifactId>jfreechart</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>ar.com.fdvs</groupId>
+			<artifactId>DynamicJasper</artifactId>
+			<version>5.0.2</version>
+			<exclusions>
+				<exclusion>
+					<artifactId>jasperreports</artifactId>
+					<groupId>net.sf.jasperreports</groupId>
+				</exclusion>
+			</exclusions>
+		</dependency>
+		<dependency>
+				<groupId>org.apache.poi</groupId>
+      			<artifactId>poi</artifactId> 
+      	</dependency>
+		<dependency>
+			<groupId>tomcat</groupId>
+			<artifactId>jasper-compiler-jdt</artifactId>
+			<version>5.5.23</version>
+		</dependency>
+
+		<!-- REPORTS END -->
     </dependencies>
 
     <build>

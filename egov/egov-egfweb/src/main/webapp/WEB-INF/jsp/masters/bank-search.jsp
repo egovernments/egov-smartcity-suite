@@ -71,37 +71,46 @@
 				</tr>
 				<tr>
 					<td class="greybox" width="20%"></td>
-					<td class="greybox" style="text-align: center;"><s:text
-							name="bank.create.name" /></td>
-					
+					<td class="greybox" style="text-align: center;"><span
+						class="mandatory1">*</span> <s:text name="bank.create.name" /></td>
+
 					<td class="bluebox"><s:select name="name" id="bankName"
-							list="dropdownData.bankList" listKey="name"
-							listValue="name" headerKey="-1"
-							headerValue="----Choose----" /></td>
+							list="dropdownData.bankList" listKey="name" listValue="name"
+							headerKey="-1" headerValue="----Choose----" /></td>
 				</tr>
 			</table>
 			<br />
 	</div>
 	<div class="buttonbottom" style="padding-bottom: 10px;">
 		<s:hidden name="mode"></s:hidden>
-		<input type="submit" class="buttonsubmit" value="Modify"
-			id="modifyButton" name="Modify" onclick="validateAndSubmit();" /> <input
-			type="button" id="Close" value="Close"
+		<s:if test="%{mode.equals('MODIFY')}">
+			<input type="submit" class="buttonsubmit" value="Modify"
+				id="modifyButton" name="Modify"
+				onclick="return validateAndSubmit();" />
+		</s:if>
+		<s:else>
+			<input type="submit" class="buttonsubmit" value="View"
+				id="modifyButton" name="View" onclick="return validateAndSubmit();" />
+		</s:else>
+		<input type="button" id="Close" value="Close"
 			onclick="javascript:window.close()" class="button" />
 	</div>
 	</s:form>
 	<script type="text/javascript">
-     /* jQuery( "#bankName" ).autocomplete({
-        source: "bank.action?mode=AUTO_COMP_BANK_NAME",
-        minLength: 2
-      });  */
+		/* jQuery( "#bankName" ).autocomplete({
+		   source: "bank.action?mode=AUTO_COMP_BANK_NAME",
+		   minLength: 2
+		 });  */
 
-  function validateAndSubmit(){
-	document.bankForm.action='/EGF/masters/bank-execute.action';
-	document.bankForm.submit();
-}
-
-    </script>
+		function validateAndSubmit() {
+			if (document.getElementById('bankName').value == -1) {
+				bootbox.alert("Please select Bank Name");
+				return false;
+			}
+			document.bankForm.action = '/EGF/masters/bank-execute.action';
+			document.bankForm.submit();
+		}
+	</script>
 </body>
 
 </html>

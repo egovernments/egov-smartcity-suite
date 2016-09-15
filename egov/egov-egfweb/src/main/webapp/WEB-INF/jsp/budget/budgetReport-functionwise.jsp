@@ -55,8 +55,10 @@
 			<%@include file="budgetReport-form.jsp"%>
 			<s:hidden name="onSaveOrForward" />
 			<div class="buttonbottom" style="padding-bottom: 10px;">
-				<s:submit value="Submit" cssClass="buttonsubmit"
+				<s:submit value="Search" cssClass="buttonsubmit"
 					onclick="return validateFinYear('getFunctionwiseReport');" />
+					<s:reset name="button" type="submit" cssClass="button" id="button"
+					value="Cancel" />
 				<input type="button" value="Close"
 					onclick="javascript:window.close()" class="button" />
 			</div>

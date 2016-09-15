@@ -2299,15 +2299,7 @@ public class CreateVoucher {
 						&& headerdetails.get("billid") != null)
 					transaction.setBillId((Long) headerdetails.get("billid"));
 				
-				//if not passeed consider allowed
-				if(headerdetails.get(VoucherConstant.ALLOWNEGETIVE)==null)
-				{
-					transaction.setAllowNegetiveBudgetAmount(true);
-				}else
-				{
-				//if present consider configured value	
-				transaction.setAllowNegetiveBudgetAmount((Boolean)headerdetails.get(VoucherConstant.ALLOWNEGETIVE));
-				} 
+			 
 				final ArrayList reqParams = new ArrayList();
 				for (final HashMap<String, Object> sublegDetailMap : subledgerdetails) {
 

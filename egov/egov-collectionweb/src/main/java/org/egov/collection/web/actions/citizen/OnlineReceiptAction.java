@@ -431,11 +431,11 @@ public class OnlineReceiptAction extends BaseFormAction implements ServletReques
 
     @Action(value = "/citizen/onlineReceipt-viewReceipt")
     public String viewReceipt() {
-        LOGGER.debug("::VIEWRECEIPT API:::  ServiceCode: " + getServiceCode() + ", Receipt Number="
-                + getReceiptNumber() + ", Consumer Code=" + getConsumerCode());
+        LOGGER.debug(
+                "::VIEWRECEIPT API::: Receipt Number=" + getReceiptNumber() + ", Consumer Code=" + getConsumerCode());
         final ReceiptHeader receiptHeader = (ReceiptHeader) getPersistenceService().findByNamedQuery(
-                CollectionConstants.QUERY_RECEIPT_BY_SERVICE_RECEIPTNUMBER_CONSUMERCODE, getServiceCode(),
-                getReceiptNumber(), getReceiptNumber(), getConsumerCode());
+                CollectionConstants.QUERY_RECEIPT_BY_SERVICE_RECEIPTNUMBER_CONSUMERCODE, getReceiptNumber(),
+                getReceiptNumber(), getConsumerCode());
 
         if (receiptHeader != null) {
             setReceiptId(receiptHeader.getId());

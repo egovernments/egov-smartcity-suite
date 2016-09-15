@@ -42,7 +42,8 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 <%@ taglib uri="http://www.springframework.org/tags" prefix="spring"%>
 <%@ taglib uri="http://www.springframework.org/tags/form" prefix="form"%>
-<%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>			
+<%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>	
+<%@ taglib uri="/WEB-INF/taglibs/cdn.tld" prefix="cdn"%>		
 		<form:form id="createLetterOfAcceptanceForm" class="form-horizontal form-groups-bordered" modelAttribute="workOrder" role="form" action="loa-save" method="post" enctype="multipart/form-data">
 			<div class="row">
 				<div class="col-md-12"> 
@@ -73,4 +74,4 @@
 				</div>
 			</div>
 		</form:form>  
-<script src="<c:url value='/resources/js/letterofacceptance.js?rnd=${app_release_no}'/>"></script>
+<script src="<cdn:url value='/resources/js/letterofacceptance.js?rnd=${app_release_no}'/>"></script>

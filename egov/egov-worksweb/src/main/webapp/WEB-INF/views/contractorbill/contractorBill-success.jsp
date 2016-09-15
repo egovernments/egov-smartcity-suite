@@ -37,7 +37,7 @@
   ~
   ~   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
   --%>
-
+<%@ taglib uri="/WEB-INF/taglibs/cdn.tld" prefix="cdn"%>
 <%@ taglib uri="http://www.springframework.org/tags" prefix="spring"%>
 <%@ taglib uri="http://www.springframework.org/tags/form" prefix="form"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
@@ -64,4 +64,4 @@
 		</div>
 	</div>
 </div>
-<script src="<c:url value='/resources/js/searchcontractorbill.js?rnd=${app_release_no}'/>"></script>
+<script src="<cdn:url value='/resources/js/searchcontractorbill.js?rnd=${app_release_no}'/>"></script>

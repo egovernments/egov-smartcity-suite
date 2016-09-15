@@ -92,6 +92,7 @@ public class InterimOrderService {
     public InterimOrder findOne(final Long id) {
         return interimOrderRepository.findOne(id);
     }
+
     public List<InterimOrder> getActiveInterimOrder() {
         return interimOrderRepository.findByActiveTrueOrderByInterimOrderTypeAsc();
     }
@@ -127,7 +128,7 @@ public class InterimOrderService {
                         code));
             }
             if (interimOrder.getActive() != null)
-                if (interimOrder.getActive() == true)
+                if (interimOrder.getActive())
                     predicates.add(cb.equal(
                             interimorder.get(InterimOrder.getDeclaredSingularAttribute("active", Boolean.class)),
                             true));

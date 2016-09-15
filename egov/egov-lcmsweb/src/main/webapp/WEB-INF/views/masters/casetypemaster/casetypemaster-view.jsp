@@ -39,7 +39,6 @@
   --%>
 <%@ page contentType="text/html;charset=UTF-8" language="java"%>
 <%@ include file="/includes/taglibs.jsp"%>
-<div class="main-content">
 	<div class="row">
 		<div class="col-md-12">
 			<div class="panel panel-primary" data-collapsed="0">
@@ -67,7 +66,7 @@
 							${casetypeMaster.ordernumber}</div>
 
 						<div class="col-xs-3 add-margin">
-							<spring:message code="lbl.notes" />
+							<spring:message code="lbl.description" />
 						</div>
 						<div class="col-sm-3 add-margin view-content">
 							${casetypeMaster.notes}</div>
@@ -97,3 +96,4 @@
 					onclick="self.close()"><spring:message code='lbl.close' /></a>
 			</div>
 		</div>
+</div>	

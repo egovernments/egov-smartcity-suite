@@ -52,6 +52,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 @Service
+@Transactional(readOnly = true)
 public class LegalCaseDisposalService {
 
     @Autowired
@@ -62,10 +63,10 @@ public class LegalCaseDisposalService {
 
     @Transactional
     public LegalCaseDisposal persist(final LegalCaseDisposal legalCaseDisposal) {
-
-        final EgwStatus statusobj = legalCaseUtil.getStatusForModuleAndCode(LcmsConstants.MODULE_TYPE_LEGALCASE,
-                LcmsConstants.LEGALCASE_STATUS_CLOSE);
-        legalCaseDisposal.getLegalCase().setStatus(statusobj);
+        legalCaseDisposal.getLegalCase().setNextDate(legalCaseDisposal.getDisposalDate());
+        final EgwStatus statusObj = legalCaseUtil.getStatusForModuleAndCode(LcmsConstants.MODULE_TYPE_LEGALCASE,
+                LcmsConstants.LEGALCASE_STATUS_CLOSED);
+        legalCaseDisposal.getLegalCase().setStatus(statusObj);
         return legalCaseDisposalRepository.save(legalCaseDisposal);
     }
 

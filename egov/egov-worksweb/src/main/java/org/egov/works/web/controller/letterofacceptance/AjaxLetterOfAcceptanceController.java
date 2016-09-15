@@ -115,12 +115,12 @@ public class AjaxLetterOfAcceptanceController {
 
     @RequestMapping(value = "/ajaxestimatenumbers", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
     public @ResponseBody List<String> findEstimateNumbersForLOA(@RequestParam final String name) {
-        return letterOfAcceptanceService.findLoaEstimateNumbers(name);
+        return letterOfAcceptanceService.getApprovedEstimateNumbersToModifyLOA(name);
     }
 
     @RequestMapping(value = "/ajaxloanumber", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
     public @ResponseBody List<String> findLoaNumbers(@RequestParam final String name) {
-        return letterOfAcceptanceService.getWorkOrderByNumber(name);
+        return letterOfAcceptanceService.getApprovedWorkOrderByNumberToModifyLOA(name);
     }
 
     @RequestMapping(value = "/ajaxsearchcontractors-loaforcontractorbill", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)

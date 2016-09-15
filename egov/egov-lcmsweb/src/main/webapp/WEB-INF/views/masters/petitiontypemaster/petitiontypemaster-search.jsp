@@ -43,7 +43,6 @@
 	modelAttribute="petitionTypeMaster" id="petitionTypeMastersearchform"
 	cssClass="form-horizontal form-groups-bordered"
 	enctype="multipart/form-data">
-	<div class="main-content">
 		<div class="row">
 			<div class="col-md-12">
 				<div class="panel panel-primary" data-collapsed="0">
@@ -112,7 +111,6 @@
 				</div>
 			</div>
 		</div>
-	</div>
 </form:form>
 <div class="row display-hide report-section">
 	<div class="col-md-12 table-header text-left">Petition Type 

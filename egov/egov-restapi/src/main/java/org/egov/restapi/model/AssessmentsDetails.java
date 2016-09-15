@@ -49,10 +49,7 @@ public class AssessmentsDetails implements Serializable {
 	private String extentOfSite;
 	private Boolean isExtentAppurtenantLand;
 	private String occupancyCertificationNo;
-	private Boolean isSuperStructure;
-	private String siteOwnerName;
-	private Boolean isBuildingPlanDetails;
-	private BuildingPlanDetails buildingPlanDetails;
+	private String extentAppartenauntLand;
 	private String regdDocNo;
 	private String regdDocDate;
 	public String getMutationReasonCode() {
@@ -85,30 +82,6 @@ public class AssessmentsDetails implements Serializable {
 	public void setOccupancyCertificationNo(String occupancyCertificationNo) {
 		this.occupancyCertificationNo = occupancyCertificationNo;
 	}
-	public Boolean getIsSuperStructure() {
-		return isSuperStructure;
-	}
-	public void setIsSuperStructure(Boolean isSuperStructure) {
-		this.isSuperStructure = isSuperStructure;
-	}
-	public String getSiteOwnerName() {
-		return siteOwnerName;
-	}
-	public void setSiteOwnerName(String siteOwnerName) {
-		this.siteOwnerName = siteOwnerName;
-	}
-	public Boolean getIsBuildingPlanDetails() {
-		return isBuildingPlanDetails;
-	}
-	public void setIsBuildingPlanDetails(Boolean isBuildingPlanDetails) {
-		this.isBuildingPlanDetails = isBuildingPlanDetails;
-	}
-	public BuildingPlanDetails getBuildingPlanDetails() {
-		return buildingPlanDetails;
-	}
-	public void setBuildingPlanDetails(BuildingPlanDetails buildingPlanDetails) {
-		this.buildingPlanDetails = buildingPlanDetails;
-	}
 	public String getRegdDocNo() {
 		return regdDocNo;
 	}
@@ -126,9 +99,13 @@ public class AssessmentsDetails implements Serializable {
 		return "AssessmentsDetails [mutationReasonCode=" + mutationReasonCode + ", parentPropertyAssessmentNo="
 				+ parentPropertyAssessmentNo + ", extentOfSite=" + extentOfSite + ", isExtentAppurtenantLand="
 				+ isExtentAppurtenantLand + ", occupancyCertificationNo=" + occupancyCertificationNo
-				+ ", isSuperStructure=" + isSuperStructure + ", siteOwnerName=" + siteOwnerName
-				+ ", isBuildingPlanDetails=" + isBuildingPlanDetails + ", buildingPlanDetails=" + buildingPlanDetails
 				+ ", regdDocNo=" + regdDocNo + ", regdDocDate=" + regdDocDate + "]";
+	}
+	public String getExtentAppartenauntLand() {
+		return extentAppartenauntLand;
+	}
+	public void setExtentAppartenauntLand(String extentAppartenauntLand) {
+		this.extentAppartenauntLand = extentAppartenauntLand;
 	}
 
 }

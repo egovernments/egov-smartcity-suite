@@ -74,12 +74,12 @@ public class CourtMaster extends AbstractAuditable {
     private Long id;
 
     @NotNull
-    @Length(min = 3, max = 100)
+    @Length(max = 100)
     @Audited
     private String name;
 
     @NotNull
-    @Length(min = 3, max = 256)
+    @Length(max = 256)
     private String address;
     
     @Min(1)

@@ -44,10 +44,6 @@
 	cssClass="form-horizontal form-groups-bordered"
 	enctype="multipart/form-data">
 	<%@ include file="governmentdepartment-form.jsp"%>
-	</div>
-	</div>
-	</div>
-	</div>
 	<div class="form-group">
 		<div class="text-center">
 			<button type='submit' class='btn btn-primary' id="buttonSubmit">
@@ -64,6 +60,21 @@
 		if ($('form').valid()) {
 		} else {
 			e.preventDefault();
+		}
+	});
+	var alphanumeric = /[^a-zA-Z0-9]/g ;
+
+	jQuery('.aaa').on("input", function(e){
+		if(jQuery(this).val().match(alphanumeric)){
+			jQuery(this).val( jQuery(this).val().replace(alphanumeric,'') );
+		}
+	});
+	
+	var alphanumerichyphenbackslashwithspace = /[^a-zA-Z0-9-\/ ]/g ;
+	
+	jQuery('.pattern').on("input", function(e){
+		if(jQuery(this).val().match(alphanumerichyphenbackslashwithspace)){
+			jQuery(this).val( jQuery(this).val().replace(alphanumerichyphenbackslashwithspace,'') );
 		}
 	});
 </script>

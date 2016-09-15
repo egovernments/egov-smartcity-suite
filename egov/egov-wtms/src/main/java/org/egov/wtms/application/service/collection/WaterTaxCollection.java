@@ -47,6 +47,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -76,6 +77,7 @@ import org.egov.demand.model.EgDemand;
 import org.egov.demand.model.EgDemandDetails;
 import org.egov.demand.model.EgDemandReason;
 import org.egov.demand.model.EgDemandReasonMaster;
+import org.egov.infra.admin.master.entity.AppConfigValues;
 import org.egov.infra.admin.master.entity.Module;
 import org.egov.infra.admin.master.service.ModuleService;
 import org.egov.infra.exception.ApplicationRuntimeException;
@@ -85,7 +87,6 @@ import org.egov.infra.workflow.service.SimpleWorkflowService;
 import org.egov.pims.commons.Position;
 import org.egov.wtms.application.entity.WaterConnectionDetails;
 import org.egov.wtms.application.entity.WaterDemandConnection;
-import org.egov.wtms.application.repository.WaterConnectionDetailsRepository;
 import org.egov.wtms.application.rest.CollectionApportioner;
 import org.egov.wtms.application.service.WaterConnectionDetailsService;
 import org.egov.wtms.application.service.WaterConnectionSmsAndEmailService;
@@ -112,12 +113,8 @@ public class WaterTaxCollection extends TaxCollection {
     @Autowired
     private WaterConnectionDetailsService waterConnectionDetailsService;
 
-    @Autowired
-    private WaterConnectionDetailsRepository waterConnectionDetailsRepository;
-
-    @Autowired
-    private WaterTaxUtils waterTaxUtils;
-
+    private final WaterTaxUtils waterTaxUtils;
+    
     @Autowired
     @Qualifier("workflowService")
     private SimpleWorkflowService<WaterConnectionDetails> waterConnectionWorkflowService;
@@ -149,7 +146,10 @@ public class WaterTaxCollection extends TaxCollection {
     public Session getCurrentSession() {
         return entityManager.unwrap(Session.class);
     }
-
+    @Autowired
+    public WaterTaxCollection(final WaterTaxUtils waterTaxUtils) {
+        this.waterTaxUtils = waterTaxUtils;
+    }
     @Override
     @Transactional
     public void updateDemandDetails(final BillReceiptInfo billRcptInfo) throws ApplicationRuntimeException {
@@ -258,7 +258,7 @@ public class WaterTaxCollection extends TaxCollection {
                     approvalPosition, WaterTaxConstants.FEE_COLLECTION_COMMENT,
                     WaterTaxConstants.NEW_CONNECTION_MATRIX_ADDL_RULE, null);
             waterConnectionSmsAndEmailService.sendSmsAndEmail(waterConnectionDetails, null);
-            waterConnectionDetailsRepository.saveAndFlush(waterConnectionDetails);
+            waterConnectionDetailsService.saveAndFlushWaterConnectionDetail(waterConnectionDetails);
         }
     }
 
@@ -530,20 +530,28 @@ public class WaterTaxCollection extends TaxCollection {
         final Map<String, BigDecimal> retMap = new HashMap<String, BigDecimal>();
         String installment = "";
         String[] desc;
-
+        final List<AppConfigValues> demandreasonGlcode =waterTaxUtils.getAppConfigValueByModuleNameAndKeyName(WaterTaxConstants.MODULE_NAME, WaterTaxConstants.DEMANDREASONANDGLCODEMAP);
+        Map<String, String> demandReasonGlCodePairmap = new HashMap<String, String>();
+        Set<String>demandReasonGlocdeSet=new HashSet<String>();
+        for (AppConfigValues appConfig : demandreasonGlcode) {
+            String rows[] = appConfig.getValue().split("=");
+                demandReasonGlCodePairmap.put(rows[0], rows[1]);
+                demandReasonGlocdeSet.add(rows[1]);
+            
+        }
         for (final ReceiptDetail rd : receiptDetails) {
             final String glCode = rd.getAccounthead().getGlcode();
             installment = "";
             desc = rd.getDescription().split("-", 2);
             final String[] installsplit = desc[1].split("#");
             installment = installsplit[0].trim();
-
-            if (WaterTaxConstants.GLCODEMAP_FOR_CURRENTTAX.containsValue(glCode))
+            
+            if (demandReasonGlCodePairmap.containsValue(glCode))
                 if (retMap.get(installment) == null)
                     retMap.put(installment, rd.getCramountToBePaid());
                 else
                     retMap.put(installment, retMap.get(installment).add(rd.getCramountToBePaid()));
-            if (WaterTaxConstants.GLCODES_FOR_CURRENTTAX.contains(glCode))
+            if (demandReasonGlocdeSet.contains(glCode))
                 prepareTaxMap(retMap, installment, rd, "FULLTAX");
         }
         return retMap;

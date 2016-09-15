@@ -40,15 +40,13 @@
 
 package org.egov.infra.web.controller.admin.masters.crosshierarchy;
 
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
 import javax.servlet.http.HttpServletRequest;
 
 import org.egov.infra.admin.master.entity.BoundaryType;
 import org.egov.infra.admin.master.entity.CrossHierarchy;
-import org.egov.infra.admin.master.service.BoundaryTypeService;
+import org.egov.infra.admin.master.service.CrossHierarchyService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -62,11 +60,8 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 @RequestMapping("/crosshierarchy/update")
 public class SearchCrossHierarchyController {
 
-    private static final String REVENUE_HIERARCHY_TYPE = "REVENUE";
-    private static final String ADMIN_HIERARCHY_TYPE = "ADMIN";
-
     @Autowired
-    private BoundaryTypeService boundaryTypeService;
+    private CrossHierarchyService crossHierarchyService;
 
     @ModelAttribute
     public CrossHierarchy crossHierarchyModel() {
@@ -75,10 +70,7 @@ public class SearchCrossHierarchyController {
 
     @ModelAttribute(value = "boundaryTypeList")
     public List<BoundaryType> findAllBoundaryType() {
-        final Set<String> hierarchyNames = new HashSet<String>();
-        hierarchyNames.add(REVENUE_HIERARCHY_TYPE);
-        hierarchyNames.add(ADMIN_HIERARCHY_TYPE);
-        final List<BoundaryType> boundaryType = boundaryTypeService.getBoundaryTypeByHierarchyTypeNames(hierarchyNames);
+        final List<BoundaryType> boundaryType = crossHierarchyService.getCrossHierarchyBoundaryTypes();
         return boundaryType;
     }
 

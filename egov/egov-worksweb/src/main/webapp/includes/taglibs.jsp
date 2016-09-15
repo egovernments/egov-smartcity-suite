@@ -47,3 +47,4 @@
 <%@ taglib uri="http://www.opensymphony.com/sitemesh/page" prefix="page"%>
 <%@ taglib prefix="s" uri="/WEB-INF/taglibs/struts-tags.tld" %>  
 <%@ taglib prefix="egov" tagdir="/WEB-INF/tags" %>  
+<%@ taglib uri="/WEB-INF/taglibs/cdn.tld" prefix="cdn"%>

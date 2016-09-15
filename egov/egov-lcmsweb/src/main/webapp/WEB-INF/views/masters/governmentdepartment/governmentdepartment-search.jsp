@@ -44,7 +44,6 @@
 	id="governmentDepartmentsearchform"
 	cssClass="form-horizontal form-groups-bordered"
 	enctype="multipart/form-data">
-	<div class="main-content">
 		<div class="row">
 			<div class="col-md-12">
 				<div class="panel panel-primary" data-collapsed="0">
@@ -62,7 +61,7 @@
 								<form:errors path="code" cssClass="error-msg" />
 							</div>
 							<label class="col-sm-3 control-label text-right"><spring:message
-									code="lbl.name" /> :</label>
+									code="lbl.departmentname" /> :</label>
 							<div class="col-sm-3 add-margin">
 								<form:input path="name"
 									class="form-control text-left patternvalidation"

@@ -50,7 +50,9 @@ body
   font-size:14px;
 }
 </style>
-<c:if test="${errorMsg != ''}">
+<body onload="loadOnStartUp(${isExempted})">
+
+<c:if test="${not empty errorMsg}">
  	<div class="panel-heading">
 				<div class="add-margin error-msg" style="text-align:center;">
 					<strong><c:out value="${errorMsg}"/></strong>
@@ -61,7 +63,7 @@ body
 	<div class="col-md-12">
 		<form:form class="form-horizontal form-groups-bordered" method="post"
 			name="taxExemptionForm" id="taxExemptionForm" action=""
-			modelAttribute="property">
+			modelAttribute="property" onsubmit="validate()">
 			<div class="panel panel-primary" data-collapsed="0"
 				style="text-align: left">
 				<jsp:include page="../../common/commonPropertyDetailsView.jsp"></jsp:include>
@@ -80,9 +82,9 @@ body
 						</div>
 						<div class="col-sm-3 add-margin control-label text-right">
 							<form:select path="taxExemptedReason" id="taxExemptedReason" name="taxExemptedReason"
-								data-first-option="false" cssClass="form-control"
-								required="required">
-								<form:option value="-1">
+								 cssClass="form-control"
+								>
+								<form:option value="">
 									<spring:message code="lbl.option.none" />
 								</form:option>
 								<form:options items="${taxExemptionReasons}" itemValue="id" 
@@ -99,3 +101,40 @@ body
 		</form:form>
 	</div>
 </div>
+</body>
+<script language="javascript">
+
+function loadOnStartUp(exempted) {
+	
+	var isAlert = ${isAlert};
+	var isExempted = exempted;
+	if(isExempted && isAlert){
+		bootbox.dialog({
+		    title: 'Property Tax Exemption',
+		    closeButton: false,
+		    onEscape: false,
+		    message: 'The property is exempted from tax, are you sure you want to remove the exemption?',
+		    buttons: {
+		        'cancel': {
+		            label: 'No',
+		            className: 'btn-danger',
+		            callback: function(){
+		            	
+		                      window.close();
+		            }
+		        },
+		        'confirm': {
+		            label: 'Yes',
+		            className: 'btn-success'
+		        }
+		    }
+		    
+		});
+	}else if(isExempted==false){
+		
+		jQuery('#taxExemptedReason').attr('required','required');
+	}
+	
+	
+}
+</script>

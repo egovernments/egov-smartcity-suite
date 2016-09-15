@@ -92,6 +92,8 @@ import static org.egov.ptis.constants.PropertyTaxConstants.VACANT_PROPERTY;
 import static org.egov.ptis.constants.PropertyTaxConstants.VAC_LAND_PROPERTY_TYPE_CATEGORY;
 import static org.egov.ptis.constants.PropertyTaxConstants.WF_STATE_COMMISSIONER_APPROVED;
 import static org.egov.ptis.constants.PropertyTaxConstants.WF_STATE_UD_REVENUE_INSPECTOR_APPROVAL_PENDING;
+import static org.egov.ptis.constants.PropertyTaxConstants.APPCONFIG_CLIENT_SPECIFIC_DMD_BILL;
+import static org.egov.ptis.constants.PropertyTaxConstants.PTMODULENAME;
 
 import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
@@ -119,9 +121,6 @@ import org.apache.struts2.interceptor.validation.SkipValidation;
 import org.egov.commons.Area;
 import org.egov.eis.entity.Assignment;
 import org.egov.eis.service.AssignmentService;
-import org.egov.eis.service.EisCommonService;
-import org.egov.infra.admin.master.entity.User;
-import org.egov.infra.admin.master.service.UserService;
 import org.egov.infra.persistence.entity.Address;
 import org.egov.infra.reporting.engine.ReportConstants.FileFormat;
 import org.egov.infra.reporting.engine.ReportOutput;
@@ -130,7 +129,6 @@ import org.egov.infra.reporting.engine.ReportService;
 import org.egov.infra.reporting.viewer.ReportViewerUtil;
 import org.egov.infra.security.utils.SecurityUtils;
 import org.egov.infra.utils.DateUtils;
-import org.egov.infra.validation.exception.ValidationError;
 import org.egov.infra.web.struts.annotation.ValidationErrorPage;
 import org.egov.infra.web.utils.WebUtils;
 import org.egov.infra.workflow.entity.StateAware;
@@ -140,9 +138,6 @@ import org.egov.ptis.client.util.FinancialUtil;
 import org.egov.ptis.client.util.PropertyTaxNumberGenerator;
 import org.egov.ptis.client.util.PropertyTaxUtil;
 import org.egov.ptis.constants.PropertyTaxConstants;
-import org.egov.ptis.domain.dao.demand.PtDemandDao;
-import org.egov.ptis.domain.dao.property.BasicPropertyDAO;
-import org.egov.ptis.domain.dao.property.PropertyStatusValuesDAO;
 import org.egov.ptis.domain.dao.property.PropertyTypeMasterDAO;
 import org.egov.ptis.domain.entity.demand.Ptdemand;
 import org.egov.ptis.domain.entity.enums.TransactionType;
@@ -191,7 +186,12 @@ import org.springframework.beans.factory.annotation.Autowired;
         @Result(name = ModifyPropertyAction.COMMON_FORM, location = "search/searchProperty-commonForm.jsp") })
 @Namespace("/modify")
 public class ModifyPropertyAction extends PropertyTaxBaseAction {
+    private final Logger LOGGER = Logger.getLogger(getClass());
     protected static final String COMMON_FORM = "commonForm";
+    protected static final String BALANCE = "balance";
+    protected static final String RESULT_ACK = "ack";
+    protected static final String VIEW = "view";
+    
     private static final String PROPERTY_MODIFY_REJECT_SUCCESS = "property.modify.reject.success";
     private static final String PROPERTY_MODIFY_FINAL_REJECT_SUCCESS = "property.modify.final.reject.success";
     private static final String PROPERTY_MODIFY_APPROVE_SUCCESS = "property.modify.approve.success";
@@ -202,15 +202,12 @@ public class ModifyPropertyAction extends PropertyTaxBaseAction {
     private static final String PROPERTY_BIFURCATION = "Property Bifurcation";
     private static final String PROPERTY_GENERAL_REVISION_PETITION = "Property General Revision Petition";
     private static final long serialVersionUID = 1L;
-    private final Logger LOGGER = Logger.getLogger(getClass());
     private static final String BIFURCATION = "Bifurcation";
-    protected static final String BALANCE = "balance";
-    protected static final String RESULT_ACK = "ack";
     private static final String RESULT_ERROR = "error";
-    protected static final String VIEW = "view";
     private static final String MODIFY_ACK_TEMPLATE = "modifyProperty_ack";
     private static final String GRP_ACK_TEMPLATE = "GRP_Property_ack";
     public static final String PRINT_ACK = "printAck";
+    
     private PersistenceService<Property, Long> propertyImplService;
     private PersistenceService<Floor, Long> floorService;
     private BasicProperty basicProp;
@@ -251,9 +248,7 @@ public class ModifyPropertyAction extends PropertyTaxBaseAction {
     private String propOccId;
     private String amenities;
     private String[] floorNoStr = new String[100];
-    List<ValidationError> errors = new ArrayList<ValidationError>();
     final SimpleDateFormat dateFormatter = new SimpleDateFormat("dd/MM/yyyy");
-    int i = 0;
     private PropertyImpl propWF;// would be current property workflow obj
     private Map<String, String> propTypeCategoryMap;
     FinancialUtil financialUtil = new FinancialUtil();
@@ -292,21 +287,15 @@ public class ModifyPropertyAction extends PropertyTaxBaseAction {
     private String taxDueErrorMsg;
     private Long taxExemptedReason;
     private Boolean wfInitiatorRejected;
+    private String houseNo;
+    private String oldPropertyTypeCode;
 
     @Autowired
     private PropertyPersistenceService basicPropertyService;
     @Autowired
     private PropertyService propertyService;
     @Autowired
-    private BasicPropertyDAO basicPropertyDAO;
-    @Autowired
-    private UserService userService;
-    @Autowired
     private PropertyTypeMasterDAO propertyTypeMasterDAO;
-    @Autowired
-    private PropertyStatusValuesDAO propertyStatusValuesDAO;
-    @Autowired
-    private PtDemandDao ptDemandDAO;
     @Autowired
     private SecurityUtils securityUtils;
     @Autowired
@@ -454,6 +443,8 @@ public class ModifyPropertyAction extends PropertyTaxBaseAction {
             setPropAddress(basicProp.getAddress().toString());
             propertyAddr = basicProp.getAddress();
             corrsAddress = PropertyTaxUtil.getOwnerAddress(basicProp.getPropertyOwnerInfo());
+           if(propertyAddr.getHouseNoBldgApt() !=null)
+                setHouseNo(propertyAddr.getHouseNoBldgApt().toString());
             if (propertyModel.getPropertyDetail().getFloorType() != null)
                 floorTypeId = propertyModel.getPropertyDetail().getFloorType().getId();
             if (propertyModel.getPropertyDetail().getRoofType() != null)
@@ -473,6 +464,7 @@ public class ModifyPropertyAction extends PropertyTaxBaseAction {
             }
             final PropertyTypeMaster propertyType = propertyModel.getPropertyDetail().getPropertyTypeMaster();
             propTypeId = propertyType.getId().toString();
+            setOldPropertyTypeCode(oldProperty.getPropertyDetail().getPropertyTypeMaster().getCode());
             if (propertyModel.getPropertyDetail().getPropertyUsage() != null)
                 propUsageId = propertyModel.getPropertyDetail().getPropertyUsage().getId().toString();
             if (propertyModel.getPropertyDetail().getPropertyOccupation() != null)
@@ -569,6 +561,7 @@ public class ModifyPropertyAction extends PropertyTaxBaseAction {
     @Action(value = "/modifyProperty-forward")
     public String forwardModify() {
         LOGGER.debug("forwardModify: Modify property started " + propertyModel);
+        setOldPropertyTypeCode(basicProp.getProperty().getPropertyDetail().getPropertyTypeMaster().getCode());
         validate();
         final long startTimeMillis = System.currentTimeMillis();
         if (getModelId() != null && !getModelId().trim().isEmpty()) {
@@ -585,6 +578,9 @@ public class ModifyPropertyAction extends PropertyTaxBaseAction {
             final Area area = new Area();
             area.setArea(new Float(areaOfPlot));
             propertyModel.getPropertyDetail().setSitalArea(area);
+        }
+        if (houseNo != null && !houseNo.isEmpty()) {
+            basicProp.getAddress().setHouseNoBldgApt(houseNo);
         }
         if (propTypeId != null && !propTypeId.trim().isEmpty() && !propTypeId.equals("-1"))
             propTypeMstr = (PropertyTypeMaster) getPersistenceService().find(
@@ -640,12 +636,12 @@ public class ModifyPropertyAction extends PropertyTaxBaseAction {
     }
 
     private String getApplicationType() {
-        final String applicationType = PROPERTY_MODIFY_REASON_ADD_OR_ALTER.equals(modifyRsn) ? ALTERATION_OF_ASSESSMENT
+        final String applicationType = PROPERTY_MODIFY_REASON_ADD_OR_ALTER.equals(modifyRsn) ? APPLICATION_TYPE_ALTER_ASSESSENT
                 : PROPERTY_MODIFY_REASON_BIFURCATE.equals(modifyRsn) ? APPLICATION_TYPE_BIFURCATE_ASSESSENT
                         : APPLICATION_TYPE_GRP;
         return applicationType;
     }
-
+   
     /**
      * Modifies and Forwards the assessment to next user when form is submitted
      * in read only mode
@@ -715,8 +711,12 @@ public class ModifyPropertyAction extends PropertyTaxBaseAction {
                 || PROPERTY_MODIFY_REASON_GENERAL_REVISION_PETITION.equals(modifyRsn)) {
             propertyModel.setStatus(STATUS_ISACTIVE);
             oldProperty.setStatus(STATUS_ISHISTORY);
-            propertyTaxUtil.makeTheEgBillAsHistory(basicProp);
-            propertyTaxCommonUtils.makeExistingDemandBillInactive(basicProp.getUpicNo());
+            String clientSpecificDmdBill = propertyTaxCommonUtils.getAppConfigValue(APPCONFIG_CLIENT_SPECIFIC_DMD_BILL,PTMODULENAME);
+            if ("Y".equalsIgnoreCase(clientSpecificDmdBill)) {
+                propertyTaxCommonUtils.makeExistingDemandBillInactive(basicProp.getUpicNo());
+            } else
+                propertyTaxUtil.makeTheEgBillAsHistory(basicProp);
+            
         }
         processAndStoreDocumentsWithReason(basicProp, getReason(modifyRsn));
         if (PROPERTY_MODIFY_REASON_ADD_OR_ALTER.equals(modifyRsn) || PROPERTY_MODIFY_REASON_BIFURCATE.equals(modifyRsn)
@@ -1131,6 +1131,11 @@ public class ModifyPropertyAction extends PropertyTaxBaseAction {
         LOGGER.debug("Entered into validate, ModifyRsn: " + modifyRsn);
         propertyModel.setBasicProperty(basicProp);
         Date propCompletionDate = null;
+        if(!propTypeMstr.getType().equals(OWNERSHIP_TYPE_VAC_LAND_STR) && oldPropertyTypeCode.equals(OWNERSHIP_TYPE_VAC_LAND) && modifyRsn.equals(PROPERTY_MODIFY_REASON_ADD_OR_ALTER)){
+            if(houseNo == null || houseNo.isEmpty()){
+                addActionError(getText("mandatory.doorNo"));
+            }
+        }
         if (basicProp.getSource() == SOURCEOFDATA_MIGRATION || basicProp.getSource() == SOURCEOFDATA_DATAENTRY) {
             setOldProperty((PropertyImpl) getBasicProp().getProperty());
             propCompletionDate = propertyTaxUtil.getLowestInstallmentForProperty(oldProperty);
@@ -1141,7 +1146,7 @@ public class ModifyPropertyAction extends PropertyTaxBaseAction {
                 propOccId, floorTypeId, roofTypeId, wallTypeId, woodTypeId, modifyRsn, propCompletionDate);
         validateApproverDetails();
         if (!propertyByEmployee) {
-            if (null != basicProp && null == propService.getUserPositionByZone(basicProp)) {
+            if (null != basicProp && null == propService.getUserPositionByZone(basicProp,basicProp.getSource())) {
                 addActionError(getText("notexists.position"));
             }
         }
@@ -1876,20 +1881,8 @@ public class ModifyPropertyAction extends PropertyTaxBaseAction {
         this.woodTypeId = woodTypeId;
     }
 
-    public void setBasicPropertyDAO(final BasicPropertyDAO basicPropertyDAO) {
-        this.basicPropertyDAO = basicPropertyDAO;
-    }
-
     public void setPropertyTypeMasterDAO(final PropertyTypeMasterDAO propertyTypeMasterDAO) {
         this.propertyTypeMasterDAO = propertyTypeMasterDAO;
-    }
-
-    public void setPropertyStatusValuesDAO(final PropertyStatusValuesDAO propertyStatusValuesDAO) {
-        this.propertyStatusValuesDAO = propertyStatusValuesDAO;
-    }
-
-    public void setPtDemandDAO(final PtDemandDao ptDemandDAO) {
-        this.ptDemandDAO = ptDemandDAO;
     }
 
     public void setbasicPropertyService(final PropertyPersistenceService basicPropertyService) {
@@ -2051,6 +2044,22 @@ public class ModifyPropertyAction extends PropertyTaxBaseAction {
 
     public void setPropertyTaxDetailsMap(Map<String, BigDecimal> propertyTaxDetailsMap) {
         this.propertyTaxDetailsMap = propertyTaxDetailsMap;
+    }
+
+    public String getHouseNo() {
+        return houseNo;
+    }
+
+    public void setHouseNo(String houseNo) {
+        this.houseNo = houseNo;
+    }
+
+    public String getOldPropertyTypeCode() {
+        return oldPropertyTypeCode;
+    }
+
+    public void setOldPropertyTypeCode(String oldPropertyTypeCode) {
+        this.oldPropertyTypeCode = oldPropertyTypeCode;
     }
 
 }

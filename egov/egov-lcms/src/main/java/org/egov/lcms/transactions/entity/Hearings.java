@@ -71,9 +71,6 @@ import org.hibernate.validator.constraints.Length;
 @Table(name = "EGLC_HEARINGS")
 @SequenceGenerator(name = Hearings.SEQ_EGLC_HEARINGS, sequenceName = Hearings.SEQ_EGLC_HEARINGS, allocationSize = 1)
 public class Hearings extends AbstractAuditable {
-    /**
-     * Serial version uid
-     */
 
     private static final long serialVersionUID = 1517694643078084884L;
     public static final String SEQ_EGLC_HEARINGS = "SEQ_EGLC_HEARINGS";
@@ -83,13 +80,16 @@ public class Hearings extends AbstractAuditable {
     private Long id;
 
     private Date hearingDate;
+
     @ManyToOne
     @Valid
     @JoinColumn(name = "legalcase", nullable = false)
     private LegalCase legalCase;
+
     @Column(name = "isstandingcounselpresent")
     private boolean isStandingCounselPresent;
-    @Length(max = 128, message = "hearing.additionalLawyer.length")
+
+    @Length(max = 128)
     @OptionalPattern(regex = LcmsConstants.mixedChar, message = "hearing.additionalLawyerName.text")
     private String additionalLawyers;
 
@@ -104,18 +104,21 @@ public class Hearings extends AbstractAuditable {
      * check
      */
 
-    @Length(max = 1024, message = "hearing.outcome.length")
+    @Length(max = 1024)
     private String hearingOutcome;
+
     private boolean isSeniorStandingCounselPresent;
-    @Length(max = 2056, message = "hearing.purpose.length")
+
+    @Length(max = 1024)
     @Column(name = "purposeofhearing")
     private String purposeofHearings;
+
     @ManyToOne
     @Valid
     @JoinColumn(name = "STATUS", nullable = false)
     private EgwStatus status;
-    @Length(max = 50, message = "ti.referencenumber.length")
-    @OptionalPattern(regex = LcmsConstants.referenceNumberTIRegx, message = "ti.referencenumber.alphanumeric")
+
+    @Length(max = 50)
     private String referenceNumber;
 
     /*
@@ -180,7 +183,7 @@ public class Hearings extends AbstractAuditable {
 
     public Date getCaDueDate() {
         Date caDueDate = null;
-        for (final Pwr pwr : getLegalCase().getEglcPwrs())
+        for (final Pwr pwr : getLegalCase().getPwrList())
             caDueDate = pwr.getCaDueDate();
         return caDueDate;
     }
@@ -194,7 +197,7 @@ public class Hearings extends AbstractAuditable {
             if (legalCase.getCaseReceivingDate() != null
                     && !DateUtils.compareDates(getHearingDate(), legalCase.getCaseReceivingDate()))
                 errors.add(new ValidationError("hearingDate", "hearingDate.greaterThan.caseReceivingDate"));
-            if (!DateUtils.compareDates(getHearingDate(), legalCase.getCasedate()))
+            if (!DateUtils.compareDates(getHearingDate(), legalCase.getCaseDate()))
                 errors.add(new ValidationError("hearingDate", "hearingDate.greaterThan.caseDate"));
 
         }

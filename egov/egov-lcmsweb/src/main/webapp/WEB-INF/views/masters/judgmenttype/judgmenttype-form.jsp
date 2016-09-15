@@ -37,8 +37,7 @@
   ~
   ~   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
   --%>
-<div class="main-content">
-	<div class="row">
+<div class="row">
 		<div class="col-md-12">
 			<div class="panel panel-primary" data-collapsed="0">
 				<div class="panel-heading">
@@ -50,8 +49,8 @@
 								code="lbl.code" /> :<span class="mandatory"></span> </label>
 						<div class="col-sm-3 add-margin">
 							<form:input path="code"
-								class="form-control text-left patternvalidation"
-								data-pattern="alphanumericwithspecialcharacters" maxlength="25"
+								class="form-control text-left aaa"
+								 maxlength="25"
 								required="required" />
 							<form:errors path="code" cssClass="error-msg" />
 						</div>
@@ -60,7 +59,7 @@
 						<div class="col-sm-3 add-margin">
 							<form:input path="name"
 								class="form-control text-left patternvalidation"
-								data-pattern="alphabetwithspace" maxlength="50"
+								data-pattern="alphanumericspecialcharacters" maxlength="50"
 								required="required" />
 							<form:errors path="name" cssClass="error-msg" />
 						</div>
@@ -71,7 +70,7 @@
 						<div class="col-sm-3 add-margin">
 							<form:textarea path="description"
 								class="form-control text-left patternvalidation"
-								data-pattern="alphabetwithspace" maxlength="256" />
+								data-pattern="alphanumericspecialcharacters" maxlength="256" />
 							<form:errors path="description" cssClass="error-msg" />
 						</div>
 						<label class="col-sm-3 control-label text-right"><spring:message
@@ -99,3 +98,8 @@
 						</div>
 						<input type="hidden" name="judgmentType"
 							value="${judgmentType.id}" />
+							</div>
+					</div>
+				</div>
+			</div>
+	</div>

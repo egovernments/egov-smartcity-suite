@@ -45,10 +45,6 @@
 	enctype="multipart/form-data">
 	<%@ include file="judgmenttype-form.jsp"%>
 	<input type="hidden" name="judgmentType" value="${judgmentType.id}" />
-	</div>
-	</div>
-	</div>
-	</div>
 	<div class="form-group">
 		<div class="text-center">
 			<button type='submit' class='btn btn-primary' id="buttonSubmit">
@@ -64,6 +60,13 @@
 		if ($('form').valid()) {
 		} else {
 			e.preventDefault();
+		}
+	});
+	var alphanumeric = /[^a-zA-Z0-9]/g ;
+
+	jQuery('.aaa').on("input", function(e){
+		if(jQuery(this).val().match(alphanumeric)){
+			jQuery(this).val( jQuery(this).val().replace(alphanumeric,'') );
 		}
 	});
 </script>

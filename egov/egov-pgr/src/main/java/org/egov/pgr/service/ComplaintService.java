@@ -41,6 +41,7 @@
 package org.egov.pgr.service;
 
 import static org.egov.pgr.entity.enums.ComplaintStatus.FORWARDED;
+import static org.egov.pgr.entity.enums.ComplaintStatus.PROCESSING;
 import static org.egov.pgr.entity.enums.ComplaintStatus.REGISTERED;
 import static org.egov.pgr.entity.enums.ComplaintStatus.REOPENED;
 
@@ -73,7 +74,6 @@ import org.egov.infra.security.utils.SecurityUtils;
 import org.egov.infra.utils.ApplicationNumberGenerator;
 import org.egov.infra.workflow.entity.State;
 import org.egov.infra.workflow.entity.StateHistory;
-import org.egov.pgr.elasticSearch.entity.ComplaintIndex;
 import org.egov.pgr.elasticSearch.service.ComplaintIndexService;
 import org.egov.pgr.entity.Complaint;
 import org.egov.pgr.entity.enums.ComplaintStatus;
@@ -94,7 +94,6 @@ import org.hibernate.criterion.Restrictions;
 import org.joda.time.DateTime;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -207,14 +206,8 @@ public class ComplaintService {
 
         final Complaint savedComplaint = complaintRepository.save(complaint);
         pushMessage(savedComplaint);
-
-        final Complaint savedComplaintIndex = new ComplaintIndex();
-        BeanUtils.copyProperties(savedComplaint, savedComplaintIndex);
-        final ComplaintIndex complaintIndex = ComplaintIndex.method(savedComplaintIndex);
         sendEmailandSms(complaint);
-
-        // Indexing complaint here
-        complaintIndexService.createComplaintIndex(complaintIndex);
+        
         return savedComplaint;
     }
 
@@ -283,12 +276,7 @@ public class ComplaintService {
                 !complaint.getStatus().getName().equalsIgnoreCase(ComplaintStatus.REJECTED.toString())
                 && !complaint.getStatus().getName().equalsIgnoreCase(ComplaintStatus.WITHDRAWN.toString()))
             sendSmsToOfficials(savedComplaint);
-
-        final Complaint savedComplaintIndex = new ComplaintIndex();
-        BeanUtils.copyProperties(savedComplaint, savedComplaintIndex);
-        final ComplaintIndex complaintIndex = ComplaintIndex.method(savedComplaintIndex);
-
-        complaintIndexService.updateComplaintIndex(complaintIndex, approvalPosition, approvalComent);
+        
         return savedComplaint;
     }
 
@@ -310,6 +298,7 @@ public class ComplaintService {
 
         criteria.add(Restrictions.disjunction().add(Restrictions.eq("complaintStatus.name", REOPENED.name()))
                 .add(Restrictions.eq("complaintStatus.name", FORWARDED.name()))
+                .add(Restrictions.eq("complaintStatus.name", PROCESSING.name()))
                 .add(Restrictions.eq("complaintStatus.name", REGISTERED.name())))
                 .add(Restrictions.lt("complaint.escalationDate", new DateTime().toDate()))
                 .setResultTransformer(CriteriaSpecification.DISTINCT_ROOT_ENTITY);

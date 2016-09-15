@@ -39,7 +39,6 @@
  */
 package org.egov.lcms.transactions.entity;
 
-import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -67,7 +66,7 @@ import org.egov.lcms.utils.constants.LcmsConstants;
 @Entity
 @Table(name = "EGLC_PWR")
 @SequenceGenerator(name = Pwr.SEQ_EGLC_PWR, sequenceName = Pwr.SEQ_EGLC_PWR, allocationSize = 1)
-public class Pwr extends AbstractPersistable<Long>  {
+public class Pwr extends AbstractPersistable<Long> {
 
     private static final long serialVersionUID = 1517694643078084884L;
     public static final String SEQ_EGLC_PWR = "seq_eglc_pwr";
@@ -75,33 +74,30 @@ public class Pwr extends AbstractPersistable<Long>  {
     @Id
     @GeneratedValue(generator = SEQ_EGLC_PWR, strategy = GenerationType.SEQUENCE)
     private Long id;
-    
-    @ManyToOne(cascade = CascadeType.ALL,fetch = FetchType.LAZY)
+
+    @ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @JoinColumn(name = "legalcase", nullable = false)
     private LegalCase legalCase;
-   
-    
+
     @DateFormat(message = "invalid.fieldvalue.caFilingdate")
     @ValidateDate(allowPast = true, dateFormat = LcmsConstants.DATE_FORMAT, message = "invalid.cafiling.date")
     @Column(name = "cafilingdate")
     private Date caFilingdate;
-    
+
     @OneToMany(mappedBy = "pwr", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
     private List<PwrDocuments> pwrDocuments = new ArrayList<PwrDocuments>(0);
-    
+
     @DateFormat(message = "invalid.fieldvalue.caDueDate")
     @Column(name = "caduedate")
     private Date caDueDate;
-    
+
     @DateFormat(message = "invalid.fieldvalue.pwrDueDate")
     @Column(name = "pwrduedate")
     private Date pwrDueDate;
-    
+
     @DateFormat(message = "invalid.fieldvalue.pwrDueDate")
     @Column(name = "pwrapprovaldate")
     private Date pwrApprovalDate;
-    
-   
 
     public Date getCaFilingdate() {
         return caFilingdate;
@@ -111,21 +107,20 @@ public class Pwr extends AbstractPersistable<Long>  {
         this.caFilingdate = caFilingdate;
     }
 
-
     public Date getPwrApprovalDate() {
-		return pwrApprovalDate;
-	}
+        return pwrApprovalDate;
+    }
 
-	public void setPwrApprovalDate(Date pwrApprovalDate) {
-		this.pwrApprovalDate = pwrApprovalDate;
-	}
+    public void setPwrApprovalDate(final Date pwrApprovalDate) {
+        this.pwrApprovalDate = pwrApprovalDate;
+    }
 
-	
+    @Override
     public Long getId() {
         return id;
     }
 
-    
+    @Override
     public void setId(final Long id) {
         this.id = id;
     }
@@ -140,11 +135,11 @@ public class Pwr extends AbstractPersistable<Long>  {
 
     public List<ValidationError> validate() {
         final List<ValidationError> errors = new ArrayList<ValidationError>();
-        if (!DateUtils.compareDates(getCaDueDate(), legalCase.getCasedate()))
+        if (!DateUtils.compareDates(getCaDueDate(), legalCase.getCaseDate()))
             errors.add(new ValidationError("caDueDate", "caDueDate.less.casedate"));
-        if (!DateUtils.compareDates(getCaFilingdate(), legalCase.getCasedate()))
+        if (!DateUtils.compareDates(getCaFilingdate(), legalCase.getCaseDate()))
             errors.add(new ValidationError("caFilingDate", "caFilingDate.less.casedate"));
-        if (!DateUtils.compareDates(getPwrDueDate(), legalCase.getCasedate()))
+        if (!DateUtils.compareDates(getPwrDueDate(), legalCase.getCaseDate()))
             errors.add(new ValidationError("pwrDueDate", "pwrDueDate.less.casedate"));
         if (!DateUtils.compareDates(getCaDueDate(), getPwrDueDate()))
             errors.add(new ValidationError("caDueDate", "caDueDate.greaterThan.pwrDueDate"));
@@ -167,13 +162,12 @@ public class Pwr extends AbstractPersistable<Long>  {
         this.legalCase = legalCase;
     }
 
-	public List<PwrDocuments> getPwrDocuments() {
-		return pwrDocuments;
-	}
+    public List<PwrDocuments> getPwrDocuments() {
+        return pwrDocuments;
+    }
 
-	public void setPwrDocuments(List<PwrDocuments> pwrDocuments) {
-		this.pwrDocuments = pwrDocuments;
-	}
+    public void setPwrDocuments(final List<PwrDocuments> pwrDocuments) {
+        this.pwrDocuments = pwrDocuments;
+    }
 
-	
 }
