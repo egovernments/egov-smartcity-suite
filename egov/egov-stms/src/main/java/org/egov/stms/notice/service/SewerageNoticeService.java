@@ -41,6 +41,8 @@ package org.egov.stms.notice.service;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
@@ -58,6 +60,7 @@ import java.util.zip.Deflater;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 
+import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
 import org.apache.commons.lang.WordUtils;
@@ -596,6 +599,27 @@ public class SewerageNoticeService {
             sewerageNotice.setFileStore(fileStore);
         }
         return sewerageNotice;
+    }
+    
+    public ReportOutput getSewerageCloseConnectionNotice(final SewerageApplicationDetails sewerageApplicationDetails, 
+            final File file, final HttpSession session,final HttpServletResponse response) throws IOException{
+        Map<String, Object> reportParams = new HashMap<String, Object>(); 
+        ReportRequest reportInput = null;
+        OutputStream os;
+        InputStream is = new FileInputStream(file);
+        os = response.getOutputStream();
+        reportParams.put("closenoticereport",os);
+        byte[] buffer = new byte[1024];
+        int len;
+        while ((len = is.read(buffer)) != -1) {
+            os.write(buffer, 0, len);
+        }
+        os.flush();
+        os.close();
+        is.close();
+        
+        reportInput = new ReportRequest(sewerageApplicationDetails.getClosureNoticeNumber(), sewerageApplicationDetails, reportParams);
+        return reportService.createReport(reportInput);
     }
 
 }

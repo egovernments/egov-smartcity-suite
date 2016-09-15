@@ -39,11 +39,20 @@
  */
 package org.egov.stms.web.controller.transactions;
 
+import static org.egov.stms.utils.constants.SewerageTaxConstants.NOTICE_TYPE_CLOSER_NOTICE;
+
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.Iterator;
 import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import javax.validation.Valid;
 import javax.validation.ValidationException;
@@ -53,10 +62,15 @@ import org.egov.eis.service.AssignmentService;
 import org.egov.eis.web.contract.WorkflowContainer;
 import org.egov.eis.web.controller.workflow.GenericWorkFlowController;
 import org.egov.infra.admin.master.service.DepartmentService;
+import org.egov.infra.filestore.entity.FileStoreMapper;
 import org.egov.infra.filestore.service.FileStoreService;
+import org.egov.infra.reporting.engine.ReportOutput;
+import org.egov.infra.reporting.engine.ReportService;
 import org.egov.infra.security.utils.SecurityUtils;
 import org.egov.ptis.domain.model.AssessmentDetails;
 import org.egov.stms.masters.entity.enums.PropertyType;
+import org.egov.stms.notice.entity.SewerageNotice;
+import org.egov.stms.notice.service.SewerageNoticeService;
 import org.egov.stms.transactions.entity.SewerageApplicationDetails;
 import org.egov.stms.transactions.entity.SewerageApplicationDetailsDocument;
 import org.egov.stms.transactions.service.SewerageApplicationDetailsService;
@@ -76,6 +90,12 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+
+import com.lowagie.text.Document;
+import com.lowagie.text.pdf.PdfContentByte;
+import com.lowagie.text.pdf.PdfImportedPage;
+import com.lowagie.text.pdf.PdfReader;
+import com.lowagie.text.pdf.PdfWriter;;
 
 @Controller
 @RequestMapping(value = "/transactions")
@@ -106,6 +126,11 @@ public class SewerageCloseUpdateConnectionController extends GenericWorkFlowCont
     @Autowired
     private SewerageConnectionService sewerageConnectionService;
     
+    @Autowired
+    private SewerageNoticeService sewerageNoticeService;
+    
+    @Autowired
+    private ReportService reportService;
 
     @ModelAttribute("sewerageApplicationDetails")
     public SewerageApplicationDetails getSewerageApplicationDetails(@PathVariable final String applicationNumber) {
@@ -144,7 +169,7 @@ public class SewerageCloseUpdateConnectionController extends GenericWorkFlowCont
     public String update(@Valid @ModelAttribute SewerageApplicationDetails sewerageApplicationDetails,
             final BindingResult resultBinder, final RedirectAttributes redirectAttributes,
             final HttpServletRequest request, final HttpSession session, final Model model,@RequestParam String workFlowAction, 
-            @RequestParam("files") final MultipartFile[] files) {
+            @RequestParam("files") final MultipartFile[] files,final HttpServletResponse response) throws Exception {
         
         Long approvalPosition = 0l;
         String approvalComment = "";
@@ -177,10 +202,15 @@ public class SewerageCloseUpdateConnectionController extends GenericWorkFlowCont
         
         
         //TODO : show closer notice from sewerage tax notice object.
-       if (workFlowAction != null && !workFlowAction.isEmpty()
-                && workFlowAction.equalsIgnoreCase(SewerageTaxConstants.WF_STATE_CONNECTION_CLOSE_BUTTON))
-            return "redirect:/transactions/closeConnectionNotice?pathVar="
-            + sewerageApplicationDetails.getApplicationNumber();
+        if (workFlowAction != null && !workFlowAction.isEmpty()
+                && workFlowAction.equalsIgnoreCase(SewerageTaxConstants.WF_STATE_CONNECTION_CLOSE_BUTTON)
+                && sewerageApplicationDetails.getClosureNoticeNumber()!=null) {
+             SewerageNotice sewerageNotice = sewerageNoticeService.findByNoticeNoAndNoticeType(sewerageApplicationDetails.getClosureNoticeNumber(),
+                    NOTICE_TYPE_CLOSER_NOTICE);
+            FileStoreMapper fmp = sewerageNotice.getFileStore();
+            File file = fileStoreService.fetch(fmp, SewerageTaxConstants.FILESTORE_MODULECODE);
+            sewerageNoticeService.getSewerageCloseConnectionNotice(sewerageApplicationDetails, file, session, response);
+        }
         
         final Assignment currentUserAssignment = assignmentService.getPrimaryAssignmentForGivenRange(securityUtils
                 .getCurrentUser().getId(), new Date(), new Date());
