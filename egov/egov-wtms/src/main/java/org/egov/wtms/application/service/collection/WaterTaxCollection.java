@@ -47,6 +47,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -531,14 +532,12 @@ public class WaterTaxCollection extends TaxCollection {
         String[] desc;
         final List<AppConfigValues> demandreasonGlcode =waterTaxUtils.getAppConfigValueByModuleNameAndKeyName(WaterTaxConstants.MODULE_NAME, WaterTaxConstants.DEMANDREASONANDGLCODEMAP);
         Map<String, String> demandReasonGlCodePairmap = new HashMap<String, String>();
-        List<String>demandReasonGlocdelist=new ArrayList<String>();
+        Set<String>demandReasonGlocdeSet=new HashSet<String>();
         for (AppConfigValues appConfig : demandreasonGlcode) {
-            String rows[] = appConfig.getValue().split("\n");
-            for (String row : rows) {
-                String value[] = row.split("=");
-                demandReasonGlCodePairmap.put(value[0], value[1]);
-                demandReasonGlocdelist.add(value[1]);
-            }
+            String rows[] = appConfig.getValue().split("=");
+                demandReasonGlCodePairmap.put(rows[0], rows[1]);
+                demandReasonGlocdeSet.add(rows[1]);
+            
         }
         for (final ReceiptDetail rd : receiptDetails) {
             final String glCode = rd.getAccounthead().getGlcode();
@@ -552,7 +551,7 @@ public class WaterTaxCollection extends TaxCollection {
                     retMap.put(installment, rd.getCramountToBePaid());
                 else
                     retMap.put(installment, retMap.get(installment).add(rd.getCramountToBePaid()));
-            if (demandReasonGlocdelist.contains(glCode))
+            if (demandReasonGlocdeSet.contains(glCode))
                 prepareTaxMap(retMap, installment, rd, "FULLTAX");
         }
         return retMap;
