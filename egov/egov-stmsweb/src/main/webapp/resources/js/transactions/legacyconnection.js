@@ -332,7 +332,7 @@ function addDemandDetailRow(instlmntDesc,reasondsc,demandamount,collectionamount
     actualAmount.setAttribute("class","form-control table-input text-right patternvalidation");
     actualAmount.setAttribute("data-pattern","decimalvalue"); 
     actualAmount.type = "text";
-    actualAmount.setAttribute("maxlength", "8");
+    actualAmount.setAttribute("maxlength", "7");
     actualAmount.setAttribute("name", "demandDetailBeanList[" + (elementIndex-1) + "].actualAmount");
     actualAmount.setAttribute("id", "demandDetailBeanList"+(elementIndex-1)+"actualAmount");
     actualAmount.setAttribute("value", demandamount);
@@ -346,7 +346,7 @@ function addDemandDetailRow(instlmntDesc,reasondsc,demandamount,collectionamount
     actualCollection.setAttribute("class","form-control table-input text-right patternvalidation");
     actualCollection.setAttribute("data-pattern","decimalvalue"); 
     actualCollection.type = "text";
-    actualCollection.setAttribute("maxlength", "8");
+    actualCollection.setAttribute("maxlength", "7");
     actualCollection.setAttribute("name", "demandDetailBeanList[" + (elementIndex-1) + "].actualCollection");
     actualCollection.setAttribute("id", "demandDetailBeanList"+(elementIndex-1)+"actualCollection");
     actualCollection.setAttribute("value", collectionamount);
