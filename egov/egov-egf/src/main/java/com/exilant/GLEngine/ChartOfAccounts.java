@@ -58,6 +58,7 @@ import java.util.Map;
 import java.util.Set;
 
 import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
 
 import org.apache.log4j.Logger;
 import org.egov.commons.Accountdetailtype;
@@ -156,8 +157,8 @@ public class ChartOfAccounts {
 	@Autowired
 	private BudgetDetailsHibernateDAO budgetDetailsDAO;
 
-	@Autowired
-	EntityManager entityManager;
+	@PersistenceContext
+	private EntityManager entityManager;
 
 	@Autowired
 	private FinancialYearHibernateDAO financialYearDAO;

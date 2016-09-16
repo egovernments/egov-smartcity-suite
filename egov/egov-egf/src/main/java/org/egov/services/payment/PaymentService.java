@@ -110,6 +110,7 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.math.BigInteger;
@@ -188,7 +189,7 @@ public class PaymentService extends PersistenceService<Paymentheader, Long> {
 	@Autowired
 	@Qualifier("miscbilldetailService")
 	private MiscbilldetailService miscbilldetailService;
-	@Autowired
+	@PersistenceContext
 	private EntityManager entityManager;
 	@Autowired
 	ChartOfAccounts chartOfAccounts;

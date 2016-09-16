@@ -57,6 +57,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
 import javax.ws.rs.core.MediaType;
 import java.io.UnsupportedEncodingException;
@@ -86,12 +87,14 @@ import java.util.Map;
 public class AxisAdaptor implements PaymentGatewayAdaptor {
 
     private static final Logger LOGGER = Logger.getLogger(AxisAdaptor.class);
-    @Autowired
+    public static final BigDecimal PAISE_RUPEE_CONVERTER = BigDecimal.valueOf(100);
+
+    @PersistenceContext
     private EntityManager entityManager;
 
     @Autowired
     private CollectionApplicationProperties collectionApplicationProperties;
-    public static final BigDecimal PAISE_RUPEE_CONVERTER = new BigDecimal(100);
+
     @Autowired
     private  CityService cityService;
 
