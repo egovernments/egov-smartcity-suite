@@ -208,7 +208,7 @@ public class SewerageLegacyConnectionController extends GenericWorkFlowControlle
     public String create(@Valid @ModelAttribute final SewerageApplicationDetails sewerageApplicationDetails,
             final BindingResult resultBinder, final RedirectAttributes redirectAttributes,
             final HttpServletRequest request, final Model model,
-            final BindingResult errors, @RequestParam("files") final MultipartFile[] files) {
+            @RequestParam("files") final MultipartFile[] files) {
              
         final List<SewerageApplicationDetailsDocument> applicationDocs = new ArrayList<SewerageApplicationDetailsDocument>();
         int i = 0;
@@ -218,7 +218,7 @@ public class SewerageLegacyConnectionController extends GenericWorkFlowControlle
                 sewerageConnectionService.validateDocuments(applicationDocs, applicationDocument, i, resultBinder);
                 i++;
             }
-
+        validateSHSCNumberLength(sewerageApplicationDetails,resultBinder);
         if (LOG.isDebugEnabled())
             LOG.error("Model Level Validation occurs = " + resultBinder);
 
@@ -288,6 +288,12 @@ public class SewerageLegacyConnectionController extends GenericWorkFlowControlle
                 resultBinder.reject("err.connection.propertyIdentifier.validate",
                         new String[] { errorMessage }, null);
             }
+        }
+    }
+    
+    private void validateSHSCNumberLength(final SewerageApplicationDetails sewerageApplicationDetails, final BindingResult errors){
+        if(sewerageApplicationDetails.getConnection().getShscNumber().length()!=10){
+            errors.reject("err.shscnumber.length.validate");
         }
     }
 

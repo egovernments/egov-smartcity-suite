@@ -46,7 +46,7 @@
 			code="lbl.shsc.number" /><span class="mandatory"></span></label>
 	<div class="col-sm-3 add-margin">
 		<form:input path="connection.shscNumber" id="shscNumber"
-			class="form-control text-left patternvalidation" data-pattern="number" maxlength="10" required="required" />
+			class="form-control text-left patternvalidation" data-pattern="number" required="required" />
 		<form:errors path="connection.shscNumber" 
 			cssClass="add-margin error-msg" />
 	</div>

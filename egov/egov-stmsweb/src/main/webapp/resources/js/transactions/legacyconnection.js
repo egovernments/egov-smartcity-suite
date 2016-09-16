@@ -60,13 +60,7 @@ $(document).ready(function(){
 	}
 	
 	$('#shscNumber').blur(function(){
-		if($('#shscNumber').val()!= "" && $('#shscNumber').val().length!=10){
-			bootbox.alert("Please enter 10 digit value of SHSC Number", function(){
-			});
-		}
-		else{
 		validateSewerageConnectionNumber();
-		}
 	});
 	
 	function validateSewerageConnection() {
@@ -266,7 +260,7 @@ function validateDemandDetailsOnSubmit(){
           	bootbox.alert("Enter all mandatory Details for installment \""+instlmnt+"\".");
     		return false; 
     	}
-        if((demandamount!='' && collectionamount!='' &&  collectionamount > demandamount)) { 
+        if((demandamount!='' && collectionamount!='' &&  parseFloat(collectionamount) > parseFloat(demandamount))) { 
            	bootbox.alert("Collection cannot be more than Demand for installment \""+instlmnt+"\".");
      		return false; 
      	}
