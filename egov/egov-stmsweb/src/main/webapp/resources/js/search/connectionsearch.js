@@ -226,6 +226,7 @@ $("#viewDCB").click(function(){
 });
   
 $("#closeConnection").click(function(){
+	applicationType="closesewerageconnection";
 	var shscnumber=document.getElementById("shscNumber").value;
 	propertyID=$('#assessmentNo').val();
 	jQuery.ajax({
