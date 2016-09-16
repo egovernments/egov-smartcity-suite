@@ -1,3 +1,16 @@
+
+----------------------------------------Attendance Report role action---------------------------
+
+INSERT INTO eg_module(id, name, enabled, contextroot, parentmodule, displayname, ordernumber) VALUES (nextval('seq_eg_module'), 'Council Management Reports', true, 'council', (select id from eg_module where name = 'Council Management'), 'Reports', 3);
+
+INSERT into eg_action(id,name,url,parentmodule,ordernumber,displayname,enabled,contextroot,application) values(nextval('SEQ_EG_ACTION'),'Attendance Report','/councilmeeting/attendance/report/search',(select id from eg_module where name='Council Management Reports'),1,'Attendance Report',true,'council',(select id from eg_module where name='Council Management' and parentmodule is null));
+
+INSERT into eg_roleaction values((select id from eg_role where name='Super User'),(select id from eg_action where name='Attendance Report'));
+
+INSERT into eg_roleaction values((select id from eg_role where name='Council Management Admin'),(select id from eg_action where name='Attendance Report'));
+
+INSERT into eg_roleaction values((select id from eg_role where name='Council Clerk'),(select id from eg_action where name='Attendance Report'));
+
 CREATE TABLE egcncl_preamble_wards
 (
   preamble bigint NOT NULL,
