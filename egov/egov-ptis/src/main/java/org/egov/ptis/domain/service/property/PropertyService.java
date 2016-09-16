@@ -3138,6 +3138,23 @@ public List<PropertyMaterlizeView> getPropertyByAssessmentAndOwnerDetails(final 
         
     }
     
+    /**
+     * Gives the total amount to be paid for the property from the current Ptdemand
+     * @param property
+     * @return BigDecimal
+     */
+    public BigDecimal getTotalAmountToBePaidForProperty(Property property){
+    	BigDecimal totalAmount = BigDecimal.ZERO;
+    	Ptdemand ptdemand = getCurrrentDemand(property);
+    	for(EgDemandDetails dmdDet : ptdemand.getEgDemandDetails()){
+    		if(dmdDet.getAmtCollected().equals(BigDecimal.ZERO) 
+    				|| (dmdDet.getAmount().subtract(dmdDet.getAmtCollected())).compareTo(BigDecimal.ZERO)>0){
+    			totalAmount = totalAmount.add(dmdDet.getAmount().subtract(dmdDet.getAmtCollected()));
+    		}
+    	}
+    	return totalAmount;
+    }
+    
     public Map<Installment, Map<String, BigDecimal>> getExcessCollAmtMap() {
         return excessCollAmtMap;
     }
