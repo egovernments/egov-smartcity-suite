@@ -149,6 +149,7 @@
 										
 										<div class="col-sm-3">
 											<form:input type="text" cssClass="form-control" id="emial" path="emailId" placeholder="abc@xyz.com" />
+											<form:errors path="emailId" cssClass="error-msg"/>
 										</div>
 										
 									</div>
