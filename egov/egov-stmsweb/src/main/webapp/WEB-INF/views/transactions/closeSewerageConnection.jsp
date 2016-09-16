@@ -77,10 +77,10 @@
 						<c:choose>
 						<c:when test="${sewerageApplicationDetails!=null && (sewerageApplicationDetails.status != null 
 							&& (sewerageApplicationDetails.status.code != 'CREATED' && sewerageApplicationDetails.status.code != 'REJECTED' ))}">
-								<form:textarea cssClass="form-control patternvalidation" path="closeConnectionReason"  cols="20" id="closeConnectionReason" data-pattern="alphanumericwithspace" maxlength="100" readonly="true"/>
+								<form:textarea cssClass="form-control patternvalidation" path="closeConnectionReason"  cols="20" id="closeConnectionReason" data-pattern="alphanumericwithspace" maxlength="512" readonly="true"/>
 						</c:when>
 						<c:otherwise>
-							<form:textarea cssClass="form-control patternvalidation" path="closeConnectionReason"  cols="20" id="closeConnectionReason" data-pattern="alphanumericwithspace" maxlength="100" required="required"/>
+							<form:textarea cssClass="form-control patternvalidation" path="closeConnectionReason"  cols="20" id="closeConnectionReason" data-pattern="alphanumericwithspace" maxlength="512" required="required"/>
 						</c:otherwise>	
 						</c:choose>	
 				 		</div>
