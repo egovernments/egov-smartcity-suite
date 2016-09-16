@@ -53,7 +53,7 @@
 							<label class="col-sm-2 control-label text-right"><spring:message
 									code="lbl.department" /> </label>
 							<div class="col-sm-3 add-margin">
-								<form:select path="department" id="department"
+								<form:select path="department" id="department" 
 									cssClass="form-control" cssErrorClass="form-control error">
 									<form:option value="">
 										<spring:message code="lbl.select" />
@@ -90,22 +90,21 @@
 								<form:errors path="toDate" cssClass="error-msg" />
 							</div>
 						</div>
-						<%-- <div class="form-group">
+						<div class="form-group">
 							<label class="col-sm-2 control-label text-right"><spring:message
-									code="lbl.ward" /> </label>
+							code="lbl.ward" /> </label>
 							<div class="col-sm-3 add-margin">
-								<form:select path="" id="department"
-									cssClass="form-control" cssErrorClass="form-control error">
-									<form:option value="">
-										<spring:message code="lbl.select" />
-									</form:option>
-									<form:options items="${wards}" itemValue="id"
-										itemLabel="name" />
+								<form:select path="wards" id="wards" multiple="false" cssClass="form-control" cssErrorClass="form-control error">
+									<form:option value=""><spring:message code="lbl.select" /></form:option>
+									<form:options  items="${wards}" itemValue="id" itemLabel="name"></form:options>
 								</form:select>
-								<form:errors path="" cssClass="error-msg" />
+								<form:errors path="wards" cssClass="error-msg" /> 
 							</div>
-						</div> --%>
-						<input type="hidden" id="mode" name="mode" value="${mode}" />
+							
+							<%-- <spring:message code="lbl.pressCntrlToSelectMultipleWards"></spring:message> --%>
+							<input type="hidden" id="mode" name="mode" value="${mode}" />
+						</div>
+						
 					</div>
 				</div>
 			</div>
@@ -120,4 +119,4 @@
 				onclick='self.close()'><spring:message code='lbl.close' /></a>
 		</div>
 	</div>
-
+	</script>

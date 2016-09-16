@@ -38,9 +38,14 @@
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
 package org.egov.council.web.adaptor;
+
+import static org.egov.council.utils.constants.CouncilConstants.PREAMBLEUSEDINAGENDA;
+
 import java.lang.reflect.Type;
 
 import org.egov.council.entity.CouncilPreamble;
+import org.egov.council.entity.MeetingMOM;
+import org.egov.infra.admin.master.entity.Boundary;
 import org.egov.infra.utils.StringUtils;
 
 import com.google.gson.JsonElement;
@@ -49,44 +54,77 @@ import com.google.gson.JsonSerializationContext;
 import com.google.gson.JsonSerializer;
 
 public class CouncilPreambleJsonAdaptor implements JsonSerializer<CouncilPreamble> {
-    @Override
-    public JsonElement serialize(final CouncilPreamble councilPreamble, final Type type, final JsonSerializationContext jsc) {
-        final JsonObject jsonObject = new JsonObject();
-        if (councilPreamble != null) {
-            if (councilPreamble.getDepartment() != null)
-                jsonObject.addProperty("department", councilPreamble.getDepartment().getName());
-            else
-                jsonObject.addProperty("department", StringUtils.EMPTY);
-            if (councilPreamble.getPreambleNumber() != null)
-                jsonObject.addProperty("preambleNumber", councilPreamble.getPreambleNumber());
-            else
-                jsonObject.addProperty("department", StringUtils.EMPTY);
-            if(councilPreamble.getGistOfPreamble() !=null)
-                jsonObject.addProperty("gistOfPreamble", councilPreamble.getGistOfPreamble());
-            else
-                jsonObject.addProperty("gistOfPreamble", StringUtils.EMPTY);
-            if(councilPreamble.getSanctionAmount()!=null)
-                jsonObject.addProperty("sanctionAmount", councilPreamble.getSanctionAmount());
-            else
-                jsonObject.addProperty("sanctionAmount", StringUtils.EMPTY);
-            if(councilPreamble.getCreatedDate()!=null)
-                jsonObject.addProperty("createdDate", councilPreamble.getCreatedDate().toString());
-            else
-                jsonObject.addProperty("createdDate", StringUtils.EMPTY);
-            if(councilPreamble.getCreatedDate()!=null)
-                jsonObject.addProperty("createdDate", councilPreamble.getCreatedDate().toString());
-            else
-                jsonObject.addProperty("createdDate", StringUtils.EMPTY);
-            if(councilPreamble.getCreatedDate()!=null)
-                jsonObject.addProperty("status", councilPreamble.getStatus().getCode());
-            else
-                jsonObject.addProperty("status", StringUtils.EMPTY);
-            
-            jsonObject.addProperty("id", councilPreamble.getId());
-        }
-        return jsonObject;
-    }
+	@Override
+	public JsonElement serialize(final CouncilPreamble councilPreamble, final Type type,
+			final JsonSerializationContext jsc) {
+		String meetingDate = StringUtils.EMPTY;
+		String meetingType = StringUtils.EMPTY;
+		final JsonObject jsonObject = new JsonObject();
+		StringBuilder bndryList = new StringBuilder();
+		if (councilPreamble != null) {
 
-   
+			if (!councilPreamble.getWards().isEmpty()) {
+				for (Boundary ward : councilPreamble.getWards()) {
+					bndryList.append(ward.getName());
+					bndryList.append(",");
+				}
+			}
+			jsonObject.addProperty("ward", bndryList.toString());
+			if (councilPreamble.getDepartment() != null)
+				jsonObject.addProperty("department", councilPreamble.getDepartment().getName());
+			else
+				jsonObject.addProperty("department", StringUtils.EMPTY);
+			if (councilPreamble.getType() != null)
+				jsonObject.addProperty("preambleType", councilPreamble.getType().toString());
+			else
+				jsonObject.addProperty("preambleType", StringUtils.EMPTY);
+			if (councilPreamble.getPreambleNumber() != null)
+				jsonObject.addProperty("preambleNumber", councilPreamble.getPreambleNumber());
+			else
+				jsonObject.addProperty("department", StringUtils.EMPTY);
+			if (councilPreamble.getGistOfPreamble() != null)
+				jsonObject.addProperty("gistOfPreamble", councilPreamble.getGistOfPreamble());
+			else
+				jsonObject.addProperty("gistOfPreamble", StringUtils.EMPTY);
+			if (councilPreamble.getSanctionAmount() != null)
+				jsonObject.addProperty("sanctionAmount", councilPreamble.getSanctionAmount());
+			else
+				jsonObject.addProperty("sanctionAmount", StringUtils.EMPTY);
+			if (councilPreamble.getCreatedDate() != null)
+				jsonObject.addProperty("createdDate", councilPreamble.getCreatedDate().toString());
+			else
+				jsonObject.addProperty("createdDate", StringUtils.EMPTY);
+			if (councilPreamble.getStatus() != null)
+				jsonObject.addProperty("preambleUsedInAgenda",
+						PREAMBLEUSEDINAGENDA.equals(councilPreamble.getStatus().getCode()) ? "Yes" : "No");
+			else
+				jsonObject.addProperty("preambleUsedInAgenda", StringUtils.EMPTY);
+
+			if (!councilPreamble.getMeetingMOMs().isEmpty()) {
+				for (MeetingMOM meetingMOM : councilPreamble.getMeetingMOMs()) {
+					meetingDate = meetingMOM.getMeeting().getMeetingDate().toString();
+					meetingType = meetingMOM.getMeeting().getCommitteeType().getName();
+				}
+			}
+
+			if (meetingDate != null)
+				jsonObject.addProperty("meetingDate", meetingDate);
+			else
+				jsonObject.addProperty("meetingDate", StringUtils.EMPTY);
+
+			if (meetingType != null)
+				jsonObject.addProperty("meetingType", meetingType);
+			else
+				jsonObject.addProperty("meetingType", StringUtils.EMPTY);
+
+			if (councilPreamble.getStatus() != null)
+				jsonObject.addProperty("status", councilPreamble.getStatus().getCode());
+			else
+				jsonObject.addProperty("status", StringUtils.EMPTY);
+
+			jsonObject.addProperty("id", councilPreamble.getId());
+		}
+		return jsonObject;
+	}
 
 }

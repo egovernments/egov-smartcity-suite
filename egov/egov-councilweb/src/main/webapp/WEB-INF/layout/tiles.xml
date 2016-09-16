@@ -348,4 +348,9 @@
 	<put-attribute name="body" value="/WEB-INF/views/agenda/council-agendaSearch.jsp"/>
 </definition>
 
+<definition name="preamblewardwise-report" extends="base_layout">
+	<put-attribute name="page-title" value="title.preamble.report" cascade="true"/>
+	<put-attribute name="body" value="/WEB-INF/views/reports/preamblewardwise-report.jsp"/>
+</definition>
+
 </tiles-definitions>

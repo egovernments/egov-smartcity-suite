@@ -41,6 +41,7 @@ package org.egov.council.service;
 import static org.egov.council.utils.constants.CouncilConstants.ADJOURNED;
 import static org.egov.council.utils.constants.CouncilConstants.APPROVED;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.persistence.EntityManager;
@@ -53,6 +54,7 @@ import org.egov.council.entity.MeetingMOM;
 import org.egov.council.entity.enums.PreambleType;
 import org.egov.council.repository.CouncilPreambleRepository;
 import org.egov.council.service.workflow.PreambleWorkflowCustomImpl;
+import org.egov.infra.admin.master.entity.Boundary;
 import org.egov.infra.utils.DateUtils;
 import org.egov.infra.utils.StringUtils;
 import org.egov.infra.utils.autonumber.AutonumberServiceBeanResolver;
@@ -117,6 +119,12 @@ public class CouncilPreambleService {
         criteria.add(Restrictions.in("status.code", new String[] { APPROVED, ADJOURNED }));
         return criteria.list();
     }
+    
+    @SuppressWarnings("unchecked")
+    public List<CouncilPreamble> searchPreambleForWardwiseReport(CouncilPreamble councilPreamble) {
+        final Criteria criteria = buildSearchCriteria(councilPreamble);
+        return criteria.list();
+    }
 
     @SuppressWarnings("unchecked")
     public List<CouncilPreamble> search(CouncilPreamble councilPreamble) {
@@ -143,22 +151,31 @@ public class CouncilPreambleService {
 
 	}
     
-    public Criteria buildSearchCriteria(CouncilPreamble councilPreamble) {
-        final Criteria criteria = getCurrentSession().createCriteria(CouncilPreamble.class, "councilPreamble")
-                .createAlias("councilPreamble.status", "status");
+	public Criteria buildSearchCriteria(CouncilPreamble councilPreamble) {
+		final Criteria criteria = getCurrentSession().createCriteria(CouncilPreamble.class, "councilPreamble")
+				.createAlias("councilPreamble.status", "status").createAlias("councilPreamble.wards", "wards");
 
-        if (null != councilPreamble.getDepartment())
-            criteria.add(Restrictions.eq("councilPreamble.department", councilPreamble.getDepartment()));
+		if ( councilPreamble.getDepartment() != null)
+			criteria.add(Restrictions.eq("councilPreamble.department", councilPreamble.getDepartment()));
 
-        if (null!=councilPreamble.getFromDate() && null!=councilPreamble.getToDate()) {
-            criteria.add(Restrictions.between("councilPreamble.createdDate", councilPreamble.getFromDate(),
-                    DateUtils.addDays(councilPreamble.getToDate(), 1)));
-        }
-        if (null != councilPreamble.getPreambleNumber())
-            criteria.add(Restrictions.ilike("councilPreamble.preambleNumber", councilPreamble.getPreambleNumber(),MatchMode.ANYWHERE));
+		if (councilPreamble.getFromDate() != null && councilPreamble.getToDate() != null) {
+			criteria.add(Restrictions.between("councilPreamble.createdDate", councilPreamble.getFromDate(),
+					DateUtils.addDays(councilPreamble.getToDate(), 1)));
+		}
+		if (councilPreamble.getPreambleNumber() != null)
+			criteria.add(Restrictions.ilike("councilPreamble.preambleNumber", councilPreamble.getPreambleNumber(),
+					MatchMode.ANYWHERE));
 
-
-        return criteria;
-    }
+		if (councilPreamble.getWards() != null) {
+			ArrayList<Long> boundaryid = new ArrayList<Long>();
+			for (Boundary bndry : councilPreamble.getWards()) {
+				boundaryid.add(bndry.getId());
+			}
+			if (!boundaryid.isEmpty())
+				criteria.add(Restrictions.in("wards.id", boundaryid));
+		}
+		criteria.setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY);
+		return criteria;
+	}
 
 }

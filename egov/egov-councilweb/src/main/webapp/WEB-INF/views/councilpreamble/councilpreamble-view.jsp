@@ -105,7 +105,16 @@
 						<div class="col-sm-3 add-margin view-content">
 							${councilPreamble.preambleNumber}</div>
 					</div>
-				</div>
+						<div class="col-xs-3 add-margin">
+							<spring:message code="lbl.ward" /> 
+						</div>
+						<div class="col-sm-3 add-margin view-content">
+						<select   id="ward" size="7" cssClass="form-control" cssErrorClass="form-control error">
+						<c:forEach items="${councilPreamble.wards}" var="ward" varStatus=""> 
+								<option  value="${ward.name}">${ward.name}</option>
+						</c:forEach>
+						</select>
+						</div>
 			</div>
 			<div class="panel panel-primary" data-collapsed="0">
 							<jsp:include page="applicationhistory-view.jsp"></jsp:include>
