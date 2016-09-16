@@ -64,7 +64,7 @@ import static org.egov.stms.utils.constants.SewerageTaxConstants.ROLE_SEWERAGETA
 import static org.egov.stms.utils.constants.SewerageTaxConstants.ROLE_SEWERAGETAX_APPROVER;
 import static org.egov.stms.utils.constants.SewerageTaxConstants.ROLE_CSCOPERTAOR;
 import static org.egov.stms.utils.constants.SewerageTaxConstants.ROLE_ULBOPERATOR;
-import static org.egov.stms.utils.constants.SewerageTaxConstants.ROLE_BILLCOLLECTOR;
+import static org.egov.stms.utils.constants.SewerageTaxConstants.ROLE_COLLECTIONOPERATOR;
 import static org.egov.stms.utils.constants.SewerageTaxConstants.ROLE_SUPERUSER;
 import static org.egov.stms.utils.constants.SewerageTaxConstants.ROLE_SEWERAGETAX_REPORTVIEWER;
 import static org.egov.stms.utils.constants.SewerageTaxConstants.APPLICATION_STATUS_SANCTIONED;
@@ -103,8 +103,8 @@ public class SewerageActionDropDownUtil {
         SEWERAGEROLEACTIONMAP.put(ROLE_SEWERAGETAX_ADMINISTRATOR, Arrays.asList(VIEW));
         SEWERAGEROLEACTIONMAP.put(ROLE_SEWERAGETAX_APPROVER, Arrays.asList(VIEW,VIEWDCB,CHANGENOOFCLOSET));
         SEWERAGEROLEACTIONMAP.put(ROLE_CSCOPERTAOR, Arrays.asList(VIEW,COLLECTDONATIONCHARHGES));
-        SEWERAGEROLEACTIONMAP.put(ROLE_ULBOPERATOR, Arrays.asList(VIEW, COLLECTDONATIONCHARHGES));
-        SEWERAGEROLEACTIONMAP.put(ROLE_BILLCOLLECTOR, Arrays.asList(VIEW, COLLECTDONATIONCHARHGES));
+        SEWERAGEROLEACTIONMAP.put(ROLE_ULBOPERATOR, Arrays.asList(VIEW, COLLECTDONATIONCHARHGES,VIEWDCB,CHANGENOOFCLOSET,CLOSECONNECTION_ACTIONDROPDOWN));
+        SEWERAGEROLEACTIONMAP.put(ROLE_COLLECTIONOPERATOR, Arrays.asList(VIEW, COLLECTDONATIONCHARHGES));
         SEWERAGEROLEACTIONMAP.put(ROLE_SUPERUSER,Arrays.asList(VIEW, COLLECTDONATIONCHARHGES));
         SEWERAGEROLEACTIONMAP.put(ROLE_SEWERAGETAX_REPORTVIEWER, Arrays.asList(VIEW,VIEWDCB));
         
@@ -178,8 +178,8 @@ public class SewerageActionDropDownUtil {
                 actionList = SEWERAGEROLEACTIONMAP.get(ROLE_CSCOPERTAOR);
             } else if (roleName.contains(ROLE_ULBOPERATOR)) {
                 actionList = SEWERAGEROLEACTIONMAP.get(ROLE_ULBOPERATOR);
-            } else if (roleName.contains(ROLE_BILLCOLLECTOR)) {
-                actionList = SEWERAGEROLEACTIONMAP.get(ROLE_BILLCOLLECTOR);
+            } else if (roleName.contains(ROLE_COLLECTIONOPERATOR)) {
+                actionList = SEWERAGEROLEACTIONMAP.get(ROLE_COLLECTIONOPERATOR);
             } else if (roleName.contains(ROLE_SEWERAGETAX_CREATOR)) {
                 actionList = SEWERAGEROLEACTIONMAP.get(ROLE_SEWERAGETAX_CREATOR);
             } else if (roleName.contains(ROLE_SEWERAGETAX_APPROVER)) {

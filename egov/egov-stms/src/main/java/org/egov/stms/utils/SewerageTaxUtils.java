@@ -385,7 +385,7 @@ public class SewerageTaxUtils {
             final User userObj = userService.getUserById(ApplicationThreadLocals.getUserId());
             if (userObj != null)
                 for (final Role role : userObj.getRoles())
-                    if (role != null && (role.getName().contains(SewerageTaxConstants.ROLE_BILLCOLLECTOR))) {
+                    if (role != null && (role.getName().contains(SewerageTaxConstants.ROLE_COLLECTIONOPERATOR))) {
                         isCSCOperator = true;
                         break;
                     }
