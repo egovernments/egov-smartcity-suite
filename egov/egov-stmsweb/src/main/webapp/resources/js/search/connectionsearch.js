@@ -225,31 +225,6 @@ $("#viewDCB").click(function(){
 	window.open("/stms/reports/sewerageRateReportView/"+appNumber+"/"+assessmentNum, '_blank', "width=800, height=600, scrollbars=yes");
 });
   
-$("#closeConnection").click(function(){
-	applicationType="closesewerageconnection";
-	var shscnumber=document.getElementById("shscNumber").value;
-	propertyID=$('#assessmentNo').val();
-	jQuery.ajax({
-		url: "/stms/ajaxconnection/check-application-inworkflow/"+shscnumber,
-		type: "GET",
-		data: {
-			shscnumber : shscnumber,
-		},
-		datatype: "text",
-		success: function (response){
-			if(response!=""){
-			bootbox.alert(response);
-			return false;
-			}
-			else{
-				loadPropertyDetails(shscnumber,propertyID);
-			}
-		},
-		
-	});
-	
-});
-
 
 function loadPropertyDetails(shscnumber, propertyID) {
 	var errorMessage=""; 
