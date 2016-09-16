@@ -91,9 +91,6 @@ INSERT INTO eg_roleaction(roleid, actionid) VALUES ((select id from eg_role wher
 INSERT INTO eg_roleaction(roleid, actionid) VALUES ((select id from eg_role where name = 'Sewerage Tax Report Viewer'), (select id from eg_action where name = 'STNoticeSearchResultCount'));
 
 
-INSERT INTO eg_roleaction(roleid, actionid) VALUES ((select id from eg_role where name = 'Super User'), (select id from eg_action where name = 'AjaxSewerageClosetsCheck'));
-INSERT INTO eg_roleaction(roleid, actionid) VALUES ((select id from eg_role where name = 'Sewerage Tax Creator'), (select id from eg_action where name = 'AjaxSewerageClosetsCheck'));
-INSERT INTO eg_roleaction(roleid, actionid) VALUES ((select id from eg_role where name = 'Sewerage Tax Administrator'), (select id from eg_action where name = 'AjaxSewerageClosetsCheck'));
 INSERT INTO eg_roleaction(roleid, actionid) VALUES ((select id from eg_role where name = 'Sewerage Tax Report Viewer'), (select id from eg_action where name = 'AjaxSewerageClosetsCheck'));
 
 UPDATE EG_ACTION SET parentmodule=(select id from eg_module where name='SewerageReports') where name='viewSewerageConnectionDCBReport' and url='/reports/sewerageRateReportView' and contextroot = 'stms';
