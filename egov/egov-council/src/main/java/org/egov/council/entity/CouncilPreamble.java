@@ -1,18 +1,23 @@
 package org.egov.council.entity;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.Transient;
@@ -20,6 +25,7 @@ import javax.validation.constraints.NotNull;
 
 import org.egov.commons.EgwStatus;
 import org.egov.council.entity.enums.PreambleType;
+import org.egov.infra.admin.master.entity.Boundary;
 import org.egov.infra.admin.master.entity.Department;
 import org.egov.infra.filestore.entity.FileStoreMapper;
 import org.egov.infra.workflow.entity.StateAware;
@@ -67,7 +73,13 @@ public class CouncilPreamble extends StateAware {
     @ManyToOne
     @JoinColumn(name = "status", nullable = false)
     private EgwStatus status;
-
+    
+    @OneToMany(mappedBy = "preamble", cascade = CascadeType.ALL)
+    private List<MeetingMOM> meetingMOMs = new ArrayList<MeetingMOM>(0);
+    
+    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @JoinTable(name = "egcncl_preamble_wards", joinColumns = @JoinColumn(name = "preamble"), inverseJoinColumns = @JoinColumn(name = "ward"))
+    private List<Boundary> wards = new ArrayList<Boundary>(0);
     
     @Enumerated(EnumType.ORDINAL)
     private PreambleType type;
@@ -205,5 +217,21 @@ public class CouncilPreamble extends StateAware {
     public void setApprovalPosition(Long approvalPosition) {
         this.approvalPosition = approvalPosition;
     }
+
+	public List<MeetingMOM> getMeetingMOMs() {
+		return meetingMOMs;
+	}
+
+	public void setMeetingMOMs(List<MeetingMOM> meetingMOMs) {
+		this.meetingMOMs = meetingMOMs;
+	}
+
+	public List<Boundary> getWards() {
+		return wards;
+	}
+
+	public void setWards(List<Boundary> wards) {
+		this.wards = wards;
+	}
 
 }

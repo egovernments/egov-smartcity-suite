@@ -1,5 +1,7 @@
 package org.egov.council.web.controller;
 
+import static org.egov.council.utils.constants.CouncilConstants.REVENUE_HIERARCHY_TYPE;
+import static org.egov.council.utils.constants.CouncilConstants.WARD;
 import static org.egov.infra.web.utils.WebUtils.toJSON;
 
 import java.io.IOException;
@@ -20,6 +22,8 @@ import org.egov.council.utils.constants.CouncilConstants;
 import org.egov.council.web.adaptor.CouncilPreambleJsonAdaptor;
 import org.egov.eis.web.contract.WorkflowContainer;
 import org.egov.eis.web.controller.workflow.GenericWorkFlowController;
+import org.egov.infra.admin.master.entity.Boundary;
+import org.egov.infra.admin.master.entity.Department;
 import org.egov.infra.admin.master.service.BoundaryService;
 import org.egov.infra.admin.master.service.DepartmentService;
 import org.egov.infra.filestore.service.FileStoreService;
@@ -40,9 +44,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
-
-import static org.egov.council.utils.constants.CouncilConstants.WARD; 
-import static org.egov.council.utils.constants.CouncilConstants.REVENUE_HIERARCHY_TYPE;
 @Controller
 @RequestMapping("/councilpreamble")
 public class CouncilPreambleController extends GenericWorkFlowController {
@@ -51,7 +52,6 @@ public class CouncilPreambleController extends GenericWorkFlowController {
     private final static String COUNCILPREAMBLE_EDIT = "councilpreamble-edit";
     private final static String COUNCILPREAMBLE_VIEW = "councilpreamble-view";
     private final static String COUNCILPREAMBLE_SEARCH = "councilpreamble-search";
-    public static final String WARDWISE = "ward";
     @Autowired
     private CouncilPreambleService councilPreambleService;
     @Autowired
@@ -78,15 +78,18 @@ public class CouncilPreambleController extends GenericWorkFlowController {
     
     private static final Logger LOGGER = Logger.getLogger(CouncilPreambleController.class);
 
-    private void prepareNewForm(final Model model) {
-        model.addAttribute("departments", departmentService.getAllDepartments()); // WARD.
-        model.addAttribute("wards", boundaryService.getActiveBoundariesByBndryTypeNameAndHierarchyTypeName(WARD,
-                REVENUE_HIERARCHY_TYPE)); 
-    }
+    
+    public @ModelAttribute("departments") List<Department> getDepartmentList() {
+		return departmentService.getAllDepartments();
+	}
+	
+	public @ModelAttribute("wards") List<Boundary> getWardsList() {
+		return boundaryService.getActiveBoundariesByBndryTypeNameAndHierarchyTypeName(WARD,
+                REVENUE_HIERARCHY_TYPE);
+	}
 
     @RequestMapping(value = "/new", method = RequestMethod.GET)
     public String newForm(final Model model) {
-        prepareNewForm(model);
         CouncilPreamble councilPreamble = new CouncilPreamble();
         councilPreamble.setType(PreambleType.GENERAL);
         model.addAttribute("councilPreamble",councilPreamble);
@@ -105,7 +108,6 @@ public class CouncilPreambleController extends GenericWorkFlowController {
     public String create(@Valid @ModelAttribute final CouncilPreamble councilPreamble, final BindingResult errors,
             @RequestParam final MultipartFile attachments, final Model model,final HttpServletRequest request, final RedirectAttributes redirectAttrs,@RequestParam String workFlowAction) {
         if (errors.hasErrors()) {
-            prepareNewForm(model);
             prepareWorkFlowOnLoad(model, councilPreamble);
             return COUNCILPREAMBLE_NEW;
         }
@@ -169,7 +171,6 @@ public class CouncilPreambleController extends GenericWorkFlowController {
             final HttpServletRequest request, final RedirectAttributes redirectAttrs,
             @RequestParam String workFlowAction) {
         if (errors.hasErrors()) {
-            prepareNewForm(model);
             prepareWorkFlowOnLoad(model, councilPreamble);
             model.addAttribute("currentState", councilPreamble.getCurrentState().getValue());
             return COUNCILPREAMBLE_EDIT;
@@ -212,7 +213,6 @@ public class CouncilPreambleController extends GenericWorkFlowController {
     public String edit(@PathVariable("id") final Long id, final Model model, final HttpServletResponse response)
             throws IOException {
         CouncilPreamble councilPreamble = councilPreambleService.findOne(id);
-        prepareNewForm(model);
         WorkflowContainer workFlowContainer= new WorkflowContainer();
         prepareWorkflow(model, councilPreamble,workFlowContainer);
         model.addAttribute("stateType", councilPreamble.getClass().getSimpleName());
@@ -230,7 +230,6 @@ public class CouncilPreambleController extends GenericWorkFlowController {
     @RequestMapping(value = "/view/{id}", method = RequestMethod.GET)
     public String view(@PathVariable("id") final Long id, Model model) {
         CouncilPreamble councilPreamble = councilPreambleService.findOne(id);
-        prepareNewForm(model);
         model.addAttribute("councilPreamble", councilPreamble);
         model.addAttribute("applicationHistory", councilThirdPartyService.getHistory(councilPreamble));
 
@@ -239,7 +238,6 @@ public class CouncilPreambleController extends GenericWorkFlowController {
 
     @RequestMapping(value = "/search/{mode}", method = RequestMethod.GET)
     public String search(@PathVariable("mode") final String mode, Model model) {
-        prepareNewForm(model);
         model.addAttribute("councilPreamble", new CouncilPreamble());
         return COUNCILPREAMBLE_SEARCH;
 

@@ -55,7 +55,7 @@ public class CouncilConstants {
     public final static String AGENDA_STATUS_INWORKFLOW ="INWORKFLOW";
     public final static String COUNCIL_RESOLUTION ="COUNCILRESOLUTION";	
     public final static String MOM_FINALISED="MOM FINALISED";
-    public static final String REVENUE_HIERARCHY_TYPE = "REVENUE";
+    public static final String REVENUE_HIERARCHY_TYPE = "ADMINISTRATION";
     public static final String WARD = "Ward";
     
     public final static String AGENDA_MODULENAME = "COUNCILAGENDA";

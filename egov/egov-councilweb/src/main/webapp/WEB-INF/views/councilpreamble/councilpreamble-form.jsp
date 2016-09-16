@@ -63,7 +63,7 @@
 						<c:when test="${councilPreamble.filestoreid != null}">
 
 							<form:input path="attachments" type="file" id="attachments" name="attachments"
-								data-id="1" class="filechange inline btn" />
+								data-id="1" class="filechange inline btn upload-file" /><small class="error-msg"><spring:message code="lbl.mesg.document"/></small>
 							<form:errors path="attachments" cssClass="error-msg" />
 
 							<form:hidden path="filestoreid.id" value="${councilPreamble.filestoreid.id}" />
@@ -79,24 +79,21 @@
 						</c:when>
 						<c:otherwise>
 							<form:input path ="attachments" type="file" id="attachments" name="attachments"
-								data-id="1" class="filechange inline btn" />
+								data-id="1" class="filechange inline btn upload-file" /><small class="error-msg"><spring:message code="lbl.mesg.document"/></small>
 							<form:errors path="attachments" cssClass="error-msg" />
 						</c:otherwise>
 					</c:choose>
 				</div>
-			<%-- 	<label class="col-sm-2 control-label text-right"><spring:message
-						code="lbl.ward.no" /> <span class="mandatory"></span></label>
+				<label class="col-sm-2 control-label text-right"><spring:message
+						code="lbl.ward.no" /></label>
 				<div class="col-sm-3 add-margin">
-					<div>
-							<form:select path="wards" multiple="true" id="ward" size="10" cssClass="form-control" cssErrorClass="form-control error">
-								<form:option value="0">ALL</form:option>
-								<form:options items="${wards}" itemValue="id" itemLabel="name"></form:options>
-							</form:select>
-							<form:errors path="wards" cssClass="error-msg" /> 
-						</div>
-						<spring:message code="lbl.pressCntrlToSelectMultipleWards"></spring:message>
-				</div> --%>
-				
+					<form:select path="wards" multiple="true" id="wards" size="7" cssClass="form-control" cssErrorClass="form-control error">
+						<form:option value="" id="selectall">All</form:option>
+						<form:options  items="${wards}" itemValue="id" itemLabel="name"></form:options>
+					</form:select>
+					<form:errors path="wards" cssClass="error-msg" /> 
+				</div>
+				<spring:message code="lbl.pressCntrlToSelectMultipleWards"></spring:message>
 				<c:if test="${councilPreamble.preambleNumber!= null && !''.equalsIgnoreCase(councilPreamble.preambleNumber)}">
 				<label class="col-sm-2 control-label text-right">	<spring:message code="lbl.preamble.number" /> </label>
 				<div class="col-sm-3 add-margin"> ${councilPreamble.preambleNumber}		</div>
