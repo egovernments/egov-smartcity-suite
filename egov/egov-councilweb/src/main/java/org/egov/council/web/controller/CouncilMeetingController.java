@@ -138,7 +138,7 @@ public class CouncilMeetingController {
 		return MEETING_TIMINGS;
 	}
 
-	public @ModelAttribute("departmentList") List<Department> getDepartmentList() {
+	public @ModelAttribute("departments") List<Department> getDepartmentList() {
 		return departmentService.getAllDepartments();
 	}
 
@@ -307,6 +307,7 @@ public class CouncilMeetingController {
         String result = new StringBuilder("{ \"success\":true }").toString();
         return result;
     }
+    
 
     @RequestMapping(value = "/generateresolution/{id}", method = RequestMethod.GET)
     public @ResponseBody ResponseEntity<byte[]> viewDemandNoticeReport(@PathVariable final Long id,
@@ -356,6 +357,20 @@ public class CouncilMeetingController {
                 .toString();
         return result;
     }
-
-
+    
+    @RequestMapping(value = "/generateagenda/{id}", method = RequestMethod.GET)
+    public @ResponseBody ResponseEntity<byte[]> printAgendaDetails(@PathVariable("id") final Long id,final Model model, final HttpServletRequest request){
+    	byte[] reportOutput = null;
+    	CouncilMeeting councilMeeting = councilMeetingService.findOne(id);
+    	final String url = WebUtils.extractRequestDomainURL(request, false);
+        String logoPath = url.concat(ReportConstants.IMAGE_CONTEXT_PATH).concat(
+                (String) request.getSession().getAttribute("citylogo"));
+        reportOutput = councilReportService.generatePDFForAgendaDetails(councilMeeting, logoPath);
+        
+        final HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.parseMediaType("application/pdf"));
+        headers.add("content-disposition", "inline;filename=AgendaItems.pdf");
+        return new ResponseEntity<byte[]>(reportOutput, headers, HttpStatus.CREATED);
+        
+    } 
 }

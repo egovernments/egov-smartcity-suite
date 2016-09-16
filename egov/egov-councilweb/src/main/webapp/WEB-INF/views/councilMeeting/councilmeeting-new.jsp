@@ -45,6 +45,8 @@
 	id="councilMeetingform" cssClass="form-horizontal form-groups-bordered"
 	enctype="multipart/form-data">
 	<%@ include file="councilmeeting-form.jsp"%>
+	
+	 <%@ include file="councilmeeting-agendaDetail.jsp"%> 
 	<div class="form-group">
 		<div class="text-center">
 			<button type='submit' class='btn btn-primary' id="buttonSubmit">
@@ -54,16 +56,8 @@
 				onclick='self.close()'><spring:message code='lbl.close' /></a>
 		</div>
 	</div>
-	
-	 <%@ include file="councilmeeting-agendaDetail.jsp"%> 
-	
 </form:form>
-<div class="row text-center">
-			<div class="add-margin">
-				<a href="javascript:void(0)" class="btn btn-default"
-					onclick="self.close()">Close</a>
-			</div>
-		</div>
+
 <script
 	src="<c:url value='/resources/app/js/councilMeetingHelper.js?rnd=${app_release_no}'/>"></script>
 

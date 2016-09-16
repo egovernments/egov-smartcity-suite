@@ -93,11 +93,11 @@
 					<form:errors path="meetingTime" cssClass="error-msg" />
 				</div>
 				<label class="col-sm-2 control-label text-right"><spring:message
-						code="lbl.meeting.place" /> </label>
+						code="lbl.meeting.place" /><span class="mandatory"></span> </label>
 				<div class="col-sm-3 add-margin">
 					<form:textarea path="meetingLocation" id="meetingLocation" cols="5"
 						rows="2" class="form-control patternvalidation"
-						data-pattern="alphanumericwithspace" minlength="5" maxlength="32" />
+						data-pattern="alphanumericwithspace" required="required" minlength="5" maxlength="32" />
 
 					<form:errors path="meetingLocation" cssClass="error-msg" />
 				</div>

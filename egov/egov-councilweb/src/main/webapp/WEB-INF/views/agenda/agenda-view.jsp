@@ -73,7 +73,7 @@
 				</div>
 			</div>
 			<div class="table-header">
-				<spring:message code="lbl.preamble.details" />
+				<spring:message code="lbl.agenda.details" />
 			</div>
 			<table class="table table-bordered">
 				<thead>
@@ -112,6 +112,7 @@
 	</div>
 		<div class="row text-center">
 			<div class="add-margin">
+				<input type="button" class="btn btn-primary" value="Print" onclick="window.print()">
 				<a href="javascript:void(0)" class="btn btn-default"
 					onclick="self.close()">Close</a>
 			</div>

@@ -39,11 +39,13 @@
  */
 package org.egov.council.web.controller;
 
-import static org.egov.council.utils.constants.CouncilConstants.PREAMBLE_MODULENAME;
 import static org.egov.council.utils.constants.CouncilConstants.AGENDA_MODULENAME;
-import static org.egov.council.utils.constants.CouncilConstants.PREAMBLE_STATUS_APPROVED;
-import static org.egov.council.utils.constants.CouncilConstants.PREAMBLEUSEDINAGENDA;
 import static org.egov.council.utils.constants.CouncilConstants.AGENDA_STATUS_APPROVED;
+import static org.egov.council.utils.constants.CouncilConstants.PREAMBLEUSEDINAGENDA;
+import static org.egov.council.utils.constants.CouncilConstants.PREAMBLE_MODULENAME;
+import static org.egov.council.utils.constants.CouncilConstants.PREAMBLE_STATUS_APPROVED;
+import static org.egov.council.utils.constants.CouncilConstants.REVENUE_HIERARCHY_TYPE;
+import static org.egov.council.utils.constants.CouncilConstants.WARD;
 import static org.egov.infra.web.utils.WebUtils.toJSON;
 
 import java.io.IOException;
@@ -64,7 +66,9 @@ import org.egov.council.service.CouncilAgendaService;
 import org.egov.council.service.CouncilPreambleService;
 import org.egov.council.web.adaptor.CouncilAgendaJsonAdaptor;
 import org.egov.council.web.adaptor.CouncilPreambleJsonAdaptor;
+import org.egov.infra.admin.master.entity.Boundary;
 import org.egov.infra.admin.master.entity.Department;
+import org.egov.infra.admin.master.service.BoundaryService;
 import org.egov.infra.admin.master.service.DepartmentService;
 import org.egov.infra.utils.autonumber.AutonumberServiceBeanResolver;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -111,11 +115,19 @@ public class CouncilAgendaController {
 
 	@Autowired
 	private MessageSource messageSource;
+	
+	@Autowired
+	private BoundaryService boundaryService;
 
-	public @ModelAttribute("departmentList") List<Department> getDepartmentList() {
+	public @ModelAttribute("departments") List<Department> getDepartmentList() {
 		return departmentService.getAllDepartments();
 	}
-
+	
+	public @ModelAttribute("wards") List<Boundary> getWardsList() {
+		return boundaryService.getActiveBoundariesByBndryTypeNameAndHierarchyTypeName(WARD,
+                REVENUE_HIERARCHY_TYPE);
+	}
+	
 	public @ModelAttribute("committeeType") List<CommitteeType> getCommitteTypeList() {
 		return committeeTypeService.getActiveCommiteeType();
 	}

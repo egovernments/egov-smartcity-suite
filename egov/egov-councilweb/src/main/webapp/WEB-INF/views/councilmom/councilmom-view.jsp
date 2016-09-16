@@ -58,7 +58,8 @@
 							<spring:message code="lbl.meeting.type" />
 						</div>
 						<div class="col-sm-3 add-margin view-content">
-							${councilMeeting.committeeType.name}</div>
+							${councilMeeting.committeeType.name}
+						</div>
 						<div class="col-xs-3 add-margin">
 							<spring:message code="lbl.meeting.number" />
 						</div>
@@ -110,7 +111,8 @@
 											varStatus="counter">
 											<tr>
 												<div class="row add-margin">
-													<td align="center">${mom.itemNumber} </td>
+													<td align="center">${mom.itemNumber}
+													</td>
 													<td><c:out value="${mom.preamble.gistOfPreamble}" /></td>
 													<td><c:out value="${mom.agenda.agendaNumber}" /></td>
 													<td><c:out value="${mom.preamble.preambleNumber}" /></td>
@@ -131,32 +133,30 @@
 							</tbody>
 						</table>
 					</div>
-						<c:choose>
-									<c:when test="${!councilMeeting.meetingAttendence.isEmpty()}">
-							
-					<div class="panel-body">
-						<div class="panel-heading">
-							<div class="panel-title">
-								<spring:message code="lbl.mom.attendance" />
-							</div>
-						</div>
-						<table class="table table-bordered">
-							<thead>
-								<tr>
-									<th align="center"><spring:message
-											code="lbl.serial.number" /></th>
-									<th>Member Name</th>
-									<th>Election Ward</th>
-									<th>Designation</th>
-									<th>Qualification</th>
-									<th>Party Affiliation</th>
-									<th>Meeting Attend</th>
-								</tr>
-							</thead>
-							<tbody>
-							<%-- 	<c:choose>
-									<c:when test="${!councilMeeting.meetingAttendence.isEmpty()}">
-							 --%>			<c:forEach items="${councilMeeting.meetingAttendence}"
+					<c:choose>
+						<c:when test="${!councilMeeting.meetingAttendence.isEmpty()}">
+
+							<div class="panel-body">
+								<div class="panel-heading">
+									<div class="panel-title">
+										<spring:message code="lbl.mom.attendance" />
+									</div>
+								</div>
+								<table class="table table-bordered">
+									<thead>
+										<tr>
+											<th align="center"><spring:message
+													code="lbl.serial.number" /></th>
+											<th>Member Name</th>
+											<th>Election Ward</th>
+											<th>Designation</th>
+											<th>Qualification</th>
+											<th>Party Affiliation</th>
+											<th>Meeting Attend</th>
+										</tr>
+									</thead>
+									<tbody>
+										<c:forEach items="${councilMeeting.meetingAttendence}"
 											var="meetingAttend" varStatus="counter">
 											<tr>
 												<td>${counter.index+1}</td>
@@ -170,26 +170,17 @@
 														value="${meetingAttend.committeeMembers.councilMember.qualification.name}" /></td>
 												<td><c:out
 														value="${meetingAttend.committeeMembers.councilMember.partyAffiliation.name}" /></td>
-												<td><c:out value="${meetingAttend.attendedMeeting?'Yes':'No'}" /></td>
+												<td><c:out
+														value="${meetingAttend.attendedMeeting?'Yes':'No'}" /></td>
 											</tr>
 										</c:forEach>
-									<%-- </c:when>
-									<c:otherwise>
-										<div class="col-md-3 col-xs-6 add-margin">
-											<spring:message code="lbl.attendence.Detail" />
-										</div>
-									</c:otherwise>
-								</c:choose> --%>
-							</tbody>
-						</table>
-					</div>
-					</c:when>
-								<%-- 	<c:otherwise>
-										<div class="col-md-3 col-xs-6 add-margin">
-											<spring:message code="lbl.attendence.Detail" />
-										</div>
-									</c:otherwise> --%>
-								</c:choose>
+
+									</tbody>
+								</table>
+							</div>
+						</c:when>
+
+					</c:choose>
 				</div>
 			</div>
 		</div>
@@ -199,5 +190,9 @@
 	<div class="add-margin">
 		<a href="javascript:void(0)" class="btn btn-default"
 			onclick="self.close()">Close</a>
+		<button type="button" id="printAgenda" value="Print Agenda"
+			onclick="location.href='/council/councilmeeting/generateagenda/'+${councilMeeting.id};"
+			class='btn btn-primary'>Print</button>
 	</div>
 </div>
+
