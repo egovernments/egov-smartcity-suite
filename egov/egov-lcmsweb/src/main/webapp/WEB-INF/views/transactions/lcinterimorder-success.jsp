@@ -92,66 +92,64 @@
 							<div class="col-sm-3 add-margin view-content">
 								${legalCaseInterimOrder.notes}</div>
 						</div>
+						<c:choose>
+						<c:when test="${legalCaseInterimOrder.interimOrder.interimOrderType == 'Stay' ||
+						legalCaseInterimOrder.interimOrder.interimOrderType == 'Stay on Condition'}">
 						<div class="row add-border">
 							<div class="col-xs-3 add-margin">
 								<spring:message code="lbl.sendtostandingcounsel" />
 							</div>
 							<div class="col-sm-3 add-margin view-content">
-								<fmt:formatDate pattern="MM/dd/yyyyy"
+								<fmt:formatDate pattern="dd/MM/yyyy"
 									value="${legalCaseInterimOrder.sendtoStandingCounsel}" />
 							</div>
 							<div class="col-xs-3 add-margin">
 								<spring:message code="lbl.petitionfiledon" />
 							</div>
 							<div class="col-sm-3 add-margin view-content">
-								<fmt:formatDate pattern="MM/dd/yyyyy"
+								<fmt:formatDate pattern="dd/MM/yyyy"
 									value="${legalCaseInterimOrder.petitionFiledOn}" />
 							</div>
 						</div>
+						</c:when>
+					</c:choose>
+					<c:choose>
+						<c:when test="${legalCaseInterimOrder.interimOrder.interimOrderType == 'Report file'}">
 						<div class="row add-border">
 							<div class="col-xs-3 add-margin">
 								<spring:message code="lbl.reportfilingdue" />
 							</div>
 							<div class="col-sm-3 add-margin view-content">
-								<fmt:formatDate pattern="MM/dd/yyyyy"
+								<fmt:formatDate pattern="dd/MM/yyyy"
 									value="${legalCaseInterimOrder.reportFilingDue}" />
 							</div>
-							<div class="col-xs-3 add-margin">
-								<spring:message code="lbl.sendtodepartment" />
-							</div>
-							<div class="col-sm-3 add-margin view-content">
-								<fmt:formatDate pattern="MM/dd/yyyyy"
-									value="${legalCaseInterimOrder.sendtoDepartment}" />
-							</div>
-						</div>
-						<div class="row add-border">
 							<div class="col-xs-3 add-margin">
 								<spring:message code="lbl.reportfromhod" />
 							</div>
 							<div class="col-sm-3 add-margin view-content">
-								<fmt:formatDate pattern="MM/dd/yyyyy"
+								<fmt:formatDate pattern="dd/MM/yyyy"
 									value="${legalCaseInterimOrder.reportFromHod}" />
-							</div>
-
-							<div class="col-xs-3 add-margin">
-								<spring:message code="lbl.reportsendtostandingcounsel" />
-							</div>
-							<div class="col-sm-3 add-margin view-content">
-								<fmt:formatDate pattern="MM/dd/yyyyy"
-									value="${legalCaseInterimOrder.reportSendtoStandingCounsel}" />
 							</div>
 						</div>
 						<div class="row add-border">
 							<div class="col-xs-3 add-margin">
+								<spring:message code="lbl.reportsendtostandingcounsel" />
+							</div>
+							<div class="col-sm-3 add-margin view-content">
+								<fmt:formatDate pattern="dd/MM/yyyy"
+									value="${legalCaseInterimOrder.reportSendtoStandingCounsel}" />
+							</div>
+							<div class="col-xs-3 add-margin">
 								<spring:message code="lbl.reportfilingdate" />
 							</div>
 							<div class="col-sm-3 add-margin view-content">
-								<fmt:formatDate pattern="MM/dd/yyyyy"
+								<fmt:formatDate pattern="dd/MM/yyyy"
 									value="${legalCaseInterimOrder.reportFilingDate}" />
 							</div>
 						</div>
+							</c:when>
+					</c:choose>
 					</div>
-
 				</div>
 			</div>
 		</div>
@@ -167,6 +165,7 @@
 					onclick="self.close()">Close</a>
 				</div>
 		</div>
+</div>		
 </form:form>
 <script
 	src="<cdn:url value='/resources/global/js/bootstrap/bootstrap-datepicker.js' context='/egi'/>"></script>
