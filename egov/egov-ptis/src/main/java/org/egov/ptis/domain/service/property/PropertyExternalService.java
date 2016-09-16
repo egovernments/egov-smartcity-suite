@@ -134,8 +134,6 @@ import java.text.MessageFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -150,13 +148,11 @@ import javax.persistence.Query;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.egov.collection.integration.models.BillReceiptInfo;
-import org.egov.collection.integration.models.ReceiptAccountInfo;
 import org.egov.collection.integration.services.CollectionIntegrationService;
 import org.egov.commons.Area;
 import org.egov.commons.Bank;
 import org.egov.commons.Installment;
 import org.egov.commons.dao.BankHibernateDAO;
-import org.egov.commons.dao.InstallmentHibDao;
 import org.egov.dcb.bean.ChequePayment;
 import org.egov.dcb.bean.Payment;
 import org.egov.demand.dao.EgBillDao;
@@ -170,7 +166,6 @@ import org.egov.infra.admin.master.entity.Department;
 import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.admin.master.service.BoundaryService;
 import org.egov.infra.admin.master.service.BoundaryTypeService;
-import org.egov.infra.admin.master.service.ModuleService;
 import org.egov.infra.admin.master.service.UserService;
 import org.egov.infra.config.core.ApplicationThreadLocals;
 import org.egov.infra.exception.ApplicationRuntimeException;
@@ -309,10 +304,6 @@ public class PropertyExternalService {
     private WallTypeService wallTypeService;
     @Autowired
     private WoodTypeService woodTypeService;
-    @Autowired
-    private InstallmentHibDao installmentDao;
-    @Autowired
-    private ModuleService moduleService;
 
     public AssessmentDetails loadAssessmentDetails(final String propertyId, final Integer flag,
             final BasicPropertyStatus status) {
@@ -729,13 +720,6 @@ public class PropertyExternalService {
         ErrorDetails errorDetails = null;
         final BasicProperty basicProperty = basicPropertyDAO.getBasicPropertyByPropertyID(payPropertyTaxDetails
                 .getAssessmentNo());
-        if(basicProperty.getProperty().getPropertyDetail().getPropertyTypeMaster().getCode().equalsIgnoreCase(OWNERSHIP_TYPE_VAC_LAND))
-        	propertyTaxBillable.setVacantLandTaxPayment(true);
-	    
-        Property property = basicProperty.getProperty();
-        PropertyService propService = beanProvider.getBean("propService", PropertyService.class);
-        BigDecimal totalAmountToBePaid = propService.getTotalAmountToBePaidForProperty(property);
-        
         propertyTaxBillable.setBasicProperty(basicProperty);
         propertyTaxBillable.setUserId(2L);
         ApplicationThreadLocals.setUserId(2L);
@@ -781,35 +765,7 @@ public class PropertyExternalService {
             errorDetails = new ErrorDetails();
             errorDetails.setErrorCode(THIRD_PARTY_ERR_CODE_SUCCESS);
             errorDetails.setErrorMessage(THIRD_PARTY_ERR_MSG_SUCCESS);
-            
-            List<ReceiptAccountInfo> receiptAccountsList = new ArrayList<ReceiptAccountInfo>(billReceiptInfo.getAccountDetails());
-            Collections.sort(receiptAccountsList, new Comparator<ReceiptAccountInfo>() {
-                @Override
-                public int compare(ReceiptAccountInfo rcptAcctInfo1, ReceiptAccountInfo rcptAcctInfo2) {
-                	if(rcptAcctInfo1.getOrderNumber() != null && rcptAcctInfo2.getOrderNumber() != null)
-	                    return rcptAcctInfo1.getOrderNumber()
-	                            .compareTo(rcptAcctInfo2.getOrderNumber());
-					return 0;
-                }
-            });
-            String[] paidFrom = null;
-            String[] paidTo = null;
-            for(ReceiptAccountInfo rcptAcctInfo : receiptAccountsList){
-            	if(rcptAcctInfo.getCrAmount().compareTo(ZERO)>0 ){
-            		if(paidFrom == null)
-            			paidFrom = rcptAcctInfo.getDescription().split("-",2);
-            		paidTo = rcptAcctInfo.getDescription().split("-",2);
-            	}
-            }
-            Installment fromInstallment = installmentDao.getInsatllmentByModuleAndDescription(moduleService.getModuleByName(PropertyTaxConstants.PTMODULENAME), paidFrom[1].toString());
-            Installment toInstallment = installmentDao.getInsatllmentByModuleAndDescription(moduleService.getModuleByName(PropertyTaxConstants.PTMODULENAME), paidTo[1].toString());
-            receiptDetails.setPaymentPeriod(DateUtils.getDefaultFormattedDate(fromInstallment.getFromDate())
-            		.concat(" to ").concat(DateUtils.getDefaultFormattedDate(toInstallment.getToDate())));
-            
-            if(totalAmountToBePaid.compareTo(payPropertyTaxDetails.getPaymentAmount())>0)
-            	receiptDetails.setPaymentType("Partially");
-            else
-            	receiptDetails.setPaymentType("Full");
+
             receiptDetails.setErrorDetails(errorDetails);
         }
         return receiptDetails;

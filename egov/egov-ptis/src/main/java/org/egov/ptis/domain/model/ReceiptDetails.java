@@ -62,8 +62,6 @@ public class ReceiptDetails implements Serializable {
     //private String collectionType;
     private ErrorDetails errorDetails;
     private String transactionId;
-    private String paymentPeriod;
-    private String paymentType;
 
     public String getReceiptNo() {
         return receiptNo;
@@ -171,22 +169,6 @@ public class ReceiptDetails implements Serializable {
 
 	public void setPaymentAmount(BigDecimal paymentAmount) {
 		this.paymentAmount = paymentAmount;
-	}
-
-	public String getPaymentPeriod() {
-		return paymentPeriod;
-	}
-
-	public void setPaymentPeriod(String paymentPeriod) {
-		this.paymentPeriod = paymentPeriod;
-	}
-
-	public String getPaymentType() {
-		return paymentType;
-	}
-
-	public void setPaymentType(String paymentType) {
-		this.paymentType = paymentType;
 	}
 
 }
