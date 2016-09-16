@@ -52,9 +52,10 @@ INSERT into eg_action(id,name,url,parentmodule,ordernumber,displayname,enabled,c
 
 INSERT into eg_roleaction values((select id from eg_role where name='Super User'),(select id from eg_action where name='GenerateAgendaPdf'));
 
-INSERT INTO eg_feature_role (ROLE, FEATURE) VALUES ((select id from eg_role where name = 'Council Management Admin') ,(select id FROM eg_feature WHERE name = 'GenerateAgendaPdf'));
+INSERT into eg_roleaction values((select id from eg_role where name='Council Management Admin'),(select id from eg_action where name='GenerateAgendaPdf'));
 
-INSERT INTO eg_feature_role (ROLE, FEATURE) VALUES ((select id from eg_role where name = 'Council Clerk') ,(select id FROM eg_feature WHERE name = 'GenerateAgendaPdf'));
+INSERT into eg_roleaction values((select id from eg_role where name='Council Clerk'),(select id from eg_action where name='GenerateAgendaPdf'));
+
 
 
 -------------------------generate agenda pdf feature mapping---------------------

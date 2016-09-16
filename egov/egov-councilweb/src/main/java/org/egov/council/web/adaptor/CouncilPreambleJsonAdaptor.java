@@ -66,7 +66,7 @@ public class CouncilPreambleJsonAdaptor implements JsonSerializer<CouncilPreambl
 			if (!councilPreamble.getWards().isEmpty()) {
 				for (Boundary ward : councilPreamble.getWards()) {
 					bndryList.append(ward.getName());
-					bndryList.append(",");
+					bndryList.append(',');
 				}
 			}
 			jsonObject.addProperty("ward", bndryList.toString());
