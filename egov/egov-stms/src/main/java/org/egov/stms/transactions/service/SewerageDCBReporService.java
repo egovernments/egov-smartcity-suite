@@ -186,7 +186,7 @@ public class SewerageDCBReporService {
             List<Boundary> boundaryList = new ArrayList<Boundary>();
             dcbResult = new DCBReportWardwiseResult();
             for (SewerageApplicationDetails appDetails : entry.getValue()) {
-                if (appDetails != null) {
+                if (appDetails != null && appDetails.getCurrentDemand()!=null && appDetails.getCurrentDemand().getEgDemandDetails()!=null) {
                     for (EgDemandDetails demandDetails : appDetails.getCurrentDemand().getEgDemandDetails()) {
                         dcbResult.setNoofassessments(entry.getValue().size());
                         dcbResult.setRevenueWard(entry.getKey());
@@ -264,7 +264,7 @@ public class SewerageDCBReporService {
 
             for (SewerageApplicationDetails detail : applicationList) {
                 dcbResult = new DCBReportWardwiseResult();
-                if (detail != null) {
+                if (detail != null && detail.getCurrentDemand()!=null && detail.getCurrentDemand().getEgDemandDetails()!=null) {
                     dcbResult.setShscnumber(detail.getConnection().getShscNumber());
                     dcbResult.setOwnerName(detail.getOwnerName());
                     for (EgDemandDetails demandDetails : detail.getCurrentDemand().getEgDemandDetails()) {
