@@ -44,28 +44,33 @@
 	<input type="hidden" id="councilId" name="id" value="${id}" />
 	<input type="hidden" id="currDate" name="currDate" value="${currDate}" />
 	<div class="row report-section">
-	<div class="col-md-12 table-header text-left">Council Committee Members Who Are All Attended Meeting</div>
+	<div class="col-md-12 table-header text-left"><spring:message code="label.attendance.result.title"/></div>
 	<div class="col-md-12 form-group report-table-container">
 		<table class="table table-bordered table-hover multiheadertbl"
 			id="attendanceResultTable">
 			<thead>
 				<tr>
 					<th>Member Name</th>
-					<th>Election Ward</th>
-					<th>Designation</th>
-					<th>Qualification</th>
-					<th>Party Affiliation</th>
-					<th>Mobile No</th>
-					<th>Address</th>
-					<th>Meeting Type</th>
-					<th>Meeting Date</th>
-					<th>Attendance</th>
+					<th><spring:message code="lbl.electionward"/></th>
+					<th><spring:message code="lbl.designation"/></th>
+					<th><spring:message code="lbl.qualification"/></th>
+					<th><spring:message code="lbl.partyaffiliation"/></th>
+					<th><spring:message code="lbl.mobilenumber"/></th>
+					<th><spring:message code="lbl.residentialaddress"/></th>
+					<th><spring:message code="lbl.meeting.date"/></th>
+					<th><spring:message code="lbl.meeting.type"/></th>
+					<th><spring:message code="label.attendance"/></th>
 				</tr>
 			</thead>
 			<tbody></tbody>
 		</table>
 	</div>
-	
+	<div class="form-group">
+			<div class="text-center">
+				<a href='javascript:void(0)' class='btn btn-default'
+					onclick='self.close()'><spring:message code='lbl.close' /></a>
+			</div>
+	</div>
 </div>	
 
 		<script type="text/javascript"
