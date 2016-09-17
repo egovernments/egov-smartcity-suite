@@ -79,7 +79,7 @@ public class LcmsConstants {
     public static final String Withdrawn = "Withdrawn";
     public static final String WithdrawnDetails = "The case was withdrawn by the party";
     public static final Long IS_ACTIVE = 1L;
-    public static final String LEGAL_CASE_ADVOCATE = "eglcAdvocateMaster";
+    public static final String LEGAL_CASE_ADVOCATE = "advocateMaster";
     public static final String EMPTY_STRING = " ";
     public static final String ZERO_VALUE = "0";
     public static final String SEPARATOR = ",";
@@ -133,13 +133,14 @@ public class LcmsConstants {
     public static final String SERIAL_NO = "serialNumber";
     public static final String COUNT = "count";
     public static final String AGG_ITEM = "aggItem";
-    public static final String AGG_YEAR = "year";
-    public static final String AGG_MONTH = "month";
+    public static final String AGG_YEAR = "Year";
+    public static final String AGG_MONTH = "Month";
     public static final String QRY_CONSTANTS = "Select distinct(count(legalcase.id))";
-    public static final String QRY_SELECTION_CONSTANTS = " from Legalcase legalcase ";
+    public static final String QRY_SELECTION_CONSTANTS = " from LegalCase legalcase ";
     public static final String QRY_GROUPBY_CONSTANTS = " group by ";
     public static final String QRY_ORDERBY_CONSTANTS = " order by ";
     public static final String FILED_BYCOC_FILING_Expenses = "Filing Expenses";
+    
 
     public static final Integer PURPOSE_ID_LEGAL_EXPENSES = 59;
 
@@ -196,5 +197,12 @@ public class LcmsConstants {
     public static final String searchMixedCharType1 = "[0-9a-zA-Z-&/*]+";
     public static final String mixedCharType1withComma = "^[a-z|A-Z|]+[a-z|A-Z|0-9|&/() .,]*";
     public static final String referenceNumberTIRegx = "[0-9a-zA-Z-&/() .]+";
+    
+    public static final String COURTNAME = "Court Name";
+    public static final String COURTTYPE = "Court Type";
+    public static final String CASECATEGORY = "Case Category";
+    public static final String PETITIONTYPE = "Petition Type";
+    public static final String OFFICERINCHRGE = "In charge officer";
+    public static final String CASESTATUS = "Case Status";
 
 }
