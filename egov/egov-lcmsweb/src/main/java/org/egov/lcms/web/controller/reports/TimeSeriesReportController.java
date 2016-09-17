@@ -71,12 +71,6 @@ public class TimeSeriesReportController {
     @Autowired
     private TimeSeriesReportService timeSeriesReportService;
 
-    @ModelAttribute
-    private void getTimeSeriesReport(final Model model) {
-        final TimeSeriesReportResult timeSeriesReportResult = new TimeSeriesReportResult();
-        model.addAttribute("timeSeriesReportResult", timeSeriesReportResult);
-    }
-
     public @ModelAttribute("aggregatedByList") List<String> getAggregatedBy() {
         final List<String> aggregatedByList = new ArrayList<String>();
         aggregatedByList.add(LcmsConstants.COURTNAME);
@@ -97,6 +91,7 @@ public class TimeSeriesReportController {
 
     @RequestMapping(method = RequestMethod.GET, value = "/timeSeriesReport")
     public String searchForm(final Model model) {
+        model.addAttribute("timeSeriesReportResult", new TimeSeriesReportResult());
         model.addAttribute("currentDate", new Date());
         return "timeseriesreport-form";
     }
