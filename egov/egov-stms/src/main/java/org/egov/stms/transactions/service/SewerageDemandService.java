@@ -202,6 +202,21 @@ public class SewerageDemandService {
         return pendingTaxCollection;
 
     }
+    public Boolean checkAnyTaxIsPendingToCollectExcludingAdvance(final EgDemand demand) {
+        Boolean taxPendingForCollection = false;
+
+        if (demand != null)
+            for (final EgDemandDetails demandDtl : demand.getEgDemandDetails())
+                if ( !demandDtl.getEgDemandReason().getEgDemandReasonMaster().getCode()
+                        .equalsIgnoreCase(SewerageTaxConstants.FEES_ADVANCE_CODE) && demandDtl.getAmount().subtract(demandDtl.getAmtCollected()).compareTo(BigDecimal.ZERO) > 0) {
+                    taxPendingForCollection = true;
+                    break;
+
+                }
+
+        return taxPendingForCollection;
+
+    }
 
     /**
      * Check any tax pay pending for selected advertisement in selected installment
@@ -348,16 +363,16 @@ public class SewerageDemandService {
     public EgDemand updateDemandOnChangeInClosets(SewerageApplicationDetails oldSewerageApplicationDetails,
             final List<SewerageConnectionFee> connectionFees, final EgDemand demand) {
         final Installment installment = getCurrentInstallment();
-        BigDecimal totalDemandAmount = BigDecimal.ZERO;
+        BigDecimal totalDemandAmount = BigDecimal.ZERO;//(demand.getBaseDemand()!=null?demand.getBaseDemand(): BigDecimal.ZERO); //TODO : CHECK THIS VARIABLE.
         BigDecimal oldDonationCharge = BigDecimal.ZERO;
         BigDecimal oldSewerageTax = BigDecimal.ZERO;
-
+        BigDecimal oldApplicationAdvanceAmount = BigDecimal.ZERO;
+        Boolean oldAdvanceUsedInSewerageTaxOrAddedAsAdvance=false;
         BigDecimal currentDonationCharge = BigDecimal.ZERO;
         BigDecimal currentSewerageTax = BigDecimal.ZERO;
 
         boolean demandDtlPresent = false;
-
-        if (oldSewerageApplicationDetails != null) {
+          if (oldSewerageApplicationDetails != null) {
             for (final SewerageConnectionFee oldSewerageConnectionFee : oldSewerageApplicationDetails.getConnectionFees()) {
                 if (oldSewerageConnectionFee.getFeesDetail().getCode()
                         .equalsIgnoreCase(SewerageTaxConstants.FEES_SEWERAGETAX_CODE)) {
@@ -368,8 +383,33 @@ public class SewerageDemandService {
                     oldDonationCharge = oldDonationCharge.add(BigDecimal.valueOf(oldSewerageConnectionFee.getAmount()));
                 }
             }
+          
+            //Check any advance amount present in old sewerage application. If yes, use advance amount and reset advance amount as zero. This amount will be either
+            // carry forward in new application demand or will adjust with current application sewerage tax.
+          if(oldSewerageApplicationDetails.getCurrentDemand()!=null){  
+            for (final EgDemandDetails dmdDtl : oldSewerageApplicationDetails.getCurrentDemand().getEgDemandDetails()) {
+              if( dmdDtl.getEgDemandReason().getEgDemandReasonMaster().getCode()
+                .equalsIgnoreCase(SewerageTaxConstants.FEES_ADVANCE_CODE))
+               {
+                  oldApplicationAdvanceAmount=oldApplicationAdvanceAmount.add(dmdDtl.getAmount());
+                  dmdDtl.setAmount(BigDecimal.ZERO);
+                   dmdDtl.setAmtCollected(BigDecimal.ZERO);
+               }
+            }
+          }
         }
 
+          if(demand!=null){  
+              for (final EgDemandDetails dmdDtl : demand.getEgDemandDetails()) {
+                if( dmdDtl.getEgDemandReason().getEgDemandReasonMaster().getCode()
+                  .equalsIgnoreCase(SewerageTaxConstants.FEES_ADVANCE_CODE))
+                 {
+                    oldApplicationAdvanceAmount=oldApplicationAdvanceAmount.add(dmdDtl.getAmount());
+                   //If current demand updated, then use advance amount in sewerage tax payment.
+                 }
+              }
+            }
+          
         for (final SewerageConnectionFee scf : connectionFees) {
 
             if (scf.getFeesDetail().getCode().equalsIgnoreCase(SewerageTaxConstants.FEES_SEWERAGETAX_CODE)) {
@@ -393,35 +433,69 @@ public class SewerageDemandService {
             for (final EgDemandDetails dmdDtl : demand.getEgDemandDetails()) {
 
                 if (scf.getFeesDetail().getCode()
-                        .equalsIgnoreCase(dmdDtl.getEgDemandReason().getEgDemandReasonMaster().getCode())) {
+                        .equalsIgnoreCase(dmdDtl.getEgDemandReason().getEgDemandReasonMaster().getCode()) 
+                       &&  !scf.getFeesDetail().getCode().equalsIgnoreCase(SewerageTaxConstants.FEE_INSPECTIONCHARGE)) {
 
                     demandDtlPresent = true;
 
                     if (scf.getFeesDetail().getCode().equalsIgnoreCase(SewerageTaxConstants.FEES_DONATIONCHARGE_CODE)) {
                         // If donation chanrge more than earlier installment, then collect amount in this installment
                         if (currentDonationCharge.compareTo(oldDonationCharge) > 0) {
-                            dmdDtl.setAmount(currentDonationCharge.subtract(oldDonationCharge));
+                            
+                            totalDemandAmount = totalDemandAmount.subtract(dmdDtl.getAmount().subtract(dmdDtl.getAmtCollected()));
+                            dmdDtl.setAmount(currentDonationCharge);
+                            dmdDtl.setAmtCollected(oldSewerageTax);
                             totalDemandAmount = totalDemandAmount.add(currentDonationCharge.subtract(oldDonationCharge));
+
                         }
                     } else if (scf.getFeesDetail().getCode().equalsIgnoreCase(SewerageTaxConstants.FEES_SEWERAGETAX_CODE)) {
                         // Mean tax increased and diffence amount will be collected in this installment.
                         if (currentSewerageTax.compareTo(oldSewerageTax) > 0) {
-                            dmdDtl.setAmount(currentSewerageTax);
-                            dmdDtl.setAmtCollected(oldSewerageTax);
-                            totalDemandAmount = totalDemandAmount.add(currentSewerageTax.subtract(oldSewerageTax));
+                             totalDemandAmount = totalDemandAmount.subtract(dmdDtl.getAmount().subtract(dmdDtl.getAmtCollected()));
+                             dmdDtl.setAmount(currentSewerageTax);
+                             
+                            BigDecimal differenceAmount=currentSewerageTax.subtract(oldSewerageTax);
+                            if(oldApplicationAdvanceAmount.compareTo(BigDecimal.ZERO)>0)
+                                {
+                                // Eg: 500 diff, 100 advance present. adjust 100
+                                // as collected.
+                                if ((differenceAmount).compareTo(oldApplicationAdvanceAmount) > 0) {
+                                    dmdDtl.setAmtCollected(oldSewerageTax.add(oldApplicationAdvanceAmount));
+                                    oldApplicationAdvanceAmount = BigDecimal.ZERO; oldAdvanceUsedInSewerageTaxOrAddedAsAdvance=true;
+                                } else { // Eg: 500 diff, 600 advance present.
+                                         // adjust 500 as collected.
+                                    dmdDtl.setAmtCollected(oldSewerageTax.add(differenceAmount));
+                                    oldApplicationAdvanceAmount = oldApplicationAdvanceAmount
+                                            .subtract(differenceAmount);
+                                  //Add remaining amount as advance.
+                                    createAdvanceDemandDetail(demand, oldApplicationAdvanceAmount);
+                                    oldAdvanceUsedInSewerageTaxOrAddedAsAdvance=true;
+                                }
 
-                        } else if (oldSewerageTax.compareTo(BigDecimal.ZERO) > 0)// Mean, paid more amount in old installment.
+                            }else {
+                               
+                                dmdDtl.setAmtCollected(oldSewerageTax);
+                                totalDemandAmount = totalDemandAmount.add(differenceAmount);
+                                
+                            }
+                         // check sewerage tax, we need to adjust ? save remaining amount as advance for current demand.
+                         // if tax is less and advance also present.. then add amount into current demand..
+                         } else if (oldSewerageTax.compareTo(BigDecimal.ZERO) > 0)// Mean, paid more amount in old installment.
                                                                                  // Difference amount will be used as next
                                                                                  // installment tax.
-                        {
-                            dmdDtl.setAmount(oldSewerageTax);
-                            dmdDtl.setAmtCollected(oldSewerageTax);
-
-                            if (oldSewerageTax.compareTo(currentSewerageTax) > 0) {
+                        {  totalDemandAmount = totalDemandAmount.subtract(dmdDtl.getAmount().subtract(dmdDtl.getAmtCollected()));
+                           dmdDtl.setAmount(currentSewerageTax);
+                           dmdDtl.setAmtCollected(currentSewerageTax);
+                           totalDemandAmount = totalDemandAmount.add(currentSewerageTax); 
+                            
+                            //Add remaining advance as current demand advance.
+                            if (oldSewerageTax.compareTo(currentSewerageTax) > 0 || (oldApplicationAdvanceAmount.compareTo(BigDecimal.ZERO)>0)) {
                                 // Add amount to advance of next installment if not present in this transaction.
 
-                                createAdvanceDemandDetail(demand, oldSewerageTax.subtract(currentSewerageTax));
-
+//TODO: CHECK WHETHER WE NEED TO UPDATE ADVANCE OR ADD AS FRESH ONCE?
+                                createAdvanceDemandDetail(demand, (oldSewerageTax.subtract(currentSewerageTax)).add(oldApplicationAdvanceAmount));
+                                oldAdvanceUsedInSewerageTaxOrAddedAsAdvance=true;
+                              
                             }
                         }
 
@@ -434,33 +508,55 @@ public class SewerageDemandService {
                 }
             }
 
-            if (!demandDtlPresent && scf.getAmount() > 0) {
+            if (!demandDtlPresent && scf.getAmount() > 0 && !scf.getFeesDetail().getCode().equalsIgnoreCase(SewerageTaxConstants.FEE_INSPECTIONCHARGE)) {
 
                 if (scf.getFeesDetail().getCode().equalsIgnoreCase(SewerageTaxConstants.FEES_DONATIONCHARGE_CODE)) {
                     if (currentDonationCharge.compareTo(oldDonationCharge) > 0) {
-                        demand.addEgDemandDetails(createDemandDetails(currentDonationCharge.subtract(oldDonationCharge),
+                        demand.addEgDemandDetails(createDemandDetails(currentDonationCharge,
                                 getDemandReasonByCodeAndInstallment(scf.getFeesDetail().getCode(), installment.getId()),
-                                BigDecimal.ZERO));
-                        totalDemandAmount = totalDemandAmount.add(BigDecimal.valueOf(scf.getAmount()));
+                                oldDonationCharge));
+                        totalDemandAmount = totalDemandAmount.add(currentDonationCharge.subtract(oldDonationCharge));
                     }
                 } else if (scf.getFeesDetail().getCode().equalsIgnoreCase(SewerageTaxConstants.FEES_SEWERAGETAX_CODE)) {
                     // Mean tax increased and diffence amount will be collected in this installment.
                     if (currentSewerageTax.compareTo(oldSewerageTax) > 0) {
+                        
+                        BigDecimal differenceAmount=currentSewerageTax.subtract(oldSewerageTax);
+                        BigDecimal amoountCollected=oldSewerageTax;
+                        if(oldApplicationAdvanceAmount.compareTo(BigDecimal.ZERO)>0)
+                            {
+                            // Eg: 500 diff, 100 advance present. adjust 100
+                            // as collected.
+                            if ((differenceAmount).compareTo(oldApplicationAdvanceAmount) > 0) {
+                                amoountCollected=oldSewerageTax.add(oldApplicationAdvanceAmount);
+                                oldApplicationAdvanceAmount = BigDecimal.ZERO;oldAdvanceUsedInSewerageTaxOrAddedAsAdvance=true;
+                            } else { // Eg: 500 diff, 600 advance present.
+                                     // adjust 500 as collected.
+                                amoountCollected=oldSewerageTax.add(differenceAmount);
+                                oldApplicationAdvanceAmount = oldApplicationAdvanceAmount
+                                        .subtract(differenceAmount);
+                                //Add remaining amount as advance.
+                                createAdvanceDemandDetail(demand, oldApplicationAdvanceAmount);oldAdvanceUsedInSewerageTaxOrAddedAsAdvance=true;
+                            }
+
+                        }
+                        
                         demand.addEgDemandDetails(createDemandDetails(currentSewerageTax,
                                 getDemandReasonByCodeAndInstallment(scf.getFeesDetail().getCode(), installment.getId()),
-                                oldSewerageTax));
-                        totalDemandAmount = totalDemandAmount.add(currentSewerageTax.subtract(oldSewerageTax));
+                                amoountCollected));
+                        totalDemandAmount = totalDemandAmount.add(currentSewerageTax.subtract(amoountCollected));
+                        
 
                     } else if (oldSewerageTax.compareTo(BigDecimal.ZERO) > 0 )// Mean, paid more amount in old installment.
                                                                              // Difference amount will be used as next installment tax.
                     {
-                        if (oldSewerageTax.compareTo(currentSewerageTax) > 0) {
-                            demand.addEgDemandDetails(createDemandDetails(oldSewerageTax,
+                        if (oldSewerageTax.compareTo(currentSewerageTax) >= 0 || (oldApplicationAdvanceAmount.compareTo(BigDecimal.ZERO)>0)) {
+                            demand.addEgDemandDetails(createDemandDetails(currentSewerageTax,
                                 getDemandReasonByCodeAndInstallment(scf.getFeesDetail().getCode(), installment.getId()), 
-                                oldSewerageTax));
+                                currentSewerageTax));
                             // Add amount to advance of next installment if not present in this transaction.
-                            createAdvanceDemandDetail(demand, oldSewerageTax.subtract(currentSewerageTax));
-                            // totalDemandAmount = totalDemandAmount.add(oldSewerageTax.subtract(currentSewerageTax));
+                            createAdvanceDemandDetail(demand, (oldSewerageTax.subtract(currentSewerageTax)).add(oldApplicationAdvanceAmount));
+                             totalDemandAmount = totalDemandAmount.add(((currentSewerageTax)));oldAdvanceUsedInSewerageTaxOrAddedAsAdvance=true;
                         }
                     }
 
@@ -471,15 +567,20 @@ public class SewerageDemandService {
                     totalDemandAmount = totalDemandAmount.add(BigDecimal.valueOf(scf.getAmount()));
                 }
             }
+            //TODO: oldApplicationAdvanceAmount ADD TO ADVANCE.. IF THERE IS NO CHANGES..
         }
+        //Copy Advance from previous demand and add to current demand(iff there is no adjustment happened in sewerage tax
+        if(!oldAdvanceUsedInSewerageTaxOrAddedAsAdvance && oldApplicationAdvanceAmount.compareTo(BigDecimal.ZERO)>0)
+            createAdvanceDemandDetail(demand,oldApplicationAdvanceAmount);
         demand.addBaseDemand(totalDemandAmount.setScale(0, BigDecimal.ROUND_HALF_UP));
         return demand;
 
     }
 
     private void createAdvanceDemandDetail(EgDemand demand, BigDecimal amount) {
-        // TODO Auto-generated method stub
-
+      
+//TODO : CHECK WHETHER APPLICATION IN SAME INSTALLMENT OR DIFFERENT ?
+        
         // get next installment
         Installment nextInstallment = getNextInstallment();
         Boolean advancePresent = false;
@@ -488,9 +589,9 @@ public class SewerageDemandService {
                     .equalsIgnoreCase(SewerageTaxConstants.FEES_ADVANCE_CODE)
                     && nextInstallment != null && nextInstallment.getDescription()
                             .equalsIgnoreCase(dmdDtl.getEgDemandReason().getEgInstallmentMaster().getDescription())) {
-                dmdDtl.getEgDemand().getBaseDemand().subtract(dmdDtl.getAmount());
+               dmdDtl.getEgDemand().getBaseDemand().subtract(dmdDtl.getAmount());
                 dmdDtl.setAmount(amount);
-                dmdDtl.getEgDemand().getBaseDemand().add(amount);
+               dmdDtl.getEgDemand().getBaseDemand().add(amount);
 
             }
         }

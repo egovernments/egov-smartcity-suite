@@ -97,9 +97,9 @@ public class SewerageBillServiceImpl extends BillServiceInterface {
                     .compareTo(c2.getEgDemandReason().getEgDemandReasonMaster().getReasonMaster()));
 
         for (final EgDemandDetails demandDetail : details)
-            if (demandDetail.getAmount().compareTo(BigDecimal.ZERO) > 0) {
-                BigDecimal creaditAmt = BigDecimal.ZERO;
-                creaditAmt = demandDetail.getAmount().subtract(demandDetail.getAmtCollected());
+            if (demandDetail.getAmount().compareTo(BigDecimal.ZERO) > 0 && !demandDetail.getEgDemandReason().getEgDemandReasonMaster().getCode()
+                    .equalsIgnoreCase(SewerageTaxConstants.FEES_ADVANCE_CODE)) {
+                BigDecimal creaditAmt = demandDetail.getAmount().subtract(demandDetail.getAmtCollected());
 
                 // If Amount- collected amount greather than zero, then send
                 // these demand details to collection.

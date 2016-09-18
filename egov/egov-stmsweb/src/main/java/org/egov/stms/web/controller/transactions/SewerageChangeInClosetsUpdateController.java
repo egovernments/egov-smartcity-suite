@@ -43,31 +43,25 @@ import java.math.BigDecimal;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.stream.Collectors;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 import javax.validation.Valid;
 import javax.validation.ValidationException;
 
-import org.apache.commons.lang3.ArrayUtils;
 import org.egov.commons.service.UOMService;
 import org.egov.eis.entity.Assignment;
 import org.egov.eis.service.AssignmentService;
 import org.egov.eis.web.contract.WorkflowContainer;
 import org.egov.eis.web.controller.workflow.GenericWorkFlowController;
 import org.egov.infra.admin.master.service.DepartmentService;
-import org.egov.infra.admin.master.service.UserService;
-import org.egov.infra.exception.ApplicationRuntimeException;
 import org.egov.infra.filestore.entity.FileStoreMapper;
-import org.egov.infra.filestore.service.FileStoreService;
 import org.egov.infra.security.utils.SecurityUtils;
 import org.egov.ptis.domain.model.AssessmentDetails;
 import org.egov.ptis.domain.model.PropertyTaxDetails;
@@ -75,9 +69,7 @@ import org.egov.ptis.domain.service.property.PropertyExternalService;
 import org.egov.stms.masters.entity.FeesDetailMaster;
 import org.egov.stms.masters.entity.enums.OwnerOfTheRoad;
 import org.egov.stms.masters.entity.enums.PropertyType;
-import org.egov.stms.masters.service.DocumentTypeMasterService;
 import org.egov.stms.masters.service.FeesDetailMasterService;
-import org.egov.stms.masters.service.SewerageApplicationTypeService;
 import org.egov.stms.transactions.charges.SewerageChargeCalculationService;
 import org.egov.stms.transactions.entity.SewerageApplicationDetails;
 import org.egov.stms.transactions.entity.SewerageConnectionEstimationDetails;
@@ -86,7 +78,7 @@ import org.egov.stms.transactions.entity.SewerageFieldInspection;
 import org.egov.stms.transactions.entity.SewerageFieldInspectionDetails;
 import org.egov.stms.transactions.service.SewerageApplicationDetailsService;
 import org.egov.stms.transactions.service.SewerageConnectionFeeService;
-import org.egov.stms.transactions.service.SewerageConnectionService;
+import org.egov.stms.transactions.service.SewerageDemandService;
 import org.egov.stms.transactions.service.SewerageEstimationDetailsService;
 import org.egov.stms.transactions.service.SewerageFieldInspectionDetailsService;
 import org.egov.stms.transactions.service.SewerageThirdPartyServices;
@@ -94,7 +86,6 @@ import org.egov.stms.utils.SewerageInspectionDetailsComparatorById;
 import org.egov.stms.utils.SewerageTaxUtils;
 import org.egov.stms.utils.constants.SewerageTaxConstants;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -122,14 +113,7 @@ public class SewerageChangeInClosetsUpdateController extends GenericWorkFlowCont
     private SecurityUtils securityUtils;
 
     @Autowired
-    private UserService userService;
-
-    @Autowired
     private AssignmentService assignmentService;
-
-    @Autowired
-    @Qualifier("fileStoreService")
-    protected FileStoreService fileStoreService;
 
     @Autowired
     private FeesDetailMasterService feesDetailMasterService;
@@ -140,17 +124,9 @@ public class SewerageChangeInClosetsUpdateController extends GenericWorkFlowCont
     @Autowired
     private SewerageChargeCalculationService sewerageChargeCalculationService;
     
-    @Autowired
-    private SewerageApplicationTypeService sewerageApplicationTypeService;
-    
-    @Autowired
-    private DocumentTypeMasterService documentTypeMasterService;
     
     @Autowired
     private SewerageConnectionFeeService SewerageConnectionFeeService;
-    
-    @Autowired
-    private SewerageConnectionService sewerageConnectionService;
     
     @Autowired
     private SewerageEstimationDetailsService sewerageEstimationDetailsService;
@@ -164,6 +140,8 @@ public class SewerageChangeInClosetsUpdateController extends GenericWorkFlowCont
     @Autowired
     private SewerageThirdPartyServices sewerageThirdPartyServices;
     
+    @Autowired
+    private SewerageDemandService sewerageDemandService;
     @Autowired
     public SewerageChangeInClosetsUpdateController(
             final SewerageApplicationDetailsService sewerageApplicationDetailsService,
@@ -251,44 +229,11 @@ public class SewerageChangeInClosetsUpdateController extends GenericWorkFlowCont
             populateDonationSewerageTax(sewerageApplicationDetails);
         }
         
-        //After modification if demand reduced, sewerage tax collection shld not be done. Hence directly fwd application from DEE to EE
+        //After modification if demand reduced, sewerage tax collection shold not be done. Hence directly fwd application from DEE to EE
         if(sewerageApplicationDetails.getStatus()!=null && 
                 (sewerageApplicationDetails.getStatus().getCode().equalsIgnoreCase(SewerageTaxConstants.APPLICATION_STATUS_INITIALAPPROVED) ||
                         sewerageApplicationDetails.getStatus().getCode().equalsIgnoreCase(SewerageTaxConstants.APPLICATION_STATUS_DEEAPPROVED))){    
-            SewerageApplicationDetails oldSewerageAppDtls = sewerageApplicationDetailsService.findByConnection_ShscNumberAndIsActive(sewerageApplicationDetails.getConnection().getShscNumber());
-            
-            BigDecimal oldDonationCharge = BigDecimal.ZERO;
-            BigDecimal oldSewerageTax = BigDecimal.ZERO;
-            
-            BigDecimal currentDonationCharge=BigDecimal.ZERO;
-            BigDecimal currentSewerageTax=BigDecimal.ZERO;
-            
-            if(oldSewerageAppDtls!=null){  
-                for (final SewerageConnectionFee oldSewerageConnectionFee : oldSewerageAppDtls.getConnectionFees()) {
-                    if (oldSewerageConnectionFee.getFeesDetail().getCode().equalsIgnoreCase(SewerageTaxConstants.FEES_SEWERAGETAX_CODE))
-                    {
-                        oldSewerageTax=oldSewerageTax.add(BigDecimal.valueOf(oldSewerageConnectionFee.getAmount()));
-                    }
-                    if (oldSewerageConnectionFee.getFeesDetail().getCode().equalsIgnoreCase(SewerageTaxConstants.FEES_DONATIONCHARGE_CODE))
-                    {
-                        oldDonationCharge=oldDonationCharge.add(BigDecimal.valueOf(oldSewerageConnectionFee.getAmount()));
-                    }
-                }
-            }
-            
-            for (final SewerageConnectionFee scf : sewerageApplicationDetails.getConnectionFees()) {
-                if (scf.getFeesDetail().getCode().equalsIgnoreCase(SewerageTaxConstants.FEES_SEWERAGETAX_CODE)) 
-                {
-                    currentSewerageTax=currentSewerageTax.add(BigDecimal.valueOf(scf.getAmount()));
-                }
-                if (scf.getFeesDetail().getCode().equalsIgnoreCase(SewerageTaxConstants.FEES_DONATIONCHARGE_CODE))
-                {
-                    currentDonationCharge=currentDonationCharge.add(BigDecimal.valueOf(scf.getAmount()));
-                }
-            }
-            
-            if((currentDonationCharge.compareTo(oldDonationCharge)<=0) && (currentSewerageTax.compareTo(oldSewerageTax)<=0))
-            {
+            if(!sewerageDemandService.checkAnyTaxIsPendingToCollectExcludingAdvance(sewerageApplicationDetails.getCurrentDemand())) {
                 additionalRule=SewerageTaxConstants.CHANGEINCLOSETS_NOCOLLECTION;
                 if(sewerageApplicationDetails.getStatus().getCode().equalsIgnoreCase(SewerageTaxConstants.APPLICATION_STATUS_INITIALAPPROVED))
                     model.addAttribute("showApprovalDtls","yes");

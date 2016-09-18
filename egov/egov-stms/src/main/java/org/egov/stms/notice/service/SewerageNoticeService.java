@@ -344,7 +344,7 @@ public class SewerageNoticeService {
             } else{ 
                 if (sewerageApplicationDetails.getCurrentDemand() != null) {
                     SewerageApplicationDetails oldSewerageApplicationDetails = sewerageApplicationDetailsService.findByConnection_ShscNumberAndIsActive(sewerageApplicationDetails.getConnection().getShscNumber());
-                    Map<String, BigDecimal> donationSewerageFeesDtls = getDonation_SewerageChargesForChangeInClosets(oldSewerageApplicationDetails,sewerageApplicationDetails.getConnectionFees(),sewerageApplicationDetails.getCurrentDemand());
+                    Map<String, BigDecimal> donationSewerageFeesDtls = getDonation_SewerageChargesForChangeInClosets(sewerageApplicationDetails.getCurrentDemand());
                     estimationCharges = donationSewerageFeesDtls.get("estimationCharges");
                     donationCharges = donationSewerageFeesDtls.get("donationCharges");
                     sewerageCharges = donationSewerageFeesDtls.get("sewerageTax");
@@ -377,59 +377,25 @@ public class SewerageNoticeService {
     }
     
   
-    public Map<String, BigDecimal> getDonation_SewerageChargesForChangeInClosets(SewerageApplicationDetails oldSewerageApplicationDetails,final List<SewerageConnectionFee> connectionFees, final EgDemand demand) {
+    public Map<String, BigDecimal> getDonation_SewerageChargesForChangeInClosets(final EgDemand demand) {
+        BigDecimal currentEstimationCharges = BigDecimal.ZERO;
 
-        BigDecimal oldDonationCharge = BigDecimal.ZERO;
-        BigDecimal oldSewerageTax = BigDecimal.ZERO;
-        
-        BigDecimal currentDonationCharge=BigDecimal.ZERO;
-        BigDecimal currentSewerageTax=BigDecimal.ZERO;
-        BigDecimal currentEstimationCharges=BigDecimal.ZERO;
-        
-        BigDecimal totalDontationCharge=BigDecimal.ZERO;
-        BigDecimal totalSewerageTax=BigDecimal.ZERO;
-        
+        BigDecimal totalDontationCharge = BigDecimal.ZERO;
+        BigDecimal totalSewerageTax = BigDecimal.ZERO;
+
         Map<String, BigDecimal> donationSewerageFees = new HashMap<String, BigDecimal>();
-        if(oldSewerageApplicationDetails!=null){  
-            for (final SewerageConnectionFee oldSewerageConnectionFee : oldSewerageApplicationDetails.getConnectionFees()) {
-                if (oldSewerageConnectionFee.getFeesDetail().getCode().equalsIgnoreCase(SewerageTaxConstants.FEES_SEWERAGETAX_CODE))
-                    oldSewerageTax=oldSewerageTax.add(BigDecimal.valueOf(oldSewerageConnectionFee.getAmount()));
-                if (oldSewerageConnectionFee.getFeesDetail().getCode().equalsIgnoreCase(SewerageTaxConstants.FEES_DONATIONCHARGE_CODE))
-                oldDonationCharge=oldDonationCharge.add(BigDecimal.valueOf(oldSewerageConnectionFee.getAmount()));
+
+        for (final EgDemandDetails dmdDtl : demand.getEgDemandDetails()) {
+            if (SewerageTaxConstants.FEES_DONATIONCHARGE_CODE
+                    .equalsIgnoreCase(dmdDtl.getEgDemandReason().getEgDemandReasonMaster().getCode())) {
+                totalDontationCharge=totalDontationCharge.add(dmdDtl.getAmount().subtract(dmdDtl.getAmtCollected()));
             }
-        }
-        
-        for (final SewerageConnectionFee scf : connectionFees) {
-            if (scf.getFeesDetail().getCode().equalsIgnoreCase(SewerageTaxConstants.FEES_SEWERAGETAX_CODE)) 
-                currentSewerageTax=currentSewerageTax.add(BigDecimal.valueOf(scf.getAmount()));
-            if (scf.getFeesDetail().getCode().equalsIgnoreCase(SewerageTaxConstants.FEES_DONATIONCHARGE_CODE))
-                currentDonationCharge=currentDonationCharge.add(BigDecimal.valueOf(scf.getAmount()));
-            if (scf.getFeesDetail().getCode().equalsIgnoreCase(SewerageTaxConstants.FEES_ESTIMATIONCHARGES_CODE))
-                currentEstimationCharges = BigDecimal.valueOf(scf.getAmount());
-        }
-        
-      //Compare previous tax deposit amount and sewerage tax.
-        // if donation amount is less then previous  detail , then do not create donation amount, else difference amount will be added.
-        // if sewerage tax more, then add difference amount.
-        for (final SewerageConnectionFee scf : connectionFees) {
-            for (final EgDemandDetails dmdDtl : demand.getEgDemandDetails()) {
-                    if (scf.getFeesDetail().getCode()
-                            .equalsIgnoreCase(dmdDtl.getEgDemandReason().getEgDemandReasonMaster().getCode())) {
-                        if (scf.getFeesDetail().getCode().equalsIgnoreCase(SewerageTaxConstants.FEES_DONATIONCHARGE_CODE))
-                        {
-                            // donation chanrge more than earlier installment
-                            if(currentDonationCharge.compareTo(oldDonationCharge)>0)
-                                totalDontationCharge=currentDonationCharge.subtract(oldDonationCharge);
-                        }
-                        else if (scf.getFeesDetail().getCode().equalsIgnoreCase(SewerageTaxConstants.FEES_SEWERAGETAX_CODE))
-                        {
-                            //tax increased 
-                            if(currentSewerageTax.compareTo(oldSewerageTax)>0)
-                                totalSewerageTax = currentSewerageTax.subtract(oldSewerageTax);
-                            else if(oldSewerageTax.compareTo(BigDecimal.ZERO)>0)
-                                totalSewerageTax =  BigDecimal.ZERO; //In case of Advance show 0
-                        }
-                    }
+            else if (SewerageTaxConstants.FEES_SEWERAGETAX_CODE
+                    .equalsIgnoreCase(dmdDtl.getEgDemandReason().getEgDemandReasonMaster().getCode())) {
+                totalSewerageTax=totalSewerageTax.add(dmdDtl.getAmount().subtract(dmdDtl.getAmtCollected()));
+            }else  if (SewerageTaxConstants.FEES_ESTIMATIONCHARGES_CODE 
+                    .equalsIgnoreCase(dmdDtl.getEgDemandReason().getEgDemandReasonMaster().getCode())) {
+                currentEstimationCharges=currentEstimationCharges.add(dmdDtl.getAmount().subtract(dmdDtl.getAmtCollected()));
             }
         }
         donationSewerageFees.put("donationCharges", totalDontationCharge);
