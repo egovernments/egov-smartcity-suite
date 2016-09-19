@@ -119,4 +119,3 @@
 				onclick='self.close()'><spring:message code='lbl.close' /></a>
 		</div>
 	</div>
-	</script>

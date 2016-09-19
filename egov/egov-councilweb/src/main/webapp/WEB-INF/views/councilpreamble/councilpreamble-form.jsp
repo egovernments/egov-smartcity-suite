@@ -32,10 +32,13 @@
 				<div class="form-group">
 				<label class="col-sm-2 control-label text-right"><spring:message
 						code="lbl.gistofpreamble" /><span class="mandatory"></span></label>
-				<div class="col-sm-3 add-margin">
-					<form:textarea path="gistOfPreamble" class="form-control text-left patternvalidation" maxlength="5000" required ="required"/>
+				<div class="col-sm-8 add-margin">
+					<form:textarea path="gistOfPreamble" id="gistOfPreamble" data-role="none" rows="10" class="form-control text-left patternvalidation"
+					 maxlength="5000" required ="required"/>
 					<form:errors path="gistOfPreamble" cssClass="error-msg" />
 				</div>
+				
+				
 				<%-- <label class="col-sm-2 control-label text-right"><spring:message
 						code="lbl.PreambleType" /> <span class="mandatory"></span></label>
 				<div class="col-sm-3 add-margin">
@@ -84,6 +87,7 @@
 						</c:otherwise>
 					</c:choose>
 				</div>
+				
 				<label class="col-sm-2 control-label text-right"><spring:message
 						code="lbl.ward.no" /></label>
 				<div class="col-sm-3 add-margin">
@@ -94,15 +98,15 @@
 					<form:errors path="wards" cssClass="error-msg" /> 
 				</div>
 				<spring:message code="lbl.pressCntrlToSelectMultipleWards"></spring:message>
-				<c:if test="${councilPreamble.preambleNumber!= null && !''.equalsIgnoreCase(councilPreamble.preambleNumber)}">
-				<label class="col-sm-2 control-label text-right">	<spring:message code="lbl.preamble.number" /> </label>
-				<div class="col-sm-3 add-margin"> ${councilPreamble.preambleNumber}		</div>
-				</c:if>
-				</div>
+				
+					<c:if test="${councilPreamble.preambleNumber!= null && !''.equalsIgnoreCase(councilPreamble.preambleNumber)}">
+					<label class="col-sm-2 control-label text-right">	<spring:message code="lbl.preamble.number" /> </label>
+					<div class="col-sm-3 add-margin"> ${councilPreamble.preambleNumber}		</div>
+					</c:if>
+				
 				<input type="hidden" name="councilPreamble" value="${councilPreamble.id}" />
 					<form:hidden path="preambleNumber" id="preambleNumber" value="${councilPreamble.preambleNumber}" />
 					<form:hidden path="type" id="type" value="${councilPreamble.type}" />
 					
-			</div>
 		</div>
 	</div>

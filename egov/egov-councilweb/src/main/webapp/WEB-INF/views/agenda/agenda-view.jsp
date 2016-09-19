@@ -61,15 +61,12 @@
 						</div>
 						<div class="col-sm-3 add-margin view-content">
 							${councilAgenda.committeeType.name}</div>
-					</div>
-					<div class="row add-border">
 						<div class="col-xs-3 add-margin">
 							<spring:message code="lbl.agendaNumber" />
 						</div>
 						<div class="col-sm-3 add-margin view-content">
 							${councilAgenda.agendaNumber}</div>
 					</div>
-					
 				</div>
 			</div>
 			<div class="table-header">
@@ -79,10 +76,9 @@
 				<thead>
 				<tr>
 					<th align="center"><spring:message code="lbl.serial.number" /></th>
-					<th><spring:message code="lbl.agenda.item" /></th>
-					<th><spring:message code="lbl.agenda.number" /></th>
-					<th><spring:message code="lbl.preamble.number" /></th>
 					<th><spring:message code="lbl.department" /></th>
+					<th><spring:message code="lbl.preamble.number" /></th>
+					<th><spring:message code="lbl.gistofpreamble" /></th>
 				</tr>
 				</thead>
 				<tbody>
@@ -92,10 +88,9 @@
 								var="contact" varStatus="counter">
 								<tr>
 										<td align="center">${counter.count}</td>
-										<td><c:out value="${contact.preamble.gistOfPreamble}" /></td>
-										<td><c:out value="${contact.agenda.agendaNumber}" /></td>
-										<td><c:out value="${contact.preamble.preambleNumber}" /></td>
 										<td><c:out value="${contact.preamble.department.name}" /></td>
+										<td><c:out value="${contact.preamble.preambleNumber}" /></td>
+										<td><c:out value="${contact.preamble.gistOfPreamble}" /></td>
 								</tr>
 							</c:forEach>
 						</c:when>

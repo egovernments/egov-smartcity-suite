@@ -97,7 +97,7 @@
 						<div class="panel-body custom">
 						<p>The length of the companies collection is : ${fn:length(councilMeeting.meetingMOMs)}</p>
 						
-						<table class="table table-bordered">
+						<table class="table table-bordered" id="agendaTable">
 							<thead>
 								<th align="center"><spring:message code="lbl.serial.number" /></th>
 								<th><spring:message code="lbl.agenda.item" /></th>
@@ -122,11 +122,14 @@
 													<td><c:out value="${mom.preamble.gistOfPreamble}" /></td>
 													<td><c:out value="${mom.agenda.agendaNumber}" /></td>
 													<td><c:out value="${mom.preamble.preambleNumber}" /></td>
-													<td><input type="textarea" class="form-control" required="required"
-														data-unique id="resoltionDetail"
-														name="meetingMOMs[${counter.index}].resolutionDetail"
-														minlength="5" maxlength="512"
-														value="${mom.resolutionDetail}" /></td>
+													<td>
+													 <div class="input-group">
+											            <form:textarea path="meetingMOMs[${counter.index}].resolutionDetail" id="meetingMOMs[${counter.index}].resolutionDetail" 
+														class="form-control text-left textarea-content" maxlength="512" value="${mom.resolutionDetail}" required ="required" />
+														<form:errors path="meetingMOMs[${counter.index}].resolutionDetail" cssClass="error-msg" />
+											            <span class="input-group-addon" id="showModal" data-header="Agenda Items - Resolution comments"><span class="glyphicon glyphicon-pencil" style="cursor:pointer"></span></span>
+											        </div>
+											        </td>
 													<td>
 													<form:select  path="meetingMOMs[${counter.index}].resolutionStatus"
 																	id="resolutionStatus" cssClass="form-control" 
@@ -189,10 +192,34 @@
 	<!-- </div> -->
 </div>
 </div>
+
+<!-- Modal -->
+  <div class="modal fade" id="textarea-modal" role="dialog">
+    <div class="modal-dialog modal-lg">
+    
+      <!-- Modal content-->
+      <div class="modal-content">
+        <div class="modal-header">
+          <button type="button" class="close" data-dismiss="modal">&times;</button>
+          <h4 class="modal-title" id="textarea-header"></h4>
+        </div>
+        <div class="modal-body">
+          <textarea class="form-control textarea-content-of-modal" id="textarea-updatedcontent" rows="10"></textarea>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-primary" id="textarea-btnupdate" data-dismiss="modal">Update</button>
+          <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+          
+        </div>
+      </div>
+      
+    </div>
+  </div>
+  
 <script>
 	$('#buttonSubmit').click(function(e) {
 		document.forms["councilMomform"].submit();
-	});
+	});  
 </script>
 
 <script type="text/javascript"

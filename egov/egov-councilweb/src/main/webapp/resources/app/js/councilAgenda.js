@@ -47,8 +47,10 @@ String.prototype.compose = (function (){
 	   }
 }());
 
+var emptyRow = '<tr><td colspan="5" id="emptyRow" >No preamble item available</td></tr>';
 var tbody = $('#agendaTable').children('tbody');
-var table = tbody.length ? tbody : $('#agendaTable');
+var table = tbody.length == 0 ? $('#agendaTable tbody').append(emptyRow) : $('#agendaTable');
+
 var row = '<tr>'+
 /* '<td><span class="sno">{{sno}}</span></td>'+*/
  '<td><input type="text" class="form-control" data-unique name="councilAgendaDetailsForUpdate[{{idx}}].preamble.preambleNumber" {{readonly}} value="{{pnoTextBoxValue}}"/></td>'+
@@ -61,11 +63,15 @@ var row = '<tr>'+
  '<button type="button" class="btn btn-xs btn-secondary delete"><span class="glyphicon glyphicon-trash"></span>&nbsp;Delete</button></td>'+
 '</tr>';
 
-
-jQuery('#add-agenda').click(function(){
-   
+jQuery('#btnsearch').click(function(){
+	   
 	$('.agenda-section').show();
+});
+
+/*jQuery('#add-agenda').click(function(){
+   
 	var idx=$(tbody).find('tr').length;
+	alert("len : "+idx);
 	var sno=idx+1;
    //Add row
 	var row={
@@ -74,7 +80,7 @@ jQuery('#add-agenda').click(function(){
 	   };
 	addRowFromObject(row);
    
-});
+});*/
 
 function addRowFromObject(rowJsonObj)
 {
@@ -114,8 +120,9 @@ function regenerateIndexes()
 
 function addReadOnlyRow(btn)
 {
-	
-	var data=$(btn).data('row');
+	$('#emptyRow').closest('tr').remove();
+
+		var data=$(btn).data('row');
 	
 	var isDuplicate=false;
 	
@@ -209,7 +216,7 @@ function callAjaxSearch() {
 						},
 						{
 							"data" : "gistOfPreamble",
-							'sTitle' : "Gist of Preamble"
+							'sTitle' : "Gist of Preamble", "width": "75%" 
 						},
 						{
 							"data" : "sanctionAmount",
@@ -244,18 +251,43 @@ function callAjaxSearch() {
 $(document).ready(function() {
 	
 	$("#agendaTable tbody").on('click','tr td .delete',function(event) {
-		if($(tbody).find('tr').length==1)
-		{	bootbox.alert("You cannot delete this row.");
-		}
-		else {
 		$(this).closest('tr').remove();
 		regenerateIndexes();
+		var idx  = $("#agendaTable > tbody").children().length;
+		if(idx == 0){
+			$('#agendaTable tbody').append(emptyRow);
 		}
 	});
 	
+	$( "#btnsave" ).click(function(e){
+		if ($('#committeeType').val()=="") {
+			bootbox.alert("Please select committe type");
+			e.preventDefault();
+		} 
+		if($('#emptyRow').length){
+			bootbox.alert("Atleast one preamble item should be added into agenda");
+			e.preventDefault();
+		}else{
+			// form submit happen
+		}
+		
+
+	});
+	
+	$( "#buttonSubmit" ).click(function(e){
+		
+		if ($('#committeeType').val()=="") {
+			alert("Please select committe type");
+			e.preventDefault();
+			} else {
+		}
+		if($('#emptyRow').length){
+			bootbox.alert("Atleast one preamble item should be added into agenda");
+			e.preventDefault();
+		}else{
+			// form submit happen
+		}
+
+	});
+	
 });
-
-
-
-
-

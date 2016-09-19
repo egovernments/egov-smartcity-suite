@@ -172,16 +172,7 @@
 
 <script>
 
-$('#buttonSubmit').click(function(e) {
-	if ($('#committeeType').val()=="") {
-		alert("Please select committe type");
-		e.preventDefault();
-		} else {
-	}
-});
-
 $('#btnsearchPreamble').click(function(e) {
-	console.log('valid1111111');
 	if ($('form').valid()) {
 		return true;
 	} else {

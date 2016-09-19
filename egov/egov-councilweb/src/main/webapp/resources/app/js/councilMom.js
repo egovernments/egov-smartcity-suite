@@ -130,9 +130,9 @@ var row = '<tr>'+
  
  '<td><select name="meetingMOMs[{{idx}}].preamble.department" class="form-control" required="required"> <option value="">Loading...</option></select></td>'+
  /*'<td><select multiple="multiple" name="meetingMOMs[{{idx}}].preamble.wardNumber" class="form-control"> <option value="">Loading...</option></select></td>'+*/
- '<td><input type="textarea" class="form-control" required="required" name="meetingMOMs[{{idx}}].preamble.gistOfPreamble" {{readonly}} value="{{gistTextBoxValue}}"/></td>'+
+ '<td><div class="input-group"><textarea class="form-control textarea-content" required="required" name="meetingMOMs[{{idx}}].preamble.gistOfPreamble"  value="{{gistTextBoxValue}}" /><span class="input-group-addon" id="showModal" data-header="Sumoto Resolution - GIST of Sumoto Resolution"><span class="glyphicon glyphicon-pencil" style="cursor:pointer"></span></span></div></td>'+
  '<td><input type="text" class="form-control" name="meetingMOMs[{{idx}}].preamble.sanctionAmount" {{readonly}} data-pattern="number" value="{{amountTextBoxValue}}"/></td>'+
- '<td><input type="text" class="form-control" required="required" name="meetingMOMs[{{idx}}].resolutionDetail" {{readonly}} value="{{amountTextBoxValue}}"/></td>'+
+ '<td><div class="input-group"><textarea class="form-control textarea-content" required="required" name="meetingMOMs[{{idx}}].resolutionDetail"  value="{{amountTextBoxValue}}" /><span class="input-group-addon" id="showModal" data-header="Sumoto Resolution - Resolution comments"><span class="glyphicon glyphicon-pencil" style="cursor:pointer"></span></span></div></td>'+
  '<td><select name="meetingMOMs[{{idx}}].resolutionStatus" class="form-control" required="required"><option value="">Loading...</option></select></td>'+
  /*'<td><input type="hidden" class="form-control" name="meetingMOMs[{{idx}}].preamble.id" {{readonly}} value="{{departmentId}}"/>'+*/
 '</tr>';
@@ -279,6 +279,35 @@ $(document).ready(function() {
     	}else{
     		$('input[name="'+$hiddenName+'"]').val(false);
     	}
+    });
+    
+    var table_rowindex = 0;
+    var tablecolumn_index = 0;
+    var tableheaderid ='';
+    var tableid='';
+    
+    $(document).on('blur','.textarea-content', function(evt) {
+    	$(this).tooltip('hide')
+        .attr('data-original-title', $(this).val());
+    	evt.stopImmediatePropagation();
+    });
+    
+    $(document).on('click','#showModal',function(evt){
+    	table_rowindex = $(this).closest('tr').index();
+    	tablecolumn_index = $(this).closest('td').index();
+    	tableheaderid = $(this).data('header');
+    	tableid = $(this).closest('table').attr('id');
+    	$('#textarea-header').html(tableheaderid);
+    	$('#textarea-updatedcontent').val($(this).parent().parent().find('textarea').val());
+    	$("#textarea-modal").modal('show');
+    	evt.stopImmediatePropagation();
+    });
+    
+    //update textarea content in table wrt index
+    $(document).on('click','#textarea-btnupdate',function(evt){
+    	$('#'+tableid +' tbody tr:eq(' + table_rowindex + ') td:eq('+tablecolumn_index+')').find('textarea').val($('#textarea-updatedcontent').val()).tooltip('hide')
+        .attr('data-original-title', $('#textarea-updatedcontent').val());
+    	evt.stopImmediatePropagation();
     });
 
 });

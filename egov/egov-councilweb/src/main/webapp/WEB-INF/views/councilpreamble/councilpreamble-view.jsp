@@ -43,7 +43,6 @@
 <%@ taglib uri="http://www.springframework.org/tags" prefix="spring"%>
 <%@ taglib uri="http://www.springframework.org/tags/form" prefix="form"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt"%>
-<div class="main-content">
 	<div class="row">
 		<div class="col-md-12">
 			<div class="panel panel-primary" data-collapsed="0">
@@ -67,30 +66,30 @@
 						<div class="col-xs-3 add-margin">
 							<spring:message code="lbl.gistofpreamble" />
 						</div>
-						<div class="col-sm-3 add-margin view-content">
+						<div class="col-sm-9 add-margin view-content">
 							${councilPreamble.gistOfPreamble}</div>
+					</div>
 					<div class="row add-border">
-							<div class="col-md-2 col-xs-6 add-margin">
-								<spring:message code="lbl.upload" />
-							</div>
-							<div class="col-md-3 col-xs-12 add-margin down-file view-content"
-								id="links">
-								<c:choose>
-									<c:when test="${councilPreamble.filestoreid != null}">
-										<a
-											href="/council/councilmember/downloadfile/${councilPreamble.filestoreid.fileStoreId}"
-											data-gallery target="_blank"> <img
-											class="img-width add-margin"
-											style="max-width: 50%; max-height: 50%;"
-											src="/council/councilmember/downloadfile/${councilPreamble.filestoreid.fileStoreId}"
-											alt="${councilPreamble.filestoreid.fileName}" /></a>
+						<div class="col-md-3 col-xs-6 add-margin">
+							<spring:message code="lbl.upload" />
+						</div>
+						<div class="col-md-3 col-xs-12 add-margin down-file view-content"
+							id="links">
+							<c:choose>
+								<c:when test="${councilPreamble.filestoreid != null}">
+									<a
+										href="/council/councilpreamble/downloadfile/${councilPreamble.filestoreid.fileStoreId}"
+										data-gallery target="_blank"> <img
+										class="img-width add-margin"
+										style="max-width: 50%; max-height: 50%;"
+										src="/council/councilpreamble/downloadfile/${councilPreamble.filestoreid.fileStoreId}"
+										alt="${councilPreamble.filestoreid.fileName}" /></a>
 
-									</c:when>
-									<c:otherwise>
-										<spring:message code="msg.no.attach.found" />
-									</c:otherwise>
-								</c:choose>
-							</div>
+								</c:when>
+								<c:otherwise>
+									<spring:message code="msg.no.attach.found" />
+								</c:otherwise>
+							</c:choose>
 						</div>
 					</div>
 					<div class="row add-border">
@@ -105,26 +104,29 @@
 						<div class="col-sm-3 add-margin view-content">
 							${councilPreamble.preambleNumber}</div>
 					</div>
+					<div class="row add-border">
 						<div class="col-xs-3 add-margin">
 							<spring:message code="lbl.ward" /> 
 						</div>
-						<div class="col-sm-3 add-margin view-content">
-						<select   id="ward" size="7" cssClass="form-control" cssErrorClass="form-control error">
-						<c:forEach items="${councilPreamble.wards}" var="ward" varStatus=""> 
-								<option  value="${ward.name}">${ward.name}</option>
+						<div class="col-sm-9 add-margin view-content">
+						<c:forEach items="${councilPreamble.wards}" var="ward" varStatus="i"> 
+								<c:if test="${i.index ne 0}">, </c:if> ${ward.name}
 						</c:forEach>
-						</select>
 						</div>
+					</div>
 			</div>
-			<div class="panel panel-primary" data-collapsed="0">
-							<jsp:include page="applicationhistory-view.jsp"></jsp:include>
-				</div> 
+			
 		</div>
-	</div>
-	<div class="row text-center">
+		<div class="panel panel-primary" data-collapsed="0">
+			<jsp:include page="applicationhistory-view.jsp"></jsp:include>
+		</div> 
+		<div class="text-center">
 		<div class="add-margin">
 			<a href="javascript:void(0)" class="btn btn-default"
 				onclick="self.close()">Close</a>
 		</div>
+		</div>
 	</div>
+	</div>
+	
 	

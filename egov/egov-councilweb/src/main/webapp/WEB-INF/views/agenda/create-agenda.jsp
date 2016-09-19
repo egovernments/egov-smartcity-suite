@@ -63,7 +63,7 @@
 	cssClass="form-horizontal form-groups-bordered"
 	enctype="multipart/form-data">
 	
-<div class="row">
+<div class="row display-hide agenda-section">
 	<div class="col-md-6 table-header text-left">Create Agenda</div>
 	<!-- <div class="col-md-6 text-right pull-right"><button type="button" class="btn btn-primary" id="add-agenda">Add Row</button></div> -->
 		<div class="row">
@@ -83,7 +83,7 @@
 			</div>
 		</div>
 
-		<div class="col-md-12 form-group report-table-container display-hide agenda-section">
+		<div class="col-md-12 form-group report-table-container">
 		<table class="table table-bordered table-hover multiheadertbl"
 			id=agendaTable>
 			<thead>
@@ -101,20 +101,13 @@
 		</table>
 		<div class="row">
 					<div class="text-center">
-						<input type="submit" class='btn btn-primary' value='Save' id="btnsave">
+						<input type="submit" class='btn btn-primary validate' value='Create' id="btnsave">
 					</div>
 				</div>
 	</div>
 </div>
 </form:form>
 <script>
-	$('#btnsave').click(function(e) {
-		if ($('#committeeType').val()=="") {
-			alert("Please select committe type");
-			e.preventDefault();
-			} else {
-		}
-	});
 
 	$('#btnsearch').click(function(e) {
 	
