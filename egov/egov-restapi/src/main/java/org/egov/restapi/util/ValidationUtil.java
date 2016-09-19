@@ -260,7 +260,7 @@ public class ValidationUtil {
                         errorDetails.setErrorMessage(MOBILENO_MAX_LENGTH_ERROR_MSG);
                         return errorDetails;
                 	}
-                	Pattern pattern = Pattern.compile("\\d{3}-\\d{7}");
+                	Pattern pattern = Pattern.compile("\\d{10}");
                     Matcher matcher = pattern.matcher(ownerDetails.getMobileNumber());
                     if(!matcher.matches()){
                     	errorDetails = new ErrorDetails();
