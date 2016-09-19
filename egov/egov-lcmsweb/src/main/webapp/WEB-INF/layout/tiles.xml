@@ -401,6 +401,10 @@
 	<put-attribute name="page-title" value="title.dailyboardreport" cascade="true"/>
 	<put-attribute name="body" value="/WEB-INF/views/reports/dailyboardreport-form.jsp"/>
 </definition>
+<definition name="timeseriesreport-form" extends="base_layout">
+	<put-attribute name="page-title" value="title.timeseriesreport" cascade="true"/>
+	<put-attribute name="body" value="/WEB-INF/views/reports/timeseriesreport-form.jsp"/>
+</definition>
 
 
 </tiles-definitions>

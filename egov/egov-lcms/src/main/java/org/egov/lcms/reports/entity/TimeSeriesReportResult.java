@@ -37,28 +37,85 @@
  *
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
+package org.egov.lcms.reports.entity;
 
-package org.egov.pgr.service.scheduler.jobs;
+import java.util.Date;
 
-import org.egov.infra.scheduler.quartz.AbstractQuartzJob;
-import org.egov.pgr.service.EscalationService;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.transaction.annotation.Transactional;
+import org.egov.lcms.transactions.entity.LegalCase;
 
-/**
- * @author Vaibhav.K
- */
-@Transactional
-public class ComplaintEscalationJob extends AbstractQuartzJob {
+public class TimeSeriesReportResult {
 
-    private static final long serialVersionUID = -5428952585539260293L;
+    private String aggregatedBy;
+    private String period;
+    private Date fromDate;
+    private Date toDate;
+    private Integer year;
+    private String month;
+    private Long count;
+    private LegalCase legalCase;
 
-    @Autowired
-    private EscalationService escalationService;
+    public Long getCount() {
+        return count;
+    }
 
-    @Override
-    public void executeJob() {
-        escalationService.escalateComplaint();
+    public void setCount(final Long count) {
+        this.count = count;
+    }
+
+    public String getAggregatedBy() {
+        return aggregatedBy;
+    }
+
+    public void setAggregatedBy(final String aggregatedBy) {
+        this.aggregatedBy = aggregatedBy;
+    }
+
+    public String getPeriod() {
+        return period;
+    }
+
+    public void setPeriod(final String period) {
+        this.period = period;
+    }
+
+    public Date getFromDate() {
+        return fromDate;
+    }
+
+    public void setFromDate(final Date fromDate) {
+        this.fromDate = fromDate;
+    }
+
+    public Date getToDate() {
+        return toDate;
+    }
+
+    public void setToDate(final Date toDate) {
+        this.toDate = toDate;
+    }
+
+    public String getMonth() {
+        return month;
+    }
+
+    public void setMonth(final String month) {
+        this.month = month;
+    }
+
+    public LegalCase getLegalCase() {
+        return legalCase;
+    }
+
+    public Integer getYear() {
+        return year;
+    }
+
+    public void setYear(final Integer year) {
+        this.year = year;
+    }
+
+    public void setLegalCase(final LegalCase legalCase) {
+        this.legalCase = legalCase;
     }
 
 }

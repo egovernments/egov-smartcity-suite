@@ -154,6 +154,42 @@ public class RemitRecoveryService {
             LOGGER.debug("RemitRecoveryService | getRecoveryDetails | End");
         return listRemitBean;
     }
+    
+    public List<RemittanceBean> getRecoveryDetails(final String selectedRows)
+            throws ValidationException {
+        if (LOGGER.isDebugEnabled())
+            LOGGER.debug("RemitRecoveryService | getRecoveryDetails | Start");
+        final List<RemittanceBean> listRemitBean = new ArrayList<RemittanceBean>();
+        
+        StringBuilder query = new StringBuilder();
+        query.append(" SELECT vh.NAME  AS col_0_0_,  vh.VOUCHERNUMBER AS col_1_0_,  vh.VOUCHERDATE   AS col_2_0_,");
+        query.append(" egr.GLDTLAMT   AS col_3_0_,  gld.DETAILTYPEID  AS col_4_0_,  gld.DETAILKEYID   AS col_5_0_,");
+        query.append(" egr.ID    AS col_6_0_, (select  case when sum(egd.remittedamt) is null then 0 else sum(egd.remittedamt) end");
+        query.append(" from EG_REMITTANCE_GLDTL egr1,eg_remittance_detail egd,eg_remittance  eg,voucherheader vh");
+        query.append(" where vh.status!=4 and  eg.PAYMENTVHID=vh.id and egd.remittanceid=eg.id and egr1.id=egd.remittancegldtlid ");
+        query.append(" and egr1.id=egr.id) As col_7_0 , mis.departmentid as col_8_0,mis.functionid as col_9_0");
+        query.append("  FROM VOUCHERHEADER vh,  VOUCHERMIS mis,  GENERALLEDGER gl,  GENERALLEDGERDETAIL gld,  EG_REMITTANCE_GLDTL egr,  TDS recovery5_");
+        query.append(" WHERE recovery5_.GLCODEID  =gl.GLCODEID AND gld.ID =egr.GLDTLID AND gl.ID =gld.GENERALLEDGERID AND vh.ID =gl.VOUCHERHEADERID");
+        query.append(" AND mis.VOUCHERHEADERID  =vh.ID AND vh.STATUS    =0 ");
+        query.append(" and egr.id in ( ");
+        query.append(selectedRows);
+        query.append(" ) ");
+        query.append(" AND egr.GLDTLAMT-");
+        query.append(" (select  case when sum(egd.remittedamt) is null then 0 else sum(egd.remittedamt) end from EG_REMITTANCE_GLDTL egr1,eg_remittance_detail egd,eg_remittance  eg,voucherheader vh");
+        query.append(" where vh.status not in (1,2,4) and  eg.PAYMENTVHID=vh.id and egd.remittanceid=eg.id and egr1.id=egd.remittancegldtlid and egr1.id=egr.id)");
+        query.append(" <>0  ");
+        query.append(" ORDER BY vh.VOUCHERNUMBER,  vh.VOUCHERDATE");
+                               
+        if (LOGGER.isDebugEnabled())
+            LOGGER.debug("RemitRecoveryService | getRecoveryDetails | query := " + query.toString());
+
+        populateDetailsBySQL(null, listRemitBean, query );
+        if (LOGGER.isDebugEnabled())
+            LOGGER.debug("RemitRecoveryService | listRemitBean size : " + listRemitBean.size());
+        if (LOGGER.isDebugEnabled())
+            LOGGER.debug("RemitRecoveryService | getRecoveryDetails | End");
+        return listRemitBean;
+    }
 
     public List<RemittanceBean> getRecoveryDetailsForReport(final RemittanceBean remittanceBean,
             final CVoucherHeader voucherHeader,

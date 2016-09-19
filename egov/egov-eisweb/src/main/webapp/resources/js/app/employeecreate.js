@@ -145,9 +145,35 @@ $(document).ready(function(){
 		if(null!=toDate || ''!=toDate){
 			$('.todateerror').html('To Date is required').hide();
 		}
-		if(Date.parse($("#fromDate").val()) >= Date.parse($("#toDate").val()))
-			$('.todateerror').html('To Date should be greater than from date').show();
 	});
+	
+	function validateDateRange() {
+
+		if($("#fromDate").val() != '' && $("#toDate").val() != ''){
+			var start = $("#fromDate").val();
+			var end = $("#toDate").val();
+			var stsplit = start.split("/");
+			var ensplit = end.split("/");
+
+			start = stsplit[1] + "/" + stsplit[0] + "/" + stsplit[2];
+			end = ensplit[1] + "/" + ensplit[0] + "/" + ensplit[2];
+
+
+			var startDate = Date.parse(start);
+			var endDate = Date.parse(end);
+
+			// Check the date range, 86400000 is the number of milliseconds in one day
+			var difference = (endDate - startDate) / (86400000 * 7);
+			if (difference < 0) {
+				bootbox.alert("From date  should not be greater than the To Date.");
+				$('#toDate').val('');
+				return false;
+			} else {
+				return true;
+			}
+			return true;
+		}
+	}
 	
 	//Position auto-complete
 	
@@ -202,7 +228,7 @@ $(document).ready(function(){
 	var editedRowIndex="";
 	
 	$("#btn-add").click(function() {
-		if(validateAssignment()) {
+		if(validateAssignment() && validateDateRange()) {
 			if(!edit){
 				rowCount = $("#assignmentTable tr").length;
 				addRow(rowCount);
@@ -248,6 +274,7 @@ $(document).ready(function(){
 		var hoddept = (null!=$("#hodDeptId").val() || 'undefined'!=$("#hodDeptId").val())?$("#hodDeptId").val():null;
 		var hoddept = (null!=$("#hodDeptId").val() || 'undefined'!=$("#hodDeptId").val())?$("#hodDeptId").val():null;
 		var hodInput="";
+		
 		if(null!=hoddept){
 			for(var i=0;i<hoddept.length;i++) {
 				hodInput = hodInput+'<input type="hidden" id="assignments['+index+'].deptSet['+i+'].hod" name="assignments['+index+'].deptSet['+i+'].hod" value="'+hoddept[i]+'"/>';

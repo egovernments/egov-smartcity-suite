@@ -54,15 +54,14 @@ public class GenerateDemandForAdvertisementTaxJob extends AbstractQuartzJob {
     private static final Logger LOGGER = Logger.getLogger(GenerateDemandForAdvertisementTaxJob.class);
 
     @Autowired
-    private AdvertisementBatchDemandGenService advertisementBatchDemandGenService;
+    private transient AdvertisementBatchDemandGenService advertisementBatchDemandGenService;
 
     @Override
     public void executeJob() {
 
-        int totalRecordsProcessed = 0;
         LOGGER.info("*************************************** GenerateDemandForAdvertisementTaxJob started ");
 
-        totalRecordsProcessed = advertisementBatchDemandGenService.generateDemandForNextFinYear();
+        int totalRecordsProcessed = advertisementBatchDemandGenService.generateDemandForNextFinYear();
 
         LOGGER.info("*************************************** End GenerateDemandForAdvertisementTaxJob. Total records "
                 + totalRecordsProcessed);

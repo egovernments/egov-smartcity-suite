@@ -225,7 +225,7 @@ public class UpdateLineEstimateController extends GenericWorkFlowController {
 
         if (lineEstimate.getStatus().getCode().equals(LineEstimateStatus.CHECKED.toString())
                 && !workFlowAction.equalsIgnoreCase(WorksConstants.REJECT_ACTION.toString())) {
-            if (BudgetControlType.BudgetCheckOption.MANDATORY.toString()
+            if (!BudgetControlType.BudgetCheckOption.NONE.toString()
                     .equalsIgnoreCase(budgetControlTypeService.getConfigValue()))
                 validateBudgetAmount(lineEstimate, errors);
         }
@@ -318,7 +318,8 @@ public class UpdateLineEstimateController extends GenericWorkFlowController {
             for (final LineEstimateDetails led : lineEstimate.getLineEstimateDetails())
                 totalEstimateAmount = led.getEstimateAmount().add(totalEstimateAmount);
 
-            if (budgetAvailable.compareTo(totalEstimateAmount) == -1)
+            if (BudgetControlType.BudgetCheckOption.MANDATORY.toString()
+                    .equalsIgnoreCase(budgetControlTypeService.getConfigValue()) && budgetAvailable.compareTo(totalEstimateAmount) == -1)
                 errors.reject("error.budgetappropriation.amount",
                         new String[] { budgetAvailable.toString(), totalEstimateAmount.toString() }, null);
         } catch (final ValidationException e) {

@@ -2057,11 +2057,13 @@ public class BudgetDetailsHibernateDAO implements BudgetDetailsDAO {
 
 					if (LOGGER.isDebugEnabled())
 						LOGGER.debug(".................Budgeted amount......................" + budgetedAmt);
-					if (budgetedAmt.compareTo(BigDecimal.ZERO) == 0) {
-						if (LOGGER.isDebugEnabled())
-							LOGGER.debug("Budget check failed Because of  Budgeted not allocated for the combination");
-						return false;
-					}
+					if (budgetCheckConfigService.getConfigValue()
+							.equalsIgnoreCase(BudgetControlType.BudgetCheckOption.MANDATORY.toString()))
+						if (budgetedAmt.compareTo(BigDecimal.ZERO) == 0) {
+							if (LOGGER.isDebugEnabled())
+								LOGGER.debug("Budget check failed Because of  Budgeted not allocated for the combination");
+							return false;
+						}
 
 					final BigDecimal actualAmt = getActualBudgetUtilizedForBudgetaryCheck(paramMap); // get
 					// actual

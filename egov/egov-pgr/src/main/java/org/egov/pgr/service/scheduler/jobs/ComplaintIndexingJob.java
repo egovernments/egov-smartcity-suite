@@ -54,7 +54,6 @@ public class ComplaintIndexingJob extends AbstractQuartzJob{
 
 	@Override
 	public void executeJob() {
-		prepareCityThreadLocal();
 		complaintIndexService.updateAllOpenComplaintIndex();
 	}
 }

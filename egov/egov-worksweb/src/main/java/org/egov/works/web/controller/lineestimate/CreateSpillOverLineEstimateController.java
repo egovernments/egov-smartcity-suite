@@ -167,7 +167,7 @@ public class CreateSpillOverLineEstimateController {
         validateLineEstimateDetails(lineEstimate, errors);
         validateAdminSanctionDetail(lineEstimate, errors);
 
-        if (BudgetControlType.BudgetCheckOption.MANDATORY.toString()
+        if (!BudgetControlType.BudgetCheckOption.NONE.toString()
                 .equalsIgnoreCase(budgetControlTypeService.getConfigValue()))
             validateBudgetAmount(lineEstimate, errors);
 
@@ -321,8 +321,8 @@ public class CreateSpillOverLineEstimateController {
                             led.getGrossAmountBilled()));
                 else
                     totalAppropriationAmount = totalAppropriationAmount.add(led.getEstimateAmount());
-
-            if (budgetAvailable.compareTo(totalAppropriationAmount) == -1)
+            if (BudgetControlType.BudgetCheckOption.MANDATORY.toString().equalsIgnoreCase(budgetControlTypeService.getConfigValue()) 
+                    && budgetAvailable.compareTo(totalAppropriationAmount) == -1)
                 errors.reject("error.budgetappropriation.amount",
                         new String[] { budgetAvailable.toString(), totalAppropriationAmount.toString() }, null);
         } catch (final ValidationException e) {

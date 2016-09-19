@@ -56,6 +56,9 @@ jQuery(document).ready(
 			});
 
 		});
+$('#searchapp').keyup(function(){
+	tableContainer.fnFilter(this.value);
+	});
 
 function submitForm() {
 

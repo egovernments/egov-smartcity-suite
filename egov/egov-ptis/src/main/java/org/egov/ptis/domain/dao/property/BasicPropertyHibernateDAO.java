@@ -517,7 +517,7 @@ public class BasicPropertyHibernateDAO implements BasicPropertyDAO {
         for (String param : params.keySet()) {
             query.setParameter(param, params.get(param));
         }
-        List<String> list = query.list();
+        List<String> list = query.setMaxResults(100).list();
         List<BasicProperty> basicProperties = new ArrayList<BasicProperty>();
         if (null != list && !list.isEmpty()) {
             for (String propertyid : list) {

@@ -37,28 +37,28 @@
  *
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
+package org.egov.lcms.web.adaptor;
 
-package org.egov.pgr.service.scheduler.jobs;
+import java.lang.reflect.Type;
 
-import org.egov.infra.scheduler.quartz.AbstractQuartzJob;
-import org.egov.pgr.service.EscalationService;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.transaction.annotation.Transactional;
+import org.egov.lcms.reports.entity.TimeSeriesReportResult;
 
-/**
- * @author Vaibhav.K
- */
-@Transactional
-public class ComplaintEscalationJob extends AbstractQuartzJob {
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonSerializationContext;
+import com.google.gson.JsonSerializer;
 
-    private static final long serialVersionUID = -5428952585539260293L;
-
-    @Autowired
-    private EscalationService escalationService;
+public class TimeSeriesReportJsonAdaptor implements JsonSerializer<TimeSeriesReportResult> {
 
     @Override
-    public void executeJob() {
-        escalationService.escalateComplaint();
+    public JsonElement serialize(final TimeSeriesReportResult timeSeriesresult, final Type typeOfSrc,
+            final JsonSerializationContext context) {
+        final JsonObject jsonObject = new JsonObject();
+        jsonObject.addProperty("count", timeSeriesresult.getCount().toString());
+        jsonObject.addProperty("aggregatedBy", timeSeriesresult.getAggregatedBy());
+        jsonObject.addProperty("year", timeSeriesresult.getYear().toString()== null ? "": timeSeriesresult.getYear().toString());
+        jsonObject.addProperty("month", timeSeriesresult.getMonth() == null ? "":timeSeriesresult.getMonth());
+        return jsonObject;
     }
 
 }

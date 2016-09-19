@@ -51,6 +51,9 @@
 				<c:set var="mandatoryLable" value='<span class="mandatory"></span>' />
 				<c:set var="required" value='required="required" ' />
 			</c:if>
+			<c:if test="${categoryProperties.isMandatory==false}">
+				<c:set var="mandatoryLable" value='<span class=""></span>' />
+			</c:if>
 			<c:if test="${empty categoryProperties.localText}">
 				<c:set var="localText" value="" />
 			</c:if>
@@ -73,18 +76,18 @@
 				<c:if test="${categoryProperties.dataType=='String'}">
 					<input type="text" name="categoryProperties[${vs.index}].value"
 						id="${categoryProperties.name}" class="form-control text-left"
-						${required} />
+						<c:if test="${categoryProperties.isMandatory==true}">${required}</c:if> />
 				</c:if>
 				<c:if test="${categoryProperties.dataType=='Number'}">
 					<input type="text" name="categoryProperties[${vs.index}].value"
 						id="${categoryProperties.name}"
 						class="form-control text-right patternvalidation"
-						data-pattern="number" ${required} />
+						data-pattern="number" <c:if test="${categoryProperties.isMandatory==true}">${required}</c:if> />
 				</c:if>
 				<c:if test="${categoryProperties.dataType=='Enumeration'}">
 					<select name="categoryProperties[${vs.index}].value"
 						id="${categoryProperties.name}" class="form-control"
-						data-pattern="number" ${required}>
+						data-pattern="number" <c:if test="${categoryProperties.isMandatory==true}">${required}</c:if>>
 						<option value="">
 							<spring:message code="lbl.select" />
 						</option>
@@ -101,14 +104,14 @@
 						id="${categoryProperties.name}" class="form-control datepicker"
 						data-date-end-date="0d" data-inputmask="'mask': 'd/m/y'"
 						value="${properties[vs.index].value}"
-						${required} data-set-date="dd-mm-yyyy" /> <!-- yyyy-mm-dd -->
+						<c:if test="${categoryProperties.isMandatory==true}">${required}</c:if> data-set-date="dd-mm-yyyy" /> <!-- yyyy-mm-dd -->
 				</c:if>
 				<c:if test="${categoryProperties.dataType=='DateTime'}">
 					<input type="text"
 						name="categoryProperties[${vs.index}].value"
 						id="${categoryProperties.name}" class="form-control datetimepicker"
 						value="${properties[vs.index].value}"
-						${required} />
+						<c:if test="${categoryProperties.isMandatory==true}">${required}</c:if> />
 				</c:if>
 				<c:if test="${categoryProperties.dataType=='MasterData'}">
 					<input type="hidden" name="categoryProperties[${vs.index}].value"
@@ -119,7 +122,7 @@
 						id="${categoryProperties.id}" class="form-control autocomplete"
 						data-hidden-elem2="categoryProperties[${vs.index}].value"
 						data-hidden-elem="categoryProperties[${vs.index}].id"
-						data-source-type="${categoryProperties.id}" ${required}/>
+						data-source-type="${categoryProperties.id}" <c:if test="${categoryProperties.isMandatory==true}">${required}</c:if>/>
 				</c:if>
 
 			</div>
