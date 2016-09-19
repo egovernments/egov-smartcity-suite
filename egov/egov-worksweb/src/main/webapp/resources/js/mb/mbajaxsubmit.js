@@ -201,6 +201,14 @@ function submitForm(workFlowAction) {
 					$(this).removeAttr('disabled');
 				});
 				
+				$('#tblNonTendered').find('input, textarea').each(function() {
+					$(this).removeAttr('disabled');
+				});
+				
+				$('#tblLumpSum').find('input, textarea').each(function() {
+					$(this).removeAttr('disabled');
+				});
+				
 				$('.clearthis').each(function() {
 					$(this).attr('value', '');
 				});
@@ -246,6 +254,14 @@ function submitForm(workFlowAction) {
 			});
 			
 			$('#tblNonSor').find('input, textarea').each(function() {
+				$(this).removeAttr('disabled');
+			});
+			
+			$('#tblNonTendered').find('input, textarea').each(function() {
+				$(this).removeAttr('disabled');
+			});
+			
+			$('#tblLumpSum').find('input, textarea').each(function() {
 				$(this).removeAttr('disabled');
 			});
 			$('#successMessage').html("");

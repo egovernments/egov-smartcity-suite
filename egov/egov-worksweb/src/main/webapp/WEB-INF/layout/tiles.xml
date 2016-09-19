@@ -331,6 +331,11 @@
         <put-attribute name="body" value="/WEB-INF/views/mb/searchWorkOrderActivity-form.jsp"/>
      </definition>
      
+     <definition name="searchREWorkOrderActivity-form" extends="base_layout">
+        <put-attribute name="page-title" value="title.searchview.workorderactivity" cascade="true"/>
+        <put-attribute name="body" value="/WEB-INF/views/mb/searchREWorkOrderActivity-form.jsp"/>
+     </definition>
+     
      <definition name="mbheader-view" extends="base_layout">
         <put-attribute name="page-title" value="title.viewmbheader" cascade="true"/>
         <put-attribute name="body" value="/WEB-INF/views/mb/mbheader-view.jsp"/>

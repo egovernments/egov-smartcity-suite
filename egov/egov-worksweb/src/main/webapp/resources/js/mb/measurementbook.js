@@ -89,6 +89,47 @@ $('#addAll').click(function() {
 	$('.loader-class').modal('hide');
 });
 
+$('#searchNonTenderedAndAdd').click(function() {
+	var workOrderEstimateId = $('#workOrderEstimateId').val();
+	var workOrderNumber = $('#workOrderNumber').html();
+	var mbHeaderId = $('#id').val();
+	if(mbHeaderId == '')
+		mbHeaderId = -1;
+	
+	window.open("/egworks/measurementbook/searchreactivityform?woeId=" + workOrderEstimateId + "&workOrderNo=" + workOrderNumber + "&mbHeaderId=" + mbHeaderId, '', 'height=650,width=980,scrollbars=yes,left=0,top=0,status=yes');
+});
+
+$('#addAllNonTendered').click(function() {
+	var workOrderEstimateId = $('#workOrderEstimateId').val();
+	var mbHeaderId = $('#id').val();
+	if(mbHeaderId == '')
+		mbHeaderId = -1;
+	var selectedActivities = "";
+	
+	$('.loader-class').modal('show', {backdrop: 'static'});
+	$.ajax({
+		type: "POST",
+		url: "/egworks/measurementbook/ajax-searchreactivities",
+		cache: true,
+		dataType: "json",
+		"data": {"workOrderEstimateId" : workOrderEstimateId,
+			"id" : mbHeaderId},
+		success: function (data) {
+			populateREActivities(data, selectedActivities);
+		},
+		error: function (error) {
+			console.log(error.responseText.slice(0,-2));
+			var json = $.parseJSON(error.responseText.slice(0,-2));
+			
+			$.each(json, function(key, value){
+				$('#errorMessage').append(value + '</br>');
+			});
+			$('#errorMessage').show();
+		}
+	});
+	$('.loader-class').modal('hide');
+});
+
 function getRow(obj) {
 	if(!obj)return null;
 	tag = obj.nodeName.toUpperCase();
@@ -102,6 +143,426 @@ function getRow(obj) {
 
 function populateActivities(data, selectedActivities) {
 	populateData(data, selectedActivities);
+}
+
+function populateREActivities(data, selectedActivities) {
+	var lumpSumCheck  = false;
+	var addAll = false;
+	if(selectedActivities == "")
+		addAll = true;
+	
+	var activityArray = selectedActivities.split(",");
+	var existingActivityArray = [];
+	$('.nonTenderedworkOrderActivity, .lumpSumWorkOrderActivity').each(function() {
+		existingActivityArray.push($(this).val());
+	});
+	if(!addAll) {
+		var nonTenderedCount = $("#tblNonTendered > tbody > tr:visible[id='nonTenderedRow']").length;
+		var lumpSumCount = $("#tblLumpSum > tbody > tr:visible[id='lumpSumRow']").length;
+		$(data.data).each(function(index, workOrderActivity){
+			if($.inArray("" + workOrderActivity.id + "", existingActivityArray) == -1
+					&& $.inArray("" + workOrderActivity.id + "", activityArray) != -1) {
+				if(nonTenderedCount==0 && workOrderActivity.sorNonSorType == 'SOR'){
+					$('#nonTenderedMessage').prop("hidden",true);
+					$('#nonTenderedRow').removeAttr("hidden");
+					$('#nonTenderedRow').removeAttr('sorinvisible');
+				}else{
+					if(workOrderActivity.sorNonSorType == 'SOR'){
+						var key = $("#tblNonTendered > tbody > tr:visible[id='nonTenderedRow']").length;
+						addRow('tblNonTendered', 'nonTenderedRow');
+						resetIndexes();
+						$('#nonTenderedMbDetailsId_' + key).val('');
+						$('#nonTenderedquantity_' + key).val('');
+						$('.nonTenderedcumulativeIncludingCurrentEntry_' + key).html('');
+						$('.nonTenderedAmountCurrentEntry_' + key).html('');
+						$('.nonTenderedamountIncludingCurrentEntry_' + key).html('');
+						$('#nonTenderedremarks_' + key).val('');
+						generateSlno('spannontenderedslno');	
+					}else{
+						if (lumpSumCount > 0)
+							lumpSumCheck = true;
+						if(!lumpSumCheck){
+							$('#lumpSumMessage').prop("hidden",true);
+							$('#lumpSumRow').removeAttr("hidden");
+							$('#lumpSumRow').removeAttr('nonsorinvisible');
+						}
+						if(lumpSumCheck) {
+							var key = $("#tblLumpSum > tbody > tr:visible[id='lumpSumRow']").length;
+							addRow('tblLumpSum', 'lumpSumRow');
+							resetIndexes();
+							$('#lumpSumMbDetailsId_' + key).val('');
+							$('#lumpSumQuantity_' + key).val('');
+							$('.lumpSumCumulativeIncludingCurrentEntry_' + key).html('');
+							$('.lumpSumAmountCurrentEntry_' + key).html('');
+							$('.lumpSumAmountIncludingCurrentEntry_' + key).html('');
+							$('#lumpSumRemarks_' + key).val('');
+							generateSlno('spanlumpsumslno');
+						}
+						lumpSumCheck = true;
+					}
+				}
+				if(workOrderActivity.sorNonSorType == 'SOR'){
+					$('#nonTenderedworkOrderActivity_' + nonTenderedCount).val(workOrderActivity.id);
+					$('.nonTenderedsorCategory_' + nonTenderedCount).html(workOrderActivity.categoryType);
+					$('.nonTenderedsorCode_' + nonTenderedCount).html(workOrderActivity.sorCode);
+					$('.nonTenderedsummary_' + nonTenderedCount).html(workOrderActivity.summary);
+					$('.nonTendereddescription_' + nonTenderedCount).html(hint.replace(/@fulldescription@/g, workOrderActivity.description));
+					$('.nonTendereduom_' + nonTenderedCount).html(workOrderActivity.uom);
+					$('.nonTenderedapprovedQuantity_' + nonTenderedCount).html(workOrderActivity.approvedQuantity);
+					$('.nonTenderedapprovedRate_' + nonTenderedCount).html(parseFloat(workOrderActivity.estimateRate).toFixed(2));
+					$('#nonTenderedunitRate_' + nonTenderedCount).val(workOrderActivity.unitRate);
+					$('.nonTenderedapprovedAmount_' + nonTenderedCount).html(parseFloat(workOrderActivity.activityAmount).toFixed(2));
+					$('.nonTenderedcumulativePreviousEntry_' + nonTenderedCount).html(workOrderActivity.cumulativePreviousEntry);
+					if (workOrderActivity.woms != "") {
+						$('#nonTenderedquantity_' + nonTenderedCount).attr('readonly', 'readonly');
+						document.getElementById('nonTenderedMbDetails[' + nonTenderedCount + '].msadd').removeAttribute('style');
+						var newrow= $('#msheaderrowtemplate').html();
+						
+						newrow = newrow.replace(/findNet/g, 'findNonTenderedNet');
+						newrow=  newrow.replace(/msrowtemplate/g, 'msrownonTenderedMbDetails[' + nonTenderedCount + ']');
+						newrow=  newrow.replace(/templatesorMbDetails\[0\]/g, 'nonTenderedMbDetails[' + nonTenderedCount + ']');
+						newrow = newrow.replace(/templatesorMbDetails_0/g, 'nonTenderedMbDetails_' + nonTenderedCount);
+						newrow = newrow.replace(/templatemssubmit_0/g, 'mssubmit_' + nonTenderedCount);
+						newrow = newrow.replace('msrowslNo_0_0', 'msrowslNo_' + nonTenderedCount + '_0');
+						newrow = newrow.replace('msrowremarks_0_0', 'msrowremarks_' + nonTenderedCount + '_0');
+						newrow = newrow.replace('msrowno_0_0', 'msrowno_' + nonTenderedCount + '_0');
+						newrow = newrow.replace('msrowlength_0_0', 'msrowlength_' + nonTenderedCount + '_0');
+						newrow = newrow.replace('msrowwidth_0_0', 'msrowwidth_' + nonTenderedCount + '_0');
+						newrow = newrow.replace('msrowdepthOrHeight_0_0', 'msrowdepthOrHeight_' + nonTenderedCount + '_0');
+						newrow = newrow.replace('msrowquantity_0_0', 'msrowquantity_' + nonTenderedCount + '_0');
+						newrow = newrow.replace('msrowidentifier_0_0', 'nontenderedmsrowidentifier_' + nonTenderedCount + '_0');
+						newrow = newrow.replace('msrowmbmsPreviousEntry_0_0', 'msrowmbmsPreviousEntry_' + nonTenderedCount + '_0');
+						document.getElementById('nonTenderedMbDetails[' + nonTenderedCount + '].mstd').innerHTML=newrow;
+						$(workOrderActivity.woms).each(function(index, measurementSheet){
+							if (index > 0) {
+								var msrowname= "nonTenderedMbDetails[" + nonTenderedCount + "].mstable";
+								var msrownameid=msrowname.split(".")[0];
+								var rep='measurementSheets\['+ index +'\]';
+
+								var $newrow = "<tr>"+$('#msrowtemplate').html()+"</tr>";
+								newrow = newrow.replace(/findNet/g, 'findNonTenderedNet');
+								$newrow = $newrow.replace(/templatesorMbDetails\[0\]/g,msrownameid);
+								$newrow = $newrow.replace(/measurementSheets\[0\]/g,rep);
+								$newrow = $newrow.replace(/templatesorMbDetails_0/g, 'nonTenderedMbDetails_' + nonTenderedCount);
+								$newrow = $newrow.replace(/measurementSheets_0_id/g, 'measurementSheets_' + index + '_id');
+								$newrow = $newrow.replace(/measurementSheets_0_woMeasurementSheet/g, 'measurementSheets_' + index + '_woMeasurementSheet');
+								$newrow = $newrow.replace('msrowslNo_0_0', 'msrowslNo_' + nonTenderedCount + '_' + index);
+								$newrow = $newrow.replace('msrowremarks_0_0', 'msrowremarks_' + nonTenderedCount + '_' + index);
+								$newrow = $newrow.replace('msrowno_0_0', 'msrowno_' + nonTenderedCount + '_' + index);
+								$newrow = $newrow.replace('msrowlength_0_0', 'msrowlength_' + nonTenderedCount + '_' + index);
+								$newrow = $newrow.replace('msrowwidth_0_0', 'msrowwidth_' + nonTenderedCount + '_' + index);
+								$newrow = $newrow.replace('msrowdepthOrHeight_0_0', 'msrowdepthOrHeight_' + nonTenderedCount + '_' + index);
+								$newrow = $newrow.replace('msrowquantity_0_0', 'msrowquantity_' + nonTenderedCount + '_' + index);
+								$newrow = $newrow.replace('msrowidentifier_0_0', 'nontenderedmsrowidentifier_' + nonTenderedCount + '_' + index);
+								$newrow = $newrow.replace('msrowmbmsPreviousEntry_0_0', 'msrowmbmsPreviousEntry_' + nonTenderedCount + '_' + index);
+								$newrow = $newrow.replace('value="1"','value="'+(index+1)+'"');
+								$('.mssubmit_' + nonTenderedCount).closest('tr').before($newrow);
+
+								patternvalidation();
+							}
+							$.each(measurementSheet, function(key, value){
+								if(key == "womsid") {
+									$('#nonTenderedMbDetails_' + nonTenderedCount + '_measurementSheets_' + index + '_woMeasurementSheet').attr('value', value);
+								} else if(key == "id") {
+									$('#nonTenderedMbDetails_' + nonTenderedCount + '_measurementSheets_' + index + '_id').attr('value', value);
+								} else if(key == "identifier") {
+									if(value == 'A')
+										$('#nontenderedmsrowidentifier_' + nonTenderedCount + '_' + index).html('No');
+									else
+										$('#nontenderedmsrowidentifier_' + nonTenderedCount + '_' + index).html('Yes');
+								} else
+									$('#msrow' + key + '_' + nonTenderedCount + '_' + index).html(value);
+							});
+						});
+					} else {
+						document.getElementById('nonTenderedMbDetails[' + nonTenderedCount + '].msadd').style.display = 'none';
+						$('#quantity_' + nonTenderedCount).removeAttr('readonly');
+					}
+					nonTenderedCount++;
+				}else{
+					$('#lumpSumWorkOrderActivity_' + lumpSumCount).val(workOrderActivity.id);
+					$('.lumpSumSummary_' + lumpSumCount).html(workOrderActivity.summary);
+					$('.lumpSumDescription_' + lumpSumCount).html(hint.replace(/@fulldescription@/g, workOrderActivity.description));
+					$('.lumpSumUom_' + lumpSumCount).html(workOrderActivity.uom);
+					$('.lumpSumApprovedQuantity_' + lumpSumCount).html(workOrderActivity.approvedQuantity);
+					$('.lumpSumApprovedRate_' + lumpSumCount).html(parseFloat(workOrderActivity.estimateRate).toFixed(2));
+					$('#lumpSumUnitRate_' + lumpSumCount).val(workOrderActivity.unitRate);
+					$('.lumpSumApprovedAmount_' + lumpSumCount).html(parseFloat(workOrderActivity.activityAmount).toFixed(2));
+					$('.lumpSumCumulativePreviousEntry_' + lumpSumCount).html(workOrderActivity.cumulativePreviousEntry);
+					if (workOrderActivity.woms != "") {
+						$('#lumpSumQuantity_' + lumpSumCount).attr('readonly', 'readonly');
+						document.getElementById('lumpSumMbDetails[' + lumpSumCount + '].msadd').removeAttribute('style');
+						var newrow= $('#msheaderrowtemplate').html();
+
+						newrow = newrow.replace(/findNet/g, 'findLumpSumNet');
+						newrow=  newrow.replace(/msrowtemplate/g, 'msrowLumpSumMbDetails[' + lumpSumCount + ']');
+						newrow=  newrow.replace(/templatesorMbDetails\[0\]/g, 'lumpSumMbDetails[' + lumpSumCount + ']');
+						newrow = newrow.replace(/templatesorMbDetails_0/g, 'lumpSumMbDetails_' + lumpSumCount);
+						newrow = newrow.replace(/templatemssubmit_0/g, 'lumpsummssubmit_' + lumpSumCount);
+						newrow = newrow.replace('msrowslNo_0_0', 'lumpsummsrowslNo_' + lumpSumCount + '_0');
+						newrow = newrow.replace('msrowremarks_0_0', 'lumpsummsrowremarks_' + lumpSumCount + '_0');
+						newrow = newrow.replace('msrowno_0_0', 'lumpsummsrowno_' + lumpSumCount + '_0');
+						newrow = newrow.replace('msrowlength_0_0', 'lumpsummsrowlength_' + lumpSumCount + '_0');
+						newrow = newrow.replace('msrowwidth_0_0', 'lumpsummsrowwidth_' + lumpSumCount + '_0');
+						newrow = newrow.replace('msrowdepthOrHeight_0_0', 'lumpsummsrowdepthOrHeight_' + lumpSumCount + '_0');
+						newrow = newrow.replace('msrowquantity_0_0', 'lumpsummsrowquantity_' + lumpSumCount + '_0');
+						newrow = newrow.replace('msrowidentifier_0_0', 'lumpsummsrowidentifier_' + lumpSumCount + '_0');
+						newrow = newrow.replace('msrowmbmsPreviousEntry_0_0', 'lumpsummsrowmbmsPreviousEntry_' + lumpSumCount + '_0');
+						document.getElementById('lumpSumMbDetails[' + lumpSumCount + '].mstd').innerHTML=newrow;
+						$(workOrderActivity.woms).each(function(index, measurementSheet){
+							if (index > 0) {
+								var msrowname= "lumpSumMbDetails[" + lumpSumCount + "].mstable";
+								var msrownameid=msrowname.split(".")[0];
+								var rep='measurementSheets\['+ index +'\]';
+
+								var $newrow = "<tr>"+$('#msrowtemplate').html()+"</tr>";
+								$newrow = $newrow.replace(/findNet/g, 'findLumpSumNet');
+								$newrow = $newrow.replace(/templatesorMbDetails\[0\]/g,msrownameid);
+								$newrow = $newrow.replace(/measurementSheets\[0\]/g,rep);
+								$newrow = $newrow.replace(/templatesorMbDetails_0/g, 'lumpSumMbDetails_' + lumpSumCount);
+								$newrow = $newrow.replace(/measurementSheets_0_id/g, 'measurementSheets_' + index + '_id');
+								$newrow = $newrow.replace(/measurementSheets_0_woMeasurementSheet/g, 'measurementSheets_' + index + '_woMeasurementSheet');
+								$newrow = $newrow.replace('msrowslNo_0_0', 'lumpsummsrowslNo_' + lumpSumCount + '_' + index);
+								$newrow = $newrow.replace('msrowremarks_0_0', 'lumpsummsrowremarks_' + lumpSumCount + '_' + index);
+								$newrow = $newrow.replace('msrowno_0_0', 'lumpsummsrowno_' + lumpSumCount + '_' + index);
+								$newrow = $newrow.replace('msrowlength_0_0', 'lumpsummsrowlength_' + lumpSumCount + '_' + index);
+								$newrow = $newrow.replace('msrowwidth_0_0', 'lumpsummsrowwidth_' + lumpSumCount + '_' + index);
+								$newrow = $newrow.replace('msrowdepthOrHeight_0_0', 'lumpsummsrowdepthOrHeight_' + lumpSumCount + '_' + index);
+								$newrow = $newrow.replace('msrowquantity_0_0', 'lumpsummsrowquantity_' + lumpSumCount + '_' + index);
+								$newrow = $newrow.replace('msrowidentifier_0_0', 'lumpsummsrowidentifier_' + lumpSumCount + '_' + index);
+								$newrow = $newrow.replace('msrowmbmsPreviousEntry_0_0', 'lumpsummsrowmbmsPreviousEntry_' + lumpSumCount + '_' + index);
+								$newrow = $newrow.replace('value="1"','value="'+(index+1)+'"');
+								$('.lumpsummssubmit_' + lumpSumCount).closest('tr').before($newrow);
+
+								patternvalidation();
+							}
+							$.each(measurementSheet, function(key, value){
+								if(key == "womsid") {
+									$('#lumpSumMbDetails_' + lumpSumCount + '_measurementSheets_' + index + '_woMeasurementSheet').attr('value', value);
+								} else if(key == "id") {
+									$('#lumpSumMbDetails_' + lumpSumCount + '_measurementSheets_' + index + '_id').attr('value', value);
+								} else if(key == "identifier") {
+									if(value == 'A')
+										$('#lumpsummsrowidentifier_' + lumpSumCount + '_' + index).html('No');
+									else
+										$('#lumpsummsrowidentifier_' + lumpSumCount + '_' + index).html('Yes');
+								} else
+									$('#lumpsummsrow' + key + '_' + lumpSumCount + '_' + index).html(value);
+							});
+						});
+					} else {
+						document.getElementById('lumpSumMbDetails[' + lumpSumCount + '].msadd').style.display = 'none';
+						$('#lumpSumQuantity_' + lumpSumCount).removeAttr('readonly');
+					}
+					lumpSumCount++;
+				}
+			}
+		});
+	} else {
+		var nonTenderedCount = $("#tblNonTendered > tbody > tr:visible[id='nonTenderedRow']").length;
+		var lumpSumCount = $("#tblLumpSum > tbody > tr:visible[id='lumpSumRow']").length;
+		$(data.data).each(function(index, workOrderActivity){
+			if($.inArray("" + workOrderActivity.id + "", existingActivityArray) == -1) {
+				if(nonTenderedCount==0 && workOrderActivity.sorNonSorType == 'SOR'){
+					$('#nonTenderedMessage').prop("hidden",true);
+					$('#nonTenderedRow').removeAttr("hidden");
+					$('#nonTenderedRow').removeAttr('sorinvisible');
+				}else{
+					if(workOrderActivity.sorNonSorType == 'SOR'){
+						var key = $("#tblNonTendered > tbody > tr:visible[id='nonTenderedRow']").length;
+						addRow('tblNonTendered', 'nonTenderedRow');
+						resetIndexes();
+						$('#nonTenderedMbDetailsId_' + key).val('');
+						$('#nonTenderedquantity_' + key).val('');
+						$('.nonTenderedcumulativeIncludingCurrentEntry_' + key).html('');
+						$('.nonTenderedAmountCurrentEntry_' + key).html('');
+						$('.nonTenderedamountIncludingCurrentEntry_' + key).html('');
+						$('#nonTenderedremarks_' + key).val('');
+						generateSlno('spannontenderedslno');
+					}else{
+						if (lumpSumCount > 0)
+							lumpSumCheck = true;
+						if(!lumpSumCheck){
+							$('#lumpSumMessage').prop("hidden",true);
+							$('#lumpSumRow').removeAttr("hidden");
+							$('#lumpSumRow').removeAttr('nonsorinvisible');
+						}
+						if(lumpSumCheck) {
+							var key = $("#tblLumpSum > tbody > tr:visible[id='lumpSumRow']").length;
+							addRow('tblLumpSum', 'lumpSumRow');
+							resetIndexes();
+							$('#lumpSumMbDetailsId_' + key).val('');
+							$('#lumpSumQuantity_' + key).val('');
+							$('.lumpSumCumulativeIncludingCurrentEntry_' + key).html('');
+							$('.lumpSumAmountCurrentEntry_' + key).html('');
+							$('.lumpSumAmountIncludingCurrentEntry_' + key).html('');
+							$('#lumpSumRemarks_' + key).val('');
+							generateSlno('spanlumpsumslno');
+						}
+						lumpSumCheck = true;
+					}
+				}
+				if(workOrderActivity.sorNonSorType == 'SOR'){
+					$('#nonTenderedworkOrderActivity_' + nonTenderedCount).val(workOrderActivity.id);
+					$('.nonTenderedsorCategory_' + nonTenderedCount).html(workOrderActivity.categoryType);
+					$('.nonTenderedsorCode_' + nonTenderedCount).html(workOrderActivity.sorCode);
+					$('.nonTenderedsummary_' + nonTenderedCount).html(workOrderActivity.summary);
+					$('.nonTendereddescription_' + nonTenderedCount).html(hint.replace(/@fulldescription@/g, workOrderActivity.description));
+					$('.nonTendereduom_' + nonTenderedCount).html(workOrderActivity.uom);
+					$('.nonTenderedapprovedQuantity_' + nonTenderedCount).html(workOrderActivity.approvedQuantity);
+					$('.nonTenderedapprovedRate_' + nonTenderedCount).html(parseFloat(workOrderActivity.estimateRate).toFixed(2));
+					$('#nonTenderedunitRate_' + nonTenderedCount).val(workOrderActivity.unitRate);
+					$('.nonTenderedapprovedAmount_' + nonTenderedCount).html(parseFloat(workOrderActivity.activityAmount).toFixed(2));
+					$('.nonTenderedcumulativePreviousEntry_' + nonTenderedCount).html(workOrderActivity.cumulativePreviousEntry);
+					if (workOrderActivity.woms != "") {
+						$('#nonTenderedquantity_' + nonTenderedCount).attr('readonly', 'readonly');
+						document.getElementById('nonTenderedMbDetails[' + nonTenderedCount + '].msadd').removeAttribute('style');
+						var newrow= $('#msheaderrowtemplate').html();
+						newrow = newrow.replace(/findNet/g, 'findNonTenderedNet');
+						newrow=  newrow.replace(/msrowtemplate/g, 'msrownonTenderedMbDetails[' + nonTenderedCount + ']');
+						newrow=  newrow.replace(/templatesorMbDetails\[0\]/g, 'nonTenderedMbDetails[' + nonTenderedCount + ']');
+						newrow = newrow.replace(/templatesorMbDetails_0/g, 'nonTenderedMbDetails_' + nonTenderedCount);
+						newrow = newrow.replace(/templatemssubmit_0/g, 'mssubmit_' + nonTenderedCount);
+						newrow = newrow.replace('msrowslNo_0_0', 'msrowslNo_' + nonTenderedCount + '_0');
+						newrow = newrow.replace('msrowremarks_0_0', 'msrowremarks_' + nonTenderedCount + '_0');
+						newrow = newrow.replace('msrowno_0_0', 'msrowno_' + nonTenderedCount + '_0');
+						newrow = newrow.replace('msrowlength_0_0', 'msrowlength_' + nonTenderedCount + '_0');
+						newrow = newrow.replace('msrowwidth_0_0', 'msrowwidth_' + nonTenderedCount + '_0');
+						newrow = newrow.replace('msrowdepthOrHeight_0_0', 'msrowdepthOrHeight_' + nonTenderedCount + '_0');
+						newrow = newrow.replace('msrowquantity_0_0', 'msrowquantity_' + nonTenderedCount + '_0');
+						newrow = newrow.replace('msrowidentifier_0_0', 'nontenderedmsrowidentifier_' + nonTenderedCount + '_0');
+						newrow = newrow.replace('msrowmbmsPreviousEntry_0_0', 'msrowmbmsPreviousEntry_' + nonTenderedCount + '_0');
+						document.getElementById('nonTenderedMbDetails[' + nonTenderedCount + '].mstd').innerHTML=newrow;
+						$(workOrderActivity.woms).each(function(index, measurementSheet){
+							if (index > 0) {
+								var msrowname= "nonTenderedMbDetails[" + nonTenderedCount + "].mstable";
+								var msrownameid=msrowname.split(".")[0];
+								var rep='measurementSheets\['+ index +'\]';
+
+								var $newrow = "<tr>"+$('#msrowtemplate').html()+"</tr>";
+								newrow = newrow.replace(/findNet/g, 'findNonTenderedNet');
+								$newrow = $newrow.replace(/templatesorMbDetails\[0\]/g,msrownameid);
+								$newrow = $newrow.replace(/measurementSheets\[0\]/g,rep);
+								$newrow = $newrow.replace(/templatesorMbDetails_0/g, 'nonTenderedMbDetails_' + nonTenderedCount);
+								$newrow = $newrow.replace(/measurementSheets_0_id/g, 'measurementSheets_' + index + '_id');
+								$newrow = $newrow.replace(/measurementSheets_0_woMeasurementSheet/g, 'measurementSheets_' + index + '_woMeasurementSheet');
+								$newrow = $newrow.replace('msrowslNo_0_0', 'msrowslNo_' + nonTenderedCount + '_' + index);
+								$newrow = $newrow.replace('msrowremarks_0_0', 'msrowremarks_' + nonTenderedCount + '_' + index);
+								$newrow = $newrow.replace('msrowno_0_0', 'msrowno_' + nonTenderedCount + '_' + index);
+								$newrow = $newrow.replace('msrowlength_0_0', 'msrowlength_' + nonTenderedCount + '_' + index);
+								$newrow = $newrow.replace('msrowwidth_0_0', 'msrowwidth_' + nonTenderedCount + '_' + index);
+								$newrow = $newrow.replace('msrowdepthOrHeight_0_0', 'msrowdepthOrHeight_' + nonTenderedCount + '_' + index);
+								$newrow = $newrow.replace('msrowquantity_0_0', 'msrowquantity_' + nonTenderedCount + '_' + index);
+								$newrow = $newrow.replace('msrowidentifier_0_0', 'nontenderedmsrowidentifier_' + nonTenderedCount + '_' + index);
+								$newrow = $newrow.replace('msrowmbmsPreviousEntry_0_0', 'msrowmbmsPreviousEntry_' + nonTenderedCount + '_' + index);
+								$newrow = $newrow.replace('value="1"','value="'+(index+1)+'"');
+								$('.mssubmit_' + nonTenderedCount).closest('tr').before($newrow);
+
+								patternvalidation();
+							}
+							$.each(measurementSheet, function(key, value){
+								if(key == "womsid") {
+									$('#nonTenderedMbDetails_' + nonTenderedCount + '_measurementSheets_' + index + '_woMeasurementSheet').attr('value', value);
+								} else if(key == "id") {
+									$('#nonTenderedMbDetails_' + nonTenderedCount + '_measurementSheets_' + index + '_id').attr('value', value);
+								} else if(key == "identifier") {
+									if(value == 'A')
+										$('#nontenderedmsrowidentifier_' + nonTenderedCount + '_' + index).html('No');
+									else
+										$('#nontenderedmsrowidentifier_' + nonTenderedCount + '_' + index).html('Yes');
+								} else
+									$('#msrow' + key + '_' + nonTenderedCount + '_' + index).html(value);
+							});
+						});
+					} else {
+						document.getElementById('nonTenderedMbDetails[' + nonTenderedCount + '].msadd').style.display = 'none';
+						$('#quantity_' + nonTenderedCount).removeAttr('readonly');
+					}
+					nonTenderedCount++;
+				}else{
+					$('#lumpSumWorkOrderActivity_' + lumpSumCount).val(workOrderActivity.id);
+					$('.lumpSumSummary_' + lumpSumCount).html(workOrderActivity.summary);
+					$('.lumpSumDescription_' + lumpSumCount).html(hint.replace(/@fulldescription@/g, workOrderActivity.description));
+					$('.lumpSumUom_' + lumpSumCount).html(workOrderActivity.uom);
+					$('.lumpSumApprovedQuantity_' + lumpSumCount).html(workOrderActivity.approvedQuantity);
+					$('.lumpSumApprovedRate_' + lumpSumCount).html(parseFloat(workOrderActivity.estimateRate).toFixed(2));
+					$('#lumpSumUnitRate_' + lumpSumCount).val(workOrderActivity.unitRate);
+					$('.lumpSumApprovedAmount_' + lumpSumCount).html(parseFloat(workOrderActivity.activityAmount).toFixed(2));
+					$('.lumpSumCumulativePreviousEntry_' + lumpSumCount).html(workOrderActivity.cumulativePreviousEntry);
+					if (workOrderActivity.woms != "") {
+						$('#lumpSumQuantity_' + lumpSumCount).attr('readonly', 'readonly');
+						document.getElementById('lumpSumMbDetails[' + lumpSumCount + '].msadd').removeAttribute('style');
+						var newrow= $('#msheaderrowtemplate').html();
+
+						newrow = newrow.replace(/findNet/g, 'findLumpSumNet');
+						newrow=  newrow.replace(/msrowtemplate/g, 'msrowLumpSumMbDetails[' + lumpSumCount + ']');
+						newrow=  newrow.replace(/templatesorMbDetails\[0\]/g, 'lumpSumMbDetails[' + lumpSumCount + ']');
+						newrow = newrow.replace(/templatesorMbDetails_0/g, 'lumpSumMbDetails_' + lumpSumCount);
+						newrow = newrow.replace(/templatemssubmit_0/g, 'lumpsummssubmit_' + lumpSumCount);
+						newrow = newrow.replace('msrowslNo_0_0', 'lumpsummsrowslNo_' + lumpSumCount + '_0');
+						newrow = newrow.replace('msrowremarks_0_0', 'lumpsummsrowremarks_' + lumpSumCount + '_0');
+						newrow = newrow.replace('msrowno_0_0', 'lumpsummsrowno_' + lumpSumCount + '_0');
+						newrow = newrow.replace('msrowlength_0_0', 'lumpsummsrowlength_' + lumpSumCount + '_0');
+						newrow = newrow.replace('msrowwidth_0_0', 'lumpsummsrowwidth_' + lumpSumCount + '_0');
+						newrow = newrow.replace('msrowdepthOrHeight_0_0', 'lumpsummsrowdepthOrHeight_' + lumpSumCount + '_0');
+						newrow = newrow.replace('msrowquantity_0_0', 'lumpsummsrowquantity_' + lumpSumCount + '_0');
+						newrow = newrow.replace('msrowidentifier_0_0', 'lumpsummsrowidentifier_' + lumpSumCount + '_0');
+						newrow = newrow.replace('msrowmbmsPreviousEntry_0_0', 'lumpsummsrowmbmsPreviousEntry_' + lumpSumCount + '_0');
+						document.getElementById('lumpSumMbDetails[' + lumpSumCount + '].mstd').innerHTML=newrow;
+						$(workOrderActivity.woms).each(function(index, measurementSheet){
+							if (index > 0) {
+								var msrowname= "lumpSumMbDetails[" + lumpSumCount + "].mstable";
+								var msrownameid=msrowname.split(".")[0];
+								var rep='measurementSheets\['+ index +'\]';
+
+								var $newrow = "<tr>"+$('#msrowtemplate').html()+"</tr>";
+								$newrow = $newrow.replace(/findNet/g, 'findLumpSumNet');
+								$newrow = $newrow.replace(/templatesorMbDetails\[0\]/g,msrownameid);
+								$newrow = $newrow.replace(/measurementSheets\[0\]/g,rep);
+								$newrow = $newrow.replace(/templatesorMbDetails_0/g, 'lumpSumMbDetails_' + lumpSumCount);
+								$newrow = $newrow.replace(/measurementSheets_0_id/g, 'measurementSheets_' + index + '_id');
+								$newrow = $newrow.replace(/measurementSheets_0_woMeasurementSheet/g, 'measurementSheets_' + index + '_woMeasurementSheet');
+								$newrow = $newrow.replace('msrowslNo_0_0', 'lumpsummsrowslNo_' + lumpSumCount + '_' + index);
+								$newrow = $newrow.replace('msrowremarks_0_0', 'lumpsummsrowremarks_' + lumpSumCount + '_' + index);
+								$newrow = $newrow.replace('msrowno_0_0', 'lumpsummsrowno_' + lumpSumCount + '_' + index);
+								$newrow = $newrow.replace('msrowlength_0_0', 'lumpsummsrowlength_' + lumpSumCount + '_' + index);
+								$newrow = $newrow.replace('msrowwidth_0_0', 'lumpsummsrowwidth_' + lumpSumCount + '_' + index);
+								$newrow = $newrow.replace('msrowdepthOrHeight_0_0', 'lumpsummsrowdepthOrHeight_' + lumpSumCount + '_' + index);
+								$newrow = $newrow.replace('msrowquantity_0_0', 'lumpsummsrowquantity_' + lumpSumCount + '_' + index);
+								$newrow = $newrow.replace('msrowidentifier_0_0', 'lumpsummsrowidentifier_' + lumpSumCount + '_' + index);
+								$newrow = $newrow.replace('msrowmbmsPreviousEntry_0_0', 'lumpsummsrowmbmsPreviousEntry_' + lumpSumCount + '_' + index);
+								$newrow = $newrow.replace('value="1"','value="'+(index+1)+'"');
+								$('.lumpsummssubmit_' + lumpSumCount).closest('tr').before($newrow);
+
+								patternvalidation();
+							}
+							$.each(measurementSheet, function(key, value){
+								if(key == "womsid") {
+									$('#lumpSumMbDetails_' + lumpSumCount + '_measurementSheets_' + index + '_woMeasurementSheet').attr('value', value);
+								} else if(key == "id") {
+									$('#lumpSumMbDetails_' + lumpSumCount + '_measurementSheets_' + index + '_id').attr('value', value);
+								} else if(key == "identifier") {
+									if(value == 'A')
+										$('#lumpsummsrowidentifier_' + lumpSumCount + '_' + index).html('No');
+									else
+										$('#lumpsummsrowidentifier_' + lumpSumCount + '_' + index).html('Yes');
+								} else
+									$('#lumpsummsrow' + key + '_' + lumpSumCount + '_' + index).html(value);
+							});
+						});
+					} else {
+						document.getElementById('lumpSumMbDetails[' + lumpSumCount + '].msadd').style.display = 'none';
+						$('#lumpSumQuantity_' + lumpSumCount).removeAttr('readonly');
+					}
+					lumpSumCount++;
+				}
+			}
+		});
+	}
+	
+	nonTenderedTotal();
+	lumpSumTotal();
+
 }
 
 function resetIndexes() {
@@ -267,6 +728,186 @@ function resetIndexes() {
 						subRowIdx++;
 					});
 				}
+				$(this).attr({
+					'class' : function(_, name) {
+						if(name != undefined)
+							return name.replace(/\d+/, idx);
+					},
+					'id' : function(_, id) {
+						if(id != undefined)
+							return id.replace(/\d+/, idx);
+					},
+				});
+			}
+		});
+		idx++;
+	});
+	
+ idx = 0;
+	
+	//regenerate index existing inputs in table row
+	$(".nonTenderedRow").each(function() {
+		$(this).find("input, span, select, textarea, button").each(function() {
+			
+			if (!$(this).is('span')) {
+				$(this).attr({
+					'name' : function(_, name) {
+						if(name != undefined)
+							if(name) {
+							  name= name.replace(/nonTenderedMbDetails\[.\]/g, "nonTenderedMbDetails["+idx+"]");
+							  return name.replace(/_\d+/,"_"+idx);
+							}
+					},
+					'id' : function(_, id) {
+						if(id != undefined)
+							return id.replace(/\d+/, idx);
+					},
+					'class' : function(_, name) {
+						if(name != undefined)
+							return name.replace(/\d+/, idx);
+					},
+					'data-idx' : function(_, dataIdx) {
+						return idx;
+					}
+				});
+			} else {
+				if($(this).attr('class').endsWith('.mstd')) {
+					var subRowIdx=0;
+					$(this).find("table > tbody > tr").each(function() {
+					  	$(this).find("input, textarea, td").each(function() {
+							if ($(this).is('td')) {
+								$(this).attr({
+									'id' : function(_, id) {
+										if(id != undefined && id.indexOf('msrow') >= 0) {
+											return id.split('_')[0] + '_' + idx + '_' + subRowIdx;
+										} else {
+											if(id != undefined)
+												return id.replace(/\d+/, idx);
+										}
+									}
+								});
+							}
+							else{
+								$(this).attr({
+									'name' : function(_, name) {
+										if(name != undefined)
+											if(name) {
+												name = name.replace(/measurementSheets\[.\]/g, "measurementSheets["+subRowIdx+"]");
+												return name;
+											}
+									},
+									'id' : function(_, id) {
+										if(id != undefined)
+											if(id.indexOf('_') == -1) {
+												id = id.replace(/measurementSheets\[.\]/g, "measurementSheets["+subRowIdx+"]");
+												return id;
+											} else {
+												if(id.indexOf('_woMeasurementSheet') == -1)
+													return 'nonTenderedMbDetails_' + idx + '_measurementSheets_' + subRowIdx + '_id';
+												else
+													return 'nonTenderedMbDetails_' + idx + '_measurementSheets_' + subRowIdx + '_woMeasurementSheet';
+											}
+									},
+									'data-idx' : function(_, dataIdx) {
+										return subRowIdx;
+									}
+								});
+							}
+						});
+						subRowIdx++;
+					});
+				}
+				
+				$(this).attr({
+					'class' : function(_, name) {
+						if(name != undefined)
+							return name.replace(/\d+/, idx);
+					},
+					'id' : function(_, id) {
+						if(id != undefined)
+							return id.replace(/\d+/, idx);
+					},
+				});
+			}
+		});
+		idx++;
+	});
+	
+idx = 0;
+	
+	//regenerate index existing inputs in table row
+	$(".lumpSumRow").each(function() {
+		$(this).find("input, span, select, textarea, button").each(function() {
+			
+			if (!$(this).is('span')) {
+				$(this).attr({
+					'name' : function(_, name) {
+						if(name != undefined)
+							if(name) {
+							  name= name.replace(/lumpSumMbDetails\[.\]/g, "lumpSumMbDetails["+idx+"]");
+							  return name.replace(/_\d+/,"_"+idx);
+							}
+					},
+					'id' : function(_, id) {
+						if(id != undefined)
+							return id.replace(/\d+/, idx);
+					},
+					'class' : function(_, name) {
+						if(name != undefined)
+							return name.replace(/\d+/, idx);
+					},
+					'data-idx' : function(_, dataIdx) {
+						return idx;
+					}
+				});
+			} else {
+				if($(this).attr('class').endsWith('.mstd')) {
+					var subRowIdx=0;
+					$(this).find("table > tbody > tr").each(function() {
+					  	$(this).find("input, textarea, td").each(function() {
+							if ($(this).is('td')) {
+								$(this).attr({
+									'id' : function(_, id) {
+										if(id != undefined && id.indexOf('msrow') >= 0) {
+											return id.split('_')[0] + '_' + idx + '_' + subRowIdx;
+										} else {
+											if(id != undefined)
+												return id.replace(/\d+/, idx);
+										}
+									}
+								});
+							}
+							else{
+								$(this).attr({
+									'name' : function(_, name) {
+										if(name != undefined)
+											if(name) {
+												name = name.replace(/measurementSheets\[.\]/g, "measurementSheets["+subRowIdx+"]");
+												return name;
+											}
+									},
+									'id' : function(_, id) {
+										if(id != undefined)
+											if(id.indexOf('_') == -1) {
+												id = id.replace(/measurementSheets\[.\]/g, "measurementSheets["+subRowIdx+"]");
+												return id;
+											} else {
+												if(id.indexOf('_woMeasurementSheet') == -1)
+													return 'lumpSumMbDetails_' + idx + '_measurementSheets_' + subRowIdx + '_id';
+												else
+													return 'lumpSumMbDetails_' + idx + '_measurementSheets_' + subRowIdx + '_woMeasurementSheet';
+											}
+									},
+									'data-idx' : function(_, dataIdx) {
+										return subRowIdx;
+									}
+								});
+							}
+						});
+						subRowIdx++;
+					});
+				}
+				
 				$(this).attr({
 					'class' : function(_, name) {
 						if(name != undefined)
@@ -794,6 +1435,101 @@ function deleteNonSor(obj) {
 	return true;
 }
 
+function deleteNonTendered(obj) {
+	// close all measurement sheets before deleting
+	closeAllmsheet();
+	var rIndex = getRow(obj).rowIndex;
+	var id = $(getRow(obj)).children('td:first').children('input:first').val();
+    //To get all the deleted rows id
+    var aIndex = rIndex - 1;
+    if(!$("#removedDetailIds").val()==""){
+		$("#removedDetailIds").val($("#removedDetailIds").val()+",");
+	}
+    $("#removedDetailIds").val($("#removedDetailIds").val()+id);
+	
+	var tbl=document.getElementById('tblsor');	
+	var rowcount=$("#tblNonTendered > tbody > tr").length;
+	if(rowcount==2) {
+		var rowId = $(obj).attr('class').split('_').pop();
+		$('#nonTenderedMbDetailsId_' + rowId).val('');
+		$('#nonTenderedworkOrderActivity_' + rowId).val('');
+		$('.nonTenderedsorCategory_' + rowId).html('');
+		$('.nonTenderedsorCode_' + rowId).html('');
+		$('.nonTenderedsummary_' + rowId).html('');
+		$('.nonTendereddescription_' + rowId).html('');
+		$('.nonTendereduom_' + rowId).html('');
+		$('.nonTenderedapprovedQuantity_' + rowId).html('');
+		$('.nonTenderedapprovedRate_' + rowId).html('');
+		$('#nonTenderedunitRate_' + rowId).val('');
+		$('.nonTenderedcumulativePreviousEntry_' + rowId).html('');
+		$('#nonTenderedquantity_' + rowId).val('');
+		$('.nonTenderedcumulativeIncludingCurrentEntry_' + rowId).html('');
+		$('.nonTenderedAmountCurrentEntry_' + rowId).html('');
+		$('.nonTenderedamountIncludingCurrentEntry_' + rowId).html('');
+		$('.nonTenderedapprovedAmount_' + rowId).html('');
+		$('#nonTenderedremarks_' + rowId).val('');
+		$('#nonTenderedRow').prop("hidden",true);
+		$('#nonTenderedRow').attr('sorinvisible', true);
+		$('#nonTenderedMessage').removeAttr('hidden');
+		document.getElementById('nonTenderedMbDetails[' + rowId + '].mstd').innerHTML = "";
+		nonTenderedMsArray[rowId]="";
+	} else {
+		deleteRow('tblNonTendered',obj);
+	}
+	resetIndexes();
+	//starting index for table fields
+	generateSlno('spannontenderedslno');
+	nonTenderedTotal();
+	return true;
+}
+
+function deleteLumpSum(obj) {
+	// close all measurement sheets before deleting
+	closeAllmsheet();
+    var rIndex = getRow(obj).rowIndex;
+    
+    var id = $(getRow(obj)).children('td:first').children('input:first').val();
+    //To get all the deleted rows id
+    var aIndex = rIndex - 1;
+    if(!$("#removedDetailIds").val()==""){
+		$("#removedDetailIds").val($("#removedDetailIds").val()+",");
+	}
+    $("#removedDetailIds").val($("#removedDetailIds").val()+id);
+    
+	var rowcount=$("#tblLumpSum > tbody > tr").length;
+
+	if(rowcount==2) {
+		var rowId = $(obj).attr('class').split('_').pop();
+		$('#lumpSumMbDetailsId_' + rowId).val('');
+		$('#lumpSumWorkOrderActivity_' + rowId).val('');
+		$('.lumpSumSummary_' + rowId).html('');
+		$('.lumpSumDescription_' + rowId).html('');
+		$('.lumpSumUom_' + rowId).html('');
+		$('.lumpSumApprovedQuantity_' + rowId).html('');
+		$('.lumpSumApprovedRate_' + rowId).html('');
+		$('#lumpSumUnitRate_' + rowId).val('');
+		$('.lumpSumCumulativePreviousEntry_' + rowId).html('');
+		$('#lumpSumQuantity_' + rowId).val('');
+		$('.lumpSumCumulativeIncludingCurrentEntry_' + rowId).html('');
+		$('.lumpSumAmountCurrentEntry_' + rowId).html('');
+		$('.lumpSumAmountIncludingCurrentEntry_' + rowId).html('');
+		$('.lumpSumApprovedAmount_' + rowId).html('');
+		$('#lumpSumRemarks_' + rowId).val('');
+		$('#lumpSumRow').prop("hidden",true);
+		$('#lumpSumRow').attr('nonsorinvisible', true);
+		$('#lumpSumMessage').removeAttr('hidden');
+//		document.getElementById('lumpSumMbDetails[' + rowId + '].mstd').innerHTML = $('#msheaderrowtemplate').html();
+	} else {
+		deleteRow('tblLumpSum',obj);
+	}
+	resetIndexes();
+	//starting index for table fields
+	generateSlno('spanlumpsumslno');
+	
+	lumpSumTotal();
+	return true;
+}
+
 function generateSlno(className)
 {
 	var idx=1;
@@ -948,7 +1684,38 @@ function calculateSorAmounts(currentObj) {
 	
 	sorTotal();
 }
-
+function calculateNonTenderedAmounts(currentObj) {
+	rowcount = $(currentObj).attr('id').split('_').pop();
+	
+	var toleranceLimit = $('#quantityTolerance').val();
+	var cumulativePreviousEntry = parseFloat($('.nonTenderedcumulativePreviousEntry_' + rowcount).html().trim());
+	var currentQuantity = $(currentObj).val() == "" ? 0 : $(currentObj).val();
+	var unitRate = parseFloat($('#nonTenderedunitRate_' + rowcount).val().trim());
+	var approvedQuantity = parseFloat($('.nonTenderedapprovedQuantity_' + rowcount).html().trim());
+	var toleranceQuantity = parseFloat(approvedQuantity * parseFloat(toleranceLimit) / 100);
+	var cumulativeIncludingCurrentEntry = parseFloat(parseFloat(cumulativePreviousEntry) + parseFloat(currentQuantity)).toFixed(4);
+	if (toleranceQuantity < cumulativeIncludingCurrentEntry) {
+		var message = $('#errorcumulativequantity').val();
+		var sorCode = $('.nonTenderedsorCode_' + rowcount).html();
+		message = message.replace(/\{0\}/g, toleranceLimit) + " for the Non Tendered " + sorCode;
+		bootbox.alert(message);
+		$(currentObj).val('');
+		$('.nonTenderedcumulativeIncludingCurrentEntry_' + rowcount).html('');
+		$('.nonTenderedAmountCurrentEntry_' + rowcount).html('');
+		$('.nonTenderedamountIncludingCurrentEntry_' + rowcount).html('');
+		return false;
+	}
+	
+	var amountCurrentEntry = parseFloat(parseFloat(unitRate) * parseFloat(currentQuantity)).toFixed(2);
+	var amountIncludingCurrentEntry = parseFloat(parseFloat(unitRate) * parseFloat(cumulativeIncludingCurrentEntry)).toFixed(2);
+	
+	$('.nonTenderedcumulativeIncludingCurrentEntry_' + rowcount).html(cumulativeIncludingCurrentEntry);
+	$('.nonTenderedAmountCurrentEntry_' + rowcount).html(amountCurrentEntry);
+	$('.nonTenderedamountIncludingCurrentEntry_' + rowcount).html(amountIncludingCurrentEntry);
+	$('#nonTenderedamount_' + rowcount).val(amountCurrentEntry);
+	
+	nonTenderedTotal();
+}
 function calculateNonSorAmounts(currentObj) {
 	rowcount = $(currentObj).attr('id').split('_').pop();
 	
@@ -982,6 +1749,39 @@ function calculateNonSorAmounts(currentObj) {
 	nonSorTotal();
 }
 
+function calculateLumpSumAmounts(currentObj) {
+	rowcount = $(currentObj).attr('id').split('_').pop();
+	
+	var toleranceLimit = $('#quantityTolerance').val();
+	var cumulativePreviousEntry = parseFloat($('.lumpSumCumulativePreviousEntry_' + rowcount).html().trim());
+	var currentQuantity = $(currentObj).val() == "" ? 0 : $(currentObj).val();
+	var unitRate = parseFloat($('#lumpSumUnitRate_' + rowcount).val().trim());
+	var approvedQuantity = parseFloat($('.lumpSumApprovedQuantity_' + rowcount).html().trim());
+	var toleranceQuantity = parseFloat(approvedQuantity * parseFloat(toleranceLimit) / 100);
+	var cumulativeIncludingCurrentEntry = parseFloat(parseFloat(cumulativePreviousEntry) + parseFloat(currentQuantity)).toFixed(4);
+	if (toleranceQuantity < cumulativeIncludingCurrentEntry) {
+		var message = $('#errorcumulativequantity').val();
+		var nonSorCode = $('.lumpSumCode_' + rowcount).html();
+		message = message.replace(/\{0\}/g, toleranceLimit) + " for the Lump Sum " + nonSorCode;
+		bootbox.alert(message);
+		$(currentObj).val('');
+		$('.lumpSumCumulativeIncludingCurrentEntry_' + rowcount).html('');
+		$('.lumpSumAmountCurrentEntry_' + rowcount).html('');
+		$('.lumpSumAmountIncludingCurrentEntry_' + rowcount).html('');
+		return false;
+	}
+	
+	var amountCurrentEntry = parseFloat(parseFloat(unitRate) * parseFloat(currentQuantity)).toFixed(2);
+	var amountIncludingCurrentEntry = parseFloat(parseFloat(unitRate) * parseFloat(cumulativeIncludingCurrentEntry)).toFixed(2);
+	
+	$('.lumpSumCumulativeIncludingCurrentEntry_' + rowcount).html(cumulativeIncludingCurrentEntry);
+	$('.lumpSumAmountCurrentEntry_' + rowcount).html(amountCurrentEntry);
+	$('.lumpSumAmountIncludingCurrentEntry_' + rowcount).html(amountIncludingCurrentEntry);
+	$('#lumpSumAmount_' + rowcount).val(amountCurrentEntry);
+	
+	lumpSumTotal();
+}
+
 function sorTotal() {
 	var total = 0.0;
 	$('.amountCurrentEntry').each(function() {
@@ -989,6 +1789,16 @@ function sorTotal() {
 			total = parseFloat(parseFloat(total) + parseFloat($(this).html().replace(',', ''))).toFixed(2);
 	});
 	$('#sorTotal').html(total);
+	calculateTotalValue();
+}
+
+function nonTenderedTotal() {
+	var total = 0.0;
+	$('.nonTenderedAmountCurrentEntry').each(function() {
+		if($(this).html().trim() != "")
+			total = parseFloat(parseFloat(total) + parseFloat($(this).html().replace(',', ''))).toFixed(2);
+	});
+	$('#nonTenderedTotal').html(total);
 	calculateTotalValue();
 }
 
@@ -1002,16 +1812,34 @@ function nonSorTotal() {
 	calculateTotalValue();
 }
 
+function lumpSumTotal() {
+	var total = 0.0;
+	$('.lumpSumAmountCurrentEntry').each(function() {
+		if($(this).html().trim() != "")
+			total = parseFloat(parseFloat(total) + parseFloat($(this).html().replace(',', ''))).toFixed(2);
+	});
+	$('#lumpSumTotal').html(total);
+	calculateTotalValue();
+}
+
 function calculateTotalValue() {
 	var sorTotal = $('#sorTotal').html();
 	var nonSorTotal = $('#nonSorTotal').html();
+	var nonTenderedTotal = $('#nonTenderedTotal').html();
+	var lumpSumTotal = $('#lumpSumTotal').html();
 	if(sorTotal == '')
 		sorTotal = 0.0;
 	if(nonSorTotal == '')
 		nonSorTotal = 0.0;
+	if(nonTenderedTotal == '')
+		nonTenderedTotal = 0.0;
+	if(lumpSumTotal == '')
+		lumpSumTotal = 0.0;
 	
-	var total = parseFloat(parseFloat(sorTotal) + parseFloat(nonSorTotal) ).toFixed(2);
-	$('#pageTotal').html(total);
+	var total = parseFloat(parseFloat(sorTotal) + parseFloat(nonSorTotal) +parseFloat(nonTenderedTotal) + parseFloat(lumpSumTotal) ).toFixed(2);
+	
+	$('#pageTotal').html(parseFloat(parseFloat(sorTotal) + parseFloat(nonSorTotal)).toFixed(2));
+	$('#nonTenderedPageTotal').html(parseFloat(parseFloat(nonTenderedTotal) + parseFloat(lumpSumTotal)).toFixed(2));
 	
 	var tenderFinalisedPercentage = 0;
 	if($('#tenderFinalisedPercentage').html().trim() != '')
@@ -1121,7 +1949,9 @@ function validateFormData() {
 	
 	var inVisibleSorCount = $("#tblsor > tbody > tr[sorinvisible='true']").length;
 	var inVisibleNonSorCount = $("#tblNonSor > tbody > tr[nonsorinvisible='true']").length;
-	if (inVisibleSorCount == 1 && inVisibleNonSorCount == 1) {
+	var inVisibleNonTenderedCount = $("#tblNonTendered > tbody > tr[sorinvisible='true']").length;
+	var inVisibleLumpSumCount = $("#tbllumpSum > tbody > tr[nonsorinvisible='true']").length;
+	if (inVisibleSorCount == 1 && inVisibleNonSorCount == 1 && inVisibleNonTenderedCount == 1 && inVisibleLumpSumCount == 1) {
 		bootbox.alert($('#errorsornonsor').val());
 		return false;
 	}
@@ -1158,6 +1988,48 @@ function validateFormData() {
 				message += " for Non SOR Sl No : " + slNo;
 			else
 				message += " and for Non SOR Sl No : " + slNo;
+		}
+		bootbox.alert($('#errorquantitieszero').val() + message);
+		return false;
+	}
+	index = 0;
+	var slNo = "";
+	$("#tblNonTendered > tbody > tr[sorinvisible!='true'] .quantity").each(function() {
+		index++;
+		if ($(this).val() == "" || parseFloat($(this).val()) <= 0) {
+			flag = false;
+			slNo = slNo + index + ", ";
+		}
+	});
+	
+	if (!flag) {
+		if(slNo != "") {
+			slNo = slNo.slice(0, -2);
+			if(message == "")
+				message += " for Non Tendered Sl No : " + slNo;
+			else
+				message += " and for Non Tendered Sl No : " + slNo;
+		}
+		bootbox.alert($('#errorquantitieszero').val() + message);
+		return false;
+	}
+	index = 0;
+	var slNo = "";
+	$("#tblLumpSum > tbody > tr[nonsorinvisible!='true'] .quantity").each(function() {
+		index++;
+		if ($(this).val() == "" || parseFloat($(this).val()) <= 0) {
+			flag = false;
+			slNo = slNo + index + ", ";
+		}
+	});
+	
+	if (!flag) {
+		if(slNo != "") {
+			slNo = slNo.slice(0, -2);
+			if(message == "")
+				message += " for Lump Sum Sl No : " + slNo;
+			else
+				message += " and for Lump Sum Sl No : " + slNo;
 		}
 		bootbox.alert($('#errorquantitieszero').val() + message);
 		return false;

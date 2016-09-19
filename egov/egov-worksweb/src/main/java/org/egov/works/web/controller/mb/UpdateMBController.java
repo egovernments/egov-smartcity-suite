@@ -151,6 +151,8 @@ public class UpdateMBController extends GenericWorkFlowController {
     private void splitSorAndNonSorMBDetails(final MBHeader mbHeader) {
         mbHeader.setSorMbDetails((List<MBDetails>) mbHeader.getSORMBDetails());
         mbHeader.setNonSorMbDetails((List<MBDetails>) mbHeader.getNonSORMBDetails());
+        mbHeader.setNonTenderedMbDetails((List<MBDetails>) mbHeader.getNonTenderedMBDetails());
+        mbHeader.setLumpSumMbDetails((List<MBDetails>) mbHeader.getLumpSumMBDetails());
     }
 
     @RequestMapping(value = "/save/{mbHeaderId}", method = RequestMethod.POST)

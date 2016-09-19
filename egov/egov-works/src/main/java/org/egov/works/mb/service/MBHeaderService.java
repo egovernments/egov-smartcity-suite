@@ -331,6 +331,33 @@ public class MBHeaderService {
                 for (final MBDetails oldMBDetails : mbHeader.getNonSORMBDetails())
                     if (oldMBDetails.getId().equals(mbDetails.getId()))
                         updateMBDetails(oldMBDetails, mbDetails);
+
+        for (final MBDetails mbDetails : mbHeader.getNonTenderedMbDetails())
+            if (mbDetails.getId() == null) {
+                removeEmptyMBMS(mbDetails);
+                mbDetails.setMbHeader(mbHeader);
+                mbDetails.setWorkOrderActivity(
+                        workOrderActivityService.getWorkOrderActivityById(mbDetails.getWorkOrderActivity().getId()));
+                for (final MBMeasurementSheet mbms : mbDetails.getMeasurementSheets())
+                    mbms.setMbDetails(mbDetails);
+                mbHeader.addMbDetails(mbDetails);
+            } else
+                for (final MBDetails oldMBDetails : mbHeader.getNonTenderedMBDetails())
+                    if (oldMBDetails.getId().equals(mbDetails.getId()))
+                        updateMBDetails(oldMBDetails, mbDetails);
+        for (final MBDetails mbDetails : mbHeader.getLumpSumMbDetails())
+            if (mbDetails.getId() == null) {
+                removeEmptyMBMS(mbDetails);
+                mbDetails.setMbHeader(mbHeader);
+                mbDetails.setWorkOrderActivity(
+                        workOrderActivityService.getWorkOrderActivityById(mbDetails.getWorkOrderActivity().getId()));
+                for (final MBMeasurementSheet mbms : mbDetails.getMeasurementSheets())
+                    mbms.setMbDetails(mbDetails);
+                mbHeader.addMbDetails(mbDetails);
+            } else
+                for (final MBDetails oldMBDetails : mbHeader.getLumpSumMBDetails())
+                    if (oldMBDetails.getId().equals(mbDetails.getId()))
+                        updateMBDetails(oldMBDetails, mbDetails);
     }
 
     private void updateMBDetails(final MBDetails oldMBDetails, final MBDetails mbDetails) {
@@ -695,7 +722,8 @@ public class MBHeaderService {
         final List<AppConfigValues> values = appConfigValuesService.getConfigValuesByModuleAndKey(
                 WorksConstants.WORKS_MODULE_NAME, WorksConstants.APPCONFIG_KEY_MB_QUANTITY_TOLERANCE_LEVEL);
         final AppConfigValues value = values.get(0);
-        if (mbHeader.getSorMbDetails().isEmpty() && mbHeader.getNonSorMbDetails().isEmpty()) {
+        if (mbHeader.getSorMbDetails().isEmpty() && mbHeader.getNonSorMbDetails().isEmpty()
+                && mbHeader.getNonTenderedMbDetails().isEmpty() && mbHeader.getLumpSumMbDetails().isEmpty()) {
             message = messageSource.getMessage("error.mb.sor.nonsor.required",
                     new String[] {},
                     null);
@@ -928,13 +956,14 @@ public class MBHeaderService {
                 MBHeader.MeasurementBookStatus.CANCELLED.toString(),
                 woMeasurementSheetId);
     }
-    
-    public List<MBHeader> getMBHeaderForBillTillDate(final Long contractorBillId,final Long workOrderEstimateId) {
+
+    public List<MBHeader> getMBHeaderForBillTillDate(final Long contractorBillId, final Long workOrderEstimateId) {
         return mbHeaderRepository.findMBHeadersTillDate(contractorBillId, workOrderEstimateId);
     }
-    
-    public List<MBHeader> getMBHeadersForTenderedLumpSumAcivitiesToCancelRE(final RevisionAbstractEstimate revisionEstimate,final WorkOrderEstimate workOrderEstimate) { 
-         return  mbHeaderRepository.findMBHeadersForRevisionEstimate(revisionEstimate.getId(),workOrderEstimate.getId(),
-                RevisionType.NON_TENDERED_ITEM,RevisionType.LUMP_SUM_ITEM,WorksConstants.CANCELLED);
+
+    public List<MBHeader> getMBHeadersForTenderedLumpSumAcivitiesToCancelRE(final RevisionAbstractEstimate revisionEstimate,
+            final WorkOrderEstimate workOrderEstimate) {
+        return mbHeaderRepository.findMBHeadersForRevisionEstimate(revisionEstimate.getId(), workOrderEstimate.getId(),
+                RevisionType.NON_TENDERED_ITEM, RevisionType.LUMP_SUM_ITEM, WorksConstants.CANCELLED);
     }
 }

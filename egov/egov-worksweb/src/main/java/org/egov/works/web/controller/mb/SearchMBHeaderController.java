@@ -98,4 +98,16 @@ public class SearchMBHeaderController {
 
         return "workorderactivity-searchform";
     }
+    
+    @RequestMapping(value = "/measurementbook/searchreactivityform", method = RequestMethod.GET)
+    public String showSearchREWorkOrderActivity(@RequestParam("woeId") final Long workOrderEstimateId,
+            @RequestParam("workOrderNo") final String workOrderNo,
+            @RequestParam("mbHeaderId") final String mbHeaderId,
+            final Model model) {
+        model.addAttribute("workOrderEstimateId", workOrderEstimateId);
+        model.addAttribute("workOrderNo", workOrderNo);
+        model.addAttribute("mbHeaderId", mbHeaderId);
+
+        return "searchREWorkOrderActivity-form";
+    }
 }

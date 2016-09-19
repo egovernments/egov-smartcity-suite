@@ -77,6 +77,7 @@ import org.egov.infra.validation.exception.ValidationError;
 import org.egov.infra.workflow.entity.StateAware;
 import org.egov.works.contractorbill.entity.ContractorBillRegister;
 import org.egov.works.lineestimate.entity.DocumentDetails;
+import org.egov.works.revisionestimate.entity.enums.RevisionType;
 import org.egov.works.utils.WorksConstants;
 import org.egov.works.workorder.entity.WorkOrder;
 import org.egov.works.workorder.entity.WorkOrderEstimate;
@@ -199,6 +200,10 @@ public class MBHeader extends StateAware {
     private transient List<MBDetails> sorMbDetails = new ArrayList<MBDetails>(0);
 
     private transient List<MBDetails> nonSorMbDetails = new ArrayList<MBDetails>(0);
+
+    private transient List<MBDetails> nonTenderedMbDetails = new ArrayList<MBDetails>(0);
+
+    private transient List<MBDetails> lumpSumMbDetails = new ArrayList<MBDetails>(0);
 
     private final transient List<DocumentDetails> documentDetails = new ArrayList<DocumentDetails>(0);
 
@@ -439,14 +444,42 @@ public class MBHeader extends StateAware {
         this.nonSorMbDetails = nonSorMbDetails;
     }
 
+    @SuppressWarnings("unchecked")
     public Collection<MBDetails> getSORMBDetails() {
         return CollectionUtils.select(mbDetails,
-                mbDetail -> ((MBDetails) mbDetail).getWorkOrderActivity().getActivity().getSchedule() != null);
+                mbDetail -> ((MBDetails) mbDetail).getWorkOrderActivity().getActivity().getSchedule() != null
+                        && (((MBDetails) mbDetail).getWorkOrderActivity().getActivity().getRevisionType() == null ||
+                                ((MBDetails) mbDetail).getWorkOrderActivity().getActivity().getRevisionType()
+                                        .compareTo(RevisionType.ADDITIONAL_QUANTITY) == 0
+                                ||
+                                ((MBDetails) mbDetail).getWorkOrderActivity().getActivity().getRevisionType()
+                                        .compareTo(RevisionType.REDUCED_QUANTITY) == 0));
     }
 
+    @SuppressWarnings("unchecked")
     public Collection<MBDetails> getNonSORMBDetails() {
         return CollectionUtils.select(mbDetails,
-                mbDetail -> ((MBDetails) mbDetail).getWorkOrderActivity().getActivity().getNonSor() != null);
+                mbDetail -> ((MBDetails) mbDetail).getWorkOrderActivity().getActivity().getNonSor() != null
+                        && (((MBDetails) mbDetail).getWorkOrderActivity().getActivity().getRevisionType() == null ||
+                                ((MBDetails) mbDetail).getWorkOrderActivity().getActivity().getRevisionType()
+                                        .compareTo(RevisionType.ADDITIONAL_QUANTITY) == 0
+                                ||
+                                ((MBDetails) mbDetail).getWorkOrderActivity().getActivity().getRevisionType()
+                                        .compareTo(RevisionType.REDUCED_QUANTITY) == 0));
+    }
+
+    @SuppressWarnings("unchecked")
+    public Collection<MBDetails> getNonTenderedMBDetails() {
+        return CollectionUtils.select(mbDetails,
+                mbDetail -> ((MBDetails) mbDetail).getWorkOrderActivity().getActivity().getRevisionType()
+                        .compareTo(RevisionType.NON_TENDERED_ITEM) == 0);
+    }
+
+    @SuppressWarnings("unchecked")
+    public Collection<MBDetails> getLumpSumMBDetails() {
+        return CollectionUtils.select(mbDetails,
+                mbDetail -> ((MBDetails) mbDetail).getWorkOrderActivity().getActivity().getRevisionType()
+                        .compareTo(RevisionType.LUMP_SUM_ITEM) == 0);
     }
 
     public Long getApprovalDepartment() {
@@ -498,4 +531,21 @@ public class MBHeader extends StateAware {
     public void setCancellationRemarks(final String cancellationRemarks) {
         this.cancellationRemarks = cancellationRemarks;
     }
+
+    public List<MBDetails> getNonTenderedMbDetails() {
+        return nonTenderedMbDetails;
+    }
+
+    public void setNonTenderedMbDetails(List<MBDetails> nonTenderedMbDetails) {
+        this.nonTenderedMbDetails = nonTenderedMbDetails;
+    }
+
+    public List<MBDetails> getLumpSumMbDetails() {
+        return lumpSumMbDetails;
+    }
+
+    public void setLumpSumMbDetails(List<MBDetails> lumpSumMbDetails) {
+        this.lumpSumMbDetails = lumpSumMbDetails;
+    }
+
 }

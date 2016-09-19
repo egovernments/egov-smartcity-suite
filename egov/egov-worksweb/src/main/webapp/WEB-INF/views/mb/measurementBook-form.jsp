@@ -135,8 +135,8 @@
 					data-tabidx=0><spring:message code="lbl.mbheader" /></a></li>
 				<li><a data-toggle="tab" href="#tenderedItems" data-tabidx=1><spring:message
 							code="lbl.tendered.items" /> </a></li>
-				<%-- <li><a data-toggle="tab" href="#nonTenderedItems" data-tabidx=1><spring:message
-							code="lbl.nontendered.items" /> </a></li> --%>
+				 <li><a data-toggle="tab" href="#nonTenderedItems" data-tabidx=1><spring:message
+							code="lbl.nontendered.items" /> </a></li> 
 			</ul>
 		</div>
 		<div class="tab-content">
@@ -148,9 +148,10 @@
 				<%@ include file="mb-sor.jsp"%>
 				<%@ include file="mb-nonsor.jsp"%>
 			</div>
-			<%-- <div class="tab-pane fade" id="nonTenderedItems">
-				<%@ include file="mb-nonTenderedItems.jsp"%>
-			</div> --%>
+			<div class="tab-pane fade" id="nonTenderedItems">
+				<%@ include file="mb-nontendered.jsp"%>
+				<%@ include file="mb-lumpsum.jsp"%>
+			</div>
 			<c:if test="${!workflowHistory.isEmpty() && mode != null }">
 				<jsp:include page="../common/commonWorkflowhistory-view.jsp"></jsp:include>
 			</c:if>

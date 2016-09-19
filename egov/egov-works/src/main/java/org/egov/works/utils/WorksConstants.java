@@ -347,5 +347,9 @@ public class WorksConstants {
     public static final String EXISTING_SOR_ORIGINAL_FILE_NAME_KEY = "existingsor_original";
     
     public static final String EXISTING_SOR_OUTPUT_FILE_NAME_KEY = "existingsor_output";
+    
+    public static final String NON_TENDERED = "NONTENDERED";
+    
+    public static final String LUMP_SUM = "LUMPSUM";
 
 }

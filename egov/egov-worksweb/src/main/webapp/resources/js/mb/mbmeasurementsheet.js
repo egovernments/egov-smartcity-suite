@@ -39,6 +39,8 @@
  */
 var sorMsArray=new Array(200);
 var nonSorMsArray=new Array(200);
+var nonTenderedMsArray=new Array(200);
+var lumpSumMsArray=new Array(200);
 var headstart="<!--only for validity head start -->";
 var headend="<!--only for validity head end -->";
 var tailstart="<!--only for validity tail start -->";
@@ -77,6 +79,13 @@ function addMBMSheet(obj)
 		if(sortable.indexOf("sorMbDetails") >= 0)
 		{
 			sorMsArray[idx]=mscontent;
+		} else if(sortable.indexOf("nonTenderedMbDetails") >= 0)
+		{
+			nonTenderedMsArray[idx]=mscontent;
+		}
+		else if(sortable.indexOf("lumpSumMbDetails") >= 0)
+		{
+			lumpSumMsArray[idx]=mscontent;
 		}
 		else
 		{
@@ -96,6 +105,13 @@ function addMBMSheet(obj)
 		if(sortable.indexOf("sorMbDetails") >= 0)
 		{
 			sorMsArray[idx]="";
+		} else if(sortable.indexOf("nonTenderedMbDetails") >= 0)
+		{
+			nonTenderedMsArray[idx]="";
+		}
+		else if(sortable.indexOf("lumpSumMbDetails") >= 0)
+		{
+			lumpSumMsArray[idx]="";
 		}
 		else
 		{
@@ -115,6 +131,17 @@ $(document).on('click','.hide-ms',function () {
 	{
 		document.getElementById(sid.split(".")[0]+".mstd").innerHTML=sorMsArray[idx];
 		if(sorMsArray[idx].length==0)
+			document.getElementById(sid.split(".")[0]+".mspresent").value="0";
+			
+	}else if(sid.split(".")[0].indexOf("nonTenderedMbDetails") >= 0)
+	{
+		document.getElementById(sid.split(".")[0]+".mstd").innerHTML=nonTenderedMsArray[idx];
+		if(nonTenderedMsArray[idx].length==0)
+			document.getElementById(sid.split(".")[0]+".mspresent").value="0";
+	} else if(sid.split(".")[0].indexOf("lumpSumMbDetails") >= 0)
+	{
+		document.getElementById(sid.split(".")[0]+".mstd").innerHTML=lumpSumMsArray[idx];
+		if(lumpSumMsArray[idx].length==0)
 			document.getElementById(sid.split(".")[0]+".mspresent").value="0";
 			
 	}else
@@ -148,7 +175,7 @@ $(document).on('change','.runtime-update',function (e) {
 	if($(this).attr('id').indexOf("quantity")>=0)
 		findNet(this);
 	else
-	findTotal(this);
+		findTotal(this);
 });
 
 $(document).on('click','.ms-submit',function () {
@@ -180,6 +207,12 @@ $(document).on('click','.ms-submit',function () {
 	if(sid.split(".")[0].indexOf("sorMbDetails") >= 0)
 	{
 		calculateSorAmounts(document.getElementsByName(sid.split(".")[0]+".quantity")[0]);
+	}else if(sid.split(".")[0].indexOf("nonTenderedMbDetails") >= 0)
+	{
+		calculateNonTenderedAmounts(document.getElementsByName(sid.split(".")[0]+".quantity")[0]);
+	} else if(sid.split(".")[0].indexOf("lumpSumMbDetails") >= 0)
+	{
+		calculateLumpSumAmounts(document.getElementsByName(sid.split(".")[0]+".quantity")[0]);
 	}else
 	{
 		calculateNonSorAmounts(document.getElementsByName(sid.split(".")[0]+".quantity")[0]);
@@ -263,7 +296,11 @@ function findTotal(obj)
 	//console.log(len);
 	if(name[0].indexOf("sorMbDetails") >= 0)
 		findNet(netObj);
-	else
+	else if(name[0].indexOf("nonTenderedMbDetails") >= 0)
+		findNonTenderedNet(netObj);
+	else if(name[0].indexOf("lumpSumMbDetails") >= 0)
+		findLumpSumNet(netObj);
+	else 
 		findNonSorNet(netObj);
 }
 
@@ -295,6 +332,75 @@ function findNet(obj)
 		var qname=name[0]+'.measurementSheets['+i+'].quantity';
 		var quantity=eval(document.getElementById(qname).value);
 		var oname= '#msrowidentifier_' + index + '_' + i;
+		var operation=$(oname).html().trim();
+		console.log(quantity+"---"+operation);
+		if(quantity===undefined)
+			quantity=0;
+		if(quantity==NaN)
+			quantity=0;
+		if(quantity=='')
+			quantity=0;
+		if(operation=='No')
+			sum=sum+quantity;
+		else
+			sum=sum-quantity;
+	}
+	//var fname=obj.name.split(".");
+	var netName=name[0]+'.msnet';
+	sum=parseFloat(sum).toFixed(4);
+	//console.log(document.getElementById(netName).innerHTML);
+	document.getElementById(netName).innerHTML=sum;
+}
+
+function findNonTenderedNet(obj)
+{
+	var len=$(obj).closest('tbody').find('tr').length;
+	
+	var name=obj.id.split(".");
+	
+	var index = name[0].split('[')[1].split(']')[0];
+
+	var sum=0;
+	for(var i=0;i<len - 1;i++)
+	{
+		var qname=name[0]+'.measurementSheets['+i+'].quantity';
+		var quantity=eval(document.getElementById(qname).value);
+		var oname= '#nontenderedmsrowidentifier_' + index + '_' + i;
+		var operation=$(oname).html().trim();
+		console.log(quantity+"---"+operation);
+		if(quantity===undefined)
+			quantity=0;
+		if(quantity==NaN)
+			quantity=0;
+		if(quantity=='')
+			quantity=0;
+		if(operation=='No')
+			sum=sum+quantity;
+		else
+			sum=sum-quantity;
+	}
+	//var fname=obj.name.split(".");
+	var netName=name[0]+'.msnet';
+	sum=parseFloat(sum).toFixed(4);
+	//console.log(document.getElementById(netName).innerHTML);
+	document.getElementById(netName).innerHTML=sum;
+}
+
+
+function findLumpSumNet(obj)
+{
+	var len=$(obj).closest('tbody').find('tr').length;
+	
+	var name=obj.id.split(".");
+	
+	var index = name[0].split('[')[1].split(']')[0];
+
+	var sum=0;
+	for(var i=0;i<len - 1;i++)
+	{
+		var qname=name[0]+'.measurementSheets['+i+'].quantity';
+		var quantity=eval(document.getElementById(qname).value);
+		var oname= '#lumpsummsrowidentifier_' + index + '_' + i;
 		var operation=$(oname).html().trim();
 		console.log(quantity+"---"+operation);
 		if(quantity===undefined)
