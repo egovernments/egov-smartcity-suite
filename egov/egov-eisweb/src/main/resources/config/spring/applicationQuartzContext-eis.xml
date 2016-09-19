@@ -69,7 +69,7 @@
 			<map>
 				<entry key="jobBeanName" value="userRoleMappingJob" />
 				<entry key="userName" value="egovernments" />
-				<entry key="transactional" value="true" />
+				<entry key="cityDataRequired" value="false" />
 				<entry key="moduleName" value="eis" />
 			</map>
 		</property>

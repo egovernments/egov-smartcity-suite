@@ -73,7 +73,6 @@ public class BulkWaterConnBillGenerationJob extends AbstractQuartzJob {
     @Override
     public void executeJob() {
         LOGGER.debug("Water tax Schedular Running in City:");
-        super.prepareCityThreadLocal();
         final Long jobStartTime = System.currentTimeMillis();
         Boolean schedularEnable=waterTaxUtils.getAppconfigValueForSchedulearEnabled();
         WaterConnectionBillService waterConnectionBillService = null;
