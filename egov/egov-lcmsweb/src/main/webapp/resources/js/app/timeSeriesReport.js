@@ -56,6 +56,7 @@ function submitForm() {
 		oTable= $('#timeSeriesReportResult-table');
 		$('#timeSeriesReportResult-header').show();
 		$('#reportgeneration-header').show();
+		var isMonthColVisibile = ($("#period").val()==="Month");
 		var oDataTable=oTable.dataTable({
 			"sPaginationType": "bootstrap",
 			"sDom": "<'row'<'col-xs-12 hidden col-right'f>r>t<'row'<'col-md-3 col-xs-12'i><'col-md-3 col-xs-6 col-right'l><'col-xs-12 col-md-3 col-right'<'export-data'T>><'col-md-3 col-xs-6 text-right'p>>",
@@ -96,12 +97,12 @@ function submitForm() {
 						'toDate': $("#toDate").val()
 					}
 				},
-				columns :[{"title" : "S.no","sClass" : "text-center"},  
-				          { "data" : "aggregatedBy" , "title": "Aggregated By","sClass" : "text-center"}, 
+				columns :[
+				         {"title" : "S.no","sClass" : "text-center"},  
+				         { "data" : "aggregatedBy" , "title": "Aggregated By","sClass" : "text-center"}, 
 				         { "data" : "year", "title": "Year","sClass" : "text-center"},
-				         { "data" : "month", "title": "Month","sClass" : "text-center"},
-				         { "data" : "count", "title": "Number of Cases","sClass" : "text-center"},
-				
+				         { "data" : "month", "title": "Month","sClass" : "text-center", "visible":isMonthColVisibile},
+				         { "data" : "count", "title": "Number of Cases","sClass" : "text-center"}
 				  ],
 				           "fnDrawCallback": function ( oSettings ) {
 				                if ( oSettings.bSorted || oSettings.bFiltered )
