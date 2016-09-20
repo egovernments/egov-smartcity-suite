@@ -66,9 +66,9 @@
 <div class="row display-hide agenda-section">
 	<div class="col-md-6 table-header text-left">Create Agenda</div>
 	<!-- <div class="col-md-6 text-right pull-right"><button type="button" class="btn btn-primary" id="add-agenda">Add Row</button></div> -->
-		<div class="row">
+		<div>
 
-			<label class="col-sm-2 control-label text-right"><spring:message
+			<label class="col-sm-3 control-label text-right"><spring:message
 					code="lbl.committeetype" /> <span class="mandatory"></span> </label>
 			<div class="col-sm-3 add-margin">
 				<form:select path="committeeType" id="committeeType" required="required"
@@ -83,7 +83,7 @@
 			</div>
 		</div>
 
-		<div class="col-md-12 form-group report-table-container">
+		<div class="col-md-12 report-table-container">
 		<table class="table table-bordered table-hover multiheadertbl"
 			id=agendaTable>
 			<thead>

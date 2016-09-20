@@ -117,9 +117,9 @@
 								<td><input type="text" class="form-control"
 									name="councilAgendaDetailsForUpdate[${counter.index}].preamble.department.name"
 									readonly="readonly" value="${contact.preamble.department.name}" /></td>
-								<td><input type="text" class="form-control"
+								<td><textarea class="form-control"
 									name="councilAgendaDetailsForUpdate[${counter.index}].preamble.gistOfPreamble"
-									readonly="readonly" value="${contact.preamble.gistOfPreamble}" /></td>
+									readonly="readonly" rows="3" />${contact.preamble.gistOfPreamble}</textarea></td>
 								<td><input type="text" class="form-control"
 									name="councilAgendaDetailsForUpdate[${counter.index}].preamble.sanctionAmount"
 									readonly="readonly" value="${contact.preamble.sanctionAmount}" /></td>

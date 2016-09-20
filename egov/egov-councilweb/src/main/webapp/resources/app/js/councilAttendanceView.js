@@ -1,5 +1,5 @@
 $(document).ready(function() {
-
+	
 	drillDowntableContainer = jQuery("#attendanceResultTable");	
 	
 		reportdatatable = drillDowntableContainer
@@ -17,14 +17,16 @@ $(document).ready(function() {
 					"aButtons" : [ 
 					               {
 						             "sExtends": "pdf",
-						             "sPdfMessage": "Report generated on "+$('#currDate').val()+"",
-				                     "sTitle": "Council Meeting Attendance Report",
+						             "sPdfMessage" : "Council Meeting Attendance Report generated on "
+											+ $('#currDate').val() + "",
+				                     "sTitle": $('#cityName').val(),
 				                     "sPdfOrientation": "landscape"
 					                },
 					                {
 							             "sExtends": "xls",
-				                         "sPdfMessage": "Council Meeting Attendance Report",
-				                         "sTitle": "Council Meeting Attendance Report"
+							             "sPdfMessage" : "Council Meeting Attendance Report generated on "
+												+ $('#currDate').val() + "",
+				                         "sTitle": $('#cityName').val()
 						             },
 						             {
 							             "sExtends": "print",

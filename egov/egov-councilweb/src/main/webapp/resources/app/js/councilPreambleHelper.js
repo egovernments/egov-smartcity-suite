@@ -116,9 +116,11 @@ function callAjaxSearch() {
 				"oTableTools" : {
 					"sSwfPath" : "../../../../../../egi/resources/global/swf/copy_csv_xls_pdf.swf",
 					"aButtons" : [ {
-						"sExtends" : "xls"
+						"sExtends" : "xls",
+						"mColumns": [0,1,2,3]
 					}, {
-						"sExtends" : "pdf"
+						"sExtends" : "pdf",
+						"mColumns": [0,1,2,3]
 					}, {
 						"sExtends" : "print"
 					} ]
@@ -126,7 +128,11 @@ function callAjaxSearch() {
 				aaSorting : [],
 				columns : [
 						{
-							"data" : "department",
+							"data" : "department","width": "8%",
+							"sClass" : "text-left"
+						},
+						{
+							"data" : "ward","width": "28%",
 							"sClass" : "text-left"
 						},
 						{
@@ -134,14 +140,14 @@ function callAjaxSearch() {
 							"sClass" : "text-left"
 						},
 						{
-							"data" : "gistOfPreamble",
+							"data" : "gistOfPreamble","width": "38%",
 							"sClass" : "text-left"
 						},
 						{
 							"data" : "sanctionAmount",
-							"sClass" : "text-left"
+							"sClass" : "text-right"
 						},{
-							"data" : "status",
+							"data" : "status","width": "8%",
 							"sClass" : "text-left"
 						},{
 							"data" : null,
@@ -158,7 +164,15 @@ function callAjaxSearch() {
 						}, {
 							"data" : "id",
 							"visible" : false
-						} ]
+						} ],columnDefs:[
+					     	              {
+					     	                   "render": function ( data, type, row ) {
+					     	                	   
+					     	                       return type === 'display' && data.length > 500 ? data.substr( 0, 500 )+' <span class="details" data-text="'+ escape(data) +'"><button class="btn-xs" style="font-size:10px;">More <i class="fa fa-angle-double-right" aria-hidden="true"></i></button</span>' : data;
+					     	                   },
+					     	                   "targets": [1,3]
+						     	           }
+						     	          ] 
 			});
 }
 
@@ -204,7 +218,7 @@ function callAjaxSearchForAgendaPreamble() {
 						},
 						{
 							"data" : "expectedAmount",
-							"sClass" : "text-left"
+							"sClass" : "text-right"
 						},
 						{
 							"data" : null,
@@ -221,15 +235,30 @@ function callAjaxSearchForAgendaPreamble() {
 						}, {
 							"data" : "id",
 							"visible" : false
-						} ]
+						} ],"columnDefs":[
+					     	              {
+					     	                   "render": function ( data, type, row ) {
+					     	                       return type === 'display' && data.length > 500 ? data.substr( 0, 500 )+' <span class="details" data-text="'+escape(data)+'"><button class="btn-xs" style="font-size:10px;">More <i class="fa fa-angle-double-right" aria-hidden="true"></i></button</span>' : data;
+					     	                   },
+					     	                   "targets": 2
+						     	           }
+						     	          ] 
 			});
 }
+
+$("#resultTable,#preambleResultTable").on('click','tbody tr td span.details',function(e) {
+	$(this).parent().html(unescape($(this).data('text')));
+	console.log($(this).data('text'))
+	e.stopPropagation();
+	e.preventDefault();
+});
+
 
 $("#resultTable").on(
 		'click',
 		'tbody tr td  .view',
 		function(event) {
-			var id = reportdatatable.fnGetData($(this).parent().parent(), 6);
+			var id = reportdatatable.fnGetData($(this).parent().parent(), 7);
 			window.open('/council/councilpreamble/' + $('#mode').val() + '/'
 					+ id, '', 'width=800, height=600,scrollbars=yes');
 
@@ -239,7 +268,7 @@ $("#resultTable").on(
 		'click',
 		'tbody tr td  .edit',
 		function(event) {
-			var id = reportdatatable.fnGetData($(this).parent().parent(), 5);
+			var id = reportdatatable.fnGetData($(this).parent().parent(), 7);
 			window.open('/council/councilpreamble/' + $('#mode').val() + '/'
 					+ id, '', 'width=800, height=600,scrollbars=yes');
 

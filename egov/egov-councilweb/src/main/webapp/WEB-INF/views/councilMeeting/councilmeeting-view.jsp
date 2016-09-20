@@ -94,10 +94,10 @@
 					<table class="table table-bordered">
 						<thead>
 							<th align="center"><spring:message code="lbl.serial.number" /></th>
-							<th><spring:message code="lbl.agenda.item" /></th>
+							<th><spring:message code="lbl.department" /></th>
 							<th><spring:message code="lbl.agenda.number" /></th>
 							<th><spring:message code="lbl.preamble.number" /></th>
-							<th><spring:message code="lbl.department" /></th>
+							<th><spring:message code="lbl.gistofpreamble" /></th>
 						</thead>
 						<tbody>
 							<c:choose>
@@ -107,10 +107,10 @@
 										<tr>
 											<div class="row add-margin">
 												<td align="center">${mom.itemNumber}</td>
-												<td><c:out value="${mom.preamble.gistOfPreamble}" /></td>
+												<td><c:out value="${mom.preamble.department.name}" /></td>
 												<td><c:out value="${mom.agenda.agendaNumber}" /></td>
 												<td><c:out value="${mom.preamble.preambleNumber}" /></td>
-												<td><c:out value="${mom.preamble.department.name}" /></td>
+												<td><span class="more"><c:out value="${mom.preamble.gistOfPreamble}" /></span></td>
 											</div>
 										</tr>
 									</c:forEach>
@@ -136,3 +136,12 @@
 			onclick="self.close()">Close</a>
 	</div>
 </div>
+
+<script
+	src="<c:url value='/resources/app/js/showMoreorLessContent.js?rnd=${app_release_no}'/>"></script>
+
+<style>
+	.morecontent span {
+	    display: none;
+	}
+</style>

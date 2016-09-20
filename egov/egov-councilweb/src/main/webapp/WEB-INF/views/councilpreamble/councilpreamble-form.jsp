@@ -66,7 +66,7 @@
 						<c:when test="${councilPreamble.filestoreid != null}">
 
 							<form:input path="attachments" type="file" id="attachments" name="attachments"
-								data-id="1" class="filechange inline btn upload-file" /><small class="error-msg"><spring:message code="lbl.mesg.document"/></small>
+								data-id="1" class="filechange inline btn upload-file" />
 							<form:errors path="attachments" cssClass="error-msg" />
 
 							<form:hidden path="filestoreid.id" value="${councilPreamble.filestoreid.id}" />
@@ -75,10 +75,8 @@
 
 							<a
 								href="/council/councilmember/downloadfile/${councilPreamble.filestoreid.fileStoreId}"
-								data-gallery> <img class="img-width add-margin"
-								style="max-width: 25%; max-height: 25%;"
-								src="/council/councilmember/downloadfile/${councilPreamble.filestoreid.fileStoreId}"
-								alt="${councilPreamble.filestoreid.fileName}" /></a>
+								data-gallery> ${councilPreamble.filestoreid.fileName}</a>
+							<small class="error-msg"><spring:message code="lbl.mesg.document"/></small>
 						</c:when>
 						<c:otherwise>
 							<form:input path ="attachments" type="file" id="attachments" name="attachments"
@@ -98,15 +96,15 @@
 					<form:errors path="wards" cssClass="error-msg" /> 
 				</div>
 				<spring:message code="lbl.pressCntrlToSelectMultipleWards"></spring:message>
-				
-					<c:if test="${councilPreamble.preambleNumber!= null && !''.equalsIgnoreCase(councilPreamble.preambleNumber)}">
-					<label class="col-sm-2 control-label text-right">	<spring:message code="lbl.preamble.number" /> </label>
-					<div class="col-sm-3 add-margin"> ${councilPreamble.preambleNumber}		</div>
-					</c:if>
-				
-				<input type="hidden" name="councilPreamble" value="${councilPreamble.id}" />
-					<form:hidden path="preambleNumber" id="preambleNumber" value="${councilPreamble.preambleNumber}" />
-					<form:hidden path="type" id="type" value="${councilPreamble.type}" />
+		</div>
+		<div class="form-group">
+			<c:if test="${councilPreamble.preambleNumber!= null && !''.equalsIgnoreCase(councilPreamble.preambleNumber)}">
+						<label class="col-sm-2 control-label text-right">	<spring:message code="lbl.preamble.number" /> </label>
+						<div class="col-sm-3 add-margin"> ${councilPreamble.preambleNumber}		</div>
+						</c:if>
 					
+					<input type="hidden" name="councilPreamble" value="${councilPreamble.id}" />
+						<form:hidden path="preambleNumber" id="preambleNumber" value="${councilPreamble.preambleNumber}" />
+						<form:hidden path="type" id="type" value="${councilPreamble.type}" />
 		</div>
 	</div>

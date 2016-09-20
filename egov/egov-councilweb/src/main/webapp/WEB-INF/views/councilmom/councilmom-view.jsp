@@ -96,13 +96,13 @@
 						<table class="table table-bordered">
 							<thead>
 								<th align="center"><spring:message code="lbl.serial.number" /></th>
-								<th><spring:message code="lbl.agenda.item" /></th>
+								<th><spring:message code="lbl.department" /></th>
 								<th><spring:message code="lbl.agenda.number" /></th>
 								<th><spring:message code="lbl.preamble.number" /></th>
 								<th><spring:message code="lbl.resolution.comment" /></th>
 								<th><spring:message code="lbl.status" /></th>
-								<th><spring:message code="lbl.department" /></th>
 								<th><spring:message code="lbl.resolutionNumber" /></th>
+								<th><spring:message code="lbl.gistofpreamble" /></th>
 							</thead>
 							<tbody>
 								<c:choose>
@@ -110,17 +110,16 @@
 										<c:forEach items="${councilMeeting.meetingMOMs}" var="mom"
 											varStatus="counter">
 											<tr>
-												<div class="row add-margin">
 													<td align="center">${mom.itemNumber}
 													</td>
-													<td><c:out value="${mom.preamble.gistOfPreamble}" /></td>
+													<td><c:out value="${mom.preamble.department.name}" /></td>
 													<td><c:out value="${mom.agenda.agendaNumber}" /></td>
 													<td><c:out value="${mom.preamble.preambleNumber}" /></td>
-													<td><c:out value="${mom.resolutionDetail}" /></td>
+													<td width="35%"><span class="more"><c:out value="${mom.resolutionDetail}"/></span></td>
 													<td><c:out value="${mom.resolutionStatus.code}" /></td>
-													<td><c:out value="${mom.preamble.department.name}" /></td>
-													<td><c:out value="${mom.resolutionNumber}"></c:out>
-												</div>
+													<td><c:out value="${mom.resolutionNumber}"></c:out></td>
+													<td width="35%"><span class="more"><c:out value="${mom.preamble.gistOfPreamble}"/></span></td>
+													</td>
 											</tr>
 										</c:forEach>
 									</c:when>
@@ -196,3 +195,33 @@
 	</div>
 </div>
 
+<!-- Modal -->
+  <div class="modal fade" id="textarea-modal" role="dialog">
+    <div class="modal-dialog modal-lg">
+    
+      <!-- Modal content-->
+      <div class="modal-content">
+        <div class="modal-header">
+          <button type="button" class="close" data-dismiss="modal">&times;</button>
+          <h4 class="modal-title" id="textarea-header"></h4>
+        </div>
+        <div class="modal-body">
+          <textarea class="form-control textarea-content-of-modal" id="textarea-updatedcontent" rows="10"></textarea>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+          
+        </div>
+      </div>
+      
+    </div>
+  </div>
+
+  <script
+	src="<c:url value='/resources/app/js/showMoreorLessContent.js?rnd=${app_release_no}'/>"></script>
+
+<style>
+	.morecontent span {
+	    display: none;
+	}
+</style>

@@ -87,6 +87,7 @@ function callAjaxSearch() {
 				columns : [ { 
 "data" : "committeeType", "sClass" : "text-left"} ,{ 
 "data" : "meetingNumber", "sClass" : "text-left"} ,{ 
+"data" : "meetingCreatedDate", "sClass" : "text-left"},{ 
 "data" : "meetingDate", "sClass" : "text-left"},{
 "data" : "meetingLocation", "sClass" : "text-left"},{
 "data" : "meetingTime", "sClass" : "text-left"},{

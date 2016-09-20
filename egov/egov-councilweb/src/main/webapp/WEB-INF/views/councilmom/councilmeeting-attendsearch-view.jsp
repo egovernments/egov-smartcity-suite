@@ -43,6 +43,7 @@
 
 	<input type="hidden" id="councilId" name="id" value="${id}" />
 	<input type="hidden" id="currDate" name="currDate" value="${currDate}" />
+	<input type="hidden" id="cityName" name="cityName" value="${cityName}" />
 	<div class="row report-section">
 	<div class="col-md-12 table-header text-left"><spring:message code="label.attendance.result.title"/></div>
 	<div class="col-md-12 form-group report-table-container">

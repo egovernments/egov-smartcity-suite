@@ -45,7 +45,6 @@
 	id="councilPreamblesearchform"
 	cssClass="form-horizontal form-groups-bordered"
 	enctype="multipart/form-data">
-	<div class="main-content">
 	
 	<jsp:include page="../councilpreamble/councilpreamble-search-form.jsp"/>
 			  
@@ -59,7 +58,8 @@
 			<thead>
 				<tr>
 					<th><spring:message code="lbl.department" /></th>
-						<th><spring:message code="lbl.preamble.number" /></th>
+					<th><spring:message code="lbl.ward.no" /></th>
+					<th><spring:message code="lbl.preamble.number" /></th>
 					<th><spring:message code="lbl.gistofpreamble" /></th>
 					<th><spring:message code="lbl.amount"/>
 					<th><spring:message code="lbl.status"/></th>

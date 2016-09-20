@@ -79,11 +79,7 @@
 								<c:when test="${councilPreamble.filestoreid != null}">
 									<a
 										href="/council/councilpreamble/downloadfile/${councilPreamble.filestoreid.fileStoreId}"
-										data-gallery target="_blank"> <img
-										class="img-width add-margin"
-										style="max-width: 50%; max-height: 50%;"
-										src="/council/councilpreamble/downloadfile/${councilPreamble.filestoreid.fileStoreId}"
-										alt="${councilPreamble.filestoreid.fileName}" /></a>
+										data-gallery target="_blank">${councilPreamble.filestoreid.fileName}</a>
 
 								</c:when>
 								<c:otherwise>

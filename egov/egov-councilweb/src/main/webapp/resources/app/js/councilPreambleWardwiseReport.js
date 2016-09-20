@@ -113,7 +113,7 @@ function getFormData($form){
 }*/
 
 function callAjaxSearch() {
-	console.log(JSON.stringify(getFormData(jQuery('form'))));
+	
 	// To get current date
 	var currentDate = new Date()
 	var day = currentDate.getDate()
@@ -140,10 +140,12 @@ function callAjaxSearch() {
 					"aButtons" : [
 							{
 								"sExtends" : "xls",
+								"mColumns": [0,1,2,3,4,5,6,7],
 								"sTitle" : "Council Preamble wardwise Report"
 							},
 							{
 								"sExtends" : "pdf",
+								"mColumns": [0,1,2,3,4,5,6,7],
 								"sPdfMessage" : "Report generated on "
 										+ currentDate + "",
 								"sTitle" : "Council Preamble wardwise Report"
@@ -160,7 +162,7 @@ function callAjaxSearch() {
 				    },
 					"sClass" : "text-left"
 				}, {
-					"data" : "ward",
+					"data" : "ward","width": "30%",
 					"sClass" : "text-left"
 				}, {
 					"data" : "department", 
@@ -169,7 +171,7 @@ function callAjaxSearch() {
 					"data" : "preambleType",
 					"sClass" : "text-left"
 				}, {
-					"data" : "gistOfPreamble",
+					"data" : "gistOfPreamble", "width": "40%",
 					"sClass" : "text-left"
 				}, {
 					"data" : "createdDate",
@@ -189,6 +191,20 @@ function callAjaxSearch() {
 				}, {
 					"data" : "id",
 					"visible" : false
-				} ]
+				} ],columnDefs:[
+			     	              {
+			     	                   "render": function ( data, type, row ) {
+			     	                	   
+			     	                       return type === 'display' && data.length > 500 ? data.substr( 0, 500 )+' <span class="details" data-text="'+escape(data)+'"><button class="btn-xs" style="font-size:10px;">More <i class="fa fa-angle-double-right" aria-hidden="true"></i></button</span>' : data;
+			     	                   },
+			     	                   "targets": [1,4]
+				     	           }
+				     	          ] 
 			});
 }
+
+$("#resultTable").on('click','tbody tr td span.details',function(e) {
+	$(this).parent().html(unescape($(this).data('text')));
+	e.stopPropagation();
+	e.preventDefault();
+});

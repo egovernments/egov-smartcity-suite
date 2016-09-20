@@ -90,7 +90,7 @@
 										<td align="center">${counter.count}</td>
 										<td><c:out value="${contact.preamble.department.name}" /></td>
 										<td><c:out value="${contact.preamble.preambleNumber}" /></td>
-										<td><c:out value="${contact.preamble.gistOfPreamble}" /></td>
+										<td><span class="more"><c:out value="${contact.preamble.gistOfPreamble}" /></span></td>
 								</tr>
 							</c:forEach>
 						</c:when>
@@ -112,3 +112,12 @@
 					onclick="self.close()">Close</a>
 			</div>
 		</div>
+		
+<script
+	src="<c:url value='/resources/app/js/showMoreorLessContent.js?rnd=${app_release_no}'/>"></script>
+
+<style>
+	.morecontent span {
+	    display: none;
+	}
+</style>

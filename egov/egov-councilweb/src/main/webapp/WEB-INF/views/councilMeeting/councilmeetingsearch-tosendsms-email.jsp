@@ -60,11 +60,12 @@
 				<tr>
 					<th><spring:message code="lbl.meeting.type" /></th>
 					<th><spring:message code="lbl.meeting.number" /></th>
+					<th><spring:message code="lbl.dateofcreation" /></th>
 					<th><spring:message code="lbl.meeting.date" />
 					<th><spring:message code="lbl.meeting.place" /></th>
 					<th><spring:message code="lbl.meeting.time" /></th>
 					<th><spring:message code="lbl.msg" /></th>
-					<th><spring:message code="lbl.msg" /></th>
+					<th><spring:message code="lbl.action" /></th>
 				</tr>
 			</thead>
 		</table>

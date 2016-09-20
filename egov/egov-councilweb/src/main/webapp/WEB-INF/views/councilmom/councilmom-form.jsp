@@ -100,12 +100,13 @@
 						<table class="table table-bordered" id="agendaTable">
 							<thead>
 								<th align="center"><spring:message code="lbl.serial.number" /></th>
-								<th><spring:message code="lbl.agenda.item" /></th>
-								<th><spring:message code="lbl.agenda.number" /></th>
+								<th><spring:message code="lbl.department" /></th>
+								<th width="45%"><spring:message code="lbl.gistofpreamble" /></th>
+								<th  width="3%"><spring:message code="lbl.agenda.number" /></th>
 								<th><spring:message code="lbl.preamble.number" /></th>
 								<th><spring:message code="lbl.resolution.comment" /></th>
 								<th><spring:message code="lbl.mom.action" /></th>
-								<th><spring:message code="lbl.department" /></th>
+								
 							</thead>
 							<tbody>
 								<c:choose>
@@ -119,13 +120,14 @@
 													  <input type="hidden" name="meetingMOMs[${counter.index}].preamable.id" value="${mom.preamble.id}" />
 													   <input type="hidden" name="meetingMOMs[${counter.index}].itemNumber" value="${mom.itemNumber}" />
 													</td>
-													<td><c:out value="${mom.preamble.gistOfPreamble}" /></td>
+													<td><c:out value="${mom.preamble.department.name}" /></td>
+													<td><span class="more"><c:out value="${mom.preamble.gistOfPreamble}" /></span></td>
 													<td><c:out value="${mom.agenda.agendaNumber}" /></td>
 													<td><c:out value="${mom.preamble.preambleNumber}" /></td>
 													<td>
 													 <div class="input-group">
 											            <form:textarea path="meetingMOMs[${counter.index}].resolutionDetail" id="meetingMOMs[${counter.index}].resolutionDetail" 
-														class="form-control text-left textarea-content" maxlength="512" value="${mom.resolutionDetail}" required ="required" />
+														class="form-control text-left textarea-content"  value="${mom.resolutionDetail}" rows="5" required ="required" />
 														<form:errors path="meetingMOMs[${counter.index}].resolutionDetail" cssClass="error-msg" />
 											            <span class="input-group-addon" id="showModal" data-header="Agenda Items - Resolution comments"><span class="glyphicon glyphicon-pencil" style="cursor:pointer"></span></span>
 											        </div>
@@ -146,7 +148,6 @@
 														</div>
 														
 													</td>
-													<td><c:out value="${mom.preamble.department.name}" /></td>
 											</tr>
 										</c:forEach>
 									</c:when>
@@ -224,5 +225,10 @@
 
 <script type="text/javascript"
 	src="<c:url value='/resources/app/js/councilMom.js'/>"></script>
-	<%-- <script type="text/javascript"
-	src="<c:url value='/resources/app/js/councilAgenda.js'/>"></script> --%>
+<script
+	src="<c:url value='/resources/app/js/showMoreorLessContent.js?rnd=${app_release_no}'/>"></script>
+<style>
+	.morecontent span {
+	    display: none;
+	}
+</style>

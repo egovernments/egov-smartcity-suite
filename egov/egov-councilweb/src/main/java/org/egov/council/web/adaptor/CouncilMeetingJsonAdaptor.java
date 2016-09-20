@@ -44,7 +44,6 @@ import java.lang.reflect.Type;
 
 import org.egov.council.entity.CouncilMeeting;
 import org.egov.council.entity.MeetingAttendence;
-import org.egov.council.entity.MeetingMOM;
 import org.egov.infra.utils.StringUtils;
 
 import com.google.gson.JsonElement;
@@ -85,7 +84,10 @@ public class CouncilMeetingJsonAdaptor implements JsonSerializer<CouncilMeeting>
                 jsonObject.addProperty("meetingStatus", councilMeeting.getStatus().getCode());
             else
                 jsonObject.addProperty("meetingStatus", StringUtils.EMPTY);
-            
+            if (councilMeeting.getMeetingDate() != null)
+                jsonObject.addProperty("meetingCreatedDate", councilMeeting.getCreatedDate().toString());
+            else
+                jsonObject.addProperty("meetingCreatedDate", StringUtils.EMPTY);
             
           /*  if (councilMeeting.getMeetingMOMs() != null)
                 for (MeetingMOM meetingMOM : councilMeeting.getMeetingMOMs()) {

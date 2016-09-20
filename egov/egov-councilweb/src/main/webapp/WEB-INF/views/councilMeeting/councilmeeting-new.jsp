@@ -60,6 +60,8 @@
 
 <script
 	src="<c:url value='/resources/app/js/councilMeetingHelper.js?rnd=${app_release_no}'/>"></script>
+<script
+	src="<c:url value='/resources/app/js/showMoreorLessContent.js?rnd=${app_release_no}'/>"></script>
 
 <script>
 	 $('#buttonSubmit').click(function(e) {
@@ -72,3 +74,9 @@
 		}
 	});	 
 </script>
+
+<style>
+	.morecontent span {
+	    display: none;
+	}
+</style>

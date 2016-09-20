@@ -49,13 +49,13 @@ String.prototype.compose = (function (){
 
 var emptyRow = '<tr><td colspan="5" id="emptyRow" >No preamble item available</td></tr>';
 var tbody = $('#agendaTable').children('tbody');
-var table = tbody.length == 0 ? $('#agendaTable tbody').append(emptyRow) : $('#agendaTable');
+var table = tbody.find('tr').length == 0 ? $('#agendaTable tbody').append(emptyRow) : $('#agendaTable');
 
 var row = '<tr>'+
 /* '<td><span class="sno">{{sno}}</span></td>'+*/
  '<td><input type="text" class="form-control" data-unique name="councilAgendaDetailsForUpdate[{{idx}}].preamble.preambleNumber" {{readonly}} value="{{pnoTextBoxValue}}"/></td>'+
  '<td><input type="text" class="form-control" name="councilAgendaDetailsForUpdate[{{idx}}].preamble.department.name" {{readonly}} value="{{deptTextBoxValue}}"/></td>'+
- '<td><input type="text" class="form-control" name="councilAgendaDetailsForUpdate[{{idx}}].preamble.gistOfPreamble" {{readonly}} value="{{gistTextBoxValue}}"/></td>'+
+ '<td><textarea class="form-control" name="councilAgendaDetailsForUpdate[{{idx}}].preamble.gistOfPreamble" rows="3" {{readonly}} maxlength="5000" >{{gistTextBoxValue}}</textarea></td>'+
  '<td><input type="text" class="form-control" name="councilAgendaDetailsForUpdate[{{idx}}].preamble.sanctionAmount" {{readonly}} value="{{amountTextBoxValue}}"/></td>'+
 //  '<td><input type="hidden" class="form-control" name="agendaDetails[{{idx}}].preamble.department.id" {{readonly}} value="{{departmentId}}"/>'+
  '<td><input type="hidden" class="form-control" name="councilAgendaDetailsForUpdate[{{idx}}].preamble.id" {{readonly}} value="{{preamableId}}"/>'+
@@ -63,10 +63,7 @@ var row = '<tr>'+
  '<button type="button" class="btn btn-xs btn-secondary delete"><span class="glyphicon glyphicon-trash"></span>&nbsp;Delete</button></td>'+
 '</tr>';
 
-jQuery('#btnsearch').click(function(){
-	   
-	$('.agenda-section').show();
-});
+
 
 /*jQuery('#add-agenda').click(function(){
    
@@ -120,10 +117,10 @@ function regenerateIndexes()
 
 function addReadOnlyRow(btn)
 {
+	var data=JSON.parse(unescape($(btn).data('row')));
+		
 	$('#emptyRow').closest('tr').remove();
 
-		var data=$(btn).data('row');
-	
 	var isDuplicate=false;
 	
 	$(tbody).find("input[data-unique][readonly]").each(function() {
@@ -142,12 +139,12 @@ function addReadOnlyRow(btn)
 		return;
 	}
 	
-	$('.agenda-section').show();
+	/*$('.agenda-section').show();*/
 	var idx=$(tbody).find('tr').length;
 	var sno=idx+1;
 	
 	
-	console.log("Row", data);
+	//console.log("Row : ", data);
 	
 	//Add row
 	var row={
@@ -167,6 +164,7 @@ function addReadOnlyRow(btn)
 
 jQuery('#btnsearch').click(function(e) {
 	callAjaxSearch();
+	$('.agenda-section').show();
 });
 
 $('form').keypress(function (e) {
@@ -216,7 +214,7 @@ function callAjaxSearch() {
 						},
 						{
 							"data" : "gistOfPreamble",
-							'sTitle' : "Gist of Preamble", "width": "75%" 
+							'sTitle' : "Gist of Preamble", "width": "58%" 
 						},
 						{
 							"data" : "sanctionAmount",
@@ -235,7 +233,7 @@ function callAjaxSearch() {
 							'sTitle' : "Action",
 							"render" : function(data, type, full, meta) {
 								return '<button type="button" class="btn btn-xs btn-secondary add"  data-row=\''
-										+ JSON.stringify(full)
+										+ escape(JSON.stringify(full))
 										+ '\' onclick="addReadOnlyRow(this)"><span class="glyphicon glyphicon-edit"></span>&nbsp;Add</button>';
 							}
 						}, {
@@ -243,12 +241,27 @@ function callAjaxSearch() {
 							"visible" : false,
 							"searchable" : false
 						}
-					]				
+					],columnDefs:[
+			     	              {
+			     	                   "render": function ( data, type, row ) {
+			     	                	   
+			     	                       return type === 'display' && data.length > 500 ? data.substr( 0, 500 )+' <span class="details" data-text="'+escape(data)+'"><button class="btn-xs" style="font-size:10px;">More <i class="fa fa-angle-double-right" aria-hidden="true"></i></button</span>' : data;
+			     	                   },
+			     	                   "targets": 2
+				     	           }
+				     	          ]			
 			});
 			}
 
 
 $(document).ready(function() {
+	
+	$("#resultTable").on('click','tbody tr td span.details',function(e) {
+		$(this).parent().html(unescape($(this).data('text')));
+		e.stopPropagation();
+		e.preventDefault();
+	});
+	
 	
 	$("#agendaTable tbody").on('click','tr td .delete',function(event) {
 		$(this).closest('tr').remove();
@@ -279,8 +292,7 @@ $(document).ready(function() {
 		if ($('#committeeType').val()=="") {
 			alert("Please select committe type");
 			e.preventDefault();
-			} else {
-		}
+			} 
 		if($('#emptyRow').length){
 			bootbox.alert("Atleast one preamble item should be added into agenda");
 			e.preventDefault();
