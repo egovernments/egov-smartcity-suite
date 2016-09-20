@@ -1877,6 +1877,20 @@ function validateSORDetails() {
 				$(this).attr('disabled', 'disabled');
 			});
 		}
+		
+		hiddenRowCount = $("#tblNonTendered > tbody > tr[sorinvisible='true']").length;
+		if(hiddenRowCount == 1) {
+			$('#tblNonTendered').find('input, textarea').each(function() {
+				$(this).attr('disabled', 'disabled');
+			});
+		}
+		
+		hiddenRowCount = $("#tblLumpSum > tbody > tr[nonsorinvisible='true']").length;
+		if(hiddenRowCount == 1) {
+			$('#tblLumpSum').find('input, textarea').each(function() {
+				$(this).attr('disabled', 'disabled');
+			});
+		}
 	} else
 		return false;
 }

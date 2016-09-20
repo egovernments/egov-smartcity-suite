@@ -471,15 +471,17 @@ public class MBHeader extends StateAware {
     @SuppressWarnings("unchecked")
     public Collection<MBDetails> getNonTenderedMBDetails() {
         return CollectionUtils.select(mbDetails,
-                mbDetail -> ((MBDetails) mbDetail).getWorkOrderActivity().getActivity().getRevisionType()
-                        .compareTo(RevisionType.NON_TENDERED_ITEM) == 0);
+                mbDetail -> (((MBDetails) mbDetail).getWorkOrderActivity().getActivity().getRevisionType() != null
+                        && ((MBDetails) mbDetail).getWorkOrderActivity().getActivity().getRevisionType()
+                                .compareTo(RevisionType.NON_TENDERED_ITEM) == 0));
     }
 
     @SuppressWarnings("unchecked")
     public Collection<MBDetails> getLumpSumMBDetails() {
         return CollectionUtils.select(mbDetails,
-                mbDetail -> ((MBDetails) mbDetail).getWorkOrderActivity().getActivity().getRevisionType()
-                        .compareTo(RevisionType.LUMP_SUM_ITEM) == 0);
+                mbDetail -> (((MBDetails) mbDetail).getWorkOrderActivity().getActivity().getRevisionType() != null
+                        && ((MBDetails) mbDetail).getWorkOrderActivity().getActivity().getRevisionType()
+                                .compareTo(RevisionType.LUMP_SUM_ITEM) == 0));
     }
 
     public Long getApprovalDepartment() {

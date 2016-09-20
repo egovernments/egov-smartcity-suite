@@ -47,7 +47,40 @@
 			<input type="hidden" id="errorSelect" value="<spring:message code='msg.select.workorderactivity' />">
 			<div class="row">
 				<div class="col-md-12">
-					<jsp:include page="searchWorkOrderActivity-header.jsp"/>
+					<div class="panel panel-primary" data-collapsed="0">
+						<div class="panel-heading">
+							<div class="panel-title" style="text-align:center;"><spring:message code="title.searchview.workorderactivity" /></div>
+						</div>
+						<input type="hidden" name="workOrderEstimateId" id="workOrderEstimateId" value="${workOrderEstimateId }"/>
+						<input type="hidden" name="id" id="mbHeaderId" value="${mbHeaderId }"/>
+						<div class="panel-body">
+							<div class="col-md-12 text-left">
+								<spring:message code="lbl.workordernumber" />: ${workOrderNo }
+							</div><br /><br />
+							<div class="form-group">
+								<label class="col-sm-2 control-label text-right"><spring:message code="lbl.item.code" /></label>
+								<div class="col-sm-3 add-margin">
+									<input name="itemCode" id="itemCode" class="form-control"/>
+								</div>
+								<label class="col-sm-2 control-label text-right"><spring:message code="lbl.description.item" /></label>
+								<div class="col-sm-3 add-margin">
+									<input name="description" id="description" class="form-control"/>
+								</div>
+							</div>
+							<div class="form-group">
+								<label class="col-sm-2 control-label text-right"><spring:message code="lbl.sor.nonsor.type" /></label>
+								<div class="col-sm-3 add-margin">
+									<select name="sorType" data-first-option="false" id="sorType" class="form-control">
+										<option value="">
+											<spring:message code="lbl.select" />
+										</option>
+										<option value="SOR">SOR</option>
+ 										<option value="Non SOR">Non SOR</option>
+									</select>
+								</div>
+							</div>
+						</div>
+					</div>
 				</div>
 			</div>
 			<div class="row">

@@ -206,7 +206,7 @@ public class LetterOfAcceptanceService {
 
         if (StringUtils.isNotBlank(workOrder.getPercentageSign()) && workOrder.getPercentageSign().equals("-"))
             workOrder.setTenderFinalizedPercentage(workOrder.getTenderFinalizedPercentage() * -1);
-
+        workOrder.setTotalIncludingRE(workOrder.getWorkOrderAmount());
         workOrder = createWorkOrderActivities(workOrder);
 
         workOrder = createAssetsForWorkOrder(workOrder);

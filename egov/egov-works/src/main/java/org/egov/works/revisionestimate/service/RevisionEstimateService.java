@@ -62,6 +62,7 @@ import org.egov.eis.service.PositionMasterService;
 import org.egov.infra.admin.master.entity.AppConfigValues;
 import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.admin.master.service.AppConfigValueService;
+import org.egov.infra.config.core.ApplicationThreadLocals;
 import org.egov.infra.persistence.entity.component.Money;
 import org.egov.infra.security.utils.SecurityUtils;
 import org.egov.infra.utils.DateUtils;
@@ -240,10 +241,7 @@ public class RevisionEstimateService {
             revisionEstimate.setDescription("Revision Estimate for: " + abstractEstimate.getDescription());
             revisionEstimate.setNatureOfWork(abstractEstimate.getNatureOfWork());
             revisionEstimate.setExecutingDepartment(abstractEstimate.getExecutingDepartment());
-            revisionEstimate.setUserDepartment(abstractEstimate.getUserDepartment());
             revisionEstimate.setWard(abstractEstimate.getWard());
-            revisionEstimate.setDepositCode(abstractEstimate.getDepositCode());
-            revisionEstimate.setFundSource(abstractEstimate.getFundSource());
             revisionEstimate.setParentCategory(abstractEstimate.getParentCategory());
         }
 
@@ -326,6 +324,9 @@ public class RevisionEstimateService {
                     .equalsIgnoreCase(budgetControlTypeService.getConfigValue()))
                 releaseBudgetOnReject(revisionEstimate);
         }
+        revisionEstimate
+                .setApprovedBy((User) entityManager.unwrap(Session.class).load(User.class, ApplicationThreadLocals.getUserId()));
+        revisionEstimate.setApprovedDate(new Date());
         updateRevisionEstimate = revisionEstimateRepository.save(revisionEstimate);
 
         revisionEstimateStatusChange(updateRevisionEstimate, workFlowAction);
@@ -337,13 +338,8 @@ public class RevisionEstimateService {
             RevisionWorkOrder revisionWorkOrder = new RevisionWorkOrder();
             revisionWorkOrder = createRevisionWorkOrder(updateRevisionEstimate, revisionWorkOrder, workOrderEstimate);
             revisionWorkOrderService.create(revisionWorkOrder);
-
-            final List<RevisionAbstractEstimate> revisionAbstractEstimates = findApprovedRevisionEstimatesByParent(
-                    updateRevisionEstimate.getParent().getId());
-            double totalIncludingRE = 0d;
-            for (final RevisionAbstractEstimate re : revisionAbstractEstimates)
-                totalIncludingRE += re.getWorkValue();
-            updateRevisionEstimate.getParent().setTotalIncludingRE(totalIncludingRE);
+            updateRevisionEstimate.getParent().setTotalIncludingRE(
+                    updateRevisionEstimate.getParent().getTotalIncludingRE() + updateRevisionEstimate.getWorkValue());
         }
 
         revisionEstimateRepository.save(updateRevisionEstimate);
@@ -357,23 +353,20 @@ public class RevisionEstimateService {
         final List<RevisionAbstractEstimate> revisionEstimates = revisionEstimateRepository
                 .findByParent_Id(revisionEstimate.getParent().getId());
 
-        final Integer reCount = revisionEstimates.size();
+        Integer reCount = revisionEstimates.size();
         revisionWorkOrder.setParent(workOrderEstimate.getWorkOrder());
         revisionWorkOrder.setWorkOrderDate(revisionEstimate.getEstimateDate());
         revisionWorkOrder.setWorkOrderNumber(
-                workOrderEstimate.getWorkOrder().getWorkOrderNumber() + "/RW".concat(Integer.toString(reCount)));
+                workOrderEstimate.getWorkOrder().getWorkOrderNumber() + "/RW".concat(Integer.toString(++reCount)));
         revisionWorkOrder.setContractor(workOrderEstimate.getWorkOrder().getContractor());
         revisionWorkOrder.setEngineerIncharge(workOrderEstimate.getWorkOrder().getEngineerIncharge());
         revisionWorkOrder.setEmdAmountDeposited(0);
         revisionWorkOrder.setEgwStatus(worksUtils.getStatusByModuleAndCode(WorksConstants.WORKORDER, WorksConstants.APPROVED));
+        revisionWorkOrder.setApprovedDate(new Date());
         populateWorkOrderActivities(revisionWorkOrder, revisionEstimate);
 
-        final List<RevisionWorkOrder> revisionWorkOrders = revisionWorkOrderService.findApprovedRevisionEstimatesByParent(
-                revisionWorkOrder.getParent().getId());
-        double totalIncludingRE = 0d;
-        for (final RevisionWorkOrder rw : revisionWorkOrders)
-            totalIncludingRE += rw.getWorkOrderAmount();
-        revisionWorkOrder.getParent().setTotalIncludingRE(totalIncludingRE);
+        revisionWorkOrder.getParent().setTotalIncludingRE(
+                revisionWorkOrder.getParent().getTotalIncludingRE() + revisionWorkOrder.getWorkOrderAmount());
         return revisionWorkOrder;
     }
 
@@ -441,6 +434,7 @@ public class RevisionEstimateService {
             workOrderEstimate.addWorkOrderActivity(workOrderActivity);
         }
         workOrderEstimate.getWorkOrder().setWorkOrderAmount(woTotalAmount);
+        workOrderEstimate.setEstimateWOAmount(woTotalAmount);
     }
 
     private void populateWorkOrderMeasurementSheet(final WorkOrderActivity workOrderActivity) {
@@ -1184,12 +1178,19 @@ public class RevisionEstimateService {
         if (revisionWorkOrder != null) {
             revisionWorkOrder
                     .setEgwStatus(worksUtils.getStatusByModuleAndCode(WorksConstants.WORKORDER, WorksConstants.CANCELLED_STATUS));
+            revisionWorkOrder.getParent().setTotalIncludingRE(
+                    revisionWorkOrder.getParent().getTotalIncludingRE() - revisionWorkOrder.getWorkOrderAmount());
             revisionWorkOrderService.create(revisionWorkOrder);
         }
-        final String appropriationNumber = lineEstimateAppropriationService
-                .generateBudgetAppropriationNumber(revisionEstimate.getParent().getLineEstimateDetails());
-        lineEstimateService.releaseBudgetOnReject(revisionEstimate.getParent().getLineEstimateDetails(),
-                revisionEstimate.getEstimateValue().doubleValue(), appropriationNumber);
+        if (!BudgetControlType.BudgetCheckOption.NONE.toString()
+                .equalsIgnoreCase(budgetControlTypeService.getConfigValue())) {
+            final String appropriationNumber = lineEstimateAppropriationService
+                    .generateBudgetAppropriationNumber(revisionEstimate.getParent().getLineEstimateDetails());
+            lineEstimateService.releaseBudgetOnReject(revisionEstimate.getParent().getLineEstimateDetails(),
+                    revisionEstimate.getEstimateValue().doubleValue(), appropriationNumber);
+        }
+        revisionEstimate.getParent().setTotalIncludingRE(
+                revisionEstimate.getParent().getTotalIncludingRE() - revisionEstimate.getWorkValue());
         return revisionEstimateRepository.save(revisionEstimate);
     }
 
