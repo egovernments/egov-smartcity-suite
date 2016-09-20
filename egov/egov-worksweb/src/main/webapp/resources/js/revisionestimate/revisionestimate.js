@@ -932,7 +932,7 @@ var sorSearch = new Bloodhound({
 		$('#lumpSumUomid_' + rowId).val($(obj).val());
 		$('#lumpSumUomid_' + rowId).val($(obj).val());
 		$('#lumpSumEstimateRate_' + rowId).val("");
-		$('#lumpSumQuantity_' + rowId).val("");
+		//$('#lumpSumQuantity_' + rowId).val("");
 		calculateLumpSumEstimateAmount($('#lumpSumQuantity_' + rowId));
 	}
 	
@@ -1006,6 +1006,7 @@ var sorSearch = new Bloodhound({
 				total = parseFloat(parseFloat(total) + parseFloat($(this).html().replace(',', ''))).toFixed(2);
 		});
 		$('#lumpSumTotal').html(total);
+		$('#lumpSumEstimateTotal').html(total);
 		calculateEstimateValue();
 	}
 	

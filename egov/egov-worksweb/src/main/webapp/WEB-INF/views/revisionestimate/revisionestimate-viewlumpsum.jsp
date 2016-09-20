@@ -92,10 +92,10 @@
 					</c:choose> 
 				</tbody>
 				<tfoot>
-					<c:set var="nonsortotal" value="${0}" scope="session" />
+					<c:set var="lumpsumtotal" value="${0}" scope="session" />
 					<c:if test="${revisionEstimate.lumpSumActivities != null}">
 						<c:forEach items="${revisionEstimate.lumpSumActivities}" var="nonSor">
-							<c:set var="nonsortotal" value="${nonsortotal + nonSor.getAmount().value }" />
+							<c:set var="lumpsumtotal" value="${lumpsumtotal + nonSor.getAmount().value }" />
 						</c:forEach>
 					</c:if>
 					<tr>
@@ -106,7 +106,7 @@
 						<td colspan="5" class="text-right"><spring:message code="lbl.total" /></td>
 					</c:if>
 						<td class="text-right">
-							<span><fmt:formatNumber groupingUsed="false" minFractionDigits="2" maxFractionDigits="2"><c:out value="${nonsortotal}" /></fmt:formatNumber></span>
+							<span><fmt:formatNumber groupingUsed="false" minFractionDigits="2" maxFractionDigits="2"><c:out value="${lumpsumtotal}" /></fmt:formatNumber></span>
 						</td>
 					</tr>
 				</tfoot>

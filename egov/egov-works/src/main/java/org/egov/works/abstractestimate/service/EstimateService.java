@@ -233,7 +233,7 @@ public class EstimateService {
             final Long approvalPosition, final String approvalComent, final String additionalRule,
             final String workFlowAction) throws IOException {
         AbstractEstimate newAbstractEstimate = null;
-        abstractEstimate.setTotalIncludingRE(abstractEstimate.getWorkValue());
+        abstractEstimate.setTotalIncludingRE(abstractEstimate.getEstimateValue().doubleValue());
         mergeSorAndNonSorActivities(abstractEstimate);
         final AbstractEstimate abstractEstimateFromDB = getAbstractEstimateByEstimateNumber(
                 abstractEstimate.getEstimateNumber());

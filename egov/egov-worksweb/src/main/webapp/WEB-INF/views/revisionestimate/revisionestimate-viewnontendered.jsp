@@ -103,10 +103,10 @@
 				</c:choose> 
 			</tbody>
 			<tfoot>
-				<c:set var="sortotal" value="${0}" scope="session" />
+				<c:set var="nontenderedtotal" value="${0}" scope="session" />
 				<c:if test="${revisionEstimate.nonTenderedActivities != null}">
 					<c:forEach items="${revisionEstimate.nonTenderedActivities}" var="sor">
-						<c:set var="sortotal"	value="${sortotal + sor.getAmount().value }" />  
+						<c:set var="nontenderedtotal"	value="${nontenderedtotal + sor.getAmount().value }" />  
 					</c:forEach>
 				</c:if>
 				<tr>
@@ -117,7 +117,7 @@
 					<td colspan="7" class="text-right"><spring:message code="lbl.total" /></td>
 				</c:if>
 					<td class="text-right">
-						<span><fmt:formatNumber groupingUsed="false" minFractionDigits="2" maxFractionDigits="2"><c:out value="${sortotal}" /></fmt:formatNumber></span>
+						<span><fmt:formatNumber groupingUsed="false" minFractionDigits="2" maxFractionDigits="2"><c:out value="${nontenderedtotal}" /></fmt:formatNumber></span>
 					</td>
 				</tr>
 			</tfoot>
