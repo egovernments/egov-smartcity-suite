@@ -83,7 +83,7 @@
 		<button type="submit" class="btn btn-primary" id="payBtn"><spring:message code="lbl.pay.online"/></button>
 	</c:if>
 	<c:if test="${sewerageApplicationDetails.status.code != 'CREATED' && sewerageApplicationDetails.status.code != 'VERIFIED' && sewerageApplicationDetails.status.code != 'APPROVED'
-	&& sewerageApplicationDetails.status.code != 'CANCELLED' && sewerageApplicationDetails.fieldInspectionDetails != nul && !citizenRole}">
+	&& sewerageApplicationDetails.status.code != 'CANCELLED' && sewerageApplicationDetails.fieldInspections.fieldInspectionDetails != null && !citizenRole}">
 		<button type="submit" class="btn btn-primary" id="viewEstimationNotice"><spring:message code="lbl.printestimationnotice"/></button>
 	</c:if>
 	<c:if test="${!citizenRole && (sewerageApplicationDetails.status.code == 'APPROVED' || sewerageApplicationDetails.status.code == 'WORKORDERGENERATED')}">

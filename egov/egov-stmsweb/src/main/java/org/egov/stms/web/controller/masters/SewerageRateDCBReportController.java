@@ -269,6 +269,7 @@ public class SewerageRateDCBReportController {
             Map<String, String> searchableObjects = (Map<String,String>)document.getResource().get("searchable");
             List<SewerageApplicationDetails> appList = new ArrayList<SewerageApplicationDetails>();
             SewerageApplicationDetails sewerageAppDtl=sewerageApplicationDetailsService.findByApplicationNumber(searchableObjects.get("consumernumber"));
+            if(sewerageAppDtl!=null)
             sewerageAppDtl.setOwnerName(searchableObjects.get("consumername"));
             if(applicationDetailList.isEmpty())
               if(sewerageAppDtl!=null){
