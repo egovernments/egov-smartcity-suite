@@ -87,10 +87,12 @@ public class DefaultersWTReportService {
         
         queryStr.append(" and dcbinfo.demand IS NOT NULL");
         if (!topDefaulters.isEmpty())
-            queryStr.append(" order by dcbinfo.arr_balance+dcbinfo.curr_balance desc limit " + topDefaulters);
+            queryStr.append(" order by dcbinfo.arr_balance+dcbinfo.curr_balance desc ");
         final SQLQuery finalQuery = getCurrentSession().createSQLQuery(queryStr.toString());
         finalQuery.setFirstResult(startsFrom);
         finalQuery.setMaxResults(maxResults);
+        if (!topDefaulters.isEmpty())
+            finalQuery.setMaxResults(Integer.valueOf(topDefaulters));
         finalQuery.setResultTransformer(new AliasToBeanResultTransformer(DefaultersReport.class));
         return finalQuery.list();
     }
@@ -112,7 +114,7 @@ public class DefaultersWTReportService {
         if (ward != null && !ward.isEmpty())
             queryStr.append(" and wardboundary.name = '" + ward + "'");
         if (!topDefaulters.isEmpty())
-            queryStr.append(" order by dcbinfo.arr_balance+dcbinfo.curr_balance desc limit " + topDefaulters);
+            queryStr.append(" limit " + topDefaulters);
         final SQLQuery finalQuery = getCurrentSession().createSQLQuery(queryStr.toString());
         final Long count = ((BigInteger) finalQuery.uniqueResult()).longValue();
         return count;
