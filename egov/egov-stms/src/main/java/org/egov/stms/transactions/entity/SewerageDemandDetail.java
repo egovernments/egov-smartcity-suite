@@ -48,8 +48,8 @@ public class SewerageDemandDetail {
     private String installment; // holds installment description
     private String reasonMaster; // reasonmaster code
     private String reasonMasterDesc;
-    private BigDecimal actualAmount; // demand amount
-    private BigDecimal actualCollection;
+    private BigDecimal actualAmount = BigDecimal.ZERO; // demand amount
+    private BigDecimal actualCollection = BigDecimal.ZERO;
 
     public String getReasonMasterDesc() {
         return reasonMasterDesc;

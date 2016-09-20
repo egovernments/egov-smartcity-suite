@@ -314,6 +314,8 @@ public class SewerageDemandService {
                     demandDetailSet.add(createDemandDetails(sdd.getActualAmount(), pendingTaxReason,
                             sdd.getActualCollection()));
                     totalDemandAmount = totalDemandAmount.add(sdd.getActualAmount());
+                    if(sdd.getActualCollection()==null)
+                        sdd.setActualCollection(BigDecimal.ZERO);
                     totalCollectedAmount = totalCollectedAmount.add(sdd.getActualCollection());
                 } else
                     throw new ApplicationRuntimeException("SEWERAGE.001");
