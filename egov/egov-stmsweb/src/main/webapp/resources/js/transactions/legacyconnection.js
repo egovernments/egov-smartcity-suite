@@ -38,7 +38,7 @@
 #   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
 #-------------------------------------------------------------------------------*/
 $(document).ready(function(){
-	
+	validateDemand(this);
 	$('#propertyIdentifier').blur(function(){
 		validateSewerageConnection();
 	});
@@ -247,6 +247,42 @@ function getWaterTaxDue(propertyID) {
 	}
 }
 
+$("#submit").click(function() {
+	var table = document.getElementById('legacyDemandDetails');
+    var rowCount = table.rows.length;
+    var index = rowCount -2;
+    var i;
+    for(i=0; i<= index; i++){
+    	if($('#demandDetailBeanList'+i+'actualAmount').val() != ''){
+    		var j=i+1;
+    		for(k=j; k<= index; k++)
+    			$('#demandDetailBeanList'+k+'actualAmount').attr('required', 'required');
+    	}
+    	if(i===index){
+    		if($('#demandDetailBeanList'+i+'actualAmount').val() === ''){
+    			$('#demandDetailBeanList'+i+'actualAmount').attr('required', 'required');
+    		}
+    		if( $('#demandDetailBeanList'+i+'actualCollection').val() === ''){
+    			$('#demandDetailBeanList'+i+'actualCollection').attr('required','required');
+    		}
+    			
+    	}
+    }
+    	
+    
+	if($('form').valid()){
+		if(!validateDemandDetailsOnSubmit()){
+		return false;
+		}
+		else{
+			return true;
+		}
+	}
+	else{
+		return false;
+	}
+});
+
 function validateDemandDetailsOnSubmit(){
 	var tbl=document.getElementById("legacyDemandDetails");
     var lastRow = (tbl.rows.length)-1;
@@ -256,28 +292,58 @@ function validateDemandDetailsOnSubmit(){
     	instlmnt=getControlInBranch(tbl.rows[i],'demandDetailBeanList'+(i-1)+'installment').value;
     	demandamount=getControlInBranch(tbl.rows[i],'demandDetailBeanList'+(i-1)+'actualAmount').value;
     	collectionamount=getControlInBranch(tbl.rows[i],'demandDetailBeanList'+(i-1)+'actualCollection').value;
-         if((demandamount=='' || demandamount == 0 ) || (collectionamount=='' || collectionamount == 0)) { 
-          	bootbox.alert("Enter all mandatory Details for installment \""+instlmnt+"\".");
-    		return false; 
-    	}
         if((demandamount!='' && collectionamount!='' &&  parseFloat(collectionamount) > parseFloat(demandamount))) { 
            	bootbox.alert("Collection cannot be more than Demand for installment \""+instlmnt+"\".");
      		return false; 
      	}
+        
     } 
     return true;
 }
-$("#submit").click(function() { 
-	if($('form').valid()){
-		if(!validateDemandDetailsOnSubmit()){
-		return false;
-		}
-		else{
-			return true;
-		}
+
+$('.propertyTypeValidate').blur(function(){
+	var noofclosetsresidential=0;
+	var noofclosetsnonresidential=0;
+	var propertytype = document.getElementById('propertyType').value;
+	if(propertytype=='RESIDENTIAL')
+		noofclosetsresidential = document.getElementById('noOfClosetsResidential').value;
+	else if(propertytype=='NON_RESIDENTIAL')
+		noofclosetsnonresidential = document.getElementById('noOfClosetsNonResidential').value;
+	else{
+		noofclosetsresidential = document.getElementById('noOfClosetsResidential').value;
+		noofclosetsnonresidential = document.getElementById('noOfClosetsNonResidential').value;
 	}
-	return false;
-});	
+	
+	if(propertytype != '') {
+		$.ajax({
+			url: "/stms/ajaxconnection/getlegacy-donation-amount",      
+			type: "GET",
+			data: {
+				propertytype : propertytype,
+				noofclosetsresidential : noofclosetsresidential,
+				noofclosetsnonresidential : noofclosetsnonresidential
+			},
+			dataType: "json",
+			success: function (response) { 
+				var inspectionDtlTable = document.getElementById('inspectionChargesDetails');
+				var rowCount = inspectionDtlTable.rows.length;
+				var i;
+				for(i=0;i<=rowCount-1;i++){
+				var feeName = $(inspectionDtlTable.rows[i].cells[1]).text();
+				if(feeName.trim()==="Donation Charge"){
+					var j=i-1;
+					var donation = document.getElementById('feesDetail'+j+'amount').value;
+					$('#feesDetail'+j+'amount').attr('value', response);
+				}
+				}
+			}, 
+			error: function (response) {
+				bootbox.alert("connection validation failed");
+			}
+		});
+	}		
+	
+});
 
 
 function addDemandDetailRow(instlmntDesc,reasondsc,demandamount,collectionamount,instlmntId,dmndReasonId) {
@@ -335,7 +401,11 @@ function addDemandDetailRow(instlmntDesc,reasondsc,demandamount,collectionamount
     actualAmount.setAttribute("maxlength", "7");
     actualAmount.setAttribute("name", "demandDetailBeanList[" + (elementIndex-1) + "].actualAmount");
     actualAmount.setAttribute("id", "demandDetailBeanList"+(elementIndex-1)+"actualAmount");
-    actualAmount.setAttribute("value", demandamount);
+    actualAmount.setAttribute("onkeyup","validateDemand(this);");
+    actualAmount.setAttribute("onclick","validateDemand(this);");
+    actualAmount.setAttribute("onblur","validateDemand(this);");
+    actualAmount.setAttribute("autocomplete","off");
+
     cell3.appendChild(actualAmount);  
     
     newCol = document.createElement("td");
@@ -349,7 +419,7 @@ function addDemandDetailRow(instlmntDesc,reasondsc,demandamount,collectionamount
     actualCollection.setAttribute("maxlength", "7");
     actualCollection.setAttribute("name", "demandDetailBeanList[" + (elementIndex-1) + "].actualCollection");
     actualCollection.setAttribute("id", "demandDetailBeanList"+(elementIndex-1)+"actualCollection");
-    actualCollection.setAttribute("value", collectionamount);
+    actualCollection.setAttribute("autocomplete","off");
     cell4.appendChild(actualCollection);  
     
     var installmentId = document.createElement("input");
@@ -370,4 +440,16 @@ function addDemandDetailRow(instlmntDesc,reasondsc,demandamount,collectionamount
     demandReasonId.setAttribute("value", dmndReasonId);
     cell4.appendChild(demandReasonId); 
     patternvalidation();
+}
+
+function validateDemand(obj) {
+	$( "input[name$='actualAmount']" ).on("keyup", function(){
+	    var valid = /^[1-9](\d{0,9})(\.\d{0,3})?$/.test(this.value),
+	        val = this.value;
+	    
+	    if(!valid){
+	        console.log("Invalid input!");
+	        this.value = val.substring(0, val.length - 1);
+	    }
+	});
 }

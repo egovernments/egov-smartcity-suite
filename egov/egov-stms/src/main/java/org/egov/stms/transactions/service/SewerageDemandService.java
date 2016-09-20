@@ -311,11 +311,13 @@ public class SewerageDemandService {
             for (final SewerageDemandDetail sdd : sewerageDemandDetail) {
                 final EgDemandReason pendingTaxReason = getDemandReasonByCodeAndInstallment(sdd.getReasonMaster(), sdd.getInstallmentId()); 
                 if (pendingTaxReason != null) {
+                    if(sdd.getActualAmount()==null)
+                        sdd.setActualAmount(BigDecimal.ZERO);
+                    if(sdd.getActualCollection()==null)
+                        sdd.setActualCollection(BigDecimal.ZERO);
                     demandDetailSet.add(createDemandDetails(sdd.getActualAmount(), pendingTaxReason,
                             sdd.getActualCollection()));
                     totalDemandAmount = totalDemandAmount.add(sdd.getActualAmount());
-                    if(sdd.getActualCollection()==null)
-                        sdd.setActualCollection(BigDecimal.ZERO);
                     totalCollectedAmount = totalCollectedAmount.add(sdd.getActualCollection());
                 } else
                     throw new ApplicationRuntimeException("SEWERAGE.001");

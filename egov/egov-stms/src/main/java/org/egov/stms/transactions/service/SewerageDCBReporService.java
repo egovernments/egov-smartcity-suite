@@ -100,7 +100,10 @@ public class SewerageDCBReporService {
                         .get(demandDtl.getEgDemandReason().getEgInstallmentMaster().getDescription());
                 if (rateResult == null) {
                     // TODO: Handle Penalty cases in future.
-
+                    
+                    if(demandDtl.getAmtCollected()==null){
+                        demandDtl.setAmtCollected(BigDecimal.ZERO);
+                    }
                     dcbResult = new SewerageRateDCBResult();
                     dcbResult.setInstallmentYearDescription(
                             demandDtl.getEgDemandReason().getEgInstallmentMaster().getDescription());
@@ -115,7 +118,7 @@ public class SewerageDCBReporService {
                         dcbResult.setCollectedDemandAmount(dcbResult.getCollectedDemandAmount().add(demandDtl.getAmtCollected()));
                     }
                     else if(demandDtl.getEgDemandReason().getEgDemandReasonMaster().getCode().equalsIgnoreCase(FEES_ADVANCE_CODE)) {
-                        dcbResult.setAdvanceAmount(demandDtl.getAmtCollected().setScale(2, BigDecimal.ROUND_HALF_UP));
+                        dcbResult.setAdvanceAmount(demandDtl.getAmount().setScale(2, BigDecimal.ROUND_HALF_UP));
                     }
                     sewerageReportMap.put(demandDtl.getEgDemandReason().getEgInstallmentMaster().getDescription(), dcbResult);
                 } else {
@@ -135,7 +138,7 @@ public class SewerageDCBReporService {
                                 .add(demandDtl.getAmtCollected().setScale(2, BigDecimal.ROUND_HALF_UP)));
                     }
                     else if(demandDtl.getEgDemandReason().getEgDemandReasonMaster().getCode().equalsIgnoreCase(FEES_ADVANCE_CODE)){
-                        dcbResult.setAdvanceAmount(dcbResult.getAdvanceAmount().add(demandDtl.getAmtCollected().setScale(2, BigDecimal.ROUND_HALF_UP)));
+                        dcbResult.setAdvanceAmount(dcbResult.getAdvanceAmount().add(demandDtl.getAmount().setScale(2, BigDecimal.ROUND_HALF_UP)));
                     }
                     sewerageReportMap.put(demandDtl.getEgDemandReason().getEgInstallmentMaster().getDescription(), dcbResult);
                 }

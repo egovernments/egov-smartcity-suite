@@ -40,13 +40,16 @@
 
 package org.egov.stms.web.controller.transactions;
 
+import static org.egov.stms.utils.constants.SewerageTaxConstants.CHANGEINCLOSETS;
+import static org.egov.stms.utils.constants.SewerageTaxConstants.CLOSESEWERAGECONNECTION;
+
 import java.math.BigDecimal;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.LinkedHashSet;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 
@@ -73,8 +76,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
-import static org.egov.stms.utils.constants.SewerageTaxConstants.CHANGEINCLOSETS;
-import static org.egov.stms.utils.constants.SewerageTaxConstants.CLOSESEWERAGECONNECTION;
 
 @Controller
 public class SewerageAjaxConnectionController {
@@ -98,8 +99,6 @@ public class SewerageAjaxConnectionController {
     @Autowired
     private SewerageDemandService sewerageDemandService;
     
-
-  
     @RequestMapping(value = "/ajaxconnection/check-connection-exists", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
     public @ResponseBody String isConnectionPresentForProperty(@RequestParam final String propertyID) {
         return sewerageApplicationDetailsService.checkConnectionPresentForProperty(propertyID);
@@ -154,7 +153,6 @@ public class SewerageAjaxConnectionController {
     @RequestMapping(value = "/ajaxconnection/getlegacy-demand-details", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
     public @ResponseBody List<SewerageDemandDetail> getLegacyDemandDetails(@RequestParam("executionDate") final String executionDate,
             final HttpServletRequest request) {
-        List<SewerageDemandDetail> sdd = new LinkedList<SewerageDemandDetail>(); 
         
         final List<SewerageDemandDetail> demandDetailBeanList = new ArrayList<SewerageDemandDetail>();
         final Set<SewerageDemandDetail> tempDemandDetail = new LinkedHashSet<SewerageDemandDetail>();
@@ -163,17 +161,21 @@ public class SewerageAjaxConnectionController {
         try {
             allInstallments = sewerageTaxUtils.getInstallmentsForCurrYear(
                     sdf.parse(executionDate));
+            
         } catch (final ParseException e) {
             throw new ApplicationRuntimeException("Error while getting all installments from start date", e);
         }
         SewerageDemandDetail dmdDtl = null;
             for (final Installment installObj : allInstallments) {
-                final EgDemandReason demandReasonObj = sewerageDemandService
-                        .getDemandReasonByCodeAndInstallment(SewerageTaxConstants.FEES_SEWERAGETAX_CODE, installObj.getId());
-                if (demandReasonObj != null) {
-                        dmdDtl = createDemandDetailBean(installObj, demandReasonObj);
+                //check whether the from date of installment is less than current date. To eliminate future installments 
+                if(installObj.getFromDate().compareTo(new Date())<0){
+                    final EgDemandReason demandReasonObj = sewerageDemandService
+                            .getDemandReasonByCodeAndInstallment(SewerageTaxConstants.FEES_SEWERAGETAX_CODE, installObj.getId());
+                    if (demandReasonObj != null) {
+                            dmdDtl = createDemandDetailBean(installObj, demandReasonObj);
+                    }
+                    tempDemandDetail.add(dmdDtl);
                 }
-                tempDemandDetail.add(dmdDtl);
             }
         for (final SewerageDemandDetail demandDetList : tempDemandDetail)
             if (demandDetList != null)
@@ -194,4 +196,27 @@ public class SewerageAjaxConnectionController {
         return demandDetail;
     }
 
+    @RequestMapping(value="/ajaxconnection/getlegacy-donation-amount", method=RequestMethod.GET, produces=MediaType.APPLICATION_JSON_VALUE)
+    public @ResponseBody BigDecimal getLegacyDonationAmount(@RequestParam("propertytype") PropertyType propertyType, @RequestParam("noofclosetsresidential") Integer noofclosetsresidential, 
+            @RequestParam("noofclosetsnonresidential") Integer noofclosetsnonresidential){
+        
+        
+        BigDecimal legacyDonationAmount=BigDecimal.ZERO;
+        BigDecimal residentialAmount=BigDecimal.ZERO;
+        BigDecimal nonResidentialAmount=BigDecimal.ZERO;
+        if(noofclosetsresidential!=0){
+            residentialAmount = donationMasterService.getDonationAmountByNoOfClosetsAndPropertytypeForCurrentDate(noofclosetsresidential, propertyType);
+        }
+        if(noofclosetsnonresidential!=0){
+            nonResidentialAmount = donationMasterService.getDonationAmountByNoOfClosetsAndPropertytypeForCurrentDate(noofclosetsnonresidential, propertyType);
+
+        }
+        if(propertyType.equals(PropertyType.MIXED) && residentialAmount!=null && nonResidentialAmount!=null)
+            legacyDonationAmount=residentialAmount.add(nonResidentialAmount);
+        else if(propertyType.equals(PropertyType.RESIDENTIAL) && residentialAmount!=null)
+            legacyDonationAmount=residentialAmount;
+        else if(nonResidentialAmount!=null)
+            legacyDonationAmount=nonResidentialAmount;
+        return legacyDonationAmount;
+    }
 }
