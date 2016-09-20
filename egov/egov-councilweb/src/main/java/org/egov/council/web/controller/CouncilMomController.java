@@ -108,6 +108,7 @@ public class CouncilMomController {
 	private final static String COUNCILMOM_RESULT = "councilmom-result";
 	private final static String COUNCILMOM_SEARCH = "councilmom-search";
 	private final static String COUNCILMOM_VIEW = "councilmom-view";
+	private final static String COMMONERRORPAGE = "common-error-page";
 
 	@Autowired
 	private EgwStatusHibernateDAO egwStatusHibernateDAO;
@@ -151,6 +152,11 @@ public class CouncilMomController {
 	@RequestMapping(value = "/new/{id}", method = RequestMethod.GET)
 	public String newForm(@PathVariable("id") final Long id, Model model) {
 		CouncilMeeting councilMeeting = councilMeetingService.findOne(id);
+		
+		if(null!=councilMeeting && null!=councilMeeting.getStatus() && MOM_FINALISED.equals(councilMeeting.getStatus().getCode())){
+                    model.addAttribute("message", "msg.mom.alreadyfinalized");
+                return COMMONERRORPAGE;
+                }
 		if (councilMeeting.getCommitteeType() != null
 				&& councilMeeting.getMeetingAttendence().isEmpty()) {
 			List<MeetingAttendence> attendencesList = new ArrayList<MeetingAttendence>();
