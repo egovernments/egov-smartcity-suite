@@ -146,7 +146,8 @@
 <script type="text/javascript"
 	src="<cdn:url value='/resources/global/js/jquery/plugins/jquery.validate.min.js' context='/egi'/>"></script>
 <script
-	src="<cdn:url value='/resources/global/js/bootstrap/bootstrap-datepicker.js' context='/egi'/>"
+	src="<cdn:url value='/resources/global/js/bootstrap/bootstrap-datepicker.js?rnd=${app_release_no}' context='/egi'/>"
 	type="text/javascript"></script>
-<script type="text/javascript"
-	src="<cdn:url value='/resources/js/app/casetypeMasterHelper.js'/>"></script>
+<script
+	src="<cdn:url value='/resources/js/app/casetypeMasterHelper.js?rnd=${app_release_no}'/>"
+	type="text/javascript"></script>
