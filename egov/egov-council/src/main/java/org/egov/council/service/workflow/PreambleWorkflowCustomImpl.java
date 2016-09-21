@@ -133,7 +133,7 @@ public class PreambleWorkflowCustomImpl implements PreambleWorkflowCustom {
 					.withComments(approvalComent)
 					.withDateInfo(currentDate.toDate())
 					.withNatureOfTask(CouncilConstants.NATURE_OF_WORK);
-			;
+		
 		} else if (CouncilConstants.WF_APPROVE_BUTTON.equalsIgnoreCase(workFlowAction)) {
             wfmatrix = councilPreambleWorkflowService.getWfMatrix(councilPreamble.getStateType(), null, null, null,
                     councilPreamble.getCurrentState().getValue(), null);
