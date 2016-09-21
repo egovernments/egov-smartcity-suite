@@ -949,7 +949,7 @@ public class ReportService {
 
         List<PropertyMaterlizeView> properties = query.list();
         List<BaseRegisterVLTResult> baseRegisterVLTResultList = new LinkedList<BaseRegisterVLTResult>();
-
+        
         for (PropertyMaterlizeView propMatView : properties) {
         	BigDecimal currFirstHalfLibCess=BigDecimal.ZERO;
         	BigDecimal currSecondHalfLibCess=BigDecimal.ZERO;
@@ -1000,10 +1000,13 @@ public class ReportService {
                     baseRegisterVLTResultObj.setPenaltyFines(currPenaltyFine);
                     baseRegisterVLTResultObj.setArrearPropertyTax(propMatView.getAggrArrDmd()!=null && propMatView.getAggrArrDmd().compareTo(BigDecimal.ZERO)>=1 ? (propMatView.getAggrArrDmd()).subtract(arrLibCess) : BigDecimal.ZERO);
                     baseRegisterVLTResultObj.setArrearPenaltyFines(propMatView.getAggrArrearPenaly()!=null?propMatView.getAggrArrearPenaly():BigDecimal.ZERO);
-                    baseRegisterVLTResultObj.setArrearTotal(propMatView.getAggrArrDmd()!=null ? propMatView.getAggrArrDmd() : BigDecimal.ZERO);
+                    BigDecimal arrTotal;
                     BigDecimal arrColl;
                     BigDecimal totalColl;
                     BigDecimal currColl;
+                    arrTotal=propMatView.getAggrArrDmd()!=null ? propMatView.getAggrArrDmd() : BigDecimal.ZERO;
+                    baseRegisterVLTResultObj.setArrearTotal(arrTotal);
+                   
                     arrColl=propMatView.getAggrArrColl()!=null ? propMatView.getAggrArrColl():BigDecimal.ZERO;
                     baseRegisterVLTResultObj.setArrearColl(arrColl);
                     
@@ -1015,7 +1018,7 @@ public class ReportService {
 
                     String arrearPerFrom = "";
                     String arrearPerTo = "";
-                    if (instDemandCollList.size() > 1) {
+                    if (instDemandCollList.size() > 1 && ((arrTotal.subtract(arrColl).compareTo(BigDecimal.ZERO))>1)) {
                     	arrearPerTo = dateFormatter.format(DateUtils.add(propertyTaxCommonUtils.getCurrentInstallment().getFromDate(), Calendar.DAY_OF_MONTH, -1));
                         arrearPerFrom = dateFormatter.format(instDemandCollList.get(0).getInstallment().getFromDate());
                         baseRegisterVLTResultObj.setArrearPeriod(arrearPerFrom + "-" + arrearPerTo);

@@ -111,12 +111,7 @@
 							<form:input id="positionName" type="text" class="form-control "
 								autocomplete="off" path="" name="" value="" placeholder="" />
 							<input type="hidden" id="positionId" value="" />
-							<c:forEach items="${position}" var="position">
-								<a onclick="setPositionId(<c:out value="${position.id}"/>)"
-									href="javascript:void(0)"
-									class="btn btn-secondary btn-xs tag-element freq-ct"><c:out
-										value="${position.name }" /> </a>
-							</c:forEach>
+							
 						</div>
 						<button type="button" class="btn btn-default" value="Add"
 							id="addid">Add</button>
@@ -125,13 +120,38 @@
 						id="employeeDetails">
 						<thead>
 							<tr>
-								<th class="text-center">Position-Employee</th>
-								<th class="text-center">Delete</th>
+								<th class="text-center">Position-Employee1</th>
 							</tr>
 						</thead>
 
 						<tbody>
-
+						<c:choose>
+ 		<c:when test="${not empty hearings.getTempEmplyeeHearing()}">
+                   <c:forEach items="${hearings.getTempEmplyeeHearing()}" var="positionTemplList"
+                              varStatus="counter">
+                       <tr>
+			<td class="text-right" >
+			 <form:input path="positionTemplList[${counter.index}].employee.name" cssClass="form-control confValues" value="${positionTemplList.employee.name}"
+	                                      id="positionTemplList[${counter.index}].employee.name" />
+	                                <%--   <input type="hidden" name="positionTemplList[${counter.index}].id" value="${positionTemplList.id}" />  --%> </td>
+	
+				 </tr>
+                   </c:forEach>
+               </c:when>
+               <c:otherwise>
+               
+                 <tr>
+			 <td>
+                           <form:input path="positionTemplList[0].empPosName" cssClass="form-control"
+                                  id="positionTemplList[0].empPosName"  />
+              </td>
+		
+				<td>
+                           <span class="add-padding"><i class="fa fa-trash" data-func="add" aria-hidden="true" id="emp_delete_row"></i></span>
+                       </td>
+				 </tr>
+               </c:otherwise>
+               </c:choose>
 						</tbody>
 					</table>
 				</div>

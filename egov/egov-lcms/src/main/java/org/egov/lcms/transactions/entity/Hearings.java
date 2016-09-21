@@ -41,7 +41,9 @@ package org.egov.lcms.transactions.entity;
 
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -64,7 +66,6 @@ import org.egov.infra.persistence.validator.annotation.OptionalPattern;
 import org.egov.infra.utils.DateUtils;
 import org.egov.infra.validation.exception.ValidationError;
 import org.egov.lcms.utils.constants.LcmsConstants;
-import org.egov.pims.commons.Position;
 import org.hibernate.validator.constraints.Length;
 
 @Entity
@@ -80,7 +81,7 @@ public class Hearings extends AbstractAuditable {
     private Long id;
 
     private Date hearingDate;
-
+	
     @ManyToOne
     @Valid
     @JoinColumn(name = "legalcase", nullable = false)
@@ -93,17 +94,12 @@ public class Hearings extends AbstractAuditable {
     @OptionalPattern(regex = LcmsConstants.mixedChar, message = "hearing.additionalLawyerName.text")
     private String additionalLawyers;
 
-    @OneToMany(mappedBy = "hearing", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
-    List<EmployeeHearing> employeeHearingList = new ArrayList<EmployeeHearing>();
+    @OneToMany(cascade = CascadeType.ALL, fetch=FetchType.LAZY,mappedBy="hearing", orphanRemoval = true)
+    Set<EmployeeHearing> employeeHearingList = new HashSet<EmployeeHearing>(0);
+    
     @Transient
-    List<Position> positionTemplList = new ArrayList<Position>(0);
-    /*
-     * @OneToMany(mappedBy = "EMPLOYEE", fetch = FetchType.LAZY, cascade =
-     * CascadeType.ALL, orphanRemoval = true) private Set<PersonalInformation>
-     * eglcEmployeehearings = new HashSet<PersonalInformation>(0);* need to
-     * check
-     */
-
+    List<EmployeeHearing> positionTemplList = new ArrayList<EmployeeHearing>();
+    
     @Length(max = 1024)
     private String hearingOutcome;
 
@@ -246,20 +242,30 @@ public class Hearings extends AbstractAuditable {
         this.isStandingCounselPresent = isStandingCounselPresent;
     }
 
-    public List<EmployeeHearing> getEmployeeHearingList() {
-        return employeeHearingList;
-    }
+    public List<EmployeeHearing> getTempEmplyeeHearing() {
+         final List<EmployeeHearing> tempList = new ArrayList<EmployeeHearing>();
+        for (final EmployeeHearing temp : employeeHearingList)
+           tempList.add(temp);
+        return tempList;
 
-    public void setEmployeeHearingList(final List<EmployeeHearing> employeeHearingList) {
-        this.employeeHearingList = employeeHearingList;
     }
+	
 
-    public List<Position> getPositionTemplList() {
-        return positionTemplList;
-    }
+	public Set<EmployeeHearing> getEmployeeHearingList() {
+		return employeeHearingList;
+	}
 
-    public void setPositionTemplList(final List<Position> positionTemplList) {
-        this.positionTemplList = positionTemplList;
-    }
+	public void setEmployeeHearingList(Set<EmployeeHearing> employeeHearingList) {
+		this.employeeHearingList = employeeHearingList;
+	}
+
+	public List<EmployeeHearing> getPositionTemplList() {
+		return positionTemplList;
+	}
+
+	public void setPositionTemplList(List<EmployeeHearing> positionTemplList) {
+		this.positionTemplList = positionTemplList;
+	}
+
 
 }

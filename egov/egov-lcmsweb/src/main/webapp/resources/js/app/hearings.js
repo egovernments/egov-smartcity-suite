@@ -38,6 +38,7 @@
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
 $(document).ready(function() {
+	//document.getElementById('employeeDetails').disabled=true;
 	$('#buttonid').click(function(){
 	if(!validateHearingDate())
 	{
@@ -53,18 +54,16 @@ $(document).ready(function() {
 		},
 		queryTokenizer : Bloodhound.tokenizers.whitespace,
 		remote : {
-			url : '/lcms/ajax/positions',
+			url : '/lcms/ajax/getpositionEmployee',
 			replace : function(url, uriEncodedQuery) {
-				return url + '?positionName=' + uriEncodedQuery
-						+ '&departmentName='
-						+ $("#departmentName").val();
+				return url + '?positionName=' + uriEncodedQuery;
 
 			},
 			filter : function(data) {
 				return $.map(data, function(position) {
 					return {
-						name : position.name,
-						value : position.id
+						name : position,
+						value : position
 
 					};
 				});
@@ -108,8 +107,12 @@ $(document).ready(function() {
 	    var counts = rowCount;
 	    var k = 2;
 	    var m;
+	    if(counts==2)
+		{
+			bootbox.alert("This Row cannot be deleted");
+			return false;
+		}else{	
 			$(this).closest('tr').remove();		
-			
 			jQuery("#employeeDetails tr:eq(1) td span[alt='AddF']").show();
 			//starting index for table fields
 			var idx=0;
@@ -129,22 +132,30 @@ $(document).ready(function() {
 				
 				idx++;
 			});
+		}
 	});
 	$("#addid").click(function(){
-		addResRow();
+		addEmployee();
 	});
 	
-	var  rowobj = '<tr class=""> <td class="text-right"><input type="text" class="form-control table-input text-left" data-pattern="alphanumerichyphenbackslash" name="positionTemplList[0].name" id="positionTemplList[0].name" maxlength="50"></td> <td class="text-center"><a href="javascript:void(0);" class="btn-sm btn-default" id="emp_delete_row" ><i class="fa fa-trash"></i></a></td> </tr>';
-	var i = 1;
-	
-	function addResRow()
-	{     
-		  
-	  $('#employeeDetails tbody').append(rowobj);
-	  
-	  $('#employeeDetails tbody tr:last').find('input').val($("#positionName").val());
-	}	
+		
 });
+var count = $("#employeeDetails tbody  tr").length -1;
+function addEmployee()
+{     
+	var $tableBody = $('#employeeDetails').find("tbody"),
+    $trLast = $tableBody.find("tr:last");
+	 $trNew = $trLast.clone();
+	$trLast.find('input').val($("#positionName").val());
+		count++;
+		$trNew.find("input").each(function(){
+	        $(this).attr({
+	        	'name': function(_, name) { return name.replace(/\[.\]/g, '['+ count +']'); } ,
+	        	'id': function(_, id) { return id.replace(/\[.\]/g, '['+ count +']'); }
+	        });
+	    });
+		$trLast.after($trNew);
+}
 function edit(hearingId){    
 	var url = '/lcms/hearing/edit/'+hearingId
 	window.location = url;
