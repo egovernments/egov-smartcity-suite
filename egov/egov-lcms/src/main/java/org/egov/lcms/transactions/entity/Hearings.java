@@ -48,7 +48,6 @@ import java.util.Set;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import org.hibernate.annotations.Cascade;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -100,9 +99,6 @@ public class Hearings extends AbstractAuditable {
     
     @Transient
     List<EmployeeHearing> positionTemplList = new ArrayList<EmployeeHearing>();
-    
-    @Transient
-    List<EmployeeHearing> positionEditHearinglList = new ArrayList<EmployeeHearing>();
     
     @Length(max = 1024)
     private String hearingOutcome;
@@ -271,12 +267,5 @@ public class Hearings extends AbstractAuditable {
 		this.positionTemplList = positionTemplList;
 	}
 
-	public List<EmployeeHearing> getPositionEditHearinglList() {
-		return positionEditHearinglList;
-	}
-
-	public void setPositionEditHearinglList(List<EmployeeHearing> positionEditHearinglList) {
-		this.positionEditHearinglList = positionEditHearinglList;
-	}
 
 }

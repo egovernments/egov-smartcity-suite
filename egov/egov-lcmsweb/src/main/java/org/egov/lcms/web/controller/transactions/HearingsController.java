@@ -39,13 +39,11 @@
  */
 package org.egov.lcms.web.controller.transactions;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 
-import org.egov.lcms.transactions.entity.EmployeeHearing;
 import org.egov.lcms.transactions.entity.Hearings;
 import org.egov.lcms.transactions.entity.LegalCase;
 import org.egov.lcms.transactions.service.HearingsService;
@@ -71,10 +69,9 @@ public class HearingsController {
     private LegalCaseService legalCaseService;
 
     @RequestMapping(value = "/new/", method = RequestMethod.GET)
-    public String newForm(@ModelAttribute("hearings")  Hearings hearings, final Model model,
+    public String newForm(@ModelAttribute("hearings") final Hearings hearings, final Model model,
             @RequestParam("lcNumber") final String lcNumber, final HttpServletRequest request) {
         final LegalCase legalCase = getLegalCase(lcNumber, request);
-        hearings=new Hearings();
         model.addAttribute("legalCase", legalCase);
         model.addAttribute("positionTemplList", hearings.getPositionTemplList());
         model.addAttribute("hearings", hearings);
