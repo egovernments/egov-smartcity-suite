@@ -2030,11 +2030,11 @@ public class PropertyService {
         else
             user = assignmentService.getAssignmentsForPosition(position.getId(), new Date()).get(0).getEmployee();
         User owner = null;
-        String source=null;
-        if (applictionType != null
-                && (applictionType.equalsIgnoreCase(APPLICATION_TYPE_NEW_ASSESSENT)
-                        || applictionType.equalsIgnoreCase(APPLICATION_TYPE_ALTER_ASSESSENT) || applictionType
-                            .equalsIgnoreCase(APPLICATION_TYPE_BIFURCATE_ASSESSENT))|| applictionType.equalsIgnoreCase(APPLICATION_TYPE_GRP)) {
+        String source;
+		if (!applictionType.isEmpty() && (applictionType.equalsIgnoreCase(APPLICATION_TYPE_NEW_ASSESSENT)
+				|| applictionType.equalsIgnoreCase(APPLICATION_TYPE_ALTER_ASSESSENT)
+				|| applictionType.equalsIgnoreCase(APPLICATION_TYPE_BIFURCATE_ASSESSENT)
+				|| applictionType.equalsIgnoreCase(APPLICATION_TYPE_GRP))) {
             final PropertyImpl property = (PropertyImpl) stateAwareObject;
             final ApplicationIndex applicationIndex = applicationIndexService.findByApplicationNumber(property
                     .getApplicationNo());
@@ -2049,7 +2049,7 @@ public class PropertyService {
             	source=Source.MOBILE.toString();
             else
             	source=Source.SYSTEM.toString();
-            if (null == applicationIndex) {
+            if (applicationIndex==null) {
                 final ApplicationIndexBuilder applicationIndexBuilder = new ApplicationIndexBuilder(PTMODULENAME,
                         property.getApplicationNo(), new Date(), applictionType, owner.getName(), property
                                 .getState().getValue(), url, property.getBasicProperty().getAddress().toString(),
@@ -2072,7 +2072,7 @@ public class PropertyService {
                 applicationIndexService.updateApplicationIndex(applicationIndex);
             }
 
-        } else if (applictionType != null && applictionType.equalsIgnoreCase(APPLICATION_TYPE_REVISION_PETITION)) {
+        } else if (!applictionType.isEmpty() && applictionType.equalsIgnoreCase(APPLICATION_TYPE_REVISION_PETITION)) {
             final RevisionPetition property = (RevisionPetition) stateAwareObject;
             final ApplicationIndex applicationIndex = applicationIndexService.findByApplicationNumber(property
                     .getObjectionNumber());
@@ -2086,7 +2086,7 @@ public class PropertyService {
              	source=Source.MOBILE.toString();
              else
              	source=Source.SYSTEM.toString();
-            if (null == applicationIndex) {
+            if (applicationIndex == null) {
                 owner = property.getBasicProperty().getPrimaryOwner();
                 final ApplicationIndexBuilder applicationIndexBuilder = new ApplicationIndexBuilder(PTMODULENAME,
                         property.getObjectionNumber(), property.getCreatedDate() != null ? property.getCreatedDate()
@@ -2103,7 +2103,7 @@ public class PropertyService {
                 applicationIndexService.updateApplicationIndex(applicationIndex);
             }
 
-        } else if (applictionType != null && applictionType.equalsIgnoreCase(APPLICATION_TYPE_TRANSFER_OF_OWNERSHIP)) {
+        } else if (!applictionType.isEmpty() && applictionType.equalsIgnoreCase(APPLICATION_TYPE_TRANSFER_OF_OWNERSHIP)) {
             final PropertyMutation property = (PropertyMutation) stateAwareObject;
             final ApplicationIndex applicationIndex = applicationIndexService.findByApplicationNumber(property
                     .getApplicationNo());
@@ -2118,7 +2118,7 @@ public class PropertyService {
              	source=Source.MOBILE.toString();
              else
              	source=Source.SYSTEM.toString();
-            if (null == applicationIndex) {
+            if (applicationIndex == null) {
                 final ApplicationIndexBuilder applicationIndexBuilder = new ApplicationIndexBuilder(PTMODULENAME,
                         property.getApplicationNo(), property.getCreatedDate() != null ? property.getCreatedDate()
                                 : new Date(), applictionType, owner.getName(),
