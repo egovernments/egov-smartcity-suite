@@ -360,7 +360,7 @@ public class EgBillregister extends StateAware implements java.io.Serializable {
 
     @Override
     public String getStateDetails() {
-        return getBillnumber();
+        return getBillnumber()+"-"+getState().getComments();
     }
 
     public User getApprover() {

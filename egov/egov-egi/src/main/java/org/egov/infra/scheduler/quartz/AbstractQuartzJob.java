@@ -40,8 +40,8 @@
 
 package org.egov.infra.scheduler.quartz;
 
-import org.apache.commons.lang.StringUtils;
 import org.egov.infra.admin.master.entity.City;
+import org.egov.infra.admin.master.entity.CityPreferences;
 import org.egov.infra.admin.master.service.CityService;
 import org.egov.infra.admin.master.service.UserService;
 import org.egov.infra.config.core.ApplicationThreadLocals;
@@ -57,6 +57,8 @@ import org.springframework.scheduling.quartz.QuartzJobBean;
 import javax.annotation.Resource;
 import java.util.List;
 
+import static org.apache.commons.lang3.StringUtils.defaultIfBlank;
+
 /**
  * An abstract base class wrapper for {@link QuartzJobBean} and implements {@link GenericJob}. A class which extends this will be
  * eligible for doing Quartz Jobs. Those classes required Statefulness (Threadsafety) so need to annotate class
@@ -66,37 +68,31 @@ public abstract class AbstractQuartzJob extends QuartzJobBean implements Generic
 
     private static final long serialVersionUID = 1L;
     private static final Logger LOGGER = LoggerFactory.getLogger(AbstractQuartzJob.class);
-    private boolean isTransactional;
-    private String userName;
 
     @Resource(name = "cities")
-    protected List<String> cities;
+    private transient List<String> cities;
 
     @Autowired
-    private UserService userService;
+    private transient CityService cityService;
 
     @Autowired
-    private CityService cityService;
+    private transient UserService userService;
 
-    /**
-     * This method will wrap up the Transaction (if isTransactional set to true) and call the executeJob implementation on
-     * individual job class.
-     **/
+    private String userName;
+
+    private boolean cityDataRequired;
+
     @Override
     protected void executeInternal(JobExecutionContext jobCtx) throws JobExecutionException {
         try {
             MDC.put("appname", jobCtx.getJobDetail().getKey().getName());
-            if (this.isTransactional)
-                for (String tenant : this.cities) {
-                    MDC.put("ulbcode", tenant);
-                    this.prepareThreadLocal(tenant);
-                    this.executeJob();
-                }
-            else
+            for (String tenant : this.cities) {
+                MDC.put("ulbcode", tenant);
+                this.prepareThreadLocal(tenant);
                 this.executeJob();
-
+            }
         } catch (Exception ex) {
-            AbstractQuartzJob.LOGGER.error("Unable to complete execution Scheduler ", ex);
+            LOGGER.error("Unable to complete execution Scheduler ", ex);
             throw new JobExecutionException("Unable to execute batch job Scheduler", ex, false);
         } finally {
             ApplicationThreadLocals.clearValues();
@@ -105,30 +101,26 @@ public abstract class AbstractQuartzJob extends QuartzJobBean implements Generic
     }
 
     public void setUserName(String userName) {
-        if (StringUtils.isBlank(userName))
-            this.userName = "egovernments";
-        else
-            this.userName = userName;
+        this.userName = defaultIfBlank(userName, "egovernments");
     }
 
-    public void setTransactional(boolean isTransactional) {
-        this.isTransactional = isTransactional;
-    }
-
-    protected City getCurrentCity() {
-        return this.cityService.findAll().get(0);
-    }
-
-    protected void prepareCityThreadLocal() {
-        City city = getCurrentCity();
-        ApplicationThreadLocals.setCityCode(city.getCode());
-        ApplicationThreadLocals.setCityName(city.getName());
-        ApplicationThreadLocals.setMunicipalityName(city.getPreferences().getMunicipalityName());
-        ApplicationThreadLocals.setDomainName(city.getDomainURL());
+    public void setCityDataRequired(boolean cityDataRequired) {
+        this.cityDataRequired = cityDataRequired;
     }
 
     private void prepareThreadLocal(String tenant) {
         ApplicationThreadLocals.setTenantID(tenant);
         ApplicationThreadLocals.setUserId(this.userService.getUserByUsername(this.userName).getId());
+        if(cityDataRequired) {
+            City city = this.cityService.findAll().get(0);
+            ApplicationThreadLocals.setCityCode(city.getCode());
+            ApplicationThreadLocals.setCityName(city.getName());
+            CityPreferences cityPreferences = city.getPreferences();
+            if (cityPreferences != null)
+                ApplicationThreadLocals.setMunicipalityName(cityPreferences.getMunicipalityName());
+            else
+                LOGGER.warn("City preferences not set for {}", city.getName());
+            ApplicationThreadLocals.setDomainName(city.getDomainURL());
+        }
     }
 }

@@ -71,8 +71,8 @@
 		<property name="jobDataMap">
             <map>
                 <entry key="jobBeanName" value="bulkBillGenerationJobDelegate0"/>
-				<entry key="userName" value="egovernments"/>
-				<entry key="transactional"  value="true" />
+				<entry key="userName" value="egovernments" />
+				<entry key="cityDataRequired"  value="true" />
 				<entry key="moduleName" value="ptis"/>
             </map>
         </property>   	
@@ -104,8 +104,8 @@
 		<property name="jobDataMap">
             <map>
                 <entry key="jobBeanName" value="bulkBillGenerationJobDelegate1"/>
-				<entry key="userName" value="egovernments"/>
-				<entry key="transactional"  value="true" />
+				<entry key="userName" value="egovernments" />
+				<entry key="cityDataRequired"  value="true" />
 				<entry key="moduleName" value="ptis"/>
             </map>
         </property>   	
@@ -137,8 +137,8 @@
 		<property name="jobDataMap">
             <map>
                 <entry key="jobBeanName" value="bulkBillGenerationJobDelegate2"/>
-				<entry key="userName" value="egovernments"/>
-				<entry key="transactional"  value="true" />
+				<entry key="userName" value="egovernments" />
+				<entry key="cityDataRequired"  value="true" />
 				<entry key="moduleName" value="ptis"/>
             </map>
         </property>   	
@@ -170,8 +170,8 @@
 		<property name="jobDataMap">
             <map>
                 <entry key="jobBeanName" value="bulkBillGenerationJobDelegate3"/>
-				<entry key="userName" value="egovernments"/>
-				<entry key="transactional" value="true" />
+				<entry key="userName" value="egovernments" />
+				<entry key="cityDataRequired" value="true" />
 				<entry key="moduleName" value="ptis"/>
             </map>
         </property>   	
@@ -203,8 +203,8 @@
 		<property name="jobDataMap">
             <map>
                 <entry key="jobBeanName" value="bulkBillGenerationJobDelegate4"/>
-				<entry key="userName" value="egovernments"/>
-				<entry key="transactional"  value="true" />
+				<entry key="userName" value="egovernments" />
+				<entry key="cityDataRequired"  value="true" />
 				<entry key="moduleName" value="ptis"/>
             </map>
         </property>   	
@@ -236,8 +236,8 @@
 		<property name="jobDataAsMap">
             <map>
                 <entry key="jobBeanName" value="demandActivationJob"/>
-				<entry key="userName" value="egovernments"/>
-				<entry key="transactional"  value="true" />
+				<entry key="userName" value="egovernments" />
+				<entry key="cityDataRequired"  value="true" />
 				<entry key="moduleName" value="ptis"/>
             </map>
         </property>   	

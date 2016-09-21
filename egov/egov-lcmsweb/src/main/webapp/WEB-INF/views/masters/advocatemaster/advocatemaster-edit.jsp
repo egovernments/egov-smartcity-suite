@@ -91,4 +91,4 @@
 	src="<cdn:url value='/resources/global/js/bootstrap/bootstrap-datepicker.js' context='/egi'/>"
 	type="text/javascript"></script>
 <script type="text/javascript"
-	src="<cdn:url value='/resources/js/app/advocateMasterHelper.js'/>"></script>
+	src="<cdn:url value='/resources/js/app/advocateMasterHelper.js?rnd=${app_release_no}'/>"></script>

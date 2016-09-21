@@ -37,55 +37,85 @@
  *
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
-jQuery('#btnsearch').click(function(e) {
+package org.egov.lcms.reports.entity;
 
-	callAjaxSearch();
-});
+import java.util.Date;
 
-function getFormData($form) {
-	var unindexed_array = $form.serializeArray();
-	var indexed_array = {};
+import org.egov.lcms.transactions.entity.LegalCase;
 
-	$.map(unindexed_array, function(n, i) {
-		indexed_array[n['name']] = n['value'];
-	});
+public class TimeSeriesReportResult {
 
-	return indexed_array;
+    private String aggregatedBy;
+    private String period;
+    private Date fromDate;
+    private Date toDate;
+    private Integer year;
+    private String month;
+    private Long count;
+    private LegalCase legalCase;
+
+    public Long getCount() {
+        return count;
+    }
+
+    public void setCount(final Long count) {
+        this.count = count;
+    }
+
+    public String getAggregatedBy() {
+        return aggregatedBy;
+    }
+
+    public void setAggregatedBy(final String aggregatedBy) {
+        this.aggregatedBy = aggregatedBy;
+    }
+
+    public String getPeriod() {
+        return period;
+    }
+
+    public void setPeriod(final String period) {
+        this.period = period;
+    }
+
+    public Date getFromDate() {
+        return fromDate;
+    }
+
+    public void setFromDate(final Date fromDate) {
+        this.fromDate = fromDate;
+    }
+
+    public Date getToDate() {
+        return toDate;
+    }
+
+    public void setToDate(final Date toDate) {
+        this.toDate = toDate;
+    }
+
+    public String getMonth() {
+        return month;
+    }
+
+    public void setMonth(final String month) {
+        this.month = month;
+    }
+
+    public LegalCase getLegalCase() {
+        return legalCase;
+    }
+
+    public Integer getYear() {
+        return year;
+    }
+
+    public void setYear(final Integer year) {
+        this.year = year;
+    }
+
+    public void setLegalCase(final LegalCase legalCase) {
+        this.legalCase = legalCase;
+    }
+
 }
-
-function callAjaxSearch() {
-	drillDowntableContainer = jQuery("#resultTable");
-	jQuery('.report-section').removeClass('display-hide');
-	reportdatatable = drillDowntableContainer
-			.dataTable({
-				ajax : {
-					url : "/lcms/judgmenttype/ajaxsearch/" + $('#mode').val(),
-					type : "POST",
-					"data" : getFormData(jQuery('form'))
-				},
-				"sPaginationType" : "bootstrap",
-				"bDestroy" : true,
-				'bAutoWidth': false,
-				"sDom" : "<'row'<'col-xs-12 hidden col-right'f>r>t<'row'<'col-xs-3'i><'col-xs-3 col-right'l><'col-xs-3 col-right'<'export-data'T>><'col-xs-3 text-right'p>>",
-				"aLengthMenu" : [ [ 10, 25, 50, -1 ], [ 10, 25, 50, "All" ] ],
-				"oTableTools" : {
-					"sSwfPath" : "../../../../../../egi/resources/global/swf/copy_csv_xls_pdf.swf",
-					"aButtons" : [ "xls", "pdf", "print" ]
-				},
-				aaSorting : [],
-				columns : [ {
-					"data" : "code",
-					"sClass" : "text-left"
-				}, {
-					"data" : "name",
-					"sClass" : "text-left"
-				}, {
-					"data" : "active",
-					"sClass" : "text-left"
-				} ,{ 
-					"data" : "id","visible": false, "searchable": false }]
-			});
-}
-$("#resultTable").on('click','tbody tr',function(event) {
-	window.open('/lcms/judgmenttype/'+ $('#mode').val() +'/'+drillDowntableContainer.fnGetData(this,3),'','width=800, height=600');
-});

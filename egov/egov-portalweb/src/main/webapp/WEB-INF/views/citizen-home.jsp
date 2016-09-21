@@ -40,8 +40,9 @@
 
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt"%>
 <%@taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
+<%@ taglib uri="/WEB-INF/taglib/cdn.tld" prefix="cdn" %>
 
-		<link rel="stylesheet" href="../egi/resources/global/css/font-icons/font-awesome/css/font-awesome.min.css">
+<link rel="stylesheet" href="<cdn:url value='/resources/global/css/font-icons/font-awesome/css/font-awesome.min.css' context='/egi'/>">
 		<script type="text/javascript">
 			function onBodyLoad(){
 				var unreadMessageCount = "${unreadMessageCount}";

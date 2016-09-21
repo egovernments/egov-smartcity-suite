@@ -37,55 +37,28 @@
  *
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
-jQuery('#btnsearch').click(function(e) {
+package org.egov.lcms.web.adaptor;
 
-	callAjaxSearch();
-});
+import java.lang.reflect.Type;
 
-function getFormData($form) {
-	var unindexed_array = $form.serializeArray();
-	var indexed_array = {};
+import org.egov.lcms.reports.entity.TimeSeriesReportResult;
 
-	$.map(unindexed_array, function(n, i) {
-		indexed_array[n['name']] = n['value'];
-	});
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonSerializationContext;
+import com.google.gson.JsonSerializer;
 
-	return indexed_array;
+public class TimeSeriesReportJsonAdaptor implements JsonSerializer<TimeSeriesReportResult> {
+
+    @Override
+    public JsonElement serialize(final TimeSeriesReportResult timeSeriesresult, final Type typeOfSrc,
+            final JsonSerializationContext context) {
+        final JsonObject jsonObject = new JsonObject();
+        jsonObject.addProperty("count", timeSeriesresult.getCount().toString());
+        jsonObject.addProperty("aggregatedBy", timeSeriesresult.getAggregatedBy());
+        jsonObject.addProperty("year", timeSeriesresult.getYear().toString()== null ? "": timeSeriesresult.getYear().toString());
+        jsonObject.addProperty("month", timeSeriesresult.getMonth() == null ? "":timeSeriesresult.getMonth());
+        return jsonObject;
+    }
+
 }
-
-function callAjaxSearch() {
-	drillDowntableContainer = jQuery("#resultTable");
-	jQuery('.report-section').removeClass('display-hide');
-	reportdatatable = drillDowntableContainer
-			.dataTable({
-				ajax : {
-					url : "/lcms/judgmenttype/ajaxsearch/" + $('#mode').val(),
-					type : "POST",
-					"data" : getFormData(jQuery('form'))
-				},
-				"sPaginationType" : "bootstrap",
-				"bDestroy" : true,
-				'bAutoWidth': false,
-				"sDom" : "<'row'<'col-xs-12 hidden col-right'f>r>t<'row'<'col-xs-3'i><'col-xs-3 col-right'l><'col-xs-3 col-right'<'export-data'T>><'col-xs-3 text-right'p>>",
-				"aLengthMenu" : [ [ 10, 25, 50, -1 ], [ 10, 25, 50, "All" ] ],
-				"oTableTools" : {
-					"sSwfPath" : "../../../../../../egi/resources/global/swf/copy_csv_xls_pdf.swf",
-					"aButtons" : [ "xls", "pdf", "print" ]
-				},
-				aaSorting : [],
-				columns : [ {
-					"data" : "code",
-					"sClass" : "text-left"
-				}, {
-					"data" : "name",
-					"sClass" : "text-left"
-				}, {
-					"data" : "active",
-					"sClass" : "text-left"
-				} ,{ 
-					"data" : "id","visible": false, "searchable": false }]
-			});
-}
-$("#resultTable").on('click','tbody tr',function(event) {
-	window.open('/lcms/judgmenttype/'+ $('#mode').val() +'/'+drillDowntableContainer.fnGetData(this,3),'','width=800, height=600');
-});

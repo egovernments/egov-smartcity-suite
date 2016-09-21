@@ -65,8 +65,8 @@
 		<property name="jobDataAsMap">
             <map>
                 <entry key="jobBeanName" value="axisReconciliationJobDelegate"/>
-				<entry key="userName" value="egovernments"/>
-				<entry key="transactional"  value="true" />
+				<entry key="userName" value="egovernments" />
+				<entry key="cityDataRequired"  value="true" />
 				<entry key="moduleName" value="collection"/>
             </map>
         </property>      	
