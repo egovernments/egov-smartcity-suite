@@ -18,6 +18,7 @@ import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import javax.persistence.Transient;
+import javax.persistence.OrderBy;
 
 import org.egov.commons.EgwStatus;
 import org.egov.infra.filestore.entity.FileStoreMapper;
@@ -66,6 +67,7 @@ public class CouncilMeeting  extends StateAware {
     @Transient
     private Date toDate;
 
+    @OrderBy("id")
     @OneToMany(mappedBy = "meeting", cascade = CascadeType.ALL)
     private List<MeetingMOM> meetingMOMs = new ArrayList<MeetingMOM>(0);
 
