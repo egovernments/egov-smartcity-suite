@@ -110,7 +110,7 @@
 				<form:input id="seniorAdvocateName" type="text"
 					class="form-control " autocomplete="off"
 					path="seniorAdvocate.name"
-					name="seniorAdvocate.name"
+					name="seniorAdvocate.name" required="required"
 					value="${seniorAdvocate.name}" placeholder="" />
 				<input type="hidden" id="senioradvocateId" value="" />
 				<c:forEach items="${departments}" var="advocate">
