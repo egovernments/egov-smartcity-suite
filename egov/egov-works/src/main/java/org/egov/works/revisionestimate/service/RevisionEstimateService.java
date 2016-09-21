@@ -317,7 +317,7 @@ public class RevisionEstimateService {
                 && WorksConstants.FORWARD_ACTION.equals(workFlowAction)) {
             if (!BudgetControlType.BudgetCheckOption.NONE.toString()
                     .equalsIgnoreCase(budgetControlTypeService.getConfigValue()))
-                doBudgetoryAppropriation(workFlowAction, updateRevisionEstimate);
+                doBudgetoryAppropriation(workFlowAction, revisionEstimate);
         }
         if (WorksConstants.REJECT_ACTION.toString().equalsIgnoreCase(workFlowAction)) {
             if (!BudgetControlType.BudgetCheckOption.NONE.toString()
@@ -395,8 +395,7 @@ public class RevisionEstimateService {
                             .equalsIgnoreCase(activity.getRevisionType().toString())
                             || RevisionType.LUMP_SUM_ITEM.toString().equalsIgnoreCase(activity.getRevisionType()
                                     .toString())))
-                workOrderActivity.setApprovedRate(activity.getRate()
-                        / activity.getConversionFactorForRE(revisionWorkOrder.getParent().getWorkOrderDate()));
+                workOrderActivity.setApprovedRate(activity.getRate());
             else if (activity != null
                     && activity.getRevisionType() != null
                     && (RevisionType.ADDITIONAL_QUANTITY.toString()
@@ -575,6 +574,7 @@ public class RevisionEstimateService {
     }
 
     private void mergeChangeQuantityActivities(final RevisionAbstractEstimate revisionEstimate) {
+
         for (final Activity activity : revisionEstimate.getChangeQuantityActivities())
             if (activity.getId() == null) {
                 removeEmptyMS(activity);
@@ -589,7 +589,8 @@ public class RevisionEstimateService {
                     activity.setRevisionType(RevisionType.REDUCED_QUANTITY);
                 else
                     activity.setRevisionType(RevisionType.ADDITIONAL_QUANTITY);
-                activity.setEstimateRate(activity.getRate() * activity.getQuantity());
+                activity.setEstimateRate(act.getEstimateRate());
+
                 for (final MeasurementSheet ms : activity.getMeasurementSheetList()) {
                     final MeasurementSheet sheet = measurementSheetService.findOne(ms.getParent().getId());
                     ms.setActivity(activity);
@@ -614,7 +615,7 @@ public class RevisionEstimateService {
         oldActivity.setQuantity(activity.getQuantity());
         oldActivity.setRate(parent.getRate());
         oldActivity.setServiceTaxPerc(activity.getServiceTaxPerc());
-        oldActivity.setEstimateRate(activity.getRate() * activity.getQuantity());
+        oldActivity.setEstimateRate(parent.getEstimateRate());
         oldActivity.setUom(parent.getUom());
         oldActivity.setMeasurementSheetList(mergeCQMeasurementSheet(oldActivity, activity));
         if ("+".equals(activity.getSignValue()))

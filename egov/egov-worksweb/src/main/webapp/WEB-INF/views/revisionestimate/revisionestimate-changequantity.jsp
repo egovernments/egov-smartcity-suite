@@ -59,7 +59,7 @@
 	<div align="right" class="openCloseAll">
 		<input type="button" value="Close All Measurements" class="btn btn-sm btn-secondary"
 			onclick="closeAllmsheet()" /> <input type="button" class="btn btn-sm btn-secondary"
-			value="Open All Measurements" onclick="openAllmsheet()" />
+			value="Open All Measurements" onclick="openAllcqmsheet()" />
 	</div>
 	<div class="panel-body" id="changeQuantityTable">
 		<table class="table table-bordered" style="overflow: auto;" id="tblchangequantity">
@@ -140,7 +140,7 @@
 								<span  class="changeQuantityActivities[0].mstd" id="changeQuantityActivities[0].mstd" data-idx="0"></span>
 							</td>
 							<td class="text-right">
-								<span class="reActivityTotal activityEstimatedAmount_0"></span>
+								<span class="reActivityTotal activityEstimatedAmount_0" id="activityEstimatedAmount_0"></span>
 							</td>
 							<td class="text-right">
 								<span class="activityTotal activityTotal_0"></span>
@@ -241,7 +241,7 @@
 									</span>
 								</td>
 								<td class="text-right">
-									<span class="reActivityTotal activityEstimatedAmount_${item.index }"><fmt:formatNumber groupingUsed="false" minFractionDigits="2" maxFractionDigits="4">${activity.rate * activity.quantity }</fmt:formatNumber></span>
+									<span class="reActivityTotal activityEstimatedAmount_${item.index }" id = "activityEstimatedAmount_${item.index }"><fmt:formatNumber groupingUsed="false" minFractionDigits="2" maxFractionDigits="4">${activity.rate * activity.quantity }</fmt:formatNumber></span>
 								</td>
 								<td class="text-right">
 									<c:if test="${activity.revisionType == 'ADDITIONAL_QUANTITY' }">
@@ -263,7 +263,13 @@
 				<c:set var="recqsortotal" value="${0}" scope="session" />
 				<c:if test="${revisionEstimate.changeQuantityActivities != null}">
 					<c:forEach items="${revisionEstimate.changeQuantityActivities}" var="sorDtls">
-						<c:set var="recqsortotal" value="${recqsortotal + (sorDtls.rate * (sorDtls.quantity)) }" />
+						<c:if test="${sorDtls.revisionType == 'ADDITIONAL_QUANTITY' }">
+							<c:set var="recqsortotal" value="${recqsortotal + (sorDtls.rate * (sorDtls.quantity)) }" />
+						</c:if>
+						<c:if test="${sorDtls.revisionType == 'REDUCED_QUANTITY' }">
+							<c:set var="recqsortotal" value="${recqsortotal - (sorDtls.rate * (sorDtls.quantity)) }" />
+						</c:if>
+						
 					</c:forEach>
 				</c:if>
 				<c:set var="cqsortotal" value="${0}" scope="session" />

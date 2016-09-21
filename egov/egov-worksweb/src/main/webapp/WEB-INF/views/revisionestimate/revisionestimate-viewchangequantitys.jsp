@@ -111,8 +111,6 @@
 										<span class="activityConsumedQuantity_${item.index }"><fmt:formatNumber groupingUsed="false" minFractionDigits="2" maxFractionDigits="4">${sorDtls.consumedQuantity }</fmt:formatNumber></span>
 									</td>
 								 	<td class="text-right">
-								 		<c:if test="${sorDtls.revisionType == 'ADDITIONAL_QUANTITY' }">+</c:if>
-								 		<c:if test="${sorDtls.revisionType == 'REDUCED_QUANTITY' }">-</c:if>
 								 		<c:out value="${sorDtls.quantity}"></c:out>
 								 	<c:if test="${sorDtls.measurementSheetList.size() > 0 }">
 								 		 <button class="btn btn-default openmsheet" name="changeQuantityActivities[${item.index}].msadd" id="changeQuantityActivities[${item.index}].msadd" data-idx="0" onclick="addCQMSheet(this);return false;"><i  class="fa fa-plus-circle" aria-hidden="true"></i></button>

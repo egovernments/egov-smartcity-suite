@@ -57,9 +57,10 @@
 	border: 1px solid #ddd;
 }
 
-.msheet-table thead:first-child>tr:first-child th {
+.msheet-table thead:first-child>tr:first-child th, .msheet-table thead:first-child>tr th {
 	background: #E7E7E7;
 	color: #333;
+	font-weight:normal;
 }
  .position_alert1{
         background:#F2DEDE;padding:10px 20px;border-radius: 5px;margin-right: 10px;color:#333;font-size:14px;position: absolute; top: 10px;right: 10px;

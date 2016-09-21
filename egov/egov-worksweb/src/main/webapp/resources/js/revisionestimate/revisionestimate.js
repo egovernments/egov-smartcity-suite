@@ -1904,7 +1904,7 @@ function calculateActivityAmounts(currentObj) {
 	var estimatedAmount = parseFloat($(currentObj).val() * unitRate).toFixed(2);
 	if (signValue == "-")
 		estimatedAmount = -1 * estimatedAmount;
-	$('.activityEstimatedAmount_' + rowcount).html(parseFloat(estimatedAmount).toFixed(2));
+	$('.activityEstimatedAmount_' + rowcount).html(Math.abs(parseFloat(estimatedAmount).toFixed(2)));
 	$('.activityTotal_' + rowcount).html((parseFloat(parseFloat(estimateQuantity) * unitRate) + parseFloat(estimatedAmount)).toFixed(2));
 	reActivityTotal();
 	activityTotal();
@@ -1913,7 +1913,11 @@ function calculateActivityAmounts(currentObj) {
 function reActivityTotal() {
 	var total = 0;
 	$('.reActivityTotal').each(function() {
-		if($(this).html().trim() != "")
+		rowcount = $(this).attr('id').split('_').pop();
+		var signValue = $('#changeQuantityActivitiesSignValue_' + rowcount).val();
+		if($(this).html().trim() != "" && signValue == "-")
+			total = parseFloat(parseFloat(total) - parseFloat($(this).html().replace(',', ''))).toFixed(2);
+		else
 			total = parseFloat(parseFloat(total) + parseFloat($(this).html().replace(',', ''))).toFixed(2);
 	});
 	$('#reActivityTotal').html(total);
@@ -1953,6 +1957,12 @@ function openAllmsheet() {
 
 function closeAllmsheet() {
 	$(".hide-ms:visible").each(function() {
+		$(this).trigger('click');
+	});
+}
+
+function openAllcqmsheet() {
+	$(".openmbsheet:visible").each(function() {
 		$(this).trigger('click');
 	});
 }

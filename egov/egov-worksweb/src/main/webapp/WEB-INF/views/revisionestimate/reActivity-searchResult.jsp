@@ -50,8 +50,8 @@
 				<tr>
 					<th><spring:message code="lbl.slno" /></th>
 					<th><spring:message code="lbl.selectall" /><br /><input type="checkbox" id="selectall"></th>
+					<th><spring:message code="lbl.categorycode" /></th>
 					<th><spring:message code="lbl.sorcode" /></th>
-					<th><spring:message code="lbl.category.type" /></th>
 					<th><spring:message code="lbl.description" /></th>
 					<th><spring:message code="lbl.sor.nonsor.type" /></th>
 					<th><spring:message code="lbl.uom" /></th>

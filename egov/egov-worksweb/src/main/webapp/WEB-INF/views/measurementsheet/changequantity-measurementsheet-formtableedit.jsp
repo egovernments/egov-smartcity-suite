@@ -63,7 +63,7 @@
 		                    <th><spring:message code="lbl.length" /></th>
 		                    <th><spring:message code="lbl.width" /></th>
 		                    <th><spring:message code="lbl.depthorheight" /></th>
-		                    <th><spring:message code="lbl.quantity" /></th>
+		                    <th><spring:message code="lbl.quantity" /><span class="mandatory"></span></th>
 	                    </tr>
 	                </thead>
 	                <tbody>
