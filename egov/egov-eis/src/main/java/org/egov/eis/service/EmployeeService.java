@@ -237,9 +237,7 @@ public class EmployeeService implements EntityTypeService {
             for (final HeadOfDepartments hod : assign.getDeptSet())
                 hod.setAssignment(assign);
         }
-        employee.setJurisdictions(employee.getJurisdictions().parallelStream()
-                .filter(Jurisdictions -> Jurisdictions.getBoundaryType() != null && Jurisdictions.getBoundary() != null)
-                .collect(Collectors.toList()));
+
         for (final Jurisdiction jurisdiction : employee.getJurisdictions()) {
             jurisdiction.setEmployee(employee);
             jurisdiction.setBoundaryType(jurisdiction.getBoundaryType());
@@ -499,6 +497,9 @@ public class EmployeeService implements EntityTypeService {
                     employee.addRole(roleService.getRoleByName(role.getName()));
             }
         }
+        employee.setJurisdictions(employee.getJurisdictions().parallelStream()
+                .filter(Jurisdictions -> Jurisdictions.getBoundaryType() != null && Jurisdictions.getBoundary() != null)
+                .collect(Collectors.toList()));
 
         getCurrentSession().evict(employee);
         final Employee updatedEmployee = getEmployeeById(employee.getId());
