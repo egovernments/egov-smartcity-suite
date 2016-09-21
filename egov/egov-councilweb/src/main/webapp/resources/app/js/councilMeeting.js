@@ -89,7 +89,7 @@ $("#resultTable").on('click','tbody tr td  .edit',function(event) {
 
 $("#resultTable").on('click','tbody tr td  .generateMom',function(event) {
 	var id = reportdatatable.fnGetData($(this).parent().parent(),7);
-	window.open('/council/councilmeeting/generateresolution'+'/'+id,'','width=800, height=600,scrollbars=yes');
+	window.open('/council/councilmeeting/downloadfile'+'/'+id,'','width=800, height=600,scrollbars=yes');
 	
 });
 

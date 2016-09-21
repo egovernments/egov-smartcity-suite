@@ -43,9 +43,13 @@ import static org.egov.council.utils.constants.CouncilConstants.AGENDAUSEDINMEET
 import static org.egov.council.utils.constants.CouncilConstants.AGENDA_MODULENAME;
 import static org.egov.council.utils.constants.CouncilConstants.APPROVED;
 import static org.egov.council.utils.constants.CouncilConstants.COUNCILMEETING;
+import static org.egov.council.utils.constants.CouncilConstants.MEETINGRESOLUTIONFILENAME;
 import static org.egov.council.utils.constants.CouncilConstants.MEETING_TIMINGS;
+import static org.egov.council.utils.constants.CouncilConstants.MODULE_NAME;
+import static org.egov.council.utils.constants.CouncilConstants.MOM_FINALISED;
 import static org.egov.infra.web.utils.WebUtils.toJSON;
 
+import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.util.Collections;
 import java.util.Comparator;
@@ -71,14 +75,18 @@ import org.egov.council.service.CouncilAgendaService;
 import org.egov.council.service.CouncilMeetingService;
 import org.egov.council.service.CouncilReportService;
 import org.egov.council.service.CouncilSmsAndEmailService;
+import org.egov.council.utils.constants.CouncilConstants;
 import org.egov.council.web.adaptor.CouncilMeetingJsonAdaptor;
 import org.egov.council.web.adaptor.MeetingAttendanceJsonAdaptor;
 import org.egov.infra.admin.master.entity.Department;
 import org.egov.infra.admin.master.service.DepartmentService;
+import org.egov.infra.filestore.service.FileStoreService;
 import org.egov.infra.reporting.engine.ReportConstants;
+import org.egov.infra.utils.FileStoreUtils;
 import org.egov.infra.utils.autonumber.AutonumberServiceBeanResolver;
 import org.egov.infra.web.utils.WebUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.MessageSource;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -110,7 +118,8 @@ public class CouncilMeetingController {
     private final static String COUNCILMEETING_ATTENDANCE_SEARCH = "councilmeeting-attendsearch";
     private final static String COUNCILMEETING_ATTENDANCE_SEARCH_RESULT = "councilmeeting-attendsearch-view";
     private final static String COUNCILMEETING_SEND_SMS_EMAIL = "councilmeetingsearch-tosendsms-email";
-
+  
+	
 	@Autowired
 	private CouncilMeetingService councilMeetingService;
 	@Autowired
@@ -128,7 +137,9 @@ public class CouncilMeetingController {
 	@Autowired
 	private CouncilSmsAndEmailService councilSmsAndEmailService;
 	@Autowired  private CouncilReportService councilReportService;
-	        
+	protected @Autowired FileStoreUtils fileStoreUtils;  
+	@Qualifier("fileStoreService")
+	private @Autowired FileStoreService fileStoreService;
 
 	public @ModelAttribute("committeeType") List<CommitteeType> getCommitteTypeList() {
 		return committeeTypeService.getActiveCommiteeType();
@@ -349,7 +360,49 @@ public class CouncilMeetingController {
         model.addAttribute("currDate", new Date());
         return COUNCILMEETING_ATTENDANCE_SEARCH_RESULT;
     }
+    
+	@RequestMapping(value = "/downloadfile/{id}")
+	public void download(@PathVariable("id") final Long id, final HttpServletResponse response,
+			final HttpServletRequest request) throws IOException {
+		CouncilMeeting councilMeeting = councilMeetingService.findOne(id);
+		if (null != councilMeeting) {
+			if (councilMeeting.getFilestore() != null) {
+				fetchMeetingResolutionByFileStoreId(response, councilMeeting);
+			} else {
+				if (MOM_FINALISED.equals(councilMeeting.getStatus().getCode())) {
+					byte[] reportOutput = generatePdfByPassingMeetingObject(request, councilMeeting);
 
+					if (reportOutput != null ) {
+						councilMeeting.setFilestore(fileStoreService.store(new ByteArrayInputStream(reportOutput),
+								MEETINGRESOLUTIONFILENAME, "application/pdf", MODULE_NAME));
+						councilMeetingService.update(councilMeeting);
+					}
+
+					if (councilMeeting.getFilestore() != null) {
+						fetchMeetingResolutionByFileStoreId(response, councilMeeting);
+					}
+				}
+			}
+		}
+		
+
+	}
+
+	private byte[] generatePdfByPassingMeetingObject(final HttpServletRequest request, CouncilMeeting councilMeeting) {
+		byte[] reportOutput = null;
+		final String url = WebUtils.extractRequestDomainURL(request, false);
+		String logoPath = url.concat(ReportConstants.IMAGE_CONTEXT_PATH)
+				.concat((String) request.getSession().getAttribute("citylogo"));
+		reportOutput = councilReportService.generatePDFForMom(councilMeeting, logoPath);
+		return reportOutput;
+	}
+
+	private void fetchMeetingResolutionByFileStoreId(final HttpServletResponse response, CouncilMeeting councilMeeting)
+			throws IOException {
+		fileStoreUtils.fetchFileAndWriteToStream(councilMeeting.getFilestore().getFileStoreId(),
+				CouncilConstants.MODULE_NAME, false, response);
+	}
+    
     @RequestMapping(value = "/attendance/ajaxsearch/{id}", method = RequestMethod.GET, produces = MediaType.TEXT_PLAIN_VALUE)
     public @ResponseBody String ajaxsearc(@PathVariable("id") final CouncilMeeting id, Model model) {
         List<MeetingAttendence> searchResultList = councilMeetingService.findListOfAttendance(id);

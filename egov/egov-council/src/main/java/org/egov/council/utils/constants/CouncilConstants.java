@@ -108,4 +108,5 @@ public class CouncilConstants {
     public static final String WF_APPROVE_BUTTON = "Approve";
     public static final String MEETINGSTATUSCREATED = "CREATED";
     public final static String MEETINGSTATUSAPPROVED ="APPROVED";
+    public final static String MEETINGRESOLUTIONFILENAME = "MeetingResolution";
 }

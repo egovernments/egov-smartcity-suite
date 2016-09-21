@@ -3,7 +3,6 @@ package org.egov.council.entity;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-import java.util.Set;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -21,6 +20,7 @@ import javax.persistence.TemporalType;
 import javax.persistence.Transient;
 
 import org.egov.commons.EgwStatus;
+import org.egov.infra.filestore.entity.FileStoreMapper;
 import org.egov.infra.persistence.validator.annotation.Unique;
 import org.egov.infra.workflow.entity.StateAware;
 import org.egov.search.domain.Searchable;
@@ -71,6 +71,11 @@ public class CouncilMeeting  extends StateAware {
 
     @OneToMany(mappedBy = "meeting", cascade = CascadeType.ALL)
     private List<MeetingAttendence> meetingAttendence = new ArrayList<MeetingAttendence>(0);
+    
+    @ManyToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name = "filestore")
+    private FileStoreMapper filestore;
+    
     
     public Long getId() {
         return id;
@@ -169,5 +174,13 @@ public class CouncilMeeting  extends StateAware {
     public void setToDate(Date toDate) {
         this.toDate = toDate;
     }
+    
+    public void setFilestore(FileStoreMapper filestore) {
+		this.filestore = filestore;
+	}
+    
+    public FileStoreMapper getFilestore() {
+		return filestore;
+	}
     
 }
