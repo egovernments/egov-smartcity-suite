@@ -52,7 +52,7 @@
 			document.getElementById("approverName").value= approver.split('~')[0];
 		}   */
 		var rejectbutton=document.getElementById("workFlowAction").value;
-		if(rejectbutton!=null && rejectbutton=='Reject')
+		if(rejectbutton!=null && (rejectbutton=='Reject'|| rejectbutton=='Provide more info'))
 			{
 			$('#approvalDepartment').removeAttr('required');
 			$('#approvalDesignation').removeAttr('required');

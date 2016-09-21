@@ -11,6 +11,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.egov.commons.dao.EgwStatusHibernateDAO;
 import org.egov.council.autonumber.PreambleNumberGenerator;
@@ -146,7 +147,7 @@ public class CouncilPreambleController extends GenericWorkFlowController {
         councilPreambleService.create(councilPreamble, approvalPosition,
                 approvalComment, workFlowAction);
         
-        String message = messageSource.getMessage("msg.councilPreamble.success", new String[] { approverName.concat("~").concat(nextDesignation), councilPreamble.getPreambleNumber() }, null);
+        String message = messageSource.getMessage("msg.councilPreamble.create", new String[] { approverName.concat("~").concat(nextDesignation), councilPreamble.getPreambleNumber() }, null);
         redirectAttrs.addFlashAttribute("message",message);
         return "redirect:/councilpreamble/result/" + councilPreamble.getId();
     }
@@ -185,29 +186,38 @@ public class CouncilPreambleController extends GenericWorkFlowController {
         }
         
         Long approvalPosition = 0l;
-        String approvalComment = "";
-        String approverName = "";
-        String nextDesignation = "";
+        String approvalComment = StringUtils.EMPTY;
+        String message=StringUtils.EMPTY;
         if (request.getParameter("approvalComent") != null)
             approvalComment = request.getParameter("approvalComent");
         if (request.getParameter("workFlowAction") != null)
             workFlowAction = request.getParameter("workFlowAction");
-        if (request.getParameter("approverName") != null)
-            approverName = request.getParameter("approverName");
-        if (request.getParameter("nextDesignation") != null)
-            nextDesignation = request.getParameter("nextDesignation");
-        if (request.getParameter("approvalPosition") != null && !request.getParameter("approvalPosition").isEmpty())
+            if (request.getParameter("approvalPosition") != null && !request.getParameter("approvalPosition").isEmpty())
             approvalPosition = Long.valueOf(request.getParameter("approvalPosition"));
 
         councilPreambleService.update(councilPreamble, approvalPosition, approvalComment, workFlowAction);
-
-        String message = messageSource.getMessage("msg.councilPreamble.success", new String[] {
-                approverName.concat("~").concat(nextDesignation), councilPreamble.getPreambleNumber() }, null);
-        redirectAttrs.addFlashAttribute("message", message);
-        
-        redirectAttrs.addFlashAttribute("message", message);
-        return "redirect:/councilpreamble/result/" + councilPreamble.getId();
+		if(null!=workFlowAction)
+		  { if (CouncilConstants.WF_STATE_REJECT.equalsIgnoreCase(workFlowAction)) {
+				message = getMessage("msg.councilPreamble.reject", councilPreamble);
+			} else if (CouncilConstants.WF_APPROVE_BUTTON.equalsIgnoreCase(workFlowAction)) {
+				message = getMessage("msg.councilPreamble.success", councilPreamble);
+			} else if (CouncilConstants.WF_FORWARD_BUTTON.equalsIgnoreCase(workFlowAction)) {
+				message = getMessage("msg.councilPreamble.forward", councilPreamble);
+			} else if (CouncilConstants.WF_PROVIDE_INFO_BUTTON.equalsIgnoreCase(workFlowAction)) {
+				message = getMessage("msg.councilPreamble.moreInfo",councilPreamble);
+			}
+			redirectAttrs.addFlashAttribute("message", message);
+		  }
+		return "redirect:/councilpreamble/result/" + councilPreamble.getId();
     }
+
+	private String getMessage(String messageLabel, final CouncilPreamble councilPreamble) {
+		String message;
+		message = messageSource.getMessage(
+				messageLabel,
+				new String[] { councilPreamble.getPreambleNumber() }, null);
+		return message;
+	}
 
     @RequestMapping(value = "/edit/{id}", method = RequestMethod.GET)
     public String edit(@PathVariable("id") final Long id, final Model model, final HttpServletResponse response)
