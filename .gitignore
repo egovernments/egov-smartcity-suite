@@ -9,3 +9,4 @@ target
 .classpath
 .tern-project
 rebel.xml
+.travis.yml

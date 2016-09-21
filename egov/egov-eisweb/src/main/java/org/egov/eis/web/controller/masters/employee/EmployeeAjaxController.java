@@ -39,6 +39,14 @@
  */
 package org.egov.eis.web.controller.masters.employee;
 
+import static org.springframework.web.bind.annotation.RequestMethod.GET;
+
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+
+import org.egov.eis.entity.Assignment;
+import org.egov.eis.service.AssignmentService;
 import org.egov.eis.service.DesignationService;
 import org.egov.eis.service.PositionMasterService;
 import org.egov.pims.commons.Designation;
@@ -51,12 +59,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-
-import static org.springframework.web.bind.annotation.RequestMethod.GET;
-
 @Controller
 @RequestMapping(value = "/employee")
 public class EmployeeAjaxController {
@@ -66,6 +68,9 @@ public class EmployeeAjaxController {
 
     @Autowired
     private PositionMasterService positionMasterService;
+
+    @Autowired
+    private AssignmentService assignmentService;
 
     @RequestMapping(value = "/ajax/designations", method = GET, produces = MediaType.APPLICATION_JSON_VALUE)
     public @ResponseBody List<Designation> getAllDesignationsByNameLike(
@@ -85,6 +90,14 @@ public class EmployeeAjaxController {
         else
             posList = positionMasterService.getPositionsForDeptDesigAndNameLike(deptId, desigId, positionName);
         return posList;
+    }
+
+    @RequestMapping(value = "/ajax/primaryPosition", method = GET, produces = MediaType.APPLICATION_JSON_VALUE)
+    public @ResponseBody boolean getPrimaryAssignmentsForPosition(
+            @ModelAttribute("employeeBean") @RequestParam final Long positionId,
+            @RequestParam final Long assignmentId) {
+        final Assignment assignment = assignmentService.getPrimaryAssignmentForPositon(positionId);
+        return assignment == null ? false : assignment.getId() != assignmentId ? true : false;
     }
 
 }
