@@ -224,8 +224,8 @@
         <module>egov-councilweb</module>
    <!-- <module>egov-inventory</module>
 	    <module>egov-inventoryweb</module> -->
-    <module>egov-stms</module>
-    <module>egov-stmsweb</module>
+  <!--   <module>egov-stms</module>
+    <module>egov-stmsweb</module> -->
     </modules>
 
     <dependencyManagement>
