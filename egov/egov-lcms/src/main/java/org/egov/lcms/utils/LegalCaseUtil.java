@@ -44,6 +44,8 @@ import java.util.Set;
 
 import org.egov.commons.EgwStatus;
 import org.egov.commons.dao.EgwStatusHibernateDAO;
+import org.egov.eis.entity.Employee;
+import org.egov.eis.service.EmployeeService;
 import org.egov.eis.service.PositionMasterService;
 import org.egov.infra.admin.master.entity.Department;
 import org.egov.infra.admin.master.service.DepartmentService;
@@ -72,6 +74,9 @@ public class LegalCaseUtil {
 
     @Autowired
     private PositionMasterService positionMasterService;
+    
+    @Autowired
+    private EmployeeService employeeService;
 
     @Autowired
     private DepartmentService departmentService;
@@ -111,7 +116,12 @@ public class LegalCaseUtil {
         final List<LegalCaseDocuments> legalDoc = legalCaseRepository.getLegalCaseDocumentList(legalcase.getId());
         return legalDoc;
     }
+    @Transactional(propagation = Propagation.REQUIRES_NEW, readOnly = true)
+    public Employee getEmployeeByUserName(final String userName) {
+       Employee employee= employeeService.getEmployeeByUserName(userName);
+       return employee;
 
+    }
     public Set<FileStoreMapper> addToFileStore(final MultipartFile[] files) {
         return fileStoreUtils.addToFileStore(files, LcmsConstants.FILESTORE_MODULECODE);
     }

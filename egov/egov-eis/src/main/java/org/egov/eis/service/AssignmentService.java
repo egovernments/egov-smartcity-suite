@@ -393,7 +393,10 @@ public class AssignmentService {
             final Date givenDate) {
         return assignmentRepository.findByDepartmentDesignationsAndGivenDate(deptId, desigIds, givenDate);
     }
-
+    public List<Assignment> getAllAssignmentsByPositionNameForGivenRange(final String positionName) {
+        return assignmentRepository.getAllAssignmentForPositionNameLike(new Date(),positionName);
+    }
+    
     public List<Position> findPositionsForEmployees(final String name) {
         return assignmentRepository.findEmployeePositions("%" + name + "%");
     }
