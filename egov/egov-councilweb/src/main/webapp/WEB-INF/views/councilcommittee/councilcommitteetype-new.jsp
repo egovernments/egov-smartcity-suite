@@ -39,6 +39,7 @@
   --%>
 <%@ page contentType="text/html;charset=UTF-8" language="java"%>
 <%@ include file="/includes/taglibs.jsp"%>
+<%@ taglib uri="/WEB-INF/taglib/cdn.tld" prefix="cdn" %>
 <form:form role="form" action="create" modelAttribute="committeeType"
 	id="councilCommitteeTypeform" cssClass="form-horizontal form-groups-bordered"
 	enctype="multipart/form-data">
@@ -56,4 +57,4 @@
 </form:form>
 
 <script
-	src="<c:url value='/resources/app/js/councilCommitteeMember.js?rnd=${app_release_no}'/>"></script>
+	src="<cdn:url value='/resources/app/js/councilCommitteeMember.js?rnd=${app_release_no}'/>"></script>
