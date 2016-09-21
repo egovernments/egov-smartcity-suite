@@ -101,10 +101,10 @@
 							<thead>
 								<th align="center"><spring:message code="lbl.serial.number" /></th>
 								<th><spring:message code="lbl.department" /></th>
-								<th width="45%"><spring:message code="lbl.gistofpreamble" /></th>
+								<th width="40%"><spring:message code="lbl.gistofpreamble" /></th>
 								<th  width="3%"><spring:message code="lbl.agenda.number" /></th>
 								<th><spring:message code="lbl.preamble.number" /></th>
-								<th><spring:message code="lbl.resolution.comment" /></th>
+								<th  width="22%"><spring:message code="lbl.resolution.comment" /></th>
 								<th><spring:message code="lbl.mom.action" /></th>
 								
 							</thead>

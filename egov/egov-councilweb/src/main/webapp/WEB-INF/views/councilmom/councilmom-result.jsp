@@ -44,14 +44,3 @@
 <div class="alert alert-success" role="alert">
 	<strong>${message}</strong>
 </div><%@ include file="councilmom-view.jsp"%>
-<script
-	src="<c:url value='/resources/app/js/showMoreorLessContent.js?rnd=${app_release_no}'/>"></script>
-
-<style>
-	.morecontent span {
-	    display: none;
-	}
-	.morelink {
-    display: block;
-	}
-</style>
