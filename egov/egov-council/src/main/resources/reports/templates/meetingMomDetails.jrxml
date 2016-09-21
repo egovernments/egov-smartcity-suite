@@ -73,21 +73,7 @@
 				<textFieldExpression><![CDATA["Dt: "+$F{meeting}.getMeetingDate()]]></textFieldExpression>
 			</textField>
 		</band>
-		<band height="59">
-			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
-				<reportElement stretchType="RelativeToBandHeight" mode="Transparent" x="2" y="36" width="536" height="23" isPrintWhenDetailOverflows="true" uuid="353743ec-5ba9-4c0f-ba84-725970688c0a"/>
-				<box>
-					<pen lineWidth="0.0"/>
-					<topPen lineWidth="0.0"/>
-					<leftPen lineWidth="0.0"/>
-					<bottomPen lineWidth="0.0"/>
-					<rightPen lineWidth="0.0"/>
-				</box>
-				<textElement textAlignment="Center" verticalAlignment="Middle">
-					<font isBold="true"/>
-				</textElement>
-				<textFieldExpression><![CDATA["'"+$F{resolutionStatus}.getDescription()+"'"]]></textFieldExpression>
-			</textField>
+		<band height="31">
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
 				<reportElement stretchType="RelativeToBandHeight" mode="Transparent" x="2" y="0" width="536" height="31" isPrintWhenDetailOverflows="true" uuid="1925d8d9-b23c-4e05-893f-d12cd021c2a1"/>
 				<box>
@@ -101,6 +87,22 @@
 					<font isBold="false"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{resolutionDetail}]]></textFieldExpression>
+			</textField>
+		</band>
+		<band height="32">
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement stretchType="RelativeToBandHeight" mode="Transparent" x="2" y="7" width="536" height="23" isPrintWhenDetailOverflows="true" uuid="353743ec-5ba9-4c0f-ba84-725970688c0a"/>
+				<box>
+					<pen lineWidth="0.0"/>
+					<topPen lineWidth="0.0"/>
+					<leftPen lineWidth="0.0"/>
+					<bottomPen lineWidth="0.0"/>
+					<rightPen lineWidth="0.0"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA["'"+$F{resolutionStatus}.getDescription()+"'"]]></textFieldExpression>
 			</textField>
 		</band>
 	</detail>
