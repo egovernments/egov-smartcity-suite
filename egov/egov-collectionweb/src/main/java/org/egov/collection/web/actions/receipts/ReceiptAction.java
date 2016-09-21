@@ -1656,7 +1656,7 @@ public class ReceiptAction extends BaseFormAction {
                     addActionError(getText("miscreciept.subledger.entrymissing", new String[] { map.get("glcode")
                             .toString() }));
                     return false;
-                } else if (!subledAmtmap.get(glcodeId).equals(new BigDecimal(map.get("amount").toString()))) {
+                } else if (subledAmtmap.get(glcodeId).compareTo(new BigDecimal(map.get("amount").toString()))!=0) {
                     addActionError(getText("miscreciept.subledger.amtnotmatchinng", new String[] { map.get("glcode")
                             .toString() }));
                     return false;

@@ -63,12 +63,6 @@ function callAjaxSearch() {
 					type: "POST",
 					"data":  getFormData(jQuery('form'))
 				},
-				"fnRowCallback": function (row, data, index) {
-						$(row).on('click', function() {
-				console.log(data.id);
-				window.open('/lcms/interimorder/'+ $('#mode').val() +'/'+data.id);
-			});
-				 },
 				"sPaginationType" : "bootstrap",
 				"bDestroy" : true,
 				'bAutoWidth': false,
@@ -82,6 +76,10 @@ function callAjaxSearch() {
 				columns : [ { 
 "data" : "interimOrderType", "sClass" : "text-left"} ,{ 
 "data" : "code", "sClass" : "text-left"} ,{ 
-"data" : "active", "sClass" : "text-left"}]				
+"data" : "active", "sClass" : "text-left"},{ 
+"data" : "id","visible": false, "searchable": false }]				
 			});
 			}
+$("#resultTable").on('click','tbody tr',function(event) {
+	window.open('/lcms/interimorder/'+ $('#mode').val() +'/'+drillDowntableContainer.fnGetData(this,3),'','width=800, height=600');
+});

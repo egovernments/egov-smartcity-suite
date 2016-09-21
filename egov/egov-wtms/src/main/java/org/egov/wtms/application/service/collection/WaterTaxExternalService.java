@@ -47,8 +47,10 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.egov.collection.entity.ReceiptDetail;
 import org.egov.collection.integration.models.BillAccountDetails;
@@ -416,11 +418,9 @@ public class WaterTaxExternalService {
         final List<AppConfigValues> demandreasonGlcode = waterTaxUtils.getAppConfigValueByModuleNameAndKeyName(WaterTaxConstants.MODULE_NAME, WaterTaxConstants.DEMANDREASONANDGLCODEMAP);
         Map<String, String> demandReasonGlCodePairmap = new HashMap<String, String>();
         for (AppConfigValues appConfig : demandreasonGlcode) {
-            String rows[] = appConfig.getValue().split("\n");
-            for (String row : rows) {
-                String value[] = row.split("=");
-                demandReasonGlCodePairmap.put(value[0], value[1]);
-            }
+            String rows[] = appConfig.getValue().split("=");
+                demandReasonGlCodePairmap.put(rows[0], rows[1]);
+            
         }
         for (final Map.Entry<String, String> entry :demandReasonGlCodePairmap.entrySet())
             currentBal = currentBal.add(bill.balanceForGLCode(entry.getValue()));

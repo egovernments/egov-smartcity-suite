@@ -405,11 +405,14 @@ public class PropertyTransferAction extends GenericWorkFlowAction {
     @SkipValidation
     @Action(value = "/reject")
     public String reject() {
-        if (propertyMutation.getState().getValue().equals("Rejected")
+        if (propertyMutation.getState().getValue().equals("Rejected") || propertyMutation.getType().equalsIgnoreCase(ADDTIONAL_RULE_FULL_TRANSFER)
                 && (propertyMutation.getReceiptNum() != null && !propertyMutation.getReceiptNum().isEmpty())
                 && !receiptCanceled) {
             addActionError(getText("error.mutation.reject.notallowed"));
-            return EDIT;
+            if(propertyMutation.getType().equalsIgnoreCase(ADDTIONAL_RULE_FULL_TRANSFER))
+                return VIEW;
+            else
+                return EDIT;
         }
         transitionWorkFlow(propertyMutation);
         transferOwnerService.viewPropertyTransfer(basicproperty, propertyMutation);
@@ -679,7 +682,7 @@ public class PropertyTransferAction extends GenericWorkFlowAction {
                         .getOwnerPosition().getId());
 
         if (WFLOW_ACTION_STEP_REJECT.equalsIgnoreCase(workFlowAction)) {
-            if (wfInitiator.equals(userAssignment)) {
+            if (wfInitiator.equals(userAssignment) || propertyMutation.getType().equalsIgnoreCase(ADDTIONAL_RULE_FULL_TRANSFER)) {
                 propertyMutation.transition(true).end().withSenderName(user.getUsername() + "::" + user.getName())
                         .withComments(approverComments).withDateInfo(currentDate.toDate());
                 propertyMutation.getBasicProperty().setUnderWorkflow(Boolean.FALSE);

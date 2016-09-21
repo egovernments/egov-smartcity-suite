@@ -58,7 +58,6 @@ import org.egov.commons.dao.AccountdetailtypeHibernateDAO;
 import org.egov.commons.dao.ChartOfAccountsDAO;
 import org.egov.commons.dao.FinancialYearHibernateDAO;
 import org.egov.commons.dao.FunctionDAO;
-import org.egov.commons.dao.VoucherHeaderDAO;
 import org.egov.commons.utils.EntityType;
 import org.egov.dao.budget.BudgetDetailsDAO;
 import org.egov.dao.budget.BudgetDetailsHibernateDAO;
@@ -71,7 +70,6 @@ import org.egov.eis.entity.EmployeeView;
 import org.egov.eis.service.AssignmentService;
 import org.egov.eis.service.DesignationService;
 import org.egov.eis.service.EisCommonService;
-import org.egov.infra.admin.master.entity.AppConfig;
 import org.egov.infra.admin.master.entity.AppConfigValues;
 import org.egov.infra.admin.master.entity.Boundary;
 import org.egov.infra.admin.master.entity.Department;
@@ -80,9 +78,9 @@ import org.egov.infra.admin.master.service.AppConfigValueService;
 import org.egov.infra.config.core.ApplicationThreadLocals;
 import org.egov.infra.exception.ApplicationException;
 import org.egov.infra.exception.ApplicationRuntimeException;
-import org.egov.infra.persistence.utils.ApplicationSequenceNumberGenerator;
 import org.egov.infra.script.entity.Script;
 import org.egov.infra.script.service.ScriptService;
+import org.egov.infra.utils.DateUtils;
 import org.egov.infra.utils.autonumber.AutonumberServiceBeanResolver;
 import org.egov.infra.validation.exception.ValidationError;
 import org.egov.infra.validation.exception.ValidationException;
@@ -111,10 +109,8 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import javax.persistence.EntityManager;
 import java.math.BigDecimal;
 import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
@@ -149,20 +145,13 @@ public class VoucherService extends PersistenceService<CVoucherHeader, Long> {
 	@Autowired
 	private AssignmentService assignmentService;
 	@Autowired
-	private VoucherHeaderDAO voucherHeaderDAO;
-	@Autowired
 	@Qualifier("voucherHelper")
 	private VoucherHelper voucherHelper;
 
 	@Autowired
 	@Qualifier("eGovernCommon")
 	private EGovernCommon eGovernCommon;
-	private static final SimpleDateFormat FORMATDDMMYYYY = new SimpleDateFormat(
-			"dd/MM/yyyy", Constants.LOCALE);
-	public static final SimpleDateFormat sdf = new SimpleDateFormat(
-			"dd-MMM-yyyy", Constants.LOCALE);
-	@Autowired
-	private ApplicationSequenceNumberGenerator sequenceGenerator;
+
 	@Autowired
 	@Qualifier("financialYearDAO")
 	private FinancialYearHibernateDAO financialYearDAO;
@@ -174,6 +163,24 @@ public class VoucherService extends PersistenceService<CVoucherHeader, Long> {
 	@Autowired
 	private AutonumberServiceBeanResolver beanResolver;
 
+	private EISServeable eisService;
+
+	private EmployeeServiceOld employeeService;
+
+	@Autowired
+	private ScriptService scriptService;
+
+	@Autowired
+	@Qualifier("egBillRegisterService")
+	private EgBillRegisterService egBillRegisterService;
+
+	@Autowired
+	private AccountdetailtypeHibernateDAO accountdetailtypeHibernateDAO;
+
+	@Autowired
+	@Qualifier("recordStatusPersistenceService")
+	private PersistenceService recordStatusPersistenceService;
+
 	public VoucherService(final Class<CVoucherHeader> voucherHeader) {
 		super(voucherHeader);
 	}
@@ -181,23 +188,6 @@ public class VoucherService extends PersistenceService<CVoucherHeader, Long> {
 	public VoucherService() {
 		super(CVoucherHeader.class);
 	}
-
-	private EISServeable eisService;
-	private EmployeeServiceOld employeeService;
-	@Autowired
-	private ScriptService scriptService;
-
-	@Autowired
-	@Qualifier("egBillRegisterService")
-	private EgBillRegisterService egBillRegisterService;
-	@Autowired
-	private EntityManager entityManager;
-	@Autowired
-	private AccountdetailtypeHibernateDAO accountdetailtypeHibernateDAO;
-
-	@Autowired
-	@Qualifier("recordStatusPersistenceService")
-	private PersistenceService recordStatusPersistenceService;
 
 	public Boundary getBoundaryForUser(final CVoucherHeader rv) {
 		return egovCommon.getBoundaryForUser(rv.getCreatedBy());
@@ -212,8 +202,6 @@ public class VoucherService extends PersistenceService<CVoucherHeader, Long> {
 	}
 
 	public Department getCurrentDepartment() {
-		// TODO: Now employee is extending user so passing userid to get
-		// assingment -- changes done by Vaibhav
 		final Assignment assignment = eisCommonService
 				.getLatestAssignmentForEmployeeByDate(
 						ApplicationThreadLocals.getUserId(), new Date());
@@ -221,8 +209,6 @@ public class VoucherService extends PersistenceService<CVoucherHeader, Long> {
 	}
 
 	public Department getDepartmentForWfItem(final CVoucherHeader cv) {
-		// TODO: Now employee is extending user so passing userid to get
-		// assingment -- changes done by Vaibhav
 		final Assignment assignment = eisCommonService
 				.getLatestAssignmentForEmployeeByDate(
 						cv.getCreatedBy().getId(), new Date());
@@ -644,8 +630,7 @@ public class VoucherService extends PersistenceService<CVoucherHeader, Long> {
 		// no need to change voucher number if onlydate is changed since
 		// vouchernumber-sequence is for the year not for month
 		try {
-			final String fiscalPeriodIdStr = eGovernCommon.getFiscalPeriod(sdf
-					.format(voucherHeader.getVoucherDate()));
+			final String fiscalPeriodIdStr = eGovernCommon.getFiscalPeriod(DateUtils.getFormattedDate( voucherHeader.getVoucherDate(), "dd-MMM-yyyy"));
 			if (null == fiscalPeriodIdStr)
 				throw new ApplicationRuntimeException(
 						"Voucher Date not within an open period or Financial year not open for posting, fiscalPeriod := "
@@ -1640,11 +1625,6 @@ public class VoucherService extends PersistenceService<CVoucherHeader, Long> {
 	public Position getPositionForEmployee(final Employee emp)
 			throws ApplicationRuntimeException {
 		return eisCommonService.getPrimaryAssignmentPositionForEmp(emp.getId());
-	}
-
-	public void setSequenceGenerator(
-			final ApplicationSequenceNumberGenerator sequenceGenerator) {
-		this.sequenceGenerator = sequenceGenerator;
 	}
 
 	public void setScriptService(final ScriptService scriptService) {

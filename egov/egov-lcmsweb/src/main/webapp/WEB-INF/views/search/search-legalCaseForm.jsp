@@ -170,9 +170,9 @@
 							</div>
 						</div>
 						<div class="form-group">
-							<label class="col-sm-3 control-label"><spring:message
+							<label class="col-sm-4 control-label"><spring:message
 									code="lbl.exclude.closed.case" /></label>
-							<div class="col-sm-3 add-margin">
+							<div class="col-sm-2 add-margin">
 								<form:checkbox id="isStatusExcluded" path=""
 									value="isStatusExcluded" />
 							</div>

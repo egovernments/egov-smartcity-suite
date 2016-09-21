@@ -62,6 +62,9 @@ function loadBank(obj)
 </head>
 <body>
 	<s:form action="remitRecovery" theme="simple" name="remitRecoveryForm">
+	<s:hidden type="hidden" id="selectedRows" name="selectedRows" />
+	<s:hidden type="hidden" id="departmentId" name="departmentId" value="%{departmentId}" />
+	<s:hidden type="hidden" id="functionId" name="functionId" value="%{functionId}" />
 		<jsp:include page="../budget/budgetHeader.jsp">
 			<jsp:param name="heading" value='Remittance Recovery' />
 		</jsp:include>
@@ -121,8 +124,6 @@ function loadBank(obj)
 				<s:submit type="submit" cssClass="buttonsubmit" value="Search"
 					id="search" name="search" method="search"
 					onclick="return validateSearch();" />
-				<s:submit type="submit" cssClass="buttonsubmit" value="Cancel"
-					method="newform" onclick="resetSubmit();" />
 				<input type="button" id="Close" value="Close"
 					onclick="javascript:window.close()" class="button" />
 			</div>
@@ -167,6 +168,7 @@ function loadBank(obj)
 								readonly="true" value="0" /></td>
 					</tr>
 				</table>
+				<div id ="remitTotal" />
 				<s:hidden type="hidden" id="selectedrRemit"
 					name="remittanceBean.selectedrRemit" />
 				<div class="buttonbottom" style="padding-bottom: 10px;">

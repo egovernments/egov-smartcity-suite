@@ -40,15 +40,12 @@
 package org.egov.ptis.scheduler;
 
 import org.apache.log4j.Logger;
-import org.egov.infra.admin.master.service.UserService;
 import org.egov.infra.scheduler.quartz.AbstractQuartzJob;
 import org.egov.ptis.service.DemandBill.DemandBillService;
 import org.springframework.beans.factory.NoSuchBeanDefinitionException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.transaction.annotation.Transactional;
-
-//import org.egov.infstr.config.dao.AppConfigValuesDAO;
 
 
 @Transactional
@@ -59,20 +56,16 @@ public class BulkBillGenerationJob extends AbstractQuartzJob  {
 
     private Integer billsCount;
     private Integer modulo; 
-    private DemandBillService demandBillService;
-    
+
     @Autowired
-    private ApplicationContext beanProvider;
-    @Autowired
-    private UserService userService;
+    private transient ApplicationContext beanProvider;
 
     @Override
     public void executeJob() {
         LOGGER.debug("Entered into executeJob" + modulo);
-        super.prepareCityThreadLocal();
         DemandBillService demandBillService = null;
         try {
-            demandBillService = (DemandBillService) beanProvider.getBean("demandBillService");
+            demandBillService = beanProvider.getBean("demandBillService", DemandBillService.class);
         } catch (NoSuchBeanDefinitionException e) {
             LOGGER.warn("DemandBillService implementation not found");
         }
@@ -80,29 +73,12 @@ public class BulkBillGenerationJob extends AbstractQuartzJob  {
             demandBillService.bulkBillGeneration(modulo, billsCount);
     }
             
-    public Integer getBillsCount() { 
-        return billsCount;
-    }
-
     public void setBillsCount(Integer billsCount) {
             this.billsCount = billsCount;
-    }
-
-    public Integer getModulo() {
-            return modulo;
     }
 
     public void setModulo(Integer modulo) {
             this.modulo = modulo;
     }
 
-    public DemandBillService getDemandBillService() {
-        return demandBillService;
-    }
-
-    public void setDemandBillService(DemandBillService demandBillService) {
-        this.demandBillService = demandBillService;
-    }
-    
-    
 }

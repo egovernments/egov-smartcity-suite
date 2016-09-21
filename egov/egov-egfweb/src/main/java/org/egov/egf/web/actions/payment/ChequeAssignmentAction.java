@@ -330,8 +330,7 @@ public class ChequeAssignmentAction extends BaseVoucherAction
         if (deptNonMandatory == true)
             mandatoryFields.remove("department");
 
-        // overriding department Mandatory Condition only for cheque assignment search
-        if (functionNonMandatory == true)
+        // overriding function Mandatory Condition only for cheque assignment search
             mandatoryFields.remove("function");
 
         if (LOGGER.isDebugEnabled())

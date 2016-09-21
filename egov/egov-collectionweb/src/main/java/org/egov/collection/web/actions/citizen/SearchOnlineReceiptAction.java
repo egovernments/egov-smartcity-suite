@@ -51,6 +51,7 @@ import org.egov.infstr.models.ServiceDetails;
 
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 
@@ -81,7 +82,7 @@ public class SearchOnlineReceiptAction extends BaseFormAction {
 
     @Action(value = "/citizen/searchOnlineReceipt-reset")
     public String reset() {
-        results = null;
+        results = Collections.emptyList();
         serviceTypeId = Long.valueOf(-1);
         fromDate = null;
         toDate = null;

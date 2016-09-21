@@ -56,8 +56,6 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 
-import org.apache.commons.collections.CollectionUtils;
-import org.apache.commons.collections.Predicate;
 import org.apache.log4j.Logger;
 import org.apache.struts2.convention.annotation.Action;
 import org.apache.struts2.convention.annotation.ParentPackage;
@@ -146,6 +144,8 @@ public class RemitRecoveryAction extends BasePaymentAction {
     private RemitRecoveryService remitRecoveryService;
     private VoucherService voucherService;
     private List<RemittanceBean> listRemitBean;
+    private String selectedRows;
+    private Long functionId;
     @Autowired
     @Qualifier("remittanceRecoveryService")
     private RecoveryService recoveryService;
@@ -272,8 +272,12 @@ public class RemitRecoveryAction extends BasePaymentAction {
         if (LOGGER.isDebugEnabled())
             LOGGER.debug("RemitRecoveryAction | Search | Start");
         listRemitBean = remitRecoveryService.getRecoveryDetails(remittanceBean, voucherHeader);
-        if (listRemitBean == null)
-            listRemitBean = new ArrayList<RemittanceBean>(); 
+        if (listRemitBean == null || listRemitBean.isEmpty())
+            listRemitBean = new ArrayList<RemittanceBean>();
+        else{
+            departmentId = listRemitBean.get(0).getDepartmentId().intValue();
+            functionId = listRemitBean.get(0).getFunctionId();
+        }
 
         return NEW;
     }
@@ -287,6 +291,8 @@ public class RemitRecoveryAction extends BasePaymentAction {
     @ValidationErrorPage(value = "new")
     @Action(value = "/deduction/remitRecovery-remit")
     public String remit() {
+        
+        prepareListRemitBean(selectedRows);
         List<AppConfigValues> cutOffDateconfigValue = appConfigValuesService.getConfigValuesByModuleAndKey("EGF",
                 "DataEntryCutOffDate");
         if (cutOffDateconfigValue != null && !cutOffDateconfigValue.isEmpty())
@@ -301,12 +307,12 @@ public class RemitRecoveryAction extends BasePaymentAction {
         voucherHeader.setType(FinancialConstants.STANDARD_VOUCHER_TYPE_PAYMENT);
         if(voucherHeader.getVouchermis().getDepartmentid()==null )
         {
-            Department department=departmentService.getDepartmentById(listRemitBean.get(0).getDepartmentId());
+            Department department=departmentService.getDepartmentById(departmentId.longValue());
             voucherHeader.getVouchermis().setDepartmentid(department);
         }
         if(voucherHeader.getVouchermis().getFunction()==null)
         {
-            CFunction function=functionService.findOne(listRemitBean.get(0).getFunctionId());
+            CFunction function=functionService.findOne(functionId);
             voucherHeader.getVouchermis().setFunction(function); 
         }
         if (LOGGER.isDebugEnabled())
@@ -316,16 +322,21 @@ public class RemitRecoveryAction extends BasePaymentAction {
         final Recovery recov = (Recovery) persistenceService.find("from Recovery where id=?", remittanceBean.getRecoveryId());
         if (recov != null)
             remittedTo = recov.getRemitted();
-        final Predicate remitPredicate = new RemittanceBean();
         for (final RemittanceBean rbean : listRemitBean)
             rbean.setPartialAmount(rbean.getAmount());
-        CollectionUtils.filter(listRemitBean, remitPredicate);
         if (LOGGER.isDebugEnabled())
             LOGGER.debug("RemitRecoveryAction | remit | size after filter" + listRemitBean.size());
         setModeOfPayment(FinancialConstants.MODEOFPAYMENT_CASH);
         if (LOGGER.isDebugEnabled())
             LOGGER.debug("RemitRecoveryAction | remit | end");
         return "remitDetail";
+    }
+
+    private void prepareListRemitBean(String selectedRows) {
+        listRemitBean = remitRecoveryService.getRecoveryDetails(selectedRows);
+        if (listRemitBean == null)
+            listRemitBean = new ArrayList<RemittanceBean>(); 
+
     }
 
     @ValidationErrorPage(value = "remitDetail")
@@ -1112,5 +1123,30 @@ public class RemitRecoveryAction extends BasePaymentAction {
     public void setCutOffDate(String cutOffDate) {
         this.cutOffDate = cutOffDate;
     }
+
+    public String getSelectedRows() {
+        return selectedRows;
+    }
+
+    public Long getFunctionId() {
+        return functionId;
+    }
+
+    public Integer getDepartmentId() {
+        return departmentId;
+    }
+
+    public void setSelectedRows(String selectedRows) {
+        this.selectedRows = selectedRows;
+    }
+
+    public void setFunctionId(Long functionId) {
+        this.functionId = functionId;
+    }
+
+    public void setDepartmentId(Integer departmentId) {
+        this.departmentId = departmentId;
+    }
+
 
 }

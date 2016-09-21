@@ -63,16 +63,6 @@ function callAjaxSearch() {
 					type : "POST",
 					"data" : getFormData(jQuery('form'))
 				},
-				"fnRowCallback" : function(row, data, index) {
-					$(row).on(
-							'click',
-							function() {
-								console.log(data.id);
-								window.open('/lcms/judgmenttype/'
-										+ $('#mode').val() + '/' + data.id, '',
-										'width=800, height=600');
-							});
-				},
 				"sPaginationType" : "bootstrap",
 				"bDestroy" : true,
 				'bAutoWidth': false,
@@ -92,6 +82,10 @@ function callAjaxSearch() {
 				}, {
 					"data" : "active",
 					"sClass" : "text-left"
-				} ]
+				} ,{ 
+					"data" : "id","visible": false, "searchable": false }]
 			});
 }
+$("#resultTable").on('click','tbody tr',function(event) {
+	window.open('/lcms/judgmenttype/'+ $('#mode').val() +'/'+drillDowntableContainer.fnGetData(this,3),'','width=800, height=600');
+});
