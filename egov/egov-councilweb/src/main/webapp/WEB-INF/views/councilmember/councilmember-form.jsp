@@ -236,12 +236,12 @@
 								style="max-width: 25%; max-height: 25%;"
 								src="/council/councilmember/downloadfile/${councilMember.photo.fileStoreId}"
 								alt="${councilMember.photo.fileName}" /></a>
-								<small class="error-msg"><spring:message code="lbl.mesg.document.size"/></small>
+								<small class="error-msg"><spring:message code="lbl.mesg.upload.size"/></small>
 						</c:when>
 						<c:otherwise>
 							<input type="file" id="attachments" name="attachments"
 								data-id="1" class="filechange inline btn upload-file" />
-								<small class="error-msg"><spring:message code="lbl.mesg.document.size"/></small>
+								<small class="error-msg"><spring:message code="lbl.mesg.upload.size"/></small>
 							<form:errors path="attachments" cssClass="error-msg" />
 						</c:otherwise>
 					</c:choose>
