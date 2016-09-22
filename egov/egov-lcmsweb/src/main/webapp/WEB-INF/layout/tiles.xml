@@ -406,5 +406,9 @@
 	<put-attribute name="body" value="/WEB-INF/views/reports/timeseriesreport-form.jsp"/>
 </definition>
 
+<definition name="genericsub-form" extends="base_layout">
+	<put-attribute name="page-title" value="title.genericsubreport" cascade="true"/>
+	<put-attribute name="body" value="/WEB-INF/views/reports/genericsub-form.jsp"/>
+</definition>
 
 </tiles-definitions>
