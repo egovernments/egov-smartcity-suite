@@ -59,6 +59,7 @@ import javax.persistence.PersistenceContext;
 import javax.validation.ValidationException;
 
 import org.apache.commons.lang3.StringUtils;
+import org.egov.eis.entity.Assignment;
 import org.egov.eis.service.AssignmentService;
 import org.egov.eis.service.EisCommonService;
 import org.egov.eis.service.PositionMasterService;
@@ -74,7 +75,6 @@ import org.egov.infra.security.utils.SecurityUtils;
 import org.egov.infra.utils.ApplicationNumberGenerator;
 import org.egov.infra.workflow.entity.State;
 import org.egov.infra.workflow.entity.StateHistory;
-import org.egov.pgr.elasticSearch.service.ComplaintIndexService;
 import org.egov.pgr.entity.Complaint;
 import org.egov.pgr.entity.enums.ComplaintStatus;
 import org.egov.pgr.entity.enums.ReceivingMode;
@@ -145,9 +145,6 @@ public class ComplaintService {
     @Autowired
     private AssignmentService assignmentService;
 
-    @Autowired
-    private ComplaintIndexService complaintIndexService;
-
     @PersistenceContext
     private EntityManager entityManager;
 
@@ -207,7 +204,7 @@ public class ComplaintService {
         final Complaint savedComplaint = complaintRepository.save(complaint);
         pushMessage(savedComplaint);
         sendEmailandSms(complaint);
-        
+
         return savedComplaint;
     }
 
@@ -276,7 +273,7 @@ public class ComplaintService {
                 !complaint.getStatus().getName().equalsIgnoreCase(ComplaintStatus.REJECTED.toString())
                 && !complaint.getStatus().getName().equalsIgnoreCase(ComplaintStatus.WITHDRAWN.toString()))
             sendSmsToOfficials(savedComplaint);
-        
+
         return savedComplaint;
     }
 
@@ -358,16 +355,19 @@ public class ComplaintService {
         map.put("status", state.getValue());
         final Position ownerPosition = state.getOwnerPosition();
         user = state.getOwnerUser();
-        user = state.getOwnerUser();
         if (null != user) {
             map.put("user", user.getUsername() + "::" + user.getName());
-            map.put("usertype", null != user.getType() ? user.getType() : "");
+            map.put("usertype", null != user ? user.getType() : "");
             map.put("department", null != eisCommonService.getDepartmentForUser(user.getId())
                     ? eisCommonService.getDepartmentForUser(user.getId()).getName() : "");
         } else if (null != ownerPosition && null != ownerPosition.getDeptDesig()) {
-            user = eisCommonService.getUserForPosition(ownerPosition.getId(), new Date());
-            map.put("user", null != user.getUsername() ? user.getUsername() + "::" + user.getName() : "");
-            map.put("usertype", null != user.getType() ? user.getType() : "");
+            final List<Assignment> assignmentList = assignmentService.getAssignmentsForPosition(ownerPosition.getId(),
+                    new Date());
+            user = !assignmentList.isEmpty() ? assignmentList.get(0).getEmployee() : null;
+            map.put("user", null != user
+                    ? user.getUsername() + "::" + user.getName() + "::" + ownerPosition.getDeptDesig().getDesignation().getName()
+                    : ownerPosition.getName());
+            map.put("usertype", null != user ? user.getType() : "");
             map.put("department", null != ownerPosition.getDeptDesig().getDepartment()
                     ? ownerPosition.getDeptDesig().getDepartment().getName() : "");
         }
@@ -391,13 +391,19 @@ public class ComplaintService {
                 user = stateHistory.getOwnerUser();
                 if (null != user) {
                     HistoryMap.put("user", user.getUsername() + "::" + user.getName());
-                    HistoryMap.put("usertype", null != user.getType() ? user.getType() : "");
+                    HistoryMap.put("usertype", null != user ? user.getType() : "");
                     HistoryMap.put("department", null != eisCommonService.getDepartmentForUser(user.getId())
                             ? eisCommonService.getDepartmentForUser(user.getId()).getName() : "");
                 } else if (null != owner && null != owner.getDeptDesig()) {
-                    user = eisCommonService.getUserForPosition(owner.getId(), new Date());
-                    HistoryMap.put("user", null != user.getUsername() ? user.getUsername() + "::" + user.getName() : "");
-                    HistoryMap.put("usertype", null != user.getType() ? user.getType() : "");
+                    final List<Assignment> assignments = assignmentService.getAssignmentsForPosition(owner.getId(), new Date());
+                    user = !assignments.isEmpty() ? assignments.get(0).getEmployee() : null;
+                    HistoryMap
+                            .put("user",
+                                    null != user
+                                            ? user.getUsername() + "::" + user.getName() + "::"
+                                                    + ownerPosition.getDeptDesig().getDesignation().getName()
+                                            : ownerPosition.getName());
+                    HistoryMap.put("usertype", null != user ? user.getType() : "");
                     HistoryMap.put("department", null != owner.getDeptDesig().getDepartment()
                             ? owner.getDeptDesig().getDepartment().getName() : "");
                 }
@@ -581,10 +587,10 @@ public class ComplaintService {
         complaintsCount.put(COMPLAINTS_UNRESOLVED, complaintRepository.getComplaintsTotalCountByStatus(pendingStatus).intValue());
         return complaintsCount;
     }
-    
-    public List<Complaint> getOpenComplaints(){
-    	List<String> statusList = Arrays.asList("REGISTERED", "FORWARDED", "REOPENED","PROCESSING");
-    	return complaintRepository.findByStatusNameIn(statusList);
+
+    public List<Complaint> getOpenComplaints() {
+        final List<String> statusList = Arrays.asList("REGISTERED", "FORWARDED", "REOPENED", "PROCESSING");
+        return complaintRepository.findByStatusNameIn(statusList);
     }
 
 }
