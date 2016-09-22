@@ -822,22 +822,22 @@ public class RevisionEstimateService {
         for (final Activity sa : activities) {
             if (mode != null && WorksConstants.VIEW.equals(mode)) {
                 if (activity.getRevisionType() != null
-                        && activity.getRevisionType().equals(RevisionType.ADDITIONAL_QUANTITY)) {
+                        && RevisionType.ADDITIONAL_QUANTITY.equals(activity.getRevisionType())) {
                     sa.setQuantity(sa.getQuantity() + activity.getQuantity());
                     sa.setQuantityChanged(true);
                 } else if (activity.getRevisionType() != null
-                        && activity.getRevisionType().equals(RevisionType.REDUCED_QUANTITY)) {
+                        && RevisionType.REDUCED_QUANTITY.equals(activity.getRevisionType())) {
                     sa.setQuantity(sa.getQuantity() - activity.getQuantity());
                     sa.setQuantityChanged(true);
                 }
             } else {
                 if (activity.getParent().getId().equals(sa.getId()))
                     if (activity.getRevisionType() != null
-                            && activity.getRevisionType().equals(RevisionType.ADDITIONAL_QUANTITY)) {
+                            && RevisionType.ADDITIONAL_QUANTITY.equals(activity.getRevisionType())) {
                         sa.setQuantity(sa.getQuantity() + activity.getQuantity());
                         sa.setQuantityChanged(true);
                     } else if (activity.getRevisionType() != null
-                            && activity.getRevisionType().equals(RevisionType.REDUCED_QUANTITY)) {
+                            && RevisionType.REDUCED_QUANTITY.equals(activity.getRevisionType())) {
                         sa.setQuantity(sa.getQuantity() - activity.getQuantity());
                         sa.setQuantityChanged(true);
                     }
@@ -847,22 +847,22 @@ public class RevisionEstimateService {
         for (final Activity sa : nonTenderedLumpSumActivities) {
             if (mode != null && WorksConstants.VIEW.equals(mode)) {
                 if (activity.getRevisionType() != null
-                        && activity.getRevisionType().equals(RevisionType.ADDITIONAL_QUANTITY)) {
+                        && RevisionType.ADDITIONAL_QUANTITY.equals(activity.getRevisionType())) {
                     sa.setQuantity(sa.getQuantity() + activity.getQuantity());
                     sa.setQuantityChanged(true);
                 } else if (activity.getRevisionType() != null
-                        && activity.getRevisionType().equals(RevisionType.REDUCED_QUANTITY)) {
+                        && RevisionType.REDUCED_QUANTITY.equals(activity.getRevisionType())) {
                     sa.setQuantity(sa.getQuantity() - activity.getQuantity());
                     sa.setQuantityChanged(true);
                 }
             } else {
                 if (activity.getParent().getId().equals(sa.getId()))
                     if (activity.getRevisionType() != null
-                            && activity.getRevisionType().equals(RevisionType.ADDITIONAL_QUANTITY)) {
+                            && RevisionType.ADDITIONAL_QUANTITY.equals(activity.getRevisionType())) {
                         sa.setQuantity(sa.getQuantity() + activity.getQuantity());
                         sa.setQuantityChanged(true);
                     } else if (activity.getRevisionType() != null
-                            && activity.getRevisionType().equals(RevisionType.REDUCED_QUANTITY)) {
+                            && RevisionType.REDUCED_QUANTITY.equals(activity.getRevisionType())) {
                         sa.setQuantity(sa.getQuantity() - activity.getQuantity());
                         sa.setQuantityChanged(true);
                     }
