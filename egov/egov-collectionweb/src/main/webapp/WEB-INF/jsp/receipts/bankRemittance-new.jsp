@@ -442,12 +442,12 @@
 							<td class="bluebox"><s:text name="bankremittance.fromdate" /></td>
 							<s:date name="fromDate" var="fromFormat"  format="dd/MM/yyyy" />
 							<td class="bluebox"><s:textfield id="fromDate"
-									name="fromDate" data-inputmask="'mask': 'd/m/y'" readonly="true"  value="%{fromFormat}"
+									name="fromDate" data-inputmask="'mask': 'd/m/y'" value="%{fromFormat}"
 									placeholder="DD/MM/YYYY" /></td>
 							<td class="bluebox"><s:text name="bankremittance.todate" /></td>
 							<s:date name="toDate" var="toFormat"  format="dd/MM/yyyy" />
 							<td class="bluebox"><s:textfield id="toDate" name="toDate" value="%{toFormat}"
-									readonly="true" data-inputmask="'mask': 'd/m/y'"
+									data-inputmask="'mask': 'd/m/y'"
 									placeholder="DD/MM/YYYY" /></td>
 						</tr>
 					</table>
