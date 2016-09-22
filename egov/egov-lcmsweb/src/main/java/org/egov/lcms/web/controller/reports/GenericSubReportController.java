@@ -62,11 +62,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 @Controller
@@ -108,35 +106,18 @@ public class GenericSubReportController extends GenericLegalCaseController {
     }
 
     @RequestMapping(value = "/genericSubReport", method = RequestMethod.GET)
-    public String searchForm(final Model model) {
+    public String searchForm(final Model model,final @ModelAttribute("genericSubReportResult") GenericSubReportResult genericSubReportResult) {
         model.addAttribute("currDate", new Date());
+        model.addAttribute("genericSubReportResult", genericSubReportResult);
         return "genericsub-form";
     }
 
-    @ExceptionHandler(Exception.class)
     @RequestMapping(value = "/genericSubResult", method = RequestMethod.GET, produces = MediaType.TEXT_PLAIN_VALUE)
-    public @ResponseBody String getGenerivSubReportResult(@RequestParam final String aggregatedBy,
-            @RequestParam final Integer caseCategory, @RequestParam final String standingCounsel,
-            @RequestParam final String courtType, @RequestParam final Integer courtName,
-            @RequestParam final String judgmentType, @RequestParam final Integer petitionType,
-            @RequestParam final Integer caseStatus, @RequestParam final String officerIncharge,
-            @RequestParam final Date fromDate, @RequestParam final Date toDate, final HttpServletRequest request,
-            final HttpServletResponse response) throws IOException, ParseException {
+    public @ResponseBody String getGenerivSubReportResult(final HttpServletRequest request,
+            final HttpServletResponse response,final @ModelAttribute("genericSubReportResult") GenericSubReportResult genericSubReportResult) throws IOException, ParseException {
 
-        final GenericSubReportResult genericSubReportResult = new GenericSubReportResult();
-        genericSubReportResult.setAggregatedBy(aggregatedBy);
-        genericSubReportResult.setCaseCategory(caseCategory);
-        genericSubReportResult.setStandingCounsel(standingCounsel);
-        genericSubReportResult.setCaseStatus(caseStatus);
-        genericSubReportResult.setCourtType(courtType);
-        genericSubReportResult.setCourtName(courtName);
-        genericSubReportResult.setJudgmentType(judgmentType);
-        genericSubReportResult.setPetitionType(petitionType);
-        genericSubReportResult.setOfficerIncharge(officerIncharge);
-        genericSubReportResult.setFromDate(fromDate);
-        genericSubReportResult.setToDate(toDate);
         List<GenericSubReportResult> genericSubResultList = new ArrayList<GenericSubReportResult>();
-        genericSubResultList = genericSubReportService.getGenericSubReport(genericSubReportResult);
+       genericSubResultList = genericSubReportService.getGenericSubReport(genericSubReportResult);
 
         final String result = new StringBuilder("{ \"data\":").append(
                 WebUtils.toJSON(genericSubResultList, GenericSubReportResult.class, GenericSubReportAdaptor.class))
