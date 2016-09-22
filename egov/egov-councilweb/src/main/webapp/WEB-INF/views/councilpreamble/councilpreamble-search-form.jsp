@@ -94,8 +94,8 @@
 							<label class="col-sm-2 control-label text-right"><spring:message
 							code="lbl.ward" /> </label>
 							<div class="col-sm-3 add-margin">
-								<form:select path="wards" id="wards" multiple="false" cssClass="form-control" cssErrorClass="form-control error">
-									<form:option value=""><spring:message code="lbl.select" /></form:option>
+								<form:select path="wards" id="wards" multiple="true" size="5"  cssClass="form-control" cssErrorClass="form-control error">
+									<form:option value="" id="selectall">All</form:option>
 									<form:options  items="${wards}" itemValue="id" itemLabel="name"></form:options>
 								</form:select>
 								<form:errors path="wards" cssClass="error-msg" /> 

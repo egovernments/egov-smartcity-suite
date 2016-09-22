@@ -174,15 +174,34 @@ $('form').keypress(function (e) {
     }
 }); 
 
-	function getFormData($form){
-    var unindexed_array = $form.serializeArray();
-    var indexed_array = {};
+function getFormData($form) {
+	var unindexed_array = $form.serializeArray();
+	var indexed_array = {};
 
-    $.map(unindexed_array, function(n, i){
-        indexed_array[n['name']] = n['value'];
-    });
-
-    return indexed_array;
+	$.map(unindexed_array, function(n, i) {
+		if(indexed_array[n['name']])
+		{
+			var arry=[];
+			if(Array.isArray(indexed_array[n['name']]))
+			{
+				arry=indexed_array[n['name']];
+				console.log(arry);
+				arry.push(n['value']);
+			}
+			else
+			{
+				arry.push(indexed_array[n['name']]);
+				arry.push(n['value']);
+				indexed_array[n['name']];
+			}
+			indexed_array[n['name']]=arry;
+		}
+		else{
+		   indexed_array[n['name']] = n['value'];
+		}
+	});
+	
+	return indexed_array;
 }
  
 function callAjaxSearch() {
@@ -193,6 +212,7 @@ function callAjaxSearch() {
 				ajax : {
 					url : "/council/agenda/ajaxsearch",      
 					type: "POST",
+					traditional: true,
 					"data":  getFormData(jQuery('form'))
 				},
 				"sPaginationType" : "bootstrap",
@@ -245,7 +265,7 @@ function callAjaxSearch() {
 			     	              {
 			     	                   "render": function ( data, type, row ) {
 			     	                	   
-			     	                       return type === 'display' && data.length > 500 ? data.substr( 0, 500 )+' <span class="details" data-text="'+escape(data)+'"><button class="btn-xs" style="font-size:10px;">More <i class="fa fa-angle-double-right" aria-hidden="true"></i></button</span>' : data;
+			     	                	  return type === 'display' && '<div><span>'+(data.length > 500 ? data.substr( 0, 500 )+'</span> <button class="details" data-text="'+escape(data)+'" class="btn-xs" style="font-size:10px;">More <i class="fa fa-angle-double-right" aria-hidden="true"></i></button></div>' : data+"</p>");
 			     	                   },
 			     	                   "targets": 2
 				     	           }
@@ -256,8 +276,16 @@ function callAjaxSearch() {
 
 $(document).ready(function() {
 	
-	$("#resultTable").on('click','tbody tr td span.details',function(e) {
-		$(this).parent().html(unescape($(this).data('text')));
+	$("#resultTable").on('click','tbody tr td button.details',function(e) {
+		if($(this).parent().find('span').text().length==500){
+			$(this).parent().find('span').text(unescape($(this).data('text')));	
+			$(this).html('<i class="fa fa-angle-double-left" aria-hidden="true"></i> Less');
+		}
+		else
+		{
+			$(this).parent().find('span').text(unescape($(this).data('text')).substr(0,500));	
+			$(this).html('More <i class="fa fa-angle-double-right" aria-hidden="true"></i>');
+		}
 		e.stopPropagation();
 		e.preventDefault();
 	});
@@ -302,4 +330,9 @@ $(document).ready(function() {
 
 	});
 	
+});
+
+//To Select all wards
+$('#selectall').click( function() {
+    $('select#wards > option').prop('selected', 'selected');
 });
