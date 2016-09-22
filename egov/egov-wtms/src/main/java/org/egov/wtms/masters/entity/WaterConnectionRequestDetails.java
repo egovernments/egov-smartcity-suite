@@ -42,6 +42,7 @@ package org.egov.wtms.masters.entity;
 import java.io.Serializable;
 
 import org.codehaus.jackson.annotate.JsonIgnore;
+import org.egov.ptis.domain.model.ErrorDetails;
 
 /**
  * The WaterTaxDetails class is used to contain water tax details, arrears
@@ -61,11 +62,21 @@ public class WaterConnectionRequestDetails implements Serializable {
     private String ownerName;
     private String mobileNo;
     private String ulbCode;
+    private String assessmentNo;
+    private ErrorDetails errorDetails;
 
     @Override
     public String toString() {
-        return "WaterConnectionRequestDetails [consumerNo=" + consumerNo + "ownerName=" + ownerName + "mobileNo="
-                + mobileNo + "]";
+        return "WaterConnectionRequestDetails [consumerNo=" + consumerNo + "assessmentNo=" + assessmentNo
+                + " ownerName=" + ownerName + "mobileNo=" + mobileNo + "]";
+    }
+
+    public String getAssessmentNo() {
+        return assessmentNo;
+    }
+
+    public void setAssessmentNo(String assessmentNo) {
+        this.assessmentNo = assessmentNo;
     }
 
     public String getConsumerNo() {
@@ -78,6 +89,14 @@ public class WaterConnectionRequestDetails implements Serializable {
 
     public String getOwnerName() {
         return ownerName;
+    }
+
+    public ErrorDetails getErrorDetails() {
+        return errorDetails;
+    }
+
+    public void setErrorDetails(final ErrorDetails errorDetails) {
+        this.errorDetails = errorDetails;
     }
 
     public void setOwnerName(final String ownerName) {
