@@ -82,12 +82,12 @@ import org.hibernate.Query;
 import org.springframework.beans.factory.annotation.Autowired;
 
 @Results({
-    @Result(name = BankRemittanceAction.NEW, location = "bankRemittance-new.jsp"),
-    @Result(name = BankRemittanceAction.PRINT_BANK_CHALLAN, type = "redirectAction", location = "remittanceStatementReport-printBankChallan.action", params = {
-            "namespace", "/reports", "totalCashAmount", "${totalCashAmount}", "totalChequeAmount",
-            "${totalChequeAmount}", "totalOnlineAmount", "${totalOnlineAmount}", "bank", "${bank}", "bankAccount",
-            "${bankAccount}", "remittanceDate", "${remittanceDate}" }),
-            @Result(name = BankRemittanceAction.INDEX, location = "bankRemittance-index.jsp") })
+        @Result(name = BankRemittanceAction.NEW, location = "bankRemittance-new.jsp"),
+        @Result(name = BankRemittanceAction.PRINT_BANK_CHALLAN, type = "redirectAction", location = "remittanceStatementReport-printBankChallan.action", params = {
+                "namespace", "/reports", "totalCashAmount", "${totalCashAmount}", "totalChequeAmount",
+                "${totalChequeAmount}", "totalOnlineAmount", "${totalOnlineAmount}", "bank", "${bank}", "bankAccount",
+                "${bankAccount}", "remittanceDate", "${remittanceDate}" }),
+        @Result(name = BankRemittanceAction.INDEX, location = "bankRemittance-index.jsp") })
 @ParentPackage("egov")
 public class BankRemittanceAction extends BaseFormAction {
 
@@ -134,6 +134,9 @@ public class BankRemittanceAction extends BaseFormAction {
     private String voucherNumber;
     private TreeMap<String, String> paymentModesMap = new TreeMap<String, String>();
     private String paymentMode;
+    private Date fromDate;
+    private Date toDate;
+    private Integer pageSize;
 
     /**
      * @param collectionsUtil
@@ -193,24 +196,38 @@ public class BankRemittanceAction extends BaseFormAction {
     public String listData() {
         isListData = true;
         populateRemittanceList();
-        final String serviceFundQueryStr = "select distinct sd.code as servicecode,fd.code as fundcode from BANKACCOUNT ba,"
-                + "EGCL_BANKACCOUNTSERVICEMAPPING asm,EGCL_SERVICEDETAILS sd,FUND fd where asm.BANKACCOUNT=ba.ID and asm.servicedetails=sd.ID and fd.ID=ba.FUNDID and "
-                + "ba.id=" + accountNumberId;
+        if (fromDate != null && fromDate.before(financialYearDAO.getFinancialYearByDate(new Date()).getStartingDate()))
+            addActionError(getText("bankremittance.error.fromdate.lessthan.financialyear"));
+        if (toDate != null && toDate.before(financialYearDAO.getFinancialYearByDate(new Date()).getStartingDate()))
+            addActionError(getText("bankremittance.error.todate.lessthan.financialyear"));
+        if (fromDate != null && toDate != null && toDate.before(fromDate))
+            addActionError(getText("bankremittance.before.fromdate"));
+        if (!hasErrors()) {
+            final String serviceFundQueryStr = "select distinct sd.code as servicecode,fd.code as fundcode from BANKACCOUNT ba,"
+                    + "EGCL_BANKACCOUNTSERVICEMAPPING asm,EGCL_SERVICEDETAILS sd,FUND fd where asm.BANKACCOUNT=ba.ID and asm.servicedetails=sd.ID and fd.ID=ba.FUNDID and "
+                    + "ba.id=" + accountNumberId;
 
-        final Query serviceFundQuery = persistenceService.getSession().createSQLQuery(serviceFundQueryStr);
-        final List<Object[]> queryResults = serviceFundQuery.list();
+            final Query serviceFundQuery = persistenceService.getSession().createSQLQuery(serviceFundQueryStr);
+            final List<Object[]> queryResults = serviceFundQuery.list();
 
-        final List serviceCodeList = new ArrayList<String>(0);
-        final List fundCodeList = new ArrayList<String>(0);
-        for (int i = 0; i < queryResults.size(); i++) {
-            final Object[] arrayObjectInitialIndex = queryResults.get(i);
-            serviceCodeList.add(arrayObjectInitialIndex[0].toString());
-            fundCodeList.add(arrayObjectInitialIndex[1].toString());
+            final List serviceCodeList = new ArrayList<String>(0);
+            final List fundCodeList = new ArrayList<String>(0);
+            for (int i = 0; i < queryResults.size(); i++) {
+                final Object[] arrayObjectInitialIndex = queryResults.get(i);
+                serviceCodeList.add(arrayObjectInitialIndex[0].toString());
+                fundCodeList.add(arrayObjectInitialIndex[1].toString());
+            }
+            final CFinancialYear financialYear = financialYearDAO.getFinancialYearById(finYearId);
+            paramList = remittanceService.findAllRemittanceDetailsForServiceAndFund(getJurisdictionBoundary(), "'"
+                    + StringUtils.join(serviceCodeList, "','") + "'",
+                    "'" + StringUtils.join(fundCodeList, "','") + "'",
+                    fromDate == null ? financialYear.getStartingDate() : fromDate,
+                    toDate == null ? financialYear.getEndingDate() : toDate, paymentMode);
+            if (fromDate != null && toDate != null)
+                pageSize = paramList.size();
+            else
+                pageSize = CollectionConstants.DEFAULT_PAGE_SIZE;
         }
-        final CFinancialYear financialYear = financialYearDAO.getFinancialYearById(finYearId);
-        paramList = remittanceService.findAllRemittanceDetailsForServiceAndFund(getJurisdictionBoundary(), "'"
-                + StringUtils.join(serviceCodeList, "','") + "'", "'" + StringUtils.join(fundCodeList, "','") + "'",
-                financialYear.getStartingDate(), financialYear.getEndingDate(), paymentMode);
         return NEW;
     }
 
@@ -291,7 +308,6 @@ public class BankRemittanceAction extends BaseFormAction {
         bank = bankAcc.getBankbranch().getBank().getName();
         totalCashAmount = getSum(getTotalCashAmountArray());
         totalChequeAmount = getSum(getTotalChequeAmountArray());
-        totalOnlineAmount = getSum(getTotalOnlineAmountArray());
         return INDEX;
     }
 
@@ -658,5 +674,29 @@ public class BankRemittanceAction extends BaseFormAction {
 
     public void setPaymentMode(final String paymentMode) {
         this.paymentMode = paymentMode;
+    }
+
+    public Date getFromDate() {
+        return fromDate;
+    }
+
+    public void setFromDate(Date fromDate) {
+        this.fromDate = fromDate;
+    }
+
+    public Date getToDate() {
+        return toDate;
+    }
+
+    public void setToDate(Date toDate) {
+        this.toDate = toDate;
+    }
+
+    public Integer getPageSize() {
+        return pageSize;
+    }
+
+    public void setPageSize(Integer pageSize) {
+        this.pageSize = pageSize;
     }
 }

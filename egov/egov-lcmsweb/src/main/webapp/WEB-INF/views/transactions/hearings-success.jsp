@@ -109,7 +109,9 @@
 										var="employeeHearingList" varStatus="counter">
 										<tr>
 											<td class="text-left"><c:out
-													value="${employeeHearingList.employee.name}"></c:out>
+													value="${employeeHearingList.employee.name}"></c:out>-
+													<c:out
+													value="${employeeHearingList.employee.username}"></c:out></td>
 										</tr>
 									</c:forEach>
 								</tbody>

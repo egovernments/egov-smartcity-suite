@@ -205,5 +205,6 @@ public class LcmsConstants {
     public static final String OFFICERINCHRGE = "In charge officer";
     public static final String CASESTATUS = "Case Status";
     public static final String STANDINGCOUNSEL = "Standing Counsel";
+    public static final String JUDGEMENTOUTCOME = "Judgement outcome";
 
 }

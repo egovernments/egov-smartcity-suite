@@ -193,7 +193,16 @@ function showInstrumentDetails(obj){
 		clearCashDetails();
 		clearCardDetails();
 		clearBankDetails();
-		//displayChequeDDInstrumentTypeDetails();
+	}
+	else  if(obj.id=='ddradiobutton'){
+		document.getElementById('cashdetails').style.display='none';
+		document.getElementById('chequeDDdetails').style.display='table-row';
+		document.getElementById('carddetails').style.display='none';
+		document.getElementById('bankdetails').style.display='none';
+		document.getElementById('instrumentTypeCashOrCard').value="";
+		clearCashDetails();
+		clearCardDetails();
+		clearBankDetails();
 	}
 	else if(obj.id=='cardradiobutton'){
 		document.getElementById('cashdetails').style.display='none';

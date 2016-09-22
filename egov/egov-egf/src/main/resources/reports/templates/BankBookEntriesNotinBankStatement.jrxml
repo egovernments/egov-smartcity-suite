@@ -38,7 +38,9 @@
   ~
   ~   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
   -->
-<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="BankBookEntriesNotinBankStatement"  pageWidth="595" pageHeight="842" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20">
+<!-- Created with Jaspersoft Studio version 6.2.0.final using JasperReports Library version 6.2.0  -->
+<!-- 2016-09-22T12:02:35 -->
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="BankBookEntriesNotinBankStatement" pageWidth="595" pageHeight="842" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="06962c09-40d0-48af-8944-e9626fd6b780">
 	<parameter name="notInStatementNet" class="java.math.BigDecimal"/>
 	<field name="txDate" class="java.util.Date"/>
 	<field name="instrumentNo" class="java.lang.String"/>
@@ -52,9 +54,9 @@
 	<title>
 		<band height="21" splitType="Stretch">
 			<staticText>
-				<reportElement x="0" y="0" width="555" height="17"/>
+				<reportElement x="0" y="0" width="555" height="17" uuid="8a9618df-c0ef-46f1-ae8a-2aeea18ad346"/>
 				<textElement textAlignment="Center" verticalAlignment="Middle">
-					<font isBold="true" pdfFontName="Helvetica-Bold"/>
+					<font isBold="true"/>
 				</textElement>
 				<text><![CDATA[Bank Book entries not in bank statement( AS PER SYSTEM DATA) ]]></text>
 			</staticText>
@@ -63,7 +65,7 @@
 	<columnHeader>
 		<band height="29">
 			<staticText>
-				<reportElement x="0" y="0" width="61" height="29"/>
+				<reportElement x="0" y="0" width="61" height="29" uuid="0eb2e637-c5b4-435d-84e3-88b989669859"/>
 				<box>
 					<pen lineWidth="0.5"/>
 					<topPen lineWidth="0.5"/>
@@ -72,12 +74,12 @@
 					<rightPen lineWidth="0.5"/>
 				</box>
 				<textElement textAlignment="Center" verticalAlignment="Middle">
-					<font isBold="true" pdfFontName="Helvetica-Bold" isPdfEmbedded="false"/>
+					<font isBold="true" isPdfEmbedded="false"/>
 				</textElement>
 				<text><![CDATA[Sl No]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="151" y="0" width="86" height="29"/>
+				<reportElement x="151" y="0" width="86" height="29" uuid="ba80c9dd-6fd7-4d18-9a10-f3e3611ae5e4"/>
 				<box>
 					<pen lineWidth="0.5"/>
 					<topPen lineWidth="0.5"/>
@@ -86,12 +88,12 @@
 					<rightPen lineWidth="0.5"/>
 				</box>
 				<textElement textAlignment="Center" verticalAlignment="Middle">
-					<font isBold="true" pdfFontName="Helvetica-Bold" isPdfEmbedded="false"/>
+					<font isBold="true" isPdfEmbedded="false"/>
 				</textElement>
 				<text><![CDATA[Cheque No]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="61" y="0" width="90" height="29"/>
+				<reportElement x="61" y="0" width="90" height="29" uuid="3242abda-d796-43d8-b369-22687396604f"/>
 				<box>
 					<pen lineWidth="0.5"/>
 					<topPen lineWidth="0.5"/>
@@ -100,12 +102,12 @@
 					<rightPen lineWidth="0.5"/>
 				</box>
 				<textElement textAlignment="Center" verticalAlignment="Middle">
-					<font isBold="true" pdfFontName="Helvetica-Bold" isPdfEmbedded="false"/>
+					<font isBold="true" isPdfEmbedded="false"/>
 				</textElement>
 				<text><![CDATA[Date]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="427" y="0" width="128" height="29"/>
+				<reportElement x="427" y="0" width="128" height="29" uuid="69e5f253-52a5-4e36-9dce-5d95a90baba9"/>
 				<box>
 					<pen lineWidth="0.5"/>
 					<topPen lineWidth="0.5"/>
@@ -114,12 +116,12 @@
 					<rightPen lineWidth="0.5"/>
 				</box>
 				<textElement textAlignment="Center" verticalAlignment="Middle">
-					<font isBold="true" pdfFontName="Helvetica-Bold" isPdfEmbedded="false"/>
+					<font isBold="true" isPdfEmbedded="false"/>
 				</textElement>
 				<text><![CDATA[Narration]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="237" y="0" width="95" height="29"/>
+				<reportElement x="237" y="0" width="95" height="29" uuid="1919d620-e252-4797-b0a0-d4e3b93e6e68"/>
 				<box>
 					<pen lineWidth="0.5"/>
 					<topPen lineWidth="0.5"/>
@@ -128,12 +130,12 @@
 					<rightPen lineWidth="0.5"/>
 				</box>
 				<textElement textAlignment="Center" verticalAlignment="Middle">
-					<font isBold="true" pdfFontName="Helvetica-Bold" isPdfEmbedded="false"/>
+					<font isBold="true" isPdfEmbedded="false"/>
 				</textElement>
 				<text><![CDATA[Debit]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="332" y="0" width="95" height="29"/>
+				<reportElement x="332" y="0" width="95" height="29" uuid="91e9893e-2f01-4420-bd87-5dfe10ddc930"/>
 				<box>
 					<pen lineWidth="0.5"/>
 					<topPen lineWidth="0.5"/>
@@ -142,7 +144,7 @@
 					<rightPen lineWidth="0.5"/>
 				</box>
 				<textElement textAlignment="Center" verticalAlignment="Middle">
-					<font isBold="true" pdfFontName="Helvetica-Bold" isPdfEmbedded="false"/>
+					<font isBold="true" isPdfEmbedded="false"/>
 				</textElement>
 				<text><![CDATA[Credit]]></text>
 			</staticText>
@@ -151,7 +153,7 @@
 	<detail>
 		<band height="30" splitType="Stretch">
 			<textField isStretchWithOverflow="true" pattern="dd/MM/yyyy" isBlankWhenNull="true">
-				<reportElement stretchType="RelativeToTallestObject" x="61" y="0" width="90" height="30"/>
+				<reportElement stretchType="RelativeToTallestObject" x="61" y="0" width="90" height="30" uuid="e8697b51-1749-44c7-aa99-675c8779c9d3"/>
 				<box>
 					<pen lineWidth="0.5"/>
 					<topPen lineWidth="0.5"/>
@@ -162,10 +164,10 @@
 				<textElement textAlignment="Center" verticalAlignment="Middle">
 					<font size="8"/>
 				</textElement>
-				<textFieldExpression class="java.util.Date"><![CDATA[$F{txDate}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$F{txDate}]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
-				<reportElement x="151" y="0" width="86" height="30"/>
+				<reportElement x="151" y="0" width="86" height="30" uuid="bae831d6-4f87-4d69-91b6-5b2985e47acd"/>
 				<box>
 					<pen lineWidth="0.5"/>
 					<topPen lineWidth="0.5"/>
@@ -176,10 +178,10 @@
 				<textElement textAlignment="Center" verticalAlignment="Middle">
 					<font size="8"/>
 				</textElement>
-				<textFieldExpression class="java.lang.String"><![CDATA[$F{instrumentNo}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$F{instrumentNo}]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" pattern="###0.00;-###0.00" isBlankWhenNull="true">
-				<reportElement x="237" y="0" width="95" height="30"/>
+				<reportElement x="237" y="0" width="95" height="30" uuid="52e8e16e-931b-40eb-ab5e-3ac900457783"/>
 				<box>
 					<pen lineWidth="0.5"/>
 					<topPen lineWidth="0.5"/>
@@ -190,10 +192,10 @@
 				<textElement textAlignment="Right" verticalAlignment="Middle">
 					<font size="8"/>
 				</textElement>
-				<textFieldExpression class="java.math.BigDecimal"><![CDATA[$F{debit}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$F{debit}]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" pattern="###0.00;-###0.00" isBlankWhenNull="true">
-				<reportElement x="332" y="0" width="95" height="30"/>
+				<reportElement x="332" y="0" width="95" height="30" uuid="7dc4fae9-bff1-4bed-a2cf-df4058a420bb"/>
 				<box>
 					<pen lineWidth="0.5"/>
 					<topPen lineWidth="0.5"/>
@@ -204,10 +206,10 @@
 				<textElement textAlignment="Right" verticalAlignment="Middle">
 					<font size="8"/>
 				</textElement>
-				<textFieldExpression class="java.math.BigDecimal"><![CDATA[$F{credit}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$F{credit}]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
-				<reportElement x="427" y="0" width="128" height="30"/>
+				<reportElement x="427" y="0" width="128" height="30" uuid="c7d53346-8021-416b-8075-730f9cfd264c"/>
 				<box>
 					<pen lineWidth="0.5"/>
 					<topPen lineWidth="0.5"/>
@@ -218,10 +220,10 @@
 				<textElement textAlignment="Center" verticalAlignment="Middle">
 					<font size="8"/>
 				</textElement>
-				<textFieldExpression class="java.lang.String"><![CDATA[$F{narration}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$F{narration}]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement x="0" y="0" width="61" height="30"/>
+				<reportElement x="0" y="0" width="61" height="30" uuid="b59712ec-8cda-4ff6-b0a8-5689095ec9a1"/>
 				<box>
 					<pen lineWidth="0.5"/>
 					<topPen lineWidth="0.5"/>
@@ -232,10 +234,10 @@
 				<textElement textAlignment="Center" verticalAlignment="Middle">
 					<font size="8"/>
 				</textElement>
-				<textFieldExpression class="java.lang.Integer"><![CDATA[$V{REPORT_COUNT}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$V{REPORT_COUNT}]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
-				<reportElement x="0" y="0" width="555" height="30" isRemoveLineWhenBlank="true" isPrintWhenDetailOverflows="true"/>
+				<reportElement x="0" y="0" width="555" height="30" isRemoveLineWhenBlank="true" isPrintWhenDetailOverflows="true" uuid="5578c4cc-6d01-45fe-81fb-9527affb64ef"/>
 				<box>
 					<pen lineWidth="0.0"/>
 					<topPen lineWidth="0.0"/>
@@ -246,25 +248,25 @@
 				<textElement textAlignment="Center" verticalAlignment="Middle">
 					<font isBold="true"/>
 				</textElement>
-				<textFieldExpression class="java.lang.String"><![CDATA[$F{noDetailsFound}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$F{noDetailsFound}]]></textFieldExpression>
 			</textField>
 		</band>
 	</detail>
 	<summary>
 		<band height="23" splitType="Stretch">
 			<staticText>
-				<reportElement x="332" y="0" width="95" height="23"/>
+				<reportElement x="332" y="0" width="95" height="23" uuid="feed84f6-e43f-4407-9734-d4155462dbc9"/>
 				<textElement textAlignment="Right" verticalAlignment="Middle">
-					<font size="8" isBold="true" pdfFontName="Helvetica-Bold"/>
+					<font size="8" isBold="true"/>
 				</textElement>
 				<text><![CDATA[Net balance(D):]]></text>
 			</staticText>
 			<textField isStretchWithOverflow="true" pattern="###0.00;-###0.00" isBlankWhenNull="true">
-				<reportElement x="427" y="0" width="128" height="23"/>
+				<reportElement x="427" y="0" width="128" height="23" uuid="54bad78a-104d-4245-aad8-285e3dfe0ce4"/>
 				<textElement textAlignment="Right" verticalAlignment="Middle">
-					<font size="8" isBold="true" pdfFontName="Helvetica-Bold"/>
+					<font size="8" isBold="true"/>
 				</textElement>
-				<textFieldExpression class="java.math.BigDecimal"><![CDATA[$P{notInStatementNet}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$P{notInStatementNet}]]></textFieldExpression>
 			</textField>
 		</band>
 	</summary>

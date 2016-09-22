@@ -264,6 +264,7 @@ function validate()
  	</s:else>
 	var instrTypeCash = document.getElementById("cashradiobutton").checked;
 	var instrTypeCheque = document.getElementById("chequeradiobutton").checked;
+	var instrTypeDD = document.getElementById("ddradiobutton").checked;
 	var instrTypeCard = document.getElementById("cardradiobutton").checked;
 	var instrTypeBank = document.getElementById("bankradiobutton").checked;
 	var chequetable=document.getElementById('chequegrid')
@@ -389,7 +390,7 @@ function validate()
 	document.getElementById('instrumentTypeCashOrCard').value="bankchallan";
 	}
 	//if mode of payment is cheque/DD
-	if(instrTypeCheque){
+	if(instrTypeCheque || instrTypeDD){
 		var count=document.forms[0].instrumentCount.value;
 
 		if(count == 0) {

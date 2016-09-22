@@ -101,14 +101,24 @@
 					</div>
 				</div>
 				<div class="form-group">
+				<c:choose>
+				<c:when test="${not empty hearings.getTempEmplyeeHearing()}">
 					<div class="panel-heading">
 						<div class="panel-title">Employee Details</div>
 					</div>
+					</c:when>
+					<c:otherwise>
+					<div class="panel-heading">
+						<div class="panel-title">Employee Details</div>
+						<div class="panel-title">Delete</div>
+					</div>
+					</c:otherwise>
+					</c:choose>
 					<div class="form-group">
 						<label class="col-sm-2 control-label text-right"><spring:message
 								code="lbl.positionofemployee" /> :</label>
 						<div class="col-sm-3 add-margin">
-							<form:input id="positionName" type="text" class="form-control "
+							<form:input id="positionEmpName" type="text" class="form-control "
 								autocomplete="off" path="" name="" value="" placeholder="" />
 							<input type="hidden" id="positionId" value="" />
 							
