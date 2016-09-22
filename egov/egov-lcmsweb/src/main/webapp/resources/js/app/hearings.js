@@ -72,7 +72,7 @@ $(document).ready(function() {
 	});
 	
 	assignPosition.initialize();
-	var typeaheadobj = $('#positionName').typeahead({
+	var typeaheadobj = $('#positionEmpName').typeahead({
 		hint : false,
 		highlight : false,
 		minLength : 1
@@ -146,7 +146,7 @@ function addEmployee()
 	var $tableBody = $('#employeeDetails').find("tbody"),
     $trLast = $tableBody.find("tr:last");
 	 $trNew = $trLast.clone();
-	$trLast.find('input').val($("#positionName").val());
+	$trLast.find('input').val($("#positionEmpName").val());
 		count++;
 		$trNew.find("input").each(function(){
 	        $(this).attr({

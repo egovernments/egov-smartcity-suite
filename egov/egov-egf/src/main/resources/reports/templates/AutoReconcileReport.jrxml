@@ -39,7 +39,7 @@
   ~   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
   -->
 <!-- Created with Jaspersoft Studio version 6.2.0.final using JasperReports Library version 6.2.0  -->
-<!-- 2016-06-16T10:51:29 -->
+<!-- 2016-09-22T12:46:35 -->
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="AutoReconcileReport" pageWidth="595" pageHeight="842" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="8c4c4ad1-0136-4efe-8220-8fd5b7328bc1">
 	<parameter name="bankName" class="java.lang.String"/>
 	<parameter name="accountNumber" class="java.lang.String"/>
@@ -83,7 +83,7 @@
 			<staticText>
 				<reportElement x="114" y="0" width="324" height="28" uuid="1da26972-5bae-45a6-beab-fc0e9c342a92"/>
 				<textElement textAlignment="Center" verticalAlignment="Middle">
-					<font isBold="true" pdfFontName="Helvetica-Bold"/>
+					<font isBold="true"/>
 				</textElement>
 				<text><![CDATA[Auto Bank Reconciliation]]></text>
 			</staticText>
@@ -111,7 +111,7 @@
 			<staticText>
 				<reportElement x="290" y="136" width="184" height="21" isPrintWhenDetailOverflows="true" uuid="10832e3c-3ac7-46ac-862a-c9376de6592a"/>
 				<textElement textAlignment="Right">
-					<font size="8" isBold="true" pdfFontName="Helvetica-Bold"/>
+					<font size="8" isBold="true"/>
 				</textElement>
 				<text><![CDATA[Balance as per Bank book (A):]]></text>
 			</staticText>
@@ -134,14 +134,14 @@
 			<textField isStretchWithOverflow="true" pattern="###0.00;-###0.00" isBlankWhenNull="true">
 				<reportElement x="474" y="136" width="81" height="21" uuid="e7992fff-76be-4267-9467-560618ffc623"/>
 				<textElement textAlignment="Right" verticalAlignment="Top">
-					<font size="8" isBold="true" isItalic="false" pdfFontName="Helvetica-Bold"/>
+					<font size="8" isBold="true" isItalic="false"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$P{bankBookBalance}]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
 				<reportElement x="0" y="108" width="554" height="28" uuid="f2b443d9-8314-406c-a294-3aa7e7fc5085"/>
 				<textElement textAlignment="Center" verticalAlignment="Middle">
-					<font isBold="true" pdfFontName="Helvetica-Bold"/>
+					<font isBold="true"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$P{heading}]]></textFieldExpression>
 			</textField>
@@ -170,7 +170,7 @@
 					<rightPen lineWidth="0.5"/>
 				</box>
 				<textElement textAlignment="Center" verticalAlignment="Middle">
-					<font isBold="true" pdfFontName="Helvetica-Bold" isPdfEmbedded="false"/>
+					<font isBold="true" isPdfEmbedded="false"/>
 				</textElement>
 				<text><![CDATA[Sl No]]></text>
 			</staticText>
@@ -184,7 +184,7 @@
 					<rightPen lineWidth="0.5"/>
 				</box>
 				<textElement textAlignment="Center" verticalAlignment="Middle">
-					<font isBold="true" pdfFontName="Helvetica-Bold" isPdfEmbedded="false"/>
+					<font isBold="true" isPdfEmbedded="false"/>
 				</textElement>
 				<text><![CDATA[Type]]></text>
 			</staticText>
@@ -198,7 +198,7 @@
 					<rightPen lineWidth="0.5"/>
 				</box>
 				<textElement textAlignment="Center" verticalAlignment="Middle">
-					<font isBold="true" pdfFontName="Helvetica-Bold" isPdfEmbedded="false"/>
+					<font isBold="true" isPdfEmbedded="false"/>
 				</textElement>
 				<text><![CDATA[Date]]></text>
 			</staticText>
@@ -212,7 +212,7 @@
 					<rightPen lineWidth="0.5"/>
 				</box>
 				<textElement textAlignment="Center" verticalAlignment="Middle">
-					<font isBold="true" pdfFontName="Helvetica-Bold" isPdfEmbedded="false"/>
+					<font isBold="true" isPdfEmbedded="false"/>
 				</textElement>
 				<text><![CDATA[Cheque No]]></text>
 			</staticText>
@@ -226,7 +226,7 @@
 					<rightPen lineWidth="0.5"/>
 				</box>
 				<textElement textAlignment="Center" verticalAlignment="Middle">
-					<font isBold="true" pdfFontName="Helvetica-Bold" isPdfEmbedded="false"/>
+					<font isBold="true" isPdfEmbedded="false"/>
 				</textElement>
 				<text><![CDATA[Debit]]></text>
 			</staticText>
@@ -240,7 +240,7 @@
 					<rightPen lineWidth="0.5"/>
 				</box>
 				<textElement textAlignment="Center" verticalAlignment="Middle">
-					<font isBold="true" pdfFontName="Helvetica-Bold" isPdfEmbedded="false"/>
+					<font isBold="true" isPdfEmbedded="false"/>
 				</textElement>
 				<text><![CDATA[Credit]]></text>
 			</staticText>
@@ -254,7 +254,7 @@
 					<rightPen lineWidth="0.5"/>
 				</box>
 				<textElement textAlignment="Center" verticalAlignment="Middle">
-					<font isBold="true" pdfFontName="Helvetica-Bold" isPdfEmbedded="false"/>
+					<font isBold="true" isPdfEmbedded="false"/>
 				</textElement>
 				<text><![CDATA[Narration]]></text>
 			</staticText>
@@ -268,7 +268,7 @@
 					<rightPen lineWidth="0.5"/>
 				</box>
 				<textElement textAlignment="Center" verticalAlignment="Middle">
-					<font isBold="true" pdfFontName="Helvetica-Bold" isPdfEmbedded="false"/>
+					<font isBold="true" isPdfEmbedded="false"/>
 				</textElement>
 				<text><![CDATA[Action]]></text>
 			</staticText>
@@ -282,7 +282,7 @@
 					<rightPen lineWidth="0.5"/>
 				</box>
 				<textElement textAlignment="Center" verticalAlignment="Middle">
-					<font isBold="true" pdfFontName="Helvetica-Bold" isPdfEmbedded="false"/>
+					<font isBold="true" isPdfEmbedded="false"/>
 				</textElement>
 				<text><![CDATA[Message]]></text>
 			</staticText>
@@ -419,7 +419,7 @@
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
 				<reportElement x="0" y="0" width="555" height="24" isRemoveLineWhenBlank="true" isPrintWhenDetailOverflows="true" uuid="54c7f05d-455b-46eb-add3-8b231e2f54ec"/>
 				<textElement textAlignment="Center" verticalAlignment="Middle">
-					<font isBold="true" pdfFontName="Helvetica-Bold"/>
+					<font isBold="true"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{noDetailsFound}]]></textFieldExpression>
 			</textField>
@@ -446,42 +446,42 @@
 			<staticText>
 				<reportElement x="366" y="0" width="85" height="26" uuid="07e341b4-606c-4ef4-bc24-a6b3a2f82eee"/>
 				<textElement textAlignment="Right" verticalAlignment="Middle">
-					<font size="8" isBold="true" pdfFontName="Helvetica-Bold"/>
+					<font size="8" isBold="true"/>
 				</textElement>
 				<text><![CDATA[Net balance(B):]]></text>
 			</staticText>
 			<textField isStretchWithOverflow="true" pattern="###0.00;-###0.00" isBlankWhenNull="true">
 				<reportElement isPrintRepeatedValues="false" x="451" y="0" width="104" height="26" uuid="d7ad4d82-48bf-45bc-b776-4ce522daf56b"/>
 				<textElement textAlignment="Right" verticalAlignment="Middle">
-					<font size="8" isBold="true" pdfFontName="Helvetica-Bold"/>
+					<font size="8" isBold="true"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$P{notInBookNet}]]></textFieldExpression>
 			</textField>
 			<staticText>
 				<reportElement positionType="Float" x="236" y="96" width="215" height="20" uuid="35e44c85-d7c7-4ccb-abd9-62d2d2fdbcd6"/>
 				<textElement textAlignment="Right" verticalAlignment="Middle">
-					<font size="9" isBold="true" pdfFontName="Helvetica-Bold"/>
+					<font size="9" isBold="true"/>
 				</textElement>
 				<text><![CDATA[Total Not Reconciled balance(C+D)]]></text>
 			</staticText>
 			<staticText>
 				<reportElement positionType="Float" x="236" y="116" width="215" height="23" uuid="d696e111-591f-4e30-b8dc-f9e24976b03e"/>
 				<textElement textAlignment="Right" verticalAlignment="Middle">
-					<font size="9" isBold="true" pdfFontName="Helvetica-Bold"/>
+					<font size="9" isBold="true"/>
 				</textElement>
 				<text><![CDATA[BRS Balance (A+B+C+D):E=]]></text>
 			</staticText>
 			<textField isStretchWithOverflow="true" pattern="###0.00;-###0.00" isBlankWhenNull="true">
 				<reportElement positionType="Float" x="451" y="96" width="104" height="20" uuid="eb989a41-b6f2-49c2-a1db-44810bf2aa42"/>
 				<textElement textAlignment="Right" verticalAlignment="Middle">
-					<font size="8" isBold="true" pdfFontName="Helvetica-Bold"/>
+					<font size="8" isBold="true"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$P{totalNotReconciledAmount}]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" pattern="###0.00;-###0.00" isBlankWhenNull="true">
 				<reportElement positionType="Float" x="451" y="116" width="104" height="23" uuid="0b294f71-9e0c-42c6-9f4d-d3bf56d28c8f"/>
 				<textElement textAlignment="Right" verticalAlignment="Middle">
-					<font size="8" isBold="true" pdfFontName="Helvetica-Bold"/>
+					<font size="8" isBold="true"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$P{brsBalance}]]></textFieldExpression>
 			</textField>

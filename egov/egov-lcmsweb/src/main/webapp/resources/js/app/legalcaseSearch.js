@@ -160,7 +160,7 @@ function submitForm() {
 								} else if (full.casestatus == 'CLOSED') {
 									return ('<select class="dropchange" id="additionconn" ><option>Select from Below</option><option value="9">Edit Close Case</option></select>');
 								} else if (full.casestatus == 'JUDGEMENT_IMPL') {
-									return ('<select class="dropchange" id="additionconn" ><option>Select from Below</option><option value="12">Edit Judgment Implementation</option></select>');
+									return ('<select class="dropchange" id="additionconn" ><option>Select from Below</option><option value="12">Edit Judgment Implementation</option><option value="8">Close Case</option></select>');
 								}
 							}
 						} ],
