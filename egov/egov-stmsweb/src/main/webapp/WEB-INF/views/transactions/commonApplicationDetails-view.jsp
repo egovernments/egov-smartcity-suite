@@ -50,6 +50,15 @@
 	</div>
 	<div class="panel-body">
 		<div class="row add-border">
+			<div class="col-xs-3 add-margin"><spring:message code="lbl.shsc.number"/></div>
+			<div class="col-xs-3 add-margin view-content">
+				<c:choose>
+					<c:when test="${not empty sewerageApplicationDetails.connection.shscNumber}">
+						<c:out value="${sewerageApplicationDetails.connection.shscNumber}" />
+					</c:when>
+					<c:otherwise><spring:message code="lb.NA.code"/></c:otherwise>
+				</c:choose>
+			</div>
 			<div class="col-xs-3 add-margin">
 				<spring:message code="lbl.ack.number"/>
 			</div>
@@ -61,10 +70,6 @@
 					<c:otherwise><spring:message code="lb.NA.code"/></c:otherwise>
 				</c:choose>
 			</div>
-			<div class="col-xs-3 add-margin"><spring:message code="lbl.application.date"/></div>
-			<div class="col-xs-3 add-margin view-content" id="applicationDate">
-				<fmt:formatDate pattern="dd/MM/yyyy" value="${sewerageApplicationDetails.applicationDate}" />
-			</div>
 		</div>
 	
 		<div class="row add-border">
@@ -75,14 +80,9 @@
 				<input type="hidden" id="applNumber" value="${sewerageApplicationDetails.applicationNumber}"/>
 				<input type="hidden" id="shscNumber" value="${sewerageApplicationDetails.connection.shscNumber}"/>
 			</div>
-			<div class="col-xs-3 add-margin"><spring:message code="lbl.shsc.number"/></div>
-			<div class="col-xs-3 add-margin view-content">
-				<c:choose>
-					<c:when test="${not empty sewerageApplicationDetails.connection.shscNumber}">
-						<c:out value="${sewerageApplicationDetails.connection.shscNumber}" />
-					</c:when>
-					<c:otherwise><spring:message code="lb.NA.code"/></c:otherwise>
-				</c:choose>
+			<div class="col-xs-3 add-margin"><spring:message code="lbl.application.date"/></div>
+			<div class="col-xs-3 add-margin view-content" id="applicationDate">
+				<fmt:formatDate pattern="dd/MM/yyyy" value="${sewerageApplicationDetails.applicationDate}" />
 			</div>
 		</div>
 		<c:forEach items="${propertyOwnerDetails.ownerNames}" var="owner">
