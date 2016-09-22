@@ -81,8 +81,8 @@
 							minFractionDigits="2" value="${revisionEstimate.parent.lineEstimateDetails.estimateAmount}" /></div>
 							<div class="col-md-2 col-xs-6 add-margin"><spring:message code="lbl.loano" /> : </div>
 							<div class="col-md-2 col-xs-6 add-margin view-content">
-								<a href="javascript:void(0)" onclick='viewLOA(<c:out value="${workOrder.id }"/>)'>
-									<c:out value="${workOrder.workOrderNumber}"></c:out>
+								<a href="javascript:void(0)" onclick='viewLOA(<c:out value="${workOrderEstimate.workOrder.id }"/>)'>
+									<c:out value="${workOrderEstimate.workOrder.workOrderNumber}"></c:out>
 								</a>
 							</div>
 							<div class="col-md-2 col-xs-6 add-margin"><spring:message code="lbl.revision.estimate.number" /> : </div> 

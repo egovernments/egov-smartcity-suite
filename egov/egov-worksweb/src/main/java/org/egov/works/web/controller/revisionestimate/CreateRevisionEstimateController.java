@@ -41,7 +41,6 @@ package org.egov.works.web.controller.revisionestimate;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 
@@ -55,7 +54,6 @@ import org.egov.eis.web.controller.workflow.GenericWorkFlowController;
 import org.egov.infra.exception.ApplicationRuntimeException;
 import org.egov.infra.validation.exception.ValidationError;
 import org.egov.infra.validation.exception.ValidationException;
-import org.egov.infra.workflow.matrix.service.CustomizedWorkFlowService;
 import org.egov.works.abstractestimate.entity.AbstractEstimate.EstimateStatus;
 import org.egov.works.lineestimate.entity.LineEstimate;
 import org.egov.works.lineestimate.entity.LineEstimateAppropriation;
@@ -97,9 +95,6 @@ public class CreateRevisionEstimateController extends GenericWorkFlowController 
     private RevisionEstimateService revisionEstimateService;
 
     @Autowired
-    protected CustomizedWorkFlowService customizedWorkFlowService;
-
-    @Autowired
     @Qualifier("messageSource")
     private MessageSource messageSource;
 
@@ -118,7 +113,7 @@ public class CreateRevisionEstimateController extends GenericWorkFlowController 
 
         final WorkOrderEstimate workOrderEstimate = workOrderEstimateService.getWorkOrderEstimateById(workOrderEstimateId);
         revisionEstimate.setParent(workOrderEstimate.getEstimate());
-        revisionEstimateService.loadViewData(revisionEstimate, workOrderEstimate, model);
+        revisionEstimateService.loadViewData(revisionEstimate, workOrderEstimate, model, null);
         final WorkflowContainer workflowContainer = new WorkflowContainer();
         prepareWorkflow(model, revisionEstimate, workflowContainer);
         List<String> validActions = new ArrayList<String>();
@@ -153,15 +148,13 @@ public class CreateRevisionEstimateController extends GenericWorkFlowController 
         revisionEstimateService.validateREInWorkFlow(workOrderEstimate.getEstimate().getId(), jsonObject, bindErrors);
         revisionEstimateService.validateChangeQuantityActivities(revisionEstimate, bindErrors);
         if (bindErrors.hasErrors()) {
-            revisionEstimateService.loadViewData(revisionEstimate, workOrderEstimate, model);
+            revisionEstimateService.loadViewData(revisionEstimate, workOrderEstimate, model, null);
 
             final WorkflowContainer workflowContainer = new WorkflowContainer();
             prepareWorkflow(model, revisionEstimate, workflowContainer);
-            List<String> validActions = Collections.emptyList();
-            validActions = customizedWorkFlowService.getNextValidActions(revisionEstimate.getStateType(),
-                    workflowContainer.getWorkFlowDepartment(), workflowContainer.getAmountRule(),
-                    workflowContainer.getAdditionalRule(), WorksConstants.NEW, workflowContainer.getPendingActions(),
-                    revisionEstimate.getCreatedDate());
+            List<String> validActions = new ArrayList<String>();
+            validActions.add(WorksConstants.SAVE_ACTION);
+            validActions.add(WorksConstants.FORWARD_ACTION.toString());
             if (revisionEstimate.getState() != null && revisionEstimate.getState().getNextAction() != null)
                 model.addAttribute("nextAction", revisionEstimate.getState().getNextAction());
             model.addAttribute("validActionList", validActions);

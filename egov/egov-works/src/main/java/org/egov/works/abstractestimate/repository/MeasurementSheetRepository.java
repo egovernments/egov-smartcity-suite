@@ -60,4 +60,9 @@ public interface MeasurementSheetRepository extends JpaRepository<MeasurementShe
     List<MeasurementSheet> findByParent_Id(@Param("parentId") final Long parentId,
             @Param("abstractEstimateStatus") final String abstractEstimateStatus);
 
+    @Query("select ms from MeasurementSheet ms where ms.parent.id =:parentId and ms.activity.abstractEstimate.id<:reId and ms.activity.abstractEstimate.egwStatus.code =:abstractEstimateStatus")
+    List<MeasurementSheet> findByParent_IdForView(@Param("parentId") final Long parentId,
+            @Param("reId") final Long reId,
+            @Param("abstractEstimateStatus") final String abstractEstimateStatus);
+
 }

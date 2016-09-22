@@ -99,4 +99,8 @@ public class MeasurementSheetService {
     public List<MeasurementSheet> findByParentId(final Long parentId) {
         return measurementSheetRepository.findByParent_Id(parentId, RevisionEstimateStatus.APPROVED.toString());
     }
+
+    public List<MeasurementSheet> findByParentIdForView(final Long parentId, final Long reId) {
+        return measurementSheetRepository.findByParent_IdForView(parentId, reId, RevisionEstimateStatus.APPROVED.toString());
+    }
 }

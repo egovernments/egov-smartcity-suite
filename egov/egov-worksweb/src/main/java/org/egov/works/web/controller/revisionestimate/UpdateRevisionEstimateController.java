@@ -120,7 +120,7 @@ public class UpdateRevisionEstimateController extends GenericWorkFlowController 
         final RevisionAbstractEstimate revisionEstimate = revisionEstimateService.getRevisionEstimateById(revisionEstimateId);
         final WorkOrderEstimate workOrderEstimate = workOrderEstimateService
                 .getWorkOrderEstimateByAbstractEstimateId(revisionEstimate.getParent().getId());
-        revisionEstimateService.loadViewData(revisionEstimate, workOrderEstimate, model);
+        revisionEstimateService.loadViewData(revisionEstimate, workOrderEstimate, model,null);
 
         prepareNonTenderedAndLumpSumActivities(revisionEstimate);
         prepareChangeQuantityActivities(revisionEstimate);
@@ -170,7 +170,7 @@ public class UpdateRevisionEstimateController extends GenericWorkFlowController 
         final RevisionAbstractEstimate revisionEstimate = revisionEstimateService.getRevisionEstimateById(revisionEstimateId);
         final WorkOrderEstimate workOrderEstimate = workOrderEstimateService
                 .getWorkOrderEstimateByAbstractEstimateId(revisionEstimate.getParent().getId());
-        revisionEstimateService.loadViewData(revisionEstimate, workOrderEstimate, model);
+        revisionEstimateService.loadViewData(revisionEstimate, workOrderEstimate, model,WorksConstants.VIEW);
 
         prepareNonTenderedAndLumpSumActivities(revisionEstimate);
         prepareChangeQuantityActivities(revisionEstimate);
@@ -248,7 +248,7 @@ public class UpdateRevisionEstimateController extends GenericWorkFlowController 
         revisionEstimateService.validateChangeQuantityActivities(revisionEstimate, errors);
         if (errors.hasErrors()) {
 
-            revisionEstimateService.loadViewData(revisionEstimate, workOrderEstimate, model);
+            revisionEstimateService.loadViewData(revisionEstimate, workOrderEstimate, model,null);
 
             final WorkflowContainer workflowContainer = new WorkflowContainer();
             prepareWorkflow(model, revisionEstimate, workflowContainer);

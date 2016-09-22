@@ -49,13 +49,11 @@
 		</div>
 	</div>
 	<div class="panel-body">
-	<c:if test="${measurementsPresent}">
 		<div align="right">
 			<input type="button" value="Close All Measurements" class="btn btn-sm btn-secondary"
 				onclick="closeAllmsheet()" /> <input type="button" class="btn btn-sm btn-secondary"
 				value="Open All Measurements" onclick="openAllmsheet()" />
 		</div>
-	</c:if>
 		
 		<table class="table table-bordered">
 			<thead>

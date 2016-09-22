@@ -207,6 +207,11 @@ public class RevisionEstimateService {
                 RevisionAbstractEstimate.RevisionEstimateStatus.APPROVED.toString());
     }
 
+    public List<RevisionAbstractEstimate> findApprovedRevisionEstimatesByParentForView(final Long id, final Long reId) {
+        return revisionEstimateRepository.findByParent_IdAndStatusForView(id, reId,
+                RevisionAbstractEstimate.RevisionEstimateStatus.APPROVED.toString());
+    }
+
     public RevisionAbstractEstimate getRevisionEstimateById(final Long id) {
         return revisionEstimateRepository.findOne(id);
     }
@@ -728,7 +733,7 @@ public class RevisionEstimateService {
     }
 
     public void populateHeaderActivities(final RevisionAbstractEstimate revisionEstimate,
-            final List<RevisionAbstractEstimate> revisionAbstractEstimates, final Model model) {
+            final List<RevisionAbstractEstimate> revisionAbstractEstimates, final Model model, String mode) {
         // Adding Original Activities
         final List<Activity> sorActivities = new ArrayList<>(revisionEstimate.getParent().getSORActivities());
         final List<Activity> nonSorActivities = new ArrayList<>(revisionEstimate.getParent().getNonSORActivities());
@@ -747,13 +752,13 @@ public class RevisionEstimateService {
                             && re.getCreatedDate().before(revisionEstimate.getCreatedDate())) {
                 for (final Activity activity : re.getActivities())
                     if (activity.getParent() == null && activity.getSchedule() != null)
-                        populateNonTenderedLumpSumActivities(activity, nonTenderedActivities);
+                        populateNonTenderedLumpSumActivities(activity, nonTenderedActivities, mode);
                     else if (activity.getParent() == null && activity.getSchedule() == null)
-                        populateNonTenderedLumpSumActivities(activity, lumpSumActivities);
+                        populateNonTenderedLumpSumActivities(activity, lumpSumActivities, mode);
                     else if (activity.getParent() != null && activity.getSchedule() != null)
-                        populateChangeQuantityActivities(activity, sorActivities, nonTenderedActivities);
+                        populateChangeQuantityActivities(activity, sorActivities, nonTenderedActivities, mode);
                     else if (activity.getParent() != null && activity.getSchedule() == null)
-                        populateChangeQuantityActivities(activity, nonSorActivities, lumpSumActivities);
+                        populateChangeQuantityActivities(activity, nonSorActivities, lumpSumActivities, mode);
                 previousEstimates.put(re.getId(), re.getEstimateNumber());
                 if (!measurementsPresent)
                     measurementsPresent = measurementSheetService.existsByEstimate(re.getId());
@@ -762,12 +767,22 @@ public class RevisionEstimateService {
         for (final Activity sa : sorActivities)
             if (!sa.getMeasurementSheetList().isEmpty())
                 for (final MeasurementSheet ms : sa.getMeasurementSheetList())
-                    deriveMeasurementSheetQuantity(ms);
+                    deriveMeasurementSheetQuantity(ms, mode, revisionEstimate.getId());
 
         for (final Activity sa : nonSorActivities)
             if (!sa.getMeasurementSheetList().isEmpty())
                 for (final MeasurementSheet ms : sa.getMeasurementSheetList())
-                    deriveMeasurementSheetQuantity(ms);
+                    deriveMeasurementSheetQuantity(ms, mode, revisionEstimate.getId());
+
+        for (final Activity sa : nonTenderedActivities)
+            if (!sa.getMeasurementSheetList().isEmpty())
+                for (final MeasurementSheet ms : sa.getMeasurementSheetList())
+                    deriveMeasurementSheetQuantity(ms, mode, revisionEstimate.getId());
+
+        for (final Activity sa : lumpSumActivities)
+            if (!sa.getMeasurementSheetList().isEmpty())
+                for (final MeasurementSheet ms : sa.getMeasurementSheetList())
+                    deriveMeasurementSheetQuantity(ms, mode, revisionEstimate.getId());
 
         revisionEstimate.getSorActivities().addAll(sorActivities);
         revisionEstimate.getNonSorActivities().addAll(nonSorActivities);
@@ -778,28 +793,34 @@ public class RevisionEstimateService {
         model.addAttribute("measurementsPresent", measurementsPresent);
     }
 
-    private void populateNonTenderedLumpSumActivities(final Activity activity, final List<Activity> activities) {
+    private void populateNonTenderedLumpSumActivities(final Activity activity, final List<Activity> activities, String mode) {
         if (activities.isEmpty())
             activities.add(activity);
         else {
             boolean flag = false;
-            for (final Activity act : activities)
-                if (activity.getSchedule() != null && activity.getSchedule().getId().equals(act.getSchedule().getId())) {
+            for (final Activity act : activities) {
+                if (mode != null && WorksConstants.VIEW.equals(mode)) {
                     flag = true;
                     act.setQuantity(act.getQuantity() + activity.getQuantity());
-                } else if (activity.getSchedule() == null && activity.getNonSor().getId().equals(act.getNonSor().getId())) {
-                    flag = true;
-                    act.setQuantity(act.getQuantity() + activity.getQuantity());
+                } else {
+                    if (activity.getSchedule() != null && activity.getSchedule().getId().equals(act.getSchedule().getId())) {
+                        flag = true;
+                        act.setQuantity(act.getQuantity() + activity.getQuantity());
+                    } else if (activity.getSchedule() == null && activity.getNonSor().getId().equals(act.getNonSor().getId())) {
+                        flag = true;
+                        act.setQuantity(act.getQuantity() + activity.getQuantity());
+                    }
                 }
+            }
             if (!flag)
                 activities.add(activity);
         }
     }
 
     private void populateChangeQuantityActivities(final Activity activity, final List<Activity> activities,
-            final List<Activity> nonTenderedLumpSumActivities) {
-        for (final Activity sa : activities)
-            if (activity.getParent().getId().equals(sa.getId()))
+            final List<Activity> nonTenderedLumpSumActivities, String mode) {
+        for (final Activity sa : activities) {
+            if (mode != null && WorksConstants.VIEW.equals(mode)) {
                 if (activity.getRevisionType() != null
                         && activity.getRevisionType().equals(RevisionType.ADDITIONAL_QUANTITY)) {
                     sa.setQuantity(sa.getQuantity() + activity.getQuantity());
@@ -809,9 +830,22 @@ public class RevisionEstimateService {
                     sa.setQuantity(sa.getQuantity() - activity.getQuantity());
                     sa.setQuantityChanged(true);
                 }
+            } else {
+                if (activity.getParent().getId().equals(sa.getId()))
+                    if (activity.getRevisionType() != null
+                            && activity.getRevisionType().equals(RevisionType.ADDITIONAL_QUANTITY)) {
+                        sa.setQuantity(sa.getQuantity() + activity.getQuantity());
+                        sa.setQuantityChanged(true);
+                    } else if (activity.getRevisionType() != null
+                            && activity.getRevisionType().equals(RevisionType.REDUCED_QUANTITY)) {
+                        sa.setQuantity(sa.getQuantity() - activity.getQuantity());
+                        sa.setQuantityChanged(true);
+                    }
+            }
+        }
 
-        for (final Activity sa : nonTenderedLumpSumActivities)
-            if (activity.getParent().getId().equals(sa.getId()))
+        for (final Activity sa : nonTenderedLumpSumActivities) {
+            if (mode != null && WorksConstants.VIEW.equals(mode)) {
                 if (activity.getRevisionType() != null
                         && activity.getRevisionType().equals(RevisionType.ADDITIONAL_QUANTITY)) {
                     sa.setQuantity(sa.getQuantity() + activity.getQuantity());
@@ -821,10 +855,23 @@ public class RevisionEstimateService {
                     sa.setQuantity(sa.getQuantity() - activity.getQuantity());
                     sa.setQuantityChanged(true);
                 }
+            } else {
+                if (activity.getParent().getId().equals(sa.getId()))
+                    if (activity.getRevisionType() != null
+                            && activity.getRevisionType().equals(RevisionType.ADDITIONAL_QUANTITY)) {
+                        sa.setQuantity(sa.getQuantity() + activity.getQuantity());
+                        sa.setQuantityChanged(true);
+                    } else if (activity.getRevisionType() != null
+                            && activity.getRevisionType().equals(RevisionType.REDUCED_QUANTITY)) {
+                        sa.setQuantity(sa.getQuantity() - activity.getQuantity());
+                        sa.setQuantityChanged(true);
+                    }
+            }
+        }
     }
 
     public void loadViewData(final RevisionAbstractEstimate revisionEstimate, final WorkOrderEstimate workOrderEstimate,
-            final Model model) {
+            final Model model, String mode) {
         final List<AppConfigValues> values = appConfigValuesService.getConfigValuesByModuleAndKey(
                 WorksConstants.WORKS_MODULE_NAME, WorksConstants.APPCONFIG_KEY_SHOW_SERVICE_FIELDS);
         final AppConfigValues value = values.get(0);
@@ -833,16 +880,20 @@ public class RevisionEstimateService {
         else
             model.addAttribute("isServiceVATRequired", false);
         model.addAttribute("uoms", uomService.findAll());
-        final List<RevisionAbstractEstimate> revisionAbstractEstimates = findApprovedRevisionEstimatesByParent(
-                workOrderEstimate.getEstimate().getId());
-        populateHeaderActivities(revisionEstimate, revisionAbstractEstimates, model);
+        List<RevisionAbstractEstimate> revisionAbstractEstimates;
+        if (mode != null && WorksConstants.VIEW.equals(mode))
+            revisionAbstractEstimates = findApprovedRevisionEstimatesByParentForView(
+                    workOrderEstimate.getEstimate().getId(), revisionEstimate.getId());
+        else
+            revisionAbstractEstimates = findApprovedRevisionEstimatesByParent(
+                    workOrderEstimate.getEstimate().getId());
+        populateHeaderActivities(revisionEstimate, revisionAbstractEstimates, model, mode);
         model.addAttribute("revisionEstimate", revisionEstimate);
         model.addAttribute("exceptionaluoms", worksUtils.getExceptionalUOMS());
         model.addAttribute("workOrderDate",
                 DateUtils.getDefaultFormattedDate(workOrderEstimate.getWorkOrder().getWorkOrderDate()));
         model.addAttribute("workOrderEstimate", workOrderEstimate);
         model.addAttribute("scheduleCategories", scheduleCategoryService.getAllScheduleCategories());
-        model.addAttribute("workOrder", workOrderEstimate.getWorkOrder());
         model.addAttribute("stateType", revisionEstimate.getClass().getSimpleName());
     }
 
@@ -1293,9 +1344,12 @@ public class RevisionEstimateService {
             workOrderActivity.setApprovedQuantity(qty);
     }
 
-    private void deriveMeasurementSheetQuantity(final MeasurementSheet measurementSheet) {
+    private void deriveMeasurementSheetQuantity(final MeasurementSheet measurementSheet, String mode, Long reId) {
         List<MeasurementSheet> remsList = new ArrayList<>();
-        remsList = measurementSheetService.findByParentId(measurementSheet.getId());
+        if (mode != null && WorksConstants.VIEW.equals(mode))
+            remsList = measurementSheetService.findByParentIdForView(measurementSheet.getId(), reId);
+        else
+            remsList = measurementSheetService.findByParentId(measurementSheet.getId());
         Double no = measurementSheet.getNo() == null ? 0 : measurementSheet.getNo().doubleValue();
         Double length = measurementSheet.getLength() == null ? 0 : measurementSheet.getLength().doubleValue();
         Double width = measurementSheet.getWidth() == null ? 0 : measurementSheet.getWidth().doubleValue();
