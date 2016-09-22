@@ -9,6 +9,7 @@ import org.egov.works.revisionestimate.service.RevisionEstimateService;
 import org.egov.works.workorder.entity.WorkOrderEstimate;
 import org.egov.works.workorder.service.WorkOrderEstimateService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.MessageSource;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -27,6 +28,7 @@ public class CancelRevisionEstimateController {
     private WorkOrderEstimateService workOrderEstimateService;
 
     @Autowired
+    @Qualifier("messageSource")
     private MessageSource messageSource;
 
     @RequestMapping(value = "/cancel/search", method = RequestMethod.GET)

@@ -107,6 +107,7 @@ public class EstimateAbstractReportPDFController {
     private EgwTypeOfWorkHibernateDAO egwTypeOfWorkHibernateDAO;
 
     @Autowired
+    @Qualifier("messageSource")
     private MessageSource messageSource;
 
     private final Map<String, Object> reportParams = new HashMap<String, Object>();

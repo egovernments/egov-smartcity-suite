@@ -60,7 +60,6 @@ import org.egov.egf.budget.service.BudgetControlTypeService;
 import org.egov.eis.service.AssignmentService;
 import org.egov.eis.web.contract.WorkflowContainer;
 import org.egov.eis.web.controller.workflow.GenericWorkFlowController;
-import org.egov.infra.admin.master.service.AppConfigValueService;
 import org.egov.infra.admin.master.service.BoundaryService;
 import org.egov.infra.admin.master.service.DepartmentService;
 import org.egov.infra.exception.ApplicationException;
@@ -235,8 +234,7 @@ public class UpdateLineEstimateController extends GenericWorkFlowController {
         } else {
             if (null != workFlowAction)
                 try {
-                    final CFinancialYear financialYear = lineEstimateService
-                            .getCurrentFinancialYear(lineEstimate.getLineEstimateDate());
+                    final CFinancialYear financialYear = worksUtils.getFinancialYearByDate(lineEstimate.getLineEstimateDate());
                     newLineEstimate = lineEstimateService.updateLineEstimateDetails(lineEstimate, approvalPosition,
                             approvalComment, null, workFlowAction,
                             mode, null, removedLineEstimateDetailsIds, files, financialYear);
@@ -246,7 +244,7 @@ public class UpdateLineEstimateController extends GenericWorkFlowController {
 
                     final BigDecimal budgetAvailable = budgetDetailsDAO
                             .getPlanningBudgetAvailable(
-                                    lineEstimateService.getCurrentFinancialYear(new Date()).getId(),
+                                    worksUtils.getFinancialYearByDate(new Date()).getId(),
                                     Integer.parseInt(lineEstimate
                                             .getExecutingDepartment().getId().toString()),
                                     lineEstimate.getFunction().getId(),
@@ -301,7 +299,7 @@ public class UpdateLineEstimateController extends GenericWorkFlowController {
         try {
             final BigDecimal budgetAvailable = budgetDetailsDAO
                     .getPlanningBudgetAvailable(
-                            lineEstimateService.getCurrentFinancialYear(new Date()).getId(),
+                            worksUtils.getFinancialYearByDate(new Date()).getId(),
                             Integer.parseInt(lineEstimate
                                     .getExecutingDepartment().getId().toString()),
                             lineEstimate.getFunction().getId(),

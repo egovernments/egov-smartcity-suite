@@ -53,7 +53,6 @@ import javax.persistence.Query;
 
 import org.egov.commons.CFinancialYear;
 import org.egov.commons.dao.EgwStatusHibernateDAO;
-import org.egov.commons.dao.FinancialYearHibernateDAO;
 import org.egov.dao.budget.BudgetDetailsDAO;
 import org.egov.egf.budget.model.BudgetControlType;
 import org.egov.egf.budget.service.BudgetControlTypeService;
@@ -147,9 +146,6 @@ public class LineEstimateService {
     private PositionMasterService positionMasterService;
 
     @Autowired
-    private FinancialYearHibernateDAO financialYearHibernateDAO;
-
-    @Autowired
     private BudgetDetailsDAO budgetDetailsDAO;
 
     @Autowired
@@ -190,7 +186,7 @@ public class LineEstimateService {
             final String workFlowAction) throws IOException {
         lineEstimate.setStatus(egwStatusHibernateDAO.getStatusByModuleAndCode(WorksConstants.MODULETYPE,
                 LineEstimateStatus.CREATED.toString()));
-        final CFinancialYear financialYear = getCurrentFinancialYear(lineEstimate.getLineEstimateDate());
+        final CFinancialYear financialYear = worksUtils.getFinancialYearByDate(lineEstimate.getLineEstimateDate());
         for (final LineEstimateDetails lineEstimateDetail : lineEstimate.getLineEstimateDetails()) {
             final EstimateNumberGenerator e = beanResolver.getAutoNumberServiceFor(EstimateNumberGenerator.class);
             final String estimateNumber = e.getNextNumber(lineEstimate, financialYear);
@@ -642,7 +638,7 @@ public class LineEstimateService {
 
             if (appropriationAmount.compareTo(BigDecimal.ZERO) == 1) {
                 final boolean flag = lineEstimateDetailService.checkConsumeEncumbranceBudget(led,
-                        getCurrentFinancialYear(new Date()).getId(), appropriationAmount.doubleValue(), budgetheadid);
+                        worksUtils.getFinancialYearByDate(new Date()).getId(), appropriationAmount.doubleValue(), budgetheadid);
 
                 if (!flag)
                     throw new ValidationException("", "error.budgetappropriation.insufficient.amount");
@@ -761,10 +757,6 @@ public class LineEstimateService {
     public LineEstimate getLineEstimateByTechnicalSanctionNumber(final String technicalSanctionNumber) {
         return lineEstimateRepository.findByTechnicalSanctionNumberIgnoreCaseAndStatus_CodeNot(technicalSanctionNumber,
                 LineEstimateStatus.CANCELLED.toString());
-    }
-
-    public CFinancialYear getCurrentFinancialYear(final Date estimateDate) {
-        return financialYearHibernateDAO.getFinYearByDate(estimateDate);
     }
 
     public LineEstimate getLineEstimateByAdminSanctionNumber(final String adminSanctionNumber) {

@@ -320,7 +320,7 @@ public class ContractorBillRegisterService {
             egBillRegisterMis.setSubScheme(workOrderEstimate.getEstimate().getFinancialDetails().get(0).getSubScheme());
 
         egBillRegisterMis.setEgDepartment(workOrderEstimate.getEstimate().getExecutingDepartment());
-        final CFinancialYear financialYear = worksUtils.getFinancialYearByDate(contractorBillRegister.getBilldate());
+        final CFinancialYear financialYear = worksUtils.getActiveForPostingFinancialYearByDate(contractorBillRegister.getBilldate());
         egBillRegisterMis.setFinancialyear(financialYear);
         egBillRegisterMis.setLastupdatedtime(new Date());
         return egBillRegisterMis;

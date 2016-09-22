@@ -42,7 +42,6 @@ package org.egov.works.web.controller.reports;
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -67,6 +66,7 @@ import org.egov.works.reports.entity.ContractorWiseAbstractSearchResult;
 import org.egov.works.reports.service.WorkProgressRegisterService;
 import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.MessageSource;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -91,6 +91,7 @@ public class ContractorWiseAbstractReportPDFController {
     private WorkProgressRegisterService workProgressRegisterService;
 
     @Autowired
+    @Qualifier("messageSource")
     private MessageSource messageSource;
 
     @Autowired

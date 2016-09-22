@@ -71,6 +71,7 @@ import org.egov.works.utils.WorksUtils;
 import org.egov.works.workorder.entity.WorkOrder.OfflineStatuses;
 import org.egov.works.workorder.entity.WorkOrderMeasurementSheet;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.MessageSource;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -105,6 +106,7 @@ public class UpdateMBController extends GenericWorkFlowController {
     protected AssignmentService assignmentService;
 
     @Autowired
+    @Qualifier("messageSource")
     private MessageSource messageSource;
 
     @Autowired

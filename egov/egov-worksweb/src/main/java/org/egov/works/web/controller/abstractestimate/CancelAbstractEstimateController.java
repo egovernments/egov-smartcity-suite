@@ -50,6 +50,7 @@ import org.egov.works.abstractestimate.service.EstimateService;
 import org.egov.works.workorder.entity.WorkOrderEstimate;
 import org.egov.works.workorder.service.WorkOrderEstimateService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.MessageSource;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -62,6 +63,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 public class CancelAbstractEstimateController {
 
     @Autowired
+    @Qualifier("messageSource")
     private MessageSource messageSource;
 
     @Autowired

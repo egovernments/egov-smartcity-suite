@@ -61,7 +61,6 @@ import org.egov.works.lineestimate.entity.LineEstimate;
 import org.egov.works.lineestimate.entity.LineEstimateAppropriation;
 import org.egov.works.lineestimate.entity.LineEstimateDetails;
 import org.egov.works.lineestimate.service.LineEstimateAppropriationService;
-import org.egov.works.lineestimate.service.LineEstimateService;
 import org.egov.works.revisionestimate.entity.RevisionAbstractEstimate;
 import org.egov.works.revisionestimate.entity.RevisionAbstractEstimate.RevisionEstimateStatus;
 import org.egov.works.revisionestimate.service.RevisionEstimateService;
@@ -70,6 +69,7 @@ import org.egov.works.utils.WorksUtils;
 import org.egov.works.workorder.entity.WorkOrderEstimate;
 import org.egov.works.workorder.service.WorkOrderEstimateService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.MessageSource;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -100,13 +100,11 @@ public class CreateRevisionEstimateController extends GenericWorkFlowController 
     protected CustomizedWorkFlowService customizedWorkFlowService;
 
     @Autowired
+    @Qualifier("messageSource")
     private MessageSource messageSource;
 
     @Autowired
     private BudgetDetailsDAO budgetDetailsDAO;
-
-    @Autowired
-    private LineEstimateService lineEstimateService;
 
     @Autowired
     private LineEstimateAppropriationService lineEstimateAppropriationService;
@@ -214,7 +212,7 @@ public class CreateRevisionEstimateController extends GenericWorkFlowController 
         try {
             final BigDecimal budgetAvailable = budgetDetailsDAO
                     .getPlanningBudgetAvailable(
-                            lineEstimateService.getCurrentFinancialYear(new Date()).getId(),
+                            worksUtils.getFinancialYearByDate(new Date()).getId(),
                             Integer.parseInt(lineEstimate
                                     .getExecutingDepartment().getId().toString()),
                             lineEstimate.getFunction().getId(),

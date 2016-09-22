@@ -248,7 +248,7 @@ public class UpdateLetterOfAcceptanceController extends GenericWorkFlowControlle
                     budgetheadid.add(financialDetail.getBudgetGroup().getId());
 
                     budgetAvailable = budgetDetailsDAO.getPlanningBudgetAvailable(
-                            lineEstimateService.getCurrentFinancialYear(new Date()).getId(),
+                            worksUtils.getFinancialYearByDate(new Date()).getId(),
                             Integer.parseInt(abstractEstimate.getExecutingDepartment().getId().toString()),
                             financialDetail.getFunction().getId(), null,
                             financialDetail.getScheme() == null ? null

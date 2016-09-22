@@ -66,6 +66,7 @@ import org.egov.works.master.service.ScheduleOfRateService;
 import org.egov.works.utils.WorksConstants;
 import org.egov.works.utils.WorksUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.MessageSource;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -92,6 +93,7 @@ public class CreateAbstractEstimateController extends GenericWorkFlowController 
     private EgwStatusHibernateDAO egwStatusHibernateDAO;
 
     @Autowired
+    @Qualifier("messageSource")
     private MessageSource messageSource;
 
     @Autowired

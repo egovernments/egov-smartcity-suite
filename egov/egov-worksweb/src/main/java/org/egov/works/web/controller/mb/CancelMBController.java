@@ -50,6 +50,7 @@ import org.egov.works.mb.entity.MBHeader;
 import org.egov.works.mb.entity.SearchRequestCancelMB;
 import org.egov.works.mb.service.MBHeaderService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.MessageSource;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -65,6 +66,7 @@ public class CancelMBController {
     private DepartmentService departmentService;
 
     @Autowired
+    @Qualifier("messageSource")
     private MessageSource messageSource;
 
     @Autowired

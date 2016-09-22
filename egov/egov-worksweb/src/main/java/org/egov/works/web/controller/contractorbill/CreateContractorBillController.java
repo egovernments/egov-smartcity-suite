@@ -72,7 +72,6 @@ import org.egov.works.contractorbill.entity.ContractorBillRegister;
 import org.egov.works.contractorbill.entity.enums.BillTypes;
 import org.egov.works.contractorbill.service.ContractorBillRegisterService;
 import org.egov.works.letterofacceptance.service.LetterOfAcceptanceService;
-import org.egov.works.lineestimate.service.LineEstimateService;
 import org.egov.works.mb.entity.MBHeader;
 import org.egov.works.mb.service.MBHeaderService;
 import org.egov.works.models.tender.OfflineStatus;
@@ -98,9 +97,6 @@ import org.springframework.web.multipart.MultipartFile;
 @Controller
 @RequestMapping(value = "/contractorbill")
 public class CreateContractorBillController extends GenericWorkFlowController {
-
-    @Autowired
-    private LineEstimateService lineEstimateService;
 
     @Autowired
     private LetterOfAcceptanceService letterOfAcceptanceService;
@@ -168,7 +164,7 @@ public class CreateContractorBillController extends GenericWorkFlowController {
         if (workOrderEstimate.getEstimate().getLineEstimateDetails() != null
                 && workOrderEstimate.getEstimate().getLineEstimateDetails().getLineEstimate().isSpillOverFlag()) {
             model.addAttribute("cutOffDate", worksUtils.getCutOffDate() != null ? worksUtils.getCutOffDate() : "");
-            model.addAttribute("currFinYearStartDate", lineEstimateService.getCurrentFinancialYear(new Date()).getStartingDate());
+            model.addAttribute("currFinYearStartDate", worksUtils.getFinancialYearByDate(new Date()).getStartingDate());
         }
         return "contractorBill-form";
     }
@@ -441,13 +437,13 @@ public class CreateContractorBillController extends GenericWorkFlowController {
 
         if (workOrderEstimate.getEstimate().getLineEstimateDetails() != null
                 && workOrderEstimate.getEstimate().getLineEstimateDetails().getLineEstimate().isSpillOverFlag()) {
-            final Date currentFinYear = lineEstimateService.getCurrentFinancialYear(currentDate).getStartingDate();
+            final Date currentFinYearStartDate = worksUtils.getFinancialYearByDate(currentDate).getStartingDate();
             if (contractorBillRegister.getBilldate().after(currentDate))
                 resultBinder.rejectValue("billdate", "error.billdate.futuredate");
             if (contractorBillRegister.getBilldate()
                     .before(contractorBillRegister.getWorkOrderEstimate().getWorkOrder().getWorkOrderDate()))
                 resultBinder.rejectValue("billdate", "error.billdate.workorderdate");
-            if (contractorBillRegister.getBilldate().before(currentFinYear))
+            if (contractorBillRegister.getBilldate().before(currentFinYearStartDate))
                 resultBinder.rejectValue("billdate", "error.billdate.finyear");
         }
 
@@ -695,7 +691,7 @@ public class CreateContractorBillController extends GenericWorkFlowController {
             final BindingResult resultBinder) {
         final Date cutOffDate = worksUtils.getCutOffDate();
         final SimpleDateFormat fmt = new SimpleDateFormat("dd-MM-yyyy");
-        final Date currFinYearStartDate = lineEstimateService.getCurrentFinancialYear(new Date()).getStartingDate();
+        final Date currFinYearStartDate = worksUtils.getFinancialYearByDate(new Date()).getStartingDate();
         if (cutOffDate != null && (contractorBillRegister.getBilldate().before(currFinYearStartDate)
                 || contractorBillRegister.getBilldate().after(cutOffDate)))
             resultBinder.reject("error.billdate.cutoffdate",

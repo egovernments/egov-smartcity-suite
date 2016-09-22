@@ -274,7 +274,7 @@ public class RevisionEstimateService {
         budgetheadid.add(revisionEstimate.getParent().getLineEstimateDetails().getLineEstimate().getBudgetHead().getId());
         final boolean flag = lineEstimateDetailService.checkConsumeEncumbranceBudget(
                 revisionEstimate.getParent().getLineEstimateDetails(),
-                lineEstimateService.getCurrentFinancialYear(new Date()).getId(),
+                worksUtils.getFinancialYearByDate(new Date()).getId(),
                 revisionEstimate.getEstimateValue().doubleValue(),
                 budgetheadid);
 

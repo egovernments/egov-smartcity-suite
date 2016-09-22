@@ -51,6 +51,7 @@ import org.egov.works.models.masters.OverheadRate;
 import org.egov.works.services.WorksService;
 import org.egov.works.utils.WorksConstants;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.MessageSource;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -73,6 +74,7 @@ public class CreateOverheadController {
     private OverheadService overheadService;
 
     @Autowired
+    @Qualifier("messageSource")
     private MessageSource messageSource;
 
     @RequestMapping(value = "/overhead-newform", method = RequestMethod.GET)

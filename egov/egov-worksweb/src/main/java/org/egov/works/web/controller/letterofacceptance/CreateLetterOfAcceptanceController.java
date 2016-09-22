@@ -121,6 +121,7 @@ public class CreateLetterOfAcceptanceController extends GenericWorkFlowControlle
     private WorksUtils worksUtils;
 
     @Autowired
+    @Qualifier("messageSource")
     private MessageSource messageSource;
 
     @Autowired

@@ -178,6 +178,7 @@ public class LetterOfAcceptanceService {
     @Autowired
     private MBHeaderService mBHeaderService;
     
+    @Autowired
     private BudgetControlTypeService budgetControlTypeService;
 
     public Session getCurrentSession() {
@@ -791,7 +792,7 @@ public class LetterOfAcceptanceService {
                 final List<Long> budgetheadid = new ArrayList<Long>();
                 budgetheadid.add(lineEstimateDetails.getLineEstimate().getBudgetHead().getId());
                 final boolean flag = lineEstimateDetailService.checkConsumeEncumbranceBudget(lineEstimateDetails,
-                        lineEstimateService.getCurrentFinancialYear(new Date()).getId(), appropriationAmount,
+                        worksUtils.getFinancialYearByDate(new Date()).getId(), appropriationAmount,
                         budgetheadid);
 
                 if (!flag)

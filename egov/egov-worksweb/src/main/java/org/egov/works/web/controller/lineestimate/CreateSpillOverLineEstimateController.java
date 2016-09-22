@@ -228,7 +228,7 @@ public class CreateSpillOverLineEstimateController {
         }
         final SimpleDateFormat dateformatter = new SimpleDateFormat("dd/MM/yyyy");
 
-        final Date currFinYearStartDate = lineEstimateService.getCurrentFinancialYear(new Date()).getStartingDate();
+        final Date currFinYearStartDate = worksUtils.getFinancialYearByDate(new Date()).getStartingDate();
 
         final Date cuttOfdate = worksUtils.getCutOffDate();
 
@@ -280,7 +280,7 @@ public class CreateSpillOverLineEstimateController {
         model.addAttribute("designations", designations);
 
         model.addAttribute("cuttOffDate", worksUtils.getCutOffDate());
-        model.addAttribute("currFinDate", lineEstimateService.getCurrentFinancialYear(new Date()).getStartingDate());
+        model.addAttribute("currFinDate", worksUtils.getFinancialYearByDate(new Date()).getStartingDate());
     }
 
     @RequestMapping(value = "/spillover-lineestimate-success", method = RequestMethod.GET)
@@ -301,7 +301,7 @@ public class CreateSpillOverLineEstimateController {
         try {
             final BigDecimal budgetAvailable = budgetDetailsDAO
                     .getPlanningBudgetAvailable(
-                            lineEstimateService.getCurrentFinancialYear(new Date()).getId(),
+                            worksUtils.getFinancialYearByDate(new Date()).getId(),
                             Integer.parseInt(lineEstimate
                                     .getExecutingDepartment().getId().toString()),
                             lineEstimate.getFunction().getId(),

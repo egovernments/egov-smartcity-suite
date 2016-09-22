@@ -102,6 +102,7 @@ public class UploadExistingSORController {
     private UOMService uomService;
 
     @Autowired
+    @Qualifier("messageSource")
     private MessageSource messageSource;
 
     @Autowired

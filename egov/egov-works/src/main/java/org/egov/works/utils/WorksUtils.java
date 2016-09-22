@@ -267,8 +267,13 @@ public class WorksUtils {
     }
 
     @Transactional(propagation = Propagation.REQUIRES_NEW, readOnly = true)
-    public CFinancialYear getFinancialYearByDate(final Date billdate) {
-        return financialYearHibernateDAO.getFinancialYearByDate(billdate);
+    public CFinancialYear getFinancialYearByDate(final Date asOnDate) {
+        return financialYearHibernateDAO.getFinYearByDate(asOnDate);
+    }
+    
+    @Transactional(propagation = Propagation.REQUIRES_NEW, readOnly = true)
+    public CFinancialYear getActiveForPostingFinancialYearByDate(final Date asOnDate) {
+        return financialYearHibernateDAO.getFinancialYearByDate(asOnDate);
     }
 
     public List<Hashtable<String, Object>> getWorkFlowHistory(final State state, final List<StateHistory> history) {
