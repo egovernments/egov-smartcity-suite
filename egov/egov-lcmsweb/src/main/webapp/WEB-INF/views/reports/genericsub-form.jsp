@@ -59,7 +59,7 @@
 						<div class="col-sm-3 add-margin">
 							<div class="col-sm-12 add-margin">
 								<form:select id="aggregatedBy" name="aggregatedBy" path=""
-									cssClass="form-control" cssErrorClass="form-control error">
+									cssClass="form-control" cssErrorClass="form-control error" required="required">
 									<form:option value="">
 										<spring:message code="lbl.select" />
 									</form:option>
@@ -90,7 +90,7 @@
 							</form:select>
 						</div>
 						<label class="col-sm-2 control-label text-right"><spring:message
-								code="lbl.standingcounsel" /> :</label>
+								code="lbl.standingcons" /> :</label>
 						<div class="col-sm-3 add-margin">
 							<form:input class="form-control" maxlength="50"
 								id="standingCounsel" path="standingCounsel" />
