@@ -405,9 +405,8 @@ public class PropertyTransferAction extends GenericWorkFlowAction {
     @SkipValidation
     @Action(value = "/reject")
     public String reject() {
-        if (propertyMutation.getState().getValue().equals("Rejected") || propertyMutation.getType().equalsIgnoreCase(ADDTIONAL_RULE_FULL_TRANSFER)
-                && (propertyMutation.getReceiptNum() != null && !propertyMutation.getReceiptNum().isEmpty())
-                && !receiptCanceled) {
+        if ((propertyMutation.getState().getValue().equals("Rejected") || propertyMutation.getType().equalsIgnoreCase(ADDTIONAL_RULE_FULL_TRANSFER))
+                && propertyMutation.getReceiptNum() != null && !receiptCanceled) {
             addActionError(getText("error.mutation.reject.notallowed"));
             if(propertyMutation.getType().equalsIgnoreCase(ADDTIONAL_RULE_FULL_TRANSFER))
                 return VIEW;
