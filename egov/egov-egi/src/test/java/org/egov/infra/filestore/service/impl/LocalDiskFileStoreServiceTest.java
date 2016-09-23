@@ -62,6 +62,7 @@ import java.util.HashSet;
 import java.util.Set;
 import java.util.UUID;
 
+import static java.nio.charset.StandardCharsets.UTF_8;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
@@ -78,7 +79,7 @@ public class LocalDiskFileStoreServiceTest {
 
     private File createTempFileWithContent() throws IOException {
 	final File newFile = Files.createTempFile(tempFilePath, "xyz", "txt").toFile();
-	FileUtils.write(newFile, "Test");
+	FileUtils.write(newFile, "Test", UTF_8);
 	return newFile;
     }
     
@@ -146,7 +147,7 @@ public class LocalDiskFileStoreServiceTest {
 	Set<File> files = new HashSet<File>();
 	for(int no=0; no <10 ; no++)  {
 	    final File newFile = Files.createTempFile(tempFilePath, "xyz"+no, "txt").toFile();
-	    FileUtils.write(newFile, "Test");
+	    FileUtils.write(newFile, "Test", UTF_8);
 	    files.add(newFile);
 	}
 	//final Set<FileStoreMapper> maps = diskFileService.store(files, "testmodule");
@@ -160,7 +161,7 @@ public class LocalDiskFileStoreServiceTest {
 	Set<InputStream> files = new HashSet<InputStream>();
 	for(int no=0; no <10 ; no++)  {
 	    final File newFile = Files.createTempFile(tempFilePath, "xyz"+no, "txt").toFile();
-	    FileUtils.write(newFile, "Test");
+	    FileUtils.write(newFile, "Test", UTF_8);
 	    FileInputStream fin = new FileInputStream(newFile);
 	    files.add(fin);
 	}
@@ -189,7 +190,7 @@ public class LocalDiskFileStoreServiceTest {
 	Set<File> files = new HashSet<File>();
 	for(int no=0; no <10 ; no++)  {
 	    final File newFile = Files.createTempFile(tempFilePath, "xyz"+no, "txt").toFile();
-	    FileUtils.write(newFile, "Test");
+	    FileUtils.write(newFile, "Test", UTF_8);
 	    files.add(newFile);
 	}
 	final Set<FileStoreMapper> maps = new HashSet<>();
@@ -208,7 +209,7 @@ public class LocalDiskFileStoreServiceTest {
     @Test
     public final void testDeleteFile() throws IOException {
         final File newFile = Files.createTempFile(tempFilePath, "xyz", "txt").toFile();
-        FileUtils.write(newFile, "Test");
+        FileUtils.write(newFile, "Test", UTF_8);
         FileStoreMapper fileStoreMapper = diskFileService.store(newFile, "fileName", "text/plain", "testmodule");
         diskFileService.delete(fileStoreMapper.getFileStoreId(), "testmodule");
         Files.deleteIfExists(newFile.toPath());
