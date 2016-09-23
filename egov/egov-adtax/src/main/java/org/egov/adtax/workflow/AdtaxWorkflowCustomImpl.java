@@ -41,6 +41,7 @@
 package org.egov.adtax.workflow;
 
 import java.util.Date;
+import java.util.List;
 
 import org.egov.adtax.autonumber.AdvertisementPermitNumberGenerator;
 import org.egov.adtax.entity.AdvertisementPermitDetail;
@@ -111,8 +112,7 @@ public abstract class AdtaxWorkflowCustomImpl implements AdtaxWorkflowCustom {
         final User user = securityUtils.getCurrentUser();
         final DateTime currentDate = new DateTime();
         Position pos = null;
-        final Assignment wfInitiator = assignmentService
-                .getPrimaryAssignmentForUser(advertisementPermitDetail.getCreatedBy().getId());
+        final Assignment wfInitiator = getWorkFlowInitiator(advertisementPermitDetail);
         if (approvalPosition != null && approvalPosition > 0)
             pos = positionMasterService.getPositionById(approvalPosition);
         WorkFlowMatrix wfmatrix = null;
@@ -122,7 +122,7 @@ public abstract class AdtaxWorkflowCustomImpl implements AdtaxWorkflowCustom {
             advertisementPermitDetail.setStatus(getStatusByPassingModuleAndCode(wfmatrix));
             advertisementPermitDetail.transition().start()
                     .withSenderName(user.getUsername() + AdvertisementTaxConstants.COLON_CONCATE + user.getName())
-                    .withComments(approvalComent)
+                    .withComments(approvalComent).withInitiator(wfInitiator!=null ?wfInitiator.getPosition():null)
                     .withStateValue(wfmatrix.getNextState()).withDateInfo(new Date()).withOwner(pos)
                     .withNextAction(wfmatrix.getNextAction()).withNatureOfTask(AdvertisementTaxConstants.NATURE_OF_WORK);
 
@@ -160,9 +160,10 @@ public abstract class AdtaxWorkflowCustomImpl implements AdtaxWorkflowCustom {
                 ) {
             
             // In case of rejection of renewal record, do not change status of advertisement . We need to change previous record as active.
-            if (ApplicationThreadLocals.getUserId().equals(wfInitiator!=null && wfInitiator.getEmployee()!=null ?wfInitiator.getEmployee().getId():0 )) {
-                advertisementPermitDetail.setStatus(egwStatusHibernateDAO
-                        .getStatusByModuleAndCode(AdvertisementTaxConstants.APPLICATION_MODULE_TYPE,
+          //  if (ApplicationThreadLocals.getUserId().equals(wfInitiator!=null && wfInitiator.getEmployee()!=null ?wfInitiator.getEmployee().getId():0 )) {
+          if( validateUserHasSamePositionAsInitiator(ApplicationThreadLocals.getUserId(),(wfInitiator!=null?wfInitiator.getPosition():null))) {
+                    
+                advertisementPermitDetail.setStatus(egwStatusHibernateDAO.getStatusByModuleAndCode(AdvertisementTaxConstants.APPLICATION_MODULE_TYPE,
                                 AdvertisementTaxConstants.APPLICATION_STATUS_CANCELLED));
                 advertisementPermitDetail.transition(true).end()
                         .withSenderName(user.getUsername() + AdvertisementTaxConstants.COLON_CONCATE + user.getName())
@@ -244,6 +245,53 @@ public abstract class AdtaxWorkflowCustomImpl implements AdtaxWorkflowCustom {
         }
         if (LOG.isDebugEnabled())
             LOG.debug(" WorkFlow Transition Completed ");
+    }
+
+    private Assignment getWorkFlowInitiator(final AdvertisementPermitDetail advertisementPermitDetail ) {
+
+        if (advertisementPermitDetail != null) {
+            if (advertisementPermitDetail.getState() != null  && advertisementPermitDetail.getState().getInitiatorPosition() != null)
+                return getUserAssignmentByPassingPositionAndUser(advertisementPermitDetail
+                        .getCreatedBy(),advertisementPermitDetail.getState().getInitiatorPosition());
+            else {
+                Assignment wfInitiator = assignmentService.getPrimaryAssignmentForUser(advertisementPermitDetail
+                        .getCreatedBy().getId());
+              return wfInitiator;
+            }
+        }
+        return null;
+    }
+    
+    private Assignment getUserAssignmentByPassingPositionAndUser(final User user, Position position) {
+
+        Assignment wfInitiatorAssignment = null;
+
+        if (user != null && position != null) {
+            List<Assignment> assignmentList = assignmentService.findByEmployeeAndGivenDate(user.getId(), new Date());
+            for (final Assignment assignment : assignmentList) {
+                if (position.getId() == assignment.getPosition().getId()) {
+                    wfInitiatorAssignment = assignment;
+                }
+            }
+        }
+
+        return wfInitiatorAssignment;
+    }
+
+    private Boolean validateUserHasSamePositionAsInitiator(final Long userId, Position position) {
+
+        Boolean userHasSamePosition = false;
+
+        if (userId != null && position != null) {
+            List<Assignment> assignmentList = assignmentService.findByEmployeeAndGivenDate(userId, new Date());
+            for (final Assignment assignment : assignmentList) {
+                if (position.getId() == assignment.getPosition().getId()) {
+                    userHasSamePosition = true;
+                }
+            }
+        }
+
+        return userHasSamePosition;
     }
 
     private EgwStatus getStatusByPassingModuleAndCode(WorkFlowMatrix wfmatrix) {

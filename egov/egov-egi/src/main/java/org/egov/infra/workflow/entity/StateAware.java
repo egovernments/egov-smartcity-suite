@@ -198,6 +198,11 @@ public abstract class StateAware extends AbstractAuditable {
         state.setOwnerPosition(owner);
         return this;
     }
+    
+    public final StateAware withInitiator(final Position owner) {
+        state.setInitiatorPosition(owner);
+        return this;
+    }
 
     public final StateAware withStateValue(final String currentStateValue) {
         state.setValue(currentStateValue);
@@ -250,6 +255,7 @@ public abstract class StateAware extends AbstractAuditable {
         state.setNatureOfTask(EMPTY);
         state.setOwnerUser(null);
         state.setOwnerPosition(null);
+        state.setInitiatorPosition(null);
     }
 
     public static Comparator<? super StateAware> byCreatedDate() {
