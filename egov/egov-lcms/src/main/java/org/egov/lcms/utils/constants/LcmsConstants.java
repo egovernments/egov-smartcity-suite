@@ -52,6 +52,7 @@ public class LcmsConstants {
     public static final String LC_NUMBER_TYPE_KEY = "LC_NUMBER_TYPE";
     public static final String LC_NUMBER_OPTIONAL_TYPE = "MANUAL";
     public static final String LC_NUMBER_AUTOMATED_TYPE = "AUTOMATED";
+    public static final String APPENDSEPERATE= ",\n";
     public static final String TARGET_VIEW = "view";
     public static final String TARGET_SUCCESS = "success";
     public static final String CONTEMPT_STATUS = "Contempt";

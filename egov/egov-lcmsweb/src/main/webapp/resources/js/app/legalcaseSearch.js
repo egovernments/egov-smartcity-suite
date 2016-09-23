@@ -71,21 +71,8 @@ function submitForm() {
 	reportdatatable = tableContainer
 			.dataTable({
 				ajax : {
-					url : "/lcms/search/legalsearchResult",
-					data : {
-						'caseNumber' : caseNumber,
-						'lcNumber' : lcNumber,
-						'court' : $("#courtName").val(),
-						'caseType' : $("#caseCatogory").val(),
-						'standingCouncil' : $("#standingCouncil").val(),
-						'courtType' : $("#courtType").val(),
-						'isStatusExcluded' : isCancelled,
-						'caseFromDate' : $("#caseFromDate").val(),
-						'caseToDate' : $("#caseToDate").val(),
-						'caseStatus' : $("#statusId").val(),
-						'petionType' : $("#petitionTypeId").val()
-
-					}
+					url : "/lcms/search/legalsearchResult?"+$('#searchlegalcaseForm').serialize(),
+					
 				},
 				"sPaginationType" : "bootstrap",
 				"autoWidth" : false,

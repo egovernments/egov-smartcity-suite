@@ -74,6 +74,7 @@ import org.egov.lcms.masters.entity.CaseTypeMaster;
 import org.egov.lcms.masters.entity.CourtMaster;
 import org.egov.lcms.masters.entity.PetitionTypeMaster;
 import org.egov.lcms.masters.entity.enums.LCNumberType;
+import org.egov.lcms.utils.constants.LcmsConstants;
 import org.egov.pims.commons.Position;
 import org.egov.search.domain.Searchable;
 import org.hibernate.validator.constraints.Length;
@@ -408,7 +409,7 @@ public class LegalCase extends AbstractAuditable {
                 if (tempStr.length() == 0)
                     tempStr.append(temp.getName());
                 else
-                    tempStr.append(",\n" + temp.getName());
+                    tempStr.append(LcmsConstants.APPENDSEPERATE ).append(temp.getName());
         return tempStr.toString();
     }
 
@@ -419,7 +420,7 @@ public class LegalCase extends AbstractAuditable {
                 if (tempStr.length() == 0)
                     tempStr.append(temp.getName());
                 else
-                    tempStr.append(",\n" + temp.getName());
+                    tempStr.append(LcmsConstants.APPENDSEPERATE ).append(temp.getName());
         return tempStr.toString();
     }
 
