@@ -46,7 +46,7 @@
 <div class="row" id="page-content">
 	<div class="col-md-12">
 		<form:form class="form-horizontal form-groups-bordered"
-			id="genericSubregisterform" modelAttribute="genericSubReportResult"
+			id="genericSubregisterform" name="genericSubregisterform" modelAttribute="genericSubReportResult"
 			method="get">
 			<div class="panel panel-primary" data-collapsed="0">
 				<div class="panel-heading">

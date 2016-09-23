@@ -69,21 +69,7 @@ function submitForm() {
 					},
 					ajax : {
 
-						url : "/lcms/reports/genericSubResult",
-						data : {
-							'aggregatedBy' : $("#aggregatedBy").val(),
-							'caseCategory' : $("#caseCategory").val(),
-							'standingCounsel' : $("#standingCounsel").val(),
-							'courtType' : $("#courtType").val(),
-							'courtName' : $("#courtName").val(),
-							'judgmentType' : $("#judgmentType").val(),
-							'petitionType' : $("#petitiontype").val(),
-							'caseStatus' : $("#casestatus").val(),
-							'officerIncharge' : $("#officerIncharge").val(),
-							'fromDate' : $("#fromDate").val(),
-							'toDate' : $("#toDate").val()
-
-						}
+						url : "/lcms/reports/genericSubResult?"+$('#genericSubregisterform').serialize(),
 					},
 					"columns" : [ {
 						"title" : "S. No",
