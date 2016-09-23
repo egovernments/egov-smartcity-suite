@@ -73,6 +73,7 @@ public class HearingsController {
             @RequestParam("lcNumber") final String lcNumber, final HttpServletRequest request) {
         final LegalCase legalCase = getLegalCase(lcNumber, request);
         model.addAttribute("legalCase", legalCase);
+        model.addAttribute("positionTemplList", hearings.getPositionTemplList());
         model.addAttribute("hearings", hearings);
         model.addAttribute("mode", "create");
         return "hearings-new";
@@ -110,6 +111,7 @@ public class HearingsController {
         model.addAttribute("legalCase", legalCase);
         model.addAttribute("lcNumber", legalCase.getLcNumber());
         model.addAttribute("hearingsId", legalCase.getHearings());
+        model.addAttribute("positionTemplList", hearings.getPositionTemplList());
         model.addAttribute("hearings", hearings);
         model.addAttribute("hearingsList", hearingsList);
         return "hearings-list";

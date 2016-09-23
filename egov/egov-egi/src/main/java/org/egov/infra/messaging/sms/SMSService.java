@@ -56,9 +56,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
-import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
+
+import static java.nio.charset.StandardCharsets.UTF_8;
 
 @Service
 public class SMSService {
@@ -96,9 +97,9 @@ public class SMSService {
                             urlParameters.add(new BasicNameValuePair(paramNameValue[0], paramNameValue[1]));
                         }
                 }
-                post.setEntity(new UrlEncodedFormEntity(urlParameters, StandardCharsets.UTF_8));
+                post.setEntity(new UrlEncodedFormEntity(urlParameters, UTF_8));
                 final HttpResponse response = client.execute(post);
-                final String responseCode = IOUtils.toString(response.getEntity().getContent());
+                final String responseCode = IOUtils.toString(response.getEntity().getContent(), UTF_8);
                 LOGGER.info("SMS sending completed with response code [{}] - [{}]", responseCode,
                         applicationProperties.smsResponseMessageForCode(responseCode));
                 return applicationProperties.smsErrorCodes().parallelStream()

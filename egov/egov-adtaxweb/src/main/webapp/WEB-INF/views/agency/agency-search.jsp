@@ -42,6 +42,7 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ taglib uri="http://www.springframework.org/tags" prefix="spring" %>
 <%@ taglib uri="http://www.springframework.org/tags/form" prefix="form" %>
+<%@ taglib uri="/WEB-INF/taglib/cdn.tld" prefix="cdn" %>
 
 <div class="row" id="page-content">
     <div class="col-md-12">
@@ -75,7 +76,7 @@
         </form:form>
     </div>
 </div>
-<script src="<c:url value='/resources/app/js/agency.js'/>"></script>
+<script src="<cdn:url value='/resources/app/js/agency.js?rnd=${app_release_no}'/>"></script>
 <script>
 $(function() {
     $('#agencies').change(function() {

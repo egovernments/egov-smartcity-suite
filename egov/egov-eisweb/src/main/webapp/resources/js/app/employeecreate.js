@@ -175,6 +175,38 @@ $(document).ready(function(){
 		}
 	}
 	
+	function validatePrimaryPosition(index)
+	{
+
+		positionId = $("#positionId").val();
+		assignmentId = $("#editassignIds").val();
+		$.ajax({
+			url: '/eis/employee/ajax/primaryPosition',
+			type: "GET",
+			data: {
+				positionId : $("#positionId").val(),
+				assignmentId : $("#editassignIds").val()   
+			},
+			dataType : 'json',
+			success: function (response) {
+				if(response == true){
+					$("#primary_yes").prop("checked",false);
+					$("#primary_no").prop("checked",true);
+					addRow(index);		
+					edit=false;
+				}
+				else{
+					addRow(index);		
+					edit=false;
+				}
+				resetAssignmentValues();
+
+			},error: function (response) {
+				console.log("failed");
+			}
+		});
+	}
+	
 	//Position auto-complete
 	
 	var positions = new Bloodhound(
@@ -228,6 +260,8 @@ $(document).ready(function(){
 	var editedRowIndex="";
 	
 	$("#btn-add").click(function() {
+		var primary = $("#primary_yes").prop("checked");
+
 		if(validateAssignment() && validateDateRange()) {
 			if(!edit){
 				rowCount = $("#assignmentTable tr").length;
@@ -236,8 +270,14 @@ $(document).ready(function(){
 			}
 			else{
 				deleteRow.remove();
-				addRow(editedRowIndex);		
-				edit=false;
+				if(primary==true ){
+					validatePrimaryPosition(editedRowIndex);
+				}
+				else{
+					addRow(editedRowIndex);		
+					edit=false;
+				}
+
 			}
 			resetAssignmentValues();
 		}	
@@ -343,7 +383,13 @@ $(document).ready(function(){
 		$(this).closest('tr').remove();
 	});
 	
+	
 	$(document).on('click',"#edit_row",function (){
+		
+		if($("#table_assignid"+$(this).attr("value")+"").val()!=undefined){
+		 $("#editassignIds").val($("#table_assignid"+$(this).attr("value")+"").val());
+		}
+		
 		edit = true;
 		deleteRow = $(this).closest('tr');
 		editedRowIndex =$(this).attr("value");

@@ -95,6 +95,29 @@
 						<div class="col-sm-3 add-margin view-content">
 							${hearings.isStandingCounselPresent}</div>
 					   </div>
+					<c:choose>
+						<c:when test="${not empty hearings.employeeHearingList}">
+							<table class="table table-striped table-bordered"
+								id="employeeDetails">
+								<thead>
+									<tr>
+										<th class="text-center">Position-Employee</th>
+									</tr>
+								</thead>
+								<tbody>
+									<c:forEach items="${hearings.employeeHearingList}"
+										var="employeeHearingList" varStatus="counter">
+										<tr>
+											<td class="text-left"><c:out
+													value="${employeeHearingList.employee.name}"></c:out>-
+													<c:out
+													value="${employeeHearingList.employee.username}"></c:out></td>
+										</tr>
+									</c:forEach>
+								</tbody>
+							</table>
+						</c:when>
+					</c:choose>
 				</div>
 			</div>
 		</div>

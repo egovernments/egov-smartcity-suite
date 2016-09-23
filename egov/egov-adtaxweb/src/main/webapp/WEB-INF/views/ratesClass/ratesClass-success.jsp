@@ -86,5 +86,3 @@
 		</form:form>
 	</div>
 </div>
-<%-- <script src="<c:url value='/resources/app/js/agency.js'/>"></script>
- --%>
