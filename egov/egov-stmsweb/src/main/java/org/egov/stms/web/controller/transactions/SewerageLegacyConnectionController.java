@@ -48,7 +48,6 @@ import javax.validation.Valid;
 
 import org.egov.eis.service.AssignmentService;
 import org.egov.eis.web.controller.workflow.GenericWorkFlowController;
-import org.egov.infra.admin.master.service.AppConfigValueService;
 import org.egov.infra.filestore.service.FileStoreService;
 import org.egov.infra.security.utils.SecurityUtils;
 import org.egov.ptis.domain.model.AssessmentDetails;
@@ -62,13 +61,11 @@ import org.egov.stms.masters.entity.enums.SewerageConnectionStatus;
 import org.egov.stms.masters.service.DocumentTypeMasterService;
 import org.egov.stms.masters.service.FeesDetailMasterService;
 import org.egov.stms.masters.service.SewerageApplicationTypeService;
-import org.egov.stms.transactions.charges.SewerageChargeCalculationService;
 import org.egov.stms.transactions.entity.SewerageApplicationDetails;
 import org.egov.stms.transactions.entity.SewerageApplicationDetailsDocument;
 import org.egov.stms.transactions.entity.SewerageConnection;
 import org.egov.stms.transactions.entity.SewerageConnectionFee;
 import org.egov.stms.transactions.service.SewerageApplicationDetailsService;
-import org.egov.stms.transactions.service.SewerageConnectionFeeService;
 import org.egov.stms.transactions.service.SewerageConnectionService;
 import org.egov.stms.transactions.service.SewerageThirdPartyServices;
 import org.egov.stms.utils.SewerageTaxUtils;
@@ -113,8 +110,6 @@ public class SewerageLegacyConnectionController extends GenericWorkFlowControlle
     protected AssignmentService assignmentService;
 
     @Autowired
-    private AppConfigValueService appConfigValuesService;
-    @Autowired
     private PropertyExternalService propertyExternalService;
 
     @Autowired
@@ -130,12 +125,7 @@ public class SewerageLegacyConnectionController extends GenericWorkFlowControlle
     @Autowired
     private DocumentTypeMasterService documentTypeMasterService;
     
-    @Autowired
-    private SewerageConnectionFeeService SewerageConnectionFeeService;
-    
-    @Autowired
-    private SewerageChargeCalculationService sewerageChargeCalculationService;
-    
+       
     @Autowired
     public SewerageLegacyConnectionController(final SewerageTaxUtils sewerageTaxUtils,
             final SewerageApplicationDetailsService sewerageApplicationDetailsService) {
@@ -219,7 +209,8 @@ public class SewerageLegacyConnectionController extends GenericWorkFlowControlle
                 i++;
             }
         validateSHSCNumberLength(sewerageApplicationDetails,resultBinder);
-        if (LOG.isDebugEnabled())
+        validateNumberOfClosets(sewerageApplicationDetails,resultBinder);
+          if (LOG.isDebugEnabled())
             LOG.error("Model Level Validation occurs = " + resultBinder);
 
         if (resultBinder.hasErrors()) {
@@ -296,5 +287,15 @@ public class SewerageLegacyConnectionController extends GenericWorkFlowControlle
             errors.reject("err.shscnumber.length.validate");
         }
     }
-
+    
+    private void validateNumberOfClosets(final SewerageApplicationDetails sewerageApplicationDetails,
+            final BindingResult errors) {
+        if ((sewerageApplicationDetails.getConnectionDetail().getNoOfClosetsResidential() != null
+                && sewerageApplicationDetails.getConnectionDetail().getNoOfClosetsResidential() == 0)
+                || (sewerageApplicationDetails.getConnectionDetail().getNoOfClosetsNonResidential() != null
+                        && sewerageApplicationDetails.getConnectionDetail().getNoOfClosetsNonResidential() == 0)) {
+            errors.reject("err.numberofclosets.reject.0");
+        }
+    }
+    
 }

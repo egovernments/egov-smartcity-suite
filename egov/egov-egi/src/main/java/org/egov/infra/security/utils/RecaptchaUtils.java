@@ -56,6 +56,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import javax.servlet.http.HttpServletRequest;
+import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -79,7 +80,7 @@ public class RecaptchaUtils {
                 urlParameters.add(new BasicNameValuePair("response", request.getParameter("g-recaptcha-response")));
                 urlParameters.add(new BasicNameValuePair("remoteip", request.getRemoteAddr()));
                 post.setEntity(new UrlEncodedFormEntity(urlParameters));
-                final String responseJson = IOUtils.toString(HttpClientBuilder.create().build().execute(post).getEntity().getContent());
+                final String responseJson = IOUtils.toString(HttpClientBuilder.create().build().execute(post).getEntity().getContent(), Charset.defaultCharset());
                 return Boolean.valueOf(new GsonBuilder().create().fromJson(responseJson, HashMap.class).get("success").toString());
             } else {
                 String remoteAddr = request.getRemoteAddr();

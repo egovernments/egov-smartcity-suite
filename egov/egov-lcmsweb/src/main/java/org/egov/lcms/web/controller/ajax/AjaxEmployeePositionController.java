@@ -54,22 +54,23 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
+
 @Controller
 public class AjaxEmployeePositionController {
-	 @Autowired
-	    private AssignmentService assignmentService;
+
+    @Autowired
+    private AssignmentService assignmentService;
 
     @RequestMapping(value = "/ajax/getpositionEmployee", method = GET, produces = MediaType.APPLICATION_JSON_VALUE)
-    public @ResponseBody  Map<Long,String> getPositionForDeptAndDesig(
-            @ModelAttribute("employeeBean") 
-             @RequestParam final String positionName) {
-    	Map<Long,String> positionEmployeeMap = new HashMap<Long,String>();
+    public @ResponseBody Map<Long, String> getPositionForDeptAndDesig(
+            @ModelAttribute("employeeBean") @RequestParam final String positionName) {
+        final Map<Long, String> positionEmployeeMap = new HashMap<Long, String>();
         String posEmpName;
-        List<Assignment>assignmentList=assignmentService.getAllAssignmentsByPositionNameForGivenRange(positionName);
-        for(Assignment assign:assignmentList)
-        {
-        	posEmpName=assign.getPosition().getName().concat("-").concat(assign.getEmployee().getUsername());
-        	positionEmployeeMap.put( assign.getEmployee().getId(),posEmpName);
+        final List<Assignment> assignmentList = assignmentService
+                .getAllAssignmentsByPositionNameForGivenRange(positionName);
+        for (final Assignment assign : assignmentList) {
+            posEmpName = assign.getPosition().getName().concat("@").concat(assign.getEmployee().getUsername());
+            positionEmployeeMap.put(assign.getEmployee().getId(), posEmpName);
         }
         return positionEmployeeMap;
     }

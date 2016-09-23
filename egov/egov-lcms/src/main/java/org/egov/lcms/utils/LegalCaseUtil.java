@@ -118,7 +118,7 @@ public class LegalCaseUtil {
     }
     @Transactional(propagation = Propagation.REQUIRES_NEW, readOnly = true)
     public Employee getEmployeeByUserName(final String userName) {
-       Employee employee= employeeService.getEmployeeByUserName(userName);
+      final Employee employee = employeeService.getEmployeeByUserName(userName);
        return employee;
 
     }

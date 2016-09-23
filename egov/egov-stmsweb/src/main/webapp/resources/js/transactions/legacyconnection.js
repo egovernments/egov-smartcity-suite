@@ -93,6 +93,10 @@ $(document).ready(function(){
 	
 	function validateSewerageConnectionNumber(){
 		shscNumber=$('#shscNumber').val()
+		if(shscNumber != '' && shscNumber.length!=10){
+			bootbox.alert("Please enter 10 digit SHSC number");
+			return false;
+		}
 		if(shscNumber != '') {
 			$.ajax({
 				url: "/stms/ajaxconnection/check-shscnumber-exists",      
@@ -166,40 +170,61 @@ function loadPropertyDetails() {
 			type: "GET",
 			dataType: "json",
 			success: function (response) { 
+				/*if(response.ownerNames==null && response.boundaryDetails==null && response.propertyAddress==null){
+					bootbox.alert("Property does not exist with property id : "+propertyID);
+					return false;
+				}*/
+				if(response.boundaryDetails==null || response.boundaryDetails==''){
+					bootbox.alert("Property does not exist with property id : "+propertyID);
+					return false;
+				}
+					
 				var waterTaxDue = getWaterTaxDue(propertyID);
 						$('#propertyIdentifierError').html('');
 						applicantName = '';
-						for(i=0; i<response.ownerNames.length; i++) {
-							if(applicantName == '')
-								applicantName = response.ownerNames[i].ownerName;
-							else 							
-								applicantName = applicantName+ ', '+response.ownerNames[i].ownerName;
-						}
+							if(response.ownerNames!=null) {
+							for(i=0; i<response.ownerNames.length; i++) {
+								if(applicantName == '')
+									applicantName = response.ownerNames[i].ownerName;
+								else 							
+									applicantName = applicantName+ ', '+response.ownerNames[i].ownerName;
+								}
+							if(response.ownerNames[0].mobileNumber != '')
+								$("#mobileNumber").val(response.ownerNames[0].mobileNumber);
+							if(response.ownerNames[0].emailId != '')
+								$("#email").val(response.ownerNames[0].emailId);
+							$("#aadhaar").val(response.ownerNames[0].aadhaarNumber);
+
+							}
 						$("#applicantname").val(applicantName);
+						if(response.propertyDetails != null && response.propertyDetails.noOfFloors!=null)
 						$("#nooffloors").val(response.propertyDetails.noOfFloors);
-						if(response.ownerNames[0].mobileNumber != '')
-							$("#mobileNumber").val(response.ownerNames[0].mobileNumber);
-						if(response.ownerNames[0].emailId != '')
-							$("#email").val(response.ownerNames[0].emailId);
-						$("#propertyaddress").val(response.propertyAddress);
+						if(response.propertyAddress!=null)
+							$("#propertyaddress").val(response.propertyAddress);
+						else
+							$("#propertyaddress").val('');
+						
 						boundaryData = '';
-						if(response.boundaryDetails.zoneName != null && response.boundaryDetails.zoneName != '')
-							boundaryData = response.boundaryDetails.zoneName;
-						if(response.boundaryDetails.wardName != null && response.boundaryDetails.wardName != '') {
-							if(boundaryData == '')
-								boundaryData = response.boundaryDetails.wardName;
-							else
-								boundaryData = boundaryData + " / " + response.boundaryDetails.wardName;
+						if(response.boundaryDetails!=null){
+							if(response.boundaryDetails.zoneName != null && response.boundaryDetails.zoneName != '')
+								boundaryData = response.boundaryDetails.zoneName;
+							if(response.boundaryDetails.wardName != null && response.boundaryDetails.wardName != '') {
+								if(boundaryData == '')
+									boundaryData = response.boundaryDetails.wardName;
+								else
+									boundaryData = boundaryData + " / " + response.boundaryDetails.wardName;
+							}
+							if(response.boundaryDetails.blockName != null && response.boundaryDetails.blockName != '') {
+								if(boundaryData == '')
+									boundaryData = response.boundaryDetails.blockName;
+								else
+									boundaryData = boundaryData + " / " +response.boundaryDetails.blockName; 
+							}
+							$("#locality").val(response.boundaryDetails.localityName);
+
 						}
-						if(response.boundaryDetails.blockName != null && response.boundaryDetails.blockName != '') {
-							if(boundaryData == '')
-								boundaryData = response.boundaryDetails.blockName;
-							else
-								boundaryData = boundaryData + " / " +response.boundaryDetails.blockName; 
-						}
-						$("#aadhaar").val(response.ownerNames[0].aadhaarNumber);
-						$("#locality").val(response.boundaryDetails.localityName);
 						$("#zonewardblock").val(boundaryData);
+						if(response.propertyDetails != null && response.propertyDetails.currentTax!=null)
 						$("#propertytax").val(response.propertyDetails.currentTax);
 						if(waterTaxDue['PROPERTYID']!="")
 							$('#watercharges').val(waterTaxDue['CURRENTWATERCHARGE']);
@@ -301,7 +326,19 @@ function validateDemandDetailsOnSubmit(){
     return true;
 }
 
-$('.propertyTypeValidate').blur(function(){
+function loadDonationAmount(){
+	var propertytype = document.getElementById('propertyType').value;
+	var noofclosetsnonresidential = document.getElementById('noOfClosetsNonResidential').value;
+	var noofclosetsresidential = document.getElementById('noOfClosetsResidential').value;
+	if(propertytype=="MIXED" && noofclosetsresidential=="" || propertytype=="MIXED" && noofclosetsnonresidential==""){
+		return false;
+	}
+	else{
+		fetchdonationamount();
+	}
+}
+
+function fetchdonationamount(){
 	var noofclosetsresidential=0;
 	var noofclosetsnonresidential=0;
 	var propertytype = document.getElementById('propertyType').value;
@@ -314,7 +351,7 @@ $('.propertyTypeValidate').blur(function(){
 		noofclosetsnonresidential = document.getElementById('noOfClosetsNonResidential').value;
 	}
 	
-	if(propertytype != '') {
+	if(propertytype != '' ) {
 		$.ajax({
 			url: "/stms/ajaxconnection/getlegacy-donation-amount",      
 			type: "GET",
@@ -325,6 +362,7 @@ $('.propertyTypeValidate').blur(function(){
 			},
 			dataType: "json",
 			success: function (response) { 
+				if(jQuery.isNumeric(response)){
 				var inspectionDtlTable = document.getElementById('inspectionChargesDetails');
 				var rowCount = inspectionDtlTable.rows.length;
 				var i;
@@ -333,18 +371,24 @@ $('.propertyTypeValidate').blur(function(){
 				if(feeName.trim()==="Donation Charge"){
 					var j=i-1;
 					var donation = document.getElementById('feesDetail'+j+'amount').value;
-					$('#feesDetail'+j+'amount').attr('value', response);
+					$('#feesDetail'+j+'amount').attr('value', parseFloat(response));
 				}
+				}
+				return true;
+				}
+				else{
+					bootbox.alert(response);
+					return false;
 				}
 			}, 
 			error: function (response) {
 				bootbox.alert("connection validation failed");
+				return false;
 			}
 		});
 	}		
 	
-});
-
+}
 
 function addDemandDetailRow(instlmntDesc,reasondsc,demandamount,collectionamount,instlmntId,dmndReasonId) {
     var table = document.getElementById('legacyDemandDetails');

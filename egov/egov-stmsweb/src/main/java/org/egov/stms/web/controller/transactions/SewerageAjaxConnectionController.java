@@ -197,26 +197,35 @@ public class SewerageAjaxConnectionController {
     }
 
     @RequestMapping(value="/ajaxconnection/getlegacy-donation-amount", method=RequestMethod.GET, produces=MediaType.APPLICATION_JSON_VALUE)
-    public @ResponseBody BigDecimal getLegacyDonationAmount(@RequestParam("propertytype") PropertyType propertyType, @RequestParam("noofclosetsresidential") Integer noofclosetsresidential, 
+    public @ResponseBody String getLegacyDonationAmount(@RequestParam("propertytype") PropertyType propertyType, @RequestParam("noofclosetsresidential") Integer noofclosetsresidential, 
             @RequestParam("noofclosetsnonresidential") Integer noofclosetsnonresidential){
         
         
         BigDecimal legacyDonationAmount=BigDecimal.ZERO;
         BigDecimal residentialAmount=BigDecimal.ZERO;
         BigDecimal nonResidentialAmount=BigDecimal.ZERO;
-        if(noofclosetsresidential!=0){
-            residentialAmount = donationMasterService.getDonationAmountByNoOfClosetsAndPropertytypeForCurrentDate(noofclosetsresidential, propertyType);
-        }
+          if(noofclosetsresidential!=0){
+            residentialAmount = donationMasterService.getDonationAmountByNoOfClosetsAndPropertytypeForCurrentDate(noofclosetsresidential, PropertyType.RESIDENTIAL);
+                 }
         if(noofclosetsnonresidential!=0){
-            nonResidentialAmount = donationMasterService.getDonationAmountByNoOfClosetsAndPropertytypeForCurrentDate(noofclosetsnonresidential, propertyType);
-
-        }
+            nonResidentialAmount = donationMasterService.getDonationAmountByNoOfClosetsAndPropertytypeForCurrentDate(noofclosetsnonresidential, PropertyType.NON_RESIDENTIAL);
+          }
         if(propertyType.equals(PropertyType.MIXED) && residentialAmount!=null && nonResidentialAmount!=null)
             legacyDonationAmount=residentialAmount.add(nonResidentialAmount);
         else if(propertyType.equals(PropertyType.RESIDENTIAL) && residentialAmount!=null)
             legacyDonationAmount=residentialAmount;
-        else if(nonResidentialAmount!=null)
+        else if(propertyType.equals(PropertyType.NON_RESIDENTIAL) && nonResidentialAmount!=null)
             legacyDonationAmount=nonResidentialAmount;
-        return legacyDonationAmount;
+        else{
+            if(residentialAmount==null && nonResidentialAmount==null)
+            {
+                return messageSource.getMessage("err.validate.donationamount.notexistForBothcombination", new String[]{propertyType.toString()},null);
+             }
+            else if(residentialAmount==null)
+                return messageSource.getMessage("err.validate.donationamount.notexist", new String[] {PropertyType.RESIDENTIAL.toString(), noofclosetsresidential.toString()},null);
+            else if(nonResidentialAmount==null)
+                return messageSource.getMessage("err.validate.donationamount.notexist", new String[] {PropertyType.NON_RESIDENTIAL.toString(), noofclosetsnonresidential.toString()},null);
+        }
+        return legacyDonationAmount.toString();
     }
 }

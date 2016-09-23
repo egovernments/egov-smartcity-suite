@@ -509,7 +509,7 @@ public class RemittanceServiceImpl extends RemittanceService {
                 + CollectionConstants.MODULE_NAME_RECEIPTHEADER + "' and code='"
                 + CollectionConstants.RECEIPT_STATUS_CODE_APPROVED + "') " + " AND ch.source='" + Source.SYSTEM + "' ";
         if (startDate != null && endDate != null)
-            whereClause = whereClause + " AND ch.receiptdate between '" + startDate + "' and '" + endDate + "' ";
+            whereClause = whereClause + " AND date(ch.receiptdate) between '" + startDate + "' and '" + endDate + "' ";
 
         final String groupByClause = " group by date(ch.RECEIPTDATE),sd.NAME,it.TYPE,fnd.name,dpt.name,fnd.code,dpt.code";
         final String orderBy = " order by RECEIPTDATE";

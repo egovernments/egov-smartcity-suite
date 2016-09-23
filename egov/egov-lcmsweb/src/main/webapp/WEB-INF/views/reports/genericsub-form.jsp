@@ -46,7 +46,7 @@
 <div class="row" id="page-content">
 	<div class="col-md-12">
 		<form:form class="form-horizontal form-groups-bordered"
-			id="genericSubregisterform" modelAttribute="genericSubReportResult"
+			id="genericSubregisterform" name="genericSubregisterform" modelAttribute="genericSubReportResult"
 			method="get">
 			<div class="panel panel-primary" data-collapsed="0">
 				<div class="panel-heading">
@@ -58,8 +58,8 @@
 								code="lbl.aggregatedby" /> :</span></label>
 						<div class="col-sm-3 add-margin">
 							<div class="col-sm-12 add-margin">
-								<form:select id="aggregatedBy" name="aggregatedBy" path=""
-									cssClass="form-control" cssErrorClass="form-control error">
+								<form:select id="aggregatedBy" name="aggregatedBy" path="aggregatedBy"
+									cssClass="form-control" cssErrorClass="form-control error" required="required">
 									<form:option value="">
 										<spring:message code="lbl.select" />
 									</form:option>
@@ -79,7 +79,7 @@
 						<label class="col-sm-2 control-label"><spring:message
 								code="lbl.casecatagory" /> :</label>
 						<div class="col-sm-3 add-margin">
-							<form:select name="caseCategory" path=""
+							<form:select name="caseCategory" path="caseCategory"
 								data-first-option="false" id="caseCategory"
 								cssClass="form-control">
 								<form:option value="">
@@ -90,7 +90,7 @@
 							</form:select>
 						</div>
 						<label class="col-sm-2 control-label text-right"><spring:message
-								code="lbl.standingcounsel" /> :</label>
+								code="lbl.standingcons" /> :</label>
 						<div class="col-sm-3 add-margin">
 							<form:input class="form-control" maxlength="50"
 								id="standingCounsel" path="standingCounsel" />
@@ -104,7 +104,7 @@
 						<label class="col-sm-2 control-label"><spring:message
 								code="lbl.courttype" /> :</label>
 						<div class="col-sm-3 add-margin">
-							<form:select name="courtType" path="" data-first-option="false"
+							<form:select name="courtType" path="courtType" data-first-option="false"
 								id="courtType" cssClass="form-control">
 								<form:option value="">
 									<spring:message code="lbls.select" />
@@ -116,7 +116,7 @@
 						<label class="col-sm-2 control-label text-right"><spring:message
 								code="lbl.courttype" /> :</label>
 						<div class="col-sm-3 add-margin">
-							<form:select name="courtName" path="" data-first-option="false"
+							<form:select name="courtName" path="courtName" data-first-option="false"
 								id="courtName" cssClass="form-control">
 								<form:option value="">
 									<spring:message code="lbls.select" />
@@ -132,7 +132,7 @@
 						<label class="col-sm-2 control-label"><spring:message
 								code="lbl.judgmentype" /> :</label>
 						<div class="col-sm-3 add-margin">
-							<form:select name="judgmentType" path=""
+							<form:select name="judgmentType" path="judgmentType"
 								data-first-option="false" id="judgmentType"
 								cssClass="form-control">
 								<form:option value="">
@@ -145,7 +145,7 @@
 						<label class="col-sm-2 control-label text-right"><spring:message
 								code="lbl.petitiontype" /> :</label>
 						<div class="col-sm-3 add-margin">
-							<form:select name="petitionType" path=""
+							<form:select name="petitionType" path="petitionType"
 								data-first-option="false" id="petitiontype"
 								cssClass="form-control">
 								<form:option value="">
@@ -160,7 +160,7 @@
 						<label class="col-sm-2 control-label text-right"><spring:message
 								code="lbl.casestatus" /> :</label>
 						<div class="col-sm-3 add-margin">
-							<form:select name="casestatus" path="" data-first-option="false"
+							<form:select name="casestatus" path="caseStatus" data-first-option="false"
 								id="casestatus" cssClass="form-control">
 								<form:option value="">
 									<spring:message code="lbls.select" />
@@ -183,7 +183,7 @@
 								code="lbl.fromDate" /> :
 						</label>
 						<div class="col-sm-3 add-margin">
-							<input type="text" name="fromDate"
+							<input type="text" name="fromDate" path="fromDate"
 								class="form-control datepicker" data-date-end-date="0d"
 								id="fromDate" data-inputmask="'mask': 'd/m/y' onblur=" onchnageofDate()"/>
 						</div>
@@ -191,7 +191,7 @@
 								code="lbl.toDate" /> :
 						</label>
 						<div class="col-sm-3 add-margin">
-							<input type="text" name="toDate"
+							<input type="text" name="toDate" path="toDate"
 								class="form-control datepicker today" data-date-end-date="0d"
 								id="toDate" data-inputmask="'mask': 'd/m/y'" />
 						</div>
@@ -216,8 +216,7 @@
 <div id="reportgeneration-header"
 	class="col-md-12 table-header text-left">
 	<fmt:formatDate value="${currDate}" var="currDate" pattern="dd-MM-yyyy" />
-	<spring:message code="lbl.reportgeneration" />
-	:
+	<spring:message code="lbl.reportgeneration" /> :
 	<c:out value="${currDate}"></c:out>
 </div>
 <table class="table table-bordered table-hover multiheadertbl"

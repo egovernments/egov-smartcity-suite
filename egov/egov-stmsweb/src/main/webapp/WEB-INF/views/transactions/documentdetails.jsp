@@ -76,10 +76,10 @@
 	<div class="col-sm-3 add-margin text-center">
 		<c:choose>
 			<c:when test="${docs.documentTypeMaster.isMandatory}">
-				<form:input class="form-control patternvalidation" data-pattern="alphanumerichyphenbackslash" id="appDetailsDocument${status.index}documentNumber" path="appDetailsDocument[${status.index}].documentNumber" min="3" maxlength="50" required="required" isMandatory="isMandatory" />
+				<form:input class="form-control patternvalidation" data-pattern="alphanumerichyphenbackslash" id="appDetailsDocument${status.index}documentNumber" path="appDetailsDocument[${status.index}].documentNumber" maxlength="20" required="required" isMandatory="isMandatory" />
 			</c:when>
 			<c:otherwise>
-				<form:input class="form-control patternvalidation" data-pattern="alphanumerichyphenbackslash" id="appDetailsDocument${status.index}documentNumber" path="appDetailsDocument[${status.index}].documentNumber" min="3" maxlength="50" />
+				<form:input class="form-control patternvalidation" data-pattern="alphanumerichyphenbackslash" id="appDetailsDocument${status.index}documentNumber" path="appDetailsDocument[${status.index}].documentNumber" maxlength="20" />
 			</c:otherwise>		
 		</c:choose> 
 		<form:errors path="appDetailsDocument[${status.index}].documentNumber" cssClass="add-margin error-msg" />

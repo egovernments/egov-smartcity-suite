@@ -396,37 +396,38 @@ public class ConnectionDemandService {
         final EgDemand currDemand = waterTaxUtils.getCurrentDemand(waterConnectionDetails).getDemand();
         Installment installment = null;
         List<Object> dmdCollList = new ArrayList<Object>(0);
-        Installment currInst = null;
+        Installment currFirstHalf = null;
+        Installment currSecondHalf = null;
         Integer instId = null;
         BigDecimal currDmd = BigDecimal.ZERO;
         BigDecimal arrDmd = BigDecimal.ZERO;
         BigDecimal currCollection = BigDecimal.ZERO;
-        BigDecimal arrColelection = BigDecimal.ZERO;
+        BigDecimal arrCollection = BigDecimal.ZERO;
         final Map<String, BigDecimal> retMap = new HashMap<String, BigDecimal>(0);
-
         if (currDemand != null)
             dmdCollList = getDmdCollAmtInstallmentWise(currDemand);
-        currInst = installmentDao.getInsatllmentByModuleForGivenDateAndInstallmentType(
-                moduleService.getModuleByName(WaterTaxConstants.EGMODULE_NAME), new Date(), WaterTaxConstants.YEARLY);
-
+        currFirstHalf = propertyTaxUtil.getInstallmentsForCurrYear(new Date())
+                .get(PropertyTaxConstants.CURRENTYEAR_FIRST_HALF);
+        currSecondHalf = propertyTaxUtil.getInstallmentsForCurrYear(new Date())
+                .get(PropertyTaxConstants.CURRENTYEAR_SECOND_HALF);
         for (final Object object : dmdCollList) {
             final Object[] listObj = (Object[]) object;
             instId = Integer.valueOf(listObj[1].toString());
             installment = installmentDao.findById(instId, false);
-            if (currInst.equals(installment)) {
+            if (currFirstHalf.equals(installment) || currSecondHalf.equals(installment)) {
                 if (listObj[3] != null && new BigDecimal((Double) listObj[3]).compareTo(BigDecimal.ZERO) == 1)
                     currCollection = currCollection.add(new BigDecimal((Double) listObj[3]));
                 currDmd = currDmd.add(new BigDecimal((Double) listObj[2]));
             } else if (listObj[2] != null) {
                 arrDmd = arrDmd.add(new BigDecimal((Double) listObj[2]));
-                if (new BigDecimal((Double) listObj[2]).compareTo(BigDecimal.ZERO) == 1)
-                    arrColelection = arrColelection.add(new BigDecimal((Double) listObj[2]));
+                if (new BigDecimal((Double) listObj[3]).compareTo(BigDecimal.ZERO) == 1)
+                    arrCollection = arrCollection.add(new BigDecimal((Double) listObj[3]));
             }
         }
         retMap.put(WaterTaxConstants.CURR_DMD_STR, currDmd);
         retMap.put(WaterTaxConstants.ARR_DMD_STR, arrDmd);
         retMap.put(WaterTaxConstants.CURR_COLL_STR, currCollection);
-        retMap.put(WaterTaxConstants.ARR_COLL_STR, arrColelection);
+        retMap.put(WaterTaxConstants.ARR_COLL_STR, arrCollection);
         return retMap;
     }
 

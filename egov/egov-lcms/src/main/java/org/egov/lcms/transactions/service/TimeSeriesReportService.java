@@ -42,20 +42,21 @@ package org.egov.lcms.transactions.service;
 import java.util.List;
 
 import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
 
 import org.egov.lcms.reports.entity.TimeSeriesReportResult;
 import org.egov.lcms.utils.constants.LcmsConstants;
 import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.transform.AliasToBeanResultTransformer;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @Transactional(readOnly = true)
 public class TimeSeriesReportService {
-    @Autowired
+
+    @PersistenceContext
     private EntityManager entityManager;
 
     public Session getCurrentSession() {

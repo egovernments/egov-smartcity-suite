@@ -57,11 +57,6 @@ import org.hibernate.search.annotations.DocumentId;
 
 import com.google.gson.annotations.Expose;
 
-/**
- * Appeal entity.
- *
- * @author MyEclipse Persistence Tools
- */
 @Entity
 @Table(name = "eglc_employeehearing")
 @SequenceGenerator(name = EmployeeHearing.SEQ_EGLC_EMPHEARING, sequenceName = EmployeeHearing.SEQ_EGLC_EMPHEARING, allocationSize = 1)
