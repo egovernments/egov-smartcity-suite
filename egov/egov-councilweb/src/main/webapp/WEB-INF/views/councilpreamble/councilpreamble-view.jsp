@@ -116,6 +116,47 @@
 		<div class="panel panel-primary" data-collapsed="0">
 			<jsp:include page="applicationhistory-view.jsp"></jsp:include>
 		</div> 
+		<div class="panel-heading">
+			<div class="panel-title">Minutes of Meeting Details</div>
+			</div>
+			<table class="table table-bordered" id="momdetails">
+							<thead>
+								<th><spring:message code="lbl.meeting.number" /></th>
+								<th><spring:message code="lbl.meeting.date" /></th>
+								<th><spring:message code="lbl.meeting.type" /></th>
+								<th><spring:message code="lbl.preamble.status" /></th>
+								<th><spring:message code="lbl.resolutionNumber" /></th>
+								<th><spring:message code="lbl.resolution.comment" /></th>
+								<th><spring:message code="lbl.action" /></th>
+							</thead>
+							<tbody>
+								<c:choose>
+									<c:when test="${!councilPreamble.meetingMOMs.isEmpty()}">
+										<c:forEach items="${councilPreamble.meetingMOMs}" var="preamble"
+											varStatus="counter">
+											<tr>
+												<div class="row add-margin">
+												<td><c:out value="${preamble.meeting.meetingNumber}" /></td>
+												<td><c:out value="${preamble.meeting.meetingDate}" /></td>
+												<td><c:out value="${preamble.meeting.committeeType.name}" /></td>
+												<td><c:out value="${preamble.preamble.status.code}" /></td>
+												<td><c:out value="${preamble.resolutionNumber}" /></td>
+												<td><c:out value="${preamble.resolutionDetail}" /></td>
+												<td><button type="button" class="btn btn-xs btn-secondary view"><span class="glyphicon glyphicon-tasks"></span>&nbsp;View</button>
+												<input type="hidden" name="councilMeeting" value="${preamble.meeting.id}" id="test" />
+						
+												</div>
+												</tr>
+												</c:forEach>
+												</c:when>
+						<c:otherwise>
+							<div class="col-md-3 col-xs-6 add-margin">
+								<spring:message code="lbl.noMeeting.Detail" />
+							</div>
+						</c:otherwise>
+							</c:choose></tbody>
+												
+							</table>
 		<div class="text-center">
 		<div class="add-margin">
 			<a href="javascript:void(0)" class="btn btn-default"
@@ -124,5 +165,6 @@
 		</div>
 	</div>
 	</div>
-	
+	<script
+	src="<c:url value='/resources/app/js/councilPreambleHelper.js?rnd=${app_release_no}'/>"></script>
 	

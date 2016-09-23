@@ -305,3 +305,11 @@ $("#resultTable").on(
 $('#selectall').click( function() {
     $('select#wards > option').prop('selected', 'selected');
 });
+
+$("#momdetails").on(
+		'click',
+		'tbody tr td .view',
+		function(event){
+    var id = $('#test').val();
+    window.open('/council/councilmom/view'+ '/'+id,'','width=800, height=600,scrollbars=yes');
+});
