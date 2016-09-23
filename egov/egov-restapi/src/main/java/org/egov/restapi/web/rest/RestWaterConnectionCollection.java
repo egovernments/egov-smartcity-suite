@@ -413,13 +413,15 @@ public class RestWaterConnectionCollection {
         return errorDetails;
     }
 
-    private WaterTaxDetails isEmptyWaterTaxDetails() {
+    private List<WaterTaxDetails>  isEmptyWaterTaxDetails() {
+        final List<WaterTaxDetails> waterTaxDetailsList = new ArrayList<WaterTaxDetails>();
         final WaterTaxDetails watertaxDetails = new WaterTaxDetails();
         final ErrorDetails errordetails = new ErrorDetails();
         errordetails.setErrorCode(RestApiConstants.THIRD_PARTY_ERR_CODE_WATERTAXDETAILS_SIZE);
         errordetails.setErrorMessage(RestApiConstants.THIRD_PARTY_ERR_MSG_WATERTAXDETAILS_SIZE);
         watertaxDetails.setErrorDetails(errordetails);
-        return watertaxDetails;
+        waterTaxDetailsList.add(watertaxDetails);
+        return waterTaxDetailsList;
     }
 
     private ErrorDetails validateAssessmentNumber(final String assessmentNumber) {
