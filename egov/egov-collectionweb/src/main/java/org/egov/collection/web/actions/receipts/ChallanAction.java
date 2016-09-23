@@ -340,6 +340,7 @@ public class ChallanAction extends BaseFormAction {
      * @return the string
      */
     @ValidationErrorPage(value = "createReceipt")
+    @SkipValidation
     @Action(value = "/receipts/challan-createReceipt")
     public String createReceipt() {
         if (challanNumber != null && !"".equals(challanNumber)) {
