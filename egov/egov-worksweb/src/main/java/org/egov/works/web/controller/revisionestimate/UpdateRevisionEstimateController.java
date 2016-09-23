@@ -278,7 +278,7 @@ public class UpdateRevisionEstimateController extends GenericWorkFlowController 
                 model.addAttribute("message", errorMessage);
                 return "revisionEstimate-success";
             }
-            redirectAttributes.addFlashAttribute("revisionEstimate", updatedRevisionEstimate);
+            model.addAttribute("revisionEstimate", updatedRevisionEstimate);
 
             if (EstimateStatus.NEW.toString().equals(updatedRevisionEstimate.getEgwStatus().getCode())) {
                 return "redirect:/revisionestimate/update/" + updatedRevisionEstimate.getId() + "?mode=save";
