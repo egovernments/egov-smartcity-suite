@@ -70,7 +70,7 @@
 					<div class="col-sm-3 add-margin">
 						<form:textarea path="purposeofHearings"
 							class="form-control text-left patternvalidation"
-							data-pattern="alphanumeric" maxlength="1024" required="required" />
+							data-pattern="alphanumericwithspecialcharacterswithspace" maxlength="1024" required="required" />
 						<form:errors path="purposeofHearings" cssClass="error-msg" />
 					</div>
 
@@ -79,21 +79,21 @@
 					<div class="col-sm-3 add-margin">
 						<form:textarea path="hearingOutcome"
 							class="form-control text-left patternvalidation"
-							data-pattern="alphanumeric" maxlength="2056" />
+							data-pattern="alphanumericwithspecialcharacterswithspace" maxlength="2056" />
 						<form:errors path="hearingOutcome" cssClass="error-msg" />
 					</div>
 				</div>
 				<div class="form-group">
 					<label class="col-sm-2 control-label text-right"><spring:message
-							code="lbl.additionallawyer" /> :</label>
+							code="lbl.additionallawyer" />:</label>
 					<div class="col-sm-3 add-margin">
 						<form:input path="additionalLawyers"
 							class="form-control text-left patternvalidation"
-							data-pattern="alphabetwithspace" maxlength="50" />
+							data-pattern="alphanumericwithspecialcharacterswithspace" maxlength="50" />
 						<form:errors path="additionalLawyers" cssClass="error-msg" />
 					</div>
 					<label class="col-sm-3 control-label text-right"><spring:message
-							code="lbl.standingcounsel" /></label>
+							code="lbl.standingcounsel"/> ?</label>
 					<div class="col-sm-2 add-margin">
 						<form:checkbox path="isStandingCounselPresent"
 							value="${isStandingCounselPresent}" />
@@ -104,7 +104,7 @@
 				<c:choose>
 				<c:when test="${not empty hearings.getTempEmplyeeHearing()}">
 					<div class="panel-heading">
-						<div class="panel-title">Employee Details</div>
+						<div class="panel-title">Employee</div>
 					</div>
 					</c:when>
 					<c:otherwise>
@@ -130,13 +130,13 @@
 						id="employeeDetails">
 						<thead>
 							<tr>
-								<th class="text-center">Position-Employee1</th>
+								<th class="text-center">Position-Employee</th>
 							</tr>
 						</thead>
 
 						<tbody>
 						<c:choose>
- 		<c:when test="${not empty hearings.getTempEmplyeeHearing()}">
+ 				<c:when test="${not empty hearings.getTempEmplyeeHearing()}">
                    <c:forEach items="${hearings.getTempEmplyeeHearing()}" var="positionTemplList"
                               varStatus="counter">
                        <tr>

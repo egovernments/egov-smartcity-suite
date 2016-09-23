@@ -83,7 +83,6 @@ public class HearingsService {
         updateNextDate(hearings, hearings.getLegalCase());
         final EgwStatus statusObj = legalCaseUtil.getStatusForModuleAndCode(LcmsConstants.MODULE_TYPE_LEGALCASE,
                 LcmsConstants.LEGALCASE_STATUS_IN_PROGRESS);
-        hearings.setStatus(statusObj);
         hearings.getLegalCase().setStatus(statusObj);
         return hearingsRepository.save(hearings);
     }
@@ -119,6 +118,7 @@ public class HearingsService {
 		hearingEmp.setEmployee(employeeObj);
 		hearings.getEmployeeHearingList().add(hearingEmp);
 	}
+	
     public List<Hearings> findAll() {
         return hearingsRepository.findAll(new Sort(Sort.Direction.ASC, ""));
     }
