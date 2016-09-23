@@ -1,5 +1,7 @@
 package org.egov.council.web.controller;
 
+import static org.egov.council.utils.constants.CouncilConstants.CHECK_BUDGET;
+import static org.egov.council.utils.constants.CouncilConstants.MODULE_FULLNAME;
 import static org.egov.council.utils.constants.CouncilConstants.REVENUE_HIERARCHY_TYPE;
 import static org.egov.council.utils.constants.CouncilConstants.WARD;
 import static org.egov.infra.web.utils.WebUtils.toJSON;
@@ -23,8 +25,10 @@ import org.egov.council.utils.constants.CouncilConstants;
 import org.egov.council.web.adaptor.CouncilPreambleJsonAdaptor;
 import org.egov.eis.web.contract.WorkflowContainer;
 import org.egov.eis.web.controller.workflow.GenericWorkFlowController;
+import org.egov.infra.admin.master.entity.AppConfigValues;
 import org.egov.infra.admin.master.entity.Boundary;
 import org.egov.infra.admin.master.entity.Department;
+import org.egov.infra.admin.master.service.AppConfigValueService;
 import org.egov.infra.admin.master.service.BoundaryService;
 import org.egov.infra.admin.master.service.DepartmentService;
 import org.egov.infra.filestore.service.FileStoreService;
@@ -77,6 +81,9 @@ public class CouncilPreambleController extends GenericWorkFlowController {
     @Autowired
     private BoundaryService boundaryService;
     
+    @Autowired
+    private AppConfigValueService appConfigValueService;
+    
     private static final Logger LOGGER = Logger.getLogger(CouncilPreambleController.class);
 
     
@@ -88,6 +95,14 @@ public class CouncilPreambleController extends GenericWorkFlowController {
 		return boundaryService.getActiveBoundariesByBndryTypeNameAndHierarchyTypeName(WARD,
                 REVENUE_HIERARCHY_TYPE);
 	}
+	
+	public @ModelAttribute("URL") String getAppConfigValues() {
+		List<AppConfigValues> appConfigValue = appConfigValueService
+				.getConfigValuesByModuleAndKey(MODULE_FULLNAME, CHECK_BUDGET);
+		if (appConfigValue != null && appConfigValue.size() > 0)
+			return appConfigValueService.getConfigValuesByModuleAndKey(MODULE_FULLNAME,CHECK_BUDGET).get(0).getValue();
+		return "";
+	}
 
     @RequestMapping(value = "/new", method = RequestMethod.GET)
     public String newForm(final Model model) {
@@ -96,6 +111,7 @@ public class CouncilPreambleController extends GenericWorkFlowController {
         model.addAttribute("councilPreamble",councilPreamble);
         prepareWorkFlowOnLoad(model, councilPreamble);
         model.addAttribute("currentState", "NEW");
+        
         return COUNCILPREAMBLE_NEW;
     }
 

@@ -28,6 +28,8 @@
 					<form:input path="sanctionAmount" class="form-control text-left patternvalidation" data-pattern="number" />
 					<form:errors path="sanctionAmount" cssClass="error-msg" />
 				</div>
+				<form:hidden path="" id="URL" name="URL" value="${URL}"/>
+				<a onclick="window.open('${URL}','name','width=800, height=600,scrollbars=yes')">Click here to Check Budget</a>
 				</div>
 				<div class="form-group">
 				<label class="col-sm-2 control-label text-right"><spring:message

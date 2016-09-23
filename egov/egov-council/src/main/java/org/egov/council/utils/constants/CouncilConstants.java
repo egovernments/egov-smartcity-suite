@@ -42,7 +42,7 @@ package org.egov.council.utils.constants;
 import java.util.LinkedHashMap;
 
 public class CouncilConstants {
-    
+	
     public static final String CREATED = "CREATED";
     public static final String MODULE_NAME = "COUNCIL";
     public static final String MODULE_FULLNAME ="Council Management";
@@ -111,4 +111,6 @@ public class CouncilConstants {
     public final static String MEETINGRESOLUTIONFILENAME = "MeetingResolution";
     public final static String WF_FORWARD_BUTTON = "Forward";
     public final static String WF_PROVIDE_INFO_BUTTON ="Provide more info";
+    public final static String CHECK_BUDGET= "budgetcheckurl";
+   
 }
