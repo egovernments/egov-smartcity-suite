@@ -9,7 +9,6 @@ INSERT INTO eg_feature_action (ACTION, FEATURE) VALUES ((select id FROM eg_actio
 
 
 INSERT into EG_ROLEACTION(ROLEID,ACTIONID) VALUES ((select id from eg_role where name='Council Clerk'),(select id from eg_action where name ='Budget Variance Report'));
-INSERT into EG_ROLEACTION(ROLEID,ACTIONID) VALUES ((select id from eg_role where name='Super User'),(select id from eg_action where name ='Budget Variance Report'));
 INSERT into EG_ROLEACTION(ROLEID,ACTIONID) VALUES ((select id from eg_role where name='Council Management Approver'),(select id from eg_action where name ='Budget Variance Report'));
 INSERT into EG_ROLEACTION(ROLEID,ACTIONID) VALUES ((select id from eg_role where name='Council Management Creator'),(select id from eg_action where name ='Budget Variance Report'));
 
