@@ -39,7 +39,6 @@
  */
 package org.egov.works.web.controller.mb;
 
-import java.sql.Date;
 import java.util.List;
 
 import org.egov.infra.admin.master.entity.Department;

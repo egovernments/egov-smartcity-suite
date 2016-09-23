@@ -184,13 +184,13 @@ public class SearchWorkOrderActivityJsonAdaptor implements JsonSerializer<WorkOr
                     depthOrHeight = depthOrHeight - rems.getDepthOrHeight().doubleValue();
             }
         if (no != null && no != 0)
-            workOrderMeasurementSheet.setNo(new BigDecimal(no));
+            workOrderMeasurementSheet.setNo(new BigDecimal(no.toString()));
         if (length != null && length != 0)
-            workOrderMeasurementSheet.setLength(new BigDecimal(length));
+            workOrderMeasurementSheet.setLength(new BigDecimal(length.toString()));
         if (width != null && width != 0)
-            workOrderMeasurementSheet.setWidth(new BigDecimal(width));
+            workOrderMeasurementSheet.setWidth(new BigDecimal(width.toString()));
         if (depthOrHeight != null && depthOrHeight != 0)
-            workOrderMeasurementSheet.setDepthOrHeight(new BigDecimal(depthOrHeight));
+            workOrderMeasurementSheet.setDepthOrHeight(new BigDecimal(depthOrHeight.toString()));
 
         workOrderMeasurementSheet.setQuantity(new BigDecimal(
                 (no == null || no == 0 ? 1 : no.doubleValue()) * (length == null || length == 0 ? 1 : length.doubleValue())
