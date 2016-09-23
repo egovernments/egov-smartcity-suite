@@ -69,7 +69,7 @@ public class AjaxEmployeePositionController {
         final List<Assignment> assignmentList = assignmentService
                 .getAllAssignmentsByPositionNameForGivenRange(positionName);
         for (final Assignment assign : assignmentList) {
-            posEmpName = assign.getPosition().getName().concat("-").concat(assign.getEmployee().getUsername());
+            posEmpName = assign.getPosition().getName().concat("@").concat(assign.getEmployee().getUsername());
             positionEmployeeMap.put(assign.getEmployee().getId(), posEmpName);
         }
         return positionEmployeeMap;

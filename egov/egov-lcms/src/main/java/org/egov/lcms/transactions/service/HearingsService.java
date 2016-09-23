@@ -93,12 +93,12 @@ public class HearingsService {
 		String empUserName = "";
 		for (EmployeeHearing hearingEmp : hearings.getPositionTemplList()) {
 				if (hearingEmp.getEmpPosName() != null) {
-					empUserName = hearingEmp.getEmpPosName().split("-")[1];
+					empUserName = hearingEmp.getEmpPosName().split("@")[1];
 					prepareEmployeeHearingList(hearings, empUserName, hearingEmp);
 				}
 					if (hearingEmp.getId() ==null && hearingEmp.getEmployee() !=null && hearingEmp.getEmployee().getName()!=null && 
-							hearingEmp.getEmployee().getName().contains("-")){
-						empUserName = hearingEmp.getEmployee().getName().split("-")[1];
+							hearingEmp.getEmployee().getName().contains("@")){
+						empUserName = hearingEmp.getEmployee().getName().split("@")[1];
 						prepareEmployeeHearingList(hearings, empUserName, hearingEmp);
 				}
 			}

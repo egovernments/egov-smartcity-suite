@@ -97,7 +97,6 @@ public class HearingsController {
         }
         hearings.setLegalCase(legalCase);
         hearingsService.persist(hearings);
-        model.addAttribute("positionTemplList", hearings.getPositionTemplList());
         redirectAttrs.addFlashAttribute("hearings", hearings);
         model.addAttribute("message", "Hearing created successfully.");
         model.addAttribute("mode", "create");
