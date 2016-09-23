@@ -102,6 +102,7 @@
         <db.url></db.url>
         <db.user></db.user>
         <db.password></db.password>
+        <disable.drop.db>true</disable.drop.db>
         <!-- Sonar properties -->
         <sonar.core.codeCoveragePlugin>jacoco</sonar.core.codeCoveragePlugin>
         <sonar.dynamicAnalysis>reuseReports</sonar.dynamicAnalysis>
@@ -123,13 +124,13 @@
         <javax-mail-version>1.5.5</javax-mail-version>
         <javax-el-version>3.0.1-b05</javax-el-version>
         <xerces-version>2.11.0.SP4</xerces-version>
-        <postgres-version>9.4.1208</postgres-version>
+        <postgres-version>9.4.1210</postgres-version>
 
         <!-- Other application dependency versions -->
         <struts2-version>2.5.2</struts2-version>
         <struts2-jquery-version>3.7.1</struts2-jquery-version>
         <xstream-version>1.4.9</xstream-version>
-        <xpp3-version>1.1.3.4.O</xpp3-version>
+        <xpp3-version>1.1.4c</xpp3-version>
         <spring-version>4.3.2.RELEASE</spring-version>
         <spring-session-version>1.2.2.RELEASE</spring-session-version>
         <spring-data-jpa-version>1.10.3.RELEASE</spring-data-jpa-version>
@@ -169,18 +170,33 @@
         <joda-time-jsptag-version>1.1.1</joda-time-jsptag-version>
         <jsoup-version>1.9.2</jsoup-version>
         <jython-version>2.7.0</jython-version>
-        <flyway-core-version>3.2.1</flyway-core-version>
+        <flyway-core-version>4.0.3</flyway-core-version>
         <junit-version>4.12</junit-version>
         <mockito-all-version>1.10.19</mockito-all-version>
-        <springockito-version>1.0.8</springockito-version>
-        <easymock-version>3.3.1</easymock-version>
+        <springockito-version>1.0.9</springockito-version>
+        <easymock-version>3.4</easymock-version>
         <easymockclassextension-version>3.2</easymockclassextension-version>
-        <dbunit-version>2.2.3</dbunit-version>
         <hamcrest-all-version>1.3</hamcrest-all-version>
         <slf4j-version>1.7.21</slf4j-version>
         <log4j-version>1.2.17</log4j-version>
         <google-guava-version>19.0</google-guava-version>
         <recaptcha.version>0.0.8</recaptcha.version>
+
+        <!-- Plugin dependency versions-->
+        <mvn.javadoc.plugin.version>2.10.4</mvn.javadoc.plugin.version>
+        <mvn.release.plugin.version>2.5.3</mvn.release.plugin.version>
+        <mvn.jacoco.plugin.version>0.7.7.201606060606</mvn.jacoco.plugin.version>
+        <mvn.ear.plugin.version>2.10.1</mvn.ear.plugin.version>
+        <mvn.war.plugin.version>3.0.0</mvn.war.plugin.version>
+        <mvn.jar.plugin.version>3.0.2</mvn.jar.plugin.version>
+        <mvn.compiler.plugin.version>3.5.1</mvn.compiler.plugin.version>
+        <mvn.dependency.plugin.version>2.10</mvn.dependency.plugin.version>
+        <mvn.resource.plugin.version>3.0.1</mvn.resource.plugin.version>
+        <mvn.sonar.plugin.version>3.0.2</mvn.sonar.plugin.version>
+        <mvn.wildfly.plugin.version>1.0.2.Final</mvn.wildfly.plugin.version>
+        <mvn.versioneye.plugin.version>3.10.2</mvn.versioneye.plugin.version>
+        <mvn.surefire.plugin.version>2.19.1</mvn.surefire.plugin.version>
+        <mvn.eclipse.lifecycle.plugin.version>1.0.0</mvn.eclipse.lifecycle.plugin.version>
     </properties>
 
     <modules>
@@ -841,22 +857,6 @@
                 <scope>test</scope>
             </dependency>
             <dependency>
-                <groupId>org.dbunit</groupId>
-                <artifactId>dbunit</artifactId>
-                <version>${dbunit-version}</version>
-                <scope>test</scope>
-                <exclusions>
-                    <exclusion>
-                        <groupId>org.slf4j</groupId>
-                        <artifactId>slf4j-nop</artifactId>
-                    </exclusion>
-                    <exclusion>
-                        <groupId>log4j</groupId>
-                        <artifactId>log4j</artifactId>
-                    </exclusion>
-                </exclusions>
-            </dependency>
-            <dependency>
                 <groupId>org.hamcrest</groupId>
                 <artifactId>hamcrest-all</artifactId>
                 <version>${hamcrest-all-version}</version>
@@ -1146,10 +1146,6 @@
             <scope>test</scope>
         </dependency>
         <dependency>
-            <groupId>org.dbunit</groupId>
-            <artifactId>dbunit</artifactId>
-        </dependency>
-        <dependency>
             <groupId>org.hamcrest</groupId>
             <artifactId>hamcrest-all</artifactId>
         </dependency>
@@ -1186,14 +1182,14 @@
                 <plugin>
                     <groupId>org.codehaus.mojo</groupId>
                     <artifactId>sonar-maven-plugin</artifactId>
-                    <version>2.7.1</version>
+                    <version>${mvn.sonar.plugin.version}</version>
                 </plugin>
                 <!--This plugin's configuration is used to store Eclipse m2e settings
                     only. It has no influence on the Maven build itself. -->
                 <plugin>
                     <groupId>org.eclipse.m2e</groupId>
                     <artifactId>lifecycle-mapping</artifactId>
-                    <version>1.0.0</version>
+                    <version>${mvn.eclipse.lifecycle.plugin.version}</version>
                     <configuration>
                         <lifecycleMappingMetadata>
                             <pluginExecutions>
@@ -1224,12 +1220,12 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-dependency-plugin</artifactId>
-                <version>2.9</version>
+                <version>${mvn.dependency.plugin.version}</version>
             </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
-                <version>3.2</version>
+                <version>${mvn.compiler.plugin.version}</version>
                 <configuration>
                     <source>1.8</source>
                     <target>1.8</target>
@@ -1238,7 +1234,7 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-jar-plugin</artifactId>
-                <version>2.6</version>
+                <version>${mvn.jar.plugin.version}</version>
                 <configuration>
                     <archive>
                         <index>true</index>
@@ -1256,7 +1252,7 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-war-plugin</artifactId>
-                <version>2.5</version>
+                <version>${mvn.war.plugin.version}</version>
                 <configuration>
                     <packagingExcludes>WEB-INF/lib/*.jar</packagingExcludes>
                     <archive>
@@ -1272,7 +1268,7 @@
             <plugin>
                 <groupId>org.wildfly.plugins</groupId>
                 <artifactId>wildfly-maven-plugin</artifactId>
-                <version>1.0.2.Final</version>
+                <version>${mvn.wildfly.plugin.version}</version>
                 <configuration>
                     <skip>true</skip>
                 </configuration>
@@ -1286,7 +1282,7 @@
             <plugin>
                 <groupId>org.jacoco</groupId>
                 <artifactId>jacoco-maven-plugin</artifactId>
-                <version>0.7.5.201505241946</version>
+                <version>${mvn.jacoco.plugin.version}</version>
                 <executions>
                     <execution>
                         <id>default-prepare-agent</id>
@@ -1310,7 +1306,7 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-release-plugin</artifactId>
-                <version>2.5.2</version>
+                <version>${mvn.release.plugin.version}</version>
                 <configuration>
                     <goals>deploy</goals>
                     <arguments>-DskipTests -Dbuild.number=${build.number}</arguments>
@@ -1326,7 +1322,7 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-javadoc-plugin</artifactId>
-                <version>2.10.2</version>
+                <version>${mvn.javadoc.plugin.version}</version>
                 <executions>
                     <execution>
                         <id>attach-javadocs</id>
@@ -1344,7 +1340,7 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-surefire-plugin</artifactId>
-                <version>2.19.1</version>
+                <version>${mvn.surefire.plugin.version}</version>
             </plugin>
             <plugin>
                 <groupId>org.flywaydb</groupId>
@@ -1361,7 +1357,7 @@
             <plugin>
                 <groupId>com.versioneye</groupId>
                 <artifactId>versioneye-maven-plugin</artifactId>
-                <version>3.10.2</version>
+                <version>${mvn.versioneye.plugin.version}</version>
                 <configuration>
                     <apiKey>${versioneye.key}</apiKey>
                 </configuration>
