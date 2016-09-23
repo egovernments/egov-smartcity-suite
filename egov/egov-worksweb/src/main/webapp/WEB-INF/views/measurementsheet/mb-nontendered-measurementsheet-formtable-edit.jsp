@@ -75,14 +75,14 @@
 			                        <form:input path="nonTenderedMbDetails[${item.index }].measurementSheets[${index.index }].id" class="clearthis" id="nonTenderedMbDetails_${item.index }_measurementSheets_${index.index }_id" />
 			                        <form:input path="nonTenderedMbDetails[${item.index }].measurementSheets[${index.index }].woMeasurementSheet" id="nonTenderedMbDetails_${item.index }_measurementSheets_${index.index }_woMeasurementSheet" />
 			                    </td>
-			                	<td id="msrowslNo_${item.index }_${index.index }">${details.workOrderActivity.workOrderMeasurementSheets.get(index.index).measurementSheet.slNo }</td>
-			                    <td id="msrowremarks_${item.index }_${index.index }">${details.workOrderActivity.workOrderMeasurementSheets.get(index.index).measurementSheet.remarks }</td>
-			                    <td id="msrowno_${item.index }_${index.index }" align="right">${details.workOrderActivity.workOrderMeasurementSheets.get(index.index).no }</td>
-			                    <td id="msrowlength_${item.index }_${index.index }" align="right">${details.workOrderActivity.workOrderMeasurementSheets.get(index.index).length }</td>
-			                    <td id="msrowwidth_${item.index }_${index.index }" align="right">${details.workOrderActivity.workOrderMeasurementSheets.get(index.index).width }</td>
-			                    <td id="msrowdepthOrHeight_${item.index }_${index.index }" align="right">${details.workOrderActivity.workOrderMeasurementSheets.get(index.index).depthOrHeight }</td>
-			                    <td id="msrowquantity_${item.index }_${index.index }" align="right">${details.workOrderActivity.workOrderMeasurementSheets.get(index.index).quantity }</td>
-			                    <td id="msrowmbmsPreviousEntry_${item.index }_${index.index }" align="right">${details.workOrderActivity.workOrderMeasurementSheets.get(index.index).cumulativeQuantity }</td>
+			                	<td id="nontenderedmsrowslNo_${item.index }_${index.index }">${details.workOrderActivity.workOrderMeasurementSheets.get(index.index).measurementSheet.slNo }</td>
+			                    <td id="nontenderedmsrowremarks_${item.index }_${index.index }">${details.workOrderActivity.workOrderMeasurementSheets.get(index.index).measurementSheet.remarks }</td>
+			                    <td id="nontenderedmsrowno_${item.index }_${index.index }" align="right">${details.workOrderActivity.workOrderMeasurementSheets.get(index.index).no }</td>
+			                    <td id="nontenderedmsrowlength_${item.index }_${index.index }" align="right">${details.workOrderActivity.workOrderMeasurementSheets.get(index.index).length }</td>
+			                    <td id="nontenderedmsrowwidth_${item.index }_${index.index }" align="right">${details.workOrderActivity.workOrderMeasurementSheets.get(index.index).width }</td>
+			                    <td id="nontenderedmsrowdepthOrHeight_${item.index }_${index.index }" align="right">${details.workOrderActivity.workOrderMeasurementSheets.get(index.index).depthOrHeight }</td>
+			                    <td id="nontenderedmsrowquantity_${item.index }_${index.index }" align="right">${details.workOrderActivity.workOrderMeasurementSheets.get(index.index).quantity }</td>
+			                    <td id="nontenderedmsrowmbmsPreviousEntry_${item.index }_${index.index }" align="right">${details.workOrderActivity.workOrderMeasurementSheets.get(index.index).cumulativeQuantity }</td>
 			                    <c:if test="${details.workOrderActivity.workOrderMeasurementSheets.get(index.index).measurementSheet.identifier == 'A'}">
 									<c:set var="total" value="${total + details.workOrderActivity.workOrderMeasurementSheets.get(index.index).quantity}" />
 								</c:if>

@@ -168,8 +168,6 @@ $(document).on('click','.ms-submit',function () {
 
 	document.getElementsByName(sid.split(".")[0]+".quantity")[0].value=document.getElementById(sid.split(".")[0]+".msnet").innerHTML;
 	mscontent=document.getElementById(sid.split(".")[0]+".mstr").innerHTML;
-	document.getElementById(sid.split(".")[0]+".mstr")
-	document.getElementById(sid.split(".")[0]+".mstd")
 	document.getElementById(sid.split(".")[0]+".mstd").innerHTML=mscontent;
 	document.getElementById(sid.split(".")[0]+".msopen").value="0";
 	var mstr=document.getElementById(sid.split(".")[0]+".mstr");

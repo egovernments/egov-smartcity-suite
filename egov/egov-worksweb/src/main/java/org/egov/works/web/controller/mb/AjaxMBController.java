@@ -194,7 +194,7 @@ public class AjaxMBController {
                 .append(toSearchWorkOrderActivityResultJson(workOrderActivities)).append("}").toString();
         return result;
     }
-    
+
     @RequestMapping(value = "/measurementbook/ajax-searchreactivities", method = RequestMethod.POST, produces = MediaType.TEXT_PLAIN_VALUE)
     public @ResponseBody String searchREWorkOrderActivities(final HttpServletRequest request) {
         final Long workOrderEstimateId = Long.parseLong(request.getParameter("workOrderEstimateId"));
@@ -202,8 +202,9 @@ public class AjaxMBController {
         final String description = request.getParameter("description");
         final String itemCode = request.getParameter("itemCode");
         final String nonTenderedType = request.getParameter("nonTenderedType");
+        final String mbDate = request.getParameter("mbDate");
         final List<WorkOrderActivity> workOrderActivities = workOrderActivityService
-                .searchREActivities(workOrderEstimateId, description, itemCode, nonTenderedType);
+                .searchREActivities(workOrderEstimateId, description, itemCode, nonTenderedType,mbDate);
 
         for (final WorkOrderActivity woa : workOrderActivities)
             woa.setMbHeaderId(mbHeaderId);
@@ -212,7 +213,6 @@ public class AjaxMBController {
                 .append(toSearchWorkOrderActivityResultJson(workOrderActivities)).append("}").toString();
         return result;
     }
-
 
     public Object toSearchWorkOrderActivityResultJson(final Object object) {
         final GsonBuilder gsonBuilder = new GsonBuilder();

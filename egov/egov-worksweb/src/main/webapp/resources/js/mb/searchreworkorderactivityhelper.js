@@ -87,8 +87,8 @@ function callAjaxSearch() {
 				columns : [ { 
 						"data" : "", "sClass" : "text-center"} , {
 						"data" : "", "sClass" : "text-center", "bSortable": false} ,{
+						"data" : "categoryType", "-sClass" : "text-center"},{
 						"data" : "sorCode", "sClass" : "text-right"},{
-						"data" : "categoryType", "sClass" : "text-center"},{
 						"data" : "", "sClass" : "text-center"},{
 						"data" : "sorNonSorType", "sClass" : "text-center"},{
 						"data" : "uom", "sClass" : "text-center"},{

@@ -53,6 +53,7 @@
 						</div>
 						<input type="hidden" name="workOrderEstimateId" id="workOrderEstimateId" value="${workOrderEstimateId }"/>
 						<input type="hidden" name="id" id="mbHeaderId" value="${mbHeaderId }"/>
+						<input type="hidden" name="mbDate" id="mbDate" value="${mbDate }"/>
 						<div class="panel-body">
 							<div class="col-md-12 text-left">
 								<spring:message code="lbl.workordernumber" />: ${workOrderNo }

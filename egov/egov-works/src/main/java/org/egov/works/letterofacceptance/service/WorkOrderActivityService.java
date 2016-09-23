@@ -44,6 +44,7 @@ import java.util.List;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 
+import org.egov.infra.utils.DateUtils;
 import org.egov.works.letterofacceptance.repository.WorkOrderActivityRepository;
 import org.egov.works.revisionestimate.entity.RevisionAbstractEstimate;
 import org.egov.works.revisionestimate.entity.enums.RevisionType;
@@ -109,7 +110,7 @@ public class WorkOrderActivityService {
     }
 
     public List<WorkOrderActivity> searchREActivities(final Long workOrderEstimateId, final String description,
-            final String itemCode, final String nonTenderedType) {
+            final String itemCode, final String nonTenderedType, String mbDate) {
 
         WorkOrderEstimate workOrderEstimate = workOrderEstimateService.getWorkOrderEstimateById(workOrderEstimateId);
 
@@ -117,10 +118,14 @@ public class WorkOrderActivityService {
                 .createAlias("woa.workOrderEstimate", "woe")
                 .createAlias("woe.workOrder", "workOrder")
                 .createAlias("activity", "act")
+                .createAlias("act.abstractEstimate", "estimate")
                 .createAlias("woa.activity.schedule", "schedule", CriteriaSpecification.LEFT_JOIN)
                 .createAlias("woa.activity.nonSor", "nonSor", CriteriaSpecification.LEFT_JOIN);
 
         if (workOrderEstimateId != null)
+            criteria.add(Restrictions.le("estimate.estimateDate", DateUtils.getDate(mbDate, "dd/MM/yyyy")));
+
+        if (mbDate != null)
             criteria.add(Restrictions.eq("workOrder.parent.id", workOrderEstimate.getWorkOrder().getId()));
 
         if (nonTenderedType != null && WorksConstants.NON_TENDERED.equalsIgnoreCase(nonTenderedType))

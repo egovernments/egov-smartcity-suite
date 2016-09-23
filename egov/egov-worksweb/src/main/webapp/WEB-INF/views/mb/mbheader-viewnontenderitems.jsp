@@ -50,7 +50,7 @@
 							<div class="panel-body">
 								<div class="panel-heading">
 									<div class="panel-title">
-										<spring:message code="title.sor" />
+										<spring:message code="title.nontendered" />
 									</div>
 								</div>
 								<div align="right" class="openCloseAll">
@@ -79,7 +79,7 @@
 									</thead>  
 									<tbody>
 									<c:set var="sorSlNo" value="${1}" scope="session" />
-									<c:forEach items="${mbHeader.getSORMBDetails()}" var="mbdetails" varStatus="item">
+									<c:forEach items="${mbHeader.getNonTenderedMBDetails()}" var="mbdetails" varStatus="item">
 					                <c:if test="${mbdetails.workOrderActivity.activity.schedule != null }">
 										<tr> 
 											<td><span><c:out value="${sorSlNo}" /></span></td>
@@ -99,10 +99,10 @@
 													<c:out value="${mbdetails.quantity}" />
 														<c:choose>
 															<c:when test="${!mbdetails.measurementSheets.isEmpty() }">
-																<button class="btn btn-default openmbsheet" name="sorMbDetails[${item.index }].msadd" id="sorMbDetails[${item.index }].msadd" data-idx="0" onclick="addMBMSheet(this);return false;"><i  class="fa fa-plus-circle" aria-hidden="true"></i></button>
+																<button class="btn btn-default openmbsheet" name="nonTenderedMbDetails[${item.index }].msadd" id="nonTenderedMbDetails[${item.index }].msadd" data-idx="0" onclick="addMBMSheet(this);return false;"><i  class="fa fa-plus-circle" aria-hidden="true"></i></button>
 															</c:when>
 															<c:otherwise>
-																<button style="display: none;" class="btn btn-default openmbsheet" name="sorMbDetails[${item.index }].msadd" id="sorMbDetails[${item.index }].msadd" data-idx="0" onclick="addMBMSheet(this);return false;"><i  class="fa fa-plus-circle" aria-hidden="true"></i></button>
+																<button style="display: none;" class="btn btn-default openmbsheet" name="nonTenderedMbDetails[${item.index }].msadd" id="nonTenderedMbDetails[${item.index }].msadd" data-idx="0" onclick="addMBMSheet(this);return false;"><i  class="fa fa-plus-circle" aria-hidden="true"></i></button>
 															</c:otherwise>
 														</c:choose>
 												</div>
@@ -110,10 +110,10 @@
 											<td hidden="true">
 												<c:set var="net" value="0" />
 												<c:set var="total" value="0" />
-					                            <input class="classmspresent" type="hidden" disabled="disabled" name="sorMbDetails[${item.index }].mspresent" id="sorMbDetails[${item.index }].mspresent" data-idx="0"/>
-					                            <input class="classmsopen" type="hidden" disabled="disabled" name="sorMbDetails[${item.index }].msopen" id="sorMbDetails[${item.index }].msopen" data-idx="0"/>
-												<span  class="sorMbDetails[${item.index }].mstd" id="sorMbDetails[${item.index }].mstd" data-idx="0">
-													<%@ include file="../measurementsheet/mb-sor-measurementsheet-formtable-view.jsp"%>
+					                            <input class="classmspresent" type="hidden" disabled="disabled" name="nonTenderedMbDetails[${item.index }].mspresent" id="nonTenderedMbDetails[${item.index }].mspresent" data-idx="0"/>
+					                            <input class="classmsopen" type="hidden" disabled="disabled" name="nonTenderedMbDetails[${item.index }].msopen" id="nonTenderedMbDetails[${item.index }].msopen" data-idx="0"/>
+												<span  class="nonTenderedMbDetails[${item.index }].mstd" id="nonTenderedMbDetails[${item.index }].mstd" data-idx="0">
+													<%@ include file="../measurementsheet/mb-nontendered-measurementsheet-formtable-view.jsp"%>
 												</span>
 											</td>
 											<input type="hidden" name="currMbEnrty" id="currMbEnrty" value="${mbdetails.quantity}" />
@@ -145,7 +145,7 @@
 							<div class="panel-body">
 								<div class="panel-heading">
 									<div class="panel-title">
-										<spring:message code="title.nonsor" />
+										<spring:message code="title.lumpsum" />
 									</div>
 								</div>
 								<table class="table table-bordered" id="tblnonsor">
@@ -167,7 +167,7 @@
 									</thead>
 									<tbody>
 									<c:set var="slNo" value="${1}" scope="session" />
-									<c:forEach items="${mbHeader.getNonSORMBDetails()}" var="mbdetails" varStatus="item">
+									<c:forEach items="${mbHeader.getLumpSumMBDetails()}" var="mbdetails" varStatus="item">
 					                <c:if test="${mbdetails.workOrderActivity.activity.schedule == null }">
 										<tr> 
 											<td><span><c:out value="${slNo}" /></span></td>
@@ -186,10 +186,10 @@
 													<c:out value="${mbdetails.quantity}" />
 													<c:choose>
 														<c:when test="${!mbdetails.measurementSheets.isEmpty() }">
-															<button class="btn btn-default openmbsheet" name="nonSorMbDetails[${item.index }].msadd" id="nonSorMbDetails[${item.index }].msadd" data-idx="0" onclick="addMBMSheet(this);return false;"><i  class="fa fa-plus-circle" aria-hidden="true"></i></button>
+															<button class="btn btn-default openmbsheet" name="lumpSumMbDetails[${item.index }].msadd" id="lumpSumMbDetails[${item.index }].msadd" data-idx="0" onclick="addMBMSheet(this);return false;"><i  class="fa fa-plus-circle" aria-hidden="true"></i></button>
 														</c:when>
 														<c:otherwise>
-															<button style="display: none;" class="btn btn-default openmbsheet" name="nonSorMbDetails[${item.index }].msadd" id="nonSorMbDetails[${item.index }].msadd" data-idx="0" onclick="addMBMSheet(this);return false;"><i  class="fa fa-plus-circle" aria-hidden="true"></i></button>
+															<button style="display: none;" class="btn btn-default openmbsheet" name="lumpSumMbDetails[${item.index }].msadd" id="lumpSumMbDetails[${item.index }].msadd" data-idx="0" onclick="addMBMSheet(this);return false;"><i  class="fa fa-plus-circle" aria-hidden="true"></i></button>
 														</c:otherwise>
 													</c:choose>
 												</div>
@@ -197,10 +197,10 @@
 											<td hidden="true">
 												<c:set var="net" value="0" />
 												<c:set var="total" value="0" />
-					                            <input class="classmspresent" type="hidden" disabled="disabled" name="nonSorMbDetails[${item.index }].mspresent" id="nonSorMbDetails[${item.index }].mspresent" data-idx="0"/>
-					                            <input class="classmsopen" type="hidden" disabled="disabled" name="nonSorMbDetails[${item.index }].msopen" id="nonSorMbDetails[${item.index }].msopen" data-idx="0"/>
-												<span  class="nonSorMbDetails[${item.index }].mstd" id="nonSorMbDetails[${item.index }].mstd" data-idx="0">
-													<%@ include file="../measurementsheet/mb-nonsor-measurementsheet-formtable-view.jsp"%>
+					                            <input class="classmspresent" type="hidden" disabled="disabled" name="lumpSumMbDetails[${item.index }].mspresent" id="lumpSumMbDetails[${item.index }].mspresent" data-idx="0"/>
+					                            <input class="classmsopen" type="hidden" disabled="disabled" name="lumpSumMbDetails[${item.index }].msopen" id="lumpSumMbDetails[${item.index }].msopen" data-idx="0"/>
+												<span  class="lumpSumMbDetails[${item.index }].mstd" id="lumpSumMbDetails[${item.index }].mstd" data-idx="0">
+													<%@ include file="../measurementsheet/mb-lumpsum-measurementsheet-formtable-view.jsp"%>
 												</span>
 											</td>
 											<input type="hidden" name="nonSorCurrMbEnrty" id="nonSorCurrMbEnrty" value="${mbdetails.quantity}" />

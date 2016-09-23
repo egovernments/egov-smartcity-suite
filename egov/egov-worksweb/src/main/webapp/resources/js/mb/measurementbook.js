@@ -38,16 +38,51 @@
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
 var hint='<a href="#" class="hintanchor" title="@fulldescription@"><i class="fa fa-question-circle" aria-hidden="true"></i></a>';
-
+var isDatepickerOpened=false;
 $(document).ready(function(){
 	sorTotal();
 	nonSorTotal();
-	
 	if($('#isMeasurementsExist').val() == 'false') {
 		$('.openCloseAll').hide();
 	}
+	
+	 jQuery( "#mbDate" ).datepicker({ 
+    	 format: 'dd/mm/yyyy',
+    	 autoclose:true,
+         onRender: function(date) {
+      	    return date.valueOf() < now.valueOf() ? 'disabled' : '';
+      	  }
+	  }).on('changeDate', function(ev) {
+		  var string=jQuery(this).val();
+		  if(!(string.indexOf("_") > -1)){
+			  var mbDate = $('#mbDate').val();
+				bootbox.alert("Change in MB Entry date will reset the Tendered and non tendered items data");
+				clearAllTenderedAndNonTenderedItems();
+		  }
+		  
+	  }).data('datepicker');
 });
 
+function clearAllTenderedAndNonTenderedItems(){
+	var inVisibleNonTenderedCount = $("#tblNonTendered > tbody > tr[sorinvisible='true']").length;
+	var inVisibleLumpSumCount = $("#tbllumpSum > tbody > tr[nonsorinvisible='true']").length;
+	var nonTenderedCount = $("#tblNonTendered > tbody > tr[id='nonTenderedRow']").length;
+	var lumpSumCount = $("#tblLumpSum > tbody > tr[id='lumpSumRow']").length;
+	if(inVisibleNonTenderedCount != 1){
+		for (var i = 0; i < nonTenderedCount; i++) {
+			var tbl=document.getElementById('nonTenderedTable');
+			var objects = $('.nonTenderedDelete');
+			deleteNonTendered(objects[i]);
+		}
+	}
+	if(inVisibleLumpSumCount != 1){
+		for (var i = 0; i < lumpSumCount; i++) {
+			var tbl=document.getElementById('lumpSumTable');
+			var objects = $('.lumpSumDelete');
+			deleteLumpSum(objects[i]);
+		}
+	}
+}
 $('#searchAndAdd').click(function() {
 	var workOrderEstimateId = $('#workOrderEstimateId').val();
 	var workOrderNumber = $('#workOrderNumber').html();
@@ -90,44 +125,53 @@ $('#addAll').click(function() {
 });
 
 $('#searchNonTenderedAndAdd').click(function() {
-	var workOrderEstimateId = $('#workOrderEstimateId').val();
-	var workOrderNumber = $('#workOrderNumber').html();
-	var mbHeaderId = $('#id').val();
-	if(mbHeaderId == '')
-		mbHeaderId = -1;
-	
-	window.open("/egworks/measurementbook/searchreactivityform?woeId=" + workOrderEstimateId + "&workOrderNo=" + workOrderNumber + "&mbHeaderId=" + mbHeaderId, '', 'height=650,width=980,scrollbars=yes,left=0,top=0,status=yes');
+	var mbDate = $('#mbDate').val();
+	if(mbDate!=""){
+		var workOrderEstimateId = $('#workOrderEstimateId').val();
+		var workOrderNumber = $('#workOrderNumber').html();
+		var mbHeaderId = $('#id').val();
+		if(mbHeaderId == '')
+			mbHeaderId = -1;
+		window.open("/egworks/measurementbook/searchreactivityform?woeId=" + workOrderEstimateId + "&workOrderNo=" + workOrderNumber + "&mbHeaderId=" + mbHeaderId + "&mbDate="+mbDate ,'', 'height=650,width=980,scrollbars=yes,left=0,top=0,status=yes');
+	}else{
+		bootbox.alert("Please select MB Entry date first");
+	}
 });
 
 $('#addAllNonTendered').click(function() {
-	var workOrderEstimateId = $('#workOrderEstimateId').val();
-	var mbHeaderId = $('#id').val();
-	if(mbHeaderId == '')
-		mbHeaderId = -1;
-	var selectedActivities = "";
-	
-	$('.loader-class').modal('show', {backdrop: 'static'});
-	$.ajax({
-		type: "POST",
-		url: "/egworks/measurementbook/ajax-searchreactivities",
-		cache: true,
-		dataType: "json",
-		"data": {"workOrderEstimateId" : workOrderEstimateId,
-			"id" : mbHeaderId},
-		success: function (data) {
-			populateREActivities(data, selectedActivities);
-		},
-		error: function (error) {
-			console.log(error.responseText.slice(0,-2));
-			var json = $.parseJSON(error.responseText.slice(0,-2));
-			
-			$.each(json, function(key, value){
-				$('#errorMessage').append(value + '</br>');
-			});
-			$('#errorMessage').show();
-		}
-	});
-	$('.loader-class').modal('hide');
+	var mbDate = $('#mbDate').val();
+	if(mbDate!=""){
+		var workOrderEstimateId = $('#workOrderEstimateId').val();
+		var mbHeaderId = $('#id').val();
+		if(mbHeaderId == '')
+			mbHeaderId = -1;
+		var selectedActivities = "";
+		
+		$('.loader-class').modal('show', {backdrop: 'static'});
+		$.ajax({
+			type: "POST",
+			url: "/egworks/measurementbook/ajax-searchreactivities",
+			cache: true,
+			dataType: "json",
+			"data": {"workOrderEstimateId" : workOrderEstimateId,
+				"id" : mbHeaderId,"mbDate" : mbDate},
+			success: function (data) {
+				populateREActivities(data, selectedActivities);
+			},
+			error: function (error) {
+				console.log(error.responseText.slice(0,-2));
+				var json = $.parseJSON(error.responseText.slice(0,-2));
+				
+				$.each(json, function(key, value){
+					$('#errorMessage').append(value + '</br>');
+				});
+				$('#errorMessage').show();
+			}
+		});
+		$('.loader-class').modal('hide');
+	}else{
+		bootbox.alert("Please select MB Entry date first");
+	}
 });
 
 function getRow(obj) {
@@ -223,15 +267,15 @@ function populateREActivities(data, selectedActivities) {
 						newrow=  newrow.replace(/templatesorMbDetails\[0\]/g, 'nonTenderedMbDetails[' + nonTenderedCount + ']');
 						newrow = newrow.replace(/templatesorMbDetails_0/g, 'nonTenderedMbDetails_' + nonTenderedCount);
 						newrow = newrow.replace(/templatemssubmit_0/g, 'mssubmit_' + nonTenderedCount);
-						newrow = newrow.replace('msrowslNo_0_0', 'msrowslNo_' + nonTenderedCount + '_0');
-						newrow = newrow.replace('msrowremarks_0_0', 'msrowremarks_' + nonTenderedCount + '_0');
-						newrow = newrow.replace('msrowno_0_0', 'msrowno_' + nonTenderedCount + '_0');
-						newrow = newrow.replace('msrowlength_0_0', 'msrowlength_' + nonTenderedCount + '_0');
-						newrow = newrow.replace('msrowwidth_0_0', 'msrowwidth_' + nonTenderedCount + '_0');
-						newrow = newrow.replace('msrowdepthOrHeight_0_0', 'msrowdepthOrHeight_' + nonTenderedCount + '_0');
-						newrow = newrow.replace('msrowquantity_0_0', 'msrowquantity_' + nonTenderedCount + '_0');
+						newrow = newrow.replace('msrowslNo_0_0', 'nontenderedmsrowslNo_' + nonTenderedCount + '_0');
+						newrow = newrow.replace('msrowremarks_0_0', 'nontenderedmsrowremarks_' + nonTenderedCount + '_0');
+						newrow = newrow.replace('msrowno_0_0', 'nontenderedmsrowno_' + nonTenderedCount + '_0');
+						newrow = newrow.replace('msrowlength_0_0', 'nontenderedmsrowlength_' + nonTenderedCount + '_0');
+						newrow = newrow.replace('msrowwidth_0_0', 'nontenderedmsrowwidth_' + nonTenderedCount + '_0');
+						newrow = newrow.replace('msrowdepthOrHeight_0_0', 'nontenderedmsrowdepthOrHeight_' + nonTenderedCount + '_0');
+						newrow = newrow.replace('msrowquantity_0_0', 'nontenderedmsrowquantity_' + nonTenderedCount + '_0');
 						newrow = newrow.replace('msrowidentifier_0_0', 'nontenderedmsrowidentifier_' + nonTenderedCount + '_0');
-						newrow = newrow.replace('msrowmbmsPreviousEntry_0_0', 'msrowmbmsPreviousEntry_' + nonTenderedCount + '_0');
+						newrow = newrow.replace('msrowmbmsPreviousEntry_0_0', 'nontenderedmsrowmbmsPreviousEntry_' + nonTenderedCount + '_0');
 						document.getElementById('nonTenderedMbDetails[' + nonTenderedCount + '].mstd').innerHTML=newrow;
 						$(workOrderActivity.woms).each(function(index, measurementSheet){
 							if (index > 0) {
@@ -246,15 +290,15 @@ function populateREActivities(data, selectedActivities) {
 								$newrow = $newrow.replace(/templatesorMbDetails_0/g, 'nonTenderedMbDetails_' + nonTenderedCount);
 								$newrow = $newrow.replace(/measurementSheets_0_id/g, 'measurementSheets_' + index + '_id');
 								$newrow = $newrow.replace(/measurementSheets_0_woMeasurementSheet/g, 'measurementSheets_' + index + '_woMeasurementSheet');
-								$newrow = $newrow.replace('msrowslNo_0_0', 'msrowslNo_' + nonTenderedCount + '_' + index);
-								$newrow = $newrow.replace('msrowremarks_0_0', 'msrowremarks_' + nonTenderedCount + '_' + index);
-								$newrow = $newrow.replace('msrowno_0_0', 'msrowno_' + nonTenderedCount + '_' + index);
-								$newrow = $newrow.replace('msrowlength_0_0', 'msrowlength_' + nonTenderedCount + '_' + index);
-								$newrow = $newrow.replace('msrowwidth_0_0', 'msrowwidth_' + nonTenderedCount + '_' + index);
-								$newrow = $newrow.replace('msrowdepthOrHeight_0_0', 'msrowdepthOrHeight_' + nonTenderedCount + '_' + index);
-								$newrow = $newrow.replace('msrowquantity_0_0', 'msrowquantity_' + nonTenderedCount + '_' + index);
+								$newrow = $newrow.replace('msrowslNo_0_0', 'nontenderedmsrowslNo_' + nonTenderedCount + '_' + index);
+								$newrow = $newrow.replace('msrowremarks_0_0', 'nontenderedmsrowremarks_' + nonTenderedCount + '_' + index);
+								$newrow = $newrow.replace('msrowno_0_0', 'nontenderedmsrowno_' + nonTenderedCount + '_' + index);
+								$newrow = $newrow.replace('msrowlength_0_0', 'nontenderedmsrowlength_' + nonTenderedCount + '_' + index);
+								$newrow = $newrow.replace('msrowwidth_0_0', 'nontenderedmsrowwidth_' + nonTenderedCount + '_' + index);
+								$newrow = $newrow.replace('msrowdepthOrHeight_0_0', 'nontenderedmsrowdepthOrHeight_' + nonTenderedCount + '_' + index);
+								$newrow = $newrow.replace('msrowquantity_0_0', 'nontenderedmsrowquantity_' + nonTenderedCount + '_' + index);
 								$newrow = $newrow.replace('msrowidentifier_0_0', 'nontenderedmsrowidentifier_' + nonTenderedCount + '_' + index);
-								$newrow = $newrow.replace('msrowmbmsPreviousEntry_0_0', 'msrowmbmsPreviousEntry_' + nonTenderedCount + '_' + index);
+								$newrow = $newrow.replace('msrowmbmsPreviousEntry_0_0', 'nontenderedmsrowmbmsPreviousEntry_' + nonTenderedCount + '_' + index);
 								$newrow = $newrow.replace('value="1"','value="'+(index+1)+'"');
 								$('.mssubmit_' + nonTenderedCount).closest('tr').before($newrow);
 
@@ -271,7 +315,7 @@ function populateREActivities(data, selectedActivities) {
 									else
 										$('#nontenderedmsrowidentifier_' + nonTenderedCount + '_' + index).html('Yes');
 								} else
-									$('#msrow' + key + '_' + nonTenderedCount + '_' + index).html(value);
+									$('#nontenderedmsrow' + key + '_' + nonTenderedCount + '_' + index).html(value);
 							});
 						});
 					} else {
@@ -423,15 +467,15 @@ function populateREActivities(data, selectedActivities) {
 						newrow=  newrow.replace(/templatesorMbDetails\[0\]/g, 'nonTenderedMbDetails[' + nonTenderedCount + ']');
 						newrow = newrow.replace(/templatesorMbDetails_0/g, 'nonTenderedMbDetails_' + nonTenderedCount);
 						newrow = newrow.replace(/templatemssubmit_0/g, 'mssubmit_' + nonTenderedCount);
-						newrow = newrow.replace('msrowslNo_0_0', 'msrowslNo_' + nonTenderedCount + '_0');
-						newrow = newrow.replace('msrowremarks_0_0', 'msrowremarks_' + nonTenderedCount + '_0');
-						newrow = newrow.replace('msrowno_0_0', 'msrowno_' + nonTenderedCount + '_0');
-						newrow = newrow.replace('msrowlength_0_0', 'msrowlength_' + nonTenderedCount + '_0');
-						newrow = newrow.replace('msrowwidth_0_0', 'msrowwidth_' + nonTenderedCount + '_0');
-						newrow = newrow.replace('msrowdepthOrHeight_0_0', 'msrowdepthOrHeight_' + nonTenderedCount + '_0');
-						newrow = newrow.replace('msrowquantity_0_0', 'msrowquantity_' + nonTenderedCount + '_0');
+						newrow = newrow.replace('msrowslNo_0_0', 'nontenderedmsrowslNo_' + nonTenderedCount + '_0');
+						newrow = newrow.replace('msrowremarks_0_0', 'nontenderedmsrowremarks_' + nonTenderedCount + '_0');
+						newrow = newrow.replace('msrowno_0_0', 'nontenderedmsrowno_' + nonTenderedCount + '_0');
+						newrow = newrow.replace('msrowlength_0_0', 'nontenderedmsrowlength_' + nonTenderedCount + '_0');
+						newrow = newrow.replace('msrowwidth_0_0', 'nontenderedmsrowwidth_' + nonTenderedCount + '_0');
+						newrow = newrow.replace('msrowdepthOrHeight_0_0', 'nontenderedmsrowdepthOrHeight_' + nonTenderedCount + '_0');
+						newrow = newrow.replace('msrowquantity_0_0', 'nontenderedmsrowquantity_' + nonTenderedCount + '_0');
 						newrow = newrow.replace('msrowidentifier_0_0', 'nontenderedmsrowidentifier_' + nonTenderedCount + '_0');
-						newrow = newrow.replace('msrowmbmsPreviousEntry_0_0', 'msrowmbmsPreviousEntry_' + nonTenderedCount + '_0');
+						newrow = newrow.replace('msrowmbmsPreviousEntry_0_0', 'nontenderedmsrowmbmsPreviousEntry_' + nonTenderedCount + '_0');
 						document.getElementById('nonTenderedMbDetails[' + nonTenderedCount + '].mstd').innerHTML=newrow;
 						$(workOrderActivity.woms).each(function(index, measurementSheet){
 							if (index > 0) {
@@ -446,15 +490,15 @@ function populateREActivities(data, selectedActivities) {
 								$newrow = $newrow.replace(/templatesorMbDetails_0/g, 'nonTenderedMbDetails_' + nonTenderedCount);
 								$newrow = $newrow.replace(/measurementSheets_0_id/g, 'measurementSheets_' + index + '_id');
 								$newrow = $newrow.replace(/measurementSheets_0_woMeasurementSheet/g, 'measurementSheets_' + index + '_woMeasurementSheet');
-								$newrow = $newrow.replace('msrowslNo_0_0', 'msrowslNo_' + nonTenderedCount + '_' + index);
-								$newrow = $newrow.replace('msrowremarks_0_0', 'msrowremarks_' + nonTenderedCount + '_' + index);
-								$newrow = $newrow.replace('msrowno_0_0', 'msrowno_' + nonTenderedCount + '_' + index);
-								$newrow = $newrow.replace('msrowlength_0_0', 'msrowlength_' + nonTenderedCount + '_' + index);
-								$newrow = $newrow.replace('msrowwidth_0_0', 'msrowwidth_' + nonTenderedCount + '_' + index);
-								$newrow = $newrow.replace('msrowdepthOrHeight_0_0', 'msrowdepthOrHeight_' + nonTenderedCount + '_' + index);
-								$newrow = $newrow.replace('msrowquantity_0_0', 'msrowquantity_' + nonTenderedCount + '_' + index);
+								$newrow = $newrow.replace('msrowslNo_0_0', 'nontenderedmsrowslNo_' + nonTenderedCount + '_' + index);
+								$newrow = $newrow.replace('msrowremarks_0_0', 'nontenderedmsrowremarks_' + nonTenderedCount + '_' + index);
+								$newrow = $newrow.replace('msrowno_0_0', 'nontenderedmsrowno_' + nonTenderedCount + '_' + index);
+								$newrow = $newrow.replace('msrowlength_0_0', 'nontenderedmsrowlength_' + nonTenderedCount + '_' + index);
+								$newrow = $newrow.replace('msrowwidth_0_0', 'nontenderedmsrowwidth_' + nonTenderedCount + '_' + index);
+								$newrow = $newrow.replace('msrowdepthOrHeight_0_0', 'nontenderedmsrowdepthOrHeight_' + nonTenderedCount + '_' + index);
+								$newrow = $newrow.replace('msrowquantity_0_0', 'nontenderedmsrowquantity_' + nonTenderedCount + '_' + index);
 								$newrow = $newrow.replace('msrowidentifier_0_0', 'nontenderedmsrowidentifier_' + nonTenderedCount + '_' + index);
-								$newrow = $newrow.replace('msrowmbmsPreviousEntry_0_0', 'msrowmbmsPreviousEntry_' + nonTenderedCount + '_' + index);
+								$newrow = $newrow.replace('msrowmbmsPreviousEntry_0_0', 'nontenderedmsrowmbmsPreviousEntry_' + nonTenderedCount + '_' + index);
 								$newrow = $newrow.replace('value="1"','value="'+(index+1)+'"');
 								$('.mssubmit_' + nonTenderedCount).closest('tr').before($newrow);
 
@@ -471,7 +515,7 @@ function populateREActivities(data, selectedActivities) {
 									else
 										$('#nontenderedmsrowidentifier_' + nonTenderedCount + '_' + index).html('Yes');
 								} else
-									$('#msrow' + key + '_' + nonTenderedCount + '_' + index).html(value);
+									$('#nontenderedmsrow' + key + '_' + nonTenderedCount + '_' + index).html(value);
 							});
 						});
 					} else {
