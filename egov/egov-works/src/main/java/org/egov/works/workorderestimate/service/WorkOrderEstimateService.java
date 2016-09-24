@@ -65,4 +65,8 @@ public class WorkOrderEstimateService {
     public WorkOrderEstimate getWorkOrderEstimateById(final Long id) {
         return workOrderEstimateRepository.findOne(id);
     }
+    
+    public WorkOrderEstimate getWorkOrderEstimateByEstimateNumber(final String estimateNumber) {
+        return workOrderEstimateRepository.findWorkOrderEstimateByEstimateNumber(estimateNumber,WorksConstants.APPROVED);
+    }
 }

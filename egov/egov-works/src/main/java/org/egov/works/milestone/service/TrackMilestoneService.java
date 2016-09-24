@@ -39,14 +39,18 @@
  */
 package org.egov.works.milestone.service;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 
+import org.egov.works.contractorbill.entity.ContractorBillRegister;
 import org.egov.works.milestone.entity.SearchRequestMilestone;
 import org.egov.works.milestone.entity.TrackMilestone;
 import org.egov.works.milestone.repository.TrackMilestoneRepository;
+import org.egov.works.models.workorder.WorkOrder;
+import org.egov.works.utils.WorksConstants;
 import org.hibernate.Criteria;
 import org.hibernate.Session;
 import org.hibernate.criterion.CriteriaSpecification;
@@ -123,4 +127,9 @@ public class TrackMilestoneService {
     public TrackMilestone getTrackMilestoneByMilestoneId(final Long id) {
         return trackMilestoneRepository.findByMilestone_Id(id);
     }
+    
+    public TrackMilestone getTrackMilestoneTotalPercentage(final Long workOrderEstimateId) {
+        return trackMilestoneRepository.findTrackMilestoneTotalPercentage(workOrderEstimateId,WorksConstants.APPROVED,WorksConstants.APPROVED,WorksConstants.APPROVED);
+    }
+    
 }
