@@ -47,6 +47,7 @@ import java.util.List;
 import org.egov.billsaccounting.services.CreateVoucher;
 import org.egov.commons.CVoucherHeader;
 import org.egov.infra.exception.ApplicationRuntimeException;
+import org.egov.infra.utils.StringUtils;
 import org.egov.infra.validation.exception.ValidationError;
 import org.egov.infra.validation.exception.ValidationException;
 import org.egov.model.voucher.WorkflowBean;
@@ -80,7 +81,7 @@ public class PreApprovedActionHelper {
             voucherHeader = voucherService.findById(voucherHeaderId, false);
             voucherHeader = sendForApproval(voucherHeader, workflowBean);
         }catch (final ValidationException e) {
-            if (e.getErrors().get(0).getMessage() != null && e.getErrors().get(0).getMessage() != "")
+            if (e.getErrors().get(0).getMessage() != null && !e.getErrors().get(0).getMessage().equals(StringUtils.EMPTY))
                 throw new ValidationException(e.getErrors().get(0).getMessage(), e.getErrors().get(0).getMessage());
             else
                 throw new ValidationException("Voucher creation failed", "Voucher creation failed");

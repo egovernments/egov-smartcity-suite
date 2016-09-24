@@ -82,6 +82,7 @@ import org.egov.infra.config.core.ApplicationThreadLocals;
 import org.egov.infra.exception.ApplicationException;
 import org.egov.infra.exception.ApplicationRuntimeException;
 import org.egov.infra.script.service.ScriptService;
+import org.egov.infra.utils.StringUtils;
 import org.egov.infra.validation.exception.ValidationError;
 import org.egov.infra.validation.exception.ValidationException;
 import org.egov.infra.web.struts.annotation.ValidationErrorPage;
@@ -616,7 +617,7 @@ public class PreApprovedVoucherAction extends GenericWorkFlowAction {
         final ValidationException e) {
             voucher();
             mode = "";
-            if (e.getErrors().get(0).getMessage() != null && e.getErrors().get(0).getMessage() != "")
+            if (e.getErrors().get(0).getMessage() != null && !e.getErrors().get(0).getMessage().equals(StringUtils.EMPTY))
                 throw new ValidationException(e.getErrors().get(0).getMessage(), e.getErrors().get(0).getMessage());
             else
                 throw new ValidationException("Voucher creation failed", "Voucher creation failed");
@@ -1104,7 +1105,7 @@ public class PreApprovedVoucherAction extends GenericWorkFlowAction {
     public boolean shouldShowHeaderField(final String field) {
         if (LOGGER.isDebugEnabled())
             LOGGER.debug("Inside shouldShowHeaderField menthod");
-        if (field.equals("vouchernumber")) {
+        if ("vouchernumber".equals(field)) {
             String vNumGenMode = "Manual";
             vNumGenMode = voucherTypeForULB.readVoucherTypes("Journal");
             if (!"Auto".equalsIgnoreCase(vNumGenMode)) {
