@@ -39,9 +39,11 @@
  */
 $ExceptionalUOMs = "";
 var hint='<a href="#" class="hintanchor" title="@fulldescription@"><i class="fa fa-question-circle" aria-hidden="true"></i></a>';
+var nonTenderedSORMsArray=new Array(200);
+var lumpSumSORMsArray=new Array(200);
 var nonTenderedMsArray=new Array(200);
 var lumpSumMsArray=new Array(200);
-
+var nonSorMsArray=new Array(200);
 var sorMsArray=new Array(200);
 var cqMsArray=new Array(200);
 var headstart="<!--only for validity head start -->";
@@ -721,17 +723,30 @@ var sorSearch = new Bloodhound({
 				document.getElementById(rowid.replace("msadd","msopen")).value="1";
 			var idx=sortable.substr(sortable.indexOf("["),sortable.indexOf("]"));
 			
-			if(sortable.indexOf("nonTenderedActivities") >= 0)
+			if(sortable.indexOf("nonTenderedSORActivities") >= 0)
+			{
+				nonTenderedSORMsArray[idx]=mscontent;
+			}
+			else if (sortable.indexOf("lumpSumSORActivities") >= 0)
+			{
+				lumpSumMsSORArray[idx]=mscontent;
+			} else if(sortable.indexOf("nonTenderedActivities") >= 0)
 			{
 				nonTenderedMsArray[idx]=mscontent;
 			}
 			else if (sortable.indexOf("lumpSumActivities") >= 0)
 			{
 				lumpSumMsArray[idx]=mscontent;
+			} else  if (sortable.indexOf("nonSorActivities") >= 0)
+			{
+				nonSorMsArray[idx]=mscontent;
+			} else  if (sortable.indexOf("changeQuantityActivities") >= 0)
+			{
+				cqMsArray[idx]=mscontent;
 			} else {
 				sorMsArray[idx]=mscontent;
 			}
-
+			
 
 		}else
 		{
@@ -751,9 +766,17 @@ var sorSearch = new Bloodhound({
 			{
 				nonTenderedMsArray[idx]="";
 			}
-			else
+			else if(sortable.indexOf("lumpSumActivities") >= 0)
 			{
 				lumpSumMsArray[idx]="";
+			} 
+			else if(sortable.indexOf("nonSorActivities") >= 0)
+			{
+				nonSorMsArray[idx]="";
+			}
+			else 
+			{
+				sorMsArray[idx]="";
 			}
 
 		}
@@ -1359,7 +1382,25 @@ var sorSearch = new Bloodhound({
 		var sid=$(this).closest('tr').attr("id");
 		var name=	sid.split(".")[0]
 		var idx=name.substr(name.indexOf("["),name.indexOf("]"));
-		if(sid.split(".")[0].indexOf("nonTenderedActivities") >= 0)
+		if(sid.split(".")[0].indexOf("nonTenderedSORActivities") >= 0)
+		{
+			//to support view close option
+			if(nonTenderedSORMsArray[idx])
+				{
+			document.getElementById(sid.split(".")[0]+".mstd").innerHTML=nonTenderedSORMsArray[idx];
+			if(nonTenderedSORMsArray[idx].length==0)
+				document.getElementById(sid.split(".")[0]+".mspresent").value="0";
+				}
+				
+		}else if(sid.split(".")[0].indexOf("lumpSumSORActivities") >= 0)
+		{
+			if(lumpSumSORMsArray[idx])
+				{
+			document.getElementById(sid.split(".")[0]+".mstd").innerHTML=lumpSumSORMsArray[idx];
+			if(lumpSumSORMsArray[idx].length==0)
+				document.getElementById(sid.split(".")[0]+".mspresent").value="0";
+				}
+		} else if(sid.split(".")[0].indexOf("nonTenderedActivities") >= 0)
 		{
 			//to support view close option
 			if(nonTenderedMsArray[idx])
@@ -1383,7 +1424,15 @@ var sorSearch = new Bloodhound({
 				if(cqMsArray[idx].length==0)
 					document.getElementById(sid.split(".")[0]+".mspresent").value="0";
 			}
-		} else {
+		} else if(sid.split(".")[0].indexOf("nonSorActivities") >= 0)
+		{
+			if(nonSorMsArray[idx])
+				{
+			document.getElementById(sid.split(".")[0]+".mstd").innerHTML=nonSorMsArray[idx];
+			if(nonSorMsArray[idx].length==0)
+				document.getElementById(sid.split(".")[0]+".mspresent").value="0";
+				}
+		}else {
 			if(sorMsArray[idx]) {
 				document.getElementById(sid.split(".")[0]+".mstd").innerHTML=sorMsArray[idx];
 				if(sorMsArray[idx].length==0)
@@ -1800,6 +1849,7 @@ function populateActivities(data, selectedActivities){
 
 						patternvalidation();
 					}
+					
 					$.each(measurementSheet, function(key, value){
 						if(key == "id") {
 							$('#changeQuantityActivities_' + activityCount + '_measurementSheetList_' + index + '_id').attr('value', value);
@@ -1812,11 +1862,28 @@ function populateActivities(data, selectedActivities){
 								$('#msrowidentifier_' + activityCount + '_' + index).html('Yes');
 						} else {
 							$('#msrow' + key + '_' + activityCount + '_' + index).html(value);
-							if(key != "slNo" && key != "remarks")
+							if(key != "slNo" && key != "remarks"){
 								document.getElementById('changeQuantityActivities[' + activityCount + '].measurementSheetList[' + index + '].' + key).setAttribute('data-' + key, value);
+							}
+								
 						}
 					});
+					
 				});
+				var total = 0;
+				var identifier ;
+				$(activity.ms).each(function(index, measurementSheet){
+					if($('#msrowidentifier_' + activityCount + '_' + index).html()=='No')
+						identifier = "A";
+					else
+						identifier = "D";
+					var quantity = $('#msrowquantity_' + activityCount + '_' + index).html();
+					if(identifier == "A")
+						total = total + Number(quantity);
+					else
+						total = total - Number(quantity);
+				});
+				$('.cqtotal_'+activityCount).html(total);
 			} else {
 				document.getElementById('changeQuantityActivities[' + activityCount + '].msadd').style.display = 'none';
 				$('#activityQuantity_' + activityCount).removeAttr('readonly');

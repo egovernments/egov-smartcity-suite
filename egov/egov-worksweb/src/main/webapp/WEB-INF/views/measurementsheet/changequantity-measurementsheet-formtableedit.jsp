@@ -38,6 +38,8 @@
   ~   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
   --%>
 <c:if test="${!activity.measurementSheetList.isEmpty() }">
+		<c:set var="cqnet" value="0" />
+		<c:set var="cqtotal" value="0" />   
 	<!--only for validity head start -->                         
     <table>
 	    <tr class='msheet-tr'>
@@ -81,10 +83,10 @@
 			                    <td id="msrowdepthOrHeight_${item.index }_${index.index }" align="right">${activity.parent.measurementSheetList.get(index.index).depthOrHeight }</td>
 			                    <td id="msrowquantity_${item.index }_${index.index }" align="right">${activity.parent.measurementSheetList.get(index.index).quantity }</td>
 			                    <c:if test="${activity.parent.measurementSheetList.get(index.index).identifier == 'A'}">
-									<c:set var="total" value="${total + activity.parent.measurementSheetList.get(index.index).quantity}" />
+									<c:set var="cqtotal" value="${cqtotal + activity.parent.measurementSheetList.get(index.index).quantity}" />
 								</c:if>
 								<c:if test="${activity.parent.measurementSheetList.get(index.index).identifier == 'D'}">
-									<c:set var="total" value="${total - activity.parent.measurementSheetList.get(index.index).quantity}" />
+									<c:set var="cqtotal" value="${cqtotal - activity.parent.measurementSheetList.get(index.index).quantity}" />
 								</c:if>
 			                    <td id="msrowidentifier_${item.index }_${index.index }">
 			                    	<c:choose>
@@ -116,10 +118,10 @@
 				                    <form:input path="changeQuantityActivities[${item.index }].measurementSheetList[${index.index }].quantity" id="changeQuantityActivities[${item.index }].measurementSheetList[${index.index }].quantity" class="form-control text-right patternvalidation runtime-update"
 				                           data-pattern="decimalvalue" onblur="findNet(this)" data-quantity="${activity.parent.measurementSheetList.get(index.index).quantity }" />
 									<c:if test="${activity.parent.measurementSheetList.get(index.index).identifier == 'A'}">
-										<c:set var="net" value="${net + activity.measurementSheetList.get(index.index).quantity}" />
+										<c:set var="cqnet" value="${cqnet + activity.measurementSheetList.get(index.index).quantity}" />
 									</c:if>
 									<c:if test="${activity.parent.measurementSheetList.get(index.index).identifier == 'D'}">
-										<c:set var="net" value="${net - activity.measurementSheetList.get(index.index).quantity}" />
+										<c:set var="cqnet" value="${cqnet - activity.measurementSheetList.get(index.index).quantity}" />
 									</c:if>
 			                	</td>
 			                </tr>
@@ -127,13 +129,13 @@
 		                <tr>
 		                	<td colspan="5"></td>
 		                    <td class="text-right"><spring:message code="lbl.total" /></td>
-		                    <td class="text-right view-content">${total }</td>
+		                    <td class="text-right view-content cqtotal_${item.index }">${cqtotal }</td>
 		                    <td colspan="4" class="text-right">
 		                        <input type="button" name="resetButton" value="Reset" id="resetButton" class="btn btn-xs btn-danger reset-cq" />
 		                        <input type="button" value="Submit" id="changeQuantityActivities[${item.index }].mssubmit" class="btn btn-xs btn-primary ms-submit mssubmit_${item.index }"/> 
 		                    </td>
 		                    <td class="text-right"><spring:message code="lbl.subtotal" /></td>
-		                    <td id="changeQuantityActivities[${item.index }].msnet" class="text-right changequantity-msnet">${net}</td>
+		                    <td id="changeQuantityActivities[${item.index }].msnet" class="text-right changequantity-msnet">${cqnet}</td>
 		                </tr>
 	                </tbody>
 	            </table>

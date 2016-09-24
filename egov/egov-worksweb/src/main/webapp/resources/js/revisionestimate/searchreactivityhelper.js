@@ -81,7 +81,7 @@ function callAjaxSearch() {
 						$('td:eq(1)',row).html('<input type="checkbox" name="selectActivity" class="selectActivity" data="'+ data.id +'">');
 					if(data.summary != null)
 						$('td:eq(4)',row).html('<span>'+ data.summary +'</span><span/><a href="#" class="hintanchor" title="'+ data.description +'"><i class="fa fa-question-circle" aria-hidden="true"></i></a></span>');
-					$('td:eq(7)',row).html(parseFloat(data.rate).toFixed(2));
+					$('td:eq(7)',row).html(parseFloat(data.estimateRate).toFixed(2));
 					$('td:eq(8)',row).html(parseFloat(data.approvedQuantity).toFixed(2));
 				},
 				aaSorting : [],
