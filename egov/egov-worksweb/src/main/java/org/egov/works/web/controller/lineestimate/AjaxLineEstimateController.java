@@ -67,7 +67,9 @@ import org.egov.infra.web.support.json.adapter.UserAdaptor;
 import org.egov.model.budget.BudgetGroup;
 import org.egov.services.masters.SchemeService;
 import org.egov.utils.BudgetAccountType;
+import org.egov.works.abstractestimate.entity.EstimatePhotographSearchRequest;
 import org.egov.works.lineestimate.entity.LineEstimate;
+import org.egov.works.lineestimate.entity.LineEstimateDetails;
 import org.egov.works.lineestimate.entity.LineEstimateForLoaSearchRequest;
 import org.egov.works.lineestimate.entity.LineEstimateForLoaSearchResult;
 import org.egov.works.lineestimate.entity.LineEstimateSearchRequest;
@@ -75,6 +77,7 @@ import org.egov.works.lineestimate.service.LineEstimateService;
 import org.egov.works.master.service.NatureOfWorkService;
 import org.egov.works.models.masters.NatureOfWork;
 import org.egov.works.utils.WorksConstants;
+import org.egov.works.web.adaptor.LineEstimateForEstimatePhotographJsonAdaptor;
 import org.egov.works.web.adaptor.LineEstimateForLOAJsonAdaptor;
 import org.egov.works.web.adaptor.LineEstimateJsonAdaptor;
 import org.egov.works.web.adaptor.SearchLineEstimateToCancelJSONAdaptor;
@@ -149,6 +152,9 @@ public class AjaxLineEstimateController {
 
     @Autowired
     private NatureOfWorkService natureOfWorkService;
+    
+    @Autowired
+    private LineEstimateForEstimatePhotographJsonAdaptor lineEstimateForEstimatePhotographJsonAdaptor;
 
     @RequestMapping(value = "/getsubschemesbyschemeid/{schemeId}", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
     public @ResponseBody String getAllSubSchemesBySchemeId(final Model model, @PathVariable final String schemeId)
@@ -347,4 +353,32 @@ public class AjaxLineEstimateController {
         final List<CFunction> functions = budgetDetailsHibernateDAO.getFunctionsByFundAndDepartment(fundId, departmentId);
         return functions;
     }
+    
+    @RequestMapping(value = "/getestimatenumbers-uploadphotographs", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+    public @ResponseBody List<String> findEstimateNumbersForEstimatePhotograph(@RequestParam final String estimateNumber) {
+        return lineEstimateService.getEstimateNumbersForEstimatePhotograph(estimateNumber);
+    }
+    
+    @RequestMapping(value = "/getwin-uploadphotographs", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+    public @ResponseBody List<String> findWinForEstimatePhotograph(@RequestParam final String workIdentificationNumber) {
+        return lineEstimateService.getWinForEstimatePhotograph(workIdentificationNumber);
+    }
+    
+    @RequestMapping(value = "/searchlineestimateforestimatephotograph", method = RequestMethod.POST, produces = MediaType.TEXT_PLAIN_VALUE)
+    public @ResponseBody String ajaxSearchLEForEstimatePhotograph(final Model model,
+            @ModelAttribute final EstimatePhotographSearchRequest estimatePhotographSearchRequest) {
+        final List<LineEstimateDetails> searchResultList = lineEstimateService.searchLineEstimatesForEstimatePhotograph(estimatePhotographSearchRequest);
+        final String result = new StringBuilder("{ \"data\":").append(toSearchLineEstimateForEstimatePhotograph(searchResultList))
+                .append("}").toString();
+        return result;
+    }
+    
+    public Object toSearchLineEstimateForEstimatePhotograph(final Object object) {
+        final GsonBuilder gsonBuilder = new GsonBuilder();
+        final Gson gson = gsonBuilder.registerTypeAdapter(LineEstimateDetails.class, lineEstimateForEstimatePhotographJsonAdaptor).create();
+        final String json = gson.toJson(object);
+        return json;
+    }
+    
+    
 }

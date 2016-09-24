@@ -37,22 +37,17 @@
  *
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
-package org.egov.works.web.controller.lineestimate;
+package org.egov.works.web.controller.estimatephotograph;
 
 import java.util.List;
 
-import org.egov.commons.dao.FunctionHibernateDAO;
-import org.egov.commons.dao.FundHibernateDAO;
-import org.egov.dao.budget.BudgetGroupDAO;
 import org.egov.infra.admin.master.entity.Department;
 import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.admin.master.service.DepartmentService;
 import org.egov.infra.exception.ApplicationException;
 import org.egov.infra.security.utils.SecurityUtils;
-import org.egov.services.masters.SchemeService;
 import org.egov.works.abstractestimate.entity.EstimatePhotographSearchRequest;
-import org.egov.works.lineestimate.entity.LineEstimateForLoaSearchRequest;
-import org.egov.works.lineestimate.entity.LineEstimateSearchRequest;
+import org.egov.works.abstractestimate.service.EstimateService;
 import org.egov.works.lineestimate.service.LineEstimateService;
 import org.egov.works.master.service.NatureOfWorkService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -63,70 +58,35 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
 @Controller
-@RequestMapping(value = "/lineestimate")
-public class SearchLineEstimateController {
-
-    @Autowired
+@RequestMapping(value = "/estimatephotograph")
+public class SearchEstimatePhotographController {
+	
+	@Autowired
     private LineEstimateService lineEstimateService;
-
-    @Autowired
-    private FundHibernateDAO fundHibernateDAO;
-
-    @Autowired
-    private FunctionHibernateDAO functionHibernateDAO;
-
-    @Autowired
-    private BudgetGroupDAO budgetGroupDAO;
-
-    @Autowired
-    private SchemeService schemeService;
-
-    @Autowired
+	
+	@Autowired
     private DepartmentService departmentService;
 
     @Autowired
     private SecurityUtils securityUtils;
-
+    
     @Autowired
     private NatureOfWorkService natureOfWorkService;
     
-    @RequestMapping(value = "/searchform", method = RequestMethod.GET)
-    public String showSearchLineEstimateForm(@ModelAttribute final LineEstimateSearchRequest lineEstimateSearchRequest,
-            final Model model) throws ApplicationException {
-        setDropDownValues(model);
-        model.addAttribute("lineEstimateSearchRequest", lineEstimateSearchRequest);
-        return "lineestimate-search";
-    }
+    @Autowired
+    private EstimateService estimateService; 
 
-    @RequestMapping(value = "/searchlineestimateforloa-form", method = RequestMethod.GET)
-    public String create(@ModelAttribute final LineEstimateForLoaSearchRequest lineEstimateForLoaSearchRequest,
-            final Model model) {
-        setDropDownValues(model);
-        final List<User> lineEstimateCreatedByUsers = lineEstimateService.getLineEstimateCreatedByUsers();
-        final List<Department> departments = lineEstimateService.getUserDepartments(securityUtils.getCurrentUser());
-        model.addAttribute("lineEstimateForLoaSearchRequest", lineEstimateForLoaSearchRequest);
-        model.addAttribute("lineEstimateCreatedByUsers", lineEstimateCreatedByUsers);
-        model.addAttribute("departments", departments);
-        return "searchLineEstimateForLoa-form";
-    }
-
-    private void setDropDownValues(final Model model) {
-        model.addAttribute("funds", fundHibernateDAO.findAllActiveFunds());
-        model.addAttribute("functions", functionHibernateDAO.getAllActiveFunctions());
-        model.addAttribute("budgetHeads", budgetGroupDAO.getBudgetGroupList());
-        model.addAttribute("schemes", schemeService.findAll());
-        model.addAttribute("departments", departmentService.getAllDepartments());
-        model.addAttribute("natureOfWork", natureOfWorkService.findAll());
-    }
-    
-    @RequestMapping(value = "/searchlineestimateform", method = RequestMethod.GET)
-    public String searchLineEstimateToUploadEstmatePhotographs(@ModelAttribute final EstimatePhotographSearchRequest estimatePhotographSearchRequest,
+	@RequestMapping(value = "/viewestimatephotograph", method = RequestMethod.GET)
+    public String searchEstmatePhotographs(@ModelAttribute final EstimatePhotographSearchRequest estimatePhotographSearchRequest,
             final Model model) throws ApplicationException {
-        setDropDownValues(model);
+		model.addAttribute("departments", departmentService.getAllDepartments());
+		model.addAttribute("natureOfWork", natureOfWorkService.findAll());
         final List<Department> departments = lineEstimateService.getUserDepartments(securityUtils.getCurrentUser());
+        final List<User> aeCreatedByUsers = estimateService.getCreatedByForEstimatePhotograph();
         model.addAttribute("departments", departments);
+        model.addAttribute("aeCreatedByUsers", aeCreatedByUsers);
         model.addAttribute("estimatePhotographSearchRequest", estimatePhotographSearchRequest);
-        return "searchLineEstimateForEstimatePhotograph-form";
+        return "searchEstimatePhotograph-form";
     }
 
 }
