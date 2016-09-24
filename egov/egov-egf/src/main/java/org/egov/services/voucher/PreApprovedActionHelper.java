@@ -79,6 +79,12 @@ public class PreApprovedActionHelper {
                     voucherNumber, voucherDate);
             voucherHeader = voucherService.findById(voucherHeaderId, false);
             voucherHeader = sendForApproval(voucherHeader, workflowBean);
+        }catch (final ValidationException e) {
+            if (e.getErrors().get(0).getMessage() != null && e.getErrors().get(0).getMessage() != "")
+                throw new ValidationException(e.getErrors().get(0).getMessage(), e.getErrors().get(0).getMessage());
+            else
+                throw new ValidationException("Voucher creation failed", "Voucher creation failed");
+
         } catch (final Exception e) {
             e.printStackTrace();
             final List<ValidationError> errors = new ArrayList<ValidationError>();
