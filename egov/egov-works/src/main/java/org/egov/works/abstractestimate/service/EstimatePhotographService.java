@@ -91,11 +91,10 @@ public class EstimatePhotographService {
     public List<EstimatePhotographs> getEstimatePhotographs(final MultipartFile[] files, final Object object)
             throws IOException {
         List<EstimatePhotographs> estimatePhotographsList = new ArrayList<EstimatePhotographs>();
-        Long id = null;
         Method method = null;
         try {
             method = object.getClass().getMethod("getId", null);
-            id = (Long) method.invoke(object, null);
+            method.invoke(object, null);
         } catch (NoSuchMethodException | SecurityException | IllegalAccessException | IllegalArgumentException
                 | InvocationTargetException e) {
             throw new ApplicationRuntimeException("lineestimate.document.error", e);

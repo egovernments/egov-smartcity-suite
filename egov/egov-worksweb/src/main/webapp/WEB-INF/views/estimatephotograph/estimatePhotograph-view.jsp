@@ -43,11 +43,11 @@
 <%@ taglib uri="http://www.springframework.org/tags" prefix="spring"%>
 <%@ taglib uri="http://www.springframework.org/tags/form" prefix="form"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
-<link rel="stylesheet" href="<cdn:url value='/resources/global/js/jquery/plugins/jQuery.filer/css/jquery.filer-dragdropbox-theme.css' context='/egi'/>">
-<link rel="stylesheet" href="<cdn:url value='/resources/global/js/jquery/plugins/jQuery.filer/css/jquery.filer.css' context='/egi'/>">
-<script type="text/javascript" src="<cdn:url value='/resources/global/js/jquery/plugins/jQuery.filer/js/jquery.filer.min.js' context='/egi'/>"></script>
+<link rel="stylesheet" href="<cdn:url value='/resources/global/css/jquery/plugins/filer/jquery.filer-dragdropbox-theme.css' context='/egi'/>">
+<link rel="stylesheet" href="<cdn:url value='/resources/global/css/jquery/plugins/filer/jquery.filer.css' context='/egi'/>">
+<script type="text/javascript" src="<cdn:url value='/resources/global/js/jquery/plugins/filer/jquery.filer.min.js' context='/egi'/>"></script>
 
-<link rel="stylesheet" href="<cdn:url value='/resources/global/js/image-gallery/css/bootstrap-image-gallery.css' context='/egi'/>">
+<link rel="stylesheet" href="<cdn:url value='/resources/global/css/bootstrap/plugins/image-gallery/bootstrap-image-gallery.css' context='/egi'/>">
 <link rel="stylesheet" href="<cdn:url value='/resources/global/js/image-gallery/css/blueimp-gallery.min.css' context='/egi'/>">
 
 <script type="text/javascript" src="<cdn:url value='/resources/global/js/image-gallery/js/jquery.blueimp-gallery.min.js' context='/egi'/>"></script>
