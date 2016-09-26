@@ -194,10 +194,8 @@ public class LetterOfAcceptanceService {
         return letterOfAcceptanceRepository.findById(id);
     }
     
-    public List<String> getApprovedWorkOrderByNumberToModifyLOA(final String name) {
-        return letterOfAcceptanceRepository.findDistinctWorkorderNumberToModifyLOA("%" + name + "%", WorksConstants.APPROVED,
-                ContractorBillRegister.BillStatus.CANCELLED.toString(),
-                BillTypes.Final_Bill.toString());
+    public List<String> getApprovedWorkOrderByNumber(final String workOrderNumber) {
+        return letterOfAcceptanceRepository.findDistinctWorkOrderNumberContainingIgnoreCase("%" + workOrderNumber + "%");
     }
 
     @Transactional
