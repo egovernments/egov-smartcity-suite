@@ -61,7 +61,14 @@
 			<br/>
 		</div>
 		<div class="buttonbottom" align="center">
-			<input type="button" class="button" name="SearchProperty" id="SearchProperty" value="Search Property" onclick="window.location='${pageContext.request.contextPath}/search/searchProperty-searchForm.action';" />
+			<s:if test="%{applicationType.isEmpty()}">
+			<input type="button" class="button" name="SearchProperty" id="SearchProperty" value="Search Property" 
+			onclick="window.location='${pageContext.request.contextPath}/search/searchProperty-searchForm.action';" />
+			</s:if>
+			<s:else>
+			<input type="button" class="button" name="SearchProperty" id="SearchProperty" value="Search Property" 
+			onclick="window.location='${pageContext.request.contextPath}/search/searchProperty-commonForm.action?applicationType=${applicationType}';" />
+			</s:else>
 			&nbsp;<input type="button" name="button2" id="button2" value="Close" class="button" onclick="window.close();" />
 		</div>
 	</body>
