@@ -296,6 +296,9 @@ function addOtherDeductionRow() {
 	if (rowcount < 30) {
 		if (document.getElementById('otherdeductionrow') != null) {
 			addRow('tblotherdeductioncreditdetails','otherdeductionrow');
+			$('#tblotherdeductioncreditdetails tbody tr:eq('+rowcount+')').find('.otherDeductionCreditGlcode').val('');
+			$('#tblotherdeductioncreditdetails tbody tr:eq('+rowcount+')').find('.otherdeductionname').val('');
+			$('#tblotherdeductioncreditdetails tbody tr:eq('+rowcount+')').find('.creditAmount').val('');
 			otherDeductionCreditGlcode_initialize();
 		}
 	} else {
