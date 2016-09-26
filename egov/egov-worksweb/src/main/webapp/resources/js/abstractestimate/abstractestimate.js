@@ -54,7 +54,6 @@ var tailend="<!--only for validity tail end -->";
 
 var hint='<a href="#" class="hintanchor" title="@fulldescription@"><i class="fa fa-question-circle" aria-hidden="true"></i></a>';
 $(document).ready(function(){
-	$('#beneficiary').val($('#beneficiary').val().replace(/_C/g, '/C').replace(/_/g, ' '));
 	if($('#estimateNumber').val() != '') {
 		$('.disablefield').attr('disabled', 'disabled');
 	}
@@ -73,7 +72,7 @@ $(document).ready(function(){
 	}
 	var beneficiary = $('#beneficiary').val(); 
 	if(beneficiary != undefined) {
-		$('#beneficiary').val($('#beneficiary').val().replace(/_/g, '/'));
+		$('#beneficiary').val($('#beneficiary').val().replace(/_C/g, '/C').replace(/_/g, ' '));
 	}
 	$( "input[name$='percentage']" ).each(function() {
 		var value = $(this).val();
