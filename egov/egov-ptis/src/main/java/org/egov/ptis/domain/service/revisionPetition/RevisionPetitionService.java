@@ -39,6 +39,11 @@
  */
 package org.egov.ptis.domain.service.revisionPetition;
 
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+
 import org.apache.commons.lang3.StringUtils;
 import org.egov.commons.EgwStatus;
 import org.egov.commons.dao.EgwStatusHibernateDAO;
@@ -69,10 +74,6 @@ import org.hibernate.criterion.Restrictions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
 
 public class RevisionPetitionService extends PersistenceService<RevisionPetition, Long> {
     @Autowired
@@ -307,6 +308,11 @@ public class RevisionPetitionService extends PersistenceService<RevisionPetition
 
     public void setsMSEmailService(final SMSEmailService sMSEmailService) {
         this.sMSEmailService = sMSEmailService;
+    }
+    
+    public RevisionPetition createRevisionPetition(RevisionPetition objection, HashMap<String, String> meesevaParams){
+        createRevisionPetition(objection);
+        return objection;
     }
 
 }
