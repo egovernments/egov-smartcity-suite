@@ -40,14 +40,25 @@
 
 package org.egov.restapi.web.rest;
 
+import java.io.IOException;
 import java.util.List;
 
+import org.codehaus.jackson.JsonParseException;
+import org.codehaus.jackson.annotate.JsonAutoDetect.Visibility;
+import org.codehaus.jackson.annotate.JsonMethod;
+import org.codehaus.jackson.map.JsonMappingException;
+import org.codehaus.jackson.map.ObjectMapper;
+import org.codehaus.jackson.map.SerializationConfig;
+import org.egov.dcb.bean.ChequePayment;
 import org.egov.infra.web.utils.WebUtils;
 import org.egov.restapi.model.StateCityInfo;
+import org.egov.restapi.model.dashboard.CollectionIndexDetails;
 import org.egov.restapi.service.DashboardService;
+import org.egov.restapi.util.JsonConvertor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.ExceptionHandler;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -75,4 +86,15 @@ public class CMDashboardController {
         		StateCityInfo.class, StateInfoHelperAdaptor.class)).append("}").toString();
         return result;
     }
+
+	/**
+	 * Provides Collection Index details across all ULBs 
+	 * @return response JSON
+	 * @throws IOException 
+	 */
+	@RequestMapping(value = "/collectiondashboard", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
+	public String getCollectionDetails(@RequestBody String collDetailsRequest) throws IOException{
+		CollectionIndexDetails collectionDetails = dashboardService.getCollectionIndexDetails();
+        return JsonConvertor.convert(collectionDetails);
+	}
 }
