@@ -53,10 +53,11 @@
 	<c:choose>
 		<c:when test="${not empty judgmentDocList}">
 			<c:forEach items="${judgmentDocList}" var="docs" varStatus="serialNo">
+			<c:forEach items="${docs.getSupportDocs()}" var="file">
 				<tbody>
 					<tr>
 						
-						<td><c:forEach items="${docs.getSupportDocs()}" var="file">
+						<td>
 							<a href="/egi/downloadfile?fileStoreId=${file.fileStoreId}&moduleName=LCMS" target="_blank">  
 								<c:out value="${file.fileName}"/> </a> 
 							</c:forEach>
