@@ -54,6 +54,7 @@ import org.egov.ptis.domain.model.ErrorDetails;
 import org.egov.restapi.model.dashboard.CollIndexTableData;
 import org.egov.restapi.model.dashboard.CollectionIndexDetails;
 import org.egov.restapi.model.dashboard.CollectionTrend;
+import org.egov.restapi.model.dashboard.ConsolidatedCollDetails;
 import org.egov.restapi.model.StateCityInfo;
 import org.hibernate.SQLQuery;
 import org.hibernate.Session;
@@ -191,5 +192,18 @@ public class DashboardService {
 		collTrend.setCyColl(BigDecimal.valueOf(600.23));
 		collTrendsList.add(collTrend);
 		collectionIndexDetails.setCollTrends(collTrendsList);
+	}
+	
+	/**
+	 * Provides State-wise Collection Statistics
+	 * @return ConsolidatedCollDetails
+	 */
+	public ConsolidatedCollDetails getConsolidatedCollDetails(){
+		//Temporarily all values are being hard coded, actual values will be read from the elastic search index later
+		ConsolidatedCollDetails consolidatedData = new ConsolidatedCollDetails();
+		consolidatedData.setCytdColl(BigDecimal.valueOf(50.95));
+		consolidatedData.setTotalDmd(BigDecimal.valueOf(194.93));
+		consolidatedData.setLytdColl(BigDecimal.valueOf(45.71));
+		return consolidatedData;
 	}
 }
