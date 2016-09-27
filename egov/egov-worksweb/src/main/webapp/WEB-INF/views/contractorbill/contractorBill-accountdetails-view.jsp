@@ -62,7 +62,7 @@
 			</thead>
 			<tbody>
 			<c:forEach items="${billDetailsMap}" var="debitBillDetails" varStatus="item">
-				<c:if test="${debitBillDetails.isDebit}"> 
+				<c:if test="${debitBillDetails.isDebit && !debitBillDetails.isRefund}"> 
 					<tr>					
 						<td>
 							<c:out value="${debitBillDetails.glcode}" /> 
@@ -78,6 +78,50 @@
 			</c:forEach>
 			</tbody>
 		</table>
+	</div>
+	
+	<div class="panel-heading custom_form_panel_heading">
+	<div class="panel-title">
+		<spring:message  code="lbl.refund"/>
+	</div>
+</div>
+
+<div style="padding: 0 15px;">
+		<table class="table table-bordered" id="tbldebitdetails-view">
+			<thead>
+				<tr>
+					<th><spring:message code="lbl.account.code"/></th>
+					<th><spring:message code="lbl.account.head"/></th>
+					<th><spring:message code="lbl.withheld.amount"/></th>
+					<th><spring:message code="lbl.refundedsofar.amount"/></th>
+					<th><spring:message code="lbl.debit.amount"/></th>
+				</tr>
+			</thead>
+			<tbody>
+			<c:forEach items="${billDetailsMap}" var="debitBillDetails" varStatus="item">
+				<c:if test="${debitBillDetails.isDebit && debitBillDetails.isRefund}"> 
+					<tr>	
+					    <td>
+							<c:out value="${debitBillDetails.glcode}" /> 
+						</td>
+						<td>
+							<c:out value="${debitBillDetails.accountHead}" /> 
+						</td>
+						<td class="text-right">
+							<c:out value="${debitBillDetails.withHeldAmount}" /> 
+						</td>
+						<td class="text-right">
+							<c:out value="${debitBillDetails.RefundedAmount}" /> 
+						</td>
+						<td class="text-right">
+							<fmt:formatNumber maxFractionDigits="2" minFractionDigits="2" groupingUsed="false" value="${debitBillDetails.amount}" />
+						</td>
+					</tr>
+					</c:if>
+					</c:forEach>
+					
+	</tbody>
+	</table>
 	</div>
 
 <div class="panel-heading custom_form_panel_heading">

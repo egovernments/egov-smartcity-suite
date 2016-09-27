@@ -304,4 +304,11 @@ public class WorksConstants {
     public static final String NATUREOFWORK_EXPENDITURETYPE_CAPITAL = "CAPITAL";
 
     public static final String NATUREOFWORK_EXPENDITURETYPE_REVENUE = "REVENUE";
+    
+    public static final String CONTRACTOR_RETENTION_MONEY_PURPOSE = "RETENTION_MONEY";
+    
+    public static final String CONTRACTOR_SECURITY_DEPOSITE_PURPOSE = "Security Deposit";
+    
+    public static final String [] CONTRACTOR_REFUND_PURPOSE = {CONTRACTOR_RETENTION_MONEY_PURPOSE , CONTRACTOR_SECURITY_DEPOSITE_PURPOSE};
+    
 }

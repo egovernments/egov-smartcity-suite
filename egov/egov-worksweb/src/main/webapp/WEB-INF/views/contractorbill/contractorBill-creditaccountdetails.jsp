@@ -70,11 +70,11 @@
 			</thead>
 			<tbody>
 				<c:choose>
-					<c:when test="${billDetailsMap == null || billDetailsMap.size() == 2}">
+					<c:when test="${billDetailsMap == null || !isCreditsPreset}">
 						<tr id="deductionRow">
 							<td>
-								<input type="text" id="billDetailes[1].creditGlcode" name="billDetailes[1].creditGlcode" class="form-control table-input patternvalidation creditGlcode" data-pattern="alphanumerichyphenbackslash" data-errormsg="Account Code is mandatory!" data-idx="0" data-optional="0" maxlength="9" required="required" placeholder="Type first 3 letters of Account code" onblur="resetCreditAccountDetails(this);"> 
-								<form:hidden path="billDetailes[1].glcodeid"  name="billDetailes[1].glcodeid" id="billDetailes[1].glcodeid" value="${egBilldetailes.glcodeid}" class="form-control table-input hidden-input creditglcodeid"/> 
+								<input type="text" id="billDetailes[1].creditGlcode" name="billDetailes[1].creditGlcode" class="form-control table-input patternvalidation  creditGlcode" data-pattern="alphanumerichyphenbackslash" data-errormsg="Account Code is mandatory!" data-idx="0" data-optional="0" required="required" placeholder="Type first 3 letters of Account code" onblur="resetCreditAccountDetails(this);"> 
+								<form:hidden path="billDetailes[1].glcodeid"  name="billDetailes[1].glcodeid" id="billDetailes[1].glcodeid" value="${egBilldetailes.glcodeid}" class="form-control table-inputhidden-input  creditglcodeid"/> 
 								<form:errors path="billDetailes[1].glcodeid" cssClass="add-margin error-msg" /> 
 							</td>
 							<td>
@@ -89,25 +89,27 @@
 						</tr>
 					</c:when>
 					<c:otherwise>
-						<c:forEach items="${billDetailsMap }" var="billDetail" varStatus="item" begin="1">
+					<c:set var="rowIndex" value="${1}" scope="session" />
+						<c:forEach items="${billDetailsMap }" var="billDetail" varStatus="item">
 							<c:if test="${!billDetail.isDebit && !billDetail.isNetPayable}">
 								<tr id="deductionRow">
 									<td>
 										<%-- <form:hidden path="billDetailes[${item.index }].id" value="${billDetail.id}"/> --%>
-										<input type="text" id="billDetailes[${item.index }].creditGlcode" name="billDetailes[${item.index }].creditGlcode" value="${billDetail.glcode} ~ ${billDetail.accountHead}" class="form-control table-input patternvalidation creditGlcode" data-pattern="alphanumerichyphenbackslash" data-errormsg="Account Code is mandatory!" data-idx="0" data-optional="0" maxlength="9" required="required" placeholder="Type first 3 letters of Account code" onblur="resetCreditAccountDetails(this);"> 
-										<form:hidden path="billDetailes[${item.index }].glcodeid" name="billDetailes[${item.index }].glcodeid" value="${billDetail.glcodeId}" id="billDetailes[${item.index }].glcodeid" class="form-control table-input hidden-input creditglcodeid"/> 
-										<form:errors path="billDetailes[${item.index }].glcodeid" cssClass="add-margin error-msg" /> 
+										<input type="text" id="billDetailes[${rowIndex}].creditGlcode" name="billDetailes[${rowIndex}].creditGlcode" value="${billDetail.glcode} ~ ${billDetail.accountHead}" class="form-control table-input patternvalidation creditGlcode" data-pattern="alphanumerichyphenbackslash" data-errormsg="Account Code is mandatory!" data-idx="0" data-optional="0" required="required" placeholder="Type first 3 letters of Account code" onblur="resetCreditAccountDetails(this);"> 
+										<form:hidden path="billDetailes[${rowIndex}].glcodeid" name="billDetailes[${rowIndex}].glcodeid" value="${billDetail.glcodeId}" id="billDetailes[${rowIndex}].glcodeid" class="form-control table-input hidden-input creditglcodeid"/> 
+										<form:errors path="billDetailes[${rowIndex}].glcodeid" cssClass="add-margin error-msg" /> 
 									</td>
 									<td>
-										<input type="text" id="billDetailes[${item.index }].creditAccountHead" name="billDetailes[${item.index }].creditAccountHead" value="${billDetail.accountHead}" class="form-control creditaccountheadname" disabled>  
+										<input type="text" id="billDetailes[${rowIndex}].creditAccountHead" name="billDetailes[${rowIndex}].creditAccountHead" value="${billDetail.accountHead}" class="form-control creditaccountheadname" disabled>  
 									</td>
 									<td>
-										<form:input path="billDetailes[${item.index }].creditamount" id="billDetailes[${item.index }].creditamount" name="billDetailes[${item.index }].creditamount" value="${billDetail.amount }" data-errormsg="Credit Amount is mandatory!" onkeyup="decimalvalue(this);" data-pattern="decimalvalue" data-idx="0" data-optional="0" class="form-control table-input text-right creditAmount" onblur="calculateNetPayableAmount();"  maxlength="12" required="required" />
-										<form:errors path="billDetailes[${item.index }].creditamount" cssClass="add-margin error-msg" /> 
+										<form:input path="billDetailes[${rowIndex}].creditamount" id="billDetailes[${rowIndex}].creditamount" name="billDetailes[${rowIndex}].creditamount" value="${billDetail.amount }" data-errormsg="Credit Amount is mandatory!" onkeyup="decimalvalue(this);" data-pattern="decimalvalue" data-idx="0" data-optional="0" class="form-control table-input text-right creditAmount" onblur="calculateNetPayableAmount();"  maxlength="12" required="required" />
+										<form:errors path="billDetailes[${rowIndex}].creditamount" cssClass="add-margin error-msg" /> 
 									</td> 
 									<td class="text-center"><span style="cursor:pointer;" onclick="addDeductionRow();"><i class="fa fa-plus"></i></span>
 									 <span class="add-padding" onclick="deleteDeductionRow(this);"><i class="fa fa-trash" data-toggle="tooltip" title="" data-original-title="Delete!"></i></span> </td>
 								</tr>
+								<c:set value="${rowIndex + 1}" var="rowIndex" scope="session" />
 							</c:if>
 						</c:forEach>
 					</c:otherwise>
