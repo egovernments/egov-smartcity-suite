@@ -102,9 +102,10 @@
 					<td>
 						<s:submit type="submit" cssClass="buttonsubmit custom-button" value="%{name}"
 							id="%{name}" name="%{name}"
-							onclick="return validateWorkFlowApprover('%{name}','jsValidationErrors');" style="margin:0 5px"/></td>
+							onclick="return validateWorkFlowApprover('%{name}','jsValidationErrors');" style="margin:0 5px" /></td>
 					</s:if>
-				</s:iterator> <td><input type="button" name="button2" id="button2" value="Close"
+				</s:iterator> 
+				<td><input type="button" name="button2" id="button2" value="Close"
 				class="button" onclick="window.close();" style="margin:0 5px"/></td></td>
 		</tr>
 	</table>
