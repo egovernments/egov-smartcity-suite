@@ -55,7 +55,7 @@ public interface RevisionEstimateRepository extends JpaRepository<RevisionAbstra
     @Query("from RevisionAbstractEstimate re where re.parent.id=:id and re.egwStatus.code=:status order by re.id")
     List<RevisionAbstractEstimate> findByParent_IdAndStatus(@Param("id") final Long id, @Param("status") final String status);
     
-    @Query("from RevisionAbstractEstimate re where re.parent.id=:id and re.egwStatus.code=:status and re.id<=:reId order by re.id")
+    @Query("from RevisionAbstractEstimate re where re.parent.id=:id and re.egwStatus.code=:status and re.id<:reId order by re.id")
     List<RevisionAbstractEstimate> findByParent_IdAndStatusForView(@Param("id") final Long id,@Param("reId") final Long reId, @Param("status") final String status);
 
     List<RevisionAbstractEstimate> findByParent_Id(final Long id);

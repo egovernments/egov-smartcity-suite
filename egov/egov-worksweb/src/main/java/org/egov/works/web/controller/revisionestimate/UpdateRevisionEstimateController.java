@@ -52,7 +52,6 @@ import org.egov.eis.web.controller.workflow.GenericWorkFlowController;
 import org.egov.infra.exception.ApplicationException;
 import org.egov.infra.validation.exception.ValidationException;
 import org.egov.works.abstractestimate.entity.AbstractEstimate.EstimateStatus;
-import org.egov.works.abstractestimate.entity.Activity;
 import org.egov.works.abstractestimate.service.EstimateService;
 import org.egov.works.abstractestimate.service.MeasurementSheetService;
 import org.egov.works.letterofacceptance.service.WorkOrderActivityService;
@@ -61,7 +60,6 @@ import org.egov.works.mb.service.MBHeaderService;
 import org.egov.works.revisionestimate.entity.RevisionAbstractEstimate;
 import org.egov.works.revisionestimate.service.RevisionEstimateService;
 import org.egov.works.utils.WorksConstants;
-import org.egov.works.workorder.entity.WorkOrderActivity;
 import org.egov.works.workorder.entity.WorkOrderEstimate;
 import org.egov.works.workorder.service.WorkOrderEstimateService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -120,10 +118,7 @@ public class UpdateRevisionEstimateController extends GenericWorkFlowController 
         final RevisionAbstractEstimate revisionEstimate = revisionEstimateService.getRevisionEstimateById(revisionEstimateId);
         final WorkOrderEstimate workOrderEstimate = workOrderEstimateService
                 .getWorkOrderEstimateByAbstractEstimateId(revisionEstimate.getParent().getId());
-        revisionEstimateService.loadViewData(revisionEstimate, workOrderEstimate, model,null);
-
-        prepareNonTenderedAndLumpSumActivities(revisionEstimate);
-        prepareChangeQuantityActivities(revisionEstimate);
+        revisionEstimateService.loadDataForView(revisionEstimate, workOrderEstimate, model);
 
         if (revisionEstimate.getCurrentState() != null
                 && !WorksConstants.NEW.equals(revisionEstimate.getCurrentState().getValue()))
@@ -170,40 +165,13 @@ public class UpdateRevisionEstimateController extends GenericWorkFlowController 
         final RevisionAbstractEstimate revisionEstimate = revisionEstimateService.getRevisionEstimateById(revisionEstimateId);
         final WorkOrderEstimate workOrderEstimate = workOrderEstimateService
                 .getWorkOrderEstimateByAbstractEstimateId(revisionEstimate.getParent().getId());
-        revisionEstimateService.loadViewData(revisionEstimate, workOrderEstimate, model,WorksConstants.VIEW);
-
-        prepareNonTenderedAndLumpSumActivities(revisionEstimate);
-        prepareChangeQuantityActivities(revisionEstimate);
+        revisionEstimateService.loadDataForView(revisionEstimate, workOrderEstimate, model);
 
         model.addAttribute("workflowHistory",
                 lineEstimateService.getHistory(revisionEstimate.getState(), revisionEstimate.getStateHistory()));
         model.addAttribute("estimateValue", revisionEstimate.getEstimateValue().setScale(2, BigDecimal.ROUND_HALF_EVEN));
         model.addAttribute("mode", "view");
         return "revisionEstimate-view";
-    }
-
-    private void prepareNonTenderedAndLumpSumActivities(final RevisionAbstractEstimate revisionEstimate) {
-
-        for (final Activity activity : revisionEstimate.getActivities())
-            if (activity.getSchedule() != null && activity.getParent() == null)
-                revisionEstimate.getNonTenderedActivities().add(activity);
-            else if (activity.getNonSor() != null && activity.getParent() == null)
-                revisionEstimate.getLumpSumActivities().add(activity);
-    }
-
-    private void prepareChangeQuantityActivities(final RevisionAbstractEstimate revisionEstimate) {
-        for (final Activity activity : revisionEstimate.getActivities())
-            if (activity.getParent() != null) {
-                final WorkOrderActivity workOrderActivity = workOrderActivityService
-                        .getWorkOrderActivityByActivity(activity.getParent().getId());
-                if (workOrderActivity != null) {
-                    revisionEstimateService.deriveWorkOrderActivityQuantity(workOrderActivity);
-                    final Double consumedQuantity = mbHeaderService.getPreviousCumulativeQuantity(-1L, workOrderActivity.getId());
-                    activity.setConsumedQuantity(consumedQuantity == null ? 0 : consumedQuantity);
-                    activity.setEstimateQuantity(workOrderActivity.getApprovedQuantity());
-                }
-                revisionEstimate.getChangeQuantityActivities().add(activity);
-            }
     }
 
     @RequestMapping(value = "/update/{revisionEstimateId}", method = RequestMethod.POST)
@@ -248,7 +216,7 @@ public class UpdateRevisionEstimateController extends GenericWorkFlowController 
         revisionEstimateService.validateChangeQuantityActivities(revisionEstimate, errors);
         if (errors.hasErrors()) {
 
-            revisionEstimateService.loadViewData(revisionEstimate, workOrderEstimate, model,null);
+            revisionEstimateService.loadViewData(revisionEstimate, workOrderEstimate, model);
 
             final WorkflowContainer workflowContainer = new WorkflowContainer();
             prepareWorkflow(model, revisionEstimate, workflowContainer);
@@ -269,9 +237,9 @@ public class UpdateRevisionEstimateController extends GenericWorkFlowController 
             return "revisionEstimate-form";
         } else {
             try {
-            if (null != workFlowAction)
-                updatedRevisionEstimate = revisionEstimateService.updateRevisionEstimate(revisionEstimate, approvalPosition,
-                        approvalComment, null, workFlowAction, removedActivityIds, workOrderEstimate);
+                if (null != workFlowAction)
+                    updatedRevisionEstimate = revisionEstimateService.updateRevisionEstimate(revisionEstimate, approvalPosition,
+                            approvalComment, null, workFlowAction, removedActivityIds, workOrderEstimate);
             } catch (final ValidationException e) {
                 final String errorMessage = messageSource.getMessage("error.budgetappropriation.insufficient.amount",
                         new String[] {}, null);

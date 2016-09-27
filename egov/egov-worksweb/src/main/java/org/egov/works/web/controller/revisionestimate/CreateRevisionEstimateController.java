@@ -113,7 +113,7 @@ public class CreateRevisionEstimateController extends GenericWorkFlowController 
 
         final WorkOrderEstimate workOrderEstimate = workOrderEstimateService.getWorkOrderEstimateById(workOrderEstimateId);
         revisionEstimate.setParent(workOrderEstimate.getEstimate());
-        revisionEstimateService.loadViewData(revisionEstimate, workOrderEstimate, model, null);
+        revisionEstimateService.loadViewData(revisionEstimate, workOrderEstimate, model);
         final WorkflowContainer workflowContainer = new WorkflowContainer();
         prepareWorkflow(model, revisionEstimate, workflowContainer);
         List<String> validActions = new ArrayList<String>();
@@ -148,7 +148,7 @@ public class CreateRevisionEstimateController extends GenericWorkFlowController 
         revisionEstimateService.validateREInWorkFlow(workOrderEstimate.getEstimate().getId(), jsonObject, bindErrors);
         revisionEstimateService.validateChangeQuantityActivities(revisionEstimate, bindErrors);
         if (bindErrors.hasErrors()) {
-            revisionEstimateService.loadViewData(revisionEstimate, workOrderEstimate, model, null);
+            revisionEstimateService.loadViewData(revisionEstimate, workOrderEstimate, model);
 
             final WorkflowContainer workflowContainer = new WorkflowContainer();
             prepareWorkflow(model, revisionEstimate, workflowContainer);

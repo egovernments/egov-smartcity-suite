@@ -1822,6 +1822,7 @@ function populateActivities(data, selectedActivities){
 				newrow = newrow.replace('msrowquantity_0_0', 'msrowquantity_' + activityCount + '_0');
 				newrow = newrow.replace('msrowidentifier_0_0', 'msrowidentifier_' + activityCount + '_0');
 				newrow = newrow.replace('msrowmbmsPreviousEntry_0_0', 'msrowmbmsPreviousEntry_' + activityCount + '_0');
+				newrow = newrow.replace('cqtotal_0_0', 'cqtotal_' + activityCount + '_' + activityCount);
 				document.getElementById('changeQuantityActivities[' + activityCount + '].mstd').innerHTML=newrow;
 				$(activity.ms).each(function(index, measurementSheet){
 					if (index > 0) {
@@ -1844,6 +1845,7 @@ function populateActivities(data, selectedActivities){
 						$newrow = $newrow.replace('msrowquantity_0_0', 'msrowquantity_' + activityCount + '_' + index);
 						$newrow = $newrow.replace('msrowidentifier_0_0', 'msrowidentifier_' + activityCount + '_' + index);
 						$newrow = $newrow.replace('msrowmbmsPreviousEntry_0_0', 'msrowmbmsPreviousEntry_' + activityCount + '_' + index);
+						$newrow = $newrow.replace('cqtotal_0_0', 'cqtotal_' + activityCount + '_' + activityCount);
 						$newrow = $newrow.replace('value="1"','value="'+(index+1)+'"');
 						$('.mssubmit_' + activityCount).closest('tr').before($newrow);
 
@@ -1883,7 +1885,7 @@ function populateActivities(data, selectedActivities){
 					else
 						total = total - Number(quantity);
 				});
-				$('.cqtotal_'+activityCount).html(total);
+				$('.cqtotal_'+activityCount+ '_' + activityCount).html(total);
 			} else {
 				document.getElementById('changeQuantityActivities[' + activityCount + '].msadd').style.display = 'none';
 				$('#activityQuantity_' + activityCount).removeAttr('readonly');

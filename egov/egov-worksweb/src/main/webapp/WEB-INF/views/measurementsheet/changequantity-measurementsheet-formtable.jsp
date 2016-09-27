@@ -108,7 +108,7 @@
 	                <tr>
 	                	<td colspan="5"></td>
 	                    <td class="text-right"><spring:message code="lbl.total" /></td>
-	                    <td class="text-right view-content cqtotal_0"></td>
+	                    <td class="text-right view-content cqtotal_0_0"></td>
 	                    <td colspan="4" class="text-right">
 	                        <input type="button" name="resetButton" value="Reset" id="resetButton" class="btn btn-xs btn-danger reset-cq" />
 	                        <input type="button" value="Submit"  id="templatesorActivities[0].mssubmit" class="btn btn-xs btn-primary ms-submit templatemssubmit_0"/> 

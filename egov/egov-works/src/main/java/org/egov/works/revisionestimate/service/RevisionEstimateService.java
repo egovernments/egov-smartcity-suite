@@ -733,7 +733,7 @@ public class RevisionEstimateService {
     }
 
     public void populateHeaderActivities(final RevisionAbstractEstimate revisionEstimate,
-            final List<RevisionAbstractEstimate> revisionAbstractEstimates, final Model model, String mode) {
+            final List<RevisionAbstractEstimate> revisionAbstractEstimates, final Model model) {
         // Adding Original Activities
         final List<Activity> sorActivities = new ArrayList<>(revisionEstimate.getParent().getSORActivities());
         final List<Activity> nonSorActivities = new ArrayList<>(revisionEstimate.getParent().getNonSORActivities());
@@ -745,45 +745,64 @@ public class RevisionEstimateService {
 
         Boolean measurementsPresent = false;
 
-        // Populating Revision Estimate Activities
-        for (final RevisionAbstractEstimate re : revisionAbstractEstimates)
-            if (revisionEstimate == null || revisionEstimate.getCreatedDate() == null
-                    || revisionEstimate != null && revisionEstimate.getCreatedDate() != null
-                            && re.getCreatedDate().before(revisionEstimate.getCreatedDate())) {
-                for (final Activity activity : re.getActivities())
-                    if (activity.getParent() == null && activity.getSchedule() != null)
-                        populateNonTenderedLumpSumActivities(activity, nonTenderedActivities, mode);
-                    else if (activity.getParent() == null && activity.getSchedule() == null)
-                        populateNonTenderedLumpSumActivities(activity, lumpSumActivities, mode);
-                    else if (activity.getParent() != null && activity.getSchedule() != null)
-                        populateChangeQuantityActivities(activity, sorActivities, nonTenderedActivities, mode);
-                    else if (activity.getParent() != null && activity.getSchedule() == null)
-                        populateChangeQuantityActivities(activity, nonSorActivities, lumpSumActivities, mode);
-                previousEstimates.put(re.getId(), re.getEstimateNumber());
-                if (!measurementsPresent)
-                    measurementsPresent = measurementSheetService.existsByEstimate(re.getId());
+        // Populating Revision Estimate NonTendered and Lump Sum Activities
+        for (final RevisionAbstractEstimate re : revisionAbstractEstimates) {
+            for (final Activity activity : re.getActivities())
+                if (activity.getParent() == null && activity.getRevisionType() != null
+                        && RevisionType.NON_TENDERED_ITEM.equals(activity.getRevisionType())) {
+                    nonTenderedActivities.add(activity);
+                } else if (activity.getParent() == null && activity.getRevisionType() != null
+                        && RevisionType.LUMP_SUM_ITEM.equals(activity.getRevisionType())) {
+                    lumpSumActivities.add(activity);
+                }
+            previousEstimates.put(re.getId(), re.getEstimateNumber());
+            if (!measurementsPresent)
+                measurementsPresent = measurementSheetService.existsByEstimate(re.getId());
+        }
+
+        // Populating Revision Estimate Change Quantity Activities
+        for (final RevisionAbstractEstimate re : revisionAbstractEstimates) {
+            for (final Activity activity : re.getActivities())
+                if (activity.getParent() != null && activity.getSchedule() != null) {
+                    populateChangeQuantityActivities(activity, sorActivities, nonTenderedActivities);
+                } else if (activity.getParent() != null && activity.getSchedule() == null) {
+                    populateChangeQuantityActivities(activity, nonSorActivities, lumpSumActivities);
+                }
+        }
+        if (!revisionAbstractEstimates.isEmpty()) {
+            for (final Activity sa : sorActivities) {
+                if (!sa.getMeasurementSheetList().isEmpty()) {
+                    for (final MeasurementSheet ms : sa.getMeasurementSheetList()) {
+                        deriveMeasurementSheetQuantity(ms, revisionEstimate.getId());
+
+                    }
+                }
             }
 
-        for (final Activity sa : sorActivities)
-            if (!sa.getMeasurementSheetList().isEmpty())
-                for (final MeasurementSheet ms : sa.getMeasurementSheetList())
-                    deriveMeasurementSheetQuantity(ms, mode, revisionEstimate.getId());
+            for (final Activity sa : nonSorActivities) {
+                if (!sa.getMeasurementSheetList().isEmpty()) {
+                    for (final MeasurementSheet ms : sa.getMeasurementSheetList()) {
+                        deriveMeasurementSheetQuantity(ms, revisionEstimate.getId());
+                    }
+                }
+            }
 
-        for (final Activity sa : nonSorActivities)
-            if (!sa.getMeasurementSheetList().isEmpty())
-                for (final MeasurementSheet ms : sa.getMeasurementSheetList())
-                    deriveMeasurementSheetQuantity(ms, mode, revisionEstimate.getId());
+            for (final Activity sa : nonTenderedActivities) {
+                if (!sa.getMeasurementSheetList().isEmpty()) {
+                    for (final MeasurementSheet ms : sa.getMeasurementSheetList()) {
+                        deriveMeasurementSheetQuantity(ms, revisionEstimate.getId());
+                    }
+                }
+            }
 
-        for (final Activity sa : nonTenderedActivities)
-            if (!sa.getMeasurementSheetList().isEmpty())
-                for (final MeasurementSheet ms : sa.getMeasurementSheetList())
-                    deriveMeasurementSheetQuantity(ms, mode, revisionEstimate.getId());
-
-        for (final Activity sa : lumpSumActivities)
-            if (!sa.getMeasurementSheetList().isEmpty())
-                for (final MeasurementSheet ms : sa.getMeasurementSheetList())
-                    deriveMeasurementSheetQuantity(ms, mode, revisionEstimate.getId());
-
+            for (final Activity sa : lumpSumActivities) {
+                if (!sa.getMeasurementSheetList().isEmpty()) {
+                    for (final MeasurementSheet ms : sa.getMeasurementSheetList()) {
+                        deriveMeasurementSheetQuantity(ms, revisionEstimate.getId());
+                    }
+                }
+            }
+        }
         revisionEstimate.getSorActivities().addAll(sorActivities);
         revisionEstimate.getNonSorActivities().addAll(nonSorActivities);
         revisionEstimate.getChangeQuantityNTActivities().addAll(nonTenderedActivities);
@@ -793,34 +812,10 @@ public class RevisionEstimateService {
         model.addAttribute("measurementsPresent", measurementsPresent);
     }
 
-    private void populateNonTenderedLumpSumActivities(final Activity activity, final List<Activity> activities, String mode) {
-        if (activities.isEmpty())
-            activities.add(activity);
-        else {
-            boolean flag = false;
-            for (final Activity act : activities) {
-                if (mode != null && WorksConstants.VIEW.equals(mode)) {
-                    flag = true;
-                    act.setQuantity(act.getQuantity() + activity.getQuantity());
-                } else {
-                    if (activity.getSchedule() != null && activity.getSchedule().getId().equals(act.getSchedule().getId())) {
-                        flag = true;
-                        act.setQuantity(act.getQuantity() + activity.getQuantity());
-                    } else if (activity.getSchedule() == null && activity.getNonSor().getId().equals(act.getNonSor().getId())) {
-                        flag = true;
-                        act.setQuantity(act.getQuantity() + activity.getQuantity());
-                    }
-                }
-            }
-            if (!flag)
-                activities.add(activity);
-        }
-    }
-
-    private void populateChangeQuantityActivities(final Activity activity, final List<Activity> activities,
-            final List<Activity> nonTenderedLumpSumActivities, String mode) {
+    public void populateChangeQuantityActivities(final Activity activity, final List<Activity> activities,
+            final List<Activity> nonTenderedLumpSumActivities) {
         for (final Activity sa : activities) {
-            if (mode != null && WorksConstants.VIEW.equals(mode)) {
+            if (activity.getParent().getId().equals(sa.getId())) {
                 if (activity.getRevisionType() != null
                         && RevisionType.ADDITIONAL_QUANTITY.equals(activity.getRevisionType())) {
                     sa.setQuantity(sa.getQuantity() + activity.getQuantity());
@@ -830,22 +825,11 @@ public class RevisionEstimateService {
                     sa.setQuantity(sa.getQuantity() - activity.getQuantity());
                     sa.setQuantityChanged(true);
                 }
-            } else {
-                if (activity.getParent().getId().equals(sa.getId()))
-                    if (activity.getRevisionType() != null
-                            && RevisionType.ADDITIONAL_QUANTITY.equals(activity.getRevisionType())) {
-                        sa.setQuantity(sa.getQuantity() + activity.getQuantity());
-                        sa.setQuantityChanged(true);
-                    } else if (activity.getRevisionType() != null
-                            && RevisionType.REDUCED_QUANTITY.equals(activity.getRevisionType())) {
-                        sa.setQuantity(sa.getQuantity() - activity.getQuantity());
-                        sa.setQuantityChanged(true);
-                    }
             }
         }
 
         for (final Activity sa : nonTenderedLumpSumActivities) {
-            if (mode != null && WorksConstants.VIEW.equals(mode)) {
+            if (activity.getParent().getId().equals(sa.getId())) {
                 if (activity.getRevisionType() != null
                         && RevisionType.ADDITIONAL_QUANTITY.equals(activity.getRevisionType())) {
                     sa.setQuantity(sa.getQuantity() + activity.getQuantity());
@@ -855,23 +839,19 @@ public class RevisionEstimateService {
                     sa.setQuantity(sa.getQuantity() - activity.getQuantity());
                     sa.setQuantityChanged(true);
                 }
-            } else {
-                if (activity.getParent().getId().equals(sa.getId()))
-                    if (activity.getRevisionType() != null
-                            && RevisionType.ADDITIONAL_QUANTITY.equals(activity.getRevisionType())) {
-                        sa.setQuantity(sa.getQuantity() + activity.getQuantity());
-                        sa.setQuantityChanged(true);
-                    } else if (activity.getRevisionType() != null
-                            && RevisionType.REDUCED_QUANTITY.equals(activity.getRevisionType())) {
-                        sa.setQuantity(sa.getQuantity() - activity.getQuantity());
-                        sa.setQuantityChanged(true);
-                    }
             }
         }
     }
 
+    public void loadDataForView(final RevisionAbstractEstimate revisionEstimate, final WorkOrderEstimate workOrderEstimate,
+            final Model model) {
+        loadViewData(revisionEstimate, workOrderEstimate, model);
+        prepareNonTenderedAndLumpSumActivities(revisionEstimate);
+        prepareChangeQuantityActivities(revisionEstimate);
+    }
+
     public void loadViewData(final RevisionAbstractEstimate revisionEstimate, final WorkOrderEstimate workOrderEstimate,
-            final Model model, String mode) {
+            final Model model) {
         final List<AppConfigValues> values = appConfigValuesService.getConfigValuesByModuleAndKey(
                 WorksConstants.WORKS_MODULE_NAME, WorksConstants.APPCONFIG_KEY_SHOW_SERVICE_FIELDS);
         final AppConfigValues value = values.get(0);
@@ -881,13 +861,13 @@ public class RevisionEstimateService {
             model.addAttribute("isServiceVATRequired", false);
         model.addAttribute("uoms", uomService.findAll());
         List<RevisionAbstractEstimate> revisionAbstractEstimates;
-        if (mode != null && WorksConstants.VIEW.equals(mode))
+        if (revisionEstimate != null && revisionEstimate.getId() != null)
             revisionAbstractEstimates = findApprovedRevisionEstimatesByParentForView(
                     workOrderEstimate.getEstimate().getId(), revisionEstimate.getId());
         else
             revisionAbstractEstimates = findApprovedRevisionEstimatesByParent(
                     workOrderEstimate.getEstimate().getId());
-        populateHeaderActivities(revisionEstimate, revisionAbstractEstimates, model, mode);
+        populateHeaderActivities(revisionEstimate, revisionAbstractEstimates, model);
         model.addAttribute("revisionEstimate", revisionEstimate);
         model.addAttribute("exceptionaluoms", worksUtils.getExceptionalUOMS());
         model.addAttribute("workOrderDate",
@@ -1309,16 +1289,13 @@ public class RevisionEstimateService {
                             width = width + rems.getWidth().doubleValue();
                         if (rems.getDepthOrHeight() != null)
                             depthOrHeight = depthOrHeight + rems.getDepthOrHeight().doubleValue();
-                    } else {
-                        if (rems.getNo() != null)
-                            no = no - rems.getNo().doubleValue();
-                        if (rems.getLength() != null)
-                            length = length - rems.getLength().doubleValue();
-                        if (rems.getWidth() != null)
-                            width = width - rems.getWidth().doubleValue();
-                        if (rems.getDepthOrHeight() != null)
-                            depthOrHeight = depthOrHeight - rems.getDepthOrHeight().doubleValue();
                     }
+                /*
+                 * else { if (rems.getNo() != null) no = no - rems.getNo().doubleValue(); if (rems.getLength() != null) length =
+                 * length - rems.getLength().doubleValue(); if (rems.getWidth() != null) width = width -
+                 * rems.getWidth().doubleValue(); if (rems.getDepthOrHeight() != null) depthOrHeight = depthOrHeight -
+                 * rems.getDepthOrHeight().doubleValue(); }
+                 */
                 if (no != null && no != 0)
                     woms.setNo(new BigDecimal(no));
                 if (length != null && length != 0)
@@ -1344,9 +1321,9 @@ public class RevisionEstimateService {
             workOrderActivity.setApprovedQuantity(qty);
     }
 
-    private void deriveMeasurementSheetQuantity(final MeasurementSheet measurementSheet, String mode, Long reId) {
+    public void deriveMeasurementSheetQuantity(final MeasurementSheet measurementSheet, Long reId) {
         List<MeasurementSheet> remsList = new ArrayList<>();
-        if (mode != null && WorksConstants.VIEW.equals(mode))
+        if (reId != null)
             remsList = measurementSheetService.findByParentIdForView(measurementSheet.getId(), reId);
         else
             remsList = measurementSheetService.findByParentId(measurementSheet.getId());
@@ -1391,5 +1368,29 @@ public class RevisionEstimateService {
     public List<RevisionAbstractEstimate> findRevisionEstimatesByParentAndStatus(final Long parentId) {
         return revisionEstimateRepository.findByParent_IdAndEgwStatus_codeNotLike(parentId,
                 "%" + WorksConstants.CANCELLED_STATUS + "%");
+    }
+
+    public void prepareNonTenderedAndLumpSumActivities(final RevisionAbstractEstimate revisionEstimate) {
+
+        for (final Activity activity : revisionEstimate.getActivities())
+            if (activity.getSchedule() != null && activity.getParent() == null)
+                revisionEstimate.getNonTenderedActivities().add(activity);
+            else if (activity.getNonSor() != null && activity.getParent() == null)
+                revisionEstimate.getLumpSumActivities().add(activity);
+    }
+
+    public void prepareChangeQuantityActivities(final RevisionAbstractEstimate revisionEstimate) {
+        for (final Activity activity : revisionEstimate.getActivities())
+            if (activity.getParent() != null) {
+                final WorkOrderActivity workOrderActivity = workOrderActivityService
+                        .getWorkOrderActivityByActivity(activity.getParent().getId());
+                if (workOrderActivity != null) {
+                    deriveWorkOrderActivityQuantity(workOrderActivity);
+                    final Double consumedQuantity = mbHeaderService.getPreviousCumulativeQuantity(-1L, workOrderActivity.getId());
+                    activity.setConsumedQuantity(consumedQuantity == null ? 0 : consumedQuantity);
+                    activity.setEstimateQuantity(workOrderActivity.getApprovedQuantity());
+                }
+                revisionEstimate.getChangeQuantityActivities().add(activity);
+            }
     }
 }
