@@ -92,4 +92,11 @@ public interface LineEstimateDetailsRepository extends JpaRepository<LineEstimat
 
     LineEstimateDetails findByProjectCode_codeAndLineEstimate_Status_CodeNotLike(String workIdentificationNumber, String status);
     
+    @Query("select distinct(led.estimateNumber) from LineEstimateDetails as led where upper(led.estimateNumber) like upper(:estimateNumber) and led.lineEstimate.status.code != :lineEstimateStatus")
+    List<String> findEstimateNumbersForEstimatePhotograph(@Param("estimateNumber") String estimateNumber, @Param("lineEstimateStatus") String lineEstimateStatus);
+    
+    @Query("select distinct(led.projectCode.code) from LineEstimateDetails as led where upper(led.projectCode.code) like upper(:workIdentificationNumber) and led.lineEstimate.status.code != :lineEstimateStatus")
+    List<String> findWorkIdentificationNumberForEstimatePhotograph(@Param("workIdentificationNumber") String workIdentificationNumber, @Param("lineEstimateStatus") String lineEstimateStatus);
+
+
 }

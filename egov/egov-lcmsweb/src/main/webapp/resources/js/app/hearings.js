@@ -80,6 +80,9 @@ $(document).ready(function() {
 		displayKey : 'name',
 		source : assignPosition.ttAdapter()
 	});
+	typeaheadWithEventsHandling(typeaheadobj, '#positionEmpId'); 
+	
+	
 	$('#btnclose').click(function(){
 		bootbox.confirm({
 		    message: 'Information entered in this screen will be lost if you close this page ? Please confirm if you want to close. ',

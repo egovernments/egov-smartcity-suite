@@ -114,4 +114,10 @@ public interface LetterOfAcceptanceRepository extends JpaRepository<WorkOrder, L
     @Query("select distinct(woe.estimate.estimateNumber) from WorkOrderEstimate as woe where upper(woe.estimate.estimateNumber) like upper(:estimateNumber) and woe.workOrder.egwStatus.code = :workOrderStatus and woe.workOrder.parent is null and not exists (select distinct(cbr.workOrderEstimate) from ContractorBillRegister as cbr where woe.id = cbr.workOrderEstimate.id and upper(cbr.billstatus) != :status and cbr.billtype = :billtype)")
     List<String> findDistinctEstimateNumberToModifyLOA(@Param("estimateNumber") final String estimateNumber, @Param("workOrderStatus") String workOrderStatus, @Param("status") String status, @Param("billtype") String billtype);
 
+    @Query("select distinct(woe.workOrder.workOrderNumber) from WorkOrderEstimate as woe where upper(woe.workOrder.workOrderNumber) like upper(:workOrderNumber) and woe.workOrder.egwStatus.code = :workOrderStatus and woe.workOrder.parent is null and woe.estimate.lineEstimateDetails.id in (select ep.lineEstimateDetails.id from EstimatePhotographs as ep) ")
+    List<String> findworkOrderNumbersToViewEstimatePhotograph(@Param("workOrderNumber") final String workOrderNumber, @Param("workOrderStatus") String workOrderStatus);
+
+    @Query("select distinct(woe.workOrder.contractor.name) from WorkOrderEstimate as woe where upper(woe.workOrder.contractor.name) like upper(:contractorName) or upper(woe.workOrder.contractor.code) like upper(:contractorName) and woe.workOrder.egwStatus.code = :workOrderStatus and woe.workOrder.parent is null and woe.estimate.lineEstimateDetails.id in (select ep.lineEstimateDetails.id from EstimatePhotographs as ep) ")
+    List<String> findContractorsToViewEstimatePhotograph(@Param("contractorName") final String contractorName, @Param("workOrderStatus") String workOrderStatus);
+
 }

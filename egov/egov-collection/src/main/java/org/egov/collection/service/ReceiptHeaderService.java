@@ -84,6 +84,7 @@ import org.egov.infra.reporting.engine.ReportConstants;
 import org.egov.infra.reporting.engine.ReportRequest;
 import org.egov.infra.search.elastic.entity.CollectionIndex;
 import org.egov.infra.search.elastic.service.CollectionIndexService;
+import org.egov.infra.search.elastic.utils.CollectionIndexUtils;
 import org.egov.infra.validation.exception.ValidationError;
 import org.egov.infra.validation.exception.ValidationException;
 import org.egov.infstr.models.ServiceDetails;
@@ -96,6 +97,7 @@ import org.hibernate.HibernateException;
 import org.hibernate.Query;
 import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 /**
@@ -121,6 +123,10 @@ public class ReceiptHeaderService extends PersistenceService<ReceiptHeader, Long
 
     @Autowired
     private CollectionIndexService collectionIndexService;
+
+    @Autowired
+    private CollectionIndexUtils collectionIndexUtils;
+
     @Autowired
     private ChartOfAccountsHibernateDAO chartOfAccountsHibernateDAO;
 
@@ -131,6 +137,7 @@ public class ReceiptHeaderService extends PersistenceService<ReceiptHeader, Long
     public ReceiptHeaderService(Class<ReceiptHeader> type) {
         super(type);
     }
+
     /**
      * @param statusCode
      *            Status code of receipts to be fetched. If null or ALL, then
@@ -664,7 +671,7 @@ public class ReceiptHeaderService extends PersistenceService<ReceiptHeader, Long
                 CollectionConstants.APPCONFIG_VALUE_CHALLANVALIDUPTO));
         final Challan challan = receiptHeader.getChallan();
         DateTime date = new DateTime(challan.getChallanDate());
-        date=date.plusDays(validUpto);
+        date = date.plusDays(validUpto);
         challan.setValidUpto(date.toDate());
         if (challan.getChallanNumber() == null)
             setChallanNumber(challan);
@@ -1007,8 +1014,8 @@ public class ReceiptHeaderService extends PersistenceService<ReceiptHeader, Long
                     .withComments(remarks).withStateValue(wfState).withOwner(ownerPosition).withDateInfo(new Date())
                     .withNextAction(nextAction);
         super.persist(receiptHeader);
+
         updateCollectionIndexAndPushMail(receiptHeader);
-        this.getSession().evict(receiptHeader);
     }
 
     public Set<InstrumentHeader> createOnlineInstrument(final Date transactionDate, final String transactionId,
@@ -1090,7 +1097,7 @@ public class ReceiptHeaderService extends PersistenceService<ReceiptHeader, Long
             } catch (ParseException e) {
                 LOGGER.error("Error parsing Cut Off Date" + e.getMessage());
             }
-            if (cutOffDate!=null && receiptHeader.getReceiptdate().before(cutOffDate))
+            if (cutOffDate != null && receiptHeader.getReceiptdate().before(cutOffDate))
                 performWorkflow(CollectionConstants.WF_ACTION_APPROVE, receiptHeader,
                         "Legacy data Receipt Approval based on cutoff date");
             if (receiptHeader.getService().getServiceType().equalsIgnoreCase(CollectionConstants.SERVICE_TYPE_BILLING)) {
@@ -1169,18 +1176,20 @@ public class ReceiptHeaderService extends PersistenceService<ReceiptHeader, Long
     public void updateCollectionIndexAndPushMail(final ReceiptHeader receiptHeader) {
         if (receiptHeader.getPayeeEmail() != null
                 && !receiptHeader.getPayeeEmail().isEmpty()
-                && ((receiptHeader.getCollectiontype().equals(CollectionConstants.COLLECTION_TYPE_ONLINECOLLECTION)
-                && receiptHeader.getStatus().getCode().equals(CollectionConstants.RECEIPT_STATUS_CODE_APPROVED)) ||
-                (!receiptHeader.getCollectiontype().equals(CollectionConstants.COLLECTION_TYPE_ONLINECOLLECTION)
-                && receiptHeader.getStatus().getCode().equals(CollectionConstants.RECEIPT_STATUS_CODE_TO_BE_SUBMITTED))))
+                && ((receiptHeader.getCollectiontype().equals(CollectionConstants.COLLECTION_TYPE_ONLINECOLLECTION) && receiptHeader
+                        .getStatus().getCode().equals(CollectionConstants.RECEIPT_STATUS_CODE_APPROVED)) || (!receiptHeader
+                        .getCollectiontype().equals(CollectionConstants.COLLECTION_TYPE_ONLINECOLLECTION) && receiptHeader
+                        .getStatus().getCode().equals(CollectionConstants.RECEIPT_STATUS_CODE_TO_BE_SUBMITTED))))
             pushMail(receiptHeader);
-        CollectionIndex collectionIndexObj = collectionIndexService.findByReceiptNumber(receiptHeader
+        CollectionIndex collectionIndexObj = collectionIndexUtils.findByReceiptNumber(receiptHeader
                 .getReceiptnumber());
-        if (collectionIndexObj != null)
+        if (collectionIndexObj != null) {
             collectionIndexObj.setStatus(receiptHeader.getStatus().getDescription());
-        else
+            collectionIndexService.persistCollectionIndex(collectionIndexObj);
+        } else {
             collectionIndexObj = collectionsUtil.constructCollectionIndex(receiptHeader);
-        collectionIndexService.pushCollectionIndex(collectionIndexObj);
+            collectionIndexService.pushCollectionIndex(collectionIndexObj);
+        }
     }
 
     private void pushMail(final ReceiptHeader receiptHeader) {

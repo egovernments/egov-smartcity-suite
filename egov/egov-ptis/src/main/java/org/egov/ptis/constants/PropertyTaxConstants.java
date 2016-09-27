@@ -1281,6 +1281,8 @@ public interface PropertyTaxConstants {
     public static final String APPLICATION_TYPE_EDIT_OWNER = "Edit_owner";
     public static final String APPLICATION_TYPE_EDIT_COLLECTION = "Edit_Collection";
     public static final String APPLICATION_TYPE_MODIFY_DATA_ENTRY = "Edit_Data_Entry";
+    public static final String APPLICATION_TYPE_MEESEVA_GRP = "Meeseva_General_Revision_Petition";
+    public static final String APPLICATION_TYPE_MEESEVA_RP = "Meeseva_Revision_Petition";
 
     // AppConfig values
     public static final String PROPERTYTAX_WORKFLOWDEPARTEMENT = "PROPERTYTAXDEPARTMENTFORWORKFLOW";

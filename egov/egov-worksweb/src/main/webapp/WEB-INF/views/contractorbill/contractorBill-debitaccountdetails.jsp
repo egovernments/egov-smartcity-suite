@@ -75,7 +75,7 @@
 					</c:when>
 					<c:otherwise>
 						<c:forEach items="${billDetailsMap}" var="debitBillDetails" varStatus="item">
-							<c:if test="${debitBillDetails.isDebit}">
+							<c:if test="${debitBillDetails.isDebit && !debitBillDetails.isRefund}">
 								<tr>
 									<td>
 										<%-- <form:hidden path="billDetailes[0].id" value="${debitBillDetails.id}"/> --%>

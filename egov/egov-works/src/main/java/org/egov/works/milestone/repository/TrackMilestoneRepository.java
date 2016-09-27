@@ -54,5 +54,8 @@ public interface TrackMilestoneRepository extends JpaRepository<TrackMilestone, 
     List<String> findWorkIdentificationNumbersTrackMilestone(@Param("code") String code);
     
     TrackMilestone findByMilestone_Id(final Long id);
+    
+    @Query("select distinct(tms) FROM WorkOrderEstimate as woe,Milestone as ms ,TrackMilestone as tms WHERE ms.workOrderEstimate.id =:workOrderEstimateId and woe.workOrder.egwStatus.code=:workOrderStatus and tms.status.code =:trackMilestoneStatus and ms.status.code =:milestoneStatus")
+    TrackMilestone findTrackMilestoneTotalPercentage(@Param("workOrderEstimateId") Long workOrderEstimateId,@Param("workOrderStatus") String workOrderStatus,@Param("trackMilestoneStatus") String trackMilestoneStatus,@Param("milestoneStatus") String milestoneStatus);
 
 }

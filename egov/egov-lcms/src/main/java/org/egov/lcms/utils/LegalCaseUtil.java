@@ -52,8 +52,11 @@ import org.egov.infra.admin.master.service.DepartmentService;
 import org.egov.infra.filestore.entity.FileStoreMapper;
 import org.egov.infra.utils.FileStoreUtils;
 import org.egov.lcms.transactions.entity.BipartisanDetails;
+import org.egov.lcms.transactions.entity.Judgment;
+import org.egov.lcms.transactions.entity.JudgmentDocuments;
 import org.egov.lcms.transactions.entity.LegalCase;
 import org.egov.lcms.transactions.entity.LegalCaseDocuments;
+import org.egov.lcms.transactions.repository.JudgmentRepository;
 import org.egov.lcms.transactions.repository.LegalCaseRepository;
 import org.egov.lcms.utils.constants.LcmsConstants;
 import org.egov.pims.commons.Position;
@@ -74,7 +77,7 @@ public class LegalCaseUtil {
 
     @Autowired
     private PositionMasterService positionMasterService;
-    
+
     @Autowired
     private EmployeeService employeeService;
 
@@ -83,6 +86,9 @@ public class LegalCaseUtil {
 
     @Autowired
     private FileStoreUtils fileStoreUtils;
+
+    @Autowired
+    private JudgmentRepository judgmentRepository;
 
     @Transactional(propagation = Propagation.REQUIRES_NEW, readOnly = true)
     public EgwStatus getStatusForModuleAndCode(final String moduleName, final String statusCode) {
@@ -116,12 +122,20 @@ public class LegalCaseUtil {
         final List<LegalCaseDocuments> legalDoc = legalCaseRepository.getLegalCaseDocumentList(legalcase.getId());
         return legalDoc;
     }
+
+    @Transactional(propagation = Propagation.REQUIRES_NEW, readOnly = true)
+    public List<JudgmentDocuments> getJudgmentDocumentList(final Judgment judgment) {
+        final List<JudgmentDocuments> judgmentDoc = judgmentRepository.getJudgmentDocumentList(judgment.getId());
+        return judgmentDoc;
+    }
+
     @Transactional(propagation = Propagation.REQUIRES_NEW, readOnly = true)
     public Employee getEmployeeByUserName(final String userName) {
-      final Employee employee = employeeService.getEmployeeByUserName(userName);
-       return employee;
+        final Employee employee = employeeService.getEmployeeByUserName(userName);
+        return employee;
 
     }
+
     public Set<FileStoreMapper> addToFileStore(final MultipartFile[] files) {
         return fileStoreUtils.addToFileStore(files, LcmsConstants.FILESTORE_MODULECODE);
     }

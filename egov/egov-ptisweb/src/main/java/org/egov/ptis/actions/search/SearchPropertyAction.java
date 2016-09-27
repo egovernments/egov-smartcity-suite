@@ -39,7 +39,52 @@
  */
 package org.egov.ptis.actions.search;
 
-import com.opensymphony.xwork2.validator.annotations.Validations;
+import static java.math.BigDecimal.ZERO;
+import static org.egov.infra.web.struts.actions.BaseFormAction.NEW;
+import static org.egov.ptis.constants.PropertyTaxConstants.APPLICATION_TYPE_ADD_DEMAND;
+import static org.egov.ptis.constants.PropertyTaxConstants.APPLICATION_TYPE_ALTER_ASSESSENT;
+import static org.egov.ptis.constants.PropertyTaxConstants.APPLICATION_TYPE_BIFURCATE_ASSESSENT;
+import static org.egov.ptis.constants.PropertyTaxConstants.APPLICATION_TYPE_COLLECT_TAX;
+import static org.egov.ptis.constants.PropertyTaxConstants.APPLICATION_TYPE_DEMAND_BILL;
+import static org.egov.ptis.constants.PropertyTaxConstants.APPLICATION_TYPE_DEMOLITION;
+import static org.egov.ptis.constants.PropertyTaxConstants.APPLICATION_TYPE_EDIT_COLLECTION;
+import static org.egov.ptis.constants.PropertyTaxConstants.APPLICATION_TYPE_EDIT_DEMAND;
+import static org.egov.ptis.constants.PropertyTaxConstants.APPLICATION_TYPE_EDIT_OWNER;
+import static org.egov.ptis.constants.PropertyTaxConstants.APPLICATION_TYPE_GRP;
+import static org.egov.ptis.constants.PropertyTaxConstants.APPLICATION_TYPE_MEESEVA_GRP;
+import static org.egov.ptis.constants.PropertyTaxConstants.APPLICATION_TYPE_MEESEVA_RP;
+import static org.egov.ptis.constants.PropertyTaxConstants.APPLICATION_TYPE_MEESEVA_TRANSFER_OF_OWNERSHIP;
+import static org.egov.ptis.constants.PropertyTaxConstants.APPLICATION_TYPE_MODIFY_DATA_ENTRY;
+import static org.egov.ptis.constants.PropertyTaxConstants.APPLICATION_TYPE_REVISION_PETITION;
+import static org.egov.ptis.constants.PropertyTaxConstants.APPLICATION_TYPE_TAX_EXEMTION;
+import static org.egov.ptis.constants.PropertyTaxConstants.APPLICATION_TYPE_TRANSFER_OF_OWNERSHIP;
+import static org.egov.ptis.constants.PropertyTaxConstants.APPLICATION_TYPE_VACANCY_REMISSION;
+import static org.egov.ptis.constants.PropertyTaxConstants.ARR_COLL_STR;
+import static org.egov.ptis.constants.PropertyTaxConstants.ARR_DMD_STR;
+import static org.egov.ptis.constants.PropertyTaxConstants.CURR_COLL_STR;
+import static org.egov.ptis.constants.PropertyTaxConstants.CURR_FIRSTHALF_COLL_STR;
+import static org.egov.ptis.constants.PropertyTaxConstants.CURR_FIRSTHALF_DMD_STR;
+import static org.egov.ptis.constants.PropertyTaxConstants.CURR_SECONDHALF_COLL_STR;
+import static org.egov.ptis.constants.PropertyTaxConstants.CURR_SECONDHALF_DMD_STR;
+import static org.egov.ptis.constants.PropertyTaxConstants.LOCATION_HIERARCHY_TYPE;
+import static org.egov.ptis.constants.PropertyTaxConstants.NOT_AVAILABLE;
+import static org.egov.ptis.constants.PropertyTaxConstants.PROPERTY_STATUS_MARK_DEACTIVE;
+import static org.egov.ptis.constants.PropertyTaxConstants.REVENUE_HIERARCHY_TYPE;
+import static org.egov.ptis.constants.PropertyTaxConstants.SESSIONLOGINID;
+import static org.egov.ptis.constants.PropertyTaxConstants.SOURCEOFDATA_DATAENTRY;
+import static org.egov.ptis.constants.PropertyTaxConstants.SOURCEOFDATA_MIGRATION;
+
+import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+
+import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
@@ -73,21 +118,7 @@ import org.egov.ptis.domain.entity.property.PropertyStatusValues;
 import org.egov.ptis.domain.service.property.PropertyService;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import javax.servlet.http.HttpServletRequest;
-
-import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-
-import static java.math.BigDecimal.ZERO;
-import static org.egov.infra.web.struts.actions.BaseFormAction.NEW;
-import static org.egov.ptis.constants.PropertyTaxConstants.*;
+import com.opensymphony.xwork2.validator.annotations.Validations;
 
 @ParentPackage("egov")
 @Validations
@@ -96,13 +127,13 @@ import static org.egov.ptis.constants.PropertyTaxConstants.*;
         @Result(name = SearchPropertyAction.TARGET, location = "searchProperty-result.jsp"),
         @Result(name = SearchPropertyAction.COMMON_FORM, location = "searchProperty-commonForm.jsp"),
         @Result(name = APPLICATION_TYPE_ALTER_ASSESSENT, type = "redirectAction", location = "modifyProperty-modifyForm", params = {
-                "namespace", "/modify", "indexNumber", "${assessmentNum}", "modifyRsn", "ADD_OR_ALTER" }),
+                "namespace", "/modify", "indexNumber", "${assessmentNum}", "modifyRsn", "ADD_OR_ALTER", "applicationType", "${applicationType}" }),
         @Result(name = APPLICATION_TYPE_GRP, type = "redirectAction", location = "modifyProperty-modifyForm", params = {
-                "namespace", "/modify", "indexNumber", "${assessmentNum}", "modifyRsn", "GRP" }),
+                "namespace", "/modify", "indexNumber", "${assessmentNum}", "modifyRsn", "GRP", "applicationType", "${applicationType}" }),
         @Result(name = APPLICATION_TYPE_BIFURCATE_ASSESSENT, type = "redirectAction", location = "modifyProperty-modifyForm", params = {
-                "namespace", "/modify", "indexNumber", "${assessmentNum}", "modifyRsn", "BIFURCATE" }),
+                "namespace", "/modify", "indexNumber", "${assessmentNum}", "modifyRsn", "BIFURCATE", "applicationType", "${applicationType}" }),
         @Result(name = APPLICATION_TYPE_TRANSFER_OF_OWNERSHIP, type = "redirectAction", location = "redirect", params = {
-                "namespace", "/property/transfer", "assessmentNo", "${assessmentNum}" }),
+                "namespace", "/property/transfer", "assessmentNo", "${assessmentNum}", "applicationType", "${applicationType}" }),
         @Result(name = APPLICATION_TYPE_MEESEVA_TRANSFER_OF_OWNERSHIP, type = "redirectAction", location = "redirect", params = {
                 "namespace", "/property/transfer", "assessmentNo", "${assessmentNum}", "meesevaApplicationNumber",
                 "${meesevaApplicationNumber}", "meesevaServiceCode", "${meesevaServiceCode}", "applicationType",
@@ -127,7 +158,13 @@ import static org.egov.ptis.constants.PropertyTaxConstants.*;
         @Result(name = APPLICATION_TYPE_EDIT_OWNER, type = "redirect", location = "../editowner/${assessmentNum}"),
         @Result(name = SearchPropertyAction.USER_DETAILS, location = "searchProperty-ownerDetails.jsp"),
         @Result(name = APPLICATION_TYPE_MODIFY_DATA_ENTRY, type = "redirectAction", location = "createProperty-editDataEntryForm", params = {
-                "namespace", "/create", "indexNumber", "${assessmentNum}", "modifyRsn", "EDIT_DATA_ENTRY", "modelId", "${activePropertyId}" })})
+                "namespace", "/create", "indexNumber", "${assessmentNum}", "modifyRsn", "EDIT_DATA_ENTRY", "modelId", "${activePropertyId}" }),
+        @Result(name = APPLICATION_TYPE_MEESEVA_GRP, type = "redirectAction", location = "modifyProperty-modifyForm", params = {
+                "namespace", "/modify", "indexNumber", "${assessmentNum}", "meesevaApplicationNumber",
+                "${meesevaApplicationNumber}", "meesevaServiceCode", "${meesevaServiceCode}", "modifyRsn", "GRP", "applicationType", "${applicationType}" }),
+        @Result(name = APPLICATION_TYPE_MEESEVA_RP, type = "redirectAction", location = "revPetition-newForm", params = {
+                "namespace", "/revPetition", "propertyId", "${assessmentNum}", "meesevaApplicationNumber",
+                "${meesevaApplicationNumber}", "meesevaServiceCode", "${meesevaServiceCode}", "applicationType", "${applicationType}" })})
 public class SearchPropertyAction extends BaseFormAction {
     /**
      *
@@ -321,17 +358,22 @@ public class SearchPropertyAction extends BaseFormAction {
                 return COMMON_FORM;
             }
 
-            loggedUserIsMeesevaUser = propertyService.isMeesevaUser(securityUtils.getCurrentUser());
-            if (loggedUserIsMeesevaUser) {
-                if (APPLICATION_TYPE_TRANSFER_OF_OWNERSHIP.equals(applicationType))
-                    return APPLICATION_TYPE_MEESEVA_TRANSFER_OF_OWNERSHIP;
-            }
-
+            
         } else if (APPLICATION_TYPE_DEMAND_BILL.equals(applicationType))
             if (basicProperty.getProperty().getIsExemptedFromTax()) {
                 addActionError(getText("error.msg.taxExempted"));
                 return COMMON_FORM;
             }
+        loggedUserIsMeesevaUser = propertyService.isMeesevaUser(securityUtils.getCurrentUser());
+        if (loggedUserIsMeesevaUser) {
+            if (APPLICATION_TYPE_TRANSFER_OF_OWNERSHIP.equals(applicationType))
+                return APPLICATION_TYPE_MEESEVA_TRANSFER_OF_OWNERSHIP;
+            else if(APPLICATION_TYPE_GRP.equals(applicationType))
+                return APPLICATION_TYPE_MEESEVA_GRP;
+            else if(APPLICATION_TYPE_REVISION_PETITION.equals(applicationType))
+                return APPLICATION_TYPE_MEESEVA_RP;
+        }
+
         if (APPLICATION_TYPE_EDIT_DEMAND.equals(applicationType)) {
         	if(!(basicProperty.getSource().toString().equalsIgnoreCase(SOURCEOFDATA_DATAENTRY.toString()))){
         		addActionError(getText("edit.dataEntry.source.error"));

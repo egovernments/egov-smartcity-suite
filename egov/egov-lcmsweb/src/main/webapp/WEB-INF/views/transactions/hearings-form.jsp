@@ -120,7 +120,7 @@
 						<div class="col-sm-3 add-margin">
 							<form:input id="positionEmpName" type="text" class="form-control "
 								autocomplete="off" path="" name="" value="" placeholder="" />
-							<input type="hidden" id="positionId" value="" />
+							<input type="hidden" id="positionEmpId" value="" />
 							
 						</div>
 						<button type="button" class="btn btn-default" value="Add"

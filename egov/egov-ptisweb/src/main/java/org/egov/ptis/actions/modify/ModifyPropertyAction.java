@@ -44,6 +44,7 @@ import static org.egov.ptis.constants.PropertyTaxConstants.ADDTIONAL_RULE_ALTER_
 import static org.egov.ptis.constants.PropertyTaxConstants.ADDTIONAL_RULE_BIFURCATE_ASSESSMENT;
 import static org.egov.ptis.constants.PropertyTaxConstants.ALTERATION_OF_ASSESSMENT;
 import static org.egov.ptis.constants.PropertyTaxConstants.AMALGAMATION_OF_ASSESSMENT;
+import static org.egov.ptis.constants.PropertyTaxConstants.APPCONFIG_CLIENT_SPECIFIC_DMD_BILL;
 import static org.egov.ptis.constants.PropertyTaxConstants.APPLICATION_TYPE_ALTER_ASSESSENT;
 import static org.egov.ptis.constants.PropertyTaxConstants.APPLICATION_TYPE_BIFURCATE_ASSESSENT;
 import static org.egov.ptis.constants.PropertyTaxConstants.APPLICATION_TYPE_GRP;
@@ -77,6 +78,7 @@ import static org.egov.ptis.constants.PropertyTaxConstants.PROPERTY_MODIFY_REASO
 import static org.egov.ptis.constants.PropertyTaxConstants.PROPERTY_MODIFY_REASON_DATA_UPDATE;
 import static org.egov.ptis.constants.PropertyTaxConstants.PROPERTY_MODIFY_REASON_GENERAL_REVISION_PETITION;
 import static org.egov.ptis.constants.PropertyTaxConstants.PROP_CREATE_RSN;
+import static org.egov.ptis.constants.PropertyTaxConstants.PTMODULENAME;
 import static org.egov.ptis.constants.PropertyTaxConstants.QUERY_BASICPROPERTY_BY_UPICNO;
 import static org.egov.ptis.constants.PropertyTaxConstants.QUERY_PROPERTYIMPL_BYID;
 import static org.egov.ptis.constants.PropertyTaxConstants.QUERY_WORKFLOW_PROPERTYIMPL_BYID;
@@ -92,8 +94,6 @@ import static org.egov.ptis.constants.PropertyTaxConstants.VACANT_PROPERTY;
 import static org.egov.ptis.constants.PropertyTaxConstants.VAC_LAND_PROPERTY_TYPE_CATEGORY;
 import static org.egov.ptis.constants.PropertyTaxConstants.WF_STATE_COMMISSIONER_APPROVED;
 import static org.egov.ptis.constants.PropertyTaxConstants.WF_STATE_UD_REVENUE_INSPECTOR_APPROVAL_PENDING;
-import static org.egov.ptis.constants.PropertyTaxConstants.APPCONFIG_CLIENT_SPECIFIC_DMD_BILL;
-import static org.egov.ptis.constants.PropertyTaxConstants.PTMODULENAME;
 
 import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
@@ -183,7 +183,9 @@ import org.springframework.beans.factory.annotation.Autowired;
         @Result(name = TARGET_WORKFLOW_ERROR, location = "workflow/workflow-error.jsp"),
         @Result(name = ModifyPropertyAction.BALANCE, location = "modify/modifyProperty-balance.jsp"),
         @Result(name = ModifyPropertyAction.PRINT_ACK, location = "modify/modifyProperty-printAck.jsp"),
-        @Result(name = ModifyPropertyAction.COMMON_FORM, location = "search/searchProperty-commonForm.jsp") })
+        @Result(name = ModifyPropertyAction.COMMON_FORM, location = "search/searchProperty-commonForm.jsp"),
+        @Result(name = ModifyPropertyAction.MEESEVA_ERROR, location = "common/meeseva-errorPage.jsp"),
+        @Result(name = ModifyPropertyAction.MEESEVA_RESULT_ACK, location = "common/meesevaAck.jsp")})
 @Namespace("/modify")
 public class ModifyPropertyAction extends PropertyTaxBaseAction {
     private final Logger LOGGER = Logger.getLogger(getClass());
@@ -207,6 +209,8 @@ public class ModifyPropertyAction extends PropertyTaxBaseAction {
     private static final String MODIFY_ACK_TEMPLATE = "modifyProperty_ack";
     private static final String GRP_ACK_TEMPLATE = "GRP_Property_ack";
     public static final String PRINT_ACK = "printAck";
+    public static final String MEESEVA_RESULT_ACK = "meesevaAck";
+    public static final String MEESEVA_ERROR = "meesevaError";
     
     private PersistenceService<Property, Long> propertyImplService;
     private PersistenceService<Floor, Long> floorService;
@@ -289,6 +293,8 @@ public class ModifyPropertyAction extends PropertyTaxBaseAction {
     private Boolean wfInitiatorRejected;
     private String houseNo;
     private String oldPropertyTypeCode;
+    private Boolean isMeesevaUser = Boolean.FALSE;
+    private String meesevaApplicationNumber;
 
     @Autowired
     private PropertyPersistenceService basicPropertyService;
@@ -332,6 +338,16 @@ public class ModifyPropertyAction extends PropertyTaxBaseAction {
         }
         String target = "";
         target = populateFormData(Boolean.FALSE);
+        isMeesevaUser = propService.isMeesevaUser(securityUtils.getCurrentUser());
+        if (isMeesevaUser) {
+            if (getMeesevaApplicationNumber() == null) {
+                addActionMessage(getText("MEESEVA.005"));
+                return MEESEVA_ERROR;
+            }
+            else{
+                propertyModel.setMeesevaApplicationNumber(getMeesevaApplicationNumber());
+            }
+        }
         LOGGER.debug("modifyForm: IsAuthProp: " + getIsAuthProp() + ", AreaOfPlot: " + getAreaOfPlot()
                 + ", PropTypeId: " + getPropTypeId() + ", PropertyCategory: " + getPropertyCategory()
                 + ", PropUsageId: " + getPropUsageId() + ", PropOccId: " + getPropOccId());
@@ -564,6 +580,12 @@ public class ModifyPropertyAction extends PropertyTaxBaseAction {
         setOldPropertyTypeCode(basicProp.getProperty().getPropertyDetail().getPropertyTypeMaster().getCode());
         validate();
         final long startTimeMillis = System.currentTimeMillis();
+        isMeesevaUser = propService.isMeesevaUser(securityUtils.getCurrentUser());
+
+        if (isMeesevaUser && getMeesevaApplicationNumber() != null) {
+            propertyModel.setApplicationNo(propertyModel.getMeesevaApplicationNumber());
+            propertyModel.setSource(PropertyTaxConstants.SOURCEOFDATA_MEESEWA);
+        }
         if (getModelId() != null && !getModelId().trim().isEmpty()) {
             propWF = (PropertyImpl) getPersistenceService().findByNamedQuery(QUERY_WORKFLOW_PROPERTYIMPL_BYID,
                     Long.valueOf(getModelId()));
@@ -623,7 +645,16 @@ public class ModifyPropertyAction extends PropertyTaxBaseAction {
                 basicPropertyService.applyAuditing(ptDemand.getDmdCalculations());
             }
         }
+        if (!isMeesevaUser)
         basicPropertyService.update(basicProp);
+        else {
+            HashMap<String, String> meesevaParams = new HashMap<String, String>();
+            meesevaParams.put("ADMISSIONFEE", "0");
+            meesevaParams.put("APPLICATIONNUMBER", propertyModel.getMeesevaApplicationNumber());
+            basicProp.setSource(PropertyTaxConstants.SOURCEOFDATA_MEESEWA);
+            basicProp.getProperty().setApplicationNo(propertyModel.getMeesevaApplicationNumber());
+            basicPropertyService.updateBasicProperty(basicProp, meesevaParams);
+        }
         setModifyRsn(propertyModel.getPropertyDetail().getPropertyMutationMaster().getCode());
         prepareAckMsg();
         buildEmailandSms(propertyModel, getApplicationType());
@@ -632,10 +663,10 @@ public class ModifyPropertyAction extends PropertyTaxBaseAction {
         final long elapsedTimeMillis = System.currentTimeMillis() - startTimeMillis;
         LOGGER.info("forwardModify: Modify property forwarded successfully; Time taken(ms) = " + elapsedTimeMillis);
         LOGGER.debug("forwardModify: Modify property forward ended");
-        return RESULT_ACK;
+        return isMeesevaUser ? MEESEVA_RESULT_ACK : RESULT_ACK;
     }
 
-    private String getApplicationType() {
+    public String getApplicationType() {
         final String applicationType = PROPERTY_MODIFY_REASON_ADD_OR_ALTER.equals(modifyRsn) ? APPLICATION_TYPE_ALTER_ASSESSENT
                 : PROPERTY_MODIFY_REASON_BIFURCATE.equals(modifyRsn) ? APPLICATION_TYPE_BIFURCATE_ASSESSENT
                         : APPLICATION_TYPE_GRP;
@@ -2061,5 +2092,11 @@ public class ModifyPropertyAction extends PropertyTaxBaseAction {
     public void setOldPropertyTypeCode(String oldPropertyTypeCode) {
         this.oldPropertyTypeCode = oldPropertyTypeCode;
     }
+    public String getMeesevaApplicationNumber() {
+        return meesevaApplicationNumber;
+    }
 
+    public void setMeesevaApplicationNumber(String meesevaApplicationNumber) {
+        this.meesevaApplicationNumber = meesevaApplicationNumber;
+    }
 }

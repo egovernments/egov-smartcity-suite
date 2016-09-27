@@ -49,6 +49,9 @@
 			<form:hidden path="workOrder.id"  name="workOrder" id="workOrderId" value="${workOrder.id}" />
 			<input type="hidden" id="id" value="${contractorBillRegister.id }" /> 
 			<input type="hidden" name="mode" id="mode" value="${mode }" />
+			<input type="hidden" name="isSpillover" id="isSpillOver" value="${contractorBillRegister.workOrderEstimate.estimate.lineEstimateDetails.lineEstimate.spillOverFlag}"/>
+			<input type="hidden" name="contractorBillId" id="contractorBillId" value="${contractorBillRegister.id}" /> 
+			<input type="hidden"  name="workOrderEstimateId" id="workOrderEstimateId" value="${contractorBillRegister.workOrderEstimate.id}" /> 
 					<div class="panel panel-primary" data-collapsed="0">
 						
 						<div class="panel-heading">
@@ -71,6 +74,7 @@
 								<jsp:include page="contractorBill-header.jsp"/>
 								<jsp:include page="contractorBill-mbdetails.jsp"/>
 								<jsp:include page="contractorBill-debitaccountdetails.jsp"/>
+								<jsp:include page="contractorBill-refund.jsp"/>
 								<jsp:include page="contractorBill-creditaccountdetails.jsp"/>
 							</c:if>
 							<c:if test="${mode == 'view' || mode == 'readOnly' }">
