@@ -90,7 +90,7 @@ public class DBMigrationConfiguration {
         if (applicationProperties.statewideMigrationRequired()) {
             final Flyway flyway = new Flyway();
             flyway.setOutOfOrder(true);
-            flyway.setLocations(STATEWIDE_MIGRATION_FILE_PATH);
+            flyway.setLocations(MAIN_MIGRATION_FILE_PATH, STATEWIDE_MIGRATION_FILE_PATH, format(TENANR_MIGRATION_FILE_PATH, "public"));
             flyway.setDataSource(dataSource);
             flyway.setSchemas("public");
             flyway.repair();
