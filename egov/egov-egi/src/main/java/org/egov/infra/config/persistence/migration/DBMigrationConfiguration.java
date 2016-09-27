@@ -54,8 +54,16 @@ import javax.sql.DataSource;
 import java.util.ArrayList;
 import java.util.List;
 
+import static java.lang.String.format;
+
 @Configuration
 public class DBMigrationConfiguration {
+
+    public static final String MAIN_MIGRATION_FILE_PATH = "classpath:/db/migration/main/";
+    public static final String SAMPLE_MIGRATION_FILE_PATH = "classpath:/db/migration/sample/";
+    public static final String TENANR_MIGRATION_FILE_PATH = "classpath:/db/migration/%s/";
+    public static final String STATEWIDE_MIGRATION_FILE_PATH = "classpath:/db/migration/statewide/";
+
 
     @Autowired
     private ApplicationProperties applicationProperties;
@@ -66,33 +74,27 @@ public class DBMigrationConfiguration {
     @Bean
     @DependsOn("dataSource")
     public Flyway flyway(final DataSource dataSource) {
-        for(String schema : tenants()) {
-            System.out.println("Starting migration for "+ schema);
+        tenants().parallelStream().forEach(schema -> {
             final Flyway flyway = new Flyway();
             flyway.setBaselineOnMigrate(true);
             flyway.setOutOfOrder(true);
             if (applicationProperties.devMode())
-                flyway.setLocations("classpath:/db/migration/main/", "classpath:/db/migration/sample/");
+                flyway.setLocations(MAIN_MIGRATION_FILE_PATH, SAMPLE_MIGRATION_FILE_PATH);
             else
-                flyway.setLocations("classpath:/db/migration/main/", "classpath:/db/migration/" + schema + "/");
+                flyway.setLocations(MAIN_MIGRATION_FILE_PATH, format(TENANR_MIGRATION_FILE_PATH, schema));
             flyway.setDataSource(dataSource);
             flyway.setSchemas(schema);
             flyway.migrate();
-            System.out.println("End migration for "+ schema);
+        });
+        if (applicationProperties.statewideMigrationRequired()) {
+            final Flyway flyway = new Flyway();
+            flyway.setOutOfOrder(true);
+            flyway.setLocations(STATEWIDE_MIGRATION_FILE_PATH);
+            flyway.setDataSource(dataSource);
+            flyway.setSchemas("public");
+            flyway.migrate();
         }
-        if (applicationProperties.statewideMigrationRequired())
-            runStatewideMigration(dataSource);
         return new Flyway();
-    }
-
-    private void runStatewideMigration(final DataSource dataSource) {
-        final Flyway flyway = new Flyway();
-        flyway.setBaselineOnMigrate(true);
-        flyway.setOutOfOrder(true);
-        flyway.setLocations("classpath:/db/migration/statewide/");
-        flyway.setDataSource(dataSource);
-        flyway.setSchemas("public");
-        flyway.migrate();
     }
 
     @Bean(name = "tenants", autowire = Autowire.BY_NAME)
