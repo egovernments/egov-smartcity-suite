@@ -1279,17 +1279,16 @@ public class RevisionEstimateService {
                 Double length = woms.getLength() == null ? 0 : woms.getLength().doubleValue();
                 Double width = woms.getWidth() == null ? 0 : woms.getWidth().doubleValue();
                 Double depthOrHeight = woms.getDepthOrHeight() == null ? 0 : woms.getDepthOrHeight().doubleValue();
-                for (final WorkOrderMeasurementSheet rems : rewomsList)
-                    if (woms.getMeasurementSheet().getIdentifier() == 'A') {
-                        if (rems.getNo() != null)
-                            no = no + rems.getNo().doubleValue();
-                        if (rems.getLength() != null)
-                            length = length + rems.getLength().doubleValue();
-                        if (rems.getWidth() != null)
-                            width = width + rems.getWidth().doubleValue();
-                        if (rems.getDepthOrHeight() != null)
-                            depthOrHeight = depthOrHeight + rems.getDepthOrHeight().doubleValue();
-                    }
+                for (final WorkOrderMeasurementSheet rems : rewomsList) {
+                    if (rems.getNo() != null)
+                        no = no + rems.getNo().doubleValue();
+                    if (rems.getLength() != null)
+                        length = length + rems.getLength().doubleValue();
+                    if (rems.getWidth() != null)
+                        width = width + rems.getWidth().doubleValue();
+                    if (rems.getDepthOrHeight() != null)
+                        depthOrHeight = depthOrHeight + rems.getDepthOrHeight().doubleValue();
+                }
                 /*
                  * else { if (rems.getNo() != null) no = no - rems.getNo().doubleValue(); if (rems.getLength() != null) length =
                  * length - rems.getLength().doubleValue(); if (rems.getWidth() != null) width = width -
