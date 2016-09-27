@@ -122,7 +122,7 @@ public class CommonController extends ApiController {
             }
             
             User user=userservice.getUserByUsername(citizenCreate.getMobileNumber());
-            if(users!=null)
+            if(user!=null)
             {
             	return res.error(getMessage("user.register.duplicate.mobileno"));
             }
