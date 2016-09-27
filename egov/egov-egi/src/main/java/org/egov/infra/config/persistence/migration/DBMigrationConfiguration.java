@@ -84,6 +84,7 @@ public class DBMigrationConfiguration {
                 flyway.setLocations(MAIN_MIGRATION_FILE_PATH, format(TENANR_MIGRATION_FILE_PATH, schema));
             flyway.setDataSource(dataSource);
             flyway.setSchemas(schema);
+            flyway.repair();
             flyway.migrate();
         });
         if (applicationProperties.statewideMigrationRequired()) {
@@ -92,6 +93,7 @@ public class DBMigrationConfiguration {
             flyway.setLocations(STATEWIDE_MIGRATION_FILE_PATH);
             flyway.setDataSource(dataSource);
             flyway.setSchemas("public");
+            flyway.repair();
             flyway.migrate();
         }
         return new Flyway();
