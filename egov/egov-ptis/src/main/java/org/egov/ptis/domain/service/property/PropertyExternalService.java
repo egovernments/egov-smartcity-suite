@@ -48,7 +48,7 @@ import static org.egov.ptis.constants.PropertyTaxConstants.BILLTYPE_AUTO;
 import static org.egov.ptis.constants.PropertyTaxConstants.BLOCK;
 import static org.egov.ptis.constants.PropertyTaxConstants.CATEGORY_TYPE_PROPERTY_TAX;
 import static org.egov.ptis.constants.PropertyTaxConstants.CATEGORY_TYPE_VACANTLAND_TAX;
-import static org.egov.ptis.constants.PropertyTaxConstants.CURRENT_STATE_BILL_COLLECTOR_APPROVED;
+import static org.egov.ptis.constants.PropertyTaxConstants.CREATE_CURRENT_STATE_BILL_COLLECTOR_APPROVED;
 import static org.egov.ptis.constants.PropertyTaxConstants.CURR_FIRSTHALF_COLL_STR;
 import static org.egov.ptis.constants.PropertyTaxConstants.CURR_FIRSTHALF_DMD_STR;
 import static org.egov.ptis.constants.PropertyTaxConstants.DEMANDRSN_CODE_CHQ_BOUNCE_PENALTY;
@@ -178,6 +178,7 @@ import org.egov.infra.utils.DateUtils;
 import org.egov.infra.workflow.matrix.entity.WorkFlowMatrix;
 import org.egov.infra.workflow.service.SimpleWorkflowService;
 import org.egov.pims.commons.Position;
+import org.egov.ptis.bean.SurveyAssessmentDetails;
 import org.egov.ptis.client.bill.PTBillServiceImpl;
 import org.egov.ptis.client.integration.utils.CollectionHelper;
 import org.egov.ptis.client.model.PenaltyAndRebate;
@@ -762,6 +763,7 @@ public class PropertyExternalService {
             receiptDetails.setPaymentAmount(billReceiptInfo.getTotalAmount());
             receiptDetails.setPaymentMode(payPropertyTaxDetails.getPaymentMode());
             receiptDetails.setTransactionId(billReceiptInfo.getManualReceiptNumber());
+            
             errorDetails = new ErrorDetails();
             errorDetails.setErrorCode(THIRD_PARTY_ERR_CODE_SUCCESS);
             errorDetails.setErrorMessage(THIRD_PARTY_ERR_MSG_SUCCESS);
@@ -1797,7 +1799,7 @@ public class PropertyExternalService {
         final DateTime currentDate = new DateTime();
         final User user = userService.getUserById(ApplicationThreadLocals.getUserId());
         final String approverComments = APPROVAL_COMMENTS_SUCCESS;
-        final String currentState = CURRENT_STATE_BILL_COLLECTOR_APPROVED;
+        final String currentState = CREATE_CURRENT_STATE_BILL_COLLECTOR_APPROVED;
         final PropertyService propService = beanProvider.getBean("propService", PropertyService.class);
         final Assignment assignment = propService.getUserPositionByZone(property.getBasicProperty(),property.getBasicProperty().getSource());
         final Position pos = assignment.getPosition();
@@ -2257,4 +2259,80 @@ public class PropertyExternalService {
     	viewPropertyDetails.setSouthBoundary(propertyID.getSouthBoundary());
     	
     }
+    
+    /**
+     * Gives the count of properties for the given input criteria
+     * @param transactionType
+     * @param fromDate
+     * @param toDate
+     * @return
+     * @throws ParseException
+     */
+    public Long getPropertiesCount(String transactionType, String fromDate, String toDate) throws ParseException{
+    	StringBuilder queryString = new StringBuilder();
+        queryString.append("select count(distinct prop.basicProperty.id) from PropertyImpl prop, PropertyMaterlizeView pmv ");
+        queryString.append(" where prop.basicProperty.id = pmv.basicPropertyID and (cast(prop.createdDate as date)) between :fromDate and :toDate ");
+        queryString.append(" and upper(prop.propertyModifyReason) like :modifyReason and prop.status in ('A','I') ");
+        if(transactionType.equalsIgnoreCase(PropertyTaxConstants.TRANSACTION_TYPE_CREATE))
+        	queryString.append(" and prop.demolitionReason is null ");
+        else if(transactionType.equalsIgnoreCase(PropertyTaxConstants.TRANSACTION_TYPE_DEMOLITION))
+        	queryString.append(" and prop.demolitionReason is not null ");
+        final Query qry = entityManager.createQuery(queryString.toString());
+      	qry.setParameter("fromDate", convertStringToDate(fromDate));
+       	qry.setParameter("toDate", convertStringToDate(toDate));
+       	qry.setParameter("modifyReason", "%".concat(transactionType.toUpperCase()).concat("%"));
+    	return (Long) qry.getResultList().get(0);
+    }
+    
+    /**
+     * Gives details of the properties for the selected input criteria
+     * @param transactionType
+     * @param fromDate
+     * @param toDate
+     * @return
+     * @throws ParseException
+     */
+    public List<SurveyAssessmentDetails> getPropertyDetailsForSurvey(String transactionType, String fromDate, String toDate) throws ParseException{
+    	StringBuilder queryString = new StringBuilder();
+    	List<SurveyAssessmentDetails> assessmentDetailsList = new ArrayList<>();
+        queryString.append("select prop, pmv.houseNo, pmv.propertyAddress, pmv.sitalArea, sum(pmv.arrearDemand+pmv.aggrArrearPenaly+pmv.aggrCurrFirstHalfPenaly+");
+        queryString.append("pmv.aggrCurrSecondHalfPenaly+pmv.aggrCurrFirstHalfDmd+pmv.aggrCurrSecondHalfDmd) from PropertyImpl prop, PropertyMaterlizeView pmv ");
+        queryString.append(" where prop.basicProperty.id = pmv.basicPropertyID and (cast(prop.createdDate as date)) between :fromDate and :toDate ");
+        queryString.append(" and upper(prop.propertyModifyReason) like :modifyReason and prop.status in ('A','I') ");
+        if(transactionType.equalsIgnoreCase(PropertyTaxConstants.TRANSACTION_TYPE_CREATE))
+        	queryString.append(" and prop.demolitionReason is null ");
+        else if(transactionType.equalsIgnoreCase(PropertyTaxConstants.TRANSACTION_TYPE_DEMOLITION))
+        	queryString.append(" and prop.demolitionReason is not null ");
+        queryString.append(" group by pmv.houseNo, pmv.propertyAddress, pmv.sitalArea, prop.id ");
+        final Query qry = entityManager.createQuery(queryString.toString());
+      	qry.setParameter("fromDate", convertStringToDate(fromDate));
+       	qry.setParameter("toDate", convertStringToDate(toDate));
+       	qry.setParameter("modifyReason", "%".concat(transactionType.toUpperCase()).concat("%"));
+       	
+    	List<Object[]> propertyDetails = qry.getResultList();
+    	if(!propertyDetails.isEmpty()){
+    		SurveyAssessmentDetails assessmentDetails;
+    		for(Object[] objArr : propertyDetails){
+    			assessmentDetails = new SurveyAssessmentDetails();
+    			preparePropertyDetails(objArr, assessmentDetails);
+    			assessmentDetailsList.add(assessmentDetails);
+    		}
+    	}
+    	return assessmentDetailsList;
+    }
+    
+    private void preparePropertyDetails(Object[] obj,SurveyAssessmentDetails assessmentDetails){
+    	Property property = (Property) obj[0];
+    	BasicProperty basicProperty = property.getBasicProperty();
+    	assessmentDetails.setAssessmentNo(basicProperty.getUpicNo());
+    	assessmentDetails.setDoorNo(obj[1].toString());
+        assessmentDetails.setPropertyAddress(obj[2].toString());
+        assessmentDetails.setPropertyType(property.getPropertyDetail().getPropertyTypeMaster().getType());
+        assessmentDetails.setPropertyCategory(PropertyTaxConstants.PROPERTY_TYPE_CATEGORIES.get(property.getPropertyDetail().getCategoryType()));
+        assessmentDetails.setAssessmentYear(DateUtils.toYearFormat(basicProperty.getPropOccupationDate()));
+        assessmentDetails.setTotalTax(new BigDecimal(obj[4].toString()));
+        assessmentDetails.setTotalSitalArea(new BigDecimal(obj[3].toString()));
+        assessmentDetails.setOwnerDetails(getOwnerDetails(basicProperty));
+    }
+    
 }

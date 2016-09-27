@@ -768,4 +768,30 @@ public class ValidationUtil {
     	return errorDetails;
     }
     
+    public ErrorDetails validateSurveyRequest(AssessmentRequest assessmentRequest) throws ParseException{
+    	ErrorDetails errorDetails = null;
+    	if(StringUtils.isBlank(assessmentRequest.getTransactionType())){
+    		errorDetails = new ErrorDetails();
+            errorDetails.setErrorCode(TRANSACTION_TYPE_REQUIRED_CODE);
+            errorDetails.setErrorMessage(TRANSACTION_TYPE_REQUIRED_MSG);
+    	} else if (StringUtils.isBlank(assessmentRequest.getFromDate())){
+    		errorDetails = new ErrorDetails();
+            errorDetails.setErrorCode(FROM_DATE_REQUIRED_CODE);
+            errorDetails.setErrorMessage(FROM_DATE_REQUIRED_MSG);
+    	} else if (StringUtils.isBlank(assessmentRequest.getToDate())){
+    		errorDetails = new ErrorDetails();
+            errorDetails.setErrorCode(TO_DATE_REQUIRED_CODE);
+            errorDetails.setErrorMessage(TO_DATE_REQUIRED_MSG);
+    	}
+    	if(StringUtils.isNotBlank(assessmentRequest.getTransactionType()) && StringUtils.isNotBlank(assessmentRequest.getFromDate()) 
+    			&& StringUtils.isNotBlank(assessmentRequest.getToDate())){
+    		Long propertiesCount = propertyExternalService.getPropertiesCount(assessmentRequest.getTransactionType(), assessmentRequest.getFromDate(), assessmentRequest.getToDate());
+        	if(propertiesCount>100){
+        		errorDetails = new ErrorDetails();
+                errorDetails.setErrorCode(PROPERTIES_LIST_EXCEED_LIMIT_CODE);
+                errorDetails.setErrorMessage(PROPERTIES_LIST_EXCEED_LIMIT_MSG);
+        	}
+    	}
+    	return errorDetails;
+    }
 }
