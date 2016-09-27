@@ -44,6 +44,7 @@ import org.egov.infra.config.properties.ApplicationProperties;
 import org.flywaydb.core.Flyway;
 import org.springframework.beans.factory.annotation.Autowire;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.DependsOn;
@@ -61,8 +62,9 @@ public class DBMigrationConfiguration {
 
     public static final String MAIN_MIGRATION_FILE_PATH = "classpath:/db/migration/main/";
     public static final String SAMPLE_MIGRATION_FILE_PATH = "classpath:/db/migration/sample/";
-    public static final String TENANR_MIGRATION_FILE_PATH = "classpath:/db/migration/%s/";
+    public static final String TENANT_MIGRATION_FILE_PATH = "classpath:/db/migration/%s/";
     public static final String STATEWIDE_MIGRATION_FILE_PATH = "classpath:/db/migration/statewide/";
+    public static final String PUBLIC_SCHEMA = "public";
 
 
     @Autowired
@@ -73,35 +75,37 @@ public class DBMigrationConfiguration {
 
     @Bean
     @DependsOn("dataSource")
-    public Flyway flyway(final DataSource dataSource) {
-        tenants().parallelStream().forEach(schema -> {
-            final Flyway flyway = new Flyway();
-            flyway.setBaselineOnMigrate(true);
-            flyway.setOutOfOrder(true);
-            if (applicationProperties.devMode())
-                flyway.setLocations(MAIN_MIGRATION_FILE_PATH, SAMPLE_MIGRATION_FILE_PATH);
+    public Flyway flyway(DataSource dataSource, @Qualifier("cities") List<String> cities) {
+        boolean devMode = applicationProperties.devMode();
+        cities.parallelStream().forEach(schema -> {
+            if (devMode)
+                migrateDatabase(schema, dataSource, MAIN_MIGRATION_FILE_PATH, SAMPLE_MIGRATION_FILE_PATH);
             else
-                flyway.setLocations(MAIN_MIGRATION_FILE_PATH, format(TENANR_MIGRATION_FILE_PATH, schema));
-            flyway.setDataSource(dataSource);
-            flyway.setSchemas(schema);
-            flyway.repair();
-            flyway.migrate();
+                migrateDatabase(schema, dataSource, MAIN_MIGRATION_FILE_PATH, format(TENANT_MIGRATION_FILE_PATH, schema));
         });
-        if (applicationProperties.statewideMigrationRequired()) {
-            final Flyway flyway = new Flyway();
-            flyway.setOutOfOrder(true);
-            flyway.setLocations(MAIN_MIGRATION_FILE_PATH, STATEWIDE_MIGRATION_FILE_PATH, format(TENANR_MIGRATION_FILE_PATH, "public"));
-            flyway.setDataSource(dataSource);
-            flyway.setSchemas("public");
-            flyway.repair();
-            flyway.migrate();
-        }
+
+        if (applicationProperties.statewideMigrationRequired() && !devMode)
+            migrateDatabase(PUBLIC_SCHEMA, dataSource, MAIN_MIGRATION_FILE_PATH, STATEWIDE_MIGRATION_FILE_PATH,
+                    format(TENANT_MIGRATION_FILE_PATH, PUBLIC_SCHEMA));
+        else if (!devMode)
+            migrateDatabase(PUBLIC_SCHEMA, dataSource, MAIN_MIGRATION_FILE_PATH, format(TENANT_MIGRATION_FILE_PATH, PUBLIC_SCHEMA));
+
         return new Flyway();
+    }
+
+    private void migrateDatabase(String schema, DataSource dataSource, String... locations) {
+        Flyway flyway = new Flyway();
+        flyway.setBaselineOnMigrate(true);
+        flyway.setOutOfOrder(true);
+        flyway.setLocations(locations);
+        flyway.setDataSource(dataSource);
+        flyway.setSchemas(schema);
+        flyway.migrate();
     }
 
     @Bean(name = "tenants", autowire = Autowire.BY_NAME)
     public List<String> tenants() {
-        final List<String> tenants = new ArrayList<>();
+        List<String> tenants = new ArrayList<>();
         environment.getPropertySources().iterator().forEachRemaining(propertySource -> {
             if (propertySource instanceof MapPropertySource)
                 ((MapPropertySource) propertySource).getSource().forEach((key, value) -> {
