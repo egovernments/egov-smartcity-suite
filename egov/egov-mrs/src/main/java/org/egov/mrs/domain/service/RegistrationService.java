@@ -44,7 +44,6 @@ import java.io.IOException;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Base64;
-import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -54,6 +53,7 @@ import java.util.stream.Collectors;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
 import org.egov.eis.web.contract.WorkflowContainer;
 import org.egov.infra.admin.master.entity.User;
@@ -82,7 +82,6 @@ import org.egov.mrs.domain.repository.WitnessRepository;
 import org.egov.mrs.masters.service.ActService;
 import org.egov.mrs.masters.service.ReligionService;
 import org.egov.mrs.utils.MarriageRegistrationNoGenerator;
-import org.elasticsearch.common.lang3.StringUtils;
 import org.hibernate.Criteria;
 import org.hibernate.Session;
 import org.hibernate.criterion.Restrictions;
@@ -378,7 +377,7 @@ public class RegistrationService {
                 registration.getHusband().getFullName().concat(registration.getWife().getFullName()),
                 registration.getStatus().name(),
                 "/mrs/registration/" + registration.getId(),
-                registration.getHusband().getContactInfo().getResidenceAddress(), user.getUsername() + "::" + user.getName())
+                registration.getHusband().getContactInfo().getResidenceAddress(), user.getUsername() + "::" + user.getName(), "")//TODO CHECK THIS
                         .mobileNumber(registration.getHusband().getContactInfo().getMobileNo());
 
         applicationIndexService.createApplicationIndex(applicationIndexBuilder.build());
@@ -510,7 +509,7 @@ public class RegistrationService {
     }
 
     public void prepareDocumentsForView(final Registration registration) {
-        registration.getRegistrationDocuments().forEach(appDoc -> {
+       if(registration.getRegistrationDocuments()!=null){ registration.getRegistrationDocuments().forEach(appDoc -> {
             final File file = fileStoreService.fetch(appDoc.getFileStoreMapper().getFileStoreId(), Constants.MODULE_NAME);
             try {
                 appDoc.setBase64EncodedFile(Base64.getEncoder().encodeToString(FileCopyUtils.copyToByteArray(file)));
@@ -518,6 +517,7 @@ public class RegistrationService {
                 LOG.error("Error while preparing the document for view", e);
             }
         });
+       }
     }
 
 }

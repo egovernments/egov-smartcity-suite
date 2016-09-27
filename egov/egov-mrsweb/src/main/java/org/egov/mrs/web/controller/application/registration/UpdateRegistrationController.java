@@ -71,7 +71,8 @@ public class UpdateRegistrationController extends RegistrationController {
         registrationService.prepareDocumentsForView(registration);
         applicantService.prepareDocumentsForView(registration.getHusband());
         applicantService.prepareDocumentsForView(registration.getWife());
-        registration.getWitnesses().forEach(witness -> witness.setEncodedPhoto(Base64.getEncoder().encodeToString(witness.getPhoto())));
+        if(registration.getWitnesses()!=null)
+          registration.getWitnesses().forEach(witness -> { if(witness.getPhoto()!=null)witness.setEncodedPhoto(Base64.getEncoder().encodeToString(witness.getPhoto()));});
         return "registration-correction";
     }
 

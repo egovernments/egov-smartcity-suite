@@ -120,6 +120,7 @@ public class ApplicantService {
         Map<Long, ApplicantDocument> documentIdAndApplicantDoc = new HashMap<Long, ApplicantDocument>();
         applicant.getApplicantDocuments().forEach(appDoc -> documentIdAndApplicantDoc.put(appDoc.getDocument().getId(), appDoc));
 
+        if(applicantModel.getDocuments()!=null){
         applicantModel.getDocuments().stream()
             .filter(doc -> doc.getFile().getSize() > 0)
             .map(doc -> {
@@ -130,6 +131,7 @@ public class ApplicantService {
             .forEach(appDoc -> toDelete.add(appDoc)); // seems like redundent, check
         
         applicantDocumentService.delete(toDelete);
+        }
     }
     
     /**
@@ -139,7 +141,7 @@ public class ApplicantService {
      */
     public void addDocumentsToFileStore(final Applicant applicantModel, final Applicant applicant, final Map<Long, Document> documentAndId) {
         List<Document> documents = applicantModel == null ? applicant.getDocuments() : applicantModel.getDocuments();
-        documents.stream()
+      if(documents!=null){  documents.stream()
                 .filter(document -> !document.getFile().isEmpty() && document.getFile().getSize() > 0)
                 .map(document -> {
                     final ApplicantDocument applicantDocument = new ApplicantDocument();
@@ -149,6 +151,7 @@ public class ApplicantService {
                     return applicantDocument;
                 }).collect(Collectors.toList())
         .forEach(doc -> applicant.addApplicantDocument(doc));
+      }
     }
     
     private FileStoreMapper addToFileStore(final MultipartFile file) {

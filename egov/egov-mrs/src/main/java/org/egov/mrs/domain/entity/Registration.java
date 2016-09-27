@@ -71,8 +71,6 @@ import org.egov.mrs.masters.entity.Act;
 import org.hibernate.validator.constraints.Length;
 import org.hibernate.validator.constraints.SafeHtml;
 
-import com.mysema.query.annotations.QueryInit;
-
 @Entity
 @Table(name = "egmrs_registration")
 @SequenceGenerator(name = Registration.SEQ_REGISTRATION, sequenceName = Registration.SEQ_REGISTRATION, allocationSize = 1)
@@ -117,14 +115,14 @@ public class Registration extends StateAware {
     @Valid
     @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     @JoinColumn(name = "husband")
-    @QueryInit("name.firstName")
+  //  @QueryInit("name.firstName")
     private Applicant husband = new Applicant();
 
     @NotNull
     @Valid
     @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     @JoinColumn(name = "wife")
-    @QueryInit("name.firstName")
+ //   @QueryInit("name.firstName")
     private Applicant wife = new Applicant();
 
     @NotNull

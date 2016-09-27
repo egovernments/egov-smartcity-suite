@@ -46,14 +46,14 @@ import org.egov.eis.service.PositionMasterService;
 import org.egov.eis.web.contract.WorkflowContainer;
 import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.security.utils.SecurityUtils;
-import org.egov.infra.workflow.entity.State;
 import org.egov.infra.workflow.entity.StateAware;
+import org.egov.infra.workflow.matrix.entity.WorkFlowMatrix;
 import org.egov.infra.workflow.service.SimpleWorkflowService;
-import org.egov.infstr.workflow.WorkFlowMatrix;
 import org.egov.mrs.domain.entity.ReIssue;
 import org.egov.mrs.domain.entity.Registration;
 import org.egov.pims.commons.Position;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -68,9 +68,11 @@ public class RegistrationWorkflowService {
     private static final String STEP_FORWARD = "Forward";
 
     @Autowired
+    @Qualifier("workflowService")
     private SimpleWorkflowService<Registration> registrationWorkflowService;
     
     @Autowired
+    @Qualifier("workflowService")
     private SimpleWorkflowService<ReIssue> reIssueWorkflowService;
 
     @Autowired

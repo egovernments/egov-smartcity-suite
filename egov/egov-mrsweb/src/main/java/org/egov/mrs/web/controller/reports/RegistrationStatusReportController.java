@@ -49,7 +49,6 @@ import java.util.Map;
 import org.egov.mrs.application.Constants;
 import org.egov.mrs.domain.entity.SearchModel;
 import org.egov.mrs.domain.entity.SearchResult;
-import org.egov.mrs.domain.enums.ApplicationStatus;
 import org.egov.mrs.domain.enums.FeeType;
 import org.egov.mrs.domain.service.RegistrationService;
 import org.springframework.beans.factory.annotation.Autowired;

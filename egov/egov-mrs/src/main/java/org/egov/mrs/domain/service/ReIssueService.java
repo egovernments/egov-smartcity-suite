@@ -47,6 +47,7 @@ import java.util.Map;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 
+import org.apache.commons.lang3.StringUtils;
 import org.egov.eis.web.contract.WorkflowContainer;
 import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.messaging.MessagingService;
@@ -63,7 +64,6 @@ import org.egov.mrs.domain.entity.ReIssue;
 import org.egov.mrs.domain.enums.ApplicationStatus;
 import org.egov.mrs.domain.enums.FeeType;
 import org.egov.mrs.domain.repository.ReIssueRepository;
-import org.elasticsearch.common.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.support.ResourceBundleMessageSource;
 import org.springframework.stereotype.Service;
@@ -197,7 +197,7 @@ public class ReIssueService {
                 reIssue.getApplicant().getFullName(),
                 reIssue.getStatus().name(),
                 "/mrs/reissue/" + reIssue.getId(),
-                reIssue.getApplicant().getContactInfo().getResidenceAddress(), user.getUsername() + "::" + user.getName())
+                reIssue.getApplicant().getContactInfo().getResidenceAddress(), user.getUsername() + "::" + user.getName(),"")
                         .mobileNumber(reIssue.getApplicant().getContactInfo().getMobileNo());
 
         applicationIndexService.createApplicationIndex(applicationIndexBuilder.build());

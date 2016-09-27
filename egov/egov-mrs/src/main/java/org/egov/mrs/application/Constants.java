@@ -49,5 +49,7 @@ public class Constants {
     public static final String DATE_FORMAT_DDMMYYYY = "dd-MM-yyyy";
     
     public static final String REISSUE_FEECRITERIA = "Re-Issue Fee";
+    public static final String ADDITIONAL_RULE_REGISTRATION = "MARRIAGE REGISTRATION"; 
+
 
 }

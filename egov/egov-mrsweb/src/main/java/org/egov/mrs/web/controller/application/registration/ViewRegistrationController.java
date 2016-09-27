@@ -63,7 +63,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 @RequestMapping(value = "/registration")
 public class ViewRegistrationController extends RegistrationController {
 
-    @RequestMapping(value = "/{registrationId}", method = RequestMethod.GET)
+    @RequestMapping(value = "/view/{registrationId}", method = RequestMethod.GET)
     public String viewRegistration(@PathVariable final Long registrationId, @RequestParam(required = false) String mode,
             final Model model) throws IOException {
         final Registration registration = registrationService.get(registrationId);

@@ -74,7 +74,7 @@ $('#btnregistrationsearch').click( function () {
 		type : "POST",
 		contentType: "application/json",
 		accept: "application/json",
-		url : "http://localhost:9080/mrs/registration/search",
+		url : "/mrs/registration/search",
 		data : '{ "registrationNo": "'+$('#registrationNo').val()+'", "dateOfMarriage": "'+$('#dateOfMarriage').val()+'", "husbandName": "'+$('#husbandName').val()+'", "wifeName": "'+$('#wifeName').val()+'", "registrationDate": "'+$('#registrationDate').val()+'" }',
 		dataType : "json",
 		success : function (response, textStatus, xhr) {
@@ -124,7 +124,7 @@ function performSelectedAction(dropdown) {
     registrationId = selectedRowData._aData[0];    
     var url = '';    
     if (optionSelected === 'view') {
-		url = '/mrs/registration/' + registrationId + '?mode=view';
+		url = '/mrs/registration/view/' + registrationId + '?mode=view';
 	} else if (optionSelected === 'collectfee') {
 		url = '/mrs/collection/bill/' + registrationId;
 	} else if (optionSelected === 'correction') {
@@ -132,8 +132,7 @@ function performSelectedAction(dropdown) {
 	} else if (optionSelected === 'reissue') {
 		url = '/mrs/reissue/create/' + registrationId;
 	}
-    
-    if (optionSelected != 'select') {
-    	window.open(url, '_blank');
+      if (optionSelected != 'select' && optionSelected != 'default') {
+    	window.open(url, '_blank',"width=800, height=600 , scrollbars=yes");
     }
 }

@@ -42,6 +42,7 @@ package org.egov.mrs.web.controller.application.registration;
 import javax.servlet.http.HttpServletRequest;
 
 import org.egov.eis.web.contract.WorkflowContainer;
+import org.egov.mrs.application.Constants;
 import org.egov.mrs.domain.entity.Registration;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -64,8 +65,17 @@ public class NewRegistrationController extends RegistrationController {
     
     @RequestMapping(value = "/register", method = RequestMethod.GET)
     public String showRegistration(@ModelAttribute final Registration registration, final Model model) {
-        prepareWorkflow(model, registration, new WorkflowContainer());
-        return "registration-form";
+        prepareWorkFlowForNewMarriageRegistration(registration, model);
+       return "registration-form";
+    }
+
+    private void prepareWorkFlowForNewMarriageRegistration(final Registration registration, final Model model) {
+        WorkflowContainer workFlowContainer = new WorkflowContainer();
+        workFlowContainer.setAdditionalRule(Constants.ADDITIONAL_RULE_REGISTRATION);
+        prepareWorkflow(model, registration, workFlowContainer);
+        model.addAttribute("additionalRule", Constants.ADDITIONAL_RULE_REGISTRATION);
+        model.addAttribute("stateType", registration.getClass().getSimpleName());
+        model.addAttribute("currentState", "NEW");
     }
 
     @RequestMapping(value = "/register", method = RequestMethod.POST)
@@ -75,8 +85,11 @@ public class NewRegistrationController extends RegistrationController {
             final HttpServletRequest request,
             final BindingResult errors) {
 
-        if (errors.hasErrors())
+        if (errors.hasErrors()){
+            prepareWorkFlowForNewMarriageRegistration(registration, model);
             return "registration-form";
+            
+        }
 
         obtainWorkflowParameters(workflowContainer, request);
         final String appNo = registrationService.createRegistration(registration, workflowContainer);

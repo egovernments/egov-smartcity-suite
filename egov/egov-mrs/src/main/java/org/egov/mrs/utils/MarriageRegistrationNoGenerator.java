@@ -39,10 +39,11 @@
 
 package org.egov.mrs.utils;
 
+import java.io.Serializable;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
-import org.egov.infstr.utils.SequenceNumberGenerator;
+import org.egov.infra.persistence.utils.SequenceNumberGenerator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -55,8 +56,12 @@ public class MarriageRegistrationNoGenerator {
     private SequenceNumberGenerator sequenceNoGenerator;
 
     public String generateRegistrationNo() {
-        return new SimpleDateFormat("ddMMyyyy").format(new Date())
-                .concat(sequenceNoGenerator.getNextNumberWithFormat("EGMRS_REGISTRATIONNO", 3, '0').getFormattedNumber());
+        
+        final Serializable referenceNumber = sequenceNoGenerator.getNextSequence(SEQ_REGISTRATIONNO);
+        return new  SimpleDateFormat("ddMMyyyy").format(new Date())
+                .concat(String.format(
+                "%s%06d", "", referenceNumber));
+       
     }
 
 }

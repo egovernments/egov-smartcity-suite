@@ -51,6 +51,7 @@ import org.egov.collection.entity.ReceiptDetail;
 import org.egov.collection.integration.models.BillReceiptInfo;
 import org.egov.collection.integration.models.BillReceiptInfoImpl;
 import org.egov.collection.integration.models.ReceiptAccountInfo;
+import org.egov.collection.integration.models.ReceiptAmountInfo;
 import org.egov.demand.dao.EgBillDao;
 import org.egov.demand.integration.TaxCollection;
 import org.egov.demand.model.EgBill;
@@ -62,7 +63,6 @@ import org.egov.infra.exception.ApplicationRuntimeException;
 import org.egov.mrs.application.Constants;
 import org.egov.mrs.application.service.workflow.RegistrationWorkflowService;
 import org.egov.mrs.domain.service.RegistrationService;
-import org.elasticsearch.common.lang3.StringUtils;
 import org.hibernate.Session;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -150,7 +150,7 @@ public class MarriageFeeCollection extends TaxCollection {
                 .setLong("demand", demand.getId()).list().get(0);
 
         for (final ReceiptAccountInfo receiptAccount : accountDetails)
-            if (StringUtils.isNotBlank(receiptAccount.getDescription()))
+            if (org.apache.commons.lang.StringUtils.isNotBlank(receiptAccount.getDescription()))
                 if (receiptAccount.getCrAmount() != null && receiptAccount.getCrAmount().compareTo(BigDecimal.ZERO) == 1) {
 
                     demandDetail.addCollectedWithOnePaisaTolerance(receiptAccount.getCrAmount());
@@ -244,10 +244,7 @@ public class MarriageFeeCollection extends TaxCollection {
         LOGGER.debug("Exiting method updateDmdDetForRcptCancel");
     }
 
-    @Override
-    public List<ReceiptDetail> reconstructReceiptDetail(final String billReferenceNumber, final BigDecimal actualAmountPaid) {
-        return null;
-    }
+   
 
     /**
      * Called when the Marriage Fee is collected for the registration, to move to next state
@@ -256,6 +253,25 @@ public class MarriageFeeCollection extends TaxCollection {
      */
     private void moveRegistrationToNextState(final String registrationNo) {
         workflowService.transition(registrationService.get(registrationNo), null, null);
+    }
+
+    @Override
+    public List<ReceiptDetail> reconstructReceiptDetail(String billReferenceNumber, BigDecimal actualAmountPaid,
+            List<ReceiptDetail> receiptDetailList) {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    @Override
+    public String constructAdditionalInfoForReceipt(BillReceiptInfo billReceiptInfo) {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    @Override
+    public ReceiptAmountInfo receiptAmountBifurcation(BillReceiptInfo billReceiptInfo) {
+        // TODO Auto-generated method stub
+        return null;
     }
 
 }

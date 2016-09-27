@@ -101,8 +101,9 @@ public class RegistrationCertificateService {
         registration.setCertificateIssued(true);
         workflowService.transition(registration, null, null);
         registrationService.update(registration);
-        httpSession.removeAttribute(ReportConstants.ATTRIB_EGOV_REPORT_OUTPUT_MAP);
-        return ReportViewerUtil.addReportToSession(reportOutput, httpSession);
+     //   httpSession.removeAttribute(ReportConstants.ATTRIB_EGOV_REPORT_OUTPUT_MAP);//TODO: CHECK THIS LOGIC AND CORRECT
+     //   return ReportViewerUtil.addReportToSession(reportOutput, httpSession);
+        return null;
     }
 
 }
