@@ -1487,4 +1487,7 @@ public interface PropertyTaxConstants {
 	
 	public static final String TRANSACTION_TYPE_CREATE = "Create";
 	public static final String TRANSACTION_TYPE_DEMOLITION = "Demolition";
+	
+	public static final String PROPERTY_MODE_CREATE = "create";
+	public static final String PROPERTY_MODE_MODIFY = "modify";
 }

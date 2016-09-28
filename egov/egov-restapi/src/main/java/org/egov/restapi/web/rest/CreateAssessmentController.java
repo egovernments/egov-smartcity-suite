@@ -92,20 +92,18 @@ public class CreateAssessmentController {
      * 
      * @param createPropertyDetails - Property details request
      * @return
-     * @throws JsonGenerationException
-     * @throws JsonMappingException
      * @throws IOException
      * @throws ParseException
      */
 	@RequestMapping(value = "/property/createProperty", method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON, produces = MediaType.APPLICATION_JSON)
 	public String createProperty(@RequestBody String createPropertyDetails)
-			throws JsonGenerationException, JsonMappingException, IOException, ParseException {
+			throws IOException, ParseException {
 		String responseJson = new String();
 		ApplicationThreadLocals.setUserId(2L);
 		CreatePropertyDetails createPropDetails = (CreatePropertyDetails) getObjectFromJSONRequest(
                 createPropertyDetails, CreatePropertyDetails.class);
 		
-		ErrorDetails errorDetails = validationUtil.validateCreateRequest(createPropDetails);
+		ErrorDetails errorDetails = validationUtil.validateCreateRequest(createPropDetails, PropertyTaxConstants.PROPERTY_MODE_CREATE);
 		if (errorDetails != null) {
 			responseJson = JsonConvertor.convert(errorDetails);
         } else {
@@ -167,12 +165,10 @@ public class CreateAssessmentController {
      * 
      * @param jsonString - request JSON string
      * @return
-     * @throws JsonParseException
-     * @throws JsonMappingException
      * @throws IOException
      */
     private Object getObjectFromJSONRequest(String jsonString, Class cls)
-            throws JsonParseException, JsonMappingException, IOException {
+            throws IOException {
         ObjectMapper mapper = new ObjectMapper();
         mapper.setVisibility(JsonMethod.FIELD, Visibility.ANY);
         mapper.configure(SerializationConfig.Feature.AUTO_DETECT_FIELDS, true);
