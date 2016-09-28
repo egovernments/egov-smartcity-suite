@@ -135,7 +135,7 @@
 					data-tabidx=0><spring:message code="lbl.mbheader" /></a></li>
 				<li><a data-toggle="tab" href="#tenderedItems" data-tabidx=1><spring:message
 							code="lbl.tendered.items" /> </a></li>
-				 <li><a data-toggle="tab" href="#nonTenderedItems"  style="display:none" data-tabidx=1 ><spring:message
+				 <li><a data-toggle="tab" href="#nonTenderedItems"  data-tabidx=1 ><spring:message
 							code="lbl.nontendered.items" /> </a></li> 
 			</ul>
 		</div>
@@ -148,7 +148,7 @@
 				<%@ include file="mb-sor.jsp"%>
 				<%@ include file="mb-nonsor.jsp"%>
 			</div>
-			<div class="tab-pane fade" id="nonTenderedItems" style="display:none">
+			<div class="tab-pane fade" id="nonTenderedItems" >
 				<%@ include file="mb-nontendered.jsp"%>
 				<%@ include file="mb-lumpsum.jsp"%>
 			</div>
