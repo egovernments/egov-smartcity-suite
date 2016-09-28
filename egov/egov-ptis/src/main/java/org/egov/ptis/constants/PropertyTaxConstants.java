@@ -1490,4 +1490,8 @@ public interface PropertyTaxConstants {
 	
 	public static final String PROPERTY_MODE_CREATE = "create";
 	public static final String PROPERTY_MODE_MODIFY = "modify";
+	
+	public static final String PAYMENT_TYPE_PARTIALLY = "Partially";
+	public static final String PAYMENT_TYPE_FULLY = "Fully";
+	public static final String PAYMENT_TYPE_ADVANCE = "Advance";
 }
