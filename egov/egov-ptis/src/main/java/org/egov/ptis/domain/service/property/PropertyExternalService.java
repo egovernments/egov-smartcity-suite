@@ -2295,15 +2295,14 @@ public class PropertyExternalService {
     public List<SurveyAssessmentDetails> getPropertyDetailsForSurvey(String transactionType, String fromDate, String toDate) throws ParseException{
     	StringBuilder queryString = new StringBuilder();
     	List<SurveyAssessmentDetails> assessmentDetailsList = new ArrayList<>();
-        queryString.append("select prop, pmv.houseNo, pmv.propertyAddress, pmv.sitalArea, sum(pmv.arrearDemand+pmv.aggrArrearPenaly+pmv.aggrCurrFirstHalfPenaly+");
-        queryString.append("pmv.aggrCurrSecondHalfPenaly+pmv.aggrCurrFirstHalfDmd+pmv.aggrCurrSecondHalfDmd) from PropertyImpl prop, PropertyMaterlizeView pmv ");
+        queryString.append("select prop, pmv.houseNo, pmv.propertyAddress, pmv.sitalArea, (coalesce(pmv.arrearDemand,0)+coalesce(pmv.aggrArrearPenaly,0)+coalesce(pmv.aggrCurrFirstHalfPenaly,0)+");
+        queryString.append("coalesce(pmv.aggrCurrSecondHalfPenaly,0)+coalesce(pmv.aggrCurrFirstHalfDmd,0)+coalesce(pmv.aggrCurrSecondHalfDmd,0)) from PropertyImpl prop, PropertyMaterlizeView pmv ");
         queryString.append(" where prop.basicProperty.id = pmv.basicPropertyID and (cast(prop.createdDate as date)) between :fromDate and :toDate ");
         queryString.append(" and upper(prop.propertyModifyReason) like :modifyReason and prop.status in ('A','I') ");
         if(transactionType.equalsIgnoreCase(PropertyTaxConstants.TRANSACTION_TYPE_CREATE))
         	queryString.append(" and prop.demolitionReason is null ");
         else if(transactionType.equalsIgnoreCase(PropertyTaxConstants.TRANSACTION_TYPE_DEMOLITION))
         	queryString.append(" and prop.demolitionReason is not null ");
-        queryString.append(" group by pmv.houseNo, pmv.propertyAddress, pmv.sitalArea, prop.id ");
         final Query qry = entityManager.createQuery(queryString.toString());
       	qry.setParameter("fromDate", convertStringToDate(fromDate));
        	qry.setParameter("toDate", convertStringToDate(toDate));
