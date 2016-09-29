@@ -698,6 +698,7 @@ public class RevisionEstimateService {
         for (final MeasurementSheet msnew : activity.getMeasurementSheetList()) {
             if (msnew.getId() == null) {
                 msnew.setActivity(oldActivity);
+                msnew.setIdentifier(msnew.getParent().getIdentifier());
                 oldActivity.getMeasurementSheetList().add(msnew);
                 continue;
             }

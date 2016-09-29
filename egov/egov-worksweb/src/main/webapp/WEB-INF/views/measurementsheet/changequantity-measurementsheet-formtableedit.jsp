@@ -73,7 +73,7 @@
 	                		<tr>
 			                	<td hidden="true">
 			                        <form:input path="changeQuantityActivities[${item.index }].measurementSheetList[${index.index }].id" class="clearthis" id="changeQuantityActivities_${item.index }_measurementSheetList_${index.index }_id" />
-			                        <form:input path="changeQuantityActivities[${item.index }].measurementSheetList[${index.index }].parent" id="changeQuantityActivities_${item.index }_measurementSheetList_${index.index }_parent" />
+			                        <form:input path="changeQuantityActivities[${item.index }].measurementSheetList[${index.index }].parent" id="changeQuantityActivities_${item.index }_measurementSheetList_${index.index }_parent" value="${activity.parent.measurementSheetList.get(index.index).id}" />
 			                    </td>
 			                	<td id="msrowslNo_${item.index }_${index.index }">${activity.parent.measurementSheetList.get(index.index).slNo }</td>
 			                    <td id="msrowremarks_${item.index }_${index.index }">${activity.parent.measurementSheetList.get(index.index).remarks }</td>
