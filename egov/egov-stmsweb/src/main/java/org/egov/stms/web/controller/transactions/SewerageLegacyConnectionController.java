@@ -276,7 +276,7 @@ public class SewerageLegacyConnectionController extends GenericWorkFlowControlle
                     .checkValidPropertyAssessmentNumber(sewerageApplicationDetails.getConnectionDetail()
                             .getPropertyIdentifier());
             if (errorMessage != null && !errorMessage.equals("")){
-                resultBinder.reject("err.connection.propertyIdentifier.validate",
+                resultBinder.reject("err.connectionDetail.propertyIdentifier.validate",
                         new String[] { errorMessage }, null);
             }
         }

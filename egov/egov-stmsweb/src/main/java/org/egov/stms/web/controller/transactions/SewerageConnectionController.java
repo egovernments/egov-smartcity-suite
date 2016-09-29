@@ -42,6 +42,7 @@ package org.egov.stms.web.controller.transactions;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
@@ -210,7 +211,7 @@ public class SewerageConnectionController extends GenericWorkFlowController {
             final HttpServletRequest request, final Model model, @RequestParam String workFlowAction,
             final BindingResult errors, @RequestParam("files") final MultipartFile[] files) {
 
-        validatePropertyID(sewerageApplicationDetails, resultBinder);
+        validatePropertyID(sewerageApplicationDetails, resultBinder, request);
         final List<SewerageApplicationDetailsDocument> applicationDocs = new ArrayList<SewerageApplicationDetailsDocument>();
         int i = 0;
         if (!sewerageApplicationDetails.getAppDetailsDocument().isEmpty())
@@ -228,7 +229,6 @@ public class SewerageConnectionController extends GenericWorkFlowController {
             LOG.error("Model Level Validation occurs = " + resultBinder);
 
         if (resultBinder.hasErrors()) {
-            validatePropertyID(sewerageApplicationDetails, resultBinder);
             sewerageApplicationDetails.setApplicationDate(new Date());
             model.addAttribute("validateIfPTDueExists", sewerageTaxUtils.isNewConnectionAllowedIfPTDuePresent());
             model.addAttribute("propertyTypes", PropertyType.values());
@@ -354,19 +354,35 @@ public class SewerageConnectionController extends GenericWorkFlowController {
     }
 
     private void validatePropertyID(final SewerageApplicationDetails sewerageApplicationDetails,
-            final BindingResult errors) {
-        if (sewerageApplicationDetails.getConnection() != null
+            final BindingResult errors, final HttpServletRequest request) {
+        if (sewerageApplicationDetails.getConnectionDetail() != null
                 && sewerageApplicationDetails.getConnectionDetail().getPropertyIdentifier() != null
                 && !sewerageApplicationDetails.getConnectionDetail().getPropertyIdentifier().equals("")) {
-            String errorMessage = sewerageApplicationDetailsService
+          String errorMessage = sewerageApplicationDetailsService
                     .checkValidPropertyAssessmentNumber(sewerageApplicationDetails.getConnectionDetail().getPropertyIdentifier());
             if (errorMessage != null && !errorMessage.equals(""))
-                errors.rejectValue("connection.propertyIdentifier", errorMessage, errorMessage);
+                errors.reject("err.connectionDetail.propertyIdentifier.validate",
+                        new String[] { errorMessage }, null);
             else {
                 errorMessage = sewerageApplicationDetailsService
                         .checkConnectionPresentForProperty(sewerageApplicationDetails.getConnectionDetail().getPropertyIdentifier());
                 if (errorMessage != null && !errorMessage.equals(""))
-                    errors.rejectValue("connection.propertyIdentifier", errorMessage, errorMessage);
+                    errors.reject("err.connectionDetail.propertyIdentifier.validate",
+                            new String[] { errorMessage }, null);
+                else {
+                    HashMap<String, Object> result = sewerageThirdPartyServices.getWaterTaxDueAndCurrentTax(sewerageApplicationDetails.getConnectionDetail().getPropertyIdentifier(), request);
+                    BigDecimal waterTaxDue = (BigDecimal) result.get("WATERTAXDUE");
+                    String consumerCode = result.get("CONSUMERCODE").toString(); 
+                    //Taking substring since value in consumercode is in this form [12345]
+                    if(consumerCode!="" && consumerCode!=null)
+                        consumerCode=consumerCode.substring(1, consumerCode.length()-1);
+                    if (waterTaxDue.compareTo(BigDecimal.ZERO)>0){
+                        errorMessage="For Entered Property tax Assessment number "+sewerageApplicationDetails.getConnectionDetail().getPropertyIdentifier()+
+                                " linked water tap connection demand with Consumer code:"+consumerCode+" is due Rs."+waterTaxDue+"/- . Please clear demand and create new sewerage connection.";
+                        errors.reject("err.connectionDetail.propertyIdentifier.validate",
+                                new String[] { errorMessage }, null);
+                    } 
+                }
             }
         }
     }
