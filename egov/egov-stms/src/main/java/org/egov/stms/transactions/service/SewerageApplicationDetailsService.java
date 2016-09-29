@@ -506,7 +506,8 @@ public class SewerageApplicationDetailsService {
             // Create New ApplicationIndex on create sewerage connection
             if (sewerageApplicationDetails.getApplicationDate() == null)
                 sewerageApplicationDetails.setApplicationDate(new Date());
-            final String url = "/stms/application/view/" + sewerageApplicationDetails.getApplicationNumber();
+            //final String url = "/stms/application/view/" + sewerageApplicationDetails.getApplicationNumber();
+            final String url = "/stms/existing/sewerage/view/"+ sewerageApplicationDetails.getApplicationNumber()+"/"+sewerageApplicationDetails.getConnectionDetail().getPropertyIdentifier();
             if (LOG.isDebugEnabled())
                 LOG.debug("Application Index creation Started... ");
             final ApplicationIndexBuilder applicationIndexBuilder = new ApplicationIndexBuilder(
