@@ -108,7 +108,7 @@ function callAjaxSearch() {
 
 $("#resultTable").on('click','tbody tr td  .view',function(event) {
 	var msg = $(this).parent().parent().find('textarea').val();
-	var id = reportdatatable.fnGetData($(this).parent().parent(),7);
+	var id = reportdatatable.fnGetData($(this).parent().parent(),8);
 	
 	$.ajax({
 	   url: '/council/councilmeeting/sendsmsemail?id='+id+'&msg='+msg,
@@ -154,4 +154,3 @@ String.prototype.compose = (function (){
 	       });
 	   }
 }());
-
