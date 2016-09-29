@@ -367,19 +367,23 @@
 																			cellpadding="0" cellspacing="0" width="100%">
 																			<tr>
 																				<th class="bluebgheadtdnew">Bill Number
-																				</td>
+																				</th>
 																				<th class="bluebgheadtdnew">Bill Date
-																				</td>
+																				</th>
+																				<th class="bluebgheadtdnew">Bill Voucher Number
+																				</th>
+																				<th class="bluebgheadtdnew">Bill Voucher Date
+																				</th>
 																				<th class="bluebgheadtdnew">Payee Name
-																				</td>
+																				</th>
 																				<th class="bluebgheadtdnew">Net Amount
-																				</td>
+																				</th>
 																				<th class="bluebgheadtdnew">Earlier Payment
-																				</td>
+																				</th>
 																				<th class="bluebgheadtdnew">Payable Amount
-																				</td>
+																				</th>
 																				<th class="bluebgheadtdnew">Payment Amount
-																				</td>
+																				</th>
 																			</tr>
 																			<s:if test="%{billList.size>0}">
 																				<s:iterator var="p" value="billList" status="s">
@@ -396,6 +400,21 @@
 																								name="billList[%{#s.index}].billDate"
 																								id="billDate%{#s.index}" value="%{billDate}" />
 																							<s:date name="%{billDate}" format="dd/MM/yyyy" /></td>
+																						<td style="text-align: center"
+																							class="blueborderfortdnew"><s:hidden
+																								name="billList[%{#s.index}].billVoucherId"
+																								id="billVoucherId%{#s.index}" value="%{billVoucherId}" />
+																							<s:hidden name="billList[%{#s.index}].billVoucherNumber"
+																								id="billNumber" value="%{billVoucherNumber}" />
+																								<a href="#" onclick="openVoucher('<s:property value='%{billVoucherId}'/>');">
+																								 	<s:property value="%{billVoucherNumber}" />
+																								 </a>
+																						</td>
+																						<td style="text-align: center"
+																							class="blueborderfortdnew"><s:hidden
+																								name="billList[%{#s.index}].billVoucherDate"
+																								id="billVoucherDate%{#s.index}" value="%{billVoucherDate}" />
+																							<s:date name="%{billVoucherDate}" format="dd/MM/yyyy" /></td>
 																						<td style="text-align: center"
 																							class="blueborderfortdnew"><s:hidden
 																								name="billList[%{#s.index}].expType"
@@ -711,6 +730,11 @@
 				bootbox.alert('Max 250 characters are allowed for comments. Remaining characters are truncated.')
 				obj.value = obj.value.substring(1,250);
 			}
+		}
+		function openVoucher(vid)
+		{
+			var url = "${pageContext.request.contextPath}/voucher/preApprovedVoucher-loadvoucherview.action?vhid="+ vid;
+			window.open(url,'','width=900, height=700');
 		}
 		document.getElementById('paymentAmountspan').innerHTML = document.getElementById('grandTotal').value;
 	</script>
