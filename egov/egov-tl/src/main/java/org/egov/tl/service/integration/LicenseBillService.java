@@ -459,7 +459,7 @@ public class LicenseBillService extends BillServiceInterface implements BillingI
                     wfmatrix = tradeLicenseWorkflowService.getWfMatrix(TRADELICENSE, null, null, Constants.RENEW_ADDITIONAL_RULE,
                             Constants.WF_STATE_COMMISSIONER_APPROVED_STR, null);
             } else if (licenseObj.getLicenseAppType() != null
-                    && licenseObj.getLicenseAppType().getName().equals(Constants.NEW))
+                    && licenseObj.getLicenseAppType().getName().equals(Constants.NEW_LIC_APPTYPE))
                 if (licenseObj.getEgwStatus().getCode().equals(Constants.APPLICATION_STATUS_FIRSTCOLLECTIONDONE_CODE))
                     wfmatrix = tradeLicenseWorkflowService.getWfMatrix(TRADELICENSE, null, null, Constants.NEW_ADDITIONAL_RULE,
                             Constants.WF_LICENSE_CREATED, null);
