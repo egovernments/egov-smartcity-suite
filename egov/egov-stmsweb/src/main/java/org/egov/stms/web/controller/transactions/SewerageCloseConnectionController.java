@@ -252,13 +252,7 @@ public class SewerageCloseConnectionController extends GenericWorkFlowController
             if (errorMessage != null && !errorMessage.equals(""))
                 errors.reject("err.connectionDetail.propertyIdentifier.validate",
                         new String[] { errorMessage }, null);
-            else {
-                errorMessage = sewerageApplicationDetailsService 
-                        .checkConnectionPresentForProperty(sewerageApplicationDetails.getConnectionDetail().getPropertyIdentifier());
-                if (errorMessage != null && !errorMessage.equals(""))
-                    errors.reject("err.connectionDetail.propertyIdentifier.validate",
-                            new String[] { errorMessage }, null);
-                else {
+           else {
                     HashMap<String, Object> result = sewerageThirdPartyServices.getWaterTaxDueAndCurrentTax(sewerageApplicationDetails.getConnectionDetail().getPropertyIdentifier(), request);
                     BigDecimal waterTaxDue = (BigDecimal) result.get("WATERTAXDUE");
                     String consumerCode = result.get("CONSUMERCODE").toString(); 
@@ -272,7 +266,6 @@ public class SewerageCloseConnectionController extends GenericWorkFlowController
                                 new String[] { errorMessage }, null);
                     } 
                 }
-            }
         }
     }
 }
