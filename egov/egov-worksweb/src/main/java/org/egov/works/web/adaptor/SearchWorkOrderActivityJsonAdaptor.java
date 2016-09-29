@@ -102,7 +102,7 @@ public class SearchWorkOrderActivityJsonAdaptor implements JsonSerializer<WorkOr
 
         Double quantity = workOrderActivity.getActivity().getQuantity();
 
-        final List<Activity> cqActivities = activityService.findByParentId(workOrderActivity.getActivity().getId());
+        final List<Activity> cqActivities = activityService.findApprovedActivitiesByParentId(workOrderActivity.getActivity().getId());
 
         for (final Activity act : cqActivities)
             if (act.getRevisionType().equals(RevisionType.ADDITIONAL_QUANTITY))

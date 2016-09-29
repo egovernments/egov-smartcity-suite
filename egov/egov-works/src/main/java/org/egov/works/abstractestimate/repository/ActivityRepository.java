@@ -49,5 +49,7 @@ import org.springframework.stereotype.Repository;
 public interface ActivityRepository extends JpaRepository<Activity, Long> {
 
     List<Activity> findByParent_Id(Long parentId);
+    
+    List<Activity> findByParent_IdAndAbstractEstimate_EgwStatus_Code(Long parentId,String estimateStatus);
 
 }

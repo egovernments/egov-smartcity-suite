@@ -44,8 +44,10 @@ import java.util.List;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 
+import org.egov.works.abstractestimate.entity.AbstractEstimate.EstimateStatus;
 import org.egov.works.abstractestimate.entity.Activity;
 import org.egov.works.abstractestimate.repository.ActivityRepository;
+import org.egov.works.revisionestimate.entity.RevisionAbstractEstimate.RevisionEstimateStatus;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -70,5 +72,9 @@ public class ActivityService {
 
     public List<Activity> findByParentId(final Long parentId) {
         return activityRepository.findByParent_Id(parentId);
+    }
+
+    public List<Activity> findApprovedActivitiesByParentId(final Long parentId) {
+        return activityRepository.findByParent_IdAndAbstractEstimate_EgwStatus_Code(parentId, RevisionEstimateStatus.APPROVED.toString());
     }
 }

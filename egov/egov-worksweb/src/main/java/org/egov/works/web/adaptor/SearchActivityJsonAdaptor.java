@@ -113,7 +113,7 @@ public class SearchActivityJsonAdaptor implements JsonSerializer<Activity> {
 
         Double quantity = activity.getQuantity();
 
-        final List<Activity> cqActivities = activityService.findByParentId(activity.getId());
+        final List<Activity> cqActivities = activityService.findApprovedActivitiesByParentId(activity.getId());
 
         for (final Activity act : cqActivities)
             if (act.getRevisionType().equals(RevisionType.ADDITIONAL_QUANTITY))

@@ -143,7 +143,7 @@
 								<span class="reActivityTotal activityEstimatedAmount_0" id="activityEstimatedAmount_0"></span>
 							</td>
 							<td class="text-right">
-								<span class="activityTotal activityTotal_0"></span>
+								<span class="activityTotal activityTotal_0" id="activityTotal_0"></span>
 							</td>
 							<td>
 								<span class="add-padding activityDelete_0" onclick="deleteActivity(this);"><i class="fa fa-trash" data-toggle="tooltip" title="" data-original-title="Delete!"></i></span>
@@ -245,10 +245,10 @@
 								</td>
 								<td class="text-right">
 									<c:if test="${activity.revisionType == 'ADDITIONAL_QUANTITY' }">
-										<span class="activityTotal activityTotal_${item.index }"><fmt:formatNumber groupingUsed="false" minFractionDigits="2" maxFractionDigits="4">${activity.rate * (activity.quantity + activity.estimateQuantity) }</fmt:formatNumber></span>
+										<span class="activityTotal activityTotal_${item.index }" id="activityTotal_${item.index }"><fmt:formatNumber groupingUsed="false" minFractionDigits="2" maxFractionDigits="4">${activity.rate * (activity.quantity + activity.estimateQuantity) }</fmt:formatNumber></span>
 									</c:if>
 									<c:if test="${activity.revisionType == 'REDUCED_QUANTITY' }">
-										<span class="activityTotal activityTotal_${item.index }"><fmt:formatNumber groupingUsed="false" minFractionDigits="2" maxFractionDigits="4">${activity.rate * (activity.estimateQuantity - activity.quantity) }</fmt:formatNumber></span>
+										<span class="activityTotal activityTotal_${item.index }" id="activityTotal_${item.index }"><fmt:formatNumber groupingUsed="false" minFractionDigits="2" maxFractionDigits="4">${activity.rate * (activity.estimateQuantity - activity.quantity) }</fmt:formatNumber></span>
 									</c:if>
 								</td>
 								<td>

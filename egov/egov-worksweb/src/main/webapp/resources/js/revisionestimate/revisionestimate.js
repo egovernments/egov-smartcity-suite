@@ -1454,11 +1454,11 @@ var sorSearch = new Bloodhound({
 
 		if($(this).is("input"))
 		{
-			if($(this).val()==0)
-				{
+			if($(this).val() && $(this).val()==0)
+			{
 				bootbox.alert("Zero is not allowed");
 				$(this).val('');
-				}
+			}
 				$(this).attr('value', $(this).val());
 			
 
@@ -1996,8 +1996,13 @@ function reActivityTotal() {
 
 function activityTotal() {
 	var total = 0;
+	
 	$('.activityTotal').each(function() {
-		if($(this).html().trim() != "")
+		rowcount = $(this).attr('id').split('_').pop();
+		var signValue = $('#changeQuantityActivitiesSignValue_' + rowcount).val();
+		if($(this).html().trim() != "" && signValue == "-")
+			total = parseFloat(parseFloat(total) - parseFloat($(this).html().replace(',', ''))).toFixed(2);
+		else
 			total = parseFloat(parseFloat(total) + parseFloat($(this).html().replace(',', ''))).toFixed(2);
 	});
 	$('#activityTotal').html(total);

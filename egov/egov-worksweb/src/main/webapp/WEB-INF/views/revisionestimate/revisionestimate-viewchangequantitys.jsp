@@ -142,7 +142,13 @@
 				<c:set var="recqsortotal" value="${0}" scope="session" />
 				<c:if test="${revisionEstimate.changeQuantityActivities != null}">
 					<c:forEach items="${revisionEstimate.changeQuantityActivities}" var="sorDtls">
-						<c:set var="recqsortotal" value="${recqsortotal + (sorDtls.rate * (sorDtls.quantity)) }" />
+						<c:if test="${sorDtls.revisionType == 'ADDITIONAL_QUANTITY' }">
+							<c:set var="recqsortotal" value="${recqsortotal + (sorDtls.rate * (sorDtls.quantity)) }" />
+						</c:if>
+						<c:if test="${sorDtls.revisionType == 'REDUCED_QUANTITY' }">
+							<c:set var="recqsortotal" value="${recqsortotal - (sorDtls.rate * (sorDtls.quantity)) }" />
+						</c:if>
+						
 					</c:forEach>
 				</c:if>
 				<c:set var="cqsortotal" value="${0}" scope="session" />
@@ -152,7 +158,7 @@
 							<c:set var="cqsortotal"	value="${cqsortotal + (sorDtls.rate * (sorDtls.quantity + sorDtls.estimateQuantity)) }" />
 						</c:if>
 						<c:if test="${sorDtls.revisionType == 'REDUCED_QUANTITY' }">
-							<c:set var="cqsortotal"	value="${cqsortotal + (sorDtls.rate * (sorDtls.estimateQuantity - sorDtls.quantity)) }" />
+							<c:set var="cqsortotal"	value="${cqsortotal - (sorDtls.rate * (sorDtls.estimateQuantity - sorDtls.quantity)) }" />
 						</c:if>
 					</c:forEach>
 				</c:if>
