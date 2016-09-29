@@ -763,7 +763,7 @@ public class ContractorBillRegisterService {
                             coa.getGlcode(), WorksConstants.ACCOUNTDETAIL_TYPE_CONTRACTOR);
                     if (contractorAccountDetailType != null)
                         egBilldetails.getEgBillPaydetailes().add(getEgPayeeDetails(egBilldetails,
-                                contractorAccountDetailType.getId(), egBilldetails.getCreditamount(), isDebit,
+                                contractorAccountDetailType.getId(), isDebit ? egBilldetails.getDebitamount() : egBilldetails.getCreditamount(), isDebit,
                                 Integer.valueOf(billregister.getWorkOrder().getContractor().getId().toString())));
 
                 }
