@@ -765,7 +765,7 @@ $('body').on('click', '#remove-row', function() {
 
 $('#buttonSubmit').click(function(e) {
 	if (validateOnCreate()) {
-		jQuery('.loader-class').modal('show', {backdrop: 'static'});
+		
 		var myform = $('#transactionSummaryform');
 
 		// Find disabled inputs, and remove the "disabled"
@@ -781,7 +781,10 @@ $('#buttonSubmit').click(function(e) {
 			url : formURL,
 			type : "post",
 			data : postData,
-			success : function(data, textStatus, jqXHR) {
+			beforeSend : function() {
+				jQuery('.loader-class').modal('show', {backdrop: 'static'});
+			},
+			success : function(data) {
 				bootbox.alert('Data Saved Successfully', function() {
 					location.reload();
 				});
@@ -789,10 +792,11 @@ $('#buttonSubmit').click(function(e) {
 					var obj = $("#result tbody tr").get(index);
 					$(obj).children(':first-child').val(data[index].id);
 				});
-				jQuery('.loader-class').modal('hide');
 			},
-			error : function(jqXHR, textStatus, errorThrown) {
+			error : function() {
 				bootbox.alert("Error while saving data");
+			},
+			complete : function() {
 				jQuery('.loader-class').modal('hide');
 			}
 		});
