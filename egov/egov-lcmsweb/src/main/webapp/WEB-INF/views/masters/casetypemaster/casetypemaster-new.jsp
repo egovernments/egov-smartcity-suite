@@ -39,14 +39,10 @@
   --%>
 <%@ page contentType="text/html;charset=UTF-8" language="java"%>
 <%@ include file="/includes/taglibs.jsp"%>
-<form:form role="form" action="create" modelAttribute="casetypeMaster"
+<form:form role="form" action="create" modelAttribute="caseTypeMaster" method="post"
 	id="casetypeMasterform" cssClass="form-horizontal form-groups-bordered"
 	enctype="multipart/form-data">
 	<%@ include file="casetypemaster-form.jsp"%>
-	</div>
-	</div>
-	</div>
-	</div>
 	<div class="form-group">
 		<div class="text-center">
 			<button type='submit' class='btn btn-primary' id="buttonSubmit">
@@ -62,6 +58,13 @@
 		if ($('form').valid()) {
 		} else {
 			e.preventDefault();
+		}
+	});
+	var alphanumeric = /[^a-zA-Z0-9]/g ;
+
+	jQuery('.aaa').on("input", function(e){
+		if(jQuery(this).val().match(alphanumeric)){
+			jQuery(this).val( jQuery(this).val().replace(alphanumeric,'') );
 		}
 	});
 </script>

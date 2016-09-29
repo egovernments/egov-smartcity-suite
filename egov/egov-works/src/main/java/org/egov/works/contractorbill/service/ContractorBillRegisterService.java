@@ -43,15 +43,21 @@ import java.io.IOException;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.script.ScriptContext;
+import javax.servlet.http.HttpServletRequest;
 
+import org.egov.commons.Accountdetailtype;
+import org.egov.commons.CChartOfAccounts;
 import org.egov.commons.CFinancialYear;
+import org.egov.commons.dao.ChartOfAccountsHibernateDAO;
 import org.egov.commons.dao.EgwStatusHibernateDAO;
 import org.egov.commons.dao.FinancialYearHibernateDAO;
 import org.egov.eis.entity.Assignment;
@@ -60,9 +66,11 @@ import org.egov.eis.service.PositionMasterService;
 import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.script.service.ScriptService;
 import org.egov.infra.security.utils.SecurityUtils;
+import org.egov.infra.utils.StringUtils;
 import org.egov.infra.validation.exception.ValidationException;
 import org.egov.infra.workflow.matrix.entity.WorkFlowMatrix;
 import org.egov.infra.workflow.service.SimpleWorkflowService;
+import org.egov.model.bills.EgBillPayeedetails;
 import org.egov.model.bills.EgBilldetails;
 import org.egov.model.bills.EgBillregistermis;
 import org.egov.pims.commons.Position;
@@ -91,6 +99,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.multipart.MultipartFile;
 
 @Service
@@ -136,6 +146,9 @@ public class ContractorBillRegisterService {
 
     @Autowired
     private MBHeaderService mbHeaderService;
+    
+    @Autowired
+    private ChartOfAccountsHibernateDAO chartOfAccountsHibernateDAO;
 
     public Session getCurrentSession() {
         return entityManager.unwrap(Session.class);
@@ -554,4 +567,218 @@ public class ContractorBillRegisterService {
             mbHeaderService.cancel(mbHeader);
         return contractorBillRegisterRepository.save(contractorBillRegister);
     }
+    
+    public EgBillPayeedetails getEgPayeeDetails(final EgBilldetails billDetails, final Integer accountsDetailTypeId,
+            final BigDecimal amount, final boolean isDebit, final Integer accountsDetailKeyId) {
+        final EgBillPayeedetails egBillPaydetail = new EgBillPayeedetails();
+        egBillPaydetail.setAccountDetailKeyId(accountsDetailKeyId);
+        egBillPaydetail.setAccountDetailTypeId(accountsDetailTypeId);
+        if (isDebit)
+            egBillPaydetail.setDebitAmount(amount);
+        else
+            egBillPaydetail.setCreditAmount(amount);
+        egBillPaydetail.setEgBilldetailsId(billDetails);
+        egBillPaydetail.setLastUpdatedTime(new Date());
+        return egBillPaydetail;
+    }
+    
+    public List<Map<String, Object>> getBillDetailsMap(final ContractorBillRegister contractorBillRegister,
+            final Model model) {
+        final List<Map<String, Object>> billDetailsList = new ArrayList<Map<String, Object>>();
+        Map<String, Object> billDetails = new HashMap<String, Object>();
+
+        final List<CChartOfAccounts> contractorPayableAccountList = chartOfAccountsHibernateDAO
+                .getAccountCodeByPurposeName(WorksConstants.CONTRACTOR_NETPAYABLE_PURPOSE);
+        final List<CChartOfAccounts> contractorRefundAccountList = chartOfAccountsHibernateDAO
+                .getAccountCodeByListOfPurposeName(WorksConstants.CONTRACTOR_REFUND_PURPOSE);
+        for (final EgBilldetails egBilldetails : contractorBillRegister.getEgBilldetailes()) {
+            final CChartOfAccounts coa = chartOfAccountsHibernateDAO
+                    .findById(egBilldetails.getGlcodeid().longValue(), false);
+            if (egBilldetails.getDebitamount() != null) {
+                billDetails = new HashMap<String, Object>();
+                billDetails.put("id", egBilldetails.getId());
+                billDetails.put("glcodeId", coa.getId());
+                billDetails.put("glcode", coa.getGlcode());
+                billDetails.put("accountHead", coa.getName());
+                billDetails.put("amount", egBilldetails.getDebitamount());
+                billDetails.put("isDebit", true);
+                billDetails.put("isNetPayable", false);
+                if(!contractorRefundAccountList.isEmpty() && contractorRefundAccountList.contains(coa))  {
+                    String amounts = getTotalDebitAndCreditAmountByAccountCode(contractorBillRegister.getWorkOrderEstimate().getWorkOrder().getId(),new BigDecimal(coa.getId()),contractorBillRegister.getId() != null ? contractorBillRegister.getId() : -1);
+                    String[] creditDebitAmounts = amounts.split(",");
+                    billDetails.put("withHeldAmount", creditDebitAmounts[0]);
+                    billDetails.put("RefundedAmount", creditDebitAmounts[1]);
+                    billDetails.put("isRefund", true);
+                } else
+                   billDetails.put("isRefund", false);
+                       
+            } else if (egBilldetails.getCreditamount() != null) {
+                billDetails = new HashMap<String, Object>();
+                billDetails.put("id", egBilldetails.getId());
+                billDetails.put("glcodeId", coa.getId());
+                billDetails.put("glcode", coa.getGlcode());
+                billDetails.put("accountHead", coa.getName());
+                billDetails.put("amount", egBilldetails.getCreditamount());
+                billDetails.put("isDebit", false);
+                if (contractorPayableAccountList != null && !contractorPayableAccountList.isEmpty()
+                        && contractorPayableAccountList.contains(coa)) {
+                    billDetails.put("isNetPayable", true);
+                    model.addAttribute("netPayableAccountId", egBilldetails.getId());
+                    model.addAttribute("netPayableAccountCode", coa.getId());
+                    model.addAttribute("netPayableAmount", egBilldetails.getCreditamount());
+                } else
+                    billDetails.put("isNetPayable", false);
+
+            }
+            billDetailsList.add(billDetails);
+        }
+        return billDetailsList;
+    }
+    
+    public boolean checkForDuplicateAccountCodes(final ContractorBillRegister contractorBillRegister) {
+        final Set<Long> glCodeIdSet = new HashSet<Long>();
+        for (final EgBilldetails egBilldetails : contractorBillRegister.getEgBilldetailes())
+            if (egBilldetails.getGlcodeid() != null && !contractorBillRegister.getRefundBillDetails().contains(egBilldetails)) {
+                if (glCodeIdSet.contains(egBilldetails.getGlcodeid().longValue()))
+                    return false;
+                glCodeIdSet.add(egBilldetails.getGlcodeid().longValue());
+            }
+        return true;
+    }
+    
+    public boolean validateDuplicateRefundAccountCodes(final ContractorBillRegister contractorBillRegister) {
+        final Set<Long> glCodeIdSet = new HashSet<Long>();
+        for (final EgBilldetails egBilldetails : contractorBillRegister.getEgBilldetailes())
+            if (egBilldetails.getGlcodeid() != null && egBilldetails.getDebitamount() != null) {
+                if (glCodeIdSet.contains(egBilldetails.getGlcodeid().longValue()))
+                    return false;
+                glCodeIdSet.add(egBilldetails.getGlcodeid().longValue());
+            }
+        return true;
+    }
+    
+    public void validateTotalDebitAndCreditAmount(final ContractorBillRegister contractorBillRegister,
+            final BindingResult resultBinder) {
+        BigDecimal totalDebitAmount = BigDecimal.ZERO;
+        BigDecimal totalCreditAmount = BigDecimal.ZERO;
+        for (final EgBilldetails egBilldetails : contractorBillRegister.getEgBilldetailes()) {
+            if (egBilldetails.getDebitamount() != null
+                    && !(BigDecimal.ZERO.compareTo(egBilldetails.getDebitamount()) == 0))
+                totalDebitAmount = totalDebitAmount.add(egBilldetails.getDebitamount());
+            if (egBilldetails.getCreditamount() != null
+                    && !(BigDecimal.ZERO.compareTo(egBilldetails.getCreditamount()) == 0))
+                totalCreditAmount = totalCreditAmount.add(egBilldetails.getCreditamount());
+        }
+        if (!(totalDebitAmount.compareTo(totalCreditAmount) == 0))
+            resultBinder.reject("error.total.debitamount.creditamount.notequal",
+                    "error.total.debitamount.creditamount.notequal");
+    }
+    
+    public void validateRefundAmount(final ContractorBillRegister contractorBillRegister, final BindingResult resultBinder) {
+        int index = 0;
+        for(final EgBilldetails egBillDetail : contractorBillRegister.getRefundBillDetails()) {
+            if(egBillDetail.getGlcodeid() != null && egBillDetail.getDebitamount() == null) {
+                resultBinder.rejectValue("refundBillDetails[" + index + "].debitamount", "error.refundamount.required");
+            }
+            if(egBillDetail.getDebitamount() != null && egBillDetail.getGlcodeid() == null) {
+                resultBinder.rejectValue("refundBillDetails[" + index + "].glcodeid", "error.refundaccountcode.required");
+            }
+            if(egBillDetail.getGlcodeid() != null && egBillDetail.getDebitamount() != null) {
+            final CChartOfAccounts coa = chartOfAccountsHibernateDAO
+                        .findById(egBillDetail.getGlcodeid().longValue(), false);
+                String amounts = getTotalDebitAndCreditAmountByAccountCode(contractorBillRegister.getWorkOrderEstimate().getWorkOrder().getId(),new BigDecimal(coa.getId()),contractorBillRegister.getId() != null ? contractorBillRegister.getId() : -1);
+                if(!StringUtils.isBlank(amounts)) {
+                  String[] creditDebitAmounts = amounts.split(",");
+                  BigDecimal withheldAmount = BigDecimal.ZERO;
+                  BigDecimal refundedAmount = BigDecimal.ZERO;
+                  if(!creditDebitAmounts[0].equals("0"))
+                      withheldAmount = new BigDecimal(creditDebitAmounts[0]);
+                  if(!creditDebitAmounts[1].equals("0"))
+                      refundedAmount = new BigDecimal(creditDebitAmounts[1]);
+                  
+                  if(withheldAmount.equals("0")) {
+                      resultBinder.reject("error.contractorBill.nowithheldtorefund",
+                              new String[] { coa.getGlcode() }, null);
+                  } else {
+                      
+                      BigDecimal validRefundAmount = egBillDetail.getDebitamount().add(refundedAmount);
+                      BigDecimal diffAmount = validRefundAmount.subtract(withheldAmount);
+                      if(validRefundAmount.compareTo(new BigDecimal(creditDebitAmounts[0])) == 1 && !contractorBillRegister.getWorkOrderEstimate().getEstimate().getLineEstimateDetails().getLineEstimate().isSpillOverFlag()) {
+                          resultBinder.reject("error.contractorBill.validate.refundAmount",
+                                  new String[] { coa.getGlcode() , diffAmount.toString() }, null);
+                      }
+                  }
+                }
+            }
+            index++;
+        }
+        
+    }
+    
+    public EgBilldetails getBillDetails(final ContractorBillRegister billregister, final EgBilldetails egBilldetails,
+            final LineEstimateDetails lineEstimateDetails, final BindingResult resultBinder,
+            final HttpServletRequest request) {
+        egBilldetails.setFunctionid(new BigDecimal(lineEstimateDetails.getLineEstimate().getFunction().getId()));
+        boolean isDebit = false;
+        CChartOfAccounts coa = null;
+        if (!(BigDecimal.ZERO.compareTo(egBilldetails.getGlcodeid()) == 0))
+            coa = chartOfAccountsHibernateDAO.findById(egBilldetails.getGlcodeid().longValue(), false);
+        if (coa != null && coa.getId() != null)
+            egBilldetails.setGlcodeid(BigDecimal.valueOf(coa.getId()));
+        if (egBilldetails.getDebitamount() != null
+                && !(BigDecimal.ZERO.compareTo(egBilldetails.getDebitamount()) == 0)) {
+            egBilldetails.setDebitamount(egBilldetails.getDebitamount());
+            isDebit = true;
+        } else if (egBilldetails.getCreditamount() != null
+                && !(BigDecimal.ZERO.compareTo(egBilldetails.getCreditamount()) == 0))
+            egBilldetails.setCreditamount(egBilldetails.getCreditamount());
+        else if (!StringUtils.isBlank(request.getParameter("netPayableAccountCode"))
+                && request.getParameter("netPayableAccountCode").toString().equals(egBilldetails.getGlcodeid()))
+            resultBinder.reject("error.contractorbill.accountdetails.amount.required",
+                    "error.contractorbill.accountdetails.amount.required");
+        
+        egBilldetails.setEgBillregister(billregister);
+        final List<CChartOfAccounts> contractorRefundAccountList = chartOfAccountsHibernateDAO
+                .getAccountCodeByListOfPurposeName(WorksConstants.CONTRACTOR_REFUND_PURPOSE);
+        if (coa != null && coa.getGlcode() != null) {
+            Accountdetailtype projectCodeAccountDetailType = null;
+            Accountdetailtype contractorAccountDetailType = null;
+            if (isDebit && !contractorRefundAccountList.isEmpty() && !contractorRefundAccountList.contains(coa)) {
+                projectCodeAccountDetailType = chartOfAccountsHibernateDAO.getAccountDetailTypeIdByName(coa.getGlcode(),
+                        WorksConstants.PROJECTCODE);
+                if (projectCodeAccountDetailType == null)
+                    resultBinder.reject("error.contractorBill.validate.glcode.for.projectcode.subledger",
+                            new String[] { coa.getGlcode() }, null);
+            }
+            final List<Accountdetailtype> detailCode = chartOfAccountsHibernateDAO
+                    .getAccountdetailtypeListByGLCode(coa.getGlcode());
+            if (detailCode != null && !detailCode.isEmpty()) {
+                if (isDebit && !contractorRefundAccountList.isEmpty() && !contractorRefundAccountList.contains(coa)) {
+                    if (projectCodeAccountDetailType != null)
+                        egBilldetails.addEgBillPayeedetail(getEgPayeeDetails(egBilldetails,
+                                projectCodeAccountDetailType.getId(), egBilldetails.getDebitamount(), isDebit,
+                                Integer.valueOf(lineEstimateDetails.getProjectCode().getId().toString())));
+                } else {
+                    contractorAccountDetailType = chartOfAccountsHibernateDAO.getAccountDetailTypeIdByName(
+                            coa.getGlcode(), WorksConstants.ACCOUNTDETAIL_TYPE_CONTRACTOR);
+                    if (contractorAccountDetailType != null)
+                        egBilldetails.getEgBillPaydetailes().add(getEgPayeeDetails(egBilldetails,
+                                contractorAccountDetailType.getId(), isDebit ? egBilldetails.getDebitamount() : egBilldetails.getCreditamount(), isDebit,
+                                Integer.valueOf(billregister.getWorkOrder().getContractor().getId().toString())));
+
+                }
+                
+                if (projectCodeAccountDetailType == null && contractorAccountDetailType == null)
+                    resultBinder.reject("error.contractorbill.validate.glcode.for.subledger",
+                            new String[] { coa.getGlcode() }, null);
+            }
+        }
+        egBilldetails.setLastupdatedtime(new Date());
+        return egBilldetails;
+    }
+    
+    public String getTotalDebitAndCreditAmountByAccountCode(final Long workOrderId,final BigDecimal glCodeId,final Long contractorBillId) {
+        return contractorBillRegisterRepository.findSumOfDebitByAccountCodeForWorkOrder(workOrderId, glCodeId, ContractorBillRegister.BillStatus.APPROVED.toString(),contractorBillId);
+    }
+    
 }

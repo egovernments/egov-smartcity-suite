@@ -41,41 +41,42 @@
 <%@ include file="/includes/taglibs.jsp" %>
 <%@ taglib uri="http://www.opensymphony.com/sitemesh/decorator" prefix="decorator"%>
 <%@ taglib uri="http://www.opensymphony.com/sitemesh/page" prefix="page"%>
+<%@ taglib uri="/WEB-INF/taglib/cdn.tld" prefix="cdn" %>
 <html>
     <head>
         <%@ include file="/includes/meta.jsp" %>
         <title>eGov  - <decorator:title/> </title>
         
-        <link rel="icon" href="<c:url value='/resources/global/images/favicon.png" sizes="32x32' context='/egi'/>">
+        <link rel="icon" href="<cdn:url  value='/resources/global/images/favicon.png' context='/egi'/>" sizes="32x32">
         
-     	<link rel="stylesheet" type="text/css" href="<c:url value='/resources/legacy/commonyui/yui2.8/fonts/fonts-min.css'/>"/>
-		<link rel="stylesheet" type="text/css" href="<c:url value='/resources/legacy/commonyui/yui2.8/datatable/assets/skins/sam/datatable.css'/>"/>	
+     	<link rel="stylesheet" type="text/css" href="<cdn:url  value='/resources/legacy/commonyui/yui2.8/fonts/fonts-min.css'/>"/>
+		<link rel="stylesheet" type="text/css" href="<cdn:url  value='/resources/legacy/commonyui/yui2.8/datatable/assets/skins/sam/datatable.css'/>"/>
 		
-		<script type="text/javascript" src="<c:url value='/resources/legacy/commonyui/yui2.8/yahoo-dom-event/yahoo-dom-event.js'/>"></script> 
-		<script type="text/javascript" src="<c:url value='/resources/legacy/commonyui/yui2.8/element/element-min.js'/>"></script>
-		<script type="text/javascript" src="<c:url value='/resources/legacy/commonyui/yui2.8/connection/connection-min.js'/>"></script>
-		<script type="text/javascript" src="<c:url value='/resources/legacy/commonyui/yui2.8/datasource/datasource-min.js'/>"></script>
-		<script type="text/javascript" src="<c:url value='/resources/legacy/commonyui/yui2.8/datatable/datatable-min.js'/>"></script>
-		<script type="text/javascript" src="<c:url value='/resources/legacy/commonyui/yui2.8/container/container_core-min.js'/>"></script>
-		<script type="text/javascript" src="<c:url value='/resources/legacy/commonyui/yui2.8/button/button-min.js'/>"></script>
+		<script type="text/javascript" src="<cdn:url  value='/resources/legacy/commonyui/yui2.8/yahoo-dom-event/yahoo-dom-event.js'/>"></script>
+		<script type="text/javascript" src="<cdn:url  value='/resources/legacy/commonyui/yui2.8/element/element-min.js'/>"></script>
+		<script type="text/javascript" src="<cdn:url  value='/resources/legacy/commonyui/yui2.8/connection/connection-min.js'/>"></script>
+		<script type="text/javascript" src="<cdn:url  value='/resources/legacy/commonyui/yui2.8/datasource/datasource-min.js'/>"></script>
+		<script type="text/javascript" src="<cdn:url  value='/resources/legacy/commonyui/yui2.8/datatable/datatable-min.js'/>"></script>
+		<script type="text/javascript" src="<cdn:url  value='/resources/legacy/commonyui/yui2.8/container/container_core-min.js'/>"></script>
+		<script type="text/javascript" src="<cdn:url  value='/resources/legacy/commonyui/yui2.8/button/button-min.js'/>"></script>
 		  
-   	    <link rel="stylesheet" href="<c:url value='/resources/global/css/font-icons/font-awesome/css/font-awesome.min.css' context='/egi'/>">
-   	    <link rel="stylesheet" href="<c:url value='/resources/global/css/bootstrap/bootstrap-datepicker.css' context='/egi'/>">      
-		<link href="<c:url value='/resources/global/css/bootstrap/bootstrap.css' context='/egi'/>" rel="stylesheet" type="text/css" />
-		<link href="<c:url value='/resources/global/css/egov/custom.css?rnd=${app_release_no}' context='/egi'/>" rel="stylesheet" type="text/css" />
+   	    <link rel="stylesheet" href="<cdn:url  value='/resources/global/css/font-icons/font-awesome/css/font-awesome.min.css' context='/egi'/>">
+   	    <link rel="stylesheet" href="<cdn:url  value='/resources/global/css/bootstrap/bootstrap-datepicker.css' context='/egi'/>">
+		<link href="<cdn:url  value='/resources/global/css/bootstrap/bootstrap.css' context='/egi'/>" rel="stylesheet" type="text/css" />
+		<link href="<cdn:url  value='/resources/global/css/egov/custom.css?rnd=${app_release_no}' context='/egi'/>" rel="stylesheet" type="text/css" />
 		
-		<script src="<c:url value='/resources/global/js/jquery/jquery.js' context='/egi'/>"></script>
+		<script src="<cdn:url  value='/resources/global/js/jquery/jquery.js' context='/egi'/>"></script>
 		
-		<script type="text/javascript" src="<c:url value='/resources/js/app/validations.js'/>"></script>
-		<script type="text/javascript" src="<c:url value='/resources/js/app/SASvalidation.js'/>"></script>
-		<script type="text/javascript" src="<c:url value='/resources/js/app/dateValidation.js'/>"></script>
-		<script type="text/javascript" src="<c:url value='/resources/js/app/license-common.js?rnd=${app_release_no}'/>"></script>
-		<script type="text/javascript" src="<c:url value='/resources/js/app/helper.js'/>"></script>
+		<script type="text/javascript" src="<cdn:url  value='/resources/js/app/validations.js'/>"></script>
+		<script type="text/javascript" src="<cdn:url  value='/resources/js/app/SASvalidation.js'/>"></script>
+		<script type="text/javascript" src="<cdn:url  value='/resources/js/app/dateValidation.js'/>"></script>
+		<script type="text/javascript" src="<cdn:url  value='/resources/js/app/license-common.js?rnd=${app_release_no}'/>"></script>
+		<script type="text/javascript" src="<cdn:url  value='/resources/js/app/helper.js'/>"></script>
 	    
-	    <script type="text/javascript" src="<c:url value='/resources/global/js/bootstrap/bootstrap.js' context='/egi'/>"></script>
-	    <script src="<c:url value='/resources/global/js/bootstrap/bootbox.min.js' context='/egi'/>"></script>
-        <script src="<c:url value='/resources/global/js/bootstrap/bootstrap-datepicker.js' context='/egi'/>"></script>
-        <script src="<c:url value='/resources/global/js/egov/patternvalidation.js?rnd=${app_release_no}' context='/egi'/>"></script>
+	    <script type="text/javascript" src="<cdn:url  value='/resources/global/js/bootstrap/bootstrap.js' context='/egi'/>"></script>
+	    <script src="<cdn:url  value='/resources/global/js/bootstrap/bootbox.min.js' context='/egi'/>"></script>
+        <script src="<cdn:url  value='/resources/global/js/bootstrap/bootstrap-datepicker.js' context='/egi'/>"></script>
+        <script src="<cdn:url  value='/resources/global/js/egov/patternvalidation.js?rnd=${app_release_no}' context='/egi'/>"></script>
         
     	<decorator:head/>
     </head>

@@ -68,6 +68,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+import static org.egov.infra.web.utils.WebUtils.toJSON;
 import static org.egov.ptis.constants.PropertyTaxConstants.BLOCK;
 import static org.egov.ptis.constants.PropertyTaxConstants.LOCALITY;
 import static org.egov.ptis.constants.PropertyTaxConstants.LOCATION_HIERARCHY_TYPE;
@@ -98,7 +99,6 @@ public class DCBReportController {
         return dCBReportResult;
     }
 
-    @Autowired
     public @ModelAttribute("connectionTypes") Map<String, String> connectionTypes() {
         return waterConnectionDetailsService.getConnectionTypesMap();
     }
@@ -181,7 +181,7 @@ public class DCBReportController {
         final SQLQuery query = prepareQuery(zones.toString(), connectionType, mode, reportType);
         resultList = query.list();
         String result = null;
-        result = new StringBuilder("{ \"data\":").append(toJSON(resultList)).append("}").toString();
+        result = new StringBuilder("{ \"data\":").append(toJSON(resultList, DCBReportResult.class, DCBReportHelperAdaptor.class)).append("}").toString();
         response.setContentType(MediaType.APPLICATION_JSON_VALUE);
         IOUtils.write(result, response.getWriter());
     }
@@ -247,12 +247,4 @@ public class DCBReportController {
         finalQuery.setResultTransformer(new AliasToBeanResultTransformer(DCBReportResult.class));
         return finalQuery;
     }
-
-    private Object toJSON(final Object object) {
-        final GsonBuilder gsonBuilder = new GsonBuilder();
-        final Gson gson = gsonBuilder.registerTypeAdapter(DCBReportResult.class, new DCBReportHelperAdaptor()).create();
-        final String json = gson.toJson(object);
-        return json;
-    }
-
 }

@@ -39,8 +39,19 @@
  */
 $(document).ready(function() {
 	
-	$("#buttonid").click(function() {
-	document.forms[0].submit();
+	
+	 $("#hearingsTbl tbody tr:gt(2)").each(function( index ) {
+		 $(this).find('a').hide();
+	    });
+	 
+	
+	$('#buttonid').click(function(){
+	if(!validateHearingDate())
+	{
+	return false;
+	}else{
+		document.forms["hearingsform"].submit();
+	}
 	});
 	var assignPosition = new Bloodhound({
 		datumTokenizer : function(datum) {
@@ -49,18 +60,16 @@ $(document).ready(function() {
 		},
 		queryTokenizer : Bloodhound.tokenizers.whitespace,
 		remote : {
-			url : '/lcms/ajax/positions',
+			url : '/lcms/ajax/getpositionEmployee',
 			replace : function(url, uriEncodedQuery) {
-				return url + '?positionName=' + uriEncodedQuery
-						+ '&departmentName='
-						+ $("#departmentName").val();
+				return url + '?positionName=' + uriEncodedQuery;
 
 			},
 			filter : function(data) {
 				return $.map(data, function(position) {
 					return {
-						name : position.name,
-						value : position.id
+						name : position,
+						value : position
 
 					};
 				});
@@ -69,7 +78,7 @@ $(document).ready(function() {
 	});
 	
 	assignPosition.initialize();
-	var typeaheadobj = $('#positionName').typeahead({
+	var typeaheadobj = $('#positionEmpName').typeahead({
 		hint : false,
 		highlight : false,
 		minLength : 1
@@ -77,6 +86,9 @@ $(document).ready(function() {
 		displayKey : 'name',
 		source : assignPosition.ttAdapter()
 	});
+	typeaheadWithEventsHandling(typeaheadobj, '#positionEmpId'); 
+	
+	
 	$('#btnclose').click(function(){
 		bootbox.confirm({
 		    message: 'Information entered in this screen will be lost if you close this page ? Please confirm if you want to close. ',
@@ -104,8 +116,12 @@ $(document).ready(function() {
 	    var counts = rowCount;
 	    var k = 2;
 	    var m;
+	    if(counts==2)
+		{
+			bootbox.alert("This Row cannot be deleted");
+			return false;
+		}else{	
 			$(this).closest('tr').remove();		
-			
 			jQuery("#employeeDetails tr:eq(1) td span[alt='AddF']").show();
 			//starting index for table fields
 			var idx=0;
@@ -125,25 +141,69 @@ $(document).ready(function() {
 				
 				idx++;
 			});
+		}
 	});
 	$("#addid").click(function(){
-		addResRow();
+		addEmployee();
 	});
 	
-	var  rowobj = '<tr class=""> <td class="text-right"><input type="text" class="form-control table-input text-left" data-pattern="alphanumerichyphenbackslash" name="positionTemplList[0].name" id="positionTemplList[0].name" maxlength="50"></td> <td class="text-center"><a href="javascript:void(0);" class="btn-sm btn-default" id="emp_delete_row" ><i class="fa fa-trash"></i></a></td> </tr>';
-	var i = 1;
-	
-	function addResRow()
-	{     
-		  
-	  $('#employeeDetails tbody').append(rowobj);
-	  
-	  $('#employeeDetails tbody tr:last').find('input').val($("#positionName").val());
-	}	
 		
-	
+});
+var count = $("#employeeDetails tbody  tr").length -1;
+function addEmployee()
+{     
+	var $tableBody = $('#employeeDetails').find("tbody"),
+    $trLast = $tableBody.find("tr:last");
+	 $trNew = $trLast.clone();
+	$trLast.find('input').val($("#positionEmpName").val());
+		count++;
+		$trNew.find("input").each(function(){
+	        $(this).attr({
+	        	'name': function(_, name) { return name.replace(/\[.\]/g, '['+ count +']'); } ,
+	        	'id': function(_, id) { return id.replace(/\[.\]/g, '['+ count +']'); }
+	        });
+	    });
+		$trLast.after($trNew);
+}
+function edit(hearingId){    
+	var url = '/lcms/hearing/edit/'+hearingId
+	window.location = url;
+   }
+$('#createnewhearings').click(function() {
+	var lcNumber = $('#lcNumber').val();
+	var url = '/lcms/hearing/new/?lcNumber='+lcNumber;
+	$('#hearingsform').attr('method', 'get');
+	$('#hearingsform').attr('action', url);
+	window.location = url;
 });
 
+function validateHearingDate() {
+var hearingdate = $('#hearingDate').val();
+var casedate = $('#caseDate').val();
+var casedate1 = new Date(casedate);
+var casedate=( casedate1.getDate()+ '/' + (casedate1.getMonth() + 1) + '/' + casedate1.getFullYear());
+if (compareDate(hearingdate, casedate) == 1) {
+bootbox.alert("Hearing date should be greater than case date.");
+$(this).val("");
+return false;
+} else {
+return true;
+}
+}
+
+function compareDate(dt1, dt2) {
+	var d1, m1, y1, d2, m2, y2, ret;
+	dt1 = dt1.split('/');
+	dt2 = dt2.split('/');
+	ret = (eval(dt2[2]) > eval(dt1[2])) ? 1
+	: (eval(dt2[2]) < eval(dt1[2])) ? -1
+	: (eval(dt2[1]) > eval(dt1[1])) ? 1
+	: (eval(dt2[1]) < eval(dt1[1])) ? -1	// decimal points
+	: (eval(dt2[0]) > eval(dt1[0])) ? 1
+	: (eval(dt2[0]) < eval(dt1[0])) ? -1
+	: 0;
+	return ret;
+	}
 			
 	
 				

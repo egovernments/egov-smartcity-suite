@@ -39,6 +39,7 @@
  */
 package org.egov.wtms.application.service;
 
+import java.math.BigInteger;
 import java.text.ParseException;
 import java.util.List;
 
@@ -68,12 +69,12 @@ public class GenerateConnectionBillService {
         final long startTime = System.currentTimeMillis();
         final StringBuilder queryStr = new StringBuilder();
         queryStr.append(
-                "select dcbinfo.hscno as \"hscNo\", dcbinfo.username as \"ownerName\",dcbinfo.propertyid as \"assessmentNo\","
-                        + "dcbinfo.houseno as \"houseNumber\" , localboundary.localname as \"locality\", dcbinfo.applicationtype as \"applicationType\" , "
-                        + " dcbinfo.connectiontype as  \"connectionType\" , bill.bill_no as \"billNo\" , bill.issue_date as \"billDate\" from egwtr_mv_dcb_view dcbinfo"
-                        + " INNER JOIN eg_boundary wardboundary on dcbinfo.wardid = wardboundary.id INNER JOIN eg_boundary localboundary on dcbinfo.locality = localboundary.id"
-                        + " INNER JOIN eg_bill bill on dcbinfo.hscno = bill.consumer_id and dcbinfo.demand= bill.id_demand"
-                        + " INNER JOIN eg_boundary zoneboundary on dcbinfo.zoneid = zoneboundary.id ");
+                "select distinct dcbinfo.hscno as \"hscNo\", dcbinfo.username as \"ownerName\",dcbinfo.propertyid as \"assessmentNo\",dcbinfo.demanddocumentnumber as \"fileStoreID\",");
+        queryStr.append("dcbinfo.houseno as \"houseNumber\" , localboundary.localname as \"locality\", dcbinfo.applicationtype as \"applicationType\" , ");
+        queryStr.append( " dcbinfo.connectiontype as  \"connectionType\" , bill.bill_no as \"billNo\" , bill.issue_date as \"billDate\" from egwtr_mv_bill_view dcbinfo");
+        queryStr.append( " INNER JOIN eg_boundary wardboundary on dcbinfo.wardid = wardboundary.id INNER JOIN eg_boundary localboundary on dcbinfo.locality = localboundary.id");
+        queryStr.append( " INNER JOIN eg_bill bill on dcbinfo.hscno = bill.consumer_id and dcbinfo.demand= bill.id_demand");
+        queryStr.append( " INNER JOIN eg_boundary zoneboundary on dcbinfo.zoneid = zoneboundary.id ");
         queryStr.append(" where dcbinfo.connectionstatus = '" + ConnectionStatus.ACTIVE.toString() + "' ");
         queryStr.append(" and bill.module_id = (select id from eg_module where name ='Water Tax Management')");
         queryStr.append(" and bill.id_bill_type = (select id from eg_bill_type  where code ='MANUAL')");
@@ -114,16 +115,55 @@ public class GenerateConnectionBillService {
                 "select filestore.filestoreid from eg_filestoremap filestore,egwtr_documents conndoc,egwtr_application_documents appD,egwtr_connectiondetails conndet,egwtr_connection  "
                         + "conn , egwtr_demand_connection demcon ,eg_demand dem,eg_bill bill, eg_bill_type billtype"
                         + ",egwtr_document_names docName where filestore.id=conndoc.filestoreid and conndet.connection=conn.id and conndet.id=appD.connectiondetailsid and appD.documentnamesid=docName.id and "
-                        + " bill.id_demand =demcon.demand and billtype.id = bill.id_bill_type and conndoc.applicationdocumentsid=appD.id  "
-                        + " and  demcon.connectiondetails=conndet.id and demcon.demand = dem.id and appD.documentnumber=bill.bill_no  and billtype.code='MANUAL' and dem.is_history ='N' and  docName.documentname='DemandBill' "
+                        + " bill.id_demand =demcon.demand and billtype.id = bill.id_bill_type and bill.service_code='WT' and conndoc.applicationdocumentsid=appD.id  "
+                        + " and  demcon.connectiondetails=conndet.id and demcon.demand = dem.id and appD.documentnumber=bill.bill_no and bill.is_cancelled='N' and billtype.code='MANUAL' and dem.is_history ='N' and  docName.documentname='DemandBill' "
                         + " ");
         queryStr.append(" and conn.consumercode=  " + "'" + consumerCode + "'");
         queryStr.append(" and docName.applicationtype in(select id from egwtr_application_type where name = '"
                 + applicationType + "' )");
+        queryStr.append(" order by appD.id desc ");
 
         final SQLQuery finalQuery = entityQueryService.getSession().createSQLQuery(queryStr.toString());
         final List<Long> waterChargesDocumentsList = finalQuery.list();
         return waterChargesDocumentsList;
+    }
+
+    public long getTotalCountofBills(final String zone, final String ward, final String propertyType,
+            final String applicationType, final String connectionType, final String consumerCode,
+            final String houseNumber, final String assessmentNumber) throws ParseException {
+
+        final StringBuilder queryStr = new StringBuilder();
+        queryStr.append("select count(distinct dcbinfo.hscno)  from egwtr_mv_bill_view dcbinfo"
+                + " INNER JOIN eg_boundary wardboundary on dcbinfo.wardid = wardboundary.id INNER JOIN eg_boundary localboundary on dcbinfo.locality = localboundary.id"
+                + " INNER JOIN eg_bill bill on dcbinfo.hscno = bill.consumer_id and dcbinfo.demand= bill.id_demand"
+                + " INNER JOIN eg_boundary zoneboundary on dcbinfo.zoneid = zoneboundary.id ");
+        queryStr.append(" where dcbinfo.connectionstatus = '" + ConnectionStatus.ACTIVE.toString() + "' ");
+        queryStr.append(" and bill.module_id = (select id from eg_module where name ='Water Tax Management')");
+        queryStr.append(" and bill.id_bill_type = (select id from eg_bill_type  where code ='MANUAL')");
+        queryStr.append(" and bill.is_cancelled ='N' ");
+        if (ward != null && !ward.isEmpty())
+            queryStr.append(" and wardboundary.name = " + "'" + ward + "'");
+        if (zone != null && !zone.isEmpty())
+            queryStr.append(" and zoneboundary.name = " + "'" + zone + "'");
+        if (consumerCode != null && !consumerCode.isEmpty())
+            queryStr.append(" and dcbinfo.hscno = " + "'" + consumerCode + "'");
+        if (assessmentNumber != null && !assessmentNumber.isEmpty())
+            queryStr.append(" and dcbinfo.propertyid = " + "'" + assessmentNumber + "'");
+        if (houseNumber != null && !houseNumber.isEmpty())
+            queryStr.append(" and dcbinfo.houseno = " + "'" + houseNumber + "'");
+        if (connectionType != null && !connectionType.isEmpty())
+            queryStr.append(" and dcbinfo.connectiontype = " + "'" + connectionType + "'");
+        if (applicationType != null && !applicationType.isEmpty())
+            queryStr.append(" and dcbinfo.applicationtype = " + "'" + applicationType + "'");
+        if (propertyType != null && !propertyType.isEmpty())
+            queryStr.append(" and dcbinfo.propertytype = " + "'" + propertyType + "'");
+        final SQLQuery finalQuery = entityQueryService.getSession().createSQLQuery(queryStr.toString());
+        if (LOGGER.isDebugEnabled())
+            LOGGER.debug("GenerateConnectionBill -- count Result " + queryStr.toString());
+
+        final Long count = ((BigInteger) finalQuery.uniqueResult()).longValue();
+
+        return count;
     }
 
 }

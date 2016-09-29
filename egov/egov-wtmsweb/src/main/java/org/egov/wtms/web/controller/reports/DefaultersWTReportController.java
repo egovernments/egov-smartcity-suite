@@ -39,10 +39,12 @@
  */
 package org.egov.wtms.web.controller.reports;
 
+import static org.egov.infra.web.utils.WebUtils.toJSON;
 import static org.egov.ptis.constants.PropertyTaxConstants.REVENUE_HIERARCHY_TYPE;
 import static org.springframework.web.bind.annotation.RequestMethod.GET;
 
 import java.io.IOException;
+import java.math.BigInteger;
 import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -55,20 +57,17 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.io.IOUtils;
+import org.egov.demand.dao.EgDemandDao;
 import org.egov.demand.model.EgDemandDetails;
 import org.egov.infra.admin.master.entity.Boundary;
 import org.egov.infra.admin.master.service.BoundaryService;
-import org.egov.wtms.application.entity.DailyWTCollectionReport;
 import org.egov.wtms.application.entity.DefaultersReport;
-import org.egov.wtms.application.entity.WaterConnectionDetails;
 import org.egov.wtms.application.service.ConnectionDemandService;
 import org.egov.wtms.application.service.DefaultersWTReportService;
 import org.egov.wtms.application.service.WaterConnectionDetailsService;
-import org.egov.wtms.masters.entity.enums.ConnectionStatus;
 import org.egov.wtms.utils.DemandComparatorByInstallmentOrder;
 import org.egov.wtms.utils.WaterTaxUtils;
 import org.egov.wtms.utils.constants.WaterTaxConstants;
-import org.hibernate.SQLQuery;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
@@ -77,9 +76,6 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
-
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
 
 @Controller
 @RequestMapping("/report/defaultersWTReport/search")
@@ -96,6 +92,9 @@ public class DefaultersWTReportController {
 
     @Autowired
     public ConnectionDemandService connectionDemandService;
+    
+    @Autowired
+    private EgDemandDao egDemandDao;
 
     @Autowired
     private WaterTaxUtils waterTaxUtils;
@@ -142,46 +141,35 @@ public class DefaultersWTReportController {
             fromAmount = request.getParameter("fromAmount");
         if (null != request.getParameter("toAmount"))
             toAmount = request.getParameter("toAmount");
-
         List<DefaultersReport> defaultersreportlist = new ArrayList<DefaultersReport>();
-        final SQLQuery query = defaultersWTReportService.getDefaultersReportDetails(fromAmount, toAmount, ward,
-                topDefaulters);
-        defaultersreportlist = query.list();
+        defaultersreportlist = defaultersWTReportService.getDefaultersReportDetails(fromAmount, toAmount, ward,
+                topDefaulters, Integer.valueOf(request.getParameter("start")),
+                Integer.valueOf(request.getParameter("length")));
+        final long foundRows = defaultersWTReportService.getTotalCount(fromAmount, toAmount, ward, topDefaulters);
         String result = null;
         for (final DefaultersReport dd : defaultersreportlist)
-            dd.setDuePeriodFrom(getDuePeriodFrom(dd.getHscNo()));
-        result = new StringBuilder("{ \"data\":").append(toJSON(defaultersreportlist)).append("}").toString();
+            dd.setDuePeriodFrom(getDuePeriodFrom(dd.getDemandId()));
+        result = new StringBuilder("{ \"draw\":").append(request.getParameter("draw")).append(", \"recordsTotal\":")
+                .append(foundRows).append(", \"recordsFiltered\":").append(foundRows).append(", \"data\":")
+                .append(toJSON(defaultersreportlist, DefaultersReport.class, DefaultersReportAdaptor.class)).append("}")
+                .toString();
         response.setContentType(MediaType.APPLICATION_JSON_VALUE);
         IOUtils.write(result, response.getWriter());
     }
 
-    public String getDuePeriodFrom(final String consumerCode) {
-        final WaterConnectionDetails waterConnectionDetails = waterConnectionDetailsService
-                .findByApplicationNumberOrConsumerCodeAndStatus(consumerCode, ConnectionStatus.ACTIVE);
-        if (waterConnectionDetails != null) {
-            final DemandComparatorByInstallmentOrder demandComparatorByOrderId = new DemandComparatorByInstallmentOrder();
-            final Set<EgDemandDetails> egdemandtemplist = new HashSet<EgDemandDetails>();
-            final Set<EgDemandDetails> demnadDetList = waterTaxUtils.getCurrentDemand(waterConnectionDetails)
-                    .getDemand().getEgDemandDetails();
-            for (final EgDemandDetails egDemandTemp : demnadDetList)
-                if (!egDemandTemp.getAmount().equals(egDemandTemp.getAmtCollected()))
-                    egdemandtemplist.addAll(egDemandTemp.getEgDemand().getEgDemandDetails());
-            final List<EgDemandDetails> egdemandlist = new ArrayList<EgDemandDetails>(egdemandtemplist);
-            if (egdemandlist.isEmpty())
-                return "";
-            else {
-                Collections.sort(egdemandlist, demandComparatorByOrderId);
-                return egdemandlist.get(0).getEgDemandReason().getEgInstallmentMaster().getDescription();
-            }
-        } else
-            return "";
-    }
+	public String getDuePeriodFrom(final BigInteger demandId) {
+		List<EgDemandDetails> demandDetList = new ArrayList<EgDemandDetails>(egDemandDao.findById(demandId.longValue(), false).getEgDemandDetails());
+		Set<EgDemandDetails> demnadDetList = new HashSet<EgDemandDetails>();
+		for (final EgDemandDetails egDemandTemp : demandDetList)
+			if (!egDemandTemp.getAmount().equals(egDemandTemp.getAmtCollected()))
+				demnadDetList.addAll(egDemandTemp.getEgDemand().getEgDemandDetails());
+		final List<EgDemandDetails> egdemandlist = new ArrayList<EgDemandDetails>(demnadDetList);
+		if (egdemandlist.isEmpty())
+			return "";
+		else {
+			Collections.sort(egdemandlist, new DemandComparatorByInstallmentOrder());
+			return egdemandlist.get(0).getEgDemandReason().getEgInstallmentMaster().getDescription();
+		}
 
-    private Object toJSON(final Object object) {
-        final GsonBuilder gsonBuilder = new GsonBuilder();
-        final Gson gson = gsonBuilder.registerTypeAdapter(DailyWTCollectionReport.class, new DefaultersReportAdaptor())
-                .create();
-        final String json = gson.toJson(object);
-        return json;
-    }
+	}
 }

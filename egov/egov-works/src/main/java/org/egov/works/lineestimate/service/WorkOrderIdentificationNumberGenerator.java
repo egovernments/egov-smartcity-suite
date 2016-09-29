@@ -74,14 +74,14 @@ public class WorkOrderIdentificationNumberGenerator {
     public String generateWorkOrderIdentificationNumber(final LineEstimateDetails lineEstimateDetails) {
         try {
             final CFinancialYear financialYear = financialYearHibernateDAO
-                    .getFinancialYearByDate(lineEstimateDetails.getLineEstimate().getLineEstimateDate());
+                    .getFinYearByDate(lineEstimateDetails.getLineEstimate().getLineEstimateDate());
             final String finYearRange[] = financialYear.getFinYearRange().split("-");
             final String sequenceName = PROJECTCODE_SEQ_PREFIX + "_" + finYearRange[0] + "_" + finYearRange[1];
-            final String typeOfWork;
-            if (lineEstimateDetails.getLineEstimate().getWorkCategory().toString().equals(WorkCategory.SLUM_WORK.toString()))
-                typeOfWork = "SL";
+            final String workCategory;
+            if (!lineEstimateDetails.getLineEstimate().getWorkCategory().toString().equals(WorkCategory.NON_SLUM.toString()))
+                workCategory = "SL";
             else
-                typeOfWork = "NS";
+                workCategory = "NS";
             Serializable sequenceNumber;
             try {
                 sequenceNumber = sequenceNumberGenerator.getNextSequence(sequenceName);
@@ -89,7 +89,7 @@ public class WorkOrderIdentificationNumberGenerator {
                 sequenceNumber = dbSequenceGenerator.createAndGetNextSequence(sequenceName);
             }
             return String.format("%s/%s/%05d/%02d/%s", lineEstimateDetails.getLineEstimate().getExecutingDepartment().getCode(),
-                    typeOfWork, sequenceNumber,
+                    workCategory, sequenceNumber,
                     getMonthOfTransaction(lineEstimateDetails.getLineEstimate().getLineEstimateDate()),
                     financialYear.getFinYearRange());
         } catch (final SQLException e) {

@@ -46,11 +46,15 @@ import java.util.List;
 
 import org.egov.eis.entity.Assignment;
 import org.egov.eis.service.AssignmentService;
-import org.egov.eis.service.PositionMasterService;
 import org.egov.infra.admin.master.entity.Department;
 import org.egov.infra.admin.master.service.DepartmentService;
 import org.egov.lcms.masters.entity.AdvocateMaster;
+import org.egov.lcms.masters.entity.CourtMaster;
+import org.egov.lcms.masters.entity.PetitionTypeMaster;
 import org.egov.lcms.masters.service.AdvocateMasterService;
+import org.egov.lcms.masters.service.CourtMasterService;
+import org.egov.lcms.masters.service.CourtTypeMasterService;
+import org.egov.lcms.masters.service.PetitionTypeMasterService;
 import org.egov.pims.commons.Position;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
@@ -73,10 +77,19 @@ public class AjaxLegalCaseController {
     @Autowired
     private AdvocateMasterService advocateMasterService;
 
+    @Autowired
+    private PetitionTypeMasterService petitiontypeMasterService;
+
+    @Autowired
+    private CourtTypeMasterService courtTypeMasterService;
+
+    @Autowired
+    private CourtMasterService courtMasterService;
+
     @RequestMapping(value = "ajax/departments", method = GET, produces = MediaType.APPLICATION_JSON_VALUE)
     public @ResponseBody List<Department> getAllDepartmentsByNameLike(
             @ModelAttribute("legalcase") @RequestParam final String departmentName) {
-         return departmentService.getAllDepartmentsByNameLike(departmentName);
+        return departmentService.getAllDepartmentsByNameLike(departmentName);
 
     }
 
@@ -85,23 +98,43 @@ public class AjaxLegalCaseController {
             @ModelAttribute("legalcase") @RequestParam final String advocateName,
             @RequestParam final Boolean isSeniorAdvocate) {
 
-        return advocateMasterService.getAllAdvocatesByNameLikeAndIsSeniorAdvocate(advocateName, isSeniorAdvocate);
+        return advocateMasterService.getAllAdvocatesByNameLikeAndIsSeniorAdvocate(advocateName.toUpperCase(), isSeniorAdvocate);
     }
 
     @RequestMapping(value = "ajax/positions", method = GET, produces = MediaType.APPLICATION_JSON_VALUE)
     public @ResponseBody List<Position> getAllPositionsByDeptAndNameLike(
             @ModelAttribute("legalcase") @RequestParam final String departmentName,
             @RequestParam final String positionName) {
-    	List<Position> poslist=new ArrayList<Position>();
+        final List<Position> poslist = new ArrayList<Position>();
         final Department deptObj = departmentService.getDepartmentByName(departmentName);
-        List<Assignment>assignList=assignmentService.getAllPositionsByDepartmentAndPositionNameForGivenRange(deptObj.getId(),positionName);
-        for(Assignment assign:assignList)  
-        {
-        	poslist.add(assign.getPosition());
-        }
+        final List<Assignment> assignList = assignmentService
+                .getAllPositionsByDepartmentAndPositionNameForGivenRange(deptObj.getId(), positionName.toUpperCase());
+        for (final Assignment assign : assignList)
+            poslist.add(assign.getPosition());
+        for (final Position dd : poslist)
+            System.out.println(dd.getId());
         return poslist;
 
+    }
 
+    @RequestMapping(value = "/ajax-petitionTypeByCourtType", method = GET, produces = MediaType.APPLICATION_JSON_VALUE)
+    public @ResponseBody List<PetitionTypeMaster> getAllPetitionTypesByCountType(@RequestParam final Long courtType) {
+        List<PetitionTypeMaster> petitionTypeList = new ArrayList<PetitionTypeMaster>(0);
+        if (courtType != null) {
+            petitionTypeList = petitiontypeMasterService.findActivePetitionByCourtType(courtTypeMasterService.findOne(courtType));
+            petitionTypeList.forEach(petitionType -> petitionType.toString());
+        }
+        return petitionTypeList;
+    }
+
+    @RequestMapping(value = "/ajax-courtNameByCourtType", method = GET, produces = MediaType.APPLICATION_JSON_VALUE)
+    public @ResponseBody List<CourtMaster> getAllCourtNamesByCountType(@RequestParam final Long courtType) {
+        List<CourtMaster> courtNameList = new ArrayList<CourtMaster>(0);
+        if (courtType != null) {
+            courtNameList = courtMasterService.findActiveCourtByCourtType(courtTypeMasterService.findOne(courtType));
+            courtNameList.forEach(petitionType -> petitionType.toString());
+        }
+        return courtNameList;
     }
 
 }

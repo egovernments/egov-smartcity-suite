@@ -55,6 +55,7 @@ import org.egov.eis.service.EisCommonService;
 import org.egov.infra.admin.master.entity.AppConfig;
 import org.egov.infra.admin.master.entity.AppConfigValues;
 import org.egov.infra.admin.master.entity.User;
+import org.egov.infra.admin.master.service.AppConfigValueService;
 import org.egov.infra.config.core.ApplicationThreadLocals;
 import org.egov.infra.exception.ApplicationRuntimeException;
 import org.egov.infra.validation.exception.ValidationError;
@@ -118,12 +119,16 @@ public class ScheduledRemittanceService {
     private Map<String, Integer> receiptBankAccountMap;
     
     
- @Autowired
- @Qualifier("persistenceService")
- private PersistenceService persistenceService;
- @Autowired CreateVoucher createVoucher;
+    @Autowired
+    @Qualifier("persistenceService")
+    private PersistenceService persistenceService;
+
+    @Autowired
+    CreateVoucher createVoucher;
 
     private FinancialYearDAO financialYearDAO;
+    @Autowired
+    @Qualifier("recoveryPersistenceService")
     private RecoveryService recoveryService;
     private PersistenceService<EgRemittanceGldtl, Integer> egRemittancegldtlService;
     private RemittancePersistenceService remittancePersistenceService;
@@ -165,6 +170,8 @@ public class ScheduledRemittanceService {
     private User user;
 
     private Position nextOwner;
+    @Autowired
+    private AppConfigValueService appConfigValueService;
 
     /**
      * Our jboss Trnasaction manager does not support nested transactions https://community.jboss.org/thread/206684 so all have to
@@ -201,7 +208,7 @@ public class ScheduledRemittanceService {
             }
             remitted = recovery.getRemitted();
 
-            final List coads = remittancePersistenceService.getPersistenceService().findAllBy(
+            final List coads = remittancePersistenceService.findAllBy(
                     "from CChartOfAccountDetail where glcodeId=?", recovery.getChartofaccounts());
             if (coads == null || coads.size() == 0)
                 isControlCode = false;
@@ -295,7 +302,7 @@ public class ScheduledRemittanceService {
                             // create pre approved voucher,add to paymentheader, Miscbilldetail send to workflow
                             // Here there is no chance of voucherheader coming as null as create voucher throws validation
                             // exception on any issues
-                            final Bankaccount ba = (Bankaccount) remittancePersistenceService.getPersistenceService().
+                            final Bankaccount ba = (Bankaccount) persistenceService.
                                     find(" from  Bankaccount where id="
                                             + Integer.parseInt(voucher.split("-")[bankAccountIdIndex]) + "");
 
@@ -413,7 +420,7 @@ public class ScheduledRemittanceService {
                 // create pre approved voucher,add to paymentheader, Miscbilldetail send to workflow
                 // Here there is no chance of voucherheader coming as null as create voucher throws validation exception on any
                 // issues
-                final Bankaccount ba = (Bankaccount) remittancePersistenceService.getPersistenceService().
+                final Bankaccount ba = (Bankaccount) persistenceService.
                         find(" from  Bankaccount where id=" + Integer.parseInt(voucher.split("-")[bankAccountIdIndex]) + "");
                 if (ba == null)
                 {
@@ -532,7 +539,7 @@ public class ScheduledRemittanceService {
         } else
         {
 
-            final DrawingOfficer drawingOfficer1 = (DrawingOfficer) remittancePersistenceService.getPersistenceService().find(
+            final DrawingOfficer drawingOfficer1 = (DrawingOfficer) persistenceService.find(
                     "from DrawingOfficer where id=? ", deptDOMap.get(dept).intValue());
             if (drawingOfficer1.getTan() == null)
             {
@@ -634,7 +641,7 @@ public class ScheduledRemittanceService {
      *
      */
     private void loadNextOwner() {
-        user = (User) remittancePersistenceService.getPersistenceService().find("from User where userName='ASSTBUDGET'");
+        user = (User) persistenceService.find("from User where userName='ASSTBUDGET'");
         nextOwner = eisCommonService.getPositionByUserId(user.getId());
 
     }
@@ -643,18 +650,17 @@ public class ScheduledRemittanceService {
         try {
             GJVBankAccountMap = new HashMap<String, Integer>();
             String value = "";
-            final List<AppConfig> appConfigList = remittancePersistenceService.getPersistenceService().findAllBy(
-                    "from AppConfig where key_name = 'AuoRemittance_Account_Number_For_GJV'");
+            final List<AppConfigValues> appConfigList = appConfigValueService.getConfigValuesByModuleAndKey("EGF", "AuoRemittance_Account_Number_For_GJV");
             if (appConfigList == null)
                 throw new ValidationException(Arrays.asList(new ValidationError(
                         "AuoRemittance_Account_Number_For_GJV app config key not defined",
                         "AuoRemittance_Account_Number_For_GJV app config key not defined")));
-            for (final AppConfig appConfig : appConfigList)
-                for (final AppConfigValues appConfigVal : appConfig.getAppDataValues())
+
+                for (final AppConfigValues appConfigVal : appConfigList)
                 {
                     value = appConfigVal.getValue();
 
-                    final List<Bankaccount> bankAcountsList = remittancePersistenceService.getPersistenceService().findAllBy(
+                    final List<Bankaccount> bankAcountsList = persistenceService.findAllBy(
                             "from Bankaccount ba where accountNumber=?", value.split("-")[1]);
                     if (bankAcountsList.size() == 1)
                         GJVBankAccountMap.put(value.split("-")[0], bankAcountsList.get(0).getId().intValue());
@@ -693,18 +699,16 @@ public class ScheduledRemittanceService {
             // 2. 02-****701
             receiptBankAccountMap = new HashMap<String, Integer>();
             String value = "";
-            final List<AppConfig> appConfigList = remittancePersistenceService.getPersistenceService().findAllBy(
-                    "from AppConfig where key_name = 'AuoRemittance_Account_Number_For_Receipts'");
+             final List<AppConfigValues> appConfigList =appConfigValueService.getConfigValuesByModuleAndKey("EGF", "AuoRemittance_Account_Number_For_Receipts");
             if (appConfigList == null)
                 throw new ValidationException(Arrays.asList(new ValidationError(
                         "AuoRemittance_Account_Number_For_Receipts app config key not defined",
                         "AuoRemittance_Account_Number_For_Receipts app config key not defined")));
-            for (final AppConfig appConfig : appConfigList)
-                for (final AppConfigValues appConfigVal : appConfig.getAppDataValues())
+                for (final AppConfigValues appConfigVal : appConfigList)
                 {
                     value = appConfigVal.getValue();
 
-                    final List<Bankaccount> bankAcountsList = remittancePersistenceService.getPersistenceService().findAllBy(
+                    final List<Bankaccount> bankAcountsList = persistenceService.findAllBy(
                             "from Bankaccount ba where accountNumber=?", value.split("-")[1]);
                     if (bankAcountsList.size() == 1)
                         receiptBankAccountMap.put(value.split("-")[0], bankAcountsList.get(0).getId().intValue());
@@ -1099,14 +1103,12 @@ public class ScheduledRemittanceService {
         final SimpleDateFormat stringToDate = new SimpleDateFormat("dd/MM/yyyy");
         String value = null;
         try {
-            final List<AppConfig> appConfigList = remittancePersistenceService.getPersistenceService().findAllBy(
-                    "from AppConfig where key_name = 'AutoRemittance_Start_Date'");
+            final List<AppConfigValues> appConfigList =  appConfigValueService.getConfigValuesByModuleAndKey("EGF", "AutoRemittance_Start_Date");
             if (appConfigList == null)
                 throw new ValidationException(Arrays.asList(new ValidationError(
                         "AutoRemittance_Start_Date app config key not defined",
                         "AutoRemittance_Start_Date app config key not defined")));
-            for (final AppConfig appConfig : appConfigList)
-                for (final AppConfigValues appConfigVal : appConfig.getAppDataValues())
+                for (final AppConfigValues appConfigVal : appConfigList)
                     value = appConfigVal.getValue();
 
             startDate = stringToDate.parse(value);
@@ -1375,10 +1377,6 @@ public class ScheduledRemittanceService {
     public void setRemittancePersistenceService(
             final RemittancePersistenceService remittancePersistenceService) {
         this.remittancePersistenceService = remittancePersistenceService;
-    }
-
-    public void setRecoveryService(final RecoveryService recoveryService) {
-        this.recoveryService = recoveryService;
     }
 
     public void setEgRemittancegldtlService(

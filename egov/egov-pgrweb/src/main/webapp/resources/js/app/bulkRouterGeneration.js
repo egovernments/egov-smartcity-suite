@@ -146,21 +146,23 @@ $(document).ready(function()
 					});
 			e.stopPropagation();
 			$('.data-save').removeClass('hide');
+		}else{
+			$('.positionerror').hide();
 		}
 		e.preventDefault();
 		});
 	
 	$('#routersave').click(function(e){  
-		if($("#bulk_router_table").dataTable().fnSettings().aoData.length == 0){
-			document.forms["bulkRouter"].submit();//submit it
-		}else{
-			bootbox.confirm("Existing Router Data will be overridden, Are you sure?", function(result) {
-				  if(result){
-					  document.forms["bulkRouter"].submit();//submit it
-				  }else{
-					  //leave it.. Don't submit
-				  }
-				}); 
+		if ($('#bulkRouter').valid()) {
+			if($("#bulk_router_table").dataTable().fnSettings().aoData.length == 0){
+				document.forms["bulkRouter"].submit();
+			} else{
+				bootbox.confirm("Existing Router Data will be overridden, Are you sure?", function(result) {
+					  if(result){
+						  document.forms["bulkRouter"].submit();
+					  }
+					}); 
+			}
 		}
 	});
 });

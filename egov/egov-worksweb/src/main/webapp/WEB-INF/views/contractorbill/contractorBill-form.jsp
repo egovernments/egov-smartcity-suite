@@ -39,13 +39,18 @@
   --%>
 
 <%@ page contentType="text/html;charset=UTF-8" language="java"%>
+<%@ taglib uri="/WEB-INF/taglibs/cdn.tld" prefix="cdn"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 <%@ taglib uri="http://www.springframework.org/tags" prefix="spring"%>
 <%@ taglib uri="http://www.springframework.org/tags/form" prefix="form"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>	
 		<form:form id="contractorBillForm" class="form-horizontal form-groups-bordered" modelAttribute="contractorBillRegister" role="form" action="contractorbill-save" method="post" enctype="multipart/form-data">
-			<input type="hidden" name="workOrderDate" id="workOrderDate" class="form-control datepicker" maxlength="10" data-inputmask="'mask': 'd/m/y'" data-date-end-date="0d" value='<fmt:formatDate value="${workOrder.workOrderDate}" pattern="dd/MM/yyyy"/>'> 
+			<input type="hidden" name="workOrderDate" id="workOrderDate" class="form-control datepicker" maxlength="10" data-inputmask="'mask': 'd/m/y'" data-date-end-date="0d" value='<fmt:formatDate value="${workOrder.workOrderDate}" pattern="dd/MM/yyyy"/>'>
 			<form:hidden path="workOrder.id"  name="workOrder" id="workOrderId" value="${workOrder.id}" /> 
+			<input type="hidden" name="contractorBillId" id="contractorBillId" value="${contractorBillRegister.id}" /> 
+			<input type="hidden" name="isSpillover" id="isSpillOver" value="${workOrderEstimate.estimate.lineEstimateDetails.lineEstimate.spillOverFlag}"/>
+			<input type="hidden"  name="workOrderEstimateId" id="workOrderEstimateId" value="${workOrderEstimate.id}" /> 
+			<input type="hidden" name="mode" id="mode" value="${mode }" />
 					<div class="panel panel-primary" data-collapsed="0">
 						<div class="panel-heading">
 							<div class="panel-title"><spring:message code="lbl.header" /></div> 
@@ -60,7 +65,8 @@
 						<div class="panel-body custom-form">
 							<jsp:include page="contractorBill-header.jsp"/>
 							<jsp:include page="contractorBill-mbdetails.jsp"/>
-							<jsp:include page="contractorBill-debitaccountdetails.jsp"/>
+							<jsp:include page="contractorBill-debitaccountdetails.jsp"/> 
+							<jsp:include page="contractorBill-refund.jsp"/>
 							<jsp:include page="contractorBill-creditaccountdetails.jsp"/>
 							<jsp:include page="uploadDocuments.jsp"/>
 						</div>
@@ -70,5 +76,5 @@
 				<jsp:include page="../common/commonWorkflowMatrix-button.jsp" />
 			</div>
 		</form:form>  
-<script src="<c:url value='/resources/js/contractorbill.js?rnd=${app_release_no}'/>"></script>
-<script src="<c:url value='/resources/global/js/egov/inbox.js' context='/egi'/>"></script>
+<script src="<cdn:url value='/resources/js/contractorbill.js?rnd=${app_release_no}'/>"></script>
+<script src="<cdn:url value='/resources/global/js/egov/inbox.js' context='/egi'/>"></script>

@@ -41,8 +41,10 @@ package org.egov.lcms.transactions.entity;
 
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.Hashtable;
 import java.util.List;
+import java.util.Set;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -56,19 +58,17 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
+import javax.persistence.OrderBy;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
 import javax.persistence.Transient;
 import javax.validation.constraints.NotNull;
 
 import org.apache.commons.lang.StringUtils;
 import org.egov.commons.EgwStatus;
 import org.egov.infra.persistence.entity.AbstractAuditable;
-import org.egov.infra.persistence.validator.annotation.DateFormat;
-import org.egov.infra.persistence.validator.annotation.OptionalPattern;
-import org.egov.infra.persistence.validator.annotation.Required;
-import org.egov.infra.persistence.validator.annotation.Unique;
-import org.egov.infra.persistence.validator.annotation.ValidateDate;
 import org.egov.infra.validation.exception.ValidationError;
 import org.egov.lcms.masters.entity.CaseTypeMaster;
 import org.egov.lcms.masters.entity.CourtMaster;
@@ -76,15 +76,16 @@ import org.egov.lcms.masters.entity.PetitionTypeMaster;
 import org.egov.lcms.masters.entity.enums.LCNumberType;
 import org.egov.lcms.utils.constants.LcmsConstants;
 import org.egov.pims.commons.Position;
+import org.egov.search.domain.Searchable;
 import org.hibernate.validator.constraints.Length;
 
 @Entity
 @Table(name = "EGLC_LEGALCASE")
-// @CompareDates(fromDate = "caseReceivingDate", toDate = "caseDate", dateFormat
-// = "dd/MM/yyyy", message = "fgfgf ggffg date")
-@Unique(fields = { "caseNumber", "lcNumber" }, id = "id", tableName = "EGLC_LEGALCASE", columnName = { "CASENUMBER",
-        "LCNUMBER" }, message = "casenumber.name.isunique")
+// @Unique(fields = { "caseNumber" }, id = "id", tableName = "EGLC_LEGALCASE",
+// columnName = { "casenumber" }, enableDfltMsg =
+// true)
 @SequenceGenerator(name = LegalCase.SEQ_LEGALCASE_TYPE, sequenceName = LegalCase.SEQ_LEGALCASE_TYPE, allocationSize = 1)
+@Searchable
 public class LegalCase extends AbstractAuditable {
     private static final long serialVersionUID = 1517694643078084884L;
     public static final String SEQ_LEGALCASE_TYPE = "SEQ_EGLC_LEGALCASE";
@@ -93,78 +94,102 @@ public class LegalCase extends AbstractAuditable {
     @GeneratedValue(generator = SEQ_LEGALCASE_TYPE, strategy = GenerationType.SEQUENCE)
     private Long id;
 
-    @DateFormat(message = "invalid.fieldvalue.model.nextDate")
+    @Temporal(TemporalType.DATE)
     private Date nextDate;
-    @Required(message = "case.casetype.null")
+
     @ManyToOne(fetch = FetchType.LAZY)
     @NotNull
     @JoinColumn(name = "CASETYPE", nullable = false)
     private CaseTypeMaster caseTypeMaster;
-    @Required(message = "case.court.null")
+
     @ManyToOne(fetch = FetchType.LAZY)
     @NotNull
     @JoinColumn(name = "COURT", nullable = false)
     private CourtMaster courtMaster;
+
     @ManyToOne
     @JoinColumn(name = "STATUS", nullable = false)
     private EgwStatus status;
-    @Required(message = "case.petitiontype.null")
+
     @ManyToOne(fetch = FetchType.LAZY)
     @NotNull
     @JoinColumn(name = "PETITIONTYPE", nullable = false)
     private PetitionTypeMaster petitionTypeMaster;
+
     @NotNull
     @Column(name = "casenumber")
     private String caseNumber;
-    @Required(message = "case.casedate.null")
-    @DateFormat(message = "invalid.fieldvalue.model.casedate")
-    // @ValidateDate(allowPast = true, dateFormat = LcmsConstants.DATE_FORMAT,
-    // message = "invalid.case.date")
+
+    @NotNull
+    @Temporal(TemporalType.DATE)
     @Column(name = "casedate")
     private Date caseDate;
-    @Required(message = "case.title.null")
-    @Length(max = 1024, message = "casetitle.length")
+
+    @NotNull
+    @Length(max = 1024)
     @Column(name = "casetitle")
     private String caseTitle;
-    @Length(max = 50, message = "appealnum.length")
+
+    @Length(max = 50)
     @Column(name = "appealnum")
     private String appealNum;
-    @Length(max = 1024, message = "remarks.length")
+
+    @Length(max = 1024)
     private String remarks;
-    @DateFormat(message = "invalid.fieldvalue.model.caseReceivingDate")
-    @ValidateDate(allowPast = true, dateFormat = LcmsConstants.DATE_FORMAT, message = "invalid.caseReceivingDate.date")
+
     @Column(name = "casereceivingdate")
+    @Temporal(TemporalType.DATE)
     private Date caseReceivingDate;
+
     private Boolean isfiledbycorporation;
-    @OptionalPattern(regex = LcmsConstants.alphaNumericwithSlashes, message = "case.lcnumber.invalid")
-    @Length(max = 50, message = "lcnumber.length")
+
+    @Length(max = 50)
     @Column(name = "lcnumber")
     private String lcNumber;
-    @Required(message = "case.prayer.null")
-    @Length(max = 1024, message = "prayer.length")
+
+    @NotNull
+    @Length(max = 1024)
     private String prayer;
+
     @Column(name = "isSenioradvrequired")
     private Boolean isSenioradvrequired = Boolean.FALSE;
+
     @Column(name = "assigntoIdboundary")
     private Long assigntoIdboundary;
 
-    @Transient
-    private List<BipartisanDetails> bipartisanDetailsBeanList = new ArrayList<BipartisanDetails>(0);
+    @Length(max = 128)
+    @Column(name = "oppPartyAdvocate")
+    private String oppPartyAdvocate;
+
+    @Length(max = 256)
+    @Column(name = "representedby")
+    private String representedby;
+
+    @Column(name = "lcNumberType")
+    @Enumerated(EnumType.STRING)
+    private LCNumberType lcNumberType;
+
+    @Temporal(TemporalType.DATE)
+    @Column(name = "previousDate")
+    private Date previousDate;
+
+    @Column(name = "stampNumber")
+    private String stampNumber;
+
+    @Length(max = 50)
+    @Column(name = "officerincharge")
+    private String officerIncharge;
+
+    @NotNull
+    @Temporal(TemporalType.DATE)
+    @Column(name = "noticedate")
+    private Date noticeDate;
+
+    @Temporal(TemporalType.DATE)
+    private Date casefirstappearancedate;
 
     @Transient
-    private List<Judgment> judgmentsBeanList = new ArrayList<Judgment>(0);
-
-    @OneToMany(mappedBy = "legalCase", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<Judgment> judgment = new ArrayList<Judgment>(0);
-
-    @OneToMany(mappedBy = "legalCase", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<LegalCaseDocuments> legalCaseDocuments = new ArrayList<LegalCaseDocuments>(0);
-
-    @OneToMany(mappedBy = "legalCase", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<Pwr> eglcPwrs = new ArrayList<Pwr>(0);
-
-    @OneToMany(mappedBy = "legalCase", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<LcInterimOrder> lcInterimOrder = new ArrayList<LcInterimOrder>(0);
+    private String functionaryCode;
 
     @Transient
     private String wpYear;
@@ -173,55 +198,61 @@ public class LegalCase extends AbstractAuditable {
     private String finwpYear;
 
     @OneToMany(mappedBy = "legalCase", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<BipartisanDetails> bipartisanDetails = new ArrayList<BipartisanDetails>(0);
+    private List<Judgment> judgment = new ArrayList<Judgment>(0);
+
     @OneToMany(mappedBy = "legalCase", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<LegalCaseAdvocate> eglcLegalcaseAdvocates = new ArrayList<LegalCaseAdvocate>(0);
+    private List<LegalCaseDocuments> legalCaseDocuments = new ArrayList<LegalCaseDocuments>(0);
+
+    @OneToMany(mappedBy = "legalCase", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
+    private final List<Pwr> pwrList = new ArrayList<Pwr>(0);
+
+    @OneToMany(mappedBy = "legalCase", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
+    private final List<CounterAffidavit> counterAffidavits = new ArrayList<CounterAffidavit>(0);
+
+    @OneToMany(mappedBy = "legalCase", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<LegalCaseInterimOrder> legalCaseInterimOrder = new ArrayList<LegalCaseInterimOrder>(0);
+
+    @OneToMany(mappedBy = "legalCase", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<BipartisanDetails> bipartisanDetails = new ArrayList<BipartisanDetails>(0);
+
+    @OrderBy("id")
+    @OneToMany(mappedBy = "legalCase", cascade = CascadeType.ALL, fetch = FetchType.LAZY, orphanRemoval = true)
+    private List<LegalCaseAdvocate> legalCaseAdvocates = new ArrayList<LegalCaseAdvocate>(0);
 
     @OneToMany(mappedBy = "legalCase", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Hearings> hearings = new ArrayList<Hearings>(0);
 
-    @OptionalPattern(regex = LcmsConstants.mixedChar, message = "oppPartyAdvocate.alphanumeric")
-    @Length(max = 128, message = "oppPartyAdvocate.length")
-    @Column(name = "oppPartyAdvocate")
-    private String oppPartyAdvocate;
-    @OptionalPattern(regex = LcmsConstants.mixedChar, message = "representedby.alphanumeric")
-    @Length(max = 256, message = "representedby.length")
-    @Column(name = "representedby")
-    private String representedby;
-    @Column(name = "lcNumberType")
-    @Enumerated(EnumType.STRING)
-    private LCNumberType lcNumberType;
     @OneToMany(mappedBy = "legalCase", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
     private List<LegalCaseDisposal> legalCaseDisposal = new ArrayList<LegalCaseDisposal>(0);
 
-    @OneToMany(mappedBy = "legalCase", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<LegalCaseDepartment> legalCaseDepartment = new ArrayList<LegalCaseDepartment>(0);
+    @OneToMany(mappedBy = "legalCase", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    private final List<LegalCaseDepartment> legalCaseDepartment = new ArrayList<LegalCaseDepartment>(0);
 
     @OneToMany(mappedBy = "legalCase", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
     private List<BatchCase> batchCaseSet = new ArrayList<BatchCase>(0);
 
-    @OneToMany(mappedBy = "legalCase", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<PaperBook> paperBookSet = new ArrayList<PaperBook>(0);
-
-    @OneToMany(mappedBy = "legalCase", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<ProcessRegister> processRegisterSet = new ArrayList<ProcessRegister>(0);
-
-    @DateFormat(message = "invalid.fieldvalue.model.firstAppearenceDate")
-    private Date casefirstappearancedate;
+    // TODO:need to enable when we start work on PaperBook and ProcessRegister
+    // object
+    /*
+     * @OneToMany(mappedBy = "legalCase", fetch = FetchType.LAZY, cascade =
+     * CascadeType.ALL, orphanRemoval = true) private List<PaperBook>
+     * paperBookSet = new ArrayList<PaperBook>(0);
+     * @OneToMany(mappedBy = "legalCase", fetch = FetchType.LAZY, cascade =
+     * CascadeType.ALL, orphanRemoval = true) private List<ProcessRegister>
+     * processRegisterSet = new ArrayList<ProcessRegister>(0);
+     */
 
     @OneToMany(mappedBy = "legalCase", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
     private List<LegalCaseMiscDetails> legalCaseMiscDetails = new ArrayList<LegalCaseMiscDetails>(0);
 
-    @DateFormat(message = "invalid.fieldvalue.model.previousDate")
-    @Column(name = "previousDate")
-    private Date previousDate;
-
-    @Length(max = 50, message = "stampNumber.length")
-    @Column(name = "stampNumber")
-    private String stampNumber;
+    @Transient
+    private List<BipartisanDetails> bipartisanRespondentDetailsList = new ArrayList<BipartisanDetails>(0);
 
     @Transient
-    private String functionaryCode;
+    private List<BipartisanDetails> bipartisanPetitionerDetailsList = new ArrayList<BipartisanDetails>(0);
+
+    @Transient
+    private List<Judgment> judgmentsBeanList = new ArrayList<Judgment>(0);
 
     public List<ValidationError> validate() {
         final List<ValidationError> errors = new ArrayList<ValidationError>();
@@ -231,11 +262,11 @@ public class LegalCase extends AbstractAuditable {
             final BipartisanDetails element = bipartisanDetails2;
             errors.addAll(element.validate());
         }
-        for (final Pwr pwr : getEglcPwrs()) {
+        for (final Pwr pwr : getPwrList()) {
             final Pwr element = pwr;
             errors.addAll(element.validate());
         }
-        for (final LegalCaseAdvocate legalcaseAdvocate : getEglcLegalcaseAdvocates()) {
+        for (final LegalCaseAdvocate legalcaseAdvocate : getLegalCaseAdvocates()) {
             final LegalCaseAdvocate element = legalcaseAdvocate;
             errors.addAll(element.validate());
         }
@@ -294,14 +325,16 @@ public class LegalCase extends AbstractAuditable {
     }
 
     /**
-     * @param errors Validation Check for Batch case:
+     * @param errors
+     *            Validation Check for Batch case:
      */
     protected void batchCaseValidation(final List<ValidationError> errors) {
         Boolean duplicateCaseNumberCheck = false;
         int i = 0;
         for (final BatchCase batchcase : getBatchCaseSet()) {
             /*
-             * Both the batch case number and primary case number should not be same
+             * Both the batch case number and primary case number should not be
+             * same
              */
             if (StringUtils.isNotBlank(getCaseNumber()) && StringUtils.isNotBlank(batchcase.getCasenumber())
                     && getCaseNumber().equals(batchcase.getCasenumber())) {
@@ -327,8 +360,8 @@ public class LegalCase extends AbstractAuditable {
 
     public Date getCaDueDate() {
         // iterate through the case's PWRs and return the first non-null date
-        if (eglcPwrs != null)
-            for (final Pwr pwr : eglcPwrs)
+        if (pwrList != null)
+            for (final Pwr pwr : pwrList)
                 if (pwr.getCaDueDate() != null)
                     return pwr.getCaDueDate();
         return null;
@@ -336,8 +369,8 @@ public class LegalCase extends AbstractAuditable {
 
     public Date getPwrDate() {
         // iterate through the case's PWRs and return the first non-null date
-        if (getEglcPwrs() != null)
-            for (final Pwr pwr : getEglcPwrs())
+        if (getPwrList() != null)
+            for (final Pwr pwr : getPwrList())
                 if (pwr.getPwrDueDate() != null)
                     return pwr.getPwrDueDate();
         return null;
@@ -346,22 +379,49 @@ public class LegalCase extends AbstractAuditable {
     public List<BipartisanDetails> getPetitioners() {
         // iterate through this.getBipartisan and return only petitioners (based
         // on isRespondent=0)
-        final List<BipartisanDetails> petitionerslist = new ArrayList<BipartisanDetails>();
-        for (final BipartisanDetails bp : getBipartisanDetails())
-            if (!bp.getIsRepondent())
-                petitionerslist.add(bp);
-        return petitionerslist;
+
+        final List<BipartisanDetails> tempList = new ArrayList<BipartisanDetails>();
+        for (final BipartisanDetails temp : bipartisanDetails)
+            if (!temp.getIsRepondent())
+                tempList.add(temp);
+        final Set<BipartisanDetails> tempset = new HashSet<BipartisanDetails>(tempList);
+        bipartisanPetitionerDetailsList = new ArrayList<BipartisanDetails>(tempset);
+        return bipartisanPetitionerDetailsList;
+
     }
 
     public List<BipartisanDetails> getRespondents() {
         // iterate through this.getBipartisan and return only petitioners (based
         // on isRespondent=1)
+        final List<BipartisanDetails> tempList = new ArrayList<BipartisanDetails>();
+        for (final BipartisanDetails temp : bipartisanDetails)
+            if (temp.getIsRepondent())
+                tempList.add(temp);
+        final Set<BipartisanDetails> tempset = new HashSet<BipartisanDetails>(tempList);
+        bipartisanRespondentDetailsList = new ArrayList<BipartisanDetails>(tempset);
+        return bipartisanRespondentDetailsList;
+    }
 
-        final List<BipartisanDetails> respondentlist = new ArrayList<BipartisanDetails>();
-        for (final BipartisanDetails bp : getBipartisanDetails())
-            if (bp.getIsRepondent())
-                respondentlist.add(bp);
-        return respondentlist;
+    public String getRespondantNames() {
+        final StringBuilder tempStr = new StringBuilder();
+        for (final BipartisanDetails temp : bipartisanDetails)
+            if (temp.getIsRepondent())
+                if (tempStr.length() == 0)
+                    tempStr.append(temp.getName());
+                else
+                    tempStr.append(LcmsConstants.APPENDSEPERATE ).append(temp.getName());
+        return tempStr.toString();
+    }
+
+    public String getPetitionersNames() {
+        final StringBuilder tempStr = new StringBuilder();
+        for (final BipartisanDetails temp : bipartisanDetails)
+            if (!temp.getIsRepondent())
+                if (tempStr.length() == 0)
+                    tempStr.append(temp.getName());
+                else
+                    tempStr.append(LcmsConstants.APPENDSEPERATE ).append(temp.getName());
+        return tempStr.toString();
     }
 
     public Judgment getJudgmentValue() {
@@ -429,7 +489,6 @@ public class LegalCase extends AbstractAuditable {
         this.nextDate = nextDate;
     }
 
-
     public CourtMaster getCourtMaster() {
         return courtMaster;
     }
@@ -448,14 +507,6 @@ public class LegalCase extends AbstractAuditable {
 
     public void setIsSenioradvrequired(final Boolean isSenioradvrequired) {
         this.isSenioradvrequired = isSenioradvrequired;
-    }
-
-    public Date getCasedate() {
-        return caseDate;
-    }
-
-    public void setCasedate(final Date casedate) {
-        caseDate = casedate;
     }
 
     public String getCasetitle() {
@@ -490,14 +541,6 @@ public class LegalCase extends AbstractAuditable {
         this.caseReceivingDate = caseReceivingDate;
     }
 
-    public Boolean getIsfiledbycorporation() {
-        return isfiledbycorporation;
-    }
-
-    public void setIsfiledbycorporation(final Boolean isfiledbycorporation) {
-        this.isfiledbycorporation = isfiledbycorporation;
-    }
-
     public String getLcnumber() {
         return lcNumber;
     }
@@ -530,39 +573,21 @@ public class LegalCase extends AbstractAuditable {
         this.assigntoIdboundary = assigntoIdboundary;
     }
 
-    public List<LcInterimOrder> getEglcLcinterimorders() {
-        return lcInterimOrder;
+    public List<LegalCaseInterimOrder> getLegalCaseInterimOrder() {
+        return legalCaseInterimOrder;
     }
 
-    public void setEglcLcinterimorders(final List<LcInterimOrder> eglcLcinterimorders) {
-        lcInterimOrder = eglcLcinterimorders;
+    public void setLegalCaseInterimOrder(final List<LegalCaseInterimOrder> legalCaseInterimOrder) {
+        this.legalCaseInterimOrder = legalCaseInterimOrder;
     }
 
-    /*
-     * public List<Contempt> getEglcContempts() { return eglcContempts; } public void setEglcContempts(final List<Contempt>
-     * eglcContempts) { this.eglcContempts = eglcContempts; }
-     */
-
-    public List<BipartisanDetails> getBipartisanDetails() {
-        return bipartisanDetails;
+    public void addBipartisanDetails(final BipartisanDetails bipartisanDetails) {
+        this.bipartisanDetails.add(bipartisanDetails);
     }
 
-    public void setBipartisanDetails(final List<BipartisanDetails> bipartisanDetails) {
-        this.bipartisanDetails = bipartisanDetails;
+    public void removeBipartisanDetails(final BipartisanDetails bipartisanDetails) {
+        this.bipartisanDetails.remove(bipartisanDetails);
     }
-
-    public List<LegalCaseAdvocate> getEglcLegalcaseAdvocates() {
-        return eglcLegalcaseAdvocates;
-    }
-
-    public void setEglcLegalcaseAdvocates(final List<LegalCaseAdvocate> eglcLegalcaseAdvocates) {
-        this.eglcLegalcaseAdvocates = eglcLegalcaseAdvocates;
-    }
-
-    /*
-     * public List<Appeal> getEglcAppeals() { return eglcAppeals; } public void setEglcAppeals(final List<Appeal> eglcAppeals) {
-     * this.eglcAppeals = eglcAppeals; }
-     */
 
     public List<Hearings> getHearings() {
         return hearings;
@@ -612,26 +637,28 @@ public class LegalCase extends AbstractAuditable {
         this.batchCaseSet = batchCaseSet;
     }
 
-    public List<PaperBook> getPaperBookSet() {
-        return paperBookSet;
-    }
-
-    public void setPaperBookSet(final List<PaperBook> paperBookSet) {
-        this.paperBookSet = paperBookSet;
-    }
-
-    public List<ProcessRegister> getProcessRegisterSet() {
-        return processRegisterSet;
-    }
-
-    public void setProcessRegisterSet(final List<ProcessRegister> processRegisterSet) {
-        this.processRegisterSet = processRegisterSet;
-    }
+    /*
+     * public List<PaperBook> getPaperBookSet() { return paperBookSet; } public
+     * void setPaperBookSet(final List<PaperBook> paperBookSet) {
+     * this.paperBookSet = paperBookSet; } public List<ProcessRegister>
+     * getProcessRegisterSet() { return processRegisterSet; } public void
+     * setProcessRegisterSet(final List<ProcessRegister> processRegisterSet) {
+     * this.processRegisterSet = processRegisterSet; }
+     */
 
     /*
-     * public Long getDocumentNum() { return documentNum; } public void setDocumentNum(final Long documentNum) { this.documentNum
-     * = documentNum; }
+     * public Long getDocumentNum() { return documentNum; } public void
+     * setDocumentNum(final Long documentNum) { this.documentNum = documentNum;
+     * }
      */
+
+    public List<BipartisanDetails> getBipartisanDetails() {
+        return bipartisanDetails;
+    }
+
+    public void setBipartisanDetails(final List<BipartisanDetails> bipartisanDetails) {
+        this.bipartisanDetails = bipartisanDetails;
+    }
 
     public Date getCasefirstappearancedate() {
         return casefirstappearancedate;
@@ -650,8 +677,9 @@ public class LegalCase extends AbstractAuditable {
     }
 
     /*
-     * public Date getPetFirstAppDate() { return petFirstAppDate; } public void setPetFirstAppDate(final Date petFirstAppDate) {
-     * this.petFirstAppDate = petFirstAppDate; }
+     * public Date getPetFirstAppDate() { return petFirstAppDate; } public void
+     * setPetFirstAppDate(final Date petFirstAppDate) { this.petFirstAppDate =
+     * petFirstAppDate; }
      */
 
     public String getStampNumber() {
@@ -676,12 +704,32 @@ public class LegalCase extends AbstractAuditable {
         this.judgment = judgment;
     }
 
-    public List<Pwr> getEglcPwrs() {
-        return eglcPwrs;
+    public List<Pwr> getPwrList() {
+        return pwrList;
     }
 
-    public void setEglcPwrs(final List<Pwr> eglcPwrs) {
-        this.eglcPwrs = eglcPwrs;
+    public void setPwrList(final List<Pwr> pwrs) {
+        pwrList.clear();
+        if (pwrs != null)
+            pwrList.addAll(pwrs);
+    }
+
+    public void addPwrList(final Pwr pwr) {
+        pwrList.add(pwr);
+    }
+
+    public void removePwrList(final Pwr pwr) {
+        pwrList.remove(pwr);
+    }
+
+    public List<CounterAffidavit> getCounterAffidavits() {
+        return counterAffidavits;
+    }
+
+    public void setCounterAffidavits(final List<CounterAffidavit> counterAffidavitsList) {
+        counterAffidavits.clear();
+        if (counterAffidavits != null)
+            counterAffidavits.addAll(counterAffidavitsList);
     }
 
     public Date getCaseDate() {
@@ -706,14 +754,6 @@ public class LegalCase extends AbstractAuditable {
 
     public void setAppealNum(final String appealNum) {
         this.appealNum = appealNum;
-    }
-
-    public List<BipartisanDetails> getBipartisanDetailsBeanList() {
-        return bipartisanDetailsBeanList;
-    }
-
-    public void setBipartisanDetailsBeanList(final List<BipartisanDetails> bipartisanDetailsBeanList) {
-        this.bipartisanDetailsBeanList = bipartisanDetailsBeanList;
     }
 
     public String getFunctionaryCode() {
@@ -756,17 +796,15 @@ public class LegalCase extends AbstractAuditable {
         this.caseTypeMaster = caseTypeMaster;
     }
 
-    
+    public String getCaseNumber() {
+        return caseNumber;
+    }
 
-	public String getCaseNumber() {
-		return caseNumber;
-	}
+    public void setCaseNumber(final String caseNumber) {
+        this.caseNumber = caseNumber;
+    }
 
-	public void setCaseNumber(String caseNumber) {
-		this.caseNumber = caseNumber;
-	}
-
-	public List<Judgment> getJudgmentsBeanList() {
+    public List<Judgment> getJudgmentsBeanList() {
         return judgmentsBeanList;
     }
 
@@ -782,14 +820,6 @@ public class LegalCase extends AbstractAuditable {
         this.legalCaseDocuments = legalCaseDocuments;
     }
 
-    public List<LcInterimOrder> getLcInterimOrder() {
-        return lcInterimOrder;
-    }
-
-    public void setLcInterimOrder(final List<LcInterimOrder> lcInterimOrder) {
-        this.lcInterimOrder = lcInterimOrder;
-    }
-
     public List<LegalCaseDisposal> getLegalCaseDisposal() {
         return legalCaseDisposal;
     }
@@ -803,7 +833,17 @@ public class LegalCase extends AbstractAuditable {
     }
 
     public void setLegalCaseDepartment(final List<LegalCaseDepartment> legalCaseDepartment) {
-        this.legalCaseDepartment = legalCaseDepartment;
+        this.legalCaseDepartment.clear();
+        if (legalCaseDepartment != null)
+            this.legalCaseDepartment.addAll(legalCaseDepartment);
+    }
+
+    public void addLegalCaseDepartment(final LegalCaseDepartment legalCaseDepartment) {
+        this.legalCaseDepartment.add(legalCaseDepartment);
+    }
+
+    public void removeLegalCaseDepartment(final LegalCaseDepartment legalCaseDepartment) {
+        this.legalCaseDepartment.remove(legalCaseDepartment);
     }
 
     public List<LegalCaseMiscDetails> getLegalCaseMiscDetails() {
@@ -818,8 +858,56 @@ public class LegalCase extends AbstractAuditable {
         return petitionTypeMaster;
     }
 
-    public void setPetitionTypeMaster(PetitionTypeMaster petitionTypeMaster) {
+    public void setPetitionTypeMaster(final PetitionTypeMaster petitionTypeMaster) {
         this.petitionTypeMaster = petitionTypeMaster;
+    }
+
+    public List<BipartisanDetails> getBipartisanRespondentDetailsList() {
+        return bipartisanRespondentDetailsList;
+    }
+
+    public void setBipartisanRespondentDetailsList(final List<BipartisanDetails> bipartisanRespondentDetailsList) {
+        this.bipartisanRespondentDetailsList = bipartisanRespondentDetailsList;
+    }
+
+    public List<BipartisanDetails> getBipartisanPetitionerDetailsList() {
+        return bipartisanPetitionerDetailsList;
+    }
+
+    public void setBipartisanPetitionerDetailsList(final List<BipartisanDetails> bipartisanPetitionerDetailsList) {
+        this.bipartisanPetitionerDetailsList = bipartisanPetitionerDetailsList;
+    }
+
+    public String getOfficerIncharge() {
+        return officerIncharge;
+    }
+
+    public void setOfficerIncharge(final String officerIncharge) {
+        this.officerIncharge = officerIncharge;
+    }
+
+    public Date getNoticeDate() {
+        return noticeDate;
+    }
+
+    public void setNoticeDate(final Date noticeDate) {
+        this.noticeDate = noticeDate;
+    }
+
+    public Boolean getIsfiledbycorporation() {
+        return isfiledbycorporation;
+    }
+
+    public void setIsfiledbycorporation(final Boolean isfiledbycorporation) {
+        this.isfiledbycorporation = isfiledbycorporation;
+    }
+
+    public List<LegalCaseAdvocate> getLegalCaseAdvocates() {
+        return legalCaseAdvocates;
+    }
+
+    public void setLegalCaseAdvocates(final List<LegalCaseAdvocate> legalCaseAdvocates) {
+        this.legalCaseAdvocates = legalCaseAdvocates;
     }
 
 }

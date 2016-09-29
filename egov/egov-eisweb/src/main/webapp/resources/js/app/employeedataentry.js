@@ -73,6 +73,11 @@ $(document).ready(function(){
 	});
 	typeaheadWithEventsHandling(typeaheadobj, '#designationId'); 
 	
+	$("#submit").click(function () {
+		 var code =document.getElementById("code").value;
+		 $("#username").val(code);
+	});
+	
 
 });
 

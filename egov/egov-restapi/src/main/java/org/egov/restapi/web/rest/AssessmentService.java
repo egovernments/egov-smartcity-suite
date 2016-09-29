@@ -39,8 +39,10 @@
  */
 package org.egov.restapi.web.rest;
 
+import static org.egov.ptis.constants.PropertyTaxConstants.ADMIN_HIERARCHY_TYPE;
+import static org.egov.ptis.constants.PropertyTaxConstants.WARD;
+
 import java.io.IOException;
-import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
@@ -57,43 +59,33 @@ import org.codehaus.jackson.map.JsonMappingException;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.codehaus.jackson.map.SerializationConfig;
 import org.egov.dcb.bean.ChequePayment;
-import org.egov.infra.config.core.ApplicationThreadLocals;
 import org.egov.infra.utils.StringUtils;
 import org.egov.infra.validation.exception.ValidationError;
 import org.egov.infra.validation.exception.ValidationException;
 import org.egov.ptis.constants.PropertyTaxConstants;
-import org.egov.ptis.domain.entity.property.Document;
 import org.egov.ptis.domain.entity.property.PropertyTypeMaster;
 import org.egov.ptis.domain.model.AssessmentDetails;
 import org.egov.ptis.domain.model.DrainageEnum;
 import org.egov.ptis.domain.model.ErrorDetails;
-import org.egov.ptis.domain.model.FloorDetails;
 import org.egov.ptis.domain.model.LocalityDetails;
 import org.egov.ptis.domain.model.MasterCodeNamePairDetails;
-import org.egov.ptis.domain.model.NewPropertyDetails;
 import org.egov.ptis.domain.model.OwnerDetails;
 import org.egov.ptis.domain.model.PayPropertyTaxDetails;
 import org.egov.ptis.domain.model.PropertyTaxDetails;
 import org.egov.ptis.domain.model.ReceiptDetails;
 import org.egov.ptis.domain.model.RestPropertyTaxDetails;
+import org.egov.ptis.domain.model.ViewPropertyDetails;
 import org.egov.ptis.domain.model.enums.BasicPropertyStatus;
 import org.egov.ptis.domain.service.property.PropertyExternalService;
-import org.egov.restapi.model.AmenitiesDetails;
 import org.egov.restapi.model.AssessmentRequest;
-import org.egov.restapi.model.AssessmentsDetails;
-import org.egov.restapi.model.BuildingPlanDetails;
-import org.egov.restapi.model.ConstructionTypeDetails;
-import org.egov.restapi.model.CorrespondenceAddressDetails;
-import org.egov.restapi.model.CreatePropertyDetails;
 import org.egov.restapi.model.LocalityCodeDetails;
 import org.egov.restapi.model.OwnershipCategoryDetails;
-import org.egov.restapi.model.PropertyAddressDetails;
 import org.egov.restapi.model.PropertyTaxBoundaryDetails;
-import org.egov.restapi.model.SurroundingBoundaryDetails;
-import org.egov.restapi.model.VacantLandDetails;
 import org.egov.restapi.util.JsonConvertor;
 import org.egov.restapi.util.ValidationUtil;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.config.ConfigurableBeanFactory;
+import org.springframework.context.annotation.Scope;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -106,6 +98,7 @@ import org.springframework.web.bind.annotation.RestController;
  *
  */
 @RestController
+@Scope(scopeName=ConfigurableBeanFactory.SCOPE_PROTOTYPE)
 public class AssessmentService {
 
     @Autowired
@@ -145,7 +138,6 @@ public class AssessmentService {
     @RequestMapping(value = "/property/propertytaxdetails", method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON, produces = MediaType.APPLICATION_JSON)
     public String getPropertyTaxDetails(@RequestBody String assessmentRequest)
             throws JsonGenerationException, JsonMappingException, IOException {
-
         PropertyTaxDetails propertyTaxDetails = new PropertyTaxDetails();
         AssessmentRequest assessmentReq = (AssessmentRequest) getObjectFromJSONRequest(assessmentRequest,
                 AssessmentRequest.class);
@@ -209,6 +201,7 @@ public class AssessmentService {
             String ownerName = assessmentReq.getOwnerName();
             String mobileNumber = assessmentReq.getMobileNumber();
             String category = assessmentReq.getCategory();
+            String doorNo = assessmentReq.getDoorNo();
             if (!StringUtils.isBlank(category)) {
                 if (!(PropertyTaxConstants.CATEGORY_TYPE_PROPERTY_TAX.equals(category)
                         || PropertyTaxConstants.CATEGORY_TYPE_VACANTLAND_TAX.equals(category))) {
@@ -220,8 +213,8 @@ public class AssessmentService {
                     return JsonConvertor.convert(errors);
                 }
             }
-            if (!StringUtils.isBlank(assessmentNo) || !StringUtils.isBlank(ownerName) || !StringUtils.isBlank(mobileNumber)) {
-                propertyTaxDetailsList = propertyExternalService.getPropertyTaxDetails(assessmentNo, ownerName, mobileNumber, category);
+            if (!StringUtils.isBlank(assessmentNo) || !StringUtils.isBlank(ownerName) || !StringUtils.isBlank(mobileNumber) || !StringUtils.isBlank(doorNo)) {
+                propertyTaxDetailsList = propertyExternalService.getPropertyTaxDetails(assessmentNo, ownerName, mobileNumber, category, doorNo);
             } else {
                 ErrorDetails errorDetails = getInvalidCredentialsErrorDetails();
                 PropertyTaxDetails propertyTaxDetails = new PropertyTaxDetails();
@@ -242,6 +235,12 @@ public class AssessmentService {
                     List<RestPropertyTaxDetails> taxDetails = new ArrayList<RestPropertyTaxDetails>(0);
                     taxDetails.add(ar);
                     propertyTaxDetails.setTaxDetails(taxDetails);
+                }
+                if(propertyTaxDetails.getErrorDetails() == null){
+                	ErrorDetails errorDetails = new ErrorDetails();
+                	errorDetails.setErrorCode(PropertyTaxConstants.THIRD_PARTY_ERR_CODE_SUCCESS);
+                    errorDetails.setErrorMessage(PropertyTaxConstants.THIRD_PARTY_ERR_MSG_SUCCESS);
+                	propertyTaxDetails.setErrorDetails(errorDetails);
                 }
             }
         } catch (Exception e) {
@@ -458,7 +457,8 @@ public class AssessmentService {
      */
     @RequestMapping(value = "/property/localities", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON)
     public String getLocalities() throws JsonGenerationException, JsonMappingException, IOException {
-        List<MasterCodeNamePairDetails> mstrCodeNamePairDetailsList = propertyExternalService.getLocalities();
+        List<MasterCodeNamePairDetails> mstrCodeNamePairDetailsList = propertyExternalService.getBoundariesByBoundaryTypeAndHierarchyType(
+        		PropertyTaxConstants.LOCALITY, PropertyTaxConstants.LOCATION_HIERARCHY_TYPE);
         return getJSONResponse(mstrCodeNamePairDetailsList);
     }
 
@@ -490,7 +490,8 @@ public class AssessmentService {
      */
     @RequestMapping(value = "/property/electionWards", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON)
     public String getElectionWards() throws JsonGenerationException, JsonMappingException, IOException {
-        List<MasterCodeNamePairDetails> mstrCodeNamePairDetailsList = propertyExternalService.getElectionBoundaries();
+        List<MasterCodeNamePairDetails> mstrCodeNamePairDetailsList = propertyExternalService.getBoundariesByBoundaryTypeAndHierarchyType(
+        		WARD, ADMIN_HIERARCHY_TYPE);
         return getJSONResponse(mstrCodeNamePairDetailsList);
     }
 
@@ -680,110 +681,18 @@ public class AssessmentService {
     }
 
     /**
-     * This method is used to create property.
-     * 
-     * @param createPropertyDetails - Property details request
-     * @return
-     * @throws JsonGenerationException
-     * @throws JsonMappingException
-     * @throws IOException
-     * @throws ParseException
+     * This method provides ward-wise property details
+     * @throws IOException 
+     * @throws JsonMappingException 
+     * @throws JsonParseException 
      */
-    @RequestMapping(value = "/property/createProperty", method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON, produces = MediaType.APPLICATION_JSON)
-    public String createProperty(@RequestBody String createPropertyDetails)
-            throws JsonGenerationException, JsonMappingException, IOException, ParseException {
-        ApplicationThreadLocals.setUserId(Long.valueOf("40"));
-        CreatePropertyDetails createPropDetails = (CreatePropertyDetails) getObjectFromJSONRequest(
-                createPropertyDetails, CreatePropertyDetails.class);
-
-        ErrorDetails errorDetails = ValidationUtil.validateCreateRequest(createPropDetails);
-        if (errorDetails != null) {
-            return getJSONResponse(errorDetails);
-        } else {
-            String propertyTypeMasterCode = createPropDetails.getPropertyTypeMasterCode();
-            String propertyCategoryCode = createPropDetails.getPropertyCategoryCode();
-            String apartmentCmplxCode = createPropDetails.getApartmentCmplxCode();
-            List<OwnerDetails> ownerDetailsList = createPropDetails.getOwnerDetails();
-
-            AssessmentsDetails assessmentsDetails = createPropDetails.getAssessmentDetails();
-            String mutationReasonCode = assessmentsDetails.getMutationReasonCode();
-            // TODO : Need to verify whether this values has to be used or not
-            String parentPropertyAssessmentNo = assessmentsDetails.getParentPropertyAssessmentNo();
-            String extentOfSite = assessmentsDetails.getExtentOfSite();
-            Boolean isExtentAppurtenantLand = assessmentsDetails.getIsExtentAppurtenantLand();
-            String occupancyCertificationNo = assessmentsDetails.getOccupancyCertificationNo();
-            Boolean isSuperStructure = assessmentsDetails.getIsSuperStructure();
-            String siteOwnerName = assessmentsDetails.getSiteOwnerName();
-            Boolean isBuildingPlanDetails = assessmentsDetails.getIsBuildingPlanDetails();
-
-            BuildingPlanDetails buildingPlanDetails = assessmentsDetails.getBuildingPlanDetails();
-            String buildingPermissionNo = buildingPlanDetails.getBuildingPermissionNo();
-            String buildingPermissionDate = buildingPlanDetails.getBuildingPermissionDate();
-            String percentageDeviation = buildingPlanDetails.getPercentageDeviation();
-
-            String regdDocNo = assessmentsDetails.getRegdDocNo();
-            String regdDocDate = assessmentsDetails.getRegdDocDate();
-
-            PropertyAddressDetails propAddressDetails = createPropDetails.getPropertyAddressDetails();
-            String localityCode = propAddressDetails.getLocalityCode();
-            String street = propAddressDetails.getStreet();
-            String electionWardCode = propAddressDetails.getElectionWardCode();
-            String doorNo = propAddressDetails.getDoorNo();
-            String enumerationBlockCode = propAddressDetails.getEnumerationBlockCode();
-            String pinCode = propAddressDetails.getPinCode();
-            Boolean isCorrAddrDiff = propAddressDetails.getIsCorrAddrDiff();
-            CorrespondenceAddressDetails corrAddressDetails = propAddressDetails.getCorrAddressDetails();
-            String corrAddr1 = corrAddressDetails.getCorrAddr1();
-            String corrAddr2 = corrAddressDetails.getCorrAddr2();
-            String corrPinCode = corrAddressDetails.getCorrPinCode();
-
-            AmenitiesDetails amenitiesDetails = createPropDetails.getAmenitiesDetails();
-            Boolean hasLift = amenitiesDetails.hasLift();
-            Boolean hasToilet = amenitiesDetails.hasToilet();
-            Boolean hasWaterTap = amenitiesDetails.hasWaterTap();
-            Boolean hasElectricity = amenitiesDetails.hasElectricity();
-            Boolean hasAttachedBathroom = amenitiesDetails.hasAttachedBathroom();
-            Boolean hasWaterHarvesting = amenitiesDetails.hasWaterHarvesting();
-            Boolean hasCable = amenitiesDetails.hasCableConnection();
-
-            ConstructionTypeDetails constructionTypeDetails = createPropDetails.getConstructionTypeDetails();
-            String floorTypeCode = constructionTypeDetails.getFloorTypeCode();
-            String roofTypeCode = constructionTypeDetails.getRoofTypeCode();
-            String wallTypeCode = constructionTypeDetails.getWallTypeCode();
-            String woodTypeCode = constructionTypeDetails.getWoodTypeCode();
-
-            List<FloorDetails> floorDetailsList = createPropDetails.getFloorDetails();
-            String completionDate = floorDetailsList.get(0).getConstructionDate();
-
-            VacantLandDetails vacantLandDetails = createPropDetails.getVacantLandDetails();
-            String surveyNumber = vacantLandDetails.getSurveyNumber();
-            String pattaNumber = vacantLandDetails.getPattaNumber();
-            Float vacantLandArea = vacantLandDetails.getVacantLandArea();
-            Double marketValue = vacantLandDetails.getMarketValue();
-            Double currentCapitalValue = vacantLandDetails.getCurrentCapitalValue();
-            String effectiveDate = vacantLandDetails.getEffectiveDate();
-
-            SurroundingBoundaryDetails surroundingBoundaryDetails = createPropDetails.getSurroundingBoundaryDetails();
-            String northBoundary = surroundingBoundaryDetails.getNorthBoundary();
-            String southBoundary = surroundingBoundaryDetails.getSouthBoundary();
-            String eastBoundary = surroundingBoundaryDetails.getEastBoundary();
-            String westBoundary = surroundingBoundaryDetails.getWestBoundary();
-
-            List<Document> documents = null;
-            NewPropertyDetails newPropertyDetails = propertyExternalService.createNewProperty(propertyTypeMasterCode,
-                    propertyCategoryCode, apartmentCmplxCode, ownerDetailsList, mutationReasonCode, extentOfSite,
-                    isExtentAppurtenantLand, occupancyCertificationNo, isSuperStructure, siteOwnerName,
-                    isBuildingPlanDetails, buildingPermissionNo, buildingPermissionDate, percentageDeviation, regdDocNo,
-                    regdDocDate, localityCode, street, electionWardCode, doorNo, enumerationBlockCode, pinCode,
-                    isCorrAddrDiff, corrAddr1, corrAddr2, corrPinCode, hasLift, hasToilet, hasWaterTap, hasElectricity,
-                    hasAttachedBathroom, hasWaterHarvesting, hasCable, floorTypeCode, roofTypeCode, wallTypeCode,
-                    woodTypeCode, floorDetailsList, surveyNumber, pattaNumber, vacantLandArea, marketValue,
-                    currentCapitalValue, effectiveDate, completionDate, northBoundary, southBoundary, eastBoundary,
-                    westBoundary, documents);
-            return getJSONResponse(newPropertyDetails);
-        }
+    @RequestMapping(value = "/property/wardWisePropertyDetails", method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON, produces = MediaType.APPLICATION_JSON)
+    public String getWardWisePropertyDetails(@RequestBody String assessmentRequest) throws JsonParseException, JsonMappingException, IOException {
+    	AssessmentRequest assessmentReq = (AssessmentRequest) getObjectFromJSONRequest(assessmentRequest,
+                AssessmentRequest.class);
+    	List<ViewPropertyDetails> propertyDetails = propertyExternalService.getPropertyDetailsForTheWard(assessmentReq.getUlbCode(), assessmentReq.getWardNum());
+    	return getJSONResponse(propertyDetails);
     }
-
     /**
      * This method is used to prepare jSON response.
      * 

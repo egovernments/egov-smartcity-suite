@@ -43,6 +43,8 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import javax.persistence.CascadeType;
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
@@ -50,29 +52,24 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
 import javax.validation.constraints.NotNull;
 
-import org.egov.commons.EgwStatus;
-import org.egov.infra.persistence.entity.AbstractAuditable;
-import org.egov.infra.persistence.validator.annotation.OptionalPattern;
-import org.egov.infra.persistence.validator.annotation.Required;
+import org.egov.infra.persistence.entity.AbstractPersistable;
 import org.egov.infra.persistence.validator.annotation.ValidateDate;
 import org.egov.infra.utils.DateUtils;
 import org.egov.infra.validation.exception.ValidationError;
 import org.egov.lcms.utils.constants.LcmsConstants;
 import org.hibernate.validator.constraints.Length;
 
-/**
- * Appeal entity.
- *
- * @author MyEclipse Persistence Tools
- */
 @Entity
 @Table(name = "EGLC_APPEAL")
 @SequenceGenerator(name = Appeal.SEQ_EGLC_APPEAL, sequenceName = Appeal.SEQ_EGLC_APPEAL, allocationSize = 1)
-public class Appeal extends AbstractAuditable {
+public class Appeal extends AbstractPersistable<Long> {
 
     private static final long serialVersionUID = 1517694643078084884L;
     public static final String SEQ_EGLC_APPEAL = "SEQ_EGLC_APPEAL";
@@ -80,32 +77,37 @@ public class Appeal extends AbstractAuditable {
     @Id
     @GeneratedValue(generator = SEQ_EGLC_APPEAL, strategy = GenerationType.SEQUENCE)
     private Long id;
-    @ManyToOne(fetch = FetchType.LAZY)
+
+    @ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @NotNull
-    @JoinColumn(name = "JUDGMENTIMPL")
+    @JoinColumn(name = "judgmentimpl")
     private JudgmentImpl judgmentImpl;
-    @ManyToOne(fetch = FetchType.LAZY)
+
+    @Length(max = 50)
     @NotNull
-    @JoinColumn(name = "STATUS")
-    private EgwStatus status;
-    @Required(message = "srnumber.null")
-    @Length(max = 50, message = "srnumber.length")
-    @OptionalPattern(regex = LcmsConstants.alphaNumeric, message = "srnumber.alpha")
+    @Column(name = "srnumber")
     private String srNumber;
-    @Required(message = "appealfiledon.null")
-    @ValidateDate(allowPast = true, dateFormat = LcmsConstants.DATE_FORMAT, message = "invalid.appeal.date")
+
+    @ValidateDate(allowPast = true, dateFormat = LcmsConstants.DATE_FORMAT)
+    @Temporal(TemporalType.DATE)
+    @Column(name = "appealfiledon")
     private Date appealFiledOn;
-    @Required(message = "appealfiledby.null")
-    @Length(max = 100, message = "appealfiledby.length")
-    @OptionalPattern(regex = LcmsConstants.alphaNumeric, message = "appealfiledby.alpha")
+
+    @Length(max = 100)
+    @Column(name = "appealfiledby")
     private String appealFiledBy;
 
-    public EgwStatus getStatus() {
-        return status;
+    @OneToMany(mappedBy = "appeal", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    private List<AppealDocuments> appealDocuments = new ArrayList<AppealDocuments>(0);
+
+    @Override
+    public Long getId() {
+        return id;
     }
 
-    public void setStatus(final EgwStatus status) {
-        this.status = status;
+    @Override
+    public void setId(final Long id) {
+        this.id = id;
     }
 
     public String getSrNumber() {
@@ -132,14 +134,20 @@ public class Appeal extends AbstractAuditable {
         this.appealFiledBy = appealFiledBy;
     }
 
-    @Override
-    public Long getId() {
-        return id;
+    public JudgmentImpl getJudgmentImpl() {
+        return judgmentImpl;
     }
 
-    @Override
-    public void setId(final Long id) {
-        this.id = id;
+    public void setJudgmentImpl(final JudgmentImpl judgmentImpl) {
+        this.judgmentImpl = judgmentImpl;
+    }
+
+    public List<AppealDocuments> getAppealDocuments() {
+        return appealDocuments;
+    }
+
+    public void setAppealDocuments(final List<AppealDocuments> appealDocuments) {
+        this.appealDocuments = appealDocuments;
     }
 
     public List<ValidationError> validate() {
@@ -150,11 +158,4 @@ public class Appeal extends AbstractAuditable {
         return errors;
     }
 
-    public JudgmentImpl getJudgmentImpl() {
-        return judgmentImpl;
-    }
-
-    public void setJudgmentImpl(JudgmentImpl judgmentImpl) {
-        this.judgmentImpl = judgmentImpl;
-    }
 }

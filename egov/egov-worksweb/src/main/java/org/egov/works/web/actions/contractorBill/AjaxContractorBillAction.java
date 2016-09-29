@@ -39,20 +39,6 @@
  */
 package org.egov.works.web.actions.contractorBill;
 
-import java.io.IOException;
-import java.math.BigDecimal;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
-
-import javax.servlet.http.HttpServletResponse;
-
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.apache.struts2.ServletActionContext;
@@ -96,6 +82,20 @@ import org.egov.works.services.contractoradvance.ContractorAdvanceService;
 import org.egov.works.services.impl.MeasurementBookServiceImpl;
 import org.egov.works.utils.WorksConstants;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
+
+import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
+import java.math.BigDecimal;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
 
 public class AjaxContractorBillAction extends BaseFormAction {
 
@@ -180,7 +180,11 @@ public class AjaxContractorBillAction extends BaseFormAction {
     private static final String TRACK_MLS_CHECK = "trackMlsCheckForBillCreation";
     private static final String STATUTORY_DEDUCTION_AMOUNT = "statutoryDeductionAmount";
     private static final String PARTY_TYPE_CONTRACTOR = "Contractor";
+
+    @Autowired
+    @Qualifier("recoveryPersistenceService")
     private RecoveryService recoveryService;
+
     private String subPartyType;
     private String typeOfWork;
     private BigDecimal grossAmount;
@@ -638,7 +642,7 @@ public class AjaxContractorBillAction extends BaseFormAction {
     }
 
     public CFinancialYear getCurrentFinancialYear(final Date billDate) {
-        return finHibernateDao.getFinancialYearByDate(billDate);
+        return finHibernateDao.getFinYearByDate(billDate);
     }
 
     public String getStatutoryDeductionAmount() throws Exception {
@@ -992,10 +996,6 @@ public class AjaxContractorBillAction extends BaseFormAction {
 
     public void setEgovCommon(final EgovCommon egovCommon) {
         this.egovCommon = egovCommon;
-    }
-
-    public void setRecoveryService(final RecoveryService recoveryService) {
-        this.recoveryService = recoveryService;
     }
 
     public String getSubPartyType() {

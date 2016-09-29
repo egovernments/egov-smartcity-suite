@@ -60,7 +60,7 @@ import org.hibernate.validator.constraints.SafeHtml;
 @Entity
 @Table(name = "EGLC_GOVERNMENTDEPARTMENT")
 @SequenceGenerator(name = GovernmentDepartment.SEQ_EGLC_GOVERNMENTDEPARTMENT, sequenceName = GovernmentDepartment.SEQ_EGLC_GOVERNMENTDEPARTMENT, allocationSize = 1)
-@Unique(id = "id", tableName = "EGLC_GOVERNMENTDEPARTMENT", columnName = "NAME", enableDfltMsg = true)
+@Unique(id = "id", tableName = "EGLC_GOVERNMENTDEPARTMENT", columnName = "name",fields = { "name" }, enableDfltMsg = true)
 @AuditOverrides({ @AuditOverride(forClass = AbstractAuditable.class, name = "lastModifiedBy"),
         @AuditOverride(forClass = AbstractAuditable.class, name = "lastModifiedDate") })
 public class GovernmentDepartment extends AbstractAuditable {
@@ -75,16 +75,16 @@ public class GovernmentDepartment extends AbstractAuditable {
     @Audited
     @SafeHtml
     @NotNull
-    @Length(min = 1, max = 25)
+    @Length(max = 25)
     private String code;
 
     @Audited
     @NotNull
-    @Length(min = 1, max = 256)
+    @Length(max = 256)
     private String name;
 
     @SafeHtml
-    @Length(min = 3, max = 256)
+    @Length(max = 256)
     private String description;
 
     @Min(1)

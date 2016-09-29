@@ -51,6 +51,7 @@
 		<property name="triggers">
 	    	<list>
 				<ref bean="complaintEscalationCronTrigger" />
+				<ref bean="complaintIndexingCronTrigger" />
 	    	</list>
 		</property>	
 		<property name="applicationContextSchedulerContextKey" value="applicationQuartzContext-pgr" /> 
@@ -65,8 +66,8 @@
 		<property name="jobDataAsMap">
             <map>
                 <entry key="jobBeanName" value="complaintEscalationJob"/>
-				<entry key="userName" value="egovernments"/>
-				<entry key="transactional"  value="true" />
+				<entry key="userName" value="egovernments" />
+				<entry key="cityDataRequired" value="true"/>
 				<entry key="moduleName" value="pgr"/>
             </map>
         </property>   	
@@ -81,4 +82,31 @@
 		<property name="name" value="PGR_ESCALATION_TRIGGER" />		
         <property name="cronExpression" value="0 */52 * * * ?" />
     </bean>
+    
+    <bean name="complaintIndexingJobDetail" id="complaintIndexingJobDetail" class="org.springframework.scheduling.quartz.JobDetailFactoryBean" lazy-init="false"> 
+		<property name="group" value="PGR_JOB_GROUP"/>
+   		<property name="name" value="PGR_INDEX_JOB"/>
+   		<property name="durability" value="true" /> 
+   		<property name="jobClass" value="org.egov.pgr.service.scheduler.jobs.ComplaintIndexingJob"/>
+   		<property name="requestsRecovery" value="true"/>
+		<property name="jobDataAsMap">
+            <map>
+                <entry key="jobBeanName" value="complaintIndexingJob"/>
+				<entry key="userName" value="egovernments" />
+				<entry key="cityDataRequired" value="true"/>
+				<entry key="moduleName" value="pgr"/>
+            </map>
+        </property>   	
+	</bean>
+	
+	<bean id="complaintIndexingJob" class="org.egov.pgr.service.scheduler.jobs.ComplaintIndexingJob" lazy-init="true"> 	
+    </bean>
+    
+    <bean id="complaintIndexingCronTrigger" class="org.springframework.scheduling.quartz.CronTriggerFactoryBean" lazy-init="true">
+        <property name="jobDetail" ref="complaintIndexingJobDetail" />
+		<property name="group" value="PGR_INDEX_TRIGGER_GROUP" />
+		<property name="name" value="PGR_INDEX_TRIGGER" />		
+        <property name="cronExpression" value="0 0 2 * * ?" />
+    </bean>
+    
 </beans>

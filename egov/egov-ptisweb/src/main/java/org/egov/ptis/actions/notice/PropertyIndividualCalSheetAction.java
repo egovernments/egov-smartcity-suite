@@ -92,7 +92,6 @@ import static org.egov.ptis.constants.PropertyTaxConstants.REPORT_TEMPLATENAME_D
 import static org.egov.ptis.constants.PropertyTaxConstants.STATEGOVT_BUILDING_ALV_PERCENTAGE;
 import static org.egov.ptis.constants.PropertyTaxConstants.SqFt;
 
-@Transactional(readOnly = true)
 public class PropertyIndividualCalSheetAction extends BaseFormAction {
 	private final Logger LOGGER = Logger.getLogger(getClass());
 	private final BigDecimal TOTAL_MONTHS = new BigDecimal("12");

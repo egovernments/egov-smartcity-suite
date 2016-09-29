@@ -685,7 +685,10 @@ function checkContingentForSameMisAttribs(obj,len)
 																				<td align="left" class="blueborderfortdnew"><s:hidden
 																						name="contractorList[%{#s.index}].billVoucherNumber"
 																						id="billVoucherNumber%{#s.index}"
-																						value="%{billVoucherNumber}" /> <s:property
+																						value="%{billVoucherNumber}" /> <s:hidden
+																						name="contractorList[%{#s.index}].billVoucherId"
+																						id="billVoucherId%{#s.index}"
+																						value="%{billVoucherId}" /> <s:property
 																						value="%{billVoucherNumber}" /></td>
 																				<td style="text-align: left"
 																					class="blueborderfortdnew"><s:hidden
@@ -844,7 +847,10 @@ function checkContingentForSameMisAttribs(obj,len)
 																				<td align="left" class="blueborderfortdnew"><s:hidden
 																						name="supplierList[%{#s.index}].billVoucherNumber"
 																						id="billVoucherNumber%{#s.index}"
-																						value="%{billVoucherNumber}" /> <s:property
+																						value="%{billVoucherNumber}" />  <s:hidden
+																						name="supplierList[%{#s.index}].billVoucherId"
+																						id="billVoucherId%{#s.index}"
+																						value="%{billVoucherId}" /> <s:property
 																						value="%{billVoucherNumber}" /></td>
 																				<td style="text-align: left"
 																					class="blueborderfortdnew"><s:hidden
@@ -1004,7 +1010,10 @@ function checkContingentForSameMisAttribs(obj,len)
 																				<td align="left" class="blueborderfortdnew"><s:hidden
 																						name="contingentList[%{#s.index}].billVoucherNumber"
 																						id="billVoucherNumber%{#s.index}"
-																						value="%{billVoucherNumber}" /> <s:property
+																						value="%{billVoucherNumber}" />  <s:hidden
+																						name="contingentList[%{#s.index}].billVoucherId"
+																						id="billVoucherId%{#s.index}"
+																						value="%{billVoucherId}" /> <s:property
 																						value="%{billVoucherNumber}" /></td>
 																				<td style="text-align: left"
 																					class="blueborderfortdnew"><s:hidden

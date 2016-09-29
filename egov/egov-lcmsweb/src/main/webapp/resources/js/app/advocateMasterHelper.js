@@ -37,14 +37,19 @@
  *
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
-
+$bankBranchId=0;
 $(document).ready(function(){
-	
+	$("#buttonid").click(function() {
+		document.forms[0].submit();
+	});
+	$('#bankId').trigger('blur');
+	$bankBranchId=$('#bankBranchId').val();
 	callbankdetails();
 	$('#paymentmode').change(function(){
 	callbankdetails();
-	});
 	
+	});
+});
 jQuery('#btnsearch').click(function(e) {
 		callAjaxSearch();
 	});
@@ -70,14 +75,9 @@ function callAjaxSearch() {
 					type: "POST",
 					"data":  getFormData(jQuery('form'))
 				},
-				"fnRowCallback": function (row, data, index) {
-						$(row).on('click', function() {
-				console.log(data.id);
-				window.open('/lcms/advocatemaster/'+ $('#mode').val() +'/'+data.id,'','width=800, height=600');
-			});
-				 },
 				"sPaginationType" : "bootstrap",
 				"bDestroy" : true,
+				'bAutoWidth': false,
 				"sDom" : "<'row'<'col-xs-12 hidden col-right'f>r>t<'row'<'col-xs-3'i><'col-xs-3 col-right'l><'col-xs-3 col-right'<'export-data'T>><'col-xs-3 text-right'p>>",
 				"aLengthMenu" : [ [ 10, 25, 50, -1 ], [ 10, 25, 50, "All" ] ],
 				"oTableTools" : {
@@ -88,9 +88,13 @@ function callAjaxSearch() {
 				columns : [ { 
 "data" : "name", "sClass" : "text-left"} ,{ 
 "data" : "mobileNumber", "sClass" : "text-left"} ,{ 
-"data" : "email", "sClass" : "text-left"}]				
+"data" : "email", "sClass" : "text-left"},{ 
+	"data" : "id","visible": false, "searchable": false }]				
 			});
 			}
+$("#resultTable").on('click','tbody tr',function(event) {
+	window.open('/lcms/advocatemaster/'+ $('#mode').val() +'/'+drillDowntableContainer.fnGetData(this,3),'','width=800, height=600');
+});
 
 
 function callbankdetails(){
@@ -116,8 +120,6 @@ function callbankdetails(){
 	}
 }
 
-});
-
 
 $('#bankId').blur(function(){
 	 if ($('#bankId').val() === '') {
@@ -138,7 +140,16 @@ $('#bankId').blur(function(){
 					$('#bankBranch').empty();
 					$('#bankBranch').append($("<option value=''>Select from below</option>"));
 					$.each(response, function(index, value) {
-					$('#bankBranch').append($('<option>').text(value.branchname).attr('value', value.id))
+						var selected="";
+						if($bankBranchId)
+						{
+							if($bankBranchId==value.id)
+							{
+								selected="selected";
+							}
+						}
+//					$('#bankBranch').append($('<option>').text(value.branchname).attr('value', value.id))
+					$('#bankBranch').append($('<option '+ selected +'>').text(value.branchname).attr('value', value.id));
 					});
 				}, 
 				error: function (response) {
@@ -147,3 +158,35 @@ $('#bankId').blur(function(){
 			});
 			}
 	});
+$('#monthlyRenumeration').keyup(function(e) { // validate two decimal points
+	var regex = /^\d+(\.\d{0,2})?$/g;
+	if (!regex.test(this.value)) {
+		$(this).val($(this).getNum());
+	}
+});
+jQuery.fn.getNum = function() {
+	var val = $.trim($(this).val());
+	if (val.indexOf(',') > -1) {
+		val = val.replace(',', '.');
+	}
+	var num = parseFloat(val);
+	var num = num.toFixed(2);
+	if (isNaN(num)) {
+		num = '';
+	}
+	return num;
+}
+function checkPanNumber() {
+	var text =document.getElementById('panNumber').value;
+	var panNumber = document.getElementById('panNumber').value.length;
+    if( text != text.toUpperCase() || panNumber<10 && panNumber!='' )
+        {
+    	bootbox.alert("Enter valid Pan Number.")
+        window.scroll(0,0);
+        return false;
+        }
+    return true;
+} 
+$('#panNumber').keyup(function() {
+    this.value = this.value.toUpperCase();
+});

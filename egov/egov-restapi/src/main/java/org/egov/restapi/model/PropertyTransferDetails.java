@@ -42,6 +42,8 @@ package org.egov.restapi.model;
 import java.io.Serializable;
 import java.util.List;
 
+import org.egov.ptis.domain.model.OwnerInformation;
+
 
 /**
  * The PropertyTransferDetails class is used to contain property transfer related details

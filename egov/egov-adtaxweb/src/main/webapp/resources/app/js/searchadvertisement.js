@@ -108,7 +108,7 @@ $(document).ready(function(){
 	
 	$('#categories').change(function(){
 		$.ajax({
-			url: "/adtax/hoarding/subcategories-by-category",    
+			url: "/adtax/hoarding/getsubcategories-by-category",    
 			type: "GET",
 			data: {
 				categoryId : $('#categories').val()   
@@ -145,7 +145,7 @@ $(document).ready(function(){
 			"aLengthMenu": [[10, 25, 50, -1], [10, 25, 50, "All"]],
 			"autoWidth": false,
 			"bDestroy": true,
-			"ajax": "/adtax/hoarding/search-adtax-result?"+$("#adtaxsearchform").serialize(),
+			"ajax": "/adtax/hoarding/getsearch-adtax-result?"+$("#adtaxsearchform").serialize(),
 			"columns" : [
 			              { "data" : "agencyName", "title": "Agency"},
 						  { "data" : "advertisementNumber", "title":"Advertisement No."},
@@ -231,7 +231,7 @@ $(document).ready(function(){
 			"aLengthMenu": [[10, 25, 50, -1], [10, 25, 50, "All"]],
 			"autoWidth": false,
 			"bDestroy": true,
-			"ajax": "/adtax/hoarding/renewal-search-result?"+$("#renewalsearchform").serialize(),
+			"ajax": "/adtax/hoarding/renewl-search-result?"+$("#renewalsearchform").serialize(),
 			"columns" : [
 						  { "data" : "advertisementNumber", "title":"Advertisement No."},
 						  { "data" : "categoryName", "title": "Category"},

@@ -40,49 +40,11 @@
 
 package org.egov.wtms.web.controller.reports;
 
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
-import com.lowagie.text.Document;
-import com.lowagie.text.pdf.PdfContentByte;
-import com.lowagie.text.pdf.PdfImportedPage;
-import com.lowagie.text.pdf.PdfReader;
-import com.lowagie.text.pdf.PdfWriter;
-
-import org.apache.commons.io.FileUtils;
-import org.apache.commons.io.IOUtils;
-import org.apache.log4j.Logger;
-import org.egov.infra.admin.master.entity.Boundary;
-import org.egov.infra.admin.master.service.BoundaryService;
-import org.egov.infra.admin.master.service.UserService;
-import org.egov.infra.exception.ApplicationRuntimeException;
-import org.egov.infra.filestore.entity.FileStoreMapper;
-import org.egov.infra.filestore.repository.FileStoreMapperRepository;
-import org.egov.infra.filestore.service.FileStoreService;
-import org.egov.infra.security.utils.SecurityUtils;
-import org.egov.wtms.application.entity.GenerateConnectionBill;
-import org.egov.wtms.application.service.GenerateConnectionBillService;
-import org.egov.wtms.application.service.WaterConnectionDetailsService;
-import org.egov.wtms.masters.entity.ApplicationType;
-import org.egov.wtms.masters.entity.PropertyType;
-import org.egov.wtms.masters.service.ApplicationTypeService;
-import org.egov.wtms.masters.service.PropertyTypeService;
-import org.egov.wtms.utils.WaterTaxUtils;
-import org.egov.wtms.utils.constants.WaterTaxConstants;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.http.MediaType;
-import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.ResponseBody;
-
-import javax.servlet.ServletContext;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import javax.validation.ValidationException;
+import static java.math.BigDecimal.ZERO;
+import static org.egov.infra.web.utils.WebUtils.toJSON;
+import static org.egov.ptis.constants.PropertyTaxConstants.REVENUE_HIERARCHY_TYPE;
+import static org.egov.ptis.constants.PropertyTaxConstants.ZONE;
+import static org.springframework.web.bind.annotation.RequestMethod.GET;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -101,10 +63,42 @@ import java.util.zip.Deflater;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 
-import static java.math.BigDecimal.ZERO;
-import static org.egov.ptis.constants.PropertyTaxConstants.REVENUE_HIERARCHY_TYPE;
-import static org.egov.ptis.constants.PropertyTaxConstants.ZONE;
-import static org.springframework.web.bind.annotation.RequestMethod.GET;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import javax.validation.ValidationException;
+
+import org.apache.commons.io.FileUtils;
+import org.apache.commons.io.IOUtils;
+import org.apache.log4j.Logger;
+import org.egov.infra.admin.master.entity.Boundary;
+import org.egov.infra.admin.master.service.BoundaryService;
+import org.egov.infra.exception.ApplicationRuntimeException;
+import org.egov.infra.filestore.entity.FileStoreMapper;
+import org.egov.infra.filestore.repository.FileStoreMapperRepository;
+import org.egov.infra.filestore.service.FileStoreService;
+import org.egov.wtms.application.entity.GenerateConnectionBill;
+import org.egov.wtms.application.service.GenerateConnectionBillService;
+import org.egov.wtms.application.service.WaterConnectionDetailsService;
+import org.egov.wtms.masters.entity.ApplicationType;
+import org.egov.wtms.masters.entity.PropertyType;
+import org.egov.wtms.masters.service.ApplicationTypeService;
+import org.egov.wtms.masters.service.PropertyTypeService;
+import org.egov.wtms.utils.constants.WaterTaxConstants;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.http.MediaType;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.ResponseBody;
+
+import com.lowagie.text.Document;
+import com.lowagie.text.pdf.PdfContentByte;
+import com.lowagie.text.pdf.PdfImportedPage;
+import com.lowagie.text.pdf.PdfReader;
+import com.lowagie.text.pdf.PdfWriter;
 
 @Controller
 @RequestMapping("/report/generateBill/search")
@@ -124,22 +118,10 @@ public class GenerateConnectionBillController {
     private GenerateConnectionBillService generateConnectionBillService;
 
     @Autowired
-    private WaterTaxUtils waterTaxUtils;
-
-    @Autowired
-    private SecurityUtils securityUtils;
-
-    @Autowired
-    private UserService userService;
-
-    @Autowired
     private BoundaryService boundaryService;
 
     @Autowired
     private WaterConnectionDetailsService waterConnectionDetailsService;
-
-    @Autowired
-    ServletContext context;
 
     @Autowired
     private FileStoreMapperRepository fileStoreMapperRepository;
@@ -179,26 +161,35 @@ public class GenerateConnectionBillController {
         return applicationTypeService.findAll();
     }
 
-    @RequestMapping(value = "/result", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+    @RequestMapping(value = "/result", method = GET, produces = MediaType.APPLICATION_JSON_VALUE)
     public @ResponseBody void searchResult(final HttpServletRequest request, final HttpServletResponse response)
             throws IOException, ParseException {
         String result = null;
         List<GenerateConnectionBill> generateConnectionBillList = new ArrayList<>();
-        generateConnectionBillList = generateConnectionBillService
-                .getBillReportDetails(request.getParameter("zone"), request.getParameter("revenueWard"),
-                        request.getParameter("propertyType"), request.getParameter("applicationType"),
-                        request.getParameter("connectionType"), request.getParameter("consumerCode"),
-                        request.getParameter("houseNumber"), request.getParameter("assessmentNumber"));
+        generateConnectionBillList = generateConnectionBillService.getBillReportDetails(request.getParameter("zone"),
+                request.getParameter("revenueWard"), request.getParameter("propertyType"),
+                request.getParameter("applicationType"), request.getParameter("connectionType"),
+                request.getParameter("consumerCode"), request.getParameter("houseNumber"),
+                request.getParameter("assessmentNumber"));
+        final long foundRows = generateConnectionBillService.getTotalCountofBills(request.getParameter("zone"),
+                request.getParameter("revenueWard"), request.getParameter("propertyType"),
+                request.getParameter("applicationType"), request.getParameter("connectionType"),
+                request.getParameter("consumerCode"), request.getParameter("houseNumber"),
+                request.getParameter("assessmentNumber"));
+
         final int count = generateConnectionBillList.size();
-        LOGGER.info("Total count of records-->"+Long.valueOf(count));
-        List<GenerateConnectionBill> generateconnectionBillList = new ArrayList<>();
-        if (Long.valueOf(count)>1000){
-            generateconnectionBillList = new ArrayList<>();
-        }
-        result = new StringBuilder("{ \"data\":").append(toJSON(generateConnectionBillList)).append(", \"recordsCount\":").append(Long.valueOf(count)).append("}").toString();
+        LOGGER.info("Total count of records-->" + Long.valueOf(count));
+        new ArrayList<>();
+        if (Long.valueOf(count) > 5000)
+            new ArrayList<>();
+        result = new StringBuilder("{ \"draw\":").append(request.getParameter("draw")).append(", \"recordsTotal\":")
+                .append(foundRows).append(", \"recordsFiltered\":").append(foundRows).append(", \"data\":")
+                .append(toJSON(generateConnectionBillList, GenerateConnectionBill.class,
+                        GenerateConnectionBillAdaptor.class))
+                        .append(", \"recordsCount\":").append(Long.valueOf(count)).append("}").toString();
         response.setContentType(MediaType.APPLICATION_JSON_VALUE);
         IOUtils.write(result, response.getWriter());
-        
+
     }
 
     @RequestMapping(value = "/result/{consumerCode}", method = GET)
@@ -206,13 +197,13 @@ public class GenerateConnectionBillController {
             @PathVariable final String consumerCode) {
         final List<Long> waterChargesDocumentslist = generateConnectionBillService.getDocuments(consumerCode,
                 waterConnectionDetailsService.findByApplicationNumberOrConsumerCode(consumerCode).getApplicationType()
-                        .getName());
-        response.setHeader("content-disposition", "attachment; filename=\"" + "generate_bill.pdf" + "\"");
+                .getName());
+        response.setHeader("content-disposition", "attachment; filename=\"" + consumerCode + ".pdf" + "\"");
         if (!waterChargesDocumentslist.isEmpty() && waterChargesDocumentslist.get(0) != null)
             try {
 
-                final FileStoreMapper fsm = fileStoreMapperRepository.findByFileStoreId(waterChargesDocumentslist
-                        .get(0) + "");
+                final FileStoreMapper fsm = fileStoreMapperRepository
+                        .findByFileStoreId(waterChargesDocumentslist.get(0) + "");
                 final File file = fileStoreService.fetch(fsm, WaterTaxConstants.FILESTORE_MODULECODE);
                 final FileInputStream inStream = new FileInputStream(file);
                 final PrintWriter outStream = response.getWriter();
@@ -230,15 +221,7 @@ public class GenerateConnectionBillController {
             throw new ValidationException("err.demand.notice");
     }
 
-    private Object toJSON(final Object object) {
-        final GsonBuilder gsonBuilder = new GsonBuilder();
-        final Gson gson = gsonBuilder.registerTypeAdapter(GenerateConnectionBill.class,
-                new GenerateConnectionBillAdaptor()).create();
-        final String json = gson.toJson(object);
-        return json;
-    }
-
-    @RequestMapping(value = "/mergeAndDownload", method = RequestMethod.GET)
+    @RequestMapping(value = "/mergeAndDownload", method = GET)
     public String mergeAndDownload(final HttpServletRequest request, final HttpServletResponse response)
             throws IOException, ParseException, ValidationException {
         final long startTime = System.currentTimeMillis();
@@ -247,35 +230,33 @@ public class GenerateConnectionBillController {
                         request.getParameter("propertyType"), request.getParameter("applicationType"),
                         request.getParameter("connectionType"), request.getParameter("consumerCode"),
                         request.getParameter("houseNumber"), request.getParameter("assessmentNumber"));
+
         if (LOGGER.isDebugEnabled())
-            LOGGER.debug("Number of Bills : " + (generateConnectionBillList != null ? generateConnectionBillList.size() : ZERO));
+            LOGGER.debug("Number of Bills : "
+                    + (generateConnectionBillList != null ? generateConnectionBillList.size() : ZERO));
         final List<InputStream> pdfs = new ArrayList<InputStream>();
 
         for (final GenerateConnectionBill connectionbill : generateConnectionBillList)
-        	if(connectionbill!=null){
-            try {
-            	
-                final List<Long> waterChargesDocumentslist = generateConnectionBillService.getDocuments(
-                        connectionbill.getHscNo(), connectionbill.getApplicationType());
-                if (!waterChargesDocumentslist.isEmpty() && waterChargesDocumentslist.get(0) != null) {
-                    final FileStoreMapper fsm = fileStoreMapperRepository.findByFileStoreId(waterChargesDocumentslist
-                            .get(0) + "");
-                    final File file = fileStoreService.fetch(fsm, WaterTaxConstants.FILESTORE_MODULECODE);
-                    final byte[] bFile = FileUtils.readFileToByteArray(file);
-                    pdfs.add(new ByteArrayInputStream(bFile));
+            if (connectionbill != null)
+                try {
+                    if (!connectionbill.getFileStoreID().isEmpty()) {
+                        final FileStoreMapper fsm = fileStoreMapperRepository
+                                .findByFileStoreId(connectionbill.getFileStoreID());
+                        final File file = fileStoreService.fetch(fsm, WaterTaxConstants.FILESTORE_MODULECODE);
+                        final byte[] bFile = FileUtils.readFileToByteArray(file);
+                        pdfs.add(new ByteArrayInputStream(bFile));
+                    }
+                } catch (final Exception e) {
+                    LOGGER.debug("Entered into executeJob" + e);
+                    continue;
                 }
-            } catch (final Exception e) {
-                LOGGER.debug("Entered into executeJob" + e);
-                continue;
-            }
-        	}
         if (LOGGER.isDebugEnabled())
             LOGGER.debug("Number of pdfs : " + (pdfs != null ? pdfs.size() : ZERO));
         try {
             if (!pdfs.isEmpty()) {
                 final ByteArrayOutputStream output = new ByteArrayOutputStream();
                 final byte[] data = concatPDFs(pdfs, output);
-                response.setHeader("Content-disposition", "attachment;filename=" + "generate_bill" + ".pdf");
+                response.setHeader("Content-disposition", "attachment;filename=" + "search_bill" + ".pdf");
                 response.setContentType("application/pdf");
                 response.setContentLength(data.length);
                 response.getOutputStream().write(data);
@@ -358,34 +339,32 @@ public class GenerateConnectionBillController {
         return outputStream.toByteArray();
     }
 
-    @RequestMapping(value = "/zipAndDownload", method = RequestMethod.GET)
+    @RequestMapping(value = "/zipAndDownload", method = GET)
     public String zipAndDownload(final HttpServletRequest request, final HttpServletResponse response)
             throws IOException, ParseException, ValidationException {
         final long startTime = System.currentTimeMillis();
-
         final List<GenerateConnectionBill> generateConnectionBillList = generateConnectionBillService
                 .getBillReportDetails(request.getParameter("zone"), request.getParameter("revenueWard"),
                         request.getParameter("propertyType"), request.getParameter("applicationType"),
                         request.getParameter("connectionType"), request.getParameter("consumerCode"),
                         request.getParameter("houseNumber"), request.getParameter("assessmentNumber"));
         if (LOGGER.isDebugEnabled())
-            LOGGER.debug("Number of BIlls : " + (generateConnectionBillList != null ? generateConnectionBillList.size() : ZERO));
+            LOGGER.debug("Number of BIlls : "
+                    + (generateConnectionBillList != null ? generateConnectionBillList.size() : ZERO));
         try {
             ZipOutputStream zipOutputStream = null;
-            if (null != generateConnectionBillList || generateConnectionBillList.size() >= 0) {
+            if (null != generateConnectionBillList && generateConnectionBillList.size() >= 0) {
 
                 zipOutputStream = new ZipOutputStream(response.getOutputStream());
-                response.setHeader("Content-disposition", "attachment;filename=" + "genaratebill" + ".zip");
+                response.setHeader("Content-disposition", "attachment;filename=" + "searchbill" + ".zip");
                 response.setContentType("application/zip");
             }
 
             for (final GenerateConnectionBill connectionbill : generateConnectionBillList)
                 try {
-                    final List<Long> filestoreList = generateConnectionBillService.getDocuments(
-                            connectionbill.getHscNo(), connectionbill.getApplicationType());
-                    if (!filestoreList.isEmpty() && filestoreList.get(0) != null) {
-                        final FileStoreMapper fsm = fileStoreMapperRepository.findByFileStoreId(filestoreList.get(0)
-                                + "");
+                    if (!connectionbill.getFileStoreID().isEmpty()) {
+                        final FileStoreMapper fsm = fileStoreMapperRepository
+                                .findByFileStoreId(connectionbill.getFileStoreID());
                         final File file = fileStoreService.fetch(fsm, WaterTaxConstants.FILESTORE_MODULECODE);
                         final byte[] bFile = FileUtils.readFileToByteArray(file);
                         zipOutputStream = addFilesToZip(new ByteArrayInputStream(bFile), file.getName(),

@@ -1,0 +1,1 @@
+alter table bankaccount add column chequeformatid bigint;

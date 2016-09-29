@@ -39,18 +39,6 @@
  */
 package org.egov.wtms.web.controller.reports;
 
-import static org.egov.ptis.constants.PropertyTaxConstants.REVENUE_HIERARCHY_TYPE;
-import static org.springframework.web.bind.annotation.RequestMethod.GET;
-
-import java.io.IOException;
-import java.text.ParseException;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
 import org.apache.commons.io.IOUtils;
 import org.egov.infra.admin.master.entity.Boundary;
 import org.egov.infra.admin.master.service.BoundaryService;
@@ -70,8 +58,16 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
+import java.text.ParseException;
+import java.util.Date;
+import java.util.List;
+
+import static org.egov.infra.web.utils.WebUtils.toJSON;
+import static org.egov.ptis.constants.PropertyTaxConstants.REVENUE_HIERARCHY_TYPE;
+import static org.springframework.web.bind.annotation.RequestMethod.GET;
 
 @Controller
 @RequestMapping("/report/dataEntryConnectionReport/search")
@@ -108,10 +104,8 @@ public class DataEntryConnectionReportController {
         String ward = "";
         if (null != request.getParameter("ward"))
             ward = request.getParameter("ward");
-        List<DataEntryConnectionReport> dataEntryConnectionReportlist = new ArrayList<DataEntryConnectionReport>();
         final SQLQuery query = dataEntryConnectionReportService.getDataEntryConnectionReportDetails(ward);
-        dataEntryConnectionReportlist = query.list();
-        String result = null;
+        List<DataEntryConnectionReport> dataEntryConnectionReportlist = query.list();
         for (final DataEntryConnectionReport dataEntryReport : dataEntryConnectionReportlist) {
             final WaterConnectionDetails waterConnectionDetails = waterConnectionDetailsService
                     .findByApplicationNumberOrConsumerCodeAndStatus(dataEntryReport.getHscNo(),ConnectionStatus.ACTIVE);
@@ -120,16 +114,8 @@ public class DataEntryConnectionReportController {
                 dataEntryReport.setMonthlyFee(waterConnectionDetails.getExistingConnection().getMonthlyFee());
             }
         }
-        result = new StringBuilder("{ \"data\":").append(toJSON(dataEntryConnectionReportlist)).append("}").toString();
+        String result = new StringBuilder("{ \"data\":").append(toJSON(dataEntryConnectionReportlist, DataEntryConnectionReport.class, DataEntryConnectionReportAdaptor.class)).append("}").toString();
         response.setContentType(MediaType.APPLICATION_JSON_VALUE);
         IOUtils.write(result, response.getWriter());
-    }
-
-    private Object toJSON(final Object object) {
-        final GsonBuilder gsonBuilder = new GsonBuilder();
-        final Gson gson = gsonBuilder.registerTypeAdapter(DataEntryConnectionReport.class,
-                new DataEntryConnectionReportAdaptor()).create();
-        final String json = gson.toJson(object);
-        return json;
     }
 }

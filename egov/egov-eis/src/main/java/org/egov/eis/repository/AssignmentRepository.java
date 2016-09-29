@@ -39,17 +39,18 @@
  */
 package org.egov.eis.repository;
 
+import java.util.Date;
+import java.util.List;
+import java.util.Set;
+
 import org.egov.eis.entity.Assignment;
 import org.egov.infra.admin.master.entity.Role;
 import org.egov.infra.admin.master.entity.User;
+import org.egov.pims.commons.Position;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
-
-import java.util.Date;
-import java.util.List;
-import java.util.Set;
 
 /**
  * This repository intends to serve all required API(s) wrt employee assignment
@@ -116,6 +117,11 @@ public interface AssignmentRepository extends JpaRepository<Assignment, Long> {
     public List<Assignment> getAllAssignmentForDepartmentAndPositionNameLike(@Param("departmentId") Long departmentId,
             @Param("givenDate") Date givenDate ,@Param("posName") String posName);
     
+    @Query(" from Assignment A where  A.fromDate<=:givenDate and A.toDate>=:givenDate "
+    		+ " and A.position.name like '%'||:posName||'%' order by A.primary desc")
+    public List<Assignment> getAllAssignmentForPositionNameLike(
+            @Param("givenDate") Date givenDate ,@Param("posName") String posName);
+    
     @Query(" from Assignment A where A.designation.id=:designationId  and A.primary=true and A.fromDate<=:givenDate and A.toDate>=:givenDate ")
     public List<Assignment> getPrimaryAssignmentForDesignation(@Param("designationId") Long designationId,
             @Param("givenDate") Date givenDate);
@@ -174,4 +180,11 @@ public interface AssignmentRepository extends JpaRepository<Assignment, Long> {
     
     @Query(" select distinct A.designation.roles from  Assignment A where A.fromDate<=current_date and A.toDate>=current_date and A.employee.id =:empId")
     public Set<Role> getRolesForActiveAssignmentsByEmpId(@Param("empId") Long empId);
+    
+    @Query(" select A from Assignment A where A.department.id=:deptId and A.designation.id in :desigIds and A.fromDate<=:givenDate and A.toDate>=:givenDate")
+    public List<Assignment> findByDepartmentDesignationsAndGivenDate(@Param("deptId") Long deptId, @Param("desigIds") final List<Long> desigIds,
+            @Param("givenDate") Date givenDate);
+    
+    @Query(" select A.position from Assignment A where upper(A.position.name) like upper(:positionName) ")
+     public List<Position> findEmployeePositions(@Param("positionName") final String positionName);
 }

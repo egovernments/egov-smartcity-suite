@@ -43,7 +43,8 @@
 <%@ taglib prefix="egov" tagdir="/WEB-INF/tags"%>
 <html>
 <head>
-<link rel="stylesheet" type="text/css" href="/EGF/resources/css/ccMenu.css?rnd=${app_release_no}" />
+<link rel="stylesheet" type="text/css"
+	href="/EGF/resources/css/ccMenu.css?rnd=${app_release_no}" />
 <title>Cheque Assignment View</title>
 </head>
 <body>
@@ -51,7 +52,8 @@
 		<jsp:include page="../budget/budgetHeader.jsp">
 			<jsp:param name="heading" value="Cheque Assignment View" />
 		</jsp:include>
-		<span class="mandatory1"> <s:actionerror /> <s:fielderror /> <s:actionmessage />
+		<span class="mandatory1"> <s:actionerror /> <s:fielderror />
+			<s:actionmessage />
 		</span>
 		<div class="formmainbox">
 			<div class="subheadnew">
@@ -73,6 +75,13 @@
 								name="chq.assignment.instrument.date" /></th>
 						<th class="bluebgheadtdnew"><s:text
 								name="chq.assignment.instrument.status" /></th>
+						<th class="bluebgheadtdnew"><s:text
+								name="instrument.bankadvice" /></th>
+						<s:if
+							test="%{chequePrintingEnabled && chequePrintAvailableAt=='assignment'}">
+							<th class="bluebgheadtdnew"></th>
+						</s:if>
+
 					</s:if>
 					<s:else>
 						<th class="bluebgheadtdnew"><s:text
@@ -86,6 +95,7 @@
 						<th class="bluebgheadtdnew"><s:text
 								name="chq.assignment.instrument.status" /></th>
 					</s:else>
+
 				</tr>
 				<s:if test="%{paymentMode=='cheque'|| paymentMode=='cash'}">
 					<s:iterator var="p" value="instHeaderList" status="s">
@@ -104,6 +114,24 @@
 									name="%{instrumentDate}" format="dd/MM/yyyy" /></td>
 							<td style="text-align: center" class="blueborderfortdnew"><s:property
 									value="%{statusId.description}" /></td>
+							<td class="blueborderfortd"><div align="center">
+									<a
+										href='/EGF/payment/chequeAssignment-bankAdviceExcel.action?instHeaderId=<s:property value="id"/>'>
+										<s:text name="instrument.bankadvice" />
+									</a>
+								</div></td>
+							<s:if
+								test="%{chequePrintingEnabled && chequePrintAvailableAt=='assignment'}">
+								<td style="text-align: center" class="blueborderfortdnew">
+									<input type="submit" value="Print"
+									onclick="return printCheque(<s:property
+						value="%{id}" />);"
+									class="button" />
+								</td>
+							</s:if>
+							<input type="hidden" name='chequeFormatId' id="chequeFormatId"
+								value="<s:property value="chequeFormat"/>" />
+
 						</tr>
 					</s:iterator>
 				</s:if>
@@ -133,6 +161,9 @@
 						value="<s:property value="instVoucherList[0].instrumentHeaderId.bankAccountId.bankbranch.id"/>" />
 					<input type="hidden" name='bank' id="bank"
 						value="<s:property value="instVoucherList[0].instrumentHeaderId.bankAccountId.bankbranch.bank.id"/>" />
+					<input type="hidden" name='chequeFormatId' id="chequeFormatId"
+						value="<s:property value="instVoucherList[0].instrumentHeaderId.bankAccountId.chequeformat"/>" />
+
 				</s:else>
 			</table>
 			<br />
@@ -175,6 +206,17 @@ function printAdvicePdf(){
 	 var url="${pageContext.request.contextPath}/report/bankAdviceReport!exportPDF.action?bank.id="+
 	 			bank+"&bankbranch.id="+bankbranch+"&bankaccount.id="+bankaccount+"&instrumentnumber.id="+instrumentnumber;
 	 window.open(url,'','height=650,width=980,scrollbars=yes,left=0,top=0,status=yes');
+}
+
+function printCheque(id)
+{
+ 	var chequeFormat=document.getElementById("chequeFormatId");
+	if(chequeFormat == "" || chequeFormat == null){
+		bootbox.alert("This bank account is not attached to any cheque formats");
+		return false;
+	} 
+	window.open('/EGF/payment/chequeAssignmentPrint-generateChequeFormat.action?instrumentHeader='+id,'Search','resizable=yes,scrollbars=yes,left=300,top=40,width=900, height=700');
+    return false;
 }
 </script>
 </body>

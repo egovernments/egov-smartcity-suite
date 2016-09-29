@@ -42,6 +42,10 @@
  */
 package org.egov.services.cheque;
 
+import java.text.ParseException;
+import java.util.List;
+import java.util.Map;
+
 import org.apache.log4j.Logger;
 import org.egov.commons.Bankaccount;
 import org.egov.infra.admin.master.entity.Department;
@@ -56,10 +60,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.text.ParseException;
-import java.util.List;
-import java.util.Map;
-
 public class AccountChequesService extends PersistenceService<AccountCheques, Long> {
 
     private static final Logger LOGGER = Logger.getLogger(AccountChequesService.class);
@@ -72,9 +72,14 @@ public class AccountChequesService extends PersistenceService<AccountCheques, Lo
     @Qualifier("persistenceService")
     private PersistenceService persistenceService;
 
-    public AccountChequesService(final Class<AccountCheques> accountCheques) {
-        this.type = accountCheques;
+    public AccountChequesService() {
+        super(AccountCheques.class);
     }
+
+    public AccountChequesService(Class<AccountCheques> type) {
+        super(type);
+    }
+
     @Transactional
     public void createCheques(List<ChequeDetail> chequeDetailsList, Map<String, String> chequeIdMap,
             Map<String, AccountCheques> chequeMap, Bankaccount bankaccount, String deletedChqDeptId) {
@@ -146,5 +151,10 @@ public class AccountChequesService extends PersistenceService<AccountCheques, Lo
         delqry.setLong("bankAccId", bankaccount.getId());
         delqry.executeUpdate();
 
+    }
+    
+    public List<ChequeDeptMapping> getChequeListByBankAccId(Long bankAccountId)
+    {
+        return persistenceService.findAllBy("from ChequeDeptMapping where accountCheque.bankAccountId.id =?", bankAccountId);
     }
 }

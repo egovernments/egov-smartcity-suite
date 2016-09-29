@@ -98,7 +98,6 @@ import static org.egov.ptis.constants.PropertyTaxConstants.REPORT_TEMPLATENAME_D
  * 
  */
 @ParentPackage("egov")
-@Transactional(readOnly = true)
 @ResultPath("/WEB-INF/jsp/")
 @Namespace("/reports")
 @Results({ @Result(name = "new", location = "reports/dailyCollectionReport-new.jsp")})

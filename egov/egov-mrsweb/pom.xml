@@ -37,8 +37,7 @@
   ~            or trademarks of eGovernments Foundation.
   ~
   ~   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
-  -->
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+  --><project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <parent>
         <artifactId>egov-erp</artifactId>
         <groupId>org.egov</groupId>
@@ -46,7 +45,7 @@
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
-    <name>e-governments mrs web</name>
+    <name>e-governments Marriage Registration web</name>
     <artifactId>egov-mrsweb</artifactId>
     <packaging>war</packaging>
 

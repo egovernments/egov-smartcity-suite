@@ -42,6 +42,7 @@
 <%@ taglib prefix="egov" tagdir="/WEB-INF/tags"%>
 <%@ taglib uri="http://java.sun.com/jstl/fmt" prefix="fmt"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
+<%@ taglib uri="/WEB-INF/taglib/cdn.tld" prefix="cdn" %>
 <html>
 <head>
 	<title>Acknowledgement Slip for Trade License</title>
@@ -144,6 +145,6 @@
 				type="button" id="close" value="Close" class="button"
 				onclick="javascript:window.close();" />
 		</div>
-		<script src="<c:url value='/resources/global/js/jquery/plugins/jquery.printelement.min.js' context='/egi'/>"></script>
+		<script src="<cdn:url  value='/resources/global/js/jquery/plugins/jQuery.print.js' context='/egi'/>"></script>
 </body>
 </html>

@@ -51,27 +51,16 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
-import javax.persistence.NamedQueries;
-import javax.persistence.NamedQuery;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 
 @Entity
 @Table(name = "EG_WF_TYPES")
-@NamedQueries({
-        @NamedQuery(name = WorkflowTypes.MODULE_FOR_TYPE, query = "select wt.module.name from WorkflowTypes wt where wt.type=?"),
-        @NamedQuery(name = WorkflowTypes.TYPE_FOR_NAME, query = "select wt from WorkflowTypes wt where wt.displayName = ?"),
-        @NamedQuery(name = WorkflowTypes.TYPE_LIKE_NAME, query = "select wt from WorkflowTypes wt where lower(wt.displayName) like ?"),
-        @NamedQuery(name = WorkflowTypes.WF_TYPE_BY_TYPE_AND_RENDER_Y, query = "select wt from WorkflowTypes wt where wt.type =? and  renderYN ='Y'") })
 @SequenceGenerator(name = WorkflowTypes.SEQ_WORKFLOWTYPES, sequenceName = WorkflowTypes.SEQ_WORKFLOWTYPES, allocationSize = 1)
 public class WorkflowTypes extends AbstractAuditable {
 
     private static final long serialVersionUID = 1L;
-    public static final String MODULE_FOR_TYPE = "MODULE_FOR_TYPE";
-    public static final String TYPE_FOR_NAME = "TYPE_FOR_NAME";
-    public static final String TYPE_LIKE_NAME = "TYPE_LIKE_NAME";
-    public static final String SEQ_WORKFLOWTYPES = "SEQ_EG_WF_TYPES";
-    public static final String WF_TYPE_BY_TYPE_AND_RENDER_Y = "WF_TYPE_BY_TYPE_AND_RENDER_Y";
+    static final String SEQ_WORKFLOWTYPES = "SEQ_EG_WF_TYPES";
 
     @DocumentId
     @Id
@@ -90,9 +79,9 @@ public class WorkflowTypes extends AbstractAuditable {
 
     private String displayName;
 
-    private Character renderYN;
+    private boolean enabled;
 
-    private Character groupYN;
+    private boolean grouped;
 
     public Long getId() {
         return id;
@@ -142,19 +131,19 @@ public class WorkflowTypes extends AbstractAuditable {
         this.typeFQN = typeFQN;
     }
 
-    public Character getRenderYN() {
-        return renderYN;
+    public boolean isEnabled() {
+        return enabled;
     }
 
-    public void setRenderYN(final Character renderYN) {
-        this.renderYN = renderYN;
+    public void setEnabled(final boolean enabled) {
+        this.enabled = enabled;
     }
 
-    public Character getGroupYN() {
-        return groupYN;
+    public boolean isGrouped() {
+        return grouped;
     }
 
-    public void setGroupYN(final Character groupYN) {
-        this.groupYN = groupYN;
+    public void setGrouped(final boolean grouped) {
+        this.grouped = grouped;
     }
 }

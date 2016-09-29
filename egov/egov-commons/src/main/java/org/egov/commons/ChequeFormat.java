@@ -39,22 +39,21 @@
  */
 package org.egov.commons;
 
+
 import javax.persistence.Entity;
-import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.OneToMany;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 
-import org.egov.commons.Bank;
+import org.egov.infra.persistence.entity.AbstractAuditable;
+
 
 @Entity
 @Table(name = "chequeformat")
 @SequenceGenerator(name = ChequeFormat.SEQ, sequenceName = ChequeFormat.SEQ, allocationSize = 1)
-public class ChequeFormat {
+public class ChequeFormat extends AbstractAuditable{
     private static final long serialVersionUID = 1L;
     public static final String SEQ = "seq_chequeformat";
 
@@ -63,22 +62,22 @@ public class ChequeFormat {
     private Long id;
     private String chequeName;
     private String chequeType;
-    private double chequeLength;
-    private double chequeWidth;
+    private Double chequeLength;
+    private Double chequeWidth;
     private String accountPayeeCoordinate;// Value to be printed is A/C Payee
     private String dateFormat;
     private String dateCoordinate;
-    private double payeeNameLength;
-    private double payeeNameCoordinate;
+    private Double payeeNameLength;
+    private String payeeNameCoordinate;
     private String amountNumberingFormat;
     private String amountInWordsFirstLineCoordinate;
-    private double amountInWordsFirstLineLength;
-    private double amountInWordsSecondLineLength;
+    private Double amountInWordsFirstLineLength;
+    private Double amountInWordsSecondLineLength;
     private String amountInWordsSecondLineCoordinate;
-    private double amountLength;
+    private Double amountLength;
     private String amountCoordinate;
     private boolean formatStatus;
-
+    
     public static long getSerialversionuid() {
         return serialVersionUID;
     }
@@ -99,11 +98,11 @@ public class ChequeFormat {
         return chequeType;
     }
 
-    public double getChequeLength() {
+    public Double getChequeLength() {
         return chequeLength;
     }
 
-    public double getChequeWidth() {
+    public Double getChequeWidth() {
         return chequeWidth;
     }
 
@@ -119,11 +118,11 @@ public class ChequeFormat {
         return dateCoordinate;
     }
 
-    public double getPayeeNameLength() {
+    public Double getPayeeNameLength() {
         return payeeNameLength;
     }
 
-    public double getPayeeNameCoordinate() {
+    public String getPayeeNameCoordinate() {
         return payeeNameCoordinate;
     }
 
@@ -135,11 +134,11 @@ public class ChequeFormat {
         return amountInWordsFirstLineCoordinate;
     }
 
-    public double getAmountInWordsFirstLineLength() {
+    public Double getAmountInWordsFirstLineLength() {
         return amountInWordsFirstLineLength;
     }
 
-    public double getAmountInWordsSecondLineLength() {
+    public Double getAmountInWordsSecondLineLength() {
         return amountInWordsSecondLineLength;
     }
 
@@ -147,7 +146,7 @@ public class ChequeFormat {
         return amountInWordsSecondLineCoordinate;
     }
 
-    public double getAmountLength() {
+    public Double getAmountLength() {
         return amountLength;
     }
 
@@ -171,11 +170,11 @@ public class ChequeFormat {
         this.chequeType = chequeType;
     }
 
-    public void setChequeLength(double chequeLength) {
+    public void setChequeLength(Double chequeLength) {
         this.chequeLength = chequeLength;
     }
 
-    public void setChequeWidth(double chequeWidth) {
+    public void setChequeWidth(Double chequeWidth) {
         this.chequeWidth = chequeWidth;
     }
 
@@ -191,11 +190,11 @@ public class ChequeFormat {
         this.dateCoordinate = dateCoordinate;
     }
 
-    public void setPayeeNameLength(double payeeNameLength) {
+    public void setPayeeNameLength(Double payeeNameLength) {
         this.payeeNameLength = payeeNameLength;
     }
 
-    public void setPayeeNameCoordinate(double payeeNameCoordinate) {
+    public void setPayeeNameCoordinate(String payeeNameCoordinate) {
         this.payeeNameCoordinate = payeeNameCoordinate;
     }
 
@@ -207,11 +206,11 @@ public class ChequeFormat {
         this.amountInWordsFirstLineCoordinate = amountInWordsFirstLineCoordinate;
     }
 
-    public void setAmountInWordsFirstLineLength(double amountInWordsFirstLineLength) {
+    public void setAmountInWordsFirstLineLength(Double amountInWordsFirstLineLength) {
         this.amountInWordsFirstLineLength = amountInWordsFirstLineLength;
     }
 
-    public void setAmountInWordsSecondLineLength(double amountInWordsSecondLineLength) {
+    public void setAmountInWordsSecondLineLength(Double amountInWordsSecondLineLength) {
         this.amountInWordsSecondLineLength = amountInWordsSecondLineLength;
     }
 
@@ -219,7 +218,7 @@ public class ChequeFormat {
         this.amountInWordsSecondLineCoordinate = amountInWordsSecondLineCoordinate;
     }
 
-    public void setAmountLength(double amountLength) {
+    public void setAmountLength(Double amountLength) {
         this.amountLength = amountLength;
     }
 
@@ -230,5 +229,6 @@ public class ChequeFormat {
     public void setFormatStatus(boolean formatStatus) {
         this.formatStatus = formatStatus;
     }
+    
 
 }

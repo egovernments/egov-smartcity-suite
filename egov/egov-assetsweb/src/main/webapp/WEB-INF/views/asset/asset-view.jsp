@@ -44,7 +44,7 @@
 	<div>
 		<div class="panel panel-primary" data-collapsed="0">
 			<div class="panel-heading">
-				<div class="panel-title">Asset</div>
+				<div class="panel-title"><spring:message code="title.asset.result.header" /></div>
 			</div>
 			<div class="panel-body custom">
 				<div class="row add-border">
@@ -81,50 +81,37 @@
 					<div class="col-sm-3 add-margin view-content">
 						${asset.modeOfAcquisition}</div>
 				</div>
-				<div class="row add-border">
-					<div class="col-xs-3 add-margin">
-						<spring:message code="lbl.status" />
-					</div>
-					<div class="col-sm-3 add-margin view-content">
-						${asset.status.description}</div>
-					<div class="col-xs-3 add-margin">
-						<spring:message code="lbl.description" />
-					</div>
-					<div class="col-sm-3 add-margin view-content">
-						${asset.description}</div>
-				</div>
+				
 				<div class="row add-border">
 					<div class="col-xs-3 add-margin">
 						<spring:message code="lbl.dateofcreation" />
 					</div>
 					<div class="col-sm-3 add-margin view-content">
-						<fmt:formatDate pattern="MM/dd/yyyyy"
+						<fmt:formatDate pattern="dd/MM/yyyy"
 							value="${asset.dateOfCreation}" />
 					</div>
-					<div class="col-xs-3 add-margin">
-						<spring:message code="lbl.remarks" />
-					</div>
-					<div class="col-sm-3 add-margin view-content">
-						${asset.remarks}</div>
-				</div>
-				<div class="row add-border">
 					<div class="col-xs-3 add-margin">
 						<spring:message code="lbl.accdepreciation" />
 					</div>
 					<div class="col-sm-3 add-margin view-content">
 						${asset.accDepreciation}</div>
+					
+				</div>
+				<div class="row add-border">
+					
 					<div class="col-xs-3 add-margin">
 						<spring:message code="lbl.length" />
 					</div>
 					<div class="col-sm-3 add-margin view-content">
 						${asset.length}</div>
-				</div>
-				<div class="row add-border">
-					<div class="col-xs-3 add-margin">
+						<div class="col-xs-3 add-margin">
 						<spring:message code="lbl.width" />
 					</div>
 					<div class="col-sm-3 add-margin view-content">${asset.width}
 					</div>
+				</div>
+				<div class="row add-border">
+					
 					<div class="col-xs-3 add-margin">
 						<spring:message code="lbl.totalarea" />
 					</div>
@@ -134,7 +121,34 @@
 			</div>
 			<%@ include file="location-details-view.jsp" %>
 			<%@ include file="assetcategory-properties-view.jsp" %>
+			<div class="row add-border">
+			<div class="panel-heading">
+				<div class="panel-title"><spring:message code="title.valuesummary" /></div>
+			</div>
+			
+			<div class="col-xs-3 add-margin">
+						<spring:message code="lbl.status" />
+					</div>
+					<div class="col-sm-3 add-margin view-content">
+						${asset.status.description}</div>
+			
+			<div class="col-xs-3 add-margin">
+						<spring:message code="lbl.grossvalue" />
+					</div>
+					<div class="col-sm-3 add-margin view-content">
+						${asset.grossValue}</div>
+			</div>
+			<div class="row add-border">
+			<div class="col-xs-3 add-margin">
+						<spring:message code="lbl.remarks" />
+					</div>
+					<div class="col-sm-3 add-margin view-content">
+						${asset.remarks}</div>
+			</div>
+			</div>
+			
 		</div>
+		
 	</div>
 </div>
 <div class="row text-center">

@@ -39,17 +39,20 @@
  */
 package org.egov.wtms.application.service;
 
+import java.math.BigInteger;
+import java.text.ParseException;
+import java.util.List;
+
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+
 import org.egov.wtms.application.entity.DefaultersReport;
+import org.egov.wtms.masters.entity.enums.ConnectionStatus;
 import org.hibernate.SQLQuery;
 import org.hibernate.Session;
 import org.hibernate.transform.AliasToBeanResultTransformer;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
-
-import java.text.ParseException;
 
 @Service
 @Transactional(readOnly = true)
@@ -62,32 +65,58 @@ public class DefaultersWTReportService {
         return entityManager.unwrap(Session.class);
     }
 
-    public SQLQuery getDefaultersReportDetails(final String fromAmount, final String toAmount,
-            final String ward,
-            final String topDefaulters) throws ParseException {
-
-        final StringBuilder queryStr = new StringBuilder();
-        queryStr.append(
-                "select dcbinfo.hscno as \"hscNo\", dcbinfo.username as \"ownerName\",wardboundary.name as \"wardName\","
-                        + "dcbinfo.houseno as \"houseNo\" , localboundary.localname as \"locality\", dcbinfo.mobileno as \"mobileNumber\", "
-                        + "dcbinfo.arr_balance as \"arrearsDue\" ,  dcbinfo.curr_balance as \"currentDue\" , dcbinfo.arr_balance+dcbinfo.curr_balance as \"totalDue\"  "
-                        + "from egwtr_mv_dcb_view dcbinfo"
-                        + " INNER JOIN eg_boundary wardboundary on dcbinfo.wardid = wardboundary.id INNER JOIN eg_boundary localboundary on dcbinfo.locality = localboundary.id");
+    public List<DefaultersReport> getDefaultersReportDetails(final String fromAmount, final String toAmount,
+            final String ward, final String topDefaulters, final int startsFrom, final int maxResults)
+            throws ParseException {
+        StringBuilder queryStr = new StringBuilder();
+        queryStr = queryStr
+                .append("select dcbinfo.hscno as \"hscNo\", dcbinfo.demand as \"demandId\", dcbinfo.username as \"ownerName\",wardboundary.name as \"wardName\", ")
+                .append("dcbinfo.houseno as \"houseNo\" , localboundary.localname as \"locality\", dcbinfo.mobileno as \"mobileNumber\", ")
+                .append("dcbinfo.arr_balance as \"arrearsDue\" ,  dcbinfo.curr_balance as \"currentDue\" , dcbinfo.arr_balance+dcbinfo.curr_balance as \"totalDue\" ")
+                .append("from egwtr_mv_dcb_view dcbinfo INNER JOIN eg_boundary wardboundary on dcbinfo.wardid = wardboundary.id INNER JOIN eg_boundary localboundary on dcbinfo.locality = localboundary.id");
 
         if (Double.parseDouble(toAmount) == 0)
             queryStr.append(" where dcbinfo.arr_balance+dcbinfo.curr_balance >" + fromAmount);
         else
             queryStr.append(" where dcbinfo.arr_balance+dcbinfo.curr_balance >" + fromAmount
                     + " and dcbinfo.arr_balance+dcbinfo.curr_balance <" + toAmount);
-        queryStr.append(" and dcbinfo.connectionstatus = 'ACTIVE'");
+        queryStr.append(" and dcbinfo.connectionstatus = '" + ConnectionStatus.ACTIVE.toString() + "'");
         if (ward != null && !ward.isEmpty())
-            queryStr.append(" and wardboundary.name = " + "'" + ward + "'");
+            queryStr.append(" and wardboundary.name = '" + ward + "'");
+        
+        
+        queryStr.append(" and dcbinfo.demand IS NOT NULL");
         if (!topDefaulters.isEmpty())
-            queryStr.append(" order by dcbinfo.arr_balance+dcbinfo.curr_balance desc limit " + topDefaulters);
+            queryStr.append(" order by dcbinfo.arr_balance+dcbinfo.curr_balance desc ");
         final SQLQuery finalQuery = getCurrentSession().createSQLQuery(queryStr.toString());
+        finalQuery.setFirstResult(startsFrom);
+        finalQuery.setMaxResults(maxResults);
+        if (!topDefaulters.isEmpty())
+            finalQuery.setMaxResults(Integer.valueOf(topDefaulters));
         finalQuery.setResultTransformer(new AliasToBeanResultTransformer(DefaultersReport.class));
-        return finalQuery;
-
+        return finalQuery.list();
     }
 
+    public long getTotalCount(final String fromAmount, final String toAmount, final String ward,
+            final String topDefaulters) throws ParseException {
+
+        StringBuilder queryStr = new StringBuilder();
+        queryStr = queryStr
+                .append("select count(dcbinfo.hscno) from egwtr_mv_dcb_view dcbinfo")
+                .append(" INNER JOIN eg_boundary wardboundary on dcbinfo.wardid = wardboundary.id INNER JOIN eg_boundary localboundary")
+                .append(" on dcbinfo.locality = localboundary.id");
+        if (Double.parseDouble(toAmount) == 0)
+            queryStr.append(" where dcbinfo.arr_balance+dcbinfo.curr_balance >" + fromAmount);
+        else
+            queryStr.append(" where dcbinfo.arr_balance+dcbinfo.curr_balance >" + fromAmount
+                    + " and dcbinfo.arr_balance+dcbinfo.curr_balance <" + toAmount);
+        queryStr.append(" and dcbinfo.connectionstatus = '" + ConnectionStatus.ACTIVE.toString() + "'");
+        if (ward != null && !ward.isEmpty())
+            queryStr.append(" and wardboundary.name = '" + ward + "'");
+        if (!topDefaulters.isEmpty())
+            queryStr.append(" limit " + topDefaulters);
+        final SQLQuery finalQuery = getCurrentSession().createSQLQuery(queryStr.toString());
+        final Long count = ((BigInteger) finalQuery.uniqueResult()).longValue();
+        return count;
+    }
 }

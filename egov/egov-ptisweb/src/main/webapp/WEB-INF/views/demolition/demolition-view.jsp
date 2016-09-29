@@ -43,7 +43,9 @@
 <%@ taglib uri="http://www.springframework.org/tags" prefix="spring"%>
 <%@ taglib uri="http://www.springframework.org/tags/form" prefix="form"%>
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt"%>
-<script type="text/javascript" src="<c:url value='/resources/javascript/validations.js'/>"></script>
+<%@ include file="/includes/taglibs.jsp"%>
+<%@ taglib uri="/WEB-INF/taglib/cdn.tld" prefix="cdn"%>
+<script type="text/javascript" src="<cdn:url value='/resources/javascript/validations.js'/>"></script>
 <style>
 body
 {
@@ -141,7 +143,7 @@ body
 				</div>
 			</div>
 			 <c:choose>
-            <c:when test="${fn:containsIgnoreCase(userDesignationList, designation)}">
+            <c:when test="${!fn:containsIgnoreCase(userDesignationList, designation)}">
 			<jsp:include page="../common/commonWorkflowMatrix.jsp"/>
 			</c:when>
 			<c:otherwise>
@@ -157,7 +159,7 @@ body
 		</div>
 	</div>
 </form:form>
-<script src="<c:url value='/resources/global/js/egov/inbox.js' context='/egi'/>"></script>
+<script src="<cdn:url value='/resources/global/js/egov/inbox.js' context='/egi'/>"></script>
 
 
 

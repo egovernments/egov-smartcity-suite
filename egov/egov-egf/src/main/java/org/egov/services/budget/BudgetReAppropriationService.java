@@ -109,8 +109,12 @@ public class BudgetReAppropriationService extends PersistenceService<BudgetReApp
     @Autowired
     private AutonumberServiceBeanResolver beanResolver;
 
-    public BudgetReAppropriationService(final Class<BudgetReAppropriation> budgetReAppropriation) {
-        this.type = budgetReAppropriation;
+    public BudgetReAppropriationService() {
+        super(BudgetReAppropriation.class);
+    }
+
+    public BudgetReAppropriationService(final Class<BudgetReAppropriation> type) {
+        super(type);
     }
 
     public ApplicationSequenceNumberGenerator getSequenceGenerator() {

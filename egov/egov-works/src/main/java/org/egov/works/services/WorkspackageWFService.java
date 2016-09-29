@@ -45,7 +45,11 @@ import org.egov.works.models.tender.WorksPackage;
 public class WorkspackageWFService extends PersistenceService<WorksPackage, Long> {
 
     public WorkspackageWFService() {
-        setType(WorksPackage.class);
+        super(WorksPackage.class);
+    }
+
+    public WorkspackageWFService(Class<WorksPackage> type) {
+        super(type);
     }
 
 }

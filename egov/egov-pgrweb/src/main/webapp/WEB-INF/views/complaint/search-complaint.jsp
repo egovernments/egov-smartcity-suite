@@ -43,6 +43,7 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 <%@ taglib uri="http://www.springframework.org/tags/form" prefix="form"%>
 <%@ taglib uri="http://www.springframework.org/tags" prefix="spring"%>
+<%@ taglib uri="/WEB-INF/taglib/cdn.tld" prefix="cdn" %>
 <div class="row">
 	<div class="col-md-12">
 		<div class="panel panel-primary" data-collapsed="0">
@@ -177,30 +178,15 @@
 	<table class="table table-bordered datatable dt-responsive" id="complaintSearchResults"></table>
 </div>
 
-<link rel="stylesheet"
-	href="<c:url value='/resources/global/js/jquery/plugins/datatables/responsive/css/datatables.responsive.css' context='/egi'/>">
-<script
-	src="<c:url value='/resources/global/js/jquery/plugins/datatables/jquery.dataTables.min.js' context='/egi'/>"
-	type="text/javascript"></script>
-<script
-	src="<c:url value='/resources/global/js/jquery/plugins/datatables/dataTables.bootstrap.js' context='/egi'/>"
-	type="text/javascript"></script>
-<script
-	src="<c:url value='/resources/global/js/jquery/plugins/datatables/dataTables.tableTools.js' context='/egi'/>"
-	type="text/javascript"></script>
-<script
-	src="<c:url value='/resources/global/js/jquery/plugins/datatables/TableTools.min.js' context='/egi'/>"
-	type="text/javascript"></script>
-<script
-	src="<c:url value='/resources/global/js/jquery/plugins/datatables/responsive/js/datatables.responsive.js' context='/egi'/>"
-	type="text/javascript"></script>
-<script
-	src="<c:url value='/resources/global/js/bootstrap/bootstrap-datepicker.js' context='/egi'/>"
-	type="text/javascript"></script>
-<link rel="stylesheet"
-	href="<c:url value='/resources/global/css/bootstrap/bootstrap-datepicker.css' context='/egi'/>">
-<script src="<c:url value='/resources/js/app/search-complaint.js?rnd=${app_release_no}'/>"
-	type="text/javascript"></script>
+<link rel="stylesheet" href="<cdn:url  value='/resources/global/js/jquery/plugins/datatables/responsive/css/datatables.responsive.css' context='/egi'/>">
+<script src="<cdn:url  value='/resources/global/js/jquery/plugins/datatables/jquery.dataTables.min.js' context='/egi'/>" type="text/javascript"></script>
+<script src="<cdn:url  value='/resources/global/js/jquery/plugins/datatables/dataTables.bootstrap.js' context='/egi'/>" type="text/javascript"></script>
+<script src="<cdn:url  value='/resources/global/js/jquery/plugins/datatables/dataTables.tableTools.js' context='/egi'/>" type="text/javascript"></script>
+<script src="<cdn:url  value='/resources/global/js/jquery/plugins/datatables/TableTools.min.js' context='/egi'/>" type="text/javascript"></script>
+<script src="<cdn:url  value='/resources/global/js/jquery/plugins/datatables/responsive/js/datatables.responsive.js' context='/egi'/>" type="text/javascript"></script>
+<script src="<cdn:url  value='/resources/global/js/bootstrap/bootstrap-datepicker.js' context='/egi'/>" type="text/javascript"></script>
+<link rel="stylesheet" href="<cdn:url  value='/resources/global/css/bootstrap/bootstrap-datepicker.css' context='/egi'/>">
+<script src="<cdn:url  value='/resources/js/app/search-complaint.js?rnd=${app_release_no}'/>" type="text/javascript"></script>
 <c:if test="${not empty param.crn}">
 <script>
 jQuery("#ct-ctno").val('${param.crn}');

@@ -118,41 +118,28 @@
 				</form:select>
 			</div>
 		</div>
-		<div class="form-group" id="radioValue" >
-			<label class="col-sm-3 control-label text-right"><spring:message code="lbl.slum" /></label>
-			<div class="col-sm-3 add-margin">
-				<form:radiobutton path="workCategory" id="slum" value="SLUM_WORK" onclick="showSlumFields();" />
-			</div>
-			<label class="col-sm-2 control-label text-right"><spring:message code="lbl.nonslum" />
+		<div class="form-group">
+			<label class="col-sm-3 control-label text-right"> <spring:message code="lbl.workcategory" />
 			</label>
 			<div class="col-sm-3 add-margin">
-				<form:radiobutton path="workCategory" id="nonslum" value="NON_SLUM_WORK" onclick="disableSlumFields()" />
+				<form:select path="workCategory" data-first-option="false" id="workCategory" cssClass="form-control" >
+					<form:option value="">
+						<spring:message code="lbl.select" />
+					</form:option>
+					<form:options items="${workCategory}" />
+				</form:select>
+				<form:errors path="workCategory" cssClass="add-margin error-msg" />
 			</div>
-		</div>
-		<div id="slumfields" style="display: none">
-			<div class="form-group">
-				<label class="col-sm-3 control-label text-right"> <spring:message code="lbl.typeofslum" />
-				</label>
+			<div>
+				<label class="col-sm-2 control-label text-right"><spring:message code="lbl.beneficiary" /></label>
 				<div class="col-sm-3 add-margin">
-					<form:select path="typeOfSlum" data-first-option="false" id="typeOfSlum" cssClass="form-control" >
+					<form:select path="beneficiary" data-first-option="false" id="beneficiary" class="form-control">
 						<form:option value="">
 							<spring:message code="lbl.select" />
 						</form:option>
-						<form:options items="${typeOfSlum}" />
+						<form:options items="${beneficiary}" />
 					</form:select>
-					<form:errors path="typeOfSlum" cssClass="add-margin error-msg" />
-				</div>
-				<div>
-					<label class="col-sm-2 control-label text-right"><spring:message code="lbl.beneficiary" /></label>
-					<div class="col-sm-3 add-margin">
-						<form:select path="beneficiary" data-first-option="false" id="beneficiary" class="form-control">
-							<form:option value="">
-								<spring:message code="lbl.select" />
-							</form:option>
-							<form:options items="${beneficiary}" />
-						</form:select>
-						<form:errors path="beneficiary" cssClass="add-margin error-msg" />
-					</div>
+					<form:errors path="beneficiary" cssClass="add-margin error-msg" />
 				</div>
 			</div>
 		</div>

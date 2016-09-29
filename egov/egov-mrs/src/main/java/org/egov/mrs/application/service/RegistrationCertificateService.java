@@ -39,13 +39,9 @@
 
 package org.egov.mrs.application.service;
 
-import javax.servlet.http.HttpSession;
-
-import org.egov.infra.reporting.engine.ReportConstants;
 import org.egov.infra.reporting.engine.ReportOutput;
 import org.egov.infra.reporting.engine.ReportRequest;
 import org.egov.infra.reporting.engine.ReportService;
-import org.egov.infra.reporting.viewer.ReportViewerUtil;
 import org.egov.infra.security.utils.SecurityUtils;
 import org.egov.mrs.application.service.workflow.RegistrationWorkflowService;
 import org.egov.mrs.domain.entity.Registration;
@@ -76,9 +72,7 @@ public class RegistrationCertificateService {
     @Autowired
     RegistrationService registrationService;
 
-    @Autowired
-    private HttpSession httpSession;
-
+ 
     @Autowired
     private SecurityUtils securityUtils;
     

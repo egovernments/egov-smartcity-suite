@@ -39,10 +39,6 @@
  */
 package org.egov.services.bills;
 
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-
 import org.apache.log4j.Logger;
 import org.egov.commons.EgwStatus;
 import org.egov.commons.dao.EgwStatusHibernateDAO;
@@ -69,6 +65,10 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+
 @Service
 @Transactional(readOnly = true)
 public class EgBillRegisterService extends PersistenceService<EgBillregister, Long>
@@ -90,20 +90,19 @@ public class EgBillRegisterService extends PersistenceService<EgBillregister, Lo
     @Autowired
     private EgwStatusHibernateDAO egwStatusHibernateDAO;
 
-    public EgBillRegisterService(final Class<EgBillregister> egBillregister) {
-        this.type = egBillregister;
-    }
-
     public EgBillRegisterService() {
         super(EgBillregister.class);
+    }
 
+    public EgBillRegisterService(Class<EgBillregister> type) {
+        super(type);
     }
 
     @Transactional
     public EgBillregister createBill(EgBillregister bill, WorkflowBean workflowBean, List<CheckListHelper> checkListsTable) {
         try {
             applyAuditing(bill);
-            if (FinancialConstants.BUTTONAPPROVE.equalsIgnoreCase(workflowBean.getWorkFlowAction()) && bill.getState() == null)
+            if (FinancialConstants.CREATEANDAPPROVE.equalsIgnoreCase(workflowBean.getWorkFlowAction()) && bill.getState() == null)
             {
                 bill.setBillstatus("APPROVED");
                 EgwStatus egwStatus = egwStatusHibernateDAO.getStatusByModuleAndCode(FinancialConstants.CONTINGENCYBILL_FIN,

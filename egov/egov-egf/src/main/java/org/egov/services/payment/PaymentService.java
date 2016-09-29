@@ -110,6 +110,7 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.math.BigInteger;
@@ -188,7 +189,7 @@ public class PaymentService extends PersistenceService<Paymentheader, Long> {
 	@Autowired
 	@Qualifier("miscbilldetailService")
 	private MiscbilldetailService miscbilldetailService;
-	@Autowired
+	@PersistenceContext
 	private EntityManager entityManager;
 	@Autowired
 	ChartOfAccounts chartOfAccounts;
@@ -413,9 +414,18 @@ public class PaymentService extends PersistenceService<Paymentheader, Long> {
 					.setSourcePath(
 							"/EGF/payment/payment-view.action?" + PAYMENTID
 									+ "=" + paymentheader.getId());
-			paymentheader = transitionWorkFlow(paymentheader, workflowBean);
-			applyAuditing(paymentheader.getState());
-			applyAuditing(paymentheader);
+			 if (FinancialConstants.CREATEANDAPPROVE.equalsIgnoreCase(workflowBean.getWorkFlowAction())
+		                    && voucherHeader.getState() == null)
+		            {
+		                paymentheader.getVoucherheader().setStatus(
+		                        FinancialConstants.CREATEDVOUCHERSTATUS);
+		            }
+		            else
+		            {
+		                paymentheader = transitionWorkFlow(paymentheader, workflowBean);
+		                applyAuditing(paymentheader.getState());
+		                applyAuditing(paymentheader);
+		            }
 			update(paymentheader);
 			entityManager.flush();
 		} catch (final ValidationException e) {
@@ -3426,6 +3436,9 @@ public class PaymentService extends PersistenceService<Paymentheader, Long> {
 					paymentBean.setBillVoucherDate(billregister
 							.getEgBillregistermis().getVoucherHeader()
 							.getVoucherDate());
+					paymentBean.setBillVoucherId(billregister
+                                                .getEgBillregistermis().getVoucherHeader()
+                                                .getId());
 				}
 				if (billregister.getEgBillregistermis().getEgBillSubType() != null)
 					if (billregister.getEgBillregistermis().getEgBillSubType()
@@ -3491,6 +3504,14 @@ public class PaymentService extends PersistenceService<Paymentheader, Long> {
 		if (LOGGER.isDebugEnabled())
 			LOGGER.debug("Completed createPaymentHeader.");
 		return paymentheader;
+	}
+	
+	public Paymentheader getPaymentHeaderByVoucherHeaderId(Long voucherHeaderId)
+	{
+        Paymentheader paymentheader = (Paymentheader) persistenceService.find(" from Paymentheader where voucherheader.id=?",
+                voucherHeaderId);
+	    
+	    return paymentheader;
 	}
 
 	public Paymentheader updatePaymentHeader(final Paymentheader paymentheader,

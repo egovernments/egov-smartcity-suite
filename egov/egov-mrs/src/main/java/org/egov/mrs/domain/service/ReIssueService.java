@@ -65,7 +65,8 @@ import org.egov.mrs.domain.enums.ApplicationStatus;
 import org.egov.mrs.domain.enums.FeeType;
 import org.egov.mrs.domain.repository.ReIssueRepository;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.support.ResourceBundleMessageSource;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.context.MessageSource;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -92,7 +93,8 @@ public class ReIssueService {
     private MessagingService messagingService;
 
     @Autowired
-    private ResourceBundleMessageSource messageSource;
+    @Qualifier("parentMessageSource")
+    private MessageSource mrsMessageSource;
 
     @Autowired
     private RegistrationWorkflowService workflowService;
@@ -240,7 +242,7 @@ public class ReIssueService {
         if (reIssue.getStatus() == ApplicationStatus.Rejected)
             msgKey = MSG_KEY_SMS_REISSUE_REJECTION;
 
-        final String message = messageSource.getMessage(msgKey,
+        final String message = mrsMessageSource.getMessage(msgKey,
                 new String[] { reIssue.getRegistration().getHusband().getFullName(),
                         reIssue.getRegistration().getWife().getFullName(),
                         reIssue.getRegistration().getRegistrationNo() },
@@ -258,13 +260,13 @@ public class ReIssueService {
             msgKeyMailSubject = MSG_KEY_EMAIL_REISSUE_REJECTION_SUBJECT;
         }
 
-        final String message = messageSource.getMessage(msgKeyMail,
+        final String message = mrsMessageSource.getMessage(msgKeyMail,
                 new String[] { reIssue.getRegistration().getHusband().getFullName(),
                         reIssue.getRegistration().getWife().getFullName(),
                         reIssue.getRegistration().getRegistrationNo() },
                 null);
 
-        final String subject = messageSource.getMessage(msgKeyMailSubject, null, null);
+        final String subject = mrsMessageSource.getMessage(msgKeyMailSubject, null, null);
         messagingService.sendEmail(reIssue.getRegistration().getHusband().getContactInfo().getEmail(), subject, message);
         messagingService.sendEmail(reIssue.getRegistration().getWife().getContactInfo().getEmail(), subject, message);
     }

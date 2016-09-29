@@ -71,6 +71,7 @@ import org.egov.ptis.client.util.PropertyTaxUtil;
 import org.egov.ptis.constants.PropertyTaxConstants;
 import org.egov.ptis.domain.dao.demand.PtDemandDao;
 import org.egov.ptis.domain.dao.property.BasicPropertyDAO;
+import org.egov.ptis.domain.entity.demand.Ptdemand;
 import org.egov.ptis.domain.entity.property.BasicProperty;
 import org.egov.ptis.domain.entity.property.Property;
 import org.egov.ptis.domain.entity.property.PropertyImpl;
@@ -112,6 +113,9 @@ public class TaxExemptionController extends GenericWorkFlowController {
     @Autowired
     private TaxExemptionService taxExemptionService;
     private Boolean loggedUserIsMeesevaUser = Boolean.FALSE;
+    private Boolean isExempted = Boolean.FALSE;
+    private Boolean isAlert = Boolean.FALSE;
+    private PropertyImpl property;
     @Autowired
     private SecurityUtils securityUtils;
 
@@ -139,11 +143,23 @@ public class TaxExemptionController extends GenericWorkFlowController {
     public String exemptionForm(final HttpServletRequest request, final Model model,
             @RequestParam(required = false) final String meesevaApplicationNumber,
             @PathVariable("assessmentNo") final String assessmentNo) {
+        isExempted = oldProperty.getIsExemptedFromTax();
+        isAlert= true;
         basicProperty = basicPropertyDAO.getBasicPropertyByPropertyID(assessmentNo);
-        if (null != basicProperty && basicProperty.isUnderWorkflow()) {
-            model.addAttribute("wfPendingMsg", "Could not do Tax Exemption now, property is undergoing some work flow.");
-            return TARGET_WORKFLOW_ERROR;
-        } else if (null != basicProperty && !oldProperty.getIsExemptedFromTax()) {
+         if(basicProperty!=null){
+            property = (PropertyImpl) basicProperty.getProperty();
+            Ptdemand ptDemand = ptDemandDAO.getNonHistoryCurrDmdForProperty(property);
+            if(ptDemand==null || (ptDemand!=null && ptDemand.getEgDemandDetails()==null)) {
+                model.addAttribute("errorMsg","There is no tax for this property");
+                return PROPERTY_VALIDATION;
+            }      
+           
+            else if(basicProperty.isUnderWorkflow()) {
+                model.addAttribute("wfPendingMsg","Could not do Tax exemption now, property is undergoing some work flow.");
+                return TARGET_WORKFLOW_ERROR;
+            }
+                   
+        else if(!isExempted) {
             final Map<String, BigDecimal> propertyTaxDetails = propertyService
                     .getCurrentPropertyTaxDetails(basicProperty.getActiveProperty());
             BigDecimal currentPropertyTax = BigDecimal.ZERO;
@@ -178,6 +194,7 @@ public class TaxExemptionController extends GenericWorkFlowController {
                 return PROPERTY_VALIDATION;
             }
         }
+         }
         loggedUserIsMeesevaUser = propertyService.isMeesevaUser(securityUtils.getCurrentUser());
         if (loggedUserIsMeesevaUser)
             if (meesevaApplicationNumber == null)
@@ -185,6 +202,8 @@ public class TaxExemptionController extends GenericWorkFlowController {
             else
                 propertyImpl.setMeesevaApplicationNumber(meesevaApplicationNumber);
         model.addAttribute("stateType", propertyImpl.getClass().getSimpleName());
+        model.addAttribute("isExempted", isExempted);
+        model.addAttribute("isAlert",isAlert);
         taxExemptionService.addModelAttributes(model, basicProperty);
         prepareWorkflow(model, propertyImpl, new WorkflowContainer());
         return TAX_EXEMPTION_FORM;
@@ -203,7 +222,7 @@ public class TaxExemptionController extends GenericWorkFlowController {
         String target = "";
         loggedUserIsMeesevaUser = propertyService.isMeesevaUser(securityUtils.getCurrentUser());
         if ((!propertyByEmployee || loggedUserIsMeesevaUser)
-                && null == propertyService.getUserPositionByZone(property.getBasicProperty())) {
+                && null == propertyService.getUserPositionByZone(property.getBasicProperty(), false)) {
             model.addAttribute("errorMsg", "No Senior or Junior assistants exists,Please check");
             model.addAttribute("stateType", propertyImpl.getClass().getSimpleName());
             taxExemptionService.addModelAttributes(model, basicProperty);
@@ -237,9 +256,10 @@ public class TaxExemptionController extends GenericWorkFlowController {
             model.addAttribute(
                     "successMessage",
                     "Property exemption data saved successfully in the system and forwarded to "
-                            + propertyTaxUtil.getApproverUserName(approvalPosition) + " with application number "
+                            + propertyTaxUtil.getApproverUserName(((PropertyImpl) property).getState()
+                                    .getOwnerPosition().getId()) + " with application number "
                             + property.getApplicationNo());
-            if (loggedUserIsMeesevaUser)
+           if (loggedUserIsMeesevaUser)
                 target = "redirect:/exemption/generate-meesevareceipt/"
                         + ((PropertyImpl) property).getBasicProperty().getUpicNo() + "?transactionServiceNumber="
                         + ((PropertyImpl) property).getApplicationNo();

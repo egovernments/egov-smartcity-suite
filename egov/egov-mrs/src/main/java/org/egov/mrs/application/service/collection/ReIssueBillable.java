@@ -270,4 +270,10 @@ public class ReIssueBillable extends AbstractBillable implements Billable {
     public void setReIssue(final ReIssue reIssue) {
         this.reIssue = reIssue;
     }
+
+	@Override
+	public String getEmailId() {
+		// TODO Auto-generated method stub
+		return null;
+	}
 }

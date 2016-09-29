@@ -43,6 +43,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -51,14 +52,11 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
-import javax.validation.Valid;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
 import javax.validation.constraints.NotNull;
 
 import org.egov.infra.persistence.entity.AbstractAuditable;
-import org.egov.infra.persistence.validator.annotation.CompareDates;
-import org.egov.infra.persistence.validator.annotation.DateFormat;
-import org.egov.infra.persistence.validator.annotation.Required;
-import org.egov.infra.persistence.validator.annotation.ValidateDate;
 import org.egov.infra.utils.DateUtils;
 import org.egov.infra.validation.exception.ValidationError;
 import org.egov.lcms.utils.constants.LcmsConstants;
@@ -67,7 +65,6 @@ import org.hibernate.validator.constraints.Length;
 @Entity
 @Table(name = "EGLC_LEGALCASEDISPOSAL")
 @SequenceGenerator(name = LegalCaseDisposal.SEQ_EGLC_LEGALCASEDISPOSAL, sequenceName = LegalCaseDisposal.SEQ_EGLC_LEGALCASEDISPOSAL, allocationSize = 1)
-@CompareDates(fromDate = "consignmentDate", toDate = LcmsConstants.DISPOSAL_DATE, dateFormat = "dd/MM/yyyy", message = "consignmentDate.greaterThan.disposalDate")
 public class LegalCaseDisposal extends AbstractAuditable {
     private static final long serialVersionUID = 1517694643078084884L;
     public static final String SEQ_EGLC_LEGALCASEDISPOSAL = "SEQ_EGLC_LEGALCASEDISPOSAL";
@@ -75,18 +72,23 @@ public class LegalCaseDisposal extends AbstractAuditable {
     @Id
     @GeneratedValue(generator = SEQ_EGLC_LEGALCASEDISPOSAL, strategy = GenerationType.SEQUENCE)
     private Long id;
+
     @ManyToOne
     @NotNull
-    @Valid
     @JoinColumn(name = "legalcase", nullable = false)
     private LegalCase legalCase;
-    @Required(message = "disposalDate.null")
-    @DateFormat(message = "invalid.fieldvalue.model.disposalDate")
-    @ValidateDate(allowPast = true, dateFormat = LcmsConstants.DATE_FORMAT, message = "disposalDate.lessthan.currentDate")
+
+    @NotNull
+    @Temporal(TemporalType.DATE)
+    @Column(name = "disposaldate")
     private Date disposalDate;
-    @Length(max = 1024, message = "io.disposalDetails.length")
+
+    @Length(max = 1024)
+    @Column(name = "disposaldetails")
     private String disposalDetails;
-    @DateFormat(message = "invalid.fieldvalue.model.consignmentDate")
+
+    @Temporal(TemporalType.DATE)
+    @Column(name = "consignmenttorecordroomdate")
     private Date consignmentDate;
 
     public Date getDisposalDate() {
@@ -116,7 +118,7 @@ public class LegalCaseDisposal extends AbstractAuditable {
     public List<ValidationError> validate() {
         final List<ValidationError> errors = new ArrayList<ValidationError>();
 
-        if (!DateUtils.compareDates(getDisposalDate(), getLegalCase().getCasedate()))
+        if (!DateUtils.compareDates(getDisposalDate(), getLegalCase().getCaseDate()))
             errors.add(new ValidationError(LcmsConstants.DISPOSAL_DATE, "disposalDate.greaterthan.caseDate"));
 
         for (final Hearings hearingsObj : legalCase.getHearings()) {
@@ -132,7 +134,7 @@ public class LegalCaseDisposal extends AbstractAuditable {
         for (final Judgment judgmentObj : getLegalCase().getJudgment()) {
             if (!DateUtils.compareDates(getDisposalDate(), judgmentObj.getOrderDate()))
                 errors.add(new ValidationError(LcmsConstants.DISPOSAL_DATE, "disposalDate.greaterthan.judgementDate"));
-            for (final JudgmentImpl judgementImpl : judgmentObj.getEglcJudgmentimpls())
+            for (final JudgmentImpl judgementImpl : judgmentObj.getJudgmentImpl())
                 if (!DateUtils.compareDates(getDisposalDate(), judgementImpl.getDateOfCompliance()))
                     errors.add(new ValidationError(LcmsConstants.DISPOSAL_DATE,
                             "disposalDate.greaterthan.judgementImplDate"));

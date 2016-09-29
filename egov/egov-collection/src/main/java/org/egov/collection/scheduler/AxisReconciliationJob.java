@@ -47,7 +47,7 @@ import org.springframework.transaction.annotation.Transactional;
 public class AxisReconciliationJob extends AbstractQuartzJob {
 
     private static final long serialVersionUID = -8293830861860894611L;
-    SchedularService schedularService;
+    private transient SchedularService schedularService;
 
     @Override
     public void executeJob() {

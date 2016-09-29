@@ -39,19 +39,11 @@
  */
 package org.egov.lcms.transactions.service;
 
-import java.util.Arrays;
+import java.util.Date;
 import java.util.List;
-import java.util.Set;
-import java.util.stream.Collectors;
 
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
-
-import org.apache.commons.lang3.ArrayUtils;
 import org.egov.commons.EgwStatus;
-import org.egov.infra.exception.ApplicationRuntimeException;
-import org.egov.infra.filestore.entity.FileStoreMapper;
-import org.egov.infra.filestore.service.FileStoreService;
+import org.egov.infra.utils.DateUtils;
 import org.egov.lcms.transactions.entity.Judgment;
 import org.egov.lcms.transactions.entity.JudgmentDocuments;
 import org.egov.lcms.transactions.repository.JudgmentRepository;
@@ -59,11 +51,10 @@ import org.egov.lcms.transactions.repository.LegalCaseRepository;
 import org.egov.lcms.utils.LegalCaseUtil;
 import org.egov.lcms.utils.constants.LcmsConstants;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.multipart.MultipartFile;
 
 @Service
 @Transactional(readOnly = true)
@@ -71,8 +62,6 @@ public class JudgmentService {
 
     @Autowired
     private final JudgmentRepository judgmentRepository;
-    @PersistenceContext
-    private EntityManager entityManager;
 
     @Autowired
     private LegalCaseRepository legalCaseRepository;
@@ -81,17 +70,14 @@ public class JudgmentService {
     private LegalCaseUtil legalCaseUtil;
 
     @Autowired
-    @Qualifier("fileStoreService")
-    protected FileStoreService fileStoreService;
-
-    @Autowired
     public JudgmentService(final JudgmentRepository judgmentRepository) {
         this.judgmentRepository = judgmentRepository;
     }
 
     @Transactional
     public Judgment persist(final Judgment judgment) {
-        processAndStoreApplicationDocuments(judgment);
+        final List<JudgmentDocuments> judgmentDoc = legalCaseUtil.getJudgmentDocumentList(judgment);
+        processAndStoreApplicationDocuments(judgment, judgmentDoc);
         final EgwStatus statusObj = legalCaseUtil.getStatusForModuleAndCode(LcmsConstants.MODULE_TYPE_LEGALCASE,
                 LcmsConstants.LEGALCASE_STATUS_JUDGMENT);
         judgment.getLegalCase().setStatus(statusObj);
@@ -101,34 +87,53 @@ public class JudgmentService {
     }
 
     public List<Judgment> findAll() {
-        return judgmentRepository.findAll(new Sort(Sort.Direction.ASC, "orderDate"));
+        return judgmentRepository.findAll(new Sort(Sort.Direction.ASC, ""));
     }
 
     public Judgment findById(final Long id) {
         return judgmentRepository.findOne(id);
     }
 
-    protected void processAndStoreApplicationDocuments(final Judgment judgment) {
-        if (!judgment.getJudgmentDocuments().isEmpty())
+    public List<JudgmentDocuments> getJudgmentDocList(final Judgment judgment) {
+        return judgment.getJudgmentDocuments();
+    }
+
+    protected void processAndStoreApplicationDocuments(final Judgment judgment,
+            final List<JudgmentDocuments> judgmentDoc) {
+        if (judgment.getId() == null) {
+            if (!judgment.getJudgmentDocuments().isEmpty())
+                for (final JudgmentDocuments applicationDocument : judgment.getJudgmentDocuments()) {
+                    applicationDocument.setJudgment(judgment);
+                    applicationDocument.setDocumentName("Judgment");
+                    applicationDocument.setSupportDocs(legalCaseUtil.addToFileStore(applicationDocument.getFiles()));
+                }
+        } else {
             for (final JudgmentDocuments applicationDocument : judgment.getJudgmentDocuments()) {
                 applicationDocument.setJudgment(judgment);
                 applicationDocument.setDocumentName("Judgment");
-                applicationDocument.setSupportDocs(addToFileStore(applicationDocument.getFiles()));
+                applicationDocument.getSupportDocs()
+                        .addAll(legalCaseUtil.addToFileStore(applicationDocument.getFiles()));
+                judgment.getJudgmentDocuments().clear();
+                judgment.getJudgmentDocuments().add(applicationDocument);
             }
+            judgment.getJudgmentDocuments().addAll(judgmentDoc);
+        }
+
     }
 
-    protected Set<FileStoreMapper> addToFileStore(final MultipartFile[] files) {
-        if (ArrayUtils.isNotEmpty(files))
-            return Arrays.asList(files).stream().filter(file -> !file.isEmpty()).map(file -> {
-                try {
-                    return fileStoreService.store(file.getInputStream(), file.getOriginalFilename(),
-                            file.getContentType(), LcmsConstants.FILESTORE_MODULECODE);
-                } catch (final Exception e) {
-                    throw new ApplicationRuntimeException("Error occurred while getting inputstream", e);
-                }
-            }).collect(Collectors.toSet());
+    @Transactional(propagation = Propagation.REQUIRES_NEW, readOnly = true)
+    public Judgment findByLCNumber(final String lcNumber) {
+        return judgmentRepository.findByLegalCase_lcNumber(lcNumber);
+    }
+
+    public void updateNextDate(final Judgment judgment) {
+        final Date nextDate = judgment.getEnquiryDate() != null ? judgment.getEnquiryDate() : judgment.getOrderDate();
+        if (!DateUtils.compareDates(judgment.getLegalCase().getNextDate(), nextDate))
+            judgment.getLegalCase().setNextDate(nextDate);
+        else if (judgment.getEnquiryDate() != null)
+            judgment.getLegalCase().setNextDate(judgment.getEnquiryDate());
         else
-            return null;
+            judgment.getLegalCase().setNextDate(judgment.getOrderDate());
     }
 
 }

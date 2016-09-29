@@ -43,6 +43,8 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import javax.persistence.CascadeType;
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
@@ -52,46 +54,59 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
 import javax.validation.constraints.NotNull;
 
-import org.egov.infra.persistence.entity.AbstractAuditable;
-import org.egov.infra.persistence.validator.annotation.OptionalPattern;
-import org.egov.infra.persistence.validator.annotation.Required;
+import org.egov.infra.persistence.entity.AbstractPersistable;
 import org.egov.infra.persistence.validator.annotation.ValidateDate;
 import org.egov.infra.utils.DateUtils;
 import org.egov.infra.validation.exception.ValidationError;
 import org.egov.lcms.utils.constants.LcmsConstants;
 import org.hibernate.validator.constraints.Length;
 
-/**
- * Contempt entity.
- *
- * @author MyEclipse Persistence Tools
- */
 @Entity
 @Table(name = "EGLC_CONTEMPT")
 @SequenceGenerator(name = Contempt.SEQ_EGLC_CONTEMPT, sequenceName = Contempt.SEQ_EGLC_CONTEMPT, allocationSize = 1)
-public class Contempt extends AbstractAuditable {
+public class Contempt extends AbstractPersistable<Long> {
     private static final long serialVersionUID = 1517694643078084884L;
     public static final String SEQ_EGLC_CONTEMPT = "SEQ_EGLC_CONTEMPT";
 
-    // Fields
     @Id
     @GeneratedValue(generator = SEQ_EGLC_CONTEMPT, strategy = GenerationType.SEQUENCE)
     private Long id;
-    @ManyToOne(fetch = FetchType.LAZY)
+
+    @ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @NotNull
-    @JoinColumn(name = "JUDGMENTIMPL")
+    @JoinColumn(name = "judgmentimpl")
     private JudgmentImpl judgmentImpl;
-    @Required(message = "canumber.null")
-    @Length(max = 50, message = "canumber.length")
-    @OptionalPattern(regex = LcmsConstants.alphaNumeric, message = "canumber.alpha")
+
+    @Length(max = 50)
+    @NotNull
+    @Column(name = "canumber")
     private String caNumber;
-    @Required(message = "receivingdate.null")
-    @ValidateDate(allowPast = true, dateFormat = LcmsConstants.DATE_FORMAT, message = "invalid.contempt.date")
+
+    @Temporal(TemporalType.DATE)
+    @ValidateDate(allowPast = true, dateFormat = LcmsConstants.DATE_FORMAT)
+    @Column(name = "receivingdate")
     private Date receivingDate;
-    private boolean iscommapprRequired = false;
+
+    @Column(name = "iscommapprrequired")
+    private Boolean iscommapprRequired = false;
+
+    @Temporal(TemporalType.DATE)
+    @Column(name = "commappdate")
     private Date commappDate;
+
+    @Override
+    public Long getId() {
+        return id;
+    }
+
+    @Override
+    public void setId(final Long id) {
+        this.id = id;
+    }
 
     public JudgmentImpl getJudgmentImpl() {
         return judgmentImpl;
@@ -117,27 +132,6 @@ public class Contempt extends AbstractAuditable {
         this.commappDate = commappDate;
     }
 
-    @Override
-    public Long getId() {
-        return id;
-    }
-
-    @Override
-    public void setId(final Long id) {
-        this.id = id;
-    }
-
-    public List<ValidationError> validate() {
-        final List<ValidationError> errors = new ArrayList<ValidationError>();
-        if (getReceivingDate() != null) {
-            if (!DateUtils.compareDates(getReceivingDate(), getJudgmentImpl().getJudgment().getOrderDate()))
-                errors.add(new ValidationError("receivingDate", "receivingDate.less.orderDate"));
-            if (!DateUtils.compareDates(getCommappDate(), getReceivingDate()))
-                errors.add(new ValidationError("receivingDate", "commappDate.greaterThan.receivingDate"));
-        }
-        return errors;
-    }
-
     public String getCaNumber() {
         return caNumber;
     }
@@ -152,6 +146,17 @@ public class Contempt extends AbstractAuditable {
 
     public void setReceivingDate(final Date receivingDate) {
         this.receivingDate = receivingDate;
+    }
+
+    public List<ValidationError> validate() {
+        final List<ValidationError> errors = new ArrayList<ValidationError>();
+        if (getReceivingDate() != null) {
+            if (!DateUtils.compareDates(getReceivingDate(), getJudgmentImpl().getJudgment().getOrderDate()))
+                errors.add(new ValidationError("receivingDate", "receivingDate.less.orderDate"));
+            if (!DateUtils.compareDates(getCommappDate(), getReceivingDate()))
+                errors.add(new ValidationError("receivingDate", "commappDate.greaterThan.receivingDate"));
+        }
+        return errors;
     }
 
 }

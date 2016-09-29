@@ -1023,6 +1023,7 @@ function fillNeibrAfterSplitGlcode(obj)
 	}
 	var currRow=getRowIndex(obj);
 	var funcObj = document.getElementById('billDetailslist['+currRow+'].functionDetail');
+	if(funcObj)
 	fillNeibrAfterSplitFunction(funcObj);
 	
 }

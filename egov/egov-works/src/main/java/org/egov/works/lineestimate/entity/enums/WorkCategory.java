@@ -43,11 +43,11 @@ package org.egov.works.lineestimate.entity.enums;
 import org.apache.commons.lang.StringUtils;
 
 public enum WorkCategory {
-    SLUM_WORK, NON_SLUM_WORK;
+    NON_SLUM, NOTIFIED_SLUM, NON_NOTIFIED_SLUM;
 
     @Override
     public String toString() {
-        return StringUtils.capitalize(name());
+        return StringUtils.replace(name(), "_", " ");
     }
 
 }

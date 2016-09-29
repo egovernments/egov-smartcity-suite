@@ -87,16 +87,12 @@ jQuery('#btnsearch').click(function(e) {
         queryParameters += "Sub Scheme : " + $('#subScheme').find(":selected").text() + ", ";
     }
     
-    if($("input[name=workCategory]").is(":checked") ) {
-        queryParameters += "Work Category : " + $("input[name=workCategory]:checked").val().replace('_',' ').replace('_',' ') + ", ";
-    }
-    
-    if($('#typeOfSlum').val() != "") {
-        queryParameters += "Type Of Slum : " + $('#typeOfSlum').val().replace('_',' ') + ", ";
+    if($('#workCategory').val() != "") {
+        queryParameters += "Work Category : " + $('#workCategory').val().replace(/_/g, ' ') + ", ";
     }
     
     if($('#beneficiary').val() != "") {
-        queryParameters += "Beneficiary : " + $('#beneficiary').val() + ", ";
+        queryParameters += "Beneficiary : " + $('#beneficiary').val().replace(/_C/g, '/C').replace('_',' ') + ", ";
     }
     
     if($('#natureOfWork').val() != "") {
@@ -117,8 +113,7 @@ $('#btndownloadpdf').click(function() {
 	var department = $('#department').val();
 	var scheme = $('#scheme').val();
 	var subScheme = $('#subScheme').val();
-	var workCategory = $("input[name=workCategory]:checked").val();
-	var typeOfSlum = $('#typeOfSlum').val();
+	var workCategory = $('#workCategory').val();
 	var beneficiary = $('#beneficiary').val();
 	var natureOfWork = $('#natureOfWork').val();
 	var spillOver = document.getElementById("spillOverFlag");
@@ -137,8 +132,6 @@ $('#btndownloadpdf').click(function() {
 			+ subScheme
 			+ "&workCategory="
 			+ workCategory
-			+ "&typeOfSlum="
-			+ typeOfSlum
 			+ "&beneficiary="
 			+ beneficiary
 			+ "&natureOfWork="
@@ -153,8 +146,7 @@ $('#btndownloadexcel').click(function() {
 	var department = $('#department').val();
 	var scheme = $('#scheme').val();
 	var subScheme = $('#subScheme').val();
-	var workCategory = $("input[name=workCategory]:checked").val();
-	var typeOfSlum = $('#typeOfSlum').val();
+	var workCategory = $('#workCategory').val();
 	var beneficiary = $('#beneficiary').val();
 	var natureOfWork = $('#natureOfWork').val();
 	var spillOver = document.getElementById("spillOverFlag");
@@ -173,8 +165,6 @@ $('#btndownloadexcel').click(function() {
 			+ subScheme
 			+ "&workCategory="
 			+ workCategory
-			+ "&typeOfSlum="
-			+ typeOfSlum
 			+ "&beneficiary="
 			+ beneficiary
 			+ "&natureOfWork="
@@ -257,15 +247,6 @@ function callAjaxSearch() {
 }
 
 
-function disableSlumFields() {
-	var slum = document.getElementById("slum");
-	var slumfields = document.getElementById("slumfields");
-	slumfields.style.display = slum.checked ? "block" : "none";
-	document.getElementById("typeOfSlum").disabled = true;
-	document.getElementById("beneficiary").disabled = true;
-	$('#nonslum').attr('checked', 'checked');
-}
-
 function getSubSchemsBySchemeId(schemeId) {
 	if ($('#scheme').val() === '') {
 		   $('#subScheme').empty();
@@ -341,20 +322,8 @@ function getFinancialYearDatesByFYId(fyId) {
 			}
 }
 
-function showSlumFields() {
-	replaceTypeOfSlumChar();
-	replaceBeneficiaryChar();
-	var slum = document.getElementById("slum");
-	var slumfields = document.getElementById("slumfields");
-	slumfields.style.display = slum.checked ? "block" : "none";
-	document.getElementById("typeOfSlum").disabled = false;
-	document.getElementById("beneficiary").disabled = false;
-	$('#slum').attr('checked', 'checked');
-	
-}
-
-function replaceTypeOfSlumChar() {
-	$('#typeOfSlum option').each(function() {
+function replaceWorkCategoryChar() {
+	$('#workCategory option').each(function() {
 	   var $this = $(this);
 	   $this.text($this.text().replace(/_/g, ' '));
 	});
@@ -363,13 +332,15 @@ function replaceTypeOfSlumChar() {
 function replaceBeneficiaryChar() {
 	$('#beneficiary option').each(function() {
 	   var $this = $(this);
-	   $this.text($this.text().replace(/_/g, '/'));
+	   $this.text($this.text().replace(/_C/g, '/C').replace(/_/g, ' '));
 	});
-	
-
 }
 
+
 $(document).ready(function(){
+	replaceWorkCategoryChar();
+	replaceBeneficiaryChar();
+	
 	$('#btnsearch').click(function(e) {
 		if ($('form').valid()) {
 		} else {

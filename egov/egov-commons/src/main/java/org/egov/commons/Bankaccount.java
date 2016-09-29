@@ -96,6 +96,10 @@ public class Bankaccount extends AbstractAuditable implements java.io.Serializab
     @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL, mappedBy = "bankaccount")
     private Set<EgSurrenderedCheques> egSurrenderedChequeses = new HashSet<EgSurrenderedCheques>(0);
 
+    @ManyToOne
+    @JoinColumn(name="chequeformatid")
+    private ChequeFormat chequeformat ;
+    
     public Bankaccount() {
         // For hibernate to work
     }
@@ -211,6 +215,14 @@ public class Bankaccount extends AbstractAuditable implements java.io.Serializab
 
     public void setIsactive(Boolean isactive) {
         this.isactive = isactive;
+    }
+
+    public ChequeFormat getChequeformat() {
+        return this.chequeformat;
+    }
+
+    public void setChequeformat(ChequeFormat chequeformat) {
+        this.chequeformat = chequeformat;
     }
 
 }

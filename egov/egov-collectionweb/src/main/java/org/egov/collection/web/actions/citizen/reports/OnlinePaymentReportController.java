@@ -39,8 +39,6 @@
  */
 package org.egov.collection.web.actions.citizen.reports;
 
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
 import net.sf.json.JSONObject;
 import org.apache.commons.io.IOUtils;
 import org.egov.collection.entity.OnlinePaymentResult;
@@ -62,6 +60,8 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+
+import static org.egov.infra.web.utils.WebUtils.toJSON;
 
 @Controller
 public class OnlinePaymentReportController {
@@ -90,7 +90,7 @@ public class OnlinePaymentReportController {
     @RequestMapping(value = "/citizen/onlinePaymentReport/result", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
     public @ResponseBody void springPaginationDataTablesUpdate(final HttpServletRequest request,
             final HttpServletResponse response, final Model model) throws IOException {
-        List<OnlinePaymentResult> onlinePaymentList = new ArrayList<OnlinePaymentResult>();
+
         final String districtname = request.getParameter("districtname");
         final String ulbname = request.getParameter("ulbname");
         final String fromdate = request.getParameter("fromdate");
@@ -98,19 +98,11 @@ public class OnlinePaymentReportController {
         final String transid = request.getParameter("transid");
         final SQLQuery query = reportService.getOnlinePaymentReportData(districtname, ulbname, fromdate, todate,
                 transid);
-        onlinePaymentList = query.list();
-        final String result = new StringBuilder("{ \"data\":").append(toJSON(onlinePaymentList)).append("}").toString();
+        List<OnlinePaymentResult> onlinePaymentList = query.list();
+        final String result = new StringBuilder("{ \"data\":").append(toJSON(onlinePaymentList, OnlinePaymentResult.class, OnlinePaymentResultAdaptor.class )).append("}").toString();
         IOUtils.write(result, response.getWriter());
     }
 
-    private Object toJSON(final Object object) {
-        final GsonBuilder gsonBuilder = new GsonBuilder();
-        final Gson gson = gsonBuilder.registerTypeAdapter(OnlinePaymentResult.class, new OnlinePaymentResultAdaptor())
-                .create();
-        final String json = gson.toJson(object);
-        return json;
-    }
-    
     @RequestMapping(value = "/citizen/getUlbNamesByDistrict", method = RequestMethod.GET)
     public @ResponseBody void getUlbNamesByDistrict(@RequestParam final String districtname,final HttpServletResponse response) throws IOException {
         List ulbnames = new ArrayList();

@@ -50,39 +50,34 @@ import java.util.List;
 
 /**
  * Service for the HierarchyType
- * 
- * @author nayeem
  *
+ * @author nayeem
  */
 @Service
 @Transactional(readOnly = true)
 public class HierarchyTypeService {
-    
+
     private HierarchyTypeRepository hierarchyTypeRepository;
-    
+
     @Autowired
     public HierarchyTypeService(HierarchyTypeRepository hierarchyTypeRepository) {
         this.hierarchyTypeRepository = hierarchyTypeRepository;
     }
-    
+
     @Transactional
     public HierarchyType createHierarchyType(HierarchyType hierarchyType) {
         return hierarchyTypeRepository.save(hierarchyType);
     }
-    
+
     @Transactional
     public HierarchyType updateHierarchyType(HierarchyType hierarchyType) {
         return hierarchyTypeRepository.saveAndFlush(hierarchyType);
-    }
-    
-    public HierarchyType getHierarchyTypeById(Long id) {
-        return hierarchyTypeRepository.findOne(id);
     }
 
     public HierarchyType getHierarchyTypeByName(String name) {
         return hierarchyTypeRepository.findByName(name);
     }
-    
+
     public List<HierarchyType> getAllHierarchyTypes() {
         return hierarchyTypeRepository.findAll();
     }

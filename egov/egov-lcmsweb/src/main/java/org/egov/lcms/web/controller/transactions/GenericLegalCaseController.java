@@ -72,25 +72,27 @@ public class GenericLegalCaseController {
     private GovernmentDepartmentService governmentDepartmentService;
 
     @Autowired
-    private PetitionTypeMasterService petitiontypeMasterService;
+    private PetitionTypeMasterService petitionTypeMasterService;
 
     @Autowired
     private CourtMasterService courtMasterService;
 
-
     public @ModelAttribute("courtTypeList") List<CourtTypeMaster> courtTypeList() {
-        return courtTypeMasterService.getCourtTypeList();
+        return courtTypeMasterService.getActiveCourtTypes();
     }
 
-    public @ModelAttribute("courtsList") List<CourtMaster> courtList() {
-        return courtMasterService.findAll();
+    public @ModelAttribute("petitiontypeList") List<PetitionTypeMaster> getPetitionList() {
+        return petitionTypeMasterService.getActivePetitionTypes();
+    }
+
+    public @ModelAttribute("courtsList") List<CourtMaster> getCourtNameList() {
+        return courtMasterService.getActiveCourtMaster();
     }
 
     public @ModelAttribute("govtDeptList") List<GovernmentDepartment> getGovtDeptList() {
-        return governmentDepartmentService.findAll();
+        return governmentDepartmentService.getActiveGovernmentDepartment();
     }
 
-   
     public @ModelAttribute("lcNumberTypes") Map<String, String> getLcNumberTypeTypes() {
         return getLcNumberTypesMap();
     }
@@ -103,11 +105,7 @@ public class GenericLegalCaseController {
     }
 
     public @ModelAttribute("caseTypeList") List<CaseTypeMaster> caseTypeList() {
-        return caseTypeMasterService.getCaseTypeList();
-    }
-
-    public @ModelAttribute("petitiontypeList") List<PetitionTypeMaster> petitiontypeList() {
-        return petitiontypeMasterService.getPetitiontypeList();
+        return caseTypeMasterService.getActiveCaseTypeList();
     }
 
     public @ModelAttribute("wPYearList") List<Integer> getWPYearList() {

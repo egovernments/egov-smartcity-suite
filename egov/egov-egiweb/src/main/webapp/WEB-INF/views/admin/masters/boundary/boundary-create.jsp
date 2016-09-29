@@ -43,6 +43,7 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
 <%@ taglib uri="http://www.springframework.org/tags" prefix="spring" %>
 <%@ taglib uri="http://www.springframework.org/tags/form" prefix="form" %>
+<%@ taglib uri="/WEB-INF/taglib/cdn.tld" prefix="cdn" %>
 <div class="row" id="page-content">
 	<div class="col-md-12">
 		<div class="panel" data-collapsed="0">
@@ -77,7 +78,7 @@
 					<div class="form-group">
 						<label class="col-sm-3 control-label"><spring:message code="lbl.hierarchyType"/></label>
 						<div class="col-sm-6" style="padding-top: 7px">
-							<strong><c:out value="${boundaryType.hierarchyType.name}" /></strong>                 
+							<strong><c:out value="${boundaryType.hierarchyType.name}" /></strong>
 						</div>
 					</div>
 					<div class="form-group">
@@ -86,7 +87,7 @@
 						</label>
 						<div class="col-sm-6" style="padding-top: 7px">
 							<strong><c:out value="${boundaryType.name}" /></strong>
-							<input type="hidden" name="boundaryTypeId" value="<c:out value="${boundaryType.id}" />" />
+							<input type="hidden" name="boundaryType" value="<c:out value="${boundaryType.id}" />" />
 						</div>
 					</div>
 					  <div class="panel-body custom-form">
@@ -98,12 +99,11 @@
 									<span class="mandatory"></span>
 								</label>
 								<div class="col-sm-6 add-margin">
-		                            <form:select path="parent"
-		                                         id="hierarchyTypeSelect" cssClass="form-control"  cssErrorClass="form-control error" required="required">
+		                            <form:select path="parent" id="hierarchyTypeSelect" cssClass="form-control"  cssErrorClass="form-control error" required="true">
 		                                <form:option value=""> <spring:message code="lbl.select"/> </form:option>
 		                                <form:options items="${parentBoundary}" itemValue="id" itemLabel="name"/>
 		                            </form:select>
-		                            <form:errors path="name" cssClass="error-msg"/>
+		                            <form:errors path="parent" cssClass="error-msg"/>
 	                        	</div>
 	                        </div>
 	                 	</c:when>
@@ -118,7 +118,7 @@
 		                                <form:option value=""> <spring:message code="lbl.select"/> </form:option>
 		                                <form:options items="${parentBoundary}" itemValue="id" itemLabel="name"/>
 		                            </form:select>
-		                            <form:errors path="name" cssClass="error-msg"/>
+		                            <form:errors path="parent" cssClass="error-msg"/>
 	                        	</div>
 	                        </div>
 	                 	</c:otherwise>
@@ -182,4 +182,4 @@
         </div>
     </div>
 </div>
-<script src="<c:url value='/resources/js/app/boundary.js?rnd=${app_release_no}'/>"></script>
+<script src="<cdn:url  value='/resources/js/app/boundary.js?rnd=${app_release_no}'/>"></script>

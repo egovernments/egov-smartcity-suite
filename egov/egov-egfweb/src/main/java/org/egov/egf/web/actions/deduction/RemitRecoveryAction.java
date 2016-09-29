@@ -42,12 +42,20 @@
  */
 package org.egov.egf.web.actions.deduction;
 
-import com.exilant.GLEngine.ChartOfAccounts;
-import com.exilant.GLEngine.Transaxtion;
-import com.opensymphony.xwork2.validator.annotations.Validation;
+import java.math.BigDecimal;
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
+import java.util.Set;
 
-import org.apache.commons.collections.CollectionUtils;
-import org.apache.commons.collections.Predicate;
 import org.apache.log4j.Logger;
 import org.apache.struts2.convention.annotation.Action;
 import org.apache.struts2.convention.annotation.ParentPackage;
@@ -57,6 +65,7 @@ import org.apache.struts2.interceptor.validation.SkipValidation;
 import org.egov.billsaccounting.services.CreateVoucher;
 import org.egov.billsaccounting.services.VoucherConstant;
 import org.egov.commons.Bankaccount;
+import org.egov.commons.CFunction;
 import org.egov.commons.CVoucherHeader;
 import org.egov.commons.Functionary;
 import org.egov.commons.Fund;
@@ -65,15 +74,18 @@ import org.egov.commons.Scheme;
 import org.egov.commons.SubScheme;
 import org.egov.commons.Vouchermis;
 import org.egov.commons.dao.FinancialYearHibernateDAO;
+import org.egov.commons.service.BankAccountService;
+import org.egov.commons.service.FunctionService;
 import org.egov.commons.utils.EntityType;
 import org.egov.dao.voucher.VoucherHibernateDAO;
 import org.egov.deduction.model.EgRemittance;
 import org.egov.deduction.model.EgRemittanceDetail;
 import org.egov.egf.commons.EgovCommon;
 import org.egov.egf.web.actions.payment.BasePaymentAction;
-import org.egov.egf.web.actions.voucher.CommonAction;
+import org.egov.infra.admin.master.entity.AppConfigValues;
 import org.egov.infra.admin.master.entity.Boundary;
 import org.egov.infra.admin.master.entity.Department;
+import org.egov.infra.admin.master.service.DepartmentService;
 import org.egov.infra.script.entity.Script;
 import org.egov.infra.script.service.ScriptService;
 import org.egov.infra.validation.exception.ValidationError;
@@ -96,24 +108,17 @@ import org.egov.model.voucher.WorkflowBean;
 import org.egov.payment.services.PaymentActionHelper;
 import org.egov.pims.commons.Designation;
 import org.egov.services.deduction.RemitRecoveryService;
+import org.egov.services.masters.BankService;
 import org.egov.services.payment.PaymentService;
 import org.egov.services.voucher.VoucherService;
+import org.egov.utils.Constants;
 import org.egov.utils.FinancialConstants;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 
-import java.math.BigDecimal;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Map.Entry;
-import java.util.Set;
+import com.exilant.GLEngine.ChartOfAccounts;
+import com.exilant.GLEngine.Transaxtion;
+import com.opensymphony.xwork2.validator.annotations.Validation;
 
 @ParentPackage("egov")
 @Validation
@@ -139,8 +144,11 @@ public class RemitRecoveryAction extends BasePaymentAction {
     private RemitRecoveryService remitRecoveryService;
     private VoucherService voucherService;
     private List<RemittanceBean> listRemitBean;
+    private String selectedRows;
+    private Long functionId;
+    @Autowired
+    @Qualifier("remittanceRecoveryService")
     private RecoveryService recoveryService;
-    private CommonAction common;
     private Map<String, String> modeOfCollectionMap = new HashMap<String, String>();
     private PaymentService paymentService;
     private Paymentheader paymentheader = new Paymentheader();
@@ -150,6 +158,10 @@ public class RemitRecoveryAction extends BasePaymentAction {
     public boolean showApprove = false;
     private CommonBean commonBean;
     private String modeOfPayment;
+    @Autowired
+    private DepartmentService departmentService;
+    @Autowired
+    private FunctionService functionService;
 
     @Autowired
     @Qualifier("persistenceService")
@@ -172,12 +184,27 @@ public class RemitRecoveryAction extends BasePaymentAction {
     private String remittedTo = "";
     private final boolean remit = false;
     private List<InstrumentHeader> instrumentHeaderList = new ArrayList<InstrumentHeader>();
+    private String cutOffDate;
+    private final SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy", Constants.LOCALE);
+    DateFormat df = new SimpleDateFormat("dd-MMM-yyyy");
+    DateFormat sdf1 = new SimpleDateFormat("dd/MM/yyyy");
+    private final SimpleDateFormat formatter1 = new SimpleDateFormat("yyyy-MM-dd");
+
+    Date date;
     private ScriptService scriptService;
     @Autowired
     private PaymentActionHelper paymentActionHelper;
     private ChartOfAccounts chartOfAccounts;
     @Autowired
     private EgovMasterDataCaching masterDataCache;
+
+    @Autowired
+    @Qualifier("bankService")
+    private BankService bankService;
+
+    @Autowired
+    @Qualifier("bankAccountService")
+    private BankAccountService bankAccountService;
 
     public BigDecimal getBalance() {
         return balance;
@@ -244,10 +271,13 @@ public class RemitRecoveryAction extends BasePaymentAction {
         listRemitBean = new ArrayList<RemittanceBean>();
         if (LOGGER.isDebugEnabled())
             LOGGER.debug("RemitRecoveryAction | Search | Start");
-        validateFields();
         listRemitBean = remitRecoveryService.getRecoveryDetails(remittanceBean, voucherHeader);
-        if (listRemitBean == null)
+        if (listRemitBean == null || listRemitBean.isEmpty())
             listRemitBean = new ArrayList<RemittanceBean>();
+        else{
+            departmentId = listRemitBean.get(0).getDepartmentId().intValue();
+            functionId = listRemitBean.get(0).getFunctionId();
+        }
 
         return NEW;
     }
@@ -261,7 +291,30 @@ public class RemitRecoveryAction extends BasePaymentAction {
     @ValidationErrorPage(value = "new")
     @Action(value = "/deduction/remitRecovery-remit")
     public String remit() {
+        
+        prepareListRemitBean(selectedRows);
+        List<AppConfigValues> cutOffDateconfigValue = appConfigValuesService.getConfigValuesByModuleAndKey("EGF",
+                "DataEntryCutOffDate");
+        if (cutOffDateconfigValue != null && !cutOffDateconfigValue.isEmpty())
+        {
+            try {
+                date = df.parse(cutOffDateconfigValue.get(0).getValue());
+                setCutOffDate(formatter.format(date));
+            } catch (ParseException e) {
+                e.printStackTrace();
+            }
+        }
         voucherHeader.setType(FinancialConstants.STANDARD_VOUCHER_TYPE_PAYMENT);
+        if(voucherHeader.getVouchermis().getDepartmentid()==null )
+        {
+            Department department=departmentService.getDepartmentById(departmentId.longValue());
+            voucherHeader.getVouchermis().setDepartmentid(department);
+        }
+        if(voucherHeader.getVouchermis().getFunction()==null)
+        {
+            CFunction function=functionService.findOne(functionId);
+            voucherHeader.getVouchermis().setFunction(function); 
+        }
         if (LOGGER.isDebugEnabled())
             LOGGER.debug("RemitRecoveryAction | remit | start");
         if (LOGGER.isDebugEnabled())
@@ -269,10 +322,8 @@ public class RemitRecoveryAction extends BasePaymentAction {
         final Recovery recov = (Recovery) persistenceService.find("from Recovery where id=?", remittanceBean.getRecoveryId());
         if (recov != null)
             remittedTo = recov.getRemitted();
-        final Predicate remitPredicate = new RemittanceBean();
         for (final RemittanceBean rbean : listRemitBean)
             rbean.setPartialAmount(rbean.getAmount());
-        CollectionUtils.filter(listRemitBean, remitPredicate);
         if (LOGGER.isDebugEnabled())
             LOGGER.debug("RemitRecoveryAction | remit | size after filter" + listRemitBean.size());
         setModeOfPayment(FinancialConstants.MODEOFPAYMENT_CASH);
@@ -281,12 +332,23 @@ public class RemitRecoveryAction extends BasePaymentAction {
         return "remitDetail";
     }
 
+    private void prepareListRemitBean(String selectedRows) {
+        listRemitBean = remitRecoveryService.getRecoveryDetails(selectedRows);
+        if (listRemitBean == null)
+            listRemitBean = new ArrayList<RemittanceBean>(); 
+
+    }
+
     @ValidationErrorPage(value = "remitDetail")
     @Action(value = "/deduction/remitRecovery-create")
     public String create()
     {
         try {
-            validateFields();
+            String vdate = parameters.get("voucherDate")[0];
+            Date date1 = sdf1.parse(vdate);
+            String voucherDate = formatter1.format(date1);
+            String cutOffDate1 = null;
+            validateFields(); 
             voucherHeader.setType(FinancialConstants.STANDARD_VOUCHER_TYPE_PAYMENT);
             voucherHeader.setName(FinancialConstants.PAYMENTVOUCHER_NAME_REMITTANCE);
             final HashMap<String, Object> headerDetails = createHeaderAndMisDetails();
@@ -295,10 +357,29 @@ public class RemitRecoveryAction extends BasePaymentAction {
             paymentheader = paymentActionHelper.createRemittancePayment(paymentheader, voucherHeader,
                     Integer.valueOf(commonBean.getAccountNumberId()), getModeOfPayment(), remittanceBean.getTotalAmount(),
                     listRemitBean, recovery, remittanceBean, remittedTo, workflowBean, headerDetails, commonBean);
-            addActionMessage(getText("remittancepayment.transaction.success")
-                    + paymentheader.getVoucherheader().getVoucherNumber());
-            addActionMessage(getText("payment.voucher.approved",
-                    new String[] { paymentService.getEmployeeNameForPositionId(paymentheader.getState().getOwnerPosition()) }));
+
+            if (!cutOffDate.isEmpty() && cutOffDate != null)
+            {
+                try {
+                    date = sdf1.parse(cutOffDate);
+                    cutOffDate1 = formatter1.format(date);
+                } catch (ParseException e) {
+                    // e.printStackTrace();
+                }
+            }
+            if (cutOffDate1 != null && voucherDate.compareTo(cutOffDate1) <= 0
+                    && FinancialConstants.CREATEANDAPPROVE.equalsIgnoreCase(workflowBean.getWorkFlowAction()))
+            {
+                addActionMessage(getText("remittancepayment.transaction.success")
+                        + paymentheader.getVoucherheader().getVoucherNumber());
+            }
+            else
+            {
+                addActionMessage(getText("remittancepayment.transaction.success")
+                        + paymentheader.getVoucherheader().getVoucherNumber());
+                addActionMessage(getText("payment.voucher.approved",
+                        new String[] { paymentService.getEmployeeNameForPositionId(paymentheader.getState().getOwnerPosition()) }));
+            }
 
         } catch (final ValidationException e) {
             loadAjaxedDropDowns();
@@ -316,7 +397,6 @@ public class RemitRecoveryAction extends BasePaymentAction {
 
     /**
      *
-     * @param vh
      *
      * 1.Creates one EgRemittance with paymentvoucher is set 2.updates every EgRemittanceGldtl for selected Bills 3.Creates
      * EgRemittanceDetail per selected Bill
@@ -730,7 +810,6 @@ public class RemitRecoveryAction extends BasePaymentAction {
 
     /**
      * @param remitDtl
-     * @param remit
      * @return
      */
     private BigDecimal calculateEarlierPayment(final EgRemittanceDetail remitDtl) {
@@ -776,34 +855,26 @@ public class RemitRecoveryAction extends BasePaymentAction {
     }
 
     private void loadBankBranchForFundAndType() {
-        common.setFundId(voucherHeader.getFundId().getId());
-        common.setTypeOfAccount("RECEIPTS_PAYMENTS,PAYMENTS");
-        common.ajaxLoadBanksByFundAndType();
-        addDropdownData("bankList", common.getBankBranchList());
+        addDropdownData("bankList", bankService.getBankByFundAndType(voucherHeader.getFundId().getId(), "RECEIPTS_PAYMENTS,PAYMENTS"));
     }
 
     private void loadBankAccountNumberForFundAndType()
     {
         Bankaccount bankaccount = null;
 
-        if (paymentheader != null && paymentheader.getBankaccount()!=null)
+        if (paymentheader != null && paymentheader.getBankaccount() != null)
         {
             bankaccount = paymentheader.getBankaccount();
-            common.setBranchId(bankaccount.getBankbranch().getId());
-            common.setBankId(bankaccount.getBankbranch().getBank().getId());
         } else if (commonBean.getAccountNumberId() != null && !commonBean.getAccountNumberId().equals("-1")
                 && !commonBean.getAccountNumberId().equals(""))
         {
             bankaccount = (Bankaccount) persistenceService.find("from Bankaccount where id=?",
                     Integer.valueOf(commonBean.getAccountNumberId()));
-            common.setBranchId(bankaccount.getBankbranch().getId());
-            common.setBankId(bankaccount.getBankbranch().getBank().getId());
         }
-        if (common.getBranchId() != null)
+        if (bankaccount.getBankbranch().getId() != null)
         {
-            common.setTypeOfAccount("RECEIPTS_PAYMENTS,PAYMENTS");
-            common.ajaxLoadAccNumAndType();
-            addDropdownData("accNumList", common.getAccNumList());
+            addDropdownData("accNumList", bankAccountService.getBankAccounts(voucherHeader.getFundId().getId(), bankaccount.getBankbranch().getId(),
+                    bankaccount.getBankbranch().getBank().getId(), "RECEIPTS_PAYMENTS,PAYMENTS"));
         } else
             addDropdownData("accNumList", Collections.EMPTY_LIST);
     }
@@ -832,14 +903,34 @@ public class RemitRecoveryAction extends BasePaymentAction {
 
     public List<String> getValidActions() {
         List<String> validActions = Collections.emptyList();
-        if (null == paymentheader || null == paymentheader.getId() || paymentheader.getCurrentState().getValue().endsWith("NEW")) {
-            validActions = Arrays.asList("Forward");
-        } else {
-            if (paymentheader.getCurrentState() != null) {
-                validActions = this.customizedWorkFlowService.getNextValidActions(paymentheader
-                        .getStateType(), getWorkFlowDepartment(), getAmountRule(),
-                        getAdditionalRule(), paymentheader.getCurrentState().getValue(),
-                        getPendingActions(), paymentheader.getCreatedDate());
+        List<AppConfigValues> cutOffDateconfigValue = appConfigValuesService.getConfigValuesByModuleAndKey("EGF",
+                "DataEntryCutOffDate");
+        if (cutOffDateconfigValue != null && !cutOffDateconfigValue.isEmpty())
+        {
+            if (null == paymentheader || null == paymentheader.getId()
+                    || paymentheader.getCurrentState().getValue().endsWith("NEW")) {
+                validActions = Arrays.asList(FinancialConstants.BUTTONFORWARD, FinancialConstants.CREATEANDAPPROVE);
+            } else {
+                if (paymentheader.getCurrentState() != null) {
+                    validActions = this.customizedWorkFlowService.getNextValidActions(paymentheader
+                            .getStateType(), getWorkFlowDepartment(), getAmountRule(),
+                            getAdditionalRule(), paymentheader.getCurrentState().getValue(),
+                            getPendingActions(), paymentheader.getCreatedDate());
+                }
+            }
+        }
+        else
+        {
+            if (null == paymentheader || null == paymentheader.getId()
+                    || paymentheader.getCurrentState().getValue().endsWith("NEW")) {
+                validActions = Arrays.asList(FinancialConstants.BUTTONFORWARD);
+            } else {
+                if (paymentheader.getCurrentState() != null) {
+                    validActions = this.customizedWorkFlowService.getNextValidActions(paymentheader
+                            .getStateType(), getWorkFlowDepartment(), getAmountRule(),
+                            getAdditionalRule(), paymentheader.getCurrentState().getValue(),
+                            getPendingActions(), paymentheader.getCreatedDate());
+                }
             }
         }
         return validActions;
@@ -891,14 +982,6 @@ public class RemitRecoveryAction extends BasePaymentAction {
 
     public void setListRemitBean(final List<RemittanceBean> listRemitBean) {
         this.listRemitBean = listRemitBean;
-    }
-
-    public void setRecoveryService(final RecoveryService recoveryService) {
-        this.recoveryService = recoveryService;
-    }
-
-    public void setCommon(final CommonAction common) {
-        this.common = common;
     }
 
     public Paymentheader getPaymentheader() {
@@ -1032,5 +1115,38 @@ public class RemitRecoveryAction extends BasePaymentAction {
     public String getCurrentState() {
         return paymentheader.getState().getValue();
     }
+
+    public String getCutOffDate() {
+        return cutOffDate;
+    }
+
+    public void setCutOffDate(String cutOffDate) {
+        this.cutOffDate = cutOffDate;
+    }
+
+    public String getSelectedRows() {
+        return selectedRows;
+    }
+
+    public Long getFunctionId() {
+        return functionId;
+    }
+
+    public Integer getDepartmentId() {
+        return departmentId;
+    }
+
+    public void setSelectedRows(String selectedRows) {
+        this.selectedRows = selectedRows;
+    }
+
+    public void setFunctionId(Long functionId) {
+        this.functionId = functionId;
+    }
+
+    public void setDepartmentId(Integer departmentId) {
+        this.departmentId = departmentId;
+    }
+
 
 }

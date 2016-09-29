@@ -40,32 +40,43 @@
 
 package org.egov.ptis.domain.service.exemption;
 
+import static java.lang.Boolean.FALSE;
+import static org.egov.ptis.constants.PropertyTaxConstants.*;
+
+import java.math.BigDecimal;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Set;
+
 import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.lang3.time.DateUtils;
 import org.egov.commons.Installment;
+import org.egov.demand.model.EgDemandDetails;
 import org.egov.eis.entity.Assignment;
 import org.egov.eis.service.AssignmentService;
 import org.egov.eis.service.PositionMasterService;
 import org.egov.infra.admin.master.entity.User;
-import org.egov.infra.admin.master.service.UserService;
 import org.egov.infra.config.core.ApplicationThreadLocals;
 import org.egov.infra.exception.ApplicationRuntimeException;
 import org.egov.infra.messaging.MessagingService;
 import org.egov.infra.security.utils.SecurityUtils;
 import org.egov.infra.utils.ApplicationNumberGenerator;
+import org.egov.infra.utils.DateUtils;
 import org.egov.infra.workflow.matrix.entity.WorkFlowMatrix;
 import org.egov.infra.workflow.service.SimpleWorkflowService;
 import org.egov.infstr.services.PersistenceService;
 import org.egov.pims.commons.Position;
 import org.egov.ptis.client.util.PropertyTaxUtil;
 import org.egov.ptis.domain.dao.demand.PtDemandDao;
-import org.egov.ptis.domain.dao.property.PropertyTypeMasterDAO;
 import org.egov.ptis.domain.entity.demand.Ptdemand;
 import org.egov.ptis.domain.entity.property.BasicProperty;
 import org.egov.ptis.domain.entity.property.Floor;
 import org.egov.ptis.domain.entity.property.Property;
 import org.egov.ptis.domain.entity.property.PropertyDetail;
 import org.egov.ptis.domain.entity.property.PropertyImpl;
+import org.egov.ptis.domain.entity.property.PropertyOwnerInfo;
 import org.egov.ptis.domain.entity.property.TaxExeptionReason;
 import org.egov.ptis.domain.service.property.PropertyPersistenceService;
 import org.egov.ptis.domain.service.property.PropertyService;
@@ -75,29 +86,16 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.EnableAspectJAutoProxy;
-import org.springframework.context.support.ResourceBundleMessageSource;
+import org.springframework.context.MessageSource;
+import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.ui.Model;
 
-import java.math.BigDecimal;
-import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.Map;
-
-import static java.lang.Boolean.FALSE;
-import static org.egov.ptis.constants.PropertyTaxConstants.*;
-
-@Configuration
-@EnableAspectJAutoProxy(proxyTargetClass = true)
+@Service
+@Transactional
 public class TaxExemptionService extends PersistenceService<PropertyImpl, Long> {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(TaxExemptionService.class);
-
-    @Autowired
-    private PropertyTypeMasterDAO propertyTypeMasterDAO;
 
     @Autowired
     private PropertyService propService;
@@ -127,21 +125,27 @@ public class TaxExemptionService extends PersistenceService<PropertyImpl, Long> 
     PropertyImpl propertyModel = new PropertyImpl();
 
     @Autowired
-    private UserService userService;
-
-    @Autowired
     private ApplicationNumberGenerator applicationNumberGenerator;
 
     @Autowired
     private PtDemandDao ptDemandDAO;
 
     @Autowired
-    private ResourceBundleMessageSource messageSource;
+    @Qualifier("parentMessageSource")
+    private MessageSource ptisMessageSource;
 
     @Autowired
     private MessagingService messagingService;
     
     Property property = null;
+
+    public TaxExemptionService() {
+        super(PropertyImpl.class);
+    }
+
+    public TaxExemptionService(Class<PropertyImpl> type) {
+        super(type);
+    }
 
     @Transactional
     public BasicProperty saveProperty(final Property newProperty, final Property oldProperty, final Character status,
@@ -156,6 +160,28 @@ public class TaxExemptionService extends PersistenceService<PropertyImpl, Long> 
         propertyModel.setStatus(status);
         if (propertyModel.getApplicationNo() == null)
             propertyModel.setApplicationNo(applicationNumberGenerator.generate());
+
+        Map<String,Installment> yearwiseInstMap = propertyTaxUtil.getInstallmentsForCurrYear(new Date());
+        Installment installmentFirstHalf = yearwiseInstMap.get(CURRENTYEAR_FIRST_HALF);
+        Installment installmentSecondHalf = yearwiseInstMap.get(CURRENTYEAR_SECOND_HALF);
+        Date effectiveDate = null;
+        /*
+         * While converting an exempted property to non-exempted property,
+         * effective date will be the installment from date of the current installment.
+         * Else, effective date will be the starting date of the next installment
+         */
+        if(DateUtils.between(new Date(), installmentFirstHalf.getFromDate(), installmentFirstHalf.getToDate())){
+        	if (StringUtils.isNotBlank(taxExemptedReason) && !taxExemptedReason.equals("-1"))
+        		effectiveDate = installmentSecondHalf.getFromDate();
+        	else
+        		effectiveDate = installmentFirstHalf.getFromDate();
+        }
+        else{
+        	if (StringUtils.isNotBlank(taxExemptedReason) && !taxExemptedReason.equals("-1"))
+        		effectiveDate = DateUtils.addYears(installmentFirstHalf.getFromDate(), 1);
+        	else
+        		effectiveDate = installmentSecondHalf.getFromDate();
+        }
 
         if (!propertyModel.getPropertyDetail().getPropertyTypeMaster().getCode()
                 .equalsIgnoreCase(OWNERSHIP_TYPE_VAC_LAND))
@@ -175,12 +201,35 @@ public class TaxExemptionService extends PersistenceService<PropertyImpl, Long> 
             propertyModel.setTaxExemptedReason(null);
             propertyModel.setIsExemptedFromTax(Boolean.FALSE);
         }
-
+        propertyModel.setEffectiveDate(effectiveDate);
         basicProperty.setUnderWorkflow(Boolean.TRUE);
-        propertyModel.setEffectiveDate(propCompletionDate);
-        for (Ptdemand ptdemand : propertyModel.getPtDemandSet()) {
-            propertyPerService.applyAuditing(ptdemand.getDmdCalculations());
+        Set<Ptdemand> newPtdemandSet = propertyModel.getPtDemandSet();
+        Set<EgDemandDetails> demandDetailSet = new HashSet<EgDemandDetails>();
+
+        if (StringUtils.isNotBlank(taxExemptedReason) && !taxExemptedReason.equals("-1")) {
+            // Do not do anything
+        } else {
+            // Remove all the previous demands until the current installment
+            if (StringUtils.isNotBlank(workFlowAction) && !workFlowAction.equalsIgnoreCase(WFLOW_ACTION_STEP_REJECT)) {
+                for (Ptdemand ptdemand : newPtdemandSet) {
+                    if (ptdemand.getEgInstallmentMaster().equals(installmentFirstHalf)) {
+                        for (EgDemandDetails demandDetails : ptdemand.getEgDemandDetails()) {
+                            if (demandDetails.getInstallmentStartDate().equals(effectiveDate)
+                                    || demandDetails.getInstallmentStartDate().after(effectiveDate)) {
+                                demandDetailSet.add(demandDetails);
+                            }
+                        }
+                        ptdemand.getEgDemandDetails().clear();
+                        ptdemand.getEgDemandDetails().addAll(demandDetailSet);
+                    }
+                }
+            }
         }
+
+        for (Ptdemand ptdemand : newPtdemandSet) {
+	    	propertyPerService.applyAuditing(ptdemand.getDmdCalculations());
+	    }
+
         propertyModel.setBasicProperty(basicProperty);
         basicProperty.addProperty(propertyModel);
         transitionWorkFlow(propertyModel, approvalComment, workFlowAction, approvalPosition, additionalRule,
@@ -212,7 +261,7 @@ public class TaxExemptionService extends PersistenceService<PropertyImpl, Long> 
 
         if (!propertyByEmployee) {
             currentState = "Created";
-            final Assignment assignment = propService.getUserPositionByZone(property.getBasicProperty());
+            final Assignment assignment = propService.getUserPositionByZone(property.getBasicProperty(), false);
             if (null != assignment)
                 approverPosition = assignment.getPosition().getId();
         } else
@@ -336,7 +385,14 @@ public class TaxExemptionService extends PersistenceService<PropertyImpl, Long> 
     }
 
     public void buildSMS(Property property, String workFlowAction) {
-        final User user = property.getBasicProperty().getPrimaryOwner();
+        for (PropertyOwnerInfo ownerInfo : property.getBasicProperty().getPropertyOwnerInfo()) {
+            if (StringUtils.isNotBlank(ownerInfo.getOwner().getMobileNumber())) {
+                buildSms(property, ownerInfo.getOwner(), workFlowAction);
+            }
+        }
+    }
+
+    private void buildSms(Property property, User user, String workFlowAction) {
         final String assessmentNo = property.getBasicProperty().getUpicNo();
         final String mobileNumber = user.getMobileNumber();
         final String applicantName = user.getName();
@@ -346,12 +402,12 @@ public class TaxExemptionService extends PersistenceService<PropertyImpl, Long> 
         	/*smsMsg = messageSource.getMessage("msg.initiateexemption.sms",
                     new String[] { applicantName, assessmentNo }, null);*/
         } else if (workFlowAction.equals(WFLOW_ACTION_STEP_REJECT)) {
-            smsMsg = messageSource.getMessage("msg.rejectexemption.sms", new String[] { applicantName, assessmentNo,
+            smsMsg = ptisMessageSource.getMessage("msg.rejectexemption.sms", new String[] { applicantName, assessmentNo,
                     ApplicationThreadLocals.getMunicipalityName() }, null);
         } else if (workFlowAction.equals(WFLOW_ACTION_STEP_APPROVE)) {
             Installment installment = propertyTaxUtil.getInstallmentListByStartDate(new Date()).get(0);
             Date effectiveDate = DateUtils.addDays(installment.getToDate(), 1);
-            smsMsg = messageSource.getMessage("msg.approveexemption.sms", new String[] { applicantName, assessmentNo,
+            smsMsg = ptisMessageSource.getMessage("msg.approveexemption.sms", new String[] { applicantName, assessmentNo,
                     new SimpleDateFormat("dd/MM/yyyy").format(effectiveDate), ApplicationThreadLocals.getMunicipalityName() },
                     null);
         }

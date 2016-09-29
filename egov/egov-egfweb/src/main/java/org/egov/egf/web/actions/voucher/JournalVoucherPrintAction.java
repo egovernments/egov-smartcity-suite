@@ -60,7 +60,6 @@ import org.egov.infra.exception.ApplicationRuntimeException;
 import org.egov.infra.utils.DateUtils;
 import org.egov.infra.web.struts.actions.BaseFormAction;
 import org.egov.infra.workflow.entity.StateHistory;
-import org.egov.infra.workflow.entity.WorkflowAction;
 import org.egov.model.bills.EgBillregistermis;
 import org.egov.services.bills.BillsService;
 import org.egov.services.budget.BudgetAppropriationService;
@@ -79,6 +78,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import static org.apache.commons.lang3.StringUtils.isBlank;
 import static org.egov.infra.utils.DateUtils.getFormattedDate;
 
 @Results(value = {
@@ -94,12 +94,12 @@ public class JournalVoucherPrintAction extends BaseFormAction {
     private static final long serialVersionUID = 1L;
     private static final String PRINT = "print";
     private CVoucherHeader voucher = new CVoucherHeader();
-    List<Object> voucherReportList = new ArrayList<Object>();
-    List<Object> budgetReportList = new ArrayList<Object>();
+    List<Object> voucherReportList = new ArrayList<>();
+    List<Object> budgetReportList = new ArrayList<>();
     InputStream inputStream;
     ReportHelper reportHelper;
     Long id;
-    List<WorkFlowHistoryItem> inboxHistory = new ArrayList<WorkFlowHistoryItem>();
+    List<WorkFlowHistoryItem> inboxHistory = new ArrayList<>();
     private CityService cityService;
     private BillsService billsManager;
     private static final String ACCDETAILTYPEQUERY = " from Accountdetailtype where id=?";
@@ -162,9 +162,9 @@ public class JournalVoucherPrintAction extends BaseFormAction {
     private void populateVoucher() {
         if (!StringUtils.isBlank(parameters.get("id")[0])) {
 
-            final Long id = Long.valueOf(parameters.get("id")[0]);
+            final Long voucherId = Long.valueOf(parameters.get("id")[0]);
             final CVoucherHeader voucherHeader = (CVoucherHeader) persistenceService.find(
-                    "from CVoucherHeader where id =?", id);
+                    "from CVoucherHeader where id =?", voucherId);
             if (voucherHeader != null) {
                 voucher = voucherHeader;
                 generateVoucherReportList();
@@ -192,7 +192,6 @@ public class JournalVoucherPrintAction extends BaseFormAction {
 
     public String getFundName() {
         if (voucher != null && voucher.getFundId() != null) {
-            // persistenceService.setType(Fund.class);
             final Fund fund = (Fund) persistenceService.find("from Fund where id=? ", voucher.getFundId().getId());
             return fund == null ? "" : fund.getName();
         }
@@ -201,7 +200,6 @@ public class JournalVoucherPrintAction extends BaseFormAction {
 
     public String getDepartmentName() {
         if (voucher != null && voucher.getVouchermis() != null && voucher.getVouchermis().getDepartmentid() != null) {
-            // persistenceService.setType(Department.class);
             final Department dept = (Department) persistenceService.find("from Department where id=? ", voucher
                     .getVouchermis().getDepartmentid().getId());
             return dept == null ? "" : dept.getName();
@@ -227,7 +225,7 @@ public class JournalVoucherPrintAction extends BaseFormAction {
     }
 
     protected Map<String, Object> getParamMap() {
-        final Map<String, Object> paramMap = new HashMap<String, Object>();
+        final Map<String, Object> paramMap = new HashMap<>();
         paramMap.put("fundName", getFundName());
         paramMap.put("departmentName", getDepartmentName());
         paramMap.put("voucherNumber", getVoucherNumber());
@@ -242,17 +240,17 @@ public class JournalVoucherPrintAction extends BaseFormAction {
         final HttpSession session = request.getSession();
         final City cityWebsite = cityService.getCityByURL((String) session.getAttribute("cityurl"));
         String billType = billsManager.getBillTypeforVoucher(voucher);
-        if (null == billType)
+        if (isBlank(billType))
             billType = "General";
         else if ("Works".equalsIgnoreCase(billType))
             billType = "Contractor";
-        else if ("".equalsIgnoreCase(billType))
-            billType = "General";
         if ("Purchase".equalsIgnoreCase(billType))
             billType = billsManager.getBillSubTypeforVoucher(voucher);
-        final EgBillregistermis billRegistermis = (EgBillregistermis) persistenceService.find(
+        EgBillregistermis billRegistermis = null;
+        if (voucher != null)
+            billRegistermis = (EgBillregistermis) persistenceService.find(
                 "from EgBillregistermis where voucherHeader.id=?", voucher.getId());
-        final StringBuffer cityName = new StringBuffer(100);
+        final StringBuilder cityName = new StringBuilder(100);
         cityName.append(cityWebsite.getName().toUpperCase());
         paramMap.put("cityName", cityName.toString());
         paramMap.put("voucherName", billType.toUpperCase().concat(" JOURNAL VOUCHER"));
@@ -266,7 +264,7 @@ public class JournalVoucherPrintAction extends BaseFormAction {
                 && !"".equalsIgnoreCase(voucher.getVouchermis().getBudgetaryAppnumber()))
             paramMap.put("budgetDetail", budgetAppropriationService.getBudgetDetailsForVoucher(voucher));
         else
-            paramMap.put("budgetDetail", new ArrayList<Object>());
+            paramMap.put("budgetDetail", new ArrayList<>());
         return paramMap;
     }
 
@@ -298,20 +296,11 @@ public class JournalVoucherPrintAction extends BaseFormAction {
                 .getVoucherDate());
     }
 
-    /*
-     * private Position getStateUser(State state) { if (state.getPrevious() !=
-     * null) return state.getPrevious().getOwner(); else return null;//
-     * inboxService.getPrimaryPositionForUser(state.getCreatedBy().getId(),
-     * state.getCreatedDate()); }
-     */
-
     private void loadInboxHistoryData(final List<StateHistory> stateHistory) throws ApplicationRuntimeException {
         Collections.reverse(stateHistory);
         
         
         for (final StateHistory historyState : stateHistory) {
-            // WorkflowTypes workflowTypes =
-            // inboxService.getWorkflowType(state.getType());
             final String pos = historyState.getSenderName().concat(" / ").concat(historyState.getSenderName());
             final String nextAction = historyState.getNextAction();
             if (!"NEW".equalsIgnoreCase(historyState.getValue())) {
@@ -327,19 +316,6 @@ public class JournalVoucherPrintAction extends BaseFormAction {
 
     private String removeSpecialCharacters(final String str) {
         return str.replaceAll("\\s\\s+|\\r\\n", "<br/>").replaceAll("\'", "\\\\'");
-    }
-
-    private String getNextAction(final StateHistory state) {
-        if (state.getNextAction() == null)
-            return "";
-        else {
-            final WorkflowAction workflowAction = (WorkflowAction) persistenceService
-                    .findByNamedQuery(WorkflowAction.BY_NAME_AND_TYPE, state.getNextAction(), null);
-            if (workflowAction != null)
-                return " - " + (workflowAction.getDescription() != null ? workflowAction.getDescription() : state.getNextAction());
-            else
-                return " - " + state.getNextAction();
-        }
     }
 
     public void setBudgetAppropriationService(final BudgetAppropriationService budgetAppropriationService) {

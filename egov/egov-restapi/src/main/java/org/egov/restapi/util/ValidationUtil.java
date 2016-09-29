@@ -40,10 +40,16 @@
 
 package org.egov.restapi.util;
 
+import static org.egov.restapi.constants.RestApiConstants.*;
+import java.text.ParseException;
+import java.util.Date;
 import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import org.apache.commons.lang3.StringUtils;
 import org.egov.collection.integration.models.BillReceiptInfo;
+import org.egov.ptis.client.util.PropertyTaxUtil;
 import org.egov.ptis.constants.PropertyTaxConstants;
 import org.egov.ptis.domain.dao.demand.PtDemandDao;
 import org.egov.ptis.domain.dao.property.BasicPropertyDAO;
@@ -52,14 +58,14 @@ import org.egov.ptis.domain.entity.property.Property;
 import org.egov.ptis.domain.entity.property.PropertyMutation;
 import org.egov.ptis.domain.model.ErrorDetails;
 import org.egov.ptis.domain.model.FloorDetails;
-import org.egov.ptis.domain.model.OwnerDetails;
+import org.egov.ptis.domain.model.OwnerInformation;
 import org.egov.ptis.domain.model.PayPropertyTaxDetails;
 import org.egov.ptis.domain.service.property.PropertyExternalService;
-import org.egov.restapi.constants.RestApiConstants;
 import org.egov.restapi.model.AssessmentRequest;
 import org.egov.restapi.model.AssessmentsDetails;
+import org.egov.restapi.model.ConstructionTypeDetails;
 import org.egov.restapi.model.CreatePropertyDetails;
-import org.egov.restapi.model.OwnerInformation;
+import org.egov.restapi.model.PropertyAddressDetails;
 import org.egov.restapi.model.PropertyTransferDetails;
 import org.egov.restapi.model.SurroundingBoundaryDetails;
 import org.egov.restapi.model.VacantLandDetails;
@@ -76,6 +82,9 @@ public class ValidationUtil {
     @Autowired
     private PtDemandDao ptDemandDAO;
     
+    @Autowired
+    private PropertyTaxUtil propertyTaxUtil;
+    
     /**
      * Validates Property Transfer request
      * @param propertyTransferDetails
@@ -87,16 +96,16 @@ public class ValidationUtil {
     	String assessmentNumber = propertyTransferDetails.getAssessmentNo();
     	if(StringUtils.isBlank(assessmentNumber)){
     		errorDetails = new ErrorDetails();
-            errorDetails.setErrorCode(RestApiConstants.ASSESSMENT_NO_REQ_CODE);
-            errorDetails.setErrorMessage(RestApiConstants.ASSESSMENT_NO_REQ_MSG);
+            errorDetails.setErrorCode(ASSESSMENT_NO_REQ_CODE);
+            errorDetails.setErrorMessage(ASSESSMENT_NO_REQ_MSG);
             return errorDetails;
     	}
     	
     	String mutationReasonCode = propertyTransferDetails.getMutationReasonCode();
     	if(StringUtils.isBlank(mutationReasonCode)){
     		errorDetails = new ErrorDetails();
-            errorDetails.setErrorCode(RestApiConstants.MUTATION_REASON_CODE_REQ_CODE);
-            errorDetails.setErrorMessage(RestApiConstants.MUTATION_REASON_CODE_REQ_MSG);
+            errorDetails.setErrorCode(MUTATION_REASON_CODE_REQ_CODE);
+            errorDetails.setErrorMessage(MUTATION_REASON_CODE_REQ_MSG);
             return errorDetails;
     	}
     	
@@ -107,16 +116,16 @@ public class ValidationUtil {
     			&& !mutationReasonCode.equalsIgnoreCase(PropertyTaxConstants.MUTATION_REASON_CODE_RELINQUISH)
     			&& !mutationReasonCode.equalsIgnoreCase(PropertyTaxConstants.MUTATION_REASON_CODE_PARTITION)){
     		errorDetails = new ErrorDetails();
-            errorDetails.setErrorCode(RestApiConstants.MUTATION_REASON_INVALID_CODE_REQ_CODE);
-            errorDetails.setErrorMessage(RestApiConstants.MUTATION_REASON_INVALID_CODE_REQ_MSG);
+            errorDetails.setErrorCode(MUTATION_REASON_INVALID_CODE_REQ_CODE);
+            errorDetails.setErrorMessage(MUTATION_REASON_INVALID_CODE_REQ_MSG);
             return errorDetails;
     	}
     	
     	if(mutationReasonCode.equalsIgnoreCase(PropertyTaxConstants.MUTATION_REASON_CODE_SALE)){
     		if(StringUtils.isBlank(propertyTransferDetails.getSaleDetails())){
     			errorDetails = new ErrorDetails();
-                errorDetails.setErrorCode(RestApiConstants.SALE_DETAILS_REQ_CODE);
-                errorDetails.setErrorMessage(RestApiConstants.SALE_DETAILS_REQ_MSG);
+                errorDetails.setErrorCode(SALE_DETAILS_REQ_CODE);
+                errorDetails.setErrorMessage(SALE_DETAILS_REQ_MSG);
                 return errorDetails;
     		}
     	}
@@ -124,8 +133,8 @@ public class ValidationUtil {
     	if(!mutationReasonCode.equalsIgnoreCase(PropertyTaxConstants.MUTATION_REASON_CODE_SALE)){
     		if(StringUtils.isNotBlank(propertyTransferDetails.getSaleDetails())){
     			errorDetails = new ErrorDetails();
-                errorDetails.setErrorCode(RestApiConstants.OTHER_MUTATION_CODES_SALE_DETAILS_VALIDATION_CODE);
-                errorDetails.setErrorMessage(RestApiConstants.OTHER_MUTATION_CODES_SALE_DETAILS_VALIDATION_MSG);
+                errorDetails.setErrorCode(OTHER_MUTATION_CODES_SALE_DETAILS_VALIDATION_CODE);
+                errorDetails.setErrorMessage(OTHER_MUTATION_CODES_SALE_DETAILS_VALIDATION_MSG);
                 return errorDetails;
     		}
     	}
@@ -133,55 +142,55 @@ public class ValidationUtil {
     	String deedNo = propertyTransferDetails.getDeedNo();
     	if(StringUtils.isBlank(deedNo)){
     		errorDetails = new ErrorDetails();
-            errorDetails.setErrorCode(RestApiConstants.DEED_NO_REQ_CODE);
-            errorDetails.setErrorMessage(RestApiConstants.DEED_NO_REQ_MSG);
+            errorDetails.setErrorCode(DEED_NO_REQ_CODE);
+            errorDetails.setErrorMessage(DEED_NO_REQ_MSG);
             return errorDetails;
     	}
     	
     	String deedDate = propertyTransferDetails.getDeedDate();
     	if(StringUtils.isBlank(deedDate)){
     		errorDetails = new ErrorDetails();
-            errorDetails.setErrorCode(RestApiConstants.DEED_DATE_REQ_CODE);
-            errorDetails.setErrorMessage(RestApiConstants.DEED_DATE_REQ_MSG);
+            errorDetails.setErrorCode(DEED_DATE_REQ_CODE);
+            errorDetails.setErrorMessage(DEED_DATE_REQ_MSG);
             return errorDetails;
     	}
     	
     	List<OwnerInformation> ownerDetailsList = propertyTransferDetails.getOwnerDetails();
         if (ownerDetailsList.isEmpty()) {
             errorDetails = new ErrorDetails();
-            errorDetails.setErrorCode(RestApiConstants.OWNER_DETAILS_REQ_CODE);
-            errorDetails.setErrorMessage(RestApiConstants.OWNER_DETAILS_REQ_MSG);
+            errorDetails.setErrorCode(OWNER_DETAILS_REQ_CODE);
+            errorDetails.setErrorMessage(OWNER_DETAILS_REQ_MSG);
             return errorDetails;
         } else
             for (final OwnerInformation ownerInfo : ownerDetailsList) {
                 if (ownerInfo.getMobileNumber() == null) {
                     errorDetails = new ErrorDetails();
-                    errorDetails.setErrorCode(RestApiConstants.MOBILE_NO_REQ_CODE);
-                    errorDetails.setErrorMessage(RestApiConstants.MOBILE_NO_REQ_MSG);
+                    errorDetails.setErrorCode(MOBILE_NO_REQ_CODE);
+                    errorDetails.setErrorMessage(MOBILE_NO_REQ_MSG);
                     return errorDetails;
                 }
                 if (ownerInfo.getName() == null) {
                     errorDetails = new ErrorDetails();
-                    errorDetails.setErrorCode(RestApiConstants.OWNER_NAME_REQ_CODE);
-                    errorDetails.setErrorMessage(RestApiConstants.OWNER_NAME_REQ_MSG);
+                    errorDetails.setErrorCode(OWNER_NAME_REQ_CODE);
+                    errorDetails.setErrorMessage(OWNER_NAME_REQ_MSG);
                     return errorDetails;
                 }
                 if (ownerInfo.getGender() == null) {
                     errorDetails = new ErrorDetails();
-                    errorDetails.setErrorCode(RestApiConstants.GENDER_REQ_CODE);
-                    errorDetails.setErrorMessage(RestApiConstants.GENDER_REQ_MSG);
+                    errorDetails.setErrorCode(GENDER_REQ_CODE);
+                    errorDetails.setErrorMessage(GENDER_REQ_MSG);
                     return errorDetails;
                 }
                 if (ownerInfo.getGuardianRelation() == null) {
                     errorDetails = new ErrorDetails();
-                    errorDetails.setErrorCode(RestApiConstants.GUARDIAN_RELATION_REQ_CODE);
-                    errorDetails.setErrorMessage(RestApiConstants.GUARDIAN_RELATION_REQ_MSG);
+                    errorDetails.setErrorCode(GUARDIAN_RELATION_REQ_CODE);
+                    errorDetails.setErrorMessage(GUARDIAN_RELATION_REQ_MSG);
                     return errorDetails;
                 }
                 if (ownerInfo.getGuardian() == null) {
                     errorDetails = new ErrorDetails();
-                    errorDetails.setErrorCode(RestApiConstants.GUARDIAN_REQ_CODE);
-                    errorDetails.setErrorMessage(RestApiConstants.GUARDIAN_REQ_MSG);
+                    errorDetails.setErrorCode(GUARDIAN_REQ_CODE);
+                    errorDetails.setErrorMessage(GUARDIAN_REQ_MSG);
                     return errorDetails;
                 }
             }
@@ -189,16 +198,15 @@ public class ValidationUtil {
     	return errorDetails;
     }
     
-    public static ErrorDetails validateCreateRequest(final CreatePropertyDetails createPropDetails) {
+    public ErrorDetails validateCreateRequest(final CreatePropertyDetails createPropDetails, final String mode) throws ParseException {
         ErrorDetails errorDetails = null;
         final String propertyTypeMasterCode = createPropDetails.getPropertyTypeMasterCode();
-        if (propertyTypeMasterCode == null || propertyTypeMasterCode.trim().length() == 0) {
+        if (StringUtils.isBlank(propertyTypeMasterCode)) {
             errorDetails = new ErrorDetails();
-            errorDetails.setErrorCode(RestApiConstants.OWNERSHIP_CATEGORY_TYPE_REQ_CODE);
-            errorDetails.setErrorMessage(RestApiConstants.OWNERSHIP_CATEGORY_TYPE_REQ_MSG);
+            errorDetails.setErrorCode(OWNERSHIP_CATEGORY_TYPE_REQ_CODE);
+            errorDetails.setErrorMessage(OWNERSHIP_CATEGORY_TYPE_REQ_MSG);
             return errorDetails;
-        }
-        if (propertyTypeMasterCode != null
+        } else if (propertyTypeMasterCode != null
                 && !propertyTypeMasterCode.equalsIgnoreCase(PropertyTaxConstants.OWNERSHIP_TYPE_VAC_LAND)
                 && !propertyTypeMasterCode.equalsIgnoreCase(PropertyTaxConstants.OWNERSHIP_TYPE_PRIVATE)
                 && !propertyTypeMasterCode.equalsIgnoreCase(PropertyTaxConstants.OWNERSHIP_TYPE_STATE_GOVT)
@@ -206,226 +214,454 @@ public class ValidationUtil {
                 && !propertyTypeMasterCode.equalsIgnoreCase(PropertyTaxConstants.OWNERSHIP_TYPE_CENTRAL_GOVT_50)
                 && !propertyTypeMasterCode.equalsIgnoreCase(PropertyTaxConstants.OWNERSHIP_TYPE_CENTRAL_GOVT_75)) {
             errorDetails = new ErrorDetails();
-            errorDetails.setErrorCode(RestApiConstants.OWNERSHIP_CATEGORY_TYPE_INVALID_CODE);
-            errorDetails.setErrorMessage(RestApiConstants.OWNERSHIP_CATEGORY_TYPE_INVALID_MSG);
+            errorDetails.setErrorCode(OWNERSHIP_CATEGORY_TYPE_INVALID_CODE);
+            errorDetails.setErrorMessage(OWNERSHIP_CATEGORY_TYPE_INVALID_MSG);
             return errorDetails;
         }
-        final String propertyCategoryCode = createPropDetails.getPropertyCategoryCode();
-        if (propertyCategoryCode == null || propertyCategoryCode.trim().length() == 0) {
+        final String propertyCategoryCode = createPropDetails.getCategoryCode();
+        if (StringUtils.isBlank(propertyCategoryCode)) {
             errorDetails = new ErrorDetails();
-            errorDetails.setErrorCode(RestApiConstants.PROPERTY_CATEGORY_TYPE_REQ_CODE);
-            errorDetails.setErrorMessage(RestApiConstants.PROPERTY_CATEGORY_TYPE_REQ_MSG);
+            errorDetails.setErrorCode(PROPERTY_CATEGORY_TYPE_REQ_CODE);
+            errorDetails.setErrorMessage(PROPERTY_CATEGORY_TYPE_REQ_MSG);
             return errorDetails;
-        }
-        if (propertyCategoryCode != null
+        } else if (propertyCategoryCode != null
+        		&& !propertyCategoryCode.equalsIgnoreCase(PropertyTaxConstants.CATEGORY_VACANT_LAND)
+                && !propertyCategoryCode.equalsIgnoreCase(PropertyTaxConstants.CATEGORY_STATE_GOVT)
+                && !propertyCategoryCode.equalsIgnoreCase(PropertyTaxConstants.CATEGORY_CENTRAL_GOVT)
                 && !propertyCategoryCode.equalsIgnoreCase(PropertyTaxConstants.CATEGORY_RESIDENTIAL)
                 && !propertyCategoryCode.equalsIgnoreCase(PropertyTaxConstants.CATEGORY_NON_RESIDENTIAL)
                 && !propertyCategoryCode.equalsIgnoreCase(PropertyTaxConstants.CATEGORY_MIXED)) {
             errorDetails = new ErrorDetails();
-            errorDetails.setErrorCode(RestApiConstants.PROPERTY_CATEGORY_TYPE_INVALID_CODE);
-            errorDetails.setErrorMessage(RestApiConstants.PROPERTY_CATEGORY_TYPE_INVALID_MSG);
+            errorDetails.setErrorCode(PROPERTY_CATEGORY_TYPE_INVALID_CODE);
+            errorDetails.setErrorMessage(PROPERTY_CATEGORY_TYPE_INVALID_MSG);
             return errorDetails;
         }
-
-        final List<OwnerDetails> ownerDetailsList = createPropDetails.getOwnerDetails();
-        if (ownerDetailsList == null) {
-            errorDetails = new ErrorDetails();
-            errorDetails.setErrorCode(RestApiConstants.OWNER_DETAILS_REQ_CODE);
-            errorDetails.setErrorMessage(RestApiConstants.OWNER_DETAILS_REQ_MSG);
-            return errorDetails;
-        } else
-            for (final OwnerDetails ownerDetails : ownerDetailsList) {
-                if (ownerDetails.getMobileNumber() == null) {
-                    errorDetails = new ErrorDetails();
-                    errorDetails.setErrorCode(RestApiConstants.MOBILE_NO_REQ_CODE);
-                    errorDetails.setErrorMessage(RestApiConstants.MOBILE_NO_REQ_MSG);
-                    return errorDetails;
-                }
-                if (ownerDetails.getName() == null) {
-                    errorDetails = new ErrorDetails();
-                    errorDetails.setErrorCode(RestApiConstants.OWNER_NAME_REQ_CODE);
-                    errorDetails.setErrorMessage(RestApiConstants.OWNER_NAME_REQ_MSG);
-                    return errorDetails;
-                }
-                if (ownerDetails.getGender() == null) {
-                    errorDetails = new ErrorDetails();
-                    errorDetails.setErrorCode(RestApiConstants.GENDER_REQ_CODE);
-                    errorDetails.setErrorMessage(RestApiConstants.GENDER_REQ_MSG);
-                    return errorDetails;
-                }
-                if (ownerDetails.getGuardianRelation() == null) {
-                    errorDetails = new ErrorDetails();
-                    errorDetails.setErrorCode(RestApiConstants.GUARDIAN_RELATION_REQ_CODE);
-                    errorDetails.setErrorMessage(RestApiConstants.GUARDIAN_RELATION_REQ_MSG);
-                    return errorDetails;
-                }
-                if (ownerDetails.getGuardian() == null) {
-                    errorDetails = new ErrorDetails();
-                    errorDetails.setErrorCode(RestApiConstants.GUARDIAN_REQ_CODE);
-                    errorDetails.setErrorMessage(RestApiConstants.GUARDIAN_REQ_MSG);
-                    return errorDetails;
-                }
-            }
-
+        Double areaOfPlot = 0.0;
+	    if(mode.equals(PropertyTaxConstants.PROPERTY_MODE_CREATE)){
+	        //Owner details validations
+	        final List<OwnerInformation> ownerDetailsList = createPropDetails.getOwnerDetails();
+	        errorDetails = validateOwnerDetails(errorDetails, ownerDetailsList);
+	        if(errorDetails != null)
+	        	return errorDetails;
+	    }
+        
+        //Assessment level validations
         final AssessmentsDetails assessmentsDetails = createPropDetails.getAssessmentDetails();
         if (assessmentsDetails == null) {
             errorDetails = new ErrorDetails();
-            errorDetails.setErrorCode(RestApiConstants.ASSESSMENT_DETAILS_REQ_CODE);
-            errorDetails.setErrorMessage(RestApiConstants.ASSESSMENT_DETAILS_REQ_MSG);
+            errorDetails.setErrorCode(ASSESSMENT_DETAILS_REQ_CODE);
+            errorDetails.setErrorMessage(ASSESSMENT_DETAILS_REQ_MSG);
             return errorDetails;
         } else {
-            if (assessmentsDetails.getMutationReasonCode() == null) {
+            if (StringUtils.isBlank(assessmentsDetails.getMutationReasonCode())) {
                 errorDetails = new ErrorDetails();
-                errorDetails.setErrorCode(RestApiConstants.REASON_FOR_CREATION_REQ_CODE);
-                errorDetails.setErrorMessage(RestApiConstants.REASON_FOR_CREATION_REQ_MSG);
+                errorDetails.setErrorCode(REASON_FOR_CREATION_REQ_CODE);
+                errorDetails.setErrorMessage(REASON_FOR_CREATION_REQ_MSG);
                 return errorDetails;
             }
-            if (assessmentsDetails.getExtentOfSite() == null) {
-                errorDetails = new ErrorDetails();
-                errorDetails.setErrorCode(RestApiConstants.EXTENT_OF_SITE_REQ_CODE);
-                errorDetails.setErrorMessage(RestApiConstants.EXTENT_OF_SITE_REQ_MSG);
-                return errorDetails;
-            }
-            if (assessmentsDetails.getRegdDocNo() == null) {
-                errorDetails = new ErrorDetails();
-                errorDetails.setErrorCode(RestApiConstants.REG_DOC_NO_REQ_CODE);
-                errorDetails.setErrorMessage(RestApiConstants.REG_DOC_NO_REQ_MSG);
-                return errorDetails;
-            }
-            if (assessmentsDetails.getRegdDocDate() == null) {
-                errorDetails = new ErrorDetails();
-                errorDetails.setErrorCode(RestApiConstants.REG_DOC_DATE_REQ_CODE);
-                errorDetails.setErrorMessage(RestApiConstants.REG_DOC_DATE_REQ_MSG);
-                return errorDetails;
-            }
-            if (assessmentsDetails.getIsExtentAppurtenantLand()) {
-                final VacantLandDetails vacantLandDetails = createPropDetails.getVacantLandDetails();
-                if (vacantLandDetails == null) {
+            if(!propertyTypeMasterCode.equalsIgnoreCase(PropertyTaxConstants.OWNERSHIP_TYPE_VAC_LAND)){
+            	if (StringUtils.isBlank(assessmentsDetails.getExtentOfSite())) {
                     errorDetails = new ErrorDetails();
-                    errorDetails.setErrorCode(RestApiConstants.VACANT_LAND_DETAILS_REQ_CODE);
-                    errorDetails.setErrorMessage(RestApiConstants.VACANT_LAND_DETAILS_REQ_MSG);
+                    errorDetails.setErrorCode(EXTENT_OF_SITE_REQ_CODE);
+                    errorDetails.setErrorMessage(EXTENT_OF_SITE_REQ_MSG);
                     return errorDetails;
-                } else {
-                    if (vacantLandDetails.getSurveyNumber() == null) {
+                } else if(Double.valueOf(assessmentsDetails.getExtentOfSite()) == 0){
+                	errorDetails = new ErrorDetails();
+                    errorDetails.setErrorCode(AREA_GREATER_THAN_ZERO_CODE);
+                    errorDetails.setErrorMessage(AREA_GREATER_THAN_ZERO_MSG);
+                    return errorDetails;
+                }
+                areaOfPlot = Double.valueOf(assessmentsDetails.getExtentOfSite());
+                if (assessmentsDetails.getIsExtentAppurtenantLand()) {
+                	if (StringUtils.isBlank(assessmentsDetails.getExtentAppartenauntLand())) {
                         errorDetails = new ErrorDetails();
-                        errorDetails.setErrorCode(RestApiConstants.SURVEY_NO_REQ_CODE);
-                        errorDetails.setErrorMessage(RestApiConstants.SURVEY_NO_REQ_MSG);
+                        errorDetails.setErrorCode(EXTENT_OF_SITE_REQ_CODE);
+                        errorDetails.setErrorMessage(EXTENT_OF_SITE_REQ_MSG);
                         return errorDetails;
-                    }
-                    if (vacantLandDetails.getPattaNumber() == null) {
-                        errorDetails = new ErrorDetails();
-                        errorDetails.setErrorCode(RestApiConstants.PATTA_NO_REQ_CODE);
-                        errorDetails.setErrorMessage(RestApiConstants.PATTA_NO_REQ_MSG);
-                        return errorDetails;
-                    }
-                    if (vacantLandDetails.getVacantLandArea() == null) {
-                        errorDetails = new ErrorDetails();
-                        errorDetails.setErrorCode(RestApiConstants.VACANT_LAND_AREA_REQ_CODE);
-                        errorDetails.setErrorMessage(RestApiConstants.VACANT_LAND_AREA_REQ_MSG);
-                        return errorDetails;
-                    }
-                    if (vacantLandDetails.getMarketValue() == null) {
-                        errorDetails = new ErrorDetails();
-                        errorDetails.setErrorCode(RestApiConstants.MARKET_AREA_VALUE_REQ_CODE);
-                        errorDetails.setErrorMessage(RestApiConstants.MARKET_AREA_VALUE_REQ_MSG);
-                        return errorDetails;
-                    }
-                    if (vacantLandDetails.getCurrentCapitalValue() == null) {
-                        errorDetails = new ErrorDetails();
-                        errorDetails.setErrorCode(RestApiConstants.CURRENT_CAPITAL_VALUE_REQ_CODE);
-                        errorDetails.setErrorMessage(RestApiConstants.CURRENT_CAPITAL_VALUE_REQ_MSG);
-                        return errorDetails;
-                    }
-                    if (vacantLandDetails.getEffectiveDate() == null) {
-                        errorDetails = new ErrorDetails();
-                        errorDetails.setErrorCode(RestApiConstants.EFFECTIVE_DATE_REQ_CODE);
-                        errorDetails.setErrorMessage(RestApiConstants.EFFECTIVE_DATE_REQ_MSG);
+                    } else if(Double.valueOf(assessmentsDetails.getExtentAppartenauntLand()) == 0){
+                    	errorDetails = new ErrorDetails();
+                        errorDetails.setErrorCode(AREA_GREATER_THAN_ZERO_CODE);
+                        errorDetails.setErrorMessage(AREA_GREATER_THAN_ZERO_MSG);
                         return errorDetails;
                     }
                 }
-
-                final SurroundingBoundaryDetails surBoundaryDetails = createPropDetails.getSurroundingBoundaryDetails();
-                if (surBoundaryDetails == null) {
-                    errorDetails = new ErrorDetails();
-                    errorDetails.setErrorCode(RestApiConstants.SURROUNDING_BOUNDARY_DETAILS_REQ_CODE);
-                    errorDetails.setErrorMessage(RestApiConstants.SURROUNDING_BOUNDARY_DETAILS_REQ_MSG);
-                    return errorDetails;
-                } else {
-                    if (surBoundaryDetails.getNorthBoundary() == null) {
-                        errorDetails = new ErrorDetails();
-                        errorDetails.setErrorCode(RestApiConstants.NORTH_BOUNDARY_REQ_CODE);
-                        errorDetails.setErrorMessage(RestApiConstants.NORTH_BOUNDARY_REQ_MSG);
-                        return errorDetails;
-                    }
-                    if (surBoundaryDetails.getSouthBoundary() == null) {
-                        errorDetails = new ErrorDetails();
-                        errorDetails.setErrorCode(RestApiConstants.SOUTH_BOUNDARY_REQ_CODE);
-                        errorDetails.setErrorMessage(RestApiConstants.SOUTH_BOUNDARY_REQ_MSG);
-                        return errorDetails;
-                    }
-                    if (surBoundaryDetails.getEastBoundary() == null) {
-                        errorDetails = new ErrorDetails();
-                        errorDetails.setErrorCode(RestApiConstants.EAST_BOUNDARY_REQ_CODE);
-                        errorDetails.setErrorMessage(RestApiConstants.EAST_BOUNDARY_REQ_MSG);
-                        return errorDetails;
-                    }
-                    if (surBoundaryDetails.getWestBoundary() == null) {
-                        errorDetails = new ErrorDetails();
-                        errorDetails.setErrorCode(RestApiConstants.WEST_BOUNDARY_REQ_CODE);
-                        errorDetails.setErrorMessage(RestApiConstants.WEST_BOUNDARY_REQ_MSG);
-                        return errorDetails;
-                    }
-                }
+            } 
+            if (StringUtils.isBlank(assessmentsDetails.getRegdDocNo())) {
+                errorDetails = new ErrorDetails();
+                errorDetails.setErrorCode(REG_DOC_NO_REQ_CODE);
+                errorDetails.setErrorMessage(REG_DOC_NO_REQ_MSG);
+                return errorDetails;
+            } else if (StringUtils.isBlank(assessmentsDetails.getRegdDocDate())) {
+                errorDetails = new ErrorDetails();
+                errorDetails.setErrorCode(REG_DOC_DATE_REQ_CODE);
+                errorDetails.setErrorMessage(REG_DOC_DATE_REQ_MSG);
+                return errorDetails;
             }
+            if(propertyExternalService.convertStringToDate(assessmentsDetails.getRegdDocDate()).after(new Date())){
+            	errorDetails = new ErrorDetails();
+                errorDetails.setErrorCode(FUTURE_DATES_NOT_ALLOWED_CODE);
+                errorDetails.setErrorMessage(FUTURE_DATES_NOT_ALLOWED_MSG);
+                return errorDetails;
+            }
+            
+        	//Vacant Land validations
+            if(propertyTypeMasterCode.equalsIgnoreCase(PropertyTaxConstants.OWNERSHIP_TYPE_VAC_LAND)){
+            	errorDetails = validateVacantLandDetails(createPropDetails, errorDetails);
+            	if(errorDetails != null)
+            	return errorDetails;
+            }
+            
         }
 
-        final List<FloorDetails> floorDetailsList = createPropDetails.getFloorDetails();
-        if (floorDetailsList == null) {
-            errorDetails = new ErrorDetails();
-            errorDetails.setErrorCode(RestApiConstants.FLOOR_DETAILS_REQ_CODE);
-            errorDetails.setErrorMessage(RestApiConstants.FLOOR_DETAILS_REQ_MSG);
+    	//Property Address validations
+        PropertyAddressDetails propertyAddressDetails = createPropDetails.getPropertyAddressDetails();
+        if(propertyAddressDetails == null){
+        	errorDetails = new ErrorDetails();
+            errorDetails.setErrorCode(ADDRESS_DETAILS_REQ_CODE);
+            errorDetails.setErrorMessage(ADDRESS_DETAILS_REQ_MSG);
             return errorDetails;
-        } else
-            for (final FloorDetails floorDetails : floorDetailsList) {
-                if (floorDetails.getFloorNoCode() == null) {
-                    errorDetails = new ErrorDetails();
-                    errorDetails.setErrorCode(RestApiConstants.FLOOR_NO_REQ_CODE);
-                    errorDetails.setErrorMessage(RestApiConstants.FLOOR_NO_REQ_MSG);
+        } else {
+        	if(StringUtils.isBlank(propertyAddressDetails.getLocalityNum())){
+        		errorDetails = new ErrorDetails();
+                errorDetails.setErrorCode(LOCALITY_REQ_CODE);
+                errorDetails.setErrorMessage(LOCALITY_REQ_MSG);
+                return errorDetails;
+        	}
+        	if(StringUtils.isBlank(propertyAddressDetails.getZoneNum())){
+        		errorDetails = new ErrorDetails();
+                errorDetails.setErrorCode(ZONE_NO_REQ_CODE);
+                errorDetails.setErrorMessage(ZONE_NO_REQ_MSG);
+                return errorDetails;
+        	}
+        	if(StringUtils.isBlank(propertyAddressDetails.getWardNum())){
+        		errorDetails = new ErrorDetails();
+                errorDetails.setErrorCode(WARD_NO_REQ_CODE);
+                errorDetails.setErrorMessage(WARD_NO_REQ_MSG);
+                return errorDetails;
+        	}
+        	if(StringUtils.isBlank(propertyAddressDetails.getBlockNum())){
+        		errorDetails = new ErrorDetails();
+                errorDetails.setErrorCode(BLOCK_NO_REQ_CODE);
+                errorDetails.setErrorMessage(BLOCK_NO_REQ_MSG);
+                return errorDetails;
+        	}
+        	if(StringUtils.isBlank(propertyAddressDetails.getElectionWardNum())){
+        		errorDetails = new ErrorDetails();
+                errorDetails.setErrorCode(ELECTION_WARD_REQ_CODE);
+                errorDetails.setErrorMessage(ELECTION_WARD_REQ_MSG);
+                return errorDetails;
+        	}
+        	if(StringUtils.isBlank(propertyAddressDetails.getPinCode())){
+        		errorDetails = new ErrorDetails();
+                errorDetails.setErrorCode(PIN_CODE_REQ_CODE);
+                errorDetails.setErrorMessage(PIN_CODE_REQ_MSG);
+                return errorDetails;
+        	}
+        	if(!propertyTypeMasterCode.equalsIgnoreCase(PropertyTaxConstants.OWNERSHIP_TYPE_VAC_LAND)){
+	        	if(StringUtils.isBlank(propertyAddressDetails.getDoorNo())){
+	        		errorDetails = new ErrorDetails();
+	                errorDetails.setErrorCode(DOOR_NO_REQ_CODE);
+	                errorDetails.setErrorMessage(DOOR_NO_REQ_MSG);
+	                return errorDetails;
+	        	}
+        	}
+        }
+        if(!propertyTypeMasterCode.equalsIgnoreCase(PropertyTaxConstants.OWNERSHIP_TYPE_VAC_LAND)){
+        	ConstructionTypeDetails constructionTypeDetails = createPropDetails.getConstructionTypeDetails();
+        	if(constructionTypeDetails == null){
+        		errorDetails = new ErrorDetails();
+                errorDetails.setErrorCode(CONSTRUCTION_DETAILS_REQ_CODE);
+                errorDetails.setErrorMessage(CONSTRUCTION_DETAILS_REQ_MSG);
+                return errorDetails;
+        	} else {
+        		if(StringUtils.isBlank(constructionTypeDetails.getFloorTypeId())){
+        			errorDetails = new ErrorDetails();
+                    errorDetails.setErrorCode(FLOOR_TYPE_REQ_CODE);
+                    errorDetails.setErrorMessage(FLOOR_TYPE_REQ_MSG);
                     return errorDetails;
-                }
-                if (floorDetails.getBuildClassificationCode() == null) {
-                    errorDetails = new ErrorDetails();
-                    errorDetails.setErrorCode(RestApiConstants.CLASSIFICATION_OF_BUILDING_REQ_CODE);
-                    errorDetails.setErrorMessage(RestApiConstants.CLASSIFICATION_OF_BUILDING_REQ_MSG);
+        		}
+        		if(StringUtils.isBlank(constructionTypeDetails.getRoofTypeId())){
+        			errorDetails = new ErrorDetails();
+                    errorDetails.setErrorCode(ROOF_TYPE_REQ_CODE);
+                    errorDetails.setErrorMessage(ROOF_TYPE_REQ_MSG);
                     return errorDetails;
+        		}
+        	}
+        	//Floor level validations
+        	final List<FloorDetails> floorDetailsList = createPropDetails.getFloorDetails();
+            if (floorDetailsList == null || floorDetailsList.isEmpty()) {
+                errorDetails = new ErrorDetails();
+                errorDetails.setErrorCode(FLOOR_DETAILS_REQ_CODE);
+                errorDetails.setErrorMessage(FLOOR_DETAILS_REQ_MSG);
+                return errorDetails;
+            } else
+                for (final FloorDetails floorDetails : floorDetailsList) {
+                    if (StringUtils.isBlank(floorDetails.getFloorNoCode())) {
+                        errorDetails = new ErrorDetails();
+                        errorDetails.setErrorCode(FLOOR_NO_REQ_CODE);
+                        errorDetails.setErrorMessage(FLOOR_NO_REQ_MSG);
+                        return errorDetails;
+                    }
+                    if (StringUtils.isBlank(floorDetails.getBuildClassificationCode())) {
+                        errorDetails = new ErrorDetails();
+                        errorDetails.setErrorCode(CLASSIFICATION_OF_BUILDING_REQ_CODE);
+                        errorDetails.setErrorMessage(CLASSIFICATION_OF_BUILDING_REQ_MSG);
+                        return errorDetails;
+                    }
+                    if (StringUtils.isBlank(floorDetails.getNatureOfUsageCode())) {
+                        errorDetails = new ErrorDetails();
+                        errorDetails.setErrorCode(NATURE_OF_USAGES_REQ_CODE);
+                        errorDetails.setErrorMessage(NATURE_OF_USAGES_REQ_MSG);
+                        return errorDetails;
+                    }
+                    if(!floorDetails.getNatureOfUsageCode().equalsIgnoreCase(PropertyTaxConstants.PROPTYPE_RESD)){
+                    	if (StringUtils.isBlank(floorDetails.getFirmName())) {
+                            errorDetails = new ErrorDetails();
+                            errorDetails.setErrorCode(FIRMNAME_REQ_CODE);
+                            errorDetails.setErrorMessage(FIRMNAME_REQ_MSG);
+                            return errorDetails;
+                        }
+                    }
+                    if (StringUtils.isBlank(floorDetails.getOccupancyCode())) {
+                        errorDetails = new ErrorDetails();
+                        errorDetails.setErrorCode(OCCUPANCY_REQ_CODE);
+                        errorDetails.setErrorMessage(OCCUPANCY_REQ_MSG);
+                        return errorDetails;
+                    }
+                    if (StringUtils.isBlank(floorDetails.getConstructionDate())) {
+                        errorDetails = new ErrorDetails();
+                        errorDetails.setErrorCode(CONSTRUCTION_DATE_REQ_CODE);
+                        errorDetails.setErrorMessage(CONSTRUCTION_DATE_REQ_MSG);
+                        return errorDetails;
+                    }
+                    if (StringUtils.isBlank(floorDetails.getOccupancyDate())) {
+                        errorDetails = new ErrorDetails();
+                        errorDetails.setErrorCode(OCCUPANCY_DATE_REQ_CODE);
+                        errorDetails.setErrorMessage(OCCUPANCY_DATE_REQ_MSG);
+                        return errorDetails;
+                    }
+                    
+                    Date constructionDate = propertyExternalService.convertStringToDate(floorDetails.getConstructionDate());
+                    Date occupancyDate = propertyExternalService.convertStringToDate(floorDetails.getOccupancyDate());
+                    if(constructionDate.after(new Date()) || occupancyDate.after(new Date())){
+                    	errorDetails = new ErrorDetails();
+                        errorDetails.setErrorCode(FUTURE_DATES_NOT_ALLOWED_CODE);
+                        errorDetails.setErrorMessage(FUTURE_DATES_NOT_ALLOWED_MSG);
+                        return errorDetails;
+                    }
+                    if(occupancyDate.before(constructionDate)){
+                    	errorDetails = new ErrorDetails();
+                        errorDetails.setErrorCode(OCCUPANCY_DATE_BEFORE_CONSTRUCTION_DATE_CODE);
+                        errorDetails.setErrorMessage(OCCUPANCY_DATE_BEFORE_CONSTRUCTION_DATE_MSG);
+                        return errorDetails;
+                    }
+                    if(!floorDetails.getUnstructuredLand()){
+                    	if (floorDetails.getPlinthLength() == null) {
+                            errorDetails = new ErrorDetails();
+                            errorDetails.setErrorCode(PLINTH_LENGTH_REQ_CODE);
+                            errorDetails.setErrorMessage(PLINTH_LENGTH_REQ_MSG);
+                            return errorDetails;
+                        }
+                        if(Float.valueOf(floorDetails.getPlinthLength()) == 0.0){
+                        	errorDetails = new ErrorDetails();
+                            errorDetails.setErrorCode(PLINTH_LENGTH_GREATER_THAN_ZERO_CODE);
+                            errorDetails.setErrorMessage(PLINTH_LENGTH_GREATER_THAN_ZERO_MSG);
+                            return errorDetails;
+                        }
+                        if (floorDetails.getPlinthBreadth() == null) {
+                            errorDetails = new ErrorDetails();
+                            errorDetails.setErrorCode(PLINTH_BREADTH_REQ_CODE);
+                            errorDetails.setErrorMessage(PLINTH_BREADTH_REQ_MSG);
+                            return errorDetails;
+                        }
+                        if(Float.valueOf(floorDetails.getPlinthBreadth()) == 0.0){
+                        	errorDetails = new ErrorDetails();
+                            errorDetails.setErrorCode(PLINTH_AREA_GREATER_THAN_ZERO_CODE);
+                            errorDetails.setErrorMessage(PLINTH_AREA_GREATER_THAN_ZERO_MSG);
+                            return errorDetails;
+                        }
+                    }
+                    if (floorDetails.getPlinthArea() == null) {
+                        errorDetails = new ErrorDetails();
+                        errorDetails.setErrorCode(PLINTH_AREA_REQ_CODE);
+                        errorDetails.setErrorMessage(PLINTH_AREA_REQ_MSG);
+                        return errorDetails;
+                    }
+                    if(Double.valueOf(floorDetails.getPlinthArea()) == 0.0){
+                    	errorDetails = new ErrorDetails();
+                        errorDetails.setErrorCode(PLINTH_AREA_GREATER_THAN_ZERO_CODE);
+                        errorDetails.setErrorMessage(PLINTH_AREA_GREATER_THAN_ZERO_MSG);
+                        return errorDetails;
+                    }
+                    if(Double.valueOf(floorDetails.getPlinthArea()) > areaOfPlot){
+                    	errorDetails = new ErrorDetails();
+                        errorDetails.setErrorCode(PLINTH_AREA_GREATER_THAN_PLOT_AREA_CODE);
+                        errorDetails.setErrorMessage(PLINTH_AREA_GREATER_THAN_PLOT_AREA_MSG);
+                        return errorDetails;
+                    }
                 }
-                if (floorDetails.getNatureOfUsageCode() == null) {
-                    errorDetails = new ErrorDetails();
-                    errorDetails.setErrorCode(RestApiConstants.NATURE_OF_USAGES_REQ_CODE);
-                    errorDetails.setErrorMessage(RestApiConstants.NATURE_OF_USAGES_REQ_MSG);
-                    return errorDetails;
-                }
-                if (floorDetails.getOccupancyCode() == null) {
-                    errorDetails = new ErrorDetails();
-                    errorDetails.setErrorCode(RestApiConstants.OCCUPANCY_REQ_CODE);
-                    errorDetails.setErrorMessage(RestApiConstants.OCCUPANCY_REQ_MSG);
-                    return errorDetails;
-                }
-                if (floorDetails.getConstructionDate() == null) {
-                    errorDetails = new ErrorDetails();
-                    errorDetails.setErrorCode(RestApiConstants.CONSTRUCTION_DATE_REQ_CODE);
-                    errorDetails.setErrorMessage(RestApiConstants.CONSTRUCTION_DATE_REQ_MSG);
-                    return errorDetails;
-                }
-                if (floorDetails.getPlinthArea() == null) {
-                    errorDetails = new ErrorDetails();
-                    errorDetails.setErrorCode(RestApiConstants.PLINTH_AREA_REQ_CODE);
-                    errorDetails.setErrorMessage(RestApiConstants.PLINTH_AREA_REQ_MSG);
-                    return errorDetails;
-                }
-            }
+        }
+        
         return errorDetails;
     }
+
+    /**
+     * Validates Vacant Land details
+     * @param createPropDetails
+     * @param errorDetails
+     * @return ErrorDetails
+     */
+	public ErrorDetails validateVacantLandDetails(final CreatePropertyDetails createPropDetails,
+			ErrorDetails errorDetails) {
+		final VacantLandDetails vacantLandDetails = createPropDetails.getVacantLandDetails();
+		if (vacantLandDetails == null) {
+		    errorDetails = new ErrorDetails();
+		    errorDetails.setErrorCode(VACANT_LAND_DETAILS_REQ_CODE);
+		    errorDetails.setErrorMessage(VACANT_LAND_DETAILS_REQ_MSG);
+		    return errorDetails;
+		} else {
+		    if (StringUtils.isBlank(vacantLandDetails.getSurveyNumber())) {
+		        errorDetails = new ErrorDetails();
+		        errorDetails.setErrorCode(SURVEY_NO_REQ_CODE);
+		        errorDetails.setErrorMessage(SURVEY_NO_REQ_MSG);
+		        return errorDetails;
+		    } else if (StringUtils.isBlank(vacantLandDetails.getPattaNumber())) {
+		        errorDetails = new ErrorDetails();
+		        errorDetails.setErrorCode(PATTA_NO_REQ_CODE);
+		        errorDetails.setErrorMessage(PATTA_NO_REQ_MSG);
+		        return errorDetails;
+		    } else if (vacantLandDetails.getVacantLandArea() == null) {
+		        errorDetails = new ErrorDetails();
+		        errorDetails.setErrorCode(VACANT_LAND_AREA_REQ_CODE);
+		        errorDetails.setErrorMessage(VACANT_LAND_AREA_REQ_MSG);
+		        return errorDetails;
+		    } else if(Float.valueOf(vacantLandDetails.getVacantLandArea()) == 0.0){
+		    	errorDetails = new ErrorDetails();
+		        errorDetails.setErrorCode(AREA_GREATER_THAN_ZERO_CODE);
+		        errorDetails.setErrorMessage(AREA_GREATER_THAN_ZERO_MSG);
+		        return errorDetails;
+		    } else if (vacantLandDetails.getMarketValue() == null) {
+		        errorDetails = new ErrorDetails();
+		        errorDetails.setErrorCode(MARKET_AREA_VALUE_REQ_CODE);
+		        errorDetails.setErrorMessage(MARKET_AREA_VALUE_REQ_MSG);
+		        return errorDetails;
+		    } else if(Double.valueOf(vacantLandDetails.getMarketValue()) == 0){
+		    	errorDetails = new ErrorDetails();
+		        errorDetails.setErrorCode(MARKET_VALUE_GREATER_THAN_ZERO_CODE);
+		        errorDetails.setErrorMessage(MARKET_VALUE_GREATER_THAN_ZERO_MSG);
+		        return errorDetails;
+		    } else if (vacantLandDetails.getCurrentCapitalValue() == null) {
+		        errorDetails = new ErrorDetails();
+		        errorDetails.setErrorCode(CURRENT_CAPITAL_VALUE_REQ_CODE);
+		        errorDetails.setErrorMessage(CURRENT_CAPITAL_VALUE_REQ_MSG);
+		        return errorDetails;
+		    } else if(Double.valueOf(vacantLandDetails.getCurrentCapitalValue()) == 0.0){
+		    	errorDetails = new ErrorDetails();
+		        errorDetails.setErrorCode(CURRENT_CAPITAL_VALUE_GREATER_THAN_ZERO_CODE);
+		        errorDetails.setErrorMessage(CURRENT_CAPITAL_VALUE_GREATER_THAN_ZERO_MSG);
+		        return errorDetails;
+		    } else if (StringUtils.isBlank(vacantLandDetails.getEffectiveDate())) {
+		        errorDetails = new ErrorDetails();
+		        errorDetails.setErrorCode(EFFECTIVE_DATE_REQ_CODE);
+		        errorDetails.setErrorMessage(EFFECTIVE_DATE_REQ_MSG);
+		        return errorDetails;
+		    }
+
+		    final SurroundingBoundaryDetails surBoundaryDetails = createPropDetails.getSurroundingBoundaryDetails();
+		    if (surBoundaryDetails == null) {
+		        errorDetails = new ErrorDetails();
+		        errorDetails.setErrorCode(SURROUNDING_BOUNDARY_DETAILS_REQ_CODE);
+		        errorDetails.setErrorMessage(SURROUNDING_BOUNDARY_DETAILS_REQ_MSG);
+		        return errorDetails;
+		    } else {
+		        if (StringUtils.isBlank(surBoundaryDetails.getNorthBoundary())) {
+		            errorDetails = new ErrorDetails();
+		            errorDetails.setErrorCode(NORTH_BOUNDARY_REQ_CODE);
+		            errorDetails.setErrorMessage(NORTH_BOUNDARY_REQ_MSG);
+		            return errorDetails;
+		        } else if (StringUtils.isBlank(surBoundaryDetails.getSouthBoundary())) {
+		            errorDetails = new ErrorDetails();
+		            errorDetails.setErrorCode(SOUTH_BOUNDARY_REQ_CODE);
+		            errorDetails.setErrorMessage(SOUTH_BOUNDARY_REQ_MSG);
+		            return errorDetails;
+		        } else if (StringUtils.isBlank(surBoundaryDetails.getEastBoundary())) {
+		            errorDetails = new ErrorDetails();
+		            errorDetails.setErrorCode(EAST_BOUNDARY_REQ_CODE);
+		            errorDetails.setErrorMessage(EAST_BOUNDARY_REQ_MSG);
+		            return errorDetails;
+		        } else if (StringUtils.isBlank(surBoundaryDetails.getWestBoundary())) {
+		            errorDetails = new ErrorDetails();
+		            errorDetails.setErrorCode(WEST_BOUNDARY_REQ_CODE);
+		            errorDetails.setErrorMessage(WEST_BOUNDARY_REQ_MSG);
+		            return errorDetails;
+		        }
+		    }
+		}
+		return errorDetails;
+	}
+
+	/**
+	 * Validates owner details 
+	 * @param errorDetails
+	 * @param ownerDetailsList
+	 * @return ErrorDetails
+	 */
+	public ErrorDetails validateOwnerDetails(ErrorDetails errorDetails, final List<OwnerInformation> ownerDetailsList) {
+		if (ownerDetailsList == null) {
+		    errorDetails = new ErrorDetails();
+		    errorDetails.setErrorCode(OWNER_DETAILS_REQ_CODE);
+		    errorDetails.setErrorMessage(OWNER_DETAILS_REQ_MSG);
+		    return errorDetails;
+		} else {
+		    for (final OwnerInformation ownerDetails : ownerDetailsList) {
+		        if (StringUtils.isBlank(ownerDetails.getMobileNumber())) {
+		            errorDetails = new ErrorDetails();
+		            errorDetails.setErrorCode(MOBILE_NO_REQ_CODE);
+		            errorDetails.setErrorMessage(MOBILE_NO_REQ_MSG);
+		            return errorDetails;
+		        } else {
+		        	if(ownerDetails.getMobileNumber().trim().length() != 10){
+		        		errorDetails = new ErrorDetails();
+		                errorDetails.setErrorCode(MOBILENO_MAX_LENGTH_ERROR_CODE);
+		                errorDetails.setErrorMessage(MOBILENO_MAX_LENGTH_ERROR_MSG);
+		                return errorDetails;
+		        	}
+		        	Pattern pattern = Pattern.compile("\\d{10}");
+		            Matcher matcher = pattern.matcher(ownerDetails.getMobileNumber());
+		            if(!matcher.matches()){
+		            	errorDetails = new ErrorDetails();
+		                errorDetails.setErrorCode(MOBILENO_ALPHANUMERIC_ERROR_CODE);
+		                errorDetails.setErrorMessage(MOBILENO_ALPHANUMERIC_ERROR_MSG);
+		                return errorDetails;
+		            }
+		        }
+		        if (StringUtils.isBlank(ownerDetails.getName())) {
+		            errorDetails = new ErrorDetails();
+		            errorDetails.setErrorCode(OWNER_NAME_REQ_CODE);
+		            errorDetails.setErrorMessage(OWNER_NAME_REQ_MSG);
+		            return errorDetails;
+		        } else if (StringUtils.isBlank(ownerDetails.getGender())) {
+		            errorDetails = new ErrorDetails();
+		            errorDetails.setErrorCode(GENDER_REQ_CODE);
+		            errorDetails.setErrorMessage(GENDER_REQ_MSG);
+		            return errorDetails;
+		        } else if (StringUtils.isBlank(ownerDetails.getGuardianRelation())) {
+		            errorDetails = new ErrorDetails();
+		            errorDetails.setErrorCode(GUARDIAN_RELATION_REQ_CODE);
+		            errorDetails.setErrorMessage(GUARDIAN_RELATION_REQ_MSG);
+		            return errorDetails;
+		        } else if (StringUtils.isBlank(ownerDetails.getGuardian())) {
+		            errorDetails = new ErrorDetails();
+		            errorDetails.setErrorCode(GUARDIAN_REQ_CODE);
+		            errorDetails.setErrorMessage(GUARDIAN_REQ_MSG);
+		            return errorDetails;
+		        }
+		    }
+		}
+		return errorDetails;
+		
+	}
+    
     public  ErrorDetails validatePaymentDetails(final PayPropertyTaxDetails payPropTaxDetails, boolean isMutationFeePayment) {
         ErrorDetails errorDetails = null;
         if (payPropTaxDetails.getAssessmentNo() == null || payPropTaxDetails.getAssessmentNo().trim().length() == 0) {
@@ -544,4 +780,30 @@ public class ValidationUtil {
     	return errorDetails;
     }
     
+    public ErrorDetails validateSurveyRequest(AssessmentRequest assessmentRequest) throws ParseException{
+    	ErrorDetails errorDetails = null;
+    	if(StringUtils.isBlank(assessmentRequest.getTransactionType())){
+    		errorDetails = new ErrorDetails();
+            errorDetails.setErrorCode(TRANSACTION_TYPE_REQUIRED_CODE);
+            errorDetails.setErrorMessage(TRANSACTION_TYPE_REQUIRED_MSG);
+    	} else if (StringUtils.isBlank(assessmentRequest.getFromDate())){
+    		errorDetails = new ErrorDetails();
+            errorDetails.setErrorCode(FROM_DATE_REQUIRED_CODE);
+            errorDetails.setErrorMessage(FROM_DATE_REQUIRED_MSG);
+    	} else if (StringUtils.isBlank(assessmentRequest.getToDate())){
+    		errorDetails = new ErrorDetails();
+            errorDetails.setErrorCode(TO_DATE_REQUIRED_CODE);
+            errorDetails.setErrorMessage(TO_DATE_REQUIRED_MSG);
+    	}
+    	if(StringUtils.isNotBlank(assessmentRequest.getTransactionType()) && StringUtils.isNotBlank(assessmentRequest.getFromDate()) 
+    			&& StringUtils.isNotBlank(assessmentRequest.getToDate())){
+    		Long propertiesCount = propertyExternalService.getPropertiesCount(assessmentRequest.getTransactionType(), assessmentRequest.getFromDate(), assessmentRequest.getToDate());
+        	if(propertiesCount>100){
+        		errorDetails = new ErrorDetails();
+                errorDetails.setErrorCode(PROPERTIES_LIST_EXCEED_LIMIT_CODE);
+                errorDetails.setErrorMessage(PROPERTIES_LIST_EXCEED_LIMIT_MSG);
+        	}
+    	}
+    	return errorDetails;
+    }
 }

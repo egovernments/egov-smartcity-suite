@@ -39,6 +39,17 @@
  */
 package org.egov.eis.service;
 
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
+
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+
+import org.apache.commons.lang3.StringUtils;
 import org.egov.commons.CFunction;
 import org.egov.commons.Functionary;
 import org.egov.commons.Fund;
@@ -63,7 +74,10 @@ import org.egov.infra.admin.master.service.RoleService;
 import org.egov.infra.admin.master.service.UserService;
 import org.egov.infra.config.properties.ApplicationProperties;
 import org.egov.infra.validation.exception.ValidationException;
+import org.egov.infra.workflow.service.StateHistoryService;
+import org.egov.infra.workflow.service.StateService;
 import org.egov.pims.commons.Designation;
+import org.egov.pims.commons.Position;
 import org.hibernate.Criteria;
 import org.hibernate.Session;
 import org.hibernate.criterion.CriteriaSpecification;
@@ -75,27 +89,14 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
-import java.util.stream.Collectors;
-
 @Service
 @Transactional(readOnly = true)
 public class EmployeeService implements EntityTypeService {
 
+    private final EmployeeRepository employeeRepository;
+
     @PersistenceContext
     private EntityManager entityManager;
-
-    public Session getCurrentSession() {
-        return entityManager.unwrap(Session.class);
-    }
-
-    private final EmployeeRepository employeeRepository;
 
     @Autowired
     private UserRepository userRepository;
@@ -120,19 +121,32 @@ public class EmployeeService implements EntityTypeService {
 
     @Autowired
     private AssignmentService assignmentService;
-    
+
     @Autowired
     private RoleService roleService;
+
+    @Autowired
+    private StateService stateService;
+
+    @Autowired
+    private StateHistoryService stateHistoryService;
+
+    @Autowired
+    private PositionMasterService positionMasterService;
 
     @Autowired
     public EmployeeService(final EmployeeRepository employeeRepository) {
         this.employeeRepository = employeeRepository;
     }
 
+    public Session getCurrentSession() {
+        return entityManager.unwrap(Session.class);
+    }
+
     @SuppressWarnings("unchecked")
     public List<CFunction> getAllFunctions() {
-        return getCurrentSession().createQuery("from CFunction where isactive = true AND isnotleaf=false order by upper(name)")
-                .list();
+        return getCurrentSession()
+                .createQuery("from CFunction where isactive = true AND isnotleaf=false order by upper(name)").list();
     }
 
     @SuppressWarnings("unchecked")
@@ -142,8 +156,8 @@ public class EmployeeService implements EntityTypeService {
 
     @SuppressWarnings("unchecked")
     public List<Fund> getAllFunds() {
-        return getCurrentSession().createQuery("from Fund where isactive = true and isNotLeaf!=true order by upper(name)")
-                .list();
+        return getCurrentSession()
+                .createQuery("from Fund where isactive = true and isNotLeaf!=true order by upper(name)").list();
     }
 
     @SuppressWarnings("unchecked")
@@ -215,28 +229,15 @@ public class EmployeeService implements EntityTypeService {
     public void update(final Employee employee) {
         // Following is added to prevent null values and empty assignment
         // objects getting persisted
-        employee.setAssignments(employee.getAssignments().parallelStream()
-                .filter(assignment -> assignment.getPosition() != null).collect(Collectors.toList()));
-        List<User> user = new ArrayList<User>();
 
         for (final Assignment assign : employee.getAssignments()) {
             assign.setEmployee(employee);
             assign.setDepartment(assign.getDepartment());
 
-            final Set<Role> roles = designationService.getRolesByDesignation(assign.getDesignation().getName());
-            for (final Role role : roles) {
-                user = userService.getUsersByUsernameAndRolename(employee.getUsername(),
-                        roleService.getRoleByName(role.getName()).getName());
-                if (assign.getFromDate().before(new Date()) && assign.getToDate().after(new Date()))
-                    if (user.isEmpty() || user == null)
-                        employee.addRole(roleService.getRoleByName(role.getName()));
-            }
             for (final HeadOfDepartments hod : assign.getDeptSet())
                 hod.setAssignment(assign);
         }
-        employee.setJurisdictions(employee.getJurisdictions().parallelStream()
-                .filter(Jurisdictions -> Jurisdictions.getBoundaryType() != null && Jurisdictions.getBoundary() != null)
-                .collect(Collectors.toList()));
+
         for (final Jurisdiction jurisdiction : employee.getJurisdictions()) {
             jurisdiction.setEmployee(employee);
             jurisdiction.setBoundaryType(jurisdiction.getBoundaryType());
@@ -248,28 +249,28 @@ public class EmployeeService implements EntityTypeService {
     @Transactional
     public void addOrRemoveUserRole() {
         final List<Employee> employee = getAllEmployees();
-        
+
         for (final Employee emp : employee) {
-          final Set<Role> userRole = userService.getRolesByUsername(emp.getUsername());
-          
-          //List Of Expired Roles
-          final Set<Role> expiredRoleList = assignmentService.getRolesForExpiredAssignmentsByEmpId(emp.getId());
-          //List Of Active Roles
-          final Set<Role> activeRoleList = assignmentService.getRolesForActiveAssignmentsByEmpId(emp.getId());
-         
-          //Remove activeRoles from ExpiredRoles List
-          expiredRoleList.removeAll(activeRoleList);
-          
-          //Remove Expired Roles 
-          userRole.removeAll(expiredRoleList);
-          
-          //Add Roles
-          userRole.addAll(activeRoleList);
-          
-          emp.setRoles(userRole);
-          employeeRepository.save(emp);
+            final Set<Role> userRole = userService.getRolesByUsername(emp.getUsername());
+
+            // List Of Expired Roles
+            final Set<Role> expiredRoleList = assignmentService.getRolesForExpiredAssignmentsByEmpId(emp.getId());
+            // List Of Active Roles
+            final Set<Role> activeRoleList = assignmentService.getRolesForActiveAssignmentsByEmpId(emp.getId());
+
+            // Remove activeRoles from ExpiredRoles List
+            expiredRoleList.removeAll(activeRoleList);
+
+            // Remove Expired Roles
+            userRole.removeAll(expiredRoleList);
+
+            // Add Roles
+            userRole.addAll(activeRoleList);
+
+            emp.setRoles(userRole);
+            employeeRepository.save(emp);
         }
-          
+
     }
 
     public List<Employee> searchEmployees(final EmployeeSearchDTO searchParams) {
@@ -455,6 +456,78 @@ public class EmployeeService implements EntityTypeService {
         String name = department.getCode() + designation.getCode();
         name += userRepository.getUserSerialNumberByName(name) + 1;
         return name;
+    }
+
+    public List<Employee> findEmployeeByCodeLike(final String code) {
+        return employeeRepository.findEmployeeByCodeLike(code);
+    }
+
+    public List<Employee> findActiveEmployeeByCodeLike(final String code) {
+        return employeeRepository.findActiveEmployeeByCodeLike(code);
+    }
+
+    public String validatePosition(final Employee employee, final String removedassignIds) {
+        boolean positionExistsInWF = false;
+        boolean positionExistsInWFHistory = false;
+        final List<Position> updatedPositionList = positionMasterService.getPositionsForEmployee(employee.getId());
+        if (StringUtils.isNotBlank(removedassignIds)) {
+            final String[] deletedAssignIds = removedassignIds.split(",");
+            for (final String assignId : deletedAssignIds) {
+                final Assignment assignment = assignmentService.getAssignmentById(Long.valueOf(assignId));
+                if (assignment != null && !assignment.equals("")) {
+                    positionExistsInWF = stateService.isPositionUnderWorkflow(assignment.getPosition().getId());
+                    positionExistsInWFHistory = stateHistoryService
+                            .isPositionUnderWorkflowHistory(assignment.getPosition().getId());
+                }
+                if (positionExistsInWF || positionExistsInWFHistory)
+                    return assignment.getPosition().getName();
+            }
+        }
+        assignmentService.removeDeletedAssignments(employee, removedassignIds);
+        // user role mapping based on designation
+        employee.setAssignments(employee.getAssignments().parallelStream()
+                .filter(assignment -> assignment.getPosition() != null).collect(Collectors.toList()));
+        List<User> user = new ArrayList<User>();
+        for (final Assignment assign : employee.getAssignments()) {
+            final Set<Role> roles = designationService.getRolesByDesignation(assign.getDesignation().getName());
+            for (final Role role : roles) {
+                user = userService.getUsersByUsernameAndRolename(employee.getUsername(),
+                        roleService.getRoleByName(role.getName()).getName());
+                if (assign.getFromDate().before(new Date()) && assign.getToDate().after(new Date()) && user.isEmpty())
+                    employee.addRole(roleService.getRoleByName(role.getName()));
+            }
+        }
+        employee.setJurisdictions(employee.getJurisdictions().parallelStream()
+                .filter(Jurisdictions -> Jurisdictions.getBoundaryType() != null && Jurisdictions.getBoundary() != null)
+                .collect(Collectors.toList()));
+
+        getCurrentSession().evict(employee);
+        final Employee updatedEmployee = getEmployeeById(employee.getId());
+        final List<Position> oldPositionList = positionMasterService.getPositionsForEmployee(updatedEmployee.getId());
+        oldPositionList.removeAll(updatedPositionList);
+        for (final Position position : oldPositionList) {
+            positionExistsInWF = stateService.isPositionUnderWorkflow(position.getId());
+            positionExistsInWFHistory = stateHistoryService.isPositionUnderWorkflowHistory(position.getId());
+            if (positionExistsInWF || positionExistsInWFHistory)
+                return position.getName();
+        }
+        return StringUtils.EMPTY;
+    }
+
+    public Boolean validateEmployeeCode(final Employee employee) {
+        final String employeeCode = employee.getCode().replaceFirst("^0+(?!$)", "");
+
+        final List<Employee> employeeList = findActiveEmployeeByCodeLike(employeeCode);
+
+        if (!employeeList.isEmpty())
+            for (final Employee emp : employeeList) {
+                final String empCode = emp.getCode().replaceFirst("^0+(?!$)", "");
+                if (!emp.getCode().equals(employee.getCode()) && employeeCode.equals(empCode)
+                        && !emp.getId().equals(employee.getId()))
+                    return true;
+
+            }
+        return false;
     }
 
 }

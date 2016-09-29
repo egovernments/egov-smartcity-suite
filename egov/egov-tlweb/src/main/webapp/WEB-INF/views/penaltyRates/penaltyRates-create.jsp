@@ -2,7 +2,7 @@
 <%@ taglib uri="http://www.springframework.org/tags" prefix="spring"%>
 <%@ taglib uri="http://www.springframework.org/tags/form" prefix="form"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
-
+<%@ taglib uri="/WEB-INF/taglib/cdn.tld" prefix="cdn" %>
 <%--
   ~ eGov suite of products aim to improve the internal efficiency,transparency,
   ~    accountability and the service delivery of the government  organizations.
@@ -219,6 +219,6 @@ $( "#search" ).click(function( event ) {
 	 
 });
 </script>
-<script src="<c:url value='/resources/js/app/helper.js' context='/tl'/>"></script>
-<script src="<c:url value='/resources/global/js/egov/patternvalidation.js?rnd=${app_release_no}' context='/egi'/>"></script>
-<script type="text/javascript" src="<c:url value='/resources/app/js/penaltyRates.js?rnd=${app_release_no}'/>"></script>
+<script src="<cdn:url  value='/resources/js/app/helper.js'/>"></script>
+<script src="<cdn:url  value='/resources/global/js/egov/patternvalidation.js?rnd=${app_release_no}' context='/egi'/>"></script>
+<script type="text/javascript" src="<cdn:url  value='/resources/app/js/penaltyRates.js?rnd=${app_release_no}'/>"></script>

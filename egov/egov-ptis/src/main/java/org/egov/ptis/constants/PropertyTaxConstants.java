@@ -72,6 +72,7 @@ public interface PropertyTaxConstants {
     public static final String APPCONFIG_ISSEASHORE_ULB = "IS_SEASHORE_ULB";
     public static final String APPCONFIG_IS_PRIMARY_SERVICECHARGES_APPLICABLE = "IS_PRIMARYSERVICECHARGES_APPLICABLE";
     public static final Float SQUARE_YARD_TO_SQUARE_METER_VALUE = 0.836127f;
+    
     // General constants used across Clients
     public static final String PTMODULENAME = "Property Tax";
     public static final String DEACTIVATION = "DEACTIVATION";
@@ -235,6 +236,7 @@ public interface PropertyTaxConstants {
     public static final String STREET = "Street";
     public static final String LOCALITY = "locality";
     public static final String ELECTIONWARD_BNDRY_TYPE = "Election Ward";
+    public static final String LOCALITY_BNDRY_TYPE = "Locality";
 
     // Ownership type code
     public static final String OWNERSHIP_TYPE_VAC_LAND = "VAC_LAND";
@@ -626,6 +628,7 @@ public interface PropertyTaxConstants {
     public static final String WF_STATE_REVENUE_OFFICER_APPROVAL_PENDING = "Revenue Officer Approval Pending";
     public static final String WF_STATE_REGISTRATION_PENDING = "Registration Pending";
     public static final String WF_STATE_REGISTRATION_COMPLETED = "Registration Completed";
+    public static final String WF_STATE_BILL_COLLECTOR_APPROVAL_PENDING = "Bill Collector Approval Pending";
 
     public static final String REPORT_TEMPLATENAME_BILL_GENERATION = "propertybill";
 
@@ -1274,15 +1277,19 @@ public interface PropertyTaxConstants {
     public static final String APPLICATION_TYPE_MEESEVA_TRANSFER_OF_OWNERSHIP = "Meeseva_Transfer_of_Ownership";
     public static final String APPLICATION_TYPE_GRP = "General_Revision_Petition";
     public static final String APPLICATION_TYPE_EDIT_DEMAND = "Edit_demand";
+    public static final String APPLICATION_TYPE_ADD_DEMAND = "Add_demand";
     public static final String APPLICATION_TYPE_EDIT_OWNER = "Edit_owner";
     public static final String APPLICATION_TYPE_EDIT_COLLECTION = "Edit_Collection";
     public static final String APPLICATION_TYPE_MODIFY_DATA_ENTRY = "Edit_Data_Entry";
+    public static final String APPLICATION_TYPE_MEESEVA_GRP = "Meeseva_General_Revision_Petition";
+    public static final String APPLICATION_TYPE_MEESEVA_RP = "Meeseva_Revision_Petition";
 
     // AppConfig values
     public static final String PROPERTYTAX_WORKFLOWDEPARTEMENT = "PROPERTYTAXDEPARTMENTFORWORKFLOW";
     public static final String PROPERTYTAX_WORKFLOWDESIGNATION = "PROPERTYTAXDESIGNATIONFORWORKFLOW";
     public static final String PROPERTYTAX_ROLEFORNONEMPLOYEE = "PROPERTYTAXROLEFORNONEMPLOYEE";
     public static final String APPLICATION_TYPE_REVISION_PETITION = "Revision_Petition";
+    public static final String PT_WORKFLOWDESIGNATION_MOBILE = "PTIS_DESIGNATIONFORWF_MOBILE";
 
     // Action targets
     public static final String TARGET_WORKFLOW_ERROR = "workFlowError";
@@ -1302,12 +1309,21 @@ public interface PropertyTaxConstants {
     public static final Character SOURCEOFDATA_MIGRATION = 'M';
     public static final Character SOURCEOFDATA_DATAENTRY = 'D';
     public static final Character SOURCEOFDATA_MEESEWA = 'T';
+    public static final Character SOURCEOFDATA_ONLINE = 'O';
+    public static final Character SOURCEOFDATA_MOBILE = 'S';
+    public static final Character SOURCEOFDATA_ESEVA = 'E';
+    public static final Character SOURCEOFDATA_CARD = 'D';
+    
+    
 
     public static final String ALTERATION_OF_ASSESSMENT = "Alteration of Assessment";
     public static final String BIFURCATION_OF_ASSESSMENT = "Bifurcation of Assessment";
     public static final String AMALGAMATION_OF_ASSESSMENT = "Amalgamation of Assessment";
     public static final String GRP_OF_ASSESSMENT = "General Revision Petition of Assessment";
 
+    public static final String CATEGORY_VACANT_LAND = "VACANTLAND";
+    public static final String CATEGORY_STATE_GOVT = "STATE_GOVT";
+    public static final String CATEGORY_CENTRAL_GOVT = "CENTRAL_GOVT";
     public static final String CATEGORY_RESIDENTIAL = "RESIDENTIAl";
     public static final String CATEGORY_NON_RESIDENTIAL = "NON_RESIDENTIAL";
     public static final String CATEGORY_MIXED = "MIXED";
@@ -1436,6 +1452,8 @@ public interface PropertyTaxConstants {
     public static final String REVISIONPETITION_STATUS_CODE = "RP";
 
     public static final String APPCONFIG_DIGITAL_SIGNATURE = "PTIS_DIGITAL_SIGNATURE_REQUIRED";
+    
+    public static final String APPCONFIG_CLIENT_SPECIFIC_DMD_BILL = "IS_CLIENT_SPECIFIC_DEMANDBILL";
  
     public static final String SERVICE_CODE_VACANTLANDTAX = "VLT";
     public static final String SERVICE_CODE_PROPERTYTAX = "PT";
@@ -1446,14 +1464,34 @@ public interface PropertyTaxConstants {
     public static final String FULLTT="Transfer of ownership of entire property which needs to be registered in Registration and Stamps Office";
     public static final String ALL_READY_REGISTER ="Transfer of ownership of property which is already registered in Registration and Stamps Office";
     
-    public static final String TTTEXT=" of the registration is completed in Registration and Stamps Office";
+    public static final String TTTEXT=" of the registration is completed";
+    public static final String TTTEXTEND= " in Registration and Stamps Office";
     
     public static final String REG_DEPT_WEBSERVICE_USERNAME = "CMDAService1";
     public static final String REG_DEPT_WEBSERVICE_PASSWORD = "CMDAService1";
     
+    public static final String MOBILE_PAYMENT_INCORRECT_BILL_DATA = "Bill data is incorrect";
+    public static final String APPROVAL_COMMENTS_SUCCESS = "Property has been successfully forwarded.";
+    public static final String CREATE_CURRENT_STATE_BILL_COLLECTOR_APPROVED ="Create:Bill Collector Approved";
+    public static final String UD_REVENUE_INSPECTOR_APPROVAL_PENDING = "UD Revenue Inspector Approval Pending";
+    public static final String MODIFY_CURRENT_STATE_BILL_COLLECTOR_APPROVED ="Alter:Bill Collector Approved";
+    	
+    //Collection services
     public static final String CATEGORY_TYPE_PROPERTY_TAX = "PT";
     public static final String CATEGORY_TYPE_VACANTLAND_TAX = "VLT";
-    public static final String PROPERTY_TYPE_CODE_VACANT = "VAC_LAND";
+    public static final String INDEX_COLLECTION_CLAUSES_BILLINGSERVICE_NON_VACANT_LAND ="Property Tax";
+    public static final String INDEX_COLLECTION_CLAUSES_BILLINGSERVICE_VACANT_LAND ="Property Tax (On Land)";
     
-	public static final String MOBILE_PAYMENT_INCORRECT_BILL_DATA = "Bill data is incorrect";
+    //urls	
+    public String WTMS_TAXDUE_RESTURL = "%s/wtms/rest/watertax/due/byptno/%s";
+	
+	public static final String TRANSACTION_TYPE_CREATE = "Create";
+	public static final String TRANSACTION_TYPE_DEMOLITION = "Demolition";
+	
+	public static final String PROPERTY_MODE_CREATE = "create";
+	public static final String PROPERTY_MODE_MODIFY = "modify";
+	
+	public static final String PAYMENT_TYPE_PARTIALLY = "Partially";
+	public static final String PAYMENT_TYPE_FULLY = "Fully";
+	public static final String PAYMENT_TYPE_ADVANCE = "Advance";
 }

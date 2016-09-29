@@ -39,12 +39,9 @@
  */
 package org.egov.works.web.controller.milestone;
 
-import java.io.IOException;
-import java.io.Writer;
-
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import com.google.gson.JsonObject;
 import org.apache.commons.io.IOUtils;
 import org.egov.infra.exception.ApplicationException;
 import org.egov.works.milestone.entity.Milestone;
@@ -54,7 +51,8 @@ import org.egov.works.milestone.entity.enums.MilestoneActivityStatus;
 import org.egov.works.milestone.service.MilestoneService;
 import org.egov.works.web.adaptor.TrackMilestoneJsonAdaptor;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.support.ResourceBundleMessageSource;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.context.MessageSource;
 import org.springframework.http.MediaType;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -65,9 +63,10 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
-import com.google.gson.JsonObject;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
+import java.io.Writer;
 
 @RestController
 @RequestMapping(value = "/milestone")
@@ -77,7 +76,8 @@ public class TrackMilestoneController {
     private MilestoneService milestoneService;
 
     @Autowired
-    private ResourceBundleMessageSource messageSource;
+    @Qualifier("messageSource")
+    private MessageSource messageSource;
 
     @Autowired
     private TrackMilestoneJsonAdaptor trackMilestoneJsonAdaptor;

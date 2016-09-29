@@ -39,6 +39,7 @@
  */
 package org.egov.wtms.application.entity;
 
+import java.math.BigDecimal;
 import java.util.Date;
 
 public class WaterChargesReceiptInfo {
@@ -49,7 +50,8 @@ public class WaterChargesReceiptInfo {
     private Date receiptDate;
     private Date fromDate;
     private Date toDate;
-    private double receiptAmount;
+
+    private BigDecimal receiptAmount;
 
     public String getConsumerNumber() {
         return consumerNumber;
@@ -99,11 +101,11 @@ public class WaterChargesReceiptInfo {
         this.toDate = toDate;
     }
 
-    public double getReceiptAmount() {
+    public BigDecimal getReceiptAmount() {
         return receiptAmount;
     }
 
-    public void setReceiptAmount(final double receiptAmount) {
+    public void setReceiptAmount(final BigDecimal receiptAmount) {
         this.receiptAmount = receiptAmount;
     }
 

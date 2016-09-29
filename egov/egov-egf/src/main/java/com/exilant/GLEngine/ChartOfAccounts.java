@@ -58,6 +58,7 @@ import java.util.Map;
 import java.util.Set;
 
 import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
 
 import org.apache.log4j.Logger;
 import org.egov.commons.Accountdetailtype;
@@ -79,6 +80,7 @@ import org.egov.infra.validation.exception.ValidationException;
 import org.egov.infstr.services.PersistenceService;
 import org.egov.model.recoveries.Recovery;
 import org.egov.services.voucher.VoucherService;
+import org.egov.utils.FinancialConstants;
 import org.hibernate.HibernateException;
 import org.hibernate.Query;
 import org.hibernate.SQLQuery;
@@ -109,6 +111,7 @@ import com.exilant.exility.dataservice.DataExtractor;
 @Service
 public class ChartOfAccounts {
 
+	
 	static ChartOfAccounts singletonInstance;
 	private static final Logger LOGGER = Logger
 			.getLogger(ChartOfAccounts.class);
@@ -154,8 +157,8 @@ public class ChartOfAccounts {
 	@Autowired
 	private BudgetDetailsHibernateDAO budgetDetailsDAO;
 
-	@Autowired
-	EntityManager entityManager;
+	@PersistenceContext
+	private EntityManager entityManager;
 
 	@Autowired
 	private FinancialYearHibernateDAO financialYearDAO;
@@ -532,8 +535,8 @@ public class ChartOfAccounts {
 			if (txnObj.getBillId() != null)
 				paramMap.put("bill", txnObj.getBillId());
 			if (!budgetDetailsDAO.budgetaryCheck(paramMap))
-				throw new ValidationException("Budgetary check failed for "
-						+ txnObj.getGlCode(), "Budgetary check is failed for "
+				throw new ValidationException("Budget check failed: Insufficient Budget for "
+						+ txnObj.getGlCode(), "Budget check failed: Insufficient Budget for "
 						+ txnObj.getGlCode());
 		}
 		return true;
@@ -544,7 +547,7 @@ public class ChartOfAccounts {
 			final String vDate) throws Exception, ValidationException {
 
 		if (!checkBudget(txnList))
-			throw new Exception("Budgetary check is failed");
+			throw new Exception(FinancialConstants.BUDGET_CHECK_ERROR_MESSAGE);   
 		// if objects are lost load them
 		loadAccountData();
 		try {

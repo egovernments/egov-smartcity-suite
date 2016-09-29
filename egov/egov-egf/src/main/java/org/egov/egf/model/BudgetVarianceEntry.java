@@ -53,6 +53,7 @@ public class BudgetVarianceEntry {
     BigDecimal actual;
     BigDecimal variance;
     private Long detailId;
+    private BigDecimal total;
 
     public String getDepartmentCode() {
         return departmentCode;
@@ -140,5 +141,13 @@ public class BudgetVarianceEntry {
 
     public Long getDetailId() {
         return detailId;
+    }
+
+    public BigDecimal getTotal() {
+        return total;
+    }
+
+    public void setTotal(BigDecimal total) {
+        this.total = total;
     }
 }

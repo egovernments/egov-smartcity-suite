@@ -175,8 +175,7 @@ public class AutoRemittanceAction extends BaseFormAction {
             throw new ValidationException(Arrays.asList(new ValidationError(scheduledRemittanceService.getErrorMessage()
                     .toString(), scheduledRemittanceService.getErrorMessage().toString())));
         }
-        final List<String> findAllBy = scheduledRemittanceService.getRemittancePersistenceService()
-                .getPersistenceService().findAllBy("select voucherheaderId.voucherNumber from " +
+        final List<String> findAllBy = persistenceService.findAllBy("select voucherheaderId.voucherNumber from " +
                         "RemittanceSchedulePayment  where schId.id=?", remittanceScheduler.getId());
         if (findAllBy.isEmpty())
             addActionMessage(" No Payments Created ");

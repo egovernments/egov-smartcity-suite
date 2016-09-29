@@ -45,31 +45,73 @@
 <title><s:text name="bankRemittance.title" /></title>
 <script type="text/javascript">
 	jQuery.noConflict();
-	var isDatepickerOpened=false;
-	jQuery(document).ready(function() {
-		jQuery('#remittanceDate').val("");
-		jQuery('#finYearId').prop("disabled", true); 
-		jQuery(" form ").submit(function(event) {
-			doLoadingMask();
-		});
-		var nowTemp = new Date();
-	    var now = new Date(nowTemp.getFullYear(), nowTemp.getMonth(), nowTemp.getDate(), 0, 0, 0, 0);
-	    
-	     jQuery( "#remittanceDate" ).datepicker({ 
-	   	 format: 'dd/mm/yyyy',
-	   	 endDate: nowTemp, 
-	   	 autoclose:true,
-	        onRender: function(date) {
-	     	    return date.valueOf() < now.valueOf() ? 'disabled' : '';
-	     	  }
-		  }).on('changeDate', function(ev) {
-			  var string=jQuery(this).val();
-			  if(!(string.indexOf("_") > -1)){
-				  isDatepickerOpened=false; 
-			  }
-		  }).data('datepicker');
-		doLoadingMask();
-	});
+	var isDatepickerOpened = false;
+	jQuery(document)
+			.ready(
+					function() {
+						jQuery('#remittanceDate').val("");
+						jQuery('#finYearId').prop("disabled", true);
+						jQuery("form").submit(function(event) {
+							doLoadingMask();
+						});
+						var nowTemp = new Date();
+						var now = new Date(nowTemp.getFullYear(), nowTemp
+								.getMonth(), nowTemp.getDate(), 0, 0, 0, 0);
+
+						jQuery("#remittanceDate")
+								.datepicker(
+										{
+											format : 'dd/mm/yyyy',
+											endDate : nowTemp,
+											autoclose : true,
+											onRender : function(date) {
+												return date.valueOf() < now
+														.valueOf() ? 'disabled'
+														: '';
+											}
+										}).on('changeDate', function(ev) {
+									var string = jQuery(this).val();
+									if (!(string.indexOf("_") > -1)) {
+										isDatepickerOpened = false;
+									}
+								}).data('datepicker');
+						jQuery("#fromDate")
+								.datepicker(
+										{
+											format : 'dd/mm/yyyy',
+											endDate : nowTemp,
+											autoclose : true,
+											onRender : function(date) {
+												return date.valueOf() < now
+														.valueOf() ? 'disabled'
+														: '';
+											}
+										}).on('changeDate', function(ev) {
+									var string = jQuery(this).val();
+									if (!(string.indexOf("_") > -1)) {
+										isDatepickerOpened = false;
+									}
+								}).data('datepicker');
+
+						jQuery("#toDate")
+								.datepicker(
+										{
+											format : 'dd/mm/yyyy',
+											endDate : nowTemp,
+											autoclose : true,
+											onRender : function(date) {
+												return date.valueOf() < now
+														.valueOf() ? 'disabled'
+														: '';
+											}
+										}).on('changeDate', function(ev) {
+									var string = jQuery(this).val();
+									if (!(string.indexOf("_") > -1)) {
+										isDatepickerOpened = false;
+									}
+								}).data('datepicker');
+						doLoadingMask();
+					});
 
 	jQuery(window).load(function() {
 		undoLoadingMask();
@@ -115,7 +157,20 @@
 				document.bankRemittanceForm.receiptDateArray[i].value = "";
 			}
 		}
-
+		var totalCashAmt = document.getElementsByName('totalCashAmountArray');
+		var totalAmtDisplay = 0.00;
+		for (i = 0; i < totalCashAmt.length; i++) {
+			totalAmtDisplay = totalAmtDisplay
+					+ +document.getElementsByName('totalCashAmountArray')[i].value;
+		}
+		var totalChequeAmt = document
+				.getElementsByName('totalChequeAmountArray');
+		for (i = 0; i < totalChequeAmt.length; i++) {
+			totalAmtDisplay = totalAmtDisplay
+					+ +document.getElementsByName('totalChequeAmountArray')[i].value;
+		}
+		document.getElementById("remittanceAmount").value = totalAmtDisplay
+				.toFixed(2);
 		//TODO: uncomment the validation after go live
 		/* var receiptDateArray=document.getElementsByName('receiptDateArray');
 		for(j=0; j<receiptDateArray.length; j++)
@@ -178,11 +233,11 @@
 		dom.get("approvalSelectionError").style.display = "none";
 
 		<s:if test="showRemittanceDate">
-		if(dom.get("remittanceDate")!=null && dom.get("remittanceDate").value=="")
-			{
+		if (dom.get("remittanceDate") != null
+				&& dom.get("remittanceDate").value == "") {
 			bootbox.alert("Please Enter Date of Remittance");
 			return false;
-			}
+		}
 		</s:if>
 		if (!isChecked(document.getElementsByName('receiptIds'))) {
 			dom.get("selectremittanceerror").style.display = "block";
@@ -193,7 +248,6 @@
 			document.bankRemittanceForm.action = "bankRemittance-create.action";
 			return true;
 		}
-		
 
 	}
 
@@ -204,19 +258,32 @@
 	}
 
 	function searchDataToRemit() {
-		if (dom.get("bankBranchMaster").value!=null && dom.get("bankBranchMaster").value == -1) {
+		if (dom.get("bankBranchMaster").value != null
+				&& dom.get("bankBranchMaster").value == -1) {
 			dom.get("bankselectionerror").style.display = "block";
 			return false;
 		}
-		if (dom.get("accountNumberId").value!=null && dom.get("accountNumberId").value == -1) {
-			dom.get("bankselectionerror").innerHTML="";
+		if (dom.get("accountNumberId").value != null
+				&& dom.get("accountNumberId").value == -1) {
+			dom.get("bankselectionerror").innerHTML = "";
 			dom.get("accountselectionerror").style.display = "block";
 			return false;
 		}
-		jQuery('#finYearId').prop("disabled", false);
-		document.bankRemittanceForm.action = "bankRemittance-listData.action?bankAccountId="+dom.get("accountNumberId").value;
-		return true;
+		if (dom.get("toDate") != null && dom.get("toDate").value == ""
+				&& dom.get("fromDate") != null
+				&& dom.get("fromDate").value != "") {
+			bootbox.alert("Please Enter To Date");
+			return false;
 		}
+		if (dom.get("fromDate") != null && dom.get("fromDate").value == ""
+				&& dom.get("toDate") != null && dom.get("toDate").value != "") {
+			bootbox.alert("Please Enter From Date");
+			return false;
+		}
+		jQuery('#finYearId').prop("disabled", false);
+		document.bankRemittanceForm.action = "bankRemittance-listData.action";
+		return true;
+	}
 
 	function onChangeDeparment(approverDeptId) {
 		var receiptheaderId = '<s:property value="model.id"/>';
@@ -244,29 +311,27 @@
 	// Check if at least one receipt is selected
 	function isChecked(chk) {
 		if (chk.length == undefined) {
-	 		if (chk.checked == true) {
-	  			return true;
-	 		} else {
-	 	 		return false;
-	 		}	
-	 	} else {
-	 		for (i = 0; i < chk.length; i++)
-			{
-				if (chk[i].checked == true ) {
+			if (chk.checked == true) {
+				return true;
+			} else {
+				return false;
+			}
+		} else {
+			for (i = 0; i < chk.length; i++) {
+				if (chk[i].checked == true) {
 					return true;
 				}
 			}
 			return false;
-	 	}
+		}
 	}
-
 
 	//DeSelect all receipts
 	function deSelectAll() {
 		// DeSelect all checkboxes
 		changeSelectionOfAllReceipts(false);
 
-	 	// Set all amounts to zero
+		// Set all amounts to zero
 		totalAmount = 0;
 		cashAmount = 0;
 		chequeAmount = 0;
@@ -287,7 +352,7 @@
 	}
 
 	function setCheckboxStatuses(isSelected) {
-		if(isSelected == true) {
+		if (isSelected == true) {
 			selectAll();
 		} else {
 			deSelectAll();
@@ -318,97 +383,110 @@
 						name="bankremittance.error.noApproverselected" /> </b></font></li>
 	</span>
 	<s:form theme="simple" name="bankRemittanceForm">
-	<s:push value="model">
+		<s:push value="model">
 			<s:token />
-		<s:if test="%{hasErrors()}">
-	    <div id="actionErrorMessages" class="errorstyle">
-	      <s:actionerror/>
-	      <s:fielderror/>
-	    </div>
-		</s:if>
-		<s:if test="%{hasActionMessages()}">
-		    <div id="actionMessages" class="messagestyle">
-		    	<s:actionmessage theme="simple"/>
-		    </div>
-		</s:if>
-		<div class="formmainbox">
-			<div class="subheadnew">
-				<s:text name="bankRemittance.title" />
-			</div>
-					<div align="center">
+			<s:if test="%{hasErrors()}">
+				<div id="actionErrorMessages" class="errorstyle">
+					<s:actionerror />
+					<s:fielderror />
+				</div>
+			</s:if>
+			<s:if test="%{hasActionMessages()}">
+				<div id="actionMessages" class="messagestyle">
+					<s:actionmessage theme="simple" />
+				</div>
+			</s:if>
+			<div class="formmainbox">
+				<div class="subheadnew">
+					<s:text name="bankRemittance.title" />
+				</div>
+				<div align="center">
 					<table width="100%" border="0" cellspacing="0" cellpadding="0">
-					<tr>
-						<td width="4%" class="bluebox">&nbsp;</td>
-						<td class="bluebox"><s:text
-								name="bankremittance.bank" />:</td>
-						<td class="bluebox"><s:select
-								headerValue="--Select--" headerKey="-1"
-								list="dropdownData.bankBranchList" listKey="id"
-								id="bankBranchMaster" listValue="branchname"
-								label="bankBranchMaster" name="branchId"
-								value="%{branchId}"
-								onChange="onChangeBankAccount(this.value)" /> <egov:ajaxdropdown
-								id="accountNumberIdDropdown" fields="['Text','Value']"
-								dropdownId='accountNumberId'
-								url='receipts/ajaxBankRemittance-accountListOfService.action'
-								selectedValue="%{accountNumberId}" /></td>
-						<td class="bluebox"><s:text
-								name="bankremittance.accountnumber" />:</td>
-						<td class="bluebox"><s:select
-								headerValue="--Select--" headerKey="-1"
-								list="dropdownData.accountNumberList" listKey="id"
-								id="accountNumberId" listValue="accountnumber"
-								label="accountNumberMaster" name="accountNumberId"
-								value="%{accountNumberId}" /></td>
-								</tr>
 						<tr>
-						<td width="4%" class="bluebox">&nbsp;</td>
-						<td class="bluebox"><s:text
-								name="bankremittance.financialyear" />:</td>
-						<td class="bluebox"><s:select
-								headerKey="-1"
-								list="dropdownData.financialYearList" listKey="id"
-								id="finYearId" listValue="finYearRange"
-								label="finYearRange" name="finYearId" 
-								value="%{finYearId}"
-								 /> 
-								</td>
+							<td width="4%" class="bluebox">&nbsp;</td>
+							<td class="bluebox"><s:text name="bankremittance.bank" />:</td>
+							<td class="bluebox"><s:select headerValue="--Select--"
+									headerKey="-1" list="dropdownData.bankBranchList" listKey="id"
+									id="bankBranchMaster" listValue="branchname"
+									label="bankBranchMaster" name="branchId" value="%{branchId}"
+									onChange="onChangeBankAccount(this.value)" /> <egov:ajaxdropdown
+									id="accountNumberIdDropdown" fields="['Text','Value']"
+									dropdownId='accountNumberId'
+									url='receipts/ajaxBankRemittance-accountListOfService.action'
+									selectedValue="%{accountNumberId}" /></td>
+							<td class="bluebox"><s:text
+									name="bankremittance.accountnumber" />:</td>
+							<td class="bluebox"><s:select headerValue="--Select--"
+									headerKey="-1" list="dropdownData.accountNumberList"
+									listKey="id" id="accountNumberId" listValue="accountnumber"
+									label="accountNumberMaster" name="accountNumberId"
+									value="%{accountNumberId}" /></td>
+						</tr>
+						<tr>
+							<td width="4%" class="bluebox">&nbsp;</td>
+							<td class="bluebox"><s:text
+									name="bankremittance.financialyear" />:</td>
+							<td class="bluebox"><s:select headerKey="-1"
+									list="dropdownData.financialYearList" listKey="id"
+									id="finYearId" listValue="finYearRange" label="finYearRange"
+									name="finYearId" value="%{finYearId}" /></td>
+							<td class="bluebox"><s:text
+									name="collectionReport.criteria.payment.mode" /></td>
+							<td class="bluebox"><s:select headerKey="-1"
+									headerValue="--Select--" list="paymentModesMap"
+									id="paymentMode" label="paymentMode" name="paymentMode"
+									value="%{paymentMode}" /></td>
+						</tr>
+						<tr>
+							<td width="4%" class="bluebox">&nbsp;</td>
+							<td class="bluebox"><s:text name="bankremittance.fromdate" /></td>
+							<s:date name="fromDate" var="fromFormat"  format="dd/MM/yyyy" />
+							<td class="bluebox"><s:textfield id="fromDate"
+									name="fromDate" data-inputmask="'mask': 'd/m/y'" value="%{fromFormat}"
+									placeholder="DD/MM/YYYY" /></td>
+							<td class="bluebox"><s:text name="bankremittance.todate" /></td>
+							<s:date name="toDate" var="toFormat"  format="dd/MM/yyyy" />
+							<td class="bluebox"><s:textfield id="toDate" name="toDate" value="%{toFormat}"
+									data-inputmask="'mask': 'd/m/y'"
+									placeholder="DD/MM/YYYY" /></td>
 						</tr>
 					</table>
 					<div class="buttonbottom">
-							<input name="search" type="submit" class="buttonsubmit"
+						<input name="search" type="submit" class="buttonsubmit"
 							id="search" value="Search" onclick="return searchDataToRemit()" />
 					</div>
-					    <s:if test="%{!paramList.isEmpty()}">
-						<display:table name="paramList" uid="currentRow" pagesize="30"
+					<s:if test="%{!paramList.isEmpty()}">
+						<display:table name="paramList" uid="currentRow" pagesize="${pageSize}"
 							style="border:1px;width:100%" cellpadding="0" cellspacing="0"
-							export="false" requestURI="" excludedParams="serviceNameArray fundCodeArray departmentCodeArray totalCashAmountArray totalChequeAmountArray totalCardAmountArray totalATMAmountArray totalATMAmountTempArray departmentCodeTempArray totalOnlineAmountTempArray receiptDateTempArray serviceNameTempArray totalCardAmountTempArray totalCashAmountTempArray totalChequeAmountTempArray">
-							<display:column headerClass="bluebgheadtd" class="blueborderfortd"
+							export="false" requestURI=""
+							excludedParams="serviceNameArray fundCodeArray departmentCodeArray totalCashAmountArray totalChequeAmountArray totalCardAmountArray totalATMAmountArray totalATMAmountTempArray departmentCodeTempArray totalOnlineAmountTempArray receiptDateTempArray serviceNameTempArray totalCardAmountTempArray totalCashAmountTempArray totalChequeAmountTempArray">
+							<display:column headerClass="bluebgheadtd"
+								class="blueborderfortd"
 								title="Select<input type='checkbox' name='selectAllReceipts' value='on' onClick='setCheckboxStatuses(this.checked);handleReceiptSelectionEvent(this.checked);'/>"
 								style="width:5%; text-align: center">
 								<input name="receiptIds" type="checkbox" id="receiptIds"
 									value="${currentRow.id}"
 									onClick="handleReceiptSelectionEvent(this.checked)" />
-								<input type="hidden" name="serviceNameTempArray"
+								<input type="hidden" name="serviceNameTempArray" disabled="disabled"
 									id="serviceNameTempArray" value="${currentRow.SERVICENAME}" />
-								<input type="hidden" name="fundCodeTempArray"
+								<input type="hidden" name="fundCodeTempArray" disabled="disabled"
 									id="fundCodeTempArray" value="${currentRow.FUNDCODE}" />
 								<input type="hidden" name="departmentCodeTempArray"
-									id="departmentCodeTempArray"
+									id="departmentCodeTempArray" disabled="disabled"
 									value="${currentRow.DEPARTMENTCODE}" />
-								<input type="hidden" name="totalCashAmountTempArray"
+								<input type="hidden" name="totalCashAmountTempArray" disabled="disabled"
 									id="totalCashAmountTempArray"
 									value="${currentRow.SERVICETOTALCASHAMOUNT}" />
-								<input type="hidden" name="totalChequeAmountTempArray"
+								<input type="hidden" name="totalChequeAmountTempArray" disabled="disabled"
 									id="totalChequeAmountTempArray"
 									value="${currentRow.SERVICETOTALCHEQUEAMOUNT}" />
-								<input type="hidden" name="totalCardAmountTempArray"
+								<input type="hidden" name="totalCardAmountTempArray" disabled="disabled"
 									id="totalCardAmountTempArray"
 									value="${currentRow.SERVICETOTALCARDPAYMENTAMOUNT}" />
-								<input type="hidden" name="totalOnlineAmountTempArray"
+								<input type="hidden" name="totalOnlineAmountTempArray" disabled="disabled"
 									id="totalOnlineAmountTempArray"
 									value="${currentRow.SERVICETOTALONLINEPAYMENTAMOUNT}" />
-								<input type="hidden" name="receiptDateTempArray"
+								<input type="hidden" name="receiptDateTempArray" disabled="disabled"
 									id="receiptDateTempArray" value="${currentRow.RECEIPTDATE}" />
 								<input type="hidden" name="serviceNameArray"
 									id="serviceNameArray" />
@@ -419,9 +497,9 @@
 									id="totalCashAmountArray" />
 								<input type="hidden" name="totalChequeAmountArray"
 									id="totalChequeAmountArray" />
-								<input type="hidden" name="totalCardAmountArray"
+								<input type="hidden" name="totalCardAmountArray" disabled="disabled"
 									id="totalCardAmountArray" />
-								<input type="hidden" name="totalOnlineAmountArray"
+								<input type="hidden" name="totalOnlineAmountArray" disabled="disabled"
 									id="totalOnlineAmountArray" />
 								<input type="hidden" name="receiptDateArray"
 									id="receiptDateArray" />
@@ -447,83 +525,98 @@
 								style="width:10%;text-align: center"
 								value="${currentRow.DEPARTMENTNAME}" />
 
-							<display:column headerClass="bluebgheadtd"
-								class="blueborderfortd" title="Total Cash Collection"
-								style="width:10%;text-align: center">
-								<div align="center">
-									<c:if test="${not empty currentRow.SERVICETOTALCASHAMOUNT}">
-										<c:out value="${currentRow.SERVICETOTALCASHAMOUNT}" />
-									</c:if>
-									&nbsp;
-								</div>
-							</display:column>
-
-							<display:column headerClass="bluebgheadtd"
-								class="blueborderfortd" title="Total Cheque Collection"
-								style="width:10%;text-align: center">
-								<div align="center">
-									<c:if test="${not empty currentRow.SERVICETOTALCHEQUEAMOUNT}">
-										<c:out value="${currentRow.SERVICETOTALCHEQUEAMOUNT}" />
-									</c:if>
-									&nbsp;
-								</div>
-							</display:column>
+							<s:if
+								test="paymentMode.equals(@org.egov.collection.constants.CollectionConstants@INSTRUMENTTYPE_CASH) || paymentMode.equals('-1')">
+								<display:column headerClass="bluebgheadtd"
+									class="blueborderfortd" title="Total Cash Collection"
+									style="width:10%;text-align: center">
+									<div align="center">
+										<c:if test="${not empty currentRow.SERVICETOTALCASHAMOUNT}">
+											<c:out value="${currentRow.SERVICETOTALCASHAMOUNT}" />
+										</c:if>
+										&nbsp;
+									</div>
+								</display:column>
+							</s:if>
+							<s:if
+								test="paymentMode.equals(@org.egov.collection.constants.CollectionConstants@INSTRUMENTTYPE_CHEQUEORDD) || paymentMode.equals('-1')">
+								<display:column headerClass="bluebgheadtd"
+									class="blueborderfortd" title="Total Cheque Collection"
+									style="width:10%;text-align: center">
+									<div align="center">
+										<c:if test="${not empty currentRow.SERVICETOTALCHEQUEAMOUNT}">
+											<c:out value="${currentRow.SERVICETOTALCHEQUEAMOUNT}" />
+										</c:if>
+										&nbsp;
+									</div>
+								</display:column>
+							</s:if>
 							<s:if test="showCardAndOnlineColumn">
-							<display:column headerClass="bluebgheadtd"
-								class="blueborderfortd" title="Total Card Collection"
-								style="width:10%;text-align: center">
-								<div align="center">
-									<c:if
-										test="${not empty currentRow.SERVICETOTALCARDPAYMENTAMOUNT && showCardAndOnlineColumn}">
-										<c:out value="${currentRow.SERVICETOTALCARDPAYMENTAMOUNT}" />
-									</c:if>
-									&nbsp;
-								</div>
-							</display:column>
-							<display:column headerClass="bluebgheadtd"
-								class="blueborderfortd" title="Total Online Collection"
-								style="width:10%;text-align: center">
-								<div align="center">
-									<c:if
-										test="${not empty currentRow.SERVICETOTALONLINEPAYMENTAMOUNT}">
-										<c:out value="${currentRow.SERVICETOTALONLINEPAYMENTAMOUNT}" />
-									</c:if>
-									&nbsp;
-								</div>
-							</display:column>
+								<display:column headerClass="bluebgheadtd"
+									class="blueborderfortd" title="Total Card Collection"
+									style="width:10%;text-align: center">
+									<div align="center">
+										<c:if
+											test="${not empty currentRow.SERVICETOTALCARDPAYMENTAMOUNT && showCardAndOnlineColumn}">
+											<c:out value="${currentRow.SERVICETOTALCARDPAYMENTAMOUNT}" />
+										</c:if>
+										&nbsp;
+									</div>
+								</display:column>
+								<display:column headerClass="bluebgheadtd"
+									class="blueborderfortd" title="Total Online Collection"
+									style="width:10%;text-align: center">
+									<div align="center">
+										<c:if
+											test="${not empty currentRow.SERVICETOTALONLINEPAYMENTAMOUNT}">
+											<c:out value="${currentRow.SERVICETOTALONLINEPAYMENTAMOUNT}" />
+										</c:if>
+										&nbsp;
+									</div>
+								</display:column>
 							</s:if>
 						</display:table>
-					</div>
-					<br />
-					<div id="loadingMask"
-						style="display: none; overflow: hidden; text-align: center">
-						<img src="/collection/resources/images/bar_loader.gif" alt=""/> <span
-							style="color: red">Please wait....</span>
-					</div>
-					<s:if test="showRemittanceDate">
-					<div align="center">
+				</div>
+				<br />
+				<div id="loadingMask"
+					style="display: none; overflow: hidden; text-align: center">
+					<img src="/collection/resources/images/bar_loader.gif" alt="" /> <span
+						style="color: red">Please wait....</span>
+				</div>
+
+				<div align="center">
 					<table>
-					<tr>
-					<td class="bluebox" colspan="7"> &nbsp;</td>
-					<td class="bluebox" ><s:text name="bankremittance.remittancetdate"/><span class="mandatory"/></td>
-					<td class="bluebox"><s:textfield id="remittanceDate" name="remittanceDate" readonly="true" data-inputmask="'mask': 'd/m/y'"  onfocus = "waterMarkTextIn('remittanceDate','DD/MM/YYYY');"/><div>(DD/MM/YYYY)</div></td>
-					</tr>
+						<tr>
+							<s:if test="showRemittanceDate">
+								<td class="bluebox" colspan="3">&nbsp;</td>
+								<td class="bluebox"><s:text
+										name="bankremittance.remittancedate" /><span
+									class="mandatory" /></td>
+								<td class="bluebox"><s:textfield id="remittanceDate"
+										name="remittanceDate" readonly="true"
+										data-inputmask="'mask': 'd/m/y'" placeholder="DD/MM/YYYY" /></td>
+							</s:if>
+							<td class="bluebox"><s:text
+									name="bankremittance.remittanceamount" /></td>
+							<td class="bluebox"><s:textfield id="remittanceAmount"
+									name="remittanceAmount" readonly="true" /></td>
+						</tr>
 					</table>
-					</div>
-					</s:if>
-					<div align="left" class="mandatorycoll">
-						<s:text name="common.mandatoryfields" />
-					</div>
-					<div class="buttonbottom">
-						<input name="button32" type="submit" class="buttonsubmit"
-							id="button32" value="Remit to Bank" onclick="return validate()" />
-						&nbsp; <input name="buttonClose" type="button" class="button"
-							id="button" value="Close" onclick="window.close()" />
-					</div>
-					</s:if>
-					<s:if test="%{isListData}">
+				</div>
+
+				<div align="left" class="mandatorycoll">
+					<s:text name="common.mandatoryfields" />
+				</div>
+				<div class="buttonbottom">
+					<input name="button32" type="submit" class="buttonsubmit"
+						id="button32" value="Remit to Bank" onclick="return validate()" />
+					&nbsp; <input name="buttonClose" type="button" class="button"
+						id="button" value="Close" onclick="window.close()" />
+				</div>
+				</s:if>
+				<s:if test="%{isListData}">
 					<s:if test="%{paramList.isEmpty()}">
-					<div class="formmainbox">
+						<div class="formmainbox">
 							<table width="90%" border="0" align="center" cellpadding="0"
 								cellspacing="0">
 								<tr>
@@ -540,8 +633,8 @@
 								id="buttonClose" value="Close" onclick="window.close()" />
 						</div>
 					</s:if>
-					</s:if>
-		</div>
+				</s:if>
+			</div>
 		</s:push>
 	</s:form>
 </body>

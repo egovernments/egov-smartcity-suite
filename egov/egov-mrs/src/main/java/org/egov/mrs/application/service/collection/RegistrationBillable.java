@@ -72,7 +72,7 @@ import org.springframework.transaction.annotation.Transactional;
 @Scope(ConfigurableBeanFactory.SCOPE_PROTOTYPE)
 public class RegistrationBillable extends AbstractBillable implements Billable {
 
-    private static final String STRING_DEPARTMENT_CODE = "REV";
+    private static final String STRING_DEPARTMENT_CODE = "REV";//TODO: MOVE these data to application config.
     private static final String STRING_SERVICE_CODE = "MR";
     public static final String DEFAULT_FUNCTIONARY_CODE = "1";
     public static final String DEFAULT_FUND_SRC_CODE = "01";
@@ -219,7 +219,7 @@ public class RegistrationBillable extends AbstractBillable implements Billable {
                 .append(CollectionConstants.INSTRUMENTTYPE_DD)
                 .append(CollectionConstants.INSTRUMENTTYPE_CARD)
                 .append(CollectionConstants.INSTRUMENTTYPE_BANK)
-                .append(CollectionConstants.INSTRUMENTTYPE_ONLINE).toString();
+                .append(CollectionConstants.INSTRUMENTTYPE_ONLINE).toString();//TODO: check this logic.
     }
 
     @Override
@@ -270,4 +270,10 @@ public class RegistrationBillable extends AbstractBillable implements Billable {
     public void setRegistration(final Registration registration) {
         this.registration = registration;
     }
+
+	@Override
+	public String getEmailId() {
+		// TODO Auto-generated method stub
+		return null;
+	}
 }

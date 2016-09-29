@@ -39,7 +39,7 @@
   --%>
 
 <%@ include file="/includes/taglibs.jsp"%>
-
+<%@ taglib uri="/WEB-INF/taglib/cdn.tld" prefix="cdn" %>
 <html>
 	<head>
 		<title><s:text name="page.title.newtrade" /></title>
@@ -362,8 +362,8 @@
                     </s:form> 
                     </div>
                 </div>
-        <script	src="<c:url value='/resources/global/js/egov/inbox.js' context='/egi'/>"></script>        
-        <script src="../resources/js/app/newtrade.js?rnd=${app_release_no}"></script>
-        <script src="../resources/js/app/searchTrade.js?rnd=${app_release_no}"></script>
+        <script	src="<cdn:url  value='/resources/global/js/egov/inbox.js' context='/egi'/>"></script>
+        <script src="<cdn:url  value='/resources/js/app/newtrade.js?rnd=${app_release_no}'/>"></script>
+        <script src="<cdn:url  value='/resources/js/app/searchTrade.js?rnd=${app_release_no}'/>"></script>
     </body>
 </html>

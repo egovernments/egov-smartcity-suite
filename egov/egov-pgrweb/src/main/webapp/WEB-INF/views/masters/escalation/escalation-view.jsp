@@ -42,10 +42,8 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ taglib uri="http://www.springframework.org/tags" prefix="spring" %>
 <%@ taglib uri="http://www.springframework.org/tags/form" prefix="form" %>
-<link rel="stylesheet"
-	href="<c:url value='/resources/global/css/bootstrap/typeahead.css' context='/egi'/>">
-
-<script type="text/javascript" src="<c:url value='/resources/js/app/escalationview.js?rnd=${app_release_no}'/>"></script>
+<%@ taglib uri="/WEB-INF/taglib/cdn.tld" prefix="cdn" %>
+<script type="text/javascript" src="<cdn:url  value='/resources/js/app/escalationview.js?rnd=${app_release_no}'/>"></script>
 <script>
 	function deleteRow(obj) {
 		var tb1 = document.getElementById("escalationTable");

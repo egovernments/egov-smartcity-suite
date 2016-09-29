@@ -43,6 +43,7 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 <%@ taglib uri="http://www.springframework.org/tags" prefix="spring"%>
 <%@ taglib uri="http://www.springframework.org/tags/form" prefix="form"%>
+<%@ taglib uri="/WEB-INF/taglib/cdn.tld" prefix="cdn" %>
 <form:form role="form" action="../update" modelAttribute="councilMember" id="councilMemberform" cssClass="form-horizontal form-groups-bordered"
 	enctype="multipart/form-data">
 	<%@ include file="councilmember-form.jsp"%>
@@ -58,9 +59,9 @@
 		</div>
 	</div>
 </form:form>
-<script src="<c:url value='/resources/global/js/bootstrap/bootstrap-datepicker.js' context='/egi'/>"></script>	
-	<script src="<c:url value='/resources/app/js/councilMemberHelper.js?rnd=${app_release_no}'/>"></script>	
-	<link rel="stylesheet" href="<c:url value='/resources/global/css/bootstrap/bootstrap-datepicker.css' context='/egi'/>">
+<script src="<cdn:url value='/resources/global/js/bootstrap/bootstrap-datepicker.js' context='/egi'/>"></script>	
+	<script src="<cdn:url value='/resources/app/js/councilMemberHelper.js?rnd=${app_release_no}'/>"></script>	
+	<link rel="stylesheet" href="<cdn:url value='/resources/global/css/bootstrap/bootstrap-datepicker.css' context='/egi'/>">
 
 <script>
 	$('#buttonSubmit').click(function(e) {

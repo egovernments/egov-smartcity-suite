@@ -42,9 +42,15 @@ package org.egov.infra.messaging.email;
 
 import org.egov.infra.config.properties.ApplicationProperties;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.mail.MailParseException;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSenderImpl;
+import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.stereotype.Service;
+
+import javax.mail.MessagingException;
+import javax.mail.internet.MimeMessage;
+import javax.mail.util.ByteArrayDataSource;
 
 @Service
 public class EmailService {
@@ -64,6 +70,28 @@ public class EmailService {
             mailMessage.setText(mailBody);
             mailSender.send(mailMessage);
             isSent = true;
+        }
+        return isSent;
+    }
+
+    public boolean sendMailWithAttachment(final String toEmail, final String subject, final String mailBody, final String fileType, final String fileName,
+            final Object attachment) {
+        boolean isSent = false;
+         if (applicationProperties.emailEnabled()) {
+            MimeMessage message = mailSender.createMimeMessage();
+            try {
+                MimeMessageHelper mimeMessageHelper = new MimeMessageHelper(message, true);
+                mimeMessageHelper.setTo(toEmail);
+                mimeMessageHelper.setSubject(subject);
+                mimeMessageHelper.setText(mailBody);
+                ByteArrayDataSource source = new ByteArrayDataSource((byte[])attachment,fileType);
+                    mimeMessageHelper.addAttachment(fileName, source);
+            } catch (MessagingException e) {
+                throw new MailParseException(e);
+            } catch (IllegalArgumentException e) {
+                throw new MailParseException(e);
+            }
+            mailSender.send(message);
         }
         return isSent;
     }

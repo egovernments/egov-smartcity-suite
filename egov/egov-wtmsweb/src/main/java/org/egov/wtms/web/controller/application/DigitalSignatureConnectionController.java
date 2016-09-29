@@ -53,8 +53,6 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
@@ -70,6 +68,7 @@ import org.egov.infra.utils.autonumber.AutonumberServiceBeanResolver;
 import org.egov.infra.workflow.entity.StateAware;
 import org.egov.infra.workflow.entity.WorkflowTypes;
 import org.egov.infra.workflow.inbox.InboxRenderServiceDeligate;
+import org.egov.infra.workflow.service.WorkflowTypeService;
 import org.egov.ptis.domain.model.AssessmentDetails;
 import org.egov.ptis.domain.model.OwnerName;
 import org.egov.ptis.domain.model.enums.BasicPropertyStatus;
@@ -80,15 +79,15 @@ import org.egov.wtms.application.service.WaterConnectionDetailsService;
 import org.egov.wtms.autonumber.WorkOrderNumberGenerator;
 import org.egov.wtms.masters.service.UsageTypeService;
 import org.egov.wtms.utils.PropertyExtnUtils;
-import org.egov.wtms.utils.WaterTaxNumberGenerator;
 import org.egov.wtms.utils.constants.WaterTaxConstants;
-import org.hibernate.Session;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+
+import static org.egov.infra.utils.ApplicationConstant.CITY_DIST_NAME_KEY;
 
 /**
  *
@@ -99,9 +98,6 @@ import org.springframework.web.bind.annotation.RequestMethod;
 @RequestMapping(value = "/digitalSignature")
 public class DigitalSignatureConnectionController {
 
-    @PersistenceContext
-    private EntityManager entityManager;
-    
     @Autowired
     private WaterConnectionDetailsService waterConnectionDetailsService;
 
@@ -116,7 +112,7 @@ public class DigitalSignatureConnectionController {
     private SecurityUtils securityUtils;
      
     @Autowired
-    private WaterTaxNumberGenerator waterTaxNumberGenerator;
+    private WorkflowTypeService workflowTypeService;
     
     @Autowired
     protected UsageTypeService usageTypeService;
@@ -142,7 +138,7 @@ public class DigitalSignatureConnectionController {
         Long approvalPosition = (Long)session.getAttribute(WaterTaxConstants.APPROVAL_POSITION);
         String approvalComent = (String)session.getAttribute(WaterTaxConstants.APPROVAL_COMMENT);
         Map<String, String> appNoFileStoreIdsMap = (Map<String, String>)session.getAttribute(WaterTaxConstants.FILE_STORE_ID_APPLICATION_NUMBER);
-        WaterConnectionDetails waterConnectionDetails = null;
+        WaterConnectionDetails waterConnectionDetails;
         for(String fileStoreId : fileStoreIdArr) {
             String applicationNumber = appNoFileStoreIdsMap.get(fileStoreId);
             if(null != applicationNumber && !applicationNumber.isEmpty()) {
@@ -173,15 +169,12 @@ public class DigitalSignatureConnectionController {
         response.setContentType("application/pdf");  
         response.setContentType("application/octet-stream");
         response.setHeader("content-disposition", "attachment; filename=\"" + fileStoreMapper.getFileName() + "\"");
-        try{
-            FileInputStream inStream = new FileInputStream(file);
+        try(FileInputStream inStream = new FileInputStream(file)){
             PrintWriter outStream = response.getWriter();
             int bytesRead = -1;
             while ((bytesRead = inStream.read()) != -1) {
                 outStream.write(bytesRead);
             }
-            inStream.close();
-            outStream.close(); 
         } catch(FileNotFoundException fileNotFoundExcep) {
             throw new ApplicationRuntimeException("Exception while loading file : " + fileNotFoundExcep);
         } catch(final IOException ioExcep) {
@@ -192,29 +185,29 @@ public class DigitalSignatureConnectionController {
     @RequestMapping(value = "/digitalSignaturePending-form", method = RequestMethod.GET)
     public String searchForm(final HttpServletRequest request, final Model model) {
         String cityMunicipalityName = (String)request.getSession().getAttribute("citymunicipalityname");
-        String districtName = (String)request.getSession().getAttribute("districtName");
+        String districtName = (String)request.getSession().getAttribute(CITY_DIST_NAME_KEY);
         final List<HashMap<String, Object>> resultList = getRecordsForDigitalSignature();
         model.addAttribute("digitalSignatureReportList", resultList);
         model.addAttribute("noticeType", WaterTaxConstants.NOTICE_TYPE_SPECIAL_NOTICE);
         model.addAttribute("cityMunicipalityName", cityMunicipalityName);
-        model.addAttribute("districtName", districtName);
+        model.addAttribute(CITY_DIST_NAME_KEY, districtName);
         return "digitalSignaturePending-form";
     }
     
     @RequestMapping(value = "/waterTax/signWorkOrder", method = RequestMethod.POST)
     public String signWorkOrder(final HttpServletRequest request, final Model model) {
-        WaterConnectionDetails waterConnectionDetails = null;
-        String[] applicationNumbers = null;
+        WaterConnectionDetails waterConnectionDetails;
+        String[] applicationNumbers;
         String[] appNumberConTypePair = null;
-        Map<String, String> fileStoreIdsApplicationNoMap = new HashMap<String, String>();
-        StringBuffer fileStoreIds = new StringBuffer();
+        Map<String, String> fileStoreIdsApplicationNoMap = new HashMap<>();
+        StringBuilder fileStoreIds = new StringBuilder();
         String pathVar = request.getParameter("pathVar");
         String applicationNoStatePair = request.getParameter("applicationNoStatePair");
         String currentState = request.getParameter("currentState");
         String signAll = request.getParameter("signAll");
         WorkOrderNumberGenerator workOrderGen = beanResolver.getAutoNumberServiceFor(WorkOrderNumberGenerator.class);
 
-        String fileName = "";
+        String fileName;
         if(pathVar != null) {
             applicationNumbers = request.getParameter("pathVar").split(",");
             if(applicationNoStatePair != null) {
@@ -223,10 +216,10 @@ public class DigitalSignatureConnectionController {
             for(int i = 0; i < applicationNumbers.length; i++) {
                 waterConnectionDetails = waterConnectionDetailsService.findByApplicationNumber(applicationNumbers[i]);
                 String cityMunicipalityName = (String) request.getSession().getAttribute("citymunicipalityname");
-                String districtName = (String) request.getSession().getAttribute("districtName");
+                String districtName = (String) request.getSession().getAttribute(CITY_DIST_NAME_KEY);
                 waterConnectionDetails.setWorkOrderDate(new Date());
                 waterConnectionDetails.setWorkOrderNumber(workOrderGen.generateWorkOrderNumber());
-                ReportOutput reportOutput = null;
+                ReportOutput reportOutput;
                 if(signAll != null && signAll.equalsIgnoreCase(WaterTaxConstants.SIGN_ALL)) {
                     for(int j = 0; j < appNumberConTypePair.length; j++) {
                         String[] appNoStatePair = appNumberConTypePair[j].split(":");
@@ -271,30 +264,21 @@ public class DigitalSignatureConnectionController {
     
     @SuppressWarnings("unchecked")
     public List<HashMap<String, Object>> getRecordsForDigitalSignature() {
-        final List<HashMap<String, Object>> resultList = new ArrayList<HashMap<String, Object>>();
+        final List<HashMap<String, Object>> resultList = new ArrayList<>();
         final List<StateAware> stateAwareList = fetchItems();
-        WaterConnectionDetails waterConnectionDetails = null;
+        WaterConnectionDetails waterConnectionDetails;
         if (null != stateAwareList && !stateAwareList.isEmpty()) {
-            HashMap<String, Object> tempMap = new HashMap<String, Object>();
-            WorkflowTypes workflowTypes = null;
-            List<WorkflowTypes> workflowTypesList = new ArrayList<WorkflowTypes>();
+            HashMap<String, Object> tempMap;
             for (final StateAware record : stateAwareList)
-                if (record != null)
-                    if (record.getState() != null && record.getState().getNextAction() != null && 
+                if (record != null && record.getState() != null && record.getState().getNextAction() != null &&
                     record.getState().getNextAction().equalsIgnoreCase(WaterTaxConstants.DIGITAL_SIGNATURE_PENDING)) {
-                        tempMap = new HashMap<String, Object>();
-                        workflowTypesList = getCurrentSession().getNamedQuery(WorkflowTypes.WF_TYPE_BY_TYPE_AND_RENDER_Y)
-                                .setString(0, record.getStateType()).list();
-                        
-                        if (workflowTypesList != null && !workflowTypesList.isEmpty())
-                            workflowTypes = workflowTypesList.get(0);
-                        else
-                            workflowTypes = null;
+                        tempMap = new HashMap<>();
+                        WorkflowTypes workflowTypes = workflowTypeService.getEnabledWorkflowTypeByType(record.getStateType());
                         if (WaterTaxConstants.MODULE_NAME.equalsIgnoreCase(workflowTypes.getModule().getName())) {
                             waterConnectionDetails = (WaterConnectionDetails)record;
                             tempMap.put("objectId", ((WaterConnectionDetails)record).getApplicationNumber());
                             tempMap.put("type", record.getState().getNatureOfTask());
-                            tempMap.put("module", workflowTypes != null ? workflowTypes.getModule().getDisplayName() : null);
+                            tempMap.put("module", workflowTypes.getModule().getDisplayName());
                             tempMap.put("details", record.getStateDetails());
                             tempMap.put("hscNumber", waterConnectionDetails.getConnection().getConsumerCode());
                             tempMap.put("status", record.getCurrentState().getValue());
@@ -303,7 +287,7 @@ public class DigitalSignatureConnectionController {
                             tempMap.put("ownerName", getOwnerName(waterConnectionDetails));
                             tempMap.put("propertyAddress", getPropertyAddress(waterConnectionDetails));
                             String additionalRule = waterConnectionDetails.getApplicationType().getCode();
-                            if(additionalRule.equals("CLOSINGCONNECTION")) {
+                            if("CLOSINGCONNECTION".equals(additionalRule)) {
                                 additionalRule = WaterTaxConstants.CLOSECONNECTION;
                             }
                             tempMap.put("state", additionalRule);
@@ -315,13 +299,9 @@ public class DigitalSignatureConnectionController {
     }
     
     public List<StateAware> fetchItems() {
-        final List<StateAware> digitalSignWFItems = new ArrayList<StateAware>();
+        final List<StateAware> digitalSignWFItems = new ArrayList<>();
         digitalSignWFItems.addAll(inboxRenderServiceDeligate.getInboxItems(securityUtils.getCurrentUser().getId()));
         return digitalSignWFItems;
-    }
-    
-    private Session getCurrentSession() {
-        return entityManager.unwrap(Session.class);
     }
     
     private String getOwnerName(final WaterConnectionDetails waterConnectionDetails) {

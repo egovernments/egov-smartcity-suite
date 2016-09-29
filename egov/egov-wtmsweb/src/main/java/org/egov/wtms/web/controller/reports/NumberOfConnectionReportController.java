@@ -39,8 +39,6 @@
  */
 package org.egov.wtms.web.controller.reports;
 
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
 import org.apache.commons.io.IOUtils;
 import org.egov.infra.admin.master.entity.Boundary;
 import org.egov.infra.admin.master.service.BoundaryService;
@@ -65,6 +63,7 @@ import java.io.IOException;
 import java.util.Date;
 import java.util.List;
 
+import static org.egov.infra.web.utils.WebUtils.toJSON;
 import static org.egov.ptis.constants.PropertyTaxConstants.LOCALITY;
 import static org.egov.ptis.constants.PropertyTaxConstants.LOCATION_HIERARCHY_TYPE;
 import static org.egov.ptis.constants.PropertyTaxConstants.WARD;
@@ -120,20 +119,10 @@ public class NumberOfConnectionReportController {
         drillDownreportQuery = boundaryWiseReportService.getDrillDownReportQuery(ward, block);
         drillDownreportQuery.setResultTransformer(Transformers.aliasToBean(WaterConnectionReportResult.class));
         final List<WaterConnectionReportResult> drillDownresult = drillDownreportQuery.list();
-        result = new StringBuilder("{ \"data\":").append(toJSON(drillDownresult)).append("}").toString();
+        result = new StringBuilder("{ \"data\":").append(toJSON(drillDownresult, WaterConnectionReportResult.class,
+                WaterConnectionHelperAdaptor.class)).append("}").toString();
         response.setContentType(MediaType.APPLICATION_JSON_VALUE);
         IOUtils.write(result, response.getWriter());
 
     }
-
-    private Object toJSON(final Object object) {
-
-        final GsonBuilder gsonBuilder = new GsonBuilder();
-        final Gson gson = gsonBuilder.registerTypeAdapter(WaterConnectionReportResult.class,
-                new WaterConnectionHelperAdaptor()).create();
-        final String json = gson.toJson(object);
-        return json;
-
-    }
-
 }

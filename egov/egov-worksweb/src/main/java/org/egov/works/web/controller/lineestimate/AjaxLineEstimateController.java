@@ -39,13 +39,9 @@
  */
 package org.egov.works.web.controller.lineestimate;
 
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Date;
-import java.util.List;
-import java.util.Set;
-
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import com.google.gson.reflect.TypeToken;
 import org.codehaus.jackson.JsonGenerationException;
 import org.codehaus.jackson.map.JsonMappingException;
 import org.egov.commons.CFinancialYear;
@@ -71,7 +67,9 @@ import org.egov.infra.web.support.json.adapter.UserAdaptor;
 import org.egov.model.budget.BudgetGroup;
 import org.egov.services.masters.SchemeService;
 import org.egov.utils.BudgetAccountType;
+import org.egov.works.abstractestimate.entity.EstimatePhotographSearchRequest;
 import org.egov.works.lineestimate.entity.LineEstimate;
+import org.egov.works.lineestimate.entity.LineEstimateDetails;
 import org.egov.works.lineestimate.entity.LineEstimateForLoaSearchRequest;
 import org.egov.works.lineestimate.entity.LineEstimateForLoaSearchResult;
 import org.egov.works.lineestimate.entity.LineEstimateSearchRequest;
@@ -79,12 +77,14 @@ import org.egov.works.lineestimate.service.LineEstimateService;
 import org.egov.works.master.service.NatureOfWorkService;
 import org.egov.works.models.masters.NatureOfWork;
 import org.egov.works.utils.WorksConstants;
+import org.egov.works.web.adaptor.LineEstimateForEstimatePhotographJsonAdaptor;
 import org.egov.works.web.adaptor.LineEstimateForLOAJsonAdaptor;
 import org.egov.works.web.adaptor.LineEstimateJsonAdaptor;
 import org.egov.works.web.adaptor.SearchLineEstimateToCancelJSONAdaptor;
 import org.egov.works.web.adaptor.SubSchemeAdaptor;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.support.ResourceBundleMessageSource;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.context.MessageSource;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -95,9 +95,14 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
-import com.google.gson.reflect.TypeToken;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Date;
+import java.util.List;
+import java.util.Set;
+
+import static org.egov.infra.web.utils.WebUtils.toJSON;
 
 @Controller
 @RequestMapping(value = "/lineestimate")
@@ -130,7 +135,8 @@ public class AjaxLineEstimateController {
     private SearchLineEstimateToCancelJSONAdaptor searchLineEstimateToCancelJSONAdaptor;
 
     @Autowired
-    private ResourceBundleMessageSource messageSource;
+    @Qualifier("messageSource")
+    private MessageSource messageSource;
 
     @Autowired
     private FinancialYearService financialYearService;
@@ -146,13 +152,16 @@ public class AjaxLineEstimateController {
 
     @Autowired
     private NatureOfWorkService natureOfWorkService;
+    
+    @Autowired
+    private LineEstimateForEstimatePhotographJsonAdaptor lineEstimateForEstimatePhotographJsonAdaptor;
 
     @RequestMapping(value = "/getsubschemesbyschemeid/{schemeId}", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
     public @ResponseBody String getAllSubSchemesBySchemeId(final Model model, @PathVariable final String schemeId)
-            throws JsonGenerationException, JsonMappingException, IOException, NumberFormatException, ApplicationException {
+            throws IOException, NumberFormatException, ApplicationException {
         final Scheme scheme = schemeService.findById(Integer.parseInt(schemeId), false);
         final Set<SubScheme> subSchemes = scheme.getSubSchemes();
-        final String jsonResponse = toJSONSubScheme(subSchemes);
+        final String jsonResponse = toJSON(subSchemes, SubScheme.class, SubSchemeAdaptor.class);
         return jsonResponse;
     }
 
@@ -182,13 +191,6 @@ public class AjaxLineEstimateController {
         final List<Boundary> boundaries = boundaryService.getBondariesByNameAndBndryTypeAndHierarchyType(
                 WorksConstants.BOUNDARY_TYPE_WARD, WorksConstants.HIERARCHY_TYPE_ADMINISTRATION, "%" + name);
         return boundaries;
-    }
-
-    public String toJSONSubScheme(final Object object) {
-        final GsonBuilder gsonBuilder = new GsonBuilder();
-        final Gson gson = gsonBuilder.registerTypeAdapter(SubScheme.class, new SubSchemeAdaptor()).create();
-        final String json = gson.toJson(object);
-        return json;
     }
 
     @RequestMapping(value = "/ajaxsearch", method = RequestMethod.POST, produces = MediaType.TEXT_PLAIN_VALUE)
@@ -351,4 +353,32 @@ public class AjaxLineEstimateController {
         final List<CFunction> functions = budgetDetailsHibernateDAO.getFunctionsByFundAndDepartment(fundId, departmentId);
         return functions;
     }
+    
+    @RequestMapping(value = "/getestimatenumbers-uploadphotographs", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+    public @ResponseBody List<String> findEstimateNumbersForEstimatePhotograph(@RequestParam final String estimateNumber) {
+        return lineEstimateService.getEstimateNumbersForEstimatePhotograph(estimateNumber);
+    }
+    
+    @RequestMapping(value = "/getwin-uploadphotographs", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+    public @ResponseBody List<String> findWinForEstimatePhotograph(@RequestParam final String workIdentificationNumber) {
+        return lineEstimateService.getWinForEstimatePhotograph(workIdentificationNumber);
+    }
+    
+    @RequestMapping(value = "/searchlineestimateforestimatephotograph", method = RequestMethod.POST, produces = MediaType.TEXT_PLAIN_VALUE)
+    public @ResponseBody String ajaxSearchLEForEstimatePhotograph(final Model model,
+            @ModelAttribute final EstimatePhotographSearchRequest estimatePhotographSearchRequest) {
+        final List<LineEstimateDetails> searchResultList = lineEstimateService.searchLineEstimatesForEstimatePhotograph(estimatePhotographSearchRequest);
+        final String result = new StringBuilder("{ \"data\":").append(toSearchLineEstimateForEstimatePhotograph(searchResultList))
+                .append("}").toString();
+        return result;
+    }
+    
+    public Object toSearchLineEstimateForEstimatePhotograph(final Object object) {
+        final GsonBuilder gsonBuilder = new GsonBuilder();
+        final Gson gson = gsonBuilder.registerTypeAdapter(LineEstimateDetails.class, lineEstimateForEstimatePhotographJsonAdaptor).create();
+        final String json = gson.toJson(object);
+        return json;
+    }
+    
+    
 }

@@ -42,7 +42,7 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ taglib uri="http://www.springframework.org/tags" prefix="spring" %>
 <%@ taglib uri="http://www.springframework.org/tags/form" prefix="form" %>
-
+<%@ taglib uri="/WEB-INF/taglib/cdn.tld" prefix="cdn" %>
 <div class="row">
 	<div class="col-md-12">
 		<form:form  id="complaintRouterSuccess" method ="post" 
@@ -73,4 +73,4 @@
 	</div>
 </div>
 
-<script src="<c:url value='/resources/js/app/complaintroutingsuccess.js?rnd=${app_release_no}'/>"></script>
+<script src="<cdn:url  value='/resources/js/app/complaintroutingsuccess.js?rnd=${app_release_no}'/>"></script>

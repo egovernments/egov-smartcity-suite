@@ -91,6 +91,9 @@ public class GovernmentDepartmentService {
     public GovernmentDepartment findOne(final Long id) {
         return governmentDepartmentRepository.findOne(id);
     }
+    public List<GovernmentDepartment> getActiveGovernmentDepartment() {
+        return governmentDepartmentRepository.findByActiveTrueOrderByNameAsc();
+    }
 
     public List<GovernmentDepartment> search(final GovernmentDepartment governmentDepartment) {
 

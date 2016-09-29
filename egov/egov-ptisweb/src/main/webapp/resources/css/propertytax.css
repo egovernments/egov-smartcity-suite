@@ -866,3 +866,13 @@ tbody tr.shown td.details-control {
     width: 90px;
     margin-top: 1px;
 }
+
+.page-container .main-content td.greybox input[type="text"]:read-only
+{
+	background:#eee !important;
+}
+
+.page-container .main-content td.greybox input[type="text"]:-moz-read-only
+{
+	background:#eee !important;
+}

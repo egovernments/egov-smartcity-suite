@@ -41,6 +41,7 @@
 <%@ taglib uri="http://www.springframework.org/tags" prefix="spring"%>
 <%@ taglib uri="http://www.springframework.org/tags/form" prefix="form"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
+<%@ taglib uri="/WEB-INF/taglib/cdn.tld" prefix="cdn" %>
 <c:choose>
 <c:when test="${!documentNamesList.isEmpty()}">
 <div class="panel-heading custom_form_panel_heading">
@@ -115,4 +116,4 @@
 </c:when>
 </c:choose>
 
-<script src="<c:url value='/resources/js/app/documentsupload.js?rnd=${app_release_no}'/>"></script>
+<script src="<cdn:url value='/resources/js/app/documentsupload.js?rnd=${app_release_no}'/>"></script>

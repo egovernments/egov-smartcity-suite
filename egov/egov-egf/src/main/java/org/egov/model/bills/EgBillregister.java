@@ -39,18 +39,34 @@
  */
 package org.egov.model.bills;
 
+import java.math.BigDecimal;
+import java.util.Date;
+import java.util.LinkedHashSet;
+import java.util.Set;
+
+import javax.persistence.CascadeType;
+import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.Inheritance;
+import javax.persistence.InheritanceType;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
+import javax.persistence.OneToOne;
+import javax.persistence.OrderBy;
+import javax.persistence.SequenceGenerator;
+import javax.persistence.Table;
+import javax.persistence.Transient;
+import javax.validation.constraints.NotNull;
+
 import org.egov.commons.EgwStatus;
 import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.workflow.entity.StateAware;
 import org.hibernate.search.annotations.DocumentId;
 import org.hibernate.validator.constraints.Length;
-
-import javax.persistence.*;
-import javax.validation.constraints.NotNull;
-import java.math.BigDecimal;
-import java.util.Date;
-import java.util.HashSet;
-import java.util.Set;
 
 @Entity
 @Table(name = "EG_BILLREGISTER")
@@ -115,7 +131,7 @@ public class EgBillregister extends StateAware implements java.io.Serializable {
 
     @OrderBy("id")
     @OneToMany(orphanRemoval = true, cascade = CascadeType.ALL, fetch = FetchType.LAZY, mappedBy = "egBillregister", targetEntity = EgBilldetails.class)
-    private Set<EgBilldetails> egBilldetailes = new HashSet<EgBilldetails>(0);
+    private Set<EgBilldetails> egBilldetailes = new LinkedHashSet<EgBilldetails>(0);
 
     /**
      * @return the worksdetail
@@ -360,7 +376,7 @@ public class EgBillregister extends StateAware implements java.io.Serializable {
 
     @Override
     public String getStateDetails() {
-        return getBillnumber();
+        return getBillnumber()+"-"+getState().getComments();
     }
 
     public User getApprover() {

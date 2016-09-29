@@ -40,16 +40,6 @@
 
 package org.egov.pgr.web.controller.masters.escalation;
 
-import static org.springframework.web.bind.annotation.RequestMethod.GET;
-
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
-
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import javax.validation.Valid;
-
 import org.apache.commons.io.IOUtils;
 import org.egov.commons.ObjectType;
 import org.egov.commons.service.ObjectTypeService;
@@ -70,8 +60,15 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import javax.validation.Valid;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
+
+import static org.egov.infra.web.utils.WebUtils.toJSON;
+import static org.springframework.web.bind.annotation.RequestMethod.GET;
 
 @Controller
 @RequestMapping("/bulkEscalation")
@@ -111,7 +108,7 @@ public class BulkEscalationController {
     public @ResponseBody void search(final Model model, final HttpServletRequest request,
             @ModelAttribute final BulkEscalationGenerator bulkEscalationGenerator, final HttpServletResponse response)
             throws IOException {
-        final List<EscalationHelper> escalationHelperList = new ArrayList<EscalationHelper>();
+        final List<EscalationHelper> escalationHelperList = new ArrayList<>();
         final List<PositionHierarchy> escalationRecords = escalationService
                 .getEscalationObjByComplaintTypeFromPosition(bulkEscalationGenerator.getComplaintTypes(),
                         bulkEscalationGenerator.getFromPosition());
@@ -124,18 +121,10 @@ public class BulkEscalationController {
             escalationHelper.setToPosition(posHir.getToPosition());
             escalationHelperList.add(escalationHelper);
         }
-        final String escalationJSONData = new StringBuilder("{ \"data\":").append(toJSON(escalationHelperList)).append("}")
+        final String escalationJSONData = new StringBuilder("{ \"data\":").append(toJSON(escalationHelperList, EscalationHelper.class, EscalationHelperAdaptor.class)).append("}")
                 .toString();
         IOUtils.write(escalationJSONData, response.getWriter());
 
-    }
-
-    private String toJSON(final Object object) {
-        final GsonBuilder gsonBuilder = new GsonBuilder();
-        final Gson gson = gsonBuilder.registerTypeAdapter(EscalationHelper.class, new EscalationHelperAdaptor())
-                .create();
-        final String json = gson.toJson(object);
-        return json;
     }
 
     @RequestMapping(value = "/save", method = RequestMethod.POST)

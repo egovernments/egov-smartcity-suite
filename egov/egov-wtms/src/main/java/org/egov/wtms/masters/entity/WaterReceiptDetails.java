@@ -62,6 +62,10 @@ public class WaterReceiptDetails implements Serializable {
     private BigDecimal paymentAmount;
     private String transactionId;
     private ErrorDetails errorDetails;
+    private String paymentPeriod;
+    private String paymentType;
+
+
 
     public String getReceiptNo() {
         return receiptNo;
@@ -158,6 +162,22 @@ public class WaterReceiptDetails implements Serializable {
 
     public void setPaymentMode(String paymentMode) {
         this.paymentMode = paymentMode;
+    }
+    
+    public String getPaymentPeriod() {
+        return paymentPeriod;
+    }
+
+    public void setPaymentPeriod(String paymentPeriod) {
+        this.paymentPeriod = paymentPeriod;
+    }
+
+    public String getPaymentType() {
+        return paymentType;
+    }
+
+    public void setPaymentType(String paymentType) {
+        this.paymentType = paymentType;
     }
 
     @Override

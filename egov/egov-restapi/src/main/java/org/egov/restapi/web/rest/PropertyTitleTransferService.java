@@ -62,13 +62,13 @@ import org.egov.infra.validation.exception.ValidationException;
 import org.egov.ptis.domain.model.ErrorDetails;
 import org.egov.ptis.domain.model.NewPropertyDetails;
 import org.egov.ptis.domain.model.OwnerDetails;
+import org.egov.ptis.domain.model.OwnerInformation;
 import org.egov.ptis.domain.model.PayPropertyTaxDetails;
 import org.egov.ptis.domain.model.ReceiptDetails;
 import org.egov.ptis.domain.model.RestAssessmentDetails;
 import org.egov.ptis.domain.service.property.PropertyExternalService;
 import org.egov.ptis.domain.service.transfer.PropertyTransferService;
 import org.egov.restapi.model.AssessmentRequest;
-import org.egov.restapi.model.OwnerInformation;
 import org.egov.restapi.model.PropertyTransferDetails;
 import org.egov.restapi.util.JsonConvertor;
 import org.egov.restapi.util.ValidationUtil;
@@ -172,7 +172,7 @@ public class PropertyTitleTransferService {
             responseJson = getJSONResponse(errorDetails);
         } else {
             RestAssessmentDetails assessmentDetails = propertyExternalService
-                    .loadAssessmentDetails(assessmentReq.getAssessmentNo());
+                    .fetchAssessmentDetails(assessmentReq.getAssessmentNo());
             responseJson = getJSONResponse(assessmentDetails);
         }
         return responseJson;

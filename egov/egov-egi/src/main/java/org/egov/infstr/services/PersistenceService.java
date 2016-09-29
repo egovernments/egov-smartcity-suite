@@ -85,7 +85,7 @@ import java.util.Set;
 public class PersistenceService<T, ID extends Serializable> {
     private static final Logger LOG = LoggerFactory.getLogger(PersistenceService.class);
     private static final String DEFAULT_FIELD = "_hibernate_class";
-    protected Class<T> type;
+    private Class<T> type;
 
     @Autowired
     @Qualifier("entityValidator")
@@ -94,17 +94,7 @@ public class PersistenceService<T, ID extends Serializable> {
     @PersistenceContext
     EntityManager entityManager;
 
-    @Deprecated
-    public PersistenceService() {
-        //Marked for removal
-    }
-
     public PersistenceService(final Class<T> type) {
-        this.type = type;
-    }
-
-    @Deprecated
-    public void setType(final Class<T> type) {
         this.type = type;
     }
 

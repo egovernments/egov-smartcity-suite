@@ -249,7 +249,7 @@ function transitionStates(){
 	      <td width="21%" class="bluebox2"><s:text name="searchOnlineReceipts.criteria.referenceid"/></td>
 	      <td width="24%" class="bluebox2"><s:textfield id="referenceId" type="text" name="referenceId"/></td>
 	      <td width="21%" class="bluebox2"><s:text name="searchOnlineReceipts.transaction.status"/></td>
-	      <td width="30%" class="bluebox2"><s:select id="searchTransactionStatus" name="searchTransactionStatus" headerKey="-1" headerValue="%{getText('searchOnlineReceipts.default.transaction.status')}" cssClass="selectwk" list="%{onlineReceiptStatuses}" value="%{id}" listKey="id" listValue="description" /> </td>
+	      <td width="30%" class="bluebox2"><s:select id="searchTransactionStatus" name="searchTransactionStatus" headerKey="-1" headerValue="%{getText('searchOnlineReceipts.default.transaction.status')}" cssClass="selectwk" list="%{onlineReceiptStatuses}" value="%{searchTransactionStatus}" listKey="id" listValue="description" /> </td>
 	    </tr>	    
 	    </table>
 	    <br/>

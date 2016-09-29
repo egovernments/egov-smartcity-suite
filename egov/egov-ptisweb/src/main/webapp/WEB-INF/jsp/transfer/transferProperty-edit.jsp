@@ -40,17 +40,18 @@
 
 <%@ page language="java" pageEncoding="UTF-8"%>
 <%@ include file="/includes/taglibs.jsp"%>
+<%@ taglib uri="/WEB-INF/taglib/cdn.tld" prefix="cdn"%>
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 <html>
 <head>
 <title><s:text name='transferProperty' /></title>
 <link rel="stylesheet"
-	href="<c:url value='/resources/global/css/font-icons/font-awesome/css/font-awesome.min.css' context='/egi'/>">
+	href="<cdn:url value='/resources/global/css/font-icons/font-awesome/css/font-awesome.min.css' context='/egi'/>">
 <link
-	href="<c:url value='/resources/global/css/bootstrap/bootstrap-datepicker.css' context='/egi'/>"
+	href="<cdn:url value='/resources/global/css/bootstrap/bootstrap-datepicker.css' context='/egi'/>"
 	rel="stylesheet" type="text/css" />
 <script
-	src="<c:url value='/resources/global/js/bootstrap/bootstrap-datepicker.js' context='/egi'/>"></script>
+	src="<cdn:url value='/resources/global/js/bootstrap/bootstrap-datepicker.js' context='/egi'/>"></script>
 <script type="text/javascript">
 	jQuery.noConflict();
 	jQuery("#loadingMask").remove();
@@ -274,31 +275,48 @@
 									onblur="validateDateFormat(this);" cssClass="datepicker" /></td>
 						</tr>
 					</s:if>
-					<tr>
-						<td class="greybox2">&nbsp;</td>
-						<td class="greybox"><s:text name="label.parties.value" /> :</td>
-						<td class="greybox"><s:textfield name="partyValue"
+					<s:if test="%{(model.state.value.equalsIgnoreCase(@org.egov.ptis.constants.PropertyTaxConstants@WF_STATE_REJECTED) && !mutationFeePaid) 
+					||(model.state.value.equalsIgnoreCase(@org.egov.ptis.constants.PropertyTaxConstants@WF_STATE_REJECTED) && receiptCanceled)}">
+						<tr>
+						<td class="bluebox2">&nbsp;</td>
+						<td class="bluebox"><s:text name="label.parties.value" /> :</td>
+						<td class="bluebox"><s:textfield name="partyValue"
 								value="%{partyValue}" id="partyValue" maxlength="16"
-								onblur="validNumber(this);checkZero(this);" /></td>
-						<td class="greybox"><s:text name="label.department.value" />:</td>
-						<td class="greybox"><s:textfield name="departmentValue"
+								onblur="validNumber(this);checkZero(this);calculateMutationFee();" /></td>
+						<td class="bluebox"><s:text name="label.department.value" />:</td>
+						<td class="bluebox"><s:textfield name="departmentValue"
 								value="%{departmentValue}" id="departmentValue" maxlength="16"
-								onblur="validNumber(this);checkZero(this);" /></td>
-					</tr>
-					<tr>
-						<s:if
-							test="%{!userDesignationList.toUpperCase().contains(@org.egov.ptis.constants.PropertyTaxConstants@BILL_COLLECTOR_DESGN.toUpperCase())}">
-							<tr>
-								<td class="bluebox2">&nbsp;</td>
-								<td class="bluebox"><s:text name="docValue" /> :</td>
-								<td class="bluebox"><span class="bold"><s:property
-											value="%{marketValue}" default="N/A" /></span></td>
-								<td class="bluebox"><s:text name="payablefee" />:</td>
-								<td class="bluebox"><span class="bold"><s:property
-											value="%{mutationFee}" default="N/A" /></span></td>
-							</tr>
-						</s:if>
-					</tr>
+								onblur="validNumber(this);checkZero(this);calculateMutationFee();" /></td>
+						</tr>
+						<tr>
+						<td class="bluebox2">&nbsp;</td>
+						<td class="bluebox"><s:text name="payablefee" /> :</td>
+						<td class="bluebox"><s:textfield name="mutationFee"
+								value="%{mutationFee}" id="mutationFee" maxlength="16" readonly="true"/></td>
+						<td class="bluebox" colspan="2" />
+						</tr>		
+					</s:if>
+					<s:else>
+						<tr>
+							<td class="bluebox2">&nbsp;</td>
+							<td class="bluebox"><s:text name="label.parties.value" /> :</td>
+							<td class="bluebox"><span class="bold"><s:property
+										value="%{partyValue}" default="N/A" /></span></td>
+							<td class="bluebox"><s:text name="label.department.value" />
+								:</td>
+							<td class="bluebox"><span class="bold"><s:property
+										value="%{departmentValue}" default="N/A" /></span></td>
+						</tr>
+						<tr>
+							<td class="bluebox2">&nbsp;</td>
+							<td class="bluebox"><s:text name="docValue" /> :</td>
+							<td class="bluebox"><span class="bold"><s:property
+										value="%{marketValue}" default="N/A" /></span></td>
+							<td class="bluebox"><s:text name="payablefee" />:</td>
+							<td class="bluebox"><span class="bold"><s:property
+										value="%{mutationFee}" default="N/A" /></span></td>
+						</tr>
+					</s:else>
 					</table>
 				</table>
 				<s:if test="%{!documentTypes.isEmpty()}">
@@ -393,7 +411,7 @@
 			}
 		}
 	</script>
-	<script
-		src="<c:url value='/resources/global/js/egov/inbox.js' context='/egi'/>"></script>
+	<script src="<cdn:url value='/resources/global/js/egov/inbox.js' context='/egi'/>"></script>
+	<script type="text/javascript" src="<cdn:url value='/resources/javascript/transferProperty.js'/>"></script>
 </body>
 </html>

@@ -40,6 +40,7 @@
   ~
   ~   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
   --%>
+<%@ taglib uri="/WEB-INF/taglib/cdn.tld" prefix="cdn" %>
 <div class="row">
   <div class="col-sm-12">
   <br>
@@ -91,5 +92,5 @@
     <button type="button" id="save" class="btn btn-primary">Save</button>
   </div>
 </div>
-<script src="<c:url value='/resources/global/js/egov/patternvalidation.js?rnd=${app_release_no}' context='/egi'/>"></script>
-<script src="<c:url value='/resources/js/app/feematrix.js?rnd=${app_release_no}' context='/tl'/>"></script>
+<script src="<cdn:url  value='/resources/global/js/egov/patternvalidation.js?rnd=${app_release_no}' context='/egi'/>"></script>
+<script src="<cdn:url  value='/resources/js/app/feematrix.js?rnd=${app_release_no}'/>"></script>

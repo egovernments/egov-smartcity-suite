@@ -44,6 +44,7 @@ import java.text.ParseException;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 
+import org.apache.commons.lang.StringUtils;
 import org.egov.wtms.application.entity.BaseRegisterResult;
 import org.hibernate.SQLQuery;
 import org.hibernate.Session;
@@ -66,18 +67,21 @@ public class BaseRegisterReportService {
 
         final StringBuilder queryStr = new StringBuilder();
         queryStr.append(
-                "select dcbinfo.hscno as \"consumerNo\",dcbinfo.propertyid as \"assementNo\", dcbinfo.username as \"ownerName\",dcbinfo.categorytype as \"categoryType\",dcbinfo.username as \"period\","
-                        + "dcbinfo.houseno as \"doorNo\",   "
-                        + "dcbinfo.arr_balance as \"arrears\" ,  dcbinfo.curr_balance as \"current\" , dcbinfo.arr_balance+dcbinfo.curr_balance as \"totalDemand\"  "
-                        + "from egwtr_mv_dcb_view dcbinfo"
-                        + " INNER JOIN eg_boundary wardboundary on dcbinfo.wardid = wardboundary.id INNER JOIN eg_boundary localboundary on dcbinfo.locality = localboundary.id");
+                "select dcbinfo.hscno as \"consumerNo\",dcbinfo.propertyid as \"assementNo\", dcbinfo.username as \"ownerName\",dcbinfo.categorytype as \"categoryType\",dcbinfo.username as \"period\",");
+        queryStr.append(
+                "dcbinfo.houseno as \"doorNo\", dcbinfo.connectiontype as \"connectionType\" , dcbinfo.arr_demand as \"arrears\" ,  dcbinfo.curr_demand as \"current\" ,  ");
+        queryStr.append(
+                "dcbinfo.arr_coll as \"arrearsCollection\" ,  dcbinfo.curr_coll as \"currentCollection\" , dcbinfo.arr_demand+dcbinfo.curr_demand as \"totalDemand\"  ");
+        queryStr.append("from egwtr_mv_dcb_view dcbinfo");
+        queryStr.append(
+                " INNER JOIN eg_boundary wardboundary on dcbinfo.wardid = wardboundary.id INNER JOIN eg_boundary localboundary on dcbinfo.locality = localboundary.id");
 
-        if (ward != null && !ward.isEmpty())
-            queryStr.append(" and wardboundary.name = " + "'" + ward + "'");
-
+        if (StringUtils.isNotBlank(ward))
+            queryStr.append(" and wardboundary.id = :ward");
         final SQLQuery finalQuery = getCurrentSession().createSQLQuery(queryStr.toString());
+        if (StringUtils.isNotBlank(ward))
+            finalQuery.setLong("ward", Long.valueOf(ward));
         finalQuery.setResultTransformer(new AliasToBeanResultTransformer(BaseRegisterResult.class));
-
         return finalQuery;
 
     }

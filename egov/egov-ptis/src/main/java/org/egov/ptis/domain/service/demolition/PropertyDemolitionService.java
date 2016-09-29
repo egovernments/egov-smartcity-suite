@@ -66,6 +66,7 @@ import org.egov.ptis.domain.entity.property.BasicProperty;
 import org.egov.ptis.domain.entity.property.Property;
 import org.egov.ptis.domain.entity.property.PropertyDetail;
 import org.egov.ptis.domain.entity.property.PropertyImpl;
+import org.egov.ptis.domain.entity.property.PropertyOwnerInfo;
 import org.egov.ptis.domain.entity.property.PropertyTypeMaster;
 import org.egov.ptis.domain.entity.property.VacantProperty;
 import org.egov.ptis.domain.service.property.PropertyPersistenceService;
@@ -78,7 +79,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.context.support.ResourceBundleMessageSource;
+import org.springframework.context.MessageSource;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -125,7 +126,8 @@ public class PropertyDemolitionService extends PersistenceService<PropertyImpl, 
     private PtDemandDao ptDemandDAO;
     
     @Autowired
-    private ResourceBundleMessageSource messageSource;
+    @Qualifier("parentMessageSource")
+    private MessageSource ptisMessageSource;
 
     @Autowired
     private MessagingService messagingService;
@@ -138,6 +140,14 @@ public class PropertyDemolitionService extends PersistenceService<PropertyImpl, 
     
     @Autowired
     private PropertyTaxCommonUtils propertyTaxCommonUtils;
+
+    public PropertyDemolitionService() {
+        super(PropertyImpl.class);
+    }
+
+    public PropertyDemolitionService(Class<PropertyImpl> type) {
+        super(type);
+    }
 
     @Transactional
     public void saveProperty(Property oldProperty, Property newProperty, Character status, String comments,
@@ -354,21 +364,28 @@ public class PropertyDemolitionService extends PersistenceService<PropertyImpl, 
     }
     
     public void buildSMS(Property property, String workFlowAction) {
-        final User user = property.getBasicProperty().getPrimaryOwner();
+        for (PropertyOwnerInfo ownerInfo : property.getBasicProperty().getPropertyOwnerInfo()) {
+            if (StringUtils.isNotBlank(ownerInfo.getOwner().getMobileNumber())) {
+                buildSms(property, ownerInfo.getOwner(), workFlowAction);
+            }
+        }
+    }
+
+    private void buildSms(Property property, User user, String workFlowAction) {
         final String assessmentNo = property.getBasicProperty().getUpicNo();
         final String mobileNumber = user.getMobileNumber();
         final String applicantName = user.getName();
         String smsMsg = "";
         if (workFlowAction.equals(WFLOW_ACTION_STEP_FORWARD)) {
-        	//to be enabled once acknowledgement feature is developed
+                //to be enabled once acknowledgement feature is developed
             /*smsMsg = messageSource.getMessage("demolition.ack.sms",
                     new String[] { applicantName, assessmentNo }, null);*/
         } else if (workFlowAction.equals(WFLOW_ACTION_STEP_REJECT)) {
-            smsMsg = messageSource.getMessage("demolition.rejection.sms", new String[] { applicantName, assessmentNo,
+            smsMsg = ptisMessageSource.getMessage("demolition.rejection.sms", new String[] { applicantName, assessmentNo,
                     ApplicationThreadLocals.getMunicipalityName() }, null);
         } else if (workFlowAction.equals(WFLOW_ACTION_STEP_APPROVE)) {
-        	Installment effectiveInstallment = null;
-        	Map<String,Installment> yearwiseInstMap = propertyTaxUtil.getInstallmentsForCurrYear(new Date());
+                Installment effectiveInstallment = null;
+                Map<String,Installment> yearwiseInstMap = propertyTaxUtil.getInstallmentsForCurrYear(new Date());
             Installment installmentFirstHalf = yearwiseInstMap.get(CURRENTYEAR_FIRST_HALF);
             Installment installmentSecondHalf = yearwiseInstMap.get(CURRENTYEAR_SECOND_HALF);
             Date effectiveDate = null;
@@ -379,26 +396,26 @@ public class PropertyDemolitionService extends PersistenceService<PropertyImpl, 
              * else fetch the total tax for next installment 1st half and display in the SMS.
              */
             if(DateUtils.between(new Date(), installmentFirstHalf.getFromDate(), installmentFirstHalf.getToDate())){
-            	effectiveInstallment = installmentSecondHalf;
+                effectiveInstallment = installmentSecondHalf;
             }
             else{
-            	Module module = moduleDao.getModuleByName(PTMODULENAME);
-            	effectiveDate = DateUtils.addDays(installmentSecondHalf.getToDate(), 1);
-            	effectiveInstallment = installmentDao.getInsatllmentByModuleForGivenDate(module, effectiveDate);
+                Module module = moduleDao.getModuleByName(PTMODULENAME);
+                effectiveDate = DateUtils.addDays(installmentSecondHalf.getToDate(), 1);
+                effectiveInstallment = installmentDao.getInsatllmentByModuleForGivenDate(module, effectiveDate);
             }
-            demandMap = propertyTaxUtil.getTaxDetailsForInstallment(property, effectiveInstallment,installmentFirstHalf);	
+            demandMap = propertyTaxUtil.getTaxDetailsForInstallment(property, effectiveInstallment,installmentFirstHalf);       
             totalTax = demandMap.get(DEMANDRSN_STR_VACANT_TAX) == null ? BigDecimal.ZERO : demandMap.get(DEMANDRSN_STR_VACANT_TAX)
                     .add(demandMap.get(DEMANDRSN_STR_LIBRARY_CESS) == null ? BigDecimal.ZERO
                             : demandMap.get(DEMANDRSN_STR_LIBRARY_CESS));
-            smsMsg = messageSource.getMessage("demolition.approval.sms", new String[] { applicantName, assessmentNo,
-            		totalTax.toString(),new SimpleDateFormat("dd/MM/yyyy").format(effectiveInstallment.getFromDate()), ApplicationThreadLocals.getMunicipalityName() },
+            smsMsg = ptisMessageSource.getMessage("demolition.approval.sms", new String[] { applicantName, assessmentNo,
+                        totalTax.toString(),new SimpleDateFormat("dd/MM/yyyy").format(effectiveInstallment.getFromDate()), ApplicationThreadLocals.getMunicipalityName() },
                     null);
         }
 
         if (StringUtils.isNotBlank(mobileNumber)) {
             messagingService.sendSMS(mobileNumber, smsMsg);
         }
-
+    
     }
 
 }

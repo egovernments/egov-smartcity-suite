@@ -39,6 +39,7 @@
   --%>
 
 <%@ include file="/includes/taglibs.jsp"%>
+<%@ taglib uri="/WEB-INF/taglib/cdn.tld" prefix="cdn" %>
 <html>
 	<head>
 		<title><s:text name="page.title.viewtrade" /></title>
@@ -84,6 +85,6 @@
 				</tr>
 			</table>
 		</div>
-		<script src="<c:url value='/resources/global/js/jquery/plugins/jquery.printelement.min.js' context='/egi'/>"></script>
+		<script src="<cdn:url  value='/resources/global/js/jquery/plugins/jQuery.print.js' context='/egi'/>"></script>
 	</body>
 </html>

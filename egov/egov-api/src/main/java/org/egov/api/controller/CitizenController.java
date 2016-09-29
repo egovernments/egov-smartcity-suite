@@ -49,6 +49,7 @@ import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.admin.master.service.UserService;
 import org.egov.infra.persistence.entity.enums.Gender;
 import org.egov.infra.security.utils.SecurityUtils;
+import org.egov.infra.utils.StringUtils;
 import org.egov.portal.entity.Citizen;
 import org.egov.portal.service.CitizenService;
 import org.joda.time.format.DateTimeFormat;
@@ -65,6 +66,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
 import javax.servlet.http.HttpServletRequest;
+
 import java.util.Date;
 
 @org.springframework.web.bind.annotation.RestController
@@ -157,14 +159,25 @@ public class CitizenController extends ApiController {
             Citizen citizenUpdate = citizenService.getCitizenByUserName(citizen.get("userName").toString());
             citizenUpdate.setName(citizen.get("name").toString());
             citizenUpdate.setGender(Gender.valueOf(citizen.get("gender").toString()));
-            citizenUpdate.setMobileNumber(citizen.get("mobileNumber").toString());
+            /*citizenUpdate.setMobileNumber(citizen.get("mobileNumber").toString());*/
+            
+            if(citizen.get("emailId")!=null)
             citizenUpdate.setEmailId(citizen.get("emailId").toString());
+            
+           
+            if(citizen.get("altContactNumber")!=null)
             citizenUpdate.setAltContactNumber(citizen.get("altContactNumber").toString());
+            
             DateTimeFormatter ft = DateTimeFormat.forPattern("yyyy-MM-dd");
             Date dt = ft.parseDateTime(citizen.get("dob").toString()).toDate();            
             citizenUpdate.setDob(dt);
+            
+            if(citizen.get("pan")!=null)
             citizenUpdate.setPan(citizen.get("pan").toString());
-            citizenUpdate.setAadhaarNumber(citizen.get("aadhaarNumber").toString());            
+            
+            if(citizen.get("aadhaarNumber")!=null)
+            citizenUpdate.setAadhaarNumber(citizen.get("aadhaarNumber").toString());
+            
             citizenService.update(citizenUpdate);
             return res.setDataAdapter(new UserAdapter()).success(citizen, this.getMessage("msg.citizen.update.success"));
 

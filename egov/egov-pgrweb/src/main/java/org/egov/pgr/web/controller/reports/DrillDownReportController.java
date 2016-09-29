@@ -40,8 +40,6 @@
 
 package org.egov.pgr.web.controller.reports;
 
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
 import org.apache.commons.io.IOUtils;
 import org.egov.pgr.service.reports.DrillDownReportService;
 import org.hibernate.SQLQuery;
@@ -62,6 +60,8 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.List;
+
+import static org.egov.infra.web.utils.WebUtils.toJSON;
 
 @Controller
 @RequestMapping(value = {"/report", "/public/report"})
@@ -115,7 +115,8 @@ public class DrillDownReportController {
             drillDownreportQuery.setResultTransformer(Transformers.aliasToBean(DrillDownReportResult.class));
 
             final List<DrillDownReportResult> drillDownresult = drillDownreportQuery.list();
-            result = new StringBuilder("{ \"data\":").append(toJSONForComplaintType(drillDownresult)).append("}")
+            result = new StringBuilder("{ \"data\":").append(toJSON(drillDownresult, DrillDownReportResult.class,
+                    DrillDownReportWithcompTypeAdaptor.class)).append("}")
                     .toString();
 
         } else {
@@ -123,8 +124,9 @@ public class DrillDownReportController {
                     groupBy, deptid, boundary, complainttypeid, selecteduserid);
             drillDownreportQuery.setResultTransformer(Transformers.aliasToBean(DrillDownReportResult.class));
 
-            final List<AgeingReportResult> drillDownresult = drillDownreportQuery.list();
-            result = new StringBuilder("{ \"data\":").append(toJSON(drillDownresult)).append("}").toString();
+            final List<DrillDownReportResult> drillDownresult = drillDownreportQuery.list();
+            result = new StringBuilder("{ \"data\":").append(toJSON(drillDownresult, DrillDownReportResult.class,
+                    DrillDownReportHelperAdaptor.class)).append("}").toString();
 
         }
 
@@ -132,25 +134,4 @@ public class DrillDownReportController {
         IOUtils.write(result, response.getWriter());
 
     }
-
-    private Object toJSONForComplaintType(final Object object) {
-
-        final GsonBuilder gsonBuilder = new GsonBuilder();
-        final Gson gson = gsonBuilder.registerTypeAdapter(DrillDownReportResult.class,
-                new DrillDownReportWithcompTypeAdaptor()).create();
-        final String json = gson.toJson(object);
-        return json;
-
-    }
-
-    private Object toJSON(final Object object) {
-
-        final GsonBuilder gsonBuilder = new GsonBuilder();
-        final Gson gson = gsonBuilder.registerTypeAdapter(DrillDownReportResult.class,
-                new DrillDownReportHelperAdaptor()).create();
-        final String json = gson.toJson(object);
-        return json;
-
-    }
-
 }

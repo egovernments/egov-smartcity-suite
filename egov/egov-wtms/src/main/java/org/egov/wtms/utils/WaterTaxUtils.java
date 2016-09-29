@@ -88,8 +88,8 @@ import org.egov.wtms.application.service.WaterDemandConnectionService;
 import org.egov.wtms.utils.constants.WaterTaxConstants;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.context.MessageSource;
 import org.springframework.context.i18n.LocaleContextHolder;
-import org.springframework.context.support.ResourceBundleMessageSource;
 import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.ModelAttribute;
 
@@ -134,7 +134,8 @@ public class WaterTaxUtils {
     private MessagingService messagingService;
 
     @Autowired
-    private ResourceBundleMessageSource messageSource;
+    @Qualifier("parentMessageSource")
+    private MessageSource wcmsMessageSource;
 
     @Autowired
     private UserService userService;
@@ -155,24 +156,31 @@ public class WaterTaxUtils {
     @Autowired
     private InstallmentDao installmentDao;
 
+    public List<AppConfigValues> getAppConfigValueByModuleNameAndKeyName(String moduleName,String keyName) {
+        final List<AppConfigValues> appconfigValuesList = appConfigValuesService.getConfigValuesByModuleAndKey(
+                moduleName,keyName);
+        return appconfigValuesList;
+    }
+    
     public Boolean isSmsEnabled() {
-        final AppConfigValues appConfigValue = appConfigValuesService.getConfigValuesByModuleAndKey(
+        final AppConfigValues appConfigValue = getAppConfigValueByModuleNameAndKeyName(
                 WaterTaxConstants.MODULE_NAME, WaterTaxConstants.SENDSMSFORWATERTAX).get(0);
         return WaterTaxConstants.APPCONFIGVALUEOFENABLED.equalsIgnoreCase(appConfigValue.getValue());
     }
 
     public String getDepartmentForWorkFlow() {
         String department = "";
-        final List<AppConfigValues> appConfigValue = appConfigValuesService.getConfigValuesByModuleAndKey(
+        final List<AppConfigValues> appConfigValue = getAppConfigValueByModuleNameAndKeyName(
                 WaterTaxConstants.MODULE_NAME, WaterTaxConstants.WATERTAXWORKFLOWDEPARTEMENT);
         if (null != appConfigValue && !appConfigValue.isEmpty())
             department = appConfigValue.get(0).getValue();
         return department;
     }
+  
 
     public String getDesignationForThirdPartyUser() {
         String designation = "";
-        final List<AppConfigValues> appConfigValue = appConfigValuesService.getConfigValuesByModuleAndKey(
+        final List<AppConfigValues> appConfigValue = getAppConfigValueByModuleNameAndKeyName(
                 WaterTaxConstants.MODULE_NAME, WaterTaxConstants.CLERKDESIGNATIONFORCSCOPERATOR);
         if (null != appConfigValue && !appConfigValue.isEmpty())
             designation = appConfigValue.get(0).getValue();
@@ -181,7 +189,7 @@ public class WaterTaxUtils {
 
     public List<AppConfigValues> getThirdPartyUserRoles() {
 
-        final List<AppConfigValues> appConfigValueList = appConfigValuesService.getConfigValuesByModuleAndKey(
+        final List<AppConfigValues> appConfigValueList = getAppConfigValueByModuleNameAndKeyName(
                 WaterTaxConstants.MODULE_NAME, WaterTaxConstants.ROLEFORNONEMPLOYEEINWATERTAX);
 
         return !appConfigValueList.isEmpty() ? appConfigValueList : null;
@@ -238,26 +246,26 @@ public class WaterTaxUtils {
     }
 
     public Boolean isEmailEnabled() {
-        final AppConfigValues appConfigValue = appConfigValuesService.getConfigValuesByModuleAndKey(
+        final AppConfigValues appConfigValue = getAppConfigValueByModuleNameAndKeyName(
                 WaterTaxConstants.MODULE_NAME, WaterTaxConstants.SENDEMAILFORWATERTAX).get(0);
         return WaterTaxConstants.APPCONFIGVALUEOFENABLED.equalsIgnoreCase(appConfigValue.getValue());
     }
 
     public Boolean isNewConnectionAllowedIfPTDuePresent() {
-        final AppConfigValues appConfigValue = appConfigValuesService.getConfigValuesByModuleAndKey(
+        final AppConfigValues appConfigValue = getAppConfigValueByModuleNameAndKeyName(
                 WaterTaxConstants.MODULE_NAME, WaterTaxConstants.NEWCONNECTIONALLOWEDIFPTDUE).get(0);
         return WaterTaxConstants.APPCONFIGVALUEOFENABLED.equalsIgnoreCase(appConfigValue.getValue());
     }
 
     public Boolean isMultipleNewConnectionAllowedForPID() {
-        final AppConfigValues appConfigValue = appConfigValuesService.getConfigValuesByModuleAndKey(
+        final AppConfigValues appConfigValue = getAppConfigValueByModuleNameAndKeyName(
                 WaterTaxConstants.MODULE_NAME, WaterTaxConstants.MULTIPLENEWCONNECTIONFORPID).get(0);
         return WaterTaxConstants.APPCONFIGVALUEOFENABLED.equalsIgnoreCase(appConfigValue.getValue());
     }
 
     public Boolean isConnectionAllowedIfWTDuePresent(final String connectionType) {
         final Boolean isAllowed = false;
-        final List<AppConfigValues> appConfigValue = appConfigValuesService.getConfigValuesByModuleAndKey(
+        final List<AppConfigValues> appConfigValue = getAppConfigValueByModuleNameAndKeyName(
                 WaterTaxConstants.MODULE_NAME, connectionType);
         if (null != appConfigValue && !appConfigValue.isEmpty())
             return WaterTaxConstants.APPCONFIGVALUEOFENABLED.equalsIgnoreCase(appConfigValue.get(0).getValue());
@@ -267,7 +275,7 @@ public class WaterTaxUtils {
 
     public String documentRequiredForBPLCategory() {
         String documentName = null;
-        final List<AppConfigValues> appConfigValue = appConfigValuesService.getConfigValuesByModuleAndKey(
+        final List<AppConfigValues> appConfigValue = getAppConfigValueByModuleNameAndKeyName(
                 WaterTaxConstants.MODULE_NAME, WaterTaxConstants.DOCUMENTREQUIREDFORBPL);
         if (appConfigValue != null && !appConfigValue.isEmpty())
             documentName = appConfigValue.get(0).getValue();
@@ -285,7 +293,7 @@ public class WaterTaxUtils {
     public String smsAndEmailBodyByCodeAndArgsForRejection(final String code, final String approvalComment,
             final String applicantName) {
         final Locale locale = LocaleContextHolder.getLocale();
-        final String smsMsg = messageSource.getMessage(code, new String[] { applicantName, approvalComment,
+        final String smsMsg = wcmsMessageSource.getMessage(code, new String[] { applicantName, approvalComment,
                 getMunicipalityName() }, locale);
         return smsMsg;
     }
@@ -293,7 +301,7 @@ public class WaterTaxUtils {
     public String emailBodyforApprovalEmailByCodeAndArgs(final String code,
             final WaterConnectionDetails waterConnectionDetails, final String applicantName) {
         final Locale locale = LocaleContextHolder.getLocale();
-        final String smsMsg = messageSource.getMessage(code,
+        final String smsMsg = wcmsMessageSource.getMessage(code,
                 new String[] { applicantName, waterConnectionDetails.getApplicationNumber(),
                 waterConnectionDetails.getConnection().getConsumerCode(), getMunicipalityName() }, locale);
         return smsMsg;
@@ -301,7 +309,7 @@ public class WaterTaxUtils {
 
     public String emailSubjectforEmailByCodeAndArgs(final String code, final String applicationNumber) {
         final Locale locale = LocaleContextHolder.getLocale();
-        final String emailSubject = messageSource.getMessage(code, new String[] { applicationNumber }, locale);
+        final String emailSubject = wcmsMessageSource.getMessage(code, new String[] { applicationNumber }, locale);
         return emailSubject;
     }
 
@@ -558,7 +566,7 @@ public class WaterTaxUtils {
     }
 
     public Boolean isDigitalSignatureEnabled() {
-        final List<AppConfigValues> appConfigValue = appConfigValuesService.getConfigValuesByModuleAndKey(
+        final List<AppConfigValues> appConfigValue = getAppConfigValueByModuleNameAndKeyName(
                 WaterTaxConstants.MODULE_NAME, WaterTaxConstants.ENABLEDIGITALSIGNATURE);
         if (null != appConfigValue && !appConfigValue.isEmpty())
             return WaterTaxConstants.APPCONFIGVALUEOFENABLED.equalsIgnoreCase(appConfigValue.get(0).getValue());

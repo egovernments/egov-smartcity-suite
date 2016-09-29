@@ -62,6 +62,13 @@ public class ChallanService extends PersistenceService<Challan, Long> {
     @Autowired
     private CollectionsUtil collectionsUtil;
 
+    public ChallanService() {
+        super(Challan.class);
+    }
+
+    public ChallanService(Class<Challan> type) {
+        super(type);
+    }
     /**
      * This method performs the Challan workflow transition. The challan status
      * is updated and transitioned to the next state. At the end of the
@@ -138,12 +145,18 @@ public class ChallanService extends PersistenceService<Challan, Long> {
         }
         // persist(challan);
 
-        LOGGER.debug("Challan workflow transition completed. Challan transitioned to : "
-                + challan.getCurrentState().getValue());
-
         if (CollectionConstants.WF_ACTION_NAME_CANCEL_CHALLAN.equals(actionName)
-                || CollectionConstants.WF_ACTION_NAME_VALIDATE_CHALLAN.equals(actionName)) {
+                || (CollectionConstants.WF_ACTION_NAME_VALIDATE_CHALLAN.equals(actionName) && challan.getState() != null )) {
             challan.transition().end().withComments("End of challan worklow")
+                    .withStateValue(CollectionConstants.WF_STATE_END)
+            .withSenderName(challan.getCreatedBy().getUsername() + "::" + challan.getCreatedBy().getName())
+                    .withDateInfo(new Date());
+            LOGGER.debug("End of Challan Workflow.");
+        }
+        
+        if (challan.getState() == null &&
+                CollectionConstants.WF_ACTION_NAME_VALIDATE_CHALLAN.equals(actionName)){
+            challan.transition().start().end().withComments("End of challan worklow")
                     .withStateValue(CollectionConstants.WF_STATE_END)
             .withSenderName(challan.getCreatedBy().getUsername() + "::" + challan.getCreatedBy().getName())
                     .withDateInfo(new Date());

@@ -42,11 +42,13 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 <%@ taglib uri="http://www.springframework.org/tags/form" prefix="form"%>
 <%@ taglib uri="http://www.springframework.org/tags" prefix="spring"%>
+<%@ taglib uri="/WEB-INF/taglib/cdn.tld" prefix="cdn" %>
+
 <link rel="stylesheet"
-	href="<c:url value='/resources/global/css/bootstrap/typeahead.css' context='/egi'/>">
+	href="<cdn:url value='/resources/global/css/bootstrap/typeahead.css' context='/egi'/>">
 
 <script type="text/javascript"
-	src="<c:url value='/global/js/egov/patternvalidation.js' context='/egi'/>"></script>
+	src="<cdn:url value='/global/js/egov/patternvalidation.js' context='/egi'/>"></script>
 <script>
 	function deleteRow(obj) {
 		var tb1 = document.getElementById("schedleOfrateTable");
@@ -288,4 +290,4 @@
 			  
 	
 </div>
-<script src="<c:url value='/resources/app/js/scheduleOfRates.js'/>"></script>
+<script src="<cdn:url value='/resources/app/js/scheduleOfRates.js?rnd=${app_release_no}'/>"></script>

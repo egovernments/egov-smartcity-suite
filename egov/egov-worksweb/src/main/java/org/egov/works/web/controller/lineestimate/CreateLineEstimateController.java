@@ -54,6 +54,8 @@ import org.egov.commons.CChartOfAccountDetail;
 import org.egov.commons.dao.EgwStatusHibernateDAO;
 import org.egov.commons.dao.EgwTypeOfWorkHibernateDAO;
 import org.egov.commons.dao.FundHibernateDAO;
+import org.egov.egf.budget.model.BudgetControlType;
+import org.egov.egf.budget.service.BudgetControlTypeService;
 import org.egov.eis.web.contract.WorkflowContainer;
 import org.egov.eis.web.controller.workflow.GenericWorkFlowController;
 import org.egov.infra.admin.master.entity.Department;
@@ -68,7 +70,6 @@ import org.egov.works.lineestimate.entity.LineEstimateAppropriation;
 import org.egov.works.lineestimate.entity.LineEstimateDetails;
 import org.egov.works.lineestimate.entity.enums.Beneficiary;
 import org.egov.works.lineestimate.entity.enums.LineEstimateStatus;
-import org.egov.works.lineestimate.entity.enums.TypeOfSlum;
 import org.egov.works.lineestimate.entity.enums.WorkCategory;
 import org.egov.works.lineestimate.service.LineEstimateAppropriationService;
 import org.egov.works.lineestimate.service.LineEstimateService;
@@ -78,7 +79,8 @@ import org.egov.works.master.service.NatureOfWorkService;
 import org.egov.works.utils.WorksConstants;
 import org.egov.works.utils.WorksUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.support.ResourceBundleMessageSource;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.context.MessageSource;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.ui.ModelMap;
@@ -119,7 +121,8 @@ public class CreateLineEstimateController extends GenericWorkFlowController {
     private EgwTypeOfWorkHibernateDAO egwTypeOfWorkHibernateDAO;
 
     @Autowired
-    private ResourceBundleMessageSource messageSource;
+    @Qualifier("messageSource")
+    private MessageSource messageSource;
 
     @Autowired
     private EgwStatusHibernateDAO egwStatusHibernateDAO;
@@ -138,6 +141,9 @@ public class CreateLineEstimateController extends GenericWorkFlowController {
     
     @Autowired
     private LineEstimateUOMService lineEstimateUOMService;
+    
+    @Autowired
+    private BudgetControlTypeService budgetControlTypeService;
 
     @RequestMapping(value = "/newform", method = RequestMethod.GET)
     public String showNewLineEstimateForm(@ModelAttribute("lineEstimate") final LineEstimate lineEstimate,
@@ -166,6 +172,7 @@ public class CreateLineEstimateController extends GenericWorkFlowController {
             throws ApplicationException, IOException {
         setDropDownValues(model);
         validateBudgetHead(lineEstimate, errors);
+        validateLineEstimateDetails(lineEstimate, errors);
         if (errors.hasErrors()) {
             model.addAttribute("stateType", lineEstimate.getClass().getSimpleName());
 
@@ -223,7 +230,6 @@ public class CreateLineEstimateController extends GenericWorkFlowController {
         model.addAttribute("schemes", schemeService.findAll());
         model.addAttribute("departments", lineEstimateService.getUserDepartments(securityUtils.getCurrentUser()));
         model.addAttribute("workCategory", WorkCategory.values());
-        model.addAttribute("typeOfSlum", TypeOfSlum.values());
         model.addAttribute("beneficiary", Beneficiary.values());
         model.addAttribute("modeOfAllotment", modeOfAllotmentService.findAll());
         model.addAttribute("lineEstimateUOMs", lineEstimateUOMService.findAll());
@@ -320,8 +326,8 @@ public class CreateLineEstimateController extends GenericWorkFlowController {
         final String message = getMessageByStatus(lineEstimate, approverName, nextDesign);
 
         model.addAttribute("message", message);
-
-        if (lineEstimate.getStatus().getCode().equals(LineEstimateStatus.BUDGET_SANCTIONED.toString())) {
+        if (lineEstimate.getStatus().getCode().equals(LineEstimateStatus.BUDGET_SANCTIONED.toString()) && !BudgetControlType.BudgetCheckOption.NONE.toString()
+                .equalsIgnoreCase(budgetControlTypeService.getConfigValue())) {
             final List<String> basMessages = new ArrayList<String>();
             Integer count = 1;
             for (final LineEstimateDetails led : lineEstimate.getLineEstimateDetails()) {
@@ -371,5 +377,14 @@ public class CreateLineEstimateController extends GenericWorkFlowController {
                     new String[] { lineEstimate.getLineEstimateNumber() }, null);
 
         return message;
+    }
+    
+    private void validateLineEstimateDetails(final LineEstimate lineEstimate, final BindingResult errors) {
+        Integer index = 0;
+        for (final LineEstimateDetails led : lineEstimate.getLineEstimateDetails()) {
+            if (led.getQuantity() <= 0)
+                errors.rejectValue("lineEstimateDetails[" + index + "].quantity", "error.quantity.required");
+            index++;
+        }
     }
 }

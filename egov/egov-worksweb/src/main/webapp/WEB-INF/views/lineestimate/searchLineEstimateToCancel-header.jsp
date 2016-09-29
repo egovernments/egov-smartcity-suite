@@ -37,7 +37,7 @@
   ~
   ~   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
   --%>
-
+<%@ taglib uri="/WEB-INF/taglibs/cdn.tld" prefix="cdn"%>
 <%@ page contentType="text/html;charset=UTF-8" language="java"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 <%@ taglib uri="http://www.springframework.org/tags" prefix="spring"%>
@@ -70,4 +70,4 @@
 		}
 	});
 </script>
-<script src="<c:url value='/resources/js/searchlineestimatetocancel.js?rnd=${app_release_no}'/>"></script>
+<script src="<cdn:url value='/resources/js/searchlineestimatetocancel.js?rnd=${app_release_no}'/>"></script>

@@ -40,8 +40,11 @@
 package org.egov.ptis.domain.service.bill;
 
 import org.apache.log4j.Logger;
+import org.egov.commons.CFinancialYear;
 import org.egov.commons.Installment;
+import org.egov.commons.dao.FinancialYearDAO;
 import org.egov.demand.model.EgBill;
+import org.egov.infra.admin.master.entity.City;
 import org.egov.infra.admin.master.entity.Module;
 import org.egov.infra.admin.master.service.BoundaryService;
 import org.egov.infra.admin.master.service.CityService;
@@ -63,11 +66,11 @@ import org.egov.ptis.domain.entity.demand.BulkBillGeneration;
 import org.egov.ptis.domain.entity.property.BasicProperty;
 import org.egov.ptis.domain.service.notice.NoticeService;
 import org.egov.ptis.service.utils.PropertyTaxCommonUtils;
-import org.egov.ptis.wtms.PropertyWiseConsumptions;
 import org.egov.ptis.wtms.WaterChargesIntegrationService;
 import org.hibernate.Query;
 import org.hibernate.Session;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.EntityManager;
@@ -76,6 +79,7 @@ import javax.persistence.PersistenceContext;
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 import java.math.BigDecimal;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -83,7 +87,7 @@ import java.util.Map;
 import static org.egov.ptis.constants.PropertyTaxConstants.BILLTYPE_MANUAL;
 import static org.egov.ptis.constants.PropertyTaxConstants.NOTICE_TYPE_BILL;
 import static org.egov.ptis.constants.PropertyTaxConstants.QUARTZ_BULKBILL_JOBS;
-import static org.egov.ptis.constants.PropertyTaxConstants.REPORT_TEMPLATENAME_DEMANDNOTICE_GENERATION;
+import static org.egov.ptis.constants.PropertyTaxConstants.REPORT_TEMPLATENAME_BILL_GENERATION;
 import static org.egov.ptis.constants.PropertyTaxConstants.STATUS_BILL_CREATED;
 import static org.egov.ptis.constants.PropertyTaxConstants.STRING_EMPTY;
 
@@ -124,6 +128,12 @@ public class BillService {
     @Autowired
     private PropertyTaxCommonUtils propertyTaxCommonUtils;
 
+    @Autowired
+    @Qualifier("bulkBillGenerationPersistenceService")
+    private PersistenceService bulkBillGenerationPersistenceService;
+    @Autowired
+    private FinancialYearDAO financialYearDAO;
+
     /**
      * Generates a Demand Notice or the Bill giving the break up of the tax
      * amounts and the <code>EgBill</code>
@@ -141,8 +151,6 @@ public class BillService {
             final int noOfBillGenerated = getNumberOfBills(basicProperty);
             if (noOfBillGenerated > 0)
                 setBillNo(getBillNo() + "/" + STR_BILL_SHORTCUT + noOfBillGenerated);
-            // To generate Notice having installment and reasonwise balance for
-            // a property
             DemandNoticeInfo demandNoticeInfo = new DemandNoticeInfo();
             demandNoticeInfo.setCityService(cityService);
             demandNoticeInfo.setBasicProperty(basicProperty);
@@ -150,18 +158,15 @@ public class BillService {
             demandNoticeInfo.setBillNo(getBillNo());
             demandNoticeInfo.setLocality(basicProperty.getPropertyID().getLocality().getName());
             demandNoticeInfo.setBillPeriod(propertyTaxCommonUtils.getCurrentInstallment().getDescription());
-            final PropertyWiseConsumptions pwc = propertyTaxUtil.getPropertyWiseConsumptions(basicProperty.getUpicNo());
-            demandNoticeInfo.setPropertyWiseConsumptions(pwc);
-            demandNoticeInfo.setDemandNoticeDetailsInfo(propertyTaxUtil.getDemandNoticeDetailsInfo(basicProperty, pwc));
             if (basicProperty.getVacancyRemissions().isEmpty()) {
                 demandNoticeInfo.setIsVacancyRemissionDone(false);
             } else {
                 demandNoticeInfo.setIsVacancyRemissionDone(true);
             }
-
+            Map<String, Object> reprortParams = prepareReportParams(basicProperty);
             ReportRequest reportRequest = null;
-            reportRequest = new ReportRequest(REPORT_TEMPLATENAME_DEMANDNOTICE_GENERATION, demandNoticeInfo,
-                    new HashMap<String, Object>());
+            reportRequest = new ReportRequest(REPORT_TEMPLATENAME_BILL_GENERATION, demandNoticeInfo,
+                    reprortParams);
             reportOutput = getReportService().createReport(reportRequest);
             if (reportOutput != null && reportOutput.getReportOutputData() != null)
                 billPDF = new ByteArrayInputStream(reportOutput.getReportOutputData());
@@ -188,6 +193,27 @@ public class BillService {
         if (LOGGER.isDebugEnabled())
             LOGGER.debug("Exiting from generateBill");
         return reportOutput;
+    }
+
+    private Map<String, Object> prepareReportParams(BasicProperty basicProperty) {
+        final Map<String, Object> reportParams = new HashMap<String, Object>();
+        City city = cityService.getCityByCode(cityService.getCityCode());
+        String owner = basicProperty.getProperty().getPropertyDetail().getPropertyTypeMaster().getType();
+        String ownerType = "";
+        if (owner.equalsIgnoreCase("Vacant Land")) {
+            ownerType = "(On Land)";
+        }
+        final String cityName = city.getPreferences().getMunicipalityName();
+        final String districtName = city.getDistrictName();
+        final String date = org.egov.infra.utils.DateUtils.getDefaultFormattedDate(new Date());
+        final CFinancialYear financialYear = financialYearDAO.getFinancialYearByDate(new Date());
+        reportParams.put("cityName", cityName);
+        reportParams.put("cityUrl", cityService.findAll().get(0).getName().toLowerCase());
+        reportParams.put("districtName", districtName);
+        reportParams.put("currDate", date);
+        reportParams.put("financialYear", financialYear.getFinYearRange());
+        reportParams.put("ownerType", ownerType);
+        return reportParams;
     }
 
     /**
@@ -226,6 +252,7 @@ public class BillService {
      * @param modulo
      * @param billsCount
      */
+    @SuppressWarnings("unchecked")
     public void bulkBillGeneration(final Integer modulo, final Integer billsCount) {
         LOGGER.debug("Entered into executeJob" + modulo);
 
@@ -279,6 +306,7 @@ public class BillService {
      * @param billsCount
      * @return
      */
+    @SuppressWarnings({ "unchecked", "unused" })
     private Query getQuery(final Integer modulo, final Integer billsCount) {
 
         StringBuilder queryString = new StringBuilder(200);
@@ -353,6 +381,7 @@ public class BillService {
      * @param currentInstallment
      * @return
      */
+    @SuppressWarnings("unchecked")
     public List<BulkBillGeneration> getBulkBill(Long zoneId, Long wardId, Installment currentInstallment) {
         final StringBuilder queryStr = new StringBuilder();
         queryStr.append("select bbg from BulkBillGeneration bbg ").append(
@@ -375,13 +404,13 @@ public class BillService {
      * @param currentInstallment
      * @return
      */
+    @SuppressWarnings("unchecked")
     public BulkBillGeneration saveBulkBill(Long zoneId, Long wardId, Installment currentInstallment) {
         BulkBillGeneration bulkBill = new BulkBillGeneration();
         bulkBill.setZone(boundaryService.getBoundaryById(zoneId));
         bulkBill.setWard(boundaryService.getBoundaryById(wardId));
         bulkBill.setInstallment(currentInstallment);
-        persistenceService.setType(BulkBillGeneration.class);
-        getPersistenceService().persist(bulkBill);
+        bulkBillGenerationPersistenceService.persist(bulkBill);
         return bulkBill;
     }
 

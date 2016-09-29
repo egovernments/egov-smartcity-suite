@@ -38,8 +38,9 @@
   ~
   ~   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
   -->
-
-<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="bankBookReport" pageWidth="595" pageHeight="842" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="30" bottomMargin="20">
+<!-- Created with Jaspersoft Studio version 6.2.0.final using JasperReports Library version 6.2.0  -->
+<!-- 2016-08-02T14:43:41 -->
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="bankBookReport" pageWidth="595" pageHeight="842" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="30" bottomMargin="20" uuid="e4464ce6-96ab-4897-83e8-12a3a3a15fd6">
 	<property name="net.sf.jasperreports.export.pdf.exclude.origin.keep.first.band.columnHeader" value="columnHeader"/>
 	<property name="net.sf.jasperreports.export.xls.exclude.origin.keep.first.band.columnHeader" value="columnHeader"/>
 	<property name="ireport.scriptlethandling" value="0"/>
@@ -68,7 +69,7 @@
 	<columnHeader>
 		<band height="129" splitType="Stretch">
 			<staticText>
-				<reportElement stretchType="RelativeToTallestObject" x="44" y="84" width="63" height="45"/>
+				<reportElement stretchType="RelativeToTallestObject" x="44" y="84" width="63" height="45" uuid="562934df-1a3b-4fa7-874f-5674222a1543"/>
 				<box topPadding="1" leftPadding="1" bottomPadding="1" rightPadding="1">
 					<pen lineWidth="1.0"/>
 					<topPen lineWidth="1.0"/>
@@ -76,13 +77,13 @@
 					<bottomPen lineWidth="1.0"/>
 					<rightPen lineWidth="1.0"/>
 				</box>
-				<textElement textAlignment="Center">
+				<textElement textAlignment="Center" verticalAlignment="Middle">
 					<font size="10" isBold="true"/>
 				</textElement>
 				<text><![CDATA[Voucher Number]]></text>
 			</staticText>
 			<staticText>
-				<reportElement stretchType="RelativeToTallestObject" x="161" y="84" width="67" height="45"/>
+				<reportElement stretchType="RelativeToTallestObject" x="161" y="84" width="59" height="45" uuid="ca83f4d0-945c-4e46-a8ed-b86a74dea097"/>
 				<box topPadding="1" leftPadding="1" bottomPadding="1" rightPadding="1">
 					<pen lineWidth="1.0"/>
 					<topPen lineWidth="1.0"/>
@@ -90,13 +91,13 @@
 					<bottomPen lineWidth="1.0"/>
 					<rightPen lineWidth="1.0"/>
 				</box>
-				<textElement textAlignment="Center">
+				<textElement textAlignment="Center" verticalAlignment="Middle">
 					<font size="10" isBold="true"/>
 				</textElement>
 				<text><![CDATA[Amount]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="107" y="84" width="54" height="45"/>
+				<reportElement x="107" y="84" width="54" height="45" uuid="e350aa84-9363-4853-8f22-71dfd96f9851"/>
 				<box topPadding="1" leftPadding="1" bottomPadding="1" rightPadding="1">
 					<pen lineWidth="1.0"/>
 					<topPen lineWidth="1.0"/>
@@ -104,13 +105,13 @@
 					<bottomPen lineWidth="1.0"/>
 					<rightPen lineWidth="1.0"/>
 				</box>
-				<textElement textAlignment="Center">
+				<textElement textAlignment="Center" verticalAlignment="Middle">
 					<font size="10" isBold="true"/>
 				</textElement>
 				<text><![CDATA[Particulars]]></text>
 			</staticText>
 			<staticText>
-				<reportElement stretchType="RelativeToTallestObject" x="0" y="84" width="44" height="45"/>
+				<reportElement stretchType="RelativeToTallestObject" x="0" y="84" width="44" height="45" uuid="60f0c26e-452a-4436-a0eb-5776ed4d7ada"/>
 				<box topPadding="1" leftPadding="1" bottomPadding="1" rightPadding="1">
 					<pen lineWidth="1.0"/>
 					<topPen lineWidth="1.0"/>
@@ -118,13 +119,13 @@
 					<bottomPen lineWidth="1.0"/>
 					<rightPen lineWidth="1.0"/>
 				</box>
-				<textElement textAlignment="Center">
+				<textElement textAlignment="Center" verticalAlignment="Middle">
 					<font size="10" isBold="true"/>
 				</textElement>
 				<text><![CDATA[Voucher Date]]></text>
 			</staticText>
 			<frame>
-				<reportElement x="0" y="59" width="283" height="25"/>
+				<reportElement x="0" y="59" width="283" height="25" uuid="1545678b-bc14-4590-baab-d5b3f52e1efb"/>
 				<box topPadding="1" leftPadding="1" bottomPadding="1" rightPadding="1">
 					<pen lineWidth="1.0"/>
 					<topPen lineWidth="1.0"/>
@@ -133,15 +134,15 @@
 					<rightPen lineWidth="1.0"/>
 				</box>
 				<staticText>
-					<reportElement x="132" y="0" width="81" height="20"/>
-					<textElement>
+					<reportElement x="132" y="0" width="81" height="20" uuid="de74962e-96d4-4d9d-b8fb-4166865ceb59"/>
+					<textElement verticalAlignment="Middle">
 						<font isBold="true"/>
 					</textElement>
 					<text><![CDATA[Debit]]></text>
 				</staticText>
 			</frame>
 			<frame>
-				<reportElement x="283" y="59" width="272" height="25"/>
+				<reportElement x="283" y="59" width="272" height="25" uuid="98949ad4-f9fd-49ae-931f-ea4c4c6c5a68"/>
 				<box topPadding="1" leftPadding="1" bottomPadding="1" rightPadding="1">
 					<pen lineWidth="1.0"/>
 					<topPen lineWidth="1.0"/>
@@ -150,15 +151,15 @@
 					<rightPen lineWidth="1.0"/>
 				</box>
 				<staticText>
-					<reportElement x="104" y="0" width="100" height="20"/>
-					<textElement>
+					<reportElement x="104" y="0" width="100" height="20" uuid="28d003fb-ea27-4dad-bc01-4c315ccf24cc"/>
+					<textElement verticalAlignment="Middle">
 						<font isBold="true"/>
 					</textElement>
 					<text><![CDATA[Credit]]></text>
 				</staticText>
 			</frame>
 			<frame>
-				<reportElement x="0" y="0" width="555" height="59"/>
+				<reportElement x="0" y="0" width="555" height="59" uuid="d87e71ff-7c52-4f94-80f9-29948b7de782"/>
 				<box topPadding="1" leftPadding="1" bottomPadding="1" rightPadding="1">
 					<pen lineWidth="1.0"/>
 					<topPen lineWidth="1.0"/>
@@ -167,22 +168,22 @@
 					<rightPen lineWidth="1.0"/>
 				</box>
 				<textField isBlankWhenNull="true">
-					<reportElement x="161" y="0" width="212" height="20"/>
+					<reportElement x="161" y="0" width="212" height="20" uuid="b7fc71c5-983a-4952-ad6f-932ad031a068"/>
 					<textElement textAlignment="Center">
 						<font size="12" isBold="true"/>
 					</textElement>
-					<textFieldExpression class="java.lang.String"><![CDATA[$P{ulbName}]]></textFieldExpression>
+					<textFieldExpression><![CDATA[$P{ulbName}]]></textFieldExpression>
 				</textField>
 				<textField isBlankWhenNull="true">
-					<reportElement x="18" y="20" width="513" height="29"/>
+					<reportElement x="18" y="20" width="513" height="29" uuid="c4a97931-b6e1-4ebc-863f-d4ee04aa7f7a"/>
 					<textElement textAlignment="Center">
 						<font size="11" isBold="true"/>
 					</textElement>
-					<textFieldExpression class="java.lang.String"><![CDATA[$P{heading}]]></textFieldExpression>
+					<textFieldExpression><![CDATA[$P{heading}]]></textFieldExpression>
 				</textField>
 			</frame>
 			<staticText>
-				<reportElement x="228" y="84" width="55" height="45"/>
+				<reportElement x="220" y="84" width="55" height="45" uuid="ef63886e-a877-4e8f-b744-0b8afa69fc2d"/>
 				<box topPadding="1" leftPadding="1" bottomPadding="1" rightPadding="1">
 					<pen lineWidth="1.0"/>
 					<topPen lineWidth="1.0"/>
@@ -190,13 +191,13 @@
 					<bottomPen lineWidth="1.0"/>
 					<rightPen lineWidth="1.0"/>
 				</box>
-				<textElement>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
 					<font isBold="true"/>
 				</textElement>
 				<text><![CDATA[Cheque date]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="283" y="84" width="50" height="45"/>
+				<reportElement x="275" y="84" width="50" height="45" uuid="8fc6d586-7ad0-4ec0-92bc-49d9445e64ae"/>
 				<box topPadding="1" leftPadding="1" bottomPadding="1" rightPadding="1">
 					<pen lineWidth="1.0"/>
 					<topPen lineWidth="1.0"/>
@@ -204,13 +205,13 @@
 					<bottomPen lineWidth="1.0"/>
 					<rightPen lineWidth="1.0"/>
 				</box>
-				<textElement>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
 					<font isBold="true"/>
 				</textElement>
 				<text><![CDATA[Voucher Date]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="333" y="84" width="54" height="45"/>
+				<reportElement x="325" y="84" width="62" height="45" uuid="6adce6e8-2b6a-4ba4-af32-5bc0cf8762f5"/>
 				<box topPadding="1" leftPadding="1" bottomPadding="1" rightPadding="1">
 					<pen lineWidth="1.0"/>
 					<topPen lineWidth="1.0"/>
@@ -218,13 +219,13 @@
 					<bottomPen lineWidth="1.0"/>
 					<rightPen lineWidth="1.0"/>
 				</box>
-				<textElement>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
 					<font isBold="true"/>
 				</textElement>
 				<text><![CDATA[Voucher Number]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="387" y="84" width="53" height="45"/>
+				<reportElement x="387" y="84" width="53" height="45" uuid="693fef27-7c1c-4c0a-99c1-e2ed9940abce"/>
 				<box topPadding="1" leftPadding="1" bottomPadding="1" rightPadding="1">
 					<pen lineWidth="1.0"/>
 					<topPen lineWidth="1.0"/>
@@ -232,13 +233,13 @@
 					<bottomPen lineWidth="1.0"/>
 					<rightPen lineWidth="1.0"/>
 				</box>
-				<textElement>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
 					<font isBold="true"/>
 				</textElement>
 				<text><![CDATA[Particulars]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="440" y="84" width="59" height="45"/>
+				<reportElement x="440" y="84" width="59" height="45" uuid="de280e6f-4740-4b3e-ad14-c2ee7db4d9e2"/>
 				<box topPadding="1" leftPadding="1" bottomPadding="1" rightPadding="1">
 					<pen lineWidth="1.0"/>
 					<topPen lineWidth="1.0"/>
@@ -246,13 +247,13 @@
 					<bottomPen lineWidth="1.0"/>
 					<rightPen lineWidth="1.0"/>
 				</box>
-				<textElement>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
 					<font isBold="true"/>
 				</textElement>
 				<text><![CDATA[Amount]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="499" y="84" width="56" height="45"/>
+				<reportElement x="499" y="84" width="56" height="45" uuid="10c941cb-bf74-4bf0-94b5-681c75cccb2e"/>
 				<box topPadding="1" leftPadding="1" bottomPadding="1" rightPadding="1">
 					<pen lineWidth="1.0"/>
 					<topPen lineWidth="1.0"/>
@@ -260,7 +261,7 @@
 					<bottomPen lineWidth="1.0"/>
 					<rightPen lineWidth="1.0"/>
 				</box>
-				<textElement>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
 					<font isBold="true"/>
 				</textElement>
 				<text><![CDATA[Cheque Date]]></text>
@@ -268,9 +269,9 @@
 		</band>
 	</columnHeader>
 	<detail>
-		<band height="46" splitType="Stretch">
+		<band height="60" splitType="Stretch">
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
-				<reportElement positionType="Float" stretchType="RelativeToTallestObject" x="0" y="0" width="44" height="46" isPrintWhenDetailOverflows="true"/>
+				<reportElement positionType="Float" stretchType="RelativeToTallestObject" x="0" y="0" width="44" height="60" isPrintWhenDetailOverflows="true" uuid="ee43f62a-cc31-4a1d-b627-ffebcfe825af"/>
 				<box topPadding="1" leftPadding="1" bottomPadding="1" rightPadding="1">
 					<pen lineWidth="1.0"/>
 					<topPen lineWidth="1.0"/>
@@ -278,13 +279,13 @@
 					<bottomPen lineWidth="1.0"/>
 					<rightPen lineWidth="1.0"/>
 				</box>
-				<textElement textAlignment="Center">
+				<textElement textAlignment="Center" verticalAlignment="Middle">
 					<font size="8"/>
 				</textElement>
-				<textFieldExpression class="java.lang.String"><![CDATA[$F{receiptVoucherDate}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$F{receiptVoucherDate}]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
-				<reportElement positionType="Float" stretchType="RelativeToTallestObject" x="44" y="0" width="63" height="46" isPrintWhenDetailOverflows="true"/>
+				<reportElement positionType="Float" stretchType="RelativeToTallestObject" x="44" y="0" width="63" height="60" isPrintWhenDetailOverflows="true" uuid="b2342938-9212-4d97-9d96-34f265f37742"/>
 				<box topPadding="1" leftPadding="1" bottomPadding="1" rightPadding="1">
 					<pen lineWidth="1.0"/>
 					<topPen lineWidth="1.0"/>
@@ -292,13 +293,13 @@
 					<bottomPen lineWidth="1.0"/>
 					<rightPen lineWidth="1.0"/>
 				</box>
-				<textElement textAlignment="Center">
+				<textElement textAlignment="Center" verticalAlignment="Middle">
 					<font size="8"/>
 				</textElement>
-				<textFieldExpression class="java.lang.String"><![CDATA[$F{receiptVoucherNumber}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$F{receiptVoucherNumber}]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
-				<reportElement positionType="Float" stretchType="RelativeToTallestObject" x="107" y="0" width="54" height="46" isPrintWhenDetailOverflows="true"/>
+				<reportElement positionType="Float" stretchType="RelativeToTallestObject" x="107" y="0" width="54" height="60" isPrintWhenDetailOverflows="true" uuid="47e41528-709a-4caf-9506-8e444e06a726"/>
 				<box topPadding="1" leftPadding="1" bottomPadding="1" rightPadding="1">
 					<pen lineWidth="1.0"/>
 					<topPen lineWidth="1.0"/>
@@ -306,13 +307,13 @@
 					<bottomPen lineWidth="1.0"/>
 					<rightPen lineWidth="1.0"/>
 				</box>
-				<textElement textAlignment="Center">
+				<textElement textAlignment="Center" verticalAlignment="Middle">
 					<font size="8"/>
 				</textElement>
-				<textFieldExpression class="java.lang.String"><![CDATA[$F{receiptParticulars}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$F{receiptParticulars}]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" pattern="###0.00" isBlankWhenNull="true">
-				<reportElement positionType="Float" stretchType="RelativeToTallestObject" x="161" y="0" width="67" height="46" isPrintWhenDetailOverflows="true"/>
+				<reportElement positionType="Float" stretchType="RelativeToTallestObject" x="161" y="0" width="59" height="60" isPrintWhenDetailOverflows="true" uuid="a68f2b99-1d38-4207-ab03-2108e8259d83"/>
 				<box topPadding="1" leftPadding="1" bottomPadding="1" rightPadding="1">
 					<pen lineWidth="1.0"/>
 					<topPen lineWidth="1.0"/>
@@ -320,13 +321,13 @@
 					<bottomPen lineWidth="1.0"/>
 					<rightPen lineWidth="1.0"/>
 				</box>
-				<textElement textAlignment="Right">
+				<textElement textAlignment="Right" verticalAlignment="Middle">
 					<font size="8"/>
 				</textElement>
-				<textFieldExpression class="java.math.BigDecimal"><![CDATA[$F{receiptAmount}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$F{receiptAmount}]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
-				<reportElement positionType="Float" stretchType="RelativeToTallestObject" x="228" y="0" width="55" height="46" isPrintWhenDetailOverflows="true"/>
+				<reportElement positionType="Float" stretchType="RelativeToTallestObject" x="220" y="0" width="55" height="60" isPrintWhenDetailOverflows="true" uuid="12945aac-0898-4237-97a2-b1e19ae17440"/>
 				<box topPadding="1" leftPadding="1" bottomPadding="1" rightPadding="1">
 					<pen lineWidth="1.0"/>
 					<topPen lineWidth="1.0"/>
@@ -334,13 +335,13 @@
 					<bottomPen lineWidth="1.0"/>
 					<rightPen lineWidth="1.0"/>
 				</box>
-				<textElement>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
 					<font size="8"/>
 				</textElement>
-				<textFieldExpression class="java.lang.String"><![CDATA[$F{receiptChequeDetail}=="MULTIPLE"?$F{chequeNumber}:$F{receiptChequeDetail}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$F{receiptChequeDetail}=="MULTIPLE"?$F{chequeNumber}:$F{receiptChequeDetail}]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
-				<reportElement positionType="Float" stretchType="RelativeToTallestObject" x="283" y="0" width="50" height="46"/>
+				<reportElement positionType="Float" stretchType="RelativeToTallestObject" x="275" y="0" width="50" height="60" uuid="4c1d62e3-e390-4d52-8afb-eb87d3c99335"/>
 				<box topPadding="1" leftPadding="1" bottomPadding="1" rightPadding="1">
 					<pen lineWidth="1.0"/>
 					<topPen lineWidth="1.0"/>
@@ -348,13 +349,13 @@
 					<bottomPen lineWidth="1.0"/>
 					<rightPen lineWidth="1.0"/>
 				</box>
-				<textElement>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
 					<font size="8"/>
 				</textElement>
-				<textFieldExpression class="java.lang.String"><![CDATA[$F{paymentVoucherDate}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$F{paymentVoucherDate}]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
-				<reportElement positionType="Float" stretchType="RelativeToTallestObject" x="333" y="0" width="54" height="46" isPrintWhenDetailOverflows="true"/>
+				<reportElement positionType="Float" stretchType="RelativeToTallestObject" x="325" y="0" width="62" height="60" isPrintWhenDetailOverflows="true" uuid="7512f639-9f58-44fb-8fa9-6cd6db1dd11a"/>
 				<box topPadding="1" leftPadding="1" bottomPadding="1" rightPadding="1">
 					<pen lineWidth="1.0"/>
 					<topPen lineWidth="1.0"/>
@@ -362,13 +363,13 @@
 					<bottomPen lineWidth="1.0"/>
 					<rightPen lineWidth="1.0"/>
 				</box>
-				<textElement>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
 					<font size="8"/>
 				</textElement>
-				<textFieldExpression class="java.lang.String"><![CDATA[$F{paymentVoucherNumber}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$F{paymentVoucherNumber}]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
-				<reportElement positionType="Float" stretchType="RelativeToTallestObject" x="387" y="0" width="53" height="46" isPrintWhenDetailOverflows="true"/>
+				<reportElement positionType="Float" stretchType="RelativeToTallestObject" x="387" y="0" width="53" height="60" isPrintWhenDetailOverflows="true" uuid="1418dfb9-38dc-432d-ba67-b964991db8ab"/>
 				<box topPadding="1" leftPadding="1" bottomPadding="1" rightPadding="1">
 					<pen lineWidth="1.0"/>
 					<topPen lineWidth="1.0"/>
@@ -376,13 +377,13 @@
 					<bottomPen lineWidth="1.0"/>
 					<rightPen lineWidth="1.0"/>
 				</box>
-				<textElement>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
 					<font size="8"/>
 				</textElement>
-				<textFieldExpression class="java.lang.String"><![CDATA[$F{paymentParticulars}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$F{paymentParticulars}]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" pattern="###0.00" isBlankWhenNull="true">
-				<reportElement positionType="Float" stretchType="RelativeToTallestObject" x="440" y="0" width="59" height="46" isPrintWhenDetailOverflows="true"/>
+				<reportElement positionType="Float" stretchType="RelativeToTallestObject" x="440" y="0" width="59" height="60" isPrintWhenDetailOverflows="true" uuid="c2e101bb-7782-4e98-8a81-947455a41349"/>
 				<box topPadding="1" leftPadding="1" bottomPadding="1" rightPadding="1">
 					<pen lineWidth="1.0"/>
 					<topPen lineWidth="1.0"/>
@@ -390,13 +391,13 @@
 					<bottomPen lineWidth="1.0"/>
 					<rightPen lineWidth="1.0"/>
 				</box>
-				<textElement textAlignment="Right">
+				<textElement textAlignment="Right" verticalAlignment="Middle">
 					<font size="8"/>
 				</textElement>
-				<textFieldExpression class="java.math.BigDecimal"><![CDATA[$F{paymentAmount}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$F{paymentAmount}]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" pattern="" isBlankWhenNull="true">
-				<reportElement positionType="Float" stretchType="RelativeToTallestObject" x="499" y="0" width="56" height="46" isPrintWhenDetailOverflows="true"/>
+				<reportElement positionType="Float" stretchType="RelativeToTallestObject" x="499" y="0" width="56" height="60" isPrintWhenDetailOverflows="true" uuid="a4519db8-ed72-45f0-b802-78d208c24be8"/>
 				<box topPadding="1" leftPadding="1" bottomPadding="1" rightPadding="1">
 					<pen lineWidth="1.0"/>
 					<topPen lineWidth="1.0"/>
@@ -404,10 +405,10 @@
 					<bottomPen lineWidth="1.0"/>
 					<rightPen lineWidth="1.0"/>
 				</box>
-				<textElement>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
 					<font size="8"/>
 				</textElement>
-				<textFieldExpression class="java.lang.String"><![CDATA[$F{paymentChequeDetail}=="MULTIPLE"?$F{chequeNumber}:$F{paymentChequeDetail}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$F{paymentChequeDetail}=="MULTIPLE"?$F{chequeNumber}:$F{paymentChequeDetail}]]></textFieldExpression>
 			</textField>
 		</band>
 	</detail>

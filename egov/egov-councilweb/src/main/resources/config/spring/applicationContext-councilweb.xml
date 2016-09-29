@@ -47,9 +47,10 @@
 		http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd">
 
     <import resource="applicationQuartzContext-council.xml"/>
-    <import resource="classpath*:config/spring/applicationContext-council.xml"/>
 	<import resource="applicationSecurityContext-council.xml"/>
-	<context:property-placeholder />
+
+    <context:property-placeholder />
+
     <context:component-scan base-package="org.egov.council.web">
         <context:exclude-filter type="annotation" expression="org.springframework.stereotype.Controller"/>
     </context:component-scan>
@@ -58,4 +59,6 @@
 		<property name="maxUploadSize" value="${max.file.upload.size}"/>
 		<property name="maxInMemorySize" value="${max.file.inmemory.size}"/>
     </bean>
+
+
 </beans>

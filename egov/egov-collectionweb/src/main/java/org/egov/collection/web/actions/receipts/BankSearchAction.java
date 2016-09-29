@@ -55,7 +55,6 @@ import com.opensymphony.xwork2.Action;
 
 @Result(name = Action.SUCCESS, type = "redirect", location = "bankSearch-searchResults")
 @ParentPackage("egov")
-@Transactional(readOnly = true)
 public class BankSearchAction extends BaseFormAction {
     private static final long serialVersionUID = 1L;
     private PersistenceService<Bank, Integer> bankService;

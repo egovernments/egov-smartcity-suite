@@ -51,6 +51,8 @@ public interface CourtMasterRepository extends JpaRepository<CourtMaster, java.l
 
     CourtMaster findByName(String name);
 
-    List<CourtMaster> findByCourtType(CourtTypeMaster courtType);
+    List<CourtMaster> findByActiveTrueAndCourtType(CourtTypeMaster courtType);
+
+    List<CourtMaster> findByActiveTrueOrderByNameAsc();
 
 }

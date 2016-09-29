@@ -42,89 +42,82 @@ package org.egov.infra.workflow.matrix.service;
 
 import org.egov.infra.workflow.entity.WorkflowTypes;
 import org.egov.infra.workflow.matrix.entity.WorkFlowAdditionalRule;
+import org.egov.infra.workflow.matrix.repository.WorkFlowAdditionalRuleRepository;
+import org.egov.infra.workflow.service.WorkflowTypeService;
 import org.egov.infstr.services.PersistenceService;
 import org.hibernate.Criteria;
 import org.hibernate.criterion.Restrictions;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
-public class WorkFlowAdditionalDetailsService extends PersistenceService<WorkFlowAdditionalRule, Long> {
+@Service
+@Transactional(readOnly = true)
+public class WorkFlowAdditionalDetailsService {
 
-	private PersistenceService persistenceService;
-	private static final Logger LOGGER = LoggerFactory.getLogger(WorkFlowAdditionalDetailsService.class);
 
-	public PersistenceService getPersistenceService() {
-		return this.persistenceService;
-	}
+	public static final String OBJECTTYPEID_ID = "objecttypeid.id";
+	public static final String ADDITIONAL_RULE = "additionalRule";
 
-	public void setPersistenceService(final PersistenceService persistenceService) {
-		this.persistenceService = persistenceService;
-	}
+	@Autowired
+	@Qualifier("entityQueryService")
+	private PersistenceService entityQueryService;
 
-	public WorkflowTypes getobjectTypebyId(final Long objectTypeId) {
+	@Autowired
+	private WorkflowTypeService workflowTypeService;
 
-		return (WorkflowTypes) this.persistenceService.find("from org.egov.infstr.models.WorkflowTypes where id=? order by type asc", objectTypeId);
-	}
+	@Autowired
+	private WorkFlowAdditionalRuleRepository workFlowAdditionalRuleRepository;
 
 	public List getAllModuleTypeforStatus() {
-
-		return this.persistenceService.findAllBy(" select distinct(moduletype) from EgwStatus order by moduletype asc");
+		return this.entityQueryService.findAllBy(" select distinct(moduletype) from EgwStatus order by moduletype asc");
 	}
 
 	public List<WorkflowTypes> getobjectTypeList() {
-
-		return this.persistenceService.findAllBy("from org.egov.infstr.models.WorkflowTypes order by type asc");
+		return workflowTypeService.getAllWorkflowTypes();
 	}
 
+	@Transactional
 	public WorkFlowAdditionalRule save(WorkFlowAdditionalRule wfAdditionalRule) {
-		LOGGER.info("save Method is called");
-		if (wfAdditionalRule.getId() == null) {
-			wfAdditionalRule = persist(wfAdditionalRule);
-		} else {
-			wfAdditionalRule = merge(wfAdditionalRule);
-		}
-		LOGGER.info("save Method is Ended");
-		return wfAdditionalRule;
+		return workFlowAdditionalRuleRepository.save(wfAdditionalRule);
 	}
 
 	public List<WorkFlowAdditionalRule> getAdditionalRulesbyObject(final Long objectType) {
-		LOGGER.info("getAdditionalRulesbyObject Method is called");
-		final Criteria crit = getSession().createCriteria(WorkFlowAdditionalRule.class);
-		crit.add(Restrictions.eq("objecttypeid.id", objectType));
-		LOGGER.info("getAdditionalRulesbyObject Method is ended");
-		return crit.list();
+		return entityQueryService.getSession().createCriteria(WorkFlowAdditionalRule.class).
+                add(Restrictions.eq(OBJECTTYPEID_ID, objectType)).list();
 	}
 
 	public WorkFlowAdditionalRule getObjectbyTypeandRule(final Long objectType, final String additionalRules) {
-		LOGGER.info("getObjectbyTypeandRule Method is called");
-		final Criteria crit = getSession().createCriteria(WorkFlowAdditionalRule.class);
-		crit.add(Restrictions.eq("objecttypeid.id", objectType));
-		if (additionalRules == null || additionalRules.equals("-1")) {
-			crit.add(Restrictions.isNull("additionalRule"));
+		final Criteria crit = entityQueryService.getSession().createCriteria(WorkFlowAdditionalRule.class);
+		crit.add(Restrictions.eq(OBJECTTYPEID_ID, objectType));
+		if ("-1".equals(additionalRules)) {
+			crit.add(Restrictions.isNull(ADDITIONAL_RULE));
 		} else {
-			crit.add(Restrictions.eq("additionalRule", additionalRules));
+			crit.add(Restrictions.eq(ADDITIONAL_RULE, additionalRules));
 		}
-		if (crit.list().size() != 0) {
-			return (WorkFlowAdditionalRule) crit.list().get(0);
+		List<WorkFlowAdditionalRule> wfAdditionalRules = crit.list();
+		if (!wfAdditionalRules.isEmpty()) {
+			return wfAdditionalRules.get(0);
 		} else {
 			return null;
 		}
 	}
 
-	public WorkFlowAdditionalRule getObjectbyTypeandRule(final Long ObjectId, final Long objectType, final String additionalRules) {
-		LOGGER.info("getObjectbyTypeandRule Method is called");
-		final Criteria crit = getSession().createCriteria(WorkFlowAdditionalRule.class);
-		crit.add(Restrictions.eq("objecttypeid.id", objectType));
-		crit.add(Restrictions.ne("id", ObjectId));
+	public WorkFlowAdditionalRule getObjectbyTypeandRule(final Long objectId, final Long objectType, final String additionalRules) {
+		final Criteria crit = entityQueryService.getSession().createCriteria(WorkFlowAdditionalRule.class);
+		crit.add(Restrictions.eq(OBJECTTYPEID_ID, objectType));
+		crit.add(Restrictions.ne("id", objectId));
 		if (additionalRules == null) {
-			crit.add(Restrictions.isNull("additionalRule"));
+			crit.add(Restrictions.isNull(ADDITIONAL_RULE));
 		} else {
-			crit.add(Restrictions.eq("additionalRule", additionalRules));
+			crit.add(Restrictions.eq(ADDITIONAL_RULE, additionalRules));
 		}
-		if (crit.list().size() != 0) {
-			return (WorkFlowAdditionalRule) crit.list().get(0);
+		List<WorkFlowAdditionalRule> wfAdditionalRules = crit.list();
+		if (!wfAdditionalRules.isEmpty()) {
+			return wfAdditionalRules.get(0);
 		} else {
 			return null;
 		}

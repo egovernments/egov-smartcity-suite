@@ -43,7 +43,6 @@
 <%@ taglib uri="http://www.springframework.org/tags" prefix="spring" %>
 <%@ taglib uri="http://www.springframework.org/tags/form" prefix="form" %>
 
-<link rel="stylesheet" href="<c:url value='/resources/global/css/bootstrap/typeahead.css'/>">
 <div class="row" id="page-content">
 	<div class="col-md-12">
 				 <c:if test="${not empty message}">

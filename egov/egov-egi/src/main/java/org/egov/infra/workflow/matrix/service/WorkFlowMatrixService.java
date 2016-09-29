@@ -42,10 +42,13 @@ package org.egov.infra.workflow.matrix.service;
 
 import org.egov.commons.EgwStatus;
 import org.egov.infra.admin.master.entity.Department;
+import org.egov.infra.admin.master.service.DepartmentService;
 import org.egov.infra.workflow.entity.WorkflowTypes;
 import org.egov.infra.workflow.matrix.entity.WorkFlowAdditionalRule;
 import org.egov.infra.workflow.matrix.entity.WorkFlowMatrix;
 import org.egov.infra.workflow.matrix.entity.WorkFlowMatrixDetails;
+import org.egov.infra.workflow.matrix.repository.WorkflowMatrixRepository;
+import org.egov.infra.workflow.service.WorkflowTypeService;
 import org.egov.infstr.services.PersistenceService;
 import org.egov.pims.commons.Designation;
 import org.hibernate.Criteria;
@@ -54,22 +57,28 @@ import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
 import org.hibernate.transform.Transformers;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 import java.util.StringTokenizer;
 
-public class WorkFlowMatrixService extends PersistenceService<WorkFlowMatrix, Long> {
+import static org.apache.commons.lang3.StringUtils.isNotBlank;
 
-	private PersistenceService persistenceService;
-	private static final Logger LOGGER = LoggerFactory.getLogger(WorkFlowMatrixService.class);
+@Service
+@Transactional(readOnly = true)
+public class WorkFlowMatrixService  {
+
 	public static final String OBJECTTYPE = "ObjectType";
 	public static final String ADDITIONALRULE = "AdditionalRule";
 	public static final String FROMDATE = "FromDate";
@@ -80,65 +89,68 @@ public class WorkFlowMatrixService extends PersistenceService<WorkFlowMatrix, Lo
 	public static final String MODIFYDATE = "ModifyDate";
 	public static final String DEFAULT = "DEFAULT";
 	public static final String REJECTED = "Rejected";
-	private Boolean isworkFlowCorrect;
+    public static final String TO_DATE = "toDate";
+    public static final String TO_QTY = "toQty";
+    public static final String FROM_QTY = "fromQty";
+    public static final String FROM_DATE = "fromDate";
+    public static final String ADDITIONAL_RULE = "additionalRule";
+    public static final String DEPARTMENT = "department";
+    public static final String OBJECT_TYPE = "objectType";
 
-	public Boolean getIsworkFlowCorrect() {
-		return this.isworkFlowCorrect;
-	}
+    @Autowired
+    private DepartmentService departmentService;
 
-	public void setIsworkFlowCorrect(final Boolean isworkFlowCorrect) {
-		this.isworkFlowCorrect = isworkFlowCorrect;
-	}
+    @Autowired
+    @Qualifier("entityQueryService")
+    private PersistenceService entityQueryService;
+
+    @Autowired
+    private WorkflowTypeService workflowTypeService;
+
+    @Autowired
+    private WorkflowMatrixRepository workflowMatrixRepository;
+
 
 	public List<Department> getdepartmentList() {
-
-		return this.persistenceService.findAllBy("from Department order by deptName asc");
+		return departmentService.getAllDepartments();
 	}
 
 	public List<WorkflowTypes> getobjectTypeList() {
-
-		return this.persistenceService.findAllBy("from org.egov.infstr.models.WorkflowTypes order by type asc");
+		return workflowTypeService.getAllWorkflowTypes();
 	}
 
 	public WorkflowTypes getobjectTypebyId(final Long objectTypeId) {
-
-		return (WorkflowTypes) this.persistenceService.find("from org.egov.infstr.models.WorkflowTypes where id=? order by type asc", objectTypeId);
+		return workflowTypeService.getWorkflowTypeById(objectTypeId);
 	}
 
 	public WorkflowTypes getobjectTypebyName(final String objectTypeName) {
-
-		return (WorkflowTypes) this.persistenceService.find("from org.egov.infstr.models.WorkflowTypes where type=? order by type asc", objectTypeName);
+		return workflowTypeService.getWorkflowTypeByType(objectTypeName);
 	}
 
 	public List getAdditionalRulesforObject(final Long objectTypeid) {
-		final Criteria crit = getSession().createCriteria(WorkFlowAdditionalRule.class);
+		final Criteria crit = entityQueryService.getSession().createCriteria(WorkFlowAdditionalRule.class);
 		crit.add(Restrictions.eq("objecttypeid.id", objectTypeid));
 		return crit.list();
 	}
 
 	public List<Designation> getdesignationList() {
-
-		return this.persistenceService.findAllBy("from Designation order by name asc");
+		return this.entityQueryService.findAllBy("from Designation order by name asc");
 	}
 
 	/**
 	 * This method returns a map consisting the state ,status from egw_status and buttons defined in the additionalrule table for a given objecttype
 	 * @return
 	 */
-	public HashMap<String, List> getDetailsforObject(final Long workFlowObjectId) {
-
-		LOGGER.info("getDetailsforObject Method is called");
-
+	public Map<String, List> getDetailsforObject(final Long workFlowObjectId) {
 		final List<String> stateList = new ArrayList();
 		final List<String> statusList = new ArrayList();
 		final List<String> buttonList = new ArrayList();
 		final List<String> objactionList = new ArrayList();
 		final HashMap detailMap = new HashMap();
 
-		final Criteria stateCrit = getSession().createCriteria(WorkFlowAdditionalRule.class);
+		final Criteria stateCrit = entityQueryService.getSession().createCriteria(WorkFlowAdditionalRule.class);
 		stateCrit.add(Restrictions.eq("objecttypeid.id", workFlowObjectId));
-		List<WorkFlowAdditionalRule> workFlowAdditionalList = new ArrayList();
-		workFlowAdditionalList = stateCrit.list();
+		List<WorkFlowAdditionalRule> workFlowAdditionalList = stateCrit.list();
 		for (final WorkFlowAdditionalRule wfAdditionalrule : workFlowAdditionalList) {
 			if (wfAdditionalrule != null && wfAdditionalrule.getStates() != null && wfAdditionalrule.getStates() != "") {
 				final StringTokenizer strngtkn = new StringTokenizer(wfAdditionalrule.getStates(), ",");
@@ -153,7 +165,7 @@ public class WorkFlowMatrixService extends PersistenceService<WorkFlowMatrix, Lo
 				final StringTokenizer strngtkn = new StringTokenizer(wfAdditionalrule.getStatus(), ",");
 				while (strngtkn.hasMoreTokens()) {
 					final String moduleType = strngtkn.nextToken();
-					final List<EgwStatus> statusLists = this.persistenceService.findAllBy("from EgwStatus where moduletype=? order by code asc", moduleType);
+					final List<EgwStatus> statusLists = this.entityQueryService.findAllBy("from EgwStatus where moduletype=? order by code asc", moduleType);
 					for (final EgwStatus status : statusLists) {
 						if (status != null && status.getCode() != null && (!statusList.contains(status.getCode()))) {
 							statusList.add(status.getCode());
@@ -188,12 +200,12 @@ public class WorkFlowMatrixService extends PersistenceService<WorkFlowMatrix, Lo
 			stateList.add("Inspected");
 			stateList.add("Submitted");
 			stateList.add("ReSubmitted");
-			stateList.add("Rejected");
+			stateList.add(REJECTED);
 		}
 		if (statusList.isEmpty()) {
 			statusList.add("Created");
 			statusList.add("Approved");
-			statusList.add("Rejected");
+			statusList.add(REJECTED);
 			statusList.add("Submitted");
 			statusList.add("Closed");
 		}
@@ -218,7 +230,6 @@ public class WorkFlowMatrixService extends PersistenceService<WorkFlowMatrix, Lo
 		detailMap.put("ButtonsList", buttonList);
 		detailMap.put("ActionsList", objactionList);
 
-		LOGGER.info("getDetailsforObject Method is ended");
 		return detailMap;
 	}
 
@@ -226,9 +237,8 @@ public class WorkFlowMatrixService extends PersistenceService<WorkFlowMatrix, Lo
 	 * This method saves the workflow matrix details for every department selected
 	 * @return
 	 */
+	@Transactional
 	public void save(final List<WorkFlowMatrix> actualWorkFlowMatrixDetails, final String[] departments) {
-
-		LOGGER.info("save Method is called");
 
 		for (final String dept : departments) {
 			for (final WorkFlowMatrix workFlowMatrix : actualWorkFlowMatrixDetails) {
@@ -238,54 +248,50 @@ public class WorkFlowMatrixService extends PersistenceService<WorkFlowMatrix, Lo
 				} else {
 					wfObj.setDepartment(dept);
 				}
-				getSession().save(wfObj);
+                workflowMatrixRepository.save(wfObj);
 			}
 		}
-		getSession().flush();
-		LOGGER.info("save Method is ended");
 	}
 
 	/**
 	 * This method gets the workflowdetails grouped by objecttype,additionalrule,from and todate,from qty and toqty
 	 * @return
 	 */
-	public List<WorkFlowMatrixDetails> getWorkFlowMatrixObjectForView(final HashMap workFlowObjectMap) {
-
-		LOGGER.info("save Method is called");
-		final Criteria workFlowCrit = getSession().createCriteria(WorkFlowMatrix.class);
+	public List<WorkFlowMatrixDetails> getWorkFlowMatrixObjectForView(final Map workFlowObjectMap) {
+		final Criteria workFlowCrit = entityQueryService.getSession().createCriteria(WorkFlowMatrix.class);
 		if (workFlowObjectMap.get(OBJECTTYPE) != null && workFlowObjectMap.get(OBJECTTYPE) != "-1") {
-			workFlowCrit.add(Restrictions.eq("objectType", getobjectTypebyId((Long) workFlowObjectMap.get(OBJECTTYPE)).getType()));
+			workFlowCrit.add(Restrictions.eq(OBJECT_TYPE, getobjectTypebyId((Long) workFlowObjectMap.get(OBJECTTYPE)).getType()));
 		}
 
-		if (workFlowObjectMap.get(DEPARTMENTS) != null && (workFlowObjectMap.get(DEPARTMENTS)) != "-1") {
+		if (!"-1".equals(workFlowObjectMap.get(DEPARTMENTS))) {
 			final String[] department = (String[]) workFlowObjectMap.get(DEPARTMENTS);
-			workFlowCrit.add(Restrictions.eq("department", department[0]));
+			workFlowCrit.add(Restrictions.eq(DEPARTMENT, department[0]));
 		}
-		if (workFlowObjectMap.get(ADDITIONALRULE) != null && !workFlowObjectMap.get(ADDITIONALRULE).equals("-1")) {
-			workFlowCrit.add(Restrictions.eq("additionalRule", workFlowObjectMap.get(ADDITIONALRULE)));
+		if (!"-1".equals(workFlowObjectMap.get(ADDITIONALRULE))) {
+			workFlowCrit.add(Restrictions.eq(ADDITIONAL_RULE, workFlowObjectMap.get(ADDITIONALRULE)));
 		}
 
 		addProjectionsforCriteria(workFlowCrit);
 
-		workFlowCrit.addOrder(Order.asc("fromDate"));
-		workFlowCrit.addOrder(Order.asc("fromQty"));
-		workFlowCrit.addOrder(Order.asc("additionalRule"));
+		workFlowCrit.addOrder(Order.asc(FROM_DATE));
+		workFlowCrit.addOrder(Order.asc(FROM_QTY));
+		workFlowCrit.addOrder(Order.asc(ADDITIONAL_RULE));
 
 		workFlowCrit.setResultTransformer(Transformers.aliasToBean(WorkFlowMatrixDetails.class));
 		final List workFlowList = workFlowCrit.list();
 
-		if (workFlowList.size() != 0) {
+		if (!workFlowList.isEmpty()) {
 			final List<WorkFlowMatrixDetails> actList = checkWithOtherParams(workFlowList, workFlowObjectMap);
 			return prepareWorkFlowResult(actList);
 		} else {
-			return null;
+			return Collections.emptyList();
 		}
 	}
 
 	private void addProjectionsforCriteria(final Criteria workFlowCrit) {
-		workFlowCrit.setProjection(Projections.projectionList().add(Projections.groupProperty("objectType").as("objectTypeAlias")).add(Projections.groupProperty("department").as("departmentAlias"))
-				.add(Projections.groupProperty("additionalRule").as("additionalRuleAlias")).add(Projections.groupProperty("fromQty").as("fromQtyAlias")).add(Projections.groupProperty("toQty").as("toQtyAlias"))
-				.add(Projections.groupProperty("fromDate").as("fromDateAlias")).add(Projections.groupProperty("toDate").as("toDateAlias")));
+		workFlowCrit.setProjection(Projections.projectionList().add(Projections.groupProperty(OBJECT_TYPE).as("objectTypeAlias")).add(Projections.groupProperty(DEPARTMENT).as("departmentAlias"))
+				.add(Projections.groupProperty(ADDITIONAL_RULE).as("additionalRuleAlias")).add(Projections.groupProperty(FROM_QTY).as("fromQtyAlias")).add(Projections.groupProperty(TO_QTY).as("toQtyAlias"))
+				.add(Projections.groupProperty(FROM_DATE).as("fromDateAlias")).add(Projections.groupProperty(TO_DATE).as("toDateAlias")));
 	}
 
 	/**
@@ -293,23 +299,19 @@ public class WorkFlowMatrixService extends PersistenceService<WorkFlowMatrix, Lo
 	 * @return
 	 */
 	private List<WorkFlowMatrixDetails> prepareWorkFlowResult(final List<WorkFlowMatrixDetails> matrixdetList) {
-		LOGGER.info("prepareWorkFlowResult Method is called");
 		for (final WorkFlowMatrixDetails det : matrixdetList) {
 			det.setObjectTypeDisplay(getobjectTypebyName(det.getObjectType()).getDisplayName());
 			final List<WorkFlowMatrix> workFlowdet = getMatrixdetails(det);
 			List<WorkFlowMatrixDetails> detailsList = new LinkedList();
 			detailsList = prepareWorkFlowMatrixDetailsList(sortListbyActions(workFlowdet), detailsList, Boolean.TRUE);
-			// }
 			det.setMatrixdetails(detailsList);
 		}
-		LOGGER.info("prepareWorkFlowResult Method is ended");
 		return matrixdetList;
 	}
 
 	public List prepareWorkFlowMatrixDetailsList(final List<WorkFlowMatrix> workFlowdet, final List<WorkFlowMatrixDetails> detailsList, final Boolean isReject) {
-		for (final WorkFlowMatrix wfMatrixObj : (workFlowdet)) {
+		for (final WorkFlowMatrix wfMatrixObj : workFlowdet) {
 			final WorkFlowMatrixDetails details = new WorkFlowMatrixDetails();
-			// if(!wfMatrixObj.getCurrentState().equalsIgnoreCase("Rejected")){
 			if (isReject) {
 				details.setAction(wfMatrixObj.getNextAction());
 				details.setState(wfMatrixObj.getNextState());
@@ -353,27 +355,22 @@ public class WorkFlowMatrixService extends PersistenceService<WorkFlowMatrix, Lo
 	 * @return
 	 */
 	private List sortListbyActions(final List<WorkFlowMatrix> workFlowdet) {
-		LOGGER.info("sortListbyActions Method is called");
-		setIsworkFlowCorrect(Boolean.TRUE);
-		/*
-		 * for(WorkFlowMatrix wfMatrix:workFlowdet){ System.out.println("Inputids  "+wfMatrix.getId()); }
-		 */
 		final LinkedList unsortedList = new LinkedList(workFlowdet);
 		WorkFlowMatrix rejectedMatrix = null;
-		// int workFlowdetinitialsize=workFlowdet.size()-1;
-		final List<WorkFlowMatrix> workflowSortedList = new LinkedList<WorkFlowMatrix>();
-		final List<WorkFlowMatrix> rejectedRelatedList = new LinkedList<WorkFlowMatrix>();
+		final List<WorkFlowMatrix> workflowSortedList = new LinkedList<>();
+		final List<WorkFlowMatrix> rejectedRelatedList = new LinkedList<>();
 		final Iterator<WorkFlowMatrix> workFlowdetiterator = workFlowdet.iterator();
 		while (workFlowdetiterator.hasNext()) {
 			final WorkFlowMatrix wfMatrix = workFlowdetiterator.next();
-			if (wfMatrix.getPendingActions() == null && wfMatrix.getCurrentState().equalsIgnoreCase("NEW")) {
+			if (wfMatrix.getPendingActions() == null && "NEW".equalsIgnoreCase(wfMatrix.getCurrentState())) {
 				workflowSortedList.add(wfMatrix);
 				workFlowdetiterator.remove();
 			}
 
 		}
 
-		for (; (workflowSortedList.size() > 0 && !workflowSortedList.get(workflowSortedList.size() - 1).getNextAction().equalsIgnoreCase("END"));) {
+		Boolean isworkFlowCorrect = Boolean.TRUE;
+		while (!workflowSortedList.isEmpty() && !"END".equalsIgnoreCase(workflowSortedList.get(workflowSortedList.size() - 1).getNextAction())) {
 			final int size = workFlowdet.size();
 			final String sortedwfMatrixnextAction = workflowSortedList.get(workflowSortedList.size() - 1).getNextAction();
 			final String sortedwfMatrixnextState = workflowSortedList.get(workflowSortedList.size() - 1).getNextState();
@@ -381,35 +378,31 @@ public class WorkFlowMatrixService extends PersistenceService<WorkFlowMatrix, Lo
 			for (final WorkFlowMatrix wfMatrix : workFlowdet) {
 
 				if (sortedwfMatrixnextAction.equalsIgnoreCase(wfMatrix.getPendingActions()) && sortedwfMatrixnextState.equalsIgnoreCase(wfMatrix.getCurrentState())) {
-					// System.out.println("added"+wfMatrix.getId() );
 					workflowSortedList.add(wfMatrix);
-
 				} else {
 					count++;
 					if (count >= size) {
-						setIsworkFlowCorrect(Boolean.FALSE);
+                        isworkFlowCorrect = Boolean.FALSE;
 						break;
 					}
 				}
 			}
 
-			if (this.isworkFlowCorrect) {
+			if (isworkFlowCorrect) {
 				for (int j = 0; j < workFlowdet.size(); j++) {
 					final Long actwfMatrixnextAction = workFlowdet.get(j).getId();
 					for (final WorkFlowMatrix wfMatrix : workflowSortedList) {
 						if (actwfMatrixnextAction.equals(wfMatrix.getId())) {
-							// System.out.println("removed"+wfMatrix.getId() );
 							workFlowdet.remove(j);
 						}
 					}
 				}
-			}
-			if (!this.isworkFlowCorrect) {
+			} else {
 				break;
 			}
 		}
 
-		if (this.isworkFlowCorrect) {
+		if (isworkFlowCorrect) {
 
 			final Iterator<WorkFlowMatrix> rejectworkFlowdetiterator = workFlowdet.iterator();
 			while (rejectworkFlowdetiterator.hasNext()) {
@@ -422,9 +415,7 @@ public class WorkFlowMatrixService extends PersistenceService<WorkFlowMatrix, Lo
 						}
 					}
 					rejectworkFlowdetiterator.remove();
-					/*
-					 * if(rejectedMatrix!=null&&!workflowSortedList.contains(rejectedMatrix)) workflowSortedList.add(rejectedMatrix);
-					 */}
+                }
 			}
 
 			if (rejectedMatrix != null) {
@@ -432,17 +423,10 @@ public class WorkFlowMatrixService extends PersistenceService<WorkFlowMatrix, Lo
 			}
 
 			for (final WorkFlowMatrix wfMatrix : rejectedRelatedList) {
-				// System.out.println("RejectedInputids  "+wfMatrix.getId());
 				if (wfMatrix != null && !workflowSortedList.contains(wfMatrix)) {
 					workflowSortedList.add(wfMatrix);
 				}
 			}
-
-			// sortedList.addAll(rejectedRelatedList);
-			LOGGER.info("sortListbyActions Method is ended");
-			/*
-			 * for(WorkFlowMatrix wfMatrix:workflowSortedList){ System.out.println("sortedInputids  "+wfMatrix.getId()); }
-			 */
 
 			return workflowSortedList;
 		} else {
@@ -455,38 +439,36 @@ public class WorkFlowMatrixService extends PersistenceService<WorkFlowMatrix, Lo
 	 * @return
 	 */
 	private List<WorkFlowMatrix> getMatrixdetails(final WorkFlowMatrixDetails det) {
-		LOGGER.info("getMatrixdetails Method is called");
-		final Criteria workFlowCrit = getSession().createCriteria(WorkFlowMatrix.class);
+		final Criteria workFlowCrit = entityQueryService.getSession().createCriteria(WorkFlowMatrix.class);
 		if (det.getObjectType() != null) {
-			workFlowCrit.add(Restrictions.eq("objectType", det.getObjectType()));
+			workFlowCrit.add(Restrictions.eq(OBJECT_TYPE, det.getObjectType()));
 		}
 		if (det.getAdditionalRule() != null) {
-			workFlowCrit.add(Restrictions.eq("additionalRule", det.getAdditionalRule()));
+			workFlowCrit.add(Restrictions.eq(ADDITIONAL_RULE, det.getAdditionalRule()));
 		} else {
-			workFlowCrit.add(Restrictions.isNull("additionalRule"));
+			workFlowCrit.add(Restrictions.isNull(ADDITIONAL_RULE));
 		}
 		if (det.getDepartment() != null) {
-			workFlowCrit.add(Restrictions.eq("department", det.getDepartment()));
+			workFlowCrit.add(Restrictions.eq(DEPARTMENT, det.getDepartment()));
 		}
 		if (det.getFromDate() != null) {
-			workFlowCrit.add(Restrictions.eq("fromDate", det.getFromDate()));
+			workFlowCrit.add(Restrictions.eq(FROM_DATE, det.getFromDate()));
 		}
 		if (det.getToDate() != null) {
-			workFlowCrit.add(Restrictions.eq("toDate", det.getToDate()));
+			workFlowCrit.add(Restrictions.eq(TO_DATE, det.getToDate()));
 		} else {
-			workFlowCrit.add(Restrictions.isNull("toDate"));
+			workFlowCrit.add(Restrictions.isNull(TO_DATE));
 		}
 		if (det.getFromQty() != null) {
-			workFlowCrit.add(Restrictions.eq("fromQty", det.getFromQty()));
+			workFlowCrit.add(Restrictions.eq(FROM_QTY, det.getFromQty()));
 		} else {
-			workFlowCrit.add(Restrictions.isNull("fromQty"));
+			workFlowCrit.add(Restrictions.isNull(FROM_QTY));
 		}
 		if (det.getToQty() != null) {
-			workFlowCrit.add(Restrictions.eq("toQty", det.getToQty()));
+			workFlowCrit.add(Restrictions.eq(TO_QTY, det.getToQty()));
 		} else {
-			workFlowCrit.add(Restrictions.isNull("toQty"));
+			workFlowCrit.add(Restrictions.isNull(TO_QTY));
 		}
-		LOGGER.info("getMatrixdetails Method is ended");
 		return workFlowCrit.list();
 	}
 
@@ -494,9 +476,7 @@ public class WorkFlowMatrixService extends PersistenceService<WorkFlowMatrix, Lo
 	 * This method takes the workflowmatrix details grouped by objecttype,from and todate,from and to quantity,department and checks if there are any record that matched with the select criteria entered in the searchscreen like from and todate and from and to quantity
 	 * @return
 	 */
-	private List<WorkFlowMatrixDetails> checkWithOtherParams(final List<WorkFlowMatrixDetails> workFlowList, final HashMap workFlowObjectMap) {
-
-		LOGGER.info("checkWithOtherParams Method is called");
+	private List<WorkFlowMatrixDetails> checkWithOtherParams(final List<WorkFlowMatrixDetails> workFlowList, final Map workFlowObjectMap) {
 		final List<WorkFlowMatrixDetails> tempList1 = new ArrayList();
 		Date fromdate = null;
 		Date todate = null;
@@ -517,13 +497,9 @@ public class WorkFlowMatrixService extends PersistenceService<WorkFlowMatrix, Lo
 
 		if (fromdate != null && todate == null) {
 			for (final WorkFlowMatrixDetails matrixdet : workFlowList) {
-				if (matrixdet.getToDate() == null && matrixdet.getFromDate() != null && !fromdate.before(matrixdet.getFromDate())) {
+				if (checkFromDateIsNotBeforeMatrixDate(fromdate, matrixdet)
+                        || (fromdate.before(matrixdet.getFromDate()) || fromdate.equals(matrixdet.getFromDate()))) {
 					tempList1.add(matrixdet);
-					continue;
-				}
-				if (fromdate.before(matrixdet.getFromDate()) || fromdate.equals(matrixdet.getFromDate())) {
-					tempList1.add(matrixdet);
-					continue;
 				}
 			}
 		}
@@ -557,8 +533,8 @@ public class WorkFlowMatrixService extends PersistenceService<WorkFlowMatrix, Lo
 					matrixiterator.remove();
 				} else {
 
-					if ((matrixdet.getToQty() != null && matrixdet.getToQty() != null && (fromqty.doubleValue() >= (matrixdet.getFromQty().doubleValue()) && (toqty.doubleValue() <= (matrixdet.getToQty().doubleValue()))))) {
-						;
+					if (matrixdet.getToQty() != null && (fromqty.doubleValue() >= (matrixdet.getFromQty().doubleValue()) && (toqty.doubleValue() <= (matrixdet.getToQty().doubleValue())))) {
+						//Do nothing ?
 					} else {
 						matrixiterator.remove();
 					}
@@ -586,7 +562,6 @@ public class WorkFlowMatrixService extends PersistenceService<WorkFlowMatrix, Lo
 				}
 			}
 		}
-		LOGGER.info("checkWithOtherParams Method is ended");
 		if (fromqty == null && toqty == null && fromdate == null && todate == null) {
 			return workFlowList;
 		} else {
@@ -595,84 +570,75 @@ public class WorkFlowMatrixService extends PersistenceService<WorkFlowMatrix, Lo
 
 	}
 
-	/**
+    private boolean checkFromDateIsNotBeforeMatrixDate(final Date fromdate, final WorkFlowMatrixDetails matrixdet) {
+        return matrixdet.getToDate() == null && matrixdet.getFromDate() != null && !fromdate.before(matrixdet.getFromDate());
+    }
+
+    /**
 	 * This method checks if there are any workflow matrix details for the parameters from,todate,from and to quantity,objecttype,department
 	 * @return
 	 */
-	public List checkIfMatrixExists(final HashMap workflowheaderparams) {
-		LOGGER.info("checkIfMatrixExists Method is called");
+	public List checkIfMatrixExists(final Map workflowheaderparams) {
 
-		final StringBuffer dateQryStr = new StringBuffer();
-		final StringBuffer qntyQryStr = new StringBuffer();
+		final StringBuilder dateQryStr = new StringBuilder();
+		final StringBuilder qntyQryStr = new StringBuilder();
 		prepareQuery(workflowheaderparams, dateQryStr);
 		prepareQuery(workflowheaderparams, qntyQryStr);
 
 		dateQryStr.append(" having  fromDate <= :fromdate  and toDate is null ");
 		dateQryStr.append(" or fromDate <= :fromdate  and toDate>= :fromdate   ");
-		if (workflowheaderparams.get(TODATE) != null && !workflowheaderparams.get(TODATE).equals("")) {
+		if (isNotBlank((String)workflowheaderparams.get(TODATE))) {
 			dateQryStr.append(" or fromDate <= :todate  and toDate>= :todate   ");
 		}
 
-		final Query datequery = getSession().createQuery(new String(dateQryStr));
+		final Query datequery = entityQueryService.getSession().createQuery(new String(dateQryStr));
 		addParameter(workflowheaderparams, datequery);
 		datequery.setParameter("fromdate", workflowheaderparams.get(FROMDATE));
-		if (workflowheaderparams.get(TODATE) != null && !workflowheaderparams.get(TODATE).equals("")) {
+		if (isNotBlank((String)workflowheaderparams.get(TODATE))) {
 			datequery.setParameter("todate", workflowheaderparams.get(TODATE));
 		}
-		final List dateList = datequery.list();
-
-		if (workflowheaderparams.get(FROMAMOUNT) != null && !workflowheaderparams.get(FROMAMOUNT).equals("")) {
+		if (isNotBlank((String)workflowheaderparams.get(FROMAMOUNT))) {
 			qntyQryStr.append(" having  fromQty <= :fromamount  and toQty is null ");
 			qntyQryStr.append(" or fromQty <= :fromamount  and toQty>= :fromamount   ");
 		}
 
-		if (workflowheaderparams.get(TOAMOUNT) != null && !workflowheaderparams.get(TOAMOUNT).equals("")) {
+		if (isNotBlank((String)workflowheaderparams.get(TOAMOUNT))) {
 			qntyQryStr.append(" or fromQty <= :toamount  and toQty>= :toamount   ");
 
 		}
 
-		final Query qntyquery = getSession().createQuery(new String(qntyQryStr));
+		final Query qntyquery = entityQueryService.getSession().createQuery(new String(qntyQryStr));
 		addParameter(workflowheaderparams, qntyquery);
-		if (workflowheaderparams.get(FROMAMOUNT) != null && !workflowheaderparams.get(FROMAMOUNT).equals("")) {
+		if (isNotBlank((String)workflowheaderparams.get(FROMAMOUNT))) {
 			qntyquery.setParameter("fromamount", workflowheaderparams.get(FROMAMOUNT));
 		}
-		if (workflowheaderparams.get(TOAMOUNT) != null && !workflowheaderparams.get(TOAMOUNT).equals("")) {
+		if (isNotBlank((String)workflowheaderparams.get(TOAMOUNT))) {
 			qntyquery.setParameter("toamount", workflowheaderparams.get(TOAMOUNT));
 		}
 
-		final List qntyList = qntyquery.list();
-		dateList.retainAll(qntyList);
-		LOGGER.info("checkIfMatrixExists Method is ended");
-		if (dateList.size() > 0) {
-			return dateList;
-		} else {
-			return null;
-		}
-
+		return qntyquery.list();
 	}
 
 	/**
 	 * This method is used to prepare query that is used in checkIfMatrixExists method
 	 * @return
 	 */
-	private void prepareQuery(final HashMap workflowheaderparams, final StringBuffer QryStr) {
-		LOGGER.info("prepareQuery Method is called");
-		QryStr.append("select id from  WorkFlowMatrix  where objectType = :objecttype and department IN (:departments) ");
+	private void prepareQuery(final Map workflowheaderparams, final StringBuilder qryStr) {
+		qryStr.append("select id from  WorkFlowMatrix  where objectType = :objecttype and department IN (:departments) ");
 
-		if (workflowheaderparams.get(ADDITIONALRULE) != null && !workflowheaderparams.get(ADDITIONALRULE).equals("-1")) {
-			QryStr.append("and additionalRule = :additionalrule");
+		if (!"-1".equals(workflowheaderparams.get(ADDITIONALRULE))) {
+			qryStr.append("and additionalRule = :additionalrule");
 		}
-		QryStr.append(" group by id,objectType,department,fromDate,toDate,fromQty,toQty ");
+		qryStr.append(" group by id,objectType,department,fromDate,toDate,fromQty,toQty ");
 
-		if (workflowheaderparams.get(ADDITIONALRULE) != null && !workflowheaderparams.get(ADDITIONALRULE).equals("-1")) {
-			QryStr.append(",additionalRule ");
+		if (!"-1".equals(workflowheaderparams.get(ADDITIONALRULE))) {
+			qryStr.append(",additionalRule ");
 		}
-		LOGGER.info("prepareQuery Method is ended");
 	}
 
-	private void addParameter(final HashMap workflowheaderparams, final Query datequery) {
-		datequery.setParameter("objecttype", getobjectTypebyId(((Long) workflowheaderparams.get(OBJECTTYPE))).getType());
-		if (workflowheaderparams.get(ADDITIONALRULE) != null && !workflowheaderparams.get(ADDITIONALRULE).equals("-1")) {
+	private void addParameter(final Map workflowheaderparams, final Query datequery) {
+		datequery.setParameter(OBJECT_TYPE, getobjectTypebyId((Long) workflowheaderparams.get(OBJECTTYPE)).getType());
+		if (!"-1".equals(workflowheaderparams.get(ADDITIONALRULE))) {
 			datequery.setParameter("additionalrule", workflowheaderparams.get(ADDITIONALRULE));
 		}
 		datequery.setParameterList("departments", (String[]) workflowheaderparams.get(DEPARTMENTS));
@@ -681,20 +647,20 @@ public class WorkFlowMatrixService extends PersistenceService<WorkFlowMatrix, Lo
 	/**
 	 * This method is used to delete the workflow matrix details
 	 */
-	public void deleteWorkFlowforObject(final HashMap workflowsearchparams) {
+	@Transactional
+	public void deleteWorkFlowforObject(final Map workflowsearchparams) {
 
 		final Criteria workFlowCrit = getCriteriaForDeleteorModify(workflowsearchparams);
 		for (final WorkFlowMatrix matrix : (List<WorkFlowMatrix>) workFlowCrit.list()) {
-			getSession().delete(matrix);
+			workflowMatrixRepository.delete(matrix);
 		}
-		getSession().flush();
 
 	}
 
 	/**
 	 * This method is used to get the workflow matrix details
 	 */
-	public List getWorkFlowforObjectforModify(final HashMap workflowsearchparams) {
+	public List getWorkFlowforObjectforModify(final Map workflowsearchparams) {
 
 		final Criteria workFlowCrit = getCriteriaForDeleteorModify(workflowsearchparams);
 		final List<WorkFlowMatrix> matrixList = workFlowCrit.list();
@@ -705,32 +671,30 @@ public class WorkFlowMatrixService extends PersistenceService<WorkFlowMatrix, Lo
 	/**
 	 * This method is used to get the criteria that can be used for modifying or deleting the workflow matrix details based on the search parameters
 	 */
-	private Criteria getCriteriaForDeleteorModify(final HashMap workflowsearchparams) {
-		LOGGER.info("getCriteriaForDeleteorModify Method is called");
-		final Criteria workFlowCrit = getSession().createCriteria(WorkFlowMatrix.class);
-		if (workflowsearchparams.get(OBJECTTYPE) != null && !workflowsearchparams.get(OBJECTTYPE).equals("")) {
-			workFlowCrit.add(Restrictions.eq("objectType", workflowsearchparams.get(OBJECTTYPE)));
+	private Criteria getCriteriaForDeleteorModify(final Map workflowsearchparams) {
+		final Criteria workFlowCrit = entityQueryService.getSession().createCriteria(WorkFlowMatrix.class);
+		if (isNotBlank((String)workflowsearchparams.get(OBJECTTYPE))) {
+			workFlowCrit.add(Restrictions.eq(OBJECT_TYPE, workflowsearchparams.get(OBJECTTYPE)));
 		}
-		if (workflowsearchparams.get(ADDITIONALRULE) != null && !workflowsearchparams.get(ADDITIONALRULE).equals("") && !workflowsearchparams.get(ADDITIONALRULE).equals("-1")) {
-			workFlowCrit.add(Restrictions.eq("additionalRule", workflowsearchparams.get(ADDITIONALRULE)));
+		if (isNotBlank((String)workflowsearchparams.get(ADDITIONALRULE)) && !"-1".equals(workflowsearchparams.get(ADDITIONALRULE))) {
+			workFlowCrit.add(Restrictions.eq(ADDITIONAL_RULE, workflowsearchparams.get(ADDITIONALRULE)));
 		}
-		if (workflowsearchparams.get(DEPARTMENTS) != null && !workflowsearchparams.get(DEPARTMENTS).equals("")) {
+		if (isNotBlank((String)workflowsearchparams.get(DEPARTMENTS))) {
 			final String[] department = (String[]) workflowsearchparams.get(DEPARTMENTS);
-			workFlowCrit.add(Restrictions.eq("department", department[0]));
+			workFlowCrit.add(Restrictions.eq(DEPARTMENT, department[0]));
 		}
-		if (workflowsearchparams.get(FROMDATE) != null && !workflowsearchparams.get(FROMDATE).equals("")) {
-			workFlowCrit.add(Restrictions.eq("fromDate", workflowsearchparams.get(FROMDATE)));
+		if (isNotBlank((String)workflowsearchparams.get(FROMDATE))) {
+			workFlowCrit.add(Restrictions.eq(FROM_DATE, workflowsearchparams.get(FROMDATE)));
 		}
-		if (workflowsearchparams.get(TODATE) != null && !workflowsearchparams.get(TODATE).equals("")) {
-			workFlowCrit.add(Restrictions.eq("toDate", workflowsearchparams.get(TODATE)));
+		if (isNotBlank((String)workflowsearchparams.get(TODATE))) {
+			workFlowCrit.add(Restrictions.eq(TO_DATE, workflowsearchparams.get(TODATE)));
 		}
-		if (workflowsearchparams.get(FROMAMOUNT) != null && !workflowsearchparams.get(FROMAMOUNT).equals("")) {
-			workFlowCrit.add(Restrictions.eq("fromQty", workflowsearchparams.get(FROMAMOUNT)));
+		if (isNotBlank((String)workflowsearchparams.get(FROMAMOUNT))) {
+			workFlowCrit.add(Restrictions.eq(FROM_QTY, workflowsearchparams.get(FROMAMOUNT)));
 		}
-		if (workflowsearchparams.get(TOAMOUNT) != null && !workflowsearchparams.get(TOAMOUNT).equals("")) {
-			workFlowCrit.add(Restrictions.eq("toQty", workflowsearchparams.get(TOAMOUNT)));
+		if (isNotBlank((String)workflowsearchparams.get(TOAMOUNT))) {
+			workFlowCrit.add(Restrictions.eq(TO_QTY, workflowsearchparams.get(TOAMOUNT)));
 		}
-		LOGGER.info("getCriteriaForDeleteorModify Method is ended");
 		return workFlowCrit;
 	}
 
@@ -738,9 +702,8 @@ public class WorkFlowMatrixService extends PersistenceService<WorkFlowMatrix, Lo
 	 * This method is used to update the existing workflow matrix details for which modification has been done,only the todate is set
 	 * @return
 	 */
-	public Boolean updateWorkFlowforObject(final HashMap workflowparams) {
-
-		LOGGER.info("updateWorkFlowforObject Method is called");
+	@Transactional
+	public Boolean updateWorkFlowforObject(final Map workflowparams) {
 		final Criteria workFlowCrit = getCriteriaForDeleteorModify(workflowparams);
 		for (final WorkFlowMatrix matrix : (List<WorkFlowMatrix>) workFlowCrit.list()) {
 
@@ -749,11 +712,8 @@ public class WorkFlowMatrixService extends PersistenceService<WorkFlowMatrix, Lo
 			if (matrix.getFromDate().equals(matrix.getToDate())) {
 				return false;
 			}
-			getSession().update(matrix);
+			workflowMatrixRepository.save(matrix);
 		}
-
-		getSession().flush();
-		LOGGER.info("updateWorkFlowforObject Method is ended");
 		return true;
 	}
 
@@ -761,36 +721,32 @@ public class WorkFlowMatrixService extends PersistenceService<WorkFlowMatrix, Lo
 	 * This method is used to check if any matrix exists for the ones which are being created for the dates lesser than the current date
 	 * @return
 	 */
-	public Date checkLegacyMatrix(final HashMap workflowheaderparams) {
-
-		LOGGER.info("checkLegacyMatrix Method is called");
-		final Criteria workFlowCrit = getSession().createCriteria(WorkFlowMatrix.class);
-		if (workflowheaderparams.get(OBJECTTYPE) != null && workflowheaderparams.get(OBJECTTYPE) != "") {
-			workFlowCrit.add(Restrictions.eq("objectType", getobjectTypebyId((Long) workflowheaderparams.get(OBJECTTYPE)).getType()));
+	public Date checkLegacyMatrix(final Map workflowheaderparams) {
+		final Criteria workFlowCrit = entityQueryService.getSession().createCriteria(WorkFlowMatrix.class);
+		if (isNotBlank((String)workflowheaderparams.get(OBJECTTYPE))) {
+			workFlowCrit.add(Restrictions.eq(OBJECT_TYPE, getobjectTypebyId((Long) workflowheaderparams.get(OBJECTTYPE)).getType()));
 		}
-		if (workflowheaderparams.get(ADDITIONALRULE) != null && !workflowheaderparams.get(ADDITIONALRULE).equals("-1")) {
-			workFlowCrit.add(Restrictions.eq("additionalRule", workflowheaderparams.get(ADDITIONALRULE)));
+		if (!"-1".equals(workflowheaderparams.get(ADDITIONALRULE))) {
+			workFlowCrit.add(Restrictions.eq(ADDITIONAL_RULE, workflowheaderparams.get(ADDITIONALRULE)));
 		}
-		if (workflowheaderparams.get(DEPARTMENTS) != null && workflowheaderparams.get(DEPARTMENTS) != "") {
+		if (!"-1".equals(workflowheaderparams.get(DEPARTMENTS))) {
 			final String[] department = (String[]) workflowheaderparams.get(DEPARTMENTS);
-			workFlowCrit.add(Restrictions.eq("department", department[0]));
+			workFlowCrit.add(Restrictions.eq(DEPARTMENT, department[0]));
 		}
-		if (workflowheaderparams.get(FROMDATE) != null && workflowheaderparams.get(FROMDATE) != "") {
-			workFlowCrit.add(Restrictions.ge("fromDate", workflowheaderparams.get(FROMDATE)));
+		if (isNotBlank((String)workflowheaderparams.get(FROMDATE))) {
+			workFlowCrit.add(Restrictions.ge(FROM_DATE, workflowheaderparams.get(FROMDATE)));
 		}
-		if (workflowheaderparams.get(FROMAMOUNT) != null && workflowheaderparams.get(FROMAMOUNT) != "") {
-			workFlowCrit.add(Restrictions.eq("fromQty", workflowheaderparams.get(FROMAMOUNT)));
+		if (isNotBlank((String)workflowheaderparams.get(FROMAMOUNT))) {
+			workFlowCrit.add(Restrictions.eq(FROM_QTY, workflowheaderparams.get(FROMAMOUNT)));
 		}
-		if (workflowheaderparams.get(TOAMOUNT) != null && workflowheaderparams.get(TOAMOUNT) != "") {
-			workFlowCrit.add(Restrictions.eq("toQty", workflowheaderparams.get(TOAMOUNT)));
+		if (isNotBlank((String)workflowheaderparams.get(TOAMOUNT))) {
+			workFlowCrit.add(Restrictions.eq(TO_QTY, workflowheaderparams.get(TOAMOUNT)));
 		}
 		addProjectionsforCriteria(workFlowCrit);
-		workFlowCrit.addOrder(Order.asc("toDate"));
+		workFlowCrit.addOrder(Order.asc(TO_DATE));
 		workFlowCrit.setResultTransformer(Transformers.aliasToBean(WorkFlowMatrixDetails.class));
 		final List<WorkFlowMatrixDetails> matrixList = workFlowCrit.list();
-		LOGGER.info("checkLegacyMatrix Method is ended");
-		if (matrixList.size() > 0) {
-
+		if (!matrixList.isEmpty()) {
 			return matrixList.get(0).getFromDateAlias();
 		} else {
 			return null;
@@ -799,17 +755,7 @@ public class WorkFlowMatrixService extends PersistenceService<WorkFlowMatrix, Lo
 	}
 
 	public WorkFlowMatrix getWorkFlowObjectbyId(final Long matrixid) {
-
-		return (WorkFlowMatrix) getSession().get(WorkFlowMatrix.class, matrixid);
-
-	}
-
-	public PersistenceService getPersistenceService() {
-		return this.persistenceService;
-	}
-
-	public void setPersistenceService(final PersistenceService persistenceService) {
-		this.persistenceService = persistenceService;
+		return workflowMatrixRepository.findOne(matrixid);
 	}
 
 }

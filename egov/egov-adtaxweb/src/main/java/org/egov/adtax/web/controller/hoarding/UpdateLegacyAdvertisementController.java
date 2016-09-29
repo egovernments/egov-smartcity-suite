@@ -46,7 +46,8 @@ import org.egov.adtax.exception.HoardingValidationError;
 import org.egov.adtax.web.controller.common.HoardingControllerSupport;
 import org.egov.demand.model.EgDemandDetails;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.support.ResourceBundleMessageSource;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.context.MessageSource;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -67,7 +68,8 @@ import static org.springframework.web.bind.annotation.RequestMethod.POST;
 public class UpdateLegacyAdvertisementController extends HoardingControllerSupport {
 
 	@Autowired
-	private ResourceBundleMessageSource messageSource;
+    @Qualifier("messageSource")
+	private MessageSource messageSource;
 	
     @ModelAttribute("advertisementPermitDetail")
     public AdvertisementPermitDetail advertisementPermitDetail(@PathVariable final String id) {
@@ -89,7 +91,7 @@ public class UpdateLegacyAdvertisementController extends HoardingControllerSuppo
         }
     }*/
     
-    @RequestMapping(value = "/updateLegacy/{id}", method = GET)
+    @RequestMapping(value = "/legacyUpdation/{id}", method = GET)
     public String updateHoarding(@PathVariable final String id, final Model model) {
         final AdvertisementPermitDetail advertisementPermitDetail = advertisementPermitDetailService.findBy(Long.valueOf(id));
         final Advertisement advertisement = advertisementPermitDetail.getAdvertisement();
@@ -126,7 +128,7 @@ public class UpdateLegacyAdvertisementController extends HoardingControllerSuppo
         return "hoarding-updateLegacy";
     }
 
-    @RequestMapping(value = "/updateLegacy/{id}", method = POST)
+    @RequestMapping(value = "/legacyUpdation/{id}", method = POST)
     public String updateHoarding(@Valid @ModelAttribute final AdvertisementPermitDetail advertisementPermitDetail,
             final BindingResult resultBinder, final RedirectAttributes redirAttrib, final HttpServletRequest request,
             final Model model) {

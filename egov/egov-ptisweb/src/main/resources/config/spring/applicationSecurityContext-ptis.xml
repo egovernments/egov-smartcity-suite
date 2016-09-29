@@ -58,6 +58,7 @@
 				<security:filter-chain pattern="/resources/**" filters="none" />
 				<security:filter-chain pattern="/citizen/register" filters="anonymousAuthenticationFilter"/>
 				<security:filter-chain pattern="/citizen/activation/**" filters="anonymousAuthenticationFilter"/>
+				<security:filter-chain pattern="/reportviewer**" filters="anonymousAuthenticationFilter" />
 				<security:filter-chain pattern="/dashboard/**" filters="anonymousAuthenticationFilter"/>
 				<security:filter-chain pattern="/error/**" filters="none" />
 				<security:filter-chain pattern="/index.jsp" filters="none" />
@@ -69,6 +70,7 @@
 				<security:filter-chain pattern="/view/viewDCBProperty-displayHeadwiseDcb.action" filters="none" />
 				<security:filter-chain pattern="/view/viewDCBProperty-showMigData.action" filters="none" />
 				<security:filter-chain pattern="/citizen/collection/**" filters="none" />
+				<security:filter-chain pattern="/citizen/create/**" filters="none" />
 				<security:filter-chain pattern="/reports/billcollectorDailyCollectionReport-form" filters="none" />  
 				<security:filter-chain pattern="/reports/billcollectorDailyCollectionReportList" filters="none" />  
 				<security:filter-chain pattern="/reports/getRegionHeirarchyByType" filters="none" />
@@ -84,8 +86,8 @@
 				<security:filter-chain pattern="/report/dailyCollection" filters="none" />
 				<security:filter-chain pattern="/report/dailyCollection/result" filters="none" />
 				<security:filter-chain pattern="/report/currentInstDCB" filters="none" />
-				<security:filter-chain pattern="/report/currentInstDCB/result" filters="none" />  
-					<security:filter-chain pattern="/reports/ulbWiseDCBList" filters="none" />  
+				<security:filter-chain pattern="/report/currentInstDCB/result" filters="none" /> 
+				<security:filter-chain pattern="/reports/ulbWiseDCBList" filters="none" />  
 				
 				<security:filter-chain pattern="/public/**" filters="none"/>
 				<security:filter-chain pattern="/reports/ulbWiseCollectionList" filters="none" />  

@@ -43,6 +43,7 @@
 <%@ taglib uri="http://www.springframework.org/tags" prefix="spring" %>
 <%@ taglib uri="http://www.springframework.org/tags/form" prefix="form" %>
 <%@ taglib prefix="egov" tagdir="/WEB-INF/tags" %>
+<%@ taglib uri="/WEB-INF/taglib/cdn.tld" prefix="cdn" %>
 <div class="row" id="page-content">
 	<div class="col-md-12">
 				 <c:if test="${not empty message}">
@@ -92,4 +93,4 @@
 			</div>
 </div>
 
-<script src="<c:url value='/resources/js/app/userrole.js?rnd=${app_release_no}'/>"></script>
+<script src="<cdn:url  value='/resources/js/app/userrole.js?rnd=${app_release_no}'/>"></script>

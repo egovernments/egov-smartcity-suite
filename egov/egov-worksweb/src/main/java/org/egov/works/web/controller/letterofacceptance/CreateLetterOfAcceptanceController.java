@@ -93,7 +93,8 @@ public class CreateLetterOfAcceptanceController {
         final String estimateNumber = request.getParameter("estimateNumber");
         final LineEstimateDetails lineEstimateDetails = lineEstimateService.findByEstimateNumber(estimateNumber);
         setDropDownValues(model, lineEstimateDetails);
-        workOrder.setWorkOrderDate(new Date());
+        if(!(lineEstimateDetails.getLineEstimate().isSpillOverFlag() && lineEstimateDetails.getLineEstimate().isWorkOrderCreated()))
+        	workOrder.setWorkOrderDate(new Date());
         model.addAttribute("lineEstimateDetails", lineEstimateDetails);
         model.addAttribute("workOrder", workOrder);
         model.addAttribute("loggedInUser", securityUtils.getCurrentUser().getName());
@@ -104,7 +105,7 @@ public class CreateLetterOfAcceptanceController {
         model.addAttribute("engineerInchargeList",
                 letterOfAcceptanceService.getEngineerInchargeList(
                         lineEstimateDetails.getLineEstimate().getExecutingDepartment().getId(),
-                        letterOfAcceptanceService.getEngineerInchargeDesignationId()));
+                        letterOfAcceptanceService.getEngineerInchargeDesignationIds()));
     }
 
     @RequestMapping(value = "/loa-save", method = RequestMethod.POST)

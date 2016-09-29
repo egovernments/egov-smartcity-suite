@@ -1,0 +1,1 @@
+update eg_module set enabled=false where id in (select id from eg_module  where contextroot='adtax' and name in ('Advertisement Tax RateClass','Advertisement Tax Category','Advertisement Tax Subcategory','Advertisement Tax UnitOfMeasure'));

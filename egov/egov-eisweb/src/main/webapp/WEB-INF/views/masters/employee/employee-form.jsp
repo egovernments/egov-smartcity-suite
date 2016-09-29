@@ -44,15 +44,17 @@
 <%@ taglib uri="http://www.springframework.org/tags/form" prefix="form"%>
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
 <%@ include file="/includes/taglibs.jsp" %>
-<script src="<c:url value='/resources/js/app/employeecreate.js'/>"></script>
+<%@ taglib uri="/WEB-INF/taglib/cdn.tld" prefix="cdn" %>
+<script src="<cdn:url value='/resources/js/app/employeecreate.js'/>"></script>
 
-<link rel="stylesheet" href="<c:url value='/resources/global/css/bootstrap/typeahead.css' context='/egi'/>">
-<link rel="stylesheet" href="<c:url value='/resources/global/css/bootstrap/bootstrap-datepicker.css' context='/egi'/>"/>
 
-<script src="<c:url value='/resources/global/js/bootstrap/bootstrap-datepicker.js' context='/egi'/>"></script>
-<script src="<c:url value='/resources/global/js/bootstrap/typeahead.bundle.js' context='/egi'/>"></script>
+<link rel="stylesheet" href="<cdn:url value='/resources/global/css/bootstrap/typeahead.css' context='/egi'/>">
+<link rel="stylesheet" href="<cdn:url value='/resources/global/css/bootstrap/bootstrap-datepicker.css' context='/egi'/>"/>
 
-<script src="<c:url value='/resources/js/app/ajaxCommonFunctions.js'/>"></script>
+<script src="<cdn:url value='/resources/global/js/bootstrap/bootstrap-datepicker.js' context='/egi'/>"></script>
+<script src="<cdn:url value='/resources/global/js/bootstrap/typeahead.bundle.js' context='/egi'/>"></script>
+
+<script src="<cdn:url value='/resources/js/app/ajaxCommonFunctions.js'/>"></script>
 
 		
 		
@@ -92,6 +94,7 @@
 								<form:hidden path="locale" value="en_IN"/>
 								<input type="hidden" value="" id="removedJurisdictionIds" name ="removedJurisdictionIds"/>
 								<input type="hidden" value="" id="removedassignIds" name ="removedassignIds"/>
+								<input type="hidden" value="" id="editassignIds" name ="editassignIds"/>
 								<input type="hidden" value="${mode}" id="mode"/>
 									<div class="form-group">
 										<label for="field-1" class="col-sm-3 control-label"><spring:message code="lbl.name"/><span class="mandatory"></span></label>
@@ -147,6 +150,7 @@
 										
 										<div class="col-sm-3">
 											<form:input type="text" cssClass="form-control" id="emial" path="emailId" placeholder="abc@xyz.com" />
+											<form:errors path="emailId" cssClass="error-msg"/>
 										</div>
 										
 									</div>
@@ -480,6 +484,9 @@
 										</thead>
 											<tbody>
 											<div class="error-msg assignmentserror all-errors display-hide" align="center"></div>
+											   <c:if test="${not empty error}"> 
+                                                 <div class="alert alert-danger" role="alert"><strong>${error}</strong></div>
+                                             </c:if> 
 											<c:forEach var="assign" items="${employee.assignments}" varStatus="status">
 												<tr>
 													<td>
@@ -675,4 +682,4 @@
              </form:form>
     </div>
 </div>
-<script src="<c:url value='/resources/js/app/fileuploadndmaps.js'/>"></script>
+<script src="<cdn:url value='/resources/js/app/fileuploadndmaps.js'/>"></script>

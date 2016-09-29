@@ -60,8 +60,12 @@ import java.util.List;
 public class FinancingSourceService extends PersistenceService<Fundsource, Integer> {
     private static final Logger LOGGER = Logger.getLogger(FinancingSourceService.class);
 
-    public FinancingSourceService(final Class<Fundsource> fundsource) {
-        this.type = fundsource;
+    public FinancingSourceService() {
+        super(Fundsource.class);
+    }
+
+    public FinancingSourceService(final Class<Fundsource> type) {
+        super(type);
     }
 
     /**

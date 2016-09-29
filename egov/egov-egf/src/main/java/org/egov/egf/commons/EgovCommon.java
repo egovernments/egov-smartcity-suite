@@ -233,7 +233,7 @@ public class EgovCommon {
             opeAvailable1 = BigDecimal.valueOf((Double) tsummarylist.get(0));
 
             final List<AppConfigValues> appList = appConfigValuesService.getConfigValuesByModuleAndKey(
-                    "EGF", "cancelledstatus");
+                    FinancialConstants.MODULE_NAME_APPCONFIG, "cancelledstatus");
             final String statusExclude = appList.get(0).getValue();
 
             final StringBuffer opBalncQuery2 = new StringBuffer(300);
@@ -333,7 +333,7 @@ public class EgovCommon {
             final CChartOfAccounts coa = (CChartOfAccounts) persistenceService.find(
                     "from CChartOfAccounts where id=?", Long.valueOf(glcodeid));
             final List<AppConfigValues> paymentStatusList = appConfigValuesService.getConfigValuesByModuleAndKey(
-                    "EGF", "PAYMENT_WF_STATUS_FOR_BANK_BALANCE_CHECK");
+                    FinancialConstants.MODULE_NAME_APPCONFIG, "PAYMENT_WF_STATUS_FOR_BANK_BALANCE_CHECK");
             for (final AppConfigValues values : paymentStatusList)
                 paymentWFStatus = paymentWFStatus + "'" + values.getValue()
                 + "',";
@@ -342,7 +342,7 @@ public class EgovCommon {
                         .length() - 1);
 
             final List<AppConfigValues> preAppList = appConfigValuesService.getConfigValuesByModuleAndKey(
-                    "EGF", "PREAPPROVEDVOUCHERSTATUS");
+                    FinancialConstants.MODULE_NAME_APPCONFIG, "PREAPPROVEDVOUCHERSTATUS");
             final String preApprovedStatus = preAppList.get(0).getValue();
 
             final StringBuffer paymentQuery = new StringBuffer(400);
@@ -522,7 +522,7 @@ public class EgovCommon {
 
         BigDecimal bankBalance = BigDecimal.ZERO;
 
-        final List<AppConfigValues> appList = appConfigValuesService.getConfigValuesByModuleAndKey("EGF",
+        final List<AppConfigValues> appList = appConfigValuesService.getConfigValuesByModuleAndKey(FinancialConstants.MODULE_NAME_APPCONFIG,
                 "Balance Check Based on Fund Flow Report");
         final String balanceChequeBasedOnFundFlowReport = appList.get(0).getValue();
 
@@ -662,7 +662,7 @@ public class EgovCommon {
             final Integer glcodeid = Integer.valueOf(list.get(0).toString());
 
             final List<AppConfigValues> appList = appConfigValuesService.getConfigValuesByModuleAndKey(
-                    "EGF", "statusexcludeReport");
+                    FinancialConstants.MODULE_NAME_APPCONFIG, "statusexcludeReport");
             final String statusExclude = appList.get(0).getValue();
 
             opBalncQuery2
@@ -701,7 +701,7 @@ public class EgovCommon {
                                 paymentId);
                 String paymentWFStatus = "";
                 final List<AppConfigValues> paymentStatusList = appConfigValuesService.getConfigValuesByModuleAndKey(
-                        "EGF",
+                        FinancialConstants.MODULE_NAME_APPCONFIG,
                         "PAYMENT_WF_STATUS_FOR_BANK_BALANCE_CHECK");
                 for (final AppConfigValues values : paymentStatusList) {
                     if (s.getValue().equals(values.getValue()))
@@ -714,7 +714,7 @@ public class EgovCommon {
                             paymentWFStatus.length() - 1);
 
                 final List<AppConfigValues> preAppList = appConfigValuesService.getConfigValuesByModuleAndKey(
-                        "EGF", "PREAPPROVEDVOUCHERSTATUS");
+                        FinancialConstants.MODULE_NAME_APPCONFIG, "PREAPPROVEDVOUCHERSTATUS");
                 final String preApprovedStatus = preAppList.get(0).getValue();
 
                 final StringBuffer paymentQuery = new StringBuffer(400);
@@ -1164,7 +1164,7 @@ public class EgovCommon {
             deptCond = " and mis.voucherheaderid.id=vh.id and mis.departmentid.id=" + deptId;
         }
 
-        final List<AppConfigValues> appList = appConfigValuesService.getConfigValuesByModuleAndKey("EGF",
+        final List<AppConfigValues> appList = appConfigValuesService.getConfigValuesByModuleAndKey(FinancialConstants.MODULE_NAME_APPCONFIG,
                 "statusexcludeReport");
         final String statusExclude = appList.get(0).getValue();
         if (null == accountdetailType && null == accountdetailkey) {
@@ -1256,7 +1256,7 @@ public class EgovCommon {
             deptCond = " and mis.voucherheaderid.id=vh.id and mis.departmentid.id=" + deptId;
         }
 
-        final List<AppConfigValues> appList = appConfigValuesService.getConfigValuesByModuleAndKey("EGF",
+        final List<AppConfigValues> appList = appConfigValuesService.getConfigValuesByModuleAndKey(FinancialConstants.MODULE_NAME_APPCONFIG,
                 "statusexcludeReport");
         final String statusExclude = appList.get(0).getValue();
         if (null == accountdetailType && null == accountdetailkey) {
@@ -1441,10 +1441,8 @@ public class EgovCommon {
         query
         .append("select bu from BudgetUsage bu,BudgetDetail bd where  bu.budgetDetail.id=bd.id");
         final Map<String, String> mandatoryFields = new HashMap<String, String>();
-        final List<AppConfig> appConfigList = persistenceService
-                .findAllBy("from AppConfig where key_name = 'DEFAULTTXNMISATTRRIBUTES'");
-        for (final AppConfig appConfig : appConfigList)
-            for (final AppConfigValues appConfigVal : appConfig.getAppDataValues()) {
+        final List<AppConfigValues> appConfigList = appConfigValuesService.getConfigValuesByModuleAndKey(FinancialConstants.MODULE_NAME_APPCONFIG,"DEFAULTTXNMISATTRRIBUTES");
+            for (final AppConfigValues appConfigVal : appConfigList) {
                 final String value = appConfigVal.getValue();
                 final String header = value.substring(0, value.indexOf("|"));
                 final String mandate = value.substring(value.indexOf("|") + 1);
@@ -1833,7 +1831,7 @@ public class EgovCommon {
         BigDecimal subledgerCrdBalance = BigDecimal.ZERO;
 
         final List<AppConfigValues> appList = appConfigValuesService.getConfigValuesByModuleAndKey(
-                "EGF", "statusexcludeReport");
+                FinancialConstants.MODULE_NAME_APPCONFIG, "statusexcludeReport");
         final String statusExclude = appList.get(0).getValue();
         if (null == accountdetailType && null == accountdetailkey) {
             glCodeBalQry

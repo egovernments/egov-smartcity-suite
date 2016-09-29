@@ -56,10 +56,18 @@ import java.util.Date;
 
 public class PositionService extends PersistenceService<Position, Integer> {  
 	
-	  @PersistenceContext
-		private EntityManager entityManager;
+    @PersistenceContext
+	private EntityManager entityManager;
+
+	public PositionService() {
+	    super(Position.class);
+    }
+
+    public PositionService(Class<Position> type) {
+        super(type);
+    }
 	    
-		public Session  getCurrentSession() {
+    public Session  getCurrentSession() {
 			return entityManager.unwrap(Session.class);
 		}
 	/**

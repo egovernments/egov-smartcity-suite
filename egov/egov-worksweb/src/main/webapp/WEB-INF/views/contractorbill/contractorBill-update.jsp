@@ -37,7 +37,7 @@
   ~
   ~   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
   --%>
-
+<%@ taglib uri="/WEB-INF/taglibs/cdn.tld" prefix="cdn"%>
 <%@ page contentType="text/html;charset=UTF-8" language="java"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 <%@ taglib uri="http://www.springframework.org/tags" prefix="spring"%>
@@ -49,6 +49,9 @@
 			<form:hidden path="workOrder.id"  name="workOrder" id="workOrderId" value="${workOrder.id}" />
 			<input type="hidden" id="id" value="${contractorBillRegister.id }" /> 
 			<input type="hidden" name="mode" id="mode" value="${mode }" />
+			<input type="hidden" name="isSpillover" id="isSpillOver" value="${contractorBillRegister.workOrderEstimate.estimate.lineEstimateDetails.lineEstimate.spillOverFlag}"/>
+			<input type="hidden" name="contractorBillId" id="contractorBillId" value="${contractorBillRegister.id}" /> 
+			<input type="hidden"  name="workOrderEstimateId" id="workOrderEstimateId" value="${contractorBillRegister.workOrderEstimate.id}" /> 
 					<div class="panel panel-primary" data-collapsed="0">
 						
 						<div class="panel-heading">
@@ -71,6 +74,7 @@
 								<jsp:include page="contractorBill-header.jsp"/>
 								<jsp:include page="contractorBill-mbdetails.jsp"/>
 								<jsp:include page="contractorBill-debitaccountdetails.jsp"/>
+								<jsp:include page="contractorBill-refund.jsp"/>
 								<jsp:include page="contractorBill-creditaccountdetails.jsp"/>
 							</c:if>
 							<c:if test="${mode == 'view' || mode == 'readOnly' }">
@@ -116,5 +120,5 @@
 			</c:if>
 		</form:form>  
 	
-<script src="<c:url value='/resources/js/contractorbill.js?rnd=${app_release_no}'/>"></script>
-<script src="<c:url value='/resources/global/js/egov/inbox.js' context='/egi'/>"></script>
+<script src="<cdn:url value='/resources/js/contractorbill.js?rnd=${app_release_no}'/>"></script>
+<script src="<cdn:url value='/resources/global/js/egov/inbox.js' context='/egi'/>"></script>

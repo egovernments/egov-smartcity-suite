@@ -49,8 +49,10 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface PetitionTypeMasterRepository extends JpaRepository<PetitionTypeMaster, java.lang.Long> {
 
-    List<PetitionTypeMaster> findByCourtType(CourtTypeMaster courtType);
+    List<PetitionTypeMaster> findByActiveTrueAndCourtType(CourtTypeMaster courtType);
 
     PetitionTypeMaster findByCode(String code);
+
+    List<PetitionTypeMaster> findByActiveTrueOrderByPetitionTypeAsc();
 
 }

@@ -40,10 +40,12 @@
   --%>
 
 <%@ include file="/includes/taglibs.jsp" %>
+<%@ taglib uri="/WEB-INF/taglib/cdn.tld" prefix="cdn" %>
 <head>
 <!-- <link rel="stylesheet" href="http://code.jquery.com/ui/1.10.3/themes/smoothness/jquery-ui.css" />
 <script src="http://code.jquery.com/ui/1.10.3/jquery-ui.js"></script> -->
 <script type="text/javascript" src="${pageContext.request.contextPath}/resources/js/autocomplete-debug.js?rnd=${app_release_no}"></script>
+<script type="text/javascript" src="${pageContext.request.contextPath}/resources/js/receiptinstrument.js?rnd=${app_release_no}"></script>
 <style type="text/css">
 #bankcodescontainer {position:absolute;left:11em;width:9%;text-align: left;}
 	#bankcodescontainer .yui-ac-content {position:absolute;width:350px;border:1px solid #404040;background:#fff;overflow:hidden;z-index:9050;}
@@ -98,134 +100,34 @@ jQuery(document).ready(function() {
 			  validateManualReceiptDate(this);
 		  }
 	  }).data('datepicker');
+
+     
  });
 
 jQuery(window).load(function () {
 	undoLoadingMask();
 });
 
-function showInstrumentDetails(obj){
-	if(obj.id=='cashradiobutton'){
-		document.getElementById('cashdetails').style.display='table-row';
-		document.getElementById('chequeDDdetails').style.display='none';
-		document.getElementById('carddetails').style.display='none';
-		document.getElementById('bankdetails').style.display='none';
-		document.getElementById('instrumentTypeCashOrCard').value="cash";
- 		document.getElementById('instrHeaderCash.instrumentAmount').value=document.getElementById('totalamountdisplay').value;
- 		clearCardDetails();
-		clearChequeDDDetails();
-		clearBankDetails();
-	}
-	else  if(obj.id=='chequeradiobutton'){
-		document.getElementById('cashdetails').style.display='none';
-		document.getElementById('chequeDDdetails').style.display='table-row';
-		document.getElementById('carddetails').style.display='none';
-		document.getElementById('bankdetails').style.display='none';
-		document.getElementById('instrumentTypeCashOrCard').value="";
-		clearCashDetails();
-		clearCardDetails();
-		clearBankDetails();
-		displayChequeDDInstrumentTypeDetails();
-	}
-	else if(obj.id=='cardradiobutton'){
-		document.getElementById('cashdetails').style.display='none';
-		document.getElementById('chequeDDdetails').style.display='none';
-		document.getElementById('carddetails').style.display='table-row';
-		document.getElementById('bankdetails').style.display='none';
-		document.getElementById('instrumentTypeCashOrCard').value="card";
-		clearCashDetails();
-		clearBankDetails();
-		clearChequeDDDetails();
-	}
-	else if(obj.id=='bankradiobutton'){
-		document.getElementById('cashdetails').style.display='none';
-		document.getElementById('chequeDDdetails').style.display='none';
-		document.getElementById('carddetails').style.display='none';
-		document.getElementById('bankdetails').style.display='table-row';
-		document.getElementById('instrumentTypeCashOrCard').value="bankchallan";
-		clearCashDetails();
-		clearCardDetails();
-		clearChequeDDDetails();
-		<s:if test="%{isBillSourcemisc()}">
-			if(document.getElementById("fundId")!=null && document.getElementById("fundId").value!="-1"){
-				getBankBranchList(document.getElementById('fundId'));
-			}
-		</s:if>
-	}
-}
 
-function clearCashDetails(){
-	document.getElementById('instrHeaderCash.instrumentAmount').value="";
-}
-
-function clearChequeDDDetails(){
-	var table=document.getElementById('chequegrid');
-	var len=table.rows.length;
-	
-	for(var j=0;j<len;j++)
-	{
-	    //clear instrument type
-	    if(getControlInBranch(table.rows[j],'instrumentType')!=null){
-	    	getControlInBranch(table.rows[j],'instrumentType').value="";
-	    }
-	    
-	    //deselect dd checkbox  
-	    if(getControlInBranch(table.rows[j],'instrumenttypedd')!=null){
-	    	getControlInBranch(table.rows[j],'instrumenttypedd').checked=false;
-    }
-	    
-	    //deselect cheque checkbox  
-	    if(getControlInBranch(table.rows[j],'instrumenttypecheque')!=null){
-	    	getControlInBranch(table.rows[j],'instrumenttypecheque').checked=false;
-	    }
-
-	    //clear instrument number
-	    if(getControlInBranch(table.rows[j],'instrumentChequeNumber')!=null){
-	    	getControlInBranch(table.rows[j],'instrumentChequeNumber').value="";
-	    }
-	    //clear bank name 
-	    if(getControlInBranch(table.rows[j],'bankID')!=null){
-	    	getControlInBranch(table.rows[j],'bankID').value="-1";
-	    }
-	    
-	   if(getControlInBranch(table.rows[j],'bankName')!=null){
-	    	getControlInBranch(table.rows[j],'bankName').value="";
-	    }
-
-	    //clear date
-	    if(getControlInBranch(table.rows[j],'instrumentDate')!=null){
-	    	getControlInBranch(table.rows[j],'instrumentDate').value="";
-	    	waterMarkInitialize('instrumentDate','DD/MM/YYYY');
-	    }
-
-	    //clear instrument amount
-	    if(getControlInBranch(table.rows[j],'instrumentChequeAmount')!=null){
-	    	getControlInBranch(table.rows[j],'instrumentChequeAmount').value="";
-	    }
-	    
-	    //clear branch name 
-	    if(getControlInBranch(table.rows[j],'instrumentBranchName')!=null){
-	    	getControlInBranch(table.rows[j],'instrumentBranchName').value="";
-	    }
-	}
-	
-	for(var z=5;z<len;z++)
-	{
-		table.deleteRow(5);
-	}
-}
-
-function clearCardDetails(){
-	document.getElementById('instrHeaderCard.instrumentAmount').value="";
-	document.getElementById('instrHeaderCard.transactionNumber').value="";
-	document.getElementById('instrHeaderCard.instrumentNumber').value="";
-}
-function clearBankDetails(){
-	document.getElementById('instrHeaderBank.instrumentAmount').value="";
-	document.getElementById('instrHeaderBank.transactionNumber').value="";
-	document.getElementById('bankChallanDate').value="";
-	if(document.getElementById("accountNumberMaster")!=null){
-		document.getElementById("accountNumberMaster").options.length = 1;
+function onChangeBankAccount(branchId) {
+	var serviceName = document.getElementById("serviceName").value;
+	var fundName = "", fundId = -1;
+	if (document.getElementById('fundId') != null
+			&& document.getElementById('fundId') != null) {
+		var serviceId = document.getElementById("serviceId").value;
+		fundId = document.getElementById('fundId').value;
+		populateaccountNumberMaster({
+			branchId : branchId,
+			serviceId : serviceId,
+			fundId : fundId
+		});
+	} else if (document.getElementById("fundName") != null) {
+		fundName = document.getElementById("fundName").value;
+		populateaccountNumberMaster({
+			branchId : branchId,
+			serviceName : serviceName,
+			fundName : fundName
+		});
 	}
 }
 var accountscount=0;
@@ -237,251 +139,6 @@ var initialSetting="true";
 	var currDate = "${currDate}";
 	
 	
-// 'chequegrid','chequetyperow','chequedetailsrow','chequebankrow','chequeamountrow',this,'chequeaddrow'
-function addChequeGrid(tableId,trId1,trId2,trId3,trId4,obj,trId5)
-{
-	document.getElementById("receipt_error_area").innerHTML=""; 
-	document.getElementById("receipt_error_area").style.display="none";
-	var chequetable=document.getElementById('chequegrid');
-	var chequetablelen1 =chequetable.rows.length;
-    if(!verifyChequeDetails(chequetable,chequetablelen1)){
-    	instrAmountInvalidErrMsg='<s:text name="billreceipt.missingchequeamount.errormessage" />' + '<br>';
-    	document.getElementById("receipt_error_area").innerHTML='Please Enter Mandatory Cheque/DD Details Before Adding A New Cheque/DD';  
-    	document.getElementById("receipt_error_area").style.display="block";
-    }
-    
-    else{
-   		 //To add rows to the cheque grid table
-		addtablerow(tableId,trId1,trId2,trId3,trId4,trId5);
-		var tbl = document.getElementById(tableId);
-		var rowNumber=getRow(obj).rowIndex;
-		var newtablelength=tbl.rows.length;
-		
-		var count=document.forms[0].instrumentCount.value;
-		count=eval(count)+1;
-		document.forms[0].instrumentCount.value=count;
-		
-		document.forms[0].instrumentChequeNumber[0].value="";
-		document.forms[0].instrumentDate[0].value="";
-		waterMarkInitialize('instrumentDate','DD/MM/YYYY');
-		document.forms[0].instrumentBranchName[0].value="";
-		document.forms[0].bankName[0].value="";
-		document.forms[0].bankID[0].value="-1";
-		document.forms[0].instrumentChequeAmount[0].value="";
-
-		document.forms[0].instrumentType[0].value="";
-
-		document.forms[0].instrumentType[0].name="instrumentProxyList["+count+"].instrumentType.type";
-		document.forms[0].bankID[0].name="instrumentProxyList["+count+"].bankId.id";
-		document.forms[0].bankName[0].name="instrumentProxyList["+count+"].bankId.name";
-		document.forms[0].instrumentChequeAmount[0].name="instrumentProxyList["+count+"].instrumentAmount";
-		document.forms[0].instrumentBranchName[0].name="instrumentProxyList["+count+"].bankBranchName";
-		document.forms[0].instrumentChequeNumber[0].name="instrumentProxyList["+count+"].instrumentNumber";
-		document.forms[0].instrumentDate[0].name="instrumentProxyList["+count+"].instrumentDate";
-		
-	
-		getControlInBranch(tbl.rows[rowNumber],'addchequerow').style.display="block";
-		getControlInBranch(tbl.rows[newtablelength-1],'addchequerow').style.display="none";
-		getControlInBranch(tbl.rows[newtablelength-1],'deletechequerow').style.display="block";
-
-
-		getControlInBranch(tbl.rows[newtablelength-4],'instrumentChequeNumber').readOnly="true";
-		getControlInBranch(tbl.rows[newtablelength-4],'instrumentDate').readOnly="true";
-		getControlInBranch(tbl.rows[newtablelength-3],'bankName').readOnly="true";
-		getControlInBranch(tbl.rows[newtablelength-3],'instrumentBranchName').readOnly="true";		
-		getControlInBranch(tbl.rows[newtablelength-2],'instrumentChequeAmount').readOnly="true";
-		getControlInBranch(tbl.rows[newtablelength-3],'bankID').readOnly="true";
-
-		var chequeAllowed=document.getElementById("chequeAllowed").value;
-		var ddAllowed=document.getElementById("ddAllowed").value;
-		
-		if(chequeAllowed=='true' && ddAllowed=='false'){
-	    		// getControlInBranch(tbl.rows[newtablelength-5],'instrumentType').value="cheque";
-	    		document.forms[0].instrumentType[0].value="cheque";
-	    		
-	    		getControlInBranch(tbl.rows[newtablelength-5],'instrumenttypecheque').checked=true;
-	    		getControlInBranch(tbl.rows[newtablelength-5],'instrumenttypedd').checked=false;
-	    		
-	    		getControlInBranch(tbl.rows[newtablelength-5],'instrumenttypecheque').disabled=true;
-	    		getControlInBranch(tbl.rows[newtablelength-5],'instrumenttypedd').disabled=true;
-	    }
-	    else if(chequeAllowed=='false' && ddAllowed=='true'){
-	    		// getControlInBranch(tbl.rows[newtablelength-5],'instrumentType').value="dd";
-	    		document.forms[0].instrumentType[0].value="dd";
-	    		
-	    		getControlInBranch(tbl.rows[newtablelength-5],'instrumenttypecheque').checked=false;
-	    		getControlInBranch(tbl.rows[newtablelength-5],'instrumenttypedd').checked=true;
-	    		
-	    		getControlInBranch(tbl.rows[newtablelength-5],'instrumenttypecheque').disabled=true;
-	    		
-	    		getControlInBranch(tbl.rows[newtablelength-5],'instrumenttypedd').disabled=true;
-	    }
-	    else{
-		
-			if(document.forms[0].instrumenttypecheque[0].checked==true)
-			{
-				getControlInBranch(tbl.rows[newtablelength-5],'instrumenttypecheque').checked=true;
-			}
-			else if(document.forms[0].instrumenttypedd[0].checked==true)
-			{
-				getControlInBranch(tbl.rows[newtablelength-5],'instrumenttypedd').checked=true;
-			}
-			getControlInBranch(tbl.rows[0],'instrumenttypecheque').checked=false;
-			getControlInBranch(tbl.rows[0],'instrumenttypedd').checked=false;
-			document.forms[0].instrumentType[0].value="";
-			document.forms[0].instrumentType[0].name="instrumentProxyList["+count+"].instrumentType.type";
-		}
-	}
-}
-function addtablerow(tableId,trId1,trId2,trId3,trId4,trId5){
-	var tbl = document.getElementById(tableId);
-		var rowObj1 = document.getElementById(trId1).cloneNode(true);
-		var rowObj2 = document.getElementById(trId2).cloneNode(true);
-		var rowObj3 = document.getElementById(trId3).cloneNode(true);
-		var rowObj4 = document.getElementById(trId4).cloneNode(true);
-		var rowObj5 = document.getElementById(trId5).cloneNode(true);
-		addRow(tbl,rowObj1);
-		addRow(tbl,rowObj2);
-		addRow(tbl,rowObj3);
-		addRow(tbl,rowObj4);
-		addRow(tbl,rowObj5);
-		document.getElementById("delerror").style.display="none";
-}
-
-
-function loadchequegrid(tableId,trId1,trId2,trId3,trId4,trId5){
-	var chequetable=document.getElementById('chequegrid');
-	var chequetablelen1 =chequetable.rows.length;
-	var chqAmtArray=new Array();
-	var chqNumberArray=new Array();
-	var bankIdArray=new Array();
-	var chqDateArray=new Array();
-	var bankBranchArray=new Array();
-	var bankNameArray=new Array();
-	var instrumentTypeArray=new Array();
-	for(var m=0;m<chequetablelen1;m++)
-	{
-		var chequeAmt=getControlInBranch(chequetable.rows[m],'instrumentChequeAmount');
-		var chequeNo=getControlInBranch(chequetable.rows[m],'instrumentChequeNumber');
-		var chequeDate=getControlInBranch(chequetable.rows[m],'instrumentDate');
-		var bankName=getControlInBranch(chequetable.rows[m],'bankName');
-		var bankId=getControlInBranch(chequetable.rows[m],'bankID');
-		var bankBranch=getControlInBranch(chequetable.rows[m],'instrumentBranchName');
-		var instrumentType=getControlInBranch(chequetable.rows[m],'instrumentType');
-		
-		if(chequeNo!=null&&chequeNo.value!=""){
-			chqNumberArray=chequeNo.value.split(',');
-		}
-		if(chequeAmt!=null&&chequeAmt.value!=""){
-			chqAmtArray=chequeAmt.value.split(',');
-		}
-		if(chequeDate!=null&&chequeDate.value!="DD/MM/YYYY"){
-			chqDateArray=chequeDate.value.split(',');
-		}
-		if(bankId!=null&&bankId.value!=""){
-			bankIdArray=bankId.value.split(',');
-		}
-		if(bankBranch!=null&&bankBranch.value!=""){
-			bankBranchArray=bankBranch.value.split(',');
-		}
-		if(bankName!=null&&bankName.value!=""){
-			bankNameArray=bankName.value.split(',');
-		}
-		if(instrumentType!=null&&instrumentType.value!=""){
-			instrumentTypeArray=instrumentType.value.split(',');
-		}
-	}
-				
-	if(chqAmtArray.length>1){
-		document.forms[0].instrumentChequeAmount.value=chqAmtArray[0];
-		document.forms[0].instrumentChequeNumber.value=chqNumberArray[0].trim();
-		document.forms[0].instrumentDate.value=chqDateArray[0];
-		document.forms[0].instrumentBranchName.value=bankBranchArray[0];
-		document.forms[0].bankName.value=bankNameArray[0];
-		document.forms[0].bankID.value=bankIdArray[0];
-		document.forms[0].instrumentType.value=instrumentTypeArray[0];
-		
-		if(instrumentTypeArray[0].trim()=="dd"){
-			document.forms[0].instrumenttypedd.checked=true;
-		}
-		else if(instrumentTypeArray[0].trim()=="cheque"){
-			document.forms[0].instrumenttypecheque.checked=true;
-		}
-		for(var k=1;k<chqAmtArray.length;k++){
-			addtablerow(tableId,trId1,trId2,trId3,trId4,trId5);
-			var tbl = document.getElementById(tableId);
-			var rowNumber=4;
-			var newtablelength=tbl.rows.length;
-	
-			document.forms[0].instrumentChequeNumber[0].value=chqNumberArray[k].trim();
-			document.forms[0].instrumentDate[0].value=chqDateArray[k];
-			document.forms[0].instrumentBranchName[0].value=bankBranchArray[k];
-			document.forms[0].instrumentBankName[0].value=bankNameArray[k];
-			document.forms[0].instrumentBankId[0].value=bankIdArray[k];
-			document.forms[0].instrumentChequeAmount[0].value=chqAmtArray[k];
-	
-			getControlInBranch(tbl.rows[rowNumber],'addchequerow').style.display="block";
-			getControlInBranch(tbl.rows[newtablelength-1],'addchequerow').style.display="none";
-			getControlInBranch(tbl.rows[newtablelength-1],'deletechequerow').style.display="block";
-			getControlInBranch(tbl.rows[0],'instrumenttypecheque').checked=false;
-			getControlInBranch(tbl.rows[0],'instrumenttypedd').checked=false;
-			if(instrumentTypeArray[k].trim()=="cheque")
-			{
-				getControlInBranch(tbl.rows[0],'instrumenttypecheque').checked=true;
-			}
-			else if(instrumentTypeArray[k].trim()=="dd")
-			{
-				getControlInBranch(tbl.rows[0],'instrumenttypedd').checked=true;
-			}
-			document.forms[0].instrumentType[0].value=instrumentTypeArray[k];
-							
-		}
-	}
-			
-}
-
-function addRow(tableObj,rowObj)
-{
-	var tbody=tableObj.tBodies[0];
-	tbody.appendChild(rowObj);
-}
-
-function deleteChequeObj(obj,tableId)
-{
-	var tbl = document.getElementById(tableId);
-	var rowNumber=getRow(obj).rowIndex; 
-	if(tbl.rows.length==6)
-	{
-	   document.getElementById("delerror").style.display="block";
-	}
-	else
-	{
-		document.getElementById("delerror").style.display="none";
-		tbl.deleteRow(rowNumber);
-		tbl.deleteRow(rowNumber-1);
-		tbl.deleteRow(rowNumber-2);
-		tbl.deleteRow(rowNumber-3);
-		tbl.deleteRow(rowNumber-4);
-	}
-	callpopulateapportioningamountforbills();
-	var tbl = document.getElementById(tableId);
-	var rowNumber=getRow(obj).rowIndex;
-	var newtablelength=tbl.rows.length;
-	var countUI=document.forms[0].instrumentCount.value;
-	var count=document.forms[0].instrumentCount.value;
-	for(var j=newtablelength;j>0;j=j-5){
-		count=eval(count)-1;
-		getControlInBranch(tbl.rows[j-5],'instrumentType').name="instrumentProxyList["+count+"].instrumentType.type";
-		getControlInBranch(tbl.rows[j-4],'instrumentChequeNumber').name="instrumentProxyList["+count+"].instrumentNumber";
-		getControlInBranch(tbl.rows[j-4],'instrumentDate').name="instrumentProxyList["+count+"].instrumentDate";
-		getControlInBranch(tbl.rows[j-3],'instrumentBranchName').name="instrumentProxyList["+count+"].bankBranchName";
-		getControlInBranch(tbl.rows[j-2],'instrumentChequeAmount').name="instrumentProxyList["+count+"].instrumentAmount";
-		getControlInBranch(tbl.rows[j-3],'bankName').name="instrumentProxyList["+count+"].bankId.name";
-		getControlInBranch(tbl.rows[j-3],'bankID').name="instrumentProxyList["+count+"].bankId.id";
-		}
-	count=eval(countUI)-1;
-	document.forms[0].instrumentCount.value=count;
-}
 
 function calculateCollectionTotal(){
 		var collectiontotal=0
@@ -538,175 +195,6 @@ function calculateCreditTotal(){
 	return Math.round(credittotal*100)/100;
 }
 
-function callpopulateapportioningamountforbills(){
-	<s:if test="%{!isBillSourcemisc()}">  
-		populateapportioningamount();
-	</s:if>
-	
-}
-
-apportionLoadHandler = function(req,res){
-  results=res.results;
-  var noofaccounts=document.getElementById("totalNoOfAccounts").value;
-  for(var j=0;j<noofaccounts; j++)
-  {
-    for(var k=0;k<results.length;k++)
-    {
-	    if(document.getElementById('receiptDetailList['+j+'].ordernumber').value==results[k].OrderNumber)
-	    {
-		document.getElementById('receiptDetailList['+j+'].cramount').value=results[k].CreditAmount;
-		document.getElementById('receiptDetailList['+j+'].cramountToBePaid').value=results[k].CrAmountToBePaid;
-		document.getElementById('receiptDetailList['+j+'].dramount').value=results[k].DebitAmount;
-	    }	
-    } 
-  }
-}
-
-apportionLoadFailureHandler= function(){
-   // document.getElementById("errorstyle").style.display='';
-	//document.getElementById("errorstyle").innerHTML='Error Loading Apportioned Amount';
-}
-function populateapportioningamount()
-{
-    // total of actual amt to be credited - can be removed
-	var billingtotal=document.forms[0].totalAmountToBeCollected.value;
-	var checkpartpaymentvalue=document.getElementById("partPaymentAllowed").value;
-	var checkoverridevalue=document.getElementById("overrideAccountHeads").value;
-	var collectiontotal=0,cashamount=0,chequeamount=0,cardamount=0,bankamount=0;
-
-	var noofaccounts=document.getElementById("totalNoOfAccounts").value;
-	var credittotal=0;
-	collectiontotal=calculateCollectionTotal();
-	document.getElementById("totalamountdisplay").value=isNaN(collectiontotal)?collectiontotal:collectiontotal.toFixed(2);
-	
-	for(var j=0;j<noofaccounts; j++)
-	{
-		var advanceRebatePresent=document.getElementById('receiptDetailList['+j+'].isActualDemand').value;
-		if(advanceRebatePresent==0){
-			zeroAccHeads=true;
-			break;
-		}
-	}
-
-	if(document.getElementById("callbackForApportioning").value=="true")
-	{
-		document.getElementById("amountoverrideerror").style.display="none";
-		if(collectiontotal > billingtotal &&  zeroAccHeads==false)
-		{
-			document.getElementById("amountoverrideerror").style.display="block";
-			return false;
-		}
-		else
-		{
-			//makeJSONCall(["OrderNumber","CreditAmount","DebitAmount","CrAmountToBePaid"],'${pageContext.request.contextPath}/receipts/receipt!apportionBillAmount.action',{instrumenttotal:collectiontotal},apportionLoadHandler,apportionLoadFailureHandler);
-		}
-	}
-	else if(document.getElementById("callbackForApportioning").value=="false")
-	{
-			if(initialSetting=="true"){
-				initialiseCreditAmount();
-			}
-			
-			credittotal=calculateCreditTotal();
-			
-			// logic for advance payt START
-			
-			// if amt paid by citizen(collectiontotal) is more than the billed amt(billingtottal), 
-			// and if overrideaccountheads is permitted, system should not apportion for the "zero" account heads. 
-			// The citizen has to manually apportion the amount among the account heads
-			var zeroAccHeads=false;
-			for(var j=0;j<noofaccounts; j++)
-			{
-					var advanceRebatePresent=document.getElementById('receiptDetailList['+j+'].isActualDemand').value;
-					if(advanceRebatePresent==0){
-						zeroAccHeads=true;
-					}
-			}
-			if(collectiontotal>billingtotal && checkoverridevalue=="true" && zeroAccHeads==true){
-				// MAIN FUNCTION: new switchcontent("class name", "[optional_element_type_to_scan_for]") REQUIRED
-				// Call Instance.init() at the very end. REQUIRED
-				var bobexample=new switchcontent("switchgroup1", "div") //Limit scanning of switch contents to just "div" elements
-				bobexample.collapsePrevious(true) //Only one content open at any given time
-				bobexample.init()
-				bobexample.sweepToggle('expand')
-			}
-			
-			// logic for advance payt END
-			
-			//bill apportioning - the collectiontotal is apportioned among the account heads
-			if(checkpartpaymentvalue=="true")
-			{
-				// if overriding accounts is permitted and collected total is same as the 
-				// credit total, do not apportion
-				if(checkoverridevalue=="true" && collectiontotal==credittotal){
-			    		return;
-				}
-				else{
-					var remainingamount=0;
-					var check=0;
-					for(var j=0;j<noofaccounts; j++)
-					{
-						var amounttobecollected=document.getElementById('receiptDetailList['+j+'].cramountToBePaid').value;
-						amounttobecollected=Math.round(amounttobecollected*100)/100;
-						if(check==0)
-						{
-							if(collectiontotal>amounttobecollected)
-							{
-								if(amounttobecollected==0 && checkoverridevalue=="true")
-								{
-									//This is for advance pyt for account which has 0 as credit amount.
-									// document.getElementById('receiptDetailList['+j+'].cramount').value=collectiontotal;
-									// DO NOTHING NOW FOR ADVANCE PAYT - I.E., DO NOT APPROTION
-									// LATER SHUD APPROTION TREATING THE 'ZERO' ACCOUNT HEADS WITH LEAST PRIORITY 
-									continue;
-								}
-								else
-								{
-									document.getElementById('receiptDetailList['+j+'].cramount').value=amounttobecollected;
-									remainingamount=collectiontotal-amounttobecollected;
-									remainingamount=Math.round(remainingamount*100)/100;
-								}
-							}
-							else if(collectiontotal<=amounttobecollected)
-							{
-								document.getElementById('receiptDetailList['+j+'].cramount').value=collectiontotal;
-							}
-						}
-						else if(check!=0 && remainingamount>0)
-						{
-							if(remainingamount>amounttobecollected)
-							{
-								if(amounttobecollected==0){//This is for advance pyt for account which has 0 as credit amount.
-								// document.getElementById('receiptDetailList['+j+'].cramount').value=remainingamount;
-								// DO NOTHING NOW FOR ADVANCE PAYT - I.E., DO NOT APPROTION
-								// LATER SHUD APPROTION TREATING THE 'ZERO' ACCOUNT HEADS WITH LEAST PRIORITY
-								continue;
-							}
-							else
-							{
-								document.getElementById('receiptDetailList['+j+'].cramount').value=amounttobecollected;
-								remainingamount=remainingamount-amounttobecollected;
-								remainingamount=Math.round(remainingamount*100)/100;
-							}
-						}
-						else if(remainingamount<=amounttobecollected)
-						{
-							document.getElementById('receiptDetailList['+j+'].cramount').value=remainingamount;
-							remainingamount=remainingamount-document.getElementById('receiptDetailList['+j+'].cramount').value;
-						}
-					}
-					else if(check!=0 && remainingamount==0)
-					{
-						document.getElementById('receiptDetailList['+j+'].cramount').value=0;
-					}
-					check++;
-					}//end of for
-					document.getElementById("totalamountdisplay").value=isNaN(collectiontotal)?collectiontotal:collectiontotal.toFixed(2);
-				}//end of if collectiontotal < billingtotal
-			}//end of if checkpartpaymentvalue=="true"
-		}	
-}//end of function populateapportioningamount
-
 function validate()
 {
 	callpopulateapportioningamountforbills();	
@@ -738,8 +226,7 @@ function validate()
 	<s:if test="%{isBillSourcemisc()}"> 
 		if(validateMiscReceipt){
 			if(!validateMiscReceipt()){
-				validation = false;
-				document.getElementById("receipt_error_area").style.display="block";
+				return false;
 			}
 		}
 	</s:if>
@@ -775,6 +262,7 @@ function validate()
  	</s:else>
 	var instrTypeCash = document.getElementById("cashradiobutton").checked;
 	var instrTypeCheque = document.getElementById("chequeradiobutton").checked;
+	var instrTypeDD = document.getElementById("ddradiobutton").checked;
 	var instrTypeCard = document.getElementById("cardradiobutton").checked;
 	var instrTypeBank = document.getElementById("bankradiobutton").checked;
 	var chequetable=document.getElementById('chequegrid')
@@ -859,6 +347,21 @@ function validate()
 				document.getElementById("receipt_error_area").innerHTML+='<s:text name="billreceipt.missingbankchallandate.errormessage" />'+ '<br>';
 				validation = false;
 			}
+			else {
+				var receiptDate;
+				 <s:if test="%{!isBillSourcemisc()}">
+				 receiptDate = document.getElementById("manualReceiptDate").value;
+				</s:if>
+				<s:else>
+				receiptDate = document.getElementById("voucherDate").value;
+				</s:else>
+				if(receiptDate!=null && process(bankChallanDate) > process(receiptDate)){
+ 	 	    		document.getElementById("receipt_error_area").innerHTML+=
+ 	 					'<s:text name="miscreceipt.error.transactiondate.greaterthan.receiptdate" />'+ '<br>';   	
+ 	 				window.scroll(0,0);
+ 	 				validation=false;
+ 		 	   	}
+			}
 		}
 		if(document.getElementById("instrHeaderBank.instrumentAmount")!=null){
 			bankamount=document.getElementById("instrHeaderBank.instrumentAmount").value;
@@ -886,7 +389,7 @@ function validate()
 	document.getElementById('instrumentTypeCashOrCard').value="bankchallan";
 	}
 	//if mode of payment is cheque/DD
-	if(instrTypeCheque){
+	if(instrTypeCheque || instrTypeDD){
 		var count=document.forms[0].instrumentCount.value;
 
 		if(count == 0) {
@@ -968,7 +471,15 @@ function validate()
 		validation = false;
    	}
 
-   	if(validation==false){
+   	<s:if test="%{!isBillSourcemisc()}"> 
+	 if(eval(document.getElementById("totalamountdisplay").value)>eval(document.getElementById("totalamounttobepaid").value)){
+		 var r = confirm('Collected amount is more than the amount to be paid. Do you want to collect advance amount?');
+		 if(r !=true)
+			 validation = false;
+	 }
+	 </s:if>
+
+   	if(validation==false &&  document.getElementById("receipt_error_area").innerHTML!=''){
 		document.getElementById("receipt_error_area").style.display="block";
 		window.scroll(0,0);
 	}
@@ -982,10 +493,9 @@ function validate()
 		return false;
 	}
 	else {
+		document.getElementById("receipt_error_area").style.display="block";
 		document.collDetails.action="receipt-save.action";
-  		
 		return validation;
-  		
 	}
 }//end of function 'validate'
 
@@ -1042,9 +552,9 @@ function verifyChequeDetails(table,len1)
 	    	}
 	    }
 	    //validate if valid date has been entered
-	    <s:if test="%{!isBillSourcemisc()}">
 	    if(getControlInBranch(table.rows[j],'instrumentDate')!=null){
-	    	var instrDate=getControlInBranch(table.rows[j],'instrumentDate');
+	    var instrDate=getControlInBranch(table.rows[j],'instrumentDate');
+	    <s:if test="%{!isBillSourcemisc()}">
 	    	if(instrDate.value==null || instrDate.value=="" || instrDate.value=="DD/MM/YYYY"){
 	    		if(instrDateErrMsg==""){
 	    		    instrDateErrMsg='<s:text name="billreceipt.missingchequedate.errormessage" />' + '<br>';
@@ -1054,19 +564,20 @@ function verifyChequeDetails(table,len1)
 	    		
 	    	} 
 	    	else if (document.getElementById('manualreceiptinfo').checked==true){
-		    	 if(document.getElementById("manualReceiptDate").value !=null && document.getElementById("manualReceiptDate").value != '' ){
-	    		if(getControlInBranch(table.rows[j],'instrumentDate') != null && getControlInBranch(table.rows[j],'instrumentDate')!= '' && check==true) {
-    			checkForCurrentDate(instrDate);
-	    		}
+	    		var receiptDate = document.getElementById("manualReceiptDate").value;
+		    	 if(receiptDate !=null && receiptDate != '' && instrDate.value != null && instrDate.value!= '' && check==true ){
+	    			if(process(instrDate.value) > process(receiptDate)){
+	 	 	    		document.getElementById("receipt_error_area").innerHTML+=
+	 	 					'<s:text name="miscreceipt.error.instrumentdate.greaterthan.receiptdate" />'+ '<br>';   	
+	 	 				window.scroll(0,0);
+	 	 				check=false;
+	 		 	   	}
+    				checkForCurrentDate(instrDate);
 	    	}
-	    	} 
-	    	checkForCurrentDate(instrDate);
-	    }
+	    	}
 	    </s:if>
 
 	    <s:else>
-	    if(getControlInBranch(table.rows[j],'instrumentDate')!=null){
-	    	var instrDate=getControlInBranch(table.rows[j],'instrumentDate');
 	    	if(instrDate.value==null || instrDate.value=="" || instrDate.value=="DD/MM/YYYY"){
 	    		if(instrDateErrMsg==""){
 	    		    instrDateErrMsg='<s:text name="billreceipt.missingchequedate.errormessage" />' + '<br>';
@@ -1074,10 +585,17 @@ function verifyChequeDetails(table,len1)
 	    		}
 	    		check=false;
 	    	 } else {
+	 	    		var receiptDate = document.getElementById("voucherDate").value;
+	 	 	    	if(instrDate.value != null && instrDate.value!= '' && check==true && process(instrDate.value) > process(receiptDate)){
+	 	 	    		document.getElementById("receipt_error_area").innerHTML+=
+	 	 					'<s:text name="miscreceipt.error.instrumentdate.greaterthan.receiptdate" />'+ '<br>';   	
+	 	 				window.scroll(0,0);
+	 	 				check=false;
+	 		 	   	}
 	    		     checkForCurrentDate(instrDate);
 	    		   } 	               
-	    }
 	    </s:else>
+	    }
 
 	    if(getControlInBranch(table.rows[j],'instrumentChequeAmount')!=null)
 		{
@@ -1159,142 +677,6 @@ function checkaccountheaderwiseamount()
 	return true;
 }
 
-function clearPaytModes(){
-	//deselect all payt mode radio buttons
-	document.getElementById('cashradiobuttonspan').style.display="none";
-	document.getElementById('cashdetails').style.display="table-row";
-	
-	document.getElementById('cardradiobuttonspan').style.display="none";
-	document.getElementById('carddetails').style.display="none";
-	
-	document.getElementById('chequeradiobuttonspan').style.display="none";
-	document.getElementById('chequeDDdetails').style.display="none";
-	
-	document.getElementById('bankradiobuttonspan').style.display="none";
-	document.getElementById('bankdetails').style.display="none";
-}
-
-function isChequeDDAllowed(){
-	 var chequeAllowed=document.getElementById("chequeAllowed").value;
-     var ddAllowed=document.getElementById("ddAllowed").value;
-     if(chequeAllowed=='true'||ddAllowed=='true'){
-       	return "true";
-     }
-     
-    return "false";
-}
-
-//if either of cheque or dd modes are restricted, both instrument type
-//check boxes should be disabled, the permitted mode should be default 
-//selected and the corresponding instrument type value should be assigned 
-function displayChequeDDInstrumentTypeDetails(){
-	var table=document.getElementById('chequegrid');
-	var len=table.rows.length;
-	
-	 var chequeAllowed=document.getElementById("chequeAllowed").value;
-     var ddAllowed=document.getElementById("ddAllowed").value;
-
-	for(var j=0;j<len;j++)
-	{
-	    //clear instrument type
-	    if(getControlInBranch(table.rows[j],'instrumentType')!=null ){
-	    	if(chequeAllowed=='true' && ddAllowed=='false'){
-	    		getControlInBranch(table.rows[j],'instrumentType').value="cheque";
-	    		
-	    		getControlInBranch(table.rows[j],'instrumenttypecheque').checked=true;
-	    		getControlInBranch(table.rows[j],'instrumenttypedd').checked=false;
-	    		
-	    		getControlInBranch(table.rows[j],'instrumenttypecheque').disabled=true;
-	    		getControlInBranch(table.rows[j],'instrumenttypedd').disabled=true;
-	    	}
-	    	if(chequeAllowed=='false' && ddAllowed=='true'){
-	    		getControlInBranch(table.rows[j],'instrumentType').value="dd";
-	    		
-	    		getControlInBranch(table.rows[j],'instrumenttypecheque').checked=false;
-	    		getControlInBranch(table.rows[j],'instrumenttypedd').checked=true;
-	    		
-	    		getControlInBranch(table.rows[j],'instrumenttypecheque').disabled=true;
-	    		
-	    		getControlInBranch(table.rows[j],'instrumenttypedd').disabled=true;
-	    	}
-	    }
-    }
-}
-
-// This function is called to display the payt modes at the time of body load and 
-// at the time of reset
-function displayPaytModes(){
-       var cashAllowed=document.getElementById("cashAllowed").value;
-       var cardAllowed=document.getElementById("cardAllowed").value;
-      // var chequeAllowed=document.getElementById("chequeAllowed").value;
-       //var ddAllowed=document.getElementById("ddAllowed").value;
-       var chequeDDAllowed=isChequeDDAllowed();
-       var bankAllowed=document.getElementById("bankAllowed").value;
-	   clearPaytModes();
-	   
-       if(cashAllowed=='true'){
-       		//display cash radio button, set it as checked and display cash details
-       		document.getElementById('cashradiobuttonspan').style.display="block";
-
-       		document.getElementById('cashradiobutton').checked=true;
-       		document.getElementById('cashdetails').style.display='table-row';
-			document.getElementById('instrumentTypeCashOrCard').value="cash";
-       }
-       else{
-            // do not display cash details
-       		document.getElementById('cashradiobuttonspan').style.display="none";
-       		document.getElementById('cashdetails').style.display='table-row';
-       }
-       if(cardAllowed=='true'){
-            //display card radio button
-       		document.getElementById('cardradiobuttonspan').style.display="block";
-       		document.getElementById('instrumentTypeCashOrCard').value="card";
-       }
-       else{
-       		//do not display card radio button
-       		document.getElementById('cardradiobuttonspan').style.display="none";
-       }
-       if(chequeDDAllowed=='true'){
-       		//display cheque DD radio button
-       		document.getElementById('chequeradiobuttonspan').style.display="block";
-       		displayChequeDDInstrumentTypeDetails();
-       }
-       else{
-       		//do not display cheque/DD radio button
-       		document.getElementById('chequeradiobuttonspan').style.display="none";
-       }
-       if(bankAllowed=='true'){
-            //display bank radio button
-       		document.getElementById('bankradiobuttonspan').style.display="block";
-       		document.getElementById('instrumentTypeCashOrCard').value="bankchallan";
-       }
-       else{
-       		//do not display card radio button
-       		document.getElementById('bankradiobuttonspan').style.display="none";
-       }
-       //if cash is not allowed and cheque is allowed, set cheque as the default payt
-       if(chequeDDAllowed=='true' && cashAllowed=='false'){
-       		document.getElementById('chequeradiobutton').checked=true;
-       		document.getElementById('chequeDDdetails').style.display='table-row';
-       		document.getElementById('cashdetails').style.display="none";
-       		document.getElementById('instrumentTypeCashOrCard').value="";
-       		
-       		displayChequeDDInstrumentTypeDetails();
-       }
-       //if cash, cheque/DD are not allowed and card is allowed, set card as the default payt
-       if(cardAllowed=='true' && cashAllowed=='false' && chequeDDAllowed=='false'){
-       		document.getElementById('cardradiobutton').checked=true;
-       		document.getElementById('carddetails').style.display='table-row';
-       		document.getElementById('instrumentTypeCashOrCard').value="card";
-       }
-       //if cash, cheque/DD and card are not allowed and bank is allowed, set bank as the default payt
-       if(bankAllowed=='true' && cashAllowed=='false' && chequeDDAllowed=='false' && cardAllowed=='false'){
-       		document.getElementById('bankradiobutton').checked=true;
-       		document.getElementById('bankdetails').style.display='table-row';
-       		document.getElementById('instrumentTypeCashOrCard').value="bankchallan";
-       }
-}
-
 function onBodyLoad()
 {
 	var headertable=document.getElementById('billsheaderinfotable');
@@ -1344,10 +726,10 @@ function onBodyLoad()
 	
 	// To hide delete button in cheque grid on page load
 	var chequetable=document.getElementById('chequegrid');
-	if(getControlInBranch(chequetable.rows[4],'addchequerow')!=null)
-		getControlInBranch(chequetable.rows[4],'addchequerow').style.display="block";
-	if(getControlInBranch(chequetable.rows[4],'deletechequerow')!=null)
-		getControlInBranch(chequetable.rows[4],'deletechequerow').style.display="none";
+	if(getControlInBranch(chequetable.rows[3],'addchequerow')!=null)
+		getControlInBranch(chequetable.rows[3],'addchequerow').style.display="block";
+	if(getControlInBranch(chequetable.rows[3],'deletechequerow')!=null)
+		getControlInBranch(chequetable.rows[3],'deletechequerow').style.display="none";
 	
 	if(document.getElementById('instrHeaderCash.instrumentAmount').value==""){
 		document.getElementById('instrHeaderCash.instrumentAmount').value="";
@@ -1377,63 +759,6 @@ function onBodyLoad()
 	displayPaytModes();
 	displayPaymentDetails();
 	loadchequedetails();
-}
-
-function displayPaymentDetails(){
-	if(document.getElementById("totalamounttobepaid")!=null && document.getElementById("totalamounttobepaid").value!=""){
-	var collectionamount = parseFloat(document.getElementById("totalamounttobepaid").value);
-	document.getElementById("totalamounttobepaid").value=isNaN(collectionamount)?collectionamount:collectionamount.toFixed(2);
-	}
-	if(document.getElementById("instrHeaderBank.instrumentAmount")!=null && document.getElementById("instrHeaderBank.instrumentAmount").value!=""){
-		document.getElementById('bankradiobutton').checked=true;
-		document.getElementById('bankdetails').style.display='table-row';
-       	document.getElementById('instrumentTypeCashOrCard').value="bankchallan";
-       	document.getElementById('cashdetails').style.display="none";
-       	// document.getElementById('carddetails').style.display="none";
-	}
-	if(document.getElementById("instrHeaderCard.instrumentAmount")!=null && document.getElementById("instrHeaderCard.instrumentAmount").value!=""){
-		document.getElementById('cardradiobutton').checked=true;
-		document.getElementById('carddetails').style.display='table-row';
-       	document.getElementById('instrumentTypeCashOrCard').value="card";
-       	document.getElementById('cashdetails').style.display="none";
-	}
-
-	var chequetable=document.getElementById('chequegrid');
-	var chequetablelen1 =chequetable.rows.length;
-	for(var m=0;m<chequetablelen1;m++)
-	{
-		var chequeAmt=getControlInBranch(chequetable.rows[m],'instrumentChequeAmount');
-		if(chequeAmt!=null && chequeAmt.value!="")
-		{
-			document.getElementById('chequeradiobutton').checked=true;
-			document.getElementById('chequeDDdetails').style.display='table-row';
-    		document.getElementById('instrumentTypeCashOrCard').value="";
-       		document.getElementById('cashdetails').style.display="none";
-	    }
-	}
-		
-	//loadchequegrid('chequegrid','chequetyperow','chequedetailsrow','chequebankrow','chequeamountrow','chequeaddrow');	 
-}
-
-function loadchequedetails(){
-	var chequetable=document.getElementById('chequegrid');
-	var chequetablelen1 =chequetable.rows.length;
-	var tbl = document.getElementById("chequegrid");
-	
-	for(var j=chequetablelen1;j>5;j=j-5){
-		if(chequetablelen1>5){
-		getControlInBranch(tbl.rows[j-1],'deletechequerow').style.display="block";
-		}
-	}
-	for(var j=chequetablelen1;j>=5;j=j-5){
-		
-		if(getControlInBranch(tbl.rows[j-5],'instrumentType').value=="cheque"){
-			getControlInBranch(tbl.rows[j-5],'instrumenttypecheque').checked=true;
-		}
-		else if(getControlInBranch(tbl.rows[j-5],'instrumentType').value=="dd"){
-			getControlInBranch(tbl.rows[j-5],'instrumenttypedd').checked=true;
-		}
-	}
 }
 
 function checkandcalculatecredittotal(index,elem){
@@ -1620,27 +945,6 @@ function checkForCurrentDate(obj)
 	   }
 }
 
-
-
-function setinstrumenttypevalue(obj)
-{
-	var currRow=getRow(obj);
-	if(obj.value=="cheque")
-	{
-		getControlInBranch(currRow,'instrumenttypedd').checked=false;
-		getControlInBranch(currRow,'instrumentType').value=obj.value;
-	}
-	else if(obj.value=="dd")
-	{
-		getControlInBranch(currRow,'instrumenttypecheque').checked=false;
-		getControlInBranch(currRow,'instrumentType').value=obj.value;
-	}
-	if(getControlInBranch(currRow,'instrumenttypedd').checked==false && getControlInBranch(currRow,'instrumenttypecheque').checked==false)
-	{
-		getControlInBranch(currRow,'instrumentType').value="";
-	}
-}
-
 function checkreset()
 {
 	document.forms[0].reset();
@@ -1662,125 +966,6 @@ function checkreset()
 			resetMisc();
 		}
 	</s:if>
-}
-
-
-
-function setCashInstrumentDetails(elem){
-     document.getElementById("instrHeaderCash.instrumentAmount").value=elem.value;
-     document.getElementById("instrumentTypeCashOrCard").value="cash";
-}
-
-function setCardInstrumentDetails(elem){
-     document.getElementById("instrHeaderCard.instrumentAmount").value=elem.value;
-     document.getElementById("instrumentTypeCashOrCard").value="card";
-}
-function setBankInstrumentDetails(elem){
-     document.getElementById("instrHeaderBank.instrumentAmount").value=elem.value;
-     document.getElementById("instrumentTypeCashOrCard").value="bankchallan";
-}
-
-var bankfuncObj;
-var bankArray;
-function loadDropDownCodesBank()
-{
-	var url = "<c:url value='/voucher/common-ajaxGetAllBankName.action' context='/EGF'/>";
-	var req2 = initiateRequest();
-	req2.onreadystatechange = function()
-	{
-	  if (req2.readyState == 4)
-	  {
-		  if (req2.status == 200)
-		  {
-			var codes2=req2.responseText;
-			var a = codes2.split("^");
-			var codes = a[0];
-			bankArray=codes.split("+");
-			bankfuncObj= new YAHOO.widget.DS_JSArray(bankArray);
-		  }
-	   }
-	};
-	req2.open("GET", url, true);
-	req2.send(null);
-}
-
-var yuiflagBank = new Array();
-function autocompletecodeBank(obj,myEvent)
-{
-	//Fix-Me
-	var branchObj = document.getElementById('instrumentBranchName');
-	jQuery(branchObj).trigger('focus');
-	jQuery(obj).focus();
-	var src = obj;	
-	var target = document.getElementById('bankcodescontainer');	
-	var posSrc=findPos(src); 
-	target.style.left=posSrc[0];	
-	target.style.top=posSrc[1]-40;
-	target.style.width=450;	
-		
-	var coaCodeObj=obj;
-	var  currRow=getRow(obj);
-	//40 --> Down arrow, 38 --> Up arrow
-	if(yuiflagBank[currRow] == undefined)
-	{
-		var key = window.event ? window.event.keyCode : myEvent.charCode; 
-		if(key != 40 )
-		{
-			if(key != 38 )
-			{ var oAutoComp = new YAHOO.widget.AutoComplete(coaCodeObj,'bankcodescontainer', bankfuncObj);
-				oAutoComp.queryDelay = 0;
-				oAutoComp.prehighlightClassName = "yui-ac-prehighlight";
-				oAutoComp.useShadow = true;
-				oAutoComp.maxResultsDisplayed = 15;
-				oAutoComp.useIFrame = true;
-				bankfuncObj.applyLocalFilter = true;
-				bankfuncObj.queryMatchContains = true;
-				oAutoComp.minQueryLength = 0;
-				//if(bankfuncObj){
-				//	bankfuncObj.applyLocalFilter = true;
-				//	bankfuncObj.queryMatchContains = true;
-				//}
-			}
-		}
-		yuiflagBank[currRow] = 1;
-	}	
-}
-function fillAfterSplitBank(obj)
-{
-	var currRow=getRow(obj);
-	var temp = obj.value;
-	temp = temp.split("`-`");
-	if(temp[1])
-	{
-		obj.value=temp[0];
-		getControlInBranch(currRow,'bankID').value=temp[1];
-		getControlInBranch(currRow,'bankName').value=temp[0];
-		
-	}
-	/* else
-	{
-		getControlInBranch(currRow,'bankID').value="";
-		getControlInBranch(currRow,'bankName').value="";
-	} */
-	
-}
-
-function onChangeBankAccount(branchId)
-{
-    var serviceName=document.getElementById("serviceName").value;
-    var fundName="",fundId=-1;
-    if(document.getElementById('fundId')!=null && document.getElementById('fundId')!=null){
-    	var serviceId=document.getElementById("serviceId").value;
-    	fundId=document.getElementById('fundId').value;
-    	populateaccountNumberMaster({branchId:branchId,serviceId:serviceId,fundId:fundId});
-    }
-    else if(document.getElementById("fundName")!=null){
-    	fundName=document.getElementById("fundName").value;
-    	populateaccountNumberMaster({branchId:branchId,serviceName:serviceName,fundName:fundName});
-    }
-    
-    
-	
 }
 
 function showHideMandataryMark(obj){
@@ -1814,6 +999,7 @@ function showHideMandataryMark(obj){
 
 
 <div class="errorstyle" id="receipt_error_area" style="display:none;"></div>
+<div class="errorstyle" id="error_area" style="display:none;"></div>
 <div class="errorstyle" id="common_error_area" style="display:none;"></div>
 <div class="errorstyle" id="receipt_dateerror_area" style="display:none;"></div>
 
@@ -1931,224 +1117,7 @@ function showHideMandataryMark(obj){
 	</table>
 	<!--  Table to hold all modes of payment -->
 	<table width="100%" border="0" cellpadding="0" cellspacing="0" >
-	   <tr>
-	   <td class="bluebox" width="3%" ></td>
-	   <td class="bluebox" width="22%" ><s:text name="billreceipt.payment.mode"/>:<span class="mandatory1">*</span></td>
-	   <td class="bluebox" colspan="2" >
-      		
-	            	<span style="float:left;" id="cashradiobuttonspan">
-						<input onClick="showInstrumentDetails(this)"  type="radio" align="absmiddle" id="cashradiobutton"  name="paytradiobutton"/> Cash &nbsp; <s:hidden name="instrumentTypeCashOrCard" id="instrumentTypeCashOrCard" value="cash" />
-					</span>
-					<span style="float:left;"  id="chequeradiobuttonspan">
-						<input onClick="showInstrumentDetails(this)"  type="radio" align="absmiddle" id="chequeradiobutton" name="paytradiobutton"/> Cheque/DD &nbsp;</span>
-					<span style="float:left;" id="cardradiobuttonspan">
-						<input onClick="showInstrumentDetails(this)"  type="radio" align="absmiddle" id="cardradiobutton" name="paytradiobutton"/> Credit  card	&nbsp;</span>
-	             	<span style="float:left;" id="bankradiobuttonspan">
-						<input onClick="showInstrumentDetails(this)"  type="radio" align="absmiddle" id="bankradiobutton" name="paytradiobutton"/> Direct Bank &nbsp;</span>
-	   </td>
-	   </tr>
-	   
-	   <tr id="cashdetails" >
-		   <td class="bluebox" width="3%" ></td>
-		   <td class="bluebox" width="21%"><s:text name="billreceipt.payment.instrumentAmount"/><span class="mandatory1">*</span></td>
-		   <td class="bluebox" colspan="3"><s:textfield label="instrumentAmount" id="instrHeaderCash.instrumentAmount" name="instrHeaderCash.instrumentAmount" maxlength="14" size="18" cssClass="form-control patternvalidation" data-pattern="number" placeholder="0.0" onblur="callpopulateapportioningamountforbills();setCashInstrumentDetails(this);" onkeyup="callpopulateapportioningamountforbills();setCashInstrumentDetails(this);"/></td>
-	   </tr>
-	   
-	   
-		<tr>
-			<td colspan="5" >
-				<!--  Table to hold each mode of payment -->
-				<table border="0" width="100%" cellspacing="0" cellpadding="0" align="left">
-				
-				<!--for cheque NEW USING PROXY-->
-			 <tr id="chequeDDdetails" style="display:none">
-		       	<td class="bluebox2cheque" width="11%">
-		       		<s:hidden label="instrumentCount" id="instrumentCount" name="instrumentCount"/>
-		       		
-			   <table width="100%" border="0" cellspacing="0" cellpadding="0" name="chequegrid" id="chequegrid">
-		       		<!-- This row contains check boxes to choose between cheque and DD -->
-		       		<s:if test="instrumentProxyList==null || instrumentProxyList.size()==0">
-		       		<tr id="chequetyperow">
-		       		    <td class="bluebox" width="3%"></td>
-			   			<td class="bluebox" width="21%">
-			   				<INPUT TYPE="CHECKBOX" NAME="cheque" onclick="setinstrumenttypevalue(this);" value="cheque" id="instrumenttypecheque">Cheque
-			   				<INPUT TYPE="CHECKBOX" NAME="dd" onclick="setinstrumenttypevalue(this);" value="dd" id="instrumenttypedd">DD<BR>
-			   				<s:hidden label="instrumentType" id="instrumentType" name="instrumentProxyList[0].instrumentType.type"/>
-			   			</td>
-					</tr>
-					<!-- This row captures the cheque/DD No and the cheque/DD date -->
-					<tr id="chequedetailsrow"> 
-					    <td class="bluebox" width="3%"></td>
-					    <td class="bluebox" width="22%"><s:text name="billreceipt.payment.chequeddno"/><span class="mandatory1">*</span></td>
-					    <td class="bluebox"><s:textfield label="instrumentNumber" id="instrumentChequeNumber" maxlength="6" name="instrumentProxyList[0].instrumentNumber" size="18" /></td>
-					    <td class="bluebox" ><s:text name="billreceipt.payment.chequedddate"/><span class="mandatory1">*</span></td>
-						<td class="bluebox"><input type ="text" id="instrumentDate" name="instrumentProxyList[0].instrumentDate" data-date-end-date="0d"  data-inputmask="'mask': 'd/m/y'" /></td>
-				    </tr>
-				    <!-- This row captures the cheque/DD Bank and Branch names -->
-		     		<tr id="chequebankrow">
-		     		    <td class="bluebox" width="3%"></td>
-				       	<td class="bluebox"><s:text name="billreceipt.payment.bankname"/><span class="mandatory1">*</span></td>
-				       	<td class="bluebox">
-					   			<s:textfield id="bankName" type="text" name="instrumentProxyList[0].bankId.name"  onkeyup='autocompletecodeBank(this,event)' onblur='fillAfterSplitBank(this)' />
-					   			<s:hidden id="bankID" name="instrumentProxyList[0].bankId.id" />
-		   						<div id="bankcodescontainer"></div>
-		       			</td>
-		       			<td class="bluebox"><s:text name="billreceipt.payment.branchname"/></td>
-		       			<td class="bluebox"><s:textfield label="instrumentBranchName" id="instrumentBranchName" maxlength="50" name="instrumentProxyList[0].bankBranchName" size="18" /></td>
-		       		</tr>
-		       		<!-- This row captures the cheque/DD Amount -->
-		       		<tr id="chequeamountrow">
-		       		    <td class="bluebox" width="3%"></td>
-						<td class="bluebox"><s:text name="billreceipt.payment.instrumentAmount"/><span class="mandatory1">*</span></td>
-						<td class="bluebox"><s:textfield label="instrumentAmount" id="instrumentChequeAmount" maxlength="14" name="instrumentProxyList[0].instrumentAmount"  size="18"  cssClass="form-control patternvalidation" data-pattern="number" placeholder="0.0" onblur="callpopulateapportioningamountforbills();" onkeyup="callpopulateapportioningamountforbills();"/></td>
-						<td class="bluebox">&nbsp;</td>
-						<td class="bluebox">&nbsp;</td>
-					</tr>
-					<tr id="chequeaddrow">
-						<td colspan="5" class="blueborderfortd4">
-							<div id="addchequerow" style="display:none">
-								<a href="#" id="addchequelink" onclick="addChequeGrid('chequegrid','chequetyperow','chequedetailsrow','chequebankrow','chequeamountrow',this,'chequeaddrow')">
-									<s:text name="billreceipt.payment.add"/></a>
-								<img src="../../egi/resources/erp2/images/add.png" id="addchequeimg" alt="Add" width="16" height="16" border="0" align="absmiddle" onclick="addChequeGrid('chequegrid','chequetyperow','chequedetailsrow','chequebankrow','chequeamountrow',this,'chequeaddrow')"/>
-							</div>
-							<div id="deletechequerow" style="display:none">
-								<a href="#" id="deletechequelink" onclick="deleteChequeObj(this,'chequegrid','delerror')">
-									<s:text name="billreceipt.payment.delete"/></a>
-								<img src="../../egi/resources/erp2/images/delete.png" alt="Delete" width="16" height="16" border="0" align="absmiddle"  onclick="deleteChequeObj(this,'chequegrid','delerror')"/>
-							</div>
-						</td>
-					</tr>
-					</s:if>
-					<s:else>
-					  <s:iterator value="(instrumentProxyList.size).{#this}" status="instrstatus">
-					<tr id="chequetyperow">
-			   			<td class="blueboxcheckbox" width="19%">
-			   				<INPUT TYPE="CHECKBOX" NAME="cheque" onclick="setinstrumenttypevalue(this);" value="cheque" id="instrumenttypecheque">Cheque
-			   				<INPUT TYPE="CHECKBOX" NAME="dd" onclick="setinstrumenttypevalue(this);" value="dd" id="instrumenttypedd">DD<BR>
-			   				<s:hidden label="instrumentType" id="instrumentType" name="instrumentProxyList[%{#instrstatus.index}].instrumentType.type"/>
-			   			</td>
-			       		<td class="bluebox" colspan="3">&nbsp;</td>
-					</tr>
-					<!-- This row captures the cheque/DD No and the cheque/DD date -->
-					<tr id="chequedetailsrow"> 
-					    <td class="bluebox2new"><s:text name="billreceipt.payment.chequeddno"/><span class="mandatory1">*</span></td>
-					    <td class="bluebox2" width="20%"><s:textfield label="instrumentNumber" id="instrumentChequeNumber" maxlength="6" name="instrumentProxyList[%{#instrstatus.index}].instrumentNumber" size="18" /></td>
-					    <td class="bluebox2" width="23%"><s:text name="billreceipt.payment.chequedddate"/><span class="mandatory1">*</span></td>
-					   <td class="bluebox2"><input type ="text" id="instrumentDate" name="instrumentProxyList[%{#instrstatus.index}].instrumentDate" data-inputmask="'mask': 'd/m/y'"  onfocus = "waterMarkTextIn('instrumentDate','DD/MM/YYYY');"/><div>(DD/MM/YYYY)</div></td>
-				    </tr>
-				    <!-- This row captures the cheque/DD Bank and Branch names -->
-		     		<tr id="chequebankrow">
-				       	<td class="blueboxnew"><s:text name="billreceipt.payment.bankname"/><span class="mandatory1">*</span></td>
-				       	<td class="bluebox">
-					   			<s:textfield id="bankName" type="text" name="instrumentProxyList[%{#instrstatus.index}].bankId.name"  onkeyup='autocompletecodeBank(this,event)' onblur='fillAfterSplitBank(this)' />
-					   			<s:hidden id="bankID" name="instrumentProxyList[%{#instrstatus.index}].bankId.id" />
-		   						<div id="bankcodescontainer"></div>
-		       			</td>
-		       			<td class="bluebox"><s:text name="billreceipt.payment.branchname"/></td>
-		       			<td class="bluebox"><s:textfield label="instrumentBranchName" id="instrumentBranchName" maxlength="50" name="instrumentProxyList[%{#instrstatus.index}].bankBranchName" size="18" /></td>
-		       		</tr>
-		       		<!-- This row captures the cheque/DD Amount -->
-		       		<tr id="chequeamountrow">
-						<td class="bluebox2new"><s:text name="billreceipt.payment.instrumentAmount"/><span class="mandatory1">*</span></td>
-						<td class="bluebox2"><s:textfield label="instrumentAmount" id="instrumentChequeAmount" maxlength="14" name="instrumentProxyList[%{#instrstatus.index}].instrumentAmount"  size="18"  cssClass="form-control patternvalidation" data-pattern="number" placeholder="0.0" onblur="callpopulateapportioningamountforbills();" onkeyup="callpopulateapportioningamountforbills();"/></td>
-						<td class="bluebox2">&nbsp;</td>
-						<td class="bluebox2">&nbsp;</td>
-					</tr>
-					<tr id="chequeaddrow">
-						<td colspan="5" class="blueborderfortd4">
-							<div id="addchequerow" style="display:none">
-								<a href="#" id="addchequelink" onclick="addChequeGrid('chequegrid','chequetyperow','chequedetailsrow','chequebankrow','chequeamountrow',this,'chequeaddrow')">
-									<s:text name="billreceipt.payment.add"/></a>
-								<img src="<egov:url path='../../../../egi/resources/erp2/images/add.png' />" id="addchequeimg" alt="Add" width="16" height="16" border="0" align="absmiddle" onclick="addChequeGrid('chequegrid','chequetyperow','chequedetailsrow','chequebankrow','chequeamountrow',this,'chequeaddrow')"/>
-							</div>
-							<div id="deletechequerow" style="display:none">
-								<a href="#" id="deletechequelink" onclick="deleteChequeObj(this,'chequegrid','delerror')">
-									<s:text name="billreceipt.payment.delete"/></a>
-								<img src="<egov:url id="deletechequeimg" path='../../egi/resources/erp2/images/delete.png' />" alt="Delete" width="16" height="16" border="0" align="absmiddle"  onclick="deleteChequeObj(this,'chequegrid','delerror')"/>
-							</div>
-						</td>
-					</tr>
-					  </s:iterator>
-					</s:else>
-		       </table>
-		       <!-- End of table 'chequegrid' -->
-		   	    	</td>
-					</tr><!--  End of row 'chequeDDdetails' -->
-				<!--for cheque-->
-				<!--for card-->
-					<tr id="carddetails" style="display:none">
-		        	<td class="bluebox2cheque" width="11%">
-			        	<table width="100%" border="0" cellspacing="0" cellpadding="0" name="cardgrid" id="cardgrid">
-					  		<tr id="carddetailsrow">
-					  		    <td class="bluebox" width="3%"></td>
-					            <td width="22%" class="bluebox"><s:text name="billreceipt.payment.cardno"/><span class="mandatory1">*</span></td>
-					            <td class="bluebox"><s:textfield label="instrHeaderCard.instrumentNumber" id="instrHeaderCard.instrumentNumber" maxlength="4" name="instrHeaderCard.instrumentNumber" value="%{instrHeaderCard.instrumentNumber}" size="18" /></td>
-						        <td class="bluebox"><s:text name="billreceipt.payment.transactionnumber"/><span class="mandatory1">*</span></td>
-								<td class="bluebox"><s:textfield label="instrHeaderCard.transactionNumber" id="instrHeaderCard.transactionNumber" maxlength="14" name="instrHeaderCard.transactionNumber" size="18" value="%{instrHeaderCard.transactionNumber}"/></td>
-					        </tr>
-					        
-					        <tr id="carddetailsrow">
-					  		    <td class="bluebox" width="3%"></td>
-								<td class="bluebox"><s:text name="billreceipt.payment.instrumentAmount"/><span class="mandatory1">*</span></td>
-					            <td class="bluebox"><s:textfield label="instrHeaderCard.instrumentAmount" id="instrHeaderCard.instrumentAmount" maxlength="14" name="instrHeaderCard.instrumentAmount" size="18"  cssClass="form-control patternvalidation" data-pattern="number" placeholder="0.0" onblur="callpopulateapportioningamountforbills();setCardInstrumentDetails(this);" onkeyup="setCardInstrumentDetails(this);"/></td>
-					        </tr>
-					        
-			            </table> 
-			   <!-- End of table 'cardgrid' -->
-		        	</td>
-					</tr><!-- End of row 'carddetails' -->
-				<!-- for card-->
-				<!--for bank-->
-					<tr id="bankdetails" style="display:none">
-					<td class="bluebox2cheque" width="11%">
-						<table width="100%" border="0" cellspacing="0" cellpadding="0" name="bankgrid" id="bankgrid" style="padding:0px;margin:0px;">
-				       		
-							<!-- This row captures the bank challan No and the bank challan date -->
-							<tr id="bankchallandetailsrow">
-							    <td class="bluebox" width="3%">&nbsp;</td> 
-							    <td class="bluebox" width="22%"><s:text name="billreceipt.payment.bankchallano"/><span class="mandatory1">*</span></td>
-							    <td class="bluebox" ><s:textfield label="transactionNumber" id="instrHeaderBank.transactionNumber" maxlength="6" name="instrHeaderBank.transactionNumber" value="%{instrHeaderBank.transactionNumber}" size="18" /></td>
-							    <td class="bluebox"><s:text name="billreceipt.payment.bankchallandate"/><span class="mandatory1">*</span></td>
-							    <s:date name="instrHeaderBank.transactionDate" var="cdFormat" format="dd/MM/yyyy"/>
-							    <td class="bluebox">
-							    	<s:textfield id="bankChallanDate" name="instrHeaderBank.transactionDate"  value="%{cdFormat}" onfocus="javascript:vDateType='3';" onkeyup="DateFormat(this,this.value,event,false,'3');waterMarkTextOut('bankChallanDate','DD/MM/YYYY');" onblur="validateChallanDate(this);"/>
-							    	<a  id="calendarLink" href="javascript:show_calendar('forms[0].bankChallanDate');" onmouseover="window.status='Date Picker';return true;"  onmouseout="window.status='';return true;"  >
-			      						<img src="/../../egi/resources/erp2/images/calendaricon.gif" alt="Date" width="18" height="18" border="0" align="middle" />
-			      					</a>
-							    </td>
-						    </tr>
-						    <!-- This row captures the bank and account names -->
-				     		<tr id="bankaccountrow">
-				     		    <td class="bluebox" width="3%">&nbsp;</td> 
-						       	<td class="bluebox"><s:text name="billreceipt.payment.bankname"/><span class="mandatory1">*</span></td>
-						       	<td class="bluebox">
-						       		<egov:ajaxdropdown id="bankBranchMasterDropdown" fields="['Text','Value']" dropdownId='bankBranchMaster'
-				                 		url='receipts/ajaxBankRemittance-bankBranchList.action' selectedValue="%{bankbranch.id}"/>
-							   		<s:select headerValue="--Select--"  headerKey="0" list="dropdownData.bankBranchList" listKey="id" 
-							   		id="bankBranchMaster" listValue="branchname" label="bankBranchMaster" name="bankBranchId" 
-							   		onChange="onChangeBankAccount(this.value)" value="%{bankBranchId}"/>
-									<egov:ajaxdropdown id="accountNumberMasterDropdown" fields="['Text','Value']" dropdownId='accountNumberMaster'
-				         				url='receipts/ajaxBankRemittance-accountList.action' selectedValue="%{bankaccount.id}"/>
-				       			</td>
-				       			<td class="bluebox"><s:text name="billreceipt.payment.bankaccountname"/><span class="mandatory"></td>
-				       			<td class="bluebox"><s:select headerValue="--Select--"  headerKey="0"
-		                			list="dropdownData.accountNumberList" listKey="id" id="accountNumberMaster" listValue="accountnumber"
-		                			label="accountNumberMaster" name="bankAccountId" value="%{bankAccountId}"/>
-		                		</td>
-				       		</tr>
-				       		<tr id="bankamountrow">
-				       		<td class="bluebox" width="3%">&nbsp;</td>
-				       		<td class="bluebox" width="22%"><s:text name="billreceipt.payment.instrumentAmount"/><span class="mandatory1">*</span></td>
-				       		<td class="bluebox"><s:textfield label="instrumentAmount" id="instrHeaderBank.instrumentAmount" name="instrHeaderBank.instrumentAmount" maxlength="14" size="18" cssClass="form-control patternvalidation" data-pattern="number" placeholder="0.0" onblur="callpopulateapportioningamountforbills();setBankInstrumentDetails(this);" onkeyup="callpopulateapportioningamountforbills();setBankInstrumentDetails(this);"/></td>
-				       		</tr>
-						</table> 
-				<!-- End of bank grid table -->
-					</td>
-					</tr>
-					
-		</table> <!-- End of mode of payments table -->
-		</td></tr>
-		
+			<%@include file="receipt-instrumentdetails.jsp" %>
 		<!-- Paid by details -->
 		<s:if test="%{!isBillSourcemisc()}">
 		<tr >
@@ -2245,7 +1214,7 @@ var bobexample=new switchcontent("switchgroup1", "div") //Limit scanning of swit
 bobexample.collapsePrevious(true) //Only one content open at any given time
 bobexample.init()
 </script>
-<script src="<c:url value='/resources/global/js/jquery/plugins/jquery.inputmask.bundle.min.js' context='/egi'/>"></script>
+<script src="<cdn:url value='/resources/global/js/jquery/plugins/jquery.inputmask.bundle.min.js' context='/egi'/>"></script>
 <script>
 jQuery(":input").inputmask();
 </script>

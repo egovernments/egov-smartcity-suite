@@ -1,0 +1,9 @@
+-----------------Ajax Check Connection Role action Mapping--------------------
+INSERT INTO eg_action(id, name, url, queryparams, parentmodule, ordernumber, displayname, enabled, contextroot, version, createdby, createddate, lastmodifiedby, lastmodifieddate, application) VALUES (nextval('seq_eg_action'), 'AjaxCheckConnection', '/ajaxconnection/check-primaryconnection-exists', null, (select id from eg_module where name = 'SewerageTransactions'), 1, 'AjaxCheckConnection', false, 'stms', 0, 1, now(), 1, now(), (select id from eg_module where name = 'Sewerage Tax Management'));
+INSERT INTO eg_roleaction(roleid, actionid) VALUES ((select id from eg_role where name = 'Super User'), (select id from eg_action where name = 'AjaxCheckConnection'));
+INSERT INTO eg_roleaction(roleid, actionid) VALUES ((select id from eg_role where name = 'ULB Operator'), (select id from eg_action where name = 'AjaxCheckConnection'));
+
+-----------------Ajax Check water tax due Role action Mapping--------------------
+INSERT INTO eg_action(id, name, url, queryparams, parentmodule, ordernumber, displayname, enabled, contextroot, version, createdby, createddate, lastmodifiedby, lastmodifieddate, application) VALUES (nextval('seq_eg_action'), 'AjaxCheckWaterTaxDue', '/ajaxconnection/check-watertax-due', null, (select id from eg_module where name = 'SewerageTransactions'), 1, 'AjaxCheckWaterTaxDue', false, 'stms', 0, 1, now(), 1, now(), (select id from eg_module where name = 'Sewerage Tax Management'));
+INSERT INTO eg_roleaction(roleid, actionid) VALUES ((select id from eg_role where name = 'Super User'), (select id from eg_action where name = 'AjaxCheckWaterTaxDue'));
+INSERT INTO eg_roleaction(roleid, actionid) VALUES ((select id from eg_role where name = 'ULB Operator'), (select id from eg_action where name = 'AjaxCheckWaterTaxDue'));

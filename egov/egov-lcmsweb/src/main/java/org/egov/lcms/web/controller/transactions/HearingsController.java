@@ -39,25 +39,23 @@
  */
 package org.egov.lcms.web.controller.transactions;
 
+import java.util.List;
+
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 
-import org.egov.eis.entity.Employee;
-import org.egov.eis.service.EmployeeService;
-import org.egov.lcms.transactions.entity.EmployeeHearing;
 import org.egov.lcms.transactions.entity.Hearings;
 import org.egov.lcms.transactions.entity.LegalCase;
 import org.egov.lcms.transactions.service.HearingsService;
 import org.egov.lcms.transactions.service.LegalCaseService;
-import org.egov.pims.commons.Position;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 @Controller
@@ -69,44 +67,55 @@ public class HearingsController {
 
     @Autowired
     private LegalCaseService legalCaseService;
-    
-    @Autowired
-    private EmployeeService employeeService;
 
-    
-
-    @RequestMapping(value = "/new/{lcNumber}", method = RequestMethod.GET)
-    public String newForm(@ModelAttribute("hearings") final Hearings hearings,final Model model,
-            @PathVariable final String lcNumber, final HttpServletRequest request) {
-        final LegalCase legalCase = getLegalCase(lcNumber, request);;
+    @RequestMapping(value = "/new/", method = RequestMethod.GET)
+    public String newForm(@ModelAttribute("hearings") final Hearings hearings, final Model model,
+            @RequestParam("lcNumber") final String lcNumber, final HttpServletRequest request) {
+        final LegalCase legalCase = getLegalCase(lcNumber, request);
         model.addAttribute("legalCase", legalCase);
+        model.addAttribute("positionTemplList", hearings.getPositionTemplList());
         model.addAttribute("hearings", hearings);
         model.addAttribute("mode", "create");
         return "hearings-new";
     }
-    
+
     @ModelAttribute
-    private LegalCase getLegalCase(@PathVariable final String lcNumber, final HttpServletRequest request) {
+    private LegalCase getLegalCase(@RequestParam("lcNumber") final String lcNumber, final HttpServletRequest request) {
         final LegalCase legalCase = legalCaseService.findByLcNumber(lcNumber);
         return legalCase;
     }
 
-    @RequestMapping(value = "/new/{lcNumber}", method = RequestMethod.POST)
-    public String create(@Valid @ModelAttribute final Hearings hearings, final BindingResult errors,
-            @PathVariable final String lcNumber, final RedirectAttributes redirectAttrs, final Model model,
+    @RequestMapping(value = "/new/", method = RequestMethod.POST)
+    public String create(@ModelAttribute final Hearings hearings, final BindingResult errors,
+            @RequestParam("lcNumber") final String lcNumber, final RedirectAttributes redirectAttrs, final Model model,
             final HttpServletRequest request) {
         final LegalCase legalCase = getLegalCase(lcNumber, request);
+        hearingsService.validateDate(hearings, legalCase, errors);
         if (errors.hasErrors()) {
             model.addAttribute("legalCase", legalCase);
             return "hearings-new";
         }
         hearings.setLegalCase(legalCase);
-        
         hearingsService.persist(hearings);
         redirectAttrs.addFlashAttribute("hearings", hearings);
         model.addAttribute("message", "Hearing created successfully.");
         model.addAttribute("mode", "create");
         return "hearings-success";
     }
-  
+
+    @RequestMapping(value = "/list/", method = RequestMethod.GET)
+    public String getHearingsList(final Model model, @RequestParam("lcNumber") final String lcNumber,
+            @Valid @ModelAttribute final Hearings hearings, final HttpServletRequest request) {
+        final LegalCase legalCase = getLegalCase(lcNumber, request);
+        final List<Hearings> hearingsList = hearingsService.findByLCNumber(lcNumber);
+        model.addAttribute("legalCase", legalCase);
+        model.addAttribute("lcNumber", legalCase.getLcNumber());
+        model.addAttribute("hearingsId", legalCase.getHearings());
+        model.addAttribute("positionTemplList", hearings.getPositionTemplList());
+        model.addAttribute("hearings", hearings);
+        model.addAttribute("hearingsList", hearingsList);
+        return "hearings-list";
+
+    }
+
 }

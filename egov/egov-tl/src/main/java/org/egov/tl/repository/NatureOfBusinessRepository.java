@@ -49,4 +49,5 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface NatureOfBusinessRepository extends JpaRepository<NatureOfBusiness, Long> {
 
+    NatureOfBusiness findByName(String name);
 }

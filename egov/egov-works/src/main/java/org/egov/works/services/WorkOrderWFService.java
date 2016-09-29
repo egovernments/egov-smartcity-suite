@@ -45,7 +45,11 @@ import org.egov.works.models.workorder.WorkOrder;
 public class WorkOrderWFService extends PersistenceService<WorkOrder, Long> {
 
     public WorkOrderWFService() {
-        setType(WorkOrder.class);
+        super(WorkOrder.class);
+    }
+
+    public WorkOrderWFService(Class<WorkOrder> type) {
+        super(type);
     }
 
 }

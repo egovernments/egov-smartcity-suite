@@ -44,10 +44,10 @@ import org.egov.config.search.Index;
 import org.egov.config.search.IndexType;
 import org.egov.infra.admin.master.entity.City;
 import org.egov.infra.admin.master.service.CityService;
+import org.egov.infra.config.core.ApplicationThreadLocals;
 import org.egov.infra.search.elastic.annotation.Indexing;
 import org.egov.infra.search.elastic.entity.ApplicationIndex;
 import org.egov.infra.search.elastic.repository.ApplicationIndexRepository;
-import org.egov.infra.config.core.ApplicationThreadLocals;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -75,8 +75,11 @@ public class ApplicationIndexService {
     @Indexing(name = Index.APPLICATION, type = IndexType.APPLICATIONSEARCH)
     public ApplicationIndex createApplicationIndex(final ApplicationIndex applicationIndex) {
         final City cityWebsite = cityService.getCityByURL(ApplicationThreadLocals.getDomainName());
-        applicationIndex.setUlbName(cityWebsite.getName());
-        applicationIndex.setDistrictName(cityWebsite.getDistrictName());
+        applicationIndex.setCityCode(cityWebsite.getCode() != null ? cityWebsite.getCode() : "");
+        applicationIndex.setCityName(cityWebsite.getName() != null ? cityWebsite.getName() : "");
+        applicationIndex.setCityGrade(cityWebsite.getGrade() != null ? cityWebsite.getGrade() : "");
+        applicationIndex.setDistrictName(cityWebsite.getDistrictName() != null ? cityWebsite.getDistrictName() : "");
+        applicationIndex.setRegionName(cityWebsite.getRegionName() != null ? cityWebsite.getRegionName() : "");
         applicationIndexRepository.save(applicationIndex);
         return applicationIndex;
     }
@@ -90,7 +93,7 @@ public class ApplicationIndexService {
 
     public ApplicationIndex findByApplicationNumber(final String applicationNumber) {
         final City cityWebsite = cityService.getCityByURL(ApplicationThreadLocals.getDomainName());
-        return applicationIndexRepository.findByApplicationNumberAndUlbName(applicationNumber, cityWebsite.getName());
+        return applicationIndexRepository.findByApplicationNumberAndCityName(applicationNumber, cityWebsite.getName());
     }
 
 }

@@ -41,8 +41,8 @@ package org.egov.billsaccounting.services;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
+import java.math.BigInteger;
 import java.sql.SQLException;
-import java.sql.Timestamp;
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
 import java.text.ParseException;
@@ -51,14 +51,12 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
-import org.egov.billsaccounting.model.Worksdetail;
 import org.egov.commons.Accountdetailtype;
 import org.egov.commons.Bankaccount;
 import org.egov.commons.Bankreconciliation;
@@ -68,7 +66,6 @@ import org.egov.commons.CFunction;
 import org.egov.commons.CGeneralLedger;
 import org.egov.commons.CGeneralLedgerDetail;
 import org.egov.commons.CVoucherHeader;
-import org.egov.commons.EgwStatus;
 import org.egov.commons.Functionary;
 import org.egov.commons.Fund;
 import org.egov.commons.Fundsource;
@@ -135,9 +132,7 @@ import org.hibernate.Query;
 import org.hibernate.Session;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.context.ApplicationContext;
-import org.springframework.context.annotation.Scope;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -145,7 +140,6 @@ import org.springframework.transaction.annotation.Transactional;
 import com.exilant.GLEngine.ChartOfAccounts;
 import com.exilant.GLEngine.Transaxtion;
 import com.exilant.GLEngine.TransaxtionParameter;
-import com.exilant.eGov.src.common.EGovernCommon;
 import com.exilant.eGov.src.transactions.CommonMethodsImpl;
 import com.exilant.eGov.src.transactions.VoucherTypeForULB;
 import com.exilant.exility.common.TaskFailedException;
@@ -157,7 +151,7 @@ import com.exilant.exility.common.TaskFailedException;
  *
  */
 @Service
-@Scope(ConfigurableBeanFactory.SCOPE_PROTOTYPE)
+//@Scope(ConfigurableBeanFactory.SCOPE_PROTOTYPE)
 public class CreateVoucher {
 	private static final String DD_MMM_YYYY = "dd-MMM-yyyy";
 	private static final String DD_MM_YYYY = "dd/MM/yyyy";
@@ -175,7 +169,6 @@ public class CreateVoucher {
 	private final static String FUNDMISSINGMSG = "Fund is not used in Bill ,cannot create Voucher";
 	private static final String FAILED = "Transaction failed";
 	private static final String EXCEPTION_WHILE_SAVING_DATA = "Exception while saving data";
-	private String name = null;
 	private final String ISREQUIRED = ".required";
 	private final String SELECT = "  Please Select  ";
 	@Autowired
@@ -187,21 +180,16 @@ public class CreateVoucher {
 	@Autowired
 	@Qualifier("persistenceService")
 	private PersistenceService persistenceService;
-	@Autowired
-	private EGovernCommon eGovernCommon;
+	 
 	@Autowired
 	private AutonumberServiceBeanResolver beanResolver;
 
 	// add here for other bills
 
 	// bill related common variables for back end updation
-	Timestamp curDate = new Timestamp(System.currentTimeMillis());
 	SimpleDateFormat sdf = new SimpleDateFormat(DD_MM_YYYY);
 	SimpleDateFormat formatter = new SimpleDateFormat(DD_MMM_YYYY);
 	NumberFormat nf = new DecimalFormat("##############.00");
-
-	// transaction related common variables
-	private int usrId;
 	@Autowired
 	private BillsService billsService;
 	@Autowired
@@ -258,8 +246,6 @@ public class CreateVoucher {
 	private static final String IS_EMPTY = "is empty";
 	private static final String TYPE = "Reversal voucher type";
 	private static final String REVERSAL_VOUCHER_NUMBER = "Reversal voucher number";
-	protected List<String> headerFields = new ArrayList<String>();
-	protected List<String> mandatoryFields = new ArrayList<String>();
 
 	@Autowired
 	private DepartmentService deptM;
@@ -288,7 +274,6 @@ public class CreateVoucher {
 	@Qualifier("generalLedgerDetailService")
 	private GeneralLedgerDetailService generalLedgerDetailService;
 
-	private Fund fundByCode;
 	@Autowired
 	private PersonalInformationDAO personalInformationDAO;
 	@Autowired
@@ -299,23 +284,7 @@ public class CreateVoucher {
 	public CreateVoucher() {
 		if (LOGGER.isDebugEnabled())
 			LOGGER.debug("Initializing CreateVoucher Service");
-		try {
-
-			// generalLedgerService = new PersistenceService<CGeneralLedger,
-			// Long>();
-			// generalLedgerService.setType(CGeneralLedger.class);
-
-			// generalLedgerDetailService = new
-			// PersistenceService<CGeneralLedgerDetail, Long>();
-			// generalLedgerDetailService.setType(CGeneralLedgerDetail.class);
-			// generalLedgerDetailService.setSessionFactory(new
-
-		} catch (final Exception e) {
-			LOGGER.error("Exception in CreateVoucher", e);
-			throw new ApplicationRuntimeException(e.getMessage());
-		}
-		if (LOGGER.isDebugEnabled())
-			LOGGER.debug("Initialization completed");
+		 
 	}
 
 	/**
@@ -330,32 +299,30 @@ public class CreateVoucher {
 	 * @throws Exception
 	 */
 
-	public long createVoucherFromBill(final int billId, String voucherStatus,
-			final String voucherNumber, final Date voucherDate)
-			throws ApplicationRuntimeException, SQLException,
-			TaskFailedException {
-		CVoucherHeader vh = null;
-		try {
-			if (voucherStatus == null) {
-				final List vStatusList = appConfigValuesService
-						.getConfigValuesByModuleAndKey("EGF",
-								"PREAPPROVEDVOUCHERSTATUS");
+    public long createVoucherFromBill(final int billId, String voucherStatus,
+            final String voucherNumber, final Date voucherDate)
+            throws ApplicationRuntimeException, SQLException,
+            TaskFailedException {
+        CVoucherHeader vh = null;
+        try {
+            if (voucherStatus == null) {
+                final List vStatusList = appConfigValuesService
+                        .getConfigValuesByModuleAndKey(FinancialConstants.MODULE_NAME_APPCONFIG, "PREAPPROVEDVOUCHERSTATUS");
 
-				if (!vStatusList.isEmpty() && vStatusList.size() == 1) {
-					final AppConfigValues appVal = (AppConfigValues) vStatusList
-							.get(0);
-					voucherStatus = appVal.getValue();
-				} else
-					throw new ApplicationRuntimeException(
-							"PREAPPROVEDVOUCHERSTATUS"
-									+ "is not defined in AppConfig values cannot proceed creating voucher");
-			}
-			usrId = ApplicationThreadLocals.getUserId().intValue();
-			if (LOGGER.isDebugEnabled())
-				LOGGER.debug(" ---------------Generating Voucher for Bill-------");
-			EgBillregister egBillregister = null;
-			egBillregister = billsService.getBillRegisterById(Integer
-					.valueOf(billId));
+                if (!vStatusList.isEmpty() && vStatusList.size() == 1) {
+                    final AppConfigValues appVal = (AppConfigValues) vStatusList
+                            .get(0);
+                    voucherStatus = appVal.getValue();
+                } else
+                    throw new ApplicationRuntimeException(
+                            "PREAPPROVEDVOUCHERSTATUS"
+                                    + "is not defined in AppConfig values cannot proceed creating voucher");
+            }
+            if (LOGGER.isDebugEnabled())
+                LOGGER.debug(" ---------------Generating Voucher for Bill-------");
+            EgBillregister egBillregister = null;
+            egBillregister = billsService.getBillRegisterById(Integer
+                    .valueOf(billId));
 			/*
 			 * identify the bill type and delegate get the fund and fundsource
 			 * check for mandatory fields for implementation if missing throw
@@ -403,6 +370,7 @@ public class CreateVoucher {
 			final String expType = egBillregister.getExpendituretype();
 			String voucherType = null;
 			String voucherSubType = null;
+			String name="";
 			if (expType.equalsIgnoreCase(CONBILL)) {
 				name = "Contractor Journal";
 				voucherSubType = FinancialConstants.JOURNALVOUCHER_NAME_CONTRACTORJOURNAL;
@@ -624,7 +592,6 @@ public class CreateVoucher {
 			TaskFailedException {
 		final CVoucherHeader vh = null;
 		try {
-			usrId = ApplicationThreadLocals.getUserId().intValue();
 			if (LOGGER.isDebugEnabled())
 				LOGGER.debug(" ---------------Generating Voucher-------");
 			EgBillregister egBillregister = null;
@@ -636,6 +603,7 @@ public class CreateVoucher {
 			 * exception department is mandatory for implementation type fund is
 			 * mandatory for all implementations
 			 */
+			String name="";
 			final EgBillregistermis billMis = egBillregister
 					.getEgBillregistermis();
 			final Fund fund = billMis.getFund();
@@ -827,10 +795,10 @@ public class CreateVoucher {
 			final List<HashMap<String, Object>> subledgerdetails)
 			throws ApplicationRuntimeException, ValidationException {
 		final AppConfig appConfig = appConfigService
-				.findBykeyName("PREAPPROVEDVOUCHERSTATUS");
-		if (null != appConfig && null != appConfig.getAppDataValues())
+				.getAppConfigByKeyName("PREAPPROVEDVOUCHERSTATUS");
+		if (null != appConfig && null != appConfig.getConfValues())
 			for (final AppConfigValues appConfigVal : appConfig
-					.getAppDataValues())
+					.getConfValues())
 				headerdetails.put(VoucherConstant.STATUS,
 						Integer.valueOf(appConfigVal.getValue()));
 		else
@@ -1001,7 +969,9 @@ public class CreateVoucher {
 		return nextPosition;
 
 	}
-
+/**
+ * 
+ */
 	@Deprecated
 	public void startWorkflow(final ContraJournalVoucher cjv)
 			throws ValidationException {
@@ -1247,7 +1217,7 @@ public class CreateVoucher {
 			final String vdt = formatter.format(vh.getVoucherDate());
 			String fiscalPeriod = null;
 			try {
-				fiscalPeriod = eGovernCommon.getFiscalPeriod(vdt);
+				fiscalPeriod = getFiscalPeriod(vdt);
 			} catch (final TaskFailedException e) {
 				throw new ApplicationRuntimeException(
 						"error while getting fiscal period");
@@ -1261,7 +1231,7 @@ public class CreateVoucher {
 			vh.setCgvn(getCGVNNumber(vh));
 
 			try {
-				if (!eGovernCommon.isUniqueVN(vh.getVoucherNumber(), vdt))
+				if (!isUniqueVN(vh.getVoucherNumber(), vdt))
 					throw new ValidationException(
 							Arrays.asList(new ValidationError(
 									"Duplicate Voucher Number",
@@ -1333,15 +1303,13 @@ public class CreateVoucher {
 	private void validateFunction(final HashMap<String, Object> headerdetails,
 			final List<HashMap<String, Object>> accountcodedetails) {
 
-		final AppConfigValues appConfigValues = (AppConfigValues) persistenceService
-				.find("from AppConfigValues where key in "
-						+ "(select id from AppConfig where key_name='ifRestrictedToOneFunctionCenter' and module.name='EGF' )");
+		final List<AppConfigValues> appConfigValues = appConfigValuesService.getConfigValuesByModuleAndKey(FinancialConstants.MODULE_NAME_APPCONFIG, "ifRestrictedToOneFunctionCenter");
 		if (appConfigValues == null) {
 			if (LOGGER.isDebugEnabled())
 				LOGGER.debug("app config ifRestrictedToOneFunctionCenter is not defined");
 			throw new ValidationException("Error",
 					"Use Single Function For a transaction is not defined");
-		} else if (appConfigValues.getValue().equalsIgnoreCase("No")) {
+		} else if (appConfigValues.get(0).getValue().equalsIgnoreCase("No")) {
 
 			// Keep last two lines when making single function mandatory.
 			// Now this will support both.
@@ -1375,7 +1343,7 @@ public class CreateVoucher {
 			if (LOGGER.isDebugEnabled())
 				LOGGER.debug("Not a single Function Transaction  No need of Further check on function");
 			return;
-		} else if (appConfigValues.getValue().equalsIgnoreCase("Yes")) {
+		} else if (appConfigValues.get(0).getValue().equalsIgnoreCase("Yes")) {
 			boolean foundInHeader = false;
 			boolean atLeastOneMissing = false;
 			final Map functionMap = new HashMap<String, String>();// to find
@@ -1506,7 +1474,7 @@ public class CreateVoucher {
 		vh.setCgvn(getCGVNNumber(vh));
 
 		try {
-			if (!eGovernCommon.isUniqueVN(vh.getVoucherNumber(), vdt))
+			if (!isUniqueVN(vh.getVoucherNumber(), vdt))
 				throw new ValidationException(
 						Arrays.asList(new ValidationError(
 								"Duplicate Voucher Number",
@@ -1653,31 +1621,31 @@ public class CreateVoucher {
 	public void validateMandateFields(
 			final HashMap<String, Object> headerdetails) {
 
-		getHeaderMandateFields();
+		List<String> headerMandateFields = getHeaderMandateFields();
 		if (LOGGER.isDebugEnabled())
 			LOGGER.debug("Inside Validate Method");
 		checkMandatoryField("vouchernumber",
-				headerdetails.get(VoucherConstant.VOUCHERNUMBER), headerdetails);
+				headerdetails.get(VoucherConstant.VOUCHERNUMBER), headerdetails,headerMandateFields);
 		checkMandatoryField("voucherdate",
-				headerdetails.get(VoucherConstant.VOUCHERDATE), headerdetails);
+				headerdetails.get(VoucherConstant.VOUCHERDATE), headerdetails,headerMandateFields);
 		checkMandatoryField("fund",
-				headerdetails.get(VoucherConstant.FUNDCODE), headerdetails);
+				headerdetails.get(VoucherConstant.FUNDCODE), headerdetails,headerMandateFields);
 		checkMandatoryField("department",
 				headerdetails.get(VoucherConstant.DEPARTMENTCODE),
-				headerdetails);
+				headerdetails,headerMandateFields);
 		checkMandatoryField("scheme",
-				headerdetails.get(VoucherConstant.SCHEMECODE), headerdetails);
+				headerdetails.get(VoucherConstant.SCHEMECODE), headerdetails,headerMandateFields);
 		checkMandatoryField("subscheme",
-				headerdetails.get(VoucherConstant.SUBSCHEMECODE), headerdetails);
+				headerdetails.get(VoucherConstant.SUBSCHEMECODE), headerdetails,headerMandateFields);
 		checkMandatoryField("functionary",
 				headerdetails.get(VoucherConstant.FUNCTIONARYCODE),
-				headerdetails);
+				headerdetails,headerMandateFields);
 		// checkMandatoryField("function",headerdetails.get(VoucherConstant.FUNCTIONCODE),headerdetails);
 		checkMandatoryField("fundsource",
 				headerdetails.get(VoucherConstant.FUNDSOURCECODE),
-				headerdetails);
+				headerdetails,headerMandateFields);
 		checkMandatoryField("field",
-				headerdetails.get(VoucherConstant.DIVISIONID), headerdetails);
+				headerdetails.get(VoucherConstant.DIVISIONID), headerdetails,headerMandateFields);
 
 	}
 
@@ -1742,7 +1710,7 @@ public class CreateVoucher {
 			final Date voucherDate = (Date) headerdetails
 					.get(VoucherConstant.VOUCHERDATE);
 			cVoucherHeader.setVoucherDate(voucherDate);
-			fundByCode = fundDAO.fundByCode(headerdetails.get(
+		Fund	fundByCode = fundDAO.fundByCode(headerdetails.get(
 					VoucherConstant.FUNDCODE).toString());
 
 			if (LOGGER.isDebugEnabled())
@@ -1803,8 +1771,8 @@ public class CreateVoucher {
 				 * (AppConfig)
 				 * appConfigSer.find("from AppConfig where key_name =?",
 				 * "JournalVoucher_ConfirmonCreate"); if(null != appConfig &&
-				 * null!= appConfig.getAppDataValues() ){ for (AppConfigValues
-				 * appConfigVal : appConfig.getAppDataValues()) {
+				 * null!= appConfig.getValues() ){ for (AppConfigValues
+				 * appConfigVal : appConfig.getValues()) {
 				 * cVoucherHeader.
 				 * setIsConfirmed(Integer.valueOf(appConfigVal.getValue())); } }
 				 */
@@ -2321,7 +2289,7 @@ public class CreateVoucher {
 				 */
 				final Transaxtion transaction = new Transaxtion();
 				transaction.setGlCode(chartOfAcc.getGlcode());
-				transaction.setGlName(chartOfAcc.getName());
+				transaction.setGlName(chartOfAcc.getName()); 
 				transaction.setVoucherLineId(String.valueOf(voucherLineId++));
 				transaction.setVoucherHeaderId(vh.getId().toString());
 				transaction.setCrAmount(creditAmount);
@@ -2330,7 +2298,8 @@ public class CreateVoucher {
 				if (headerdetails != null
 						&& headerdetails.get("billid") != null)
 					transaction.setBillId((Long) headerdetails.get("billid"));
-
+				
+			 
 				final ArrayList reqParams = new ArrayList();
 				for (final HashMap<String, Object> sublegDetailMap : subledgerdetails) {
 
@@ -2583,117 +2552,7 @@ public class CreateVoucher {
 		return collectionMode;
 	}
 
-	public EgBillregister createBill(
-			final HashMap<String, Object> supplierBillDetails,
-			final List<HashMap<String, Object>> ledgerlist)
-			throws ApplicationRuntimeException, Exception {
-		EgBillregister billregister = new EgBillregister();
-
-		postInBillRegister(supplierBillDetails, billregister);
-		postInEgbillMis(billregister, supplierBillDetails);
-		postinbilldetail(billregister, ledgerlist);
-		billregister = billsService.createBillRegister(billregister);
-
-		return billregister;
-
-	}
-
-	public void postInBillRegister(
-			final HashMap<String, Object> supplierBillDetails,
-			final EgBillregister billregister)
-			throws ApplicationRuntimeException, Exception {
-
-		billregister.setWorksdetailId(supplierBillDetails.get("worksdetailid")
-				.toString());
-		billregister.setBilldate((Date) supplierBillDetails.get("billdate"));
-		billregister.setBillamount(new BigDecimal(supplierBillDetails.get(
-				"billamount").toString()));
-		billregister.setPassedamount(new BigDecimal(supplierBillDetails.get(
-				"passedamount").toString()));
-		if (null != supplierBillDetails.get("adjustedamount").toString())
-			billregister.setAdvanceadjusted(new BigDecimal(supplierBillDetails
-					.get("adjustedamount").toString()));
-		billregister.setBillstatus("CREATED");
-		billregister
-				.setBilltype(supplierBillDetails.get("billtype").toString());
-		billregister.setExpendituretype(supplierBillDetails.get(
-				"expendituretype").toString());
-		if (null != supplierBillDetails.get("narration").toString())
-			billregister.setNarration(supplierBillDetails.get("narration")
-					.toString());
-		EgwStatus status = null;
-		// status = (EgwStatus)
-		// egwStatusDAO.findById(Integer.valueOf(eGovernCommon.getEGWStatusId("PURCHBILL",
-		// "Pending")), false);
-		status = (EgwStatus) egwStatusDAO.getStatusByModuleAndCode("PURCHBILL",
-				"Pending");
-		billregister.setStatus(status);
-		if (null != ApplicationThreadLocals.getUserId())
-			billregister.setCreatedBy(userMngr.getUserById(Long
-					.valueOf(ApplicationThreadLocals.getUserId())));
-		billregister.setCreatedDate(new Date());
-		final SimpleDateFormat df = new SimpleDateFormat(DD_MM_YYYY);
-		final String date = df.format((Date) supplierBillDetails
-				.get("billdate"));
-		billregister.setBillnumber(cmImpl.getTxnNumber("WBILL", date));
-	}
-
-	public void postInEgbillMis(final EgBillregister billregister,
-			final HashMap<String, Object> supplierBillDetails) throws Exception {
-
-		final EgBillregistermis billMis = new EgBillregistermis();
-		billMis.setEgBillregister(billregister);
-		billMis.setFund(((Worksdetail) supplierBillDetails.get("worksdetail"))
-				.getFund());
-		billMis.setFundsource(((Worksdetail) supplierBillDetails
-				.get("worksdetail")).getFundsource());
-		final SimpleDateFormat df = new SimpleDateFormat(DD_MM_YYYY);
-		final String date = df.format((Date) supplierBillDetails
-				.get("billdate"));
-		final String sanctionNo = cmImpl.getTxnNumber("SAN", date);
-		billMis.setSanctiondetail(sanctionNo);
-		billMis.setSanctiondate(billregister.getBilldate());
-		billMis.setFinancialyear(financialYearDAO
-				.getFinancialYearByFinYearRange(date));
-		if (null != supplierBillDetails.get(VoucherConstant.DEPARTMENTCODE)) {
-			final String departmentCode = supplierBillDetails.get(
-					VoucherConstant.DEPARTMENTCODE).toString();
-			billMis.setEgDepartment(deptM.getDepartmentByCode(departmentCode));
-		}
-		billMis.setLastupdatedtime(new Date());
-		billregister.setEgBillregistermis(billMis);
-	}
-
-	public void postinbilldetail(final EgBillregister billregister,
-			final List<HashMap<String, Object>> ledgerlist) {
-
-		final Set<EgBilldetails> egBilldetailes = new HashSet<EgBilldetails>(0);
-		for (final HashMap<String, Object> ledgerMap : ledgerlist) {
-
-			final EgBilldetails billDetail = new EgBilldetails();
-			billDetail.setEgBillregister(billregister);
-			final String glcode = ledgerMap.get(VoucherConstant.GLCODE)
-					.toString();
-			final CChartOfAccounts chartOfAcc = chartOfAccountsDAO
-					.getCChartOfAccountsByGlCode(glcode);
-			billDetail.setGlcodeid(new BigDecimal(chartOfAcc.getId()));
-			if (null != ledgerMap.get(VoucherConstant.DEBITAMOUNT)
-					&& new BigDecimal(ledgerMap
-							.get(VoucherConstant.DEBITAMOUNT).toString())
-							.compareTo(BigDecimal.ZERO) != 0)
-				billDetail.setDebitamount(new BigDecimal(ledgerMap.get(
-						VoucherConstant.DEBITAMOUNT).toString()));
-			if (null != ledgerMap.get(VoucherConstant.CREDITAMOUNT)
-					&& new BigDecimal(ledgerMap.get(
-							VoucherConstant.CREDITAMOUNT).toString())
-							.compareTo(BigDecimal.ZERO) != 0)
-				billDetail.setCreditamount(new BigDecimal(ledgerMap.get(
-						VoucherConstant.CREDITAMOUNT).toString()));
-			egBilldetailes.add(billDetail);
-		}
-		billregister.setEgBilldetailes(egBilldetailes);
-
-	}
+	
 
 	public void updatePJV(final CVoucherHeader vh,
 			final List<PreApprovedVoucher> detailList,
@@ -3048,7 +2907,7 @@ public class CreateVoucher {
 	}
 
 	protected void checkMandatoryField(final String fieldName,
-			final Object value, final HashMap<String, Object> headerdetails) {
+			final Object value, final HashMap<String, Object> headerdetails,List<String> mandatoryFields) {
 		if (LOGGER.isDebugEnabled())
 			LOGGER.debug("Filed name :=" + fieldName + " Value = :" + value);
 		String vNumGenMode = null;
@@ -3083,21 +2942,21 @@ public class CreateVoucher {
 	}
 
 	@SuppressWarnings("unchecked")
-	protected void getHeaderMandateFields() {
-		final List<AppConfig> appConfigList = persistenceService
-				.findAllBy("from AppConfig where key_name = 'DEFAULTTXNMISATTRRIBUTES'");
-		for (final AppConfig appConfig : appConfigList)
-			for (final AppConfigValues appConfigVal : appConfig
-					.getAppDataValues()) {
-				final String value = appConfigVal.getValue();
-				final String header = value.substring(0, value.indexOf("|"));
-				headerFields.add(header);
-				final String mandate = value.substring(value.indexOf("|") + 1);
-				if (mandate.equalsIgnoreCase("M"))
-					mandatoryFields.add(header);
-			}
+    protected List<String> getHeaderMandateFields() {
+		List<String> mandatoryFields=new ArrayList<String>();
+        final List<AppConfigValues> appConfigList = appConfigValuesService.getConfigValuesByModuleAndKey(
+                FinancialConstants.MODULE_NAME_APPCONFIG, "DEFAULTTXNMISATTRRIBUTES");
 
-	}
+        for (final AppConfigValues appConfigVal : appConfigList)
+        {
+            final String value = appConfigVal.getValue();
+            final String header = value.substring(0, value.indexOf("|"));
+            final String mandate = value.substring(value.indexOf("|") + 1);
+            if (mandate.equalsIgnoreCase("M"))
+                mandatoryFields.add(header);
+        }
+        return mandatoryFields;
+    }
 
 
 
@@ -3198,4 +3057,54 @@ public class CreateVoucher {
 		this.appConfigValuesService = appConfigValuesService;
 	}
 
+	
+	public boolean isUniqueVN(String vcNum, final String vcDate) throws Exception, TaskFailedException {
+	       boolean isUnique = false;
+	       String fyStartDate = "", fyEndDate = "";
+	       vcNum = vcNum.toUpperCase();
+	       Query pst = null;                           
+	       List<Object[]> rs = null;
+	       try {
+	           final String query1 = "SELECT to_char(startingDate, 'DD-Mon-YYYY') AS \"startingDate\", to_char(endingDate, 'DD-Mon-YYYY') AS \"endingDate\" FROM financialYear WHERE startingDate <= '"
+	                   + vcDate + "' AND endingDate >= '" + vcDate + "'";
+	           pst = persistenceService.getSession().createSQLQuery(query1);
+	           rs = pst.list();
+	           if (rs != null && rs.size() > 0)
+	               for (final Object[] element : rs) {
+	                   fyStartDate = element[0].toString();
+	                   fyEndDate = element[1].toString();
+	               }
+	           final String query2 = "SELECT id FROM voucherHeader WHERE voucherNumber = '" + vcNum + "' AND voucherDate>='"
+	                   + fyStartDate
+	                   + "' AND voucherDate<='" + fyEndDate + "' and status!=4";
+	           pst = persistenceService.getSession().createSQLQuery(query2);
+	           rs = pst.list();
+	           if (rs != null && rs.size() > 0) {
+	               if (LOGGER.isDebugEnabled())
+	                   LOGGER.debug("Duplicate Voucher Number");
+	           } else
+	               isUnique = true;
+	       } catch (final Exception ex) {
+	           LOGGER.error("error in finding unique VoucherNumber");
+	            throw new ApplicationRuntimeException("error in finding unique VoucherNumber"); 
+	       } finally {
+	           
+	       }
+	       return isUnique;
+	   }
+	
+	public String getFiscalPeriod(final String vDate) throws TaskFailedException {
+		BigInteger fiscalPeriod = null;
+		final String sql = "select id from fiscalperiod  where '" + vDate + "' between startingdate and endingdate";
+		try {
+			final Query pst = persistenceService.getSession().createSQLQuery(sql);
+			final List<BigInteger> rset = pst.list();
+			fiscalPeriod = rset != null ? rset.get(0) : BigInteger.ZERO;
+		} catch (final Exception e) {
+			LOGGER.error("Exception..." + e.getMessage());
+			throw new TaskFailedException(e.getMessage());
+		}
+		return fiscalPeriod.toString();
+	}
+	
 }

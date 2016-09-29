@@ -43,15 +43,14 @@ package org.egov.tl.service;
 import org.apache.commons.lang3.StringUtils;
 import org.egov.eis.entity.Assignment;
 import org.egov.infra.admin.master.entity.Module;
+import org.egov.infra.admin.master.service.ModuleService;
 import org.egov.infra.config.core.ApplicationThreadLocals;
 import org.egov.infra.reporting.engine.ReportOutput;
 import org.egov.infra.reporting.engine.ReportRequest;
 import org.egov.infra.reporting.engine.ReportService;
-import org.egov.infstr.services.PersistenceService;
 import org.egov.tl.entity.License;
 import org.egov.tl.entity.LicenseAppType;
 import org.egov.tl.entity.LicenseDemand;
-import org.egov.tl.entity.LicenseStatus;
 import org.egov.tl.entity.NatureOfBusiness;
 import org.egov.tl.entity.TradeLicense;
 import org.egov.tl.entity.WorkflowBean;
@@ -85,19 +84,18 @@ public class TradeLicenseService extends AbstractLicenseService<TradeLicense> {
     @Autowired
     private LicenseUtils licenseUtils;
 
+    @Autowired
+    private ModuleService moduleService;
+
+
     @Override
     protected NatureOfBusiness getNatureOfBusiness() {
-        final NatureOfBusiness natureOfBusiness = (NatureOfBusiness) entityQueryService
-                .find("from org.egov.tl.entity.NatureOfBusiness where   name='Permanent'");
-        return natureOfBusiness;
+        return natureOfBusinessService.getNatureOfBusinessByName("Permanent");
     }
 
     @Override
     protected Module getModuleName() {
-        final Module module = (Module) entityQueryService
-                .find("from org.egov.infra.admin.master.entity.Module where parentModule is null and name=?",
-                        "Trade License");
-        return module;
+        return moduleService.getModuleByName("Trade License");
     }
 
     @Override
@@ -107,22 +105,17 @@ public class TradeLicenseService extends AbstractLicenseService<TradeLicense> {
 
     @Override
     protected Assignment getWorkflowInitiator(final TradeLicense license) {
-        final Assignment wfInitiator = assignmentService.getPrimaryAssignmentForUser(license.getCreatedBy().getId());
-        return wfInitiator;
+        return assignmentService.getPrimaryAssignmentForUser(license.getCreatedBy().getId());
     }
 
     @Override
     protected LicenseAppType getLicenseApplicationTypeForRenew() {
-        final LicenseAppType appType = (LicenseAppType) entityQueryService
-                .find("from org.egov.tl.entity.LicenseAppType where   name='Renew'");
-        return appType;
+        return licenseAppTypeService.getLicenseAppTypeByName("Renew");
     }
 
     @Override
     protected LicenseAppType getLicenseApplicationType() {
-        final LicenseAppType appType = (LicenseAppType) entityQueryService
-                .find("from org.egov.tl.entity.LicenseAppType where   name='New'");
-        return appType;
+        return licenseAppTypeService.getLicenseAppTypeByName("New");
     }
 
     @Transactional
@@ -148,18 +141,14 @@ public class TradeLicenseService extends AbstractLicenseService<TradeLicense> {
         }
         if (BUTTONAPPROVE.equals(workFlowAction) || Constants.BUTTONFORWARD.equals(workFlowAction)
                 && license.getState().getValue().contains(Constants.WF_STATE_SANITORY_INSPECTOR_APPROVAL_PENDING)) {
-            final LicenseStatus activeStatus = (LicenseStatus) entityQueryService
-                    .find("from org.egov.tl.entity.LicenseStatus where code='UWF'");
-            license.setStatus(activeStatus);
+            license.setStatus(licenseStatusService.getLicenseStatusByCode("UWF"));
             if (Constants.BUTTONFORWARD.equals(workFlowAction) && license.getEgwStatus() != null
                     && license.getEgwStatus().getCode().equals(Constants.APPLICATION_STATUS_CREATED_CODE))
                 license = (TradeLicense) licenseUtils.applicationStatusChange(license,
                         Constants.APPLICATION_STATUS_INSPE_CODE);
         }
         if (Constants.GENERATECERTIFICATE.equals(workFlowAction)) {
-            final LicenseStatus activeStatus = (LicenseStatus) entityQueryService
-                    .find("from org.egov.tl.entity.LicenseStatus where code='ACT'");
-            license.setStatus(activeStatus);
+            license.setStatus(licenseStatusService.getLicenseStatusByCode("ACT"));
             // setting license to non-legacy, old license number will be the only tracking
             // to check a license created as legacy or new hereafter.
             license.setLegacy(false);
@@ -170,13 +159,9 @@ public class TradeLicenseService extends AbstractLicenseService<TradeLicense> {
                 && license.getState().getValue().contains(Constants.WORKFLOW_STATE_REJECTED))
             if (license.getLicenseAppType() != null
                     && license.getLicenseAppType().getName().equals(Constants.RENEWAL_LIC_APPTYPE)) {
-                final LicenseStatus activeStatus = (LicenseStatus) entityQueryService
-                        .find("from org.egov.tl.entity.LicenseStatus where code='ACT'");
-                license.setStatus(activeStatus);
+                license.setStatus(licenseStatusService.getLicenseStatusByCode("ACT"));
             } else {
-                final LicenseStatus activeStatus = (LicenseStatus) entityQueryService
-                        .find("from org.egov.tl.entity.LicenseStatus where code='CAN'");
-                license.setStatus(activeStatus);
+                license.setStatus(licenseStatusService.getLicenseStatusByCode("CAN"));
             }
         if (null != license && null != license.getState()
                 && license.getState().getValue().contains(Constants.WF_STATE_SANITORY_INSPECTOR_APPROVAL_PENDING))
@@ -197,7 +182,7 @@ public class TradeLicenseService extends AbstractLicenseService<TradeLicense> {
 
     private Map<String, Object> getReportParamsForCertificate(final License license, final String districtName,
             final String cityMunicipalityName) {
-        final Map<String, Object> reportParams = new HashMap<String, Object>();
+        final Map<String, Object> reportParams = new HashMap<>();
         final SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
         final Format formatterYear = new SimpleDateFormat("YYYY");
         reportParams.put("applicationnumber", license.getApplicationNumber());
@@ -212,7 +197,7 @@ public class TradeLicenseService extends AbstractLicenseService<TradeLicense> {
         reportParams.put("subCategory", license.getTradeName() != null ? license.getTradeName().getName() : null);
         reportParams
                 .put("appType", license.getLicenseAppType() != null
-                        ? license.getLicenseAppType().getName() != null && license.getLicenseAppType().getName().equals("New")
+                        ? "New".equals(license.getLicenseAppType().getName())
                                 ? "New Trade" : "Renewal"
                         : "New");
         if (ApplicationThreadLocals.getMunicipalityName().contains("Corporation"))
@@ -220,8 +205,8 @@ public class TradeLicenseService extends AbstractLicenseService<TradeLicense> {
         reportParams.put("municipality", ApplicationThreadLocals.getMunicipalityName());
         final LicenseDemand licenseDemand = license.getLicenseDemand();
         final String startYear = formatterYear.format(licenseDemand.getEgInstallmentMaster().getFromDate());
-        final String EndYear = formatterYear.format(licenseDemand.getEgInstallmentMaster().getToDate());
-        final String installMentYear = startYear + "-" + EndYear;
+        final String endYear = formatterYear.format(licenseDemand.getEgInstallmentMaster().getToDate());
+        final String installMentYear = startYear + "-" + endYear;
         reportParams.put("installMentYear", installMentYear);
         reportParams.put("applicationdate", formatter.format(license.getApplicationDate()));
         reportParams.put("demandUpdateDate", formatter.format(license.getCurrentDemand().getModifiedDate()));

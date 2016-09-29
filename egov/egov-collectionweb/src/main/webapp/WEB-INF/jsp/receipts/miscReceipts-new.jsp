@@ -89,9 +89,21 @@ function addRow(tableObj,rowObj)
 function validateMiscReceipt()
 {
     if(!validateMiscDetails()){
+    	document.getElementById("receipt_error_area").style.display="block";
         return false;
+    }else{
+    	var receiptDate = document.getElementById("voucherDate").value;
+        var financialYearDate = document.getElementById("financialYearDate").value;
+    	if(process(financialYearDate) > process(receiptDate)) {
+			 document.getElementById("receipt_error_area").style.display="block";
+    		document.getElementById("receipt_error_area").innerHTML+=
+				'<s:text name="challan.error.receiptdate.lessthan.financialyear" />'+ '<br>';   	
+			       window.scroll(0,0);
+				return false;
+   		}
     }
-    return true;
+    
+	return true;
 }
 
 jQuery(document).ready(function(){
@@ -202,9 +214,6 @@ function resetMisc(){
 function onBodyLoadMiscReceipt()
 {
     document.getElementById("voucherDate").value=currDate;
-    if(document.getElementById("deptId")!=null){
-        document.getElementById("deptId").disabled=true;
-    }
     document.getElementById("rebateDetails").style.display="none";
     loadDropDownCodes();
     loadDropDownRebateCodes();
@@ -697,10 +706,6 @@ var totaldbamt=0,totalcramt=0;
             </s:iterator>
         
     }
-    
-    
-   
-
 </script>
 <table width="100%" border="0" cellspacing="0" cellpadding="0" >
 
@@ -771,6 +776,8 @@ var totaldbamt=0,totalcramt=0;
                 url='receipts/ajaxBankRemittance-bankBranchList.action' selectedValue="%{bankbranch.id}"/> 
           <egov:ajaxdropdown id="schemeIdDropdown" fields="['Text','Value']" dropdownId='schemeId' url='receipts/ajaxReceiptCreate-ajaxLoadSchemes.action' />
          <s:hidden label="receiptMisc.fund.id" id="receiptMisc.fund.id"  name="receiptMisc.fund.id"/>
+         <s:date name="financialYearDate" var="financialYearDateFormat" format="dd/MM/yyyy"/>
+         <s:hidden id="financialYearDate"  name="financialYearDate" value="%{financialYearDateFormat}"/>
           </td>
           </s:if>
            <s:else>
@@ -888,6 +895,3 @@ var totaldbamt=0,totalcramt=0;
         <td colspan="5"></td>
       </tr>
     </table>
-    
-
-    

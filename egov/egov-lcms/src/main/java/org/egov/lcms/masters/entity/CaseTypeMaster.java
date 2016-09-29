@@ -59,8 +59,7 @@ import org.hibernate.validator.constraints.SafeHtml;
 
 @Entity
 @Table(name = "EGLC_CASETYPE_MASTER")
-@Unique(fields = { "code", "caseType" }, id = "id", tableName = "EGLC_CASETYPE_MASTER", columnName = { "code",
-        "casetype" }, enableDfltMsg = true)
+@Unique(id = "id", tableName = "EGLC_CASETYPE_MASTER",columnName = { "code","caseType" },fields = { "code", "caseType" }, enableDfltMsg = true)
 @SequenceGenerator(name = CaseTypeMaster.SEQ_CASE_TYPE, sequenceName = CaseTypeMaster.SEQ_CASE_TYPE, allocationSize = 1)
 @AuditOverrides({ @AuditOverride(forClass = AbstractAuditable.class, name = "lastModifiedBy"),
         @AuditOverride(forClass = AbstractAuditable.class, name = "lastModifiedDate") })
@@ -73,13 +72,13 @@ public class CaseTypeMaster extends AbstractAuditable {
     @GeneratedValue(generator = SEQ_CASE_TYPE, strategy = GenerationType.SEQUENCE)
     private Long id;
 
-    @Length(min = 1, max = 25)
+    @Length(max = 25)
     @Audited
     @NotNull
     private String code;
 
     @NotNull
-    @Length(min = 3, max = 50)
+    @Length(max = 50)
     @Audited
     private String caseType;
 
@@ -87,7 +86,7 @@ public class CaseTypeMaster extends AbstractAuditable {
     @NotNull
     private Boolean active;
 
-    @Length(min = 3, max = 256)
+    @Length(max = 256)
     @SafeHtml
     private String notes;
     

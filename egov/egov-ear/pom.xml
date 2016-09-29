@@ -24,14 +24,14 @@
 			<artifactId>egov-commonsweb</artifactId>
 			<version>${project.parent.version}</version>
 			<type>war</type>
-		</dependency>
+		</dependency> 
 		<dependency>
 			<groupId>org.egov</groupId>
 			<artifactId>egov-eisweb</artifactId>
 			<version>${project.parent.version}</version>
 			<type>war</type>
 		</dependency>
-		<dependency>
+	    <dependency>
 			<groupId>org.egov</groupId>
 			<artifactId>egov-egfweb</artifactId>
 			<version>${project.parent.version}</version>
@@ -108,8 +108,25 @@
 			<artifactId>egov-councilweb</artifactId>
 			<version>${project.parent.version}</version>
 			<type>war</type>
+		</dependency> 
+		<!-- <dependency>
+			<groupId>org.egov</groupId>
+			<artifactId>egov-inventoryweb</artifactId>
+			<version>${project.parent.version}</version>
+			<type>war</type>
+		</dependency>  -->
+		<dependency>
+			<groupId>org.egov</groupId>
+			<artifactId>egov-stmsweb</artifactId>
+			<version>${project.parent.version}</version>
+			<type>war</type>
 		</dependency>
-		
+		<dependency>
+			<groupId>org.egov</groupId>
+			<artifactId>egov-mrsweb</artifactId>
+			<version>${project.parent.version}</version>
+			<type>war</type>
+		</dependency>
 		<dependency>
 			<groupId>org.egov</groupId>
 			<artifactId>egov-api</artifactId>
@@ -208,11 +225,26 @@
 			<artifactId>egov-council</artifactId>
 			<version>${project.parent.version}</version>
 		</dependency>
+	<!-- 	<dependency>
+			<groupId>org.egov</groupId>
+			<artifactId>egov-inventory</artifactId>
+			<version>${project.parent.version}</version>
+		</dependency> -->
 		<dependency>
 			<groupId>org.egov</groupId>
 			<artifactId>egov-restapi</artifactId>
 			<version>${project.parent.version}</version>
 			<type>war</type>
+		</dependency>
+		<dependency>
+			<groupId>org.egov</groupId>
+			<artifactId>egov-stms</artifactId>
+			<version>${project.parent.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.egov</groupId>
+			<artifactId>egov-mrs</artifactId>
+			<version>${project.parent.version}</version>
 		</dependency>
 		<!-- Following dependencies are included in ear as these are used only 
 			in war modules and we have configured war modules to be archived as skinny 
@@ -253,7 +285,7 @@
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-ear-plugin</artifactId>
-				<version>2.10</version>
+				<version>${mvn.ear.plugin.version}</version>
 				<configuration>
 					<version>6</version>
 					<modules>
@@ -342,11 +374,27 @@
 							<artifactId>egov-councilweb</artifactId>
 							<contextRoot>/council</contextRoot>
 						</webModule>
+				<!-- 	<webModule>
+							<groupId>org.egov</groupId>
+							<artifactId>egov-inventoryweb</artifactId>
+							<contextRoot>/inventory</contextRoot>
+						</webModule> -->
 						<webModule>
 							<groupId>org.egov</groupId>
 							<artifactId>egov-restapi</artifactId>
 							<contextRoot>/restapi</contextRoot>
 						</webModule>
+						<webModule>
+							<groupId>org.egov</groupId>
+							<artifactId>egov-stmsweb</artifactId>
+							<contextRoot>/stms</contextRoot>
+						</webModule>
+						<webModule>
+							<groupId>org.egov</groupId>
+							<artifactId>egov-mrsweb</artifactId>
+							<contextRoot>/mrs</contextRoot>
+						</webModule>
+						
 					</modules>
 
 					<defaultLibBundleDir>lib</defaultLibBundleDir>

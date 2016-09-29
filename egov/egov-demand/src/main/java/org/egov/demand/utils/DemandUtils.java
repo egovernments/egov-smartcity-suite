@@ -103,14 +103,13 @@ public class DemandUtils {
                         bill.getFundSourceCode(), bill.getDepartmentCode(), displayMsg, bill.getCitizenName(),
                         bill.getPartPaymentAllowed(), bill.getOverrideAccountHeadsAllowed(), collModesList,
                         COLLECTIONTYPE.F);
-                billPayeeDet = new BillPayeeDetails(bill.getCitizenName(), bill.getCitizenAddress());
+                billPayeeDet = new BillPayeeDetails(bill.getCitizenName(), bill.getCitizenAddress(), bill.getEmailId());
                 billDetails = new BillDetails(bill.getId().toString(), bill.getCreateDate(), bill.getConsumerId(),
                         bill.getBoundaryNum().toString(), bill.getBoundaryType(), bill.getDescription(),
                         bill.getTotalAmount(), bill.getMinAmtPayable());
                 billPayeeDetList.add(billPayeeDet);
                 billInfoImpl.setPayees(billPayeeDetList);
                 billInfoImpl.setCallbackForApportioning(bill.getCallBackForApportion());
-
                 boolean isActualDemand = false;
 
                 for (EgBillDetails egBillDet : bill.getEgBillDetails()) {

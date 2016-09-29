@@ -39,6 +39,17 @@
  */
 package org.egov.eis.web.controller.masters.employee;
 
+import java.io.IOException;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+import java.util.Locale;
+import java.util.Set;
+
+import javax.validation.Valid;
+
 import org.apache.log4j.Logger;
 import org.egov.commons.Accountdetailkey;
 import org.egov.commons.Accountdetailtype;
@@ -78,16 +89,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
-import javax.validation.Valid;
-import java.io.IOException;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.Locale;
-import java.util.Set;
-
 @Controller
 @RequestMapping(value = "/employeeMaster")
 public class CreateEmployeeDataEntryController {
@@ -97,7 +98,6 @@ public class CreateEmployeeDataEntryController {
 
     @Autowired
     private DepartmentService departmentService;
-    
 
     @Autowired
     private AccountdetailtypeHibernateDAO accountdetailtypeHibernateDAO;
@@ -132,8 +132,6 @@ public class CreateEmployeeDataEntryController {
     @Autowired
     private AccountDetailKeyService accountDetailKeyService;
 
-   
-
     @RequestMapping(value = "create", method = RequestMethod.GET)
     public String createForm(final Model model) {
         model.addAttribute("employee", new Employee());
@@ -146,6 +144,11 @@ public class CreateEmployeeDataEntryController {
     public String createEmployee(@Valid @ModelAttribute final Employee employee, final BindingResult errors,
             final RedirectAttributes redirectAttrs, @RequestParam final MultipartFile file,
             @RequestParam final String designationName, @RequestParam final Long deptId, final Model model) {
+
+        final Boolean codeExists = employeeService.validateEmployeeCode(employee);
+        if (codeExists)
+            errors.rejectValue("code", "Unique.employee.code");
+
         if (errors.hasErrors()) {
             setDropDownValues(model);
             model.addAttribute("mode", "create");
@@ -156,9 +159,6 @@ public class CreateEmployeeDataEntryController {
         final EmployeeType empType = employeeTypeRepository.findByName(EisConstants.EMPLOYEE_TYPE_PERMANENT);
         final EmployeeStatus empStatus = EmployeeStatus.EMPLOYED;
         try {
-            if (null != employee.getCode() && !employee.getCode().isEmpty())
-                employee.setUsername(employee.getCode());
-
             employee.setEmployeeStatus(empStatus);
             employee.setEmployeeType(empType);
             employee.setActive(EisConstants.ISACTIVE_TRUE);
@@ -231,7 +231,8 @@ public class CreateEmployeeDataEntryController {
         employee.setJurisdictions(jurisdictions);
         employeeService.createEmployeeData(employee);
 
-        final Accountdetailtype accountdetailtype = accountdetailtypeHibernateDAO.getAccountdetailtypeByName(EisConstants.ROLE_EMPLOYEE);
+        final Accountdetailtype accountdetailtype = accountdetailtypeHibernateDAO
+                .getAccountdetailtypeByName(EisConstants.ROLE_EMPLOYEE);
         final Accountdetailkey adk = new Accountdetailkey();
         adk.setAccountdetailtype(accountdetailtype);
         adk.setGroupid(1);

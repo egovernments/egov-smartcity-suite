@@ -49,7 +49,8 @@ import org.egov.eis.web.contract.WorkflowContainer;
 import org.egov.infra.admin.master.entity.Boundary;
 import org.egov.infra.utils.DateUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.support.ResourceBundleMessageSource;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.context.MessageSource;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -74,7 +75,8 @@ import static org.springframework.web.bind.annotation.RequestMethod.POST;
 public class CreateAdvertisementController extends HoardingControllerSupport {
 	
 	@Autowired
-    private ResourceBundleMessageSource messageSource;
+    @Qualifier("messageSource")
+    private MessageSource messageSource;
 
     @RequestMapping(value = "child-boundaries", method = GET, produces = APPLICATION_JSON_VALUE)
     public @ResponseBody List<Boundary> childBoundaries(@RequestParam final Long parentBoundaryId) {

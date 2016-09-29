@@ -42,6 +42,7 @@ package org.egov.portal.service;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.egov.infra.admin.master.service.RoleService;
+import org.egov.infra.config.core.ApplicationThreadLocals;
 import org.egov.infra.config.properties.ApplicationProperties;
 import org.egov.infra.exception.ApplicationRuntimeException;
 import org.egov.infra.messaging.MessagingService;
@@ -106,6 +107,13 @@ public class CitizenService {
             citizen.setActive(true);
             citizen.setActivationCode(null);
             update(citizen);
+            messagingService
+                    .sendEmail(
+                            citizen.getEmailId(),
+                            "Portal Registration Success",
+                            String.format("Dear %s,\r\n You have successfully registered into our portal, you can use your registered mobile number " +
+                                            "as Username to login to our portal.\r\nRegards,\r\n%s", citizen.getName(), ApplicationThreadLocals.getMunicipalityName()));
+            messagingService.sendSMS(citizen.getMobileNumber(), "Your portal registration completed, please use your registered mobile number as Username to login");
         }
         return citizen;
     }

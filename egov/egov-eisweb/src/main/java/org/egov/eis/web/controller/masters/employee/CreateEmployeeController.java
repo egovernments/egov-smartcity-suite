@@ -39,6 +39,11 @@
  */
 package org.egov.eis.web.controller.masters.employee;
 
+import java.io.IOException;
+import java.util.Arrays;
+
+import javax.validation.Valid;
+
 import org.apache.log4j.Logger;
 import org.egov.commons.Accountdetailkey;
 import org.egov.commons.Accountdetailtype;
@@ -63,10 +68,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
-import javax.validation.Valid;
-import java.io.IOException;
-import java.util.Arrays;
-
 @Controller
 @RequestMapping(value = "/employee")
 public class CreateEmployeeController {
@@ -84,8 +85,6 @@ public class CreateEmployeeController {
     @Autowired
     private BoundaryTypeService boundaryTypeService;
 
-    
-    
     @Autowired
     private AccountdetailtypeHibernateDAO accountdetailtypeHibernateDAO;
     @Autowired
@@ -102,11 +101,17 @@ public class CreateEmployeeController {
     @RequestMapping(value = "create", method = RequestMethod.POST)
     public String createEmployee(@Valid @ModelAttribute final Employee employee, final BindingResult errors,
             final RedirectAttributes redirectAttrs, @RequestParam final MultipartFile file, final Model model) {
+
+        final Boolean codeExists = employeeService.validateEmployeeCode(employee);
+        if (codeExists)
+            errors.rejectValue("code", "Unique.employee.code");
+
         if (errors.hasErrors()) {
             setDropDownValues(model);
             model.addAttribute("mode", "create");
             return "employee-form";
         }
+
         try {
             employee.setSignature(file.getBytes());
         } catch (final IOException e) {
@@ -114,7 +119,8 @@ public class CreateEmployeeController {
         }
         employeeService.create(employee);
 
-        final Accountdetailtype accountdetailtype = accountdetailtypeHibernateDAO.getAccountdetailtypeByName(EisConstants.ROLE_EMPLOYEE);
+        final Accountdetailtype accountdetailtype = accountdetailtypeHibernateDAO
+                .getAccountdetailtypeByName(EisConstants.ROLE_EMPLOYEE);
         final Accountdetailkey adk = new Accountdetailkey();
         adk.setAccountdetailtype(accountdetailtype);
         adk.setGroupid(1);

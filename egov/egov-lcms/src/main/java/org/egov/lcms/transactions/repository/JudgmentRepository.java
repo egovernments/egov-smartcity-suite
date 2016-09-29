@@ -39,11 +39,21 @@
  */
 package org.egov.lcms.transactions.repository;
 
+import java.util.List;
+
 import org.egov.lcms.transactions.entity.Judgment;
+import org.egov.lcms.transactions.entity.JudgmentDocuments;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 @Repository
 public interface JudgmentRepository extends JpaRepository<Judgment, Long> {
+
+    Judgment findByLegalCase_lcNumber(final String lcNumber);
+
+    @Query("select jd from JudgmentDocuments jd where jd.judgment.id=:judgmentId order by jd.id desc")
+    List<JudgmentDocuments> getJudgmentDocumentList(@Param("judgmentId") Long judgmentId);
 
 }

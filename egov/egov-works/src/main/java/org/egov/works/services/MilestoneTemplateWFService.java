@@ -49,7 +49,11 @@ import org.egov.works.models.masters.MilestoneTemplate;
 public class MilestoneTemplateWFService extends PersistenceService<MilestoneTemplate, Long> {
 
     public MilestoneTemplateWFService() {
-        setType(MilestoneTemplate.class);
+        super(MilestoneTemplate.class);
+    }
+
+    public MilestoneTemplateWFService(Class<MilestoneTemplate> type) {
+        super(type);
     }
 
 }

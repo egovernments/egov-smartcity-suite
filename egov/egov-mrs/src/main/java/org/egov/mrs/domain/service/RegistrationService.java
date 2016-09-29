@@ -86,7 +86,8 @@ import org.hibernate.Criteria;
 import org.hibernate.Session;
 import org.hibernate.criterion.Restrictions;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.support.ResourceBundleMessageSource;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.context.MessageSource;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.FileCopyUtils;
@@ -114,9 +115,12 @@ public class RegistrationService {
 
     @Autowired
     private MessagingService messagingService;
+    
 
     @Autowired
-    private ResourceBundleMessageSource messageSource;
+    @Qualifier("parentMessageSource")
+    private MessageSource mrsMessageSource;
+    
 
     @Autowired
     private ReligionService religionService;
@@ -389,7 +393,7 @@ public class RegistrationService {
         if (registration.getStatus() == ApplicationStatus.Rejected)
             msgKey = MSG_KEY_SMS_REGISTRATION_REJECTION;
 
-        final String message = messageSource.getMessage(msgKey,
+        final String message = mrsMessageSource.getMessage(msgKey,
                 new String[] { registration.getHusband().getFullName(), registration.getWife().getFullName(),
                         registration.getRegistrationNo() },
                 null);
@@ -406,12 +410,12 @@ public class RegistrationService {
             msgKeyMailSubject = MSG_KEY_EMAIL_REGISTRATION_REJECTION_SUBJECT;
         }
 
-        final String message = messageSource.getMessage(msgKeyMail,
+        final String message = mrsMessageSource.getMessage(msgKeyMail,
                 new String[] { registration.getHusband().getFullName(), registration.getWife().getFullName(),
                         registration.getRegistrationNo() },
                 null);
 
-        final String subject = messageSource.getMessage(msgKeyMailSubject, null, null);
+        final String subject = mrsMessageSource.getMessage(msgKeyMailSubject, null, null);
         messagingService.sendEmail(registration.getHusband().getContactInfo().getEmail(), subject, message);
         messagingService.sendEmail(registration.getWife().getContactInfo().getEmail(), subject, message);
     }

@@ -40,6 +40,7 @@
 
 <%@ page language="java" pageEncoding="UTF-8"%>
 <%@ include file="/includes/taglibs.jsp"%>
+<%@ taglib uri="/WEB-INF/taglib/cdn.tld" prefix="cdn" %>
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
 <html>
 <head>
@@ -167,12 +168,12 @@ var wf_certificateGenerate_status='<s:property value="%{@org.egov.tl.utils.Const
 			</div>
 		</div>
 	</div>
-<link rel="stylesheet" href="<c:url value='/resources/global/css/bootstrap/typeahead.css' context='/egi'/>">
-<script type="text/javascript" src="<c:url value='/resources/global/js/bootstrap/typeahead.bundle.js' context='/egi'/>"></script>
-<script type="text/javascript" src="<c:url value='/resources/global/js/jquery/plugins/datatables/jquery.dataTables.min.js' context='/egi'/>"></script>
-<script type="text/javascript" src="<c:url value='/resources/global/js/jquery/plugins/datatables/dataTables.bootstrap.js' context='/egi'/>"></script>
-<script type="text/javascript" src="<c:url value='/resources/global/js/jquery/plugins/jquery.validate.min.js' context='/egi'/>"></script>
-	<script type="text/javascript" src="/tl/resources/js/app/searchTradeLicense.js?rnd=${app_release_no}"></script>
+<link rel="stylesheet" href="<cdn:url  value='/resources/global/css/bootstrap/typeahead.css' context='/egi'/>">
+<script type="text/javascript" src="<cdn:url  value='/resources/global/js/bootstrap/typeahead.bundle.js' context='/egi'/>"></script>
+<script type="text/javascript" src="<cdn:url  value='/resources/global/js/jquery/plugins/datatables/jquery.dataTables.min.js' context='/egi'/>"></script>
+<script type="text/javascript" src="<cdn:url  value='/resources/global/js/jquery/plugins/datatables/dataTables.bootstrap.js' context='/egi'/>"></script>
+<script type="text/javascript" src="<cdn:url  value='/resources/global/js/jquery/plugins/jquery.validate.min.js' context='/egi'/>"></script>
+<script type="text/javascript" src="<cdn:url  value='/resources/js/app/searchTradeLicense.js?rnd=${app_release_no}'/>"></script>
 	 <style>
 		.ui-autocomplete { 
 		    /* these sets the height and width */
@@ -183,4 +184,5 @@ var wf_certificateGenerate_status='<s:property value="%{@org.egov.tl.utils.Const
 		    overflow-y:scroll;
 		}
 	</style>
+</body>
 </html>

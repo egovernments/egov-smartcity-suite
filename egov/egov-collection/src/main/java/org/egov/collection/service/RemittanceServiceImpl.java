@@ -376,8 +376,8 @@ public class RemittanceServiceImpl extends RemittanceService {
         remittancePersistService.persist(remittance);
         startWorkflow(remittance);
         if (CollectionConstants.YES.equalsIgnoreCase(createVoucher)
-                && (totalCashVoucherAmt.compareTo(BigDecimal.ZERO) > 0
-                || totalChequeVoucherAmt.compareTo(BigDecimal.ZERO) > 0)) {
+                && (totalCashVoucherAmt.compareTo(BigDecimal.ZERO) > 0 || totalChequeVoucherAmt
+                        .compareTo(BigDecimal.ZERO) > 0)) {
             voucherHeader = createVoucherForRemittance(cashInHandGLCode, chequeInHandGLcode, serviceGLCode,
                     functionCode, totalCashVoucherAmt, totalChequeVoucherAmt, voucherDate, fundCode);
             remittance.setVoucherHeader(voucherHeader);
@@ -483,7 +483,8 @@ public class RemittanceServiceImpl extends RemittanceService {
      */
     @Override
     public List<HashMap<String, Object>> findAllRemittanceDetailsForServiceAndFund(final String boundaryIdList,
-            final String serviceCodes, final String fundCodes, final Date startDate, final Date endDate) {
+            final String serviceCodes, final String fundCodes, final Date startDate, final Date endDate,
+            final String paymentMode) {
 
         final List<HashMap<String, Object>> paramList = new ArrayList<HashMap<String, Object>>();
         // TODO: Fix the sum(ih.instrumentamount) the amount is wrong because of
@@ -508,7 +509,7 @@ public class RemittanceServiceImpl extends RemittanceService {
                 + CollectionConstants.MODULE_NAME_RECEIPTHEADER + "' and code='"
                 + CollectionConstants.RECEIPT_STATUS_CODE_APPROVED + "') " + " AND ch.source='" + Source.SYSTEM + "' ";
         if (startDate != null && endDate != null)
-            whereClause = whereClause + " AND ch.receiptdate between '" + startDate + "' and '" + endDate + "' ";
+            whereClause = whereClause + " AND date(ch.receiptdate) between '" + startDate + "' and '" + endDate + "' ";
 
         final String groupByClause = " group by date(ch.RECEIPTDATE),sd.NAME,it.TYPE,fnd.name,dpt.name,fnd.code,dpt.code";
         final String orderBy = " order by RECEIPTDATE";
@@ -517,11 +518,18 @@ public class RemittanceServiceImpl extends RemittanceService {
          * Query to get the collection of the instrument types Cash,Cheque,DD & Card for bank remittance
          */
         final StringBuilder queryStringForCashChequeDDCard = new StringBuilder(queryBuilder + ",egeis_jurisdiction ujl"
-                + whereClauseBeforInstumentType + whereClauseForServiceAndFund + "it.TYPE in ('"
-                + CollectionConstants.INSTRUMENTTYPE_CASH + "','" + CollectionConstants.INSTRUMENTTYPE_CHEQUE + "',"
-                + "'" + CollectionConstants.INSTRUMENTTYPE_DD + "','" + CollectionConstants.INSTRUMENTTYPE_CARD + "') "
-                + whereClause + "AND ch.CREATEDBY=ujl.employee and ujl.boundary in (" + boundaryIdList + ")"
-                + groupByClause);
+                + whereClauseBeforInstumentType + whereClauseForServiceAndFund + "it.TYPE in ");
+        if (paymentMode.equals(CollectionConstants.INSTRUMENTTYPE_CASH))
+            queryStringForCashChequeDDCard.append("('" + CollectionConstants.INSTRUMENTTYPE_CASH + "')");
+        else if (paymentMode.equals(CollectionConstants.INSTRUMENTTYPE_CHEQUEORDD))
+            queryStringForCashChequeDDCard.append("('" + CollectionConstants.INSTRUMENTTYPE_CHEQUE + "'," + "'"
+                    + CollectionConstants.INSTRUMENTTYPE_DD + "') ");
+        else
+            queryStringForCashChequeDDCard.append("('" + CollectionConstants.INSTRUMENTTYPE_CASH + "','"
+                    + CollectionConstants.INSTRUMENTTYPE_CHEQUE + "'," + "'" + CollectionConstants.INSTRUMENTTYPE_DD
+                    + "') ");
+        queryStringForCashChequeDDCard.append(whereClause + "AND ch.CREATEDBY=ujl.employee and ujl.boundary in ("
+                + boundaryIdList + ")" + groupByClause);
 
         collectionsUtil.getUserByUserName(CollectionConstants.CITIZEN_USER_NAME);
 

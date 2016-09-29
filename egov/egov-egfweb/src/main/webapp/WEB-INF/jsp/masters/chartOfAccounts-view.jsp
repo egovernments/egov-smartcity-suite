@@ -44,6 +44,7 @@
 <html>
 <head>
 <title><s:text name="chartOfAccount" /></title>
+
 <script type="text/javascript">
 	function submitForm() {
 		var id = '<s:property value="coaId"/>';
@@ -68,9 +69,8 @@
 	<div class="subheadnew">
 		<s:text name="chartOfAccount" />
 	</div>
-	<s:actionmessage theme="simple" />
-	<s:actionerror />
-	<s:fielderror />
+	<span class="mandatory1"> <s:actionmessage theme="simple" /> <s:actionerror />
+		<s:fielderror /></span>
 	<s:form name="chartOfAccountsForm" id="chartOfAccountsForm"
 		action="chartOfAccounts" theme="simple">
 		<div class="formmainbox">
@@ -166,8 +166,6 @@
 					<s:submit name="Add" value="Add" cssClass="buttonsubmit"
 						onclick="submitForAdd()" />
 				</s:if>
-				<input type="submit" class="buttonsubmit" value="Modify" id="Modify"
-					name="Modify" onclick="return submitForm();" />
 			</s:if>
 			<input type="button" value="Close"
 				onclick="javascript:window.close()" class="button" />

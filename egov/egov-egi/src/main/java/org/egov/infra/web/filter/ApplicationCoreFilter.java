@@ -42,6 +42,7 @@ package org.egov.infra.web.filter;
 
 import org.egov.infra.admin.master.service.CityService;
 import org.egov.infra.config.core.ApplicationThreadLocals;
+import org.egov.infra.config.properties.ApplicationProperties;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import javax.servlet.Filter;
@@ -54,10 +55,19 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 import java.io.IOException;
 
+import static org.egov.infra.utils.ApplicationConstant.CDN_ATTRIB_NAME;
+import static org.egov.infra.utils.ApplicationConstant.CITY_CODE_KEY;
+import static org.egov.infra.utils.ApplicationConstant.CITY_CORP_NAME_KEY;
+import static org.egov.infra.utils.ApplicationConstant.CITY_NAME_KEY;
+import static org.egov.infra.utils.ApplicationConstant.USERID_KEY;
+
 public class ApplicationCoreFilter implements Filter {
 
     @Autowired
     private CityService cityService;
+
+    @Autowired
+    private ApplicationProperties applicationProperties;
 
     @Override
     public void doFilter(final ServletRequest req, final ServletResponse resp, final FilterChain chain) throws IOException, ServletException {
@@ -73,18 +83,20 @@ public class ApplicationCoreFilter implements Filter {
     }
 
     private void prepareCityPreferences(final HttpSession session) {
-        if (session.getAttribute("cityCode") == null)
+        if (session.getAttribute(CITY_CODE_KEY) == null)
             cityService.cityDataAsMap().forEach((k, v) -> {
                 session.setAttribute(k, v);
             });
     }
 
     private void prepareThreadLocal(final HttpSession session) {
-        ApplicationThreadLocals.setCityCode((String) session.getAttribute("cityCode"));
-        ApplicationThreadLocals.setCityName((String) session.getAttribute("cityname"));
-        ApplicationThreadLocals.setMunicipalityName((String) session.getAttribute("citymunicipalityname"));
-        if (session.getAttribute("userid") != null)
-            ApplicationThreadLocals.setUserId((Long) session.getAttribute("userid"));
+        ApplicationThreadLocals.setCityCode((String) session.getAttribute(CITY_CODE_KEY));
+        ApplicationThreadLocals.setCityName((String) session.getAttribute(CITY_NAME_KEY));
+        ApplicationThreadLocals.setMunicipalityName((String) session.getAttribute(CITY_CORP_NAME_KEY));
+        if (session.getAttribute(USERID_KEY) != null)
+            ApplicationThreadLocals.setUserId((Long) session.getAttribute(USERID_KEY));
+        if(session.getServletContext().getAttribute(CDN_ATTRIB_NAME) == null)
+            session.getServletContext().setAttribute(CDN_ATTRIB_NAME,applicationProperties.getProperty("cdn.domain.url"));
     }
 
     @Override

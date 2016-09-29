@@ -52,12 +52,14 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
+import javax.persistence.OrderBy;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
 
 import org.egov.infra.persistence.entity.AbstractAuditable;
 import org.egov.infra.persistence.validator.annotation.Unique;
+import org.egov.works.abstractestimate.entity.EstimatePhotographs;
 import org.egov.works.models.estimate.ProjectCode;
 import org.hibernate.search.annotations.DocumentId;
 import org.hibernate.validator.constraints.Length;
@@ -118,6 +120,18 @@ public class LineEstimateDetails extends AbstractAuditable {
 
     @OneToMany(mappedBy = "lineEstimateDetails", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true, targetEntity = LineEstimateAppropriation.class)
     private List<LineEstimateAppropriation> lineEstimateAppropriations = new ArrayList<LineEstimateAppropriation>(0);
+    
+    @OrderBy("id")
+    @OneToMany(mappedBy = "lineEstimateDetails", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true, targetEntity = EstimatePhotographs.class)
+    private List<EstimatePhotographs> estimatePhotographsList = new ArrayList<EstimatePhotographs>(0);
+
+    public List<EstimatePhotographs> getEstimatePhotographsList() {
+        return estimatePhotographsList;
+    }
+
+    public void setEstimatePhotographsList(final List<EstimatePhotographs> estimatePhotographsList) {
+        this.estimatePhotographsList = estimatePhotographsList;
+    }
 
     @Override
     public Long getId() {

@@ -1,0 +1,1 @@
+update egw_status set code='CLOSED',description='Closed' where moduletype='Legal Case' and code='CLOSE_CASE';

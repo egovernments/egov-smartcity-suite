@@ -101,7 +101,8 @@ public class GenericMasterAjaxController {
     @RequestMapping(value = "/boundaries-by-boundaryType", method = RequestMethod.GET)
     public @ResponseBody void getBoundariesByBoundaryType(@RequestParam final Long boundaryTypeId,
             final HttpServletResponse response) throws IOException {
-        final List<Boundary> boundaries = boundaryService.getAllBoundariesByBoundaryTypeId(boundaryTypeId);
+      BoundaryType boundaryType = boundaryTypeService.getBoundaryTypeById(boundaryTypeId);
+      final List<Boundary> boundaries = boundaryService.getAllBoundariesOrderByBoundaryNumAsc(boundaryType);
         final JSONArray jsonArray = new JSONArray();
         JSONObject jsonObject = null;
 
@@ -111,7 +112,6 @@ public class GenericMasterAjaxController {
             jsonObject.put("Value", boundary.getId());
             jsonArray.add(jsonObject);
         }
-
         response.setContentType(MediaType.APPLICATION_JSON_VALUE);
         IOUtils.write(jsonArray.toString(), response.getWriter());
     }
@@ -193,7 +193,7 @@ public class GenericMasterAjaxController {
         return jsonArray.toString();
     }
     
-    @RequestMapping(value = "/boundary/ajaxBoundary-blockByLocality", method = RequestMethod.GET)
+    @RequestMapping(value = {"/boundary/ajaxBoundary-blockByLocality", "/public/boundary/ajaxBoundary-blockByLocality"}, method = RequestMethod.GET)
     public void blockByLocality(@RequestParam final Long locality, final HttpServletResponse response) throws IOException {
         BoundaryType blockType = boundaryTypeService.getBoundaryTypeByNameAndHierarchyTypeName(BLOCK, REVENUE_HIERARCHY_TYPE);
         final List<Boundary> blocks = crossHierarchyService.getParentBoundaryByChildBoundaryAndParentBoundaryType(locality, blockType.getId());

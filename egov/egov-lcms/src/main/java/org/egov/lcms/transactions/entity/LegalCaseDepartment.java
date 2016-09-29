@@ -76,7 +76,7 @@ public class LegalCaseDepartment extends AbstractPersistable<Long> {
     @GeneratedValue(generator = SEQ_EGLC_LEGALCASE_DEPT, strategy = GenerationType.SEQUENCE)
     private Long id;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(cascade = CascadeType.ALL,fetch = FetchType.LAZY)
     @NotNull
     @JoinColumn(name = "legalcase", nullable = false)
     private LegalCase legalCase;
@@ -85,7 +85,7 @@ public class LegalCaseDepartment extends AbstractPersistable<Long> {
     @Column(name = "dateofreceiptofpwr")
     private Date dateofreceiptofpwr;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne
     @NotNull
     @JoinColumn(name = "DEPARTMENT")
     private Department department;
@@ -136,9 +136,9 @@ public class LegalCaseDepartment extends AbstractPersistable<Long> {
 
     public List<ValidationError> validate() {
         final List<ValidationError> errors = new ArrayList<ValidationError>();
-        if (getLegalCase() != null && !DateUtils.compareDates(getDateofreceiptofpwr(), legalCase.getCasedate()))
+        if (getLegalCase() != null && !DateUtils.compareDates(getDateofreceiptofpwr(), legalCase.getCaseDate()))
             errors.add(new ValidationError("dateOfReceipt", "dateOfReceipt.less.casedate"));
-        if (legalCase != null && !DateUtils.compareDates(getAssignOn(), legalCase.getCasedate()))
+        if (legalCase != null && !DateUtils.compareDates(getAssignOn(), legalCase.getCaseDate()))
             errors.add(new ValidationError("assignOnDate", "assignOn.less.casedate"));
 
         return errors;

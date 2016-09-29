@@ -117,6 +117,8 @@ public final class CollectionConstants {
     public static final String RECEIPT_STATUS_CODE_CANCELLATION_CREATED = "CANCELLATION_CREATED";
     public static final String RECEIPT_STATUS_CODE_CANCELLATION_CHECKED = "CANCELLATION_CHECKED";
     public static final String RECEIPT_STATUS_CODE_CANCELLATION_REJECTED = "CANCELLATION_REJECTED";
+    public static final String DISHONORCHEQUE_STATUS_CODE_CREATED = "CREATED";
+    public static final String DISHONORCHEQUE_STATUS_CODE_APPROVED = "APPROVED";
 
     // Status descriptions - ideally we should not be using these - to be
     // discussed
@@ -133,6 +135,7 @@ public final class CollectionConstants {
     public static final String MODULE_NAME_ONLINEPAYMENT = "OnlinePayment";
     public static final String MODULE_NAME_REMITTANCE = "Remittance";
     public static final String MODULE_NAME_PROPERTYTAX = "Property Tax";
+    public static final String MODULE_NAME_DISHONORCHEQUE = "DishonorCheque";
 
     // AppConfig Values
     public static final String APPCONFIG_VALUE_ISVOUCHERAPPROVED = "ISVOUCHERAPPROVED";
@@ -147,10 +150,12 @@ public final class CollectionConstants {
     public static final String APPCONFIG_VALUE_COLLECTION_BANKREMITTANCE_FUNCTIONCODE = "COLLECTION_BANKREMITTANCE_FUNCTIONCODE";
     public static final String APPCONFIG_VALUE_COLLECTION_BANKREMITTANCE_SHOWCOLUMNSCARDONLINE = "COLLECTION_BANKREMITTANCE_SHOWCOLUMNSCARDONLINE";
     public static final String APPCONFIG_VALUE_COLLECTION_BANKREMITTANCE_SHOWREMITDATE = "COLLECTION_BANKREMITTANCE_SHOWREMITDATE";
+    public static final String APPCONFIG_VALUE_COLLECTIONDATAENTRYCUTOFFDATE= "COLLECTIONDATAENTRYCUTOFFDATE";
 
     // named queries (collections)
     public static final String QUERY_RECEIPTS_FOR_VOUCHERS = "RECEIPTS_FOR_VOUCHERS";
     public static final String QUERY_RECEIPTDETAIL_BY_RECEIPTNUMBER = "QUERY_RECEIPTDETAIL_BY_RECEIPTNUMBER";
+    public static final String QUERY_RECEIPT_VOUCHER_BY_RECEIPTID="RECEIPT_VOUCHER_BY_RECEIPTID";
 
     public static final String QUERY_RECEIPTS_FOR_BOUNCED_INSTRUMENTS = "RECEIPTS_FOR_BOUNCED_INSTRUMENTS";
     // public static final String QUERY_RECEIPTS_FOR_PAYEEDETAIL =
@@ -567,4 +572,5 @@ public final class CollectionConstants {
     };
 
     public static final char[] REVENUEHEADS=new char[] {'I','A','L'};
+    public static final Integer DEFAULT_PAGE_SIZE = 30;
 }

@@ -43,6 +43,7 @@
 <%@ taglib uri="http://www.springframework.org/tags" prefix="spring"%>
 <%@ taglib uri="http://www.springframework.org/tags/form" prefix="form"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
+<%@ taglib uri="/WEB-INF/taglibs/cdn.tld" prefix="cdn"%>
 <div id="searchFormDiv">
 	<form:form name="SearchRequest" role="form" action="" modelAttribute="searchRequestMilestone" id="searchRequestMilestone" class="form-horizontal form-groups-bordered">
 		<div class="row">
@@ -69,7 +70,7 @@
 			}
 		});
 	</script>
-	<script src="<c:url value='/resources/js/searchmilestonehelper.js?rnd=${app_release_no}'/>"></script>
+	<script src="<cdn:url value='/resources/js/searchmilestonehelper.js?rnd=${app_release_no}'/>"></script>
 </div>
 <div id="successPage" hidden="true">
 	<jsp:include page="milestone-success.jsp"/>

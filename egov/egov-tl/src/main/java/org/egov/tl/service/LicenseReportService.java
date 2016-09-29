@@ -42,7 +42,7 @@ package org.egov.tl.service;
 
 import org.egov.commons.Installment;
 import org.egov.commons.dao.InstallmentHibDao;
-import org.egov.infra.admin.master.entity.Module;
+import org.egov.infra.admin.master.service.ModuleService;
 import org.egov.infra.web.utils.EgovPaginatedList;
 import org.egov.infstr.services.Page;
 import org.egov.infstr.services.PersistenceService;
@@ -63,15 +63,18 @@ import java.util.Map;
 public class LicenseReportService {
     @Autowired
     @Qualifier("persistenceService")
-    protected PersistenceService persistenceService;
-    protected List<Map<String, Object>> licenseList = new ArrayList<Map<String, Object>>();
+    private PersistenceService persistenceService;
+    @Autowired
+    private InstallmentHibDao installmentDao;
+    @Autowired
+    private ModuleService moduleService;
+
+    protected List<Map<String, Object>> licenseList = new ArrayList<>();
     protected EgovPaginatedList paginateList;
     protected Integer pageNum = 1;
     protected Integer pageSize = Constants.PAGE_SIZE;
     protected List pageList = new ArrayList();
     protected Map<String, Object> hashMap;
-    @Autowired
-    protected InstallmentHibDao installmentDao;
     protected String query;
 
     public EgovPaginatedList getZoneWiseReportList(String pageNo, String moduleName, String licenseType) {
@@ -96,7 +99,7 @@ public class LicenseReportService {
             Iterator iterator = pageList.iterator();
             while (iterator.hasNext()) {
                 objects = (Object[]) iterator.next();
-                hashMap = new HashMap<String, Object>();
+                hashMap = new HashMap<>();
                 hashMap.put(Constants.NEW_LICENSE_REGISTERED, objects[0]);
                 hashMap.put(Constants.CANCELLED, objects[1]);
                 hashMap.put(Constants.OBJECTED, objects[2]);
@@ -143,7 +146,7 @@ public class LicenseReportService {
             Iterator iterator = pageList.iterator();
             while (iterator.hasNext()) {
                 objects = (Object[]) iterator.next();
-                hashMap = new HashMap<String, Object>();
+                hashMap = new HashMap<>();
                 hashMap.put(Constants.NEW_LICENSE_REGISTERED, objects[0]);
                 hashMap.put(Constants.CANCELLED, objects[1]);
                 hashMap.put(Constants.OBJECTED, objects[2]);
@@ -169,16 +172,15 @@ public class LicenseReportService {
 
     private StringBuilder constructQuery(String boundaryType, Integer id, String licenseType,
                                          Installment currentInstallment) {
-        StringBuilder query = new StringBuilder(
+        StringBuilder queryStr = new StringBuilder(
                 " select NVL(act, 0) AS act, NVL(can, 0) AS can, NVL(obj, 0) AS obj, NVL(ren, 0) AS ren, NVL(totalamount, 0) AS totalamount,egb.id_bndry bb , egb.name from ")
                 .append
                 (" (select boundary.id_bndry, boundary.name from eg_boundary boundary , eg_boundary_type boundarytype ").append
                 (" where boundarytype.name='").append(boundaryType)
                 .append("' and boundary.id_bndry_type= boundarytype.id_bndry_type").append(" and boundary.is_history = 'N'");
-        if (id != null && id > 0)
-            if (boundaryType.equalsIgnoreCase(Constants.DIVISION))
-                query.append(" and boundary.parent=").append(id);
-        query.append(") egb ")
+        if (id != null && id > 0 && boundaryType.equalsIgnoreCase(Constants.DIVISION))
+                queryStr.append(" and boundary.parent=").append(id);
+        queryStr.append(") egb ")
                 .append
                 (" left outer join ")
                 .append
@@ -205,10 +207,10 @@ public class LicenseReportService {
                                                                                                        // new and renewed licenses
                                                                                                        // in the current year
         if (boundaryType.equalsIgnoreCase(Constants.ZONE))
-            query.append(" boun.parent as bb");
+            queryStr.append(" boun.parent as bb");
         else if (boundaryType.equalsIgnoreCase(Constants.DIVISION))
-            query.append(" boun.id_bndry as bb");
-        query.append(
+            queryStr.append(" boun.id_bndry as bb");
+        queryStr.append(
                 " from EGTL_license lic, EGTL_mstr_status status,eg_boundary boun  , EGTL_license_demand ld , eg_demand demand  where lic.id_status=status.id_status ")
                 .append
                 (" and  status.status_name in('").append(Constants.LICENSE_STATUS_ACTIVE).append("','")
@@ -218,20 +220,19 @@ public class LicenseReportService {
                 .append(" and boun.is_history = 'N'").append
                 (" and lic.id= ld.id_license and ld.id_demand=demand.id )group by bb) t ").append
                 (" on egb.ID_BNDRY = t.bb	order by LPAD(name,10) ");
-        return query;
+        return queryStr;
 
     }
 
     public EgovPaginatedList getTradeWiseReportList(String pageNo, String moduleName, String licenseType,
                                                     String type) {
         Installment currentInstallment = getCurrentInstallment(moduleName);
-        return populateTradeWiseReport(pageNo, moduleName, licenseType, type,
+        return populateTradeWiseReport(pageNo, licenseType, type,
                 currentInstallment);
     }
 
-    private EgovPaginatedList populateTradeWiseReport(String pageNo, String moduleName,
-                                                      String licenseType, String type, Installment installment) {
-        query = constructQueryForTradeList(moduleName, licenseType, installment, type).toString();
+    private EgovPaginatedList populateTradeWiseReport(String pageNo, String licenseType, String type, Installment installment) {
+        query = constructQueryForTradeList(licenseType, installment, type).toString();
         Query hibQuery = persistenceService.getSession().createSQLQuery(String.valueOf(query));
         if (pageNo == null)
             pageNum = 1;
@@ -247,7 +248,7 @@ public class LicenseReportService {
             Iterator iterator = pageList.iterator();
             while (iterator.hasNext()) {
                 objects = (Object[]) iterator.next();
-                hashMap = new HashMap<String, Object>();
+                hashMap = new HashMap<>();
                 hashMap.put(Constants.NEW_LICENSE_REGISTERED, objects[0]);
                 hashMap.put(Constants.CANCELLED, objects[1]);
                 hashMap.put(Constants.OBJECTED, objects[2]);
@@ -270,9 +271,9 @@ public class LicenseReportService {
         return paginateList;
     }
 
-    private StringBuilder constructQueryForTradeList(String moduleName, String licenseType,
+    private StringBuilder constructQueryForTradeList(String licenseType,
                                                      Installment currentInstallment, String type) {
-        StringBuilder query = new StringBuilder
+        return new StringBuilder
                 (
                         " select NVL(act, 0) AS act, NVL(can, 0) AS can, NVL(obj, 0) AS obj,NVL(ren, 0) AS ren, NVL(totalamount, 0) AS totalamount, scat.trade_name,scat.id from ")
                         .append
@@ -319,8 +320,6 @@ public class LicenseReportService {
                         (" )group by trade_name,id ) t").append
                         ("  ON scat.id = t.id").append
                         (" order by trade_name asc");
-
-        return query;
     }
 
     public EgovPaginatedList getLateRenewalsListReport(String pageNo, String moduleName, String licenseType) {
@@ -346,7 +345,7 @@ public class LicenseReportService {
             Iterator iterator = pageList.iterator();
             while (iterator.hasNext()) {
                 objects = (Object[]) iterator.next();
-                hashMap = new HashMap<String, Object>();
+                hashMap = new HashMap<>();
                 hashMap.put(Constants.NO_OF_LATE_RENEWALS, objects[0]);
                 hashMap.put(Constants.WARD_NUM, objects[1]);
                 hashMap.put(Constants.WARD_NAME, objects[3]);
@@ -360,7 +359,7 @@ public class LicenseReportService {
     }
 
     private StringBuilder constructQueryForLateRenewalsList(String licenseType, Installment installment) {
-        StringBuilder query = new StringBuilder(
+        StringBuilder queryStr = new StringBuilder(
                 " select NVL(lateren, 0) AS lateren, egb.bndry_num,egb.id_bndry bb , egb.name from ")
                 .append
                 (" (select boundary.id_bndry,boundary.bndry_num, boundary.name from eg_boundary boundary , eg_boundary_type boundarytype ")
@@ -368,14 +367,14 @@ public class LicenseReportService {
                 (" where boundarytype.name='").append(Constants.DIVISION)
                 .append("' and boundary.id_bndry_type= boundarytype.id_bndry_type");
 
-        query.append(") egb ").append
+        queryStr.append(") egb ").append
                 (" left outer join ").append
                 (" (select sum(laterenCount) as lateren ,bb from ").append
                 (" (select case when status.status_name='").append(Constants.LICENSE_STATUS_ACTIVE)
                 .append("' and ld.renewal_date is not null AND ld.is_laterenewal='1' and ld.id_installment=").append
                 (installment.getId()).append(" then 1 else 0 end as laterenCount, boun.id_bndry as bb");
 
-        query.append(
+        queryStr.append(
                 " from  EGTL_license lic, EGTL_mstr_status status,eg_boundary boun  , EGTL_license_demand ld  where lic.id_status=status.id_status ")
                 .append
                 (" and  status.status_name in('").append(Constants.LICENSE_STATUS_ACTIVE).append
@@ -383,7 +382,7 @@ public class LicenseReportService {
                 (" and lic.id= ld.id_license )group by bb) t ").append
                 (" on egb.ID_BNDRY = t.bb	order by LPAD(name,10) ");
 
-        return query;
+        return queryStr;
     }
 
     public List<Map<String, Object>> getTotalsForWardWiseReport(Integer zoneId, String moduleName, String licenseType) {
@@ -395,20 +394,20 @@ public class LicenseReportService {
     private List<Map<String, Object>> populateTotalsForWardWiseReport(Integer zoneId, String licenseType, Installment installment) {
         query = constructQuery(Constants.DIVISION, zoneId, licenseType, installment).toString();
         query = "Select sum(act),sum(can),sum(obj),sum(ren),sum(totalamount) from(" + query + ")";
-        return getTotalList(query, licenseType, installment);
+        return getTotalList(licenseType, installment);
     }
 
     public List<Map<String, Object>> getTotalForTradeWiseReport(String moduleName, String licenseType, String type) {
         Installment currentInstallment = getCurrentInstallment(moduleName);
-        return populateTotalForTradeWiseReport(moduleName, licenseType, type,
+        return populateTotalForTradeWiseReport(licenseType, type,
                 currentInstallment);
     }
 
-    private List<Map<String, Object>> populateTotalForTradeWiseReport(String moduleName, String licenseType, String type,
+    private List<Map<String, Object>> populateTotalForTradeWiseReport(String licenseType, String type,
             Installment currentInstallment) {
-        query = constructQueryForTradeList(moduleName, licenseType, currentInstallment, type).toString();
+        query = constructQueryForTradeList(licenseType, currentInstallment, type).toString();
         query = "Select sum(act),sum(can),sum(obj),sum(ren),sum(totalamount) from(" + query + ")";
-        return getTotalList(query, licenseType, currentInstallment);
+        return getTotalList(licenseType, currentInstallment);
     }
 
     public List<Map<String, Object>> getTotalForLateRenewalsReport(String moduleName, String licenseType) {
@@ -424,18 +423,17 @@ public class LicenseReportService {
         List result = hibQuery.list();
 
         HashMap<String, Object> totalHashMap;
-        List<Map<String, Object>> totalList = new ArrayList<Map<String, Object>>();
+        List<Map<String, Object>> totalList = new ArrayList<>();
 
-        totalHashMap = new HashMap<String, Object>();
+        totalHashMap = new HashMap<>();
         totalHashMap.put(Constants.TOTAL_LATEREN, result.get(0));
         totalList.add(totalHashMap);
 
         return totalList;
     }
 
-    protected List<Map<String, Object>> getTotalList(String finalQuery, String licenseType, Installment installment) {
-        List<Map<String, Object>> totalList = populateTotalList(licenseType, installment);
-        return totalList;
+    protected List<Map<String, Object>> getTotalList(String licenseType, Installment installment) {
+        return populateTotalList(licenseType, installment);
     }
 
     private List<Map<String, Object>> populateTotalList(String licenseType, Installment installment) {
@@ -444,10 +442,10 @@ public class LicenseReportService {
         Object[] objects;
         Iterator iterator = result.iterator();
         HashMap<String, Object> totalHashMap;
-        List<Map<String, Object>> totalList = new ArrayList<Map<String, Object>>();
+        List<Map<String, Object>> totalList = new ArrayList<>();
         while (iterator.hasNext()) {
             objects = (Object[]) iterator.next();
-            totalHashMap = new HashMap<String, Object>();
+            totalHashMap = new HashMap<>();
             totalHashMap.put(Constants.TOTAL_NEW, objects[0]);
             totalHashMap.put(Constants.TOTAL_CAN, objects[1]);
             totalHashMap.put(Constants.TOTAL_OBJ, objects[2]);
@@ -470,7 +468,7 @@ public class LicenseReportService {
     }
 
     private Object getPendingRenewals(String licenseType, Long boundaryId, Long subcategoryId, Date date) {
-        StringBuilder query = new StringBuilder(
+        StringBuilder queryStr = new StringBuilder(
                 " select NVL(SUM(pren1)+SUM(pren2),0) from (SELECT ")
                 .append
                 (" CASE WHEN expired = 0 AND months_between(dateofexpiry, ?)<1 THEN 1 ELSE 0 END AS pren1 , ")
@@ -484,12 +482,12 @@ public class LicenseReportService {
                 .append("' AND lic.license_type='").append(licenseType).append("' ").append
                 (" AND boun.id_bndry = lic.id_adm_bndry ");
         if (boundaryId != null && boundaryId > 0)
-            query.append(" and boun.id_bndry=").append(boundaryId);
+            queryStr.append(" and boun.id_bndry=").append(boundaryId);
         if (subcategoryId != null && subcategoryId > 0)
-            query.append(" and lic.id_sub_category=").append(subcategoryId);
-        query.append(" )");
+            queryStr.append(" and lic.id_sub_category=").append(subcategoryId);
+        queryStr.append(" )");
 
-        Query hibQuery = persistenceService.getSession().createSQLQuery(String.valueOf(query));
+        Query hibQuery = persistenceService.getSession().createSQLQuery(String.valueOf(queryStr));
         hibQuery.setDate(0, date);
         hibQuery.setDate(1, date);
         hibQuery.setDate(2, date);
@@ -505,11 +503,7 @@ public class LicenseReportService {
     }
 
     public Installment getCurrentInstallment(String moduleName) {
-        Module module = (Module) persistenceService.find(
-                "from org.egov.infra.admin.master.entity.Module where parent is null and moduleName=?", moduleName);
-
-        Installment installment = installmentDao.getInsatllmentByModuleForGivenDate(module, new Date());
-        return installment;
+        return installmentDao.getInsatllmentByModuleForGivenDate(moduleService.getModuleByName(moduleName), new Date());
     }
 
 }

@@ -41,7 +41,6 @@ package org.egov.works.web.controller.letterofacceptance;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
-
 import org.egov.works.letterofacceptance.entity.SearchRequestContractor;
 import org.egov.works.letterofacceptance.entity.SearchRequestLetterOfAcceptance;
 import org.egov.works.letterofacceptance.service.LetterOfAcceptanceService;
@@ -54,7 +53,8 @@ import org.egov.works.web.adaptor.SearchContractorJsonAdaptor;
 import org.egov.works.web.adaptor.SearchLetterOfAcceptanceJsonAdaptor;
 import org.egov.works.web.adaptor.SearchLetterOfAcceptanceToCreateContractorBillJson;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.support.ResourceBundleMessageSource;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.context.MessageSource;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -89,7 +89,8 @@ public class AjaxLetterOfAcceptanceController {
     private LetterOfAcceptanceForMilestoneJSONAdaptor letterOfAcceptanceForMilestoneJSONAdaptor;
     
     @Autowired
-    private ResourceBundleMessageSource messageSource;
+    @Qualifier("messageSource")
+    private MessageSource messageSource;
 
     @RequestMapping(value = "/ajaxcontractors-loa", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
     public @ResponseBody List<Contractor> findContractorsByCodeOrName(@RequestParam final String name) {
@@ -114,12 +115,12 @@ public class AjaxLetterOfAcceptanceController {
 
     @RequestMapping(value = "/ajaxestimatenumbers", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
     public @ResponseBody List<String> findEstimateNumbersForLOA(@RequestParam final String name) {
-        return letterOfAcceptanceService.findLoaEstimateNumbers(name);
+        return letterOfAcceptanceService.getApprovedEstimateNumbersToModifyLOA(name);
     }
 
     @RequestMapping(value = "/ajaxloanumber", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
     public @ResponseBody List<String> findLoaNumbers(@RequestParam final String name) {
-        return letterOfAcceptanceService.getWorkOrderByNumber(name);
+        return letterOfAcceptanceService.getApprovedWorkOrderByNumberToModifyLOA(name);
     }
 
     @RequestMapping(value = "/ajaxsearchcontractors-loaforcontractorbill", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
@@ -266,4 +267,15 @@ public class AjaxLetterOfAcceptanceController {
         
         return message;
     }
+    
+    @RequestMapping(value = "/getworkordernumber-viewestimatephotograph", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+    public @ResponseBody List<String> findWorkOrderNumbersForViewEstimatePhotograph(@RequestParam final String workOrderNumber) {
+        return letterOfAcceptanceService.getWorkOrderNumbersForViewEstimatePhotograph(workOrderNumber);
+    }
+    
+    @RequestMapping(value = "/getcontractorname-viewestimatephotograph", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+    public @ResponseBody List<String> findContractorsNamesForViewEstimatePhotograph(@RequestParam final String contractorName) {
+        return letterOfAcceptanceService.getContractorsNamesForViewEstimatePhotograph(contractorName);
+    }
+
 }

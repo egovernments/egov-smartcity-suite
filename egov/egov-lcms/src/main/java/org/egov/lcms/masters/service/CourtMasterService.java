@@ -89,8 +89,11 @@ public class CourtMasterService {
         return courtMasterRepository.findOne(id);
     }
 
-    public List<CourtMaster> findByCourtType(final CourtTypeMaster courtType) {
-        return courtMasterRepository.findByCourtType(courtType);
+    public List<CourtMaster> findActiveCourtByCourtType(final CourtTypeMaster courtType) {
+        return courtMasterRepository.findByActiveTrueAndCourtType(courtType);
+    }
+    public List<CourtMaster> getActiveCourtMaster() {
+        return courtMasterRepository.findByActiveTrueOrderByNameAsc();
     }
 
     public List<CourtMaster> search(final CourtMaster courtMaster) {
@@ -117,7 +120,7 @@ public class CourtMasterService {
             if (courtMaster.getCourtType() != null)
                 predicates.add(cb.equal(courtMasterobj.get("courtType"), courtMaster.getCourtType()));
             if (courtMaster.getActive() != null)
-                if (courtMaster.getActive() == true)
+                if (courtMaster.getActive())
                     predicates.add(cb.equal(
                             courtMasterobj.get(CourtMaster.getDeclaredSingularAttribute("active", Boolean.class)),
                             true));

@@ -42,6 +42,7 @@
   ~
   ~   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
   --%>
+<%@ taglib uri="/WEB-INF/taglib/cdn.tld" prefix="cdn" %>
 <form:form role="form" action="/tl/validity/update" modelAttribute="validity" commandName="validity" id="validityform"  cssClass="form-horizontal form-groups-bordered">
    <div class="row">
     <div class="col-md-12">
@@ -121,4 +122,4 @@
     </div>
   </div>
 </form:form>
-<script type="text/javascript" src="<c:url value='/resources/js/app/validityHelper.js?rnd=${app_release_no}'/>"></script>
+<script type="text/javascript" src="<cdn:url  value='/resources/js/app/validityHelper.js?rnd=${app_release_no}'/>"></script>

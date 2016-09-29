@@ -55,7 +55,7 @@ import javax.persistence.Table;
 
 @Entity
 @Table(name = "EGTL_MSTR_CATEGORY")
-@Unique(fields = {"name", "code"})
+@Unique(fields = {"name", "code"}, enableDfltMsg = true)
 @SequenceGenerator(name = LicenseCategory.SEQUENCE, sequenceName = LicenseCategory.SEQUENCE, allocationSize = 1)
 public class LicenseCategory extends AbstractAuditable {
     private static final long serialVersionUID = 2997222319085575846L;

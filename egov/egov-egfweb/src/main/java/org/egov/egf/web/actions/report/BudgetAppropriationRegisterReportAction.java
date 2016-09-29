@@ -39,6 +39,18 @@
  */
 package org.egov.egf.web.actions.report;
 
+import java.io.IOException;
+import java.io.InputStream;
+import java.math.BigDecimal;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
 import net.sf.jasperreports.engine.JRException;
 
 import org.apache.log4j.Logger;
@@ -67,37 +79,24 @@ import org.egov.utils.BudgetDetailConfig;
 import org.egov.utils.BudgetingType;
 import org.egov.utils.Constants;
 import org.egov.utils.ReportHelper;
+import org.hibernate.Hibernate;
 import org.hibernate.Query;
 import org.hibernate.transform.Transformers;
 import org.hibernate.type.BigDecimalType;
 import org.hibernate.type.StandardBasicTypes;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.math.BigDecimal;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
 @Results(value = {
-		@Result(name = "result", location = "budgetAppropriationRegisterReport-result.jsp"),
+        @Result(name = "result", location = "budgetAppropriationRegisterReport-form.jsp"),
         @Result(name = "PDF", type = "stream", location = Constants.INPUT_STREAM, params = { Constants.INPUT_NAME,
                 Constants.INPUT_STREAM, Constants.CONTENT_TYPE, "application/pdf", Constants.CONTENT_DISPOSITION,
-        "no-cache;filename=BudgetAppropriationRegisterRepor.pdf" }),
+                "no-cache;filename=BudgetAppropriationRegisterRepor.pdf" }),
         @Result(name = "XLS", type = "stream", location = Constants.INPUT_STREAM, params = { Constants.INPUT_NAME,
                 Constants.INPUT_STREAM, Constants.CONTENT_TYPE, "application/xls", Constants.CONTENT_DISPOSITION,
-        "no-cache;filename=BudgetAppropriationRegisterRepor.xls" })
+                "no-cache;filename=BudgetAppropriationRegisterRepor.xls" })
 })
 @ParentPackage("egov")
 public class BudgetAppropriationRegisterReportAction extends BaseFormAction {
-    /**
-     *
-     */
     private static final long serialVersionUID = 1658431423915247237L;
     private static final Logger LOGGER = Logger.getLogger(BudgetAppropriationRegisterReportAction.class);
     String jasperpath = "/reports/templates/BudgetAppReport.jasper";
@@ -123,7 +122,6 @@ public class BudgetAppropriationRegisterReportAction extends BaseFormAction {
     private BigDecimal reAmount = BigDecimal.ZERO;
     private String finYearRange;
     protected List<String> mandatoryFields = new ArrayList<String>();
-    private BudgetDetailConfig budgetDetailConfig;
     private BudgetService budgetService;
     private boolean isBeDefined = true;
     private boolean isReDefined = true;
@@ -132,7 +130,9 @@ public class BudgetAppropriationRegisterReportAction extends BaseFormAction {
     private Boolean shouldShowREAppropriations = false;
     @Autowired
     private EgovMasterDataCaching masterDataCache;
-    
+    @Autowired
+    private BudgetDetailConfig budgetDetailConfig;
+
     public BudgetAppropriationRegisterReportAction() {
         addRelatedEntity(Constants.FUNCTION, CFunction.class);
         addRelatedEntity(Constants.EXECUTING_DEPARTMENT, Department.class);
@@ -143,9 +143,9 @@ public class BudgetAppropriationRegisterReportAction extends BaseFormAction {
     public void prepare() {
         super.prepare();
         mandatoryFields = budgetDetailConfig.getMandatoryFields();
-        dropdownData.put("functionList", masterDataCache.get("egi-function"));
-        dropdownData.put("executingDepartmentList", masterDataCache.get("egi-department"));
-        dropdownData.put("budgetGroupList", persistenceService.findAllBy("from BudgetGroup where isActive=true order by name"));
+        dropdownData.put("functionList",Collections.EMPTY_LIST);
+        dropdownData.put("executingDepartmentList",Collections.EMPTY_LIST);
+        dropdownData.put("budgetGroupList", Collections.EMPTY_LIST);
         dropdownData.put("fundList", masterDataCache.get("egi-fund"));
         if (department.getId() != null && department.getId() != -1)
             department = (Department) persistenceService.find("from Department where id=?", department.getId());
@@ -174,32 +174,32 @@ public class BudgetAppropriationRegisterReportAction extends BaseFormAction {
         // Get this to show at header level
         if (budgetService.hasApprovedBeForYear(financialYear.getId()))
             beAmount = getBudgetBEorREAmt("BE");
-        else
-        {
+        else {
             isBeDefined = false;
             isReDefined = false;
         }
         // -- Consider RE if RE is present & approved for the current yr.
-        if (budgetService.hasApprovedReForYear(financialYear.getId()))
-        {
+        if (budgetService.hasApprovedReForYear(financialYear.getId())) {
             reAmount = getBudgetBEorREAmt("RE");
             if (getConsiderReAppropriationAsSeperate())
                 totalGrant = reAmount.add(addtionalAppropriationForRe);
             else
                 totalGrant = reAmount;
-        }
-        else if (budgetService.hasApprovedBeForYear(financialYear.getId()))
-        {
+        } else if (budgetService.hasApprovedBeForYear(financialYear.getId())) {
             isReDefined = false;
             totalGrant = beAmount.add(addtionalAppropriationForBe);
         }
         generateReport();
+        if(budgetAppropriationRegisterList.isEmpty())
+        {
+            addActionMessage(getText("voucher.norecords"));
+        }
         return "result";
     }
 
     private void generateReport() {
-    	CFinancialYear financialYr=new CFinancialYear();
-    	financialYr = financialYearDAO.getFinancialYearByDate(dtAsOnDate);
+        CFinancialYear financialYr = new CFinancialYear();
+        financialYr = financialYearDAO.getFinancialYearByDate(dtAsOnDate);
         CFinancialYear financialYear = null;
         financialYear = financialYearDAO.getFinancialYearById(Long.valueOf(financialYr.getId()));
         finYearRange = financialYear.getFinYearRange();
@@ -211,79 +211,51 @@ public class BudgetAppropriationRegisterReportAction extends BaseFormAction {
 
         if (budgetGroup != null) {
             budgetHead = budgetGroup.getName();
-            final String strQuery = "select vmis.budgetary_appnumber as bdgApprNumber, vh.vouchernumber as VoucherNumber, vh.voucherdate as voucherDate, vh.description as description, "
-                    +
-                    " null as billNumber, null as billDate, gl.debitamount as debitAmount, gl.creditamount as creditAmount from generalledger gl, vouchermis vmis,  "
-                    +
-                    " voucherheader vh  where vh.id = gl.voucherheaderid and vh.id = vmis.voucherheaderid and  gl.glcodeid = "
-                    + budgetGroup.getMinCode().getId()
-                    + " and  "
-                    +
-                    " (vmis.budgetary_appnumber  != 'null' and vmis.budgetary_appnumber is not null) and vh.status != 4 and vh.voucherdate  between '"
-                    + strStDate
-                    + "' and '"
-                    + strAODate
-                    + "'  "
-                    +
-                    getFunctionQuery("gl.functionid")
-                    + getDepartmentQuery("vmis.departmentid")
-                    + getFundQuery("vh.fundid")
-                    + " "
-                    +
-                    " union "
-                    +
-                    " select distinct bmis.budgetary_appnumber as bdgApprNumber, vh1.vouchernumber as VoucherNumber, vh1.voucherdate as  voucherDate , "
-                    +
-                    " br.narration as description, br.billnumber as billNumber, br.billdate as billDate,   bd.debitamount as debitAmount, bd.creditamount as creditAmount  "
-                    +
-                    " from eg_billdetails bd, eg_billregistermis bmis, eg_billregister br, voucherHeader vh1 where br.id = bd.billid and br.id = bmis.billid and  bd.glcodeid = "
-                    + budgetGroup.getMinCode().getId()
-                    + " and (bmis.budgetary_appnumber != 'null' and bmis.budgetary_appnumber is not null) "
-                    +
-                    " and br.statusid not in (select id from egw_status where description='Cancelled' and moduletype in ('EXPENSEBILL', 'SALBILL', 'WORKSBILL', 'PURCHBILL', 'CBILL', 'SBILL', 'CONTRACTORBILL')) and (vh1.id = bmis.voucherheaderid )  and br.billdate  between '"
-                    + strStDate
-                    + "' and '"
-                    + strAODate
-                    + "' "
-                    + getFunctionQuery("bd.functionid")
-                    + getDepartmentQuery("bmis.departmentid")
-                    +
-                    getFundQuery("bmis.fundid")
-                    + "  "
-                    +
-                    " union "
-                    +
-                    " select distinct bmis1.budgetary_appnumber as bdgApprNumber, null as VoucherNumber,cast( null as date) voucherDate , "
-                    +
-                    " br.narration as description, br.billnumber as billNumber, br.billdate as billDate,   bd1.debitamount as debitAmount, bd1.creditamount as creditAmount from eg_billdetails bd1, eg_billregistermis bmis1, eg_billregister br  "
-                    +
-                    " where br.id = bd1.billid and br.id = bmis1.billid and  bd1.glcodeid = "
-                    + budgetGroup.getMinCode().getId()
-                    + " and (bmis1.budgetary_appnumber != 'null' and bmis1.budgetary_appnumber is not null) "
-                    +
-                    " and br.statusid not in (select id from egw_status where description='Cancelled' and moduletype in ('EXPENSEBILL', 'SALBILL', 'WORKSBILL', 'PURCHBILL', 'CBILL', 'SBILL', 'CONTRACTORBILL')) and bmis1.voucherheaderid is null and br.billdate   between '"
-                    + strStDate
-                    + "' and '"
-                    + strAODate
-                    + "' "
-                    + getFunctionQuery("bd1.functionid")
-                    + getDepartmentQuery("bmis1.departmentid") +
-                    getFundQuery("bmis1.fundid") + "  order by bdgApprNumber ";
+            StringBuilder strQuery = new StringBuilder();
+            strQuery.append("select vmis.budgetary_appnumber as bdgApprNumber, vh.vouchernumber as VoucherNumber, vh.voucherdate as voucherDate, vh.description as description,vh.createddate as createdDate, ");
+            strQuery.append(" null as billNumber, null as billDate,null as billCreatedDate, gl.debitamount as debitAmount, gl.creditamount as creditAmount from generalledger gl, vouchermis vmis,  ");
+            strQuery.append(" voucherheader vh  where vh.id = gl.voucherheaderid and vh.id = vmis.voucherheaderid and  gl.glcodeid =:glCodeId");
+            strQuery.append(" and (vmis.budgetary_appnumber  != 'null' and vmis.budgetary_appnumber is not null) and vh.status != 4 and vh.voucherdate  >=:strStDate");
+            strQuery.append(" and vh.voucherdate <=:strAODate");
+            strQuery.append(getFunctionQuery("gl.functionid"));
+            strQuery.append(getDepartmentQuery("vmis.departmentid"));
+            strQuery.append(getFundQuery("vh.fundid"));
+            strQuery.append(" ");
+            strQuery.append(" union select distinct bmis.budgetary_appnumber as bdgApprNumber, vh1.vouchernumber as VoucherNumber, vh1.voucherdate as  voucherDate , br.narration as description,vh1.createddate as createdDate, br.billnumber as billNumber, br.billdate as billDate,br.createddate as billCreatedDate ,  bd.debitamount as debitAmount, bd.creditamount as creditAmount  ");
+            strQuery.append(" from eg_billdetails bd, eg_billregistermis bmis, eg_billregister br, voucherHeader vh1 where br.id = bd.billid and br.id = bmis.billid and  bd.glcodeid =:glCodeId ");
+            strQuery.append(" and (bmis.budgetary_appnumber != 'null' and bmis.budgetary_appnumber is not null) and br.statusid not in (select id from egw_status where description='Cancelled' and moduletype in ('EXPENSEBILL', 'SALBILL', 'WORKSBILL', 'PURCHBILL', 'CBILL', 'SBILL', 'CONTRACTORBILL')) and (vh1.id = bmis.voucherheaderid )  and br.billdate  >=:strStDate");
+            strQuery.append(" and br.billdate  <=:strAODate");
+            strQuery.append(getFunctionQuery("bd.functionid"));
+            strQuery.append(getDepartmentQuery("bmis.departmentid"));
+            strQuery.append(getFundQuery("bmis.fundid"));
+            strQuery.append("  ");
+            strQuery.append(" union select distinct bmis1.budgetary_appnumber as bdgApprNumber, null as VoucherNumber,cast( null as date) voucherDate , ");
+            strQuery.append(" br.narration as description,cast( null as date) createdDate, br.billnumber as billNumber, br.billdate as billDate,br.createddate as billCreatedDate ,   bd1.debitamount as debitAmount, bd1.creditamount as creditAmount from eg_billdetails bd1, eg_billregistermis bmis1, eg_billregister br  ");
+            strQuery.append(" where br.id = bd1.billid and br.id = bmis1.billid and  bd1.glcodeid =:glCodeId ");
+            strQuery.append(" and (bmis1.budgetary_appnumber != 'null' and bmis1.budgetary_appnumber is not null) ");
+            strQuery.append(" and br.statusid not in (select id from egw_status where description='Cancelled' and moduletype in ('EXPENSEBILL', 'SALBILL', 'WORKSBILL', 'PURCHBILL', 'CBILL', 'SBILL', 'CONTRACTORBILL')) and bmis1.voucherheaderid is null and br.billdate   >=:strStDate");
+            strQuery.append(" and br.billdate <=:strAODate");
+            strQuery.append(getFunctionQuery("bd1.functionid"));
+            strQuery.append(getDepartmentQuery("bmis1.departmentid"));
+            strQuery.append(getFundQuery("bmis1.fundid"));
+            strQuery.append("  order by bdgApprNumber ");
 
             if (LOGGER.isDebugEnabled())
                 LOGGER.debug("BudgetAppropriationRegisterReportAction -- strQuery...." + strQuery);
 
-            query = persistenceService.getSession().createSQLQuery(strQuery)
+            query = persistenceService.getSession().createSQLQuery(strQuery.toString())
                     .addScalar("bdgApprNumber")
-                    .addScalar("voucherDate",StandardBasicTypes.DATE)
-                    .addScalar("billDate",StandardBasicTypes.DATE)
-                    
+                    .addScalar("voucherDate", StandardBasicTypes.DATE)
+                    .addScalar("billDate", StandardBasicTypes.DATE)
+                    .addScalar("createdDate",StandardBasicTypes.DATE)
+                    .addScalar("billCreatedDate", StandardBasicTypes.DATE)
                     .addScalar("description")
                     .addScalar("VoucherNumber")
                     .addScalar("billNumber")
-                    .addScalar("debitAmount",BigDecimalType.INSTANCE)
-                    .addScalar("creditAmount",BigDecimalType.INSTANCE)
+                    .addScalar("debitAmount", BigDecimalType.INSTANCE)
+                    .addScalar("creditAmount", BigDecimalType.INSTANCE)
                     .setResultTransformer(Transformers.aliasToBean(BudgetAppDisplay.class));
+            query=setParameterForBudgetAppDisplay(query,dtAsOnDate,dStartDate);
         }
         budgetAppropriationRegisterList = query.list();
 
@@ -291,41 +263,35 @@ public class BudgetAppropriationRegisterReportAction extends BaseFormAction {
         final List<BudgetAppDisplay> budgetApprRegUpdatedList1 = new ArrayList<BudgetAppDisplay>();
         final HashMap<String, BudgetAppDisplay> regMap = new HashMap<String, BudgetAppDisplay>();
         if (budgetAppropriationRegisterList.size() > 0) {
-            final String strsubQuery = "select vmis.budgetary_appnumber as bdgApprNumber, vh.vouchernumber as VoucherNumber, vh.voucherdate as voucherDate, vh.description as description, "
-                    +
-                    " br.billnumber as billNumber, br.billdate as billDate, gl.debitamount as debitAmount, gl.creditamount as creditAmount from generalledger gl, vouchermis vmis,  "
-                    +
-                    " voucherheader vh,  eg_billregistermis bmis, eg_billregister br  where vh.id = gl.voucherheaderid and vh.id = vmis.voucherheaderid and vh.id = bmis.voucherheaderid and bmis.billid = br.id "
-                    +
-                    " and  gl.glcodeid = "
-                    + budgetGroup.getMinCode().getId()
-                    + " and  "
-                    +
-                    " (vmis.budgetary_appnumber  != 'null' and vmis.budgetary_appnumber is not null) and vh.status != 4 and vh.voucherdate  between '"
-                    + strStDate
-                    + "' and '"
-                    + strAODate
-                    + "'  "
-                    +
-                    getFunctionQuery("gl.functionid")
-                    + getDepartmentQuery("vmis.departmentid")
-                    + getFundQuery("vh.fundid")
-                    + "  order by bdgApprNumber ";
+            StringBuilder strsubQuery = new StringBuilder();
+            strsubQuery.append("select vmis.budgetary_appnumber as bdgApprNumber, vh.vouchernumber as VoucherNumber, vh.voucherdate as voucherDate, vh.description as description,vh.createddate as createdDate, ");
+            strsubQuery.append(" br.billnumber as billNumber, br.billdate as billDate,br.createddate as billCreatedDate, gl.debitamount as debitAmount, gl.creditamount as creditAmount from generalledger gl, vouchermis vmis,  ");
+            strsubQuery.append(" voucherheader vh,  eg_billregistermis bmis, eg_billregister br  where vh.id = gl.voucherheaderid and vh.id = vmis.voucherheaderid and vh.id = bmis.voucherheaderid and bmis.billid = br.id ");
+            strsubQuery.append(" and  gl.glcodeid =:glCodeId ");
+            strsubQuery.append(" and  ");
+            strsubQuery.append(" (vmis.budgetary_appnumber  != 'null' and vmis.budgetary_appnumber is not null) and vh.status != 4 and vh.voucherdate  >=:strStDate");
+            strsubQuery.append(" and vh.voucherdate <=:strAODate");
+            strsubQuery.append(getFunctionQuery("gl.functionid"));
+            strsubQuery.append(getDepartmentQuery("vmis.departmentid"));
+            strsubQuery.append(getFundQuery("vh.fundid"));
+            strsubQuery.append("  order by bdgApprNumber ");
 
             if (LOGGER.isDebugEnabled())
                 LOGGER.debug("BudgetAppropriationRegisterReportAction -- strsubQuery...." + strsubQuery);
 
-            query = persistenceService.getSession().createSQLQuery(strsubQuery)
+            query = persistenceService.getSession().createSQLQuery(strsubQuery.toString())
                     .addScalar("bdgApprNumber")
-                    .addScalar("voucherDate",StandardBasicTypes.DATE)
-                    .addScalar("billDate",StandardBasicTypes.DATE)
-                    
+                    .addScalar("voucherDate", StandardBasicTypes.DATE)
+                    .addScalar("billDate", StandardBasicTypes.DATE)
+                    .addScalar("createdDate", StandardBasicTypes.DATE)
+                    .addScalar("billCreatedDate", StandardBasicTypes.DATE)
                     .addScalar("description")
                     .addScalar("VoucherNumber")
                     .addScalar("billNumber")
-                    .addScalar("debitAmount",BigDecimalType.INSTANCE)
-                    .addScalar("creditAmount",BigDecimalType.INSTANCE)
+                    .addScalar("debitAmount", BigDecimalType.INSTANCE)
+                    .addScalar("creditAmount", BigDecimalType.INSTANCE)
                     .setResultTransformer(Transformers.aliasToBean(BudgetAppDisplay.class));
+            query=setParameterForBudgetAppDisplay(query,dtAsOnDate,dStartDate); 
             budgetApprRegNewList = query.list();
             if (budgetApprRegNewList.size() > 0) {
                 for (final BudgetAppDisplay budgetAppRtDisp : budgetApprRegNewList)
@@ -348,21 +314,21 @@ public class BudgetAppropriationRegisterReportAction extends BaseFormAction {
     private String getFundQuery(final String string) {
         final String query = "";
         if (fund.getId() != null && fund.getId() != -1)
-            return " and " + string + " = " + fund.getId();
+            return " and " + string + " =:fundId ";
         return query;
     }
 
     private String getFunctionQuery(final String string) {
         final String query = "";
         if (function.getId() != null && function.getId() != -1)
-            return " and " + string + " = " + function.getId();
+            return " and " + string + " =:functionId ";
         return query;
     }
 
     private String getDepartmentQuery(final String string) {
         final String query = "";
         if (department.getId() != null && department.getId() != -1)
-            return " and " + string + " = " + department.getId();
+            return " and " + string + " =:departmentId ";
         return query;
     }
 
@@ -385,7 +351,7 @@ public class BudgetAppropriationRegisterReportAction extends BaseFormAction {
             for (final BudgetAppDisplay budgetAppropriationRegisterDisp : budgetAppropriationRegisterList) {
                 if (BudgetingType.DEBIT.equals(budgetGroup.getBudgetingType()))
                     if (budgetAppropriationRegisterDisp.getDebitAmount() != null
-                    && budgetAppropriationRegisterDisp.getDebitAmount().compareTo(BigDecimal.ZERO) == 1) {
+                            && budgetAppropriationRegisterDisp.getDebitAmount().compareTo(BigDecimal.ZERO) == 1) {
 
                         budgetAppropriationRegisterDisp.setBillAmount(budgetAppropriationRegisterDisp.getDebitAmount());
                         totalDebit = totalDebit.add(budgetAppropriationRegisterDisp.getBillAmount());
@@ -397,7 +363,7 @@ public class BudgetAppropriationRegisterReportAction extends BaseFormAction {
                     }
                 if (BudgetingType.CREDIT.equals(budgetGroup.getBudgetingType()))
                     if (budgetAppropriationRegisterDisp.getCreditAmount() != null
-                    && budgetAppropriationRegisterDisp.getCreditAmount().compareTo(BigDecimal.ZERO) == 1) {
+                            && budgetAppropriationRegisterDisp.getCreditAmount().compareTo(BigDecimal.ZERO) == 1) {
 
                         budgetAppropriationRegisterDisp.setBillAmount(budgetAppropriationRegisterDisp.getCreditAmount());
                         totalCredit = totalCredit.add(budgetAppropriationRegisterDisp.getBillAmount());
@@ -409,7 +375,7 @@ public class BudgetAppropriationRegisterReportAction extends BaseFormAction {
                     }
                 if (BudgetingType.ALL.equals(budgetGroup.getBudgetingType()))
                     if (budgetAppropriationRegisterDisp.getDebitAmount() != null
-                    && budgetAppropriationRegisterDisp.getDebitAmount().compareTo(BigDecimal.ZERO) == 1)
+                            && budgetAppropriationRegisterDisp.getDebitAmount().compareTo(BigDecimal.ZERO) == 1)
                         budgetAppropriationRegisterDisp.setBillAmount(budgetAppropriationRegisterDisp.getDebitAmount());
                     else
                         budgetAppropriationRegisterDisp.setBillAmount(budgetAppropriationRegisterDisp.getCreditAmount().multiply(
@@ -423,24 +389,24 @@ public class BudgetAppropriationRegisterReportAction extends BaseFormAction {
                         cumulativeAmt = totalDebit.subtract(totalCredit);
                     budgetAppropriationRegisterDisp.setCumulativeAmount(cumulativeAmt);
                 } else // when budgeting type is 'ALL', to calculate the cumulative balance,
-                    // if the debit amount>0, add the debit amount to cumulative amount
-                    // if the credit amount>0, subtract the credit amount from the cumulative amount
-                    if (BudgetingType.ALL.equals(budgetGroup.getBudgetingType())) {
-                        if (budgetAppropriationRegisterDisp.getDebitAmount() != null
-                                && budgetAppropriationRegisterDisp.getDebitAmount().compareTo(BigDecimal.ZERO) == 1) {
-                            cumulativeAmt = budgetAppropriationRegisterDisp.getBillAmount().abs().add(cumulativeAmt);
-                            budgetAppropriationRegisterDisp.setCumulativeAmount(cumulativeAmt);
-                        } else {
-                            cumulativeAmt = cumulativeAmt.subtract(budgetAppropriationRegisterDisp.getBillAmount().abs());
-                            budgetAppropriationRegisterDisp.setCumulativeAmount(cumulativeAmt);
-                        }
-                    } else if (BudgetingType.CREDIT.equals(budgetGroup.getBudgetingType())) {
-                        cumulativeAmt = cumulativeAmt.add(totalCredit.subtract(totalDebit));
+                       // if the debit amount>0, add the debit amount to cumulative amount
+                       // if the credit amount>0, subtract the credit amount from the cumulative amount
+                if (BudgetingType.ALL.equals(budgetGroup.getBudgetingType())) {
+                    if (budgetAppropriationRegisterDisp.getDebitAmount() != null
+                            && budgetAppropriationRegisterDisp.getDebitAmount().compareTo(BigDecimal.ZERO) == 1) {
+                        cumulativeAmt = budgetAppropriationRegisterDisp.getBillAmount().abs().add(cumulativeAmt);
                         budgetAppropriationRegisterDisp.setCumulativeAmount(cumulativeAmt);
-                    } else if (BudgetingType.DEBIT.equals(budgetGroup.getBudgetingType())) {
-                        cumulativeAmt = cumulativeAmt.add(totalDebit.subtract(totalCredit));
+                    } else {
+                        cumulativeAmt = cumulativeAmt.subtract(budgetAppropriationRegisterDisp.getBillAmount().abs());
                         budgetAppropriationRegisterDisp.setCumulativeAmount(cumulativeAmt);
                     }
+                } else if (BudgetingType.CREDIT.equals(budgetGroup.getBudgetingType())) {
+                    cumulativeAmt = cumulativeAmt.add(totalCredit.subtract(totalDebit));
+                    budgetAppropriationRegisterDisp.setCumulativeAmount(cumulativeAmt);
+                } else if (BudgetingType.DEBIT.equals(budgetGroup.getBudgetingType())) {
+                    cumulativeAmt = cumulativeAmt.add(totalDebit.subtract(totalCredit));
+                    budgetAppropriationRegisterDisp.setCumulativeAmount(cumulativeAmt);
+                }
                 // when budgeting type is 'ALL', to calculate the running balance,
                 // if the debit amount>0, subtract the cumulative from running balance
                 // if the credit amount>0, add the cumulative to running balance
@@ -465,10 +431,10 @@ public class BudgetAppropriationRegisterReportAction extends BaseFormAction {
     private BigDecimal getBudgetBEorREAmt(final String type) {
         BigDecimal approvedAmount = new BigDecimal(0.0);
         try {
-        	CFinancialYear financialYr=new CFinancialYear();
-        	financialYr = financialYearDAO.getFinancialYearByDate(dtAsOnDate);
-        	final CFinancialYear financialYear = financialYearDAO.getFinancialYearById(Long.valueOf(financialYr.getId()));
-        	
+            CFinancialYear financialYr = new CFinancialYear();
+            financialYr = financialYearDAO.getFinancialYearByDate(dtAsOnDate);
+            final CFinancialYear financialYear = financialYearDAO.getFinancialYearById(Long.valueOf(financialYr.getId()));
+
             List<BudgetDetail> budgedDetailList = new ArrayList<BudgetDetail>();
             String query = " from BudgetDetail bd where bd.budget.isbere=? and bd.budgetGroup=? and bd.budget.financialYear=? ";
             if (department.getId() != null && department.getId() != -1)
@@ -481,15 +447,13 @@ public class BudgetAppropriationRegisterReportAction extends BaseFormAction {
             if (budgedDetailList != null && budgedDetailList.size() > 0)
                 for (final BudgetDetail bdetail : budgedDetailList) {
                     approvedAmount = approvedAmount.add(bdetail.getApprovedAmount());
-                    if ("RE".equalsIgnoreCase(type) && !getConsiderReAppropriationAsSeperate())
-                    {
+                    if ("RE".equalsIgnoreCase(type) && !getConsiderReAppropriationAsSeperate()) {
                         approvedAmount = approvedAmount.add(bdetail.getApprovedReAppropriationsTotal());
                         continue;
                     } else if ("BE".equalsIgnoreCase(type))
                         addtionalAppropriationForBe = addtionalAppropriationForBe.add(bdetail
                                 .getApprovedReAppropriationsTotal());
-                    else
-                    {
+                    else {
                         shouldShowREAppropriations = true;
                         addtionalAppropriationForRe = addtionalAppropriationForRe.add(bdetail
                                 .getApprovedReAppropriationsTotal());
@@ -512,23 +476,17 @@ public class BudgetAppropriationRegisterReportAction extends BaseFormAction {
 
         final String rBEorREAmountForm = " - (" + finYearRange + ") (Rs.)  : ";
         paramMapForReportFile.put("rAsOnDate", strAsOnDate);
-        if (isBeDefined)
-        {
+        if (isBeDefined) {
             paramMapForReportFile.put("rBE", rBEorREAmountForm + beAmount.toString());
             paramMapForReportFile.put("rAddiApprBe", addtionalAppropriationForBe.toString());
-        }
-        else
-        {
+        } else {
             paramMapForReportFile.put("rBE", rBEorREAmountForm + "Budget Not Defined ");
             paramMapForReportFile.put("rAddiApprBe", "");
         }
-        if (isReDefined)
-        {
+        if (isReDefined) {
             paramMapForReportFile.put("rRE", rBEorREAmountForm + reAmount.toString());
             paramMapForReportFile.put("rAddiApprRe", addtionalAppropriationForRe.toString());
-        }
-        else
-        {
+        } else {
             paramMapForReportFile.put("rRE", rBEorREAmountForm);
             paramMapForReportFile.put("rAddiApprRe", "");
         }
@@ -555,15 +513,43 @@ public class BudgetAppropriationRegisterReportAction extends BaseFormAction {
         inputStream = reportHelper.exportXls(getInputStream(), jasperpath, getParamMapForReportFile(), data);
         return "XLS";
     }
+    private Query setParameterForBudgetAppDisplay(Query query ,Date asOnDate,Date startDate)
+    {
+        if (function.getId() != null && function.getId() != -1)
+        {
+            query.setLong("functionId", function.getId()) ; 
+        }
+        if (department.getId() != null && department.getId() != -1)
+        {
+            query.setLong("departmentId", department.getId()) ; 
+        }
+        if (fund.getId() != null && fund.getId() != -1)
+        {
+            query.setLong("fundId", fund.getId()) ; 
+        }
+        if (budgetGroup.getMinCode().getId() != null )
+        {
+            query.setLong("glCodeId", budgetGroup.getMinCode().getId()) ; 
+        }
+        if (asOnDate != null )
+        {
+            query.setDate("strAODate", asOnDate) ; 
+        }
+        
+        if (startDate != null )
+        {
+            query.setDate("strStDate", startDate) ; 
+        }
+        
+        
+        return query;
+    }
 
     public String getFormattedDate(final Date date) {
         final SimpleDateFormat formatter = Constants.DDMMYYYYFORMAT1;
         return formatter.format(date);
     }
 
-    public void setBudgetDetailConfig(final BudgetDetailConfig budgetDetailConfig) {
-        this.budgetDetailConfig = budgetDetailConfig;
-    }
 
     public void setReportHelper(final ReportHelper reportHelper) {
         this.reportHelper = reportHelper;

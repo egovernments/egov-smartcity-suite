@@ -47,7 +47,8 @@ import org.egov.adtax.web.controller.common.HoardingControllerSupport;
 import org.egov.commons.Installment;
 import org.egov.infra.utils.DateUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.support.ResourceBundleMessageSource;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.context.MessageSource;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.ModelAttribute;
@@ -66,9 +67,10 @@ import static org.springframework.web.bind.annotation.RequestMethod.POST;
 public class CreateLegacyAdvertisementController extends HoardingControllerSupport {
 	
 	@Autowired
-	private ResourceBundleMessageSource messageSource;
+    @Qualifier("messageSource")
+	private MessageSource messageSource;
 
-    @RequestMapping(value = "createLegacy", method = GET)
+    @RequestMapping(value = "adtaxCreateLegacy", method = GET)
     public String createLegacyHoardingForm(@ModelAttribute final AdvertisementPermitDetail advertisementPermitDetail) {
         if (advertisementPermitDetail != null && advertisementPermitDetail.getAdvertisement() == null)
             advertisementPermitDetail.setAdvertisement(new Advertisement());
@@ -96,7 +98,7 @@ public class CreateLegacyAdvertisementController extends HoardingControllerSuppo
 
     }
 
-    @RequestMapping(value = "createLegacy", method = POST)
+    @RequestMapping(value = "adtaxCreateLegacy", method = POST)
     public String createLegacyHoarding(@Valid @ModelAttribute final AdvertisementPermitDetail advertisementPermitDetail,
             final BindingResult resultBinder, final RedirectAttributes redirAttrib) {
         final SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");

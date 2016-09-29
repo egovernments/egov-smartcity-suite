@@ -138,7 +138,7 @@ public class UpdatePropertyDemolitionController extends GenericWorkFlowControlle
     @RequestMapping(method = RequestMethod.POST)
     public String update(@Valid @ModelAttribute Property property, final BindingResult errors,
             final RedirectAttributes redirectAttributes, final HttpServletRequest request, final Model model,
-            @RequestParam String workFlowAction) {
+            @RequestParam String workFlowAction) throws TaxCalculatorExeption {
 
         propertyDemolitionService.validateProperty(property, errors, request);
         if (errors.hasErrors()) {
@@ -182,18 +182,13 @@ public class UpdatePropertyDemolitionController extends GenericWorkFlowControlle
                     propertyDemolitionService.updateProperty(property, approvalComent, workFlowAction,
                             approvalPosition, DEMOLITION);
                 } else {
-                    try {
-                        propertyDemolitionService.saveProperty(oldProperty, property, status, approvalComent,
-                                workFlowAction, approvalPosition, DEMOLITION);
-                    } catch (TaxCalculatorExeption e) {
-                        // TODO Auto-generated catch block
-                        e.printStackTrace();
-                    }
+                    propertyDemolitionService.saveProperty(oldProperty, property, status, approvalComent,
+                            workFlowAction, approvalPosition, DEMOLITION);
                 }
                 Assignment assignment = new Assignment();
                 if (workFlowAction.equalsIgnoreCase(WFLOW_ACTION_STEP_APPROVE)) {
                     model.addAttribute("successMessage", "Property Demolition approved successfully and forwarded to  "
-                            + propertyTaxUtil.getApproverUserName(approvalPosition) + " with assessment number "
+                            + propertyTaxUtil.getApproverUserName(((PropertyImpl) property).getState().getOwnerPosition().getId()) + " with assessment number "
                             + property.getBasicProperty().getUpicNo());
                 } else if (workFlowAction.equalsIgnoreCase(WFLOW_ACTION_STEP_REJECT)) {
                     assignment = assignmentService.getPrimaryAssignmentForUser(property.getCreatedBy().getId());

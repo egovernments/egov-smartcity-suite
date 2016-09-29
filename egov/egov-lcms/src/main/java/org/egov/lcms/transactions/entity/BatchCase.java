@@ -43,6 +43,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -51,21 +52,19 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
-import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 
-import org.apache.commons.lang.StringUtils;
-import org.egov.infra.persistence.entity.AbstractAuditable;
 import org.egov.infra.persistence.validator.annotation.DateFormat;
 import org.egov.infra.persistence.validator.annotation.OptionalPattern;
 import org.egov.infra.persistence.validator.annotation.ValidateDate;
 import org.egov.infra.validation.exception.ValidationError;
 import org.egov.lcms.utils.constants.LcmsConstants;
+import org.springframework.data.jpa.domain.AbstractPersistable;
 
 @Entity
 @Table(name = "EGLC_LEGALCASE_BATCHCASE")
 @SequenceGenerator(name = BatchCase.SEQ_EGLC_LEGALCASE_BATCHCASE, sequenceName = BatchCase.SEQ_EGLC_LEGALCASE_BATCHCASE, allocationSize = 1)
-public class BatchCase extends AbstractAuditable {
+public class BatchCase extends AbstractPersistable<Long> {
 
     private static final long serialVersionUID = 1517694643078084884L;
     public static final String SEQ_EGLC_LEGALCASE_BATCHCASE = "SEQ_EGLC_LEGALCASE_BATCHCASE";
@@ -76,21 +75,23 @@ public class BatchCase extends AbstractAuditable {
 
     @ManyToOne
     @NotNull
-    @Valid
     @JoinColumn(name = "legalcase", nullable = false)
     private LegalCase legalCase;
 
     @DateFormat(message = "invalid.fieldvalue.model.batchCaseDate")
     @ValidateDate(allowPast = true, dateFormat = LcmsConstants.DATE_FORMAT, message = "invalid.batchcase.date")
+    @Column(name="casedate")
     private Date batchCaseDate;
 
     @OptionalPattern(regex = LcmsConstants.caseNumberRegx, message = "batchcase.number.alphanumeric")
     private String casenumber;
 
     @OptionalPattern(regex = LcmsConstants.mixedCharType1withComma, message = "petitionerName.batchcase.mixedChar")
+    @Column(name="petitionername")
     private String petitionerName;
 
-    private String caseNumberForDisplay;
+   /* @Column(name="petitionername")
+    private String caseNumberForDisplay;*/
 
     @Override
     public Long getId() {
@@ -126,7 +127,7 @@ public class BatchCase extends AbstractAuditable {
         this.casenumber = casenumber;
     }
 
-    public String getCaseNumberForDisplay() {
+ /*   public String getCaseNumberForDisplay() {
         if (getCasenumber() != null) {
             final int lastOccurance = getCasenumber().indexOf("/", 0);
             setCaseNumberForDisplay(getCasenumber().substring(lastOccurance + 1, getCasenumber().length()));
@@ -136,14 +137,14 @@ public class BatchCase extends AbstractAuditable {
 
     public void setCaseNumberForDisplay(final String caseNumberForDisplay) {
         this.caseNumberForDisplay = caseNumberForDisplay;
-    }
+    }*/
 
     /*
      * If they entered either one of the value then validation should throw for rest of the fields. That check is done over here.
      */
     public List<ValidationError> validate() {
         final List<ValidationError> errors = new ArrayList<ValidationError>();
-        if (StringUtils.isBlank(getCaseNumberForDisplay()) && getBatchCaseDate() == null
+        /* if (StringUtils.isBlank(getCaseNumberForDisplay()) && getBatchCaseDate() == null
                 && StringUtils.isBlank(getPetitionerName()))
             errors.add(new ValidationError("caseNumber", "batchcase.null"));
         else {
@@ -153,7 +154,7 @@ public class BatchCase extends AbstractAuditable {
                 errors.add(new ValidationError("caseDate", "batchcase.caseDate.null"));
             if (StringUtils.isBlank(getCaseNumberForDisplay()))
                 errors.add(new ValidationError("casenumber", "batchcase.casenumber.null"));
-        }
+        }*/
         return errors;
     }
 

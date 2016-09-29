@@ -52,6 +52,8 @@ import org.egov.commons.CChartOfAccountDetail;
 import org.egov.commons.dao.EgwTypeOfWorkHibernateDAO;
 import org.egov.commons.dao.FundHibernateDAO;
 import org.egov.dao.budget.BudgetDetailsDAO;
+import org.egov.egf.budget.model.BudgetControlType;
+import org.egov.egf.budget.service.BudgetControlTypeService;
 import org.egov.eis.service.DesignationService;
 import org.egov.infra.admin.master.entity.AppConfigValues;
 import org.egov.infra.admin.master.entity.Department;
@@ -67,7 +69,6 @@ import org.egov.services.masters.SchemeService;
 import org.egov.works.lineestimate.entity.LineEstimate;
 import org.egov.works.lineestimate.entity.LineEstimateDetails;
 import org.egov.works.lineestimate.entity.enums.Beneficiary;
-import org.egov.works.lineestimate.entity.enums.TypeOfSlum;
 import org.egov.works.lineestimate.entity.enums.WorkCategory;
 import org.egov.works.lineestimate.service.LineEstimateDetailService;
 import org.egov.works.lineestimate.service.LineEstimateService;
@@ -76,7 +77,8 @@ import org.egov.works.master.service.ModeOfAllotmentService;
 import org.egov.works.master.service.NatureOfWorkService;
 import org.egov.works.utils.WorksConstants;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.support.ResourceBundleMessageSource;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.context.MessageSource;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -108,7 +110,8 @@ public class CreateSpillOverLineEstimateController {
     private EgwTypeOfWorkHibernateDAO egwTypeOfWorkHibernateDAO;
 
     @Autowired
-    private ResourceBundleMessageSource messageSource;
+    @Qualifier("messageSource")
+    private MessageSource messageSource;
 
     @Autowired
     private DesignationService designationService;
@@ -121,6 +124,9 @@ public class CreateSpillOverLineEstimateController {
 
     @Autowired
     private AppConfigValueService appConfigValuesService;
+    
+    @Autowired
+    private BudgetControlTypeService budgetControlTypeService;
     
     @Autowired
     private BoundaryService boundaryService;
@@ -161,10 +167,8 @@ public class CreateSpillOverLineEstimateController {
         validateAdminSanctionDetail(lineEstimate, errors);
         validateTechSanctionDetails(lineEstimate, errors);
 
-        final List<AppConfigValues> values = appConfigValuesService.getConfigValuesByModuleAndKey(WorksConstants.EGF_MODULE_NAME,
-                WorksConstants.APPCONFIG_KEY_BUDGETCHECK_REQUIRED);
-        final AppConfigValues value = values.get(0);
-        if (value.getValue().equalsIgnoreCase("Y"))
+        if (!BudgetControlType.BudgetCheckOption.NONE.toString()
+                .equalsIgnoreCase(budgetControlTypeService.getConfigValue()))
             validateBudgetAmount(lineEstimate, errors);
         
         validateBudgetHead(lineEstimate, errors);
@@ -216,6 +220,12 @@ public class CreateSpillOverLineEstimateController {
                 errors.rejectValue("lineEstimateDetails[" + index + "].estimateNumber", "error.estimatenumber.unique");
             if (workIdentificationNumber != null)
                 errors.rejectValue("lineEstimateDetails[" + index + "].projectCode.code", "error.win.unique");
+            if(led.getActualEstimateAmount() != null && !(led.getActualEstimateAmount().signum() == 1))
+            	errors.rejectValue("lineEstimateDetails[" + index + "].actualEstimateAmount",  "error.actualestimateamount.required");
+            if(led.getEstimateAmount().compareTo(led.getActualEstimateAmount()) == -1)
+            	errors.rejectValue("lineEstimateDetails[" + index + "].actualEstimateAmount", "error.actualamount");
+            if (led.getQuantity() <= 0)
+                errors.rejectValue("lineEstimateDetails[" + index + "].quantity", "error.quantity.required");
             index++;
         }
     }
@@ -241,8 +251,8 @@ public class CreateSpillOverLineEstimateController {
                 && lineEstimate.getAdminSanctionDate().before(lineEstimate.getLineEstimateDate()))
             errors.rejectValue("adminSanctionDate", "error.adminsanctiondate");
         if (lineEstimate.getCouncilResolutionDate() != null
-                && lineEstimate.getCouncilResolutionDate().after(lineEstimate.getAdminSanctionDate()))
-            errors.rejectValue("councilResolutionDate", "error.spillover.councilresolutiondate");
+                && lineEstimate.getCouncilResolutionDate().before(lineEstimate.getLineEstimateDate()))
+            errors.rejectValue("councilResolutionDate", "error.councilresolutiondate");
         if (StringUtils.isBlank(lineEstimate.getAdminSanctionNumber()))
             errors.rejectValue("adminSanctionNumber", "error.adminsanctionnumber.notnull");
         if (lineEstimate.getAdminSanctionNumber() != null) {
@@ -259,7 +269,6 @@ public class CreateSpillOverLineEstimateController {
         model.addAttribute("schemes", schemeService.findAll());
         model.addAttribute("departments", lineEstimateService.getUserDepartments(securityUtils.getCurrentUser()));
         model.addAttribute("workCategory", WorkCategory.values());
-        model.addAttribute("typeOfSlum", TypeOfSlum.values());
         model.addAttribute("beneficiary", Beneficiary.values());
         model.addAttribute("modeOfAllotment", modeOfAllotmentService.findAll());
         model.addAttribute("lineEstimateUOMs", lineEstimateUOMService.findAll());
@@ -317,8 +326,8 @@ public class CreateSpillOverLineEstimateController {
                             led.getGrossAmountBilled()));
                 else
                     totalAppropriationAmount = totalAppropriationAmount.add(led.getEstimateAmount());
-
-            if (budgetAvailable.compareTo(totalAppropriationAmount) == -1)
+            if (BudgetControlType.BudgetCheckOption.MANDATORY.toString().equalsIgnoreCase(budgetControlTypeService.getConfigValue()) 
+                    && budgetAvailable.compareTo(totalAppropriationAmount) == -1)
                 errors.reject("error.budgetappropriation.amount",
                         new String[] { budgetAvailable.toString(), totalAppropriationAmount.toString() }, null);
         } catch (final ValidationException e) {

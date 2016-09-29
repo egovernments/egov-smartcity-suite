@@ -53,8 +53,8 @@
 		<th class="bluebgheadtd"><s:text name="effectiveDate" /><span	class="mandatory1">*</span></th>
 		
 		<th class="bluebgheadtd"><s:text name="unstructuredLand" /><span class="mandatory1">*</span></th>
-		<th class="bluebgheadtd"><s:text name="plinthLength" /></th>
-		<th class="bluebgheadtd"><s:text name="plinthBreadth" /></th>
+		<th class="bluebgheadtd"><s:text name="plinthLength" /><span class="mandatory1">*</span></th>
+		<th class="bluebgheadtd"><s:text name="plinthBreadth" /><span class="mandatory1">*</span></th>
 		<th class="bluebgheadtd"><s:text name="PlinthArea" /><span	class="mandatory1">*</span></th>
 		<th class="bluebgheadtd"><s:text name="building.permNo" />
 		<th class="bluebgheadtd"><s:text name="buildingpermdate" />
@@ -88,7 +88,7 @@
 				</div>
 			</td>
 			<egov:ajaxdropdown id="floorUsage" fields="['Text','Value']" dropdownId="floorUsage"
-			url="common/ajaxCommon-usageByPropType.action" afterSuccess="loadUsages"/>
+			url="/public/common/ajaxCommon-usageByPropType.action" afterSuccess="loadUsages"/>
 			<td class="blueborderfortd" style="padding: 2px 2px">
 				<div align="center">
 					<s:select headerKey="" headerValue="%{getText('default.select')}"
@@ -160,7 +160,7 @@
 		<td class="blueborderfortd" style="padding: 2px 2px">
 				<div align="center">
 					<s:textfield name="propertyDetail.floorDetailsProxy[0].builtUpArea.length" 
-						maxlength="10" size="10" readonly="true" id="builtUpArealength" value="%{propertyDetail.floorDetailsProxy[0].builtUpArea.length}"
+						maxlength="10" size="10" id="builtUpArealength" value="%{propertyDetail.floorDetailsProxy[0].builtUpArea.length}"
 						onblur="trim(this,this.value);checkForTwoDecimals(this,'Length');checkZero(this,'Length'); calculatePlintArea(this);"
 						  cssStyle="width:100%" data-optional="1" data-errormsg="Length is mandatory!" title="Length" />
 				</div>
@@ -168,7 +168,7 @@
 		<td class="blueborderfortd" style="padding: 2px 2px">
 				<div align="center">
 					<s:textfield name="propertyDetail.floorDetailsProxy[0].builtUpArea.breadth" 
-						maxlength="10" size="10" readonly="true" id="builtUpAreabreadth" value="%{propertyDetail.floorDetailsProxy[0].builtUpArea.breadth}"
+						maxlength="10" size="10" id="builtUpAreabreadth" value="%{propertyDetail.floorDetailsProxy[0].builtUpArea.breadth}"
 						onblur="trim(this,this.value);checkForTwoDecimals(this,'Breadth');checkZero(this,'Breadth'); calculatePlintArea(this);"
 						 cssStyle="width:100%" data-optional="1" data-errormsg="Breadth is mandatory!" title="Breadth"/>
 				</div>
@@ -265,7 +265,7 @@
 					</div>
 				</td>
 				<egov:ajaxdropdown id="floorUsage" fields="['Text','Value']" dropdownId="floorUsage"
-			          url="/common/ajaxCommon-usageByPropType.action" afterSuccess="loadUsages"/>
+			          url="/public/common/ajaxCommon-usageByPropType.action" afterSuccess="loadUsages"/>
 				<td class="blueborderfortd" style="padding: 2px 2px">
 					<div align="center">
 							<s:select headerKey=""
@@ -341,7 +341,7 @@
 		<td class="blueborderfortd" style="padding: 2px 2px">
 				<div align="center">
 					<s:textfield name="propertyDetail.floorDetailsProxy[%{#floorsstatus.index}].builtUpArea.length" 
-						maxlength="10" size="10" readonly="true" id="builtUpArealength" value="%{propertyDetail.floorDetailsProxy[#floorsstatus.index].builtUpArea.length}"
+						maxlength="10" size="10" id="builtUpArealength" value="%{propertyDetail.floorDetailsProxy[#floorsstatus.index].builtUpArea.length}"
 						onblur="trim(this,this.value);checkForTwoDecimals(this,'Length');checkZero(this,'Length'); calculatePlintArea(this);"
 						cssStyle="width:100%" data-optional="1" data-errormsg="Length is mandatory!" title="Length" />
 				</div>
@@ -349,7 +349,7 @@
 		<td class="blueborderfortd" style="padding: 2px 2px">
 				<div align="center">
 					<s:textfield name="propertyDetail.floorDetailsProxy[%{#floorsstatus.index}].builtUpArea.breadth" 
-						maxlength="10" size="10" readonly="true" id="builtUpAreabreadth" value="%{propertyDetail.floorDetailsProxy[#floorsstatus.index].builtUpArea.breadth}"
+						maxlength="10" size="10" id="builtUpAreabreadth" value="%{propertyDetail.floorDetailsProxy[#floorsstatus.index].builtUpArea.breadth}"
 						onblur="trim(this,this.value);checkForTwoDecimals(this,'Breadth');checkZero(this,'Breadth'); calculatePlintArea(this);"
 						cssStyle="width:100%" data-optional="1" data-errormsg="Breadth is mandatory!" title="Breadth"/>
 				</div>

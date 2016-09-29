@@ -93,6 +93,10 @@ public class InterimOrderService {
         return interimOrderRepository.findOne(id);
     }
 
+    public List<InterimOrder> getActiveInterimOrder() {
+        return interimOrderRepository.findByActiveTrueOrderByInterimOrderTypeAsc();
+    }
+
     public List<InterimOrder> search(final InterimOrder interimOrder) {
 
         final CriteriaBuilder cb = entityManager.getCriteriaBuilder();
@@ -124,7 +128,7 @@ public class InterimOrderService {
                         code));
             }
             if (interimOrder.getActive() != null)
-                if (interimOrder.getActive() == true)
+                if (interimOrder.getActive())
                     predicates.add(cb.equal(
                             interimorder.get(InterimOrder.getDeclaredSingularAttribute("active", Boolean.class)),
                             true));

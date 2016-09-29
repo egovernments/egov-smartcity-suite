@@ -80,9 +80,11 @@ function loadingReport()
 			var oDataTable=oTable.dataTable({
 				"sPaginationType": "bootstrap",
 				"sDom": "<'row'<'col-xs-12 hidden col-right'f>r>t<'row'<'col-md-3 col-xs-12'i><'col-md-3 col-xs-6 col-right'l><'col-xs-12 col-md-3 col-right'<'export-data'T>><'col-md-3 col-xs-6 text-right'p>>",
-				"aLengthMenu": [[10, 25, 50, -1], [10, 25, 50, "All"]],
+				"aLengthMenu": [[10, 25, 50, 100,-1], [10, 25, 50, 100,"All"]],
 				"autoWidth": false,
 				"bDestroy": true,
+				"processing": true,
+		        "serverSide": true,
 				"oTableTools" : {
 					"sSwfPath" : "../../../../../../egi/resources/global/swf/copy_csv_xls_pdf.swf",
 					"aButtons" : [ 
@@ -116,7 +118,9 @@ function loadingReport()
 						'toAmount': toAmount
 					}
 				},
-				"columns" : [{"sTitle" : "S.no", /*"data" : "hscNo", "mRender": function ( o,val,data, meta ) { return ''+(meta.row+1); }*/},
+				"columns" : [{"sTitle" : "S.no", "render": function ( data, type, full, meta ) {
+						      return oTable.fnPagingInfo().iStart+meta.row+1;
+						    }},
 							  { "data" : "hscNo" , "title": "H.S.C NO"},  
 							  { "data" : "ownerName", "title": "Owner Name"},
 							  { "data" : "wardName", "title": "Revenue Ward"},
@@ -149,16 +153,6 @@ function loadingReport()
 								},
 					            "fnInitComplete": function() {
 					            	if(oDataTable){ oDataTable.fnSort( [ [7,'desc'] , [3,'asc'] ] ); }
-					            },
-					            "fnDrawCallback": function ( oSettings ) {
-					                /* Need to redo the counters if filtered or sorted */
-					                if ( oSettings.bSorted || oSettings.bFiltered )
-					                {
-					                    for ( var i=0, iLen=oSettings.aiDisplay.length ; i<iLen ; i++ )
-					                    {
-					                        $('td:eq(0)', oSettings.aoData[ oSettings.aiDisplay[i] ].nTr ).html( i+1 );
-					                    }
-					                }
 					            },
 					            
 								"aoColumnDefs" : [ {

@@ -94,8 +94,8 @@ public class PetitionTypeMasterService {
         return petitionTypeMasterRepository.findOne(id);
     }
 
-    public List<PetitionTypeMaster> findByCourtType(final CourtTypeMaster courtType) {
-        return petitionTypeMasterRepository.findByCourtType(courtType);
+    public List<PetitionTypeMaster> findActivePetitionByCourtType(final CourtTypeMaster courtType) {
+        return petitionTypeMasterRepository.findByActiveTrueAndCourtType(courtType);
     }
 
     public List<PetitionTypeMaster> search(final PetitionTypeMaster petitionTypeMaster) {
@@ -134,7 +134,7 @@ public class PetitionTypeMasterService {
             if (petitionTypeMaster.getCourtType() != null)
                 predicates.add(cb.equal(petitionTypeMasterobj.get("courtType"), petitionTypeMaster.getCourtType()));
             if (petitionTypeMaster.getActive() != null)
-                if (petitionTypeMaster.getActive() == true)
+                if (petitionTypeMaster.getActive())
                     predicates
                             .add(cb.equal(
                                     petitionTypeMasterobj.get(
@@ -155,9 +155,12 @@ public class PetitionTypeMasterService {
         return resultList;
     }
 
-    public List<PetitionTypeMaster> getPetitiontypeList()
-    {
+    public List<PetitionTypeMaster> getPetitiontypeList() {
         return petitionTypeMasterRepository.findAll();
+    }
+
+    public List<PetitionTypeMaster> getActivePetitionTypes() {
+        return petitionTypeMasterRepository.findByActiveTrueOrderByPetitionTypeAsc();
     }
 
 }

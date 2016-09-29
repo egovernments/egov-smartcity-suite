@@ -44,7 +44,8 @@ import org.egov.infra.messaging.MessagingService;
 import org.egov.tl.entity.License;
 import org.egov.tl.utils.Constants;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.support.ResourceBundleMessageSource;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.context.MessageSource;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
@@ -58,7 +59,8 @@ public class TradeLicenseSmsAndEmailService {
     private MessagingService messagingService;
 
     @Autowired
-    private ResourceBundleMessageSource messageSource;
+    @Qualifier("parentMessageSource")
+    private MessageSource licenseMessageSource;
 
     public void sendSMSOnLicense(final String mobileNumber, final String smsBody) {
         messagingService.sendSMS(mobileNumber, smsBody);
@@ -101,17 +103,17 @@ public class TradeLicenseSmsAndEmailService {
                 smsCode = "msg.newTradeLicensecreator.sms";
                 emailCode = "msg.newTradeLicensecreate.email.body";
             }
-            smsMsg = messageSource.getMessage(
+            smsMsg = licenseMessageSource.getMessage(
                     smsCode,
                     new String[] { license.getLicensee().getApplicantName(), license.getApplicationNumber(),
                             getMunicipalityName() },
                     locale);
-            emailBody = messageSource.getMessage(
+            emailBody = licenseMessageSource.getMessage(
                     emailCode,
                     new String[] { license.getLicensee().getApplicantName(), license.getApplicationNumber(),
                             getMunicipalityName() },
                     locale);
-            emailSubject = messageSource.getMessage("msg.newTradeLicensecreate.email.subject",
+            emailSubject = licenseMessageSource.getMessage("msg.newTradeLicensecreate.email.subject",
                     new String[] { license.getApplicationNumber() }, locale);
         } else if (workFlowAction.equals(Constants.BUTTONAPPROVE)
                 && Constants.STATUS_UNDERWORKFLOW.equalsIgnoreCase(license.getStatus()
@@ -123,31 +125,31 @@ public class TradeLicenseSmsAndEmailService {
                 emailCode = "msg.renewTradeLicenseapproval.email.body";
             else
                 emailCode = "msg.newTradeLicenseapproval.email.body";
-            smsMsg = messageSource.getMessage(
+            smsMsg = licenseMessageSource.getMessage(
                     "msg.newTradeLicenseapproval.sms",
                     new String[] { license.getLicensee().getApplicantName(), license.getLicenseNumber(),
                             demAmt.toString(), formatter.format(license.getApplicationDate()), cityname, getMunicipalityName() },
                     locale);
-            emailBody = messageSource.getMessage(
+            emailBody = licenseMessageSource.getMessage(
                     emailCode,
                     new String[] { license.getLicensee().getApplicantName(), license.getLicenseNumber(),
                             demAmt.toString(), formatter.format(license.getApplicationDate()), cityname, getMunicipalityName() },
                     locale);
-            emailSubject = messageSource.getMessage("msg.newTradeLicenseApproval.email.subject",
+            emailSubject = licenseMessageSource.getMessage("msg.newTradeLicenseApproval.email.subject",
                     new String[] { license.getLicenseNumber() }, locale);
         } else if (Constants.STATUS_CANCELLED.equalsIgnoreCase(license.getStatus()
                 .getStatusCode())) {
-            smsMsg = messageSource.getMessage(
+            smsMsg = licenseMessageSource.getMessage(
                     "msg.newTradeLicensecancelled.sms",
                     new String[] { license.getLicensee().getApplicantName(), license.getApplicationNumber(),
                             cityname, getMunicipalityName() },
                     locale);
-            emailBody = messageSource.getMessage(
+            emailBody = licenseMessageSource.getMessage(
                     "msg.newTradeLicensecancelled.email.body",
                     new String[] { license.getLicensee().getApplicantName(), license.getApplicationNumber(),
                             cityname, getMunicipalityName() },
                     locale);
-            emailSubject = messageSource.getMessage("msg.newTradeLicensecancelled.email.subject",
+            emailSubject = licenseMessageSource.getMessage("msg.newTradeLicensecancelled.email.subject",
                     new String[] { license.getApplicationNumber() }, locale);
         }
         sendSMSOnLicense(mobileNumber, smsMsg);

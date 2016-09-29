@@ -44,37 +44,40 @@ import java.io.Serializable;
 @SuppressWarnings("serial")
 public class PropertyAddressDetails implements Serializable {
 
-	private String localityCode;
-	private String street;
-	private String electionWardCode;
+	private String localityNum;
+	private String streetNum;
+	private String electionWardNum;
 	private String doorNo;
 	private String enumerationBlockCode;
 	private String pinCode;
-	private Boolean isCorrAddrDiff;
+	private String zoneNum;
+	private String wardNum;
+	private String blockNum;
+	private Boolean isCorrAddrDiff = false;
 	private CorrespondenceAddressDetails corrAddressDetails;
 
-	public String getLocalityCode() {
-		return localityCode;
+	public String getLocalityNum() {
+		return localityNum;
 	}
 
-	public void setLocalityCode(String localityCode) {
-		this.localityCode = localityCode;
+	public void setLocalityNum(String localityNum) {
+		this.localityNum = localityNum;
 	}
 
-	public String getStreet() {
-		return street;
+	public String getStreetNum() {
+		return streetNum;
 	}
 
-	public void setStreet(String street) {
-		this.street = street;
+	public void setStreetNum(String streetNum) {
+		this.streetNum = streetNum;
 	}
 
-	public String getElectionWardCode() {
-		return electionWardCode;
+	public String getElectionWardNum() {
+		return electionWardNum;
 	}
 
-	public void setElectionWardCode(String electionWardCode) {
-		this.electionWardCode = electionWardCode;
+	public void setElectionWardNum(String electionWardNum) {
+		this.electionWardNum = electionWardNum;
 	}
 
 	public String getDoorNo() {
@@ -119,9 +122,34 @@ public class PropertyAddressDetails implements Serializable {
 
 	@Override
 	public String toString() {
-		return "PropertyAddressDetails [localityCode=" + localityCode + ", street=" + street + ", electionWardCode="
-				+ electionWardCode + ", doorNo=" + doorNo + ", enumerationBlockCode=" + enumerationBlockCode
+		return "PropertyAddressDetails [localityNum=" + localityNum + ", streetNum=" + streetNum + ", electionWardNum="
+				+ electionWardNum + ", doorNo=" + doorNo + ", enumerationBlockCode=" + enumerationBlockCode 
+				+ ", zoneNum=" + zoneNum + ", wardNum=" + wardNum
 				+ ", pinCode=" + pinCode + ", isCorrAddrDiff=" + isCorrAddrDiff + ", corrAddressDetails=" + corrAddressDetails + "]";
+	}
+
+	public String getZoneNum() {
+		return zoneNum;
+	}
+
+	public void setZoneNum(String zoneNum) {
+		this.zoneNum = zoneNum;
+	}
+
+	public String getWardNum() {
+		return wardNum;
+	}
+
+	public void setWardNum(String wardNum) {
+		this.wardNum = wardNum;
+	}
+
+	public String getBlockNum() {
+		return blockNum;
+	}
+
+	public void setBlockNum(String blockNum) {
+		this.blockNum = blockNum;
 	}
 
 }

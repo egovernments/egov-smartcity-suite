@@ -45,8 +45,6 @@ import org.egov.collection.entity.OnlinePayment;
 import org.egov.collection.entity.ReceiptHeader;
 import org.egov.collection.integration.pgi.AxisAdaptor;
 import org.egov.collection.integration.pgi.PaymentResponse;
-import org.egov.infra.admin.master.entity.City;
-import org.egov.infra.admin.master.service.CityService;
 import org.egov.infra.config.core.ApplicationThreadLocals;
 import org.egov.infstr.models.ServiceDetails;
 import org.egov.infstr.services.PersistenceService;
@@ -58,18 +56,17 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
+import static org.apache.commons.lang3.StringUtils.isNotBlank;
+
 @Transactional(readOnly = true)
 public class SchedularService {
 
     private static final Logger LOGGER = Logger.getLogger(SchedularService.class);
-    protected PersistenceService persistenceService;
-    private ReceiptHeader onlinePaymentReceiptHeader;
-    private PaymentResponse paymentResponse;
+    private PersistenceService persistenceService;
     private ReconciliationService reconciliationService;
+
     @Autowired
-    private  CityService cityService;
-    @Autowired
-    AxisAdaptor axisAdaptor;
+    private AxisAdaptor axisAdaptor;
 
     @Transactional
     public void reconcileAXIS() {
@@ -77,40 +74,33 @@ public class SchedularService {
         LOGGER.debug("Inside reconcileAXIS");
         final Calendar cal = Calendar.getInstance();
         cal.add(Calendar.MINUTE, -30);
-        Query queryCity = persistenceService.getSession().createSQLQuery("select domainurl from eg_city");
-        List<Object> cityList = queryCity.list();
-        if(cityList.size()>1){
-            ApplicationThreadLocals.setDomainName("localhost");
-        }else{
-            ApplicationThreadLocals.setDomainName(cityList.get(0).toString());
-        }
         final Query qry = persistenceService
                 .getSession()
                 .createQuery(
                         "select receipt from org.egov.collection.entity.OnlinePayment as receipt where receipt.status.code=:onlinestatuscode"
                                 + " and receipt.service.code=:paymentservicecode and receipt.createdDate<:thirtyminslesssysdate")
-                .setMaxResults(50);
+                                .setMaxResults(50);
         qry.setString("onlinestatuscode", CollectionConstants.ONLINEPAYMENT_STATUS_CODE_PENDING);
         qry.setString("paymentservicecode", CollectionConstants.SERVICECODE_AXIS);
         qry.setParameter("thirtyminslesssysdate", new Date(cal.getTimeInMillis()));
         final List<OnlinePayment> reconcileList = qry.list();
 
         LOGGER.debug("Thread ID = " + Thread.currentThread().getId() + ": got " + reconcileList.size() + " results.");
-        if (reconcileList.size() > 0) {
+        if (!reconcileList.isEmpty()) {
             final ServiceDetails paymentService = (ServiceDetails) persistenceService.findByNamedQuery(
                     CollectionConstants.QUERY_SERVICE_BY_CODE, CollectionConstants.SERVICECODE_AXIS);
             for (final OnlinePayment onlinePaymentObj : reconcileList) {
                 final long startTimeInMilis = System.currentTimeMillis();
                 LOGGER.info("AXIS Receiptid::::" + onlinePaymentObj.getReceiptHeader().getId());
-                paymentResponse = axisAdaptor.createOfflinePaymentRequest(paymentService, onlinePaymentObj);
+                PaymentResponse paymentResponse = axisAdaptor.createOfflinePaymentRequest(paymentService, onlinePaymentObj);
 
-                if (null != paymentResponse && paymentResponse.getReceiptId()!=null && !paymentResponse.getReceiptId().equals("")) {
+                if (paymentResponse != null && isNotBlank(paymentResponse.getReceiptId())) {
                     LOGGER.info("paymentResponse.getReceiptId():" + paymentResponse.getReceiptId());
                     LOGGER.info("paymentResponse.getAdditionalInfo6():" + paymentResponse.getAdditionalInfo6());
                     LOGGER.info("paymentResponse.getAuthStatus():" + paymentResponse.getAuthStatus());
-                    final City cityWebsite = cityService.getCityByURL(ApplicationThreadLocals.getDomainName());
-                    onlinePaymentReceiptHeader = (ReceiptHeader) persistenceService.findByNamedQuery(
-                            CollectionConstants.QUERY_RECEIPT_BY_ID_AND_CITYCODE, Long.valueOf(paymentResponse.getReceiptId()), cityWebsite.getCode());
+                    ReceiptHeader onlinePaymentReceiptHeader = (ReceiptHeader) persistenceService.findByNamedQuery(
+                            CollectionConstants.QUERY_RECEIPT_BY_ID_AND_CITYCODE, Long.valueOf(paymentResponse.getReceiptId()),
+                            ApplicationThreadLocals.getCityCode());
                     if (CollectionConstants.PGI_AUTHORISATION_CODE_SUCCESS.equals(paymentResponse.getAuthStatus()))
                         reconciliationService.processSuccessMsg(onlinePaymentReceiptHeader, paymentResponse);
                     else
@@ -121,7 +111,7 @@ public class SchedularService {
                             + onlinePaymentReceiptHeader.getReceiptnumber()
                             + (onlinePaymentReceiptHeader.getConsumerCode() != null ? " and consumer code: "
                                     + onlinePaymentReceiptHeader.getConsumerCode() : "") + "; Time taken(ms) = "
-                            + elapsedTimeInMillis);
+                                    + elapsedTimeInMillis);
                 }
             }
         }

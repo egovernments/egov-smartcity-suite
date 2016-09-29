@@ -69,7 +69,6 @@ import org.egov.model.budget.BudgetGroup;
 import org.egov.works.lineestimate.entity.LineEstimate;
 import org.egov.works.lineestimate.entity.LineEstimateDetails;
 import org.egov.works.lineestimate.entity.enums.Beneficiary;
-import org.egov.works.lineestimate.entity.enums.TypeOfSlum;
 import org.egov.works.lineestimate.entity.enums.WorkCategory;
 import org.egov.works.models.masters.Contractor;
 import org.egov.works.models.masters.NatureOfWork;
@@ -99,9 +98,6 @@ public class WorkProgressRegister extends AbstractAuditable {
 
     @Enumerated(EnumType.STRING)
     private WorkCategory workCategory;
-
-    @Enumerated(EnumType.STRING)
-    private TypeOfSlum typeOfSlum;
 
     @Enumerated(EnumType.STRING)
     private Beneficiary beneficiary;
@@ -268,14 +264,6 @@ public class WorkProgressRegister extends AbstractAuditable {
 
     public void setWorkCategory(final WorkCategory workCategory) {
         this.workCategory = workCategory;
-    }
-
-    public TypeOfSlum getTypeOfSlum() {
-        return typeOfSlum;
-    }
-
-    public void setTypeOfSlum(final TypeOfSlum typeOfSlum) {
-        this.typeOfSlum = typeOfSlum;
     }
 
     public Beneficiary getBeneficiary() {

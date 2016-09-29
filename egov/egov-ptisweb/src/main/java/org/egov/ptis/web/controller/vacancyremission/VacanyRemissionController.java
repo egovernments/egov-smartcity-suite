@@ -273,7 +273,7 @@ public class VacanyRemissionController extends GenericWorkFlowController {
             }
             return VACANCYREMISSION_FORM;
         } else if ((!propertyByEmployee || loggedUserIsMeesevaUser) && null != basicProperty
-                && null == propertyService.getUserPositionByZone(basicProperty)) {
+                && null == propertyService.getUserPositionByZone(basicProperty, false)) {
             prepareWorkflow(model, vacancyRemission, new WorkflowContainer());
             model.addAttribute("stateType", vacancyRemission.getClass().getSimpleName());
             model.addAttribute("errorMsg", "No Senior or Junior assistants exists,Please check");

@@ -51,6 +51,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.log4j.Logger;
+import org.egov.collection.config.properties.CollectionApplicationProperties;
 import org.egov.collection.constants.CollectionConstants;
 import org.egov.collection.entity.Challan;
 import org.egov.collection.entity.OnlinePayment;
@@ -84,8 +85,12 @@ import org.egov.infra.admin.master.service.AppConfigValueService;
 import org.egov.infra.admin.master.service.DepartmentService;
 import org.egov.infra.admin.master.service.ModuleService;
 import org.egov.infra.admin.master.service.UserService;
+import org.egov.infra.config.core.ApplicationThreadLocals;
 import org.egov.infra.exception.ApplicationRuntimeException;
-import org.egov.infra.script.entity.Script;
+import org.egov.infra.messaging.MessagingService;
+import org.egov.infra.reporting.engine.ReportOutput;
+import org.egov.infra.reporting.engine.ReportRequest;
+import org.egov.infra.reporting.engine.ReportService;
 import org.egov.infra.search.elastic.entity.CollectionIndex;
 import org.egov.infra.search.elastic.entity.CollectionIndexBuilder;
 import org.egov.infra.security.utils.SecurityUtils;
@@ -142,6 +147,11 @@ public class CollectionsUtil {
     private ChartOfAccountsHibernateDAO chartOfAccountsHibernateDAO;
     @Autowired
     private FinancialYearDAO financialYearDAO;
+    private ReportService reportService;
+    @Autowired
+    private MessagingService messagingService;
+    @Autowired
+    private CollectionApplicationProperties collectionApplicationProperties;
 
     /**
      * Returns the Status object for given status code for a receipt
@@ -161,7 +171,6 @@ public class CollectionsUtil {
      * @return the <code>EgwStatus</code> instance
      */
     public EgwStatus getStatusForModuleAndCode(final String moduleName, final String statusCode) {
-
         final EgwStatus status = egwStatusDAO.getStatusByModuleAndCode(moduleName, statusCode);
         return status;
     }
@@ -198,7 +207,10 @@ public class CollectionsUtil {
      * @return department of the given user
      */
     public Department getDepartmentOfUser(final User user) {
-        return eisCommonService.getDepartmentForUser(user.getId());
+        if (assignmentService.getPrimaryAssignmentForUser(user.getId()) == null)
+            return null;
+        else
+            return eisCommonService.getDepartmentForUser(user.getId());
     }
 
     /**
@@ -226,18 +238,12 @@ public class CollectionsUtil {
      */
     public Location getLocationOfUser(final Map<String, Object> sessionMap) {
         Location location = null;
-        try {
-            location = getLocationById(Long.valueOf((String) sessionMap
-                    .get(CollectionConstants.SESSION_VAR_LOGIN_USER_LOCATIONID)));
-            if (location == null)
-                throw new ApplicationRuntimeException("Unable to fetch the location of the logged in user ["
-                        + (String) sessionMap.get(CollectionConstants.SESSION_VAR_LOGIN_USER_NAME) + "]");
-        } catch (final Exception exp) {
-            final String errorMsg = "Unable to fetch the location of the logged in user ["
-                    + (String) sessionMap.get(CollectionConstants.SESSION_VAR_LOGIN_USER_NAME) + "]";
-            LOGGER.error(errorMsg, exp);
-            throw new ApplicationRuntimeException(errorMsg, exp);
-        }
+        final String locationId = (String) sessionMap.get(CollectionConstants.SESSION_VAR_LOGIN_USER_LOCATIONID);
+        if (locationId != null && !locationId.isEmpty())
+            location = getLocationById(Long.valueOf(locationId));
+        if (location == null)
+            throw new ValidationException(Arrays.asList(
+                    new ValidationError("Location Not Found", "submitcollections.validation.error.location.notfound")));
         return location;
     }
 
@@ -250,20 +256,6 @@ public class CollectionsUtil {
      */
     public List getAllCounters() {
         return persistenceService.findAllByNamedQuery(CollectionConstants.QUERY_ALLCOUNTERS);
-    }
-
-    /**
-     * @return list of all active counters
-     */
-    public List getActiveCounters() {
-        return persistenceService.findAllByNamedQuery(CollectionConstants.QUERY_ACTIVE_COUNTERS);
-    }
-
-    /**
-     * @return List of all collection services (service type = B (Billing) or C (Challan)
-     */
-    public List getCollectionServiceList() {
-        return persistenceService.findAllByNamedQuery(CollectionConstants.QUERY_COLLECTION_SERVICS);
     }
 
     /**
@@ -420,7 +412,7 @@ public class CollectionsUtil {
                 .createQuery(
                         "from CFinancialYear cfinancialyear where ? between "
                                 + "cfinancialyear.startingDate and cfinancialyear.endingDate").setDate(0, date).list()
-                .get(0);
+                                .get(0);
     }
 
     /**
@@ -453,9 +445,6 @@ public class CollectionsUtil {
         if (validityStart.compareTo(current) <= 0 && validityEnd.compareTo(current) >= 0)
             return true;
         return false;
-    }
-
-    public void setScriptService(final PersistenceService<Script, Long> scriptService) {
     }
 
     /**
@@ -723,6 +712,18 @@ public class CollectionsUtil {
         this.persistenceService = persistenceService;
     }
 
+    public void setReportService(final ReportService reportService) {
+        this.reportService = reportService;
+    }
+
+    public boolean isValidTemplate(final String templateName) {
+        return reportService.isValidTemplate(templateName);
+    }
+
+    public ReportOutput createReport(final ReportRequest reportRequest) {
+        return reportService.createReport(reportRequest);
+    }
+
     public CollectionIndex constructCollectionIndex(final ReceiptHeader receiptHeader) {
         ReceiptAmountInfo receiptAmountInfo = new ReceiptAmountInfo();
         final ServiceDetails billingService = receiptHeader.getService();
@@ -733,7 +734,7 @@ public class CollectionsUtil {
         final CollectionIndexBuilder collectionIndexBuilder = new CollectionIndexBuilder(
                 receiptHeader.getReceiptdate(), receiptHeader.getReceiptnumber(), billingService.getName(),
                 instrumentType, receiptHeader.getTotalAmount(), receiptHeader.getSource(), receiptHeader.getStatus()
-                        .getDescription());
+                .getDescription());
 
         collectionIndexBuilder.consumerCode(receiptHeader.getConsumerCode() != null ? receiptHeader.getConsumerCode()
                 : "");
@@ -836,9 +837,57 @@ public class CollectionsUtil {
         Boolean voucherTypeForChequeDDCard = false;
         if (getAppConfigValue(CollectionConstants.MODULE_NAME_COLLECTIONS_CONFIG,
                 CollectionConstants.APPCONFIG_VALUE_REMITTANCEVOUCHERTYPEFORCHEQUEDDCARD).equals(
-                CollectionConstants.FINANCIAL_RECEIPTS_VOUCHERTYPE))
+                        CollectionConstants.FINANCIAL_RECEIPTS_VOUCHERTYPE))
             voucherTypeForChequeDDCard = true;
         return voucherTypeForChequeDDCard;
     }
 
+    /**
+     * @param serviceCode Billing service code for which the receipt template is to be returned
+     * @return Receipt template to be used for given billing service code.
+     */
+    public String getReceiptTemplateName(final char receiptType, final String serviceCode) {
+        String templateName = null;
+
+        switch (receiptType) {
+        case CollectionConstants.RECEIPT_TYPE_BILL:
+            templateName = serviceCode + CollectionConstants.SEPARATOR_UNDERSCORE
+            + CollectionConstants.RECEIPT_TEMPLATE_NAME;// <servicecode>_collection_receipt
+            if (!isValidTemplate(templateName)) {
+                LOGGER.info("Billing system specific report template [" + templateName
+                        + "] not available. Using the default template [" + CollectionConstants.RECEIPT_TEMPLATE_NAME
+                        + "]");
+                templateName = "PT_collection_receipt"; // CollectionConstants.RECEIPT_TEMPLATE_NAME;
+
+                if (!isValidTemplate(templateName)) {
+                    // No template available for creating the receipt report.
+                    // Throw
+                    // exception.
+                    final String errMsg = "Report template [" + templateName
+                            + "] not available! Receipt report cannot be generated.";
+                    LOGGER.error(errMsg);
+                    throw new ApplicationRuntimeException(errMsg);
+                }
+            }
+            break;
+        case CollectionConstants.RECEIPT_TYPE_CHALLAN:
+            templateName = CollectionConstants.CHALLAN_RECEIPT_TEMPLATE_NAME;
+            break;
+        case CollectionConstants.RECEIPT_TYPE_ADHOC:
+            templateName = CollectionConstants.RECEIPT_TEMPLATE_NAME;
+            break;
+        }
+        return templateName;
+    }
+
+    public void emailReceiptAsAttachment(final ReceiptHeader receiptHeader, final byte[] attachment) {
+        String emailBody = collectionApplicationProperties.getEmailBody();
+        emailBody = String.format(emailBody, ApplicationThreadLocals.getCityName(), receiptHeader.getTotalAmount()
+                .toString(), receiptHeader.getService().getName(), receiptHeader.getConsumerCode(), receiptHeader
+                .getReceiptdate().toString(), ApplicationThreadLocals.getCityName());
+        String emailSubject = collectionApplicationProperties.getEmailSubject();
+        emailSubject = String.format(emailSubject, receiptHeader.getService().getName());
+        messagingService.sendEmailWithAttachment(receiptHeader.getPayeeEmail(), emailSubject, emailBody,
+                "application/pdf", "Receipt" + receiptHeader.getReceiptdate().toString(), attachment);
+    }
 }

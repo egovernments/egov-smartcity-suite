@@ -84,6 +84,8 @@ public interface Billable {
 	String getFundCode();
 
 	String getFundSourceCode();
+	
+	String getEmailId();
 
 	Date getIssueDate();
 

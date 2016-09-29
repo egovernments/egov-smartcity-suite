@@ -180,8 +180,13 @@ function populateUser(){
 	function validate()
 		{
 		document.getElementById('lblError').innerHTML = "";
-			if(!validateMIS())
+		if(!validateMIS())
 			  return false;
+		if(document.getElementById('vouchermis.function')!=null && document.getElementById('vouchermis.function').value=='-1')
+		   {
+		   document.getElementById('lblError').innerHTML='Please select Function';
+		   return false;
+		   }
 		   if(document.getElementById('bank').value=='-1')
 		   {
 		   document.getElementById('lblError').innerHTML='Please select Bank';
@@ -206,8 +211,6 @@ function onLoad(){
 	jQuery(scheme).attr('disabled', 'disabled');
 	jQuery(subscheme).attr('disabled', 'disabled');
 	jQuery(fundsource).attr('disabled', 'disabled');
-	jQuery(department).attr('disabled', 'disabled');
-	jQuery(functionid).attr('disabled', 'disabled');
 	if(document.getElementById('approverDepartment'))
 		document.getElementById('approverDepartment').value = "-1";
 }
@@ -219,7 +222,7 @@ function onSubmit()
 		var disabled = myform.find(':input:disabled').removeAttr('disabled'); 
 		 if(!balanceCheck()){
 
-			 var msg = confirm("Insuffiecient Bank Balance. Do you want to process ?");
+			 var msg = confirm("Insufficient Bank Balance. Do you want to process ?");
 			 if (msg == true) {
 				 document.remittanceForm.action='${pageContext.request.contextPath}/deduction/remitRecovery-create.action';
 				return true;
@@ -235,6 +238,25 @@ function onSubmit()
 		return false;
 		
 	
+}
+function validateCutOff()
+{
+var cutOffDatePart=document.getElementById("cutOffDate").value.split("/");
+var voucherDatePart=document.getElementById("voucherDate").value.split("/");
+var cutOffDate = new Date(cutOffDatePart[1] + "/" + cutOffDatePart[0] + "/"
+		+ cutOffDatePart[2]);
+var voucherDate = new Date(voucherDatePart[1] + "/" + voucherDatePart[0] + "/"
+		+ voucherDatePart[2]);
+if(voucherDate<=cutOffDate)
+{
+	return true;
+}
+else{
+	var msg1='<s:text name="wf.vouchercutoffdate.message"/>';
+	var msg2='<s:text name="wf.cutoffdate.msg"/>';
+	bootbox.alert(msg1+" "+document.getElementById("cutOffDate").value+" "+msg2);
+		return false;
+	}
 }
 </script>
 </head>
@@ -435,6 +457,7 @@ function onSubmit()
 					</table>
 
 				</div>
+				<s:hidden name="cutOffDate" id="cutOffDate" />
 				<%@ include file='../payment/commonWorkflowMatrix.jsp'%>
 				<%@ include file='../workflow/commonWorkflowMatrix-button.jsp'%>
 			</div>

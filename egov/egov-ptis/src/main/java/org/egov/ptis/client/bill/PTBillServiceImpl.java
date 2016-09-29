@@ -60,9 +60,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
 
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
-
 import org.apache.log4j.Logger;
 import org.egov.collection.integration.models.BillAccountDetails.PURPOSE;
 import org.egov.commons.Installment;
@@ -129,9 +126,6 @@ public class PTBillServiceImpl extends BillServiceInterface {
     @Autowired
     private FinancialUtil financialUtil;
 
-    @PersistenceContext
-    private EntityManager entityManager;
-
     @Override
     public String getBillXML(final Billable billObj) {
         if (billObj == null)
@@ -166,6 +160,7 @@ public class PTBillServiceImpl extends BillServiceInterface {
             billdetail.setEgInstallmentMaster(currInstallment);
             billdetail.setAdditionalFlag(Integer.valueOf(1));
             billdetail.setPurpose(PURPOSE.OTHERS.toString());
+            billdetail.setFunctionCode(financialUtil.getFunctionCode());
             billDetails.add(billdetail);
             return billDetails;
         }

@@ -46,14 +46,15 @@ import java.util.List;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
-import javax.persistence.Transient;
 
 import org.egov.infra.persistence.entity.AbstractPersistable;
 import org.egov.infra.persistence.validator.annotation.DateFormat;
@@ -73,31 +74,30 @@ public class Pwr extends AbstractPersistable<Long> {
     @Id
     @GeneratedValue(generator = SEQ_EGLC_PWR, strategy = GenerationType.SEQUENCE)
     private Long id;
-    @ManyToOne(cascade = CascadeType.ALL)
-    @JoinColumn(name = "LEGALCASE", nullable = false)
+
+    @ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @JoinColumn(name = "legalcase", nullable = false)
     private LegalCase legalCase;
-    @Transient
-    private String uploadPwr;
+
     @DateFormat(message = "invalid.fieldvalue.caFilingdate")
     @ValidateDate(allowPast = true, dateFormat = LcmsConstants.DATE_FORMAT, message = "invalid.cafiling.date")
     @Column(name = "cafilingdate")
     private Date caFilingdate;
-    @Transient
-    private String uploadCa;
+
+    @OneToMany(mappedBy = "pwr", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<PwrDocuments> pwrDocuments = new ArrayList<PwrDocuments>(0);
+
     @DateFormat(message = "invalid.fieldvalue.caDueDate")
     @Column(name = "caduedate")
     private Date caDueDate;
+
     @DateFormat(message = "invalid.fieldvalue.pwrDueDate")
     @Column(name = "pwrduedate")
     private Date pwrDueDate;
 
-    public String getUploadPwr() {
-        return uploadPwr;
-    }
-
-    public void setUploadPwr(final String uploadPwr) {
-        this.uploadPwr = uploadPwr;
-    }
+    @DateFormat(message = "invalid.fieldvalue.pwrDueDate")
+    @Column(name = "pwrapprovaldate")
+    private Date pwrApprovalDate;
 
     public Date getCaFilingdate() {
         return caFilingdate;
@@ -107,12 +107,12 @@ public class Pwr extends AbstractPersistable<Long> {
         this.caFilingdate = caFilingdate;
     }
 
-    public String getUploadCa() {
-        return uploadCa;
+    public Date getPwrApprovalDate() {
+        return pwrApprovalDate;
     }
 
-    public void setUploadCa(final String uploadCa) {
-        this.uploadCa = uploadCa;
+    public void setPwrApprovalDate(final Date pwrApprovalDate) {
+        this.pwrApprovalDate = pwrApprovalDate;
     }
 
     @Override
@@ -135,11 +135,11 @@ public class Pwr extends AbstractPersistable<Long> {
 
     public List<ValidationError> validate() {
         final List<ValidationError> errors = new ArrayList<ValidationError>();
-        if (!DateUtils.compareDates(getCaDueDate(), legalCase.getCasedate()))
+        if (!DateUtils.compareDates(getCaDueDate(), legalCase.getCaseDate()))
             errors.add(new ValidationError("caDueDate", "caDueDate.less.casedate"));
-        if (!DateUtils.compareDates(getCaFilingdate(), legalCase.getCasedate()))
+        if (!DateUtils.compareDates(getCaFilingdate(), legalCase.getCaseDate()))
             errors.add(new ValidationError("caFilingDate", "caFilingDate.less.casedate"));
-        if (!DateUtils.compareDates(getPwrDueDate(), legalCase.getCasedate()))
+        if (!DateUtils.compareDates(getPwrDueDate(), legalCase.getCaseDate()))
             errors.add(new ValidationError("pwrDueDate", "pwrDueDate.less.casedate"));
         if (!DateUtils.compareDates(getCaDueDate(), getPwrDueDate()))
             errors.add(new ValidationError("caDueDate", "caDueDate.greaterThan.pwrDueDate"));
@@ -160,6 +160,14 @@ public class Pwr extends AbstractPersistable<Long> {
 
     public void setLegalCase(final LegalCase legalCase) {
         this.legalCase = legalCase;
+    }
+
+    public List<PwrDocuments> getPwrDocuments() {
+        return pwrDocuments;
+    }
+
+    public void setPwrDocuments(final List<PwrDocuments> pwrDocuments) {
+        this.pwrDocuments = pwrDocuments;
     }
 
 }

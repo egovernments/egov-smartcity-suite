@@ -63,6 +63,7 @@ import org.egov.commons.Bank;
 import org.egov.commons.Bankaccount;
 import org.egov.commons.Bankbranch;
 import org.egov.egf.commons.EgovCommon;
+import org.egov.egf.model.BankAdviceReportInfo;
 import org.egov.infra.admin.master.entity.AppConfigValues;
 import org.egov.infra.admin.master.entity.Department;
 import org.egov.infra.admin.master.service.AppConfigValueService;
@@ -72,6 +73,8 @@ import org.egov.infra.validation.exception.ValidationException;
 import org.egov.infra.web.struts.actions.BaseFormAction;
 import org.egov.infstr.services.PersistenceService;
 import org.egov.infstr.utils.EgovMasterDataCaching;
+import org.egov.model.instrument.InstrumentHeader;
+import org.egov.services.instrument.InstrumentHeaderService;
 import org.egov.utils.Constants;
 import org.egov.utils.FinancialConstants;
 import org.egov.utils.ReportHelper;
@@ -83,23 +86,22 @@ import org.hibernate.type.LongType;
 import org.hibernate.type.StandardBasicTypes;
 import org.springframework.beans.factory.annotation.Autowired;
 
-@Results(value = {
-		@Result(name = "result", location = "chequeIssueRegisterReport-result.jsp"),
+@Results(value = { @Result(name = "result", location = "chequeIssueRegisterReport-result.jsp"),
         @Result(name = "PDF", type = "stream", location = Constants.INPUT_STREAM, params = { Constants.INPUT_NAME,
                 Constants.INPUT_STREAM, Constants.CONTENT_TYPE, "application/pdf", Constants.CONTENT_DISPOSITION,
-        "no-cache;filename=ChequeIssueRegister.pdf" }),
+                "no-cache;filename=ChequeIssueRegister.pdf" }),
         @Result(name = "XLS", type = "stream", location = Constants.INPUT_STREAM, params = { Constants.INPUT_NAME,
                 Constants.INPUT_STREAM, Constants.CONTENT_TYPE, "application/xls", Constants.CONTENT_DISPOSITION,
-        "no-cache;filename=ChequeIssueRegister.xls" })
-})
+                "no-cache;filename=ChequeIssueRegister.xls" }) })
 @ParentPackage("egov")
 public class ChequeIssueRegisterReportAction extends BaseFormAction {
     /**
-     *
-     */
+	 *
+	 */
     private static final long serialVersionUID = -5452940328051657821L;
     private static final String MULTIPLE = "Multiple";
     String jasperpath = "/reports/templates/chequeIssueRegisterReport.jasper";
+    String bankAdviceJasperPath = "/reports/templates/bankAdviceExcelReport.jasper";
     private List<ChequeIssueRegisterDisplay> chequeIssueRegisterList = new ArrayList<ChequeIssueRegisterDisplay>();
     PersistenceService persistenceService;
     private Date fromDate;
@@ -117,7 +119,13 @@ public class ChequeIssueRegisterReportAction extends BaseFormAction {
     private static final Logger LOGGER = Logger.getLogger(ChequeIssueRegisterReportAction.class);
     @Autowired
     private EgovMasterDataCaching masterDataCache;
-    
+    private boolean chequePrintingEnabled;
+    private String chequePrintAvailableAt;
+    private boolean chequeFormatExists;
+    private String chequeFormat = "";
+    private Long instrumentHeaderId;
+    private InstrumentHeaderService instrumentHeaderService;
+
     public ChequeIssueRegisterReportAction() {
         addRelatedEntity(Constants.EXECUTING_DEPARTMENT, Department.class);
     }
@@ -147,45 +155,48 @@ public class ChequeIssueRegisterReportAction extends BaseFormAction {
     public void generateReport() throws JRException, IOException {
         if (LOGGER.isDebugEnabled())
             LOGGER.debug("----Inside generateReport---- ");
+
         accountNumber = (Bankaccount) persistenceService.find("from Bankaccount where id=?", accountNumber.getId());
+        if (accountNumber.getChequeformat() != null && !accountNumber.getChequeformat().equals("")) {
+            chequeFormat = accountNumber.getChequeformat().getId().toString();
+        }
+
         validateDates(fromDate, toDate);
         if (LOGGER.isDebugEnabled())
             LOGGER.debug("Querying to date range " + getFormattedDate(fromDate) + "to date "
                     + getFormattedDate(getNextDate(toDate)));
-        //persistenceService.setType(InstrumentHeader.class);
-        final Query query = persistenceService.getSession()
+        // persistenceService.setType(InstrumentHeader.class);
+        final List<AppConfigValues> printAvailConfig = appConfigValuesService
+                .getConfigValuesByModuleAndKey(FinancialConstants.MODULE_NAME_APPCONFIG, "chequeprintavailableat");
+
+        chequePrintingEnabled = isChequePrintEnabled();
+
+        for (final AppConfigValues appConfigVal : printAvailConfig)
+            chequePrintAvailableAt = appConfigVal.getValue();
+
+        final Query query = persistenceService
+                .getSession()
                 .createSQLQuery(
                         "select ih.instrumentnumber as chequeNumber,ih.instrumentdate as chequeDate,"
-                                +
-                                "ih.instrumentamount as chequeAmount,vh.vouchernumber as voucherNumber,vh.id as vhId,ih.serialno as serialNo,vh.voucherdate as voucherDate,vh.name as voucherName,ih.payto as payTo,mbd.billnumber as billNumber,"
-                                +
-                                "mbd.billDate as billDate,vh.type as type,es.DESCRIPTION as chequeStatus from egf_instrumentHeader ih,egf_instrumentvoucher iv,EGW_STATUS es,"
-                                +
-                                "voucherheader vh left outer join miscbilldetail mbd on  vh.id=mbd.PAYVHID ,vouchermis vmis where ih.instrumentDate <'"
+                                + "ih.instrumentamount as chequeAmount,vh.vouchernumber as voucherNumber,vh.id as vhId,ih.serialno as serialNo,vh.voucherdate as voucherDate,vh.name as voucherName,ih.payto as payTo,mbd.billnumber as billNumber,"
+                                + "mbd.billDate as billDate,vh.type as type,es.DESCRIPTION as chequeStatus,ih.id as instrumentheaderid from egf_instrumentHeader ih,egf_instrumentvoucher iv,EGW_STATUS es,"
+                                + "voucherheader vh left outer join miscbilldetail mbd on  vh.id=mbd.PAYVHID ,vouchermis vmis where ih.instrumentDate <'"
                                 + getFormattedDate(getNextDate(toDate))
                                 + "' and ih.instrumentDate>='"
                                 + getFormattedDate(fromDate)
                                 + "' and ih.isPayCheque='1' "
-                                +
-                                "and ih.INSTRUMENTTYPE=(select id from egf_instrumenttype where TYPE='cheque' ) and vh.status not in ("
+                                + "and ih.INSTRUMENTTYPE=(select id from egf_instrumenttype where TYPE='cheque' ) and vh.status not in ("
                                 + getExcludeVoucherStatues() + ") and vh.id=iv.voucherheaderid and  bankAccountId="
-                                + accountNumber.getId() + " and ih.id=iv.instrumentheaderid and ih.id_status=es.id " +
-                                " and vmis.voucherheaderid=vh.id " + createQuery()
+                                + accountNumber.getId() + " and ih.id=iv.instrumentheaderid and ih.id_status=es.id "
+                                + " and vmis.voucherheaderid=vh.id " + createQuery()
                                 + " order by ih.instrumentDate,ih.instrumentNumber ")
-                                .addScalar("chequeNumber")
-                                .addScalar("chequeDate",StandardBasicTypes.DATE)
-                                .addScalar("chequeAmount",BigDecimalType.INSTANCE)
-                                .addScalar("voucherNumber")
-                                .addScalar("voucherDate",StandardBasicTypes.DATE)
-                                .addScalar("voucherName")
-                                .addScalar("payTo")
-                                .addScalar("billNumber")
-                                .addScalar("billDate",StandardBasicTypes.DATE)
-                                .addScalar("type")
-                                .addScalar("vhId",BigDecimalType.INSTANCE)
-                                .addScalar("serialNo",LongType.INSTANCE)
-                                .addScalar("chequeStatus")
-                                .setResultTransformer(Transformers.aliasToBean(ChequeIssueRegisterDisplay.class));
+                .addScalar("chequeNumber").addScalar("chequeDate", StandardBasicTypes.DATE)
+                .addScalar("chequeAmount", BigDecimalType.INSTANCE).addScalar("voucherNumber")
+                .addScalar("voucherDate", StandardBasicTypes.DATE).addScalar("voucherName").addScalar("payTo")
+                .addScalar("billNumber").addScalar("billDate", StandardBasicTypes.DATE).addScalar("type")
+                .addScalar("vhId", BigDecimalType.INSTANCE).addScalar("serialNo", LongType.INSTANCE)
+                .addScalar("chequeStatus").addScalar("instrumentHeaderId", LongType.INSTANCE)
+                .setResultTransformer(Transformers.aliasToBean(ChequeIssueRegisterDisplay.class));
         if (LOGGER.isDebugEnabled())
             LOGGER.debug("Search query" + query.getQueryString());
         chequeIssueRegisterList = query.list();
@@ -198,6 +209,21 @@ public class ChequeIssueRegisterReportAction extends BaseFormAction {
         removeDuplicates();
         if (LOGGER.isDebugEnabled())
             LOGGER.debug("--End  generateReport--");
+    }
+
+    public boolean isChequePrintEnabled() {
+
+        String chequePrintEnabled = null;
+        final List<AppConfigValues> enablePrintConfig = appConfigValuesService
+                .getConfigValuesByModuleAndKey(FinancialConstants.MODULE_NAME_APPCONFIG, "chequeprintingenabled");
+        if (enablePrintConfig != null)
+            for (final AppConfigValues appConfigVal : enablePrintConfig)
+                chequePrintEnabled = appConfigVal.getValue();
+
+        if (chequePrintEnabled != null && chequePrintEnabled.equalsIgnoreCase("Y"))
+            return true;
+        else
+            return false;
     }
 
     private void removeDuplicates() {
@@ -249,10 +275,11 @@ public class ChequeIssueRegisterReportAction extends BaseFormAction {
             else if (map.get(row.getChequeNumber()).getChequeStatus()
                     .equalsIgnoreCase(FinancialConstants.INSTRUMENT_SURRENDERED_FOR_REASSIGN_STATUS)
                     || map.get(row.getChequeNumber()).getChequeStatus()
-                    .equalsIgnoreCase(FinancialConstants.INSTRUMENT_SURRENDERED_STATUS)
+                            .equalsIgnoreCase(FinancialConstants.INSTRUMENT_SURRENDERED_STATUS)
                     || map.get(row.getChequeNumber()).getChequeStatus()
-                    .equalsIgnoreCase(FinancialConstants.INSTRUMENT_CANCELLED_STATUS)
-                    || row.getChequeStatus().equalsIgnoreCase(FinancialConstants.INSTRUMENT_SURRENDERED_FOR_REASSIGN_STATUS)
+                            .equalsIgnoreCase(FinancialConstants.INSTRUMENT_CANCELLED_STATUS)
+                    || row.getChequeStatus()
+                            .equalsIgnoreCase(FinancialConstants.INSTRUMENT_SURRENDERED_FOR_REASSIGN_STATUS)
                     || row.getChequeStatus().equalsIgnoreCase(FinancialConstants.INSTRUMENT_SURRENDERED_STATUS)
                     || row.getChequeStatus().equalsIgnoreCase(FinancialConstants.INSTRUMENT_CANCELLED_STATUS))
                 continue;
@@ -279,11 +306,26 @@ public class ChequeIssueRegisterReportAction extends BaseFormAction {
     }
 
     @Action(value = "/report/chequeIssueRegisterReport-generateXls")
-    public String generateXls() throws JRException, IOException {
+    public String generateXls() throws JRException,
+            IOException {
         generateReport();
         final List<Object> data = new ArrayList<Object>();
         data.addAll(getChequeIssueRegisterList());
-        inputStream = reportHelper.exportXls(getInputStream(), jasperpath, getParamMap(), data);
+        inputStream = reportHelper.exportXls(getInputStream(), jasperpath,
+                getParamMap(), data);
+        return "XLS";
+    }
+
+    @Action(value = "/report/chequeIssueRegisterReport-bankAdviceExcel")
+    public String bankAdviceExcel() throws JRException, IOException {
+        BankAdviceReportInfo bankAdvice = new BankAdviceReportInfo();
+        final InstrumentHeader instrumentHeader = (InstrumentHeader) persistenceService.find("from InstrumentHeader where id=?",
+                instrumentHeaderId);
+        bankAdvice.setPartyName(instrumentHeader.getPayTo());
+        bankAdvice.setAmount(instrumentHeader.getInstrumentAmount());
+        final List<Object> data = new ArrayList<Object>();
+        data.add(bankAdvice);
+        inputStream = reportHelper.exportXls(getInputStream(), bankAdviceJasperPath, null, data);
         return "XLS";
     }
 
@@ -340,7 +382,8 @@ public class ChequeIssueRegisterReportAction extends BaseFormAction {
         paramMap.put("toDate", Constants.DDMMYYYYFORMAT1.format(toDate));
         paramMap.put("ulbName", ulbName);
         if (department != null && department.getId() != null && department.getId() != 0) {
-            final Department dept = (Department) persistenceService.find("from Department where id=?", department.getId());
+            final Department dept = (Department) persistenceService.find("from Department where id=?",
+                    department.getId());
             paramMap.put("departmentName", dept.getName());
         }
         return paramMap;
@@ -390,8 +433,8 @@ public class ChequeIssueRegisterReportAction extends BaseFormAction {
     }
 
     private void populateUlbName() {
-        
-            setUlbName(ReportUtil.getCityName());
+
+        setUlbName(ReportUtil.getCityName());
     }
 
     public void setUlbName(final String ulbName) {
@@ -434,13 +477,52 @@ public class ChequeIssueRegisterReportAction extends BaseFormAction {
         return chequeFromNumber;
     }
 
-	public AppConfigValueService getAppConfigValuesService() {
-		return appConfigValuesService;
-	}
+    public AppConfigValueService getAppConfigValuesService() {
+        return appConfigValuesService;
+    }
 
-	public void setAppConfigValuesService(
-			AppConfigValueService appConfigValuesService) {
-		this.appConfigValuesService = appConfigValuesService;
-	}
-    
+    public void setAppConfigValuesService(AppConfigValueService appConfigValuesService) {
+        this.appConfigValuesService = appConfigValuesService;
+    }
+
+    public boolean isChequePrintingEnabled() {
+        return chequePrintingEnabled;
+    }
+
+    public String getChequePrintAvailableAt() {
+        return chequePrintAvailableAt;
+    }
+
+    public boolean isChequeFormatExists() {
+        return chequeFormatExists;
+    }
+
+    public void setChequePrintingEnabled(boolean chequePrintingEnabled) {
+        this.chequePrintingEnabled = chequePrintingEnabled;
+    }
+
+    public void setChequePrintAvailableAt(String chequePrintAvailableAt) {
+        this.chequePrintAvailableAt = chequePrintAvailableAt;
+    }
+
+    public void setChequeFormatExists(boolean chequeFormatExists) {
+        this.chequeFormatExists = chequeFormatExists;
+    }
+
+    public String getChequeFormat() {
+        return chequeFormat;
+    }
+
+    public void setChequeFormat(String chequeFormat) {
+        this.chequeFormat = chequeFormat;
+    }
+
+    public Long getInstrumentHeaderId() {
+        return instrumentHeaderId;
+    }
+
+    public void setInstrumentHeaderId(Long instrumentHeaderId) {
+        this.instrumentHeaderId = instrumentHeaderId;
+    }
+
 }

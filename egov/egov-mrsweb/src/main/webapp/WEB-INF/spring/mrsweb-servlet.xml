@@ -69,8 +69,13 @@
     <mvc:resources mapping="/resources/**" location="/resources/"/>
 
 	<mvc:interceptors>
-		<bean class="org.egov.infra.web.spring.interceptor.DuplicateFormSubmissionInterceptor"/>
+		<mvc:interceptor>
+			<mvc:mapping path="/**"/>
+			<mvc:exclude-mapping path="/resources/**"/>
+			<bean class="org.egov.infra.web.spring.interceptor.CacheControlInterceptor"/>
+		</mvc:interceptor>
 	</mvc:interceptors>
+	
 	<bean id="conversionService" class="org.springframework.core.convert.support.DefaultConversionService"/>
 	
 	<bean class="org.springframework.beans.factory.config.MethodInvokingFactoryBean">
@@ -102,20 +107,18 @@
         <property name="validationMessageSource" ref="messageSource"/>
     </bean>
 
-    <bean id="messageSource"
-          class="org.springframework.context.support.ResourceBundleMessageSource">
-        <property name="parentMessageSource" ref="parentMessageSource" />
-        <property name="basenames">
-            <list>
-                <value>messages/labels</value>
-                <value>messages/errors</value>
-                <value>messages/message</value>
-            </list>
-        </property>
-        <!-- Disabling caching since on development-->
-        <property name="cacheSeconds" value="0"/>
-    </bean>
-
+	<bean id="messageSource" name="messageSource" class="org.springframework.context.support.ResourceBundleMessageSource">
+		<property name="parentMessageSource" ref="parentMessageSource" />
+		<property name="basenames">
+			<list>
+				<value>messages/labels</value>
+				<value>messages/errors</value>
+				<value>messages/message</value>
+			</list>
+		</property>
+		<!-- Disabling caching since on development-->
+		<property name="cacheSeconds" value="0"/>
+	</bean>
     <!-- Imports user-defined @Controller beans that process client requests -->
     <context:component-scan base-package="org.egov.mrs.web.controller"/>
 

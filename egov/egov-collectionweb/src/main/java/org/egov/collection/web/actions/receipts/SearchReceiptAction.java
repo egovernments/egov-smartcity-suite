@@ -217,7 +217,7 @@ public class SearchReceiptAction extends SearchFormAction {
         final StringBuilder searchQueryString = new StringBuilder("select distinct receipt ");
         final StringBuilder countQueryString = new StringBuilder("select count(distinct receipt) ");
         final StringBuilder fromString = new StringBuilder(" from org.egov.collection.entity.ReceiptHeader receipt ");
-        final String orderByString = " group by receipt.createdDate,receipt.id  order by receipt.createdDate desc";
+        final String orderByString = " group by receipt.receiptdate,receipt.id  order by receipt.receiptdate desc";
 
         // Get only those receipts whose status is NOT PENDING
         final StringBuilder criteriaString = new StringBuilder(" where receipt.status.code != ? ");
@@ -242,11 +242,11 @@ public class SearchReceiptAction extends SearchFormAction {
             params.add(getSearchStatus());
         }
         if (getFromDate() != null) {
-            criteriaString.append(" and receipt.createdDate >= ? ");
+            criteriaString.append(" and receipt.receiptdate >= ? ");
             params.add(fromDate);
         }
         if (getToDate() != null) {
-            criteriaString.append(" and receipt.createdDate < ? ");
+            criteriaString.append(" and receipt.receiptdate < ? ");
             params.add(DateUtils.add(toDate, Calendar.DATE, 1));
         }
         if (getServiceTypeId() != -1) {

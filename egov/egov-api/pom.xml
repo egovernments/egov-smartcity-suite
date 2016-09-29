@@ -121,7 +121,7 @@
 			<artifactId>thumbnailator</artifactId>
 		</dependency>
 		<!-- IMAGE PROCESSING API END -->
-		
+
 	</dependencies>
 
 	<!--  

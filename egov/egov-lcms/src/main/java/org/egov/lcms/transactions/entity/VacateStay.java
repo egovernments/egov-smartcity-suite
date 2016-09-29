@@ -43,6 +43,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -51,12 +52,11 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
-import javax.validation.Valid;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
 import javax.validation.constraints.NotNull;
 
 import org.egov.infra.persistence.entity.AbstractAuditable;
-import org.egov.infra.persistence.validator.annotation.DateFormat;
-import org.egov.infra.persistence.validator.annotation.Required;
 import org.egov.infra.persistence.validator.annotation.ValidateDate;
 import org.egov.infra.utils.DateUtils;
 import org.egov.infra.validation.exception.ValidationError;
@@ -67,32 +67,53 @@ import org.hibernate.validator.constraints.Length;
 @Table(name = "EGLC_VACATESTAY_PETITION")
 @SequenceGenerator(name = VacateStay.SEQ_EGLC_VACATESTAY_PETITION, sequenceName = VacateStay.SEQ_EGLC_VACATESTAY_PETITION, allocationSize = 1)
 public class VacateStay extends AbstractAuditable {
-   
+
     private static final long serialVersionUID = 1517694643078084884L;
     public static final String SEQ_EGLC_VACATESTAY_PETITION = "SEQ_EGLC_VACATESTAY_PETITION";
 
     @Id
     @GeneratedValue(generator = SEQ_EGLC_VACATESTAY_PETITION, strategy = GenerationType.SEQUENCE)
     private Long id;
+
     @ManyToOne
     @NotNull
-    @Valid
-    @JoinColumn(name = "LCINTERIMORDER", nullable = false)
-    private LcInterimOrder lcInterimOrder;
-    
-    @DateFormat(message = "invalid.fieldvalue.model.vsReceivedFromStandingCounsel")
+    @JoinColumn(name = "lcinterimorder", nullable = false)
+    private LegalCaseInterimOrder legalCaseInterimOrder;
+
+    @Temporal(TemporalType.DATE)
+    @Column(name = "receivedfromstandingcounsel")
     private Date vsReceivedFromStandingCounsel;
-    
-    @DateFormat(message = "invalid.fieldvalue.model.vsSendToStandingCounsel")
+
+    @Temporal(TemporalType.DATE)
+    @Column(name = "sendtostandingcounsel")
     private Date vsSendToStandingCounsel;
-    
-    @Required(message = "vcpetition.exists")
-    @DateFormat(message = "invalid.fieldvalue.model.vsPetitionFiledOn")
-    @ValidateDate(allowPast = true, dateFormat = LcmsConstants.DATE_FORMAT, message = "petitionfiledon.notAllow.futureDate")
+
+    @NotNull
+    @Temporal(TemporalType.DATE)
+    @ValidateDate(allowPast = true, dateFormat = LcmsConstants.DATE_FORMAT)
+    @Column(name = "petitionfiledon")
     private Date vsPetitionFiledOn;
-    
-    @Length(max = 1024, message = "io.vcremarks.length")
+
+    @Length(max = 1024)
     private String remarks;
+
+    @Override
+    public Long getId() {
+        return id;
+    }
+
+    @Override
+    public void setId(final Long id) {
+        this.id = id;
+    }
+
+    public LegalCaseInterimOrder getLegalCaseInterimOrder() {
+        return legalCaseInterimOrder;
+    }
+
+    public void setLegalCaseInterimOrder(final LegalCaseInterimOrder legalCaseInterimOrder) {
+        this.legalCaseInterimOrder = legalCaseInterimOrder;
+    }
 
     public Date getVsReceivedFromStandingCounsel() {
         return vsReceivedFromStandingCounsel;
@@ -126,24 +147,16 @@ public class VacateStay extends AbstractAuditable {
         this.remarks = remarks;
     }
 
-    public LcInterimOrder getLcInterimOrder() {
-        return lcInterimOrder;
-    }
-
-    public void setLcInterimOrder(final LcInterimOrder lcInterimOrder) {
-        this.lcInterimOrder = lcInterimOrder;
-    }
-
     public List<ValidationError> validate() {
         final List<ValidationError> errors = new ArrayList<ValidationError>();
 
-        if (!DateUtils.compareDates(getVsReceivedFromStandingCounsel(), getLcInterimOrder().getIoDate()))
+        if (!DateUtils.compareDates(getVsReceivedFromStandingCounsel(), getLegalCaseInterimOrder().getIoDate()))
             errors.add(new ValidationError("iodate", "iodate.greaterThan.vsReceivedFromStandingCounsel"));
 
-        if (!DateUtils.compareDates(getVsPetitionFiledOn(), getLcInterimOrder().getIoDate()))
+        if (!DateUtils.compareDates(getVsPetitionFiledOn(), getLegalCaseInterimOrder().getIoDate()))
             errors.add(new ValidationError("iodate", "iodate.greaterThan.petitionFiledOn"));
 
-        if (!DateUtils.compareDates(getVsSendToStandingCounsel(), getLcInterimOrder().getIoDate()))
+        if (!DateUtils.compareDates(getVsSendToStandingCounsel(), getLegalCaseInterimOrder().getIoDate()))
             errors.add(new ValidationError("iodate", "iodate.greaterThan.vsSendToStandingCounsel"));
 
         if (!DateUtils.compareDates(getVsReceivedFromStandingCounsel(), getVsSendToStandingCounsel()))
@@ -154,16 +167,6 @@ public class VacateStay extends AbstractAuditable {
             errors.add(new ValidationError("petitionFiledOn", "vsSendToStandingCounsel.greaterThan.petitionFiledOn"));
 
         return errors;
-    }
-
-    @Override
-    public Long getId() {
-        return id;
-    }
-
-    @Override
-    public void setId(final Long id) {
-        this.id = id;
     }
 
 }

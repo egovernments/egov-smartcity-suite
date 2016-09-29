@@ -166,4 +166,40 @@
 		<put-attribute name="page-title" value="title.demandGeneation" cascade="true" />
 		<put-attribute name="body" value="/WEB-INF/views/demandgeneration/demand-generate.jsp" />
 	</definition>
+    <definition name="document-new" extends="base_layout">
+	     <put-attribute name="page-title" value="title.create.document" cascade="true"/>
+	     <put-attribute name="body" value="/WEB-INF/views/documenttype/document-new.jsp"/>
+	</definition>
+	<definition name="document-search" extends="base_layout">
+	     <put-attribute name="page-title" value="title.document.search" cascade="true"/>
+	     <put-attribute name="body" value="/WEB-INF/views/documenttype/document-search.jsp"/>
+	</definition>
+	<definition name="document-edit" extends="base_layout">
+	     <put-attribute name="page-title" value="title.document.edit" cascade="true"/>
+	     <put-attribute name="body" value="/WEB-INF/views/documenttype/document-edit.jsp"/>
+	</definition>
+	<definition name="document-view" extends="base_layout">
+	     <put-attribute name="page-title" value="title.document.view" cascade="true"/>
+	     <put-attribute name="body" value="/WEB-INF/views/documenttype/document-view.jsp"/>
+	</definition>
+	<definition name="licensecategory-create" extends="base_layout">
+		<put-attribute name="page-title" value="title.document.new" cascade="true" />
+		<put-attribute name="body" value="/WEB-INF/views/master/category/licensecategory-create.jsp" />
+	</definition>
+    <definition name="licensecategory-update" extends="base_layout">
+	     <put-attribute name="page-title" value="title.document.new" cascade="true"/>
+	     <put-attribute name="body" value="/WEB-INF/views/master/category/licensecategory-update.jsp"/>
+	</definition>
+    <definition name="licensecategory-view" extends="base_layout">
+	     <put-attribute name="page-title" value="title.document.new" cascade="true"/>
+	     <put-attribute name="body" value="/WEB-INF/views/master/category/licensecategory-view.jsp"/>
+	</definition>
+	<definition name="licensecategory-search-update" extends="base_layout">
+	     <put-attribute name="page-title" value="title.document.new" cascade="true"/>
+	     <put-attribute name="body" value="/WEB-INF/views/master/category/licensecategory-search-update.jsp"/>
+	</definition>
+	<definition name="licensecategory-search-view" extends="base_layout">
+	     <put-attribute name="page-title" value="title.document.new" cascade="true"/>
+	     <put-attribute name="body" value="/WEB-INF/views/master/category/licensecategory-search-view.jsp"/>
+	</definition>
 </tiles-definitions>

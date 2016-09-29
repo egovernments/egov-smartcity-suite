@@ -47,7 +47,10 @@ public class MeasurementBookWFService extends PersistenceService<MBHeader, Long>
     private static final Logger logger = Logger.getLogger(MeasurementBookWFService.class);
 
     public MeasurementBookWFService() {
-        logger.info("inside negotiationservice");
-        setType(MBHeader.class);
+        super(MBHeader.class);
+    }
+
+    public MeasurementBookWFService(Class<MBHeader> type) {
+        super(type);
     }
 }

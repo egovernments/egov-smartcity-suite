@@ -46,7 +46,20 @@ import org.egov.pims.commons.Position;
 import org.hibernate.search.annotations.DocumentId;
 import org.hibernate.validator.constraints.Length;
 
-import javax.persistence.*;
+import javax.persistence.CascadeType;
+import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
+import javax.persistence.FetchType;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
+import javax.persistence.OrderBy;
+import javax.persistence.SequenceGenerator;
+import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
 import java.util.Date;
 import java.util.HashSet;
@@ -54,24 +67,17 @@ import java.util.Set;
 
 @Entity
 @Table(name = "EG_WF_STATES")
-@NamedQueries({
-        @NamedQuery(name = State.WORKFLOWTYPES_QRY, query = "select distinct s.type from State s where s.ownerPosition.id in (:param_0)  and s.status is not 2"),
-        @NamedQuery(name = State.WORKFLOWTYPES_BY_ID, query = "select s from State s where s.id=?") })
 @SequenceGenerator(name = State.SEQ_STATE, sequenceName = State.SEQ_STATE, allocationSize = 1)
 public class State extends AbstractAuditable {
 
     private static final long serialVersionUID = -9159043292636575746L;
+    static final String SEQ_STATE = "SEQ_EG_WF_STATES";
 
     public static final String DEFAULT_STATE_VALUE_CREATED = "Created";
     public static final String DEFAULT_STATE_VALUE_CLOSED = "Closed";
     public static final String STATE_REOPENED = "Reopened";
-    public static final String STATE_UPDATED = "Updated";
-    public static final String STATE_FORWARDED = "Forwarded";
-    public static final String WORKFLOWTYPES_QRY = "WORKFLOWTYPES";
-    public static final String WORKFLOWTYPES_BY_ID = "WORKFLOWTYPES_BY_ID";
-    public static final String SEQ_STATE = "SEQ_EG_WF_STATES";
 
-    public static enum StateStatus {
+    public enum StateStatus {
         STARTED, INPROGRESS, ENDED
     }
 
@@ -111,9 +117,14 @@ public class State extends AbstractAuditable {
     @NotNull
     private StateStatus status;
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "INITIATOR_POS")
+    private Position initiatorPosition;
+  
     protected State() {
     }
-
+    
+     
     @Override
     public Long getId() {
         return id;
@@ -240,4 +251,13 @@ public class State extends AbstractAuditable {
     public boolean isEnded() {
         return status.equals(StateStatus.ENDED);
     }
+
+    public Position getInitiatorPosition() {
+        return initiatorPosition;
+    }
+
+    public void setInitiatorPosition(Position initiatorPosition) {
+        this.initiatorPosition = initiatorPosition;
+    }
+    
 }

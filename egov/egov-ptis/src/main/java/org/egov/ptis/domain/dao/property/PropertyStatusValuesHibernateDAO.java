@@ -139,9 +139,10 @@ public class PropertyStatusValuesHibernateDAO implements PropertyStatusValuesDAO
     }
 
     @Override
+    @Transactional
     public PropertyStatusValues update(PropertyStatusValues propertyStatusValues) {
-        // TODO Auto-generated method stub
-        return null;
+        entityManager.persist(propertyStatusValues);
+        return propertyStatusValues;
     }
 
 }

@@ -37,8 +37,7 @@
   ~
   ~   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
   --%>
-<div class="main-content">
-	<div class="row">
+ <div class="row">
 		<div class="col-md-12">
 			<div class="panel panel-primary" data-collapsed="0">
 				<div class="panel-heading">
@@ -52,15 +51,15 @@
 						<div class="col-sm-3 add-margin">
 							<form:input path="interimOrderType"
 								class="form-control text-left patternvalidation"
-								data-pattern="alphabetwithspace" maxlength="32" required="required" />
+								data-pattern="alphanumericspecialcharacters" maxlength="32" required="required" />
 							<form:errors path="interimOrderType" cssClass="error-msg" />
 						</div>
 						<label class="col-sm-3 control-label text-right"><spring:message
 								code="lbl.code" /> :<span class="mandatory"></span> </label>
 						<div class="col-sm-3 add-margin">
 							<form:input path="code"
-								class="form-control text-left patternvalidation"
-								data-pattern="alphanumericwithspecialcharacters" maxlength="25" required="required" />
+								class="form-control text-left aaa"
+								 maxlength="25" required="required" />
 							<form:errors path="code" cssClass="error-msg" />
 						</div>
 					</div>
@@ -70,7 +69,7 @@
 						<div class="col-sm-3 add-margin">
 							<form:textarea path="description"
 								class="form-control text-left patternvalidation"
-								data-pattern="alphanumericwithspecialcharacterswithspace" maxlength="128" />
+								data-pattern="alphanumericspecialcharacters" maxlength="256" />
 							<form:errors path="description" cssClass="error-msg" />
 						</div>
 						<label class="col-sm-3 control-label text-right"><spring:message
@@ -78,7 +77,7 @@
 						<div class="col-sm-3 add-margin">
 							<form:input path="orderNumber"
 								class="form-control text-left patternvalidation"
-								data-pattern="number" />
+								data-pattern="number" maxlength="3"/>
 							<form:errors path="orderNumber" cssClass="error-msg" />
 						</div>
 					</div>
@@ -95,3 +94,10 @@
 										</div>
 						<input type="hidden" name="interimOrder"
 							value="${interimOrder.id}" />
+							
+	                </div>
+	          </div>
+	    </div>
+	</div>
+</div>
+							

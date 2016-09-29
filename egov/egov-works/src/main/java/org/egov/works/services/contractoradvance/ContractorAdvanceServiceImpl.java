@@ -104,6 +104,14 @@ public class ContractorAdvanceServiceImpl extends PersistenceService<ContractorA
 
     private static final Logger LOGGER = Logger.getLogger(ContractorAdvanceServiceImpl.class);
 
+    public ContractorAdvanceServiceImpl(){
+        super(ContractorAdvanceRequisition.class);
+    }
+
+    public ContractorAdvanceServiceImpl(Class<ContractorAdvanceRequisition> type){
+        super(type);
+    }
+
     @Override
     public BigDecimal getAdvancePaidByWOEstimateId(final Long workOrderEstimateId) throws ValidationException {
         BigDecimal advanceAlreadyPaid = BigDecimal.ZERO;
@@ -190,7 +198,7 @@ public class ContractorAdvanceServiceImpl extends PersistenceService<ContractorA
      */
     public void setARFNumber(final ContractorAdvanceRequisition contractorAdvanceRequisition) {
         try {
-            final CFinancialYear financialYear = financialYearHibernateDAO.getFinancialYearByDate(contractorAdvanceRequisition
+            final CFinancialYear financialYear = financialYearHibernateDAO.getFinYearByDate(contractorAdvanceRequisition
                     .getAdvanceRequisitionDate());
             if (financialYear == null)
                 throw new ValidationException(Arrays.asList(new ValidationError(

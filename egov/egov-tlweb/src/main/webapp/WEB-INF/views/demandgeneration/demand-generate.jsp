@@ -40,9 +40,9 @@
   ~   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
   --%>
 
-
-<script src="<c:url value='/resources/js/app/helper.js' context='/tl'/>"></script>
-<script src="<c:url value='/resources/app/js/demand-generate.js?rnd=${app_release_no}' context='/tl'/>"></script>
+<%@ taglib uri="/WEB-INF/taglib/cdn.tld" prefix="cdn" %>
+<script src="<cdn:url  value='/resources/js/app/helper.js'/>"></script>
+<script src="<cdn:url  value='/resources/app/js/demand-generate.js?rnd=${app_release_no}'/>"></script>
 <div class="row">
     <div class="col-md-12">
       <div class="panel panel-primary" data-collapsed="0"> 

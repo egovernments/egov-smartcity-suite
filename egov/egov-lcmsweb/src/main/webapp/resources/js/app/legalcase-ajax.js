@@ -38,6 +38,8 @@
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
 $(document).ready(function(){
+	
+	
 var department = new Bloodhound({
 							datumTokenizer : function(datum) {
 									return Bloodhound.tokenizers
@@ -48,7 +50,7 @@ var department = new Bloodhound({
 									url : '/lcms/legalcase/ajax/departments?departmentName=%QUERY',
 									filter : function(data) {
 										return $.map(data,function(department) {
-													return {
+											return {
 														name : department.name,
 														value : department.id
 
@@ -67,6 +69,8 @@ var department = new Bloodhound({
 						displayKey : 'name',
 						source : department.ttAdapter()
 					});
+					typeaheadWithEventsHandling(typeaheadobj, '#departmentId'); 
+
 
 					var standingCpuncil = new Bloodhound({
 						datumTokenizer : function(datum) {
@@ -86,11 +90,11 @@ var department = new Bloodhound({
 									return {
 										name : advocate.name,
 										value : advocate.id
-
 									};
 								});
 							}
 						}
+
 					});
 
 					standingCpuncil.initialize();
@@ -102,6 +106,7 @@ var department = new Bloodhound({
 						displayKey : 'name',
 						source : standingCpuncil.ttAdapter()
 					});
+					typeaheadWithEventsHandling(typeaheadobj, '#advocateId'); 
 
 					var senioradvocateName = new Bloodhound({
 						datumTokenizer : function(datum) {
@@ -120,8 +125,7 @@ var department = new Bloodhound({
 								return $.map(data, function(advocate) {
 									return {
 										name : advocate.name,
-										value : advocate.id
-
+										value :advocate.id
 									};
 								});
 							}
@@ -137,6 +141,8 @@ var department = new Bloodhound({
 						displayKey : 'name',
 						source : senioradvocateName.ttAdapter()
 					});
+
+					typeaheadWithEventsHandling(typeaheadobj, '#senioradvocateId'); 
 
 					$("#departmentName").blur(function() {
 						var desigId = $("#departmentName").val();
@@ -160,11 +166,12 @@ var department = new Bloodhound({
 
 							},
 							filter : function(data) {
-								return $.map(data, function(position) {
+								data = JSON.parse(data);
+								console.log(data);
+								return $.map(data, function(advocate) {
 									return {
-										name : position.name,
-										value : position.id
-
+										name : advocate.name,
+										value : advocate.id
 									};
 								});
 							}
@@ -179,5 +186,5 @@ var department = new Bloodhound({
 						displayKey : 'name',
 						source : assignPosition.ttAdapter()
 					});
-
+					typeaheadWithEventsHandling(typeaheadobj, '#positionId'); 
 				});
