@@ -87,7 +87,7 @@ public class CounterAffidavitController {
         redirectAttrs.addFlashAttribute("legalCase", legalCase);
         model.addAttribute("message", "LegalCase Updated successfully.");
         model.addAttribute("legalcase", legalCase);
-        model.addAttribute("supportDocs",legalCase.getLegalCaseDocuments().get(0).getSupportDocs());
+        model.addAttribute("supportDocs",(!legalCase.getLegalCaseDocuments().isEmpty() && legalCase.getLegalCaseDocuments().get(0)!=null ?legalCase.getLegalCaseDocuments().get(0).getSupportDocs():null));
         model.addAttribute("pwrDocList", legalCaseService.getPwrDocList(legalCase));
         model.addAttribute("mode", "view");
         return "legalcasedetails-view";

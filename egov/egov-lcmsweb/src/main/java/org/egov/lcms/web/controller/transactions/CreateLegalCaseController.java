@@ -94,7 +94,7 @@ public class CreateLegalCaseController extends GenericLegalCaseController {
         redirectAttrs.addFlashAttribute("legalCase", legalCase);
         model.addAttribute("message", "Legal Case created successfully.");
         model.addAttribute("mode", "create");
-        model.addAttribute("supportDocs",legalCase.getLegalCaseDocuments().get(0).getSupportDocs());
+        model.addAttribute("supportDocs",(!legalCase.getLegalCaseDocuments().isEmpty() && legalCase.getLegalCaseDocuments().get(0)!=null ?legalCase.getLegalCaseDocuments().get(0).getSupportDocs():null));
         return "legalcase-success";
     }
 

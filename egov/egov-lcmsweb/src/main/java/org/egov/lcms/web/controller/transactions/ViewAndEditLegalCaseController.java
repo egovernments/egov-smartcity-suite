@@ -83,7 +83,7 @@ public class ViewAndEditLegalCaseController extends GenericLegalCaseController {
         final LegalCase legalCase = legalCaseService.findByLcNumber(lcNumber);
         model.addAttribute("legalCase", legalCase);
         model.addAttribute("mode", "view");
-        model.addAttribute("supportDocs",legalCase.getLegalCaseDocuments().get(0).getSupportDocs());
+        model.addAttribute("supportDocs",(!legalCase.getLegalCaseDocuments().isEmpty() && legalCase.getLegalCaseDocuments().get(0)!=null ?legalCase.getLegalCaseDocuments().get(0).getSupportDocs():null));
         model.addAttribute("pwrDocList", legalCaseService.getPwrDocList(legalCase));
         return "legalcasedetails-view";
     }
@@ -99,7 +99,7 @@ public class ViewAndEditLegalCaseController extends GenericLegalCaseController {
             legalCase.setWpYear(casenumberyear[1]);
         legalCase.getBipartisanPetitionerDetailsList().addAll(legalCase.getPetitioners());
         legalCase.getBipartisanRespondentDetailsList().addAll(legalCase.getRespondents());
-        model.addAttribute("supportDocs",legalCase.getLegalCaseDocuments().get(0).getSupportDocs());
+        model.addAttribute("supportDocs",(!legalCase.getLegalCaseDocuments().isEmpty() && legalCase.getLegalCaseDocuments().get(0)!=null ?legalCase.getLegalCaseDocuments().get(0).getSupportDocs():null));
         model.addAttribute("mode", "edit");
         return "legalcase-edit";
     }
@@ -115,7 +115,7 @@ public class ViewAndEditLegalCaseController extends GenericLegalCaseController {
         redirectAttrs.addFlashAttribute("legalCase", legalCase);
         model.addAttribute("mode", "edit");
         model.addAttribute("message", "LegalCase updated successfully.");
-        model.addAttribute("supportDocs",legalCase.getLegalCaseDocuments().get(0).getSupportDocs());
+        model.addAttribute("supportDocs",(!legalCase.getLegalCaseDocuments().isEmpty() && legalCase.getLegalCaseDocuments().get(0)!=null ?legalCase.getLegalCaseDocuments().get(0).getSupportDocs():null));
         return "legalcase-success";
     }
 
