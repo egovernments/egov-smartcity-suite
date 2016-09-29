@@ -62,6 +62,7 @@
 							code="lbl.additionallawyer" /></th>
 					<th align="center" colspan="1" class="text-center"><spring:message
 							code="lbl.standingcounsel" /></th>
+					<th align="center" colspan="1" class="text-center">Position-Employee</th>
 					<th colspan="1" class="text-center"><spring:message
 							code="lbl.edit" /></th>
 				</tr>
@@ -76,7 +77,7 @@
 						</div>
 					</td>
 
-					<td colspan="1" id="iodate">
+					<td colspan="1">
 						<div align="center">
 							<c:out value="${hearings.purposeofHearings}" />
 						</div>
@@ -94,6 +95,21 @@
 					<td colspan="1">
 						<div align="center">
 							<c:out value="${hearings.isStandingCounselPresent}" />
+						</div>
+					</td>
+					<td colspan="1">
+						<div align="center">
+							<c:choose>
+								<c:when test="${not empty hearings.employeeHearingList}">
+									<c:forEach items="${hearings.employeeHearingList}"
+										var="employeeHearingList" varStatus="counter">
+
+										<c:out value="${employeeHearingList.employee.name}"></c:out>- <c:out
+											value="${employeeHearingList.employee.username}"></c:out>
+
+									</c:forEach>
+								</c:when>
+							</c:choose>
 						</div>
 					</td>
 					<td colspan="1">
