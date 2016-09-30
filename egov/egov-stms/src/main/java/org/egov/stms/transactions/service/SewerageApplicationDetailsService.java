@@ -30,6 +30,37 @@
  */
 package org.egov.stms.transactions.service;
 
+import static org.egov.stms.utils.constants.SewerageTaxConstants.APPLICATION_STATUS_CANCELLED;
+import static org.egov.stms.utils.constants.SewerageTaxConstants.APPLICATION_STATUS_CLOSERSANCTIONED;
+import static org.egov.stms.utils.constants.SewerageTaxConstants.APPLICATION_STATUS_COLLECTINSPECTIONFEE;
+import static org.egov.stms.utils.constants.SewerageTaxConstants.APPLICATION_STATUS_CREATED;
+import static org.egov.stms.utils.constants.SewerageTaxConstants.APPLICATION_STATUS_DEEAPPROVED;
+import static org.egov.stms.utils.constants.SewerageTaxConstants.APPLICATION_STATUS_ESTIMATENOTICEGEN;
+import static org.egov.stms.utils.constants.SewerageTaxConstants.APPLICATION_STATUS_FEEPAID;
+import static org.egov.stms.utils.constants.SewerageTaxConstants.APPLICATION_STATUS_FINALAPPROVED;
+import static org.egov.stms.utils.constants.SewerageTaxConstants.APPLICATION_STATUS_INITIALAPPROVED;
+import static org.egov.stms.utils.constants.SewerageTaxConstants.APPLICATION_STATUS_INSPECTIONFEEPAID;
+import static org.egov.stms.utils.constants.SewerageTaxConstants.APPLICATION_STATUS_REJECTED;
+import static org.egov.stms.utils.constants.SewerageTaxConstants.APPLICATION_STATUS_SANCTIONED;
+import static org.egov.stms.utils.constants.SewerageTaxConstants.APPLICATION_STATUS_WOGENERATED;
+import static org.egov.stms.utils.constants.SewerageTaxConstants.APPL_INDEX_MODULE_NAME;
+import static org.egov.stms.utils.constants.SewerageTaxConstants.APPROVEWORKFLOWACTION;
+import static org.egov.stms.utils.constants.SewerageTaxConstants.CHANGEINCLOSETS;
+import static org.egov.stms.utils.constants.SewerageTaxConstants.CHANGEINCLOSETS_NOCOLLECTION;
+import static org.egov.stms.utils.constants.SewerageTaxConstants.CLOSESEWERAGECONNECTION;
+import static org.egov.stms.utils.constants.SewerageTaxConstants.DOCTYPE_OTHERS;
+import static org.egov.stms.utils.constants.SewerageTaxConstants.MODULETYPE;
+import static org.egov.stms.utils.constants.SewerageTaxConstants.NOTICE_TYPE_WORK_ORDER_NOTICE;
+import static org.egov.stms.utils.constants.SewerageTaxConstants.WFLOW_ACTION_STEP_CANCEL;
+import static org.egov.stms.utils.constants.SewerageTaxConstants.WFLOW_ACTION_STEP_REJECT;
+import static org.egov.stms.utils.constants.SewerageTaxConstants.WF_STATE_ASSISTANT_APPROVED;
+import static org.egov.stms.utils.constants.SewerageTaxConstants.WF_STATE_CLERK_APPROVED;
+import static org.egov.stms.utils.constants.SewerageTaxConstants.WF_STATE_DEPUTY_EXE_APPROVED;
+import static org.egov.stms.utils.constants.SewerageTaxConstants.WF_STATE_INSPECTIONFEE_COLLECTED;
+import static org.egov.stms.utils.constants.SewerageTaxConstants.WF_STATE_INSPECTIONFEE_PENDING;
+import static org.egov.stms.utils.constants.SewerageTaxConstants.WF_STATE_PAYMENTDONE;
+import static org.egov.stms.utils.constants.SewerageTaxConstants.WF_STATE_REJECTED;
+
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -67,7 +98,6 @@ import org.egov.infra.security.utils.SecurityUtils;
 import org.egov.infra.utils.autonumber.AutonumberServiceBeanResolver;
 import org.egov.infra.workflow.entity.State;
 import org.egov.infra.workflow.entity.StateHistory;
-import org.egov.infra.workflow.service.SimpleWorkflowService;
 import org.egov.pims.commons.Position;
 import org.egov.ptis.domain.model.AssessmentDetails;
 import org.egov.ptis.domain.model.OwnerName;
@@ -79,7 +109,6 @@ import org.egov.stms.autonumber.SewerageEstimationNumberGenerator;
 import org.egov.stms.autonumber.SewerageWorkOrderNumberGenerator;
 import org.egov.stms.elasticSearch.service.SewerageIndexService;
 import org.egov.stms.masters.entity.enums.SewerageConnectionStatus;
-import org.egov.stms.masters.repository.SewerageApplicationTypeRepository;
 import org.egov.stms.masters.service.DocumentTypeMasterService;
 import org.egov.stms.notice.entity.SewerageNotice;
 import org.egov.stms.notice.service.SewerageNoticeService;
@@ -94,41 +123,10 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.context.ApplicationContext;
 import org.springframework.context.MessageSource;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
-import static org.egov.stms.utils.constants.SewerageTaxConstants.CLOSESEWERAGECONNECTION;
-import static org.egov.stms.utils.constants.SewerageTaxConstants.DOCTYPE_OTHERS;
-import static org.egov.stms.utils.constants.SewerageTaxConstants.APPLICATION_STATUS_COLLECTINSPECTIONFEE;
-import static org.egov.stms.utils.constants.SewerageTaxConstants.APPLICATION_STATUS_CREATED;
-import static org.egov.stms.utils.constants.SewerageTaxConstants.APPLICATION_STATUS_SANCTIONED;
-import static org.egov.stms.utils.constants.SewerageTaxConstants.APPLICATION_STATUS_CANCELLED;
-import static org.egov.stms.utils.constants.SewerageTaxConstants.WF_STATE_INSPECTIONFEE_PENDING;
-import static org.egov.stms.utils.constants.SewerageTaxConstants.WF_STATE_ASSISTANT_APPROVED;
-import static org.egov.stms.utils.constants.SewerageTaxConstants.WF_STATE_DEPUTY_EXE_APPROVED;
-import static org.egov.stms.utils.constants.SewerageTaxConstants.WF_STATE_PAYMENTDONE;
-import static org.egov.stms.utils.constants.SewerageTaxConstants.WF_STATE_INSPECTIONFEE_COLLECTED;
-import static org.egov.stms.utils.constants.SewerageTaxConstants.WF_STATE_CLERK_APPROVED;
-import static org.egov.stms.utils.constants.SewerageTaxConstants.WF_STATE_REJECTED;
-import static org.egov.stms.utils.constants.SewerageTaxConstants.APPLICATION_STATUS_FEEPAID;
-import static org.egov.stms.utils.constants.SewerageTaxConstants.APPLICATION_STATUS_DEEAPPROVED;
-import static org.egov.stms.utils.constants.SewerageTaxConstants.CHANGEINCLOSETS_NOCOLLECTION;
-import static org.egov.stms.utils.constants.SewerageTaxConstants.APPLICATION_STATUS_INITIALAPPROVED;
-import static org.egov.stms.utils.constants.SewerageTaxConstants.APPLICATION_STATUS_INSPECTIONFEEPAID;
-import static org.egov.stms.utils.constants.SewerageTaxConstants.CHANGEINCLOSETS;
-import static org.egov.stms.utils.constants.SewerageTaxConstants.APPLICATION_STATUS_ESTIMATENOTICEGEN;
-import static org.egov.stms.utils.constants.SewerageTaxConstants.APPLICATION_STATUS_WOGENERATED;
-import static org.egov.stms.utils.constants.SewerageTaxConstants.APPLICATION_STATUS_FINALAPPROVED;
-import static org.egov.stms.utils.constants.SewerageTaxConstants.APPLICATION_STATUS_REJECTED;
-import static org.egov.stms.utils.constants.SewerageTaxConstants.WFLOW_ACTION_STEP_REJECT;
-import static org.egov.stms.utils.constants.SewerageTaxConstants.WFLOW_ACTION_STEP_CANCEL;
-import static org.egov.stms.utils.constants.SewerageTaxConstants.MODULETYPE;
-import static org.egov.stms.utils.constants.SewerageTaxConstants.APPLICATION_STATUS_CLOSERSANCTIONED;
-import static org.egov.stms.utils.constants.SewerageTaxConstants.APPL_INDEX_MODULE_NAME;
-import static org.egov.stms.utils.constants.SewerageTaxConstants.WF_STATE_CONNECTION_CLOSE_BUTTON;
-import static org.egov.stms.utils.constants.SewerageTaxConstants.APPROVEWORKFLOWACTION;
 
 @Service
 @Transactional(readOnly = true)
@@ -144,12 +142,6 @@ public class SewerageApplicationDetailsService {
     private MessageSource stmsMessageSource;
 
     protected SewerageApplicationDetailsRepository sewerageApplicationDetailsRepository;
-
-    @Autowired
-    private SewerageApplicationTypeRepository sewerageApplicationTypeRepository;
-
-    @Autowired
-    private ApplicationContext context;
 
     @Autowired
     private AssignmentService assignmentService;
@@ -663,14 +655,17 @@ public class SewerageApplicationDetailsService {
                if (sewerageNotice != null)
                    sewerageApplicationDetails.addNotice(sewerageNotice);
            } else if (sewerageApplicationDetails.getStatus().getCode()
-                   .equalsIgnoreCase(APPLICATION_STATUS_WOGENERATED)) {//TODO: CHECK THIS STATUS IS CORRECT
-               SewerageNotice sewerageNotice = sewerageNoticeService.generateReportForWorkOrder(
-                       sewerageApplicationDetails, session);
+                   .equalsIgnoreCase(APPLICATION_STATUS_WOGENERATED)) {
+               SewerageNotice existingSewerageNotice = sewerageNoticeService.findByNoticeNoAndNoticeType(sewerageApplicationDetails.getWorkOrderNumber()
+                       , NOTICE_TYPE_WORK_ORDER_NOTICE);
+               if(existingSewerageNotice==null){
+               SewerageNotice sewerageNotice = sewerageNoticeService.generateReportForWorkOrder(sewerageApplicationDetails, session);
                if (sewerageNotice != null)
                    sewerageApplicationDetails.addNotice(sewerageNotice);
+               }
            }
            
-        final SewerageApplicationDetails updatedSewerageApplicationDetails = sewerageApplicationDetailsRepository
+        SewerageApplicationDetails updatedSewerageApplicationDetails = sewerageApplicationDetailsRepository
                 .save(sewerageApplicationDetails);
 
         if (LOG.isDebugEnabled())
