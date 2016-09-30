@@ -40,8 +40,12 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 <%@ taglib uri="http://www.springframework.org/tags" prefix="spring"%>
 <%@ taglib uri="http://www.springframework.org/tags/form" prefix="form"%>
+<%@ taglib uri="/WEB-INF/taglib/cdn.tld" prefix="cdn" %>
 
-
+<form:form role="form" action=""
+	modelAttribute="councilMeeting" name="councilMeetingform" id="councilMeetingform"
+	cssClass="form-horizontal form-groups-bordered"
+	enctype="multipart/form-data">
 		<div class="row">
 			<div class="col-md-12">
 				<div class="panel panel-primary" data-collapsed="0">
@@ -69,11 +73,11 @@
 									<c:when test="${attend.attendedMeeting}">
 										<tr>
 											<td>
-												<input type="checkbox"  name="meetingAttendence[${counter.index}].committeeMembers" class="councilcommitmem" data-change-to="meetingAttendence[${counter.index}].checked"  id="${attend.committeeMembers.id}" checked  value="${attend.committeeMembers.id}"/>
-												<input type="hidden" name="meetingAttendence[${counter.index}].checked"  id="councilcommitmemchk" class="councilcommitmemchk" value="true"/>
-												<input type="hidden"  name="meetingAttendence[${counter.index}].checked"  value="${attend.committeeMembers.id}"/>
-												<input type="hidden"  name="meetingAttendence[${counter.index}].committeeMembers"  value="${attend.committeeMembers.id}"/>
-												<input type="hidden" name="meetingAttendence[${counter.index}].meeting" value="${councilMeeting.id}" />
+												<input type="checkbox" name="meetingAttendence[${counter.index}].committeeMembers" class="councilcommitmem" data-change-to="meetingAttendence[${counter.index}].checked"  id="${attend.committeeMembers.id}" checked  value="${attend.committeeMembers.id}"/>
+												<input type="hidden"   name="meetingAttendence[${counter.index}].checked"  id="councilcommitmemchk" class="councilcommitmemchk" value="true"/>
+												<input type="hidden"   name="meetingAttendence[${counter.index}].checked"  value="${attend.committeeMembers.id}"/>
+												<input type="hidden"   name="meetingAttendence[${counter.index}].committeeMembers"  value="${attend.committeeMembers.id}"/>
+												<input type="hidden"   name="meetingAttendence[${counter.index}].meeting" value="${councilMeeting.id}" />
 											</td>
 											<td><c:out value="${attend.committeeMembers.councilMember.name}" /></td>
 											<td><c:out value="${attend.committeeMembers.councilMember.electionWard.name}" /></td>
@@ -85,11 +89,11 @@
 								<c:otherwise>
 								<tr>
 											<td>
-												<input type="checkbox"  name="meetingAttendence[${counter.index}].committeeMembers" class="councilcommitmem" data-change-to="meetingAttendence[${counter.index}].checked"  id="${attend.committeeMembers.id}"  value="${attend.committeeMembers.id}"/>
-												<input type="hidden" name="meetingAttendence[${counter.index}].checked"  id="councilcommitmemchk" class="councilcommitmemchk" value="false"/>
-												<input type="hidden"  name="meetingAttendence[${counter.index}].checked"  value="${attend.committeeMembers.id}"/>
-												<input type="hidden"  name="meetingAttendence[${counter.index}].committeeMembers"  value="${attend.committeeMembers.id}"/>
-												<input type="hidden" name="meetingAttendence[${counter.index}].meeting" value="${councilMeeting.id}" />
+												<input type="checkbox" name="meetingAttendence[${counter.index}].committeeMembers" class="councilcommitmem" data-change-to="meetingAttendence[${counter.index}].checked"  id="${attend.committeeMembers.id}"  value="${attend.committeeMembers.id}"/>
+												<input type="hidden"   name="meetingAttendence[${counter.index}].checked"  id="councilcommitmemchk" class="councilcommitmemchk" value="false"/>
+												<input type="hidden"   name="meetingAttendence[${counter.index}].checked"  value="${attend.committeeMembers.id}"/>
+												<input type="hidden"   name="meetingAttendence[${counter.index}].committeeMembers"  value="${attend.committeeMembers.id}"/>
+												<input type="hidden"   name="meetingAttendence[${counter.index}].meeting" value="${councilMeeting.id}" />
 											</td>
 											<td><c:out value="${attend.committeeMembers.councilMember.name}" /></td>
 											<td><c:out value="${attend.committeeMembers.councilMember.electionWard.name}" /></td>
@@ -100,6 +104,7 @@
 									</c:otherwise>
 								</c:choose>
 							</c:forEach>
+							<input type="hidden" name="councilMeeting" value="${councilMeeting.id}" />
 								</tbody>
 							</table>
 							</div>
@@ -111,12 +116,29 @@
 				<div>Note :- </div> <label class="checkbox-inline"><input type="checkbox" value="" checked disabled>Attended</label>
 				<label class="checkbox-inline"><input type="checkbox" value="" disabled>Not Attended</label>
 			</div>
-	<script>
-	$('#buttonSubmit').click(function(e) {
-		if ($('form').valid()) {
-		} else {
-			e.preventDefault();
-		}
-	});
+		<div class="text-center">
+		<button  class='btn btn-primary' id="buttonSubmit">
+			<spring:message code='lbl.update' />
+		</button>
+		<button  id="finalizeAttendanceBtn" class='btn btn-primary'><spring:message code='lbl.finalize.attendance'/></button>
+		<a href='javascript:void(0)' class='btn btn-default'
+			onclick='self.close()'><spring:message code='lbl.close' /></a>
+	</div>
+</form:form>
+
+<script type="text/javascript"
+	src="<cdn:url value='/resources/app/js/councilAttendance.js?rnd=${app_release_no}'/>"></script>
+<script>
 	
+$('#buttonSubmit').click(function(e) {
+	if ($('form').valid()) {
+		 var action = '/council/councilmeeting/attendance/update' ;
+			$('#councilMeetingform').attr('method', 'post');
+			$('#councilMeetingform').attr('action', action); 
+			document.forms["councilMeetingform"].submit();
+	} else {
+		e.preventDefault();
+	}
+});	 
+
 </script>

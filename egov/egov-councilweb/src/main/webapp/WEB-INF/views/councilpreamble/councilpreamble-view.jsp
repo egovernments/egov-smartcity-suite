@@ -51,6 +51,18 @@
 				</div>
 				<div class="panel-body custom">
 					<div class="row add-border">
+					<div class="col-xs-3 add-margin">
+							<spring:message code="lbl.preamble.number" />
+						</div>
+						<div class="col-sm-3 add-margin view-content">
+							${councilPreamble.preambleNumber}</div>
+						<div class="col-xs-3 add-margin">
+							<spring:message code="lbl.status" /> 
+						</div>
+						<div class="col-sm-3 add-margin view-content">
+							 ${councilPreamble.status.code}</div>
+					</div>
+					<div class="row add-border">
 						<div class="col-xs-3 add-margin">
 							<spring:message code="lbl.department" />
 						</div>
@@ -87,18 +99,6 @@
 								</c:otherwise>
 							</c:choose>
 						</div>
-					</div>
-					<div class="row add-border">
-						<div class="col-xs-3 add-margin">
-							<spring:message code="lbl.status" /> 
-						</div>
-						<div class="col-sm-3 add-margin view-content">
-							 ${councilPreamble.status.code}</div>
-						<div class="col-xs-3 add-margin">
-							<spring:message code="lbl.preamble.number" />
-						</div>
-						<div class="col-sm-3 add-margin view-content">
-							${councilPreamble.preambleNumber}</div>
 					</div>
 					<div class="row add-border">
 						<div class="col-xs-3 add-margin">

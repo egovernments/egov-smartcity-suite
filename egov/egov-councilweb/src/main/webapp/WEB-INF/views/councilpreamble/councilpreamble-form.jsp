@@ -9,6 +9,16 @@
 		</div>
 		<div class="panel-body">
 			<div class="form-group">
+				<c:if test="${councilPreamble.preambleNumber!= null && !''.equalsIgnoreCase(councilPreamble.preambleNumber)}">
+						<label class="col-sm-2 control-label text-right">	<spring:message code="lbl.preamble.number" /> </label>
+						<div class="col-sm-3 add-margin"> ${councilPreamble.preambleNumber}		</div>
+						</c:if>
+					
+					<input type="hidden" name="councilPreamble" value="${councilPreamble.id}" />
+						<form:hidden path="preambleNumber" id="preambleNumber" value="${councilPreamble.preambleNumber}" />
+						<form:hidden path="type" id="type" value="${councilPreamble.type}" />
+			</div>
+			<div class="form-group">
 				<label class="col-sm-2 control-label text-right"><spring:message
 						code="lbl.department" /> <span class="mandatory"></span></label>
 				<div class="col-sm-3 add-margin">
@@ -99,14 +109,5 @@
 				</div>
 				<spring:message code="lbl.pressCntrlToSelectMultipleWards"></spring:message>
 		</div>
-		<div class="form-group">
-			<c:if test="${councilPreamble.preambleNumber!= null && !''.equalsIgnoreCase(councilPreamble.preambleNumber)}">
-						<label class="col-sm-2 control-label text-right">	<spring:message code="lbl.preamble.number" /> </label>
-						<div class="col-sm-3 add-margin"> ${councilPreamble.preambleNumber}		</div>
-						</c:if>
-					
-					<input type="hidden" name="councilPreamble" value="${councilPreamble.id}" />
-						<form:hidden path="preambleNumber" id="preambleNumber" value="${councilPreamble.preambleNumber}" />
-						<form:hidden path="type" id="type" value="${councilPreamble.type}" />
-		</div>
+		
 	</div>

@@ -64,7 +64,8 @@
 					<th><spring:message code="lbl.total.committe.members" /></th>
 					<th><spring:message code="lbl.no.commit.mem.present" /></th>
 					<th><spring:message code="lbl.no.commit.mem.absent" /></th>
-					<th><spring:message code="lbl.view" /></th>
+					<th><spring:message code="lbl.status" /></th>
+					<th><spring:message code="lbl.action" /></th>
 					<th>&nbsp;</th>
 				</tr>
 			</thead>

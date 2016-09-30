@@ -303,7 +303,7 @@
 </definition>
 
 <definition name="councilMom-new" extends="base_layout">
-	<put-attribute name="page-title" value="title.councilmeeting" cascade="true"/>
+	<put-attribute name="page-title" value="title.councilmom" cascade="true"/>
 	<put-attribute name="body" value="/WEB-INF/views/councilmom/councilmom-new.jsp"/>
 </definition>
 
@@ -312,7 +312,7 @@
 	<put-attribute name="body"	value="/WEB-INF/views/common/common-error.jsp" />
 </definition>
 <definition name="councilmom-result" extends="base_layout">
-	<put-attribute name="page-title" value="title.councilmeeting" cascade="true"/>
+	<put-attribute name="page-title" value="title.councilmom.view" cascade="true"/>
 	<put-attribute name="body" value="/WEB-INF/views/councilmom/councilmom-result.jsp"/>
 </definition>
 
@@ -329,7 +329,7 @@
 	<put-attribute name="body" value="/WEB-INF/views/councilmom/councilmeeting-attendsearch.jsp"/>
 </definition>
 <definition name="councilmeeting-attend-form" extends="base_layout">
-	<put-attribute name="page-title" value="title.councilmeeting" cascade="true"/>
+	<put-attribute name="page-title" value="title.councilmom.attendance" cascade="true"/>
 	<put-attribute name="body" value="/WEB-INF/views/councilmom/councilmeeting-attend-form.jsp"/>
 </definition>
 
@@ -353,4 +353,8 @@
 	<put-attribute name="body" value="/WEB-INF/views/reports/preamblewardwise-report.jsp"/>
 </definition>
 
+<definition name="councilmeeting-attend-result" extends="base_layout">
+	<put-attribute name="page-title" value="title.meeting.attend.result" cascade="true"/>
+	<put-attribute name="body" value="/WEB-INF/views/councilmom/councilmeeting-attend-result.jsp"/>
+</definition>
 </tiles-definitions>

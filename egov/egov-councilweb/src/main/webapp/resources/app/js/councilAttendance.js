@@ -92,10 +92,19 @@ $(document).ready(function() {
 	
 });
 
+function setHiddenValue(flag)
+{
+	
+	$('.councilcommitmem').each(function(){
+		$hiddenName=$(this).data('change-to');
+		$('input[name="'+$hiddenName+'"]').val(flag);
+	});
+	
+}
+
 function getFormData($form){
     var unindexed_array = $form.serializeArray();
     var indexed_array = {};
-
     $.map(unindexed_array, function(n, i){
         indexed_array[n['name']] = n['value'];
     });
@@ -103,7 +112,8 @@ function getFormData($form){
     return indexed_array;
 }
 
-
+var viewurl='/council/councilmeeting/attendance/search/view/';
+var editurl='/council/councilmeeting/attendance/search/edit/';
 function callAjaxSearch() {
 	
 	drillDowntableContainer = jQuery("#resultTable");	
@@ -150,34 +160,80 @@ function callAjaxSearch() {
 					{"data" : "totCommitteMemCount", "sClass" : "text-center"},
 					{"data" : "noOfMembersPresent", "sClass" : "text-center"},
 					{"data" : "noOfMembersAbsent", "sClass" : "text-center"},
+					{"data" : "meetingStatus", "sClass" : "text-center"},
 					{ "data" : null, "target":-1,
 					    sortable: false,
-					    "render": function ( data, type, full, meta ) {          	
-				          	return '<button type="button" class="btn btn-xs btn-secondary view"><span class="glyphicon glyphicon-tasks"></span>&nbsp;View</button>';
+					    "render": function ( data, type, row, meta ) {   
+					    	if(row.meetingStatus == 'ATTENDANCE FINALIZED' || row.meetingStatus == 'MOM CREATED' || row.meetingStatus == 'MOM FINALISED'){
+					    		return ('<select class="dropchange"><option value="">Select from Below</option><option  value='+viewurl+row.id +'>View</option>');
+					    	}else{
+					    		return ('<select class="dropchange"><option value="">Select from Below</option><option  value='+viewurl+row.id +'>View</option><option  value='+editurl+row.id +'>Edit</option></select>');
+					    	}
 					    }
 					}
-					,{ "data": "id", "visible":false }
+					,{ "data": "id", "visible":false },
+					 { "data": "meetingStatus", "visible":false }
 					]				
 			});
 }
+
+$(document).on('change','.dropchange',function(){
+    var url = $(this).val();
+    if(url){
+    	openPopup(url);
+    }
+    
+});
 
 function openPopup(url)
 {
 	window.open(url,'window','scrollbars=yes,resizable=yes,height=700,width=800,status=yes');
 }
 
-$("#resultTable").on('click','tbody tr td  .view',function(event) {
-	var id = reportdatatable.fnGetData($(this).parent().parent(),6);
-	openPopup('/council/councilmeeting/attendance/search/view' + '/'+id);
-});
+var isSubmit=false;
 
-function setHiddenValue(flag)
-{
-	
-	$('.councilcommitmem').each(function(){
-		$hiddenName=$(this).data('change-to');
-		$('input[name="'+$hiddenName+'"]').val(flag);
-	});
-	
-}
+$('#finalizeAttendanceBtn').click(
+       function(e) {
+
+                   if(isSubmit)
+                   {
+                     return true;
+                   }
+
+                   if ($('form').valid()) {
+                       var chkbxLength = $('.councilcommitmem:checked').length;
+                       if(chkbxLength <= 0){
+                           bootbox.alert('Please enter attendance details');
+                       }else{
+                           bootbox
+                           .confirm({
+                               message : 'Information entered in this screen will not be modified once submitted,Please confirm yes to save',
+                               buttons : {
+                                   'cancel' : {
+                                       label : 'No',
+                                       className : 'btn-danger pull-right'
+                                   },
+                                   'confirm' : {
+                                       label : 'Yes',
+                                       className : 'btn-danger pull-right'
+                                   }
+                               },
+                               callback : function(result) {
+                                   if (result) {
+                                        var action = '/council/councilmeeting/attendance/finalizeattendance';
+                                            $('#councilMeetingform').attr('method', 'post');
+                                            $('#councilMeetingform').attr('action', action);
+                                            isSubmit=true;
+                                            $('#finalizeAttendanceBtn').trigger('click');
+                                   } else {
+                                       e.preventDefault();
+                                   }
+                               }
+                           });
+                       }
+           }
+
+           return false;
+
+});
 

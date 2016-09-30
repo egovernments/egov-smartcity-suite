@@ -42,8 +42,10 @@ package org.egov.council.web.controller;
 import static org.egov.council.utils.constants.CouncilConstants.AGENDAUSEDINMEETING;
 import static org.egov.council.utils.constants.CouncilConstants.AGENDA_MODULENAME;
 import static org.egov.council.utils.constants.CouncilConstants.APPROVED;
+import static org.egov.council.utils.constants.CouncilConstants.ATTENDANCEFINALIZED;
 import static org.egov.council.utils.constants.CouncilConstants.COUNCILMEETING;
 import static org.egov.council.utils.constants.CouncilConstants.MEETINGRESOLUTIONFILENAME;
+import static org.egov.council.utils.constants.CouncilConstants.MEETING_MODULENAME;
 import static org.egov.council.utils.constants.CouncilConstants.MEETING_TIMINGS;
 import static org.egov.council.utils.constants.CouncilConstants.MODULE_NAME;
 import static org.egov.council.utils.constants.CouncilConstants.MOM_FINALISED;
@@ -51,6 +53,7 @@ import static org.egov.infra.web.utils.WebUtils.toJSON;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
@@ -64,6 +67,7 @@ import javax.validation.Valid;
 
 import org.egov.commons.dao.EgwStatusHibernateDAO;
 import org.egov.council.autonumber.CouncilMeetingNumberGenerator;
+import org.egov.council.entity.CommitteeMembers;
 import org.egov.council.entity.CommitteeType;
 import org.egov.council.entity.CouncilAgenda;
 import org.egov.council.entity.CouncilAgendaDetails;
@@ -72,6 +76,7 @@ import org.egov.council.entity.MeetingAttendence;
 import org.egov.council.entity.MeetingMOM;
 import org.egov.council.service.CommitteeTypeService;
 import org.egov.council.service.CouncilAgendaService;
+import org.egov.council.service.CouncilCommitteeMemberService;
 import org.egov.council.service.CouncilMeetingService;
 import org.egov.council.service.CouncilReportService;
 import org.egov.council.service.CouncilSmsAndEmailService;
@@ -116,9 +121,10 @@ public class CouncilMeetingController {
     private final static String COUNCILMEETING_SEARCH = "councilmeeting-search";
     private final static String COUNCIL_MEETING_AGENDA_SEARCH = "councilmeetingAgenda-search";
     private final static String COUNCILMEETING_ATTENDANCE_SEARCH = "councilmeeting-attendsearch";
-    private final static String COUNCILMEETING_ATTENDANCE_SEARCH_RESULT = "councilmeeting-attendsearch-view";
+    private final static String COUNCILMEETING_ATTENDANCE_VIEW = "councilmeeting-attendsearch-view";
     private final static String COUNCILMEETING_SEND_SMS_EMAIL = "councilmeetingsearch-tosendsms-email";
-  
+    private final static String COUNCILMEETING_EDIT_ATTENDANCE = "councilmeeting-attend-form";
+    private final static String COUNCILMEETING_ATTENDANCE_RESULT = "councilmeeting-attend-result";
 	
 	@Autowired
 	private CouncilMeetingService councilMeetingService;
@@ -140,6 +146,9 @@ public class CouncilMeetingController {
 	protected @Autowired FileStoreUtils fileStoreUtils;  
 	@Qualifier("fileStoreService")
 	private @Autowired FileStoreService fileStoreService;
+	
+	@Autowired
+	private CouncilCommitteeMemberService committeeMemberService;
 
 	public @ModelAttribute("committeeType") List<CommitteeType> getCommitteTypeList() {
 		return committeeTypeService.getActiveCommiteeType();
@@ -152,7 +161,7 @@ public class CouncilMeetingController {
 	public @ModelAttribute("departments") List<Department> getDepartmentList() {
 		return departmentService.getAllDepartments();
 	}
-
+	
 	@RequestMapping(value = "/new/{id}", method = RequestMethod.GET)
 	public String newForm(@ModelAttribute final CouncilMeeting councilMeeting, @PathVariable("id") final Long id,
 			final Model model) {
@@ -195,7 +204,7 @@ public class CouncilMeetingController {
         if (errors.hasErrors()) {
             return COUNCILMEETING_NEW;
         }
-        CouncilMeetingNumberGenerator meetingNumberGenerator = autonumberServiceBeanResolver
+        CouncilMeetingNumberGenerator meetingNumberGenerator = autonumberServiceBeanResolver	
                 .getAutoNumberServiceFor(CouncilMeetingNumberGenerator.class);
         councilMeeting.setMeetingNumber(meetingNumberGenerator.getNextNumber(councilMeeting));
 
@@ -353,13 +362,83 @@ public class CouncilMeetingController {
         model.addAttribute("mode", "view");
         return COUNCILMEETING_ATTENDANCE_SEARCH;
     }
-
+    
     @RequestMapping(value = "/attendance/search/view/{id}", method = RequestMethod.GET)
-    public String searchAttendanceResult(@PathVariable("id") final CouncilMeeting councilMeeting, Model model) {
+    public String viewAttendanceDetails(@PathVariable("id") final CouncilMeeting councilMeeting, Model model) {
         model.addAttribute("id", councilMeeting.getId());
         model.addAttribute("currDate", new Date());
-        return COUNCILMEETING_ATTENDANCE_SEARCH_RESULT;
+        return COUNCILMEETING_ATTENDANCE_VIEW;
     }
+    
+    @RequestMapping(value = "/attendance/result/{id}", method = RequestMethod.GET)
+    public String showAttendanceResult(@PathVariable("id") final CouncilMeeting councilMeeting, Model model) {
+        model.addAttribute("id", councilMeeting.getId());
+        model.addAttribute("currDate", new Date());
+        return COUNCILMEETING_ATTENDANCE_RESULT;
+    }
+    
+    
+    @RequestMapping(value = "/attendance/search/edit/{id}", method = RequestMethod.GET)
+    public String editAttendance(@PathVariable("id") final CouncilMeeting councilMeeting1, Model model) {
+    	 CouncilMeeting councilMeeting = councilMeetingService.findOne(councilMeeting1.getId());
+    
+    	 if ( councilMeeting != null && councilMeeting.getStatus() != null){
+ 			if( ATTENDANCEFINALIZED.equals(councilMeeting.getStatus().getCode())) {
+ 			model.addAttribute("message", "msg.attendance.already.finalizd");
+ 			return COMMONERRORPAGE;
+ 			}
+    	 }
+    	 
+    	 if ( councilMeeting != null && councilMeeting.getCommitteeType() != null && councilMeeting.getMeetingAttendence().isEmpty()) {
+				List<MeetingAttendence> attendencesList = new ArrayList<MeetingAttendence>();
+				for (CommitteeMembers committeeMembers : committeeMemberService
+						.findAllByCommitteType(councilMeeting.getCommitteeType())) {
+					MeetingAttendence attendence = new MeetingAttendence();
+					attendence.setCommitteeMembers(committeeMembers);
+					attendencesList.add(attendence);
+				}
+				councilMeeting1.setMeetingAttendence(attendencesList);
+			}
+         sortMeetingMomByItemNumber(councilMeeting);
+         model.addAttribute("councilMeeting", councilMeeting);
+        return COUNCILMEETING_EDIT_ATTENDANCE;
+    }
+    
+    @RequestMapping(value = "/attendance/update", method = RequestMethod.POST)
+    public String updateAttendance(@Valid @ModelAttribute final CouncilMeeting councilMeeting, final BindingResult errors,
+            final Model model, final RedirectAttributes redirectAttrs) {
+    	if (errors.hasErrors()) {
+            return "redirect:councilmeeting/attendance/search/edit/"+ councilMeeting.getId();
+        }
+    	buildAttendanceDetailsForMeeting(councilMeeting);
+        councilMeetingService.update(councilMeeting);
+        redirectAttrs.addFlashAttribute("message", messageSource.getMessage("msg.councilMeeting.attendance.success", null, null));
+        return "redirect:result/" + councilMeeting.getId();
+    }
+
+    @RequestMapping(value = "/attendance/finalizeattendance", method = RequestMethod.POST)
+    public String updateFinalizedAttendance(@Valid @ModelAttribute final CouncilMeeting councilMeeting, final BindingResult errors,
+            final Model model, final RedirectAttributes redirectAttrs) {
+        if (errors.hasErrors()) {
+        	 return "redirect:councilmeeting/attendance/search/edit/"+councilMeeting.getId();
+        }
+        buildAttendanceDetailsForMeeting(councilMeeting);
+        councilMeeting.setStatus(egwStatusHibernateDAO.getStatusByModuleAndCode(MEETING_MODULENAME, ATTENDANCEFINALIZED));
+        councilMeetingService.update(councilMeeting);
+        redirectAttrs.addFlashAttribute("message", messageSource.getMessage("msg.councilMeeting.attendance.success", null, null));
+        return "redirect:result/"+councilMeeting.getId();
+    }
+    
+    private void buildAttendanceDetailsForMeeting(final CouncilMeeting councilMeeting) {
+		for (MeetingAttendence attendence : councilMeeting
+				.getMeetingAttendence()) {
+			if (attendence.getChecked()) {
+				attendence.setAttendedMeeting(true);
+			} else {
+				attendence.setAttendedMeeting(false);
+			}
+		}
+	}
     
 	@RequestMapping(value = "/downloadfile/{id}")
 	public void download(@PathVariable("id") final Long id, final HttpServletResponse response,

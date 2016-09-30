@@ -41,6 +41,7 @@
 package org.egov.council.service;
 
 import static org.egov.council.utils.constants.CouncilConstants.ADJOURNED;
+import static org.egov.council.utils.constants.CouncilConstants.ATTENDANCEFINALIZED;
 import static org.egov.council.utils.constants.CouncilConstants.MEETINGSTATUSAPPROVED;
 import static org.egov.council.utils.constants.CouncilConstants.MEETINGUSEDINRMOM;
 import static org.egov.council.utils.constants.CouncilConstants.PREAMBLE_MODULENAME;
@@ -123,7 +124,7 @@ public class CouncilMeetingService {
     @SuppressWarnings("unchecked")
     public List<CouncilMeeting> searchMeetingToCreateMOM(CouncilMeeting councilMeeting) {
         return buildSearchCriteria(councilMeeting)
-                .add(Restrictions.in("status.code", new String[] { MEETINGSTATUSAPPROVED})).list();
+                .add(Restrictions.in("status.code", new String[] { MEETINGSTATUSAPPROVED,ATTENDANCEFINALIZED})).list();
     }
 
     @SuppressWarnings("unchecked")
@@ -133,7 +134,7 @@ public class CouncilMeetingService {
     
     @SuppressWarnings("unchecked")
     public List<CouncilMeeting> searchMeetingForEdit(CouncilMeeting councilMeeting) {
-        return buildSearchCriteria(councilMeeting).add(Restrictions.in("status.code", new String[] { MEETINGSTATUSAPPROVED})).list();
+        return buildSearchCriteria(councilMeeting).add(Restrictions.in("status.code", new String[] { MEETINGSTATUSAPPROVED,ATTENDANCEFINALIZED})).list();
     }
     
     @SuppressWarnings("unchecked")

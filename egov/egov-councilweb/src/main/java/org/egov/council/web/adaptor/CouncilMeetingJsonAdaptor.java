@@ -105,7 +105,7 @@ public class CouncilMeetingJsonAdaptor implements JsonSerializer<CouncilMeeting>
                         jsonObject.addProperty("department", StringUtils.EMPTY);
                 }*/
             if (councilMeeting.getMeetingAttendence() != null)
-                jsonObject.addProperty("totCommitteMemCount", councilMeeting.getMeetingAttendence().size());
+                jsonObject.addProperty("totCommitteMemCount", councilMeeting.getCommitteeType().getCommiteemembers().size());
             else
                 jsonObject.addProperty("totCommitteMemCount", StringUtils.EMPTY);
             if(councilMeeting.getMeetingAttendence() != null){

@@ -69,9 +69,15 @@ public class CouncilConstants {
     public final static String APPROVED ="APPROVED";
     public final static String REJECTED ="REJECTED";
     public final static String ADJOURNED ="ADJOURNED";
+    public final static String ATTENDANCEFINALIZED ="ATTENDANCE FINALIZED";
     
     public static final LinkedHashMap<String, String> MEETING_TIMINGS = new LinkedHashMap<String, String>() {
-        {
+        /**
+		 * 
+		 */
+		private static final long serialVersionUID = 1L;
+
+		{
             put("9.00 AM", "9.00 AM");
             put("9.30 AM", "9.30 AM");
             put("10.00 AM", "10.00 AM");

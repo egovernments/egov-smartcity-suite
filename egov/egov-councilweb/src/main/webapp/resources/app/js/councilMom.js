@@ -1,12 +1,48 @@
+/*
+ * eGov suite of products aim to improve the internal efficiency,transparency,
+ *    accountability and the service delivery of the government  organizations.
+ *
+ *     Copyright (C) <2016>  eGovernments Foundation
+ *
+ *     The updated version of eGov suite of products as by eGovernments Foundation
+ *     is available at http://www.egovernments.org
+ *
+ *     This program is free software: you can redistribute it and/or modify
+ *     it under the terms of the GNU General Public License as published by
+ *     the Free Software Foundation, either version 3 of the License, or
+ *     any later version.
+ *
+ *     This program is distributed in the hope that it will be useful,
+ *     but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *     GNU General Public License for more details.
+ *
+ *     You should have received a copy of the GNU General Public License
+ *     along with this program. If not, see http://www.gnu.org/licenses/ or
+ *     http://www.gnu.org/licenses/gpl.html .
+ *
+ *     In addition to the terms of the GPL license to be adhered to in using this
+ *     program, the following additional terms are to be complied with:
+ *
+ *         1) All versions of this program, verbatim or modified must carry this
+ *            Legal Notice.
+ *
+ *         2) Any misrepresentation of the origin of the material is prohibited. It
+ *            is required that all modified versions of this material be marked in
+ *            reasonable ways as different from the original version.
+ *
+ *         3) This license does not grant any rights to any user of the program
+ *            with regards to rights under trademark law for use of the trade names
+ *            or trademarks of eGovernments Foundation.
+ *
+ *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
+ */
+
 jQuery('#btnsearch').click(function(e) {
 		
 		callAjaxSearch();
 	});
 
-/*jQuery('#add-sumoto').click(function(e) {
-	
-	loadDepartmentlist();
-});*/
 
 $('form').keypress(function (e) {
     if (e.which == 13) {
@@ -72,45 +108,9 @@ function callAjaxSearch() {
 
 $("#resultTable").on('click','tbody tr td  .view',function(event) {
 	var id = reportdatatable.fnGetData($(this).parent().parent(),6);
-	//window.open('/council/agenda/'+ $('#mode').val() +'/'+id,'','width=800, height=600,scrollbars=yes');
-	//window.open('/council/councilmeeting/'+ $('#mode').val() +'/'+id,'','width=800, height=600,scrollbars=yes');
 	window.open('/council/councilmom/new' + '/'+id,'','width=800, height=600,scrollbars=yes');
 });
 
-
-$(document).ready(function() {
-	
-	jQuery( ".dateval" ).datepicker({ 
-   	 format: 'dd/mm/yyyy',
-   	 autoclose:true,
-        onRender: function(date) {
-     	    return date.valueOf() < now.valueOf() ? 'disabled' : '';
-     	  }
-	  }).on('changeDate', function(ev) {
-		  var electiondate = jQuery('#electionDate').val();
-		  var oathdate = jQuery('#oathDate').val();
-		  if(electiondate && oathdate){
-			  DateValidation1(electiondate , oathdate);
-		  }
-		 
-	  }).data('datepicker');
-	
-	function DateValidation1(start , end){
-	    if (start != "" && end != "") {
-			var stsplit = start.split("/");
-			var ensplit = end.split("/");
-			
-			start = stsplit[1] + "/" + stsplit[0] + "/" + stsplit[2];
-			end = ensplit[1] + "/" + ensplit[0] + "/" + ensplit[2];
-			
-			return ValidRange(start, end);
-		}else{
-			return true;
-		}
-	}
-
-	
-});
 
 
 String.prototype.compose = (function (){
@@ -126,16 +126,13 @@ var tbody = $('#sumotoTable').children('tbody');
 var table = tbody.length ? tbody : $('#sumotoTable');
 
 var row = '<tr>'+
-/* '<td><span class="sno">{{sno}}</span></td>'+ '<td><input type="text" class="form-control" data-unique name="meetingMOMs[{{idx}}].preamble.preambleNumber" {{readonly}} value="{{pnoTextBoxValue}}"/></td>'+*/
- 
  '<td><select name="meetingMOMs[{{idx}}].preamble.department" class="form-control" required="required"> <option value="">Loading...</option></select></td>'+
- /*'<td><select multiple="multiple" name="meetingMOMs[{{idx}}].preamble.wardNumber" class="form-control"> <option value="">Loading...</option></select></td>'+*/
  '<td><div class="input-group"><textarea class="form-control textarea-content" required="required" name="meetingMOMs[{{idx}}].preamble.gistOfPreamble"  value="{{gistTextBoxValue}}" /><span class="input-group-addon" id="showModal" data-header="Sumoto Resolution - GIST of Sumoto Resolution"><span class="glyphicon glyphicon-pencil" style="cursor:pointer"></span></span></div></td>'+
  '<td><input type="text" class="form-control" name="meetingMOMs[{{idx}}].preamble.sanctionAmount" {{readonly}} data-pattern="number" value="{{amountTextBoxValue}}"/></td>'+
  '<td><div class="input-group"><textarea class="form-control textarea-content" required="required" name="meetingMOMs[{{idx}}].resolutionDetail"  value="{{amountTextBoxValue}}" /><span class="input-group-addon" id="showModal" data-header="Sumoto Resolution - Resolution comments"><span class="glyphicon glyphicon-pencil" style="cursor:pointer"></span></span></div></td>'+
  '<td><select name="meetingMOMs[{{idx}}].resolutionStatus" class="form-control" required="required"><option value="">Loading...</option></select></td>'+
- /*'<td><input type="hidden" class="form-control" name="meetingMOMs[{{idx}}].preamble.id" {{readonly}} value="{{departmentId}}"/>'+*/
 '</tr>';
+
 jQuery('#add-sumoto').click(function(){
 	$('.agenda-section').show();
 	
@@ -153,7 +150,6 @@ jQuery('#add-sumoto').click(function(){
 	loadDepartmentlist("meetingMOMs["+idx+"].preamble.department");
 	loadResolutionlist("meetingMOMs["+idx+"].resolutionStatus");
 	loadWardnumberlist("meetingMOMs["+idx+"].preamble.wardNumber");
-	///meetingMOMs[idx].resolutionStatus
 });
 
 //ajax call 
@@ -235,52 +231,9 @@ function addRowFromObject(rowJsonObj)
 }
 
 
-/*function getFormData($form){
-    var unindexed_array = $form.serializeArray();
-    var indexed_array = {};
-
-    $.map(unindexed_array, function(n, i){
-        indexed_array[n['name']] = n['value'];
-    });
-
-    return indexed_array;
-}*/
-
-$("#committeechk").change(function(){  
-	if($(this).is(':checked')){
-		$('#councilcommittee')
-        .find('> tbody > tr > td:first-child > input[type="checkbox"]')
-        .prop('checked', true);
-		setHiddenValue(true);
-	}else{
-		$('#councilcommittee')
-        .find('> tbody > tr > td:first-child > input[type="checkbox"]')
-        .prop('checked', false);
-		setHiddenValue(false);
-	}
-});
-
-function setHiddenValue(flag)
-{
-	
-	$('.councilcommitmem').each(function(){
-		$hiddenName=$(this).data('change-to');
-		$('input[name="'+$hiddenName+'"]').val(flag);
-	});
-	
-}
 
 $(document).ready(function() {
-    $(".councilcommitmem").change(function(){  
-    	$hiddenName=$(this).data('change-to');
-    	console.log( $hiddenName );
-    	if($(this).is(':checked')){
-    		$('input[name="'+$hiddenName+'"]').val(true);
-    	}else{
-    		$('input[name="'+$hiddenName+'"]').val(false);
-    	}
-    });
-    
+	    
     var table_rowindex = 0;
     var tablecolumn_index = 0;
     var tableheaderid ='';
@@ -312,16 +265,10 @@ $(document).ready(function() {
 
 });
 
-
 $('#buttonFinalSubmit')
 .click(
 		function(e) {
 					if ($('form').valid()) {
-						
-						var chkbxLength = $('.councilcommitmem:checked').length;
-						if(chkbxLength <= 0){
-							bootbox.alert('Please enter attendance details');
-						}else{
 							bootbox
 							.confirm({
 								message : 'Information entered in this screen will not be modified once submitted,Please confirm yes to save',
@@ -340,34 +287,16 @@ $('#buttonFinalSubmit')
 										 var action = '/council/councilmom/generateresolution';
 								 			$('#councilMomform').attr('method', 'get');
 								 			$('#councilMomform').attr('action', action); 
-								 			//$('#councilMomform').submit();
-										document.forms["councilMomform"].submit();
+								 			document.forms["councilMomform"].submit();
 									} else {
+										e.stopPropagation();
 										e.preventDefault();
 									}
 								}
 							});
-						}
 			} else {
+				e.stopPropagation();
 				e.preventDefault();
 			}
 });
 
-
-/*$(document).ready(function() {
-    $("#councilMomform").validate({
-        rules: {
-        	resolutionStatus: "required"
-        },
-        messages: {
-        	resolutionStatus: "Please select the status"
-        },
-        rules: {
-        	resolutionDetail: "required"
-        },
-        messages: {
-        	resolutionDetail: "Please fill the resolution details"
-        }
-    })
-});
-*/

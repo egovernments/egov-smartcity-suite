@@ -39,6 +39,7 @@
  */
 package org.egov.council.web.controller;
 
+import static org.egov.council.utils.constants.CouncilConstants.APPROVED;
 import static org.egov.council.utils.constants.CouncilConstants.COUNCIL_RESOLUTION;
 import static org.egov.council.utils.constants.CouncilConstants.MEETINGRESOLUTIONFILENAME;
 import static org.egov.council.utils.constants.CouncilConstants.MEETINGUSEDINRMOM;
@@ -57,7 +58,6 @@ import static org.egov.infra.web.utils.WebUtils.toJSON;
 
 import java.io.ByteArrayInputStream;
 import java.lang.reflect.Type;
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.LinkedHashMap;
@@ -69,13 +69,10 @@ import javax.validation.Valid;
 import org.egov.commons.EgwStatus;
 import org.egov.commons.dao.EgwStatusHibernateDAO;
 import org.egov.council.autonumber.MOMResolutionNumberGenerator;
-import org.egov.council.entity.CommitteeMembers;
 import org.egov.council.entity.CommitteeType;
 import org.egov.council.entity.CouncilMeeting;
-import org.egov.council.entity.MeetingAttendence;
 import org.egov.council.entity.MeetingMOM;
 import org.egov.council.service.CommitteeTypeService;
-import org.egov.council.service.CouncilCommitteeMemberService;
 import org.egov.council.service.CouncilMeetingService;
 import org.egov.council.service.CouncilPreambleService;
 import org.egov.council.service.CouncilReportService;
@@ -141,9 +138,6 @@ public class CouncilMomController {
 	private AutonumberServiceBeanResolver autonumberServiceBeanResolver;
 
 	@Autowired
-	private CouncilCommitteeMemberService committeeMemberService;
-
-	@Autowired
 	private CouncilPreambleService councilPreambleService;
 	
 	@Autowired  private CouncilReportService councilReportService;
@@ -166,27 +160,25 @@ public class CouncilMomController {
 	@RequestMapping(value = "/new/{id}", method = RequestMethod.GET)
 	public String newForm(@PathVariable("id") final Long id, Model model) {
 		CouncilMeeting councilMeeting = councilMeetingService.findOne(id);
-		
-		if(null!=councilMeeting && null!=councilMeeting.getStatus() && MOM_FINALISED.equals(councilMeeting.getStatus().getCode())){
-                    model.addAttribute("message", "msg.mom.alreadyfinalized");
-                return COMMONERRORPAGE;
-                }
-		if (councilMeeting.getCommitteeType() != null
-				&& councilMeeting.getMeetingAttendence().isEmpty()) {
-			List<MeetingAttendence> attendencesList = new ArrayList<MeetingAttendence>();
-			for (CommitteeMembers committeeMembers : committeeMemberService
-					.findAllByCommitteType(councilMeeting.getCommitteeType())) {
-				MeetingAttendence attendence = new MeetingAttendence();
-				attendence.setCommitteeMembers(committeeMembers);
-				attendencesList.add(attendence);
+
+		if (null != councilMeeting && null != councilMeeting.getStatus()) {
+			if (APPROVED.equals(councilMeeting.getStatus().getCode())) {
+				model.addAttribute("message", "msg.attendance.not.finalizd");
+				return COMMONERRORPAGE;
+			} 
+			if (MOM_FINALISED.equals(councilMeeting.getStatus().getCode())) {
+				model.addAttribute("message", "msg.mom.alreadyfinalized");
+				return COMMONERRORPAGE;
 			}
-			councilMeeting.setMeetingAttendence(attendencesList);
+
 		}
 		sortMeetingMomByItemNumber(councilMeeting);
 		model.addAttribute("councilMeeting", councilMeeting);
 
 		return COUNCILMOM_NEW;
 	}
+		
+	
 	 private void sortMeetingMomByItemNumber(CouncilMeeting councilMeeting) {
 	        Collections.sort(councilMeeting.getMeetingMOMs(), new Comparator<MeetingMOM>() {
 	                @Override
@@ -213,14 +205,6 @@ public class CouncilMomController {
 										preambleApprovedStatus));
 				meetingMOM.setMeeting(councilMeeting);
 				meetingMOM.setItemNumber(itemNumber.toString());itemNumber++;
-			}
-		}
-		for (MeetingAttendence attendence : councilMeeting
-				.getMeetingAttendence()) {
-			if (attendence.getChecked()) {
-				attendence.setAttendedMeeting(true);
-			} else {
-				attendence.setAttendedMeeting(false);
 			}
 		}
 		councilMeeting
@@ -345,14 +329,7 @@ public class CouncilMomController {
 				meetingMOM.setMeeting(councilMeeting);
 			}
 		}
-		for (MeetingAttendence attendence : councilMeeting
-				.getMeetingAttendence()) {
-			if (attendence.getChecked()) {
-				attendence.setAttendedMeeting(true);
-			} else {
-				attendence.setAttendedMeeting(false);
-			}
-		}
+		
 		for (MeetingMOM meetingMOM : councilMeeting.getMeetingMOMs()) {
 			// if mom status is approved, generate resolution number 
 			if (meetingMOM.getResolutionStatus().getCode().equals(resoulutionApprovedStatus.getCode())) {

@@ -2,7 +2,7 @@
   ~ eGov suite of products aim to improve the internal efficiency,transparency,
   ~    accountability and the service delivery of the government  organizations.
   ~
-  ~     Copyright (C) <2016>  eGovernments Foundation
+  ~     Copyright (C) <2015>  eGovernments Foundation
   ~
   ~     The updated version of eGov suite of products as by eGovernments Foundation
   ~     is available at http://www.egovernments.org
@@ -41,53 +41,6 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 <%@ taglib uri="http://www.springframework.org/tags" prefix="spring"%>
 <%@ taglib uri="http://www.springframework.org/tags/form" prefix="form"%>
-<%@ taglib uri="/WEB-INF/taglib/cdn.tld" prefix="cdn" %>
-<form:form role="form" action="../update"
-	modelAttribute="councilMeeting" id="councilMomform"
-	cssClass="form-horizontal form-groups-bordered"
-	enctype="multipart/form-data">
-	<div class="panel-heading">
-		<ul class="nav nav-tabs" id="settingstab">
-			<li class="active"><a data-toggle="tab" href="#councilmom"
-				data-tabidx=0><spring:message code="tab.council.mom" /></a></li>
-			<li><a data-toggle="tab" href="#councilattendance" data-tabidx=1><spring:message
-						code="tab.council.attendance" /></a></li>
-		</ul>
-	</div>
-	<div class="panel-body custom-form">
-		<div class="tab-content">
-			<div class="tab-pane fade in active" id="councilmom">
-				<%@ include file="councilmom-form.jsp"%>
-				<div class="form-group">
-					<div class="text-center">
-						<button type='button' class='btn btn-primary' id="buttonSubmit">
-							<spring:message code='lbl.update' />
-						</button>
-						<button type="button" id="add-sumoto" class='btn btn-primary'><spring:message code='lbl.AddSumoto'/></button>
-						<button type="button" id="buttonFinalSubmit" class='btn btn-primary'><spring:message code='lbl.resolutionpdf'/></button>
-						<a href='javascript:void(0)' class='btn btn-default'
-							onclick='self.close()'><spring:message code='lbl.close' /></a>
-					</div>
-				</div>
-			</div>
-			<div id="councilattendance" class="tab-pane fade">
-				<%@ include file="councilmeeting-attendsearch-view.jsp"%>
-			</div>
-		</div>
-	</div>
-
-</form:form>
-
-<script
-	src="<cdn:url value='/resources/global/js/bootstrap/bootstrap-datepicker.js' context='/egi'/>"></script>
-<script
-	src="<cdn:url value='/resources/app/js/councilMomHelper.js?rnd=${app_release_no}'/>"></script>
-<link rel="stylesheet"
-	href="<cdn:url value='/resources/global/css/bootstrap/bootstrap-datepicker.css' context='/egi'/>">
-<script type="text/javascript"
-	src="<cdn:url value='/resources/app/js/councilMom.js?rnd=${app_release_no}'/>"></script>
-<script>
-	$('#buttonSubmit').click(function(e) {
-		document.forms["councilMomform"].submit();
-	});
-</script>
+<div class="alert alert-success" role="alert">
+	<strong>${message}</strong>
+</div><%@ include file="councilmeeting-attendsearch-view.jsp"%>
