@@ -1281,7 +1281,7 @@ public class RevisionPetitionAction extends PropertyTaxBaseAction {
         if (revPetition.getState() == null) {
             // Get the default revenue cleark from admin boundary.
             if (position == null && (approverPositionId == null || approverPositionId != -1)) {
-                final Assignment assignment = propService.getUserPositionByZone(objection.getBasicProperty(),objection.getBasicProperty().getSource());
+                final Assignment assignment = propService.getUserPositionByZone(objection.getBasicProperty(), false);
                 if (assignment != null)
                     position = assignment.getPosition();
             }

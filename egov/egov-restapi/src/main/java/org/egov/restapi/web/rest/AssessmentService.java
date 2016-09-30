@@ -690,7 +690,7 @@ public class AssessmentService {
     public String getWardWisePropertyDetails(@RequestBody String assessmentRequest) throws JsonParseException, JsonMappingException, IOException {
     	AssessmentRequest assessmentReq = (AssessmentRequest) getObjectFromJSONRequest(assessmentRequest,
                 AssessmentRequest.class);
-    	List<ViewPropertyDetails> propertyDetails = propertyExternalService.getPropertyDetails(assessmentReq.getUlbCode(), assessmentReq.getWardNum());
+    	List<ViewPropertyDetails> propertyDetails = propertyExternalService.getPropertyDetailsForTheWard(assessmentReq.getUlbCode(), assessmentReq.getWardNum());
     	return getJSONResponse(propertyDetails);
     }
     /**

@@ -138,7 +138,6 @@ function loadPropertyDetails() {
 			dataType: "json",
 			success: function (response) { 
 				var waterTaxDue = getWaterTaxDue(propertyID);
-				//console.log(waterTaxDue['CURRENTWATERCHARGE']);  
 				if(response.errorDetails.errorCode != null && response.errorDetails.errorCode != '') {
 					if($('#legacy'))
 					{
@@ -152,13 +151,13 @@ function loadPropertyDetails() {
 					else
 						subErrorMessage=" apply for change in closets.";
 					if(allowIfPTDueExists=='false' &&response.propertyDetails.taxDue > 0) {
-						resetPropertyDetails();						
 						errorMessage = "For entered Property tax Assessment number "+propertyID+" demand is due Rs."+ response.propertyDetails.taxDue+"/-. Please clear demand and"+subErrorMessage;
 					}
 					if(waterTaxDue['WATERTAXDUE'] > 0) {
 						errorMessage += "For entered Property tax Assessment number "+propertyID+" linked water tap connection demand with Consumer code:"+waterTaxDue['CONSUMERCODE'][0]+" is due Rs."+ waterTaxDue['WATERTAXDUE']+"/- . Please clear demand and"+subErrorMessage;
 					}
 					if((allowIfPTDueExists=='false' && response.propertyDetails.taxDue > 0) || waterTaxDue['WATERTAXDUE'] > 0) {
+						resetPropertyDetails();	
 						bootbox.alert(errorMessage);
 					}
 					else {					
@@ -219,7 +218,7 @@ function resetPropertyDetails() {
 	$('#propertyaddress').val('');
 	$('#locality').val('');
 	$('#zonewardblock').val('');
-	$('#nooffloors').val('');
+	$('#nooffloors').val(''); 
 	$('#propertytax').val('0.00');
 	$('#watercharges').val('0.00');
 

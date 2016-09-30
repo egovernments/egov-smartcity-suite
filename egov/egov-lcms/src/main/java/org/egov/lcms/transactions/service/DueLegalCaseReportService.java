@@ -66,8 +66,14 @@ public class DueLegalCaseReportService {
 	@SuppressWarnings("unchecked")
 	public List<DueReportResult> getLegalCaseReport(final DueReportResult dueReportResult, String reportType) {
 		final StringBuilder queryStr = new StringBuilder();
-		queryStr.append("select distinct legalObj  as  legalCase ,courtmaster.name  as  courtName ,");
+		queryStr.append("select  legalObj  as  legalCase ,courtmaster.name  as  courtName ,");
 		queryStr.append(" legalObj.status.code  as  caseStatus ");
+		if (reportType.equals(LcmsConstants.DUEEMPLOYEEHEARINGREPORT)) {
+			queryStr.append(" ,empHearing.hearingDate  as  hearingDate ");
+		}
+		if (reportType.equals(LcmsConstants.DUEJUDGEMENTIMPLPREPORT)) {
+			queryStr.append(" ,judgementImpl.dateOfCompliance as judgementImplDate ");
+		}
 		queryStr.append(" from LegalCase legalObj,CourtMaster courtmaster,CaseTypeMaster casetypemaster,");
 		queryStr.append(" PetitionTypeMaster petmaster");
 		if (reportType.equals(LcmsConstants.DUEEMPLOYEEHEARINGREPORT) || reportType.equals(LcmsConstants.DUEJUDGEMENTIMPLPREPORT)) {
@@ -102,18 +108,18 @@ public class DueLegalCaseReportService {
 		}
 		if (reportType.equals(LcmsConstants.DUEEMPLOYEEHEARINGREPORT)) {
 			queryStr.append(" and empHearing.legalCase.id=legalObj.id  ");
-			/*if (dueReportResult.getCaseFromDate() != null)
+			if (dueReportResult.getCaseFromDate() != null)
 				queryStr.append(" and empHearing.hearingDate >=:fromdate ");
 			if (dueReportResult.getCaseToDate() != null)
-				queryStr.append(" and empHearing.hearingDate <=:toDate ");*/
+				queryStr.append(" and empHearing.hearingDate <=:toDate ");
 		}
 		if (reportType.equals(LcmsConstants.DUEJUDGEMENTIMPLPREPORT)) {
 			queryStr.append(" and judgement.legalCase.id=legalObj.id  ");
 			queryStr.append(" and judgement.id=judgementImpl.judgment.id  ");
-		/*	if (dueReportResult.getCaseFromDate() != null)
+			if (dueReportResult.getCaseFromDate() != null)
 				queryStr.append(" and judgementImpl.dateOfCompliance >=:fromdate ");
 			if (dueReportResult.getCaseToDate() != null)
-				queryStr.append(" and judgementImpl.dateOfCompliance <=:toDate ");*/
+				queryStr.append(" and judgementImpl.dateOfCompliance <=:toDate ");
 
 		}
 		
@@ -122,7 +128,9 @@ public class DueLegalCaseReportService {
 			queryStr.append(" and legalObj.officerIncharge =:officerIncharge ");
 		}
 		
+		if(!(reportType.equals(LcmsConstants.DUEEMPLOYEEHEARINGREPORT) ||reportType.equals(LcmsConstants.DUEJUDGEMENTIMPLPREPORT))){
 		getAppendQuery(dueReportResult, queryStr);
+		}
 		
 		Query queryResult = getCurrentSession().createQuery(queryStr.toString());
 		queryResult = setParametersToQuery(dueReportResult, queryResult, reportType);

@@ -64,14 +64,16 @@
 									</div>
 									<div class="col-sm-3 add-margin view-content">
 										${judgmentImpl.judgmentImplIsComplied}</div>
-									<div class="col-xs-3 add-margin">
-										<spring:message code="lbl.dateofcompliance" />
-									</div>
-									<div class="col-sm-3 add-margin view-content">
-										<fmt:formatDate pattern="MM/dd/yyyyy"
-											value="${judgmentImpl.dateOfCompliance}" var="datecomp" />
-										<c:out value="${datecomp}" />
-									</div>
+									<c:choose>
+										<c:when test="${judgmentImpl.judgmentImplIsComplied == 'YES'}">
+											<div class="col-xs-3 add-margin">
+												<spring:message code="lbl.dateofcompliance" />
+											</div>
+											<div class="col-sm-3 add-margin view-content">
+												<fmt:formatDate pattern="MM/dd/yyyyy"
+													value="${judgmentImpl.dateOfCompliance}" var="datecomp" />
+												<c:out value="${datecomp}" />
+											</div>
 								</div>
 								<div class="row add-border">
 									<div class="col-xs-3 add-margin">
@@ -79,92 +81,125 @@
 									</div>
 									<div class="col-sm-3 add-margin view-content">
 										${judgmentImpl.complianceReport}</div>
-									<div class="col-xs-3 add-margin">
-										<spring:message code="lbl.reason" />
-									</div>
-									<div class="col-sm-3 add-margin view-content">
-										${judgmentImpl.implementationFailure}</div>
 								</div>
-								<div class="row add-border">
-								<div class="col-xs-3 add-margin">
-										<spring:message code="lbl.details" />
-									</div>
-									<div class="col-sm-3 add-margin view-content">
-										${judgmentImpl.details}</div>
+								</c:when>
+								</c:choose>
+								<c:choose>
+									<c:when test="${judgmentImpl.judgmentImplIsComplied =='NO'}">
+										<div class="row add-border">
+											<div class="col-xs-3 add-margin">
+												<spring:message code="lbl.reason" />
+											</div>
+											<div class="col-sm-3 add-margin view-content">
+												${judgmentImpl.implementationFailure}</div>
 										</div>
-										
-										<div class="row add-border">
-									<div class="col-xs-3 add-margin">
-										<spring:message code="lbl.srnumber" />
-									</div>
-									<div class="col-sm-3 add-margin view-content">
-										${judgmentImpl.appeal[0].srNumber}</div>
-									<div class="col-xs-3 add-margin">
-										<spring:message code="lbl.appealfieldon" />
-									</div>
-									<div class="col-sm-3 add-margin view-content">
-										<fmt:formatDate pattern="MM/dd/yyyyy"
-											value="${judgmentImpl.appeal[0].appealFiledOn}" var="datecomp" />
-										<c:out value="${datecomp}" />
-									</div>
-								</div>
-								
-									<div class="row add-border">
-									<div class="col-xs-3 add-margin">
-										<spring:message code="lbl.appealfieldby" />
-									</div>
-									<div class="col-sm-3 add-margin view-content">
-										${judgmentImpl.appeal[0].appealFiledBy}</div>
-									
-								</div>
-								
-										<div class="row add-border">
-									<div class="col-xs-3 add-margin">
-										<spring:message code="lbl.canumber" />
-									</div>
-									<div class="col-sm-3 add-margin view-content">
-										${judgmentImpl.contempt[0].caNumber}</div>
-									<div class="col-xs-3 add-margin">
-										<spring:message code="lbl.receiveddate" />
-									</div>
-									<div class="col-sm-3 add-margin view-content">
-										<fmt:formatDate pattern="MM/dd/yyyyy"
-											value="${judgmentImpl.contempt[0].receivingDate}" var="datecomp" />
-										<c:out value="${datecomp}" />
-									</div>
-								</div>
-									<div class="row add-border">
-									<div class="col-xs-3 add-margin">
-										<spring:message code="lbl.appearancecomm" />
-									</div>
-									<div class="col-sm-3 add-margin view-content">
-										${judgmentImpl.contempt[0].iscommapprRequired}</div>
-									<div class="col-xs-3 add-margin">
-										<spring:message code="lbl.dateofapp" />
-									</div>
-									<div class="col-sm-3 add-margin view-content">
-										<fmt:formatDate pattern="MM/dd/yyyyy"
-											value="${judgmentImpl.contempt[0].commappDate}" var="datecomp" />
-										<c:out value="${datecomp}" />
-									</div>
-								</div>
-								
+
+
+										<c:choose>
+											<c:when
+												test="${judgmentImpl.implementationFailure =='Appeal'}">
+												<div class="row add-border">
+													<div class="col-xs-3 add-margin">
+														<spring:message code="lbl.srnumber" />
+													</div>
+													<div class="col-sm-3 add-margin view-content">
+														${judgmentImpl.appeal[0].srNumber}</div>
+													<div class="col-xs-3 add-margin">
+														<spring:message code="lbl.appealfieldon" />
+													</div>
+													<div class="col-sm-3 add-margin view-content">
+														<fmt:formatDate pattern="MM/dd/yyyyy"
+															value="${judgmentImpl.appeal[0].appealFiledOn}"
+															var="datecomp" />
+														<c:out value="${datecomp}" />
+													</div>
+												</div>
+
+												<div class="row add-border">
+													<div class="col-xs-3 add-margin">
+														<spring:message code="lbl.appealfieldby" />
+													</div>
+													<div class="col-sm-3 add-margin view-content">
+														${judgmentImpl.appeal[0].appealFiledBy}</div>
+
+												</div>
 							</div>
+							</c:when>
+							</c:choose>
+
+
+							<c:choose>
+								<c:when
+									test="${judgmentImpl.implementationFailure =='Contempt'}">
+
+									<div class="row add-border">
+										<div class="col-xs-3 add-margin">
+											<spring:message code="lbl.canumber" />
+										</div>
+										<div class="col-sm-3 add-margin view-content">
+											${judgmentImpl.contempt[0].caNumber}</div>
+										<div class="col-xs-3 add-margin">
+											<spring:message code="lbl.receiveddate" />
+										</div>
+										<div class="col-sm-3 add-margin view-content">
+											<fmt:formatDate pattern="MM/dd/yyyyy"
+												value="${judgmentImpl.contempt[0].receivingDate}"
+												var="datecomp" />
+											<c:out value="${datecomp}" />
+										</div>
+									</div>
+									<div class="row add-border">
+										<div class="col-xs-3 add-margin">
+											<spring:message code="lbl.appearancecomm" />
+										</div>
+										<div class="col-sm-3 add-margin view-content">
+											${judgmentImpl.contempt[0].iscommapprRequired}</div>
+										<div class="col-xs-3 add-margin">
+											<spring:message code="lbl.dateofapp" />
+										</div>
+										<div class="col-sm-3 add-margin view-content">
+											<fmt:formatDate pattern="MM/dd/yyyyy"
+												value="${judgmentImpl.contempt[0].commappDate}"
+												var="datecomp" />
+											<c:out value="${datecomp}" />
+										</div>
+									</div>
+								</c:when>
+							</c:choose>
+							</c:when>
+							</c:choose>
+							<c:choose>
+								<c:when
+									test="${judgmentImpl.judgmentImplIsComplied == 'INPROGRESS'}">
+									<div class="row add-border">
+										<div class="col-xs-3 add-margin">
+											<spring:message code="lbl.details" />
+										</div>
+										<div class="col-sm-3 add-margin view-content">
+											${judgmentImpl.details}</div>
+									</div>
+								</c:when>
+							</c:choose>
+
+
 						</div>
 					</div>
 				</div>
 			</div>
-				<jsp:include page="appealdocuments-view.jsp"></jsp:include>
-		<input type="hidden" name="appealDocList" value="${appealDocList}" />
-			
-				<div class="form-group text-center" >
-			<a onclick="self.close()" class="btn btn-default" href="javascript:void(0)"><spring:message code="lbl.close"/></a>
-	
-					<!-- <a href="javascript:void(0)" class="btn btn-default"
-						onclick="self.close()">Close</a> -->
-					<%-- 	<form:button type='button' class='btn btn-default' ><spring:message code='lbl.close' /></form:button> --%>
-				
-			</div>
 		</div>
+		<c:choose>
+			<c:when
+				test="${judgmentImpl.judgmentImplIsComplied == 'NO' && judgmentImpl.implementationFailure == 'Appeal'}">
+				<jsp:include page="appealdocuments-view.jsp"></jsp:include>
+				<input type="hidden" name="supportDocs" value="${supportDocs}" />
+			</c:when>
+		</c:choose>
+
+		<div class="form-group text-center">
+			<a onclick="self.close()" class="btn btn-default"
+				href="javascript:void(0)"><spring:message code="lbl.close" /></a>
+
+		</div>
+	</div>
 	</div>
 </form:form>

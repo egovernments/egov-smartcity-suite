@@ -37,39 +37,55 @@
  *
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
-$(document).ready(function(){
+package org.egov.wtms.application.rest;
 
-	
-	
-	$("#resetid").click(function(){
-		$("#usageTypeMasterform")[0].reset();
-		window.open("/wtms/masters/usageTypeMaster/", "_self");
-		})
-	$( "#code" ).focusout(function() {
-	    textValue =  $.trim($(this).val());
-	    if(textValue ==''){
-	       $.trim($(this).val('')); //to set it blank
-	    } else {
-	       return true;
-	    }
-	});
-	$( "#caseType" ).focusout(function() {
-	    textValue =  $.trim($(this).val());
-	    if(textValue ==''){
-	       $.trim($(this).val('')); //to set it blank
-	    } else {
-	       return true;
-	    }
-	});
-	
- });
+import java.math.BigDecimal;
 
-$('#addnewid').click(function() {
-	window.open("/wtms/masters/usageTypeMaster/", "_self");
-});
+public class WaterChargesDetails {
+    private String propertyID;
+    private BigDecimal totalTaxDue;
+    private String consumerCode;
+    private String connectionType;
+    private String connectionStatus;
 
-function edit(usageType)
-{
-      window.open("/wtms/masters/usageTypeMaster/edit/"+usageType, "_self");
-       
+    public String getConnectionStatus() {
+        return connectionStatus;
+    }
+
+    public void setConnectionStatus(final String connectionStatus) {
+        this.connectionStatus = connectionStatus;
+    }
+
+    public String getPropertyID() {
+        return org.apache.commons.lang.StringUtils.defaultIfEmpty(propertyID, "");
+    }
+
+    public void setPropertyID(final String propertyID) {
+        this.propertyID = propertyID;
+    }
+
+    public BigDecimal getTotalTaxDue() {
+        return totalTaxDue;
+    }
+
+    public void setTotalTaxDue(final BigDecimal totalTaxDue) {
+        this.totalTaxDue = totalTaxDue;
+    }
+
+    public String getConsumerCode() {
+        return consumerCode;
+    }
+
+    public void setConsumerCode(final String consumerCode) {
+        this.consumerCode = consumerCode;
+    }
+
+    public String getConnectionType() {
+        return connectionType;
+    }
+
+    public void setConnectionType(final String connectionType) {
+        this.connectionType = connectionType;
+    }
+
 }

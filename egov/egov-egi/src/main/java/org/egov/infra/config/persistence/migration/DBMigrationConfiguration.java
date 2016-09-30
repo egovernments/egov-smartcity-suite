@@ -76,19 +76,21 @@ public class DBMigrationConfiguration {
     @Bean
     @DependsOn("dataSource")
     public Flyway flyway(DataSource dataSource, @Qualifier("cities") List<String> cities) {
-        boolean devMode = applicationProperties.devMode();
-        cities.parallelStream().forEach(schema -> {
-            if (devMode)
-                migrateDatabase(schema, dataSource, MAIN_MIGRATION_FILE_PATH, SAMPLE_MIGRATION_FILE_PATH);
-            else
-                migrateDatabase(schema, dataSource, MAIN_MIGRATION_FILE_PATH, format(TENANT_MIGRATION_FILE_PATH, schema));
-        });
+        if (applicationProperties.isMasterServer()) {
+            boolean devMode = applicationProperties.devMode();
+            cities.parallelStream().forEach(schema -> {
+                if (devMode)
+                    migrateDatabase(schema, dataSource, MAIN_MIGRATION_FILE_PATH, SAMPLE_MIGRATION_FILE_PATH);
+                else
+                    migrateDatabase(schema, dataSource, MAIN_MIGRATION_FILE_PATH, format(TENANT_MIGRATION_FILE_PATH, schema));
+            });
 
-        if (applicationProperties.statewideMigrationRequired() && !devMode)
-            migrateDatabase(PUBLIC_SCHEMA, dataSource, MAIN_MIGRATION_FILE_PATH, STATEWIDE_MIGRATION_FILE_PATH,
-                    format(TENANT_MIGRATION_FILE_PATH, PUBLIC_SCHEMA));
-        else if (!devMode)
-            migrateDatabase(PUBLIC_SCHEMA, dataSource, MAIN_MIGRATION_FILE_PATH, format(TENANT_MIGRATION_FILE_PATH, PUBLIC_SCHEMA));
+            if (applicationProperties.statewideMigrationRequired() && !devMode)
+                migrateDatabase(PUBLIC_SCHEMA, dataSource, MAIN_MIGRATION_FILE_PATH, STATEWIDE_MIGRATION_FILE_PATH,
+                        format(TENANT_MIGRATION_FILE_PATH, PUBLIC_SCHEMA));
+            else if (!devMode)
+                migrateDatabase(PUBLIC_SCHEMA, dataSource, MAIN_MIGRATION_FILE_PATH, format(TENANT_MIGRATION_FILE_PATH, PUBLIC_SCHEMA));
+        }
 
         return new Flyway();
     }
@@ -96,6 +98,7 @@ public class DBMigrationConfiguration {
     private void migrateDatabase(String schema, DataSource dataSource, String... locations) {
         Flyway flyway = new Flyway();
         flyway.setBaselineOnMigrate(true);
+        flyway.setValidateOnMigrate(applicationProperties.flywayValidateonMigrate());
         flyway.setOutOfOrder(true);
         flyway.setLocations(locations);
         flyway.setDataSource(dataSource);

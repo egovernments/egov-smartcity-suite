@@ -39,6 +39,7 @@
  */
 package org.egov.lcms.transactions.service;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -108,12 +109,13 @@ public class JudgmentService {
                     applicationDocument.setSupportDocs(legalCaseUtil.addToFileStore(applicationDocument.getFiles()));
                 }
         } else {
-            for (final JudgmentDocuments applicationDocument : judgment.getJudgmentDocuments()) {
+            final List<JudgmentDocuments> tempJudgmentDoc = new ArrayList<JudgmentDocuments>(
+                    judgment.getJudgmentDocuments());
+            for (final JudgmentDocuments applicationDocument : tempJudgmentDoc) {
                 applicationDocument.setJudgment(judgment);
                 applicationDocument.setDocumentName("Judgment");
                 applicationDocument.getSupportDocs()
                         .addAll(legalCaseUtil.addToFileStore(applicationDocument.getFiles()));
-                judgment.getJudgmentDocuments().clear();
                 judgment.getJudgmentDocuments().add(applicationDocument);
             }
             judgment.getJudgmentDocuments().addAll(judgmentDoc);

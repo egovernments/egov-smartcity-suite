@@ -44,12 +44,7 @@
 <%@ taglib uri="http://www.springframework.org/tags" prefix="spring"%>
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt"%>
 <%@ taglib uri="/WEB-INF/taglib/cdn.tld" prefix="cdn"%>
-<style>
-body {
-	font-family: regular !important;
-	font-size: 14px;
-}
-</style>
+
 <div class="row" id="page-content">
 	<div class="col-md-12">
 		<form:form method="get" modelAttribute="dueReportResult"
@@ -67,7 +62,7 @@ body {
 
 			<div class="row">
 				<div class="text-center">
-					<button type="button" id="pwrDueReportSearch"
+					<button type="button" id="pwrDueReportSearch" value="pwrDueReportSearch"
 						class="btn btn-primary">Search</button>
 					<a href="javascript:void(0)" class="btn btn-default"
 						onclick="self.close()"> Close</a>
@@ -84,7 +79,7 @@ body {
 		<c:out value="${currDate}"></c:out>
 	</div>
 	<table class="table table-bordered table-hover multiheadertbl"
-		id="pwrDueReport-table" width="200%">
+		id="pwrDueReport-table" >
 	</table>
 
 
@@ -92,8 +87,6 @@ body {
 </div>
 
 
-<link rel="stylesheet"
-	href="<cdn:url value='/resources/global/css/bootstrap/bootstrap-datepicker.css' context='/egi'/>" />
 <script type="text/javascript"
 	src="<cdn:url value='/resources/global/js/jquery/plugins/datatables/jquery.dataTables.min.js' context='/egi'/>"></script>
 <script type="text/javascript"
@@ -102,21 +95,14 @@ body {
 	src="<cdn:url value='/resources/global/js/jquery/plugins/datatables/dataTables.tableTools.js' context='/egi'/>"></script>
 <script type="text/javascript"
 	src="<cdn:url value='/resources/global/js/jquery/plugins/datatables/TableTools.min.js' context='/egi'/>"></script>
-<script type="text/javascript"
-	src="<cdn:url value='/resources/global/js/jquery/plugins/datatables/jquery.dataTables.columnFilter.js' context='/egi'/>"></script>
-<script type="text/javascript"
-	src="<cdn:url value='/resources/global/js/bootstrap/typeahead.bundle.js' context='/egi'/>"></script>
-<script
-	src="<cdn:url value='/resources/global/js/jquery/plugins/jquery.inputmask.bundle.min.js' context='/egi'/>"></script>
+
 <script type="text/javascript"
 	src="<cdn:url value='/resources/global/js/jquery/plugins/jquery.validate.min.js' context='/egi'/>"></script>
-<script
-	src="<cdn:url value='/resources/global/js/bootstrap/bootstrap-datepicker.js' context='/egi'/>"></script>
 
 <script
 	src="<cdn:url value='/resources/js/app/commonDueReport.js?rnd=${app_release_no}'/>"
 	type="text/javascript"></script>
 <script
-	src="<cdn:url value='/resources/js/app/pwrDueReport.js?rnd=${app_release_no}'/>"
+	src="<cdn:url value='/resources/js/app/dueLegalCaseReport.js?rnd=${app_release_no}'/>"
 	type="text/javascript"></script>
 

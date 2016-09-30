@@ -40,17 +40,40 @@
 
 jQuery(document).ready(function($) {
 	
-	jQuery('#pwrDueReportSearch').click(function(e){
-				submitForm();
+	var redirectUrl="";
+	var oTable="";
+	$(".btn-primary").click(function(event){
+	
+	var searchButton=jQuery('.btn-primary').val();
+	 if(searchButton !=undefined && searchButton=='pwrDueReportSearch'){
+		 redirectUrl="/lcms/reports/pwrDueReportResult?";
+		 oTable= $('#pwrDueReport-table');
+	 }
+	 else if(searchButton !=undefined && searchButton=='counterAffidavitDueReportSearch')
+		 {
+		 redirectUrl="/lcms/reports/caDueReportResult?";
+		 oTable= $('#caDueReport-table');
+		 }
+	 
+	 else if(searchButton !=undefined && searchButton=='emmplyeehearingDueReportSearch')
+	 {
+		 redirectUrl="/lcms/reports/employeehearingDueReportResult?";
+		 oTable= $('#employeehearingDueReport-table');
+	 }
+	 else if(searchButton !=undefined && searchButton=='judgemntDueReportSearch')
+	 {
+		 redirectUrl="/lcms/reports/judgementImplDueReportResult?";
+		 oTable= $('#judgemntDueReport-table');
+	 }
+	 submitForm(redirectUrl,oTable);
 
 		});
 	
 });
 		
-function submitForm() {
+function submitForm(redirectUrl,oTable) {
 	if($('form').valid()){
 		var today = getdate();
-		oTable= $('#pwrDueReport-table');
 		$('#dailyBoardReportResult-header').show();
 		$('#reportgeneration-header').show();
 		var oDataTable=oTable.dataTable({
@@ -65,27 +88,24 @@ function submitForm() {
 				"aButtons" : [ 
 					               {
 							             "sExtends": "pdf",
-							             "mColumns": [ 1, 2, 3, 4,5,6,7,8,9,10],
 		                                 "sPdfMessage": "Report generated on "+today+"",
-		                                 "sTitle": "Pwr Due Report",
+		                                 "sTitle": "Due Report",
 		                                 "sPdfOrientation": "landscape"
 						                },
 						                {
 								             "sExtends": "xls",
-								             "mColumns": [ 1,2,3,4,5,6,7,8,9,10],
-			                                 "sPdfMessage": "Pwr Due Report",
-			                                 "sTitle": "Pwr Due Report"
+			                                 "sPdfMessage": "Due Report",
+			                                 "sTitle": "Due Report"
 							             },
 							             {
 								             "sExtends": "print",
-								             "mColumns": [ 1,2,3,4,5,6,7,8,9,10],
-			                                 "sPdfMessage": "Pwr Due Report",
-			                                 "sTitle": "Pwr Due Report"
+			                                 "sPdfMessage": "Due Report",
+			                                 "sTitle": "Due Report"
 							             }],
 				},
 				ajax : {
 					
-					url : "/lcms/reports/pwrDueReportResult?"+$('#dueReportResultForm').serialize(),
+					url : redirectUrl+$('#dueReportResultForm').serialize(),
 				},
 				columns :[{"title" : "S.no"},
 				          { "data" : "caseNumber", "title": "Case Number"},
@@ -112,15 +132,5 @@ function submitForm() {
 	
 }
 
-function updateSerialNo()
-{
-	$( "#pwrDueReport-table tbody tr" ).each(function(index) {
-		if($(this).find('td').length>1)
-		{
-			oDataTable.fnUpdate(''+(index+1), index, 0);
-		}
-	});
-	
-}
 
 

@@ -1472,8 +1472,9 @@ public interface PropertyTaxConstants {
     
     public static final String MOBILE_PAYMENT_INCORRECT_BILL_DATA = "Bill data is incorrect";
     public static final String APPROVAL_COMMENTS_SUCCESS = "Property has been successfully forwarded.";
-    public static final String CURRENT_STATE_BILL_COLLECTOR_APPROVED ="Create:Bill Collector Approved";
+    public static final String CREATE_CURRENT_STATE_BILL_COLLECTOR_APPROVED ="Create:Bill Collector Approved";
     public static final String UD_REVENUE_INSPECTOR_APPROVAL_PENDING = "UD Revenue Inspector Approval Pending";
+    public static final String MODIFY_CURRENT_STATE_BILL_COLLECTOR_APPROVED ="Alter:Bill Collector Approved";
     	
     //Collection services
     public static final String CATEGORY_TYPE_PROPERTY_TAX = "PT";
@@ -1483,4 +1484,14 @@ public interface PropertyTaxConstants {
     
     //urls	
     public String WTMS_TAXDUE_RESTURL = "%s/wtms/rest/watertax/due/byptno/%s";
+	
+	public static final String TRANSACTION_TYPE_CREATE = "Create";
+	public static final String TRANSACTION_TYPE_DEMOLITION = "Demolition";
+	
+	public static final String PROPERTY_MODE_CREATE = "create";
+	public static final String PROPERTY_MODE_MODIFY = "modify";
+	
+	public static final String PAYMENT_TYPE_PARTIALLY = "Partially";
+	public static final String PAYMENT_TYPE_FULLY = "Fully";
+	public static final String PAYMENT_TYPE_ADVANCE = "Advance";
 }
