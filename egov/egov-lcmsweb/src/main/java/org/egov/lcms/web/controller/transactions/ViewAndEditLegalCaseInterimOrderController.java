@@ -80,8 +80,10 @@ public class ViewAndEditLegalCaseInterimOrderController {
         model.addAttribute("legalCaseInterimOrder", legalCaseInterimOrder);
         model.addAttribute("legalCase", legalCaseInterimOrder.getLegalCase());
         model.addAttribute("lcNumber", legalCaseInterimOrder.getLegalCase().getLcNumber());
-        model.addAttribute("lcInterimOrderDocList",
-                legalCaseInterimOrderService.getLcInterimOrderDocList(legalCaseInterimOrder));
+        model.addAttribute("supportDocs",
+                !legalCaseInterimOrder.getLcInterimOrderDocuments().isEmpty()
+                        && legalCaseInterimOrder.getLcInterimOrderDocuments().get(0) != null
+                                ? legalCaseInterimOrder.getLcInterimOrderDocuments().get(0).getSupportDocs() : null);
         model.addAttribute("mode", "edit");
         return "lcinterimorder-edit";
     }
@@ -97,8 +99,10 @@ public class ViewAndEditLegalCaseInterimOrderController {
         }
         legalCaseInterimOrderService.persist(legalCaseInterimOrder);
         redirectAttrs.addFlashAttribute("legalCaseInterimOrder", legalCaseInterimOrder);
-        model.addAttribute("lcInterimOrderDocList",
-                legalCaseInterimOrderService.getLcInterimOrderDocList(legalCaseInterimOrder));
+        model.addAttribute("supportDocs",
+                !legalCaseInterimOrder.getLcInterimOrderDocuments().isEmpty()
+                        && legalCaseInterimOrder.getLcInterimOrderDocuments().get(0) != null
+                                ? legalCaseInterimOrder.getLcInterimOrderDocuments().get(0).getSupportDocs() : null);
         model.addAttribute("message", "InterimOrder updated successfully.");
         model.addAttribute("mode", "edit");
         return "lcinterimorder-success";
@@ -109,8 +113,10 @@ public class ViewAndEditLegalCaseInterimOrderController {
         final LegalCaseInterimOrder legalCaseInterimOrder = getLcInterimOrder(lcInterimOrderId);
         model.addAttribute("legalCaseInterimOrder", legalCaseInterimOrder);
         model.addAttribute("lcNumber", legalCaseInterimOrder.getLegalCase().getLcNumber());
-        model.addAttribute("lcInterimOrderDocList",
-                legalCaseInterimOrderService.getLcInterimOrderDocList(legalCaseInterimOrder));
+        model.addAttribute("supportDocs",
+                !legalCaseInterimOrder.getLcInterimOrderDocuments().isEmpty()
+                        && legalCaseInterimOrder.getLcInterimOrderDocuments().get(0) != null
+                                ? legalCaseInterimOrder.getLcInterimOrderDocuments().get(0).getSupportDocs() : null);
         model.addAttribute("mode", "view");
         return "lcinterimorder-success";
     }

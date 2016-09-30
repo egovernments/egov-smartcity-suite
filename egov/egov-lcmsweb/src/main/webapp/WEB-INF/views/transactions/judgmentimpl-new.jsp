@@ -51,13 +51,13 @@
 	</div>
 	</div>
 	</div>
-	<c:choose>
+	<%--  <c:choose>
 			<c:when
 				test="${judgmentImpl.judgmentImplIsComplied == 'NO' && judgmentImpl.implementationFailure == 'Appeal'}">
 				<jsp:include page="appealdocuments-view.jsp"></jsp:include>
-				<input type="hidden" name="appealDocList" value="${appealDocList}" />
+				<input type="hidden" name="supportDocs" value="${supportDocs}" />
 			</c:when>
-		</c:choose>
+		</c:choose>  --%>
 	<div class="form-group">
 		<div class="text-center">
 			<form:button type="button" id="buttonid" class="btn btn-primary"><spring:message code="lbl.submit"/></form:button>
