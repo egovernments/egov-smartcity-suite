@@ -78,10 +78,10 @@ function load()
 
 function checkMiscAttributes(obj)
 {
+	var id = obj.id.substring(10,obj.id.length);
+	var prefix = obj.name.substring(0, obj.name.indexOf("["));
 	if(obj.checked)
 	{
-		var id = obj.id.substring(10,obj.id.length);
-		var prefix = obj.name.substring(0, obj.name.indexOf("["));
 		var fundName = prefix+"["+id+"].fundName";
 		var functionName = prefix+"["+id+"].functionName";
 		var deptName = prefix+"["+id+"].deptName";
@@ -90,7 +90,13 @@ function checkMiscAttributes(obj)
 		var schemeName = prefix+"["+id+"].schemeName";
 		var subschemeName = prefix+"["+id+"].subschemeName";
 		var fieldName = prefix+"["+id+"].fieldName";
-		//var schemeName = prefix+"["+id+"].schemeName";
+		var payableAmt = 0;
+		var total = 0;
+		if(jQuery("#totalPaymentAmount").html()!="")
+			total = jQuery("#totalPaymentAmount").html().trim();
+		if(document.getElementById(prefix+"["+id+"].payableAmt"))
+			payableAmt = document.getElementById(prefix+"["+id+"].payableAmt").value;
+		jQuery("#totalPaymentAmount").html(parseFloat(Number(total) + Number(payableAmt)).toFixed(2));
 		var mis = '';
 		if(document.getElementsByName(fundName) && document.getElementsByName(fundName).item(0) != null )
 			mis = ( document.getElementsByName(fundName).item(0)).value;
@@ -123,6 +129,12 @@ function checkMiscAttributes(obj)
 	}
 	else
 	{
+		var total = 0;
+		if(jQuery("#totalPaymentAmount").html()!="")
+			total = jQuery("#totalPaymentAmount").html().trim();
+		if(document.getElementById(prefix+"["+id+"].payableAmt"))
+			payableAmt = document.getElementById(prefix+"["+id+"].payableAmt").value;
+		jQuery("#totalPaymentAmount").html(parseFloat(Number(total) - Number(payableAmt)).toFixed(2));
 		document.getElementById('miscount').value=parseInt(document.getElementById('miscount').value)-1;
 		if(document.getElementById('miscount').value==0)
 			document.getElementById('miscattributes').value='';
@@ -250,13 +262,35 @@ function selectAllContingent(element){
 }
 
 function checkAll(field,length){
+	var payableAmt = 0;
+	var total = 0;
+	
 	for (i = 0; i < length; i++){
+		if(jQuery("#totalPaymentAmount").html()!="")
+			total = jQuery("#totalPaymentAmount").html().trim();
+		else
+			total = 0;
+		if(document.getElementById(field+"["+i+"].payableAmt"))
+			payableAmt = document.getElementById(field+"["+i+"].payableAmt").value;
+		jQuery("#totalPaymentAmount").html(parseFloat(Number(total) + Number(payableAmt)).toFixed(2));
+		
 		document.getElementsByName(field+'['+i+'].isSelected')[0].checked = true;
 		document.getElementById('miscount').value=parseInt(document.getElementById('miscount').value)+1;
 	}
 }
 function uncheckAll(field,length){
+	var payableAmt = 0;
+	var total = 0;
+	
 	for (i = 0; i < length; i++){
+		if(jQuery("#totalPaymentAmount").html()!="")
+			total = jQuery("#totalPaymentAmount").html().trim();
+		else
+			total = 0;
+		if(document.getElementById(field+"["+i+"].payableAmt"))
+			payableAmt = document.getElementById(field+"["+i+"].payableAmt").value;
+		jQuery("#totalPaymentAmount").html(parseFloat(Number(total) - Number(payableAmt)).toFixed(2));
+		
 		document.getElementsByName(field+'['+i+'].isSelected')[0].checked = false;
 		document.getElementById('miscount').value=parseInt(document.getElementById('miscount').value)-1;
 	}
@@ -719,7 +753,7 @@ function checkContingentForSameMisAttribs(obj,len)
 																				<td style="text-align: right"
 																					class="blueborderfortdnew"><s:hidden
 																						name="contractorList[%{#s.index}].payableAmt"
-																						id="payableAmt%{#s.index}" value="%{payableAmt}" />
+																						id="contractorList[%{#s.index}].payableAmt" value="%{payableAmt}" />
 																					<s:hidden
 																						name="contractorList[%{#s.index}].paymentAmt"
 																						id="paymentAmt%{#s.index}" value="%{paymentAmt}" />
@@ -881,7 +915,7 @@ function checkContingentForSameMisAttribs(obj,len)
 																				<td style="text-align: right"
 																					class="blueborderfortdnew"><s:hidden
 																						name="supplierList[%{#s.index}].payableAmt"
-																						id="payableAmt%{#s.index}" value="%{payableAmt}" />
+																						id="supplierList[%{#s.index}].payableAmt" value="%{payableAmt}" />
 																					<s:hidden
 																						name="supplierList[%{#s.index}].paymentAmt"
 																						id="paymentAmt%{#s.index}" value="%{paymentAmt}" />
@@ -1044,7 +1078,7 @@ function checkContingentForSameMisAttribs(obj,len)
 																				<td style="text-align: right"
 																					class="blueborderfortdnew"><s:hidden
 																						name="contingentList[%{#s.index}].payableAmt"
-																						id="payableAmt%{#s.index}" value="%{payableAmt}" />
+																						id="contingentList[%{#s.index}].payableAmt" value="%{payableAmt}" />
 																					<s:hidden
 																						name="contingentList[%{#s.index}].paymentAmt"
 																						id="paymentAmt%{#s.index}" value="%{paymentAmt}" />
@@ -1177,11 +1211,19 @@ function checkContingentForSameMisAttribs(obj,len)
 <div id="buttondiv" align="center" style="display: visible">
 				<table align="center" width="100%">
 					<tr>
-						<font size="small" color="red">*Maximum of 500 records are
-							displayed here<br>*You can select Maximum of 125 bills for single payment</font>
+						<td class="text-right view-content">
+								Total:  
+						</td>
+						<td width="10%" class="text-right view-content"><div id="totalPaymentAmount">0.00</div></td>
 					</tr>
 					<tr>
-						<td class="modeofpayment"><strong><s:text
+						<td colspan="2" class="text-center">
+					 		<font size="small" color="red">*Maximum of 500 records are
+								displayed here<br>*You can select Maximum of 125 bills for single payment</font>
+						</td>
+					</tr>
+					<tr>
+						<td colspan="2" class="modeofpayment"><strong><s:text
 									name="payment.mode" /><span class="mandatory1">*</span></strong> <input
 							name="paymentMode" id="paymentModecheque" checked="checked"
 							value="cheque" type="radio"><label
@@ -1192,12 +1234,16 @@ function checkContingentForSameMisAttribs(obj,len)
 							id="paymentModertgs" value="rtgs" type="radio"><label
 							for="paymentModertgs">RTGS</label></td>
 					</tr>
-
-			
-<tr>
-						<td class="buttonbottomnew" align="center"><br> <input
+	
+					<tr>
+						<td colspan="2" class="buttonbottomnew" align="center"><br> <input
 							type="button" class="buttonsubmit" value="Generate Payment"
 							id="generatePayment" onclick="return check();" /></td>
+					</tr>
+					
+					<tr>
+					
+						
 					</tr>
 </table>
 </div>

@@ -152,10 +152,11 @@ $(document).ready(function() {
 var count = $("#employeeDetails tbody  tr").length -1;
 function addEmployee()
 {     
-	var $tableBody = $('#employeeDetails').find("tbody"),
-    $trLast = $tableBody.find("tr:last");
-	 $trNew = $trLast.clone();
-	$trLast.find('input').val($("#positionEmpName").val());
+	if( $("#positionEmpName").val() !=''){
+		var $tableBody = $('#employeeDetails').find("tbody"),
+	    $trLast = $tableBody.find("tr:last");
+	 	$trNew = $trLast.clone();
+		$trLast.find('input').val($("#positionEmpName").val());
 		count++;
 		$trNew.find("input").each(function(){
 	        $(this).attr({
@@ -164,6 +165,7 @@ function addEmployee()
 	        });
 	    });
 		$trLast.after($trNew);
+	}
 }
 function edit(hearingId){    
 	var url = '/lcms/hearing/edit/'+hearingId
