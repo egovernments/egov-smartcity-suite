@@ -51,6 +51,8 @@
 <input type="hidden" id="errorWorkCompletionDateGreaterThanBillDate" value="<spring:message code='error.workcompletiondate.billdate' />" />
 <input type="hidden" id="errorWorkCompletionDateGreaterThanWorkOrderDate" value="<spring:message code='error.workcompletiondate.workorderdate' />" />
 <input type="hidden" id="errorWorkCompletionDateFutureDate" value="<spring:message code='error.workcompletiondate.futuredate' />" /> 
+<input type="hidden" id="errorSpilloverNoRefund" value="<spring:message code='error.contractorBill.spillover.norefund' />" /> 
+<input type="hidden" id="errorNonSpilloverNoRefund" value="<spring:message code='error.contractorBill.nonspillover.norefund' />" /> 
 <input type="hidden" id="hiddenbilldate" value='<fmt:formatDate value="${contractorBillRegister.billdate }"/>'/>
 <div class="form-group">
 	<!-- TODO: remove this condition to make billdate editable after user finishes data entry -->

@@ -44,11 +44,13 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>	
 <%@ taglib uri="/WEB-INF/taglibs/cdn.tld" prefix="cdn"%>		
 <div id="errorBlock" class="help-block"></div>
-<link rel="stylesheet" href="<cdn:url value='/resources/global/js/jquery/plugins/jQuery.filer/css/jquery.filer-dragdropbox-theme.css' context='/egi'/>">
-<link rel="stylesheet" href="<cdn:url value='/resources/global/js/jquery/plugins/jQuery.filer/css/jquery.filer.css' context='/egi'/>">
-<script type="text/javascript" src="<cdn:url value='/resources/global/js/jquery/plugins/jQuery.filer/js/jquery.filer.min.js' context='/egi'/>"></script>
-<link rel="stylesheet" href="<cdn:url value='/resources/global/js/image-gallery/css/bootstrap-image-gallery.css' context='/egi'/>">
+<link rel="stylesheet" href="<cdn:url value='/resources/global/css/jquery/plugins/filer/jquery.filer-dragdropbox-theme.css' context='/egi'/>">
+<link rel="stylesheet" href="<cdn:url value='/resources/global/css/jquery/plugins/filer/jquery.filer.css' context='/egi'/>">
+<script type="text/javascript" src="<cdn:url value='/resources/global/js/jquery/plugins/filer/jquery.filer.min.js' context='/egi'/>"></script>
+
+<link rel="stylesheet" href="<cdn:url value='/resources/global/css/bootstrap/plugins/image-gallery/bootstrap-image-gallery.css' context='/egi'/>">
 <link rel="stylesheet" href="<cdn:url value='/resources/global/js/image-gallery/css/blueimp-gallery.min.css' context='/egi'/>">
+
 <script type="text/javascript" src="<cdn:url value='/resources/global/js/image-gallery/js/jquery.blueimp-gallery.min.js' context='/egi'/>"></script>
 <script type="text/javascript" src="<cdn:url value='/resources/global/js/image-gallery/js/bootstrap-image-gallery.js' context='/egi'/>"></script>
 <style>
@@ -64,18 +66,17 @@
          height:20%;
      }
 </style>
+
 <form:form id="estimatePhotographs" class="form-horizontal form-groups-bordered" modelAttribute="estimatePhotographs" role="form" action="loa-save" method="post" enctype="multipart/form-data">
 		<div class="new-page-header"><spring:message code="lbl.uploadestimatephotograph" /> </div> 
 		
 		<input type="hidden" value="${lineEstimateDetails.id}" id="ledId" name="ledId"/>
 		<input type="hidden" value='${photographStages}'  id = "photographStages"/>
 		<input type="hidden" value="${workOrder.id}" name="workOrderId" />
-		<input type="hidden" value="${latitude}" name="latitude" />
-		<input type="hidden" value="${longitude}" name="longitude" />
+		<input type="hidden" path="latitude" name="latitude" />
+		<input type="hidden" path="longitude" name="longitude" />
 		
-<%-- 		<form:input id="latitude" path="latitude" class="form-control" type="text" />
-		<form:input id="longitude" path="longitude" class="form-control" type="text" />
- --%>		
+		
 		<input type="hidden" value="${lineEstimateDetails.lineEstimate.id}" name="lineEstimateId" />
 		<input type="hidden" value="<spring:message code="lbl.before" />" id="beforeId" />
 		<input type="hidden" value="<spring:message code="lbl.after" />" id="afterId" />

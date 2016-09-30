@@ -85,6 +85,7 @@ import org.egov.wtms.application.entity.WaterConnection;
 import org.egov.wtms.application.entity.WaterConnectionDetails;
 import org.egov.wtms.application.entity.WaterDemandConnection;
 import org.egov.wtms.application.repository.WaterConnectionDetailsRepository;
+import org.egov.wtms.application.rest.WaterChargesDetails;
 import org.egov.wtms.application.rest.WaterTaxDue;
 import org.egov.wtms.application.service.collection.ConnectionBillService;
 import org.egov.wtms.application.service.collection.WaterConnectionBillable;
@@ -371,6 +372,46 @@ public class ConnectionDemandService {
             waterTaxDue.setIsSuccess(true);
         }
         return waterTaxDue;
+    }
+
+    public List<WaterChargesDetails> getWaterTaxDetailsByPropertyId(final String propertyIdentifier) {
+        final List<WaterConnection> waterConnections = waterConnectionService
+                .findByPropertyIdentifier(propertyIdentifier);
+        final List<WaterChargesDetails> waterChargesDetailsList = new ArrayList<>();
+        if (waterConnections.isEmpty())
+            return waterChargesDetailsList;
+        else {
+            WaterChargesDetails waterChargesDetails = new WaterChargesDetails();
+            for (final WaterConnection connection : waterConnections)
+                if (connection.getConsumerCode() != null) {
+                    WaterConnectionDetails waterConnectionDetails = waterConnectionDetailsService
+                            .findByConsumerCodeAndConnectionStatus(connection.getConsumerCode(),
+                                    ConnectionStatus.ACTIVE);
+                    if (waterConnectionDetails != null)
+                        waterChargesDetails = getWatertaxDetails(waterConnectionDetails, connection.getConsumerCode(),
+                                propertyIdentifier);
+                    else {
+                        waterConnectionDetails = waterConnectionDetailsService.findByConsumerCodeAndConnectionStatus(
+                                connection.getConsumerCode(), ConnectionStatus.INACTIVE);
+                        if (waterConnectionDetails != null)
+                            waterChargesDetails = getWatertaxDetails(waterConnectionDetails,
+                                    connection.getConsumerCode(), propertyIdentifier);
+                    }
+                    waterChargesDetailsList.add(waterChargesDetails);
+                }
+            return waterChargesDetailsList;
+        }
+    }
+
+    public WaterChargesDetails getWatertaxDetails(final WaterConnectionDetails waterConnectionDetails,
+            final String consumerCode, final String propertyIdentifier) {
+        final WaterChargesDetails waterChargesDetails = new WaterChargesDetails();
+        waterChargesDetails.setTotalTaxDue(getDueInfo(waterConnectionDetails).getTotalTaxDue());
+        waterChargesDetails.setConnectionType(waterConnectionDetails.getConnectionType().toString());
+        waterChargesDetails.setConsumerCode(consumerCode);
+        waterChargesDetails.setPropertyID(propertyIdentifier);
+        waterChargesDetails.setConnectionStatus(waterConnectionDetails.getConnectionStatus().toString());
+        return waterChargesDetails;
     }
 
     private WaterTaxDue getDueInfo(final WaterConnectionDetails waterConnectionDetails) {

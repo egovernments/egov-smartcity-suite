@@ -92,6 +92,7 @@
 	</s:if>
 	<div class="errorstyle" id="lblError" style="display:none;"></div>
 	<s:actionerror/>  <s:fielderror />
+	<s:hidden name="meesevaApplicationNumber" id="meesevaApplicationNumber" value="%{meesevaApplicationNumber}" />
 	<table width="100%" border="0" cellspacing="0" cellpadding="0" class="tabs-tableparent">
         <tr>
             <td><div id="header">

@@ -243,6 +243,10 @@ public class WaterTaxConstants {
     public static final String  PREVIOUS_SECOND_HALF ="Previous 2nd Half";
 
     public static final String  DEMANDREASONANDGLCODEMAP ="DemandReasonGlcodeMap";
+    
+    public static final String PAYMENT_TYPE_PARTIALLY = "Partially";
+    public static final String PAYMENT_TYPE_FULLY = "Fully";
+    public static final String PAYMENT_TYPE_ADVANCE = "Advance";
     // HashMap map b/n Demand reason string and code
     public static final LinkedHashMap<String, String> NON_METERED_DMDRSN_CODE_MAP = new LinkedHashMap<String, String>() {
         /**

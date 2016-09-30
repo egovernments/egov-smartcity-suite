@@ -87,21 +87,25 @@ public class EditJudgmentController {
         final Judgment judgmentObj = judgementList.get(0);
         prepareNewForm(model);
         model.addAttribute("judgment", judgmentObj);
-        model.addAttribute("judgmentDocList",
-                judgmentService.getJudgmentDocList(judgmentObj));
+        model.addAttribute("supportDocs",
+                !judgmentObj.getJudgmentDocuments().isEmpty() && judgmentObj.getJudgmentDocuments().get(0) != null
+                        ? judgmentObj.getJudgmentDocuments().get(0).getSupportDocs() : null);
         model.addAttribute("mode", "edit");
         return "judgment-edit";
     }
 
     @RequestMapping(value = "/edit/", method = RequestMethod.POST)
-    public String update(@Valid @ModelAttribute final Judgment judgment, @RequestParam("lcNumber") final String lcNumber,
-            final BindingResult errors, final Model model, final RedirectAttributes redirectAttrs) {
+    public String update(@Valid @ModelAttribute final Judgment judgment,
+            @RequestParam("lcNumber") final String lcNumber, final BindingResult errors, final Model model,
+            final RedirectAttributes redirectAttrs) {
         if (errors.hasErrors()) {
             prepareNewForm(model);
             return "judgment-edit";
         }
         judgmentService.persist(judgment);
-        model.addAttribute("judgmentDocList", judgmentService.getJudgmentDocList(judgment));
+        model.addAttribute("supportDocs",
+                !judgment.getJudgmentDocuments().isEmpty() && judgment.getJudgmentDocuments().get(0) != null
+                        ? judgment.getJudgmentDocuments().get(0).getSupportDocs() : null);
         redirectAttrs.addFlashAttribute("judgment", judgment);
         model.addAttribute("message", "Judgment updated successfully.");
         model.addAttribute("mode", "edit");

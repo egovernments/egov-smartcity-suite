@@ -121,8 +121,8 @@ public class CommonController extends ApiController {
                 device.setOSVersion(citizen.get("OSVersion").toString());
             }
             
-            List<User> users=userservice.findAllByMatchingUserNameForType(citizenCreate.getMobileNumber(), UserType.CITIZEN);
-            if(users.size()>0)
+            User user=userservice.getUserByUsername(citizenCreate.getMobileNumber());
+            if(user!=null)
             {
             	return res.error(getMessage("user.register.duplicate.mobileno"));
             }

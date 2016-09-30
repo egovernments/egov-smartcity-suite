@@ -198,9 +198,9 @@ public class UploadEstimatePhotographController {
 			ep.setLineEstimateDetails(lineEstimateDetails);
 			ep.setLatitude(ep.getLatitude());
 			ep.setLongitude(ep.getLongitude());
-			if (WorkProgress.BEFORE.toString().equals(estimatephotographstage.toUpperCase()))
+			if (WorkProgress.BEFORE.toString().equalsIgnoreCase(estimatephotographstage))
 				ep.setWorkProgress(WorkProgress.BEFORE);
-			else if (WorkProgress.AFTER.toString().equals(estimatephotographstage.toUpperCase()))
+			else if (WorkProgress.AFTER.toString().equalsIgnoreCase(estimatephotographstage))
 				ep.setWorkProgress(WorkProgress.AFTER);
 			else
 				ep.setWorkProgress(WorkProgress.DURING);

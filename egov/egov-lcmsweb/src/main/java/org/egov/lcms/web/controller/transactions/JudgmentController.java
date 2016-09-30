@@ -75,8 +75,8 @@ public class JudgmentController {
     }
 
     @RequestMapping(value = "/new/", method = RequestMethod.GET)
-    public String viewForm(@ModelAttribute("judgment") final Judgment judgment, @RequestParam("lcNumber") final String lcNumber,
-            final Model model, final HttpServletRequest request) {
+    public String viewForm(@ModelAttribute("judgment") final Judgment judgment,
+            @RequestParam("lcNumber") final String lcNumber, final Model model, final HttpServletRequest request) {
         prepareNewForm(model);
         final LegalCase legalCase = getLegalCase(lcNumber, request);
         model.addAttribute("legalCase", legalCase);
@@ -105,8 +105,9 @@ public class JudgmentController {
         judgmentService.persist(judgment);
         model.addAttribute("mode", "create");
         redirectAttrs.addFlashAttribute("judgment", judgment);
-        model.addAttribute("judgmentDocList",
-                judgmentService.getJudgmentDocList(judgment));
+        model.addAttribute("supportDocs",
+                !judgment.getJudgmentDocuments().isEmpty() && judgment.getJudgmentDocuments().get(0) != null
+                        ? judgment.getJudgmentDocuments().get(0).getSupportDocs() : null);
         model.addAttribute("message", "Judgment Created successfully.");
         return "judgment-success";
 

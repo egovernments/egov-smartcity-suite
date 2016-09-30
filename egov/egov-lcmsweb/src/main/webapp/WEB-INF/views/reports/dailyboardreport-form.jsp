@@ -44,13 +44,7 @@
 <%@ taglib uri="http://www.springframework.org/tags" prefix="spring"%>
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt"%>
 <%@ taglib uri="/WEB-INF/taglib/cdn.tld" prefix="cdn"%>
-<style>
-body
-{
-  font-family:regular !important;
-  font-size:14px;
-}
-</style>
+
 <div class="row" id="page-content">
 	<div class="col-md-12">
 		<form:form method="get" modelAttribute="dailyBoardReportResult"

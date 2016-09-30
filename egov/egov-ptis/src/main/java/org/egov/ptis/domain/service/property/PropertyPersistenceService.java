@@ -40,6 +40,12 @@
 
 package org.egov.ptis.domain.service.property;
 
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
+
 import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
 import org.egov.infra.admin.master.entity.User;
@@ -62,12 +68,6 @@ import org.egov.ptis.report.bean.PropertyAckNoticeInfo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.BindingResult;
 
-import java.text.SimpleDateFormat;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.Map;
-
 public class PropertyPersistenceService extends PersistenceService<BasicProperty, Long> {
 
     private static final Logger LOGGER = Logger.getLogger(PropertyPersistenceService.class);
@@ -87,7 +87,6 @@ public class PropertyPersistenceService extends PersistenceService<BasicProperty
         super(type);
     }
 
-    @SuppressWarnings("unchecked")
     public void createOwners(final Property property, final BasicProperty basicProperty, final Address ownerAddress) {
 
         LOGGER.debug("createOwners for property: " + property + ", basicProperty: " + basicProperty
@@ -250,4 +249,7 @@ public class PropertyPersistenceService extends PersistenceService<BasicProperty
             basicProp.addPropertyOwners(ownerInfo);
         }
 	}
+    public BasicProperty updateBasicProperty(BasicProperty basicProperty, HashMap<String, String> meesevaParams) {
+        return update(basicProperty);
+    }
 }

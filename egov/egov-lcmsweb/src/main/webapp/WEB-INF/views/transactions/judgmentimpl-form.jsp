@@ -154,7 +154,7 @@
 								data-pattern="alphanumeric" maxlength="36" required="required" />
 							<form:errors path="appeal[0].appealFiledBy" cssClass="error-msg" />
 						</div>
-						<!-- <label class="col-sm-3 control-label text-right"><font
+						<!--  <label class="col-sm-3 control-label text-right"><font
 							size="2"><spring:message code="lbl.mesg.document" />:</font></label>
 						<div class="col-sm-3 add-margin">
 							<input type="file" id="file"
@@ -162,34 +162,35 @@
 								class="file-ellipsis upload-file">
 							<form:errors path="appeal[0].appealDocuments[0].files"
 								cssClass="add-margin error-msg" />
-						</div> -->
-								<c:choose>
-		<c:when test="${not empty appealDocList}">
-		
-			<jsp:include page="appealdocuments-view.jsp"></jsp:include>
-		
-		</c:when>
-		<c:otherwise>
-			<div class="form-group">
-	<label class="col-sm-3 control-label text-right"><font
-							size="2"><spring:message code="lbl.mesg.document" />:</font></label>
-	<div class="col-sm-3 add-margin">
+						</div>  -->
+						<c:choose>
+							<c:when test="${not empty supportDocs}">
 
-		<input type="file" id="file" name="appeal[0].appealDocuments[0].files"
-			class="file-ellipsis upload-file">
+								<jsp:include page="appealdocuments-view.jsp"></jsp:include>
 
-		<form:errors path="appeal[0].appealDocuments[0].files"
-			cssClass="add-margin error-msg" />
-		
-	</div>
-	<input type="hidden" name="appealDocList" value="${appealDocList}" />
-</div>
-		
-		</c:otherwise>
-		</c:choose>
+							</c:when>
+							<c:otherwise>
+								<div class="form-group">
+									<label class="col-sm-3 control-label text-right"><font
+										size="2"><spring:message code="lbl.mesg.document" />:</font></label>
+									<div class="col-sm-3 add-margin">
+
+										<input type="file" id="file"
+											name="appeal[0].appealDocuments[0].files"
+											class="file-ellipsis upload-file">
+
+										<form:errors path="appeal[0].appealDocuments[0].files"
+											cssClass="add-margin error-msg" />
+
+									</div>
+									<input type="hidden" name="supportDocs" value="${supportDocs}" />
+								</div>
+
+							</c:otherwise>
+						</c:choose>
 						<input type="hidden" name="judgmentImpl.appeal"
-							value="${appeal[0].id}" />
-							<input type="hidden" name="judgmentImpl.appeal[0].appealDocuments"
+							value="${appeal[0].id}" /> <input type="hidden"
+							name="judgmentImpl.appeal[0].appealDocuments"
 							value="${appealDocuments[0].id}" />
 					</div>
 

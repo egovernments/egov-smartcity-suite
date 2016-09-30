@@ -122,8 +122,10 @@ $(document).ready(function(){
 				
 			}
 			
-			
-			var debitamount = $('#debitamount').val();
+			var debitamount = 0;
+			$( "input[name$='debitamount']" ).each(function(){
+				debitamount = debitamount + parseFloat(($(this).val()?$(this).val():"0"));
+			});
 			$('#billamount').val(debitamount);
 			if($('#partyBillDate').val() != '') { 
 				var workOrderDate = $('#workOrderDate').data('datepicker').date;
@@ -152,6 +154,8 @@ $(document).ready(function(){
 			if(!validateMBPageNumbers())
 				return false;
 			if(!validateNetPayableAmount())
+				return false;
+			if(!validateCreditAndDebitAmount())
 				return false;
 			return validateWorkFlowApprover(button);
 		}
@@ -200,9 +204,15 @@ $(document).ready(function(){
 		}
 		$('.creditGlcode').removeAttr('required');
 		$('.creditAmount').removeAttr('required');
-		document.forms[0].submit;
+		//document.forms[0].submit;
 		return true;
 	}
+	
+	
+	$("#tblrefunddetails tbody tr").each(function() {
+		hiddenElem=$(this).find("input:hidden").val();
+		$(this).find("select").val(hiddenElem);
+	});
 	
 });
 
@@ -215,11 +225,7 @@ function addDeductionRow() {
 		if (document.getElementById('deductionRow') != null) {
 			// get Next Row Index to Generate
 			var nextIdx = 0;
-			if($detailsRowCount == 0 || $detailsRowCount == '')
-				nextIdx = $("#tblcreditdetails tbody tr").length;
-			else
-				nextIdx = $detailsRowCount++;
-			nextIdx++;
+			nextIdx = rowcount + 1;
 			// validate status variable for exiting function
 			var isValid = 1;// for default have success value 0
 
@@ -301,14 +307,9 @@ function deleteDeductionRow(obj) {
 	} else {
 		tbl.deleteRow(rIndex);
 		//starting index for table fields
-		var idx=parseInt($detailsRowCount);
+		var idx=1;
 		//regenerate index existing inputs in table row
 		$("#tblcreditdetails tbody tr").each(function() {
-		
-			hiddenElem=$(this).find("input:hidden");
-			
-			if(!$(hiddenElem).val())
-			{
 				$(this).find("input, errors").each(function() {
 					   $(this).attr({
 					      'name': function(_, name) {
@@ -326,8 +327,7 @@ function deleteDeductionRow(obj) {
 					   });
 			    });
 				idx++;
-			}
-		});
+			});
 		calculateNetPayableAmount();
 		return true;
 	}	
@@ -335,10 +335,13 @@ function deleteDeductionRow(obj) {
 
 function calculateNetPayableAmount(){
 	validateAmount();
-	var debitAmount = $('#debitamount').val();
+	var debitAmount = 0;
 	var totalDeductionAmount = 0;
 	$( "input[name$='creditamount']" ).each(function(){
 		totalDeductionAmount = totalDeductionAmount + parseFloat(($(this).val()?$(this).val():"0"));
+	});
+	$( "input[name$='debitamount']" ).each(function(){
+		debitAmount = debitAmount + parseFloat(($(this).val()?$(this).val():"0"));
 	});
 	$('#netPayableAmount').val(roundTo(debitAmount-totalDeductionAmount));
 	validateNetPayableAmount();
@@ -465,3 +468,224 @@ $('#billtype').change(function() {
 	}
 });
 
+
+function addRefundRow() {
+	var rowcount = $("#tblrefunddetails tbody tr").length;
+	
+	if (document.getElementById('refundRow') != null) {
+		// get Next Row Index to Generate
+		var nextIdx = rowcount;
+		// validate status variable for exiting function
+		var isValid = 1;// for default have success value 0
+
+		// validate existing rows in table
+		$("#tblrefunddetails tbody tr").find('input,select').each(
+				function() {
+					if (($(this).data('optional') === 0)
+							&& (!$(this).val()) && !($(this).attr('name')===undefined)) { 
+						$(this).focus();
+						bootbox.alert($(this).data('errormsg'));
+						isValid = 0;// set validation failure
+						return false;
+					}
+		});
+		if (isValid === 0) {
+			return false;
+		}
+		
+		$("#refundRow").clone().find("input, errors, select").each(
+				function() {	
+					$(this).attr(
+							{
+								'name' : function(_, name) {
+									if(!($(this).attr('name')===undefined))
+										return name.replace(/\d+/, nextIdx); 
+								},
+								'id' : function(_, id) {
+									if(!($(this).attr('id')===undefined))
+										return id.replace(/\d+/, nextIdx); 
+								},
+								'data-idx' : function(_,dataIdx)
+								{
+									return nextIdx;
+								}
+							});
+		
+						// if element is static attribute hold values for next row, otherwise it will be reset
+						if (!$(this).data('static')) {
+							$(this).val('');
+						}
+		
+				}).end().appendTo("#tblrefunddetails tbody");	
+}
+}
+
+function deleteRefundRow(obj) {
+	var rIndex = getRow(obj).rowIndex;
+	var tbl=document.getElementById('tblrefunddetails');	
+	var rowo=tbl.rows.length;
+	
+	 if(rowo<=2)
+		{
+			bootbox.alert("This row cannot be deleted");
+			return false;
+		}
+	 else {
+		 tbl.deleteRow(rIndex);
+		//starting index for table fields
+			var idx=0;
+			//regenerate index existing inputs in table row
+			$("#tblrefunddetails tbody tr").each(function() {
+			
+					$(this).find("input, errors, select").each(function() {
+						   $(this).attr({
+						      'name': function(_, name) {
+						    	  if(!($(this).attr('name')===undefined))
+						    		  return name.replace(/\[.\]/g, '['+ idx +']'); 
+						      },
+						      'id': function(_, id) {
+						    	  if(!($(this).attr('id')===undefined))
+						    		  return id.replace(/\[.\]/g, '['+ idx +']'); 
+						      },
+							  'data-idx' : function(_,dataIdx)
+							  {
+								  return idx;
+							  }
+						   });
+				    });
+					idx++;
+			});
+			calculateNetPayableAmount();
+			return true;
+	 }
+}
+
+$(document).on('blur','.refundAmount',function(e) {
+	var index = $(this).attr("data-idx"); 
+	var accountCode = document.getElementById("refundBillDetails["+index+"].refundAccountCode");
+	var accountCodeName = accountCode.options[accountCode.selectedIndex].text;
+	var withheldAmount = $('input[name="refundBillDetails['+ index +'].withHeldAmount"]').val();
+	var refundedAmount = $('input[name="refundBillDetails['+ index +'].refundedAmount"]').val();
+	var refundAmount = $('input[name="refundBillDetails['+ index +'].debitamount"]').val();
+	if(withheldAmount == "")
+		withheldAmount = "0";
+	
+	if(refundedAmount == "") 
+		refundedAmount = "0";
+	
+	if(refundAmount == "")
+		refundAmount = "0";
+	
+	var totalRefund =  parseFloat(refundedAmount) + parseFloat(refundAmount);
+	var diffAmount = totalRefund - parseFloat(withheldAmount);
+	var flag = true;
+	if(totalRefund > parseFloat(withheldAmount) && refundAmount != 0) {
+		var spillOverFlag = $("#isSpillOver").val();
+		if(spillOverFlag == 'true') {
+			var alertMessage = '';
+			if(withheldAmount == 0) {
+				alertMessage = $("#errorSpilloverNoRefund").val();
+			} else {
+				alertMessage = "Sum of Refund amount for the COA "+ accountCodeName +" is exceeding the withheld amount by Rs."+ diffAmount +". Do you want to proceed?;"
+			}
+			bootbox.confirm(alertMessage, function(result) {
+				if(!result) {
+					bootbox.hideAll();
+					$('input[name="refundBillDetails['+ index +'].debitamount"]').val('');
+					calculateNetPayableAmount();
+					return false;
+				} else {
+					return true;
+				}
+			});
+		} else {
+			 if(withheldAmount == 0) {
+				 bootbox.alert($("#errorNonSpilloverNoRefund").val());
+			 } else 
+		        bootbox.alert("Sum of Refund amount for the COA "+ accountCodeName +" is exceeding the withheld amount by Rs."+ diffAmount +". Please enter proper value");
+			 
+			 $('input[name="refundBillDetails['+ index +'].debitamount"]').val('');
+		     return false;
+		}
+	}
+});
+
+$(document).on('change','.refundpurpose',function(e) {
+	var index = $(this).attr("data-idx"); 
+	var accountCode = $(this).find("option:selected").text();
+	var accountHead = accountCode.split('-').slice(1).join('-');
+	var accountHeadName = "";
+	var glCodeId = $(this).val();
+	var woeId = $("#workOrderEstimateId").val();
+	var spillOverFlag = $("#isSpillOver").val();
+	var contractorBillId = $("#contractorBillId").val()
+	if(contractorBillId == '')
+		contractorBillId = -1;
+		
+	if(glCodeId != "") {
+	$.ajax({
+		url: "/egworks/contractorbill/gettotalcreditanddebitamount?workOrderEstimateId="+woeId+"&glCodeId="+$(this).val()+"&contractorBillId="+contractorBillId,     
+		type: "GET",
+		dataType: "json",
+		success: function (data) {
+			if(data != '') {
+			var amounts = data.split(",");
+			var creditAmount = amounts[0];
+			var debitAmount = amounts[1];
+			$('input[name="refundBillDetails['+ index +'].refundAccountHead"]').val(accountHead);
+			$('input[name="refundBillDetails['+ index +'].glcodeid"]').val(glCodeId);
+		    $('input[name="refundBillDetails['+ index +'].withHeldAmount"]').val(creditAmount);
+		    $('input[name="refundBillDetails['+ index +'].refundedAmount"]').val(debitAmount);
+		    $('input[name="refundBillDetails['+ index +'].debitamount"]').val('');
+		    calculateNetPayableAmount();
+		  }
+		}, 
+	   error: function (response) {
+		 console.log("failed");
+	   }
+	});
+} else {
+	$('input[name="refundBillDetails['+ index +'].refundAccountHead"]').val('');
+	$('input[name="refundBillDetails['+ index +'].glcodeid"]').val('');
+    $('input[name="refundBillDetails['+ index +'].withHeldAmount"]').val('');
+    $('input[name="refundBillDetails['+ index +'].refundedAmount"]').val('');
+    $('input[name="refundBillDetails['+ index +'].debitamount"]').val('');
+    calculateNetPayableAmount();
+}
+});
+
+function validateCreditAndDebitAmount() {
+	var creaditdetailsLength = $('#tblcreditdetails tr').length - 1;
+	var index;
+	for (var i = 1; i <= creaditdetailsLength; i++) {
+		index = i;
+		var accountCode = document.getElementById('billDetailes[' + index + '].glcodeid').value;
+		var amount = document.getElementById('billDetailes[' + index + '].creditamount').value;
+		if(accountCode != '' && amount == '') {
+			bootbox.alert("Credit Amount is mandatory for deduction row: " +i);
+			return false;
+		}
+		
+		if(accountCode == '' && amount != '') {
+			bootbox.alert("Credit Account code is mandatory for deduction row: " +i );
+			return false;
+		}
+	}
+	
+	var refunddetailsLength = $('#tblrefunddetails tr').length - 1;
+	for (var i = 1; i <= refunddetailsLength; i++) {
+		index = i-1;
+		var accountCode = document.getElementById('refundBillDetails[' + index + '].glcodeid').value;
+		var amount = document.getElementById('refundBillDetails[' + index + '].debitamount').value;
+		if(accountCode != '' && amount == '') {
+			bootbox.alert("Debit Amount is mandatory for Refund row: " +i ); 
+			return false;
+		}
+		if(accountCode == '' && amount != '') {
+			bootbox.alert("Debit Account code is mandatory for Refund row: " +i );
+			return false;
+		}
+	}
+	
+	return true;
+}

@@ -48,6 +48,14 @@
 			<spring:message code="lbl.applicant.details" />
 		</div>
 	</div>
+	<div>
+			<spring:hasBindErrors name="sewerageApplicationDetails">
+			<div class="alert alert-danger col-md-10 col-md-offset-1">
+		     			<form:errors path="*" /><br/>
+		   	</div>
+		    </spring:hasBindErrors>
+		     <br/>
+		</div>
 	<div class="panel-body">
 		<div class="row add-border">
 			<div class="col-xs-3 add-margin"><spring:message code="lbl.shsc.number"/></div>

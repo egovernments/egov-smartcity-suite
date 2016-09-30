@@ -44,10 +44,14 @@ import java.util.List;
 
 import org.egov.infra.web.utils.WebUtils;
 import org.egov.restapi.model.StateCityInfo;
+import org.egov.restapi.model.dashboard.CollectionIndexDetails;
+import org.egov.restapi.model.dashboard.ConsolidatedCollDetails;
 import org.egov.restapi.service.DashboardService;
+import org.egov.restapi.util.JsonConvertor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.ExceptionHandler;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -75,4 +79,25 @@ public class CMDashboardController {
         		StateCityInfo.class, StateInfoHelperAdaptor.class)).append("}").toString();
         return result;
     }
+
+	/**
+	 * Provides State-wise Collection Statistics
+	 * @return response JSON
+	 */
+	@RequestMapping(value = "/collectionstats", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+	public String getConsolidatedCollDetails(){
+		ConsolidatedCollDetails consolidatedCollData = dashboardService.getConsolidatedCollDetails();
+		return JsonConvertor.convert(consolidatedCollData);
+	}
+	
+	/**
+	 * Provides Collection Index details across all ULBs 
+	 * @return response JSON
+	 */
+	@RequestMapping(value = "/collectiondashboard", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
+	public String getCollectionDetails(@RequestBody String collDetailsRequest){
+		CollectionIndexDetails collectionDetails = dashboardService.getCollectionIndexDetails();
+        return JsonConvertor.convert(collectionDetails);
+	}
+	
 }
