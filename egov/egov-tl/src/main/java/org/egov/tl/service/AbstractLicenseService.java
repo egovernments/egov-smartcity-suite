@@ -54,6 +54,7 @@ import static org.egov.tl.utils.Constants.WORKFLOW_STATE_REJECTED;
 
 import java.io.File;
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
@@ -261,9 +262,9 @@ public abstract class AbstractLicenseService<T extends License> {
                 if (installment.getId().equals(dmd.getEgDemandReason().getEgInstallmentMaster().getId()) &&
                         dmd.getEgDemandReason().getEgDemandReasonMaster().getCode()
                                 .equalsIgnoreCase(fm.getFeeMatrix().getFeeType().getName())) {
-                    dmd.setAmount(fm.getAmount());
+                    dmd.setAmount(fm.getAmount().setScale(0, RoundingMode.HALF_UP));
                     dmd.setAmtCollected(ZERO);
-                    totalAmount = totalAmount.add(fm.getAmount());
+                    totalAmount = totalAmount.add(fm.getAmount().setScale(0, RoundingMode.HALF_UP));
                 }
         this.recalculateBaseDemand(licenseDemand);
         return totalAmount;
@@ -303,7 +304,8 @@ public abstract class AbstractLicenseService<T extends License> {
                         legacyInstallmentwiseFee.getKey());
 
                 licenseDemand.setEgInstallmentMaster(installment);
-                final BigDecimal demandAmount = BigDecimal.valueOf(legacyInstallmentwiseFee.getValue());
+                final BigDecimal demandAmount = BigDecimal.valueOf(legacyInstallmentwiseFee.getValue()).setScale(0,
+                        RoundingMode.HALF_UP);
                 final BigDecimal amtCollected = legacyFeePayStatus.get(legacyInstallmentwiseFee.getKey()) == null
                         || !legacyFeePayStatus.get(legacyInstallmentwiseFee.getKey()) ? ZERO : demandAmount;
                 licenseDemand.getEgDemandDetails().add(
@@ -312,8 +314,9 @@ public abstract class AbstractLicenseService<T extends License> {
                                         this.demandGenericDao.getDemandReasonMasterByCode("License Fee", module),
                                         installment, module),
                                 amtCollected));
-                licenseDemand.setBaseDemand(demandAmount.add(licenseDemand.getBaseDemand()));
-                licenseDemand.setAmtCollected(amtCollected.add(licenseDemand.getAmtCollected()));
+                licenseDemand.setBaseDemand(demandAmount.add(licenseDemand.getBaseDemand()).setScale(0, RoundingMode.HALF_UP));
+                licenseDemand
+                        .setAmtCollected(amtCollected.add(licenseDemand.getAmtCollected()).setScale(0, RoundingMode.HALF_UP));
             }
         license.setLicenseDemand(licenseDemand);
 
@@ -340,7 +343,7 @@ public abstract class AbstractLicenseService<T extends License> {
             final Integer updatedFee = updatedInstallmentFees.get(installmentNumber);
             final Boolean feePaymentStatus = legacyFeePayStatus.get(installmentNumber);
             if (updatedFee != null) {
-                final BigDecimal updatedDemandAmt = BigDecimal.valueOf(updatedFee);
+                final BigDecimal updatedDemandAmt = BigDecimal.valueOf(updatedFee).setScale(0, RoundingMode.HALF_UP);
                 demandDetail.setAmount(updatedDemandAmt);
                 if (feePaymentStatus != null && feePaymentStatus)
                     demandDetail.setAmtCollected(updatedDemandAmt);
@@ -358,7 +361,8 @@ public abstract class AbstractLicenseService<T extends License> {
             if (updatedInstallmentFee.getValue() != null && updatedInstallmentFee.getValue() > 0) {
                 final Installment installment = this.installmentDao.fetchInstallmentByModuleAndInstallmentNumber(module,
                         updatedInstallmentFee.getKey());
-                final BigDecimal demandAmount = BigDecimal.valueOf(updatedInstallmentFee.getValue());
+                final BigDecimal demandAmount = BigDecimal.valueOf(updatedInstallmentFee.getValue()).setScale(0,
+                        RoundingMode.HALF_UP);
                 final BigDecimal amtCollected = legacyFeePayStatus.get(updatedInstallmentFee.getKey()) == null
                         || !legacyFeePayStatus.get(updatedInstallmentFee.getKey()) ? ZERO : demandAmount;
                 licenseDemand.getEgDemandDetails().add(
@@ -384,6 +388,8 @@ public abstract class AbstractLicenseService<T extends License> {
 
     @Transactional
     public void renew(final T license, final WorkflowBean workflowBean) {
+        final String natureOfWork = license.getLicenseAppType().getName().equals(Constants.RENEWAL_LIC_APPTYPE)
+                ? Constants.RENEWAL_NATUREOFWORK : Constants.NEW_NATUREOFWORK;
         final Assignment wfInitiator = this.assignmentService
                 .getPrimaryAssignmentForUser(this.securityUtils.getCurrentUser().getId());
         license.setApplicationNumber(licenseNumberUtils.generateApplicationNumber());
@@ -399,7 +405,7 @@ public abstract class AbstractLicenseService<T extends License> {
                 null, workflowBean.getAdditionaRule(), workflowBean.getCurrentState(), null);
         license.reinitiateTransition().start()
                 .withSenderName(currentUser.getUsername() + DELIMITER_COLON + currentUser.getName())
-                .withComments(workflowBean.getApproverComments())
+                .withComments(workflowBean.getApproverComments()).withNatureOfTask(natureOfWork)
                 .withStateValue(wfmatrix.getNextState()).withDateInfo(new DateTime().toDate()).withOwner(pos)
                 .withNextAction(wfmatrix.getNextAction()).withInitiator(wfInitiator.getPosition());
         this.licenseRepository.save(license);

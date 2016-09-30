@@ -40,6 +40,18 @@
 
 package org.egov.tl.web.actions.newtradelicense;
 
+import static org.egov.tl.utils.Constants.LOCALITY;
+import static org.egov.tl.utils.Constants.LOCATION_HIERARCHY_TYPE;
+
+import java.io.IOException;
+import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.Date;
+import java.util.List;
+import java.util.Map;
+
 import org.apache.struts2.ServletActionContext;
 import org.apache.struts2.convention.annotation.Action;
 import org.apache.struts2.convention.annotation.ParentPackage;
@@ -53,29 +65,17 @@ import org.egov.infra.validation.exception.ValidationException;
 import org.egov.infra.web.struts.annotation.ValidationErrorPage;
 import org.egov.infra.web.struts.annotation.ValidationErrorPageExt;
 import org.egov.tl.entity.License;
-import org.egov.tl.entity.enums.ApplicationType;
 import org.egov.tl.entity.LicenseDocumentType;
 import org.egov.tl.entity.Licensee;
 import org.egov.tl.entity.TradeLicense;
 import org.egov.tl.entity.WorkflowBean;
+import org.egov.tl.entity.enums.ApplicationType;
 import org.egov.tl.service.AbstractLicenseService;
 import org.egov.tl.service.TradeLicenseService;
 import org.egov.tl.utils.Constants;
 import org.egov.tl.web.actions.BaseLicenseAction;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
-
-import java.io.IOException;
-import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
-
-import static org.egov.tl.utils.Constants.LOCALITY;
-import static org.egov.tl.utils.Constants.LOCATION_HIERARCHY_TYPE;
 
 @ParentPackage("egov")
 @Results({ @Result(name = NewTradeLicenseAction.NEW, location = "newTradeLicense-new.jsp"),
@@ -121,25 +121,25 @@ public class NewTradeLicenseAction extends BaseLicenseAction<TradeLicense> {
     @Action(value = "/newtradelicense/newTradeLicense-showForApproval")
     @SkipValidation
     public String showForApproval() throws IOException {
-        if (license().getState().getValue().equals(Constants.WF_LICENSE_CREATED) || 
-                (license().getState().getValue().contains(Constants.WF_STATE_COMMISSIONER_APPROVED_STR) 
-                && license().getEgwStatus().getCode().equals(Constants.APPLICATION_STATUS_SECONDCOLLECTION_CODE)))
-            mode = Constants.ACK_MODE; 
-        else if (license().getState().getValue().equals(Constants.WF_FIRST_LVL_FEECOLLECTED) 
+        if (license().getState().getValue().equals(Constants.WF_LICENSE_CREATED) ||
+                license().getState().getValue().contains(Constants.WF_STATE_COMMISSIONER_APPROVED_STR)
+                        && license().getEgwStatus().getCode().equals(Constants.APPLICATION_STATUS_SECONDCOLLECTION_CODE))
+            mode = Constants.ACK_MODE;
+        else if (license().getState().getValue().equals(Constants.WF_FIRST_LVL_FEECOLLECTED)
                 || license().getState().getValue().equals(Constants.WF_SI_APPROVED))
             mode = VIEW;
         else if (license().getState().getValue().contains(Constants.WORKFLOW_STATE_REJECTED))
             mode = Constants.EDIT_REJECT_MODE;
         else if (license().getState().getValue().contains(Constants.WF_REVENUECLERK_APPROVED))
-            mode = Constants.EDIT_REJECT_MODE;
+            mode = Constants.EDIT_APPROVAL_MODE;
         else if (license().getState().getValue().contains(Constants.WF_STATE_DIGISIGN_STR)
                 || license().getState().getValue().contains(Constants.WF_STATE_INSPECTION_APPROVED_STR)
                 || license().getState().getValue().contains(Constants.WF_SECOND_LVL_FEECOLLECTED)
-                || (license().getEgwStatus().getCode().equals(Constants.APPLICATION_STATUS_APPROVED_CODE) 
-                        && license().getState().getValue().contains(Constants.WF_STATE_COMMISSIONER_APPROVED_STR)))
-            mode = Constants.DISABLE_APPROVER_MODE;  
-        if (license().getState().getValue().contains(Constants.WF_STATE_COMMISSIONER_APPROVED_STR) 
-                && license().getEgwStatus().getCode().equals(Constants.APPLICATION_STATUS_SECONDCOLLECTION_CODE) 
+                || license().getEgwStatus().getCode().equals(Constants.APPLICATION_STATUS_APPROVED_CODE)
+                        && license().getState().getValue().contains(Constants.WF_STATE_COMMISSIONER_APPROVED_STR))
+            mode = Constants.DISABLE_APPROVER_MODE;
+        if (license().getState().getValue().contains(Constants.WF_STATE_COMMISSIONER_APPROVED_STR)
+                && license().getEgwStatus().getCode().equals(Constants.APPLICATION_STATUS_SECONDCOLLECTION_CODE)
                 || license().getState().getValue().contains(Constants.WF_LICENSE_CREATED))
             message = Constants.PENDING_COLLECTION_MSG;
         if (!license().getState().getOwnerPosition()
@@ -211,7 +211,7 @@ public class NewTradeLicenseAction extends BaseLicenseAction<TradeLicense> {
         super.prepareNewForm();
         if (license() != null && license().getId() != null)
             tradeLicense = tradeLicenseService.getLicenseById(license().getId());
-        setDocumentTypes(tradeLicenseService.getDocumentTypesByApplicationType(ApplicationType.NEW));        
+        setDocumentTypes(tradeLicenseService.getDocumentTypesByApplicationType(ApplicationType.NEW));
         setOwnerShipTypeMap(Constants.OWNERSHIP_TYPE);
         final List<Boundary> localityList = boundaryService.getActiveBoundariesByBndryTypeNameAndHierarchyTypeName(
                 LOCALITY, LOCATION_HIERARCHY_TYPE);

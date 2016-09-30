@@ -213,6 +213,7 @@ public class Constants {
         public static final String NEW_ADDITIONAL_RULE = "NEWTRADELICENSE";
         public static final String NEW_LIC_APPTYPE = "New";
         public static final String DELIMITER_COLON = "::";
+        public static final String EDIT_APPROVAL_MODE = "editForApproval";
         
 }
 

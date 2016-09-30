@@ -51,6 +51,7 @@ import static org.egov.tl.utils.Constants.WF_STATE_DIGITAL_SIGN_NEWTL;
 import static org.egov.tl.utils.Constants.WF_STATE_DIGITAL_SIGN_RENEWAL;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
@@ -201,9 +202,9 @@ public class LicenseBillService extends BillServiceInterface implements BillingI
             if (penalty.getValue().signum() > 0) {
                 penaltyDemandDetail = installmentWisePenaltyDemandDetail.get(penalty.getKey());
                 if (penaltyDemandDetail != null)
-                    penaltyDemandDetail.setAmount(penalty.getValue());
+                    penaltyDemandDetail.setAmount(penalty.getValue().setScale(0, RoundingMode.HALF_UP));
                 else {
-                    penaltyDemandDetail = insertPenaltyAndBillDetails(penalty.getValue(),
+                    penaltyDemandDetail = insertPenaltyAndBillDetails(penalty.getValue().setScale(0, RoundingMode.HALF_UP),
                             penalty.getKey());
                     if (penaltyDemandDetail != null) {
                         demand.getEgDemandDetails().add(penaltyDemandDetail);
