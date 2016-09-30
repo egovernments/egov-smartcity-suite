@@ -17,7 +17,7 @@ public class PropertyTaxutilTest {
     @Test
     public void consecutiveDays() {
         DateTime date = new DateTime();
-        long noofdays = PropertyTaxUtil.getNumberOfDays(date.toDate(), date.withDayOfMonth(date.getDayOfMonth() + 1).toDate());
+        long noofdays = PropertyTaxUtil.getNumberOfDays(date.toDate(), date.withDayOfYear(date.getDayOfYear() + 1).toDate());
         assertEquals(noofdays, 1L);
     }
 
