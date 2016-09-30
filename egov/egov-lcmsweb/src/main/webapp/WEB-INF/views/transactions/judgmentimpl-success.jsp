@@ -122,8 +122,7 @@
 													<div class="col-sm-3 add-margin view-content">
 														${judgmentImpl.appeal[0].appealFiledBy}</div>
 
-												</div>
-							</div>
+												</div></div>
 							</c:when>
 							</c:choose>
 
@@ -191,7 +190,7 @@
 			<c:when
 				test="${judgmentImpl.judgmentImplIsComplied == 'NO' && judgmentImpl.implementationFailure == 'Appeal'}">
 				<jsp:include page="appealdocuments-view.jsp"></jsp:include>
-				<input type="hidden" name="supportDocs" value="${supportDocs}" />
+				<input type="hidden" name="appealDocList" value="${appealDocList}" />
 			</c:when>
 		</c:choose>
 
