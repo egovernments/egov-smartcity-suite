@@ -189,7 +189,7 @@ public class AjaxRevisionEstimateController {
         String message = "";
         final RevisionAbstractEstimate revisionEstimate = revisionEstimateService.getRevisionEstimateById(reId);
         final WorkOrderEstimate workOrderEstimate = workOrderEstimateService
-                .getWorkOrderEstimateByAbstractEstimateId(revisionEstimate.getId());
+                .getWorkOrderEstimateByAbstractEstimateId(revisionEstimate.getParent().getId());
         final String mbRefNumbers = revisionEstimateService.checkIfMBCreatedForRE(revisionEstimate, workOrderEstimate);
         if (!mbRefNumbers.equals(""))
             message = messageSource.getMessage("error.re.mb.created", new String[] { mbRefNumbers }, null);

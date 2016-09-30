@@ -1150,10 +1150,12 @@ public class RevisionEstimateService {
                 mbRefNumbersForRE.append(mBHeader.getMbRefNo()).append(",");
         else {
             final List<Long> activtityIdList = new ArrayList<>();
+            final WorkOrderEstimate revisionWorkOrderEstimate = workOrderEstimateService
+                    .getWorkOrderEstimateByAbstractEstimateId(revisionEstimate.getId());
             final List<WorkOrderActivity> woaList = workOrderActivityService
-                    .getChangedQuantityActivities(revisionEstimate, workOrderEstimate);
+                    .getChangedQuantityActivities(revisionEstimate, revisionWorkOrderEstimate);
             for (final WorkOrderActivity woa : woaList)
-                activtityIdList.add(woa.getActivity().getParent().getId());
+                activtityIdList.add(woa.getActivity().getParent().getId()); //Original Estimate
             List<Object[]> activityIdQuantityList = null;
             if (activtityIdList != null && activtityIdList.size() > 0)
                 activityIdQuantityList = mBDetailsService.getMBDetailsByWorkOrderActivity(activtityIdList);
@@ -1177,7 +1179,7 @@ public class RevisionEstimateService {
                                     .parseDouble(activityIdQuantity[1].toString()))
                                 continue;
                             else {
-                                final MBDetails mbDetails = mBDetailsService.getMBDetailsForREActivity(activityId);
+                                final MBDetails mbDetails = mBDetailsService.getMBDetailsForREActivity(activityId,revisionEstimate.getId());
                                 if (mbDetails != null) {
                                     // TO DO Read maxPercent from appconfig
                                     Double maxPercent = Double.valueOf("1");

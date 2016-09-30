@@ -53,14 +53,13 @@ public interface WorkOrderActivityRepository extends JpaRepository<WorkOrderActi
     WorkOrderActivity findByActivity_IdAndWorkOrderEstimate_WorkOrder_EgwStatus_Code(final Long activityId,
             final String woStatus);
     
-    @Query("select woa from WorkOrderActivity woa where woa.workOrderEstimate.estimate.id =:revisionEstimateId and woa.id=:revisionWorkOrderId and woa.activity.revisionType=:changedQuantityRevisionType")
+    @Query("select woa from WorkOrderActivity woa where woa.workOrderEstimate.estimate.id =:revisionEstimateId and woa.workOrderEstimate.id=:revisionWorkOrderId and woa.activity.revisionType=:changedQuantityRevisionType")
     List<WorkOrderActivity> findChangedQuantityActivitiesForEstimate(@Param("revisionEstimateId") Long revisionEstimateId,@Param("revisionWorkOrderId") Long revisionWorkOrderEstimateId,@Param("changedQuantityRevisionType") RevisionType changedQuantityRevisionType);
     
     @Query("select sum(woa.approvedQuantity) from WorkOrderActivity woa  group by woa,woa.activity having activity.id =:activityId")
     Object getActivityQuantity(@Param("activityId") Long activityId);   
     
-    @Query("select sum(woa.approvedQuantity*nvl(decode(woa.activity.revisionType,'REDUCED_QUANTITY',-1,'ADDITIONAL_QUANTITY',1,'NON_TENDERED_ITEM',1,'LUMP_SUM_ITEM',1),1)) from WorkOrderActivity woa where woa.activity.abstractEstimate.egwStatus.code = 'APPROVED' and woa.activity.abstractEstimate.id !=:revisionEstimateId and woa.activity.parent.id =:parentId and woa.activity.parent is not null group by woa.activity.parent")
+    @Query("select sum(woa.approvedQuantity) from WorkOrderActivity woa where woa.activity.abstractEstimate.egwStatus.code = 'APPROVED' and woa.activity.abstractEstimate.id =:revisionEstimateId and woa.activity.parent.id =:parentId and woa.activity.parent is not null group by woa.activity.parent")
     Object getREActivityQuantity(@Param("revisionEstimateId") Long revisionEstimateId,@Param ("parentId") Long parentId);
-    
     
 }

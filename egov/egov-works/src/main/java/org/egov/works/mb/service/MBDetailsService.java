@@ -38,8 +38,8 @@ public class MBDetailsService {
         return mBDetailsRepository.getMBActivitiesForRevisionEstimate(activityIdList);
     }
     
-    public MBDetails getMBDetailsForREActivity(final Long activityId) {
-        return mBDetailsRepository.getMBDetailsForREActivity(activityId,WorksConstants.CANCELLED);
+    public MBDetails getMBDetailsForREActivity(final Long activityId,final Long revisionEstimateId) {
+        return mBDetailsRepository.getMBDetailsForREActivity(activityId,revisionEstimateId,WorksConstants.CANCELLED);
     }
 
 }

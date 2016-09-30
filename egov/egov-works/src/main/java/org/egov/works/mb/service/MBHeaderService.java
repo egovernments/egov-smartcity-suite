@@ -963,7 +963,7 @@ public class MBHeaderService {
 
     public List<MBHeader> getMBHeadersForTenderedLumpSumAcivitiesToCancelRE(final RevisionAbstractEstimate revisionEstimate,
             final WorkOrderEstimate workOrderEstimate) {
-        return mbHeaderRepository.findMBHeadersForRevisionEstimate(revisionEstimate.getId(), workOrderEstimate.getId(),
-                RevisionType.NON_TENDERED_ITEM, RevisionType.LUMP_SUM_ITEM, WorksConstants.CANCELLED);
+        return mbHeaderRepository.findMBHeadersForRevisionEstimate(revisionEstimate.getParent().getId(),revisionEstimate.getId(), workOrderEstimate.getId(),
+                RevisionType.NON_TENDERED_ITEM, RevisionType.LUMP_SUM_ITEM, MBHeader.MeasurementBookStatus.CANCELLED.toString());
     }
 }

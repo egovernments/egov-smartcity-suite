@@ -48,7 +48,7 @@ public class CancelRevisionEstimateController {
         String message = "";
         RevisionAbstractEstimate revisionEstimate = revisionEstimateService.getRevisionEstimateById(revisionEstimateId);
         final WorkOrderEstimate workOrderEstimate = workOrderEstimateService
-                .getWorkOrderEstimateByAbstractEstimateId(revisionEstimate.getId());
+                .getWorkOrderEstimateByAbstractEstimateId(revisionEstimate.getParent().getId());
         final String mbRefNumbers = revisionEstimateService.checkIfMBCreatedForRE(revisionEstimate, workOrderEstimate);
         if (!mbRefNumbers.isEmpty()) {
             model.addAttribute("message",

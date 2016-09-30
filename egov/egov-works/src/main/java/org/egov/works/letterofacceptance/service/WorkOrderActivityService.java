@@ -155,9 +155,9 @@ public class WorkOrderActivityService {
     }
 
     public List<WorkOrderActivity> getChangedQuantityActivities(final RevisionAbstractEstimate revisionEstimate,
-            final WorkOrderEstimate workOrderEstimate) {
+            final WorkOrderEstimate revisionWorkOrderEstimate) {
         return workOrderActivityRepository.findChangedQuantityActivitiesForEstimate(revisionEstimate.getId(),
-                workOrderEstimate.getId(), RevisionType.ADDITIONAL_QUANTITY);
+                revisionWorkOrderEstimate.getId(), RevisionType.ADDITIONAL_QUANTITY);
     }
 
     public Object getQuantityForActivity(final Long activityId) {
