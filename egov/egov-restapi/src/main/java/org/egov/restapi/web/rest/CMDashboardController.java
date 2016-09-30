@@ -81,13 +81,13 @@ public class CMDashboardController {
     }
 
 	/**
-	 * Provides State-wise Collection Statistics
+	 * Provides State-wise Collection Statistics for Property Tax, Water Charges and Others
 	 * @return response JSON
 	 */
 	@RequestMapping(value = "/collectionstats", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
 	public String getConsolidatedCollDetails(){
-		ConsolidatedCollDetails consolidatedCollData = dashboardService.getConsolidatedCollDetails();
-		return JsonConvertor.convert(consolidatedCollData);
+		List<ConsolidatedCollDetails> consolidatedCollDetails = dashboardService.getConsolidatedCollDetails();
+		return JsonConvertor.convert(consolidatedCollDetails);
 	}
 	
 	/**

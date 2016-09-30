@@ -97,6 +97,7 @@ public class DashboardService {
 		//Temporarily all values are being hard coded, actual values will be read from the elastic search index later
 		CollectionIndexDetails collectionIndexDetails = new CollectionIndexDetails();
 		collectionIndexDetails.setTodayColl(BigDecimal.valueOf(156.583));
+		collectionIndexDetails.setLyTodayColl(BigDecimal.valueOf(145.67));
 		collectionIndexDetails.setCytdColl(BigDecimal.valueOf(32499.615));
 		collectionIndexDetails.setCytdDmd(BigDecimal.valueOf(51338.92));
 		collectionIndexDetails.setTotalDmd(BigDecimal.valueOf(123213.409));
@@ -195,15 +196,29 @@ public class DashboardService {
 	}
 	
 	/**
-	 * Provides State-wise Collection Statistics
+	 * Provides State-wise Collection Statistics for Property Tax, Water Charges and Others
 	 * @return ConsolidatedCollDetails
 	 */
-	public ConsolidatedCollDetails getConsolidatedCollDetails(){
+	public List<ConsolidatedCollDetails> getConsolidatedCollDetails(){
 		//Temporarily all values are being hard coded, actual values will be read from the elastic search index later
 		ConsolidatedCollDetails consolidatedData = new ConsolidatedCollDetails();
+		List<ConsolidatedCollDetails> consolidatedDetailsList = new ArrayList<>();
 		consolidatedData.setCytdColl(BigDecimal.valueOf(50.95));
 		consolidatedData.setTotalDmd(BigDecimal.valueOf(194.93));
 		consolidatedData.setLytdColl(BigDecimal.valueOf(45.71));
-		return consolidatedData;
+		consolidatedDetailsList.add(consolidatedData);
+		
+		consolidatedData = new ConsolidatedCollDetails();
+		consolidatedData.setCytdColl(BigDecimal.valueOf(30.95));
+		consolidatedData.setTotalDmd(BigDecimal.valueOf(174.00));
+		consolidatedData.setLytdColl(BigDecimal.valueOf(25.47));
+		consolidatedDetailsList.add(consolidatedData);
+		
+		consolidatedData = new ConsolidatedCollDetails();
+		consolidatedData.setCytdColl(BigDecimal.valueOf(20.95));
+		consolidatedData.setTotalDmd(BigDecimal.valueOf(164.25));
+		consolidatedData.setLytdColl(BigDecimal.valueOf(18.74));
+		consolidatedDetailsList.add(consolidatedData);
+		return consolidatedDetailsList;
 	}
 }
