@@ -46,7 +46,8 @@ public class CollectionDetailsRequest {
 	private String districtName;
 	private String ulbGrade;
 	private String ulbCode;
-	private String tillMonth;
+	private String fromDate;
+	private String toDate;
 	
 	public String getRegionName() {
 		return regionName;
@@ -72,11 +73,17 @@ public class CollectionDetailsRequest {
 	public void setUlbCode(String ulbCode) {
 		this.ulbCode = ulbCode;
 	}
-	public String getTillMonth() {
-		return tillMonth;
+	public String getFromDate() {
+		return fromDate;
 	}
-	public void setTillMonth(String tillMonth) {
-		this.tillMonth = tillMonth;
+	public void setFromDate(String fromDate) {
+		this.fromDate = fromDate;
+	}
+	public String getToDate() {
+		return toDate;
+	}
+	public void setToDate(String toDate) {
+		this.toDate = toDate;
 	}
 	
 }

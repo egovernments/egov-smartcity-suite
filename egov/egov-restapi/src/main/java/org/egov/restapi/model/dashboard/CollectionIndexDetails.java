@@ -46,6 +46,7 @@ import org.egov.ptis.domain.model.ErrorDetails;
 
 public class CollectionIndexDetails {
 	private BigDecimal todayColl = BigDecimal.ZERO;
+	private BigDecimal lyTodayColl = BigDecimal.ZERO;
 	private BigDecimal cytdColl = BigDecimal.ZERO;
 	private BigDecimal cytdDmd = BigDecimal.ZERO;
 	private BigDecimal totalDmd = BigDecimal.ZERO;
@@ -59,6 +60,12 @@ public class CollectionIndexDetails {
 	}
 	public void setTodayColl(BigDecimal todayColl) {
 		this.todayColl = todayColl;
+	}
+	public BigDecimal getLyTodayColl() {
+		return lyTodayColl;
+	}
+	public void setLyTodayColl(BigDecimal lyTodayColl) {
+		this.lyTodayColl = lyTodayColl;
 	}
 	public BigDecimal getCytdColl() {
 		return cytdColl;
