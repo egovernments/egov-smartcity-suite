@@ -39,13 +39,16 @@
  */
 package org.egov.wtms.elasticSearch.service;
 
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
+
 import org.egov.infra.search.elastic.entity.ApplicationIndex;
 import org.egov.wtms.elasticSearch.repository.ApplicationSearchRepository;
+import org.egov.wtms.utils.constants.WaterTaxConstants;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.util.List;
 
 @Service
 @Transactional(readOnly = true)
@@ -73,4 +76,11 @@ public class ApplicationSearchService {
         return applicationSearchRepository.findAllApplicationTypes(moduleName);
     }
 
+    public Map<String, String> getApplicationStatusMap() {
+        final Map<String, String> connectionTypeMap = new LinkedHashMap<String, String>(0);
+        connectionTypeMap.put(WaterTaxConstants.APPLICATIONSTATUSOPEN.toString(), WaterTaxConstants.APPLICATIONSTATUSOPEN);
+        connectionTypeMap.put(WaterTaxConstants.APPLICATIONSTATUSCLOSED.toString(), WaterTaxConstants.APPLICATIONSTATUSCLOSED);
+        connectionTypeMap.put(WaterTaxConstants.APPLICATIONSTATUSALL.toString(), WaterTaxConstants.APPLICATIONSTATUSALL);
+        return connectionTypeMap;
+    }
 }

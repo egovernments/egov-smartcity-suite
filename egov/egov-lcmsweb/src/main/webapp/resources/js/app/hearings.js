@@ -38,7 +38,13 @@
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
 $(document).ready(function() {
-	//document.getElementById('employeeDetails').disabled=true;
+	
+	
+	 $("#hearingsTbl tbody tr:gt(2)").each(function( index ) {
+		 $(this).find('a').hide();
+	    });
+	 
+	
 	$('#buttonid').click(function(){
 	if(!validateHearingDate())
 	{
@@ -80,6 +86,9 @@ $(document).ready(function() {
 		displayKey : 'name',
 		source : assignPosition.ttAdapter()
 	});
+	typeaheadWithEventsHandling(typeaheadobj, '#positionEmpId'); 
+	
+	
 	$('#btnclose').click(function(){
 		bootbox.confirm({
 		    message: 'Information entered in this screen will be lost if you close this page ? Please confirm if you want to close. ',
@@ -143,10 +152,11 @@ $(document).ready(function() {
 var count = $("#employeeDetails tbody  tr").length -1;
 function addEmployee()
 {     
-	var $tableBody = $('#employeeDetails').find("tbody"),
-    $trLast = $tableBody.find("tr:last");
-	 $trNew = $trLast.clone();
-	$trLast.find('input').val($("#positionEmpName").val());
+	if( $("#positionEmpName").val() !=''){
+		var $tableBody = $('#employeeDetails').find("tbody"),
+	    $trLast = $tableBody.find("tr:last");
+	 	$trNew = $trLast.clone();
+		$trLast.find('input').val($("#positionEmpName").val());
 		count++;
 		$trNew.find("input").each(function(){
 	        $(this).attr({
@@ -155,6 +165,7 @@ function addEmployee()
 	        });
 	    });
 		$trLast.after($trNew);
+	}
 }
 function edit(hearingId){    
 	var url = '/lcms/hearing/edit/'+hearingId

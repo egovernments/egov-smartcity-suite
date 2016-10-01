@@ -111,7 +111,7 @@ $(document).on('change', 'select.actiondropdown', function() {
 				return false;
 				}
 				else{
-					loadPropertyDetails(shscnumber,ptassessmentno);
+					loadPropertyDetails(changeincloseturl,consumerno,shscnumber,ptassessmentno);
 				}
 			}, 
 			error: function (response) {
@@ -121,7 +121,6 @@ $(document).on('change', 'select.actiondropdown', function() {
 		}  
 	else if($(this).find(":selected").text()=="Close Sewerage Connection"){
 		var closeconnectionurl=$(this).val();
-		applicationType="closesewerageconnection";
 		jQuery.ajax({
 			url: "/stms/ajaxconnection/check-application-inworkflow/"+shscnumber,
 			type: "GET",
@@ -135,7 +134,7 @@ $(document).on('change', 'select.actiondropdown', function() {
 				return false;
 				}
 				else{
-					loadPropertyDetails(shscnumber,ptassessmentno);
+					loadPropertyDetails(closeconnectionurl, $(this).data('consumer-no'), shscnumber,ptassessmentno);
 				}
 			},
 			error: function (response) {
@@ -226,7 +225,7 @@ $("#viewDCB").click(function(){
 });
   
 
-function loadPropertyDetails(shscnumber, propertyID) {
+function loadPropertyDetails(url,consumerno,shscnumber, propertyID) {
 	var errorMessage=""; 
 	var subErrorMessage="";
 	if(propertyID != '') {
@@ -236,7 +235,6 @@ function loadPropertyDetails(shscnumber, propertyID) {
 			dataType: "json",
 			success: function (response) { 
 				var waterTaxDue = getWaterTaxDue(propertyID);
-				//console.log(waterTaxDue['CURRENTWATERCHARGE']); 
 					if(applicationType==="changenumberofseats"){
 						subErrorMessage = " change number of seats";
 					}
@@ -252,11 +250,8 @@ function loadPropertyDetails(shscnumber, propertyID) {
 					if(response.propertyDetails.taxDue > 0 || waterTaxDue['WATERTAXDUE'] > 0) {
 						bootbox.alert(errorMessage);
 					}
-					else if(applicationType === "closesewerageconnection"){	
-						window.open("/stms/transactions/closeConnection/"+shscnumber, '_blank', "width=800, height=600, scrollbars=yes");
-					}
 					else{
-						window.open("/stms/transactions/modifyConnection/"+shscnumber, '_blank', "width=800, height=600, scrollbars=yes");
+						callurl(url, consumerno, propertyID, shscnumber);
 					}
 				
 			}, 

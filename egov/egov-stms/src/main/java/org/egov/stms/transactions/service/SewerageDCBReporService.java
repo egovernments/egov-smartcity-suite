@@ -119,6 +119,7 @@ public class SewerageDCBReporService {
                     }
                     else if(demandDtl.getEgDemandReason().getEgDemandReasonMaster().getCode().equalsIgnoreCase(FEES_ADVANCE_CODE)) {
                         dcbResult.setAdvanceAmount(demandDtl.getAmount().setScale(2, BigDecimal.ROUND_HALF_UP));
+                        dcbResult.setCollectedAdvanceAmount(demandDtl.getAmtCollected().setScale(2, BigDecimal.ROUND_HALF_UP));
                     }
                     sewerageReportMap.put(demandDtl.getEgDemandReason().getEgInstallmentMaster().getDescription(), dcbResult);
                 } else {
@@ -139,6 +140,7 @@ public class SewerageDCBReporService {
                     }
                     else if(demandDtl.getEgDemandReason().getEgDemandReasonMaster().getCode().equalsIgnoreCase(FEES_ADVANCE_CODE)){
                         dcbResult.setAdvanceAmount(dcbResult.getAdvanceAmount().add(demandDtl.getAmount().setScale(2, BigDecimal.ROUND_HALF_UP)));
+                        dcbResult.setCollectedAdvanceAmount(dcbResult.getCollectedAdvanceAmount().add(demandDtl.getAmtCollected().setScale(2, BigDecimal.ROUND_HALF_UP)));
                     }
                     sewerageReportMap.put(demandDtl.getEgDemandReason().getEgInstallmentMaster().getDescription(), dcbResult);
                 }
@@ -157,9 +159,11 @@ public class SewerageDCBReporService {
                     receiptMap.put(receipt.getReceiptNumber(), receiptDtlMap);
                     
                 }
+                if(!receiptMap.isEmpty())
                 receiptApplDtlMap.put(detail.getApplicationNumber(), receiptMap);
             }
            }
+          
            dcbResult.setReceipts(receiptApplDtlMap);
             
             if (sewerageReportMap.size() > 0) {

@@ -39,12 +39,23 @@
  */
 package org.egov.works.abstractestimate.service;
 
+import java.awt.image.BufferedImage;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.OutputStream;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
+import javax.imageio.IIOImage;
+import javax.imageio.ImageIO;
+import javax.imageio.ImageWriteParam;
+import javax.imageio.ImageWriter;
+import javax.imageio.stream.ImageOutputStream;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
@@ -65,7 +76,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
-
 @Service
 @Transactional(readOnly = true)
 public class EstimatePhotographService {
@@ -75,19 +85,19 @@ public class EstimatePhotographService {
 
     @Autowired
     private EstimatePhotographRepository estimatePhotographRepository;
-    
+
     @Autowired
     private FileStoreService fileStoreService;
 
     public Session getCurrentSession() {
         return entityManager.unwrap(Session.class);
     }
-    
+
     @Transactional
-    public void save(final EstimatePhotographs estimatePhotographs){
+    public void save(final EstimatePhotographs estimatePhotographs) {
         estimatePhotographRepository.save(estimatePhotographs);
     }
-    
+
     public List<EstimatePhotographs> getEstimatePhotographs(final MultipartFile[] files, final Object object)
             throws IOException {
         List<EstimatePhotographs> estimatePhotographsList = new ArrayList<EstimatePhotographs>();
@@ -99,27 +109,55 @@ public class EstimatePhotographService {
                 | InvocationTargetException e) {
             throw new ApplicationRuntimeException("lineestimate.document.error", e);
         }
+        File compressedImageFile = null;
+        if (files != null && files.length > 0 && !files[0].isEmpty()) 
+            compressedImageFile = compressImage(files);
 
-        if (files != null && files.length > 0)
-            for (int i = 0; i < files.length; i++)
-                if (!files[i].isEmpty()) {
-                    final EstimatePhotographs estimatePhotographs = new EstimatePhotographs();
-                    estimatePhotographs.setFileStore(fileStoreService.store(files[i].getInputStream(), files[i].getOriginalFilename(),
-                            files[i].getContentType(), WorksConstants.FILESTORE_MODULECODE));
-                    estimatePhotographsList.add(estimatePhotographs);
-                }
+        final EstimatePhotographs estimatePhotographs = new EstimatePhotographs();
+        estimatePhotographs.setFileStore(fileStoreService.store(compressedImageFile, files[0].getOriginalFilename(),
+                files[0].getContentType(), WorksConstants.FILESTORE_MODULECODE));
+        estimatePhotographsList.add(estimatePhotographs);
+
         return estimatePhotographsList;
     }
-    
-    public List<EstimatePhotographs> getEstimatePhotographByLineEstimateDetail(final Long lineEstimateDetailId){
+
+    public File compressImage(final MultipartFile[] files) throws IOException, FileNotFoundException {
+        
+        BufferedImage image = ImageIO.read(files[0].getInputStream());
+        File compressedImageFile = new File(files[0].getOriginalFilename());
+        OutputStream os = new FileOutputStream(compressedImageFile);
+        String fileExtenstion = files[0].getOriginalFilename();
+        fileExtenstion = fileExtenstion.substring(fileExtenstion.lastIndexOf(".") + 1);
+        Iterator<ImageWriter> writers = ImageIO.getImageWritersByFormatName(fileExtenstion);
+        ImageWriter writer = (ImageWriter) writers.next();
+        ImageOutputStream ios = ImageIO.createImageOutputStream(os);
+        writer.setOutput(ios);
+        ImageWriteParam param = writer.getDefaultWriteParam();
+
+        if(!fileExtenstion.equalsIgnoreCase("png")){
+            param.setCompressionMode(ImageWriteParam.MODE_EXPLICIT);
+            param.setCompressionQuality(0.5f);
+        }
+        writer.write(null, new IIOImage(image, null, null), param);
+
+        os.close();
+        ios.close();
+        writer.dispose();
+        return compressedImageFile;
+    }
+
+    public List<EstimatePhotographs> getEstimatePhotographByLineEstimateDetail(final Long lineEstimateDetailId) {
         return estimatePhotographRepository.findByLineEstimateDetails_id(lineEstimateDetailId);
     }
-    
-    public List<EstimatePhotographs> getEstimatePhotographsByEstimatePhotographStageAndLineEstimateDetails(final WorkProgress estimatePhotographtrackStage,final Long lineEstimateDetailId) {
-        return estimatePhotographRepository.findByEstimatePhotographAndLineEstimateDetails(estimatePhotographtrackStage,lineEstimateDetailId);
+
+    public List<EstimatePhotographs> getEstimatePhotographsByEstimatePhotographStageAndLineEstimateDetails(
+            final WorkProgress estimatePhotographtrackStage, final Long lineEstimateDetailId) {
+        return estimatePhotographRepository.findByEstimatePhotographAndLineEstimateDetails(estimatePhotographtrackStage,
+                lineEstimateDetailId);
     }
-    
-    public List<LineEstimateDetails> searchEstimatePhotograph(final EstimatePhotographSearchRequest estimatePhotographSearchRequest) {
+
+    public List<LineEstimateDetails> searchEstimatePhotograph(
+            final EstimatePhotographSearchRequest estimatePhotographSearchRequest) {
         final StringBuilder queryStr = new StringBuilder(500);
 
         buildWhereClause(estimatePhotographSearchRequest, queryStr);
@@ -128,7 +166,8 @@ public class EstimatePhotographService {
         return estimatePhotographsList;
     }
 
-    private void buildWhereClause(final EstimatePhotographSearchRequest estimatePhotographSearchRequest, final StringBuilder queryStr) {
+    private void buildWhereClause(final EstimatePhotographSearchRequest estimatePhotographSearchRequest,
+            final StringBuilder queryStr) {
 
         queryStr.append(
                 "select distinct(ep.lineEstimateDetails) from EstimatePhotographs as ep where ep.lineEstimateDetails.lineEstimate.status.code != :lineEstimateStatus and ep.workProgress is not null");
@@ -137,9 +176,9 @@ public class EstimatePhotographService {
             queryStr.append(
                     " and upper(ep.lineEstimateDetails.projectCode.code) = :workIdentificationNumber");
 
-//        if (StringUtils.isNotBlank(estimatePhotographSearchRequest.getEstimateNumber()))
-//            queryStr.append(" and upper(ep.lineEstimateDetails.estimateNumber) = :estimateNumber");
-        
+        // if (StringUtils.isNotBlank(estimatePhotographSearchRequest.getEstimateNumber()))
+        // queryStr.append(" and upper(ep.lineEstimateDetails.estimateNumber) = :estimateNumber");
+
         if (StringUtils.isNotBlank(estimatePhotographSearchRequest.getWorkOrderNumber()))
             queryStr.append(
                     " and ep.lineEstimateDetails.id in (select distinct(woe.estimate.lineEstimateDetails.id) from WorkOrderEstimate as woe where woe.workOrder.egwStatus.code =:workOrderStatus and upper(woe.workOrder.workOrderNumber) =:workOrderNumber) ");
@@ -149,7 +188,7 @@ public class EstimatePhotographService {
         if (StringUtils.isNotBlank(estimatePhotographSearchRequest.getContractorName()))
             queryStr.append(
                     " and ep.lineEstimateDetails.id in (select distinct(woe.estimate.lineEstimateDetails.id) from WorkOrderEstimate as woe where woe.workOrder.egwStatus.code =:workOrderStatus and upper(woe.workOrder.contractor.name) =:contractorName or upper(woe.workOrder.contractor.code) =:contractorName) ");
-            
+
     }
 
     private Query setParameterForEstimatePhotograph(final EstimatePhotographSearchRequest estimatePhotographSearchRequest,
@@ -157,46 +196,47 @@ public class EstimatePhotographService {
         final Query qry = entityManager.createQuery(queryStr.toString());
 
         qry.setParameter("lineEstimateStatus", WorksConstants.CANCELLED_STATUS);
-        
+
         if (estimatePhotographSearchRequest != null) {
             if (StringUtils.isNotBlank(estimatePhotographSearchRequest.getWorkIdentificationNumber()))
                 qry.setParameter("workIdentificationNumber",
                         estimatePhotographSearchRequest.getWorkIdentificationNumber().toUpperCase());
             if (StringUtils.isNotBlank(estimatePhotographSearchRequest.getEstimateNumber()))
                 qry.setParameter("estimateNumber", estimatePhotographSearchRequest.getEstimateNumber().toUpperCase());
-            if (StringUtils.isNotBlank(estimatePhotographSearchRequest.getWorkOrderNumber())){
+            if (StringUtils.isNotBlank(estimatePhotographSearchRequest.getWorkOrderNumber())) {
                 qry.setParameter("workOrderStatus", WorksConstants.APPROVED);
                 qry.setParameter("workOrderNumber", estimatePhotographSearchRequest.getWorkOrderNumber().toUpperCase());
             }
-            if (estimatePhotographSearchRequest.getEstimateCreatedBy() != null){
+            if (estimatePhotographSearchRequest.getEstimateCreatedBy() != null) {
                 qry.setParameter("abstractEstimateStatus", AbstractEstimate.EstimateStatus.TECH_SANCTIONED.toString());
                 qry.setParameter("aeCreatedById", estimatePhotographSearchRequest.getEstimateCreatedBy());
             }
-            if (StringUtils.isNotBlank(estimatePhotographSearchRequest.getContractorName())){
+            if (StringUtils.isNotBlank(estimatePhotographSearchRequest.getContractorName())) {
                 qry.setParameter("workOrderStatus", WorksConstants.APPROVED);
                 qry.setParameter("contractorName", estimatePhotographSearchRequest.getContractorName().toUpperCase());
             }
-                
-                
+
         }
         return qry;
     }
 
-    public EstimatePhotographs getEstimatePhotographByFilestore(final Long filestoreId){
+    public EstimatePhotographs getEstimatePhotographByFilestore(final Long filestoreId) {
         return estimatePhotographRepository.findByFileStore_id(filestoreId);
     }
-    
+
     @Transactional
-    public void delete(final EstimatePhotographs estimatePhotographs){
+    public void delete(final EstimatePhotographs estimatePhotographs) {
         estimatePhotographRepository.delete(estimatePhotographs);
     }
-    
+
     public List<String> getEstimateNumbersForViewEstimatePhotograph(final String estimateNumber) {
-        return estimatePhotographRepository.findEstimateNumbersForViewEstimatePhotograph("%" + estimateNumber + "%",WorksConstants.CANCELLED_STATUS);
+        return estimatePhotographRepository.findEstimateNumbersForViewEstimatePhotograph("%" + estimateNumber + "%",
+                WorksConstants.CANCELLED_STATUS);
     }
-    
+
     public List<String> getWinForViewEstimatePhotograph(final String workIdentificationNumber) {
-        return estimatePhotographRepository.findWorkIdentificationNumberForViewEstimatePhotograph("%" + workIdentificationNumber + "%",WorksConstants.CANCELLED_STATUS);
+        return estimatePhotographRepository.findWorkIdentificationNumberForViewEstimatePhotograph(
+                "%" + workIdentificationNumber + "%", WorksConstants.CANCELLED_STATUS);
     }
 
 }

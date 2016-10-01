@@ -109,6 +109,8 @@
 							${judgment.judgmentDetails}</div>
 
 					</div>
+					<c:choose>
+						<c:when test="${judgment.judgmentType.name == 'Enquiry'}">
 					<div class="row add-border">
 						<div class="col-xs-3 add-margin">
 							<spring:message code="lbl.enquirydetails" />
@@ -124,6 +126,10 @@
 							<c:out value="${enuiryDate}" />
 						</div>
 					</div>
+						</c:when>
+					</c:choose>
+					<c:choose>
+						<c:when test="${judgment.judgmentType.name == 'Ex-parte Order'}">
 					<div class="row add-border">
 						<div class="col-xs-3 add-margin">
 							<spring:message code="lbl.setasidepetitiondate" />
@@ -154,6 +160,8 @@
 						<div class="col-sm-3 add-margin view-content">
 							${judgment.setasidePetitionDetails}</div>
 					</div>
+					</c:when>
+					</c:choose>
 				</div>
 			</div>
 			<div></div>

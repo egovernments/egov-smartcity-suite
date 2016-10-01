@@ -47,8 +47,8 @@
 	<thead>
 		<tr>
 			<th class="text-center">Is Primary Dept</th>
-			<th class="text-center">Department :<span class="mandatory"></span></th>
-			<th class="text-center">Assigned To :<span class="mandatory"></span></th>
+			<th class="text-center">Department <span class="mandatory"></span></th>
+			<th class="text-center">Assigned To <span class="mandatory"></span></th>
 			<th class="text-center">Date Of Receipt Of PWR (DD/MM/YYYY)<span
 				class="mandatory"></span></th>
 			<th class="text-center">Add/Delete Department</th>

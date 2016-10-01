@@ -61,6 +61,7 @@ public class CreatePropertyDetails implements Serializable {
 	private List<FloorDetails> floorDetails;
 	private VacantLandDetails vacantLandDetails;
 	private SurroundingBoundaryDetails surroundingBoundaryDetails;
+	private String assessmentNo;
 	
 	@Override
 	public String toString() {
@@ -143,6 +144,14 @@ public class CreatePropertyDetails implements Serializable {
 	}
 	public void setUlbCode(String ulbCode) {
 		this.ulbCode = ulbCode;
+	}
+
+	public String getAssessmentNo() {
+		return assessmentNo;
+	}
+
+	public void setAssessmentNo(String assessmentNo) {
+		this.assessmentNo = assessmentNo;
 	}
 
 }

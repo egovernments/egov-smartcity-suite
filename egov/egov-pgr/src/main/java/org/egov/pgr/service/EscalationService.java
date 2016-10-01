@@ -200,7 +200,7 @@ public class EscalationService {
         complaint.setEscalationDate(getExpiryDate(complaint));
         complaint.setAssignee(superiorPosition);
         complaint.transition().withOwner(superiorPosition).withComments("Complaint is escalated")
-                .withDateInfo(complaint.getEscalationDate().toDate())
+                .withDateInfo(new Date())
                 .withStateValue(complaint.getStatus().getName())
                 .withSenderName(securityUtils.getCurrentUser().getName());
         final Complaint savedComplaint = complaintRepository.save(complaint);

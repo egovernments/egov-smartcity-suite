@@ -129,20 +129,20 @@
         <xstream-version>1.4.9</xstream-version>
         <xpp3-version>1.1.4c</xpp3-version>
         <spring-version>4.3.2.RELEASE</spring-version>
-        <spring-session-version>1.2.2.RELEASE</spring-session-version>
+        <spring-session-version>1.1.1.RELEASE</spring-session-version>
         <spring-data-jpa-version>1.10.3.RELEASE</spring-data-jpa-version>
         <spring-data-jpa-envers-version>1.0.2.RELEASE</spring-data-jpa-envers-version>
+        <spring-security-version>4.0.3.RELEASE</spring-security-version>
+        <spring-security-oauth2-version>2.0.9.RELEASE</spring-security-oauth2-version>
         <spring-data-elasticsearch>2.0.3.RELEASE</spring-data-elasticsearch>
         <egov-search-version>2.0.1-SNAPSHOT</egov-search-version>
         <elastic-search-version>2.1.2</elastic-search-version>
-        <spring-security-version>4.1.3.RELEASE</spring-security-version>
-        <spring-security-oauth2-version>2.0.11.RELEASE</spring-security-oauth2-version>
         <apache-tiles-version>3.0.7</apache-tiles-version>
         <embedded-redis-version>0.6</embedded-redis-version>
         <quartz-version>2.2.3</quartz-version>
         <jasper-report-version>6.1.0</jasper-report-version>
         <json-simple-version>1.1.1</json-simple-version>
-        <jackson-version>2.8.3</jackson-version>
+        <jackson-version>2.7.2</jackson-version>
         <gson-version>2.7</gson-version>
         <antisamy-version>1.5.3</antisamy-version>
         <jasypt-version>1.9.2</jasypt-version>
@@ -169,7 +169,7 @@
         <joda-time-version>2.9.4</joda-time-version>
         <joda-time-jsptag-version>1.1.1</joda-time-jsptag-version>
         <jsoup-version>1.9.2</jsoup-version>
-        <jython-version>2.7.0</jython-version>
+        <jython-version>2.5.2</jython-version>
         <flyway-core-version>4.0.3</flyway-core-version>
         <junit-version>4.12</junit-version>
         <mockito-all-version>1.10.19</mockito-all-version>
@@ -1112,7 +1112,7 @@
             <artifactId>embedded-redis</artifactId>
         </dependency>
         <!-- EMBEDDED REDIS SERVER END -->
-        
+
         <!-- ELASTICSEARCH DEPENDANCY STARTS -->
         <dependency>
             <groupId>org.egov.search</groupId>
@@ -1123,7 +1123,7 @@
             <artifactId>elasticsearch</artifactId>
 	    </dependency>
 		<!-- ELASTICSEARCH DEPENDANCY ENDS -->
-		
+
         <!-- MISC STARTS -->
         <dependency>
             <groupId>com.google.guava</groupId>

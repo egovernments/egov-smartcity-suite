@@ -1,14 +1,9 @@
 package org.egov.stms.masters.pojo;
 
 import java.math.BigDecimal;
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
-import java.util.Set;
-
-import org.egov.demand.model.EgdmCollectedReceipt;
 
 public class SewerageRateDCBResult {
     private String applicationNumber;
@@ -29,6 +24,7 @@ public class SewerageRateDCBResult {
     private BigDecimal collectedPenaltyAmount=BigDecimal.ZERO.setScale(2, BigDecimal.ROUND_HALF_UP);
     
     private BigDecimal advanceAmount = BigDecimal.ZERO.setScale(2, BigDecimal.ROUND_HALF_UP);
+    private BigDecimal collectedAdvanceAmount = BigDecimal.ZERO.setScale(2, BigDecimal.ROUND_HALF_UP);
     
     private Map<String, Map<String, Map<Date, BigDecimal>>> receipts = new HashMap <String, Map<String, Map<Date, BigDecimal>>>();
     
@@ -116,5 +112,11 @@ public class SewerageRateDCBResult {
     }
     public void setReceipts(Map<String, Map<String, Map<Date, BigDecimal>>> receipts) {
         this.receipts = receipts;
+    }
+    public BigDecimal getCollectedAdvanceAmount() {
+        return collectedAdvanceAmount;
+    }
+    public void setCollectedAdvanceAmount(BigDecimal collectedAdvanceAmount) {
+        this.collectedAdvanceAmount = collectedAdvanceAmount;
     }
 }

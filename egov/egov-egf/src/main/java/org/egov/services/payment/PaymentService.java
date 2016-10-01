@@ -3436,6 +3436,9 @@ public class PaymentService extends PersistenceService<Paymentheader, Long> {
 					paymentBean.setBillVoucherDate(billregister
 							.getEgBillregistermis().getVoucherHeader()
 							.getVoucherDate());
+					paymentBean.setBillVoucherId(billregister
+                                                .getEgBillregistermis().getVoucherHeader()
+                                                .getId());
 				}
 				if (billregister.getEgBillregistermis().getEgBillSubType() != null)
 					if (billregister.getEgBillregistermis().getEgBillSubType()

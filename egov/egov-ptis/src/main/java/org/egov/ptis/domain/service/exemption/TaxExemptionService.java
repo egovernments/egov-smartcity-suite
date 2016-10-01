@@ -261,7 +261,7 @@ public class TaxExemptionService extends PersistenceService<PropertyImpl, Long> 
 
         if (!propertyByEmployee) {
             currentState = "Created";
-            final Assignment assignment = propService.getUserPositionByZone(property.getBasicProperty(),property.getBasicProperty().getSource());
+            final Assignment assignment = propService.getUserPositionByZone(property.getBasicProperty(), false);
             if (null != assignment)
                 approverPosition = assignment.getPosition().getId();
         } else

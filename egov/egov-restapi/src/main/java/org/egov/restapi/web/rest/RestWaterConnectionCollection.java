@@ -282,11 +282,6 @@ public class RestWaterConnectionCollection {
 
             LOG.error("compare " + totalAmountDue.compareTo(payWaterTaxDetails.getTotalAmount()));
 
-            if (totalAmountDue.compareTo(payWaterTaxDetails.getTotalAmount()) == -1) {
-                errorDetails = new ErrorDetails();
-                errorDetails.setErrorCode(RestApiConstants.THIRD_PARTY_ERR_CODE_DEMAND_AMOUNT_VALID);
-                errorDetails.setErrorMessage(RestApiConstants.THIRD_PARTY_ERR_MSG_DEMAND_AMOUNT_VALID);
-            }
 
         }
         if (payWaterTaxDetails.getTransactionId() == null || "".equals(payWaterTaxDetails.getTransactionId())) {

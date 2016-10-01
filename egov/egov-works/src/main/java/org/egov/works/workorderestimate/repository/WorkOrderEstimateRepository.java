@@ -47,7 +47,9 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface WorkOrderEstimateRepository extends JpaRepository<WorkOrderEstimate, Long> {
-
+    
+    WorkOrderEstimate findByWorkOrder_Id(final Long workOrderId);
+    
     WorkOrderEstimate findByWorkOrder_IdAndEstimate_IdAndWorkOrder_EgwStatus_Code(final Long workOrderId, final Long estimateId,
             final String status);
 
