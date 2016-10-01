@@ -108,9 +108,6 @@
         <sonar.dynamicAnalysis>reuseReports</sonar.dynamicAnalysis>
         <sonar.jacoco.reportPath>${project.basedir}/../target/jacoco.exec</sonar.jacoco.reportPath>
 
-        <!-- Application core dependency versions -->
-        <egov-search-version>2.0.1-SNAPSHOT</egov-search-version>
-
         <!-- Application server provided dependency versions -->
         <lucene-version>5.3.1</lucene-version>
         <hibernate-version>5.0.7.Final</hibernate-version>
@@ -135,6 +132,9 @@
         <spring-session-version>1.2.2.RELEASE</spring-session-version>
         <spring-data-jpa-version>1.10.3.RELEASE</spring-data-jpa-version>
         <spring-data-jpa-envers-version>1.0.2.RELEASE</spring-data-jpa-envers-version>
+        <spring-data-elasticsearch>2.0.3.RELEASE</spring-data-elasticsearch>
+        <egov-search-version>2.0.1-SNAPSHOT</egov-search-version>
+        <elastic-search-version>2.1.2</elastic-search-version>
         <spring-security-version>4.1.3.RELEASE</spring-security-version>
         <spring-security-oauth2-version>2.0.11.RELEASE</spring-security-oauth2-version>
         <apache-tiles-version>3.0.7</apache-tiles-version>
@@ -246,7 +246,52 @@
     <dependencyManagement>
         <dependencies>
             <dependency>
-                <groupId>org.egov.search</groupId>
+	            <groupId>org.elasticsearch</groupId>
+	            <artifactId>elasticsearch</artifactId>
+	            <version>${elastic-search-version}</version>
+                <!-- Below excluded libraries are already provided by app server -->
+                <exclusions>
+                    <exclusion>
+                        <groupId>com.jayway.jsonpath</groupId>
+                        <artifactId>json-path</artifactId>
+                    </exclusion>
+                    <exclusion>
+                        <groupId>org.ow2.asm</groupId>
+                        <artifactId>*</artifactId>
+                    </exclusion>
+                    <exclusion>
+                        <groupId>org.apache.lucene</groupId>
+                        <artifactId>lucene-analyzers-common</artifactId>
+                    </exclusion>
+                    <exclusion>
+                        <groupId>org.apache.lucene</groupId>
+                        <artifactId>lucene-core</artifactId>
+                    </exclusion>
+                    <exclusion>
+                        <groupId>org.apache.lucene</groupId>
+                        <artifactId>lucene-facet</artifactId>
+                    </exclusion>
+                    <exclusion>
+                        <groupId>org.apache.lucene</groupId>
+                        <artifactId>lucene-queries</artifactId>
+                    </exclusion>
+                    <exclusion>
+                        <groupId>org.apache.lucene</groupId>
+                        <artifactId>lucene-queryparser</artifactId>
+                    </exclusion>
+                    <exclusion>
+                        <groupId>org.apache.lucene</groupId>
+                        <artifactId>lucene-backward-codecs</artifactId>
+                    </exclusion>
+                    <exclusion>
+                        <groupId>org.apache.lucene</groupId>
+                        <artifactId>lucene-misc</artifactId>
+                    </exclusion>
+                </exclusions>
+            </dependency>
+
+			<dependency>
+	            <groupId>org.egov.search</groupId>
                 <artifactId>egov-search</artifactId>
                 <version>${egov-search-version}</version>
                 <!-- Below excluded libraries are already provided by app server -->
@@ -289,7 +334,6 @@
                     </exclusion>
                 </exclusions>
             </dependency>
-
 
             <!-- HIBERNATE DEPENDENCIES START -->
             <dependency>
@@ -521,6 +565,11 @@
                     </exclusion>
                 </exclusions>
             </dependency>
+            <dependency>
+		        <groupId>org.springframework.data</groupId>
+		        <artifactId>spring-data-elasticsearch</artifactId>
+		        <version>${spring-data-elasticsearch}</version>
+		    </dependency>
             <!-- SPRING END -->
 
             <!-- SECURITY START -->
@@ -1051,6 +1100,10 @@
             <groupId>org.springframework.session</groupId>
             <artifactId>spring-session-data-redis</artifactId>
         </dependency>
+        <dependency>
+	        <groupId>org.springframework.data</groupId>
+	        <artifactId>spring-data-elasticsearch</artifactId>
+		</dependency>
         <!-- SPRING DEPENDENCIES END -->
 
         <!-- EMBEDDED REDIS SERVER START -->
@@ -1059,7 +1112,18 @@
             <artifactId>embedded-redis</artifactId>
         </dependency>
         <!-- EMBEDDED REDIS SERVER END -->
-
+        
+        <!-- ELASTICSEARCH DEPENDANCY STARTS -->
+        <dependency>
+            <groupId>org.egov.search</groupId>
+            <artifactId>egov-search</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.elasticsearch</groupId>
+            <artifactId>elasticsearch</artifactId>
+	    </dependency>
+		<!-- ELASTICSEARCH DEPENDANCY ENDS -->
+		
         <!-- MISC STARTS -->
         <dependency>
             <groupId>com.google.guava</groupId>

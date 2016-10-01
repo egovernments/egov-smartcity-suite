@@ -67,11 +67,6 @@
 		</dependency>
 
 		<dependency>
-			<groupId>org.egov.search</groupId>
-			<artifactId>egov-search</artifactId>
-		</dependency>
-
-		<dependency>
 			<groupId>org.springframework.data</groupId>
 			<artifactId>spring-data-envers</artifactId>
 		</dependency>
