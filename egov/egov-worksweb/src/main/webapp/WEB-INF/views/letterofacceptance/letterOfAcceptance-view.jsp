@@ -217,16 +217,16 @@
 					</div>
 					<div class="row add-border">
 						<div class="col-xs-3 add-margin">
-							<spring:message code="lbl.additional.security.deposit" />
+							<spring:message code="lbl.emd.amount" />
 						</div>
 						<div class="col-xs-3 add-margin view-content">
 							<c:choose>
-								<c:when test="${workOrder.securityDeposit == '0.0'}">
+								<c:when test="${workOrder.emdAmountDeposited == '0.0'}">
 									<c:out default="N/A" value="N/A" />
 								</c:when>
 								<c:otherwise>
 									<fmt:formatNumber groupingUsed="false" maxFractionDigits="2"
-										minFractionDigits="2" value="${workOrder.securityDeposit}" />
+										minFractionDigits="2" value="${workOrder.emdAmountDeposited}" />
 								</c:otherwise>
 							</c:choose>
 						</div>
@@ -238,17 +238,17 @@
 						</div>
 					</div>
 					<div class="row add-border">
-						<div class="col-xs-3 add-margin">
-							<spring:message code="lbl.emd.amount" />
+					<div class="col-xs-3 add-margin">
+							<spring:message code="lbl.additional.security.deposit" />
 						</div>
 						<div class="col-xs-3 add-margin view-content">
 							<c:choose>
-								<c:when test="${workOrder.emdAmountDeposited == '0.0'}">
+								<c:when test="${workOrder.securityDeposit == '0.0'}">
 									<c:out default="N/A" value="N/A" />
 								</c:when>
 								<c:otherwise>
 									<fmt:formatNumber groupingUsed="false" maxFractionDigits="2"
-										minFractionDigits="2" value="${workOrder.emdAmountDeposited}" />
+										minFractionDigits="2" value="${workOrder.securityDeposit}" />
 								</c:otherwise>
 							</c:choose>
 						</div>
