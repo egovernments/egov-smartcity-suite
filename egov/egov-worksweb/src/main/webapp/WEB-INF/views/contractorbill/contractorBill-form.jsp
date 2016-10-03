@@ -52,7 +52,14 @@
 			<input type="hidden"  name="woeId" id="woeId" value="${woeId}" />
 			<input type="hidden" value="${contractorBillRegister.status}" id=billStatus />
 			<input type="hidden" value="${workOrderEstimate.estimate.lineEstimateDetails.lineEstimate.spillOverFlag }" id=spillOverFlag />
-			
+		
+			<input type="hidden" name="workOrderDate" id="workOrderDate" class="form-control datepicker" maxlength="10" data-inputmask="'mask': 'd/m/y'" data-date-end-date="0d" value='<fmt:formatDate value="${workOrder.workOrderDate}" pattern="dd/MM/yyyy"/>'>
+			<form:hidden path="workOrder.id"  name="workOrder" id="workOrderId" value="${workOrder.id}" /> 
+			<input type="hidden" name="contractorBillId" id="contractorBillId" value="${contractorBillRegister.id}" /> 
+			<input type="hidden" name="isSpillover" id="isSpillOver" value="${workOrderEstimate.estimate.lineEstimateDetails.lineEstimate.spillOverFlag}"/>
+			<input type="hidden"  name="workOrderEstimateId" id="workOrderEstimateId" value="${workOrderEstimate.id}" /> 
+			<input type="hidden" name="mode" id="mode" value="${mode }" />
+
 					<div class="panel panel-primary" data-collapsed="0">
 						<div class="panel-heading">
 							<div class="panel-title"><spring:message code="lbl.header" /></div> 
@@ -67,7 +74,8 @@
 						<!-- <div class="panel-body"> -->
 							<jsp:include page="contractorBill-header.jsp"/>
 							<jsp:include page="contractorBill-mbdetails.jsp"/>
-							<jsp:include page="contractorBill-debitaccountdetails.jsp"/>
+							<jsp:include page="contractorBill-debitaccountdetails.jsp"/> 
+							<jsp:include page="contractorBill-refund.jsp"/>
 							<jsp:include page="contractorBill-creditaccountdetails.jsp"/>
 							
 						<!-- </div> -->

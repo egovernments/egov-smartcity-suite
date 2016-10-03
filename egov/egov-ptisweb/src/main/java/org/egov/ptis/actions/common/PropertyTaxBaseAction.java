@@ -197,6 +197,7 @@ public abstract class PropertyTaxBaseAction extends GenericWorkFlowAction {
 
     protected Boolean propertyByEmployee = Boolean.TRUE;
     protected String userDesignationList = new String();
+    protected String applicationType;
 
     public List<File> getUpload() {
         return uploads;
@@ -577,7 +578,7 @@ public abstract class PropertyTaxBaseAction extends GenericWorkFlowAction {
 
         if (!propertyByEmployee) {
             currentState = "Created";
-            final Assignment assignment = propertyService.getUserPositionByZone(property.getBasicProperty(),property.getBasicProperty().getSource());
+            final Assignment assignment = propertyService.getUserPositionByZone(property.getBasicProperty(), false);
             if (null != assignment) {
                 approverPositionId = assignment.getPosition().getId();
                 approverName = (assignment.getEmployee().getName()).concat("~").concat(
@@ -967,6 +968,14 @@ public abstract class PropertyTaxBaseAction extends GenericWorkFlowAction {
     }
     public void setUserDesignationList(String userDesignationList) {
         this.userDesignationList = userDesignationList;
+    }
+
+    public void setApplicationType(String applicationType) {
+        this.applicationType = applicationType;
+    }
+
+    public String getApplicationType() {
+        return applicationType;
     }
     
     

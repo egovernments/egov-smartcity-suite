@@ -31,10 +31,11 @@
 
 package org.egov.stms.web.controller.transactions;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
-import java.util.Set;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
@@ -44,16 +45,13 @@ import org.egov.eis.service.AssignmentService;
 import org.egov.eis.web.contract.WorkflowContainer;
 import org.egov.eis.web.controller.workflow.GenericWorkFlowController;
 import org.egov.infra.config.core.ApplicationThreadLocals;
-import org.egov.infra.filestore.entity.FileStoreMapper;
 import org.egov.infra.filestore.service.FileStoreService;
 import org.egov.infra.security.utils.SecurityUtils;
 import org.egov.ptis.domain.model.AssessmentDetails;
 import org.egov.stms.masters.entity.SewerageApplicationType;
 import org.egov.stms.masters.entity.enums.SewerageConnectionStatus;
-import org.egov.stms.masters.service.DocumentTypeMasterService;
 import org.egov.stms.masters.service.SewerageApplicationTypeService;
 import org.egov.stms.transactions.entity.SewerageApplicationDetails;
-import org.egov.stms.transactions.entity.SewerageApplicationDetailsDocument;
 import org.egov.stms.transactions.entity.SewerageConnection;
 import org.egov.stms.transactions.service.SewerageApplicationDetailsService;
 import org.egov.stms.transactions.service.SewerageConnectionService;
@@ -145,10 +143,12 @@ public class SewerageCloseConnectionController extends GenericWorkFlowController
             final BindingResult resultBinder, final RedirectAttributes redirectAttributes,
             final HttpServletRequest request, final Model model, @RequestParam String workFlowAction,
            @RequestParam("files") final MultipartFile[] files,@RequestParam final String shscNumber) {
-        validatePropertyID(sewerageApplicationDetails, resultBinder);
+        
         final SewerageApplicationDetails sewerageApplicationDetailsFromDB = sewerageApplicationDetailsService
                 .findByConnection_ShscNumberAndIsActive(shscNumber); 
         sewerageApplicationDetails.setConnectionDetail(sewerageApplicationDetailsFromDB.getConnectionDetail()); 
+        
+        validatePropertyID(sewerageApplicationDetails, resultBinder,request);
       
         if (resultBinder.hasErrors()) { 
             sewerageApplicationDetails.setApplicationDate(new Date());
@@ -242,20 +242,30 @@ public class SewerageCloseConnectionController extends GenericWorkFlowController
         return new ModelAndView("closeConnection-success", "sewerageApplicationDetails", sewerageApplicationDetails);
     }
 
-  
     private void validatePropertyID(final SewerageApplicationDetails sewerageApplicationDetails,
-            final BindingResult resultBinder) {
+            final BindingResult errors, final HttpServletRequest request) {
         if (sewerageApplicationDetails.getConnectionDetail() != null
                 && sewerageApplicationDetails.getConnectionDetail().getPropertyIdentifier() != null
                 && !sewerageApplicationDetails.getConnectionDetail().getPropertyIdentifier().equals("")) {
-            String errorMessage = sewerageApplicationDetailsService
-                    .checkValidPropertyAssessmentNumber(sewerageApplicationDetails.getConnectionDetail()
-                            .getPropertyIdentifier());
-            if (errorMessage != null && !errorMessage.equals("")){
-                resultBinder.reject("err.connection.propertyIdentifier.validate",
+          String errorMessage = sewerageApplicationDetailsService
+                    .checkValidPropertyAssessmentNumber(sewerageApplicationDetails.getConnectionDetail().getPropertyIdentifier());
+            if (errorMessage != null && !errorMessage.equals(""))
+                errors.reject("err.connectionDetail.propertyIdentifier.validate",
                         new String[] { errorMessage }, null);
-            }
+           else {
+                    HashMap<String, Object> result = sewerageThirdPartyServices.getWaterTaxDueAndCurrentTax(sewerageApplicationDetails.getConnectionDetail().getPropertyIdentifier(), request);
+                    BigDecimal waterTaxDue = (BigDecimal) result.get("WATERTAXDUE");
+                    String consumerCode = result.get("CONSUMERCODE").toString(); 
+                    //Taking substring since value in consumercode is in this form [12345]
+                    if(consumerCode!="" && consumerCode!=null)
+                        consumerCode=consumerCode.substring(1, consumerCode.length()-1);
+                    if (waterTaxDue.compareTo(BigDecimal.ZERO)>0){
+                        errorMessage="Property tax Assessment number "+sewerageApplicationDetails.getConnectionDetail().getPropertyIdentifier()+
+                                " linked water tap connection demand with Consumer code:"+consumerCode+" is due Rs."+waterTaxDue+"/- . Please clear demand and close sewerage connection.";
+                        errors.reject("err.connectionDetail.propertyIdentifier.validate",
+                                new String[] { errorMessage }, null);
+                    } 
+                }
         }
     }
-   
 }

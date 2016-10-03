@@ -119,4 +119,8 @@ public interface AbstractEstimateRepository extends JpaRepository<AbstractEstima
     @Query("select woe from WorkOrderEstimate woe where exists (select a.abstractEstimate from Activity a where a.abstractEstimate.id = woe.estimate.id and a.schedule.id=:sorId) and woe.workOrder.workOrderDate>=:workOrderDate and woe.estimate.egwStatus.code !=:abstractEstimateStatus ")
     List<WorkOrderEstimate> findBySorIdAndWorkOrderDate(@Param("sorId") final Long sorId,
             @Param("workOrderDate") final Date workOrderDate, @Param("abstractEstimateStatus") final String abstractEstimateStatus);
+
+    @Query("select distinct(ae.createdBy) from AbstractEstimate as ae where ae.egwStatus.code = :abstractEstimateStatus ")
+    List<User> findCreatedByForEstimatePhotograph(@Param("abstractEstimateStatus") String abstractEstimateStatus);
+
 }

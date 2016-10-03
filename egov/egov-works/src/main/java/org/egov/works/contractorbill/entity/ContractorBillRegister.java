@@ -103,6 +103,9 @@ public class ContractorBillRegister extends EgBillregister {
 
     @Transient
     private List<EgBilldetails> billDetailes = new ArrayList<EgBilldetails>(0);
+    
+    @Transient
+    private List<EgBilldetails> refundBillDetails = new ArrayList<EgBilldetails>(0);
 
     @Transient
     private List<EgBilldetails> statutoryDeductionDetailes = new ArrayList<EgBilldetails>(0);
@@ -312,4 +315,12 @@ public class ContractorBillRegister extends EgBillregister {
         this.mbHeaderIds = mbHeaderIds;
     }
 
+    public List<EgBilldetails> getRefundBillDetails() {
+        return refundBillDetails;
+    }
+
+    public void setRefundBillDetails(final List<EgBilldetails> refundBillDetails) {
+        this.refundBillDetails = refundBillDetails;
+    }
+    
 }

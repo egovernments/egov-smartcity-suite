@@ -287,10 +287,6 @@ public class AbstractEstimate extends StateAware implements Auditable {
     private List<FinancialDetail> financialDetails = new ArrayList<FinancialDetail>(0);
 
     @OrderBy("id")
-    @OneToMany(mappedBy = "abstractEstimate", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true, targetEntity = EstimatePhotographs.class)
-    private List<EstimatePhotographs> estimatePhotographsList = new ArrayList<EstimatePhotographs>(0);
-
-    @OrderBy("id")
     @OneToMany(mappedBy = "abstractEstimate", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true, targetEntity = EstimateTechnicalSanction.class)
     private List<EstimateTechnicalSanction> estimateTechnicalSanctions = new ArrayList<EstimateTechnicalSanction>(0);
 
@@ -698,14 +694,6 @@ public class AbstractEstimate extends StateAware implements Auditable {
 
     public void setApprovedBy(final User approvedBy) {
         this.approvedBy = approvedBy;
-    }
-
-    public List<EstimatePhotographs> getEstimatePhotographsList() {
-        return estimatePhotographsList;
-    }
-
-    public void setEstimatePhotographsList(final List<EstimatePhotographs> estimatePhotographsList) {
-        this.estimatePhotographsList = estimatePhotographsList;
     }
 
     public BigDecimal getLatitude() {

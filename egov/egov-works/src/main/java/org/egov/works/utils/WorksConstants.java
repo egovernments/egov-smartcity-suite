@@ -351,5 +351,11 @@ public class WorksConstants {
     public static final String NON_TENDERED = "NONTENDERED";
     
     public static final String LUMP_SUM = "LUMPSUM";
-
+    
+    public static final String CONTRACTOR_RETENTION_MONEY_PURPOSE = "RETENTION_MONEY";
+    
+    public static final String CONTRACTOR_SECURITY_DEPOSITE_PURPOSE = "Security Deposit";
+    
+    public static final String [] CONTRACTOR_REFUND_PURPOSE = {CONTRACTOR_RETENTION_MONEY_PURPOSE , CONTRACTOR_SECURITY_DEPOSITE_PURPOSE};
+    
 }

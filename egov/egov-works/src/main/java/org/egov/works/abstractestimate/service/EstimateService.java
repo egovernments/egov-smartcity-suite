@@ -1376,4 +1376,10 @@ public class EstimateService {
     public List<WorkOrderEstimate> getBySorIdAndWorkOrderDate(final Long sorId, final Date workOrderDate) {
         return abstractEstimateRepository.findBySorIdAndWorkOrderDate(sorId, workOrderDate, WorksConstants.CANCELLED_STATUS);
     }
+    
+    public List<User> getCreatedByForEstimatePhotograph() {
+        return abstractEstimateRepository.findCreatedByForEstimatePhotograph(
+                AbstractEstimate.EstimateStatus.TECH_SANCTIONED.toString());
+    }
+
 }

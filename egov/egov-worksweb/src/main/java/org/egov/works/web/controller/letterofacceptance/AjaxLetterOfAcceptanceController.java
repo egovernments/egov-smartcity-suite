@@ -430,4 +430,14 @@ public class AjaxLetterOfAcceptanceController {
         return json;
     }
     
+    @RequestMapping(value = "/getworkordernumber-viewestimatephotograph", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+    public @ResponseBody List<String> findWorkOrderNumbersForViewEstimatePhotograph(@RequestParam final String workOrderNumber) {
+        return letterOfAcceptanceService.getWorkOrderNumbersForViewEstimatePhotograph(workOrderNumber);
+    }
+    
+    @RequestMapping(value = "/getcontractorname-viewestimatephotograph", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+    public @ResponseBody List<String> findContractorsNamesForViewEstimatePhotograph(@RequestParam final String contractorName) {
+        return letterOfAcceptanceService.getContractorsNamesForViewEstimatePhotograph(contractorName);
+    }
+
 }

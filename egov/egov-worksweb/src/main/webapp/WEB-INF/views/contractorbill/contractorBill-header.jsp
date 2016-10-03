@@ -53,6 +53,8 @@
 <input type="hidden" id="errorWorkCompletionDateGreaterThanWorkOrderDate" value="<spring:message code='error.workcompletiondate.workorderdate' />" />
 <input type="hidden" id="errorWorkCompletionDateFutureDate" value="<spring:message code='error.workcompletiondate.futuredate' />" /> 
 <input type="hidden" id="errorWorkCompletionDategreaterThanWorkCommencedDate" value="<spring:message code='error.workcompletiondate.workcommenceddate' />" /> 
+<input type="hidden" id="errorSpilloverNoRefund" value="<spring:message code='error.contractorBill.spillover.norefund' />" /> 
+<input type="hidden" id="errorNonSpilloverNoRefund" value="<spring:message code='error.contractorBill.nonspillover.norefund' />" /> 
 <input type="hidden" id="hiddenbilldate" value='<fmt:formatDate value="${contractorBillRegister.billdate }"/>'/>
 <input type="hidden" id="errorBillDateGreaterThanMbDate" value="<spring:message code='error.billdate.mbdate' />" />
 <input type="hidden" id="errormsg" value="<spring:message code='error.mbnotexists.tocreatebill' />" />

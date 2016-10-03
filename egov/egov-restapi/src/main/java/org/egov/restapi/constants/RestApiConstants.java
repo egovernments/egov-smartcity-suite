@@ -257,6 +257,18 @@ public class RestApiConstants {
 	public static final String MOBILENO_MAX_LENGTH_ERROR_CODE = "79";
 	public static final String MOBILENO_MAX_LENGTH_ERROR_MSG = "Maximum of 10 digits can be entered for the mobile number.";
 	
+	public static final String TRANSACTION_TYPE_REQUIRED_CODE = "80";
+	public static final String TRANSACTION_TYPE_REQUIRED_MSG = "Transaction type is required.";
+	
+	public static final String FROM_DATE_REQUIRED_CODE = "81";
+	public static final String FROM_DATE_REQUIRED_MSG = "From date is required.";
+	
+	public static final String TO_DATE_REQUIRED_CODE = "82";
+	public static final String TO_DATE_REQUIRED_MSG = "To date is required.";
+	
+	public static final String PROPERTIES_LIST_EXCEED_LIMIT_CODE = "83";
+	public static final String PROPERTIES_LIST_EXCEED_LIMIT_MSG = "More than 100 records found, please narrow the search criteria.";
+	
 	//Water TAx
 	public static final String PROPERTY_USAGETYPE_COMBINATION_VALID_CODE="42";
 	public static final String PROPERTY_USAGETYPE_COMBINATION_VALID = "PropertyType and UsageType Combination is not valid";

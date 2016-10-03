@@ -1217,8 +1217,8 @@ public class BudgetDetailsHibernateDAO implements BudgetDetailsDAO {
 			if (bdList == null || bdList.size() == 0)
 				// return BigDecimal.ZERO;
 				throw new ValidationException(
-						new ValidationError("Budget not defined for Glcode" + budgetHeadList.get(0) + " and given combination",
-								"Budget not defined for Glcode" + budgetHeadList.get(0) + " and given combination"));
+						new ValidationError("Budget Check failed: Budget not defined for the given combination.",
+								"Budget Check failed: Budget not defined for the given combination."));
 			else
 				return getApprovedAmt(bdList);
 		} catch (final ValidationException v) {
@@ -1653,8 +1653,7 @@ public class BudgetDetailsHibernateDAO implements BudgetDetailsDAO {
 				final List<BudgetGroup> budgetHeadListByGlcode = getBudgetHeadByGlcode(coa);
 				if (budgetHeadListByGlcode == null || budgetHeadListByGlcode.size() == 0)
 					throw new ValidationException(EMPTY_STRING,
-							"Budget Group is not defined for this glcode/No Budget details for this glcode : "
-									+ coa.getGlcode());
+							"Budget Check failed: Budget not defined for the given combination.");
 				// get budgettinh type for first BG object
 				if (!isBudgetCheckingRequiredForType(txnType, budgetHeadListByGlcode.get(0).getBudgetingType()
 						.toString())) {
@@ -1853,8 +1852,7 @@ public class BudgetDetailsHibernateDAO implements BudgetDetailsDAO {
 					bgList = persistenceService.findAllBy(query);
 					if (bgList.isEmpty())
 						throw new ValidationException(EMPTY_STRING,
-								"Budget Group is not defined for this glcode/No Budget details for this glcode : "
-										+ coa.getGlcode());
+								"Budget Check failed: Budget not defined for the given combination.");
 					else
 						return bgList;
 				} else

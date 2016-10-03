@@ -37,39 +37,41 @@
  *
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
-$(document).ready(function(){
 
-	
-	
-	$("#resetid").click(function(){
-		$("#usageTypeMasterform")[0].reset();
-		window.open("/wtms/masters/usageTypeMaster/", "_self");
-		})
-	$( "#code" ).focusout(function() {
-	    textValue =  $.trim($(this).val());
-	    if(textValue ==''){
-	       $.trim($(this).val('')); //to set it blank
-	    } else {
-	       return true;
-	    }
-	});
-	$( "#caseType" ).focusout(function() {
-	    textValue =  $.trim($(this).val());
-	    if(textValue ==''){
-	       $.trim($(this).val('')); //to set it blank
-	    } else {
-	       return true;
-	    }
-	});
-	
- });
 
-$('#addnewid').click(function() {
-	window.open("/wtms/masters/usageTypeMaster/", "_self");
-});
+function onchnageofDate() {
+	var date;
+	var d = new Date();
+	var curr_month = d.getMonth();
+	var curr_date = d.getDate();
+	if (curr_date <= 9) {
+		curr_date = ("0" + curr_date);
+	}
+	curr_month++;
+	if (!(curr_month > 9)) {
+		curr_month = ("0" + curr_month);
+	}
+	var curr_year = d.getFullYear();
+	date = curr_date + "/" + (curr_month) + "/" + curr_year;
+	$("#caseToDate").val(date);
 
-function edit(usageType)
-{
-      window.open("/wtms/masters/usageTypeMaster/edit/"+usageType, "_self");
-       
 }
+
+function getdate()
+{
+	var today = new Date();
+    var dd = today.getDate();
+    var mm = today.getMonth()+1; //January is 0!
+
+    var yyyy = today.getFullYear();
+    if(dd<10){
+        dd='0'+dd
+    } 
+    if(mm<10){
+        mm='0'+mm
+    } 
+    var today = dd+'/'+mm+'/'+yyyy;
+    return today;
+}
+
+

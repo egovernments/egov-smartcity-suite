@@ -56,6 +56,7 @@ import javax.validation.Valid;
 import javax.validation.ValidationException;
 
 import org.egov.commons.service.UOMService;
+import org.egov.demand.model.EgDemandDetails;
 import org.egov.eis.entity.Assignment;
 import org.egov.eis.service.AssignmentService;
 import org.egov.eis.web.contract.WorkflowContainer;
@@ -230,16 +231,21 @@ public class SewerageChangeInClosetsUpdateController extends GenericWorkFlowCont
         }
         
         //After modification if demand reduced, sewerage tax collection shold not be done. Hence directly fwd application from DEE to EE
-        if(sewerageApplicationDetails.getStatus()!=null && 
-                (sewerageApplicationDetails.getStatus().getCode().equalsIgnoreCase(SewerageTaxConstants.APPLICATION_STATUS_INITIALAPPROVED) ||
-                        sewerageApplicationDetails.getStatus().getCode().equalsIgnoreCase(SewerageTaxConstants.APPLICATION_STATUS_DEEAPPROVED))){    
+        if (sewerageApplicationDetails.getStatus() != null &&
+                (sewerageApplicationDetails.getStatus().getCode()
+                        .equalsIgnoreCase(SewerageTaxConstants.APPLICATION_STATUS_INITIALAPPROVED))) {
+
+            if (!checkAnyTaxIsPendingToCollect(sewerageApplicationDetails)) {
+                additionalRule = SewerageTaxConstants.CHANGEINCLOSETS_NOCOLLECTION;
+            }
+            model.addAttribute("showApprovalDtls", "yes");
+        } 
+        else if(sewerageApplicationDetails.getStatus()!=null && 
+                   sewerageApplicationDetails.getStatus().getCode().equalsIgnoreCase(SewerageTaxConstants.APPLICATION_STATUS_DEEAPPROVED)){    
             if(!sewerageDemandService.checkAnyTaxIsPendingToCollectExcludingAdvance(sewerageApplicationDetails.getCurrentDemand())) {
                 additionalRule=SewerageTaxConstants.CHANGEINCLOSETS_NOCOLLECTION;
-                if(sewerageApplicationDetails.getStatus().getCode().equalsIgnoreCase(SewerageTaxConstants.APPLICATION_STATUS_INITIALAPPROVED))
-                    model.addAttribute("showApprovalDtls","yes");
-            }
+               }
         } 
-        
         model.addAttribute("additionalRule", additionalRule);
         model.addAttribute("currentUser", sewerageTaxUtils.getCurrentUserRole(securityUtils.getCurrentUser()));
         model.addAttribute("currentState", sewerageApplicationDetails.getCurrentState().getValue());
@@ -250,6 +256,58 @@ public class SewerageChangeInClosetsUpdateController extends GenericWorkFlowCont
         model.addAttribute("sewerageTaxDue", sewerageTaxDue);
         model.addAttribute("propertyTypes", PropertyType.values());
         return "changeInClosets-edit";
+    }
+
+    private Boolean checkAnyTaxIsPendingToCollect(final SewerageApplicationDetails sewerageApplicationDetails
+            ) {
+        SewerageApplicationDetails oldSewerageAppDtls = sewerageApplicationDetailsService.findByConnection_ShscNumberAndIsActive(sewerageApplicationDetails.getConnection().getShscNumber());
+            
+            BigDecimal oldDonationCharge = BigDecimal.ZERO;
+            BigDecimal oldSewerageTax = BigDecimal.ZERO;
+            BigDecimal oldApplicationAdvanceAmount = BigDecimal.ZERO;
+            
+            BigDecimal currentDonationCharge=BigDecimal.ZERO;
+            BigDecimal currentSewerageTax=BigDecimal.ZERO;
+            BigDecimal currentEstimationCharge=BigDecimal.ZERO;
+            
+            if (oldSewerageAppDtls != null) {
+                for (final SewerageConnectionFee oldSewerageConnectionFee : oldSewerageAppDtls.getConnectionFees()) {
+                    if (oldSewerageConnectionFee.getFeesDetail().getCode()
+                            .equalsIgnoreCase(SewerageTaxConstants.FEES_SEWERAGETAX_CODE)) {
+                        oldSewerageTax = oldSewerageTax.add(BigDecimal.valueOf(oldSewerageConnectionFee.getAmount()));
+                    } else if (oldSewerageConnectionFee.getFeesDetail().getCode()
+                            .equalsIgnoreCase(SewerageTaxConstants.FEES_DONATIONCHARGE_CODE)) {
+                        oldDonationCharge = oldDonationCharge.add(BigDecimal.valueOf(oldSewerageConnectionFee.getAmount()));
+                    }
+                }
+
+                if (oldSewerageAppDtls.getCurrentDemand() != null) {
+                    for (final EgDemandDetails dmdDtl : oldSewerageAppDtls.getCurrentDemand().getEgDemandDetails()) {
+                        if (dmdDtl.getEgDemandReason().getEgDemandReasonMaster().getCode()
+                                .equalsIgnoreCase(SewerageTaxConstants.FEES_ADVANCE_CODE)) {
+                            oldApplicationAdvanceAmount = oldApplicationAdvanceAmount.add(dmdDtl.getAmount());
+
+                        }
+                    }
+                }
+            }
+            
+            for (final SewerageConnectionFee scf : sewerageApplicationDetails.getConnectionFees()) {
+                if (scf.getFeesDetail().getCode().equalsIgnoreCase(SewerageTaxConstants.FEES_SEWERAGETAX_CODE)) {
+                    currentSewerageTax = currentSewerageTax.add(BigDecimal.valueOf(scf.getAmount()));
+                } else if (scf.getFeesDetail().getCode().equalsIgnoreCase(SewerageTaxConstants.FEES_DONATIONCHARGE_CODE)) {
+                    currentDonationCharge = currentDonationCharge.add(BigDecimal.valueOf(scf.getAmount()));
+                } else if (scf.getFeesDetail().getCode().equalsIgnoreCase(SewerageTaxConstants.FEES_ESTIMATIONCHARGES_CODE)) {
+                    currentEstimationCharge = currentEstimationCharge.add(BigDecimal.valueOf(scf.getAmount()));
+                }
+            }
+            
+            if((currentDonationCharge.compareTo(oldDonationCharge)<=0) && (currentSewerageTax.compareTo(oldSewerageTax.add(oldApplicationAdvanceAmount))<=0)
+                    && currentEstimationCharge.compareTo(BigDecimal.ZERO)<=0)
+            {
+                return false;
+            }
+        return true;
     } 
        
     

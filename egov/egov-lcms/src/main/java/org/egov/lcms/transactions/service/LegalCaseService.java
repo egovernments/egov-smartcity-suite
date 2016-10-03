@@ -61,6 +61,7 @@ import org.egov.lcms.utils.LegalCaseUtil;
 import org.egov.lcms.utils.constants.LcmsConstants;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 @Service
@@ -150,6 +151,7 @@ public class LegalCaseService {
         return legalCase.getLegalCaseDocuments();
     }
 
+   
     public List<PwrDocuments> getPwrDocList(final LegalCase legalCase) {
         return legalCase.getPwrList().get(0).getPwrDocuments();
     }
@@ -241,12 +243,15 @@ public class LegalCaseService {
                     applicationDocument.setSupportDocs(legalCaseUtil.addToFileStore(applicationDocument.getFiles()));
                 }
         } else {
-            for (final LegalCaseDocuments applicationDocument : legalcase.getLegalCaseDocuments()) {
+        	List<LegalCaseDocuments> tempLegalCaseDoc= new ArrayList<LegalCaseDocuments>(legalcase.getLegalCaseDocuments());
+        	
+            for (final LegalCaseDocuments applicationDocument :tempLegalCaseDoc) {
+            	if(applicationDocument.getFiles() !=null){
                 applicationDocument.setLegalCase(legalcase);
                 applicationDocument.setDocumentName("LegalCase");
                 applicationDocument.getSupportDocs().addAll(legalCaseUtil.addToFileStore(applicationDocument.getFiles()));
-                legalcase.getLegalCaseDocuments().clear();
                 legalcase.getLegalCaseDocuments().add(applicationDocument);
+            	}
             }
             legalcase.getLegalCaseDocuments().addAll(legalDoc);
 

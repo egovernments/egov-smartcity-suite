@@ -39,10 +39,12 @@
  */
 package org.egov.works.abstractestimate.entity;
 
-import java.io.File;
 import java.util.Date;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -55,7 +57,10 @@ import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import javax.validation.constraints.NotNull;
 
+import org.apache.commons.lang.StringUtils;
+import org.egov.infra.filestore.entity.FileStoreMapper;
 import org.egov.infra.persistence.entity.AbstractAuditable;
+import org.egov.works.lineestimate.entity.LineEstimateDetails;
 import org.hibernate.validator.constraints.Length;
 import org.hibernate.validator.constraints.SafeHtml;
 
@@ -67,6 +72,16 @@ public class EstimatePhotographs extends AbstractAuditable {
     private static final long serialVersionUID = -4760202350886149567L;
 
     public static final String SEQ_EGW_ESTIMATEPHOTOGRAPHS = "SEQ_EGW_ESTIMATE_PHOTOGRAPHS";
+    
+    public enum WorkProgress {
+        BEFORE,DURING,AFTER;
+        
+        @Override
+        public String toString() {
+            return StringUtils.replace(name(), "_", " ");
+        }
+        
+    }
 
     @Id
     @GeneratedValue(generator = SEQ_EGW_ESTIMATEPHOTOGRAPHS, strategy = GenerationType.SEQUENCE)
@@ -74,27 +89,27 @@ public class EstimatePhotographs extends AbstractAuditable {
 
     @NotNull
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "abstractestimate", nullable = false)
-    private AbstractEstimate abstractEstimate;
+    @JoinColumn(name = "lineestimatedetails", nullable = false)
+    private LineEstimateDetails lineEstimateDetails;
 
-    @NotNull
     private double latitude;
 
-    @NotNull
     private double longitude;
 
     @SafeHtml
     @Length(max = 1024)
     private String description;
 
-    @NotNull
     @Temporal(value = TemporalType.DATE)
     private Date dateOfCapture;
 
-    private File fileUpload;
-
+    @ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @JoinColumn(name = "filestore", nullable = false)
+    private FileStoreMapper fileStore;
+    
     @NotNull
-    private byte[] image;
+    @Enumerated(EnumType.STRING)
+    private WorkProgress workProgress;
 
     public EstimatePhotographs() {
     }
@@ -107,30 +122,6 @@ public class EstimatePhotographs extends AbstractAuditable {
     @Override
     public void setId(final Long id) {
         this.id = id;
-    }
-
-    public File getFileUpload() {
-        return fileUpload;
-    }
-
-    public void setFileUpload(final File fileUpload) {
-        this.fileUpload = fileUpload;
-    }
-
-    public AbstractEstimate getAbstractEstimate() {
-        return abstractEstimate;
-    }
-
-    public void setAbstractEstimate(final AbstractEstimate abstractEstimate) {
-        this.abstractEstimate = abstractEstimate;
-    }
-
-    public byte[] getImage() {
-        return image;
-    }
-
-    public void setImage(final byte[] image) {
-        this.image = image;
     }
 
     public double getLatitude() {
@@ -164,4 +155,29 @@ public class EstimatePhotographs extends AbstractAuditable {
     public void setDateOfCapture(final Date dateOfCapture) {
         this.dateOfCapture = dateOfCapture;
     }
+
+    public LineEstimateDetails getLineEstimateDetails() {
+        return lineEstimateDetails;
+    }
+
+    public void setLineEstimateDetails(final LineEstimateDetails lineEstimateDetails) {
+        this.lineEstimateDetails = lineEstimateDetails;
+    }
+
+    public FileStoreMapper getFileStore() {
+        return fileStore;
+    }
+
+    public void setFileStore(FileStoreMapper fileStore) {
+        this.fileStore = fileStore;
+    }
+
+    public WorkProgress getWorkProgress() {
+        return workProgress;
+    }
+
+    public void setWorkProgress(WorkProgress workProgress) {
+        this.workProgress = workProgress;
+    }
+
 }

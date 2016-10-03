@@ -44,6 +44,7 @@ import java.util.Date;
 
 public class PaymentBean {
     private Long billId;
+    private Long billVoucherId;
     private String billNumber;
     private Date billDate;
     private String payTo;
@@ -258,4 +259,14 @@ public class PaymentBean {
     public void setRegion(final String region) {
         this.region = region;
     }
+
+    public Long getBillVoucherId() {
+        return billVoucherId;
+    }
+
+    public void setBillVoucherId(Long billVoucherId) {
+        this.billVoucherId = billVoucherId;
+    }
+    
+    
 }

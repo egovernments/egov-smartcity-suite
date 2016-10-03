@@ -314,4 +314,8 @@ public class WorkOrderEstimateService {
         return workOrderEstimateRepository.findByEstimate_EstimateNumberContainingIgnoreCaseAndWorkOrder_EgwStatus_codeEquals(
                 estimateNumber, WorksConstants.APPROVED).get(0);
     }
+    
+    public WorkOrderEstimate getWorkOrderEstimateByEstimateNumber(final String estimateNumber) {
+        return workOrderEstimateRepository.findWorkOrderEstimateByEstimateNumber(estimateNumber,WorksConstants.APPROVED);
+   }
 }

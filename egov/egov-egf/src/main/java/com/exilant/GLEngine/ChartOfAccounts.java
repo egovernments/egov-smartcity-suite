@@ -535,8 +535,8 @@ public class ChartOfAccounts {
 			if (txnObj.getBillId() != null)
 				paramMap.put("bill", txnObj.getBillId());
 			if (!budgetDetailsDAO.budgetaryCheck(paramMap))
-				throw new ValidationException("Budgetary check failed for "
-						+ txnObj.getGlCode(), "Budgetary check is failed for "
+				throw new ValidationException("Budget check failed: Insufficient Budget for "
+						+ txnObj.getGlCode(), "Budget check failed: Insufficient Budget for "
 						+ txnObj.getGlCode());
 		}
 		return true;

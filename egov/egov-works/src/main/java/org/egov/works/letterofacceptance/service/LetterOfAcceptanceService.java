@@ -979,6 +979,20 @@ public class LetterOfAcceptanceService {
                 .findEstimateNumbersToCancelLineEstimate(lineEstimateId, WorksConstants.APPROVED);
         return estimateNumbers;
     }
+    
+    public List<String> getWorkOrderNumbersForViewEstimatePhotograph(final String workOrderNumber) {
+        final List<String> workOrderNumbers = letterOfAcceptanceRepository
+                .findworkOrderNumbersToViewEstimatePhotograph("%" + workOrderNumber + "%",
+                        WorksConstants.APPROVED.toString());
+        return workOrderNumbers;
+    }
+
+    public List<String> getContractorsNamesForViewEstimatePhotograph(final String contractorName) {
+        final List<String> contractorNames = letterOfAcceptanceRepository
+                .findContractorsToViewEstimatePhotograph("%" + contractorName + "%",
+                        WorksConstants.APPROVED.toString());
+        return contractorNames;
+    }
 
     public List<String> getEstimateNumbersForApprovedLoa(final String estimateNumber) {
         final List<WorkOrder> workorders = letterOfAcceptanceRepository
