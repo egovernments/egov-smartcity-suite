@@ -235,7 +235,21 @@ public class SewerageLegacyConnectionController extends GenericWorkFlowControlle
         if (sewerageApplicationDetails.getConnectionFees() != null
                 && !sewerageApplicationDetails.getConnectionFees().isEmpty())
             for (final SewerageConnectionFee scf : sewerageApplicationDetails.getConnectionFees())
-                scf.setApplicationDetails(sewerageApplicationDetails);
+                scf.setApplicationDetails(sewerageApplicationDetails); 
+        // Create Sewerage Tax connection fee entry for current installment
+        FeesDetailMaster sewerageTax = feesDetailMasterService.findByCodeAndIsActive(
+                SewerageTaxConstants.FEES_SEWERAGETAX_CODE, true);
+        if (sewerageTax!=null) {
+            if(!sewerageApplicationDetails.getDemandDetailBeanList().isEmpty()){ 
+                SewerageConnectionFee connectionFee = new SewerageConnectionFee();
+                connectionFee = new SewerageConnectionFee();
+                connectionFee.setFeesDetail(sewerageTax);
+                //Last entry in demanddetailbean is always current installment
+                connectionFee.setAmount(sewerageApplicationDetails.getDemandDetailBeanList().get(sewerageApplicationDetails.getDemandDetailBeanList().size()-1).getActualAmount().doubleValue());
+                connectionFee.setApplicationDetails(sewerageApplicationDetails);
+                sewerageApplicationDetails.getConnectionFees().add(connectionFee);
+            }
+        }
     }
 
     @RequestMapping(value = "/sewerageLegacyApplication-success", method = RequestMethod.GET)
