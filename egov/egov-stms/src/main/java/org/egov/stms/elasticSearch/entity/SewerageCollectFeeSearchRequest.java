@@ -132,7 +132,7 @@ public class SewerageCollectFeeSearchRequest {
         andFilters.add(termsStringFilter(SewerageTaxConstants.CLAUSES_REVWARD_NAME, revenueWard));
         andFilters.add(queryStringFilter(SewerageTaxConstants.CLAUSES_APPLICATION_DATE,applicationDate));
         andFilters.add(termsStringFilter(SewerageTaxConstants.CLAUSES_APPLICATIONNO,consumerNumber));
-        andFilters.add(termsStringFilter(SewerageTaxConstants.CLAUSES_ISACTIVE, "false"));
+        //andFilters.add(termsStringFilter(SewerageTaxConstants.CLAUSES_ISACTIVE, "false"));
         if (logger.isDebugEnabled())
             logger.debug("finished filters");
         return Filters.withAndFilters(andFilters);
