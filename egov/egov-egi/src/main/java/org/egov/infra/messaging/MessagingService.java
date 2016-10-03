@@ -52,6 +52,15 @@ import javax.jms.Destination;
 import javax.jms.MapMessage;
 
 import static org.apache.commons.lang3.StringUtils.isNoneBlank;
+import static org.egov.infra.messaging.MessageConstants.ATTACHMENT;
+import static org.egov.infra.messaging.MessageConstants.EMAIL;
+import static org.egov.infra.messaging.MessageConstants.FILENAME;
+import static org.egov.infra.messaging.MessageConstants.FILETYPE;
+import static org.egov.infra.messaging.MessageConstants.MESSAGE;
+import static org.egov.infra.messaging.MessageConstants.MOBILE;
+import static org.egov.infra.messaging.MessageConstants.PRIORITY;
+import static org.egov.infra.messaging.MessageConstants.SUBJECT;
+import static org.egov.infra.messaging.MessagePriority.MEDIUM;
 
 @Service
 public class MessagingService {
@@ -73,20 +82,9 @@ public class MessagingService {
     @Autowired
     private ApplicationProperties applicationProperties;
 
-    public void sendEmailAndSMS(final User user, final String subject, final String templateName,
-            final Object... messageValues) {
-        sendEmail(user, subject, templateName, messageValues);
-        sendSMS(user, templateName, messageValues);
-    }
-
     public void sendEmail(final User user, final String subject, final String templateName,
-            final Object... messageValues) {
+                          final Object... messageValues) {
         sendEmail(user.getEmailId(), subject, messageTemplateService.realizeMessage(
-                messageTemplateService.getByTemplateName(templateName), messageValues));
-    }
-
-    public void sendSMS(final User user, final String templateName, final Object... messageValues) {
-        sendSMS(user.getMobileNumber(), messageTemplateService.realizeMessage(
                 messageTemplateService.getByTemplateName(templateName), messageValues));
     }
 
@@ -94,36 +92,45 @@ public class MessagingService {
         if (applicationProperties.emailEnabled() && isNoneBlank(email, subject, message))
             jmsTemplate.send(emailQueue, session -> {
                 final MapMessage mapMessage = session.createMapMessage();
-                mapMessage.setString("email", email);
-                mapMessage.setString("message", message);
-                mapMessage.setString("subject", subject);
-                return mapMessage;
-            });
-    }
-
-    public void sendSMS(final String mobileNo, final String message) {
-        if (applicationProperties.smsEnabled() && isNoneBlank(mobileNo, message))
-            jmsTemplate.send(smsQueue, session -> {
-                final MapMessage mapMessage = session.createMapMessage();
-                mapMessage.setString("mobile", "91" + mobileNo);
-                mapMessage.setString("message", message);
+                mapMessage.setString(EMAIL, email);
+                mapMessage.setString(MESSAGE, message);
+                mapMessage.setString(SUBJECT, subject);
                 return mapMessage;
             });
     }
 
     public void sendEmailWithAttachment(final String email, final String subject, final String message,
-            final String fileType, final String fileName, final byte[] attachment) {
+                                        final String fileType, final String fileName, final byte[] attachment) {
         if (applicationProperties.emailEnabled() && isNoneBlank(email, subject, message))
             jmsTemplate.send(emailQueue, session -> {
                 final MapMessage mapMessage = session.createMapMessage();
-                mapMessage.setString("email", email);
-                mapMessage.setString("message", message);
-                mapMessage.setString("subject", subject);
-                mapMessage.setString("type", fileType);
-                mapMessage.setString("name", fileName);
-                mapMessage.setBytes("attachment", attachment);
+                mapMessage.setString(EMAIL, email);
+                mapMessage.setString(MESSAGE, message);
+                mapMessage.setString(SUBJECT, subject);
+                mapMessage.setString(FILETYPE, fileType);
+                mapMessage.setString(FILENAME, fileName);
+                mapMessage.setBytes(ATTACHMENT, attachment);
                 return mapMessage;
             });
     }
 
+    public void sendSMS(final String mobileNo, final String message) {
+        sendSMS(mobileNo, message, MEDIUM);
+    }
+
+    public void sendSMS(final User user, final String templateName, final Object... messageValues) {
+        sendSMS(user.getMobileNumber(), messageTemplateService.realizeMessage(
+                messageTemplateService.getByTemplateName(templateName), messageValues), MEDIUM);
+    }
+
+    public void sendSMS(final String mobileNo, final String message, MessagePriority priority) {
+        if (applicationProperties.smsEnabled() && isNoneBlank(mobileNo, message))
+            jmsTemplate.send(smsQueue, session -> {
+                final MapMessage mapMessage = session.createMapMessage();
+                mapMessage.setString(MOBILE, mobileNo);
+                mapMessage.setString(MESSAGE, message);
+                mapMessage.setString(PRIORITY, priority.name());
+                return mapMessage;
+            });
+    }
 }
