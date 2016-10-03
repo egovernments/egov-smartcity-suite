@@ -118,24 +118,25 @@ function loadingReport()
 						'toAmount': toAmount
 					}
 				},
-				"columns" : [{"sTitle" : "S.no", "render": function ( data, type, full, meta ) {
+				aaSorting: [],	
+				"columns" : [{"sTitle" : "S.no", "sortable": false,"render": function ( data, type, full, meta ) {
 						      return oTable.fnPagingInfo().iStart+meta.row+1;
 						    }},
-							  { "data" : "hscNo" , "title": "H.S.C NO"},  
-							  { "data" : "ownerName", "title": "Owner Name"},
-							  { "data" : "wardName", "title": "Revenue Ward"},
-							  { "data" : "houseNo", "title": "Door No"},
-							  { "data" : "locality", "title": "Locality"},
+							  { "data" : "hscNo" , "title": "H.S.C NO", "sortable": false},  
+							  { "data" : "ownerName", "title": "Owner Name","sortable": false},
+							  { "data" : "wardName", "title": "Revenue Ward","sortable": false},
+							  { "data" : "houseNo", "title": "Door No","sortable": false},
+							  { "data" : "locality", "title": "Locality","sortable": false},
 							  { 
-								  "data" : "mobileNumber", "title": "Mobile Number",
+								  "data" : "mobileNumber", "title": "Mobile Number","sortable": false,
 								  "render" : function(data, type, row) {
 									  return (!data || parseInt(data)==0? "NA" : data);
 								  }
 							  },
-							  { "data" : "duePeriodFrom", "title": "Due Period From"},
-							  { "data" : "arrearsDue", "title": "Arears Amount","className": "text-right"},
-							  { "data" : "currentDue", "title": "Current Amount","className": "text-right"},
-							  { "data" : "totalDue", "title": "Total","className": "text-right"}
+							  { "data" : "duePeriodFrom", "title": "Due Period From","sortable": false},
+							  { "data" : "arrearsDue", "title": "Arears Amount","className": "text-right","sortable": false},
+							  { "data" : "currentDue", "title": "Current Amount","className": "text-right","sortable": false},
+							  { "data" : "totalDue", "title": "Total","className": "text-right","sortable": false}
 							],
 							 /* "aaSorting": [[3, 'asc'] , [8,'desc']] ,*/
 							  "footerCallback" : function(row, data, start, end, display) {
@@ -152,7 +153,7 @@ function loadingReport()
 									}
 								},
 					            "fnInitComplete": function() {
-					            	if(oDataTable){ oDataTable.fnSort( [ [7,'desc'] , [3,'asc'] ] ); }
+					            	if(oDataTable){ oDataTable.fnSort( [ [0,'asc'] ] ); }
 					            },
 					            
 								"aoColumnDefs" : [ {
@@ -163,8 +164,6 @@ function loadingReport()
 								} ]		
 					});
 			
-			
-			e.stopPropagation();
 		}
 		
 		function updateSerialNo()

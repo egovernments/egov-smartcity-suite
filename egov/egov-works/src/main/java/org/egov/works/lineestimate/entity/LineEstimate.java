@@ -359,7 +359,7 @@ public class LineEstimate extends StateAware {
 
     @Override
     public String getStateDetails() {
-        return "Line Estimate Number : " + getLineEstimateNumber();
+        return "Estimate Number : " + getLineEstimateNumber();
     }
 
     public String getAdminSanctionNumber() {

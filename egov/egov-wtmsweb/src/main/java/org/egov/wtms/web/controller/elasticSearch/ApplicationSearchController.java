@@ -44,6 +44,7 @@ import static java.util.Arrays.asList;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 import org.egov.config.search.Index;
 import org.egov.config.search.IndexType;
@@ -95,6 +96,10 @@ public class ApplicationSearchController {
         final List<ApplicationIndex> applicationIndexList = applicationSearchService
                 .findApplicationIndexApplicationTypes(appModuleName);
         return applicationIndexList;
+    }
+
+    public @ModelAttribute("applicationstatusList") Map<String, String> connectionTypes() {
+        return applicationSearchService.getApplicationStatusMap();
     }
 
     @ModelAttribute(value = "sourceList")

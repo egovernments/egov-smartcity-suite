@@ -57,10 +57,12 @@ import java.util.Date;
 import java.util.Optional;
 import java.util.UUID;
 
+import static org.egov.infra.messaging.MessagePriority.HIGH;
+
 @Service
 @Transactional(readOnly = true)
 public class IdentityRecoveryService {
-    private static final String USER_PWD_RECOVERY_TMPLTE = "user.pwd.recovery";
+    private static final String USER_PASWRD_RECOVERY_TMPLTE = "user.pwd.recovery";
 
     @Autowired
     private IdentityRecoveryRepository identityRecoveryRepository;
@@ -99,10 +101,10 @@ public class IdentityRecoveryService {
             final IdentityRecovery identityRecovery = generate(user.get(), new DateTime().plusMinutes(5).toDate(), byOTP);
             if (byOTP) {
                 String message = "Your OTP for recovering password is " + identityRecovery.getToken();
-                messagingService.sendSMS(user.get().getMobileNumber(), message);
+                messagingService.sendSMS(user.get().getMobileNumber(), message, HIGH);
                 messagingService.sendEmail(user.get().getEmailId(), "Password Reset", message);
             } else
-                messagingService.sendEmail(identityRecovery.getUser(), "Password Recovery", USER_PWD_RECOVERY_TMPLTE, urlToSent,
+                messagingService.sendEmail(identityRecovery.getUser(), "Password Recovery", USER_PASWRD_RECOVERY_TMPLTE, urlToSent,
                         identityRecovery.getToken(), System.getProperty("line.separator"));
         }
         return user.isPresent();

@@ -66,7 +66,6 @@ import org.egov.wtms.application.service.ConnectionDemandService;
 import org.egov.wtms.application.service.DefaultersWTReportService;
 import org.egov.wtms.application.service.WaterConnectionDetailsService;
 import org.egov.wtms.utils.DemandComparatorByInstallmentOrder;
-import org.egov.wtms.utils.WaterTaxUtils;
 import org.egov.wtms.utils.constants.WaterTaxConstants;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
@@ -92,12 +91,9 @@ public class DefaultersWTReportController {
 
     @Autowired
     public ConnectionDemandService connectionDemandService;
-    
-    @Autowired
-    private EgDemandDao egDemandDao;
 
     @Autowired
-    private WaterTaxUtils waterTaxUtils;
+    private EgDemandDao egDemandDao;
 
     @RequestMapping(method = GET)
     public String search(final Model model) {
@@ -145,7 +141,11 @@ public class DefaultersWTReportController {
         defaultersreportlist = defaultersWTReportService.getDefaultersReportDetails(fromAmount, toAmount, ward,
                 topDefaulters, Integer.valueOf(request.getParameter("start")),
                 Integer.valueOf(request.getParameter("length")));
-        final long foundRows = defaultersWTReportService.getTotalCount(fromAmount, toAmount, ward, topDefaulters);
+        long foundRows = 0;
+        if (null != request.getParameter("topDefaulters"))
+            foundRows = defaultersWTReportService.getTotalCountFromLimit(fromAmount, toAmount, ward, topDefaulters);
+        else
+            foundRows = defaultersWTReportService.getTotalCount(fromAmount, toAmount, ward);
         String result = null;
         for (final DefaultersReport dd : defaultersreportlist)
             dd.setDuePeriodFrom(getDuePeriodFrom(dd.getDemandId()));
@@ -157,19 +157,21 @@ public class DefaultersWTReportController {
         IOUtils.write(result, response.getWriter());
     }
 
-	public String getDuePeriodFrom(final BigInteger demandId) {
-		List<EgDemandDetails> demandDetList = new ArrayList<EgDemandDetails>(egDemandDao.findById(demandId.longValue(), false).getEgDemandDetails());
-		Set<EgDemandDetails> demnadDetList = new HashSet<EgDemandDetails>();
-		for (final EgDemandDetails egDemandTemp : demandDetList)
-			if (!egDemandTemp.getAmount().equals(egDemandTemp.getAmtCollected()))
-				demnadDetList.addAll(egDemandTemp.getEgDemand().getEgDemandDetails());
-		final List<EgDemandDetails> egdemandlist = new ArrayList<EgDemandDetails>(demnadDetList);
-		if (egdemandlist.isEmpty())
-			return "";
-		else {
-			Collections.sort(egdemandlist, new DemandComparatorByInstallmentOrder());
-			return egdemandlist.get(0).getEgDemandReason().getEgInstallmentMaster().getDescription();
-		}
+    public String getDuePeriodFrom(final BigInteger demandId) {
+        final List<EgDemandDetails> demandDetList = new ArrayList<EgDemandDetails>(
+                egDemandDao.findById(demandId.longValue(), false).getEgDemandDetails());
+        final List<EgDemandDetails> demandDetFinalList = new ArrayList<EgDemandDetails>();
+        
+        for (final EgDemandDetails egDemandTemp : demandDetList)
+            if (!egDemandTemp.getAmount().equals(egDemandTemp.getAmtCollected()))
+                demandDetFinalList.addAll(egDemandTemp.getEgDemand().getEgDemandDetails());
+       
+        if (demandDetFinalList.isEmpty())
+            return "";
+        else {
+            Collections.sort(demandDetFinalList, new DemandComparatorByInstallmentOrder());
+            return demandDetFinalList.get(0).getEgDemandReason().getEgInstallmentMaster().getDescription();
+        }
 
-	}
+    }
 }
