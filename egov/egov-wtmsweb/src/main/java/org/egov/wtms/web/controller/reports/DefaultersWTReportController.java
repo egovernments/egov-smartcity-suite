@@ -160,16 +160,17 @@ public class DefaultersWTReportController {
     public String getDuePeriodFrom(final BigInteger demandId) {
         final List<EgDemandDetails> demandDetList = new ArrayList<EgDemandDetails>(
                 egDemandDao.findById(demandId.longValue(), false).getEgDemandDetails());
-        final Set<EgDemandDetails> demnadDetList = new HashSet<EgDemandDetails>();
+        final List<EgDemandDetails> demandDetFinalList = new ArrayList<EgDemandDetails>();
+        
         for (final EgDemandDetails egDemandTemp : demandDetList)
             if (!egDemandTemp.getAmount().equals(egDemandTemp.getAmtCollected()))
-                demnadDetList.addAll(egDemandTemp.getEgDemand().getEgDemandDetails());
-        final List<EgDemandDetails> egdemandlist = new ArrayList<EgDemandDetails>(demnadDetList);
-        if (egdemandlist.isEmpty())
+                demandDetFinalList.addAll(egDemandTemp.getEgDemand().getEgDemandDetails());
+       
+        if (demandDetFinalList.isEmpty())
             return "";
         else {
-            Collections.sort(egdemandlist, new DemandComparatorByInstallmentOrder());
-            return egdemandlist.get(0).getEgDemandReason().getEgInstallmentMaster().getDescription();
+            Collections.sort(demandDetFinalList, new DemandComparatorByInstallmentOrder());
+            return demandDetFinalList.get(0).getEgDemandReason().getEgInstallmentMaster().getDescription();
         }
 
     }
