@@ -56,7 +56,7 @@
 								id=councilcommittee>
 								<thead>
 									<tr>
-										<th><input type="checkbox" id="committeechk" name="chkbox"/></th> 
+										<th><input type="checkbox" id="committeechk" name="chkbox" <c:if test="${isSelectedAll}"> checked="checked" </c:if>/></th> 
 										<th>Member Name</th>
 										<th>Election Ward</th>
 										<th>Designation</th>
@@ -67,33 +67,31 @@
 								
 								<tbody>
 									<c:set var="index" value="0"/>
-									<c:forEach items="${committeeType.commiteemembers}" var="coumcilmem" varStatus="counter">
-									<tr>
-										<td> 
-										<input type="checkbox" name="commiteemembers[${index}].councilMember" data-change-to="commiteemembers[${index}].checked" class="councilcommitmem" checked  id="${coumcilmem.councilMember.id}" value="${coumcilmem.councilMember.id}"/>
-										<input type="hidden" name="commiteemembers[${index}].checked" id="councilcommitmemchk" class="councilcommitmemchk" value="true" />
-										</td>
-										<td><c:out value="${coumcilmem.councilMember.name}" /></td>
-										<td><c:out value="${coumcilmem.councilMember.electionWard.name}" /></td>
-										<td><c:out value="${coumcilmem.councilMember.designation.name}" /></td>
-										<td><c:out value="${coumcilmem.councilMember.qualification.name}" /></td>	
-										<td><c:out value="${coumcilmem.councilMember.partyAffiliation.name}" /></td>		
-									</tr>
-									<c:set var="index" value="${index+1}"/>
-									</c:forEach>  
-									<c:forEach items="${councilMembers}" var="coumcilmem" varStatus="counter">
-									<tr>
-										<td>
-											<input type="checkbox"  name="commiteemembers[${index}].councilMember" class="councilcommitmem" data-change-to="commiteemembers[${index}].councilMember.checked"  id="${coumcilmem.id}"  value="${coumcilmem.id}"/>
-											<input type="hidden" name="commiteemembers[${index}].councilMember.checked"  id="councilcommitmemchk" class="councilcommitmemchk" value="false"/>
-											<input type="hidden"  name="commiteemembers[${index}].councilMember"  value="${coumcilmem.id}"/>
-										</td>
-										<td><c:out value="${coumcilmem.name}" /></td>
-										<td><c:out value="${coumcilmem.electionWard.name}" /></td>
-										<td><c:out value="${coumcilmem.designation.name}" /></td>
-										<td><c:out value="${coumcilmem.qualification.name}" /></td>	
-										<td><c:out value="${coumcilmem.partyAffiliation.name}" /></td>	
-									</tr>
+									
+									<c:forEach items="${councilMembers}" var="councilmem" varStatus="counter">
+										<tr>
+											<td>
+												<c:choose>
+													<c:when test="${councilmem.checked}">
+														<input type="checkbox"  name="commiteemembers[${index}].councilMember" class="councilcommitmem" data-change-to="commiteemembers[${index}].councilMember.checked" checked="checked"
+														  id="${councilmem.id}"  value="${councilmem.id}"/>
+														<input type="hidden" name="commiteemembers[${index}].councilMember.checked"  id="councilcommitmemchk" class="councilcommitmemchk" value="true"/>
+													</c:when>
+													<c:otherwise>
+														<input type="checkbox"  name="commiteemembers[${index}].councilMember" class="councilcommitmem" data-change-to="commiteemembers[${index}].councilMember.checked"
+														  id="${councilmem.id}"  value="${councilmem.id}"/>
+														<input type="hidden" name="commiteemembers[${index}].councilMember.checked"  id="councilcommitmemchk" class="councilcommitmemchk" value="false"/>
+													</c:otherwise>
+												</c:choose>
+												<input type="hidden"  name="commiteemembers[${index}].councilMember"  value="${councilmem.id}"/>
+											</td>
+											<td><c:out value="${councilmem.name}" /></td>
+											<td><c:out value="${councilmem.electionWard.name}" /></td>
+											<td><c:out value="${councilmem.designation.name}" /></td>
+											<td><c:out value="${councilmem.qualification.name}" /></td>	
+											<td><c:out value="${councilmem.partyAffiliation.name}" /></td>	
+										</tr>
+									
 									<c:set var="index" value="${index+1}"/>
 									</c:forEach>
 								</tbody>

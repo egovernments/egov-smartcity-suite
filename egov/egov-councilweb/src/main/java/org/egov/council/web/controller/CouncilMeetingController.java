@@ -381,7 +381,11 @@ public class CouncilMeetingController {
     @RequestMapping(value = "/attendance/search/edit/{id}", method = RequestMethod.GET)
     public String editAttendance(@PathVariable("id") final CouncilMeeting councilMeeting1, Model model) {
     	 CouncilMeeting councilMeeting = councilMeetingService.findOne(councilMeeting1.getId());
-    
+    	 
+    	 if(councilMeeting != null && councilMeeting.getCommitteeType().getCommiteemembers().size() <= 0){
+    		 model.addAttribute("message", "msg.committee.members.not.added");
+  			return COMMONERRORPAGE;
+    	 }
     	 if ( councilMeeting != null && councilMeeting.getStatus() != null){
  			if( ATTENDANCEFINALIZED.equals(councilMeeting.getStatus().getCode())) {
  			model.addAttribute("message", "msg.attendance.already.finalizd");

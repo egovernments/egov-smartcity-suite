@@ -40,7 +40,7 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java"%>
 <%@ include file="/includes/taglibs.jsp"%>
 <%@ taglib uri="/WEB-INF/taglib/cdn.tld" prefix="cdn" %>
-<form:form role="form" action="../update" modelAttribute="committeeType"
+<form:form role="form" action="/council/committeetype/update" modelAttribute="committeeType"
 	id="councilCommitteetypeform" cssClass="form-horizontal form-groups-bordered"
 	enctype="multipart/form-data">
 	<%@ include file="councilcommitteetype-form.jsp"%>

@@ -40,12 +40,13 @@
 
 
 //select all checkboxes
-$("#committeechk").change(function(){  
+$("#committeechk").change(function(){
 	if($(this).is(':checked')){
 		$('#councilcommittee')
         .find('> tbody > tr > td:first-child > input[type="checkbox"]')
         .prop('checked', true);
 		setHiddenValue(true);
+		
 	}else{
 		$('#councilcommittee')
         .find('> tbody > tr > td:first-child > input[type="checkbox"]')
@@ -70,12 +71,17 @@ $(document).ready(function() {
     	console.log( $hiddenName );
     	if($(this).is(':checked')){
     		$('input[name="'+$hiddenName+'"]').val(true);
+    		if($("#councilcommittee input[type='checkbox']:checked").length === $('#councilcommittee tbody tr').length)
+    		{
+    			$("#committeechk").prop('checked', true);
+    		}
     	}else{
     		$('input[name="'+$hiddenName+'"]').val(false);
+    		$("#committeechk").prop('checked', false);
     	}
     });
-
 });
+
 
 $("#buttonSubmit").click(function(e){ 
 		var chkbxLength = $('.councilcommitmem:checked').length;

@@ -153,7 +153,7 @@ public class CouncilPreambleService {
     
 	public Criteria buildSearchCriteria(CouncilPreamble councilPreamble) {
 		final Criteria criteria = getCurrentSession().createCriteria(CouncilPreamble.class, "councilPreamble")
-				.createAlias("councilPreamble.status", "status").createAlias("councilPreamble.wards", "wards");
+				.createAlias("councilPreamble.status", "status");
 
 		if ( councilPreamble.getDepartment() != null)
 			criteria.add(Restrictions.eq("councilPreamble.department", councilPreamble.getDepartment()));
@@ -166,13 +166,13 @@ public class CouncilPreambleService {
 			criteria.add(Restrictions.ilike("councilPreamble.preambleNumber", councilPreamble.getPreambleNumber(),
 					MatchMode.ANYWHERE));
 
-		if (councilPreamble.getWards() != null) {
+		if (councilPreamble.getWards() != null && councilPreamble.getWards().size() > 0) {
 			ArrayList<Long> boundaryid = new ArrayList<Long>();
 			for (Boundary bndry : councilPreamble.getWards()) {
 				boundaryid.add(bndry.getId());
 			}
 			if (!boundaryid.isEmpty())
-				criteria.add(Restrictions.in("wards.id", boundaryid));
+				criteria.createAlias("councilPreamble.wards", "wards").add(Restrictions.in("wards.id", boundaryid));
 		}
 		criteria.setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY);
 		return criteria;
