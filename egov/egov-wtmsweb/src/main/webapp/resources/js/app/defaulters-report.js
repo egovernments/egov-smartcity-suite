@@ -52,7 +52,7 @@ jQuery(document).ready(function() {
 		
 		if (((fromDemand == null || fromDemand == "") &&
 				(toDemand == null || toDemand == ""))  ) {
-			bootbox.alert('Either From and To Amounts is mandatory');
+			bootbox.alert('From and To Amounts is mandatory');
 			return false;
 		}
 		
@@ -66,7 +66,7 @@ jQuery(document).ready(function() {
 	      return false;
 		}
 		if(parseInt($("#fromAmount").val()) > parseInt($("#toAmount").val())){
-			bootbox.alert('To Demand should be greather than From Demand');
+			bootbox.alert('To Amount should be greather than From Amount');
 			return false;
 		}
 		loadingReport();
