@@ -67,7 +67,6 @@ import org.egov.commons.CVoucherHeader;
 import org.egov.commons.EgwStatus;
 import org.egov.commons.dao.ChartOfAccountsHibernateDAO;
 import org.egov.commons.dao.EgwStatusHibernateDAO;
-import org.egov.commons.dao.FunctionDAO;
 import org.egov.commons.service.ChartOfAccountsService;
 import org.egov.infra.validation.exception.ValidationError;
 import org.egov.infra.validation.exception.ValidationException;
@@ -126,9 +125,6 @@ public class DishonorChequeService implements FinancialIntegrationService {
     @Autowired
     @Qualifier("chartOfAccountsService")
     private ChartOfAccountsService chartOfAccountsService;
-
-    @Autowired
-    private FunctionDAO functionDAO;
 
     @Autowired
     @Qualifier("createVoucher")
