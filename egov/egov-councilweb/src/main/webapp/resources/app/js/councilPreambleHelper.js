@@ -145,14 +145,24 @@ function callAjaxSearch() {
 						"sExtends" : "print"
 					} ]
 				},
+				"fnRowCallback" : function(row, data, index) {
+					var mode = $('#mode').val();
+					if (mode == 'edit')
+						$('td:eq(5)',row).html('<input type="text" readonly="readonly" data='+ data.implementationStatus +' value="'+ data.implementationStatus +'"/>');				
+					else
+						$('td:eq(5)',row).html('<input type="text" readonly="readonly "data='+ data.status +' value="'+ data.status +'"/>');
+					return row;
+				},
 				aaSorting : [],
 				columns : [
 						{
-							"data" : "department","width": "8%",
+							"data" : "department",
+							"width" : "8%",
 							"sClass" : "text-left"
 						},
 						{
-							"data" : "ward","width": "28%",
+							"data" : "ward",
+							"width" : "28%",
 							"sClass" : "text-left"
 						},
 						{
@@ -160,16 +170,21 @@ function callAjaxSearch() {
 							"sClass" : "text-left"
 						},
 						{
-							"data" : "gistOfPreamble","width": "38%",
+							"data" : "gistOfPreamble",
+							"width" : "38%",
 							"sClass" : "text-left"
 						},
 						{
 							"data" : "sanctionAmount",
 							"sClass" : "text-right"
-						},{
-							"data" : "status","width": "8%",
+						},
+						{
+
+							"data" : "",
+							"width" : "8%",
 							"sClass" : "text-left"
-						},{
+						},
+						{
 							"data" : null,
 							"target" : -1,
 
@@ -177,7 +192,7 @@ function callAjaxSearch() {
 							"render" : function(data, type, full, meta) {
 								var mode = $('#mode').val();
 								if (mode == 'edit')
-									return '<button type="button" class="btn btn-xs btn-secondary edit"><span class="glyphicon glyphicon-edit"></span>&nbsp;Edit</button>';
+									return '<button type="button" class="btn btn-xs btn-secondary changeStatus"><span class="glyphicon glyphicon-change Status"></span>&nbsp;change Status</button>';
 								else
 									return '<button type="button" class="btn btn-xs btn-secondary view"><span class="glyphicon glyphicon-tasks"></span>&nbsp;View</button>';
 							}
@@ -294,10 +309,10 @@ $("#resultTable").on(
 
 $("#resultTable").on(
 		'click',
-		'tbody tr td  .edit',
+		'tbody tr td  .changeStatus',
 		function(event) {
 			var id = reportdatatable.fnGetData($(this).parent().parent(), 7);
-			window.open('/council/councilpreamble/' + $('#mode').val() + '/'
+			window.open('/council/councilpreamble/updateimplimentaionstatus' + '/'
 					+ id, '', 'width=800, height=600,scrollbars=yes');
 
 		});

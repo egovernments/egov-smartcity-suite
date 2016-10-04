@@ -116,7 +116,10 @@ public class CouncilPreambleJsonAdaptor implements JsonSerializer<CouncilPreambl
 				jsonObject.addProperty("meetingType", meetingType);
 			else
 				jsonObject.addProperty("meetingType", StringUtils.EMPTY);
-
+			if (councilPreamble.getImplementationStatus() != null)
+				jsonObject.addProperty("implementationStatus", councilPreamble.getImplementationStatus().getCode());
+			else
+				jsonObject.addProperty("implementationStatus", StringUtils.EMPTY);
 			if (councilPreamble.getStatus() != null)
 				jsonObject.addProperty("status", councilPreamble.getStatus().getCode());
 			else

@@ -40,6 +40,8 @@
 package org.egov.council.service;
 import static org.egov.council.utils.constants.CouncilConstants.ADJOURNED;
 import static org.egov.council.utils.constants.CouncilConstants.APPROVED;
+import static org.egov.council.utils.constants.CouncilConstants.IMPLEMENTATION_STATUS_FINISHED;
+import static org.egov.council.utils.constants.CouncilConstants.RESOLUTION_APPROVED_PREAMBLE;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -60,6 +62,7 @@ import org.egov.infra.utils.StringUtils;
 import org.egov.infra.utils.autonumber.AutonumberServiceBeanResolver;
 import org.hibernate.Criteria;
 import org.hibernate.Session;
+import org.hibernate.criterion.CriteriaSpecification;
 import org.hibernate.criterion.MatchMode;
 import org.hibernate.criterion.Restrictions;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -108,7 +111,12 @@ public class CouncilPreambleService {
         CouncilPreambleRepository.save(councilPreamble);
         return councilPreamble;
     }
-
+    
+    @Transactional
+    public CouncilPreamble updateImplementationStatus(final CouncilPreamble councilPreamble) {
+        CouncilPreambleRepository.save(councilPreamble);
+        return councilPreamble;
+    }
     public CouncilPreamble findOne(Long id) {
         return CouncilPreambleRepository.findById(id);
     }
@@ -131,6 +139,22 @@ public class CouncilPreambleService {
         final Criteria criteria = buildSearchCriteria(councilPreamble);
         return criteria.list();
     }
+    //TODO: ALSO CHECK IMPLEMENTATION STATUS IS NOT COMPLETED.
+    @SuppressWarnings({ "unchecked", "deprecation" })
+	public List<CouncilPreamble> searchFinalizedPreamble(
+			CouncilPreamble councilPreamble) {
+		final Criteria criteria = buildSearchCriteria(councilPreamble);
+		criteria.createAlias("councilPreamble.implementationStatus",
+				"implementationStatus", CriteriaSpecification.LEFT_JOIN)
+				.add(Restrictions.or(Restrictions
+						.isNull("implementationStatus.code"), Restrictions.ne(
+						"implementationStatus.code",
+						IMPLEMENTATION_STATUS_FINISHED)))
+				.add(Restrictions.and(Restrictions.in("status.code",
+						new String[] { RESOLUTION_APPROVED_PREAMBLE })));
+		return criteria.list();
+	}
+    
     
 	public CouncilPreamble buildSumotoPreamble(MeetingMOM meetingMOM,
 			EgwStatus preambleStatus) {
@@ -173,7 +197,9 @@ public class CouncilPreambleService {
 			}
 			if (!boundaryid.isEmpty())
 				criteria.createAlias("councilPreamble.wards", "wards").add(Restrictions.in("wards.id", boundaryid));
+			
 		}
+		
 		criteria.setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY);
 		return criteria;
 	}

@@ -74,6 +74,10 @@ public class CouncilPreamble extends StateAware {
     @JoinColumn(name = "status", nullable = false)
     private EgwStatus status;
     
+    @ManyToOne
+    @JoinColumn(name = "ImplStatus")
+    private EgwStatus implementationStatus;
+    
     @OneToMany(mappedBy = "preamble", cascade = CascadeType.ALL)
     private List<MeetingMOM> meetingMOMs = new ArrayList<MeetingMOM>(0);
     
@@ -234,4 +238,14 @@ public class CouncilPreamble extends StateAware {
 		this.wards = wards;
 	}
 
+	public EgwStatus getImplementationStatus() {
+		return implementationStatus;
+	}
+
+	public void setImplementationStatus(EgwStatus implementationStatus) {
+		this.implementationStatus = implementationStatus;
+	}
+
+	
+	
 }

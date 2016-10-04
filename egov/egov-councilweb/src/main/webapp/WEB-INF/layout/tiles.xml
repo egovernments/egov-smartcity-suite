@@ -352,6 +352,10 @@
 	<put-attribute name="page-title" value="title.preamble.report" cascade="true"/>
 	<put-attribute name="body" value="/WEB-INF/views/reports/preamblewardwise-report.jsp"/>
 </definition>
+<definition name="councilpreamble-update-status" extends="base_layout">
+	<put-attribute name="page-title" value="title.councilpreamble.edit" cascade="true"/>
+	<put-attribute name="body" value="/WEB-INF/views/councilpreamble/councilpreamble-update-status.jsp"/>
+</definition>
 
 <definition name="councilmeeting-attend-result" extends="base_layout">
 	<put-attribute name="page-title" value="title.meeting.attend.result" cascade="true"/>

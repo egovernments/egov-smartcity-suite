@@ -50,6 +50,7 @@ import static org.egov.council.utils.constants.CouncilConstants.MOM_FINALISED;
 import static org.egov.council.utils.constants.CouncilConstants.PREAMBLE_MODULENAME;
 import static org.egov.council.utils.constants.CouncilConstants.PREAMBLE_STATUS_ADJOURNED;
 import static org.egov.council.utils.constants.CouncilConstants.PREAMBLE_STATUS_APPROVED;
+import static org.egov.council.utils.constants.CouncilConstants.RESOLUTION_APPROVED_PREAMBLE;
 import static org.egov.council.utils.constants.CouncilConstants.RESOLUTION_STATUS_ADJURNED;
 import static org.egov.council.utils.constants.CouncilConstants.RESOLUTION_STATUS_APPROVED;
 import static org.egov.council.utils.constants.CouncilConstants.REVENUE_HIERARCHY_TYPE;
@@ -58,6 +59,7 @@ import static org.egov.infra.web.utils.WebUtils.toJSON;
 
 import java.io.ByteArrayInputStream;
 import java.lang.reflect.Type;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.LinkedHashMap;
@@ -76,6 +78,7 @@ import org.egov.council.service.CommitteeTypeService;
 import org.egov.council.service.CouncilMeetingService;
 import org.egov.council.service.CouncilPreambleService;
 import org.egov.council.service.CouncilReportService;
+import org.egov.council.service.CouncilSmsAndEmailService;
 import org.egov.council.web.adaptor.CouncilDepartmentJsonAdaptor;
 import org.egov.council.web.adaptor.CouncilMeetingJsonAdaptor;
 import org.egov.infra.admin.master.entity.Boundary;
@@ -90,6 +93,7 @@ import org.egov.infra.web.utils.WebUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.MessageSource;
+import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -141,6 +145,10 @@ public class CouncilMomController {
 	private CouncilPreambleService councilPreambleService;
 	
 	@Autowired  private CouncilReportService councilReportService;
+	
+
+	@Autowired
+	private CouncilSmsAndEmailService councilSmsAndEmailService;
 	
 	@Qualifier("fileStoreService")
 	private @Autowired FileStoreService fileStoreService;
@@ -320,7 +328,9 @@ public class CouncilMomController {
 		EgwStatus resoulutionApprovedStatus  =egwStatusHibernateDAO.getStatusByModuleAndCode(COUNCIL_RESOLUTION,RESOLUTION_STATUS_APPROVED);
 		EgwStatus resoulutionAdjurnedStatus  =	egwStatusHibernateDAO.getStatusByModuleAndCode(COUNCIL_RESOLUTION,RESOLUTION_STATUS_ADJURNED);
 		EgwStatus preambleAdjurnedStatus  = egwStatusHibernateDAO.getStatusByModuleAndCode(	PREAMBLE_MODULENAME,PREAMBLE_STATUS_ADJOURNED);
-		 Long itemNumber = Long.valueOf(councilMeeting.getMeetingMOMs().size());
+		EgwStatus resolutionApprovedStatus  = egwStatusHibernateDAO.getStatusByModuleAndCode(PREAMBLE_MODULENAME,RESOLUTION_APPROVED_PREAMBLE);
+	
+		Long itemNumber = Long.valueOf(councilMeeting.getMeetingMOMs().size());
 		for (MeetingMOM meetingMOM : councilMeeting.getMeetingMOMs()) {
 			if (meetingMOM.getPreamble().getId() == null) {
 			        meetingMOM.setItemNumber(itemNumber.toString());itemNumber++;
@@ -337,7 +347,8 @@ public class CouncilMomController {
 						.getAutoNumberServiceFor(MOMResolutionNumberGenerator.class);
 				meetingMOM.setResolutionNumber(momResolutionNumberGenerator
 						.getNextNumber(meetingMOM));
-               //	if mom status adjourned, update preamble status to adjurned. These record will be used in next meeting.
+				meetingMOM.getPreamble().setStatus(resolutionApprovedStatus);
+			   //	if mom status adjourned, update preamble status to adjurned. These record will be used in next meeting.
 			} else if(meetingMOM.getResolutionStatus().getCode().equals(resoulutionAdjurnedStatus.getCode())) {
 				meetingMOM.getPreamble()
 						.setStatus(preambleAdjurnedStatus);
@@ -350,9 +361,16 @@ public class CouncilMomController {
 					"application/pdf", MODULE_NAME));
 		}
 		councilMeeting.setStatus(egwStatusHibernateDAO.getStatusByModuleAndCode(MEETING_MODULENAME, MOM_FINALISED));
+		String defaultmsg= messageSource.getMessage("msg.resolution.sms",
+				new String[] { String.valueOf(councilMeeting.getCommitteeType().getName())},
+		LocaleContextHolder.getLocale());
+		String defaultemail= messageSource.getMessage("email.resolution.mail",new String[] { String.valueOf(councilMeeting.getCommitteeType().getName())},
+				LocaleContextHolder.getLocale());
+		councilSmsAndEmailService.sendSms(councilMeeting,defaultmsg);
+        councilSmsAndEmailService.sendEmail(councilMeeting, defaultemail,reportOutput);
 		councilMeetingService.update(councilMeeting);
-
-		 return "redirect:/councilmeeting/generateresolution/" + councilMeeting.getId();
+		
+		return "redirect:/councilmeeting/generateresolution/" + councilMeeting.getId();
 	}
 
 	private byte[] generateMomPdfByPassingMeeting(final CouncilMeeting councilMeeting,
