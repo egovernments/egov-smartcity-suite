@@ -38,34 +38,13 @@
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
 
-package org.egov.commons.repository;
+package org.egov.ptis.repository.elasticsearch;
 
-import org.egov.commons.CFinancialYear;
-import org.egov.commons.CFiscalPeriod;
-import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.data.jpa.repository.Query;
-import org.springframework.data.repository.query.Param;
+import org.egov.ptis.elasticsearch.model.WaterTaxIndex;
+import org.springframework.data.elasticsearch.repository.ElasticsearchRepository;
 import org.springframework.stereotype.Repository;
 
-import java.util.Date;
-import java.util.List;
-
 @Repository
-public interface CFinancialYearRepository extends JpaRepository<CFinancialYear, Long> {
-    @Query("from CFinancialYear where endingDate > current_date order by financialyear asc")
-    List<CFinancialYear> getAllFinancialYears();
+public interface WaterTaxIndexRepository extends ElasticsearchRepository<WaterTaxIndex, String> {
 
-    CFinancialYear findByFinYearRange(String finYearRange);
-
-    @Query("from CFinancialYear where finYearRange=:finYearRange order by id desc")
-    List<CFinancialYear> findByFinancialYearRange(@Param("finYearRange") String finYearRange);
-
-    @Query("from CFinancialYear order by id desc")
-    List<CFinancialYear> getFinYearLastDate();
-
-    @Query("from CFiscalPeriod where name=:name order by id desc")
-    CFiscalPeriod findByFiscalName(@Param("name") String name);
-    
-    @Query("from CFinancialYear where startingDate <=:inpuDate and endingDate >=:inpuDate and isActiveForPosting=true")
-    CFinancialYear getFinancialYearByDate(@Param("inpuDate") Date inpuDate);
 }

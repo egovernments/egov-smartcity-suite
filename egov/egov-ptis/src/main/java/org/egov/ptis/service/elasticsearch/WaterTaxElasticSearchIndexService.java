@@ -38,13 +38,54 @@
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
 
-package org.egov.ptis.repository.elasticsearch;
+package org.egov.ptis.service.elasticsearch;
 
-import org.egov.ptis.elasticsearch.model.CollectionIndex;
-import org.springframework.data.elasticsearch.repository.ElasticsearchRepository;
-import org.springframework.stereotype.Repository;
+import java.math.BigDecimal;
 
-@Repository
-public interface CollectionIndexRepository extends ElasticsearchRepository<CollectionIndex, String> {
+import org.egov.ptis.repository.elasticsearch.WaterTaxIndexRepository;
+import org.elasticsearch.action.search.SearchResponse;
+import org.elasticsearch.search.aggregations.AggregationBuilders;
+import org.elasticsearch.search.aggregations.Aggregations;
+import org.elasticsearch.search.aggregations.metrics.sum.Sum;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.elasticsearch.core.ElasticsearchTemplate;
+import org.springframework.data.elasticsearch.core.ResultsExtractor;
+import org.springframework.data.elasticsearch.core.query.NativeSearchQueryBuilder;
+import org.springframework.data.elasticsearch.core.query.SearchQuery;
+import org.springframework.stereotype.Service;
 
+@Service
+public class WaterTaxElasticSearchIndexService {
+
+	private WaterTaxIndexRepository waterTaxIndexRepository;
+	
+	@Autowired
+	private ElasticsearchTemplate elasticsearchTemplate;
+	
+	@Autowired
+	public WaterTaxElasticSearchIndexService(final WaterTaxIndexRepository waterTaxIndexRepository) {
+        this.waterTaxIndexRepository = waterTaxIndexRepository;
+    }
+	
+	/**
+	 * API returns the current year total demand from Water Tax index
+	 * @return BigDecimal
+	 */
+	public BigDecimal getTotalDemand(){
+		SearchQuery searchQuery = new NativeSearchQueryBuilder()
+				.withIndices("watercharges")
+				.addAggregation(AggregationBuilders.sum("totaldemand").field("currentDemand"))
+				.build();
+
+		Aggregations aggregations = elasticsearchTemplate.query(searchQuery, new ResultsExtractor<Aggregations>() {
+			@Override
+			public Aggregations extract(SearchResponse response) {
+				return response.getAggregations();
+			}
+		});
+
+		Sum aggr = aggregations.get("totaldemand");
+		return BigDecimal.valueOf(aggr.getValue()).setScale(0, BigDecimal.ROUND_HALF_UP);
+	}
+	
 }

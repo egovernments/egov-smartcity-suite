@@ -40,11 +40,21 @@
 
 package org.egov.ptis.service.elasticsearch;
 
+import java.math.BigDecimal;
+
 import org.egov.ptis.elasticsearch.model.PropertyTaxIndex;
 import org.egov.ptis.repository.elasticsearch.PropertyTaxIndexRepository;
+import org.elasticsearch.action.search.SearchResponse;
+import org.elasticsearch.search.aggregations.AggregationBuilders;
+import org.elasticsearch.search.aggregations.Aggregations;
+import org.elasticsearch.search.aggregations.metrics.sum.Sum;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.elasticsearch.core.ElasticsearchTemplate;
+import org.springframework.data.elasticsearch.core.ResultsExtractor;
+import org.springframework.data.elasticsearch.core.query.NativeSearchQueryBuilder;
+import org.springframework.data.elasticsearch.core.query.SearchQuery;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -53,11 +63,35 @@ public class PropertyTaxElasticSearchIndexService {
 	private PropertyTaxIndexRepository propertyTaxIndexRepository;
 	
 	@Autowired
+	private ElasticsearchTemplate elasticsearchTemplate;
+	
+	@Autowired
 	public PropertyTaxElasticSearchIndexService(final PropertyTaxIndexRepository propertyTaxIndexRepository) {
         this.propertyTaxIndexRepository = propertyTaxIndexRepository;
     }
 	
 	public Page<PropertyTaxIndex> findByConsumercode(String consumerCode, PageRequest pageRequest){
 		return  propertyTaxIndexRepository.findByConsumercode(consumerCode, new PageRequest(0, 10));
+	}
+	
+	/**
+	 * API returns the current year total demand from Property Tax index
+	 * @return BigDecimal
+	 */
+	public BigDecimal getTotalDemand(){
+		SearchQuery searchQuery = new NativeSearchQueryBuilder()
+				.withIndices("apptis")
+				.addAggregation(AggregationBuilders.sum("totaldemand").field("annualdemand"))
+				.build();
+
+		Aggregations aggregations = elasticsearchTemplate.query(searchQuery, new ResultsExtractor<Aggregations>() {
+			@Override
+			public Aggregations extract(SearchResponse response) {
+				return response.getAggregations();
+			}
+		});
+
+		Sum aggr = aggregations.get("totaldemand");
+		return BigDecimal.valueOf(aggr.getValue()).setScale(0, BigDecimal.ROUND_HALF_UP);
 	}
 }

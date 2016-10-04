@@ -46,20 +46,26 @@ import static org.egov.ptis.constants.PropertyTaxConstants.THIRD_PARTY_ERR_MSG_S
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 
 import org.egov.ptis.domain.model.ErrorDetails;
+import org.egov.ptis.service.elasticsearch.CollectionIndexElasticSearchService;
+import org.egov.ptis.service.elasticsearch.PropertyTaxElasticSearchIndexService;
+import org.egov.ptis.service.elasticsearch.WaterTaxElasticSearchIndexService;
+import org.egov.restapi.constants.RestApiConstants;
+import org.egov.restapi.model.StateCityInfo;
 import org.egov.restapi.model.dashboard.CollIndexTableData;
 import org.egov.restapi.model.dashboard.CollectionIndexDetails;
 import org.egov.restapi.model.dashboard.CollectionTrend;
 import org.egov.restapi.model.dashboard.ConsolidatedCollDetails;
-import org.egov.restapi.model.StateCityInfo;
 import org.hibernate.SQLQuery;
 import org.hibernate.Session;
 import org.hibernate.transform.AliasToBeanResultTransformer;
 import org.hibernate.type.StandardBasicTypes;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 /**
@@ -71,6 +77,15 @@ public class DashboardService {
 
 	@PersistenceContext
     private EntityManager entityManager;
+	
+	@Autowired
+	private CollectionIndexElasticSearchService collectionIndexElasticSearchService;
+	
+	@Autowired
+	private PropertyTaxElasticSearchIndexService propertyTaxElasticSearchIndexService;
+	
+	@Autowired
+	private WaterTaxElasticSearchIndexService waterTaxElasticSearchIndexService;
 	
 	/**
 	 * Gives the State-City information across all ULBs
@@ -200,25 +215,34 @@ public class DashboardService {
 	 * @return ConsolidatedCollDetails
 	 */
 	public List<ConsolidatedCollDetails> getConsolidatedCollDetails(){
-		//Temporarily all values are being hard coded, actual values will be read from the elastic search index later
 		ConsolidatedCollDetails consolidatedData = new ConsolidatedCollDetails();
 		List<ConsolidatedCollDetails> consolidatedDetailsList = new ArrayList<>();
-		consolidatedData.setCytdColl(BigDecimal.valueOf(50.95));
-		consolidatedData.setTotalDmd(BigDecimal.valueOf(194.93));
-		consolidatedData.setLytdColl(BigDecimal.valueOf(45.71));
+		//For Property Tax collections
+		Map<String, BigDecimal> consolidatedColl = collectionIndexElasticSearchService.getConsolidatedCollection(RestApiConstants.BILLING_SERVICE_PT);		
+		if(!consolidatedColl.isEmpty()){
+			consolidatedData.setCytdColl(consolidatedColl.get("cytdColln"));
+			consolidatedData.setLytdColl(consolidatedColl.get("lytdColln"));
+		}
+		consolidatedData.setTotalDmd(propertyTaxElasticSearchIndexService.getTotalDemand());
 		consolidatedDetailsList.add(consolidatedData);
 		
+		//For Water Tax collections
+		consolidatedColl = collectionIndexElasticSearchService.getConsolidatedCollection(RestApiConstants.BILLING_SERVICE_WTMS);		
 		consolidatedData = new ConsolidatedCollDetails();
-		consolidatedData.setCytdColl(BigDecimal.valueOf(30.95));
-		consolidatedData.setTotalDmd(BigDecimal.valueOf(174.00));
-		consolidatedData.setLytdColl(BigDecimal.valueOf(25.47));
+		if(!consolidatedColl.isEmpty()){
+			consolidatedData.setCytdColl(consolidatedColl.get("cytdColln"));
+			consolidatedData.setLytdColl(consolidatedColl.get("lytdColln"));
+		}
+		consolidatedData.setTotalDmd(waterTaxElasticSearchIndexService.getTotalDemand());
 		consolidatedDetailsList.add(consolidatedData);
 		
+		//Other collections - temporarily set to 0
 		consolidatedData = new ConsolidatedCollDetails();
-		consolidatedData.setCytdColl(BigDecimal.valueOf(20.95));
-		consolidatedData.setTotalDmd(BigDecimal.valueOf(164.25));
-		consolidatedData.setLytdColl(BigDecimal.valueOf(18.74));
+		consolidatedData.setCytdColl(BigDecimal.ZERO);
+		consolidatedData.setTotalDmd(BigDecimal.ZERO);
+		consolidatedData.setLytdColl(BigDecimal.ZERO);
 		consolidatedDetailsList.add(consolidatedData);
+		
 		return consolidatedDetailsList;
 	}
 }

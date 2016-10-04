@@ -43,10 +43,13 @@ package org.egov.ptis.elasticsearch.model;
 import java.util.Date;
 
 import org.springframework.data.annotation.Id;
+import org.springframework.data.elasticsearch.annotations.DateFormat;
 import org.springframework.data.elasticsearch.annotations.Document;
 import org.springframework.data.elasticsearch.annotations.Field;
 import org.springframework.data.elasticsearch.annotations.FieldIndex;
 import org.springframework.data.elasticsearch.annotations.FieldType;
+
+import com.fasterxml.jackson.annotation.JsonFormat;
 
 @Document(indexName = "collection", type = "collection_bifurcation")
 public class CollectionIndex {
@@ -90,7 +93,8 @@ public class CollectionIndex {
 	@Field(type = FieldType.String, index = FieldIndex.not_analyzed)
 	private String receiptcreator;
 	
-	@Field(type = FieldType.Date)
+	@JsonFormat (shape = JsonFormat.Shape.STRING, pattern ="yyyy-MM-dd'T'HH:mm'Z'")
+	@Field(type = FieldType.Date, index = FieldIndex.not_analyzed, format = DateFormat.date_optional_time, pattern = "yyyy-MM-dd'T'hh:mm'Z'")
 	private Date receiptdate;
 	
 	@Field(type = FieldType.Double)

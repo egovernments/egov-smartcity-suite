@@ -40,17 +40,71 @@
 
 package org.egov.ptis.service.elasticsearch;
 
-import org.egov.ptis.repository.elasticsearch.CollectionIndexRepository;
+import java.math.BigDecimal;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
+
+import org.egov.commons.CFinancialYear;
+import org.egov.commons.service.CFinancialYearService;
+import org.egov.infra.utils.DateUtils;
+import org.egov.ptis.repository.elasticsearch.CollectionIndexESRepository;
+import org.elasticsearch.action.search.SearchResponse;
+import org.elasticsearch.index.query.QueryBuilder;
+import org.elasticsearch.index.query.QueryBuilders;
+import org.elasticsearch.search.aggregations.AggregationBuilders;
+import org.elasticsearch.search.aggregations.Aggregations;
+import org.elasticsearch.search.aggregations.metrics.sum.Sum;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.elasticsearch.core.ElasticsearchTemplate;
+import org.springframework.data.elasticsearch.core.ResultsExtractor;
+import org.springframework.data.elasticsearch.core.query.NativeSearchQueryBuilder;
+import org.springframework.data.elasticsearch.core.query.SearchQuery;
 import org.springframework.stereotype.Service;
 
 @Service
 public class CollectionIndexElasticSearchService {
 
-	private CollectionIndexRepository collectionIndexRepository;
+	private CollectionIndexESRepository collectionIndexESRepository;
 	
 	@Autowired
-	public CollectionIndexElasticSearchService(final CollectionIndexRepository collectionIndexRepository) {
-        this.collectionIndexRepository = collectionIndexRepository;
+	private CFinancialYearService cFinancialYearService;
+	
+	@Autowired
+	private ElasticsearchTemplate elasticsearchTemplate;
+	
+	@Autowired
+	public CollectionIndexElasticSearchService(final CollectionIndexESRepository collectionIndexESRepository) {
+        this.collectionIndexESRepository = collectionIndexESRepository;
     }
+	
+	public Map<String, BigDecimal> getConsolidatedCollection(String billingService){
+		Map<String, BigDecimal> consolidatedCollValues = new HashMap<>();
+		CFinancialYear currFinYear = cFinancialYearService.getFinancialYearByDate(new Date());
+		consolidatedCollValues.put("cytdColln", getConsolidatedCollForYears(currFinYear.getStartingDate(), new Date(), billingService));
+		DateUtils.addYears(currFinYear.getStartingDate(), -1);
+		consolidatedCollValues.put("lytdColln", getConsolidatedCollForYears(DateUtils.addYears(currFinYear.getStartingDate(), -1), 
+				DateUtils.addYears(new Date(), -1), billingService));
+		return consolidatedCollValues;
+	}
+
+	public BigDecimal getConsolidatedCollForYears(Date fromDate, Date toDate, String billingService) {
+		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+		QueryBuilder queryBuilder = QueryBuilders.boolQuery().must(QueryBuilders.rangeQuery("receiptdate").gte(sdf.format(fromDate)).lte(sdf.format(toDate)))
+							.must(QueryBuilders.termQuery("billingservice", billingService));
+		SearchQuery searchQueryColl = new NativeSearchQueryBuilder().withIndices("collection").withQuery(queryBuilder)
+						.addAggregation(AggregationBuilders.sum("collectiontotal").field("totalamount"))
+						.build();
+
+		Aggregations collAggr = elasticsearchTemplate.query(searchQueryColl, new ResultsExtractor<Aggregations>() {
+				@Override
+				public Aggregations extract(SearchResponse response) {
+					return response.getAggregations();
+				}
+		});
+
+		Sum aggr = collAggr.get("collectiontotal");
+		return BigDecimal.valueOf(aggr.getValue()).setScale(0, BigDecimal.ROUND_HALF_UP);
+	}
 }
