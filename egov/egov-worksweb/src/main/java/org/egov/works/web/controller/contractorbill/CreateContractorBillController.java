@@ -50,7 +50,6 @@ import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 
-import org.egov.commons.Accountdetailtype;
 import org.egov.commons.CChartOfAccounts;
 import org.egov.commons.dao.ChartOfAccountsHibernateDAO;
 import org.egov.egf.budget.model.BudgetControlType;
@@ -63,7 +62,6 @@ import org.egov.infra.exception.ApplicationRuntimeException;
 import org.egov.infra.utils.StringUtils;
 import org.egov.infra.utils.autonumber.AutonumberServiceBeanResolver;
 import org.egov.infra.validation.exception.ValidationException;
-import org.egov.model.bills.EgBillPayeedetails;
 import org.egov.model.bills.EgBilldetails;
 import org.egov.works.autonumber.ContractorBillNumberGenerator;
 import org.egov.works.contractorbill.entity.ContractorBillRegister;
@@ -551,7 +549,7 @@ public class CreateContractorBillController extends GenericWorkFlowController {
         return contractorBillRegister;
     }
 
-    private EgBilldetails getBillDetails(final ContractorBillRegister billregister, final EgBilldetails egBilldetails,
+    /*private EgBilldetails getBillDetails(final ContractorBillRegister billregister, final EgBilldetails egBilldetails,
             final WorkOrderEstimate workOrderEstimate, final BindingResult resultBinder,
             final HttpServletRequest request) {
         egBilldetails.setFunctionid(
@@ -613,21 +611,7 @@ public class CreateContractorBillController extends GenericWorkFlowController {
         }
         egBilldetails.setLastupdatedtime(new Date());
         return egBilldetails;
-    }
-
-    private EgBillPayeedetails getEgPayeeDetails(final EgBilldetails billDetails, final Integer accountsDetailTypeId,
-            final BigDecimal amount, final boolean isDebit, final Integer accountsDetailKeyId) {
-        final EgBillPayeedetails egBillPaydetail = new EgBillPayeedetails();
-        egBillPaydetail.setAccountDetailKeyId(accountsDetailKeyId);
-        egBillPaydetail.setAccountDetailTypeId(accountsDetailTypeId);
-        if (isDebit)
-            egBillPaydetail.setDebitAmount(amount);
-        else
-            egBillPaydetail.setCreditAmount(amount);
-        egBillPaydetail.setEgBilldetailsId(billDetails);
-        egBillPaydetail.setLastUpdatedTime(new Date());
-        return egBillPaydetail;
-    }
+    }*/
 
     public List<Map<String, Object>> getBillDetailsMap(final ContractorBillRegister contractorBillRegister,
             final Model model) {

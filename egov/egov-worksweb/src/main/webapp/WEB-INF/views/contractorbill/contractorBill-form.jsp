@@ -54,7 +54,6 @@
 			<input type="hidden" value="${workOrderEstimate.estimate.lineEstimateDetails.lineEstimate.spillOverFlag }" id=spillOverFlag />
 		
 			<input type="hidden" name="workOrderDate" id="workOrderDate" class="form-control datepicker" maxlength="10" data-inputmask="'mask': 'd/m/y'" data-date-end-date="0d" value='<fmt:formatDate value="${workOrder.workOrderDate}" pattern="dd/MM/yyyy"/>'>
-			<form:hidden path="workOrder.id"  name="workOrder" id="workOrderId" value="${workOrder.id}" /> 
 			<input type="hidden" name="contractorBillId" id="contractorBillId" value="${contractorBillRegister.id}" /> 
 			<input type="hidden" name="isSpillover" id="isSpillOver" value="${workOrderEstimate.estimate.lineEstimateDetails.lineEstimate.spillOverFlag}"/>
 			<input type="hidden"  name="workOrderEstimateId" id="workOrderEstimateId" value="${workOrderEstimate.id}" /> 

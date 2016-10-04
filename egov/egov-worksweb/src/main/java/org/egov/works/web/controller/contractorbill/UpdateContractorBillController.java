@@ -433,63 +433,6 @@ public class UpdateContractorBillController extends GenericWorkFlowController {
         return "contractorBill-view";
     }
 
-    public List<Map<String, Object>> getBillDetailsMap(final ContractorBillRegister contractorBillRegister,
-            final Model model) {
-        final List<Map<String, Object>> billDetailsList = new ArrayList<Map<String, Object>>();
-        Map<String, Object> billDetails = new HashMap<String, Object>();
-
-        final List<CChartOfAccounts> contractorNetPayableAccountList = chartOfAccountsHibernateDAO
-                .getAccountCodeByPurposeName(WorksConstants.CONTRACTOR_NETPAYABLE_PURPOSE);
-        final List<CChartOfAccounts> contractorDeductionAccountList = chartOfAccountsHibernateDAO
-                .getAccountCodeByPurposeName(WorksConstants.CONTRACTOR_DEDUCTIONS_PURPOSE);
-        final List<CChartOfAccounts> retentionMoneyDeductionAccountList = chartOfAccountsHibernateDAO
-                .getAccountCodeByPurposeName(WorksConstants.RETENTION_MONEY_DEDUCTIONS_PURPOSE);
-        for (final EgBilldetails egBilldetails : contractorBillRegister.getEgBilldetailes()) {
-            if (egBilldetails.getDebitamount() != null) {
-                billDetails = new HashMap<String, Object>();
-                final CChartOfAccounts coa = chartOfAccountsHibernateDAO
-                        .findById(egBilldetails.getGlcodeid().longValue(), false);
-                billDetails.put("id", egBilldetails.getId());
-                billDetails.put("glcodeId", coa.getId());
-                billDetails.put("glcode", coa.getGlcode());
-                billDetails.put("accountHead", coa.getName());
-                billDetails.put("amount", egBilldetails.getDebitamount());
-                billDetails.put("isDebit", true);
-                billDetails.put("isNetPayable", false);
-            } else if (egBilldetails.getCreditamount() != null) {
-                billDetails = new HashMap<String, Object>();
-                final CChartOfAccounts coa = chartOfAccountsHibernateDAO
-                        .findById(egBilldetails.getGlcodeid().longValue(), false);
-                billDetails.put("id", egBilldetails.getId());
-                billDetails.put("glcodeId", coa.getId());
-                billDetails.put("glcode", coa.getGlcode());
-                billDetails.put("accountHead", coa.getName());
-                billDetails.put("amount", egBilldetails.getCreditamount());
-                billDetails.put("isDebit", false);
-                if (contractorNetPayableAccountList != null && !contractorNetPayableAccountList.isEmpty()
-                        && contractorNetPayableAccountList.contains(coa)) {
-                    billDetails.put("isNetPayable", true);
-                    model.addAttribute("netPayableAccountId", egBilldetails.getId());
-                    model.addAttribute("netPayableAccountCode", coa.getId());
-                    model.addAttribute("netPayableAmount", egBilldetails.getCreditamount());
-                } else {
-                    billDetails.put("isNetPayable", false);
-                    if (contractorDeductionAccountList != null && !contractorDeductionAccountList.isEmpty()
-                            && contractorDeductionAccountList.contains(coa))
-                        billDetails.put("isStatutoryDeduction", true);
-                    else
-                        billDetails.put("isStatutoryDeduction", false);
-                    if (retentionMoneyDeductionAccountList != null && !retentionMoneyDeductionAccountList.isEmpty()
-                            && retentionMoneyDeductionAccountList.contains(coa))
-                        billDetails.put("isRetentionMoneyDeduction", true);
-                    else
-                        billDetails.put("isRetentionMoneyDeduction", false);
-                }
-            }
-            billDetailsList.add(billDetails);
-        }
-        return billDetailsList;
-    }
 
     private ContractorBillRegister addBillDetails(final ContractorBillRegister contractorBillRegister,
             final WorkOrderEstimate workOrderEstimate, final BindingResult resultBinder,
@@ -511,10 +454,7 @@ public class UpdateContractorBillController extends GenericWorkFlowController {
                 }
             } else {
             if (egBilldetails.getGlcodeid() != null)
-                contractorBillRegister.addEgBilldetailes(getBillDetails(contractorBillRegister, egBilldetails,
-                        workOrderEstimate, resultBinder, request));
-        request.getParameter("netPayableAccountId");
-
+                request.getParameter("netPayableAccountId");
                 contractorBillRegister.addEgBilldetailes(contractorBillRegisterService.getBillDetails(contractorBillRegister, egBilldetails,
                         workOrderEstimate, resultBinder, request));
             }
@@ -529,88 +469,11 @@ public class UpdateContractorBillController extends GenericWorkFlowController {
             billdetails.setCreditamount(new BigDecimal(netPayableAmount));
 
             contractorBillRegister.addEgBilldetailes(
-                    getBillDetails(contractorBillRegister, billdetails, workOrderEstimate, resultBinder, request));
-
-                    contractorBillRegisterService.getBillDetails(contractorBillRegister, billdetails, workOrderEstimate, resultBinder, request);
+                    contractorBillRegisterService.getBillDetails(contractorBillRegister, billdetails, workOrderEstimate, resultBinder, request));
         }
 
         return contractorBillRegister;
     }
 
-    private EgBilldetails getBillDetails(final ContractorBillRegister billregister, final EgBilldetails egBilldetails,
-            final WorkOrderEstimate workOrderEstimate, final BindingResult resultBinder,
-            final HttpServletRequest request) {
-        egBilldetails.setFunctionid(
-                new BigDecimal(workOrderEstimate.getEstimate().getFinancialDetails().get(0).getFunction().getId()));
-
-        boolean isDebit = false;
-        CChartOfAccounts coa = null;
-        if (!(BigDecimal.ZERO.compareTo(egBilldetails.getGlcodeid()) == 0))
-            coa = chartOfAccountsHibernateDAO.findById(egBilldetails.getGlcodeid().longValue(), false);
-        if (coa != null && coa.getId() != null)
-            egBilldetails.setGlcodeid(BigDecimal.valueOf(coa.getId()));
-        if (egBilldetails.getDebitamount() != null
-                && !(BigDecimal.ZERO.compareTo(egBilldetails.getDebitamount()) == 0)) {
-            egBilldetails.setDebitamount(egBilldetails.getDebitamount());
-            isDebit = true;
-        } else if (egBilldetails.getCreditamount() != null
-                && !(BigDecimal.ZERO.compareTo(egBilldetails.getCreditamount()) == 0))
-            egBilldetails.setCreditamount(egBilldetails.getCreditamount());
-        else if (!StringUtils.isBlank(request.getParameter("netPayableAccountCode"))
-                && request.getParameter("netPayableAccountCode").toString().equals(egBilldetails.getGlcodeid()))
-            resultBinder.reject("error.contractorbill.accountdetails.amount.required",
-                    "error.contractorbill.accountdetails.amount.required");
-
-        egBilldetails.setEgBillregister(billregister);
-        if (coa != null && coa.getGlcode() != null) {
-            Accountdetailtype projectCodeAccountDetailType = null;
-            Accountdetailtype contractorAccountDetailType = null;
-            if (isDebit) {
-                projectCodeAccountDetailType = chartOfAccountsHibernateDAO.getAccountDetailTypeIdByName(coa.getGlcode(),
-                        WorksConstants.PROJECTCODE);
-                if (projectCodeAccountDetailType == null)
-                    resultBinder.reject("error.contractorBill.validate.glcode.for.projectcode.subledger",
-                            new String[] { coa.getGlcode() }, null);
-            }
-            final List<Accountdetailtype> detailCode = chartOfAccountsHibernateDAO
-                    .getAccountdetailtypeListByGLCode(coa.getGlcode());
-            if (detailCode != null && !detailCode.isEmpty()) {
-                if (isDebit) {
-                    if (projectCodeAccountDetailType != null)
-                        egBilldetails.addEgBillPayeedetail(getEgPayeeDetails(egBilldetails,
-                                projectCodeAccountDetailType.getId(), egBilldetails.getDebitamount(), isDebit,
-                                Integer.valueOf(workOrderEstimate.getEstimate().getProjectCode().getId().toString())));
-
-                } else {
-                    contractorAccountDetailType = chartOfAccountsHibernateDAO.getAccountDetailTypeIdByName(
-                            coa.getGlcode(), WorksConstants.ACCOUNTDETAIL_TYPE_CONTRACTOR);
-                    if (contractorAccountDetailType != null)
-                        egBilldetails.getEgBillPaydetailes().add(getEgPayeeDetails(egBilldetails,
-                                contractorAccountDetailType.getId(), egBilldetails.getCreditamount(), isDebit,
-                                Integer.valueOf(workOrderEstimate.getWorkOrder().getContractor().getId().toString())));
-
-                }
-                if (projectCodeAccountDetailType == null && contractorAccountDetailType == null)
-                    resultBinder.reject("error.contractorbill.validate.glcode.for.subledger",
-                            new String[] { coa.getGlcode() }, null);
-            }
-        }
-        egBilldetails.setLastupdatedtime(new Date());
-        return egBilldetails;
-    }
-
-    private EgBillPayeedetails getEgPayeeDetails(final EgBilldetails billDetails, final Integer accountsDetailTypeId,
-            final BigDecimal amount, final boolean isDebit, final Integer accountsDetailKeyId) {
-        final EgBillPayeedetails egBillPaydetail = new EgBillPayeedetails();
-        egBillPaydetail.setAccountDetailKeyId(accountsDetailKeyId);
-        egBillPaydetail.setAccountDetailTypeId(accountsDetailTypeId);
-        if (isDebit)
-            egBillPaydetail.setDebitAmount(amount);
-        else
-            egBillPaydetail.setCreditAmount(amount);
-        egBillPaydetail.setEgBilldetailsId(billDetails);
-        egBillPaydetail.setLastUpdatedTime(new Date());
-        return egBillPaydetail;
-    }
 
 }
