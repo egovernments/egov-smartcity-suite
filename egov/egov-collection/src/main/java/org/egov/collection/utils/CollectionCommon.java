@@ -174,6 +174,7 @@ public class CollectionCommon {
             newReceiptDetail.setDramount(debitAmount);
             newReceiptDetail.setCramount(BigDecimal.valueOf(0));
             newReceiptDetail.setReceiptHeader(receiptHeader);
+            newReceiptDetail.setFunction(receiptHeader.getReceiptDetails().iterator().next().getFunction());
         }
 
         if (otherInstrumenttotal.toString() != null
@@ -199,8 +200,8 @@ public class CollectionCommon {
             newReceiptDetail.setDramount(debitAmount);
             newReceiptDetail.setCramount(BigDecimal.ZERO);
             newReceiptDetail.setReceiptHeader(receiptHeader);
+            newReceiptDetail.setFunction(receiptHeader.getReceiptDetails().iterator().next().getFunction());
         }
-
         return newReceiptDetail;
     }
 
