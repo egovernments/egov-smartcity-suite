@@ -12,7 +12,7 @@ INSERT INTO eg_demand_reason_master (id, reasonmaster, "category", isdebit, modu
 
 
 -----------------START-------------------
-INSERT INTO eg_wf_types (id,module,type,link,createdby,createddate,lastmodifiedby,lastmodifieddate,renderyn,groupyn,typefqn,displayname,version) VALUES (nextval('seq_eg_wf_types'),(SELECT id FROM eg_module WHERE name='Marriage Registration'),'Registration','/mrs/registration/update/:ID',1,now(),1,now(), 'Y', 'N','org.egov.mrs.domain.entity.Registration', 'Registration',0);------------------END---------------------
+INSERT INTO eg_wf_types (id,module,type,link,createdby,createddate,lastmodifiedby,lastmodifieddate,enabled,grouped,typefqn,displayname,version) VALUES (nextval('seq_eg_wf_types'),(SELECT id FROM eg_module WHERE name='Marriage Registration'),'Registration','/mrs/registration/update/:ID',1,now(),1,now(), 'Y', 'N','org.egov.mrs.domain.entity.Registration', 'Registration',0);------------------END---------------------
 
 -----------------START-------------------
 INSERT INTO eg_installment_master (id, installment_num, installment_year, start_date, end_date, id_module, lastupdatedtimestamp, description, installment_type) VALUES (nextval('seq_eg_installment_master'), 1, '2015-10-01 00:00:00', '2015-10-01 00:00:00', '2016-03-31 23:59:59', (select id from eg_module where name='Marriage Registration'), current_timestamp, '2015-2016-2', NULL);
