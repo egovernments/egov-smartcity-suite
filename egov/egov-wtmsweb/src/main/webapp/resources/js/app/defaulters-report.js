@@ -62,6 +62,7 @@ jQuery(document).ready(function() {
 		loadingReport();
 	});
 	
+
 });
 
 function loadingReport()
@@ -119,9 +120,11 @@ function loadingReport()
 					}
 				},
 				aaSorting: [],	
-				"columns" : [{"sTitle" : "S.no", "sortable": false,"render": function ( data, type, full, meta ) {
+				"columns" : [{"sTitle" : "S.no","sortable": false,
+							  "render": function ( data, type, full, meta ) {
 						      return oTable.fnPagingInfo().iStart+meta.row+1;
-						    }},
+						    }
+							},
 							  { "data" : "hscNo" , "title": "H.S.C NO", "sortable": false},  
 							  { "data" : "ownerName", "title": "Owner Name","sortable": false},
 							  { "data" : "wardName", "title": "Revenue Ward","sortable": false},
@@ -152,9 +155,9 @@ function loadingReport()
 										updateTotalFooter(10, api);
 									}
 								},
-					            "fnInitComplete": function() {
+					           /* "fnInitComplete": function() {
 					            	if(oDataTable){ oDataTable.fnSort( [ [0,'asc'] ] ); }
-					            },
+					            },*/
 					            
 								"aoColumnDefs" : [ {
 									"aTargets" : [8,9,10],
@@ -166,7 +169,7 @@ function loadingReport()
 			
 		}
 		
-		function updateSerialNo()
+		/*function updateSerialNo()
 		{
 			$( "#defaultersReport-table tbody tr" ).each(function(index) {
 				if($(this).find('td').length>1)
@@ -175,7 +178,7 @@ function loadingReport()
 				}
 			});
 			
-		}
+		}*/
 		
 	
 }
