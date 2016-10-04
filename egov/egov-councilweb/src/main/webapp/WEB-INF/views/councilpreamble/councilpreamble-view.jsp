@@ -116,6 +116,8 @@
 		<div class="panel panel-primary" data-collapsed="0">
 			<jsp:include page="applicationhistory-view.jsp"></jsp:include>
 		</div> 
+		<c:if test="${not councilPreamble.meetingMOMs.isEmpty()}" > 
+		
 		<div class="panel-heading">
 			<div class="panel-title">Minutes of Meeting Details</div>
 			</div>
@@ -149,14 +151,15 @@
 												</tr>
 												</c:forEach>
 												</c:when>
-						<c:otherwise>
+						<%-- <c:otherwise>
 							<div class="col-md-3 col-xs-6 add-margin">
 								<spring:message code="lbl.noMeeting.Detail" />
 							</div>
-						</c:otherwise>
+						</c:otherwise> --%>
 							</c:choose></tbody>
 												
 							</table>
+							</c:if>
 		<div class="text-center">
 		<div class="add-margin">
 			<a href="javascript:void(0)" class="btn btn-default"
