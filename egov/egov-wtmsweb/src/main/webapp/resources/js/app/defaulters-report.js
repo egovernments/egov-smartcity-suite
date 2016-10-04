@@ -44,19 +44,29 @@ jQuery(document).ready(function() {
 	
 	
 	jQuery('#defaultersReportSearch').click(function(e) {
-		var fromAmount = $("#fromAmount").val();
-		var toAmount = $("#toAmount").val(); 
+		var fromDemand = $("#fromAmount").val();
+		var toDemand = $("#toAmount").val(); 
 		var ward = $("#ward").val();
 		var topDefaulters = $("#topDefaulters").val();
 		console.log(parseInt(fromAmount)+'-'+parseInt(toAmount)+'-'+topDefaulters);
-		if ((fromAmount == undefined || parseInt(fromAmount) == 0) &&
-				(toAmount == undefined || parseInt(toAmount) == 0) && (topDefaulters == '')) {
-			bootbox.alert('Enter either From amount or  To Amount or Top Defaulters , One is mandatory');
+		
+		if (((fromDemand == null || fromDemand == "") &&
+				(toDemand == null || toDemand == ""))  ) {
+			bootbox.alert('Either From and To Amounts is mandatory');
 			return false;
 		}
-		 
-		if (parseInt(toAmount)!=0 && fromAmount > parseInt(toAmount)) {
-			bootbox.alert('From Amount should not be greater than to Amount');
+		
+		if ((fromDemand == null || fromDemand == "") && (toDemand != null && toDemand != "")) {
+			bootbox.alert('Please Enter From Amount');
+			return false;
+		}
+		if ((fromDemand != null || fromDemand != "") &&
+				(toDemand == null || toDemand == "")) {
+			bootbox.alert('Please Enter To Amount');
+	      return false;
+		}
+		if(parseInt($("#fromAmount").val()) > parseInt($("#toAmount").val())){
+			bootbox.alert('To Demand should be greather than From Demand');
 			return false;
 		}
 		loadingReport();
