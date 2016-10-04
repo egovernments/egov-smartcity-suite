@@ -13,12 +13,12 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
+import javax.persistence.OrderBy;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import javax.persistence.Transient;
-import javax.persistence.OrderBy;
 
 import org.egov.commons.EgwStatus;
 import org.egov.infra.filestore.entity.FileStoreMapper;
@@ -74,10 +74,12 @@ public class CouncilMeeting  extends StateAware {
     @OneToMany(mappedBy = "meeting", cascade = CascadeType.ALL)
     private List<MeetingAttendence> meetingAttendence = new ArrayList<MeetingAttendence>(0);
     
+    @OneToMany(mappedBy = "meeting", cascade = CascadeType.ALL)
+    private List<CouncilSmsDetails> smsDetails = new ArrayList<CouncilSmsDetails>(0);
+    
     @ManyToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "filestore")
     private FileStoreMapper filestore;
-    
     
     public Long getId() {
         return id;
@@ -184,5 +186,20 @@ public class CouncilMeeting  extends StateAware {
     public FileStoreMapper getFilestore() {
 		return filestore;
 	}
+
+	public List<CouncilSmsDetails> getSmsDetails() {
+		return smsDetails;
+	}
+
+	public void setSmsDetails(List<CouncilSmsDetails> smsDetails) {
+		this.smsDetails = smsDetails;
+	}
+	
+	public void addSmsDetails(CouncilSmsDetails councilSmsDetails) {
+		this.smsDetails.add(councilSmsDetails);
+	}
+
+	
+	
     
 }

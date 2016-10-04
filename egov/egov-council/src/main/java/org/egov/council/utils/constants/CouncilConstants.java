@@ -70,6 +70,10 @@ public class CouncilConstants {
     public final static String REJECTED ="REJECTED";
     public final static String ADJOURNED ="ADJOURNED";
     public final static String ATTENDANCEFINALIZED ="ATTENDANCE FINALIZED";
+    public final static String RESOLUTION_APPROVED_PREAMBLE="Resolution Approved";
+    public final static String IMPLEMENTATIONSTATUS = "IMPLEMENTATIONSTATUS";
+    public final static String IMPLEMENTATION_STATUS_WORKINPROGRESS="Work In Progress";
+    public final static String IMPLEMENTATION_STATUS_FINISHED="Finished";
     
     public static final LinkedHashMap<String, String> MEETING_TIMINGS = new LinkedHashMap<String, String>() {
         /**

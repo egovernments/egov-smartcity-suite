@@ -43,10 +43,12 @@ import static org.egov.council.utils.constants.CouncilConstants.MODULE_FULLNAME;
 import static org.egov.council.utils.constants.CouncilConstants.SENDEMAILFORCOUNCIL;
 import static org.egov.council.utils.constants.CouncilConstants.SENDSMSFORCOUNCIL;
 
+import java.util.Date;
 import java.util.List;
 
 import org.egov.council.entity.CommitteeMembers;
 import org.egov.council.entity.CouncilMeeting;
+import org.egov.council.entity.CouncilSmsDetails;
 import org.egov.infra.admin.master.entity.AppConfigValues;
 import org.egov.infra.admin.master.service.AppConfigValueService;
 import org.egov.infra.messaging.MessagingService;
@@ -84,6 +86,7 @@ public class CouncilSmsAndEmailService {
 		String mobileno = StringUtils.EMPTY;
 		Boolean smsEnabled = isSmsEnabled();
 		if (smsEnabled) {
+			
 			for (CommitteeMembers committeeMembers : committeeMemberService
 					.findAllByCommitteType(councilMeeting.getCommitteeType())) {
 				mobileno = committeeMembers.getCouncilMember().getMobileNumber();
@@ -91,6 +94,7 @@ public class CouncilSmsAndEmailService {
 					buildSmsForMeeting(mobileno, councilMeeting, customMessage);
 				}
 			}
+			buildCouncilSmsDetails(customMessage, councilMeeting);	
 		}
 	}
 
@@ -108,6 +112,15 @@ public class CouncilSmsAndEmailService {
 		}
 	}
 
+	private CouncilSmsDetails buildCouncilSmsDetails(String message,
+			CouncilMeeting councilMeeting) {
+		CouncilSmsDetails councilSmsDetails = new CouncilSmsDetails();
+		councilSmsDetails.setSmsSentDate(new Date());
+		councilSmsDetails.setSmsContent(message);
+		councilSmsDetails.setMeeting(councilMeeting);
+		councilMeeting.addSmsDetails(councilSmsDetails);
+		return councilSmsDetails;
+	}
 	/**
 	 * @return SMS AND EMAIL body and subject For Committee Members
 	 * @param CouncilMeeting
