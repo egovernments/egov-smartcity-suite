@@ -139,7 +139,7 @@ public class CouncilPreambleService {
         final Criteria criteria = buildSearchCriteria(councilPreamble);
         return criteria.list();
     }
-    //TODO: ALSO CHECK IMPLEMENTATION STATUS IS NOT COMPLETED.
+    
     @SuppressWarnings({ "unchecked", "deprecation" })
 	public List<CouncilPreamble> searchFinalizedPreamble(
 			CouncilPreamble councilPreamble) {

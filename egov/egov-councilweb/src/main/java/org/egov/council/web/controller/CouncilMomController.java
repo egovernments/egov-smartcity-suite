@@ -59,7 +59,6 @@ import static org.egov.infra.web.utils.WebUtils.toJSON;
 
 import java.io.ByteArrayInputStream;
 import java.lang.reflect.Type;
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.LinkedHashMap;
