@@ -37,78 +37,40 @@
  *
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
-package org.egov.restapi.model.dashboard;
+
+package org.egov.ptis.bean.dashboard;
 
 import java.math.BigDecimal;
-import java.util.List;
 
-import org.egov.ptis.domain.model.ErrorDetails;
+public class CollectionTrend {
 
-public class CollectionIndexDetails {
-	private BigDecimal todayColl = BigDecimal.ZERO;
-	private BigDecimal lyTodayColl = BigDecimal.ZERO;
-	private BigDecimal cytdColl = BigDecimal.ZERO;
-	private BigDecimal cytdDmd = BigDecimal.ZERO;
-	private BigDecimal totalDmd = BigDecimal.ZERO;
-	private BigDecimal lytdColl = BigDecimal.ZERO;
-	private List<CollectionTrend> collTrends;
-	private List<CollIndexTableData> responseDetails;
-	private ErrorDetails errorDetails;
+	private String month;
+	private BigDecimal pyColl = BigDecimal.ZERO;
+	private BigDecimal lyColl = BigDecimal.ZERO;
+	private BigDecimal cyColl = BigDecimal.ZERO;
 	
-	public BigDecimal getTodayColl() {
-		return todayColl;
+	public String getMonth() {
+		return month;
 	}
-	public void setTodayColl(BigDecimal todayColl) {
-		this.todayColl = todayColl;
+	public void setMonth(String month) {
+		this.month = month;
 	}
-	public BigDecimal getLyTodayColl() {
-		return lyTodayColl;
+	public BigDecimal getPyColl() {
+		return pyColl;
 	}
-	public void setLyTodayColl(BigDecimal lyTodayColl) {
-		this.lyTodayColl = lyTodayColl;
+	public void setPyColl(BigDecimal pyColl) {
+		this.pyColl = pyColl;
 	}
-	public BigDecimal getCytdColl() {
-		return cytdColl;
+	public BigDecimal getLyColl() {
+		return lyColl;
 	}
-	public void setCytdColl(BigDecimal cytdColl) {
-		this.cytdColl = cytdColl;
+	public void setLyColl(BigDecimal lyColl) {
+		this.lyColl = lyColl;
 	}
-	public BigDecimal getCytdDmd() {
-		return cytdDmd;
+	public BigDecimal getCyColl() {
+		return cyColl;
 	}
-	public void setCytdDmd(BigDecimal cytdDmd) {
-		this.cytdDmd = cytdDmd;
+	public void setCyColl(BigDecimal cyColl) {
+		this.cyColl = cyColl;
 	}
-	public BigDecimal getTotalDmd() {
-		return totalDmd;
-	}
-	public void setTotalDmd(BigDecimal totalDmd) {
-		this.totalDmd = totalDmd;
-	}
-	public BigDecimal getLytdColl() {
-		return lytdColl;
-	}
-	public void setLytdColl(BigDecimal lytdColl) {
-		this.lytdColl = lytdColl;
-	}
-	public List<CollectionTrend> getCollTrends() {
-		return collTrends;
-	}
-	public void setCollTrends(List<CollectionTrend> collTrends) {
-		this.collTrends = collTrends;
-	}
-	public List<CollIndexTableData> getResponseDetails() {
-		return responseDetails;
-	}
-	public void setResponseDetails(List<CollIndexTableData> responseDetails) {
-		this.responseDetails = responseDetails;
-	}
-	public ErrorDetails getErrorDetails() {
-		return errorDetails;
-	}
-	public void setErrorDetails(ErrorDetails errorDetails) {
-		this.errorDetails = errorDetails;
-	}
-	
-	
 }

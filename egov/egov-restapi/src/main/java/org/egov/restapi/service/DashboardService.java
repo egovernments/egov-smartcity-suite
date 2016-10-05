@@ -51,16 +51,17 @@ import java.util.Map;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 
+import org.egov.ptis.bean.dashboard.CollIndexTableData;
+import org.egov.ptis.bean.dashboard.CollectionIndexDetails;
+import org.egov.ptis.bean.dashboard.CollectionTrend;
+import org.egov.ptis.bean.dashboard.ConsolidatedCollDetails;
+import org.egov.ptis.bean.dashboard.ConsolidatedCollectionDetails;
 import org.egov.ptis.domain.model.ErrorDetails;
 import org.egov.ptis.service.elasticsearch.CollectionIndexElasticSearchService;
 import org.egov.ptis.service.elasticsearch.PropertyTaxElasticSearchIndexService;
 import org.egov.ptis.service.elasticsearch.WaterTaxElasticSearchIndexService;
 import org.egov.restapi.constants.RestApiConstants;
 import org.egov.restapi.model.StateCityInfo;
-import org.egov.restapi.model.dashboard.CollIndexTableData;
-import org.egov.restapi.model.dashboard.CollectionIndexDetails;
-import org.egov.restapi.model.dashboard.CollectionTrend;
-import org.egov.restapi.model.dashboard.ConsolidatedCollDetails;
 import org.hibernate.SQLQuery;
 import org.hibernate.Session;
 import org.hibernate.transform.AliasToBeanResultTransformer;
@@ -214,35 +215,35 @@ public class DashboardService {
 	 * Provides State-wise Collection Statistics for Property Tax, Water Charges and Others
 	 * @return ConsolidatedCollDetails
 	 */
-	public List<ConsolidatedCollDetails> getConsolidatedCollDetails(){
-		ConsolidatedCollDetails consolidatedData = new ConsolidatedCollDetails();
-		List<ConsolidatedCollDetails> consolidatedDetailsList = new ArrayList<>();
+	public ConsolidatedCollectionDetails getConsolidatedCollectionDetails(){
+		ConsolidatedCollectionDetails consolidatedCollectionDetails = new ConsolidatedCollectionDetails();
 		//For Property Tax collections
+		ConsolidatedCollDetails consolidatedData = new ConsolidatedCollDetails();
 		Map<String, BigDecimal> consolidatedColl = collectionIndexElasticSearchService.getConsolidatedCollection(RestApiConstants.BILLING_SERVICE_PT);		
 		if(!consolidatedColl.isEmpty()){
 			consolidatedData.setCytdColl(consolidatedColl.get("cytdColln"));
 			consolidatedData.setLytdColl(consolidatedColl.get("lytdColln"));
 		}
 		consolidatedData.setTotalDmd(propertyTaxElasticSearchIndexService.getTotalDemand());
-		consolidatedDetailsList.add(consolidatedData);
+		consolidatedCollectionDetails.setPropertyTax(consolidatedData);
 		
 		//For Water Tax collections
-		consolidatedColl = collectionIndexElasticSearchService.getConsolidatedCollection(RestApiConstants.BILLING_SERVICE_WTMS);		
 		consolidatedData = new ConsolidatedCollDetails();
+		consolidatedColl = collectionIndexElasticSearchService.getConsolidatedCollection(RestApiConstants.BILLING_SERVICE_WTMS);		
 		if(!consolidatedColl.isEmpty()){
 			consolidatedData.setCytdColl(consolidatedColl.get("cytdColln"));
 			consolidatedData.setLytdColl(consolidatedColl.get("lytdColln"));
 		}
 		consolidatedData.setTotalDmd(waterTaxElasticSearchIndexService.getTotalDemand());
-		consolidatedDetailsList.add(consolidatedData);
+		consolidatedCollectionDetails.setWaterTax(consolidatedData);
 		
 		//Other collections - temporarily set to 0
 		consolidatedData = new ConsolidatedCollDetails();
 		consolidatedData.setCytdColl(BigDecimal.ZERO);
 		consolidatedData.setTotalDmd(BigDecimal.ZERO);
 		consolidatedData.setLytdColl(BigDecimal.ZERO);
-		consolidatedDetailsList.add(consolidatedData);
+		consolidatedCollectionDetails.setOthers(consolidatedData);
 		
-		return consolidatedDetailsList;
+		return consolidatedCollectionDetails;
 	}
 }

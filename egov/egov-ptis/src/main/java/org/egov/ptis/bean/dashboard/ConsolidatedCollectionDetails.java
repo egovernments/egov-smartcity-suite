@@ -38,39 +38,30 @@
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
 
-package org.egov.restapi.model.dashboard;
+package org.egov.ptis.bean.dashboard;
 
-import java.math.BigDecimal;
-
-public class CollectionTrend {
-
-	private String month;
-	private BigDecimal pyColl = BigDecimal.ZERO;
-	private BigDecimal lyColl = BigDecimal.ZERO;
-	private BigDecimal cyColl = BigDecimal.ZERO;
+public class ConsolidatedCollectionDetails {
 	
-	public String getMonth() {
-		return month;
+	private ConsolidatedCollDetails propertyTax;
+	private ConsolidatedCollDetails waterTax;
+	private ConsolidatedCollDetails others;
+	
+	public ConsolidatedCollDetails getPropertyTax() {
+		return propertyTax;
 	}
-	public void setMonth(String month) {
-		this.month = month;
+	public void setPropertyTax(ConsolidatedCollDetails propertyTax) {
+		this.propertyTax = propertyTax;
 	}
-	public BigDecimal getPyColl() {
-		return pyColl;
+	public ConsolidatedCollDetails getWaterTax() {
+		return waterTax;
 	}
-	public void setPyColl(BigDecimal pyColl) {
-		this.pyColl = pyColl;
+	public void setWaterTax(ConsolidatedCollDetails waterTax) {
+		this.waterTax = waterTax;
 	}
-	public BigDecimal getLyColl() {
-		return lyColl;
+	public ConsolidatedCollDetails getOthers() {
+		return others;
 	}
-	public void setLyColl(BigDecimal lyColl) {
-		this.lyColl = lyColl;
-	}
-	public BigDecimal getCyColl() {
-		return cyColl;
-	}
-	public void setCyColl(BigDecimal cyColl) {
-		this.cyColl = cyColl;
+	public void setOthers(ConsolidatedCollDetails others) {
+		this.others = others;
 	}
 }

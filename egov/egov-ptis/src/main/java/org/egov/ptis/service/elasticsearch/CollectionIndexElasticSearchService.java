@@ -82,8 +82,9 @@ public class CollectionIndexElasticSearchService {
 	public Map<String, BigDecimal> getConsolidatedCollection(String billingService){
 		Map<String, BigDecimal> consolidatedCollValues = new HashMap<>();
 		CFinancialYear currFinYear = cFinancialYearService.getFinancialYearByDate(new Date());
+		//For current year results
 		consolidatedCollValues.put("cytdColln", getConsolidatedCollForYears(currFinYear.getStartingDate(), new Date(), billingService));
-		DateUtils.addYears(currFinYear.getStartingDate(), -1);
+		//For last year results
 		consolidatedCollValues.put("lytdColln", getConsolidatedCollForYears(DateUtils.addYears(currFinYear.getStartingDate(), -1), 
 				DateUtils.addYears(new Date(), -1), billingService));
 		return consolidatedCollValues;

@@ -43,9 +43,9 @@ package org.egov.restapi.web.rest;
 import java.util.List;
 
 import org.egov.infra.web.utils.WebUtils;
+import org.egov.ptis.bean.dashboard.CollectionIndexDetails;
+import org.egov.ptis.bean.dashboard.ConsolidatedCollectionDetails;
 import org.egov.restapi.model.StateCityInfo;
-import org.egov.restapi.model.dashboard.CollectionIndexDetails;
-import org.egov.restapi.model.dashboard.ConsolidatedCollDetails;
 import org.egov.restapi.service.DashboardService;
 import org.egov.restapi.util.JsonConvertor;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -86,8 +86,8 @@ public class CMDashboardController {
 	 */
 	@RequestMapping(value = "/collectionstats", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
 	public String getConsolidatedCollDetails(){
-		List<ConsolidatedCollDetails> consolidatedCollDetails = dashboardService.getConsolidatedCollDetails();
-		return JsonConvertor.convert(consolidatedCollDetails);
+		ConsolidatedCollectionDetails consolidatedCollectionDetails = dashboardService.getConsolidatedCollectionDetails();
+		return JsonConvertor.convert(consolidatedCollectionDetails);
 	}
 	
 	/**
