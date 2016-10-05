@@ -41,8 +41,15 @@ package org.egov.mrs.masters.service;
 
 import java.util.List;
 
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+
 import org.egov.mrs.masters.entity.Religion;
 import org.egov.mrs.masters.repository.ReligionRepository;
+import org.hibernate.Criteria;
+import org.hibernate.Session;
+import org.hibernate.criterion.MatchMode;
+import org.hibernate.criterion.Restrictions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -52,7 +59,13 @@ import org.springframework.transaction.annotation.Transactional;
 public class ReligionService {
 
     private final ReligionRepository religionRepository;
+    
+    @PersistenceContext
+	private EntityManager entityManager;
 
+	public Session getCurrentSession() {
+		return entityManager.unwrap(Session.class);
+	}
     @Autowired
     public ReligionService(final ReligionRepository religionRepository) {
         this.religionRepository = religionRepository;
@@ -68,7 +81,7 @@ public class ReligionService {
         return religionRepository.saveAndFlush(religion);
     }
 
-    public Religion getReligion(final Long id) {
+    public Religion findById(final Long id) {
         return religionRepository.findById(id);
     }
 
@@ -87,4 +100,13 @@ public class ReligionService {
     public List<Religion> findAll() {
         return religionRepository.findAll();
     }
+    
+    @SuppressWarnings("unchecked")
+	public List<Religion> searchReligions(Religion religion) {
+		final Criteria criteria = getCurrentSession().createCriteria(
+				Religion.class);
+		if (null != religion.getName())
+			criteria.add(Restrictions.ilike("name", religion.getName(),MatchMode.ANYWHERE));
+		return criteria.list();
+	}
 }

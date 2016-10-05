@@ -42,28 +42,28 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
 <%@ taglib uri="http://www.springframework.org/tags" prefix="spring" %>
 <%@ taglib uri="http://www.springframework.org/tags/form" prefix="form" %>
-		<form:form  method="post" action="/mrs/masters/religion/create" class="form-horizontal form-groups-bordered" commandName="religion" id="form-religion" >
-			<div class="row" id="page-content">
-			<div class="col-md-12">
-			<div class="panel" data-collapsed="0">
-			<div class="panel-body">
-			<div class="panel panel-primary" data-collapsed="0">
-			<div class="panel-heading">
-					<div class="panel-title">
-							<strong><spring:message code="lbl.hdr.createReligion"/></strong>
+<c:if test="${not empty message}">
+                    <div class="alert alert-success" role="alert"><spring:message code="${message}"/></div>
+                </c:if>
+				
+				<div class="panel-body custom-form">				
+					<div class="form-group">
+						<label class="col-sm-3 control-label">
+							<spring:message code="lbl.religion"/><span class="mandatory"></span>
+						</label>
+						<div class="col-sm-6">
+							<form:input path="name" id="name" type="text" class="form-control low-width is_valid_alphabet" maxlength="30" placeholder="" autocomplete="off" required="required"/>
+                            <form:errors path="name" cssClass="add-margin error-msg"/>
+						</div>
 					</div>
-			</div> 
-			<jsp:include page="religion-form.jsp"></jsp:include>
-			</div>
-			</div>
-        </div>
-    </div>
-</div>
-			<div class="row">
-				<div class="text-center">					
-					<button type="submit" class="btn btn-primary"><spring:message code="lbl.submit.religion"/></button>
-			        <a href="javascript:void(0)" class="btn btn-default" onclick="self.close()"><spring:message code="lbl.close"/></a>
+					<div class="form-group">
+						<label class="col-sm-3 control-label">
+							<spring:message code="lbl.religion.desc"/>
+						</label>
+						<div class="col-sm-6">
+							<form:textarea path="description" id="name" type="text" class="form-control low-width" data-pattern="alphanumericwithspecialcharacters" maxlength="50" placeholder="" autocomplete="off" />
+                            <form:errors path="description" cssClass="add-margin error-msg"/>
+						</div>
+					</div>
 				</div>
-			</div>
-		</form:form>
 			

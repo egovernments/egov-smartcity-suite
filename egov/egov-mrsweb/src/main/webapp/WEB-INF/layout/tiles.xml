@@ -120,4 +120,19 @@
         <put-attribute name="body" value="/WEB-INF/views/application/reissue/reissue-view.jsp"/>
     </definition>
     
+    <definition name="religion-success" extends="base_layout">
+        <put-attribute name="page-title" value="title.Religion.success" cascade="true"/>
+        <put-attribute name="body" value="/WEB-INF/views/masters/religion/religion-success.jsp"/>
+    </definition>
+    
+    <definition name="religion-search" extends="base_layout">
+        <put-attribute name="page-title" value="title.Religion.search" cascade="true"/>
+        <put-attribute name="body" value="/WEB-INF/views/masters/religion/religion-search.jsp"/>
+    </definition>
+    
+     <definition name="religion-update" extends="base_layout">
+        <put-attribute name="page-title" value="title.Religion.update" cascade="true"/>
+        <put-attribute name="body" value="/WEB-INF/views/masters/religion/religion-update.jsp"/>
+    </definition>
+    
 </tiles-definitions>

@@ -42,7 +42,8 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
 <%@ taglib uri="http://www.springframework.org/tags" prefix="spring" %>
 <%@ taglib uri="http://www.springframework.org/tags/form" prefix="form" %>
-		<form:form  method="post" action="/mrs/masters/religion/create" class="form-horizontal form-groups-bordered" commandName="religion" id="form-religion" >
+
+<form:form  method="post" action="/mrs/masters/religion/update" class="form-horizontal form-groups-bordered" commandName="religion" id="form-religion" >
 			<div class="row" id="page-content">
 			<div class="col-md-12">
 			<div class="panel" data-collapsed="0">
@@ -50,20 +51,19 @@
 			<div class="panel panel-primary" data-collapsed="0">
 			<div class="panel-heading">
 					<div class="panel-title">
-							<strong><spring:message code="lbl.hdr.createReligion"/></strong>
+							<strong><spring:message code="title.Religion.update"/></strong>
 					</div>
 			</div> 
 			<jsp:include page="religion-form.jsp"></jsp:include>
-			</div>
+				</div>
 			</div>
         </div>
     </div>
 </div>
 			<div class="row">
 				<div class="text-center">					
-					<button type="submit" class="btn btn-primary"><spring:message code="lbl.submit.religion"/></button>
+					<button type="submit" class="btn btn-primary"><spring:message code="lbl.update"/></button>
 			        <a href="javascript:void(0)" class="btn btn-default" onclick="self.close()"><spring:message code="lbl.close"/></a>
 				</div>
 			</div>
-		</form:form>
-			
+</form:form>

@@ -42,28 +42,35 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
 <%@ taglib uri="http://www.springframework.org/tags" prefix="spring" %>
 <%@ taglib uri="http://www.springframework.org/tags/form" prefix="form" %>
-		<form:form  method="post" action="/mrs/masters/religion/create" class="form-horizontal form-groups-bordered" commandName="religion" id="form-religion" >
-			<div class="row" id="page-content">
-			<div class="col-md-12">
-			<div class="panel" data-collapsed="0">
-			<div class="panel-body">
-			<div class="panel panel-primary" data-collapsed="0">
-			<div class="panel-heading">
-					<div class="panel-title">
-							<strong><spring:message code="lbl.hdr.createReligion"/></strong>
-					</div>
-			</div> 
-			<jsp:include page="religion-form.jsp"></jsp:include>
-			</div>
-			</div>
-        </div>
-    </div>
+
+<div class="alert alert-success" role="alert">
+	<strong>${message}</strong>
 </div>
-			<div class="row">
-				<div class="text-center">					
-					<button type="submit" class="btn btn-primary"><spring:message code="lbl.submit.religion"/></button>
-			        <a href="javascript:void(0)" class="btn btn-default" onclick="self.close()"><spring:message code="lbl.close"/></a>
+<div class="row">
+		<div class="col-md-12">
+			<div class="panel panel-primary" data-collapsed="0">
+				<div class="panel-heading">
+					<div class="panel-title">Religion</div>
+				</div>
+				<div class="panel-body custom">
+					<div class="row add-border">
+						<div class="col-xs-3 add-margin">
+							<spring:message code="lbl.religion" />
+						</div>
+						<div class="col-sm-3 add-margin view-content">
+							${religion.name}</div>
+						<div class="col-xs-3 add-margin">
+							<spring:message code="lbl.religion.desc" />
+						</div>
+						<div class="col-sm-3 add-margin view-content">
+							${religion.description}</div>
+					</div>
 				</div>
 			</div>
-		</form:form>
-			
+		</div>
+	</div>
+	<div class="row">
+					<div class="text-center">					
+				        <a href="javascript:void(0)" class="btn btn-default" onclick="self.close()"><spring:message code="lbl.close"/></a>
+					</div>
+				</div>
