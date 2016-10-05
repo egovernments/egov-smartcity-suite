@@ -99,7 +99,7 @@ public class ReIssue extends StateAware {
     @Valid
     @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     @JoinColumn(name = "registration")
-    private Registration registration;
+    private MarriageRegistration registration;
     
     @NotNull
     private String feeCriteria;
@@ -151,11 +151,11 @@ public class ReIssue extends StateAware {
         this.applicant = applicant;
     }
     
-    public Registration getRegistration() {
+    public MarriageRegistration getRegistration() {
         return registration;
     }
     
-    public void setRegistration(Registration registration) {
+    public void setRegistration(MarriageRegistration registration) {
         this.registration = registration;
     }
 

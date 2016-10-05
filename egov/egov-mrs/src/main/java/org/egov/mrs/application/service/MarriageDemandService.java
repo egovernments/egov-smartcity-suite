@@ -37,26 +37,56 @@
   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
 
-package org.egov.mrs.domain.repository;
+package org.egov.mrs.application.service;
 
+import java.math.BigDecimal;
 import java.util.Date;
-import java.util.List;
+import java.util.Set;
 
-import org.egov.mrs.domain.entity.Registration;
-import org.egov.mrs.domain.enums.ApplicationStatus;
-import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.data.querydsl.QueryDslPredicateExecutor;
-import org.springframework.stereotype.Repository;
+import org.egov.commons.dao.InstallmentDao;
+import org.egov.demand.dao.DemandGenericDao;
+import org.egov.demand.dao.EgDemandDao;
+import org.egov.demand.dao.EgDemandDetailsDao;
+import org.egov.demand.model.EgDemand;
+import org.egov.demand.model.EgDemandDetails;
+import org.egov.infra.admin.master.service.ModuleService;
+import org.egov.mrs.application.MarriageConstants;
+import org.springframework.beans.factory.annotation.Autowired;
 
-@Repository
-public interface RegistrationRepository extends JpaRepository<Registration, Long> {//, QueryDslPredicateExecutor<Registration> {
-    Registration findById(Long id);
+/**
+ * Provides abstraction for creating its Marriage Fee
+ *
+ * @author nayeem
+ *
+ */
+public abstract class MarriageDemandService {
 
-    Registration findByApplicationNo(String applicationNo);
+    @Autowired
+    protected EgDemandDao egDemandDAO;
 
-    Registration findByRegistrationNo(String registrationNo);
-    
-    //List<Registration> findByRegistrationNoAndDateOfMarriageAndHusbandNameFirstName();
-    
-    List<Registration> findByCreatedDateAfterAndCreatedDateBeforeAndStatus(Date fromDate, Date toDate, ApplicationStatus status);    
+    @Autowired
+    protected EgDemandDetailsDao egDemandDetailsDAO;
+
+    @Autowired
+    protected DemandGenericDao demandGenericDAO;
+
+    @Autowired
+    protected ModuleService moduleService;
+
+    @Autowired
+    protected InstallmentDao installmentDAO;
+
+    public EgDemand createDemand(final BigDecimal amount) {
+        final EgDemand egDemand = new EgDemand();
+        egDemand.setBaseDemand(amount);
+        egDemand.setEgDemandDetails(createDemandDetails(amount));
+        egDemand.setCreateDate(new Date());
+        egDemand.setModifiedDate(new Date());
+        egDemand.setIsHistory("N");
+        egDemand.setEgInstallmentMaster(installmentDAO
+                .getInsatllmentByModuleForGivenDate(moduleService.getModuleByName(MarriageConstants.MODULE_NAME), new Date()));
+        return egDemandDAO.create(egDemand);
+    }
+
+    public abstract Set<EgDemandDetails> createDemandDetails(BigDecimal amount);
 }

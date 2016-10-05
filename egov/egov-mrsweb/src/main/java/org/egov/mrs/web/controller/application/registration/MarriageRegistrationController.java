@@ -39,20 +39,19 @@
 
 package org.egov.mrs.web.controller.application.registration;
 
-import static org.egov.mrs.application.Constants.BOUNDARY_TYPE;
-import static org.egov.mrs.application.Constants.REVENUE_HIERARCHY_TYPE;
+import static org.egov.mrs.application.MarriageConstants.BOUNDARY_TYPE;
+import static org.egov.mrs.application.MarriageConstants.REVENUE_HIERARCHY_TYPE;
 
 import java.util.Arrays;
 
 import org.egov.eis.web.controller.workflow.GenericWorkFlowController;
 import org.egov.infra.admin.master.service.BoundaryService;
-import org.egov.mrs.application.Utils;
+import org.egov.mrs.application.MarriageUtils;
 import org.egov.mrs.domain.enums.MaritalStatus;
 import org.egov.mrs.domain.enums.ReligionPractice;
-import org.egov.mrs.domain.repository.ApplicantRepository;
-import org.egov.mrs.domain.service.ApplicantService;
-import org.egov.mrs.domain.service.DocumentService;
-import org.egov.mrs.domain.service.RegistrationService;
+import org.egov.mrs.domain.service.MarriageApplicantService;
+import org.egov.mrs.domain.service.MarriageDocumentService;
+import org.egov.mrs.domain.service.MarriageRegistrationService;
 import org.egov.mrs.masters.service.ActService;
 import org.egov.mrs.masters.service.FeeService;
 import org.egov.mrs.masters.service.ReligionService;
@@ -61,7 +60,7 @@ import org.springframework.context.support.ResourceBundleMessageSource;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.ModelAttribute;
 
-public abstract class RegistrationController extends GenericWorkFlowController {
+public class MarriageRegistrationController extends GenericWorkFlowController {
 
     @Autowired
     protected ReligionService religionService;
@@ -73,25 +72,24 @@ public abstract class RegistrationController extends GenericWorkFlowController {
     protected ActService actService;
 
     @Autowired
-    protected RegistrationService registrationService;
+    protected MarriageRegistrationService marriageRegistrationService;
 
     @Autowired
     protected FeeService feeService;
 
     @Autowired
-    protected Utils utils;
+    protected MarriageUtils utils;
 
     @Autowired
-    protected DocumentService documentService;
+    protected MarriageDocumentService marriageDocumentService;
 
     @Autowired
     protected ResourceBundleMessageSource messageSource;
     
     @Autowired
-    protected ApplicantService applicantService;
+    protected MarriageApplicantService marriageApplicantService;
     
-    @Autowired
-    protected ApplicantRepository applicantRepository;
+
     
     @ModelAttribute
     public void prepareForm(final Model model) {
@@ -102,8 +100,8 @@ public abstract class RegistrationController extends GenericWorkFlowController {
         model.addAttribute("religionPractice", Arrays.asList(ReligionPractice.values()));
         model.addAttribute("maritalStatusList", Arrays.asList(MaritalStatus.values()));
         model.addAttribute("feesList", feeService.getAll());
-        model.addAttribute("generalDocuments", documentService.getGeneralDocuments());
-        model.addAttribute("individualDocuments", documentService.getIndividualDocuments());
+        model.addAttribute("generalDocuments", marriageDocumentService.getGeneralDocuments());
+        model.addAttribute("individualDocuments", marriageDocumentService.getIndividualDocuments());
     }
 
 }

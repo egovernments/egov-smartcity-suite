@@ -73,8 +73,8 @@ import org.hibernate.validator.constraints.SafeHtml;
 
 @Entity
 @Table(name = "egmrs_registration")
-@SequenceGenerator(name = Registration.SEQ_REGISTRATION, sequenceName = Registration.SEQ_REGISTRATION, allocationSize = 1)
-public class Registration extends StateAware {
+@SequenceGenerator(name = MarriageRegistration.SEQ_REGISTRATION, sequenceName = MarriageRegistration.SEQ_REGISTRATION, allocationSize = 1)
+public class MarriageRegistration extends StateAware {
 
     private static final long serialVersionUID = 6743094118312883758L;
     public static final String SEQ_REGISTRATION = "SEQ_EGMRS_REGISTRATION";
@@ -129,7 +129,7 @@ public class Registration extends StateAware {
     @Valid
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "registration")
     @Size(max = 3)
-    private List<Witness> witnesses = new LinkedList<Witness>();
+    private List<MarriageWitness> witnesses = new LinkedList<MarriageWitness>();
 
     @Valid
     @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
@@ -183,7 +183,7 @@ public class Registration extends StateAware {
     private List<RegistrationDocument> registrationDocuments = new ArrayList<RegistrationDocument>();
 
     @Transient
-    private List<Document> documents;
+    private List<MarriageDocument> documents;
 
     @Override
     public String getStateDetails() {
@@ -199,7 +199,7 @@ public class Registration extends StateAware {
         getRegistrationDocuments().add(registrationDocument);
     }
 
-    public void addWitness(final Witness witness) {
+    public void addWitness(final MarriageWitness witness) {
         witness.setRegistration(this);
         getWitnesses().add(witness);
     }
@@ -346,11 +346,11 @@ public class Registration extends StateAware {
         this.feePaid = feePaid;
     }
 
-    public List<Witness> getWitnesses() {
+    public List<MarriageWitness> getWitnesses() {
         return witnesses;
     }
 
-    public void setWitnesses(final List<Witness> witnesses) {
+    public void setWitnesses(final List<MarriageWitness> witnesses) {
         this.witnesses = witnesses;
     }
 
@@ -434,11 +434,11 @@ public class Registration extends StateAware {
         this.registrationDocuments = registrationDocuments;
     }
 
-    public List<Document> getDocuments() {
+    public List<MarriageDocument> getDocuments() {
         return documents;
     }
 
-    public void setDocuments(final List<Document> documents) {
+    public void setDocuments(final List<MarriageDocument> documents) {
         this.documents = documents;
     }
 }

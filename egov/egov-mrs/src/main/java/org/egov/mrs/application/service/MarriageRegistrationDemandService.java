@@ -37,54 +37,42 @@
   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
 
-package org.egov.mrs.domain.service;
+package org.egov.mrs.application.service;
 
-import java.util.List;
+import java.math.BigDecimal;
+import java.util.Date;
+import java.util.HashSet;
+import java.util.Set;
 
-import org.egov.mrs.domain.entity.Document;
+import org.egov.commons.Installment;
+import org.egov.demand.model.EgDemandDetails;
+import org.egov.demand.model.EgDemandReason;
+import org.egov.demand.model.EgDemandReasonMaster;
+import org.egov.infra.admin.master.entity.Module;
+import org.egov.mrs.application.MarriageConstants;
 import org.egov.mrs.domain.enums.FeeType;
-import org.egov.mrs.domain.repository.DocumentRepository;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
+/**
+ * 
+ * Creates registration fee details
+ * 
+ * @author nayeem
+ *
+ */
 @Service
-@Transactional(readOnly = true)
-public class DocumentService {
+public class MarriageRegistrationDemandService extends MarriageDemandService {
 
-    private final DocumentRepository documentRepository;
-
-    @Autowired
-    public DocumentService(final DocumentRepository documentRepository) {
-        this.documentRepository = documentRepository;
-    }
-
-    @Transactional
-    public void create(final Document document) {
-        documentRepository.save(document);
-    }
-
-    public Document get(final Long id) {
-        return documentRepository.findById(id);
+    @Override
+    public Set<EgDemandDetails> createDemandDetails(final BigDecimal amount) {
+        final Set<EgDemandDetails> demandDetails = new HashSet<EgDemandDetails>();
+        final Module module = moduleService.getModuleByName(MarriageConstants.MODULE_NAME);
+        final Installment installment = installmentDAO.getInsatllmentByModuleForGivenDate(module, new Date());
+        final EgDemandReasonMaster demandReasonMaster = demandGenericDAO.getDemandReasonMasterByCode(FeeType.REGISTRATION.name(), module);
+        final EgDemandReason demandReason = demandGenericDAO.getDmdReasonByDmdReasonMsterInstallAndMod(demandReasonMaster,
+                installment, module);
+        demandDetails.add(EgDemandDetails.fromReasonAndAmounts(amount, demandReason, BigDecimal.ZERO));
+        return demandDetails;
     }
 
-    public Document get(final String docuementName) {
-        return documentRepository.findByName(docuementName);
-    }
-
-    public List<Document> getAll() {
-        return documentRepository.findAll();
-    }
-    
-    public List<Document> getIndividualDocuments() {
-        return documentRepository.findByIndividual(true);
-    }
-    
-    public List<Document> getGeneralDocuments() {
-        return documentRepository.findByIndividual(false);
-    }
-    
-    public List<Document> getReIssueApplicantDocs() {
-        return documentRepository.findByType(FeeType.REISSUE);
-    }
 }

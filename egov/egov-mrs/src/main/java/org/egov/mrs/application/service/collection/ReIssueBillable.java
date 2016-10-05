@@ -52,7 +52,7 @@ import org.egov.demand.model.EgBillType;
 import org.egov.demand.model.EgDemand;
 import org.egov.infra.admin.master.entity.Module;
 import org.egov.infra.admin.master.service.ModuleService;
-import org.egov.mrs.application.Constants;
+import org.egov.mrs.application.MarriageConstants;
 import org.egov.mrs.domain.entity.ReIssue;
 import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -173,7 +173,7 @@ public class ReIssueBillable extends AbstractBillable implements Billable {
 
     @Override
     public Module getModule() {
-        return moduleService.getModuleByName(Constants.MODULE_NAME);
+        return moduleService.getModuleByName(MarriageConstants.MODULE_NAME);
     }
 
     @Override

@@ -46,11 +46,11 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.egov.mrs.application.Constants;
+import org.egov.mrs.application.MarriageConstants;
 import org.egov.mrs.domain.entity.SearchModel;
 import org.egov.mrs.domain.entity.SearchResult;
 import org.egov.mrs.domain.enums.FeeType;
-import org.egov.mrs.domain.service.RegistrationService;
+import org.egov.mrs.domain.service.MarriageRegistrationService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.ModelAttribute;
@@ -70,7 +70,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 public class RegistrationStatusReportController {
     
     @Autowired
-    private RegistrationService registrationService;
+    private MarriageRegistrationService marriageRegistrationService;
     
     @RequestMapping(value = "/registrationstatus", method = RequestMethod.GET)
     public String showReportForm(@ModelAttribute final SearchModel searchModel) {
@@ -86,9 +86,9 @@ public class RegistrationStatusReportController {
     
     private List<SearchResult> prepareSearchResult(final SearchModel searchModel) {
         final List<SearchResult> results = new ArrayList<SearchResult>();
-        final DateFormat formatter = new SimpleDateFormat(Constants.DATE_FORMAT_DDMMYYYY);
+        final DateFormat formatter = new SimpleDateFormat(MarriageConstants.DATE_FORMAT_DDMMYYYY);
         
-        registrationService.searchRegistration(searchModel, true).forEach(registration -> {
+        marriageRegistrationService.searchRegistration(searchModel, true).forEach(registration -> {
             final SearchResult searchResult = new SearchResult();
             searchResult.setHusbandName(registration.getHusband().getName().getFirstName());
             searchResult.setWifeName(registration.getWife().getName().getFirstName());

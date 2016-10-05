@@ -37,56 +37,54 @@
   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
 
-package org.egov.mrs.application.service;
+package org.egov.mrs.domain.service;
 
-import java.math.BigDecimal;
-import java.util.Date;
-import java.util.Set;
+import java.util.List;
 
-import org.egov.commons.dao.InstallmentDao;
-import org.egov.demand.dao.DemandGenericDao;
-import org.egov.demand.dao.EgDemandDao;
-import org.egov.demand.dao.EgDemandDetailsDao;
-import org.egov.demand.model.EgDemand;
-import org.egov.demand.model.EgDemandDetails;
-import org.egov.infra.admin.master.service.ModuleService;
-import org.egov.mrs.application.Constants;
+import org.egov.mrs.domain.entity.MarriageDocument;
+import org.egov.mrs.domain.enums.FeeType;
+import org.egov.mrs.domain.repository.MarriageDocumentRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
-/**
- * Provides abstraction for creating its Marriage Fee
- *
- * @author nayeem
- *
- */
-public abstract class DemandService {
+@Service
+@Transactional(readOnly = true)
+public class MarriageDocumentService {
 
-    @Autowired
-    protected EgDemandDao egDemandDAO;
+    private final MarriageDocumentRepository documentRepository;
 
     @Autowired
-    protected EgDemandDetailsDao egDemandDetailsDAO;
-
-    @Autowired
-    protected DemandGenericDao demandGenericDAO;
-
-    @Autowired
-    protected ModuleService moduleService;
-
-    @Autowired
-    protected InstallmentDao installmentDAO;
-
-    public EgDemand createDemand(final BigDecimal amount) {
-        final EgDemand egDemand = new EgDemand();
-        egDemand.setBaseDemand(amount);
-        egDemand.setEgDemandDetails(createDemandDetails(amount));
-        egDemand.setCreateDate(new Date());
-        egDemand.setModifiedDate(new Date());
-        egDemand.setIsHistory("N");
-        egDemand.setEgInstallmentMaster(installmentDAO
-                .getInsatllmentByModuleForGivenDate(moduleService.getModuleByName(Constants.MODULE_NAME), new Date()));
-        return egDemandDAO.create(egDemand);
+    public MarriageDocumentService(final MarriageDocumentRepository documentRepository) {
+        this.documentRepository = documentRepository;
     }
 
-    public abstract Set<EgDemandDetails> createDemandDetails(BigDecimal amount);
+    @Transactional
+    public void create(final MarriageDocument document) {
+        documentRepository.save(document);
+    }
+
+    public MarriageDocument get(final Long id) {
+        return documentRepository.findById(id);
+    }
+
+    public MarriageDocument get(final String docuementName) {
+        return documentRepository.findByName(docuementName);
+    }
+
+    public List<MarriageDocument> getAll() {
+        return documentRepository.findAll();
+    }
+    
+    public List<MarriageDocument> getIndividualDocuments() {
+        return documentRepository.findByIndividual(true);
+    }
+    
+    public List<MarriageDocument> getGeneralDocuments() {
+        return documentRepository.findByIndividual(false);
+    }
+    
+    public List<MarriageDocument> getReIssueApplicantDocs() {
+        return documentRepository.findByType(FeeType.REISSUE);
+    }
 }

@@ -50,7 +50,7 @@ import org.egov.infra.workflow.entity.StateAware;
 import org.egov.infra.workflow.matrix.entity.WorkFlowMatrix;
 import org.egov.infra.workflow.service.SimpleWorkflowService;
 import org.egov.mrs.domain.entity.ReIssue;
-import org.egov.mrs.domain.entity.Registration;
+import org.egov.mrs.domain.entity.MarriageRegistration;
 import org.egov.pims.commons.Position;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -69,7 +69,7 @@ public class RegistrationWorkflowService {
 
     @Autowired
     @Qualifier("workflowService")
-    private SimpleWorkflowService<Registration> registrationWorkflowService;
+    private SimpleWorkflowService<MarriageRegistration> registrationWorkflowService;
     
     @Autowired
     @Qualifier("workflowService")
@@ -85,10 +85,10 @@ public class RegistrationWorkflowService {
     protected AssignmentService assignmentService;
 
     private enum WorkflowType {
-        Registration, ReIssue
+        MarriageRegistration, ReIssue
     }
 
-    public void transition(Registration registration, WorkflowContainer workflowContainer, String approvalComent) {
+    public void transition(MarriageRegistration registration, WorkflowContainer workflowContainer, String approvalComent) {
 
         final User user = securityUtils.getCurrentUser();
         String natureOfTask = "Marriage Registration :: New Registration";
@@ -100,7 +100,7 @@ public class RegistrationWorkflowService {
 
         if (workflowContainer == null) {
             nextStateOwner = assignmentService.getPrimaryAssignmentForUser(registration.getCreatedBy().getId()).getPosition();
-            workflowMatrix = registrationWorkflowService.getWfMatrix(WorkflowType.Registration.name(), null, null,
+            workflowMatrix = registrationWorkflowService.getWfMatrix(WorkflowType.MarriageRegistration.name(), null, null,
                     REGISTRATION_ADDNL_RULE, registration.getCurrentState().getValue(), null);
             nextState = workflowMatrix.getNextState();
             nextAction = workflowMatrix.getNextAction();
@@ -112,10 +112,10 @@ public class RegistrationWorkflowService {
                 nextStateOwner = positionMasterService.getPositionById(workflowContainer.getApproverPositionId());
                 
                 if (registration.getCurrentState() == null)
-                    workflowMatrix = registrationWorkflowService.getWfMatrix(WorkflowType.Registration.name(), null, null,
+                    workflowMatrix = registrationWorkflowService.getWfMatrix(WorkflowType.MarriageRegistration.name(), null, null,
                             REGISTRATION_ADDNL_RULE, STATE_NEW, workflowContainer.getPendingActions());
                 else
-                    workflowMatrix = registrationWorkflowService.getWfMatrix(WorkflowType.Registration.name(), null, null,
+                    workflowMatrix = registrationWorkflowService.getWfMatrix(WorkflowType.MarriageRegistration.name(), null, null,
                             REGISTRATION_ADDNL_RULE, registration.getCurrentState().getValue(), workflowContainer.getPendingActions());
                 
                 nextState = workflowMatrix.getNextState();
@@ -138,7 +138,7 @@ public class RegistrationWorkflowService {
             } else if (workflowContainer.getWorkFlowAction().equalsIgnoreCase(STEP_APPROVE)) {
 
                 nextStateOwner = assignmentService.getPrimaryAssignmentForUser(registration.getCreatedBy().getId()).getPosition();
-                workflowMatrix = registrationWorkflowService.getWfMatrix(WorkflowType.Registration.name(), null, null,
+                workflowMatrix = registrationWorkflowService.getWfMatrix(WorkflowType.MarriageRegistration.name(), null, null,
                         REGISTRATION_ADDNL_RULE, registration.getCurrentState().getValue(), null);
                 
                 nextState = workflowMatrix.getNextState();

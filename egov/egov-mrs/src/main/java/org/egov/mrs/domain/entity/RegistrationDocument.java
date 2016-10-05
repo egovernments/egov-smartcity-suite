@@ -74,7 +74,7 @@ public class RegistrationDocument extends AbstractDocument {
     @Valid
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "registration")
-    private Registration registration;
+    private MarriageRegistration registration;
 
     @Override
     public Long getId() {
@@ -86,11 +86,11 @@ public class RegistrationDocument extends AbstractDocument {
         this.id = id;
     }
 
-    public Registration getRegistration() {
+    public MarriageRegistration getRegistration() {
         return registration;
     }
 
-    public void setRegistration(final Registration registration) {
+    public void setRegistration(final MarriageRegistration registration) {
         this.registration = registration;
     }
 }

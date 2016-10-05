@@ -55,11 +55,11 @@ import org.egov.infra.search.elastic.entity.ApplicationIndexBuilder;
 import org.egov.infra.search.elastic.service.ApplicationIndexService;
 import org.egov.infra.security.utils.SecurityUtils;
 import org.egov.infra.utils.ApplicationNumberGenerator;
-import org.egov.mrs.application.Constants;
+import org.egov.mrs.application.MarriageConstants;
 import org.egov.mrs.application.service.ReIssueDemandService;
 import org.egov.mrs.application.service.workflow.RegistrationWorkflowService;
 import org.egov.mrs.domain.entity.Applicant;
-import org.egov.mrs.domain.entity.Document;
+import org.egov.mrs.domain.entity.MarriageDocument;
 import org.egov.mrs.domain.entity.ReIssue;
 import org.egov.mrs.domain.enums.ApplicationStatus;
 import org.egov.mrs.domain.enums.FeeType;
@@ -109,10 +109,10 @@ public class ReIssueService {
     private ApplicationNumberGenerator applicationNumberGenerator;
 
     @Autowired
-    private DocumentService documentService;
+    private MarriageDocumentService marriageDocumentService;
 
     @Autowired
-    private ApplicantService applicantService;
+    private MarriageApplicantService marriageApplicantService;
 
     @Autowired
     public ReIssueService(final ReIssueRepository reIssueRepository) {
@@ -144,10 +144,10 @@ public class ReIssueService {
         reIssue.setStatus(ApplicationStatus.Created);
         reIssue.setDemand(reIssueDemandService.createDemand(new BigDecimal(reIssue.getFeePaid())));
 
-        final Map<Long, Document> applicantDocumentAndId = new HashMap<Long, Document>();
-        documentService.getReIssueApplicantDocs().forEach(document -> applicantDocumentAndId.put(document.getId(), document));
+        final Map<Long, MarriageDocument> applicantDocumentAndId = new HashMap<Long, MarriageDocument>();
+        marriageDocumentService.getReIssueApplicantDocs().forEach(document -> applicantDocumentAndId.put(document.getId(), document));
 
-        applicantService.addDocumentsToFileStore(null, reIssue.getApplicant(), applicantDocumentAndId);
+        marriageApplicantService.addDocumentsToFileStore(null, reIssue.getApplicant(), applicantDocumentAndId);
 
         workflowService.transition(reIssue, workflowContainer, reIssue.getApprovalComent());
 
@@ -193,7 +193,7 @@ public class ReIssueService {
 
     private void createReIssueAppIndex(final ReIssue reIssue) {
         final User user = securityUtils.getCurrentUser();
-        final ApplicationIndexBuilder applicationIndexBuilder = new ApplicationIndexBuilder(Constants.MODULE_NAME,
+        final ApplicationIndexBuilder applicationIndexBuilder = new ApplicationIndexBuilder(MarriageConstants.MODULE_NAME,
                 reIssue.getApplicationNo(),
                 reIssue.getApplicationDate(), FeeType.REISSUE.name(),
                 reIssue.getApplicant().getFullName(),
@@ -217,12 +217,12 @@ public class ReIssueService {
 
     private void updateDocuments(final ReIssue reissueModel, final ReIssue reissue) {
 
-        applicantService.deleteDocuments(reissueModel.getApplicant(), reissue.getApplicant());
+    	marriageApplicantService.deleteDocuments(reissueModel.getApplicant(), reissue.getApplicant());
 
-        final Map<Long, Document> individualDocumentAndId = new HashMap<Long, Document>();
-        documentService.getReIssueApplicantDocs().forEach(document -> individualDocumentAndId.put(document.getId(), document));
+        final Map<Long, MarriageDocument> individualDocumentAndId = new HashMap<Long, MarriageDocument>();
+        marriageDocumentService.getReIssueApplicantDocs().forEach(document -> individualDocumentAndId.put(document.getId(), document));
 
-        applicantService.addDocumentsToFileStore(reissueModel.getApplicant(), reissue.getApplicant(), individualDocumentAndId);
+        marriageApplicantService.addDocumentsToFileStore(reissueModel.getApplicant(), reissue.getApplicant(), individualDocumentAndId);
     }
 
     private void updateApplicantInfo(final Applicant modelApplicant, final Applicant dbApplicant) {

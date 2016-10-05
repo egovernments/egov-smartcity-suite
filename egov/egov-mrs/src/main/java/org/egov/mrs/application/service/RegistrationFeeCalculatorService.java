@@ -50,7 +50,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 @Service
-public class RegistrationFeeCalculatorService implements FeeCalculator {
+public class RegistrationFeeCalculatorService implements MarriageFeeCalculator {
     
     private FeeService feeService;
     

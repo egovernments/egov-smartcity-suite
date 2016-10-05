@@ -50,7 +50,7 @@ import org.egov.demand.model.EgDemandDetails;
 import org.egov.demand.model.EgDemandReason;
 import org.egov.demand.model.EgDemandReasonMaster;
 import org.egov.infra.admin.master.entity.Module;
-import org.egov.mrs.application.Constants;
+import org.egov.mrs.application.MarriageConstants;
 import org.egov.mrs.domain.enums.FeeType;
 import org.springframework.stereotype.Service;
 
@@ -62,12 +62,12 @@ import org.springframework.stereotype.Service;
  */
 
 @Service
-public class ReIssueDemandService extends DemandService {
+public class ReIssueDemandService extends MarriageDemandService {
 
     @Override
     public Set<EgDemandDetails> createDemandDetails(final BigDecimal amount) {
         final Set<EgDemandDetails> demandDetails = new HashSet<EgDemandDetails>();
-        final Module module = moduleService.getModuleByName(Constants.MODULE_NAME);
+        final Module module = moduleService.getModuleByName(MarriageConstants.MODULE_NAME);
         final Installment installment = installmentDAO.getInsatllmentByModuleForGivenDate(module, new Date());
         final EgDemandReasonMaster demandReasonMaster = demandGenericDAO.getDemandReasonMasterByCode(FeeType.REISSUE.name(), module);
         final EgDemandReason demandReason = demandGenericDAO.getDmdReasonByDmdReasonMsterInstallAndMod(demandReasonMaster,

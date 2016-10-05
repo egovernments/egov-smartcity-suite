@@ -43,13 +43,13 @@ import javax.servlet.http.HttpServletRequest;
 
 import org.egov.eis.web.contract.WorkflowContainer;
 import org.egov.eis.web.controller.workflow.GenericWorkFlowController;
-import org.egov.mrs.application.Constants;
+import org.egov.mrs.application.MarriageConstants;
+import org.egov.mrs.domain.entity.MarriageRegistration;
 import org.egov.mrs.domain.entity.ReIssue;
-import org.egov.mrs.domain.entity.Registration;
-import org.egov.mrs.domain.service.ApplicantService;
-import org.egov.mrs.domain.service.DocumentService;
+import org.egov.mrs.domain.service.MarriageApplicantService;
+import org.egov.mrs.domain.service.MarriageDocumentService;
+import org.egov.mrs.domain.service.MarriageRegistrationService;
 import org.egov.mrs.domain.service.ReIssueService;
-import org.egov.mrs.domain.service.RegistrationService;
 import org.egov.mrs.masters.service.FeeService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -78,13 +78,13 @@ public class NewReIssueController extends GenericWorkFlowController {
     private FeeService feeService;
 
     @Autowired
-    private RegistrationService registrationService;
+    private MarriageRegistrationService marriageRegistrationService;
 
     @Autowired
-    private ApplicantService applicantService;
+    private MarriageApplicantService marriageApplicantService;
 
     @Autowired
-    private DocumentService documentService;
+    private MarriageDocumentService marriageDocumentService;
 
     @Autowired
     private ReIssueService reissueService;
@@ -92,11 +92,11 @@ public class NewReIssueController extends GenericWorkFlowController {
     @RequestMapping(value = "/create/{registrationId}", method = RequestMethod.GET)
     public String showReIssueForm(@PathVariable final Long registrationId, final Model model) {
 
-        final Registration registration = registrationService.get(registrationId);
+        final MarriageRegistration registration = marriageRegistrationService.get(registrationId);
 
-        registrationService.prepareDocumentsForView(registration);
-        applicantService.prepareDocumentsForView(registration.getHusband());
-        applicantService.prepareDocumentsForView(registration.getWife());
+        marriageRegistrationService.prepareDocumentsForView(registration);
+        marriageApplicantService.prepareDocumentsForView(registration.getHusband());
+        marriageApplicantService.prepareDocumentsForView(registration.getWife());
 
         /*
          * registration.getWitnesses() .stream() .filter(witness -> witness.getPhoto() != null && witness.getPhoto().length > 0)
@@ -104,12 +104,12 @@ public class NewReIssueController extends GenericWorkFlowController {
          */
 
         final ReIssue reIssue = new ReIssue();
-        reIssue.setFeeCriteria(Constants.REISSUE_FEECRITERIA);
-        reIssue.setFeePaid(feeService.getFeeForCriteria(Constants.REISSUE_FEECRITERIA).getFees());
+        reIssue.setFeeCriteria(MarriageConstants.REISSUE_FEECRITERIA);
+        reIssue.setFeePaid(feeService.getFeeForCriteria(MarriageConstants.REISSUE_FEECRITERIA).getFees());
         reIssue.setRegistration(registration);
 
         model.addAttribute("reIssue", reIssue);
-        model.addAttribute("documents", documentService.getReIssueApplicantDocs());
+        model.addAttribute("documents", marriageDocumentService.getReIssueApplicantDocs());
         prepareWorkflow(model, reIssue, new WorkflowContainer());
         return "reissue-form";
     }
@@ -123,7 +123,7 @@ public class NewReIssueController extends GenericWorkFlowController {
 
         if (errors.hasErrors())
             return "reissue-form";
-        reIssue.setRegistration(registrationService.get(reIssue.getRegistration().getId()));
+        reIssue.setRegistration(marriageRegistrationService.get(reIssue.getRegistration().getId()));
         obtainWorkflowParameters(workflowContainer, request);
         final String appNo = reIssueService.createReIssueApplication(reIssue, workflowContainer);
         model.addAttribute("ackNumber", appNo);

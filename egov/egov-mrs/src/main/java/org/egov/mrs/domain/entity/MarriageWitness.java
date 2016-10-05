@@ -60,8 +60,8 @@ import org.springframework.web.multipart.MultipartFile;
 
 @Entity
 @Table(name = "egmrs_witness")
-@SequenceGenerator(name = Witness.SEQ_WITNESS, sequenceName = Witness.SEQ_WITNESS, allocationSize = 1)
-public class Witness extends AbstractAuditable {
+@SequenceGenerator(name = MarriageWitness.SEQ_WITNESS, sequenceName = MarriageWitness.SEQ_WITNESS, allocationSize = 1)
+public class MarriageWitness extends AbstractAuditable {
 
     private static final long serialVersionUID = 8963626310849299317L;
     public static final String SEQ_WITNESS = "SEQ_EGMRS_WITNESS";
@@ -102,7 +102,7 @@ public class Witness extends AbstractAuditable {
     @NotNull
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "registration")
-    private Registration registration;
+    private MarriageRegistration registration;
 
     @Embedded
     private Contact contactInfo;
@@ -173,11 +173,11 @@ public class Witness extends AbstractAuditable {
         this.photo = photo;
     }
 
-    public Registration getRegistration() {
+    public MarriageRegistration getRegistration() {
         return registration;
     }
 
-    public void setRegistration(final Registration registration) {
+    public void setRegistration(final MarriageRegistration registration) {
         this.registration = registration;
     }
 

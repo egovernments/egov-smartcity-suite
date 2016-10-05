@@ -63,8 +63,8 @@ import org.springframework.web.multipart.MultipartFile;
  */
 @Entity
 @Table(name = "egmrs_document")
-@SequenceGenerator(name = Document.SEQ_DOCUMENT, sequenceName = Document.SEQ_DOCUMENT, allocationSize = 1)
-public class Document extends AbstractAuditable {
+@SequenceGenerator(name = MarriageDocument.SEQ_DOCUMENT, sequenceName = MarriageDocument.SEQ_DOCUMENT, allocationSize = 1)
+public class MarriageDocument extends AbstractAuditable {
 
     private static final long serialVersionUID = 1L;
     public static final String SEQ_DOCUMENT = "SEQ_EGMRS_DOCUMENT";

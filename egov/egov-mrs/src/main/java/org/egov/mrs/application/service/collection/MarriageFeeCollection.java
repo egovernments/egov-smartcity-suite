@@ -60,9 +60,9 @@ import org.egov.demand.model.EgDemandDetails;
 import org.egov.infra.admin.master.entity.Module;
 import org.egov.infra.admin.master.service.ModuleService;
 import org.egov.infra.exception.ApplicationRuntimeException;
-import org.egov.mrs.application.Constants;
+import org.egov.mrs.application.MarriageConstants;
 import org.egov.mrs.application.service.workflow.RegistrationWorkflowService;
-import org.egov.mrs.domain.service.RegistrationService;
+import org.egov.mrs.domain.service.MarriageRegistrationService;
 import org.hibernate.Session;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -89,7 +89,7 @@ public class MarriageFeeCollection extends TaxCollection {
     private RegistrationWorkflowService workflowService;
 
     @Autowired
-    private RegistrationService registrationService;
+    private MarriageRegistrationService marriageRegistrationService;
 
     @PersistenceContext
     private EntityManager entityManager;
@@ -177,7 +177,7 @@ public class MarriageFeeCollection extends TaxCollection {
 
     @Override
     protected Module module() {
-        return moduleService.getModuleByName(Constants.MODULE_NAME);
+        return moduleService.getModuleByName(MarriageConstants.MODULE_NAME);
     }
 
     public EgDemand getCurrentDemand(final Long billId) {
@@ -252,7 +252,7 @@ public class MarriageFeeCollection extends TaxCollection {
      * @param registrationNo
      */
     private void moveRegistrationToNextState(final String registrationNo) {
-        workflowService.transition(registrationService.get(registrationNo), null, null);
+        workflowService.transition(marriageRegistrationService.get(registrationNo), null, null);
     }
 
     @Override

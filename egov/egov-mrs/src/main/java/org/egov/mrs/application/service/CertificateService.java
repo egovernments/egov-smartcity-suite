@@ -44,9 +44,9 @@ import org.egov.infra.reporting.engine.ReportRequest;
 import org.egov.infra.reporting.engine.ReportService;
 import org.egov.infra.security.utils.SecurityUtils;
 import org.egov.mrs.application.service.workflow.RegistrationWorkflowService;
-import org.egov.mrs.domain.entity.Registration;
+import org.egov.mrs.domain.entity.MarriageRegistration;
 import org.egov.mrs.domain.entity.RegistrationCertificate;
-import org.egov.mrs.domain.service.RegistrationService;
+import org.egov.mrs.domain.service.MarriageRegistrationService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -57,7 +57,7 @@ import org.springframework.stereotype.Service;
  *
  */
 @Service
-public class RegistrationCertificateService {
+public class CertificateService {
 
     private static final String CERTIFICATE_TEMPLATE_REGISTRATION = "registrationcertificate";
     private static final String CERTIFICATE_TEMPLATE_REJECTION = "rejectioncertificate";
@@ -70,7 +70,7 @@ public class RegistrationCertificateService {
     private ReportService reportService;
 
     @Autowired
-    RegistrationService registrationService;
+    MarriageRegistrationService marriageRegistrationService;
 
  
     @Autowired
@@ -84,17 +84,17 @@ public class RegistrationCertificateService {
      * @param registration
      * @return certificate id
      */
-    public Integer generate(Registration registration, CertificateType certificateType) {
+    public Integer generate(MarriageRegistration registration, CertificateType certificateType) {
         ReportRequest reportInput = null;
         ReportOutput reportOutput = null;
-        String template = certificateType == RegistrationCertificateService.CertificateType.REGISTRATION
+        String template = certificateType == CertificateService.CertificateType.REGISTRATION
                 ? CERTIFICATE_TEMPLATE_REGISTRATION : CERTIFICATE_TEMPLATE_REJECTION;
         reportInput = new ReportRequest(template, new RegistrationCertificate(registration, securityUtils.getCurrentUser()),
                 null);
         reportOutput = reportService.createReport(reportInput);
         registration.setCertificateIssued(true);
         workflowService.transition(registration, null, null);
-        registrationService.update(registration);
+        marriageRegistrationService.update(registration);
      //   httpSession.removeAttribute(ReportConstants.ATTRIB_EGOV_REPORT_OUTPUT_MAP);//TODO: CHECK THIS LOGIC AND CORRECT
      //   return ReportViewerUtil.addReportToSession(reportOutput, httpSession);
         return null;

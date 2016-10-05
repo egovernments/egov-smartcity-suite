@@ -44,7 +44,7 @@ import java.util.Date;
 import org.springframework.stereotype.Service;
 
 @Service
-public class ReIssueFeeCalculatorService implements FeeCalculator {
+public class ReIssueFeeCalculatorService implements MarriageFeeCalculator {
 
     @Override
     public Double calculateFee(final Date date) {

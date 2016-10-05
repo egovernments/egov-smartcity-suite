@@ -39,14 +39,14 @@
 
 package org.egov.mrs.domain.repository;
 
-import org.egov.mrs.domain.entity.Witness;
+import org.egov.mrs.domain.entity.MarriageWitness;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
 @Repository
-public interface WitnessRepository extends JpaRepository<Witness, Long> {
-    Witness findById(Long id);
+public interface WitnessRepository extends JpaRepository<MarriageWitness, Long> {
+    MarriageWitness findById(Long id);
 
-    Witness findByNameFirstName(String firstName);
+    MarriageWitness findByNameFirstName(String firstName);
 
 }

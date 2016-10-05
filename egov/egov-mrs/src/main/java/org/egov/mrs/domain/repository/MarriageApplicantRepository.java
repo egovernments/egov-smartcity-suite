@@ -37,42 +37,20 @@
   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
 
-package org.egov.mrs.application.service;
+package org.egov.mrs.domain.repository;
 
-import java.math.BigDecimal;
-import java.util.Date;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.List;
 
-import org.egov.commons.Installment;
-import org.egov.demand.model.EgDemandDetails;
-import org.egov.demand.model.EgDemandReason;
-import org.egov.demand.model.EgDemandReasonMaster;
-import org.egov.infra.admin.master.entity.Module;
-import org.egov.mrs.application.Constants;
-import org.egov.mrs.domain.enums.FeeType;
-import org.springframework.stereotype.Service;
+import org.egov.mrs.domain.entity.Applicant;
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.stereotype.Repository;
 
-/**
- * 
- * Creates registration fee details
- * 
- * @author nayeem
- *
- */
-@Service
-public class RegistrationDemandService extends DemandService {
+@Repository
+public interface MarriageApplicantRepository extends JpaRepository<Applicant, Long> {
+    Applicant findById(Long id);
+
+    Applicant findByNameFirstName(String firstName);
 
     @Override
-    public Set<EgDemandDetails> createDemandDetails(final BigDecimal amount) {
-        final Set<EgDemandDetails> demandDetails = new HashSet<EgDemandDetails>();
-        final Module module = moduleService.getModuleByName(Constants.MODULE_NAME);
-        final Installment installment = installmentDAO.getInsatllmentByModuleForGivenDate(module, new Date());
-        final EgDemandReasonMaster demandReasonMaster = demandGenericDAO.getDemandReasonMasterByCode(FeeType.REGISTRATION.name(), module);
-        final EgDemandReason demandReason = demandGenericDAO.getDmdReasonByDmdReasonMsterInstallAndMod(demandReasonMaster,
-                installment, module);
-        demandDetails.add(EgDemandDetails.fromReasonAndAmounts(amount, demandReason, BigDecimal.ZERO));
-        return demandDetails;
-    }
-
+    List<Applicant> findAll();
 }

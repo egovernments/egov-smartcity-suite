@@ -48,7 +48,7 @@
 	<context:component-scan base-package="org.egov.mrs" />
 	
 	<bean id="RegistrationPersistenceService" parent="abstractPersistenceService">
-        <constructor-arg name="type" value="org.egov.mrs.domain.entity.Registration" />
+        <constructor-arg name="type" value="org.egov.mrs.domain.entity.MarriageRegistration" />
     </bean>
         
     <bean id="RegistrationInboxRenderService" class="org.egov.infra.workflow.inbox.DefaultInboxRenderServiceImpl">

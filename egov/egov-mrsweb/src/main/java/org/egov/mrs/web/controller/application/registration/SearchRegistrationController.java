@@ -49,11 +49,11 @@ import java.util.stream.Collectors;
 
 import org.egov.infra.admin.master.entity.Role;
 import org.egov.infra.security.utils.SecurityUtils;
-import org.egov.mrs.application.Constants;
+import org.egov.mrs.application.MarriageConstants;
 import org.egov.mrs.domain.entity.SearchModel;
 import org.egov.mrs.domain.entity.SearchResult;
 import org.egov.mrs.domain.enums.ApplicationStatus;
-import org.egov.mrs.domain.service.RegistrationService;
+import org.egov.mrs.domain.service.MarriageRegistrationService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -73,12 +73,12 @@ import org.springframework.web.bind.annotation.ResponseBody;
 @RequestMapping(value = "/registration")
 public class SearchRegistrationController {
 
-    private final RegistrationService registrationService;
+    private final MarriageRegistrationService marriageRegistrationService;
     private final SecurityUtils securityUtils;
 
     @Autowired
-    public SearchRegistrationController(final RegistrationService registrationService, final SecurityUtils securityUtils) {
-        this.registrationService = registrationService;
+    public SearchRegistrationController(final MarriageRegistrationService marriageRegistrationService, final SecurityUtils securityUtils) {
+        this.marriageRegistrationService = marriageRegistrationService;
         this.securityUtils = securityUtils;
     }
 
@@ -102,8 +102,8 @@ public class SearchRegistrationController {
 
     private List<SearchResult> prepareSearchResult(final SearchModel searchModel) {
         final List<SearchResult> results = new ArrayList<SearchResult>();
-        final DateFormat formatter = new SimpleDateFormat(Constants.DATE_FORMAT_DDMMYYYY);
-        registrationService.searchRegistration(searchModel, false).forEach(registration -> {
+        final DateFormat formatter = new SimpleDateFormat(MarriageConstants.DATE_FORMAT_DDMMYYYY);
+        marriageRegistrationService.searchRegistration(searchModel, false).forEach(registration -> {
             final SearchResult searchResult = new SearchResult();
             searchResult.setRegistrationId(registration.getId());
             searchResult.setRegistrationNo(registration.getRegistrationNo() == null ? "NA" : registration.getRegistrationNo());

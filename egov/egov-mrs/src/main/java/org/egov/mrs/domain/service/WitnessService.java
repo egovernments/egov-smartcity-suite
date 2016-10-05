@@ -39,7 +39,7 @@
 
 package org.egov.mrs.domain.service;
 
-import org.egov.mrs.domain.entity.Witness;
+import org.egov.mrs.domain.entity.MarriageWitness;
 import org.egov.mrs.domain.repository.WitnessRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -57,12 +57,12 @@ public class WitnessService {
     }
 
     @Transactional
-    public void createWitness(final Witness witness) {
+    public void createWitness(final MarriageWitness witness) {
         witnessRepository.save(witness);
     }
 
     @Transactional
-    public Witness updateWitness(final Witness witness) {
+    public MarriageWitness updateWitness(final MarriageWitness witness) {
         return witnessRepository.saveAndFlush(witness);
     }
 }

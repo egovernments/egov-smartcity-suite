@@ -39,9 +39,9 @@
 
 package org.egov.mrs.web.controller.application.registration;
 
-import org.egov.mrs.application.service.RegistrationCertificateService;
-import org.egov.mrs.application.service.RegistrationCertificateService.CertificateType;
-import org.egov.mrs.domain.service.RegistrationService;
+import org.egov.mrs.application.service.CertificateService;
+import org.egov.mrs.application.service.CertificateService.CertificateType;
+import org.egov.mrs.domain.service.MarriageRegistrationService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -58,26 +58,20 @@ import org.springframework.web.bind.annotation.RequestParam;
 @Controller
 @RequestMapping(value = "/certificate")
 public class CertificateController {
-
-    private final RegistrationCertificateService certificateService;
-    private final RegistrationService registrationService;
-
-    @Autowired
-    public CertificateController(final RegistrationCertificateService certificateService,
-            final RegistrationService registrationService) {
-        this.certificateService = certificateService;
-        this.registrationService = registrationService;
-    }
+	@Autowired
+    private CertificateService certificateService;
+	@Autowired
+	private  MarriageRegistrationService marriageRegistrationService;
 
     @RequestMapping(value = "/registration", method = RequestMethod.POST)
     public String showRegistrationCertificate(@RequestParam final Long id, final Model model) {
-        model.addAttribute("reportId", certificateService.generate(registrationService.get(id), CertificateType.REGISTRATION));
+        model.addAttribute("reportId", certificateService.generate(marriageRegistrationService.get(id), CertificateType.REGISTRATION));
         return "registration-certificate";
     }
     
     @RequestMapping(value = "/rejection", method = RequestMethod.POST)
     public String showRejectionCertificate(@RequestParam final Long id, final Model model) {
-        model.addAttribute("reportId", certificateService.generate(registrationService.get(id), CertificateType.REJECTION));
+        model.addAttribute("reportId", certificateService.generate(marriageRegistrationService.get(id), CertificateType.REJECTION));
         return "registration-certificate";
     }
 

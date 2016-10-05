@@ -67,7 +67,7 @@ public abstract class AbstractDocument extends AbstractPersistable<Long> {
     @Valid
     @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     @JoinColumn(name = "document")
-    protected Document document;
+    protected MarriageDocument document;
 
     @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     @JoinTable(name = "egmrs_proofdocs", 
@@ -82,11 +82,11 @@ public abstract class AbstractDocument extends AbstractPersistable<Long> {
     @Transient
     protected String base64EncodedFile;
 
-    public Document getDocument() {
+    public MarriageDocument getDocument() {
         return document;
     }
 
-    public void setDocument(final Document document) {
+    public void setDocument(final MarriageDocument document) {
         this.document = document;
     }
 

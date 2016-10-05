@@ -40,7 +40,7 @@
 package org.egov.mrs.domain.repository;
 
 import org.egov.mrs.domain.entity.ReIssue;
-import org.egov.mrs.domain.entity.Registration;
+import org.egov.mrs.domain.entity.MarriageRegistration;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
@@ -49,5 +49,5 @@ public interface ReIssueRepository extends JpaRepository<ReIssue, Long> {
     
     ReIssue findById(Long id);
     
-    ReIssue findByRegistration(Registration registration);
+    ReIssue findByRegistration(MarriageRegistration registration);
 }

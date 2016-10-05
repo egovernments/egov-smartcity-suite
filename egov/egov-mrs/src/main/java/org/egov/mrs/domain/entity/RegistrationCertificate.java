@@ -55,7 +55,7 @@ import java.util.Base64;
 import org.apache.commons.lang.WordUtils;
 import org.egov.infra.admin.master.entity.Role;
 import org.egov.infra.admin.master.entity.User;
-import org.egov.mrs.application.Constants;
+import org.egov.mrs.application.MarriageConstants;
 
 /**
  * A Bean class which is being used as input the certificate jrxml
@@ -67,23 +67,23 @@ public class RegistrationCertificate {
     private static Path tempFilePath = Paths.get(System.getProperty("user.home") + File.separator + "testtmpr");
     public static final String STYLE_TAG_BEGIN = "<style forecolor=\"#000000\" isBold=\"true\" pdfFontName=\"SansSerif\" pdfEncoding=\"Cp1252\">";
     public static final String STYLE_TAG_END = "</style>";
-    private final DateFormat dateFormatter = new SimpleDateFormat(Constants.DATE_FORMAT_DDMMYYYY);
-    private Registration registration;
+    private final DateFormat dateFormatter = new SimpleDateFormat(MarriageConstants.DATE_FORMAT_DDMMYYYY);
+    private MarriageRegistration registration;
     private User user;
 
     public RegistrationCertificate() {
     }
 
-    public RegistrationCertificate(final Registration registration, final User user) {
+    public RegistrationCertificate(final MarriageRegistration registration, final User user) {
         this.registration = registration;
         this.user = user;
     }
 
-    public Registration getRegistration() {
+    public MarriageRegistration getRegistration() {
         return registration;
     }
 
-    public void setRegistration(final Registration registration) {
+    public void setRegistration(final MarriageRegistration registration) {
         this.registration = registration;
     }
 

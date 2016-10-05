@@ -43,7 +43,7 @@ import java.io.IOException;
 import java.util.Base64;
 
 import org.egov.eis.web.contract.WorkflowContainer;
-import org.egov.mrs.domain.entity.Registration;
+import org.egov.mrs.domain.entity.MarriageRegistration;
 import org.egov.mrs.domain.enums.ApplicationStatus;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -61,19 +61,19 @@ import org.springframework.web.bind.annotation.RequestParam;
 
 @Controller
 @RequestMapping(value = "/registration")
-public class ViewRegistrationController extends RegistrationController {
+public class ViewMarriageRegistrationController extends MarriageRegistrationController {
 
     @RequestMapping(value = "/view/{registrationId}", method = RequestMethod.GET)
     public String viewRegistration(@PathVariable final Long registrationId, @RequestParam(required = false) String mode,
             final Model model) throws IOException {
-        final Registration registration = registrationService.get(registrationId);
+        final MarriageRegistration registration = marriageRegistrationService.get(registrationId);
 
         model.addAttribute("registration", registration);
         model.addAttribute("mode", mode);
         
-        registrationService.prepareDocumentsForView(registration);
-        applicantService.prepareDocumentsForView(registration.getHusband());
-        applicantService.prepareDocumentsForView(registration.getWife());
+        marriageRegistrationService.prepareDocumentsForView(registration);
+        marriageApplicantService.prepareDocumentsForView(registration.getHusband());
+        marriageApplicantService.prepareDocumentsForView(registration.getWife());
         registration.getWitnesses()
             .stream()
             .filter(witness -> witness.getPhoto() != null && witness.getPhoto().length > 0)

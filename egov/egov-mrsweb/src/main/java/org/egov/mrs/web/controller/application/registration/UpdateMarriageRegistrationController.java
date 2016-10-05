@@ -43,7 +43,7 @@ import java.util.Base64;
 
 import javax.servlet.http.HttpServletRequest;
 
-import org.egov.mrs.domain.entity.Registration;
+import org.egov.mrs.domain.entity.MarriageRegistration;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -62,22 +62,22 @@ import org.springframework.web.bind.annotation.RequestParam;
 
 @Controller
 @RequestMapping(value = "/registration")
-public class UpdateRegistrationController extends RegistrationController {
+public class UpdateMarriageRegistrationController extends MarriageRegistrationController {
 
     @RequestMapping(value = "/update/{id}", method = RequestMethod.GET)
     public String showRegistration(@PathVariable final Long id, final Model model) {
-        Registration registration = registrationService.get(id);
+        MarriageRegistration registration = marriageRegistrationService.get(id);
         model.addAttribute("registration", registration);
-        registrationService.prepareDocumentsForView(registration);
-        applicantService.prepareDocumentsForView(registration.getHusband());
-        applicantService.prepareDocumentsForView(registration.getWife());
+        marriageRegistrationService.prepareDocumentsForView(registration);
+        marriageApplicantService.prepareDocumentsForView(registration.getHusband());
+        marriageApplicantService.prepareDocumentsForView(registration.getWife());
         if(registration.getWitnesses()!=null)
           registration.getWitnesses().forEach(witness -> { if(witness.getPhoto()!=null)witness.setEncodedPhoto(Base64.getEncoder().encodeToString(witness.getPhoto()));});
         return "registration-correction";
     }
 
     @RequestMapping(value = "/update", method = RequestMethod.POST)
-    public String updateRegistration(@RequestParam final Long id, @ModelAttribute final Registration registration,
+    public String updateRegistration(@RequestParam final Long id, @ModelAttribute final MarriageRegistration registration,
             final Model model,
             final HttpServletRequest request,
             final BindingResult errors) {
@@ -85,7 +85,7 @@ public class UpdateRegistrationController extends RegistrationController {
         if (errors.hasErrors())
             return "registration-correction";
 
-        model.addAttribute("registration", registrationService.updateRegistration(id, registration));
+        model.addAttribute("registration", marriageRegistrationService.updateRegistration(id, registration));
         model.addAttribute("message", messageSource.getMessage("msg.update.registration", null, null));
 
         return "registration-ack";

@@ -52,8 +52,8 @@ import org.egov.demand.model.EgBillType;
 import org.egov.demand.model.EgDemand;
 import org.egov.infra.admin.master.entity.Module;
 import org.egov.infra.admin.master.service.ModuleService;
-import org.egov.mrs.application.Constants;
-import org.egov.mrs.domain.entity.Registration;
+import org.egov.mrs.application.MarriageConstants;
+import org.egov.mrs.domain.entity.MarriageRegistration;
 import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
@@ -86,7 +86,7 @@ public class RegistrationBillable extends AbstractBillable implements Billable {
     private String referenceNumber;
     private String transanctionReferenceNumber;
 
-    private Registration registration;
+    private MarriageRegistration registration;
 
     @Autowired
     private EgDemandDao egDemandDAO;
@@ -173,7 +173,7 @@ public class RegistrationBillable extends AbstractBillable implements Billable {
 
     @Override
     public Module getModule() {
-        return moduleService.getModuleByName(Constants.MODULE_NAME);
+        return moduleService.getModuleByName(MarriageConstants.MODULE_NAME);
     }
 
     @Override
@@ -263,11 +263,11 @@ public class RegistrationBillable extends AbstractBillable implements Billable {
         this.transanctionReferenceNumber = transanctionReferenceNumber;
     }
 
-    public Registration getRegistration() {
+    public MarriageRegistration getRegistration() {
         return registration;
     }
 
-    public void setRegistration(final Registration registration) {
+    public void setRegistration(final MarriageRegistration registration) {
         this.registration = registration;
     }
 

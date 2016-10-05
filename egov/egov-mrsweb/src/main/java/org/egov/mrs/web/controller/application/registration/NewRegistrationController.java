@@ -42,8 +42,8 @@ package org.egov.mrs.web.controller.application.registration;
 import javax.servlet.http.HttpServletRequest;
 
 import org.egov.eis.web.contract.WorkflowContainer;
-import org.egov.mrs.application.Constants;
-import org.egov.mrs.domain.entity.Registration;
+import org.egov.mrs.application.MarriageConstants;
+import org.egov.mrs.domain.entity.MarriageRegistration;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -61,25 +61,27 @@ import org.springframework.web.bind.annotation.RequestParam;
 
 @Controller
 @RequestMapping(value = "/registration")
-public class NewRegistrationController extends RegistrationController {
+public class NewRegistrationController extends MarriageRegistrationController {
     
     @RequestMapping(value = "/register", method = RequestMethod.GET)
-    public String showRegistration(@ModelAttribute final Registration registration, final Model model) {
+    public String showRegistration( final Model model) { 
+    	 MarriageRegistration registration= new MarriageRegistration();
+    	 model.addAttribute("registration",registration);
         prepareWorkFlowForNewMarriageRegistration(registration, model);
        return "registration-form";
     }
 
-    private void prepareWorkFlowForNewMarriageRegistration(final Registration registration, final Model model) {
+    private void prepareWorkFlowForNewMarriageRegistration(final MarriageRegistration registration, final Model model) {
         WorkflowContainer workFlowContainer = new WorkflowContainer();
-        workFlowContainer.setAdditionalRule(Constants.ADDITIONAL_RULE_REGISTRATION);
+        workFlowContainer.setAdditionalRule(MarriageConstants.ADDITIONAL_RULE_REGISTRATION);
         prepareWorkflow(model, registration, workFlowContainer);
-        model.addAttribute("additionalRule", Constants.ADDITIONAL_RULE_REGISTRATION);
+        model.addAttribute("additionalRule", MarriageConstants.ADDITIONAL_RULE_REGISTRATION);
         model.addAttribute("stateType", registration.getClass().getSimpleName());
         model.addAttribute("currentState", "NEW");
     }
 
     @RequestMapping(value = "/register", method = RequestMethod.POST)
-    public String register(@ModelAttribute final Registration registration,
+    public String register(@ModelAttribute final MarriageRegistration registration,
             @ModelAttribute final WorkflowContainer workflowContainer,
             final Model model,
             final HttpServletRequest request,
@@ -92,7 +94,7 @@ public class NewRegistrationController extends RegistrationController {
         }
 
         obtainWorkflowParameters(workflowContainer, request);
-        final String appNo = registrationService.createRegistration(registration, workflowContainer);
+        final String appNo = marriageRegistrationService.createRegistration(registration, workflowContainer);
         model.addAttribute("ackNumber", appNo);
 
         return "registration-ack";
@@ -100,7 +102,7 @@ public class NewRegistrationController extends RegistrationController {
 
     @RequestMapping(value = "/workflow", method = RequestMethod.POST)
     public String handleWorkflowAction(@RequestParam final Long id,
-            @ModelAttribute final Registration registration,
+            @ModelAttribute final MarriageRegistration registration,
             @ModelAttribute final WorkflowContainer workflowContainer,
             final Model model,
             final HttpServletRequest request,
@@ -110,20 +112,20 @@ public class NewRegistrationController extends RegistrationController {
             return "registration-view";
 
         obtainWorkflowParameters(workflowContainer, request);
-        Registration result = null;
+        MarriageRegistration result = null;
 
         switch (workflowContainer.getWorkFlowAction()) {
         case "Forward":
-            result = registrationService.forwardRegistration(id, registration, workflowContainer);
+            result = marriageRegistrationService.forwardRegistration(id, registration, workflowContainer);
             break;
         case "Approve":
-            result = registrationService.approveRegistration(id, workflowContainer);
+            result = marriageRegistrationService.approveRegistration(id, workflowContainer);
             break;
         case "Reject":
-            result = registrationService.rejectRegistration(id, workflowContainer);
+            result = marriageRegistrationService.rejectRegistration(id, workflowContainer);
             break;
         case "Close Registration":
-            result = registrationService.rejectRegistration(id, workflowContainer);
+            result = marriageRegistrationService.rejectRegistration(id, workflowContainer);
             break;
         }
 

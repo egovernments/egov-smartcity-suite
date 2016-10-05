@@ -45,14 +45,14 @@ import javax.servlet.http.HttpServletRequest;
 
 import org.egov.eis.web.contract.WorkflowContainer;
 import org.egov.eis.web.controller.workflow.GenericWorkFlowController;
-import org.egov.mrs.application.Utils;
+import org.egov.mrs.application.MarriageUtils;
+import org.egov.mrs.domain.entity.MarriageRegistration;
 import org.egov.mrs.domain.entity.ReIssue;
-import org.egov.mrs.domain.entity.Registration;
 import org.egov.mrs.domain.enums.ApplicationStatus;
-import org.egov.mrs.domain.service.ApplicantService;
-import org.egov.mrs.domain.service.DocumentService;
+import org.egov.mrs.domain.service.MarriageApplicantService;
+import org.egov.mrs.domain.service.MarriageDocumentService;
+import org.egov.mrs.domain.service.MarriageRegistrationService;
 import org.egov.mrs.domain.service.ReIssueService;
-import org.egov.mrs.domain.service.RegistrationService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -66,21 +66,21 @@ import org.springframework.web.bind.annotation.RequestParam;
 public class ViewReIssueController extends GenericWorkFlowController {
     
     private final ReIssueService reIssueService;
-    private final RegistrationService registrationService;
+    private final MarriageRegistrationService marriageRegistrationService;
     
     @Autowired
-    private ApplicantService applicantService;
+    private MarriageApplicantService marriageApplicantService;
     
     @Autowired
-    private DocumentService documentService;
+    private MarriageDocumentService marriageDocumentService;
     
     @Autowired
-    private Utils utils;
+    private MarriageUtils utils;
     
     @Autowired
-    public ViewReIssueController(final ReIssueService reIssueService, final RegistrationService registrationService) {
+    public ViewReIssueController(final ReIssueService reIssueService, final MarriageRegistrationService marriageRegistrationService) {
         this.reIssueService = reIssueService;
-        this.registrationService = registrationService;
+        this.marriageRegistrationService = marriageRegistrationService;
     }
     
     @RequestMapping(value = "/{reIssueId}", method = RequestMethod.GET)
@@ -88,16 +88,16 @@ public class ViewReIssueController extends GenericWorkFlowController {
             final Model model) throws IOException {
         
         final ReIssue reIssue = reIssueService.get(reIssueId);
-        final Registration registration = reIssue.getRegistration();
+        final MarriageRegistration registration = reIssue.getRegistration();
         
-        model.addAttribute("documents", documentService.getReIssueApplicantDocs());
+        model.addAttribute("documents", marriageDocumentService.getReIssueApplicantDocs());
         model.addAttribute("reissue", reIssue);
         model.addAttribute("mode", mode);
         
-        registrationService.prepareDocumentsForView(registration);
-        applicantService.prepareDocumentsForView(registration.getHusband());
-        applicantService.prepareDocumentsForView(registration.getWife());
-        applicantService.prepareDocumentsForView(reIssue.getApplicant());
+        marriageRegistrationService.prepareDocumentsForView(registration);
+        marriageApplicantService.prepareDocumentsForView(registration.getHusband());
+        marriageApplicantService.prepareDocumentsForView(registration.getWife());
+        marriageApplicantService.prepareDocumentsForView(reIssue.getApplicant());
                 
         String screen = null;
        

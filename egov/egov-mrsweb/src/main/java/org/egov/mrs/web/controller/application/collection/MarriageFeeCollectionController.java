@@ -40,7 +40,7 @@
 package org.egov.mrs.web.controller.application.collection;
 
 import org.egov.mrs.application.service.collection.MarriageBillService;
-import org.egov.mrs.domain.service.RegistrationService;
+import org.egov.mrs.domain.service.MarriageRegistrationService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -59,19 +59,19 @@ import org.springframework.web.bind.annotation.RequestMethod;
 public class MarriageFeeCollectionController {
 
     private final MarriageBillService marriageBillService;
-    private final RegistrationService registrationService;
+    private final MarriageRegistrationService marriageRegistrationService;
 
     @Autowired
     public MarriageFeeCollectionController(final MarriageBillService marriageBillService,
-            final RegistrationService registrationService) {
+            final MarriageRegistrationService marriageRegistrationService) {
         this.marriageBillService = marriageBillService;
-        this.registrationService = registrationService;
+        this.marriageRegistrationService = marriageRegistrationService;
     }
 
     @RequestMapping(value = "/bill/{id}", method = RequestMethod.GET)
     public String generateBill(@PathVariable final Long id, final Model model) {
 
-        final String billXml = marriageBillService.generateBill(registrationService.get(id));
+        final String billXml = marriageBillService.generateBill(marriageRegistrationService.get(id));
 
         model.addAttribute("billXml", billXml);
 

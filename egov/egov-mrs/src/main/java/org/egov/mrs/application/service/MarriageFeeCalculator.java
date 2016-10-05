@@ -23,33 +23,26 @@
     In addition to the terms of the GPL license to be adhered to in using this
     program, the following additional terms are to be complied with:
 
-        1) All versions of this program, verbatim or modified must carry this
-           Legal Notice.
+	1) All versions of this program, verbatim or modified must carry this
+	   Legal Notice.
 
-        2) Any misrepresentation of the origin of the material is prohibited. It
-           is required that all modified versions of this material be marked in
-           reasonable ways as different from the original version.
+	2) Any misrepresentation of the origin of the material is prohibited. It
+	   is required that all modified versions of this material be marked in
+	   reasonable ways as different from the original version.
 
-        3) This license does not grant any rights to any user of the program
-           with regards to rights under trademark law for use of the trade names
-           or trademarks of eGovernments Foundation.
+	3) This license does not grant any rights to any user of the program
+	   with regards to rights under trademark law for use of the trade names
+	   or trademarks of eGovernments Foundation.
 
   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
 
-package org.egov.mrs.application;
+package org.egov.mrs.application.service;
 
-public class Constants {
-    
-    public static final String MODULE_NAME = "Marriage Registration";
-    public static final String BOUNDARY_TYPE = "Zone";
-    public static final String REVENUE_HIERARCHY_TYPE = "REVENUE";
-    
-    public static final String APPROVER_ROLE_NAME = "ULB Operator";
-    public static final String DATE_FORMAT_DDMMYYYY = "dd-MM-yyyy";
-    
-    public static final String REISSUE_FEECRITERIA = "Re-Issue Fee";
-    public static final String ADDITIONAL_RULE_REGISTRATION = "MARRIAGE REGISTRATION"; 
+import java.util.Date;
 
+public interface MarriageFeeCalculator {
+    Double calculateFee(Date date);
 
+    String getFeeType();
 }

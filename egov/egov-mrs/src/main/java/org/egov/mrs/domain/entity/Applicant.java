@@ -142,7 +142,7 @@ public class Applicant extends AbstractAuditable {
     private List<ApplicantDocument> applicantDocuments = new ArrayList<ApplicantDocument>();
     
     @Transient
-    private List<Document> documents;
+    private List<MarriageDocument> documents;
 
     @Transient
     private MultipartFile photoFile;
@@ -293,11 +293,11 @@ public class Applicant extends AbstractAuditable {
         this.contactInfo = contactInfo;
     }
 
-    public List<Document> getDocuments() {
+    public List<MarriageDocument> getDocuments() {
         return documents;
     }
 
-    public void setDocuments(final List<Document> documents) {
+    public void setDocuments(final List<MarriageDocument> documents) {
         this.documents = documents;
     }
 

@@ -61,7 +61,7 @@ import org.egov.demand.model.EgDemandReasonMaster;
 import org.egov.infra.exception.ApplicationRuntimeException;
 import org.egov.infra.security.utils.SecurityUtils;
 import org.egov.mrs.domain.entity.ReIssue;
-import org.egov.mrs.domain.entity.Registration;
+import org.egov.mrs.domain.entity.MarriageRegistration;
 import org.hibernate.Session;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -97,7 +97,7 @@ public class MarriageBillService extends BillServiceInterface {
      * @param registration
      * @return xml representation of the bill
      */
-    public String generateBill(final Registration registration) {
+    public String generateBill(final MarriageRegistration registration) {
 
         billableRegistration.setRegistration(registration);
         billableRegistration.setUserId(securityUtils.getCurrentUser().getId());

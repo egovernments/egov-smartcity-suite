@@ -41,20 +41,20 @@ package org.egov.mrs.domain.repository;
 
 import java.util.List;
 
-import org.egov.mrs.domain.entity.Document;
+import org.egov.mrs.domain.entity.MarriageDocument;
 import org.egov.mrs.domain.enums.FeeType;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
 @Repository
-public interface DocumentRepository extends JpaRepository<Document, Long> {
+public interface MarriageDocumentRepository extends JpaRepository<MarriageDocument, Long> {
 
-    Document findById(Long id);
+    MarriageDocument findById(Long id);
 
-    Document findByName(String ame);
+    MarriageDocument findByName(String ame);
 
-    List<Document> findByIndividual(boolean individual);
+    List<MarriageDocument> findByIndividual(boolean individual);
 
-    List<Document> findByType(FeeType type);
+    List<MarriageDocument> findByType(FeeType type);
 
 }

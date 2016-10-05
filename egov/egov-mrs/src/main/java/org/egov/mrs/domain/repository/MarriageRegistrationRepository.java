@@ -37,12 +37,26 @@
   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
 
-package org.egov.mrs.application.service;
+package org.egov.mrs.domain.repository;
 
 import java.util.Date;
+import java.util.List;
 
-public interface FeeCalculator {
-    Double calculateFee(Date date);
+import org.egov.mrs.domain.entity.MarriageRegistration;
+import org.egov.mrs.domain.enums.ApplicationStatus;
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.querydsl.QueryDslPredicateExecutor;
+import org.springframework.stereotype.Repository;
 
-    String getFeeType();
+@Repository
+public interface MarriageRegistrationRepository extends JpaRepository<MarriageRegistration, Long> {//, QueryDslPredicateExecutor<Registration> {
+    MarriageRegistration findById(Long id);
+
+    MarriageRegistration findByApplicationNo(String applicationNo);
+
+    MarriageRegistration findByRegistrationNo(String registrationNo);
+    
+    //List<Registration> findByRegistrationNoAndDateOfMarriageAndHusbandNameFirstName();
+    
+    List<MarriageRegistration> findByCreatedDateAfterAndCreatedDateBeforeAndStatus(Date fromDate, Date toDate, ApplicationStatus status);    
 }

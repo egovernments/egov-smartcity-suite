@@ -48,14 +48,14 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 @Service
-public class Utils {
+public class MarriageUtils {
     
     @Autowired
     private SecurityUtils securityUtils;
     
     public boolean isLoggedInUserApprover() {
         List<Role> approvers = securityUtils.getCurrentUser().getRoles().stream()
-                .filter(role -> role.getName().equalsIgnoreCase(Constants.APPROVER_ROLE_NAME)).collect(Collectors.toList());
+                .filter(role -> role.getName().equalsIgnoreCase(MarriageConstants.APPROVER_ROLE_NAME)).collect(Collectors.toList());
 
         if (approvers.isEmpty())
             return false;
