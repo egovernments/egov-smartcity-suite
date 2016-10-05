@@ -41,38 +41,27 @@
 <%@ taglib uri="http://www.springframework.org/tags/form" prefix="form"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 
-<div class="row add-margin view-content">
-	<div class="col-sm-3 text-center">	<spring:message code="lbl.applicant.docs"/></div>
-	<div class="col-sm-9 text-center"></div>
-</div>
-<c:forEach var="doc" items="${documents}" varStatus="status">	
-	
-	<div class="form-group">	
-		<div class="col-sm-2"></div>
-		<form:hidden id="applicant.documents[${status.index}].id" path="applicant.documents[${status.index}].id" value="${doc.id}" /> 
-		<div class="col-sm-4 add-margin text-right">
-			<c:out value="${doc.name}"></c:out>
+<c:set value="applicant" var="applicant" scope="request"></c:set>
+<form:hidden path="applicant.id" />
+<jsp:include page="applicantinfo.jsp">
+	<jsp:param value="subheading.applicant.info" name="header" />
+</jsp:include>
+<br />
+<div class="row">
+	<div class="form-group">
+		<div class="col-sm-3 add-margin">
+			<spring:message code="lbl.fee.criteria"/>
 		</div>
-		<div class="col-sm-2 add-margin text-center">
-			<input type="file" id="file${status.index}id" name="applicant.documents[${status.index}].file" class="file-ellipsis upload-file">
-			<form:errors path="applicant.documents[${status.index}].file" cssClass="add-margin error-msg" />
-			&nbsp;&nbsp;
-			<c:set value="false" var="isDocFound"></c:set>
-			<c:forEach items="${registration.husband.applicantDocuments}" var="appdoc" varStatus="loopStatus">
-				<c:if test="${appdoc.document.id == doc.id}">
-					<c:set value="true" var="isDocFound"></c:set>
-					<input type="hidden" id="husbandfile${status.index}" value="${appdoc.fileStoreMapper.fileName}|${appdoc.fileStoreMapper.contentType}|${appdoc.base64EncodedFile}">
-					<a id="husbanddoc${status.index}">Download</a>
-				</c:if>
-			</c:forEach>
-			<c:if test="${!isDocFound && reIssue.id != null}">
-				NA
-			</c:if>
+		<div class="col-sm-3 add-margin view-content">
+			 <c:out value="${reIssue.feeCriteria}" />
+			 <input type="hidden" name="feeCriteria" value="${reIssue.feeCriteria}" />
 		</div>
-		<div class="col-sm-2 add-margin text-center">
+		<div class="col-sm-3 add-margin">
+			<spring:message code="lbl.fee"/><span class="mandatory"></span>
+		</div>
+		<div class="col-sm-3">
+			<form:input path="feePaid" id="txt-feepaid" type="text" class="form-control low-width patternvalidation" data-pattern="decimalvalue" placeholder="" autocomplete="off" required="required"/>
+            <form:errors path="feePaid" cssClass="add-margin error-msg"/>
 		</div>
 	</div>
-</c:forEach> 
-
-<script src="<c:url value='/resources/js/app/documentsupload.js'/>"></script>
-<script src="<c:url value='/resources/js/app/viewdocumentsupload.js'/>"></script>
+</div>

@@ -74,22 +74,23 @@
 				<div class="panel-body custom-form ">
 					  <div class="container-fluid">	
 					  <ul class="nav nav-tabs nav-justified nav-tabs-top">
-					    <li class="active"><a data-toggle="tab" href="#applicant-info">Applicant's Information</a></li>
-					    <li><a data-toggle="tab" href="#checklist-info">Checklist</a></li>
+					    <li class="active"><a data-toggle="tab" href="#applicant-info"><spring:message code="subheading.applicant.info"/> </a></li>
+					    <li><a data-toggle="tab" href="#checklist-info"><spring:message code="lbl.registration.detail"/></a></li>
 					  </ul>
 					  <div class="tab-content">
-					    <div id="applicant-info" class="tab-pane fade in active">
-					    	<jsp:include page="../../common/generalinfo.jsp" />
+					    <div id="checklist-info"  class="tab-pane fade ">
+					    	<jsp:include page="../../common/generalinfo.jsp" /> 
 					    </div>
-					    <div id="checklist-info" class="tab-pane fade">
+					    <div id="applicant-info" class="tab-pane fade in active">
 					    	<%-- <jsp:include page="checklist.jsp"></jsp:include> --%>
+					    	<jsp:include page="reissueApplicantInfo.jsp"></jsp:include> 
 					    	<jsp:include page="reissuedocumentdetails.jsp"></jsp:include>
 					    </div>
 					  </div>
-					  <ul class="nav nav-tabs nav-justified nav-tabs-bottom">
+				<!-- 	  <ul class="nav nav-tabs nav-justified nav-tabs-bottom">
 					    <li class="active"><a data-toggle="tab" href="#applicant-info">Applicant's Information</a></li>
 					    <li><a data-toggle="tab" href="#checklist-info">Checklist</a></li>
-					  </ul>
+					  </ul> -->
 					  </div>
 				</div>
 			</div>

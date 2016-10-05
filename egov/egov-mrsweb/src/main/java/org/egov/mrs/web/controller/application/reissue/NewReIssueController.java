@@ -97,8 +97,7 @@ public class NewReIssueController extends GenericWorkFlowController {
         marriageRegistrationService.prepareDocumentsForView(registration);
         marriageApplicantService.prepareDocumentsForView(registration.getHusband());
         marriageApplicantService.prepareDocumentsForView(registration.getWife());
-
-        /*
+          /*
          * registration.getWitnesses() .stream() .filter(witness -> witness.getPhoto() != null && witness.getPhoto().length > 0)
          * .forEach(witness -> witness.setEncodedPhoto(Base64.getEncoder().encodeToString(witness.getPhoto())));
          */
@@ -107,13 +106,24 @@ public class NewReIssueController extends GenericWorkFlowController {
         reIssue.setFeeCriteria(MarriageConstants.REISSUE_FEECRITERIA);
         reIssue.setFeePaid(feeService.getFeeForCriteria(MarriageConstants.REISSUE_FEECRITERIA).getFees());
         reIssue.setRegistration(registration);
-
+        
+        prepareWorkFlowForNewMarriageRegistration(reIssue, model);
+        
         model.addAttribute("reIssue", reIssue);
-        model.addAttribute("documents", marriageDocumentService.getReIssueApplicantDocs());
+        //model.addAttribute("documents", marriageDocumentService.getReIssueApplicantDocs());
+        model.addAttribute("documents", marriageDocumentService.getGeneralDocuments());
         prepareWorkflow(model, reIssue, new WorkflowContainer());
         return "reissue-form";
     }
 
+    private void prepareWorkFlowForNewMarriageRegistration(final ReIssue reIssue, final Model model) {
+        WorkflowContainer workFlowContainer = new WorkflowContainer();
+        workFlowContainer.setAdditionalRule(MarriageConstants.ADDITIONAL_RULE_REGISTRATION);
+        prepareWorkflow(model, reIssue, workFlowContainer);
+        model.addAttribute("additionalRule", MarriageConstants.ADDITIONAL_RULE_REGISTRATION);
+        model.addAttribute("stateType", reIssue.getClass().getSimpleName());
+        model.addAttribute("currentState", "NEW");
+    }
     @RequestMapping(value = "/create", method = RequestMethod.POST)
     public String createReIssue(@ModelAttribute final ReIssue reIssue,
             @ModelAttribute final WorkflowContainer workflowContainer,
@@ -121,8 +131,10 @@ public class NewReIssueController extends GenericWorkFlowController {
             final HttpServletRequest request,
             final BindingResult errors) {
 
-        if (errors.hasErrors())
-            return "reissue-form";
+		if (errors.hasErrors()) {
+			prepareWorkFlowForNewMarriageRegistration(reIssue, model);
+			return "reissue-form";
+		}
         reIssue.setRegistration(marriageRegistrationService.get(reIssue.getRegistration().getId()));
         obtainWorkflowParameters(workflowContainer, request);
         final String appNo = reIssueService.createReIssueApplication(reIssue, workflowContainer);

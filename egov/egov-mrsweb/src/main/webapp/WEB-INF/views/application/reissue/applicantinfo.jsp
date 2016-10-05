@@ -57,7 +57,7 @@
 		<div class="col-sm-3" style="padding-left: 15px;">
 			<form:input path="${applicant}.name.firstName" id="txt-firstName" type="text" class="form-control is_valid_alphabet inline-elem" maxlength="30" autocomplete="off" required="required" style="width: 33%" placeholder="First Name" />
 			<form:input path="${applicant}.name.middleName" id="txt-middleName" type="text" class="form-control is_valid_alphabet inline-elem" maxlength="20" autocomplete="off" required="required" style="width: 33%" placeholder="Middle Name"/>
-			<form:input path="${applicant}.name.lastName" id="txt-lastName" type="text" class="form-control is_valid_alphabet inline-elem" maxlength="20" autocomplete="off" required="required" style="width: 30%" placeholder="Last Name"/>
+			<form:input path="${applicant}.name.lastName" id="txt-lastName" type="text" class="form-control is_valid_alphabet inline-elem" maxlength="20" autocomplete="off" style="width: 30%" placeholder="Last Name"/>
             <form:errors path="${applicant}.name.firstName" cssClass="add-margin error-msg"/>
             <form:errors path="${applicant}.name.middleName" cssClass="add-margin error-msg"/>
             <form:errors path="${applicant}.name.lastName" cssClass="add-margin error-msg"/>

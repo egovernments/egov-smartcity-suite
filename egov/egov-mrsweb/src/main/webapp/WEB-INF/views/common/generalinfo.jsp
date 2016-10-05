@@ -53,6 +53,14 @@
 <form:hidden path="id"/>
 <div class="row">
 	<div class="form-group">
+		<div class="col-sm-3 add-margin"><spring:message code="lbl.application.no"/></div>
+		<div class="col-sm-3 add-margin view-content"><c:out value="${reIssue.registration.applicationNo}" /></div>
+		<div class="col-sm-3 add-margin"><spring:message code="lbl.registration.no"/></div>
+		<div class="col-sm-3 add-margin view-content"><c:out value="${reIssue.registration.registrationNo}" /></div>
+	</div>
+</div>
+<div class="row">
+	<div class="form-group">
 		<div class="col-sm-3 add-margin"><spring:message code="lbl.date.of.marriage"/></div>
 		<div class="col-sm-3 add-margin view-content"><c:out value="${reIssue.registration.dateOfMarriage}" /></div>
 		<div class="col-sm-3 add-margin"><spring:message code="lbl.zone"/></div>
@@ -111,28 +119,4 @@
 	<jsp:param value="${reIssue.registration.wife.contactInfo.mobileNo}" name="appMobileNo"/>
 	<jsp:param value="${reIssue.registration.wife.contactInfo.email}" name="appEmail"/>
 </jsp:include>
-
-<div class="row">
-	<div class="form-group">
-		<div class="col-sm-3 add-margin">
-			<spring:message code="lbl.fee.criteria"/>
-		</div>
-		<div class="col-sm-3 add-margin view-content">
-			 <c:out value="${reIssue.feeCriteria}" />
-			 <input type="hidden" name="feeCriteria" value="${reIssue.feeCriteria}" />
-		</div>
-		<div class="col-sm-3 add-margin">
-			<spring:message code="lbl.fee"/><span class="mandatory"></span>
-		</div>
-		<div class="col-sm-3">
-			<form:input path="feePaid" id="txt-feepaid" type="text" class="form-control low-width patternvalidation" data-pattern="decimalvalue" placeholder="" autocomplete="off" required="required"/>
-            <form:errors path="feePaid" cssClass="add-margin error-msg"/>
-		</div>
-	</div>
-</div>
-
-<c:set value="applicant" var="applicant" scope="request"></c:set>
-<form:hidden path="applicant.id" />
-<jsp:include page="../application/reissue/applicantinfo.jsp">
-	<jsp:param value="subheading.applicant.info" name="header" />
-</jsp:include>
+	
