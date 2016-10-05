@@ -61,16 +61,17 @@
 					<th><spring:message code="lbl.code" /></th>
 					<th><spring:message code="lbl.description" /></th>
 					<th><spring:message code="lbl.uom" /></th>
-					<th><spring:message code="lbl.rate" /></th>
-					<th><spring:message code="lbl.estimate.quantity" /></th>
+					<th><spring:message code="lbl.cq.rate" /></th>
+					<th><spring:message code="lbl.cq.estimate.quantity" /></th>
 					<th><spring:message code="lbl.consumed.quantity" /></th>
-					<th><spring:message code="lbl.estimatedquantity" /></th>
-					<th><spring:message code="lbl.estimatedamount" /></th>
+					<th><spring:message code="lbl.addition.or.reduction.qty" /></th>
+					<th><spring:message code="lbl.addition.or.reduction.amount" /></th>
+					<th><spring:message code="lbl.revised.estimate.qty" /></th>
 					<c:if test="${isServiceVATRequired == true }">
 						<th><spring:message code="lbl.service.vat" /></th>
 						<th><spring:message code="lbl.service.vat.amount" /></th>
 					</c:if>
-					<th><spring:message code="lbl.total" /></th>
+					<th><spring:message code="lbl.revised.total.amount" /></th>
 				</tr>
 			</thead>
 			<tbody>
@@ -111,6 +112,7 @@
 										<span class="activityConsumedQuantity_${item.index }"><fmt:formatNumber groupingUsed="false" minFractionDigits="2" maxFractionDigits="4">${sorDtls.consumedQuantity }</fmt:formatNumber></span>
 									</td>
 								 	<td class="text-right">
+								 		<c:if test="${sorDtls.revisionType == 'REDUCED_QUANTITY' }">-</c:if>
 								 		<c:out value="${sorDtls.quantity}"></c:out>
 								 	<c:if test="${sorDtls.measurementSheetList.size() > 0 }">
 								 		 <button class="btn btn-default openmsheet" name="changeQuantityActivities[${item.index}].msadd" id="changeQuantityActivities[${item.index}].msadd" data-idx="0" onclick="addCQMSheet(this);return false;"><i  class="fa fa-plus-circle" aria-hidden="true"></i></button>
@@ -122,6 +124,14 @@
 										<td class="text-right"><c:out value="${sorDtls.serviceTaxPerc}"></c:out></td>
 										<td class="text-right"><fmt:formatNumber groupingUsed="false" minFractionDigits="2" maxFractionDigits="2">${(sorDtls.getAmount().value) * (sorDtls.serviceTaxPerc / 100) }</fmt:formatNumber></td>
 									</c:if>
+									<td class="text-right">
+										<c:if test="${sorDtls.revisionType == 'ADDITIONAL_QUANTITY' }">
+											<span class="revisedEstimateQty revisedEstimateQty_${item.index }"><fmt:formatNumber groupingUsed="false" minFractionDigits="2" maxFractionDigits="4">${sorDtls.estimateQuantity + sorDtls.quantity}</fmt:formatNumber></span>
+										</c:if>
+										<c:if test="${sorDtls.revisionType == 'REDUCED_QUANTITY' }">
+											<span class="revisedEstimateQty revisedEstimateQty_${item.index }"><fmt:formatNumber groupingUsed="false" minFractionDigits="2" maxFractionDigits="4">${sorDtls.estimateQuantity - sorDtls.quantity}</fmt:formatNumber></span>
+										</c:if>
+									</td>
 									<td class="text-right">
 										<c:if test="${sorDtls.revisionType == 'ADDITIONAL_QUANTITY' }">
 											<span class="activityTotal activityTotal_${item.index }"><fmt:formatNumber groupingUsed="false" minFractionDigits="2" maxFractionDigits="4">${sorDtls.rate * (sorDtls.quantity + sorDtls.estimateQuantity) }</fmt:formatNumber></span>
@@ -170,9 +180,10 @@
 					<td colspan="9" class="text-right"><spring:message code="lbl.total" /></td>
 				</c:if>
 				<td class="text-right"><span id="reActivityTotal"><fmt:formatNumber groupingUsed="false" minFractionDigits="2" maxFractionDigits="2"><c:out default="0.00" value="${recqsortotal }" /></fmt:formatNumber></span> </td>
-					<td class="text-right">
-						<span><fmt:formatNumber groupingUsed="false" minFractionDigits="2" maxFractionDigits="2"><c:out value="${cqsortotal}" /></fmt:formatNumber></span>
-					</td>
+				<td class="text-right"></td>
+				<td class="text-right">
+					<span><fmt:formatNumber groupingUsed="false" minFractionDigits="2" maxFractionDigits="2"><c:out value="${cqsortotal}" /></fmt:formatNumber></span>
+				</td>
 				</tr>
 			</tfoot>
 		</table>

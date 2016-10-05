@@ -1155,7 +1155,7 @@ public class RevisionEstimateService {
             final List<WorkOrderActivity> woaList = workOrderActivityService
                     .getChangedQuantityActivities(revisionEstimate, revisionWorkOrderEstimate);
             for (final WorkOrderActivity woa : woaList)
-                activtityIdList.add(woa.getActivity().getParent().getId()); //Original Estimate
+                activtityIdList.add(woa.getActivity().getParent().getId()); // Original Estimate
             List<Object[]> activityIdQuantityList = null;
             if (activtityIdList != null && activtityIdList.size() > 0)
                 activityIdQuantityList = mBDetailsService.getMBDetailsByWorkOrderActivity(activtityIdList);
@@ -1179,7 +1179,8 @@ public class RevisionEstimateService {
                                     .parseDouble(activityIdQuantity[1].toString()))
                                 continue;
                             else {
-                                final MBDetails mbDetails = mBDetailsService.getMBDetailsForREActivity(activityId,revisionEstimate.getId());
+                                final MBDetails mbDetails = mBDetailsService.getMBDetailsForREActivity(activityId,
+                                        revisionEstimate.getId());
                                 if (mbDetails != null) {
                                     // TO DO Read maxPercent from appconfig
                                     Double maxPercent = Double.valueOf("1");
@@ -1277,7 +1278,8 @@ public class RevisionEstimateService {
         if (!workOrderActivity.getWorkOrderMeasurementSheets().isEmpty())
             for (final WorkOrderMeasurementSheet woms : workOrderActivity.getWorkOrderMeasurementSheets()) {
                 final List<WorkOrderMeasurementSheet> rewomsList = workOrderMeasurementSheetService
-                        .findByMeasurementSheetParentId(woms.getMeasurementSheet().getId());
+                        .findByMeasurementSheetParentId_ForView(woms.getMeasurementSheet().getId(),
+                                workOrderActivity.getWorkOrderEstimate().getEstimate().getId());
                 Double no = woms.getNo() == null ? 0 : woms.getNo().doubleValue();
                 Double length = woms.getLength() == null ? 0 : woms.getLength().doubleValue();
                 Double width = woms.getWidth() == null ? 0 : woms.getWidth().doubleValue();

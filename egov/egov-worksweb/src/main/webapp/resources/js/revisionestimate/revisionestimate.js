@@ -1793,16 +1793,21 @@ function populateActivities(data, selectedActivities){
 			$('.activityUom_' + activityCount).html(activity.uom);
 			$('.activityRate_' + activityCount).html(parseFloat(activity.rate).toFixed(2));
 			$('.activityEstimateRate_' + activityCount).html(parseFloat(activity.estimateRate).toFixed(2));
-			if (activity.estimateQuantity != "")
+			if (activity.estimateQuantity != ""){
 				$('.activityEstimateQuantity_' + activityCount).html(parseFloat(activity.estimateQuantity).toFixed(2));
-			else
+				$('.revisedEstimateQty_' + activityCount).html(parseFloat(activity.estimateQuantity).toFixed(2));
+			}
+			else{
 				$('.activityEstimateQuantity_' + activityCount).html("");
+				$('.revisedEstimateQty_' + activityCount).html("");
+			}
 			if (activity.consumedQuantity != "")
 				$('.activityConsumedQuantity_' + activityCount).html(parseFloat(activity.consumedQuantity).toFixed(2));
 			else
 				$('.activityConsumedQuantity_' + activityCount).html("");
-			unitRate = getUnitRate(activity.uom, activity.rate);
+			unitRate = getUnitRate(activity.uom, activity.estimateRate);
 			$('#activityUnitRate_' + activityCount).val(unitRate);
+			$('.activityApprovedAmount_' + activityCount).html(parseFloat(activity.activityAmount).toFixed(2));
 			$('.activityApprovedAmount_' + activityCount).html(parseFloat(activity.activityAmount).toFixed(2));
 			if (activity.ms != "") {
 				$('#activityQuantity_' + activityCount).attr('readonly', 'readonly');
@@ -1937,6 +1942,7 @@ function deleteActivity(obj) {
 		$('#activityQuantity_' + rowId).val('');
 		$('.activityApprovedAmount_' + rowId).html('');
 		$('.activityEstimatedAmount_' + rowId).html('');
+		$('.revisedEstimateQty_' + rowId).html('');
 		$('.activityTotal_' + rowId).html('');
 		$('#activityRow').prop("hidden",true);
 		$('#activityRow').attr('sorinvisible', true);
@@ -1969,7 +1975,14 @@ function calculateActivityAmounts(currentObj) {
 		bootbox.alert($('#errorchangequantity').val());
 		$(currentObj).val('');
 	}
-		
+	var currentQty = 0;
+	if($(currentObj).val()!="")
+		currentQty = $(currentObj).val();
+	if (signValue == "-")
+		$('.revisedEstimateQty_' + rowcount).html(parseFloat(estimateQuantity) - parseFloat(currentQty));
+	else
+		$('.revisedEstimateQty_' + rowcount).html(parseFloat(estimateQuantity) + parseFloat(currentQty));
+
 	var estimatedAmount = parseFloat($(currentObj).val() * unitRate).toFixed(2);
 	if (signValue == "-")
 		estimatedAmount = -1 * estimatedAmount;
@@ -1984,10 +1997,13 @@ function reActivityTotal() {
 	$('.reActivityTotal').each(function() {
 		rowcount = $(this).attr('id').split('_').pop();
 		var signValue = $('#changeQuantityActivitiesSignValue_' + rowcount).val();
+		var currVal = $(this).html().replace(',', '');
+		if(currVal=="")
+			currVal= "0";
 		if($(this).html().trim() != "" && signValue == "-")
-			total = parseFloat(parseFloat(total) - parseFloat($(this).html().replace(',', ''))).toFixed(2);
+			total = parseFloat(parseFloat(total) - parseFloat(currVal)).toFixed(2);
 		else
-			total = parseFloat(parseFloat(total) + parseFloat($(this).html().replace(',', ''))).toFixed(2);
+			total = parseFloat(parseFloat(total) + parseFloat(currVal)).toFixed(2);
 	});
 	$('#reActivityTotal').html(total);
 	
@@ -2000,10 +2016,13 @@ function activityTotal() {
 	$('.activityTotal').each(function() {
 		rowcount = $(this).attr('id').split('_').pop();
 		var signValue = $('#changeQuantityActivitiesSignValue_' + rowcount).val();
+		var currVal = $(this).html().replace(',', '');
+		if(currVal=="")
+			currVal= "0";
 		if($(this).html().trim() != "" && signValue == "-")
-			total = parseFloat(parseFloat(total) - parseFloat($(this).html().replace(',', ''))).toFixed(2);
+			total = parseFloat(parseFloat(total) - parseFloat(currVal)).toFixed(2);
 		else
-			total = parseFloat(parseFloat(total) + parseFloat($(this).html().replace(',', ''))).toFixed(2);
+			total = parseFloat(parseFloat(total) + parseFloat(currVal)).toFixed(2);
 	});
 	$('#activityTotal').html(total);
 	

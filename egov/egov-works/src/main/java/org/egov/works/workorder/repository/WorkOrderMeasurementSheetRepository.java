@@ -55,4 +55,8 @@ public interface WorkOrderMeasurementSheetRepository extends JpaRepository<WorkO
     @Query("select woms from WorkOrderMeasurementSheet woms where woms.measurementSheet.parent.id =:parentId and woms.measurementSheet.activity.abstractEstimate.egwStatus.code =:abstractEstimateStatus ")
     List<WorkOrderMeasurementSheet> findByMeasurementSheetParent_Id(@Param("parentId") final Long parentId,
             @Param("abstractEstimateStatus") final String abstractEstimateStatus);
+    
+    @Query("select woms from WorkOrderMeasurementSheet woms where woms.woActivity.workOrderEstimate.estimate.id <:estimateId and woms.measurementSheet.parent.id =:parentId and woms.measurementSheet.activity.abstractEstimate.egwStatus.code =:abstractEstimateStatus ")
+    List<WorkOrderMeasurementSheet> findByMeasurementSheetParentId_ForView(@Param("parentId") final Long parentId,@Param("estimateId") final Long estimateId,
+            @Param("abstractEstimateStatus") final String abstractEstimateStatus);
 }

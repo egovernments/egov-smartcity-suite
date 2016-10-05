@@ -70,12 +70,13 @@
 					<th><spring:message code="lbl.sorcode" /></th>
 					<th><spring:message code="lbl.description.item" /></th>
 					<th><spring:message code="lbl.uom" /></th>
-					<th><spring:message code="lbl.rate" /></th>
-					<th><spring:message code="lbl.estimate.quantity" /></th>
+					<th><spring:message code="lbl.cq.rate" /></th>
+					<th><spring:message code="lbl.cq.estimate.quantity" /></th>
 					<th><spring:message code="lbl.consumed.quantity" /></th>
-					<th><spring:message code="lbl.change.quantity" /></th>
-					<th><spring:message code="lbl.estimated.amount.rs" /></th>
-					<th><spring:message code="lbl.total" /></th>
+					<th><spring:message code="lbl.addition.or.reduction.qty" /></th>
+					<th><spring:message code="lbl.addition.or.reduction.amount" /></th>
+					<th><spring:message code="lbl.revised.estimate.qty" /></th>
+					<th><spring:message code="lbl.revised.total.amount" /></th>
 					<th><spring:message code="lbl.delete" /></th>
 				</tr>
 			</thead>
@@ -86,7 +87,7 @@
 				<c:if test="${revisionEstimate.changeQuantityActivities.size() != 0}">
 					<tr id="activityMessage" hidden="true">
 				</c:if>
-					<td colspan="12"><spring:message code="msg.mb.sor.table"/></td>
+					<td colspan="13"><spring:message code="msg.mb.sor.table"/></td>
 				</tr>
 				<c:choose>
 					<c:when test="${revisionEstimate.changeQuantityActivities.size() == 0}">
@@ -110,7 +111,7 @@
 								<span class="activityUom_0"></span>
 							</td>
 							<td class="text-right">
-								<span class="activityRate_0"></span>
+								<span class="activityEstimateRate_0"></span>
 							</td>
 							<td class="text-right">
 								<span class="activityEstimateQuantity_0"></span>
@@ -141,6 +142,9 @@
 							</td>
 							<td class="text-right">
 								<span class="reActivityTotal activityEstimatedAmount_0" id="activityEstimatedAmount_0"></span>
+							</td>
+							<td class="text-right">
+								<span class="revisedEstimateQty revisedEstimateQty_0" id="revisedEstimateQty_0"></span>
 							</td>
 							<td class="text-right">
 								<span class="activityTotal activityTotal_0" id="activityTotal_0"></span>
@@ -178,7 +182,7 @@
 									<span class="activityUom_${item.index }">${activity.uom.uom }</span>
 								</td>
 								<td class="text-right">
-									<span class="activityRate_${item.index }"><fmt:formatNumber groupingUsed="false" minFractionDigits="2" maxFractionDigits="4">${activity.estimateRate }</fmt:formatNumber></span>
+									<span class="activityEstimateRate_${item.index }"><fmt:formatNumber groupingUsed="false" minFractionDigits="2" maxFractionDigits="4">${activity.estimateRate }</fmt:formatNumber></span>
 								</td>
 								<td class="text-right">
 									<span class="activityEstimateQuantity_${item.index }"><fmt:formatNumber groupingUsed="false" minFractionDigits="2" maxFractionDigits="4">${activity.estimateQuantity }</fmt:formatNumber></span>
@@ -245,6 +249,14 @@
 								</td>
 								<td class="text-right">
 									<c:if test="${activity.revisionType == 'ADDITIONAL_QUANTITY' }">
+										<span class="revisedEstimateQty revisedEstimateQty_${item.index }" id="revisedEstimateQty_${item.index }"><fmt:formatNumber groupingUsed="false" minFractionDigits="2" maxFractionDigits="4">${(activity.quantity + activity.estimateQuantity) }</fmt:formatNumber></span>
+									</c:if>
+									<c:if test="${activity.revisionType == 'REDUCED_QUANTITY' }">
+										<span class="revisedEstimateQty revisedEstimateQty_${item.index }" id="revisedEstimateQty_${item.index }"><fmt:formatNumber groupingUsed="false" minFractionDigits="2" maxFractionDigits="4">${(activity.estimateQuantity - activity.quantity) }</fmt:formatNumber></span>
+									</c:if>
+								</td>
+								<td class="text-right">
+									<c:if test="${activity.revisionType == 'ADDITIONAL_QUANTITY' }">
 										<span class="activityTotal activityTotal_${item.index }" id="activityTotal_${item.index }"><fmt:formatNumber groupingUsed="false" minFractionDigits="2" maxFractionDigits="4">${activity.rate * (activity.quantity + activity.estimateQuantity) }</fmt:formatNumber></span>
 									</c:if>
 									<c:if test="${activity.revisionType == 'REDUCED_QUANTITY' }">
@@ -286,6 +298,7 @@
 				<tr>
 					<td colspan="9" class="text-right"><spring:message code="lbl.total" /></td>
 					<td class="text-right"><span id="reActivityTotal"><fmt:formatNumber groupingUsed="false" minFractionDigits="2" maxFractionDigits="2"><c:out default="0.00" value="${recqsortotal }" /></fmt:formatNumber></span> </td>
+					<td></td>
 					<td class="text-right"><span id="activityTotal"><fmt:formatNumber groupingUsed="false" minFractionDigits="2" maxFractionDigits="2"><c:out default="0.00" value="${cqsortotal }" /></fmt:formatNumber></span> </td>
 					<td></td>
 				</tr>

@@ -89,6 +89,12 @@ public class WorkOrderMeasurementSheetService {
     }
 
     public List<WorkOrderMeasurementSheet> findByMeasurementSheetParentId(final Long parentId) {
-        return workOrderMeasurementSheetRepository.findByMeasurementSheetParent_Id(parentId, RevisionEstimateStatus.APPROVED.toString());
+        return workOrderMeasurementSheetRepository.findByMeasurementSheetParent_Id(parentId,
+                RevisionEstimateStatus.APPROVED.toString());
+    }
+
+    public List<WorkOrderMeasurementSheet> findByMeasurementSheetParentId_ForView(final Long parentId, final Long id) {
+        return workOrderMeasurementSheetRepository.findByMeasurementSheetParentId_ForView(parentId, id,
+                RevisionEstimateStatus.APPROVED.toString());
     }
 }
