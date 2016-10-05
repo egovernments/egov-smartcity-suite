@@ -604,7 +604,7 @@ public class ContractorBillRegisterService {
                 billDetails.put("isDebit", true);
                 billDetails.put("isNetPayable", false);
                 if(!contractorRefundAccountList.isEmpty() && contractorRefundAccountList.contains(coa))  {
-                    String amounts = getTotalDebitAndCreditAmountByAccountCode(contractorBillRegister.getWorkOrderEstimate().getWorkOrder().getId(),new BigDecimal(coa.getId()),contractorBillRegister.getId() != null ? contractorBillRegister.getId() : -1);
+                    String amounts = getTotalDebitAndCreditAmountByAccountCode(contractorBillRegister.getWorkOrderEstimate().getId(),new BigDecimal(coa.getId()),contractorBillRegister.getId() != null ? contractorBillRegister.getId() : -1);
                     String[] creditDebitAmounts = amounts.split(",");
                     billDetails.put("withHeldAmount", creditDebitAmounts[0]);
                     billDetails.put("RefundedAmount", creditDebitAmounts[1]);
@@ -686,7 +686,7 @@ public class ContractorBillRegisterService {
             if(egBillDetail.getGlcodeid() != null && egBillDetail.getDebitamount() != null) {
             final CChartOfAccounts coa = chartOfAccountsHibernateDAO
                         .findById(egBillDetail.getGlcodeid().longValue(), false);
-                String amounts = getTotalDebitAndCreditAmountByAccountCode(contractorBillRegister.getWorkOrderEstimate().getWorkOrder().getId(),new BigDecimal(coa.getId()),contractorBillRegister.getId() != null ? contractorBillRegister.getId() : -1);
+                String amounts = getTotalDebitAndCreditAmountByAccountCode(contractorBillRegister.getWorkOrderEstimate().getId(),new BigDecimal(coa.getId()),contractorBillRegister.getId() != null ? contractorBillRegister.getId() : -1);
                 if(!StringUtils.isBlank(amounts)) {
                   String[] creditDebitAmounts = amounts.split(",");
                   BigDecimal withheldAmount = BigDecimal.ZERO;
