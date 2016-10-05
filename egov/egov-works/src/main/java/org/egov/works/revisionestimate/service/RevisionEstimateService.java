@@ -1274,12 +1274,11 @@ public class RevisionEstimateService {
         }
     }
 
-    public void deriveWorkOrderActivityQuantity(final WorkOrderActivity workOrderActivity) {
+    public void deriveWorkOrderActivityQuantity(final WorkOrderActivity workOrderActivity, Long reId) {
         if (!workOrderActivity.getWorkOrderMeasurementSheets().isEmpty())
             for (final WorkOrderMeasurementSheet woms : workOrderActivity.getWorkOrderMeasurementSheets()) {
                 final List<WorkOrderMeasurementSheet> rewomsList = workOrderMeasurementSheetService
-                        .findByMeasurementSheetParentId_ForView(woms.getMeasurementSheet().getId(),
-                                workOrderActivity.getWorkOrderEstimate().getEstimate().getId());
+                        .findByMeasurementSheetParentId_ForView(woms.getMeasurementSheet().getId(), reId);
                 Double no = woms.getNo() == null ? 0 : woms.getNo().doubleValue();
                 Double length = woms.getLength() == null ? 0 : woms.getLength().doubleValue();
                 Double width = woms.getWidth() == null ? 0 : woms.getWidth().doubleValue();
@@ -1389,7 +1388,7 @@ public class RevisionEstimateService {
                 final WorkOrderActivity workOrderActivity = workOrderActivityService
                         .getWorkOrderActivityByActivity(activity.getParent().getId());
                 if (workOrderActivity != null) {
-                    deriveWorkOrderActivityQuantity(workOrderActivity);
+                    deriveWorkOrderActivityQuantity(workOrderActivity, revisionEstimate.getId());
                     final Double consumedQuantity = mbHeaderService.getPreviousCumulativeQuantity(-1L, workOrderActivity.getId());
                     activity.setConsumedQuantity(consumedQuantity == null ? 0 : consumedQuantity);
                     activity.setEstimateQuantity(workOrderActivity.getApprovedQuantity());
