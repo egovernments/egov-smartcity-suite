@@ -51,7 +51,7 @@
         <constructor-arg name="type" value="org.egov.mrs.domain.entity.MarriageRegistration" />
     </bean>
         
-    <bean id="RegistrationInboxRenderService" class="org.egov.infra.workflow.inbox.DefaultInboxRenderServiceImpl">
+    <bean id="MarriageRegistrationInboxRenderService" class="org.egov.infra.workflow.inbox.DefaultInboxRenderServiceImpl">
          <constructor-arg index="0" ref="RegistrationPersistenceService"/>
     </bean>
     
