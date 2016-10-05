@@ -929,7 +929,7 @@ public class ContractorBillRegisterService {
         return egBilldetails;
     }
     
-    public String getTotalDebitAndCreditAmountByAccountCode(final Long workOrderId,final BigDecimal glCodeId,final Long contractorBillId) {
-        return contractorBillRegisterRepository.findSumOfDebitByAccountCodeForWorkOrder(workOrderId, glCodeId, ContractorBillRegister.BillStatus.APPROVED.toString(),contractorBillId);
+    public String getTotalDebitAndCreditAmountByAccountCode(final Long workOrderEstmateId,final BigDecimal glCodeId,final Long contractorBillId) {
+        return contractorBillRegisterRepository.findSumOfDebitByAccountCodeForWorkOrder(workOrderEstmateId, glCodeId, ContractorBillRegister.BillStatus.APPROVED.toString(),contractorBillId);
     }
 }
