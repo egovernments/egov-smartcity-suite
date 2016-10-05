@@ -39,9 +39,12 @@
  */
 package org.egov.collection.utils;
 
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
 import org.apache.log4j.Logger;
 import org.egov.billsaccounting.services.CreateVoucher;
-import org.egov.billsaccounting.services.VoucherConstant;
 import org.egov.collection.constants.CollectionConstants;
 import org.egov.commons.Bankaccount;
 import org.egov.commons.CChartOfAccounts;
@@ -59,11 +62,6 @@ import org.hibernate.SQLQuery;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 
 /**
  * Utility class for interfacing with financials. This class should be used for
