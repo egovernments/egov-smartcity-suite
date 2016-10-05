@@ -200,8 +200,11 @@ public class MarriageRegistrationService {
         registration.getWife().setReligion(religionService.getProxy(registration.getWife().getReligion().getId()));
         registration.getWitnesses().forEach(witness -> witness.setRegistration(registration));
         registration.setMarriageAct(actService.getAct(registration.getMarriageAct().getId()));
-        registration.setDemand(marriageRegistrationDemandService.createDemand(new BigDecimal(registration.getFeePaid())));
-        registration.setStatus(ApplicationStatus.Created);
+		if (registration.getFeePaid() != null && registration.getDemand() == null){
+			registration.setDemand(
+					marriageRegistrationDemandService.createDemand(new BigDecimal(registration.getFeePaid())));
+		}
+		  registration.setStatus(ApplicationStatus.Created);
 
         if (registration.getPriest().getReligion().getId() != null)
             registration.getPriest().setReligion(religionService.getProxy(registration.getPriest().getReligion().getId()));
@@ -288,7 +291,18 @@ public class MarriageRegistrationService {
         registration.setFeeCriteria(regModel.getFeeCriteria());
         registration.setFeePaid(regModel.getFeePaid());
         registration.setMarriageAct(actService.getAct(registration.getMarriageAct().getId()));
-        registration.setDemand(marriageRegistrationDemandService.createDemand(new BigDecimal(registration.getFeePaid())));
+        
+		if (registration.getFeePaid() != null) {
+			if (registration.getDemand() == null){
+				registration.setDemand(
+						marriageRegistrationDemandService.createDemand(new BigDecimal(registration.getFeePaid())));
+			}
+			else{
+				marriageRegistrationDemandService.updateDemand(registration.getDemand(),
+						new BigDecimal(registration.getFeePaid()));
+			}
+
+		}
         registration.setStatus(ApplicationStatus.Created);
 
         witnessRepository.delete(registration.getWitnesses());

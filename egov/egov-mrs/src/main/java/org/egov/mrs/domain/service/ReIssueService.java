@@ -142,7 +142,9 @@ public class ReIssueService {
         }
 
         reIssue.setStatus(ApplicationStatus.Created);
-        reIssue.setDemand(reIssueDemandService.createDemand(new BigDecimal(reIssue.getFeePaid())));
+        if (reIssue.getFeePaid() != null && reIssue.getDemand() == null){
+        	reIssue.setDemand(reIssueDemandService.createDemand(new BigDecimal(reIssue.getFeePaid())));
+        }
 
         final Map<Long, MarriageDocument> applicantDocumentAndId = new HashMap<Long, MarriageDocument>();
         marriageDocumentService.getReIssueApplicantDocs().forEach(document -> applicantDocumentAndId.put(document.getId(), document));
@@ -208,7 +210,14 @@ public class ReIssueService {
     private void updateReIssueData(final ReIssue reissueModel, final ReIssue reissue) {
         reissue.setFeeCriteria(reissueModel.getFeeCriteria());
         reissue.setFeePaid(reissueModel.getFeePaid());
-        reissue.setDemand(reIssueDemandService.createDemand(new BigDecimal(reissue.getFeePaid())));
+        if (reissueModel.getFeePaid() != null){
+        	if(reissueModel.getDemand() == null){
+        		reissue.setDemand(reIssueDemandService.createDemand(new BigDecimal(reissue.getFeePaid())));
+        	}
+        	else{
+        		reIssueDemandService.updateDemand(reissue.getDemand(),new BigDecimal(reissue.getFeePaid()));
+        	}
+        }
         reissue.setStatus(ApplicationStatus.Created);
 
         updateApplicantInfo(reissueModel.getApplicant(), reissue.getApplicant());

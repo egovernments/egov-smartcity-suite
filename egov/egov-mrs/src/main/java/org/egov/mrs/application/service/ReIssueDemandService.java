@@ -37,7 +37,6 @@
   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
 
-
 package org.egov.mrs.application.service;
 
 import java.math.BigDecimal;
@@ -46,6 +45,7 @@ import java.util.HashSet;
 import java.util.Set;
 
 import org.egov.commons.Installment;
+import org.egov.demand.model.EgDemand;
 import org.egov.demand.model.EgDemandDetails;
 import org.egov.demand.model.EgDemandReason;
 import org.egov.demand.model.EgDemandReasonMaster;
@@ -64,15 +64,29 @@ import org.springframework.stereotype.Service;
 @Service
 public class ReIssueDemandService extends MarriageDemandService {
 
-    @Override
-    public Set<EgDemandDetails> createDemandDetails(final BigDecimal amount) {
-        final Set<EgDemandDetails> demandDetails = new HashSet<EgDemandDetails>();
-        final Module module = moduleService.getModuleByName(MarriageConstants.MODULE_NAME);
-        final Installment installment = installmentDAO.getInsatllmentByModuleForGivenDate(module, new Date());
-        final EgDemandReasonMaster demandReasonMaster = demandGenericDAO.getDemandReasonMasterByCode(FeeType.REISSUE.name(), module);
-        final EgDemandReason demandReason = demandGenericDAO.getDmdReasonByDmdReasonMsterInstallAndMod(demandReasonMaster,
-                installment, module);
-        demandDetails.add(EgDemandDetails.fromReasonAndAmounts(amount, demandReason, BigDecimal.ZERO));
-        return demandDetails;
-    }
+	@Override
+	public Set<EgDemandDetails> createDemandDetails(final BigDecimal amount) {
+		final Set<EgDemandDetails> demandDetails = new HashSet<EgDemandDetails>();
+		final Module module = moduleService.getModuleByName(MarriageConstants.MODULE_NAME);
+		final Installment installment = installmentDAO.getInsatllmentByModuleForGivenDate(module, new Date());
+		final EgDemandReasonMaster demandReasonMaster = demandGenericDAO
+				.getDemandReasonMasterByCode(FeeType.REISSUE.name(), module);
+		final EgDemandReason demandReason = demandGenericDAO
+				.getDmdReasonByDmdReasonMsterInstallAndMod(demandReasonMaster, installment, module);
+		demandDetails.add(EgDemandDetails.fromReasonAndAmounts(amount, demandReason, BigDecimal.ZERO));
+		return demandDetails;
+	}
+
+	@Override
+	public void updateDemand(EgDemand demand, BigDecimal amount) {
+		if (demand != null) {
+			for (final EgDemandDetails dmdDtl : demand.getEgDemandDetails()) {
+				if (dmdDtl.getEgDemandReason().getEgDemandReasonMaster().getCode()
+						.equalsIgnoreCase(FeeType.REISSUE.name())) {
+					dmdDtl.setAmount(amount);
+					dmdDtl.setAmtCollected(BigDecimal.ZERO);
+				}
+			}
+		}
+	}
 }

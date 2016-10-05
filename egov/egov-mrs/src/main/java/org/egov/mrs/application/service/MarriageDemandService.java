@@ -51,6 +51,7 @@ import org.egov.demand.model.EgDemand;
 import org.egov.demand.model.EgDemandDetails;
 import org.egov.infra.admin.master.service.ModuleService;
 import org.egov.mrs.application.MarriageConstants;
+import org.egov.mrs.domain.enums.FeeType;
 import org.springframework.beans.factory.annotation.Autowired;
 
 /**
@@ -89,4 +90,5 @@ public abstract class MarriageDemandService {
     }
 
     public abstract Set<EgDemandDetails> createDemandDetails(BigDecimal amount);
+    public abstract void updateDemand(EgDemand demand, BigDecimal amount) ;
 }
