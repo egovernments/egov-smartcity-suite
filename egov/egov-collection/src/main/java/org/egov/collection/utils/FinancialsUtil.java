@@ -60,12 +60,14 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 /**
- * Utility class for interfacing with financials. This class should be used for calling any financials APIs from erp collections.
+ * Utility class for interfacing with financials. This class should be used for
+ * calling any financials APIs from erp collections.
  */
 public class FinancialsUtil {
     private InstrumentService instrumentService;
@@ -76,11 +78,14 @@ public class FinancialsUtil {
     @Autowired
     private CreateVoucher createVoucher;
     @Autowired
+    private FinancialsVoucherUtil financialsVoucherUtil;
+    @Autowired
     private ChartOfAccountsHibernateDAO chartOfAccountsHibernateDAO;
     private static final Logger LOGGER = Logger.getLogger(FinancialsUtil.class);
 
     /**
-     * @param instrumentService the Instrument Service to set
+     * @param instrumentService
+     *            the Instrument Service to set
      */
     public void setInstrumentService(final InstrumentService instrumentService) {
         this.instrumentService = instrumentService;
@@ -89,7 +94,8 @@ public class FinancialsUtil {
     /**
      * Fetches instrument type object for given instrument type as string
      *
-     * @param type Instrument type as string e.g. cash/cheque
+     * @param type
+     *            Instrument type as string e.g. cash/cheque
      * @return Instrument type object for given instrument type as string
      */
     public InstrumentType getInstrumentTypeByType(final String type) {
@@ -101,7 +107,8 @@ public class FinancialsUtil {
             final List<HashMap<String, Object>> accountCodeList, final List<HashMap<String, Object>> subledgerList) {
         CVoucherHeader voucherHeaderCash = new CVoucherHeader();
         try {
-            voucherHeaderCash = createApprovedVoucher(headerdetails, accountCodeList, subledgerList);
+            voucherHeaderCash = financialsVoucherUtil.createApprovedVoucher(headerdetails, accountCodeList,
+                    subledgerList);
         } catch (final Exception e) {
             LOGGER.error("Error in createBankRemittance createPreApprovalVoucher when cash amount>0");
             throw new ApplicationRuntimeException(
@@ -127,59 +134,17 @@ public class FinancialsUtil {
 
         /* if (!receiptBulkUpload) { */
         if (isVoucherApproved != null && isVoucherApproved)
-            voucherHeader = createApprovedVoucher(headerdetails, accountcodedetails, subledgerdetails);
+            voucherHeader = financialsVoucherUtil.createApprovedVoucher(headerdetails, accountcodedetails,
+                    subledgerdetails);
         else
-            voucherHeader = createPreApprovalVoucher(headerdetails, accountcodedetails, subledgerdetails);
+            voucherHeader = financialsVoucherUtil.createPreApprovalVoucher(headerdetails, accountcodedetails,
+                    subledgerdetails);
         /*
-         * } else voucherHeader = createApprovedVoucher(headerdetails, accountcodedetails, subledgerdetails);
+         * } else voucherHeader = createApprovedVoucher(headerdetails,
+         * accountcodedetails, subledgerdetails);
          */
         LOGGER.info("Logs For HandHeldDevice Permance Test : Voucher Creation Ended...");
         return voucherHeader;
-
-    }
-
-    /**
-     * Get the pre-approval voucher created from financials
-     *
-     * @param headerdetails
-     * @param accountcodedetails
-     * @param subledgerdetails
-     * @return CVoucherHeader
-     */
-
-    public CVoucherHeader createPreApprovalVoucher(final Map<String, Object> headerdetails,
-            final List<HashMap<String, Object>> accountcodedetails, final List<HashMap<String, Object>> subledgerdetails)
-            throws ApplicationRuntimeException {
-        CVoucherHeader voucherHeaders = null;
-        try {
-            if (headerdetails instanceof HashMap)
-                voucherHeaders = createVoucher.createPreApprovedVoucher((HashMap<String, Object>) headerdetails,
-                        accountcodedetails, subledgerdetails);
-        } catch (final ApplicationRuntimeException e) {
-            LOGGER.error("Exception while creating voucher!", e);
-            throw e;
-        }
-        return voucherHeaders;
-    }
-
-    @Transactional
-    public CVoucherHeader createApprovedVoucher(final Map<String, Object> headerdetails,
-            final List<HashMap<String, Object>> accountcodedetails, final List<HashMap<String, Object>> subledgerdetails) {
-
-        CVoucherHeader voucherHeaders = null;
-        try {
-            if (headerdetails instanceof HashMap) {
-
-                // fetch from eg_modules once have master data in place
-                headerdetails.put(VoucherConstant.MODULEID, "10");
-                voucherHeaders = createVoucher.createVoucher((HashMap<String, Object>) headerdetails,
-                        accountcodedetails, subledgerdetails);
-            }
-        } catch (final ApplicationRuntimeException e) {
-            LOGGER.error("Exception while creating voucher!", e);
-            throw e;
-        }
-        return voucherHeaders;
 
     }
 
@@ -217,7 +182,8 @@ public class FinancialsUtil {
     }
 
     /**
-     * Create Instrument Header for list of HashMap of instrument header properties
+     * Create Instrument Header for list of HashMap of instrument header
+     * properties
      *
      * @param paramList
      * @return List of InstrumentHeader
@@ -228,10 +194,11 @@ public class FinancialsUtil {
     }
 
     /**
-     * Update Cheque/DD/Card Instrument Status after creating Bank Remittance Voucher(if the Bank Remittance voucher type is
-     * Contra)
+     * Update Cheque/DD/Card Instrument Status after creating Bank Remittance
+     * Voucher(if the Bank Remittance voucher type is Contra)
      *
-     * @param Map containing Instrument and PayInSlip voucher information
+     * @param Map
+     *            containing Instrument and PayInSlip voucher information
      */
 
     @Transactional
@@ -239,11 +206,18 @@ public class FinancialsUtil {
         contraService.updateCheque_DD_Card_Deposit(instrumentMap);
     }
 
+    @Transactional
+    public void updateCheque_DD_Card_Deposit(final Map instrumentMap, CVoucherHeader cVoucherHeader,
+            InstrumentHeader instrumentHeader, Bankaccount bankaccount) {
+        contraService.updateCheque_DD_Card_Deposit(instrumentMap,cVoucherHeader,instrumentHeader,bankaccount);
+    }
+
     /**
-     * Update Cheque/DD/Card Instrument Status after creating Bank Remittance Voucher(if the Bank Remittance voucher type is
-     * Receipt)
+     * Update Cheque/DD/Card Instrument Status after creating Bank Remittance
+     * Voucher(if the Bank Remittance voucher type is Receipt)
      *
-     * @param Map containing Instrument and PayInSlip voucher information
+     * @param Map
+     *            containing Instrument and PayInSlip voucher information
      */
 
     @Transactional
@@ -254,15 +228,24 @@ public class FinancialsUtil {
     /**
      * Update Cash Instrument Status after creating Pay in Slip Voucher
      * 
-     * @param Map containing Instrument and PayInSlip voucher information
+     * @param Map
+     *            containing Instrument and PayInSlip voucher information
      */
+    @Deprecated
     @Transactional
     public void updateCashDeposit(Map<String, Object> instrumentMap) {
         contraService.updateCashDeposit(instrumentMap);
     }
 
+    @Transactional
+    public void updateCashDeposit(Map<String, Object> instrumentMap, CVoucherHeader cVoucherHeader,
+            InstrumentHeader instrumentHeader, Bankaccount bankaccount) {
+        contraService.updateCashDeposit(instrumentMap, cVoucherHeader, instrumentHeader, bankaccount);
+    }
+
     /**
-     * @param contraService the contraService to set
+     * @param contraService
+     *            the contraService to set
      */
     public void setContraService(final ContraService contraService) {
         this.contraService = contraService;
@@ -271,7 +254,8 @@ public class FinancialsUtil {
     /**
      * Checks whether given account is a revenue account (cash/cheque in hand)
      *
-     * @param coa the account object
+     * @param coa
+     *            the account object
      * @return true if the account is a revenue account, else false
      */
     @SuppressWarnings("unchecked")
