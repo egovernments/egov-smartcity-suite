@@ -122,6 +122,7 @@
 			</div>
 			<div class="tab-pane fade" id="overheads">
 				<%@ include file="abstractestimate-viewoverheads.jsp"%>
+				<jsp:include page="abstractestimate-viewdeduction.jsp" />
 			</div>
 			<div class="tab-pane fade" id="assetandfinancials">
 				<%@ include file="abstractestimate-viewfinancialdetails.jsp"%>
