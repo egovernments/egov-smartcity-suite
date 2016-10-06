@@ -61,11 +61,13 @@ import org.egov.api.model.ComplaintSearchRequest;
 import org.egov.config.search.Index;
 import org.egov.config.search.IndexType;
 import org.egov.infra.admin.master.entity.CrossHierarchy;
+import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.admin.master.service.BoundaryService;
 import org.egov.infra.admin.master.service.CrossHierarchyService;
 import org.egov.infra.admin.master.service.DepartmentService;
 import org.egov.infra.exception.ApplicationRuntimeException;
 import org.egov.infra.filestore.entity.FileStoreMapper;
+import org.egov.infra.persistence.entity.enums.UserType;
 import org.egov.infra.security.utils.SecurityUtils;
 import org.egov.infra.utils.FileStoreUtils;
 import org.egov.infra.utils.StringUtils;
@@ -320,6 +322,46 @@ public class ComplaintController extends ApiController {
     		JSONObject complaintRequest=(JSONObject)JSONValue.parse(complaintJSON);
     		
             final Complaint complaint = new Complaint();
+                        
+            
+            
+            if (securityUtils.currentUserType().equals(UserType.EMPLOYEE)) {
+            	
+            	if(complaintRequest.containsKey("complainantName") && 
+            			complaintRequest.containsKey("complainantMobileNo"))
+            	{
+            		
+            		if(StringUtils.isEmpty(complaintRequest.get("complainantName").toString()) || StringUtils.isEmpty(complaintRequest.get("complainantMobileNo").toString()))
+            		{
+            			return getResponseHandler().error(getMessage("msg.complaint.reg.failed.user"));
+            		}
+            		
+            		complaint.getComplainant().setName(complaintRequest.get("complainantName").toString());
+                    complaint.getComplainant().setMobile(complaintRequest.get("complainantMobileNo").toString());
+                    
+                    if(complaintRequest.containsKey("complainantEmail")){
+                    String email=complaintRequest.get("complainantEmail").toString();
+                    	if(!email.matches("^[A-Za-z0-9+_.-]+@(.+)$")){
+                    		return getResponseHandler().error(getMessage("msg.invalid.mail"));
+                    	}
+                    	complaint.getComplainant().setEmail(email);
+                    }
+                    
+            	}
+            	else if(!complaintRequest.containsKey("complainantName") && 
+            			!complaintRequest.containsKey("complainantMobileNo") &&
+            			!complaintRequest.containsKey("complainantEmail")){
+            		User currentUser=securityUtils.getCurrentUser();
+            		complaint.getComplainant().setName(currentUser.getUsername());
+                    complaint.getComplainant().setMobile(currentUser.getMobileNumber());
+                    if(!StringUtils.isEmpty(currentUser.getEmailId()))
+            		complaint.getComplainant().setEmail(currentUser.getEmailId());
+            	}
+            	else{
+            		return getResponseHandler().error(getMessage("msg.complaint.reg.failed.user"));
+            	}
+            }
+            
             final long complaintTypeId = (long) complaintRequest.get("complaintTypeId");
             if (complaintRequest.get("locationId") != null && (long) complaintRequest.get("locationId") > 0) {
                 final long locationId = (long) complaintRequest.get("locationId");
