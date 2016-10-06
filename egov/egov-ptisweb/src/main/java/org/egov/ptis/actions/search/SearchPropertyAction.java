@@ -928,91 +928,91 @@ public class SearchPropertyAction extends BaseFormAction {
     
     @Action(value = "/search/searchproperty-alter-assessment")
     public String alterAssessment() {
-        setApplicationType(PropertyTaxConstants.APPLICATION_TYPE_ALTER_ASSESSENT);
+        setApplicationType(APPLICATION_TYPE_ALTER_ASSESSENT);
         return commonForm();
     }
     
     @Action(value = "/search/searchproperty-bifurcation")
     public String bifurcation() {
-        setApplicationType(PropertyTaxConstants.APPLICATION_TYPE_BIFURCATE_ASSESSENT);
+        setApplicationType(APPLICATION_TYPE_BIFURCATE_ASSESSENT);
         return commonForm();
     }
     
     @Action(value = "/search/searchproperty-taxexemption")
     public String taxExemption() {
-        setApplicationType(PropertyTaxConstants.APPLICATION_TYPE_TAX_EXEMTION);
+        setApplicationType(APPLICATION_TYPE_TAX_EXEMTION);
         return commonForm();
     }
     
     @Action(value = "/search/searchproperty-editcollection")
     public String editCollection() {
-        setApplicationType(PropertyTaxConstants.APPLICATION_TYPE_EDIT_COLLECTION);
+        setApplicationType(APPLICATION_TYPE_EDIT_COLLECTION);
         return commonForm();
     }
     
     @Action(value = "/search/searchproperty-editdemand")
     public String editDemand() {
-        setApplicationType(PropertyTaxConstants.APPLICATION_TYPE_EDIT_DEMAND);
+        setApplicationType(APPLICATION_TYPE_EDIT_DEMAND);
         return commonForm();
     }
     
     @Action(value = "/search/searchproperty-transferownership")
     public String transferOwnership() {
-        setApplicationType(PropertyTaxConstants.APPLICATION_TYPE_TRANSFER_OF_OWNERSHIP);
+        setApplicationType(APPLICATION_TYPE_TRANSFER_OF_OWNERSHIP);
         return commonForm();
     }
     
     @Action(value = "/search/searchproperty-collecttax")
     public String collectTax() {
-        setApplicationType(PropertyTaxConstants.APPLICATION_TYPE_COLLECT_TAX);
+        setApplicationType(APPLICATION_TYPE_COLLECT_TAX);
         return commonForm();
     }
     
     @Action(value = "/search/searchproperty-revisionpetition")
     public String revisionPetition() {
-        setApplicationType(PropertyTaxConstants.APPLICATION_TYPE_REVISION_PETITION);
+        setApplicationType(APPLICATION_TYPE_REVISION_PETITION);
         return commonForm();
     }
     
     @Action(value = "/search/searchproperty-general-revisionpetition")
     public String generalRevisionPetition() {
-        setApplicationType(PropertyTaxConstants.APPLICATION_TYPE_GRP);
+        setApplicationType(APPLICATION_TYPE_GRP);
         return commonForm();
     }
     
     @Action(value = "/search/searchproperty-demolition")
     public String demolition() {
-        setApplicationType(PropertyTaxConstants.APPLICATION_TYPE_DEMOLITION);
+        setApplicationType(APPLICATION_TYPE_DEMOLITION);
         return commonForm();
     }
     
     @Action(value = "/search/searchproperty-vacancyremission")
     public String vacancyRemission() {
-        setApplicationType(PropertyTaxConstants.APPLICATION_TYPE_VACANCY_REMISSION);
+        setApplicationType(APPLICATION_TYPE_VACANCY_REMISSION);
         return commonForm();
     }
     
     @Action(value = "/search/searchproperty-generatedemandbill")
     public String generateDemandBill() {
-        setApplicationType(PropertyTaxConstants.APPLICATION_TYPE_DEMAND_BILL);
+        setApplicationType(APPLICATION_TYPE_DEMAND_BILL);
         return commonForm();
     }
     
     @Action(value = "/search/searchproperty-editdataentry")
     public String editDataEntry() {
-        setApplicationType(PropertyTaxConstants.APPLICATION_TYPE_MODIFY_DATA_ENTRY);
+        setApplicationType(APPLICATION_TYPE_MODIFY_DATA_ENTRY);
         return commonForm();
     }
     
     @Action(value = "/search/searchproperty-editownerdetails")
     public String editOwnerDetails() {
-        setApplicationType(PropertyTaxConstants.APPLICATION_TYPE_EDIT_OWNER);
+        setApplicationType(APPLICATION_TYPE_EDIT_OWNER);
         return commonForm();
     }
     
     @Action(value = "/search/searchproperty-adddemand")
     public String AddDemand() {
-        setApplicationType(PropertyTaxConstants.APPLICATION_TYPE_ADD_DEMAND);
+        setApplicationType(APPLICATION_TYPE_ADD_DEMAND);
         return commonForm();
     }
 
