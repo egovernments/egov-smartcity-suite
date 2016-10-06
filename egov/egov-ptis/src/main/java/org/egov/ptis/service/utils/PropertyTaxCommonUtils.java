@@ -64,8 +64,8 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.TreeMap;
 import java.util.Map.Entry;
+import java.util.TreeMap;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
@@ -73,14 +73,14 @@ import javax.persistence.PersistenceContext;
 import org.apache.log4j.Logger;
 import org.egov.collection.constants.CollectionConstants;
 import org.egov.collection.entity.ReceiptHeader;
-import org.egov.commons.CFinancialYear;
 import org.egov.commons.Installment;
-import org.egov.commons.dao.FinancialYearDAO;
+import org.egov.commons.dao.InstallmentDao;
 import org.egov.eis.service.PositionMasterService;
 import org.egov.infra.admin.master.entity.AppConfigValues;
+import org.egov.infra.admin.master.entity.Module;
 import org.egov.infra.admin.master.service.AppConfigValueService;
+import org.egov.infra.admin.master.service.ModuleService;
 import org.egov.infra.exception.ApplicationRuntimeException;
-import org.egov.pims.commons.Designation;
 import org.egov.pims.commons.Position;
 import org.egov.ptis.client.util.PropertyTaxUtil;
 import org.egov.ptis.constants.PropertyTaxConstants;
@@ -104,13 +104,17 @@ public class PropertyTaxCommonUtils {
     @Autowired
     private PropertyTaxUtil propertyTaxUtil;
     
-    private FinancialYearDAO financialYearDAO;
-    
     @Autowired
     private ApplicationContext beanProvider;
 
     @Autowired
     private PositionMasterService positionMasterService;
+    
+    @Autowired
+    private ModuleService moduleService;
+    
+    @Autowired
+    private InstallmentDao installmentDao;
     
 
     /**
@@ -288,6 +292,16 @@ public class PropertyTaxCommonUtils {
         ReceiptHeader receiptHeader = (ReceiptHeader) qry.getSingleResult();
         return receiptHeader.getStatus().getCode().equals(CollectionConstants.RECEIPT_STATUS_CODE_CANCELLED)
                 ? Boolean.TRUE : Boolean.FALSE;
+    }
+    
+    /**
+     * API to get the current installment period
+     * 
+     * @return installment
+     */
+    public Installment getCurrentPeriodInstallment() {
+        final Module module = moduleService.getModuleByName(PTMODULENAME);
+        return installmentDao.getInsatllmentByModuleForGivenDate(module, new Date());
     }
 
 }
