@@ -103,17 +103,22 @@ public class SewerageCloseConnectionController extends GenericWorkFlowController
     @Autowired
     private AssignmentService assignmentService;
     
-    private static final Logger logger = Logger.getLogger(SewerageCloseConnectionController.class);
-
-    
     @RequestMapping(value = "/closeConnection/{shscNumber}", method = RequestMethod.GET)
     public String view(@ModelAttribute SewerageApplicationDetails sewerageApplicationDetails, final Model model,
             @PathVariable final String shscNumber, final HttpServletRequest request) {   
-        
+        String taxDue =null;
         final SewerageConnection sewerageConnection = sewerageConnectionService.findByShscNumber(shscNumber);
         final SewerageApplicationDetails sewerageApplicationDetailsFromDB = sewerageApplicationDetailsService
                 .findByConnection_ShscNumberAndIsActive(shscNumber);
         sewerageApplicationDetails.setConnection(sewerageConnection);
+        
+        if(sewerageApplicationDetailsFromDB!=null)
+           
+            taxDue = sewerageApplicationDetailsService.validatePendingDemandAmount(sewerageApplicationDetailsFromDB);
+            if((Double.valueOf(taxDue))>0){
+                model.addAttribute("message", "msg.validate.demandamountdue");
+                return "common-error";
+            }
         
         final AssessmentDetails propertyOwnerDetails = sewerageThirdPartyServices.getPropertyDetails(shscNumber, request);
         if(propertyOwnerDetails!=null){

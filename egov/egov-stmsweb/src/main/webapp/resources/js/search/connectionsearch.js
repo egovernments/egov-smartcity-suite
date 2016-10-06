@@ -121,6 +121,7 @@ $(document).on('change', 'select.actiondropdown', function() {
 		}  
 	else if($(this).find(":selected").text()=="Close Sewerage Connection"){
 		var closeconnectionurl=$(this).val();
+		var consumerno = $(this).data('consumer-no');
 		jQuery.ajax({
 			url: "/stms/ajaxconnection/check-application-inworkflow/"+shscnumber,
 			type: "GET",
@@ -134,7 +135,7 @@ $(document).on('change', 'select.actiondropdown', function() {
 				return false;
 				}
 				else{
-					loadPropertyDetails(closeconnectionurl, $(this).data('consumer-no'), shscnumber,ptassessmentno);
+					loadPropertyDetails(closeconnectionurl, consumerno, shscnumber,ptassessmentno);
 				}
 			},
 			error: function (response) {

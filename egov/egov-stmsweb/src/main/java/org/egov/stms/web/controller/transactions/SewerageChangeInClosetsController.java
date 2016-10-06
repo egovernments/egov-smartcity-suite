@@ -46,7 +46,6 @@ import java.util.List;
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 
-import org.egov.commons.service.UOMService;
 import org.egov.eis.entity.Assignment;
 import org.egov.eis.service.AssignmentService;
 import org.egov.eis.web.contract.WorkflowContainer;
@@ -64,13 +63,11 @@ import org.egov.stms.masters.entity.enums.SewerageConnectionStatus;
 import org.egov.stms.masters.service.DocumentTypeMasterService;
 import org.egov.stms.masters.service.FeesDetailMasterService;
 import org.egov.stms.masters.service.SewerageApplicationTypeService;
-import org.egov.stms.transactions.charges.SewerageChargeCalculationService;
 import org.egov.stms.transactions.entity.SewerageApplicationDetails;
 import org.egov.stms.transactions.entity.SewerageApplicationDetailsDocument;
 import org.egov.stms.transactions.entity.SewerageConnection;
 import org.egov.stms.transactions.entity.SewerageConnectionFee;
 import org.egov.stms.transactions.service.SewerageApplicationDetailsService;
-import org.egov.stms.transactions.service.SewerageConnectionFeeService;
 import org.egov.stms.transactions.service.SewerageConnectionService;
 import org.egov.stms.transactions.service.SewerageThirdPartyServices;
 import org.egov.stms.utils.SewerageTaxUtils;
@@ -102,19 +99,10 @@ public class SewerageChangeInClosetsController extends GenericWorkFlowController
     private SecurityUtils securityUtils;
 
     @Autowired
-    private UOMService uOMService;
-
-    @Autowired
     private FeesDetailMasterService feesDetailMasterService;
 
     @Autowired
-    private SewerageConnectionFeeService SewerageConnectionFeeService;
-
-    @Autowired
     private SewerageConnectionService sewerageConnectionService;
-
-    @Autowired
-    private SewerageChargeCalculationService sewerageChargeCalculationService;
 
     @Autowired
     private SewerageApplicationTypeService sewerageApplicationTypeService;
@@ -130,7 +118,7 @@ public class SewerageChangeInClosetsController extends GenericWorkFlowController
 
     @Autowired
     private PropertyExternalService propertyExternalService;
-
+    
     @Autowired
     public SewerageChangeInClosetsController(final SewerageApplicationDetailsService sewerageApplicationDetailsService,
             final SewerageTaxUtils sewerageTaxUtils) {
@@ -141,12 +129,19 @@ public class SewerageChangeInClosetsController extends GenericWorkFlowController
     @RequestMapping(value = "/modifyConnection/{shscNumber}", method = RequestMethod.GET)
     public String showNewApplicationForm(@ModelAttribute final SewerageApplicationDetails sewerageApplicationDetails,
             @PathVariable final String shscNumber, final Model model, final HttpServletRequest request) {
+        String taxDue =null;
         final SewerageConnection sewerageConnection = sewerageConnectionService.findByShscNumber(shscNumber);
         final SewerageApplicationDetails sewerageApplicationDetailsFromDB = sewerageApplicationDetailsService
                 .findByConnection_ShscNumberAndIsActive(shscNumber);
 
         sewerageApplicationDetails.setConnection(sewerageConnection);
-
+        if(sewerageApplicationDetailsFromDB!=null)
+        taxDue = sewerageApplicationDetailsService.validatePendingDemandAmount(sewerageApplicationDetailsFromDB);
+        if((Double.valueOf(taxDue))>0){
+            model.addAttribute("message", "msg.validate.demandamountdue");
+            return "common-error";
+        }
+        
         final SewerageApplicationType applicationType = sewerageApplicationTypeService
                 .findByCode(SewerageTaxConstants.CHANGEINCLOSETS);
         sewerageApplicationDetails.setApplicationType(applicationType);
