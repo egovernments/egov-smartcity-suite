@@ -58,7 +58,7 @@
 	                <c:otherwise>
 	                	<c:choose>
 							<c:when test="${registration.applicationNo != 'null'}">
-								Marriage is registered with application no : <strong><c:out value="${registration.applicationNo}"></c:out></strong>, <br /> Please use this for your any future references.
+								Marriage is registered with application no : <strong><c:out value="${ackNumber}"></c:out></strong>, <br /> Please use this for your any future references.
 							</c:when>
 							<c:otherwise>
 								Registration is successful...!!
