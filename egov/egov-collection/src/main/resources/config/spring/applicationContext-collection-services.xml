@@ -162,14 +162,6 @@
 		<property name="reconciliationService" ref="reconciliationService" />
 	</bean>
 
-	<bean class="org.egov.collection.integration.services.DishonorChequeService"
-		id="dishonorChequeService">
-		<property name="persistenceService" ref="persistenceService" />
-		<property name="receiptHeaderService" ref="receiptHeaderService" />
-		<property name="collectionsUtil" ref="collectionsUtil" />
-		<property name="financialsUtil" ref="financialsUtil" />
-	</bean>
-
 	<bean id="challanPersistenceService" class="org.egov.infstr.services.PersistenceService">
 		<constructor-arg index="0" value="org.egov.collection.entity.Challan" />
 	</bean>

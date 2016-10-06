@@ -88,6 +88,7 @@
 		doLoadingMask();
 		var value = new Array();
 		var voucherHeaderIds = new Array();
+		var receiptHeaderIds = new Array();
 		var dishonorcheck = document.getElementsByName("selectedCheque");
 		var receiptHdrId = document.getElementsByName("receiptHeaderId");
 		var instrmntHdrId = document.getElementsByName("instrumentHeaderId");
@@ -112,6 +113,7 @@
 			if (receiptId != "") {
 				value[x++] = instrmndId;
 				voucherHeaderIds[x-1] = voucherId;
+				receiptHeaderIds[x-1] = receiptId;
 				for (var j = i + 1; j < len; j++) {
 					if (dishonorcheck[j].checked) {
 						if (receiptId == receiptHdrId[j].value) {
@@ -167,7 +169,7 @@
 					  {
 					  console.log("referenceNum" + referenceNum);  
 						  document.dishonorForm.action = '/collection/receipts/dishonoredCheque-process.action?instHeaderIds='
-							+ value+'&voucherHeaderIds='+voucherHeaderIds+'&referenceNo='+referenceNum;
+							+ value+'&voucherHeaderIds='+voucherHeaderIds+'&referenceNo='+referenceNum + '&receiptHeaderIds=' + receiptHeaderIds;
 						  document.dishonorForm.submit();
 					  }
 				  else

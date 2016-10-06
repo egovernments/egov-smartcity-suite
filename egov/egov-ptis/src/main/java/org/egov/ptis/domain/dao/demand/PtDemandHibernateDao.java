@@ -49,7 +49,6 @@ import org.egov.demand.model.EgDemandDetails;
 import org.egov.demand.model.EgDemandReason;
 import org.egov.infra.admin.master.entity.Boundary;
 import org.egov.infra.admin.master.entity.Module;
-import org.egov.infra.admin.master.service.ModuleService;
 import org.egov.ptis.client.util.PropertyTaxUtil;
 import org.egov.ptis.constants.PropertyTaxConstants;
 import org.egov.ptis.domain.dao.property.PropertyDAO;
@@ -82,8 +81,7 @@ import static org.egov.ptis.constants.PropertyTaxConstants.CURRENTYEAR_SECOND_HA
 public class PtDemandHibernateDao implements PtDemandDao {
     private static final String BILLID_PARAM = "billid";
     private static final String PROPERTY = "property";
-    @Autowired
-    private ModuleService moduleDao;
+    @SuppressWarnings("rawtypes")
     @Autowired
     private InstallmentHibDao installmentDao;
     @Autowired
@@ -150,6 +148,7 @@ public class PtDemandHibernateDao implements PtDemandDao {
      * @return Character of 'Y' or 'N'.
      */
 
+    @SuppressWarnings("unchecked")
     @Override
     public Character whetherBillExistsForProperty(final Property property, final String billnum, final Module module) {
         Character status = null;
@@ -226,6 +225,7 @@ public class PtDemandHibernateDao implements PtDemandDao {
     // Here divBoundary is used because in some Property Tax Applications(like
     // COC) propertyId is not unique ,It is unique within the Division Boundary
     // check the demandReasonMaster list . It is not working
+    @SuppressWarnings("rawtypes")
     @Override
     public List getDmdDetailsByPropertyIdBoundary(final BasicProperty basicProperty, final Boundary divBoundary) {
         String divStatus = "N";
@@ -254,6 +254,7 @@ public class PtDemandHibernateDao implements PtDemandDao {
         return list;
     }
 
+    @SuppressWarnings("rawtypes")
     public List getTransactionByBasicProperty(final BasicProperty basicProperty, final Installment installment,
             final String is_cancelled) {
         Query qry = null;
@@ -285,8 +286,9 @@ public class PtDemandHibernateDao implements PtDemandDao {
      * @return Map<EgDemandReason,Amount>.
      */
 
+    @SuppressWarnings({ "rawtypes", "unchecked" })
     @Override
-    public Map getAllDemands(final BasicProperty basicProperty, final Boundary divBoundary) {
+    public Map<EgDemandReason, BigDecimal> getAllDemands(final BasicProperty basicProperty, final Boundary divBoundary) {
         List<EgDemandDetails> demandDetailsList;
         BigDecimal amount = BigDecimal.ZERO;
         demandDetailsList = getDmdDetailsByPropertyIdBoundary(basicProperty, divBoundary);
@@ -334,6 +336,7 @@ public class PtDemandHibernateDao implements PtDemandDao {
         return amounts;
     }
 
+    @SuppressWarnings("rawtypes")
     @Override
     public Map<String, BigDecimal> getDemandCollMap(final Property property) {
         final Ptdemand currDemand = getNonHistoryCurrDmdForProperty(property);
@@ -385,6 +388,7 @@ public class PtDemandHibernateDao implements PtDemandDao {
         return retMap;
     }
 
+    @SuppressWarnings("rawtypes")
     @Override
     public Map<String, BigDecimal> getPenaltyDemandCollMap(final Property property) {
         final Ptdemand currDemand = getNonHistoryCurrDmdForProperty(property);
@@ -404,7 +408,7 @@ public class PtDemandHibernateDao implements PtDemandDao {
             final Object[] listObj = (Object[]) object;
             instId = Integer.valueOf(listObj[0].toString());
             installment = (Installment) installmentDao.findById(instId, false);
-            if (currInst.equals(installment)) {
+            if (installment.equals(currInst)) {
                 if (listObj[2] != null && !new BigDecimal((Double) listObj[2]).equals(BigDecimal.ZERO))
                     currPenaltyColl = currPenaltyColl.add(new BigDecimal((Double) listObj[2]));
                 if (listObj[3] != null && !new BigDecimal((Double) listObj[3]).equals(BigDecimal.ZERO))
@@ -450,11 +454,6 @@ public class PtDemandHibernateDao implements PtDemandDao {
             qry.setEntity(PROPERTY, property);
             qry.setDate("fromYear", currentFinancialYear.getStartingDate());
             qry.setDate("toYear", currentFinancialYear.getStartingDate());
-            /*
-             * if (qry.list().size() == 1) { egptPtdemand = (Ptdemand)
-             * qry.uniqueResult(); } else { egptPtdemand = (Ptdemand)
-             * qry.list().get(0); }
-             */
 
             final List<Ptdemand> ptDemandResult = qry.list();
             if (ptDemandResult != null && ptDemandResult.size() > 0)
@@ -465,25 +464,21 @@ public class PtDemandHibernateDao implements PtDemandDao {
 
     @Override
     public List findAll() {
-        // TODO Auto-generated method stub
         return null;
     }
 
     @Override
     public Ptdemand findById(final Integer id, final boolean lock) {
-        // TODO Auto-generated method stub
         return null;
     }
 
     @Override
     public Ptdemand create(final Ptdemand ptdemand) {
-        // TODO Auto-generated method stub
         return null;
     }
 
     @Override
     public void delete(final Ptdemand ptdemand) {
-        // TODO Auto-generated method stub
 
     }
 
@@ -497,6 +492,7 @@ public class PtDemandHibernateDao implements PtDemandDao {
     @SuppressWarnings("unchecked")
     public List<Object> getPropertyTaxDetails(final String assessmentNo) {
         List<Object> list = new ArrayList<Object>();
+        CFinancialYear currentFinancialYear = financialYearDAO.getFinancialYearByDate(new Date());
         String selectQuery = " select drm.code, inst.description, dd.amount, dd.amt_collected "
                 + " from egpt_basic_property bp, egpt_property prop, egpt_ptdemand ptd, eg_demand d, eg_demand_details dd, eg_demand_reason dr, eg_demand_reason_master drm, eg_installment_master inst "
                 + " where bp.id = prop.id_basic_property and prop.status  in ('A','I') "
@@ -505,10 +501,13 @@ public class PtDemandHibernateDao implements PtDemandDao {
                 + " and dd.id_demand_reason = dr.id and drm.id = dr.id_demand_reason_master "
                 + " and dr.id_installment = inst.id and bp.propertyid =:assessmentNo"
                 + " and dd.amount > dd.amt_collected  "
-                + " and d.id_installment =(select id from eg_installment_master where now() between start_date and end_date and id_module=(select id from eg_module where name='Property Tax' ))  ";
+                + " and d.id_installment =(select id from eg_installment_master "
+                + " where start_date <= :fromYear and end_date >=:toYear and id_module=(select id from eg_module where name='Property Tax' ))  ";
         selectQuery = selectQuery + " order by inst.description desc ";
 
-        final Query qry = getCurrentSession().createSQLQuery(selectQuery).setString("assessmentNo", assessmentNo);
+        final Query qry = getCurrentSession().createSQLQuery(selectQuery).setString("assessmentNo", assessmentNo)
+                .setDate("fromYear", currentFinancialYear.getStartingDate())
+                .setDate("toYear", currentFinancialYear.getStartingDate());
         list = qry.list();
         return list;
     }

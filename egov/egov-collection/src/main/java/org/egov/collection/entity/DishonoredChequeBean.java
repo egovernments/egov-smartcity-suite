@@ -40,6 +40,7 @@
 package org.egov.collection.entity;
 
 import java.math.BigDecimal;
+import java.util.Date;
 
 public class DishonoredChequeBean {
     
@@ -56,6 +57,25 @@ public class DishonoredChequeBean {
     private Long receiptHeaderid;
     private Long instrumentHeaderid;
     private Long voucherHeaderId;
+    private String receiptHeaderIds;
+    private String glcodeId;
+    private String functionId;
+    private String glcode;
+    private String debitAmount;
+    private String creditAmount;
+    private String detailKeyId;
+    private String detailTypeId;
+    private String amount;
+   
+
+    private Date transactionDate;
+    private String dishonorReason;
+    private String remarks;
+    private String referenceNo;
+    private String instHeaderIds;
+    private String voucherHeaderIds;
+    private String receiptGLDetails;
+    private String remittanceGLDetails;
 
     public String getReceiptNumber() {
         return receiptNumber;
@@ -159,6 +179,142 @@ public class DishonoredChequeBean {
 
     public void setVoucherHeaderId(Long voucherHeaderId) {
         this.voucherHeaderId = voucherHeaderId;
+    }
+
+    public String getReceiptHeaderIds() {
+        return receiptHeaderIds;
+    }
+
+    public void setReceiptHeaderIds(String receiptHeaderIds) {
+        this.receiptHeaderIds = receiptHeaderIds;
+    }
+
+    public String getGlcodeId() {
+        return glcodeId;
+    }
+
+    public void setGlcodeId(String glcodeId) {
+        this.glcodeId = glcodeId;
+    }
+
+    public String getFunctionId() {
+        return functionId;
+    }
+
+    public void setFunctionId(String functionId) {
+        this.functionId = functionId;
+    }
+
+    public String getGlcode() {
+        return glcode;
+    }
+
+    public void setGlcode(String glcode) {
+        this.glcode = glcode;
+    }
+
+    public String getDebitAmount() {
+        return debitAmount;
+    }
+
+    public void setDebitAmount(String debitAmount) {
+        this.debitAmount = debitAmount;
+    }
+
+    public String getCreditAmount() {
+        return creditAmount;
+    }
+
+    public void setCreditAmount(String creditAmount) {
+        this.creditAmount = creditAmount;
+    }
+
+    public String getDetailKeyId() {
+        return detailKeyId;
+    }
+
+    public void setDetailKeyId(String detailKeyId) {
+        this.detailKeyId = detailKeyId;
+    }
+
+    public String getDetailTypeId() {
+        return detailTypeId;
+    }
+
+    public void setDetailTypeId(String detailTypeId) {
+        this.detailTypeId = detailTypeId;
+    }
+
+    public String getAmount() {
+        return amount;
+    }
+
+    public void setAmount(String amount) {
+        this.amount = amount;
+    }
+
+    public Date getTransactionDate() {
+        return transactionDate;
+    }
+
+    public void setTransactionDate(Date transactionDate) {
+        this.transactionDate = transactionDate;
+    }
+
+    public String getDishonorReason() {
+        return dishonorReason;
+    }
+
+    public void setDishonorReason(String dishonorReason) {
+        this.dishonorReason = dishonorReason;
+    }
+
+    public String getRemarks() {
+        return remarks;
+    }
+
+    public void setRemarks(String remarks) {
+        this.remarks = remarks;
+    }
+
+    public String getReferenceNo() {
+        return referenceNo;
+    }
+
+    public void setReferenceNo(String referenceNo) {
+        this.referenceNo = referenceNo;
+    }
+
+    public String getInstHeaderIds() {
+        return instHeaderIds;
+    }
+
+    public void setInstHeaderIds(String instHeaderIds) {
+        this.instHeaderIds = instHeaderIds;
+    }
+
+    public String getVoucherHeaderIds() {
+        return voucherHeaderIds;
+    }
+
+    public void setVoucherHeaderIds(String voucherHeaderIds) {
+        this.voucherHeaderIds = voucherHeaderIds;
+    }
+
+    public String getReceiptGLDetails() {
+        return receiptGLDetails;
+    }
+
+    public void setReceiptGLDetails(String receiptGLDetails) {
+        this.receiptGLDetails = receiptGLDetails;
+    }
+
+    public String getRemittanceGLDetails() {
+        return remittanceGLDetails;
+    }
+
+    public void setRemittanceGLDetails(String remittanceGLDetails) {
+        this.remittanceGLDetails = remittanceGLDetails;
     }
 
    
