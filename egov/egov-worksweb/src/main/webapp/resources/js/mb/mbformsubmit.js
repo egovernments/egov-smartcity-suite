@@ -88,6 +88,7 @@ function validateWorkFlowApprover(name) {
 					return false;
 				} else {
 					validateSORDetails();
+					$("#mbHeaderTab").find('input,button,textarea').prop('disabled',false);
 					document.forms[0].submit();
 				}
 			});
@@ -110,6 +111,8 @@ function validateWorkFlowApprover(name) {
 	}
 	
 	if(flag && $('#mbHeader').valid()) {
+		deleteEmptyRows();
+		$("#mbHeaderTab").find('input,button,textarea').prop('disabled',false);
 		document.forms[0].submit;
 		return true;
 	} else

@@ -57,6 +57,10 @@ import javax.validation.constraints.Max;
 import org.egov.infra.persistence.entity.AbstractAuditable;
 import org.egov.infra.persistence.validator.annotation.Required;
 import org.egov.works.workorder.entity.WorkOrderMeasurementSheet;
+import org.hibernate.envers.AuditOverride;
+import org.hibernate.envers.AuditOverrides;
+import org.hibernate.envers.Audited;
+import org.hibernate.envers.NotAudited;
 import org.hibernate.validator.constraints.Length;
 
 /**
@@ -65,7 +69,11 @@ import org.hibernate.validator.constraints.Length;
 @Entity
 @Table(name = "EGW_MB_MEASUREMENTSHEET")
 @SequenceGenerator(name = MBMeasurementSheet.SEQ, sequenceName = MBMeasurementSheet.SEQ, allocationSize = 1)
-
+@AuditOverrides({
+    @AuditOverride(forClass = AbstractAuditable.class, name = "lastModifiedBy"),
+    @AuditOverride(forClass = AbstractAuditable.class, name = "lastModifiedDate")
+})
+@Audited
 public class MBMeasurementSheet extends AbstractAuditable {
 
     private static final long serialVersionUID = -5841511908573164177L;
@@ -89,6 +97,7 @@ public class MBMeasurementSheet extends AbstractAuditable {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "womsheetid")
+    @NotAudited
     private WorkOrderMeasurementSheet woMeasurementSheet;
 
     @Transient

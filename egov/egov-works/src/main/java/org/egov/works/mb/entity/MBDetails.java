@@ -69,6 +69,10 @@ import org.egov.infra.persistence.validator.annotation.Required;
 import org.egov.infra.validation.exception.ValidationError;
 import org.egov.infra.validation.regex.Constants;
 import org.egov.works.workorder.entity.WorkOrderActivity;
+import org.hibernate.envers.AuditOverride;
+import org.hibernate.envers.AuditOverrides;
+import org.hibernate.envers.Audited;
+import org.hibernate.envers.NotAudited;
 import org.hibernate.validator.constraints.Length;
 
 @Entity
@@ -89,6 +93,11 @@ import org.hibernate.validator.constraints.Length;
         @NamedQuery(name = MBDetails.TOTALESTIMATEDQUANTITYFORREINRE, query = " select sum(woa.approvedQuantity*coalesce((CASE WHEN woa.activity.revisionType = 'REDUCED_QUANTITY' THEN -1 WHEN woa.activity.revisionType = 'ADDITIONAL_QUANTITY' THEN 1 WHEN woa.activity.revisionType = 'NON_TENDERED_ITEM' THEN 1 WHEN woa.activity.revisionType = 'LUMP_SUM_ITEM' THEN 1 END),1)) from WorkOrderActivity woa where woa.activity.abstractEstimate.egwStatus.code != 'CANCELLED' and woa.activity.abstractEstimate.id != ? and woa.workOrderEstimate.workOrder.egwStatus.code<>'CANCELLED' and (woa.workOrderEstimate.workOrder = ? or (woa.workOrderEstimate.workOrder.parent is not null and woa.workOrderEstimate.workOrder.parent = ?)) group by woa.activity.parent having (woa.activity.parent is not null and woa.activity.parent.id = ? ) "),
         @NamedQuery(name = MBDetails.TOTALESTIMATEDQUANTITYFORPREVIOUSRES, query = " select sum(woa.approvedQuantity*coalesce((CASE WHEN woa.activity.revisionType = 'REDUCED_QUANTITY' THEN -1 WHEN woa.activity.revisionType = 'ADDITIONAL_QUANTITY' THEN 1 WHEN woa.activity.revisionType = 'NON_TENDERED_ITEM' THEN 1 WHEN woa.activity.revisionType = 'LUMP_SUM_ITEM' THEN 1 END),1)) from WorkOrderActivity woa where woa.activity.abstractEstimate.egwStatus.code != 'CANCELLED' and woa.activity.abstractEstimate.createdDate < (select est.createdDate from AbstractEstimate est where est.id = ?) and woa.workOrderEstimate.workOrder.egwStatus.code<>'CANCELLED' and (woa.workOrderEstimate.workOrder = ? or (woa.workOrderEstimate.workOrder.parent is not null and woa.workOrderEstimate.workOrder.parent = ?)) group by woa.activity.parent having (woa.activity.parent is not null and woa.activity.parent.id = ? )  ") })
 @SequenceGenerator(name = MBDetails.SEQ_EGW_MB_DETAILS, sequenceName = MBDetails.SEQ_EGW_MB_DETAILS, allocationSize = 1)
+@AuditOverrides({
+    @AuditOverride(forClass = AbstractAuditable.class, name = "lastModifiedBy"),
+    @AuditOverride(forClass = AbstractAuditable.class, name = "lastModifiedDate")
+})
+@Audited
 public class MBDetails extends AbstractAuditable {
 
     private static final long serialVersionUID = -5088074625605584344L;
@@ -122,6 +131,7 @@ public class MBDetails extends AbstractAuditable {
     @Required(message = "mbdetails.activity.null")
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "WO_ACTIVITY_ID", nullable = false)
+    @NotAudited
     private WorkOrderActivity workOrderActivity;
 
     @GreaterThan(value = 0, message = "mbdetails.quantity.non.negative")

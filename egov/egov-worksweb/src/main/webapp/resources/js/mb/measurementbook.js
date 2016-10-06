@@ -40,6 +40,9 @@
 var hint='<a href="#" class="hintanchor" title="@fulldescription@"><i class="fa fa-question-circle" aria-hidden="true"></i></a>';
 var isDatepickerOpened=false;
 $(document).ready(function(){
+	if($("#isMBHeaderEditable") && $("#isMBHeaderEditable").val()!="" && $("#isMBHeaderEditable").val()=="false")
+		$("#mbHeaderTab").find('input,button,textarea').prop('disabled',true);
+		
 	sorTotal();
 	nonSorTotal();
 	if($('#isMeasurementsExist').val() == 'false') {
@@ -320,7 +323,7 @@ function populateREActivities(data, selectedActivities) {
 						});
 					} else {
 						document.getElementById('nonTenderedMbDetails[' + nonTenderedCount + '].msadd').style.display = 'none';
-						$('#quantity_' + nonTenderedCount).removeAttr('readonly');
+						$('#nonTenderedquantity_' + nonTenderedCount).removeAttr('readonly');
 					}
 					nonTenderedCount++;
 				}else{
@@ -520,7 +523,7 @@ function populateREActivities(data, selectedActivities) {
 						});
 					} else {
 						document.getElementById('nonTenderedMbDetails[' + nonTenderedCount + '].msadd').style.display = 'none';
-						$('#quantity_' + nonTenderedCount).removeAttr('readonly');
+						$('#nonTenderedquantity_' + nonTenderedCount).removeAttr('readonly');
 					}
 					nonTenderedCount++;
 				}else{
@@ -1905,36 +1908,40 @@ function getFormData($form) {
 	return indexed_array;
 }
 
+function deleteEmptyRows(){
+	var hiddenRowCount = $("#tblsor > tbody > tr[sorinvisible='true']").length;
+	if(hiddenRowCount == 1) {
+		
+		$('#tblsor').find('input, textarea').each(function() {
+			$(this).attr('disabled', 'disabled');
+		});
+	}
+	
+	hiddenRowCount = $("#tblNonSor > tbody > tr[nonsorinvisible='true']").length;
+	if(hiddenRowCount == 1) {
+		$('#tblNonSor').find('input, textarea').each(function() {
+			$(this).attr('disabled', 'disabled');
+		});
+	}
+	
+	hiddenRowCount = $("#tblNonTendered > tbody > tr[sorinvisible='true']").length;
+	if(hiddenRowCount == 1) {
+		$('#tblNonTendered').find('input, textarea').each(function() {
+			$(this).attr('disabled', 'disabled');
+		});
+	}
+	
+	hiddenRowCount = $("#tblLumpSum > tbody > tr[nonsorinvisible='true']").length;
+	if(hiddenRowCount == 1) {
+		$('#tblLumpSum').find('input, textarea').each(function() {
+			$(this).attr('disabled', 'disabled');
+		});
+	}
+}
+
 function validateSORDetails() {
 	if($('#mbHeader').valid()) {
-		var hiddenRowCount = $("#tblsor > tbody > tr[sorinvisible='true']").length;
-		if(hiddenRowCount == 1) {
-			
-			$('#tblsor').find('input, textarea').each(function() {
-				$(this).attr('disabled', 'disabled');
-			});
-		}
-		
-		hiddenRowCount = $("#tblNonSor > tbody > tr[nonsorinvisible='true']").length;
-		if(hiddenRowCount == 1) {
-			$('#tblNonSor').find('input, textarea').each(function() {
-				$(this).attr('disabled', 'disabled');
-			});
-		}
-		
-		hiddenRowCount = $("#tblNonTendered > tbody > tr[sorinvisible='true']").length;
-		if(hiddenRowCount == 1) {
-			$('#tblNonTendered').find('input, textarea').each(function() {
-				$(this).attr('disabled', 'disabled');
-			});
-		}
-		
-		hiddenRowCount = $("#tblLumpSum > tbody > tr[nonsorinvisible='true']").length;
-		if(hiddenRowCount == 1) {
-			$('#tblLumpSum').find('input, textarea').each(function() {
-				$(this).attr('disabled', 'disabled');
-			});
-		}
+		deleteEmptyRows();
 	} else
 		return false;
 }

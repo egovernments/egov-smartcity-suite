@@ -244,7 +244,7 @@ public class MBHeaderService {
 
         if ((mbHeader.getEgwStatus().getCode().equals(MBHeader.MeasurementBookStatus.NEW.toString())
                 || mbHeader.getEgwStatus().getCode().equals(MBHeader.MeasurementBookStatus.REJECTED.toString()) || isMBEditable)
-                && !workFlowAction.equals(WorksConstants.CANCEL_ACTION)) {
+                && !workFlowAction.equals(WorksConstants.REJECT_ACTION) && !workFlowAction.equals(WorksConstants.CANCEL_ACTION)) {
             mergeSorAndNonSorMBDetails(mbHeader);
             List<MBDetails> mbDetails = new ArrayList<MBDetails>(mbHeader.getMbDetails());
             mbDetails = removeDeletedMBDetails(mbDetails, removedDetailIds);
@@ -963,7 +963,8 @@ public class MBHeaderService {
 
     public List<MBHeader> getMBHeadersForTenderedLumpSumAcivitiesToCancelRE(final RevisionAbstractEstimate revisionEstimate,
             final WorkOrderEstimate workOrderEstimate) {
-        return mbHeaderRepository.findMBHeadersForRevisionEstimate(revisionEstimate.getParent().getId(),revisionEstimate.getId(), workOrderEstimate.getId(),
+        return mbHeaderRepository.findMBHeadersForRevisionEstimate(revisionEstimate.getParent().getId(), revisionEstimate.getId(),
+                workOrderEstimate.getId(),
                 RevisionType.NON_TENDERED_ITEM, RevisionType.LUMP_SUM_ITEM, MBHeader.MeasurementBookStatus.CANCELLED.toString());
     }
 }

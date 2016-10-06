@@ -77,6 +77,7 @@
 	accept-charset="utf-8"
 	enctype="multipart/form-data">
 	
+	<input name="isMBHeaderEditable" type="hidden" id="isMBHeaderEditable" value="${isMBHeaderEditable}" />
 	<input name="mbHeader" type="hidden" id="id" value="${mbHeader.id }" />
 	<input name="workCommencedDate" type="hidden" id="workCommencedDate" value="${workCommencedDate }" />
 	<input name="previousMBDate" type="hidden" id="previousMBDate" value="${previousMBDate }" />
@@ -131,7 +132,7 @@
 		</c:choose>
 		<div class="panel-heading">
 			<ul class="nav nav-tabs" id="settingstab">
-				<li class="active"><a data-toggle="tab" href="#mbheader"
+				<li class="active"><a data-toggle="tab" href="#mbHeaderTab"
 					data-tabidx=0><spring:message code="lbl.mbheader" /></a></li>
 				<li><a data-toggle="tab" href="#tenderedItems" data-tabidx=1><spring:message
 							code="lbl.tendered.items" /> </a></li>
@@ -140,7 +141,7 @@
 			</ul>
 		</div>
 		<div class="tab-content">
-			<div class="tab-pane fade in active" id="mbheader">
+			<div class="tab-pane fade in active" id="mbHeaderTab">
 				<%@ include file="mb-header.jsp"%>
 				<jsp:include page="../common/uploadDocuments.jsp"/>
 			</div>

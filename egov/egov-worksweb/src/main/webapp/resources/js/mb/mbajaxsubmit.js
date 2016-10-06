@@ -179,7 +179,7 @@ function submitForm(workFlowAction) {
 		url = "/egworks/measurementbook/save/" + id;
 	else
 		url = "/egworks/measurementbook/create";
-
+	$("#mbHeaderTab").find('input,button,textarea').prop('disabled',false);
 	oData = new FormData(document.forms.namedItem("mbHeader"));
 	$.ajax({
 		type: "POST",

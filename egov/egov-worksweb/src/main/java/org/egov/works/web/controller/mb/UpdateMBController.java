@@ -359,6 +359,12 @@ public class UpdateMBController extends GenericWorkFlowController {
         model.addAttribute("isMeasurementsExist",
                 measurementSheetService.existsByEstimate(mbHeader.getWorkOrderEstimate().getEstimate().getId()));
 
+        if (!mbHeader.getEgwStatus().getCode().equals(MBHeader.MeasurementBookStatus.NEW.toString())
+                && !updatedMBHeader.getEgwStatus().getCode().equals(MBHeader.MeasurementBookStatus.REJECTED.toString())
+                && isMBEditable) {
+            model.addAttribute("isMBHeaderEditable", "false");
+        } else
+            model.addAttribute("isMBHeaderEditable", "true");
         // TODO: check if only quantities to be edited or the whole mb can be editable
         if (mbHeader.getEgwStatus().getCode().equals(MBHeader.MeasurementBookStatus.NEW.toString()) ||
                 updatedMBHeader.getEgwStatus().getCode().equals(MBHeader.MeasurementBookStatus.REJECTED.toString())

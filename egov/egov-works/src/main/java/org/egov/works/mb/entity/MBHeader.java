@@ -68,6 +68,7 @@ import javax.validation.constraints.Min;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.egov.commons.EgwStatus;
+import org.egov.infra.persistence.entity.AbstractAuditable;
 import org.egov.infra.persistence.validator.annotation.DateFormat;
 import org.egov.infra.persistence.validator.annotation.GreaterThan;
 import org.egov.infra.persistence.validator.annotation.OptionalPattern;
@@ -81,6 +82,10 @@ import org.egov.works.revisionestimate.entity.enums.RevisionType;
 import org.egov.works.utils.WorksConstants;
 import org.egov.works.workorder.entity.WorkOrder;
 import org.egov.works.workorder.entity.WorkOrderEstimate;
+import org.hibernate.envers.AuditOverride;
+import org.hibernate.envers.AuditOverrides;
+import org.hibernate.envers.Audited;
+import org.hibernate.envers.NotAudited;
 import org.hibernate.validator.constraints.Length;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
@@ -102,6 +107,11 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
         @NamedQuery(name = MBHeader.GETAMOUNTFORAPPROVEDREVISIONWO, query = " select sum(wo.workOrderAmount) from WorkOrder wo where wo.parent is not null and wo.egwStatus.code='APPROVED' and wo.parent.id=? "),
         @NamedQuery(name = MBHeader.GETALLAPPROVEDMBHEADERS, query = " select distinct mbh from MBHeader mbh where mbh.egwStatus.code = ? and mbh.workOrder.id = ? and mbh.workOrderEstimate.estimate.id = ? ") })
 @SequenceGenerator(name = MBHeader.SEQ_EGW_MB_HEADER, sequenceName = MBHeader.SEQ_EGW_MB_HEADER, allocationSize = 1)
+@AuditOverrides({
+        @AuditOverride(forClass = AbstractAuditable.class, name = "lastModifiedBy"),
+        @AuditOverride(forClass = AbstractAuditable.class, name = "lastModifiedDate")
+})
+@Audited
 public class MBHeader extends StateAware {
 
     private static final long serialVersionUID = 121631467636260459L;
@@ -142,6 +152,7 @@ public class MBHeader extends StateAware {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "WORKORDER_ID")
     @Required(message = "mbheader.workorder.null")
+    @NotAudited
     private WorkOrder workOrder;
 
     @Required(message = "mbheader.mbrefno.null")
@@ -182,6 +193,7 @@ public class MBHeader extends StateAware {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "WORKORDER_ESTIMATE_ID")
+    @NotAudited
     private WorkOrderEstimate workOrderEstimate;
 
     @Transient
@@ -189,6 +201,7 @@ public class MBHeader extends StateAware {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "BILLREGISTER_ID")
+    @NotAudited
     private ContractorBillRegister egBillregister;
 
     @Valid

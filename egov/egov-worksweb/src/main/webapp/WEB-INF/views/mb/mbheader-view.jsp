@@ -93,7 +93,7 @@
 					<a data-toggle="tab" href="#tenderitems" data-tabidx=1><spring:message code="lbl.tendered.items" /> </a>
 				</li>
 				<li>
-					<a data-toggle="tab" href="#nonTenderedItems" style="display:none" data-tabidx=1 ><spring:message code="lbl.nontendered.items" /> </a>
+					<a data-toggle="tab" href="#nonTenderedItems" data-tabidx=1 ><spring:message code="lbl.nontendered.items" /> </a>
 				</li> 
 			</ul>
 		</div>
@@ -117,7 +117,7 @@
 					</c:otherwise>	
 				</c:choose>
 			</div>
-			<div class="tab-pane fade" id="nonTenderedItems" style="display:none">
+			<div class="tab-pane fade" id="nonTenderedItems">
 					<%@ include file="mbheader-viewnontenderitems.jsp"%>
 			</div>
 			<c:if test="${!workflowHistory.isEmpty()}">

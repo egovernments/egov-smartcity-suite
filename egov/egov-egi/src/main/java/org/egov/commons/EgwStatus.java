@@ -42,20 +42,29 @@ package org.egov.commons;
 
 import java.util.Date;
 
+import org.hibernate.envers.Audited;
+import org.hibernate.envers.NotAudited;
+
+@Audited
 public class EgwStatus implements java.io.Serializable {
 
 	private static final long serialVersionUID = 1L;
 
 	private Integer id;
 
+	@NotAudited
 	private String moduletype;
 
+	@NotAudited
 	private String description;
 
+	@NotAudited
 	private Date lastmodifieddate;
 
+	@NotAudited
 	private String code;
 
+	@NotAudited
 	private String orderId;
 	
 	@Override
