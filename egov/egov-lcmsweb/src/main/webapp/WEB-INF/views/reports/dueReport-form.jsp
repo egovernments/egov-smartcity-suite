@@ -44,15 +44,10 @@
 <%@ taglib uri="http://www.springframework.org/tags" prefix="spring"%>
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt"%>
 <%@ taglib uri="/WEB-INF/taglib/cdn.tld" prefix="cdn"%>
-<style>
-body {
-	font-family: regular !important;
-	font-size: 14px;
-}
-</style>
+
 <div class="row" id="page-content">
 	<div class="col-md-12">
-		<form:form modelAttribute="dueReportResult" id="dueReportResultFormid"
+		<form:form modelAttribute="dueReportResult" id="dueReportResultFormid" method="get"
 			class="form-horizontal form-groups-bordered"
 			enctype="multipart/form-data">
 			<div class="row">
@@ -92,25 +87,21 @@ body {
 		var reportBy = $("#reportBy").val();
 		if (reportBy == 'PWR due date') {
 			var url = '/lcms/reports/pwrDueReport';
-			$('#dueReportResultFormid').attr('method', 'get');
 			$('#dueReportResultFormid').attr('action', url);
 			window.location = url;
 		} else if (reportBy == 'CA Due date') {
 			var url = '/lcms/reports/caDueReport';
-			$('#dueReportResultFormid').attr('method', 'get');
 			$('#dueReportResultFormid').attr('action', url);
 			window.location = url;
 		}
 		 else if (reportBy == 'Judgement Implementation') {
 				var url = '/lcms/reports/judgementImplDueReport';
-				$('#dueReportResultFormid').attr('method', 'get');
 				$('#dueReportResultFormid').attr('action', url);
 				window.location = url;
 			}
 		
 		 else if (reportBy == 'Employee Hearings') {
 				var url = '/lcms/reports/employeeHearingDueReport';
-				$('#dueReportResultFormid').attr('method', 'get');
 				$('#dueReportResultFormid').attr('action', url);
 				window.location = url;
 			}

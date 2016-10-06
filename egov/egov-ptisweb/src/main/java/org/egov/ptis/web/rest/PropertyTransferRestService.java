@@ -486,7 +486,7 @@ public class PropertyTransferRestService {
         Position pos = null;
         DateTime currentDate = new DateTime();
         User user = propertyTransferService.getLoggedInUser();
-        Assignment assignment = propertyService.getUserPositionByZone(basicProperty,basicProperty.getSource());
+        Assignment assignment = propertyService.getUserPositionByZone(basicProperty, false);
         pos = assignment.getPosition();
 
         if (null == propertyMutation.getState()) {

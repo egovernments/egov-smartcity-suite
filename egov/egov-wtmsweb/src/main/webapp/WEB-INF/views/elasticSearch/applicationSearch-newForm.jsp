@@ -81,7 +81,7 @@
 							<form:option value="">
 								<spring:message code="lbl.select"/>
 							</form:option>
-							<form:options items="${applicationTypeList}"  />  
+							<form:options items="${applicationTypeList}" />
 						</form:select>
 						</div>
 						</div>
@@ -148,6 +148,17 @@
 								<spring:message code="lbl.select"/>
 							</form:option>
 							<form:options items="${sourceList}"  />  
+						</form:select>
+						</div>
+						<label for="field-1" class="col-sm-3 control-label"> <spring:message
+										code="lbl.recordsOpenAndClosed" /></label>
+						<div class="col-sm-3 add-margin">
+						<form:select name="applicationStatus" path="" data-first-option="false" id="applicationStatus"
+							cssClass="form-control" >
+							<form:option value="">
+								<spring:message code="lbl.select"/>
+							</form:option>
+							<form:options items="${applicationstatusList}"  />  
 						</form:select>
 						</div>
 						</div>

@@ -98,9 +98,9 @@ function callAjaxSearch() {
 					$('td:eq(0)',row).html(index+1);
 					$('td:eq(10)',row).html(parseFloat(Math.round(data.totalAmount * 100) / 100).toFixed(2));
 					if(data.status == 'Administrative Sanctioned' || data.status == 'Technical Sanctioned')
-						$('td:eq(11)',row).html('<select id="actionDropdown" class="form-control" onchange="renderAction('+ data.id +', this.value)"><option value="">Select from below</option><option value="1">View Line Estimate</option><option value="2">View PDF</option></select>');
+						$('td:eq(11)',row).html('<select id="actionDropdown" class="form-control" onchange="renderAction('+ data.id +', this.value)"><option value="">Select from below</option><option value="1">View Estimate</option><option value="2">View PDF</option></select>');
 					else
-						$('td:eq(11)',row).html('<select id="actionDropdown" class="form-control" onchange="renderAction('+ data.id +', this.value)"><option value="">Select from below</option><option value="1">View Line Estimate</option></select>');
+						$('td:eq(11)',row).html('<select id="actionDropdown" class="form-control" onchange="renderAction('+ data.id +', this.value)"><option value="">Select from below</option><option value="1">View Estimate</option></select>');
 					return row;
 				},
 				aaSorting: [],				

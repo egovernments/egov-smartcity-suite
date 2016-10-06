@@ -86,10 +86,8 @@
 			showGlDebitAmount[i].innerHTML = amount[i].value;
 		}
 		dom.get("showGlDebitTotalAmount").innerHTML = showGlTotalAmount;
-		dom.get("showGlCreditTotalAmount").innerHTML = dom
-				.get("showRemittanceGlCreditAmount").innerHTML;
+		dom.get("showGlCreditTotalAmount").innerHTML = dom.get("showRemittanceGlCreditAmount").innerHTML;
 		var instHeaderIds = dom.get("instHeaderIds").value;
-		var voucherHeaderIds = dom.get("voucherHeaderIds").value;
 		var receiptGLDetails = "";
 		var remittanceGLDetails = "";
 
@@ -183,8 +181,7 @@
 				showGlDebitAmount[i].innerHTML = amount[i].value;
 			}
 			dom.get("showGlDebitTotalAmount").innerHTML = showGlTotalAmount;
-			dom.get("showGlCreditTotalAmount").innerHTML = dom
-					.get("showRemittanceGlCreditAmount").innerHTML;
+			dom.get("showGlCreditTotalAmount").innerHTML = dom.get("showRemittanceGlCreditAmount").innerHTML;
 			/* var gLTable = dom.get("gLEntry");
 			jQuery(gLTable).addClass("display-hide"); */
 		}
@@ -438,6 +435,8 @@
 				value="%{instHeaderIds}" />
 			<s:hidden name="voucherHeaderIds" id="voucherHeaderIds"
 				value="%{voucherHeaderIds}" />
+				<s:hidden name="receiptHeaderIds" id="receiptHeaderIds"
+				value="%{receiptHeaderIds}" />
 			<s:hidden name="receiptGLDetails" id="receiptGLDetails"
 				value="%{receiptGLDetails}" />
 			<s:hidden name="remittanceGLDetails" id="remittanceGLDetails"

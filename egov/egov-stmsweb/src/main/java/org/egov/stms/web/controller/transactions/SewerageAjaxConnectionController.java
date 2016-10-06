@@ -204,10 +204,10 @@ public class SewerageAjaxConnectionController {
         BigDecimal legacyDonationAmount=BigDecimal.ZERO;
         BigDecimal residentialAmount=BigDecimal.ZERO;
         BigDecimal nonResidentialAmount=BigDecimal.ZERO;
-          if(noofclosetsresidential!=0){
+          if(noofclosetsresidential!=null && noofclosetsresidential!=0){
             residentialAmount = donationMasterService.getDonationAmountByNoOfClosetsAndPropertytypeForCurrentDate(noofclosetsresidential, PropertyType.RESIDENTIAL);
                  }
-        if(noofclosetsnonresidential!=0){
+        if(noofclosetsnonresidential!=null && noofclosetsnonresidential!=0){
             nonResidentialAmount = donationMasterService.getDonationAmountByNoOfClosetsAndPropertytypeForCurrentDate(noofclosetsnonresidential, PropertyType.NON_RESIDENTIAL);
           }
         if(propertyType.equals(PropertyType.MIXED) && residentialAmount!=null && nonResidentialAmount!=null)

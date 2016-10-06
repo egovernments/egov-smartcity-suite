@@ -466,6 +466,7 @@ public class SewerageDemandService {
                                 if ((differenceAmount).compareTo(oldApplicationAdvanceAmount) > 0) {
                                     dmdDtl.setAmtCollected(oldSewerageTax.add(oldApplicationAdvanceAmount));
                                     oldApplicationAdvanceAmount = BigDecimal.ZERO; oldAdvanceUsedInSewerageTaxOrAddedAsAdvance=true;
+                                    createAdvanceDemandDetail(demand, oldApplicationAdvanceAmount);//reset advance as zero.
                                 } else { // Eg: 500 diff, 600 advance present.
                                          // adjust 500 as collected.
                                     dmdDtl.setAmtCollected(oldSewerageTax.add(differenceAmount));
@@ -534,6 +535,7 @@ public class SewerageDemandService {
                             if ((differenceAmount).compareTo(oldApplicationAdvanceAmount) > 0) {
                                 amoountCollected=oldSewerageTax.add(oldApplicationAdvanceAmount);
                                 oldApplicationAdvanceAmount = BigDecimal.ZERO;oldAdvanceUsedInSewerageTaxOrAddedAsAdvance=true;
+                                createAdvanceDemandDetail(demand, oldApplicationAdvanceAmount);//reset advance as zero.
                             } else { // Eg: 500 diff, 600 advance present.
                                      // adjust 500 as collected.
                                 amoountCollected=oldSewerageTax.add(differenceAmount);

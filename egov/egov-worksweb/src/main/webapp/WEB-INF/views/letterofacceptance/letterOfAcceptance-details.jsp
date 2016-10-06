@@ -111,7 +111,7 @@
 	<label class="col-sm-3 control-label text-right"><spring:message code="lbl.nameofagency" /><span class="mandatory"></span></label>
 	<div class="col-sm-3 add-margin" style="margin-bottom: 0;">
 		<div class="input-group">
-			<input id="contractorSearch" name="contractorSearch" value="${contractorSearch}" class="form-control patternvalidation" autocomplete="off" data-pattern="alphanumericspecialcharacters" maxlength="100" required="required" type="text" placeholder="Type first 3 letters of Contractor Name/Code" > 
+			<input id="contractorSearch" name="contractorSearch" value="${contractorSearch}" class="form-control patternvalidation" autocomplete="off" data-pattern="alphanumericspecialcharacters" maxlength="100" required="required" type="text" placeholder="Type first 3 letters of Agency /Firm Name" > 
 			<span class="input-group-addon"> <i class="fa fa-search specific" onclick="searchContractor();"></i></span>
 			<form:hidden path="contractor.id" name="contractor" id="contractor" />
 		</div>	
@@ -131,12 +131,12 @@
 </div>
 
 <div class="form-group" style="display: block;">
-	<label class="col-sm-3 control-label text-right"><spring:message code="lbl.additional.security.deposit" /></label>
+	<label class="col-sm-3 control-label text-right"><spring:message code="lbl.emd.amount" /></label>
 	<div class="col-sm-3 add-margin">
-	 	<form:input path="securityDeposit" name="securityDeposit" type="text" class="form-control text-right patternvalidation" maxlength="12" data-pattern="decimalvalue" />
-		<form:errors path="securityDeposit" cssClass="add-margin error-msg" />
-	</div>	
-    <label class="col-sm-2 control-label text-right"><spring:message code="lbl.bank.guarantee" /></label>
+		<form:input path="emdAmountDeposited" name="emdAmountDeposited" id="emdAmountDeposited" type="text" class="form-control text-right patternvalidation" maxlength="12" data-pattern="decimalvalue" />
+		<form:errors path="emdAmountDeposited" cssClass="add-margin error-msg" />
+	</div>
+	<label class="col-sm-2 control-label text-right"><spring:message code="lbl.bank.guarantee" /></label>
     <div class="col-sm-3 add-margin">
     	<form:textarea name="bankGuarantee" path="bankGuarantee" id="bankGuarantee" class="form-control" maxlength="1024" ></form:textarea>
 		<form:errors path="bankGuarantee" cssClass="add-margin error-msg" />
@@ -144,11 +144,11 @@
 </div>
 
 <div class="form-group">
-	<label class="col-sm-3 control-label text-right"><spring:message code="lbl.emd.amount" /></label>
+	<label class="col-sm-3 control-label text-right"><spring:message code="lbl.additional.security.deposit" /></label>
 	<div class="col-sm-3 add-margin">
-		<form:input path="emdAmountDeposited" name="emdAmountDeposited" id="emdAmountDeposited" type="text" class="form-control text-right patternvalidation" maxlength="12" data-pattern="decimalvalue" />
-		<form:errors path="emdAmountDeposited" cssClass="add-margin error-msg" />
-	</div>
+	 	<form:input path="securityDeposit" name="securityDeposit" type="text" class="form-control text-right patternvalidation" maxlength="12" data-pattern="decimalvalue" />
+		<form:errors path="securityDeposit" cssClass="add-margin error-msg" />
+	</div>	
 	<label class="col-sm-2 control-label text-right"><spring:message code="lbl.contract.period" /><span class="mandatory"></span></label>
 	<div class="col-sm-3 add-margin">
 		<form:input path="contractPeriod" name="contractPeriod" id="contractPeriod" type="text" class="form-control text-right patternvalidation" maxlength="4" data-pattern="number" required="required" />

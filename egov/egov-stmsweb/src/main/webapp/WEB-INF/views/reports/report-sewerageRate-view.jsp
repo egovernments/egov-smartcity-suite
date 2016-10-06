@@ -114,7 +114,7 @@
 						<table class="table table-bordered datatable dt-responsive multiheadertbl" role="grid" id="sewerageRateReportTable" sortable="sortable">
 							<thead>
 								<tr role="row">
-								    <th colspan="3"></th>
+								    <th colspan="2"></th>
 									<th colspan="3"><spring:message code="lbl.demand"/></th>
 									<th colspan="3"><spring:message code="lbl.collection"/></th>
 									<th colspan="3"><spring:message code="lbl.balance"/></th>
@@ -122,7 +122,6 @@
 								<tr>
 									<th><spring:message code="lbl.serial.number"/></th>
 									<th><spring:message code="lbl.installment"/></th>
-									<th><spring:message code="lbl.advance.amount" /></th>
 									<th colspan="1"><spring:message code="lbl.arrear"/></th>
 									<th colspan="1"><spring:message code="lbl.demand"/></th>
 									<th colspan="1"><spring:message code="lbl.penalty"/></th>
@@ -143,6 +142,8 @@
 								<c:set var="totalCollectionAmount" value="${0}"/>
 								<c:set var="totalPendingAmount" value="${0}"/>
 								
+								<c:set var="totalAdvanceAmount" value="${0}"/>
+								
 								<c:set var="totalArrearAmount" value="${0}" />
 								<c:set var="totalCollectedArrearAmount" value="${0}"/>
 								<c:set var="totalPendingArrearAmount" value="${0}" />
@@ -158,6 +159,8 @@
 								<c:set var="pendingArrearAmount" value="${0}"/>
 								<c:set var="pendingDemandAmount" value="${0}"/>
 								<c:set var="pendingPenaltyAmount" value="${0}"/>
+								
+								<c:set var="advanceAmount" value="${0}" />
 									
 								<c:set var="totalArrearAmount" value="${0}"/>
 								<c:set var="totalDemandAmount" value="${0}"/>
@@ -173,7 +176,6 @@
 									<tr class="odd" role="row">
 										<td align="center" >${status.index+1}</td>
 										<td align="center" >${dcb.installmentYearDescription}</td>
-										<td align="center">${dcb.advanceAmount}</td>
 										<td align="right">${dcb.arrearAmount}</td>
 										<td align="right">${dcb.demandAmount}</td> 
 										<td align="right">${dcb.penaltyAmount}</td> 
@@ -193,6 +195,7 @@
 										<c:set var="totalArrearAmount" value="${totalArrearAmount+dcb.arrearAmount}"/>
 										<c:set var="totalDemandAmount" value="${totalDemandAmount+dcb.demandAmount }"/>
 										<c:set var="totalPenaltyAmount" value="${totalPenltyAmount+dcb.penaltyAmount}"/>
+										<c:set var="totalAdvanceAmount" value="${dcb.advanceAmount-dcb.collectedAdvanceAmount}" />
 										<c:set var="totalCollectedArrearAmount" value="${totalCollectedArrearAmount+dcb.collectedArrearAmount}"/>
 										<c:set var="totalCollectedDemandAmount" value="${totalCollectedDemandAmount+dcb.collectedDemandAmount}"/>
 										<c:set var="totalCollectedPenaltyAmount" value="${totalCollectedPenaltyAmount+dcb.collectedPenaltyAmount}"/>         
@@ -204,7 +207,6 @@
 							<tr>
 						</tbody>
 					<tfoot>
-								<td></td>
 								<td></td>
 								<td align="right"><span style="font-weight: bolder;">TOTAL</span></td>
 								<td align="right"><span style="font-weight: bolder;">${totalArrearAmount}</span></td>
@@ -224,6 +226,7 @@
 								<tr role="row">
 									<th><spring:message code="lbl.total.demand"/></th>
 									<th><spring:message code="lbl.total.collection"/></th>
+									<th><spring:message code="lbl.advance.amount"></spring:message></th>
 									<th><spring:message code="lbl.total.balance"/></th>
 								</tr>
 							</thead>
@@ -235,10 +238,11 @@
 								
 								<c:set var="totalDemandSum" value="${totalArrearAmount+totalDemandAmount+totalPenaltyAmount}"/>
 								<c:set var="totalCollectionSum" value="${totalCollectedArrearAmount+totalCollectedDemandAmount+totalCollectedPenaltyAmount}"/>
-								<c:set var="totalBalanceSum" value="${totalPendingArrearAmount+totalPendingDemandAmount+totalPendingPenaltyAmount}"/>
+								<c:set var="totalBalanceSum" value="${totalPendingArrearAmount+totalPendingDemandAmount+totalPendingPenaltyAmount-totalAdvanceAmount}"/>
 								
 								<td align="center" style="font-weight : bolder;">${totalDemandSum}</td>	
 								<td align="center" style="font-weight : bolder;">${totalCollectionSum}</td>
+								<td align="center" style="font-weight : bolder;">${totalAdvanceAmount}</td>
 								<td align="center" style="font-weight : bolder;">${totalBalanceSum}</td>	
 							</tfoot>
 						</table>

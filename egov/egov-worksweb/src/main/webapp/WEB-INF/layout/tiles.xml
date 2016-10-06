@@ -67,7 +67,7 @@
     </definition>
     
     <definition name="newLineEstimate-edit" extends="base_layout">
-        <put-attribute name="page-title" value="title.new.lineestimate" cascade="true"/>
+        <put-attribute name="page-title" value="title.lineestimate.view" cascade="true"/>
         <put-attribute name="body" value="/WEB-INF/views/lineestimate/newLineEstimate-edit.jsp"/>
     </definition>
     

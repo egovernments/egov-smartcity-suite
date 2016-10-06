@@ -2329,8 +2329,8 @@ public class PropertyService {
      * @param basicProperty
      * @return
      */
-    public Assignment getUserPositionByZone(final BasicProperty basicProperty, Character source) {
-        final String designationStr = getDesignationForThirdPartyUser(source);
+    public Assignment getUserPositionByZone(final BasicProperty basicProperty, boolean isForMobile) {
+        final String designationStr = getDesignationForThirdPartyUser(isForMobile);
         final String departmentStr = getDepartmentForWorkFlow();
         final String[] department = departmentStr.split(",");
         final String[] designation = designationStr.split(",");
@@ -2368,9 +2368,9 @@ public class PropertyService {
      *
      * @return
      */
-    public String getDesignationForThirdPartyUser(Character source) {
+    public String getDesignationForThirdPartyUser(boolean isForMobile) {
     	String appConfigKey;
-    	if(source.equals(SOURCEOFDATA_MOBILE))
+    	if(isForMobile)
     		appConfigKey = PT_WORKFLOWDESIGNATION_MOBILE;
     	else
     		appConfigKey = PROPERTYTAX_WORKFLOWDESIGNATION;
