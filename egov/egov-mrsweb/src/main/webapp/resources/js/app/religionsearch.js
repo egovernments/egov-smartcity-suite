@@ -41,33 +41,31 @@
 
 $(document).ready( function () {
 	
-	$('#btnsearch').click(function(e){
-		 if($('form').valid()){
-		 }else{
-		 e.preventDefault();
-		 }  });
 	
 $('#btnSearch').click(function(e) {
-		callAjaxSearch();
+	 callAjaxSearch();
 		return false;
 	});
 
 
-
 	function callAjaxSearch() {
+		
 						$('.report-section').removeClass('display-hide');
-						$('.loader-class').modal('show', {backdrop: 'static'});
-						
 						reportdatatable =	$("#religionResultTable")
 								.dataTable(
 										{
 											ajax : {
 												url : "/mrs/masters/religion/searchResult",
 												type : "POST",
-												"data" : getFormData(jQuery('form'))
+												beforeSend:function(){
+													$('.loader-class').modal('show', {backdrop: 'static'});
+												},
+												"data" : getFormData($('form')),
+												complete:function(){
+													$('.loader-class').modal('hide');
+												}
 											},
 
-											"sPaginationType" : "bootstrap",
 											"bDestroy" : true,
 											"sDom" : "<'row'<'col-xs-12 hidden col-right'f>r>t<'row'<'col-xs-3'i><'col-xs-3 col-right'l><'col-xs-3 col-right'<'export-data'T>><'col-xs-3 text-right'p>>",
 											"aLengthMenu" : [
@@ -88,23 +86,37 @@ $('#btnSearch').click(function(e) {
 											}, {
 												"data" : "createdDate",
 												"sClass" : "text-left"
-											}, { "data" : null, "target":-1,
+											}, {
 												
+												"data" : "id",
 											    sortable: false,
 											    "render": function ( data, type, row, meta ) {
-											        var mode = $('#mode').val();
-											        if(mode == 'edit'){
-											          	 return '<button type="button" class="btn btn-xs btn-secondary edit"><span class="glyphicon glyphicon-edit"></span>&nbsp;Edit</button>';
-											        }else{
-											          	 return '<button type="button" class="btn btn-xs btn-secondary view"><span class="glyphicon glyphicon-tasks"></span>&nbsp;View</button>';
+												        var mode = $('#mode').val();
+												        if(mode == 'edit'){
+												          	 return '<button type="button" class="btn btn-xs btn-secondary edit"><span class="glyphicon glyphicon-edit"></span>&nbsp;Edit</button>';
+												        }else{
+												          	 return '<button type="button" class="btn btn-xs btn-secondary view"><span class="glyphicon glyphicon-tasks"></span>&nbsp;View</button>';
+												        }
 											    }
-											}}, {
-												"data" : "id",
-												"visible" : false
-											} ]
+											
+											}]
+											
 										});
-								$('.loader-class').modal('hide');
+								
+						
+						
 				}
+	
+	$("#religionResultTable").on('click','tbody tr td  .view',function(event) {
+		var id = reportdatatable.fnGetData($(this).parent().parent(),3);
+		window.open('/mrs/masters/religion/success' +'/'+id,'','width=800, height=600,scrollbars=yes');
+	});
+
+	$("#religionResultTable").on('click','tbody tr td  .edit',function(event) {
+		var id = reportdatatable.fnGetData($(this).parent().parent(),3);
+		window.open('/mrs/masters/religion/edit' +'/'+id,'','width=800, height=600,scrollbars=yes');
+	});
+	
 });
 
 
@@ -120,12 +132,4 @@ function getFormData($form){
     return indexed_array;
 }
 
-$("#religionResultTable").on('click','tbody tr td  .view',function(event) {
-	var id = reportdatatable.fnGetData($(this).parent().parent(),4);
-	window.open('/mrs/masters/religion/success' +'/'+id,'','width=800, height=600,scrollbars=yes');
-});
 
-$("#religionResultTable").on('click','tbody tr td  .edit',function(event) {
-	var id = reportdatatable.fnGetData($(this).parent().parent(),4);
-	window.open('/mrs/masters/religion/edit' +'/'+id,'','width=800, height=600,scrollbars=yes');
-});
