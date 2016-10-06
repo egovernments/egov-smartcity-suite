@@ -39,6 +39,7 @@
  */
 package org.egov.stms.web.controller.transactions;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -129,19 +130,19 @@ public class SewerageChangeInClosetsController extends GenericWorkFlowController
     @RequestMapping(value = "/modifyConnection/{shscNumber}", method = RequestMethod.GET)
     public String showNewApplicationForm(@ModelAttribute final SewerageApplicationDetails sewerageApplicationDetails,
             @PathVariable final String shscNumber, final Model model, final HttpServletRequest request) {
-        String taxDue =null;
+        BigDecimal taxDue =BigDecimal.ZERO;
         final SewerageConnection sewerageConnection = sewerageConnectionService.findByShscNumber(shscNumber);
         final SewerageApplicationDetails sewerageApplicationDetailsFromDB = sewerageApplicationDetailsService
                 .findByConnection_ShscNumberAndIsActive(shscNumber);
 
         sewerageApplicationDetails.setConnection(sewerageConnection);
-        if(sewerageApplicationDetailsFromDB!=null)
-        taxDue = sewerageApplicationDetailsService.validatePendingDemandAmount(sewerageApplicationDetailsFromDB);
-        if((Double.valueOf(taxDue))>0){
-            model.addAttribute("message", "msg.validate.demandamountdue");
-            return "common-error";
+        if(sewerageApplicationDetailsFromDB!=null){
+            taxDue = sewerageApplicationDetailsService.getPendingTaxAmount(sewerageApplicationDetailsFromDB);
+            if(taxDue.compareTo(BigDecimal.ZERO)>0){
+                model.addAttribute("message", "msg.validate.demandamountdue");
+                return "common-error";
+            }
         }
-        
         final SewerageApplicationType applicationType = sewerageApplicationTypeService
                 .findByCode(SewerageTaxConstants.CHANGEINCLOSETS);
         sewerageApplicationDetails.setApplicationType(applicationType);

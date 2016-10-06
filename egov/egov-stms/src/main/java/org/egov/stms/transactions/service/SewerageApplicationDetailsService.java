@@ -889,10 +889,10 @@ public class SewerageApplicationDetailsService {
       return sewerageApplicationDetailsRepository.getSewerageApplicationInWorkFlow(shscNumber);
     }
     
-    public String validatePendingDemandAmount(final SewerageApplicationDetails sewerageApplicationDetails){
+    public BigDecimal getPendingTaxAmount(final SewerageApplicationDetails sewerageApplicationDetails){
         BigDecimal taxPending = BigDecimal.ZERO;
         taxPending = sewerageDemandService.checkForPendingTaxAmountToCollect(sewerageApplicationDetails.getCurrentDemand());
-        return taxPending.toString();
+        return taxPending;
     }
 
 }

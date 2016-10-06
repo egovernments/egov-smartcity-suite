@@ -58,7 +58,6 @@ import org.egov.stms.transactions.service.SewerageConnectionService;
 import org.egov.stms.transactions.service.SewerageThirdPartyServices;
 import org.egov.stms.utils.SewerageTaxUtils;
 import org.egov.stms.utils.constants.SewerageTaxConstants;
-import org.jboss.logging.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Controller;
@@ -106,20 +105,19 @@ public class SewerageCloseConnectionController extends GenericWorkFlowController
     @RequestMapping(value = "/closeConnection/{shscNumber}", method = RequestMethod.GET)
     public String view(@ModelAttribute SewerageApplicationDetails sewerageApplicationDetails, final Model model,
             @PathVariable final String shscNumber, final HttpServletRequest request) {   
-        String taxDue =null;
+        BigDecimal taxDue =BigDecimal.ZERO;
         final SewerageConnection sewerageConnection = sewerageConnectionService.findByShscNumber(shscNumber);
         final SewerageApplicationDetails sewerageApplicationDetailsFromDB = sewerageApplicationDetailsService
                 .findByConnection_ShscNumberAndIsActive(shscNumber);
         sewerageApplicationDetails.setConnection(sewerageConnection);
         
-        if(sewerageApplicationDetailsFromDB!=null)
-           
-            taxDue = sewerageApplicationDetailsService.validatePendingDemandAmount(sewerageApplicationDetailsFromDB);
-            if((Double.valueOf(taxDue))>0){
+        if (sewerageApplicationDetailsFromDB != null){
+            taxDue = sewerageApplicationDetailsService.getPendingTaxAmount(sewerageApplicationDetailsFromDB);
+            if (taxDue.compareTo(BigDecimal.ZERO) > 0) {
                 model.addAttribute("message", "msg.validate.demandamountdue");
                 return "common-error";
             }
-        
+        }
         final AssessmentDetails propertyOwnerDetails = sewerageThirdPartyServices.getPropertyDetails(shscNumber, request);
         if(propertyOwnerDetails!=null){
            model.addAttribute("propertyOwnerDetails", propertyOwnerDetails); 

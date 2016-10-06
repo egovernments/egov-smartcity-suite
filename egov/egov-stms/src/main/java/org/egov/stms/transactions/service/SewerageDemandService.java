@@ -198,14 +198,13 @@ public class SewerageDemandService {
     public BigDecimal checkForPendingTaxAmountToCollect(final EgDemand demand) {
         BigDecimal pendingTaxCollection = BigDecimal.ZERO;
 
-        if (demand != null)
-            for (final EgDemandDetails demandDtl : demand.getEgDemandDetails())
+        if (demand != null){
+            for (final EgDemandDetails demandDtl : demand.getEgDemandDetails()){
                 if (!demandDtl.getEgDemandReason().getEgDemandReasonMaster().getCode().equals(FEES_ADVANCE_CODE) && demandDtl.getAmount().subtract(demandDtl.getAmtCollected()).compareTo(BigDecimal.ZERO) > 0) {
                     pendingTaxCollection = pendingTaxCollection.add(demandDtl.getAmount().subtract(demandDtl.getAmtCollected()));
-                    break;
-
                 }
-
+            }
+        }
         return pendingTaxCollection;
 
     }
