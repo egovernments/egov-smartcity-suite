@@ -47,6 +47,8 @@ import java.util.List;
 
 import org.codehaus.jackson.JsonGenerationException;
 import org.codehaus.jackson.map.JsonMappingException;
+import org.egov.commons.CChartOfAccounts;
+import org.egov.commons.service.ChartOfAccountsService;
 import org.egov.eis.entity.Assignment;
 import org.egov.eis.service.AssignmentService;
 import org.egov.infra.admin.master.entity.User;
@@ -66,11 +68,13 @@ import org.egov.works.models.masters.EstimateTemplateActivity;
 import org.egov.works.models.masters.Overhead;
 import org.egov.works.models.masters.OverheadRate;
 import org.egov.works.models.masters.ScheduleOfRate;
+import org.egov.works.utils.WorksConstants;
 import org.egov.works.web.adaptor.AbstractEstimateForLOAJsonAdaptor;
 import org.egov.works.web.adaptor.AbstractEstimateForOfflineStatusJsonAdaptor;
 import org.egov.works.web.adaptor.EstimateTemplateJsonAdaptor;
 import org.egov.works.web.adaptor.SearchEstimatesToCancelJson;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -114,6 +118,10 @@ public class AjaxAbstractEstimateController {
 
     @Autowired
     private EstimateTemplateJsonAdaptor estimateTemplateJsonAdaptor;
+    
+    @Autowired
+    @Qualifier("chartOfAccountsService")
+    private ChartOfAccountsService chartOfAccountsService;
 
     public Object toSearchAbstractEstimateForLOAResultJson(final Object object) {
         final GsonBuilder gsonBuilder = new GsonBuilder();
@@ -282,6 +290,13 @@ public class AjaxAbstractEstimateController {
     public @ResponseBody List<String> findApprovedWorkIdentificationNumbersForCreateLOA(
             @RequestParam final String workIdentificationNumber) {
         return estimateService.getApprovedWorkIdentificationNumbersForCreateLOA(workIdentificationNumber);
+    }
+
+    @RequestMapping(value = "/ajaxdeduction-coa", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+    public @ResponseBody List<CChartOfAccounts> findDetailedAccountCodesAndAccountHeadByGlcodeLike(@RequestParam final String searchQuery) {
+        final String[] purposeNames = new String[3];
+        purposeNames[0] = WorksConstants.CONTRACTOR_NETPAYABLE_PURPOSE;
+        return chartOfAccountsService.findOtherDeductionAccountCodesByGlcodeOrNameLike(searchQuery, purposeNames);
     }
 
 }

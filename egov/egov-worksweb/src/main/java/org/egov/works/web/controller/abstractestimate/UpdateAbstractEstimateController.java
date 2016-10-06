@@ -56,6 +56,7 @@ import org.egov.infra.admin.master.service.DepartmentService;
 import org.egov.infra.exception.ApplicationException;
 import org.egov.works.abstractestimate.entity.AbstractEstimate;
 import org.egov.works.abstractestimate.entity.AbstractEstimate.EstimateStatus;
+import org.egov.works.abstractestimate.entity.AbstractEstimateDeduction;
 import org.egov.works.abstractestimate.entity.Activity;
 import org.egov.works.abstractestimate.service.EstimateService;
 import org.egov.works.abstractestimate.service.MeasurementSheetService;
@@ -125,6 +126,7 @@ public class UpdateAbstractEstimateController extends GenericWorkFlowController 
         splitSorAndNonSorActivities(abstractEstimate);
         final LineEstimateDetails lineEstimateDetails = abstractEstimate.getLineEstimateDetails();
         abstractEstimate.setTempOverheadValues(abstractEstimate.getOverheadValues());
+        abstractEstimate.setTempDeductionValues(abstractEstimate.getAbsrtractEstimateDeductions());
         abstractEstimate.setTempAssetValues(abstractEstimate.getAssetValues());
         if (mode != null && mode.equalsIgnoreCase(WorksConstants.SAVE_ACTION))
             model.addAttribute("message",
@@ -183,6 +185,9 @@ public class UpdateAbstractEstimateController extends GenericWorkFlowController 
             estimateService.validateAssetDetails(abstractEstimate, errors);
             estimateService.validateActivities(abstractEstimate, errors);
             estimateService.validateOverheads(abstractEstimate, errors);
+            if (!estimateService.checkForDuplicateAccountCodes(abstractEstimate))
+            	errors.reject("error.abstractestimate.duplicate.accountcodes",
+                        "error.abstractestimate.duplicate.accountcodes");
             if (!workFlowAction.equals(WorksConstants.SAVE_ACTION)) {
                 if (abstractEstimate.getSorActivities().isEmpty() && abstractEstimate.getNonSorActivities().isEmpty())
                     errors.reject("error.sor.nonsor.required", "error.sor.nonsor.required");
@@ -242,6 +247,13 @@ public class UpdateAbstractEstimateController extends GenericWorkFlowController 
             model.addAttribute("isServiceVATRequired", true);
         else
             model.addAttribute("isServiceVATRequired", false);
+        final List<AppConfigValues> showDeductions = appConfigValuesService.getConfigValuesByModuleAndKey(
+                WorksConstants.WORKS_MODULE_NAME, WorksConstants.APPCONFIG_KEY_SHOW_DEDUCTION_GRID);
+        final AppConfigValues showDeduction = showDeductions.get(0);
+        if (showDeduction.getValue().equalsIgnoreCase("Yes"))
+            model.addAttribute("isDeductionGrid", true);
+        else
+            model.addAttribute("isDeductionGrid", false);
 
         estimateService.loadLocationAppConfigValue(model);
 

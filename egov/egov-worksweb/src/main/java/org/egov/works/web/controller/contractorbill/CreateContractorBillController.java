@@ -63,6 +63,8 @@ import org.egov.infra.utils.StringUtils;
 import org.egov.infra.utils.autonumber.AutonumberServiceBeanResolver;
 import org.egov.infra.validation.exception.ValidationException;
 import org.egov.model.bills.EgBilldetails;
+import org.egov.works.abstractestimate.entity.AbstractEstimate;
+import org.egov.works.abstractestimate.entity.AbstractEstimateDeduction;
 import org.egov.works.autonumber.ContractorBillNumberGenerator;
 import org.egov.works.contractorbill.entity.ContractorBillRegister;
 import org.egov.works.contractorbill.entity.enums.BillTypes;
@@ -162,6 +164,14 @@ public class CreateContractorBillController extends GenericWorkFlowController {
             model.addAttribute("cutOffDate", worksUtils.getCutOffDate() != null ? worksUtils.getCutOffDate() : "");
             model.addAttribute("currFinYearStartDate", worksUtils.getFinancialYearByDate(new Date()).getStartingDate());
         }
+        
+		final AbstractEstimate estimate = workOrderEstimate.getEstimate();
+		if (!estimate.getAbsrtractEstimateDeductions().isEmpty()) {
+			contractorBillRegister.getEgBilldetailes().addAll(prepairBillDetailsMap(estimate, model));
+			model.addAttribute("billDetailsMap",
+					contractorBillRegisterService.getBillDetailsMap(contractorBillRegister, model));
+		}
+        
         return "contractorBill-form";
     }
 
@@ -616,5 +626,18 @@ public class CreateContractorBillController extends GenericWorkFlowController {
                     new String[] { fmt.format(cutOffDate) },
                     null);
     }
+    
+	public List<EgBilldetails> prepairBillDetailsMap(final AbstractEstimate abstractEstimate, final Model model) {
+		EgBilldetails egBilldetails = null;
+		List<EgBilldetails> billList = new ArrayList<EgBilldetails>();
+		for (final AbstractEstimateDeduction deduction : abstractEstimate.getAbsrtractEstimateDeductions()) {
+			egBilldetails = new EgBilldetails();
+			egBilldetails.setCreditamount(BigDecimal.ZERO);
+			egBilldetails.setGlcodeid(new BigDecimal(deduction.getChartOfAccounts().getId()));
+			billList.add(egBilldetails);
+		}
+		return billList;
+
+	}
 
 }

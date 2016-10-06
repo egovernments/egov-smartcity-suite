@@ -285,6 +285,28 @@ $(document).ready(function(){
 		$(this).find("select").val(hiddenElem);
 	});
 	
+	var rowcount = $("#tblotherdeductioncreditdetails tbody tr").length;
+	for(i=0;i<rowcount;i++){
+	var creditAmount=document.getElementById('otherDeductionDetailes['+ i +'].creditamount').value;
+	if(parseFloat(creditAmount) == 0)
+		document.getElementById('otherDeductionDetailes['+ i +'].creditamount').value="";
+	$('.otherDeductionCreditGlcode').typeahead('destroy');
+	otherDeductionCreditGlcode_initialize();
+	}
+	var rowcount = $("#tblstatutorydeductioncreditdetails tbody tr").length;
+	for(i=0;i<rowcount;i++){
+	var creditAmount=document.getElementById('statutoryDeductionDetailes['+ i +'].creditamount').value;
+	if(parseFloat(creditAmount) == 0)
+		document.getElementById('statutoryDeductionDetailes['+ i +'].creditamount').value="";
+	}
+
+	var rowcount = $("#tblretentionmoneydeductioncreditdetails tbody tr").length;
+	for(i=0;i<rowcount;i++){
+	var creditAmount=document.getElementById('retentionMoneyDeductionDetailes['+ i +'].creditamount').value;
+	if(parseFloat(creditAmount) == 0)
+		document.getElementById('retentionMoneyDeductionDetailes['+ i +'].creditamount').value="";
+	}
+	
 });
 
 function addStatutoryDeductionRow() { 
@@ -293,6 +315,8 @@ function addStatutoryDeductionRow() {
 	if (rowcount < 30) {
 		if (document.getElementById('statutorydeductionrow') != null) {
 			addRow('tblstatutorydeductioncreditdetails','statutorydeductionrow');
+			$('#tblstatutorydeductioncreditdetails tbody tr:last').find('select option:selected').removeAttr('selected');
+			$('#tblstatutorydeductioncreditdetails tbody tr:last').find('input:text').val('');
 		}
 	} else {
 		  bootbox.alert('limit reached!');
@@ -322,6 +346,8 @@ function addRetentionMoneyDeductionRow() {
 	if (rowcount < 30) {
 		if (document.getElementById('retentionmoneydeductionrow') != null) {
 			addRow('tblretentionmoneydeductioncreditdetails','retentionmoneydeductionrow');
+			$('#tblretentionmoneydeductioncreditdetails tbody tr:last').find('select option:selected').removeAttr('selected');
+			$('#tblretentionmoneydeductioncreditdetails tbody tr:last').find('input:text').val('');
 		}
 	} else {
 		  bootbox.alert('limit reached!');
@@ -819,6 +845,7 @@ function addRow(tableName,rowName) {
 				 $(this).html('');
 			     $(this).val(''); 
 			} 
+			
 			jQuery(this).attr(
 					{
 						'name' : function(_, name) {

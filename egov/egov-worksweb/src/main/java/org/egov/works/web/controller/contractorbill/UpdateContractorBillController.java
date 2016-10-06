@@ -430,46 +430,49 @@ public class UpdateContractorBillController extends GenericWorkFlowController {
     }
 
 
-    private ContractorBillRegister addBillDetails(final ContractorBillRegister contractorBillRegister,
-            final WorkOrderEstimate workOrderEstimate, final BindingResult resultBinder,
-            final HttpServletRequest request) {
+	private ContractorBillRegister addBillDetails(final ContractorBillRegister contractorBillRegister,
+			final WorkOrderEstimate workOrderEstimate, final BindingResult resultBinder,
+			final HttpServletRequest request) {
 
-        if (contractorBillRegister.getBillDetailes() == null || contractorBillRegister.getBillDetailes().isEmpty())
-            resultBinder.reject("error.contractorbill.accountdetails.required",
-                    "error.contractorbill.accountdetails.required");
-        for (final EgBilldetails egBilldetails : contractorBillRegister.getBillDetailes())
-            if(!contractorBillRegister.getEgBilldetailes().isEmpty() && contractorBillRegister.getEgBilldetailes().size() == 1) {
-                for(final EgBilldetails refundBill : contractorBillRegister.getRefundBillDetails()) {
-                    if (refundBill.getGlcodeid() != null)
-                        contractorBillRegister.addEgBilldetailes(contractorBillRegisterService.getBillDetails(contractorBillRegister, refundBill,
-                                workOrderEstimate, resultBinder, request));
-                }
-                if (egBilldetails.getGlcodeid() != null) {
-                contractorBillRegister.addEgBilldetailes(contractorBillRegisterService.getBillDetails(contractorBillRegister, egBilldetails,
-                        workOrderEstimate, resultBinder, request));
-                }
-            } else {
-            if (egBilldetails.getGlcodeid() != null)
-                request.getParameter("netPayableAccountId");
-                contractorBillRegister.addEgBilldetailes(contractorBillRegisterService.getBillDetails(contractorBillRegister, egBilldetails,
-                        workOrderEstimate, resultBinder, request));
-            }
-        final String netPayableAccountId = request.getParameter("netPayableAccountId");
-        final String netPayableAccountCodeId = request.getParameter("netPayableAccountCode");
-        final String netPayableAmount = request.getParameter("netPayableAmount");
-        if (StringUtils.isNotBlank(netPayableAccountCodeId) && StringUtils.isNotBlank(netPayableAccountCodeId)
-                && StringUtils.isNotBlank(netPayableAmount)) {
-            final EgBilldetails billdetails = new EgBilldetails();
-            // billdetails.setId(new Integer(netPayableAccountId));
-            billdetails.setGlcodeid(new BigDecimal(netPayableAccountCodeId));
-            billdetails.setCreditamount(new BigDecimal(netPayableAmount));
+		if (contractorBillRegister.getBillDetailes() == null || contractorBillRegister.getBillDetailes().isEmpty())
+			resultBinder.reject("error.contractorbill.accountdetails.required",
+					"error.contractorbill.accountdetails.required");
+		for (final EgBilldetails egBilldetails : contractorBillRegister.getBillDetailes()) {
+			if (!contractorBillRegister.getEgBilldetailes().isEmpty()
+					&& contractorBillRegister.getEgBilldetailes().size() == 1) {
+				for (final EgBilldetails refundBill : contractorBillRegister.getRefundBillDetails()) {
+					if (refundBill.getGlcodeid() != null)
+						contractorBillRegister.addEgBilldetailes(contractorBillRegisterService.getBillDetails(
+								contractorBillRegister, refundBill, workOrderEstimate, resultBinder, request));
+				}
+				if (egBilldetails.getGlcodeid() != null) {
+					contractorBillRegister.addEgBilldetailes(contractorBillRegisterService.getBillDetails(
+							contractorBillRegister, egBilldetails, workOrderEstimate, resultBinder, request));
+				}
+			} else {
+				if (egBilldetails.getGlcodeid() != null) {
+					contractorBillRegister.addEgBilldetailes(contractorBillRegisterService.getBillDetails(
+							contractorBillRegister, egBilldetails, workOrderEstimate, resultBinder, request));
+				} else {
+					final String netPayableAccountId = request.getParameter("netPayableAccountId");
+					final String netPayableAccountCodeId = request.getParameter("netPayableAccountCode");
+					final String netPayableAmount = request.getParameter("netPayableAmount");
+					if (StringUtils.isNotBlank(netPayableAccountCodeId)
+							&& StringUtils.isNotBlank(netPayableAccountCodeId)
+							&& StringUtils.isNotBlank(netPayableAmount)) {
+						final EgBilldetails billdetails = new EgBilldetails();
+						// billdetails.setId(new Integer(netPayableAccountId));
+						billdetails.setGlcodeid(new BigDecimal(netPayableAccountCodeId));
+						billdetails.setCreditamount(new BigDecimal(netPayableAmount));
 
-            contractorBillRegister.addEgBilldetailes(
-                    contractorBillRegisterService.getBillDetails(contractorBillRegister, billdetails, workOrderEstimate, resultBinder, request));
-        }
+						contractorBillRegister.addEgBilldetailes(contractorBillRegisterService.getBillDetails(
+								contractorBillRegister, billdetails, workOrderEstimate, resultBinder, request));
+					}
+				}
+			}
+		}
 
-        return contractorBillRegister;
-    }
-
+		return contractorBillRegister;
+	}
 
 }

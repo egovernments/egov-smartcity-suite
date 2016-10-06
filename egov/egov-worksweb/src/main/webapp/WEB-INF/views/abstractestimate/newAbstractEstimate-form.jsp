@@ -72,6 +72,7 @@
 	<input type="hidden" id="errorlocation" value="<spring:message code='error.locationdetails.required' />">
 	<form:hidden path="" name="removedActivityIds" id="removedActivityIds" value="${removedActivityIds }" class="form-control table-input hidden-input"/>
 	<input type="hidden" name="locationAppConfig" id="locationAppConfig" value="${isLocationDetailsRequired}"/>
+	<input type="hidden" id="isDeductionGrid" value="${isDeductionGrid}">
 	<div class="new-page-header"><spring:message code="lbl.createae" /></div> 
 	
 	<div class="panel-title text-center" style="color: green;">
@@ -82,6 +83,7 @@
 	<input type="hidden" id="workValue" name="workValue" value='<c:out value="${abstractEstimate.workValue}" default="0.0" />'/>
 	<input type="hidden" id="exceptionaluoms" name="exceptionaluoms" value='<c:out value="${exceptionaluoms}"/>'/>
 	<input id="cancelConfirm" type="hidden" value="<spring:message code="lbl.estimate.confirm" />" />
+	
 	<%@ include file="estimateHeaderDetail.jsp"%>
 		<div class="panel-heading">
 			<ul class="nav nav-tabs" id="settingstab">
@@ -113,6 +115,9 @@
 			</div>
 			<div class="tab-pane fade" id="overheads">
 				<%@ include file="estimate-overheads.jsp"%>
+				<c:if test="${isDeductionGrid == true }">
+					<jsp:include page="estimate-deduction.jsp" />
+				</c:if>
 			</div>
 			<div class="tab-pane fade" id="assetandfinancials">
 				<%@ include file="estimate-financialdetails.jsp"%>

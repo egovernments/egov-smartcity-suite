@@ -47,6 +47,7 @@
 	<div class="panel-title">
 		<spring:message code="lbl.refund" />
 	</div>
+	</div>
 	<div class="panel-body">
 		<table class="table table-bordered" id="tblrefunddetails">
 			<thead>
@@ -63,9 +64,13 @@
          <c:if test="${billDetailsMap == null || billDetailsMap.size() >= 2}">
          <c:set var="isRefundPresent" value="${false}" scope="session" />
          <c:set var="isCreditsPreset" value="${false}" scope="session" />
+         <c:set var="isDebitPresent" value="${false}" scope="session" />
          <c:forEach items="${billDetailsMap}" var="billDetail" varStatus="item" >
              <c:if test="${billDetail.isDebit && !billDetail.isNetPayable && billDetail.isRefund}">
                 <c:set var="isRefundPresent" value="${true}" scope="session" />
+             </c:if>
+             <c:if test="${billDetail.isDebit && !billDetail.isNetPayable && !billDetail.isRefund}">
+                <c:set var="isDebitPresent" value="${true}" scope="session" />
              </c:if>
               <c:if test="${!billDetail.isDebit && !billDetail.isNetPayable}">
                 <c:set var="isCreditsPreset" value="${true}" scope="session" />
@@ -144,5 +149,4 @@
 		</c:choose>
 		</tbody>
 </table>
-</div>
 </div>

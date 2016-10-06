@@ -303,6 +303,13 @@ public class AbstractEstimate extends StateAware implements Auditable {
     @Column(name = "TOTAL_INCLUDING_RE")
     private Double totalIncludingRE;
 
+    @OrderBy("id")
+    @OneToMany(mappedBy = "abstractEstimate", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true, targetEntity = AbstractEstimateDeduction.class)
+    private List<AbstractEstimateDeduction> absrtractEstimateDeductions = new ArrayList<AbstractEstimateDeduction>(0);
+    
+    @Transient
+    private List<AbstractEstimateDeduction> tempDeductionValues = new ArrayList<AbstractEstimateDeduction>(0);
+
     @Override
     public Long getId() {
         return id;
@@ -695,7 +702,7 @@ public class AbstractEstimate extends StateAware implements Auditable {
     public void setApprovedBy(final User approvedBy) {
         this.approvedBy = approvedBy;
     }
-
+    
     public BigDecimal getLatitude() {
         return latitude;
     }
@@ -845,6 +852,24 @@ public class AbstractEstimate extends StateAware implements Auditable {
 
     public void setTotalIncludingRE(final Double totalIncludingRE) {
         this.totalIncludingRE = totalIncludingRE;
+    }
+
+    public List<AbstractEstimateDeduction> getAbsrtractEstimateDeductions() {
+        return absrtractEstimateDeductions;
+    }
+
+    public void setAbsrtractEstimateDeductions(final List<AbstractEstimateDeduction> absrtractEstimateDeductions) {
+        this.absrtractEstimateDeductions.clear();
+        if (absrtractEstimateDeductions != null)
+            this.absrtractEstimateDeductions.addAll(absrtractEstimateDeductions);
+    }
+
+    public List<AbstractEstimateDeduction> getTempDeductionValues() {
+        return tempDeductionValues;
+    }
+
+    public void setTempDeductionValues(List<AbstractEstimateDeduction> tempDeductionValues) {
+        this.tempDeductionValues = tempDeductionValues;
     }
 
 }

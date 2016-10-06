@@ -49,7 +49,7 @@ function addFileInputField() {
 	var curFieldValue = $("#file" + tempTrNo).val();
 	var documentsSize = parseFloat($("#documentsSize").val()) + parseFloat(trNo);
 	if(curFieldValue == "") {
-		bootbox.alert("Field is empty!");
+		bootbox.alert($('#attachDocument').val());
 		return;
 	}
 	if(documentsSize > 4) {

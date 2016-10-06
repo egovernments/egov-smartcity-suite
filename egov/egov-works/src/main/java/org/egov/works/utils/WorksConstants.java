@@ -358,4 +358,6 @@ public class WorksConstants {
     
     public static final String [] CONTRACTOR_REFUND_PURPOSE = {CONTRACTOR_RETENTION_MONEY_PURPOSE , CONTRACTOR_SECURITY_DEPOSITE_PURPOSE};
     
+    public static final String APPCONFIG_KEY_SHOW_DEDUCTION_GRID = "SHOW_DEDUCTION_GRID";
+    
 }

@@ -58,6 +58,7 @@
 	<div class="panel-title">
 		<spring:message code="lbl.statutorydeductions" />
 	</div>
+	</div>
 	<input type="hidden" value="${billDetailsMap == null ? contractorBillRegister.statutoryDeductionDetailes.size() : billDetailsMap.size() - 2}" id="detailsSize" /> 
 		<table class="table table-bordered" id="tblstatutorydeductioncreditdetails">
 			<thead>
@@ -82,7 +83,7 @@
 							</c:if>	
 							<c:if test="${!billDetail.isDebit && !billDetail.isNetPayable && billDetail.isRetentionMoneyDeduction && !billDetail.isStatutoryDeduction}">
 								<c:set var="isRetentionMoneyDeductionsPresent" value="${true}" scope="session" />
-							</c:if>					
+							</c:if>	
 						</c:forEach>	
 					</c:when>
 					<c:otherwise>							
@@ -148,11 +149,11 @@
 				</c:choose>
 			</tbody>
 		</table>
-</div>
 
 <div class="panel-heading custom_form_panel_heading">
 	<div class="panel-title">
 		<spring:message code="lbl.otherdeductions" />
+	</div>
 	</div>
 	<input type="hidden" value="${billDetailsMap == null ? contractorBillRegister.statutoryDeductionDetailes.size() : billDetailsMap.size() - 2}" id="detailsSize" /> 
 		<table class="table table-bordered" id="tblotherdeductioncreditdetails">
@@ -212,11 +213,11 @@
 				</c:choose>
 			</tbody>
 		</table>
-</div>
 
 <div class="panel-heading custom_form_panel_heading">
 	<div class="panel-title">
 		<spring:message code="lbl.retentionmoneydeductions" />
+	</div>
 	</div>
 	<input type="hidden" value="${billDetailsMap == null ? contractorBillRegister.statutoryDeductionDetailes.size() : billDetailsMap.size() - 2}" id="detailsSize" /> 
 		<table class="table table-bordered" id="tblretentionmoneydeductioncreditdetails">
@@ -288,7 +289,6 @@
 				</c:choose>
 			</tbody>
 		</table>
-</div>
 
 <div class="panel-heading custom_form_panel_heading">
 	<div class="panel-title">

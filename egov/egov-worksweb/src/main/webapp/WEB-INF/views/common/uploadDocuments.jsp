@@ -68,6 +68,7 @@
 			</c:if>
 		</div>
 	</div>
+	<input type="hidden" value="<spring:message code="error.documentattachment.empty" />" id="attachDocument" />
 	<c:if test="${documentDetails != null &&  !documentDetails.isEmpty()}">
 		<c:forEach items="${documentDetails}" var="documentDtls">
 			&nbsp; &nbsp; <a href="" onclick="window.open('/egi/downloadfile?fileStoreId=${documentDtls.fileStore.fileStoreId}&moduleName=WMS','','height=600,width=1200,scrollbars=yes,left=0,top=0,status=yes')">${documentDtls.fileStore.fileName }</a><br />

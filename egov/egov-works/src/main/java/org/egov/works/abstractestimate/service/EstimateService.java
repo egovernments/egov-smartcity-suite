@@ -43,9 +43,11 @@ import java.io.IOException;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.Hashtable;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Set;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
@@ -60,6 +62,7 @@ import org.egov.commons.dao.EgwTypeOfWorkHibernateDAO;
 import org.egov.commons.dao.FinancialYearDAO;
 import org.egov.commons.dao.FunctionHibernateDAO;
 import org.egov.commons.dao.FundHibernateDAO;
+import org.egov.commons.service.ChartOfAccountsService;
 import org.egov.commons.service.UOMService;
 import org.egov.dao.budget.BudgetGroupDAO;
 import org.egov.eis.entity.Assignment;
@@ -79,6 +82,7 @@ import org.egov.services.masters.SchemeService;
 import org.egov.works.abstractestimate.entity.AbstractEstimate;
 import org.egov.works.abstractestimate.entity.AbstractEstimate.EstimateStatus;
 import org.egov.works.abstractestimate.entity.AbstractEstimate.OfflineStatusesForAbstractEstimate;
+import org.egov.works.abstractestimate.entity.AbstractEstimateDeduction;
 import org.egov.works.abstractestimate.entity.AbstractEstimateForLoaSearchRequest;
 import org.egov.works.abstractestimate.entity.AbstractEstimateForLoaSearchResult;
 import org.egov.works.abstractestimate.entity.Activity;
@@ -209,6 +213,10 @@ public class EstimateService {
 
     @Autowired
     private EgwStatusHibernateDAO egwStatusHibernateDAO;
+    
+    @Autowired
+    @Qualifier("chartOfAccountsService")
+    private ChartOfAccountsService chartOfAccountsService;
 
     public Session getCurrentSession() {
         return entityManager.unwrap(Session.class);
@@ -241,7 +249,9 @@ public class EstimateService {
             newAbstractEstimate = saveNewAbstractEstimate(abstractEstimate);
         else
             newAbstractEstimate = updateAbstractEstimate(abstractEstimateFromDB, abstractEstimate);
-
+        
+        createDeductionValues(abstractEstimate);
+        
         if (newAbstractEstimate.getLineEstimateDetails() != null
                 && newAbstractEstimate.getLineEstimateDetails().getLineEstimate().isAbstractEstimateCreated())
             newAbstractEstimate.setEgwStatus(egwStatusHibernateDAO.getStatusByModuleAndCode(WorksConstants.ABSTRACTESTIMATE,
@@ -560,6 +570,14 @@ public class EstimateService {
             model.addAttribute("isServiceVATRequired", true);
         else
             model.addAttribute("isServiceVATRequired", false);
+        final List<AppConfigValues> showDeductions = appConfigValuesService.getConfigValuesByModuleAndKey(
+                WorksConstants.WORKS_MODULE_NAME, WorksConstants.APPCONFIG_KEY_SHOW_DEDUCTION_GRID);
+        final AppConfigValues showDeduction = showDeductions.get(0);
+        if (showDeduction.getValue().equalsIgnoreCase("Yes"))
+            model.addAttribute("isDeductionGrid", true);
+        else
+            model.addAttribute("isDeductionGrid", false);
+        
     }
 
     public void validateAssetDetails(final AbstractEstimate abstractEstimate, final BindingResult bindErrors) {
@@ -624,6 +642,8 @@ public class EstimateService {
                 financialDetail.setAbstractEstimate(abstractEstimate);
 
             createOverheadValues(abstractEstimate);
+            
+            createDeductionValues(abstractEstimate);
 
             createAssetValues(abstractEstimate);
 
@@ -1381,5 +1401,29 @@ public class EstimateService {
         return abstractEstimateRepository.findCreatedByForEstimatePhotograph(
                 AbstractEstimate.EstimateStatus.TECH_SANCTIONED.toString());
     }
+    
+    private void createDeductionValues(final AbstractEstimate abstractEstimate) {
+        AbstractEstimateDeduction deduction = null;
+        abstractEstimate.getAbsrtractEstimateDeductions().clear();
+        for (final AbstractEstimateDeduction deductions : abstractEstimate.getTempDeductionValues()) {
+            deduction = new AbstractEstimateDeduction();
+            deduction.setChartOfAccounts(chartOfAccountsService.findById(deductions.getChartOfAccounts().getId(), false));
+            deduction.setAmount(deductions.getAmount());
+            deduction.setAbstractEstimate(abstractEstimate);
+            deduction.setPercentage(deductions.getPercentage());
+            abstractEstimate.getAbsrtractEstimateDeductions().add(deduction);
+        }
+    }
 
+    public boolean checkForDuplicateAccountCodes(final AbstractEstimate abstractEstimate) {
+        final Set<Long> glCodeIdSet = new HashSet<Long>();
+        for (final AbstractEstimateDeduction deductions : abstractEstimate.getTempDeductionValues())
+            if (deductions.getChartOfAccounts().getGlcode() != null) {
+                if (glCodeIdSet.contains(Long.parseLong(deductions.getChartOfAccounts().getGlcode())))
+                    return false;
+                glCodeIdSet.add(Long.parseLong(deductions.getChartOfAccounts().getGlcode()));
+            }
+        return true;
+
+    }
 }

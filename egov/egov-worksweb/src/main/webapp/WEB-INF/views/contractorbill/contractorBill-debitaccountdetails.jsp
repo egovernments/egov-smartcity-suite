@@ -57,7 +57,7 @@
 			</thead>
 			<tbody>
 				<c:choose>
-					<c:when test="${billDetailsMap == null || billDetailsMap == ''}"> 
+					<c:when test="${billDetailsMap == null || !isDebitPresent}"> 
 						<tr>
 							<td>
 								<input type="text" id="debitGlcode" value="${workOrderEstimate.estimate.financialDetails[0].budgetGroup.minCode.glcode}" class="form-control" readonly="readonly"required"> 

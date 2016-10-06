@@ -44,6 +44,7 @@ $subTypeOfWorkId = 0;
 $ExceptionalUOMs = "";
 $schemeId = "";
 $subSchemeId = 0;
+$isDeductionGrid = $('#isDeductionGrid').val();
 var sorMsArray=new Array(200);
 var nonSorMsArray=new Array(200);
 var headstart="<!--only for validity head start -->";
@@ -367,6 +368,12 @@ $(document).ready(function(){
 	resetAddedOverheads();
 	calculateOverheadTotalAmount();
 	$('#isOverheadValuesLoading').val('false');
+	
+	if($isDeductionGrid == 'true') {
+		deductionAccountCodeAndHead_initialize();
+		getDeductionAmountByPercentage();
+	}
+	
 });
 
 $overheadRowCount = 0;
@@ -388,6 +395,7 @@ function getRow(obj) {
 var addedOverheads = new Array();
 
 function deleteOverheadRow(obj) {
+
 	var rIndex = getRow(obj).rowIndex;
 	var rowcount=jQuery("#overheadTable tbody tr").length;
 	if(rowcount<=1) {
@@ -660,6 +668,7 @@ function deleteSor(obj) {
 	calculateEstimateAmountTotal();
 	calculateVatAmountTotal();
 	total();
+	getDeductionAmountByPercentage();
 	return true;
 }
 
@@ -674,6 +683,7 @@ function calculateEstimateAmount(currentObj) {
 	calculateEstimateAmountTotal();
 	calculateVatAmountTotal();
 	total();
+	getDeductionAmountByPercentage();
 }
 
 function calculateVatAmount(currentObj) {
@@ -764,6 +774,7 @@ function deleteNonSor(obj) {
 	calculateNonSorEstimateAmountTotal();
 	calculateNonSorVatAmountTotal();
 	nonSorTotal();
+	getDeductionAmountByPercentage();
 	return true;
 }
 
@@ -903,6 +914,7 @@ function calculateNonSorEstimateAmount(currentObj) {
 		calculateNonSorEstimateAmountTotal();
 		calculateNonSorVatAmountTotal();
 		nonSorTotal();
+		getDeductionAmountByPercentage();
 	}
 }
 
@@ -957,9 +969,12 @@ function calculateEstimateValue() {
 		sorTotal = 0.0;
 	if(nonSorTotal == '')
 		nonSorTotal = 0.0;
-
-	var workValue = parseFloat(parseFloat(sorTotal) + parseFloat(nonSorTotal) ).toFixed(2);
-	var estimateValue =  parseFloat(parseFloat(workValue) + parseFloat(overheadTotal)).toFixed(2)
+	var workValue = parseFloat(parseFloat(sorTotal) + parseFloat(nonSorTotal));
+	var estimateValue = parseFloat(parseFloat(workValue) + parseFloat(overheadTotal)).toFixed(2);
+	if($isDeductionGrid == 'true') {
+		var deductionTotal = $('#deductionTotalAmount').html();
+		estimateValue = parseFloat(parseFloat(workValue) + parseFloat(overheadTotal) + parseFloat(deductionTotal)).toFixed(2);
+	} 
 	$('#estimateValue').val(estimateValue);
 	$('#workValue').val(workValue);
 	$('#estimateValueTotal').html(estimateValue);
@@ -1812,6 +1827,7 @@ function validateWorkFlowApprover(name) {
 		$('#approvalPosition').attr('required', 'required');
 		$('#approvalComent').removeAttr('required');
 
+
 		var lineEstimateAmount = parseFloat($('#lineEstimateAmount').val());
 		var estimateValue = parseFloat($('#estimateValueTotal').html());
 		if(estimateValue > lineEstimateAmount) {
@@ -1834,7 +1850,22 @@ function validateWorkFlowApprover(name) {
 				return false;
 			}
 		}
-
+		
+		var resultLengthForDeductionTable = jQuery('#deductionTable tr').length - 1;
+		for (var i = 0; i < resultLengthForDeductionTable; i++) {
+			var indexForDeduction=i;
+			var accountCode = document.getElementById('tempDeductionValues[' + indexForDeduction + '].accountCode').value;
+			var deductionAmount = document.getElementById('tempDeductionValues[' + indexForDeduction + '].amount').value;
+			if((accountCode == '' ) && (parseFloat(deductionAmount) != 0 && deductionAmount != '')){
+				bootbox.alert($('#msgAccountCode').val());
+				return false;				
+			} 
+			if((accountCode != '') && (parseFloat(deductionAmount) == 0 || deductionAmount == '')){
+				bootbox.alert($('#msgAmountZero').val());
+				return false;				
+			} 
+		}
+		
 		flag = validateSORDetails();
 
 		if(flag && $('#abstractEstimate').valid()) {
@@ -1871,17 +1902,24 @@ function validateWorkFlowApprover(name) {
 					if (parseFloat($(this).val()) <= 0)
 						flag = false;
 				});
-
+				
 				if (!flag) {
 					bootbox.alert($('#errorquantityzero').val());
 					return false;
 				}
 			}
 		}
+		
 	}
 
 	if(flag) {
 		deleteHiddenRows();
+		var deleteDeductionTable=$('#deductionTable tr:last');
+		var accountCode = document.getElementById('tempDeductionValues[0].accountCode').value;
+		if(resultLengthForDeductionTable<=1 && accountCode == "") {
+			var i=0;
+			deleteDeductionTable.remove();
+		}
 		document.forms[0].submit;
 		return true;
 	} else
@@ -1994,6 +2032,9 @@ function addRow(tableName,rowName) {
 			{
 			$row=jQuery("#"+tableName+" tr:eq(1)").clone();
 			nextIdx=nextIdx+1;
+			} else if(tableName.indexOf("deductionTable")>=0){
+				$row=jQuery("#"+tableName+" tr:eq(1)").clone();
+				nextIdx=nextIdx+1;
 			} else
 				{
 		      var $row=jQuery("#"+tableName+" tr:eq(2)").clone();
@@ -2884,4 +2925,162 @@ function clearOverHeads() {
 			deleteRow('overheadTable', objects[i]);
 		}
 	}
+}
+
+function deleteDeductionRow(obj) {
+	
+	var id = $(getRow(obj)).children('td:first').children('input:first').val();
+    if(!$("#removedDeductionIds").val()==""){
+		$("#removedDeductionIds").val($("#removedDeductionIds").val()+",");
+	}
+    $("#removedDeductionIds").val($("#removedDeductionIds").val()+id);
+    
+    var rIndex = getRow(obj).rowIndex;
+    
+    //To get all the deleted rows id
+    var aIndex = rIndex - 1;
+
+    var tbl=document.getElementById('deductionTable');	
+	var rowcount=$("#deductionTable tbody tr").length;
+	if(rowcount<=1) {
+		bootbox.alert("This row can not be deleted");
+		return false;
+	} else {
+	tbl.deleteRow(rIndex);
+	
+	var idx= 0;
+	//regenerate index existing inputs in table row
+	jQuery("#deductionTable tbody tr").each(function() {
+	
+			jQuery(this).find("input, select, textarea, errors, span, input:hidden").each(function() {
+				var classval = jQuery(this).attr('class');
+				jQuery(this).attr({
+				      'name': function(_, name) {
+				    	  if(!(jQuery(this).attr('name')===undefined))
+				    		  return name.replace(/\[.\]/g, '['+ idx +']'); 
+				      },
+				      'id': function(_, id) {
+				    	  if(!(jQuery(this).attr('id')===undefined))
+				    		  return id.replace(/\[.\]/g, '['+ idx +']'); 
+				      },
+				      'class' : function(_, name) {
+							if(!(jQuery(this).attr('class')===undefined))
+								return name.replace(/\[.\]/g, '['+ idx +']'); 
+						},
+					  'data-idx' : function(_,dataIdx)
+					  {
+						  return idx;
+					  }
+				   });
+		    });
+			
+			idx++;
+	});
+	calculateDeductionTotalAmount();
+	calculateEstimateValue();
+
+	return true;
+	}
+}
+
+
+function calculateDeductionTotalAmount(){
+	var resultLength = jQuery('#deductionTable tr').length-1;
+	var index;
+	var total = 0;
+	for (var i = 0; i < resultLength; i++) {
+		index = i;
+		var deductionAmount = document.getElementById('tempDeductionValues[' + i + '].amount').value;
+		if(deductionAmount==null || deductionAmount=="")
+			deductionAmount = 0;
+		total = eval(total) + eval(deductionAmount);
+	}
+
+	$("#deductionTotalAmount").html(parseFloat(total).toFixed(2));
+	calculateEstimateValue();
+}
+
+$('#addDeductionRow').click(function() { 
+	var flag=false;
+	var resultLength = jQuery('#deductionTable tr').length-1;
+	for (var i = 0; i < resultLength; i++) {
+		var deductionAmount = document.getElementById('tempDeductionValues[' + i + '].amount').value;
+		var deductionAccountCode = document.getElementById('tempDeductionValues[' + i + '].accountCode').value;
+		if((deductionAccountCode == "" || deductionAccountCode == null)){
+			bootbox.alert($('#msgAccountCode').val());
+			return false;
+		}
+				
+		if(parseFloat(deductionAmount) == 0){
+			bootbox.alert($('#msgAmountZero').val());
+			return false;
+		}
+		flag = true;
+	}
+	if(flag = true) {
+		$('.deductionAccountCode').typeahead('destroy');
+		addRow('deductionTable','deductionRow');
+		deductionAccountCodeAndHead_initialize();
+	}
+		
+});
+
+function deductionAccountCodeAndHead_initialize() {
+	 var custom = new Bloodhound({
+	    datumTokenizer: function(d) { return d.tokens; },
+	    queryTokenizer: Bloodhound.tokenizers.whitespace,
+		   remote: {
+	            url: '/egworks/abstractestimate/ajaxdeduction-coa?searchQuery=%QUERY',
+	            filter: function (data) {
+	                return $.map(data, function (ct) {
+	                    return {
+	                        id: ct.id,
+	                        name: ct.name,
+	                        glcode: ct.glcode,
+	                        glcodesearch: ct.glcode+' ~ '+ct.name
+	                    };
+	                });
+	            }
+	        }
+   });
+
+   custom.initialize();
+
+   $('.deductionAccountCode').typeahead({
+   	hint : true,
+		highlight : true,
+		minLength : 3
+		
+	}, {		    
+         displayKey: 'glcodesearch',
+         source: custom.ttAdapter()
+   }).on('typeahead:selected typeahead:autocompleted', function (event, data) {
+   	$(this).parents("tr:first").find('.deductionAccountHead').val(data.name);
+   	$(this).parents("tr:first").find('.deductionid').val(data.id);    
+   });
+}
+
+function getDeductionAmountByPercentage(){
+	var resultLength = jQuery('#deductionTable tr').length-1;
+	var workValue = $('#workValue').val();
+	var index;
+	for (var i = 0; i < resultLength; i++) {
+		var deductionPercentage = document.getElementById('tempDeductionValues[' + i + '].percentage').value;
+		var deductionAccountCode = document.getElementById('tempDeductionValues[' + i + '].accountCode').value;
+		if(deductionPercentage != undefined && parseFloat(deductionPercentage) != 0 && deductionPercentage != '')
+			$('#deductionTable tbody tr:eq('+i+')').find('.deductionAmount').val(((workValue*deductionPercentage)/100).toFixed(2));
+		if(parseFloat(workValue) == 0){
+			$('#deductionTable tbody tr:eq('+i+')').find('.deductionPercentage').val('');
+			$('#deductionTable tbody tr:eq('+i+')').find('.deductionAmount').val('');
+		}
+		if(deductionAccountCode == '' && parseFloat(deductionPercentage) != 0 && deductionPercentage != ''){
+			$('#deductionTable tbody tr:eq('+i+')').find('.deductionAmount').val('');
+			bootbox.alert($('#msgAccountCode').val());
+			$('#deductionTable tbody tr:eq('+i+')').find('.deductionPercentage').val('');
+		}
+		
+	}
+	calculateDeductionTotalAmount();
+	calculateEstimateValue();
+		
 }
