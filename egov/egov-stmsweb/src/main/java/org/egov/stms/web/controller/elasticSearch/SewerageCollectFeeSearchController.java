@@ -167,7 +167,7 @@ public class SewerageCollectFeeSearchController {
             if (searchableObjects != null) {
                String consumernumber = searchableObjects.get("consumernumber");
                String status = searchableObjects.get("status");
-               if(!status.equals("Rejected") && !status.equals("Canceled") && !status.equals("Sanctioned") ){
+               if(!status.equals("Rejected") && !status.equals("Canceled")){
                if(consumernumber != null){
                  sewerageApplicationDetails = sewerageApplicationDetailsService.findByApplicationNumber(consumernumber);
                }
