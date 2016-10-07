@@ -67,6 +67,7 @@ import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang.StringUtils;
 import org.egov.demand.utils.DemandConstants;
 import org.egov.eis.entity.Assignment;
+import org.egov.eis.service.AssignmentService;
 import org.egov.eis.service.DesignationService;
 import org.egov.eis.service.EisCommonService;
 import org.egov.infra.admin.master.entity.User;
@@ -122,6 +123,7 @@ import org.egov.ptis.domain.service.notice.NoticeService;
 import org.egov.ptis.domain.service.property.PropertyService;
 import org.egov.ptis.notice.PtNotice;
 import org.egov.ptis.report.bean.PropertyAckNoticeInfo;
+import org.egov.ptis.service.utils.PropertyTaxCommonUtils;
 import org.egov.ptis.wtms.WaterChargesIntegrationService;
 import org.joda.time.DateTime;
 import org.joda.time.LocalDate;
@@ -215,6 +217,12 @@ public class PropertyTransferService {
     
     @Autowired
     private DesignationService designationService;
+    
+    @Autowired
+    private AssignmentService assignmentService;
+    
+    @Autowired
+    private PropertyTaxCommonUtils propertyTaxCommonUtils;
     
     @Transactional
     public void initiatePropertyTransfer(final BasicProperty basicProperty, final PropertyMutation propertyMutation) {
@@ -722,6 +730,25 @@ public class PropertyTransferService {
             propertyMutation.setMutationFee(
                     calculateMutationFee(propertyMutation.getPartyValue(), propertyMutation.getDepartmentValue()));
         }
+    }
+    
+    public Assignment getWorkflowInitiator(PropertyMutation propertyMutation) {
+        Assignment wfInitiator = null;
+        if (propertyService.isEmployee(propertyMutation.getCreatedBy())) {
+            if (propertyMutation.getState() != null && propertyMutation.getState().getInitiatorPosition() != null)
+                wfInitiator = propertyTaxCommonUtils.getUserAssignmentByPassingPositionAndUser(
+                        propertyMutation.getCreatedBy(), propertyMutation.getState().getInitiatorPosition());
+            else
+                wfInitiator = assignmentService.getPrimaryAssignmentForUser(propertyMutation.getCreatedBy().getId());
+        } else if (!propertyMutation.getStateHistory().isEmpty())
+            wfInitiator = assignmentService.getPrimaryAssignmentForPositon(
+                    propertyMutation.getStateHistory().get(0).getOwnerPosition().getId());
+        else {
+            wfInitiator = assignmentService
+                    .getPrimaryAssignmentForPositon(propertyMutation.getState().getOwnerPosition().getId());
+        }
+
+        return wfInitiator;
     }
     
     

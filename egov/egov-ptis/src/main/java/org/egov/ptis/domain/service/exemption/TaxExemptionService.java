@@ -254,7 +254,6 @@ public class TaxExemptionService extends PersistenceService<PropertyImpl, Long> 
             LOGGER.debug("WorkFlow Transition For Demolition Started  ...");
         final User user = securityUtils.getCurrentUser();
         final DateTime currentDate = new DateTime();
-        final Assignment userAssignment = assignmentService.getPrimaryAssignmentForUser(user.getId());
         Position pos = null;
         String currentState = "";
         Assignment wfInitiator = null;
@@ -266,13 +265,13 @@ public class TaxExemptionService extends PersistenceService<PropertyImpl, Long> 
                 approverPosition = assignment.getPosition().getId();
         } else
             currentState = null;
-        if (null != property.getId()
-                && (workFlowAction.equalsIgnoreCase(WFLOW_ACTION_STEP_REJECT) || workFlowAction
-                        .equalsIgnoreCase(WFLOW_ACTION_STEP_APPROVE)))
+        if (property.getId() != null)
             wfInitiator = propService.getWorkflowInitiator(property);
+        else
+            wfInitiator = propertyTaxCommonUtils.getWorkflowInitiatorAssignment(user.getId());
 
         if (WFLOW_ACTION_STEP_REJECT.equalsIgnoreCase(workFlowAction)) {
-            if (wfInitiator.equals(userAssignment)) {
+            if (wfInitiator.getPosition().equals(property.getState().getOwnerPosition())) {
                 property.transition(true).end().withSenderName(user.getUsername() + "::" + user.getName())
                         .withComments(approvarComments).withDateInfo(currentDate.toDate());
                 property.setStatus(STATUS_CANCELLED);
@@ -297,7 +296,8 @@ public class TaxExemptionService extends PersistenceService<PropertyImpl, Long> 
                 property.transition().start().withSenderName(user.getUsername() + "::" + user.getName())
                         .withComments(approvarComments).withStateValue(wfmatrix.getNextState())
                         .withDateInfo(new Date()).withOwner(pos).withNextAction(wfmatrix.getNextAction())
-                        .withNatureOfTask(NATURE_TAX_EXEMPTION);
+                        .withNatureOfTask(NATURE_TAX_EXEMPTION)
+                        .withInitiator(wfInitiator != null ? wfInitiator.getPosition() : null);
                 //to be enabled once acknowledgement feature is developed
                 //buildSMS(property, workFlowAction);
             } else {

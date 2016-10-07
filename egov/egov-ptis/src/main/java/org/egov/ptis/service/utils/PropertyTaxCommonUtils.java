@@ -75,9 +75,12 @@ import org.egov.collection.constants.CollectionConstants;
 import org.egov.collection.entity.ReceiptHeader;
 import org.egov.commons.Installment;
 import org.egov.commons.dao.InstallmentDao;
+import org.egov.eis.entity.Assignment;
+import org.egov.eis.service.AssignmentService;
 import org.egov.eis.service.PositionMasterService;
 import org.egov.infra.admin.master.entity.AppConfigValues;
 import org.egov.infra.admin.master.entity.Module;
+import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.admin.master.service.AppConfigValueService;
 import org.egov.infra.admin.master.service.ModuleService;
 import org.egov.infra.exception.ApplicationRuntimeException;
@@ -115,6 +118,9 @@ public class PropertyTaxCommonUtils {
     
     @Autowired
     private InstallmentDao installmentDao;
+    
+    @Autowired
+    private AssignmentService assignmentService;
     
 
     /**
@@ -302,6 +308,44 @@ public class PropertyTaxCommonUtils {
     public Installment getCurrentPeriodInstallment() {
         final Module module = moduleService.getModuleByName(PTMODULENAME);
         return installmentDao.getInsatllmentByModuleForGivenDate(module, new Date());
+    }
+    
+    /**
+     * API to get user assignment by passing user and position
+     * 
+     * @return assignment
+     */
+    public Assignment getUserAssignmentByPassingPositionAndUser(final User user, Position position) {
+
+        Assignment userAssignment = null;
+
+        if (user != null && position != null) {
+            List<Assignment> assignmentList = assignmentService.findByEmployeeAndGivenDate(user.getId(), new Date());
+            for (final Assignment assignment : assignmentList) {
+                if (position.getId() == assignment.getPosition().getId()) {
+                    userAssignment = assignment;
+                }
+            }
+        }
+        return userAssignment;
+    }
+
+    /**
+     * API to get workflow initiator assignment in Property Tax.
+     * 
+     * @return assignment
+     */
+    public Assignment getWorkflowInitiatorAssignment(Long userId) {
+        Assignment wfInitiatorAssignment = null;
+        if (userId != null) {
+            List<Assignment> assignmentList = assignmentService.getAllActiveEmployeeAssignmentsByEmpId(userId);
+            for (final Assignment assignment : assignmentList) {
+                if (assignment.getDesignation().getName().equals(PropertyTaxConstants.JUNIOR_ASSISTANT)
+                        || assignment.getDesignation().getName().equals(PropertyTaxConstants.SENIOR_ASSISTANT))
+                    wfInitiatorAssignment = assignment;
+            }
+        }
+        return wfInitiatorAssignment;
     }
 
 }

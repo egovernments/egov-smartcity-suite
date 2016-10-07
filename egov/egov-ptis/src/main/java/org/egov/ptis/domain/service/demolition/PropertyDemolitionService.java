@@ -244,12 +244,16 @@ public class PropertyDemolitionService extends PersistenceService<PropertyImpl, 
             LOGGER.debug("WorkFlow Transition For Demolition Started  ...");
         final User user = securityUtils.getCurrentUser();
         final DateTime currentDate = new DateTime();
-        final Assignment userAssignment = assignmentService.getPrimaryAssignmentForUser(user.getId());
         Position pos = null;
-
+        Assignment wfInitiator = null;
+        
+        if(property.getId()!=null)
+            wfInitiator = propService.getWorkflowInitiator(property);
+        else
+            wfInitiator = propertyTaxCommonUtils.getWorkflowInitiatorAssignment(user.getId());
+        
         if (WFLOW_ACTION_STEP_REJECT.equalsIgnoreCase(workFlowAction)) {
-        	Assignment wfInitiator = propService.getWorkflowInitiator(property);
-        	if (wfInitiator.equals(userAssignment)) {
+        	if (wfInitiator.getPosition().equals(property.getState().getOwnerPosition())) {
         		property.transition(true).end().withSenderName(user.getUsername() + "::" + user.getName())
                 .withComments(approvarComments).withDateInfo(currentDate.toDate());
         		property.setStatus(STATUS_CANCELLED);
@@ -261,9 +265,7 @@ public class PropertyDemolitionService extends PersistenceService<PropertyImpl, 
                         .withComments(approvarComments)
                         .withStateValue(stateValue)
                         .withDateInfo(currentDate.toDate())
-                        .withOwner(
-                                assignmentService.getPrimaryAssignmentForUser(property.getCreatedBy().getId())
-                                        .getPosition()).withNextAction(WF_STATE_ASSISTANT_APPROVAL_PENDING);
+                        .withOwner(wfInitiator.getPosition()).withNextAction(WF_STATE_ASSISTANT_APPROVAL_PENDING);
                 buildSMS(property, workFlowAction);
         	}
         } else {
@@ -271,15 +273,16 @@ public class PropertyDemolitionService extends PersistenceService<PropertyImpl, 
                 pos = positionMasterService.getPositionById(approverPosition);
             else if (WFLOW_ACTION_STEP_APPROVE.equalsIgnoreCase(workFlowAction))
                 pos = positionMasterService.getPositionByUserId(securityUtils.getCurrentUser().getId());
-            else if (WFLOW_ACTION_STEP_SIGN.equalsIgnoreCase(workFlowAction))
-                pos = assignmentService.getPrimaryAssignmentForUser(property.getCreatedBy().getId()).getPosition();
+            /*else if (WFLOW_ACTION_STEP_SIGN.equalsIgnoreCase(workFlowAction))
+                pos = assignmentService.getPrimaryAssignmentForUser(property.getCreatedBy().getId()).getPosition();*/
             WorkFlowMatrix wfmatrix = null;
             if (null == property.getState()) {
                 wfmatrix = propertyWorkflowService.getWfMatrix(property.getStateType(), null, null, additionalRule,
                         null, null);
                 property.transition().start().withSenderName(user.getUsername() + "::" + user.getName())
                         .withComments(approvarComments).withStateValue(wfmatrix.getNextState())
-                        .withDateInfo(new Date()).withOwner(pos).withNextAction(wfmatrix.getNextAction()).withNatureOfTask(NATURE_DEMOLITION);
+                        .withDateInfo(new Date()).withOwner(pos).withNextAction(wfmatrix.getNextAction()).withNatureOfTask(NATURE_DEMOLITION)
+                        .withInitiator(wfInitiator != null ? wfInitiator.getPosition() : null);
                 //to be enabled once acknowledgement feature is developed
                 //buildSMS(property, workFlowAction);
             } else {

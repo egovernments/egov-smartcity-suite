@@ -230,7 +230,8 @@ public class DigitalSignatureWorkflowController {
             final WorkFlowMatrix wfmatrix = propertyWorkflowService.getWfMatrix(property.getStateType(), null, null,
                     applicationType, property.getCurrentState().getValue(), null);
             property.transition(true).withSenderName(user.getUsername() + "::" + user.getName())
-                    .withStateValue(wfmatrix.getNextState()).withDateInfo(currentDate.toDate()).withOwner(pos)
+                    .withStateValue(wfmatrix.getNextState()).withDateInfo(currentDate.toDate())
+                    .withOwner(property.getCurrentState().getInitiatorPosition()!=null?property.getCurrentState().getInitiatorPosition():pos)
                     .withNextAction(wfmatrix.getNextAction());
         }
         return applicationType;
@@ -249,7 +250,8 @@ public class DigitalSignatureWorkflowController {
             final Position pos = getWorkflowInitiator(revPetition,revPetition.getBasicProperty()).getPosition();
             final WorkFlowMatrix wfmatrix = revisionPetitionWorkFlowService.getWfMatrix(revPetition.getStateType(),
                     null, null, null, revPetition.getCurrentState().getValue(), null);
-            revPetition.transition(true).withStateValue(wfmatrix.getNextState()).withOwner(pos)
+            revPetition.transition(true).withStateValue(wfmatrix.getNextState())
+            .withOwner(revPetition.getCurrentState().getInitiatorPosition()!=null?revPetition.getCurrentState().getInitiatorPosition():pos)
                     .withSenderName(user.getUsername() + "::" + user.getName()).withDateInfo(new DateTime().toDate())
                     .withNextAction(wfmatrix.getNextAction());
         }
@@ -267,7 +269,8 @@ public class DigitalSignatureWorkflowController {
             final WorkFlowMatrix wfmatrix = transferWorkflowService.getWfMatrix(propertyMutation.getStateType(), null,
                     null, propertyMutation.getType(), propertyMutation.getCurrentState().getValue(), null);
             propertyMutation.transition(true).withSenderName(user.getUsername() + "::" + user.getName())
-                    .withStateValue(wfmatrix.getNextState()).withDateInfo(currentDate.toDate()).withOwner(pos)
+                    .withStateValue(wfmatrix.getNextState()).withDateInfo(currentDate.toDate())
+                    .withOwner(propertyMutation.getCurrentState().getInitiatorPosition()!=null?propertyMutation.getCurrentState().getInitiatorPosition():pos)
                     .withNextAction(wfmatrix.getNextAction());
         }
     }
