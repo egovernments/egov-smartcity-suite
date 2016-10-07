@@ -293,7 +293,7 @@ public class AjaxAbstractEstimateController {
     }
 
     @RequestMapping(value = "/ajaxdeduction-coa", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
-    public @ResponseBody List<CChartOfAccounts> findDetailedAccountCodesAndAccountHeadByGlcodeLike(@RequestParam final String searchQuery) {
+    public @ResponseBody List<CChartOfAccounts> findDeductionAccountCodesAndAccountHeadByGlcodeLike(@RequestParam final String searchQuery) {
         final String[] purposeNames = new String[3];
         purposeNames[0] = WorksConstants.CONTRACTOR_NETPAYABLE_PURPOSE;
         return chartOfAccountsService.findOtherDeductionAccountCodesByGlcodeOrNameLike(searchQuery, purposeNames);

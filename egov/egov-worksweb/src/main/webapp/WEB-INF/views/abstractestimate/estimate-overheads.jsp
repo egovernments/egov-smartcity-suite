@@ -117,7 +117,7 @@
 								<form:errors path="tempOverheadValues[0].overhead.id" cssClass="add-margin error-msg" /> 
 							</td>
 							<td>
-								<input type="text" id="tempOverheadValues[0].percentage" name="tempOverheadValues[0].percentage"  class="form-control" disabled>  
+								<input type="text" id="tempOverheadValues[0].percentage" name="tempOverheadValues[0].percentage"  class="form-control text-right" disabled>  
 							</td>
 							<td>
 								<form:input path="tempOverheadValues[0].amount" id="tempOverheadValues[0].amount" name="tempOverheadValues[0].amount"  data-pattern="decimalvalue" data-idx="0" data-optional="0" class="form-control table-input text-right" onblur="calculateOverheadTotalAmount();"  maxlength="12" />
@@ -214,7 +214,7 @@
 									<form:errors path="tempOverheadValues[${item.index }].overhead.id" cssClass="add-margin error-msg" /> 
 								</td>
 								<td>
-									<input type="text" id="tempOverheadValues[${item.index }].percentage" name="tempOverheadValues[${item.index }].percentage"  class="form-control" disabled value="${percentage}">  
+									<input type="text" id="tempOverheadValues[${item.index }].percentage" name="tempOverheadValues[${item.index }].percentage"  class="form-control text-right" disabled value="${percentage}">  
 								</td>
 								<td>
 									<form:input path="tempOverheadValues[${item.index }].amount" id="tempOverheadValues[${item.index }].amount" value="${overheadValue.amount }" name="tempOverheadValues[${item.index }].amount"  data-pattern="decimalvalue" data-idx="${item.index }" data-optional="0" class="form-control table-input text-right" onblur="calculateOverheadTotalAmount();"  maxlength="12" />

@@ -44,7 +44,7 @@ $subTypeOfWorkId = 0;
 $ExceptionalUOMs = "";
 $schemeId = "";
 $subSchemeId = 0;
-$isDeductionGrid = $('#isDeductionGrid').val();
+$isEstimateDeductionGrid = $('#isEstimateDeductionGrid').val();
 var sorMsArray=new Array(200);
 var nonSorMsArray=new Array(200);
 var headstart="<!--only for validity head start -->";
@@ -369,7 +369,7 @@ $(document).ready(function(){
 	calculateOverheadTotalAmount();
 	$('#isOverheadValuesLoading').val('false');
 	
-	if($isDeductionGrid == 'true') {
+	if($isEstimateDeductionGrid == 'true') {
 		deductionAccountCodeAndHead_initialize();
 		getDeductionAmountByPercentage();
 	}
@@ -971,7 +971,7 @@ function calculateEstimateValue() {
 		nonSorTotal = 0.0;
 	var workValue = parseFloat(parseFloat(sorTotal) + parseFloat(nonSorTotal));
 	var estimateValue = parseFloat(parseFloat(workValue) + parseFloat(overheadTotal)).toFixed(2);
-	if($isDeductionGrid == 'true') {
+	if($isEstimateDeductionGrid == 'true') {
 		var deductionTotal = $('#deductionTotalAmount').html();
 		estimateValue = parseFloat(parseFloat(workValue) + parseFloat(overheadTotal) + parseFloat(deductionTotal)).toFixed(2);
 	} 
@@ -1861,7 +1861,7 @@ function validateWorkFlowApprover(name) {
 				return false;				
 			} 
 			if((accountCode != '') && (parseFloat(deductionAmount) == 0 || deductionAmount == '')){
-				bootbox.alert($('#msgAmountZero').val());
+				bootbox.alert($('#msgDeductionAmount').val());
 				return false;				
 			} 
 		}
@@ -3006,8 +3006,12 @@ $('#addDeductionRow').click(function() {
 	for (var i = 0; i < resultLength; i++) {
 		var deductionAmount = document.getElementById('tempDeductionValues[' + i + '].amount').value;
 		var deductionAccountCode = document.getElementById('tempDeductionValues[' + i + '].accountCode').value;
-		if((deductionAccountCode == "" || deductionAccountCode == null)){
+		if((deductionAccountCode == '' || deductionAccountCode == null)){
 			bootbox.alert($('#msgAccountCode').val());
+			return false;
+		}
+		if((deductionAmount == '' || parseFloat(deductionAccountCode) == 0)){
+			bootbox.alert($('#msgAmountZero').val());
 			return false;
 		}
 				

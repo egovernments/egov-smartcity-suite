@@ -184,7 +184,7 @@ public class UpdateAbstractEstimateController extends GenericWorkFlowController 
             estimateService.validateAssetDetails(abstractEstimate, errors);
             estimateService.validateActivities(abstractEstimate, errors);
             estimateService.validateOverheads(abstractEstimate, errors);
-            if (!estimateService.checkForDuplicateAccountCodes(abstractEstimate))
+            if (!estimateService.checkForDuplicateAccountCodesInEstimateDeductions(abstractEstimate))
             	errors.reject("error.abstractestimate.duplicate.accountcodes",
                         "error.abstractestimate.duplicate.accountcodes");
             if (!workFlowAction.equals(WorksConstants.SAVE_ACTION)) {

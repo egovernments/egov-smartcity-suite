@@ -76,7 +76,7 @@
 	class="form-horizontal form-groups-bordered"
 	enctype="multipart/form-data">
 	<form:hidden path="" name="removedActivityIds" id="removedActivityIds" value="" class="form-control table-input hidden-input"/>
-
+	<input type="hidden" id="isEstimateDeductionGrid" value="${isEstimateDeductionGrid}">
 	<div class="new-page-header"><spring:message code="lbl.viewae" /></div>
 
 	<%@ include file="abstractestimate-vewheaderdetail.jsp"%>
@@ -122,7 +122,9 @@
 			</div>
 			<div class="tab-pane fade" id="overheads">
 				<%@ include file="abstractestimate-viewoverheads.jsp"%>
-				<jsp:include page="abstractestimate-viewdeduction.jsp" />
+				<c:if test="${isEstimateDeductionGrid == true }">
+					<jsp:include page="abstractestimate-viewdeduction.jsp" />
+				</c:if>
 			</div>
 			<div class="tab-pane fade" id="assetandfinancials">
 				<%@ include file="abstractestimate-viewfinancialdetails.jsp"%>

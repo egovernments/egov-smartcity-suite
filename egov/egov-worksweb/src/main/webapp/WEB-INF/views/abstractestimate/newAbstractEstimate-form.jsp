@@ -72,7 +72,7 @@
 	<input type="hidden" id="errorlocation" value="<spring:message code='error.locationdetails.required' />">
 	<form:hidden path="" name="removedActivityIds" id="removedActivityIds" value="${removedActivityIds }" class="form-control table-input hidden-input"/>
 	<input type="hidden" name="locationAppConfig" id="locationAppConfig" value="${isLocationDetailsRequired}"/>
-	<input type="hidden" id="isDeductionGrid" value="${isDeductionGrid}">
+	<input type="hidden" id="isEstimateDeductionGrid" value="${isEstimateDeductionGrid}">
 	<div class="new-page-header"><spring:message code="lbl.createae" /></div> 
 	
 	<div class="panel-title text-center" style="color: green;">
@@ -115,7 +115,7 @@
 			</div>
 			<div class="tab-pane fade" id="overheads">
 				<%@ include file="estimate-overheads.jsp"%>
-				<c:if test="${isDeductionGrid == true }">
+				<c:if test="${isEstimateDeductionGrid == true }">
 					<jsp:include page="estimate-deduction.jsp" />
 				</c:if>
 			</div>

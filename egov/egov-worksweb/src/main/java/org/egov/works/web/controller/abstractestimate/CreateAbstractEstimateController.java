@@ -190,7 +190,7 @@ public class CreateAbstractEstimateController extends GenericWorkFlowController 
                 && abstractEstimate.getLineEstimateDetails().getLineEstimate().isAbstractEstimateCreated()) {
             estimateService.validateTechnicalSanctionDetail(abstractEstimate, bindErrors);
             estimateService.validateAdminSanctionDetail(abstractEstimate, bindErrors);
-			if (!estimateService.checkForDuplicateAccountCodes(abstractEstimate))
+			if (!estimateService.checkForDuplicateAccountCodesInEstimateDeductions(abstractEstimate))
 				bindErrors.reject("error.abstractestimate.duplicate.accountcodes",
 						"error.abstractestimate.duplicate.accountcodes");
 

@@ -250,7 +250,7 @@ public class EstimateService {
         else
             newAbstractEstimate = updateAbstractEstimate(abstractEstimateFromDB, abstractEstimate);
         
-        createDeductionValues(abstractEstimate);
+        createEstimateDeductionValues(abstractEstimate);
         
         if (newAbstractEstimate.getLineEstimateDetails() != null
                 && newAbstractEstimate.getLineEstimateDetails().getLineEstimate().isAbstractEstimateCreated())
@@ -570,13 +570,13 @@ public class EstimateService {
             model.addAttribute("isServiceVATRequired", true);
         else
             model.addAttribute("isServiceVATRequired", false);
-        final List<AppConfigValues> showDeductions = appConfigValuesService.getConfigValuesByModuleAndKey(
+        final List<AppConfigValues> showEstimateDeductions = appConfigValuesService.getConfigValuesByModuleAndKey(
                 WorksConstants.WORKS_MODULE_NAME, WorksConstants.APPCONFIG_KEY_SHOW_DEDUCTION_GRID);
-        final AppConfigValues showDeduction = showDeductions.get(0);
-        if (showDeduction.getValue().equalsIgnoreCase("Yes"))
-            model.addAttribute("isDeductionGrid", true);
+        final AppConfigValues showEstimateDeduction = showEstimateDeductions.get(0);
+        if (showEstimateDeduction.getValue().equalsIgnoreCase("Yes"))
+            model.addAttribute("isEstimateDeductionGrid", true);
         else
-            model.addAttribute("isDeductionGrid", false);
+            model.addAttribute("isEstimateDeductionGrid", false);
         
     }
 
@@ -643,7 +643,7 @@ public class EstimateService {
 
             createOverheadValues(abstractEstimate);
             
-            createDeductionValues(abstractEstimate);
+            createEstimateDeductionValues(abstractEstimate);
 
             createAssetValues(abstractEstimate);
 
@@ -1402,7 +1402,7 @@ public class EstimateService {
                 AbstractEstimate.EstimateStatus.TECH_SANCTIONED.toString());
     }
     
-    private void createDeductionValues(final AbstractEstimate abstractEstimate) {
+    private void createEstimateDeductionValues(final AbstractEstimate abstractEstimate) {
         AbstractEstimateDeduction deduction = null;
         abstractEstimate.getAbsrtractEstimateDeductions().clear();
         for (final AbstractEstimateDeduction deductions : abstractEstimate.getTempDeductionValues()) {
@@ -1415,7 +1415,7 @@ public class EstimateService {
         }
     }
 
-    public boolean checkForDuplicateAccountCodes(final AbstractEstimate abstractEstimate) {
+    public boolean checkForDuplicateAccountCodesInEstimateDeductions(final AbstractEstimate abstractEstimate) {
         final Set<Long> glCodeIdSet = new HashSet<Long>();
         for (final AbstractEstimateDeduction deductions : abstractEstimate.getTempDeductionValues())
             if (deductions.getChartOfAccounts().getGlcode() != null) {
