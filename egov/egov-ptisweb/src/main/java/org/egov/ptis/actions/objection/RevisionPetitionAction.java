@@ -1403,7 +1403,7 @@ public class RevisionPetitionAction extends PropertyTaxBaseAction {
                     }
             }
 
-            objection.transition(true).withStateValue(wfmatrix.getNextState()).withOwner(wfInitiator.getPosition())
+            objection.transition(true).withStateValue(wfmatrix.getNextState()).withOwner(position)
                     .withSenderName(loggedInUser.getUsername() + "::" + loggedInUser.getName())
                     .withDateInfo(new DateTime().toDate()).withNextAction(wfmatrix.getNextAction())
                     .withComments(approverComments);
