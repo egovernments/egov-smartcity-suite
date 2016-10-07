@@ -75,31 +75,35 @@
 			<version>2.0.0-SNAPSHOT</version>
 		</dependency>		
 		<dependency>
-            <groupId>org.egov.search</groupId>
-            <artifactId>egov-search</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.hibernate</groupId>
-            <artifactId>hibernate-entitymanager</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.hibernate</groupId>
-            <artifactId>hibernate-validator</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.glassfish</groupId>
-            <artifactId>javax.el</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.jsoup</groupId>
-            <artifactId>jsoup</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.jboss.spec.javax.jms</groupId>
-            <artifactId>jboss-jms-api_2.0_spec</artifactId>
-        </dependency>
-
-		<!-- REPORTS START -->
+			<groupId>org.springframework.data</groupId>
+			<artifactId>spring-data-jpa</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.hibernate</groupId>
+			<artifactId>hibernate-search-engine</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.hibernate</groupId>
+			<artifactId>hibernate-entitymanager</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.hibernate</groupId>
+			<artifactId>hibernate-search-orm</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.lucene</groupId>
+			<artifactId>lucene-queryparser</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.hibernate</groupId>
+			<artifactId>hibernate-validator</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>javax.validation</groupId>
+			<artifactId>validation-api</artifactId>
+		</dependency>
+		
+			<!-- REPORTS START -->
 		<dependency>
 			<groupId>net.sf.jasperreports</groupId>
 			<artifactId>jasperreports-fonts</artifactId>
@@ -117,7 +121,36 @@
 			<artifactId>jfreechart</artifactId>
 		</dependency>
 		<!-- REPORTS END -->
-		
+		<dependency>
+			<groupId>org.codehaus.groovy</groupId>
+			<artifactId>groovy-all</artifactId>
+		</dependency>
+
+		<!-- SERVLET SPEC JBOSS DEPENDENCIES START -->
+		<dependency>
+			<groupId>org.jboss.spec.javax.servlet</groupId>
+			<artifactId>jboss-servlet-api_3.1_spec</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.jboss.spec.javax.servlet.jstl</groupId>
+			<artifactId>jboss-jstl-api_1.2_spec</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.jboss.spec.javax.servlet.jsp</groupId>
+			<artifactId>jboss-jsp-api_2.3_spec</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.jboss.spec.javax.jms</groupId>
+			<artifactId>jboss-jms-api_2.0_spec</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.glassfish</groupId>
+			<artifactId>javax.el</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>javax.mail</groupId>
+			<artifactId>javax.mail-api</artifactId>
+		</dependency>
 	</dependencies>
 
 	<build>
@@ -130,7 +163,6 @@
 			</resource>
 			<resource>
 				<directory>src/main/resources</directory>
-				<filtering>true</filtering>
 				<includes>
 					<include>**/*.*</include>
 				</includes>

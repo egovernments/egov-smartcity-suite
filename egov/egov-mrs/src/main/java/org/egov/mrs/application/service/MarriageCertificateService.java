@@ -39,65 +39,68 @@
 
 package org.egov.mrs.application.service;
 
+import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
+
 import org.egov.infra.reporting.engine.ReportOutput;
 import org.egov.infra.reporting.engine.ReportRequest;
 import org.egov.infra.reporting.engine.ReportService;
 import org.egov.infra.security.utils.SecurityUtils;
-import org.egov.mrs.application.service.workflow.RegistrationWorkflowService;
 import org.egov.mrs.domain.entity.MarriageRegistration;
 import org.egov.mrs.domain.entity.RegistrationCertificate;
-import org.egov.mrs.domain.service.MarriageRegistrationService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 /**
- * Service class to generate the Marriage Registration Certificate
+ * Service class to generate the Marriage Registration/Reissue Certificate
  * 
- * @author nayeem
+ * @author Pradeep
  *
  */
 @Service
-public class CertificateService {
+public class MarriageCertificateService {
 
-    private static final String CERTIFICATE_TEMPLATE_REGISTRATION = "registrationcertificate";
-    private static final String CERTIFICATE_TEMPLATE_REJECTION = "rejectioncertificate";
+	private static final String CERTIFICATE_TEMPLATE_REGISTRATION = "registrationcertificateNew";
+	private static final String CERTIFICATE_TEMPLATE_REJECTION = "rejectioncertificate";
 
-    public enum CertificateType {
-        REGISTRATION, REJECTION
-    }
+	public enum CertificateType {
+		REGISTRATION, REJECTION
+	}
 
-    @Autowired
-    private ReportService reportService;
+	@Autowired
+	private ReportService reportService;
 
-    @Autowired
-    MarriageRegistrationService marriageRegistrationService;
+	@Autowired
+	private SecurityUtils securityUtils;
 
- 
-    @Autowired
-    private SecurityUtils securityUtils;
-    
-    @Autowired
-    private RegistrationWorkflowService workflowService;
+	/**
+	 * Generates Marriage Registration Certificate and returns the reportOutput
+	 * 
+	 * @param registration
+	 * @param certificateType
+	 * @param cityName
+	 * @param logopath
+	 * @return
+	 */
+	public ReportOutput generate(MarriageRegistration registration, CertificateType certificateType, String cityName,
+			String logopath) {
+		ReportRequest reportInput = null;
+		ReportOutput reportOutput = null;
+		Map<String, Object> reportParams = new HashMap<String, Object>();
+		String template = (certificateType == MarriageCertificateService.CertificateType.REGISTRATION
+				? CERTIFICATE_TEMPLATE_REGISTRATION : CERTIFICATE_TEMPLATE_REJECTION);
 
-    /**
-     * Generates Marriage Registration Certificate and returns the certificate id
-     * @param registration
-     * @return certificate id
-     */
-    public Integer generate(MarriageRegistration registration, CertificateType certificateType) {
-        ReportRequest reportInput = null;
-        ReportOutput reportOutput = null;
-        String template = certificateType == CertificateService.CertificateType.REGISTRATION
-                ? CERTIFICATE_TEMPLATE_REGISTRATION : CERTIFICATE_TEMPLATE_REJECTION;
-        reportInput = new ReportRequest(template, new RegistrationCertificate(registration, securityUtils.getCurrentUser()),
-                null);
-        reportOutput = reportService.createReport(reportInput);
-        registration.setCertificateIssued(true);
-        workflowService.transition(registration, null, null);
-        marriageRegistrationService.update(registration);
-     //   httpSession.removeAttribute(ReportConstants.ATTRIB_EGOV_REPORT_OUTPUT_MAP);//TODO: CHECK THIS LOGIC AND CORRECT
-     //   return ReportViewerUtil.addReportToSession(reportOutput, httpSession);
-        return null;
-    }
+		reportParams.put("cityName", cityName);
+		reportParams.put("certificateDate", new Date());
+		reportParams.put("logoPath", logopath);
+
+		reportInput = new ReportRequest(template,
+				new RegistrationCertificate(registration, securityUtils.getCurrentUser()), reportParams);
+		reportOutput = reportService.createReport(reportInput);
+		// registration.setCertificateIssued(true);
+		// marriageRegistrationService.update(registration);
+		return reportOutput;
+	}
 
 }

@@ -50,6 +50,6 @@ public class MarriageConstants {
     
     public static final String REISSUE_FEECRITERIA = "Re-Issue Fee";
     public static final String ADDITIONAL_RULE_REGISTRATION = "MARRIAGE REGISTRATION"; 
-
+    public static final String IMAGE_CONTEXT_PATH = "/egi";
 
 }
