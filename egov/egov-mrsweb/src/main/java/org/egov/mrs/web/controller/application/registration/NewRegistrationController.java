@@ -65,8 +65,8 @@ public class NewRegistrationController extends MarriageRegistrationController {
     
     @RequestMapping(value = "/register", method = RequestMethod.GET)
     public String showRegistration( final Model model) { 
-    	 MarriageRegistration registration= new MarriageRegistration();
-    	 model.addAttribute("registration",registration);
+         MarriageRegistration registration= new MarriageRegistration();
+         model.addAttribute("registration",registration);
         prepareWorkFlowForNewMarriageRegistration(registration, model);
        return "registration-form";
     }
@@ -119,13 +119,13 @@ public class NewRegistrationController extends MarriageRegistrationController {
             result = marriageRegistrationService.forwardRegistration(id, registration, workflowContainer);
             break;
         case "Approve":
-            result = marriageRegistrationService.approveRegistration(id, workflowContainer);
+            result = marriageRegistrationService.approveRegistration(registration, workflowContainer);
             break;
         case "Reject":
-            result = marriageRegistrationService.rejectRegistration(id, workflowContainer);
+            result = marriageRegistrationService.rejectRegistration(registration, workflowContainer); 
             break;
-        case "Close Registration":
-            result = marriageRegistrationService.rejectRegistration(id, workflowContainer);
+        case "Cancel Registration":
+            result = marriageRegistrationService.rejectRegistration(registration, workflowContainer);
             break;
         }
 

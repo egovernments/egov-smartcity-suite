@@ -40,5 +40,5 @@
 package org.egov.mrs.domain.enums;
 
 public enum ApplicationStatus {
-    Created, Approved, Rejected, Registered
+    Created, Approved, Rejected, Registered, Cancelled, CertificateReIssued
 }

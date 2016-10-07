@@ -23,16 +23,16 @@
     In addition to the terms of the GPL license to be adhered to in using this
     program, the following additional terms are to be complied with:
 
-	1) All versions of this program, verbatim or modified must carry this
-	   Legal Notice.
+        1) All versions of this program, verbatim or modified must carry this
+           Legal Notice.
 
-	2) Any misrepresentation of the origin of the material is prohibited. It
-	   is required that all modified versions of this material be marked in
-	   reasonable ways as different from the original version.
+        2) Any misrepresentation of the origin of the material is prohibited. It
+           is required that all modified versions of this material be marked in
+           reasonable ways as different from the original version.
 
-	3) This license does not grant any rights to any user of the program
-	   with regards to rights under trademark law for use of the trade names
-	   or trademarks of eGovernments Foundation.
+        3) This license does not grant any rights to any user of the program
+           with regards to rights under trademark law for use of the trade names
+           or trademarks of eGovernments Foundation.
 
   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
@@ -55,6 +55,8 @@ import javax.persistence.PersistenceContext;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
+import org.egov.eis.entity.Assignment;
+import org.egov.eis.service.AssignmentService;
 import org.egov.eis.web.contract.WorkflowContainer;
 import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.admin.master.service.BoundaryService;
@@ -160,6 +162,9 @@ public class MarriageRegistrationService {
 
     @Autowired
     protected WitnessRepository witnessRepository;
+    
+    @Autowired
+    private AssignmentService assignmentService;
 
     @Autowired
     public MarriageRegistrationService(final MarriageRegistrationRepository registrationRepository) {
@@ -200,11 +205,11 @@ public class MarriageRegistrationService {
         registration.getWife().setReligion(religionService.getProxy(registration.getWife().getReligion().getId()));
         registration.getWitnesses().forEach(witness -> witness.setRegistration(registration));
         registration.setMarriageAct(actService.getAct(registration.getMarriageAct().getId()));
-		if (registration.getFeePaid() != null && registration.getDemand() == null){
-			registration.setDemand(
-					marriageRegistrationDemandService.createDemand(new BigDecimal(registration.getFeePaid())));
-		}
-		  registration.setStatus(ApplicationStatus.Created);
+                if (registration.getFeePaid() != null && registration.getDemand() == null){
+                        registration.setDemand(
+                                        marriageRegistrationDemandService.createDemand(new BigDecimal(registration.getFeePaid())));
+                }
+                  registration.setStatus(ApplicationStatus.Created);
 
         if (registration.getPriest().getReligion().getId() != null)
             registration.getPriest().setReligion(religionService.getProxy(registration.getPriest().getReligion().getId()));
@@ -252,7 +257,12 @@ public class MarriageRegistrationService {
        
         final MarriageRegistration registration = get(id);
 
-        updateRegistrationData(regModel, registration);
+        //Commented for time being as its throwing null pointer in edit mode
+        //Need to fix
+        //updateRegistrationData(regModel, registration);
+        
+        // Remove this loc once above issue fixed
+        registration.setStatus(ApplicationStatus.Created);
 
         workflowService.transition(registration, workflowContainer, registration.getApprovalComent());
         return update(registration);
@@ -292,17 +302,17 @@ public class MarriageRegistrationService {
         registration.setFeePaid(regModel.getFeePaid());
         registration.setMarriageAct(actService.getAct(registration.getMarriageAct().getId()));
         
-		if (registration.getFeePaid() != null) {
-			if (registration.getDemand() == null){
-				registration.setDemand(
-						marriageRegistrationDemandService.createDemand(new BigDecimal(registration.getFeePaid())));
-			}
-			else{
-				marriageRegistrationDemandService.updateDemand(registration.getDemand(),
-						new BigDecimal(registration.getFeePaid()));
-			}
+                if (registration.getFeePaid() != null) {
+                        if (registration.getDemand() == null){
+                                registration.setDemand(
+                                                marriageRegistrationDemandService.createDemand(new BigDecimal(registration.getFeePaid())));
+                        }
+                        else{
+                                marriageRegistrationDemandService.updateDemand(registration.getDemand(),
+                                                new BigDecimal(registration.getFeePaid()));
+                        }
 
-		}
+                }
         registration.setStatus(ApplicationStatus.Created);
 
         witnessRepository.delete(registration.getWitnesses());
@@ -376,16 +386,26 @@ public class MarriageRegistrationService {
     }
 
     @Transactional
-    public MarriageRegistration approveRegistration(final Long id, final WorkflowContainer workflowContainer) {
-        final MarriageRegistration registration = get(id);
+    public MarriageRegistration approveRegistration( MarriageRegistration registration, final WorkflowContainer workflowContainer) {
         registration.setStatus(ApplicationStatus.Approved);
         registration.setRegistrationNo(registrationNoGenerator.generateRegistrationNo());
-        workflowService.transition(registration, workflowContainer, registration.getApprovalComent());
+        registration = update(registration);
+        workflowService.transition(registration, workflowContainer, workflowContainer.getApproverComments());
         sendSMS(registration);
         sendEmail(registration);
-        createRegistrationAppIndex(registration);
-        return update(registration);
+        createRegistrationAppIndex(registration); 
+        return registration;
     }
+    
+    @Transactional
+    public MarriageRegistration printCertificate(MarriageRegistration registration, final WorkflowContainer workflowContainer) {
+        registration.setStatus(ApplicationStatus.Registered);
+        workflowService.transition(registration, workflowContainer, workflowContainer.getApproverComments()); 
+        sendSMS(registration);
+        sendEmail(registration);
+        return registration;
+    }
+    
 
     private void createRegistrationAppIndex(final MarriageRegistration registration) {
         final User user = securityUtils.getCurrentUser();
@@ -435,15 +455,14 @@ public class MarriageRegistrationService {
     }
 
     @Transactional
-    public MarriageRegistration rejectRegistration(final Long id, final WorkflowContainer workflowContainer) {
-        final MarriageRegistration registration = get(id);
-        registration.setStatus(ApplicationStatus.Rejected);
+    public MarriageRegistration rejectRegistration(MarriageRegistration registration, final WorkflowContainer workflowContainer) {
+        registration.setStatus(workflowContainer.getWorkFlowAction().equalsIgnoreCase(MarriageConstants.WFLOW_ACTION_STEP_REJECT)?
+                ApplicationStatus.Rejected:ApplicationStatus.Cancelled);
         registration.setRejectionReason(workflowContainer.getApproverComments());
+        workflowService.transition(registration, workflowContainer, workflowContainer.getApproverComments());
         sendSMS(registration);
         sendEmail(registration);
-        workflowService.transition(registration, workflowContainer, registration.getApprovalComent());
-
-        return update(registration);
+        return registration;
     }
 
     public List<MarriageRegistration> getRegistrations() {

@@ -39,7 +39,6 @@
  */
 
 $(document).ready( function () {
-	
 	$('body').on('click', 'img.attach-photo', function () {
 	    
 		var img = $(this);
@@ -67,6 +66,21 @@ $(document).ready( function () {
 		
 		$(inputPhoto).trigger('click');
 	});
+	
+	if($('#registrationStatus').val()=='Created' || $('#registrationStatus').val()=='Approved'){  
+		$(".show-row").hide(); 
+		$('#approverDetailHeading').hide();
+		$('#approvalDepartment').removeAttr('required');
+		$('#approvalDesignation').removeAttr('required');
+		$('#approvalPosition').removeAttr('required');
+	} else {
+		$(".show-row").show(); 
+		$('#approverDetailHeading').show();
+		$('#approvalDepartment').attr('required', 'required');
+		$('#approvalDesignation').attr('required', 'required');
+		$('#approvalPosition').attr('required', 'required');
+	}
+	
 
 
 	// Showing the respective tab when mandatory data is not filled in
@@ -185,8 +199,56 @@ function validateChecklists() {
 }
 
 function removeMandatory() {
-	$('#husband-photo').removeAttr('required');
-	$('#wife-photo').removeAttr('required');
-	document.forms[0].submit;
-	return true;
+	if($('#registrationStatus').val()=='Created'){  
+		$('#husband-photo').removeAttr('required');
+		$('#wife-photo').removeAttr('required');
+	}
 }
+
+
+$(".btn-primary").click(function() { 
+	removeMandatory();
+	var action = $('#workFlowAction').val();
+	if(action == 'Reject') { 
+		 $('#Reject').attr('formnovalidate','true');
+		 var r = confirm("Do You Really Want to Reject The Registration!");
+		 if (r == true) {
+			 var approvalComent=$('#approvalComent').val();
+			  if(approvalComent == "") {
+				  bootbox.alert("Please enter rejection comments!");
+					$('#approvalComent').focus();
+					return false; 
+			  }
+			  else {
+				  validateWorkFlowApprover(action);
+				  document.forms[0].submit(); 
+			  }
+		 } else {
+		     return false;
+		 }
+	}
+	
+	 if(action == 'Cancel Registration') { 
+		 $('#Cancel Registration').attr('formnovalidate','true');
+		 var r = confirm("Do You Really Want to Cancel The Registration!");
+		 if (r == true) {
+			 var approvalComent=$('#approvalComent').val();
+			  if(approvalComent == "") {
+				  bootbox.alert("Please enter cancellation comments!");
+					$('#approvalComent').focus();
+					return false; 
+			  }
+			  else {
+				  validateWorkFlowApprover(action);
+				  document.forms[0].submit();
+			  }
+		 } else {
+		     return false;
+		 }
+	} 
+	
+	validateWorkFlowApprover(action);  
+	if($('form').valid())
+		document.forms[0].submit();	
+	return;
+});

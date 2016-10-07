@@ -51,5 +51,12 @@ public class MarriageConstants {
     public static final String REISSUE_FEECRITERIA = "Re-Issue Fee";
     public static final String ADDITIONAL_RULE_REGISTRATION = "MARRIAGE REGISTRATION"; 
     public static final String IMAGE_CONTEXT_PATH = "/egi";
+    
+    // validactions
+    public static final String WFLOW_ACTION_STEP_REJECT = "Reject";
+    public static final String WFLOW_ACTION_STEP_CANCEL = "Cancel Registration";
+    public static final String WFLOW_ACTION_STEP_FORWARD = "Forward";
+    public static final String WFLOW_ACTION_STEP_APPROVE = "Approve";
+    public static final String WFLOW_ACTION_STEP_PRINTCERTIFICATE = "Print Certificate";
 
 }

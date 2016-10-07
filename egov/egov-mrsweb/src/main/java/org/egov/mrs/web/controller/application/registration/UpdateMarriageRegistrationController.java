@@ -43,6 +43,8 @@ import java.util.Base64;
 
 import javax.servlet.http.HttpServletRequest;
 
+import org.egov.eis.web.contract.WorkflowContainer;
+import org.egov.mrs.application.MarriageConstants;
 import org.egov.mrs.domain.entity.MarriageRegistration;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -69,23 +71,57 @@ public class UpdateMarriageRegistrationController extends MarriageRegistrationCo
         MarriageRegistration registration = marriageRegistrationService.get(id);
         model.addAttribute("registration", registration);
         marriageRegistrationService.prepareDocumentsForView(registration);
-        marriageApplicantService.prepareDocumentsForView(registration.getHusband());
+        marriageApplicantService.prepareDocumentsForView(registration.getHusband()); 
         marriageApplicantService.prepareDocumentsForView(registration.getWife());
+        prepareWorkFlowForNewMarriageRegistration(registration, model);  
         if(registration.getWitnesses()!=null)
           registration.getWitnesses().forEach(witness -> { if(witness.getPhoto()!=null)witness.setEncodedPhoto(Base64.getEncoder().encodeToString(witness.getPhoto()));});
         return "registration-correction";
     }
+    
+    private void prepareWorkFlowForNewMarriageRegistration(final MarriageRegistration registration, final Model model) {
+        WorkflowContainer workFlowContainer = new WorkflowContainer();
+        workFlowContainer.setAdditionalRule(MarriageConstants.ADDITIONAL_RULE_REGISTRATION);
+        prepareWorkflow(model, registration, workFlowContainer);
+        model.addAttribute("additionalRule", MarriageConstants.ADDITIONAL_RULE_REGISTRATION);
+        model.addAttribute("stateType", registration.getClass().getSimpleName());  
+    }
 
     @RequestMapping(value = "/update", method = RequestMethod.POST)
-    public String updateRegistration(@RequestParam final Long id, @ModelAttribute final MarriageRegistration registration,
+    public String updateRegistration(@RequestParam final Long id, @ModelAttribute MarriageRegistration registration,
+            @ModelAttribute final WorkflowContainer workflowContainer,
             final Model model,
             final HttpServletRequest request,
             final BindingResult errors) {
-
+        
+        String workFlowAction = "";
+        if (request.getParameter("workFlowAction") != null)
+            workFlowAction = request.getParameter("workFlowAction");
+        
         if (errors.hasErrors())
-            return "registration-correction";
-
-        model.addAttribute("registration", marriageRegistrationService.updateRegistration(id, registration));
+            return "registration-correction"; 
+         
+        registration = marriageRegistrationService.get(id);
+        if(workFlowAction != null && !workFlowAction.isEmpty()){
+            workflowContainer.setWorkFlowAction(workFlowAction);
+            workflowContainer.setApproverComments(request.getParameter("approvalComent"));
+                if (workFlowAction.equalsIgnoreCase(MarriageConstants.WFLOW_ACTION_STEP_REJECT) || 
+                    workFlowAction.equalsIgnoreCase(MarriageConstants.WFLOW_ACTION_STEP_CANCEL))
+                    marriageRegistrationService.rejectRegistration(registration, workflowContainer);   
+               else if (workFlowAction.equalsIgnoreCase(MarriageConstants.WFLOW_ACTION_STEP_APPROVE)) 
+                    marriageRegistrationService.approveRegistration(registration, workflowContainer);   
+               else if (workFlowAction.equalsIgnoreCase(MarriageConstants.WFLOW_ACTION_STEP_PRINTCERTIFICATE)) 
+                   marriageRegistrationService.printCertificate(registration, workflowContainer);
+               else{
+                   workflowContainer.setApproverPositionId(Long.valueOf(request.getParameter("approvalPosition")));
+                   marriageRegistrationService.forwardRegistration(id, registration,workflowContainer);
+               }
+        }
+        // On print certificate, output registration certificate 
+      /*  if (workFlowAction != null && !workFlowAction.isEmpty()
+                && workFlowAction.equalsIgnoreCase(MarriageConstants.WFLOW_ACTION_STEP_PRINTCERTIFICATE))
+            return "redirect: /certificate/registration?id="
+            + registration.getId();*/
         model.addAttribute("message", messageSource.getMessage("msg.update.registration", null, null));
 
         return "registration-ack";

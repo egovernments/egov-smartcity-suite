@@ -43,8 +43,6 @@
 <%@ taglib uri="http://www.springframework.org/tags/form" prefix="form"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
 
-<script src="<c:url value='/resources/js/app/viewregistration.js'/> "></script>
-
 <!-- <style>
 	ul.nav-tabs > li.active>a:after {
 		background: none !important;
@@ -92,14 +90,14 @@
  --><div class="row">
 	<div class="col-md-12"> 
 		<div class="text-right error-msg" style="font-size:14px;"></div>
-		
-		<form:form role="form" action="/mrs/registration/update"
+		<form:form role="form" method="post" action="/mrs/registration/update"
 			modelAttribute="registration" id="form-updateregistration"
 			cssClass="form-horizontal form-groups-bordered"
 			enctype="multipart/form-data">
 
 			<input type="hidden" id="registrationId" value="${registration.id}" />
-			
+			<input type="hidden" id="registrationStatus" value="${registration.status}" /> 
+			<form:hidden path="" id="workFlowAction" name="workFlowAction"/>
 			<div class="panel panel-primary" data-collapsed="0">
 				<div class="panel-heading">
 					<div class="panel-title">
@@ -149,9 +147,13 @@
 					  </div>
 				</div>
 			</div>
-			<div class="buttonbottom" align="center">
+			<%-- <div class="buttonbottom" align="center">
 				<form:button type="submit" id="btn_regcorrection" class="btn btn-primary" onclick="return removeMandatory();"><spring:message code="lbl.update.registration"></spring:message></form:button>
 				<input type="button" name="button2" id="button2" value="Close" class="btn btn-default" onclick="window.close();" />
+			</div> --%>
+			 <jsp:include page="../../common/commonWorkflowMatrix.jsp"/>
+			<div class="buttonbottom" align="center">
+				<jsp:include page="../../common/commonWorkflowMatrix-button.jsp" />
 			</div>
 		</form:form>
 		

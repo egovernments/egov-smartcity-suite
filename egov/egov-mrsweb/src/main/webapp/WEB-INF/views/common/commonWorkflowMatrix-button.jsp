@@ -50,7 +50,7 @@
 		console.log('workFlorAction= ' + $("#workFlowAction").val());
 
 		if (rejectbutton != null ) {
-			if (rejectbutton == 'Approve' || rejectbutton == 'Print Rejection Certificate' || rejectbutton == 'Close Registration') {
+			if (rejectbutton == 'Approve' || rejectbutton == 'Print Rejection Certificate' || rejectbutton == 'Cancel Registration') {
 				$('#approvalDepartment').removeAttr('required');
 				$('#approvalDesignation').removeAttr('required');
 				$('#approvalPosition').removeAttr('required');

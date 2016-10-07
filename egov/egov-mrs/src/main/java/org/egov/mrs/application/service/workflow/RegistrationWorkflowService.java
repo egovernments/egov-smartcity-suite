@@ -49,8 +49,8 @@ import org.egov.infra.security.utils.SecurityUtils;
 import org.egov.infra.workflow.entity.StateAware;
 import org.egov.infra.workflow.matrix.entity.WorkFlowMatrix;
 import org.egov.infra.workflow.service.SimpleWorkflowService;
-import org.egov.mrs.domain.entity.ReIssue;
 import org.egov.mrs.domain.entity.MarriageRegistration;
+import org.egov.mrs.domain.entity.ReIssue;
 import org.egov.pims.commons.Position;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -62,10 +62,11 @@ public class RegistrationWorkflowService {
     private static final String REGISTRATION_ADDNL_RULE = "MARRIAGE REGISTRATION";
     private static final String STATE_NEW = "NEW";
     private static final String STATE_END = "END";
-    private static final String STATE_REJECTED = "Rejected";
+    private static final String STEP_CANCEL = "Cancel Registration";
     private static final String STEP_REJECT = "Reject";
     private static final String STEP_APPROVE = "Approve";
     private static final String STEP_FORWARD = "Forward";
+    private static final String STEP_PRINT_CERTIFICATE = "Print Certificate";
 
     @Autowired
     @Qualifier("workflowService")
@@ -135,7 +136,10 @@ public class RegistrationWorkflowService {
                 
                 nextState = "Assistant Engineer Rejected";
                 nextAction = "Revenue Clerk Approval Pending";
-            } else if (workflowContainer.getWorkFlowAction().equalsIgnoreCase(STEP_APPROVE)) {
+            } else if (workflowContainer.getWorkFlowAction().equalsIgnoreCase(STEP_CANCEL) || 
+                    workflowContainer.getWorkFlowAction().equalsIgnoreCase(STEP_PRINT_CERTIFICATE)) {
+                nextAction = STATE_END;
+            } else if (workflowContainer.getWorkFlowAction().equalsIgnoreCase(STEP_APPROVE)) { 
 
                 nextStateOwner = assignmentService.getPrimaryAssignmentForUser(registration.getCreatedBy().getId()).getPosition();
                 workflowMatrix = registrationWorkflowService.getWfMatrix(WorkflowType.MarriageRegistration.name(), null, null,
@@ -146,7 +150,7 @@ public class RegistrationWorkflowService {
             }
         }
 
-        transition(registration, approvalComent, user, natureOfTask, nextStateOwner, nextState, nextAction);
+        transition(registration, approvalComent, user, natureOfTask, nextStateOwner, nextState, nextAction); 
 
     }
 
