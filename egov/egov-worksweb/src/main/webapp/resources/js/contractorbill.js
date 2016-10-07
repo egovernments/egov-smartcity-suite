@@ -598,7 +598,6 @@ function addRow(tableName,rowName) {
 	}
 }
 
-
 function deleteRow(obj,tableName) {
     var rIndex = getRow(obj).rowIndex;
     
@@ -613,32 +612,27 @@ function deleteRow(obj,tableName) {
 	} else {
 		tbl.deleteRow(rIndex);
 		//starting index for table fields
-		var idx=parseInt($detailsRowCount);
+		var idx=0;
 		//regenerate index existing inputs in table row
 		$("#"+tableName+" tbody tr").each(function() {
 		
-			hiddenElem=$(this).find("input:hidden");
-			
-			if(!$(hiddenElem).val())
-			{
-				$(this).find("input, errors").each(function() {
-					   $(this).attr({
-					      'name': function(_, name) {
-					    	  if(!($(this).attr('name')===undefined))
-					    		  return name.replace(/\[.\]/g, '['+ idx +']'); 
-					      },
-					      'id': function(_, id) {
-					    	  if(!($(this).attr('id')===undefined))
-					    		  return id.replace(/\[.\]/g, '['+ idx +']'); 
-					      },
-						  'data-idx' : function(_,dataIdx)
-						  {
-							  return idx;
-						  }
-					   });
-			    });
-				idx++;
-			}
+			$(this).find("input, errors,select").each(function() {
+				   $(this).attr({
+				      'name': function(_, name) {
+				    	  if(!($(this).attr('name')===undefined))
+				    		  return name.replace(/\[.\]/g, '['+ idx +']'); 
+				      },
+				      'id': function(_, id) {
+				    	  if(!($(this).attr('id')===undefined))
+				    		  return id.replace(/\[.\]/g, '['+ idx +']'); 
+				      },
+					  'data-idx' : function(_,dataIdx)
+					  {
+						  return idx;
+					  }
+				   });
+		    });
+			idx++;
 		});
 		return true;
 	}	
@@ -820,52 +814,6 @@ jQuery( "#billdate" ).datepicker({
 	 });
 	 }
  }).data('datepicker');
-
-
-
-function addRow(tableName,rowName) {
-	if (document.getElementById(rowName) != null) {
-		// get Next Row Index to Generate
-		var nextIdx = 0;
-		var sno = 1;
-		nextIdx = jQuery("#"+tableName+" tbody tr").length;
-		sno = nextIdx + 1;
-		
-		// Generate all textboxes Id and name with new index
-		jQuery("#"+rowName).clone().find("a, input, select, span, input:hidden").each(function() {	
-			var classval = jQuery(this).attr('class');
-			if (jQuery(this).data('server')) {
-				jQuery(this).removeAttr('data-server');
-			}
-			if(classval == 'spansno') {
-				jQuery(this).text(sno);
-			}
-			
-			if(classval == 'assetdetail') {
-				 $(this).html('');
-			     $(this).val(''); 
-			} 
-			
-			jQuery(this).attr(
-					{
-						'name' : function(_, name) {
-							if(!(jQuery(this).attr('name')===undefined))
-								return name.replace(/\d+/, nextIdx); 
-						},
-						'id' : function(_, id) {
-							if(!(jQuery(this).attr('id')===undefined))
-								return id.replace(/\d+/, nextIdx); 
-						},
-						'class' : function(_, name) {
-							if(!(jQuery(this).attr('class')===undefined))
-								return name.replace(/\d+/, nextIdx); 
-						}
-					});
-
-		}).end().appendTo("#"+tableName+" tbody");	
-		sno++;
-	}
-}
 
 function viewMB(mbHeaderId) {
 	window.open("/egworks/mb/view/"+mbHeaderId,"","height=600,width=1200,scrollbars=yes,left=0,top=0,status=yes");
