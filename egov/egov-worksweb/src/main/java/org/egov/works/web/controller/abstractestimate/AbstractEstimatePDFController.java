@@ -41,6 +41,8 @@
 package org.egov.works.web.controller.abstractestimate;
 
 import java.io.IOException;
+import java.math.BigDecimal;
+import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -57,8 +59,10 @@ import org.egov.infra.reporting.engine.ReportRequest;
 import org.egov.infra.reporting.engine.ReportService;
 import org.egov.infra.web.utils.WebUtils;
 import org.egov.works.abstractestimate.entity.AbstractEstimate;
+import org.egov.works.abstractestimate.entity.AbstractEstimateDeduction;
 import org.egov.works.abstractestimate.entity.Activity;
 import org.egov.works.abstractestimate.entity.MeasurementSheet;
+import org.egov.works.abstractestimate.entity.OverheadValue;
 import org.egov.works.abstractestimate.service.EstimateService;
 import org.egov.works.abstractestimate.service.MeasurementSheetService;
 import org.egov.works.utils.WorksUtils;
@@ -106,6 +110,7 @@ public class AbstractEstimatePDFController {
         final List<Activity> activities = new ArrayList<Activity>();
         final SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy hh:mm a");
         final SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
+        final DecimalFormat df = new DecimalFormat("0.00");
         final String cityName = request.getSession().getAttribute("citymunicipalityname").toString();
         reportParams.put("cityName", cityName);
         final String url = WebUtils.extractRequestDomainURL(request, false);
@@ -114,6 +119,14 @@ public class AbstractEstimatePDFController {
         if (abstractEstimate != null) {
             reportParams.put("estimateDate", formatter.format(abstractEstimate.getEstimateDate()));
             reportParams.put("abstractEstimate", abstractEstimate);
+            double totalEstimateOverheadAmount = 0;
+            for(final OverheadValue overheadValue:abstractEstimate.getOverheadValues())
+            	totalEstimateOverheadAmount += overheadValue.getAmount();
+            reportParams.put("totalEstimateOverheadAmount", df.format(totalEstimateOverheadAmount));
+            BigDecimal totalEstimateDeductionAmount = BigDecimal.ZERO;
+            for(final AbstractEstimateDeduction deductions:abstractEstimate.getAbsrtractEstimateDeductions())
+            	totalEstimateDeductionAmount = totalEstimateDeductionAmount.add(deductions.getAmount());
+            reportParams.put("totalEstimateDeductionAmount", df.format(totalEstimateDeductionAmount));
             activities.addAll(abstractEstimate.getSORActivities());
             activities.addAll(abstractEstimate.getNonSORActivities());
             if (abstractEstimate.getState() != null)

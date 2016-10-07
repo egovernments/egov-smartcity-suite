@@ -38,8 +38,8 @@
   ~
   ~   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
   -->
-<!-- Created with Jaspersoft Studio version 6.2.2.final using JasperReports Library version 6.2.2  -->
-<!-- 2016-08-02T16:50:36 -->
+<!-- Created with Jaspersoft Studio version 6.3.0.final using JasperReports Library version 6.3.0  -->
+<!-- 2016-10-07T15:49:14 -->
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="abstractEstimatePDF" pageWidth="595" pageHeight="842" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" isSummaryNewPage="true" isSummaryWithPageHeaderAndFooter="true" isFloatColumnFooter="true" uuid="21febbd0-09ca-473a-b5e5-726fffd82711">
 	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="One Empty Record"/>
 	<property name="com.jaspersoft.studio.unit." value="pixel"/>
@@ -53,6 +53,8 @@
 	<parameter name="currDate" class="java.lang.String"/>
 	<parameter name="measurementExists" class="java.lang.Boolean"/>
 	<parameter name="cityLogo" class="java.lang.String"/>
+	<parameter name="totalEstimateOverheadAmount" class="java.lang.String"/>
+	<parameter name="totalEstimateDeductionAmount" class="java.lang.String"/>
 	<queryString>
 		<![CDATA[]]>
 	</queryString>
@@ -312,10 +314,10 @@
 				<textElement textAlignment="Right">
 					<font fontName="Times New Roman"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$F{estimateValue}.subtract(BigDecimal.valueOf($F{workValue})).setScale(2, BigDecimal.ROUND_HALF_UP)]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$P{totalEstimateOverheadAmount}]]></textFieldExpression>
 			</textField>
 			<textField pattern="#0.00#">
-				<reportElement x="410" y="139" width="140" height="20" uuid="5edb899c-8b8f-4a40-93e7-9b4fa2c35fe1"/>
+				<reportElement x="410" y="159" width="140" height="20" uuid="5edb899c-8b8f-4a40-93e7-9b4fa2c35fe1"/>
 				<box rightPadding="2">
 					<topPen lineWidth="0.25" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="0.25" lineStyle="Solid" lineColor="#000000"/>
@@ -351,10 +353,10 @@
 				<textElement verticalAlignment="Middle">
 					<font fontName="Times New Roman"/>
 				</textElement>
-				<text><![CDATA[Schedule B]]></text>
+				<text><![CDATA[Schedule B (Overhead)]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="90" y="139" width="320" height="20" uuid="25d466a2-d279-4ab3-b896-fcc6c9c0e7db"/>
+				<reportElement x="90" y="159" width="320" height="20" uuid="25d466a2-d279-4ab3-b896-fcc6c9c0e7db"/>
 				<box leftPadding="2">
 					<topPen lineWidth="0.25" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="0.25" lineStyle="Solid" lineColor="#000000"/>
@@ -367,7 +369,7 @@
 				<text><![CDATA[Estimate value]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="11" y="139" width="79" height="20" uuid="eec035d1-13e2-4a49-8a57-543adc362a12"/>
+				<reportElement x="11" y="159" width="79" height="20" uuid="eec035d1-13e2-4a49-8a57-543adc362a12"/>
 				<box>
 					<topPen lineWidth="0.25" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="0.25" lineStyle="Solid" lineColor="#000000"/>
@@ -375,6 +377,43 @@
 					<rightPen lineWidth="0.25" lineStyle="Solid" lineColor="#000000"/>
 				</box>
 				<text><![CDATA[]]></text>
+			</staticText>
+			<textField pattern="#0.00#">
+				<reportElement x="410" y="139" width="140" height="20" uuid="f84e2d98-520b-4a48-8c52-7a591a8514ab"/>
+				<box rightPadding="2">
+					<topPen lineWidth="0.25" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.25" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.25" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="0.25" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement textAlignment="Right">
+					<font fontName="Times New Roman"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{totalEstimateDeductionAmount}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="90" y="139" width="320" height="20" uuid="08fcae47-bc10-4b19-9fdb-6e114216c308"/>
+				<box leftPadding="2">
+					<topPen lineWidth="0.25" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.25" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.25" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="0.25" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Times New Roman"/>
+				</textElement>
+				<text><![CDATA[Schedule B (Deductions)]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="11" y="139" width="79" height="20" uuid="4bd61f38-cc73-46a6-85b2-44b9bd48ef88"/>
+				<box>
+					<topPen lineWidth="0.25" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.25" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.25" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="0.25" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle"/>
+				<text><![CDATA[3]]></text>
 			</staticText>
 		</band>
 		<band height="31" splitType="Stretch">
