@@ -44,7 +44,6 @@ import static org.egov.ptis.constants.PropertyTaxConstants.THIRD_PARTY_ERR_CODE_
 import static org.egov.ptis.constants.PropertyTaxConstants.THIRD_PARTY_ERR_MSG_SUCCESS;
 
 import java.math.BigDecimal;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -52,20 +51,23 @@ import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 
 import org.egov.ptis.bean.dashboard.CollIndexTableData;
+import org.egov.ptis.bean.dashboard.CollectionDetailsRequest;
 import org.egov.ptis.bean.dashboard.CollectionIndexDetails;
 import org.egov.ptis.bean.dashboard.CollectionTrend;
 import org.egov.ptis.bean.dashboard.ConsolidatedCollDetails;
 import org.egov.ptis.bean.dashboard.ConsolidatedCollectionDetails;
+import org.egov.ptis.constants.PropertyTaxConstants;
 import org.egov.ptis.domain.model.ErrorDetails;
 import org.egov.ptis.service.elasticsearch.CollectionIndexElasticSearchService;
 import org.egov.ptis.service.elasticsearch.PropertyTaxElasticSearchIndexService;
 import org.egov.ptis.service.elasticsearch.WaterTaxElasticSearchIndexService;
-import org.egov.restapi.constants.RestApiConstants;
 import org.egov.restapi.model.StateCityInfo;
 import org.hibernate.SQLQuery;
 import org.hibernate.Session;
 import org.hibernate.transform.AliasToBeanResultTransformer;
 import org.hibernate.type.StandardBasicTypes;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -76,6 +78,8 @@ import org.springframework.stereotype.Service;
 @Service
 public class DashboardService {
 
+	private static final Logger LOGGER = LoggerFactory.getLogger(CollectionIndexElasticSearchService.class);
+	
 	@PersistenceContext
     private EntityManager entityManager;
 	
@@ -106,112 +110,6 @@ public class DashboardService {
 	}
 	
 	/**
-	 * Gives the Collection Index details across all ULBs
-	 * @return CollectionIndexDetails
-	 */
-	public CollectionIndexDetails getCollectionIndexDetails(){
-		//Temporarily all values are being hard coded, actual values will be read from the elastic search index later
-		CollectionIndexDetails collectionIndexDetails = new CollectionIndexDetails();
-		collectionIndexDetails.setTodayColl(BigDecimal.valueOf(156.583));
-		collectionIndexDetails.setLyTodayColl(BigDecimal.valueOf(145.67));
-		collectionIndexDetails.setCytdColl(BigDecimal.valueOf(32499.615));
-		collectionIndexDetails.setCytdDmd(BigDecimal.valueOf(51338.92));
-		collectionIndexDetails.setTotalDmd(BigDecimal.valueOf(123213.409));
-		collectionIndexDetails.setLytdColl(BigDecimal.valueOf(16727.998));
-
-		prepareCollectionTrends(collectionIndexDetails);
-		prepareCollIndexData(collectionIndexDetails);
-		
-		ErrorDetails errorDetails = new ErrorDetails();
-        errorDetails.setErrorCode(THIRD_PARTY_ERR_CODE_SUCCESS);
-        errorDetails.setErrorMessage(THIRD_PARTY_ERR_MSG_SUCCESS);
-		collectionIndexDetails.setErrorDetails(errorDetails);
-			
-		return collectionIndexDetails;
-	}
-
-	public void prepareCollIndexData(CollectionIndexDetails collectionIndexDetails) {
-		CollIndexTableData collIndData = new CollIndexTableData();
-		List<CollIndexTableData> collIndexResponseList = new ArrayList<>();
-		collIndData.setRegionName("ANANTAPUR");
-		collIndData.setTotalDmd(BigDecimal.valueOf(25204.194));
-		collIndData.setCytdDmd(BigDecimal.valueOf(12602.097));
-		collIndData.setCytdColl(BigDecimal.valueOf(8326.337));
-		collIndData.setCytdBalDmd(BigDecimal.valueOf(4558.5));
-		collIndData.setLytdColl(BigDecimal.valueOf(2558.5));
-		collIndexResponseList.add(collIndData);
-
-		collIndData = new CollIndexTableData();
-		collIndData.setRegionName("GUNTUR");
-		collIndData.setTotalDmd(BigDecimal.valueOf(22639.184));
-		collIndData.setCytdDmd(BigDecimal.valueOf(11319.592));
-		collIndData.setCytdColl(BigDecimal.valueOf(7960.525));
-		collIndData.setCytdBalDmd(BigDecimal.valueOf(3595.227));
-		collIndData.setLytdColl(BigDecimal.valueOf(1995.227));
-		collIndexResponseList.add(collIndData);
-		
-		collIndData = new CollIndexTableData();
-		collIndData.setRegionName("RAJAHMUNDRY");
-		collIndData.setTotalDmd(BigDecimal.valueOf(19053.534));
-		collIndData.setCytdDmd(BigDecimal.valueOf(9526.767));
-		collIndData.setCytdColl(BigDecimal.valueOf(6399.553));
-		collIndData.setCytdBalDmd(BigDecimal.valueOf(3313.139));
-		collIndData.setLytdColl(BigDecimal.valueOf(2113.139));
-		collIndexResponseList.add(collIndData);
-
-		collIndData = new CollIndexTableData();
-		collIndData.setRegionName("VISAKHAPATNAM");
-		collIndData.setTotalDmd(BigDecimal.valueOf(35780.93));
-		collIndData.setCytdDmd(BigDecimal.valueOf(17890.465));
-		collIndData.setCytdColl(BigDecimal.valueOf(9813.2));
-		collIndData.setCytdBalDmd(BigDecimal.valueOf(8348.316));
-		collIndData.setLytdColl(BigDecimal.valueOf(4348.316));
-		collIndexResponseList.add(collIndData);
-		collectionIndexDetails.setResponseDetails(collIndexResponseList);
-	}
-
-	public void prepareCollectionTrends(CollectionIndexDetails collectionIndexDetails) {
-		CollectionTrend collTrend = new CollectionTrend();
-		List<CollectionTrend> collTrendsList = new ArrayList<>();
-		collTrend.setMonth("April");
-		collTrend.setPyColl(BigDecimal.valueOf(90.10));
-		collTrend.setLyColl(BigDecimal.valueOf(101.31));
-		collTrend.setCyColl(BigDecimal.valueOf(150.41));
-		collTrendsList.add(collTrend);
-		collTrend = new CollectionTrend();
-		collTrend.setMonth("May");
-		collTrend.setPyColl(BigDecimal.valueOf(190.20));
-		collTrend.setLyColl(BigDecimal.valueOf(200.11));
-		collTrend.setCyColl(BigDecimal.valueOf(250.01));
-		collTrendsList.add(collTrend);
-		collTrend = new CollectionTrend();
-		collTrend.setMonth("June");
-		collTrend.setPyColl(BigDecimal.valueOf(280.02));
-		collTrend.setLyColl(BigDecimal.valueOf(300.04));
-		collTrend.setCyColl(BigDecimal.valueOf(360.52));
-		collTrendsList.add(collTrend);
-		collTrend = new CollectionTrend();
-		collTrend.setMonth("July");
-		collTrend.setPyColl(BigDecimal.valueOf(375.98));
-		collTrend.setLyColl(BigDecimal.valueOf(380.95));
-		collTrend.setCyColl(BigDecimal.valueOf(400.92));
-		collTrendsList.add(collTrend);
-		collTrend = new CollectionTrend();
-		collTrend.setMonth("August");
-		collTrend.setPyColl(BigDecimal.valueOf(400.92));
-		collTrend.setLyColl(BigDecimal.valueOf(450.21));
-		collTrend.setCyColl(BigDecimal.valueOf(500.25));
-		collTrendsList.add(collTrend);
-		collTrend = new CollectionTrend();
-		collTrend.setMonth("September");
-		collTrend.setPyColl(BigDecimal.valueOf(450.93));
-		collTrend.setLyColl(BigDecimal.valueOf(550.96));
-		collTrend.setCyColl(BigDecimal.valueOf(600.23));
-		collTrendsList.add(collTrend);
-		collectionIndexDetails.setCollTrends(collTrendsList);
-	}
-	
-	/**
 	 * Provides State-wise Collection Statistics for Property Tax, Water Charges and Others
 	 * @return ConsolidatedCollDetails
 	 */
@@ -219,7 +117,7 @@ public class DashboardService {
 		ConsolidatedCollectionDetails consolidatedCollectionDetails = new ConsolidatedCollectionDetails();
 		//For Property Tax collections
 		ConsolidatedCollDetails consolidatedData = new ConsolidatedCollDetails();
-		Map<String, BigDecimal> consolidatedColl = collectionIndexElasticSearchService.getConsolidatedCollection(RestApiConstants.BILLING_SERVICE_PT);		
+		Map<String, BigDecimal> consolidatedColl = collectionIndexElasticSearchService.getConsolidatedCollection(PropertyTaxConstants.COLLECION_BILLING_SERVICE_PT);		
 		if(!consolidatedColl.isEmpty()){
 			consolidatedData.setCytdColl(consolidatedColl.get("cytdColln"));
 			consolidatedData.setLytdColl(consolidatedColl.get("lytdColln"));
@@ -229,7 +127,7 @@ public class DashboardService {
 		
 		//For Water Tax collections
 		consolidatedData = new ConsolidatedCollDetails();
-		consolidatedColl = collectionIndexElasticSearchService.getConsolidatedCollection(RestApiConstants.BILLING_SERVICE_WTMS);		
+		consolidatedColl = collectionIndexElasticSearchService.getConsolidatedCollection(PropertyTaxConstants.COLLECION_BILLING_SERVICE_WTMS);		
 		if(!consolidatedColl.isEmpty()){
 			consolidatedData.setCytdColl(consolidatedColl.get("cytdColln"));
 			consolidatedData.setLytdColl(consolidatedColl.get("lytdColln"));
@@ -245,5 +143,28 @@ public class DashboardService {
 		consolidatedCollectionDetails.setOthers(consolidatedData);
 		
 		return consolidatedCollectionDetails;
+	}
+	
+	/**
+	 * Gives the Collection Index details across all ULBs
+	 * @return CollectionIndexDetails
+	 */
+	public CollectionIndexDetails getCollectionIndexDetails(CollectionDetailsRequest collectionDetailsRequest){
+		LOGGER.info("CollectionDetailsRequest input ----> ");
+		LOGGER.info("regionName = "+collectionDetailsRequest.getRegionName()+", districtName = "+ collectionDetailsRequest.getDistrictName()+
+				", ulbGrade = "+collectionDetailsRequest.getUlbGrade()+", ulbCode = "+collectionDetailsRequest.getUlbCode()+
+				", fromDate = "+collectionDetailsRequest.getFromDate()+", toDate = "+collectionDetailsRequest.getToDate());
+		CollectionIndexDetails collectionIndexDetails = new CollectionIndexDetails(); 
+		collectionIndexElasticSearchService.getCompleteCollectionIndexDetails(collectionDetailsRequest,collectionIndexDetails);
+		propertyTaxElasticSearchIndexService.getConsolidatedDemandInfo(collectionDetailsRequest, collectionIndexDetails);
+		List<CollIndexTableData> collIndexData = collectionIndexElasticSearchService.getResponseTableData(collectionDetailsRequest);
+		List<CollectionTrend> collectionTrends = collectionIndexElasticSearchService.getMonthwiseCollectionDetails(collectionDetailsRequest);
+		collectionIndexDetails.setCollTrends(collectionTrends);
+		collectionIndexDetails.setResponseDetails(collIndexData);
+		ErrorDetails errorDetails = new ErrorDetails();
+        errorDetails.setErrorCode(THIRD_PARTY_ERR_CODE_SUCCESS);
+        errorDetails.setErrorMessage(THIRD_PARTY_ERR_MSG_SUCCESS);
+		collectionIndexDetails.setErrorDetails(errorDetails);
+		return collectionIndexDetails;
 	}
 }

@@ -335,6 +335,4 @@ public class RestApiConstants {
 		public static final String THIRD_PARTY_ACTION_SUCCESS = "EGCL-REST-SUCCESS";
 		public static final String THIRD_PARTY_ACTION_FAILURE = "REST-FAILURE";
 
-		public static final String BILLING_SERVICE_PT = "Property Tax";
-		public static final String BILLING_SERVICE_WTMS = "Water Tax";
 }

@@ -40,9 +40,16 @@
 
 package org.egov.restapi.web.rest;
 
+import java.io.IOException;
 import java.util.List;
 
+import org.codehaus.jackson.annotate.JsonAutoDetect.Visibility;
+import org.codehaus.jackson.annotate.JsonMethod;
+import org.codehaus.jackson.map.ObjectMapper;
+import org.codehaus.jackson.map.SerializationConfig;
+import org.egov.dcb.bean.ChequePayment;
 import org.egov.infra.web.utils.WebUtils;
+import org.egov.ptis.bean.dashboard.CollectionDetailsRequest;
 import org.egov.ptis.bean.dashboard.CollectionIndexDetails;
 import org.egov.ptis.bean.dashboard.ConsolidatedCollectionDetails;
 import org.egov.restapi.model.StateCityInfo;
@@ -93,11 +100,29 @@ public class CMDashboardController {
 	/**
 	 * Provides Collection Index details across all ULBs 
 	 * @return response JSON
+	 * @throws IOException 
 	 */
 	@RequestMapping(value = "/collectiondashboard", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
-	public String getCollectionDetails(@RequestBody String collDetailsRequest){
-		CollectionIndexDetails collectionDetails = dashboardService.getCollectionIndexDetails();
+	public String getCollectionDetails(@RequestBody String collDetailsRequestStr) throws IOException{
+		CollectionDetailsRequest collectionDetailsRequest = (CollectionDetailsRequest) getObjectFromJSONRequest(
+				collDetailsRequestStr, CollectionDetailsRequest.class);
+		CollectionIndexDetails collectionDetails = dashboardService.getCollectionIndexDetails(collectionDetailsRequest);
         return JsonConvertor.convert(collectionDetails);
 	}
+	
+	/**
+     * This method is used to get POJO object from JSON request.
+     * @param jsonString - request JSON string
+     * @return
+     * @throws IOException
+     */
+    private Object getObjectFromJSONRequest(String jsonString, Class cls)
+            throws IOException {
+        ObjectMapper mapper = new ObjectMapper();
+        mapper.setVisibility(JsonMethod.FIELD, Visibility.ANY);
+        mapper.configure(SerializationConfig.Feature.AUTO_DETECT_FIELDS, true);
+        mapper.setDateFormat(ChequePayment.CHEQUE_DATE_FORMAT);
+        return mapper.readValue(jsonString, cls);
+    }
 	
 }
