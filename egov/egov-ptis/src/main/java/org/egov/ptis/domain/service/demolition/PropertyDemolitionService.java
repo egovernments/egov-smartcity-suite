@@ -273,8 +273,8 @@ public class PropertyDemolitionService extends PersistenceService<PropertyImpl, 
                 pos = positionMasterService.getPositionById(approverPosition);
             else if (WFLOW_ACTION_STEP_APPROVE.equalsIgnoreCase(workFlowAction))
                 pos = positionMasterService.getPositionByUserId(securityUtils.getCurrentUser().getId());
-            /*else if (WFLOW_ACTION_STEP_SIGN.equalsIgnoreCase(workFlowAction))
-                pos = assignmentService.getPrimaryAssignmentForUser(property.getCreatedBy().getId()).getPosition();*/
+            else if (WFLOW_ACTION_STEP_SIGN.equalsIgnoreCase(workFlowAction))
+                pos = wfInitiator.getPosition();
             WorkFlowMatrix wfmatrix = null;
             if (null == property.getState()) {
                 wfmatrix = propertyWorkflowService.getWfMatrix(property.getStateType(), null, null, additionalRule,
