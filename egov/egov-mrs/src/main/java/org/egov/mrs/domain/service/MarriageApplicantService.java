@@ -40,6 +40,7 @@
 package org.egov.mrs.domain.service;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Base64;
 import java.util.HashMap;
@@ -97,17 +98,34 @@ public class MarriageApplicantService {
 
     public void prepareDocumentsForView(final Applicant applicant) {
         
-        if (applicant.getPhoto() != null && applicant.getPhoto().length > 0)
-            applicant.setEncodedPhoto(Base64.getEncoder().encodeToString(applicant.getPhoto()));
+        if (applicant.getPhotoFileStore() != null ){
+        	 final File file = fileStoreService.fetch(applicant.getPhotoFileStore().getFileStoreId(), MarriageConstants.MODULE_NAME);
+            try {
+				applicant.setEncodedPhoto(Base64.getEncoder().encodeToString(FileCopyUtils.copyToByteArray(file)));
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+        }
         
-        if (applicant.getSignature() != null && applicant.getSignature().length > 0)
-            applicant.setEncodedSignature(Base64.getEncoder().encodeToString(applicant.getSignature()));
+        if (applicant.getSignatureFileStore() != null ){
+       	 final File file = fileStoreService.fetch(applicant.getSignatureFileStore().getFileStoreId(), MarriageConstants.MODULE_NAME);
+           try {
+				applicant.setEncodedSignature(Base64.getEncoder().encodeToString(FileCopyUtils.copyToByteArray(file)));
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+       }
+    
 
         
         applicant.getApplicantDocuments().forEach(appDoc -> {
-            final File file = fileStoreService.fetch(appDoc.getFileStoreMapper().getFileStoreId(), MarriageConstants.MODULE_NAME);
+            
             try {
-                appDoc.setBase64EncodedFile(Base64.getEncoder().encodeToString(FileCopyUtils.copyToByteArray(file)));
+            	if (appDoc.getFileStoreMapper() != null ){
+            		final File file = fileStoreService.fetch(appDoc.getFileStoreMapper().getFileStoreId(), MarriageConstants.MODULE_NAME);
+            		appDoc.setBase64EncodedFile(Base64.getEncoder().encodeToString(FileCopyUtils.copyToByteArray(file)));
+            	}
+                
             } catch (final Exception e) {
                 LOG.error("Error while preparing the document for view", e);
             }

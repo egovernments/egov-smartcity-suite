@@ -227,12 +227,22 @@ public class MarriageRegistrationService {
 
         registration.getWitnesses().forEach(witness -> {
             try {
-                witness.setPhoto(FileCopyUtils.copyToByteArray(witness.getPhotoFile().getInputStream()));
+                //witness.setPhoto(FileCopyUtils.copyToByteArray(witness.getPhotoFile().getInputStream()));
+            	 witness.setPhotoFileStore(addToFileStore(witness.getPhotoFile()));
             } catch (Exception e) {
                 LOG.error("Error while copying Multipart file bytes", e);
             }
         });
-
+        
+        try {
+        	registration.getWife().setPhotoFileStore(addToFileStore(registration.getWife().getPhotoFile()));
+        	registration.getWife().setSignatureFileStore(addToFileStore(registration.getWife().getSignatureFile()));
+        	registration.getHusband().setPhotoFileStore(addToFileStore(registration.getHusband().getPhotoFile()));
+        	registration.getHusband().setSignatureFileStore(addToFileStore(registration.getHusband().getSignatureFile()));
+        } catch (Exception e) {
+            LOG.error("Error while saving documents!!!!!", e);
+        }
+        
         final Map<Long, MarriageDocument> generalDocumentAndId = new HashMap<Long, MarriageDocument>();
         marriageDocumentService.getGeneralDocuments().forEach(document -> generalDocumentAndId.put(document.getId(), document));
 

@@ -39,14 +39,21 @@
 
 package org.egov.mrs.web.controller.application.registration;
 
+import java.io.File;
 import java.io.IOException;
 import java.util.Base64;
 
+import org.apache.log4j.Logger;
 import org.egov.eis.web.contract.WorkflowContainer;
+import org.egov.infra.filestore.service.FileStoreService;
+import org.egov.mrs.application.MarriageConstants;
 import org.egov.mrs.domain.entity.MarriageRegistration;
 import org.egov.mrs.domain.enums.ApplicationStatus;
+import org.egov.mrs.domain.service.MarriageRegistrationService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.util.FileCopyUtils;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -62,7 +69,12 @@ import org.springframework.web.bind.annotation.RequestParam;
 @Controller
 @RequestMapping(value = "/registration")
 public class ViewMarriageRegistrationController extends MarriageRegistrationController {
-
+	
+	@Autowired
+    private FileStoreService fileStoreService;
+	
+	 private static final Logger LOG = Logger.getLogger(ViewMarriageRegistrationController.class);
+	 
     @RequestMapping(value = "/view/{registrationId}", method = RequestMethod.GET)
     public String viewRegistration(@PathVariable final Long registrationId, @RequestParam(required = false) String mode,
             final Model model) throws IOException {
@@ -74,11 +86,17 @@ public class ViewMarriageRegistrationController extends MarriageRegistrationCont
         marriageRegistrationService.prepareDocumentsForView(registration);
         marriageApplicantService.prepareDocumentsForView(registration.getHusband());
         marriageApplicantService.prepareDocumentsForView(registration.getWife());
-        registration.getWitnesses()
-            .stream()
-            .filter(witness -> witness.getPhoto() != null && witness.getPhoto().length > 0)
-            .forEach(witness -> witness.setEncodedPhoto(Base64.getEncoder().encodeToString(witness.getPhoto())));
-                
+        
+        registration.getWitnesses().forEach(witness -> {
+            try {
+            	if(witness.getPhotoFileStore() != null){
+            		final File file = fileStoreService.fetch(witness.getPhotoFileStore().getFileStoreId(), MarriageConstants.MODULE_NAME);
+            		witness.setEncodedPhoto(Base64.getEncoder().encodeToString(FileCopyUtils.copyToByteArray(file)));
+            	}
+            } catch (final Exception e) {
+                LOG.error("Error while preparing the document for view", e);
+            }
+        });
         String screen = null;
 
         if (registration.getStatus() != ApplicationStatus.Approved) {

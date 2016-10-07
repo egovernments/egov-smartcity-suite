@@ -248,7 +248,12 @@ $(".btn-primary").click(function() {
 	} 
 	
 	validateWorkFlowApprover(action);  
-	if($('form').valid())
+	
+	/*if ($('form').valid()) {
 		document.forms[0].submit();	
-	return;
+	} else {
+		e.stopPropagation();
+		e.preventDefault();
+	}*/
+	
 });

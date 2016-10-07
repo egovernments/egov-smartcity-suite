@@ -39,13 +39,18 @@
 
 package org.egov.mrs.web.controller.application.registration;
 
+import java.io.File;
 import java.util.Base64;
 
 import javax.servlet.http.HttpServletRequest;
 
+import org.apache.log4j.Logger;
 import org.egov.eis.web.contract.WorkflowContainer;
+import org.egov.infra.filestore.service.FileStoreService;
 import org.egov.mrs.application.MarriageConstants;
 import org.egov.mrs.domain.entity.MarriageRegistration;
+import org.springframework.util.FileCopyUtils;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -65,7 +70,12 @@ import org.springframework.web.bind.annotation.RequestParam;
 @Controller
 @RequestMapping(value = "/registration")
 public class UpdateMarriageRegistrationController extends MarriageRegistrationController {
-
+	
+	private static final Logger LOG = Logger.getLogger(UpdateMarriageRegistrationController.class);
+	
+	@Autowired
+    private FileStoreService fileStoreService;
+	
     @RequestMapping(value = "/update/{id}", method = RequestMethod.GET)
     public String showRegistration(@PathVariable final Long id, final Model model) {
         MarriageRegistration registration = marriageRegistrationService.get(id);
@@ -74,8 +84,16 @@ public class UpdateMarriageRegistrationController extends MarriageRegistrationCo
         marriageApplicantService.prepareDocumentsForView(registration.getHusband()); 
         marriageApplicantService.prepareDocumentsForView(registration.getWife());
         prepareWorkFlowForNewMarriageRegistration(registration, model);  
-        if(registration.getWitnesses()!=null)
-          registration.getWitnesses().forEach(witness -> { if(witness.getPhoto()!=null)witness.setEncodedPhoto(Base64.getEncoder().encodeToString(witness.getPhoto()));});
+        registration.getWitnesses().forEach(witness -> {
+            try {
+            	if(witness.getPhotoFileStore() != null){
+            		final File file = fileStoreService.fetch(witness.getPhotoFileStore().getFileStoreId(), MarriageConstants.MODULE_NAME);
+                	witness.setEncodedPhoto(Base64.getEncoder().encodeToString(FileCopyUtils.copyToByteArray(file)));
+            	}
+            } catch (final Exception e) {
+                LOG.error("Error while preparing the document for view", e);
+            }
+        });
         return "registration-correction";
     }
     

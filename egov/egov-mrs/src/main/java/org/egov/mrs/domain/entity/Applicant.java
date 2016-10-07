@@ -63,6 +63,7 @@ import javax.persistence.Transient;
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 
+import org.egov.infra.filestore.entity.FileStoreMapper;
 import org.egov.infra.persistence.entity.AbstractAuditable;
 import org.egov.mrs.domain.enums.MaritalStatus;
 import org.egov.mrs.domain.enums.ReligionPractice;
@@ -122,10 +123,19 @@ public class Applicant extends AbstractAuditable {
     @SafeHtml
     @Length(max = 20)
     private String aadhaarNo;
-
-    @Length(min = 1)
+    @Transient
     private byte[] photo;
+    @Transient
     private byte[] signature;
+    
+    @ManyToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name = "photoFileStore") 
+    private FileStoreMapper photoFileStore;
+    
+    @ManyToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name = "signatureFileStore")
+    private FileStoreMapper signatureFileStore;
+    
 
     @NotNull
     @Valid
@@ -349,4 +359,22 @@ public class Applicant extends AbstractAuditable {
     public void setEncodedSignature(String encodedSignature) {
         this.encodedSignature = encodedSignature;
     }
+
+	public FileStoreMapper getPhotoFileStore() {
+		return photoFileStore;
+	}
+
+	public void setPhotoFileStore(FileStoreMapper photoFileStore) {
+		this.photoFileStore = photoFileStore;
+	}
+
+	public FileStoreMapper getSignatureFileStore() {
+		return signatureFileStore;
+	}
+
+	public void setSignatureFileStore(FileStoreMapper signatureFileStore) {
+		this.signatureFileStore = signatureFileStore;
+	}
+    
+    
 }

@@ -122,7 +122,7 @@
 				<spring:message code="lbl.residence.address"/><span class="mandatory"></span>
 			</label>
 			<div class="col-sm-5" style="padding-left: 26px;">
-				<form:textarea path="${witness}.contactInfo.residenceAddress" id="txt-witness-residenceAddress" type="text" class="form-control low-width patternvalidation" data-pattern="alphabetwithspacehyphenunderscore" maxlength="256" placeholder="" autocomplete="off" required="required" />
+				<form:textarea path="${witness}.contactInfo.residenceAddress" id="txt-witness-residenceAddress" type="text" class="form-control low-width patternvalidation" data-pattern="regexp_alphabetspecialcharacters" maxlength="256" placeholder="" autocomplete="off" required="required" />
                 <form:errors path="${witness}.contactInfo.residenceAddress" cssClass="add-margin error-msg"/>
 			</div>
 			<div class="col-sm-2"></div>
@@ -134,7 +134,7 @@
 				<spring:message code="lbl.office.address"/><span class="mandatory"></span>
 			</label>
 			<div class="col-sm-5" style="padding-left: 26px;">
-				<form:textarea path="${witness}.contactInfo.officeAddress" id="txt-witness-officeAddress" type="text" class="form-control low-width patternvalidation" data-pattern="alphabetwithspacehyphenunderscore" maxlength="256" placeholder="" autocomplete="off" required="required" />
+				<form:textarea path="${witness}.contactInfo.officeAddress" id="txt-witness-officeAddress" type="text" class="form-control low-width patternvalidation" data-pattern="regexp_alphabetspecialcharacters" maxlength="256" placeholder="" autocomplete="off" required="required" />
                 <form:errors path="${witness}.contactInfo.officeAddress" cssClass="add-margin error-msg"/>
 			</div>
 			<div class="col-sm-2"></div>
@@ -146,19 +146,32 @@
 			<label class="col-sm-5 text-right" style="padding: 25px;">
 				<spring:message code="lbl.photo"/>
 			</label>
-			<div class="col-sm-6">			 	
-				<c:set value="${witness}.encodedPhoto" var="ph"/>
-				<img class="add-border" id="${witness}-imgphoto" height="160" width="140">
-				<script>
-					var w = '<c:out value="${witness}" />';
-					var strData = '<c:out value="${ph}" />';
-					if (strData != null && strData.length > 0) {
-						$('#'+w+'-imgphoto').prop('src', "data:image/jpg;base64," + toBinaryString(strData));
-					}
-					
-				</script>
-				<input type="file" id="${witness}-photo" name="${witness}.photoFile" class="file-ellipsis upload-file">
+			<div class="col-sm-6 setimage">			
+			 	
+				<c:choose>
+					<c:when test="${currentState != 'NEW'}">
+					    <form:hidden  path="${witness}.photoFileStore"/>
+						<form:hidden class="encodedPhoto" path="${witness}.encodedPhoto"/>
+						<img id="${witness}.photo" class="img-width add-margin marriage-img" height="160" width="140" />
+						<input type="file" id="${witness}-photo" name="${witness}.photoFile" class="file-ellipsis upload-file validate-file" data-fileto="#${witness}.photo" >
+					</c:when>
+					<c:otherwise>
+						<img id="${witness}.photo" class="img-width add-margin marriage-img" height="160" width="140" />
+						<input type="file" id="${witness}-photo" name="${witness}.photoFile" class="file-ellipsis upload-file validate-file" data-fileto="#${witness}.photo" required="required">
+					</c:otherwise>
+				</c:choose>
 			</div>
 		</div>
 	</div>
 </div>
+<c:if test="${currentState != 'NEW'}">
+<script>
+	$('.setimage').each(function(){
+		var encodedPhoto = $(this).find('.encodedPhoto').val();
+		$(this).find('.marriage-img').attr({
+			src : "data:image/jpg;base64," + encodedPhoto
+		});
+		$(this).find('.marriage-img').attr('data-exist', '');
+	})								
+</script>
+</c:if>
