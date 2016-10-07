@@ -1,12 +1,5 @@
 package org.egov.infra.config.process.auth;
 
-import static org.apache.commons.lang3.StringUtils.isNotBlank;
-
-import java.util.Arrays;
-import java.util.List;
-import java.util.Map;
-import java.util.stream.Collectors;
-
 import org.activiti.engine.ActivitiException;
 import org.activiti.engine.identity.GroupQuery;
 import org.activiti.engine.impl.GroupQueryImpl;
@@ -16,11 +9,21 @@ import org.activiti.engine.impl.persistence.AbstractManager;
 import org.activiti.engine.impl.persistence.entity.GroupEntity;
 import org.activiti.engine.impl.persistence.entity.GroupEntityImpl;
 import org.activiti.engine.impl.persistence.entity.GroupEntityManager;
-import org.egov.infra.config.process.entity.Group;
-import org.egov.infra.config.process.service.GroupService;
+import org.egov.infra.process.entity.Group;
+import org.egov.infra.process.service.GroupService;
+
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
+
+import static org.apache.commons.lang3.StringUtils.isNotBlank;
 
 public class ProcessUserGroupManager extends AbstractManager implements GroupEntityManager {
 
+    private static final String UNSUPPORTED_CREATE_MESSAGE = "Process user group manager doesn't support creating a new group";
+    private static final String UNSUPPORTED_DELETE_MESSAGE = "Process user group manager doesn't support delete a group";
     private GroupService userGroupService;
 
     public ProcessUserGroupManager(final ProcessEngineConfigurationImpl processEngineConfiguration, GroupService userGroupService) {
@@ -40,7 +43,7 @@ public class ProcessUserGroupManager extends AbstractManager implements GroupEnt
         if (isNotBlank(query.getNameLike()))
             return userGroupService.getGroupsByNameLike(query.getNameLike()).stream().
                     map(this::mapUserGroupToGroupEntity).collect(Collectors.toList());
-        return null;
+        return Collections.emptyList();
     }
 
     @Override
@@ -50,8 +53,7 @@ public class ProcessUserGroupManager extends AbstractManager implements GroupEnt
 
     @Override
     public List<org.activiti.engine.identity.Group> findGroupsByUser(final String userId) {
-        //TODO has to implement if required
-        return null;
+        return Collections.emptyList();
     }
 
     @Override
@@ -66,12 +68,12 @@ public class ProcessUserGroupManager extends AbstractManager implements GroupEnt
 
     @Override
     public org.activiti.engine.identity.Group createNewGroup(final String groupId) {
-        throw new ActivitiException("Process user group manager doesn't support creating a new group");
+        throw new ActivitiException(UNSUPPORTED_CREATE_MESSAGE);
     }
 
     @Override
     public GroupQuery createNewGroupQuery() {
-        throw new ActivitiException("Process user group manager doesn't support creating a new group");
+        throw new ActivitiException(UNSUPPORTED_CREATE_MESSAGE);
     }
 
     @Override
@@ -81,19 +83,18 @@ public class ProcessUserGroupManager extends AbstractManager implements GroupEnt
 
     @Override
     public GroupEntity create() {
-        throw new ActivitiException("Process user group manager doesn't support creating a new group");
+        throw new ActivitiException(UNSUPPORTED_CREATE_MESSAGE);
     }
-
 
 
     @Override
     public void insert(final GroupEntity entity) {
-        throw new ActivitiException("Process user group manager doesn't support creating a new group");
+        throw new ActivitiException(UNSUPPORTED_CREATE_MESSAGE);
     }
 
     @Override
     public void insert(final GroupEntity entity, final boolean fireCreateEvent) {
-        throw new ActivitiException("Process user group manager doesn't support creating a new group");
+        throw new ActivitiException(UNSUPPORTED_CREATE_MESSAGE);
     }
 
     @Override
@@ -108,17 +109,17 @@ public class ProcessUserGroupManager extends AbstractManager implements GroupEnt
 
     @Override
     public void delete(final String id) {
-        throw new ActivitiException("Process user group manager doesn't support delete a group");
+        throw new ActivitiException(UNSUPPORTED_DELETE_MESSAGE);
     }
 
     @Override
     public void delete(final GroupEntity entity) {
-        throw new ActivitiException("Process user group manager doesn't support delete a group");
+        throw new ActivitiException(UNSUPPORTED_DELETE_MESSAGE);
     }
 
     @Override
     public void delete(final GroupEntity entity, final boolean fireDeleteEvent) {
-        throw new ActivitiException("Process user group manager doesn't support delete a group");
+        throw new ActivitiException(UNSUPPORTED_DELETE_MESSAGE);
     }
 
     private GroupEntity mapUserGroupToGroupEntity(Group group) {

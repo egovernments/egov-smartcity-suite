@@ -1,10 +1,10 @@
-package org.egov.infra.config.process.repository;
+package org.egov.infra.process.repository;
 
-import java.util.List;
-
-import org.egov.infra.config.process.entity.Group;
+import org.egov.infra.process.entity.Group;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
+
+import java.util.List;
 
 @Repository
 public interface GroupRepository extends JpaRepository<Group, Long> {

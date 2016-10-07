@@ -44,6 +44,7 @@ import org.egov.infra.config.properties.ApplicationProperties;
 import org.egov.infra.filestore.service.FileStoreService;
 import org.egov.infra.reporting.engine.ReportService;
 import org.egov.infra.reporting.engine.jasper.JasperReportService;
+import org.egov.infra.utils.ResourceFinderUtil;
 import org.springframework.beans.factory.annotation.Autowire;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
@@ -117,6 +118,11 @@ public class ApplicationConfiguration {
     @Bean
     public ReportService reportService() {
         return new JasperReportService(10,30);
+    }
+
+    @Bean
+    public ResourceFinderUtil resourceFinderUtil() {
+        return new ResourceFinderUtil();
     }
 
 }

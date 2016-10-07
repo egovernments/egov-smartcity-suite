@@ -41,6 +41,7 @@
 package org.egov.infra.web.filter;
 
 import org.egov.infra.config.core.ApplicationThreadLocals;
+import org.egov.infra.config.process.multitenant.ProcessEngineThreadLocal;
 import org.egov.infra.config.properties.ApplicationProperties;
 import org.egov.infra.web.utils.WebUtils;
 import org.slf4j.Logger;
@@ -69,7 +70,9 @@ public class ApplicationTenantResolverFilter implements Filter {
         ApplicationThreadLocals.setTenantID(applicationProperties.getProperty("tenant." + domainURL));
         LOG.debug("Resolved tenant as  {}", ApplicationThreadLocals.getTenantID());
         ApplicationThreadLocals.setDomainName(domainURL);
+        ProcessEngineThreadLocal.setTenant(ApplicationThreadLocals.getTenantID());
         chain.doFilter(request, response);
+        ProcessEngineThreadLocal.clearTenant();
     }
 
     @Override

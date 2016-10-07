@@ -1,6 +1,8 @@
-package org.egov.infra.config.process.entity;
+package org.egov.infra.process.entity;
 
-import java.util.List;
+import org.egov.infra.admin.master.entity.User;
+import org.egov.infra.persistence.entity.AbstractPersistable;
+import org.hibernate.validator.constraints.Length;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
@@ -9,27 +11,22 @@ import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
 import javax.persistence.Table;
-import javax.persistence.Version;
-
-import org.egov.infra.admin.master.entity.User;
-import org.hibernate.validator.constraints.Length;
+import java.util.List;
 
 @Entity
 @Table(name = "eg_group")
-public class Group {
+public class Group extends AbstractPersistable<Long> {
 
     @Id
     private Long id;
-    
-	
-    @Length(max=20)
+
+
+    @Length(max = 20)
     private String name;
-    
-	
-    @Length(max=20)
+
+
+    @Length(max = 20)
     private String type;
-    @Version
-    private Long version;
 
     @ManyToMany(cascade = CascadeType.ALL)
     @JoinTable(
@@ -39,10 +36,12 @@ public class Group {
     )
     private List<User> users;
 
+    @Override
     public Long getId() {
         return id;
     }
 
+    @Override
     public void setId(final Long id) {
         this.id = id;
     }
