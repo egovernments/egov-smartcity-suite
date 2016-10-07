@@ -336,6 +336,8 @@ public class CollectionIndexElasticSearchService {
 				
 			collIndData.setCytdColl(entry.getValue());
 			//Proportional Demand = (totalDemand/12)*noOfmonths
+			if(noOfMonths == 0)
+				noOfMonths = 1;
 			cytdDmd = (currYrTotalDemandMap.get(name).divide(BigDecimal.valueOf(12),BigDecimal.ROUND_HALF_UP)).multiply(BigDecimal.valueOf(noOfMonths));
 			collIndData.setCytdDmd(cytdDmd);
 			balance = cytdDmd.subtract(collIndData.getCytdColl());
@@ -343,7 +345,7 @@ public class CollectionIndexElasticSearchService {
 			collIndData.setPerformance(performance);
 			collIndData.setCytdBalDmd(balance);
 			collIndData.setTotalDmd(totalDemandMap.get(name));
-			collIndData.setLytdColl(lytdCollMap.get(name));
+			collIndData.setLytdColl(lytdCollMap.get(name) == null ? BigDecimal.ZERO : lytdCollMap.get(name));
 			collIndDataList.add(collIndData);
 		}
 		Long timeTaken = System.currentTimeMillis() - startTime;
@@ -448,8 +450,8 @@ public class CollectionIndexElasticSearchService {
 			collTrend = new CollectionTrend();
 			collTrend.setMonth(entry.getKey());
 			collTrend.setCyColl(entry.getValue());
-			collTrend.setLyColl(yearwiseMonthlyCollList.get(1).get(collTrend.getMonth()));
-			collTrend.setPyColl(yearwiseMonthlyCollList.get(2).get(collTrend.getMonth()));
+			collTrend.setLyColl(yearwiseMonthlyCollList.get(1).get(collTrend.getMonth()) == null ? BigDecimal.ZERO : yearwiseMonthlyCollList.get(1).get(collTrend.getMonth()));
+			collTrend.setPyColl(yearwiseMonthlyCollList.get(2).get(collTrend.getMonth()) == null ? BigDecimal.ZERO : yearwiseMonthlyCollList.get(2).get(collTrend.getMonth()));
 			collTrendsList.add(collTrend);
 		}
 		Long timeTaken = System.currentTimeMillis() - startTime;

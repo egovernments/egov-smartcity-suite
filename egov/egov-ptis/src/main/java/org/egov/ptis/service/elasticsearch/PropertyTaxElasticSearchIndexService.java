@@ -136,6 +136,8 @@ public class PropertyTaxElasticSearchIndexService {
 		
 		int noOfMonths = DateUtils.noOfMonths(fromDate, toDate);
 		//Proportional Demand = (totalDemand/12)*noOfmonths
+		if(noOfMonths == 0)
+			noOfMonths = 1;
 		BigDecimal proportionalDemand = (totalDemand.divide(BigDecimal.valueOf(12), BigDecimal.ROUND_HALF_UP))
 				.multiply(BigDecimal.valueOf(noOfMonths));
 		collectionIndexDetails.setCytdDmd(proportionalDemand.setScale(0, BigDecimal.ROUND_HALF_UP));
