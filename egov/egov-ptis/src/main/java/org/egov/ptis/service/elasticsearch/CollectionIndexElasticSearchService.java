@@ -300,7 +300,8 @@ public class CollectionIndexElasticSearchService {
 		String aggregationField = "regionname";
 		if(StringUtils.isNotBlank(collectionDetailsRequest.getRegionName()))
 			aggregationField = "districtname";
-		if(StringUtils.isNotBlank(collectionDetailsRequest.getDistrictName()))
+		if(StringUtils.isNotBlank(collectionDetailsRequest.getDistrictName()) 
+				|| StringUtils.isNotBlank(collectionDetailsRequest.getUlbGrade()))
 			aggregationField = "cityname";
 		//Wardwise group to be implemented later
 		
@@ -332,6 +333,7 @@ public class CollectionIndexElasticSearchService {
 			} else if(aggregationField.equals("cityname")){
 				collIndData.setUlbName(name);
 				collIndData.setDistrictName(collectionDetailsRequest.getDistrictName());
+				collIndData.setUlbGrade(collectionDetailsRequest.getUlbGrade());
 			}
 				
 			collIndData.setCytdColl(entry.getValue());
