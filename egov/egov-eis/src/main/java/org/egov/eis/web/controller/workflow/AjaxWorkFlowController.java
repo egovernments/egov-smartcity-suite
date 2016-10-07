@@ -92,7 +92,7 @@ public class AjaxWorkFlowController {
             @RequestParam final String amountRule, @RequestParam final String additionalRule,
             @RequestParam final String pendingAction, @RequestParam final Long approvalDepartment) {
 
-        List<Designation> designationList = customizedWorkFlowService.getNextDesignations(type,
+        List<Designation> designationList = customizedWorkFlowService.getNextDesignationsFromActiviti(type,
                 departmentRule, null, additionalRule, currentState,
                 pendingAction, new Date());
         if (designationList.isEmpty())

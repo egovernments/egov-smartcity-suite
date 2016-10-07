@@ -321,9 +321,9 @@ public class UpdateContractorBillController extends GenericWorkFlowController {
         model.addAttribute("stateType", contractorBillRegister.getClass().getSimpleName());
 
         if (contractorBillRegister.getState() != null)
-            model.addAttribute("currentState", contractorBillRegister.getState().getValue());
+            model.addAttribute("currentState", contractorBillRegister.getProcessInstance());
 
-        prepareWorkflow(model, contractorBillRegister, new WorkflowContainer());
+        prepareActivitiWorkflow(model, contractorBillRegister.getProcessInstance(), WorksConstants.CBR_PROCESS_DEFINITION_KEY);
         if (contractorBillRegister.getState() != null
                 && contractorBillRegister.getState().getValue().equals(WorksConstants.WF_STATE_REJECTED))
             model.addAttribute("mode", "edit");

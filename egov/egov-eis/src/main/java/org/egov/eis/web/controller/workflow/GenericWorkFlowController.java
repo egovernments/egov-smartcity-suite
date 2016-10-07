@@ -39,6 +39,20 @@
  */
 package org.egov.eis.web.controller.workflow;
 
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
+
+import org.activiti.bpmn.model.BpmnModel;
+import org.activiti.bpmn.model.ValuedDataObject;
+import org.activiti.engine.FormService;
+import org.activiti.engine.ProcessEngine;
+import org.activiti.engine.ProcessEngines;
+import org.activiti.engine.RepositoryService;
+import org.activiti.engine.TaskService;
+import org.activiti.engine.form.FormProperty;
+import org.activiti.engine.form.TaskFormData;
+import org.activiti.engine.task.Task;
 import org.egov.eis.web.contract.WorkflowContainer;
 import org.egov.infra.admin.master.entity.Department;
 import org.egov.infra.admin.master.service.DepartmentService;
@@ -51,10 +65,6 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.ModelAttribute;
 
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
-
 @Controller
 public abstract class GenericWorkFlowController {
 
@@ -63,6 +73,12 @@ public abstract class GenericWorkFlowController {
 
     @Autowired
     protected DepartmentService departmentService;
+    
+    @Autowired
+	private RepositoryService repositoryService;
+    
+    @Autowired
+	private FormService formService;
 
     @ModelAttribute(value = "approvalDepartmentList")
     public List<Department> addAllDepartments() {
@@ -85,6 +101,11 @@ public abstract class GenericWorkFlowController {
         prepareModel.addAttribute("validActionList", getValidActions(model, container));
         prepareModel.addAttribute("nextAction", getNextAction(model, container));
 
+    }
+    
+    protected void prepareActivitiWorkflow(final Model prepareModel, final String processInstanceId, final String processDefinitionKey) {
+        prepareModel.addAttribute("approverDepartmentList", addAllDepartments());
+        prepareModel.addAttribute("validActionList", getValidActivitiActions(processInstanceId, processDefinitionKey));
     }
 
     /**
@@ -132,6 +153,28 @@ public abstract class GenericWorkFlowController {
                     container.getWorkFlowDepartment(), container.getAmountRule(), container.getAdditionalRule(),
                     State.DEFAULT_STATE_VALUE_CREATED, container.getPendingActions(), model.getCreatedDate());
         return validActions;
+    }
+    
+    public List<String> getValidActivitiActions(final String processInstanceId, final String processDefinitionKey) {
+    	if (processInstanceId == null) {
+        	BpmnModel bpmnModel = repositoryService.getBpmnModel(repositoryService.createProcessDefinitionQuery()
+    				.processDefinitionKey(processDefinitionKey).list().get(0).getId());
+    		List<ValuedDataObject> dataObjects = bpmnModel.getProcesses().get(0).getDataObjects();
+    		for (ValuedDataObject object : dataObjects) {
+    			if ("validactions".equalsIgnoreCase(object.getId()))
+    				return Arrays.asList(object.getValue().toString().split(","));
+    		}
+        } else {
+        	ProcessEngine processEngine = ProcessEngines.getDefaultProcessEngine();
+    		TaskService taskService = processEngine.getTaskService();
+    		Task newTask = taskService.createTaskQuery().processInstanceId(processInstanceId).list().get(0);
+    		TaskFormData taskFormData = formService.getTaskFormData(newTask.getId());
+    		for(FormProperty property : taskFormData.getFormProperties()) {
+    			if ("validactions".equalsIgnoreCase(property.getId()))
+    				return Arrays.asList(property.getName().toString().split(","));
+    		}
+        }
+    	return Collections.EMPTY_LIST;
     }
 
 }

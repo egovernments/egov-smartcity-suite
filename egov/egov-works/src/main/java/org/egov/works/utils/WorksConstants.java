@@ -311,4 +311,5 @@ public class WorksConstants {
     
     public static final String [] CONTRACTOR_REFUND_PURPOSE = {CONTRACTOR_RETENTION_MONEY_PURPOSE , CONTRACTOR_SECURITY_DEPOSITE_PURPOSE};
     
+    public static final String CBR_PROCESS_DEFINITION_KEY = "contractor_bill_workflow";
 }

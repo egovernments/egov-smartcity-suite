@@ -54,6 +54,13 @@ import javax.persistence.PersistenceContext;
 import javax.script.ScriptContext;
 import javax.servlet.http.HttpServletRequest;
 
+import org.activiti.engine.IdentityService;
+import org.activiti.engine.ProcessEngine;
+import org.activiti.engine.ProcessEngines;
+import org.activiti.engine.RuntimeService;
+import org.activiti.engine.TaskService;
+import org.activiti.engine.runtime.ProcessInstance;
+import org.activiti.engine.task.Task;
 import org.egov.commons.Accountdetailtype;
 import org.egov.commons.CChartOfAccounts;
 import org.egov.commons.CFinancialYear;
@@ -149,6 +156,12 @@ public class ContractorBillRegisterService {
     
     @Autowired
     private ChartOfAccountsHibernateDAO chartOfAccountsHibernateDAO;
+    
+    @Autowired
+	private RuntimeService runtimeService;
+
+	@Autowired
+	private IdentityService identityService;
 
     public Session getCurrentSession() {
         return entityManager.unwrap(Session.class);
@@ -193,6 +206,11 @@ public class ContractorBillRegisterService {
             throw new ValidationException(e.getErrors());
         }
         ContractorBillRegister savedContractorBillRegister = contractorBillRegisterRepository.save(contractorBillRegister);
+        
+        String processInstanceId = commonWorkFlowTransition(
+        		savedContractorBillRegister.getProcessInstance(), approvalPosition, workFlowAction);
+        if (processInstanceId != null)
+        	savedContractorBillRegister.setProcessInstance(processInstanceId);
 
         createContractorBillRegisterWorkflowTransition(savedContractorBillRegister,
                 approvalPosition, approvalComent, additionalRule, workFlowAction);
@@ -209,6 +227,45 @@ public class ContractorBillRegisterService {
         }
         return savedContractorBillRegister;
     }
+    
+    private String commonWorkFlowTransition(String processInstanceId, Long approvalPosition, String workFlowAction) {
+    	ProcessEngine processEngine = ProcessEngines.getDefaultProcessEngine();
+		TaskService taskService = processEngine.getTaskService();
+		identityService.setAuthenticatedUserId(
+				assignmentService.getPrimaryAssignmentForUser(securityUtils.getCurrentUser().getId())
+						.getPosition().getId().toString());
+		Map<String, Object> variables = new HashMap<>();
+		variables.put("action", workFlowAction);
+		ProcessInstance processInstance = null;
+		if (processInstanceId == null) {
+			processInstance = runtimeService.startProcessInstanceByKey(WorksConstants.CBR_PROCESS_DEFINITION_KEY, variables);
+			Task task = taskService.createTaskQuery().processInstanceId(processInstance.getProcessInstanceId()).list()
+					.get(0);
+			if ("Save".equals(workFlowAction))
+				task.setAssignee(processInstance.getStartUserId());
+			else
+				task.setAssignee(approvalPosition.toString());
+			task.setOwner(processInstance.getStartUserId());
+			taskService.saveTask(task);
+		} else {
+			Task task = taskService.createTaskQuery().processInstanceId(processInstanceId).list().get(0);
+			taskService.complete(task.getId(), variables);
+			processInstance = runtimeService.createProcessInstanceQuery().processInstanceId(processInstanceId)
+					.singleResult();
+			List<Task> list = taskService.createTaskQuery().processInstanceId(processInstanceId).list();
+			Task newTask = null;
+			if (!list.isEmpty()) {
+				newTask = taskService.createTaskQuery().processInstanceId(processInstanceId).list().get(0);
+				if ("Save".equals(workFlowAction) || "Reject".equals(workFlowAction))
+					approvalPosition = Long.parseLong(processInstance.getStartUserId());
+				taskService.claim(newTask.getId(), approvalPosition.toString());
+			}
+		}
+		if (processInstance != null)
+			return processInstance.getProcessInstanceId();
+		else
+			return null;
+	}
 
     @Transactional
     public ContractorBillRegister updateContractorBillRegister(
@@ -238,6 +295,11 @@ public class ContractorBillRegisterService {
         }
         updatedContractorBillRegister = contractorBillRegisterRepository.save(contractorBillRegister);
         updatedContractorBillRegister.setBillstatus(updatedContractorBillRegister.getStatus().getCode());
+        
+        String processInstanceId = commonWorkFlowTransition(
+        		updatedContractorBillRegister.getProcessInstance(), approvalPosition, workFlowAction);
+        if (processInstanceId != null)
+        	updatedContractorBillRegister.setProcessInstance(processInstanceId);
 
         createContractorBillRegisterWorkflowTransition(updatedContractorBillRegister,
                 approvalPosition, approvalComent, additionalRule, workFlowAction);

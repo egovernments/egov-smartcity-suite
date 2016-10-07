@@ -124,6 +124,8 @@ public class ContractorBillRegister extends EgBillregister {
     private String cancellationReason;
 
     private String cancellationRemarks;
+    
+    private String processInstance;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "workOrderEstimate", nullable = false)
@@ -291,5 +293,12 @@ public class ContractorBillRegister extends EgBillregister {
     public void setRefundBillDetails(final List<EgBilldetails> refundBillDetails) {
         this.refundBillDetails = refundBillDetails;
     }
-    
+
+	public String getProcessInstance() {
+		return processInstance;
+	}
+
+	public void setProcessInstance(final String processInstance) {
+		this.processInstance = processInstance;
+	}
 }
