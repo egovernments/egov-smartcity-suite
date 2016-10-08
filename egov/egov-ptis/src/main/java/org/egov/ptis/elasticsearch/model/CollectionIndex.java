@@ -132,6 +132,9 @@ public class CollectionIndex {
 	
 	@Field(type = FieldType.Double)
 	private Double reductionamount;
+	
+	@Field(type = FieldType.String)
+	private String consumercode;
 
 	public String getReceiptnumber() {
 		return receiptnumber;
@@ -339,5 +342,13 @@ public class CollectionIndex {
 
 	public void setReductionamount(Double reductionamount) {
 		this.reductionamount = reductionamount;
+	}
+
+	public String getConsumercode() {
+		return consumercode;
+	}
+
+	public void setConsumercode(String consumercode) {
+		this.consumercode = consumercode;
 	}
 }

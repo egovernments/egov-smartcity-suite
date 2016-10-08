@@ -277,6 +277,11 @@ public class CollectionIndexElasticSearchService {
 		Date fromDate;
 		Date toDate;
 		String name;
+		CollIndexTableData collIndData;
+		BigDecimal cytdDmd = BigDecimal.ZERO;
+		BigDecimal performance = BigDecimal.ZERO;
+		BigDecimal balance = BigDecimal.ZERO;
+		BigDecimal variance = BigDecimal.ZERO;
 		/**
 		 * For collection and demand between the date ranges
 		 * if dates are sent in the request, consider fromDate and toDate+1 , else calculate from current year start date till current date+1 day
@@ -318,10 +323,6 @@ public class CollectionIndexElasticSearchService {
 		Map<String, BigDecimal> lytdCollMap = getCollectionAndDemandResults(collectionDetailsRequest, DateUtils.addYears(fromDate, -1), 
 				DateUtils.addYears(toDate, -1), COLLECTION_INDEX_NAME, "totalamount", "citycode", aggregationField);
 
-		CollIndexTableData collIndData;
-		BigDecimal cytdDmd = BigDecimal.ZERO;
-		BigDecimal performance = BigDecimal.ZERO;
-		BigDecimal balance = BigDecimal.ZERO;
 		for(Map.Entry<String, BigDecimal> entry : cytdCollMap.entrySet()){
 			collIndData = new CollIndexTableData();
 			name = entry.getKey();
@@ -348,6 +349,10 @@ public class CollectionIndexElasticSearchService {
 			collIndData.setCytdBalDmd(balance);
 			collIndData.setTotalDmd(totalDemandMap.get(name));
 			collIndData.setLytdColl(lytdCollMap.get(name) == null ? BigDecimal.ZERO : lytdCollMap.get(name));
+			//variance = ((current year coll - last year coll)/current year collection)*100
+			variance = (collIndData.getCytdColl().subtract(collIndData.getLytdColl()))
+					.divide(collIndData.getCytdColl(), BigDecimal.ROUND_HALF_UP).multiply(PropertyTaxConstants.BIGDECIMAL_100);
+			collIndData.setLyVar(variance);
 			collIndDataList.add(collIndData);
 		}
 		Long timeTaken = System.currentTimeMillis() - startTime;
