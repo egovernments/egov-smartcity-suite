@@ -53,6 +53,7 @@ import org.egov.ptis.bean.dashboard.CollReceiptDetails;
 import org.egov.ptis.bean.dashboard.CollectionDetailsRequest;
 import org.egov.ptis.bean.dashboard.CollectionIndexDetails;
 import org.egov.ptis.bean.dashboard.ConsolidatedCollectionDetails;
+import org.egov.ptis.bean.dashboard.TaxPayerDetails;
 import org.egov.restapi.model.StateCityInfo;
 import org.egov.restapi.service.DashboardService;
 import org.egov.restapi.util.JsonConvertor;
@@ -122,6 +123,20 @@ public class CMDashboardController {
 				rcptDetailsRequestStr, CollectionDetailsRequest.class);
 		CollReceiptDetails collReceiptDetails = dashboardService.getReceiptDetails(collectionDetailsRequest);
         return JsonConvertor.convert(collReceiptDetails);
+	}
+	
+	/**
+	 * Returns Top Ten Tax Performers Across all ULB's
+	 * @param collDetailsRequestStr
+	 * @return
+	 * @throws IOException
+	 */
+	@RequestMapping(value = "/toptentaxers", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
+	public String getTopTenTaxProducers(@RequestBody String collDetailsRequestStr) throws IOException{
+		CollectionDetailsRequest collectionDetailsRequest = (CollectionDetailsRequest) getObjectFromJSONRequest(
+				collDetailsRequestStr, CollectionDetailsRequest.class);
+		List<TaxPayerDetails> taxPayerDetails = dashboardService.getTopTenTaxProducers(collectionDetailsRequest);
+		return JsonConvertor.convert(taxPayerDetails);
 	}
 	
 	/**

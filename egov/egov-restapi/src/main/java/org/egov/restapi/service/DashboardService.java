@@ -59,6 +59,7 @@ import org.egov.ptis.bean.dashboard.ConsolidatedCollDetails;
 import org.egov.ptis.bean.dashboard.ConsolidatedCollectionDetails;
 import org.egov.ptis.bean.dashboard.ReceiptTableData;
 import org.egov.ptis.bean.dashboard.ReceiptsTrend;
+import org.egov.ptis.bean.dashboard.TaxPayerDetails;
 import org.egov.ptis.constants.PropertyTaxConstants;
 import org.egov.ptis.domain.model.ErrorDetails;
 import org.egov.ptis.service.elasticsearch.CollectionIndexElasticSearchService;
@@ -193,5 +194,15 @@ public class DashboardService {
         errorDetails.setErrorMessage(THIRD_PARTY_ERR_MSG_SUCCESS);
         receiptDetails.setErrorDetails(errorDetails);
 		return receiptDetails;
+	}
+	
+	/**
+	 * Returns Top Ten ULB's Tax Producers
+	 * @param collectionDetailsRequest
+	 * @return
+	 */
+	public List<TaxPayerDetails> getTopTenTaxProducers(CollectionDetailsRequest collectionDetailsRequest){
+		return propertyTaxElasticSearchIndexService.getTopTenTaxPerformers(collectionDetailsRequest);
+		
 	}
 }

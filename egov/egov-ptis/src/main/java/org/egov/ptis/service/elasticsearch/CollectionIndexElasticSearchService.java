@@ -270,6 +270,36 @@ public class CollectionIndexElasticSearchService {
 	}
 	
 	/**
+	 * Returns total Amount for ulb between specified dates
+	 * @param collectionDetailsRequest
+	 * @param fromDate
+	 * @param toDate
+	 * @param cityName
+	 * @return
+	 */
+	public BigDecimal getTotalCollectionsForDatesForUlb(CollectionDetailsRequest collectionDetailsRequest, Date fromDate, Date toDate,String cityName){
+		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+		BoolQueryBuilder boolQuery = prepareWhereClause(collectionDetailsRequest, COLLECTION_INDEX_NAME, "citycode");
+		boolQuery = boolQuery.must(QueryBuilders.rangeQuery("receiptdate").gte(sdf.format(fromDate)).lte(sdf.format(toDate)).includeUpper(false));
+		boolQuery = boolQuery.must(QueryBuilders.matchQuery("cityname", cityName));
+		
+		SearchQuery searchQueryColl = new NativeSearchQueryBuilder().withIndices(COLLECTION_INDEX_NAME)
+				.withQuery(boolQuery)
+				.addAggregation(AggregationBuilders.sum("collectiontotal").field("totalamount"))
+				.build();
+		
+		Aggregations collAggr = elasticsearchTemplate.query(searchQueryColl, new ResultsExtractor<Aggregations>() {
+			@Override
+			public Aggregations extract(SearchResponse response) {
+				return response.getAggregations();
+			}
+		});
+		
+		Sum aggr = collAggr.get("collectiontotal");
+		return BigDecimal.valueOf(aggr.getValue()).setScale(0, BigDecimal.ROUND_HALF_UP);
+	}
+	
+	/**
 	 * Prepares Collection Index Table Data 
 	 * @param collectionDetailsRequest
 	 * @return List

@@ -43,19 +43,28 @@ package org.egov.ptis.service.elasticsearch;
 import static org.egov.ptis.constants.PropertyTaxConstants.PROPERTY_TAX_INDEX_NAME;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 import org.apache.commons.lang3.StringUtils;
 import org.egov.infra.utils.DateUtils;
 import org.egov.ptis.bean.dashboard.CollectionDetailsRequest;
 import org.egov.ptis.bean.dashboard.CollectionIndexDetails;
+import org.egov.ptis.bean.dashboard.TaxPayerDetails;
 import org.egov.ptis.elasticsearch.model.PropertyTaxIndex;
 import org.egov.ptis.repository.elasticsearch.PropertyTaxIndexRepository;
 import org.elasticsearch.action.search.SearchResponse;
+import org.elasticsearch.client.Client;
 import org.elasticsearch.index.query.BoolQueryBuilder;
 import org.elasticsearch.index.query.QueryBuilders;
+import org.elasticsearch.search.aggregations.AggregationBuilder;
 import org.elasticsearch.search.aggregations.AggregationBuilders;
 import org.elasticsearch.search.aggregations.Aggregations;
+import org.elasticsearch.search.aggregations.bucket.terms.StringTerms;
+import org.elasticsearch.search.aggregations.bucket.terms.Terms;
 import org.elasticsearch.search.aggregations.metrics.sum.Sum;
 import org.joda.time.DateTime;
 import org.slf4j.Logger;
@@ -69,6 +78,8 @@ import org.springframework.data.elasticsearch.core.query.NativeSearchQueryBuilde
 import org.springframework.data.elasticsearch.core.query.SearchQuery;
 import org.springframework.stereotype.Service;
 
+import com.fasterxml.jackson.databind.annotation.JsonAppend.Prop;
+
 @Service
 public class PropertyTaxElasticSearchIndexService {
 	private static final Logger LOGGER = LoggerFactory.getLogger(CollectionIndexElasticSearchService.class);
@@ -77,6 +88,12 @@ public class PropertyTaxElasticSearchIndexService {
 	
 	@Autowired
 	private ElasticsearchTemplate elasticsearchTemplate;
+	
+	@Autowired
+	private Client client;
+	
+	@Autowired
+	private CollectionIndexElasticSearchService collectionIndexElasticSearchService;
 	
 	@Autowired
 	public PropertyTaxElasticSearchIndexService(final PropertyTaxIndexRepository propertyTaxIndexRepository) {
@@ -168,6 +185,82 @@ public class PropertyTaxElasticSearchIndexService {
 		return BigDecimal.valueOf(aggr.getValue()).setScale(0, BigDecimal.ROUND_HALF_UP);
 	}
 	
+	/**
+	 * Returns List of Top Ten Tax Performers
+	 * @param collectionDetailsRequest
+	 * @return
+	 */
+	public List<TaxPayerDetails> getTopTenTaxPerformers(CollectionDetailsRequest collectionDetailsRequest){
+		
+		return returnUlbWiseAggregationResults(collectionDetailsRequest, PROPERTY_TAX_INDEX_NAME, false);
+	}
+	
+	/**
+	 * Returns Top Ten with ULB wise grouping and total amount aggregation
+	 * @param collectionDetailsRequest
+	 * @param indexName
+	 * @param order
+	 * @return
+	 */
+	public List<TaxPayerDetails> returnUlbWiseAggregationResults(CollectionDetailsRequest collectionDetailsRequest,
+			String indexName,Boolean order){
+		List<TaxPayerDetails> taxPayers = new ArrayList<>();
+		BoolQueryBuilder boolQuery = prepareWhereClause(collectionDetailsRequest);
+
+		AggregationBuilder aggregation = AggregationBuilders.terms("by_aggregationField").field("cityname")
+				.size(10)
+				.order(Terms.Order.aggregation("totaldemand",order))
+				.subAggregation(AggregationBuilders.sum("totaldemand").field("totaldemand"))
+				.subAggregation(AggregationBuilders.sum("first_installment").field("firstinstallmentcollection"))
+				.subAggregation(AggregationBuilders.sum("second_installment").field("secondinstallmentcollection"))
+				.subAggregation(AggregationBuilders.sum("arrear_collection").field("arrearcollection"));
+
+		SearchResponse response = client.prepareSearch(indexName)
+				.setQuery(boolQuery)
+				.addAggregation(aggregation)
+				.execute().actionGet();
+
+		TaxPayerDetails taxDetail;
+		Date fromDate = new DateTime().withMonthOfYear(4).dayOfMonth().withMinimumValue().toDate();
+		Date toDate = DateUtils.addDays(new Date(), 1);
+		Date lastYearFromDate = DateUtils.addYears(fromDate, -1);
+		Date lastYearToDate = DateUtils.addYears(toDate, -1);
+		StringTerms totalAmountAggr = response.getAggregations().get("by_aggregationField");
+		for (Terms.Bucket entry : totalAmountAggr.getBuckets()) {
+			taxDetail = new TaxPayerDetails();
+			taxDetail.setRegionName(collectionDetailsRequest.getRegionName());
+			taxDetail.setDistrictName(collectionDetailsRequest.getDistrictName());
+			taxDetail.setUlbGrade(collectionDetailsRequest.getUlbGrade());
+			String fieldName = String.valueOf(entry.getKey());
+			taxDetail.setUlbName(fieldName);
+			//Proportional Demand = (totalDemand/12)*noOfmonths
+			int noOfMonths = DateUtils.noOfMonths(fromDate, toDate);
+			if(noOfMonths == 0)
+				noOfMonths = 1;
+			Sum totalDemandAggregation = entry.getAggregations().get("totaldemand");
+			Sum firstInstallmentAggregation = entry.getAggregations().get("first_installment");
+			Sum secondInstallmentAggregation = entry.getAggregations().get("second_installment");
+			Sum arrearAggregation = entry.getAggregations().get("arrear_collection");
+			BigDecimal totalDemandValue = BigDecimal.valueOf(totalDemandAggregation.getValue()).setScale(0, BigDecimal.ROUND_HALF_UP);
+			BigDecimal firstInstallmentValue = BigDecimal.valueOf(firstInstallmentAggregation.getValue()).setScale(0, BigDecimal.ROUND_HALF_UP);
+			BigDecimal secondInstallmentValue = BigDecimal.valueOf(secondInstallmentAggregation.getValue()).setScale(0, BigDecimal.ROUND_HALF_UP);
+			BigDecimal arrearCollectionValue = BigDecimal.valueOf(arrearAggregation.getValue()).setScale(0, BigDecimal.ROUND_HALF_UP);
+			BigDecimal collections = firstInstallmentValue.add(secondInstallmentValue).add(arrearCollectionValue);
+			BigDecimal proportionalDemand = (totalDemandValue.divide(BigDecimal.valueOf(12),BigDecimal.ROUND_HALF_UP)).multiply(BigDecimal.valueOf(noOfMonths));
+			taxDetail.setTotalDemand(totalDemandValue);
+			taxDetail.setCollections(collections);
+			taxDetail.setProportionalDemand(proportionalDemand);
+			taxDetail.setPercentageAchievements((collections.divide(proportionalDemand,2,BigDecimal.ROUND_HALF_UP)).multiply(BigDecimal.valueOf(100)));
+			taxDetail.setProportionalBalance(proportionalDemand.subtract(collections));
+			BigDecimal lastYearCollection = collectionIndexElasticSearchService.getTotalCollectionsForDatesForUlb(collectionDetailsRequest, lastYearFromDate, lastYearToDate,fieldName);
+			taxDetail.setLastYearCollection(lastYearCollection);
+			BigDecimal variation = ((collections.subtract(lastYearCollection)).divide(collections.multiply(BigDecimal.valueOf(100)),BigDecimal.ROUND_HALF_UP));
+			taxDetail.setVariation(variation);
+			taxPayers.add(taxDetail);
+		}
+		return taxPayers;
+	}
+
 	/**
 	 * Builds query based on the input parameters sent
 	 * @param collectionDetailsRequest
