@@ -57,9 +57,12 @@ import org.egov.commons.CFinancialYear;
 import org.egov.commons.service.CFinancialYearService;
 import org.egov.infra.utils.DateUtils;
 import org.egov.ptis.bean.dashboard.CollIndexTableData;
+import org.egov.ptis.bean.dashboard.CollReceiptDetails;
 import org.egov.ptis.bean.dashboard.CollectionDetailsRequest;
 import org.egov.ptis.bean.dashboard.CollectionIndexDetails;
 import org.egov.ptis.bean.dashboard.CollectionTrend;
+import org.egov.ptis.bean.dashboard.ReceiptTableData;
+import org.egov.ptis.bean.dashboard.ReceiptsTrend;
 import org.egov.ptis.constants.PropertyTaxConstants;
 import org.egov.ptis.repository.elasticsearch.CollectionIndexESRepository;
 import org.elasticsearch.action.search.SearchResponse;
@@ -75,6 +78,7 @@ import org.elasticsearch.search.aggregations.bucket.histogram.Histogram;
 import org.elasticsearch.search.aggregations.bucket.terms.StringTerms;
 import org.elasticsearch.search.aggregations.bucket.terms.Terms;
 import org.elasticsearch.search.aggregations.metrics.sum.Sum;
+import org.elasticsearch.search.aggregations.metrics.valuecount.ValueCount;
 import org.joda.time.DateTime;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -138,7 +142,7 @@ public class CollectionIndexElasticSearchService {
 	 */
 	public BigDecimal getConsolidatedCollForYears(Date fromDate, Date toDate, String billingService) {
 		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
-		QueryBuilder queryBuilder = QueryBuilders.boolQuery().must(QueryBuilders.rangeQuery("receiptdate").gte(sdf.format(fromDate)).lte(sdf.format(toDate)))
+		QueryBuilder queryBuilder = QueryBuilders.boolQuery().must(QueryBuilders.rangeQuery("receiptdate").gte(sdf.format(fromDate)).lte(sdf.format(toDate)).includeUpper(false))
 							.must(QueryBuilders.termQuery("billingservice", billingService));
 		SearchQuery searchQueryColl = new NativeSearchQueryBuilder().withIndices(COLLECTION_INDEX_NAME).withQuery(queryBuilder)
 						.addAggregation(AggregationBuilders.sum("collectiontotal").field("totalamount"))
@@ -247,7 +251,7 @@ public class CollectionIndexElasticSearchService {
 	public BigDecimal getTotalCollectionsForDates(CollectionDetailsRequest collectionDetailsRequest, Date fromDate, Date toDate){
 		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
 		BoolQueryBuilder boolQuery = prepareWhereClause(collectionDetailsRequest, COLLECTION_INDEX_NAME, "citycode");
-		boolQuery = boolQuery.must(QueryBuilders.rangeQuery("receiptdate").gte(sdf.format(fromDate)).lte(sdf.format(toDate)));
+		boolQuery = boolQuery.must(QueryBuilders.rangeQuery("receiptdate").gte(sdf.format(fromDate)).lte(sdf.format(toDate)).includeUpper(false));
 		
 		SearchQuery searchQueryColl = new NativeSearchQueryBuilder().withIndices(COLLECTION_INDEX_NAME)
 				.withQuery(boolQuery)
@@ -376,7 +380,7 @@ public class CollectionIndexElasticSearchService {
 		BoolQueryBuilder boolQuery = prepareWhereClause(collectionDetailsRequest, indexName, ulbCodeField); 
 		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
 		if(indexName.equals(COLLECTION_INDEX_NAME))
-			boolQuery = boolQuery.must(QueryBuilders.rangeQuery("receiptdate").gte(sdf.format(fromDate)).lte(sdf.format(toDate)));
+			boolQuery = boolQuery.must(QueryBuilders.rangeQuery("receiptdate").gte(sdf.format(fromDate)).lte(sdf.format(toDate)).includeUpper(false));
 		
 		AggregationBuilder aggregation = AggregationBuilders.terms("by_city").field(aggregationField)
 				.size(120)
@@ -432,7 +436,7 @@ public class CollectionIndexElasticSearchService {
 		}
 		for(int count = 0; count <= 2 ; count++){
 			monthwiseColl = new LinkedHashMap<>();
-			response = getCollectionsForConsecutiveYears(collectionDetailsRequest, fromDate, toDate);
+			response = getMonthwiseCollectionsForConsecutiveYears(collectionDetailsRequest, fromDate, toDate);
 			Histogram dateaggs = response.getAggregations().get("date_agg");
 			
 			for (Histogram.Bucket entry : dateaggs.getBuckets()) {
@@ -473,7 +477,7 @@ public class CollectionIndexElasticSearchService {
 	 * @param toDate
 	 * @return SearchResponse
 	 */
-	private SearchResponse getCollectionsForConsecutiveYears(CollectionDetailsRequest collectionDetailsRequest, Date fromDate, Date toDate) {
+	private SearchResponse getMonthwiseCollectionsForConsecutiveYears(CollectionDetailsRequest collectionDetailsRequest, Date fromDate, Date toDate) {
 		BoolQueryBuilder boolQuery = prepareWhereClause(collectionDetailsRequest, COLLECTION_INDEX_NAME, "citycode");
 		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
 		AggregationBuilder monthAggrgation = AggregationBuilders.dateHistogram("date_agg")
@@ -482,10 +486,264 @@ public class CollectionIndexElasticSearchService {
 											.subAggregation(AggregationBuilders.sum("current_total").field("totalamount"));
 		
 		SearchResponse response = client.prepareSearch(COLLECTION_INDEX_NAME)
-								  .setQuery(boolQuery.must(QueryBuilders.rangeQuery("receiptdate").gte(sdf.format(fromDate)).lte(sdf.format(toDate))))
+								  .setQuery(boolQuery.must(QueryBuilders.rangeQuery("receiptdate").gte(sdf.format(fromDate)).lte(sdf.format(toDate)).includeUpper(false)))
 								  .addAggregation(monthAggrgation)
 								  .execute().actionGet();
 		return response;
+	}
+	
+	/**
+	 * Provides receipts count
+	 * @param collectionDetailsRequest
+	 * @param receiptDetails
+	 */
+	public void getCummulativeReceiptsCount(CollectionDetailsRequest collectionDetailsRequest, CollReceiptDetails receiptDetails){
+		Date fromDate;
+		Date toDate;
+		LOGGER.info("---- Entered getCummulativeReceiptsCount ----");
+		Long startTime = System.currentTimeMillis();
+		/**
+		 * As per Elastic Search functionality, to get the total collections between 2 dates, add a day to the endDate and fetch the results
+		 *
+		 * For Current day's collection
+		 * if dates are sent in the request, consider the dates as toDate and toDate+1, else take date range between current date +1 day
+		 */
+		if(StringUtils.isNotBlank(collectionDetailsRequest.getFromDate()) && StringUtils.isNotBlank(collectionDetailsRequest.getToDate())){
+			fromDate = DateUtils.getDate(collectionDetailsRequest.getToDate(), "yyyy-MM-dd");
+			toDate =  DateUtils.addDays(DateUtils.getDate(collectionDetailsRequest.getToDate(), "yyyy-MM-dd"), 1);
+		} else {
+			fromDate = new Date();
+			toDate = DateUtils.addDays(fromDate, 1);
+		}
+		//Today’s receipts count
+		Long receiptsCount = getTotalReceiptCountsForDates(collectionDetailsRequest, fromDate, toDate);
+		receiptDetails.setTodayRcptsCount(receiptsCount);
+		
+		/**
+		 * For collections between the date ranges
+		 * if dates are sent in the request, consider the same, else calculate from current year start date till current date+1 day
+		 */
+		if(StringUtils.isNotBlank(collectionDetailsRequest.getFromDate()) && StringUtils.isNotBlank(collectionDetailsRequest.getToDate())){
+			fromDate = DateUtils.getDate(collectionDetailsRequest.getFromDate(), "yyyy-MM-dd");
+			toDate =  DateUtils.addDays(DateUtils.getDate(collectionDetailsRequest.getToDate(), "yyyy-MM-dd"), 1);
+		} else {
+			fromDate = new DateTime().withMonthOfYear(4).dayOfMonth().withMinimumValue().toDate();
+			toDate = DateUtils.addDays(new Date(), 1);
+		}
+		//Current Year till today receipt count
+		receiptsCount = getTotalReceiptCountsForDates(collectionDetailsRequest, fromDate, toDate);
+		receiptDetails.setCytdRcptsCount(receiptsCount);
+		
+		//Receipts count for last year's same date
+		receiptsCount = getTotalReceiptCountsForDates(collectionDetailsRequest, DateUtils.addYears(fromDate, -1), DateUtils.addYears(toDate, -1));
+		receiptDetails.setLytdRcptsCount(receiptsCount);
+		
+		Long timeTaken = System.currentTimeMillis() - startTime;
+		LOGGER.info("getCummulativeReceiptsCount ----> Total time taken is " + timeTaken / 1000 + " (secs)");
+	}
+	
+	/**
+	 * Gives the total count of receipts
+	 * @param collectionDetailsRequest
+	 * @param fromDate
+	 * @param toDate
+	 * @return receipt count
+	 */
+	private Long getTotalReceiptCountsForDates(CollectionDetailsRequest collectionDetailsRequest, Date fromDate, Date toDate){
+		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+		BoolQueryBuilder boolQuery = prepareWhereClause(collectionDetailsRequest, COLLECTION_INDEX_NAME, "citycode");
+		boolQuery = boolQuery.must(QueryBuilders.rangeQuery("receiptdate").gte(sdf.format(fromDate)).lte(sdf.format(toDate)).includeUpper(false));
+		
+		SearchQuery searchQueryColl = new NativeSearchQueryBuilder().withIndices(COLLECTION_INDEX_NAME)
+				.withQuery(boolQuery)
+				.addAggregation(AggregationBuilders.count("receipt_count").field("consumercode"))
+				.build();
+		
+		Aggregations collCountAggr = elasticsearchTemplate.query(searchQueryColl, new ResultsExtractor<Aggregations>() {
+			@Override
+			public Aggregations extract(SearchResponse response) {
+				return response.getAggregations();
+			}
+		});
+		
+		ValueCount aggr = collCountAggr.get("receipt_count");
+		return Long.valueOf(aggr.getValue());
+	}
+	
+	/**
+	 * Gives month-wise receipts count 
+	 * @param collectionDetailsRequest
+	 * @return list
+	 */
+	public List<ReceiptsTrend> getMonthwiseReceiptsTrend(CollectionDetailsRequest collectionDetailsRequest){
+		LOGGER.info("---- Entered getMonthwiseReceiptsTrend ----");
+		Long startTime = System.currentTimeMillis();
+		List<ReceiptsTrend> rcptTrendsList = new ArrayList<>();
+		ReceiptsTrend rcptsTrend;
+		Date fromDate;
+		Date toDate;
+		SearchResponse response = null;
+		Date dateForMonth;
+		String[] dateArr;
+		Integer month;
+		ValueCount rcptCount;
+		String monthName;
+		Map<String, Long> monthwiseCount;
+		Date finYearStartDate = cFinancialYearService.getFinancialYearByDate(new Date()).getStartingDate();
+		Date finYearEndDate = cFinancialYearService.getFinancialYearByDate(new Date()).getEndingDate();
+		Map<Integer, String> monthValuesMap = DateUtils.getAllMonthsWithFullNames();
+		List<Map<String, Long>> yearwiseMonthlyCountList = new ArrayList<>();
+		/**
+		 * For month-wise collections between the date ranges
+		 * if dates are sent in the request, consider fromDate and toDate+1 , else calculate from current year start date till current date+1 day
+		 */
+		if(StringUtils.isNotBlank(collectionDetailsRequest.getFromDate()) && StringUtils.isNotBlank(collectionDetailsRequest.getToDate())){
+			fromDate = DateUtils.getDate(collectionDetailsRequest.getFromDate(), "yyyy-MM-dd");
+			toDate =  DateUtils.addDays(DateUtils.getDate(collectionDetailsRequest.getToDate(), "yyyy-MM-dd"), 1);
+		} else {
+			fromDate = new DateTime().withMonthOfYear(4).dayOfMonth().withMinimumValue().toDate();
+			toDate = DateUtils.addDays(new Date(), 1);
+		}
+		for(int count = 0; count <= 2 ; count++){
+			monthwiseCount = new LinkedHashMap<>();
+			response = getReceiptsCountForConsecutiveYears(collectionDetailsRequest, fromDate, toDate);
+			Histogram dateaggs = response.getAggregations().get("date_agg");
+			
+			for (Histogram.Bucket entry : dateaggs.getBuckets()) {
+				dateArr = entry.getKeyAsString().split("T");
+				dateForMonth = DateUtils.getDate(dateArr[0], "yyyy-MM-dd");
+				month = Integer.valueOf(dateArr[0].split("-", 3)[1]);
+				monthName = monthValuesMap.get(month);
+				rcptCount = entry.getAggregations().get("receipt_count");
+				//If the receipt count is greater than 0 and the month belongs to respective financial year, add values to the map
+				if(DateUtils.between(dateForMonth, finYearStartDate, finYearEndDate) 
+						&& Long.valueOf(rcptCount.getValue()) > 0)
+					monthwiseCount.put(monthName, Long.valueOf(rcptCount.getValue()));
+	        }
+			yearwiseMonthlyCountList.add(monthwiseCount);
+			fromDate = DateUtils.addYears(fromDate, -1);
+			toDate = DateUtils.addYears(toDate, -1);
+			finYearStartDate = DateUtils.addYears(finYearStartDate, -1);
+			finYearEndDate = DateUtils.addYears(finYearEndDate, -1);
+		}
+		
+		for(Map.Entry<String, Long> entry :yearwiseMonthlyCountList.get(0).entrySet()){
+			rcptsTrend = new ReceiptsTrend();
+			rcptsTrend.setMonth(entry.getKey());
+			rcptsTrend.setCyRcptsCount(entry.getValue());
+			rcptsTrend.setLyRcptsCount(yearwiseMonthlyCountList.get(1).get(rcptsTrend.getMonth()) == null ? 0 : yearwiseMonthlyCountList.get(1).get(rcptsTrend.getMonth()));
+			rcptsTrend.setPyRcptsCount(yearwiseMonthlyCountList.get(2).get(rcptsTrend.getMonth()) == null ? 0 : yearwiseMonthlyCountList.get(2).get(rcptsTrend.getMonth()));
+			rcptTrendsList.add(rcptsTrend);
+		}
+		Long timeTaken = System.currentTimeMillis() - startTime;
+		LOGGER.info("getMonthwiseReceiptsTrend ----> Total time taken is " + timeTaken / 1000 + " (secs)");
+		return rcptTrendsList;
+	}
+	
+	/**
+	 * Provides month-wise receipts count for consecutive years
+	 * @param collectionDetailsRequest
+	 * @param fromDate
+	 * @param toDate
+	 * @return SearchResponse
+	 */
+	private SearchResponse getReceiptsCountForConsecutiveYears(CollectionDetailsRequest collectionDetailsRequest, Date fromDate, Date toDate) {
+		BoolQueryBuilder boolQuery = prepareWhereClause(collectionDetailsRequest, COLLECTION_INDEX_NAME, "citycode");
+		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+		AggregationBuilder monthAggrgation = AggregationBuilders.dateHistogram("date_agg")
+											.field("receiptdate")
+											.interval(DateHistogramInterval.MONTH)
+											.subAggregation(AggregationBuilders.count("receipt_count").field("consumercode"));
+		
+		SearchResponse response = client.prepareSearch(COLLECTION_INDEX_NAME)
+								  .setQuery(boolQuery.must(QueryBuilders.rangeQuery("receiptdate").gte(sdf.format(fromDate)).lte(sdf.format(toDate)).includeUpper(false)))
+								  .addAggregation(monthAggrgation)
+								  .execute().actionGet();
+		return response;
+	}
+	
+	/**
+	 * Populates Receipt Table Details
+	 * @param collectionDetailsRequest
+	 * @return list
+	 */
+	public List<ReceiptTableData> getReceiptTableData(CollectionDetailsRequest collectionDetailsRequest){
+		LOGGER.info("---- Entered getReceiptTableData ----");
+		Long startTime = System.currentTimeMillis();
+		ReceiptTableData receiptData;
+		List<ReceiptTableData> receiptDataList = new ArrayList<>();
+		Date fromDate;
+		Date toDate;
+		String name;
+		BigDecimal variance = BigDecimal.ZERO;
+		/**
+		 * Select the grouping based on the inputs given, by default the grouping is done based on Regions
+		 * If Region name is sent, group by Districts
+		 * If District name is sent, group by ULBs in the district
+		 * If ULB name is sent, group by wards in the ULB
+		 * If ULB grade is sent, group by ULBs having the grade
+		 */
+		String aggregationField = "regionname";
+		if(StringUtils.isNotBlank(collectionDetailsRequest.getRegionName()))
+			aggregationField = "districtname";
+		if(StringUtils.isNotBlank(collectionDetailsRequest.getDistrictName()) 
+				|| StringUtils.isNotBlank(collectionDetailsRequest.getUlbGrade()))
+			aggregationField = "cityname";
+		/**
+		 * For Current day's collection
+		 * if dates are sent in the request, consider the toDate, else take date range between current date +1 day
+		 */
+		if(StringUtils.isNotBlank(collectionDetailsRequest.getFromDate()) && StringUtils.isNotBlank(collectionDetailsRequest.getToDate())){
+			fromDate = DateUtils.getDate(collectionDetailsRequest.getToDate(), "yyyy-MM-dd");
+			toDate =  DateUtils.addDays(DateUtils.getDate(collectionDetailsRequest.getToDate(), "yyyy-MM-dd"), 1);
+		} else {
+			fromDate = new Date();
+			toDate = DateUtils.addDays(fromDate, 1);
+		}
+		Map<String, BigDecimal> currDayCollMap = getCollectionAndDemandResults(collectionDetailsRequest, fromDate,toDate, COLLECTION_INDEX_NAME, "totalamount", "citycode", aggregationField);
+		/**
+		 * For collections between the date ranges
+		 * if dates are sent in the request, consider the same, else calculate from current year start date till current date+1 day
+		 */
+		if(StringUtils.isNotBlank(collectionDetailsRequest.getFromDate()) && StringUtils.isNotBlank(collectionDetailsRequest.getToDate())){
+			fromDate = DateUtils.getDate(collectionDetailsRequest.getFromDate(), "yyyy-MM-dd");
+			toDate =  DateUtils.addDays(DateUtils.getDate(collectionDetailsRequest.getToDate(), "yyyy-MM-dd"), 1);
+		} else {
+			fromDate = new DateTime().withMonthOfYear(4).dayOfMonth().withMinimumValue().toDate();
+			toDate = DateUtils.addDays(new Date(), 1);
+		}
+		Map<String, BigDecimal> cytdCollMap = getCollectionAndDemandResults(collectionDetailsRequest, fromDate,toDate, 
+				COLLECTION_INDEX_NAME, "totalamount", "citycode", aggregationField);
+		
+		//For last year's till date collections
+		Map<String, BigDecimal> lytdCollMap = getCollectionAndDemandResults(collectionDetailsRequest, DateUtils.addYears(fromDate, -1), 
+				DateUtils.addYears(toDate, -1), COLLECTION_INDEX_NAME, "totalamount", "citycode", aggregationField);
+		
+		for(Map.Entry<String, BigDecimal> entry : cytdCollMap.entrySet()){
+			receiptData = new ReceiptTableData();
+			name = entry.getKey();
+			if(aggregationField.equals("regionname"))
+				receiptData.setRegionName(name);
+			else if(aggregationField.equals("districtname")){
+				receiptData.setRegionName(collectionDetailsRequest.getRegionName());
+				receiptData.setDistrictName(name);
+			} else if(aggregationField.equals("cityname")){
+				receiptData.setUlbName(name);
+				receiptData.setDistrictName(collectionDetailsRequest.getDistrictName());
+				receiptData.setUlbGrade(collectionDetailsRequest.getUlbGrade());
+			}
+			receiptData.setCytdColl(entry.getValue());
+			receiptData.setCurrDayColl(currDayCollMap.get(name));
+			receiptData.setLytdColl(lytdCollMap.get(name));
+			//variance = ((current year coll - last year coll)/current year collection)*100
+			variance = (receiptData.getCytdColl().subtract(receiptData.getLytdColl()))
+					.divide(receiptData.getCytdColl(), BigDecimal.ROUND_HALF_UP).multiply(PropertyTaxConstants.BIGDECIMAL_100);
+			receiptData.setLyVar(variance);
+			receiptDataList.add(receiptData);
+		}
+		Long timeTaken = System.currentTimeMillis() - startTime;
+		LOGGER.info("getReceiptTableData ----> Total time taken is " + timeTaken / 1000 + " (secs)");
+		return receiptDataList;
 	}
 	
 }

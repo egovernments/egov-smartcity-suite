@@ -51,11 +51,14 @@ import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 
 import org.egov.ptis.bean.dashboard.CollIndexTableData;
+import org.egov.ptis.bean.dashboard.CollReceiptDetails;
 import org.egov.ptis.bean.dashboard.CollectionDetailsRequest;
 import org.egov.ptis.bean.dashboard.CollectionIndexDetails;
 import org.egov.ptis.bean.dashboard.CollectionTrend;
 import org.egov.ptis.bean.dashboard.ConsolidatedCollDetails;
 import org.egov.ptis.bean.dashboard.ConsolidatedCollectionDetails;
+import org.egov.ptis.bean.dashboard.ReceiptTableData;
+import org.egov.ptis.bean.dashboard.ReceiptsTrend;
 import org.egov.ptis.constants.PropertyTaxConstants;
 import org.egov.ptis.domain.model.ErrorDetails;
 import org.egov.ptis.service.elasticsearch.CollectionIndexElasticSearchService;
@@ -147,6 +150,7 @@ public class DashboardService {
 	
 	/**
 	 * Gives the Collection Index details across all ULBs
+	 * @param collectionDetailsRequest
 	 * @return CollectionIndexDetails
 	 */
 	public CollectionIndexDetails getCollectionIndexDetails(CollectionDetailsRequest collectionDetailsRequest){
@@ -157,8 +161,8 @@ public class DashboardService {
 		CollectionIndexDetails collectionIndexDetails = new CollectionIndexDetails(); 
 		collectionIndexElasticSearchService.getCompleteCollectionIndexDetails(collectionDetailsRequest,collectionIndexDetails);
 		propertyTaxElasticSearchIndexService.getConsolidatedDemandInfo(collectionDetailsRequest, collectionIndexDetails);
-		List<CollIndexTableData> collIndexData = collectionIndexElasticSearchService.getResponseTableData(collectionDetailsRequest);
 		List<CollectionTrend> collectionTrends = collectionIndexElasticSearchService.getMonthwiseCollectionDetails(collectionDetailsRequest);
+		List<CollIndexTableData> collIndexData = collectionIndexElasticSearchService.getResponseTableData(collectionDetailsRequest);
 		collectionIndexDetails.setCollTrends(collectionTrends);
 		collectionIndexDetails.setResponseDetails(collIndexData);
 		ErrorDetails errorDetails = new ErrorDetails();
@@ -166,5 +170,28 @@ public class DashboardService {
         errorDetails.setErrorMessage(THIRD_PARTY_ERR_MSG_SUCCESS);
 		collectionIndexDetails.setErrorDetails(errorDetails);
 		return collectionIndexDetails;
+	}
+	
+	/**
+	 * Gives the receipts details across all ULBs
+	 * @param collectionDetailsRequest
+	 * @return CollReceiptDetails
+	 */
+	public CollReceiptDetails getReceiptDetails(CollectionDetailsRequest collectionDetailsRequest){
+		LOGGER.info("CollectionDetailsRequest input ----> ");
+		LOGGER.info("regionName = "+collectionDetailsRequest.getRegionName()+", districtName = "+ collectionDetailsRequest.getDistrictName()+
+				", ulbGrade = "+collectionDetailsRequest.getUlbGrade()+", ulbCode = "+collectionDetailsRequest.getUlbCode()+
+				", fromDate = "+collectionDetailsRequest.getFromDate()+", toDate = "+collectionDetailsRequest.getToDate());
+		CollReceiptDetails receiptDetails = new CollReceiptDetails(); 
+		collectionIndexElasticSearchService.getCummulativeReceiptsCount(collectionDetailsRequest,receiptDetails);
+		List<ReceiptsTrend> receiptTrends = collectionIndexElasticSearchService.getMonthwiseReceiptsTrend(collectionDetailsRequest);
+		List<ReceiptTableData> receiptTableData = collectionIndexElasticSearchService.getReceiptTableData(collectionDetailsRequest);
+		receiptDetails.setReceiptDetails(receiptTableData);
+		receiptDetails.setReceiptsTrends(receiptTrends);
+		ErrorDetails errorDetails = new ErrorDetails();
+        errorDetails.setErrorCode(THIRD_PARTY_ERR_CODE_SUCCESS);
+        errorDetails.setErrorMessage(THIRD_PARTY_ERR_MSG_SUCCESS);
+        receiptDetails.setErrorDetails(errorDetails);
+		return receiptDetails;
 	}
 }

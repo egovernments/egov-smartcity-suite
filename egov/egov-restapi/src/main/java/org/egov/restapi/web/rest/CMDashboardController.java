@@ -49,6 +49,7 @@ import org.codehaus.jackson.map.ObjectMapper;
 import org.codehaus.jackson.map.SerializationConfig;
 import org.egov.dcb.bean.ChequePayment;
 import org.egov.infra.web.utils.WebUtils;
+import org.egov.ptis.bean.dashboard.CollReceiptDetails;
 import org.egov.ptis.bean.dashboard.CollectionDetailsRequest;
 import org.egov.ptis.bean.dashboard.CollectionIndexDetails;
 import org.egov.ptis.bean.dashboard.ConsolidatedCollectionDetails;
@@ -108,6 +109,19 @@ public class CMDashboardController {
 				collDetailsRequestStr, CollectionDetailsRequest.class);
 		CollectionIndexDetails collectionDetails = dashboardService.getCollectionIndexDetails(collectionDetailsRequest);
         return JsonConvertor.convert(collectionDetails);
+	}
+	
+	/**
+	 * Gives the receipts details across all ULBs
+	 * @param collectionDetailsRequest
+	 * @return CollReceiptDetails
+	 */
+	@RequestMapping(value = "/receipttransactions", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
+	public String getReceiptTransactions(@RequestBody String rcptDetailsRequestStr) throws IOException{
+		CollectionDetailsRequest collectionDetailsRequest = (CollectionDetailsRequest) getObjectFromJSONRequest(
+				rcptDetailsRequestStr, CollectionDetailsRequest.class);
+		CollReceiptDetails collReceiptDetails = dashboardService.getReceiptDetails(collectionDetailsRequest);
+        return JsonConvertor.convert(collReceiptDetails);
 	}
 	
 	/**
