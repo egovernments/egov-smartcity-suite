@@ -631,8 +631,8 @@ public class CollectionIndexElasticSearchService {
 			rcptsTrend = new ReceiptsTrend();
 			rcptsTrend.setMonth(entry.getKey());
 			rcptsTrend.setCyRcptsCount(entry.getValue());
-			rcptsTrend.setLyRcptsCount(yearwiseMonthlyCountList.get(1).get(rcptsTrend.getMonth()) == null ? 0 : yearwiseMonthlyCountList.get(1).get(rcptsTrend.getMonth()));
-			rcptsTrend.setPyRcptsCount(yearwiseMonthlyCountList.get(2).get(rcptsTrend.getMonth()) == null ? 0 : yearwiseMonthlyCountList.get(2).get(rcptsTrend.getMonth()));
+			rcptsTrend.setLyRcptsCount(yearwiseMonthlyCountList.get(1).get(rcptsTrend.getMonth()) == null ? 0L : yearwiseMonthlyCountList.get(1).get(rcptsTrend.getMonth()));
+			rcptsTrend.setPyRcptsCount(yearwiseMonthlyCountList.get(2).get(rcptsTrend.getMonth()) == null ? 0L : yearwiseMonthlyCountList.get(2).get(rcptsTrend.getMonth()));
 			rcptTrendsList.add(rcptsTrend);
 		}
 		Long timeTaken = System.currentTimeMillis() - startTime;
