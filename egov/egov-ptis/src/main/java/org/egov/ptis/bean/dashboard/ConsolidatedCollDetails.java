@@ -44,26 +44,50 @@ import java.math.BigDecimal;
 
 public class ConsolidatedCollDetails {
 
-	private BigDecimal cytdColl = BigDecimal.ZERO;
-	private BigDecimal totalDmd = BigDecimal.ZERO;
-	private BigDecimal lytdColl = BigDecimal.ZERO;
-	
-	public BigDecimal getCytdColl() {
-		return cytdColl;
-	}
-	public void setCytdColl(BigDecimal cytdColl) {
-		this.cytdColl = cytdColl;
-	}
-	public BigDecimal getTotalDmd() {
-		return totalDmd;
-	}
-	public void setTotalDmd(BigDecimal totalDmd) {
-		this.totalDmd = totalDmd;
-	}
-	public BigDecimal getLytdColl() {
-		return lytdColl;
-	}
-	public void setLytdColl(BigDecimal lytdColl) {
-		this.lytdColl = lytdColl;
-	}
+    private BigDecimal cytdColl = BigDecimal.ZERO;
+    private BigDecimal totalDmd = BigDecimal.ZERO;
+    private BigDecimal lytdColl = BigDecimal.ZERO;
+    private BigDecimal performance = BigDecimal.ZERO;
+    private BigDecimal lyVar = BigDecimal.ZERO;
+
+    public BigDecimal getCytdColl() {
+        return cytdColl;
+    }
+
+    public void setCytdColl(BigDecimal cytdColl) {
+        this.cytdColl = cytdColl;
+    }
+
+    public BigDecimal getTotalDmd() {
+        return totalDmd;
+    }
+
+    public void setTotalDmd(BigDecimal totalDmd) {
+        this.totalDmd = totalDmd;
+    }
+
+    public BigDecimal getLytdColl() {
+        return lytdColl;
+    }
+
+    public void setLytdColl(BigDecimal lytdColl) {
+        this.lytdColl = lytdColl;
+    }
+
+    public BigDecimal getPerformance() {
+        return performance;
+    }
+
+    public void setPerformance(BigDecimal performance) {
+        this.performance = performance;
+    }
+
+    public BigDecimal getLyVar() {
+        return lyVar;
+    }
+
+    public void setLyVar(BigDecimal lyVar) {
+        this.lyVar = lyVar;
+    }
+
 }
