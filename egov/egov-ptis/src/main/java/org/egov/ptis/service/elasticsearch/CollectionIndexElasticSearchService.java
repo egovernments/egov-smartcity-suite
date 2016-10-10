@@ -316,19 +316,7 @@ public class CollectionIndexElasticSearchService {
 		BigDecimal performance = BigDecimal.ZERO;
 		BigDecimal balance = BigDecimal.ZERO;
 		BigDecimal variance = BigDecimal.ZERO;
-		/**
-		 * For collection and demand between the date ranges
-		 * if dates are sent in the request, consider fromDate and toDate+1 , else calculate from current year start date till current date+1 day
-		 */
-		if(StringUtils.isNotBlank(collectionDetailsRequest.getFromDate()) && StringUtils.isNotBlank(collectionDetailsRequest.getToDate())){
-			fromDate = DateUtils.getDate(collectionDetailsRequest.getFromDate(), "yyyy-MM-dd");
-			toDate =  DateUtils.addDays(DateUtils.getDate(collectionDetailsRequest.getToDate(), "yyyy-MM-dd"), 1);
-		} else {
-			fromDate = new DateTime().withMonthOfYear(4).dayOfMonth().withMinimumValue().toDate();
-			toDate = DateUtils.addDays(new Date(), 1);
-		}
-		int noOfMonths = DateUtils.noOfMonths(fromDate, toDate);
-
+		
 		/**
 		 * Select the grouping based on the inputs given, by default the grouping is done based on Regions
 		 * If Region name is sent, group by Districts
@@ -343,6 +331,37 @@ public class CollectionIndexElasticSearchService {
 				|| StringUtils.isNotBlank(collectionDetailsRequest.getUlbGrade()))
 			aggregationField = "cityname";
 		//Wardwise group to be implemented later
+		
+		/**
+		 * As per Elastic Search functionality, to get the total collections between 2 dates, add a day to the endDate and fetch the results
+		 *
+		 * For Current day's collection
+		 * if dates are sent in the request, consider the toDate, else take date range between current date +1 day
+		 */
+		if(StringUtils.isNotBlank(collectionDetailsRequest.getFromDate()) && StringUtils.isNotBlank(collectionDetailsRequest.getToDate())){
+			fromDate = DateUtils.getDate(collectionDetailsRequest.getToDate(), "yyyy-MM-dd");
+			toDate =  DateUtils.addDays(DateUtils.getDate(collectionDetailsRequest.getToDate(), "yyyy-MM-dd"), 1);
+		} else {
+			fromDate = new Date();
+			toDate = DateUtils.addDays(fromDate, 1);
+		}
+		
+		//For today collection
+		Map<String, BigDecimal> todayCollMap = getCollectionAndDemandResults(collectionDetailsRequest, fromDate, toDate, 
+				COLLECTION_INDEX_NAME, "totalamount", "citycode", aggregationField);
+
+		/**
+		 * For collection and demand between the date ranges
+		 * if dates are sent in the request, consider fromDate and toDate+1 , else calculate from current year start date till current date+1 day
+		 */
+		if(StringUtils.isNotBlank(collectionDetailsRequest.getFromDate()) && StringUtils.isNotBlank(collectionDetailsRequest.getToDate())){
+			fromDate = DateUtils.getDate(collectionDetailsRequest.getFromDate(), "yyyy-MM-dd");
+			toDate =  DateUtils.addDays(DateUtils.getDate(collectionDetailsRequest.getToDate(), "yyyy-MM-dd"), 1);
+		} else {
+			fromDate = new DateTime().withMonthOfYear(4).dayOfMonth().withMinimumValue().toDate();
+			toDate = DateUtils.addDays(new Date(), 1);
+		}
+		int noOfMonths = DateUtils.noOfMonths(fromDate, toDate);
 		
 		//For current year's till date collection
 		Map<String, BigDecimal> cytdCollMap = getCollectionAndDemandResults(collectionDetailsRequest, fromDate, toDate, 
@@ -371,17 +390,21 @@ public class CollectionIndexElasticSearchService {
 				collIndData.setUlbGrade(collectionDetailsRequest.getUlbGrade());
 			}
 				
+			collIndData.setTodayColl(todayCollMap.get(name) == null ? BigDecimal.ZERO : todayCollMap.get(name));
 			collIndData.setCytdColl(entry.getValue());
 			//Proportional Demand = (totalDemand/12)*noOfmonths
 			if(noOfMonths == 0)
 				noOfMonths = 1;
-			cytdDmd = (currYrTotalDemandMap.get(name).divide(BigDecimal.valueOf(12),BigDecimal.ROUND_HALF_UP)).multiply(BigDecimal.valueOf(noOfMonths));
+			BigDecimal currentYearTotalDemand = (currYrTotalDemandMap.get(name) == null ? BigDecimal.valueOf(0) : currYrTotalDemandMap.get(name));
+			cytdDmd = (currentYearTotalDemand.divide(BigDecimal.valueOf(12),BigDecimal.ROUND_HALF_UP)).multiply(BigDecimal.valueOf(noOfMonths));
 			collIndData.setCytdDmd(cytdDmd);
-			balance = cytdDmd.subtract(collIndData.getCytdColl());
-			performance = (balance.multiply(PropertyTaxConstants.BIGDECIMAL_100)).divide(cytdDmd, BigDecimal.ROUND_HALF_UP);
-			collIndData.setPerformance(performance);
-			collIndData.setCytdBalDmd(balance);
-			collIndData.setTotalDmd(totalDemandMap.get(name));
+			if(cytdDmd != BigDecimal.valueOf(0)){
+				balance = cytdDmd.subtract(collIndData.getCytdColl());
+				performance = (collIndData.getCytdColl().multiply(PropertyTaxConstants.BIGDECIMAL_100)).divide(cytdDmd, BigDecimal.ROUND_HALF_UP);
+				collIndData.setPerformance(performance);
+				collIndData.setCytdBalDmd(balance);
+			}
+			collIndData.setTotalDmd(totalDemandMap.get(name) == null ? BigDecimal.ZERO : totalDemandMap.get(name));
 			collIndData.setLytdColl(lytdCollMap.get(name) == null ? BigDecimal.ZERO : lytdCollMap.get(name));
 			//variance = ((current year coll - last year coll)/current year collection)*100
 			variance = (collIndData.getCytdColl().subtract(collIndData.getLytdColl()))

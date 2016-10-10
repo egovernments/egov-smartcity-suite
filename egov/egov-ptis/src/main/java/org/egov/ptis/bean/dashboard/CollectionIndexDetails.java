@@ -51,6 +51,8 @@ public class CollectionIndexDetails {
 	private BigDecimal cytdDmd = BigDecimal.ZERO;
 	private BigDecimal totalDmd = BigDecimal.ZERO;
 	private BigDecimal lytdColl = BigDecimal.ZERO;
+	private BigDecimal performance = BigDecimal.ZERO;
+	private BigDecimal lyVar = BigDecimal.ZERO;
 	private List<CollectionTrend> collTrends;
 	private List<CollIndexTableData> responseDetails;
 	private ErrorDetails errorDetails;
@@ -109,6 +111,16 @@ public class CollectionIndexDetails {
 	public void setErrorDetails(ErrorDetails errorDetails) {
 		this.errorDetails = errorDetails;
 	}
-	
-	
+	public BigDecimal getPerformance() {
+		return performance;
+	}
+	public void setPerformance(BigDecimal performance) {
+		this.performance = performance;
+	}
+	public BigDecimal getLyVar() {
+		return lyVar;
+	}
+	public void setLyVar(BigDecimal lyVar) {
+		this.lyVar = lyVar;
+	}
 }

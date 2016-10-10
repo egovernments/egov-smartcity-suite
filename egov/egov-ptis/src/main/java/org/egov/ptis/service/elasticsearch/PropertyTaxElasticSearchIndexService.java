@@ -54,6 +54,7 @@ import org.egov.infra.utils.DateUtils;
 import org.egov.ptis.bean.dashboard.CollectionDetailsRequest;
 import org.egov.ptis.bean.dashboard.CollectionIndexDetails;
 import org.egov.ptis.bean.dashboard.TaxPayerDetails;
+import org.egov.ptis.constants.PropertyTaxConstants;
 import org.egov.ptis.elasticsearch.model.PropertyTaxIndex;
 import org.egov.ptis.repository.elasticsearch.PropertyTaxIndexRepository;
 import org.elasticsearch.action.search.SearchResponse;
@@ -158,6 +159,12 @@ public class PropertyTaxElasticSearchIndexService {
 		BigDecimal proportionalDemand = (totalDemand.divide(BigDecimal.valueOf(12), BigDecimal.ROUND_HALF_UP))
 				.multiply(BigDecimal.valueOf(noOfMonths));
 		collectionIndexDetails.setCytdDmd(proportionalDemand.setScale(0, BigDecimal.ROUND_HALF_UP));
+		
+		//performance = (current year tilldate collection * 100)/(proportional demand)
+		collectionIndexDetails.setPerformance((collectionIndexDetails.getCytdColl().multiply(PropertyTaxConstants.BIGDECIMAL_100)).divide(proportionalDemand, BigDecimal.ROUND_HALF_UP));
+		//variance = ((current year coll - last year coll)/current year collection)*100
+		collectionIndexDetails.setLyVar((collectionIndexDetails.getCytdColl().subtract(collectionIndexDetails.getLytdColl()))
+				.divide(collectionIndexDetails.getCytdColl(), BigDecimal.ROUND_HALF_UP).multiply(PropertyTaxConstants.BIGDECIMAL_100));
 		Long timeTaken = System.currentTimeMillis() - startTime;
 		LOGGER.info("getConsolidatedDemandInfo ----> calculations done in " + timeTaken / 1000 + " (secs)");
 	}

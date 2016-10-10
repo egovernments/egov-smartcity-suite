@@ -51,6 +51,7 @@ public class CollIndexTableData {
 	private String ulbGrade = StringUtils.EMPTY;
 	private String ulbName = StringUtils.EMPTY;
 	private String wardName = StringUtils.EMPTY;
+	private BigDecimal todayColl = BigDecimal.ZERO;
 	private BigDecimal totalDmd = BigDecimal.ZERO;
 	private BigDecimal cytdDmd = BigDecimal.ZERO;
 	private BigDecimal cytdColl = BigDecimal.ZERO;
@@ -130,5 +131,11 @@ public class CollIndexTableData {
 	}
 	public void setLyVar(BigDecimal lyVar) {
 		this.lyVar = lyVar;
+	}
+	public BigDecimal getTodayColl() {
+		return todayColl;
+	}
+	public void setTodayColl(BigDecimal todayColl) {
+		this.todayColl = todayColl;
 	}
 }
