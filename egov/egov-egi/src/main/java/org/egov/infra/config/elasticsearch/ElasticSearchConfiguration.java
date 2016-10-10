@@ -21,7 +21,7 @@ public class ElasticSearchConfiguration {
     @Autowired
     private ApplicationProperties applicationProperties;
 
-    @Bean
+    /*@Bean*/
     public Client transportClient() {
         Settings settings = Settings.settingsBuilder()
                 .put("cluster.name", applicationProperties.searchClusterName()).build();
