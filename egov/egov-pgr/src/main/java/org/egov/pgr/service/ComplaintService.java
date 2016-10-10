@@ -348,7 +348,7 @@ public class ComplaintService {
                 || state.getLastModifiedBy().getType().equals(UserType.SYSTEM))
             map.put("updatedBy", complaint.getComplainant().getName());
         else
-            map.put("updatedBy", state.getLastModifiedBy().getUsername() + "::" + state.getLastModifiedBy().getName());
+            map.put("updatedBy", state.getSenderName());
         map.put("updatedUserType", state.getLastModifiedBy().getType());
         map.put("status", state.getValue());
         final Position ownerPosition = state.getOwnerPosition();
@@ -381,8 +381,7 @@ public class ComplaintService {
                         || stateHistory.getLastModifiedBy().getType().equals(UserType.SYSTEM))
                     HistoryMap.put("updatedBy", complaint.getComplainant().getName());
                 else
-                    HistoryMap.put("updatedBy",
-                            stateHistory.getLastModifiedBy().getUsername() + "::" + stateHistory.getLastModifiedBy().getName());
+                    HistoryMap.put("updatedBy", stateHistory.getSenderName());
                 HistoryMap.put("updatedUserType", stateHistory.getLastModifiedBy().getType());
                 HistoryMap.put("status", stateHistory.getValue());
                 final Position owner = stateHistory.getOwnerPosition();
@@ -399,8 +398,8 @@ public class ComplaintService {
                             .put("user",
                                     null != user
                                             ? user.getUsername() + "::" + user.getName() + "::"
-                                                    + ownerPosition.getDeptDesig().getDesignation().getName()
-                                            : "NO ASSIGNMENT :: " + ownerPosition.getName());
+                                                    + owner.getDeptDesig().getDesignation().getName()
+                                            : "NO ASSIGNMENT :: " + owner.getName());
                     HistoryMap.put("usertype", null != user ? user.getType() : "");
                     HistoryMap.put("department", null != owner.getDeptDesig().getDepartment()
                             ? owner.getDeptDesig().getDepartment().getName() : "");
