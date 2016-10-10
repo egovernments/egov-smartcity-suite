@@ -103,10 +103,13 @@ public class HearingsService {
 				}
 			}
 		if(hearings.getPositionTemplList().size() < hearings.getEmployeeHearingList().size()){
+			if(hearings.getPositionTemplList().size() >0){
 			hearings.getEmployeeHearingList().clear();
 			for (EmployeeHearing hearingEmp : hearings.getPositionTemplList()) {
 				hearingEmp.setHearing(hearings);
+				
 				hearings.getEmployeeHearingList().add(hearingEmp);
+			}
 			}
 		}
 		return hearings;
