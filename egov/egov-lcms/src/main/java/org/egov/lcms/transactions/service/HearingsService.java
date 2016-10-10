@@ -102,14 +102,12 @@ public class HearingsService {
 						prepareEmployeeHearingList(hearings, empUserName, hearingEmp);
 				}
 			}
-		if(hearings.getPositionTemplList().size() < hearings.getEmployeeHearingList().size()){
-			if(hearings.getPositionTemplList().size() >0){
+		if(hearings.getPositionTemplList().size() >0 && (hearings.getPositionTemplList().size() < hearings.getEmployeeHearingList().size())){
 			hearings.getEmployeeHearingList().clear();
 			for (EmployeeHearing hearingEmp : hearings.getPositionTemplList()) {
 				hearingEmp.setHearing(hearings);
 				
 				hearings.getEmployeeHearingList().add(hearingEmp);
-			}
 			}
 		}
 		return hearings;
