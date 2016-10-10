@@ -40,6 +40,9 @@
 
 package org.egov.restapi.service;
 
+import static org.egov.ptis.constants.PropertyTaxConstants.BIGDECIMAL_100;
+import static org.egov.ptis.constants.PropertyTaxConstants.COLLECION_BILLING_SERVICE_PT;
+import static org.egov.ptis.constants.PropertyTaxConstants.COLLECION_BILLING_SERVICE_WTMS;
 import static org.egov.ptis.constants.PropertyTaxConstants.THIRD_PARTY_ERR_CODE_SUCCESS;
 import static org.egov.ptis.constants.PropertyTaxConstants.THIRD_PARTY_ERR_MSG_SUCCESS;
 
@@ -60,7 +63,6 @@ import org.egov.ptis.bean.dashboard.ConsolidatedCollectionDetails;
 import org.egov.ptis.bean.dashboard.ReceiptTableData;
 import org.egov.ptis.bean.dashboard.ReceiptsTrend;
 import org.egov.ptis.bean.dashboard.TaxPayerDetails;
-import org.egov.ptis.constants.PropertyTaxConstants;
 import org.egov.ptis.domain.model.ErrorDetails;
 import org.egov.ptis.service.elasticsearch.CollectionIndexElasticSearchService;
 import org.egov.ptis.service.elasticsearch.PropertyTaxElasticSearchIndexService;
@@ -76,7 +78,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 /**
- * Service to provide apis for CM Dashboard
+ * Service to provide APIs for CM Dashboard
  */
 
 @Service
@@ -117,35 +119,49 @@ public class DashboardService {
 	 * Provides State-wise Collection Statistics for Property Tax, Water Charges and Others
 	 * @return ConsolidatedCollDetails
 	 */
-	public ConsolidatedCollectionDetails getConsolidatedCollectionDetails(){
+	public ConsolidatedCollectionDetails getConsolidatedCollectionDetails() {
 		ConsolidatedCollectionDetails consolidatedCollectionDetails = new ConsolidatedCollectionDetails();
-		//For Property Tax collections
+		// For Property Tax collections
 		ConsolidatedCollDetails consolidatedData = new ConsolidatedCollDetails();
-		Map<String, BigDecimal> consolidatedColl = collectionIndexElasticSearchService.getConsolidatedCollection(PropertyTaxConstants.COLLECION_BILLING_SERVICE_PT);		
-		if(!consolidatedColl.isEmpty()){
+		Map<String, BigDecimal> consolidatedColl = collectionIndexElasticSearchService
+				.getConsolidatedCollection(COLLECION_BILLING_SERVICE_PT);
+		if (!consolidatedColl.isEmpty()) {
 			consolidatedData.setCytdColl(consolidatedColl.get("cytdColln"));
 			consolidatedData.setLytdColl(consolidatedColl.get("lytdColln"));
 		}
 		consolidatedData.setTotalDmd(propertyTaxElasticSearchIndexService.getTotalDemand());
+		consolidatedData.setPerformance((consolidatedData.getCytdColl().multiply(BIGDECIMAL_100))
+				.divide(consolidatedData.getTotalDmd(), BigDecimal.ROUND_HALF_UP));
+		consolidatedData.setLyVar(
+				(consolidatedData.getCytdColl().subtract(consolidatedData.getLytdColl()).multiply(BIGDECIMAL_100))
+						.divide(consolidatedData.getCytdColl()));
 		consolidatedCollectionDetails.setPropertyTax(consolidatedData);
-		
-		//For Water Tax collections
+
+		// For Water Tax collections
 		consolidatedData = new ConsolidatedCollDetails();
-		consolidatedColl = collectionIndexElasticSearchService.getConsolidatedCollection(PropertyTaxConstants.COLLECION_BILLING_SERVICE_WTMS);		
-		if(!consolidatedColl.isEmpty()){
+		consolidatedColl = collectionIndexElasticSearchService
+				.getConsolidatedCollection(COLLECION_BILLING_SERVICE_WTMS);
+		if (!consolidatedColl.isEmpty()) {
 			consolidatedData.setCytdColl(consolidatedColl.get("cytdColln"));
 			consolidatedData.setLytdColl(consolidatedColl.get("lytdColln"));
 		}
 		consolidatedData.setTotalDmd(waterTaxElasticSearchIndexService.getTotalDemand());
+		consolidatedData.setPerformance((consolidatedData.getCytdColl().multiply(BIGDECIMAL_100))
+				.divide(consolidatedData.getTotalDmd(), BigDecimal.ROUND_HALF_UP));
+		consolidatedData.setLyVar(
+				(consolidatedData.getCytdColl().subtract(consolidatedData.getLytdColl()).multiply(BIGDECIMAL_100))
+						.divide(consolidatedData.getCytdColl()));
 		consolidatedCollectionDetails.setWaterTax(consolidatedData);
-		
-		//Other collections - temporarily set to 0
+
+		// Other collections - temporarily set to 0
 		consolidatedData = new ConsolidatedCollDetails();
 		consolidatedData.setCytdColl(BigDecimal.ZERO);
 		consolidatedData.setTotalDmd(BigDecimal.ZERO);
 		consolidatedData.setLytdColl(BigDecimal.ZERO);
+		consolidatedData.setPerformance(BigDecimal.ZERO);
+		consolidatedData.setLyVar(BigDecimal.ZERO);
 		consolidatedCollectionDetails.setOthers(consolidatedData);
-		
+
 		return consolidatedCollectionDetails;
 	}
 	
