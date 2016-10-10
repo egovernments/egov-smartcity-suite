@@ -62,7 +62,7 @@ import org.egov.ptis.bean.dashboard.ConsolidatedCollDetails;
 import org.egov.ptis.bean.dashboard.ConsolidatedCollectionDetails;
 import org.egov.ptis.bean.dashboard.ReceiptTableData;
 import org.egov.ptis.bean.dashboard.ReceiptsTrend;
-import org.egov.ptis.bean.dashboard.TaxPayerDetails;
+import org.egov.ptis.bean.dashboard.TaxPayerResponseDetails;
 import org.egov.ptis.domain.model.ErrorDetails;
 import org.egov.ptis.service.elasticsearch.CollectionIndexElasticSearchService;
 import org.egov.ptis.service.elasticsearch.PropertyTaxElasticSearchIndexService;
@@ -134,7 +134,7 @@ public class DashboardService {
 				.divide(consolidatedData.getTotalDmd(), BigDecimal.ROUND_HALF_UP));
 		consolidatedData.setLyVar(
 				(consolidatedData.getCytdColl().subtract(consolidatedData.getLytdColl()).multiply(BIGDECIMAL_100))
-						.divide(consolidatedData.getCytdColl()));
+						.divide(consolidatedData.getCytdColl(), BigDecimal.ROUND_HALF_UP));
 		consolidatedCollectionDetails.setPropertyTax(consolidatedData);
 
 		// For Water Tax collections
@@ -150,7 +150,7 @@ public class DashboardService {
 				.divide(consolidatedData.getTotalDmd(), BigDecimal.ROUND_HALF_UP));
 		consolidatedData.setLyVar(
 				(consolidatedData.getCytdColl().subtract(consolidatedData.getLytdColl()).multiply(BIGDECIMAL_100))
-						.divide(consolidatedData.getCytdColl()));
+						.divide(consolidatedData.getCytdColl(), BigDecimal.ROUND_HALF_UP));
 		consolidatedCollectionDetails.setWaterTax(consolidatedData);
 
 		// Other collections - temporarily set to 0
@@ -217,8 +217,18 @@ public class DashboardService {
 	 * @param collectionDetailsRequest
 	 * @return
 	 */
-	public List<TaxPayerDetails> getTopTenTaxProducers(CollectionDetailsRequest collectionDetailsRequest){
+	public TaxPayerResponseDetails getTopTenTaxProducers(CollectionDetailsRequest collectionDetailsRequest){
 		return propertyTaxElasticSearchIndexService.getTopTenTaxPerformers(collectionDetailsRequest);
+		
+	}
+	
+	/**
+	 * Returns Bottom Ten ULB's Tax Producers
+	 * @param collectionDetailsRequest
+	 * @return
+	 */
+	public TaxPayerResponseDetails getBottomTenTaxProducers(CollectionDetailsRequest collectionDetailsRequest){
+		return propertyTaxElasticSearchIndexService.getBottomTenTaxPerformers(collectionDetailsRequest);
 		
 	}
 }

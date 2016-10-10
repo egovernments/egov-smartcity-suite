@@ -11,55 +11,13 @@ public class TaxPayerDetails {
 	private String ulbGrade = StringUtils.EMPTY;
 	private String ulbName = StringUtils.EMPTY;
 	private String wardName = StringUtils.EMPTY;
-	private BigDecimal totalDemand = BigDecimal.ZERO;
-	private BigDecimal proportionalDemand = BigDecimal.ZERO;
-	private BigDecimal collections = BigDecimal.ZERO;
-	private BigDecimal percentageAchievements = BigDecimal.ZERO;
-	private BigDecimal proportionalBalance = BigDecimal.ZERO;
-	private BigDecimal LastYearCollection = BigDecimal.ZERO;
-	private BigDecimal variation = BigDecimal.ZERO;
-	public BigDecimal getTotalDemand() {
-		return totalDemand;
-	}
-	public void setTotalDemand(BigDecimal totalDemand) {
-		this.totalDemand = totalDemand;
-	}
-	public BigDecimal getProportionalDemand() {
-		return proportionalDemand;
-	}
-	public void setProportionalDemand(BigDecimal proportionalDemand) {
-		this.proportionalDemand = proportionalDemand;
-	}
-	public BigDecimal getCollections() {
-		return collections;
-	}
-	public void setCollections(BigDecimal collections) {
-		this.collections = collections;
-	}
-	public BigDecimal getPercentageAchievements() {
-		return percentageAchievements;
-	}
-	public void setPercentageAchievements(BigDecimal percentageAchievements) {
-		this.percentageAchievements = percentageAchievements;
-	}
-	public BigDecimal getProportionalBalance() {
-		return proportionalBalance;
-	}
-	public void setProportionalBalance(BigDecimal proportionalBalance) {
-		this.proportionalBalance = proportionalBalance;
-	}
-	public BigDecimal getLastYearCollection() {
-		return LastYearCollection;
-	}
-	public void setLastYearCollection(BigDecimal lastYearCollection) {
-		LastYearCollection = lastYearCollection;
-	}
-	public BigDecimal getVariation() {
-		return variation;
-	}
-	public void setVariation(BigDecimal variation) {
-		this.variation = variation;
-	}
+	private BigDecimal totalDmd = BigDecimal.ZERO;
+	private BigDecimal cytdDmd = BigDecimal.ZERO;
+	private BigDecimal cytdColl = BigDecimal.ZERO;
+	private BigDecimal achievement = BigDecimal.ZERO;
+	private BigDecimal cytdBalDmd = BigDecimal.ZERO;
+	private BigDecimal lytdColl = BigDecimal.ZERO;
+	private BigDecimal lyVar = BigDecimal.ZERO;
 	public String getRegionName() {
 		return regionName;
 	}
@@ -89,5 +47,47 @@ public class TaxPayerDetails {
 	}
 	public void setWardName(String wardName) {
 		this.wardName = wardName;
+	}
+	public BigDecimal getTotalDmd() {
+		return totalDmd;
+	}
+	public void setTotalDmd(BigDecimal totalDmd) {
+		this.totalDmd = totalDmd;
+	}
+	public BigDecimal getCytdDmd() {
+		return cytdDmd;
+	}
+	public void setCytdDmd(BigDecimal cytdDmd) {
+		this.cytdDmd = cytdDmd;
+	}
+	public BigDecimal getCytdColl() {
+		return cytdColl;
+	}
+	public void setCytdColl(BigDecimal cytdColl) {
+		this.cytdColl = cytdColl;
+	}
+	public BigDecimal getAchievement() {
+		return achievement;
+	}
+	public void setAchievement(BigDecimal achievement) {
+		this.achievement = achievement;
+	}
+	public BigDecimal getCytdBalDmd() {
+		return cytdBalDmd;
+	}
+	public void setCytdBalDmd(BigDecimal cytdBalDmd) {
+		this.cytdBalDmd = cytdBalDmd;
+	}
+	public BigDecimal getLytdColl() {
+		return lytdColl;
+	}
+	public void setLytdColl(BigDecimal lytdColl) {
+		this.lytdColl = lytdColl;
+	}
+	public BigDecimal getLyVar() {
+		return lyVar;
+	}
+	public void setLyVar(BigDecimal lyVar) {
+		this.lyVar = lyVar;
 	}
 }

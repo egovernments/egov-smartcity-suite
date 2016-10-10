@@ -44,16 +44,16 @@ import static org.egov.ptis.constants.PropertyTaxConstants.PROPERTY_TAX_INDEX_NA
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import org.apache.commons.lang3.StringUtils;
 import org.egov.infra.utils.DateUtils;
 import org.egov.ptis.bean.dashboard.CollectionDetailsRequest;
 import org.egov.ptis.bean.dashboard.CollectionIndexDetails;
 import org.egov.ptis.bean.dashboard.TaxPayerDetails;
+import org.egov.ptis.bean.dashboard.TaxPayerResponseDetails;
 import org.egov.ptis.constants.PropertyTaxConstants;
 import org.egov.ptis.elasticsearch.model.PropertyTaxIndex;
 import org.egov.ptis.repository.elasticsearch.PropertyTaxIndexRepository;
@@ -78,8 +78,6 @@ import org.springframework.data.elasticsearch.core.ResultsExtractor;
 import org.springframework.data.elasticsearch.core.query.NativeSearchQueryBuilder;
 import org.springframework.data.elasticsearch.core.query.SearchQuery;
 import org.springframework.stereotype.Service;
-
-import com.fasterxml.jackson.databind.annotation.JsonAppend.Prop;
 
 @Service
 public class PropertyTaxElasticSearchIndexService {
@@ -197,9 +195,32 @@ public class PropertyTaxElasticSearchIndexService {
 	 * @param collectionDetailsRequest
 	 * @return
 	 */
-	public List<TaxPayerDetails> getTopTenTaxPerformers(CollectionDetailsRequest collectionDetailsRequest){
+	public TaxPayerResponseDetails getTopTenTaxPerformers(CollectionDetailsRequest collectionDetailsRequest){
 		
-		return returnUlbWiseAggregationResults(collectionDetailsRequest, PROPERTY_TAX_INDEX_NAME, false);
+	    TaxPayerResponseDetails topTaxPerformers = new TaxPayerResponseDetails(); 
+		List<TaxPayerDetails> taxProducers = returnUlbWiseAggregationResults(collectionDetailsRequest, PROPERTY_TAX_INDEX_NAME, false);
+		List<TaxPayerDetails> taxAchievers = new ArrayList<>();
+		
+		topTaxPerformers.setProducers(taxProducers);
+		topTaxPerformers.setAchievers(taxAchievers);
+		
+		return topTaxPerformers;
+	}
+	
+	/**
+	 * Returns List of Bottom Ten Tax Performers
+	 * @param collectionDetailsRequest
+	 * @return
+	 */
+	public TaxPayerResponseDetails getBottomTenTaxPerformers(CollectionDetailsRequest collectionDetailsRequest){
+		TaxPayerResponseDetails topTaxPerformers = new TaxPayerResponseDetails(); 
+		List<TaxPayerDetails> taxProducers = returnUlbWiseAggregationResults(collectionDetailsRequest, PROPERTY_TAX_INDEX_NAME, true);
+		List<TaxPayerDetails> taxAchievers = new ArrayList<>();
+		
+		topTaxPerformers.setProducers(taxProducers);
+		topTaxPerformers.setAchievers(taxAchievers);
+		
+		return topTaxPerformers;
 	}
 	
 	/**
@@ -216,11 +237,9 @@ public class PropertyTaxElasticSearchIndexService {
 
 		AggregationBuilder aggregation = AggregationBuilders.terms("by_aggregationField").field("cityname")
 				.size(10)
-				.order(Terms.Order.aggregation("totaldemand",order))
+				.order(Terms.Order.aggregation("total_collection",order))
 				.subAggregation(AggregationBuilders.sum("totaldemand").field("totaldemand"))
-				.subAggregation(AggregationBuilders.sum("first_installment").field("firstinstallmentcollection"))
-				.subAggregation(AggregationBuilders.sum("second_installment").field("secondinstallmentcollection"))
-				.subAggregation(AggregationBuilders.sum("arrear_collection").field("arrearcollection"));
+				.subAggregation(AggregationBuilders.sum("total_collection").field("totalcollection"));
 
 		SearchResponse response = client.prepareSearch(indexName)
 				.setQuery(boolQuery)
@@ -245,24 +264,19 @@ public class PropertyTaxElasticSearchIndexService {
 			if(noOfMonths == 0)
 				noOfMonths = 1;
 			Sum totalDemandAggregation = entry.getAggregations().get("totaldemand");
-			Sum firstInstallmentAggregation = entry.getAggregations().get("first_installment");
-			Sum secondInstallmentAggregation = entry.getAggregations().get("second_installment");
-			Sum arrearAggregation = entry.getAggregations().get("arrear_collection");
+			Sum totalCollectionAggregation = entry.getAggregations().get("total_collection");
 			BigDecimal totalDemandValue = BigDecimal.valueOf(totalDemandAggregation.getValue()).setScale(0, BigDecimal.ROUND_HALF_UP);
-			BigDecimal firstInstallmentValue = BigDecimal.valueOf(firstInstallmentAggregation.getValue()).setScale(0, BigDecimal.ROUND_HALF_UP);
-			BigDecimal secondInstallmentValue = BigDecimal.valueOf(secondInstallmentAggregation.getValue()).setScale(0, BigDecimal.ROUND_HALF_UP);
-			BigDecimal arrearCollectionValue = BigDecimal.valueOf(arrearAggregation.getValue()).setScale(0, BigDecimal.ROUND_HALF_UP);
-			BigDecimal collections = firstInstallmentValue.add(secondInstallmentValue).add(arrearCollectionValue);
+			BigDecimal totalCollections = BigDecimal.valueOf(totalCollectionAggregation.getValue()).setScale(0, BigDecimal.ROUND_HALF_UP);
 			BigDecimal proportionalDemand = (totalDemandValue.divide(BigDecimal.valueOf(12),BigDecimal.ROUND_HALF_UP)).multiply(BigDecimal.valueOf(noOfMonths));
-			taxDetail.setTotalDemand(totalDemandValue);
-			taxDetail.setCollections(collections);
-			taxDetail.setProportionalDemand(proportionalDemand);
-			taxDetail.setPercentageAchievements((collections.divide(proportionalDemand,2,BigDecimal.ROUND_HALF_UP)).multiply(BigDecimal.valueOf(100)));
-			taxDetail.setProportionalBalance(proportionalDemand.subtract(collections));
+			taxDetail.setTotalDmd(totalDemandValue);
+			taxDetail.setCytdColl(totalCollections);
+			taxDetail.setCytdDmd(proportionalDemand);
+			taxDetail.setAchievement((totalCollections.divide(proportionalDemand,2,BigDecimal.ROUND_HALF_UP)).multiply(BigDecimal.valueOf(100)));
+			taxDetail.setCytdBalDmd(proportionalDemand.subtract(totalCollections));
 			BigDecimal lastYearCollection = collectionIndexElasticSearchService.getTotalCollectionsForDatesForUlb(collectionDetailsRequest, lastYearFromDate, lastYearToDate,fieldName);
-			taxDetail.setLastYearCollection(lastYearCollection);
-			BigDecimal variation = ((collections.subtract(lastYearCollection)).divide(collections.multiply(BigDecimal.valueOf(100)),BigDecimal.ROUND_HALF_UP));
-			taxDetail.setVariation(variation);
+			taxDetail.setLytdColl(lastYearCollection);
+			BigDecimal variation = ((totalCollections.subtract(lastYearCollection)).divide(totalCollections.multiply(BigDecimal.valueOf(100)),BigDecimal.ROUND_HALF_UP));
+			taxDetail.setLyVar(variation);
 			taxPayers.add(taxDetail);
 		}
 		return taxPayers;
