@@ -438,13 +438,21 @@ public class CollectionIndexElasticSearchService {
 		AggregationBuilder aggregation = AggregationBuilders.terms("by_city").field(aggregationField)
 				.size(120)
 				.subAggregation(AggregationBuilders.sum("total").field(fieldName));
-
-		SearchResponse response = client.prepareSearch(indexName)
-				  .setQuery(boolQuery)
-				  .addAggregation(aggregation)
-				  .execute().actionGet();
 		
-		StringTerms cityAggr = response.getAggregations().get("by_city");
+		
+		SearchQuery searchQueryColl = new NativeSearchQueryBuilder().withIndices(indexName)
+				.withQuery(boolQuery)
+				.addAggregation(aggregation)
+				.build();
+		
+		Aggregations collAggr = elasticsearchTemplate.query(searchQueryColl, new ResultsExtractor<Aggregations>() {
+			@Override
+			public Aggregations extract(SearchResponse response) {
+				return response.getAggregations();
+			}
+		});
+		
+		StringTerms cityAggr = collAggr.get("by_city");
 		Map<String, BigDecimal> cytdCollMap = new HashMap<>();
 		for (Terms.Bucket entry : cityAggr.getBuckets()) {
 			Sum aggr = entry.getAggregations().get("total");
@@ -489,8 +497,8 @@ public class CollectionIndexElasticSearchService {
 		}
 		for(int count = 0; count <= 2 ; count++){
 			monthwiseColl = new LinkedHashMap<>();
-			response = getMonthwiseCollectionsForConsecutiveYears(collectionDetailsRequest, fromDate, toDate);
-			Histogram dateaggs = response.getAggregations().get("date_agg");
+			Aggregations collAggr = getMonthwiseCollectionsForConsecutiveYears(collectionDetailsRequest, fromDate, toDate);
+			Histogram dateaggs = collAggr.get("date_agg");
 			
 			for (Histogram.Bucket entry : dateaggs.getBuckets()) {
 				dateArr = entry.getKeyAsString().split("T");
@@ -530,7 +538,7 @@ public class CollectionIndexElasticSearchService {
 	 * @param toDate
 	 * @return SearchResponse
 	 */
-	private SearchResponse getMonthwiseCollectionsForConsecutiveYears(CollectionDetailsRequest collectionDetailsRequest, Date fromDate, Date toDate) {
+	private Aggregations getMonthwiseCollectionsForConsecutiveYears(CollectionDetailsRequest collectionDetailsRequest, Date fromDate, Date toDate) {
 		BoolQueryBuilder boolQuery = prepareWhereClause(collectionDetailsRequest, COLLECTION_INDEX_NAME, "citycode");
 		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
 		AggregationBuilder monthAggrgation = AggregationBuilders.dateHistogram("date_agg")
@@ -538,11 +546,18 @@ public class CollectionIndexElasticSearchService {
 											.interval(DateHistogramInterval.MONTH)
 											.subAggregation(AggregationBuilders.sum("current_total").field("totalamount"));
 		
-		SearchResponse response = client.prepareSearch(COLLECTION_INDEX_NAME)
-								  .setQuery(boolQuery.must(QueryBuilders.rangeQuery("receiptdate").gte(sdf.format(fromDate)).lte(sdf.format(toDate)).includeUpper(false)))
-								  .addAggregation(monthAggrgation)
-								  .execute().actionGet();
-		return response;
+		SearchQuery searchQueryColl = new NativeSearchQueryBuilder().withIndices(COLLECTION_INDEX_NAME)
+				.withQuery(boolQuery.must(QueryBuilders.rangeQuery("receiptdate").gte(sdf.format(fromDate)).lte(sdf.format(toDate)).includeUpper(false)))
+				.addAggregation(monthAggrgation)
+				.build();
+		
+		Aggregations collAggr = elasticsearchTemplate.query(searchQueryColl, new ResultsExtractor<Aggregations>() {
+			@Override
+			public Aggregations extract(SearchResponse response) {
+				return response.getAggregations();
+			}
+		});
+		return collAggr;
 	}
 	
 	/**
@@ -659,8 +674,8 @@ public class CollectionIndexElasticSearchService {
 		}
 		for(int count = 0; count <= 2 ; count++){
 			monthwiseCount = new LinkedHashMap<>();
-			response = getReceiptsCountForConsecutiveYears(collectionDetailsRequest, fromDate, toDate);
-			Histogram dateaggs = response.getAggregations().get("date_agg");
+			Aggregations collAggregation = getReceiptsCountForConsecutiveYears(collectionDetailsRequest, fromDate, toDate);
+			Histogram dateaggs = collAggregation.get("date_agg");
 			
 			for (Histogram.Bucket entry : dateaggs.getBuckets()) {
 				dateArr = entry.getKeyAsString().split("T");
@@ -700,7 +715,7 @@ public class CollectionIndexElasticSearchService {
 	 * @param toDate
 	 * @return SearchResponse
 	 */
-	private SearchResponse getReceiptsCountForConsecutiveYears(CollectionDetailsRequest collectionDetailsRequest, Date fromDate, Date toDate) {
+	private Aggregations getReceiptsCountForConsecutiveYears(CollectionDetailsRequest collectionDetailsRequest, Date fromDate, Date toDate) {
 		BoolQueryBuilder boolQuery = prepareWhereClause(collectionDetailsRequest, COLLECTION_INDEX_NAME, "citycode");
 		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
 		AggregationBuilder monthAggrgation = AggregationBuilders.dateHistogram("date_agg")
@@ -708,11 +723,19 @@ public class CollectionIndexElasticSearchService {
 											.interval(DateHistogramInterval.MONTH)
 											.subAggregation(AggregationBuilders.count("receipt_count").field("consumercode"));
 		
-		SearchResponse response = client.prepareSearch(COLLECTION_INDEX_NAME)
-								  .setQuery(boolQuery.must(QueryBuilders.rangeQuery("receiptdate").gte(sdf.format(fromDate)).lte(sdf.format(toDate)).includeUpper(false)))
-								  .addAggregation(monthAggrgation)
-								  .execute().actionGet();
-		return response;
+		SearchQuery searchQueryColl = new NativeSearchQueryBuilder().withIndices(COLLECTION_INDEX_NAME)
+				.withQuery(boolQuery.must(QueryBuilders.rangeQuery("receiptdate").gte(sdf.format(fromDate)).lte(sdf.format(toDate)).includeUpper(false)))
+				.addAggregation(monthAggrgation)
+				.build();
+		
+		Aggregations collCountAggr = elasticsearchTemplate.query(searchQueryColl, new ResultsExtractor<Aggregations>() {
+			@Override
+			public Aggregations extract(SearchResponse response) {
+				return response.getAggregations();
+			}
+		});
+		
+		return collCountAggr;
 	}
 	
 	/**

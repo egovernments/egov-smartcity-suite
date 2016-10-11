@@ -44,7 +44,6 @@ import static org.egov.ptis.constants.PropertyTaxConstants.PROPERTY_TAX_INDEX_NA
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 
@@ -239,19 +238,27 @@ public class PropertyTaxElasticSearchIndexService {
 				.size(10)
 				.order(Terms.Order.aggregation("total_collection",order))
 				.subAggregation(AggregationBuilders.sum("totaldemand").field("totaldemand"))
-				.subAggregation(AggregationBuilders.sum("total_collection").field("totalcollection"));
-
-		SearchResponse response = client.prepareSearch(indexName)
-				.setQuery(boolQuery)
+			.subAggregation(AggregationBuilders.sum("total_collection").field("totalcollection"));
+		
+		
+		SearchQuery searchQueryColl = new NativeSearchQueryBuilder().withIndices(indexName)
+				.withQuery(boolQuery)
 				.addAggregation(aggregation)
-				.execute().actionGet();
-
+				.build();
+		
+		Aggregations collAggr = elasticsearchTemplate.query(searchQueryColl, new ResultsExtractor<Aggregations>() {
+			@Override
+			public Aggregations extract(SearchResponse response) {
+				return response.getAggregations();
+			}
+		});
+		
 		TaxPayerDetails taxDetail;
 		Date fromDate = new DateTime().withMonthOfYear(4).dayOfMonth().withMinimumValue().toDate();
 		Date toDate = DateUtils.addDays(new Date(), 1);
 		Date lastYearFromDate = DateUtils.addYears(fromDate, -1);
 		Date lastYearToDate = DateUtils.addYears(toDate, -1);
-		StringTerms totalAmountAggr = response.getAggregations().get("by_aggregationField");
+		StringTerms totalAmountAggr = collAggr.get("by_aggregationField");
 		for (Terms.Bucket entry : totalAmountAggr.getBuckets()) {
 			taxDetail = new TaxPayerDetails();
 			taxDetail.setRegionName(collectionDetailsRequest.getRegionName());
