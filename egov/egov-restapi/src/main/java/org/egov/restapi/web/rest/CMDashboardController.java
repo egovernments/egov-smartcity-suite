@@ -53,6 +53,8 @@ import org.egov.ptis.bean.dashboard.CollReceiptDetails;
 import org.egov.ptis.bean.dashboard.CollectionDetailsRequest;
 import org.egov.ptis.bean.dashboard.CollectionIndexDetails;
 import org.egov.ptis.bean.dashboard.ConsolidatedCollectionDetails;
+import org.egov.ptis.bean.dashboard.PropertyTaxDefaultersRequest;
+import org.egov.ptis.bean.dashboard.TaxDefaulters;
 import org.egov.ptis.bean.dashboard.TaxPayerResponseDetails;
 import org.egov.restapi.model.StateCityInfo;
 import org.egov.restapi.service.DashboardService;
@@ -151,6 +153,14 @@ public class CMDashboardController {
 				collDetailsRequestStr, CollectionDetailsRequest.class);
 		TaxPayerResponseDetails taxPayerDetails = dashboardService.getBottomTenTaxProducers(collectionDetailsRequest);
 		return JsonConvertor.convert(taxPayerDetails);
+	}
+	
+	@RequestMapping(value = "/topdefaulters", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
+	public String getTopTaxDefaulters(@RequestBody String taxDefaultersRequestStr) throws IOException{
+		PropertyTaxDefaultersRequest propertyTaxDefaultersRequest = (PropertyTaxDefaultersRequest)getObjectFromJSONRequest(
+				taxDefaultersRequestStr,PropertyTaxDefaultersRequest.class);
+		List<TaxDefaulters> taxDefaulters = dashboardService.getTaxDefaulters(propertyTaxDefaultersRequest);
+		return JsonConvertor.convert(taxDefaulters);
 	}
 	
 	/**

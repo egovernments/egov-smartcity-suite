@@ -60,8 +60,10 @@ import org.egov.ptis.bean.dashboard.CollectionIndexDetails;
 import org.egov.ptis.bean.dashboard.CollectionTrend;
 import org.egov.ptis.bean.dashboard.ConsolidatedCollDetails;
 import org.egov.ptis.bean.dashboard.ConsolidatedCollectionDetails;
+import org.egov.ptis.bean.dashboard.PropertyTaxDefaultersRequest;
 import org.egov.ptis.bean.dashboard.ReceiptTableData;
 import org.egov.ptis.bean.dashboard.ReceiptsTrend;
+import org.egov.ptis.bean.dashboard.TaxDefaulters;
 import org.egov.ptis.bean.dashboard.TaxPayerResponseDetails;
 import org.egov.ptis.domain.model.ErrorDetails;
 import org.egov.ptis.service.elasticsearch.CollectionIndexElasticSearchService;
@@ -231,4 +233,15 @@ public class DashboardService {
 		return propertyTaxElasticSearchIndexService.getBottomTenTaxPerformers(collectionDetailsRequest);
 		
 	}
+	
+	/**
+	 * Returns Top 100 Defaulter's after filtering
+	 * @param propertyTaxDefaultersRequest
+	 * @return
+	 */
+	public List<TaxDefaulters> getTaxDefaulters(PropertyTaxDefaultersRequest propertyTaxDefaultersRequest){
+		return propertyTaxElasticSearchIndexService.getTopDefaulters(propertyTaxDefaultersRequest);
+	}
+	
+	
 }

@@ -51,6 +51,8 @@ import org.apache.commons.lang3.StringUtils;
 import org.egov.infra.utils.DateUtils;
 import org.egov.ptis.bean.dashboard.CollectionDetailsRequest;
 import org.egov.ptis.bean.dashboard.CollectionIndexDetails;
+import org.egov.ptis.bean.dashboard.PropertyTaxDefaultersRequest;
+import org.egov.ptis.bean.dashboard.TaxDefaulters;
 import org.egov.ptis.bean.dashboard.TaxPayerDetails;
 import org.egov.ptis.bean.dashboard.TaxPayerResponseDetails;
 import org.egov.ptis.constants.PropertyTaxConstants;
@@ -66,6 +68,8 @@ import org.elasticsearch.search.aggregations.Aggregations;
 import org.elasticsearch.search.aggregations.bucket.terms.StringTerms;
 import org.elasticsearch.search.aggregations.bucket.terms.Terms;
 import org.elasticsearch.search.aggregations.metrics.sum.Sum;
+import org.elasticsearch.search.sort.FieldSortBuilder;
+import org.elasticsearch.search.sort.SortOrder;
 import org.joda.time.DateTime;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -288,6 +292,60 @@ public class PropertyTaxElasticSearchIndexService {
 		}
 		return taxPayers;
 	}
+	
+	
+	/**
+	 * Returns top 100 tax defaulters
+	 * @param propertyTaxDefaultersRequest
+	 * @return
+	 */
+	public List<TaxDefaulters> getTopDefaulters(PropertyTaxDefaultersRequest propertyTaxDefaultersRequest){
+		
+		BoolQueryBuilder boolQuery = filterBasedOnRequest(propertyTaxDefaultersRequest);
+		
+		SearchQuery searchQuery = new NativeSearchQueryBuilder()
+		        .withIndices(PROPERTY_TAX_INDEX_NAME)
+				.withQuery(boolQuery)
+				.withSort(new FieldSortBuilder("totalbalance").order(SortOrder.DESC))
+				.withPageable(new PageRequest(0, 100))
+				.build();
+		
+		final Page<PropertyTaxIndex> propertyTaxRecords = elasticsearchTemplate.queryForPage(searchQuery, PropertyTaxIndex.class);
+		
+		List<TaxDefaulters> taxDefaulters = new ArrayList<>();
+		TaxDefaulters taxDfaulter;
+		for(PropertyTaxIndex property : propertyTaxRecords){
+			taxDfaulter = new TaxDefaulters();
+			taxDfaulter.setOwnerName(property.getConsumername());
+			taxDfaulter.setPropertyType(property.getPropertytype());
+			taxDfaulter.setUlbName(property.getCityname());
+			taxDfaulter.setBalance(BigDecimal.valueOf(property.getTotalbalance()));
+			taxDfaulter.setPeriod(StringUtils.EMPTY);
+			taxDefaulters.add(taxDfaulter);
+		}
+		return taxDefaulters;
+	}
+	
+	/**
+	 * This is used for top 100 defaulter's since ward level filtering is also present
+	 * Query which filters documents from index based on request
+	 * @param propertyTaxDefaultersRequest
+	 * @return
+	 */
+	private BoolQueryBuilder filterBasedOnRequest(PropertyTaxDefaultersRequest propertyTaxDefaultersRequest){
+		BoolQueryBuilder boolQuery = QueryBuilders.boolQuery().must(QueryBuilders.rangeQuery("annualdemand").from(0).to(null));
+		if(StringUtils.isNotBlank(propertyTaxDefaultersRequest.getRegionName()))
+			boolQuery = boolQuery.must(QueryBuilders.matchQuery("regionname", propertyTaxDefaultersRequest.getRegionName()));
+		if(StringUtils.isNotBlank(propertyTaxDefaultersRequest.getDistrictName()))
+			boolQuery = boolQuery.must(QueryBuilders.matchQuery("districtname", propertyTaxDefaultersRequest.getDistrictName()));
+		if(StringUtils.isNotBlank(propertyTaxDefaultersRequest.getUlbName()))
+			boolQuery = boolQuery.must(QueryBuilders.matchQuery("cityname", propertyTaxDefaultersRequest.getUlbName()));
+		if(StringUtils.isNotBlank(propertyTaxDefaultersRequest.getWardName()))
+			boolQuery = boolQuery.must(QueryBuilders.matchQuery("revwardname", propertyTaxDefaultersRequest.getWardName()));
+		return boolQuery;
+	}
+	
+	
 
 	/**
 	 * Builds query based on the input parameters sent
