@@ -809,11 +809,11 @@ public class CollectionIndexElasticSearchService {
 				receiptData.setUlbGrade(collectionDetailsRequest.getUlbGrade());
 			}
 			receiptData.setCytdColl(entry.getValue());
-			receiptData.setCurrDayColl(currDayCollMap.get(name));
-			receiptData.setLytdColl(lytdCollMap.get(name));
+			receiptData.setCurrDayColl(currDayCollMap.get(name) == null ? BigDecimal.valueOf(0): currDayCollMap.get(name));
+			receiptData.setLytdColl(lytdCollMap.get(name) == null ? BigDecimal.valueOf(0): lytdCollMap.get(name));
 			//variance = ((current year coll - last year coll)/current year collection)*100
 			variance = (receiptData.getCytdColl().subtract(receiptData.getLytdColl()))
-					.divide(receiptData.getCytdColl(), BigDecimal.ROUND_HALF_UP).multiply(PropertyTaxConstants.BIGDECIMAL_100);
+					  .divide(receiptData.getCytdColl(), BigDecimal.ROUND_HALF_UP).multiply(PropertyTaxConstants.BIGDECIMAL_100);
 			receiptData.setLyVar(variance);
 			receiptDataList.add(receiptData);
 		}
