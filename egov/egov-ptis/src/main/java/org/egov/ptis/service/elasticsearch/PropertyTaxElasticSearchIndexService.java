@@ -211,7 +211,7 @@ public class PropertyTaxElasticSearchIndexService {
 		
 	    TaxPayerResponseDetails topTaxPerformers = new TaxPayerResponseDetails(); 
 		List<TaxPayerDetails> taxProducers = returnUlbWiseAggregationResults(collectionDetailsRequest, PROPERTY_TAX_INDEX_NAME, false,"total_collection",10);
-		List<TaxPayerDetails> taxAchievers = returnUlbWiseAggregationResults(collectionDetailsRequest, PROPERTY_TAX_INDEX_NAME, false,"avg_achievement",120);
+		List<TaxPayerDetails> taxAchievers = returnUlbWiseAggregationResults(collectionDetailsRequest, PROPERTY_TAX_INDEX_NAME, false,"total_collection",120);
 		
 		topTaxPerformers.setProducers(taxProducers);
 		topTaxPerformers.setAchievers(taxAchievers);
@@ -227,7 +227,7 @@ public class PropertyTaxElasticSearchIndexService {
 	public TaxPayerResponseDetails getBottomTenTaxPerformers(CollectionDetailsRequest collectionDetailsRequest){
 		TaxPayerResponseDetails topTaxPerformers = new TaxPayerResponseDetails(); 
 		List<TaxPayerDetails> taxProducers = returnUlbWiseAggregationResults(collectionDetailsRequest, PROPERTY_TAX_INDEX_NAME, true,"total_collection",10);
-		List<TaxPayerDetails> taxAchievers = returnUlbWiseAggregationResults(collectionDetailsRequest, PROPERTY_TAX_INDEX_NAME, true,"avg_achievement",120);
+		List<TaxPayerDetails> taxAchievers = returnUlbWiseAggregationResults(collectionDetailsRequest, PROPERTY_TAX_INDEX_NAME, true,"total_collection",120);
 		
 		topTaxPerformers.setProducers(taxProducers);
 		topTaxPerformers.setAchievers(taxAchievers);
@@ -266,7 +266,6 @@ public class PropertyTaxElasticSearchIndexService {
 		Aggregations collAggr = elasticsearchTemplate.query(searchQueryColl, new ResultsExtractor<Aggregations>() {
 			@Override
 			public Aggregations extract(SearchResponse response) {
-				LOGGER.info("Achievements : " + response.toString());
 				return response.getAggregations();
 			}
 		});
@@ -309,13 +308,17 @@ public class PropertyTaxElasticSearchIndexService {
 			taxDetail.setLyVar(variation);
 			taxPayers.add(taxDetail);
 		}
-		return returnTopResults(taxPayers,size);
+		return returnTopResults(taxPayers,size,order);
 	}
 	
-	private List<TaxPayerDetails> returnTopResults(List<TaxPayerDetails> taxPayers,int size){
+	private List<TaxPayerDetails> returnTopResults(List<TaxPayerDetails> taxPayers,int size,Boolean order){
 		if(size > 10){
-			Collections.sort(taxPayers,Collections.reverseOrder());
-			return taxPayers.subList(0, 9);
+			if(order)
+				Collections.sort(taxPayers);
+			else
+				Collections.sort(taxPayers,Collections.reverseOrder());
+			
+			return taxPayers.subList(0, 10);
 		}
 		return taxPayers;
 	}
