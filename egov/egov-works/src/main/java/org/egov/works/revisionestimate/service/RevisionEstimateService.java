@@ -1140,67 +1140,73 @@ public class RevisionEstimateService {
         return query;
     }
 
-    public String checkIfMBCreatedForRE(final RevisionAbstractEstimate revisionEstimate,
-            final WorkOrderEstimate workOrderEstimate) {
-        final StringBuilder mbRefNumbersForRE = new StringBuilder();
-        final List<MBHeader> mbHeaders = mbHeaderService
-                .getMBHeadersForTenderedLumpSumAcivitiesToCancelRE(revisionEstimate, workOrderEstimate);
-        if (!mbHeaders.isEmpty())
-            for (final MBHeader mBHeader : mbHeaders)
-                mbRefNumbersForRE.append(mBHeader.getMbRefNo()).append(",");
-        else {
-            final List<Long> activtityIdList = new ArrayList<>();
-            final WorkOrderEstimate revisionWorkOrderEstimate = workOrderEstimateService
-                    .getWorkOrderEstimateByAbstractEstimateId(revisionEstimate.getId());
-            final List<WorkOrderActivity> woaList = workOrderActivityService
-                    .getChangedQuantityActivities(revisionEstimate, revisionWorkOrderEstimate);
-            for (final WorkOrderActivity woa : woaList)
-                activtityIdList.add(woa.getActivity().getParent().getId()); // Original Estimate
-            List<Object[]> activityIdQuantityList = null;
-            if (activtityIdList != null && activtityIdList.size() > 0)
-                activityIdQuantityList = mBDetailsService.getMBDetailsByWorkOrderActivity(activtityIdList);
-            if (activityIdQuantityList != null && activityIdQuantityList.size() > 0)
-                for (final WorkOrderActivity revWoa : woaList)
-                    for (final Object[] activityIdQuantity : activityIdQuantityList)
-                        if (Long.parseLong(activityIdQuantity[0].toString()) == revWoa.getActivity().getParent().getId()
-                                .longValue()) {
-                            Long activityId = null;
-                            if (revWoa.getActivity().getParent() == null)
-                                activityId = revWoa.getActivity().getId();
-                            else
-                                activityId = revWoa.getActivity().getParent().getId();
+	public String checkIfMBCreatedForRENonTenderedLumpSum(final RevisionAbstractEstimate revisionEstimate,
+			final WorkOrderEstimate workOrderEstimate) {
+		final StringBuilder mbRefNumbersForRE = new StringBuilder();
+		// Checking MB's exists for Non Tendered and lumpsum activities
+		final List<MBHeader> mbHeaders = mbHeaderService
+				.getMBHeadersForTenderedLumpSumAcivitiesToCancelRE(revisionEstimate, workOrderEstimate);
+		if (!mbHeaders.isEmpty())
+			for (final MBHeader mBHeader : mbHeaders)
+				mbRefNumbersForRE.append(mBHeader.getMbRefNo()).append(",");
+		return mbRefNumbersForRE.toString();
 
-                            final Double originalQuantity = (Double) workOrderActivityService
-                                    .getQuantityForActivity(activityId);
-                            final Object revEstQuantityObj = workOrderActivityService
-                                    .getREActivityQuantity(revisionEstimate.getId(), activityId);
-                            final double revEstQuantity = revEstQuantityObj == null ? 0.0 : (Double) revEstQuantityObj;
-                            if (originalQuantity + revEstQuantity >= Double
-                                    .parseDouble(activityIdQuantity[1].toString()))
-                                continue;
-                            else {
-                                final MBDetails mbDetails = mBDetailsService.getMBDetailsForREActivity(activityId,
-                                        revisionEstimate.getId());
-                                if (mbDetails != null) {
-                                    // TO DO Read maxPercent from appconfig
-                                    Double maxPercent = Double.valueOf("1");
-                                    if (maxPercent != null)
-                                        maxPercent += 100;
-                                    else
-                                        maxPercent = 100d;
-                                    final Double maxAllowedQuantity = maxPercent * (originalQuantity + revEstQuantity)
-                                            / 100;
-                                    if (maxAllowedQuantity >= Double.parseDouble(activityIdQuantity[1].toString()))
-                                        continue;
-                                    else
-                                        mbRefNumbersForRE.append(mbDetails.getMbHeader().getMbRefNo()).append(",");
-                                }
-                            }
-                        }
-        }
+	}
+	
+	public String checkIfMBCreatedForREChangedQuantity(final RevisionAbstractEstimate revisionEstimate,
+			final WorkOrderEstimate workOrderEstimate) {
+		final List<Long> originalActivtityIdList = new ArrayList<>();
+		String message = "";
+		// Checking MB's for change quantity activities
+		final WorkOrderEstimate revisionWorkOrderEstimate = workOrderEstimateService
+				.getWorkOrderEstimateByAbstractEstimateId(revisionEstimate.getId());
+		final List<WorkOrderActivity> reWoaList = workOrderActivityService
+				.getChangedQuantityActivities(revisionEstimate, revisionWorkOrderEstimate);
+		for (final WorkOrderActivity woa : reWoaList)
+			originalActivtityIdList.add(woa.getActivity().getParent().getId());
+		List<Object[]> activityIdQuantityList = null;
+		if (originalActivtityIdList != null && originalActivtityIdList.size() > 0)
+			activityIdQuantityList = mBDetailsService.getMBDetailsByWorkOrderActivity(originalActivtityIdList);
+		if (activityIdQuantityList != null && activityIdQuantityList.size() > 0)
+			for (final WorkOrderActivity revWoa : reWoaList)
+				for (final Object[] activityIdQuantity : activityIdQuantityList)
+					if (Long.parseLong(activityIdQuantity[0].toString()) == revWoa.getActivity().getParent().getId()
+							.longValue()) {
+						Long activityId = null;
+						if (revWoa.getActivity().getParent() == null)
+							activityId = revWoa.getActivity().getId();
+						else
+							activityId = revWoa.getActivity().getParent().getId();
 
-        return mbRefNumbersForRE.toString();
-    }
+						final Double originalQuantity = (Double) workOrderActivityService
+								.getQuantityForActivity(activityId);
+						final Object revEstQuantityObj = workOrderActivityService
+								.getREActivityQuantity(revisionEstimate.getId(), activityId);
+						final double revEstQuantity = revEstQuantityObj == null ? 0.0 : (Double) revEstQuantityObj;
+						if (originalQuantity + revEstQuantity >= Double.parseDouble(activityIdQuantity[1].toString()))
+							continue;
+						else {
+
+							final List<AppConfigValues> values = appConfigValuesService.getConfigValuesByModuleAndKey(
+									WorksConstants.WORKS_MODULE_NAME,
+									WorksConstants.APPCONFIG_KEY_MB_QUANTITY_TOLERANCE_LEVEL);
+							final AppConfigValues value = values.get(0);
+							Double maxPercent = Double.valueOf(value.getValue());
+							if (maxPercent != null)
+								maxPercent += 100;
+							else
+								maxPercent = 100d;
+							final Double maxAllowedQuantity = maxPercent * (originalQuantity + revEstQuantity) / 100;
+							if (maxAllowedQuantity >= Double.parseDouble(activityIdQuantity[1].toString()))
+								continue;
+							else {
+								message = messageSource.getMessage("error.mbexistsfor.rechangequantity", null, null);
+								break;
+							}
+						}
+					}
+		return message;
+	}
 
     @Transactional
     public RevisionAbstractEstimate cancelRevisionEstimate(final RevisionAbstractEstimate revisionEstimate) {

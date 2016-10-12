@@ -184,25 +184,29 @@ public class AjaxRevisionEstimateController {
         return result;
     }
 
-    @RequestMapping(value = "/ajax-checkifdependantObjectscreated", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
-    public @ResponseBody String checkIfBillsCreated(@RequestParam final Long reId) {
-        String message = "";
-        final RevisionAbstractEstimate revisionEstimate = revisionEstimateService.getRevisionEstimateById(reId);
-        final WorkOrderEstimate workOrderEstimate = workOrderEstimateService
-                .getWorkOrderEstimateByAbstractEstimateId(revisionEstimate.getParent().getId());
-        final String mbRefNumbers = revisionEstimateService.checkIfMBCreatedForRE(revisionEstimate, workOrderEstimate);
-        if (!mbRefNumbers.equals(""))
-            message = messageSource.getMessage("error.re.mb.created", new String[] { mbRefNumbers }, null);
-        else {
-            final String revisionEstimates = revisionEstimateService
-                    .getRevisionEstimatesGreaterThanCurrent(revisionEstimate.getParent().getId(),
-                            revisionEstimate.getCreatedDate());
-            if (!revisionEstimates.equals(""))
-                message = messageSource.getMessage("error.reexists.greaterthancreateddate",
-                        new String[] { revisionEstimates }, null);
-        }
-        return message;
-    }
+	@RequestMapping(value = "/ajax-checkifdependantObjectscreated", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+	public @ResponseBody String checkIfBillsCreated(@RequestParam final Long reId) {
+		String message = "";
+		final RevisionAbstractEstimate revisionEstimate = revisionEstimateService.getRevisionEstimateById(reId);
+		final WorkOrderEstimate workOrderEstimate = workOrderEstimateService
+				.getWorkOrderEstimateByAbstractEstimateId(revisionEstimate.getParent().getId());
+		final String revisionEstimates = revisionEstimateService.getRevisionEstimatesGreaterThanCurrent(
+				revisionEstimate.getParent().getId(), revisionEstimate.getCreatedDate());
+		if (!revisionEstimates.equals(""))
+			message = messageSource.getMessage("error.reexists.greaterthancreateddate",
+					new String[] { revisionEstimates }, null);
+		else {
+			final String mbRefNumbers = revisionEstimateService.checkIfMBCreatedForRENonTenderedLumpSum(revisionEstimate,
+					workOrderEstimate);
+			if (!mbRefNumbers.equals(""))
+				message = messageSource.getMessage("error.re.mb.created", new String[] { mbRefNumbers }, null);
+			else {
+				message = revisionEstimateService.checkIfMBCreatedForREChangedQuantity(revisionEstimate, workOrderEstimate);
+			}
+
+		}
+		return message;
+	}
 
     @RequestMapping(value = "/validatere/{workOrderEstimateId}", method = RequestMethod.GET, produces = MediaType.TEXT_PLAIN_VALUE)
     public @ResponseBody String validateRevisionEstimate(@PathVariable final Long workOrderEstimateId,

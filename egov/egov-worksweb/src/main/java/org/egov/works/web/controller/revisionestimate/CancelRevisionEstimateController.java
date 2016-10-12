@@ -17,6 +17,8 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
+import antlr.StringUtils;
+
 @Controller
 @RequestMapping(value = "/revisionestimate")
 public class CancelRevisionEstimateController {
@@ -44,31 +46,41 @@ public class CancelRevisionEstimateController {
     public String cancelLetterOfAcceptance(final HttpServletRequest request, final Model model) {
         final Long revisionEstimateId = Long.parseLong(request.getParameter("id"));
         final String cancellationReason = request.getParameter("cancellationReason");
-        final String cancellationRemarks = request.getParameter("cancellationRemarks");
-        String message = "";
-        RevisionAbstractEstimate revisionEstimate = revisionEstimateService.getRevisionEstimateById(revisionEstimateId);
-        final WorkOrderEstimate workOrderEstimate = workOrderEstimateService
-                .getWorkOrderEstimateByAbstractEstimateId(revisionEstimate.getParent().getId());
-        final String mbRefNumbers = revisionEstimateService.checkIfMBCreatedForRE(revisionEstimate, workOrderEstimate);
-        if (!mbRefNumbers.isEmpty()) {
-            model.addAttribute("message",
-                    messageSource.getMessage("error.re.mb.created", new String[] { mbRefNumbers }, null));
-            return "revisionEstimate-success";
-        } else {
-            final String revisionEstimates = revisionEstimateService.getRevisionEstimatesGreaterThanCurrent(
-                    revisionEstimate.getParent().getId(), revisionEstimate.getCreatedDate());
-            if (!revisionEstimates.equals(""))
-                message = messageSource.getMessage("error.reexists.greaterthancreateddate",
-                        new String[] { revisionEstimates }, null);
-        }
-        message = messageSource.getMessage("msg.revisionestimate.cancelled",
-                new String[] { revisionEstimate.getEstimateNumber() }, null);
-        revisionEstimate.setCancellationReason(cancellationReason);
-        revisionEstimate.setCancellationRemarks(cancellationRemarks);
-        revisionEstimate = revisionEstimateService.cancelRevisionEstimate(revisionEstimate);
-        model.addAttribute("revisionEstimate", revisionEstimate);
-        model.addAttribute("message", message);
-        return "revisionEstimate-success";
-    }
+		final String cancellationRemarks = request.getParameter("cancellationRemarks");
+		String message = "";
+		RevisionAbstractEstimate revisionEstimate = revisionEstimateService.getRevisionEstimateById(revisionEstimateId);
+		final WorkOrderEstimate workOrderEstimate = workOrderEstimateService
+				.getWorkOrderEstimateByAbstractEstimateId(revisionEstimate.getParent().getId());
+
+		final String revisionEstimates = revisionEstimateService.getRevisionEstimatesGreaterThanCurrent(
+				revisionEstimate.getParent().getId(), revisionEstimate.getCreatedDate());
+		if (!revisionEstimates.equals("")) {
+			message = messageSource.getMessage("error.reexists.greaterthancreateddate",
+					new String[] { revisionEstimates }, null);
+			return "revisionEstimate-success";
+		} else {
+			final String mbRefNumbers = revisionEstimateService.checkIfMBCreatedForREChangedQuantity(revisionEstimate,
+					workOrderEstimate);
+			if (!mbRefNumbers.isEmpty()) {
+				model.addAttribute("message",
+						messageSource.getMessage("error.re.mb.created", new String[] { mbRefNumbers }, null));
+				return "revisionEstimate-success";
+			} else {
+				message = revisionEstimateService.checkIfMBCreatedForREChangedQuantity(revisionEstimate,
+						workOrderEstimate);
+				if (!message.equals(""))
+					return "revisionEstimate-success";
+			}
+
+		}
+		message = messageSource.getMessage("msg.revisionestimate.cancelled",
+				new String[] { revisionEstimate.getEstimateNumber() }, null);
+		revisionEstimate.setCancellationReason(cancellationReason);
+		revisionEstimate.setCancellationRemarks(cancellationRemarks);
+		revisionEstimate = revisionEstimateService.cancelRevisionEstimate(revisionEstimate);
+		model.addAttribute("revisionEstimate", revisionEstimate);
+		model.addAttribute("message", message);
+		return "revisionEstimate-success";
+	}
 
 }

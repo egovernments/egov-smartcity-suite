@@ -39,7 +39,7 @@ public class MBDetailsService {
     }
     
     public MBDetails getMBDetailsForREActivity(final Long activityId,final Long revisionEstimateId) {
-        return mBDetailsRepository.getMBDetailsForREActivity(activityId,revisionEstimateId,WorksConstants.CANCELLED);
+        return mBDetailsRepository.getMBDetailsForREActivity(activityId,revisionEstimateId,WorksConstants.CANCELLED_STATUS);
     }
 
 }

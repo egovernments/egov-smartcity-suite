@@ -161,7 +161,7 @@ public class WorkOrderActivityService {
     }
 
     public Object getQuantityForActivity(final Long activityId) {
-        return workOrderActivityRepository.getActivityQuantity(activityId);
+        return workOrderActivityRepository.getActivityQuantity(activityId,WorksConstants.APPROVED);
     }
 
     public Object getREActivityQuantity(final Long reId, final Long parentId) {

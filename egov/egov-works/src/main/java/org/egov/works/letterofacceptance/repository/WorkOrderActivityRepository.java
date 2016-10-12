@@ -56,10 +56,10 @@ public interface WorkOrderActivityRepository extends JpaRepository<WorkOrderActi
     @Query("select woa from WorkOrderActivity woa where woa.workOrderEstimate.estimate.id =:revisionEstimateId and woa.workOrderEstimate.id=:revisionWorkOrderId and woa.activity.revisionType=:changedQuantityRevisionType")
     List<WorkOrderActivity> findChangedQuantityActivitiesForEstimate(@Param("revisionEstimateId") Long revisionEstimateId,@Param("revisionWorkOrderId") Long revisionWorkOrderEstimateId,@Param("changedQuantityRevisionType") RevisionType changedQuantityRevisionType);
     
-    @Query("select sum(woa.approvedQuantity) from WorkOrderActivity woa  group by woa,woa.activity having activity.id =:activityId")
-    Object getActivityQuantity(@Param("activityId") Long activityId);   
-    
-    @Query("select sum(woa.approvedQuantity) from WorkOrderActivity woa where woa.activity.abstractEstimate.egwStatus.code = 'APPROVED' and woa.activity.abstractEstimate.id =:revisionEstimateId and woa.activity.parent.id =:parentId and woa.activity.parent is not null group by woa.activity.parent")
+    @Query("select sum(woa.approvedQuantity) from WorkOrderActivity woa where workOrderEstimate.workOrder.egwStatus.code =:workOrderStatus group by woa,woa.activity having activity.id =:activityId")
+    Object getActivityQuantity(@Param("activityId") Long activityId,@Param ("workOrderStatus") String workOrderStatus);   
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 
+    @Query("select sum(woa.approvedQuantity*coalesce((CASE WHEN woa.activity.revisionType = 'REDUCED_QUANTITY' THEN -1 WHEN woa.activity.revisionType = 'ADDITIONAL_QUANTITY' THEN 1 WHEN woa.activity.revisionType = 'NON_TENDERED_ITEM' THEN 1 WHEN woa.activity.revisionType = 'LUMP_SUM_ITEM' THEN 1 END),1)) from WorkOrderActivity woa where woa.activity.abstractEstimate.egwStatus.code = 'APPROVED' and woa.activity.abstractEstimate.id !=:revisionEstimateId group by woa.activity.parent having (woa.activity.parent is not null and woa.activity.parent.id =:parentId)")
     Object getREActivityQuantity(@Param("revisionEstimateId") Long revisionEstimateId,@Param ("parentId") Long parentId);
     
 }
