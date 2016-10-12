@@ -480,7 +480,7 @@ public class SewerageDemandService {
                                     oldApplicationAdvanceAmount = oldApplicationAdvanceAmount
                                             .subtract(differenceAmount);
                                   //Add remaining amount as advance.
-                                    createAdvanceDemandDetail(demand, oldApplicationAdvanceAmount);
+                                    createAdvanceDemandDetail(demand, oldApplicationAdvanceAmount); 
                                     oldAdvanceUsedInSewerageTaxOrAddedAsAdvance=true;
                                 }
 
@@ -602,10 +602,10 @@ public class SewerageDemandService {
                     .equalsIgnoreCase(SewerageTaxConstants.FEES_ADVANCE_CODE)
                     && nextInstallment != null && nextInstallment.getDescription()
                             .equalsIgnoreCase(dmdDtl.getEgDemandReason().getEgInstallmentMaster().getDescription())) {
-               dmdDtl.getEgDemand().getBaseDemand().subtract(dmdDtl.getAmount());
+                dmdDtl.getEgDemand().getBaseDemand().subtract(dmdDtl.getAmount());
                 dmdDtl.setAmount(amount);
                dmdDtl.getEgDemand().getBaseDemand().add(amount);
-
+               advancePresent=true;
             }
         }
         if (!advancePresent) {
