@@ -63,6 +63,11 @@
 	<definition name="religion-create" extends="base_layout">
         <put-attribute name="page-title" value="title.create.religion" cascade="true"/>
         <put-attribute name="body" value="/WEB-INF/views/masters/religion/religion-create.jsp"/>
+    </definition>  
+    
+    <definition name="act-create" extends="base_layout">
+        <put-attribute name="page-title" value="title.create.religion" cascade="true"/>
+        <put-attribute name="body" value="/WEB-INF/views/masters/act/act-create.jsp"/>
     </definition>   
     
     <definition name="registration-form" extends="base_layout">
@@ -124,6 +129,10 @@
         <put-attribute name="page-title" value="title.Religion.success" cascade="true"/>
         <put-attribute name="body" value="/WEB-INF/views/masters/religion/religion-success.jsp"/>
     </definition>
+     <definition name="act-success" extends="base_layout">
+        <put-attribute name="page-title" value="title.Religion.success" cascade="true"/>
+        <put-attribute name="body" value="/WEB-INF/views/masters/act/act-success.jsp"/>
+    </definition>
     
     <definition name="religion-search" extends="base_layout">
         <put-attribute name="page-title" value="title.Religion.search" cascade="true"/>
@@ -133,6 +142,16 @@
      <definition name="religion-update" extends="base_layout">
         <put-attribute name="page-title" value="title.Religion.update" cascade="true"/>
         <put-attribute name="body" value="/WEB-INF/views/masters/religion/religion-update.jsp"/>
+    </definition>
+    
+    <definition name="act-search" extends="base_layout">
+        <put-attribute name="page-title" value="title.Act.search" cascade="true"/>
+        <put-attribute name="body" value="/WEB-INF/views/masters/act/act-search.jsp"/>
+    </definition>
+    
+     <definition name="act-update" extends="base_layout">
+        <put-attribute name="page-title" value="title.Act.update" cascade="true"/>
+        <put-attribute name="body" value="/WEB-INF/views/masters/act/act-update.jsp"/>
     </definition>
     
 </tiles-definitions>

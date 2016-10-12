@@ -39,11 +39,61 @@ In case of any queries, you can reach eGovernments Foundation at contact@egovern
 
 package org.egov.mrs.web.controller.masters.act;
 
+import static org.egov.infra.web.utils.WebUtils.toJSON;
+
+import java.util.List;
+
+import org.egov.mrs.masters.entity.Act;
+import org.egov.mrs.masters.entity.Religion;
+import org.egov.mrs.masters.service.ActService;
+import org.egov.mrs.web.adaptor.ActJsonAdaptor;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.MessageSource;
+import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.ResponseBody;
 
 @Controller
 @RequestMapping(value = "/masters")
 public class ViewActController {
 
+	private final ActService actService;
+
+	@Autowired
+	private MessageSource messageSource;
+	private static final String MRG_ACT_VIEW = "act-success";
+	private static final String MRG_ACT_SEARCH = "act-search";
+
+	@Autowired
+	public ViewActController(final ActService actService) {
+		this.actService = actService;
+	}
+
+	@RequestMapping(value = "/act/success/{id}", method = RequestMethod.GET)
+	public String viewReligion(@PathVariable Long id, final Model model) {
+		model.addAttribute("act", actService.getAct(id));
+		return MRG_ACT_VIEW;
+	}
+
+	@RequestMapping(value = "/act/search/{mode}", method = RequestMethod.GET)
+	public String getSearchPage(@PathVariable("mode") final String mode,
+			final Model model) {
+		model.addAttribute("act", new Religion());
+		return MRG_ACT_SEARCH;
+	}
+
+	@RequestMapping(value = "/act/searchResult", method = RequestMethod.POST, produces = MediaType.TEXT_PLAIN_VALUE)
+	public @ResponseBody String searchActResult(Model model,
+			@ModelAttribute final Act act) {
+		List<Act> searchResultList = actService.searchActs(act);
+		String result = new StringBuilder("{ \"data\":")
+				.append(toJSON(searchResultList, Act.class,
+						ActJsonAdaptor.class)).append("}").toString();
+		return result;
+	}
 }

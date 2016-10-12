@@ -42,9 +42,9 @@ package org.egov.mrs.web.controller.masters.act;
 import javax.validation.Valid;
 
 import org.egov.mrs.masters.entity.Act;
-import org.egov.mrs.masters.entity.Religion;
 import org.egov.mrs.masters.service.ActService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.MessageSource;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -57,31 +57,37 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 @RequestMapping(value = "/masters")
 public class CreateActController {
 
-    private static final String PAGE_NAME = "religion-create";
+	private static final String MRG_ACT_CREATE = "act-create";
 
-    private final ActService actService;
+	private final ActService actService;
 
-    @Autowired
-    public CreateActController(final ActService actService) {
-        this.actService = actService;
-    }
+	@Autowired
+	private MessageSource messageSource;
 
-    @RequestMapping(value = "/act/create", method = RequestMethod.GET)
-    public String loadCreateForm(final Model model) {
-        model.addAttribute("act", new Act());
-        return PAGE_NAME;
-    }
+	@Autowired
+	public CreateActController(final ActService actService) {
+		this.actService = actService;
+	}
 
-    @RequestMapping(value = "/act/create", method = RequestMethod.POST)
-    public String createAct(@Valid @ModelAttribute final Act act, final BindingResult errors,
-            final RedirectAttributes redirectAttributes) {
+	@RequestMapping(value = "/act/create", method = RequestMethod.GET)
+	public String loadCreateForm(final Model model) {
+		model.addAttribute("act", new Act());
+		return MRG_ACT_CREATE;
+	}
 
-        if (errors.hasErrors())
-            return PAGE_NAME;
+	@RequestMapping(value = "/act/create", method = RequestMethod.POST)
+	public String createAct(@Valid @ModelAttribute final Act act,
+			final BindingResult errors,
+			final RedirectAttributes redirectAttributes) {
 
-        actService.create(act);
-        redirectAttributes.addFlashAttribute("message", "msg.act.create.success");
+		if (errors.hasErrors())
+			return MRG_ACT_CREATE;
 
-        return PAGE_NAME;
-    }
+		actService.create(act);
+		redirectAttributes.addFlashAttribute("message",
+				messageSource.getMessage("msg.act.create.success", null, null));
+		return "redirect:/masters/act/success/" + act.getId();
+
+	}
+
 }

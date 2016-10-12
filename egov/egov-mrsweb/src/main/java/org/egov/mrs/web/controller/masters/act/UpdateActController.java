@@ -39,11 +39,52 @@ In case of any queries, you can reach eGovernments Foundation at contact@egovern
 
 package org.egov.mrs.web.controller.masters.act;
 
+import javax.validation.Valid;
+
+import org.egov.mrs.masters.entity.Act;
+import org.egov.mrs.masters.service.ActService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.MessageSource;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
+import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 @Controller
 @RequestMapping(value = "/masters")
 public class UpdateActController {
+	private static final String MRG_ACT_UPDATE = "act-update";
 
+	private final ActService actService;
+
+	@Autowired
+	private MessageSource messageSource;
+
+	@Autowired
+	public UpdateActController(final ActService actService) {
+		this.actService = actService;
+	}
+
+	@RequestMapping(value = "/act/edit/{id}", method = RequestMethod.GET)
+	public String editReligion(@PathVariable("id") Long id, final Model model) {
+		model.addAttribute("act", actService.getAct(id));
+		return MRG_ACT_UPDATE;
+	}
+
+	@RequestMapping(value = "/act/update", method = RequestMethod.POST)
+	public String updateReligion(@Valid @ModelAttribute final Act act,
+			final BindingResult errors,
+			final RedirectAttributes redirectAttributes) {
+		if (errors.hasErrors()) {
+			return MRG_ACT_UPDATE;
+		}
+		actService.update(act);
+		redirectAttributes.addFlashAttribute("message",
+				messageSource.getMessage("msg.act.update.success", null, null));
+		return "redirect:/masters/act/success/" + act.getId();
+	}
 }

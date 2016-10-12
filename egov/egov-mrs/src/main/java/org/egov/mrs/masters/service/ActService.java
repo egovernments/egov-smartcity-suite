@@ -41,8 +41,15 @@ package org.egov.mrs.masters.service;
 
 import java.util.List;
 
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+
 import org.egov.mrs.masters.entity.Act;
 import org.egov.mrs.masters.repository.ActRepository;
+import org.hibernate.Criteria;
+import org.hibernate.Session;
+import org.hibernate.criterion.MatchMode;
+import org.hibernate.criterion.Restrictions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -51,11 +58,17 @@ import org.springframework.transaction.annotation.Transactional;
 @Transactional(readOnly = true)
 public class ActService {
     private final ActRepository actRepository;
-
+    
+    @PersistenceContext
+	private EntityManager entityManager;
+    
     @Autowired
     public ActService(final ActRepository actRepository) {
         this.actRepository = actRepository;
     }
+    public Session getCurrentSession() {
+		return entityManager.unwrap(Session.class);
+	}
 
     @Transactional
     public void create(final Act act) {
@@ -64,7 +77,7 @@ public class ActService {
 
     @Transactional
     public Act update(final Act act) {
-        return actRepository.saveAndFlush(act);
+        return actRepository.save(act);
     }
 
     public Act getAct(final Long id) {
@@ -78,4 +91,13 @@ public class ActService {
     public Act getProxy(final Long id) {
         return actRepository.getOne(id);
     }
+    
+    @SuppressWarnings("unchecked")
+   	public List<Act> searchActs(Act act) {
+   		final Criteria criteria = getCurrentSession().createCriteria(
+   				Act.class);
+   		if (null != act.getName())
+   			criteria.add(Restrictions.ilike("name",act.getName(),MatchMode.ANYWHERE));
+   		return criteria.list();
+   	}
 }
