@@ -42,8 +42,12 @@ package org.egov.stms.web.controller.elasticSearch;
 
 import static java.util.Arrays.asList;
 import static org.egov.ptis.constants.PropertyTaxConstants.REVENUE_HIERARCHY_TYPE;
+import static org.egov.stms.utils.constants.SewerageTaxConstants.COLLECTDONATIONCHARHGES;
+import static org.egov.stms.utils.constants.SewerageTaxConstants.REVENUE_WARD;
+import static org.egov.stms.utils.constants.SewerageTaxConstants.SEARCHABLE_SHSCNO;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -72,7 +76,6 @@ import org.egov.stms.transactions.service.SewerageConnectionService;
 import org.egov.stms.transactions.service.SewerageThirdPartyServices;
 import org.egov.stms.utils.SewerageActionDropDownUtil;
 import org.egov.stms.utils.SewerageTaxUtils;
-import org.egov.stms.utils.constants.SewerageTaxConstants;
 import org.elasticsearch.search.sort.SortOrder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -120,7 +123,7 @@ public class SewerageCollectFeeSearchController {
 
     public @ModelAttribute("revenueWards") List<Boundary> revenueWardList() {
         return boundaryService.getActiveBoundariesByBndryTypeNameAndHierarchyTypeName(
-                SewerageTaxConstants.REVENUE_WARD, REVENUE_HIERARCHY_TYPE);
+                REVENUE_WARD, REVENUE_HIERARCHY_TYPE);
     }
 
     @RequestMapping(value = "/view/{consumernumber}/{assessmentnumber}", method = RequestMethod.GET)
@@ -148,7 +151,7 @@ public class SewerageCollectFeeSearchController {
     public List<SewerageSearchResult> searchApplication(@ModelAttribute final SewerageCollectFeeSearchRequest searchRequest) {
         final City cityWebsite = cityService.getCityByURL(ApplicationThreadLocals.getDomainName());
         searchRequest.setUlbName(cityWebsite.getName());
-        final Sort sort = Sort.by().field(SewerageTaxConstants.SEARCHABLE_SHSCNO, SortOrder.DESC);
+        final Sort sort = Sort.by().field(SEARCHABLE_SHSCNO, SortOrder.DESC);
         final SearchResult searchResult = searchService.search(asList(Index.SEWARAGE.toString()),
                 asList(IndexType.SEWARAGESEARCH.toString()), searchRequest.searchQuery(),
                 searchRequest.searchFilters(), sort, Page.NULL);
@@ -161,19 +164,26 @@ public class SewerageCollectFeeSearchController {
         final List<SewerageSearchResult> searchResultFomatted = new ArrayList<SewerageSearchResult>(0);
         SewerageApplicationDetails  sewerageApplicationDetails = new SewerageApplicationDetails();
         for (final Document document : searchResult.getDocuments()) {
-
+            Map<String,String> actionMap = new HashMap<>();
             final Map<String, String> searchableObjects = (Map<String, String>) document.getResource()
                     .get("searchable");
             if (searchableObjects != null) {
                String consumernumber = searchableObjects.get("consumernumber");
                String status = searchableObjects.get("status");
-               if(!status.equals("Rejected") && !status.equals("Canceled") && !status.equals("Sanctioned") ){
+               if(!("Rejected").equals(status) && !("Canceled").equals(status)){
                if(consumernumber != null){
                  sewerageApplicationDetails = sewerageApplicationDetailsService.findByApplicationNumber(consumernumber);
                }
-                final SewerageSearchResult searchActions = SewerageActionDropDownUtil.getSearchResultWithActions(
+                SewerageSearchResult searchActions = SewerageActionDropDownUtil.getSearchResultWithActions(
                         roleList, searchableObjects.get("status"),sewerageApplicationDetails);
                 if (searchActions != null) {
+                    for(Map.Entry<String, String> entry : searchActions.getActions().entrySet()){
+                        if(entry.getValue().equals(COLLECTDONATIONCHARHGES)){
+                            actionMap.put(entry.getKey(), entry.getValue());
+                            break;
+                        }
+                    }
+                    searchActions.setActions(actionMap);
                     searchActions.setDocument(document);
                     searchResultFomatted.add(searchActions);
                 }

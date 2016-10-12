@@ -204,10 +204,10 @@ public class SewerageAjaxConnectionController {
         BigDecimal legacyDonationAmount=BigDecimal.ZERO;
         BigDecimal residentialAmount=BigDecimal.ZERO;
         BigDecimal nonResidentialAmount=BigDecimal.ZERO;
-          if(noofclosetsresidential!=0){
+          if(noofclosetsresidential!=null && noofclosetsresidential!=0){
             residentialAmount = donationMasterService.getDonationAmountByNoOfClosetsAndPropertytypeForCurrentDate(noofclosetsresidential, PropertyType.RESIDENTIAL);
                  }
-        if(noofclosetsnonresidential!=0){
+        if(noofclosetsnonresidential!=null && noofclosetsnonresidential!=0){
             nonResidentialAmount = donationMasterService.getDonationAmountByNoOfClosetsAndPropertytypeForCurrentDate(noofclosetsnonresidential, PropertyType.NON_RESIDENTIAL);
           }
         if(propertyType.equals(PropertyType.MIXED) && residentialAmount!=null && nonResidentialAmount!=null)
@@ -221,9 +221,9 @@ public class SewerageAjaxConnectionController {
             {
                 return messageSource.getMessage("err.validate.donationamount.notexistForBothcombination", new String[]{propertyType.toString()},null);
              }
-            else if(residentialAmount==null)
+            else if(residentialAmount==null && noofclosetsresidential!=null)
                 return messageSource.getMessage("err.validate.donationamount.notexist", new String[] {PropertyType.RESIDENTIAL.toString(), noofclosetsresidential.toString()},null);
-            else if(nonResidentialAmount==null)
+            else if(nonResidentialAmount==null && noofclosetsnonresidential!=null)
                 return messageSource.getMessage("err.validate.donationamount.notexist", new String[] {PropertyType.NON_RESIDENTIAL.toString(), noofclosetsnonresidential.toString()},null);
         }
         return legacyDonationAmount.toString();

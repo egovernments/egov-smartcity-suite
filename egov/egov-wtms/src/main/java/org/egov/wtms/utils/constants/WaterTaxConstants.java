@@ -306,6 +306,9 @@ public class WaterTaxConstants {
     public static final String[] WATERCHARGESDMDDESC = {"Water Charges"};
     
     public static final String CLOSECONNECTION = "CLOSECONNECTION";
+    public static final String APPLICATIONSTATUSOPEN = "Open";
+    public static final String APPLICATIONSTATUSCLOSED = "Closed";
+    public static final String APPLICATIONSTATUSALL = "All";
     
     public static final String RECONNECTION_ESTIMATION_NOTICE = "ReconnacknowlgementNotice";
     public static final String CLOSURE_ESTIMATION_NOTICE = "CloserConnectionAcknowldgemt";

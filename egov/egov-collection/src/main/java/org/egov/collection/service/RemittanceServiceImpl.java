@@ -102,9 +102,9 @@ public class RemittanceServiceImpl extends RemittanceService {
     private PersistenceService<Remittance, Long> remittancePersistService;
 
     /**
-     * Create Contra Vouchers for String array passed of serviceName, totalCashAmount, totalChequeAmount, totalCardAmount and
-     * totalOnlineAcount
-     *
+     * Create Contra Vouchers for String array passed of serviceName,
+     * totalCashAmount, totalChequeAmount, totalCardAmount and
+     * 
      * @param serviceName
      * @param totalCashAmount
      * @param totalAmount
@@ -113,10 +113,9 @@ public class RemittanceServiceImpl extends RemittanceService {
     @Transactional
     @Override
     public List<ReceiptHeader> createBankRemittance(final String[] serviceNameArr, final String[] totalCashAmount,
-            final String[] totalAmount, final String[] totalCardAmount, final String[] totalOnlineAmount,
-            final String[] receiptDateArray, final String[] fundCodeArray, final String[] departmentCodeArray,
-            final Integer accountNumberId, final Integer positionUser, final String[] receiptNumberArray,
-            final Date remittanceDate) {
+            final String[] totalAmount, final String[] totalCardAmount, final String[] receiptDateArray,
+            final String[] fundCodeArray, final String[] departmentCodeArray, final Integer accountNumberId,
+            final Integer positionUser, final String[] receiptNumberArray, final Date remittanceDate) {
 
         final List<ReceiptHeader> bankRemittanceList = new ArrayList<ReceiptHeader>(0);
         final List<ReceiptHeader> bankRemitList = new ArrayList<ReceiptHeader>();
@@ -140,13 +139,9 @@ public class RemittanceServiceImpl extends RemittanceService {
                 + CollectionConstants.INSTRUMENTTYPE_CHEQUE + "'";
         final String cardPaymentQueryString = instrumentGlCodeQueryString + "'"
                 + CollectionConstants.INSTRUMENTTYPE_CARD + "'";
-        final String onlinePaymentQueryString = instrumentGlCodeQueryString + "'"
-                + CollectionConstants.INSTRUMENTTYPE_ONLINE + "'";
-
         final Query cashInHand = persistenceService.getSession().createSQLQuery(cashInHandQueryString);
         final Query chequeInHand = persistenceService.getSession().createSQLQuery(chequeInHandQueryString);
         final Query cardPaymentAccount = persistenceService.getSession().createSQLQuery(cardPaymentQueryString);
-        final Query onlinePaymentAccount = persistenceService.getSession().createSQLQuery(onlinePaymentQueryString);
 
         String cashInHandGLCode = null, chequeInHandGlcode = null;
 
@@ -167,9 +162,6 @@ public class RemittanceServiceImpl extends RemittanceService {
             chequeInHandGlcode = chequeInHand.list().get(0).toString();
         if (!cardPaymentAccount.list().isEmpty())
             cardPaymentAccount.list().get(0).toString();
-        if (!onlinePaymentAccount.list().isEmpty())
-            onlinePaymentAccount.list().get(0).toString();
-
         collectionsUtil.getVoucherType();
         Boolean showRemitDate = false;
         BigDecimal totalCashAmt = BigDecimal.ZERO;
@@ -329,6 +321,7 @@ public class RemittanceServiceImpl extends RemittanceService {
 
     public List<ReceiptHeader> getRemittanceList(final ServiceDetails serviceDetails,
             final List<InstrumentHeader> instrumentHeaderList) {
+        System.out.println("getRemittanceList start");
         final List<ReceiptHeader> bankRemittanceList = new ArrayList<ReceiptHeader>();
         for (final InstrumentHeader instHead : instrumentHeaderList) {
             final List<ReceiptHeader> receiptHeaders = persistenceService.findAllByNamedQuery(
@@ -336,6 +329,7 @@ public class RemittanceServiceImpl extends RemittanceService {
                     serviceDetails.getCode());
             bankRemittanceList.addAll(receiptHeaders);
         }
+        System.out.println("getRemittanceList end remittance list size"+ bankRemittanceList.size());
         return bankRemittanceList;
     }
 
@@ -394,13 +388,13 @@ public class RemittanceServiceImpl extends RemittanceService {
                     if (voucherTypeForChequeDDCard)
                         financialsUtil.updateCheque_DD_Card_Deposit_Receipt(chequeMap);
                     else
-                        financialsUtil.updateCheque_DD_Card_Deposit(chequeMap);
+                        financialsUtil.updateCheque_DD_Card_Deposit(chequeMap,voucherHeader,instrumentHeaderCheque,depositedBankAccount);
                 }
             for (final InstrumentHeader instrumentHeaderCash : instrumentHeaderListCash)
                 if (voucherHeader.getId() != null && serviceGLCode != null) {
                     final Map<String, Object> cashMap = constructInstrumentMap(instrumentDepositMap,
                             depositedBankAccount, instrumentHeaderCash, voucherHeader, voucherDate);
-                    financialsUtil.updateCashDeposit(cashMap);
+                    financialsUtil.updateCashDeposit(cashMap,voucherHeader,instrumentHeaderCash,depositedBankAccount);
                 }
             remittancePersistService.update(remittance);
         }
@@ -477,7 +471,8 @@ public class RemittanceServiceImpl extends RemittanceService {
     }
 
     /**
-     * Method to find all the Cash,Cheque and DD type instruments with status as :new and
+     * Method to find all the Cash,Cheque and DD type instruments with status as
+     * :new and
      *
      * @return List of HashMap
      */
@@ -515,7 +510,8 @@ public class RemittanceServiceImpl extends RemittanceService {
         final String orderBy = " order by RECEIPTDATE";
 
         /**
-         * Query to get the collection of the instrument types Cash,Cheque,DD & Card for bank remittance
+         * Query to get the collection of the instrument types Cash,Cheque,DD &
+         * Card for bank remittance
          */
         final StringBuilder queryStringForCashChequeDDCard = new StringBuilder(queryBuilder + ",egeis_jurisdiction ujl"
                 + whereClauseBeforInstumentType + whereClauseForServiceAndFund + "it.TYPE in ");
@@ -576,7 +572,6 @@ public class RemittanceServiceImpl extends RemittanceService {
                                 arrayObjectInitialIndex[0]);
                         objHashMap.put(CollectionConstants.BANKREMITTANCE_SERVICETOTALCHEQUEAMOUNT, "");
                         objHashMap.put(CollectionConstants.BANKREMITTANCE_SERVICETOTALCARDPAYMENTAMOUNT, "");
-                        objHashMap.put(CollectionConstants.BANKREMITTANCE_SERVICETOTALONLINEPAYMENTAMOUNT, "");
                     }
                     if (arrayObjectInitialIndex[3].equals(CollectionConstants.INSTRUMENTTYPE_CHEQUE)
                             || arrayObjectInitialIndex[3].equals(CollectionConstants.INSTRUMENTTYPE_DD)) {
@@ -584,7 +579,6 @@ public class RemittanceServiceImpl extends RemittanceService {
                         objHashMap.put(CollectionConstants.BANKREMITTANCE_SERVICETOTALCHEQUEAMOUNT,
                                 arrayObjectInitialIndex[0]);
                         objHashMap.put(CollectionConstants.BANKREMITTANCE_SERVICETOTALCARDPAYMENTAMOUNT, "");
-                        objHashMap.put(CollectionConstants.BANKREMITTANCE_SERVICETOTALONLINEPAYMENTAMOUNT, "");
                     }
                 } else {
                     objHashMap = paramList.get(checknew);

@@ -63,7 +63,7 @@ public class ComplaintAdapter extends DataAdapter<Complaint> {
         jo.addProperty("status", complaint.getStatus().getName());
         jo.addProperty("lastModifiedBy", complaint.getLastModifiedBy().getUsername());
         jo.addProperty("lastModifiedDate", complaint.getLastModifiedDate().toString());
-        jo.addProperty("complainantName", complaint.getCreatedBy().getName());
+        jo.addProperty("complainantName", complaint.getComplainant().getName());
         
         if (complaint.getLat() > 0 && complaint.getLng() > 0) {
             jo.addProperty("lat", complaint.getLat());

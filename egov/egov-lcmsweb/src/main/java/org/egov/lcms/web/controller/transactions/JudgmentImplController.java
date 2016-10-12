@@ -102,10 +102,7 @@ public class JudgmentImplController {
             judgmentImpl.setJudgment(judgment);
         judgmentImplService.saveOrUpdate(judgmentImpl);
         model.addAttribute("mode", "create");
-        model.addAttribute("supportDocs",
-                !judgmentImpl.getAppeal().get(0).getAppealDocuments().isEmpty()
-                        && judgmentImpl.getAppeal().get(0).getAppealDocuments().get(0) != null
-                                ? judgmentImpl.getAppeal().get(0).getAppealDocuments().get(0).getSupportDocs() : null);
+        model.addAttribute("appealDocList", judgmentImplService.getAppealDocList(judgmentImpl));
         redirectAttrs.addFlashAttribute("judgmentImpl", judgmentImpl);
         model.addAttribute("message", "Judgment Implementation Created successfully.");
         return "judgmentimpl-success";

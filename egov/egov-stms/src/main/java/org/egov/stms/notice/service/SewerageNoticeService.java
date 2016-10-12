@@ -39,6 +39,8 @@
  */
 package org.egov.stms.notice.service;
 
+import static org.egov.ptis.constants.PropertyTaxConstants.FILESTORE_MODULE_NAME;
+
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
@@ -63,10 +65,12 @@ import java.util.zip.ZipOutputStream;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
+import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang.WordUtils;
 import org.apache.log4j.Logger;
 import org.egov.demand.model.EgDemand;
 import org.egov.demand.model.EgDemandDetails;
+import org.egov.demand.model.EgdmCollectedReceipt;
 import org.egov.eis.service.AssignmentService;
 import org.egov.eis.service.DesignationService;
 import org.egov.infra.admin.master.entity.Module;
@@ -82,7 +86,6 @@ import org.egov.infra.validation.exception.ValidationException;
 import org.egov.ptis.domain.model.AssessmentDetails;
 import org.egov.ptis.domain.model.OwnerName;
 import org.egov.ptis.domain.service.property.PropertyExternalService;
-import org.egov.stms.autonumber.SewerageCloseConnectionNoticeNumberGenerator;
 import org.egov.stms.masters.service.FeesDetailMasterService;
 import org.egov.stms.notice.entity.SewerageNotice;
 import org.egov.stms.transactions.entity.SewerageApplicationDetails;
@@ -343,8 +346,7 @@ public class SewerageNoticeService {
                 }
             } else{ 
                 if (sewerageApplicationDetails.getCurrentDemand() != null) {
-                    SewerageApplicationDetails oldSewerageApplicationDetails = sewerageApplicationDetailsService.findByConnection_ShscNumberAndIsActive(sewerageApplicationDetails.getConnection().getShscNumber());
-                    Map<String, BigDecimal> donationSewerageFeesDtls = getDonation_SewerageChargesForChangeInClosets(sewerageApplicationDetails.getCurrentDemand());
+                     Map<String, BigDecimal> donationSewerageFeesDtls = getFeesForChangeInClosets(sewerageApplicationDetails.getCurrentDemand());
                     estimationCharges = donationSewerageFeesDtls.get("estimationCharges");
                     donationCharges = donationSewerageFeesDtls.get("donationCharges");
                     sewerageCharges = donationSewerageFeesDtls.get("sewerageTax");
@@ -376,26 +378,28 @@ public class SewerageNoticeService {
         return reportService.createReport(reportInput);
     }
     
-  
-    public Map<String, BigDecimal> getDonation_SewerageChargesForChangeInClosets(final EgDemand demand) {
+    public Map<String, BigDecimal> getFeesForChangeInClosets(final EgDemand demand) {
         BigDecimal currentEstimationCharges = BigDecimal.ZERO;
 
         BigDecimal totalDontationCharge = BigDecimal.ZERO;
         BigDecimal totalSewerageTax = BigDecimal.ZERO;
 
         Map<String, BigDecimal> donationSewerageFees = new HashMap<String, BigDecimal>();
-
+        
         for (final EgDemandDetails dmdDtl : demand.getEgDemandDetails()) {
-            if (SewerageTaxConstants.FEES_DONATIONCHARGE_CODE
-                    .equalsIgnoreCase(dmdDtl.getEgDemandReason().getEgDemandReasonMaster().getCode())) {
-                totalDontationCharge=totalDontationCharge.add(dmdDtl.getAmount().subtract(dmdDtl.getAmtCollected()));
-            }
-            else if (SewerageTaxConstants.FEES_SEWERAGETAX_CODE
-                    .equalsIgnoreCase(dmdDtl.getEgDemandReason().getEgDemandReasonMaster().getCode())) {
-                totalSewerageTax=totalSewerageTax.add(dmdDtl.getAmount().subtract(dmdDtl.getAmtCollected()));
-            }else  if (SewerageTaxConstants.FEES_ESTIMATIONCHARGES_CODE 
-                    .equalsIgnoreCase(dmdDtl.getEgDemandReason().getEgDemandReasonMaster().getCode())) {
-                currentEstimationCharges=currentEstimationCharges.add(dmdDtl.getAmount().subtract(dmdDtl.getAmtCollected()));
+            
+            for(EgdmCollectedReceipt collectedReceipt : dmdDtl.getEgdmCollectedReceipts()){
+                if (SewerageTaxConstants.FEES_DONATIONCHARGE_CODE
+                        .equalsIgnoreCase(dmdDtl.getEgDemandReason().getEgDemandReasonMaster().getCode())) {
+                    totalDontationCharge=totalDontationCharge.add(collectedReceipt.getReasonAmount());
+                }
+                else if (SewerageTaxConstants.FEES_SEWERAGETAX_CODE
+                        .equalsIgnoreCase(dmdDtl.getEgDemandReason().getEgDemandReasonMaster().getCode())) {
+                    totalSewerageTax=totalSewerageTax.add(collectedReceipt.getReasonAmount());
+                }else  if (SewerageTaxConstants.FEES_ESTIMATIONCHARGES_CODE 
+                        .equalsIgnoreCase(dmdDtl.getEgDemandReason().getEgDemandReasonMaster().getCode())) {
+                    currentEstimationCharges=currentEstimationCharges.add(collectedReceipt.getReasonAmount());
+                }
             }
         }
         donationSewerageFees.put("donationCharges", totalDontationCharge);

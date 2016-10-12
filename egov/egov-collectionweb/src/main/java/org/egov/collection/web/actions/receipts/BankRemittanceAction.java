@@ -85,8 +85,8 @@ import org.springframework.beans.factory.annotation.Autowired;
         @Result(name = BankRemittanceAction.NEW, location = "bankRemittance-new.jsp"),
         @Result(name = BankRemittanceAction.PRINT_BANK_CHALLAN, type = "redirectAction", location = "remittanceStatementReport-printBankChallan.action", params = {
                 "namespace", "/reports", "totalCashAmount", "${totalCashAmount}", "totalChequeAmount",
-                "${totalChequeAmount}", "totalOnlineAmount", "${totalOnlineAmount}", "bank", "${bank}", "bankAccount",
-                "${bankAccount}", "remittanceDate", "${remittanceDate}" }),
+                "${totalChequeAmount}", "bank", "${bank}", "bankAccount", "${bankAccount}", "remittanceDate",
+                "${remittanceDate}" }),
         @Result(name = BankRemittanceAction.INDEX, location = "bankRemittance-index.jsp") })
 @ParentPackage("egov")
 public class BankRemittanceAction extends BaseFormAction {
@@ -102,7 +102,6 @@ public class BankRemittanceAction extends BaseFormAction {
     private String[] totalCardAmountArray;
     private String[] receiptDateArray;
     private String[] receiptNumberArray;
-    private String[] totalOnlineAmountArray;
     private String[] fundCodeArray;
     private String[] departmentCodeArray;
     private Integer accountNumberId;
@@ -123,7 +122,6 @@ public class BankRemittanceAction extends BaseFormAction {
     protected static final String PRINT_BANK_CHALLAN = "printBankChallan";
     private Double totalCashAmount;
     private Double totalChequeAmount;
-    private Double totalOnlineAmount;
     private List<CollectionBankRemittanceReport> bankRemittanceList;
     private String bank;
     private String bankAccount;
@@ -294,9 +292,8 @@ public class BankRemittanceAction extends BaseFormAction {
             throw new ValidationException(Arrays.asList(new ValidationError(
                     "Bank Account for the Service and Fund is not mapped", "bankremittance.error.bankaccounterror")));
         voucherHeaderValues = remittanceService.createBankRemittance(getServiceNameArray(), getTotalCashAmountArray(),
-                getTotalChequeAmountArray(), getTotalCardAmountArray(), getTotalOnlineAmountArray(),
-                getReceiptDateArray(), getFundCodeArray(), getDepartmentCodeArray(), accountNumberId, positionUser,
-                getReceiptNumberArray(), remittanceDate);
+                getTotalChequeAmountArray(), getTotalCardAmountArray(), getReceiptDateArray(), getFundCodeArray(),
+                getDepartmentCodeArray(), accountNumberId, positionUser, getReceiptNumberArray(), remittanceDate);
         final long elapsedTimeMillis = System.currentTimeMillis() - startTimeMillis;
         LOGGER.info("$$$$$$ Time taken to persist the remittance list (ms) = " + elapsedTimeMillis);
         bankRemittanceList = remittanceService.prepareBankRemittanceReport(voucherHeaderValues);
@@ -447,21 +444,6 @@ public class BankRemittanceAction extends BaseFormAction {
     }
 
     /**
-     * @return the totalOnlineAmountArray
-     */
-    public String[] getTotalOnlineAmountArray() {
-        return totalOnlineAmountArray;
-    }
-
-    /**
-     * @param totalOnlineAmountArray
-     *            the totalOnlineAmountArray to set
-     */
-    public void setTotalOnlineAmountArray(final String[] totalOnlineAmountArray) {
-        this.totalOnlineAmountArray = totalOnlineAmountArray;
-    }
-
-    /**
      * @return the fundCodeArray
      */
     public String[] getFundCodeArray() {
@@ -582,14 +564,6 @@ public class BankRemittanceAction extends BaseFormAction {
 
     public void setTotalChequeAmount(final Double totalChequeAmount) {
         this.totalChequeAmount = totalChequeAmount;
-    }
-
-    public Double getTotalOnlineAmount() {
-        return totalOnlineAmount;
-    }
-
-    public void setTotalOnlineAmount(final Double totalOnlineAmount) {
-        this.totalOnlineAmount = totalOnlineAmount;
     }
 
     public List<CollectionBankRemittanceReport> getBankRemittanceList() {

@@ -51,7 +51,7 @@
 		<div class="form-group">
 			<label class="col-sm-2 control-label text-right"><spring:message code="lbl.lineestimatenumber" /></label>
 			<div class="col-sm-3 add-margin">
-				<form:input path="lineEstimateNumber" id="lineEstimateNumber" class="form-control" placeholder="Type first 3 letters of Line Estimate Number"/>
+				<form:input path="lineEstimateNumber" id="lineEstimateNumber" class="form-control" placeholder="Type first 3 letters of Estimate Number"/>
 				<form:errors path="lineEstimateNumber" cssClass="add-margin error-msg" />
 			</div>
 			<label class="col-sm-2 control-label text-right"><spring:message code="lbl.department" /></label>

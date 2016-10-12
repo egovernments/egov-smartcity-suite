@@ -2043,31 +2043,6 @@ table.dataTable{
     }
 }
 
-table.dataTable thead th {
-    background-image: none !important;
-    border:1px solid #ccc;
-}
-
-table.dataTable thead th.sorting:after, table.dataTable th.sorting_asc:after, table.dataTable th.sorting_desc:after {
-    float:right;
-    font-family: FontAwesome;
-}
-
-table.dataTable#official_inbox thead th.sorting:not(:last-child):after, table.dataTable:not(#official_inbox) thead th.sorting:after {
-    content: "\f0dc";
-    color: @whitecolor;
-    .font-size(0.8em);
-    padding-top: 0.12em;
-}
-
-table.dataTable#official_inbox thead th.sorting_asc:not(:last-child):after, table.dataTable:not(#official_inbox) thead th.sorting_asc:after {
-    content: "\f0de";
-}
-
-table.dataTable#official_inbox thead th.sorting_desc:not(:last-child):after, table.dataTable:not(#official_inbox) thead th.sorting_desc:after {
-    content: "\f0dd";
-}
-
 .table-bordered{
     tbody > tr {
         @media (max-width: 768px){

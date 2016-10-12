@@ -58,4 +58,8 @@
             <column name="collectionheader" precision="22" scale="0" />
         </many-to-one>
     </class>
+    <query name="RECEIPT_VOUCHER_BY_RECEIPTID">
+	<![CDATA[
+	select rv from org.egov.collection.entity.ReceiptVoucher rv where rv.receiptHeader.id = ?]]>
+	</query>
 </hibernate-mapping>

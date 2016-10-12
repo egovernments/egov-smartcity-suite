@@ -277,6 +277,16 @@ $("#submit").click(function() {
     var rowCount = table.rows.length;
     var index = rowCount -2;
     var i;
+    
+    for(i=0; i<= rowCount-2; i++){
+    	var index1 = i;
+    	actualCollection = $('#demandDetailBeanList'+ index1 +'actualCollection').val();
+    	if(actualCollection != "")
+    		$('#demandDetailBeanList'+index1+'actualAmount').attr('required','required');
+    	else
+    		$('#demandDetailBeanList'+index1+'actualAmount').removeAttr('required');
+    }
+    
     for(i=0; i<= index; i++){
     	if($('#demandDetailBeanList'+i+'actualAmount').val() != ''){
     		var j=i+1;
@@ -293,7 +303,6 @@ $("#submit").click(function() {
     			
     	}
     }
-    	
     
 	if($('form').valid()){
 		if(!validateDemandDetailsOnSubmit()){

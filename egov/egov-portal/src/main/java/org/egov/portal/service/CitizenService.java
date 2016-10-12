@@ -44,7 +44,6 @@ import org.apache.commons.lang3.StringUtils;
 import org.egov.infra.admin.master.service.RoleService;
 import org.egov.infra.config.core.ApplicationThreadLocals;
 import org.egov.infra.config.properties.ApplicationProperties;
-import org.egov.infra.exception.ApplicationRuntimeException;
 import org.egov.infra.messaging.MessagingService;
 import org.egov.portal.entity.Citizen;
 import org.egov.portal.repository.CitizenRepository;
@@ -53,6 +52,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import static org.egov.infra.messaging.MessagePriority.HIGH;
 
 @Service
 @Transactional(readOnly = true)
@@ -112,7 +113,7 @@ public class CitizenService {
                             citizen.getEmailId(),
                             "Portal Registration Success",
                             String.format("Dear %s,\r\n You have successfully registered into our portal, you can use your registered mobile number " +
-                                            "as Username to login to our portal.\r\nRegards,\r\n%s", citizen.getName(), ApplicationThreadLocals.getMunicipalityName()));
+                                    "as Username to login to our portal.\r\nRegards,\r\n%s", citizen.getName(), ApplicationThreadLocals.getMunicipalityName()));
             messagingService.sendSMS(citizen.getMobileNumber(), "Your portal registration completed, please use your registered mobile number as Username to login");
         }
         return citizen;
@@ -125,13 +126,13 @@ public class CitizenService {
         citizenRepository.save(citizen);
     }
 
-    public void sendActivationMessage(final Citizen citizen) throws ApplicationRuntimeException {
+    public void sendActivationMessage(final Citizen citizen) {
         messagingService
                 .sendEmail(
                         citizen.getEmailId(),
                         "Portal Activation",
-                        String.format("Dear %s,\r\n Your Portal Activation Code is : %s", citizen.getName(),
+                        String.format("Dear %s,\r%n Your Portal Activation Code is : %s", citizen.getName(),
                                 citizen.getActivationCode()));
-        messagingService.sendSMS(citizen.getMobileNumber(), "Your Portal Activation Code is : " + citizen.getActivationCode());
+        messagingService.sendSMS(citizen.getMobileNumber(), "Your Portal Activation Code is : " + citizen.getActivationCode(), HIGH);
     }
 }

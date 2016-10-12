@@ -43,30 +43,24 @@ import java.math.BigDecimal;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
-import java.util.stream.Collectors;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 import javax.validation.Valid;
 import javax.validation.ValidationException;
 
-import org.apache.commons.lang3.ArrayUtils;
 import org.egov.commons.service.UOMService;
 import org.egov.eis.entity.Assignment;
 import org.egov.eis.service.AssignmentService;
 import org.egov.eis.web.contract.WorkflowContainer;
 import org.egov.eis.web.controller.workflow.GenericWorkFlowController;
 import org.egov.infra.admin.master.service.DepartmentService;
-import org.egov.infra.admin.master.service.UserService;
-import org.egov.infra.exception.ApplicationRuntimeException;
 import org.egov.infra.filestore.entity.FileStoreMapper;
 import org.egov.infra.filestore.service.FileStoreService;
 import org.egov.infra.security.utils.SecurityUtils;
@@ -76,9 +70,7 @@ import org.egov.ptis.domain.service.property.PropertyExternalService;
 import org.egov.stms.masters.entity.FeesDetailMaster;
 import org.egov.stms.masters.entity.enums.OwnerOfTheRoad;
 import org.egov.stms.masters.entity.enums.PropertyType;
-import org.egov.stms.masters.service.DocumentTypeMasterService;
 import org.egov.stms.masters.service.FeesDetailMasterService;
-import org.egov.stms.masters.service.SewerageApplicationTypeService;
 import org.egov.stms.transactions.charges.SewerageChargeCalculationService;
 import org.egov.stms.transactions.entity.SewerageApplicationDetails;
 import org.egov.stms.transactions.entity.SewerageApplicationDetailsDocument;
@@ -124,9 +116,6 @@ public class SewerageUpdateConnectionController extends GenericWorkFlowControlle
     private SecurityUtils securityUtils;
 
     @Autowired
-    private UserService userService;
-
-    @Autowired
     private AssignmentService assignmentService;
 
     @Autowired
@@ -141,12 +130,6 @@ public class SewerageUpdateConnectionController extends GenericWorkFlowControlle
     
     @Autowired
     private SewerageChargeCalculationService sewerageChargeCalculationService;
-    
-    @Autowired
-    private SewerageApplicationTypeService sewerageApplicationTypeService;
-    
-    @Autowired
-    private DocumentTypeMasterService documentTypeMasterService;
     
     @Autowired
     private SewerageConnectionFeeService SewerageConnectionFeeService;
@@ -165,7 +148,6 @@ public class SewerageUpdateConnectionController extends GenericWorkFlowControlle
 
     @Autowired
     private SewerageThirdPartyServices sewerageThirdPartyServices;
-
     
     @Autowired
     public SewerageUpdateConnectionController(
