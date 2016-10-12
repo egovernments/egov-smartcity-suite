@@ -40,6 +40,8 @@
 
 package org.egov.stms.transactions.service;
 
+import static org.egov.stms.utils.constants.SewerageTaxConstants.FEES_ADVANCE_CODE;
+
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -52,11 +54,9 @@ import java.util.Set;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 
-import org.apache.log4j.Logger;
 import org.egov.commons.Installment;
 import org.egov.commons.dao.InstallmentDao;
 import org.egov.demand.dao.DemandGenericDao;
-import org.egov.demand.dao.EgDemandDao;
 import org.egov.demand.model.BillReceipt;
 import org.egov.demand.model.EgDemand;
 import org.egov.demand.model.EgDemandDetails;
@@ -67,7 +67,6 @@ import org.egov.stms.transactions.entity.SewerageApplicationDetails;
 import org.egov.stms.transactions.entity.SewerageConnectionFee;
 import org.egov.stms.transactions.entity.SewerageDemandConnection;
 import org.egov.stms.transactions.entity.SewerageDemandDetail;
-import org.egov.stms.utils.SewerageTaxUtils;
 import org.egov.stms.utils.constants.SewerageTaxConstants;
 import org.hibernate.Query;
 import org.hibernate.Session;
@@ -78,7 +77,6 @@ import org.springframework.transaction.annotation.Transactional;
 @Service
 @Transactional(readOnly = true)
 public class SewerageDemandService {
-    private static final Logger LOGGER = Logger.getLogger(SewerageDemandService.class);
     @Autowired
     private InstallmentDao installmentDao;
 
@@ -86,13 +84,7 @@ public class SewerageDemandService {
     private DemandGenericDao demandGenericDao;
 
     @Autowired
-    private EgDemandDao egDemandDao;
-
-    @Autowired
     private ModuleService moduleService;
-
-    @Autowired
-    private SewerageTaxUtils sewerageTaxUtils;
 
     @PersistenceContext
     private EntityManager entityManager;
@@ -202,6 +194,21 @@ public class SewerageDemandService {
         return pendingTaxCollection;
 
     }
+    
+    public BigDecimal checkForPendingTaxAmountToCollect(final EgDemand demand) {
+        BigDecimal pendingTaxCollection = BigDecimal.ZERO;
+
+        if (demand != null){
+            for (final EgDemandDetails demandDtl : demand.getEgDemandDetails()){
+                if (!demandDtl.getEgDemandReason().getEgDemandReasonMaster().getCode().equals(FEES_ADVANCE_CODE) && demandDtl.getAmount().subtract(demandDtl.getAmtCollected()).compareTo(BigDecimal.ZERO) > 0) {
+                    pendingTaxCollection = pendingTaxCollection.add(demandDtl.getAmount().subtract(demandDtl.getAmtCollected()));
+                }
+            }
+        }
+        return pendingTaxCollection;
+
+    }
+    
     public Boolean checkAnyTaxIsPendingToCollectExcludingAdvance(final EgDemand demand) {
         Boolean taxPendingForCollection = false;
 

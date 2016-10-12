@@ -121,6 +121,7 @@ $(document).on('change', 'select.actiondropdown', function() {
 		}  
 	else if($(this).find(":selected").text()=="Close Sewerage Connection"){
 		var closeconnectionurl=$(this).val();
+		var consumerno = $(this).data('consumer-no');
 		jQuery.ajax({
 			url: "/stms/ajaxconnection/check-application-inworkflow/"+shscnumber,
 			type: "GET",
@@ -134,7 +135,7 @@ $(document).on('change', 'select.actiondropdown', function() {
 				return false;
 				}
 				else{
-					loadPropertyDetails(closeconnectionurl, $(this).data('consumer-no'), shscnumber,ptassessmentno);
+					loadPropertyDetails(closeconnectionurl, consumerno, shscnumber,ptassessmentno);
 				}
 			},
 			error: function (response) {
@@ -170,7 +171,6 @@ function submitButton() {
 	.done(function(searchResult) {
 	tableContainer.dataTable({
 	destroy : true,
-	"sPaginationType" : "bootstrap",
 	"sDom": "<'row'<'col-xs-12 hidden col-right'f>r>t<'row'<'col-md-6 col-xs-12'i><'col-md-3 col-xs-6'l><'col-md-3 col-xs-6 text-right'p>>",
 	"aLengthMenu" : [[10,25,50,-1 ],[10,25,50,"All" ] ],
 	"autoWidth" : false,

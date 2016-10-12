@@ -68,7 +68,9 @@ import org.egov.ptis.constants.PropertyTaxConstants;
 import org.egov.ptis.domain.dao.property.PropertyStatusDAO;
 import org.egov.ptis.domain.entity.objection.RevisionPetition;
 import org.egov.ptis.domain.entity.property.PropertyOwnerInfo;
+import org.egov.ptis.domain.service.property.PropertyService;
 import org.egov.ptis.domain.service.property.SMSEmailService;
+import org.egov.ptis.service.utils.PropertyTaxCommonUtils;
 import org.hibernate.Criteria;
 import org.hibernate.criterion.Restrictions;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -100,6 +102,12 @@ public class RevisionPetitionService extends PersistenceService<RevisionPetition
     @Autowired
     private MessagingService messagingService;
     private SMSEmailService sMSEmailService;
+    
+    @Autowired
+    private PropertyTaxCommonUtils propertyTaxCommonUtils;
+    
+    @Autowired
+    private PropertyService propertyService;
 
 
     public RevisionPetitionService() {
@@ -313,6 +321,25 @@ public class RevisionPetitionService extends PersistenceService<RevisionPetition
     public RevisionPetition createRevisionPetition(RevisionPetition objection, HashMap<String, String> meesevaParams){
         createRevisionPetition(objection);
         return objection;
+    }
+    
+    public Assignment getWorkflowInitiator(RevisionPetition objection) {
+        Assignment wfInitiator=null;
+        if (propertyService.isEmployee(objection.getCreatedBy())){
+                if(objection.getState() != null  && objection.getState().getInitiatorPosition() != null)
+                    wfInitiator = propertyTaxCommonUtils.getUserAssignmentByPassingPositionAndUser(objection
+                    .getCreatedBy(),objection.getState().getInitiatorPosition());
+                else 
+                    wfInitiator = assignmentService.getPrimaryAssignmentForUser(objection.getCreatedBy().getId());
+        }
+        else if (!objection.getStateHistory().isEmpty())
+            wfInitiator = assignmentService.getPrimaryAssignmentForPositon(objection.getStateHistory().get(0)
+                    .getOwnerPosition().getId());
+        else{
+            wfInitiator = assignmentService.getPrimaryAssignmentForPositon(objection.getState().getOwnerPosition()
+                    .getId());
+        }
+        return wfInitiator;
     }
 
 }

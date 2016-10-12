@@ -147,7 +147,7 @@ $(document).ready(function () {
     	        });
     	    });
     		$trLast.after($trNew);
-        	$trNew.find('input').val('').removeAttr('disabled');
+        	$trNew.find('input').val('').removeAttr('disabled').addClass('dynamicInput');
             $trNew.find('input.markedForRemoval').val('false');
         	dateinitialize();
     	}
@@ -170,7 +170,7 @@ $(document).ready(function () {
     }
     
     $(document).on('click','#deleterow',function(){
-    	var length = $('#configs').find("tbody tr").length;
+    	var length = $('#configs').find("tbody tr:visible").length;
     	if(length == 1){
     		bootbox.alert('First row cannot be deleted!');
     	}else{
@@ -193,8 +193,32 @@ $(document).ready(function () {
                  idx++;
                  });
             } else {
-                $(this).closest('tr').find('input[type=hidden]').val('true');
-                $(this).closest('tr').hide();
+                if($(this).closest('tr').find('input').hasClass('dynamicInput')){
+                	console.log('Dynamic Row deleted');
+                	$(this).closest('tr').remove();
+                    var idx=0;
+                    //regenerate index existing inputs in table row
+                    jQuery("#configs tbody tr").each(function() {
+                     jQuery(this).find("input").each(function() {
+                     jQuery(this).attr({
+                     'id': function(_, id) {
+                     return id.replace(/\[.\]/g, '['+ idx +']');
+                     },
+                     'name': function(_, name) {
+                     return name.replace(/\[.\]/g, '['+ idx +']');
+                     }
+                     });
+                     });
+
+                     idx++;
+                     });
+                }
+                else{
+                	console.log('Existing Row deleted');
+                	$(this).closest('tr').find('input[type=hidden]').val('true');
+                	$(this).closest('tr').hide();
+                }
+                
             }
     		
     	}

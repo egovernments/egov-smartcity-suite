@@ -80,7 +80,8 @@ public class DBMigrationConfiguration {
             boolean devMode = applicationProperties.devMode();
             cities.parallelStream().forEach(schema -> {
                 if (devMode)
-                    migrateDatabase(schema, dataSource, MAIN_MIGRATION_FILE_PATH, SAMPLE_MIGRATION_FILE_PATH);
+                    migrateDatabase(schema, dataSource, MAIN_MIGRATION_FILE_PATH, SAMPLE_MIGRATION_FILE_PATH,
+                            format(TENANT_MIGRATION_FILE_PATH, schema));
                 else
                     migrateDatabase(schema, dataSource, MAIN_MIGRATION_FILE_PATH, format(TENANT_MIGRATION_FILE_PATH, schema));
             });

@@ -274,13 +274,13 @@ public class RestWaterConnectionCollection {
         }
         if (waterConnDetailsObj != null && waterConnDetailsObj.getConnectionType().equals(ConnectionType.NON_METERED)) {
             final BigDecimal totalAmountDue = waterConnectionDetailsService.getTotalAmount(waterConnDetailsObj);
-            LOG.error("totalAmountDue:" + totalAmountDue);
+            LOG.info("totalAmountDue:" + totalAmountDue);
 
-            LOG.error("payWaterTaxDetails.getTotalAmount():" + payWaterTaxDetails.getTotalAmount());
+            LOG.info("payWaterTaxDetails.getTotalAmount():" + payWaterTaxDetails.getTotalAmount());
 
-            LOG.error("compare " + totalAmountDue.compareTo(payWaterTaxDetails.getTotalAmount()));
+            LOG.info("compare " + totalAmountDue.compareTo(payWaterTaxDetails.getTotalAmount()));
 
-            LOG.error("compare " + totalAmountDue.compareTo(payWaterTaxDetails.getTotalAmount()));
+            LOG.info("compare " + totalAmountDue.compareTo(payWaterTaxDetails.getTotalAmount()));
 
 
         }

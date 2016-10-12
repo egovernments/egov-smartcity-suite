@@ -221,9 +221,9 @@ public class SewerageAjaxConnectionController {
             {
                 return messageSource.getMessage("err.validate.donationamount.notexistForBothcombination", new String[]{propertyType.toString()},null);
              }
-            else if(residentialAmount==null)
+            else if(residentialAmount==null && noofclosetsresidential!=null)
                 return messageSource.getMessage("err.validate.donationamount.notexist", new String[] {PropertyType.RESIDENTIAL.toString(), noofclosetsresidential.toString()},null);
-            else if(nonResidentialAmount==null)
+            else if(nonResidentialAmount==null && noofclosetsnonresidential!=null)
                 return messageSource.getMessage("err.validate.donationamount.notexist", new String[] {PropertyType.NON_RESIDENTIAL.toString(), noofclosetsnonresidential.toString()},null);
         }
         return legacyDonationAmount.toString();
