@@ -115,7 +115,7 @@ public class CommonController extends ApiController {
             citizenCreate.setMobileNumber(citizen.get("mobileNumber").toString());
             citizenCreate.setName(citizen.get("name").toString());
             
-	   if(citizen.get("emailId")!=null||!citizen.get("emailId").toString().trim().equals(""))
+	   if(citizen.get("emailId")!=null && !citizen.get("emailId").toString().trim().equals(""))
               citizenCreate.setEmailId(citizen.get("emailId").toString());
 	    
 		
