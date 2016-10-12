@@ -55,7 +55,6 @@ $(document)
 						type : 'GET',
 						responsive : true,
 						destroy : true,
-						"sPaginationType" : "bootstrap",
 						"bPaginate": false,
 						"bInfo": false,
 						"autoWidth" : false,

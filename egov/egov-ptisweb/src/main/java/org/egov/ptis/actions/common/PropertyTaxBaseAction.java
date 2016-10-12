@@ -593,11 +593,13 @@ public abstract class PropertyTaxBaseAction extends GenericWorkFlowAction {
                         .concat(assignment.getPosition().getName());
             }
         }
-        if (null != property.getId())
+        if (property.getId() != null)
             wfInitiator = propertyService.getWorkflowInitiator(property);
+        else
+            wfInitiator = propertyTaxCommonUtils.getWorkflowInitiatorAssignment(user.getId());
 
         if (WFLOW_ACTION_STEP_REJECT.equalsIgnoreCase(workFlowAction)) {
-            if (wfInitiator.equals(userAssignment)) {
+            if (wfInitiator.getPosition().equals(property.getState().getOwnerPosition())) {
                 property.transition(true).end().withSenderName(user.getUsername() + "::" + user.getName())
                         .withComments(approverComments).withDateInfo(currentDate.toDate());
                 property.setStatus(STATUS_CANCELLED);
@@ -606,9 +608,9 @@ public abstract class PropertyTaxBaseAction extends GenericWorkFlowAction {
                 final String stateValue = property.getCurrentState().getValue().split(":")[0] + ":" + WF_STATE_REJECTED;
                 property.transition(true).withSenderName(user.getUsername() + "::" + user.getName())
                         .withComments(approverComments).withStateValue(stateValue).withDateInfo(currentDate.toDate())
-                        .withOwner(wfInitiator.getPosition()).withNextAction(
-                        		property.getBasicProperty().getSource().equals(SOURCEOFDATA_MOBILE)?
-                        				UD_REVENUE_INSPECTOR_APPROVAL_PENDING : WF_STATE_ASSISTANT_APPROVAL_PENDING);
+                        .withOwner(wfInitiator!=null ? wfInitiator.getPosition() : null).withNextAction(
+                                        property.getBasicProperty().getSource().equals(SOURCEOFDATA_MOBILE)?
+                                                        UD_REVENUE_INSPECTOR_APPROVAL_PENDING : WF_STATE_ASSISTANT_APPROVAL_PENDING);
             }
 
         } else {
@@ -624,7 +626,7 @@ public abstract class PropertyTaxBaseAction extends GenericWorkFlowAction {
                 property.transition().start().withSenderName(user.getUsername() + "::" + user.getName())
                         .withComments(approverComments).withStateValue(wfmatrix.getNextState())
                         .withDateInfo(currentDate.toDate()).withOwner(pos).withNextAction(wfmatrix.getNextAction())
-                        .withNatureOfTask(nature);
+                        .withNatureOfTask(nature).withInitiator(wfInitiator!=null ?wfInitiator.getPosition():null);
             } else if (property.getCurrentState().getNextAction().equalsIgnoreCase("END"))
                 property.transition(true).end().withSenderName(user.getUsername() + "::" + user.getName())
                         .withComments(approverComments).withDateInfo(currentDate.toDate());

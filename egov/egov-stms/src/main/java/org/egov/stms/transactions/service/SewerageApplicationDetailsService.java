@@ -888,5 +888,11 @@ public class SewerageApplicationDetailsService {
     public SewerageApplicationDetails checkModifyClosetInProgress(final String shscNumber){
       return sewerageApplicationDetailsRepository.getSewerageApplicationInWorkFlow(shscNumber);
     }
+    
+    public BigDecimal getPendingTaxAmount(final SewerageApplicationDetails sewerageApplicationDetails){
+        BigDecimal taxPending = BigDecimal.ZERO;
+        taxPending = sewerageDemandService.checkForPendingTaxAmountToCollect(sewerageApplicationDetails.getCurrentDemand());
+        return taxPending;
+    }
 
 }

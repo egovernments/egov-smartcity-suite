@@ -330,7 +330,7 @@ public class CommonController extends ApiController {
             device.setLastModifiedDate(new Date());
             deviceRepository.save(device);
             
-            return res.setDataAdapter(new UserAdapter()).success("Log recorded successfully!", this.getMessage("log.success"));
+            return res.setDataAdapter(new UserAdapter()).success(getMessage("log.success"), this.getMessage("log.success"));
             
         } catch (Exception e) {
         	LOGGER.error("EGOV-API ERROR ",e);
