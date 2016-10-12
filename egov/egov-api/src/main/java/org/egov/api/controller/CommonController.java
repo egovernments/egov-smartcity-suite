@@ -115,10 +115,9 @@ public class CommonController extends ApiController {
             citizenCreate.setMobileNumber(citizen.get("mobileNumber").toString());
             citizenCreate.setName(citizen.get("name").toString());
             
-	    if(citizen.get("emailId")!=null){
-            	if(!citizen.get("emailId").toString().equals(""))
-            	citizenCreate.setEmailId(citizen.get("emailId").toString());
-	    }
+	   if(citizen.get("emailId")!=null||!citizen.get("emailId").toString().trim().equals(""))
+              citizenCreate.setEmailId(citizen.get("emailId").toString());
+	    
 		
             citizenCreate.setPassword(citizen.get("password").toString());
             Device device = deviceRepository.findByDeviceUId(citizen.get("deviceId").toString());
