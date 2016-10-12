@@ -51,7 +51,7 @@ import org.springframework.data.elasticsearch.annotations.FieldType;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 
-@Document(indexName = "collection", type = "collection_bifurcation")
+@Document(indexName = "receipts", type = "receipts_bifurcation")
 public class CollectionIndex {
 
 	@Id

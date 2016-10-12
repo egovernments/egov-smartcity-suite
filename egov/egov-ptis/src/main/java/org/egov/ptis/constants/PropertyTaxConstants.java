@@ -1498,6 +1498,7 @@ public interface PropertyTaxConstants {
 	public static final String COLLECION_BILLING_SERVICE_PT = "Property Tax";
 	public static final String COLLECION_BILLING_SERVICE_WTMS = "Water Tax";
 	
-	public static final String PROPERTY_TAX_INDEX_NAME = "apptis";
-	public static final String COLLECTION_INDEX_NAME = "collection";
+	public static final String PROPERTY_TAX_INDEX_NAME = "propertytax";
+	public static final String COLLECTION_INDEX_NAME = "receipts";
+	public static final String WATER_TAX_INDEX_NAME = "waterconncharges";
 }

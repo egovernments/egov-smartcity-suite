@@ -40,10 +40,13 @@
 
 package org.egov.ptis.service.elasticsearch;
 
+import static org.egov.ptis.constants.PropertyTaxConstants.BIGDECIMAL_100;
 import static org.egov.ptis.constants.PropertyTaxConstants.PROPERTY_TAX_INDEX_NAME;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
 
@@ -207,8 +210,8 @@ public class PropertyTaxElasticSearchIndexService {
 	public TaxPayerResponseDetails getTopTenTaxPerformers(CollectionDetailsRequest collectionDetailsRequest){
 		
 	    TaxPayerResponseDetails topTaxPerformers = new TaxPayerResponseDetails(); 
-		List<TaxPayerDetails> taxProducers = returnUlbWiseAggregationResults(collectionDetailsRequest, PROPERTY_TAX_INDEX_NAME, false,"total_collection");
-		List<TaxPayerDetails> taxAchievers = returnUlbWiseAggregationResults(collectionDetailsRequest, PROPERTY_TAX_INDEX_NAME, false,"avg_achievement");
+		List<TaxPayerDetails> taxProducers = returnUlbWiseAggregationResults(collectionDetailsRequest, PROPERTY_TAX_INDEX_NAME, false,"total_collection",10);
+		List<TaxPayerDetails> taxAchievers = returnUlbWiseAggregationResults(collectionDetailsRequest, PROPERTY_TAX_INDEX_NAME, false,"avg_achievement",120);
 		
 		topTaxPerformers.setProducers(taxProducers);
 		topTaxPerformers.setAchievers(taxAchievers);
@@ -223,8 +226,8 @@ public class PropertyTaxElasticSearchIndexService {
 	 */
 	public TaxPayerResponseDetails getBottomTenTaxPerformers(CollectionDetailsRequest collectionDetailsRequest){
 		TaxPayerResponseDetails topTaxPerformers = new TaxPayerResponseDetails(); 
-		List<TaxPayerDetails> taxProducers = returnUlbWiseAggregationResults(collectionDetailsRequest, PROPERTY_TAX_INDEX_NAME, true,"total_collection");
-		List<TaxPayerDetails> taxAchievers = returnUlbWiseAggregationResults(collectionDetailsRequest, PROPERTY_TAX_INDEX_NAME, true,"avg_achievement");
+		List<TaxPayerDetails> taxProducers = returnUlbWiseAggregationResults(collectionDetailsRequest, PROPERTY_TAX_INDEX_NAME, true,"total_collection",10);
+		List<TaxPayerDetails> taxAchievers = returnUlbWiseAggregationResults(collectionDetailsRequest, PROPERTY_TAX_INDEX_NAME, true,"avg_achievement",120);
 		
 		topTaxPerformers.setProducers(taxProducers);
 		topTaxPerformers.setAchievers(taxAchievers);
@@ -241,18 +244,17 @@ public class PropertyTaxElasticSearchIndexService {
 	 * @return
 	 */
 	public List<TaxPayerDetails> returnUlbWiseAggregationResults(CollectionDetailsRequest collectionDetailsRequest,
-			String indexName,Boolean order,String orderingAggregationName){
+			String indexName,Boolean order,String orderingAggregationName,int size){
 		List<TaxPayerDetails> taxPayers = new ArrayList<>();
 		BoolQueryBuilder boolQuery = prepareWhereClause(collectionDetailsRequest);
 
 		//orderingAggregationName is the aggregation name by which we have to order the results 
 		//IN this case can be one of "totaldemand" or "total_collection" or "avg_achievement"
 		AggregationBuilder aggregation = AggregationBuilders.terms("by_aggregationField").field("cityname")
-				.size(10)
+				.size(size)
 				.order(Terms.Order.aggregation(orderingAggregationName,order))
 				.subAggregation(AggregationBuilders.sum("totaldemand").field("totaldemand"))
-			    .subAggregation(AggregationBuilders.sum("total_collection").field("totalcollection"))
-			    .subAggregation(AggregationBuilders.avg("avg_achievement").field("achievement"));
+			    .subAggregation(AggregationBuilders.sum("total_collection").field("totalcollection"));
 		
 		
 		SearchQuery searchQueryColl = new NativeSearchQueryBuilder().withIndices(indexName)
@@ -288,15 +290,13 @@ public class PropertyTaxElasticSearchIndexService {
 				noOfMonths = 1;
 			Sum totalDemandAggregation = entry.getAggregations().get("totaldemand");
 			Sum totalCollectionAggregation = entry.getAggregations().get("total_collection");
-			Avg totalAchievement = entry.getAggregations().get("avg_achievement");
 			BigDecimal totalDemandValue = BigDecimal.valueOf(totalDemandAggregation.getValue()).setScale(0, BigDecimal.ROUND_HALF_UP);
 			BigDecimal totalCollections = BigDecimal.valueOf(totalCollectionAggregation.getValue()).setScale(0, BigDecimal.ROUND_HALF_UP);
 			BigDecimal proportionalDemand = (totalDemandValue.divide(BigDecimal.valueOf(12),BigDecimal.ROUND_HALF_UP)).multiply(BigDecimal.valueOf(noOfMonths));
 			taxDetail.setTotalDmd(totalDemandValue);
 			taxDetail.setCytdColl(totalCollections);
 			taxDetail.setCytdDmd(proportionalDemand);
-//			taxDetail.setAchievement((totalCollections.divide(proportionalDemand,2,BigDecimal.ROUND_HALF_UP)).multiply(BigDecimal.valueOf(100)));
-			taxDetail.setAchievement(BigDecimal.valueOf(totalAchievement.getValue()).setScale(2, BigDecimal.ROUND_HALF_UP));
+			taxDetail.setAchievement(totalCollections.multiply(BIGDECIMAL_100).divide(proportionalDemand,BigDecimal.ROUND_HALF_UP));
 			taxDetail.setCytdBalDmd(proportionalDemand.subtract(totalCollections));
 			BigDecimal lastYearCollection = collectionIndexElasticSearchService.getTotalCollectionsForDatesForUlb(collectionDetailsRequest, lastYearFromDate, lastYearToDate,fieldName);
 			taxDetail.setLytdColl(lastYearCollection);
@@ -308,6 +308,14 @@ public class PropertyTaxElasticSearchIndexService {
 			    variation = (((totalCollections.subtract(lastYearCollection)).multiply(BigDecimal.valueOf(100))).divide(lastYearCollection,BigDecimal.ROUND_HALF_UP));
 			taxDetail.setLyVar(variation);
 			taxPayers.add(taxDetail);
+		}
+		return returnTopResults(taxPayers,size);
+	}
+	
+	private List<TaxPayerDetails> returnTopResults(List<TaxPayerDetails> taxPayers,int size){
+		if(size > 10){
+			Collections.sort(taxPayers,Collections.reverseOrder());
+			return taxPayers.subList(0, 9);
 		}
 		return taxPayers;
 	}

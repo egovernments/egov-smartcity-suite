@@ -46,7 +46,7 @@ import org.springframework.data.elasticsearch.annotations.Field;
 import org.springframework.data.elasticsearch.annotations.FieldIndex;
 import org.springframework.data.elasticsearch.annotations.FieldType;
 
-@Document(indexName = "apptis", type = "ptisdetails")
+@Document(indexName = "propertytax", type = "propertytaxdetails")
 public class PropertyTaxIndex {
 
 	@Id
@@ -172,7 +172,9 @@ public class PropertyTaxIndex {
 	@Field(type = FieldType.Double)
 	private Double currentinterestcollection;
 	
-
+	@Field(type = FieldType.Double)
+	private Double currentyearcoll;
+	
 	public Double getBuiltuparea() {
 		return builtuparea;
 	}
@@ -500,5 +502,13 @@ public class PropertyTaxIndex {
 
 	public void setCurrentinterestcollection(Double currentinterestcollection) {
 		this.currentinterestcollection = currentinterestcollection;
+	}
+
+	public Double getCurrentyearcoll() {
+		return currentyearcoll;
+	}
+
+	public void setCurrentyearcoll(Double currentyearcoll) {
+		this.currentyearcoll = currentyearcoll;
 	}
 }

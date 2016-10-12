@@ -40,6 +40,8 @@
 
 package org.egov.ptis.service.elasticsearch;
 
+import static org.egov.ptis.constants.PropertyTaxConstants.WATER_TAX_INDEX_NAME;
+
 import java.math.BigDecimal;
 
 import org.egov.ptis.repository.elasticsearch.WaterTaxIndexRepository;
@@ -53,7 +55,6 @@ import org.springframework.data.elasticsearch.core.ResultsExtractor;
 import org.springframework.data.elasticsearch.core.query.NativeSearchQueryBuilder;
 import org.springframework.data.elasticsearch.core.query.SearchQuery;
 import org.springframework.stereotype.Service;
-
 @Service
 public class WaterTaxElasticSearchIndexService {
 
@@ -73,7 +74,7 @@ public class WaterTaxElasticSearchIndexService {
 	 */
 	public BigDecimal getTotalDemand(){
 		SearchQuery searchQuery = new NativeSearchQueryBuilder()
-				.withIndices("watercharges")
+				.withIndices(WATER_TAX_INDEX_NAME)
 				.addAggregation(AggregationBuilders.sum("totaldemand").field("currentDemand"))
 				.build();
 

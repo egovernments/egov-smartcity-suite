@@ -50,7 +50,7 @@ import org.springframework.data.elasticsearch.annotations.FieldType;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 
-@Document(indexName = "watercharges", type = "connectionsearch")
+@Document(indexName = "waterconncharges", type = "watercharges_details")
 public class WaterTaxIndex {
 
 	@JsonFormat (shape = JsonFormat.Shape.STRING, pattern ="yyyy-MM-dd'T'HH:mm'Z'")
