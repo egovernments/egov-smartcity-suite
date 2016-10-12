@@ -43,21 +43,11 @@
 <%@ taglib uri="http://www.springframework.org/tags" prefix="spring"%>
 <%@ taglib uri="http://www.springframework.org/tags/form" prefix="form"%>
 
-<script
-	src="<c:url value='/resources/global/js/bootstrap/bootstrap.js' context='/egi'/>"></script>
-<link rel="stylesheet"
-	href="<c:url value='/resources/global/css/bootstrap/bootstrap-datepicker.css' context='/egi'/>" />
-<script
-	src="<c:url value='/resources/global/js/bootstrap/bootstrap-datepicker.js' context='/egi'/>"></script>
 
-
+<form:form role="form" method="post" cssClass="form-horizontal form-groups-bordered" id="usageform" modelAttribute="registration">
 <div class="row" id="page-content">
-	<div class="col-md-12">
-        <c:if test="${not empty message}">
-            <div class="alert alert-success" role="alert"><spring:message code="${message}"/></div>
-        </c:if>
         
-		<form:form role="form" method="post" cssClass="form-horizontal form-groups-bordered" id="usageform" modelAttribute="searchModel">
+		
 			<div class="panel panel-primary" data-collapsed="0">
 				<div class="panel-heading">
 					<div class="panel-title">
@@ -89,26 +79,26 @@
 									code="lbl.husband.name" /></label>
 	
 							<div class="col-sm-3 add-margin">
-								<form:input id="husbandName" path="husbandName" type="text" cssClass="form-control is_valid_alphabet" />
-								<form:errors path="husbandName" cssClass="error-msg"/>
+								<form:input id="husbandName" path="husband" type="text" cssClass="form-control is_valid_alphabet" />
+								<form:errors path="husband" cssClass="error-msg"/>
 							</div>
 							<label for="field1" class="col-sm-2 control-label"><spring:message
-									code="lbl.husband.name" /></label>
+									code="lbl.wife.name" /></label>
 	
 							<div class="col-sm-3 add-margin">
-								<form:input id="wifeName" path="wifeName" type="text" cssClass="form-control is_valid_alphabet" />
-								<form:errors path="wifeName" cssClass="error-msg"/>
+								<form:input id="wifeName" path="wife" type="text" cssClass="form-control is_valid_alphabet" />
+								<form:errors path="wife" cssClass="error-msg"/>
 							</div>
 						</div>
 					</div>
 					<div class="row">
 
 						<div class="form-group">
-							<label for="dateOfMarriage" class="col-sm-2 control-label"><spring:message code="lbl.date.of.marriage" /></label>
+							<label for="dateOfMarriage" class="col-sm-2 control-label"><spring:message code="lbl.application.date" /></label>
 	
 							<div class="col-sm-3 add-margin">
-								<form:input id="registrationDate" path="registrationDate" type="text" cssClass="form-control datepicker" data-date-today-highlight="true" data-date-end-date="0d" />
-								<form:errors path="registrationDate" cssClass="error-msg"/>
+								<form:input id="registrationDate" path="applicationDate" type="text" cssClass="form-control datepicker" data-date-today-highlight="true" data-date-end-date="0d" />
+								<form:errors path="applicationDate" cssClass="error-msg"/>
 							</div>
 						</div>
 					</div>
@@ -124,37 +114,41 @@
 						onclick="self.close()"><spring:message code="lbl.close" /></a>
 				</div>
 			</div>
-		</form:form>
-		</div>
+		
 </div>
+</form:form>
 <br /><br />
-<div class="row" style="display:none;" id="table_container">   
-	<div class="col-md-6 col-xs-6 table-header text-left">The Search result is</div>             
-	<div class="col-sm-12">
-	    <table class="table table-bordered table-striped datatable" id="registration_table">
+<div class="row display-hide report-section" id="table_container">   
+	<div class="col-md-12 table-header text-left">The Search result is</div>             
+	<div class="col-md-12 form-group report-table-container">
+	    <table class="table table-bordered table-hover multiheadertbl" id="registration_table">
 	    	<thead>
 	    		<tr>
-	    			<th>id</th><th>Registration No</th><th>Registration Date</th><th>Marriage Date</th><th>Husband Name</th><th>Wife Name</th>
-	    			<th>Is Certificate issued?</th><th>Status</th><th>Marriage Fee</th><th>Is fee collected?</th><th>Action</th>
+	    			<th>Registration No</th>
+	    			<th>Registration Date</th>
+	    			<th>Marriage Date</th>
+	    			<th>Husband Name</th>
+	    			<th>Wife Name</th>
+	    			<th>Is Certificate issued?</th>
+	    			<th>Marriage Fee</th>
+	    			<th>Is fee collected?</th>
+	    			<th>Status</th>
+	    			<th>Action</th>
 	    		</tr>
 	    	</thead>
-	    	<tbody>
-	    	</tbody>
 		</table>
 	</div>
 </div>
-<%-- <div class="row hidden" id="btn_searchresults">
-	<div class="text-center">					
-		<button type="submit" class="btn btn-primary disabled" id="btn_viewdetails"><spring:message code="lbl.view.details"/></button>
-		<c:if test="${isCollectionOperator}">
-			<button type="submit" class="btn btn-primary disabled" id="btn_collectfee"><spring:message code="lbl.collect.fee"/></button>
-		</c:if>
-	</div>
-</div> --%>
-						
-						
+
+
+<script
+	src="<c:url value='/resources/global/js/bootstrap/bootstrap.js' context='/egi'/>"></script>
+<link rel="stylesheet"
+	href="<c:url value='/resources/global/css/bootstrap/bootstrap-datepicker.css' context='/egi'/>" />
+<script
+	src="<c:url value='/resources/global/js/bootstrap/bootstrap-datepicker.js' context='/egi'/>"></script>	
 <script	src="<c:url value='/resources/global/js/jquery/plugins/datatables/jquery.dataTables.min.js' context='/egi'/>"></script>
 <script	src="<c:url value='/resources/global/js/jquery/plugins/datatables/responsive/js/datatables.responsive.js' context='/egi'/>"></script>
 <script	src="<c:url value='/resources/global/js/jquery/plugins/datatables/dataTables.bootstrap.js' context='/egi'/>"></script>
-
+				
 <script src="<c:url value='/resources/js/app/registrationsearch.js'/> "></script>

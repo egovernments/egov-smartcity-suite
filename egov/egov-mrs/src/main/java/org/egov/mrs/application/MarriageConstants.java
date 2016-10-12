@@ -58,5 +58,7 @@ public class MarriageConstants {
     public static final String WFLOW_ACTION_STEP_FORWARD = "Forward";
     public static final String WFLOW_ACTION_STEP_APPROVE = "Approve";
     public static final String WFLOW_ACTION_STEP_PRINTCERTIFICATE = "Print Certificate";
+    
+    public static final String APPROVED = "APPROVED";
 
 }

@@ -43,53 +43,8 @@
 <%@ taglib uri="http://www.springframework.org/tags/form" prefix="form"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
 
-<script src="<c:url value='/resources/js/app/viewregistration.js'/> "></script>
 
-<!-- <style>
-	ul.nav-tabs > li.active>a:after {
-		background: none !important;
-	}
-	ul.nav-tabs-top > li.active > a:after {
-	    display: block;
-	    content: '';
-	    position: absolute;
-	    bottom: 0;
-	    left: 0;
-	    width: 100%;
-	    height: 4px;
-	    background: #F67B00;
-	}
-	
-	ul.nav-tabs-bottom > li.active > a:before {
-	    display: block;
-	    content: '';
-	    position: absolute;
-	    top: 0;
-	    left: 0;
-	    width: 100%;
-	    height: 4px;
-	    background: #F67B00;
-	}
-	
-	media (min-width: 768px)
-	.nav-tabs.nav-justified > li > a {
-	}
-	
-	media (min-width: 768px)
-	.nav-tabs.nav-justified.nav-tabs-top > li > a {
-	    border-bottom: 1px solid #ddd;
-	    border-radius: 4px 4px 0 0;
-	}
-	
-	media (min-width: 768px)
-	.nav-tabs.nav-justified.nav-tabs-bottom > li > a {
-	    border-top: 1px solid #ddd;
-	    border-radius: 4px 4px 0 0;
-	}
-
-
-</style>
- --><div class="row">
+<div class="row">
 	<div class="col-md-12"> 
 		<div class="text-right error-msg" style="font-size:14px;"></div>
 		
@@ -141,7 +96,9 @@
 				</div>
 			</div>
 			stateValue : <c:out value="${stateValue}"></c:out>
-			<c:choose>
+			
+			<div class="buttonbottom" align="center"><a href="javascript:void(0)" class="btn btn-default" onclick="self.close()"><spring:message code="lbl.close"/></a></div>
+			<%-- <c:choose>
 				<c:when test="${mode != 'view'}">			
 					<c:set value="${registration.currentState.value}" var="stateValue"></c:set>
 					<c:if test="${stateValue != 'Assistant Engineer Approved' && stateValue != 'Fee Collected' && stateValue != 'Revenue Clerk Approved'}">
@@ -168,10 +125,7 @@
 				<c:otherwise>
 					<div class="buttonbottom" align="center"><a href="javascript:void(0)" class="btn btn-default" onclick="self.close()"><spring:message code="lbl.close"/></a></div>
 				</c:otherwise>
-			</c:choose>
-			<script>
-				
-			</script>
+			</c:choose> --%>
 		</form:form>
 		
 	</div>
@@ -179,3 +133,4 @@
 
 <script src="<c:url value='/resources/global/js/egov/inbox.js' context='/egi'/>"></script>
 <script src="<c:url value='/resources/js/app/registration.js'/> "></script>
+<script src="<c:url value='/resources/js/app/viewregistration.js'/> "></script>

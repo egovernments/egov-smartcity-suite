@@ -39,6 +39,8 @@
 
 package org.egov.mrs.domain.service;
 
+import static org.egov.mrs.application.MarriageConstants.APPROVED;
+
 import java.io.File;
 import java.io.IOException;
 import java.math.BigDecimal;
@@ -55,7 +57,6 @@ import javax.persistence.PersistenceContext;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
-import org.egov.eis.entity.Assignment;
 import org.egov.eis.service.AssignmentService;
 import org.egov.eis.web.contract.WorkflowContainer;
 import org.egov.infra.admin.master.entity.User;
@@ -566,5 +567,22 @@ public class MarriageRegistrationService {
         });
        }
     }
-
+    
+    
+    @SuppressWarnings("unchecked")
+	public List<MarriageRegistration> searchMarriageRegistrations(MarriageRegistration registration) {
+		final Criteria criteria = getCurrentSession().createCriteria(
+				MarriageRegistration.class);
+		
+		return criteria.list();
+	}
+    
+    @SuppressWarnings("unchecked")
+	public List<MarriageRegistration> searchApprovedMarriageRegistrations(MarriageRegistration registration) {
+		final Criteria criteria = getCurrentSession().createCriteria(
+				MarriageRegistration.class);
+		 criteria.add(Restrictions.in("status", new String[] { APPROVED}));
+		return criteria.list();
+	}
+    
 }

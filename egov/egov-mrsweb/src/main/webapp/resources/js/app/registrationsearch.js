@@ -2,7 +2,7 @@
  * eGov suite of products aim to improve the internal efficiency,transparency,
  *    accountability and the service delivery of the government  organizations.
  *
- *     Copyright (C) <2015>  eGovernments Foundation
+ *     Copyright (C) <2016>  eGovernments Foundation
  *
  *     The updated version of eGov suite of products as by eGovernments Foundation
  *     is available at http://www.egovernments.org
@@ -38,101 +38,156 @@
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
 
+$(document)
+		.ready(
+				function() {
 
-$(document).ready( function () {
-	var registrationId;
-	$('body').on( 'click', 'tr', function () {
-		if ( $(this).hasClass('selected') ) {
-            $(this).removeClass('selected');
-            $('#btn_viewdetails').addClass('disabled');
-            $('#btn_collectfee').addClass('disabled');
-        } else {
-            $('#registration_table > tbody > tr.selected').removeClass('selected');
-            $(this).addClass('selected');
-        }
-    });
-})
+					var reissueurl = '/mrs/reissue/create/';
+					var viewurl = '/mrs/registration/view/';
+					var collectfeeurl = '/mrs/collection/bill/';
+					var updateurl = '/mrs/registration/update/';
 
-var reg_table = $('#registration_table').dataTable({
-	"sPaginationType": "bootstrap",
-	"sDom": "<'row'<'col-xs-12 hidden col-right'f>r>t<'row'<'col-md-5 col-xs-12'i><'col-md-3 col-xs-6'l><'col-md-4 col-xs-6 text-right'p>>",
-	"aLengthMenu": [[10, 25, 50, -1], [10, 25, 50, "All"]],
-	columnDefs: [{
-           "targets": [ 0 ],
-           "visible": false,
-           "searchable": false
-       }, {
-           "targets": [ 9 ],
-           "visible": false,
-           "searchable": false
-       }
-	]
-});
+					$('#btnregistrationsearch').click(function() {
+						callAjaxSearch();
+					});
 
-$('#btnregistrationsearch').click( function () {
-	$.ajax({
-		type : "POST",
-		contentType: "application/json",
-		accept: "application/json",
-		url : "/mrs/registration/search",
-		data : '{ "registrationNo": "'+$('#registrationNo').val()+'", "dateOfMarriage": "'+$('#dateOfMarriage').val()+'", "husbandName": "'+$('#husbandName').val()+'", "wifeName": "'+$('#wifeName').val()+'", "registrationDate": "'+$('#registrationDate').val()+'" }',
-		dataType : "json",
-		success : function (response, textStatus, xhr) {
-			var searchResults = response.data;
-			reg_table.fnClearTable();
-			$.each(searchResults, function (index, result) {
-				var certificateIssued = result.certificateIssued ? 'Yes' : 'No';
-				var action = '<select class="form-control" id="select-actions'+index+'" style="width:125px;" onchange="performSelectedAction(this);"><option value="default">select</option><option value="view">View</option><option value="correction">Data Entry</option>';
-				console.log('feeCollectionPending=' + result.feeCollectionPending);
-				if (result.feeCollectionPending) {
-					action += '<option value="collectfee">Collect Fee</option>';
-				}
-				
-				if (result.status === 'Approved' && result.certificateIssued) {
-					action += '<option value="reissue">Re-Issue</option>';
-				}
-				
-				action += '</select>';
-				console.log('registrationDate=' + result.registrationDate);
-				reg_table.fnAddData([result.registrationId, 
-				                     result.registrationNo, 
-				                     result.registrationDate, 
-				                     result.dateOfMarriage, 
-				                     result.husbandName, 
-				                     result.wifeName, 
-				                     certificateIssued, 
-				                     result.status, 
-				                     result.feePaid, 
-				                     result.feeCollectionPending, 
-				                     action
-				]);
-            });
-			$('#table_container').show();
-			$('#registration_table_length').remove();				
-			$('#registration_table_filter').addClass('text-right');
-		},
-		error : function (xhr, textStatus, errorThrown) {
-			console.log ( 'errorThrown=' + errorThrown );
-		}
+					function callAjaxSearch() {
+						$('.report-section').removeClass('display-hide');
+						var reportdatatable = $("#registration_table")
+								.dataTable(
+										{
+											ajax : {
+												url : "/mrs/registration/search",
+												type : "POST",
+												beforeSend : function() {
+													$('.loader-class')
+															.modal(
+																	'show',
+																	{
+																		backdrop : 'static'
+																	});
+												},
+												"data" : getFormData($('form')),
+												complete : function() {
+													$('.loader-class').modal(
+															'hide');
+												}
+											},
+											"bDestroy" : true,
+											"sDom" : "<'row'<'col-xs-12 hidden col-right'f>r>t<'row'<'col-xs-3'i><'col-xs-3 col-right'l><'col-xs-3 col-right'<'export-data'T>><'col-xs-3 text-right'p>>",
+											"aLengthMenu" : [
+													[ 10, 25, 50, -1 ],
+													[ 10, 25, 50, "All" ] ],
+											"oTableTools" : {
+												"sSwfPath" : "../../../../../../egi/resources/global/swf/copy_csv_xls_pdf.swf",
+												"aButtons" : [ "xls", "pdf",
+														"print" ]
+											},
+											aaSorting : [],
+											columns : [
+													{
+														"data" : "registrationNo",
+														render : function(data,
+																type, row, meta) {
+															if (row.registrationNo == 'undefined'
+																	|| row.registrationNo == '') {
+																return "N/A";
+															} else {
+																return row.registrationNo;
+															}
+														},
+														"sClass" : "text-left"
+													},
+													{
+														"data" : "registrationDate",
+														"sClass" : "text-left"
+													},
+													{
+														"data" : "dateOfMarriage",
+														"sClass" : "text-left"
+													},
+													{
+														"data" : "husbandName",
+														"sClass" : "text-left"
+													},
+													{
+														"data" : "wifeName",
+														"sClass" : "text-left"
+													},
+													{
+														"data" : "certificateIssued",
+														"sClass" : "text-left"
+													},
+													{
+														"data" : "feePaid",
+														"sClass" : "text-left"
+													},
+													{
+														"data" : null,
+														render : function(data,
+																type, row, meta) {
+															if (row.feeCollectionPending) {
+																return 'Yes';
+															} else {
+																return 'No';
+															}
+														},
+														"sClass" : "text-left"
+													},
+													{
+														"data" : "status",
+														"sClass" : "text-left"
+													},
+													{
+														"data" : null,
+														sortable : false,
+														"render" : function(
+																data, type,
+																row, meta) {
+															return ('<select class="dropchange"><option value="">Select from Below</option><option  value='
+																	+ viewurl
+																	+ row.id + '>View</option></select>');
+															if (row.status == 'Approved'
+																	&& row.certificateIssued) {
+																return ('<select class="dropchange"><option value="">Select from Below</option><option  value='
+																		+ reissueurl
+																		+ row.id + '>Re-Issue</option>');
+															} else if (row.feeCollectionPending) {
+																return ('<select class="dropchange"><option value="">Select from Below</option><option  value='
+																		+ editurl
+																		+ row.id + '>Collect Fee</option></select>');
+															}
+														}
+
+													} ]
+
+										});
+
+					}
+
+					$(document).on('change', '.dropchange', function() {
+						var url = $(this).val();
+						if (url) {
+							openPopup(url);
+						}
+
+					});
+
+					function openPopup(url) {
+						window
+								.open(url, 'window',
+										'scrollbars=yes,resizable=yes,height=700,width=800,status=yes');
+					}
+
+				});
+
+function getFormData($form) {
+	var unindexed_array = $form.serializeArray();
+	var indexed_array = {};
+
+	$.map(unindexed_array, function(n, i) {
+		indexed_array[n['name']] = n['value'];
 	});
-});
 
-function performSelectedAction(dropdown) {
-	var optionSelected = $(dropdown).val();	
-	var data = reg_table.fnSettings().aoData;
-    var selectedRowData = data[reg_table.$('tr.selected')[0]._DT_RowIndex];
-    registrationId = selectedRowData._aData[0];    
-    var url = '';    
-    if (optionSelected === 'view') {
-		url = '/mrs/registration/view/' + registrationId + '?mode=view';
-	} else if (optionSelected === 'collectfee') {
-		url = '/mrs/collection/bill/' + registrationId;
-	} else if (optionSelected === 'correction') {
-		url = '/mrs/registration/update/' + registrationId;
-	} else if (optionSelected === 'reissue') {
-		url = '/mrs/reissue/create/' + registrationId;
-	}
-      if (optionSelected != 'select' && optionSelected != 'default') {
-    	window.open(url, '_blank',"width=800, height=600 , scrollbars=yes");
-    }
+	return indexed_array;
 }

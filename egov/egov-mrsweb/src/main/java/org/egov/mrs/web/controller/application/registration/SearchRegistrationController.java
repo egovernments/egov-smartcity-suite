@@ -39,26 +39,21 @@
 
 package org.egov.mrs.web.controller.application.registration;
 
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.HashMap;
+import static org.egov.infra.web.utils.WebUtils.toJSON;
+
 import java.util.List;
-import java.util.Map;
 import java.util.stream.Collectors;
 
 import org.egov.infra.admin.master.entity.Role;
 import org.egov.infra.security.utils.SecurityUtils;
-import org.egov.mrs.application.MarriageConstants;
-import org.egov.mrs.domain.entity.SearchModel;
-import org.egov.mrs.domain.entity.SearchResult;
-import org.egov.mrs.domain.enums.ApplicationStatus;
+import org.egov.mrs.domain.entity.MarriageRegistration;
 import org.egov.mrs.domain.service.MarriageRegistrationService;
+import org.egov.mrs.web.adaptor.MarriageRegistrationJsonAdaptor;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -83,48 +78,42 @@ public class SearchRegistrationController {
     }
 
     @RequestMapping(value = "/search", method = RequestMethod.GET)
-    public String showSearch(@ModelAttribute final SearchModel searchModel, final Model model) {
+    public String showSearch( final Model model) {
         
         final List<Role> operatorRoles = securityUtils.getCurrentUser().getRoles().stream()
                 .filter(role -> role.getName().equalsIgnoreCase("Collection Operator")).collect(Collectors.toList());
+        model.addAttribute("registration", new MarriageRegistration());
+        final boolean isCollectionOperator = operatorRoles == null || operatorRoles.isEmpty() ? false : true;
+        model.addAttribute("isCollectionOperator", isCollectionOperator);
+        return "registration-search";
+    }
+    
+    @RequestMapping(value = "/searchApproved", method = RequestMethod.GET)
+    public String showSearchApproved( final Model model) {
         
+        final List<Role> operatorRoles = securityUtils.getCurrentUser().getRoles().stream()
+                .filter(role -> role.getName().equalsIgnoreCase("Collection Operator")).collect(Collectors.toList());
+        model.addAttribute("registration", new MarriageRegistration());
         final boolean isCollectionOperator = operatorRoles == null || operatorRoles.isEmpty() ? false : true;
         model.addAttribute("isCollectionOperator", isCollectionOperator);
         return "registration-search";
     }
 
-    @RequestMapping(value = "/search", method = RequestMethod.POST)
-    public @ResponseBody Map<String, List<SearchResult>> search(@RequestBody final SearchModel searchModel) {
-        final Map<String, List<SearchResult>> registrations = new HashMap<String, List<SearchResult>>();
-        registrations.put("data", prepareSearchResult(searchModel));
-        return registrations;
+    @RequestMapping(value = "/search", method = RequestMethod.POST, produces = MediaType.TEXT_PLAIN_VALUE)
+    public @ResponseBody String search(Model model,@ModelAttribute final MarriageRegistration registration) {
+    	List<MarriageRegistration> searchResultList = marriageRegistrationService.searchMarriageRegistrations(registration);
+      	 String result = new StringBuilder("{ \"data\":").append(toJSON(searchResultList,MarriageRegistration.class,  MarriageRegistrationJsonAdaptor.class)).append("}")
+                   .toString();
+          return result;
+    }
+    
+    @RequestMapping(value = "/searchApproved", method = RequestMethod.POST, produces = MediaType.TEXT_PLAIN_VALUE)
+    public @ResponseBody String searchApprovedMarriageRecords(Model model,@ModelAttribute final MarriageRegistration registration) {
+    	List<MarriageRegistration> searchResultList = marriageRegistrationService.searchApprovedMarriageRegistrations(registration);
+      	 String result = new StringBuilder("{ \"data\":").append(toJSON(searchResultList,MarriageRegistration.class,  MarriageRegistrationJsonAdaptor.class)).append("}")
+                   .toString();
+          return result;
     }
 
-    private List<SearchResult> prepareSearchResult(final SearchModel searchModel) {
-        final List<SearchResult> results = new ArrayList<SearchResult>();
-        final DateFormat formatter = new SimpleDateFormat(MarriageConstants.DATE_FORMAT_DDMMYYYY);
-        marriageRegistrationService.searchRegistration(searchModel, false).forEach(registration -> {
-            final SearchResult searchResult = new SearchResult();
-            searchResult.setRegistrationId(registration.getId());
-            searchResult.setRegistrationNo(registration.getRegistrationNo() == null ? "NA" : registration.getRegistrationNo());
-            searchResult.setRegistrationDate(formatter.format(registration.getCreatedDate()));
-            searchResult.setDateOfMarriage(formatter.format(registration.getDateOfMarriage()));
-            searchResult.setWifeName(registration.getWife().getName().getFirstName());
-            searchResult.setHusbandName(registration.getHusband().getName().getFirstName());
-            searchResult.setCertificateIssued(registration.isCertificateIssued());
-            searchResult.setStatus(registration.getStatus().name());
-            searchResult.setFeePaid(registration.getFeePaid());
-
-            if (!registration.isFeeCollected())
-                if (registration.getStatus() == ApplicationStatus.Approved
-                && registration.getCurrentState().getNextAction().equalsIgnoreCase("Fee Collection Pending"))
-                    searchResult.setFeeCollectionPending(true);
-
-            results.add(searchResult);
-        });
-
-        return results;
-
-    }
 
 }
