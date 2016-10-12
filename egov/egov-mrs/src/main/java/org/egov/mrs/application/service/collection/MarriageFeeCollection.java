@@ -258,8 +258,19 @@ public class MarriageFeeCollection extends TaxCollection {
 
     @Override
     public ReceiptAmountInfo receiptAmountBifurcation(BillReceiptInfo billReceiptInfo) {
-        // TODO Auto-generated method stub
-        return null;
+    	   final ReceiptAmountInfo receiptAmountInfo = new ReceiptAmountInfo();
+    	   BigDecimal currentInstallmentAmount = BigDecimal.ZERO;  
+    	if (billReceiptInfo != null && billReceiptInfo.getBillReferenceNum() != null) {
+            	 for (final ReceiptAccountInfo rcptAccInfo : billReceiptInfo.getAccountDetails()){
+                       if (rcptAccInfo.getCrAmount() != null && rcptAccInfo.getCrAmount().compareTo(BigDecimal.ZERO) == 1) {
+                    	  
+                    	   currentInstallmentAmount = currentInstallmentAmount.add(rcptAccInfo.getCrAmount());
+                       }
+
+               }
+    	   }
+    	 receiptAmountInfo.setCurrentInstallmentAmount(currentInstallmentAmount); 
+        return receiptAmountInfo;
     }
 
 }
