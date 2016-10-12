@@ -2532,19 +2532,26 @@ public List<PropertyMaterlizeView> getPropertyByAssessmentAndOwnerDetails(final 
     public Assignment getWorkflowInitiator(final PropertyImpl property) {
         Assignment wfInitiator = null;
         if(property.getBasicProperty().getSource().equals(PropertyTaxConstants.SOURCEOFDATA_ONLINE) ||
-        	property.getBasicProperty().getSource().equals(PropertyTaxConstants.SOURCEOFDATA_MOBILE)){
-        	if(!property.getStateHistory().isEmpty())
-        		wfInitiator = assignmentService.getPrimaryAssignmentForPositon(property.getStateHistory().get(0)
+                property.getBasicProperty().getSource().equals(PropertyTaxConstants.SOURCEOFDATA_MOBILE)){
+                if(!property.getStateHistory().isEmpty())
+                        wfInitiator = assignmentService.getPrimaryAssignmentForPositon(property.getStateHistory().get(0)
                     .getOwnerPosition().getId());
         } else{
-	        if (isEmployee(property.getCreatedBy()))
-	            wfInitiator = assignmentService.getPrimaryAssignmentForUser(property.getCreatedBy().getId());
-	        else if (!property.getStateHistory().isEmpty())
-	            wfInitiator = assignmentService.getPrimaryAssignmentForPositon(property.getStateHistory().get(0)
-	                    .getOwnerPosition().getId());
-	        else
-	            wfInitiator = assignmentService.getPrimaryAssignmentForPositon(property.getState().getOwnerPosition()
-	                    .getId());
+                if (isEmployee(property.getCreatedBy())){
+                        if(property.getState() != null  && property.getState().getInitiatorPosition() != null)
+                            wfInitiator = propertyTaxCommonUtils.getUserAssignmentByPassingPositionAndUser(property
+                                    .getCreatedBy(),property.getState().getInitiatorPosition());
+                        else 
+                            wfInitiator = assignmentService.getPrimaryAssignmentForUser(property
+                           .getCreatedBy().getId());
+                }
+                else if (!property.getStateHistory().isEmpty())
+                    wfInitiator = assignmentService.getPrimaryAssignmentForPositon(property.getStateHistory().get(0)
+                            .getOwnerPosition().getId());
+                else{
+                    wfInitiator = assignmentService.getPrimaryAssignmentForPositon(property.getState().getOwnerPosition()
+                            .getId());
+                }
         }
         return wfInitiator;
     }

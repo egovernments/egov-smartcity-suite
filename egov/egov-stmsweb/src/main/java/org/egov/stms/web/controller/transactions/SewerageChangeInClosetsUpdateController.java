@@ -237,8 +237,9 @@ public class SewerageChangeInClosetsUpdateController extends GenericWorkFlowCont
 
             if (!checkAnyTaxIsPendingToCollect(sewerageApplicationDetails)) {
                 additionalRule = SewerageTaxConstants.CHANGEINCLOSETS_NOCOLLECTION;
+                model.addAttribute("showApprovalDtls", "yes");
             }
-            model.addAttribute("showApprovalDtls", "yes");
+           
         } 
         else if(sewerageApplicationDetails.getStatus()!=null && 
                    sewerageApplicationDetails.getStatus().getCode().equalsIgnoreCase(SewerageTaxConstants.APPLICATION_STATUS_DEEAPPROVED)){    

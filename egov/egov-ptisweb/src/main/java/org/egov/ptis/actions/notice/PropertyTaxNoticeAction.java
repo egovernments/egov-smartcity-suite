@@ -538,7 +538,7 @@ public class PropertyTaxNoticeAction extends PropertyTaxBaseAction {
             BigDecimal propertyTax, Ptdemand currDemand, String noticeMode) {
         for (final EgDemandDetails demandDetail : currDemand.getEgDemandDetails()) {
             if (demandDetail.getEgDemandReason().getEgInstallmentMaster()
-                    .equals(propertyTaxCommonUtils.getCurrentInstallment())) {
+                    .equals(propertyTaxCommonUtils.getCurrentPeriodInstallment())) {
                 if(!demandDetail.getEgDemandReason().getEgDemandReasonMaster().getCode()
                         .equalsIgnoreCase(PropertyTaxConstants.DEMANDRSN_CODE_PENALTY_FINES)) {
                 totalTax = totalTax.add(demandDetail.getAmount());
@@ -587,7 +587,7 @@ public class PropertyTaxNoticeAction extends PropertyTaxBaseAction {
             BigDecimal propertyTax, Ptdemand currDemand) {
         for (final EgDemandDetails demandDetail : currDemand.getEgDemandDetails()) {
             if (demandDetail.getEgDemandReason().getEgInstallmentMaster()
-                    .equals(propertyTaxCommonUtils.getCurrentInstallment())) {
+                    .equals(propertyTaxCommonUtils.getCurrentPeriodInstallment())) {
             	if(!demandDetail.getEgDemandReason().getEgDemandReasonMaster().getCode()
                         .equalsIgnoreCase(PropertyTaxConstants.DEMANDRSN_CODE_PENALTY_FINES)) {
                 totalTax = totalTax.add(demandDetail.getAmount());

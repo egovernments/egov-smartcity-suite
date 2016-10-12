@@ -204,7 +204,7 @@ function validateEstimateNumber(obj) {
 	.each(
 			function() {
 				if($(this).val() == $(obj).val() && $(this).attr('name') != $(obj).attr('name')) {
-					bootbox.alert("Estimate Numbers should be unique");
+					bootbox.alert("Abstract Estimate Numbers should be unique");
 					$(obj).val("");
 				}
 			});

@@ -68,7 +68,6 @@
 			</c:when>
 			<c:otherwise>
 				<a href="javascript:void(0)" class="btn btn-default" onclick="self.close()"><spring:message code="lbl.close" /></a>
-				<button type="button" class="btn btn-default" id="viewDCB" ><spring:message code="lbl.view.dcb" /></button>
 			</c:otherwise>
 		</c:choose>
 	</div>

@@ -625,9 +625,7 @@ public class ChartOfAccounts {
 				gLedger.setDebitAmount(Double.parseDouble(txn.getDrAmount()));
 				gLedger.setCreditAmount(Double.parseDouble(txn.getCrAmount()));
 				gLedger.setDescription(txn.getNarration());
-				CVoucherHeader cVoucherHeader = (CVoucherHeader) persistenceService
-						.find("from CVoucherHeader where id=?",
-								Long.parseLong(txn.getVoucherHeaderId()));
+				CVoucherHeader cVoucherHeader = (CVoucherHeader) voucherService.findById(Long.valueOf(txn.getVoucherHeaderId()), false);
 				gLedger.setVoucherHeaderId(cVoucherHeader);
 				gLedger.setEffectiveDate(new Date());
 				if (LOGGER.isInfoEnabled())
@@ -815,9 +813,7 @@ public class ChartOfAccounts {
 				gLedger.setDebitAmount(Double.parseDouble(txn.getDrAmount()));
 				gLedger.setCreditAmount(Double.parseDouble(txn.getCrAmount()));
 				gLedger.setDescription(txn.getNarration());
-				CVoucherHeader cVoucherHeader = (CVoucherHeader) persistenceService
-						.find("from CVoucherHeader where id=?",
-								Long.parseLong(txn.getVoucherHeaderId()));
+				CVoucherHeader cVoucherHeader = voucherService.findById(Long.valueOf(txn.getVoucherHeaderId()), false);
 				gLedger.setVoucherHeaderId(cVoucherHeader);
 				gLedger.setEffectiveDate(new Date());
 				if (LOGGER.isInfoEnabled())

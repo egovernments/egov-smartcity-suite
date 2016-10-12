@@ -78,7 +78,12 @@ public class ApiUrl {
 	public final static String COMPLAINT_HISTORY = "/complaint/{complaintNo}/complaintHistory";
 	
 	public final static String COMPLAINT_RESOLVED_UNRESOLVED_COUNT = "/complaint/count";
-        
+	
+	/*
+	 * User log
+	 */
+	public final static String USER_DEVICE_LOG = "/addDeviceLog";
+
 
 	/**
 	 * Citizen
@@ -102,7 +107,7 @@ public class ApiUrl {
 	public final static String CITIZEN_COMPLAINT_COUNT = "/citizen/getMyComplaint/count";
 	
 	public final static String CITIZEN_SEND_OTP = "/sendOTP";
-	
+		
 	/*
 	 * Employee
 	 */

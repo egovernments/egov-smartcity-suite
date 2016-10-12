@@ -477,7 +477,7 @@
 																			</s:if>
 
 																			<tr>
-																				<td style="text-align: right" colspan="6"
+																				<td style="text-align: right" colspan="8"
 																					class="blueborderfortdnew"><strong>Grand
 																						Total</strong></td>
 																				<td style="text-align: right"

@@ -111,7 +111,7 @@ $(document).on('change', 'select.actiondropdown', function() {
 				return false;
 				}
 				else{
-					loadPropertyDetails(shscnumber,ptassessmentno);
+					loadPropertyDetails(changeincloseturl,consumerno,shscnumber,ptassessmentno);
 				}
 			}, 
 			error: function (response) {
@@ -121,7 +121,7 @@ $(document).on('change', 'select.actiondropdown', function() {
 		}  
 	else if($(this).find(":selected").text()=="Close Sewerage Connection"){
 		var closeconnectionurl=$(this).val();
-		applicationType="closesewerageconnection";
+		var consumerno = $(this).data('consumer-no');
 		jQuery.ajax({
 			url: "/stms/ajaxconnection/check-application-inworkflow/"+shscnumber,
 			type: "GET",
@@ -135,7 +135,7 @@ $(document).on('change', 'select.actiondropdown', function() {
 				return false;
 				}
 				else{
-					loadPropertyDetails(shscnumber,ptassessmentno);
+					loadPropertyDetails(closeconnectionurl, consumerno, shscnumber,ptassessmentno);
 				}
 			},
 			error: function (response) {
@@ -171,7 +171,6 @@ function submitButton() {
 	.done(function(searchResult) {
 	tableContainer.dataTable({
 	destroy : true,
-	"sPaginationType" : "bootstrap",
 	"sDom": "<'row'<'col-xs-12 hidden col-right'f>r>t<'row'<'col-md-6 col-xs-12'i><'col-md-3 col-xs-6'l><'col-md-3 col-xs-6 text-right'p>>",
 	"aLengthMenu" : [[10,25,50,-1 ],[10,25,50,"All" ] ],
 	"autoWidth" : false,
@@ -226,7 +225,7 @@ $("#viewDCB").click(function(){
 });
   
 
-function loadPropertyDetails(shscnumber, propertyID) {
+function loadPropertyDetails(url,consumerno,shscnumber, propertyID) {
 	var errorMessage=""; 
 	var subErrorMessage="";
 	if(propertyID != '') {
@@ -236,7 +235,6 @@ function loadPropertyDetails(shscnumber, propertyID) {
 			dataType: "json",
 			success: function (response) { 
 				var waterTaxDue = getWaterTaxDue(propertyID);
-				//console.log(waterTaxDue['CURRENTWATERCHARGE']); 
 					if(applicationType==="changenumberofseats"){
 						subErrorMessage = " change number of seats";
 					}
@@ -246,17 +244,14 @@ function loadPropertyDetails(shscnumber, propertyID) {
 					if(response.propertyDetails.taxDue > 0) {
 						errorMessage = "For entered Property tax Assessment number "+propertyID+" demand is due Rs."+ response.propertyDetails.taxDue+"/-. Please clear demand and apply for"+subErrorMessage;
 					}
-					if(waterTaxDue['WATERTAXDUE'] > 0) {
-						errorMessage += "For entered Property tax Assessment number "+propertyID+" linked water tap connection demand with Consumer code:"+waterTaxDue['CONSUMERCODE'][0]+" is due Rs."+ waterTaxDue['WATERTAXDUE']+"/- . Please clear demand and apply for"+subErrorMessage;
+					else if(waterTaxDue['WATERTAXDUE'] > 0) {
+						errorMessage = "For entered Property tax Assessment number "+propertyID+" linked water tap connection demand with Consumer code:"+waterTaxDue['CONSUMERCODE'][0]+" is due Rs."+ waterTaxDue['WATERTAXDUE']+"/- . Please clear demand and apply for"+subErrorMessage;
 					}
 					if(response.propertyDetails.taxDue > 0 || waterTaxDue['WATERTAXDUE'] > 0) {
 						bootbox.alert(errorMessage);
 					}
-					else if(applicationType === "closesewerageconnection"){	
-						window.open("/stms/transactions/closeConnection/"+shscnumber, '_blank', "width=800, height=600, scrollbars=yes");
-					}
 					else{
-						window.open("/stms/transactions/modifyConnection/"+shscnumber, '_blank', "width=800, height=600, scrollbars=yes");
+						callurl(url, consumerno, propertyID, shscnumber);
 					}
 				
 			}, 

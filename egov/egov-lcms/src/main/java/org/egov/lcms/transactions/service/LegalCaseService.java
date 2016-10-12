@@ -45,7 +45,6 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
 
-import org.egov.infra.filestore.entity.FileStoreMapper;
 import org.egov.lcms.masters.entity.AdvocateMaster;
 import org.egov.lcms.masters.service.AdvocateMasterService;
 import org.egov.lcms.transactions.entity.BipartisanDetails;

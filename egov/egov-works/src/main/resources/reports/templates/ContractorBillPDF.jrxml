@@ -38,8 +38,8 @@
   ~
   ~   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
   -->
-<!-- Created with Jaspersoft Studio version 6.2.2.final using JasperReports Library version 6.2.2  -->
-<!-- 2016-09-18T20:08:30 -->
+<!-- Created with Jaspersoft Studio version 6.3.0.final using JasperReports Library version 6.3.0  -->
+<!-- 2016-10-03T19:08:12 -->
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="ContractorBillPDF" pageWidth="595" pageHeight="842" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="e5b9c4d7-5374-4222-b26c-49c47331df4d">
 	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="One Empty Record"/>
 	<parameter name="cityName" class="java.lang.String"/>
@@ -121,7 +121,7 @@
 				<reportElement positionType="Float" stretchType="RelativeToBandHeight" x="13" y="2" width="182" height="18" uuid="277c7d22-b6b0-46ca-8a67-ec18be80fdc8">
 					<property name="com.jaspersoft.studio.unit.x" value="pixel"/>
 				</reportElement>
-				<textFieldExpression><![CDATA["Vendor Name : " + $P{contractorName} + "-" + $P{contractorCode}]]></textFieldExpression>
+				<textFieldExpression><![CDATA["Agency /Firm Name : " + $P{contractorName} + "-" + $P{contractorCode}]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true">
 				<reportElement positionType="Float" stretchType="RelativeToBandHeight" x="195" y="3" width="147" height="17" uuid="6c301618-c94e-455a-b391-547e0b145575"/>

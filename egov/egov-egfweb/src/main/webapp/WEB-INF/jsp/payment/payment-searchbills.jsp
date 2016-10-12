@@ -70,6 +70,12 @@ function validateTab(indexx)
 	return true;
 }
 
+function openVoucher(vid)
+{
+	var url = "${pageContext.request.contextPath}/voucher/preApprovedVoucher-loadvoucherview.action?vhid="+ vid;
+	window.open(url,'','width=900, height=700');
+}
+
 var temp = window.setInterval(load,1);
 function load()
 {
@@ -90,13 +96,6 @@ function checkMiscAttributes(obj)
 		var schemeName = prefix+"["+id+"].schemeName";
 		var subschemeName = prefix+"["+id+"].subschemeName";
 		var fieldName = prefix+"["+id+"].fieldName";
-		var payableAmt = 0;
-		var total = 0;
-		if(jQuery("#totalPaymentAmount").html()!="")
-			total = jQuery("#totalPaymentAmount").html().trim();
-		if(document.getElementById(prefix+"["+id+"].payableAmt"))
-			payableAmt = document.getElementById(prefix+"["+id+"].payableAmt").value;
-		jQuery("#totalPaymentAmount").html(parseFloat(Number(total) + Number(payableAmt)).toFixed(2));
 		var mis = '';
 		if(document.getElementsByName(fundName) && document.getElementsByName(fundName).item(0) != null )
 			mis = ( document.getElementsByName(fundName).item(0)).value;
@@ -129,16 +128,11 @@ function checkMiscAttributes(obj)
 	}
 	else
 	{
-		var total = 0;
-		if(jQuery("#totalPaymentAmount").html()!="")
-			total = jQuery("#totalPaymentAmount").html().trim();
-		if(document.getElementById(prefix+"["+id+"].payableAmt"))
-			payableAmt = document.getElementById(prefix+"["+id+"].payableAmt").value;
-		jQuery("#totalPaymentAmount").html(parseFloat(Number(total) - Number(payableAmt)).toFixed(2));
 		document.getElementById('miscount').value=parseInt(document.getElementById('miscount').value)-1;
 		if(document.getElementById('miscount').value==0)
 			document.getElementById('miscattributes').value='';
 	}
+	calculatePaymentTotal();
 }
 function check()                   
 {
@@ -191,8 +185,6 @@ function check()
 function loadBank(obj){}
 function search()
 {
-
-	
 	if(document.getElementById('vouchermis.departmentid'))
 		document.getElementById('vouchermis.departmentid').disabled=false;
 	var fund = document.getElementById('fundId').value;
@@ -200,14 +192,72 @@ function search()
 		bootbox.alert("Please select fund");   
 		return false;  
 	}else{
-		 document.getElementById("search").innerHTML="";
+		document.getElementById("search").innerHTML="";
 		document.getElementById("search").innerHTML=document.getElementById("searchtab").innerHTML;
+		setSelectedValues();
 		document.form2.action='${pageContext.request.contextPath}/payment/payment-search.action';
-		document.form2.submit();
+		document.form2.submit();  
 		
 	}
 	
 }
+
+function setSelectedValues()
+{
+	var billNumber=document.getElementById("billNumber");
+	var fromDate=document.getElementById("fromDate");
+	var toDate=document.getElementById("toDate");
+	var expType=document.getElementById("expType");
+	var fundId=document.getElementById("fundId");
+	var fundsource=document.getElementById("vouchermis.fundsource");
+	var schemeid=document.getElementById("vouchermis.schemeid");
+	var subschemeid=document.getElementById("vouchermis.subschemeid");
+	var functionId=document.getElementById("vouchermis.function"); 
+	var departmentid=document.getElementById('vouchermis.departmentid');
+
+	jQuery("#search input[name='billNumber']").val('');
+	jQuery("#search input[name='fromDate']").val('');
+	jQuery("#search input[name='toDate']").val('');
+	jQuery('#search select[name="vouchermis.departmentid"] option:selected').removeAttr('selected');
+	jQuery('#search select[name="expType"] option:selected').removeAttr('selected');
+	jQuery('#search select[name="fundId"] option:selected').removeAttr('selected');
+	jQuery('#search select[name="vouchermis.fundsource"] option:selected').removeAttr('selected');
+	jQuery('#search select[name="vouchermis.schemeid"] option:selected').removeAttr('selected');
+	jQuery('#search select[name="vouchermis.subschemeid"] option:selected').removeAttr('selected');
+	jQuery('#search select[name="vouchermis.function"] option:selected').removeAttr('selected');
+	
+	if(billNumber!=null&& billNumber.value!=""){
+		
+		jQuery("#search input[name='billNumber']").val(billNumber.value);
+		jQuery("#search input[name='billNumber']").attr('value',billNumber.value); 
+	}
+	if(fromDate!=null&& fromDate.value!="")
+	{
+		jQuery("#search input[name='fromDate']").val(fromDate.value);
+		jQuery("#search input[name='fromDate']").attr('value',fromDate.value);
+	}
+	if(toDate!=null&& toDate.value!="")
+		{
+		jQuery("#search input[name='toDate']").val(toDate.value);
+		jQuery("#search input[name='toDate']").attr('value',toDate.value);
+		}
+	if(expType!=null && expType.value!="-1")
+		jQuery("#search").find('select[name="expType"]').val(expType.value);
+	if(fundId!=null && fundId.value!="-1")
+		jQuery("#search").find('select[name="fundId"]').val(fundId.value);
+	if(fundsource!=null && fundsource.value!="-1" )
+		jQuery("#search").find('select[name="vouchermis.fundsource"]').val(fundsource.value);
+	if(schemeid !=null && schemeid.value!="-1")
+		jQuery("#search").find('select[name="vouchermis.schemeid"]').val(schemeid.value);
+	if(subschemeid!=null && subschemeid.value!="-1" )
+		jQuery("#search").find('select[name="vouchermis.subschemeid"]').val(subschemeid.value);
+	if(departmentid!=null && departmentid.value!="-1"){
+		jQuery("#search").find('select[name="vouchermis.departmentid"]').val(departmentid.value);
+	}
+	if(functionId!=null && functionId.value!="-1")
+		jQuery("#search").find('select[name="vouchermis.function"]').val(functionId.value); 
+}
+
 function selectAllContractors(element){
 	var length = 0;
 	<s:if test="%{contractorList!=null}">
@@ -224,6 +274,7 @@ function selectAllContractors(element){
 	}
 	else
 		uncheckAll('contractorList',length);
+	calculatePaymentTotal();
 }
 function selectAllSuppliers(element){
 	var length = 0;
@@ -241,6 +292,7 @@ function selectAllSuppliers(element){
 	}
 	else
 		uncheckAll('supplierList',length);
+	calculatePaymentTotal()
 }
 function selectAllContingent(element){
 	var length = 0;
@@ -259,12 +311,28 @@ function selectAllContingent(element){
 		}
 	else
 		uncheckAll('contingentList',length);
+	calculatePaymentTotal();
 }
-
-function checkAll(field,length){
-	var payableAmt = 0;
+function calculatePaymentTotal(){
+	jQuery("#totalPaymentAmount").html('0');
+	var contractorListLength = 0;
+	var supplierListLength = 0;
+	var contingentListLength = 0;
+	<s:if test="%{contractorList!=null}">
+	contractorListLength = <s:property value="%{contractorList.size()}"/>;
+	</s:if>
+	<s:if test="%{supplierList!=null}">
+	supplierListLength = <s:property value="%{supplierList.size()}"/>;
+	</s:if>
+	<s:if test="%{contingentList!=null}">
+	contingentListLength = <s:property value="%{contingentList.size()}"/>;
+	</s:if>
+	calculateTotal('contractorList',contractorListLength);
+	calculateTotal('supplierList',supplierListLength);
+	calculateTotal('contingentList',contingentListLength);
+}
+function calculateTotal(field,length){
 	var total = 0;
-	
 	for (i = 0; i < length; i++){
 		if(jQuery("#totalPaymentAmount").html()!="")
 			total = jQuery("#totalPaymentAmount").html().trim();
@@ -272,25 +340,18 @@ function checkAll(field,length){
 			total = 0;
 		if(document.getElementById(field+"["+i+"].payableAmt"))
 			payableAmt = document.getElementById(field+"["+i+"].payableAmt").value;
-		jQuery("#totalPaymentAmount").html(parseFloat(Number(total) + Number(payableAmt)).toFixed(2));
-		
+		if(document.getElementsByName(field+'['+i+'].isSelected')[0].checked)
+			jQuery("#totalPaymentAmount").html(parseFloat(Number(total) + Number(payableAmt)).toFixed(2));
+	}
+}
+function checkAll(field,length){
+	for (i = 0; i < length; i++){
 		document.getElementsByName(field+'['+i+'].isSelected')[0].checked = true;
 		document.getElementById('miscount').value=parseInt(document.getElementById('miscount').value)+1;
 	}
 }
 function uncheckAll(field,length){
-	var payableAmt = 0;
-	var total = 0;
-	
 	for (i = 0; i < length; i++){
-		if(jQuery("#totalPaymentAmount").html()!="")
-			total = jQuery("#totalPaymentAmount").html().trim();
-		else
-			total = 0;
-		if(document.getElementById(field+"["+i+"].payableAmt"))
-			payableAmt = document.getElementById(field+"["+i+"].payableAmt").value;
-		jQuery("#totalPaymentAmount").html(parseFloat(Number(total) - Number(payableAmt)).toFixed(2));
-		
 		document.getElementsByName(field+'['+i+'].isSelected')[0].checked = false;
 		document.getElementById('miscount').value=parseInt(document.getElementById('miscount').value)-1;
 	}
@@ -722,8 +783,11 @@ function checkContingentForSameMisAttribs(obj,len)
 																						value="%{billVoucherNumber}" /> <s:hidden
 																						name="contractorList[%{#s.index}].billVoucherId"
 																						id="billVoucherId%{#s.index}"
-																						value="%{billVoucherId}" /> <s:property
-																						value="%{billVoucherNumber}" /></td>
+																						value="%{billVoucherId}" /> 
+																						<a href="#" onclick="openVoucher('<s:property value='%{billVoucherId}'/>');">
+																							<s:property value="%{billVoucherNumber}" />
+																						</a>
+																						</td>
 																				<td style="text-align: left"
 																					class="blueborderfortdnew"><s:hidden
 																						name="contractorList[%{#s.index}].billVoucherDate"
@@ -884,8 +948,11 @@ function checkContingentForSameMisAttribs(obj,len)
 																						value="%{billVoucherNumber}" />  <s:hidden
 																						name="supplierList[%{#s.index}].billVoucherId"
 																						id="billVoucherId%{#s.index}"
-																						value="%{billVoucherId}" /> <s:property
-																						value="%{billVoucherNumber}" /></td>
+																						value="%{billVoucherId}" /> 
+																						<a href="#" onclick="openVoucher('<s:property value='%{billVoucherId}'/>');">
+																							<s:property value="%{billVoucherNumber}" />
+																						</a>
+																						</td>
 																				<td style="text-align: left"
 																					class="blueborderfortdnew"><s:hidden
 																						name="supplierList[%{#s.index}].billVoucherDate"
@@ -1047,8 +1114,11 @@ function checkContingentForSameMisAttribs(obj,len)
 																						value="%{billVoucherNumber}" />  <s:hidden
 																						name="contingentList[%{#s.index}].billVoucherId"
 																						id="billVoucherId%{#s.index}"
-																						value="%{billVoucherId}" /> <s:property
-																						value="%{billVoucherNumber}" /></td>
+																						value="%{billVoucherId}" /> 
+																						<a href="#" onclick="openVoucher('<s:property value='%{billVoucherId}'/>');">
+																							<s:property value="%{billVoucherNumber}" />
+																						</a>
+																						</td>
 																				<td style="text-align: left"
 																					class="blueborderfortdnew"><s:hidden
 																						name="contingentList[%{#s.index}].billVoucherDate"

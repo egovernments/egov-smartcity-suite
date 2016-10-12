@@ -43,14 +43,7 @@
 <%@ taglib uri="http://www.springframework.org/tags" prefix="spring"%>
 <%@ taglib uri="http://www.springframework.org/tags/form" prefix="form"%>
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt"%>
-<%@ taglib uri="/WEB-INF/taglib/cdn.tld" prefix="cdn" %>
-<style>
-body
-{
-  font-family:regular !important;
-  font-size:14px;
-}
-</style>
+<%@ taglib uri="/WEB-INF/taglib/cdn.tld" prefix="cdn"%>
 <div class="row" id="page-content">
 	<div class="col-md-12">
 		<c:if test="${not empty message}">
@@ -68,9 +61,9 @@ body
 					</div>
 				</div>
 				<div class="panel-body custom-form">
-				
-				
-				<div class="form-group">
+
+
+					<div class="form-group">
 						<label for="field-1" class="col-sm-2 control-label"><spring:message
 								code="lbl.ward" /></label>
 						<div class="col-sm-3 add-margin">
@@ -79,9 +72,9 @@ body
 								<form:option value="">
 									<spring:message code="lbl.select" />
 								</form:option>
-								  <c:forEach items="${revenueWards}" var="ward">
-                                    <form:option value="${ward.name}"> ${ward.name} </form:option>
-                                </c:forEach>
+								<c:forEach items="${revenueWards}" var="ward">
+									<form:option value="${ward.id}"> ${ward.name} </form:option>
+								</c:forEach>
 							</form:select>
 						</div>
 					</div>
@@ -90,35 +83,39 @@ body
 				<div class="panel-body custom-form">
 					<div class="form-group">
 						<label for="field-1" class="col-sm-2 control-label text-right"><spring:message
-			code="lbl.fromAmount" /></label> 
-	<div class="col-sm-3 add-margin">
-		<form:input class="form-control patternvalidation" data-pattern="number" maxlength="10" id="fromAmount" path="fromAmount"  value="0.00"/>
-		<form:errors path="fromAmount" cssClass="add-margin error-msg" />		
-	</div>
+								code="lbl.fromAmount" /></label>
+						<div class="col-sm-3 add-margin">
+							<form:input class="form-control patternvalidation"
+								data-pattern="number" maxlength="10" id="fromAmount"
+								path="fromAmount" />
+							<form:errors path="fromAmount" cssClass="add-margin error-msg" />
+						</div>
 						<label for="field-1" class="col-sm-2 control-label text-right"><spring:message
-			code="lbl.toAmount" /></label> 
-	<div class="col-sm-3 add-margin">
-		<form:input class="form-control patternvalidation" data-pattern="number" maxlength="10" id="toAmount" path="toAmount" value="0.00"/>
-		<form:errors path="toAmount" cssClass="add-margin error-msg" />		
-	</div>
+								code="lbl.toAmount" /></label>
+						<div class="col-sm-3 add-margin">
+							<form:input class="form-control patternvalidation"
+								data-pattern="number" maxlength="10" id="toAmount"
+								path="toAmount" />
+							<form:errors path="toAmount" cssClass="add-margin error-msg" />
+						</div>
 					</div>
 				</div>
 				<div class="panel-body custom-form">
 					<div class="form-group">
-					<label class="col-sm-2 control-label text-right"><spring:message
-			code="lbl.topdefaulters" /></label>
-	<div class="col-sm-3 add-margin">
-		<form:select id="topDefaulters" name="topDefaulters" path=""
+						<label class="col-sm-2 control-label text-right"><spring:message
+								code="lbl.topdefaulters" /></label>
+						<div class="col-sm-3 add-margin">
+							<form:select id="topDefaulters" name="topDefaulters" path=""
 								cssClass="form-control" cssErrorClass="form-control error">
 								<form:option value="">
 									<spring:message code="lbl.select" />
 								</form:option>
-								  <c:forEach items="${topDefaultersList}" var="topdefaultersvalue">
-                                    <form:option value="${topdefaultersvalue}"> ${topdefaultersvalue} </form:option>
-                                </c:forEach>
+								<c:forEach items="${topDefaultersList}" var="topdefaultersvalue">
+									<form:option value="${topdefaultersvalue}"> ${topdefaultersvalue} </form:option>
+								</c:forEach>
 							</form:select>
-	</div>
-					
+						</div>
+
 					</div>
 				</div>
 			</div>
@@ -134,47 +131,50 @@ body
 				</div>
 			</div>
 
-	</form:form>
-		
-		   <div id="reportgeneration-header" class="col-md-12 table-header text-left">
+		</form:form>
+
+		<div id="reportgeneration-header"
+			class="col-md-12 table-header text-left">
 			<fmt:formatDate value="${currentDate}" var="currDate"
 				pattern="dd-MM-yyyy" />
-			<spring:message code="lbl.reportgeneration" />:
+			<spring:message code="lbl.reportgeneration" />
+			:
 			<c:out value="${currDate}"></c:out>
-		   </div>
+		</div>
 		<table class="table table-bordered table-hover multiheadertbl"
 			id="defaultersReport-table" width="200%">
 			<tbody>
-		   
 			<tfoot id="report-footer">
-							<tr>
-								<td></td>
-								<td></td>
-								<td></td>
-								<td></td>
-								<td></td>
-								<td></td>
-								<td></td>
-								<td>Total</td> 
-								<td></td>
-								<td></td> 
-								<td></td> 
-							</tr>
-				</tfoot> 
+				<tr>
+					<td></td>
+					<td></td>
+					<td></td>
+					<td></td>
+					<td></td>
+					<td></td>
+					<td></td>
+					<td>Total</td>
+					<td></td>
+					<td></td>
+					<td></td>
+				</tr>
+			</tfoot>
 			</tbody>
 		</table>
-		
+
 	</div>
 </div>
 
-<link rel="stylesheet" href="<cdn:url value='/resources/global/css/bootstrap/bootstrap-datepicker.css' context='/egi'/>"/>
-<script type="text/javascript" src="<cdn:url value='/resources/global/js/jquery/plugins/datatables/jquery.dataTables.min.js' context='/egi'/>"></script>
-<script type="text/javascript" src="<cdn:url value='/resources/global/js/jquery/plugins/datatables/dataTables.bootstrap.js' context='/egi'/>"></script>
-<script type="text/javascript" src="<cdn:url value='/resources/global/js/jquery/plugins/datatables/dataTables.tableTools.js' context='/egi'/>"></script>
-<script type="text/javascript" src="<cdn:url value='/resources/global/js/jquery/plugins/datatables/TableTools.min.js' context='/egi'/>"></script>
-<script type="text/javascript" src="<cdn:url value='/resources/global/js/jquery/plugins/datatables/jquery.dataTables.columnFilter.js' context='/egi'/>"></script>
-<script type="text/javascript" src="<cdn:url value='/resources/global/js/bootstrap/typeahead.bundle.js' context='/egi'/>"></script>
-<script src="<cdn:url value='/resources/global/js/jquery/plugins/jquery.inputmask.bundle.min.js' context='/egi'/>"></script>
-<script type="text/javascript" src="<cdn:url value='/resources/global/js/jquery/plugins/jquery.validate.min.js' context='/egi'/>"></script>
-<script	src="<cdn:url value='/resources/global/js/bootstrap/bootstrap-datepicker.js' context='/egi'/>" ></script>
-<script src="<cdn:url value='/resources/js/app/defaulters-report.js?rnd=${app_release_no}'/>"></script>
+
+<script type="text/javascript"
+	src="<cdn:url value='/resources/global/js/jquery/plugins/datatables/jquery.dataTables.min.js' context='/egi'/>"></script>
+<script type="text/javascript"
+	src="<cdn:url value='/resources/global/js/jquery/plugins/datatables/dataTables.bootstrap.js' context='/egi'/>"></script>
+<script type="text/javascript"
+	src="<cdn:url value='/resources/global/js/jquery/plugins/datatables/dataTables.tableTools.js' context='/egi'/>"></script>
+<script type="text/javascript"
+	src="<cdn:url value='/resources/global/js/jquery/plugins/datatables/TableTools.min.js' context='/egi'/>"></script>
+<script type="text/javascript"
+	src="<cdn:url value='/resources/global/js/jquery/plugins/jquery.validate.min.js' context='/egi'/>"></script>
+<script
+	src="<cdn:url value='/resources/js/app/defaulters-report.js?rnd=${app_release_no}'/>"></script>
