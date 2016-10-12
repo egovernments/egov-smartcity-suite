@@ -406,9 +406,12 @@ public class CollectionIndexElasticSearchService {
 			}
 			collIndData.setTotalDmd(totalDemandMap.get(name) == null ? BigDecimal.ZERO : totalDemandMap.get(name));
 			collIndData.setLytdColl(lytdCollMap.get(name) == null ? BigDecimal.ZERO : lytdCollMap.get(name));
-			//variance = ((current year coll - last year coll)/current year collection)*100
-			variance = (collIndData.getCytdColl().subtract(collIndData.getLytdColl()))
-					.divide(collIndData.getCytdColl(), BigDecimal.ROUND_HALF_UP).multiply(PropertyTaxConstants.BIGDECIMAL_100);
+			//variance = ((currentYearCollection - lastYearCollection)*100)/lastYearCollection
+			if(collIndData.getLytdColl() == BigDecimal.ZERO)
+				variance = BigDecimal.valueOf(100);
+			else
+			    variance = ((collIndData.getCytdColl().subtract(collIndData.getLytdColl()))
+									.multiply(PropertyTaxConstants.BIGDECIMAL_100)).divide(collIndData.getLytdColl(),BigDecimal.ROUND_HALF_UP);
 			collIndData.setLyVar(variance);
 			collIndDataList.add(collIndData);
 		}
@@ -776,7 +779,7 @@ public class CollectionIndexElasticSearchService {
 			fromDate = new Date();
 			toDate = DateUtils.addDays(fromDate, 1);
 		}
-		Map<String, BigDecimal> currDayCollMap = getCollectionAndDemandResults(collectionDetailsRequest, fromDate,toDate, COLLECTION_INDEX_NAME, "totalamount", "citycode", aggregationField);
+		Map<String, BigDecimal> currDayCollMap = getCollectionAndDemandCountResults(collectionDetailsRequest, fromDate,toDate, COLLECTION_INDEX_NAME, "consumercode", "citycode", aggregationField);
 		/**
 		 * For collections between the date ranges
 		 * if dates are sent in the request, consider the same, else calculate from current year start date till current date+1 day
@@ -788,12 +791,12 @@ public class CollectionIndexElasticSearchService {
 			fromDate = new DateTime().withMonthOfYear(4).dayOfMonth().withMinimumValue().toDate();
 			toDate = DateUtils.addDays(new Date(), 1);
 		}
-		Map<String, BigDecimal> cytdCollMap = getCollectionAndDemandResults(collectionDetailsRequest, fromDate,toDate, 
-				COLLECTION_INDEX_NAME, "totalamount", "citycode", aggregationField);
+		Map<String, BigDecimal> cytdCollMap = getCollectionAndDemandCountResults(collectionDetailsRequest, fromDate,toDate, 
+				COLLECTION_INDEX_NAME, "consumercode", "citycode", aggregationField);
 		
 		//For last year's till date collections
-		Map<String, BigDecimal> lytdCollMap = getCollectionAndDemandResults(collectionDetailsRequest, DateUtils.addYears(fromDate, -1), 
-				DateUtils.addYears(toDate, -1), COLLECTION_INDEX_NAME, "totalamount", "citycode", aggregationField);
+		Map<String, BigDecimal> lytdCollMap = getCollectionAndDemandCountResults(collectionDetailsRequest, DateUtils.addYears(fromDate, -1), 
+				DateUtils.addYears(toDate, -1), COLLECTION_INDEX_NAME, "consumercode", "citycode", aggregationField);
 		
 		for(Map.Entry<String, BigDecimal> entry : cytdCollMap.entrySet()){
 			receiptData = new ReceiptTableData();
@@ -811,15 +814,51 @@ public class CollectionIndexElasticSearchService {
 			receiptData.setCytdColl(entry.getValue());
 			receiptData.setCurrDayColl(currDayCollMap.get(name) == null ? BigDecimal.valueOf(0): currDayCollMap.get(name));
 			receiptData.setLytdColl(lytdCollMap.get(name) == null ? BigDecimal.valueOf(0): lytdCollMap.get(name));
-			//variance = ((current year coll - last year coll)/current year collection)*100
-			variance = (receiptData.getCytdColl().subtract(receiptData.getLytdColl()))
-					  .divide(receiptData.getCytdColl(), BigDecimal.ROUND_HALF_UP).multiply(PropertyTaxConstants.BIGDECIMAL_100);
+			//variance = ((currentYearCollection - lastYearCollection)*100)/lastYearCollection
+			if(receiptData.getLytdColl() == BigDecimal.ZERO)
+				variance = BigDecimal.valueOf(100);
+			else
+				variance = ((receiptData.getCytdColl().subtract(receiptData.getLytdColl()))
+									.multiply(PropertyTaxConstants.BIGDECIMAL_100)).divide(receiptData.getLytdColl(),BigDecimal.ROUND_HALF_UP);
 			receiptData.setLyVar(variance);
 			receiptDataList.add(receiptData);
 		}
 		Long timeTaken = System.currentTimeMillis() - startTime;
 		LOGGER.info("getReceiptTableData ----> Total time taken is " + timeTaken / 1000 + " (secs)");
 		return receiptDataList;
+	}
+	
+	public Map<String, BigDecimal> getCollectionAndDemandCountResults(CollectionDetailsRequest collectionDetailsRequest, Date fromDate, Date toDate,
+			String indexName, String fieldName, String ulbCodeField, String aggregationField) {
+		BoolQueryBuilder boolQuery = prepareWhereClause(collectionDetailsRequest, indexName, ulbCodeField); 
+		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+		if(indexName.equals(COLLECTION_INDEX_NAME))
+			boolQuery = boolQuery.must(QueryBuilders.rangeQuery("receiptdate").gte(sdf.format(fromDate)).lte(sdf.format(toDate)).includeUpper(false));
+		
+		AggregationBuilder aggregation = AggregationBuilders.terms("by_city").field(aggregationField)
+				.size(120)
+				.subAggregation(AggregationBuilders.count("total_count").field(fieldName));
+		
+		
+		SearchQuery searchQueryColl = new NativeSearchQueryBuilder().withIndices(indexName)
+				.withQuery(boolQuery)
+				.addAggregation(aggregation)
+				.build();
+		
+		Aggregations collAggr = elasticsearchTemplate.query(searchQueryColl, new ResultsExtractor<Aggregations>() {
+			@Override
+			public Aggregations extract(SearchResponse response) {
+				return response.getAggregations();
+			}
+		});
+		
+		StringTerms cityAggr = collAggr.get("by_city");
+		Map<String, BigDecimal> cytdCollMap = new HashMap<>();
+		for (Terms.Bucket entry : cityAggr.getBuckets()) {
+			ValueCount aggr = entry.getAggregations().get("total_count");
+			cytdCollMap.put(String.valueOf(entry.getKey()), BigDecimal.valueOf(aggr.getValue()).setScale(0, BigDecimal.ROUND_HALF_UP));
+        }
+		return cytdCollMap;
 	}
 	
 }
