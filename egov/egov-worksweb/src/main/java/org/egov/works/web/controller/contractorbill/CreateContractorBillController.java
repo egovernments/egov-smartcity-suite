@@ -245,7 +245,6 @@ public class CreateContractorBillController extends GenericWorkFlowController {
             model.addAttribute("approvalPosition", request.getParameter("approvalPosition"));
             prepareWorkflow(model, contractorBillRegister, new WorkflowContainer());
             model.addAttribute("mode", "new");
-            model.addAttribute("billDetailsMap", getBillDetailsMap(contractorBillRegister, model));
             final OfflineStatus offlineStatus = offlineStatusService.getOfflineStatusByObjectIdAndObjectTypeAndStatus(
                     workOrderEstimate.getWorkOrder().getId(), WorksConstants.WORKORDER,
                     OfflineStatuses.WORK_COMMENCED.toString().toUpperCase());
@@ -557,62 +556,6 @@ public class CreateContractorBillController extends GenericWorkFlowController {
         }
 
         return contractorBillRegister;
-    }
-
-    public List<Map<String, Object>> getBillDetailsMap(final ContractorBillRegister contractorBillRegister,
-            final Model model) {
-        final List<Map<String, Object>> billDetailsList = new ArrayList<Map<String, Object>>();
-        Map<String, Object> billDetails = new HashMap<String, Object>();
-
-        final List<CChartOfAccounts> contractorNetPayableAccountList = chartOfAccountsHibernateDAO
-                .getAccountCodeByPurposeName(WorksConstants.CONTRACTOR_NETPAYABLE_PURPOSE);
-        final List<CChartOfAccounts> contractorDeductionAccountList = chartOfAccountsHibernateDAO
-                .getAccountCodeByPurposeName(WorksConstants.CONTRACTOR_DEDUCTIONS_PURPOSE);
-        final List<CChartOfAccounts> retentionMoneyDeductionAccountList = chartOfAccountsHibernateDAO
-                .getAccountCodeByPurposeName(WorksConstants.RETENTION_MONEY_DEDUCTIONS_PURPOSE);
-        for (final EgBilldetails egBilldetails : contractorBillRegister.getEgBilldetailes()) {
-            if (egBilldetails.getDebitamount() != null) {
-                billDetails = new HashMap<String, Object>();
-                final CChartOfAccounts coa = chartOfAccountsHibernateDAO
-                        .findById(egBilldetails.getGlcodeid().longValue(), false);
-                billDetails.put("glcodeId", coa.getId());
-                billDetails.put("glcode", coa.getGlcode());
-                billDetails.put("accountHead", coa.getName());
-                billDetails.put("amount", egBilldetails.getDebitamount());
-                billDetails.put("isDebit", true);
-                billDetails.put("isNetPayable", false);
-            } else if (egBilldetails.getCreditamount() != null) {
-                billDetails = new HashMap<String, Object>();
-                final CChartOfAccounts coa = chartOfAccountsHibernateDAO
-                        .findById(egBilldetails.getGlcodeid().longValue(), false);
-                billDetails.put("glcodeId", coa.getId());
-                billDetails.put("glcode", coa.getGlcode());
-                billDetails.put("accountHead", coa.getName());
-                billDetails.put("amount", egBilldetails.getCreditamount());
-                billDetails.put("isDebit", false);
-                if (contractorNetPayableAccountList != null && !contractorNetPayableAccountList.isEmpty()
-                        && contractorNetPayableAccountList.contains(coa)) {
-                    billDetails.put("isNetPayable", true);
-                    model.addAttribute("netPayableAccountId", egBilldetails.getId());
-                    model.addAttribute("netPayableAccountCode", coa.getId());
-                    model.addAttribute("netPayableAmount", egBilldetails.getCreditamount());
-                } else {
-                    billDetails.put("isNetPayable", false);
-                    if (contractorDeductionAccountList != null && !contractorDeductionAccountList.isEmpty()
-                            && contractorDeductionAccountList.contains(coa))
-                        billDetails.put("isStatutoryDeduction", true);
-                    else
-                        billDetails.put("isStatutoryDeduction", false);
-                    if (retentionMoneyDeductionAccountList != null && !retentionMoneyDeductionAccountList.isEmpty()
-                            && retentionMoneyDeductionAccountList.contains(coa))
-                        billDetails.put("isRetentionMoneyDeduction", true);
-                    else
-                        billDetails.put("isRetentionMoneyDeduction", false);
-                }
-            }
-            billDetailsList.add(billDetails);
-        }
-        return billDetailsList;
     }
 
     private void validateBillDateToSkipWorkflow(final ContractorBillRegister contractorBillRegister,

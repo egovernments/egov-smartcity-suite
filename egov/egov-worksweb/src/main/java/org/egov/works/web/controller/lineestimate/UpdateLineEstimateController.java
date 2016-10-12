@@ -70,10 +70,12 @@ import org.egov.infra.validation.exception.ValidationException;
 import org.egov.services.masters.SchemeService;
 import org.egov.works.lineestimate.entity.DocumentDetails;
 import org.egov.works.lineestimate.entity.LineEstimate;
+import org.egov.works.lineestimate.entity.LineEstimateAppropriation;
 import org.egov.works.lineestimate.entity.LineEstimateDetails;
 import org.egov.works.lineestimate.entity.enums.Beneficiary;
 import org.egov.works.lineestimate.entity.enums.LineEstimateStatus;
 import org.egov.works.lineestimate.entity.enums.WorkCategory;
+import org.egov.works.lineestimate.service.LineEstimateAppropriationService;
 import org.egov.works.lineestimate.service.LineEstimateService;
 import org.egov.works.master.service.LineEstimateUOMService;
 import org.egov.works.master.service.ModeOfAllotmentService;
@@ -145,6 +147,9 @@ public class UpdateLineEstimateController extends GenericWorkFlowController {
 
     @Autowired
     private BudgetControlTypeService budgetControlTypeService;
+    
+    @Autowired
+    private LineEstimateAppropriationService lineEstimateAppropriationService;
 
     @ModelAttribute
     public LineEstimate getLineEstimate(@PathVariable final String lineEstimateId) {
@@ -373,12 +378,15 @@ public class UpdateLineEstimateController extends GenericWorkFlowController {
             final LineEstimate lineEstimate) {
 
         model.addAttribute("stateType", lineEstimate.getClass().getSimpleName());
+        model.addAttribute("amountRule", lineEstimate.getTotalEstimateAmount());
 
         if (lineEstimate.getCurrentState() != null)
             model.addAttribute("currentState", lineEstimate.getCurrentState().getValue());
         if (lineEstimate.getState() != null && lineEstimate.getState().getNextAction() != null)
             model.addAttribute("nextAction", lineEstimate.getState().getNextAction());
-        prepareWorkflow(model, lineEstimate, new WorkflowContainer());
+        WorkflowContainer workflowContainer = new WorkflowContainer();
+        workflowContainer.setAmountRule(lineEstimate.getTotalEstimateAmount());
+        prepareWorkflow(model, lineEstimate, workflowContainer);
         if (lineEstimate.getState() != null && lineEstimate.getState().getValue().equals(WorksConstants.WF_STATE_REJECTED))
             model.addAttribute("mode", "edit");
         else
@@ -395,6 +403,11 @@ public class UpdateLineEstimateController extends GenericWorkFlowController {
         model.addAttribute("lineEstimate", newLineEstimate);
         if (request != null && request.getParameter("message") != null && request.getParameter("message").equals("update"))
             model.addAttribute("message", WorksConstants.LINEESTIMATE_UPDATE);
+        if(lineEstimate.getStatus().getCode().equals(LineEstimateStatus.BUDGET_SANCTIONED.toString())) {
+           model.addAttribute("fieldsRequired", lineEstimateService.getWorkFlowLevelFields(lineEstimate));
+           final LineEstimateAppropriation lineEstimateAppropriation = lineEstimateAppropriationService.findLatestByLineEstimateDetails_EstimateNumber(lineEstimate.getLineEstimateDetails().get(0).getEstimateNumber());
+           model.addAttribute("budgetAppropriationDate", lineEstimateAppropriation.getBudgetUsage().getUpdatedTime());
+        }
         return "newLineEstimate-edit";
     }
 

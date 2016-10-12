@@ -152,7 +152,7 @@ public class SimpleWorkflowService<T extends StateAware> implements WorkflowServ
         final Criteria wfMatrixCriteria = createWfMatrixAdditionalCriteria(type, department, amountRule,
                 additionalRule, currentState, pendingActions);
 
-        return getWorkflowMatrixObj(type, additionalRule, currentState, pendingActions, wfMatrixCriteria);
+        return getWorkflowMatrixObj(type, additionalRule, amountRule, currentState, pendingActions, wfMatrixCriteria);
 
     }
 
@@ -166,18 +166,28 @@ public class SimpleWorkflowService<T extends StateAware> implements WorkflowServ
         final Criterion crit3 = Restrictions.conjunction().add(crit1).add(crit2);
         wfMatrixCriteria.add(Restrictions.or(crit3, crit1));
 
-        return getWorkflowMatrixObj(type, additionalRule, currentState, pendingActions, wfMatrixCriteria);
+        return getWorkflowMatrixObj(type, additionalRule, amountRule, currentState, pendingActions, wfMatrixCriteria);
 
     }
 
-    private WorkFlowMatrix getWorkflowMatrixObj(final String type, final String additionalRule,
+    private WorkFlowMatrix getWorkflowMatrixObj(final String type, final String additionalRule,final BigDecimal amountRule,
             final String currentState, final String pendingActions, final Criteria wfMatrixCriteria) {
         final List<WorkFlowMatrix> objectTypeList = wfMatrixCriteria.list();
 
         if (objectTypeList.isEmpty()) {
             final Criteria defaulfWfMatrixCriteria = commonWorkFlowMatrixCriteria(type, additionalRule, currentState,
                     pendingActions);
-            defaulfWfMatrixCriteria.add(Restrictions.eq("department", "ANY"));
+            defaulfWfMatrixCriteria.add(Restrictions.eq("department", "ANY")); 
+         
+            if (amountRule != null && BigDecimal.ZERO.compareTo(amountRule) != 0) {
+                final Criterion amount1st = Restrictions.conjunction().add(Restrictions.le("fromQty", amountRule))
+                        .add(Restrictions.ge("toQty", amountRule));
+
+                final Criterion amount2nd = Restrictions.conjunction().add(Restrictions.le("fromQty", amountRule))
+                        .add(Restrictions.isNull("toQty"));
+                defaulfWfMatrixCriteria.add(Restrictions.disjunction().add(amount1st).add(amount2nd));
+
+            }
             final List<WorkFlowMatrix> defaultObjectTypeList = defaulfWfMatrixCriteria.list();
             if (defaultObjectTypeList.isEmpty())
                 return null;

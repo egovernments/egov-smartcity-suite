@@ -377,6 +377,9 @@ public class CreateLineEstimateController extends GenericWorkFlowController {
         else if (lineEstimate.getStatus().getCode().equals(LineEstimateStatus.CANCELLED.toString()))
             message = messageSource.getMessage("msg.lineestimate.cancel",
                     new String[] { lineEstimate.getLineEstimateNumber() }, null);
+        else if (lineEstimate.getStatus().getCode().equals(LineEstimateStatus.TECHNICALLY_APPROVED.toString()))
+            message = messageSource.getMessage("msg.lineestimate.technicalapprove.success",
+                    new String[] { lineEstimate.getLineEstimateNumber(), approverName, nextDesign }, null);
 
         return message;
     }

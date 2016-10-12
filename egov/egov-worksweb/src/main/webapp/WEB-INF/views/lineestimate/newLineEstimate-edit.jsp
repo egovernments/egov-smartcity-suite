@@ -50,6 +50,8 @@
 			<input type="hidden" value="${lineEstimate.status.code }" id=lineEstimateStatus />
 			<input type="hidden" value="${lineEstimate.spillOverFlag }" id=spillOverFlag />
 			<input type="hidden" value="${mode}" id="mode"/>
+			<input type="hidden" value="${fieldsRequired}" id="fieldsRequired"/>
+			<input type="hidden" name="budgetAppropriationDate" id="budgetAppropriationDate" class="form-control datepicker" maxlength="10" data-inputmask="'mask': 'd/m/y'" data-date-end-date="0d" value='<fmt:formatDate value="${budgetAppropriationDate}" pattern="dd/MM/yyyy"/>' >
 			<div class="row">
 				<div class="col-md-12">
 					<c:if test="${mode != 'view' && mode != 'readOnly' }">
@@ -65,6 +67,7 @@
 			</div>
 		<c:if test="${lineEstimate.status.code == 'BUDGET_SANCTIONED' || lineEstimate.status.code == 'TECHNICAL_SANCTIONED' || lineEstimate.status.code == 'ADMINISTRATIVE_SANCTIONED' }" >
 			<jsp:include page="lineEstimateAdminSanctionDetails.jsp"></jsp:include>
+			<jsp:include page="lineEstimate-workFlowFields.jsp"></jsp:include>
 		</c:if>
 		<c:if test="${lineEstimate.status.code == 'ADMINISTRATIVE_SANCTIONED' || lineEstimate.status.code == 'TECHNICAL_SANCTIONED' }">
 			<jsp:include page="lineEstimateTechnicalSanctionDetails.jsp"/>

@@ -722,9 +722,7 @@ public class ContractorBillRegisterService {
             final Model model) {
         final List<Map<String, Object>> billDetailsList = new ArrayList<Map<String, Object>>();
         Map<String, Object> billDetails = new HashMap<String, Object>();
-
-       /* final List<CChartOfAccounts> contractorPayableAccountList = chartOfAccountsHibernateDAO
-                .getAccountCodeByPurposeName(WorksConstants.CONTRACTOR_NETPAYABLE_PURPOSE);*/
+        
         final List<CChartOfAccounts> contractorRefundAccountList = chartOfAccountsHibernateDAO
                 .getAccountCodeByListOfPurposeName(WorksConstants.CONTRACTOR_REFUND_PURPOSE);
         final List<CChartOfAccounts> contractorNetPayableAccountList = chartOfAccountsHibernateDAO

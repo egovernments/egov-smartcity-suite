@@ -360,4 +360,7 @@ public class WorksConstants {
     
     public static final String APPCONFIG_KEY_SHOW_DEDUCTION_GRID = "SHOW_DEDUCTION_GRID";
     
+    public static final String LINEESTIMATE_WF_NEXTACTION_PENDING_TECHNICAL_APPROVE = "Pending Technical approve";
+    
+    
 }

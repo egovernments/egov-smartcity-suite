@@ -43,9 +43,11 @@ import java.io.IOException;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
@@ -63,9 +65,12 @@ import org.egov.eis.service.EisCommonService;
 import org.egov.eis.service.PositionMasterService;
 import org.egov.infra.admin.master.entity.Department;
 import org.egov.infra.admin.master.entity.User;
+import org.egov.infra.admin.master.service.CityService;
 import org.egov.infra.admin.master.service.UserService;
 import org.egov.infra.reporting.engine.ReportOutput;
+import org.egov.infra.script.service.ScriptService;
 import org.egov.infra.security.utils.SecurityUtils;
+import org.egov.infra.utils.ApplicationConstant;
 import org.egov.infra.utils.autonumber.AutonumberServiceBeanResolver;
 import org.egov.infra.validation.exception.ValidationException;
 import org.egov.infra.workflow.entity.State;
@@ -164,6 +169,12 @@ public class LineEstimateService {
 
     @Autowired
     private BudgetControlTypeService budgetControlTypeService;
+    
+    @Autowired
+    private ScriptService scriptService;
+    
+    @Autowired
+    private CityService cityService;
 
     public Session getCurrentSession() {
         return entityManager.unwrap(Session.class);
@@ -589,8 +600,9 @@ public class LineEstimateService {
                         lineEstimateDetailService.setProjectCode(led);
                 }
 
-                if (lineEstimate.getStatus().getCode()
-                        .equals(LineEstimateStatus.CHECKED.toString()) && !workFlowAction.equals(WorksConstants.REJECT_ACTION)) {
+                if ((lineEstimate.getStatus().getCode()
+                        .equals(LineEstimateStatus.CHECKED.toString()) || lineEstimate.getStatus().getCode()
+                        .equals(LineEstimateStatus.CREATED.toString())) && !workFlowAction.equals(WorksConstants.REJECT_ACTION)) {
 
                     if (!BudgetControlType.BudgetCheckOption.NONE.toString()
                             .equalsIgnoreCase(budgetControlTypeService.getConfigValue()))
@@ -651,18 +663,29 @@ public class LineEstimateService {
     public void lineEstimateStatusChange(final LineEstimate lineEstimate, final String workFlowAction,
             final String mode) throws ValidationException {
         if (null != lineEstimate && null != lineEstimate.getStatus() && null != lineEstimate.getStatus().getCode())
-            if (lineEstimate.getStatus().getCode().equals(LineEstimateStatus.CREATED.toString())
+            if (lineEstimate.getStatus().getCode().equals(LineEstimateStatus.CREATED.toString()) &&
+            		!lineEstimate.getState().getNextAction().equals(WorksConstants.LINEESTIMATE_WF_NEXTACTION_PENDING_TECHNICAL_APPROVE)
                     && lineEstimate.getState() != null && workFlowAction.equals(WorksConstants.SUBMIT_ACTION))
                 lineEstimate.setStatus(egwStatusHibernateDAO.getStatusByModuleAndCode(WorksConstants.MODULETYPE,
                         LineEstimateStatus.CHECKED.toString()));
             else if (lineEstimate.getStatus().getCode().equals(LineEstimateStatus.RESUBMITTED.toString())
-                    && lineEstimate.getState() != null && workFlowAction.equals(WorksConstants.SUBMIT_ACTION))
+                    && lineEstimate.getState() != null && workFlowAction.equals(WorksConstants.SUBMIT_ACTION) &&
+                    !lineEstimate.getState().getNextAction().equals(WorksConstants.LINEESTIMATE_WF_NEXTACTION_PENDING_TECHNICAL_APPROVE))
                 lineEstimate.setStatus(egwStatusHibernateDAO.getStatusByModuleAndCode(WorksConstants.MODULETYPE,
                         LineEstimateStatus.CHECKED.toString()));
-            else if (lineEstimate.getStatus().getCode().equals(LineEstimateStatus.CHECKED.toString())
+            else if (lineEstimate.getStatus().getCode().equals(LineEstimateStatus.TECHNICALLY_APPROVED.toString())
                     && !workFlowAction.equals(WorksConstants.REJECT_ACTION))
-                lineEstimate.setStatus(egwStatusHibernateDAO.getStatusByModuleAndCode(WorksConstants.MODULETYPE,
+            	lineEstimate.setStatus(egwStatusHibernateDAO.getStatusByModuleAndCode(WorksConstants.MODULETYPE,
                         LineEstimateStatus.BUDGET_SANCTIONED.toString()));
+            else if ((lineEstimate.getStatus().getCode().equals(LineEstimateStatus.CHECKED.toString())
+                    && !workFlowAction.equals(WorksConstants.REJECT_ACTION) 
+                    && lineEstimate.getState().getNextAction().equals(WorksConstants.LINEESTIMATE_WF_NEXTACTION_PENDING_TECHNICAL_APPROVE)) ||
+            		(lineEstimate.getStatus().getCode().equals(LineEstimateStatus.CREATED.toString()) && !workFlowAction.equals(WorksConstants.REJECT_ACTION) 
+                     && lineEstimate.getState().getNextAction().equals(WorksConstants.LINEESTIMATE_WF_NEXTACTION_PENDING_TECHNICAL_APPROVE)) ||
+            		(lineEstimate.getStatus().getCode().equals(LineEstimateStatus.RESUBMITTED.toString()) && !workFlowAction.equals(WorksConstants.REJECT_ACTION) 
+                            && lineEstimate.getState().getNextAction().equals(WorksConstants.LINEESTIMATE_WF_NEXTACTION_PENDING_TECHNICAL_APPROVE)) ) 
+                lineEstimate.setStatus(egwStatusHibernateDAO.getStatusByModuleAndCode(WorksConstants.MODULETYPE,
+                        LineEstimateStatus.TECHNICALLY_APPROVED.toString()));
             else if (lineEstimate.getStatus().getCode().equals(LineEstimateStatus.BUDGET_SANCTIONED.toString())
                     && !workFlowAction.equals(WorksConstants.REJECT_ACTION))
                 lineEstimate.setStatus(egwStatusHibernateDAO.getStatusByModuleAndCode(WorksConstants.MODULETYPE,
@@ -731,20 +754,20 @@ public class LineEstimateService {
                 pos = positionMasterService.getPositionById(approvalPosition);
             WorkFlowMatrix wfmatrix = null;
             if (null == lineEstimate.getState()) {
-                wfmatrix = lineEstimateWorkflowService.getWfMatrix(lineEstimate.getStateType(), null, null,
+                wfmatrix = lineEstimateWorkflowService.getWfMatrix(lineEstimate.getStateType(), null, lineEstimate.getTotalEstimateAmount(),
                         additionalRule, currState, null);
                 lineEstimate.transition().start().withSenderName(user.getUsername() + "::" + user.getName())
                         .withComments(approvalComent).withStateValue(wfmatrix.getNextState()).withDateInfo(new Date())
                         .withOwner(pos).withNextAction(wfmatrix.getNextAction()).withNatureOfTask(natureOfwork);
             } else if (WorksConstants.CANCEL_ACTION.toString().equalsIgnoreCase(workFlowAction)) {
                 final String stateValue = WorksConstants.WF_STATE_CANCELLED;
-                wfmatrix = lineEstimateWorkflowService.getWfMatrix(lineEstimate.getStateType(), null, null,
+                wfmatrix = lineEstimateWorkflowService.getWfMatrix(lineEstimate.getStateType(), null, lineEstimate.getTotalEstimateAmount(),
                         additionalRule, lineEstimate.getCurrentState().getValue(), null);
                 lineEstimate.transition(true).withSenderName(user.getUsername() + "::" + user.getName())
                         .withComments(approvalComent).withStateValue(stateValue).withDateInfo(currentDate.toDate())
                         .withOwner(pos).withNextAction("").withNatureOfTask(natureOfwork);
             } else {
-                wfmatrix = lineEstimateWorkflowService.getWfMatrix(lineEstimate.getStateType(), null, null,
+                wfmatrix = lineEstimateWorkflowService.getWfMatrix(lineEstimate.getStateType(), null, lineEstimate.getTotalEstimateAmount(),
                         additionalRule, lineEstimate.getCurrentState().getValue(), null);
                 lineEstimate.transition(true).withSenderName(user.getUsername() + "::" + user.getName())
                         .withComments(approvalComent).withStateValue(wfmatrix.getNextState())
@@ -1041,6 +1064,13 @@ public class LineEstimateService {
 
         }
         return qry;
+    }
+    
+	public String getWorkFlowLevelFields(final LineEstimate lineEstimate) {
+    	String cityGrade = (String) cityService.cityDataAsMap().get(ApplicationConstant.CITY_CORP_GRADE_KEY);
+    	cityGrade = "I";
+    	return (String) scriptService.executeScript("LINEESTIMATE-WORKFLOW", ScriptService.createContext("estimateAmount", lineEstimate.getTotalEstimateAmount(),
+                "cityGrade", cityGrade));
     }
 
 }
