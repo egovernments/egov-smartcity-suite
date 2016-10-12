@@ -49,6 +49,7 @@ import java.util.List;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 
+import org.egov.collection.integration.models.BillAccountDetails.PURPOSE;
 import org.egov.commons.Installment;
 import org.egov.demand.dao.EgBillDao;
 import org.egov.demand.interfaces.BillServiceInterface;
@@ -58,10 +59,13 @@ import org.egov.demand.model.EgDemand;
 import org.egov.demand.model.EgDemandDetails;
 import org.egov.demand.model.EgDemandReason;
 import org.egov.demand.model.EgDemandReasonMaster;
+import org.egov.infra.admin.master.entity.AppConfigValues;
+import org.egov.infra.admin.master.service.AppConfigValueService;
 import org.egov.infra.exception.ApplicationRuntimeException;
 import org.egov.infra.security.utils.SecurityUtils;
-import org.egov.mrs.domain.entity.ReIssue;
+import org.egov.mrs.application.MarriageConstants;
 import org.egov.mrs.domain.entity.MarriageRegistration;
+import org.egov.mrs.domain.entity.ReIssue;
 import org.hibernate.Session;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -85,7 +89,9 @@ public class MarriageBillService extends BillServiceInterface {
 
     @Autowired
     private EgBillDao egBillDAO;
-
+    
+    @Autowired
+    private AppConfigValueService appConfigValuesService;
     public Session getCurrentSession() {
         return entityManager.unwrap(Session.class);
     }
@@ -132,7 +138,7 @@ public class MarriageBillService extends BillServiceInterface {
         final String billXml;
 
         try {
-            billXml = URLEncoder.encode(getBillXML(billableRegistration), "UTF-8");
+            billXml = URLEncoder.encode(getBillXML(billableReIssue), "UTF-8");
         } catch (final UnsupportedEncodingException e) {
             throw new RuntimeException(e.getMessage());
         }
@@ -146,8 +152,10 @@ public class MarriageBillService extends BillServiceInterface {
         final EgDemand demand = billObj.getCurrentDemand();
         final Date currentDate = new Date();
         final StringBuilder descriptionBuilder = new StringBuilder();
-
-        int i = 1;
+        final AppConfigValues  marriageFunctionCode = appConfigValuesService.getConfigValuesByModuleAndKey(
+        		MarriageConstants.MODULE_NAME, MarriageConstants.MARRIAGEFEECOLLECTION_FUCNTION_CODE).get(0);
+      
+        int orderNo = 1;
         for (final EgDemandDetails demandDetail : demand.getEgDemandDetails()) {
 
             final EgDemandReason reason = demandDetail.getEgDemandReason();
@@ -169,13 +177,14 @@ public class MarriageBillService extends BillServiceInterface {
                             + demandReasonMaster.getReasonMaster());
                 else
                     billdetail.setGlcode(reason.getGlcodeId().getGlcode());
-
+                
+                billdetail.setFunctionCode(marriageFunctionCode!=null ? marriageFunctionCode.getValue():"");
                 billdetail.setEgDemandReason(reason);
                 billdetail.setAdditionalFlag(Integer.valueOf(1));
                 billdetail.setCreateDate(currentDate);
                 billdetail.setModifiedDate(currentDate);
-                billdetail.setOrderNo(i++);
-
+                billdetail.setOrderNo(orderNo++);
+                billdetail.setPurpose(PURPOSE.OTHERS.toString());
                 descriptionBuilder.append(demandReasonMaster.getReasonMaster())
                         .append(" - ")
                         .append(installment.getDescription())
@@ -196,10 +205,13 @@ public class MarriageBillService extends BillServiceInterface {
 
     EgBillDetails createBillDet(final Integer orderNo, final BigDecimal billDetailAmount, final String glCode,
             final String description, final Integer addlFlag) {
+        final AppConfigValues  marriageFunctionCode = appConfigValuesService.getConfigValuesByModuleAndKey(
+        		MarriageConstants.MODULE_NAME, MarriageConstants.MARRIAGEFEECOLLECTION_FUCNTION_CODE).get(0);
+        
         if (orderNo == null || billDetailAmount == null || glCode == null)
             throw new ApplicationRuntimeException("Exception in createBillDet....");
         final EgBillDetails billdetail = new EgBillDetails();
-        billdetail.setFunctionCode("FUNCTION_CODE");
+        billdetail.setFunctionCode(marriageFunctionCode!=null ? marriageFunctionCode.getValue():"");
         billdetail.setOrderNo(orderNo);
         billdetail.setCreateDate(new Date());
         billdetail.setModifiedDate(new Date());

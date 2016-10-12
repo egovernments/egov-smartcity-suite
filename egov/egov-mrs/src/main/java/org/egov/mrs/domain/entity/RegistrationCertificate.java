@@ -129,11 +129,15 @@ public class RegistrationCertificate {
     }
 
     public InputStream getWifePhoto() {
-        return new java.io.ByteArrayInputStream(registration.getWife().getPhoto());
-    }
+		if (registration.getWife() != null && registration.getWife().getPhoto() != null)
+			return new java.io.ByteArrayInputStream(registration.getWife().getPhoto());
+		return null;
+	}
 
-    public InputStream getHusbandPhoto() {
-        return new java.io.ByteArrayInputStream(registration.getHusband().getPhoto());
+	public InputStream getHusbandPhoto() {
+		if (registration.getWife() != null && registration.getHusband().getPhoto() != null)
+			return new java.io.ByteArrayInputStream(registration.getHusband().getPhoto());
+		return null;
     }
 
     public String getRoleName() {

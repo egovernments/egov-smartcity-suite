@@ -65,4 +65,6 @@
     
     <bean id="MRCollectionsInterface" class="org.egov.mrs.application.service.collection.MarriageFeeCollection" scope="prototype">
     </bean>
+     <bean id="MRRCollectionsInterface" class="org.egov.mrs.application.service.collection.MarriageFeeCollection" scope="prototype">
+    </bean>
 </beans>

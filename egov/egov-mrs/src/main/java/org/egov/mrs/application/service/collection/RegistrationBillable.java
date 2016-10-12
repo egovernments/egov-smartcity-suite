@@ -82,7 +82,7 @@ public class RegistrationBillable extends AbstractBillable implements Billable {
 
     private Long userId;
     private EgBillType billType;
-    private boolean callbackForApportion;
+    private boolean callbackForApportion= Boolean.FALSE;
     private String referenceNumber;
     private String transanctionReferenceNumber;
 

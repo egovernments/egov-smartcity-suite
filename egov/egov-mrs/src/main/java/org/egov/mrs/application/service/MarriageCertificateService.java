@@ -61,7 +61,7 @@ import org.springframework.stereotype.Service;
 @Service
 public class MarriageCertificateService {
 
-	private static final String CERTIFICATE_TEMPLATE_REGISTRATION = "registrationcertificateNew";
+	private static final String CERTIFICATE_TEMPLATE_REGISTRATION = "registrationcertificate";
 	private static final String CERTIFICATE_TEMPLATE_REJECTION = "rejectioncertificate";
 
 	public enum CertificateType {

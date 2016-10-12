@@ -117,8 +117,7 @@ public class MarriageFeeCollection extends TaxCollection {
 
         if (billRcptInfo.getEvent().equals(EVENT_RECEIPT_CREATED)) {
             updateCollForRcptCreate(demand, billRcptInfo, totalAmount);
-            moveRegistrationToNextState(registrationNo);
-        }
+          }
 
         if (LOGGER.isDebugEnabled())
             LOGGER.debug("updateDemandDetails : Demand after processed : " + demand);
@@ -131,8 +130,7 @@ public class MarriageFeeCollection extends TaxCollection {
         
         if (LOGGER.isDebugEnabled())
             LOGGER.debug(String.format(" updateCollForRcptCreate : Updating Collection Started For Demand=%s with BillReceiptInfo=%s ", demand, billRcptInfo));
-        
-        updateDemandDetailForReceiptCreate(billRcptInfo.getAccountDetails(), demand, billRcptInfo, totalAmount);
+         updateDemandDetailForReceiptCreate(billRcptInfo.getAccountDetails(), demand, billRcptInfo, totalAmount);
     }
 
     @Transactional
@@ -245,16 +243,6 @@ public class MarriageFeeCollection extends TaxCollection {
     }
 
    
-
-    /**
-     * Called when the Marriage Fee is collected for the registration, to move to next state
-     *
-     * @param registrationNo
-     */
-    private void moveRegistrationToNextState(final String registrationNo) {
-        workflowService.transition(marriageRegistrationService.get(registrationNo), null, null);
-    }
-
     @Override
     public List<ReceiptDetail> reconstructReceiptDetail(String billReferenceNumber, BigDecimal actualAmountPaid,
             List<ReceiptDetail> receiptDetailList) {

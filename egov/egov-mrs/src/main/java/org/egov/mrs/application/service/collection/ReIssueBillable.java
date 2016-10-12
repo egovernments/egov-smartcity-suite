@@ -73,7 +73,7 @@ import org.springframework.transaction.annotation.Transactional;
 public class ReIssueBillable extends AbstractBillable implements Billable {
 
     private static final String STRING_DEPARTMENT_CODE = "REV";
-    private static final String STRING_SERVICE_CODE = "MR";
+    private static final String STRING_SERVICE_CODE = "MRR";
     public static final String DEFAULT_FUNCTIONARY_CODE = "1";
     public static final String DEFAULT_FUND_SRC_CODE = "01";
     public static final String DEFAULT_FUND_CODE = "01";
@@ -82,7 +82,7 @@ public class ReIssueBillable extends AbstractBillable implements Billable {
 
     private Long userId;
     private EgBillType billType;
-    private boolean callbackForApportion;
+    private boolean callbackForApportion= Boolean.FALSE;
     private String referenceNumber;
     private String transanctionReferenceNumber;
 
