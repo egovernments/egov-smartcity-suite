@@ -40,6 +40,7 @@
 package org.egov.mrs.web.controller.application.registration;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.Base64;
 
 import javax.servlet.http.HttpServletRequest;
@@ -123,7 +124,7 @@ public class UpdateMarriageRegistrationController extends MarriageRegistrationCo
             @ModelAttribute final WorkflowContainer workflowContainer,
             final Model model,
             final HttpServletRequest request,
-            final BindingResult errors) {
+            final BindingResult errors) throws IOException {
         
         String workFlowAction = "";
         if (request.getParameter("workFlowAction") != null)

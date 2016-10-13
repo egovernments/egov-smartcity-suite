@@ -431,7 +431,7 @@ public class MarriageRegistrationService {
     }
     
     @Transactional
-    public MarriageRegistration printCertificate(MarriageRegistration registration, final WorkflowContainer workflowContainer,final HttpServletRequest request) {
+    public MarriageRegistration printCertificate(MarriageRegistration registration, final WorkflowContainer workflowContainer,final HttpServletRequest request) throws IOException {
         MarriageCertificate marriageCertificate = marriageCertificateService.generateMarriageCertificate(registration,request);
         registration.setStatus(
                 marriageUtils.getStatusByCodeAndModuleType(MarriageRegistration.RegistrationStatus.REGISTERED.toString(), MarriageConstants.MODULE_NAME));
