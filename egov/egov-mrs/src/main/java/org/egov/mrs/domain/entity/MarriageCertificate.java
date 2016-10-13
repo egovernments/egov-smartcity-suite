@@ -1,0 +1,163 @@
+/* eGov suite of products aim to improve the internal efficiency,transparency,
+   accountability and the service delivery of the government  organizations.
+
+    Copyright (C) <2015>  eGovernments Foundation
+
+    The updated version of eGov suite of products as by eGovernments Foundation
+    is available at http://www.egovernments.org
+
+    This program is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    any later version.
+
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with this program. If not, see http://www.gnu.org/licenses/ or
+    http://www.gnu.org/licenses/gpl.html .
+
+    In addition to the terms of the GPL license to be adhered to in using this
+    program, the following additional terms are to be complied with:
+
+        1) All versions of this program, verbatim or modified must carry this
+           Legal Notice.
+
+        2) Any misrepresentation of the origin of the material is prohibited. It
+           is required that all modified versions of this material be marked in
+           reasonable ways as different from the original version.
+
+        3) This license does not grant any rights to any user of the program
+           with regards to rights under trademark law for use of the trade names
+           or trademarks of eGovernments Foundation.
+
+  In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
+ */
+package org.egov.mrs.domain.entity;
+
+import java.util.Date;
+
+import javax.persistence.CascadeType;
+import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.SequenceGenerator;
+import javax.persistence.Table;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
+
+import org.egov.infra.filestore.entity.FileStoreMapper;
+import org.egov.infra.persistence.entity.AbstractAuditable;
+import org.hibernate.validator.constraints.SafeHtml;
+
+
+@Entity
+@Table(name = "egmrs_certificate")
+@SequenceGenerator(name = MarriageCertificate.SEQ_MARRIAGECERTIFICATE, sequenceName = MarriageCertificate.SEQ_MARRIAGECERTIFICATE, allocationSize = 1)
+public class MarriageCertificate extends AbstractAuditable {
+
+    /**
+     * 
+     */
+    private static final long serialVersionUID = 1L;
+
+    public static final String SEQ_MARRIAGECERTIFICATE = "SEQ_EGMRS_CERTIFICATE";
+    
+    @Id
+    @GeneratedValue(generator = SEQ_MARRIAGECERTIFICATE, strategy = GenerationType.SEQUENCE)
+    private Long id;
+    @SafeHtml
+    private String certificateNo;
+
+    @Temporal(value = TemporalType.DATE)
+    private Date certificateDate;
+    
+    @SafeHtml
+    private String certificateType;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "registration")
+    private MarriageRegistration registration;
+
+    @ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @JoinColumn(name = "filestore", nullable = false)
+    private FileStoreMapper fileStore;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "reissue")
+    private ReIssue reIssue; 
+    
+    private boolean certificateIssued;
+
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+    public String getCertificateNo() {
+        return certificateNo;
+    }
+
+    public void setCertificateNo(String certificateNo) {
+        this.certificateNo = certificateNo;
+    }
+
+    public Date getCertificateDate() {
+        return certificateDate;
+    }
+
+    public void setCertificateDate(Date certificateDate) {
+        this.certificateDate = certificateDate;
+    }
+
+    public String getCertificateType() {
+        return certificateType;
+    }
+
+    public void setCertificateType(String certificateType) {
+        this.certificateType = certificateType;
+    }
+
+    public MarriageRegistration getRegistration() {
+        return registration;
+    }
+
+    public void setRegistration(MarriageRegistration registration) {
+        this.registration = registration;
+    }
+
+    public FileStoreMapper getFileStore() {
+        return fileStore;
+    }
+
+    public void setFileStore(FileStoreMapper fileStore) {
+        this.fileStore = fileStore;
+    }
+
+    public ReIssue getReIssue() {
+        return reIssue;
+    }
+
+    public void setReIssue(ReIssue reIssue) {
+        this.reIssue = reIssue;
+    }
+
+    public boolean isCertificateIssued() {
+        return certificateIssued;
+    }
+
+    public void setCertificateIssued(boolean certificateIssued) {
+        this.certificateIssued = certificateIssued;
+    }
+
+}

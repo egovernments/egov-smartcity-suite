@@ -39,17 +39,28 @@
 
 package org.egov.mrs.application.service;
 
+import java.io.ByteArrayInputStream;
+import java.io.InputStream;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
+import javax.servlet.http.HttpServletRequest;
+
+import org.egov.infra.filestore.entity.FileStoreMapper;
+import org.egov.infra.filestore.service.FileStoreService;
 import org.egov.infra.reporting.engine.ReportOutput;
 import org.egov.infra.reporting.engine.ReportRequest;
 import org.egov.infra.reporting.engine.ReportService;
 import org.egov.infra.security.utils.SecurityUtils;
+import org.egov.infra.web.utils.WebUtils;
+import org.egov.mrs.application.MarriageConstants;
+import org.egov.mrs.domain.autonumber.MarriageCertificateNumberGenerator;
+import org.egov.mrs.domain.entity.MarriageCertificate;
 import org.egov.mrs.domain.entity.MarriageRegistration;
 import org.egov.mrs.domain.entity.RegistrationCertificate;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 
 /**
@@ -73,6 +84,15 @@ public class MarriageCertificateService {
 
 	@Autowired
 	private SecurityUtils securityUtils;
+	
+	@Autowired
+	@Qualifier("fileStoreService")
+	protected FileStoreService fileStoreService;
+	
+	@Autowired
+        private MarriageCertificateNumberGenerator marriageCertificateNumberGenerator;
+	
+	private InputStream generateCertificatePDF;
 
 	/**
 	 * Generates Marriage Registration Certificate and returns the reportOutput
@@ -102,5 +122,43 @@ public class MarriageCertificateService {
 		// marriageRegistrationService.update(registration);
 		return reportOutput;
 	}
-
+	
+	public MarriageCertificate generateMarriageCertificate(final MarriageRegistration marriageRegistration,
+	       final HttpServletRequest request) {
+	    MarriageCertificate marriageCertificate = null;
+	    ReportOutput reportOutput = null;
+	    final String cityName = request.getSession().getAttribute("citymunicipalityname").toString();
+	    final String url = WebUtils.extractRequestDomainURL(request, false);
+	    final String cityLogo = url.concat(MarriageConstants.IMAGE_CONTEXT_PATH)
+                    .concat((String) request.getSession().getAttribute("citylogo"));
+	    reportOutput = generate(marriageRegistration, CertificateType.REGISTRATION,cityName,cityLogo);
+	    if (reportOutput != null && reportOutput.getReportOutputData() != null) {
+	        generateCertificatePDF = new ByteArrayInputStream(reportOutput.getReportOutputData());
+	        marriageCertificate = saveRegisteredCertificate(marriageRegistration,generateCertificatePDF,request.getSession().getAttribute("cityCode").toString());
+	    }
+	    return marriageCertificate;
+	}
+	
+	public MarriageCertificate saveRegisteredCertificate(final MarriageRegistration marriageRegistration,
+	        final InputStream fileStream,String cityCode) {
+	    MarriageCertificate marriageCertificate = new MarriageCertificate();
+	    if(marriageRegistration!=null){
+	        String certificateNo = marriageCertificateNumberGenerator.generateCertificateNumber(cityCode);
+	        final String fileName = certificateNo + ".pdf";
+	        buildCertificate(marriageRegistration,marriageCertificate,certificateNo,CertificateType.REGISTRATION.toString());
+	        final FileStoreMapper fileStore = fileStoreService.store(fileStream, fileName, "application/pdf",
+	                MarriageConstants.FILESTORE_MODULECODE);
+	        marriageCertificate.setFileStore(fileStore);
+	    }
+	    return marriageCertificate;
+	}
+	
+	private void buildCertificate(final MarriageRegistration marriageRegistration,
+	        MarriageCertificate marriageCertificate, String certificateNumber,String certificateType) {
+	    marriageCertificate.setCertificateDate(new Date());
+	    marriageCertificate.setCertificateIssued(true);
+	    marriageCertificate.setCertificateNo(certificateNumber);
+	    marriageCertificate.setCertificateType(certificateType);
+	    marriageCertificate.setRegistration(marriageRegistration);
+	}
 }

@@ -85,7 +85,7 @@
 		<tr>
 			<td>
 				<c:set value="" var="disabledClass" />
-				<c:if test="${registration.id != null && registration.status == 'Approved'}">
+				<c:if test="${registration.id != null && registration.status.code == 'APPROVED'}">
 					<c:set value="${registration.feeCollected}" var="isFeeCollected"></c:set>
 					<c:if test="${!isFeeCollected}">
 						<c:set value="disabled" var="disabledClass" />

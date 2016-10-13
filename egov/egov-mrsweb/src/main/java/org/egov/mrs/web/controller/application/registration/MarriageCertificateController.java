@@ -39,9 +39,16 @@
 
 package org.egov.mrs.web.controller.application.registration;
 
+import java.io.File;
+import java.io.IOException;
+
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
+import org.apache.commons.io.FileUtils;
+import org.egov.infra.filestore.entity.FileStoreMapper;
+import org.egov.infra.filestore.service.FileStoreService;
+import org.egov.infra.reporting.engine.ReportConstants.FileFormat;
 import org.egov.infra.reporting.engine.ReportOutput;
 import org.egov.infra.web.utils.WebUtils;
 import org.egov.mrs.application.MarriageConstants;
@@ -49,6 +56,7 @@ import org.egov.mrs.application.service.MarriageCertificateService;
 import org.egov.mrs.application.service.MarriageCertificateService.CertificateType;
 import org.egov.mrs.domain.service.MarriageRegistrationService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -74,29 +82,31 @@ public class MarriageCertificateController {
 
 	@Autowired
 	private MarriageRegistrationService marriageRegistrationService;
+	
+	@Autowired
+        @Qualifier("fileStoreService")
+        protected FileStoreService fileStoreService;
+	
 	private ReportOutput reportOutput = null;
-
+	
 	@RequestMapping(value = "/registration", method = RequestMethod.GET)
 	public @ResponseBody ResponseEntity<byte[]> showRegistrationCertificate(HttpServletRequest request,
-			@RequestParam final Long id, final Model model, final HttpSession session) {
-
-		final String url = WebUtils.extractRequestDomainURL(request, false);
-		final String cityLogo = url.concat(MarriageConstants.IMAGE_CONTEXT_PATH)
-				.concat((String) request.getSession().getAttribute("citylogo"));
-		final String cityName = request.getSession().getAttribute("citymunicipalityname").toString();
-
-		final HttpHeaders headers = new HttpHeaders();
-		headers.setContentType(MediaType.parseMediaType("application/pdf"));
-		headers.add("content-disposition", "inline;filename=EstimationNotice.pdf");
-		reportOutput = marriageCertificateService.generate(marriageRegistrationService.get(id),
-				CertificateType.REGISTRATION, cityName, cityLogo);
-		return new ResponseEntity<byte[]>(reportOutput.getReportOutputData(), headers, HttpStatus.CREATED);
-
+			@RequestParam final Long id, final Model model, final HttpSession session) throws IOException {
+	    reportOutput = new ReportOutput();
+	    final FileStoreMapper fsm = (marriageRegistrationService.get(id)).getMarriageCertificate().get(0).getFileStore();
+                final File file = fileStoreService.fetch(fsm, MarriageConstants.FILESTORE_MODULECODE);
+                final byte[] bFile = FileUtils.readFileToByteArray(file);
+                reportOutput.setReportOutputData(bFile);
+                reportOutput.setReportFormat(FileFormat.PDF);
+                final HttpHeaders headers = new HttpHeaders();
+                headers.setContentType(MediaType.parseMediaType("application/pdf"));
+                headers.add("content-disposition", "inline;filename="+file.getName());
+		return new ResponseEntity<byte[]>(reportOutput.getReportOutputData(),headers,HttpStatus.CREATED);
 	}
 
 	@RequestMapping(value = "/rejection", method = RequestMethod.GET)
 	public @ResponseBody ResponseEntity<byte[]> showRejectionCertificate(HttpServletRequest request,
-			@RequestParam final Long id, final Model model, final HttpSession session) {
+			@RequestParam final Long id, final Model model, final HttpSession session) {  
 		final String url = WebUtils.extractRequestDomainURL(request, false);
 		final String cityLogo = url.concat(MarriageConstants.IMAGE_CONTEXT_PATH)
 				.concat((String) request.getSession().getAttribute("citylogo"));

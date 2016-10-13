@@ -42,6 +42,8 @@ package org.egov.mrs.application;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import org.egov.commons.EgwStatus;
+import org.egov.commons.dao.EgwStatusHibernateDAO;
 import org.egov.infra.admin.master.entity.Role;
 import org.egov.infra.security.utils.SecurityUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -53,6 +55,9 @@ public class MarriageUtils {
     @Autowired
     private SecurityUtils securityUtils;
     
+    @Autowired
+    private EgwStatusHibernateDAO egwStatusHibernateDAO;
+    
     public boolean isLoggedInUserApprover() {
         List<Role> approvers = securityUtils.getCurrentUser().getRoles().stream()
                 .filter(role -> role.getName().equalsIgnoreCase(MarriageConstants.APPROVER_ROLE_NAME)).collect(Collectors.toList());
@@ -61,5 +66,9 @@ public class MarriageUtils {
             return false;
 
         return true;
+    }
+    
+    public EgwStatus getStatusByCodeAndModuleType(final String code, final String moduleName) {
+        return egwStatusHibernateDAO.getStatusByModuleAndCode(moduleName, code);
     }
 }

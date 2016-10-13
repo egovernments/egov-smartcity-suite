@@ -96,7 +96,7 @@
 			enctype="multipart/form-data">
 
 			<input type="hidden" id="registrationId" value="${registration.id}" />
-			<input type="hidden" id="registrationStatus" value="${registration.status}" /> 
+			<input type="hidden" id="registrationStatus" value="${registration.status.code}" /> 
 			<form:hidden path="" id="workFlowAction" name="workFlowAction"/>
 			<div class="panel panel-primary" data-collapsed="0">
 				<div class="panel-heading">

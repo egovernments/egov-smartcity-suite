@@ -67,7 +67,7 @@ $(document).ready( function () {
 		$(inputPhoto).trigger('click');
 	});
 	
-	if($('#registrationStatus').val()=='Created' || $('#registrationStatus').val()=='Approved'){  
+	if($('#registrationStatus').val()=='CREATED' || $('#registrationStatus').val()=='APPROVED'){  
 		$(".show-row").hide(); 
 		$('#approverDetailHeading').hide();
 		$('#approvalDepartment').removeAttr('required');

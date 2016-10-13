@@ -96,7 +96,7 @@ public class ViewMarriageRegistrationController extends MarriageRegistrationCont
         });
         /*String screen = null;
 
-        if (registration.getStatus() != ApplicationStatus.Approved) {
+        if (registration.getStatus().getCode().equalsIgnoreCase(MarriageRegistration.RegistrationStatus.APPROVED.toString())) {
             if (mode == null)
                 mode = utils.isLoggedInUserApprover() ? "view" : mode;
 

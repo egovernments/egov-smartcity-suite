@@ -1,4 +1,5 @@
-/* eGov suite of products aim to improve the internal efficiency,transparency,
+/**
+ * eGov suite of products aim to improve the internal efficiency,transparency,
    accountability and the service delivery of the government  organizations.
 
     Copyright (C) <2015>  eGovernments Foundation
@@ -36,31 +37,27 @@
 
   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
+package org.egov.mrs.domain.autonumber.impl;
 
-package org.egov.mrs.application;
+import java.io.Serializable;
 
-public class MarriageConstants {
-    
-    public static final String MODULE_NAME = "Marriage Registration";
-    public static final String BOUNDARY_TYPE = "Zone";
-    public static final String REVENUE_HIERARCHY_TYPE = "REVENUE";
-    
-    public static final String APPROVER_ROLE_NAME = "ULB Operator";
-    public static final String DATE_FORMAT_DDMMYYYY = "dd-MM-yyyy";
-    
-    public static final String REISSUE_FEECRITERIA = "Re-Issue Fee";
-    public static final String ADDITIONAL_RULE_REGISTRATION = "MARRIAGE REGISTRATION"; 
-    public static final String IMAGE_CONTEXT_PATH = "/egi";
-    
-    // validactions
-    public static final String WFLOW_ACTION_STEP_REJECT = "Reject";
-    public static final String WFLOW_ACTION_STEP_CANCEL = "Cancel Registration";
-    public static final String WFLOW_ACTION_STEP_FORWARD = "Forward";
-    public static final String WFLOW_ACTION_STEP_APPROVE = "Approve";
-    public static final String WFLOW_ACTION_STEP_PRINTCERTIFICATE = "Print Certificate";
-    
-    public static final String APPROVED = "APPROVED";
-    public static final String MARRIAGEFEECOLLECTION_FUCNTION_CODE = "MARRIAGE_FUNCTION_CODE";
-    public static final String FILESTORE_MODULECODE = "MRS";
+import org.egov.infra.persistence.utils.ApplicationSequenceNumberGenerator;
+import org.egov.mrs.domain.autonumber.MarriageCertificateNumberGenerator;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
+@Service
+public class MarriageCertificateNumberGeneratorImpl implements MarriageCertificateNumberGenerator{
+    
+private static final String CERTIFICATE_NUMBER_SEQ_PREFIX = "SEQ_EGMRS_CERTIFICATE_NUMBER";
+    
+    @Autowired
+    private ApplicationSequenceNumberGenerator applicationSequenceNumberGenerator;
+    
+    @Override 
+    public String generateCertificateNumber(String cityCode){
+        final String sequenceName = CERTIFICATE_NUMBER_SEQ_PREFIX;
+        final Serializable nextSequence = applicationSequenceNumberGenerator.getNextSequence(sequenceName);
+        return String.format("%s%06d", cityCode,nextSequence);
+    }
 }

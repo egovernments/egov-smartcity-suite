@@ -129,19 +129,19 @@ public class UpdateMarriageRegistrationController extends MarriageRegistrationCo
                else if (workFlowAction.equalsIgnoreCase(MarriageConstants.WFLOW_ACTION_STEP_APPROVE)) 
                     marriageRegistrationService.approveRegistration(registration, workflowContainer);   
                else if (workFlowAction.equalsIgnoreCase(MarriageConstants.WFLOW_ACTION_STEP_PRINTCERTIFICATE)) 
-                   marriageRegistrationService.printCertificate(registration, workflowContainer);
+                   marriageRegistrationService.printCertificate(registration, workflowContainer, request);
                else{
                    workflowContainer.setApproverPositionId(Long.valueOf(request.getParameter("approvalPosition")));
                    marriageRegistrationService.forwardRegistration(id, registration,workflowContainer);
                }
         }
         // On print certificate, output registration certificate 
-      /*  if (workFlowAction != null && !workFlowAction.isEmpty()
+        if (workFlowAction != null && !workFlowAction.isEmpty()
                 && workFlowAction.equalsIgnoreCase(MarriageConstants.WFLOW_ACTION_STEP_PRINTCERTIFICATE))
-            return "redirect: /certificate/registration?id="
-            + registration.getId();*/
-        model.addAttribute("message", messageSource.getMessage("msg.update.registration", null, null));
-
+            return "redirect:/certificate/registration?id="
+                    + registration.getId();
+                    //+ registration.getMarriageCertificate().get(0).getFileStore().getId();
+        model.addAttribute("message", messageSource.getMessage("msg.update.registration", null, null)); 
         return "registration-ack";
     }
 }

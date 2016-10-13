@@ -42,10 +42,9 @@ package org.egov.mrs.domain.repository;
 import java.util.Date;
 import java.util.List;
 
+import org.egov.commons.EgwStatus;
 import org.egov.mrs.domain.entity.MarriageRegistration;
-import org.egov.mrs.domain.enums.ApplicationStatus;
 import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.data.querydsl.QueryDslPredicateExecutor;
 import org.springframework.stereotype.Repository;
 
 @Repository
@@ -58,5 +57,5 @@ public interface MarriageRegistrationRepository extends JpaRepository<MarriageRe
     
     //List<Registration> findByRegistrationNoAndDateOfMarriageAndHusbandNameFirstName();
     
-    List<MarriageRegistration> findByCreatedDateAfterAndCreatedDateBeforeAndStatus(Date fromDate, Date toDate, ApplicationStatus status);    
+    List<MarriageRegistration> findByCreatedDateAfterAndCreatedDateBeforeAndStatus(Date fromDate, Date toDate, EgwStatus status);    
 }

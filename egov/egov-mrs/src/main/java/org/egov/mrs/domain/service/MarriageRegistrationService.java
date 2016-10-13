@@ -39,8 +39,6 @@
 
 package org.egov.mrs.domain.service;
 
-import static org.egov.mrs.application.MarriageConstants.APPROVED;
-
 import java.io.File;
 import java.io.IOException;
 import java.math.BigDecimal;
@@ -54,9 +52,11 @@ import java.util.stream.Collectors;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
+import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
+import org.egov.commons.EgwStatus;
 import org.egov.eis.service.AssignmentService;
 import org.egov.eis.web.contract.WorkflowContainer;
 import org.egov.infra.admin.master.entity.User;
@@ -70,15 +70,17 @@ import org.egov.infra.search.elastic.service.ApplicationIndexService;
 import org.egov.infra.security.utils.SecurityUtils;
 import org.egov.infra.utils.ApplicationNumberGenerator;
 import org.egov.mrs.application.MarriageConstants;
+import org.egov.mrs.application.MarriageUtils;
+import org.egov.mrs.application.service.MarriageCertificateService;
 import org.egov.mrs.application.service.MarriageRegistrationDemandService;
 import org.egov.mrs.application.service.workflow.RegistrationWorkflowService;
 import org.egov.mrs.domain.entity.Applicant;
 import org.egov.mrs.domain.entity.IdentityProof;
+import org.egov.mrs.domain.entity.MarriageCertificate;
 import org.egov.mrs.domain.entity.MarriageDocument;
 import org.egov.mrs.domain.entity.MarriageRegistration;
 import org.egov.mrs.domain.entity.RegistrationDocument;
 import org.egov.mrs.domain.entity.SearchModel;
-import org.egov.mrs.domain.enums.ApplicationStatus;
 import org.egov.mrs.domain.enums.FeeType;
 import org.egov.mrs.domain.repository.MarriageRegistrationRepository;
 import org.egov.mrs.domain.repository.WitnessRepository;
@@ -166,6 +168,12 @@ public class MarriageRegistrationService {
     
     @Autowired
     private AssignmentService assignmentService;
+    
+    @Autowired
+    private MarriageUtils marriageUtils;
+    
+    @Autowired
+    private MarriageCertificateService marriageCertificateService;
 
     @Autowired
     public MarriageRegistrationService(final MarriageRegistrationRepository registrationRepository) {
@@ -210,7 +218,8 @@ public class MarriageRegistrationService {
                         registration.setDemand(
                                         marriageRegistrationDemandService.createDemand(new BigDecimal(registration.getFeePaid())));
                 }
-                  registration.setStatus(ApplicationStatus.Created);
+                  registration.setStatus(
+                          marriageUtils.getStatusByCodeAndModuleType(MarriageRegistration.RegistrationStatus.CREATED.toString(), MarriageConstants.MODULE_NAME));
 
         if (registration.getPriest().getReligion().getId() != null)
             registration.getPriest().setReligion(religionService.getProxy(registration.getPriest().getReligion().getId()));
@@ -273,7 +282,8 @@ public class MarriageRegistrationService {
         //updateRegistrationData(regModel, registration);
         
         // Remove this loc once above issue fixed
-        registration.setStatus(ApplicationStatus.Created);
+        registration.setStatus(
+                marriageUtils.getStatusByCodeAndModuleType(MarriageRegistration.RegistrationStatus.CREATED.toString(), MarriageConstants.MODULE_NAME));
 
         workflowService.transition(registration, workflowContainer, registration.getApprovalComent());
         return update(registration);
@@ -324,7 +334,8 @@ public class MarriageRegistrationService {
                         }
 
                 }
-        registration.setStatus(ApplicationStatus.Created);
+        registration.setStatus(
+                marriageUtils.getStatusByCodeAndModuleType(MarriageRegistration.RegistrationStatus.CREATED.toString(), MarriageConstants.MODULE_NAME));
 
         witnessRepository.delete(registration.getWitnesses());
         registration.getWitnesses().clear();
@@ -398,7 +409,8 @@ public class MarriageRegistrationService {
 
     @Transactional
     public MarriageRegistration approveRegistration( MarriageRegistration registration, final WorkflowContainer workflowContainer) {
-        registration.setStatus(ApplicationStatus.Approved);
+        registration.setStatus(
+                marriageUtils.getStatusByCodeAndModuleType(MarriageRegistration.RegistrationStatus.APPROVED.toString(), MarriageConstants.MODULE_NAME));
         registration.setRegistrationNo(registrationNoGenerator.generateRegistrationNo());
         registration = update(registration);
         workflowService.transition(registration, workflowContainer, workflowContainer.getApproverComments());
@@ -409,8 +421,12 @@ public class MarriageRegistrationService {
     }
     
     @Transactional
-    public MarriageRegistration printCertificate(MarriageRegistration registration, final WorkflowContainer workflowContainer) {
-        registration.setStatus(ApplicationStatus.Registered);
+    public MarriageRegistration printCertificate(MarriageRegistration registration, final WorkflowContainer workflowContainer,final HttpServletRequest request) {
+        MarriageCertificate marriageCertificate = marriageCertificateService.generateMarriageCertificate(registration,request);
+        registration.setStatus(
+                marriageUtils.getStatusByCodeAndModuleType(MarriageRegistration.RegistrationStatus.REGISTERED.toString(), MarriageConstants.MODULE_NAME));
+        registration.addCertificate(marriageCertificate);
+        registration.setActive(true);
         workflowService.transition(registration, workflowContainer, workflowContainer.getApproverComments()); 
         sendSMS(registration);
         sendEmail(registration);
@@ -424,7 +440,7 @@ public class MarriageRegistrationService {
                 registration.getApplicationNo(),
                 registration.getApplicationDate(), FeeType.REGISTRATION.name(),
                 registration.getHusband().getFullName().concat(registration.getWife().getFullName()),
-                registration.getStatus().name(),
+                registration.getStatus().getCode(),
                 "/mrs/registration/" + registration.getId(),
                 registration.getHusband().getContactInfo().getResidenceAddress(), user.getUsername() + "::" + user.getName(), "")//TODO CHECK THIS
                         .mobileNumber(registration.getHusband().getContactInfo().getMobileNo());
@@ -435,7 +451,8 @@ public class MarriageRegistrationService {
     private void sendSMS(final MarriageRegistration registration) {
         String msgKey = MSG_KEY_SMS_REGISTRATION_NEW;
 
-        if (registration.getStatus() == ApplicationStatus.Rejected)
+        if (registration.getStatus()!=null && 
+                registration.getStatus().getCode().equalsIgnoreCase(MarriageRegistration.RegistrationStatus.REJECTED.toString()))
             msgKey = MSG_KEY_SMS_REGISTRATION_REJECTION;
 
         final String message = mrsMessageSource.getMessage(msgKey,
@@ -450,7 +467,8 @@ public class MarriageRegistrationService {
         String msgKeyMail = MSG_KEY_EMAIL_REGISTRATION_NEW_EMAIL;
         String msgKeyMailSubject = MSG_KEY_EMAIL_REGISTRATION_NEW_SUBJECT;
 
-        if (registration.getStatus() == ApplicationStatus.Rejected) {
+        if (registration.getStatus()!=null && 
+                registration.getStatus().getCode().equalsIgnoreCase(MarriageRegistration.RegistrationStatus.REJECTED.toString())){
             msgKeyMail = MSG_KEY_EMAIL_REGISTRATION_REJECTION_EMAIL;
             msgKeyMailSubject = MSG_KEY_EMAIL_REGISTRATION_REJECTION_SUBJECT;
         }
@@ -468,13 +486,14 @@ public class MarriageRegistrationService {
     @Transactional
     public MarriageRegistration rejectRegistration(MarriageRegistration registration, final WorkflowContainer workflowContainer) {
         registration.setStatus(workflowContainer.getWorkFlowAction().equalsIgnoreCase(MarriageConstants.WFLOW_ACTION_STEP_REJECT)?
-                ApplicationStatus.Rejected:ApplicationStatus.Cancelled);
+                marriageUtils.getStatusByCodeAndModuleType(MarriageRegistration.RegistrationStatus.REJECTED.toString(), MarriageConstants.MODULE_NAME)
+                :marriageUtils.getStatusByCodeAndModuleType(MarriageRegistration.RegistrationStatus.CANCELLED.toString(), MarriageConstants.MODULE_NAME));
         registration.setRejectionReason(workflowContainer.getApproverComments());
         workflowService.transition(registration, workflowContainer, workflowContainer.getApproverComments());
         sendSMS(registration);
         sendEmail(registration);
         return registration;
-    }
+    } 
 
     public List<MarriageRegistration> getRegistrations() {
         return registrationRepository.findAll();
@@ -500,9 +519,11 @@ public class MarriageRegistrationService {
             if (searchModel.getFromDate() != null && searchModel.getToDate() != null)
                 criteria.add(Restrictions.between("createdDate", searchModel.getFromDate(), searchModel.getToDate()));
 
-            ApplicationStatus status = searchModel.isRegistrationApproved() ? ApplicationStatus.Approved
+            //TODO : need to change to egwstatus
+            // Commented for time being. need to fix
+          /*  ApplicationStatus status = searchModel.isRegistrationApproved() ? ApplicationStatus.Approved
                     : ApplicationStatus.Rejected;
-            criteria.add(Restrictions.eq("status", status));
+            criteria.add(Restrictions.eq("status", status));*/
         }
 
         /*
@@ -551,7 +572,9 @@ public class MarriageRegistrationService {
     }
 
     public List<MarriageRegistration> searchRegistrationBetweenDateAndStatus(final SearchModel searchModel) {
-        ApplicationStatus status = searchModel.isRegistrationApproved() ? ApplicationStatus.Approved : ApplicationStatus.Rejected;
+        EgwStatus status = searchModel.isRegistrationApproved() ? 
+                marriageUtils.getStatusByCodeAndModuleType(MarriageRegistration.RegistrationStatus.APPROVED.toString(), MarriageConstants.MODULE_NAME)
+                : marriageUtils.getStatusByCodeAndModuleType(MarriageRegistration.RegistrationStatus.REJECTED.toString(), MarriageConstants.MODULE_NAME);
         return registrationRepository.findByCreatedDateAfterAndCreatedDateBeforeAndStatus(searchModel.getFromDate(),
                 searchModel.getToDate(), status);
     }
@@ -581,7 +604,7 @@ public class MarriageRegistrationService {
 	public List<MarriageRegistration> searchApprovedMarriageRegistrations(MarriageRegistration registration) {
 		final Criteria criteria = getCurrentSession().createCriteria(
 				MarriageRegistration.class);
-		 criteria.add(Restrictions.in("status", new String[] { APPROVED}));
+		 criteria.add(Restrictions.in("status", new String[] { MarriageRegistration.RegistrationStatus.APPROVED.toString()}));
 		return criteria.list();
 	}
     

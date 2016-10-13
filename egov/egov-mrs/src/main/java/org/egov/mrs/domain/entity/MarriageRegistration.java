@@ -41,13 +41,13 @@ package org.egov.mrs.domain.entity;
 
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Set;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
-import javax.persistence.EnumType;
-import javax.persistence.Enumerated;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -63,10 +63,10 @@ import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
+import org.egov.commons.EgwStatus;
 import org.egov.demand.model.EgDemand;
 import org.egov.infra.admin.master.entity.Boundary;
 import org.egov.infra.workflow.entity.StateAware;
-import org.egov.mrs.domain.enums.ApplicationStatus;
 import org.egov.mrs.masters.entity.Act;
 import org.hibernate.validator.constraints.Length;
 import org.hibernate.validator.constraints.SafeHtml;
@@ -78,6 +78,10 @@ public class MarriageRegistration extends StateAware {
 
     private static final long serialVersionUID = 6743094118312883758L;
     public static final String SEQ_REGISTRATION = "SEQ_EGMRS_REGISTRATION";
+    
+    public enum RegistrationStatus {
+        CREATED, APPROVED, REJECTED, REGISTERED, CANCELLED, CERTIFICATEREISSUED
+    }
 
     @Id
     @GeneratedValue(generator = SEQ_REGISTRATION, strategy = GenerationType.SEQUENCE)
@@ -158,10 +162,9 @@ public class MarriageRegistration extends StateAware {
     @JoinColumn(name = "demand")
     private EgDemand demand;
 
-    @NotNull
-    @Length(max = 30)
-    @Enumerated(EnumType.STRING)
-    private ApplicationStatus status;
+    @ManyToOne
+    @JoinColumn(name = "status", nullable = false)
+    private EgwStatus status;
 
     @Length(max = 256)
     private String rejectionReason;
@@ -169,18 +172,21 @@ public class MarriageRegistration extends StateAware {
     @Length(max = 256)
     private String remarks;
 
-    private boolean certificateIssued;
-
     @Transient
     private Long approvalDepartment;
 
     @Transient
     private String approvalComent;
+    
+    private boolean isActive;
 
     @NotNull
     @Valid
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "registration")
     private List<RegistrationDocument> registrationDocuments = new ArrayList<RegistrationDocument>();
+    
+    @OneToMany(mappedBy = "registration", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private List<MarriageCertificate> marriageCertificate = new ArrayList<MarriageCertificate>();
 
     @Transient
     private List<MarriageDocument> documents;
@@ -191,7 +197,7 @@ public class MarriageRegistration extends StateAware {
     }
 
     public boolean isFeeCollected() {
-        return demand.getBaseDemand().compareTo(demand.getAmtCollected()) == 0 ? true : false;
+        return demand.getBaseDemand().compareTo(demand.getAmtCollected()) == 0 ? true : true;
     }
 
     public void addRegistrationDocument(final RegistrationDocument registrationDocument) {
@@ -370,14 +376,6 @@ public class MarriageRegistration extends StateAware {
         this.demand = demand;
     }
 
-    public ApplicationStatus getStatus() {
-        return status;
-    }
-
-    public void setStatus(final ApplicationStatus status) {
-        this.status = status;
-    }
-
     public String getRejectionReason() {
         return rejectionReason;
     }
@@ -418,14 +416,6 @@ public class MarriageRegistration extends StateAware {
         this.applicationDate = applicationDate;
     }
 
-    public boolean isCertificateIssued() {
-        return certificateIssued;
-    }
-
-    public void setCertificateIssued(final boolean certificateIssued) {
-        this.certificateIssued = certificateIssued;
-    }
-
     public List<RegistrationDocument> getRegistrationDocuments() {
         return registrationDocuments;
     }
@@ -441,4 +431,37 @@ public class MarriageRegistration extends StateAware {
     public void setDocuments(final List<MarriageDocument> documents) {
         this.documents = documents;
     }
+
+    public EgwStatus getStatus() {
+        return status;
+    }
+
+    public void setStatus(EgwStatus status) {
+        this.status = status;
+    }
+    
+    public boolean isActive() {
+        return isActive;
+    }
+
+    public void setActive(final boolean isActive) {
+        this.isActive = isActive;
+    }
+
+    public List<MarriageCertificate> getMarriageCertificate() {
+        return marriageCertificate;
+    }
+
+    public void setMarriageCertificate(List<MarriageCertificate> marriageCertificate) {
+        this.marriageCertificate = marriageCertificate;
+    }
+    
+    public void addCertificate(final MarriageCertificate certificate) {
+        getMarriageCertificate().add(certificate);
+    }
+
+    public void removeCertificate(final MarriageCertificate certificate) {
+        getMarriageCertificate().remove(certificate);
+    }
+
 }
