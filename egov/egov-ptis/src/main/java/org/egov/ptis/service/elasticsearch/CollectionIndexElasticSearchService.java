@@ -80,8 +80,6 @@ import org.elasticsearch.search.aggregations.bucket.terms.Terms;
 import org.elasticsearch.search.aggregations.metrics.sum.Sum;
 import org.elasticsearch.search.aggregations.metrics.valuecount.ValueCount;
 import org.joda.time.DateTime;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.elasticsearch.core.ElasticsearchTemplate;
 import org.springframework.data.elasticsearch.core.ResultsExtractor;
@@ -92,8 +90,6 @@ import org.springframework.stereotype.Service;
 @Service
 public class CollectionIndexElasticSearchService {
 
-	private static final Logger LOGGER = LoggerFactory.getLogger(CollectionIndexElasticSearchService.class); 
-	
 	private CollectionIndexESRepository collectionIndexESRepository;
 	
 	@Autowired
@@ -116,11 +112,9 @@ public class CollectionIndexElasticSearchService {
 	 * @return Map
 	 */
 	public Map<String, BigDecimal> getConsolidatedCollection(String billingService){
-		LOGGER.info("---- Entered getConsolidatedCollection ---- ");
 		/**
 		 * As per Elastic Search functionality, to get the total collections between 2 dates, add a day to the endDate and fetch the results
 		 */
-		Long startTime = System.currentTimeMillis();
 		Map<String, BigDecimal> consolidatedCollValues = new HashMap<>();
 		CFinancialYear currFinYear = cFinancialYearService.getFinancialYearByDate(new Date());
 		//For current year results
@@ -128,8 +122,6 @@ public class CollectionIndexElasticSearchService {
 		//For last year results
 		consolidatedCollValues.put("lytdColln", getConsolidatedCollForYears(DateUtils.addYears(currFinYear.getStartingDate(), -1), 
 				DateUtils.addDays(DateUtils.addYears(new Date(), -1), 1), billingService));
-		Long timeTaken = System.currentTimeMillis() - startTime;
-		LOGGER.info("getConsolidatedCollection ----> calculations done in " + timeTaken / 1000 + " (secs)");
 		return consolidatedCollValues;
 	}
 
@@ -195,8 +187,6 @@ public class CollectionIndexElasticSearchService {
 		Date toDate;
 		BigDecimal todayColl = BigDecimal.ZERO;
 		BigDecimal tillDateColl = BigDecimal.ZERO;
-		LOGGER.info("---- Entered getCompleteCollectionIndexDetails ----");
-		Long startTime = System.currentTimeMillis();
 		/**
 		 * As per Elastic Search functionality, to get the total collections between 2 dates, add a day to the endDate and fetch the results
 		 *
@@ -237,8 +227,6 @@ public class CollectionIndexElasticSearchService {
 		tillDateColl = getTotalCollectionsForDates(collectionDetailsRequest, DateUtils.addYears(fromDate, -1), DateUtils.addYears(toDate, -1));
 		collectionIndexDetails.setLytdColl(tillDateColl);
 		
-		Long timeTaken = System.currentTimeMillis() - startTime;
-		LOGGER.info("getCompleteCollectionIndexDetails ----> Total collection amounts fetched in " + timeTaken / 1000 + " (secs)");
 	}
 	
 	/**
@@ -306,8 +294,6 @@ public class CollectionIndexElasticSearchService {
 	 */
 	public List<CollIndexTableData> getResponseTableData(CollectionDetailsRequest collectionDetailsRequest){
 		List<CollIndexTableData> collIndDataList = new ArrayList<>();
-		LOGGER.info("---- Entered getResponseTableData ----");
-		Long startTime = System.currentTimeMillis();
 		Date fromDate;
 		Date toDate;
 		String name;
@@ -400,23 +386,21 @@ public class CollectionIndexElasticSearchService {
 			collIndData.setCytdDmd(cytdDmd);
 			if(cytdDmd != BigDecimal.valueOf(0)){
 				balance = cytdDmd.subtract(collIndData.getCytdColl());
-				performance = (collIndData.getCytdColl().multiply(PropertyTaxConstants.BIGDECIMAL_100)).divide(cytdDmd, BigDecimal.ROUND_HALF_UP);
+				performance = (collIndData.getCytdColl().multiply(PropertyTaxConstants.BIGDECIMAL_100)).divide(cytdDmd, 1, BigDecimal.ROUND_HALF_UP);
 				collIndData.setPerformance(performance);
 				collIndData.setCytdBalDmd(balance);
 			}
 			collIndData.setTotalDmd(totalDemandMap.get(name) == null ? BigDecimal.ZERO : totalDemandMap.get(name));
 			collIndData.setLytdColl(lytdCollMap.get(name) == null ? BigDecimal.ZERO : lytdCollMap.get(name));
 			//variance = ((currentYearCollection - lastYearCollection)*100)/lastYearCollection
-			if(collIndData.getLytdColl() == BigDecimal.ZERO)
-				variance = BigDecimal.valueOf(100);
+			if(collIndData.getLytdColl().compareTo(BigDecimal.ZERO) == 0)
+				variance = PropertyTaxConstants.BIGDECIMAL_100;
 			else
 			    variance = ((collIndData.getCytdColl().subtract(collIndData.getLytdColl()))
-									.multiply(PropertyTaxConstants.BIGDECIMAL_100)).divide(collIndData.getLytdColl(),BigDecimal.ROUND_HALF_UP);
+									.multiply(PropertyTaxConstants.BIGDECIMAL_100)).divide(collIndData.getLytdColl(), 1, BigDecimal.ROUND_HALF_UP);
 			collIndData.setLyVar(variance);
 			collIndDataList.add(collIndData);
 		}
-		Long timeTaken = System.currentTimeMillis() - startTime;
-		LOGGER.info("getResponseTableData ----> Total time taken is " + timeTaken / 1000 + " (secs)");
 		return collIndDataList;
 	}
 
@@ -470,8 +454,6 @@ public class CollectionIndexElasticSearchService {
 	 * @return List
 	 */
 	public List<CollectionTrend> getMonthwiseCollectionDetails(CollectionDetailsRequest collectionDetailsRequest){
-		LOGGER.info("---- Entered getMonthwiseCollectionDetails ----");
-		Long startTime = System.currentTimeMillis();
 		List<CollectionTrend> collTrendsList = new ArrayList<>();
 		CollectionTrend collTrend;
 		Date fromDate;
@@ -529,8 +511,6 @@ public class CollectionIndexElasticSearchService {
 			collTrend.setPyColl(yearwiseMonthlyCollList.get(2).get(collTrend.getMonth()) == null ? BigDecimal.ZERO : yearwiseMonthlyCollList.get(2).get(collTrend.getMonth()));
 			collTrendsList.add(collTrend);
 		}
-		Long timeTaken = System.currentTimeMillis() - startTime;
-		LOGGER.info("getMonthwiseCollectionDetails ----> Total time taken is " + timeTaken / 1000 + " (secs)");
 		return collTrendsList;
 	}
 	
@@ -571,8 +551,6 @@ public class CollectionIndexElasticSearchService {
 	public void getCummulativeReceiptsCount(CollectionDetailsRequest collectionDetailsRequest, CollReceiptDetails receiptDetails){
 		Date fromDate;
 		Date toDate;
-		LOGGER.info("---- Entered getCummulativeReceiptsCount ----");
-		Long startTime = System.currentTimeMillis();
 		/**
 		 * As per Elastic Search functionality, to get the total collections between 2 dates, add a day to the endDate and fetch the results
 		 *
@@ -609,8 +587,6 @@ public class CollectionIndexElasticSearchService {
 		receiptsCount = getTotalReceiptCountsForDates(collectionDetailsRequest, DateUtils.addYears(fromDate, -1), DateUtils.addYears(toDate, -1));
 		receiptDetails.setLytdRcptsCount(receiptsCount);
 		
-		Long timeTaken = System.currentTimeMillis() - startTime;
-		LOGGER.info("getCummulativeReceiptsCount ----> Total time taken is " + timeTaken / 1000 + " (secs)");
 	}
 	
 	/**
@@ -647,8 +623,6 @@ public class CollectionIndexElasticSearchService {
 	 * @return list
 	 */
 	public List<ReceiptsTrend> getMonthwiseReceiptsTrend(CollectionDetailsRequest collectionDetailsRequest){
-		LOGGER.info("---- Entered getMonthwiseReceiptsTrend ----");
-		Long startTime = System.currentTimeMillis();
 		List<ReceiptsTrend> rcptTrendsList = new ArrayList<>();
 		ReceiptsTrend rcptsTrend;
 		Date fromDate;
@@ -706,8 +680,6 @@ public class CollectionIndexElasticSearchService {
 			rcptsTrend.setPyRcptsCount(yearwiseMonthlyCountList.get(2).get(rcptsTrend.getMonth()) == null ? 0L : yearwiseMonthlyCountList.get(2).get(rcptsTrend.getMonth()));
 			rcptTrendsList.add(rcptsTrend);
 		}
-		Long timeTaken = System.currentTimeMillis() - startTime;
-		LOGGER.info("getMonthwiseReceiptsTrend ----> Total time taken is " + timeTaken / 1000 + " (secs)");
 		return rcptTrendsList;
 	}
 	
@@ -747,8 +719,6 @@ public class CollectionIndexElasticSearchService {
 	 * @return list
 	 */
 	public List<ReceiptTableData> getReceiptTableData(CollectionDetailsRequest collectionDetailsRequest){
-		LOGGER.info("---- Entered getReceiptTableData ----");
-		Long startTime = System.currentTimeMillis();
 		ReceiptTableData receiptData;
 		List<ReceiptTableData> receiptDataList = new ArrayList<>();
 		Date fromDate;
@@ -815,16 +785,14 @@ public class CollectionIndexElasticSearchService {
 			receiptData.setCurrDayColl(currDayCollMap.get(name) == null ? BigDecimal.valueOf(0): currDayCollMap.get(name));
 			receiptData.setLytdColl(lytdCollMap.get(name) == null ? BigDecimal.valueOf(0): lytdCollMap.get(name));
 			//variance = ((currentYearCollection - lastYearCollection)*100)/lastYearCollection
-			if(receiptData.getLytdColl() == BigDecimal.ZERO)
-				variance = BigDecimal.valueOf(100);
+			if(receiptData.getLytdColl().compareTo(BigDecimal.ZERO) == 0)
+				variance = PropertyTaxConstants.BIGDECIMAL_100;
 			else
 				variance = ((receiptData.getCytdColl().subtract(receiptData.getLytdColl()))
-									.multiply(PropertyTaxConstants.BIGDECIMAL_100)).divide(receiptData.getLytdColl(),BigDecimal.ROUND_HALF_UP);
+									.multiply(PropertyTaxConstants.BIGDECIMAL_100)).divide(receiptData.getLytdColl(), 1, BigDecimal.ROUND_HALF_UP);
 			receiptData.setLyVar(variance);
 			receiptDataList.add(receiptData);
 		}
-		Long timeTaken = System.currentTimeMillis() - startTime;
-		LOGGER.info("getReceiptTableData ----> Total time taken is " + timeTaken / 1000 + " (secs)");
 		return receiptDataList;
 	}
 	

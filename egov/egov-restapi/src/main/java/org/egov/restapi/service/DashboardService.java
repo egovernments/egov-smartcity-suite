@@ -74,8 +74,6 @@ import org.hibernate.SQLQuery;
 import org.hibernate.Session;
 import org.hibernate.transform.AliasToBeanResultTransformer;
 import org.hibernate.type.StandardBasicTypes;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -86,8 +84,6 @@ import org.springframework.stereotype.Service;
 @Service
 public class DashboardService {
 
-	private static final Logger LOGGER = LoggerFactory.getLogger(CollectionIndexElasticSearchService.class);
-	
 	@PersistenceContext
     private EntityManager entityManager;
 	
@@ -133,10 +129,10 @@ public class DashboardService {
 		}
 		consolidatedData.setTotalDmd(propertyTaxElasticSearchIndexService.getTotalDemand());
 		consolidatedData.setPerformance((consolidatedData.getCytdColl().multiply(BIGDECIMAL_100))
-				.divide(consolidatedData.getTotalDmd(), BigDecimal.ROUND_HALF_UP));
+				.divide(consolidatedData.getTotalDmd(), 1, BigDecimal.ROUND_HALF_UP));
 		consolidatedData.setLyVar(
 				(consolidatedData.getCytdColl().subtract(consolidatedData.getLytdColl()).multiply(BIGDECIMAL_100))
-						.divide(consolidatedData.getCytdColl(), BigDecimal.ROUND_HALF_UP));
+						.divide(consolidatedData.getCytdColl(), 1, BigDecimal.ROUND_HALF_UP));
 		consolidatedCollectionDetails.setPropertyTax(consolidatedData);
 
 		// For Water Tax collections
@@ -149,10 +145,10 @@ public class DashboardService {
 		}
 		consolidatedData.setTotalDmd(waterTaxElasticSearchIndexService.getTotalDemand());
 		consolidatedData.setPerformance((consolidatedData.getCytdColl().multiply(BIGDECIMAL_100))
-				.divide(consolidatedData.getTotalDmd(), BigDecimal.ROUND_HALF_UP));
+				.divide(consolidatedData.getTotalDmd(), 1, BigDecimal.ROUND_HALF_UP));
 		consolidatedData.setLyVar(
 				(consolidatedData.getCytdColl().subtract(consolidatedData.getLytdColl()).multiply(BIGDECIMAL_100))
-						.divide(consolidatedData.getCytdColl(), BigDecimal.ROUND_HALF_UP));
+						.divide(consolidatedData.getCytdColl(), 1, BigDecimal.ROUND_HALF_UP));
 		consolidatedCollectionDetails.setWaterTax(consolidatedData);
 
 		// Other collections - temporarily set to 0
@@ -173,10 +169,6 @@ public class DashboardService {
 	 * @return CollectionIndexDetails
 	 */
 	public CollectionIndexDetails getCollectionIndexDetails(CollectionDetailsRequest collectionDetailsRequest){
-		LOGGER.info("CollectionDetailsRequest input ----> ");
-		LOGGER.info("regionName = "+collectionDetailsRequest.getRegionName()+", districtName = "+ collectionDetailsRequest.getDistrictName()+
-				", ulbGrade = "+collectionDetailsRequest.getUlbGrade()+", ulbCode = "+collectionDetailsRequest.getUlbCode()+
-				", fromDate = "+collectionDetailsRequest.getFromDate()+", toDate = "+collectionDetailsRequest.getToDate());
 		CollectionIndexDetails collectionIndexDetails = new CollectionIndexDetails(); 
 		collectionIndexElasticSearchService.getCompleteCollectionIndexDetails(collectionDetailsRequest,collectionIndexDetails);
 		propertyTaxElasticSearchIndexService.getConsolidatedDemandInfo(collectionDetailsRequest, collectionIndexDetails);
@@ -197,10 +189,6 @@ public class DashboardService {
 	 * @return CollReceiptDetails
 	 */
 	public CollReceiptDetails getReceiptDetails(CollectionDetailsRequest collectionDetailsRequest){
-		LOGGER.info("CollectionDetailsRequest input ----> ");
-		LOGGER.info("regionName = "+collectionDetailsRequest.getRegionName()+", districtName = "+ collectionDetailsRequest.getDistrictName()+
-				", ulbGrade = "+collectionDetailsRequest.getUlbGrade()+", ulbCode = "+collectionDetailsRequest.getUlbCode()+
-				", fromDate = "+collectionDetailsRequest.getFromDate()+", toDate = "+collectionDetailsRequest.getToDate());
 		CollReceiptDetails receiptDetails = new CollReceiptDetails(); 
 		collectionIndexElasticSearchService.getCummulativeReceiptsCount(collectionDetailsRequest,receiptDetails);
 		List<ReceiptsTrend> receiptTrends = collectionIndexElasticSearchService.getMonthwiseReceiptsTrend(collectionDetailsRequest);

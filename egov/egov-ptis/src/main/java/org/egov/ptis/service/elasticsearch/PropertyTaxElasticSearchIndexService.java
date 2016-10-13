@@ -46,7 +46,6 @@ import static org.egov.ptis.constants.PropertyTaxConstants.PROPERTY_TAX_INDEX_NA
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
 
@@ -70,13 +69,10 @@ import org.elasticsearch.search.aggregations.AggregationBuilders;
 import org.elasticsearch.search.aggregations.Aggregations;
 import org.elasticsearch.search.aggregations.bucket.terms.StringTerms;
 import org.elasticsearch.search.aggregations.bucket.terms.Terms;
-import org.elasticsearch.search.aggregations.metrics.avg.Avg;
 import org.elasticsearch.search.aggregations.metrics.sum.Sum;
 import org.elasticsearch.search.sort.FieldSortBuilder;
 import org.elasticsearch.search.sort.SortOrder;
 import org.joda.time.DateTime;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -88,7 +84,6 @@ import org.springframework.stereotype.Service;
 
 @Service
 public class PropertyTaxElasticSearchIndexService {
-	private static final Logger LOGGER = LoggerFactory.getLogger(CollectionIndexElasticSearchService.class);
 
 	private PropertyTaxIndexRepository propertyTaxIndexRepository;
 	
@@ -138,8 +133,6 @@ public class PropertyTaxElasticSearchIndexService {
 	 */
 	public void getConsolidatedDemandInfo(CollectionDetailsRequest collectionDetailsRequest, 
 			CollectionIndexDetails collectionIndexDetails){
-		LOGGER.info("---- Entered getConsolidatedDemandInfo ---- ");
-		Long startTime = System.currentTimeMillis();
 		Date fromDate;
 		Date toDate;
 		/**
@@ -166,17 +159,15 @@ public class PropertyTaxElasticSearchIndexService {
 		collectionIndexDetails.setCytdDmd(proportionalDemand.setScale(0, BigDecimal.ROUND_HALF_UP));
 		
 		//performance = (current year tilldate collection * 100)/(proportional demand)
-		collectionIndexDetails.setPerformance((collectionIndexDetails.getCytdColl().multiply(PropertyTaxConstants.BIGDECIMAL_100)).divide(proportionalDemand, BigDecimal.ROUND_HALF_UP));
+		collectionIndexDetails.setPerformance((collectionIndexDetails.getCytdColl().multiply(PropertyTaxConstants.BIGDECIMAL_100)).divide(proportionalDemand, 1, BigDecimal.ROUND_HALF_UP));
 		//variance = ((currentYearCollection - lastYearCollection)*100)/lastYearCollection
 		BigDecimal variation = BigDecimal.ZERO;
-		if(collectionIndexDetails.getLytdColl() == BigDecimal.ZERO)
-			variation = BigDecimal.valueOf(100);
+		if(collectionIndexDetails.getLytdColl().compareTo(BigDecimal.ZERO) ==0)
+			variation = PropertyTaxConstants.BIGDECIMAL_100;
 		else
 		variation = ((collectionIndexDetails.getCytdColl().subtract(collectionIndexDetails.getLytdColl()))
-								.multiply(PropertyTaxConstants.BIGDECIMAL_100)).divide(collectionIndexDetails.getLytdColl(),BigDecimal.ROUND_HALF_UP);
+								.multiply(PropertyTaxConstants.BIGDECIMAL_100)).divide(collectionIndexDetails.getLytdColl(), 1, BigDecimal.ROUND_HALF_UP);
 		collectionIndexDetails.setLyVar(variation);
-		Long timeTaken = System.currentTimeMillis() - startTime;
-		LOGGER.info("getConsolidatedDemandInfo ----> calculations done in " + timeTaken / 1000 + " (secs)");
 	}
 	
 	/**
@@ -295,16 +286,16 @@ public class PropertyTaxElasticSearchIndexService {
 			taxDetail.setTotalDmd(totalDemandValue);
 			taxDetail.setCytdColl(totalCollections);
 			taxDetail.setCytdDmd(proportionalDemand);
-			taxDetail.setAchievement(totalCollections.multiply(BIGDECIMAL_100).divide(proportionalDemand,BigDecimal.ROUND_HALF_UP));
+			taxDetail.setAchievement(totalCollections.multiply(BIGDECIMAL_100).divide(proportionalDemand, 1, BigDecimal.ROUND_HALF_UP));
 			taxDetail.setCytdBalDmd(proportionalDemand.subtract(totalCollections));
 			BigDecimal lastYearCollection = collectionIndexElasticSearchService.getTotalCollectionsForDatesForUlb(collectionDetailsRequest, lastYearFromDate, lastYearToDate,fieldName);
 			taxDetail.setLytdColl(lastYearCollection);
 			//variance = ((currentYearCollection - lastYearCollection)*100)/lastYearCollection
 			BigDecimal variation = BigDecimal.ZERO;
-			if(lastYearCollection == BigDecimal.ZERO)
-				variation = BigDecimal.valueOf(100);
+			if(lastYearCollection.compareTo(BigDecimal.ZERO) == 0)
+				variation = PropertyTaxConstants.BIGDECIMAL_100;
 			else
-			    variation = (((totalCollections.subtract(lastYearCollection)).multiply(BigDecimal.valueOf(100))).divide(lastYearCollection,BigDecimal.ROUND_HALF_UP));
+			    variation = (((totalCollections.subtract(lastYearCollection)).multiply(PropertyTaxConstants.BIGDECIMAL_100)).divide(lastYearCollection, 1, BigDecimal.ROUND_HALF_UP));
 			taxDetail.setLyVar(variation);
 			taxPayers.add(taxDetail);
 		}

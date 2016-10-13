@@ -59,6 +59,8 @@ import org.egov.ptis.bean.dashboard.TaxPayerResponseDetails;
 import org.egov.restapi.model.StateCityInfo;
 import org.egov.restapi.service.DashboardService;
 import org.egov.restapi.util.JsonConvertor;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -74,6 +76,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 public class CMDashboardController {
+	private static final Logger LOGGER = LoggerFactory.getLogger(CMDashboardController.class);
 
 	@Autowired
 	private DashboardService dashboardService;
@@ -85,9 +88,12 @@ public class CMDashboardController {
 	@ExceptionHandler(Exception.class)
 	@RequestMapping(value = "/statecityinfo", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
     public @ResponseBody String getStateCityInformation() {
+		Long startTime = System.currentTimeMillis();
         final List<StateCityInfo> stateDetails = dashboardService.getStateCityDetails();
         final String result = new StringBuilder("{ \"data\":").append(WebUtils.toJSON(stateDetails, 
         		StateCityInfo.class, StateInfoHelperAdaptor.class)).append("}").toString();
+        Long timeTaken = System.currentTimeMillis() - startTime;
+		LOGGER.info("Time taken to serve statecityinfo is : " + timeTaken / 1000 + " (secs)");
         return result;
     }
 
@@ -97,7 +103,10 @@ public class CMDashboardController {
 	 */
 	@RequestMapping(value = "/collectionstats", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
 	public String getConsolidatedCollDetails(){
+		Long startTime = System.currentTimeMillis();
 		ConsolidatedCollectionDetails consolidatedCollectionDetails = dashboardService.getConsolidatedCollectionDetails();
+		Long timeTaken = System.currentTimeMillis() - startTime;
+		LOGGER.info("Time taken to serve collectionstats is : " + timeTaken / 1000 + " (secs)");
 		return JsonConvertor.convert(consolidatedCollectionDetails);
 	}
 	
@@ -108,9 +117,16 @@ public class CMDashboardController {
 	 */
 	@RequestMapping(value = "/collectiondashboard", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
 	public String getCollectionDetails(@RequestBody String collDetailsRequestStr) throws IOException{
+		Long startTime = System.currentTimeMillis();
 		CollectionDetailsRequest collectionDetailsRequest = (CollectionDetailsRequest) getObjectFromJSONRequest(
 				collDetailsRequestStr, CollectionDetailsRequest.class);
+		LOGGER.info("CollectionDetailsRequest input ----> ");
+		LOGGER.info("regionName = "+collectionDetailsRequest.getRegionName()+", districtName = "+ collectionDetailsRequest.getDistrictName()+
+				", ulbGrade = "+collectionDetailsRequest.getUlbGrade()+", ulbCode = "+collectionDetailsRequest.getUlbCode()+
+				", fromDate = "+collectionDetailsRequest.getFromDate()+", toDate = "+collectionDetailsRequest.getToDate());
 		CollectionIndexDetails collectionDetails = dashboardService.getCollectionIndexDetails(collectionDetailsRequest);
+		Long timeTaken = System.currentTimeMillis() - startTime;
+		LOGGER.info("Time taken to serve collectiondashboard is : " + timeTaken / 1000 + " (secs)");
         return JsonConvertor.convert(collectionDetails);
 	}
 	
@@ -121,9 +137,16 @@ public class CMDashboardController {
 	 */
 	@RequestMapping(value = "/receipttransactions", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
 	public String getReceiptTransactions(@RequestBody String rcptDetailsRequestStr) throws IOException{
+		Long startTime = System.currentTimeMillis();
 		CollectionDetailsRequest collectionDetailsRequest = (CollectionDetailsRequest) getObjectFromJSONRequest(
 				rcptDetailsRequestStr, CollectionDetailsRequest.class);
+		LOGGER.info("CollectionDetailsRequest input ----> ");
+		LOGGER.info("regionName = "+collectionDetailsRequest.getRegionName()+", districtName = "+ collectionDetailsRequest.getDistrictName()+
+				", ulbGrade = "+collectionDetailsRequest.getUlbGrade()+", ulbCode = "+collectionDetailsRequest.getUlbCode()+
+				", fromDate = "+collectionDetailsRequest.getFromDate()+", toDate = "+collectionDetailsRequest.getToDate());
 		CollReceiptDetails collReceiptDetails = dashboardService.getReceiptDetails(collectionDetailsRequest);
+		Long timeTaken = System.currentTimeMillis() - startTime;
+		LOGGER.info("Time taken to serve receipttransactions is : " + timeTaken / 1000 + " (secs)");
         return JsonConvertor.convert(collReceiptDetails);
 	}
 	
@@ -135,9 +158,16 @@ public class CMDashboardController {
 	 */
 	@RequestMapping(value = "/toptentaxers", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
 	public String getTopTenTaxProducers(@RequestBody String collDetailsRequestStr) throws IOException{
+		Long startTime = System.currentTimeMillis();
 		CollectionDetailsRequest collectionDetailsRequest = (CollectionDetailsRequest) getObjectFromJSONRequest(
 				collDetailsRequestStr, CollectionDetailsRequest.class);
+		LOGGER.info("CollectionDetailsRequest input ----> ");
+		LOGGER.info("regionName = "+collectionDetailsRequest.getRegionName()+", districtName = "+ collectionDetailsRequest.getDistrictName()+
+				", ulbGrade = "+collectionDetailsRequest.getUlbGrade()+", ulbCode = "+collectionDetailsRequest.getUlbCode()+
+				", fromDate = "+collectionDetailsRequest.getFromDate()+", toDate = "+collectionDetailsRequest.getToDate());
 		TaxPayerResponseDetails taxPayerDetails = dashboardService.getTopTenTaxProducers(collectionDetailsRequest);
+		Long timeTaken = System.currentTimeMillis() - startTime;
+		LOGGER.info("Time taken to serve toptentaxers is : " + timeTaken / 1000 + " (secs)");
 		return JsonConvertor.convert(taxPayerDetails);
 	}
 	
@@ -149,17 +179,31 @@ public class CMDashboardController {
 	 */
 	@RequestMapping(value = "/bottomtentaxers", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
 	public String getBottomTenTaxProducers(@RequestBody String collDetailsRequestStr) throws IOException{
+		Long startTime = System.currentTimeMillis();
 		CollectionDetailsRequest collectionDetailsRequest = (CollectionDetailsRequest) getObjectFromJSONRequest(
 				collDetailsRequestStr, CollectionDetailsRequest.class);
+		LOGGER.info("CollectionDetailsRequest input ----> ");
+		LOGGER.info("regionName = "+collectionDetailsRequest.getRegionName()+", districtName = "+ collectionDetailsRequest.getDistrictName()+
+				", ulbGrade = "+collectionDetailsRequest.getUlbGrade()+", ulbCode = "+collectionDetailsRequest.getUlbCode()+
+				", fromDate = "+collectionDetailsRequest.getFromDate()+", toDate = "+collectionDetailsRequest.getToDate());
 		TaxPayerResponseDetails taxPayerDetails = dashboardService.getBottomTenTaxProducers(collectionDetailsRequest);
+		Long timeTaken = System.currentTimeMillis() - startTime;
+		LOGGER.info("Time taken to serve bottomtentaxers is : " + timeTaken / 1000 + " (secs)");
 		return JsonConvertor.convert(taxPayerDetails);
 	}
 	
 	@RequestMapping(value = "/topdefaulters", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
 	public String getTopTaxDefaulters(@RequestBody String taxDefaultersRequestStr) throws IOException{
+		Long startTime = System.currentTimeMillis();
 		PropertyTaxDefaultersRequest propertyTaxDefaultersRequest = (PropertyTaxDefaultersRequest)getObjectFromJSONRequest(
 				taxDefaultersRequestStr,PropertyTaxDefaultersRequest.class);
+		LOGGER.info("PropertyTaxDefaultersRequest input ----> ");
+		LOGGER.info("regionName = "+propertyTaxDefaultersRequest.getRegionName()+", districtName = "+ propertyTaxDefaultersRequest.getDistrictName()+
+				", ulbName = "+propertyTaxDefaultersRequest.getUlbName()+", ulbCode = "+propertyTaxDefaultersRequest.getUlbCode()+
+				", wardName = "+propertyTaxDefaultersRequest.getWardName());
 		List<TaxDefaulters> taxDefaulters = dashboardService.getTaxDefaulters(propertyTaxDefaultersRequest);
+		Long timeTaken = System.currentTimeMillis() - startTime;
+		LOGGER.info("Time taken to serve topdefaulters is : " + timeTaken / 1000 + " (secs)");
 		return JsonConvertor.convert(taxDefaulters);
 	}
 	
