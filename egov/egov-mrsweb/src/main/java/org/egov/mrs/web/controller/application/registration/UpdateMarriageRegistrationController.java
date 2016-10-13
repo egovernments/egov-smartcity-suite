@@ -72,32 +72,43 @@ import org.springframework.web.bind.annotation.RequestParam;
 public class UpdateMarriageRegistrationController extends MarriageRegistrationController {
         
         private static final Logger LOG = Logger.getLogger(UpdateMarriageRegistrationController.class);
+        private static final String MRG_REGISTRATION_EDIT = "registration-correction";
+    	private static final String MRG_REGISTRATION_EDIT_APPROVED = "registration-update-approved";
+    	private static final String MRG_REGISTRATION_SUCCESS = "registration-ack";
         
         @Autowired
     private FileStoreService fileStoreService;
         
     @RequestMapping(value = "/update/{id}", method = RequestMethod.GET)
     public String showRegistration(@PathVariable final Long id, final Model model) {
-        MarriageRegistration registration = marriageRegistrationService.get(id);
-        model.addAttribute("registration", registration);
+    	buildMrgRegistrationUpdateResult(id, model);
+        return MRG_REGISTRATION_EDIT;
+    }
+    
+    @RequestMapping(value = "/update-approved/{id}", method = RequestMethod.GET)
+    public String editApprovedRegistration(@PathVariable final Long id, final Model model) {
+        buildMrgRegistrationUpdateResult(id, model);
+        return MRG_REGISTRATION_EDIT_APPROVED;
+    }
+    
+    private void buildMrgRegistrationUpdateResult(final Long id, final Model model) {
+		MarriageRegistration registration = marriageRegistrationService.get(id);
         marriageRegistrationService.prepareDocumentsForView(registration);
         marriageApplicantService.prepareDocumentsForView(registration.getHusband()); 
         marriageApplicantService.prepareDocumentsForView(registration.getWife());
         prepareWorkFlowForNewMarriageRegistration(registration, model);  
-        model.addAttribute("applicationHistory",
-                marriageRegistrationService.getHistory(registration));
         registration.getWitnesses().forEach(witness -> {
             try {
-                if(witness.getPhotoFileStore() != null){
-                        final File file = fileStoreService.fetch(witness.getPhotoFileStore().getFileStoreId(), MarriageConstants.MODULE_NAME);
-                        witness.setEncodedPhoto(Base64.getEncoder().encodeToString(FileCopyUtils.copyToByteArray(file)));
-                }
+            	if(witness.getPhotoFileStore() != null){
+            		final File file = fileStoreService.fetch(witness.getPhotoFileStore().getFileStoreId(), MarriageConstants.FILESTORE_MODULECODE);
+                	witness.setEncodedPhoto(Base64.getEncoder().encodeToString(FileCopyUtils.copyToByteArray(file)));
+            	}
             } catch (final Exception e) {
                 LOG.error("Error while preparing the document for view", e);
             }
         });
-        return "registration-correction";
-    }
+        model.addAttribute("registration", registration);
+	}
     
     private void prepareWorkFlowForNewMarriageRegistration(final MarriageRegistration registration, final Model model) {
         WorkflowContainer workFlowContainer = new WorkflowContainer();
@@ -119,7 +130,7 @@ public class UpdateMarriageRegistrationController extends MarriageRegistrationCo
             workFlowAction = request.getParameter("workFlowAction");
         
         if (errors.hasErrors())
-            return "registration-correction"; 
+            return MRG_REGISTRATION_EDIT; 
          
         registration = marriageRegistrationService.get(id);
         if(workFlowAction != null && !workFlowAction.isEmpty()){
@@ -144,6 +155,17 @@ public class UpdateMarriageRegistrationController extends MarriageRegistrationCo
                     + registration.getId();
                     //+ registration.getMarriageCertificate().get(0).getFileStore().getId();
         model.addAttribute("message", messageSource.getMessage("msg.update.registration", null, null)); 
-        return "registration-ack";
+        return MRG_REGISTRATION_SUCCESS;
+    }
+    
+    @RequestMapping(value = "/update-approved", method = RequestMethod.POST)
+    public String updateApprovedRegistration(@RequestParam final Long id,@ModelAttribute MarriageRegistration registration,
+            final Model model,final HttpServletRequest request,final BindingResult errors) {
+    	if (errors.hasErrors())
+    		return MRG_REGISTRATION_EDIT_APPROVED;
+    	
+    	 marriageRegistrationService.updateRegistration(id, registration);
+    	 model.addAttribute("message", messageSource.getMessage("msg.update.registration", null, null));
+    	return MRG_REGISTRATION_SUCCESS;
     }
 }

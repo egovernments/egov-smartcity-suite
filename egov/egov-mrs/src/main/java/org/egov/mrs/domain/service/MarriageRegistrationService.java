@@ -343,9 +343,10 @@ public class MarriageRegistrationService {
                         }
 
                 }
-        registration.setStatus(
+                if(!registration.getStatus().getCode().equalsIgnoreCase(MarriageRegistration.RegistrationStatus.APPROVED.toString())){
+                	registration.setStatus(
                 marriageUtils.getStatusByCodeAndModuleType(MarriageRegistration.RegistrationStatus.CREATED.toString(), MarriageConstants.MODULE_NAME));
-
+                }
         witnessRepository.delete(registration.getWitnesses());
         registration.getWitnesses().clear();
 
@@ -555,7 +556,7 @@ public class MarriageRegistrationService {
         FileStoreMapper fileStoreMapper = null;
         try {
             fileStoreMapper = fileStoreService.store(file.getInputStream(), file.getOriginalFilename(),
-                    file.getContentType(), MarriageConstants.MODULE_NAME);
+                    file.getContentType(), MarriageConstants.FILESTORE_MODULECODE);
         } catch (final Exception e) {
             throw new ApplicationRuntimeException("Error occurred while getting inputstream", e);
         }
@@ -572,7 +573,7 @@ public class MarriageRegistrationService {
                 .filter(doc -> doc.getFile().getSize() > 0)
                 .map(doc -> {
                     RegistrationDocument regDoc = documentIdAndRegistrationDoc.get(doc.getId());
-                    fileStoreService.delete(regDoc.getFileStoreMapper().getFileStoreId(), MarriageConstants.MODULE_NAME);
+                    fileStoreService.delete(regDoc.getFileStoreMapper().getFileStoreId(), MarriageConstants.FILESTORE_MODULECODE);
                     return regDoc;
                 }).collect(Collectors.toList())
                 .forEach(regDoc -> toDelete.add(regDoc));
@@ -590,7 +591,7 @@ public class MarriageRegistrationService {
 
     public void prepareDocumentsForView(final MarriageRegistration registration) {
        if(registration.getRegistrationDocuments()!=null){ registration.getRegistrationDocuments().forEach(appDoc -> {
-            final File file = fileStoreService.fetch(appDoc.getFileStoreMapper().getFileStoreId(), MarriageConstants.MODULE_NAME);
+            final File file = fileStoreService.fetch(appDoc.getFileStoreMapper().getFileStoreId(), MarriageConstants.FILESTORE_MODULECODE);
             try {
                 appDoc.setBase64EncodedFile(Base64.getEncoder().encodeToString(FileCopyUtils.copyToByteArray(file)));
             } catch (final Exception e) {
@@ -610,12 +611,12 @@ public class MarriageRegistrationService {
         }
     
     @SuppressWarnings("unchecked")
-        public List<MarriageRegistration> searchApprovedMarriageRegistrations(MarriageRegistration registration) {
-                final Criteria criteria = getCurrentSession().createCriteria(
-                                MarriageRegistration.class);
-                 criteria.add(Restrictions.in("status", new String[] { MarriageRegistration.RegistrationStatus.APPROVED.toString()}));
-                return criteria.list();
-        }
+   	public List<MarriageRegistration> searchApprovedMarriageRegistrations(MarriageRegistration registration) {
+   		final Criteria criteria = getCurrentSession().createCriteria(MarriageRegistration.class,"marriageRegistration")
+   				.createAlias("marriageRegistration.status", "status");
+   		 criteria.add(Restrictions.in("status.code", new String[] { MarriageRegistration.RegistrationStatus.APPROVED.toString()}));
+   		return criteria.list();
+   	}
     
     /**
      * @param registration

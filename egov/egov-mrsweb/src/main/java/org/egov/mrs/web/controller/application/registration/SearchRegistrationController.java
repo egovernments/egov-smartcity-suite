@@ -96,7 +96,7 @@ public class SearchRegistrationController {
         model.addAttribute("registration", new MarriageRegistration());
         final boolean isCollectionOperator = operatorRoles == null || operatorRoles.isEmpty() ? false : true;
         model.addAttribute("isCollectionOperator", isCollectionOperator);
-        return "registration-search";
+        return "registration-search-approved";
     }
 
     @RequestMapping(value = "/search", method = RequestMethod.POST, produces = MediaType.TEXT_PLAIN_VALUE)

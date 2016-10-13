@@ -99,7 +99,7 @@ public class MarriageApplicantService {
     public void prepareDocumentsForView(final Applicant applicant) {
         
         if (applicant.getPhotoFileStore() != null ){
-        	 final File file = fileStoreService.fetch(applicant.getPhotoFileStore().getFileStoreId(), MarriageConstants.MODULE_NAME);
+        	 final File file = fileStoreService.fetch(applicant.getPhotoFileStore().getFileStoreId(), MarriageConstants.FILESTORE_MODULECODE);
             try {
 				applicant.setEncodedPhoto(Base64.getEncoder().encodeToString(FileCopyUtils.copyToByteArray(file)));
 			} catch (IOException e) {
@@ -108,7 +108,7 @@ public class MarriageApplicantService {
         }
         
         if (applicant.getSignatureFileStore() != null ){
-       	 final File file = fileStoreService.fetch(applicant.getSignatureFileStore().getFileStoreId(), MarriageConstants.MODULE_NAME);
+       	 final File file = fileStoreService.fetch(applicant.getSignatureFileStore().getFileStoreId(), MarriageConstants.FILESTORE_MODULECODE);
            try {
 				applicant.setEncodedSignature(Base64.getEncoder().encodeToString(FileCopyUtils.copyToByteArray(file)));
 			} catch (IOException e) {
@@ -122,7 +122,7 @@ public class MarriageApplicantService {
             
             try {
             	if (appDoc.getFileStoreMapper() != null ){
-            		final File file = fileStoreService.fetch(appDoc.getFileStoreMapper().getFileStoreId(), MarriageConstants.MODULE_NAME);
+            		final File file = fileStoreService.fetch(appDoc.getFileStoreMapper().getFileStoreId(), MarriageConstants.FILESTORE_MODULECODE);
             		appDoc.setBase64EncodedFile(Base64.getEncoder().encodeToString(FileCopyUtils.copyToByteArray(file)));
             	}
                 
@@ -143,7 +143,7 @@ public class MarriageApplicantService {
             .filter(doc -> doc.getFile().getSize() > 0)
             .map(doc -> {
                 ApplicantDocument appDoc = documentIdAndApplicantDoc.get(doc.getId());
-                fileStoreService.delete(appDoc.getFileStoreMapper().getFileStoreId(), MarriageConstants.MODULE_NAME);
+                fileStoreService.delete(appDoc.getFileStoreMapper().getFileStoreId(), MarriageConstants.FILESTORE_MODULECODE);
                 return appDoc;
             }).collect(Collectors.toList())
             .forEach(appDoc -> toDelete.add(appDoc)); // seems like redundent, check
@@ -176,7 +176,7 @@ public class MarriageApplicantService {
         FileStoreMapper fileStoreMapper = null;
         try {
             fileStoreMapper = fileStoreService.store(file.getInputStream(), file.getOriginalFilename(),
-                    file.getContentType(), MarriageConstants.MODULE_NAME);
+                    file.getContentType(), MarriageConstants.FILESTORE_MODULECODE);
         } catch (final Exception e) {
             throw new ApplicationRuntimeException("Error occurred while getting inputstream", e);
         }

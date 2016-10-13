@@ -87,7 +87,7 @@ public class ViewMarriageRegistrationController extends MarriageRegistrationCont
         registration.getWitnesses().forEach(witness -> {
             try {
             	if(witness.getPhotoFileStore() != null){
-            		final File file = fileStoreService.fetch(witness.getPhotoFileStore().getFileStoreId(), MarriageConstants.MODULE_NAME);
+            		final File file = fileStoreService.fetch(witness.getPhotoFileStore().getFileStoreId(), MarriageConstants.FILESTORE_MODULECODE);
             		witness.setEncodedPhoto(Base64.getEncoder().encodeToString(FileCopyUtils.copyToByteArray(file)));
             	}
             } catch (final Exception e) {

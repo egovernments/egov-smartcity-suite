@@ -57,13 +57,13 @@ $('#btnSearch').click(function(e) {
 											ajax : {
 												url : "/mrs/masters/act/searchResult",
 												type : "POST",
-												/*beforeSend:function(){
+												beforeSend:function(){
 													$('.loader-class').modal('show', {backdrop: 'static'});
-												},*/
+												},
 												"data" : getFormData($('form')),
-												/*complete:function(){
+												complete:function(){
 													$('.loader-class').modal('hide');
-												}*/
+												}
 											},
 
 											"bDestroy" : true,

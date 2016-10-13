@@ -154,4 +154,13 @@
         <put-attribute name="body" value="/WEB-INF/views/masters/act/act-update.jsp"/>
     </definition>
     
+    <definition name="registration-search-approved" extends="base_layout">
+        <put-attribute name="page-title" value="title.registration.search" cascade="true"/>
+        <put-attribute name="body" value="/WEB-INF/views/application/registration/registration-search-approved.jsp"/>
+    </definition>
+    
+    <definition name="registration-update-approved" extends="base_layout">
+        <put-attribute name="page-title" value="title.modify.mrg.registration" cascade="true"/>
+        <put-attribute name="body" value="/WEB-INF/views/application/registration/registration-update-approved.jsp"/>
+    </definition>
 </tiles-definitions>
