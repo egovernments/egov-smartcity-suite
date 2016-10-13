@@ -197,7 +197,7 @@ public class MarriageRegistration extends StateAware {
     }
 
     public boolean isFeeCollected() {
-        return demand.getBaseDemand().compareTo(demand.getAmtCollected()) == 0 ? true : true;
+        return demand.getBaseDemand().compareTo(demand.getAmtCollected()) == 0 ? true : false;
     }
 
     public void addRegistrationDocument(final RegistrationDocument registrationDocument) {

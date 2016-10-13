@@ -44,8 +44,10 @@ import java.io.IOException;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Base64;
+import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.Hashtable;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -58,6 +60,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
 import org.egov.commons.EgwStatus;
 import org.egov.eis.service.AssignmentService;
+import org.egov.eis.service.EisCommonService;
 import org.egov.eis.web.contract.WorkflowContainer;
 import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.admin.master.service.BoundaryService;
@@ -69,6 +72,8 @@ import org.egov.infra.search.elastic.entity.ApplicationIndexBuilder;
 import org.egov.infra.search.elastic.service.ApplicationIndexService;
 import org.egov.infra.security.utils.SecurityUtils;
 import org.egov.infra.utils.ApplicationNumberGenerator;
+import org.egov.infra.workflow.entity.State;
+import org.egov.infra.workflow.entity.StateHistory;
 import org.egov.mrs.application.MarriageConstants;
 import org.egov.mrs.application.MarriageUtils;
 import org.egov.mrs.application.service.MarriageCertificateService;
@@ -87,6 +92,7 @@ import org.egov.mrs.domain.repository.WitnessRepository;
 import org.egov.mrs.masters.service.ActService;
 import org.egov.mrs.masters.service.ReligionService;
 import org.egov.mrs.utils.MarriageRegistrationNoGenerator;
+import org.egov.pims.commons.Position;
 import org.hibernate.Criteria;
 import org.hibernate.Session;
 import org.hibernate.criterion.Restrictions;
@@ -174,6 +180,9 @@ public class MarriageRegistrationService {
     
     @Autowired
     private MarriageCertificateService marriageCertificateService;
+    
+    @Autowired
+    private EisCommonService eisCommonService;
 
     @Autowired
     public MarriageRegistrationService(final MarriageRegistrationRepository registrationRepository) {
@@ -238,17 +247,17 @@ public class MarriageRegistrationService {
         registration.getWitnesses().forEach(witness -> {
             try {
                 //witness.setPhoto(FileCopyUtils.copyToByteArray(witness.getPhotoFile().getInputStream()));
-            	 witness.setPhotoFileStore(addToFileStore(witness.getPhotoFile()));
+                 witness.setPhotoFileStore(addToFileStore(witness.getPhotoFile()));
             } catch (Exception e) {
                 LOG.error("Error while copying Multipart file bytes", e);
             }
         });
         
         try {
-        	registration.getWife().setPhotoFileStore(addToFileStore(registration.getWife().getPhotoFile()));
-        	registration.getWife().setSignatureFileStore(addToFileStore(registration.getWife().getSignatureFile()));
-        	registration.getHusband().setPhotoFileStore(addToFileStore(registration.getHusband().getPhotoFile()));
-        	registration.getHusband().setSignatureFileStore(addToFileStore(registration.getHusband().getSignatureFile()));
+                registration.getWife().setPhotoFileStore(addToFileStore(registration.getWife().getPhotoFile()));
+                registration.getWife().setSignatureFileStore(addToFileStore(registration.getWife().getSignatureFile()));
+                registration.getHusband().setPhotoFileStore(addToFileStore(registration.getHusband().getPhotoFile()));
+                registration.getHusband().setSignatureFileStore(addToFileStore(registration.getHusband().getSignatureFile()));
         } catch (Exception e) {
             LOG.error("Error while saving documents!!!!!", e);
         }
@@ -593,19 +602,76 @@ public class MarriageRegistrationService {
     
     
     @SuppressWarnings("unchecked")
-	public List<MarriageRegistration> searchMarriageRegistrations(MarriageRegistration registration) {
-		final Criteria criteria = getCurrentSession().createCriteria(
-				MarriageRegistration.class);
-		
-		return criteria.list();
-	}
+        public List<MarriageRegistration> searchMarriageRegistrations(MarriageRegistration registration) {
+                final Criteria criteria = getCurrentSession().createCriteria(
+                                MarriageRegistration.class);
+                
+                return criteria.list();
+        }
     
     @SuppressWarnings("unchecked")
-	public List<MarriageRegistration> searchApprovedMarriageRegistrations(MarriageRegistration registration) {
-		final Criteria criteria = getCurrentSession().createCriteria(
-				MarriageRegistration.class);
-		 criteria.add(Restrictions.in("status", new String[] { MarriageRegistration.RegistrationStatus.APPROVED.toString()}));
-		return criteria.list();
-	}
+        public List<MarriageRegistration> searchApprovedMarriageRegistrations(MarriageRegistration registration) {
+                final Criteria criteria = getCurrentSession().createCriteria(
+                                MarriageRegistration.class);
+                 criteria.add(Restrictions.in("status", new String[] { MarriageRegistration.RegistrationStatus.APPROVED.toString()}));
+                return criteria.list();
+        }
     
+    /**
+     * @param registration
+     * @return
+     */
+    public List<Hashtable<String, Object>> getHistory(final MarriageRegistration registration) {
+        User user = null;
+        final List<Hashtable<String, Object>> historyTable = new ArrayList<Hashtable<String, Object>>();
+        final State state = registration.getState();
+        final Hashtable<String, Object> map = new Hashtable<String, Object>(0);
+        if (null != state) {
+            if (!registration.getStateHistory().isEmpty()
+                    && registration.getStateHistory() != null)
+                Collections.reverse(registration.getStateHistory());
+            for (final StateHistory stateHistory : registration.getStateHistory()) {
+                final Hashtable<String, Object> HistoryMap = new Hashtable<String, Object>(0);
+                HistoryMap.put("date", stateHistory.getDateInfo());
+                HistoryMap.put("comments", stateHistory.getComments()!=null?stateHistory.getComments():"");
+                HistoryMap.put("updatedBy", stateHistory.getLastModifiedBy().getUsername() + "::"
+                        + stateHistory.getLastModifiedBy().getName());
+                HistoryMap.put("status", stateHistory.getValue());
+                final Position owner = stateHistory.getOwnerPosition();
+                user = stateHistory.getOwnerUser();
+                if (null != user) {
+                    HistoryMap.put("user", user.getUsername() + "::" + user.getName());
+                    HistoryMap.put("department",
+                            null != eisCommonService.getDepartmentForUser(user.getId()) ? eisCommonService
+                                    .getDepartmentForUser(user.getId()).getName() : "");
+                } else if (null != owner && null != owner.getDeptDesig()) {
+                    user = eisCommonService.getUserForPosition(owner.getId(), new Date());
+                    HistoryMap
+                            .put("user", null != user.getUsername() ? user.getUsername() + "::" + user.getName() : "");
+                    HistoryMap.put("department", null != owner.getDeptDesig().getDepartment() ? owner.getDeptDesig()
+                            .getDepartment().getName() : "");
+                }
+                historyTable.add(HistoryMap);
+            }
+
+            map.put("date", state.getDateInfo());
+            map.put("comments", state.getComments() != null ? state.getComments() : "");
+            map.put("updatedBy", state.getLastModifiedBy().getUsername() + "::" + state.getLastModifiedBy().getName());
+            map.put("status", state.getValue());
+            final Position ownerPosition = state.getOwnerPosition();
+            user = state.getOwnerUser();
+            if (null != user) {
+                map.put("user", user.getUsername() + "::" + user.getName());
+                map.put("department", null != eisCommonService.getDepartmentForUser(user.getId()) ? eisCommonService
+                        .getDepartmentForUser(user.getId()).getName() : "");
+            } else if (null != ownerPosition && null != ownerPosition.getDeptDesig()) {
+                user = eisCommonService.getUserForPosition(ownerPosition.getId(), new Date());
+                map.put("user", null != user.getUsername() ? user.getUsername() + "::" + user.getName() : "");
+                map.put("department", null != ownerPosition.getDeptDesig().getDepartment() ? ownerPosition
+                        .getDeptDesig().getDepartment().getName() : "");
+            }
+            historyTable.add(map);
+        }
+        return historyTable;
+    }
 }

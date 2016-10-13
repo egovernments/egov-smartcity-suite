@@ -164,6 +164,18 @@ $(document).ready( function () {
 		link.click();		
 	})
 	
+	$('.slide-history-menu').click(function(){
+		$(this).parent().find('.history-slide').slideToggle();
+		if($(this).parent().find('#toggle-his-icon').hasClass('fa fa-angle-down'))
+		{
+			$(this).parent().find('#toggle-his-icon').removeClass('fa fa-angle-down').addClass('fa fa-angle-up');
+			//$('#see-more-link').hide();
+			}else{
+			$(this).parent().find('#toggle-his-icon').removeClass('fa fa-angle-up').addClass('fa fa-angle-down');
+			//$('#see-more-link').show();
+		}
+	});
+	
 })
 
 function validateChecklists() {

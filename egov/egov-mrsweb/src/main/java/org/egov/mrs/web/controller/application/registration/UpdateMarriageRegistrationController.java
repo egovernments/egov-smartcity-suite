@@ -70,12 +70,12 @@ import org.springframework.web.bind.annotation.RequestParam;
 @Controller
 @RequestMapping(value = "/registration")
 public class UpdateMarriageRegistrationController extends MarriageRegistrationController {
-	
-	private static final Logger LOG = Logger.getLogger(UpdateMarriageRegistrationController.class);
-	
-	@Autowired
+        
+        private static final Logger LOG = Logger.getLogger(UpdateMarriageRegistrationController.class);
+        
+        @Autowired
     private FileStoreService fileStoreService;
-	
+        
     @RequestMapping(value = "/update/{id}", method = RequestMethod.GET)
     public String showRegistration(@PathVariable final Long id, final Model model) {
         MarriageRegistration registration = marriageRegistrationService.get(id);
@@ -84,12 +84,14 @@ public class UpdateMarriageRegistrationController extends MarriageRegistrationCo
         marriageApplicantService.prepareDocumentsForView(registration.getHusband()); 
         marriageApplicantService.prepareDocumentsForView(registration.getWife());
         prepareWorkFlowForNewMarriageRegistration(registration, model);  
+        model.addAttribute("applicationHistory",
+                marriageRegistrationService.getHistory(registration));
         registration.getWitnesses().forEach(witness -> {
             try {
-            	if(witness.getPhotoFileStore() != null){
-            		final File file = fileStoreService.fetch(witness.getPhotoFileStore().getFileStoreId(), MarriageConstants.MODULE_NAME);
-                	witness.setEncodedPhoto(Base64.getEncoder().encodeToString(FileCopyUtils.copyToByteArray(file)));
-            	}
+                if(witness.getPhotoFileStore() != null){
+                        final File file = fileStoreService.fetch(witness.getPhotoFileStore().getFileStoreId(), MarriageConstants.MODULE_NAME);
+                        witness.setEncodedPhoto(Base64.getEncoder().encodeToString(FileCopyUtils.copyToByteArray(file)));
+                }
             } catch (final Exception e) {
                 LOG.error("Error while preparing the document for view", e);
             }
