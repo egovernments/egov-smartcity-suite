@@ -3,7 +3,7 @@ id integer NOT NULL,
 rev integer NOT NULL,
 criteria character varying(50) NOT NULL,
 fees double precision,
-fromdays  bigint
+fromdays  bigint,
 todays bigint,
 lastmodifiedby bigint,
 lastmodifieddate timestamp without time zone,
