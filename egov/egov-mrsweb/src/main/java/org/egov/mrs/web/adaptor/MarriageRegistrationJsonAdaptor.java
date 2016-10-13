@@ -40,10 +40,13 @@ public class MarriageRegistrationJsonAdaptor implements JsonSerializer<MarriageR
 			else
 				jsonObject.addProperty("wifeName", StringUtils.EMPTY);
 
-			jsonObject.addProperty("certificateIssued", registration.isCertificateIssued() ? "Yes" : "No");
+			 if(registration.getMarriageCertificate().isEmpty())
+			     jsonObject.addProperty("certificateIssued","No");
+		          else if(registration.getMarriageCertificate().get(0).isCertificateIssued())
+		              jsonObject.addProperty("certificateIssued","Yes");
 
 			if (registration.getStatus() != null)
-				jsonObject.addProperty("status", registration.getStatus().name());
+				jsonObject.addProperty("status", registration.getStatus().getDescription());
 			else
 				jsonObject.addProperty("status", StringUtils.EMPTY);
 			if (registration.getFeePaid() != null)
@@ -52,7 +55,7 @@ public class MarriageRegistrationJsonAdaptor implements JsonSerializer<MarriageR
 				jsonObject.addProperty("feePaid", StringUtils.EMPTY);
 
 			if (!registration.isFeeCollected())
-				if (registration.getStatus() == ApplicationStatus.Approved
+				if (registration.getStatus().getCode().equalsIgnoreCase(MarriageRegistration.RegistrationStatus.APPROVED.toString())
 						&& registration.getCurrentState().getNextAction().equalsIgnoreCase("Fee Collection Pending")) {
 					jsonObject.addProperty("feeCollectionPending", true);
 				}
