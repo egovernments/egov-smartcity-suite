@@ -199,7 +199,7 @@ public class ComplaintService {
         if (null != complaint.getComplaintType() && null != complaint.getComplaintType().getDepartment())
             complaint.setDepartment(complaint.getComplaintType().getDepartment());
         else if (null != assignee)
-            complaint.setDepartment(assignmentService.getPrimaryAssignmentForPositon(assignee.getId()).getDepartment());
+            complaint.setDepartment(assignee.getDeptDesig().getDepartment());
 
         final Complaint savedComplaint = complaintRepository.save(complaint);
         pushMessage(savedComplaint);
