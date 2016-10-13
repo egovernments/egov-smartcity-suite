@@ -42,7 +42,7 @@ package org.egov.mrs.domain.service;
 import java.util.List;
 
 import org.egov.mrs.domain.entity.MarriageDocument;
-import org.egov.mrs.domain.enums.FeeType;
+import org.egov.mrs.domain.enums.MarriageDocumentType;
 import org.egov.mrs.domain.repository.MarriageDocumentRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -85,6 +85,6 @@ public class MarriageDocumentService {
     }
     
     public List<MarriageDocument> getReIssueApplicantDocs() {
-        return documentRepository.findByType(FeeType.REISSUE);
+        return documentRepository.findByType(MarriageDocumentType.CERTIFICATEREISSUE);
     }
 }

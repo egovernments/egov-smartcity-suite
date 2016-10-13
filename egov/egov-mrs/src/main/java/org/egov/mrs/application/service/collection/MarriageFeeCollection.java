@@ -135,43 +135,49 @@ public class MarriageFeeCollection extends TaxCollection {
 
     @Transactional
     private void updateDemandDetailForReceiptCreate(final Set<ReceiptAccountInfo> accountDetails,
-            final EgDemand demand, final BillReceiptInfo billRcptInfo, final BigDecimal totalAmount) {
+			final EgDemand demand, final BillReceiptInfo billRcptInfo, final BigDecimal totalAmount) {
 
-        final StringBuilder query = new StringBuilder(
-                "select dmdet FROM EgDemandDetails dmdet ")
-                        .append("left join fetch dmdet.egDemandReason dmdRsn ")
-                        .append("left join fetch dmdRsn.egDemandReasonMaster dmdRsnMstr ")
-                        .append("left join fetch dmdRsn.egInstallmentMaster installment ")
-                        .append("WHERE dmdet.egDemand.id = :demand");
+		final StringBuilder query = new StringBuilder("select dmdet FROM EgDemandDetails dmdet ")
+				.append("left join fetch dmdet.egDemandReason dmdRsn ")
+				.append("left join fetch dmdRsn.egDemandReasonMaster dmdRsnMstr ")
+				.append("left join fetch dmdRsn.egInstallmentMaster installment ")
+				.append("WHERE dmdet.egDemand.id = :demand");
 
-        final EgDemandDetails demandDetail = (EgDemandDetails) getCurrentSession().createQuery(query.toString())
-                .setLong("demand", demand.getId()).list().get(0);
+		final List<EgDemandDetails> demandDetails = getCurrentSession().createQuery(query.toString())
+				.setLong("demand", demand.getId()).list();
 
-        for (final ReceiptAccountInfo receiptAccount : accountDetails)
-            if (org.apache.commons.lang.StringUtils.isNotBlank(receiptAccount.getDescription()))
-                if (receiptAccount.getCrAmount() != null && receiptAccount.getCrAmount().compareTo(BigDecimal.ZERO) == 1) {
+		for (final ReceiptAccountInfo receiptAccount : accountDetails) {
+			if (org.apache.commons.lang.StringUtils.isNotBlank(receiptAccount.getDescription())
+					&& receiptAccount.getCrAmount() != null
+					&& receiptAccount.getCrAmount().compareTo(BigDecimal.ZERO) == 1) {
 
-                    demandDetail.addCollectedWithOnePaisaTolerance(receiptAccount.getCrAmount());
+				final String[] desc = receiptAccount.getDescription().split("-", 2);
+				final String reason = desc[0].trim();
+				final String installment = desc[1].trim();
 
-                    if (demandDetail.getEgDemandReason().getEgDemandReasonMaster().getIsDemand())
-                        demand.addCollected(receiptAccount.getCrAmount());
+				for (final EgDemandDetails demandDetail : demandDetails) {
+					if (reason.equalsIgnoreCase(
+							demandDetail.getEgDemandReason().getEgDemandReasonMaster().getReasonMaster())
+							&& installment.equalsIgnoreCase(
+									demandDetail.getEgDemandReason().getEgInstallmentMaster().getDescription())) {
+						demandDetail.addCollectedWithOnePaisaTolerance(receiptAccount.getCrAmount());
 
-                    persistCollectedReceipts(demandDetail, billRcptInfo.getReceiptNum(), totalAmount,
-                            billRcptInfo.getReceiptDate(), demandDetail.getAmtCollected());
+						if (demandDetail.getEgDemandReason().getEgDemandReasonMaster().getIsDemand())
+							demand.addCollected(receiptAccount.getCrAmount());
 
-                    if (LOGGER.isDebugEnabled()) {
+						persistCollectedReceipts(demandDetail, billRcptInfo.getReceiptNum(), totalAmount,
+								billRcptInfo.getReceiptDate(), demandDetail.getAmtCollected());
+					}
+				}
 
-                        final String[] desc = receiptAccount.getDescription().split("-", 2);
-                        final String reason = desc[0].trim();
-                        final String instDesc = desc[1].split("#")[0].trim();
-
-                        LOGGER.debug(String.format(
-                                "Persisted demand and receipt details for tax=%s, installment=%s, receipt no=%s, for Rs. %s ",
-                                reason, instDesc, billRcptInfo.getReceiptNum(), receiptAccount.getCrAmount()));
-                    }
-                }
-
-    }
+				if (LOGGER.isDebugEnabled()) {
+					LOGGER.debug(String.format(
+							"Persisted demand and receipt details for tax=%s, installment=%s, receipt no=%s, for Rs. %s ",
+							reason, installment, billRcptInfo.getReceiptNum(), receiptAccount.getCrAmount()));
+				}
+			}
+		}
+	}
 
     @Override
     protected Module module() {
@@ -213,8 +219,8 @@ public class MarriageFeeCollection extends TaxCollection {
                     && !rcptAccInfo.getIsRevenueAccount()) {
                 final String[] desc = rcptAccInfo.getDescription().split("-", 2);
                 final String reason = desc[0].trim();
-                final String[] installsplit = desc[1].split("#");
-                installment = installsplit[0].trim();
+              //  final String[] installsplit = desc[1].split("#");
+                installment = desc[1].trim();//installsplit[0].trim();
 
                 for (final EgDemandDetails demandDetail : demand.getEgDemandDetails())
                     if (reason.equalsIgnoreCase(demandDetail.getEgDemandReason().getEgDemandReasonMaster()
@@ -257,20 +263,20 @@ public class MarriageFeeCollection extends TaxCollection {
     }
 
     @Override
-    public ReceiptAmountInfo receiptAmountBifurcation(BillReceiptInfo billReceiptInfo) {
-    	   final ReceiptAmountInfo receiptAmountInfo = new ReceiptAmountInfo();
-    	   BigDecimal currentInstallmentAmount = BigDecimal.ZERO;  
-    	if (billReceiptInfo != null && billReceiptInfo.getBillReferenceNum() != null) {
-            	 for (final ReceiptAccountInfo rcptAccInfo : billReceiptInfo.getAccountDetails()){
-                       if (rcptAccInfo.getCrAmount() != null && rcptAccInfo.getCrAmount().compareTo(BigDecimal.ZERO) == 1) {
-                    	  
-                    	   currentInstallmentAmount = currentInstallmentAmount.add(rcptAccInfo.getCrAmount());
-                       }
+	public ReceiptAmountInfo receiptAmountBifurcation(BillReceiptInfo billReceiptInfo) {
+		final ReceiptAmountInfo receiptAmountInfo = new ReceiptAmountInfo();
+		BigDecimal currentInstallmentAmount = BigDecimal.ZERO;
+		if (billReceiptInfo != null && billReceiptInfo.getBillReferenceNum() != null) {
+			for (final ReceiptAccountInfo rcptAccInfo : billReceiptInfo.getAccountDetails()) {
+				if (rcptAccInfo.getCrAmount() != null && rcptAccInfo.getCrAmount().compareTo(BigDecimal.ZERO) == 1) {
 
-               }
-    	   }
-    	 receiptAmountInfo.setCurrentInstallmentAmount(currentInstallmentAmount); 
-        return receiptAmountInfo;
-    }
+					currentInstallmentAmount = currentInstallmentAmount.add(rcptAccInfo.getCrAmount());
+				}
+
+			}
+		}
+		receiptAmountInfo.setCurrentInstallmentAmount(currentInstallmentAmount);
+		return receiptAmountInfo;
+	}
 
 }

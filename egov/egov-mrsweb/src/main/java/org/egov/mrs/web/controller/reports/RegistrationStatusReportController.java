@@ -94,7 +94,7 @@ public class RegistrationStatusReportController {
             searchResult.setWifeName(registration.getWife().getName().getFirstName());
             searchResult.setRegistrationDate(formatter.format(registration.getCreatedDate()));
             searchResult.setDateOfMarriage(formatter.format(registration.getDateOfMarriage()));
-            searchResult.setApplicationType(FeeType.REGISTRATION.name());
+            searchResult.setApplicationType(FeeType.MRGREGISTRATION.name());
             searchResult.setFeePaid(registration.getFeePaid());
             searchResult.setStatus(registration.getStatus().getDescription());
             searchResult.setRemarks(registration.getRejectionReason());

@@ -438,7 +438,7 @@ public class MarriageRegistrationService {
         final User user = securityUtils.getCurrentUser();
         final ApplicationIndexBuilder applicationIndexBuilder = new ApplicationIndexBuilder(MarriageConstants.MODULE_NAME,
                 registration.getApplicationNo(),
-                registration.getApplicationDate(), FeeType.REGISTRATION.name(),
+                registration.getApplicationDate(), FeeType.MRGREGISTRATION.name(),
                 registration.getHusband().getFullName().concat(registration.getWife().getFullName()),
                 registration.getStatus().getCode(),
                 "/mrs/registration/" + registration.getId(),

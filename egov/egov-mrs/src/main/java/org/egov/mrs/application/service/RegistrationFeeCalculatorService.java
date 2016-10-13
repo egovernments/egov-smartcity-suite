@@ -70,7 +70,7 @@ public class RegistrationFeeCalculatorService implements MarriageFeeCalculator {
 
     @Override
     public String getFeeType() {
-        return FeeType.REGISTRATION.name();
+        return FeeType.MRGREGISTRATION.name();
     }
 
 }

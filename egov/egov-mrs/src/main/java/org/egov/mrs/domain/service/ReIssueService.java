@@ -197,7 +197,7 @@ public class ReIssueService {
         final User user = securityUtils.getCurrentUser();
         final ApplicationIndexBuilder applicationIndexBuilder = new ApplicationIndexBuilder(MarriageConstants.MODULE_NAME,
                 reIssue.getApplicationNo(),
-                reIssue.getApplicationDate(), FeeType.REISSUE.name(),
+                reIssue.getApplicationDate(), FeeType.CERTIFICATEISSUE.name(),
                 reIssue.getApplicant().getFullName(),
                 reIssue.getStatus().name(),
                 "/mrs/reissue/" + reIssue.getId(),

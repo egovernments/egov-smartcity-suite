@@ -187,9 +187,9 @@ public class MarriageBillService extends BillServiceInterface {
                 billdetail.setPurpose(PURPOSE.OTHERS.toString());
                 descriptionBuilder.append(demandReasonMaster.getReasonMaster())
                         .append(" - ")
-                        .append(installment.getDescription())
-                        .append(" # ")
-                        .append(billObj.getCurrentDemand().getEgInstallmentMaster().getDescription());
+                        .append(installment.getDescription());
+                      /*  .append(" # ")
+                        .append(billObj.getCurrentDemand().getEgInstallmentMaster().getDescription());*/
 
                 billdetail.setDescription(descriptionBuilder.toString());
                 billDetails.add(billdetail);

@@ -52,6 +52,7 @@ import javax.validation.constraints.NotNull;
 
 import org.egov.infra.persistence.entity.AbstractAuditable;
 import org.egov.mrs.domain.enums.FeeType;
+import org.egov.mrs.domain.enums.MarriageDocumentType;
 import org.hibernate.validator.constraints.SafeHtml;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -85,7 +86,7 @@ public class MarriageDocument extends AbstractAuditable {
     
     @NotNull
     @Enumerated(EnumType.STRING)
-    private FeeType type;
+    private MarriageDocumentType type;
 
     @Transient
     private MultipartFile file;
@@ -124,11 +125,11 @@ public class MarriageDocument extends AbstractAuditable {
         this.individual = individual;
     }
 
-    public FeeType getType() {
+    public MarriageDocumentType getType() {
         return type;
     }
 
-    public void setType(FeeType type) {
+    public void setType(MarriageDocumentType type) {
         this.type = type;
     }
 

@@ -70,7 +70,7 @@ public class MarriageRegistrationDemandService extends MarriageDemandService {
 		final Module module = moduleService.getModuleByName(MarriageConstants.MODULE_NAME);
 		final Installment installment = installmentDAO.getInsatllmentByModuleForGivenDate(module, new Date());
 		final EgDemandReasonMaster demandReasonMaster = demandGenericDAO
-				.getDemandReasonMasterByCode(FeeType.REGISTRATION.name(), module);
+				.getDemandReasonMasterByCode(FeeType.MRGREGISTRATION.name(), module);
 		final EgDemandReason demandReason = demandGenericDAO
 				.getDmdReasonByDmdReasonMsterInstallAndMod(demandReasonMaster, installment, module);
 		demandDetails.add(EgDemandDetails.fromReasonAndAmounts(amount, demandReason, BigDecimal.ZERO));
@@ -82,7 +82,7 @@ public class MarriageRegistrationDemandService extends MarriageDemandService {
 		if (demand != null) {
 			for (final EgDemandDetails dmdDtl : demand.getEgDemandDetails()) {
 				if (dmdDtl.getEgDemandReason().getEgDemandReasonMaster().getCode()
-						.equalsIgnoreCase(FeeType.REGISTRATION.name())) {
+						.equalsIgnoreCase(FeeType.MRGREGISTRATION.name())) {
 					dmdDtl.setAmount(amount);
 					dmdDtl.setAmtCollected(BigDecimal.ZERO);
 				}

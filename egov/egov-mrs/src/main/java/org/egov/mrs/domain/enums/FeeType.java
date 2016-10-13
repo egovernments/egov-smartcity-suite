@@ -46,5 +46,5 @@ package org.egov.mrs.domain.enums;
  *
  */
 public enum FeeType {
-    REGISTRATION, REISSUE;
+    MRGREGISTRATION, CERTIFICATEISSUE;
 }
