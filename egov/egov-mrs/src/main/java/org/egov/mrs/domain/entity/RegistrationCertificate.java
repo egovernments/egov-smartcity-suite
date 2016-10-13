@@ -70,13 +70,18 @@ public class RegistrationCertificate {
     private final DateFormat dateFormatter = new SimpleDateFormat(MarriageConstants.DATE_FORMAT_DDMMYYYY);
     private MarriageRegistration registration;
     private User user;
+    private byte[] husbandPhoto;
+    private byte[] wifePhoto;
 
-    public RegistrationCertificate() {
-    }
+    
 
-    public RegistrationCertificate(final MarriageRegistration registration, final User user) {
+    public RegistrationCertificate(final MarriageRegistration registration, final User user,byte[] husbandPhoto, byte[] wifePhoto) {
         this.registration = registration;
         this.user = user;
+        this.husbandPhoto=husbandPhoto;
+        this.wifePhoto=wifePhoto;
+        
+        
     }
 
     public MarriageRegistration getRegistration() {
@@ -129,14 +134,14 @@ public class RegistrationCertificate {
     }
 
     public InputStream getWifePhoto() {
-		if (registration.getWife() != null && registration.getWife().getPhoto() != null)
-			return new java.io.ByteArrayInputStream(registration.getWife().getPhoto());
+		if (this.wifePhoto != null)
+			return new java.io.ByteArrayInputStream(this.wifePhoto);
 		return null;
 	}
 
 	public InputStream getHusbandPhoto() {
-		if (registration.getWife() != null && registration.getHusband().getPhoto() != null)
-			return new java.io.ByteArrayInputStream(registration.getHusband().getPhoto());
+		if (this.husbandPhoto != null)
+			return new java.io.ByteArrayInputStream(this.husbandPhoto);
 		return null;
     }
 

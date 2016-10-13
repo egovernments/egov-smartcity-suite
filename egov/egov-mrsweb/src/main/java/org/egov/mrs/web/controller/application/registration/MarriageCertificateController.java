@@ -106,7 +106,7 @@ public class MarriageCertificateController {
 
 	@RequestMapping(value = "/rejection", method = RequestMethod.GET)
 	public @ResponseBody ResponseEntity<byte[]> showRejectionCertificate(HttpServletRequest request,
-			@RequestParam final Long id, final Model model, final HttpSession session) {  
+			@RequestParam final Long id, final Model model, final HttpSession session) throws IOException {  
 		final String url = WebUtils.extractRequestDomainURL(request, false);
 		final String cityLogo = url.concat(MarriageConstants.IMAGE_CONTEXT_PATH)
 				.concat((String) request.getSession().getAttribute("citylogo"));

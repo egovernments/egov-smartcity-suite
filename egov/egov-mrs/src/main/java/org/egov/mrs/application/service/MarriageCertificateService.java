@@ -40,6 +40,7 @@
 package org.egov.mrs.application.service;
 
 import java.io.ByteArrayInputStream;
+import java.io.IOException;
 import java.io.InputStream;
 import java.util.Date;
 import java.util.HashMap;
@@ -47,6 +48,7 @@ import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 
+import org.apache.commons.io.FileUtils;
 import org.egov.infra.filestore.entity.FileStoreMapper;
 import org.egov.infra.filestore.service.FileStoreService;
 import org.egov.infra.reporting.engine.ReportOutput;
@@ -76,7 +78,7 @@ public class MarriageCertificateService {
 	private static final String CERTIFICATE_TEMPLATE_REJECTION = "rejectioncertificate";
 
 	public enum CertificateType {
-		REGISTRATION, REJECTION
+		REGISTRATION, REJECTION,REISSUE
 	}
 
 	@Autowired
@@ -102,21 +104,26 @@ public class MarriageCertificateService {
 	 * @param cityName
 	 * @param logopath
 	 * @return
+	 * @throws IOException 
 	 */
 	public ReportOutput generate(MarriageRegistration registration, CertificateType certificateType, String cityName,
-			String logopath) {
+			String logopath) throws IOException {
 		ReportRequest reportInput = null;
 		ReportOutput reportOutput = null;
 		Map<String, Object> reportParams = new HashMap<String, Object>();
 		String template = (certificateType == MarriageCertificateService.CertificateType.REGISTRATION
 				? CERTIFICATE_TEMPLATE_REGISTRATION : CERTIFICATE_TEMPLATE_REJECTION);
-
+		byte[] husbandPhoto=null,wifePhoto=null;
 		reportParams.put("cityName", cityName);
 		reportParams.put("certificateDate", new Date());
 		reportParams.put("logoPath", logopath);
-
+		if (registration.getWife() != null && registration.getWife().getPhotoFileStore()!= null)
+			wifePhoto=FileUtils.readFileToByteArray(fileStoreService.fetch(registration.getWife().getPhotoFileStore(), MarriageConstants.FILESTORE_MODULECODE));
+		if (registration.getHusband() != null && registration.getHusband().getPhotoFileStore()!= null)
+			 husbandPhoto=FileUtils.readFileToByteArray(fileStoreService.fetch(registration.getHusband().getPhotoFileStore(), MarriageConstants.FILESTORE_MODULECODE));
+		
 		reportInput = new ReportRequest(template,
-				new RegistrationCertificate(registration, securityUtils.getCurrentUser()), reportParams);
+				new RegistrationCertificate(registration, securityUtils.getCurrentUser(),husbandPhoto,wifePhoto), reportParams);
 		reportOutput = reportService.createReport(reportInput);
 		// registration.setCertificateIssued(true);
 		// marriageRegistrationService.update(registration);
@@ -124,13 +131,14 @@ public class MarriageCertificateService {
 	}
 	
 	public MarriageCertificate generateMarriageCertificate(final MarriageRegistration marriageRegistration,
-	       final HttpServletRequest request) {
+	       final HttpServletRequest request) throws IOException {
 	    MarriageCertificate marriageCertificate = null;
 	    ReportOutput reportOutput = null;
 	    final String cityName = request.getSession().getAttribute("citymunicipalityname").toString();
 	    final String url = WebUtils.extractRequestDomainURL(request, false);
 	    final String cityLogo = url.concat(MarriageConstants.IMAGE_CONTEXT_PATH)
                     .concat((String) request.getSession().getAttribute("citylogo"));
+	  
 	    reportOutput = generate(marriageRegistration, CertificateType.REGISTRATION,cityName,cityLogo);
 	    if (reportOutput != null && reportOutput.getReportOutputData() != null) {
 	        generateCertificatePDF = new ByteArrayInputStream(reportOutput.getReportOutputData());
