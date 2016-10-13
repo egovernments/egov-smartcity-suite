@@ -70,13 +70,13 @@ public class UpdateActController {
 	}
 
 	@RequestMapping(value = "/act/edit/{id}", method = RequestMethod.GET)
-	public String editReligion(@PathVariable("id") Long id, final Model model) {
+	public String editAct(@PathVariable("id") Long id, final Model model) {
 		model.addAttribute("act", actService.getAct(id));
 		return MRG_ACT_UPDATE;
 	}
 
 	@RequestMapping(value = "/act/update", method = RequestMethod.POST)
-	public String updateReligion(@Valid @ModelAttribute final Act act,
+	public String updateAct(@Valid @ModelAttribute final Act act,
 			final BindingResult errors,
 			final RedirectAttributes redirectAttributes) {
 		if (errors.hasErrors()) {

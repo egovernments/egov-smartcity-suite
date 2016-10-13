@@ -45,8 +45,16 @@ import java.time.temporal.ChronoUnit;
 import java.util.Date;
 import java.util.List;
 
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+
+import org.egov.mrs.domain.enums.MarriageFeeCriteriaType;
 import org.egov.mrs.masters.entity.Fee;
 import org.egov.mrs.masters.repository.FeeRepository;
+import org.hibernate.Criteria;
+import org.hibernate.Session;
+import org.hibernate.criterion.MatchMode;
+import org.hibernate.criterion.Restrictions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -55,45 +63,76 @@ import org.springframework.transaction.annotation.Transactional;
 @Transactional(readOnly = true)
 public class FeeService {
 
-    private final FeeRepository feeRepository;
+	private final FeeRepository feeRepository;
 
-    @Autowired
-    public FeeService(final FeeRepository feeRepository) {
-        this.feeRepository = feeRepository;
-    }
+	@PersistenceContext
+	private EntityManager entityManager;
 
-    @Transactional
-    public void create(final Fee fee) {
-        feeRepository.save(fee);
-    }
+	public Session getCurrentSession() {
+		return entityManager.unwrap(Session.class);
+	}
 
-    @Transactional
-    public Fee update(final Fee fee) {
-        return feeRepository.saveAndFlush(fee);
-    }
+	@Autowired
+	public FeeService(final FeeRepository feeRepository) {
+		this.feeRepository = feeRepository;
+	}
 
-    public Fee getFee(final Long id) {
-        return feeRepository.findById(id);
-    }
+	@Transactional
+	public void create(final Fee fee) {
+		feeRepository.save(fee);
+	}
 
-    public List<Fee> getAll() {
-        return feeRepository.findAll();
-    }
-    
-    public Fee getFeeForDays(Long days) {
-        return feeRepository.findByToDaysLessThanEqual(days);
-    }
-    
-    public Fee getFeeForDate(Date date) {
-        Long daysAfterMarriage = ChronoUnit.DAYS.between(
-                date.toInstant().atZone(ZoneId.systemDefault()).toLocalDateTime(),
-                LocalDateTime.now());
-        
-        return getFeeForDays(daysAfterMarriage);
-    }
-    
-    public Fee getFeeForCriteria(String criteria) {
-        return feeRepository.findByCriteria(criteria);
-    }
+	@Transactional
+	public Fee update(final Fee fee) {
+		return feeRepository.saveAndFlush(fee);
+	}
+
+	public Fee getFee(final Long id) {
+		return feeRepository.findById(id);
+	}
+
+	public List<Fee> getAll() {
+		return feeRepository.findAll();
+	}
+
+	public Fee getFeeForDays(Long days) {
+		return feeRepository.findByToDaysLessThanEqual(days);
+	}
+
+	public Fee getFeeForDate(Date date) {
+		Long daysAfterMarriage = ChronoUnit.DAYS.between(date.toInstant()
+				.atZone(ZoneId.systemDefault()).toLocalDateTime(),
+				LocalDateTime.now());
+
+		return getFeeForDays(daysAfterMarriage);
+	}
+
+	public Fee getFeeForCriteria(String criteria) {
+		return feeRepository.findByCriteria(criteria);
+	}
+	
+	public List<Fee> searchFee(Fee fee) {
+		  final Criteria criteria = buildSearchCriteria(fee);
+	        return criteria.list();
+	}
+
+	@SuppressWarnings("unchecked")
+	public List<Fee> searchRegistrationFeesWithGeneralType(Fee fee) {
+		final Criteria criteria = buildSearchCriteria(fee);
+		criteria.add(Restrictions.eq("feeType", MarriageFeeCriteriaType.GENERAL));
+		return criteria.list();
+		
+	}
+	
+	public Criteria buildSearchCriteria(Fee fee) {
+		final Criteria criteria = getCurrentSession().createCriteria(Fee.class);
+
+		if (null != fee.getCriteria())
+			criteria.add(Restrictions.ilike("criteria", fee.getCriteria().trim(),
+					MatchMode.ANYWHERE));
+		
+		criteria.setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY);
+		return criteria;
+	}
 
 }

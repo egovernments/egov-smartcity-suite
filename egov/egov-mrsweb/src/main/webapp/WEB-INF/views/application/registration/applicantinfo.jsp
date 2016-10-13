@@ -226,6 +226,19 @@
 		<div class="row">
 			<div class="form-group">
 				<label class="col-sm-6 control-label">
+					<spring:message code="lbl.applicant.aadhaarNo"/>
+				</label>
+				<div class="col-sm-6">
+					<form:input path="${applicant}.aadhaarNo" id="txt-aadhaarNo" type="text" class="form-control text-left" maxlength="10" placeholder="aadhaarNo"/>
+	            	<form:errors path="${applicant}.aadhaarNo" cssClass="add-margin error-msg"/>
+				</div>
+			</div>	
+		</div>
+	</div>
+	<div class="col-sm-6">
+		<div class="row">
+			<div class="form-group">
+				<label class="col-sm-6 control-label">
 					<spring:message code="lbl.occupation"/><span class="mandatory"></span>
 				</label>
 				<div class="col-sm-6">

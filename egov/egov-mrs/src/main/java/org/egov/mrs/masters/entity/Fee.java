@@ -40,6 +40,8 @@
 package org.egov.mrs.masters.entity;
 
 import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -48,6 +50,12 @@ import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
 
 import org.egov.infra.persistence.entity.AbstractAuditable;
+import org.egov.infra.persistence.validator.annotation.Unique;
+import org.egov.mrs.domain.enums.MarriageFeeCriteriaType;
+import org.egov.search.domain.Searchable;
+import org.hibernate.envers.AuditOverride;
+import org.hibernate.envers.AuditOverrides;
+import org.hibernate.envers.Audited;
 import org.hibernate.validator.constraints.Length;
 import org.hibernate.validator.constraints.SafeHtml;
 
@@ -60,7 +68,11 @@ import org.hibernate.validator.constraints.SafeHtml;
 
 @Entity
 @Table(name = "egmrs_fee")
+@Unique(id = "id", tableName = "egmrs_fee", fields = { "criteria" }, columnName = { "criteria" }, enableDfltMsg = true)
+@Searchable
 @SequenceGenerator(name = Fee.SEQ_FEE, sequenceName = Fee.SEQ_FEE, allocationSize = 1)
+@AuditOverrides({ @AuditOverride(forClass = AbstractAuditable.class, name = "lastModifiedBy"),
+    @AuditOverride(forClass = AbstractAuditable.class, name = "lastModifiedDate") })
 public class Fee extends AbstractAuditable {
 
     private static final long serialVersionUID = 4605301246092443240L;
@@ -72,12 +84,20 @@ public class Fee extends AbstractAuditable {
 
     @SafeHtml
     @Length(max = 50)
+    @Audited
     private String criteria;
 
     @NotNull
+    @Audited
     private Double fees;
     
+    @Enumerated(EnumType.ORDINAL)
+    private MarriageFeeCriteriaType feeType;
+    
+    @Audited
     private Integer fromDays;
+    
+    @Audited
     private Integer toDays;
 
     @Override
@@ -121,6 +141,13 @@ public class Fee extends AbstractAuditable {
     public void setToDays(Integer toDays) {
         this.toDays = toDays;
     }
+    public MarriageFeeCriteriaType getFeeType() {
+		return feeType;
+	}
+
+	public void setFeeType(MarriageFeeCriteriaType feeType) {
+		this.feeType = feeType;
+	}
     
 
     @Override
@@ -167,4 +194,5 @@ public class Fee extends AbstractAuditable {
         return true;
     }
 
+	
 }

@@ -154,6 +154,24 @@
         <put-attribute name="body" value="/WEB-INF/views/masters/act/act-update.jsp"/>
     </definition>
     
+    <definition name="fee-create" extends="base_layout">
+        <put-attribute name="page-title" value="title.create.fee" cascade="true"/>
+        <put-attribute name="body" value="/WEB-INF/views/masters/fee/fee-create.jsp"/>
+    </definition> 
+    <definition name="fee-search" extends="base_layout">
+        <put-attribute name="page-title" value="title.Fee.search" cascade="true"/>
+        <put-attribute name="body" value="/WEB-INF/views/masters/fee/fee-search.jsp"/>
+    </definition>
+    
+    <definition name="fee-update" extends="base_layout">
+        <put-attribute name="page-title" value="title.Fee.update" cascade="true"/>
+        <put-attribute name="body" value="/WEB-INF/views/masters/fee/fee-update.jsp"/>
+    </definition>
+    
+     <definition name="fee-success" extends="base_layout">
+        <put-attribute name="page-title" value="title.Fee.success" cascade="true"/>
+        <put-attribute name="body" value="/WEB-INF/views/masters/fee/fee-success.jsp"/>
+    </definition>
     <definition name="registration-search-approved" extends="base_layout">
         <put-attribute name="page-title" value="title.registration.search" cascade="true"/>
         <put-attribute name="body" value="/WEB-INF/views/application/registration/registration-search-approved.jsp"/>

@@ -44,7 +44,6 @@ import static org.egov.infra.web.utils.WebUtils.toJSON;
 import java.util.List;
 
 import org.egov.mrs.masters.entity.Act;
-import org.egov.mrs.masters.entity.Religion;
 import org.egov.mrs.masters.service.ActService;
 import org.egov.mrs.web.adaptor.ActJsonAdaptor;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -75,7 +74,7 @@ public class ViewActController {
 	}
 
 	@RequestMapping(value = "/act/success/{id}", method = RequestMethod.GET)
-	public String viewReligion(@PathVariable Long id, final Model model) {
+	public String viewAct(@PathVariable Long id, final Model model) {
 		model.addAttribute("act", actService.getAct(id));
 		return MRG_ACT_VIEW;
 	}
@@ -83,7 +82,7 @@ public class ViewActController {
 	@RequestMapping(value = "/act/search/{mode}", method = RequestMethod.GET)
 	public String getSearchPage(@PathVariable("mode") final String mode,
 			final Model model) {
-		model.addAttribute("act", new Religion());
+		model.addAttribute("act", new Act());
 		return MRG_ACT_SEARCH;
 	}
 
