@@ -224,8 +224,11 @@ public class UpdateLineEstimateController extends GenericWorkFlowController {
             approvalPosition = Long.valueOf(request.getParameter("approvalPosition"));
 
         if (lineEstimate.getStatus().getCode().equals(LineEstimateStatus.BUDGET_SANCTIONED.toString())
-                && !workFlowAction.equalsIgnoreCase(WorksConstants.REJECT_ACTION.toString()))
+                && !workFlowAction.equalsIgnoreCase(WorksConstants.REJECT_ACTION.toString())) {
             validateAdminSanctionDetail(lineEstimate, errors);
+            lineEstimateService.validateWorkFlowFields(lineEstimate, errors);
+        }
+            
 
         if (lineEstimate.getStatus().getCode().equals(LineEstimateStatus.CHECKED.toString())
                 && !workFlowAction.equalsIgnoreCase(WorksConstants.REJECT_ACTION.toString())) {
@@ -338,9 +341,9 @@ public class UpdateLineEstimateController extends GenericWorkFlowController {
     }
 
     private void validateAdminSanctionDetail(final LineEstimate lineEstimate, final BindingResult errors) {
-        if (lineEstimate.getCouncilResolutionDate() != null
+        /*if (lineEstimate.getCouncilResolutionDate() != null
                 && lineEstimate.getCouncilResolutionDate().before(lineEstimate.getLineEstimateDate()))
-            errors.rejectValue("councilResolutionDate", "error.councilresolutiondate");
+            errors.rejectValue("councilResolutionDate", "error.councilresolutiondate");*/
         if (StringUtils.isBlank(lineEstimate.getAdminSanctionNumber()))
             errors.rejectValue("adminSanctionNumber", "error.adminsanctionnumber.notnull");
         if (lineEstimate.getAdminSanctionNumber() != null) {
@@ -349,13 +352,6 @@ public class UpdateLineEstimateController extends GenericWorkFlowController {
 
             if (checkLineEstimate != null)
                 errors.rejectValue("adminSanctionNumber", "error.adminsanctionnumber.unique");
-        }
-        if (lineEstimate.getCouncilResolutionNumber() != null) {
-            final LineEstimate councilResolutionNumber = lineEstimateService
-                    .getLineEstimateByCouncilResolutionNumber(lineEstimate.getCouncilResolutionNumber());
-            if (councilResolutionNumber != null)
-                errors.rejectValue("councilResolutionNumber",
-                        "error.councilresolutionnumber.unique");
         }
     }
 
@@ -380,12 +376,15 @@ public class UpdateLineEstimateController extends GenericWorkFlowController {
         model.addAttribute("stateType", lineEstimate.getClass().getSimpleName());
         model.addAttribute("amountRule", lineEstimate.getTotalEstimateAmount());
 
-        if (lineEstimate.getCurrentState() != null)
-            model.addAttribute("currentState", lineEstimate.getCurrentState().getValue());
-        if (lineEstimate.getState() != null && lineEstimate.getState().getNextAction() != null)
+        if (lineEstimate.getCurrentState() != null) 
+            model.addAttribute("currentState", lineEstimate.getCurrentState().getValue()); 
+        if (lineEstimate.getState() != null && lineEstimate.getState().getNextAction() != null) {
             model.addAttribute("nextAction", lineEstimate.getState().getNextAction());
+            model.addAttribute("pendingActions", lineEstimate.getState().getNextAction());
+        }
         WorkflowContainer workflowContainer = new WorkflowContainer();
         workflowContainer.setAmountRule(lineEstimate.getTotalEstimateAmount());
+        workflowContainer.setPendingActions(lineEstimate.getCurrentState().getNextAction());
         prepareWorkflow(model, lineEstimate, workflowContainer);
         if (lineEstimate.getState() != null && lineEstimate.getState().getValue().equals(WorksConstants.WF_STATE_REJECTED))
             model.addAttribute("mode", "edit");
@@ -403,8 +402,9 @@ public class UpdateLineEstimateController extends GenericWorkFlowController {
         model.addAttribute("lineEstimate", newLineEstimate);
         if (request != null && request.getParameter("message") != null && request.getParameter("message").equals("update"))
             model.addAttribute("message", WorksConstants.LINEESTIMATE_UPDATE);
-        if(lineEstimate.getStatus().getCode().equals(LineEstimateStatus.BUDGET_SANCTIONED.toString())) {
-           model.addAttribute("fieldsRequired", lineEstimateService.getWorkFlowLevelFields(lineEstimate));
+        if(lineEstimate.getStatus().getCode().equals(LineEstimateStatus.BUDGET_SANCTIONED.toString()) || 
+        		lineEstimate.getStatus().getCode().equals(LineEstimateStatus.ADMINISTRATIVE_SANCTIONED.toString())) {
+           model.addAttribute("fieldsRequiredMap", lineEstimateService.getWorkFlowLevelFields(lineEstimate));
            final LineEstimateAppropriation lineEstimateAppropriation = lineEstimateAppropriationService.findLatestByLineEstimateDetails_EstimateNumber(lineEstimate.getLineEstimateDetails().get(0).getEstimateNumber());
            model.addAttribute("budgetAppropriationDate", lineEstimateAppropriation.getBudgetUsage().getUpdatedTime());
         }

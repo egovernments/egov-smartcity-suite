@@ -2,6 +2,7 @@ package org.egov.works.web.controller.revisionestimate;
 
 import javax.servlet.http.HttpServletRequest;
 
+import org.apache.commons.lang.StringUtils;
 import org.egov.works.abstractestimate.entity.AbstractEstimate;
 import org.egov.works.revisionestimate.entity.RevisionAbstractEstimate;
 import org.egov.works.revisionestimate.entity.SearchRevisionEstimate;
@@ -16,8 +17,6 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
-
-import antlr.StringUtils;
 
 @Controller
 @RequestMapping(value = "/revisionestimate")
@@ -54,14 +53,14 @@ public class CancelRevisionEstimateController {
 
 		final String revisionEstimates = revisionEstimateService.getRevisionEstimatesGreaterThanCurrent(
 				revisionEstimate.getParent().getId(), revisionEstimate.getCreatedDate());
-		if (!revisionEstimates.equals("")) {
+		if (!StringUtils.EMPTY.equals(revisionEstimates)) {
 			message = messageSource.getMessage("error.reexists.greaterthancreateddate",
 					new String[] { revisionEstimates }, null);
 			return "revisionEstimate-success";
 		} else {
 			final String mbRefNumbers = revisionEstimateService.checkIfMBCreatedForREChangedQuantity(revisionEstimate,
 					workOrderEstimate);
-			if (!mbRefNumbers.isEmpty()) {
+			if (!StringUtils.EMPTY.equals(mbRefNumbers)) {
 				model.addAttribute("message",
 						messageSource.getMessage("error.re.mb.created", new String[] { mbRefNumbers }, null));
 				return "revisionEstimate-success";

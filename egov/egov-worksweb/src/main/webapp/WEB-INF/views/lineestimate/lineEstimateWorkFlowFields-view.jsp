@@ -37,8 +37,8 @@
   ~
   ~   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
   --%>
-
-<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
+  
+ <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 <%@ taglib uri="http://www.springframework.org/tags" prefix="spring"%>
 <%@ taglib uri="http://www.springframework.org/tags/form" prefix="form"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
@@ -61,20 +61,18 @@
 			<tbody >
 			<tr>
 					<td>
-						<form:input path="contractCommitteeApprovalNumber"  id="contractCommitteeApprovalNumber" name="contractCommitteeApprovalNumber" required="required" value="${contractCommitteeApprovalNumber}"  onclick="validateNumber('contractCommitteeApprovalNumber');" class="form-control table-input text-left" maxlength="32"/>
-						<form:errors path="contractCommitteeApprovalNumber" cssClass="add-margin error-msg" />
+						<c:out value="${lineEstimate.contractCommitteeApprovalNumber }"></c:out>
 					</td>
 					<td>
-						<form:input path="contractCommitteeApprovalDate" id="contractCommitteeApprovalDate" name="contractCommitteeApprovalDate" required="required" value="${councilResolutionDate}"  class="form-control datepicker"  maxlength="10"  data-date-end-date="0d" />
-						<form:errors path="contractCommitteeApprovalDate" cssClass="add-margin error-msg" />
+						<fmt:formatDate value="${lineEstimate.contractCommitteeApprovalDate }" pattern="dd/MM/yyyy"/>
 					</td>
 					</tr>
 			</tbody>
 			</table>
 			</div>
 	</div>
-	</c:if>
-	<c:if test="${fieldsRequiredMap.standingCommitteeDetailsRequired == true}">
+</c:if>
+<c:if test="${fieldsRequiredMap.standingCommitteeDetailsRequired == true}">
 	<div class="panel panel-primary standingcommittee" data-collapsed="0">
 	<div class="panel-heading">
 		<div class="panel-title">
@@ -91,20 +89,19 @@
 			</thead>
 			<tbody >
 			<tr>
-					<td>
-						<form:input path="standingCommitteeApprovalNumber"  id="standingCommitteeApprovalNumber" name="standingCommitteeApprovalNumber" required="required" value="${standingCommitteeApprovalNumber}" onclick="validateNumber('standingCommitteeApprovalNumber');" class="form-control table-input text-left" maxlength="32"/>
-						<form:errors path="standingCommitteeApprovalNumber" cssClass="add-margin error-msg" />
-					</td>
-					<td>
-						<form:input path="standingCommitteeApprovalDate" id="standingCommitteeApprovalDate" name="standingCommitteeApprovalDate" required="required" value="${standingCommitteeApprovalDate}"  class="form-control datepicker"  maxlength="10"  data-date-end-date="0d" />
-						<form:errors path="standingCommitteeApprovalDate" cssClass="add-margin error-msg" />
-					</td>
-					</tr>
+				<td>
+					<c:out value="${lineEstimate.standingCommitteeApprovalNumber }"></c:out>
+				</td>
+				<td>
+					<fmt:formatDate value="${lineEstimate.standingCommitteeApprovalDate }" pattern="dd/MM/yyyy"/>
+				</td>
+				</tr>
 			</tbody>
 			</table>
 			</div>
 	</div>
-	</c:if>
+</c:if>
+
 <c:if test="${fieldsRequiredMap.councilResolutionDetailsRequired == true}">
 <div class="panel panel-primary councilresolution" data-collapsed="0">
 	<div class="panel-heading">
@@ -122,15 +119,13 @@
 		</thead>
 		<tbody >
 		<tr>
-				<td>
-					<form:input path="councilResolutionNumber"  id="councilResolutionNumber" name="councilResolutionNumber" value="${councilResolutionNumber}"  onclick="validateNumber('councilResolutionNumber');" required="required" data-idx="0" data-optional="0" class="form-control table-input text-left" maxlength="32"/>
-					<form:errors path="councilResolutionNumber" cssClass="add-margin error-msg" />
-				</td>
-				<td>
-					<form:input path="councilResolutionDate" id="councilResolutionDate" name="councilResolutionDate" value="${councilResolutionDate}"  required="required" class="form-control datepicker" maxlength="10"  data-date-end-date="0d" />
-					<form:errors path="councilResolutionDate" cssClass="add-margin error-msg" />
-				</td>
-				</tr>
+			<td>
+				<c:out value="${lineEstimate.councilResolutionNumber }"></c:out>
+			</td>
+			<td>
+				<fmt:formatDate value="${lineEstimate.councilResolutionDate }" pattern="dd/MM/yyyy"/>
+			</td>
+		</tr>
 		</tbody>
 		</table>
 		</div>
@@ -153,14 +148,12 @@
 		</thead>
 		<tbody >
 		<tr>
-				<td>
-					<form:input path="governmentApprovalNumber"  id="governmentApprovalNumber" name="governmentApprovalNumber" value="${governmentApprovalNumber}" required="required" class="form-control table-input text-left" onclick="validateNumber('governmentApprovalNumber');" maxlength="32"/>
-					<form:errors path="governmentApprovalNumber" cssClass="add-margin error-msg" />
-				</td>
-				<td>
-					<form:input path="governmentApprovalDate" id="governmentApprovalDate" name="governmentApprovalDate" value="${governmentApprovalDate}" required="required" class="form-control datepicker"  maxlength="10"  data-date-end-date="0d" />
-					<form:errors path="governmentApprovalDate" cssClass="add-margin error-msg" />
-				</td>
+			<td>
+				<c:out value="${lineEstimate.governmentApprovalNumber }"></c:out>
+			</td>
+			<td>
+				<fmt:formatDate value="${lineEstimate.governmentApprovalDate }" pattern="dd/MM/yyyy"/>
+			</td>
 				</tr>
 		</tbody>
 		</table>

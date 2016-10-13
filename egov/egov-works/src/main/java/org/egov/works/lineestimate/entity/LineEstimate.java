@@ -252,7 +252,7 @@ public class LineEstimate extends StateAware {
     private String governmentApprovalNumber;
     
     @Temporal(TemporalType.DATE)
-    private Date governmentsApprovalDate;
+    private Date governmentApprovalDate;
     
 
     @Override
@@ -601,22 +601,6 @@ public class LineEstimate extends StateAware {
 		this.contractCommitteeApprovalDate = contractCommitteeApprovalDate;
 	}
 
-	public String getStandingCommitteeApprovalNumber() {
-		return standingCommitteeApprovalNumber;
-	}
-
-	public void setStandingCommiteeApprovalNumber(final String standingCommitteeApprovalNumber) {
-		this.standingCommitteeApprovalNumber = standingCommitteeApprovalNumber;
-	}
-
-	public Date getStandingCommitteeApprovalDate() {
-		return standingCommitteeApprovalDate;
-	}
-
-	public void setStandingCommiteeApprovalDate(final Date standingCommitteeApprovalDate) {
-		this.standingCommitteeApprovalDate = standingCommitteeApprovalDate;
-	}
-
 	public String getGovernmentApprovalNumber() {
 		return governmentApprovalNumber;
 	}
@@ -625,13 +609,28 @@ public class LineEstimate extends StateAware {
 		this.governmentApprovalNumber = governmentApprovalNumber;
 	}
 
-	public Date getGovernmentsApprovalDate() {
-		return governmentsApprovalDate;
+	public String getStandingCommitteeApprovalNumber() {
+		return standingCommitteeApprovalNumber;
 	}
 
-	public void setGovernmentsApprovalDate(final Date governmentsApprovalDate) {
-		this.governmentsApprovalDate = governmentsApprovalDate;
+	public void setStandingCommitteeApprovalNumber(String standingCommitteeApprovalNumber) {
+		this.standingCommitteeApprovalNumber = standingCommitteeApprovalNumber;
 	}
-    
-    
+
+	public Date getStandingCommitteeApprovalDate() {
+		return standingCommitteeApprovalDate;
+	}
+
+	public void setStandingCommitteeApprovalDate(Date standingCommitteeApprovalDate) {
+		this.standingCommitteeApprovalDate = standingCommitteeApprovalDate;
+	}
+
+	public Date getGovernmentApprovalDate() {
+		return governmentApprovalDate;
+	}
+
+	public void setGovernmentApprovalDate(Date governmentApprovalDate) {
+		this.governmentApprovalDate = governmentApprovalDate;
+	}
+
 }

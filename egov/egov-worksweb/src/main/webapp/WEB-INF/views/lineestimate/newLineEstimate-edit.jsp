@@ -50,13 +50,17 @@
 			<input type="hidden" value="${lineEstimate.status.code }" id=lineEstimateStatus />
 			<input type="hidden" value="${lineEstimate.spillOverFlag }" id=spillOverFlag />
 			<input type="hidden" value="${mode}" id="mode"/>
-			<input type="hidden" value="${fieldsRequired}" id="fieldsRequired"/>
+			<input type="hidden" value="${fieldsRequiredMap}" id="fieldsRequiredMap"/>
 			<input type="hidden" name="budgetAppropriationDate" id="budgetAppropriationDate" class="form-control datepicker" maxlength="10" data-inputmask="'mask': 'd/m/y'" data-date-end-date="0d" value='<fmt:formatDate value="${budgetAppropriationDate}" pattern="dd/MM/yyyy"/>' >
+			<input type="hidden" id="errorcouncilresolutiondate" value="<spring:message code='error.councilResolutiondate.lessthan.budgetappropriation' />" />
+			<input type="hidden" id="errorcontractcommiteeapprovaldate" value="<spring:message code='error.contractCommitteeApprovalDate.lessthan.budgetappropriation' />" />
+			<input type="hidden" id="errorstandingcommitteapprovaldate" value="<spring:message code='error.standingCommitteeApprovalDate.lessthan.budgetappropriation' />" />
+			<input type="hidden" id="errorgovernmentapprovaldate" value="<spring:message code='error.governmentApprovalDate.lessthan.budgetappropriation' />" />
 			<div class="row">
 				<div class="col-md-12">
 					<c:if test="${mode != 'view' && mode != 'readOnly' }">
 						<jsp:include page="lineEstimateHeader.jsp"/>
-						<jsp:include page="lineEstimateDetails.jsp"/>
+						<jsp:include page="lineEstimateDetails.jsp"/> 
 					</c:if>
 					<c:if test="${mode == 'view' || mode == 'readOnly' }">
 						<jsp:include page="lineEstimateHeader-view.jsp"/>
@@ -65,12 +69,15 @@
 					<jsp:include page="../common/uploadDocuments.jsp"/>
 				</div>
 			</div>
-		<c:if test="${lineEstimate.status.code == 'BUDGET_SANCTIONED' || lineEstimate.status.code == 'TECHNICAL_SANCTIONED' || lineEstimate.status.code == 'ADMINISTRATIVE_SANCTIONED' }" >
+		<c:if test="${(lineEstimate.status.code == 'BUDGET_SANCTIONED' || lineEstimate.status.code == 'TECHNICAL_SANCTIONED' || lineEstimate.status.code == 'ADMINISTRATIVE_SANCTIONED')}" >
 			<jsp:include page="lineEstimateAdminSanctionDetails.jsp"></jsp:include>
-			<jsp:include page="lineEstimate-workFlowFields.jsp"></jsp:include>
+		</c:if>
+		<c:if test="${lineEstimate.status.code == 'BUDGET_SANCTIONED' && mode != 'readOnly'}">
+		   <jsp:include page="lineEstimate-workFlowFields.jsp"></jsp:include>
 		</c:if>
 		<c:if test="${lineEstimate.status.code == 'ADMINISTRATIVE_SANCTIONED' || lineEstimate.status.code == 'TECHNICAL_SANCTIONED' }">
 			<jsp:include page="lineEstimateTechnicalSanctionDetails.jsp"/>
+			<jsp:include page="lineEstimateWorkFlowFields-view.jsp"/>
 		</c:if>
 		<c:if test="${!workflowHistory.isEmpty()}">
 			<jsp:include page="../common/commonWorkflowhistory-view.jsp"></jsp:include>
@@ -78,7 +85,6 @@
 		<c:if test="${mode != 'readOnly' }">
 			<jsp:include page="../common/commonWorkflowMatrix.jsp"/>
 		</c:if>
-		
 		<div class="buttonbottom" align="center">
 			<jsp:include page="../common/commonWorkflowMatrix-button.jsp" />
 		</div>

@@ -360,7 +360,19 @@ public class WorksConstants {
     
     public static final String APPCONFIG_KEY_SHOW_DEDUCTION_GRID = "SHOW_DEDUCTION_GRID";
     
-    public static final String LINEESTIMATE_WF_NEXTACTION_PENDING_TECHNICAL_APPROVE = "Pending Technical approve";
+    public static final String LINEESTIMATE_WF_NEXTACTION_PENDING_TECHNICAL_APPROVE = "Pending Technical Approve";
+    
+    public static final String WORKFLOW_NO_FIELDS_REQUIRED = "noFieldsRequired";
+    
+    public static final String WORKFLOW_STANDING_COMMITEE_DETAILS_REQUIRED = "standingCommitteeDetailsRequired";
+    
+    public static final String WORKFLOW_COUNCIL_RESOLUTION_DETAILS_REQUIRED = "councilResolutionDetailsRequired";
+    
+    public static final String WORKFLOW_CONTRACT_COMMITTEE_DETAILS_REQUIRED = "contractCommitteeDetailsRequired";
+    
+    public static final String WORKFLOW_GOVERNMENT_APPROVAL_DETAILS_REQUIRED = "governmentApprovalRequired";
+    
+    public static final String LINEESTIMATE_APPROVALRULES = "LINEESTIMATE-APPROVALRULES";
     
     
 }

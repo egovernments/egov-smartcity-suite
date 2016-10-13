@@ -92,22 +92,6 @@ $(document).ready(function(){
 	
 	replaceWorkCategoryChar();
 	replaceBeneficiaryChar();
-	$(".contractcommittee").hide();
-	$(".standingcommittee").hide();
-	$(".councilresolution").hide();
-	$(".governmentapproval").hide();
-	var fieldsRequired = $("#fieldsRequired").val();
-	if(fieldsRequired != '' && fieldsRequired != "noFieldsRequired") {
-		 if(fieldsRequired == 'standingCommitteeDetailsRequired') {
-			 $(".standingcommittee").show();
-		 } else if(fieldsRequired == 'councilResolutionDetailsRequired') {
-			 $(".councilresolution").show();
-		 } else if(fieldsRequired == 'contractCommitteeDetailsRequired') {
-			 $(".contractcommittee").show();
-		 } else if(fieldsRequired == 'governmentsApprovalRequired') {
-			 $(".governmentapproval").show();
-		 }
-	}
 });
 
 function renderPdf() {
@@ -119,40 +103,39 @@ $('.btn-primary').click(function(){
 	var button = $(this).attr('id');
 	if (button != null && button == 'Approve') {
 		$('#approvalComent').removeAttr('required');
-		var fieldsRequired = $("#fieldsRequired").val();
-		if(fieldsRequired != '' && fieldsRequired != "noFieldsRequired") {
-			var budgetAppropriationDate = $("#budgetAppropriationDate").val();
-			alert(budgetAppropriationDate);
-			 if(fieldsRequired == 'standingCommitteeDetailsRequired') {
-				 $('#councilResolutionNumber').removeAttr('required');
-				 $('#councilResolutionDate').removeAttr('required');
-				 $('#contractCommitteeApprovalNumber').removeAttr('required');
-				 $('#contractCommitteeApprovalDate').removeAttr('required');
-				 $('#governmentApprovalNumber').removeAttr('required');
-				 $('#governmentsApprovalDate').removeAttr('required');
-			 } else if(fieldsRequired == 'councilResolutionDetailsRequired') {
-				 $('#standingCommitteeApprovalNumber').removeAttr('required');
-				 $('#standingCommitteeApprovalDate').removeAttr('required');
-				 $('#contractCommitteeApprovalNumber').removeAttr('required');
-				 $('#contractCommitteeApprovalDate').removeAttr('required');
-				 $('#governmentApprovalNumber').removeAttr('required');
-				 $('#governmentsApprovalDate').removeAttr('required');
-			 } else if(fieldsRequired == 'contractCommitteeDetailsRequired') {
-				 $('#standingCommitteeApprovalNumber').removeAttr('required');
-				 $('#standingCommitteeApprovalDate').removeAttr('required');
-				 $('#councilResolutionNumber').removeAttr('required');
-				 $('#councilResolutionDate').removeAttr('required');
-				 $('#governmentApprovalNumber').removeAttr('required');
-				 $('#governmentsApprovalDate').removeAttr('required');
-			 } else if(fieldsRequired == 'governmentsApprovalRequired') {
-				 $('#standingCommitteeApprovalNumber').removeAttr('required');
-				 $('#standingCommitteeApprovalDate').removeAttr('required');
-				 $('#councilResolutionNumber').removeAttr('required');
-				 $('#councilResolutionDate').removeAttr('required');
-				 $('#contractCommitteeApprovalNumber').removeAttr('required');
-				 $('#contractCommitteeApprovalDate').removeAttr('required');
-			 }
+		var budgetAppropriationDate = $('#budgetAppropriationDate').data('datepicker').date;
+		var standingCommitteeApprovalDate = $("standingCommitteeApprovalDate").val();
+		if(standingCommitteeApprovalDate != undefined && standingCommitteeApprovalDate != "") {
+			 var standingCommitteDate = $('#standingCommitteeApprovalDate').data('datepicker').date;
+			 if(standingCommitteDate < budgetAppropriationDate) {
+				 bootbox.alert($("#errorstandingcommitteapprovaldate").val());
+				 return false;
+			 } 
 		}
+		var councilResolutionDate = $("#councilResolutionDate").val();
+		 if(councilResolutionDate != undefined && councilResolutionDate != "") {
+			 var resolutionDate = $('#councilResolutionDate').data('datepicker').date;
+			 if(resolutionDate < budgetAppropriationDate) {
+				 bootbox.alert($("#errorcouncilresolutiondate").val());
+				 return false;
+			 } 
+		 }
+		/* var contractCommitteeApprovalDate = $("#contractCommitteeApprovalDate").val();
+		 if(contractCommitteeApprovalDate != undefined && contractCommitteeApprovalDate != "") {
+			 var contractCommitteDate = $('#contractCommitteeApprovalDate').data('datepicker').date;
+			 if(contractCommitteDate < budgetAppropriationDate) {
+				 bootbox.alert($("#errorcontractcommiteeapprovaldate").val());
+				 return false;
+			 }
+		 }*/
+		 var governmentApprovalDate = $("#governmentApprovalDate").val();
+		 if(governmentApprovalDate != undefined && governmentApprovalDate != "") {
+			 var govtApprovalDate = $("governmentApprovalDate").val();
+			 if(govtApprovalDate < budgetAppropriationDate) {
+				 bootbox.alert($("#errorgovernmentapprovaldate").val());
+				 return false;
+			 } 
+		 }
 	} else {
 		return validateWorkFlowApprover(button);
 	}
@@ -550,6 +533,17 @@ function validatecouncilResolutionNumber() {
 	});
 }
 
+function validateNumber(number) {
+	$( "input[name$="+number+"]" ).on("keyup", function(){
+		var valid = /^[a-zA-Z0-9\\/-]*$/.test(this.value),
+	        val = this.value;
+	    if(!valid){
+	        console.log("Invalid input!");
+	        this.value = val.substring(0, val.length - 1);
+	    }
+	});
+}
+
 function roundTo(value, decimals, decimal_padding) {
 	if (!decimals)
 		decimals = 2;
@@ -603,6 +597,14 @@ function validateWorkFlowApprover(name) {
 		$('#approvalPosition').removeAttr('required');
 		$('#approvalComent').attr('required', 'required');
 		$('#adminSanctionNumber').removeAttr('required');
+		$('#standingCommitteeApprovalNumber').removeAttr('required');
+		$('#standingCommitteeApprovalDate').removeAttr('required');
+		$('#councilResolutionNumber').removeAttr('required');
+		$('#councilResolutionDate').removeAttr('required');
+		$('#contractCommitteeApprovalNumber').removeAttr('required');
+		$('#contractCommitteeApprovalDate').removeAttr('required');
+		$('#governmentApprovalNumber').removeAttr('required');
+		$('#governmentApprovalDate').removeAttr('required');
 	}
 	if (button != null && button == 'Cancel') {
 		$('#approvalDepartment').removeAttr('required');

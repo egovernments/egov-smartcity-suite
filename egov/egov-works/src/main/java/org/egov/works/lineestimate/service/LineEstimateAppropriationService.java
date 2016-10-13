@@ -103,7 +103,7 @@ public class LineEstimateAppropriationService {
         return egwStatusHibernateDAO.getStatusByModuleAndCode(moduleType, code);
     }
 
-    @Transactional(propagation = Propagation.REQUIRES_NEW, readOnly = true)
+    //@Transactional(propagation = Propagation.REQUIRES_NEW, readOnly = true)
     public LineEstimateAppropriation findLatestByLineEstimateDetails_EstimateNumber(final String estimateNumber) {
         return lineEstimateAppropriationRepository
                 .findLatestByLineEstimateDetails_EstimateNumber(estimateNumber);
