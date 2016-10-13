@@ -39,15 +39,9 @@
  */
 package org.egov.lcms.web.controller.transactions;
 
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
-
-import org.egov.infra.filestore.entity.FileStoreMapper;
 import org.egov.lcms.masters.service.CourtMasterService;
 import org.egov.lcms.masters.service.PetitionTypeMasterService;
 import org.egov.lcms.transactions.entity.LegalCase;
-import org.egov.lcms.transactions.entity.LegalCaseDocuments;
 import org.egov.lcms.transactions.service.LegalCaseService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -98,7 +92,7 @@ public class ViewAndEditLegalCaseController extends GenericLegalCaseController {
         if (casenumberyear.length > 1)
             legalCase.setWpYear(casenumberyear[1]);
         legalCase.getBipartisanPetitionerDetailsList().addAll(legalCase.getPetitioners());
-        legalCase.getBipartisanRespondentDetailsList().addAll(legalCase.getRespondents());
+       legalCase.getBipartisanRespondentDetailsList().addAll(legalCase.getRespondents());
         model.addAttribute("supportDocs",(!legalCase.getLegalCaseDocuments().isEmpty() && legalCase.getLegalCaseDocuments().get(0)!=null ?legalCase.getLegalCaseDocuments().get(0).getSupportDocs():null));
         model.addAttribute("mode", "edit");
         return "legalcase-edit";
