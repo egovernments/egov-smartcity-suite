@@ -166,8 +166,6 @@ var department = new Bloodhound({
 
 							},
 							filter : function(data) {
-								data = JSON.parse(data);
-								console.log(data);
 								return $.map(data, function(advocate) {
 									return {
 										name : advocate.name,
