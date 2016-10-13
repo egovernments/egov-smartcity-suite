@@ -47,12 +47,14 @@ import static org.egov.ptis.constants.PropertyTaxConstants.THIRD_PARTY_ERR_CODE_
 import static org.egov.ptis.constants.PropertyTaxConstants.THIRD_PARTY_ERR_MSG_SUCCESS;
 
 import java.math.BigDecimal;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 
+import org.egov.infra.utils.DateUtils;
 import org.egov.ptis.bean.dashboard.CollIndexTableData;
 import org.egov.ptis.bean.dashboard.CollReceiptDetails;
 import org.egov.ptis.bean.dashboard.CollectionDetailsRequest;
@@ -74,6 +76,7 @@ import org.hibernate.SQLQuery;
 import org.hibernate.Session;
 import org.hibernate.transform.AliasToBeanResultTransformer;
 import org.hibernate.type.StandardBasicTypes;
+import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -127,7 +130,9 @@ public class DashboardService {
 			consolidatedData.setCytdColl(consolidatedColl.get("cytdColln"));
 			consolidatedData.setLytdColl(consolidatedColl.get("lytdColln"));
 		}
-		consolidatedData.setTotalDmd(propertyTaxElasticSearchIndexService.getTotalDemand());
+		BigDecimal totalDmd = propertyTaxElasticSearchIndexService.getTotalDemand();
+		int noOfMonths = DateUtils.noOfMonths(new DateTime().withMonthOfYear(4).dayOfMonth().withMinimumValue().toDate(), new Date())+1;
+		consolidatedData.setTotalDmd(totalDmd.divide(BigDecimal.valueOf(12), BigDecimal.ROUND_HALF_UP).multiply(BigDecimal.valueOf(noOfMonths)));
 		consolidatedData.setPerformance((consolidatedData.getCytdColl().multiply(BIGDECIMAL_100))
 				.divide(consolidatedData.getTotalDmd(), 1, BigDecimal.ROUND_HALF_UP));
 		consolidatedData.setLyVar(

@@ -112,7 +112,7 @@ public class PropertyTaxElasticSearchIndexService {
 	public BigDecimal getTotalDemand(){
 		SearchQuery searchQuery = new NativeSearchQueryBuilder()
 				.withIndices(PROPERTY_TAX_INDEX_NAME)
-				.addAggregation(AggregationBuilders.sum("totaldemand").field("annualdemand"))
+				.addAggregation(AggregationBuilders.sum("totaldemand").field("totaldemand"))
 				.build();
 
 		Aggregations aggregations = elasticsearchTemplate.query(searchQuery, new ResultsExtractor<Aggregations>() {
@@ -148,12 +148,10 @@ public class PropertyTaxElasticSearchIndexService {
 			toDate = DateUtils.addDays(new Date(), 1);
 		}
 		BigDecimal totalDemand = getTotalDemandBasedOnInputFilters(collectionDetailsRequest);
+		int noOfMonths = DateUtils.noOfMonths(fromDate, toDate)+1;
 		collectionIndexDetails.setTotalDmd(totalDemand);
 		
-		int noOfMonths = DateUtils.noOfMonths(fromDate, toDate);
 		//Proportional Demand = (totalDemand/12)*noOfmonths
-		if(noOfMonths == 0)
-			noOfMonths = 1;
 		BigDecimal proportionalDemand = (totalDemand.divide(BigDecimal.valueOf(12), BigDecimal.ROUND_HALF_UP))
 				.multiply(BigDecimal.valueOf(noOfMonths));
 		collectionIndexDetails.setCytdDmd(proportionalDemand.setScale(0, BigDecimal.ROUND_HALF_UP));
@@ -179,7 +177,7 @@ public class PropertyTaxElasticSearchIndexService {
 		BoolQueryBuilder boolQuery = prepareWhereClause(collectionDetailsRequest);
 		SearchQuery searchQueryColl = new NativeSearchQueryBuilder().withIndices(PROPERTY_TAX_INDEX_NAME)
 				.withQuery(boolQuery)
-				.addAggregation(AggregationBuilders.sum("totaldemand").field("annualdemand"))
+				.addAggregation(AggregationBuilders.sum("totaldemand").field("totaldemand"))
 				.build();
 		
 		Aggregations collAggr = elasticsearchTemplate.query(searchQueryColl, new ResultsExtractor<Aggregations>() {
@@ -354,7 +352,7 @@ public class PropertyTaxElasticSearchIndexService {
 	 * @return
 	 */
 	private BoolQueryBuilder filterBasedOnRequest(PropertyTaxDefaultersRequest propertyTaxDefaultersRequest){
-		BoolQueryBuilder boolQuery = QueryBuilders.boolQuery().must(QueryBuilders.rangeQuery("annualdemand").from(0).to(null));
+		BoolQueryBuilder boolQuery = QueryBuilders.boolQuery().must(QueryBuilders.rangeQuery("totaldemand").from(0).to(null));
 		if(StringUtils.isNotBlank(propertyTaxDefaultersRequest.getRegionName()))
 			boolQuery = boolQuery.must(QueryBuilders.matchQuery("regionname", propertyTaxDefaultersRequest.getRegionName()));
 		if(StringUtils.isNotBlank(propertyTaxDefaultersRequest.getDistrictName()))
@@ -376,7 +374,7 @@ public class PropertyTaxElasticSearchIndexService {
 	 * @return BoolQueryBuilder
 	 */
 	private BoolQueryBuilder prepareWhereClause(CollectionDetailsRequest collectionDetailsRequest){
-		BoolQueryBuilder boolQuery = QueryBuilders.boolQuery().must(QueryBuilders.rangeQuery("annualdemand").from(0).to(null));
+		BoolQueryBuilder boolQuery = QueryBuilders.boolQuery().must(QueryBuilders.rangeQuery("totaldemand").from(0).to(null));
 		if(StringUtils.isNotBlank(collectionDetailsRequest.getRegionName()))
 			boolQuery = boolQuery.must(QueryBuilders.matchQuery("regionname", collectionDetailsRequest.getRegionName()));
 		if(StringUtils.isNotBlank(collectionDetailsRequest.getDistrictName()))

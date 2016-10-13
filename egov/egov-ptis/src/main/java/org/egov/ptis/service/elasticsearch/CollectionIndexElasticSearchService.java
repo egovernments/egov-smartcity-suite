@@ -161,7 +161,7 @@ public class CollectionIndexElasticSearchService {
 	private BoolQueryBuilder prepareWhereClause(CollectionDetailsRequest collectionDetailsRequest, String indexName, String ulbCodeField){
 		BoolQueryBuilder boolQuery = null;
 		if(indexName.equals(PROPERTY_TAX_INDEX_NAME))
-			boolQuery = QueryBuilders.boolQuery().must(QueryBuilders.rangeQuery("annualdemand").from(0).to(null));
+			boolQuery = QueryBuilders.boolQuery().must(QueryBuilders.rangeQuery("totaldemand").from(0).to(null));
 		else if(indexName.equals(COLLECTION_INDEX_NAME))
 			boolQuery = QueryBuilders.boolQuery().must(QueryBuilders.matchQuery("billingservice", PropertyTaxConstants.COLLECION_BILLING_SERVICE_PT));
 		if(StringUtils.isNotBlank(collectionDetailsRequest.getRegionName()))
@@ -347,7 +347,7 @@ public class CollectionIndexElasticSearchService {
 			fromDate = new DateTime().withMonthOfYear(4).dayOfMonth().withMinimumValue().toDate();
 			toDate = DateUtils.addDays(new Date(), 1);
 		}
-		int noOfMonths = DateUtils.noOfMonths(fromDate, toDate);
+		int noOfMonths = DateUtils.noOfMonths(fromDate, toDate)+1;
 		
 		//For current year's till date collection
 		Map<String, BigDecimal> cytdCollMap = getCollectionAndDemandResults(collectionDetailsRequest, fromDate, toDate, 
@@ -357,7 +357,7 @@ public class CollectionIndexElasticSearchService {
 				PROPERTY_TAX_INDEX_NAME, "totaldemand", "ulbcode", aggregationField);
 		//For current year demand
 		Map<String, BigDecimal> currYrTotalDemandMap = getCollectionAndDemandResults(collectionDetailsRequest, fromDate, toDate, 
-				PROPERTY_TAX_INDEX_NAME, "annualdemand", "ulbcode", aggregationField);
+				PROPERTY_TAX_INDEX_NAME, "totaldemand", "ulbcode", aggregationField);
 		//For last year's till today's date collections
 		Map<String, BigDecimal> lytdCollMap = getCollectionAndDemandResults(collectionDetailsRequest, DateUtils.addYears(fromDate, -1), 
 				DateUtils.addYears(toDate, -1), COLLECTION_INDEX_NAME, "totalamount", "citycode", aggregationField);
@@ -379,8 +379,6 @@ public class CollectionIndexElasticSearchService {
 			collIndData.setTodayColl(todayCollMap.get(name) == null ? BigDecimal.ZERO : todayCollMap.get(name));
 			collIndData.setCytdColl(entry.getValue());
 			//Proportional Demand = (totalDemand/12)*noOfmonths
-			if(noOfMonths == 0)
-				noOfMonths = 1;
 			BigDecimal currentYearTotalDemand = (currYrTotalDemandMap.get(name) == null ? BigDecimal.valueOf(0) : currYrTotalDemandMap.get(name));
 			cytdDmd = (currentYearTotalDemand.divide(BigDecimal.valueOf(12),BigDecimal.ROUND_HALF_UP)).multiply(BigDecimal.valueOf(noOfMonths));
 			collIndData.setCytdDmd(cytdDmd);
