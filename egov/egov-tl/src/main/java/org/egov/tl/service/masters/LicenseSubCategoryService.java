@@ -43,11 +43,14 @@ package org.egov.tl.service.masters;
 import org.egov.tl.entity.LicenseSubCategory;
 import org.egov.tl.entity.LicenseSubCategoryDetails;
 import org.egov.tl.repository.LicenseSubCategoryRepository;
+import org.egov.tl.service.LicenseTypeService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+
+import static org.egov.tl.utils.Constants.TRADELICENSE;
 
 @Service
 @Transactional(readOnly = true)
@@ -56,8 +59,12 @@ public class LicenseSubCategoryService {
     @Autowired
     private LicenseSubCategoryRepository licenseSubCategoryRepository;
     
+    @Autowired
+    private LicenseTypeService licenseTypeService;
+    
     @Transactional
     public void createSubCategory(LicenseSubCategory subCategory) {
+        subCategory.setLicenseType(licenseTypeService.getLicenseTypeByName(TRADELICENSE));
     	for (LicenseSubCategoryDetails categoryDetails : subCategory.getLicenseSubCategoryDetails())
     		categoryDetails.setSubCategory(subCategory);
     	licenseSubCategoryRepository.save(subCategory);
