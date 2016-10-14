@@ -164,13 +164,13 @@ public class SewerageCollectFeeSearchController {
         final List<SewerageSearchResult> searchResultFomatted = new ArrayList<SewerageSearchResult>(0);
         SewerageApplicationDetails  sewerageApplicationDetails = new SewerageApplicationDetails();
         for (final Document document : searchResult.getDocuments()) {
-            Map<String,String> actionMap = new HashMap<String,String>();
+            Map<String,String> actionMap = new HashMap<>();
             final Map<String, String> searchableObjects = (Map<String, String>) document.getResource()
                     .get("searchable");
             if (searchableObjects != null) {
                String consumernumber = searchableObjects.get("consumernumber");
                String status = searchableObjects.get("status");
-               if(!status.equals("Rejected") && !status.equals("Canceled")){
+               if(!("Rejected").equals(status) && !("Canceled").equals(status)){
                if(consumernumber != null){
                  sewerageApplicationDetails = sewerageApplicationDetailsService.findByApplicationNumber(consumernumber);
                }

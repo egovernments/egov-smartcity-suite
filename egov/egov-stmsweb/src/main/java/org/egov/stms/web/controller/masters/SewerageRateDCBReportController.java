@@ -39,6 +39,9 @@
 package org.egov.stms.web.controller.masters;
 
 import static java.util.Arrays.asList;
+import static org.egov.stms.utils.constants.SewerageTaxConstants.BOUNDARYTYPE_WARD;
+import static org.egov.stms.utils.constants.SewerageTaxConstants.CLOSESEWERAGECONNECTION;
+import static org.egov.stms.utils.constants.SewerageTaxConstants.HIERARCHYTYPE_REVENUE;
 
 import java.io.IOException;
 import java.text.SimpleDateFormat;
@@ -85,9 +88,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
-import org.egov.infra.admin.master.entity.BoundaryType;
-import org.egov.infra.admin.master.service.BoundaryTypeService;
-import org.egov.stms.utils.constants.SewerageTaxConstants;
 
 import com.google.gson.GsonBuilder;
 
@@ -118,9 +118,6 @@ public class SewerageRateDCBReportController {
     
     @Autowired 
     private ApplicationProperties applicationProperties;
-    
-    @Autowired
-    private BoundaryTypeService boundaryTypeService;
 
     @ModelAttribute 
     public DCBReportWardwiseResult dCBReportWardWise(){
@@ -196,7 +193,7 @@ public class SewerageRateDCBReportController {
             wards.addAll(searchRequest.getWards());
         }
         else{
-            wards.addAll(boundaryService.getBoundariesByBndryTypeNameAndHierarchyTypeName(SewerageTaxConstants.BOUNDARYTYPE_WARD, SewerageTaxConstants.HIERARCHYTYPE_REVENUE));
+            wards.addAll(boundaryService.getBoundariesByBndryTypeNameAndHierarchyTypeName(BOUNDARYTYPE_WARD, HIERARCHYTYPE_REVENUE));
         }
         
         for(Boundary boundary : wards){
@@ -215,7 +212,8 @@ public class SewerageRateDCBReportController {
                 wardValue = clausesObject.get("revwardname");
                 SewerageApplicationDetails sewerageAppDtl = sewerageApplicationDetailsService
                         .findByApplicationNumber(searchableObjects.get("consumernumber"));
-                if (sewerageAppDtl != null) {
+                // close connection application is not taken as it does not have the current demand. 
+                if (sewerageAppDtl != null && !sewerageAppDtl.getApplicationType().getCode().equals(CLOSESEWERAGECONNECTION)) {
                     if (null != dcbMap.get(wardValue)) {
                         dcbMap.get(wardValue).add(sewerageAppDtl);
                     } else {

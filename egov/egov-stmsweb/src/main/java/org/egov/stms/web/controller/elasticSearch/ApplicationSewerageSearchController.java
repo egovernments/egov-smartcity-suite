@@ -164,18 +164,15 @@ public class ApplicationSewerageSearchController {
         final List<SewerageSearchResult> searchResultFomatted = new ArrayList<SewerageSearchResult>(0);
         SewerageApplicationDetails  sewerageApplicationDetails = new SewerageApplicationDetails();
         for (final Document document : searchResult.getDocuments()) {
-            Map<String,String> actionMap = new HashMap<String,String>();
+            Map<String,String> actionMap = new HashMap<>();
             final Map<String, String> searchableObjects = (Map<String, String>) document.getResource()
                     .get("searchable");
             if (searchableObjects != null) {
-               String consumernumber = searchableObjects.get("consumernumber");
-               
-               if(consumernumber != null){
+                 String consumernumber = searchableObjects.get("consumernumber");
                  sewerageApplicationDetails = sewerageApplicationDetailsService.findByApplicationNumber(consumernumber);
-               }
-                SewerageSearchResult searchActions = SewerageActionDropDownUtil.getSearchResultWithActions(
+                 SewerageSearchResult searchActions = SewerageActionDropDownUtil.getSearchResultWithActions(
                         roleList, searchableObjects.get("status"),sewerageApplicationDetails);
-                if (searchActions != null) {
+                 if (searchActions != null) {
                     for(Map.Entry<String, String> entry : searchActions.getActions().entrySet()){
                         if(!entry.getValue().equals(COLLECTDONATIONCHARHGES)){
                             actionMap.put(entry.getKey(), entry.getValue());

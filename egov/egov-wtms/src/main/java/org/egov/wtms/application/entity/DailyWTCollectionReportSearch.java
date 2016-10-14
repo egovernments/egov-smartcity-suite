@@ -58,7 +58,7 @@ public class DailyWTCollectionReportSearch {
     private static final Logger logger = Logger.getLogger(DailyWTCollectionReportSearch.class);
     private String fromDate;
     private String toDate;
-    SimpleDateFormat ft = new SimpleDateFormat("yyyy-MM-dd");
+    SimpleDateFormat ft = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
     SimpleDateFormat dtft = new SimpleDateFormat("dd/MM/yyyy");
     private List<String> consumerCode = new ArrayList<String>();
     private String collectionMode;
@@ -93,7 +93,10 @@ public class DailyWTCollectionReportSearch {
         if (null != toDate)
             try {
                 cal.setTime(dtft.parse(toDate));
-                cal.add(Calendar.DAY_OF_YEAR, 1);
+                cal.set(Calendar.HOUR_OF_DAY, 23);
+                cal.set(Calendar.MINUTE, 59);
+                cal.set(Calendar.SECOND, 59);
+                cal.set(Calendar.MILLISECOND, 999);
                 if (logger.isDebugEnabled())
                     logger.debug("Date Range Till .. :" + ft.format(cal.getTime()));
                 this.toDate = ft.format(cal.getTime());

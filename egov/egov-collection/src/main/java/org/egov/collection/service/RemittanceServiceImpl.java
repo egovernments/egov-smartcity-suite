@@ -124,13 +124,13 @@ public class RemittanceServiceImpl extends RemittanceService {
         final String instrumentGlCodeQueryString = "SELECT COA.GLCODE FROM CHARTOFACCOUNTS COA,EGF_INSTRUMENTACCOUNTCODES IAC,EGF_INSTRUMENTTYPE IT "
                 + "WHERE IT.ID=IAC.TYPEID AND IAC.GLCODEID=COA.ID AND IT.TYPE=";
         final String receiptInstrumentQueryString = "select DISTINCT (instruments) from org.egov.collection.entity.ReceiptHeader receipt "
-                + "join receipt.receiptInstrument as instruments where ";
+                + "join receipt.receiptInstrument as instruments join receipt.receiptMisc as receiptMisc where ";
         final String serviceNameCondition = "receipt.service.name=? ";
         final String receiptDateCondition = "and date(receipt.receiptdate)=? ";
         final String instrumentStatusCondition = "and instruments.statusId.id=? ";
         final String instrumentTypeCondition = "and instruments.instrumentType.type = ? ";
-        final String receiptFundCondition = "and receipt.receiptMisc.fund.code = ? ";
-        final String receiptDepartmentCondition = "and receipt.receiptMisc.department.code = ? ";
+        final String receiptFundCondition = "and receiptMisc.fund.code = ? ";
+        final String receiptDepartmentCondition = "and receiptMisc.department.code = ? ";
         final String receiptSourceCondition = "and receipt.source = ? ";
 
         final String cashInHandQueryString = instrumentGlCodeQueryString + "'"
@@ -319,17 +319,17 @@ public class RemittanceServiceImpl extends RemittanceService {
         return voucherHeader;
     }
 
+    @SuppressWarnings("unchecked")
     public List<ReceiptHeader> getRemittanceList(final ServiceDetails serviceDetails,
             final List<InstrumentHeader> instrumentHeaderList) {
-        System.out.println("getRemittanceList start");
+        List<Long> instHeaderList = new ArrayList<Long>();
+        for (InstrumentHeader instHead : instrumentHeaderList)
+            instHeaderList.add(instHead.getId());
         final List<ReceiptHeader> bankRemittanceList = new ArrayList<ReceiptHeader>();
-        for (final InstrumentHeader instHead : instrumentHeaderList) {
-            final List<ReceiptHeader> receiptHeaders = persistenceService.findAllByNamedQuery(
-                    CollectionConstants.QUERY_RECEIPTS_BY_INSTRUMENTHEADER_AND_SERVICECODE, instHead.getId(),
-                    serviceDetails.getCode());
-            bankRemittanceList.addAll(receiptHeaders);
-        }
-        System.out.println("getRemittanceList end remittance list size"+ bankRemittanceList.size());
+        final List<ReceiptHeader> receiptHeaders = persistenceService.findAllByNamedQuery(
+                CollectionConstants.QUERY_RECEIPTS_BY_INSTRUMENTHEADER_AND_SERVICECODE, serviceDetails.getCode(),
+                instHeaderList);
+        bankRemittanceList.addAll(receiptHeaders);
         return bankRemittanceList;
     }
 
@@ -388,13 +388,15 @@ public class RemittanceServiceImpl extends RemittanceService {
                     if (voucherTypeForChequeDDCard)
                         financialsUtil.updateCheque_DD_Card_Deposit_Receipt(chequeMap);
                     else
-                        financialsUtil.updateCheque_DD_Card_Deposit(chequeMap,voucherHeader,instrumentHeaderCheque,depositedBankAccount);
+                        financialsUtil.updateCheque_DD_Card_Deposit(chequeMap, voucherHeader, instrumentHeaderCheque,
+                                depositedBankAccount);
                 }
             for (final InstrumentHeader instrumentHeaderCash : instrumentHeaderListCash)
                 if (voucherHeader.getId() != null && serviceGLCode != null) {
                     final Map<String, Object> cashMap = constructInstrumentMap(instrumentDepositMap,
                             depositedBankAccount, instrumentHeaderCash, voucherHeader, voucherDate);
-                    financialsUtil.updateCashDeposit(cashMap,voucherHeader,instrumentHeaderCash,depositedBankAccount);
+                    financialsUtil
+                            .updateCashDeposit(cashMap, voucherHeader, instrumentHeaderCash, depositedBankAccount);
                 }
             remittancePersistService.update(remittance);
         }

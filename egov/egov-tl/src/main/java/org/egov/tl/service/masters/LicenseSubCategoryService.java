@@ -43,7 +43,6 @@ package org.egov.tl.service.masters;
 import org.egov.tl.entity.LicenseSubCategory;
 import org.egov.tl.entity.LicenseSubCategoryDetails;
 import org.egov.tl.repository.LicenseSubCategoryRepository;
-import org.egov.tl.service.FeeTypeService;
 import org.egov.tl.service.LicenseTypeService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -59,35 +58,21 @@ public class LicenseSubCategoryService {
     
     @Autowired
     private LicenseSubCategoryRepository licenseSubCategoryRepository;
-
-    @Autowired
-    private LicenseCategoryService licenseCategoryService;
-
-    @Autowired
-    private FeeTypeService feeTypeService;
-
-    @Autowired
-    private UnitOfMeasurementService unitOfMeasurementService;
-
+    
     @Autowired
     private LicenseTypeService licenseTypeService;
     
     @Transactional
-    public LicenseSubCategory create(LicenseSubCategory subCategory, List<LicenseSubCategoryDetails> details, Long categoryId){
-        if(categoryId!=null){
-            subCategory.setCategory(licenseCategoryService.findById(categoryId));
-        }
+    public void createSubCategory(LicenseSubCategory subCategory) {
         subCategory.setLicenseType(licenseTypeService.getLicenseTypeByName(TRADELICENSE));
-        for (LicenseSubCategoryDetails scDetails : details) {
-            if(scDetails!=null){
-                scDetails.setSubCategory(subCategory);
-                scDetails.setFeeType(feeTypeService.findById(scDetails.getFeeType().getId()));
-                scDetails.setRateType(scDetails.getRateType());
-                scDetails.setUom(unitOfMeasurementService.findById(scDetails.getUom().getId()));
-                subCategory.addLicenseSubCategoryDetails(scDetails);
-            }
-        }
-        return  licenseSubCategoryRepository.save(subCategory);
+    	for (LicenseSubCategoryDetails categoryDetails : subCategory.getLicenseSubCategoryDetails())
+    		categoryDetails.setSubCategory(subCategory);
+    	licenseSubCategoryRepository.save(subCategory);
+    }
+    @Transactional
+    public void updateLicenseSubCategory(LicenseSubCategory licenseSubCategory) {
+    	licenseSubCategory.getSubCategory().removeIf(LicenseSubCategoryDetails::isMarkedForRemoval);
+    	licenseSubCategoryRepository.save(licenseSubCategory);
     }
 
     public List<LicenseSubCategory> findAllSubCategoryByCategory(final Long categoryId) {
@@ -113,5 +98,5 @@ public class LicenseSubCategoryService {
     public List<LicenseSubCategory> getLicenseSubCategoriesByLicenseTypeName(String licenseTypeName) {
         return licenseSubCategoryRepository.findByLicenseType_Name(licenseTypeName);
     }
-
+    
 }
