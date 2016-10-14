@@ -82,9 +82,11 @@
 							<form:errors path="code" cssClass="error-msg" />
 						</div>
 					</div>
-<div class="col-md-12 table-header text-left"><spring:message code="title.subcategory.view.details"/></div>
- <div class="col-md-12 form-group report-table-container">
-    <table class="table table-bordered table-hover multiheadertbl" id="subcat">
+<div class="panel-heading">
+<div class="col-md-12 panel-title text-left"></strong><spring:message code="title.subcategory.view.details"/></strong></div>
+</div>
+ <div class="col-md-12">
+    <table class="table table-bordered " id="subcat">
         <thead>
            <tr>
            <th><spring:message code="lbl.feetype" /><span class="mandatory"></span></th>
@@ -98,7 +100,7 @@
                    <c:forEach items="${licenseSubCategory.licenseSubCategoryDetails}" var="licenseSubCategoryDetail" varStatus="item">
 							<tr >
 								<td>
-									<form:select path="licenseSubCategoryDetails[${item.index}].feeType" id="licenseSubCategoryDetails[${item.index}].feeType" value="${licenseSubCategoryDetail.feeType}" class="form-control table-input" disabled="true"  required="required">
+									<form:select path="licenseSubCategoryDetails[${item.index}].feeType" id="licenseSubCategoryDetails[${item.index}].feeType" value="${licenseSubCategoryDetail.feeType}" cssClass="form-control feeType" disabled="true"  required="required">
 										<form:option value="">
 											<spring:message code="lbl.select" />
 										</form:option>
@@ -106,7 +108,7 @@
 									</form:select>
 								</td>
 								<td>
-									<form:select path="licenseSubCategoryDetails[${item.index}].rateType" class="form-control table-input" disabled="true" required="required">
+									<form:select path="licenseSubCategoryDetails[${item.index}].rateType" cssClass="form-control rateType" disabled="true" required="required">
 										<form:option value="">
 											<spring:message code="lbl.select" />
 										</form:option>
@@ -114,7 +116,7 @@
 									</form:select>
 								</td>
 								<td>
-									<form:select path="licenseSubCategoryDetails[${item.index}].uom" id="licenseSubCategoryDetails[${item.index}].uom" value="${licenseSubCategoryDetail.feeType}" class="form-control table-input" disabled="true" required="required">
+									<form:select path="licenseSubCategoryDetails[${item.index}].uom" id="licenseSubCategoryDetails[${item.index}].uom" value="${licenseSubCategoryDetail.feeType}" cssClass="form-control uom" disabled="true" required="required">
 										<form:option value="">
 											<spring:message code="lbl.select" />
 										</form:option>
@@ -123,38 +125,38 @@
 								</td>
 							</tr>
 						</c:forEach>
-					</c:when>
+					</c:when>	
 					<c:otherwise>	
-			         <tr>
-                       <td><div class="col-sm-10 add-margin">
-							<form:select path="licenseSubCategoryDetails[0].feeType" cssClass="form-control" cssErrorClass="form-control table-input" disabled="true" required="required">
-								<form:option value="">
-									<spring:message code="lbl.category.select" />
-								</form:option>
-								<form:options items="${licenseFeeTypes}" itemValue="id"	itemLabel="name" />
-							</form:select>
-								<form:errors path="licenseSubCategoryDetails[0].feeType" cssClass="add-margin error-msg" />
-					    </div></td>
-                       <td><div class="col-sm-10 add-margin">
-							<form:select path="licenseSubCategoryDetails[0].rateType" cssClass="form-control" cssErrorClass="form-control table-input" disabled="true" required="required">
-								<form:option value="">
-									<spring:message code="lbl.category.select" />
-								</form:option>
-								<form:options items="${rateTypes}"/>
-							</form:select>
-						<form:errors path="licenseSubCategoryDetails[0].rateType" cssClass="add-margin error-msg" />
-					 </div></td>
-                     <td> <div class="col-sm-10 add-margin">
-							<form:select path="licenseSubCategoryDetails[0].uom" cssClass="form-control" cssErrorClass="form-control table-input" disabled="true" required="required">
-								<form:option value="">
-									<spring:message code="lbl.category.select" />
-								</form:option>
-								<form:options items="${licenseUomTypes}" itemValue="id" itemLabel="name" />
-							</form:select>
-						<form:errors path="licenseSubCategoryDetails[0].uom" cssClass="add-margin error-msg" />
-			      </div></td>
-          		</tr>
-			   </c:otherwise>
+			             <tr >
+							   <td>
+									<form:select path="licenseSubCategoryDetails[0].feeType" id="licenseSubCategoryDetails[0].feeType" cssClass="form-control feeType" disabled="true" required="required" >
+										<form:option value="">
+											<spring:message code="lbl.select" />
+										</form:option>
+										<form:options items="${licenseFeeTypes}" itemValue="id" itemLabel="name" />
+									</form:select>
+							    	<form:errors path="licenseSubCategoryDetails[0].feeType" cssClass="add-margin error-msg" />
+							  </td>
+							   <td>
+									<form:select path="licenseSubCategoryDetails[0].rateType" id="licenseSubCategoryDetails[0].rateType" cssClass="form-control rateType" disabled="true" required="required">
+										<form:option value="">
+											<spring:message code="lbl.select" />
+										</form:option>
+										<form:options items="${rateTypes}"/>
+									</form:select>
+				           	        <form:errors path="licenseSubCategoryDetails[0].rateType" cssClass="add-margin error-msg" /> 
+							   </td>
+								<td>
+									<form:select path="licenseSubCategoryDetails[0].uom" id="licenseSubCategoryDetails[0].uom" cssClass="form-control uom" disabled="true" required="required">
+										<form:option value="">
+											<spring:message code="lbl.select" />
+										</form:option>
+										<form:options items="${licenseUomTypes}" itemValue="id" itemLabel="name" />
+									</form:select>
+          							<form:errors path="licenseSubCategoryDetails[0].uom" cssClass="add-margin error-msg" />
+                           		</td>							 
+						  </tr>
+				  </c:otherwise>				
 			  </c:choose>
           </tbody>
      </table>

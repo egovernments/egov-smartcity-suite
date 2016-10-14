@@ -11,7 +11,7 @@ delete from eg_action where name='saveEditedSubCategory';
 update eg_action set url='/licensesubcategory/create' where name='Create License SubCategory';
 update eg_action set url='/licensesubcategory/update',QUERYPARAMS=null where name='Modify License SubCategory';
 update eg_action set url='/licensesubcategory/view',QUERYPARAMS=null  where name='View License SubCategory';
-update eg_action set url='/licensesubcategory/getsubcategories-by-category' where name='tradeLicenseSubCategoryAjax';
+update eg_action set url='/licensesubcategory/subcategories-by-category' where name='tradeLicenseSubCategoryAjax';
 
 ---------------------------update eg_feature_action-------------------------------------------------------------------
 

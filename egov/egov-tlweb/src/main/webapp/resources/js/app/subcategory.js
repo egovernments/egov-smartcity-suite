@@ -38,6 +38,7 @@
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
 
+$(document).ready(function () {
 
 var count = $("#subcat tbody  tr").length - 1;
 
@@ -47,7 +48,7 @@ $('#addrow').click(function(){
     $trNew = $trLast.clone();
 	if( !$.trim($trLast.find('select.feeType').val()) || !$.trim($trLast.find('select.rateType').val()) || !$.trim($trLast.find('select.uom').val()))
 	{
-		bootbox.alert('All Values are mandatory !');
+		bootbox.alert('All values are mandatory !');
 	}else{
 		count++;
 		$trNew.find("select").each(function(){
@@ -62,65 +63,53 @@ $('#addrow').click(function(){
 	}
 	});
 
+
 $(document).on('click','#deleterow',function(){
 	var length = $('#subcat').find("tbody tr:visible").length;
 	if(length == 1){
 		bootbox.alert('First row cannot be deleted!');
 	}else{
         if($(this).data('func')){
-            $(this).closest('tr').remove();
-            var idx=0;
-            //regenerate index existing inputs in table row
-            jQuery("#subcat tbody tr").each(function() {
-             jQuery(this).find("input").each(function() {
-             jQuery(this).attr({
-             'id': function(_, id) {
-             return id.replace(/\[.\]/g, '['+ idx +']');
-             },
-             'name': function(_, name) {
-             return name.replace(/\[.\]/g, '['+ idx +']');
-             }
-             });
-             });
-
-             idx++;
-             });
+        	deleteandreplaceindexintable($(this));
         } else {
             if($(this).closest('tr').find('select').hasClass('dynamicInput')){
             	console.log('Dynamic Row deleted');
-            	$(this).closest('tr').remove();
-                var idx=0;
-                //regenerate index existing inputs in table row
-                jQuery("#subcat tbody tr").each(function() {
-                 jQuery(this).find("input").each(function() {
-                 jQuery(this).attr({
-                 'id': function(_, id) {
-                 return id.replace(/\[.\]/g, '['+ idx +']');
-                 },
-                 'name': function(_, name) {
-                 return name.replace(/\[.\]/g, '['+ idx +']');
-                 }
-                 });
-                 });
-
-                 idx++;
-                 });
+            	deleteandreplaceindexintable($(this));
             }
             else{
             	console.log('Existing Row deleted');
-            	$(this).closest('tr').find('input[type=hidden]').val('true');
-            	$(this).closest('tr').hide();
+            	$(this).closest('tr').hide().find('input.markedForRemoval').val('true');
             }
             
         }
 		
 	}
 		
+})
+
 });
 
+function deleteandreplaceindexintable(obj){
+obj.closest('tr').remove();
+var idx=0;
+//regenerate index existing inputs in table row
+jQuery("#subcat tbody tr").each(function() {
+	 jQuery(this).find("select").each(function() {
+		 jQuery(this).attr({
+		 'id': function(_, id) {
+			 return id.replace(/\[.\]/g, '['+ idx +']');
+		 },
+		 'name': function(_, name) {
+			 return name.replace(/\[.\]/g, '['+ idx +']');
+		 }
+		 });
+	 });
+	 idx++;
+ });
+}
 $('#categories').change(function(){
 	$.ajax({
-		url: "/tl/licensesubcategory/getsubcategories-by-category",    
+		url: "/tl/licensesubcategory/subcategories-by-category",    
 		type: "GET",
 		data: {
 			categoryId : $('#categories').val()   
@@ -129,7 +118,7 @@ $('#categories').change(function(){
 		success: function (response) {
 			console.log("success"+response);
 			$('#licenseSubCategories').empty();
-			$('#licenseSubCategories').append($("<option value=''>Select from below</option>"));
+			//$('#licenseSubCategories').append($("<option value=''>Select from below</option>"));
 			$.each(response, function(index, value) {
 				$('#licenseSubCategories').append($('<option>').text(value.name).attr('value', value.code));
 			});
@@ -141,6 +130,10 @@ $('#categories').change(function(){
 	
 	});
 });
+
+function redirect(href){
+	window.location.href = href;
+} 
 
 $('#subcat').on('change', 'select', function(){
     var obj = $("[id$='feeType']");
