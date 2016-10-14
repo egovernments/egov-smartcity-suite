@@ -97,6 +97,8 @@ public class UpdateMarriageRegistrationController extends MarriageRegistrationCo
         marriageRegistrationService.prepareDocumentsForView(registration);
         marriageApplicantService.prepareDocumentsForView(registration.getHusband()); 
         marriageApplicantService.prepareDocumentsForView(registration.getWife());
+        model.addAttribute("applicationHistory",
+                marriageRegistrationService.getHistory(registration));
         prepareWorkFlowForNewMarriageRegistration(registration, model);  
         registration.getWitnesses().forEach(witness -> {
             try {
