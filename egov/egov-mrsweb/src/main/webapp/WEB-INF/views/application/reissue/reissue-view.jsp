@@ -50,10 +50,10 @@
 		<div class="text-right error-msg" style="font-size:14px;"></div>
 		
 		<c:set value="/mrs/reissue/create" var="actionUrl" />
-		<c:if test="${reissue.status == 'Rejected'}">
+		<c:if test="${reissue.status.code == 'REJECTED'}">
 			 <c:set value="/mrs/reissue/workflow?id=${reissue.id}" var="actionUrl" />
 		</c:if>
-		<c:if test="${reissue.status == 'Approved'}">
+		<c:if test="${reissue.status.code == 'APPROVED'}">
 			<c:set value="/mrs/reissue/certificate?reIssueId=${reissue.id}" var="actionUrl"></c:set>
 		</c:if>
 		<form:form role="form" action="${actionUrl}"
@@ -62,7 +62,7 @@
 			enctype="multipart/form-data">
 
 			<input type="hidden" id="reIssueId" value="${reissue.id}" />
-			<input type="hidden" id="reIssueStatus" value="${reissue.status}" />
+			<input type="hidden" id="reIssueStatus" value="${reissue.status.code}" />
 			<form:hidden path="" name="registration.id" id="reIssueRegistrationId" value="${reissue.registration.id}"/>	
 			
 			<div class="panel panel-primary" data-collapsed="0">
@@ -125,7 +125,7 @@
 					<div class="buttonbottom" align="center">
 						<jsp:include page="../../common/commonWorkflowMatrix-button.jsp" />
 					</div>
-				</c:when>
+				</c:when> 
 				<c:otherwise>
 					<div class="buttonbottom" align="center"><a href="javascript:void(0)" class="btn btn-default" onclick="self.close()"><spring:message code="lbl.close"/></a></div>
 				</c:otherwise>

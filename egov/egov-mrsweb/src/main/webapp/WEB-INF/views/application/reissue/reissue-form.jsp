@@ -50,10 +50,10 @@
 		<div class="text-right error-msg" style="font-size:14px;"></div>
 		
 		<c:set value="/mrs/reissue/create" var="actionUrl" />
-		<c:if test="${reIssue.status == 'Rejected'}">
+		<c:if test="${reIssue.status.code == 'REJECTED'}">
 			 <c:set value="/mrs/reissue/workflow?id=${reIssue.id}" var="actionUrl" />
 		</c:if>
-		<c:if test="${reIssue.status == 'Approved'}">
+		<c:if test="${reIssue.status.code == 'APPROVED'}">
 			<c:set value="/mrs/reissue/certificate?reIssueId=${reIssue.id}" var="actionUrl"></c:set>
 		</c:if>
 		<form:form role="form" action="${actionUrl}"
@@ -62,7 +62,7 @@
 			enctype="multipart/form-data">
 
 			<input type="hidden" id="reIssueId" value="${reIssue.id}" />
-			<input type="hidden" id="reIssueStatus" value="${reIssue.status}" />
+			<input type="hidden" id="reIssueStatus" value="${reIssue.status.code}" />
 			<form:hidden path="" name="registration.id" id="reIssueRegistrationId" value="${reIssue.registration.id}"/>	
 			
 			<div class="panel panel-primary" data-collapsed="0">

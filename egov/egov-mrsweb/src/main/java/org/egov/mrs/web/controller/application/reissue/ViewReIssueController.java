@@ -48,7 +48,6 @@ import org.egov.eis.web.controller.workflow.GenericWorkFlowController;
 import org.egov.mrs.application.MarriageUtils;
 import org.egov.mrs.domain.entity.MarriageRegistration;
 import org.egov.mrs.domain.entity.ReIssue;
-import org.egov.mrs.domain.enums.ApplicationStatus;
 import org.egov.mrs.domain.service.MarriageApplicantService;
 import org.egov.mrs.domain.service.MarriageDocumentService;
 import org.egov.mrs.domain.service.MarriageRegistrationService;
@@ -101,7 +100,7 @@ public class ViewReIssueController extends GenericWorkFlowController {
                 
         String screen = null;
        
-        if (reIssue.getStatus() != ApplicationStatus.Approved) {
+        if (!reIssue.getStatus().getCode().equalsIgnoreCase(ReIssue.ReIssueStatus.APPROVED.toString())) {
             
             if (mode == null)
                 mode = utils.isLoggedInUserApprover() ? "view" : mode;

@@ -39,18 +39,19 @@
 
 package org.egov.mrs.domain.entity;
 
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
-import javax.persistence.EnumType;
-import javax.persistence.Enumerated;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
@@ -58,9 +59,9 @@ import javax.persistence.Transient;
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 
+import org.egov.commons.EgwStatus;
 import org.egov.demand.model.EgDemand;
 import org.egov.infra.workflow.entity.StateAware;
-import org.egov.mrs.domain.enums.ApplicationStatus;
 import org.egov.mrs.masters.entity.MarriageFee;
 import org.hibernate.validator.constraints.Length;
 
@@ -73,6 +74,10 @@ import org.hibernate.validator.constraints.Length;
 @Table(name = "egmrs_reissue")
 @SequenceGenerator(name = ReIssue.SEQ_REISSUE, sequenceName = ReIssue.SEQ_REISSUE, allocationSize = 1)
 public class ReIssue extends StateAware {
+    
+    public enum ReIssueStatus {
+        CREATED, APPROVED, REJECTED, REGISTERED, CANCELLED, CERTIFICATEREISSUED
+    }
     
     private static final long serialVersionUID = 7398043339748917008L;
 
@@ -112,10 +117,11 @@ public class ReIssue extends StateAware {
     @JoinColumn(name = "demand")
     private EgDemand demand;
 
-    @NotNull
-    @Length(max = 30)
-    @Enumerated(EnumType.STRING)
-    private ApplicationStatus status;
+    @ManyToOne
+    @JoinColumn(name = "status", nullable = false)
+    private EgwStatus status;
+    
+    private boolean isActive;
 
     @Length(max = 256)
     private String rejectionReason;
@@ -123,13 +129,15 @@ public class ReIssue extends StateAware {
     @Length(max = 256)
     private String remarks;
 
-    private boolean certificateIssued;
-
     @Transient
     private Long approvalDepartment;
 
     @Transient
     private String approvalComent;
+    
+    @OneToMany(mappedBy = "reIssue", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private List<MarriageCertificate> marriageCertificate = new ArrayList<MarriageCertificate>();
+
 
     @Override
     public String getStateDetails() {
@@ -208,14 +216,6 @@ public class ReIssue extends StateAware {
         this.demand = demand;
     }
     
-    public ApplicationStatus getStatus() {
-        return status;
-    }
-
-    public void setStatus(ApplicationStatus status) {
-        this.status = status;
-    }
-    
     public String getRejectionReason() {
         return rejectionReason;
     }
@@ -232,14 +232,6 @@ public class ReIssue extends StateAware {
         this.remarks = remarks;
     }
     
-    public boolean isCertificateIssued() {
-        return certificateIssued;
-    }
-    
-    public void setCertificateIssued(boolean certificateIssued) {
-        this.certificateIssued = certificateIssued;
-    }
-    
     public Long getApprovalDepartment() {
         return approvalDepartment;
     }
@@ -254,5 +246,37 @@ public class ReIssue extends StateAware {
     
     public void setApprovalComent(String approvalComent) {
         this.approvalComent = approvalComent;
+    }
+
+    public EgwStatus getStatus() {
+        return status;
+    }
+
+    public void setStatus(EgwStatus status) {
+        this.status = status;
+    }
+
+    public boolean isActive() {
+        return isActive;
+    }
+
+    public void setActive(boolean isActive) {
+        this.isActive = isActive;
+    }
+
+    public List<MarriageCertificate> getMarriageCertificate() {
+        return marriageCertificate;
+    }
+
+    public void setMarriageCertificate(List<MarriageCertificate> marriageCertificate) {
+        this.marriageCertificate = marriageCertificate;
+    }
+    
+    public void addCertificate(final MarriageCertificate certificate) {
+        getMarriageCertificate().add(certificate);
+    }
+
+    public void removeCertificate(final MarriageCertificate certificate) {
+        getMarriageCertificate().remove(certificate);
     }
 }

@@ -56,12 +56,13 @@ import org.egov.infra.search.elastic.service.ApplicationIndexService;
 import org.egov.infra.security.utils.SecurityUtils;
 import org.egov.infra.utils.ApplicationNumberGenerator;
 import org.egov.mrs.application.MarriageConstants;
+import org.egov.mrs.application.MarriageUtils;
 import org.egov.mrs.application.service.ReIssueDemandService;
 import org.egov.mrs.application.service.workflow.RegistrationWorkflowService;
 import org.egov.mrs.domain.entity.Applicant;
 import org.egov.mrs.domain.entity.MarriageDocument;
+import org.egov.mrs.domain.entity.MarriageRegistration;
 import org.egov.mrs.domain.entity.ReIssue;
-import org.egov.mrs.domain.enums.ApplicationStatus;
 import org.egov.mrs.domain.enums.MarriageFeeType;
 import org.egov.mrs.domain.repository.ReIssueRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -113,6 +114,9 @@ public class ReIssueService {
 
     @Autowired
     private MarriageApplicantService marriageApplicantService;
+    
+    @Autowired
+    private MarriageUtils marriageUtils;
 
     @Autowired
     public ReIssueService(final ReIssueRepository reIssueRepository) {
@@ -141,7 +145,7 @@ public class ReIssueService {
             reIssue.setApplicationDate(new Date());
         }
 
-        reIssue.setStatus(ApplicationStatus.Created);
+        reIssue.setStatus(marriageUtils.getStatusByCodeAndModuleType(MarriageRegistration.RegistrationStatus.CREATED.toString(), MarriageConstants.MODULE_NAME));
         if (reIssue.getFeePaid() != null && reIssue.getDemand() == null){
         	reIssue.setDemand(reIssueDemandService.createDemand(new BigDecimal(reIssue.getFeePaid())));
         }
@@ -173,7 +177,7 @@ public class ReIssueService {
     @Transactional
     public ReIssue approveReIssue(final Long id, final WorkflowContainer workflowContainer) {
         final ReIssue reissue = get(id);
-        reissue.setStatus(ApplicationStatus.Approved);
+        reissue.setStatus(marriageUtils.getStatusByCodeAndModuleType(MarriageRegistration.RegistrationStatus.APPROVED.toString(), MarriageConstants.MODULE_NAME));
         workflowService.transition(reissue, workflowContainer, reissue.getApprovalComent());
         sendSMS(reissue);
         sendEmail(reissue);
@@ -184,7 +188,7 @@ public class ReIssueService {
     @Transactional
     public ReIssue rejectReIssue(final Long id, final WorkflowContainer workflowContainer) {
         final ReIssue reIssue = get(id);
-        reIssue.setStatus(ApplicationStatus.Rejected);
+        reIssue.setStatus(marriageUtils.getStatusByCodeAndModuleType(MarriageRegistration.RegistrationStatus.REJECTED.toString(), MarriageConstants.MODULE_NAME));
         reIssue.setRejectionReason(workflowContainer.getApproverComments());
         sendSMS(reIssue);
         sendEmail(reIssue);
@@ -199,7 +203,7 @@ public class ReIssueService {
                 reIssue.getApplicationNo(),
                 reIssue.getApplicationDate(), MarriageFeeType.CERTIFICATEISSUE.name(),
                 reIssue.getApplicant().getFullName(),
-                reIssue.getStatus().name(),
+                reIssue.getStatus().getDescription(),
                 "/mrs/reissue/" + reIssue.getId(),
                 reIssue.getApplicant().getContactInfo().getResidenceAddress(), user.getUsername() + "::" + user.getName(),"")
                         .mobileNumber(reIssue.getApplicant().getContactInfo().getMobileNo());
@@ -218,7 +222,7 @@ public class ReIssueService {
         		reIssueDemandService.updateDemand(reissue.getDemand(),new BigDecimal(reissue.getFeePaid()));
         	}
         }
-        reissue.setStatus(ApplicationStatus.Created);
+        reissue.setStatus(marriageUtils.getStatusByCodeAndModuleType(MarriageRegistration.RegistrationStatus.CREATED.toString(), MarriageConstants.MODULE_NAME));
 
         updateApplicantInfo(reissueModel.getApplicant(), reissue.getApplicant());
         updateDocuments(reissueModel, reissue);
@@ -248,7 +252,7 @@ public class ReIssueService {
     private void sendSMS(final ReIssue reIssue) {
         String msgKey = MSG_KEY_SMS_REISSUE_NEW;
 
-        if (reIssue.getStatus() == ApplicationStatus.Rejected)
+        if (reIssue.getStatus().getCode().equalsIgnoreCase(ReIssue.ReIssueStatus.REJECTED.toString()))
             msgKey = MSG_KEY_SMS_REISSUE_REJECTION;
 
         final String message = mrsMessageSource.getMessage(msgKey,
@@ -264,7 +268,7 @@ public class ReIssueService {
         String msgKeyMail = MSG_KEY_EMAIL_REISSUE_NEW_EMAIL;
         String msgKeyMailSubject = MSG_KEY_EMAIL_REISSUE_NEW_SUBJECT;
 
-        if (reIssue.getStatus() == ApplicationStatus.Rejected) {
+        if (reIssue.getStatus().getCode().equalsIgnoreCase(ReIssue.ReIssueStatus.REJECTED.toString())) {
             msgKeyMail = MSG_KEY_EMAIL_REISSUE_REJECTION_EMAIL;
             msgKeyMailSubject = MSG_KEY_EMAIL_REISSUE_REJECTION_SUBJECT;
         }

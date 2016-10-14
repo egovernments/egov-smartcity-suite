@@ -4,7 +4,6 @@ import java.lang.reflect.Type;
 
 import org.egov.infra.utils.StringUtils;
 import org.egov.mrs.domain.entity.MarriageRegistration;
-import org.egov.mrs.domain.enums.ApplicationStatus;
 
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
