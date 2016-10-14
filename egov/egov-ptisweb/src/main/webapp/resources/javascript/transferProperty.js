@@ -63,3 +63,4 @@ calculateMutationFeeSuccess = function(req, res) {
 calculateMutationFeeFailure = function() {
 	bootbox.alert('Error calculating mutation fees');
 }
+jQuery("#saleDetail").keypress(function(event){ if (event.keyCode == 10 || event.keyCode == 13) event.preventDefault(); });
