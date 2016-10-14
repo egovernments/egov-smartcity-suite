@@ -378,5 +378,7 @@ public class WorksConstants {
     
     public static final String LINEESTIMATE_APPROVALRULES = "LINEESTIMATE-APPROVALRULES";
     
+    public static final String REVISIONESTIMATE_WF_NEXTACTION_PENDING_TECHNICAL_SANCTION = "Pending Technical Sanction";
+    
     
 }

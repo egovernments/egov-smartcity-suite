@@ -274,8 +274,7 @@ public class CreateRevisionEstimateController extends GenericWorkFlowController 
 
         model.addAttribute("message", message);
 
-        if (RevisionEstimateStatus.CREATED.toString().equals(revisionEstimate.getEgwStatus().getCode())
-                || RevisionEstimateStatus.RESUBMITTED.toString().equals(revisionEstimate.getEgwStatus().getCode())) {
+        if (RevisionEstimateStatus.BUDGET_SANCTIONED.toString().equals(revisionEstimate.getEgwStatus().getCode())) {
             final LineEstimateAppropriation lea = lineEstimateAppropriationService
                     .findLatestByLineEstimateDetails_EstimateNumber(revisionEstimate.getParent().getEstimateNumber());
             model.addAttribute("basMessage", messageSource
@@ -291,14 +290,14 @@ public class CreateRevisionEstimateController extends GenericWorkFlowController 
     private String getMessageByStatus(final RevisionAbstractEstimate revisionEstimate, final String approverName,
             final String nextDesign) {
         String message = "";
-        if (EstimateStatus.NEW.toString().equals(revisionEstimate.getEgwStatus().getCode()))
+        if (RevisionEstimateStatus.NEW.toString().equals(revisionEstimate.getEgwStatus().getCode()))
             message = messageSource.getMessage("msg.revisionestimate.saved",
                     new String[] { revisionEstimate.getEstimateNumber() }, null);
-        else if (EstimateStatus.CREATED.toString().equals(revisionEstimate.getEgwStatus().getCode())
+        else if (RevisionEstimateStatus.CREATED.toString().equals(revisionEstimate.getEgwStatus().getCode())
                 && !WorksConstants.WF_STATE_REJECTED.equals(revisionEstimate.getState().getValue()))
             message = messageSource.getMessage("msg.revisionestimate.created",
                     new String[] { approverName, nextDesign, revisionEstimate.getEstimateNumber() }, null);
-        else if (EstimateStatus.RESUBMITTED.toString().equals(revisionEstimate.getEgwStatus().getCode())
+        else if (RevisionEstimateStatus.RESUBMITTED.toString().equals(revisionEstimate.getEgwStatus().getCode())
                 && !WorksConstants.WF_STATE_REJECTED.equals(revisionEstimate.getState().getValue()))
             message = messageSource.getMessage("msg.revisionestimate.resubmitted",
                     new String[] { approverName, nextDesign, revisionEstimate.getEstimateNumber() }, null);
@@ -306,12 +305,21 @@ public class CreateRevisionEstimateController extends GenericWorkFlowController 
                 && WorksConstants.WF_STATE_REJECTED.equals(revisionEstimate.getState().getValue()))
             message = messageSource.getMessage("msg.revisionestimate.rejected",
                     new String[] { revisionEstimate.getEstimateNumber(), approverName, nextDesign }, null);
-        else if (EstimateStatus.CANCELLED.toString().equals(revisionEstimate.getEgwStatus().getCode()))
+        else if (RevisionEstimateStatus.CANCELLED.toString().equals(revisionEstimate.getEgwStatus().getCode()))
             message = messageSource.getMessage("msg.revisionestimate.cancelled",
                     new String[] { revisionEstimate.getEstimateNumber() }, null);
-        else if (EstimateStatus.APPROVED.toString().equalsIgnoreCase(revisionEstimate.getEgwStatus().getCode()))
+        else if (RevisionEstimateStatus.APPROVED.toString().equalsIgnoreCase(revisionEstimate.getEgwStatus().getCode()))
             message = messageSource.getMessage("msg.revisionestimate.approved",
                     new String[] { revisionEstimate.getEstimateNumber() }, null);
+        else if (RevisionEstimateStatus.TECH_SANCTIONED.toString().equalsIgnoreCase(revisionEstimate.getEgwStatus().getCode()))
+        	 message = messageSource.getMessage("msg.revisionestimate.technicalsanction",
+                     new String[] { revisionEstimate.getEstimateNumber(), approverName, nextDesign }, null);
+        else if (RevisionEstimateStatus.CHECKED.toString().equalsIgnoreCase(revisionEstimate.getEgwStatus().getCode()))
+       	 message = messageSource.getMessage("msg.revisionestimate.checked",
+                    new String[] { revisionEstimate.getEstimateNumber(), approverName, nextDesign }, null);
+        else if (RevisionEstimateStatus.BUDGET_SANCTIONED.toString().equalsIgnoreCase(revisionEstimate.getEgwStatus().getCode()))
+          	 message = messageSource.getMessage("msg.revisionestimate.budgetsanction",
+                       new String[] { revisionEstimate.getEstimateNumber(), approverName, nextDesign }, null);
         return message;
 
     }

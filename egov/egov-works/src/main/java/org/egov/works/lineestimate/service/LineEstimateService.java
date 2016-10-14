@@ -41,8 +41,6 @@ package org.egov.works.lineestimate.service;
 
 import java.io.IOException;
 import java.math.BigDecimal;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.Hashtable;
@@ -588,7 +586,7 @@ public class LineEstimateService {
         if (lineEstimate.getStatus().getCode().equals(LineEstimateStatus.REJECTED.toString())) {
             updatedLineEstimate = update(lineEstimate, removedLineEstimateDetailsIds, files, financialYear);
             try {
-                if (workFlowAction.equals(WorksConstants.FORWARD_ACTION))
+                if (workFlowAction.equals(WorksConstants.FORWARD_ACTION) || workFlowAction.equals(WorksConstants.CANCEL_ACTION))
                     lineEstimateStatusChange(updatedLineEstimate, workFlowAction, mode);
             } catch (final ValidationException e) {
                 throw new ValidationException(e.getErrors());
@@ -1097,8 +1095,9 @@ public class LineEstimateService {
 		final LineEstimateAppropriation lineEstimateAppropriation = lineEstimateAppropriationService
 				.findLatestByLineEstimateDetails_EstimateNumber(
 						lineEstimate.getLineEstimateDetails().get(0).getEstimateNumber());
-		DateTime budgetAppropriationDateWithTimeStamp = new DateTime(lineEstimateAppropriation.getBudgetUsage().getUpdatedTime());
-	    Date budgetAppropriationDate = budgetAppropriationDateWithTimeStamp.toLocalDate().toDate();
+		DateTime budgetAppropriationDateWithTimeStamp = new DateTime(
+				lineEstimateAppropriation.getBudgetUsage().getUpdatedTime());
+		Date budgetAppropriationDate = budgetAppropriationDateWithTimeStamp.toLocalDate().toDate();
 		if (requiredFieldsMap != null) {
 			if (requiredFieldsMap.get(WorksConstants.WORKFLOW_COUNCIL_RESOLUTION_DETAILS_REQUIRED) != null
 					&& requiredFieldsMap.get(WorksConstants.WORKFLOW_COUNCIL_RESOLUTION_DETAILS_REQUIRED)
@@ -1116,7 +1115,8 @@ public class LineEstimateService {
 				else if (lineEstimate.getCouncilResolutionDate().before(budgetAppropriationDate))
 					errors.rejectValue("councilResolutionDate",
 							"error.councilResolutiondate.lessthan.budgetappropriation");
-			} else if (requiredFieldsMap.get(WorksConstants.WORKFLOW_CONTRACT_COMMITTEE_DETAILS_REQUIRED) != null
+			}
+			if (requiredFieldsMap.get(WorksConstants.WORKFLOW_CONTRACT_COMMITTEE_DETAILS_REQUIRED) != null
 					&& requiredFieldsMap.get(WorksConstants.WORKFLOW_CONTRACT_COMMITTEE_DETAILS_REQUIRED)
 							.equals(true)) {
 				if (StringUtils.isBlank(lineEstimate.getContractCommitteeApprovalNumber()))
@@ -1134,7 +1134,8 @@ public class LineEstimateService {
 				else if (lineEstimate.getContractCommitteeApprovalDate().before(budgetAppropriationDate))
 					errors.rejectValue("contractCommitteeApprovalDate",
 							"error.contractCommitteeApprovalDate.lessthan.budgetappropriation");
-			} else if (requiredFieldsMap.get(WorksConstants.WORKFLOW_STANDING_COMMITEE_DETAILS_REQUIRED) != null
+			}
+			if (requiredFieldsMap.get(WorksConstants.WORKFLOW_STANDING_COMMITEE_DETAILS_REQUIRED) != null
 					&& requiredFieldsMap.get(WorksConstants.WORKFLOW_STANDING_COMMITEE_DETAILS_REQUIRED).equals(true)) {
 				if (StringUtils.isBlank(lineEstimate.getStandingCommitteeApprovalNumber()))
 					errors.rejectValue("standingCommitteeApprovalNumber",
@@ -1148,10 +1149,11 @@ public class LineEstimateService {
 				}
 				if (lineEstimate.getStandingCommitteeApprovalDate() == null)
 					errors.rejectValue("standingCommitteeApprovalDate", "error.standingCommitteeApprovalDate.required");
-				else if (lineEstimate.getContractCommitteeApprovalDate().before(budgetAppropriationDate))
+				else if (lineEstimate.getStandingCommitteeApprovalDate().before(budgetAppropriationDate))
 					errors.rejectValue("standingCommitteeApprovalDate",
 							"error.standingCommitteeApprovalDate.lessthan.budgetappropriation");
-			} else if (requiredFieldsMap.get(WorksConstants.WORKFLOW_GOVERNMENT_APPROVAL_DETAILS_REQUIRED) != null
+			}
+			if (requiredFieldsMap.get(WorksConstants.WORKFLOW_GOVERNMENT_APPROVAL_DETAILS_REQUIRED) != null
 					&& requiredFieldsMap.get(WorksConstants.WORKFLOW_GOVERNMENT_APPROVAL_DETAILS_REQUIRED)
 							.equals(true)) {
 				if (StringUtils.isBlank(lineEstimate.getGovernmentApprovalNumber()))

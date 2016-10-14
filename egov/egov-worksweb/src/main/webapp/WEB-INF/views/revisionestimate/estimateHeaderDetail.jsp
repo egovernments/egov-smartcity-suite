@@ -93,7 +93,7 @@
 						
 						<c:if test="${previousEstimates.size() != 0 }">
 							<div class="row add-border">
-								<div class="col-md-3 add-margin"><spring:message code="lbl.old.res" /> : </div> 
+								<div class="col-md-2 add-margin"><spring:message code="lbl.old.res" /> : </div> 
 								<div class="add-margin view-content">
 									<c:forEach var="estimate" items="${previousEstimates}" varStatus="item">
 										<c:if test="${item.index <= 4 }">

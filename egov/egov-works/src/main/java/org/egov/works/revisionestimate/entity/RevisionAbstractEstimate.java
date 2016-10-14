@@ -60,7 +60,7 @@ public class RevisionAbstractEstimate extends AbstractEstimate {
     private List<String> revisionEstActions = new ArrayList<String>();
 
     public enum RevisionEstimateStatus {
-        NEW, CREATED, CHECKED, REJECTED, RESUBMITTED, CANCELLED, APPROVED
+        NEW, CREATED, CHECKED, REJECTED, RESUBMITTED, CANCELLED, APPROVED, BUDGET_SANCTIONED, TECH_SANCTIONED
     }
 
     @Transient

@@ -54,9 +54,7 @@ import org.egov.infra.validation.exception.ValidationException;
 import org.egov.works.abstractestimate.entity.AbstractEstimate.EstimateStatus;
 import org.egov.works.abstractestimate.service.EstimateService;
 import org.egov.works.abstractestimate.service.MeasurementSheetService;
-import org.egov.works.letterofacceptance.service.WorkOrderActivityService;
 import org.egov.works.lineestimate.service.LineEstimateService;
-import org.egov.works.mb.service.MBHeaderService;
 import org.egov.works.revisionestimate.entity.RevisionAbstractEstimate;
 import org.egov.works.revisionestimate.service.RevisionEstimateService;
 import org.egov.works.utils.WorksConstants;
@@ -96,12 +94,6 @@ public class UpdateRevisionEstimateController extends GenericWorkFlowController 
     private EstimateService estimateService;
 
     @Autowired
-    private WorkOrderActivityService workOrderActivityService;
-
-    @Autowired
-    private MBHeaderService mbHeaderService;
-
-    @Autowired
     private MessageSource messageSource;
 
     @ModelAttribute("revisionEstimate")
@@ -121,10 +113,15 @@ public class UpdateRevisionEstimateController extends GenericWorkFlowController 
         revisionEstimateService.loadDataForView(revisionEstimate, workOrderEstimate, model);
 
         if (revisionEstimate.getCurrentState() != null
-                && !WorksConstants.NEW.equals(revisionEstimate.getCurrentState().getValue()))
+            /*    && !WorksConstants.NEW.equals(revisionEstimate.getCurrentState().getValue())*/) {
             model.addAttribute("currentState", revisionEstimate.getCurrentState().getValue());
+            model.addAttribute("amountRule", revisionEstimate.getEstimateValue());
+            model.addAttribute("pendingActions", revisionEstimate.getCurrentState().getNextAction());
+        }
 
         final WorkflowContainer workflowContainer = new WorkflowContainer();
+        workflowContainer.setAmountRule(revisionEstimate.getEstimateValue());
+        workflowContainer.setPendingActions(revisionEstimate.getCurrentState().getNextAction());
         prepareWorkflow(model, revisionEstimate, workflowContainer);
         if (EstimateStatus.NEW.toString().equals(revisionEstimate.getEgwStatus().getCode())) {
             List<String> validActions = Collections.emptyList();
