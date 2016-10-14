@@ -47,6 +47,11 @@
 
 <div class="row" id="page-content">
 	<div class="col-md-12">
+		<c:if test="${not empty message}">
+			<div class="alert alert-success" role="alert">
+				<spring:message code="${message}" />
+			</div>
+		</c:if>
 		<form:form role="form" method="post" modelAttribute="licenseSubCategory" class="form-horizontal form-groups-bordered">
 		<div class="panel panel-primary" data-collapsed="0">
 				<div class="panel-heading">
@@ -77,17 +82,16 @@
 							<form:errors path="code" cssClass="error-msg" />
 						</div>
 					</div>
-		<div class="panel-heading">
-  <div class="col-md-12 panel-title text-left"><spring:message code="title.subcategory.view.details"/>
-  <button type="button" class="btn btn-secondary pull-right" id="addrow"><i class="fa fa-plus-circle" aria-hidden="true"></i> &nbsp;Add Row</button></div></div>
-  <div class="col-md-12">
+<div class="col-md-12 table-header text-left"><spring:message code="title.subcategory.view.details"/>
+  <button type="button" class="btn btn-secondary pull-right" id="addrow"><i class="fa fa-plus-circle" aria-hidden="true"></i> &nbsp;Add Row</button></div>
+ <div class="col-md-12">
     <table class="table table-bordered" id="subcat">
         <thead>
            <tr>
            <th><spring:message code="lbl.feetype" /><span class="mandatory"></span></th>
            <th><spring:message code="lbl.rateType" /><span class="mandatory"></span></th>
            <th><spring:message code="license.uom.lbl" /><span class="mandatory"></span></th>
-           <th></th>
+           <th><spring:message code="lbl.delete" /></th>
          </tr>
        </thead>
      	<tbody >
@@ -102,7 +106,8 @@
 										</form:option>
 										<form:options items="${licenseFeeTypes}" itemValue="id" itemLabel="name" />
 									</form:select>
-							    	<form:errors path="licenseSubCategoryDetails[${item.index}].feeType" cssClass="add-margin error-msg" />									
+							    	<form:errors path="licenseSubCategoryDetails[${item.index}].feeType" cssClass="add-margin error-msg" />
+									
 								</td>
 								<td>
 									<form:select path="licenseSubCategoryDetails[${item.index}].rateType" id="licenseSubCategoryDetails[${item.index}].rateType" value="${licenseSubCategoryDetail.rateType}" cssClass="form-control rateType" required="required">
@@ -111,8 +116,9 @@
 										</form:option>
 										<form:options items="${rateTypes}"/>
 									</form:select>
-				               	<form:errors path="licenseSubCategoryDetails[${item.index}].rateType" cssClass="add-margin error-msg" /> 
-					     	  </td>
+				           	<form:errors path="licenseSubCategoryDetails[${item.index}].rateType" cssClass="add-margin error-msg" /> 
+									
+								</td>
 								<td>
 									<form:select path="licenseSubCategoryDetails[${item.index}].uom" id="licenseSubCategoryDetails[${item.index}].uom" value="${licenseSubCategoryDetail.uom}" cssClass="form-control uom" required="required">
 										<form:option value="">
@@ -121,16 +127,17 @@
 										<form:options items="${licenseUomTypes}" itemValue="id" itemLabel="name" />
 									</form:select>
           							<form:errors path="licenseSubCategoryDetails[${item.index}].uom" cssClass="add-margin error-msg" />
-                      			</td>
+                                           
+								</td>
 								<td align="center"> 
-                                <span class="add-padding"><i class="fa fa-trash" aria-hidden="true" id="deleterow"></i></span> 
+                              <span class="add-padding"><i class="fa fa-trash" aria-hidden="true" id="deleterow"></i></span> 
 								</td>
 								</tr>
 			              </c:forEach>
 					     </c:when>
-			        <c:otherwise>	
+			      <c:otherwise>	
 			             <tr >
-							   <td>
+							  <td>
 									<form:select path="licenseSubCategoryDetails[0].feeType" id="licenseSubCategoryDetails[0].feeType" cssClass="form-control feeType"  required="required" >
 										<form:option value="">
 											<spring:message code="lbl.select" />
@@ -173,7 +180,7 @@
 	<div class="form-group">
 	   <div class="text-center">
 			<button type="submit" class="btn btn-primary" ><spring:message code="lbl.save"/></button>
-			<button type="reset" class="btn btn-default" onclick="window.location.reload()" ><spring:message code="lbl.reset" /></button>
+			<button type="reset" class="btn btn-default"><spring:message code="lbl.reset" /></button>
 			<button type="button" class="btn btn-default" data-dismiss="modal" onclick="self.close()"><spring:message code="lbl.close" /></button>
 	  </div>
   </div>

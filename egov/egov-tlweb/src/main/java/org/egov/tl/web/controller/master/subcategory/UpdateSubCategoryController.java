@@ -63,15 +63,16 @@ import javax.validation.Valid;
 public class UpdateSubCategoryController {
 
 	private LicenseSubCategoryService licenseSubCategoryService;
-
+	
 	@Autowired
 	private LicenseCategoryService licenseCategoryService;
-
+	
 	@Autowired
 	private UnitOfMeasurementService unitOfMeasurementService;
-
+	
 	@Autowired
 	private FeeTypeService feeTypeService;
+
 
 	@Autowired
 	public UpdateSubCategoryController(LicenseSubCategoryService licenseSubCategoryService) {
@@ -84,30 +85,24 @@ public class UpdateSubCategoryController {
 	}
 
 	@RequestMapping(value = "/update/{code}", method = RequestMethod.GET)
-	public String subCategoryUpdateForm(@ModelAttribute @Valid LicenseSubCategory licenseSubCategory,
-			final Model model) {
-		populateDropdownData(model);
+	public String subCategoryUpdateForm(@ModelAttribute @Valid LicenseSubCategory licenseSubCategory,final Model model) {
+		model.addAttribute("licenseCategories", licenseCategoryService.findAll());
+		model.addAttribute("licenseFeeTypes", feeTypeService.findAll());
+		model.addAttribute("licenseUomTypes", unitOfMeasurementService.findAll());
 		return "subcategory-update";
 	}
 
 	@RequestMapping(value = "/update/{code}", method = RequestMethod.POST)
 	public String updateSubCategory(@ModelAttribute @Valid LicenseSubCategory licenseSubCategory, BindingResult errors,
-			RedirectAttributes additionalAttr, final Model model) {
+			RedirectAttributes additionalAttr,final Model model) {
 
 		if (errors.hasErrors()) {
-			populateDropdownData(model);
-			return "subcategory-update";
+		return "subcategory-update";
 		}
 
 		licenseSubCategoryService.updateLicenseSubCategory(licenseSubCategory);
 		additionalAttr.addFlashAttribute("message", "msg.success.subcategory.update");
 		return "redirect:/licensesubcategory/view/" + licenseSubCategory.getCode();
-	}
-	
-	private void populateDropdownData(final Model model) {
-		model.addAttribute("licenseCategories", licenseCategoryService.findAll());
-		model.addAttribute("licenseFeeTypes", feeTypeService.findAll());
-		model.addAttribute("licenseUomTypes", unitOfMeasurementService.findAll());
 	}
 
 }
