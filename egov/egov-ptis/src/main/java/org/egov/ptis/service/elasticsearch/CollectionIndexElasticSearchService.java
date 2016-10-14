@@ -456,7 +456,6 @@ public class CollectionIndexElasticSearchService {
 		CollectionTrend collTrend;
 		Date fromDate;
 		Date toDate;
-		SearchResponse response = null;
 		Date dateForMonth;
 		String[] dateArr;
 		Integer month;
@@ -495,19 +494,42 @@ public class CollectionIndexElasticSearchService {
 					monthwiseColl.put(monthName, BigDecimal.valueOf(aggregateSum.getValue()).setScale(0, BigDecimal.ROUND_HALF_UP));
 	        }
 			yearwiseMonthlyCollList.add(monthwiseColl);
-			fromDate = DateUtils.addYears(fromDate, -1);
-			toDate = DateUtils.addYears(toDate, -1);
+			
+			/**
+			 * If dates are passed in request, get result for the date range, else get results for entire financial year
+			 */
+			if(StringUtils.isNotBlank(collectionDetailsRequest.getFromDate()) && StringUtils.isNotBlank(collectionDetailsRequest.getToDate())){
+				fromDate = DateUtils.addYears(fromDate, -1);
+				toDate = DateUtils.addYears(toDate, -1);
+			} else {
+				fromDate = DateUtils.addYears(finYearStartDate, -1);
+				toDate = DateUtils.addYears(finYearEndDate, -1);
+			}
 			finYearStartDate = DateUtils.addYears(finYearStartDate, -1);
 			finYearEndDate = DateUtils.addYears(finYearEndDate, -1);
 		}
 		
-		for(Map.Entry<String, BigDecimal> entry :yearwiseMonthlyCollList.get(0).entrySet()){
-			collTrend = new CollectionTrend();
-			collTrend.setMonth(entry.getKey());
-			collTrend.setCyColl(entry.getValue());
-			collTrend.setLyColl(yearwiseMonthlyCollList.get(1).get(collTrend.getMonth()) == null ? BigDecimal.ZERO : yearwiseMonthlyCollList.get(1).get(collTrend.getMonth()));
-			collTrend.setPyColl(yearwiseMonthlyCollList.get(2).get(collTrend.getMonth()) == null ? BigDecimal.ZERO : yearwiseMonthlyCollList.get(2).get(collTrend.getMonth()));
-			collTrendsList.add(collTrend);
+		/**
+		 * If dates are passed in request, get result for the date range, else get results for all 12 months
+		 */
+		if(StringUtils.isBlank(collectionDetailsRequest.getFromDate()) && StringUtils.isBlank(collectionDetailsRequest.getToDate())){
+			for(Map.Entry<Integer, String> entry : DateUtils.getAllFinancialYearMonthsWithFullNames().entrySet()){
+				collTrend = new CollectionTrend();
+				collTrend.setMonth(entry.getValue());
+				collTrend.setCyColl(yearwiseMonthlyCollList.get(0).get(collTrend.getMonth()) == null ? BigDecimal.ZERO : yearwiseMonthlyCollList.get(0).get(collTrend.getMonth()));
+				collTrend.setLyColl(yearwiseMonthlyCollList.get(1).get(collTrend.getMonth()) == null ? BigDecimal.ZERO : yearwiseMonthlyCollList.get(1).get(collTrend.getMonth()));
+				collTrend.setPyColl(yearwiseMonthlyCollList.get(2).get(collTrend.getMonth()) == null ? BigDecimal.ZERO : yearwiseMonthlyCollList.get(2).get(collTrend.getMonth()));
+				collTrendsList.add(collTrend);
+			}
+		} else {
+				for(Map.Entry<String, BigDecimal> entry :yearwiseMonthlyCollList.get(0).entrySet()){
+					collTrend = new CollectionTrend();
+					collTrend.setMonth(entry.getKey());
+					collTrend.setCyColl(entry.getValue());
+					collTrend.setLyColl(yearwiseMonthlyCollList.get(1).get(collTrend.getMonth()) == null ? BigDecimal.ZERO : yearwiseMonthlyCollList.get(1).get(collTrend.getMonth()));
+					collTrend.setPyColl(yearwiseMonthlyCollList.get(2).get(collTrend.getMonth()) == null ? BigDecimal.ZERO : yearwiseMonthlyCollList.get(2).get(collTrend.getMonth()));
+					collTrendsList.add(collTrend);
+				}
 		}
 		return collTrendsList;
 	}
@@ -625,11 +647,10 @@ public class CollectionIndexElasticSearchService {
 		ReceiptsTrend rcptsTrend;
 		Date fromDate;
 		Date toDate;
-		SearchResponse response = null;
 		Date dateForMonth;
 		String[] dateArr;
 		Integer month;
-		ValueCount rcptCount;
+		Long rcptCount;
 		String monthName;
 		Map<String, Long> monthwiseCount;
 		Date finYearStartDate = cFinancialYearService.getFinancialYearByDate(new Date()).getStartingDate();
@@ -657,26 +678,49 @@ public class CollectionIndexElasticSearchService {
 				dateForMonth = DateUtils.getDate(dateArr[0], "yyyy-MM-dd");
 				month = Integer.valueOf(dateArr[0].split("-", 3)[1]);
 				monthName = monthValuesMap.get(month);
-				rcptCount = entry.getAggregations().get("receipt_count");
+				rcptCount = entry.getDocCount();
 				//If the receipt count is greater than 0 and the month belongs to respective financial year, add values to the map
 				if(DateUtils.between(dateForMonth, finYearStartDate, finYearEndDate) 
-						&& Long.valueOf(rcptCount.getValue()) > 0)
-					monthwiseCount.put(monthName, Long.valueOf(rcptCount.getValue()));
+						&& rcptCount > 0)
+					monthwiseCount.put(monthName, rcptCount);
 	        }
 			yearwiseMonthlyCountList.add(monthwiseCount);
-			fromDate = DateUtils.addYears(fromDate, -1);
-			toDate = DateUtils.addYears(toDate, -1);
+			
+			/**
+			 * If dates are passed in request, get result for the date range, else get results for entire financial year
+			 */
+			if(StringUtils.isNotBlank(collectionDetailsRequest.getFromDate()) && StringUtils.isNotBlank(collectionDetailsRequest.getToDate())){
+				fromDate = DateUtils.addYears(fromDate, -1);
+				toDate = DateUtils.addYears(toDate, -1);
+			} else {
+				fromDate = DateUtils.addYears(finYearStartDate, -1);
+				toDate = DateUtils.addYears(finYearEndDate, -1);
+			}
 			finYearStartDate = DateUtils.addYears(finYearStartDate, -1);
 			finYearEndDate = DateUtils.addYears(finYearEndDate, -1);
 		}
 		
-		for(Map.Entry<String, Long> entry :yearwiseMonthlyCountList.get(0).entrySet()){
-			rcptsTrend = new ReceiptsTrend();
-			rcptsTrend.setMonth(entry.getKey());
-			rcptsTrend.setCyRcptsCount(entry.getValue());
-			rcptsTrend.setLyRcptsCount(yearwiseMonthlyCountList.get(1).get(rcptsTrend.getMonth()) == null ? 0L : yearwiseMonthlyCountList.get(1).get(rcptsTrend.getMonth()));
-			rcptsTrend.setPyRcptsCount(yearwiseMonthlyCountList.get(2).get(rcptsTrend.getMonth()) == null ? 0L : yearwiseMonthlyCountList.get(2).get(rcptsTrend.getMonth()));
-			rcptTrendsList.add(rcptsTrend);
+		/**
+		 * If dates are passed in request, get result for the date range, else get results for all 12 months
+		 */
+		if(StringUtils.isBlank(collectionDetailsRequest.getFromDate()) && StringUtils.isBlank(collectionDetailsRequest.getToDate())){
+			for(Map.Entry<Integer, String> entry : DateUtils.getAllFinancialYearMonthsWithFullNames().entrySet()){
+				rcptsTrend = new ReceiptsTrend();
+				rcptsTrend.setMonth(entry.getValue());
+				rcptsTrend.setCyRcptsCount(yearwiseMonthlyCountList.get(0).get(rcptsTrend.getMonth()) == null ? 0L : yearwiseMonthlyCountList.get(0).get(rcptsTrend.getMonth()));
+				rcptsTrend.setLyRcptsCount(yearwiseMonthlyCountList.get(1).get(rcptsTrend.getMonth()) == null ? 0L : yearwiseMonthlyCountList.get(1).get(rcptsTrend.getMonth()));
+				rcptsTrend.setPyRcptsCount(yearwiseMonthlyCountList.get(2).get(rcptsTrend.getMonth()) == null ? 0L : yearwiseMonthlyCountList.get(2).get(rcptsTrend.getMonth()));
+				rcptTrendsList.add(rcptsTrend);
+			}
+		} else {
+			for(Map.Entry<String, Long> entry :yearwiseMonthlyCountList.get(0).entrySet()){
+				rcptsTrend = new ReceiptsTrend();
+				rcptsTrend.setMonth(entry.getKey());
+				rcptsTrend.setCyRcptsCount(entry.getValue());
+				rcptsTrend.setLyRcptsCount(yearwiseMonthlyCountList.get(1).get(rcptsTrend.getMonth()) == null ? 0L : yearwiseMonthlyCountList.get(1).get(rcptsTrend.getMonth()));
+				rcptsTrend.setPyRcptsCount(yearwiseMonthlyCountList.get(2).get(rcptsTrend.getMonth()) == null ? 0L : yearwiseMonthlyCountList.get(2).get(rcptsTrend.getMonth()));
+				rcptTrendsList.add(rcptsTrend);
+			}
 		}
 		return rcptTrendsList;
 	}
@@ -694,7 +738,7 @@ public class CollectionIndexElasticSearchService {
 		AggregationBuilder monthAggrgation = AggregationBuilders.dateHistogram("date_agg")
 											.field("receiptdate")
 											.interval(DateHistogramInterval.MONTH)
-											.subAggregation(AggregationBuilders.count("receipt_count").field("consumercode"));
+											.subAggregation(AggregationBuilders.count("receipt_count").field("receiptnumber"));
 		
 		SearchQuery searchQueryColl = new NativeSearchQueryBuilder().withIndices(COLLECTION_INDEX_NAME)
 				.withQuery(boolQuery.must(QueryBuilders.rangeQuery("receiptdate").gte(sdf.format(fromDate)).lte(sdf.format(toDate)).includeUpper(false)))

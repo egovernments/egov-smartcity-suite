@@ -429,4 +429,26 @@ public class DateUtils extends org.apache.commons.lang3.time.DateUtils {
     public static boolean between(final Date date, final Date fromDate, final Date toDate) {
         return (date.after(fromDate) || date.equals(fromDate)) && date.before(toDate) || date.equals(toDate);
     }
+    
+    /**
+     * Gets all months for a financial year with full names.
+     *
+     * @return all months
+     */
+    public static Map<Integer, String> getAllFinancialYearMonthsWithFullNames() {
+        final Map<Integer, String> monthMap = new HashMap<Integer, String>();
+        monthMap.put(1, "April");
+        monthMap.put(2, "May");
+        monthMap.put(3, "June");
+        monthMap.put(4, "July");
+        monthMap.put(5, "August");
+        monthMap.put(6, "September");
+        monthMap.put(7, "October");
+        monthMap.put(8, "November");
+        monthMap.put(9, "December");
+        monthMap.put(10, "January");
+        monthMap.put(11, "Feburary");
+        monthMap.put(12, "March");
+        return monthMap;
+    }
 }
