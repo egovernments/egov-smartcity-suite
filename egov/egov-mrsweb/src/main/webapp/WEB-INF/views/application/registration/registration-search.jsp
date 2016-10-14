@@ -45,78 +45,7 @@
 
 
 <form:form role="form" method="post" cssClass="form-horizontal form-groups-bordered" id="usageform" modelAttribute="registration">
-<div class="row" id="page-content">
-        
-		
-			<div class="panel panel-primary" data-collapsed="0">
-				<div class="panel-heading">
-					<div class="panel-title">
-						<spring:message code="title.registration.search" />
-					</div>
-				</div>
-				
-				<div class="panel-body custom-form">
-					<div class="row">
-					<div class="form-group">
-						<label for="registrationNo" class="col-sm-2 control-label"><spring:message
-								code="lbl.application.no" /></label>
-
-						<div class="col-sm-3 add-margin">
-							<form:input id="registrationNo" path="registrationNo" type="text" cssClass="form-control low-width is_valid_alphnumeric" autocomplete="off" required="required" />
-							<form:errors path="registrationNo" cssClass="error-msg"/>
-						</div>
-						<label for="dateOfMarriage" class="col-sm-2 control-label"><spring:message
-								code="lbl.date.of.marriage" /></label>
-						<div class="col-sm-3 add-margin">
-							<form:input id="dateOfMarriage" path="dateOfMarriage" type="text" cssClass="form-control datepicker" data-date-today-highlight="true" data-date-end-date="0d" />
-							<form:errors path="dateOfMarriage" cssClass="error-msg"/>
-						</div>
-					</div>
-					</div>
-					<div class="row">
-						<div class="form-group">
-							<label for="field1" class="col-sm-2 control-label"><spring:message
-									code="lbl.husband.name" /></label>
-	
-							<div class="col-sm-3 add-margin">
-								<form:input id="husbandName" path="husband.name.firstName" type="text" cssClass="form-control is_valid_alphabet" />
-								<form:errors path="husband.name.firstName" cssClass="error-msg"/>
-							</div>
-							<label for="field1" class="col-sm-2 control-label"><spring:message
-									code="lbl.wife.name" /></label>
-	
-							<div class="col-sm-3 add-margin">
-								<form:input id="wifeName" path="wife.name.firstName" type="text" cssClass="form-control is_valid_alphabet" />
-								<form:errors path="wife.name.firstName" cssClass="error-msg"/>
-							</div>
-						</div>
-					</div>
-					<div class="row">
-
-						<div class="form-group">
-							<label for="dateOfMarriage" class="col-sm-2 control-label"><spring:message code="lbl.application.date" /></label>
-	
-							<div class="col-sm-3 add-margin">
-								<form:input id="registrationDate" path="applicationDate" type="text" cssClass="form-control datepicker" data-date-today-highlight="true" data-date-end-date="0d" />
-								<form:errors path="applicationDate" cssClass="error-msg"/>
-							</div>
-						</div>
-					</div>
-				</div>
-			</div>
-			<div class="row">
-				<div class="text-center">						
-					<button type="button" id="btnregistrationsearch"
-						class="btn btn-primary add-margin">
-						<spring:message code="lbl.button.search" />
-					</button>
-					<button type="reset" class="btn btn-danger"><spring:message code="lbl.reset"/></button>
-					<a href="javascript:void(0)" class="btn btn-default"
-						onclick="self.close()"><spring:message code="lbl.close" /></a>
-				</div>
-			</div>
-		
-</div>
+ 	<jsp:include page="registration-searchform.jsp"></jsp:include>
 </form:form>
 <br /><br />
 <div class="row display-hide report-section" id="table_container">   

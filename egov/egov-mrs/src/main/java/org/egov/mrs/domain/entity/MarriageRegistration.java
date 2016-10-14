@@ -146,6 +146,7 @@ public class MarriageRegistration extends StateAware {
     private boolean affidavit;
     private boolean marriageCard;
 
+    @NotNull
     @ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @JoinColumn(name = "feeCriteria")
     private MarriageFee feeCriteria;

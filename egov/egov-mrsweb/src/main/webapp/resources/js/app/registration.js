@@ -129,6 +129,7 @@ $(document).ready( function () {
 	$('#select-marriagefees').change( function () {
 		//$('#txt-feepaid').val($(this).val());
 		//$('#txt_feecriteria').val($('#select-marriagefees option:selected').text());
+		showFee();
 	})
 	
 	$('input[id$="email"]').blur(function() {
@@ -175,7 +176,31 @@ $(document).ready( function () {
 			//$('#see-more-link').show();
 		}
 	});
-	
+	function showFee()
+	   {
+	    if ($('#select-marriagefees').val() === '') {
+	    	$('#txt-feepaid').val('');
+				return;
+			} else {
+			
+				$.ajax({
+					type: "GET",
+					url: "/mrs/registration/calculateMarriageFee",
+					cache: true,
+					dataType: "json",
+					data:{
+						'feeId' : $('#select-marriagefees').val()
+						}
+				}).done(function(value) {
+										if (value == 0)
+											$('#txt-feepaid').val('');
+										else
+											$('#txt-feepaid').val(value);
+				
+				});
+			}
+		
+	   }
 })
 
 function validateChecklists() {

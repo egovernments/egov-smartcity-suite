@@ -97,6 +97,7 @@ import org.egov.mrs.utils.MarriageRegistrationNoGenerator;
 import org.egov.pims.commons.Position;
 import org.hibernate.Criteria;
 import org.hibernate.Session;
+import org.hibernate.criterion.Expression;
 import org.hibernate.criterion.MatchMode;
 import org.hibernate.criterion.Restrictions;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -631,15 +632,15 @@ public class MarriageRegistrationService {
 			criteria.add(Restrictions.ilike("marriageRegistration.applicationNo", registration.getApplicationNo(),
 					MatchMode.ANYWHERE));
 		if ( registration.getHusband() != null && registration.getHusband().getFullName()!=null &&  !registration.getHusband().getFullName().equals("null"))
-		criteria.createAlias("marriageRegistration.husband", "husband").add(Restrictions.ilike("husband.name.firstName", registration.getHusband().getFullName(),
+		criteria.createAlias("marriageRegistration.husband", "husband").add(Restrictions.disjunction( Restrictions.ilike("husband.name.firstName", registration.getHusband().getFullName(),
 				MatchMode.ANYWHERE)).add(Restrictions.ilike("husband.name.lastName", registration.getHusband().getFullName(),
 						MatchMode.ANYWHERE)).add(Restrictions.ilike("husband.name.middleName", registration.getHusband().getFullName(),
-								MatchMode.ANYWHERE)); 
+								MatchMode.ANYWHERE))); 
 		if ( registration.getWife() != null && registration.getWife().getFullName()!=null &&  !registration.getWife().getFullName().equals("null"))
-		criteria.createAlias("marriageRegistration.wife", "wife").add(Restrictions.ilike("wife.name.firstName", registration.getWife().getFullName(),
+		criteria.createAlias("marriageRegistration.wife", "wife").add(Restrictions.disjunction(Restrictions.ilike("wife.name.firstName", registration.getWife().getFullName(),
 				MatchMode.ANYWHERE)).add(Restrictions.ilike("wife.name.lastName", registration.getWife().getFullName(),
 						MatchMode.ANYWHERE)).add(Restrictions.ilike("wife.name.middleName", registration.getWife().getFullName(),
-								MatchMode.ANYWHERE));
+								MatchMode.ANYWHERE)));
 		if ( registration.getApplicationDate() != null)
 			criteria.add(Restrictions.between("marriageRegistration.applicationDate", registration.getApplicationDate(),
 					DateUtils.addDays(registration.getApplicationDate(), 1)));
