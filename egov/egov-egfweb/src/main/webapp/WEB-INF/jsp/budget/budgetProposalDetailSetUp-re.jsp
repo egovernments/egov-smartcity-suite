@@ -192,7 +192,7 @@ function createAmountFieldFormatter(values,prefix,suffix){
 			mandatoryFields.boundary = <s:if test="%{isFieldMandatory('boundary')}">true</s:if><s:else>false</s:else>;
 			mandatoryFields.fund = <s:if test="%{isFieldMandatory('fund')}">true</s:if><s:else>false</s:else>;
 			if(mandatoryFields[field] == true)
-				return '<span class="mandatory">*</span>';
+				return '<span class="mandatory"></span>';
 			else 
 				return ''; 
 		}
