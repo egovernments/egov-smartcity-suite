@@ -79,15 +79,15 @@
 									code="lbl.husband.name" /></label>
 	
 							<div class="col-sm-3 add-margin">
-								<form:input id="husbandName" path="husband" type="text" cssClass="form-control is_valid_alphabet" />
-								<form:errors path="husband" cssClass="error-msg"/>
+								<form:input id="husbandName" path="husband.name.firstName" type="text" cssClass="form-control is_valid_alphabet" />
+								<form:errors path="husband.name.firstName" cssClass="error-msg"/>
 							</div>
 							<label for="field1" class="col-sm-2 control-label"><spring:message
 									code="lbl.wife.name" /></label>
 	
 							<div class="col-sm-3 add-margin">
-								<form:input id="wifeName" path="wife" type="text" cssClass="form-control is_valid_alphabet" />
-								<form:errors path="wife" cssClass="error-msg"/>
+								<form:input id="wifeName" path="wife.name.firstName" type="text" cssClass="form-control is_valid_alphabet" />
+								<form:errors path="wife.name.firstName" cssClass="error-msg"/>
 							</div>
 						</div>
 					</div>
@@ -110,6 +110,7 @@
 						class="btn btn-primary add-margin">
 						<spring:message code="lbl.button.search" />
 					</button>
+					<button type="reset" class="btn btn-danger"><spring:message code="lbl.reset"/></button>
 					<a href="javascript:void(0)" class="btn btn-default"
 						onclick="self.close()"><spring:message code="lbl.close" /></a>
 				</div>

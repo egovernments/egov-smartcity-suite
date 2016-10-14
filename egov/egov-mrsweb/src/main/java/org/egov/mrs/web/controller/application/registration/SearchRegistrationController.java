@@ -41,6 +41,7 @@ package org.egov.mrs.web.controller.application.registration;
 
 import static org.egov.infra.web.utils.WebUtils.toJSON;
 
+import java.text.ParseException;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -100,7 +101,7 @@ public class SearchRegistrationController {
     }
 
     @RequestMapping(value = "/search", method = RequestMethod.POST, produces = MediaType.TEXT_PLAIN_VALUE)
-    public @ResponseBody String search(Model model,@ModelAttribute final MarriageRegistration registration) {
+    public @ResponseBody String search(Model model,@ModelAttribute final MarriageRegistration registration) throws ParseException {
     	List<MarriageRegistration> searchResultList = marriageRegistrationService.searchMarriageRegistrations(registration);
       	 String result = new StringBuilder("{ \"data\":").append(toJSON(searchResultList,MarriageRegistration.class,  MarriageRegistrationJsonAdaptor.class)).append("}")
                    .toString();
@@ -108,7 +109,7 @@ public class SearchRegistrationController {
     }
     
     @RequestMapping(value = "/searchApproved", method = RequestMethod.POST, produces = MediaType.TEXT_PLAIN_VALUE)
-    public @ResponseBody String searchApprovedMarriageRecords(Model model,@ModelAttribute final MarriageRegistration registration) {
+    public @ResponseBody String searchApprovedMarriageRecords(Model model,@ModelAttribute final MarriageRegistration registration) throws ParseException {
     	List<MarriageRegistration> searchResultList = marriageRegistrationService.searchApprovedMarriageRegistrations(registration);
       	 String result = new StringBuilder("{ \"data\":").append(toJSON(searchResultList,MarriageRegistration.class,  MarriageRegistrationJsonAdaptor.class)).append("}")
                    .toString();

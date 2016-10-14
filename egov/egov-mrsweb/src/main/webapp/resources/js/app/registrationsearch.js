@@ -147,8 +147,7 @@ $(document)
 															return ('<select class="dropchange"><option value="">Select from Below</option><option  value='
 																	+ viewurl
 																	+ row.id + '>View</option></select>');
-															if (row.status == 'Approved'
-																	&& row.certificateIssued) {
+															if (row.status == 'Approved') {
 																return ('<select class="dropchange"><option value="">Select from Below</option><option  value='
 																		+ reissueurl
 																		+ row.id + '>Re-Issue</option>');

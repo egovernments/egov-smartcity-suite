@@ -108,6 +108,7 @@
 						class="btn btn-primary add-margin">
 						<spring:message code="lbl.button.search" />
 					</button>
+					<button type="reset" class="btn btn-danger"><spring:message code="lbl.reset"/></button>
 					<a href="javascript:void(0)" class="btn btn-default"
 						onclick="self.close()"><spring:message code="lbl.close" /></a>
 				</div>

@@ -42,6 +42,7 @@ package org.egov.mrs.domain.service;
 import java.io.File;
 import java.io.IOException;
 import java.math.BigDecimal;
+import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Base64;
 import java.util.Collections;
@@ -71,6 +72,7 @@ import org.egov.infra.search.elastic.entity.ApplicationIndexBuilder;
 import org.egov.infra.search.elastic.service.ApplicationIndexService;
 import org.egov.infra.security.utils.SecurityUtils;
 import org.egov.infra.utils.ApplicationNumberGenerator;
+import org.egov.infra.utils.DateUtils;
 import org.egov.infra.workflow.entity.State;
 import org.egov.infra.workflow.entity.StateHistory;
 import org.egov.mrs.application.MarriageConstants;
@@ -78,11 +80,11 @@ import org.egov.mrs.application.MarriageUtils;
 import org.egov.mrs.application.service.MarriageCertificateService;
 import org.egov.mrs.application.service.MarriageRegistrationDemandService;
 import org.egov.mrs.application.service.workflow.RegistrationWorkflowService;
-import org.egov.mrs.domain.entity.MrApplicant;
 import org.egov.mrs.domain.entity.IdentityProof;
 import org.egov.mrs.domain.entity.MarriageCertificate;
 import org.egov.mrs.domain.entity.MarriageDocument;
 import org.egov.mrs.domain.entity.MarriageRegistration;
+import org.egov.mrs.domain.entity.MrApplicant;
 import org.egov.mrs.domain.entity.RegistrationDocument;
 import org.egov.mrs.domain.entity.SearchModel;
 import org.egov.mrs.domain.enums.MarriageFeeType;
@@ -95,6 +97,7 @@ import org.egov.mrs.utils.MarriageRegistrationNoGenerator;
 import org.egov.pims.commons.Position;
 import org.hibernate.Criteria;
 import org.hibernate.Session;
+import org.hibernate.criterion.MatchMode;
 import org.hibernate.criterion.Restrictions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -116,8 +119,8 @@ public class MarriageRegistrationService {
     private final String MSG_KEY_EMAIL_REGISTRATION_REJECTION_SUBJECT = "msg.rejectionregistration.mail.subject";
 
     private static final Logger LOG = Logger.getLogger(MarriageRegistrationService.class);
+    @Autowired
     private final MarriageRegistrationRepository registrationRepository;
-
     @PersistenceContext
     private EntityManager entityManager;
 
@@ -605,20 +608,45 @@ public class MarriageRegistrationService {
     
     
     @SuppressWarnings("unchecked")
-        public List<MarriageRegistration> searchMarriageRegistrations(MarriageRegistration registration) {
-                final Criteria criteria = getCurrentSession().createCriteria(
-                                MarriageRegistration.class);
-                
+        public List<MarriageRegistration> searchMarriageRegistrations(MarriageRegistration registration) throws ParseException {
+                final Criteria criteria = getCurrentSession().createCriteria(MarriageRegistration.class,"marriageRegistration");
+                buildMarriageRegistrationSearchCriteria(registration, criteria);
                 return criteria.list();
         }
     
     @SuppressWarnings("unchecked")
-   	public List<MarriageRegistration> searchApprovedMarriageRegistrations(MarriageRegistration registration) {
+   	public List<MarriageRegistration> searchApprovedMarriageRegistrations(MarriageRegistration registration) throws ParseException {
    		final Criteria criteria = getCurrentSession().createCriteria(MarriageRegistration.class,"marriageRegistration")
    				.createAlias("marriageRegistration.status", "status");
+   	 buildMarriageRegistrationSearchCriteria(registration, criteria);
    		 criteria.add(Restrictions.in("status.code", new String[] { MarriageRegistration.RegistrationStatus.APPROVED.toString()}));
    		return criteria.list();
    	}
+    
+    private void buildMarriageRegistrationSearchCriteria(MarriageRegistration registration, final Criteria criteria) throws ParseException {
+    	if (registration.getRegistrationNo() != null)
+			criteria.add(Restrictions.ilike("marriageRegistration.registrationNo", registration.getRegistrationNo(),
+					MatchMode.ANYWHERE));
+    	if (registration.getApplicationNo() != null)
+			criteria.add(Restrictions.ilike("marriageRegistration.applicationNo", registration.getApplicationNo(),
+					MatchMode.ANYWHERE));
+		if ( registration.getHusband() != null && registration.getHusband().getFullName()!=null &&  !registration.getHusband().getFullName().equals("null"))
+		criteria.createAlias("marriageRegistration.husband", "husband").add(Restrictions.ilike("husband.name.firstName", registration.getHusband().getFullName(),
+				MatchMode.ANYWHERE)).add(Restrictions.ilike("husband.name.lastName", registration.getHusband().getFullName(),
+						MatchMode.ANYWHERE)).add(Restrictions.ilike("husband.name.middleName", registration.getHusband().getFullName(),
+								MatchMode.ANYWHERE)); 
+		if ( registration.getWife() != null && registration.getWife().getFullName()!=null &&  !registration.getWife().getFullName().equals("null"))
+		criteria.createAlias("marriageRegistration.wife", "wife").add(Restrictions.ilike("wife.name.firstName", registration.getWife().getFullName(),
+				MatchMode.ANYWHERE)).add(Restrictions.ilike("wife.name.lastName", registration.getWife().getFullName(),
+						MatchMode.ANYWHERE)).add(Restrictions.ilike("wife.name.middleName", registration.getWife().getFullName(),
+								MatchMode.ANYWHERE));
+		if ( registration.getApplicationDate() != null)
+			criteria.add(Restrictions.between("marriageRegistration.applicationDate", registration.getApplicationDate(),
+					DateUtils.addDays(registration.getApplicationDate(), 1)));
+		if ( registration.getDateOfMarriage() != null)
+			criteria.add(Restrictions.between("marriageRegistration.dateOfMarriage", registration.getDateOfMarriage(),
+					DateUtils.addDays(registration.getDateOfMarriage(), 1)));
+	}
     
     /**
      * @param registration
