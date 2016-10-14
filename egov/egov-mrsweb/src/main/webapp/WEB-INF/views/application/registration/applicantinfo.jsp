@@ -229,7 +229,7 @@
 					<spring:message code="lbl.applicant.aadhaarNo"/>
 				</label>
 				<div class="col-sm-6">
-					<form:input path="${applicant}.aadhaarNo" id="txt-aadhaarNo" type="text" class="form-control text-left" maxlength="10" placeholder="aadhaarNo"/>
+					<form:input path="${applicant}.aadhaarNo" id="txt-aadhaarNo" type="text" cssClass="form-control low-width patternvalidation" data-pattern="number" maxlength="12" placeholder="aadhaarNo"/>
 	            	<form:errors path="${applicant}.aadhaarNo" cssClass="add-margin error-msg"/>
 				</div>
 			</div>	
