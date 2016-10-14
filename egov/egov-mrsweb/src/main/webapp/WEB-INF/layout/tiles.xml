@@ -194,4 +194,9 @@
         <put-attribute name="page-title" value="title.registration.search" cascade="true"/>
         <put-attribute name="body" value="/WEB-INF/views/application/registration/registration-search-certificateissue.jsp"/>
     </definition>
+    
+    <definition name="registration-search-certificate" extends="base_layout">
+        <put-attribute name="page-title" value="title.search.certificate" cascade="true"/>
+        <put-attribute name="body" value="/WEB-INF/views/application/registration/registration-search-certificate.jsp"/>
+    </definition>
 </tiles-definitions>

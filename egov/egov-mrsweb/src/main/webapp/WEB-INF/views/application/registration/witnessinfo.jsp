@@ -157,7 +157,7 @@
 					</c:when>
 					<c:otherwise>
 						<img id="${witness}.photo" class="img-width add-margin marriage-img" height="160" width="140" />
-						<input type="file" id="${witness}-photo" name="${witness}.photoFile" class="file-ellipsis upload-file validate-file" data-fileto="#${witness}.photo" required="required">
+						<input type="file" id="${witness}-photo" name="${witness}.photoFile" class="file-ellipsis upload-file validate-file" data-fileto="#${witness}.photo">
 					</c:otherwise>
 				</c:choose>
 			</div>

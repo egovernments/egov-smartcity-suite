@@ -98,7 +98,7 @@
 					</c:when>
 					<c:otherwise>
 						<img class="add-border" id="${applicant}-signature" height="150" width="130" name="${applicant}.signature">
-						<input type="file" id="${applicant}.signatureFile" name="${applicant}.signatureFile" class="file-ellipsis upload-file" required="required">
+						<input type="file" id="${applicant}.signatureFile" name="${applicant}.signatureFile" class="file-ellipsis upload-file">
 					</c:otherwise>
 			</c:choose>
 			</div>

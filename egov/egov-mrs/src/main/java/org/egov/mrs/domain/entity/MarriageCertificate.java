@@ -52,6 +52,7 @@ import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
+import javax.persistence.Transient;
 
 import org.egov.infra.filestore.entity.FileStoreMapper;
 import org.egov.infra.persistence.entity.AbstractAuditable;
@@ -95,7 +96,15 @@ public class MarriageCertificate extends AbstractAuditable {
     private ReIssue reIssue; 
     
     private boolean certificateIssued;
-
+    
+    @Transient
+    private Date fromDate;
+    @Transient
+    private Date toDate;
+    
+    @Transient
+    private String frequency;
+    
     public Long getId() {
         return id;
     }
@@ -160,4 +169,28 @@ public class MarriageCertificate extends AbstractAuditable {
         this.certificateIssued = certificateIssued;
     }
 
+	public Date getFromDate() {
+		return fromDate;
+	}
+
+	public void setFromDate(Date fromDate) {
+		this.fromDate = fromDate;
+	}
+
+	public Date getToDate() {
+		return toDate;
+	}
+
+	public void setToDate(Date toDate) {
+		this.toDate = toDate;
+	}
+	
+	public void setFrequency(String frequency) {
+		this.frequency = frequency;
+	}
+	
+	public String getFrequency() {
+		return frequency;
+	}
+    
 }

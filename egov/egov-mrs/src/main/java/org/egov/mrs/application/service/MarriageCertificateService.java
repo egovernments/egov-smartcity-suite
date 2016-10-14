@@ -44,8 +44,11 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
 import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.io.FileUtils;
@@ -55,12 +58,19 @@ import org.egov.infra.reporting.engine.ReportOutput;
 import org.egov.infra.reporting.engine.ReportRequest;
 import org.egov.infra.reporting.engine.ReportService;
 import org.egov.infra.security.utils.SecurityUtils;
+import org.egov.infra.utils.DateUtils;
 import org.egov.infra.web.utils.WebUtils;
 import org.egov.mrs.application.MarriageConstants;
 import org.egov.mrs.domain.autonumber.MarriageCertificateNumberGenerator;
 import org.egov.mrs.domain.entity.MarriageCertificate;
 import org.egov.mrs.domain.entity.MarriageRegistration;
 import org.egov.mrs.domain.entity.RegistrationCertificate;
+import org.egov.mrs.domain.repository.MarriageCertificateRepository;
+import org.hibernate.Criteria;
+import org.hibernate.Session;
+import org.hibernate.criterion.MatchMode;
+import org.hibernate.criterion.Order;
+import org.hibernate.criterion.Restrictions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
@@ -81,6 +91,9 @@ public class MarriageCertificateService {
 		REGISTRATION, REJECTION,REISSUE
 	}
 
+	@PersistenceContext
+	private EntityManager entityManager;
+	 
 	@Autowired
 	private ReportService reportService;
 
@@ -92,10 +105,15 @@ public class MarriageCertificateService {
 	protected FileStoreService fileStoreService;
 	
 	@Autowired
-        private MarriageCertificateNumberGenerator marriageCertificateNumberGenerator;
-	
+    private MarriageCertificateNumberGenerator marriageCertificateNumberGenerator;
+	@Autowired
+	private MarriageCertificateRepository marriageCertificateRepository;
 	private InputStream generateCertificatePDF;
-
+	
+	private Session getCurrentSession() {
+        return entityManager.unwrap(Session.class);
+    }
+	
 	/**
 	 * Generates Marriage Registration Certificate and returns the reportOutput
 	 * 
@@ -169,4 +187,30 @@ public class MarriageCertificateService {
 	    marriageCertificate.setCertificateType(certificateType);
 	    marriageCertificate.setRegistration(marriageRegistration);
 	}
+	
+	@SuppressWarnings("unchecked")
+   	public List<MarriageCertificate> searchMarriageCertificates(MarriageCertificate certificate) {
+   		 Criteria criteria = getCurrentSession().createCriteria(MarriageCertificate.class,"certificate").createAlias("certificate.registration", "registration");
+   		if (certificate.getRegistration() != null && certificate.getRegistration().getRegistrationNo() != null)
+			criteria.add(Restrictions.ilike("registration.registrationNo", certificate.getRegistration().getRegistrationNo().trim(),MatchMode.ANYWHERE));
+   		if (certificate.getCertificateNo() != null)
+			criteria.add(Restrictions.ilike("certificateNo", certificate.getCertificateNo().trim(),MatchMode.ANYWHERE));
+   		if (certificate.getCertificateType() != null)
+			criteria.add(Restrictions.eq("certificateType", certificate.getCertificateType().trim()));
+   		if (certificate.getFromDate() != null && certificate.getToDate() != null) {
+			criteria.add(Restrictions.between("certificateDate", certificate.getFromDate(),
+					DateUtils.addDays(certificate.getToDate(), 1)));
+		}
+   		if(certificate.getFrequency() != null){
+   			if(certificate.getFrequency().equalsIgnoreCase("LATEST")){
+   				 criteria.addOrder(Order.desc("createdDate"));
+   			}
+   		}
+   		return criteria.list();
+   	}
+	
+	public MarriageCertificate findById(final long id){
+		return marriageCertificateRepository.findOne(id);
+	}
+
 }

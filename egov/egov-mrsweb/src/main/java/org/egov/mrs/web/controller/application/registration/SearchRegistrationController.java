@@ -41,20 +41,29 @@ package org.egov.mrs.web.controller.application.registration;
 
 import static org.egov.infra.web.utils.WebUtils.toJSON;
 
+import java.io.IOException;
 import java.text.ParseException;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import javax.servlet.http.HttpServletResponse;
+
 import org.egov.infra.admin.master.entity.Role;
 import org.egov.infra.security.utils.SecurityUtils;
+import org.egov.infra.utils.FileStoreUtils;
+import org.egov.mrs.application.MarriageConstants;
+import org.egov.mrs.application.service.MarriageCertificateService;
+import org.egov.mrs.domain.entity.MarriageCertificate;
 import org.egov.mrs.domain.entity.MarriageRegistration;
 import org.egov.mrs.domain.service.MarriageRegistrationService;
+import org.egov.mrs.web.adaptor.MarriageCerftificateJsonAdaptor;
 import org.egov.mrs.web.adaptor.MarriageRegistrationJsonAdaptor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -71,6 +80,10 @@ public class SearchRegistrationController {
 
     private final MarriageRegistrationService marriageRegistrationService;
     private final SecurityUtils securityUtils;
+    @Autowired
+    private MarriageCertificateService marriageCertificateService;
+    @Autowired
+    private FileStoreUtils fileStoreUtils;
 
     @Autowired
     public SearchRegistrationController(final MarriageRegistrationService marriageRegistrationService, final SecurityUtils securityUtils) {
@@ -134,5 +147,24 @@ public class SearchRegistrationController {
         model.addAttribute("registration", new MarriageRegistration());
           return "registration-search-certificateissue";
     }
+    
+    @RequestMapping(value = "/searchcertificates", method = RequestMethod.GET)
+    public String showReportForm(final Model model) {
+    	model.addAttribute("certificate", new MarriageCertificate());
+        return "registration-search-certificate";
+    }
 
+    @RequestMapping(value = "/searchcertificates", method = RequestMethod.POST, produces = MediaType.TEXT_PLAIN_VALUE)
+    public @ResponseBody String searchApprovedMarriageRecords(Model model,@ModelAttribute final MarriageCertificate certificate) {
+    	List<MarriageCertificate> searchResultList = marriageCertificateService.searchMarriageCertificates(certificate);
+      	 String result = new StringBuilder("{ \"data\":").append(toJSON(searchResultList,MarriageCertificate.class,  MarriageCerftificateJsonAdaptor.class)).append("}")
+                   .toString();
+          return result;
+    } 
+    
+    @RequestMapping(value = "/printcertficate/{id}")
+    public void download(@PathVariable final long id, final HttpServletResponse response) throws IOException {
+    	MarriageCertificate certificate = marriageCertificateService.findById(id);
+    	fileStoreUtils.fetchFileAndWriteToStream(certificate.getFileStore().getFileStoreId(), MarriageConstants.FILESTORE_MODULECODE, false, response);
+    }
 }
