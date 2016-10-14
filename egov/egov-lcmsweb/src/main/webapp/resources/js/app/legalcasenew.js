@@ -40,6 +40,15 @@
 $(document).ready(function(){
 	$(".show-ManualLcNumber").hide(); 
 	var lcNumberType=$('#lcNumberType').val();
+	
+	var modeval=$('#mode').val();
+	if(modeval=='edit')
+	{
+		if(lcNumberType !='' && lcNumberType== 'MANUAL')
+			$("#lcNumber").prop("disabled", true);
+			$("#finwpYear").hide(); 
+			$('#lcNumberType').prop("disabled", true);
+	}
 	if(lcNumberType !='' && lcNumberType== 'MANUAL')
 		{
 		
@@ -49,6 +58,8 @@ $(document).ready(function(){
 		{
 		 $(".show-ManualLcNumber").hide(); 
 		}
+	
+		
 	
     $("#petitionDetails tbody tr").each(function( index ) {
     	var $this = $(this);
@@ -66,15 +77,15 @@ $(document).ready(function(){
 		var lcnumber=$('#lcNumber').val();
 		var lcNumberType=$('#lcNumberType').val();
 		var mode=$('#mode').val();
-		
-		if(mode=='create')
+		if(mode=='create'){
 		if(caseNumber !="" && caseNumber !=null && ($('#wpYear').val() ==null || $('#wpYear').val() =='') )
 			{
 			bootbox.alert("Select Case Number Year ");
 			return false;
 			}
+		}
 		
-		if(lcNumberType =='MANUAL'){
+		if(lcNumberType =='MANUAL' && mode =='create'){
 			if(lcnumber=="" ||  lcnumber ==null )
 			{
 				bootbox.alert("Please enter Legal Case Number");
