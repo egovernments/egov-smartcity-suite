@@ -50,7 +50,7 @@ import javax.persistence.PersistenceContext;
 
 import org.egov.mrs.domain.enums.MarriageFeeCriteriaType;
 import org.egov.mrs.masters.entity.MarriageFee;
-import org.egov.mrs.masters.repository.FeeRepository;
+import org.egov.mrs.masters.repository.MarriageFeeRepository;
 import org.hibernate.Criteria;
 import org.hibernate.Session;
 import org.hibernate.criterion.MatchMode;
@@ -61,9 +61,10 @@ import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @Transactional(readOnly = true)
-public class FeeService {
-
-	private final FeeRepository feeRepository;
+public class MarriageFeeService {
+	
+	@Autowired
+	private  MarriageFeeRepository marriageFeeRepository;
 
 	@PersistenceContext
 	private EntityManager entityManager;
@@ -72,31 +73,26 @@ public class FeeService {
 		return entityManager.unwrap(Session.class);
 	}
 
-	@Autowired
-	public FeeService(final FeeRepository feeRepository) {
-		this.feeRepository = feeRepository;
-	}
-
 	@Transactional
 	public void create(final MarriageFee fee) {
-		feeRepository.save(fee);
+		marriageFeeRepository.save(fee);
 	}
 
 	@Transactional
 	public MarriageFee update(final MarriageFee fee) {
-		return feeRepository.saveAndFlush(fee);
+		return marriageFeeRepository.saveAndFlush(fee);
 	}
 
 	public MarriageFee getFee(final Long id) {
-		return feeRepository.findById(id);
+		return marriageFeeRepository.findById(id);
 	}
 
 	public List<MarriageFee> getAll() {
-		return feeRepository.findAll();
+		return marriageFeeRepository.findAll();
 	}
 
 	public MarriageFee getFeeForDays(Long days) {
-		return feeRepository.findByToDaysLessThanEqual(days);
+		return marriageFeeRepository.findByToDaysLessThanEqual(days);
 	}
 
 	public MarriageFee getFeeForDate(Date date) {
@@ -108,7 +104,7 @@ public class FeeService {
 	}
 
 	public MarriageFee getFeeForCriteria(String criteria) {
-		return feeRepository.findByCriteria(criteria);
+		return marriageFeeRepository.findByCriteria(criteria);
 	}
 	
 	public List<MarriageFee> searchFee(MarriageFee fee) {

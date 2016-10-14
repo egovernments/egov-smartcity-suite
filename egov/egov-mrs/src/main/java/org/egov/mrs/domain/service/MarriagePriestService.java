@@ -39,29 +39,29 @@
 
 package org.egov.mrs.domain.service;
 
-import org.egov.mrs.domain.entity.Priest;
-import org.egov.mrs.domain.repository.PriestRepository;
+import org.egov.mrs.domain.entity.MarriagePriest;
+import org.egov.mrs.domain.repository.MarriagePriestRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @Transactional(readOnly = true)
-public class PriestService {
-    private final PriestRepository priestRepository;
+public class MarriagePriestService {
+    private final MarriagePriestRepository marriagePriestRepository;
 
     @Autowired
-    public PriestService(final PriestRepository priestRepository) {
-        this.priestRepository = priestRepository;
+    public MarriagePriestService(final MarriagePriestRepository marriagePriestRepository) {
+        this.marriagePriestRepository = marriagePriestRepository;
     }
 
     @Transactional
-    public void createPriest(final Priest priest) {
-        priestRepository.save(priest);
+    public void createPriest(final MarriagePriest priest) {
+    	marriagePriestRepository.save(priest);
     }
 
     @Transactional
-    public Priest updatePriest(final Priest priest) {
-        return priestRepository.saveAndFlush(priest);
+    public MarriagePriest updatePriest(final MarriagePriest priest) {
+        return marriagePriestRepository.saveAndFlush(priest);
     }
 }

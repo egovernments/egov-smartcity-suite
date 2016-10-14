@@ -59,9 +59,9 @@ import org.egov.mrs.application.MarriageConstants;
 import org.egov.mrs.application.MarriageUtils;
 import org.egov.mrs.application.service.ReIssueDemandService;
 import org.egov.mrs.application.service.workflow.RegistrationWorkflowService;
-import org.egov.mrs.domain.entity.Applicant;
 import org.egov.mrs.domain.entity.MarriageDocument;
 import org.egov.mrs.domain.entity.MarriageRegistration;
+import org.egov.mrs.domain.entity.MrApplicant;
 import org.egov.mrs.domain.entity.ReIssue;
 import org.egov.mrs.domain.enums.MarriageFeeType;
 import org.egov.mrs.domain.repository.ReIssueRepository;
@@ -238,7 +238,7 @@ public class ReIssueService {
         marriageApplicantService.addDocumentsToFileStore(reissueModel.getApplicant(), reissue.getApplicant(), individualDocumentAndId);
     }
 
-    private void updateApplicantInfo(final Applicant modelApplicant, final Applicant dbApplicant) {
+    private void updateApplicantInfo(final MrApplicant modelApplicant, final MrApplicant dbApplicant) {
         dbApplicant.getName().setFirstName(modelApplicant.getName().getFirstName());
         dbApplicant.getName().setMiddleName(modelApplicant.getName().getMiddleName());
         dbApplicant.getName().setLastName(modelApplicant.getName().getLastName());

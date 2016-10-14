@@ -53,8 +53,8 @@ import org.egov.infra.exception.ApplicationRuntimeException;
 import org.egov.infra.filestore.entity.FileStoreMapper;
 import org.egov.infra.filestore.service.FileStoreService;
 import org.egov.mrs.application.MarriageConstants;
-import org.egov.mrs.domain.entity.Applicant;
-import org.egov.mrs.domain.entity.ApplicantDocument;
+import org.egov.mrs.domain.entity.MrApplicant;
+import org.egov.mrs.domain.entity.MrApplicantDocument;
 import org.egov.mrs.domain.entity.MarriageDocument;
 import org.egov.mrs.domain.repository.MarriageApplicantRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -83,20 +83,20 @@ public class MarriageApplicantService {
     }
 
     @Transactional
-    public void createApplicant(final Applicant applicant) {
+    public void createApplicant(final MrApplicant applicant) {
         applicantRepository.save(applicant);
     }
 
     @Transactional
-    public Applicant updateApplicant(final Applicant applicant) {
+    public MrApplicant updateApplicant(final MrApplicant applicant) {
         return applicantRepository.saveAndFlush(applicant);
     }
 
-    public Applicant getApplicant(final Long id) {
+    public MrApplicant getApplicant(final Long id) {
         return applicantRepository.findById(id);
     }
 
-    public void prepareDocumentsForView(final Applicant applicant) {
+    public void prepareDocumentsForView(final MrApplicant applicant) {
         
         if (applicant.getPhotoFileStore() != null ){
         	 final File file = fileStoreService.fetch(applicant.getPhotoFileStore().getFileStoreId(), MarriageConstants.FILESTORE_MODULECODE);
@@ -132,17 +132,17 @@ public class MarriageApplicantService {
         });
     }
     
-    public void deleteDocuments(final Applicant applicantModel, final Applicant applicant) {
+    public void deleteDocuments(final MrApplicant applicantModel, final MrApplicant applicant) {
         
-        List<ApplicantDocument> toDelete = new ArrayList<ApplicantDocument>();
-        Map<Long, ApplicantDocument> documentIdAndApplicantDoc = new HashMap<Long, ApplicantDocument>();
+        List<MrApplicantDocument> toDelete = new ArrayList<MrApplicantDocument>();
+        Map<Long, MrApplicantDocument> documentIdAndApplicantDoc = new HashMap<Long, MrApplicantDocument>();
         applicant.getApplicantDocuments().forEach(appDoc -> documentIdAndApplicantDoc.put(appDoc.getDocument().getId(), appDoc));
 
         if(applicantModel.getDocuments()!=null){
         applicantModel.getDocuments().stream()
             .filter(doc -> doc.getFile().getSize() > 0)
             .map(doc -> {
-                ApplicantDocument appDoc = documentIdAndApplicantDoc.get(doc.getId());
+                MrApplicantDocument appDoc = documentIdAndApplicantDoc.get(doc.getId());
                 fileStoreService.delete(appDoc.getFileStoreMapper().getFileStoreId(), MarriageConstants.FILESTORE_MODULECODE);
                 return appDoc;
             }).collect(Collectors.toList())
@@ -157,12 +157,12 @@ public class MarriageApplicantService {
      *
      * @param applicant
      */
-    public void addDocumentsToFileStore(final Applicant applicantModel, final Applicant applicant, final Map<Long, MarriageDocument> documentAndId) {
+    public void addDocumentsToFileStore(final MrApplicant applicantModel, final MrApplicant applicant, final Map<Long, MarriageDocument> documentAndId) {
         List<MarriageDocument> documents = applicantModel == null ? applicant.getDocuments() : applicantModel.getDocuments();
       if(documents!=null){  documents.stream()
                 .filter(document -> !document.getFile().isEmpty() && document.getFile().getSize() > 0)
                 .map(document -> {
-                    final ApplicantDocument applicantDocument = new ApplicantDocument();
+                    final MrApplicantDocument applicantDocument = new MrApplicantDocument();
                     applicantDocument.setApplicant(applicant);
                     applicantDocument.setDocument(documentAndId.get(document.getId()));
                     applicantDocument.setFileStoreMapper(addToFileStore(document.getFile()));

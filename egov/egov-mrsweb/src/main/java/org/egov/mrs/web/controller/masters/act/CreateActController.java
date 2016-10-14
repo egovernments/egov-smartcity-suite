@@ -42,7 +42,7 @@ package org.egov.mrs.web.controller.masters.act;
 import javax.validation.Valid;
 
 import org.egov.mrs.masters.entity.MarriageAct;
-import org.egov.mrs.masters.service.ActService;
+import org.egov.mrs.masters.service.MarriageActService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
 import org.springframework.stereotype.Controller;
@@ -58,16 +58,11 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 public class CreateActController {
 
 	private static final String MRG_ACT_CREATE = "act-create";
-
-	private final ActService actService;
+	@Autowired
+	private  MarriageActService marriageActService;
 
 	@Autowired
 	private MessageSource messageSource;
-
-	@Autowired
-	public CreateActController(final ActService actService) {
-		this.actService = actService;
-	}
 
 	@RequestMapping(value = "/act/create", method = RequestMethod.GET)
 	public String loadCreateForm(final Model model) {
@@ -83,7 +78,7 @@ public class CreateActController {
 		if (errors.hasErrors())
 			return MRG_ACT_CREATE;
 
-		actService.create(act);
+		marriageActService.create(act);
 		redirectAttributes.addFlashAttribute("message",
 				messageSource.getMessage("msg.act.create.success", null, null));
 		return "redirect:/masters/act/success/" + act.getId();

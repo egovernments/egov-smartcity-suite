@@ -47,7 +47,7 @@ import javax.validation.Valid;
 
 import org.egov.mrs.domain.enums.MarriageFeeCriteriaType;
 import org.egov.mrs.masters.entity.MarriageFee;
-import org.egov.mrs.masters.service.FeeService;
+import org.egov.mrs.masters.service.MarriageFeeService;
 import org.egov.mrs.web.adaptor.FeeJsonAdaptor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
@@ -64,7 +64,7 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 @Controller
 @RequestMapping(value = "/masters")
-public class FeeController {
+public class MarriageFeeController {
 	private static final String MRG_FEE_CREATE = "fee-create";
 	private static final String MRG_FEE_VIEW = "fee-success";
 	private static final String MRG_FEE_SEARCH = "fee-search";
@@ -74,7 +74,7 @@ public class FeeController {
 	private MessageSource messageSource;
 
 	@Autowired
-	private FeeService feeService;
+	private MarriageFeeService marriageFeeService;
 
 	@RequestMapping(value = "/fee/create", method = RequestMethod.GET)
 	public String loadCreateForm(final Model model) {
@@ -90,7 +90,7 @@ public class FeeController {
 		if (errors.hasErrors())
 			return MRG_FEE_CREATE;
 		fee.setFeeType(MarriageFeeCriteriaType.GENERAL);
-		feeService.create(fee);
+		marriageFeeService.create(fee);
 		redirectAttributes.addFlashAttribute("message",
 				messageSource.getMessage("msg.fee.create.success", null, null));
 		return "redirect:/masters/fee/success/" + fee.getId();
@@ -99,7 +99,7 @@ public class FeeController {
 
 	@RequestMapping(value = "/fee/success/{id}", method = RequestMethod.GET)
 	public String viewFee(@PathVariable Long id, final Model model) {
-		model.addAttribute("fee", feeService.getFee(id));
+		model.addAttribute("fee", marriageFeeService.getFee(id));
 		return MRG_FEE_VIEW;
 	}
 
@@ -116,9 +116,9 @@ public class FeeController {
 		
 		List<MarriageFee> searchResultList = null;
 		if(mode.equalsIgnoreCase("edit")){
-			searchResultList	= feeService.searchRegistrationFeesWithGeneralType(fee);
+			searchResultList	= marriageFeeService.searchRegistrationFeesWithGeneralType(fee);
 		}else{
-			searchResultList=  feeService.searchFee(fee);
+			searchResultList=  marriageFeeService.searchFee(fee);
 		}
 			String result = new StringBuilder("{ \"data\":")
 				.append(toJSON(searchResultList, MarriageFee.class,
@@ -127,7 +127,7 @@ public class FeeController {
 	}
 	@RequestMapping(value = "/fee/edit/{id}", method = RequestMethod.GET)
 	public String editFee(@PathVariable("id") Long id, final Model model) {
-		model.addAttribute("fee", feeService.getFee(id));
+		model.addAttribute("fee", marriageFeeService.getFee(id));
 		return MRG_FEE_UPDATE;
 	}
 
@@ -138,7 +138,7 @@ public class FeeController {
 		if (errors.hasErrors()) {
 			return MRG_FEE_UPDATE;
 		}
-		feeService.update(fee);
+		marriageFeeService.update(fee);
 		redirectAttributes.addFlashAttribute("message",
 				messageSource.getMessage("msg.fee.update.success", null, null));
 		return "redirect:/masters/fee/success/" + fee.getId();

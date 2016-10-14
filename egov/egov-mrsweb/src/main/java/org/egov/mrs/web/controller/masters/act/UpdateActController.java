@@ -42,7 +42,7 @@ package org.egov.mrs.web.controller.masters.act;
 import javax.validation.Valid;
 
 import org.egov.mrs.masters.entity.MarriageAct;
-import org.egov.mrs.masters.service.ActService;
+import org.egov.mrs.masters.service.MarriageActService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
 import org.springframework.stereotype.Controller;
@@ -58,20 +58,15 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 @RequestMapping(value = "/masters")
 public class UpdateActController {
 	private static final String MRG_ACT_UPDATE = "act-update";
-
-	private final ActService actService;
+	@Autowired
+	private  MarriageActService marriageActService;
 
 	@Autowired
 	private MessageSource messageSource;
 
-	@Autowired
-	public UpdateActController(final ActService actService) {
-		this.actService = actService;
-	}
-
 	@RequestMapping(value = "/act/edit/{id}", method = RequestMethod.GET)
 	public String editAct(@PathVariable("id") Long id, final Model model) {
-		model.addAttribute("act", actService.getAct(id));
+		model.addAttribute("act", marriageActService.getAct(id));
 		return MRG_ACT_UPDATE;
 	}
 
@@ -82,7 +77,7 @@ public class UpdateActController {
 		if (errors.hasErrors()) {
 			return MRG_ACT_UPDATE;
 		}
-		actService.update(act);
+		marriageActService.update(act);
 		redirectAttributes.addFlashAttribute("message",
 				messageSource.getMessage("msg.act.update.success", null, null));
 		return "redirect:/masters/act/success/" + act.getId();

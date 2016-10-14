@@ -75,8 +75,8 @@ import org.springframework.web.multipart.MultipartFile;
 
 @Entity
 @Table(name = "egmrs_applicant")
-@SequenceGenerator(name = Applicant.SEQ_APPLICANT, sequenceName = Applicant.SEQ_APPLICANT, allocationSize = 1)
-public class Applicant extends AbstractAuditable {
+@SequenceGenerator(name = MrApplicant.SEQ_APPLICANT, sequenceName = MrApplicant.SEQ_APPLICANT, allocationSize = 1)
+public class MrApplicant extends AbstractAuditable {
 
     private static final long serialVersionUID = -4678440835941976527L;
     public static final String SEQ_APPLICANT = "SEQ_EGMRS_APPLICANT";
@@ -149,7 +149,7 @@ public class Applicant extends AbstractAuditable {
     @NotNull
     @Valid
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "applicant")
-    private List<ApplicantDocument> applicantDocuments = new ArrayList<ApplicantDocument>();
+    private List<MrApplicantDocument> applicantDocuments = new ArrayList<MrApplicantDocument>();
     
     @Transient
     private List<MarriageDocument> documents;
@@ -311,15 +311,15 @@ public class Applicant extends AbstractAuditable {
         this.documents = documents;
     }
 
-    public List<ApplicantDocument> getApplicantDocuments() {
+    public List<MrApplicantDocument> getApplicantDocuments() {
         return applicantDocuments;
     }
 
-    public void setApplicantDocuments(final List<ApplicantDocument> applicantDocuments) {
+    public void setApplicantDocuments(final List<MrApplicantDocument> applicantDocuments) {
         this.applicantDocuments = applicantDocuments;
     }
 
-    public void addApplicantDocument(final ApplicantDocument applicantDocument) {
+    public void addApplicantDocument(final MrApplicantDocument applicantDocument) {
         applicantDocument.setApplicant(this);
         getApplicantDocuments().add(applicantDocument);
     }

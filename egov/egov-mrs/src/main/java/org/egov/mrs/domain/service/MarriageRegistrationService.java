@@ -59,7 +59,6 @@ import javax.servlet.http.HttpServletRequest;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
 import org.egov.commons.EgwStatus;
-import org.egov.eis.service.AssignmentService;
 import org.egov.eis.service.EisCommonService;
 import org.egov.eis.web.contract.WorkflowContainer;
 import org.egov.infra.admin.master.entity.User;
@@ -79,7 +78,7 @@ import org.egov.mrs.application.MarriageUtils;
 import org.egov.mrs.application.service.MarriageCertificateService;
 import org.egov.mrs.application.service.MarriageRegistrationDemandService;
 import org.egov.mrs.application.service.workflow.RegistrationWorkflowService;
-import org.egov.mrs.domain.entity.Applicant;
+import org.egov.mrs.domain.entity.MrApplicant;
 import org.egov.mrs.domain.entity.IdentityProof;
 import org.egov.mrs.domain.entity.MarriageCertificate;
 import org.egov.mrs.domain.entity.MarriageDocument;
@@ -89,8 +88,8 @@ import org.egov.mrs.domain.entity.SearchModel;
 import org.egov.mrs.domain.enums.MarriageFeeType;
 import org.egov.mrs.domain.repository.MarriageRegistrationRepository;
 import org.egov.mrs.domain.repository.WitnessRepository;
-import org.egov.mrs.masters.service.ActService;
-import org.egov.mrs.masters.service.FeeService;
+import org.egov.mrs.masters.service.MarriageActService;
+import org.egov.mrs.masters.service.MarriageFeeService;
 import org.egov.mrs.masters.service.ReligionService;
 import org.egov.mrs.utils.MarriageRegistrationNoGenerator;
 import org.egov.pims.commons.Position;
@@ -138,7 +137,7 @@ public class MarriageRegistrationService {
     private ReligionService religionService;
 
     @Autowired
-    private ActService actService;
+    private MarriageActService marriageActService;
 
     @Autowired
     private MarriageRegistrationDemandService marriageRegistrationDemandService;
@@ -181,8 +180,9 @@ public class MarriageRegistrationService {
     
     @Autowired
     private EisCommonService eisCommonService;
+   
     @Autowired
-    private FeeService feeService;
+    private MarriageFeeService marriageFeeService;
     
     @Autowired
     public MarriageRegistrationService(final MarriageRegistrationRepository registrationRepository) {
@@ -222,7 +222,7 @@ public class MarriageRegistrationService {
         registration.getHusband().setReligion(religionService.getProxy(registration.getHusband().getReligion().getId()));
         registration.getWife().setReligion(religionService.getProxy(registration.getWife().getReligion().getId()));
         registration.getWitnesses().forEach(witness -> witness.setRegistration(registration));
-        registration.setMarriageAct(actService.getAct(registration.getMarriageAct().getId()));
+        registration.setMarriageAct(marriageActService.getAct(registration.getMarriageAct().getId()));
                 if (registration.getFeePaid() != null && registration.getDemand() == null){
                         registration.setDemand(
                                         marriageRegistrationDemandService.createDemand(new BigDecimal(registration.getFeePaid())));
@@ -237,7 +237,7 @@ public class MarriageRegistrationService {
 
         registration.setZone(boundaryService.getBoundaryById(registration.getZone().getId()));
         if(registration.getFeeCriteria()!=null)
-        registration.setFeeCriteria(feeService.getFee(registration.getFeeCriteria().getId()));
+        registration.setFeeCriteria(marriageFeeService.getFee(registration.getFeeCriteria().getId()));
 
         try {
             registration.getHusband().copyPhotoAndSignatureToByteArray();
@@ -332,7 +332,7 @@ public class MarriageRegistrationService {
         registration.setPlaceOfMarriage(regModel.getPlaceOfMarriage());
         registration.setFeeCriteria(regModel.getFeeCriteria());
         registration.setFeePaid(regModel.getFeePaid());
-        registration.setMarriageAct(actService.getAct(registration.getMarriageAct().getId()));
+        registration.setMarriageAct(marriageActService.getAct(registration.getMarriageAct().getId()));
         
                 if (registration.getFeePaid() != null) {
                         if (registration.getDemand() == null){
@@ -380,7 +380,7 @@ public class MarriageRegistrationService {
         marriageApplicantService.addDocumentsToFileStore(regModel.getWife(), registration.getWife(), individualDocumentAndId);
     }
 
-    private void updateApplicantInfo(final Applicant modelApplicant, final Applicant dbApplicant) {
+    private void updateApplicantInfo(final MrApplicant modelApplicant, final MrApplicant dbApplicant) {
         dbApplicant.getName().setFirstName(modelApplicant.getName().getFirstName());
         dbApplicant.getName().setMiddleName(modelApplicant.getName().getMiddleName());
         dbApplicant.getName().setLastName(modelApplicant.getName().getLastName());

@@ -119,14 +119,14 @@ public class MarriageRegistration extends StateAware {
     @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     @JoinColumn(name = "husband")
   //  @QueryInit("name.firstName")
-    private Applicant husband = new Applicant();
+    private MrApplicant husband = new MrApplicant();
 
     @NotNull
     @Valid
     @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     @JoinColumn(name = "wife")
  //   @QueryInit("name.firstName")
-    private Applicant wife = new Applicant();
+    private MrApplicant wife = new MrApplicant();
 
     @NotNull
     @Valid
@@ -137,7 +137,7 @@ public class MarriageRegistration extends StateAware {
     @Valid
     @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @JoinColumn(name = "priest")
-    private Priest priest;
+    private MarriagePriest priest;
 
     private boolean coupleFromSamePlace;
 
@@ -260,27 +260,27 @@ public class MarriageRegistration extends StateAware {
         this.placeOfMarriage = placeOfMarriage;
     }
 
-    public Applicant getHusband() {
+    public MrApplicant getHusband() {
         return husband;
     }
 
-    public void setHusband(final Applicant husband) {
+    public void setHusband(final MrApplicant husband) {
         this.husband = husband;
     }
 
-    public Applicant getWife() {
+    public MrApplicant getWife() {
         return wife;
     }
 
-    public void setWife(final Applicant wife) {
+    public void setWife(final MrApplicant wife) {
         this.wife = wife;
     }
 
-    public Priest getPriest() {
+    public MarriagePriest getPriest() {
         return priest;
     }
 
-    public void setPriest(final Priest priest) {
+    public void setPriest(final MarriagePriest priest) {
         this.priest = priest;
     }
 

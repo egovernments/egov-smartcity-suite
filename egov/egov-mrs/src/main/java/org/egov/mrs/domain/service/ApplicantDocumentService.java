@@ -40,7 +40,7 @@ package org.egov.mrs.domain.service;
 
 import java.util.List;
 
-import org.egov.mrs.domain.entity.ApplicantDocument;
+import org.egov.mrs.domain.entity.MrApplicantDocument;
 import org.egov.mrs.domain.repository.ApplicantDocumentRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -55,11 +55,11 @@ public class ApplicantDocumentService {
         this.applicantDocumentRepository = applicantDocumentRepository;
     }
 
-    public void delete(final List<ApplicantDocument> applicantDocuments) {
+    public void delete(final List<MrApplicantDocument> applicantDocuments) {
         applicantDocumentRepository.deleteInBatch(applicantDocuments);
     }
 
-    public void delete(final ApplicantDocument applicantDocument) {
+    public void delete(final MrApplicantDocument applicantDocument) {
         applicantDocumentRepository.delete(applicantDocument);
     }
 }

@@ -39,10 +39,10 @@
 
 package org.egov.mrs.domain.repository;
 
-import org.egov.mrs.domain.entity.ApplicantDocument;
+import org.egov.mrs.domain.entity.MrApplicantDocument;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
 @Repository
-public interface ApplicantDocumentRepository extends JpaRepository<ApplicantDocument, Long> {
+public interface ApplicantDocumentRepository extends JpaRepository<MrApplicantDocument, Long> {
 }

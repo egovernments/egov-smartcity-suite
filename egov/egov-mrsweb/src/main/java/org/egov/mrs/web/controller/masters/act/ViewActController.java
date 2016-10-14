@@ -44,10 +44,9 @@ import static org.egov.infra.web.utils.WebUtils.toJSON;
 import java.util.List;
 
 import org.egov.mrs.masters.entity.MarriageAct;
-import org.egov.mrs.masters.service.ActService;
+import org.egov.mrs.masters.service.MarriageActService;
 import org.egov.mrs.web.adaptor.ActJsonAdaptor;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.MessageSource;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -60,22 +59,18 @@ import org.springframework.web.bind.annotation.ResponseBody;
 @Controller
 @RequestMapping(value = "/masters")
 public class ViewActController {
-
-	private final ActService actService;
-
 	@Autowired
-	private MessageSource messageSource;
+	private  MarriageActService marriageActService;
+
+
 	private static final String MRG_ACT_VIEW = "act-success";
 	private static final String MRG_ACT_SEARCH = "act-search";
 
-	@Autowired
-	public ViewActController(final ActService actService) {
-		this.actService = actService;
-	}
+	
 
 	@RequestMapping(value = "/act/success/{id}", method = RequestMethod.GET)
 	public String viewAct(@PathVariable Long id, final Model model) {
-		model.addAttribute("act", actService.getAct(id));
+		model.addAttribute("act", marriageActService.getAct(id));
 		return MRG_ACT_VIEW;
 	}
 
@@ -89,7 +84,7 @@ public class ViewActController {
 	@RequestMapping(value = "/act/searchResult", method = RequestMethod.POST, produces = MediaType.TEXT_PLAIN_VALUE)
 	public @ResponseBody String searchActResult(Model model,
 			@ModelAttribute final MarriageAct act) {
-		List<MarriageAct> searchResultList = actService.searchActs(act);
+		List<MarriageAct> searchResultList = marriageActService.searchActs(act);
 		String result = new StringBuilder("{ \"data\":")
 				.append(toJSON(searchResultList, MarriageAct.class,
 						ActJsonAdaptor.class)).append("}").toString();

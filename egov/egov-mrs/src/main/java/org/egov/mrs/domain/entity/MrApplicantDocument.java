@@ -66,8 +66,8 @@ import org.egov.infra.persistence.entity.AbstractPersistable;
  */
 @Entity
 @Table(name = "egmrs_applicantdocument")
-@SequenceGenerator(name = ApplicantDocument.SEQ_APPLICANTDOCUMENT, sequenceName = ApplicantDocument.SEQ_APPLICANTDOCUMENT, allocationSize = 1)
-public class ApplicantDocument extends AbstractDocument {
+@SequenceGenerator(name = MrApplicantDocument.SEQ_APPLICANTDOCUMENT, sequenceName = MrApplicantDocument.SEQ_APPLICANTDOCUMENT, allocationSize = 1)
+public class MrApplicantDocument extends AbstractDocument {
 
     private static final long serialVersionUID = 6808024071929495513L;
 
@@ -81,7 +81,7 @@ public class ApplicantDocument extends AbstractDocument {
     @Valid
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "applicant")
-    private Applicant applicant;
+    private MrApplicant applicant;
 
     @Override
     public Long getId() {
@@ -93,11 +93,11 @@ public class ApplicantDocument extends AbstractDocument {
         this.id = id;
     }
 
-    public Applicant getApplicant() {
+    public MrApplicant getApplicant() {
         return applicant;
     }
 
-    public void setApplicant(final Applicant applicant) {
+    public void setApplicant(final MrApplicant applicant) {
         this.applicant = applicant;
     }
 }

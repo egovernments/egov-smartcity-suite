@@ -51,7 +51,7 @@ import org.egov.mrs.domain.service.MarriageDocumentService;
 import org.egov.mrs.domain.service.MarriageRegistrationService;
 import org.egov.mrs.domain.service.ReIssueService;
 import org.egov.mrs.masters.entity.MarriageFee;
-import org.egov.mrs.masters.service.FeeService;
+import org.egov.mrs.masters.service.MarriageFeeService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -76,7 +76,7 @@ public class NewReIssueController extends GenericWorkFlowController {
     private ReIssueService reIssueService;
 
     @Autowired
-    private FeeService feeService;
+    private MarriageFeeService marriageFeeService;
 
     @Autowired
     private MarriageRegistrationService marriageRegistrationService;
@@ -104,7 +104,7 @@ public class NewReIssueController extends GenericWorkFlowController {
          */
 
         final ReIssue reIssue = new ReIssue();
-        MarriageFee marriageFee=feeService.getFeeForCriteria(MarriageConstants.REISSUE_FEECRITERIA);
+        MarriageFee marriageFee=marriageFeeService.getFeeForCriteria(MarriageConstants.REISSUE_FEECRITERIA);
         if(marriageFee!=null){
         reIssue.setFeeCriteria(marriageFee);
         reIssue.setFeePaid(marriageFee.getFees());

@@ -39,15 +39,13 @@
 
 package org.egov.mrs.masters.repository;
 
-import org.egov.mrs.masters.entity.MarriageFee;
+import org.egov.mrs.masters.entity.MarriageAct;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
 @Repository
-public interface FeeRepository extends JpaRepository<MarriageFee, Long> {
-    MarriageFee findById(Long id);
+public interface MarriageActRepository extends JpaRepository<MarriageAct, Long> {
+    MarriageAct findById(Long id);
 
-    MarriageFee findByCriteria(String criteria);
-    
-    MarriageFee findByToDaysLessThanEqual(Long days);
+    MarriageAct findByName(String actName);
 }

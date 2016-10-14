@@ -99,7 +99,7 @@ public class ReIssue extends StateAware {
     @Valid
     @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     @JoinColumn(name = "applicant")    
-    private Applicant applicant;
+    private MrApplicant applicant;
     
     @NotNull
     @Valid
@@ -152,11 +152,11 @@ public class ReIssue extends StateAware {
         this.id = id;
     }
     
-    public Applicant getApplicant() {
+    public MrApplicant getApplicant() {
         return applicant;
     }
     
-    public void setApplicant(Applicant applicant) {
+    public void setApplicant(MrApplicant applicant) {
         this.applicant = applicant;
     }
     

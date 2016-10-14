@@ -45,7 +45,7 @@ import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 
 import org.egov.mrs.masters.entity.MarriageAct;
-import org.egov.mrs.masters.repository.ActRepository;
+import org.egov.mrs.masters.repository.MarriageActRepository;
 import org.hibernate.Criteria;
 import org.hibernate.Session;
 import org.hibernate.criterion.MatchMode;
@@ -56,40 +56,37 @@ import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @Transactional(readOnly = true)
-public class ActService {
-    private final ActRepository actRepository;
+public class MarriageActService {
+	@Autowired
+	private  MarriageActRepository marriageActRepository;
     
     @PersistenceContext
 	private EntityManager entityManager;
-    
-    @Autowired
-    public ActService(final ActRepository actRepository) {
-        this.actRepository = actRepository;
-    }
+ 
     public Session getCurrentSession() {
 		return entityManager.unwrap(Session.class);
 	}
 
     @Transactional
     public void create(final MarriageAct act) {
-        actRepository.save(act);
+    	marriageActRepository.save(act);
     }
 
     @Transactional
     public MarriageAct update(final MarriageAct act) {
-        return actRepository.save(act);
+        return marriageActRepository.save(act);
     }
 
     public MarriageAct getAct(final Long id) {
-        return actRepository.findById(id);
+        return marriageActRepository.findById(id);
     }
 
     public List<MarriageAct> getActs() {
-        return actRepository.findAll();
+        return marriageActRepository.findAll();
     }
     
     public MarriageAct getProxy(final Long id) {
-        return actRepository.getOne(id);
+        return marriageActRepository.getOne(id);
     }
     
     @SuppressWarnings("unchecked")

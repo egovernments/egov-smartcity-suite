@@ -45,27 +45,22 @@ import java.time.temporal.ChronoUnit;
 import java.util.Date;
 
 import org.egov.mrs.domain.enums.MarriageFeeType;
-import org.egov.mrs.masters.service.FeeService;
+import org.egov.mrs.masters.service.MarriageFeeService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 @Service
 public class RegistrationFeeCalculatorService implements MarriageFeeCalculator {
+	@Autowired
+    private MarriageFeeService marriageFeeService;
     
-    private FeeService feeService;
-    
-    @Autowired
-    public RegistrationFeeCalculatorService(final FeeService feeService) {
-        this.feeService = feeService;
-    }
-
     @Override
     public Double calculateFee(final Date date) {
         Long daysAfterMarriage = ChronoUnit.DAYS.between(
                 date.toInstant().atZone(ZoneId.systemDefault()).toLocalDateTime(),
                 LocalDateTime.now());
         
-        return feeService.getFeeForDays(daysAfterMarriage).getFees();
+        return marriageFeeService.getFeeForDays(daysAfterMarriage).getFees();
     }
 
     @Override

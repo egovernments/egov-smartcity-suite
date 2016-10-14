@@ -41,16 +41,16 @@ package org.egov.mrs.domain.repository;
 
 import java.util.List;
 
-import org.egov.mrs.domain.entity.Priest;
+import org.egov.mrs.domain.entity.MarriagePriest;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
 @Repository
-public interface PriestRepository extends JpaRepository<Priest, Long> {
-    Priest findById(Long id);
+public interface MarriagePriestRepository extends JpaRepository<MarriagePriest, Long> {
+    MarriagePriest findById(Long id);
 
-    Priest findByNameFirstName(String firstName);
+    MarriagePriest findByNameFirstName(String firstName);
 
     @Override
-    List<Priest> findAll();
+    List<MarriagePriest> findAll();
 }

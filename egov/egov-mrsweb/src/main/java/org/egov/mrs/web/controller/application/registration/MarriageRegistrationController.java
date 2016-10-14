@@ -52,8 +52,8 @@ import org.egov.mrs.domain.enums.ReligionPractice;
 import org.egov.mrs.domain.service.MarriageApplicantService;
 import org.egov.mrs.domain.service.MarriageDocumentService;
 import org.egov.mrs.domain.service.MarriageRegistrationService;
-import org.egov.mrs.masters.service.ActService;
-import org.egov.mrs.masters.service.FeeService;
+import org.egov.mrs.masters.service.MarriageActService;
+import org.egov.mrs.masters.service.MarriageFeeService;
 import org.egov.mrs.masters.service.ReligionService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.support.ResourceBundleMessageSource;
@@ -69,13 +69,13 @@ public class MarriageRegistrationController extends GenericWorkFlowController {
     protected BoundaryService boundaryService;
 
     @Autowired
-    protected ActService actService;
+    protected MarriageActService marriageActService;
 
     @Autowired
     protected MarriageRegistrationService marriageRegistrationService;
 
     @Autowired
-    protected FeeService feeService;
+    protected MarriageFeeService marriageFeeService;
 
     @Autowired
     protected MarriageUtils utils;
@@ -96,10 +96,10 @@ public class MarriageRegistrationController extends GenericWorkFlowController {
         model.addAttribute("zones",
                 boundaryService.getActiveBoundariesByBndryTypeNameAndHierarchyTypeName(BOUNDARY_TYPE, REVENUE_HIERARCHY_TYPE));
         model.addAttribute("religions", religionService.getReligions());
-        model.addAttribute("acts", actService.getActs());
+        model.addAttribute("acts", marriageActService.getActs());
         model.addAttribute("religionPractice", Arrays.asList(ReligionPractice.values()));
         model.addAttribute("maritalStatusList", Arrays.asList(MaritalStatus.values()));
-        model.addAttribute("feesList", feeService.searchGeneralTypeFeeses());
+        model.addAttribute("feesList", marriageFeeService.searchGeneralTypeFeeses());
         model.addAttribute("generalDocuments", marriageDocumentService.getGeneralDocuments());
         model.addAttribute("individualDocuments", marriageDocumentService.getIndividualDocuments());
     }

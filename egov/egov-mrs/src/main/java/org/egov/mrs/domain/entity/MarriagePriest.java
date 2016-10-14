@@ -58,8 +58,8 @@ import org.hibernate.validator.constraints.SafeHtml;
 
 @Entity
 @Table(name = "egmrs_priest")
-@SequenceGenerator(name = Priest.SEQ_PRIEST, sequenceName = Priest.SEQ_PRIEST, allocationSize = 1)
-public class Priest extends AbstractAuditable {
+@SequenceGenerator(name = MarriagePriest.SEQ_PRIEST, sequenceName = MarriagePriest.SEQ_PRIEST, allocationSize = 1)
+public class MarriagePriest extends AbstractAuditable {
 
     private static final long serialVersionUID = -3486065393428049965L;
     public static final String SEQ_PRIEST = "SEQ_EGMRS_PRIEST";
