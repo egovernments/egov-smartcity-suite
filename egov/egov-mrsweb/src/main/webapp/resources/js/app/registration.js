@@ -185,7 +185,7 @@ $(document).ready( function () {
 			
 				$.ajax({
 					type: "GET",
-					url: "/mrs/registration/calculateMarriageFee",
+					url: "/mrs/registration/calculatemarriagefee",
 					cache: true,
 					dataType: "json",
 					data:{
