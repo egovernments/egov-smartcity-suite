@@ -622,9 +622,16 @@ public class SewerageApplicationDetailsService {
             } else{
                 if(sewerageApplicationDetails.getApplicationType().getCode().equalsIgnoreCase(CHANGEINCLOSETS)){
                     SewerageApplicationDetails oldSewerageAppDtls = findByConnection_ShscNumberAndIsActive(sewerageApplicationDetails.getConnection().getShscNumber());
-                    sewerageDemandService.updateDemandOnChangeInClosets(oldSewerageAppDtls,sewerageApplicationDetails.getConnectionFees(),
-                            sewerageApplicationDetails.getCurrentDemand());
-                } else{
+                        if(!workFlowAction.equals(WFLOW_ACTION_STEP_REJECT)){
+                            if(sewerageApplicationDetails.getStatus().getCode()
+                                .equalsIgnoreCase(APPLICATION_STATUS_INITIALAPPROVED))
+                                            sewerageDemandService.updateDemandOnChangeInClosets(oldSewerageAppDtls,sewerageApplicationDetails.getConnectionFees(),
+                                        sewerageApplicationDetails.getCurrentDemand(),Boolean.TRUE);
+                            else
+                                sewerageDemandService.updateDemandOnChangeInClosets(oldSewerageAppDtls,sewerageApplicationDetails.getConnectionFees(),
+                                        sewerageApplicationDetails.getCurrentDemand(),Boolean.FALSE);
+                        }
+               } else{
                     sewerageDemandService.updateDemand(sewerageApplicationDetails.getConnectionFees(),
                         sewerageApplicationDetails.getCurrentDemand());
                 } 
