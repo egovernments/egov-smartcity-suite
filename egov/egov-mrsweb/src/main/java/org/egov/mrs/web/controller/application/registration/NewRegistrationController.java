@@ -157,7 +157,7 @@ public class NewRegistrationController extends MarriageRegistrationController {
      * @param feeId
      * @return
      */
-    @RequestMapping(value = "/calculateMarriageFee", method = GET, produces = APPLICATION_JSON_VALUE)
+    @RequestMapping(value = "/calculatemarriagefee", method = GET, produces = APPLICATION_JSON_VALUE)
 	public @ResponseBody Double calculateMarriageFee(@RequestParam final Long feeId) {
 		MarriageFee marriageFee = marriageFeeService.getFee(feeId);
 		if (marriageFee != null)

@@ -190,4 +190,8 @@
         <put-attribute name="page-title" value="title.marriageFee.view" cascade="true"/>
         <put-attribute name="body" value="/WEB-INF/views/application/collection/marriage-error.jsp"/>
     </definition>
+    <definition name="registration-search-certificateissue" extends="base_layout">
+        <put-attribute name="page-title" value="title.registration.search" cascade="true"/>
+        <put-attribute name="body" value="/WEB-INF/views/application/registration/registration-search-certificateissue.jsp"/>
+    </definition>
 </tiles-definitions>

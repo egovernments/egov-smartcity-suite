@@ -97,7 +97,6 @@ import org.egov.mrs.utils.MarriageRegistrationNoGenerator;
 import org.egov.pims.commons.Position;
 import org.hibernate.Criteria;
 import org.hibernate.Session;
-import org.hibernate.criterion.Expression;
 import org.hibernate.criterion.MatchMode;
 import org.hibernate.criterion.Restrictions;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -706,4 +705,14 @@ public class MarriageRegistrationService {
         }
         return historyTable;
     }
+
+	public List<MarriageRegistration> searchRegistrationByStatus(MarriageRegistration registration,String status) throws ParseException {
+
+   		final Criteria criteria = getCurrentSession().createCriteria(MarriageRegistration.class,"marriageRegistration")
+   				.createAlias("marriageRegistration.status", "status");
+   	 buildMarriageRegistrationSearchCriteria(registration, criteria);
+   		 criteria.add(Restrictions.in("status.code", new String[] {status}));
+   		return criteria.list();
+   	
+	}
 }
