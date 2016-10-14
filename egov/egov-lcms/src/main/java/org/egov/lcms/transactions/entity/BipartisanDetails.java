@@ -104,7 +104,7 @@ public class BipartisanDetails extends AbstractAuditable {
 
     @Pattern(regexp = LcmsConstants.lengthCheckForMobileNo)
     @Audited
-    private Long contactNumber;
+    private String contactNumber;
 
     @Column(name = "isrespondent")
     @Audited
@@ -148,15 +148,15 @@ public class BipartisanDetails extends AbstractAuditable {
         this.address = address;
     }
 
-    public Long getContactNumber() {
-        return contactNumber;
-    }
+    public String getContactNumber() {
+		return contactNumber;
+	}
 
-    public void setContactNumber(final Long contactNumber) {
-        this.contactNumber = contactNumber;
-    }
+	public void setContactNumber(String contactNumber) {
+		this.contactNumber = contactNumber;
+	}
 
-    @Override
+	@Override
 	public Long getId() {
         return id;
     }

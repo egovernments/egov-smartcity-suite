@@ -42,7 +42,9 @@ package org.egov.lcms.web.controller.ajax;
 import static org.springframework.web.bind.annotation.RequestMethod.GET;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.egov.eis.entity.Assignment;
 import org.egov.eis.service.AssignmentService;
@@ -55,7 +57,6 @@ import org.egov.lcms.masters.service.AdvocateMasterService;
 import org.egov.lcms.masters.service.CourtMasterService;
 import org.egov.lcms.masters.service.CourtTypeMasterService;
 import org.egov.lcms.masters.service.PetitionTypeMasterService;
-import org.egov.pims.commons.Position;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
@@ -102,18 +103,20 @@ public class AjaxLegalCaseController {
     }
 
     @RequestMapping(value = "ajax/positions", method = GET, produces = MediaType.APPLICATION_JSON_VALUE)
-    public @ResponseBody List<Position> getAllPositionsByDeptAndNameLike(
+    public @ResponseBody Map<Long, String> getAllPositionsByDeptAndNameLike(
             @ModelAttribute("legalcase") @RequestParam final String departmentName,
             @RequestParam final String positionName) {
-        final List<Position> poslist = new ArrayList<Position>();
-        final Department deptObj = departmentService.getDepartmentByName(departmentName);
-        final List<Assignment> assignList = assignmentService
-                .getAllPositionsByDepartmentAndPositionNameForGivenRange(deptObj.getId(), positionName.toUpperCase());
-        for (final Assignment assign : assignList)
-            poslist.add(assign.getPosition());
-        for (final Position dd : poslist)
-            System.out.println(dd.getId());
-        return poslist;
+    	 final Map<Long, String> positionEmployeeMap = new HashMap<Long, String>();
+         String posEmpName;
+         final Department deptObj = departmentService.getDepartmentByName(departmentName);
+         final List<Assignment> assignList = assignmentService
+                 .getAllPositionsByDepartmentAndPositionNameForGivenRange(deptObj.getId(), positionName.toUpperCase());
+     
+         for (final Assignment assign : assignList) {
+             posEmpName = assign.getPosition().getName().concat("@").concat(assign.getEmployee().getUsername());
+             positionEmployeeMap.put(assign.getEmployee().getId(), posEmpName);
+         }
+         return positionEmployeeMap;
 
     }
 
