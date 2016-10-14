@@ -99,7 +99,14 @@ public class SearchRegistrationController {
         model.addAttribute("isCollectionOperator", isCollectionOperator);
         return "registration-search-approved";
     }
-
+    
+    
+    @RequestMapping(value = "/collectmrfee", method = RequestMethod.GET)
+    public String showSearchApprovedforFee( final Model model) {
+         model.addAttribute("registration", new MarriageRegistration());
+         return "registration-search-forfee";
+    }
+    
     @RequestMapping(value = "/search", method = RequestMethod.POST, produces = MediaType.TEXT_PLAIN_VALUE)
     public @ResponseBody String search(Model model,@ModelAttribute final MarriageRegistration registration) throws ParseException {
     	List<MarriageRegistration> searchResultList = marriageRegistrationService.searchMarriageRegistrations(registration);
@@ -116,5 +123,11 @@ public class SearchRegistrationController {
           return result;
     }
 
-
+    @RequestMapping(value = "/collectmrfee", method = RequestMethod.POST, produces = MediaType.TEXT_PLAIN_VALUE)
+    public @ResponseBody String searchApprovedRecords(Model model,@ModelAttribute final MarriageRegistration registration) throws ParseException {
+    	List<MarriageRegistration> searchResultList = marriageRegistrationService.searchApprovedMarriageRegistrations(registration);
+      	 String result = new StringBuilder("{ \"data\":").append(toJSON(searchResultList,MarriageRegistration.class,  MarriageRegistrationJsonAdaptor.class)).append("}")
+                   .toString();
+          return result;
+    }
 }

@@ -181,4 +181,13 @@
         <put-attribute name="page-title" value="title.modify.mrg.registration" cascade="true"/>
         <put-attribute name="body" value="/WEB-INF/views/application/registration/registration-update-approved.jsp"/>
     </definition>
+     <definition name="registration-search-forfee" extends="base_layout">
+        <put-attribute name="page-title" value="title.modify.mrg.registration" cascade="true"/>
+        <put-attribute name="body" value="/WEB-INF/views/application/registration/registration-search-forfee.jsp"/>
+    </definition>
+    
+     <definition name="collectmarriagefee-error" extends="base_layout">	 
+        <put-attribute name="page-title" value="title.marriageFee.view" cascade="true"/>
+        <put-attribute name="body" value="/WEB-INF/views/application/collection/marriage-error.jsp"/>
+    </definition>
 </tiles-definitions>
