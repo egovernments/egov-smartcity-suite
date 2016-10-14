@@ -148,7 +148,7 @@ public class BipartisanDetails extends AbstractAuditable {
         this.address = address;
     }
 
-    public String getContactNumber() {
+	public String getContactNumber() {
 		return contactNumber;
 	}
 
