@@ -450,5 +450,20 @@
 		<put-attribute name="page-title" value="lbl.viewestimatephotograph" cascade="true"/>
 		<put-attribute name="body" value="/WEB-INF/views/estimatephotograph/searchEstimatePhotograph-form.jsp"/>
 	</definition>
+	
+	<definition name="contractormb-form" extends="base_layout">
+		<put-attribute name="page-title" value="lbl.createmb" cascade="true"/>
+		<put-attribute name="body" value="/WEB-INF/views/contractorportal/contractormb-form.jsp"/>
+	</definition>
+	
+	<definition name="contractormb-success" extends="base_layout">
+		<put-attribute name="page-title" value="lbl.createmb" cascade="true"/>
+		<put-attribute name="body" value="/WEB-INF/views/contractorportal/contractormb-success.jsp"/>
+	</definition>
+	
+	<definition name="contractormb-loasearch" extends="base_layout">
+		<put-attribute name="page-title" value="title.search.letterofacceptance.tocreatecontractormb" cascade="true"/>
+		<put-attribute name="body" value="/WEB-INF/views/contractorportal/contractormb-loasearch.jsp"/>
+	</definition>
 
 </tiles-definitions>

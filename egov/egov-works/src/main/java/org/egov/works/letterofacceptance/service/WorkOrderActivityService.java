@@ -167,5 +167,9 @@ public class WorkOrderActivityService {
     public Object getREActivityQuantity(final Long reId, final Long parentId) {
         return workOrderActivityRepository.getREActivityQuantity(reId, parentId);
     }
+    
+    public List<WorkOrderActivity> getWorkOrderActivitiesForContractorPortal(final Long workOrderId) {
+        return workOrderActivityRepository.getWorkOrderActivitiesForContractorPortal(workOrderId);
+    }
 
 }

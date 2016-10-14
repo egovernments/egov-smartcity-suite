@@ -61,5 +61,8 @@ public interface WorkOrderActivityRepository extends JpaRepository<WorkOrderActi
                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  
     @Query("select sum(woa.approvedQuantity*coalesce((CASE WHEN woa.activity.revisionType = 'REDUCED_QUANTITY' THEN -1 WHEN woa.activity.revisionType = 'ADDITIONAL_QUANTITY' THEN 1 WHEN woa.activity.revisionType = 'NON_TENDERED_ITEM' THEN 1 WHEN woa.activity.revisionType = 'LUMP_SUM_ITEM' THEN 1 END),1)) from WorkOrderActivity woa where woa.activity.abstractEstimate.egwStatus.code = 'APPROVED' and woa.activity.abstractEstimate.id !=:revisionEstimateId group by woa.activity.parent having (woa.activity.parent is not null and woa.activity.parent.id =:parentId)")
     Object getREActivityQuantity(@Param("revisionEstimateId") Long revisionEstimateId,@Param ("parentId") Long parentId);
+
+    @Query("select woa from WorkOrderActivity woa where woa.workOrderEstimate.workOrder.id = :workOrderId or woa.workOrderEstimate.workOrder.parent.id= :workOrderId")
+    List<WorkOrderActivity> getWorkOrderActivitiesForContractorPortal(@Param("workOrderId") Long workOrderId);
     
 }

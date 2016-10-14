@@ -121,6 +121,9 @@ public class WorksConstants {
     public static final String SUBTYPEOFWORK = "SubTypeOfWork";
     public static final String CANCELLED = "cancelled";
     public static final String BALANCE_NO_OF_WORKS = "BalanceWorks";
+    public static final String MILESTONE_NOT_YET_STARTED = "Not Yet Started";
+    public static final String MILESTONE_IN_PROGRESS = "In Progress";
+    public static final String MILESTONE_COMPLETED = "Completed";
 
     public static final String DEFAULT_PROJECTCODE_STATUS = "CREATED";
 
@@ -260,6 +263,7 @@ public class WorksConstants {
     public static final String WORKORDER = "WorkOrder";
     public static final String CONTRACTORBILL = "CONTRACTORBILL";
     public static final String MBHEADER = "MBHeader";
+    public static final String CONTRACTORMBHEADER = "ContractorMBHeader";
 
     public static final String BOUNDARY_TYPE_WARD = "Ward";
     public static final String HIERARCHY_TYPE_ADMINISTRATION = "ADMINISTRATION";
