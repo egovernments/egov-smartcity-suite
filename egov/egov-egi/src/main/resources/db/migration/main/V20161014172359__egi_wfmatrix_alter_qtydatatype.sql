@@ -1,0 +1,2 @@
+ALTER TABLE eg_wf_matrix ALTER COLUMN fromqty type DOUBLE PRECISION;
+ALTER TABLE eg_wf_matrix ALTER COLUMN toqty type DOUBLE PRECISION;
