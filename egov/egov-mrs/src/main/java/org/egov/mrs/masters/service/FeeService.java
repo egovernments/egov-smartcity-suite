@@ -49,7 +49,7 @@ import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 
 import org.egov.mrs.domain.enums.MarriageFeeCriteriaType;
-import org.egov.mrs.masters.entity.Fee;
+import org.egov.mrs.masters.entity.MarriageFee;
 import org.egov.mrs.masters.repository.FeeRepository;
 import org.hibernate.Criteria;
 import org.hibernate.Session;
@@ -78,28 +78,28 @@ public class FeeService {
 	}
 
 	@Transactional
-	public void create(final Fee fee) {
+	public void create(final MarriageFee fee) {
 		feeRepository.save(fee);
 	}
 
 	@Transactional
-	public Fee update(final Fee fee) {
+	public MarriageFee update(final MarriageFee fee) {
 		return feeRepository.saveAndFlush(fee);
 	}
 
-	public Fee getFee(final Long id) {
+	public MarriageFee getFee(final Long id) {
 		return feeRepository.findById(id);
 	}
 
-	public List<Fee> getAll() {
+	public List<MarriageFee> getAll() {
 		return feeRepository.findAll();
 	}
 
-	public Fee getFeeForDays(Long days) {
+	public MarriageFee getFeeForDays(Long days) {
 		return feeRepository.findByToDaysLessThanEqual(days);
 	}
 
-	public Fee getFeeForDate(Date date) {
+	public MarriageFee getFeeForDate(Date date) {
 		Long daysAfterMarriage = ChronoUnit.DAYS.between(date.toInstant()
 				.atZone(ZoneId.systemDefault()).toLocalDateTime(),
 				LocalDateTime.now());
@@ -107,25 +107,31 @@ public class FeeService {
 		return getFeeForDays(daysAfterMarriage);
 	}
 
-	public Fee getFeeForCriteria(String criteria) {
+	public MarriageFee getFeeForCriteria(String criteria) {
 		return feeRepository.findByCriteria(criteria);
 	}
 	
-	public List<Fee> searchFee(Fee fee) {
+	public List<MarriageFee> searchFee(MarriageFee fee) {
 		  final Criteria criteria = buildSearchCriteria(fee);
 	        return criteria.list();
 	}
 
+	public List<MarriageFee> searchGeneralTypeFeeses() {
+		final Criteria criteria = getCurrentSession().createCriteria(MarriageFee.class);
+		criteria.add(Restrictions.eq("feeType", MarriageFeeCriteriaType.GENERAL));
+	        return criteria.list();
+	}
+
 	@SuppressWarnings("unchecked")
-	public List<Fee> searchRegistrationFeesWithGeneralType(Fee fee) {
+	public List<MarriageFee> searchRegistrationFeesWithGeneralType(MarriageFee fee) {
 		final Criteria criteria = buildSearchCriteria(fee);
 		criteria.add(Restrictions.eq("feeType", MarriageFeeCriteriaType.GENERAL));
 		return criteria.list();
 		
 	}
 	
-	public Criteria buildSearchCriteria(Fee fee) {
-		final Criteria criteria = getCurrentSession().createCriteria(Fee.class);
+	public Criteria buildSearchCriteria(MarriageFee fee) {
+		final Criteria criteria = getCurrentSession().createCriteria(MarriageFee.class);
 
 		if (null != fee.getCriteria())
 			criteria.add(Restrictions.ilike("criteria", fee.getCriteria().trim(),

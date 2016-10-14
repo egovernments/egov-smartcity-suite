@@ -40,6 +40,8 @@
 package org.egov.mrs.masters.entity;
 
 import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -48,29 +50,55 @@ import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
 
 import org.egov.infra.persistence.entity.AbstractAuditable;
+import org.egov.infra.persistence.validator.annotation.Unique;
+import org.egov.mrs.domain.enums.MarriageFeeCriteriaType;
+import org.egov.search.domain.Searchable;
+import org.hibernate.envers.AuditOverride;
+import org.hibernate.envers.AuditOverrides;
+import org.hibernate.envers.Audited;
 import org.hibernate.validator.constraints.Length;
 import org.hibernate.validator.constraints.SafeHtml;
 
-@Entity
-@Table(name = "egmrs_religion")
-@SequenceGenerator(name = Religion.SEQ_RELIGION, sequenceName = Religion.SEQ_RELIGION, allocationSize = 1)
-public class Religion extends AbstractAuditable {
+/**
+ * Entity representing the Fee to be paid for Marriage Registration/Re-issue
+ *
+ * @author nayeem
+ *
+ */
 
-    private static final long serialVersionUID = 2036009361527357796L;
-    public static final String SEQ_RELIGION = "SEQ_EGMRS_RELIGION";
+@Entity
+@Table(name = "egmrs_fee")
+@Unique(id = "id", tableName = "egmrs_fee", fields = { "criteria" }, columnName = { "criteria" }, enableDfltMsg = true)
+@Searchable
+@SequenceGenerator(name = MarriageFee.SEQ_FEE, sequenceName = MarriageFee.SEQ_FEE, allocationSize = 1)
+@AuditOverrides({ @AuditOverride(forClass = AbstractAuditable.class, name = "lastModifiedBy"),
+    @AuditOverride(forClass = AbstractAuditable.class, name = "lastModifiedDate") })
+public class MarriageFee extends AbstractAuditable {
+
+    private static final long serialVersionUID = 4605301246092443240L;
+    public static final String SEQ_FEE = "SEQ_EGMRS_FEE";
 
     @Id
-    @GeneratedValue(generator = SEQ_RELIGION, strategy = GenerationType.SEQUENCE)
+    @GeneratedValue(generator = SEQ_FEE, strategy = GenerationType.SEQUENCE)
     private Long id;
 
     @SafeHtml
-    @NotNull
-    @Length(max = 30)
-    private String name;
-
-    @SafeHtml
     @Length(max = 50)
-    private String description;
+    @Audited
+    private String criteria;
+
+    @NotNull
+    @Audited
+    private Double fees;
+    
+    @Enumerated(EnumType.ORDINAL)
+    private MarriageFeeCriteriaType feeType;
+    
+    @Audited
+    private Integer fromDays;
+    
+    @Audited
+    private Integer toDays;
 
     @Override
     public Long getId() {
@@ -82,28 +110,53 @@ public class Religion extends AbstractAuditable {
         this.id = id;
     }
 
-    public String getName() {
-        return name;
+    public String getCriteria() {
+        return criteria;
     }
 
-    public void setName(final String name) {
-        this.name = name;
+    public void setCriteria(final String criteria) {
+        this.criteria = criteria;
     }
 
-    public String getDescription() {
-        return description;
+    public Double getFees() {
+        return fees;
     }
 
-    public void setDescription(final String description) {
-        this.description = description;
+    public void setFees(final Double fees) {
+        this.fees = fees;
     }
+    
+    public Integer getFromDays() {
+        return fromDays;
+    }
+
+    public void setFromDays(Integer fromDays) {
+        this.fromDays = fromDays;
+    }
+
+    public Integer getToDays() {
+        return toDays;
+    }
+    
+    public void setToDays(Integer toDays) {
+        this.toDays = toDays;
+    }
+    public MarriageFeeCriteriaType getFeeType() {
+		return feeType;
+	}
+
+	public void setFeeType(MarriageFeeCriteriaType feeType) {
+		this.feeType = feeType;
+	}
+    
 
     @Override
     public int hashCode() {
         final int prime = 31;
         int result = super.hashCode();
+        result = prime * result + (criteria == null ? 0 : criteria.hashCode());
+        result = prime * result + (fees == null ? 0 : fees.hashCode());
         result = prime * result + (id == null ? 0 : id.hashCode());
-        result = prime * result + (name == null ? 0 : name.hashCode());
         return result;
     }
 
@@ -118,21 +171,28 @@ public class Religion extends AbstractAuditable {
         if (getClass() != obj.getClass())
             return false;
         
-        final Religion other = (Religion) obj;
-        
+        final MarriageFee other = (MarriageFee) obj;
+
         if (id == null) {
             if (other.id != null)
                 return false;
         } else if (!id.equals(other.id))
             return false;
         
-        if (name == null) {
-            if (other.name != null)
+        if (criteria == null) {
+            if (other.criteria != null)
                 return false;
-        } else if (!name.equals(other.name))
+        } else if (!criteria.equals(other.criteria))
+            return false;
+        
+        if (fees == null) {
+            if (other.fees != null)
+                return false;
+        } else if (!fees.equals(other.fees))
             return false;
         
         return true;
     }
 
+	
 }

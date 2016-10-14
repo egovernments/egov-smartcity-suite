@@ -46,7 +46,7 @@ import java.util.List;
 import javax.validation.Valid;
 
 import org.egov.mrs.domain.enums.MarriageFeeCriteriaType;
-import org.egov.mrs.masters.entity.Fee;
+import org.egov.mrs.masters.entity.MarriageFee;
 import org.egov.mrs.masters.service.FeeService;
 import org.egov.mrs.web.adaptor.FeeJsonAdaptor;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -78,12 +78,12 @@ public class FeeController {
 
 	@RequestMapping(value = "/fee/create", method = RequestMethod.GET)
 	public String loadCreateForm(final Model model) {
-		model.addAttribute("fee", new Fee());
+		model.addAttribute("fee", new MarriageFee());
 		return MRG_FEE_CREATE;
 	}
 
 	@RequestMapping(value = "/fee/create", method = RequestMethod.POST)
-	public String createFee(@Valid @ModelAttribute final Fee fee,
+	public String createFee(@Valid @ModelAttribute final MarriageFee fee,
 			final BindingResult errors,
 			final RedirectAttributes redirectAttributes) {
 
@@ -106,22 +106,22 @@ public class FeeController {
 	@RequestMapping(value = "/fee/search/{mode}", method = RequestMethod.GET)
 	public String getSearchPage(@PathVariable("mode") final String mode,
 			final Model model) {
-		model.addAttribute("fee", new Fee());
+		model.addAttribute("fee", new MarriageFee());
 		return MRG_FEE_SEARCH;
 	}
 
 	@RequestMapping(value = "/fee/searchResult/{mode}", method = RequestMethod.POST, produces = MediaType.TEXT_PLAIN_VALUE)
 	public @ResponseBody String searchFeeResult(@PathVariable("mode") final String mode, Model model,
-			@ModelAttribute final Fee fee) {
+			@ModelAttribute final MarriageFee fee) {
 		
-		List<Fee> searchResultList = null;
+		List<MarriageFee> searchResultList = null;
 		if(mode.equalsIgnoreCase("edit")){
 			searchResultList	= feeService.searchRegistrationFeesWithGeneralType(fee);
 		}else{
 			searchResultList=  feeService.searchFee(fee);
 		}
 			String result = new StringBuilder("{ \"data\":")
-				.append(toJSON(searchResultList, Fee.class,
+				.append(toJSON(searchResultList, MarriageFee.class,
 						FeeJsonAdaptor.class)).append("}").toString();
 		return result;
 	}
@@ -132,7 +132,7 @@ public class FeeController {
 	}
 
 	@RequestMapping(value = "/fee/update", method = RequestMethod.POST)
-	public String updateFee(@Valid @ModelAttribute final Fee fee,
+	public String updateFee(@Valid @ModelAttribute final MarriageFee fee,
 			final BindingResult errors,
 			final RedirectAttributes redirectAttributes) {
 		if (errors.hasErrors()) {

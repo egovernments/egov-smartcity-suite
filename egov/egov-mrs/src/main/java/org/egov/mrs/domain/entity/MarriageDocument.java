@@ -51,7 +51,6 @@ import javax.persistence.Transient;
 import javax.validation.constraints.NotNull;
 
 import org.egov.infra.persistence.entity.AbstractAuditable;
-import org.egov.mrs.domain.enums.FeeType;
 import org.egov.mrs.domain.enums.MarriageDocumentType;
 import org.hibernate.validator.constraints.SafeHtml;
 import org.springframework.web.multipart.MultipartFile;

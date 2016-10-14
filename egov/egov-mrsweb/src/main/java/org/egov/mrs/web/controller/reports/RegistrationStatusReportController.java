@@ -49,7 +49,7 @@ import java.util.Map;
 import org.egov.mrs.application.MarriageConstants;
 import org.egov.mrs.domain.entity.SearchModel;
 import org.egov.mrs.domain.entity.SearchResult;
-import org.egov.mrs.domain.enums.FeeType;
+import org.egov.mrs.domain.enums.MarriageFeeType;
 import org.egov.mrs.domain.service.MarriageRegistrationService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -94,7 +94,7 @@ public class RegistrationStatusReportController {
             searchResult.setWifeName(registration.getWife().getName().getFirstName());
             searchResult.setRegistrationDate(formatter.format(registration.getCreatedDate()));
             searchResult.setDateOfMarriage(formatter.format(registration.getDateOfMarriage()));
-            searchResult.setApplicationType(FeeType.MRGREGISTRATION.name());
+            searchResult.setApplicationType(MarriageFeeType.MRGREGISTRATION.name());
             searchResult.setFeePaid(registration.getFeePaid());
             searchResult.setStatus(registration.getStatus().getDescription());
             searchResult.setRemarks(registration.getRejectionReason());

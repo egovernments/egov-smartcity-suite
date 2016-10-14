@@ -44,7 +44,7 @@ import java.util.List;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 
-import org.egov.mrs.masters.entity.Act;
+import org.egov.mrs.masters.entity.MarriageAct;
 import org.egov.mrs.masters.repository.ActRepository;
 import org.hibernate.Criteria;
 import org.hibernate.Session;
@@ -71,31 +71,31 @@ public class ActService {
 	}
 
     @Transactional
-    public void create(final Act act) {
+    public void create(final MarriageAct act) {
         actRepository.save(act);
     }
 
     @Transactional
-    public Act update(final Act act) {
+    public MarriageAct update(final MarriageAct act) {
         return actRepository.save(act);
     }
 
-    public Act getAct(final Long id) {
+    public MarriageAct getAct(final Long id) {
         return actRepository.findById(id);
     }
 
-    public List<Act> getActs() {
+    public List<MarriageAct> getActs() {
         return actRepository.findAll();
     }
     
-    public Act getProxy(final Long id) {
+    public MarriageAct getProxy(final Long id) {
         return actRepository.getOne(id);
     }
     
     @SuppressWarnings("unchecked")
-   	public List<Act> searchActs(Act act) {
+   	public List<MarriageAct> searchActs(MarriageAct act) {
    		final Criteria criteria = getCurrentSession().createCriteria(
-   				Act.class);
+   				MarriageAct.class);
    		if (null != act.getName())
    			criteria.add(Restrictions.ilike("name",act.getName(),MatchMode.ANYWHERE));
    		return criteria.list();

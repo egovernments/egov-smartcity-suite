@@ -67,7 +67,7 @@ import org.egov.infra.filestore.entity.FileStoreMapper;
 import org.egov.infra.persistence.entity.AbstractAuditable;
 import org.egov.mrs.domain.enums.MaritalStatus;
 import org.egov.mrs.domain.enums.ReligionPractice;
-import org.egov.mrs.masters.entity.Religion;
+import org.egov.mrs.masters.entity.MarriageReligion;
 import org.hibernate.validator.constraints.Length;
 import org.hibernate.validator.constraints.SafeHtml;
 import org.springframework.util.FileCopyUtils;
@@ -95,7 +95,7 @@ public class Applicant extends AbstractAuditable {
     @NotNull
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "religion")
-    private Religion religion;
+    private MarriageReligion religion;
 
     @NotNull
     @Enumerated(EnumType.STRING)
@@ -207,11 +207,11 @@ public class Applicant extends AbstractAuditable {
         this.otherName = otherName;
     }
 
-    public Religion getReligion() {
+    public MarriageReligion getReligion() {
         return religion;
     }
 
-    public void setReligion(final Religion religion) {
+    public void setReligion(final MarriageReligion religion) {
         this.religion = religion;
     }
 

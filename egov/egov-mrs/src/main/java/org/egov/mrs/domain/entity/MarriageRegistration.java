@@ -41,10 +41,8 @@ package org.egov.mrs.domain.entity;
 
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Set;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
@@ -67,7 +65,8 @@ import org.egov.commons.EgwStatus;
 import org.egov.demand.model.EgDemand;
 import org.egov.infra.admin.master.entity.Boundary;
 import org.egov.infra.workflow.entity.StateAware;
-import org.egov.mrs.masters.entity.Act;
+import org.egov.mrs.masters.entity.MarriageAct;
+import org.egov.mrs.masters.entity.MarriageFee;
 import org.hibernate.validator.constraints.Length;
 import org.hibernate.validator.constraints.SafeHtml;
 
@@ -101,7 +100,7 @@ public class MarriageRegistration extends StateAware {
     @NotNull
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "marriageact")
-    private Act marriageAct;
+    private MarriageAct marriageAct;
 
     @NotNull
     @SafeHtml
@@ -147,8 +146,9 @@ public class MarriageRegistration extends StateAware {
     private boolean affidavit;
     private boolean marriageCard;
 
-    @NotNull
-    private String feeCriteria;
+    @ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @JoinColumn(name = "feeCriteria")
+    private MarriageFee feeCriteria;
 
     @NotNull
     private Double feePaid;
@@ -244,11 +244,11 @@ public class MarriageRegistration extends StateAware {
         this.dateOfMarriage = dateOfMarriage;
     }
 
-    public Act getMarriageAct() {
+    public MarriageAct getMarriageAct() {
         return marriageAct;
     }
 
-    public void setMarriageAct(final Act marriageAct) {
+    public void setMarriageAct(final MarriageAct marriageAct) {
         this.marriageAct = marriageAct;
     }
 
@@ -336,11 +336,11 @@ public class MarriageRegistration extends StateAware {
         this.coupleFromSamePlace = coupleFromSamePlace;
     }
 
-    public String getFeeCriteria() {
+    public MarriageFee getFeeCriteria() {
         return feeCriteria;
     }
 
-    public void setFeeCriteria(final String feeCriteria) {
+    public void setFeeCriteria(final MarriageFee feeCriteria) {
         this.feeCriteria = feeCriteria;
     }
 

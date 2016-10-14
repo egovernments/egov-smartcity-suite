@@ -86,10 +86,11 @@ import org.egov.mrs.domain.entity.MarriageDocument;
 import org.egov.mrs.domain.entity.MarriageRegistration;
 import org.egov.mrs.domain.entity.RegistrationDocument;
 import org.egov.mrs.domain.entity.SearchModel;
-import org.egov.mrs.domain.enums.FeeType;
+import org.egov.mrs.domain.enums.MarriageFeeType;
 import org.egov.mrs.domain.repository.MarriageRegistrationRepository;
 import org.egov.mrs.domain.repository.WitnessRepository;
 import org.egov.mrs.masters.service.ActService;
+import org.egov.mrs.masters.service.FeeService;
 import org.egov.mrs.masters.service.ReligionService;
 import org.egov.mrs.utils.MarriageRegistrationNoGenerator;
 import org.egov.pims.commons.Position;
@@ -171,10 +172,7 @@ public class MarriageRegistrationService {
 
     @Autowired
     protected WitnessRepository witnessRepository;
-    
-    @Autowired
-    private AssignmentService assignmentService;
-    
+   
     @Autowired
     private MarriageUtils marriageUtils;
     
@@ -183,7 +181,9 @@ public class MarriageRegistrationService {
     
     @Autowired
     private EisCommonService eisCommonService;
-
+    @Autowired
+    private FeeService feeService;
+    
     @Autowired
     public MarriageRegistrationService(final MarriageRegistrationRepository registrationRepository) {
         this.registrationRepository = registrationRepository;
@@ -236,6 +236,8 @@ public class MarriageRegistrationService {
             registration.setPriest(null);
 
         registration.setZone(boundaryService.getBoundaryById(registration.getZone().getId()));
+        if(registration.getFeeCriteria()!=null)
+        registration.setFeeCriteria(feeService.getFee(registration.getFeeCriteria().getId()));
 
         try {
             registration.getHusband().copyPhotoAndSignatureToByteArray();
@@ -448,7 +450,7 @@ public class MarriageRegistrationService {
         final User user = securityUtils.getCurrentUser();
         final ApplicationIndexBuilder applicationIndexBuilder = new ApplicationIndexBuilder(MarriageConstants.MODULE_NAME,
                 registration.getApplicationNo(),
-                registration.getApplicationDate(), FeeType.MRGREGISTRATION.name(),
+                registration.getApplicationDate(), MarriageFeeType.MRGREGISTRATION.name(),
                 registration.getHusband().getFullName().concat(registration.getWife().getFullName()),
                 registration.getStatus().getCode(),
                 "/mrs/registration/" + registration.getId(),

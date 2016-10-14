@@ -61,6 +61,7 @@ import javax.validation.constraints.NotNull;
 import org.egov.demand.model.EgDemand;
 import org.egov.infra.workflow.entity.StateAware;
 import org.egov.mrs.domain.enums.ApplicationStatus;
+import org.egov.mrs.masters.entity.MarriageFee;
 import org.hibernate.validator.constraints.Length;
 
 /**
@@ -102,7 +103,7 @@ public class ReIssue extends StateAware {
     private MarriageRegistration registration;
     
     @NotNull
-    private String feeCriteria;
+    private MarriageFee feeCriteria;
     
     @NotNull
     private Double feePaid;
@@ -183,11 +184,11 @@ public class ReIssue extends StateAware {
         this.reIssueDate = reIssueDate;
     }
     
-    public String getFeeCriteria() {
+    public MarriageFee getFeeCriteria() {
         return feeCriteria;
     }
     
-    public void setFeeCriteria(String feeCriteria) {
+    public void setFeeCriteria(MarriageFee feeCriteria) {
         this.feeCriteria = feeCriteria;
     }
     

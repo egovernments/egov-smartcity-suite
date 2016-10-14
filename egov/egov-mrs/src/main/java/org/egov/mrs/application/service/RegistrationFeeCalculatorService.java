@@ -44,7 +44,7 @@ import java.time.ZoneId;
 import java.time.temporal.ChronoUnit;
 import java.util.Date;
 
-import org.egov.mrs.domain.enums.FeeType;
+import org.egov.mrs.domain.enums.MarriageFeeType;
 import org.egov.mrs.masters.service.FeeService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -70,7 +70,7 @@ public class RegistrationFeeCalculatorService implements MarriageFeeCalculator {
 
     @Override
     public String getFeeType() {
-        return FeeType.MRGREGISTRATION.name();
+        return MarriageFeeType.MRGREGISTRATION.name();
     }
 
 }

@@ -44,7 +44,7 @@ import java.util.List;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 
-import org.egov.mrs.masters.entity.Religion;
+import org.egov.mrs.masters.entity.MarriageReligion;
 import org.egov.mrs.masters.repository.ReligionRepository;
 import org.hibernate.Criteria;
 import org.hibernate.Session;
@@ -72,39 +72,39 @@ public class ReligionService {
     }
 
     @Transactional
-    public void createReligion(final Religion religion) {
+    public void createReligion(final MarriageReligion religion) {
         religionRepository.save(religion);
     }
 
     @Transactional
-    public Religion updateReligion(final Religion religion) {
+    public MarriageReligion updateReligion(final MarriageReligion religion) {
         return religionRepository.saveAndFlush(religion);
     }
 
-    public Religion findById(final Long id) {
+    public MarriageReligion findById(final Long id) {
         return religionRepository.findById(id);
     }
 
-    public Religion getReligion(final String religionName) {
+    public MarriageReligion getReligion(final String religionName) {
         return religionRepository.findByName(religionName);
     }
 
-    public List<Religion> getReligions() {
+    public List<MarriageReligion> getReligions() {
         return religionRepository.findAll();
     }
 
-    public Religion getProxy(final Long id) {
+    public MarriageReligion getProxy(final Long id) {
         return religionRepository.getOne(id);
     }
     
-    public List<Religion> findAll() {
+    public List<MarriageReligion> findAll() {
         return religionRepository.findAll();
     }
     
     @SuppressWarnings("unchecked")
-	public List<Religion> searchReligions(Religion religion) {
+	public List<MarriageReligion> searchReligions(MarriageReligion religion) {
 		final Criteria criteria = getCurrentSession().createCriteria(
-				Religion.class);
+				MarriageReligion.class);
 		if (null != religion.getName())
 			criteria.add(Restrictions.ilike("name", religion.getName(),MatchMode.ANYWHERE));
 		return criteria.list();

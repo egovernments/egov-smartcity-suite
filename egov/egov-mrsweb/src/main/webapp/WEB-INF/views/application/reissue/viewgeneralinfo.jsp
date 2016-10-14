@@ -113,7 +113,7 @@
 <div class="row">
 	<div class="form-group">
 		<div class="col-sm-3 add-margin"><spring:message code="lbl.fee.criteria"/></div>
-		<div class="col-sm-3 add-margin view-content"><c:out value="${reissue.feeCriteria}" /></div>
+		<div class="col-sm-3 add-margin view-content"><c:out value="${reissue.feeCriteria.criteria}" /></div>
 		<div class="col-sm-3 add-margin"><spring:message code="lbl.fee"/></div>
 		<div class="col-sm-3 add-margin view-content"><c:out value="${reissue.feePaid}" /></div>
 	</div>

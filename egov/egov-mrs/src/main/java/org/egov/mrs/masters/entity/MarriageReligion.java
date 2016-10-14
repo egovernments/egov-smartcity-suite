@@ -52,15 +52,15 @@ import org.hibernate.validator.constraints.Length;
 import org.hibernate.validator.constraints.SafeHtml;
 
 @Entity
-@Table(name = "egmrs_act")
-@SequenceGenerator(name = Act.SEQ_ACT, sequenceName = Act.SEQ_ACT, allocationSize = 1)
-public class Act extends AbstractAuditable {
+@Table(name = "egmrs_religion")
+@SequenceGenerator(name = MarriageReligion.SEQ_RELIGION, sequenceName = MarriageReligion.SEQ_RELIGION, allocationSize = 1)
+public class MarriageReligion extends AbstractAuditable {
 
-    private static final long serialVersionUID = -8796522085867045434L;
-    public static final String SEQ_ACT = "SEQ_EGMRS_ACT";
+    private static final long serialVersionUID = 2036009361527357796L;
+    public static final String SEQ_RELIGION = "SEQ_EGMRS_RELIGION";
 
     @Id
-    @GeneratedValue(generator = SEQ_ACT, strategy = GenerationType.SEQUENCE)
+    @GeneratedValue(generator = SEQ_RELIGION, strategy = GenerationType.SEQUENCE)
     private Long id;
 
     @SafeHtml
@@ -118,7 +118,7 @@ public class Act extends AbstractAuditable {
         if (getClass() != obj.getClass())
             return false;
         
-        final Act other = (Act) obj;
+        final MarriageReligion other = (MarriageReligion) obj;
         
         if (id == null) {
             if (other.id != null)

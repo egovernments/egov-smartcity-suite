@@ -42,16 +42,16 @@ package org.egov.mrs.web.adaptor;
 import java.lang.reflect.Type;
 
 import org.egov.infra.utils.StringUtils;
-import org.egov.mrs.masters.entity.Act;
+import org.egov.mrs.masters.entity.MarriageAct;
 
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonSerializationContext;
 import com.google.gson.JsonSerializer;
 
-public class ActJsonAdaptor implements JsonSerializer<Act> {
+public class ActJsonAdaptor implements JsonSerializer<MarriageAct> {
 	 @Override
-	    public JsonElement serialize(final Act act, final Type type, final JsonSerializationContext jsc) {
+	    public JsonElement serialize(final MarriageAct act, final Type type, final JsonSerializationContext jsc) {
 	        final JsonObject jsonObject = new JsonObject();
 	        if (act != null) {
 	            if (act.getName() != null)

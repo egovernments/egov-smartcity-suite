@@ -39,13 +39,13 @@
 
 package org.egov.mrs.masters.repository;
 
-import org.egov.mrs.masters.entity.Religion;
+import org.egov.mrs.masters.entity.MarriageReligion;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
 @Repository
-public interface ReligionRepository extends JpaRepository<Religion, Long> {
-    Religion findById(Long id);
+public interface ReligionRepository extends JpaRepository<MarriageReligion, Long> {
+    MarriageReligion findById(Long id);
 
-    Religion findByName(String religionName);
+    MarriageReligion findByName(String religionName);
 }

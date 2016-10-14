@@ -39,13 +39,13 @@
 
 package org.egov.mrs.masters.repository;
 
-import org.egov.mrs.masters.entity.Act;
+import org.egov.mrs.masters.entity.MarriageAct;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
 @Repository
-public interface ActRepository extends JpaRepository<Act, Long> {
-    Act findById(Long id);
+public interface ActRepository extends JpaRepository<MarriageAct, Long> {
+    MarriageAct findById(Long id);
 
-    Act findByName(String actName);
+    MarriageAct findByName(String actName);
 }

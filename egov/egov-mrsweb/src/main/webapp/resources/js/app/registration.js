@@ -127,8 +127,8 @@ $(document).ready( function () {
 	})*/
 	
 	$('#select-marriagefees').change( function () {
-		$('#txt-feepaid').val($(this).val());
-		$('#txt_feecriteria').val($('#select-marriagefees option:selected').text());
+		//$('#txt-feepaid').val($(this).val());
+		//$('#txt_feecriteria').val($('#select-marriagefees option:selected').text());
 	})
 	
 	$('input[id$="email"]').blur(function() {

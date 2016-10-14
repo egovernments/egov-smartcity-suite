@@ -62,7 +62,7 @@ import org.egov.mrs.domain.entity.Applicant;
 import org.egov.mrs.domain.entity.MarriageDocument;
 import org.egov.mrs.domain.entity.ReIssue;
 import org.egov.mrs.domain.enums.ApplicationStatus;
-import org.egov.mrs.domain.enums.FeeType;
+import org.egov.mrs.domain.enums.MarriageFeeType;
 import org.egov.mrs.domain.repository.ReIssueRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -197,7 +197,7 @@ public class ReIssueService {
         final User user = securityUtils.getCurrentUser();
         final ApplicationIndexBuilder applicationIndexBuilder = new ApplicationIndexBuilder(MarriageConstants.MODULE_NAME,
                 reIssue.getApplicationNo(),
-                reIssue.getApplicationDate(), FeeType.CERTIFICATEISSUE.name(),
+                reIssue.getApplicationDate(), MarriageFeeType.CERTIFICATEISSUE.name(),
                 reIssue.getApplicant().getFullName(),
                 reIssue.getStatus().name(),
                 "/mrs/reissue/" + reIssue.getId(),

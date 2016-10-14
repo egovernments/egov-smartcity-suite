@@ -101,12 +101,13 @@
 			<spring:message code="lbl.fee.criteria"/><span class="mandatory"></span>
 		</label>
 		<div class="col-sm-3">
-			<form:select path="" id="select-marriagefees" cssClass="form-control" 
+			<form:select path="feeCriteria.id" id="select-marriagefees" cssClass="form-control" 
 						cssErrorClass="form-control error" required="required">
                  <form:option value=""> <spring:message code="lbl.default.option"/> </form:option>
-                 <form:options items="${feesList}" itemValue="fees" itemLabel="criteria"/>
+                 <form:options items="${feesList}" itemValue="id" itemLabel="criteria"/>
              </form:select>
-             <form:hidden path="feeCriteria" name="feeCriteria" id="txt_feecriteria"/>
+            <%--  <form:hidden path="feeCriteria.criteria" name="feeCriteria" id="txt_feecriteria"/> --%>
+               <form:errors path="feeCriteria.id" cssClass="add-margin error-msg"/>
 		</div>
 		<label class="col-sm-3 control-label">
 			<spring:message code="lbl.marriage.fee"/><span class="mandatory"></span>

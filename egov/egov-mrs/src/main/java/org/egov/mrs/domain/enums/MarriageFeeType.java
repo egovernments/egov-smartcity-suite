@@ -45,6 +45,6 @@ package org.egov.mrs.domain.enums;
  * @author nayeem
  *
  */
-public enum FeeType {
+public enum MarriageFeeType {
     MRGREGISTRATION, CERTIFICATEISSUE;
 }

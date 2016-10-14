@@ -41,7 +41,7 @@ package org.egov.mrs.web.controller.masters.act;
 
 import javax.validation.Valid;
 
-import org.egov.mrs.masters.entity.Act;
+import org.egov.mrs.masters.entity.MarriageAct;
 import org.egov.mrs.masters.service.ActService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
@@ -71,12 +71,12 @@ public class CreateActController {
 
 	@RequestMapping(value = "/act/create", method = RequestMethod.GET)
 	public String loadCreateForm(final Model model) {
-		model.addAttribute("act", new Act());
+		model.addAttribute("act", new MarriageAct());
 		return MRG_ACT_CREATE;
 	}
 
 	@RequestMapping(value = "/act/create", method = RequestMethod.POST)
-	public String createAct(@Valid @ModelAttribute final Act act,
+	public String createAct(@Valid @ModelAttribute final MarriageAct act,
 			final BindingResult errors,
 			final RedirectAttributes redirectAttributes) {
 

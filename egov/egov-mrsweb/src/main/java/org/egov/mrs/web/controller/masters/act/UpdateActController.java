@@ -41,7 +41,7 @@ package org.egov.mrs.web.controller.masters.act;
 
 import javax.validation.Valid;
 
-import org.egov.mrs.masters.entity.Act;
+import org.egov.mrs.masters.entity.MarriageAct;
 import org.egov.mrs.masters.service.ActService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
@@ -76,7 +76,7 @@ public class UpdateActController {
 	}
 
 	@RequestMapping(value = "/act/update", method = RequestMethod.POST)
-	public String updateAct(@Valid @ModelAttribute final Act act,
+	public String updateAct(@Valid @ModelAttribute final MarriageAct act,
 			final BindingResult errors,
 			final RedirectAttributes redirectAttributes) {
 		if (errors.hasErrors()) {

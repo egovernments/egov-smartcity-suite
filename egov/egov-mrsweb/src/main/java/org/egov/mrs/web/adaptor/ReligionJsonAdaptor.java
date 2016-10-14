@@ -3,16 +3,16 @@ package org.egov.mrs.web.adaptor;
 import java.lang.reflect.Type;
 
 import org.egov.infra.utils.StringUtils;
-import org.egov.mrs.masters.entity.Religion;
+import org.egov.mrs.masters.entity.MarriageReligion;
 
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonSerializationContext;
 import com.google.gson.JsonSerializer;
 
-public class ReligionJsonAdaptor implements JsonSerializer<Religion> {
+public class ReligionJsonAdaptor implements JsonSerializer<MarriageReligion> {
     @Override
-    public JsonElement serialize(final Religion religion, final Type type, final JsonSerializationContext jsc) {
+    public JsonElement serialize(final MarriageReligion religion, final Type type, final JsonSerializationContext jsc) {
         final JsonObject jsonObject = new JsonObject();
         if (religion != null) {
             if (religion.getName() != null)

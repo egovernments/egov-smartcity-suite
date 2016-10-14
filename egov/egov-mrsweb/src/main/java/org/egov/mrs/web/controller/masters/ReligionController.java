@@ -45,7 +45,7 @@ import java.util.List;
 
 import javax.validation.Valid;
 
-import org.egov.mrs.masters.entity.Religion;
+import org.egov.mrs.masters.entity.MarriageReligion;
 import org.egov.mrs.masters.service.ReligionService;
 import org.egov.mrs.web.adaptor.ReligionJsonAdaptor;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -79,12 +79,12 @@ public class ReligionController {
 
     @RequestMapping(value = "/religion/create", method = RequestMethod.GET)
     public String loadCreateForm(final Model model) {
-        model.addAttribute("religion", new Religion());
+        model.addAttribute("religion", new MarriageReligion());
         return MRG_RELIGION_CREATE;
     }
 
     @RequestMapping(value = "/religion/create", method = RequestMethod.POST)
-    public String createReligion(@Valid @ModelAttribute final Religion religion, final BindingResult errors,
+    public String createReligion(@Valid @ModelAttribute final MarriageReligion religion, final BindingResult errors,
             final RedirectAttributes redirectAttributes) {
 
         if (errors.hasErrors()){
@@ -103,16 +103,16 @@ public class ReligionController {
     
     @RequestMapping(value = "/religion/search/{mode}", method = RequestMethod.GET)
     public String getSearchPage(@PathVariable("mode") final String mode, final Model model) {
-    	model.addAttribute("religion", new Religion());
+    	model.addAttribute("religion", new MarriageReligion());
         return MRG_RELIGION_SEARCH;
     }
     
     
     @RequestMapping(value = "/religion/searchResult", method = RequestMethod.POST, produces = MediaType.TEXT_PLAIN_VALUE)
     public @ResponseBody String searchReligionResult( Model model,
-            @ModelAttribute final Religion religion) {
-    	List<Religion> searchResultList = religionService.searchReligions(religion);
-   	 String result = new StringBuilder("{ \"data\":").append(toJSON(searchResultList,Religion.class,  ReligionJsonAdaptor.class)).append("}")
+            @ModelAttribute final MarriageReligion religion) {
+    	List<MarriageReligion> searchResultList = religionService.searchReligions(religion);
+   	 String result = new StringBuilder("{ \"data\":").append(toJSON(searchResultList,MarriageReligion.class,  ReligionJsonAdaptor.class)).append("}")
                 .toString();
        return result;
     }
@@ -124,7 +124,7 @@ public class ReligionController {
     }
     
     @RequestMapping(value = "/religion/update", method = RequestMethod.POST)
-    public String updateReligion(@Valid @ModelAttribute final Religion religion, final BindingResult errors,
+    public String updateReligion(@Valid @ModelAttribute final MarriageReligion religion, final BindingResult errors,
             final RedirectAttributes redirectAttributes) {
         if (errors.hasErrors()){
         	return MRG_RELIGION_UPDATE;

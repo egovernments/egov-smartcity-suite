@@ -43,7 +43,7 @@ import static org.egov.infra.web.utils.WebUtils.toJSON;
 
 import java.util.List;
 
-import org.egov.mrs.masters.entity.Act;
+import org.egov.mrs.masters.entity.MarriageAct;
 import org.egov.mrs.masters.service.ActService;
 import org.egov.mrs.web.adaptor.ActJsonAdaptor;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -82,16 +82,16 @@ public class ViewActController {
 	@RequestMapping(value = "/act/search/{mode}", method = RequestMethod.GET)
 	public String getSearchPage(@PathVariable("mode") final String mode,
 			final Model model) {
-		model.addAttribute("act", new Act());
+		model.addAttribute("act", new MarriageAct());
 		return MRG_ACT_SEARCH;
 	}
 
 	@RequestMapping(value = "/act/searchResult", method = RequestMethod.POST, produces = MediaType.TEXT_PLAIN_VALUE)
 	public @ResponseBody String searchActResult(Model model,
-			@ModelAttribute final Act act) {
-		List<Act> searchResultList = actService.searchActs(act);
+			@ModelAttribute final MarriageAct act) {
+		List<MarriageAct> searchResultList = actService.searchActs(act);
 		String result = new StringBuilder("{ \"data\":")
-				.append(toJSON(searchResultList, Act.class,
+				.append(toJSON(searchResultList, MarriageAct.class,
 						ActJsonAdaptor.class)).append("}").toString();
 		return result;
 	}

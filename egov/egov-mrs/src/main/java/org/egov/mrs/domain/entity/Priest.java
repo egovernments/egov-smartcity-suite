@@ -52,7 +52,7 @@ import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
 
 import org.egov.infra.persistence.entity.AbstractAuditable;
-import org.egov.mrs.masters.entity.Religion;
+import org.egov.mrs.masters.entity.MarriageReligion;
 import org.hibernate.validator.constraints.Length;
 import org.hibernate.validator.constraints.SafeHtml;
 
@@ -74,7 +74,7 @@ public class Priest extends AbstractAuditable {
     @NotNull
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "religion")
-    private Religion religion;
+    private MarriageReligion religion;
 
     @NotNull
     @Length(min = 30)
@@ -97,11 +97,11 @@ public class Priest extends AbstractAuditable {
         this.id = id;
     }
 
-    public Religion getReligion() {
+    public MarriageReligion getReligion() {
         return religion;
     }
 
-    public void setReligion(final Religion religion) {
+    public void setReligion(final MarriageReligion religion) {
         this.religion = religion;
     }
 
