@@ -56,14 +56,16 @@
 		<c:if test="${reissue.status.code == 'APPROVED'}">
 			<c:set value="/mrs/reissue/certificate?reIssueId=${reissue.id}" var="actionUrl"></c:set>
 		</c:if>
-		<form:form role="form" action="${actionUrl}"
-			modelAttribute="reissue" id="form-reissue"
+		
+		<form:form role="form" action="/mrs/reIssue/update"
+			modelAttribute="reIssue" id="form-reissue"
 			cssClass="form-horizontal form-groups-bordered"
 			enctype="multipart/form-data">
 
 			<input type="hidden" id="reIssueId" value="${reissue.id}" />
 			<input type="hidden" id="reIssueStatus" value="${reissue.status.code}" />
 			<form:hidden path="" name="registration.id" id="reIssueRegistrationId" value="${reissue.registration.id}"/>	
+			<form:hidden path="" id="workFlowAction" name="workFlowAction"/>
 			
 			<div class="panel panel-primary" data-collapsed="0">
 				<div class="panel-heading">
@@ -92,36 +94,10 @@
 					  </div>
 				</div>
 			</div>
-			<c:if test="${reissue.rejectionReason != null}">
-				<div class="row">
-					<label class="col-sm-3 control-label text-right"><spring:message code="lbl.reason.rejection"/></label>
-					<div class="col-sm-8 add-margin view-content">
-						<c:out value="${reissue.rejectionReason}" />
-					</div>
-				</div>
-			</c:if>			
-			<br />
-			
+			<jsp:include page="../../common/reg-reissue-wfhistory.jsp"></jsp:include>
 			<c:choose>
 				<c:when test="${mode != 'view'}">			
-					<c:set value="${reissue.currentState.value}" var="stateValue"></c:set>
-					<c:if test="${stateValue != 'Assistant Engineer Approved' && stateValue != 'Fee Collected' && stateValue != 'Revenue Clerk Approved'}">
-						<jsp:include page="../../common/commonWorkflowMatrix.jsp"/>
-					</c:if>
-					<c:choose>
-						<c:when test="${reissue.currentState.nextAction == 'Asst. Engineer Approval Pending'}">
-							<div class="row">
-								<label class="col-sm-3 control-label text-right"><spring:message code="lbl.reason.rejection"/></label>
-								<div class="col-sm-8 add-margin">
-									<form:textarea class="form-control" path="approvalComent"  id="approvalComent" name="approvalComent"/><br />
-									<form:hidden path="" id="workFlowAction" name="workFlowAction"/>
-								</div>
-							</div>
-						</c:when>
-						<c:otherwise>
-							<form:hidden path="" id="workFlowAction" name="workFlowAction"/>
-						</c:otherwise>
-					</c:choose>
+					<jsp:include page="../../common/commonWorkflowMatrix.jsp"/>
 					<div class="buttonbottom" align="center">
 						<jsp:include page="../../common/commonWorkflowMatrix-button.jsp" />
 					</div>
@@ -130,11 +106,9 @@
 					<div class="buttonbottom" align="center"><a href="javascript:void(0)" class="btn btn-default" onclick="self.close()"><spring:message code="lbl.close"/></a></div>
 				</c:otherwise>
 			</c:choose>
-			
 		</form:form>
-		
 	</div>
 </div>
-
+<script src="<c:url value='/resources/js/app/mrgcert-reissue.js'/> "></script> 
 <script src="<c:url value='/resources/global/js/egov/inbox.js' context='/egi'/>"></script>
 <script src="<c:url value='/resources/js/app/navtabclickhandler.js'/> "></script>

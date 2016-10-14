@@ -54,7 +54,7 @@
 		</div>
 		<div class="col-sm-3 add-margin view-content">
 			 <c:out value="${reIssue.feeCriteria.criteria}" />
-			 <input type="hidden" name="feeCriteria.id" value="${reIssue.feeCriteria.id}" />
+			 <form:hidden path="feeCriteria.id"  value="${reIssue.feeCriteria.id}"/>	 
 		</div>
 		<div class="col-sm-3 add-margin">
 			<spring:message code="lbl.fee"/><span class="mandatory"></span>

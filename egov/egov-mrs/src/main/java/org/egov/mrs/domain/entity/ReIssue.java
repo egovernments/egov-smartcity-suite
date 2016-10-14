@@ -64,6 +64,7 @@ import org.egov.demand.model.EgDemand;
 import org.egov.infra.workflow.entity.StateAware;
 import org.egov.mrs.masters.entity.MarriageFee;
 import org.hibernate.validator.constraints.Length;
+import org.egov.mrs.domain.entity.MrApplicant; 
 
 /**
  * 
@@ -107,9 +108,10 @@ public class ReIssue extends StateAware {
     @JoinColumn(name = "registration")
     private MarriageRegistration registration;
     
-    @NotNull
-    private MarriageFee feeCriteria;
-    
+    @ManyToOne
+    @JoinColumn(name = "feecriteria", nullable = false)
+    private MarriageFee feeCriteria;   
+     
     @NotNull
     private Double feePaid;
 

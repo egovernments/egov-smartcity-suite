@@ -40,14 +40,19 @@
 package org.egov.mrs.domain.service;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.Hashtable;
+import java.util.List;
 import java.util.Map;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 
 import org.apache.commons.lang3.StringUtils;
+import org.egov.eis.service.EisCommonService;
 import org.egov.eis.web.contract.WorkflowContainer;
 import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.messaging.MessagingService;
@@ -55,6 +60,8 @@ import org.egov.infra.search.elastic.entity.ApplicationIndexBuilder;
 import org.egov.infra.search.elastic.service.ApplicationIndexService;
 import org.egov.infra.security.utils.SecurityUtils;
 import org.egov.infra.utils.ApplicationNumberGenerator;
+import org.egov.infra.workflow.entity.State;
+import org.egov.infra.workflow.entity.StateHistory;
 import org.egov.mrs.application.MarriageConstants;
 import org.egov.mrs.application.MarriageUtils;
 import org.egov.mrs.application.service.ReIssueDemandService;
@@ -65,6 +72,8 @@ import org.egov.mrs.domain.entity.MrApplicant;
 import org.egov.mrs.domain.entity.ReIssue;
 import org.egov.mrs.domain.enums.MarriageFeeType;
 import org.egov.mrs.domain.repository.ReIssueRepository;
+import org.egov.mrs.masters.service.MarriageFeeService;
+import org.egov.pims.commons.Position;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.MessageSource;
@@ -117,6 +126,12 @@ public class ReIssueService {
     
     @Autowired
     private MarriageUtils marriageUtils;
+    
+    @Autowired
+    private EisCommonService eisCommonService;
+    
+    @Autowired
+    private MarriageFeeService marriageFeeService;
 
     @Autowired
     public ReIssueService(final ReIssueRepository reIssueRepository) {
@@ -144,14 +159,15 @@ public class ReIssueService {
             reIssue.setApplicationNo(applicationNumberGenerator.generate());
             reIssue.setApplicationDate(new Date());
         }
-
+        if(reIssue.getFeeCriteria()!=null)
+            reIssue.setFeeCriteria(marriageFeeService.getFee(reIssue.getFeeCriteria().getId()));
         reIssue.setStatus(marriageUtils.getStatusByCodeAndModuleType(MarriageRegistration.RegistrationStatus.CREATED.toString(), MarriageConstants.MODULE_NAME));
         if (reIssue.getFeePaid() != null && reIssue.getDemand() == null){
         	reIssue.setDemand(reIssueDemandService.createDemand(new BigDecimal(reIssue.getFeePaid())));
         }
 
         final Map<Long, MarriageDocument> applicantDocumentAndId = new HashMap<Long, MarriageDocument>();
-        marriageDocumentService.getReIssueApplicantDocs().forEach(document -> applicantDocumentAndId.put(document.getId(), document));
+        marriageDocumentService.getGeneralDocuments().forEach(document -> applicantDocumentAndId.put(document.getId(), document));
 
         marriageApplicantService.addDocumentsToFileStore(null, reIssue.getApplicant(), applicantDocumentAndId);
 
@@ -282,6 +298,64 @@ public class ReIssueService {
         final String subject = mrsMessageSource.getMessage(msgKeyMailSubject, null, null);
         messagingService.sendEmail(reIssue.getRegistration().getHusband().getContactInfo().getEmail(), subject, message);
         messagingService.sendEmail(reIssue.getRegistration().getWife().getContactInfo().getEmail(), subject, message);
+    }
+    
+    /**
+     * @param registration
+     * @return
+     */
+    public List<Hashtable<String, Object>> getHistory(final ReIssue reIssue) {
+        User user = null;
+        final List<Hashtable<String, Object>> historyTable = new ArrayList<Hashtable<String, Object>>();
+        final State state = reIssue.getState();
+        final Hashtable<String, Object> map = new Hashtable<String, Object>(0);
+        if (null != state) {
+            if (!reIssue.getStateHistory().isEmpty()
+                    && reIssue.getStateHistory() != null)
+                Collections.reverse(reIssue.getStateHistory());
+            for (final StateHistory stateHistory : reIssue.getStateHistory()) {
+                final Hashtable<String, Object> HistoryMap = new Hashtable<String, Object>(0);
+                HistoryMap.put("date", stateHistory.getDateInfo());
+                HistoryMap.put("comments", stateHistory.getComments()!=null?stateHistory.getComments():"");
+                HistoryMap.put("updatedBy", stateHistory.getLastModifiedBy().getUsername() + "::"
+                        + stateHistory.getLastModifiedBy().getName());
+                HistoryMap.put("status", stateHistory.getValue());
+                final Position owner = stateHistory.getOwnerPosition();
+                user = stateHistory.getOwnerUser();
+                if (null != user) {
+                    HistoryMap.put("user", user.getUsername() + "::" + user.getName());
+                    HistoryMap.put("department",
+                            null != eisCommonService.getDepartmentForUser(user.getId()) ? eisCommonService
+                                    .getDepartmentForUser(user.getId()).getName() : "");
+                } else if (null != owner && null != owner.getDeptDesig()) {
+                    user = eisCommonService.getUserForPosition(owner.getId(), new Date());
+                    HistoryMap
+                            .put("user", null != user.getUsername() ? user.getUsername() + "::" + user.getName() : "");
+                    HistoryMap.put("department", null != owner.getDeptDesig().getDepartment() ? owner.getDeptDesig()
+                            .getDepartment().getName() : "");
+                }
+                historyTable.add(HistoryMap);
+            }
+
+            map.put("date", state.getDateInfo());
+            map.put("comments", state.getComments() != null ? state.getComments() : "");
+            map.put("updatedBy", state.getLastModifiedBy().getUsername() + "::" + state.getLastModifiedBy().getName());
+            map.put("status", state.getValue());
+            final Position ownerPosition = state.getOwnerPosition();
+            user = state.getOwnerUser();
+            if (null != user) {
+                map.put("user", user.getUsername() + "::" + user.getName());
+                map.put("department", null != eisCommonService.getDepartmentForUser(user.getId()) ? eisCommonService
+                        .getDepartmentForUser(user.getId()).getName() : "");
+            } else if (null != ownerPosition && null != ownerPosition.getDeptDesig()) {
+                user = eisCommonService.getUserForPosition(ownerPosition.getId(), new Date());
+                map.put("user", null != user.getUsername() ? user.getUsername() + "::" + user.getName() : "");
+                map.put("department", null != ownerPosition.getDeptDesig().getDepartment() ? ownerPosition
+                        .getDeptDesig().getDepartment().getName() : "");
+            }
+            historyTable.add(map);
+        }
+        return historyTable;
     }
 
 }
