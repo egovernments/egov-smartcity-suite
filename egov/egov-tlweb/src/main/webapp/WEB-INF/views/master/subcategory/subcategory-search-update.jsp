@@ -47,20 +47,14 @@
 
 <div class="row" id="page-content">
 	<div class="col-md-12">
-		<c:if test="${not empty message}">
-			<div class="alert alert-success" role="alert">
-				<spring:message code="${message}" />
-			</div>
-		</c:if>
 		<form:form role="form" method="post" modelAttribute="licenseSubCategory" class="form-horizontal form-groups-bordered">
 			<div class="panel panel-primary" data-collapsed="0">
 				<div class="panel-heading">
 					<div class="panel-title"><strong><spring:message code="title.subcategory.search" /></strong></div>
 				</div>
-        <div class="panel-body custom-form">
+             <div class="panel-body custom-form">
 					<div class="form-group">
-						<label class="col-sm-4 control-label"> <spring:message code="licenseCategory.category.lbl" /><span class="mandatory"></span>
-						</label>
+						<label class="col-sm-4 control-label"> <spring:message code="licenseCategory.category.lbl" /><span class="mandatory"></span></label>
 						<div class="col-sm-3 add-margin">
 							<form:select path="category" id="categories" cssClass="form-control" cssErrorClass="form-control error" required="required">
 								<form:option value="">
@@ -68,22 +62,20 @@
 								</form:option>
 								<form:options items="${licenseCategories}" itemValue="id"	itemLabel="name" />
 							</form:select>
-						</div>
-					</div>
-	            <label class="col-sm-4 control-label text-right"><spring:message code="lbl.subcategory" /> <span
-	                class="mandatory"></span> </label>
-	              <div class="col-sm-3 add-margin">
-	                <form:select path="code" id="licenseSubCategories" cssClass="form-control"   required="required"
-	                  cssErrorClass="form-control error">
-	                  <form:option value="">
-	                    <spring:message code="lbl.select" />
-	                  </form:option>
-	                  <form:options items="${licenseSubCategories}" itemValue="code" itemLabel="name" />
-	                </form:select>
-	              </div>
+						 </div>
+					  </div>
+	                   <label class="col-sm-4 control-label text-right"><spring:message code="lbl.subcategory" /> <span class="mandatory"></span> </label>
+	                  <div class="col-sm-3 add-margin">
+	                      <form:select path="code" id="licenseSubCategories" cssClass="form-control"   required="required" cssErrorClass="form-control error">
+	                           <form:option value="">
+	                               <spring:message code="lbl.category.select" />
+	                          </form:option>
+	                         <form:options items="${licenseSubCategories}" itemValue="code" itemLabel="name" />
+	                     </form:select>
+	                 </div>
                 </div>
             </div>
-    <div class="form-group">
+      <div class="form-group">
 	   <div class="text-center">
 			<button type="submit" class="btn btn-primary"><spring:message code="lbl.modify"/></button>
 			<button type="button" class="btn btn-default" data-dismiss="modal" onclick="self.close()"><spring:message code="lbl.close" /></button>

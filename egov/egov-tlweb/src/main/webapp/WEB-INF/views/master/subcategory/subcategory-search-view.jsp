@@ -47,11 +47,6 @@
 
 <div class="row" id="page-content">
 	<div class="col-md-12">
-		<c:if test="${not empty message}">
-			<div class="alert alert-success" role="alert">
-				<spring:message code="${message}" />
-			</div>
-		</c:if>
 		<form:form role="form" method="post" modelAttribute="licenseSubCategory" class="form-horizontal form-groups-bordered">
 			<div class="panel panel-primary" data-collapsed="0">
 				<div class="panel-heading">
@@ -76,19 +71,19 @@
 	                <form:select path="code" id="licenseSubCategories" cssClass="form-control"   required="required"
 	                  cssErrorClass="form-control error">
 	                  <form:option value="">
-	                    <spring:message code="lbl.select" />
+	                    <spring:message code="lbl.category.select" />
 	                  </form:option>
 	                  <form:options items="${licenseSubCategories}" itemValue="code" itemLabel="name" />
 	                </form:select>
 	              </div>
             </div>
             </div>
-	<div class="form-group">
+	  <div class="form-group">
 	   <div class="text-center">
 			<button type="submit" class="btn btn-primary"><spring:message code="lbl.view"/></button>
 			<button type="button" class="btn btn-default" data-dismiss="modal" onclick="self.close()"><spring:message code="lbl.close" /></button>
 	  </div>
-  </div>
+     </div>
   </form:form>
  </div>
 </div>

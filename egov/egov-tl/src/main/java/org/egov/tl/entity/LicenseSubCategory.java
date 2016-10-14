@@ -66,7 +66,7 @@ import java.util.List;
 @Entity
 @Table(name = "EGTL_MSTR_SUB_CATEGORY")
 @SequenceGenerator(name = LicenseSubCategory.SEQUENCE, sequenceName = LicenseSubCategory.SEQUENCE, allocationSize = 1)
-@Unique(fields = {"code","name"},enableDfltMsg = true, message = "{license.subcategory.exist}")
+@Unique(fields = {"code","name"},enableDfltMsg = true)
 @NamedQuery(name = "LICENSE_SUBCATEGORY_BY_NAME", query = "select lsc FROM LicenseSubCategory lsc where name =:name")
 public class LicenseSubCategory extends AbstractAuditable {
 
@@ -104,9 +104,9 @@ public class LicenseSubCategory extends AbstractAuditable {
     @JoinColumn(name = "ID_LICENSE_SUB_TYPE")
     private LicenseSubType licenseSubType;
 
-    @OneToMany(mappedBy = "subCategory", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true, targetEntity = LicenseSubCategoryDetails.class)
+    @OneToMany(mappedBy = "subCategory", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
     @Valid
-    private List<LicenseSubCategoryDetails> licenseSubCategoryDetails = new ArrayList<LicenseSubCategoryDetails>(0);
+	private List<LicenseSubCategoryDetails> licenseSubCategoryDetails = new ArrayList<>();
 
     public Long getId() {
         return id;
