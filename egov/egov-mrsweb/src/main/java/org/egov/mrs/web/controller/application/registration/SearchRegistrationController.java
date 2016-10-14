@@ -122,12 +122,4 @@ public class SearchRegistrationController {
                    .toString();
           return result;
     }
-
-    @RequestMapping(value = "/collectmrfee", method = RequestMethod.POST, produces = MediaType.TEXT_PLAIN_VALUE)
-    public @ResponseBody String searchApprovedRecords(Model model,@ModelAttribute final MarriageRegistration registration) throws ParseException {
-    	List<MarriageRegistration> searchResultList = marriageRegistrationService.searchApprovedMarriageRegistrations(registration);
-      	 String result = new StringBuilder("{ \"data\":").append(toJSON(searchResultList,MarriageRegistration.class,  MarriageRegistrationJsonAdaptor.class)).append("}")
-                   .toString();
-          return result;
-    }
 }
