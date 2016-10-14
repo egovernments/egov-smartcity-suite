@@ -1914,6 +1914,7 @@ function validateWorkFlowApprover(name) {
 
 	if(flag) {
 		deleteHiddenRows();
+		var resultLengthForDeductionTable = jQuery('#deductionTable tr').length - 1;
 		var deleteDeductionTable=$('#deductionTable tr:last');
 		var accountCode = document.getElementById('tempDeductionValues[0].accountCode').value;
 		if(resultLengthForDeductionTable<=1 && accountCode == "") {

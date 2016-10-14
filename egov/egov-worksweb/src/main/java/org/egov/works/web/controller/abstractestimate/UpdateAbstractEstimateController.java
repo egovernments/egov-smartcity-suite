@@ -225,10 +225,15 @@ public class UpdateAbstractEstimateController extends GenericWorkFlowController 
         if (abstractEstimate.getCurrentState() != null
                 && !abstractEstimate.getCurrentState().getValue().equals(WorksConstants.NEW))
             model.addAttribute("currentState", abstractEstimate.getCurrentState().getValue());
-        if (abstractEstimate.getState() != null && abstractEstimate.getState().getNextAction() != null)
-            model.addAttribute("nextAction", abstractEstimate.getState().getNextAction());
+        if (abstractEstimate.getState() != null && abstractEstimate.getState().getNextAction() != null){
+        	model.addAttribute("nextAction", abstractEstimate.getState().getNextAction());
+        	model.addAttribute("pendingActions", abstractEstimate.getState().getNextAction());
+        }
+            
 
         final WorkflowContainer workflowContainer = new WorkflowContainer();
+        workflowContainer.setAmountRule(abstractEstimate.getEstimateValue());
+        workflowContainer.setPendingActions(abstractEstimate.getState().getNextAction());
         prepareWorkflow(model, abstractEstimate, workflowContainer);
         if (abstractEstimate.getEgwStatus().getCode().equals(EstimateStatus.NEW.toString())) {
             List<String> validActions = Collections.emptyList();
@@ -266,7 +271,8 @@ public class UpdateAbstractEstimateController extends GenericWorkFlowController 
         model.addAttribute("abstractEstimate", abstractEstimate);
         model.addAttribute("documentDetails", abstractEstimate.getDocumentDetails());
         model.addAttribute("measurementsPresent", measurementSheetService.existsByEstimate(abstractEstimate.getId()));
-
+        model.addAttribute("amountRule", abstractEstimate.getEstimateValue());
+        	
         if (abstractEstimate.getEgwStatus().getCode().equals(EstimateStatus.NEW.toString()) ||
                 abstractEstimate.getEgwStatus().getCode().equals(EstimateStatus.REJECTED.toString())) {
             model.addAttribute("mode", "edit");

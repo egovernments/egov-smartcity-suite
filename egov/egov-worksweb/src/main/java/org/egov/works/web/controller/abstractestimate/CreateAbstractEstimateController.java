@@ -150,14 +150,17 @@ public class CreateAbstractEstimateController extends GenericWorkFlowController 
         } else {
 
             final WorkflowContainer workflowContainer = new WorkflowContainer();
+            workflowContainer.setAmountRule(abstractEstimate.getEstimateValue());
             prepareWorkflow(model, abstractEstimate, workflowContainer);
             List<String> validActions = Collections.emptyList();
             validActions = customizedWorkFlowService.getNextValidActions(abstractEstimate.getStateType(),
                     workflowContainer.getWorkFlowDepartment(), workflowContainer.getAmountRule(),
                     workflowContainer.getAdditionalRule(), WorksConstants.NEW, workflowContainer.getPendingActions(),
                     abstractEstimate.getCreatedDate());
-            if (abstractEstimate.getState() != null && abstractEstimate.getState().getNextAction() != null)
-                model.addAttribute("nextAction", abstractEstimate.getState().getNextAction());
+            if (abstractEstimate.getState() != null && abstractEstimate.getState().getNextAction() != null){
+            	model.addAttribute("nextAction", abstractEstimate.getState().getNextAction());
+            	model.addAttribute("pendingActions", abstractEstimate.getState().getNextAction());
+            }
             model.addAttribute("validActionList", validActions);
             model.addAttribute("mode", null);
             model.addAttribute("stateType", abstractEstimate.getClass().getSimpleName());
@@ -302,15 +305,17 @@ public class CreateAbstractEstimateController extends GenericWorkFlowController 
                     new String[] { approverName, nextDesign, abstractEstimate.getEstimateNumber() }, null);
         else if (EstimateStatus.ADMIN_SANCTIONED.toString().equals(abstractEstimate.getEgwStatus().getCode())
                 && !WorksConstants.WF_STATE_REJECTED.equals(abstractEstimate.getState().getValue()))
-            message = messageSource.getMessage("msg.estimate.adminsanctioned",
-                    new String[] { abstractEstimate.getEstimateNumber() }, null);
-        else if (EstimateStatus.TECH_SANCTIONED.toString().equals(abstractEstimate.getEgwStatus().getCode())
-                && !WorksConstants.WF_STATE_REJECTED.equals(abstractEstimate.getState().getValue()))
-            message = messageSource.getMessage("msg.estimate.techsanctioned",
-                    new String[] { abstractEstimate.getEstimateNumber(), approverName, nextDesign,
+        	message = messageSource.getMessage("msg.estimate.techsanctioned",
+                    new String[] { abstractEstimate.getEstimateNumber(),
                             abstractEstimate.getEstimateTechnicalSanctions()
                                     .get(abstractEstimate.getEstimateTechnicalSanctions().size() - 1)
                                     .getTechnicalSanctionNumber() },
+                    null);
+        else if (EstimateStatus.TECH_SANCTIONED.toString().equals(abstractEstimate.getEgwStatus().getCode())
+                && !WorksConstants.WF_STATE_REJECTED.equals(abstractEstimate.getState().getValue()))
+            message = messageSource.getMessage("msg.estimate.techsanctioned",
+                    new String[] { abstractEstimate.getEstimateNumber(),
+                            abstractEstimate.getEstimateTechnicalSanctions().get(abstractEstimate.getEstimateTechnicalSanctions().size() - 1).getTechnicalSanctionNumber() },
                     null);
         else if (abstractEstimate.getState() != null
                 && WorksConstants.WF_STATE_REJECTED.equals(abstractEstimate.getState().getValue()))
@@ -319,6 +324,11 @@ public class CreateAbstractEstimateController extends GenericWorkFlowController 
         else if (EstimateStatus.CANCELLED.toString().equals(abstractEstimate.getEgwStatus().getCode()))
             message = messageSource.getMessage("msg.estimate.cancelled",
                     new String[] { abstractEstimate.getEstimateNumber() }, null);
+
+        else if (EstimateStatus.CHECKED.toString().equals(abstractEstimate.getEgwStatus().getCode())
+                && !WorksConstants.WF_STATE_REJECTED.equals(abstractEstimate.getState().getValue()))
+            message = messageSource.getMessage("msg.abstractestimate.check.success",
+                    new String[] { abstractEstimate.getEstimateNumber() , approverName, nextDesign  }, null);
         return message;
 
     }
