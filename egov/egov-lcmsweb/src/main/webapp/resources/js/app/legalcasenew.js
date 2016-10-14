@@ -59,8 +59,6 @@ $(document).ready(function(){
 		 $(".show-ManualLcNumber").hide(); 
 		}
 	
-		
-	
     $("#petitionDetails tbody tr").each(function( index ) {
     	var $this = $(this);
         $this.find("select, button").prop("disabled", true);
@@ -97,6 +95,7 @@ $(document).ready(function(){
 				return false;
 			}
 		}
+		if(mode=='create'){
 		  if($('#caseDate').val() != '' && $('#caseReceivingDate').val() != '' ){
 				var start = $('#caseDate').val();
 				var end = $('#caseReceivingDate').val();
@@ -137,6 +136,7 @@ $(document).ready(function(){
 					return false;
 					}
 			}
+		}
 		  
 		$('#newlegalcaseForm :not([type=submit])').prop('disabled',false);
 		$(".btn-primary").prop('disabled',false);
