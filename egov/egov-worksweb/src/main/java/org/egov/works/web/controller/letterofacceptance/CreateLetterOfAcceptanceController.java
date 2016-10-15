@@ -40,6 +40,7 @@
 package org.egov.works.web.controller.letterofacceptance;
 
 import java.io.IOException;
+import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
 import java.util.Collections;
 import java.util.Date;
@@ -241,6 +242,7 @@ public class CreateLetterOfAcceptanceController extends GenericWorkFlowControlle
         setDropDownValues(model, abstractEstimate);
         model.addAttribute("stateType", workOrder.getClass().getSimpleName());
         final WorkflowContainer workflowContainer = new WorkflowContainer();
+        workflowContainer.setAmountRule(new BigDecimal(workOrder.getWorkOrderAmount()));
         prepareWorkflow(model, workOrder, workflowContainer);
         List<String> validActions = Collections.emptyList();
         if (workOrder.getId() != null) {
@@ -256,8 +258,11 @@ public class CreateLetterOfAcceptanceController extends GenericWorkFlowControlle
                     workflowContainer.getAdditionalRule(), WorksConstants.NEW, workflowContainer.getPendingActions(),
                     workOrder.getCreatedDate());
         workOrder = letterOfAcceptanceService.getWorkOrderDocuments(workOrder);
-        if (workOrder.getState() != null && workOrder.getState().getNextAction() != null)
-            model.addAttribute("nextAction", workOrder.getState().getNextAction());
+        if (workOrder.getState() != null && workOrder.getState().getNextAction() != null){
+        	model.addAttribute("nextAction", workOrder.getState().getNextAction());
+        	model.addAttribute("pendingActions", workOrder.getState().getNextAction());
+        }
+            
         final List<AppConfigValues> values = appConfigValuesService.getConfigValuesByModuleAndKey(
                 WorksConstants.WORKS_MODULE_NAME, WorksConstants.APPCONFIG_KEY_PERCENTAGE_ON_ESTIMATERATE_OR_WORKVALUE);
         final AppConfigValues value = values.get(0);
@@ -267,6 +272,7 @@ public class CreateLetterOfAcceptanceController extends GenericWorkFlowControlle
         model.addAttribute("documentDetails", workOrder.getDocumentDetails());
         model.addAttribute("validActionList", validActions);
         model.addAttribute("loggedInUser", securityUtils.getCurrentUser().getName());
+        model.addAttribute("amountRule", workOrder.getWorkOrderAmount());
     }
 
     @RequestMapping(value = "/letterofacceptance-success", method = RequestMethod.GET)
@@ -323,6 +329,9 @@ public class CreateLetterOfAcceptanceController extends GenericWorkFlowControlle
         else if (workOrder.getEgwStatus().getCode().equals(WorksConstants.CANCELLED_STATUS))
             message = messageSource.getMessage("msg.letterofacceptance.cancelled",
                     new String[] { workOrder.getWorkOrderNumber() }, null);
+        else if (WorksConstants.CHECKED_STATUS.equalsIgnoreCase(workOrder.getEgwStatus().getCode()))
+        	message = messageSource.getMessage("msg.loa.check.success",
+                    new String[] { workOrder.getWorkOrderNumber(), approverName, nextDesign,  }, null);
 
         return message;
     }

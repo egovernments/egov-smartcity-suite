@@ -40,6 +40,7 @@
 package org.egov.works.letterofacceptance.service;
 
 import java.io.IOException;
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashSet;
@@ -257,7 +258,7 @@ public class LetterOfAcceptanceService {
                         .withDateInfo(currentDate.toDate()).withOwner(wfInitiator.getPosition()).withNextAction("")
                         .withNatureOfTask(natureOfwork);
         } else if (WorksConstants.SAVE_ACTION.toString().equalsIgnoreCase(workFlowAction)) {
-            wfmatrix = workOrderWorkflowService.getWfMatrix(workOrder.getStateType(), null, null, additionalRule,
+            wfmatrix = workOrderWorkflowService.getWfMatrix(workOrder.getStateType(), null, new BigDecimal(workOrder.getWorkOrderAmount()), additionalRule,
                     WorksConstants.NEW, null);
             if (workOrder.getState() == null)
                 workOrder.transition(true).start().withSenderName(user.getUsername() + "::" + user.getName())
@@ -275,7 +276,7 @@ public class LetterOfAcceptanceService {
             if (null == workOrder.getState()) {
                 workOrder.setEgwStatus(egwStatusHibernateDAO.getStatusByModuleAndCode(WorksConstants.WORKORDER,
                         WorksConstants.CREATED_STATUS));
-                wfmatrix = workOrderWorkflowService.getWfMatrix(workOrder.getStateType(), null, null, additionalRule,
+                wfmatrix = workOrderWorkflowService.getWfMatrix(workOrder.getStateType(), null, new BigDecimal(workOrder.getWorkOrderAmount()), additionalRule,
                         currState, null);
                 workOrder.transition().start().withSenderName(user.getUsername() + "::" + user.getName())
                         .withComments(approvalComent).withStateValue(wfmatrix.getNextState()).withDateInfo(new Date())
@@ -290,8 +291,6 @@ public class LetterOfAcceptanceService {
                         .withComments(approvalComent).withStateValue(stateValue).withDateInfo(currentDate.toDate())
                         .withOwner(pos).withNextAction("").withNatureOfTask(natureOfwork);
             } else if (WorksConstants.APPROVE_ACTION.toString().equalsIgnoreCase(workFlowAction)) {
-                workOrder.setEgwStatus(egwStatusHibernateDAO.getStatusByModuleAndCode(WorksConstants.WORKORDER,
-                        WorksConstants.APPROVED));
                 wfmatrix = workOrderWorkflowService.getWfMatrix(workOrder.getStateType(), null, null, additionalRule,
                         workOrder.getCurrentState().getValue(), null);
                 workOrder.transition(true).withSenderName(user.getUsername() + "::" + user.getName())
@@ -307,8 +306,8 @@ public class LetterOfAcceptanceService {
                     workOrder.setEgwStatus(egwStatusHibernateDAO.getStatusByModuleAndCode(WorksConstants.WORKORDER,
                             WorksConstants.CREATED_STATUS));
 
-                wfmatrix = workOrderWorkflowService.getWfMatrix(workOrder.getStateType(), null, null, additionalRule,
-                        workOrder.getCurrentState().getValue(), null);
+                wfmatrix = workOrderWorkflowService.getWfMatrix(workOrder.getStateType(), null, new BigDecimal(workOrder.getWorkOrderAmount()), additionalRule,
+                        workOrder.getCurrentState().getValue(), workOrder.getState().getNextAction());
                 workOrder.transition(true).withSenderName(user.getUsername() + "::" + user.getName())
                         .withComments(approvalComent).withStateValue(wfmatrix.getNextState())
                         .withDateInfo(currentDate.toDate()).withOwner(pos).withNextAction(wfmatrix.getNextAction())
@@ -766,7 +765,24 @@ public class LetterOfAcceptanceService {
 
         final WorkOrder savedworkOrder = letterOfAcceptanceRepository.save(workOrder);
 
+        workOrderStatusChange(savedworkOrder , workFlowAction);
+        
         return savedworkOrder;
+
+    }
+
+    private void workOrderStatusChange(final WorkOrder workOrder, final String workFlowAction) {
+       
+        if (WorksConstants.ACTION_APPROVE.equalsIgnoreCase(workFlowAction))
+            workOrder.setEgwStatus(worksUtils.getStatusByModuleAndCode(WorksConstants.WORKORDER,
+                    WorksConstants.APPROVED));
+
+        else if ((WorksConstants.RESUBMITTED_STATUS.equalsIgnoreCase(workOrder.getEgwStatus().getCode()) ||
+                WorksConstants.CREATED_STATUS.equalsIgnoreCase(workOrder.getEgwStatus().getCode()) ||
+                WorksConstants.CHECKED_STATUS.equalsIgnoreCase(workOrder.getEgwStatus().getCode()))
+                && workOrder.getState() != null && WorksConstants.SUBMIT_ACTION.equalsIgnoreCase(workFlowAction))
+            workOrder.setEgwStatus(worksUtils.getStatusByModuleAndCode(WorksConstants.WORKORDER,
+                    WorksConstants.CHECKED_STATUS));
 
     }
 

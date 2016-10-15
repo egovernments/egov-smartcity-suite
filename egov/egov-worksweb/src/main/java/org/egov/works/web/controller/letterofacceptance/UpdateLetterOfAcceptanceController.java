@@ -123,9 +123,13 @@ public class UpdateLetterOfAcceptanceController extends GenericWorkFlowControlle
             if (workOrder.getCurrentState() != null
                     && !workOrder.getCurrentState().getValue().equalsIgnoreCase(WorksConstants.NEW))
                 model.addAttribute("currentState", workOrder.getCurrentState().getValue());
-            if (workOrder.getState() != null && workOrder.getState().getNextAction() != null)
+            if (workOrder.getState() != null && workOrder.getState().getNextAction() != null){
                 model.addAttribute("nextAction", workOrder.getState().getNextAction());
+                model.addAttribute("pendingActions", workOrder.getState().getNextAction());
+            }
             final WorkflowContainer workflowContainer = new WorkflowContainer();
+            workflowContainer.setAmountRule(new BigDecimal(workOrder.getWorkOrderAmount()));
+            workflowContainer.setPendingActions(workOrder.getState().getNextAction());
             prepareWorkflow(model, workOrder, workflowContainer);
             List<String> validActions = Collections.emptyList();
             validActions = customizedWorkFlowService.getNextValidActions(workOrder.getStateType(),
@@ -142,6 +146,7 @@ public class UpdateLetterOfAcceptanceController extends GenericWorkFlowControlle
             model.addAttribute("measurementsPresent", measurementSheetService.existsByEstimate(abstractEstimate.getId()));
             model.addAttribute("workflowHistory",
                     lineEstimateService.getHistory(workOrder.getState(), workOrder.getStateHistory()));
+            model.addAttribute("amountRule",workOrder.getWorkOrderAmount());
             return "letterOfAcceptance-view";
         }
     }
