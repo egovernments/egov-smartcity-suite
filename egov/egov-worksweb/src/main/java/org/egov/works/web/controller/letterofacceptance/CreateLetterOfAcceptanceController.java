@@ -258,10 +258,10 @@ public class CreateLetterOfAcceptanceController extends GenericWorkFlowControlle
                     workflowContainer.getAdditionalRule(), WorksConstants.NEW, workflowContainer.getPendingActions(),
                     workOrder.getCreatedDate());
         workOrder = letterOfAcceptanceService.getWorkOrderDocuments(workOrder);
-        if (workOrder.getState() != null && workOrder.getState().getNextAction() != null){
-        	model.addAttribute("nextAction", workOrder.getState().getNextAction());
-        	model.addAttribute("pendingActions", workOrder.getState().getNextAction());
-        }
+		if (workOrder.getState() != null && workOrder.getState().getNextAction() != null) {
+			model.addAttribute("nextAction", workOrder.getState().getNextAction());
+			model.addAttribute("pendingActions", workOrder.getState().getNextAction());
+		}
             
         final List<AppConfigValues> values = appConfigValuesService.getConfigValuesByModuleAndKey(
                 WorksConstants.WORKS_MODULE_NAME, WorksConstants.APPCONFIG_KEY_PERCENTAGE_ON_ESTIMATERATE_OR_WORKVALUE);
