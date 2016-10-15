@@ -50,21 +50,21 @@ import org.springframework.stereotype.Repository;
 import java.util.List;
 
 import static org.egov.infra.admin.master.entity.AppConfig.FETCH_WITH_VALUES;
+import static org.springframework.data.jpa.repository.EntityGraph.EntityGraphType.FETCH;
 
 @Repository
 public interface AppConfigRepository extends JpaRepository<AppConfig, Long> {
 
-    @EntityGraph(value = FETCH_WITH_VALUES, type = EntityGraph.EntityGraphType.FETCH)
-    AppConfig findByModule_NameAndKeyName(String moduleName, String keyName);
+    @EntityGraph(value = FETCH_WITH_VALUES, type = FETCH)
+    AppConfig findByModuleNameAndKeyName(String moduleName, String keyName);
 
     AppConfig findById(Long id);
 
-    @EntityGraph(value = FETCH_WITH_VALUES, type = EntityGraph.EntityGraphType.FETCH)
+    @EntityGraph(value = FETCH_WITH_VALUES, type = FETCH)
     AppConfig findByKeyName(final String keyName);
 
-    @EntityGraph(value = FETCH_WITH_VALUES, type = EntityGraph.EntityGraphType.LOAD)
-    List<AppConfig> findByModule_Name(String moduleName);
+    List<AppConfig> findByModuleName(String moduleName);
 
-    @EntityGraph(value = FETCH_WITH_VALUES, type = EntityGraph.EntityGraphType.FETCH)
-    Page<AppConfig> findByModule_Name(String moduleName, Pageable pageable);
+    @EntityGraph(value = FETCH_WITH_VALUES, type = FETCH)
+    Page<AppConfig> findByModuleName(String moduleName, Pageable pageable);
 }
