@@ -1,12 +1,12 @@
-package org.egov.pgr.elasticsearch.service.advice;
+package org.egov.pgr.service.elasticsearch.advice;
 
 import org.aspectj.lang.JoinPoint;
 import org.aspectj.lang.annotation.AfterReturning;
 import org.aspectj.lang.annotation.Aspect;
 import org.egov.infra.config.properties.ApplicationProperties;
-import org.egov.pgr.elasticSearch.entity.ComplaintIndex;
-import org.egov.pgr.elasticSearch.service.ComplaintIndexService;
 import org.egov.pgr.entity.Complaint;
+import org.egov.pgr.elasticSearch.entity.ComplaintIndex;
+import org.egov.pgr.service.elasticsearch.ComplaintIndexService;
 import org.elasticsearch.client.transport.NoNodeAvailableException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -29,6 +29,7 @@ public class ComplaintIndexingAdvice {
 	@AfterReturning(pointcut = "execution(*  org.egov.pgr.service.ComplaintService.createComplaint (..))", returning = "retVal")
 	public void createComplaintIndex(final Object retVal){
 		Complaint savedComplaint = (Complaint)retVal;
+		
 		final ComplaintIndex savedComplaintIndex = new ComplaintIndex();
 		BeanUtils.copyProperties(savedComplaint, savedComplaintIndex);
 		try {
