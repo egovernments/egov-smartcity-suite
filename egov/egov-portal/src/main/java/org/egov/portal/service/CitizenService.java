@@ -79,7 +79,7 @@ public class CitizenService {
         citizen.addRole(roleService.getRoleByName(CommonConstants.CITIZEN_ROLE));
         citizen.updateNextPwdExpiryDate(applicationProperties.userPasswordExpiryInDays());
         citizen.setPassword(passwordEncoder.encode(citizen.getPassword()));
-        citizen.setActivationCode(RandomStringUtils.random(5, Boolean.TRUE, Boolean.TRUE).toUpperCase());
+        citizen.setActivationCode(RandomStringUtils.randomNumeric(5));
         citizenRepository.save(citizen);
         sendActivationMessage(citizen);
     }
@@ -121,7 +121,7 @@ public class CitizenService {
 
     @Transactional
     public void resendActivationCode(Citizen citizen) {
-        citizen.setActivationCode(RandomStringUtils.random(5, Boolean.TRUE, Boolean.TRUE).toUpperCase());
+        citizen.setActivationCode(RandomStringUtils.randomNumeric(5));
         sendActivationMessage(citizen);
         citizenRepository.save(citizen);
     }
