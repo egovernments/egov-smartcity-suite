@@ -49,4 +49,8 @@ public interface WorkflowTypeRepository extends JpaRepository<WorkflowTypes, Lon
 
     WorkflowTypes findByType(String type);
 
+    WorkflowTypes findByTypeFQN(String className);
+
+    WorkflowTypes findByTypeFQNAndType(String className,String type);
+
 }

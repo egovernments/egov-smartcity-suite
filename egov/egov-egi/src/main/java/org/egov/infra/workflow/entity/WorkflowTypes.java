@@ -43,16 +43,9 @@ package org.egov.infra.workflow.entity;
 import org.egov.infra.admin.master.entity.Module;
 import org.egov.infra.persistence.entity.AbstractAuditable;
 import org.hibernate.search.annotations.DocumentId;
+import org.hibernate.validator.constraints.Length;
 
-import javax.persistence.Entity;
-import javax.persistence.FetchType;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
-import javax.persistence.SequenceGenerator;
-import javax.persistence.Table;
+import javax.persistence.*;
 
 @Entity
 @Table(name = "EG_WF_TYPES")
@@ -71,11 +64,23 @@ public class WorkflowTypes extends AbstractAuditable {
     @JoinColumn(name = "module")
     private Module module;
 
+    @Length(max=50)
     private String type;
-
+    @Length(max=120)
     private String typeFQN;
 
     private String link;
+
+    public String getBusinessKey() {
+        return businessKey;
+    }
+
+    public void setBusinessKey(String businessKey) {
+        this.businessKey = businessKey;
+    }
+
+    @Length(max=50)
+    private String businessKey;
 
     private String displayName;
 

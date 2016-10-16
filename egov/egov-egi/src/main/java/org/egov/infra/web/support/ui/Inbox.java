@@ -48,6 +48,15 @@ public class Inbox {
     private String status;
     private String details;
     private String link;
+    private String taskId;
+
+    public String getTaskId() {
+        return taskId;
+    }
+
+    public void setTaskId(String taskId) {
+        this.taskId = taskId;
+    }
 
     public String getId() {
         return id;

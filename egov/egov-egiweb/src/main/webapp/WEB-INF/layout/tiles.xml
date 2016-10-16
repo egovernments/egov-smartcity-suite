@@ -241,4 +241,30 @@
         <put-attribute name="page-title" value="title.accesscontrol.grantrevoke" cascade="true"/>
         <put-attribute name="body" value="/WEB-INF/views/admin/masters/feature/feature-access-control.jsp"/>
     </definition>
+
+<definition name="workflowtypes-new" extends="base_layout">
+	<put-attribute name="page-title" value="title.workflowtypes.new" cascade="true"/>
+	<put-attribute name="body" value="/WEB-INF/views/admin/masters/workflowtypes/workflowtypes-new.jsp"/>
+</definition>
+
+<definition name="workflowtypes-view" extends="base_layout">
+	<put-attribute name="page-title" value="title.workflowtypes.view" cascade="true"/>
+	<put-attribute name="body" value="/WEB-INF/views/admin/masters/workflowtypes/workflowtypes-view.jsp"/>
+</definition>
+
+<definition name="workflowtypes-edit" extends="base_layout">
+	<put-attribute name="page-title" value="title.workflowtypes.edit" cascade="true"/>
+	<put-attribute name="body" value="/WEB-INF/views/admin/masters/workflowtypes/workflowtypes-edit.jsp"/>
+</definition>
+
+<definition name="workflowtypes-result" extends="base_layout">
+	<put-attribute name="page-title" value="title.workflowtypes.result" cascade="true"/>
+	<put-attribute name="body" value="/WEB-INF/views/admin/masters/workflowtypes/workflowtypes-result.jsp"/>
+</definition>
+
+<definition name="workflowtypes-search" extends="base_layout">
+	<put-attribute name="page-title" value="title.workflowtypes.search" cascade="true"/>
+	<put-attribute name="body" value="/WEB-INF/views/admin/masters/workflowtypes/workflowtypes-search.jsp"/>
+</definition>
+
 </tiles-definitions>

@@ -47,6 +47,7 @@ import org.egov.infra.workflow.entity.State;
 import org.egov.infra.workflow.entity.StateAware;
 import org.egov.infra.workflow.entity.StateHistory;
 import org.egov.infra.workflow.entity.WorkflowTypes;
+import org.egov.infra.workflow.inbox.ActivitiInboxService;
 import org.egov.infra.workflow.inbox.InboxRenderServiceDeligate;
 import org.joda.time.DateTime;
 import org.joda.time.format.DateTimeFormat;
@@ -78,9 +79,12 @@ public class InboxController {
     @Autowired
     private SecurityUtils securityUtils;
 
+    @Autowired
+    private ActivitiInboxService activitiInboxService;
+
     @RequestMapping(produces = MediaType.TEXT_PLAIN_VALUE)
     public @ResponseBody String showInbox() {
-        return createInboxData(inboxRenderServiceDeligate.getInboxItems(securityUtils.getCurrentUser().getId()));
+       return  createInboxData(inboxRenderServiceDeligate.getInboxItems(securityUtils.getCurrentUser().getId()));
     }
 
     @RequestMapping(value = "/draft", produces = MediaType.TEXT_PLAIN_VALUE)
@@ -110,6 +114,8 @@ public class InboxController {
             inboxItem.setLink(workflowTypes.getLink().replace(":ID", stateAware.myLinkId()));
             inboxItems.add(inboxItem);
         }
+        List<Inbox> activitiInboxItems= activitiInboxService.search(securityUtils.getCurrentUser().getUsername());
+        inboxItems.addAll(activitiInboxItems);
         return "{ \"data\":" + new GsonBuilder().create().toJson(inboxItems) + "}";
     }
 

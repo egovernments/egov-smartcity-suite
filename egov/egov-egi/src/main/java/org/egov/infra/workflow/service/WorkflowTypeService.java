@@ -71,4 +71,34 @@ public class WorkflowTypeService {
     public WorkflowTypes getWorkflowTypeById(Long id) {
         return workflowTypeRepository.findOne(id);
     }
+
+    @Transactional
+    public WorkflowTypes create(final WorkflowTypes workflowTypes) {
+        return workflowTypeRepository.save(workflowTypes);
+    }
+    @Transactional
+    public WorkflowTypes update(final WorkflowTypes workflowTypes) {
+        return workflowTypeRepository.save(workflowTypes);
+    }
+    public List<WorkflowTypes> findAll() {
+        return workflowTypeRepository.findAll(new Sort(Sort.Direction.ASC, "name"));
+    }
+    public WorkflowTypes findOne(Long id){
+        return workflowTypeRepository.findOne(id);
+    }
+    public List<WorkflowTypes> search(WorkflowTypes workflowTypes){
+        return workflowTypeRepository.findAll();
+    }
+
+    public WorkflowTypes findByClassName(String fullClassname) {
+        return workflowTypeRepository.findByTypeFQN(fullClassname);
+
+    }
+    public WorkflowTypes findByClassNameAnType(String fullClassname,String type) {
+        return workflowTypeRepository.findByTypeFQNAndType(fullClassname,type);
+
+    }
+
+
+
 }
