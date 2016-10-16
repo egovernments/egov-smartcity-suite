@@ -72,7 +72,7 @@
     	<!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
     	<!--[if lt IE 9]>
 		<script src="<cdn:url  value='/resources/global/js/ie8/html5shiv.min.js' context='/egi'/>"></script>
-		<script src="<cdn:url  value='/resources/global/js/ie8/respond.min.js' context='egi'/>"></script>
+		<script src="<cdn:url  value='/resources/global/js/ie8/respond.min.js' context='/egi'/>"></script>
     	<![endif]-->    		
 		<script>
 			$(window).load(function() {
