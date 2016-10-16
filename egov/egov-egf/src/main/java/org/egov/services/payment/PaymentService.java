@@ -429,14 +429,14 @@ public class PaymentService extends PersistenceService<Paymentheader, Long> {
 			update(paymentheader);
 			entityManager.flush();
 		} catch (final ValidationException e) {
-			e.printStackTrace();
+
 			LOGGER.error(e.getMessage(), e);
 			final List<ValidationError> errors = new ArrayList<ValidationError>();
 			errors.add(new ValidationError("createPayment", e.getErrors()
 					.get(0).getMessage()));
 			throw new ValidationException(errors);
 		} catch (final Exception e) {
-			e.printStackTrace();
+
 			LOGGER.error(e.getMessage(), e);
 			final List<ValidationError> errors = new ArrayList<ValidationError>();
 			errors.add(new ValidationError("createPayment", e.getMessage()));

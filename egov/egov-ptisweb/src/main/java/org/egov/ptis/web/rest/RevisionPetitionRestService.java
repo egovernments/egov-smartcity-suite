@@ -166,7 +166,7 @@ public class RevisionPetitionRestService {
                     responseJson = convertRevisionPetitionObjectToJson(revisionPetitionService
                             .createRevisionPetitionForRest(revPetition));
                 } catch (ParseException e) {
-                    e.printStackTrace();
+
                 }
 
             }

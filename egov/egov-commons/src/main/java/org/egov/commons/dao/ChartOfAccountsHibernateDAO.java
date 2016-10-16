@@ -502,13 +502,13 @@ public class ChartOfAccountsHibernateDAO implements ChartOfAccountsDAO {
     @Override
     public List<CChartOfAccounts> findByGlcodeLikeIgnoreCaseAndClassificationAndMajorCode(String string,
             Long classification, String majorCode) {
-        // TODO Auto-generated method stub
+
         return null;
     }
 
     @Override
     public List<CChartOfAccounts> findByGlcodeLikeIgnoreCaseAndClassification(String string, Long classification) {
-        // TODO Auto-generated method stub
+
         return null;
     }
 

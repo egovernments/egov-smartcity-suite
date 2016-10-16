@@ -254,7 +254,7 @@ public class PreApprovedVoucherAction extends GenericWorkFlowAction {
                 date = df.parse(cutOffDateconfigValue.get(0).getValue());
                 cutOffDate = formatter.format(date);
             } catch (ParseException e) {
-                e.printStackTrace();
+
             }
         }
         egBillregister = (EgBillregister) getPersistenceService().find(" from EgBillregister where id=?",
@@ -578,7 +578,7 @@ public class PreApprovedVoucherAction extends GenericWorkFlowAction {
                     date = sdf.parse(cutOffDate);
                     cutOffDate1 = formatter1.format(date);
                 } catch (ParseException e) {
-                    e.printStackTrace();
+
                 }
             }
             if (cutOffDate1 != null && voucherDate.compareTo(cutOffDate1) <= 0
@@ -682,12 +682,12 @@ public class PreApprovedVoucherAction extends GenericWorkFlowAction {
                                     .getOwnerPosition()) }));
             }
         } catch (final ValidationException e) {
-            e.printStackTrace();
+
             final List<ValidationError> errors = new ArrayList<ValidationError>();
             errors.add(new ValidationError("exp", e.getErrors().get(0).getMessage()));
             throw new ValidationException(errors);
         } catch (final Exception e) {
-            e.printStackTrace();
+
             final List<ValidationError> errors = new ArrayList<ValidationError>();
             errors.add(new ValidationError("exp", e.getMessage()));
             throw new ValidationException(errors);

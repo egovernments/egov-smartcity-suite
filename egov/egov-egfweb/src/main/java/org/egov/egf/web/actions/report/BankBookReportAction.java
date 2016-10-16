@@ -498,7 +498,6 @@ public class BankBookReportAction extends BaseFormAction {
                                     }
 
                             } catch (final NumberFormatException ex) {
-                                System.out.println("Exception" + ex);
                             }
                     bankBookEntry.setChequeDetail(voucherStr);
                     entries.add(bankBookEntry);

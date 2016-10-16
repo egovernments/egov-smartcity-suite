@@ -268,10 +268,7 @@ public class TransactionSummaryController {
             accounts = chartOfAccountsDAO
                     .findByGlcodeLikeIgnoreCaseAndClassification(glcode + "%", classification);
         }
-        /*
-         * for(CChartOfAccounts account : accounts) { for(CChartOfAccountDetail detail : account.getChartOfAccountDetails()){
-         * System.out.println(account.getGlcode() + " : " + detail.getDetailTypeId().getName()); } }
-         */
+
         return accounts;
     }
 

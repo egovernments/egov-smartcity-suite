@@ -90,7 +90,7 @@ public class FundingAgency extends BaseModel implements EntityType {
 
     @Override
     public String getBankaccount() {
-        // TODO Auto-generated method stub
+
         return null;
     }
 
@@ -100,7 +100,7 @@ public class FundingAgency extends BaseModel implements EntityType {
      */
     @Override
     public String getBankname() {
-        // TODO Auto-generated method stub
+
         return null;
     }
 
@@ -110,7 +110,7 @@ public class FundingAgency extends BaseModel implements EntityType {
      */
     @Override
     public String getEntityDescription() {
-        // TODO Auto-generated method stub
+
         return code;
     }
 
@@ -120,7 +120,7 @@ public class FundingAgency extends BaseModel implements EntityType {
      */
     @Override
     public Integer getEntityId() {
-        // TODO Auto-generated method stub
+
         return Integer.valueOf(id.intValue());
     }
 
@@ -130,7 +130,7 @@ public class FundingAgency extends BaseModel implements EntityType {
      */
     @Override
     public String getIfsccode() {
-        // TODO Auto-generated method stub
+
         return null;
     }
 
@@ -140,7 +140,7 @@ public class FundingAgency extends BaseModel implements EntityType {
      */
     @Override
     public String getModeofpay() {
-        // TODO Auto-generated method stub
+
         return null;
     }
 
@@ -150,7 +150,7 @@ public class FundingAgency extends BaseModel implements EntityType {
      */
     @Override
     public String getPanno() {
-        // TODO Auto-generated method stub
+
         return null;
     }
 
@@ -160,7 +160,7 @@ public class FundingAgency extends BaseModel implements EntityType {
      */
     @Override
     public String getTinno() {
-        // TODO Auto-generated method stub
+
         return null;
     }
 
@@ -174,11 +174,11 @@ public class FundingAgency extends BaseModel implements EntityType {
 
     @Override
     public EgwStatus getEgwStatus() {
-        // TODO Auto-generated method stub
+
         return null;
     }
 
     /*
-     * @Override public EgwStatus getEgwStatus() { // TODO Auto-generated method stub return null; }
+     * @Override public EgwStatus getEgwStatus() {  return null; }
      */
 }

@@ -178,7 +178,7 @@ public class AssetCommonUtil {
 		try {
 			jsonResponse = objectMapper.writeValueAsString(obj);
 		} catch (IOException e) {
-			e.printStackTrace();
+
 			throw new ApplicationRuntimeException("Exception while converting to json"+obj.getClass().getCanonicalName());
 		}
         return jsonResponse;

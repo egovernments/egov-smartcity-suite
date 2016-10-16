@@ -787,7 +787,7 @@ public class PaymentAction extends BasePaymentAction {
                 date = df.parse(cutOffDateconfigValue.get(0).getValue());
                 cutOffDate = formatter.format(date);
             } catch (ParseException e) {
-                e.printStackTrace();
+
             }
         }
         try {
@@ -966,7 +966,7 @@ public class PaymentAction extends BasePaymentAction {
                     date = sdf1.parse(cutOffDate);
                     cutOffDate1 = formatter1.format(date);
                 } catch (ParseException e) {
-                  //  e.printStackTrace();
+                  //
                 }
             }
             if (cutOffDate1 != null && voucherDate.compareTo(cutOffDate1) <= 0
@@ -999,7 +999,7 @@ public class PaymentAction extends BasePaymentAction {
             errors.add(new ValidationError("exception", e.getMessage()));
             throw new ValidationException(errors);
         } catch (final Exception e) {
-            e.printStackTrace();
+
             final List<ValidationError> errors = new ArrayList<ValidationError>();
             loadbankBranch(billregister.getEgBillregistermis().getFund());
             errors.add(new ValidationError("exception", e.getMessage()));
@@ -1378,7 +1378,6 @@ public class PaymentAction extends BasePaymentAction {
                 sendForApproval();
                 addActionMessage(getMessage("payment.transaction.success", new String[] { paymentheader.getVoucherheader()
                         .getVoucherNumber() }));
-                // System.out.println("The retun value is :VIEW");
             }
             else {
                 if (LOGGER.isDebugEnabled())

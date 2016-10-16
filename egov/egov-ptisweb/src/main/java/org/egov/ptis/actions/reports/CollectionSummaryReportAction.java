@@ -146,7 +146,7 @@ public class CollectionSummaryReportAction extends BaseFormAction {
 
     @Override
     public Object getModel() {
-        // TODO Auto-generated method stub
+
         return null;
     }
 
@@ -302,7 +302,7 @@ public class CollectionSummaryReportAction extends BaseFormAction {
                     boundaryId,
                     propTypeCategoryId, zoneId, wardId, blockId);
         } catch (final Exception e) {
-            e.printStackTrace();
+
             LOGGER.error("Error occured in Class : CollectionSummaryReportAction  Method : list", e);
             throw new ApplicationRuntimeException("Error occured in Class : CollectionSummaryReportAction  Method : list "
                     + e.getMessage());
@@ -377,7 +377,7 @@ public class CollectionSummaryReportAction extends BaseFormAction {
             }
         } catch (final Exception e) {
             LOGGER.error("Exception in prepareBndryWiseResultList method : " + e.getMessage());
-            e.printStackTrace();
+
             throw new ApplicationRuntimeException("Exception in prepareBndryWiseResultList method : ", e);
         }
         if (LOGGER.isDebugEnabled())

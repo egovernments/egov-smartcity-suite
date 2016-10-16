@@ -59,7 +59,7 @@ public class DataAdapter<T> implements JsonSerializer<T> {
             this.clazz = (T) ((ParameterizedType) getClass().getGenericSuperclass()).getActualTypeArguments()[0];
 
         } catch (Exception e) {
-            e.printStackTrace();
+
         }
     }
 

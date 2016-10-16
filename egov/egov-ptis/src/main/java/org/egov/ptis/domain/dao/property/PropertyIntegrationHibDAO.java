@@ -61,31 +61,31 @@ public class PropertyIntegrationHibDAO implements PropertyIntegrationDAO {
 
 	@Override
 	public PropertyIntegration findById(Integer id, boolean lock) {
-		// TODO Auto-generated method stub
+
 		return null;
 	}
 
 	@Override
 	public List<PropertyIntegration> findAll() {
-		// TODO Auto-generated method stub
+
 		return null;
 	}
 
 	@Override
 	public PropertyIntegration create(PropertyIntegration propertyIntegration) {
-		// TODO Auto-generated method stub
+
 		return null;
 	}
 
 	@Override
 	public void delete(PropertyIntegration propertyIntegration) {
-		// TODO Auto-generated method stub
+
 
 	}
 
 	@Override
 	public PropertyIntegration update(PropertyIntegration propertyIntegration) {
-		// TODO Auto-generated method stub
+
 		return null;
 	}
 

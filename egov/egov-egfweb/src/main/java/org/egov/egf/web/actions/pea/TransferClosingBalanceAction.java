@@ -117,7 +117,7 @@ public class TransferClosingBalanceAction extends BaseFormAction {
 				// Ignore
 
 			} catch (final Exception e) {
-				e.printStackTrace();
+
 				final List<ValidationError> errors = new ArrayList<ValidationError>();
 				errors.add(new ValidationError("exp", e.getMessage()));
 				throw new ValidationException(errors);
@@ -132,7 +132,7 @@ public class TransferClosingBalanceAction extends BaseFormAction {
 						"Next Financial Year does not exist in system.");
 
 			} catch (final Exception e) {
-				e.printStackTrace();
+
 				final List<ValidationError> errors = new ArrayList<ValidationError>();
 				errors.add(new ValidationError("exp", e.getMessage()));
 				throw new ValidationException(errors);
@@ -155,13 +155,13 @@ public class TransferClosingBalanceAction extends BaseFormAction {
 
 			addActionMessage("Transfer Closing Balance Successful");
 		} catch (final ValidationException e) {
-			e.printStackTrace();
+
 			final List<ValidationError> errors = new ArrayList<ValidationError>();
 			errors.add(new ValidationError("exp", e.getErrors().get(0)
 					.getMessage()));
 			throw new ValidationException(errors);
 		} catch (final Exception e) {
-			e.printStackTrace();
+
 			final List<ValidationError> errors = new ArrayList<ValidationError>();
 			errors.add(new ValidationError("exp", e.getMessage()));
 			throw new ValidationException(errors);

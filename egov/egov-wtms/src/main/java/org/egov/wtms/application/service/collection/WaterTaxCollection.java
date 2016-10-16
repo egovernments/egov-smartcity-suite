@@ -186,7 +186,7 @@ public class WaterTaxCollection extends TaxCollection {
             if (LOGGER.isDebugEnabled())
                 LOGGER.debug("updateDemandDetails : Demand after processed : " + demand);
         } catch (final Exception e) {
-            e.printStackTrace();
+
             throw new ApplicationRuntimeException("Error occured during back update of DCB : " + e.getMessage(), e);
         }
     }
@@ -277,7 +277,7 @@ public class WaterTaxCollection extends TaxCollection {
         try {
             updateDemandDetailForReceiptCreate(billRcptInfo.getAccountDetails(), demand, billRcptInfo, totalAmount);
         } catch (final Exception e) {
-            e.printStackTrace();
+
             throw new ApplicationRuntimeException(
                     "Error occured during back update of DCB : updateCollForRcptCreate() " + e.getMessage(), e);
         }
@@ -444,7 +444,7 @@ public class WaterTaxCollection extends TaxCollection {
             updateDmdDetForRcptCancel(demand, billRcptInfo);
             LOGGER.debug("reconcileCollForRcptCancel : Updating Collection finished For Demand : " + demand);
         } catch (final Exception e) {
-            e.printStackTrace();
+
             throw new ApplicationRuntimeException("Error occured during back update of DCB : " + e.getMessage(), e);
         }
     }

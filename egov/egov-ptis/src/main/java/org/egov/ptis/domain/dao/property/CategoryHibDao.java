@@ -207,31 +207,31 @@ public class CategoryHibDao implements CategoryDao {
 
 	@Override
 	public Category findById(Integer id, boolean lock) {
-		// TODO Auto-generated method stub
+
 		return null;
 	}
 
 	@Override
 	public List<Category> findAll() {
-		// TODO Auto-generated method stub
+
 		return null;
 	}
 
 	@Override
 	public Category create(Category category) {
-		// TODO Auto-generated method stub
+
 		return null;
 	}
 
 	@Override
 	public void delete(Category category) {
-		// TODO Auto-generated method stub
+
 
 	}
 
 	@Override
 	public Category update(Category category) {
-		// TODO Auto-generated method stub
+
 		return null;
 	}
 }

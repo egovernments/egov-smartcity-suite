@@ -62,13 +62,13 @@ public class EgdmCollectedReceiptHibDao implements EgdmCollectedReceiptDao {
 
     @Override
     public EgdmCollectedReceipt findById(final Integer id, final boolean lock) {
-        // TODO Auto-generated method stub
+
         return null;
     }
 
     @Override
     public List<EgdmCollectedReceipt> findAll() {
-        // TODO Auto-generated method stub
+
         return null;
     }
 
@@ -81,7 +81,7 @@ public class EgdmCollectedReceiptHibDao implements EgdmCollectedReceiptDao {
 
     @Override
     public void delete(final EgdmCollectedReceipt egdmCollectedReceipt) {
-        // TODO Auto-generated method stub
+
 
     }
 

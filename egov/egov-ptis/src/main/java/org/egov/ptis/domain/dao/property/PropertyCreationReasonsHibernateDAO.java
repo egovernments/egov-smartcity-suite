@@ -61,31 +61,31 @@ public class PropertyCreationReasonsHibernateDAO implements PropertyCreationReas
 
 	@Override
 	public PropertyCreationReason findById(Integer id, boolean lock) {
-		// TODO Auto-generated method stub
+
 		return null;
 	}
 
 	@Override
 	public List<PropertyCreationReason> findAll() {
-		// TODO Auto-generated method stub
+
 		return null;
 	}
 
 	@Override
 	public PropertyCreationReason create(PropertyCreationReason propertyCreationReason) {
-		// TODO Auto-generated method stub
+
 		return null;
 	}
 
 	@Override
 	public void delete(PropertyCreationReason propertyCreationReason) {
-		// TODO Auto-generated method stub
+
 
 	}
 
 	@Override
 	public PropertyCreationReason update(PropertyCreationReason propertyCreationReason) {
-		// TODO Auto-generated method stub
+
 		return null;
 	}
 }

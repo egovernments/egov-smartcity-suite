@@ -88,7 +88,6 @@ public class ApiCreator {
         apiString
         .append(" StringBuilder query=new StringBuilder(500); \n query.append(\"update "
                 + args[2] + " set \");\n");
-        // System.out.println(fields.length);
         for (final Field f : fields)
             if (excludeList.contains(f.getType().getSimpleName()) || excludeNameList.contains(f.getName()))
                 continue;
@@ -118,7 +117,6 @@ public class ApiCreator {
         apiString.append("\n pstmt.executeQuery();\n");
         apiString.append("}catch(Exception e){	LOGGER.error(\"Exp in update: \"+e.getMessage()); throw taskExc;} finally{");
         apiString.append("try{ pstmt.close(); }catch(Exception e){LOGGER.error(\"Inside finally block of update\");}} \n }");
-        System.out.println(apiString.toString());
 
     }
 

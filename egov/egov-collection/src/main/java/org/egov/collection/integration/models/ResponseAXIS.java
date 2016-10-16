@@ -72,7 +72,7 @@ public class ResponseAXIS {
 
     @Override
     public String toString() {
-        // TODO Auto-generated method stub
+
         final String responseHdfc = "transactionId=" + transactionId + ";referenceNo=" + referenceNo + ";errorCode=" + errorCode
                 + ";paymentId=" + paymentId
                 + ";amount=" + amount + ";dateTime=" + dateTime + ";transactionType=" + transactionType + ";status=" + status

@@ -39,6 +39,7 @@
  */
 package org.egov.stms.notice.service;
 
+import static org.codehaus.groovy.tools.shell.util.Logger.io;
 import static org.egov.ptis.constants.PropertyTaxConstants.FILESTORE_MODULE_NAME;
 
 import java.io.ByteArrayInputStream;
@@ -481,15 +482,12 @@ public class SewerageNoticeService {
 
         } catch (final IllegalArgumentException iae) {
             LOGGER.error("Exception in addFilesToZip : ", iae);
-            iae.printStackTrace();
             throw new ValidationException(Arrays.asList(new ValidationError("error", iae.getMessage())));
         } catch (final FileNotFoundException fnfe) {
             LOGGER.error("Exception in addFilesToZip : ", fnfe);
-            fnfe.printStackTrace();
             throw new ValidationException(Arrays.asList(new ValidationError("error", fnfe.getMessage())));
         } catch (final IOException ioe) {
             LOGGER.error("Exception in addFilesToZip : ", ioe);
-            ioe.printStackTrace();
             throw new ValidationException(Arrays.asList(new ValidationError("error", ioe.getMessage())));
         }
         if (LOGGER.isDebugEnabled())

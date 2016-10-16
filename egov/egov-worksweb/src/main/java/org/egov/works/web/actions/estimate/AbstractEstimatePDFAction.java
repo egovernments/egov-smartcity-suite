@@ -89,7 +89,7 @@ public class AbstractEstimatePDFAction extends BaseFormAction {
             try {
                 pdfGenerator.generatePDF();
             } catch (final ValidationException e) {
-                // TODO Auto-generated catch block
+
                 logger.debug("exception " + e);
             }
 

@@ -141,7 +141,7 @@ public class JournalVoucherAction extends BaseVoucherAction
                 date = df.parse(cutOffDateconfigValue.get(0).getValue());
                 cutOffDate = formatter.format(date);
             } catch (ParseException e) {
-                e.printStackTrace();
+
             }
         }
         billDetailslist = new ArrayList<VoucherDetails>();
@@ -214,7 +214,7 @@ public class JournalVoucherAction extends BaseVoucherAction
                         date = sdf.parse(cutOffDate);
                         cutOffDate1 = formatter1.format(date);
                     } catch (ParseException e) {
-                        e.printStackTrace();
+
                     }
                 }
                 if (cutOffDate1 != null && voucherDate.compareTo(cutOffDate1) <= 0
@@ -293,7 +293,7 @@ public class JournalVoucherAction extends BaseVoucherAction
                     throw new ValidationException("Voucher creation failed", "Voucher creation failed");
 
             } catch (final Exception e) {
-                e.printStackTrace();
+
                 clearMessages();
                 if (subLedgerlist.size() == 0)
                     subLedgerlist.add(new VoucherDetails());
