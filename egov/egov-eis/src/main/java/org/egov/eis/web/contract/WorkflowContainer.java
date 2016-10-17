@@ -54,8 +54,26 @@ public class WorkflowContainer {
     protected String approverDepartment;
     protected String approverDesignation;
     protected Long approverPositionId;
+    protected String workflowType;
+    protected String processInstanceId;
 
-    public BigDecimal getAmountRule() {
+    public String getWorkflowType() {
+		return workflowType;
+	}
+
+	public void setWorkflowType(String workflowType) {
+		this.workflowType = workflowType;
+	}
+
+	public String getProcessInstanceId() {
+		return processInstanceId;
+	}
+
+	public void setProcessInstanceId(String processInstanceId) {
+		this.processInstanceId = processInstanceId;
+	}
+
+	public BigDecimal getAmountRule() {
         return amountRule;
     }
 

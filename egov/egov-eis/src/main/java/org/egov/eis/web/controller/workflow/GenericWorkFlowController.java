@@ -58,8 +58,10 @@ import org.egov.infra.admin.master.entity.Department;
 import org.egov.infra.admin.master.service.DepartmentService;
 import org.egov.infra.workflow.entity.State;
 import org.egov.infra.workflow.entity.StateAware;
+import org.egov.infra.workflow.entity.WorkflowTypes;
 import org.egov.infra.workflow.matrix.entity.WorkFlowMatrix;
 import org.egov.infra.workflow.matrix.service.CustomizedWorkFlowService;
+import org.egov.infra.workflow.service.WorkflowTypeService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -78,7 +80,16 @@ public abstract class GenericWorkFlowController {
 	private RepositoryService repositoryService;
     
     @Autowired
+	private ProcessEngine ProcessEngine;
+    
+    @Autowired
+     private TaskService taskService;
+    
+    @Autowired
 	private FormService formService;
+    
+    @Autowired
+    protected WorkflowTypeService workflowTypeService;
 
     @ModelAttribute(value = "approvalDepartmentList")
     public List<Department> addAllDepartments() {
@@ -97,11 +108,19 @@ public abstract class GenericWorkFlowController {
      *            This method we are calling In GET Method..
      */
     protected void prepareWorkflow(final Model prepareModel, final StateAware model, final WorkflowContainer container) {
+    	
+    	WorkflowTypes workflowTypeByType = workflowTypeService.getWorkflowTypeByType(container.getWorkflowType());
+    	if(workflowTypeByType!=null && workflowTypeByType.getBusinessKey()!=null)
+    	{
+    	prepareActivitiWorkflow(prepareModel,container.getProcessInstanceId(),workflowTypeByType.getBusinessKey());
+    		
+    	}else
+    	{
         prepareModel.addAttribute("approverDepartmentList", addAllDepartments());
         prepareModel.addAttribute("validActionList", getValidActions(model, container));
         prepareModel.addAttribute("nextAction", getNextAction(model, container));
-
-    }
+    	}
+    } 
     
     protected void prepareActivitiWorkflow(final Model prepareModel, final String processInstanceId, final String processDefinitionKey) {
         prepareModel.addAttribute("approverDepartmentList", addAllDepartments());
@@ -165,8 +184,7 @@ public abstract class GenericWorkFlowController {
     				return Arrays.asList(object.getValue().toString().split(","));
     		}
         } else {
-        	ProcessEngine processEngine = ProcessEngines.getDefaultProcessEngine();
-    		TaskService taskService = processEngine.getTaskService();
+        	
     		Task newTask = taskService.createTaskQuery().processInstanceId(processInstanceId).list().get(0);
     		TaskFormData taskFormData = formService.getTaskFormData(newTask.getId());
     		for(FormProperty property : taskFormData.getFormProperties()) {

@@ -127,9 +127,12 @@ public class CreateContractorBillController extends GenericWorkFlowController {
         final LineEstimateDetails lineEstimateDetails = lineEstimateService
                 .findByEstimateNumber(workOrder.getEstimateNumber());
         setDropDownValues(model);
-        model.addAttribute("stateType", WorksConstants.CBR_PROCESS_DEFINITION_KEY);
+        model.addAttribute("stateType",ContractorBillRegister.class.getSimpleName() );
+        WorkflowContainer container=new WorkflowContainer();
+        container.setWorkflowType(ContractorBillRegister.class.getSimpleName() );
 
-        prepareActivitiWorkflow(model, contractorBillRegister.getProcessInstance(), WorksConstants.CBR_PROCESS_DEFINITION_KEY);
+        prepareWorkflow(model, contractorBillRegister, container);;
+      //  prepareActivitiWorkflow(model, contractorBillRegister.getProcessInstance(), WorksConstants.CBR_PROCESS_DEFINITION_KEY);
 
         model.addAttribute("mode", "edit");
 
