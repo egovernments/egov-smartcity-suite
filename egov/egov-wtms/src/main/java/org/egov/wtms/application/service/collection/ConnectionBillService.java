@@ -320,7 +320,7 @@ public class ConnectionBillService extends BillServiceInterface {
 
     @Override
     public void cancelBill() {
-        // TODO Auto-generated method stub
+
 
     }
 

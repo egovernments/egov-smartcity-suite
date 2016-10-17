@@ -53,7 +53,7 @@ public class EisExternalImpl implements EisExternalInterface
 	@Override
 	public Position getSuperiorPositionByObjType(Position position,
 			String obType) {
-		// TODO Auto-generated method stub
+
 		return null;
 	}
 }

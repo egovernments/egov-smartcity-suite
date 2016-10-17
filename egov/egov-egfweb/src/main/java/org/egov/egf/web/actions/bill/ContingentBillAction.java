@@ -259,7 +259,7 @@ public class ContingentBillAction extends BaseBillAction {
                 date = df.parse(cutOffDateconfigValue.get(0).getValue());
                 cutOffDate = formatter.format(date);
             } catch (ParseException e) {
-                e.printStackTrace();
+
             }
         }
         reset();
@@ -303,12 +303,12 @@ public class ContingentBillAction extends BaseBillAction {
                                     .getOwnerPosition()) }));
             }
         } catch (final ValidationException e) {
-            e.printStackTrace();
+
             final List<ValidationError> errors = new ArrayList<ValidationError>();
             errors.add(new ValidationError("exp", e.getErrors().get(0).getMessage()));
             throw new ValidationException(errors);
         } catch (final Exception e) {
-            e.printStackTrace();
+
             final List<ValidationError> errors = new ArrayList<ValidationError>();
             errors.add(new ValidationError("exp", e.getMessage()));
             throw new ValidationException(errors);
@@ -382,7 +382,7 @@ public class ContingentBillAction extends BaseBillAction {
                     date = sdf.parse(cutOffDate);
                     cutOffDate1 = formatter1.format(date);
                 } catch (ParseException e) {
-                    e.printStackTrace();
+
                 }
             }
             if (cutOffDate1 != null && voucherDate.compareTo(cutOffDate1) <= 0
@@ -882,7 +882,7 @@ public class ContingentBillAction extends BaseBillAction {
 
     @Override
     public String execute() {
-        // TODO Auto-generated method stub
+
         try {
             super.execute();
         } catch (final Exception e) {

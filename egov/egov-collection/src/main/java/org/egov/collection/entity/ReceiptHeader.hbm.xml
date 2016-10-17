@@ -250,7 +250,7 @@
 	</query>
 
 	<query name="RECEIPTS_BY_INSTRUMENTHEADER_AND_SERVICECODE">
-    <![CDATA[select rh from org.egov.collection.entity.ReceiptHeader rh left join rh.receiptInstrument as ri where ri.id=?  and rh.service.code=?]]>
+    <![CDATA[select rh from org.egov.collection.entity.ReceiptHeader rh left join rh.receiptInstrument as ri where  rh.service.code=? and ri.id in (:param_1)  ]]>
     </query>
 	
 	<query name="STATUS_OF_RECEIPTS">

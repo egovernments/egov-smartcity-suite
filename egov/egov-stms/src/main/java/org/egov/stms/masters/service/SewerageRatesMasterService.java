@@ -167,7 +167,7 @@ public List<SewerageRatesMaster> getLatestActiveRecord(final PropertyType proper
                fDate =formatter.parse(formattedDate);
                
            } catch (ParseException e) {
-               e.printStackTrace();
+
            }
             connectionCriteria.add(Restrictions.eq("fromDate",fDate));
         }

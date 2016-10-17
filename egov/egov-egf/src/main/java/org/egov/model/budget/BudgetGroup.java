@@ -39,18 +39,10 @@
  */
 package org.egov.model.budget;
 
-import org.egov.commons.CChartOfAccounts;
-import org.egov.infra.persistence.entity.AbstractAuditable;
-import org.egov.infra.persistence.validator.annotation.Required;
-import org.egov.infra.persistence.validator.annotation.Unique;
-import org.egov.utils.BudgetAccountType;
-import org.egov.utils.BudgetingType;
-import org.hibernate.search.annotations.DocumentId;
-import org.hibernate.validator.constraints.Length;
-
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -60,10 +52,19 @@ import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
 
+import org.egov.commons.CChartOfAccounts;
+import org.egov.infra.persistence.entity.AbstractAuditable;
+import org.egov.infra.persistence.validator.annotation.Required;
+import org.egov.infra.persistence.validator.annotation.Unique;
+import org.egov.utils.BudgetAccountType;
+import org.egov.utils.BudgetingType;
+import org.hibernate.search.annotations.DocumentId;
+import org.hibernate.validator.constraints.Length;
+
 @Entity
 @Table(name = "EGF_BUDGETGROUP")
 @SequenceGenerator(name = BudgetGroup.SEQ_BUDGETGROUP, sequenceName = BudgetGroup.SEQ_BUDGETGROUP, allocationSize = 1)
-@Unique(fields = "name", id = "id", columnName = "NAME", tableName = "EGF_BUDGETGROUP", message = "budgetgroup.name.isunique")
+@Unique(fields = "name", id = "id", columnName = "NAME", tableName = "EGF_BUDGETGROUP", enableDfltMsg = true)
 public class BudgetGroup extends AbstractAuditable {
 
     private static final long serialVersionUID = 8907540544512153346L;
@@ -74,20 +75,27 @@ public class BudgetGroup extends AbstractAuditable {
     @GeneratedValue(generator = SEQ_BUDGETGROUP, strategy = GenerationType.SEQUENCE)
     private Long id;
     @Required(message = "Name should not be empty")
+    @Length(max = 250)
     private String name;
+
     @Length(max = 250, message = "Max 250 characters are allowed for description")
     private String description;
-    @ManyToOne
-    @JoinColumn(name = "majorCode")
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "majorcode")
     private CChartOfAccounts majorCode;
-    @ManyToOne
-    @JoinColumn(name = "maxCode")
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "maxcode")
     private CChartOfAccounts maxCode;
-    @ManyToOne
-    @JoinColumn(name = "minCode")
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "mincode")
     private CChartOfAccounts minCode;
+
     @Enumerated(value = EnumType.STRING)
     private BudgetAccountType accountType;
+
     @Enumerated(value = EnumType.STRING)
     private BudgetingType budgetingType;
     private Boolean isActive;
@@ -150,23 +158,21 @@ public class BudgetGroup extends AbstractAuditable {
         this.budgetingType = budgetingType;
     }
 
-    public boolean getIsActive() {
+    public Boolean getIsActive() {
         return isActive;
     }
 
-    public void setIsActive(final boolean isActive) {
-        this.isActive = isActive;
-    }
-
+    @Override
     public Long getId() {
         return id;
     }
 
-    public void setId(Long id) {
+    @Override
+    public void setId(final Long id) {
         this.id = id;
     }
 
-    public void setIsActive(Boolean isActive) {
+    public void setIsActive(final Boolean isActive) {
         this.isActive = isActive;
     }
 

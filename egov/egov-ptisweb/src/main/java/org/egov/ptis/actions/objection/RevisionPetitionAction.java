@@ -558,7 +558,7 @@ public class RevisionPetitionAction extends PropertyTaxBaseAction {
             try {
                 bFile = FileUtils.readFileToByteArray(file);
             } catch (final IOException e) {
-                e.printStackTrace();
+
                 throw new ApplicationRuntimeException("Exception while generating Hearing Notcie : " + e);
             }
             reportOutput.setReportOutputData(bFile);
@@ -951,7 +951,7 @@ public class RevisionPetitionAction extends PropertyTaxBaseAction {
                 try {
                     bFile = FileUtils.readFileToByteArray(file);
                 } catch (final IOException e) {
-                    e.printStackTrace();
+
                     throw new ApplicationRuntimeException("Exception while generating Hearing Notcie : " + e);
                 }
                 reportOutput.setReportOutputData(bFile);
@@ -1018,7 +1018,7 @@ public class RevisionPetitionAction extends PropertyTaxBaseAction {
                 try {
                     bFile = FileUtils.readFileToByteArray(file);
                 } catch (final IOException e) {
-                    e.printStackTrace();
+
                     throw new ApplicationRuntimeException("Exception while generating Hearing Notcie : " + e);
                 }
                 reportOutput.setReportOutputData(bFile);
@@ -1082,7 +1082,7 @@ public class RevisionPetitionAction extends PropertyTaxBaseAction {
                 try {
                     bFile = FileUtils.readFileToByteArray(file);
                 } catch (final IOException e) {
-                    e.printStackTrace();
+
                     throw new ApplicationRuntimeException("Exception while generating Hearing Notcie : " + e);
                 }
                 reportOutput.setReportOutputData(bFile);
@@ -1378,7 +1378,7 @@ public class RevisionPetitionAction extends PropertyTaxBaseAction {
                     }
                     if (stateHistoryObj.getValue()
                             .equalsIgnoreCase(PropertyTaxConstants.REVISIONPETITION_WF_REGISTERED)) {
-                        
+                        position = wfInitiator.getPosition();
                         addActionMessage(getText("objection.forward", new String[] { wfInitiator.getEmployee().getName().concat("~").concat(wfInitiator.getPosition().getName()) }));
 
                         // First time when commisioner forwarding record from
@@ -1399,6 +1399,7 @@ public class RevisionPetitionAction extends PropertyTaxBaseAction {
                                     .equalsIgnoreCase(PropertyTaxConstants.REVISIONPETITION_WF_REGISTERED)) {
                         positionFoundInHistory = true;
                         updateRevisionPetitionStatus(wfmatrix, objection, PropertyTaxConstants.OBJECTION_HEARING_FIXED);
+                        position = wfInitiator.getPosition();
                         addActionMessage(getText("objection.forward", new String[] { wfInitiator.getEmployee().getName().concat("~").concat(wfInitiator.getPosition().getName()) }));
                     }
             }

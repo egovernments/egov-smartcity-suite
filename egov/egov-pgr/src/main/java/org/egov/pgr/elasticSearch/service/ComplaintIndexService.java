@@ -76,6 +76,7 @@ import org.egov.search.domain.Sort;
 import org.egov.search.service.SearchService;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -95,19 +96,37 @@ public class ComplaintIndexService {
     @Autowired
     private ComplaintService complaintService;
 
+    @Autowired
+    private Environment environment;
+
     @Indexing(name = Index.PGR, type = IndexType.COMPLAINT)
     public ComplaintIndex createComplaintIndex(final ComplaintIndex complaintIndex) {
         final City cityWebsite = cityService.getCityByURL(ApplicationThreadLocals.getDomainName());
         complaintIndex.setCitydetails(cityWebsite);
-        if (complaintIndex.getReceivingMode().equals(ReceivingMode.MOBILE))
-            complaintIndex.setSource("PuraSeva");
+        if (complaintIndex.getReceivingMode().equals(ReceivingMode.MOBILE)
+                && complaintIndex.getCreatedBy().getType().equals(UserType.CITIZEN))
+            complaintIndex.setSource(environment.getProperty("complaint.source.citizen.app"));
+        if (complaintIndex.getReceivingMode().equals(ReceivingMode.MOBILE)
+                && complaintIndex.getCreatedBy().getType().equals(UserType.EMPLOYEE))
+            complaintIndex.setSource(environment.getProperty("complaint.source.emp.app"));
         else if (complaintIndex.getReceivingMode().equals(ReceivingMode.WEBSITE)
-                && (complaintIndex.getCreatedBy().getType().equals(UserType.CITIZEN)
-                        || complaintIndex.getCreatedBy().getType().equals(UserType.SYSTEM)))
-            complaintIndex.setSource("By citizens:ULB Portal");
-        else if (complaintIndex.getCreatedBy().getType().equals(UserType.EMPLOYEE)
-                || complaintIndex.getCreatedBy().getType().equals(UserType.SYSTEM))
-            complaintIndex.setSource("ULB counter");
+                && complaintIndex.getCreatedBy().getType().equals(UserType.CITIZEN))
+            complaintIndex.setSource(environment.getProperty("complaint.source.portal.citizen"));
+        else if (complaintIndex.getReceivingMode().equals(ReceivingMode.WEBSITE)
+                && complaintIndex.getCreatedBy().getType().equals(UserType.SYSTEM))
+            complaintIndex.setSource(environment.getProperty("complaint.source.portal.anonymous"));
+        else if (complaintIndex.getReceivingMode().equals(ReceivingMode.WEBSITE)
+                && complaintIndex.getCreatedBy().getType().equals(UserType.EMPLOYEE))
+            complaintIndex.setSource(environment.getProperty("complaint.source.emp.website"));
+        else if (complaintIndex.getReceivingMode().equals(ReceivingMode.CALL)
+                && complaintIndex.getCreatedBy().getType().equals(UserType.EMPLOYEE))
+            complaintIndex.setSource(environment.getProperty("complaint.source.website.emp.phone"));
+        else if (complaintIndex.getReceivingMode().equals(ReceivingMode.EMAIL)
+                && complaintIndex.getCreatedBy().getType().equals(UserType.EMPLOYEE))
+            complaintIndex.setSource(environment.getProperty("complaint.source.website.emp.email"));
+        else if (complaintIndex.getReceivingMode().equals(ReceivingMode.MANUAL)
+                && complaintIndex.getCreatedBy().getType().equals(UserType.EMPLOYEE))
+            complaintIndex.setSource(environment.getProperty("complaint.source.website.emp.manual"));
         complaintIndex.setIsClosed(false);
         complaintIndex.setComplaintIsClosed('N');
         complaintIndex.setIfClosed(0);

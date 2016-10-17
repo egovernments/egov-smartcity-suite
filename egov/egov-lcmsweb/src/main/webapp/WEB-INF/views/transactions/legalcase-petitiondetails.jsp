@@ -93,7 +93,7 @@
 				
 				 maxlength="256"/></td>
 			<td class="text-right"><input type="text"
-				class="form-control table-input text-left patternvalidation"
+				class="form-control table-input text-left"
 				data-pattern="number" name="bipartisanPetitionerDetailsList[${status.index}].contactNumber"
 				id="bipartisanPetitionerDetailsList[${status.index}].contactNumber"
 				value="${bipartisanPetitionerDetailsList.contactNumber}"
@@ -202,22 +202,21 @@
 				onblur="onChangeofPetitioncheck(this)" /></td> --%>
 			
 				<td><input type="text"
-				class="form-control table-input text-right"
+				class="form-control table-input text-left"
 						id="bipartisanRespondentDetailsList[${status.index}].name"
 						name="bipartisanRespondentDetailsList[${status.index}].name" 
 						value="${bipartisanRespondentDetailsList.name}" /></td>
 					
 
-				<td><input type="text"
+				<td><input type="text-right"
 				class="form-control table-input text-right"
 						id="bipartisanRespondentDetailsList[${status.index}].address"
 						name="bipartisanRespondentDetailsList[${status.index}].address" 
 						value="${bipartisanRespondentDetailsList.address}" /></td>
-
-				<td><input type="text" 
+				<td class="text-right"><input type="text" 
 						id="bipartisanRespondentDetailsList[${status.index}].contactNumber"
 						name="bipartisanRespondentDetailsList[${status.index}].contactNumber" 
-					class="form-control table-input text-right" style="text-align: center"
+					class="form-control table-input text-left patternvalidation" data-pattern="number"  maxlength="10"
 					value="${bipartisanRespondentDetailsList.contactNumber}" /></td>
 <%-- 
 				<td>
@@ -272,7 +271,7 @@
 				class="form-control table-input text-left patternvalidation"
 				data-pattern="number"
 				name="bipartisanRespondentDetailsList[0].contactNumber"
-				id="bipartisanRespondentDetailsList[0].contactNumber" maxlength="10"></td>
+				id="bipartisanRespondentDetailsList[0].contactNumber" data-pattern="number" maxlength="10"></td>
 		<%-- 	<td class="text-right"><form:select path=""
 					data-first-option="false"
 					name="bipartisanRespondentDetailsList[0].governmentDepartment"

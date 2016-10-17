@@ -71,6 +71,7 @@ import org.egov.commons.dao.EgwStatusHibernateDAO;
 import org.egov.commons.service.ChartOfAccountsService;
 import org.egov.eis.entity.Assignment;
 import org.egov.eis.entity.Employee;
+import org.egov.eis.service.AssignmentService;
 import org.egov.eis.service.EisCommonService;
 import org.egov.infra.admin.master.entity.AppConfigValues;
 import org.egov.infra.admin.master.entity.Boundary;
@@ -83,21 +84,26 @@ import org.egov.infra.exception.ApplicationRuntimeException;
 import org.egov.infra.persistence.utils.SequenceNumberGenerator;
 import org.egov.infra.script.entity.Script;
 import org.egov.infra.script.service.ScriptService;
+import org.egov.infra.security.utils.SecurityUtils;
 import org.egov.infra.validation.exception.ValidationError;
 import org.egov.infra.validation.exception.ValidationException;
 import org.egov.infra.workflow.entity.State;
+import org.egov.infra.workflow.matrix.entity.WorkFlowMatrix;
+import org.egov.infra.workflow.service.SimpleWorkflowService;
 import org.egov.infra.workflow.service.WorkflowService;
 import org.egov.infstr.services.PersistenceService;
 import org.egov.model.budget.Budget;
 import org.egov.model.budget.BudgetDetail;
 import org.egov.model.budget.BudgetGroup;
 import org.egov.model.budget.BudgetUpload;
+import org.egov.model.voucher.WorkflowBean;
 import org.egov.pims.commons.Designation;
 import org.egov.pims.commons.Position;
 import org.egov.pims.model.PersonalInformation;
 import org.egov.utils.BudgetAccountType;
 import org.egov.utils.BudgetingType;
 import org.egov.utils.Constants;
+import org.egov.utils.FinancialConstants;
 import org.hibernate.Criteria;
 import org.hibernate.Query;
 import org.hibernate.criterion.Order;
@@ -106,10 +112,14 @@ import org.hibernate.criterion.Property;
 import org.hibernate.criterion.Restrictions;
 import org.hibernate.exception.ConstraintViolationException;
 import org.hibernate.exception.SQLGrammarException;
+import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+@Service
+@Transactional(readOnly = true)
 public class BudgetDetailService extends PersistenceService<BudgetDetail, Long> {
     protected EisCommonService eisCommonService;
     protected WorkflowService<BudgetDetail> budgetDetailWorkflowService;
@@ -132,6 +142,9 @@ public class BudgetDetailService extends PersistenceService<BudgetDetail, Long> 
     private SequenceNumberGenerator sequenceNumberGenerator;
 
     @Autowired
+    private EgwStatusHibernateDAO egwStatusHibernateDAO;
+    
+    @Autowired
     @Qualifier("chartOfAccountsService")
     private ChartOfAccountsService chartOfAccountsService;
 
@@ -140,7 +153,17 @@ public class BudgetDetailService extends PersistenceService<BudgetDetail, Long> 
 
     @Autowired
     private DepartmentService departmentService;
-
+    
+    @Autowired
+    private SecurityUtils securityUtils;
+    
+    @Autowired
+    private AssignmentService assignmentService;
+    
+    @Autowired
+    @Qualifier("workflowService")
+    private SimpleWorkflowService<BudgetDetail> budgetDetailWFService;
+    
     private static final Logger LOGGER = Logger.getLogger(BudgetDetailService.class);
     private static final String BUDGET_STATES_INSERT = "insert into eg_wf_states (ID,TYPE,VALUE,CREATEDBY,CREATEDDATE,LASTMODIFIEDDATE,LASTMODIFIEDBY,DATEINFO,OWNER_POS,STATUS,VERSION) values (:stateId,'Budget','NEW',1,current_date,current_date,1,current_date,1,1,0)";
     private static final String BUDGETDETAIL_STATES_INSERT = "insert into eg_wf_states (ID,TYPE,VALUE,CREATEDBY,CREATEDDATE,LASTMODIFIEDDATE,LASTMODIFIEDBY,DATEINFO,OWNER_POS,STATUS,VERSION) values (:stateId,'BudgetDetail','NEW',1,current_date,current_date,1,current_date,1,1,0)";
@@ -496,7 +519,7 @@ public class BudgetDetailService extends PersistenceService<BudgetDetail, Long> 
 
     public void setRelatedEntitesOn(final BudgetDetail detail, final PersistenceService service) {
 
-        detail.setStatus(egwStatusDAO.getStatusByModuleAndCode("BUDGETDETAIL", "Approved"));
+        //detail.setStatus(egwStatusDAO.getStatusByModuleAndCode("BUDGETDETAIL", "Approved"));
         if (detail.getBudget() != null) {
             detail.setBudget((Budget) service.find("from Budget where id=?", detail.getBudget().getId()));
             addMaterializedPath(detail);
@@ -901,7 +924,7 @@ public class BudgetDetailService extends PersistenceService<BudgetDetail, Long> 
                         +
                         " AND vmis.departmentid   =bd.executing_department and bd.executing_department ="
                         + dept.getId()
-                        + " AND gl.glcodeid         =bg.mincode AND gl.glcodeid         =bg.maxcode AND bg.majorcode       IS NULL AND (wf.value='END' OR wf.owner="
+                        + " AND gl.glcodeid         =bg.mincode AND gl.glcodeid         =bg.maxcode AND bg.majorcode       IS NULL AND (wf.value='END' OR wf.owner_pos="
                         + pos.getId() + ") AND bd.state_id = wf.id GROUP BY substr(gl.glcode,1,3)");
 
         /*
@@ -969,7 +992,7 @@ public class BudgetDetailService extends PersistenceService<BudgetDetail, Long> 
                         " AND cao.id=bg.mincode AND cao.id=bg.maxcode AND bg.majorcode IS NULL AND bd.executing_department = "
                         + budgetDetail.getExecutingDepartment().getId()
                         + functionCondition
-                        + " and cao1.glcode = cao.majorcode AND (wf.value='END' OR wf.owner="
+                        + " and cao1.glcode = cao.majorcode AND (wf.value='END' OR wf.owner_pos="
                         + pos.getId()
                         + ") AND bd.state_id = wf.id GROUP BY cao.majorcode, cao1.glcode||'-'||cao1.name");
 
@@ -1047,7 +1070,7 @@ public class BudgetDetailService extends PersistenceService<BudgetDetail, Long> 
                         + " AND bd1.executing_department = "
                         + budgetDetail.getExecutingDepartment().getId()
                         + functionCondition1
-                        + " AND bd1.uniqueno = bd2.uniqueno AND (wf.value='END' OR wf.owner="
+                        + " AND bd1.uniqueno = bd2.uniqueno AND (wf.value='END' OR wf.owner_pos="
                         + pos.getId()
                         + ") AND bd1.state_id = wf.id GROUP BY cao.majorcode");
 
@@ -1103,7 +1126,7 @@ public class BudgetDetailService extends PersistenceService<BudgetDetail, Long> 
                         + " AND bd1.executing_department = "
                         + budgetDetail.getExecutingDepartment().getId()
                         + functionCondition1
-                        + " AND bd1.uniqueno = bd2.uniqueno AND (wf.value='END' OR wf.owner="
+                        + " AND bd1.uniqueno = bd2.uniqueno AND (wf.value='END' OR wf.owner_pos="
                         + pos.getId()
                         + ") AND bd1.state_id = wf.id GROUP BY bd2.uniqueno");
 
@@ -1188,7 +1211,7 @@ public class BudgetDetailService extends PersistenceService<BudgetDetail, Long> 
                         +
                         " "
                         + functionCondition2
-                        + " AND bapp.budgetdetail  = bd2.id AND (wf.value ='END' OR wf.owner ="
+                        + " AND bapp.budgetdetail  = bd2.id AND (wf.value ='END' OR wf.owner_pos ="
                         + pos.getId()
                         + ") AND bd1.state_id             = wf.id and bd1.uniqueno = bd2.uniqueno GROUP BY cao.majorcode");
 
@@ -1248,7 +1271,7 @@ public class BudgetDetailService extends PersistenceService<BudgetDetail, Long> 
                         +
                         " "
                         + functionCondition2
-                        + " AND bapp.budgetdetail = bd2.id AND (wf.value               ='END' OR wf.owner                 ="
+                        + " AND bapp.budgetdetail = bd2.id AND (wf.value               ='END' OR wf.owner_pos                 ="
                         + pos.getId()
                         + ") AND bd1.state_id             = wf.id and bd1.uniqueno = bd2.uniqueno GROUP BY bd2.uniqueno");
 
@@ -1284,7 +1307,7 @@ public class BudgetDetailService extends PersistenceService<BudgetDetail, Long> 
          * ") AND bd.state_id = wf.id GROUP BY cao.majorcode"); query = query.append(" UNION ");
          */
         query = query
-                .append("SELECT cao.majorcode, SUM(bd.anticipatory_amount), SUM(bd.originalamount),SUM(bd.approvedamount) FROM egf_budgetdetail bd, egf_budgetgroup bg, egf_budget b, chartofaccounts cao, financialyear f, eg_wf_states wf"
+                .append("SELECT cao.majorcode, SUM(bd.anticipatory_amount) as anticipatory_amount, SUM(bd.originalamount) as originalamount, SUM(bd.approvedamount) as approvedamount FROM egf_budgetdetail bd, egf_budgetgroup bg, egf_budget b, chartofaccounts cao, financialyear f, eg_wf_states wf"
                         +
                         " WHERE bd.budget =b.id AND f.id ="
                         + topBudget.getFinancialYear().getId()
@@ -1295,7 +1318,7 @@ public class BudgetDetailService extends PersistenceService<BudgetDetail, Long> 
                         + "%' AND bd.budgetgroup =bg.id  AND cao.id =bg.mincode AND cao.id =bg.maxcode AND bg.majorcode IS NULL AND bd.executing_department = "
                         + budgetDetail.getExecutingDepartment().getId()
                         + functionCondition
-                        + " AND (wf.value='END' OR wf.owner="
+                        + " AND (wf.value='END' OR wf.owner_pos="
                         + pos.getId() + ") AND bd.state_id = wf.id GROUP BY cao.majorcode");
 
         /*
@@ -1351,7 +1374,7 @@ public class BudgetDetailService extends PersistenceService<BudgetDetail, Long> 
                         + "%' AND bd.budgetgroup =bg.id  AND cao.id =bg.mincode AND cao.id =bg.maxcode AND bg.majorcode IS NULL AND bd.executing_department = "
                         + budgetDetail.getExecutingDepartment().getId()
                         + functionCondition
-                        + " AND (wf.value='END' OR wf.owner="
+                        + " AND (wf.value='END' OR wf.owner_pos="
                         + pos.getId() + ") AND bd.state_id = wf.id GROUP BY cao.majorcode");
 
         /*
@@ -1407,7 +1430,7 @@ public class BudgetDetailService extends PersistenceService<BudgetDetail, Long> 
          */
 
         query = query
-                .append("SELECT cao.majorcode, SUM(bd2.originalamount), SUM(bd2.approvedamount) FROM egf_budgetdetail bd1, egf_budgetdetail bd2, egf_budgetgroup bg, egf_budget b1, egf_budget b2, chartofaccounts cao, eg_wf_states wf"
+                .append("SELECT cao.majorcode, SUM(bd2.originalamount) as originalamount, SUM(bd2.approvedamount) as approvedamount  FROM egf_budgetdetail bd1, egf_budgetdetail bd2, egf_budgetgroup bg, egf_budget b1, egf_budget b2, chartofaccounts cao, eg_wf_states wf"
                         +
                         " WHERE bd1.budget =b1.id AND bd2.budget =b2.id AND b1.financialyearid="
                         + topBudget.getFinancialYear().getId()
@@ -1421,7 +1444,7 @@ public class BudgetDetailService extends PersistenceService<BudgetDetail, Long> 
                         + " AND bd1.executing_department = "
                         + budgetDetail.getExecutingDepartment().getId()
                         + functionCondition1
-                        + " AND bd1.uniqueno = bd2.uniqueno AND b2.reference_budget = b1.id AND (wf.value='END' OR wf.owner="
+                        + " AND bd1.uniqueno = bd2.uniqueno AND b2.reference_budget = b1.id AND (wf.value='END' OR wf.owner_pos="
                         + pos.getId() + ") AND bd1.state_id = wf.id GROUP BY cao.majorcode");
 
         /*
@@ -1470,7 +1493,7 @@ public class BudgetDetailService extends PersistenceService<BudgetDetail, Long> 
          */
 
         query = query
-                .append("SELECT cao.majorcode, SUM(bd.approvedamount) FROM egf_budgetdetail bd, egf_budgetgroup bg, egf_budget b, chartofaccounts cao, financialyear f, eg_wf_states wf"
+                .append("SELECT cao.majorcode, SUM(bd.approvedamount) as approvedamount  FROM egf_budgetdetail bd, egf_budgetgroup bg, egf_budget b, chartofaccounts cao, financialyear f, eg_wf_states wf"
                         +
                         " WHERE bd.budget =b.id AND f.id ="
                         + topBudget.getFinancialYear().getId()
@@ -1481,7 +1504,7 @@ public class BudgetDetailService extends PersistenceService<BudgetDetail, Long> 
                         + "%' AND bd.budgetgroup =bg.id  AND cao.id =bg.mincode AND cao.id =bg.maxcode AND bg.majorcode IS NULL AND bd.executing_department = "
                         + budgetDetail.getExecutingDepartment().getId()
                         + functionCondition
-                        + " AND (wf.value='END' OR wf.owner="
+                        + " AND (wf.value='END' OR wf.owner_pos="
                         + pos.getId() + ") AND bd.state_id = wf.id GROUP BY cao.majorcode");
 
         /*
@@ -1552,7 +1575,7 @@ public class BudgetDetailService extends PersistenceService<BudgetDetail, Long> 
                         + " AND bd1.executing_department = "
                         + budgetDetail.getExecutingDepartment().getId()
                         + functionCondition1
-                        + " AND bd1.uniqueno = bd2.uniqueno AND b2.reference_budget = b1.id AND (wf.value='END' OR wf.owner="
+                        + " AND bd1.uniqueno = bd2.uniqueno AND b2.reference_budget = b1.id AND (wf.value='END' OR wf.owner_pos="
                         + pos.getId() + ") AND bd1.state_id = wf.id GROUP BY cao.majorcode");
 
         /*
@@ -2911,5 +2934,86 @@ public class BudgetDetailService extends PersistenceService<BudgetDetail, Long> 
         Collections.sort(budgetDetails, (o1, o2) -> o1.getExecutingDepartment().getName().toUpperCase()
                 .compareTo(o2.getExecutingDepartment().getName().toUpperCase()));
         return budgetDetails;
+    }
+    
+    public Assignment getWorkflowInitiator(final BudgetDetail budgetDetail) {
+        Assignment wfInitiator = assignmentService.findByEmployeeAndGivenDate(budgetDetail.getCreatedBy().getId(), new Date())
+                .get(0);
+        return wfInitiator;
+    }
+    
+    @Transactional
+    public BudgetDetail transitionWorkFlow(final BudgetDetail budgetDetail, WorkflowBean workflowBean) {
+        final DateTime currentDate = new DateTime();
+        final User user = securityUtils.getCurrentUser();
+        final Assignment userAssignment = assignmentService.findByEmployeeAndGivenDate(user.getId(), new Date()).get(0);
+        Position pos = null;
+        Assignment wfInitiator = null;
+        if (budgetDetail.getId()!=null && budgetDetail.getId()!=0)
+            wfInitiator = getWorkflowInitiator(budgetDetail);
+
+        if (FinancialConstants.BUTTONREJECT.equalsIgnoreCase(workflowBean.getWorkFlowAction())) {
+            if (wfInitiator.equals(userAssignment)) {
+                budgetDetail.transition(true).end().withSenderName(user.getName())
+                        .withComments(workflowBean.getApproverComments())
+                        .withDateInfo(currentDate.toDate());
+            } else {
+                final String stateValue = FinancialConstants.WORKFLOW_STATE_REJECTED;
+                budgetDetail.transition(true).withSenderName(user.getName()).withComments(workflowBean.getApproverComments())
+                        .withStateValue(stateValue).withDateInfo(currentDate.toDate())
+                        .withOwner(wfInitiator.getPosition()).withNextAction(FinancialConstants.WF_STATE_EOA_Approval_Pending);
+            }
+
+        } else if (FinancialConstants.BUTTONVERIFY.equalsIgnoreCase(workflowBean.getWorkFlowAction())) {
+            final WorkFlowMatrix wfmatrix = budgetDetailWFService.getWfMatrix(budgetDetail.getStateType(), null,
+                    null, null, budgetDetail.getCurrentState().getValue(), null);
+            budgetDetail.transition(true).withSenderName(user.getName()).withComments(workflowBean.getApproverComments())
+                    .withStateValue(wfmatrix.getCurrentDesignation() + " Approved").withDateInfo(currentDate.toDate())
+                    .withOwner(pos)
+                    .withNextAction(wfmatrix.getNextAction());
+            budgetDetail.transition(true).end().withSenderName(user.getName()).withComments(workflowBean.getApproverComments())
+                    .withDateInfo(currentDate.toDate());
+            budgetDetail.setStatus(egwStatusHibernateDAO.getStatusByModuleAndCode(FinancialConstants.BUDGETDETAIL, FinancialConstants.BUDGETDETAIL_VERIFIED_STATUS));
+        } else if (FinancialConstants.BUTTONCANCEL.equalsIgnoreCase(workflowBean.getWorkFlowAction())) {
+            budgetDetail.setStatus(egwStatusHibernateDAO.getStatusByModuleAndCode(FinancialConstants.BUDGETDETAIL, FinancialConstants.WORKFLOW_STATE_CANCELLED));
+            budgetDetail.transition(true).end().withStateValue(FinancialConstants.WORKFLOW_STATE_CANCELLED)
+                    .withSenderName(user.getName()).withComments(workflowBean.getApproverComments())
+                    .withDateInfo(currentDate.toDate());
+        } else if (FinancialConstants.BUTTONSAVE.equalsIgnoreCase(workflowBean.getWorkFlowAction())) {
+            if (budgetDetail.getState() == null) {
+                final WorkFlowMatrix wfmatrix = budgetDetailWFService.getWfMatrix(budgetDetail.getStateType(), null,
+                        null, null, workflowBean.getCurrentState(), null);
+                budgetDetail.transition().start().withSenderName(user.getName()).withComments(workflowBean.getApproverComments())
+                        .withStateValue(wfmatrix.getCurrentState()).withDateInfo(currentDate.toDate())
+                        .withOwner(userAssignment.getPosition());
+                budgetDetail.setStatus(egwStatusHibernateDAO.getStatusByModuleAndCode(FinancialConstants.BUDGETDETAIL, FinancialConstants.WORKFLOW_STATE_NEW));
+            }
+        }
+            else {
+            if (null != workflowBean.getApproverPositionId() && workflowBean.getApproverPositionId() != -1)
+                pos = (Position) persistenceService.find("from Position where id=?", workflowBean.getApproverPositionId());
+            if (null == budgetDetail.getState()) {
+                final WorkFlowMatrix wfmatrix = budgetDetailWFService.getWfMatrix(budgetDetail.getStateType(), null,
+                        null, null, workflowBean.getCurrentState(), null);
+                budgetDetail.transition().start().withSenderName(user.getName())
+                        .withComments(workflowBean.getApproverComments())
+                        .withStateValue(wfmatrix.getNextState()).withDateInfo(currentDate.toDate()).withOwner(pos)
+                        .withNextAction(wfmatrix.getNextAction());
+                budgetDetail.setStatus(egwStatusHibernateDAO.getStatusByModuleAndCode(FinancialConstants.BUDGETDETAIL, FinancialConstants.BUDGETDETAIL_CREATED_STATUS));
+            } else if (budgetDetail.getCurrentState().getNextAction()!=null){
+                if(budgetDetail.getCurrentState().getNextAction().equalsIgnoreCase("END"))
+                budgetDetail.transition(true).end().withSenderName(user.getName())
+                        .withComments(workflowBean.getApproverComments())
+                        .withDateInfo(currentDate.toDate());
+            }
+            else {
+                final WorkFlowMatrix wfmatrix = budgetDetailWFService.getWfMatrix(budgetDetail.getStateType(), null,
+                        null, null, budgetDetail.getCurrentState().getValue(), null);
+                budgetDetail.transition(true).withSenderName(user.getName()).withComments(workflowBean.getApproverComments())
+                        .withStateValue(wfmatrix.getNextState()).withDateInfo(currentDate.toDate()).withOwner(pos)
+                        .withNextAction(wfmatrix.getNextAction());
+            }
+        }
+        return budgetDetail;
     }
 }

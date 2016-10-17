@@ -183,10 +183,10 @@ public class MobilePaymentController {
 	            return PROPERTY_VALIDATION;
 			}
         } catch (ValidationException e) {
-            e.printStackTrace();
+
             return PROPERTY_VALIDATION;
         } catch (Exception e) {
-            e.printStackTrace();
+
             return PROPERTY_VALIDATION;
 		}
         

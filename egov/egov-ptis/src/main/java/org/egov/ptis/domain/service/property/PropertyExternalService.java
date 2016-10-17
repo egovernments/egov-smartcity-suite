@@ -1388,8 +1388,8 @@ public class PropertyExternalService {
         try {
             propService.createDemand(propertyImpl, propCompletionDate);
         } catch (TaxCalculatorExeption e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
+
+
         }
         return basicProperty;
     }
@@ -1870,7 +1870,7 @@ public class PropertyExternalService {
             out.flush();
             out.close();
         } catch (final IOException e) {
-            e.printStackTrace();
+
         }
         return file;
     }
@@ -2549,7 +2549,7 @@ public class PropertyExternalService {
             modProperty = propService.modifyDemand(propertyImpl, oldProperty);
             
         } catch (TaxCalculatorExeption e) {
-        	e.printStackTrace();
+
         }
 
         if (modProperty != null && !modProperty.getDocuments().isEmpty())

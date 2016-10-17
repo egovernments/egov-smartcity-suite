@@ -44,6 +44,7 @@
 	cssClass="form-horizontal form-groups-bordered"
 	enctype="multipart/form-data">
 	<input type="hidden" name="legalCase" value="${legalCase.id}" />
+	<input type="hidden" id="mode" name="mode" value="${mode}" />
 	
 	<jsp:include page="../transactions/viewSummarizedCase.jsp" />
 	<%@ include file="legalcase-assignedDeptDet.jsp"%>
@@ -53,7 +54,7 @@
 	</div>
 	<div class="form-group">
 		<div class="text-center">
-			<button type="submit" name="submit" id="save" class="btn btn-primary"
+			<button type="submit" name="submit"  class="btn btn-default" id="buttonsubmitid"
 				value="Save">
 				<spring:message code="lbl.submit" />
 			</button>
@@ -72,3 +73,5 @@
 	<script
 	src="<cdn:url value='/resources/js/app/legalcaseCloseButton.js?rnd=${app_release_no}'/>"></script>
 	
+		<script
+	src="<cdn:url value='/resources/js/app/counteraffidavit.js?rnd=${app_release_no}'/>"></script>

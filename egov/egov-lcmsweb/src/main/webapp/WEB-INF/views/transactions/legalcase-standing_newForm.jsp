@@ -52,7 +52,7 @@
 	
 	<div class="form-group">
 		<div class="text-center">
-			<button type="submit" name="submit" id="save" class="btn btn-primary"
+			<button type="submit" name="submit" id="subitstandingcouncil" class="btn btn-default"
 				value="Save">
 				<spring:message code="lbl.submit" />
 			</button>

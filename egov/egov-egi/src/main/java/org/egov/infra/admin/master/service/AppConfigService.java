@@ -68,7 +68,7 @@ public class AppConfigService {
     }
 
     public AppConfig getAppConfigByModuleNameAndKeyName(final String moduleName, final String keyName) {
-        return appConfigRepository.findByModule_NameAndKeyName(moduleName, keyName);
+        return appConfigRepository.findByModuleNameAndKeyName(moduleName, keyName);
     }
 
     public AppConfig getAppConfigByKeyName(final String keyName) {
@@ -76,12 +76,13 @@ public class AppConfigService {
     }
 
     public List<AppConfig> getAllAppConfigByModuleName(final String moduleName) {
-        return appConfigRepository.findByModule_Name(moduleName);
+        return appConfigRepository.findByModuleName(moduleName);
     }
 
     public Page<AppConfig> getAllAppConfig(String moduleName, final Integer pageNumber, final Integer pageSize) {
         final Pageable pageable = new PageRequest(pageNumber - 1, pageSize, Sort.Direction.ASC, "module.name");
-        return isBlank(moduleName) ? appConfigRepository.findAll(pageable) : appConfigRepository.findByModule_Name(moduleName, pageable);
+        return isBlank(moduleName) ? appConfigRepository.findAll(pageable) :
+                appConfigRepository.findByModuleName(moduleName, pageable);
     }
 
     @Transactional

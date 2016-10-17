@@ -1153,7 +1153,6 @@ public class ChequeAssignmentAction extends BaseVoucherAction
                         Date rtgsdate = null;
                         final Date autoNoCutOffDate = FinancialConstants.RTGS_FINYEAR_WISE_ROLLING_SEQ_CUTOFF_DATE;
                         String rtgsNo = "";
-                        System.out.println(autoNoCutOffDate);
                         if (dateArray[0] != null)
                         {
                             final String date = dateArray[0];

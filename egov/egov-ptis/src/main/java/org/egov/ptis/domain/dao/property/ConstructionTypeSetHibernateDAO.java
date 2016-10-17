@@ -57,31 +57,31 @@ public class ConstructionTypeSetHibernateDAO implements ConstructionTypeSetDAO {
 
 	@Override
 	public ConstructionTypeSet findById(Integer id, boolean lock) {
-		// TODO Auto-generated method stub
+
 		return null;
 	}
 
 	@Override
 	public List<ConstructionTypeSet> findAll() {
-		// TODO Auto-generated method stub
+
 		return null;
 	}
 
 	@Override
 	public ConstructionTypeSet create(ConstructionTypeSet constructionTypeSet) {
-		// TODO Auto-generated method stub
+
 		return null;
 	}
 
 	@Override
 	public void delete(ConstructionTypeSet constructionTypeSet) {
-		// TODO Auto-generated method stub
+
 
 	}
 
 	@Override
 	public ConstructionTypeSet update(ConstructionTypeSet constructionTypeSet) {
-		// TODO Auto-generated method stub
+
 		return null;
 	}
 }

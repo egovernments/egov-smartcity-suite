@@ -70,7 +70,6 @@ public class RestRedirect {
 			if(redirected!=null )
 			{
 				String ss=(String) redirected;
-				System.out.println(ss);
 			}
 			
 		URL obj = new URL(newURI);
@@ -78,7 +77,6 @@ public class RestRedirect {
 		conn.setReadTimeout(5000);
 		
 		
-		System.out.println("Request URL ... " + newURI);
 
 		boolean redirect = false;
 
@@ -91,7 +89,6 @@ public class RestRedirect {
 			redirect = true;
 		}
 
-		System.out.println("Response Code ... " + status);
 
 		if (redirect) {
 
@@ -104,7 +101,6 @@ public class RestRedirect {
 			// open the new connnection again
 			HttpURLConnection	conn1 = (HttpURLConnection) new URL(newUrl).openConnection();
 		
-			System.out.println("Redirect to URL : " + newUrl);
 
 		}
 
@@ -118,12 +114,9 @@ public class RestRedirect {
 		}
 		in.close();
 
-		System.out.println("URL Content... \n" + html.toString());
-		System.out.println("Done");
-			 
+
 		} catch (Exception e) 
 		{
-			e.printStackTrace();
 		}
 
 	}

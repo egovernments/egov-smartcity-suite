@@ -279,7 +279,7 @@ public class SearchReceiptAction extends SearchFormAction {
     }
 
     public SearchQuery prepareQuery() {
-        // TODO Auto-generated method stub
+
         return null;
     }
 

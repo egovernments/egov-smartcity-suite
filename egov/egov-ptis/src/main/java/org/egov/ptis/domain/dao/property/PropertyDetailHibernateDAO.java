@@ -115,31 +115,31 @@ public class PropertyDetailHibernateDAO implements PropertyDetailDAO {
 
 	@Override
 	public PropertyDetail findById(Integer id, boolean lock) {
-		// TODO Auto-generated method stub
+
 		return null;
 	}
 
 	@Override
 	public List<PropertyDetail> findAll() {
-		// TODO Auto-generated method stub
+
 		return null;
 	}
 
 	@Override
 	public PropertyDetail create(PropertyDetail propertyDetail) {
-		// TODO Auto-generated method stub
+
 		return null;
 	}
 
 	@Override
 	public void delete(PropertyDetail propertyDetail) {
-		// TODO Auto-generated method stub
+
 
 	}
 
 	@Override
 	public PropertyDetail update(PropertyDetail propertyDetail) {
-		// TODO Auto-generated method stub
+
 		return null;
 	}
 

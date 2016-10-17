@@ -116,25 +116,25 @@ public class PropertyStatusValuesHibernateDAO implements PropertyStatusValuesDAO
     
     @Override
     public PropertyStatusValues findById(Integer id, boolean lock) {
-        // TODO Auto-generated method stub
+
         return null;
     }
 
     @Override
     public List<PropertyStatusValues> findAll() {
-        // TODO Auto-generated method stub
+
         return null;
     }
 
     @Override
     public PropertyStatusValues create(PropertyStatusValues propertyStatusValues) {
-        // TODO Auto-generated method stub
+
         return null;
     }
 
     @Override
     public void delete(PropertyStatusValues propertyStatusValues) {
-        // TODO Auto-generated method stub
+
 
     }
 

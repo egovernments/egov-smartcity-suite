@@ -314,7 +314,6 @@ public class BillPaymentVoucherPrintAction extends BaseFormAction {
                             chequeNumberPass = Long.parseLong(chequeNumber);
                             chequeNoList.add(chequeNumberPass);
                         } catch (final NumberFormatException ex) {
-                            System.out.println("Exception" + ex);
                         }
                 generateVoucherReportList();
                 final Bankaccount bankAccount = paymentHeader.getBankaccount();

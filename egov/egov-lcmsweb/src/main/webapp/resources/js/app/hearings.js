@@ -54,7 +54,6 @@ $(document).ready(function() {
 		document.forms["hearingsform"].submit();
 	}
 	
-	alert('out');
 	$("#employeeDetails").find("*").removeAttr('disabled');
 	$("#employeeDetails").find("*").prop('disabled', false);
 	});

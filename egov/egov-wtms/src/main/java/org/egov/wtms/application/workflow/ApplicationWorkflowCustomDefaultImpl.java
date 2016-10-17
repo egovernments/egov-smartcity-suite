@@ -47,7 +47,7 @@ import org.egov.wtms.application.entity.WaterConnectionDetails;
 public class ApplicationWorkflowCustomDefaultImpl extends ApplicationWorkflowCustomImpl {
 
     public ApplicationWorkflowCustomDefaultImpl() {
-        // TODO Auto-generated constructor stub
+
     }
 
     @Override

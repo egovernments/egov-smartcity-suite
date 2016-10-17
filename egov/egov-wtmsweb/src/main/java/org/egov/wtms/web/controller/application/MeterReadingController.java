@@ -187,7 +187,7 @@ public class MeterReadingController {
             if (request.getParameter("previousreadingDate") != null)
                 previousDate = dateFormat.parse(request.getParameter("previousreadingDate"));
         } catch (final ParseException e) {
-            e.printStackTrace();
+
         }
         meterReadingConnectionDeatilObj.setCurrentReading(Long.valueOf(request.getParameter("metercurrentReading")));
         meterReadingConnectionDeatilObj.setCurrentReadingDate(currentDate);

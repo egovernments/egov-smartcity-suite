@@ -90,57 +90,57 @@ public class PropertyMutationMasterHibDAO implements PropertyMutationMasterDAO {
         return (PropertyMutationMaster) qry.uniqueResult();
 	    }
 	public Object findById(Serializable id, boolean lock) {
-		// TODO Auto-generated method stub
+
 		return null;
 	}
 
 	@Override
 	public List findAll() {
-		// TODO Auto-generated method stub
+
 		return null;
 	}
 
 	public List findByExample(Object exampleT) {
-		// TODO Auto-generated method stub
+
 		return null;
 	}
 
 	public Object create(Object entity) {
-		// TODO Auto-generated method stub
+
 		return null;
 	}
 
 	public void delete(Object entity) {
-		// TODO Auto-generated method stub
+
 
 	}
 
 	public Object update(Object entity) {
-		// TODO Auto-generated method stub
+
 		return null;
 	}
 
 	@Override
 	public PropertyMutationMaster findById(Integer id, boolean lock) {
-		// TODO Auto-generated method stub
+
 		return null;
 	}
 
 	@Override
 	public PropertyMutationMaster create(PropertyMutationMaster propertyMutationMaster) {
-		// TODO Auto-generated method stub
+
 		return null;
 	}
 
 	@Override
 	public void delete(PropertyMutationMaster propertyMutationMaster) {
-		// TODO Auto-generated method stub
+
 		
 	}
 
 	@Override
 	public PropertyMutationMaster update(PropertyMutationMaster propertyMutationMaster) {
-		// TODO Auto-generated method stub
+
 		return null;
 	}
 

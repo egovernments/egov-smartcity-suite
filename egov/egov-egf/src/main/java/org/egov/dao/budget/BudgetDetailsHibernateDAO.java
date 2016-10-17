@@ -48,6 +48,7 @@ import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -58,7 +59,8 @@ import javax.persistence.PersistenceContext;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
-import org.egov.billsaccounting.services.VoucherConstant;
+import org.egov.commons.Bankaccount;
+import org.egov.commons.CChartOfAccountDetail;
 import org.egov.commons.CChartOfAccounts;
 import org.egov.commons.CFinancialYear;
 import org.egov.commons.CFunction;
@@ -2636,6 +2638,32 @@ public class BudgetDetailsHibernateDAO implements BudgetDetailsDAO {
 			return false;
 	}
 
+	
+    public List<BudgetDetail> getBudgetDetailsByBudgetGroupId(Long budgetGroupId) {
+        final Query qry = getCurrentSession().createQuery("from BudgetDetail where budgetGroup.id=:budgetGroupId");
+        qry.setLong("budgetGroupId", budgetGroupId);
+        List<BudgetDetail> budgetDetails = null;
+        if (qry.list().size() != 0) {
+            budgetDetails = qry.list();
+        } else
+            budgetDetails = Collections.emptyList();
+
+        return budgetDetails;
+    }
+    
+    
+    public List<BudgetDetail> getBudgetDetailsByBudgetId(Long budgetId) {
+        final Query qry = getCurrentSession().createQuery("from BudgetDetail where budget.id=:budgetId");
+        qry.setLong("budgetId", budgetId);
+        List<BudgetDetail> budgetDetails = null;
+        if (qry.list().size() != 0) {
+            budgetDetails = qry.list();
+        } else
+            budgetDetails = Collections.emptyList();
+
+        return budgetDetails;
+    }
+	
 	public ApplicationSequenceNumberGenerator getSequenceGenerator() {
 		return sequenceGenerator;
 	}
@@ -2666,7 +2694,7 @@ public class BudgetDetailsHibernateDAO implements BudgetDetailsDAO {
 
 	@Override
 	public BudgetDetail findById(Number id, boolean lock) {
-		// TODO Auto-generated method stub
+
 		return null;
 	}
 

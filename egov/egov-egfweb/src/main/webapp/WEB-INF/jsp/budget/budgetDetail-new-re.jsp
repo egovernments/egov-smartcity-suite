@@ -41,7 +41,6 @@
 
 <%@ include file="/includes/taglibs.jsp"%>
 <%@ page language="java"%>
-<%@ page import="org.egov.budget.model.*"%>
 <html>
 <head>
 <title>Create budget proposal (RE)</title>
@@ -75,9 +74,9 @@
    		   </s:if>
     		var params='financialYear=<s:property value="financialYear.id"/>&department.id=<s:property value="executingDepartment.id"/>&function='+functionid;
     		params=params+'&onSaveOrForward=true&type=All';
-    		var reportUrl="${pageContext.request.contextPath}/budget/budgetReport!getFunctionwiseReport.action?"+params;
+    		var reportUrl="${pageContext.request.contextPath}/budget/budgetReport-getFunctionwiseReport.action?"+params;
     		window.open(reportUrl,"report",850,600);
-    		document.forms[0].action = "${pageContext.request.contextPath}/budget/budgetDetail!newRe.action?re";
+    		document.forms[0].action = "${pageContext.request.contextPath}/budget/budgetDetail-newRe.action?re";
 			document.forms[0].submit();
 	    	}
     	
@@ -94,16 +93,16 @@
          return false;
         }
         else{
-   		document.forms[0].action = "${pageContext.request.contextPath}/budget/budgetDetail!loadActualsForRe.action";
+   		document.forms[0].action = "${pageContext.request.contextPath}/budget/budgetDetail-loadActualsForRe.action";
 		document.forms[0].submit();
 		}
     }
      function save(){
-   		document.forms[0].action = "${pageContext.request.contextPath}/budget/budgetDetail!createRe.action";
+   		document.forms[0].action = "${pageContext.request.contextPath}/budget/budgetDetail-createRe.action";
 		document.forms[0].submit();
     }
      function forward(){
-   		document.forms[0].action = "${pageContext.request.contextPath}/budget/budgetDetail!createReAndForward.action";
+   		document.forms[0].action = "${pageContext.request.contextPath}/budget/budgetDetail-createReAndForward.action";
 		document.forms[0].submit();
     }
     
@@ -212,7 +211,7 @@
 										<egov:ajaxdropdown id="function_filtered"
 											fields="['Text','Value']"
 											dropdownId="budgetDetail_filtered_function"
-											url="budget/budgetDetail!ajaxLoadFunctions.action" />
+											url="budget/budgetDetail-ajaxLoadFunctions.action" />
 										<td class="greybox"><s:select name="searchfunctionid"
 												id="budgetDetail_filtered_function" list="%{functionList}"
 												value="searchfunctionid" listKey="id" listValue="name"
@@ -225,7 +224,7 @@
 										<egov:ajaxdropdown id="budgetgroup_filtered"
 											fields="['Text','Value']"
 											dropdownId="budgetDetail_filtered_budgetGroup"
-											url="budget/budgetDetail!ajaxLoadBudgetGroups.action" />
+											url="budget/budgetDetail-ajaxLoadBudgetGroups.action" />
 										<td class="bluebox" colspan="3"><s:select
 												name="searchbudgetGroupid"
 												id="budgetDetail_filtered_budgetGroup"

@@ -1733,7 +1733,6 @@ public class BudgetReportAction extends BaseFormAction {
         findAllBy = persistenceService.findAllBy(query.toString());
         for (final Object[] o : findAllBy)
         {
-            System.out.println(o.length);
             final String key = (String) o[0] + "-" + (String) o[1];
             BudgetReportView bv = function_deptSumMap.get(key);
 

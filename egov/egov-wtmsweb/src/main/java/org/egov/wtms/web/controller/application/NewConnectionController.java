@@ -188,7 +188,6 @@ public class NewConnectionController extends GenericConnectionController {
             final HttpServletRequest request, final Model model, @RequestParam String workFlowAction,
             final BindingResult errors) {
         String sourceChannel = request.getParameter("Source");
-        System.out.println("sourceChannel"+sourceChannel);
         validatePropertyID(waterConnectionDetails, resultBinder);
         waterConnectionDetailsService.validateWaterRateAndDonationHeader(waterConnectionDetails, resultBinder);
         final List<ApplicationDocuments> applicationDocs = new ArrayList<ApplicationDocuments>();
