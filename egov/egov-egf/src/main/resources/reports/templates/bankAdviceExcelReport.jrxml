@@ -38,9 +38,12 @@
   ~
   ~   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
   -->
-<!-- Created with Jaspersoft Studio version 6.2.0.final using JasperReports Library version 6.2.0  -->
-<!-- 2016-08-25T12:58:22 -->
+<!-- Created with Jaspersoft Studio version 6.3.1.final using JasperReports Library version 6.3.1  -->
+<!-- 2016-10-17T13:12:38 -->
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="bankAdviceReport" printOrder="Horizontal" pageWidth="842" pageHeight="595" orientation="Landscape" columnWidth="752" leftMargin="72" rightMargin="18" topMargin="18" bottomMargin="18" isFloatColumnFooter="true" uuid="e977129d-8063-4dc8-acc3-8e8fecf2dd1e">
+	<property name="net.sf.jasperreports.export.xls.cell.locked" value="true"/>
+	<property name="net.sf.jasperreports.export.xls.password" value="password"/>
+	<property name="net.sf.jasperreports.export.xls.remove.empty.space.between.rows" value="true"/>
 	<property name="ireport.zoom" value="1.0"/>
 	<property name="ireport.x" value="0"/>
 	<property name="ireport.y" value="0"/>
@@ -53,13 +56,10 @@
 	<field name="amount" class="java.math.BigDecimal"/>
 	<field name="ifscCode" class="java.lang.String"/>
 	<field name="bank" class="java.lang.String"/>
-	<pageHeader>
-		<band splitType="Stretch"/>
-	</pageHeader>
 	<columnHeader>
 		<band height="20" splitType="Stretch">
 			<staticText>
-				<reportElement x="520" y="-20" width="85" height="40" uuid="50ea7b62-d510-49ee-817f-8b85896fa257"/>
+				<reportElement positionType="Float" stretchType="RelativeToBandHeight" x="520" y="-20" width="85" height="40" uuid="50ea7b62-d510-49ee-817f-8b85896fa257"/>
 				<box>
 					<pen lineWidth="0.5"/>
 					<topPen lineWidth="0.5"/>
@@ -74,7 +74,7 @@
 ]]></text>
 			</staticText>
 			<staticText>
-				<reportElement stretchType="RelativeToBandHeight" x="-41" y="-20" width="150" height="40" isPrintWhenDetailOverflows="true" uuid="6a1eccdd-8ce2-4cd2-a6cb-6ae052c6ee5e"/>
+				<reportElement positionType="Float" stretchType="RelativeToBandHeight" x="-41" y="-20" width="150" height="40" isPrintWhenDetailOverflows="true" uuid="6a1eccdd-8ce2-4cd2-a6cb-6ae052c6ee5e"/>
 				<box>
 					<pen lineWidth="0.5"/>
 					<topPen lineWidth="0.5"/>
@@ -89,7 +89,7 @@
 ]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="-71" y="-20" width="30" height="40" uuid="0c3b7cae-a144-40e7-b352-d8899dc4392d"/>
+				<reportElement positionType="Float" stretchType="RelativeToBandHeight" x="-71" y="-20" width="30" height="40" uuid="0c3b7cae-a144-40e7-b352-d8899dc4392d"/>
 				<box>
 					<pen lineWidth="0.5"/>
 					<topPen lineWidth="0.5"/>
@@ -104,7 +104,7 @@
 ]]></text>
 			</staticText>
 			<staticText>
-				<reportElement positionType="Float" x="109" y="-20" width="151" height="40" uuid="6955e172-0b54-4011-87ab-6b5340886570"/>
+				<reportElement positionType="Float" stretchType="RelativeToBandHeight" x="109" y="-20" width="151" height="40" uuid="6955e172-0b54-4011-87ab-6b5340886570"/>
 				<box>
 					<pen lineWidth="0.5"/>
 					<topPen lineWidth="0.5"/>
@@ -118,7 +118,7 @@
 				<text><![CDATA[Party Account no]]></text>
 			</staticText>
 			<staticText>
-				<reportElement positionType="Float" x="420" y="-20" width="100" height="40" uuid="9ad6daf2-770e-4675-9aee-45d499b51848"/>
+				<reportElement positionType="Float" stretchType="RelativeToBandHeight" x="420" y="-20" width="100" height="40" uuid="9ad6daf2-770e-4675-9aee-45d499b51848"/>
 				<box>
 					<pen lineWidth="0.5"/>
 					<topPen lineWidth="0.5"/>
@@ -133,7 +133,7 @@
 ]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="605" y="-20" width="165" height="40" uuid="27f7a361-3b8a-4d71-a296-14c0b35558ac"/>
+				<reportElement positionType="Float" stretchType="RelativeToBandHeight" x="605" y="-20" width="165" height="40" uuid="27f7a361-3b8a-4d71-a296-14c0b35558ac"/>
 				<box>
 					<pen lineWidth="0.5"/>
 					<topPen lineWidth="0.5"/>
@@ -148,7 +148,7 @@
 ]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="260" y="-20" width="160" height="40" uuid="28093082-e9c7-4f95-9be7-292f760a6af8"/>
+				<reportElement positionType="Float" stretchType="RelativeToBandHeight" x="260" y="-20" width="160" height="40" uuid="28093082-e9c7-4f95-9be7-292f760a6af8"/>
 				<box>
 					<pen lineWidth="0.5"/>
 					<topPen lineWidth="0.5"/>
@@ -167,7 +167,7 @@
 	<detail>
 		<band height="40" splitType="Prevent">
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
-				<reportElement x="109" y="0" width="151" height="40" uuid="3ce804a9-2b46-409d-ae18-8598990e6eb5"/>
+				<reportElement positionType="Float" stretchType="RelativeToBandHeight" x="109" y="0" width="151" height="40" uuid="3ce804a9-2b46-409d-ae18-8598990e6eb5"/>
 				<box>
 					<pen lineWidth="0.5"/>
 					<topPen lineWidth="0.5"/>
@@ -179,7 +179,7 @@
 				<textFieldExpression><![CDATA[$F{accountNumber}]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
-				<reportElement x="420" y="0" width="100" height="40" uuid="1ca99d34-be69-4921-883b-f31edb6b4e93"/>
+				<reportElement positionType="Float" stretchType="RelativeToBandHeight" x="420" y="0" width="100" height="40" uuid="1ca99d34-be69-4921-883b-f31edb6b4e93"/>
 				<box>
 					<pen lineWidth="0.5"/>
 					<topPen lineWidth="0.5"/>
@@ -191,7 +191,7 @@
 				<textFieldExpression><![CDATA[]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" pattern="###0.00" isBlankWhenNull="true">
-				<reportElement positionType="Float" x="520" y="0" width="85" height="40" isPrintWhenDetailOverflows="true" uuid="e63ea28c-c321-448e-862f-578be1383a3f"/>
+				<reportElement positionType="Float" stretchType="RelativeToBandHeight" x="520" y="0" width="85" height="40" isPrintWhenDetailOverflows="true" uuid="e63ea28c-c321-448e-862f-578be1383a3f"/>
 				<box>
 					<pen lineWidth="0.5"/>
 					<topPen lineWidth="0.5"/>
@@ -205,7 +205,7 @@
 				<textFieldExpression><![CDATA[$F{ifscCode}]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
-				<reportElement positionType="Float" x="-41" y="0" width="150" height="40" isPrintWhenDetailOverflows="true" uuid="6473d851-6f05-45c5-928e-c3ce8fb66ba6"/>
+				<reportElement positionType="Float" stretchType="RelativeToBandHeight" x="-41" y="0" width="150" height="40" isPrintWhenDetailOverflows="true" uuid="6473d851-6f05-45c5-928e-c3ce8fb66ba6"/>
 				<box>
 					<pen lineWidth="0.5"/>
 					<topPen lineWidth="0.5"/>
@@ -219,7 +219,7 @@
 				<textFieldExpression><![CDATA[$F{partyName}]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
-				<reportElement positionType="Float" x="-71" y="0" width="30" height="40" isPrintWhenDetailOverflows="true" uuid="7ad8f054-ac88-48f4-ae44-e98ac70a3337"/>
+				<reportElement positionType="Float" stretchType="RelativeToBandHeight" x="-71" y="0" width="30" height="40" isPrintWhenDetailOverflows="true" uuid="7ad8f054-ac88-48f4-ae44-e98ac70a3337"/>
 				<box>
 					<pen lineWidth="0.5"/>
 					<topPen lineWidth="0.5"/>
@@ -233,7 +233,7 @@
 				<textFieldExpression><![CDATA[$V{REPORT_COUNT}]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="true">
-				<reportElement x="605" y="0" width="165" height="40" uuid="ca25d589-73f4-46b6-967a-220b3542843c"/>
+				<reportElement positionType="Float" stretchType="RelativeToBandHeight" x="605" y="0" width="165" height="40" uuid="ca25d589-73f4-46b6-967a-220b3542843c"/>
 				<box>
 					<pen lineWidth="0.5"/>
 					<topPen lineWidth="0.5"/>
@@ -260,7 +260,4 @@
 			</textField>
 		</band>
 	</detail>
-	<pageFooter>
-		<band splitType="Stretch"/>
-	</pageFooter>
 </jasperReport>
