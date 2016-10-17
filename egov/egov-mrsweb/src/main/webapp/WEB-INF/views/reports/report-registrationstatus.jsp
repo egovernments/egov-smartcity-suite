@@ -43,21 +43,11 @@
 <%@ taglib uri="http://www.springframework.org/tags" prefix="spring" %>
 <%@ taglib uri="http://www.springframework.org/tags/form" prefix="form" %>
 
-<script
-	src="<c:url value='/resources/global/js/bootstrap/bootstrap.js' context='/egi'/>"></script>
-<link rel="stylesheet"
-	href="<c:url value='/resources/global/css/bootstrap/bootstrap-datepicker.css' context='/egi'/>" />
-<script
-	src="<c:url value='/resources/global/js/bootstrap/bootstrap-datepicker.js' context='/egi'/>"></script>
-	
 <div class="row" id="page-content">
 	<div class="col-md-12">
 		<div class="panel" data-collapsed="0">
 			<div class="panel-body">
-				 <c:if test="${not empty message}">
-                    <div class="alert alert-success" role="alert"><spring:message code="${message}"/></div>
-                </c:if>
-		<form:form  method="post" action="/mrs/report/registrationstatus" class="form-horizontal form-groups-bordered" id="form-registrationstatus" modelAttribute="searchModel">
+			<form:form  method="post" action="" class="form-horizontal form-groups-bordered" id="form-registrationstatus" modelAttribute="registration">
 			<div class="panel panel-primary" data-collapsed="0">
 				<div class="panel-heading">
 					<div class="panel-title">
@@ -68,10 +58,10 @@
 				<div class="panel-body custom-form">				
 					<div class="form-group">
 						<label class="col-sm-3 control-label">
-							<spring:message code="lbl.fromDate"/><span class="mandatory"></span>
+							<spring:message code="lbl.fromDate"/>
 						</label>
 						<div class="col-sm-6">
-							<form:input path="fromDate" id="txt-fromdate" type="text" class="form-control low-width datepicker today" data-date-end-date="0d" data-date-today-highlight="true" placeholder="" autocomplete="off" required="required"/>
+							<form:input path="fromDate" id="txt-fromdate" type="text" class="form-control low-width datepicker " data-date-end-date="0d" data-date-today-highlight="true" placeholder="" autocomplete="off" />
             				<form:errors path="fromDate" cssClass="add-margin error-msg"/>
 						</div>
 					</div>
@@ -80,7 +70,7 @@
 							<spring:message code="lbl.toDate"/>
 						</label>
 						<div class="col-sm-6">
-							<form:input path="toDate" id="txt-todate" type="text" class="form-control low-width datepicker today" data-date-end-date="0d" data-date-today-highlight="true" placeholder="" autocomplete="off" required="required"/>
+							<form:input path="toDate" id="txt-todate" type="text" class="form-control low-width datepicker" data-date-end-date="0d" data-date-today-highlight="true" placeholder="" autocomplete="off" />
             				<form:errors path="toDate" cssClass="add-margin error-msg"/>
 						</div>
 					</div>
@@ -88,16 +78,13 @@
 						<label for="field-1" class="col-sm-3 control-label"><spring:message code="lbl.registration.status" /><span class="mandatory"></span>
 						</label>
 						<div class="col-sm-6 add-margin">							
-							<div class="checkbox-inline">
-							  <label><input type="checkbox" id="cb-registrationapproved" name="registrationApproved" checked="checked">
-							  	<spring:message code="lbl.status.approved" />
-							  </label>
-							</div>
-							<div class="checkbox-inline">
-							  <label><input type="checkbox" id="cb-registrationrejected" name="registrationRejected">
-							  	<spring:message code="lbl.status.rejected" />
-							  </label>
-							</div>
+							<form:select path="status.code" id="status" cssClass="form-control" cssErrorClass="form-control error" required="required" >
+										<form:option value=""><spring:message code="lbl.select"></spring:message></form:option>
+										<c:forEach items="${status}" var="status">
+											<option value="${status}">${status}</option>
+										</c:forEach>
+							</form:select>
+							<form:errors path="status.code" cssClass="error-msg"/>
 						</div>
 					</div>
 				</div>
@@ -105,6 +92,7 @@
 			<div class="row">
 				<div class="text-center">					
 					<button type="button" class="btn btn-primary" id="btn_registrationstatus_search"><spring:message code="lbl.search"/></button>
+					<button type="reset" class="btn btn-default"><spring:message code="lbl.reset"/></button>
 			        <a href="javascript:void(0)" class="btn btn-default" onclick="self.close()"><spring:message code="lbl.close"/></a>
 				</div>
 			</div>
@@ -115,14 +103,21 @@
 </div>
 
 <br /><br />
-<div class="row" style="display:none;" id="regstatustable_container">   
-	<div class="col-md-6 col-xs-6 table-header text-left">The Search result is</div>             
-	<div class="col-sm-12">
-	    <table class="table table-bordered table-striped datatable" id="registrationstatus_table">
+<div class="row display-hide report-section" id="regstatustable_container">   
+	<div class="col-md-12 table-header text-left">The Registration Status Search result is</div>             
+	<div class="col-md-12 form-group report-table-container">
+	    <table class="table table-bordered table-hover multiheadertbl" id="registrationstatus_table">
 	    	<thead>
 	    		<tr>
-	    			<th>Sr.No</th><th>Husband Name</th><th>Wife Name</th><th>Registration Date</th><th>Marriage Date</th>
-	    			<th>Application Type</th><th>Marriage Fee</th><th>Status</th><th>Remarks</th>
+	    			<th>Registration No</th>
+	    			<th>Husband Name</th>
+	    			<th>Wife Name</th>
+	    			<th>Registration Date</th>
+	    			<th>Marriage Date</th>
+	    			<th>Application Type</th>
+	    			<th>Marriage Fee</th>
+	    			<th>Status</th>
+	    			<th>Remarks</th>
 	    		</tr>
 	    	</thead>
 	    	<tbody>
@@ -131,8 +126,13 @@
 	</div>
 </div>
 
+<script src="<c:url value='/resources/global/js/bootstrap/bootstrap.js' context='/egi'/>"></script>
+<link rel="stylesheet" href="<c:url value='/resources/global/css/bootstrap/bootstrap-datepicker.css' context='/egi'/>" />
+<script src="<c:url value='/resources/global/js/bootstrap/bootstrap-datepicker.js' context='/egi'/>"></script>
 <script	src="<c:url value='/resources/global/js/jquery/plugins/datatables/jquery.dataTables.min.js' context='/egi'/>"></script>
 <script	src="<c:url value='/resources/global/js/jquery/plugins/datatables/responsive/js/datatables.responsive.js' context='/egi'/>"></script>
 <script	src="<c:url value='/resources/global/js/jquery/plugins/datatables/dataTables.bootstrap.js' context='/egi'/>"></script>
+<script type="text/javascript" src="<c:url value='/resources/global/js/jquery/plugins/datatables/dataTables.tableTools.js' context='/egi'/>"></script>
+<script type="text/javascript" src="<c:url value='/resources/global/js/jquery/plugins/datatables/TableTools.min.js' context='/egi'/>"></script>
 
-<script src="<c:url value='/resources/js/app/registrationstatus.js'/> "></script>
+<script src="<c:url value='/resources/js/app/registrationstatus.js?rnd=${app_release_no}'/> "></script>

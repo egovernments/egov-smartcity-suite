@@ -58,7 +58,14 @@ public class MarriageRegistrationJsonAdaptor implements JsonSerializer<MarriageR
 						&& registration.getCurrentState().getNextAction().equalsIgnoreCase("Fee Collection Pending")) {
 					jsonObject.addProperty("feeCollectionPending", true);
 				}
-
+			if (registration.getRemarks() != null)
+				jsonObject.addProperty("remarks", registration.getRejectionReason());
+			else
+				jsonObject.addProperty("remarks", StringUtils.EMPTY);
+			if (registration.getStateType() != null)
+				jsonObject.addProperty("applicationType", registration.getStateType());
+			else
+				jsonObject.addProperty("remarks", StringUtils.EMPTY);
 			jsonObject.addProperty("id", registration.getId());
 		}
 		return jsonObject;

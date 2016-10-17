@@ -39,22 +39,20 @@
 
 package org.egov.mrs.web.controller.reports;
 
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import static org.egov.infra.web.utils.WebUtils.toJSON;
 
-import org.egov.mrs.application.MarriageConstants;
-import org.egov.mrs.domain.entity.SearchModel;
-import org.egov.mrs.domain.entity.SearchResult;
-import org.egov.mrs.domain.enums.MarriageFeeType;
+import java.text.ParseException;
+import java.util.List;
+
+import org.egov.mrs.domain.entity.MarriageRegistration;
+import org.egov.mrs.domain.entity.MarriageRegistration.RegistrationStatus;
 import org.egov.mrs.domain.service.MarriageRegistrationService;
+import org.egov.mrs.web.adaptor.MarriageRegistrationJsonAdaptor;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -68,41 +66,26 @@ import org.springframework.web.bind.annotation.ResponseBody;
 @Controller
 @RequestMapping(value = "/report")
 public class RegistrationStatusReportController {
-    
-    @Autowired
-    private MarriageRegistrationService marriageRegistrationService;
-    
-    @RequestMapping(value = "/registrationstatus", method = RequestMethod.GET)
-    public String showReportForm(@ModelAttribute final SearchModel searchModel) {
-        return "report-registrationstatus";
-    }
 
-    @RequestMapping(value = "/registrationstatus", method = RequestMethod.POST)
-    public @ResponseBody Map<String, List<SearchResult>> showStatus(@RequestBody final SearchModel searchModel) {
-        final Map<String, List<SearchResult>> registrations = new HashMap<String, List<SearchResult>>();
-        registrations.put("data", prepareSearchResult(searchModel));
-        return registrations;
-    }
-    
-    private List<SearchResult> prepareSearchResult(final SearchModel searchModel) {
-        final List<SearchResult> results = new ArrayList<SearchResult>();
-        final DateFormat formatter = new SimpleDateFormat(MarriageConstants.DATE_FORMAT_DDMMYYYY);
-        
-        marriageRegistrationService.searchRegistration(searchModel, true).forEach(registration -> {
-            final SearchResult searchResult = new SearchResult();
-            searchResult.setHusbandName(registration.getHusband().getName().getFirstName());
-            searchResult.setWifeName(registration.getWife().getName().getFirstName());
-            searchResult.setRegistrationDate(formatter.format(registration.getCreatedDate()));
-            searchResult.setDateOfMarriage(formatter.format(registration.getDateOfMarriage()));
-            searchResult.setApplicationType(MarriageFeeType.MRGREGISTRATION.name());
-            searchResult.setFeePaid(registration.getFeePaid());
-            searchResult.setStatus(registration.getStatus().getDescription());
-            searchResult.setRemarks(registration.getRejectionReason());
-            results.add(searchResult);
-        });
+	@Autowired
+	private MarriageRegistrationService marriageRegistrationService;
 
-        return results;
+	@RequestMapping(value = "/registrationstatus", method = RequestMethod.GET)
+	public String showReportForm(final Model model) {
+		model.addAttribute("registration", new MarriageRegistration());
+		model.addAttribute("status", RegistrationStatus.values());
+		return "report-registrationstatus";
+	}
 
-    }
+	@RequestMapping(value = "/registrationstatus", method = RequestMethod.POST, produces = MediaType.TEXT_PLAIN_VALUE)
+	public @ResponseBody String search(Model model, @ModelAttribute final MarriageRegistration registration)
+			throws ParseException {
+		List<MarriageRegistration> searchResultList = marriageRegistrationService
+				.searchRegistrationByStatus(registration, registration.getStatus().getCode());
+		String result = new StringBuilder("{ \"data\":")
+				.append(toJSON(searchResultList, MarriageRegistration.class, MarriageRegistrationJsonAdaptor.class))
+				.append("}").toString();
+		return result;
+	}
 
 }

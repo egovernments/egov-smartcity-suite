@@ -2,7 +2,7 @@
  * eGov suite of products aim to improve the internal efficiency,transparency,
  *    accountability and the service delivery of the government  organizations.
  *
- *     Copyright (C) <2015>  eGovernments Foundation
+ *     Copyright (C) <2016>  eGovernments Foundation
  *
  *     The updated version of eGov suite of products as by eGovernments Foundation
  *     is available at http://www.egovernments.org
@@ -38,77 +38,140 @@
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
 
-$(document).ready( function () {
-	
-	$('#table_search').keyup(function(){
-    	$('#registration_table').fnFilter(this.value);
-    });
-	
-	var registrationId;
-	$('body').on( 'click', 'tr', function () {
-		if ( $(this).hasClass('selected') ) {
-            $(this).removeClass('selected');
-            $('#btn_viewdetails').addClass('disabled');
-            $('#btn_collectfee').addClass('disabled');
-        } else {
-            $('#registration_table > tbody > tr.selected').removeClass('selected');
-            $(this).addClass('selected');
-        }
-    });
-	
-	$('#cb-registrationapproved').click( function () {
-		$('#cb-registrationrejected').prop('checked', false);
-	})
-	
-	$('#cb-registrationrejected').click( function () {
-		$('#cb-registrationapproved').prop('checked', false);
-	})
-	
-})
+$(document)
+.ready(
+		function() {
 
-var regstatus_table = $('#registrationstatus_table').dataTable({
-							"sPaginationType": "bootstrap",
-							"sDom": "<'row'<'col-xs-12 hidden col-right'f>r>t<'row'<'col-md-5 col-xs-12'i><'col-md-3 col-xs-6'l><'col-md-4 col-xs-6 text-right'p>>",
-							"aLengthMenu": [[10, 25, 50, -1], [10, 25, 50, "All"]],
-						});
-$('#btn_registrationstatus_search').click( function () {
-	
-	var date = $('#txt-fromdate').val().split('/');
-	var fromDate = date[2] + '-' + date[1] + '-' + date[0];
-	date = $('#txt-todate').val().split('/');
-	var toDate = date[2] + '-' + date[1] + '-' + date[0];
-	
-	$.ajax({
-		type : "POST",
-		contentType: "application/json",
-		accept: "application/json",
-		url : "/mrs/report/registrationstatus",
-		data : '{ "fromDate": "'+fromDate+'", "toDate": "'+toDate+'", "registrationApproved": "'+$('#cb-registrationapproved').prop("checked")+'", "registrationRejected": "'+$('#cb-registrationrejected').prop("checked")+'" }',
-		dataType : "json",
-		success : function (response, textStatus, xhr) {
-			var searchResults = response.data;
-			console.log('searchResults = ' + searchResults);
-			regstatus_table.fnClearTable();
-			$.each(searchResults, function (index, result) {				
-				regstatus_table.fnAddData([
-				                           (index + 1), 
-				                           result.husbandName, 
-				                           result.wifeName, 
-				                           result.registrationDate, 
-				                           result.dateOfMarriage, 
-				                           result.applicationType, 
-				                           result.feePaid, 
-				                           result.status, 
-				                           result.remarks
-				 ]);
-            });
-			$('#regstatustable_container').show();
-			$('#registrationstatus_table_length').remove();				
-			$('#registrationstatus_table_filter').addClass('text-right');
-		},
-		error : function (xhr, textStatus, errorThrown) {
-			console.log ( 'errorThrown=' + errorThrown );
-		}
-	});
+			
+			$('#btn_registrationstatus_search').click(function() {
+				if ($('form').valid()) {
+					callAjaxSearch();
+				} else {
+					return false;
+				}
+				
+			});
+
+			function callAjaxSearch() {
+				// To get current date
+				var currentDate = new Date();
+				var day = currentDate.getDate();
+				var month = currentDate.getMonth() + 1;
+				var year = currentDate.getFullYear();
+				var currentDate = day + "-" + month + "-" + year;
+				$('.report-section').removeClass('display-hide');
+				var reportdatatable = $("#registrationstatus_table")
+						.dataTable(
+								{
+									ajax : {
+										url : "/mrs/report/registrationstatus",
+										type : "POST",
+										beforeSend : function() {
+											$('.loader-class')
+													.modal(
+															'show',
+															{
+																backdrop : 'static'
+															});
+										},
+										"data" : getFormData($('form')),
+										complete : function() {
+											$('.loader-class').modal(
+													'hide');
+										}
+									},
+									"bDestroy" : true,
+									"sDom" : "<'row'<'col-xs-12 hidden col-right'f>r>t<'row'<'col-xs-3'i><'col-xs-3 col-right'l><'col-xs-3 col-right'<'export-data'T>><'col-xs-3 text-right'p>>",
+									"aLengthMenu" : [
+											[ 10, 25, 50, -1 ],
+											[ 10, 25, 50, "All" ] ],
+									"oTableTools" : {
+										"sSwfPath" : "../../../../../../egi/resources/global/swf/copy_csv_xls_pdf.swf",
+										"aButtons" : [ {
+								             "sExtends": "pdf",
+						                     "sPdfMessage": "Report Generated On "+ currentDate + "",
+						                     "sTitle": "Marriage Registration Status Report",
+						                     "sPdfOrientation": "landscape"
+							                },
+							                {
+									             "sExtends": "xls",
+						                         "sPdfMessage": "Marriage Registration Status Report",
+						                         "sTitle": "Marriage Registration Status Report"
+								             },
+								             {
+									             "sExtends": "print",
+						                         "sTitle": "Marriage Registration Status Report"
+								             } ]
+									},
+									aaSorting : [],
+									columns : [
+											{
+												"data" : "registrationNo",
+												render : function(data,
+														type, row, meta) {
+													if (row.registrationNo == 'undefined'
+															|| row.registrationNo == '') {
+														return "N/A";
+													} else {
+														return row.registrationNo;
+													}
+												},
+												"sClass" : "text-left"
+											},
+											{
+												"data" : "husbandName",
+												"sClass" : "text-left"
+											},
+											{
+												"data" : "wifeName",
+												"sClass" : "text-left"
+											},
+											{
+												"data" : "registrationDate",
+												"sClass" : "text-left"
+											},
+											{
+												"data" : "dateOfMarriage",
+												"sClass" : "text-left"
+											},
+											{
+												"data" : "applicationType",
+												"sClass" : "text-left"
+											},
+											{
+												"data" : "feePaid",
+												"sClass" : "text-left"
+											},
+											{
+												"data" : "status",
+												"sClass" : "text-left"
+											} ,
+											{
+												"data" : "remarks",
+												render : function(data,
+														type, row, meta) {
+													if (row.remarks == 'undefined' || row.remarks == '') {
+														return "N/A";
+													} else {
+														return row.remarks;
+													}
+												},
+												"sClass" : "text-left"
+											}]
+
+								});
+
+			}
+
+		});
+
+function getFormData($form) {
+var unindexed_array = $form.serializeArray();
+var indexed_array = {};
+
+$.map(unindexed_array, function(n, i) {
+indexed_array[n['name']] = n['value'];
 });
 
+return indexed_array;
+}

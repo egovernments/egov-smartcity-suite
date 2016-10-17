@@ -630,12 +630,12 @@ public class MarriageRegistrationService {
     	if (registration.getApplicationNo() != null)
 			criteria.add(Restrictions.ilike("marriageRegistration.applicationNo", registration.getApplicationNo(),
 					MatchMode.ANYWHERE));
-		if ( registration.getHusband() != null && registration.getHusband().getFullName()!=null &&  !registration.getHusband().getFullName().equals("null"))
+		if ( registration.getHusband().getName() != null &&  !registration.getHusband().getFullName().equals("null") && registration.getHusband().getFullName()!=null )
 		criteria.createAlias("marriageRegistration.husband", "husband").add(Restrictions.disjunction( Restrictions.ilike("husband.name.firstName", registration.getHusband().getFullName(),
 				MatchMode.ANYWHERE)).add(Restrictions.ilike("husband.name.lastName", registration.getHusband().getFullName(),
 						MatchMode.ANYWHERE)).add(Restrictions.ilike("husband.name.middleName", registration.getHusband().getFullName(),
 								MatchMode.ANYWHERE))); 
-		if ( registration.getWife() != null && registration.getWife().getFullName()!=null &&  !registration.getWife().getFullName().equals("null"))
+		if ( registration.getWife().getName() != null && registration.getWife().getFullName()!=null &&  !registration.getWife().getFullName().equals("null"))
 		criteria.createAlias("marriageRegistration.wife", "wife").add(Restrictions.disjunction(Restrictions.ilike("wife.name.firstName", registration.getWife().getFullName(),
 				MatchMode.ANYWHERE)).add(Restrictions.ilike("wife.name.lastName", registration.getWife().getFullName(),
 						MatchMode.ANYWHERE)).add(Restrictions.ilike("wife.name.middleName", registration.getWife().getFullName(),
@@ -646,6 +646,9 @@ public class MarriageRegistrationService {
 		if ( registration.getDateOfMarriage() != null)
 			criteria.add(Restrictions.between("marriageRegistration.dateOfMarriage", registration.getDateOfMarriage(),
 					DateUtils.addDays(registration.getDateOfMarriage(), 1)));
+		if ( registration.getFromDate() != null && registration.getToDate() != null)
+			criteria.add(Restrictions.between("marriageRegistration.dateOfMarriage", registration.getFromDate(),
+					DateUtils.addDays(registration.getToDate(), 1)));
 	}
     
     /**
@@ -711,6 +714,7 @@ public class MarriageRegistrationService {
    		final Criteria criteria = getCurrentSession().createCriteria(MarriageRegistration.class,"marriageRegistration")
    				.createAlias("marriageRegistration.status", "status");
    	 buildMarriageRegistrationSearchCriteria(registration, criteria);
+   	if(status != null)
    		 criteria.add(Restrictions.in("status.code", new String[] {status}));
    		return criteria.list();
    	

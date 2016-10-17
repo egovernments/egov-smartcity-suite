@@ -178,6 +178,11 @@ public class MarriageRegistration extends StateAware {
 
     @Transient
     private String approvalComent;
+    @Transient
+    private Date fromDate;
+    @Transient
+    private Date toDate;
+    
     
     private boolean isActive;
 
@@ -464,5 +469,23 @@ public class MarriageRegistration extends StateAware {
     public void removeCertificate(final MarriageCertificate certificate) {
         getMarriageCertificate().remove(certificate);
     }
+
+	public Date getFromDate() {
+		return fromDate;
+	}
+
+	public void setFromDate(Date fromDate) {
+		this.fromDate = fromDate;
+	}
+
+	public Date getToDate() {
+		return toDate;
+	}
+
+	public void setToDate(Date toDate) {
+		this.toDate = toDate;
+	}
+    
+    
 
 }
