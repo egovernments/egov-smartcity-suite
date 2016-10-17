@@ -64,31 +64,30 @@ import org.hibernate.envers.Audited;
 @Table(name = "eglc_counter_affidavit")
 @SequenceGenerator(name = CounterAffidavit.SEQ_EGLC_CA, sequenceName = CounterAffidavit.SEQ_EGLC_CA, allocationSize = 1)
 @AuditOverrides({ @AuditOverride(forClass = AbstractAuditable.class, name = "lastModifiedBy"),
-    @AuditOverride(forClass = AbstractAuditable.class, name = "lastModifiedDate") })
+		@AuditOverride(forClass = AbstractAuditable.class, name = "lastModifiedDate") })
 public class CounterAffidavit extends AbstractAuditable {
 
-    private static final long serialVersionUID = 1517694643078084884L;
-    public static final String SEQ_EGLC_CA= "seq_eglc_counter_affidavit";
+	private static final long serialVersionUID = 1517694643078084884L;
+	public static final String SEQ_EGLC_CA = "seq_eglc_counter_affidavit";
 
-    @Id
-    @GeneratedValue(generator = SEQ_EGLC_CA, strategy = GenerationType.SEQUENCE)
-    private Long id;
-    
-    @ManyToOne(cascade = CascadeType.ALL,fetch = FetchType.LAZY)
-    @JoinColumn(name = "legalcase", nullable = false)
-    @Audited
-    private LegalCase legalCase;
-    
-    
-    @Temporal(TemporalType.DATE)
-    @Column(name = "counterAffidavitduedate")
-    @Audited
-    private Date counterAffidavitDueDate;
-    
-    @Temporal(TemporalType.DATE)
-    @Column(name = "counterAffidavitapprovaldate")
-    @Audited
-    private Date counterAffidavitApprovalDate;
+	@Id
+	@GeneratedValue(generator = SEQ_EGLC_CA, strategy = GenerationType.SEQUENCE)
+	private Long id;
+
+	@ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+	@JoinColumn(name = "legalcase", nullable = false)
+	@Audited
+	private LegalCase legalCase;
+
+	@Temporal(TemporalType.DATE)
+	@Column(name = "counterAffidavitduedate")
+	@Audited
+	private Date counterAffidavitDueDate;
+
+	@Temporal(TemporalType.DATE)
+	@Column(name = "counterAffidavitapprovaldate")
+	@Audited
+	private Date counterAffidavitApprovalDate;
 
 	@Override
 	public Long getId() {
@@ -96,7 +95,7 @@ public class CounterAffidavit extends AbstractAuditable {
 	}
 
 	@Override
-	public void setId(Long id) {
+	public void setId(final Long id) {
 		this.id = id;
 	}
 
@@ -123,7 +122,5 @@ public class CounterAffidavit extends AbstractAuditable {
 	public void setCounterAffidavitApprovalDate(Date counterAffidavitApprovalDate) {
 		this.counterAffidavitApprovalDate = counterAffidavitApprovalDate;
 	}
-    
-   
 
 }

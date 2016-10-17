@@ -64,7 +64,7 @@ import com.google.gson.annotations.Expose;
 @Table(name = "eglc_employeehearing")
 @SequenceGenerator(name = EmployeeHearing.SEQ_EGLC_EMPHEARING, sequenceName = EmployeeHearing.SEQ_EGLC_EMPHEARING, allocationSize = 1)
 @AuditOverrides({ @AuditOverride(forClass = AbstractAuditable.class, name = "lastModifiedBy"),
-    @AuditOverride(forClass = AbstractAuditable.class, name = "lastModifiedDate") })
+		@AuditOverride(forClass = AbstractAuditable.class, name = "lastModifiedDate") })
 public class EmployeeHearing extends AbstractAuditable {
 
 	private static final long serialVersionUID = 1517694643078084884L;
@@ -82,8 +82,7 @@ public class EmployeeHearing extends AbstractAuditable {
 	@Audited
 	private Employee employee;
 
-	
-	@ManyToOne(fetch=FetchType.LAZY)
+	@ManyToOne(fetch = FetchType.LAZY)
 	@Valid
 	@JoinColumn(name = "hearing")
 	@Audited
@@ -108,15 +107,13 @@ public class EmployeeHearing extends AbstractAuditable {
 		this.hearing = hearing;
 	}
 
-	
 	@Override
 	public Long getId() {
 		return id;
 	}
 
-	
 	@Override
-	public void setId(Long id) {
+	public void setId(final Long id) {
 		this.id = id;
 	}
 
