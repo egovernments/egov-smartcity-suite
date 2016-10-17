@@ -143,6 +143,7 @@
         <jasper-report-version>6.1.0</jasper-report-version>
         <json-simple-version>1.1.1</json-simple-version>
         <jackson-version>2.7.2</jackson-version>
+        <orika-core.version>1.4.5</orika-core.version>
         <gson-version>2.7</gson-version>
         <antisamy-version>1.5.3</antisamy-version>
         <jasypt-version>1.9.2</jasypt-version>
@@ -535,6 +536,19 @@
                 <version>${gson-version}</version>
             </dependency>
             <!-- JSON END -->
+        	<!-- Orika -->
+			<dependency>
+				<groupId>ma.glasnost.orika</groupId>
+				<artifactId>orika-core</artifactId>
+				<version>${orika-core.version}</version>
+				<exclusions>
+                    <exclusion>
+                        <groupId>javassist</groupId>
+                        <artifactId>javassist</artifactId>
+                    </exclusion>
+                </exclusions>
+			</dependency>
+		    <!-- End Orika -->
 
             <!-- SPRING START -->
             <dependency>
@@ -1155,6 +1169,11 @@
             <groupId>asm</groupId>
             <artifactId>asm-all</artifactId>
         </dependency>
+        <dependency>
+				<groupId>ma.glasnost.orika</groupId>
+				<artifactId>orika-core</artifactId>
+		</dependency>
+        
         <!-- <dependency> <groupId>org.jadira.usertype</groupId> <artifactId>usertype.core</artifactId>
             </dependency> <dependency> <groupId>org.jadira.usertype</groupId> <artifactId>usertype.spi</artifactId>
             </dependency> -->
