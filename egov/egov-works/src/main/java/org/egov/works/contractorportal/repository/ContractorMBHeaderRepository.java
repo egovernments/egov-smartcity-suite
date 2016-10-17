@@ -53,7 +53,8 @@ public interface ContractorMBHeaderRepository extends JpaRepository<ContractorMB
 
     List<ContractorMBHeader> findByWorkOrderEstimate(final WorkOrderEstimate workOrderEstimate);
 
-    ContractorMBHeader findByWorkOrderEstimate_IdAndEgwStatus_codeEquals(final Long WorkOrderEstimateId, final String statusCode);
+    List<ContractorMBHeader> findByWorkOrderEstimate_IdAndEgwStatus_codeEquals(final Long WorkOrderEstimateId,
+            final String statusCode);
 
     List<ContractorMBHeader> findByWorkOrderEstimate_IdAndEgwStatus_codeNotOrderById(final Long workOrderEstimateId,
             final String statusCode);

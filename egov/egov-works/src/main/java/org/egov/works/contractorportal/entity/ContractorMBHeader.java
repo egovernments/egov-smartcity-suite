@@ -79,7 +79,7 @@ public class ContractorMBHeader extends AbstractAuditable {
 
     private static final long serialVersionUID = 121631467636260459L;
 
-    public static final String SEQ_EGW_CONTRACTOR_MB_HEADER = "SEQ_EGW_MB_HEADER";
+    public static final String SEQ_EGW_CONTRACTOR_MB_HEADER = "SEQ_EGW_CONTRACTOR_MB_HEADER";
 
     @Id
     @GeneratedValue(generator = SEQ_EGW_CONTRACTOR_MB_HEADER, strategy = GenerationType.SEQUENCE)

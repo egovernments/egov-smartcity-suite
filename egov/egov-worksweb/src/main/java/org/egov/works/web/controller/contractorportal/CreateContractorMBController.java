@@ -18,6 +18,7 @@ import org.egov.works.workorder.entity.WorkOrder;
 import org.egov.works.workorder.entity.WorkOrderEstimate;
 import org.egov.works.workorder.service.WorkOrderEstimateService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.MessageSource;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -43,6 +44,7 @@ public class CreateContractorMBController {
     private ContractorMBHeaderService contractorMBHeaderService;
 
     @Autowired
+    @Qualifier("messageSource")
     private MessageSource messageSource;
 
     @Autowired
@@ -72,12 +74,12 @@ public class CreateContractorMBController {
         contractorMBHeaderService.populateContractorMBDetails(contractorMBHeader);
         model.addAttribute("contractorMB", contractorMBHeader);
         model.addAttribute("documentDetails", contractorMBHeader.getDocumentDetails());
-        
+
         // TODO: Show only the amount where cheque/RTGS assignment is done for the below 2 variables
         model.addAttribute("totalBillsPaidSoFar",
                 estimateService.getPaymentsReleasedForLineEstimate(workOrderEstimate.getEstimate().getLineEstimateDetails()));
         model.addAttribute("totalBillAmount", "");
-        
+
         final TrackMilestone trackMilestone = trackMilestoneService.getTrackMilestoneTotalPercentage(workOrderEstimate.getId());
         String mileStoneStatus = "";
         if (trackMilestone == null || trackMilestone.getTotalPercentage().compareTo(BigDecimal.ZERO) < 0)

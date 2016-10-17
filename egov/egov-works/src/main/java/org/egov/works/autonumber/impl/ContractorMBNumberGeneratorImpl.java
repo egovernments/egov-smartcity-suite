@@ -48,22 +48,20 @@ import org.egov.works.contractorportal.entity.ContractorMBHeader;
 import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 @Service
 public class ContractorMBNumberGeneratorImpl implements ContractorMBNumberGenerator {
 
-    private static final String ESTIMATE_NUMBER_SEQ_PREFIX = "SEQ_CONTRACTOR_MB_NUMBER";
+    private static final String CONTRACTOR_MB_NUMBER_SEQ_PREFIX = "SEQ_CONTRACTOR_MB_NUMBER";
 
     @Autowired
     private ApplicationSequenceNumberGenerator applicationSequenceNumberGenerator;
 
     @Override
-    @Transactional(readOnly = true)
     public String getNextNumber(final ContractorMBHeader contractorMBHeader, final CFinancialYear financialYear) {
         final String financialYearRange = financialYear.getFinYearRange();
         final String finYearRange[] = financialYearRange.split("-");
-        final String sequenceName = ESTIMATE_NUMBER_SEQ_PREFIX + "_" + finYearRange[0] + "_" + finYearRange[1];
+        final String sequenceName = CONTRACTOR_MB_NUMBER_SEQ_PREFIX + "_" + finYearRange[0] + "_" + finYearRange[1];
         Serializable sequenceNumber;
         final DateTime dateTime = new DateTime();
         sequenceNumber = applicationSequenceNumberGenerator.getNextSequence(sequenceName);
