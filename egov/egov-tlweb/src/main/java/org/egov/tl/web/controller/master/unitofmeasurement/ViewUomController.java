@@ -38,73 +38,36 @@
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
 
-package org.egov.tl.entity;
+package org.egov.tl.web.controller.master.unitofmeasurement;
 
-import org.egov.infra.persistence.entity.AbstractAuditable;
-import org.egov.infra.persistence.validator.annotation.Unique;
-import org.hibernate.validator.constraints.Length;
-import org.hibernate.validator.constraints.NotBlank;
+import org.egov.tl.entity.UnitOfMeasurement;
+import org.egov.tl.service.masters.UnitOfMeasurementService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
 
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.SequenceGenerator;
-import javax.persistence.Table;
+@Controller
+@RequestMapping("/licenseunitofmeasurement")
+public class ViewUomController {
 
-@Entity
-@Table(name = "EGTL_MSTR_UNITOFMEASURE")
-@SequenceGenerator(name = UnitOfMeasurement.SEQUENCE, sequenceName = UnitOfMeasurement.SEQUENCE, allocationSize = 1)
-@Unique(fields = {"name", "code"},enableDfltMsg = true)
-public class UnitOfMeasurement extends AbstractAuditable {
+	private UnitOfMeasurementService unitOfMeasurementService;
 
-    public static final String SEQUENCE = "SEQ_EGTL_MSTR_UNITOFMEASURE";
-    private static final long serialVersionUID = -3990672464573945978L;
+	@Autowired
+	public ViewUomController(UnitOfMeasurementService unitOfMeasurementService) {
+		this.unitOfMeasurementService = unitOfMeasurementService;
+	}
 
-    @Id
-    @GeneratedValue(generator = SEQUENCE, strategy = GenerationType.SEQUENCE)
-    private Long id;
+	@ModelAttribute
+	public UnitOfMeasurement licenseUomModel(@PathVariable String code) {
+		return unitOfMeasurementService.findUOMByCode(code);
+	}
 
-    @NotBlank(message = "tradelic.uommaster.name.null")
-    @Length(min = 1, max = 50, message = "tradelic.uommaster.name.length")
-    private String name;
+	@RequestMapping(value = "/view/{code}", method = RequestMethod.GET)
+	public String uomView(@ModelAttribute UnitOfMeasurement unitOfMeasurement) {
 
-    @NotBlank(message = "tradelic.uommaster.code.null")
-    @Length(min = 1, max = 50, message = "tradelic.uommaster.code.length")
-    private String code;
-
-    private boolean active;
-
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(final String name) {
-        this.name = name;
-    }
-
-    public String getCode() {
-        return code;
-    }
-
-    public void setCode(final String code) {
-        this.code = code;
-    }
-
-    public boolean isActive() {
-        return active;
-    }
-
-    public void setActive(boolean active) {
-        this.active = active;
-    }
-
+		return "uom-view";
+	}
 }
