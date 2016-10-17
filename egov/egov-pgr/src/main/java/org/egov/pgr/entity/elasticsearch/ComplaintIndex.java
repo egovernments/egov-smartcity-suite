@@ -36,18 +36,14 @@ public class ComplaintIndex {
 	@Field(type = FieldType.String, index = FieldIndex.not_analyzed)
 	private String complainantName;
 	
-	@Field(type = FieldType.Integer)
-	private int complainantMobile;
+	@Field(type = FieldType.String, index = FieldIndex.not_analyzed)
+	private String complainantMobile;
 	
 	@Field(type = FieldType.String, index = FieldIndex.not_analyzed)
 	private String complainantEmail;
 	
 	@Field(type = FieldType.String, index = FieldIndex.not_analyzed)
 	private String complaintTypeName;
-	
-	@JsonFormat (shape = JsonFormat.Shape.STRING, pattern ="yyyy-MM-dd HH:mm")
-	@Field(type = FieldType.Date, index = FieldIndex.not_analyzed, format = DateFormat.date_optional_time, pattern = "yyyy-MM-dd HH:mm")
-	private Date complaintTypeCreatedDate;
 	
 	@Field(type = FieldType.String, index = FieldIndex.not_analyzed)
 	private String assigneeName;
@@ -56,7 +52,7 @@ public class ComplaintIndex {
 	private String details;
 	
 	@Field(type = FieldType.String, index = FieldIndex.not_analyzed)
-	private String landMarkDetails;
+	private String landmarkDetails;
 	
 	@Field(type = FieldType.String, index = FieldIndex.not_analyzed)
 	private String receivingMode;
@@ -65,7 +61,7 @@ public class ComplaintIndex {
 	private String departmentName;
 	
 	@Field(type = FieldType.String, index = FieldIndex.not_analyzed)
-	private String locationName;
+	private String wardName;
 	
 	@GeoPointField
 	private GeoPointField wardGeo;
@@ -75,6 +71,9 @@ public class ComplaintIndex {
 	
 	@GeoPointField
 	private GeoPointField  localityGeo;
+	
+	@GeoPointField
+	private GeoPoint complaintGeo;
 	
 	//ComplaintIndex additional fields
 	@Field(type = FieldType.String, index = FieldIndex.not_analyzed)
@@ -253,9 +252,6 @@ public class ComplaintIndex {
 	
 	@Field(type = FieldType.Integer)
 	private int reOpened;
-	
-	@GeoPointField
-	private GeoPoint complaintGeo;
 
 	public String getId() {
 		return id;
@@ -281,6 +277,14 @@ public class ComplaintIndex {
 		this.createdDate = createdDate;
 	}
 
+	public Date getEscalationDate() {
+		return escalationDate;
+	}
+
+	public void setEscalationDate(Date escalationDate) {
+		this.escalationDate = escalationDate;
+	}
+
 	public String getComplaintStatusName() {
 		return complaintStatusName;
 	}
@@ -297,11 +301,11 @@ public class ComplaintIndex {
 		this.complainantName = complainantName;
 	}
 
-	public int getComplainantMobile() {
+	public String getComplainantMobile() {
 		return complainantMobile;
 	}
 
-	public void setComplainantMobile(int complainantMobile) {
+	public void setComplainantMobile(String complainantMobile) {
 		this.complainantMobile = complainantMobile;
 	}
 
@@ -321,14 +325,6 @@ public class ComplaintIndex {
 		this.complaintTypeName = complaintTypeName;
 	}
 
-	public Date getComplaintTypeCreatedDate() {
-		return complaintTypeCreatedDate;
-	}
-
-	public void setComplaintTypeCreatedDate(Date complaintTypeCreatedDate) {
-		this.complaintTypeCreatedDate = complaintTypeCreatedDate;
-	}
-
 	public String getAssigneeName() {
 		return assigneeName;
 	}
@@ -346,11 +342,11 @@ public class ComplaintIndex {
 	}
 
 	public String getLandMarkDetails() {
-		return landMarkDetails;
+		return landmarkDetails;
 	}
 
 	public void setLandMarkDetails(String landMarkDetails) {
-		this.landMarkDetails = landMarkDetails;
+		this.landmarkDetails = landMarkDetails;
 	}
 
 	public String getReceivingMode() {
@@ -370,11 +366,11 @@ public class ComplaintIndex {
 	}
 
 	public String getLocationName() {
-		return locationName;
+		return wardName;
 	}
 
 	public void setLocationName(String locationName) {
-		this.locationName = locationName;
+		this.wardName = locationName;
 	}
 
 	public GeoPointField getWardGeo() {
@@ -873,14 +869,5 @@ public class ComplaintIndex {
 
 	public void setComplaintGeo(GeoPoint complaintGeo) {
 		this.complaintGeo = complaintGeo;
-	}
-
-	public Date getEscalationDate() {
-		return escalationDate;
-	}
-
-	public void setEscalationDate(Date escalationDate) {
-		this.escalationDate = escalationDate;
-	}
-	
+	}	
 }
