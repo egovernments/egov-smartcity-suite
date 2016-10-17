@@ -82,10 +82,12 @@ import org.egov.works.revisionestimate.entity.enums.RevisionType;
 import org.egov.works.utils.WorksConstants;
 import org.egov.works.workorder.entity.WorkOrder;
 import org.egov.works.workorder.entity.WorkOrderEstimate;
+import org.hibernate.envers.AuditJoinTable;
 import org.hibernate.envers.AuditOverride;
 import org.hibernate.envers.AuditOverrides;
 import org.hibernate.envers.Audited;
 import org.hibernate.envers.NotAudited;
+import org.hibernate.envers.RelationTargetAuditMode;
 import org.hibernate.validator.constraints.Length;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
@@ -208,6 +210,7 @@ public class MBHeader extends StateAware {
     @JsonIgnore
     @OrderBy("id")
     @OneToMany(mappedBy = "mbHeader", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true, targetEntity = MBDetails.class)
+    @AuditJoinTable
     private final List<MBDetails> mbDetails = new ArrayList<MBDetails>(0);
 
     private transient List<MBDetails> sorMbDetails = new ArrayList<MBDetails>(0);
@@ -228,6 +231,7 @@ public class MBHeader extends StateAware {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "STATUS_ID")
+    @Audited(targetAuditMode = RelationTargetAuditMode.NOT_AUDITED)
     private EgwStatus egwStatus;
 
     @Column(name = "IS_LEGACY_MB")

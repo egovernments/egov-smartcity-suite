@@ -51,6 +51,9 @@
 				<div class="panel-title">
 					<spring:message code="lbl.measurementbook.details" />
 				</div>
+				<div style="text-align: right;">
+					<a href="javascript:void(0);" onclick="viewMBHistory()"><spring:message code="lbl.mb.history" /></a>
+				</div>
 			</div>
 			<div class="panel-body">
 				<div class="row add-border">

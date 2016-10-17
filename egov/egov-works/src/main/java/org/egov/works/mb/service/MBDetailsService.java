@@ -8,6 +8,7 @@ import org.egov.works.mb.entity.MBHeader.MeasurementBookStatus;
 import org.egov.works.mb.repository.MBDetailsRepository;
 import org.egov.works.utils.WorksConstants;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.history.Revisions;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -40,6 +41,10 @@ public class MBDetailsService {
     
     public MBDetails getMBDetailsForREActivity(final Long activityId,final Long revisionEstimateId) {
         return mBDetailsRepository.getMBDetailsForREActivity(activityId,revisionEstimateId,WorksConstants.CANCELLED_STATUS);
+    }
+    
+    public Revisions<Integer, MBDetails> findRevisions(Long id) {
+        return mBDetailsRepository.findRevisions(id);
     }
 
 }

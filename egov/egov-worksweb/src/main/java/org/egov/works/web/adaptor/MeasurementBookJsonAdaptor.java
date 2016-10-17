@@ -90,6 +90,7 @@ public class MeasurementBookJsonAdaptor implements JsonSerializer<WorkOrderEstim
         final JsonObject jsonObject = new JsonObject();
         final DecimalFormat df = new DecimalFormat("0.00");
         final SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+        jsonObject.addProperty("showHistory",false);
         if (workOrderEstimate != null) {
             if (workOrderEstimate.getEstimate() != null) {
                 final AbstractEstimate estimate = workOrderEstimate.getEstimate();

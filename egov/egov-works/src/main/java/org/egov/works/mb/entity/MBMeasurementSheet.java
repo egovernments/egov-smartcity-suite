@@ -57,6 +57,8 @@ import javax.validation.constraints.Max;
 import org.egov.infra.persistence.entity.AbstractAuditable;
 import org.egov.infra.persistence.validator.annotation.Required;
 import org.egov.works.workorder.entity.WorkOrderMeasurementSheet;
+import org.hibernate.envers.AuditJoinTable;
+import org.hibernate.envers.AuditMappedBy;
 import org.hibernate.envers.AuditOverride;
 import org.hibernate.envers.AuditOverrides;
 import org.hibernate.envers.Audited;
@@ -93,6 +95,7 @@ public class MBMeasurementSheet extends AbstractAuditable {
     private BigDecimal quantity;
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "mbdetails")
+    @AuditJoinTable
     private MBDetails mbDetails;
 
     @ManyToOne(fetch = FetchType.LAZY)

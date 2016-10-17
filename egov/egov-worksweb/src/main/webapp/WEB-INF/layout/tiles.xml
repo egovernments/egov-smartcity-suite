@@ -465,5 +465,10 @@
 		<put-attribute name="page-title" value="title.search.letterofacceptance.tocreatecontractormb" cascade="true"/>
 		<put-attribute name="body" value="/WEB-INF/views/contractorportal/contractormb-loasearch.jsp"/>
 	</definition>
+	
+	<definition name="mb-history" extends="base_layout">
+        <put-attribute name="page-title" value="title.mb.history" cascade="true"/>
+        <put-attribute name="body" value="/WEB-INF/views/mb/mb-history.jsp"/>
+     </definition>
 
 </tiles-definitions>

@@ -50,11 +50,12 @@ import org.egov.works.workorder.entity.WorkOrder;
 import org.egov.works.workorder.entity.WorkOrderEstimate;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.history.RevisionRepository;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 @Repository
-public interface MBHeaderRepository extends JpaRepository<MBHeader, Long> {
+public interface MBHeaderRepository extends JpaRepository<MBHeader, Long>, RevisionRepository<MBHeader, Long, Integer> {
 
     MBHeader findById(final Long id);
 
@@ -128,11 +129,15 @@ public interface MBHeaderRepository extends JpaRepository<MBHeader, Long> {
     Double getMeasurementsPreviousCumulativeQuantity(@Param("mbHeaderId") final Long mbHeaderId,
             @Param("status") final String status,
             @Param("woMeasurementSheetId") final Long woMeasurementSheetId);
-    
+
     @Query("select mbh from MBHeader mbh where mbh.workOrderEstimate.id = :workOrderEstimateId and mbh.egBillregister.id < :contractorBillId ")
-    List<MBHeader> findMBHeadersTillDate(@Param("contractorBillId") final Long contractorBillId,@Param("workOrderEstimateId") final Long workOrderEstimateId);
-    
+    List<MBHeader> findMBHeadersTillDate(@Param("contractorBillId") final Long contractorBillId,
+            @Param("workOrderEstimateId") final Long workOrderEstimateId);
+
     @Query("select mbh from MBHeader mbh where exists (select mbd.mbHeader from MBDetails mbd where mbh = mbd.mbHeader and mbd.workOrderActivity.workOrderEstimate.estimate.id =:abstractEstimateId and mbd.workOrderActivity.workOrderEstimate.id =:workOrderEstimateId and  mbd.mbHeader.egwStatus.code != :mbStatus and exists (select a from Activity a where a.abstractEstimate.id =:revisionEstimateId and a.abstractEstimate.parent = mbd.workOrderActivity.workOrderEstimate.estimate and a.abstractEstimate.parent.id =:abstractEstimateId and a.revisionType in(:nonTenderderRevisionType,:lumpSumRevisionType))) ")
-    List<MBHeader> findMBHeadersForRevisionEstimate(@Param ("abstractEstimateId") Long abstractEstimateId,@Param("revisionEstimateId") Long revisionEstimateId,@Param("workOrderEstimateId") Long workOrderEstimateId,@Param("nonTenderderRevisionType") RevisionType nonTenderderRevisionType,@Param("lumpSumRevisionType") RevisionType lumpSumRevisionType,@Param("mbStatus") String mbStatus);
-    
+    List<MBHeader> findMBHeadersForRevisionEstimate(@Param("abstractEstimateId") Long abstractEstimateId,
+            @Param("revisionEstimateId") Long revisionEstimateId, @Param("workOrderEstimateId") Long workOrderEstimateId,
+            @Param("nonTenderderRevisionType") RevisionType nonTenderderRevisionType,
+            @Param("lumpSumRevisionType") RevisionType lumpSumRevisionType, @Param("mbStatus") String mbStatus);
+
 }

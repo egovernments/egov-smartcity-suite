@@ -95,6 +95,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.MessageSource;
+import org.springframework.data.history.Revisions;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.validation.BindingResult;
@@ -192,6 +193,10 @@ public class MBHeaderService {
         return mbHeaderRepository.findByWorkOrderEstimate_IdAndEgwStatus_codeNotOrderById(workOrderEstimateId, statusCode);
     }
 
+    public Revisions<Integer, MBHeader> findRevisions(Long id) {
+        return mbHeaderRepository.findRevisions(id);
+    }
+    
     @Transactional
     public MBHeader save(final MBHeader mbHeader) {
         final MBHeader savedMBHeader = mbHeaderRepository.save(mbHeader);

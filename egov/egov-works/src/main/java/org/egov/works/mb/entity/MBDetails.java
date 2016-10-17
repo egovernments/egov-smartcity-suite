@@ -69,10 +69,11 @@ import org.egov.infra.persistence.validator.annotation.Required;
 import org.egov.infra.validation.exception.ValidationError;
 import org.egov.infra.validation.regex.Constants;
 import org.egov.works.workorder.entity.WorkOrderActivity;
+import org.hibernate.envers.AuditJoinTable;
 import org.hibernate.envers.AuditOverride;
 import org.hibernate.envers.AuditOverrides;
 import org.hibernate.envers.Audited;
-import org.hibernate.envers.NotAudited;
+import org.hibernate.envers.RelationTargetAuditMode;
 import org.hibernate.validator.constraints.Length;
 
 @Entity
@@ -126,12 +127,13 @@ public class MBDetails extends AbstractAuditable {
     @Required(message = "mbdetails.mbheader.null")
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "MBHEADER_ID", nullable = false)
+    @AuditJoinTable
     private MBHeader mbHeader;
 
     @Required(message = "mbdetails.activity.null")
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "WO_ACTIVITY_ID", nullable = false)
-    @NotAudited
+    @Audited(targetAuditMode = RelationTargetAuditMode.NOT_AUDITED)
     private WorkOrderActivity workOrderActivity;
 
     @GreaterThan(value = 0, message = "mbdetails.quantity.non.negative")
@@ -167,6 +169,7 @@ public class MBDetails extends AbstractAuditable {
     private double amount = 0.0;
 
     @OneToMany(orphanRemoval = true, cascade = CascadeType.ALL, fetch = FetchType.LAZY, mappedBy = "mbDetails", targetEntity = MBMeasurementSheet.class)
+    @AuditJoinTable
     private List<MBMeasurementSheet> measurementSheets = new LinkedList<MBMeasurementSheet>();
 
     public List<ValidationError> validate() {

@@ -2111,3 +2111,8 @@ function viewEstimate() {
 	var estimateId = $('#estimateId').val();
 	window.open("/egworks/abstractestimate/view/" + estimateId, '', 'height=650,width=980,scrollbars=yes,left=0,top=0,status=yes');
 }
+
+function viewMBHistory() {
+	var mbheaderId = $('#id').val();
+	window.open("/egworks/mb/history/" + mbheaderId, '', 'height=650,width=980,scrollbars=yes,left=0,top=0,status=yes');
+}

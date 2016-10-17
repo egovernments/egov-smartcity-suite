@@ -50,8 +50,13 @@
 	<input type="hidden" id="errorfromlasttopage" value="<spring:message code='error.from.last.to.page' />">
 	<div class="panel-heading">
 		<div class="panel-title" style="text-align: left;">
-			<spring:message code="lbl.measurementbook.details" />
+			<spring:message code="lbl.measurementbook.details" /> 
 		</div>
+		<c:if test="${showHistory}">
+			<div style="text-align: right;">
+				<a href="javascript:void(0);" onclick="viewMBHistory()"><spring:message code="lbl.mb.history" /></a>
+			</div>
+		</c:if>
 	</div>
 	<div class="panel-body custom-form">
 		<div class="form-group">

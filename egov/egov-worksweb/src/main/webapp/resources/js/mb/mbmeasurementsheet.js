@@ -516,3 +516,8 @@ function limitCharatersBy3_2(object) {
 		$(object).val(val.substring(0, val.length - 1));
 	}	
 }
+
+function viewMBHistory() {
+	var mbheaderId = $('#id').val();
+	window.open("/egworks/mb/history/" + mbheaderId, '', 'height=650,width=980,scrollbars=yes,left=0,top=0,status=yes');
+}
