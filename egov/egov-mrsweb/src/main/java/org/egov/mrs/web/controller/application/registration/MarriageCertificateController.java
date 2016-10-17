@@ -53,8 +53,8 @@ import org.egov.infra.reporting.engine.ReportOutput;
 import org.egov.infra.web.utils.WebUtils;
 import org.egov.mrs.application.MarriageConstants;
 import org.egov.mrs.application.service.MarriageCertificateService;
-import org.egov.mrs.application.service.MarriageCertificateService.CertificateType;
 import org.egov.mrs.domain.service.MarriageRegistrationService;
+import org.egov.mrs.domain.service.ReIssueService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.HttpHeaders;
@@ -84,6 +84,9 @@ public class MarriageCertificateController {
 	private MarriageRegistrationService marriageRegistrationService;
 	
 	@Autowired
+	private ReIssueService reIssueService;
+	
+	@Autowired
         @Qualifier("fileStoreService")
         protected FileStoreService fileStoreService;
 	
@@ -92,32 +95,30 @@ public class MarriageCertificateController {
 	@RequestMapping(value = "/registration", method = RequestMethod.GET)
 	public @ResponseBody ResponseEntity<byte[]> showRegistrationCertificate(HttpServletRequest request,
 			@RequestParam final Long id, final Model model, final HttpSession session) throws IOException {
-	    reportOutput = new ReportOutput();
-	    final FileStoreMapper fsm = (marriageRegistrationService.get(id)).getMarriageCertificate().get(0).getFileStore();
-                final File file = fileStoreService.fetch(fsm, MarriageConstants.FILESTORE_MODULECODE);
-                final byte[] bFile = FileUtils.readFileToByteArray(file);
-                reportOutput.setReportOutputData(bFile);
-                reportOutput.setReportFormat(FileFormat.PDF);
-                final HttpHeaders headers = new HttpHeaders();
-                headers.setContentType(MediaType.parseMediaType("application/pdf"));
-                headers.add("content-disposition", "inline;filename="+file.getName());
-		return new ResponseEntity<byte[]>(reportOutput.getReportOutputData(),headers,HttpStatus.CREATED);
+	    return getResponseEntity((marriageRegistrationService.get(id)).getMarriageCertificate().get(0).getFileStore());
 	}
+	
+	@RequestMapping(value = "/reissue", method = RequestMethod.GET)
+        public @ResponseBody ResponseEntity<byte[]> showReIssuedCertificate(HttpServletRequest request,
+                        @RequestParam final Long id, final Model model, final HttpSession session) throws IOException {
+            return getResponseEntity((reIssueService.get(id)).getMarriageCertificate().get(0).getFileStore()); 
+        }
 
-	@RequestMapping(value = "/rejection", method = RequestMethod.GET)
-	public @ResponseBody ResponseEntity<byte[]> showRejectionCertificate(HttpServletRequest request,
-			@RequestParam final Long id, final Model model, final HttpSession session) throws IOException {  
-		final String url = WebUtils.extractRequestDomainURL(request, false);
-		final String cityLogo = url.concat(MarriageConstants.IMAGE_CONTEXT_PATH)
-				.concat((String) request.getSession().getAttribute("citylogo"));
-		final String cityName = request.getSession().getAttribute("citymunicipalityname").toString();
-		final HttpHeaders headers = new HttpHeaders();
-		headers.setContentType(MediaType.parseMediaType("application/pdf"));
-		headers.add("content-disposition", "inline;filename=EstimationNotice.pdf");
-		reportOutput = marriageCertificateService.generate(marriageRegistrationService.get(id),
-				CertificateType.REJECTION, cityName, cityLogo);
-		return new ResponseEntity<byte[]>(reportOutput.getReportOutputData(), headers, HttpStatus.CREATED);
-
+	/**
+	 * @param fsm
+	 * @return
+	 * @throws IOException
+	 */
+	private ResponseEntity<byte[]> getResponseEntity(final FileStoreMapper fsm ) throws IOException {
+	    reportOutput = new ReportOutput();
+	    final File file = fileStoreService.fetch(fsm, MarriageConstants.FILESTORE_MODULECODE);
+            final byte[] bFile = FileUtils.readFileToByteArray(file);
+            reportOutput.setReportOutputData(bFile);
+            reportOutput.setReportFormat(FileFormat.PDF);
+            final HttpHeaders headers = new HttpHeaders();
+            headers.setContentType(MediaType.parseMediaType("application/pdf"));
+            headers.add("content-disposition", "inline;filename="+file.getName());
+            return new ResponseEntity<byte[]>(reportOutput.getReportOutputData(),headers,HttpStatus.CREATED);
 	}
 
 }

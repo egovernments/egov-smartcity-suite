@@ -37,31 +37,8 @@
   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
 
-package org.egov.mrs.application;
+package org.egov.mrs.domain.enums;
 
-public class MarriageConstants {
-    
-    public static final String MODULE_NAME = "Marriage Registration";
-    public static final String BOUNDARY_TYPE = "Zone";
-    public static final String REVENUE_HIERARCHY_TYPE = "REVENUE";
-    
-    public static final String APPROVER_ROLE_NAME = "ULB Operator";
-    public static final String DATE_FORMAT_DDMMYYYY = "dd-MM-yyyy";
-    
-    public static final String REISSUE_FEECRITERIA = "Re-Issue Fee";
-    public static final String ADDITIONAL_RULE_REGISTRATION = "MARRIAGE REGISTRATION"; 
-    public static final String IMAGE_CONTEXT_PATH = "/egi";
-    
-    // validactions
-    public static final String WFLOW_ACTION_STEP_REJECT = "Reject";
-    public static final String WFLOW_ACTION_STEP_CANCEL = "Cancel Registration";
-    public static final String WFLOW_ACTION_STEP_CANCEL_REISSUE = "Cancel ReIssue";
-    public static final String WFLOW_ACTION_STEP_FORWARD = "Forward";
-    public static final String WFLOW_ACTION_STEP_APPROVE = "Approve";
-    public static final String WFLOW_ACTION_STEP_PRINTCERTIFICATE = "Print Certificate";
-    
-    public static final String APPROVED = "APPROVED";
-    public static final String MARRIAGEFEECOLLECTION_FUCNTION_CODE = "MARRIAGE_FUNCTION_CODE";
-    public static final String FILESTORE_MODULECODE = "MRS";
-
+public enum MarriageCertificateType {
+        REGISTRATION, REJECTION,REISSUE
 }

@@ -88,7 +88,7 @@ $(".btn-primary").click(function() {
 		 }
 	}
 	
-	 if(action == 'Cancel Registration') { 
+	 if(action == 'Cancel ReIssue') { 
 		 $('#Cancel Registration').attr('formnovalidate','true');
 		 var r = confirm("Do You Really Want to Cancel The ReIssue!");
 		 if (r == true) {

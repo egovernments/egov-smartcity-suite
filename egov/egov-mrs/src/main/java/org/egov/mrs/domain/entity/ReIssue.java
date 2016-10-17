@@ -77,7 +77,7 @@ import org.egov.mrs.domain.entity.MrApplicant;
 public class ReIssue extends StateAware {
     
     public enum ReIssueStatus {
-        CREATED, APPROVED, REJECTED, REGISTERED, CANCELLED, CERTIFICATEREISSUED
+        CREATED, APPROVED, REJECTED, CANCELLED, CERTIFICATEREISSUED
     }
     
     private static final long serialVersionUID = 7398043339748917008L;
@@ -280,5 +280,9 @@ public class ReIssue extends StateAware {
 
     public void removeCertificate(final MarriageCertificate certificate) {
         getMarriageCertificate().remove(certificate);
+    }
+    
+    public boolean isFeeCollected() {
+        return demand.getBaseDemand().compareTo(demand.getAmtCollected()) == 0 ? true : true; 
     }
 }

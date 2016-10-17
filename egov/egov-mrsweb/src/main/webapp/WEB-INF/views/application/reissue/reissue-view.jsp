@@ -55,10 +55,10 @@
 			 <c:set value="/mrs/reissue/workflow?id=${reissue.id}" var="actionUrl" />
 		</c:if>
 		<c:if test="${reissue.status.code == 'APPROVED'}">
-			<c:set value="/mrs/reissue/certificate?reIssueId=${reissue.id}" var="actionUrl"></c:set>
+			<c:set value="/mrs/reissue/certificate?reIssueId=${reissue.id}" var="actionUrl"></c:set> 
 		</c:if>
 		
-		<form:form role="form" action="/mrs/reIssue/update"
+		<form:form role="form" action="/mrs/reissue/update"
 			modelAttribute="reIssue" id="form-reissue"
 			cssClass="form-horizontal form-groups-bordered"
 			enctype="multipart/form-data">
@@ -112,4 +112,8 @@
 </div>
 <script src="<cdn:url value='/resources/js/app/mrgcert-reissue.js'/> "></script> 
 <script src="<cdn:url value='/resources/global/js/egov/inbox.js' context='/egi'/>"></script>
+<<<<<<< HEAD
 <script src="<cdn:url value='/resources/js/app/navtabclickhandler.js'/> "></script>
+=======
+<script src="<cdn:url value='/resources/js/app/navtabclickhandler.js'/> "></script>
+>>>>>>> PHOENIX-5343 ReIssue Marriage Certificate

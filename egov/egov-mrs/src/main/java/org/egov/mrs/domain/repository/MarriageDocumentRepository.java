@@ -51,7 +51,7 @@ public interface MarriageDocumentRepository extends JpaRepository<MarriageDocume
 
     MarriageDocument findById(Long id);
 
-    MarriageDocument findByName(String ame);
+    MarriageDocument findByName(String name);
 
     List<MarriageDocument> findByIndividual(boolean individual);
 

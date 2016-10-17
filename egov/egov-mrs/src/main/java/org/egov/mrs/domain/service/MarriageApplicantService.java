@@ -143,10 +143,12 @@ public class MarriageApplicantService {
             .filter(doc -> doc.getFile().getSize() > 0)
             .map(doc -> {
                 MrApplicantDocument appDoc = documentIdAndApplicantDoc.get(doc.getId());
-                fileStoreService.delete(appDoc.getFileStoreMapper().getFileStoreId(), MarriageConstants.FILESTORE_MODULECODE);
-                return appDoc;
+                if(appDoc!=null){
+                    fileStoreService.delete(appDoc.getFileStoreMapper().getFileStoreId(), MarriageConstants.FILESTORE_MODULECODE);
+                }
+                    return appDoc;
             }).collect(Collectors.toList())
-            .forEach(appDoc -> toDelete.add(appDoc)); // seems like redundent, check
+            .forEach(appDoc -> toDelete.add((MrApplicantDocument) appDoc)); // seems like redundent, check
         
         applicantDocumentService.delete(toDelete);
         }

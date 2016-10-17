@@ -54,9 +54,6 @@
 		<c:if test="${reIssue.status.code == 'REJECTED'}">
 			 <c:set value="/mrs/reissue/workflow?id=${reIssue.id}" var="actionUrl" />
 		</c:if>
-		<c:if test="${reIssue.status.code == 'APPROVED'}">
-			<c:set value="/mrs/reissue/certificate?reIssueId=${reIssue.id}" var="actionUrl"></c:set>
-		</c:if>
 		<form:form role="form" action="${actionUrl}"
 			modelAttribute="reIssue" id="form-reissue"
 			cssClass="form-horizontal form-groups-bordered"
@@ -94,15 +91,18 @@
 					  </ul> -->
 					  </div>
 				</div>
-			</div>
-			<c:if test="${reIssue.rejectionReason != null}">
+				<c:if test="${reIssue.rejectionReason != null}">
 				<div class="row">
 					<label class="col-sm-3 control-label text-right"><spring:message code="lbl.reason.rejection"/></label>
 					<div class="col-sm-8 add-margin view-content">
 						<c:out value="${reIssue.rejectionReason}" />
 					</div>
 				</div>
-			</c:if>			
+			</c:if>	
+			</div>
+			<c:if test="${reIssue.status != null}">
+				<jsp:include page="../../common/reg-reissue-wfhistory.jsp"></jsp:include>	
+			</c:if>	
 			<br />
 			<jsp:include page="../../common/commonWorkflowMatrix.jsp"/>
 			<div class="buttonbottom" align="center">
@@ -112,6 +112,6 @@
 		
 	</div>
 </div>
-
+<script src="<cdn:url value='/resources/js/app/mrgcert-reissue.js'/> "></script> 
 <script src="<cdn:url value='/resources/global/js/egov/inbox.js' context='/egi'/>"></script>
 <script src="<cdn:url value='/resources/js/app/navtabclickhandler.js'/> "></script>

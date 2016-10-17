@@ -39,6 +39,8 @@
 
 package org.egov.mrs.web.controller.application.reissue;
 
+import java.io.IOException;
+
 import javax.servlet.http.HttpServletRequest;
 
 import org.egov.eis.web.contract.WorkflowContainer;
@@ -46,6 +48,7 @@ import org.egov.eis.web.controller.workflow.GenericWorkFlowController;
 import org.egov.mrs.application.MarriageConstants;
 import org.egov.mrs.domain.entity.MarriageRegistration;
 import org.egov.mrs.domain.entity.ReIssue;
+import org.egov.mrs.domain.enums.MarriageCertificateType;
 import org.egov.mrs.domain.service.MarriageApplicantService;
 import org.egov.mrs.domain.service.MarriageDocumentService;
 import org.egov.mrs.domain.service.MarriageRegistrationService;
@@ -114,7 +117,6 @@ public class NewReIssueController extends GenericWorkFlowController {
         prepareWorkFlowForNewMarriageRegistration(reIssue, model);
         
         model.addAttribute("reIssue", reIssue);
-        //model.addAttribute("documents", marriageDocumentService.getReIssueApplicantDocs());
         model.addAttribute("documents", marriageDocumentService.getGeneralDocuments());
         prepareWorkflow(model, reIssue, new WorkflowContainer());
         return "reissue-form";
@@ -149,34 +151,31 @@ public class NewReIssueController extends GenericWorkFlowController {
 
     @RequestMapping(value = "/workflow", method = RequestMethod.POST)
     public String handleWorkflowAction(@RequestParam final Long id,
-            @ModelAttribute final ReIssue reissue,
+            @ModelAttribute ReIssue reIssue,
             @ModelAttribute final WorkflowContainer workflowContainer,
             final Model model,
             final HttpServletRequest request,
-            final BindingResult errors) {
-
+            final BindingResult errors) throws IOException {
+        
         if (errors.hasErrors())
             return "reissue-view";
-
+       
         obtainWorkflowParameters(workflowContainer, request);
-        ReIssue result = null;
-
         switch (workflowContainer.getWorkFlowAction()) {
         case "Forward":
-            result = reissueService.forwardReIssue(id, reissue, workflowContainer);
+            reIssue = reissueService.forwardReIssue(id, reIssue, workflowContainer);
             break;
-        case "Approve":
-            result = reissueService.approveReIssue(id, workflowContainer);
-            break;
-        case "Reject":
-            result = reissueService.rejectReIssue(id, workflowContainer);
-            break;
-        case "Close ReIssue":
-            result = reissueService.rejectReIssue(id, workflowContainer);
+        case "Cancel ReIssue":
+            reIssue = reIssueService.get(id);
+            reIssue = reissueService.rejectReIssue(reIssue, workflowContainer,request);
             break;
         }
-
-        model.addAttribute("reissue", result);
+        // On Cancel, output rejection certificate 
+        if (workflowContainer.getWorkFlowAction() != null && !workflowContainer.getWorkFlowAction().isEmpty()
+                && workflowContainer.getWorkFlowAction().equalsIgnoreCase(MarriageConstants.WFLOW_ACTION_STEP_CANCEL_REISSUE))
+            return "redirect:/certificate/reissue?id="
+                    + reIssue.getId();
+        model.addAttribute("ackNumber", reIssue.getApplicationNo());
         return "reissue-ack";
     }
 

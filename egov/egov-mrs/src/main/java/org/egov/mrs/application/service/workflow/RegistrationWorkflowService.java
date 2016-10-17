@@ -63,6 +63,7 @@ public class RegistrationWorkflowService {
     private static final String STATE_NEW = "NEW";
     private static final String STATE_END = "END";
     private static final String STEP_CANCEL = "Cancel Registration";
+    private static final String STEP_CANCEL_REISSUE = "Cancel ReIssue";
     private static final String STEP_REJECT = "Reject";
     private static final String STEP_APPROVE = "Approve";
     private static final String STEP_FORWARD = "Forward";
@@ -188,7 +189,6 @@ public class RegistrationWorkflowService {
                 nextAction = workflowMatrix.getNextAction();
 
             } else if (workflowContainer.getWorkFlowAction().equalsIgnoreCase(STEP_REJECT)) {
-
                 // Whatever the level of workflow, whenever rejected should come back to the initiator i.e., from where the
                 // workflow
                 // started
@@ -201,6 +201,8 @@ public class RegistrationWorkflowService {
                 
                 nextState = "Assistant Engineer Rejected";
                 nextAction = "Revenue Clerk Approval Pending";
+            }else if (workflowContainer.getWorkFlowAction().equalsIgnoreCase(STEP_CANCEL_REISSUE)) {
+                nextAction = STATE_END;
             } else if (workflowContainer.getWorkFlowAction().equalsIgnoreCase(STEP_APPROVE)) {
 
                 nextStateOwner = assignmentService.getPrimaryAssignmentForUser(reIssue.getCreatedBy().getId()).getPosition();
