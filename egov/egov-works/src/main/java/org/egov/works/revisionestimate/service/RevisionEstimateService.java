@@ -77,7 +77,6 @@ import org.egov.works.abstractestimate.entity.MeasurementSheet;
 import org.egov.works.abstractestimate.repository.ActivityRepository;
 import org.egov.works.abstractestimate.service.MeasurementSheetService;
 import org.egov.works.letterofacceptance.service.WorkOrderActivityService;
-import org.egov.works.lineestimate.entity.enums.LineEstimateStatus;
 import org.egov.works.lineestimate.service.LineEstimateAppropriationService;
 import org.egov.works.lineestimate.service.LineEstimateDetailService;
 import org.egov.works.lineestimate.service.LineEstimateService;
@@ -875,8 +874,8 @@ public class RevisionEstimateService {
 
 	public void revisionEstimateStatusChange(final RevisionAbstractEstimate revisionEstimate,
 			final String workFlowAction) {
-		if (null != revisionEstimate && null != revisionEstimate.getEgwStatus()
-				&& null != revisionEstimate.getEgwStatus().getCode())
+		if (revisionEstimate != null && revisionEstimate.getEgwStatus() != null
+				&& revisionEstimate.getEgwStatus().getCode() != null)
 			if (WorksConstants.SAVE_ACTION.equals(workFlowAction))
 				revisionEstimate.setEgwStatus(worksUtils.getStatusByModuleAndCode(
 						WorksConstants.REVISIONABSTRACTESTIMATE, RevisionEstimateStatus.NEW.toString()));
@@ -904,7 +903,7 @@ public class RevisionEstimateService {
 			else if (RevisionEstimateStatus.CREATED.toString().equals(revisionEstimate.getEgwStatus().getCode())
 					&& !revisionEstimate.getState().getNextAction()
 							.equals(WorksConstants.REVISIONESTIMATE_WF_NEXTACTION_PENDING_TECHNICAL_SANCTION)
-					&& workFlowAction.equals(WorksConstants.SUBMIT_ACTION))
+					&& WorksConstants.SUBMIT_ACTION.equals(workFlowAction))
 				revisionEstimate.setEgwStatus(worksUtils.getStatusByModuleAndCode(
 						WorksConstants.REVISIONABSTRACTESTIMATE, RevisionEstimateStatus.CHECKED.toString()));
 			else if(RevisionEstimateStatus.RESUBMITTED.toString().equals(revisionEstimate.getEgwStatus().getCode())
@@ -913,20 +912,20 @@ public class RevisionEstimateService {
 					revisionEstimate.setEgwStatus(worksUtils.getStatusByModuleAndCode(
 							WorksConstants.REVISIONABSTRACTESTIMATE, RevisionEstimateStatus.CHECKED.toString()));
 			else if (RevisionEstimateStatus.CHECKED.toString().equals(revisionEstimate.getEgwStatus().getCode())
-					&& !workFlowAction.equals(WorksConstants.REJECT_ACTION)
+					&& !WorksConstants.REJECT_ACTION.equals(workFlowAction)
 					&& revisionEstimate.getState().getNextAction()
 							.equals(WorksConstants.REVISIONESTIMATE_WF_NEXTACTION_PENDING_TECHNICAL_SANCTION)
 					|| (revisionEstimate.getEgwStatus().getCode().equals(RevisionEstimateStatus.CREATED.toString())
-							&& !workFlowAction.equals(WorksConstants.REJECT_ACTION)
+							&& !WorksConstants.REJECT_ACTION.equals(workFlowAction)
 							&& revisionEstimate.getState().getNextAction()
 									.equals(WorksConstants.REVISIONESTIMATE_WF_NEXTACTION_PENDING_TECHNICAL_SANCTION))
 					|| (revisionEstimate.getEgwStatus().getCode().equals(RevisionEstimateStatus.RESUBMITTED.toString())
-							&& !workFlowAction.equals(WorksConstants.REJECT_ACTION) && revisionEstimate.getState()
+							&& !WorksConstants.REJECT_ACTION.equals(workFlowAction) && revisionEstimate.getState()
 									.getNextAction().equals(WorksConstants.REVISIONESTIMATE_WF_NEXTACTION_PENDING_TECHNICAL_SANCTION)))
 				revisionEstimate.setEgwStatus(egwStatusHibernateDAO.getStatusByModuleAndCode(WorksConstants.REVISIONABSTRACTESTIMATE,
 						RevisionEstimateStatus.TECH_SANCTIONED.toString()));
 			else if (revisionEstimate.getEgwStatus().getCode().equals(RevisionEstimateStatus.TECH_SANCTIONED.toString())
-                    && !workFlowAction.equals(WorksConstants.REJECT_ACTION))
+                    && !WorksConstants.REJECT_ACTION.equals(workFlowAction))
 				revisionEstimate.setEgwStatus(egwStatusHibernateDAO.getStatusByModuleAndCode(WorksConstants.REVISIONABSTRACTESTIMATE,
 						RevisionEstimateStatus.BUDGET_SANCTIONED.toString()));
             	
@@ -1225,7 +1224,7 @@ public class RevisionEstimateService {
 							if (maxAllowedQuantity >= Double.parseDouble(activityIdQuantity[1].toString()))
 								continue;
 							else {
-								message = messageSource.getMessage("error.mbexistsfor.rechangequantity", null, null);
+								message = messageSource.getMessage("error.mbexistsfor.rechangequantity", new String[] {revisionEstimate.getEstimateNumber()}, null);
 								break;
 							}
 						}
