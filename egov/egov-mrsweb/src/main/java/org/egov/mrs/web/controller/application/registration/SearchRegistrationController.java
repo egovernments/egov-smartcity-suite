@@ -135,6 +135,14 @@ public class SearchRegistrationController {
                    .toString();
           return result;
     }
+    
+    @RequestMapping(value = "/collectmrfeeajaxsearch", method = RequestMethod.POST, produces = MediaType.TEXT_PLAIN_VALUE)
+    public @ResponseBody String searchApprovedMarriageRecordsForFee(Model model,@ModelAttribute final MarriageRegistration registration) throws ParseException {
+    	List<MarriageRegistration> searchResultList = marriageRegistrationService.searchApprovedMarriageRegistrations(registration);
+      	 String result = new StringBuilder("{ \"data\":").append(toJSON(searchResultList,MarriageRegistration.class,  MarriageRegistrationJsonAdaptor.class)).append("}")
+                   .toString();
+          return result;
+    }
     @RequestMapping(value = "/searchregisteredrecord", method = RequestMethod.POST, produces = MediaType.TEXT_PLAIN_VALUE)
     public @ResponseBody String searchRegisteredStatusMarriageRecords(Model model,@ModelAttribute final MarriageRegistration registration) throws ParseException {
     	List<MarriageRegistration> searchResultList = marriageRegistrationService.searchRegistrationByStatus(registration,MarriageRegistration.RegistrationStatus.REGISTERED.toString());

@@ -56,7 +56,7 @@ $(document)
 								.dataTable(
 										{
 											ajax : {
-												url : "/mrs/registration/searchApproved",
+												url : "/mrs/registration/collectmrfeeajaxsearch",
 												type : "POST",
 												/*beforeSend : function() {
 													$('.loader-class')
