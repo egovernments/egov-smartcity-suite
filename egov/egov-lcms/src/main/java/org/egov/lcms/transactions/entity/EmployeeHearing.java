@@ -64,65 +64,65 @@ import com.google.gson.annotations.Expose;
 @Table(name = "eglc_employeehearing")
 @SequenceGenerator(name = EmployeeHearing.SEQ_EGLC_EMPHEARING, sequenceName = EmployeeHearing.SEQ_EGLC_EMPHEARING, allocationSize = 1)
 @AuditOverrides({ @AuditOverride(forClass = AbstractAuditable.class, name = "lastModifiedBy"),
-		@AuditOverride(forClass = AbstractAuditable.class, name = "lastModifiedDate") })
+        @AuditOverride(forClass = AbstractAuditable.class, name = "lastModifiedDate") })
 public class EmployeeHearing extends AbstractAuditable {
 
-	private static final long serialVersionUID = 1517694643078084884L;
-	public static final String SEQ_EGLC_EMPHEARING = "seq_eglc_employeehearing";
+    private static final long serialVersionUID = 1517694643078084884L;
+    public static final String SEQ_EGLC_EMPHEARING = "seq_eglc_employeehearing";
 
-	@Expose
-	@DocumentId
-	@Id
-	@GeneratedValue(generator = SEQ_EGLC_EMPHEARING, strategy = GenerationType.SEQUENCE)
-	private Long id;
+    @Expose
+    @DocumentId
+    @Id
+    @GeneratedValue(generator = SEQ_EGLC_EMPHEARING, strategy = GenerationType.SEQUENCE)
+    private Long id;
 
-	@ManyToOne
-	@Valid
-	@JoinColumn(name = "employee")
-	@Audited
-	private Employee employee;
+    @ManyToOne
+    @Valid
+    @JoinColumn(name = "employee")
+    @Audited
+    private Employee employee;
 
-	@ManyToOne(fetch = FetchType.LAZY)
-	@Valid
-	@JoinColumn(name = "hearing")
-	@Audited
-	private Hearings hearing;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @Valid
+    @JoinColumn(name = "hearing")
+    @Audited
+    private Hearings hearing;
 
-	@Transient
-	private String empPosName;
+    @Transient
+    private String empPosName;
 
-	public Employee getEmployee() {
-		return employee;
-	}
+    public Employee getEmployee() {
+        return employee;
+    }
 
-	public void setEmployee(final Employee employee) {
-		this.employee = employee;
-	}
+    public void setEmployee(final Employee employee) {
+        this.employee = employee;
+    }
 
-	public Hearings getHearing() {
-		return hearing;
-	}
+    public Hearings getHearing() {
+        return hearing;
+    }
 
-	public void setHearing(final Hearings hearing) {
-		this.hearing = hearing;
-	}
+    public void setHearing(final Hearings hearing) {
+        this.hearing = hearing;
+    }
 
-	@Override
-	public Long getId() {
-		return id;
-	}
+    @Override
+    public Long getId() {
+        return id;
+    }
 
-	@Override
-	public void setId(final Long id) {
-		this.id = id;
-	}
+    @Override
+    public void setId(final Long id) {
+        this.id = id;
+    }
 
-	public String getEmpPosName() {
-		return empPosName;
-	}
+    public String getEmpPosName() {
+        return empPosName;
+    }
 
-	public void setEmpPosName(String empPosName) {
-		this.empPosName = empPosName;
-	}
+    public void setEmpPosName(final String empPosName) {
+        this.empPosName = empPosName;
+    }
 
 }

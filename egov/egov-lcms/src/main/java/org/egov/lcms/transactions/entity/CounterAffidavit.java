@@ -64,63 +64,63 @@ import org.hibernate.envers.Audited;
 @Table(name = "eglc_counter_affidavit")
 @SequenceGenerator(name = CounterAffidavit.SEQ_EGLC_CA, sequenceName = CounterAffidavit.SEQ_EGLC_CA, allocationSize = 1)
 @AuditOverrides({ @AuditOverride(forClass = AbstractAuditable.class, name = "lastModifiedBy"),
-		@AuditOverride(forClass = AbstractAuditable.class, name = "lastModifiedDate") })
+        @AuditOverride(forClass = AbstractAuditable.class, name = "lastModifiedDate") })
 public class CounterAffidavit extends AbstractAuditable {
 
-	private static final long serialVersionUID = 1517694643078084884L;
-	public static final String SEQ_EGLC_CA = "seq_eglc_counter_affidavit";
+    private static final long serialVersionUID = 1517694643078084884L;
+    public static final String SEQ_EGLC_CA = "seq_eglc_counter_affidavit";
 
-	@Id
-	@GeneratedValue(generator = SEQ_EGLC_CA, strategy = GenerationType.SEQUENCE)
-	private Long id;
+    @Id
+    @GeneratedValue(generator = SEQ_EGLC_CA, strategy = GenerationType.SEQUENCE)
+    private Long id;
 
-	@ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-	@JoinColumn(name = "legalcase", nullable = false)
-	@Audited
-	private LegalCase legalCase;
+    @ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @JoinColumn(name = "legalcase", nullable = false)
+    @Audited
+    private LegalCase legalCase;
 
-	@Temporal(TemporalType.DATE)
-	@Column(name = "counterAffidavitduedate")
-	@Audited
-	private Date counterAffidavitDueDate;
+    @Temporal(TemporalType.DATE)
+    @Column(name = "counterAffidavitduedate")
+    @Audited
+    private Date counterAffidavitDueDate;
 
-	@Temporal(TemporalType.DATE)
-	@Column(name = "counterAffidavitapprovaldate")
-	@Audited
-	private Date counterAffidavitApprovalDate;
+    @Temporal(TemporalType.DATE)
+    @Column(name = "counterAffidavitapprovaldate")
+    @Audited
+    private Date counterAffidavitApprovalDate;
 
-	@Override
-	public Long getId() {
-		return id;
-	}
+    @Override
+    public Long getId() {
+        return id;
+    }
 
-	@Override
-	public void setId(final Long id) {
-		this.id = id;
-	}
+    @Override
+    public void setId(final Long id) {
+        this.id = id;
+    }
 
-	public LegalCase getLegalCase() {
-		return legalCase;
-	}
+    public LegalCase getLegalCase() {
+        return legalCase;
+    }
 
-	public void setLegalCase(LegalCase legalCase) {
-		this.legalCase = legalCase;
-	}
+    public void setLegalCase(final LegalCase legalCase) {
+        this.legalCase = legalCase;
+    }
 
-	public Date getCounterAffidavitDueDate() {
-		return counterAffidavitDueDate;
-	}
+    public Date getCounterAffidavitDueDate() {
+        return counterAffidavitDueDate;
+    }
 
-	public void setCounterAffidavitDueDate(Date counterAffidavitDueDate) {
-		this.counterAffidavitDueDate = counterAffidavitDueDate;
-	}
+    public void setCounterAffidavitDueDate(final Date counterAffidavitDueDate) {
+        this.counterAffidavitDueDate = counterAffidavitDueDate;
+    }
 
-	public Date getCounterAffidavitApprovalDate() {
-		return counterAffidavitApprovalDate;
-	}
+    public Date getCounterAffidavitApprovalDate() {
+        return counterAffidavitApprovalDate;
+    }
 
-	public void setCounterAffidavitApprovalDate(Date counterAffidavitApprovalDate) {
-		this.counterAffidavitApprovalDate = counterAffidavitApprovalDate;
-	}
+    public void setCounterAffidavitApprovalDate(final Date counterAffidavitApprovalDate) {
+        this.counterAffidavitApprovalDate = counterAffidavitApprovalDate;
+    }
 
 }

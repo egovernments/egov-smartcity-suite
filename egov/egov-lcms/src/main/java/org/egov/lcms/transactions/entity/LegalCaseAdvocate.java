@@ -76,280 +76,280 @@ import org.hibernate.validator.constraints.Length;
 @Table(name = "EGLC_LEGALCASE_ADVOCATE")
 @SequenceGenerator(name = LegalCaseAdvocate.SEQ_EGLC_LEGALCASE_ADVOCATE, sequenceName = LegalCaseAdvocate.SEQ_EGLC_LEGALCASE_ADVOCATE, allocationSize = 1)
 @AuditOverrides({ @AuditOverride(forClass = AbstractAuditable.class, name = "lastModifiedBy"),
-		@AuditOverride(forClass = AbstractAuditable.class, name = "lastModifiedDate") })
+        @AuditOverride(forClass = AbstractAuditable.class, name = "lastModifiedDate") })
 public class LegalCaseAdvocate extends AbstractAuditable {
 
-	private static final long serialVersionUID = 1517694643078084884L;
-	public static final String SEQ_EGLC_LEGALCASE_ADVOCATE = "SEQ_EGLC_LEGALCASE_ADVOCATE";
+    private static final long serialVersionUID = 1517694643078084884L;
+    public static final String SEQ_EGLC_LEGALCASE_ADVOCATE = "SEQ_EGLC_LEGALCASE_ADVOCATE";
 
-	@Id
-	@GeneratedValue(generator = SEQ_EGLC_LEGALCASE_ADVOCATE, strategy = GenerationType.SEQUENCE)
-	private Long id;
+    @Id
+    @GeneratedValue(generator = SEQ_EGLC_LEGALCASE_ADVOCATE, strategy = GenerationType.SEQUENCE)
+    private Long id;
 
-	@ManyToOne
-	@NotNull
-	@JoinColumn(name = "legalcase", nullable = false)
-	@Audited
-	private LegalCase legalCase;
+    @ManyToOne
+    @NotNull
+    @JoinColumn(name = "legalcase", nullable = false)
+    @Audited
+    private LegalCase legalCase;
 
-	@ManyToOne
-	@JoinColumn(name = "advocatemaster")
-	@Audited
-	private AdvocateMaster advocateMaster;
+    @ManyToOne
+    @JoinColumn(name = "advocatemaster")
+    @Audited
+    private AdvocateMaster advocateMaster;
 
-	@Temporal(TemporalType.DATE)
-	@ValidateDate(allowPast = true, dateFormat = LcmsConstants.DATE_FORMAT, message = "invalid.assignedtodate.date")
-	@Audited
-	private Date assignedtodate;
+    @Temporal(TemporalType.DATE)
+    @ValidateDate(allowPast = true, dateFormat = LcmsConstants.DATE_FORMAT, message = "invalid.assignedtodate.date")
+    @Audited
+    private Date assignedtodate;
 
-	@Temporal(TemporalType.DATE)
-	@Column(name = "seniorassignedtodate")
-	@Audited
-	private Date assignedtodateForsenior;
+    @Temporal(TemporalType.DATE)
+    @Column(name = "seniorassignedtodate")
+    @Audited
+    private Date assignedtodateForsenior;
 
-	@Temporal(TemporalType.DATE)
-	@ValidateDate(allowPast = true, dateFormat = LcmsConstants.DATE_FORMAT, message = "invalid.vakalatdate.date")
-	@Audited
-	private Date vakalatdate;
+    @Temporal(TemporalType.DATE)
+    @ValidateDate(allowPast = true, dateFormat = LcmsConstants.DATE_FORMAT, message = "invalid.vakalatdate.date")
+    @Audited
+    private Date vakalatdate;
 
-	@Audited
-	private Boolean isActive;
+    @Audited
+    private Boolean isActive;
 
-	@Length(max = 32, message = "ordernumber.length")
-	@OptionalPattern(regex = LcmsConstants.orderNumberFormat, message = "orderNumber.format")
-	@Audited
-	private String ordernumber;
+    @Length(max = 32, message = "ordernumber.length")
+    @OptionalPattern(regex = LcmsConstants.orderNumberFormat, message = "orderNumber.format")
+    @Audited
+    private String ordernumber;
 
-	@Temporal(TemporalType.DATE)
-	@ValidateDate(allowPast = true, dateFormat = LcmsConstants.DATE_FORMAT, message = "invalid.orderdate.date")
-	@Audited
-	private Date orderdate;
+    @Temporal(TemporalType.DATE)
+    @ValidateDate(allowPast = true, dateFormat = LcmsConstants.DATE_FORMAT, message = "invalid.orderdate.date")
+    @Audited
+    private Date orderdate;
 
-	@ManyToOne
-	@JoinColumn(name = "senioradvocate")
-	@Audited
-	private AdvocateMaster seniorAdvocate;
+    @ManyToOne
+    @JoinColumn(name = "senioradvocate")
+    @Audited
+    private AdvocateMaster seniorAdvocate;
 
-	@Length(max = 32, message = "ordernumberJunior.length")
-	@JoinColumn(name = "ordernumberjunior")
-	@Audited
-	private String ordernumberJunior;
+    @Length(max = 32, message = "ordernumberJunior.length")
+    @JoinColumn(name = "ordernumberjunior")
+    @Audited
+    private String ordernumberJunior;
 
-	@DateFormat(message = "invalid.fieldvalue.juniororderDate")
-	@Column(name = "orderdatejunior")
-	@Audited
-	private Date orderdateJunior;
+    @DateFormat(message = "invalid.fieldvalue.juniororderDate")
+    @Column(name = "orderdatejunior")
+    @Audited
+    private Date orderdateJunior;
 
-	@ManyToOne
-	@JoinColumn(name = "JUNIORSTAGE")
-	@Audited
-	private CaseStage juniorStage;
+    @ManyToOne
+    @JoinColumn(name = "JUNIORSTAGE")
+    @Audited
+    private CaseStage juniorStage;
 
-	@ManyToOne
-	@JoinColumn(name = "SENIORSTAGE")
-	@Audited
-	private CaseStage seniorStage;
+    @ManyToOne
+    @JoinColumn(name = "SENIORSTAGE")
+    @Audited
+    private CaseStage seniorStage;
 
-	@Length(max = 256)
-	@Audited
-	private String reassignmentreasonjunior;
+    @Length(max = 256)
+    @Audited
+    private String reassignmentreasonjunior;
 
-	@Length(max = 256)
-	@Audited
-	private String reassignmentreasonsenior;
+    @Length(max = 256)
+    @Audited
+    private String reassignmentreasonsenior;
 
-	@Audited
-	private Boolean changeAdvocate = Boolean.FALSE;
+    @Audited
+    private Boolean changeAdvocate = Boolean.FALSE;
 
-	@Audited
-	private Boolean changeSeniorAdvocate = Boolean.FALSE;
+    @Audited
+    private Boolean changeSeniorAdvocate = Boolean.FALSE;
 
-	@Transient
-	@Audited
-	private Boolean isSeniorAdvocate = Boolean.FALSE;
+    @Transient
+    @Audited
+    private Boolean isSeniorAdvocate = Boolean.FALSE;
 
-	public Boolean getChangeAdvocate() {
-		return changeAdvocate;
-	}
+    public Boolean getChangeAdvocate() {
+        return changeAdvocate;
+    }
 
-	public void setChangeAdvocate(final Boolean changeAdvocate) {
-		this.changeAdvocate = changeAdvocate;
-	}
+    public void setChangeAdvocate(final Boolean changeAdvocate) {
+        this.changeAdvocate = changeAdvocate;
+    }
 
-	public Boolean getChangeSeniorAdvocate() {
-		return changeSeniorAdvocate;
-	}
+    public Boolean getChangeSeniorAdvocate() {
+        return changeSeniorAdvocate;
+    }
 
-	public void setChangeSeniorAdvocate(final Boolean changeSeniorAdvocate) {
-		this.changeSeniorAdvocate = changeSeniorAdvocate;
-	}
+    public void setChangeSeniorAdvocate(final Boolean changeSeniorAdvocate) {
+        this.changeSeniorAdvocate = changeSeniorAdvocate;
+    }
 
-	public AdvocateMaster getAdvocateMaster() {
-		return advocateMaster;
-	}
+    public AdvocateMaster getAdvocateMaster() {
+        return advocateMaster;
+    }
 
-	public void setAdvocateMaster(final AdvocateMaster advocateMaster) {
-		this.advocateMaster = advocateMaster;
-	}
+    public void setAdvocateMaster(final AdvocateMaster advocateMaster) {
+        this.advocateMaster = advocateMaster;
+    }
 
-	public Date getAssignedtodate() {
-		return assignedtodate;
-	}
+    public Date getAssignedtodate() {
+        return assignedtodate;
+    }
 
-	public void setAssignedtodate(final Date assignedtodate) {
-		this.assignedtodate = assignedtodate;
-	}
+    public void setAssignedtodate(final Date assignedtodate) {
+        this.assignedtodate = assignedtodate;
+    }
 
-	public Date getVakalatdate() {
-		return vakalatdate;
-	}
+    public Date getVakalatdate() {
+        return vakalatdate;
+    }
 
-	public void setVakalatdate(final Date vakalatdate) {
-		this.vakalatdate = vakalatdate;
-	}
+    public void setVakalatdate(final Date vakalatdate) {
+        this.vakalatdate = vakalatdate;
+    }
 
-	public Boolean getIsActive() {
-		return isActive;
-	}
+    public Boolean getIsActive() {
+        return isActive;
+    }
 
-	public void setIsActive(final Boolean isActive) {
-		this.isActive = isActive;
-	}
+    public void setIsActive(final Boolean isActive) {
+        this.isActive = isActive;
+    }
 
-	public String getOrdernumber() {
-		return ordernumber;
-	}
+    public String getOrdernumber() {
+        return ordernumber;
+    }
 
-	public void setOrdernumber(final String ordernumber) {
-		this.ordernumber = ordernumber;
-	}
+    public void setOrdernumber(final String ordernumber) {
+        this.ordernumber = ordernumber;
+    }
 
-	public Date getOrderdate() {
-		return orderdate;
-	}
+    public Date getOrderdate() {
+        return orderdate;
+    }
 
-	public void setOrderdate(final Date orderdate) {
-		this.orderdate = orderdate;
-	}
+    public void setOrderdate(final Date orderdate) {
+        this.orderdate = orderdate;
+    }
 
-	@Override
-	public Long getId() {
-		return id;
-	}
+    @Override
+    public Long getId() {
+        return id;
+    }
 
-	@Override
-	public void setId(final Long id) {
-		this.id = id;
-	}
+    @Override
+    public void setId(final Long id) {
+        this.id = id;
+    }
 
-	public List<ValidationError> validate() {
-		final List<ValidationError> errors = new ArrayList<ValidationError>();
-		if (legalCase.getIsSenioradvrequired()) {
-			if (getSeniorAdvocate() == null)
-				errors.add(new ValidationError("seniorAdvocate", "legalcase.seniorAdvocate.null"));
-			if (StringUtils.isBlank(getOrdernumber()))
-				errors.add(new ValidationError("ordernumber", "legalcase.ordernumber.null"));
-			if (getOrderdate() == null)
-				errors.add(new ValidationError("orderDate", "legalcase.orderdate.null"));
-			if (!DateUtils.compareDates(getOrderdate(), legalCase.getCaseReceivingDate()))
-				errors.add(new ValidationError("orderDate", "orderdate.less.casereceivingdate"));
-			if (!DateUtils.compareDates(getOrderdate(), legalCase.getCaseDate()))
-				errors.add(new ValidationError("orderDate", "orderdate.less.casedate"));
-			if (!DateUtils.compareDates(getAssignedtodateForsenior(), getOrderdate()))
-				errors.add(new ValidationError("assignedtodatesenior", "assignedon.less.orderdate"));
-		}
+    public List<ValidationError> validate() {
+        final List<ValidationError> errors = new ArrayList<ValidationError>();
+        if (legalCase.getIsSenioradvrequired()) {
+            if (getSeniorAdvocate() == null)
+                errors.add(new ValidationError("seniorAdvocate", "legalcase.seniorAdvocate.null"));
+            if (StringUtils.isBlank(getOrdernumber()))
+                errors.add(new ValidationError("ordernumber", "legalcase.ordernumber.null"));
+            if (getOrderdate() == null)
+                errors.add(new ValidationError("orderDate", "legalcase.orderdate.null"));
+            if (!DateUtils.compareDates(getOrderdate(), legalCase.getCaseReceivingDate()))
+                errors.add(new ValidationError("orderDate", "orderdate.less.casereceivingdate"));
+            if (!DateUtils.compareDates(getOrderdate(), legalCase.getCaseDate()))
+                errors.add(new ValidationError("orderDate", "orderdate.less.casedate"));
+            if (!DateUtils.compareDates(getAssignedtodateForsenior(), getOrderdate()))
+                errors.add(new ValidationError("assignedtodatesenior", "assignedon.less.orderdate"));
+        }
 
-		if (!DateUtils.compareDates(getAssignedtodate(), legalCase.getCaseReceivingDate()))
-			errors.add(new ValidationError("assignedon", "assignedon.less.casereceivingdate"));
-		if (!DateUtils.compareDates(getAssignedtodate(), legalCase.getCaseDate()))
-			errors.add(new ValidationError("assignedon", "assignedon.less.casedate"));
-		if (!DateUtils.compareDates(getVakalatdate(), legalCase.getCaseDate()))
-			errors.add(new ValidationError("vakalatdate", "vakalatdate.less.casedate"));
-		if (!DateUtils.compareDates(getVakalatdate(), legalCase.getCaseReceivingDate()))
-			errors.add(new ValidationError("vakalatdate", "vakalatdate.less.caserecdate"));
-		if (!DateUtils.compareDates(getVakalatdate(), getAssignedtodate()))
-			errors.add(new ValidationError("vakalatdate", "vakalatdate.less.assingedon"));
-		return errors;
-	}
+        if (!DateUtils.compareDates(getAssignedtodate(), legalCase.getCaseReceivingDate()))
+            errors.add(new ValidationError("assignedon", "assignedon.less.casereceivingdate"));
+        if (!DateUtils.compareDates(getAssignedtodate(), legalCase.getCaseDate()))
+            errors.add(new ValidationError("assignedon", "assignedon.less.casedate"));
+        if (!DateUtils.compareDates(getVakalatdate(), legalCase.getCaseDate()))
+            errors.add(new ValidationError("vakalatdate", "vakalatdate.less.casedate"));
+        if (!DateUtils.compareDates(getVakalatdate(), legalCase.getCaseReceivingDate()))
+            errors.add(new ValidationError("vakalatdate", "vakalatdate.less.caserecdate"));
+        if (!DateUtils.compareDates(getVakalatdate(), getAssignedtodate()))
+            errors.add(new ValidationError("vakalatdate", "vakalatdate.less.assingedon"));
+        return errors;
+    }
 
-	public AdvocateMaster getSeniorAdvocate() {
-		return seniorAdvocate;
-	}
+    public AdvocateMaster getSeniorAdvocate() {
+        return seniorAdvocate;
+    }
 
-	public void setSeniorAdvocate(final AdvocateMaster seniorAdvocate) {
-		this.seniorAdvocate = seniorAdvocate;
-	}
+    public void setSeniorAdvocate(final AdvocateMaster seniorAdvocate) {
+        this.seniorAdvocate = seniorAdvocate;
+    }
 
-	public Date getAssignedtodateForsenior() {
-		return assignedtodateForsenior;
-	}
+    public Date getAssignedtodateForsenior() {
+        return assignedtodateForsenior;
+    }
 
-	public void setAssignedtodateForsenior(final Date assignedtodateForsenior) {
-		this.assignedtodateForsenior = assignedtodateForsenior;
-	}
+    public void setAssignedtodateForsenior(final Date assignedtodateForsenior) {
+        this.assignedtodateForsenior = assignedtodateForsenior;
+    }
 
-	public String getOrdernumberJunior() {
-		return ordernumberJunior;
-	}
+    public String getOrdernumberJunior() {
+        return ordernumberJunior;
+    }
 
-	public void setOrdernumberJunior(final String ordernumberJunior) {
-		this.ordernumberJunior = ordernumberJunior;
-	}
+    public void setOrdernumberJunior(final String ordernumberJunior) {
+        this.ordernumberJunior = ordernumberJunior;
+    }
 
-	public Date getOrderdateJunior() {
-		return orderdateJunior;
-	}
+    public Date getOrderdateJunior() {
+        return orderdateJunior;
+    }
 
-	public void setOrderdateJunior(final Date orderdateJunior) {
-		this.orderdateJunior = orderdateJunior;
-	}
+    public void setOrderdateJunior(final Date orderdateJunior) {
+        this.orderdateJunior = orderdateJunior;
+    }
 
-	public CaseStage getJuniorStage() {
-		return juniorStage;
-	}
+    public CaseStage getJuniorStage() {
+        return juniorStage;
+    }
 
-	public void setJuniorStage(final CaseStage juniorStage) {
-		this.juniorStage = juniorStage;
-	}
+    public void setJuniorStage(final CaseStage juniorStage) {
+        this.juniorStage = juniorStage;
+    }
 
-	public CaseStage getSeniorStage() {
-		return seniorStage;
-	}
+    public CaseStage getSeniorStage() {
+        return seniorStage;
+    }
 
-	public void setSeniorStage(final CaseStage seniorStage) {
-		this.seniorStage = seniorStage;
-	}
+    public void setSeniorStage(final CaseStage seniorStage) {
+        this.seniorStage = seniorStage;
+    }
 
-	public String getReassignmentreasonjunior() {
-		return reassignmentreasonjunior;
-	}
+    public String getReassignmentreasonjunior() {
+        return reassignmentreasonjunior;
+    }
 
-	public void setReassignmentreasonjunior(final String reassignmentreasonjunior) {
-		this.reassignmentreasonjunior = reassignmentreasonjunior;
-	}
+    public void setReassignmentreasonjunior(final String reassignmentreasonjunior) {
+        this.reassignmentreasonjunior = reassignmentreasonjunior;
+    }
 
-	public String getReassignmentreasonsenior() {
-		return reassignmentreasonsenior;
-	}
+    public String getReassignmentreasonsenior() {
+        return reassignmentreasonsenior;
+    }
 
-	public void setReassignmentreasonsenior(final String reassignmentreasonsenior) {
-		this.reassignmentreasonsenior = reassignmentreasonsenior;
-	}
+    public void setReassignmentreasonsenior(final String reassignmentreasonsenior) {
+        this.reassignmentreasonsenior = reassignmentreasonsenior;
+    }
 
-	public LegalCase getLegalCase() {
-		return legalCase;
-	}
+    public LegalCase getLegalCase() {
+        return legalCase;
+    }
 
-	public void setLegalCase(final LegalCase legalCase) {
-		this.legalCase = legalCase;
-	}
+    public void setLegalCase(final LegalCase legalCase) {
+        this.legalCase = legalCase;
+    }
 
-	public Boolean getIsSeniorAdvocate() {
-		return isSeniorAdvocate;
-	}
+    public Boolean getIsSeniorAdvocate() {
+        return isSeniorAdvocate;
+    }
 
-	public void setIsSeniorAdvocate(Boolean isSeniorAdvocate) {
-		this.isSeniorAdvocate = isSeniorAdvocate;
-	}
+    public void setIsSeniorAdvocate(final Boolean isSeniorAdvocate) {
+        this.isSeniorAdvocate = isSeniorAdvocate;
+    }
 
 }
