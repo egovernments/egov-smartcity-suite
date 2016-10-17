@@ -618,8 +618,8 @@ public class ContraBTBAction extends BaseVoucherAction {
             contraBean.setChequeDate(sdf.format(currDate));
             voucherDate = sdf.parse(sdf.format(currDate));
         } catch (ParseException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
+
+
         }
         return NEW;
     }

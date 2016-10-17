@@ -132,7 +132,7 @@ public class RestWaterConnectionCollection {
                 waterReceiptDetails = waterTaxExternalService.payWaterTax(payWaterTaxDetails);
             }
         } catch (final ValidationException e) {
-            e.printStackTrace();
+
             final List<ErrorDetails> errorList = new ArrayList<ErrorDetails>(0);
 
             final List<ValidationError> errors = e.getErrors();
@@ -144,7 +144,7 @@ public class RestWaterConnectionCollection {
             }
             JsonConvertor.convert(errorList);
         } catch (final Exception e) {
-            e.printStackTrace();
+
             final List<ErrorDetails> errorList = new ArrayList<ErrorDetails>(0);
             final ErrorDetails er = new ErrorDetails();
             er.setErrorCode(e.getMessage());

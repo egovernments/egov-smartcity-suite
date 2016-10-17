@@ -43,6 +43,7 @@ import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Collections;
 import java.util.Date;
@@ -58,16 +59,24 @@ import org.apache.struts2.convention.annotation.Results;
 import org.apache.struts2.interceptor.validation.SkipValidation;
 import org.egov.commons.CFinancialYear;
 import org.egov.commons.CFunction;
+import org.egov.commons.service.FunctionService;
 import org.egov.egf.model.BudgetAmountView;
+import org.egov.eis.entity.Assignment;
+import org.egov.eis.service.AssignmentService;
+import org.egov.eis.service.EmployeeService;
 import org.egov.infra.config.core.ApplicationThreadLocals;
 import org.egov.infra.validation.exception.ValidationError;
 import org.egov.infra.validation.exception.ValidationException;
 import org.egov.infra.web.struts.annotation.ValidationErrorPage;
+import org.egov.infra.workflow.entity.StateAware;
+import org.egov.infra.workflow.service.SimpleWorkflowService;
 import org.egov.infstr.services.PersistenceService;
 import org.egov.model.budget.Budget;
 import org.egov.model.budget.BudgetDetail;
 import org.egov.model.budget.BudgetGroup;
+import org.egov.model.voucher.WorkflowBean;
 import org.egov.utils.Constants;
+import org.egov.utils.FinancialConstants;
 import org.hibernate.SQLQuery;
 import org.hibernate.transform.Transformers;
 import org.hibernate.type.LongType;
@@ -76,20 +85,32 @@ import org.springframework.beans.factory.annotation.Qualifier;
 
 @ParentPackage("egov")
 
-@Results({
-        @Result(name = "new-re", location = "budgetProposalDetail-new-re.jsp"),
+@Results({ @Result(name = "new-re", location = "budgetProposalDetail-new-re.jsp"),
         @Result(name = "newDetail-re", location = "budgetProposalDetail-newDetail-re.jsp"),
         @Result(name = "budgets", location = "budgetProposalDetail-budgets.jsp"),
         @Result(name = "functions", location = "budgetProposalDetail-functions.jsp"),
         @Result(name = "budgetGroup", location = "budgetProposalDetail-budgetGroup.jsp"),
-        @Result(name = "AJAX_RESULT", type = "stream", location = "returnStream", params = { "contentType", "text/plain" })
-})
+        @Result(name = "AJAX_RESULT", type = "stream", location = "returnStream", params = { "contentType",
+                "text/plain" }) })
 public class BudgetProposalDetailAction extends BaseBudgetDetailAction {
     @Autowired
     @Qualifier("persistenceService")
     private PersistenceService persistenceService;
 
+    @Autowired
+    @Qualifier("workflowService")
+    private SimpleWorkflowService<BudgetDetail> budgetDetailWorkflowService;
+
+    @Autowired
+    private AssignmentService assignmentService;
+
     private static final long serialVersionUID = 1L;
+
+    @Autowired
+    private FunctionService functionService;
+
+    @Autowired
+    private EmployeeService employeeService;
 
     private static final String ACTIONNAME = "actionName";
     private Budget topBudget;
@@ -105,6 +126,11 @@ public class BudgetProposalDetailAction extends BaseBudgetDetailAction {
         this.budgetGroupList = budgetGroupList;
     }
 
+    @Override
+    public StateAware getModel() {
+        return budgetDetail;
+    }
+
     /**
      * @return the streamResult
      */
@@ -118,8 +144,7 @@ public class BudgetProposalDetailAction extends BaseBudgetDetailAction {
     }
 
     @Override
-
-    protected void saveAndStartWorkFlow(final BudgetDetail detail) {
+    protected void saveAndStartWorkFlow(final BudgetDetail detail, final WorkflowBean workflowBean) {
         try {
             if (budgetDocumentNumber != null && budgetDetail.getBudget() != null) {
                 final Budget b = budgetService.findById(budgetDetail.getBudget().getId(), false);
@@ -150,7 +175,7 @@ public class BudgetProposalDetailAction extends BaseBudgetDetailAction {
     public void populateSavedbudgetDetailListFor(final Budget budget) {
         if (budget != null && budget.getId() != null)
             savedbudgetDetailList = budgetDetailService.findAllBy(
-                    "from BudgetDetail where budget=? order by function.name,budgetGroup.name", budget);
+                    "from BudgetDetail where budget.id=? order by function.name,budgetGroup.name", budget.getId());
     }
 
     @Override
@@ -158,15 +183,13 @@ public class BudgetProposalDetailAction extends BaseBudgetDetailAction {
         if (bd != null) {
             // find all RE for the functin
             final List<BudgetDetail> findAllBy = budgetDetailService.findAllBy(
-                    "from BudgetDetail where budget=? and function.id=? order by function.name,budgetGroup.name", bd.getBudget(),
-                    bd.getFunction().getId());
+                    "from BudgetDetail where budget=? and function.id=? order by function.name,budgetGroup.name",
+                    bd.getBudget(), bd.getFunction().getId());
             savedbudgetDetailList = findAllBy;
             // find all next year be for the function
-            savedbudgetDetailList
-                    .addAll(budgetDetailService
-                            .findAllBy(
-                                    "from BudgetDetail where budget=(select bd from Budget bd where bd.referenceBudget=?) and function.id=? order by function.name,budgetGroup.name",
-                                    bd.getBudget(), bd.getFunction().getId()));
+            savedbudgetDetailList.addAll(budgetDetailService.findAllBy(
+                    "from BudgetDetail where budget=(select bd from Budget bd where bd.referenceBudget=?) and function.id=? order by function.name,budgetGroup.name",
+                    bd.getBudget(), bd.getFunction().getId()));
         }
     }
 
@@ -186,6 +209,7 @@ public class BudgetProposalDetailAction extends BaseBudgetDetailAction {
     }
 
     @SkipValidation
+    @Action(value = "/budget/budgetProposalDetail-loadBudgetDetailList")
     public String loadBudgetDetailList() {
         LOGGER.info("Initiating load budgets .....");
         if (addNewDetails)
@@ -259,17 +283,7 @@ public class BudgetProposalDetailAction extends BaseBudgetDetailAction {
         ajaxLoadFunctions();
         ajaxLoadBudgetGroups();
 
-        /*
-         * if(budgetDetail.getBudget()!=null ) { String sqlStr=
-         * "select distinct (f.name)  as name,f.id as id   from function f,egf_budgetdetail bd where  f.id=bd.function and bd.budget="
-         * +budgetDetail.getBudget().getId() +"  order  by f.name"; SQLQuery sqlQuery =
-         * persistenceService.getSession().createSQLQuery(sqlStr); sqlQuery.addScalar("name") .addScalar("id",LongType.INSTANCE)
-         * .setResultTransformer(Transformers.aliasToBean(CFunction.class)); functionList = sqlQuery.list(); sqlStr=
-         * "select  distinct (bg.name) as name ,bg.id  as id from egf_budgetgroup bg,egf_budgetdetail  bd where  bg.id=bd.budgetgroup and bd.budget="
-         * +budgetDetail.getBudget().getId() +"  order  by bg.name"; sqlQuery =
-         * persistenceService.getSession().createSQLQuery(sqlStr); sqlQuery.addScalar("name") .addScalar("id",LongType.INSTANCE)
-         * .setResultTransformer(Transformers.aliasToBean(BudgetGroup.class)); budgetGroupList = sqlQuery.list(); }
-         */
+      
 
     }
 
@@ -288,29 +302,28 @@ public class BudgetProposalDetailAction extends BaseBudgetDetailAction {
                 && getBudgetDetail().getBudget().getName() != null) {
             final String budgetName = getBudgetDetail().getBudget().getName();
 
-            // (String)request.get("name");
+            
             final Integer deptId = getBudgetDetail().getExecutingDepartment().getId().intValue();
-            // this will load functions from budgetdeails table
-            // String
-            // sqlStr="select distinct (f.name) as name,f.id as id from function f,egf_budgetdetail bd where f.id=bd.function and
-            // bd.budget="+id
-            // +" order by f.name";
+          
             String accountType;
             accountType = budgetDetailHelper.accountTypeForFunctionDeptMap(budgetName);
 
             final String sqlStr = "select distinct (f.name)  as name,f.id as id  from eg_dept_functionmap m,function f where departmentid=:deptId"
-                    +
-                    " and  budgetaccount_Type=:accountType and f.id= m.functionid order by f.name";
+                    + " and  budgetaccount_Type=:accountType and f.id= m.functionid order by f.name";
 
             final SQLQuery sqlQuery = persistenceService.getSession().createSQLQuery(sqlStr);
 
-            sqlQuery.setInteger("deptId", deptId)
-                    .setString("accountType", accountType);
-            sqlQuery.addScalar("name")
-                    .addScalar("id", LongType.INSTANCE)
+            sqlQuery.setInteger("deptId", deptId).setString("accountType", accountType);
+            sqlQuery.addScalar("name").addScalar("id", LongType.INSTANCE)
                     .setResultTransformer(Transformers.aliasToBean(CFunction.class));
-            functionList = sqlQuery.list();
-            dropdownData.put("functionList", functionList);
+            if (!sqlQuery.list().isEmpty())
+                functionList = sqlQuery.list();
+            else
+                functionList = employeeService.getAllFunctions();
+            if (functionList.isEmpty())
+                dropdownData.put("functionList", functionService.findAll());
+            else
+                dropdownData.put("functionList", functionList);
         }
         return "functions";
     }
@@ -321,8 +334,7 @@ public class BudgetProposalDetailAction extends BaseBudgetDetailAction {
         final String sqlStr = "select  distinct (bg.name) as name ,bg.id  as id from egf_budgetgroup bg,egf_budgetdetail  bd where  bg.id=bd.budgetgroup and bd.budget="
                 + id + "  order  by bg.name";
         final SQLQuery sqlQuery = persistenceService.getSession().createSQLQuery(sqlStr);
-        sqlQuery.addScalar("name")
-                .addScalar("id", LongType.INSTANCE)
+        sqlQuery.addScalar("name").addScalar("id", LongType.INSTANCE)
                 .setResultTransformer(Transformers.aliasToBean(BudgetGroup.class));
         budgetGroupList = sqlQuery.list();
         return "budgetGroup";
@@ -390,9 +402,8 @@ public class BudgetProposalDetailAction extends BaseBudgetDetailAction {
     }
 
     @Override
-
     protected void saveAndStartWorkFlowForRe(final BudgetDetail detail, final int index, final CFinancialYear finYear,
-            final Budget refBudget) {
+            final Budget refBudget, final WorkflowBean workflowBean) {
         try {
             if (budgetDocumentNumber != null && budgetDetail.getBudget() != null) {
                 final Budget b = budgetService.findById(budgetDetail.getBudget().getId(), false);
@@ -401,15 +412,19 @@ public class BudgetProposalDetailAction extends BaseBudgetDetailAction {
                 persistenceService.getSession().flush();
             }
             detail.getBudget().setFinancialYear(finYear);
-            final BudgetDetail reCurrentYear = budgetDetailService.createBudgetDetail(detail, null, getPersistenceService());
-            reCurrentYear.setUniqueNo(reCurrentYear.getFund().getId() + "-" + reCurrentYear.getExecutingDepartment().getId()
-                    + "-"
-                    + reCurrentYear.getFunction().getId() + "-" + reCurrentYear.getBudgetGroup().getId());
+
+            BudgetDetail reCurrentYear = budgetDetailService.createBudgetDetail(detail, null, getPersistenceService());
+            reCurrentYear
+                    .setUniqueNo(reCurrentYear.getFund().getId() + "-" + reCurrentYear.getExecutingDepartment().getId()
+                            + "-" + reCurrentYear.getFunction().getId() + "-" + reCurrentYear.getBudgetGroup().getId());
+            budgetDetailService.applyAuditing(reCurrentYear);
+            reCurrentYear = budgetDetailService.transitionWorkFlow(reCurrentYear, workflowBean);
+            budgetDetailService.applyAuditing(reCurrentYear.getState());
             budgetDetailService.persist(reCurrentYear);
 
             headerDisabled = true;
             BudgetDetail beNextYear = new BudgetDetail();
-            // beNextYear=detail.clone();
+           
             if (addNewDetails)
                 beNextYear.transition(true).withStateValue("END").withOwner(getPosition()).withComments("");
             beNextYear.copyFrom(detail);
@@ -418,9 +433,10 @@ public class BudgetProposalDetailAction extends BaseBudgetDetailAction {
             beNextYear.setDocumentNumber(detail.getDocumentNumber());
             beNextYear.setAnticipatoryAmount(reCurrentYear.getAnticipatoryAmount());
             beNextYear = budgetDetailService.createBudgetDetail(beNextYear, null, getPersistenceService());
-            beNextYear.setUniqueNo(beNextYear.getFund().getId() + "-" + beNextYear.getExecutingDepartment().getId() + "-"
-                    + beNextYear.getFunction().getId() + "-" + beNextYear.getBudgetGroup().getId());
-
+            beNextYear.setUniqueNo(beNextYear.getFund().getId() + "-" + beNextYear.getExecutingDepartment().getId()
+                    + "-" + beNextYear.getFunction().getId() + "-" + beNextYear.getBudgetGroup().getId());
+            budgetDetailService.applyAuditing(beNextYear);
+            
             budgetDetailService.persist(beNextYear);
         } catch (final ValidationException e) {
             LOGGER.error(e.getMessage(), e);
@@ -431,14 +447,41 @@ public class BudgetProposalDetailAction extends BaseBudgetDetailAction {
         }
     }
 
+    public Assignment getWorkflowInitiator(final BudgetDetail budgetDetail) {
+        final Assignment wfInitiator = assignmentService
+                .findByEmployeeAndGivenDate(budgetDetail.getCreatedBy().getId(), new Date()).get(0);
+        return wfInitiator;
+    }
+
+    @Override
+    public List<String> getValidActions() {
+
+        List<String> validActions = Collections.emptyList();
+
+        if (budgetDetail.getId() == null || budgetDetail.getId() == 0)
+            validActions = Arrays.asList(FinancialConstants.BUTTONSAVE, FinancialConstants.BUTTONFORWARD);
+        else if (budgetDetail.getCurrentState() != null)
+            validActions = customizedWorkFlowService.getNextValidActions(budgetDetail.getStateType(),
+                    getWorkFlowDepartment(), getAmountRule(), getAdditionalRule(),
+                    budgetDetail.getCurrentState().getValue(), getPendingActions(), budgetDetail.getCreatedDate());
+        else if (budgetDetail.getId() == null || budgetDetail.getId() == 0
+                || budgetDetail.getCurrentState().getValue().endsWith("NEW"))
+            // read from constant
+            validActions = Arrays.asList(FinancialConstants.BUTTONFORWARD);
+        else if (budgetDetail.getCurrentState() != null)
+            validActions = customizedWorkFlowService.getNextValidActions(budgetDetail.getStateType(),
+                    getWorkFlowDepartment(), getAmountRule(), getAdditionalRule(),
+                    budgetDetail.getCurrentState().getValue(), getPendingActions(), budgetDetail.getCreatedDate());
+
+        return validActions;
+    }
+
     @Override
     public void approve() {
-        String budgetComment = "";
         if (!savedbudgetDetailList.isEmpty()) {
             topBudget = savedbudgetDetailList.get(0).getBudget();
             setTopBudget(topBudget);
-            if (parameters.get("budget.comments") != null)
-                budgetComment = parameters.get("budget.comments")[0];
+           
         }
         Integer userId = null;
         if (parameters.get(ACTIONNAME)[0] != null && parameters.get(ACTIONNAME)[0].contains("reject"))

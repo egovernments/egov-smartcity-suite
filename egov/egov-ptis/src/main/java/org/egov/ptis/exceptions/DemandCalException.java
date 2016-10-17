@@ -52,14 +52,14 @@ public class DemandCalException extends Exception
 	 */
 	public DemandCalException() {
 		super();
-		// TODO Auto-generated constructor stub
+
 	}
 	/**
 	 * @param message
 	 */
 	public DemandCalException(String message) {
 		super(message);
-		// TODO Auto-generated constructor stub
+
 	}
 	/**
 	 * @param message
@@ -67,7 +67,7 @@ public class DemandCalException extends Exception
 	 */
 	public DemandCalException(String message, Throwable cause) {
 		super(message, cause);
-		// TODO Auto-generated constructor stub
+
 	}
 	
 }

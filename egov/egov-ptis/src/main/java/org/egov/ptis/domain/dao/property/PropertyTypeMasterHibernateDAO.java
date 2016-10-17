@@ -97,19 +97,19 @@ public class PropertyTypeMasterHibernateDAO implements PropertyTypeMasterDAO {
 
     @Override
     public PropertyTypeMaster create(final PropertyTypeMaster propertyTypeMaster) {
-        // TODO Auto-generated method stub
+
         return null;
     }
 
     @Override
     public void delete(final PropertyTypeMaster propertyTypeMaster) {
-        // TODO Auto-generated method stub
+
 
     }
 
     @Override
     public PropertyTypeMaster update(final PropertyTypeMaster propertyTypeMaster) {
-        // TODO Auto-generated method stub
+
         return null;
     }
 }

@@ -542,8 +542,8 @@ public class SewerageChangeInClosetsUpdateController extends GenericWorkFlowCont
                 try {
                     sewerageFieldInspection.setInspectionDate(sdf.parse(inspectionDate));
                 } catch (ParseException e) {
-                    // TODO Auto-generated catch block
-                    e.printStackTrace();
+
+
                 }
                 final Set<FileStoreMapper> fileStoreSet = sewerageTaxUtils.addToFileStore(files);
                 Iterator<FileStoreMapper> fsIterator = null;

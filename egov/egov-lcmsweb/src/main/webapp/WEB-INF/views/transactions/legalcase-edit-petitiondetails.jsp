@@ -90,9 +90,10 @@
 				
 				 maxlength="256"/></td>
 			<td class="text-right"><input type="text"
-				class="form-control table-input text-left patternvalidation"
-				data-pattern="number" name="bipartisanPetitionerDetailsList[${status.index}].contactNumber"
+			class="form-control table-input text-left patternvalidation"
+				 name="bipartisanPetitionerDetailsList[${status.index}].contactNumber"
 				id="bipartisanPetitionerDetailsList[${status.index}].contactNumber"
+				data-pattern="number"
 				value="${bipartisanPetitionerDetailsList.contactNumber}"
 				 maxlength="10"/></td>
 			<%-- <td class="text-right"><form:select path=""
@@ -152,23 +153,24 @@
 			value="${bipartisanRespondentDetailsList.isRespondentGovernment}"
 				onblur="onChangeofPetitioncheck(this)" /></td> --%>
 			
-				<td><input type="text"
-				class="form-control table-input text-right"
+				<td class="text-right"><input type="text"
+				class="form-control table-input text-left"
 						id="bipartisanRespondentDetailsList[${status.index}].name"
 						name="bipartisanRespondentDetailsList[${status.index}].name" 
 						value="${bipartisanRespondentDetailsList.name}" /></td>
 					
 
-				<td><input type="text"
-				class="form-control table-input text-right"
+				<td class="text-right"><input type="text"
+				class="form-control table-input text-left"
 						id="bipartisanRespondentDetailsList[${status.index}].address"
 						name="bipartisanRespondentDetailsList[${status.index}].address" 
 						value="${bipartisanRespondentDetailsList.address}" /></td>
 
-				<td><input type="text" 
+				<td class="text-right"><input type="text" 
 						id="bipartisanRespondentDetailsList[${status.index}].contactNumber"
 						name="bipartisanRespondentDetailsList[${status.index}].contactNumber" 
-					class="form-control table-input text-right" style="text-align: center"
+					class="form-control table-input text-left patternvalidation" 
+					data-pattern="number"
 					value="${bipartisanRespondentDetailsList.contactNumber}" /></td>
 <%-- 
 				<td>

@@ -175,8 +175,8 @@ public class CashBook {
                 try {
 					dt = sdf.parse(endDate);
 				} catch (ParseException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
+
+
 				}
                 CFinancialYear finYearByDate = financialYearDAO.getFinYearByDate(dt);
                // final String finId = commonFun.getFYID(formendDate);
@@ -205,8 +205,6 @@ public class CashBook {
 			try {
 				dt1 = sdf.parse(endDate);
 			} catch (ParseException e1) {
-				// TODO Auto-generated catch block
-				e1.printStackTrace();
 			}
             CFinancialYear finYearByDate = financialYearDAO.getFinYearByDate(dt1);
             final String fyId=finYearByDate.getId().toString();
@@ -678,14 +676,13 @@ public class CashBook {
                         }
                     }
                 } catch (final Exception e) {
-                    e.printStackTrace();
+
                     LOGGER.error(
                             "error in resultset processing" + e.getMessage(), e);
                     throw taskExc;
                 }
 
         } catch (final SQLException ex) {
-            ex.printStackTrace();
             LOGGER.error("ERROR in  getGeneralLedgerList " + ex.getMessage(),
                     ex);
             throw taskExc;

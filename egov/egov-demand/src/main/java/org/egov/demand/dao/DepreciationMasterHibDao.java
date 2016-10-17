@@ -105,7 +105,7 @@ public class DepreciationMasterHibDao implements DepreciationMasterDao {
 
 	@Override
 	public List getDepreciationsForModule(Module mod) {
-		// TODO Auto-generated method stub
+
 		Query qry = getCurrentSession().createQuery(
 				"from DepreciationMaster DM where DM.module=:module");
 		qry.setEntity("module", mod);
@@ -155,31 +155,31 @@ public class DepreciationMasterHibDao implements DepreciationMasterDao {
 
 	@Override
 	public DepreciationMaster findById(Integer id, boolean lock) {
-		// TODO Auto-generated method stub
+
 		return null;
 	}
 
 	@Override
 	public List<DepreciationMaster> findAll() {
-		// TODO Auto-generated method stub
+
 		return null;
 	}
 
 	@Override
 	public DepreciationMaster create(DepreciationMaster depreciationMaster) {
-		// TODO Auto-generated method stub
+
 		return null;
 	}
 
 	@Override
 	public void delete(DepreciationMaster depreciationMaster) {
-		// TODO Auto-generated method stub
+
 
 	}
 
 	@Override
 	public DepreciationMaster update(DepreciationMaster depreciationMaster) {
-		// TODO Auto-generated method stub
+
 		return null;
 	}
 

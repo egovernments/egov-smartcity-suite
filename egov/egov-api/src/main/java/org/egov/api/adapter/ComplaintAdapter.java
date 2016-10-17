@@ -94,7 +94,7 @@ public class ComplaintAdapter extends DataAdapter<Complaint> {
         Collections.sort(supportDocs, new Comparator<FileStoreMapper>() {
 			@Override
 			public int compare(FileStoreMapper f1, FileStoreMapper f2) {
-				// TODO Auto-generated method stub
+
 				return f1.getIndexId().compareTo(f2.getIndexId());
 			}
         });

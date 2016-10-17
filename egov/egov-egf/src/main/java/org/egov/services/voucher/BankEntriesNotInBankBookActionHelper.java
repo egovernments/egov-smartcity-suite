@@ -177,12 +177,12 @@ public class BankEntriesNotInBankBookActionHelper {
                 bankEntriesService.persist(object);
             }
         } catch (final ValidationException e) {
-            e.printStackTrace();
+
             final List<ValidationError> errors = new ArrayList<ValidationError>();
             errors.add(new ValidationError("exp", e.getErrors().get(0).getMessage()));
             throw new ValidationException(errors);
         } catch (final Exception e) {
-            e.printStackTrace();
+
             final List<ValidationError> errors = new ArrayList<ValidationError>();
             errors.add(new ValidationError("exp", e.getMessage()));
             throw new ValidationException(errors);
@@ -231,12 +231,12 @@ public class BankEntriesNotInBankBookActionHelper {
             voucherHeaderService.applyAuditing(voucher);
             voucherHeaderService.persist(voucher);
         } catch (final ValidationException e) {
-            e.printStackTrace();
+
             final List<ValidationError> errors = new ArrayList<ValidationError>();
             errors.add(new ValidationError("exp", e.getErrors().get(0).getMessage()));
             throw new ValidationException(errors);
         } catch (final Exception e) {
-            e.printStackTrace();
+
             final List<ValidationError> errors = new ArrayList<ValidationError>();
             errors.add(new ValidationError("exp", e.getMessage()));
             throw new ValidationException(errors);

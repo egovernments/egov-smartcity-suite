@@ -362,7 +362,6 @@ public class EgBillregister extends StateAware implements java.io.Serializable {
 
     public void addEgBilldetailes(final EgBilldetails egBilldetail)
     {
-        // System.out.println("adding egbilldetails to billregister"+egBilldetail);
         getEgBilldetailes().add(egBilldetail);
     }
 

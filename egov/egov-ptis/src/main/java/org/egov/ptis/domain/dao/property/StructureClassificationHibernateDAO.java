@@ -153,31 +153,31 @@ public class StructureClassificationHibernateDAO implements StructureClassificat
 
 	@Override
 	public StructureClassification findById(Long id, boolean lock) {
-		// TODO Auto-generated method stub
+
 		return null;
 	}
 
 	@Override
 	public List<StructureClassification> findAll() {
-		// TODO Auto-generated method stub
+
 		return null;
 	}
 
 	@Override
 	public StructureClassification create(StructureClassification structureClassification) {
-		// TODO Auto-generated method stub
+
 		return null;
 	}
 
 	@Override
 	public void delete(StructureClassification structureClassification) {
-		// TODO Auto-generated method stub
+
 
 	}
 
 	@Override
 	public StructureClassification update(StructureClassification structureClassification) {
-		// TODO Auto-generated method stub
+
 		return null;
 	}
 }

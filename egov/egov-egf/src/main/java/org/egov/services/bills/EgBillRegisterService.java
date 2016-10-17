@@ -119,7 +119,7 @@ public class EgBillRegisterService extends PersistenceService<EgBillregister, Lo
                     "/EGF/bill/contingentBill-beforeView.action?billRegisterId=" + bill.getId().toString());
             createCheckList(bill, checkListsTable);
         } catch (final Exception e) {
-            e.printStackTrace();
+
             final List<ValidationError> errors = new ArrayList<ValidationError>();
             errors.add(new ValidationError("exp", e.getMessage()));
             throw new ValidationException(errors);
@@ -143,7 +143,7 @@ public class EgBillRegisterService extends PersistenceService<EgBillregister, Lo
                     persistenceService.getSession().saveOrUpdate(checkList);
                 }
         } catch (final Exception e) {
-            e.printStackTrace();
+
             final List<ValidationError> errors = new ArrayList<ValidationError>();
             errors.add(new ValidationError("exp", e.getMessage()));
             throw new ValidationException(errors);
@@ -159,7 +159,7 @@ public class EgBillRegisterService extends PersistenceService<EgBillregister, Lo
             persist(bill);
 
         } catch (final Exception e) {
-            e.printStackTrace();
+
             final List<ValidationError> errors = new ArrayList<ValidationError>();
             errors.add(new ValidationError("exp", e.getMessage()));
             throw new ValidationException(errors);

@@ -77,31 +77,31 @@ public class PropertyStatusHibernateDAO implements PropertyStatusDAO {
 
 	@Override
 	public PropertyStatus findById(Integer id, boolean lock) {
-		// TODO Auto-generated method stub
+
 		return null;
 	}
 
 	@Override
 	public List<PropertyStatus> findAll() {
-		// TODO Auto-generated method stub
+
 		return null;
 	}
 
 	@Override
 	public PropertyStatus create(PropertyStatus propertyStatus) {
-		// TODO Auto-generated method stub
+
 		return null;
 	}
 
 	@Override
 	public void delete(PropertyStatus propertyStatus) {
-		// TODO Auto-generated method stub
+
 
 	}
 
 	@Override
 	public PropertyStatus update(PropertyStatus propertyStatus) {
-		// TODO Auto-generated method stub
+
 		return null;
 	}
 }

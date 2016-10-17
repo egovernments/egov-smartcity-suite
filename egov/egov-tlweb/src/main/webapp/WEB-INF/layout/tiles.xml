@@ -202,4 +202,24 @@
 	     <put-attribute name="page-title" value="title.document.new" cascade="true"/>
 	     <put-attribute name="body" value="/WEB-INF/views/master/category/licensecategory-search-view.jsp"/>
 	</definition>
+	<definition name="subcategory-create" extends="base_layout">
+	     <put-attribute name="page-title" value="title.document.new" cascade="true"/>
+	     <put-attribute name="body" value="/WEB-INF/views/master/subcategory/subcategory-create.jsp"/>
+	</definition>
+	<definition name="subcategory-view" extends="base_layout">
+	     <put-attribute name="page-title" value="title.document.new" cascade="true"/>
+	     <put-attribute name="body" value="/WEB-INF/views/master/subcategory/subcategory-view.jsp"/>
+	</definition>
+	<definition name="subcategory-search-update" extends="base_layout">
+	     <put-attribute name="page-title" value="title.document.new" cascade="true"/>
+	     <put-attribute name="body" value="/WEB-INF/views/master/subcategory/subcategory-search-update.jsp"/>
+	</definition>
+	<definition name="subcategory-update" extends="base_layout">
+	     <put-attribute name="page-title" value="title.document.new" cascade="true"/>
+	     <put-attribute name="body" value="/WEB-INF/views/master/subcategory/subcategory-update.jsp"/>
+	</definition>
+	<definition name="subcategory-search-view" extends="base_layout">
+	     <put-attribute name="page-title" value="title.document.new" cascade="true"/>
+	     <put-attribute name="body" value="/WEB-INF/views/master/subcategory/subcategory-search-view.jsp"/>
+	</definition>
 </tiles-definitions>

@@ -95,43 +95,43 @@ public class ProjectCode extends BaseModel implements EntityType {
 
     @Override
     public String getBankaccount() {
-        // TODO Auto-generated method stub
+
         return null;
     }
 
     @Override
     public String getBankname() {
-        // TODO Auto-generated method stub
+
         return null;
     }
 
     @Override
     public String getIfsccode() {
-        // TODO Auto-generated method stub
+
         return null;
     }
 
     @Override
     public String getModeofpay() {
-        // TODO Auto-generated method stub
+
         return null;
     }
 
     @Override
     public String getName() {
-        // TODO Auto-generated method stub
+
         return codeName;
     }
 
     @Override
     public String getPanno() {
-        // TODO Auto-generated method stub
+
         return null;
     }
 
     @Override
     public String getTinno() {
-        // TODO Auto-generated method stub
+
         return null;
     }
 

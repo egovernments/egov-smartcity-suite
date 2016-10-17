@@ -63,31 +63,31 @@ public class EgDemandReasonHibDao implements EgDemandReasonDao {
 
 	@Override
 	public EgDemandReason findById(Integer id, boolean lock) {
-		// TODO Auto-generated method stub
+
 		return null;
 	}
 
 	@Override
 	public List<EgDemandReason> findAll() {
-		// TODO Auto-generated method stub
+
 		return null;
 	}
 
 	@Override
 	public EgDemandReason create(EgDemandReason egDemandReason) {
-		// TODO Auto-generated method stub
+
 		return null;
 	}
 
 	@Override
 	public void delete(EgDemandReason egDemandReason) {
-		// TODO Auto-generated method stub
+
 
 	}
 
 	@Override
 	public EgDemandReason update(EgDemandReason egDemandReason) {
-		// TODO Auto-generated method stub
+
 		return null;
 	}
 

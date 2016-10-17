@@ -60,6 +60,8 @@
 		<link rel="stylesheet" href="<cdn:url value='/resources/global/css/font-icons/font-awesome/css/font-awesome.min.css'/>">
 		<link rel="stylesheet" href="<cdn:url value='/resources/global/css/multi-level-menu/jquery.multilevelpushmenu.css'/>">
 		<link rel="stylesheet" href="<cdn:url value='/resources/global/css/egov/custom.css?rnd=${app_release_no}'/>">
+		<link rel="stylesheet" href="<cdn:url value='/resources/global/css/jquery/plugins/datatables/jquery.dataTables.min.css' context='/egi'/>"/>
+		<link rel="stylesheet" href="<cdn:url value='/resources/global/css/jquery/plugins/datatables/dataTables.bootstrap.min.css' context='/egi'/>">
 		<link rel="stylesheet" href="<cdn:url value='/resources/global/js/jquery/plugins/datatables/responsive/css/datatables.responsive.css'/>">
 		
 		<script src="<cdn:url value='/resources/global/js/jquery/jquery.js'/>"></script>

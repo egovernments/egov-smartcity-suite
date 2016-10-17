@@ -63,31 +63,31 @@ public class PropertyMutationHibDAO implements PropertyMutationDAO {
 
 	@Override
 	public PropertyMutation findById(Integer id, boolean lock) {
-		// TODO Auto-generated method stub
+
 		return null;
 	}
 
 	@Override
 	public List<PropertyMutation> findAll() {
-		// TODO Auto-generated method stub
+
 		return null;
 	}
 
 	@Override
 	public PropertyMutation create(PropertyMutation propertyMutation) {
-		// TODO Auto-generated method stub
+
 		return null;
 	}
 
 	@Override
 	public void delete(PropertyMutation propertyMutation) {
-		// TODO Auto-generated method stub
+
 
 	}
 
 	@Override
 	public PropertyMutation update(PropertyMutation propertyMutation) {
-		// TODO Auto-generated method stub
+
 		return null;
 	}
 	

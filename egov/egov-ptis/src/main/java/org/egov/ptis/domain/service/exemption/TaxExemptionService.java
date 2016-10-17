@@ -380,7 +380,7 @@ public class TaxExemptionService extends PersistenceService<PropertyImpl, Long> 
             }
         }
         catch (Exception e) {
-            // TODO Auto-generated catch block
+
             throw new ApplicationRuntimeException("Exception in addModelAttributes : " + e);
         }
         }

@@ -78,13 +78,13 @@ public class EgBillReceiptHibDao implements EgBillReceiptDao {
 
     @Override
     public BillReceipt findById(final Integer id, final boolean lock) {
-        // TODO Auto-generated method stub
+
         return null;
     }
 
     @Override
     public List<BillReceipt> findAll() {
-        // TODO Auto-generated method stub
+
         return null;
     }
 
@@ -97,13 +97,13 @@ public class EgBillReceiptHibDao implements EgBillReceiptDao {
 
     @Override
     public void delete(final BillReceipt billReceipt) {
-        // TODO Auto-generated method stub
+
 
     }
 
     @Override
     public BillReceipt update(final BillReceipt billReceipt) {
-        // TODO Auto-generated method stub
+
         return null;
     }
 

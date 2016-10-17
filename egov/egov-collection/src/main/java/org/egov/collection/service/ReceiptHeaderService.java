@@ -1225,6 +1225,7 @@ public class ReceiptHeaderService extends PersistenceService<ReceiptHeader, Long
      *            payments. For payments created as a response from bill desk,
      *            size of the array will be 1.
      */
+    @Transactional
     public ReceiptHeader createOnlineSuccessPayment(final ReceiptHeader receiptHeader, final Date transactionDate,
             final String transactionId, final BigDecimal transactionAmt, final String authStatusCode,
             final String remarks, final BillingIntegrationService billingService) {
@@ -1244,9 +1245,7 @@ public class ReceiptHeaderService extends PersistenceService<ReceiptHeader, Long
                 collectionsUtil.getStatusForModuleAndCode(CollectionConstants.MODULE_NAME_ONLINEPAYMENT,
                         CollectionConstants.ONLINEPAYMENT_STATUS_CODE_SUCCESS));
         persist(receiptHeader);
-        getSession().flush();
         LOGGER.debug("Persisted receipt after receiving success message from the payment gateway");
-
         return updateFinancialAndBillingSystem(receiptHeader, billingService);
     }
 

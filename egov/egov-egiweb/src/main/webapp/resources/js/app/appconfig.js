@@ -147,7 +147,7 @@ $(document).ready(function () {
     	        });
     	    });
     		$trLast.after($trNew);
-        	$trNew.find('input').val('').removeAttr('disabled').addClass('dynamicInput');
+        	$trNew.show().find('input').val('').removeAttr('disabled').addClass('dynamicInput');
             $trNew.find('input.markedForRemoval').val('false');
         	dateinitialize();
     	}
@@ -175,48 +175,15 @@ $(document).ready(function () {
     		bootbox.alert('First row cannot be deleted!');
     	}else{
             if($(this).data('func')){
-                $(this).closest('tr').remove();
-                var idx=0;
-                //regenerate index existing inputs in table row
-                jQuery("#configs tbody tr").each(function() {
-                 jQuery(this).find("input").each(function() {
-                 jQuery(this).attr({
-                 'id': function(_, id) {
-                 return id.replace(/\[.\]/g, '['+ idx +']');
-                 },
-                 'name': function(_, name) {
-                 return name.replace(/\[.\]/g, '['+ idx +']');
-                 }
-                 });
-                 });
-
-                 idx++;
-                 });
+            	deleteandreplaceindexintable($(this));
             } else {
                 if($(this).closest('tr').find('input').hasClass('dynamicInput')){
                 	console.log('Dynamic Row deleted');
-                	$(this).closest('tr').remove();
-                    var idx=0;
-                    //regenerate index existing inputs in table row
-                    jQuery("#configs tbody tr").each(function() {
-                     jQuery(this).find("input").each(function() {
-                     jQuery(this).attr({
-                     'id': function(_, id) {
-                     return id.replace(/\[.\]/g, '['+ idx +']');
-                     },
-                     'name': function(_, name) {
-                     return name.replace(/\[.\]/g, '['+ idx +']');
-                     }
-                     });
-                     });
-
-                     idx++;
-                     });
+                	deleteandreplaceindexintable($(this));
                 }
                 else{
                 	console.log('Existing Row deleted');
-                	$(this).closest('tr').find('input[type=hidden]').val('true');
-                	$(this).closest('tr').hide();
+                	$(this).closest('tr').hide().find('input.markedForRemoval').val('true');
                 }
                 
             }
@@ -226,3 +193,22 @@ $(document).ready(function () {
     })
 
 });
+
+function deleteandreplaceindexintable(obj){
+	obj.closest('tr').remove();
+	var idx=0;
+    //regenerate index existing inputs in table row
+    jQuery("#configs tbody tr").each(function() {
+		 jQuery(this).find("input").each(function() {
+			 jQuery(this).attr({
+			 'id': function(_, id) {
+				 return id.replace(/\[.\]/g, '['+ idx +']');
+			 },
+			 'name': function(_, name) {
+				 return name.replace(/\[.\]/g, '['+ idx +']');
+			 }
+			 });
+		 });
+		 idx++;
+     });
+}

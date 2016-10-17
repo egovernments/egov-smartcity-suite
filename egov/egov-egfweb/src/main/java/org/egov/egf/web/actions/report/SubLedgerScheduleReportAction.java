@@ -141,7 +141,7 @@ public class SubLedgerScheduleReportAction extends BaseFormAction {
         try {
             subLedgerScheduleDisplayList = rptSubLedgerSchedule.getSubLedgerTypeSchedule(subLedgerScheduleReport);
         } catch (final ValidationException e) {
-            e.printStackTrace();
+
             final List<ValidationError> errors = new ArrayList<ValidationError>();
             errors.add(new ValidationError("exp", e.getMessage()));
             throw new ValidationException(errors);

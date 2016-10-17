@@ -129,8 +129,8 @@ public class PropertyTaxBillableTest {
             Date date = dateFormat.parse(assessmentEffectiveDate); 
             basicProperty.setAssessmentdate(date);
         } catch (ParseException e) {
-            // TODO Auto-generated catch block 
-            e.printStackTrace();
+
+
         }
     }
     
