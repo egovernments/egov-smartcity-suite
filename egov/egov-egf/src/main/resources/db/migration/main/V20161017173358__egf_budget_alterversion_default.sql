@@ -1,0 +1,1 @@
+ALTER TABLE egf_budget ALTER COLUMN version SET DEFAULT 0;
