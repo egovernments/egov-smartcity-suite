@@ -65,7 +65,10 @@ public interface CFinancialYearRepository extends JpaRepository<CFinancialYear, 
 
     @Query("from CFiscalPeriod where name=:name order by id desc")
     CFiscalPeriod findByFiscalName(@Param("name") String name);
-
+    
     @Query("from CFinancialYear cfinancialyear where cfinancialyear.startingDate <=:givenDate and cfinancialyear.endingDate >=:givenDate  and cfinancialyear.isActiveForPosting=true")
     CFinancialYear getFinancialYearByDate(@Param("givenDate") Date givenDate);
-}
+    
+    //All financial year that are not closed
+    public List<CFinancialYear> findByIsClosedFalseOrderByFinYearRangeDesc();
+    }
