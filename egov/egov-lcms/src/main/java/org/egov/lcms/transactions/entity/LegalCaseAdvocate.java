@@ -52,11 +52,13 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
 import javax.persistence.Transient;
 import javax.validation.constraints.NotNull;
 
 import org.apache.commons.lang.StringUtils;
-import org.egov.infra.persistence.entity.AbstractPersistable;
+import org.egov.infra.persistence.entity.AbstractAuditable;
 import org.egov.infra.persistence.validator.annotation.DateFormat;
 import org.egov.infra.persistence.validator.annotation.OptionalPattern;
 import org.egov.infra.persistence.validator.annotation.ValidateDate;
@@ -65,12 +67,17 @@ import org.egov.infra.validation.exception.ValidationError;
 import org.egov.lcms.masters.entity.AdvocateMaster;
 import org.egov.lcms.masters.entity.CaseStage;
 import org.egov.lcms.utils.constants.LcmsConstants;
+import org.hibernate.envers.AuditOverride;
+import org.hibernate.envers.AuditOverrides;
+import org.hibernate.envers.Audited;
 import org.hibernate.validator.constraints.Length;
 
 @Entity
 @Table(name = "EGLC_LEGALCASE_ADVOCATE")
 @SequenceGenerator(name = LegalCaseAdvocate.SEQ_EGLC_LEGALCASE_ADVOCATE, sequenceName = LegalCaseAdvocate.SEQ_EGLC_LEGALCASE_ADVOCATE, allocationSize = 1)
-public class LegalCaseAdvocate extends AbstractPersistable<Long> {
+@AuditOverrides({ @AuditOverride(forClass = AbstractAuditable.class, name = "lastModifiedBy"),
+    @AuditOverride(forClass = AbstractAuditable.class, name = "lastModifiedDate") })
+public class LegalCaseAdvocate extends AbstractAuditable {
 
     private static final long serialVersionUID = 1517694643078084884L;
     public static final String SEQ_EGLC_LEGALCASE_ADVOCATE = "SEQ_EGLC_LEGALCASE_ADVOCATE";
@@ -82,65 +89,83 @@ public class LegalCaseAdvocate extends AbstractPersistable<Long> {
     @ManyToOne
     @NotNull
     @JoinColumn(name = "legalcase", nullable = false)
+    @Audited
     private LegalCase legalCase;
 
     @ManyToOne
     @JoinColumn(name = "advocatemaster")
+    @Audited
     private AdvocateMaster advocateMaster;
 
-    @DateFormat(message = "invalid.fieldvalue.assignedOnDate")
+    @Temporal(TemporalType.DATE)
     @ValidateDate(allowPast = true, dateFormat = LcmsConstants.DATE_FORMAT, message = "invalid.assignedtodate.date")
+    @Audited
     private Date assignedtodate;
 
-    @DateFormat(message = "invalid.fieldvalue.assignedOnForSeniorAdv")
+    @Temporal(TemporalType.DATE)
     @Column(name = "seniorassignedtodate")
+    @Audited
     private Date assignedtodateForsenior;
 
-    @DateFormat(message = "invalid.fieldvalue.vakalaatDate")
+    @Temporal(TemporalType.DATE)
     @ValidateDate(allowPast = true, dateFormat = LcmsConstants.DATE_FORMAT, message = "invalid.vakalatdate.date")
+    @Audited
     private Date vakalatdate;
 
+    @Audited
     private Boolean isActive;
 
     @Length(max = 32, message = "ordernumber.length")
     @OptionalPattern(regex = LcmsConstants.orderNumberFormat, message = "orderNumber.format")
+    @Audited
     private String ordernumber;
 
-    @DateFormat(message = "invalid.fieldvalue.orderDate")
+    @Temporal(TemporalType.DATE)
     @ValidateDate(allowPast = true, dateFormat = LcmsConstants.DATE_FORMAT, message = "invalid.orderdate.date")
+    @Audited
     private Date orderdate;
 
     @ManyToOne
     @JoinColumn(name = "senioradvocate")
+    @Audited
     private AdvocateMaster seniorAdvocate;
 
     @Length(max = 32, message = "ordernumberJunior.length")
     @JoinColumn(name = "ordernumberjunior")
+    @Audited
     private String ordernumberJunior;
 
     @DateFormat(message = "invalid.fieldvalue.juniororderDate")
     @Column(name = "orderdatejunior")
+    @Audited
     private Date orderdateJunior;
 
     @ManyToOne
     @JoinColumn(name = "JUNIORSTAGE")
+    @Audited
     private CaseStage juniorStage;
 
     @ManyToOne
     @JoinColumn(name = "SENIORSTAGE")
+    @Audited
     private CaseStage seniorStage;
 
-    @Length(max = 256, message = "reassignmentJunior.length")
+    @Length(max = 256)
+    @Audited
     private String reassignmentreasonjunior;
 
-    @Length(max = 256, message = "reassignmentSenior.length")
+    @Length(max = 256)
+    @Audited
     private String reassignmentreasonsenior;
 
+    @Audited
     private Boolean changeAdvocate = Boolean.FALSE;
 
+    @Audited
     private Boolean changeSeniorAdvocate = Boolean.FALSE;
 
     @Transient
+    @Audited
     private Boolean isSeniorAdvocate = Boolean.FALSE;
 
     public Boolean getChangeAdvocate() {

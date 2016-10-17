@@ -39,7 +39,6 @@
  */
 package org.egov.lcms.transactions.entity;
 
-import java.io.Serializable;
 import java.util.Date;
 
 import javax.persistence.CascadeType;
@@ -53,14 +52,20 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
 
-import org.egov.infra.persistence.entity.AbstractPersistable;
-import org.egov.infra.persistence.validator.annotation.DateFormat;
+import org.egov.infra.persistence.entity.AbstractAuditable;
+import org.hibernate.envers.AuditOverride;
+import org.hibernate.envers.AuditOverrides;
+import org.hibernate.envers.Audited;
 
 @Entity
 @Table(name = "eglc_counter_affidavit")
 @SequenceGenerator(name = CounterAffidavit.SEQ_EGLC_CA, sequenceName = CounterAffidavit.SEQ_EGLC_CA, allocationSize = 1)
-public class CounterAffidavit  extends AbstractPersistable<Long>  {
+@AuditOverrides({ @AuditOverride(forClass = AbstractAuditable.class, name = "lastModifiedBy"),
+    @AuditOverride(forClass = AbstractAuditable.class, name = "lastModifiedDate") })
+public class CounterAffidavit extends AbstractAuditable {
 
     private static final long serialVersionUID = 1517694643078084884L;
     public static final String SEQ_EGLC_CA= "seq_eglc_counter_affidavit";
@@ -71,21 +76,26 @@ public class CounterAffidavit  extends AbstractPersistable<Long>  {
     
     @ManyToOne(cascade = CascadeType.ALL,fetch = FetchType.LAZY)
     @JoinColumn(name = "legalcase", nullable = false)
+    @Audited
     private LegalCase legalCase;
     
     
-    @DateFormat(message = "invalid.fieldvalue.pwrDueDate")
+    @Temporal(TemporalType.DATE)
     @Column(name = "counterAffidavitduedate")
+    @Audited
     private Date counterAffidavitDueDate;
     
-    @DateFormat(message = "invalid.fieldvalue.pwrDueDate")
+    @Temporal(TemporalType.DATE)
     @Column(name = "counterAffidavitapprovaldate")
+    @Audited
     private Date counterAffidavitApprovalDate;
 
+	@Override
 	public Long getId() {
 		return id;
 	}
 
+	@Override
 	public void setId(Long id) {
 		this.id = id;
 	}

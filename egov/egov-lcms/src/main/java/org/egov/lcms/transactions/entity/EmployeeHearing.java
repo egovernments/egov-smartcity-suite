@@ -52,7 +52,10 @@ import javax.persistence.Transient;
 import javax.validation.Valid;
 
 import org.egov.eis.entity.Employee;
-import org.egov.infra.persistence.entity.AbstractPersistable;
+import org.egov.infra.persistence.entity.AbstractAuditable;
+import org.hibernate.envers.AuditOverride;
+import org.hibernate.envers.AuditOverrides;
+import org.hibernate.envers.Audited;
 import org.hibernate.search.annotations.DocumentId;
 
 import com.google.gson.annotations.Expose;
@@ -60,7 +63,9 @@ import com.google.gson.annotations.Expose;
 @Entity
 @Table(name = "eglc_employeehearing")
 @SequenceGenerator(name = EmployeeHearing.SEQ_EGLC_EMPHEARING, sequenceName = EmployeeHearing.SEQ_EGLC_EMPHEARING, allocationSize = 1)
-public class EmployeeHearing extends AbstractPersistable<Long> {
+@AuditOverrides({ @AuditOverride(forClass = AbstractAuditable.class, name = "lastModifiedBy"),
+    @AuditOverride(forClass = AbstractAuditable.class, name = "lastModifiedDate") })
+public class EmployeeHearing extends AbstractAuditable {
 
 	private static final long serialVersionUID = 1517694643078084884L;
 	public static final String SEQ_EGLC_EMPHEARING = "seq_eglc_employeehearing";
@@ -74,12 +79,14 @@ public class EmployeeHearing extends AbstractPersistable<Long> {
 	@ManyToOne
 	@Valid
 	@JoinColumn(name = "employee")
+	@Audited
 	private Employee employee;
 
 	
 	@ManyToOne(fetch=FetchType.LAZY)
 	@Valid
 	@JoinColumn(name = "hearing")
+	@Audited
 	private Hearings hearing;
 
 	@Transient
@@ -102,11 +109,13 @@ public class EmployeeHearing extends AbstractPersistable<Long> {
 	}
 
 	
+	@Override
 	public Long getId() {
 		return id;
 	}
 
 	
+	@Override
 	public void setId(Long id) {
 		this.id = id;
 	}
