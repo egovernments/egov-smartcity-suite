@@ -40,6 +40,7 @@
 <%@ taglib uri="http://www.springframework.org/tags" prefix="spring"%>
 <%@ taglib uri="http://www.springframework.org/tags/form" prefix="form"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
+<%@ taglib uri="/WEB-INF/taglib/cdn.tld" prefix="cdn" %>
 
 <div class="row add-margin view-content">
 	<div class="col-sm-3 text-center">	<spring:message code="lbl.applicant.docs"/></div>
@@ -74,5 +75,5 @@
 	</div>
 </c:forEach> 
 
-<script src="<c:url value='/resources/js/app/documentsupload.js'/>"></script>
-<script src="<c:url value='/resources/js/app/viewdocumentsupload.js'/>"></script>
+<script src="<cdn:url value='/resources/js/app/documentsupload.js'/>"></script>
+<script src="<cdn:url value='/resources/js/app/viewdocumentsupload.js'/>"></script>

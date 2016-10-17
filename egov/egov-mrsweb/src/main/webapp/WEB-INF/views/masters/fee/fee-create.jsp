@@ -55,8 +55,10 @@
 			</div> 
 			<jsp:include page="fee-form.jsp"></jsp:include>
 			</div>
-		
-     
+		</div>
+			</div>
+			</div>
+     </div>
 
 			<div class="row">
 				<div class="text-center">					
@@ -64,7 +66,5 @@
 			        <a href="javascript:void(0)" class="btn btn-default" onclick="self.close()"><spring:message code="lbl.close"/></a>
 				</div>
 			</div>
-			</div>
-			</div>
-			</div>
+			
 		</form:form>
