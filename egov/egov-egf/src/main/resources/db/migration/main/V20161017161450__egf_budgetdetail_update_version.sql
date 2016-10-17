@@ -1,0 +1,3 @@
+UPDATE EGF_BUDGETDETAIL set version=0;
+
+ALTER TABLE EGF_BUDGETDETAIL alter column version set DEFAULT 0;
