@@ -586,7 +586,7 @@ public class SewerageNoticeService {
         os.close();
         is.close();
         
-        reportInput = new ReportRequest(sewerageApplicationDetails.getClosureNoticeNumber(), sewerageApplicationDetails, reportParams);
+        reportInput = new ReportRequest(CLOSECONNECTIONNOTICE, sewerageApplicationDetails, reportParams);
         return reportService.createReport(reportInput);
     }
 
