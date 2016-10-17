@@ -147,10 +147,11 @@ public class CreateLetterOfAcceptanceController extends GenericWorkFlowControlle
 
         model.addAttribute("documentDetails", workOrder.getDocumentDetails());
         model.addAttribute("abstractEstimate", abstractEstimate);
-        if(!(abstractEstimate.getLineEstimateDetails() != null && abstractEstimate.getLineEstimateDetails().getLineEstimate().isSpillOverFlag() 
+        if (!(abstractEstimate.getLineEstimateDetails() != null
+                && abstractEstimate.getLineEstimateDetails().getLineEstimate().isSpillOverFlag()
                 && abstractEstimate.getLineEstimateDetails().getLineEstimate().isWorkOrderCreated()))
-        	workOrder.setWorkOrderDate(new Date());
-        
+            workOrder.setWorkOrderDate(new Date());
+
         model.addAttribute("workOrder", workOrder);
         model.addAttribute("measurementsPresent", measurementSheetService.existsByEstimate(abstractEstimate.getId()));
         model.addAttribute("workflowHistory",
@@ -258,11 +259,11 @@ public class CreateLetterOfAcceptanceController extends GenericWorkFlowControlle
                     workflowContainer.getAdditionalRule(), WorksConstants.NEW, workflowContainer.getPendingActions(),
                     workOrder.getCreatedDate());
         workOrder = letterOfAcceptanceService.getWorkOrderDocuments(workOrder);
-		if (workOrder.getState() != null && workOrder.getState().getNextAction() != null) {
-			model.addAttribute("nextAction", workOrder.getState().getNextAction());
-			model.addAttribute("pendingActions", workOrder.getState().getNextAction());
-		}
-            
+        if (workOrder.getState() != null && workOrder.getState().getNextAction() != null) {
+            model.addAttribute("nextAction", workOrder.getState().getNextAction());
+            model.addAttribute("pendingActions", workOrder.getState().getNextAction());
+        }
+
         final List<AppConfigValues> values = appConfigValuesService.getConfigValuesByModuleAndKey(
                 WorksConstants.WORKS_MODULE_NAME, WorksConstants.APPCONFIG_KEY_PERCENTAGE_ON_ESTIMATERATE_OR_WORKVALUE);
         final AppConfigValues value = values.get(0);
@@ -330,8 +331,8 @@ public class CreateLetterOfAcceptanceController extends GenericWorkFlowControlle
             message = messageSource.getMessage("msg.letterofacceptance.cancelled",
                     new String[] { workOrder.getWorkOrderNumber() }, null);
         else if (WorksConstants.CHECKED_STATUS.equalsIgnoreCase(workOrder.getEgwStatus().getCode()))
-        	message = messageSource.getMessage("msg.loa.check.success",
-                    new String[] { workOrder.getWorkOrderNumber(), approverName, nextDesign,  }, null);
+            message = messageSource.getMessage("msg.loa.check.success",
+                    new String[] { workOrder.getWorkOrderNumber(), approverName, nextDesign, }, null);
 
         return message;
     }
