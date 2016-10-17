@@ -283,6 +283,13 @@ $('#saveSpillAbstractEstimate').click(function() {
 		if(!flag)
 			return false;
 		$('.disablefield').removeAttr("disabled");
+		var resultLengthForDeductionTable = jQuery('#deductionTable tr').length - 1;
+		var deleteDeductionTable=$('#deductionTable tr:last');
+		var accountCode = document.getElementById('tempDeductionValues[0].accountCode').value;
+		if(resultLengthForDeductionTable<=1 && accountCode == "") {
+			var i=0;
+			deleteDeductionTable.remove();
+		}
 		return true;
 	} else
 	return false;
