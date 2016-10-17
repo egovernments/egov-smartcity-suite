@@ -56,7 +56,7 @@
 		<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
 		<title><tiles:insertAttribute name="title"/></title>
 		<meta name="viewport" content="width=device-width, initial-scale=1.0">
-       
+        <link rel="icon" href="<cdn:url value='/resources/global/images/favicon.png' context='/egi'/>" sizes="32x32">
         <link rel="stylesheet" href="<cdn:url value='/resources/global/css/bootstrap/bootstrap.css' context='/egi'/>">
         <link rel="stylesheet" href="<cdn:url value='/resources/css/global.css?rnd=${app_release_no}' context='/dashboard'/>">
         <link rel="stylesheet" href="<cdn:url value='/resources/css/jquery.loadmask.css' context='/dashboard'/>">

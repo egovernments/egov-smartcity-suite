@@ -52,7 +52,7 @@
 	    <meta name="author" content="eGovernments Foundation" />
 	
 	    <title><tiles:insertAttribute name="title"/></title>
-		<link rel="icon" href="<c:url value='/resources/global/images/favicon.png" sizes="32x32' context='/egi'/>">
+		<link rel="icon" href="<c:url value='/resources/global/images/favicon.png' context='/egi'/>" sizes="32x32">
 	    <link rel="stylesheet" href="<c:url value='/resources/global/css/bootstrap/bootstrap.css' context='/egi'/>">
 		<link rel="stylesheet" href="<c:url value='/resources/global/css/egov/custom.css?rnd=${app_release_no}' context='/egi'/>">
 		<link rel="stylesheet" href="<c:url value='/resources/global/css/bootstrap/typeahead.css' context='/egi'/>">
