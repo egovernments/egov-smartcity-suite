@@ -229,6 +229,10 @@ public class CreateMBController {
             message = messageSource.getMessage("msg.mbheader.cancelled",
                     new String[] { mbHeader.getMbRefNo() }, null);
 
+        else if (MBHeader.MeasurementBookStatus.CHECKED.toString().equalsIgnoreCase(mbHeader.getEgwStatus().getCode()))
+            message = messageSource.getMessage("msg.mbheader.checked",
+                    new String[] { approverName, nextDesign, mbHeader.getMbRefNo() }, null);
+
         return message;
     }
 

@@ -416,6 +416,13 @@ public class MBHeaderService {
                     && workFlowAction.equals(WorksConstants.FORWARD_ACTION))
                 mbHeader.setEgwStatus(worksUtils.getStatusByModuleAndCode(WorksConstants.MBHEADER,
                         MBHeader.MeasurementBookStatus.RESUBMITTED.toString()));
+            else if ((WorksConstants.RESUBMITTED_STATUS.equalsIgnoreCase(mbHeader.getEgwStatus().getCode()) ||
+                    WorksConstants.CREATED_STATUS.equalsIgnoreCase(mbHeader.getEgwStatus().getCode()) ||
+                    WorksConstants.CHECKED_STATUS.equalsIgnoreCase(mbHeader.getEgwStatus().getCode()))
+                    && mbHeader.getState() != null && WorksConstants.SUBMIT_ACTION.equalsIgnoreCase(workFlowAction))
+                mbHeader.setEgwStatus(worksUtils.getStatusByModuleAndCode(WorksConstants.MBHEADER,
+                        WorksConstants.CHECKED_STATUS));
+
     }
 
     @Transactional
@@ -584,8 +591,8 @@ public class MBHeaderService {
                         .withComments(approvalComent).withStateValue(stateValue).withDateInfo(currentDate.toDate())
                         .withOwner(pos).withNextAction("").withNatureOfTask(natureOfwork);
             } else {
-                wfmatrix = mbHeaderWorkflowService.getWfMatrix(mbHeader.getStateType(), null, null,
-                        additionalRule, mbHeader.getCurrentState().getValue(), null);
+                wfmatrix = mbHeaderWorkflowService.getWfMatrix(mbHeader.getStateType(), null, mbHeader.getMbAmount(),
+                        additionalRule, mbHeader.getCurrentState().getValue(), mbHeader.getState().getNextAction());
                 mbHeader.transition(true).withSenderName(user.getUsername() + "::" + user.getName())
                         .withComments(approvalComent).withStateValue(wfmatrix.getNextState())
                         .withDateInfo(currentDate.toDate()).withOwner(pos).withNextAction(wfmatrix.getNextAction())

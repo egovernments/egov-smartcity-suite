@@ -176,7 +176,6 @@ public class UpdateMBController extends GenericWorkFlowController {
             workFlowAction = request.getParameter("workFlowAction");
         if (request.getParameter("approvalPosition") != null && !request.getParameter("approvalPosition").isEmpty())
             approvalPosition = Long.valueOf(request.getParameter("approvalPosition"));
-
         final JsonObject jsonObject = new JsonObject();
         mbHeaderService.validateMBHeader(mbHeader, jsonObject, resultBinder, mode);
 
@@ -299,10 +298,15 @@ public class UpdateMBController extends GenericWorkFlowController {
         if (mbHeader.getCurrentState() != null
                 && !mbHeader.getCurrentState().getValue().equals(WorksConstants.NEW))
             model.addAttribute("currentState", mbHeader.getCurrentState().getValue());
-        if (mbHeader.getState() != null && mbHeader.getState().getNextAction() != null)
+        if (mbHeader.getState() != null && mbHeader.getState().getNextAction() != null) {
             model.addAttribute("nextAction", mbHeader.getState().getNextAction());
+            model.addAttribute("amountRule", mbHeader.getMbAmount());
+            model.addAttribute("pendingActions", mbHeader.getState().getNextAction());
+        }
 
         final WorkflowContainer workflowContainer = new WorkflowContainer();
+        workflowContainer.setAmountRule(mbHeader.getMbAmount());
+        workflowContainer.setPendingActions(mbHeader.getState().getNextAction());
         prepareWorkflow(model, mbHeader, workflowContainer);
         if (mbHeader.getEgwStatus().getCode().equals(MBHeader.MeasurementBookStatus.NEW.toString())) {
             List<String> validActions = Collections.emptyList();
@@ -361,9 +365,9 @@ public class UpdateMBController extends GenericWorkFlowController {
 
         if (!mbHeader.getEgwStatus().getCode().equals(MBHeader.MeasurementBookStatus.NEW.toString())
                 && !updatedMBHeader.getEgwStatus().getCode().equals(MBHeader.MeasurementBookStatus.REJECTED.toString())
-                && isMBEditable) {
+                && isMBEditable)
             model.addAttribute("isMBHeaderEditable", "false");
-        } else
+        else
             model.addAttribute("isMBHeaderEditable", "true");
         // TODO: check if only quantities to be edited or the whole mb can be editable
         if (mbHeader.getEgwStatus().getCode().equals(MBHeader.MeasurementBookStatus.NEW.toString()) ||
