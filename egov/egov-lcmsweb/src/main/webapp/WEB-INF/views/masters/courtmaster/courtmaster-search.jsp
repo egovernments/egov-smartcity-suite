@@ -51,7 +51,7 @@
 					</div>
 					<div class="panel-body">
 						<div class="form-group">
-							<label class="col-sm-3 control-label text-right"><spring:message
+							<label class="col-sm-2 control-label text-right"><spring:message
 									code="lbl.courttype" />: </label>
 							<div class="col-sm-3 add-margin">
 								<form:select path="courtType" id="courtType"
@@ -64,7 +64,7 @@
 								</form:select>
 								<form:errors path="courtType" cssClass="error-msg" />
 							</div>
-							<label class="col-sm-3 control-label text-right"><spring:message
+							<label class="col-sm-2 control-label text-right"><spring:message
 									code="lbl.name" /> :</label> 
 							<div class="col-sm-3 add-margin">
 								<form:input path="name"
@@ -74,7 +74,7 @@
 							</div>
 						</div>
 						<div class="form-group">
-							<label class="col-sm-3 control-label text-right"><spring:message
+							<label class="col-sm-2 control-label text-right"><spring:message
 									code="lbl.active" /> :</label>
 							<div class="col-sm-2 add-margin">
 						<form:select path="active" id="active" cssClass="form-control"
@@ -111,8 +111,8 @@
 			id="resultTable">
 			<thead>
 				<tr>
+				<th><spring:message code="lbl.courttype" /></th>
 					<th><spring:message code="lbl.name" /></th>
-					<th><spring:message code="lbl.courttype" /></th>
 					<th><spring:message code="lbl.active" /></th>
 				</tr>
 			</thead>
@@ -129,8 +129,6 @@
 </script>
 <link rel="stylesheet"
 	href="<cdn:url value='/resources/global/css/font-icons/entypo/css/entypo.css' context='/egi'/>" />
-<link rel="stylesheet"
-	href="<cdn:url value='/resources/global/css/bootstrap/bootstrap-datepicker.css' context='/egi'/>" />
 <link rel="stylesheet" href="<cdn:url value='/resources/global/css/jquery/plugins/datatables/jquery.dataTables.min.css' context='/egi'/>"/>
 <link rel="stylesheet" href="<cdn:url value='/resources/global/css/jquery/plugins/datatables/dataTables.bootstrap.min.css' context='/egi'/>">
 <script type="text/javascript"
@@ -142,15 +140,6 @@
 <script type="text/javascript"
 	src="<cdn:url value='/resources/global/js/jquery/plugins/datatables/TableTools.min.js' context='/egi'/>"></script>
 <script type="text/javascript"
-	src="<cdn:url value='/resources/global/js/jquery/plugins/datatables/jquery.dataTables.columnFilter.js' context='/egi'/>"></script>
-<script type="text/javascript"
-	src="<cdn:url value='/resources/global/js/bootstrap/typeahead.bundle.js' context='/egi'/>"></script>
-<script
-	src="<cdn:url value='/resources/global/js/jquery/plugins/jquery.inputmask.bundle.min.js' context='/egi'/>"></script>
-<script type="text/javascript"
 	src="<cdn:url value='/resources/global/js/jquery/plugins/jquery.validate.min.js' context='/egi'/>"></script>
-<script
-	src="<cdn:url value='/resources/global/js/bootstrap/bootstrap-datepicker.js' context='/egi'/>"
-	type="text/javascript"></script>
 <script type="text/javascript"
 	src="<cdn:url value='/resources/js/app/courtMasterHelper.js?rnd=${app_release_no}'/>"></script>

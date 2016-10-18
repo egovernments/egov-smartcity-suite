@@ -74,10 +74,10 @@ function callAjaxSearch() {
 				aaSorting: [],				
 				columns : [ { 
 					
-"data" : "courtType", "sClass" : "text-left"},{
-"data" : "code", "sClass" : "text-left"} ,{ 
-"data" : "petitionType", "sClass" : "text-left"} ,{ 
-"data" : "active", "sClass" : "text-left"},{ 
+"data" : "courtType", "sClass" : "text-center"},{
+"data" : "code", "sClass" : "text-center"} ,{ 
+"data" : "petitionType", "sClass" : "text-center"} ,{ 
+"data" : "active", "sClass" : "text-center"},{ 
 "data" : "id","visible": false, "searchable": false }]				
 			});
 			}
