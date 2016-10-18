@@ -169,8 +169,8 @@
 										</div>
 										<input type="text" class="form-control style-form"
 											name="j_username" id="j_username"
-											placeholder="Username" autocomplete="off"
-											required="required" autofocus="autofocus"/> <span class="mandatory set-mandatory"></span>
+											placeholder="Mobile Number / Login ID" autocomplete="off"
+											required="required" autofocus="autofocus"/>
 									</div>
 								</div>
 								<div class="form-group">
@@ -180,8 +180,11 @@
 										</div>
 										<input type="password" class="form-control style-form"
 											name="j_password" id="j_password" placeholder="Password"
-											autocomplete="new-password" required="required" /> <span
-											class="mandatory set-mandatory"></span>
+											autocomplete="new-password" required="required" />
+										<div class="input-group-addon font-12">
+											<a href="#" data-toggle="modal"
+											data-target="#fpassword" data-backdrop="static" style="color:#fff;">Forgot?</a>
+										</div>
 									</div>
 								</div>
 								<div class="form-group display-hide" id="counter-section">
@@ -249,13 +252,6 @@
 										<i class="fa fa-sign-in"></i> <spring:message code="lbl.login"/>
 									</button>
 								</div>
-								<div class="row">
-									<div class="col-md-12 col-xs-12 text-right add-margin"
-										style="font-size: 12px;">
-										<a href="javascript:void(0);" data-toggle="modal"
-											data-target="#fpassword" data-backdrop="static"><spring:message code="lbl.forgot.pwd"/></a>
-									</div>
-								</div>
 								<input type="hidden" id="ipAddress" name="ipAddress" value="<%=ipAddress%>" /> 
 								<input type="hidden" id="loginType" name="loginType" />
 								<input type="hidden"  name="userAgentInfo" value="<%=userAgentInfo%>" /> 
@@ -315,7 +311,7 @@
 									</div>
 									<input type="text" class="form-control style-form"
 										name="identity" id="emailOrMobileNum"
-										required="required" placeholder="Username"
+										required="required" placeholder="Mobile Number / Login ID"
 										autocomplete="off" />
 										<input type="hidden" name="originURL" id="originURL">
                                         <input type="hidden" name="byOTP" id="byOtp">
