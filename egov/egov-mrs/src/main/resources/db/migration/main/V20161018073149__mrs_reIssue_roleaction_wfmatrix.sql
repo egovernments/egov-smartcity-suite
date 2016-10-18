@@ -8,7 +8,7 @@ VALUES (nextval('seq_eg_action'), 'editMrgCertificateReIssue', '/reissue/workflo
 --------------------------- EG_ROLEACTION ----------------------------
 INSERT INTO EG_ROLEACTION (roleid, actionid) VALUES ((SELECT id FROM eg_role WHERE name = 'Marriage Registration Creator'), (SELECT id FROM eg_action WHERE name = 'generateReIssueCertificate'));
 
-INSERT INTO EG_ROLEACTION (roleid, actionid) VALUES ((SELECT id FROM eg_role WHERE name = 'Marriage Registration Creator'), (SELECT id FROM eg_action WHERE name = 'editReIssue'));
+INSERT INTO EG_ROLEACTION (roleid, actionid) VALUES ((SELECT id FROM eg_role WHERE name = 'Marriage Registration Creator'), (SELECT id FROM eg_action WHERE name = 'editMrgCertificateReIssue'));
 
 --------------------------- eg_wf_matrix  ----------------------------
 update eg_wf_matrix set validactions='Forward,Cancel ReIssue' where objecttype='ReIssue' and  validactions='Forward,Print Rejection Certificate,Cancel ReIssue' and additionalrule='MARRIAGE REGISTRATION';

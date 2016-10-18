@@ -112,8 +112,4 @@
 </div>
 <script src="<cdn:url value='/resources/js/app/mrgcert-reissue.js'/> "></script> 
 <script src="<cdn:url value='/resources/global/js/egov/inbox.js' context='/egi'/>"></script>
-<<<<<<< HEAD
 <script src="<cdn:url value='/resources/js/app/navtabclickhandler.js'/> "></script>
-=======
-<script src="<cdn:url value='/resources/js/app/navtabclickhandler.js'/> "></script>
->>>>>>> PHOENIX-5343 ReIssue Marriage Certificate
