@@ -104,7 +104,7 @@
 								<form:errors path="statutoryDeductionDetailes[0].glcodeid" cssClass="add-margin error-msg" /> 
 							</td>
 							<td>
-								<form:input path="statutoryDeductionDetailes[0].creditamount" id="statutoryDeductionDetailes[0].creditamount" name="statutoryDeductionDetailes[0].creditamount" data-errormsg="Credit Amount is mandatory!" onkeyup="decimalvalue(this);" data-pattern="decimalvalue" data-idx="0" data-optional="0" class="form-control table-input text-right creditAmount" onblur="calculateNetPayableAmount();"  maxlength="12"  />
+								<form:input path="statutoryDeductionDetailes[0].creditamount" id="statutoryDeductionDetailes[0].creditamount" name="statutoryDeductionDetailes[0].creditamount" data-errormsg="Credit Amount is mandatory!" onkeyup="decimalvalue(this);" data-pattern="decimalvalue" data-idx="0" data-optional="0" class="form-control table-input text-right creditAmount validateZero" onblur="calculateNetPayableAmount();"  maxlength="12"  />
 								<form:errors path="statutoryDeductionDetailes[0].creditamount" cssClass="add-margin error-msg" /> 
 							</td> 
 							<td class="text-center"><span style="cursor:pointer;" onclick="addStatutoryDeductionRow();"><i class="fa fa-plus"></i></span>
@@ -136,7 +136,7 @@
 										<form:errors path="statutoryDeductionDetailes[${rowIndex }].glcodeid" cssClass="add-margin error-msg" /> 
 									</td>
 									<td>
-										<form:input path="statutoryDeductionDetailes[${rowIndex }].creditamount" id="statutoryDeductionDetailes[${rowIndex }].creditamount" name="statutoryDeductionDetailes[${rowIndex }].creditamount" value="${billDetail.amount }" data-errormsg="Credit Amount is mandatory!" onkeyup="decimalvalue(this);" data-pattern="decimalvalue" data-idx="0" data-optional="0" class="form-control table-input text-right creditAmount" onblur="calculateNetPayableAmount();"  maxlength="12"  />
+										<form:input path="statutoryDeductionDetailes[${rowIndex }].creditamount" id="statutoryDeductionDetailes[${rowIndex }].creditamount" name="statutoryDeductionDetailes[${rowIndex }].creditamount" value="${billDetail.amount }" data-errormsg="Credit Amount is mandatory!" onkeyup="decimalvalue(this);" data-pattern="decimalvalue" data-idx="0" data-optional="0" class="form-control table-input text-right creditAmount validateZero" onblur="calculateNetPayableAmount();"  maxlength="12"  />
 										<form:errors path="statutoryDeductionDetailes[${rowIndex }].creditamount" cssClass="add-margin error-msg" /> 
 									</td> 
 									<td class="text-center"><span style="cursor:pointer;" onclick="addStatutoryDeductionRow();"><i class="fa fa-plus"></i></span>
@@ -178,7 +178,7 @@
 								<input type="text" id="otherDeductionDetailes[0].creditAccountHead" name="otherDeductionDetailes[0].creditAccountHead" value="${otherDeductionDetailes[0].creditAccountHead}" class="form-control otherdeductionname" disabled>  
 							</td>
 							<td>
-								<form:input path="otherDeductionDetailes[0].creditamount" id="otherDeductionDetailes[0].creditamount" name="otherDeductionDetailes[0].creditamount" data-errormsg="Credit Amount is mandatory!" onkeyup="decimalvalue(this);" data-pattern="decimalvalue" data-idx="0" data-optional="0" class="form-control table-input text-right creditAmount" onblur="calculateNetPayableAmount();"  maxlength="12"  />
+								<form:input path="otherDeductionDetailes[0].creditamount" id="otherDeductionDetailes[0].creditamount" name="otherDeductionDetailes[0].creditamount" data-errormsg="Credit Amount is mandatory!" onkeyup="decimalvalue(this);" data-pattern="decimalvalue" data-idx="0" data-optional="0" class="form-control table-input text-right creditAmount validateZero" onblur="calculateNetPayableAmount();"  maxlength="12"  />
 								<form:errors path="otherDeductionDetailes[0].creditamount" cssClass="add-margin error-msg" /> 
 							</td> 
 							<td class="text-center"><span style="cursor:pointer;" onclick="addOtherDeductionRow();"><i class="fa fa-plus"></i></span>
@@ -200,7 +200,7 @@
 										<input type="text" id="otherDeductionDetailes[${rowIndex }].creditAccountHead" name="otherDeductionDetailes[${rowIndex }].creditAccountHead" value="${billDetail.accountHead}" class="form-control otherdeductionname" disabled>  
 									</td>
 									<td>
-										<form:input path="otherDeductionDetailes[${rowIndex }].creditamount" id="otherDeductionDetailes[${rowIndex }].creditamount" name="otherDeductionDetailes[${rowIndex }].creditamount" value="${billDetail.amount }" data-errormsg="Credit Amount is mandatory!" onkeyup="decimalvalue(this);" data-pattern="decimalvalue" data-idx="0" data-optional="0" class="form-control table-input text-right creditAmount" onblur="calculateNetPayableAmount();"  maxlength="12"  />
+										<form:input path="otherDeductionDetailes[${rowIndex }].creditamount" id="otherDeductionDetailes[${rowIndex }].creditamount" name="otherDeductionDetailes[${rowIndex }].creditamount" value="${billDetail.amount }" data-errormsg="Credit Amount is mandatory!" onkeyup="decimalvalue(this);" data-pattern="decimalvalue" data-idx="0" data-optional="0" class="form-control table-input text-right creditAmount validateZero" onblur="calculateNetPayableAmount();"  maxlength="12"  />
 										<form:errors path="otherDeductionDetailes[${rowIndex }].creditamount" cssClass="add-margin error-msg" /> 
 									</td> 
 									<td class="text-center"><span style="cursor:pointer;" onclick="addOtherDeductionRow();"><i class="fa fa-plus"></i></span>
@@ -244,7 +244,7 @@
 								<form:errors path="retentionMoneyDeductionDetailes[0].glcodeid" cssClass="add-margin error-msg" /> 
 							</td>
 							<td>
-								<form:input path="retentionMoneyDeductionDetailes[0].creditamount" id="retentionMoneyDeductionDetailes[0].creditamount" name="retentionMoneyDeductionDetailes[0].creditamount" data-errormsg="Credit Amount is mandatory!" onkeyup="decimalvalue(this);" data-pattern="decimalvalue" data-idx="0" data-optional="0" class="form-control table-input text-right creditAmount" onblur="calculateNetPayableAmount();"  maxlength="12"  />
+								<form:input path="retentionMoneyDeductionDetailes[0].creditamount" id="retentionMoneyDeductionDetailes[0].creditamount" name="retentionMoneyDeductionDetailes[0].creditamount" data-errormsg="Credit Amount is mandatory!" onkeyup="decimalvalue(this);" data-pattern="decimalvalue" data-idx="0" data-optional="0" class="form-control table-input text-right creditAmount validateZero" onblur="calculateNetPayableAmount();"  maxlength="12"  />
 								<form:errors path="retentionMoneyDeductionDetailes[0].creditamount" cssClass="add-margin error-msg" /> 
 							</td> 
 							<td class="text-center"><span style="cursor:pointer;" onclick="addRetentionMoneyDeductionRow();"><i class="fa fa-plus"></i></span>
@@ -276,7 +276,7 @@
 										<form:errors path="retentionMoneyDeductionDetailes[${rowIndex }].glcodeid" cssClass="add-margin error-msg" /> 
 									</td>
 									<td>
-										<form:input path="retentionMoneyDeductionDetailes[${rowIndex }].creditamount" id="retentionMoneyDeductionDetailes[${rowIndex }].creditamount" name="retentionMoneyDeductionDetailes[${rowIndex }].creditamount" value="${billDetail.amount }" data-errormsg="Credit Amount is mandatory!" onkeyup="decimalvalue(this);" data-pattern="decimalvalue" data-idx="0" data-optional="0" class="form-control table-input text-right creditAmount" onblur="calculateNetPayableAmount();"  maxlength="12"  />
+										<form:input path="retentionMoneyDeductionDetailes[${rowIndex }].creditamount" id="retentionMoneyDeductionDetailes[${rowIndex }].creditamount" name="retentionMoneyDeductionDetailes[${rowIndex }].creditamount" value="${billDetail.amount }" data-errormsg="Credit Amount is mandatory!" onkeyup="decimalvalue(this);" data-pattern="decimalvalue" data-idx="0" data-optional="0" class="form-control table-input text-right creditAmount validateZero" onblur="calculateNetPayableAmount();"  maxlength="12"  />
 										<form:errors path="retentionMoneyDeductionDetailes[${rowIndex }].creditamount" cssClass="add-margin error-msg" /> 
 									</td> 
 									<td class="text-center"><span style="cursor:pointer;" onclick="addRetentionMoneyDeductionRow();"><i class="fa fa-plus"></i></span>

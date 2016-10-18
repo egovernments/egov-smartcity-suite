@@ -1037,12 +1037,12 @@ function validateRefundAmount() {
 	return true;
 }
 
-$('.disableZero' ).keyup( function(){
-	    var valid = /^[1-9](\d{0,9})(\.\d{0,2})?$/.test(this.value),
-	        val = this.value;
-	    
-	    if(!valid){
-	        console.log("Invalid input!");
-	        this.value = val.substring(0, val.length - 1);
-	    }
-	});
+$(document).on('keyup','.validateZero', function(){
+    var valid = /^[1-9](\d{0,9})(\.\d{0,2})?$/.test(this.value),
+        val = this.value;
+    
+    if(!valid){
+        console.log("Invalid input!");
+        this.value = val.substring(0, val.length - 1);
+    }
+});
