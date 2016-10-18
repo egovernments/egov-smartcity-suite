@@ -78,101 +78,101 @@ import org.springframework.web.bind.annotation.ResponseBody;
 @RequestMapping(value = "/revisionestimate")
 public class RevisionAgreementPDFController {
 
-	public static final String REVISIONAGREEMENTPDF = "RevisionAgreementPDF";
+    public static final String REVISIONAGREEMENTPDF = "RevisionAgreementPDF";
 
-	@Autowired
-	private RevisionEstimateService revisionEstimateService;
+    @Autowired
+    private RevisionEstimateService revisionEstimateService;
 
-	@Autowired
-	private WorkOrderEstimateService workOrderEstimateService;
-	
-	@Autowired
+    @Autowired
+    private WorkOrderEstimateService workOrderEstimateService;
+
+    @Autowired
     private WorksUtils worksUtils;
-	
-	@Autowired
-	private ReportService reportService;
 
-	@RequestMapping(value = "/revisionagreementPDF/{revisionEstimateId}", method = RequestMethod.GET)
-	public @ResponseBody ResponseEntity<byte[]> generateContractorBillPDF(final HttpServletRequest request,
-			@PathVariable("revisionEstimateId") final Long revisionEstimateId, final HttpSession session)
-			throws IOException {
-		final RevisionAbstractEstimate revisionEstimate = revisionEstimateService
-				.getRevisionEstimateById(revisionEstimateId);
-		return generateReport(revisionEstimate, request, session);
-	}
+    @Autowired
+    private ReportService reportService;
 
-	private ResponseEntity<byte[]> generateReport(final RevisionAbstractEstimate revisionEstimate,
-			final HttpServletRequest request, final HttpSession session) {
+    @RequestMapping(value = "/revisionagreementPDF/{revisionEstimateId}", method = RequestMethod.GET)
+    public @ResponseBody ResponseEntity<byte[]> generateContractorBillPDF(final HttpServletRequest request,
+            @PathVariable("revisionEstimateId") final Long revisionEstimateId, final HttpSession session)
+            throws IOException {
+        final RevisionAbstractEstimate revisionEstimate = revisionEstimateService
+                .getRevisionEstimateById(revisionEstimateId);
+        return generateReport(revisionEstimate, request, session);
+    }
 
-		Map<String, Object> reportParams = new HashMap<String, Object>();
-		final DecimalFormat df = new DecimalFormat("0.00");
-		ReportRequest reportInput = null;
-		ReportOutput reportOutput = null;
-		if (revisionEstimate != null) {
-			WorkOrderEstimate workOrderEstimate = workOrderEstimateService
-					.getWorkOrderEstimateByAbstractEstimateId(revisionEstimate.getParent().getId());
-			WorkOrder workOrder = workOrderEstimate.getWorkOrder();
-			AbstractEstimate abstractEstimate = workOrderEstimate.getEstimate();
-			final String url = WebUtils.extractRequestDomainURL(request, false);
-			reportParams.put("cityLogo", url.concat(ReportConstants.IMAGE_CONTEXT_PATH)
-					.concat((String) request.getSession().getAttribute("citylogo")));
+    private ResponseEntity<byte[]> generateReport(final RevisionAbstractEstimate revisionEstimate,
+            final HttpServletRequest request, final HttpSession session) {
 
-			final String cityName = ApplicationThreadLocals.getMunicipalityName();
-			reportParams.put("cityName", cityName);
-			reportParams.put("revisionEstimate", revisionEstimate);
-			reportParams.put("workOrderNumber",
-					workOrder.getWorkOrderNumber() != null ? workOrder.getWorkOrderNumber() : "");
-			reportParams.put("workOrderDate", workOrder.getWorkOrderDate() != null
-					? DateUtils.getDefaultFormattedDate(workOrder.getWorkOrderDate()) : "");
+        final Map<String, Object> reportParams = new HashMap<String, Object>();
+        final DecimalFormat df = new DecimalFormat("0.00");
+        ReportRequest reportInput = null;
+        ReportOutput reportOutput = null;
+        if (revisionEstimate != null) {
+            final WorkOrderEstimate workOrderEstimate = workOrderEstimateService
+                    .getWorkOrderEstimateByAbstractEstimateId(revisionEstimate.getParent().getId());
+            final WorkOrder workOrder = workOrderEstimate.getWorkOrder();
+            final AbstractEstimate abstractEstimate = workOrderEstimate.getEstimate();
+            final String url = WebUtils.extractRequestDomainURL(request, false);
+            reportParams.put("cityLogo", url.concat(ReportConstants.IMAGE_CONTEXT_PATH)
+                    .concat((String) request.getSession().getAttribute("citylogo")));
 
-			reportParams.put("contractorName",
-					workOrder.getContractor().getName() != null ? workOrder.getContractor().getName() : "");
-			reportParams.put("contractorAddress", workOrder.getContractor().getBankaccount() != null
-					? workOrder.getContractor().getCorrespondenceAddress() : "");
-			reportParams.put("panNo",
-					workOrder.getContractor().getPanNumber() != null ? workOrder.getContractor().getPanNumber() : "");
-			reportParams.put("bank",
-					workOrder.getContractor().getBank() != null ? workOrder.getContractor().getBank().getName() : "");
-			reportParams.put("accountNo", workOrder.getContractor().getBankaccount() != null
-					? workOrder.getContractor().getBankaccount() : "");
-			reportParams.put("subject", abstractEstimate.getName());
-			if (abstractEstimate.getLineEstimateDetails() != null)
-				reportParams.put("modeOfAllotment",
-						abstractEstimate.getLineEstimateDetails().getLineEstimate().getModeOfAllotment().toString());
-			else
-				reportParams.put("modeOfAllotment", "");
-			reportParams.put("agreementAmount", df.format(workOrder.getWorkOrderAmount()));
-			reportParams.put("emd", df.format(workOrder.getEmdAmountDeposited()));
-			reportParams.put("asd", df.format(workOrder.getSecurityDeposit()));
-			reportParams.put("WINCode", abstractEstimate.getProjectCode().getCode());
-			reportParams.put("amountOfEstimate",
-					revisionEstimate.getEstimateValue().setScale(2, BigDecimal.ROUND_HALF_EVEN));
-			reportParams.put("ward", abstractEstimate.getWard().getName());
-			reportParams.put("nonTenderedLumpSumActivities",
-					revisionEstimateService.getNonTenderedLumpSumActivities(revisionEstimate.getId()));
-			reportParams.put("changeQuatityActivities",
-					revisionEstimateService.getChangeQuatityActivities(revisionEstimate.getId()));
-			reportParams.put("tenderFinalizedPercentage", workOrder.getTenderFinalizedPercentage());
-			reportParams.put("currDate", DateUtils.getFormattedDateWithTimeStamp(new DateTime()));
-			reportParams.put("workValue", revisionEstimate.getWorkValue());
-			reportParams.put("reportRunDate", DateUtils.getFormattedDateWithTimeStamp(new DateTime()));
+            final String cityName = ApplicationThreadLocals.getMunicipalityName();
+            reportParams.put("cityName", cityName);
+            reportParams.put("revisionEstimate", revisionEstimate);
+            reportParams.put("workOrderNumber",
+                    workOrder.getWorkOrderNumber() != null ? workOrder.getWorkOrderNumber() : "");
+            reportParams.put("workOrderDate", workOrder.getWorkOrderDate() != null
+                    ? DateUtils.getDefaultFormattedDate(workOrder.getWorkOrderDate()) : "");
 
-			if (!abstractEstimate.getEstimateTechnicalSanctions().isEmpty()) {
-				final String technicalSanctionByDesignation = worksUtils.getUserDesignation(abstractEstimate
-						.getEstimateTechnicalSanctions()
-						.get(abstractEstimate.getEstimateTechnicalSanctions().size() - 1).getTechnicalSanctionBy());
-				reportParams.put("technicalSanctionByDesignation", technicalSanctionByDesignation);
-			} else
-				reportParams.put("technicalSanctionByDesignation", "");
-			reportInput = new ReportRequest(REVISIONAGREEMENTPDF, revisionEstimate, reportParams);
-		}
+            reportParams.put("contractorName",
+                    workOrder.getContractor().getName() != null ? workOrder.getContractor().getName() : "");
+            reportParams.put("contractorAddress", workOrder.getContractor().getBankaccount() != null
+                    ? workOrder.getContractor().getCorrespondenceAddress() : "");
+            reportParams.put("panNo",
+                    workOrder.getContractor().getPanNumber() != null ? workOrder.getContractor().getPanNumber() : "");
+            reportParams.put("bank",
+                    workOrder.getContractor().getBank() != null ? workOrder.getContractor().getBank().getName() : "");
+            reportParams.put("accountNo", workOrder.getContractor().getBankaccount() != null
+                    ? workOrder.getContractor().getBankaccount() : "");
+            reportParams.put("subject", abstractEstimate.getName());
+            if (abstractEstimate.getLineEstimateDetails() != null)
+                reportParams.put("modeOfAllotment",
+                        abstractEstimate.getLineEstimateDetails().getLineEstimate().getModeOfAllotment().toString());
+            else
+                reportParams.put("modeOfAllotment", "");
+            reportParams.put("agreementAmount", df.format(workOrder.getWorkOrderAmount()));
+            reportParams.put("emd", df.format(workOrder.getEmdAmountDeposited()));
+            reportParams.put("asd", df.format(workOrder.getSecurityDeposit()));
+            reportParams.put("WINCode", abstractEstimate.getProjectCode().getCode());
+            reportParams.put("amountOfEstimate",
+                    revisionEstimate.getEstimateValue().setScale(2, BigDecimal.ROUND_HALF_EVEN));
+            reportParams.put("ward", abstractEstimate.getWard().getName());
+            reportParams.put("nonTenderedLumpSumActivities",
+                    revisionEstimateService.getNonTenderedLumpSumActivities(revisionEstimate.getId()));
+            reportParams.put("changeQuatityActivities",
+                    revisionEstimateService.getChangeQuatityActivities(revisionEstimate.getId()));
+            reportParams.put("tenderFinalizedPercentage", workOrder.getTenderFinalizedPercentage());
+            reportParams.put("currDate", DateUtils.getFormattedDateWithTimeStamp(new DateTime()));
+            reportParams.put("workValue", revisionEstimate.getWorkValue());
+            reportParams.put("reportRunDate", DateUtils.getFormattedDateWithTimeStamp(new DateTime()));
 
-		final HttpHeaders headers = new HttpHeaders();
-		headers.setContentType(MediaType.parseMediaType("application/pdf"));
-		headers.add("content-disposition",
-				"inline;filename=RevisionAgreement_" + revisionEstimate.getEstimateNumber() + ".pdf");
-		reportOutput = reportService.createReport(reportInput);
-		return new ResponseEntity<byte[]>(reportOutput.getReportOutputData(), headers, HttpStatus.CREATED);
-	}
+            if (!abstractEstimate.getEstimateTechnicalSanctions().isEmpty()) {
+                final String technicalSanctionByDesignation = worksUtils.getUserDesignation(abstractEstimate
+                        .getEstimateTechnicalSanctions()
+                        .get(abstractEstimate.getEstimateTechnicalSanctions().size() - 1).getTechnicalSanctionBy());
+                reportParams.put("technicalSanctionByDesignation", technicalSanctionByDesignation);
+            } else
+                reportParams.put("technicalSanctionByDesignation", "");
+            reportInput = new ReportRequest(REVISIONAGREEMENTPDF, revisionEstimate, reportParams);
+        }
+
+        final HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.parseMediaType("application/pdf"));
+        headers.add("content-disposition",
+                "inline;filename=RevisionAgreement_" + revisionEstimate.getEstimateNumber() + ".pdf");
+        reportOutput = reportService.createReport(reportInput);
+        return new ResponseEntity<byte[]>(reportOutput.getReportOutputData(), headers, HttpStatus.CREATED);
+    }
 
 }
