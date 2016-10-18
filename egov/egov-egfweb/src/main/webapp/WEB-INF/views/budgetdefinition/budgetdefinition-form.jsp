@@ -46,7 +46,8 @@
 								code="lbl.financialyear" /> </label>
 						<div class="col-sm-6 add-margin">
 							<form:select path="financialYear" id="financialYear"
-								cssClass="form-control disablefield" cssErrorClass="form-control error"
+								cssClass="form-control disablefield"
+								cssErrorClass="form-control error"
 								onchange="getParentByFinancialYear(this.value);getReferenceBudgets(this.value)"
 								disabled="disabled">
 								<form:option value="">
@@ -64,7 +65,8 @@
 						<label class="col-sm-3 control-label text-right"><spring:message
 								code="lbl.parent" /> </label>
 						<div class="col-sm-6 add-margin">
-							<form:select path="parent" id="parent" cssClass="form-control disablefield"
+							<form:select path="parent" id="parent"
+								cssClass="form-control disablefield"
 								cssErrorClass="form-control error" disabled="disabled">
 								<c:if test="${empty modify}">
 									<form:option value="">
@@ -81,7 +83,7 @@
 						<label class="col-sm-3 control-label text-right"><spring:message
 								code="lbl.description" /> </label>
 						<div class="col-sm-6 add-margin">
-							<form:input path="description"
+							<form:textarea path="description"
 								class="form-control text-left patternvalidation"
 								data-pattern="alphanumeric" maxlength="250" />
 							<form:errors path="description" cssClass="error-msg" />
@@ -108,7 +110,8 @@
 								code="lbl.referencebudget" /> </label>
 						<div class="col-sm-6 add-margin">
 							<form:select path="referenceBudget" id="referenceBudget"
-								cssClass="form-control disablefield" cssErrorClass="form-control error" disabled="disabled">
+								cssClass="form-control disablefield"
+								cssErrorClass="form-control error" disabled="disabled">
 								<c:if test="${empty modify}">
 									<form:option value="">
 										<spring:message code="lbl.select" />
@@ -119,12 +122,15 @@
 							<form:errors path="referenceBudget" cssClass="error-msg" />
 						</div>
 					</div>
-					<input type="hidden" name="budget" id="budgetId" value="${budget.id}" /> <input
-						type="hidden" id="financialYearId"
+					<input type="hidden" name="budget" id="budgetId"
+						value="${budget.id}" /> <input type="hidden" id="financialYearId"
 						value="${budget.financialYear.id}" /> <input type="hidden"
 						id="parentValue" value="${budget.parent.name}" /> <input
 						type="hidden" id="referenceValue"
-						value="${budget.referenceBudget.id}" /> 
-						
+						value="${budget.referenceBudget.id}" />
+					<c:if test="${mode =='edit'}">
+						<input type="hidden" id="isPrimaryBudget" name="isPrimaryBudget"
+							value="${budget.isPrimaryBudget}" />
+					</c:if>
 					<script type="text/javascript"
 						src="<c:url value='/resources/app/js/budgetDefinitionHelper.js'/>"></script>

@@ -132,8 +132,9 @@ public class BudgetDefinitionService {
                         null);
         }
         if (budget.getIsPrimaryBudget() && budget.getFinancialYear() != null && (budget.getParent() == null)) {
-            final List<Budget> b =budgetDefinitionRepository.findByIsbereIsAndFinancialYearIdIsAndIsPrimaryBudgetTrueAndParentIsNull(budget.getIsbere(),budget.getFinancialYear().getId());
-            validationMessage = messageSource.getMessage("budget.primary.invalid1", new String[] { b.get(0).getName(),b.get(0).getFinancialYear().getFinYearRange() },
+            final List<Budget> budgetList =budgetDefinitionRepository.findByIsbereIsAndFinancialYearIdIsAndIsPrimaryBudgetTrueAndParentIsNull(budget.getIsbere(),budget.getFinancialYear().getId());
+           if(!budgetList.isEmpty())
+            validationMessage = messageSource.getMessage("budget.primary.invalid1", new String[] { budgetList.get(0).getName(),budgetList.get(0).getFinancialYear().getFinYearRange() },
                     null);
         }
         return validationMessage;       

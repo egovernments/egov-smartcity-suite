@@ -135,9 +135,10 @@ public class BudgetDefinitionController {
     public String update(@Valid @ModelAttribute final Budget budget, final BindingResult errors, final Model model,
             final RedirectAttributes redirectAttrs) {
         String validationMessage = budgetDefinitionService.validate(budget, errors);
-        if (errors.hasErrors()) {
+        if (errors.hasErrors() || !StringUtils.isEmpty(validationMessage)) {
             prepareNewForm(model);
             model.addAttribute("validationMessage", validationMessage);
+            model.addAttribute("modify", "modify");
             return BUDGET_EDIT;
         }
         budgetDefinitionService.update(budget);
