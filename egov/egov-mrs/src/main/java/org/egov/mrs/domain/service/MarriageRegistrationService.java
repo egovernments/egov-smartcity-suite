@@ -67,11 +67,9 @@ import org.egov.infra.admin.master.service.BoundaryService;
 import org.egov.infra.exception.ApplicationRuntimeException;
 import org.egov.infra.filestore.entity.FileStoreMapper;
 import org.egov.infra.filestore.service.FileStoreService;
-import org.egov.infra.messaging.MessagingService;
 import org.egov.infra.search.elastic.entity.ApplicationIndexBuilder;
 import org.egov.infra.search.elastic.service.ApplicationIndexService;
 import org.egov.infra.security.utils.SecurityUtils;
-import org.egov.infra.utils.ApplicationNumberGenerator;
 import org.egov.infra.utils.DateUtils;
 import org.egov.infra.workflow.entity.State;
 import org.egov.infra.workflow.entity.StateHistory;
@@ -80,6 +78,8 @@ import org.egov.mrs.application.MarriageUtils;
 import org.egov.mrs.application.service.MarriageCertificateService;
 import org.egov.mrs.application.service.MarriageRegistrationDemandService;
 import org.egov.mrs.application.service.workflow.RegistrationWorkflowService;
+import org.egov.mrs.autonumber.MarriageRegistrationApplicationNumberGenerator;
+import org.egov.mrs.autonumber.MarriageRegistrationNumberGenerator;
 import org.egov.mrs.domain.entity.IdentityProof;
 import org.egov.mrs.domain.entity.MarriageCertificate;
 import org.egov.mrs.domain.entity.MarriageDocument;
@@ -93,7 +93,6 @@ import org.egov.mrs.domain.repository.WitnessRepository;
 import org.egov.mrs.masters.service.MarriageActService;
 import org.egov.mrs.masters.service.MarriageFeeService;
 import org.egov.mrs.masters.service.ReligionService;
-import org.egov.mrs.utils.MarriageRegistrationNoGenerator;
 import org.egov.pims.commons.Position;
 import org.hibernate.Criteria;
 import org.hibernate.Session;
@@ -111,12 +110,7 @@ import org.springframework.web.multipart.MultipartFile;
 @Transactional(readOnly = true)
 public class MarriageRegistrationService {
 
-    private final String MSG_KEY_SMS_REGISTRATION_NEW = "msg.newregistration.sms";
-    private final String MSG_KEY_SMS_REGISTRATION_REJECTION = "msg.rejectregistration.sms";
-    private final String MSG_KEY_EMAIL_REGISTRATION_NEW_EMAIL = "msg.newregistration.mail";
-    private final String MSG_KEY_EMAIL_REGISTRATION_NEW_SUBJECT = "msg.newregistration.mail.subject";
-    private final String MSG_KEY_EMAIL_REGISTRATION_REJECTION_EMAIL = "msg.rejectionregistration.mail";
-    private final String MSG_KEY_EMAIL_REGISTRATION_REJECTION_SUBJECT = "msg.rejectionregistration.mail.subject";
+
 
     private static final Logger LOG = Logger.getLogger(MarriageRegistrationService.class);
     @Autowired
@@ -128,7 +122,7 @@ public class MarriageRegistrationService {
     private SecurityUtils securityUtils;
 
     @Autowired
-    private MessagingService messagingService;
+    private MarriageSmsAndEmailService marriageSmsAndEmailService;
     
 
     @Autowired
@@ -149,13 +143,13 @@ public class MarriageRegistrationService {
     private BoundaryService boundaryService;
 
     @Autowired
-    private ApplicationNumberGenerator applicationNumberGenerator;
+    private MarriageRegistrationApplicationNumberGenerator marriageRegistrationApplicationNumberGenerator;
 
     @Autowired
     private RegistrationWorkflowService workflowService;
 
     @Autowired
-    private MarriageRegistrationNoGenerator registrationNoGenerator;
+    private MarriageRegistrationNumberGenerator marriageRegistrationNumberGenerator;
 
     @Autowired
     private ApplicationIndexService applicationIndexService;
@@ -216,9 +210,8 @@ public class MarriageRegistrationService {
 
     @Transactional
     public String createRegistration(final MarriageRegistration registration, final WorkflowContainer workflowContainer) {
-
-        if (StringUtils.isBlank(registration.getApplicationNo())) {
-            registration.setApplicationNo(applicationNumberGenerator.generate());
+    	  if (StringUtils.isBlank(registration.getApplicationNo())) {
+            registration.setApplicationNo(marriageRegistrationApplicationNumberGenerator.getNextApplicationNumberForMarriageRegistration(registration));
             registration.setApplicationDate(new Date());
         }
 
@@ -281,6 +274,8 @@ public class MarriageRegistrationService {
         workflowService.transition(registration, workflowContainer, registration.getApprovalComent());
 
         create(registration);
+        marriageSmsAndEmailService.sendSMS(registration,MarriageRegistration.RegistrationStatus.CREATED.toString());
+        marriageSmsAndEmailService.sendEmail(registration,MarriageRegistration.RegistrationStatus.CREATED.toString());
 
         return registration.getApplicationNo();
     }
@@ -333,7 +328,8 @@ public class MarriageRegistrationService {
     private void updateRegistrationData(final MarriageRegistration regModel, final MarriageRegistration registration) {
         registration.setDateOfMarriage(regModel.getDateOfMarriage());
         registration.setPlaceOfMarriage(regModel.getPlaceOfMarriage());
-        registration.setFeeCriteria(regModel.getFeeCriteria());
+        if(regModel.getFeeCriteria()!=null && regModel.getFeeCriteria().getId()!=null)
+        	registration.setFeeCriteria(marriageFeeService.getFee(regModel.getFeeCriteria().getId()));
         registration.setFeePaid(regModel.getFeePaid());
         registration.setMarriageAct(marriageActService.getAct(registration.getMarriageAct().getId()));
         
@@ -426,25 +422,24 @@ public class MarriageRegistrationService {
     public MarriageRegistration approveRegistration( MarriageRegistration registration, final WorkflowContainer workflowContainer) {
         registration.setStatus(
                 marriageUtils.getStatusByCodeAndModuleType(MarriageRegistration.RegistrationStatus.APPROVED.toString(), MarriageConstants.MODULE_NAME));
-        registration.setRegistrationNo(registrationNoGenerator.generateRegistrationNo());
+        registration.setRegistrationNo(marriageRegistrationNumberGenerator.generateMarriageRegistrationNumber(registration));
         registration = update(registration);
         workflowService.transition(registration, workflowContainer, workflowContainer.getApproverComments());
-        sendSMS(registration);
-        sendEmail(registration);
         createRegistrationAppIndex(registration); 
         return registration;
     }
     
     @Transactional
     public MarriageRegistration printCertificate(MarriageRegistration registration, final WorkflowContainer workflowContainer,final HttpServletRequest request) throws IOException {
-        MarriageCertificate marriageCertificate = marriageCertificateService.generateMarriageCertificate(registration,request);
+     
+    	MarriageCertificate marriageCertificate = marriageCertificateService.generateMarriageCertificate(registration,request);
         registration.setStatus(
                 marriageUtils.getStatusByCodeAndModuleType(MarriageRegistration.RegistrationStatus.REGISTERED.toString(), MarriageConstants.MODULE_NAME));
         registration.addCertificate(marriageCertificate);
         registration.setActive(true);
         workflowService.transition(registration, workflowContainer, workflowContainer.getApproverComments()); 
-        sendSMS(registration);
-        sendEmail(registration);
+        marriageSmsAndEmailService.sendSMS(registration,MarriageRegistration.RegistrationStatus.REGISTERED.toString());
+        marriageSmsAndEmailService.sendEmail(registration,MarriageRegistration.RegistrationStatus.REGISTERED.toString());
         return registration;
     }
     
@@ -463,40 +458,7 @@ public class MarriageRegistrationService {
         applicationIndexService.createApplicationIndex(applicationIndexBuilder.build());
     }
 
-    private void sendSMS(final MarriageRegistration registration) {
-        String msgKey = MSG_KEY_SMS_REGISTRATION_NEW;
-
-        if (registration.getStatus()!=null && 
-                registration.getStatus().getCode().equalsIgnoreCase(MarriageRegistration.RegistrationStatus.REJECTED.toString()))
-            msgKey = MSG_KEY_SMS_REGISTRATION_REJECTION;
-
-        final String message = mrsMessageSource.getMessage(msgKey,
-                new String[] { registration.getHusband().getFullName(), registration.getWife().getFullName(),
-                        registration.getRegistrationNo() },
-                null);
-        messagingService.sendSMS(registration.getHusband().getContactInfo().getMobileNo(), message);
-        messagingService.sendSMS(registration.getWife().getContactInfo().getMobileNo(), message);
-    }
-
-    private void sendEmail(final MarriageRegistration registration) {
-        String msgKeyMail = MSG_KEY_EMAIL_REGISTRATION_NEW_EMAIL;
-        String msgKeyMailSubject = MSG_KEY_EMAIL_REGISTRATION_NEW_SUBJECT;
-
-        if (registration.getStatus()!=null && 
-                registration.getStatus().getCode().equalsIgnoreCase(MarriageRegistration.RegistrationStatus.REJECTED.toString())){
-            msgKeyMail = MSG_KEY_EMAIL_REGISTRATION_REJECTION_EMAIL;
-            msgKeyMailSubject = MSG_KEY_EMAIL_REGISTRATION_REJECTION_SUBJECT;
-        }
-
-        final String message = mrsMessageSource.getMessage(msgKeyMail,
-                new String[] { registration.getHusband().getFullName(), registration.getWife().getFullName(),
-                        registration.getRegistrationNo() },
-                null);
-
-        final String subject = mrsMessageSource.getMessage(msgKeyMailSubject, null, null);
-        messagingService.sendEmail(registration.getHusband().getContactInfo().getEmail(), subject, message);
-        messagingService.sendEmail(registration.getWife().getContactInfo().getEmail(), subject, message);
-    }
+   
 
     @Transactional
     public MarriageRegistration rejectRegistration(MarriageRegistration registration, final WorkflowContainer workflowContainer) {
@@ -505,8 +467,8 @@ public class MarriageRegistrationService {
                 :marriageUtils.getStatusByCodeAndModuleType(MarriageRegistration.RegistrationStatus.CANCELLED.toString(), MarriageConstants.MODULE_NAME));
         registration.setRejectionReason(workflowContainer.getApproverComments());
         workflowService.transition(registration, workflowContainer, workflowContainer.getApproverComments());
-        sendSMS(registration);
-        sendEmail(registration);
+        marriageSmsAndEmailService.sendSMS(registration,MarriageRegistration.RegistrationStatus.REJECTED.toString());
+        marriageSmsAndEmailService.sendEmail(registration,MarriageRegistration.RegistrationStatus.REJECTED.toString());
         return registration;
     } 
 

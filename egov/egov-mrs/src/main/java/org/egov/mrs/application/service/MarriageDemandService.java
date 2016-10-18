@@ -85,7 +85,7 @@ public abstract class MarriageDemandService {
         egDemand.setIsHistory("N");
         egDemand.setEgInstallmentMaster(installmentDAO
                 .getInsatllmentByModuleForGivenDate(moduleService.getModuleByName(MarriageConstants.MODULE_NAME), new Date()));
-        return egDemandDAO.create(egDemand);
+        return egDemand;
     }
 
     public abstract Set<EgDemandDetails> createDemandDetails(BigDecimal amount);

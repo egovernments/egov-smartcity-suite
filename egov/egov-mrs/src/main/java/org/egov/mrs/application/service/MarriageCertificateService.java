@@ -62,7 +62,7 @@ import org.egov.infra.security.utils.SecurityUtils;
 import org.egov.infra.utils.DateUtils;
 import org.egov.infra.web.utils.WebUtils;
 import org.egov.mrs.application.MarriageConstants;
-import org.egov.mrs.domain.autonumber.MarriageCertificateNumberGenerator;
+import org.egov.mrs.autonumber.MarriageCertificateNumberGenerator;
 import org.egov.mrs.domain.entity.MarriageCertificate;
 import org.egov.mrs.domain.entity.MarriageRegistration;
 import org.egov.mrs.domain.entity.ReIssue;
@@ -182,7 +182,7 @@ public class MarriageCertificateService {
                 final InputStream fileStream,String cityCode) {
             MarriageCertificate marriageCertificate = new MarriageCertificate();
             if(marriageRegistration!=null){
-                String certificateNo = marriageCertificateNumberGenerator.generateCertificateNumber(cityCode);
+                String certificateNo = marriageCertificateNumberGenerator.generateCertificateNumber(marriageRegistration,cityCode);
                 final String fileName = certificateNo + ".pdf";
                 buildCertificate(marriageRegistration,null,marriageCertificate,certificateNo,MarriageCertificateType.REGISTRATION.toString());
                 final FileStoreMapper fileStore = fileStoreService.store(fileStream, fileName, "application/pdf",
@@ -280,7 +280,7 @@ public class MarriageCertificateService {
                 final InputStream fileStream,String cityCode,String type) {
             MarriageCertificate marriageCertificate = new MarriageCertificate();
             if(reIssue!=null){
-                String certificateNo = marriageCertificateNumberGenerator.generateCertificateNumber(cityCode);
+                String certificateNo = marriageCertificateNumberGenerator.generateCertificateNumber(reIssue,cityCode);
                 final String fileName = certificateNo + ".pdf";
                 buildCertificate(null,reIssue,marriageCertificate,certificateNo,type.toString());
                 final FileStoreMapper fileStore = fileStoreService.store(fileStream, fileName, "application/pdf",

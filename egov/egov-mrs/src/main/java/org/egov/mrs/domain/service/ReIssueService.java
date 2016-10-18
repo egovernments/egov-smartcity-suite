@@ -61,7 +61,6 @@ import org.egov.infra.messaging.MessagingService;
 import org.egov.infra.search.elastic.entity.ApplicationIndexBuilder;
 import org.egov.infra.search.elastic.service.ApplicationIndexService;
 import org.egov.infra.security.utils.SecurityUtils;
-import org.egov.infra.utils.ApplicationNumberGenerator;
 import org.egov.infra.workflow.entity.State;
 import org.egov.infra.workflow.entity.StateHistory;
 import org.egov.mrs.application.MarriageConstants;
@@ -69,6 +68,7 @@ import org.egov.mrs.application.MarriageUtils;
 import org.egov.mrs.application.service.MarriageCertificateService;
 import org.egov.mrs.application.service.ReIssueDemandService;
 import org.egov.mrs.application.service.workflow.RegistrationWorkflowService;
+import org.egov.mrs.autonumber.MarriageRegistrationApplicationNumberGenerator;
 import org.egov.mrs.domain.entity.MarriageCertificate;
 import org.egov.mrs.domain.entity.MarriageDocument;
 import org.egov.mrs.domain.entity.MrApplicant;
@@ -120,8 +120,8 @@ public class ReIssueService {
     private ApplicationIndexService applicationIndexService;
 
     @Autowired
-    private ApplicationNumberGenerator applicationNumberGenerator;
-
+    private MarriageRegistrationApplicationNumberGenerator marriageRegistrationApplicationNumberGenerator;
+ 
     @Autowired
     private MarriageDocumentService marriageDocumentService;
 
@@ -163,7 +163,7 @@ public class ReIssueService {
     public String createReIssueApplication(final ReIssue reIssue, final WorkflowContainer workflowContainer) {
 
         if (StringUtils.isBlank(reIssue.getApplicationNo())) {
-            reIssue.setApplicationNo(applicationNumberGenerator.generate());
+            reIssue.setApplicationNo(marriageRegistrationApplicationNumberGenerator.getNextReIssueApplicationNumber(reIssue));
             reIssue.setApplicationDate(new Date());
         }
         if(reIssue.getFeeCriteria()!=null)

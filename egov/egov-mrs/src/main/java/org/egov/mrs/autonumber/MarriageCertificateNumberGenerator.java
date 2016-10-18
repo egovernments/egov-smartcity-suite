@@ -38,11 +38,14 @@
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
 
-package org.egov.mrs.domain.autonumber;
+package org.egov.mrs.autonumber;
 
+import org.egov.mrs.domain.entity.MarriageRegistration;
+import org.egov.mrs.domain.entity.ReIssue;
 import org.springframework.stereotype.Service;
 
 @Service
 public interface MarriageCertificateNumberGenerator {
-    public String generateCertificateNumber(String cityCode);
+    public String generateCertificateNumber(MarriageRegistration marriageRegistration, String cityCode);
+    public String generateCertificateNumber(ReIssue reIssue, String cityCode);
 }

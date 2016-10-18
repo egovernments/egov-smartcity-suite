@@ -63,5 +63,7 @@ public class MarriageConstants {
     public static final String APPROVED = "APPROVED";
     public static final String MARRIAGEFEECOLLECTION_FUCNTION_CODE = "MARRIAGE_FUNCTION_CODE";
     public static final String FILESTORE_MODULECODE = "MRS";
-
+    public static final String SENDSMSFROOMMARRIAGEMODULE="SENDSMSFROOMMARRIAGEMODULE";
+    public static final String SENDEMAILFROOMMARRIAGEMODULE="SENDEMAILFROOMMARRIAGEMODULE";
+    
 }

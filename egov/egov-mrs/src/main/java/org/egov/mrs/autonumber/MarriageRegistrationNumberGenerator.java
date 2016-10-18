@@ -36,32 +36,13 @@
 
   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
+package org.egov.mrs.autonumber;
 
-package org.egov.mrs.utils;
-
-import java.io.Serializable;
-import java.text.SimpleDateFormat;
-import java.util.Date;
-
-import org.egov.infra.persistence.utils.SequenceNumberGenerator;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.egov.mrs.domain.entity.MarriageRegistration;
 import org.springframework.stereotype.Service;
 
 @Service
-public class MarriageRegistrationNoGenerator {
-
-    private static final String SEQ_REGISTRATIONNO = "SEQ_EGMRS_REGISTRATIONNO";
-
-    @Autowired
-    private SequenceNumberGenerator sequenceNoGenerator;
-
-    public String generateRegistrationNo() {
-        
-        final Serializable referenceNumber = sequenceNoGenerator.getNextSequence(SEQ_REGISTRATIONNO);
-        return new  SimpleDateFormat("ddMMyyyy").format(new Date())
-                .concat(String.format(
-                "%s%06d", "", referenceNumber));
-       
-    }
+public interface MarriageRegistrationNumberGenerator {
+    public String generateMarriageRegistrationNumber(MarriageRegistration registration) ;
 
 }
