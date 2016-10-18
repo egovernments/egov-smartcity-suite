@@ -203,7 +203,7 @@ public class GenerateConnectionBillController {
                 final File file = fileStoreService.fetch(fsm, WaterTaxConstants.FILESTORE_MODULECODE);
                 final byte[] bFile = FileUtils.readFileToByteArray(file);
                 pdfs.add(new ByteArrayInputStream(bFile));
-                getServletResponse( response,pdfs,consumerCode);
+                getServletResponse(response, pdfs, consumerCode);
             } catch (final Exception e) {
                 throw new ValidationException(e.getMessage());
             }
@@ -242,11 +242,11 @@ public class GenerateConnectionBillController {
                 }
         if (LOGGER.isDebugEnabled())
             LOGGER.debug("Number of pdfs : " + (pdfs != null ? pdfs.size() : ZERO));
-       
-            if (!pdfs.isEmpty()) {
-                getServletResponse( response,pdfs,"search_bill");
-            } else
-                throw new ValidationException("err.demand.notice");
+
+        if (!pdfs.isEmpty())
+            getServletResponse(response, pdfs, "search_bill");
+        else
+            throw new ValidationException("err.demand.notice");
         final long endTime = System.currentTimeMillis();
         if (LOGGER.isDebugEnabled()) {
             LOGGER.debug("GenerateBill | mergeAndDownload | Time taken(ms) " + (endTime - startTime));
@@ -254,19 +254,18 @@ public class GenerateConnectionBillController {
         }
         return null;
     }
-    
-    private HttpServletResponse getServletResponse(HttpServletResponse response,List<InputStream> pdfs, String filename)
-    {
-        try {            
-          final ByteArrayOutputStream output = new ByteArrayOutputStream();
-          final byte[] data = concatPDFs(pdfs, output);
-          response.setHeader("Content-disposition", "attachment;filename=" + filename + ".pdf");
-          response.setContentType("application/pdf");
-          response.setContentLength(data.length);
-          response.getOutputStream().write(data);
-          return response;
-        }
-        catch (final IOException e) {
+
+    private HttpServletResponse getServletResponse(final HttpServletResponse response, final List<InputStream> pdfs,
+            final String filename) {
+        try {
+            final ByteArrayOutputStream output = new ByteArrayOutputStream();
+            final byte[] data = concatPDFs(pdfs, output);
+            response.setHeader(WaterTaxConstants.CONTENT_DISPOSITION, "attachment;filename=" + filename + ".pdf");
+            response.setContentType("application/pdf");
+            response.setContentLength(data.length);
+            response.getOutputStream().write(data);
+            return response;
+        } catch (final IOException e) {
             throw new ValidationException(e.getMessage());
         }
     }
@@ -350,7 +349,7 @@ public class GenerateConnectionBillController {
             if (null != generateConnectionBillList && generateConnectionBillList.size() >= 0) {
 
                 zipOutputStream = new ZipOutputStream(response.getOutputStream());
-                response.setHeader("Content-disposition", "attachment;filename=" + "searchbill" + ".zip");
+                response.setHeader(WaterTaxConstants.CONTENT_DISPOSITION, "attachment;filename=" + "searchbill" + ".zip");
                 response.setContentType("application/zip");
             }
 
