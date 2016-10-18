@@ -97,9 +97,6 @@ public class DishonorChequeService implements FinancialIntegrationService {
     private FinancialsUtil financialsUtil;
 
     @Autowired
-    private ChartOfAccountsHibernateDAO chartOfAccountsHibernateDAO;
-
-    @Autowired
     @Qualifier("instrumentHeaderService")
     public InstrumentHeaderService instrumentHeaderService;
 

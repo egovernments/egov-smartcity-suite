@@ -66,9 +66,6 @@ public class CollectionIndexService {
         this.collectionIndexRepository = collectionIndexRepository;
     }
 
-    @Autowired
-    private ApplicationIndexService applicationIndexService;
-
     @Transactional
     @Indexing(name = Index.COLLECTION, type = IndexType.COLLECTION_BIFURCATION)
     public CollectionIndex persistCollectionIndex(final CollectionIndex collectionIndex) {

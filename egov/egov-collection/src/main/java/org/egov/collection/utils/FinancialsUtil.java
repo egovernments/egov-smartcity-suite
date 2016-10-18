@@ -325,7 +325,4 @@ public class FinancialsUtil {
         this.instrumentHeaderService = instrumentHeaderService;
     }
 
-    public void setCollectionsUtil(final CollectionsUtil collectionsUtil) {
-    }
-
 }
