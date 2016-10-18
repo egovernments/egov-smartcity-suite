@@ -91,9 +91,15 @@
 								<fmt:formatDate value="${lineEstimate.technicalSanctionDate }" pattern="dd/MM/yyyy"/>
 							</c:if>
 						</td>
-						<c:if test="${mode == 'readOnly' }">
-						<td><c:out default="N/A" value="${technicalsanctionbydesignation } - ${lineEstimate.technicalSanctionBy.name }"></c:out></td>
-						</c:if>
+							<c:choose>
+								<c:when
+									test="${mode == 'readOnly' && technicalsanctionbydesignation == null }">
+									<td><c:out value="N/A" ></c:out></td>
+								</c:when>
+								<c:otherwise>
+									<td><c:out default="N/A" value="${technicalsanctionbydesignation } - ${lineEstimate.technicalSanctionBy.name }"></c:out></td>
+								</c:otherwise>
+							</c:choose>
 					</tr>
 				</tbody>
 			</table>
