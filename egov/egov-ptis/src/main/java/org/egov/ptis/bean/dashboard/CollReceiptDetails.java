@@ -46,48 +46,59 @@ import org.egov.ptis.domain.model.ErrorDetails;
 
 public class CollReceiptDetails {
 
-	private Long todayRcptsCount =0L;
-	private Long cytdRcptsCount =0L;
-	private Long lytdRcptsCount =0L;
-	private List<ReceiptsTrend> receiptsTrends;
-	private List<ReceiptTableData> receiptDetails;
-	private ErrorDetails errorDetails;
-	
-	public Long getTodayRcptsCount() {
-		return todayRcptsCount;
-	}
-	public void setTodayRcptsCount(Long todayRcptsCount) {
-		this.todayRcptsCount = todayRcptsCount;
-	}
-	public Long getCytdRcptsCount() {
-		return cytdRcptsCount;
-	}
-	public void setCytdRcptsCount(Long cytdRcptsCount) {
-		this.cytdRcptsCount = cytdRcptsCount;
-	}
-	public Long getLytdRcptsCount() {
-		return lytdRcptsCount;
-	}
-	public void setLytdRcptsCount(Long lytdRcptsCount) {
-		this.lytdRcptsCount = lytdRcptsCount;
-	}
-	public List<ReceiptsTrend> getReceiptsTrends() {
-		return receiptsTrends;
-	}
-	public void setReceiptsTrends(List<ReceiptsTrend> receiptsTrends) {
-		this.receiptsTrends = receiptsTrends;
-	}
-	public List<ReceiptTableData> getReceiptDetails() {
-		return receiptDetails;
-	}
-	public void setReceiptDetails(List<ReceiptTableData> receiptDetails) {
-		this.receiptDetails = receiptDetails;
-	}
-	public ErrorDetails getErrorDetails() {
-		return errorDetails;
-	}
-	public void setErrorDetails(ErrorDetails errorDetails) {
-		this.errorDetails = errorDetails;
-	}
-	
+    private Long todayRcptsCount = 0L;
+    private Long cytdRcptsCount = 0L;
+    private Long lytdRcptsCount = 0L;
+    private List<ReceiptsTrend> receiptsTrends;
+    private List<ReceiptTableData> receiptDetails;
+    private ErrorDetails errorDetails;
+
+    public Long getTodayRcptsCount() {
+        return todayRcptsCount;
+    }
+
+    public void setTodayRcptsCount(Long todayRcptsCount) {
+        this.todayRcptsCount = todayRcptsCount;
+    }
+
+    public Long getCytdRcptsCount() {
+        return cytdRcptsCount;
+    }
+
+    public void setCytdRcptsCount(Long cytdRcptsCount) {
+        this.cytdRcptsCount = cytdRcptsCount;
+    }
+
+    public Long getLytdRcptsCount() {
+        return lytdRcptsCount;
+    }
+
+    public void setLytdRcptsCount(Long lytdRcptsCount) {
+        this.lytdRcptsCount = lytdRcptsCount;
+    }
+
+    public List<ReceiptsTrend> getReceiptsTrends() {
+        return receiptsTrends;
+    }
+
+    public void setReceiptsTrends(List<ReceiptsTrend> receiptsTrends) {
+        this.receiptsTrends = receiptsTrends;
+    }
+
+    public List<ReceiptTableData> getReceiptDetails() {
+        return receiptDetails;
+    }
+
+    public void setReceiptDetails(List<ReceiptTableData> receiptDetails) {
+        this.receiptDetails = receiptDetails;
+    }
+
+    public ErrorDetails getErrorDetails() {
+        return errorDetails;
+    }
+
+    public void setErrorDetails(ErrorDetails errorDetails) {
+        this.errorDetails = errorDetails;
+    }
+
 }

@@ -38,44 +38,35 @@
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
 
-package org.egov.restapi.model;
+package org.egov.ptis.bean.dashboard;
 
-public class StateCityInfo {
+public class TotalCollectionStats {
 
-	private String region;
-	private String district;
-	private String city;
-	private String grade;
-	private String ulbCode;
-	
-	public String getRegion() {
-		return region;
-	}
-	public void setRegion(String region) {
-		this.region = region;
-	}
-	public String getDistrict() {
-		return district;
-	}
-	public void setDistrict(String district) {
-		this.district = district;
-	}
-	public String getCity() {
-		return city;
-	}
-	public void setCity(String city) {
-		this.city = city;
-	}
-	public String getGrade() {
-		return grade;
-	}
-	public void setGrade(String grade) {
-		this.grade = grade;
-	}
-	public String getUlbCode() {
-		return ulbCode;
-	}
-	public void setUlbCode(String ulbCode) {
-		this.ulbCode = ulbCode;
-	}
+    private CollectionStats propertyTax;
+    private CollectionStats waterTax;
+    private CollectionStats others;
+
+    public CollectionStats getPropertyTax() {
+        return propertyTax;
+    }
+
+    public void setPropertyTax(CollectionStats propertyTax) {
+        this.propertyTax = propertyTax;
+    }
+
+    public CollectionStats getWaterTax() {
+        return waterTax;
+    }
+
+    public void setWaterTax(CollectionStats waterTax) {
+        this.waterTax = waterTax;
+    }
+
+    public CollectionStats getOthers() {
+        return others;
+    }
+
+    public void setOthers(CollectionStats others) {
+        this.others = others;
+    }
 }

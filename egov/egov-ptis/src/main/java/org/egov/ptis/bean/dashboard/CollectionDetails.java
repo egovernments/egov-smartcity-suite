@@ -37,18 +37,41 @@
  *
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
-
 package org.egov.ptis.bean.dashboard;
 
 import java.math.BigDecimal;
+import java.util.List;
 
-public class ConsolidatedCollDetails {
+import org.egov.ptis.domain.model.ErrorDetails;
 
+public class CollectionDetails {
+    private BigDecimal todayColl = BigDecimal.ZERO;
+    private BigDecimal lyTodayColl = BigDecimal.ZERO;
     private BigDecimal cytdColl = BigDecimal.ZERO;
+    private BigDecimal cytdDmd = BigDecimal.ZERO;
     private BigDecimal totalDmd = BigDecimal.ZERO;
     private BigDecimal lytdColl = BigDecimal.ZERO;
     private BigDecimal performance = BigDecimal.ZERO;
     private BigDecimal lyVar = BigDecimal.ZERO;
+    private List<CollectionTrend> collTrends;
+    private List<CollTableData> responseDetails;
+    private ErrorDetails errorDetails;
+
+    public BigDecimal getTodayColl() {
+        return todayColl;
+    }
+
+    public void setTodayColl(BigDecimal todayColl) {
+        this.todayColl = todayColl;
+    }
+
+    public BigDecimal getLyTodayColl() {
+        return lyTodayColl;
+    }
+
+    public void setLyTodayColl(BigDecimal lyTodayColl) {
+        this.lyTodayColl = lyTodayColl;
+    }
 
     public BigDecimal getCytdColl() {
         return cytdColl;
@@ -56,6 +79,14 @@ public class ConsolidatedCollDetails {
 
     public void setCytdColl(BigDecimal cytdColl) {
         this.cytdColl = cytdColl;
+    }
+
+    public BigDecimal getCytdDmd() {
+        return cytdDmd;
+    }
+
+    public void setCytdDmd(BigDecimal cytdDmd) {
+        this.cytdDmd = cytdDmd;
     }
 
     public BigDecimal getTotalDmd() {
@@ -74,6 +105,30 @@ public class ConsolidatedCollDetails {
         this.lytdColl = lytdColl;
     }
 
+    public List<CollectionTrend> getCollTrends() {
+        return collTrends;
+    }
+
+    public void setCollTrends(List<CollectionTrend> collTrends) {
+        this.collTrends = collTrends;
+    }
+
+    public List<CollTableData> getResponseDetails() {
+        return responseDetails;
+    }
+
+    public void setResponseDetails(List<CollTableData> responseDetails) {
+        this.responseDetails = responseDetails;
+    }
+
+    public ErrorDetails getErrorDetails() {
+        return errorDetails;
+    }
+
+    public void setErrorDetails(ErrorDetails errorDetails) {
+        this.errorDetails = errorDetails;
+    }
+
     public BigDecimal getPerformance() {
         return performance;
     }
@@ -89,5 +144,4 @@ public class ConsolidatedCollDetails {
     public void setLyVar(BigDecimal lyVar) {
         this.lyVar = lyVar;
     }
-
 }

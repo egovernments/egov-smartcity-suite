@@ -40,7 +40,7 @@
 
 package org.egov.ptis.repository.elasticsearch;
 
-import org.egov.ptis.elasticsearch.model.CollectionIndex;
+import org.egov.collection.elasticsearch.CollectionIndex;
 import org.springframework.data.elasticsearch.repository.ElasticsearchRepository;
 import org.springframework.stereotype.Repository;
 

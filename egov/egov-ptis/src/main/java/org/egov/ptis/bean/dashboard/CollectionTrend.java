@@ -44,33 +44,40 @@ import java.math.BigDecimal;
 
 public class CollectionTrend {
 
-	private String month;
-	private BigDecimal pyColl = BigDecimal.ZERO;
-	private BigDecimal lyColl = BigDecimal.ZERO;
-	private BigDecimal cyColl = BigDecimal.ZERO;
-	
-	public String getMonth() {
-		return month;
-	}
-	public void setMonth(String month) {
-		this.month = month;
-	}
-	public BigDecimal getPyColl() {
-		return pyColl;
-	}
-	public void setPyColl(BigDecimal pyColl) {
-		this.pyColl = pyColl;
-	}
-	public BigDecimal getLyColl() {
-		return lyColl;
-	}
-	public void setLyColl(BigDecimal lyColl) {
-		this.lyColl = lyColl;
-	}
-	public BigDecimal getCyColl() {
-		return cyColl;
-	}
-	public void setCyColl(BigDecimal cyColl) {
-		this.cyColl = cyColl;
-	}
+    private String month;
+    private BigDecimal pyColl = BigDecimal.ZERO;
+    private BigDecimal lyColl = BigDecimal.ZERO;
+    private BigDecimal cyColl = BigDecimal.ZERO;
+
+    public String getMonth() {
+        return month;
+    }
+
+    public void setMonth(String month) {
+        this.month = month;
+    }
+
+    public BigDecimal getPyColl() {
+        return pyColl;
+    }
+
+    public void setPyColl(BigDecimal pyColl) {
+        this.pyColl = pyColl;
+    }
+
+    public BigDecimal getLyColl() {
+        return lyColl;
+    }
+
+    public void setLyColl(BigDecimal lyColl) {
+        this.lyColl = lyColl;
+    }
+
+    public BigDecimal getCyColl() {
+        return cyColl;
+    }
+
+    public void setCyColl(BigDecimal cyColl) {
+        this.cyColl = cyColl;
+    }
 }

@@ -40,28 +40,54 @@
 
 package org.egov.ptis.bean.dashboard;
 
-public class ConsolidatedCollectionDetails {
-	
-	private ConsolidatedCollDetails propertyTax;
-	private ConsolidatedCollDetails waterTax;
-	private ConsolidatedCollDetails others;
-	
-	public ConsolidatedCollDetails getPropertyTax() {
-		return propertyTax;
-	}
-	public void setPropertyTax(ConsolidatedCollDetails propertyTax) {
-		this.propertyTax = propertyTax;
-	}
-	public ConsolidatedCollDetails getWaterTax() {
-		return waterTax;
-	}
-	public void setWaterTax(ConsolidatedCollDetails waterTax) {
-		this.waterTax = waterTax;
-	}
-	public ConsolidatedCollDetails getOthers() {
-		return others;
-	}
-	public void setOthers(ConsolidatedCollDetails others) {
-		this.others = others;
-	}
+import java.io.Serializable;
+
+@SuppressWarnings("serial")
+public class StateCityInfo implements Serializable {
+
+    private String region;
+    private String district;
+    private String city;
+    private String grade;
+    private String ulbCode;
+
+    public String getRegion() {
+        return region;
+    }
+
+    public void setRegion(String region) {
+        this.region = region;
+    }
+
+    public String getDistrict() {
+        return district;
+    }
+
+    public void setDistrict(String district) {
+        this.district = district;
+    }
+
+    public String getCity() {
+        return city;
+    }
+
+    public void setCity(String city) {
+        this.city = city;
+    }
+
+    public String getGrade() {
+        return grade;
+    }
+
+    public void setGrade(String grade) {
+        this.grade = grade;
+    }
+
+    public String getUlbCode() {
+        return ulbCode;
+    }
+
+    public void setUlbCode(String ulbCode) {
+        this.ulbCode = ulbCode;
+    }
 }

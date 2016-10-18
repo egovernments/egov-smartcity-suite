@@ -38,31 +38,56 @@
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
 
-package org.egov.restapi.web.rest;
+package org.egov.ptis.bean.dashboard;
 
-import java.lang.reflect.Type;
+import java.math.BigDecimal;
 
-import org.egov.restapi.model.StateCityInfo;
+public class CollectionStats {
 
-import com.google.gson.JsonElement;
-import com.google.gson.JsonObject;
-import com.google.gson.JsonSerializationContext;
-import com.google.gson.JsonSerializer;
+    private BigDecimal cytdColl = BigDecimal.ZERO;
+    private BigDecimal totalDmd = BigDecimal.ZERO;
+    private BigDecimal lytdColl = BigDecimal.ZERO;
+    private BigDecimal performance = BigDecimal.ZERO;
+    private BigDecimal lyVar = BigDecimal.ZERO;
 
-public class StateInfoHelperAdaptor implements JsonSerializer<StateCityInfo>{
+    public BigDecimal getCytdColl() {
+        return cytdColl;
+    }
 
-	@Override
-    public JsonElement serialize(final StateCityInfo stateCityInfo, final Type type,
-            final JsonSerializationContext jsc) {
-        final JsonObject jsonObject = new JsonObject();
-        if (stateCityInfo != null) {
-            jsonObject.addProperty("region", stateCityInfo.getRegion());
-            jsonObject.addProperty("district", stateCityInfo.getDistrict());
-            jsonObject.addProperty("city", stateCityInfo.getCity());
-            jsonObject.addProperty("grade", stateCityInfo.getGrade());
-            jsonObject.addProperty("ulbCode", stateCityInfo.getUlbCode());
-        }
-        return jsonObject;
+    public void setCytdColl(BigDecimal cytdColl) {
+        this.cytdColl = cytdColl;
+    }
+
+    public BigDecimal getTotalDmd() {
+        return totalDmd;
+    }
+
+    public void setTotalDmd(BigDecimal totalDmd) {
+        this.totalDmd = totalDmd;
+    }
+
+    public BigDecimal getLytdColl() {
+        return lytdColl;
+    }
+
+    public void setLytdColl(BigDecimal lytdColl) {
+        this.lytdColl = lytdColl;
+    }
+
+    public BigDecimal getPerformance() {
+        return performance;
+    }
+
+    public void setPerformance(BigDecimal performance) {
+        this.performance = performance;
+    }
+
+    public BigDecimal getLyVar() {
+        return lyVar;
+    }
+
+    public void setLyVar(BigDecimal lyVar) {
+        this.lyVar = lyVar;
     }
 
 }
