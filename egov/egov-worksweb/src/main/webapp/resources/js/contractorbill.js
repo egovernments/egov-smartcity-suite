@@ -53,7 +53,7 @@ $(document).ready(function(){
 	var spillOverFlag = $('#spillOverFlag').val();
 	
 	if(billStatus != null && billStatus == '' && spillOverFlag == 'true') {
-		$('#actionButtons').prepend("<input type='submit' value='Create and Approve' class='btn btn-primary' id='createandapprove' name='Create and APprove'></input>");
+		$('#actionButtons').prepend("<input type='submit' value='Create and Approve' class='btn btn-primary' id='createandapprove' name='Create and Approve'></input>");
 	}
 
 	calculateNetPayableAmount();
@@ -68,7 +68,6 @@ $(document).ready(function(){
 	
 	var currentState = $('#currentState').val();
 	if(currentState == 'Created') {
-		$('#approverDetailHeading').hide();
 		
 		$('#approvalDepartment').removeAttr('required');
 		$('#approvalDesignation').removeAttr('required');
@@ -1037,3 +1036,13 @@ function validateRefundAmount() {
 	
 	return true;
 }
+
+$('.disableZero' ).keyup( function(){
+	    var valid = /^[1-9](\d{0,9})(\.\d{0,2})?$/.test(this.value),
+	        val = this.value;
+	    
+	    if(!valid){
+	        console.log("Invalid input!");
+	        this.value = val.substring(0, val.length - 1);
+	    }
+	});

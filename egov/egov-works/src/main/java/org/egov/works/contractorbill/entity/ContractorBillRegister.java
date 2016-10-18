@@ -72,7 +72,7 @@ public class ContractorBillRegister extends EgBillregister {
     private static final long serialVersionUID = -6056638534067396998L;
 
     public enum BillStatus {
-        CREATED, APPROVED, REJECTED, CANCELLED, RESUBMITTED
+        CREATED, APPROVED, REJECTED, CANCELLED, RESUBMITTED, CHECKED
     }
 
     private Integer billSequenceNumber;
@@ -103,7 +103,7 @@ public class ContractorBillRegister extends EgBillregister {
 
     @Transient
     private List<EgBilldetails> billDetailes = new ArrayList<EgBilldetails>(0);
-    
+
     @Transient
     private List<EgBilldetails> refundBillDetails = new ArrayList<EgBilldetails>(0);
 
@@ -322,5 +322,5 @@ public class ContractorBillRegister extends EgBillregister {
     public void setRefundBillDetails(final List<EgBilldetails> refundBillDetails) {
         this.refundBillDetails = refundBillDetails;
     }
-    
+
 }
