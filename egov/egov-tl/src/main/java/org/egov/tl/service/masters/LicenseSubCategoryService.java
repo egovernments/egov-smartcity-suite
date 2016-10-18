@@ -68,10 +68,12 @@ public class LicenseSubCategoryService {
     	for (LicenseSubCategoryDetails categoryDetails : subCategory.getLicenseSubCategoryDetails())
     		categoryDetails.setSubCategory(subCategory);
     	licenseSubCategoryRepository.save(subCategory);
-    }
+    }	
     @Transactional
     public void updateLicenseSubCategory(LicenseSubCategory licenseSubCategory) {
-    	licenseSubCategory.getSubCategory().removeIf(LicenseSubCategoryDetails::isMarkedForRemoval);
+    	licenseSubCategory.getLicenseSubCategoryDetails().removeIf(LicenseSubCategoryDetails::isMarkedForRemoval);
+    	for (LicenseSubCategoryDetails categoryDetails : licenseSubCategory.getLicenseSubCategoryDetails())
+    		categoryDetails.setSubCategory(licenseSubCategory);
     	licenseSubCategoryRepository.save(licenseSubCategory);
     }
 
