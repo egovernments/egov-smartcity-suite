@@ -190,6 +190,9 @@ public class AjaxLineEstimateController {
     public @ResponseBody List<Boundary> findWard(@RequestParam("name") final String name) {
         final List<Boundary> boundaries = boundaryService.getBondariesByNameAndBndryTypeAndHierarchyType(
                 WorksConstants.BOUNDARY_TYPE_WARD, WorksConstants.HIERARCHY_TYPE_ADMINISTRATION, "%" + name);
+        final List<Boundary> cityBoundary = boundaryService.getBondariesByNameAndBndryTypeAndHierarchyType(
+                WorksConstants.BOUNDARY_TYPE_CITY, WorksConstants.HIERARCHY_TYPE_ADMINISTRATION, "%" + name + "%");
+        boundaries.addAll(cityBoundary);
         return boundaries;
     }
 
