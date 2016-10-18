@@ -59,8 +59,8 @@ public class DailyCollectionReportSearch {
 
     private String fromDate;
     private String toDate;
-    SimpleDateFormat ft = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
-    SimpleDateFormat dtft = new SimpleDateFormat("dd/MM/yyyy");
+    private SimpleDateFormat ft = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
+    private SimpleDateFormat dtft = new SimpleDateFormat("dd/MM/yyyy");
     private String collectionMode;
     private String collectionOperator;
     private String status;
