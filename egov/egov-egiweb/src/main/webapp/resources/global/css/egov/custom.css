@@ -1788,13 +1788,13 @@ label.error {
   padding: 0;
 }
 .table thead:first-child > tr:first-child th {
+  border-bottom: none;
   background: #f2851f;
   color: #fff;
   font-weight: normal;
 }
 .table thead:first-child > tr:first-child th:first-child {
   border-left: 1px solid transparent;
-  border-top-left-radius: 5px;
 }
 .table thead > tr > th {
   vertical-align: top;

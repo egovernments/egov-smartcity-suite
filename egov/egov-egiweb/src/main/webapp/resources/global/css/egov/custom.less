@@ -1970,14 +1970,14 @@ b, label, strong{
     thead:first-child > tr:first-child{
         
         th {
+        	border-bottom:none;
             background: @active;
             color: @whitecolor;
             font-weight: normal;
-        }
-
-        th:first-child {
-            border-left: 1px solid transparent;
-            border-top-left-radius: 5px;
+            
+            &:first-child {
+	            border-left: 1px solid transparent;
+	        }
         }
         
     }
