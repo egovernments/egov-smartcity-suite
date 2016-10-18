@@ -76,6 +76,7 @@ import org.egov.infra.security.utils.SecurityUtils;
 import org.egov.infra.utils.StringUtils;
 import org.egov.infra.validation.exception.ValidationException;
 import org.egov.infra.workflow.matrix.entity.WorkFlowMatrix;
+import org.egov.infra.workflow.service.ActivitiWorkflowService;
 import org.egov.infra.workflow.service.SimpleWorkflowService;
 import org.egov.model.bills.EgBillPayeedetails;
 import org.egov.model.bills.EgBilldetails;
@@ -163,6 +164,9 @@ public class ContractorBillRegisterService {
 	@Autowired
 	private IdentityService identityService;
 
+	@Autowired
+	private ActivitiWorkflowService activitiWorkflowService;
+
     public Session getCurrentSession() {
         return entityManager.unwrap(Session.class);
     }
@@ -206,14 +210,23 @@ public class ContractorBillRegisterService {
             throw new ValidationException(e.getErrors());
         }
         ContractorBillRegister savedContractorBillRegister = contractorBillRegisterRepository.save(contractorBillRegister);
-        
-        String processInstanceId = commonWorkFlowTransition(
-        		savedContractorBillRegister.getProcessInstance(), approvalPosition, workFlowAction);
-        if (processInstanceId != null)
-        	savedContractorBillRegister.setProcessInstance(processInstanceId);
-
-        createContractorBillRegisterWorkflowTransition(savedContractorBillRegister,
-                approvalPosition, approvalComent, additionalRule, workFlowAction);
+        if(!"Save".equals(workFlowAction))
+        {
+        	
+        	  Map<String, Object> toBeSavedVariables = new HashMap<String, Object>();
+             
+              toBeSavedVariables.put("workflowObject", contractorBillRegister);
+              toBeSavedVariables.put("action", workFlowAction);
+              
+              Map<String, String> workflowVariables = new HashMap<String, String>();
+              workflowVariables.put("type", contractorBillRegister.getClass().getSimpleName());
+              workflowVariables.put("description", approvalComent);
+              workflowVariables.put("assignee", approvalPosition.toString());
+              workflowVariables.put("fullyQualifiedName", contractorBillRegister.getClass().getCanonicalName());
+                
+              
+        activitiWorkflowService.initiate(toBeSavedVariables,workflowVariables);
+        }
        
         savedContractorBillRegister = contractorBillRegisterRepository.save(contractorBillRegister);
         
@@ -228,44 +241,7 @@ public class ContractorBillRegisterService {
         return savedContractorBillRegister;
     }
     
-    private String commonWorkFlowTransition(String processInstanceId, Long approvalPosition, String workFlowAction) {
-    	ProcessEngine processEngine = ProcessEngines.getDefaultProcessEngine();
-		TaskService taskService = processEngine.getTaskService();
-		identityService.setAuthenticatedUserId(
-				assignmentService.getPrimaryAssignmentForUser(securityUtils.getCurrentUser().getId())
-						.getPosition().getId().toString());
-		Map<String, Object> variables = new HashMap<>();
-		variables.put("action", workFlowAction);
-		ProcessInstance processInstance = null;
-		if (processInstanceId == null) {
-			processInstance = runtimeService.startProcessInstanceByKey(WorksConstants.CBR_PROCESS_DEFINITION_KEY, variables);
-			Task task = taskService.createTaskQuery().processInstanceId(processInstance.getProcessInstanceId()).list()
-					.get(0);
-			if ("Save".equals(workFlowAction))
-				task.setAssignee(processInstance.getStartUserId());
-			else
-				task.setAssignee(approvalPosition.toString());
-			task.setOwner(processInstance.getStartUserId());
-			taskService.saveTask(task);
-		} else {
-			Task task = taskService.createTaskQuery().processInstanceId(processInstanceId).list().get(0);
-			taskService.complete(task.getId(), variables);
-			processInstance = runtimeService.createProcessInstanceQuery().processInstanceId(processInstanceId)
-					.singleResult();
-			List<Task> list = taskService.createTaskQuery().processInstanceId(processInstanceId).list();
-			Task newTask = null;
-			if (!list.isEmpty()) {
-				newTask = taskService.createTaskQuery().processInstanceId(processInstanceId).list().get(0);
-				if ("Save".equals(workFlowAction) || "Reject".equals(workFlowAction))
-					approvalPosition = Long.parseLong(processInstance.getStartUserId());
-				taskService.claim(newTask.getId(), approvalPosition.toString());
-			}
-		}
-		if (processInstance != null)
-			return processInstance.getProcessInstanceId();
-		else
-			return null;
-	}
+  
 
     @Transactional
     public ContractorBillRegister updateContractorBillRegister(
@@ -296,10 +272,20 @@ public class ContractorBillRegisterService {
         updatedContractorBillRegister = contractorBillRegisterRepository.save(contractorBillRegister);
         updatedContractorBillRegister.setBillstatus(updatedContractorBillRegister.getStatus().getCode());
         
-        String processInstanceId = commonWorkFlowTransition(
-        		updatedContractorBillRegister.getProcessInstance(), approvalPosition, workFlowAction);
-        if (processInstanceId != null)
-        	updatedContractorBillRegister.setProcessInstance(processInstanceId);
+        Map<String, Object> toBeSavedVariables = new HashMap<String, Object>();
+        
+        toBeSavedVariables.put("workflowObject", contractorBillRegister);
+        toBeSavedVariables.put("action", workFlowAction);
+        
+        Map<String, String> workflowVariables = new HashMap<String, String>();
+        workflowVariables.put("taksId", contractorBillRegister.getTaskId());
+        workflowVariables.put("type", contractorBillRegister.getClass().getSimpleName());
+        workflowVariables.put("description", approvalComent);
+        workflowVariables.put("assignee", approvalPosition.toString());
+        workflowVariables.put("fullyQualifiedName", contractorBillRegister.getClass().getCanonicalName());
+        
+        activitiWorkflowService.update(toBeSavedVariables,workflowVariables);
+       
 
         createContractorBillRegisterWorkflowTransition(updatedContractorBillRegister,
                 approvalPosition, approvalComent, additionalRule, workFlowAction);

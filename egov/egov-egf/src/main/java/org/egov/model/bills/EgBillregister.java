@@ -65,6 +65,7 @@ import javax.validation.constraints.NotNull;
 import org.egov.commons.EgwStatus;
 import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.workflow.entity.StateAware;
+import org.egov.infra.workflow.entity.WorkflowAware;
 import org.hibernate.search.annotations.DocumentId;
 import org.hibernate.validator.constraints.Length;
 
@@ -72,7 +73,7 @@ import org.hibernate.validator.constraints.Length;
 @Table(name = "EG_BILLREGISTER")
 @Inheritance(strategy = InheritanceType.JOINED) 
 @SequenceGenerator(name = EgBillregister.SEQ_EG_BILLREGISTER, sequenceName = EgBillregister.SEQ_EG_BILLREGISTER, allocationSize = 1)
-public class EgBillregister extends StateAware implements java.io.Serializable {
+public class EgBillregister extends WorkflowAware implements java.io.Serializable {
 
     private static final long serialVersionUID = -4312140421386028968L;
 

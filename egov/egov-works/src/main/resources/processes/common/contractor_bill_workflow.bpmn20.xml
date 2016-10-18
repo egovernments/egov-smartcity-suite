@@ -1,13 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<definitions xmlns="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:activiti="http://activiti.org/bpmn" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:omgdc="http://www.omg.org/spec/DD/20100524/DC" xmlns:omgdi="http://www.omg.org/spec/DD/20100524/DI" typeLanguage="http://www.w3.org/2001/XMLSchema" expressionLanguage="http://www.w3.org/1999/XPath" targetNamespace="http://www.activiti.org/processdef">
+<definitions xmlns="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:activiti="http://activiti.org/bpmn" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:omgdc="http://www.omg.org/spec/DD/20100524/DC" xmlns:omgdi="http://www.omg.org/spec/DD/20100524/DI" typeLanguage="http://www.w3.org/2001/XMLSchema" expressionLanguage="http://www.w3.org/1999/XPath" targetNamespace="/egworks/contractorbill/update/:objectId">
   <process id="contractor_bill_workflow" name="contractor_bill_workflow" isExecutable="true">
     <startEvent id="Start" name="Start"></startEvent>
     <exclusiveGateway id="sid-97C94A77-07DB-4BA2-A4E1-979A870018FF"></exclusiveGateway>
     <userTask id="userTask2" name="Saved"></userTask>
     <userTask id="created" name="Created" activiti:category="http://www.activiti.org/taskdef">
       <extensionElements>
-        <activiti:formProperty id="department" name="ANY"></activiti:formProperty>
-        <activiti:formProperty id="designation" name="Assistant engineer,Assistant executive engineer"></activiti:formProperty>
         <activiti:formProperty id="validactions" name="Approve,Reject"></activiti:formProperty>
       </extensionElements>
     </userTask>

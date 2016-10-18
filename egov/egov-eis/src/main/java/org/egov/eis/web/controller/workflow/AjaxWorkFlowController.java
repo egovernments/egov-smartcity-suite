@@ -103,7 +103,7 @@ public class AjaxWorkFlowController {
 		WorkflowTypes workflowTypeByType = workflowTypeService.getWorkflowTypeByType(type);
 		if(workflowTypeByType.getBusinessKey()!=null)
 		{
-			designationList    = customizedWorkFlowService.getNextDesignationsFromActiviti(type,
+			designationList    = customizedWorkFlowService.getNextDesignationsFromActiviti(workflowTypeByType.getBusinessKey(),
 					departmentRule, null, additionalRule, currentState,
 					pendingAction, new Date());
 		}else

@@ -204,7 +204,7 @@ public class CreateContractorBillController extends GenericWorkFlowController {
             model.addAttribute("approvalDesignation", request.getParameter("approvalDesignation"));
             model.addAttribute("approvalPosition", request.getParameter("approvalPosition"));
 
-            prepareActivitiWorkflow(model, contractorBillRegister.getProcessInstance(), WorksConstants.CBR_PROCESS_DEFINITION_KEY);
+            prepareActivitiWorkflow(model, contractorBillRegister.getProcessInstanceId(), WorksConstants.CBR_PROCESS_DEFINITION_KEY);
 
             model.addAttribute("mode", "edit");
 

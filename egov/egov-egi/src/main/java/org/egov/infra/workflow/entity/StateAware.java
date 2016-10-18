@@ -55,6 +55,8 @@ import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.MappedSuperclass;
+import javax.persistence.Transient;
+
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
@@ -71,8 +73,12 @@ public abstract class StateAware extends AbstractAuditable {
     @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     @JoinColumn(name = "STATE_ID")
     private State state;
+    
+  
 
-    /**
+    
+
+	/**
      * Need to overridden by the implementing class to give details about the State <I>Used by Inbox to fetch the State Detail at
      * runtime</I>
      *

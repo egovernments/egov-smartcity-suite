@@ -56,6 +56,7 @@ import javax.persistence.TemporalType;
 import javax.persistence.Transient;
 
 import org.egov.infra.admin.master.entity.User;
+import org.egov.infra.workflow.entity.WorkflowAware;
 import org.egov.model.bills.EgBilldetails;
 import org.egov.model.bills.EgBillregister;
 import org.egov.works.lineestimate.entity.DocumentDetails;
@@ -125,7 +126,28 @@ public class ContractorBillRegister extends EgBillregister {
 
     private String cancellationRemarks;
     
-    private String processInstance;
+   
+    private String processInstanceId;
+    
+    private String taskId;
+    
+    public String getProcessInstanceId() {
+		return processInstanceId;
+	}
+
+	public void setProcessInstanceId(String processInstanceId) {
+		this.processInstanceId = processInstanceId;
+	}
+
+	public String getTaskId() {
+		return taskId;
+	}
+
+	public void setTaskId(String taskId) {
+		this.taskId = taskId;
+	}
+
+	private String processInstance;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "workOrderEstimate", nullable = false)
@@ -294,11 +316,6 @@ public class ContractorBillRegister extends EgBillregister {
         this.refundBillDetails = refundBillDetails;
     }
 
-	public String getProcessInstance() {
-		return processInstance;
-	}
 
-	public void setProcessInstance(final String processInstance) {
-		this.processInstance = processInstance;
-	}
+	
 }

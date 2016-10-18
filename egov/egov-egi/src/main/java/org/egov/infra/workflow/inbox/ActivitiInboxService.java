@@ -40,7 +40,7 @@ public class ActivitiInboxService {
 
             Inbox item;
             List<Task> tasks = taskService.createTaskQuery().taskAssignee(userName).list();
-            tasks.addAll(taskService.createTaskQuery().taskOwner(userName).list());
+         //   tasks.addAll(taskService.createTaskQuery().taskOwner(userName).list());
             for (Task t : tasks) {
 
                 item = new Inbox();
