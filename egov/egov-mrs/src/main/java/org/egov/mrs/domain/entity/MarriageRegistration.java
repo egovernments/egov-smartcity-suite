@@ -79,7 +79,7 @@ public class MarriageRegistration extends StateAware {
     public static final String SEQ_REGISTRATION = "SEQ_EGMRS_REGISTRATION";
     
     public enum RegistrationStatus {
-        CREATED, APPROVED, REJECTED, REGISTERED, CANCELLED, CERTIFICATEREISSUED
+        CREATED, APPROVED, REJECTED, REGISTERED, CANCELLED
     }
 
     @Id
@@ -183,7 +183,7 @@ public class MarriageRegistration extends StateAware {
     @Transient
     private Date toDate;
     
-    
+    private boolean isLegacy;
     private boolean isActive;
 
     @NotNull
@@ -203,7 +203,7 @@ public class MarriageRegistration extends StateAware {
     }
 
     public boolean isFeeCollected() {
-        return demand.getBaseDemand().compareTo(demand.getAmtCollected()) == 0 ? true : true;
+        return demand.getBaseDemand().compareTo(demand.getAmtCollected()) == 0 ? true : false;
     }
 
     public void addRegistrationDocument(final RegistrationDocument registrationDocument) {
@@ -485,6 +485,14 @@ public class MarriageRegistration extends StateAware {
 	public void setToDate(Date toDate) {
 		this.toDate = toDate;
 	}
+
+    public boolean isLegacy() {
+        return isLegacy;
+    }
+
+    public void setLegacy(boolean isLegacy) {
+        this.isLegacy = isLegacy;
+    }
     
     
 

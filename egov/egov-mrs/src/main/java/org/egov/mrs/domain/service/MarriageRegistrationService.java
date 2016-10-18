@@ -60,6 +60,7 @@ import javax.servlet.http.HttpServletRequest;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
 import org.egov.commons.EgwStatus;
+import org.egov.demand.model.EgDemandDetails;
 import org.egov.eis.service.EisCommonService;
 import org.egov.eis.web.contract.WorkflowContainer;
 import org.egov.infra.admin.master.entity.User;
@@ -207,10 +208,9 @@ public class MarriageRegistrationService {
     public MarriageRegistration get(final String registrationNo) {
         return registrationRepository.findByRegistrationNo(registrationNo);
     }
-
-    @Transactional
-    public String createRegistration(final MarriageRegistration registration, final WorkflowContainer workflowContainer) {
-    	  if (StringUtils.isBlank(registration.getApplicationNo())) {
+    
+    public void setMarriageRegData(MarriageRegistration registration){
+        if (StringUtils.isBlank(registration.getApplicationNo())) {
             registration.setApplicationNo(marriageRegistrationApplicationNumberGenerator.getNextApplicationNumberForMarriageRegistration(registration));
             registration.setApplicationDate(new Date());
         }
@@ -219,13 +219,10 @@ public class MarriageRegistrationService {
         registration.getWife().setReligion(religionService.getProxy(registration.getWife().getReligion().getId()));
         registration.getWitnesses().forEach(witness -> witness.setRegistration(registration));
         registration.setMarriageAct(marriageActService.getAct(registration.getMarriageAct().getId()));
-                if (registration.getFeePaid() != null && registration.getDemand() == null){
-                        registration.setDemand(
-                                        marriageRegistrationDemandService.createDemand(new BigDecimal(registration.getFeePaid())));
-                }
-                  registration.setStatus(
-                          marriageUtils.getStatusByCodeAndModuleType(MarriageRegistration.RegistrationStatus.CREATED.toString(), MarriageConstants.MODULE_NAME));
-
+        if (registration.getFeePaid() != null && registration.getDemand() == null){
+                registration.setDemand(
+                                marriageRegistrationDemandService.createDemand(new BigDecimal(registration.getFeePaid())));
+        }
         if (registration.getPriest().getReligion().getId() != null)
             registration.getPriest().setReligion(religionService.getProxy(registration.getPriest().getReligion().getId()));
         else
@@ -270,14 +267,38 @@ public class MarriageRegistrationService {
 
         marriageApplicantService.addDocumentsToFileStore(null, registration.getHusband(), individualDocumentAndId);
         marriageApplicantService.addDocumentsToFileStore(null, registration.getWife(), individualDocumentAndId);
+    }
 
+    @Transactional
+    public String createRegistration(final MarriageRegistration registration, final WorkflowContainer workflowContainer) {
+        setMarriageRegData(registration);
+        registration.setStatus(
+             marriageUtils.getStatusByCodeAndModuleType(MarriageRegistration.RegistrationStatus.CREATED.toString(), MarriageConstants.MODULE_NAME)); 
         workflowService.transition(registration, workflowContainer, registration.getApprovalComent());
-
         create(registration);
         marriageSmsAndEmailService.sendSMS(registration,MarriageRegistration.RegistrationStatus.CREATED.toString());
         marriageSmsAndEmailService.sendEmail(registration,MarriageRegistration.RegistrationStatus.CREATED.toString());
 
         return registration.getApplicationNo();
+    }
+    
+    @Transactional
+    public String createDataEntryMrgRegistration(final MarriageRegistration registration) {
+        setMarriageRegData(registration);
+        if(registration.getDemand()!=null)
+            registration.getDemand().setAmtCollected(registration.getDemand().getBaseDemand());
+        registration.setStatus(
+                marriageUtils.getStatusByCodeAndModuleType(MarriageRegistration.RegistrationStatus.REGISTERED.toString(), MarriageConstants.MODULE_NAME));
+        if(registration.getDemand()!=null && !registration.getDemand().getEgDemandDetails().isEmpty())
+            for(EgDemandDetails dd : registration.getDemand().getEgDemandDetails()){
+                if(dd!=null)
+                    dd.setAmtCollected(dd.getAmount());
+            }
+        registration.setActive(true);
+        registration.setLegacy(true);
+        registration.setRegistrationNo(marriageRegistrationNumberGenerator.generateMarriageRegistrationNumber(registration));
+        create(registration);
+        return registration.getApplicationNo();         
     }
 
     @Transactional
@@ -329,7 +350,7 @@ public class MarriageRegistrationService {
         registration.setDateOfMarriage(regModel.getDateOfMarriage());
         registration.setPlaceOfMarriage(regModel.getPlaceOfMarriage());
         if(regModel.getFeeCriteria()!=null && regModel.getFeeCriteria().getId()!=null)
-        	registration.setFeeCriteria(marriageFeeService.getFee(regModel.getFeeCriteria().getId()));
+                registration.setFeeCriteria(marriageFeeService.getFee(regModel.getFeeCriteria().getId()));
         registration.setFeePaid(regModel.getFeePaid());
         registration.setMarriageAct(marriageActService.getAct(registration.getMarriageAct().getId()));
         
@@ -345,7 +366,7 @@ public class MarriageRegistrationService {
 
                 }
                 if(!registration.getStatus().getCode().equalsIgnoreCase(MarriageRegistration.RegistrationStatus.APPROVED.toString())){
-                	registration.setStatus(
+                        registration.setStatus(
                 marriageUtils.getStatusByCodeAndModuleType(MarriageRegistration.RegistrationStatus.CREATED.toString(), MarriageConstants.MODULE_NAME));
                 }
         witnessRepository.delete(registration.getWitnesses());
@@ -432,7 +453,7 @@ public class MarriageRegistrationService {
     @Transactional
     public MarriageRegistration printCertificate(MarriageRegistration registration, final WorkflowContainer workflowContainer,final HttpServletRequest request) throws IOException {
      
-    	MarriageCertificate marriageCertificate = marriageCertificateService.generateMarriageCertificate(registration,request);
+        MarriageCertificate marriageCertificate = marriageCertificateService.generateMarriageCertificate(registration,request);
         registration.setStatus(
                 marriageUtils.getStatusByCodeAndModuleType(MarriageRegistration.RegistrationStatus.REGISTERED.toString(), MarriageConstants.MODULE_NAME));
         registration.addCertificate(marriageCertificate);
@@ -577,41 +598,41 @@ public class MarriageRegistrationService {
         }
     
     @SuppressWarnings("unchecked")
-   	public List<MarriageRegistration> searchApprovedMarriageRegistrations(MarriageRegistration registration) throws ParseException {
-   		final Criteria criteria = getCurrentSession().createCriteria(MarriageRegistration.class,"marriageRegistration")
-   				.createAlias("marriageRegistration.status", "status");
-   	 buildMarriageRegistrationSearchCriteria(registration, criteria);
-   		 criteria.add(Restrictions.in("status.code", new String[] { MarriageRegistration.RegistrationStatus.APPROVED.toString()}));
-   		return criteria.list();
-   	}
+        public List<MarriageRegistration> searchApprovedMarriageRegistrations(MarriageRegistration registration) throws ParseException {
+                final Criteria criteria = getCurrentSession().createCriteria(MarriageRegistration.class,"marriageRegistration")
+                                .createAlias("marriageRegistration.status", "status");
+         buildMarriageRegistrationSearchCriteria(registration, criteria);
+                 criteria.add(Restrictions.in("status.code", new String[] { MarriageRegistration.RegistrationStatus.APPROVED.toString()}));
+                return criteria.list();
+        }
     
     private void buildMarriageRegistrationSearchCriteria(MarriageRegistration registration, final Criteria criteria) throws ParseException {
-    	if (registration.getRegistrationNo() != null)
-			criteria.add(Restrictions.ilike("marriageRegistration.registrationNo", registration.getRegistrationNo(),
-					MatchMode.ANYWHERE));
-    	if (registration.getApplicationNo() != null)
-			criteria.add(Restrictions.ilike("marriageRegistration.applicationNo", registration.getApplicationNo(),
-					MatchMode.ANYWHERE));
-		if ( registration.getHusband().getName() != null &&  !registration.getHusband().getFullName().equals("null") && registration.getHusband().getFullName()!=null )
-		criteria.createAlias("marriageRegistration.husband", "husband").add(Restrictions.disjunction( Restrictions.ilike("husband.name.firstName", registration.getHusband().getFullName(),
-				MatchMode.ANYWHERE)).add(Restrictions.ilike("husband.name.lastName", registration.getHusband().getFullName(),
-						MatchMode.ANYWHERE)).add(Restrictions.ilike("husband.name.middleName", registration.getHusband().getFullName(),
-								MatchMode.ANYWHERE))); 
-		if ( registration.getWife().getName() != null && registration.getWife().getFullName()!=null &&  !registration.getWife().getFullName().equals("null"))
-		criteria.createAlias("marriageRegistration.wife", "wife").add(Restrictions.disjunction(Restrictions.ilike("wife.name.firstName", registration.getWife().getFullName(),
-				MatchMode.ANYWHERE)).add(Restrictions.ilike("wife.name.lastName", registration.getWife().getFullName(),
-						MatchMode.ANYWHERE)).add(Restrictions.ilike("wife.name.middleName", registration.getWife().getFullName(),
-								MatchMode.ANYWHERE)));
-		if ( registration.getApplicationDate() != null)
-			criteria.add(Restrictions.between("marriageRegistration.applicationDate", registration.getApplicationDate(),
-					DateUtils.addDays(registration.getApplicationDate(), 1)));
-		if ( registration.getDateOfMarriage() != null)
-			criteria.add(Restrictions.between("marriageRegistration.dateOfMarriage", registration.getDateOfMarriage(),
-					DateUtils.addDays(registration.getDateOfMarriage(), 1)));
-		if ( registration.getFromDate() != null && registration.getToDate() != null)
-			criteria.add(Restrictions.between("marriageRegistration.dateOfMarriage", registration.getFromDate(),
-					DateUtils.addDays(registration.getToDate(), 1)));
-	}
+        if (registration.getRegistrationNo() != null)
+                        criteria.add(Restrictions.ilike("marriageRegistration.registrationNo", registration.getRegistrationNo(),
+                                        MatchMode.ANYWHERE));
+        if (registration.getApplicationNo() != null)
+                        criteria.add(Restrictions.ilike("marriageRegistration.applicationNo", registration.getApplicationNo(),
+                                        MatchMode.ANYWHERE));
+                if ( registration.getHusband().getName() != null &&  !registration.getHusband().getFullName().equals("null") && registration.getHusband().getFullName()!=null )
+                criteria.createAlias("marriageRegistration.husband", "husband").add(Restrictions.disjunction( Restrictions.ilike("husband.name.firstName", registration.getHusband().getFullName(),
+                                MatchMode.ANYWHERE)).add(Restrictions.ilike("husband.name.lastName", registration.getHusband().getFullName(),
+                                                MatchMode.ANYWHERE)).add(Restrictions.ilike("husband.name.middleName", registration.getHusband().getFullName(),
+                                                                MatchMode.ANYWHERE))); 
+                if ( registration.getWife().getName() != null && registration.getWife().getFullName()!=null &&  !registration.getWife().getFullName().equals("null"))
+                criteria.createAlias("marriageRegistration.wife", "wife").add(Restrictions.disjunction(Restrictions.ilike("wife.name.firstName", registration.getWife().getFullName(),
+                                MatchMode.ANYWHERE)).add(Restrictions.ilike("wife.name.lastName", registration.getWife().getFullName(),
+                                                MatchMode.ANYWHERE)).add(Restrictions.ilike("wife.name.middleName", registration.getWife().getFullName(),
+                                                                MatchMode.ANYWHERE)));
+                if ( registration.getApplicationDate() != null)
+                        criteria.add(Restrictions.between("marriageRegistration.applicationDate", registration.getApplicationDate(),
+                                        DateUtils.addDays(registration.getApplicationDate(), 1)));
+                if ( registration.getDateOfMarriage() != null)
+                        criteria.add(Restrictions.between("marriageRegistration.dateOfMarriage", registration.getDateOfMarriage(),
+                                        DateUtils.addDays(registration.getDateOfMarriage(), 1)));
+                if ( registration.getFromDate() != null && registration.getToDate() != null)
+                        criteria.add(Restrictions.between("marriageRegistration.dateOfMarriage", registration.getFromDate(),
+                                        DateUtils.addDays(registration.getToDate(), 1)));
+        }
     
     /**
      * @param registration
@@ -671,14 +692,14 @@ public class MarriageRegistrationService {
         return historyTable;
     }
 
-	public List<MarriageRegistration> searchRegistrationByStatus(MarriageRegistration registration,String status) throws ParseException {
+        public List<MarriageRegistration> searchRegistrationByStatus(MarriageRegistration registration,String status) throws ParseException {
 
-   		final Criteria criteria = getCurrentSession().createCriteria(MarriageRegistration.class,"marriageRegistration")
-   				.createAlias("marriageRegistration.status", "status");
-   	 buildMarriageRegistrationSearchCriteria(registration, criteria);
-   	if(status != null)
-   		 criteria.add(Restrictions.in("status.code", new String[] {status}));
-   		return criteria.list();
-   	
-	}
+                final Criteria criteria = getCurrentSession().createCriteria(MarriageRegistration.class,"marriageRegistration")
+                                .createAlias("marriageRegistration.status", "status");
+         buildMarriageRegistrationSearchCriteria(registration, criteria);
+        if(status != null)
+                 criteria.add(Restrictions.in("status.code", new String[] {status}));
+                return criteria.list();
+        
+        }
 }

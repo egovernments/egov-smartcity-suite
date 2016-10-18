@@ -199,4 +199,9 @@
         <put-attribute name="page-title" value="title.search.certificate" cascade="true"/>
         <put-attribute name="body" value="/WEB-INF/views/application/registration/registration-search-certificate.jsp"/>
     </definition>
+    
+     <definition name="mrgreg-dataentryform" extends="base_layout">
+        <put-attribute name="page-title" value="title.mrgRegistration.dataEntry" cascade="true"/>
+        <put-attribute name="body" value="/WEB-INF/views/application/registration/mrgreg-dataentryform.jsp"/>
+    </definition> 
 </tiles-definitions>

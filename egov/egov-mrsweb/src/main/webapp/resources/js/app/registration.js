@@ -285,12 +285,4 @@ $(".btn-primary").click(function() {
 	} 
 	
 	validateWorkFlowApprover(action);  
-	
-	/*if ($('form').valid()) {
-		document.forms[0].submit();	
-	} else {
-		e.stopPropagation();
-		e.preventDefault();
-	}*/
-	
 });
