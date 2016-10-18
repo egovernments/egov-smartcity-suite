@@ -173,6 +173,12 @@ public class PropertyTaxIndex {
 
     @Field(type = FieldType.Double)
     private Double currentyearcoll;
+    
+    @Field(type = FieldType.Boolean)
+    private Boolean isactive;
+    
+    @Field(type = FieldType.Boolean)
+    private Boolean isundercourtcase;
 
     public Double getBuiltuparea() {
         return builtuparea;
@@ -499,5 +505,21 @@ public class PropertyTaxIndex {
 
     public void setCurrentyearcoll(Double currentyearcoll) {
         this.currentyearcoll = currentyearcoll;
+    }
+    
+        public Boolean getIsactive() {
+        return isactive;
+    }
+
+    public void setIsactive(Boolean isactive) {
+        this.isactive = isactive;
+    }
+
+    public Boolean getIsundercourtcase() {
+        return isundercourtcase;
+    }
+
+    public void setIsundercourtcase(Boolean isundercourtcase) {
+        this.isundercourtcase = isundercourtcase;
     }
 }
