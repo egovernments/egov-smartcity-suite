@@ -128,7 +128,7 @@ public class WorkProgressRegisterJsonAdaptor implements JsonSerializer<WorkProgr
                                 + workProgressRegister.getTechnicalSanctionBy().getName() + ", "
                                 + DateUtils.getFormattedDate(workProgressRegister.getTechnicalSanctionDate(), "dd/MM/yyyy"));
             else
-                jsonObject.addProperty("technicalSanctionAuthorityDate", "");
+                jsonObject.addProperty("technicalSanctionAuthorityDate", "NA");
             if (workProgressRegister.getEstimateAmount() != null)
                 jsonObject.addProperty("estimateAmount", workProgressRegister.getEstimateAmount());
             else
