@@ -38,33 +38,24 @@
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
 
-package org.egov.api.model;
+package org.egov.eis.entity;
 
-import java.util.List;
-import java.util.Set;
+import java.lang.reflect.Type;
 
-import org.egov.eis.entity.EmployeeView;
-import org.egov.pims.commons.Designation;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonSerializationContext;
+import com.google.gson.JsonSerializer;
 
-public class ForwardDetails {
+public class EmployeeViewAdaptor implements JsonSerializer<EmployeeView> {
 
-    List<Designation> designations;
-    Set<EmployeeView> users;
+    @Override
+    public JsonElement serialize(final EmployeeView src, final Type typeOfSrc, final JsonSerializationContext context) {
+        final JsonObject empJsonObject = new JsonObject();
+        empJsonObject.addProperty("name", src.getName());
+        empJsonObject.addProperty("id", src.getPosition().getId());
+        return empJsonObject;
 
-    public List<Designation> getDesignations() {
-        return designations;
-    }
-
-    public void setDesignations(final List<Designation> designations) {
-        this.designations = designations;
-    }
-
-    public Set<EmployeeView> getUsers() {
-        return users;
-    }
-
-    public void setUsers(final Set<EmployeeView> users) {
-        this.users = users;
     }
 
 }

@@ -40,15 +40,16 @@
 
 package org.egov.api.adapter;
 
+import java.lang.reflect.Type;
+
+import org.egov.api.model.ForwardDetails;
+import org.egov.eis.entity.EmployeeView;
+import org.egov.pims.commons.Designation;
+
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonSerializationContext;
-import org.egov.api.model.ForwardDetails;
-import org.egov.infra.admin.master.entity.User;
-import org.egov.pims.commons.Designation;
-
-import java.lang.reflect.Type;
 
 public class ForwardDetailsAdapter extends DataAdapter<ForwardDetails> {
 	
@@ -61,10 +62,10 @@ public class ForwardDetailsAdapter extends DataAdapter<ForwardDetails> {
 		if(src.getUsers()!=null)
 		{
 			JsonArray jUsers=new JsonArray();
-			for(User user : src.getUsers())
+			for(EmployeeView user : src.getUsers())
 			{
 				JsonObject jUser=new JsonObject();
-				jUser.addProperty("id", user.getId());
+				jUser.addProperty("id", user.getPosition().getId());
 				jUser.addProperty("name", user.getName());
 				jUsers.add(jUser);
 			}
