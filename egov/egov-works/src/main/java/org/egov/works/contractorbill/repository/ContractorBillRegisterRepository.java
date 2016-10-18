@@ -96,12 +96,15 @@ public interface ContractorBillRegisterRepository extends JpaRepository<Contract
     ContractorBillRegister findByWorkOrderAndBillTypeAndStatus(
             @Param("workOrderEstimate") final WorkOrderEstimate workOrderEstimate, @Param("status") final String status,
             @Param("billtype") final String billtype);
-    
+
     @Query("select max(cbr.billdate) from ContractorBillRegister as cbr where upper(cbr.billstatus) = :billstatus and cbr.billtype = :billtype and cbr.workOrderEstimate.id = :workOrderEstimateId and cbr.createdDate < :billCreatedDate")
-    Date getLastPartBillDate(@Param("billCreatedDate") final Date billCreatedDate,@Param("workOrderEstimateId") final Long workOrderEstimateId,@Param("billstatus") final String billstatus,
+    Date getLastPartBillDate(@Param("billCreatedDate") final Date billCreatedDate,
+            @Param("workOrderEstimateId") final Long workOrderEstimateId, @Param("billstatus") final String billstatus,
             @Param("billtype") final String billtype);
 
     @Query("select COALESCE(sum(billdetail.creditamount),0) as creditAmount,COALESCE(sum(billdetail.debitamount),0) as debitAmount from EgBilldetails billdetail where billdetail.egBillregister.billstatus =:status and  billdetail.glcodeid =:glCodeId and exists (select cbr from ContractorBillRegister cbr where billdetail.egBillregister.id = cbr.id and cbr.workOrderEstimate.id =:workOrderEstmateId and cbr.billstatus = :status) and (billdetail.egBillregister.createdDate < (select createdDate from ContractorBillRegister where id = :contractorBillId) or (select count(*) from ContractorBillRegister where id = :contractorBillId) = 0 )")
-    String findSumOfDebitByAccountCodeForWorkOrder(@Param("workOrderEstmateId") final Long workOrderEstmateId,@Param("glCodeId") final BigDecimal glCodeId,@Param("status") final String status,@Param("contractorBillId") final Long contractorBillId);
+    String findSumOfDebitByAccountCodeForWorkOrder(@Param("workOrderEstmateId") final Long workOrderEstmateId,
+            @Param("glCodeId") final BigDecimal glCodeId, @Param("status") final String status,
+            @Param("contractorBillId") final Long contractorBillId);
 
 }

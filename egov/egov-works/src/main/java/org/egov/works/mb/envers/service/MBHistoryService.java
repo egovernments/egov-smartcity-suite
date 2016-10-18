@@ -88,43 +88,41 @@ public class MBHistoryService {
     @Autowired
     private MBHeaderService mbHeaderService;
 
-    public List<MBHeader> getAuditedMbHeaderById(Long id) {
+    public List<MBHeader> getAuditedMbHeaderById(final Long id) {
 
-        Revisions<Integer, MBHeader> revisions = mbHeaderService.findRevisions(id);
-        List<MBHeader> auditedMbs = new ArrayList<MBHeader>();
-        for (Revision<Integer, MBHeader> revision : revisions.getContent()) {
-
+        final Revisions<Integer, MBHeader> revisions = mbHeaderService.findRevisions(id);
+        final List<MBHeader> auditedMbs = new ArrayList<MBHeader>();
+        for (final Revision<Integer, MBHeader> revision : revisions.getContent())
             auditedMbs.add(revision.getEntity());
-        }
 
         return auditedMbs;
     }
 
-    public List<MBHistory> getMBHistory(Long mbHeaderId) {
+    public List<MBHistory> getMBHistory(final Long mbHeaderId) {
 
-        List<MBHeader> mbHeaders = getAuditedMbHeaderById(mbHeaderId);
+        final List<MBHeader> mbHeaders = getAuditedMbHeaderById(mbHeaderId);
 
-        List<MBHistory> mbHistorys = prepareHistory(mbHeaders);
+        final List<MBHistory> mbHistorys = prepareHistory(mbHeaders);
 
         return mbHistorys;
     }
 
-    private List<MBHistory> prepareHistory(List<MBHeader> mbHeaders) {
+    private List<MBHistory> prepareHistory(final List<MBHeader> mbHeaders) {
 
         Assignment userAssignment = null;
-        List<MBHistory> mbHistorys = new ArrayList<MBHistory>();
-        Set<Activity> sorActivities = new HashSet<Activity>(0);
-        Set<Activity> nonSorActivities = new HashSet<Activity>(0);
-        Set<Activity> nonTenActivities = new HashSet<Activity>(0);
-        Set<Activity> lumpSumActivities = new HashSet<Activity>(0);
-        Map<Long, Activity> sorActivitiesMap = new HashMap<Long, Activity>();
-        Map<Long, Activity> nonSorActivitiesMap = new HashMap<Long, Activity>();
-        Map<Long, Activity> ntActivitiesMap = new HashMap<Long, Activity>();
-        Map<Long, Activity> lsActivitiesMap = new HashMap<Long, Activity>();
+        final List<MBHistory> mbHistorys = new ArrayList<MBHistory>();
+        final Set<Activity> sorActivities = new HashSet<Activity>(0);
+        final Set<Activity> nonSorActivities = new HashSet<Activity>(0);
+        final Set<Activity> nonTenActivities = new HashSet<Activity>(0);
+        final Set<Activity> lumpSumActivities = new HashSet<Activity>(0);
+        final Map<Long, Activity> sorActivitiesMap = new HashMap<Long, Activity>();
+        final Map<Long, Activity> nonSorActivitiesMap = new HashMap<Long, Activity>();
+        final Map<Long, Activity> ntActivitiesMap = new HashMap<Long, Activity>();
+        final Map<Long, Activity> lsActivitiesMap = new HashMap<Long, Activity>();
         List<MBDetails> mbDetails = new ArrayList<MBDetails>();
         MBDetails detail = null;
         MBHistory history = null;
-        for (MBHeader header : mbHeaders) {
+        for (final MBHeader header : mbHeaders)
             if (!MeasurementBookStatus.NEW.toString().equals(header.getEgwStatus().getCode())) {
                 history = new MBHistory();
                 userAssignment = assignmentService.findByEmployeeAndGivenDate(header.getLastModifiedBy().getId(), new Date())
@@ -137,25 +135,25 @@ public class MBHistoryService {
                 history.setNonSorMbDetails((List<MBDetails>) header.getNonSORMBDetails());
                 history.setNonTenderedMbDetails((List<MBDetails>) header.getNonTenderedMBDetails());
                 history.setLumpSumMbDetails((List<MBDetails>) header.getLumpSumMBDetails());
-                for (MBDetails details : header.getSORMBDetails()) {
+                for (final MBDetails details : header.getSORMBDetails()) {
                     sorActivitiesMap.put(details.getWorkOrderActivity().getActivity().getId(),
                             details.getWorkOrderActivity().getActivity());
                     sorActivities.add(details.getWorkOrderActivity().getActivity());
                 }
 
-                for (MBDetails details : header.getNonSORMBDetails()) {
+                for (final MBDetails details : header.getNonSORMBDetails()) {
                     nonSorActivitiesMap.put(details.getWorkOrderActivity().getActivity().getId(),
                             details.getWorkOrderActivity().getActivity());
                     nonSorActivities.add(details.getWorkOrderActivity().getActivity());
                 }
 
-                for (MBDetails details : header.getNonTenderedMBDetails()) {
+                for (final MBDetails details : header.getNonTenderedMBDetails()) {
                     ntActivitiesMap.put(details.getWorkOrderActivity().getActivity().getId(),
                             details.getWorkOrderActivity().getActivity());
                     nonTenActivities.add(details.getWorkOrderActivity().getActivity());
                 }
 
-                for (MBDetails details : header.getLumpSumMBDetails()) {
+                for (final MBDetails details : header.getLumpSumMBDetails()) {
                     lsActivitiesMap.put(details.getWorkOrderActivity().getActivity().getId(),
                             details.getWorkOrderActivity().getActivity());
                     lumpSumActivities.add(details.getWorkOrderActivity().getActivity());
@@ -163,64 +161,50 @@ public class MBHistoryService {
                 mbHistorys.add(history);
             }
 
-        }
-
-        for (MBHistory hstr : mbHistorys) {
+        for (final MBHistory hstr : mbHistorys) {
             hstr.getSorActivities().addAll(sorActivities);
             hstr.getNonSorActivities().addAll(nonSorActivities);
             hstr.getNonTenActivities().addAll(nonTenActivities);
             hstr.getLumpSumActivities().addAll(lumpSumActivities);
             mbDetails = new ArrayList<MBDetails>();
-            for (Long activityId : sorActivitiesMap.keySet()) {
+            for (final Long activityId : sorActivitiesMap.keySet()) {
                 detail = new MBDetails();
-                for (MBDetails details : hstr.getSorMbDetails()) {
-                    if (activityId.equals(details.getWorkOrderActivity().getActivity().getId())) {
+                for (final MBDetails details : hstr.getSorMbDetails())
+                    if (activityId.equals(details.getWorkOrderActivity().getActivity().getId()))
                         detail = details;
-                    }
-
-                }
                 mbDetails.add(detail);
 
             }
             hstr.setSorMbDetails(mbDetails);
 
             mbDetails = new ArrayList<MBDetails>();
-            for (Long activityId : nonSorActivitiesMap.keySet()) {
+            for (final Long activityId : nonSorActivitiesMap.keySet()) {
                 detail = new MBDetails();
-                for (MBDetails details : hstr.getNonSorMbDetails()) {
-                    if (activityId.equals(details.getWorkOrderActivity().getActivity().getId())) {
+                for (final MBDetails details : hstr.getNonSorMbDetails())
+                    if (activityId.equals(details.getWorkOrderActivity().getActivity().getId()))
                         detail = details;
-                    }
-
-                }
                 mbDetails.add(detail);
 
             }
             hstr.setNonSorMbDetails(mbDetails);
 
             mbDetails = new ArrayList<MBDetails>();
-            for (Long activityId : ntActivitiesMap.keySet()) {
+            for (final Long activityId : ntActivitiesMap.keySet()) {
                 detail = new MBDetails();
-                for (MBDetails details : hstr.getNonTenderedMbDetails()) {
-                    if (activityId.equals(details.getWorkOrderActivity().getActivity().getId())) {
+                for (final MBDetails details : hstr.getNonTenderedMbDetails())
+                    if (activityId.equals(details.getWorkOrderActivity().getActivity().getId()))
                         detail = details;
-                    }
-
-                }
                 mbDetails.add(detail);
 
             }
             hstr.setNonTenderedMbDetails(mbDetails);
 
             mbDetails = new ArrayList<MBDetails>();
-            for (Long activityId : lsActivitiesMap.keySet()) {
+            for (final Long activityId : lsActivitiesMap.keySet()) {
                 detail = new MBDetails();
-                for (MBDetails details : hstr.getLumpSumMbDetails()) {
-                    if (activityId.equals(details.getWorkOrderActivity().getActivity().getId())) {
+                for (final MBDetails details : hstr.getLumpSumMbDetails())
+                    if (activityId.equals(details.getWorkOrderActivity().getActivity().getId()))
                         detail = details;
-                    }
-
-                }
                 mbDetails.add(detail);
 
             }

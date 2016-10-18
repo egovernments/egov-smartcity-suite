@@ -52,17 +52,20 @@ import org.springframework.stereotype.Repository;
 public interface EstimatePhotographRepository extends JpaRepository<EstimatePhotographs, Long> {
 
     List<EstimatePhotographs> findByLineEstimateDetails_id(final Long lineEstimateDetailId);
-    
-    @Query("select distinct(ep) from EstimatePhotographs as ep where ep.workProgress = :workProgress and ep.lineEstimateDetails.id = :lineEstimateDetailId")
-    List<EstimatePhotographs> findByEstimatePhotographAndLineEstimateDetails(@Param("workProgress") WorkProgress workProgress,@Param("lineEstimateDetailId") Long lineEstimateDetailId);
-    
-    EstimatePhotographs findByFileStore_id(final Long filestoreId);
-    
-    @Query("select distinct(ep.lineEstimateDetails.estimateNumber) from EstimatePhotographs as ep where upper(ep.lineEstimateDetails.estimateNumber) like upper(:estimateNumber) and ep.lineEstimateDetails.lineEstimate.status.code != :lineEstimateStatus")
-    List<String> findEstimateNumbersForViewEstimatePhotograph(@Param("estimateNumber") String estimateNumber, @Param("lineEstimateStatus") String lineEstimateStatus);
-    
-    @Query("select distinct(ep.lineEstimateDetails.projectCode.code) from EstimatePhotographs as ep where upper(ep.lineEstimateDetails.projectCode.code) like upper(:workIdentificationNumber) and ep.lineEstimateDetails.lineEstimate.status.code != :lineEstimateStatus")
-    List<String> findWorkIdentificationNumberForViewEstimatePhotograph(@Param("workIdentificationNumber") String workIdentificationNumber, @Param("lineEstimateStatus") String lineEstimateStatus);
 
-    
+    @Query("select distinct(ep) from EstimatePhotographs as ep where ep.workProgress = :workProgress and ep.lineEstimateDetails.id = :lineEstimateDetailId")
+    List<EstimatePhotographs> findByEstimatePhotographAndLineEstimateDetails(@Param("workProgress") WorkProgress workProgress,
+            @Param("lineEstimateDetailId") Long lineEstimateDetailId);
+
+    EstimatePhotographs findByFileStore_id(final Long filestoreId);
+
+    @Query("select distinct(ep.lineEstimateDetails.estimateNumber) from EstimatePhotographs as ep where upper(ep.lineEstimateDetails.estimateNumber) like upper(:estimateNumber) and ep.lineEstimateDetails.lineEstimate.status.code != :lineEstimateStatus")
+    List<String> findEstimateNumbersForViewEstimatePhotograph(@Param("estimateNumber") String estimateNumber,
+            @Param("lineEstimateStatus") String lineEstimateStatus);
+
+    @Query("select distinct(ep.lineEstimateDetails.projectCode.code) from EstimatePhotographs as ep where upper(ep.lineEstimateDetails.projectCode.code) like upper(:workIdentificationNumber) and ep.lineEstimateDetails.lineEstimate.status.code != :lineEstimateStatus")
+    List<String> findWorkIdentificationNumberForViewEstimatePhotograph(
+            @Param("workIdentificationNumber") String workIdentificationNumber,
+            @Param("lineEstimateStatus") String lineEstimateStatus);
+
 }

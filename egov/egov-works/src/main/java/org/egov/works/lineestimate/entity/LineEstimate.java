@@ -238,22 +238,21 @@ public class LineEstimate extends StateAware {
     private String cancellationRemarks;
 
     private boolean abstractEstimateCreated;
-    
+
     private String contractCommitteeApprovalNumber;
-    
+
     @Temporal(TemporalType.DATE)
     private Date contractCommitteeApprovalDate;
-    
+
     private String standingCommitteeApprovalNumber;
-    
+
     @Temporal(TemporalType.DATE)
     private Date standingCommitteeApprovalDate;
-    
+
     private String governmentApprovalNumber;
-    
+
     @Temporal(TemporalType.DATE)
     private Date governmentApprovalDate;
-    
 
     @Override
     public Long getId() {
@@ -577,60 +576,60 @@ public class LineEstimate extends StateAware {
     public void setAbstractEstimateCreated(final boolean abstractEstimateCreated) {
         this.abstractEstimateCreated = abstractEstimateCreated;
     }
-    
+
     public BigDecimal getTotalEstimateAmount() {
-    	BigDecimal totalEstimateAmount = BigDecimal.ZERO;
-    	for(LineEstimateDetails lineEstimateDetails : this.lineEstimateDetails) 
-    		totalEstimateAmount = totalEstimateAmount.add(lineEstimateDetails.getEstimateAmount());
-    	return totalEstimateAmount;
+        BigDecimal totalEstimateAmount = BigDecimal.ZERO;
+        for (final LineEstimateDetails lineEstimateDetails : this.lineEstimateDetails)
+            totalEstimateAmount = totalEstimateAmount.add(lineEstimateDetails.getEstimateAmount());
+        return totalEstimateAmount;
     }
 
-	public String getContractCommitteeApprovalNumber() {
-		return contractCommitteeApprovalNumber;
-	}
+    public String getContractCommitteeApprovalNumber() {
+        return contractCommitteeApprovalNumber;
+    }
 
-	public void setContractCommitteeApprovalNumber(final String contractCommitteeApprovalNumber) {
-		this.contractCommitteeApprovalNumber = contractCommitteeApprovalNumber;
-	}
+    public void setContractCommitteeApprovalNumber(final String contractCommitteeApprovalNumber) {
+        this.contractCommitteeApprovalNumber = contractCommitteeApprovalNumber;
+    }
 
-	public Date getContractCommitteeApprovalDate() {
-		return contractCommitteeApprovalDate;
-	}
+    public Date getContractCommitteeApprovalDate() {
+        return contractCommitteeApprovalDate;
+    }
 
-	public void setContractCommitteeApprovalDate(final Date contractCommitteeApprovalDate) {
-		this.contractCommitteeApprovalDate = contractCommitteeApprovalDate;
-	}
+    public void setContractCommitteeApprovalDate(final Date contractCommitteeApprovalDate) {
+        this.contractCommitteeApprovalDate = contractCommitteeApprovalDate;
+    }
 
-	public String getGovernmentApprovalNumber() {
-		return governmentApprovalNumber;
-	}
+    public String getGovernmentApprovalNumber() {
+        return governmentApprovalNumber;
+    }
 
-	public void setGovernmentApprovalNumber(final String governmentApprovalNumber) {
-		this.governmentApprovalNumber = governmentApprovalNumber;
-	}
+    public void setGovernmentApprovalNumber(final String governmentApprovalNumber) {
+        this.governmentApprovalNumber = governmentApprovalNumber;
+    }
 
-	public String getStandingCommitteeApprovalNumber() {
-		return standingCommitteeApprovalNumber;
-	}
+    public String getStandingCommitteeApprovalNumber() {
+        return standingCommitteeApprovalNumber;
+    }
 
-	public void setStandingCommitteeApprovalNumber(String standingCommitteeApprovalNumber) {
-		this.standingCommitteeApprovalNumber = standingCommitteeApprovalNumber;
-	}
+    public void setStandingCommitteeApprovalNumber(final String standingCommitteeApprovalNumber) {
+        this.standingCommitteeApprovalNumber = standingCommitteeApprovalNumber;
+    }
 
-	public Date getStandingCommitteeApprovalDate() {
-		return standingCommitteeApprovalDate;
-	}
+    public Date getStandingCommitteeApprovalDate() {
+        return standingCommitteeApprovalDate;
+    }
 
-	public void setStandingCommitteeApprovalDate(Date standingCommitteeApprovalDate) {
-		this.standingCommitteeApprovalDate = standingCommitteeApprovalDate;
-	}
+    public void setStandingCommitteeApprovalDate(final Date standingCommitteeApprovalDate) {
+        this.standingCommitteeApprovalDate = standingCommitteeApprovalDate;
+    }
 
-	public Date getGovernmentApprovalDate() {
-		return governmentApprovalDate;
-	}
+    public Date getGovernmentApprovalDate() {
+        return governmentApprovalDate;
+    }
 
-	public void setGovernmentApprovalDate(Date governmentApprovalDate) {
-		this.governmentApprovalDate = governmentApprovalDate;
-	}
+    public void setGovernmentApprovalDate(final Date governmentApprovalDate) {
+        this.governmentApprovalDate = governmentApprovalDate;
+    }
 
 }

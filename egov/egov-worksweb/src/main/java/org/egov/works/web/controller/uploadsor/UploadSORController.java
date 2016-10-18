@@ -228,14 +228,12 @@ public class UploadSORController {
 
                 // Validating SOR code
                 if (obj.getSorCode() != null && !obj.getSorCode().equalsIgnoreCase("")) {
-                    if (sorMap.get(obj.getSorCode().toLowerCase()) == null){
+                    if (sorMap.get(obj.getSorCode().toLowerCase()) == null) {
                         if (uploadSORService.isContainsWhitespace(obj.getSorCode()))
                             error = error + " "
                                     + messageSource.getMessage("error.whitespace.is.not.allowed.in.sorcode", null, null);
-                        }
-                    else {
+                    } else
                         obj.setScheduleOfRate(sorMap.get(obj.getSorCode().toLowerCase()));
-                    }
                 } else
                     error = error + " " + messageSource.getMessage("error.sorcode.is.required", null, null) + ",";
 

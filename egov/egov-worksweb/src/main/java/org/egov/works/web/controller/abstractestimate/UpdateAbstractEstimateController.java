@@ -185,7 +185,7 @@ public class UpdateAbstractEstimateController extends GenericWorkFlowController 
             estimateService.validateActivities(abstractEstimate, errors);
             estimateService.validateOverheads(abstractEstimate, errors);
             if (!estimateService.checkForDuplicateAccountCodesInEstimateDeductions(abstractEstimate))
-            	errors.reject("error.abstractestimate.duplicate.accountcodes",
+                errors.reject("error.abstractestimate.duplicate.accountcodes",
                         "error.abstractestimate.duplicate.accountcodes");
             if (!workFlowAction.equals(WorksConstants.SAVE_ACTION)) {
                 if (abstractEstimate.getSorActivities().isEmpty() && abstractEstimate.getNonSorActivities().isEmpty())
@@ -225,11 +225,10 @@ public class UpdateAbstractEstimateController extends GenericWorkFlowController 
         if (abstractEstimate.getCurrentState() != null
                 && !abstractEstimate.getCurrentState().getValue().equals(WorksConstants.NEW))
             model.addAttribute("currentState", abstractEstimate.getCurrentState().getValue());
-        if (abstractEstimate.getState() != null && abstractEstimate.getState().getNextAction() != null){
-        	model.addAttribute("nextAction", abstractEstimate.getState().getNextAction());
-        	model.addAttribute("pendingActions", abstractEstimate.getState().getNextAction());
+        if (abstractEstimate.getState() != null && abstractEstimate.getState().getNextAction() != null) {
+            model.addAttribute("nextAction", abstractEstimate.getState().getNextAction());
+            model.addAttribute("pendingActions", abstractEstimate.getState().getNextAction());
         }
-            
 
         final WorkflowContainer workflowContainer = new WorkflowContainer();
         workflowContainer.setAmountRule(abstractEstimate.getEstimateValue());
@@ -272,7 +271,7 @@ public class UpdateAbstractEstimateController extends GenericWorkFlowController 
         model.addAttribute("documentDetails", abstractEstimate.getDocumentDetails());
         model.addAttribute("measurementsPresent", measurementSheetService.existsByEstimate(abstractEstimate.getId()));
         model.addAttribute("amountRule", abstractEstimate.getEstimateValue());
-        	
+
         if (abstractEstimate.getEgwStatus().getCode().equals(EstimateStatus.NEW.toString()) ||
                 abstractEstimate.getEgwStatus().getCode().equals(EstimateStatus.REJECTED.toString())) {
             model.addAttribute("mode", "edit");

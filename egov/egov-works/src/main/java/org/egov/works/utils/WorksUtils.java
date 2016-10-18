@@ -270,7 +270,7 @@ public class WorksUtils {
     public CFinancialYear getFinancialYearByDate(final Date asOnDate) {
         return financialYearHibernateDAO.getFinYearByDate(asOnDate);
     }
-    
+
     @Transactional(propagation = Propagation.REQUIRES_NEW, readOnly = true)
     public CFinancialYear getActiveForPostingFinancialYearByDate(final Date asOnDate) {
         return financialYearHibernateDAO.getFinancialYearByDate(asOnDate);
@@ -320,9 +320,10 @@ public class WorksUtils {
     }
 
     @SuppressWarnings("unchecked")
-    public List<FileStoreMapper> getLatestSorRateUploadFiles(String name) {
+    public List<FileStoreMapper> getLatestSorRateUploadFiles(final String name) {
         return entityManager.unwrap(Session.class)
-                .createQuery("from FileStoreMapper where fileName like :name order by id desc ").setString("name", "%"+name+"%")
+                .createQuery("from FileStoreMapper where fileName like :name order by id desc ")
+                .setString("name", "%" + name + "%")
                 .setMaxResults(5)
                 .list();
     }

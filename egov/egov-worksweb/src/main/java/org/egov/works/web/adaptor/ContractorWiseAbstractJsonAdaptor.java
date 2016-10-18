@@ -27,8 +27,9 @@ public class ContractorWiseAbstractJsonAdaptor implements JsonSerializer<Contrac
             final JsonSerializationContext context) {
         final JsonObject jsonObject = new JsonObject();
         if (searchResult != null) {
-            if(searchResult.getElectionWard().contains("{"))
-                jsonObject.addProperty("ward", searchResult.getElectionWard().replace("{", " ").replace("}", " ").replaceAll("\"", ""));
+            if (searchResult.getElectionWard().contains("{"))
+                jsonObject.addProperty("ward",
+                        searchResult.getElectionWard().replace("{", " ").replace("}", " ").replaceAll("\"", ""));
             else
                 jsonObject.addProperty("ward", searchResult.getElectionWard());
             jsonObject.addProperty("contractorName",
@@ -36,21 +37,24 @@ public class ContractorWiseAbstractJsonAdaptor implements JsonSerializer<Contrac
             jsonObject.addProperty("approvedEstimates", searchResult.getApprovedEstimates());
             if (searchResult.getApprovedAmount() != null)
                 jsonObject.addProperty("approvedAmount",
-                        searchResult.getApprovedAmount().divide(new BigDecimal(10000000)).setScale(2, BigDecimal.ROUND_HALF_EVEN).toString());
+                        searchResult.getApprovedAmount().divide(new BigDecimal(10000000)).setScale(2, BigDecimal.ROUND_HALF_EVEN)
+                                .toString());
             else
                 jsonObject.addProperty("approvedAmount", "");
 
             jsonObject.addProperty("siteNotHandedOverEstimates", searchResult.getSiteNotHandedOverEstimates());
             if (searchResult.getSiteNotHandedOverAmount() != null)
                 jsonObject.addProperty("siteNotHandedOverAmount",
-                        searchResult.getSiteNotHandedOverAmount().divide(new BigDecimal(10000000)).setScale(2, BigDecimal.ROUND_HALF_EVEN).toString());
+                        searchResult.getSiteNotHandedOverAmount().divide(new BigDecimal(10000000))
+                                .setScale(2, BigDecimal.ROUND_HALF_EVEN).toString());
             else
                 jsonObject.addProperty("siteNotHandedOverAmount", "");
 
             jsonObject.addProperty("notWorkCommencedEstimates", searchResult.getNotWorkCommencedEstimates());
             if (searchResult.getNotWorkCommencedAmount() != null)
                 jsonObject.addProperty("notWorkCommencedAmount",
-                        searchResult.getNotWorkCommencedAmount().divide(new BigDecimal(10000000)).setScale(2, BigDecimal.ROUND_HALF_EVEN).toString());
+                        searchResult.getNotWorkCommencedAmount().divide(new BigDecimal(10000000))
+                                .setScale(2, BigDecimal.ROUND_HALF_EVEN).toString());
             else
                 jsonObject.addProperty("notWorkCommencedAmount", "");
 
@@ -67,14 +71,17 @@ public class ContractorWiseAbstractJsonAdaptor implements JsonSerializer<Contrac
 
             if (searchResult.getWorkCommencedAmount() != null && searchResult.getLagecyWorkCommencedAmount() != null)
                 jsonObject.addProperty("workCommencedAmount",
-                        searchResult.getWorkCommencedAmount().add(searchResult.getLagecyWorkCommencedAmount()).divide(new BigDecimal(10000000))
+                        searchResult.getWorkCommencedAmount().add(searchResult.getLagecyWorkCommencedAmount())
+                                .divide(new BigDecimal(10000000))
                                 .setScale(2, BigDecimal.ROUND_HALF_EVEN).toString());
             else if (searchResult.getWorkCommencedAmount() != null)
                 jsonObject.addProperty("workCommencedAmount",
-                        searchResult.getWorkCommencedAmount().setScale(2, BigDecimal.ROUND_HALF_EVEN).divide(new BigDecimal(10000000)));
+                        searchResult.getWorkCommencedAmount().setScale(2, BigDecimal.ROUND_HALF_EVEN)
+                                .divide(new BigDecimal(10000000)));
             else if (searchResult.getLagecyWorkCommencedAmount() != null)
                 jsonObject.addProperty("workCommencedAmount",
-                        searchResult.getLagecyWorkCommencedAmount().setScale(2, BigDecimal.ROUND_HALF_EVEN).divide(new BigDecimal(10000000)));
+                        searchResult.getLagecyWorkCommencedAmount().setScale(2, BigDecimal.ROUND_HALF_EVEN)
+                                .divide(new BigDecimal(10000000)));
             else
                 jsonObject.addProperty("workCommencedAmount",
                         new BigDecimal(0).setScale(2, BigDecimal.ROUND_HALF_EVEN).toString());
@@ -83,7 +90,8 @@ public class ContractorWiseAbstractJsonAdaptor implements JsonSerializer<Contrac
                     searchResult.getWorkCompletedEstimates() != null ? searchResult.getWorkCompletedEstimates() : 0);
             if (searchResult.getWorkCompletedAmount() != null)
                 jsonObject.addProperty("workCompletedAmount",
-                        searchResult.getWorkCompletedAmount().divide(new BigDecimal(10000000)).setScale(2, BigDecimal.ROUND_HALF_EVEN).toString());
+                        searchResult.getWorkCompletedAmount().divide(new BigDecimal(10000000))
+                                .setScale(2, BigDecimal.ROUND_HALF_EVEN).toString());
             else
                 jsonObject.addProperty("workCompletedAmount",
                         new BigDecimal(0).setScale(2, BigDecimal.ROUND_HALF_EVEN).toString());
@@ -101,13 +109,14 @@ public class ContractorWiseAbstractJsonAdaptor implements JsonSerializer<Contrac
                         balanceWorkAmount.divide(new BigDecimal(10000000)).setScale(2, BigDecimal.ROUND_HALF_EVEN).toString());
             } else if (searchResult.getApprovedAmount() != null)
                 jsonObject.addProperty("balanceWorkAmount",
-                        searchResult.getApprovedAmount().divide(new BigDecimal(10000000)).setScale(2, BigDecimal.ROUND_HALF_EVEN).toString());
+                        searchResult.getApprovedAmount().divide(new BigDecimal(10000000)).setScale(2, BigDecimal.ROUND_HALF_EVEN)
+                                .toString());
             else
                 jsonObject.addProperty("balanceWorkAmount", "");
 
-            if(searchResult.getWorkCompletedAmount() == null) 
+            if (searchResult.getWorkCompletedAmount() == null)
                 searchResult.setWorkCompletedAmount(new BigDecimal(0).setScale(2, BigDecimal.ROUND_HALF_EVEN));
-            
+
             if (searchResult.getApprovedAmount() != null && searchResult.getLiableAmount() != null
                     && searchResult.getWorkCompletedAmount() != null)
                 jsonObject
@@ -119,8 +128,12 @@ public class ContractorWiseAbstractJsonAdaptor implements JsonSerializer<Contrac
             else
                 jsonObject.addProperty("liableAmount", new BigDecimal(0).setScale(2, BigDecimal.ROUND_HALF_EVEN).toString());
 
-            jsonObject.addProperty("createdDate", workProgressRegisterService.getReportSchedulerRunDate() != null ?
-                    DateUtils.getFormattedDateWithTimeStamp(new DateTime(workProgressRegisterService.getReportSchedulerRunDate())) : StringUtils.EMPTY );
+            jsonObject
+                    .addProperty("createdDate",
+                            workProgressRegisterService.getReportSchedulerRunDate() != null
+                                    ? DateUtils.getFormattedDateWithTimeStamp(
+                                            new DateTime(workProgressRegisterService.getReportSchedulerRunDate()))
+                                    : StringUtils.EMPTY);
         }
         return jsonObject;
     }

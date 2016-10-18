@@ -120,12 +120,12 @@ public class AbstractEstimatePDFController {
             reportParams.put("estimateDate", formatter.format(abstractEstimate.getEstimateDate()));
             reportParams.put("abstractEstimate", abstractEstimate);
             double totalEstimateOverheadAmount = 0;
-            for(final OverheadValue overheadValue:abstractEstimate.getOverheadValues())
-            	totalEstimateOverheadAmount += overheadValue.getAmount();
+            for (final OverheadValue overheadValue : abstractEstimate.getOverheadValues())
+                totalEstimateOverheadAmount += overheadValue.getAmount();
             reportParams.put("totalEstimateOverheadAmount", df.format(totalEstimateOverheadAmount));
             BigDecimal totalEstimateDeductionAmount = BigDecimal.ZERO;
-            for(final AbstractEstimateDeduction deductions:abstractEstimate.getAbsrtractEstimateDeductions())
-            	totalEstimateDeductionAmount = totalEstimateDeductionAmount.add(deductions.getAmount());
+            for (final AbstractEstimateDeduction deductions : abstractEstimate.getAbsrtractEstimateDeductions())
+                totalEstimateDeductionAmount = totalEstimateDeductionAmount.add(deductions.getAmount());
             reportParams.put("totalEstimateDeductionAmount", df.format(totalEstimateDeductionAmount));
             activities.addAll(abstractEstimate.getSORActivities());
             activities.addAll(abstractEstimate.getNonSORActivities());

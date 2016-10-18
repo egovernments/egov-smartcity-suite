@@ -52,7 +52,7 @@ public class TrackMilestoneWFService extends PersistenceService<TrackMilestone, 
         super(TrackMilestone.class);
     }
 
-    public TrackMilestoneWFService(Class<TrackMilestone> type) {
+    public TrackMilestoneWFService(final Class<TrackMilestone> type) {
         super(type);
     }
 

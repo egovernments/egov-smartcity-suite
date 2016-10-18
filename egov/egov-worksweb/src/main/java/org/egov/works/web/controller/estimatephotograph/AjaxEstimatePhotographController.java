@@ -61,39 +61,38 @@ import com.google.gson.GsonBuilder;
 @Controller
 @RequestMapping(value = "/estimatephotograph")
 public class AjaxEstimatePhotographController {
-	
-	@Autowired
-	private EstimatePhotographService estimatePhotographService; 
-	
-	@Autowired
-	private ViewEstimatePhotographJsonAdaptor viewEstimatePhotographJsonAdaptor;
-	
-    
+
+    @Autowired
+    private EstimatePhotographService estimatePhotographService;
+
+    @Autowired
+    private ViewEstimatePhotographJsonAdaptor viewEstimatePhotographJsonAdaptor;
+
     @RequestMapping(value = "/searchestimatephotograph", method = RequestMethod.POST, produces = MediaType.TEXT_PLAIN_VALUE)
     public @ResponseBody String ajaxSearchEstimatePhotograph(final Model model,
             @ModelAttribute final EstimatePhotographSearchRequest estimatePhotographSearchRequest) {
-        final List<LineEstimateDetails> searchResultList = estimatePhotographService.searchEstimatePhotograph(estimatePhotographSearchRequest);
+        final List<LineEstimateDetails> searchResultList = estimatePhotographService
+                .searchEstimatePhotograph(estimatePhotographSearchRequest);
         final String result = new StringBuilder("{ \"data\":").append(toSearchEstimatePhotograph(searchResultList))
                 .append("}").toString();
         return result;
     }
-    
+
     public Object toSearchEstimatePhotograph(final Object object) {
         final GsonBuilder gsonBuilder = new GsonBuilder();
         final Gson gson = gsonBuilder.registerTypeAdapter(LineEstimateDetails.class, viewEstimatePhotographJsonAdaptor).create();
         final String json = gson.toJson(object);
         return json;
     }
-    
+
     @RequestMapping(value = "/getestimatenumbers-viewestimatephotograph", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
     public @ResponseBody List<String> findEstimateNumbersForViewEstimatePhotograph(@RequestParam final String estimateNumber) {
         return estimatePhotographService.getEstimateNumbersForViewEstimatePhotograph(estimateNumber);
     }
-    
+
     @RequestMapping(value = "/getwin-viewestimatephotograph", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
     public @ResponseBody List<String> findWinForViewEstimatePhotograph(@RequestParam final String workIdentificationNumber) {
         return estimatePhotographService.getWinForViewEstimatePhotograph(workIdentificationNumber);
     }
-
 
 }

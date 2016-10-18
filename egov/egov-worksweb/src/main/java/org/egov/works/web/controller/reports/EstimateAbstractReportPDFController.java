@@ -172,13 +172,12 @@ public class EstimateAbstractReportPDFController {
             queryParameters += messageSource.getMessage("msg.subscheme", null, null)
                     + subSchemeService.findById(subScheme, false).getName() + ", ";
 
-        if (workCategory != null) {
-            queryParameters += "Work Category : " + workCategory.replace('_',' ') + ", ";
-        }
+        if (workCategory != null)
+            queryParameters += "Work Category : " + workCategory.replace('_', ' ') + ", ";
 
-        if (beneficiary != null) {
-            queryParameters += messageSource.getMessage("msg.beneficiary", null, null) + beneficiary.replaceAll("_C", "/C").replace("_", " ") + ", ";
-        }
+        if (beneficiary != null)
+            queryParameters += messageSource.getMessage("msg.beneficiary", null, null)
+                    + beneficiary.replaceAll("_C", "/C").replace("_", " ") + ", ";
 
         if (natureOfWork != null)
             queryParameters += messageSource.getMessage("msg.natureofwork", null, null)
@@ -417,13 +416,12 @@ public class EstimateAbstractReportPDFController {
             queryParameters += messageSource.getMessage("msg.subscheme", null, null)
                     + subSchemeService.findById(subScheme, false).getName() + ", ";
 
-        if (workCategory != null) {
-            queryParameters += messageSource.getMessage("msg.workcategory", null, null) + workCategory.replace('_',' ') + ", ";
-        }
+        if (workCategory != null)
+            queryParameters += messageSource.getMessage("msg.workcategory", null, null) + workCategory.replace('_', ' ') + ", ";
 
-        if (beneficiary != null) {
-            queryParameters += messageSource.getMessage("msg.beneficiary", null, null) + beneficiary.replaceAll("_C", "/C").replace("_", " ") + ", ";
-        }
+        if (beneficiary != null)
+            queryParameters += messageSource.getMessage("msg.beneficiary", null, null)
+                    + beneficiary.replaceAll("_C", "/C").replace("_", " ") + ", ";
 
         if (natureOfWork != null)
             queryParameters += messageSource.getMessage("msg.natureofwork", null, null)

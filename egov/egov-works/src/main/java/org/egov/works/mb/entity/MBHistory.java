@@ -81,7 +81,7 @@ public class MBHistory {
         return ownerName;
     }
 
-    public void setOwnerName(String ownerName) {
+    public void setOwnerName(final String ownerName) {
         this.ownerName = ownerName;
     }
 
@@ -89,7 +89,7 @@ public class MBHistory {
         return dateTime;
     }
 
-    public void setDateTime(String dateTime) {
+    public void setDateTime(final String dateTime) {
         this.dateTime = dateTime;
     }
 
@@ -97,7 +97,7 @@ public class MBHistory {
         return mbAmount;
     }
 
-    public void setMbAmount(BigDecimal mbAmount) {
+    public void setMbAmount(final BigDecimal mbAmount) {
         this.mbAmount = mbAmount;
     }
 
@@ -105,7 +105,7 @@ public class MBHistory {
         return mbDetails;
     }
 
-    public void setMbDetails(List<MBDetails> mbDetails) {
+    public void setMbDetails(final List<MBDetails> mbDetails) {
         this.mbDetails = mbDetails;
     }
 
@@ -113,7 +113,7 @@ public class MBHistory {
         return sorMbDetails;
     }
 
-    public void setSorMbDetails(List<MBDetails> sorMbDetails) {
+    public void setSorMbDetails(final List<MBDetails> sorMbDetails) {
         this.sorMbDetails = sorMbDetails;
     }
 
@@ -121,7 +121,7 @@ public class MBHistory {
         return nonSorMbDetails;
     }
 
-    public void setNonSorMbDetails(List<MBDetails> nonSorMbDetails) {
+    public void setNonSorMbDetails(final List<MBDetails> nonSorMbDetails) {
         this.nonSorMbDetails = nonSorMbDetails;
     }
 
@@ -129,7 +129,7 @@ public class MBHistory {
         return nonTenderedMbDetails;
     }
 
-    public void setNonTenderedMbDetails(List<MBDetails> nonTenderedMbDetails) {
+    public void setNonTenderedMbDetails(final List<MBDetails> nonTenderedMbDetails) {
         this.nonTenderedMbDetails = nonTenderedMbDetails;
     }
 
@@ -137,31 +137,31 @@ public class MBHistory {
         return lumpSumMbDetails;
     }
 
-    public void setLumpSumMbDetails(List<MBDetails> lumpSumMbDetails) {
+    public void setLumpSumMbDetails(final List<MBDetails> lumpSumMbDetails) {
         this.lumpSumMbDetails = lumpSumMbDetails;
     }
 
     public Set<Activity> getSorActivities() {
         return sorActivities;
     }
-    
+
     public List<Activity> getSorActivitiesAsList() {
-        return new ArrayList<Activity>(sorActivities) ;
+        return new ArrayList<Activity>(sorActivities);
     }
 
-    public void setSorActivities(Set<Activity> sorActivities) {
+    public void setSorActivities(final Set<Activity> sorActivities) {
         this.sorActivities = sorActivities;
     }
 
     public Set<Activity> getNonSorActivities() {
         return nonSorActivities;
     }
-    
+
     public List<Activity> getNonSorActivitiesAsList() {
-        return new ArrayList<Activity>(nonSorActivities) ;
+        return new ArrayList<Activity>(nonSorActivities);
     }
 
-    public void setNonSorActivities(Set<Activity> nonSorActivities) {
+    public void setNonSorActivities(final Set<Activity> nonSorActivities) {
         this.nonSorActivities = nonSorActivities;
     }
 
@@ -170,10 +170,10 @@ public class MBHistory {
     }
 
     public List<Activity> getNonTenActivitiesAsList() {
-        return new ArrayList<Activity>(nonTenActivities) ;
+        return new ArrayList<Activity>(nonTenActivities);
     }
-    
-    public void setNonTenActivities(Set<Activity> nonTenActivities) {
+
+    public void setNonTenActivities(final Set<Activity> nonTenActivities) {
         this.nonTenActivities = nonTenActivities;
     }
 
@@ -182,10 +182,10 @@ public class MBHistory {
     }
 
     public List<Activity> getLumpSumActivitiesAsList() {
-        return new ArrayList<Activity>(lumpSumActivities) ;
+        return new ArrayList<Activity>(lumpSumActivities);
     }
-    
-    public void setLumpSumActivities(Set<Activity> lumpSumActivities) {
+
+    public void setLumpSumActivities(final Set<Activity> lumpSumActivities) {
         this.lumpSumActivities = lumpSumActivities;
     }
 

@@ -104,11 +104,11 @@ public class ContractorAdvanceServiceImpl extends PersistenceService<ContractorA
 
     private static final Logger LOGGER = Logger.getLogger(ContractorAdvanceServiceImpl.class);
 
-    public ContractorAdvanceServiceImpl(){
+    public ContractorAdvanceServiceImpl() {
         super(ContractorAdvanceRequisition.class);
     }
 
-    public ContractorAdvanceServiceImpl(Class<ContractorAdvanceRequisition> type){
+    public ContractorAdvanceServiceImpl(final Class<ContractorAdvanceRequisition> type) {
         super(type);
     }
 

@@ -71,7 +71,8 @@ public class LineEstimateForEstimatePhotographJsonAdaptor implements JsonSeriali
             else
                 jsonObject.addProperty("nameOfWork", "");
             if (lineEstimateDetails.getLineEstimate().getCreatedDate() != null)
-                jsonObject.addProperty("estimateDate", DateUtils.getFormattedDate(lineEstimateDetails.getLineEstimate().getCreatedDate(),"dd/MM/yyyy"));
+                jsonObject.addProperty("estimateDate",
+                        DateUtils.getFormattedDate(lineEstimateDetails.getLineEstimate().getCreatedDate(), "dd/MM/yyyy"));
             else
                 jsonObject.addProperty("estimateDate", "");
             if (lineEstimateDetails.getLineEstimate().getNatureOfWork() != null)

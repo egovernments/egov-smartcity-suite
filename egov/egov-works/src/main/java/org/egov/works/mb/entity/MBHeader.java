@@ -555,7 +555,7 @@ public class MBHeader extends StateAware {
         return nonTenderedMbDetails;
     }
 
-    public void setNonTenderedMbDetails(List<MBDetails> nonTenderedMbDetails) {
+    public void setNonTenderedMbDetails(final List<MBDetails> nonTenderedMbDetails) {
         this.nonTenderedMbDetails = nonTenderedMbDetails;
     }
 
@@ -563,7 +563,7 @@ public class MBHeader extends StateAware {
         return lumpSumMbDetails;
     }
 
-    public void setLumpSumMbDetails(List<MBDetails> lumpSumMbDetails) {
+    public void setLumpSumMbDetails(final List<MBDetails> lumpSumMbDetails) {
         this.lumpSumMbDetails = lumpSumMbDetails;
     }
 

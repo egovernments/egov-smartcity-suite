@@ -48,7 +48,7 @@ public class WorkspackageWFService extends PersistenceService<WorksPackage, Long
         super(WorksPackage.class);
     }
 
-    public WorkspackageWFService(Class<WorksPackage> type) {
+    public WorkspackageWFService(final Class<WorksPackage> type) {
         super(type);
     }
 

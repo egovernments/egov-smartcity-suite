@@ -73,7 +73,7 @@ public class AbstractEstimateDeduction extends AbstractAuditable {
     private Double percentage;
 
     private BigDecimal amount;
-    
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "chartofaccounts")
     private CChartOfAccounts chartOfAccounts;
@@ -120,5 +120,4 @@ public class AbstractEstimateDeduction extends AbstractAuditable {
         this.chartOfAccounts = chartOfAccounts;
     }
 
-   
 }

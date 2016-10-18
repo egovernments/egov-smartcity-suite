@@ -75,10 +75,13 @@ public class ActivityService {
     }
 
     public List<Activity> findApprovedActivitiesByParentId(final Long parentId) {
-        return activityRepository.findByParent_IdAndAbstractEstimate_EgwStatus_Code(parentId, RevisionEstimateStatus.APPROVED.toString());
+        return activityRepository.findByParent_IdAndAbstractEstimate_EgwStatus_Code(parentId,
+                RevisionEstimateStatus.APPROVED.toString());
     }
-    
-    public List<Activity> findByRevisionType(final Long estimateId,final RevisionType nonTenderderRevisionType,final RevisionType lumpSumRevisionType) {
-    	return activityRepository.findByAbstractEstimate_IdAndRevisionType(estimateId,nonTenderderRevisionType,lumpSumRevisionType);
+
+    public List<Activity> findByRevisionType(final Long estimateId, final RevisionType nonTenderderRevisionType,
+            final RevisionType lumpSumRevisionType) {
+        return activityRepository.findByAbstractEstimate_IdAndRevisionType(estimateId, nonTenderderRevisionType,
+                lumpSumRevisionType);
     }
 }

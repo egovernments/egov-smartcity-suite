@@ -47,7 +47,7 @@ public class ContractorAdvanceWFService extends PersistenceService<ContractorAdv
         super(ContractorAdvanceRequisition.class);
     }
 
-    public ContractorAdvanceWFService(Class<ContractorAdvanceRequisition> type) {
+    public ContractorAdvanceWFService(final Class<ContractorAdvanceRequisition> type) {
         super(type);
     }
 

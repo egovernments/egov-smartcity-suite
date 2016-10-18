@@ -52,10 +52,12 @@ import org.springframework.stereotype.Repository;
 public interface ActivityRepository extends JpaRepository<Activity, Long> {
 
     List<Activity> findByParent_Id(Long parentId);
-    
-    List<Activity> findByParent_IdAndAbstractEstimate_EgwStatus_Code(Long parentId,String estimateStatus);
-    
+
+    List<Activity> findByParent_IdAndAbstractEstimate_EgwStatus_Code(Long parentId, String estimateStatus);
+
     @Query("select a from Activity a where a.abstractEstimate.id =:abstractEstimateId and a.revisionType in(:nonTenderderRevisionType,:lumpSumRevisionType)")
-    List<Activity> findByAbstractEstimate_IdAndRevisionType(@Param("abstractEstimateId") Long abstractEstimateId,@Param("nonTenderderRevisionType") RevisionType nonTenderderRevisionType,@Param("lumpSumRevisionType") RevisionType lumpSumRevisionType);
+    List<Activity> findByAbstractEstimate_IdAndRevisionType(@Param("abstractEstimateId") Long abstractEstimateId,
+            @Param("nonTenderderRevisionType") RevisionType nonTenderderRevisionType,
+            @Param("lumpSumRevisionType") RevisionType lumpSumRevisionType);
 
 }

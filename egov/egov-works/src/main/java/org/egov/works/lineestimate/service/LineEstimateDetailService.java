@@ -71,7 +71,7 @@ public class LineEstimateDetailService {
 
     @Autowired
     private AccountdetailkeyHibernateDAO accountdetailkeyHibernateDAO;
-    
+
     @Autowired
     @Qualifier("projectCodeService")
     private ProjectCodeService projectCodeService;

@@ -65,7 +65,7 @@ public class SearchRevisionEstimate {
         return id;
     }
 
-    public void setId(Long id) {
+    public void setId(final Long id) {
         this.id = id;
     }
 
@@ -73,7 +73,7 @@ public class SearchRevisionEstimate {
         return woId;
     }
 
-    public void setWoId(Long woId) {
+    public void setWoId(final Long woId) {
         this.woId = woId;
     }
 
@@ -81,7 +81,7 @@ public class SearchRevisionEstimate {
         return aeId;
     }
 
-    public void setAeId(Long aeId) {
+    public void setAeId(final Long aeId) {
         this.aeId = aeId;
     }
 
@@ -89,7 +89,7 @@ public class SearchRevisionEstimate {
         return revisionEstimateNumber;
     }
 
-    public void setRevisionEstimateNumber(String revisionEstimateNumber) {
+    public void setRevisionEstimateNumber(final String revisionEstimateNumber) {
         this.revisionEstimateNumber = revisionEstimateNumber;
     }
 
@@ -97,7 +97,7 @@ public class SearchRevisionEstimate {
         return fromDate;
     }
 
-    public void setFromDate(Date fromDate) {
+    public void setFromDate(final Date fromDate) {
         this.fromDate = fromDate;
     }
 
@@ -105,7 +105,7 @@ public class SearchRevisionEstimate {
         return toDate;
     }
 
-    public void setToDate(Date toDate) {
+    public void setToDate(final Date toDate) {
         this.toDate = toDate;
     }
 
@@ -113,7 +113,7 @@ public class SearchRevisionEstimate {
         return status;
     }
 
-    public void setStatus(Long status) {
+    public void setStatus(final Long status) {
         this.status = status;
     }
 
@@ -121,7 +121,7 @@ public class SearchRevisionEstimate {
         return revisionEstimateStatus;
     }
 
-    public void setRevisionEstimateStatus(String revisionEstimateStatus) {
+    public void setRevisionEstimateStatus(final String revisionEstimateStatus) {
         this.revisionEstimateStatus = revisionEstimateStatus;
     }
 
@@ -129,7 +129,7 @@ public class SearchRevisionEstimate {
         return createdBy;
     }
 
-    public void setCreatedBy(Long createdBy) {
+    public void setCreatedBy(final Long createdBy) {
         this.createdBy = createdBy;
     }
 
@@ -137,7 +137,7 @@ public class SearchRevisionEstimate {
         return loaNumber;
     }
 
-    public void setLoaNumber(String loaNumber) {
+    public void setLoaNumber(final String loaNumber) {
         this.loaNumber = loaNumber;
     }
 
@@ -145,7 +145,7 @@ public class SearchRevisionEstimate {
         return lineEstimateNumber;
     }
 
-    public void setLineEstimateNumber(String lineEstimateNumber) {
+    public void setLineEstimateNumber(final String lineEstimateNumber) {
         this.lineEstimateNumber = lineEstimateNumber;
     }
 
@@ -153,7 +153,7 @@ public class SearchRevisionEstimate {
         return reDate;
     }
 
-    public void setReDate(Date reDate) {
+    public void setReDate(final Date reDate) {
         this.reDate = reDate;
     }
 
@@ -161,7 +161,7 @@ public class SearchRevisionEstimate {
         return contractorName;
     }
 
-    public void setContractorName(String contractorName) {
+    public void setContractorName(final String contractorName) {
         this.contractorName = contractorName;
     }
 
@@ -169,7 +169,7 @@ public class SearchRevisionEstimate {
         return estimateNumber;
     }
 
-    public void setEstimateNumber(String estimateNumber) {
+    public void setEstimateNumber(final String estimateNumber) {
         this.estimateNumber = estimateNumber;
     }
 
@@ -177,7 +177,7 @@ public class SearchRevisionEstimate {
         return reValue;
     }
 
-    public void setReValue(BigDecimal reValue) {
+    public void setReValue(final BigDecimal reValue) {
         this.reValue = reValue;
     }
 
@@ -185,7 +185,7 @@ public class SearchRevisionEstimate {
         return currentOwner;
     }
 
-    public void setCurrentOwner(String currentOwner) {
+    public void setCurrentOwner(final String currentOwner) {
         this.currentOwner = currentOwner;
     }
 

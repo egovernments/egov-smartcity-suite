@@ -48,7 +48,7 @@ public class WorkOrderWFService extends PersistenceService<WorkOrder, Long> {
         super(WorkOrder.class);
     }
 
-    public WorkOrderWFService(Class<WorkOrder> type) {
+    public WorkOrderWFService(final Class<WorkOrder> type) {
         super(type);
     }
 

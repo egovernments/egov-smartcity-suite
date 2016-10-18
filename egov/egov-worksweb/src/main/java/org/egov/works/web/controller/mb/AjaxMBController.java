@@ -204,7 +204,7 @@ public class AjaxMBController {
         final String nonTenderedType = request.getParameter("nonTenderedType");
         final String mbDate = request.getParameter("mbDate");
         final List<WorkOrderActivity> workOrderActivities = workOrderActivityService
-                .searchREActivities(workOrderEstimateId, description, itemCode, nonTenderedType,mbDate);
+                .searchREActivities(workOrderEstimateId, description, itemCode, nonTenderedType, mbDate);
 
         for (final WorkOrderActivity woa : workOrderActivities)
             woa.setMbHeaderId(mbHeaderId);

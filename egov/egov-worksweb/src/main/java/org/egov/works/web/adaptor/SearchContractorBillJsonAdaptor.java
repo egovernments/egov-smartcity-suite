@@ -121,7 +121,8 @@ public class SearchContractorBillJsonAdaptor implements JsonSerializer<Contracto
                     .getEstimate().getLineEstimateDetails().getLineEstimate().getId());
             jsonObject.addProperty("id", contractorBillRegister.getId());
             jsonObject.addProperty("workOrderId", contractorBillRegister.getWorkOrderEstimate().getWorkOrder().getId());
-            jsonObject.addProperty("workActivitySize", contractorBillRegister.getWorkOrderEstimate().getWorkOrderActivities().size());
+            jsonObject.addProperty("workActivitySize",
+                    contractorBillRegister.getWorkOrderEstimate().getWorkOrderActivities().size());
 
         }
         return jsonObject;

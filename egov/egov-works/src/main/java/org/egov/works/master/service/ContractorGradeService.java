@@ -67,7 +67,7 @@ public class ContractorGradeService {
 
     @Autowired
     private ContractorGradeRepository contractorGradeRepository;
-    
+
     public ContractorGrade getContractorGradeById(final Long contractorGradeId) {
         final ContractorGrade contractorGrade = contractorGradeRepository.findOne(contractorGradeId);
         return contractorGrade;

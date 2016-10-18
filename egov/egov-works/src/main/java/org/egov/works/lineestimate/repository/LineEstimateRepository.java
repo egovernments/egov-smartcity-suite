@@ -67,11 +67,13 @@ public interface LineEstimateRepository extends JpaRepository<LineEstimate, Long
     List<User> getLineEstimateCreatedByUsers(@Param("status") String status);
 
     LineEstimate findByCouncilResolutionNumberIgnoreCaseAndStatus_codeNotLike(String councilResolutionNumber, String status);
-    
-    LineEstimate findByContractCommitteeApprovalNumberIgnoreCaseAndStatus_codeNotLike(String contractCommitteeApprovalNumber, String status);
-    
-    LineEstimate findByStandingCommitteeApprovalNumberIgnoreCaseAndStatus_codeNotLike(String standingCommitteeApprovalNumber, String status);
-    
+
+    LineEstimate findByContractCommitteeApprovalNumberIgnoreCaseAndStatus_codeNotLike(String contractCommitteeApprovalNumber,
+            String status);
+
+    LineEstimate findByStandingCommitteeApprovalNumberIgnoreCaseAndStatus_codeNotLike(String standingCommitteeApprovalNumber,
+            String status);
+
     LineEstimate findByGovernmentApprovalNumberIgnoreCaseAndStatus_codeNotLike(String governmentApprovalNumber, String status);
 
 }

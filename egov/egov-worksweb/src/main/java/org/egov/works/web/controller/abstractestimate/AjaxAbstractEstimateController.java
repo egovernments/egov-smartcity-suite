@@ -118,7 +118,7 @@ public class AjaxAbstractEstimateController {
 
     @Autowired
     private EstimateTemplateJsonAdaptor estimateTemplateJsonAdaptor;
-    
+
     @Autowired
     @Qualifier("chartOfAccountsService")
     private ChartOfAccountsService chartOfAccountsService;
@@ -166,7 +166,8 @@ public class AjaxAbstractEstimateController {
             @RequestParam("scheduleCategories") final String scheduleCategories,
             @RequestParam("estimateDate") final Date estimateDate, @RequestParam("estimateId") final Long estimateId) {
         if (!scheduleCategories.equals("null"))
-            return scheduleOfRateService.getScheduleOfRatesByCodeAndScheduleOfCategoriesAndEstimateId(code, scheduleCategories, estimateDate,estimateId);
+            return scheduleOfRateService.getScheduleOfRatesByCodeAndScheduleOfCategoriesAndEstimateId(code, scheduleCategories,
+                    estimateDate, estimateId);
         return null;
     }
 
@@ -293,7 +294,8 @@ public class AjaxAbstractEstimateController {
     }
 
     @RequestMapping(value = "/ajaxdeduction-coa", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
-    public @ResponseBody List<CChartOfAccounts> findDeductionAccountCodesAndAccountHeadByGlcodeLike(@RequestParam final String searchQuery) {
+    public @ResponseBody List<CChartOfAccounts> findDeductionAccountCodesAndAccountHeadByGlcodeLike(
+            @RequestParam final String searchQuery) {
         final String[] purposeNames = new String[3];
         purposeNames[0] = WorksConstants.CONTRACTOR_NETPAYABLE_PURPOSE;
         return chartOfAccountsService.findOtherDeductionAccountCodesByGlcodeOrNameLike(searchQuery, purposeNames);

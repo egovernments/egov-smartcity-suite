@@ -142,7 +142,7 @@ public class CreateLineEstimateController extends GenericWorkFlowController {
 
     @Autowired
     private LineEstimateUOMService lineEstimateUOMService;
-    
+
     @Autowired
     private BudgetControlTypeService budgetControlTypeService;
 
@@ -327,8 +327,9 @@ public class CreateLineEstimateController extends GenericWorkFlowController {
         final String message = getMessageByStatus(lineEstimate, approverName, nextDesign);
 
         model.addAttribute("message", message);
-        if (lineEstimate.getStatus().getCode().equals(LineEstimateStatus.BUDGET_SANCTIONED.toString()) && !BudgetControlType.BudgetCheckOption.NONE.toString()
-                .equalsIgnoreCase(budgetControlTypeService.getConfigValue())) {
+        if (lineEstimate.getStatus().getCode().equals(LineEstimateStatus.BUDGET_SANCTIONED.toString())
+                && !BudgetControlType.BudgetCheckOption.NONE.toString()
+                        .equalsIgnoreCase(budgetControlTypeService.getConfigValue())) {
             final List<String> basMessages = new ArrayList<String>();
             Integer count = 1;
             for (final LineEstimateDetails led : lineEstimate.getLineEstimateDetails()) {
@@ -383,7 +384,7 @@ public class CreateLineEstimateController extends GenericWorkFlowController {
 
         return message;
     }
-    
+
     private void validateLineEstimateDetails(final LineEstimate lineEstimate, final BindingResult errors) {
         Integer index = 0;
         for (final LineEstimateDetails led : lineEstimate.getLineEstimateDetails()) {

@@ -47,6 +47,7 @@ import java.util.Date;
 import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
+
 import org.egov.dao.budget.BudgetDetailsDAO;
 import org.egov.eis.web.contract.WorkflowContainer;
 import org.egov.eis.web.controller.workflow.GenericWorkFlowController;
@@ -123,7 +124,7 @@ public class UpdateLetterOfAcceptanceController extends GenericWorkFlowControlle
             if (workOrder.getCurrentState() != null
                     && !workOrder.getCurrentState().getValue().equalsIgnoreCase(WorksConstants.NEW))
                 model.addAttribute("currentState", workOrder.getCurrentState().getValue());
-            if (workOrder.getState() != null && workOrder.getState().getNextAction() != null){
+            if (workOrder.getState() != null && workOrder.getState().getNextAction() != null) {
                 model.addAttribute("nextAction", workOrder.getState().getNextAction());
                 model.addAttribute("pendingActions", workOrder.getState().getNextAction());
             }
@@ -146,7 +147,7 @@ public class UpdateLetterOfAcceptanceController extends GenericWorkFlowControlle
             model.addAttribute("measurementsPresent", measurementSheetService.existsByEstimate(abstractEstimate.getId()));
             model.addAttribute("workflowHistory",
                     lineEstimateService.getHistory(workOrder.getState(), workOrder.getStateHistory()));
-            model.addAttribute("amountRule",workOrder.getWorkOrderAmount());
+            model.addAttribute("amountRule", workOrder.getWorkOrderAmount());
             return "letterOfAcceptance-view";
         }
     }

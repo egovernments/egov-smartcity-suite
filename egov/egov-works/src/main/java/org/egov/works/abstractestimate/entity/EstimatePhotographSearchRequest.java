@@ -52,7 +52,7 @@ public class EstimatePhotographSearchRequest {
     private String workOrderNumber;
     private String contractorName;
     private double workCompletion;
-    
+
     public String getEstimateNumber() {
         return estimateNumber;
     }

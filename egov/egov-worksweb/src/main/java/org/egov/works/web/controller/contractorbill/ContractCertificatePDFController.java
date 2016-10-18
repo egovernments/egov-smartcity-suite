@@ -104,11 +104,13 @@ public class ContractCertificatePDFController {
             reportParams.put("contractorBillRegister", contractorBillRegister);
             final Date lastPartBillDate = contractorBillRegisterService.getLastPartBillDateForContractorBill(
                     contractorBillRegister.getCreatedDate(), contractorBillRegister.getWorkOrderEstimate().getId());
-            reportParams.put("lastPartBillDate", lastPartBillDate != null ? DateUtils.getDefaultFormattedDate(lastPartBillDate) : "NA");
+            reportParams.put("lastPartBillDate",
+                    lastPartBillDate != null ? DateUtils.getDefaultFormattedDate(lastPartBillDate) : "NA");
             reportParams.put("billDate", DateUtils.getDefaultFormattedDate(contractorBillRegister.getBilldate()));
             reportParams.put("reportRunDate", DateUtils.getFormattedDateWithTimeStamp(new DateTime()));
-            final List<ContractorBillCertificateInfo> contractCertificateInfoList = contractorBillRegisterService.getContractCertificateDetails(
-                    contractorBillRegister,reportParams);
+            final List<ContractorBillCertificateInfo> contractCertificateInfoList = contractorBillRegisterService
+                    .getContractCertificateDetails(
+                            contractorBillRegister, reportParams);
             reportInput = new ReportRequest(CONTRACTCERTIFICATEPDF, contractCertificateInfoList, reportParams);
         }
 

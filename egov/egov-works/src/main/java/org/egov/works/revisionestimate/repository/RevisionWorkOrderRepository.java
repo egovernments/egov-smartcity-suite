@@ -52,8 +52,8 @@ public interface RevisionWorkOrderRepository extends JpaRepository<RevisionWorkO
 
     @Query("from RevisionWorkOrder rw where rw.parent.id=:id and rw.egwStatus.code=:status order by rw.id")
     List<RevisionWorkOrder> findByParent_IdAndStatus(@Param("id") final Long id, @Param("status") final String status);
-    
+
     List<RevisionWorkOrder> findByParent_IdAndEgwStatus_codeNotLike(final Long id, final String statusCode);
-    
+
     RevisionWorkOrder findByParent_Id(final Long id);
 }

@@ -67,7 +67,7 @@ public class ProjectCodeService extends PersistenceService<ProjectCode, Long> im
     public ProjectCodeService(final Class<ProjectCode> type) {
         super(type);
     }
-    
+
     @Autowired
     private PersistenceService<AssetsForEstimate, Long> assetsForEstimateService;
 

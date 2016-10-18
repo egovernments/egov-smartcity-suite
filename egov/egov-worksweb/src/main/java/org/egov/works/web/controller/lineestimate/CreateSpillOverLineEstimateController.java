@@ -125,7 +125,7 @@ public class CreateSpillOverLineEstimateController {
 
     @Autowired
     private BudgetControlTypeService budgetControlTypeService;
-    
+
     @Autowired
     private BoundaryService boundaryService;
 
@@ -221,7 +221,7 @@ public class CreateSpillOverLineEstimateController {
             if (estimateNumber != null)
                 errors.rejectValue("lineEstimateDetails[" + index + "].estimateNumber", "error.estimatenumber.unique");
             if (workIdentificationNumber != null)
-                errors.rejectValue("lineEstimateDetails[" + index + "].projectCode.code", "error.win.unique");          
+                errors.rejectValue("lineEstimateDetails[" + index + "].projectCode.code", "error.win.unique");
             if (led.getQuantity() <= 0)
                 errors.rejectValue("lineEstimateDetails[" + index + "].quantity", "error.quantity.required");
             index++;
@@ -321,7 +321,8 @@ public class CreateSpillOverLineEstimateController {
                             led.getGrossAmountBilled()));
                 else
                     totalAppropriationAmount = totalAppropriationAmount.add(led.getEstimateAmount());
-            if (BudgetControlType.BudgetCheckOption.MANDATORY.toString().equalsIgnoreCase(budgetControlTypeService.getConfigValue()) 
+            if (BudgetControlType.BudgetCheckOption.MANDATORY.toString()
+                    .equalsIgnoreCase(budgetControlTypeService.getConfigValue())
                     && budgetAvailable.compareTo(totalAppropriationAmount) == -1)
                 errors.reject("error.budgetappropriation.amount",
                         new String[] { budgetAvailable.toString(), totalAppropriationAmount.toString() }, null);

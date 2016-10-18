@@ -72,15 +72,15 @@ public class EstimatePhotographs extends AbstractAuditable {
     private static final long serialVersionUID = -4760202350886149567L;
 
     public static final String SEQ_EGW_ESTIMATEPHOTOGRAPHS = "SEQ_EGW_ESTIMATE_PHOTOGRAPHS";
-    
+
     public enum WorkProgress {
-        BEFORE,DURING,AFTER;
-        
+        BEFORE, DURING, AFTER;
+
         @Override
         public String toString() {
             return StringUtils.replace(name(), "_", " ");
         }
-        
+
     }
 
     @Id
@@ -106,7 +106,7 @@ public class EstimatePhotographs extends AbstractAuditable {
     @ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @JoinColumn(name = "filestore", nullable = false)
     private FileStoreMapper fileStore;
-    
+
     @NotNull
     @Enumerated(EnumType.STRING)
     private WorkProgress workProgress;
@@ -168,7 +168,7 @@ public class EstimatePhotographs extends AbstractAuditable {
         return fileStore;
     }
 
-    public void setFileStore(FileStoreMapper fileStore) {
+    public void setFileStore(final FileStoreMapper fileStore) {
         this.fileStore = fileStore;
     }
 
@@ -176,7 +176,7 @@ public class EstimatePhotographs extends AbstractAuditable {
         return workProgress;
     }
 
-    public void setWorkProgress(WorkProgress workProgress) {
+    public void setWorkProgress(final WorkProgress workProgress) {
         this.workProgress = workProgress;
     }
 

@@ -241,18 +241,18 @@ public class WorkProgressRegister extends AbstractAuditable {
     private Double workvalue;
 
     private String estimateNumber;
-    
+
     @Length(max = 50)
     private String woOfflineStatusCode;
-    
+
     @Length(max = 100)
     private String contractorName;
-    
+
     @Length(max = 50)
     private String contractorCode;
-    
+
     private Long boundaryNum;
-    
+
     private boolean bOQExists;
 
     @Override
@@ -693,7 +693,7 @@ public class WorkProgressRegister extends AbstractAuditable {
         return boundaryNum;
     }
 
-    public void setBoundaryNum(Long boundaryNum) {
+    public void setBoundaryNum(final Long boundaryNum) {
         this.boundaryNum = boundaryNum;
     }
 
@@ -701,7 +701,7 @@ public class WorkProgressRegister extends AbstractAuditable {
         return bOQExists;
     }
 
-    public void setBOQExists(boolean bOQExists) {
+    public void setBOQExists(final boolean bOQExists) {
         this.bOQExists = bOQExists;
     }
 

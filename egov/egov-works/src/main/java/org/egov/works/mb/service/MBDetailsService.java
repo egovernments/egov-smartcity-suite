@@ -28,22 +28,23 @@ public class MBDetailsService {
     }
 
     public List<MBDetails> getActivitiesByContractorBillTillDate(final Long workOrderEstimateId, final Date billCreatedDate) {
-        return mBDetailsRepository.getActivitiesByContractorBillTillDate(workOrderEstimateId, WorksConstants.APPROVED,billCreatedDate);
+        return mBDetailsRepository.getActivitiesByContractorBillTillDate(workOrderEstimateId, WorksConstants.APPROVED,
+                billCreatedDate);
     }
-        
-    public List<MBDetails> getMBDetailsByWorkOrderActivity(Long woaId) {
+
+    public List<MBDetails> getMBDetailsByWorkOrderActivity(final Long woaId) {
         return mBDetailsRepository.getMBDetailsByWorkOrderActivity(woaId, MeasurementBookStatus.APPROVED.toString());
     }
-    
+
     public List<Object[]> getMBDetailsByWorkOrderActivity(final List<Long> activityIdList) {
         return mBDetailsRepository.getMBActivitiesForRevisionEstimate(activityIdList);
     }
-    
-    public MBDetails getMBDetailsForREActivity(final Long activityId,final Long revisionEstimateId) {
-        return mBDetailsRepository.getMBDetailsForREActivity(activityId,revisionEstimateId,WorksConstants.CANCELLED_STATUS);
+
+    public MBDetails getMBDetailsForREActivity(final Long activityId, final Long revisionEstimateId) {
+        return mBDetailsRepository.getMBDetailsForREActivity(activityId, revisionEstimateId, WorksConstants.CANCELLED_STATUS);
     }
-    
-    public Revisions<Integer, MBDetails> findRevisions(Long id) {
+
+    public Revisions<Integer, MBDetails> findRevisions(final Long id) {
         return mBDetailsRepository.findRevisions(id);
     }
 

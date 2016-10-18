@@ -57,19 +57,20 @@ import com.google.gson.JsonSerializer;
 
 @Component
 public class ViewEstimatePhotographJsonAdaptor implements JsonSerializer<LineEstimateDetails> {
-	
-	@Autowired
-	private WorkOrderEstimateService workOrderEstimateService;
-	
-	@Autowired
-	private TrackMilestoneService trackMilestoneService; 
-	
+
+    @Autowired
+    private WorkOrderEstimateService workOrderEstimateService;
+
+    @Autowired
+    private TrackMilestoneService trackMilestoneService;
+
     @Override
     public JsonElement serialize(final LineEstimateDetails lineEstimateDetails, final Type type,
             final JsonSerializationContext jsc) {
-    	
-    	final WorkOrderEstimate workOrderEstimate = workOrderEstimateService.getWorkOrderEstimateByEstimateNumber(lineEstimateDetails.getEstimateNumber());
-    	
+
+        final WorkOrderEstimate workOrderEstimate = workOrderEstimateService
+                .getWorkOrderEstimateByEstimateNumber(lineEstimateDetails.getEstimateNumber());
+
         final JsonObject jsonObject = new JsonObject();
         if (lineEstimateDetails != null) {
             if (lineEstimateDetails.getProjectCode() != null)
@@ -84,25 +85,25 @@ public class ViewEstimatePhotographJsonAdaptor implements JsonSerializer<LineEst
                 jsonObject.addProperty("estimateAmount", lineEstimateDetails.getEstimateAmount());
             else
                 jsonObject.addProperty("estimateAmount", "");
-            if(workOrderEstimate != null){
-            	jsonObject.addProperty("workOrderNumber", workOrderEstimate.getWorkOrder().getWorkOrderNumber());
-            	jsonObject.addProperty("contractorName", workOrderEstimate.getWorkOrder().getContractor().getName());
-            	
-            } else{
-            	jsonObject.addProperty("workOrderNumber", "NA");
-            	jsonObject.addProperty("contractorName", "NA");
-            	jsonObject.addProperty("workCompletion", "NA");
+            if (workOrderEstimate != null) {
+                jsonObject.addProperty("workOrderNumber", workOrderEstimate.getWorkOrder().getWorkOrderNumber());
+                jsonObject.addProperty("contractorName", workOrderEstimate.getWorkOrder().getContractor().getName());
+
+            } else {
+                jsonObject.addProperty("workOrderNumber", "NA");
+                jsonObject.addProperty("contractorName", "NA");
+                jsonObject.addProperty("workCompletion", "NA");
             }
-            if(workOrderEstimate != null){
-            	final TrackMilestone trackMilestone = trackMilestoneService.getTrackMilestoneTotalPercentage(workOrderEstimate.getId());
-            	if(trackMilestone != null)
-            		jsonObject.addProperty("workCompletion", trackMilestone.getTotalPercentage());
-            	else
-            		jsonObject.addProperty("workCompletion", "NA");
-            		
+            if (workOrderEstimate != null) {
+                final TrackMilestone trackMilestone = trackMilestoneService
+                        .getTrackMilestoneTotalPercentage(workOrderEstimate.getId());
+                if (trackMilestone != null)
+                    jsonObject.addProperty("workCompletion", trackMilestone.getTotalPercentage());
+                else
+                    jsonObject.addProperty("workCompletion", "NA");
+
             }
-        		
-            	
+
             jsonObject.addProperty("lineEstimateDetailsId", lineEstimateDetails.getId());
         }
         return jsonObject;

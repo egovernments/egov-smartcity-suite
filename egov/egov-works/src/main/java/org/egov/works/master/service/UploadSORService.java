@@ -246,7 +246,7 @@ public class UploadSORService {
     }
 
     @Transactional
-    public String prepareOutPutFileWithErrors(String originalNameKey, String outputNameKey, File inputFile,
+    public String prepareOutPutFileWithErrors(final String originalNameKey, final String outputNameKey, final File inputFile,
             final List<UploadScheduleOfRate> uploadSORRatesList,
             final UploadSOR uploadSOR,
             final BindingResult errors) {
@@ -254,7 +254,7 @@ public class UploadSORService {
         try {
             final FileInputStream fIS = new FileInputStream(inputFile);
 
-            String timeStamp = new Timestamp(new Date().getTime()).toString().replace(".", "_");
+            final String timeStamp = new Timestamp(new Date().getTime()).toString().replace(".", "_");
 
             final Map<String, String> errorsMap = new HashMap<String, String>();
             final POIFSFileSystem fs = new POIFSFileSystem(fIS);
@@ -284,7 +284,7 @@ public class UploadSORService {
             wb.write(output_file);
             output_file.close();
 
-            String loadSorRateOutPutFileName = prepareOutPutFileName(originalNameKey, outputNameKey, timeStamp,
+            final String loadSorRateOutPutFileName = prepareOutPutFileName(originalNameKey, outputNameKey, timeStamp,
                     uploadSOR.getFile().getOriginalFilename(),
                     errors);
 
@@ -306,12 +306,12 @@ public class UploadSORService {
     }
 
     @Transactional
-    public String prepareOutPutFileWithFinalStatus(String originalNameKey, String outputNameKey, File inputFile,
+    public String prepareOutPutFileWithFinalStatus(final String originalNameKey, final String outputNameKey, final File inputFile,
             final List<UploadScheduleOfRate> uploadSORRatesList,
             final UploadSOR uploadSOR,
             final BindingResult errors) {
         String outPutFileStoreId;
-        String timeStamp = new Timestamp(new Date().getTime()).toString().replace(".", "_");
+        final String timeStamp = new Timestamp(new Date().getTime()).toString().replace(".", "_");
         try {
             final FileInputStream fIS = new FileInputStream(inputFile);
 
@@ -342,7 +342,7 @@ public class UploadSORService {
             wb.write(output_file);
             output_file.close();
 
-            String loadSorRateOutPutFileName = prepareOutPutFileName(originalNameKey, outputNameKey, timeStamp,
+            final String loadSorRateOutPutFileName = prepareOutPutFileName(originalNameKey, outputNameKey, timeStamp,
                     uploadSOR.getFile().getOriginalFilename(),
                     errors);
 
@@ -373,7 +373,7 @@ public class UploadSORService {
         return tempList;
     }
 
-    public String prepareOriginalFileName(String originalNameKey, String outputNameKey, String timeStamp,
+    public String prepareOriginalFileName(final String originalNameKey, final String outputNameKey, final String timeStamp,
             final String originalFilename, final BindingResult errors) {
         String loadSorRateOriginalFileName = "";
         if (originalFilename.contains(originalNameKey))
@@ -398,7 +398,7 @@ public class UploadSORService {
         return loadSorRateOriginalFileName;
     }
 
-    public String prepareOutPutFileName(String originalNameKey, String outputNameKey, String timeStamp,
+    public String prepareOutPutFileName(final String originalNameKey, final String outputNameKey, final String timeStamp,
             final String originalFilename, final BindingResult errors) {
         String loadSorRateOutPutFileName = "";
         if (originalFilename.contains(originalNameKey))
@@ -445,5 +445,5 @@ public class UploadSORService {
 
         return matcher.find() || matcher1.find();
     }
-    
+
 }

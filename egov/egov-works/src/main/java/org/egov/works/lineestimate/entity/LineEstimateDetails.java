@@ -59,8 +59,8 @@ import javax.validation.constraints.NotNull;
 
 import org.egov.infra.persistence.entity.AbstractAuditable;
 import org.egov.infra.persistence.validator.annotation.Unique;
-import org.egov.works.abstractestimate.entity.ProjectCode;
 import org.egov.works.abstractestimate.entity.EstimatePhotographs;
+import org.egov.works.abstractestimate.entity.ProjectCode;
 import org.hibernate.search.annotations.DocumentId;
 import org.hibernate.validator.constraints.Length;
 import org.hibernate.validator.constraints.SafeHtml;
@@ -120,7 +120,7 @@ public class LineEstimateDetails extends AbstractAuditable {
 
     @OneToMany(mappedBy = "lineEstimateDetails", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true, targetEntity = LineEstimateAppropriation.class)
     private List<LineEstimateAppropriation> lineEstimateAppropriations = new ArrayList<LineEstimateAppropriation>(0);
-    
+
     @OrderBy("id")
     @OneToMany(mappedBy = "lineEstimateDetails", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true, targetEntity = EstimatePhotographs.class)
     private List<EstimatePhotographs> estimatePhotographsList = new ArrayList<EstimatePhotographs>(0);

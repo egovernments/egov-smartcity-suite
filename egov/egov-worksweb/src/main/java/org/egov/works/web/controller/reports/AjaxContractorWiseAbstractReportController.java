@@ -63,16 +63,16 @@ import com.google.gson.GsonBuilder;
 @Controller
 @RequestMapping("/reports")
 public class AjaxContractorWiseAbstractReportController {
-    
+
     @Autowired
     private WorkProgressRegisterService workProgressRegisterService;
-    
+
     @Autowired
     private ContractorWiseAbstractJsonAdaptor contractorWiseAbstractJsonAdaptor;
-    
+
     @Autowired
     private WorkOrderEstimateService workOrderEstimateService;
-    
+
     @RequestMapping(value = "/ajax-contractorwiseabstractreport", method = RequestMethod.POST, produces = MediaType.TEXT_PLAIN_VALUE)
     public @ResponseBody String showSearchWorkProgressRegister(final Model model,
             @ModelAttribute final ContractorWiseAbstractReport contractorWiseAbstractReport) {
@@ -82,14 +82,15 @@ public class AjaxContractorWiseAbstractReportController {
                 .append("}").toString();
         return result;
     }
-    
+
     public Object searchResultToJson(final Object object) {
         final GsonBuilder gsonBuilder = new GsonBuilder();
-        final Gson gson = gsonBuilder.registerTypeAdapter(ContractorWiseAbstractSearchResult.class, contractorWiseAbstractJsonAdaptor).create();
+        final Gson gson = gsonBuilder
+                .registerTypeAdapter(ContractorWiseAbstractSearchResult.class, contractorWiseAbstractJsonAdaptor).create();
         final String json = gson.toJson(object);
         return json;
     }
-    
+
     @RequestMapping(value = "/ajax-searchcontractors", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
     public @ResponseBody List<Contractor> searchContractors(@RequestParam final String code) {
         return workOrderEstimateService.findContractorsByWorkOrderStatus(code);

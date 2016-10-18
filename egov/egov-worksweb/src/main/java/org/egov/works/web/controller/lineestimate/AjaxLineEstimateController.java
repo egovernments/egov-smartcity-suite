@@ -157,7 +157,7 @@ public class AjaxLineEstimateController {
 
     @Autowired
     private NatureOfWorkService natureOfWorkService;
-    
+
     @Autowired
     private LineEstimateForEstimatePhotographJsonAdaptor lineEstimateForEstimatePhotographJsonAdaptor;
 
@@ -388,32 +388,33 @@ public class AjaxLineEstimateController {
         final List<CFunction> functions = budgetDetailsHibernateDAO.getFunctionsByFundAndDepartment(fundId, departmentId);
         return functions;
     }
-    
+
     @RequestMapping(value = "/getestimatenumbers-uploadphotographs", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
     public @ResponseBody List<String> findEstimateNumbersForEstimatePhotograph(@RequestParam final String estimateNumber) {
         return lineEstimateService.getEstimateNumbersForEstimatePhotograph(estimateNumber);
     }
-    
+
     @RequestMapping(value = "/getwin-uploadphotographs", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
     public @ResponseBody List<String> findWinForEstimatePhotograph(@RequestParam final String workIdentificationNumber) {
         return lineEstimateService.getWinForEstimatePhotograph(workIdentificationNumber);
     }
-    
+
     @RequestMapping(value = "/searchlineestimateforestimatephotograph", method = RequestMethod.POST, produces = MediaType.TEXT_PLAIN_VALUE)
     public @ResponseBody String ajaxSearchLEForEstimatePhotograph(final Model model,
             @ModelAttribute final EstimatePhotographSearchRequest estimatePhotographSearchRequest) {
-        final List<LineEstimateDetails> searchResultList = lineEstimateService.searchLineEstimatesForEstimatePhotograph(estimatePhotographSearchRequest);
+        final List<LineEstimateDetails> searchResultList = lineEstimateService
+                .searchLineEstimatesForEstimatePhotograph(estimatePhotographSearchRequest);
         final String result = new StringBuilder("{ \"data\":").append(toSearchLineEstimateForEstimatePhotograph(searchResultList))
                 .append("}").toString();
         return result;
     }
-    
+
     public Object toSearchLineEstimateForEstimatePhotograph(final Object object) {
         final GsonBuilder gsonBuilder = new GsonBuilder();
-        final Gson gson = gsonBuilder.registerTypeAdapter(LineEstimateDetails.class, lineEstimateForEstimatePhotographJsonAdaptor).create();
+        final Gson gson = gsonBuilder.registerTypeAdapter(LineEstimateDetails.class, lineEstimateForEstimatePhotographJsonAdaptor)
+                .create();
         final String json = gson.toJson(object);
         return json;
     }
-    
-    
+
 }

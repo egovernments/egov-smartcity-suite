@@ -116,7 +116,7 @@ public class CreateRevisionEstimateController extends GenericWorkFlowController 
         revisionEstimateService.loadViewData(revisionEstimate, workOrderEstimate, model);
         final WorkflowContainer workflowContainer = new WorkflowContainer();
         prepareWorkflow(model, revisionEstimate, workflowContainer);
-        List<String> validActions = new ArrayList<String>();
+        final List<String> validActions = new ArrayList<String>();
         validActions.add(WorksConstants.SAVE_ACTION);
         validActions.add(WorksConstants.FORWARD_ACTION.toString());
         if (revisionEstimate.getState() != null && revisionEstimate.getState().getNextAction() != null)
@@ -152,7 +152,7 @@ public class CreateRevisionEstimateController extends GenericWorkFlowController 
 
             final WorkflowContainer workflowContainer = new WorkflowContainer();
             prepareWorkflow(model, revisionEstimate, workflowContainer);
-            List<String> validActions = new ArrayList<String>();
+            final List<String> validActions = new ArrayList<String>();
             validActions.add(WorksConstants.SAVE_ACTION);
             validActions.add(WorksConstants.FORWARD_ACTION.toString());
             if (revisionEstimate.getState() != null && revisionEstimate.getState().getNextAction() != null)
@@ -167,15 +167,14 @@ public class CreateRevisionEstimateController extends GenericWorkFlowController 
         } else {
 
             if (revisionEstimate.getState() == null)
-                if (WorksConstants.FORWARD_ACTION.equals(workFlowAction)) {
+                if (WorksConstants.FORWARD_ACTION.equals(workFlowAction))
                     revisionEstimate.setEgwStatus(
                             worksUtils.getStatusByModuleAndCode(WorksConstants.REVISIONABSTRACTESTIMATE,
                                     EstimateStatus.CREATED.toString()));
-                } else {
+                else
                     revisionEstimate.setEgwStatus(
                             worksUtils.getStatusByModuleAndCode(WorksConstants.REVISIONABSTRACTESTIMATE,
                                     EstimateStatus.NEW.toString()));
-                }
 
             if (!BudgetControlType.BudgetCheckOption.NONE.toString()
                     .equalsIgnoreCase(budgetControlTypeService.getConfigValue()))
@@ -312,14 +311,14 @@ public class CreateRevisionEstimateController extends GenericWorkFlowController 
             message = messageSource.getMessage("msg.revisionestimate.approved",
                     new String[] { revisionEstimate.getEstimateNumber() }, null);
         else if (RevisionEstimateStatus.TECH_SANCTIONED.toString().equalsIgnoreCase(revisionEstimate.getEgwStatus().getCode()))
-        	 message = messageSource.getMessage("msg.revisionestimate.technicalsanction",
-                     new String[] { revisionEstimate.getEstimateNumber(), approverName, nextDesign }, null);
+            message = messageSource.getMessage("msg.revisionestimate.technicalsanction",
+                    new String[] { revisionEstimate.getEstimateNumber(), approverName, nextDesign }, null);
         else if (RevisionEstimateStatus.CHECKED.toString().equalsIgnoreCase(revisionEstimate.getEgwStatus().getCode()))
-       	 message = messageSource.getMessage("msg.revisionestimate.checked",
+            message = messageSource.getMessage("msg.revisionestimate.checked",
                     new String[] { revisionEstimate.getEstimateNumber(), approverName, nextDesign }, null);
         else if (RevisionEstimateStatus.BUDGET_SANCTIONED.toString().equalsIgnoreCase(revisionEstimate.getEgwStatus().getCode()))
-          	 message = messageSource.getMessage("msg.revisionestimate.budgetsanction",
-                       new String[] { revisionEstimate.getEstimateNumber(), approverName, nextDesign }, null);
+            message = messageSource.getMessage("msg.revisionestimate.budgetsanction",
+                    new String[] { revisionEstimate.getEstimateNumber(), approverName, nextDesign }, null);
         return message;
 
     }

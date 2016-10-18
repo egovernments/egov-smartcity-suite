@@ -77,7 +77,8 @@ public class WorkProgressRegisterJsonAdaptor implements JsonSerializer<WorkProgr
             else
                 jsonObject.addProperty("workCategory", "NA");
             if (workProgressRegister.getBeneficiary() != null)
-                jsonObject.addProperty("beneficiaries", workProgressRegister.getBeneficiary().toString().replaceAll("_C", " /C").replace("_", " "));
+                jsonObject.addProperty("beneficiaries",
+                        workProgressRegister.getBeneficiary().toString().replaceAll("_C", " /C").replace("_", " "));
             else
                 jsonObject.addProperty("beneficiaries", "NA");
             if (workProgressRegister.getNameOfWork() != null)
@@ -140,7 +141,8 @@ public class WorkProgressRegisterJsonAdaptor implements JsonSerializer<WorkProgr
                 jsonObject.addProperty("modeOfAllotment", "");
             if (workProgressRegister.getAgreementNumber() != null)
                 jsonObject.addProperty("agreementNumberDate",
-                        workProgressRegister.getAgreementNumber() + " - " + DateUtils.getFormattedDate(workProgressRegister.getAgreementDate(), "dd/MM/yyyy"));
+                        workProgressRegister.getAgreementNumber() + " - "
+                                + DateUtils.getFormattedDate(workProgressRegister.getAgreementDate(), "dd/MM/yyyy"));
             else
                 jsonObject.addProperty("agreementNumberDate", "NA");
             if (workProgressRegister.getContractor() != null)
@@ -154,7 +156,8 @@ public class WorkProgressRegisterJsonAdaptor implements JsonSerializer<WorkProgr
                 jsonObject.addProperty("agreementAmount", "");
             if (workProgressRegister.getLatestMbNumber() != null && workProgressRegister.getLatestMbDate() != null)
                 jsonObject.addProperty("latestMbNumberDate",
-                        workProgressRegister.getLatestMbNumber() + ", " + DateUtils.getFormattedDate(workProgressRegister.getLatestMbDate(), "dd/MM/yyyy"));
+                        workProgressRegister.getLatestMbNumber() + ", "
+                                + DateUtils.getFormattedDate(workProgressRegister.getLatestMbDate(), "dd/MM/yyyy"));
             else
                 jsonObject.addProperty("latestMbNumberDate", "NA");
             if (workProgressRegister.getLatestBillNumber() != null)
@@ -200,7 +203,8 @@ public class WorkProgressRegisterJsonAdaptor implements JsonSerializer<WorkProgr
             else
                 jsonObject.addProperty("workStatus", "");
 
-            jsonObject.addProperty("createdDate", DateUtils.getFormattedDate(workProgressRegister.getCreatedDate(),"dd/MM/yyyy hh:mm a"));
+            jsonObject.addProperty("createdDate",
+                    DateUtils.getFormattedDate(workProgressRegister.getCreatedDate(), "dd/MM/yyyy hh:mm a"));
         }
         return jsonObject;
     }

@@ -52,7 +52,7 @@ public class MilestoneTemplateWFService extends PersistenceService<MilestoneTemp
         super(MilestoneTemplate.class);
     }
 
-    public MilestoneTemplateWFService(Class<MilestoneTemplate> type) {
+    public MilestoneTemplateWFService(final Class<MilestoneTemplate> type) {
         super(type);
     }
 

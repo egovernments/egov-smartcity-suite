@@ -145,9 +145,11 @@ public class AjaxContractorBillController {
     public @ResponseBody List<String> findBillNumbersToCancelContractorBill(@RequestParam final String billNumber) {
         return contractorBillRegisterService.findBillNumbersToSearchContractorBillToCancel(billNumber);
     }
-    
+
     @RequestMapping(value = "/gettotalcreditanddebitamount", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
-    public @ResponseBody Object findRundedAndWithHeldAmountForWorkOrderByAccountCode(@RequestParam final Long workOrderEstimateId,@RequestParam final BigDecimal glCodeId,@RequestParam final Long contractorBillId) {
-       return contractorBillRegisterService.getTotalDebitAndCreditAmountByAccountCode(workOrderEstimateId,glCodeId,contractorBillId);
+    public @ResponseBody Object findRundedAndWithHeldAmountForWorkOrderByAccountCode(@RequestParam final Long workOrderEstimateId,
+            @RequestParam final BigDecimal glCodeId, @RequestParam final Long contractorBillId) {
+        return contractorBillRegisterService.getTotalDebitAndCreditAmountByAccountCode(workOrderEstimateId, glCodeId,
+                contractorBillId);
     }
 }

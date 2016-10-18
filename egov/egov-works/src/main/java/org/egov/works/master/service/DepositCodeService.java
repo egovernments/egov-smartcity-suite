@@ -70,7 +70,7 @@ public class DepositCodeService extends PersistenceService<DepositCode, Long> {
     public DepositCodeService() {
         super(DepositCode.class);
     }
-    
+
     public DepositCodeService(final Class<DepositCode> type) {
         super(type);
     }

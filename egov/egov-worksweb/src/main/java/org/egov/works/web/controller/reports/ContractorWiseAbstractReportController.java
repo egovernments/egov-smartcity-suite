@@ -57,10 +57,10 @@ public class ContractorWiseAbstractReportController {
 
     @Autowired
     private FinancialYearService financialYearService;
-    
+
     @Autowired
     private NatureOfWorkService natureOfWorkService;
-    
+
     @RequestMapping(value = "/searchform", method = RequestMethod.GET)
     public String showSearchForm(
             @ModelAttribute final ContractorWiseAbstractReport contractorWiseAbstractReport,

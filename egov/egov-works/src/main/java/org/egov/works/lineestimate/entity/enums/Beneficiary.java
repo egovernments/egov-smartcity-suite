@@ -44,7 +44,7 @@ import org.apache.commons.lang.StringUtils;
 
 public enum Beneficiary {
 
-    SC,ST, BC, MINORITY,WOMEN_CHILDREN_WELFARE,GENERAL;
+    SC, ST, BC, MINORITY, WOMEN_CHILDREN_WELFARE, GENERAL;
 
     @Override
     public String toString() {

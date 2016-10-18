@@ -110,9 +110,9 @@ public class WorkOrderActivityService {
     }
 
     public List<WorkOrderActivity> searchREActivities(final Long workOrderEstimateId, final String description,
-            final String itemCode, final String nonTenderedType, String mbDate) {
+            final String itemCode, final String nonTenderedType, final String mbDate) {
 
-        WorkOrderEstimate workOrderEstimate = workOrderEstimateService.getWorkOrderEstimateById(workOrderEstimateId);
+        final WorkOrderEstimate workOrderEstimate = workOrderEstimateService.getWorkOrderEstimateById(workOrderEstimateId);
 
         final Criteria criteria = entityManager.unwrap(Session.class).createCriteria(WorkOrderActivity.class, "woa")
                 .createAlias("woa.workOrderEstimate", "woe")
@@ -132,10 +132,9 @@ public class WorkOrderActivityService {
             criteria.add(Restrictions.eq("act.revisionType", RevisionType.NON_TENDERED_ITEM));
         else if (nonTenderedType != null && WorksConstants.LUMP_SUM.equalsIgnoreCase(nonTenderedType))
             criteria.add(Restrictions.eq("act.revisionType", RevisionType.LUMP_SUM_ITEM));
-        else {
+        else
             criteria.add(Restrictions.or(Restrictions.eq("act.revisionType", RevisionType.NON_TENDERED_ITEM),
                     Restrictions.eq("act.revisionType", RevisionType.LUMP_SUM_ITEM)));
-        }
 
         if (itemCode != null && !itemCode.isEmpty())
             criteria.add(Restrictions.ilike("schedule.code", itemCode,
@@ -161,13 +160,13 @@ public class WorkOrderActivityService {
     }
 
     public Object getQuantityForActivity(final Long activityId) {
-        return workOrderActivityRepository.getActivityQuantity(activityId,WorksConstants.APPROVED);
+        return workOrderActivityRepository.getActivityQuantity(activityId, WorksConstants.APPROVED);
     }
 
     public Object getREActivityQuantity(final Long reId, final Long parentId) {
         return workOrderActivityRepository.getREActivityQuantity(reId, parentId);
     }
-    
+
     public List<WorkOrderActivity> getWorkOrderActivitiesForContractorPortal(final Long workOrderId) {
         return workOrderActivityRepository.getWorkOrderActivitiesForContractorPortal(workOrderId);
     }

@@ -90,16 +90,16 @@ public class CompletionCertificatePDFController {
 
     @Autowired
     private ContractorBillRegisterService contractorBillRegisterService;
-    
+
     @Autowired
     private OfflineStatusService offlineStatusService;
-    
+
     @Autowired
     private EstimateService estimateService;
-    
+
     @Autowired
     private MBDetailsService mbDetailsService;
-    
+
     @Autowired
     private WorksUtils worksUtils;
 
@@ -109,7 +109,7 @@ public class CompletionCertificatePDFController {
     public @ResponseBody ResponseEntity<byte[]> generateContractorBillPDF(final HttpServletRequest request,
             @PathVariable("contractorBillId") final Long id, final HttpSession session) throws IOException {
         final ContractorBillRegister contractorBillRegister = contractorBillRegisterService.getContractorBillById(id);
-        
+
         return generateReport(contractorBillRegister, request, session);
     }
 
@@ -124,25 +124,26 @@ public class CompletionCertificatePDFController {
             final DecimalFormat df = new DecimalFormat("0.00");
 
             final String url = WebUtils.extractRequestDomainURL(request, false);
-            
+
             final OfflineStatus offlineStatusses = offlineStatusService.getOfflineStatusByObjectIdAndObjectTypeAndStatus(
-            		contractorBillRegister.getWorkOrderEstimate().getWorkOrder().getId(), WorksConstants.WORKORDER,
+                    contractorBillRegister.getWorkOrderEstimate().getWorkOrder().getId(), WorksConstants.WORKORDER,
                     OfflineStatuses.WORK_COMMENCED.toString().toUpperCase());
-            		
+
             reportParams.put("nameOfWork",
                     contractorBillRegister.getWorkOrderEstimate().getEstimate().getName() != null
                             ? contractorBillRegister.getWorkOrderEstimate().getEstimate().getName() : "");
-            if(contractorBillRegister.getWorkOrderEstimate().getEstimate().getLineEstimateDetails() != null){
-            	reportParams.put("estimateNumber",
-                    contractorBillRegister.getWorkOrderEstimate().getEstimate().getLineEstimateDetails().getEstimateNumber());
-            	reportParams.put("winCode",contractorBillRegister.getWorkOrderEstimate().getEstimate().getLineEstimateDetails().getProjectCode().getCode());
-            }
-            else {
-            	reportParams.put("estimateNumber","NA");
-            	reportParams.put("winCode","NA");
+            if (contractorBillRegister.getWorkOrderEstimate().getEstimate().getLineEstimateDetails() != null) {
+                reportParams.put("estimateNumber",
+                        contractorBillRegister.getWorkOrderEstimate().getEstimate().getLineEstimateDetails().getEstimateNumber());
+                reportParams.put("winCode", contractorBillRegister.getWorkOrderEstimate().getEstimate().getLineEstimateDetails()
+                        .getProjectCode().getCode());
+            } else {
+                reportParams.put("estimateNumber", "NA");
+                reportParams.put("winCode", "NA");
             }
 
-            reportParams.put("estimateValue",df.format(contractorBillRegister.getWorkOrderEstimate().getEstimate().getEstimateValue()));
+            reportParams.put("estimateValue",
+                    df.format(contractorBillRegister.getWorkOrderEstimate().getEstimate().getEstimateValue()));
 
             reportParams.put("contractorName",
                     contractorBillRegister.getWorkOrderEstimate().getWorkOrder().getContractor().getName() != null
@@ -150,11 +151,14 @@ public class CompletionCertificatePDFController {
             reportParams.put("contractorCode",
                     contractorBillRegister.getWorkOrderEstimate().getWorkOrder().getContractor().getCode() != null
                             ? contractorBillRegister.getWorkOrderEstimate().getWorkOrder().getContractor().getCode() : "");
-            reportParams.put("workOrderAmount",df.format(contractorBillRegister.getWorkOrderEstimate().getWorkOrder().getWorkOrderAmount()));
-            reportParams.put("workOrderNumber",contractorBillRegister.getWorkOrderEstimate().getWorkOrder().getWorkOrderNumber());
+            reportParams.put("workOrderAmount",
+                    df.format(contractorBillRegister.getWorkOrderEstimate().getWorkOrder().getWorkOrderAmount()));
+            reportParams.put("workOrderNumber",
+                    contractorBillRegister.getWorkOrderEstimate().getWorkOrder().getWorkOrderNumber());
             reportParams.put("workCommencedOn", DateUtils.getFormattedDate(offlineStatusses.getStatusDate(), "dd/MM/yyyy"));
-            reportParams.put("workCompletedDate", DateUtils.getFormattedDate(contractorBillRegister.getWorkOrderEstimate().getWorkCompletionDate(), "dd/MM/yyyy"));
-            
+            reportParams.put("workCompletedDate", DateUtils
+                    .getFormattedDate(contractorBillRegister.getWorkOrderEstimate().getWorkCompletionDate(), "dd/MM/yyyy"));
+
             reportParams.put("crearedBy", worksUtils.getUserDesignation(contractorBillRegister.getCreatedBy()));
             reportParams.put("approvedBy", worksUtils.getUserDesignation(contractorBillRegister.getApprovedBy()));
             reportParams.put("ward", contractorBillRegister.getWorkOrderEstimate().getEstimate().getWard().getName());
@@ -166,37 +170,37 @@ public class CompletionCertificatePDFController {
 
             final List<ContractorBillCertificateInfo> contractorBillCertificateInfoList = new ArrayList<ContractorBillCertificateInfo>();
             for (final WorkOrderActivity woa : contractorBillRegister.getWorkOrderEstimate().getWorkOrderActivities()) {
-            	final Activity act = woa.getActivity();
-            	List<Activity> activities = estimateService.getActivitiesByParent(act.getId());
-            	activities.add(act);
-            
-            	double quantity = 0.0;
-            	for(final Activity activity : activities){
-            		final ContractorBillCertificateInfo contractorBillCertificateInfo = new ContractorBillCertificateInfo();
-            			final List<MBDetails> detailsList = mbDetailsService.getMBDetailsByWorkOrderActivity(woa.getId());
-            			for (MBDetails mbDetails : detailsList) {
-            				quantity += mbDetails.getQuantity();
-            			}
-            			contractorBillCertificateInfo.setExecutionQuantity(quantity);
-                	
-                	contractorBillCertificateInfo.setTenderQuantity(activity.getQuantity());
-                	contractorBillCertificateInfo.setTenderAmount(activity.getAmount().getValue());
-                	contractorBillCertificateInfo.setTenderRate(activity.getEstimateRate());
-                	contractorBillCertificateInfo.setExecutionRate(activity.getEstimateRate());
-                	contractorBillCertificateInfo.setExecutionAmount(quantity * activity.getRate());
-                	contractorBillCertificateInfo.setWorkOrderActivity(woa);
-                	contractorBillCertificateInfoList.add(contractorBillCertificateInfo);
-            	}
+                final Activity act = woa.getActivity();
+                final List<Activity> activities = estimateService.getActivitiesByParent(act.getId());
+                activities.add(act);
+
+                double quantity = 0.0;
+                for (final Activity activity : activities) {
+                    final ContractorBillCertificateInfo contractorBillCertificateInfo = new ContractorBillCertificateInfo();
+                    final List<MBDetails> detailsList = mbDetailsService.getMBDetailsByWorkOrderActivity(woa.getId());
+                    for (final MBDetails mbDetails : detailsList)
+                        quantity += mbDetails.getQuantity();
+                    contractorBillCertificateInfo.setExecutionQuantity(quantity);
+
+                    contractorBillCertificateInfo.setTenderQuantity(activity.getQuantity());
+                    contractorBillCertificateInfo.setTenderAmount(activity.getAmount().getValue());
+                    contractorBillCertificateInfo.setTenderRate(activity.getEstimateRate());
+                    contractorBillCertificateInfo.setExecutionRate(activity.getEstimateRate());
+                    contractorBillCertificateInfo.setExecutionAmount(quantity * activity.getRate());
+                    contractorBillCertificateInfo.setWorkOrderActivity(woa);
+                    contractorBillCertificateInfoList.add(contractorBillCertificateInfo);
+                }
 
             }
-            
-            reportInput = new ReportRequest(CONTRACTORCOMPLETIONBILLPDF,contractorBillCertificateInfoList , reportParams);
+
+            reportInput = new ReportRequest(CONTRACTORCOMPLETIONBILLPDF, contractorBillCertificateInfoList, reportParams);
 
         }
 
         final HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.parseMediaType("application/pdf"));
-        headers.add("content-disposition", "inline;filename=CompletionCertificate_"+ contractorBillRegister.getBillnumber() + ".pdf");
+        headers.add("content-disposition",
+                "inline;filename=CompletionCertificate_" + contractorBillRegister.getBillnumber() + ".pdf");
         reportOutput = reportService.createReport(reportInput);
         return new ResponseEntity<byte[]>(reportOutput.getReportOutputData(), headers, HttpStatus.CREATED);
 

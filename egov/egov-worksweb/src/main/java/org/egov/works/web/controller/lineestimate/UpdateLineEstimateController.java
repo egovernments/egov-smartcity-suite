@@ -147,7 +147,7 @@ public class UpdateLineEstimateController extends GenericWorkFlowController {
 
     @Autowired
     private BudgetControlTypeService budgetControlTypeService;
-    
+
     @Autowired
     private LineEstimateAppropriationService lineEstimateAppropriationService;
 
@@ -228,14 +228,12 @@ public class UpdateLineEstimateController extends GenericWorkFlowController {
             validateAdminSanctionDetail(lineEstimate, errors);
             lineEstimateService.validateWorkFlowFields(lineEstimate, errors);
         }
-            
 
         if (lineEstimate.getStatus().getCode().equals(LineEstimateStatus.CHECKED.toString())
-                && !workFlowAction.equalsIgnoreCase(WorksConstants.REJECT_ACTION.toString())) {
+                && !workFlowAction.equalsIgnoreCase(WorksConstants.REJECT_ACTION.toString()))
             if (!BudgetControlType.BudgetCheckOption.NONE.toString()
                     .equalsIgnoreCase(budgetControlTypeService.getConfigValue()))
                 validateBudgetAmount(lineEstimate, errors);
-        }
         if (errors.hasErrors()) {
             setDropDownValues(model);
             return loadViewData(model, request, lineEstimate);
@@ -288,7 +286,7 @@ public class UpdateLineEstimateController extends GenericWorkFlowController {
             Boolean check = false;
             final List<CChartOfAccountDetail> accountDetails = new ArrayList<CChartOfAccountDetail>();
             accountDetails.addAll(lineEstimate.getBudgetHead().getMaxCode().getChartOfAccountDetails());
-            for (CChartOfAccountDetail detail : accountDetails) 
+            for (final CChartOfAccountDetail detail : accountDetails)
                 if (detail.getDetailTypeId() != null
                         && detail.getDetailTypeId().getName().equalsIgnoreCase(WorksConstants.PROJECTCODE))
                     check = true;
@@ -325,7 +323,8 @@ public class UpdateLineEstimateController extends GenericWorkFlowController {
                 totalEstimateAmount = led.getEstimateAmount().add(totalEstimateAmount);
 
             if (BudgetControlType.BudgetCheckOption.MANDATORY.toString()
-                    .equalsIgnoreCase(budgetControlTypeService.getConfigValue()) && budgetAvailable.compareTo(totalEstimateAmount) == -1)
+                    .equalsIgnoreCase(budgetControlTypeService.getConfigValue())
+                    && budgetAvailable.compareTo(totalEstimateAmount) == -1)
                 errors.reject("error.budgetappropriation.amount",
                         new String[] { budgetAvailable.toString(), totalEstimateAmount.toString() }, null);
         } catch (final ValidationException e) {
@@ -341,9 +340,11 @@ public class UpdateLineEstimateController extends GenericWorkFlowController {
     }
 
     private void validateAdminSanctionDetail(final LineEstimate lineEstimate, final BindingResult errors) {
-        /*if (lineEstimate.getCouncilResolutionDate() != null
-                && lineEstimate.getCouncilResolutionDate().before(lineEstimate.getLineEstimateDate()))
-            errors.rejectValue("councilResolutionDate", "error.councilresolutiondate");*/
+        /*
+         * if (lineEstimate.getCouncilResolutionDate() != null &&
+         * lineEstimate.getCouncilResolutionDate().before(lineEstimate.getLineEstimateDate()))
+         * errors.rejectValue("councilResolutionDate", "error.councilresolutiondate");
+         */
         if (StringUtils.isBlank(lineEstimate.getAdminSanctionNumber()))
             errors.rejectValue("adminSanctionNumber", "error.adminsanctionnumber.notnull");
         if (lineEstimate.getAdminSanctionNumber() != null) {
@@ -376,13 +377,13 @@ public class UpdateLineEstimateController extends GenericWorkFlowController {
         model.addAttribute("stateType", lineEstimate.getClass().getSimpleName());
         model.addAttribute("amountRule", lineEstimate.getTotalEstimateAmount());
 
-        if (lineEstimate.getCurrentState() != null) 
-            model.addAttribute("currentState", lineEstimate.getCurrentState().getValue()); 
+        if (lineEstimate.getCurrentState() != null)
+            model.addAttribute("currentState", lineEstimate.getCurrentState().getValue());
         if (lineEstimate.getState() != null && lineEstimate.getState().getNextAction() != null) {
             model.addAttribute("nextAction", lineEstimate.getState().getNextAction());
             model.addAttribute("pendingActions", lineEstimate.getState().getNextAction());
         }
-        WorkflowContainer workflowContainer = new WorkflowContainer();
+        final WorkflowContainer workflowContainer = new WorkflowContainer();
         workflowContainer.setAmountRule(lineEstimate.getTotalEstimateAmount());
         workflowContainer.setPendingActions(lineEstimate.getCurrentState().getNextAction());
         prepareWorkflow(model, lineEstimate, workflowContainer);
@@ -402,11 +403,13 @@ public class UpdateLineEstimateController extends GenericWorkFlowController {
         model.addAttribute("lineEstimate", newLineEstimate);
         if (request != null && request.getParameter("message") != null && request.getParameter("message").equals("update"))
             model.addAttribute("message", WorksConstants.LINEESTIMATE_UPDATE);
-        if(lineEstimate.getStatus().getCode().equals(LineEstimateStatus.BUDGET_SANCTIONED.toString()) || 
-        		lineEstimate.getStatus().getCode().equals(LineEstimateStatus.ADMINISTRATIVE_SANCTIONED.toString())) {
-           model.addAttribute("fieldsRequiredMap", lineEstimateService.getWorkFlowLevelFields(lineEstimate));
-           final LineEstimateAppropriation lineEstimateAppropriation = lineEstimateAppropriationService.findLatestByLineEstimateDetails_EstimateNumber(lineEstimate.getLineEstimateDetails().get(0).getEstimateNumber());
-           model.addAttribute("budgetAppropriationDate", lineEstimateAppropriation.getBudgetUsage().getUpdatedTime());
+        if (lineEstimate.getStatus().getCode().equals(LineEstimateStatus.BUDGET_SANCTIONED.toString()) ||
+                lineEstimate.getStatus().getCode().equals(LineEstimateStatus.ADMINISTRATIVE_SANCTIONED.toString())) {
+            model.addAttribute("fieldsRequiredMap", lineEstimateService.getWorkFlowLevelFields(lineEstimate));
+            final LineEstimateAppropriation lineEstimateAppropriation = lineEstimateAppropriationService
+                    .findLatestByLineEstimateDetails_EstimateNumber(
+                            lineEstimate.getLineEstimateDetails().get(0).getEstimateNumber());
+            model.addAttribute("budgetAppropriationDate", lineEstimateAppropriation.getBudgetUsage().getUpdatedTime());
         }
         return "newLineEstimate-edit";
     }

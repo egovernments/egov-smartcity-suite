@@ -123,9 +123,10 @@ public class TrackMilestoneService {
     public TrackMilestone getTrackMilestoneByMilestoneId(final Long id) {
         return trackMilestoneRepository.findByMilestone_Id(id);
     }
-    
+
     public TrackMilestone getTrackMilestoneTotalPercentage(final Long workOrderEstimateId) {
-        return trackMilestoneRepository.findTrackMilestoneTotalPercentage(workOrderEstimateId,WorksConstants.APPROVED,WorksConstants.APPROVED,WorksConstants.APPROVED);
+        return trackMilestoneRepository.findTrackMilestoneTotalPercentage(workOrderEstimateId, WorksConstants.APPROVED,
+                WorksConstants.APPROVED, WorksConstants.APPROVED);
     }
-    
+
 }

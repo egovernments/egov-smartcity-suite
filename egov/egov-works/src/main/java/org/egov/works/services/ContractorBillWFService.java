@@ -48,7 +48,7 @@ public class ContractorBillWFService extends PersistenceService<ContractorBillRe
         super(ContractorBillRegister.class);
     }
 
-    public ContractorBillWFService(Class<ContractorBillRegister> type) {
+    public ContractorBillWFService(final Class<ContractorBillRegister> type) {
         super(type);
     }
 }

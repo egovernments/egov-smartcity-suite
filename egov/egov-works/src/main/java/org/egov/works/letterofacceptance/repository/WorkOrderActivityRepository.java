@@ -52,17 +52,19 @@ import org.springframework.stereotype.Repository;
 public interface WorkOrderActivityRepository extends JpaRepository<WorkOrderActivity, Long> {
     WorkOrderActivity findByActivity_IdAndWorkOrderEstimate_WorkOrder_EgwStatus_Code(final Long activityId,
             final String woStatus);
-    
+
     @Query("select woa from WorkOrderActivity woa where woa.workOrderEstimate.estimate.id =:revisionEstimateId and woa.workOrderEstimate.id=:revisionWorkOrderId and woa.activity.revisionType=:changedQuantityRevisionType")
-    List<WorkOrderActivity> findChangedQuantityActivitiesForEstimate(@Param("revisionEstimateId") Long revisionEstimateId,@Param("revisionWorkOrderId") Long revisionWorkOrderEstimateId,@Param("changedQuantityRevisionType") RevisionType changedQuantityRevisionType);
-    
+    List<WorkOrderActivity> findChangedQuantityActivitiesForEstimate(@Param("revisionEstimateId") Long revisionEstimateId,
+            @Param("revisionWorkOrderId") Long revisionWorkOrderEstimateId,
+            @Param("changedQuantityRevisionType") RevisionType changedQuantityRevisionType);
+
     @Query("select sum(woa.approvedQuantity) from WorkOrderActivity woa where workOrderEstimate.workOrder.egwStatus.code =:workOrderStatus group by woa,woa.activity having activity.id =:activityId")
-    Object getActivityQuantity(@Param("activityId") Long activityId,@Param ("workOrderStatus") String workOrderStatus);   
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 
+    Object getActivityQuantity(@Param("activityId") Long activityId, @Param("workOrderStatus") String workOrderStatus);
+
     @Query("select sum(woa.approvedQuantity*coalesce((CASE WHEN woa.activity.revisionType = 'REDUCED_QUANTITY' THEN -1 WHEN woa.activity.revisionType = 'ADDITIONAL_QUANTITY' THEN 1 WHEN woa.activity.revisionType = 'NON_TENDERED_ITEM' THEN 1 WHEN woa.activity.revisionType = 'LUMP_SUM_ITEM' THEN 1 END),1)) from WorkOrderActivity woa where woa.activity.abstractEstimate.egwStatus.code = 'APPROVED' and woa.activity.abstractEstimate.id !=:revisionEstimateId group by woa.activity.parent having (woa.activity.parent is not null and woa.activity.parent.id =:parentId)")
-    Object getREActivityQuantity(@Param("revisionEstimateId") Long revisionEstimateId,@Param ("parentId") Long parentId);
+    Object getREActivityQuantity(@Param("revisionEstimateId") Long revisionEstimateId, @Param("parentId") Long parentId);
 
     @Query("select woa from WorkOrderActivity woa where woa.workOrderEstimate.workOrder.id = :workOrderId or woa.workOrderEstimate.workOrder.parent.id= :workOrderId")
     List<WorkOrderActivity> getWorkOrderActivitiesForContractorPortal(@Param("workOrderId") Long workOrderId);
-    
+
 }

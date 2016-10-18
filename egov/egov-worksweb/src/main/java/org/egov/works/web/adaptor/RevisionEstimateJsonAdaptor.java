@@ -43,9 +43,7 @@ package org.egov.works.web.adaptor;
 import java.lang.reflect.Type;
 
 import org.egov.infra.utils.DateUtils;
-import org.egov.infra.utils.StringUtils;
 import org.egov.works.revisionestimate.entity.SearchRevisionEstimate;
-import org.springframework.stereotype.Component;
 
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
@@ -62,57 +60,57 @@ public class RevisionEstimateJsonAdaptor implements JsonSerializer<SearchRevisio
             if (searchRevisionEstimate.getId() != null)
                 jsonObject.addProperty("id", searchRevisionEstimate.getId());
             else
-                jsonObject.addProperty("id", StringUtils.EMPTY);
+                jsonObject.addProperty("id", org.apache.commons.lang.StringUtils.EMPTY);
 
             if (searchRevisionEstimate.getWoId() != null)
                 jsonObject.addProperty("woId", searchRevisionEstimate.getWoId());
             else
-                jsonObject.addProperty("woId", StringUtils.EMPTY);
+                jsonObject.addProperty("woId", org.apache.commons.lang.StringUtils.EMPTY);
 
             if (searchRevisionEstimate.getAeId() != null)
                 jsonObject.addProperty("aeId", searchRevisionEstimate.getAeId());
             else
-                jsonObject.addProperty("aeId", StringUtils.EMPTY);
+                jsonObject.addProperty("aeId", org.apache.commons.lang.StringUtils.EMPTY);
 
             if (searchRevisionEstimate.getEstimateNumber() != null)
                 jsonObject.addProperty("estimateNumber", searchRevisionEstimate.getEstimateNumber());
             else
-                jsonObject.addProperty("estimateNumber", StringUtils.EMPTY);
+                jsonObject.addProperty("estimateNumber", org.apache.commons.lang.StringUtils.EMPTY);
 
             if (searchRevisionEstimate.getRevisionEstimateNumber() != null)
                 jsonObject.addProperty("revisionEstimateNumber", searchRevisionEstimate.getRevisionEstimateNumber());
             else
-                jsonObject.addProperty("revisionEstimateNumber", StringUtils.EMPTY);
+                jsonObject.addProperty("revisionEstimateNumber", org.apache.commons.lang.StringUtils.EMPTY);
 
             if (searchRevisionEstimate.getReDate() != null)
                 jsonObject.addProperty("reDate", DateUtils.getDefaultFormattedDate(searchRevisionEstimate.getReDate()));
             else
-                jsonObject.addProperty("reDate", StringUtils.EMPTY);
+                jsonObject.addProperty("reDate", org.apache.commons.lang.StringUtils.EMPTY);
 
             if (searchRevisionEstimate.getLoaNumber() != null)
                 jsonObject.addProperty("loaNumber", searchRevisionEstimate.getLoaNumber());
             else
-                jsonObject.addProperty("loaNumber", StringUtils.EMPTY);
+                jsonObject.addProperty("loaNumber", org.apache.commons.lang.StringUtils.EMPTY);
 
             if (searchRevisionEstimate.getContractorName() != null)
                 jsonObject.addProperty("contractorName", searchRevisionEstimate.getContractorName());
             else
-                jsonObject.addProperty("contractorName", StringUtils.EMPTY);
+                jsonObject.addProperty("contractorName", org.apache.commons.lang.StringUtils.EMPTY);
 
             if (searchRevisionEstimate.getReValue() != null)
                 jsonObject.addProperty("reValue", searchRevisionEstimate.getReValue());
             else
-                jsonObject.addProperty("reValue", StringUtils.EMPTY);
+                jsonObject.addProperty("reValue", org.apache.commons.lang.StringUtils.EMPTY);
 
             if (searchRevisionEstimate.getRevisionEstimateStatus() != null)
                 jsonObject.addProperty("status", searchRevisionEstimate.getRevisionEstimateStatus());
             else
-                jsonObject.addProperty("status", StringUtils.EMPTY);
+                jsonObject.addProperty("status", org.apache.commons.lang.StringUtils.EMPTY);
 
             if (searchRevisionEstimate.getCurrentOwner() != null)
                 jsonObject.addProperty("currentOwner", searchRevisionEstimate.getCurrentOwner());
             else
-                jsonObject.addProperty("currentOwner", StringUtils.EMPTY);
+                jsonObject.addProperty("currentOwner", org.apache.commons.lang.StringUtils.EMPTY);
 
         }
         return jsonObject;

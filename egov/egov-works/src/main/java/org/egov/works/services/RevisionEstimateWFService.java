@@ -51,7 +51,7 @@ public class RevisionEstimateWFService extends PersistenceService<RevisionAbstra
         super(RevisionAbstractEstimate.class);
     }
 
-    public RevisionEstimateWFService(Class<RevisionAbstractEstimate> type) {
+    public RevisionEstimateWFService(final Class<RevisionAbstractEstimate> type) {
         super(type);
     }
 

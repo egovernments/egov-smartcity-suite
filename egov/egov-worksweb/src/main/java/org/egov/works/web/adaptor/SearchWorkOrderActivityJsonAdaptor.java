@@ -102,7 +102,8 @@ public class SearchWorkOrderActivityJsonAdaptor implements JsonSerializer<WorkOr
 
         Double quantity = workOrderActivity.getActivity().getQuantity();
 
-        final List<Activity> cqActivities = activityService.findApprovedActivitiesByParentId(workOrderActivity.getActivity().getId());
+        final List<Activity> cqActivities = activityService
+                .findApprovedActivitiesByParentId(workOrderActivity.getActivity().getId());
 
         for (final Activity act : cqActivities)
             if (act.getRevisionType().equals(RevisionType.ADDITIONAL_QUANTITY))
@@ -163,15 +164,15 @@ public class SearchWorkOrderActivityJsonAdaptor implements JsonSerializer<WorkOr
         Double width = workOrderMeasurementSheet.getWidth() == null ? 0 : workOrderMeasurementSheet.getWidth().doubleValue();
         Double depthOrHeight = workOrderMeasurementSheet.getDepthOrHeight() == null ? 0
                 : workOrderMeasurementSheet.getDepthOrHeight().doubleValue();
-        for (final WorkOrderMeasurementSheet rems : remsList){
-                if (rems.getNo() != null)
-                    no = no + rems.getNo().doubleValue();
-                if (rems.getLength() != null)
-                    length = length + rems.getLength().doubleValue();
-                if (rems.getWidth() != null)
-                    width = width + rems.getWidth().doubleValue();
-                if (rems.getDepthOrHeight() != null)
-                    depthOrHeight = depthOrHeight + rems.getDepthOrHeight().doubleValue();
+        for (final WorkOrderMeasurementSheet rems : remsList) {
+            if (rems.getNo() != null)
+                no = no + rems.getNo().doubleValue();
+            if (rems.getLength() != null)
+                length = length + rems.getLength().doubleValue();
+            if (rems.getWidth() != null)
+                width = width + rems.getWidth().doubleValue();
+            if (rems.getDepthOrHeight() != null)
+                depthOrHeight = depthOrHeight + rems.getDepthOrHeight().doubleValue();
         }
         if (no != null && no != 0)
             workOrderMeasurementSheet.setNo(new BigDecimal(no.toString()));

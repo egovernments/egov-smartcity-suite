@@ -110,7 +110,7 @@ public class AbstractEstimate extends StateAware implements Auditable {
     private static final long serialVersionUID = 5010991868891221454L;
 
     public enum EstimateStatus {
-        NEW, CREATED, TECH_SANCTIONED, ADMIN_SANCTIONED, REJECTED, CANCELLED, APPROVED, RESUBMITTED,CHECKED
+        NEW, CREATED, TECH_SANCTIONED, ADMIN_SANCTIONED, REJECTED, CANCELLED, APPROVED, RESUBMITTED, CHECKED
     }
 
     public enum Actions {
@@ -305,8 +305,8 @@ public class AbstractEstimate extends StateAware implements Auditable {
 
     @OrderBy("id")
     @OneToMany(mappedBy = "abstractEstimate", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true, targetEntity = AbstractEstimateDeduction.class)
-    private List<AbstractEstimateDeduction> absrtractEstimateDeductions = new ArrayList<AbstractEstimateDeduction>(0);
-    
+    private final List<AbstractEstimateDeduction> absrtractEstimateDeductions = new ArrayList<AbstractEstimateDeduction>(0);
+
     @Transient
     private List<AbstractEstimateDeduction> tempDeductionValues = new ArrayList<AbstractEstimateDeduction>(0);
 
@@ -702,7 +702,7 @@ public class AbstractEstimate extends StateAware implements Auditable {
     public void setApprovedBy(final User approvedBy) {
         this.approvedBy = approvedBy;
     }
-    
+
     public BigDecimal getLatitude() {
         return latitude;
     }
@@ -868,7 +868,7 @@ public class AbstractEstimate extends StateAware implements Auditable {
         return tempDeductionValues;
     }
 
-    public void setTempDeductionValues(List<AbstractEstimateDeduction> tempDeductionValues) {
+    public void setTempDeductionValues(final List<AbstractEstimateDeduction> tempDeductionValues) {
         this.tempDeductionValues = tempDeductionValues;
     }
 

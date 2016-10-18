@@ -277,7 +277,7 @@ public class WorksConstants {
     public static final String WORKFLOWTYPE_CBR_DISPLAYNAME = "Contractor Bill";
 
     public static final String WORKFLOWTYPE_DISPLAYNAME_ESTIMATE = "Abstract Estimate";
-    
+
     public static final String WORKFLOWTYPE_DISPLAYNAME_REVISION_ESTIMATE = "Revision Estimate";
 
     public static final String WORKFLOWTYPE_DISPLAYNAME_MBHEADER = "Measurement Book";
@@ -343,41 +343,42 @@ public class WorksConstants {
     public static final String APPCONFIG_KEY_GIS_INTEGRATION = "GIS_INTEGRATION";
 
     public static final String APPCONFIG_KEY_CUTOFFDATEFORLEGACYDATAENTRY = "CUTOFFDATEFORLEGACYDATAENTRY";
-    
+
     public static final String SOR_ORIGINAL_FILE_NAME_KEY = "sor_original";
 
     public static final String SOR_OUTPUT_FILE_NAME_KEY = "sor_output";
-    
+
     public static final String EXISTING_SOR_ORIGINAL_FILE_NAME_KEY = "existingsor_original";
-    
+
     public static final String EXISTING_SOR_OUTPUT_FILE_NAME_KEY = "existingsor_output";
-    
+
     public static final String NON_TENDERED = "NONTENDERED";
-    
+
     public static final String LUMP_SUM = "LUMPSUM";
-    
+
     public static final String CONTRACTOR_RETENTION_MONEY_PURPOSE = "RETENTION_MONEY";
-    
+
     public static final String CONTRACTOR_SECURITY_DEPOSITE_PURPOSE = "Security Deposit";
-    
-    public static final String [] CONTRACTOR_REFUND_PURPOSE = {CONTRACTOR_RETENTION_MONEY_PURPOSE , CONTRACTOR_SECURITY_DEPOSITE_PURPOSE};
-    
+
+    public static final String[] CONTRACTOR_REFUND_PURPOSE = { CONTRACTOR_RETENTION_MONEY_PURPOSE,
+            CONTRACTOR_SECURITY_DEPOSITE_PURPOSE };
+
     public static final String APPCONFIG_KEY_SHOW_DEDUCTION_GRID = "SHOW_DEDUCTION_GRID";
-    
+
     public static final String LINEESTIMATE_WF_NEXTACTION_PENDING_TECHNICAL_APPROVE = "Pending Technical Approve";
-    
+
     public static final String WORKFLOW_NO_FIELDS_REQUIRED = "noFieldsRequired";
-    
+
     public static final String WORKFLOW_STANDING_COMMITEE_DETAILS_REQUIRED = "standingCommitteeDetailsRequired";
-    
+
     public static final String WORKFLOW_COUNCIL_RESOLUTION_DETAILS_REQUIRED = "councilResolutionDetailsRequired";
-    
+
     public static final String WORKFLOW_CONTRACT_COMMITTEE_DETAILS_REQUIRED = "contractCommitteeDetailsRequired";
-    
+
     public static final String WORKFLOW_GOVERNMENT_APPROVAL_DETAILS_REQUIRED = "governmentApprovalRequired";
-    
+
     public static final String LINEESTIMATE_APPROVALRULES = "LINEESTIMATE-APPROVALRULES";
-    
+
     public static final String REVISIONESTIMATE_WF_NEXTACTION_PENDING_TECHNICAL_SANCTION = "Pending Technical Sanction";
-    
+
 }

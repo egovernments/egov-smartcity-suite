@@ -138,8 +138,9 @@ public class ContractorWiseAbstractReportPDFController {
             final ContractorWiseAbstractSearchResult contractorResult = new ContractorWiseAbstractSearchResult();
             if (searchResult != null) {
                 if (searchResult.getElectionWard() != null && searchResult.getElectionWard().contains("{"))
-                    contractorResult.setElectionWard(searchResult.getElectionWard().replace("{", "").replace("}","").replaceAll("\"", ""));
-                else if(searchResult.getElectionWard() != null)
+                    contractorResult.setElectionWard(
+                            searchResult.getElectionWard().replace("{", "").replace("}", "").replaceAll("\"", ""));
+                else if (searchResult.getElectionWard() != null)
                     contractorResult.setElectionWard(searchResult.getElectionWard());
                 else
                     contractorResult.setElectionWard("NA");
@@ -262,7 +263,7 @@ public class ContractorWiseAbstractReportPDFController {
             }
         }
         reportInput = new ReportRequest(CONTRACTOWISEABSTRACTREPORT, contractorSearchList, reportParams);
-        StringBuilder subHeader = new StringBuilder();
+        final StringBuilder subHeader = new StringBuilder();
         subHeader.append(messageSource.getMessage("msg.contractorwiseabstractestimate.report", null, null));
 
         if (contractorWiseAbstractReport.getFinancialYearId() != null) {
@@ -303,8 +304,12 @@ public class ContractorWiseAbstractReportPDFController {
             subHeaderStr = subHeader.toString();
 
         reportParams.put("reportTitle", subHeaderStr);
-        reportParams.put("dataRunDate", workProgressRegisterService.getReportSchedulerRunDate() != null ?
-                DateUtils.getFormattedDateWithTimeStamp(new DateTime(workProgressRegisterService.getReportSchedulerRunDate())) : StringUtils.EMPTY);
+        reportParams
+                .put("dataRunDate",
+                        workProgressRegisterService.getReportSchedulerRunDate() != null
+                                ? DateUtils.getFormattedDateWithTimeStamp(
+                                        new DateTime(workProgressRegisterService.getReportSchedulerRunDate()))
+                                : StringUtils.EMPTY);
         final HttpHeaders headers = new HttpHeaders();
         if (contentType.equalsIgnoreCase("pdf")) {
             reportInput.setReportFormat(FileFormat.PDF);

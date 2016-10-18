@@ -95,8 +95,8 @@ import org.hibernate.validator.constraints.Length;
         @NamedQuery(name = MBDetails.TOTALESTIMATEDQUANTITYFORPREVIOUSRES, query = " select sum(woa.approvedQuantity*coalesce((CASE WHEN woa.activity.revisionType = 'REDUCED_QUANTITY' THEN -1 WHEN woa.activity.revisionType = 'ADDITIONAL_QUANTITY' THEN 1 WHEN woa.activity.revisionType = 'NON_TENDERED_ITEM' THEN 1 WHEN woa.activity.revisionType = 'LUMP_SUM_ITEM' THEN 1 END),1)) from WorkOrderActivity woa where woa.activity.abstractEstimate.egwStatus.code != 'CANCELLED' and woa.activity.abstractEstimate.createdDate < (select est.createdDate from AbstractEstimate est where est.id = ?) and woa.workOrderEstimate.workOrder.egwStatus.code<>'CANCELLED' and (woa.workOrderEstimate.workOrder = ? or (woa.workOrderEstimate.workOrder.parent is not null and woa.workOrderEstimate.workOrder.parent = ?)) group by woa.activity.parent having (woa.activity.parent is not null and woa.activity.parent.id = ? )  ") })
 @SequenceGenerator(name = MBDetails.SEQ_EGW_MB_DETAILS, sequenceName = MBDetails.SEQ_EGW_MB_DETAILS, allocationSize = 1)
 @AuditOverrides({
-    @AuditOverride(forClass = AbstractAuditable.class, name = "lastModifiedBy"),
-    @AuditOverride(forClass = AbstractAuditable.class, name = "lastModifiedDate")
+        @AuditOverride(forClass = AbstractAuditable.class, name = "lastModifiedBy"),
+        @AuditOverride(forClass = AbstractAuditable.class, name = "lastModifiedDate")
 })
 @Audited
 public class MBDetails extends AbstractAuditable {

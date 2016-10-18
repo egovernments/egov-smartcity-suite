@@ -213,7 +213,7 @@ public class EstimateService {
 
     @Autowired
     private EgwStatusHibernateDAO egwStatusHibernateDAO;
-    
+
     @Autowired
     @Qualifier("chartOfAccountsService")
     private ChartOfAccountsService chartOfAccountsService;
@@ -249,9 +249,9 @@ public class EstimateService {
             newAbstractEstimate = saveNewAbstractEstimate(abstractEstimate);
         else
             newAbstractEstimate = updateAbstractEstimate(abstractEstimateFromDB, abstractEstimate);
-        
+
         createEstimateDeductionValues(abstractEstimate);
-        
+
         if (newAbstractEstimate.getLineEstimateDetails() != null
                 && newAbstractEstimate.getLineEstimateDetails().getLineEstimate().isAbstractEstimateCreated())
             newAbstractEstimate.setEgwStatus(egwStatusHibernateDAO.getStatusByModuleAndCode(WorksConstants.ABSTRACTESTIMATE,
@@ -577,7 +577,7 @@ public class EstimateService {
             model.addAttribute("isEstimateDeductionGrid", true);
         else
             model.addAttribute("isEstimateDeductionGrid", false);
-        
+
     }
 
     public void validateAssetDetails(final AbstractEstimate abstractEstimate, final BindingResult bindErrors) {
@@ -642,7 +642,7 @@ public class EstimateService {
                 financialDetail.setAbstractEstimate(abstractEstimate);
 
             createOverheadValues(abstractEstimate);
-            
+
             createEstimateDeductionValues(abstractEstimate);
 
             createAssetValues(abstractEstimate);
@@ -669,7 +669,7 @@ public class EstimateService {
         createAbstractEstimateWorkflowTransition(updatedAbstractEstimate, approvalPosition, approvalComent,
                 additionalRule, workFlowAction);
 
-        if (WorksConstants.ACTION_APPROVE.equalsIgnoreCase(workFlowAction)){
+        if (WorksConstants.ACTION_APPROVE.equalsIgnoreCase(workFlowAction)) {
             saveTechnicalSanctionDetails(updatedAbstractEstimate);
             saveAdminSanctionDetails(updatedAbstractEstimate);
         }
@@ -745,31 +745,31 @@ public class EstimateService {
             else if (EstimateStatus.NEW.toString().equalsIgnoreCase(abstractEstimate.getEgwStatus().getCode()))
                 abstractEstimate.setEgwStatus(worksUtils.getStatusByModuleAndCode(WorksConstants.ABSTRACTESTIMATE,
                         EstimateStatus.CREATED.toString()));
-        
+
             else if (workFlowAction.equals(WorksConstants.REJECT_ACTION))
                 abstractEstimate.setEgwStatus(worksUtils.getStatusByModuleAndCode(WorksConstants.ABSTRACTESTIMATE,
                         EstimateStatus.REJECTED.toString()));
-        
+
             else if (workFlowAction.equals(WorksConstants.CANCEL_ACTION))
                 abstractEstimate.setEgwStatus(worksUtils.getStatusByModuleAndCode(WorksConstants.ABSTRACTESTIMATE,
                         EstimateStatus.CANCELLED.toString()));
-        
+
             else if (abstractEstimate.getEgwStatus().getCode().equals(EstimateStatus.REJECTED.toString())
                     && workFlowAction.equals(WorksConstants.FORWARD_ACTION))
                 abstractEstimate.setEgwStatus(worksUtils.getStatusByModuleAndCode(WorksConstants.ABSTRACTESTIMATE,
                         EstimateStatus.RESUBMITTED.toString()));
-        
+
             else if (abstractEstimate.getState() != null && workFlowAction.equalsIgnoreCase(WorksConstants.ACTION_APPROVE))
                 abstractEstimate.setEgwStatus(worksUtils.getStatusByModuleAndCode(WorksConstants.ABSTRACTESTIMATE,
                         EstimateStatus.ADMIN_SANCTIONED.toString()));
 
-            else if ((abstractEstimate.getEgwStatus().getCode().equals(EstimateStatus.CREATED.toString()) || 
-                        abstractEstimate.getEgwStatus().getCode().equals(EstimateStatus.CHECKED.toString()) ||
-                            abstractEstimate.getEgwStatus().getCode().equals(EstimateStatus.RESUBMITTED.toString()))
-                            && abstractEstimate.getState() != null && workFlowAction.equalsIgnoreCase(WorksConstants.SUBMIT_ACTION))
+            else if ((abstractEstimate.getEgwStatus().getCode().equals(EstimateStatus.CREATED.toString()) ||
+                    abstractEstimate.getEgwStatus().getCode().equals(EstimateStatus.CHECKED.toString()) ||
+                    abstractEstimate.getEgwStatus().getCode().equals(EstimateStatus.RESUBMITTED.toString()))
+                    && abstractEstimate.getState() != null && workFlowAction.equalsIgnoreCase(WorksConstants.SUBMIT_ACTION))
                 abstractEstimate.setEgwStatus(worksUtils.getStatusByModuleAndCode(WorksConstants.ABSTRACTESTIMATE,
                         EstimateStatus.CHECKED.toString()));
-        
+
     }
 
     public void createAbstractEstimateWorkflowTransition(final AbstractEstimate abstractEstimate,
@@ -798,7 +798,8 @@ public class EstimateService {
                         .withDateInfo(currentDate.toDate()).withOwner(wfInitiator.getPosition()).withNextAction("")
                         .withNatureOfTask(natureOfwork);
         } else if (WorksConstants.SAVE_ACTION.toString().equalsIgnoreCase(workFlowAction)) {
-            wfmatrix = abstractEstimateWorkflowService.getWfMatrix(abstractEstimate.getStateType(), null, abstractEstimate.getEstimateValue(),
+            wfmatrix = abstractEstimateWorkflowService.getWfMatrix(abstractEstimate.getStateType(), null,
+                    abstractEstimate.getEstimateValue(),
                     additionalRule, WorksConstants.NEW, null);
             if (abstractEstimate.getState() == null)
                 abstractEstimate.transition(true).start().withSenderName(user.getUsername() + "::" + user.getName())
@@ -809,22 +810,26 @@ public class EstimateService {
             if (null != approvalPosition && approvalPosition != -1 && !approvalPosition.equals(Long.valueOf(0)))
                 pos = positionMasterService.getPositionById(approvalPosition);
             if (null == abstractEstimate.getState()) {
-                wfmatrix = abstractEstimateWorkflowService.getWfMatrix(abstractEstimate.getStateType(), null, abstractEstimate.getEstimateValue(),
+                wfmatrix = abstractEstimateWorkflowService.getWfMatrix(abstractEstimate.getStateType(), null,
+                        abstractEstimate.getEstimateValue(),
                         additionalRule, currState, null);
                 abstractEstimate.transition().start().withSenderName(user.getUsername() + "::" + user.getName())
                         .withComments(approvalComent).withStateValue(wfmatrix.getNextState()).withDateInfo(new Date())
                         .withOwner(pos).withNextAction(wfmatrix.getNextAction()).withNatureOfTask(natureOfwork);
             } else if (WorksConstants.CANCEL_ACTION.toString().equalsIgnoreCase(workFlowAction)) {
                 final String stateValue = WorksConstants.WF_STATE_CANCELLED;
-                
+
                 wfmatrix = abstractEstimateWorkflowService.getWfMatrix(abstractEstimate.getStateType(), null, null,
-                        additionalRule, abstractEstimate.getCurrentState().getValue(), abstractEstimate.getState().getNextAction());
+                        additionalRule, abstractEstimate.getCurrentState().getValue(),
+                        abstractEstimate.getState().getNextAction());
                 abstractEstimate.transition(true).withSenderName(user.getUsername() + "::" + user.getName())
                         .withComments(approvalComent).withStateValue(stateValue).withDateInfo(currentDate.toDate())
                         .withOwner(pos).withNextAction("").withNatureOfTask(natureOfwork);
             } else {
-                wfmatrix = abstractEstimateWorkflowService.getWfMatrix(abstractEstimate.getStateType(), null, abstractEstimate.getEstimateValue(),
-                        additionalRule, abstractEstimate.getCurrentState().getValue(), abstractEstimate.getState().getNextAction());
+                wfmatrix = abstractEstimateWorkflowService.getWfMatrix(abstractEstimate.getStateType(), null,
+                        abstractEstimate.getEstimateValue(),
+                        additionalRule, abstractEstimate.getCurrentState().getValue(),
+                        abstractEstimate.getState().getNextAction());
                 abstractEstimate.transition(true).withSenderName(user.getUsername() + "::" + user.getName())
                         .withComments(approvalComent).withStateValue(wfmatrix.getNextState())
                         .withDateInfo(currentDate.toDate()).withOwner(pos).withNextAction(wfmatrix.getNextAction())
@@ -946,7 +951,7 @@ public class EstimateService {
         final List<AbstractEstimateForLoaSearchResult> abstractEstimateForLoaSearchResults = new ArrayList<AbstractEstimateForLoaSearchResult>();
         for (final AbstractEstimate ae : abstractEstimates) {
             final AbstractEstimateForLoaSearchResult result = new AbstractEstimateForLoaSearchResult();
-            if (ae.getLineEstimateDetails() != null){
+            if (ae.getLineEstimateDetails() != null) {
                 result.setAdminSanctionNumber(ae.getLineEstimateDetails().getLineEstimate().getAdminSanctionNumber());
                 result.setLeId(ae.getLineEstimateDetails().getLineEstimate().getId());
             }
@@ -1131,9 +1136,9 @@ public class EstimateService {
         final StringBuilder queryStr = new StringBuilder(500);
         queryStr.append(
                 "select distinct(ae) from AbstractEstimate ae where exists (select distinct(activity.id) from Activity activity where activity.abstractEstimate.id = ae.id) and not exists (select distinct(woe) from WorkOrderEstimate as woe where woe.estimate.id = ae.id and woe.workOrder.egwStatus.code != :workOrderStatus) ");
-        
+
         queryStr.append(" and ae.parent.id is null ");
-            
+
         if (searchRequestCancelEstimate != null) {
             if (searchRequestCancelEstimate.getEstimateNumber() != null)
                 queryStr.append(" and upper(ae.estimateNumber) = upper(:estimateNumber)");
@@ -1391,12 +1396,12 @@ public class EstimateService {
     public List<WorkOrderEstimate> getBySorIdAndWorkOrderDate(final Long sorId, final Date workOrderDate) {
         return abstractEstimateRepository.findBySorIdAndWorkOrderDate(sorId, workOrderDate, WorksConstants.CANCELLED_STATUS);
     }
-    
+
     public List<User> getCreatedByForEstimatePhotograph() {
         return abstractEstimateRepository.findCreatedByForEstimatePhotograph(
                 AbstractEstimate.EstimateStatus.TECH_SANCTIONED.toString());
     }
-    
+
     private void createEstimateDeductionValues(final AbstractEstimate abstractEstimate) {
         AbstractEstimateDeduction deduction = null;
         abstractEstimate.getAbsrtractEstimateDeductions().clear();

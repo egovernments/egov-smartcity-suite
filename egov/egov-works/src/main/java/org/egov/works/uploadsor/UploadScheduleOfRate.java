@@ -254,7 +254,7 @@ public class UploadScheduleOfRate {
         return isToDateNull;
     }
 
-    public void setIsToDateNull(Boolean isToDateNull) {
+    public void setIsToDateNull(final Boolean isToDateNull) {
         this.isToDateNull = isToDateNull;
     }
 

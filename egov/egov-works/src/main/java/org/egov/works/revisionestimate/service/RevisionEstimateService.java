@@ -196,7 +196,7 @@ public class RevisionEstimateService {
 
     @Autowired
     private BudgetControlTypeService budgetControlTypeService;
-    
+
     @Autowired
     private ActivityService activityService;
 
@@ -318,19 +318,17 @@ public class RevisionEstimateService {
             revisionEstimate.setActivities(activities);
         }
         if (RevisionEstimateStatus.TECH_SANCTIONED.toString().equals(revisionEstimate.getEgwStatus().getCode())
-                && !WorksConstants.REJECT_ACTION.equals(workFlowAction)) {
+                && !WorksConstants.REJECT_ACTION.equals(workFlowAction))
             if (!BudgetControlType.BudgetCheckOption.NONE.toString()
                     .equalsIgnoreCase(budgetControlTypeService.getConfigValue()))
                 doBudgetoryAppropriation(workFlowAction, revisionEstimate);
-        }
-        if (WorksConstants.REJECT_ACTION.toString().equalsIgnoreCase(workFlowAction) && 
-        		RevisionEstimateStatus.TECH_SANCTIONED.toString().equals(revisionEstimate.getEgwStatus().getCode())) {
+        if (WorksConstants.REJECT_ACTION.toString().equalsIgnoreCase(workFlowAction) &&
+                RevisionEstimateStatus.TECH_SANCTIONED.toString().equals(revisionEstimate.getEgwStatus().getCode()))
             if (!BudgetControlType.BudgetCheckOption.NONE.toString()
                     .equalsIgnoreCase(budgetControlTypeService.getConfigValue()))
                 releaseBudgetOnReject(revisionEstimate);
-        }
         revisionEstimate
-                .setApprovedBy((User) entityManager.unwrap(Session.class).load(User.class, ApplicationThreadLocals.getUserId()));
+                .setApprovedBy(entityManager.unwrap(Session.class).load(User.class, ApplicationThreadLocals.getUserId()));
         revisionEstimate.setApprovedDate(new Date());
         updateRevisionEstimate = revisionEstimateRepository.save(revisionEstimate);
 
@@ -509,22 +507,26 @@ public class RevisionEstimateService {
                 pos = positionMasterService.getPositionById(approvalPosition);
             if (null == revisionEstimate.getState()) {
                 wfmatrix = revisionAbstractEstimateWorkflowService.getWfMatrix(revisionEstimate.getStateType(), null,
-                		revisionEstimate.getEstimateValue(), additionalRule, currState, null);
+                        revisionEstimate.getEstimateValue(), additionalRule, currState, null);
                 revisionEstimate.transition().start().withSenderName(user.getUsername() + "::" + user.getName())
                         .withComments(approvalComent).withStateValue(wfmatrix.getNextState()).withDateInfo(new Date())
                         .withOwner(pos).withNextAction(wfmatrix.getNextAction())
                         .withNatureOfTask(WorksConstants.WORKFLOWTYPE_DISPLAYNAME_REVISION_ESTIMATE);
             } else if (WorksConstants.CANCEL_ACTION.toString().equalsIgnoreCase(workFlowAction)) {
                 final String stateValue = WorksConstants.WF_STATE_CANCELLED;
-                wfmatrix = revisionAbstractEstimateWorkflowService.getWfMatrix(revisionEstimate.getStateType(), null, revisionEstimate.getEstimateValue(),
-                        additionalRule, revisionEstimate.getCurrentState().getValue(), revisionEstimate.getCurrentState().getNextAction());
+                wfmatrix = revisionAbstractEstimateWorkflowService.getWfMatrix(revisionEstimate.getStateType(), null,
+                        revisionEstimate.getEstimateValue(),
+                        additionalRule, revisionEstimate.getCurrentState().getValue(),
+                        revisionEstimate.getCurrentState().getNextAction());
                 revisionEstimate.transition(true).withSenderName(user.getUsername() + "::" + user.getName())
                         .withComments(approvalComent).withStateValue(stateValue).withDateInfo(currentDate.toDate())
                         .withOwner(pos).withNextAction("")
                         .withNatureOfTask(WorksConstants.WORKFLOWTYPE_DISPLAYNAME_REVISION_ESTIMATE);
             } else if (WorksConstants.APPROVE_ACTION.toString().equalsIgnoreCase(workFlowAction)) {
-                wfmatrix = revisionAbstractEstimateWorkflowService.getWfMatrix(revisionEstimate.getStateType(), null, revisionEstimate.getEstimateValue(),
-                        additionalRule, revisionEstimate.getCurrentState().getValue(), revisionEstimate.getCurrentState().getNextAction());
+                wfmatrix = revisionAbstractEstimateWorkflowService.getWfMatrix(revisionEstimate.getStateType(), null,
+                        revisionEstimate.getEstimateValue(),
+                        additionalRule, revisionEstimate.getCurrentState().getValue(),
+                        revisionEstimate.getCurrentState().getNextAction());
                 revisionEstimate.transition(true).withSenderName(user.getUsername() + "::" + user.getName())
                         .withComments(approvalComent).withStateValue(wfmatrix.getNextState())
                         .withDateInfo(currentDate.toDate()).withOwner(pos).withNextAction(wfmatrix.getNextAction())
@@ -532,8 +534,10 @@ public class RevisionEstimateService {
                 revisionEstimate.transition(true).end().withSenderName(user.getName()).withComments(approvalComent)
                         .withDateInfo(currentDate.toDate());
             } else {
-                wfmatrix = revisionAbstractEstimateWorkflowService.getWfMatrix(revisionEstimate.getStateType(), null, revisionEstimate.getEstimateValue(),
-                        additionalRule, revisionEstimate.getCurrentState().getValue(), revisionEstimate.getCurrentState().getNextAction());
+                wfmatrix = revisionAbstractEstimateWorkflowService.getWfMatrix(revisionEstimate.getStateType(), null,
+                        revisionEstimate.getEstimateValue(),
+                        additionalRule, revisionEstimate.getCurrentState().getValue(),
+                        revisionEstimate.getCurrentState().getNextAction());
                 revisionEstimate.transition(true).withSenderName(user.getUsername() + "::" + user.getName())
                         .withComments(approvalComent).withStateValue(wfmatrix.getNextState())
                         .withDateInfo(currentDate.toDate()).withOwner(pos).withNextAction(wfmatrix.getNextAction())
@@ -748,59 +752,43 @@ public class RevisionEstimateService {
         for (final RevisionAbstractEstimate re : revisionAbstractEstimates) {
             for (final Activity activity : re.getActivities())
                 if (activity.getParent() == null && activity.getRevisionType() != null
-                        && RevisionType.NON_TENDERED_ITEM.equals(activity.getRevisionType())) {
+                        && RevisionType.NON_TENDERED_ITEM.equals(activity.getRevisionType()))
                     nonTenderedActivities.add(activity);
-                } else if (activity.getParent() == null && activity.getRevisionType() != null
-                        && RevisionType.LUMP_SUM_ITEM.equals(activity.getRevisionType())) {
+                else if (activity.getParent() == null && activity.getRevisionType() != null
+                        && RevisionType.LUMP_SUM_ITEM.equals(activity.getRevisionType()))
                     lumpSumActivities.add(activity);
-                }
             previousEstimates.put(re.getId(), re.getEstimateNumber());
             if (!measurementsPresent)
                 measurementsPresent = measurementSheetService.existsByEstimate(re.getId());
         }
 
         // Populating Revision Estimate Change Quantity Activities
-        for (final RevisionAbstractEstimate re : revisionAbstractEstimates) {
+        for (final RevisionAbstractEstimate re : revisionAbstractEstimates)
             for (final Activity activity : re.getActivities())
-                if (activity.getParent() != null && activity.getSchedule() != null) {
+                if (activity.getParent() != null && activity.getSchedule() != null)
                     populateChangeQuantityActivities(activity, sorActivities, nonTenderedActivities);
-                } else if (activity.getParent() != null && activity.getSchedule() == null) {
+                else if (activity.getParent() != null && activity.getSchedule() == null)
                     populateChangeQuantityActivities(activity, nonSorActivities, lumpSumActivities);
-                }
-        }
         if (!revisionAbstractEstimates.isEmpty()) {
-            for (final Activity sa : sorActivities) {
-                if (!sa.getMeasurementSheetList().isEmpty()) {
-                    for (final MeasurementSheet ms : sa.getMeasurementSheetList()) {
+            for (final Activity sa : sorActivities)
+                if (!sa.getMeasurementSheetList().isEmpty())
+                    for (final MeasurementSheet ms : sa.getMeasurementSheetList())
                         deriveMeasurementSheetQuantity(ms, revisionEstimate.getId());
 
-                    }
-                }
-            }
-
-            for (final Activity sa : nonSorActivities) {
-                if (!sa.getMeasurementSheetList().isEmpty()) {
-                    for (final MeasurementSheet ms : sa.getMeasurementSheetList()) {
+            for (final Activity sa : nonSorActivities)
+                if (!sa.getMeasurementSheetList().isEmpty())
+                    for (final MeasurementSheet ms : sa.getMeasurementSheetList())
                         deriveMeasurementSheetQuantity(ms, revisionEstimate.getId());
-                    }
-                }
-            }
 
-            for (final Activity sa : nonTenderedActivities) {
-                if (!sa.getMeasurementSheetList().isEmpty()) {
-                    for (final MeasurementSheet ms : sa.getMeasurementSheetList()) {
+            for (final Activity sa : nonTenderedActivities)
+                if (!sa.getMeasurementSheetList().isEmpty())
+                    for (final MeasurementSheet ms : sa.getMeasurementSheetList())
                         deriveMeasurementSheetQuantity(ms, revisionEstimate.getId());
-                    }
-                }
-            }
 
-            for (final Activity sa : lumpSumActivities) {
-                if (!sa.getMeasurementSheetList().isEmpty()) {
-                    for (final MeasurementSheet ms : sa.getMeasurementSheetList()) {
+            for (final Activity sa : lumpSumActivities)
+                if (!sa.getMeasurementSheetList().isEmpty())
+                    for (final MeasurementSheet ms : sa.getMeasurementSheetList())
                         deriveMeasurementSheetQuantity(ms, revisionEstimate.getId());
-                    }
-                }
-            }
         }
         revisionEstimate.getSorActivities().addAll(sorActivities);
         revisionEstimate.getNonSorActivities().addAll(nonSorActivities);
@@ -813,8 +801,8 @@ public class RevisionEstimateService {
 
     public void populateChangeQuantityActivities(final Activity activity, final List<Activity> activities,
             final List<Activity> nonTenderedLumpSumActivities) {
-        for (final Activity sa : activities) {
-            if (activity.getParent().getId().equals(sa.getId())) {
+        for (final Activity sa : activities)
+            if (activity.getParent().getId().equals(sa.getId()))
                 if (activity.getRevisionType() != null
                         && RevisionType.ADDITIONAL_QUANTITY.equals(activity.getRevisionType())) {
                     sa.setQuantity(sa.getQuantity() + activity.getQuantity());
@@ -824,11 +812,9 @@ public class RevisionEstimateService {
                     sa.setQuantity(sa.getQuantity() - activity.getQuantity());
                     sa.setQuantityChanged(true);
                 }
-            }
-        }
 
-        for (final Activity sa : nonTenderedLumpSumActivities) {
-            if (activity.getParent().getId().equals(sa.getId())) {
+        for (final Activity sa : nonTenderedLumpSumActivities)
+            if (activity.getParent().getId().equals(sa.getId()))
                 if (activity.getRevisionType() != null
                         && RevisionType.ADDITIONAL_QUANTITY.equals(activity.getRevisionType())) {
                     sa.setQuantity(sa.getQuantity() + activity.getQuantity());
@@ -838,8 +824,6 @@ public class RevisionEstimateService {
                     sa.setQuantity(sa.getQuantity() - activity.getQuantity());
                     sa.setQuantityChanged(true);
                 }
-            }
-        }
     }
 
     public void loadDataForView(final RevisionAbstractEstimate revisionEstimate, final WorkOrderEstimate workOrderEstimate,
@@ -876,63 +860,66 @@ public class RevisionEstimateService {
         model.addAttribute("stateType", revisionEstimate.getClass().getSimpleName());
     }
 
-	public void revisionEstimateStatusChange(final RevisionAbstractEstimate revisionEstimate,
-			final String workFlowAction) {
-		if (revisionEstimate != null && revisionEstimate.getEgwStatus() != null
-				&& revisionEstimate.getEgwStatus().getCode() != null)
-			if (WorksConstants.SAVE_ACTION.equals(workFlowAction))
-				revisionEstimate.setEgwStatus(worksUtils.getStatusByModuleAndCode(
-						WorksConstants.REVISIONABSTRACTESTIMATE, RevisionEstimateStatus.NEW.toString()));
-			else if (WorksConstants.CANCEL_ACTION.equals(workFlowAction))
-				revisionEstimate.setEgwStatus(worksUtils.getStatusByModuleAndCode(
-						WorksConstants.REVISIONABSTRACTESTIMATE, RevisionEstimateStatus.CANCELLED.toString()));
-			else if (RevisionEstimateStatus.NEW.toString().equals(revisionEstimate.getEgwStatus().getCode()))
-				revisionEstimate.setEgwStatus(worksUtils.getStatusByModuleAndCode(
-						WorksConstants.REVISIONABSTRACTESTIMATE, RevisionEstimateStatus.CREATED.toString()));
-			else if (WorksConstants.APPROVE_ACTION.equals(workFlowAction) && 
-					RevisionEstimateStatus.BUDGET_SANCTIONED.toString().equals(revisionEstimate.getEgwStatus().getCode()))
-				revisionEstimate.setEgwStatus(worksUtils.getStatusByModuleAndCode(
-						WorksConstants.REVISIONABSTRACTESTIMATE, RevisionEstimateStatus.APPROVED.toString()));
-			else if (WorksConstants.REJECT_ACTION.equals(workFlowAction))
-				revisionEstimate.setEgwStatus(worksUtils.getStatusByModuleAndCode(
-						WorksConstants.REVISIONABSTRACTESTIMATE, RevisionEstimateStatus.REJECTED.toString()));
-			else if (RevisionEstimateStatus.REJECTED.toString().equals(revisionEstimate.getEgwStatus().getCode())
-					&& WorksConstants.CANCEL_ACTION.equals(workFlowAction))
-				revisionEstimate.setEgwStatus(worksUtils.getStatusByModuleAndCode(
-						WorksConstants.REVISIONABSTRACTESTIMATE, RevisionEstimateStatus.CANCELLED.toString()));
-			else if (RevisionEstimateStatus.REJECTED.toString().equals(revisionEstimate.getEgwStatus().getCode())
-					&& WorksConstants.FORWARD_ACTION.equals(workFlowAction))
-				revisionEstimate.setEgwStatus(worksUtils.getStatusByModuleAndCode(
-						WorksConstants.REVISIONABSTRACTESTIMATE, RevisionEstimateStatus.RESUBMITTED.toString()));
-			else if (RevisionEstimateStatus.CREATED.toString().equals(revisionEstimate.getEgwStatus().getCode())
-					&& !revisionEstimate.getState().getNextAction()
-							.equals(WorksConstants.REVISIONESTIMATE_WF_NEXTACTION_PENDING_TECHNICAL_SANCTION)
-					&& WorksConstants.SUBMIT_ACTION.equals(workFlowAction))
-				revisionEstimate.setEgwStatus(worksUtils.getStatusByModuleAndCode(
-						WorksConstants.REVISIONABSTRACTESTIMATE, RevisionEstimateStatus.CHECKED.toString()));
-			else if(RevisionEstimateStatus.RESUBMITTED.toString().equals(revisionEstimate.getEgwStatus().getCode())
-					&& !revisionEstimate.getState().getNextAction()
-					.equals(WorksConstants.REVISIONESTIMATE_WF_NEXTACTION_PENDING_TECHNICAL_SANCTION))
-					revisionEstimate.setEgwStatus(worksUtils.getStatusByModuleAndCode(
-							WorksConstants.REVISIONABSTRACTESTIMATE, RevisionEstimateStatus.CHECKED.toString()));
-			else if (RevisionEstimateStatus.CHECKED.toString().equals(revisionEstimate.getEgwStatus().getCode())
-					&& !WorksConstants.REJECT_ACTION.equals(workFlowAction)
-					&& revisionEstimate.getState().getNextAction()
-							.equals(WorksConstants.REVISIONESTIMATE_WF_NEXTACTION_PENDING_TECHNICAL_SANCTION)
-					|| (revisionEstimate.getEgwStatus().getCode().equals(RevisionEstimateStatus.CREATED.toString())
-							&& !WorksConstants.REJECT_ACTION.equals(workFlowAction)
-							&& revisionEstimate.getState().getNextAction()
-									.equals(WorksConstants.REVISIONESTIMATE_WF_NEXTACTION_PENDING_TECHNICAL_SANCTION))
-					|| (revisionEstimate.getEgwStatus().getCode().equals(RevisionEstimateStatus.RESUBMITTED.toString())
-							&& !WorksConstants.REJECT_ACTION.equals(workFlowAction) && revisionEstimate.getState()
-									.getNextAction().equals(WorksConstants.REVISIONESTIMATE_WF_NEXTACTION_PENDING_TECHNICAL_SANCTION)))
-				revisionEstimate.setEgwStatus(egwStatusHibernateDAO.getStatusByModuleAndCode(WorksConstants.REVISIONABSTRACTESTIMATE,
-						RevisionEstimateStatus.TECH_SANCTIONED.toString()));
-			else if (revisionEstimate.getEgwStatus().getCode().equals(RevisionEstimateStatus.TECH_SANCTIONED.toString())
+    public void revisionEstimateStatusChange(final RevisionAbstractEstimate revisionEstimate,
+            final String workFlowAction) {
+        if (revisionEstimate != null && revisionEstimate.getEgwStatus() != null
+                && revisionEstimate.getEgwStatus().getCode() != null)
+            if (WorksConstants.SAVE_ACTION.equals(workFlowAction))
+                revisionEstimate.setEgwStatus(worksUtils.getStatusByModuleAndCode(
+                        WorksConstants.REVISIONABSTRACTESTIMATE, RevisionEstimateStatus.NEW.toString()));
+            else if (WorksConstants.CANCEL_ACTION.equals(workFlowAction))
+                revisionEstimate.setEgwStatus(worksUtils.getStatusByModuleAndCode(
+                        WorksConstants.REVISIONABSTRACTESTIMATE, RevisionEstimateStatus.CANCELLED.toString()));
+            else if (RevisionEstimateStatus.NEW.toString().equals(revisionEstimate.getEgwStatus().getCode()))
+                revisionEstimate.setEgwStatus(worksUtils.getStatusByModuleAndCode(
+                        WorksConstants.REVISIONABSTRACTESTIMATE, RevisionEstimateStatus.CREATED.toString()));
+            else if (WorksConstants.APPROVE_ACTION.equals(workFlowAction) &&
+                    RevisionEstimateStatus.BUDGET_SANCTIONED.toString().equals(revisionEstimate.getEgwStatus().getCode()))
+                revisionEstimate.setEgwStatus(worksUtils.getStatusByModuleAndCode(
+                        WorksConstants.REVISIONABSTRACTESTIMATE, RevisionEstimateStatus.APPROVED.toString()));
+            else if (WorksConstants.REJECT_ACTION.equals(workFlowAction))
+                revisionEstimate.setEgwStatus(worksUtils.getStatusByModuleAndCode(
+                        WorksConstants.REVISIONABSTRACTESTIMATE, RevisionEstimateStatus.REJECTED.toString()));
+            else if (RevisionEstimateStatus.REJECTED.toString().equals(revisionEstimate.getEgwStatus().getCode())
+                    && WorksConstants.CANCEL_ACTION.equals(workFlowAction))
+                revisionEstimate.setEgwStatus(worksUtils.getStatusByModuleAndCode(
+                        WorksConstants.REVISIONABSTRACTESTIMATE, RevisionEstimateStatus.CANCELLED.toString()));
+            else if (RevisionEstimateStatus.REJECTED.toString().equals(revisionEstimate.getEgwStatus().getCode())
+                    && WorksConstants.FORWARD_ACTION.equals(workFlowAction))
+                revisionEstimate.setEgwStatus(worksUtils.getStatusByModuleAndCode(
+                        WorksConstants.REVISIONABSTRACTESTIMATE, RevisionEstimateStatus.RESUBMITTED.toString()));
+            else if (RevisionEstimateStatus.CREATED.toString().equals(revisionEstimate.getEgwStatus().getCode())
+                    && !revisionEstimate.getState().getNextAction()
+                            .equals(WorksConstants.REVISIONESTIMATE_WF_NEXTACTION_PENDING_TECHNICAL_SANCTION)
+                    && WorksConstants.SUBMIT_ACTION.equals(workFlowAction))
+                revisionEstimate.setEgwStatus(worksUtils.getStatusByModuleAndCode(
+                        WorksConstants.REVISIONABSTRACTESTIMATE, RevisionEstimateStatus.CHECKED.toString()));
+            else if (RevisionEstimateStatus.RESUBMITTED.toString().equals(revisionEstimate.getEgwStatus().getCode())
+                    && !revisionEstimate.getState().getNextAction()
+                            .equals(WorksConstants.REVISIONESTIMATE_WF_NEXTACTION_PENDING_TECHNICAL_SANCTION))
+                revisionEstimate.setEgwStatus(worksUtils.getStatusByModuleAndCode(
+                        WorksConstants.REVISIONABSTRACTESTIMATE, RevisionEstimateStatus.CHECKED.toString()));
+            else if (RevisionEstimateStatus.CHECKED.toString().equals(revisionEstimate.getEgwStatus().getCode())
+                    && !WorksConstants.REJECT_ACTION.equals(workFlowAction)
+                    && revisionEstimate.getState().getNextAction()
+                            .equals(WorksConstants.REVISIONESTIMATE_WF_NEXTACTION_PENDING_TECHNICAL_SANCTION)
+                    || revisionEstimate.getEgwStatus().getCode().equals(RevisionEstimateStatus.CREATED.toString())
+                            && !WorksConstants.REJECT_ACTION.equals(workFlowAction)
+                            && revisionEstimate.getState().getNextAction()
+                                    .equals(WorksConstants.REVISIONESTIMATE_WF_NEXTACTION_PENDING_TECHNICAL_SANCTION)
+                    || revisionEstimate.getEgwStatus().getCode().equals(RevisionEstimateStatus.RESUBMITTED.toString())
+                            && !WorksConstants.REJECT_ACTION.equals(workFlowAction) && revisionEstimate.getState()
+                                    .getNextAction()
+                                    .equals(WorksConstants.REVISIONESTIMATE_WF_NEXTACTION_PENDING_TECHNICAL_SANCTION))
+                revisionEstimate
+                        .setEgwStatus(egwStatusHibernateDAO.getStatusByModuleAndCode(WorksConstants.REVISIONABSTRACTESTIMATE,
+                                RevisionEstimateStatus.TECH_SANCTIONED.toString()));
+            else if (revisionEstimate.getEgwStatus().getCode().equals(RevisionEstimateStatus.TECH_SANCTIONED.toString())
                     && !WorksConstants.REJECT_ACTION.equals(workFlowAction))
-				revisionEstimate.setEgwStatus(egwStatusHibernateDAO.getStatusByModuleAndCode(WorksConstants.REVISIONABSTRACTESTIMATE,
-						RevisionEstimateStatus.BUDGET_SANCTIONED.toString()));
-            	
+                revisionEstimate
+                        .setEgwStatus(egwStatusHibernateDAO.getStatusByModuleAndCode(WorksConstants.REVISIONABSTRACTESTIMATE,
+                                RevisionEstimateStatus.BUDGET_SANCTIONED.toString()));
+
     }
 
     public List<SearchRevisionEstimate> searchRevisionEstimates(final SearchRevisionEstimate searchRevisionEstimate) {
@@ -1168,73 +1155,74 @@ public class RevisionEstimateService {
         return query;
     }
 
-	public String checkIfMBCreatedForRENonTenderedLumpSum(final RevisionAbstractEstimate revisionEstimate,
-			final WorkOrderEstimate workOrderEstimate) {
-		final StringBuilder mbRefNumbersForRE = new StringBuilder();
-		// Checking MB's exists for Non Tendered and lumpsum activities
-		final List<MBHeader> mbHeaders = mbHeaderService
-				.getMBHeadersForTenderedLumpSumAcivitiesToCancelRE(revisionEstimate, workOrderEstimate);
-		if (!mbHeaders.isEmpty())
-			for (final MBHeader mBHeader : mbHeaders)
-				mbRefNumbersForRE.append(mBHeader.getMbRefNo()).append(",");
-		return mbRefNumbersForRE.toString();
+    public String checkIfMBCreatedForRENonTenderedLumpSum(final RevisionAbstractEstimate revisionEstimate,
+            final WorkOrderEstimate workOrderEstimate) {
+        final StringBuilder mbRefNumbersForRE = new StringBuilder();
+        // Checking MB's exists for Non Tendered and lumpsum activities
+        final List<MBHeader> mbHeaders = mbHeaderService
+                .getMBHeadersForTenderedLumpSumAcivitiesToCancelRE(revisionEstimate, workOrderEstimate);
+        if (!mbHeaders.isEmpty())
+            for (final MBHeader mBHeader : mbHeaders)
+                mbRefNumbersForRE.append(mBHeader.getMbRefNo()).append(",");
+        return mbRefNumbersForRE.toString();
 
-	}
-	
-	public String checkIfMBCreatedForREChangedQuantity(final RevisionAbstractEstimate revisionEstimate,
-			final WorkOrderEstimate workOrderEstimate) {
-		final List<Long> originalActivtityIdList = new ArrayList<>();
-		String message = "";
-		// Checking MB's for change quantity activities
-		final WorkOrderEstimate revisionWorkOrderEstimate = workOrderEstimateService
-				.getWorkOrderEstimateByAbstractEstimateId(revisionEstimate.getId());
-		final List<WorkOrderActivity> reWoaList = workOrderActivityService
-				.getChangedQuantityActivities(revisionEstimate, revisionWorkOrderEstimate);
-		for (final WorkOrderActivity woa : reWoaList)
-			originalActivtityIdList.add(woa.getActivity().getParent().getId());
-		List<Object[]> activityIdQuantityList = null;
-		if (originalActivtityIdList != null && originalActivtityIdList.size() > 0)
-			activityIdQuantityList = mBDetailsService.getMBDetailsByWorkOrderActivity(originalActivtityIdList);
-		if (activityIdQuantityList != null && activityIdQuantityList.size() > 0)
-			for (final WorkOrderActivity revWoa : reWoaList)
-				for (final Object[] activityIdQuantity : activityIdQuantityList)
-					if (Long.parseLong(activityIdQuantity[0].toString()) == revWoa.getActivity().getParent().getId()
-							.longValue()) {
-						Long activityId = null;
-						if (revWoa.getActivity().getParent() == null)
-							activityId = revWoa.getActivity().getId();
-						else
-							activityId = revWoa.getActivity().getParent().getId();
+    }
 
-						final Double originalQuantity = (Double) workOrderActivityService
-								.getQuantityForActivity(activityId);
-						final Object revEstQuantityObj = workOrderActivityService
-								.getREActivityQuantity(revisionEstimate.getId(), activityId);
-						final double revEstQuantity = revEstQuantityObj == null ? 0.0 : (Double) revEstQuantityObj;
-						if (originalQuantity + revEstQuantity >= Double.parseDouble(activityIdQuantity[1].toString()))
-							continue;
-						else {
+    public String checkIfMBCreatedForREChangedQuantity(final RevisionAbstractEstimate revisionEstimate,
+            final WorkOrderEstimate workOrderEstimate) {
+        final List<Long> originalActivtityIdList = new ArrayList<>();
+        String message = "";
+        // Checking MB's for change quantity activities
+        final WorkOrderEstimate revisionWorkOrderEstimate = workOrderEstimateService
+                .getWorkOrderEstimateByAbstractEstimateId(revisionEstimate.getId());
+        final List<WorkOrderActivity> reWoaList = workOrderActivityService
+                .getChangedQuantityActivities(revisionEstimate, revisionWorkOrderEstimate);
+        for (final WorkOrderActivity woa : reWoaList)
+            originalActivtityIdList.add(woa.getActivity().getParent().getId());
+        List<Object[]> activityIdQuantityList = null;
+        if (originalActivtityIdList != null && originalActivtityIdList.size() > 0)
+            activityIdQuantityList = mBDetailsService.getMBDetailsByWorkOrderActivity(originalActivtityIdList);
+        if (activityIdQuantityList != null && activityIdQuantityList.size() > 0)
+            for (final WorkOrderActivity revWoa : reWoaList)
+                for (final Object[] activityIdQuantity : activityIdQuantityList)
+                    if (Long.parseLong(activityIdQuantity[0].toString()) == revWoa.getActivity().getParent().getId()
+                            .longValue()) {
+                        Long activityId = null;
+                        if (revWoa.getActivity().getParent() == null)
+                            activityId = revWoa.getActivity().getId();
+                        else
+                            activityId = revWoa.getActivity().getParent().getId();
 
-							final List<AppConfigValues> values = appConfigValuesService.getConfigValuesByModuleAndKey(
-									WorksConstants.WORKS_MODULE_NAME,
-									WorksConstants.APPCONFIG_KEY_MB_QUANTITY_TOLERANCE_LEVEL);
-							final AppConfigValues value = values.get(0);
-							Double maxPercent = Double.valueOf(value.getValue());
-							if (maxPercent != null)
-								maxPercent += 100;
-							else
-								maxPercent = 100d;
-							final Double maxAllowedQuantity = maxPercent * (originalQuantity + revEstQuantity) / 100;
-							if (maxAllowedQuantity >= Double.parseDouble(activityIdQuantity[1].toString()))
-								continue;
-							else {
-								message = messageSource.getMessage("error.mbexistsfor.rechangequantity", new String[] {revisionEstimate.getEstimateNumber()}, null);
-								break;
-							}
-						}
-					}
-		return message;
-	}
+                        final Double originalQuantity = (Double) workOrderActivityService
+                                .getQuantityForActivity(activityId);
+                        final Object revEstQuantityObj = workOrderActivityService
+                                .getREActivityQuantity(revisionEstimate.getId(), activityId);
+                        final double revEstQuantity = revEstQuantityObj == null ? 0.0 : (Double) revEstQuantityObj;
+                        if (originalQuantity + revEstQuantity >= Double.parseDouble(activityIdQuantity[1].toString()))
+                            continue;
+                        else {
+
+                            final List<AppConfigValues> values = appConfigValuesService.getConfigValuesByModuleAndKey(
+                                    WorksConstants.WORKS_MODULE_NAME,
+                                    WorksConstants.APPCONFIG_KEY_MB_QUANTITY_TOLERANCE_LEVEL);
+                            final AppConfigValues value = values.get(0);
+                            Double maxPercent = Double.valueOf(value.getValue());
+                            if (maxPercent != null)
+                                maxPercent += 100;
+                            else
+                                maxPercent = 100d;
+                            final Double maxAllowedQuantity = maxPercent * (originalQuantity + revEstQuantity) / 100;
+                            if (maxAllowedQuantity >= Double.parseDouble(activityIdQuantity[1].toString()))
+                                continue;
+                            else {
+                                message = messageSource.getMessage("error.mbexistsfor.rechangequantity",
+                                        new String[] { revisionEstimate.getEstimateNumber() }, null);
+                                break;
+                            }
+                        }
+                    }
+        return message;
+    }
 
     @Transactional
     public RevisionAbstractEstimate cancelRevisionEstimate(final RevisionAbstractEstimate revisionEstimate) {
@@ -1308,7 +1296,7 @@ public class RevisionEstimateService {
         }
     }
 
-    public void deriveWorkOrderActivityQuantity(final WorkOrderActivity workOrderActivity, Long reId) {
+    public void deriveWorkOrderActivityQuantity(final WorkOrderActivity workOrderActivity, final Long reId) {
         if (!workOrderActivity.getWorkOrderMeasurementSheets().isEmpty())
             for (final WorkOrderMeasurementSheet woms : workOrderActivity.getWorkOrderMeasurementSheets()) {
                 final List<WorkOrderMeasurementSheet> rewomsList = workOrderMeasurementSheetService
@@ -1358,7 +1346,7 @@ public class RevisionEstimateService {
             workOrderActivity.setApprovedQuantity(qty);
     }
 
-    public void deriveMeasurementSheetQuantity(final MeasurementSheet measurementSheet, Long reId) {
+    public void deriveMeasurementSheetQuantity(final MeasurementSheet measurementSheet, final Long reId) {
         List<MeasurementSheet> remsList = new ArrayList<>();
         if (reId != null)
             remsList = measurementSheetService.findByParentIdForView(measurementSheet.getId(), reId);
@@ -1430,12 +1418,13 @@ public class RevisionEstimateService {
                 revisionEstimate.getChangeQuantityActivities().add(activity);
             }
     }
-    
+
     public List<Activity> getNonTenderedLumpSumActivities(final Long revisionEstimateId) {
-    	return activityService.findByRevisionType(revisionEstimateId, RevisionType.NON_TENDERED_ITEM,RevisionType.LUMP_SUM_ITEM);
+        return activityService.findByRevisionType(revisionEstimateId, RevisionType.NON_TENDERED_ITEM, RevisionType.LUMP_SUM_ITEM);
     }
-    
+
     public List<Activity> getChangeQuatityActivities(final Long revisionEstimateId) {
-    	return activityService.findByRevisionType(revisionEstimateId, RevisionType.ADDITIONAL_QUANTITY,RevisionType.REDUCED_QUANTITY);
+        return activityService.findByRevisionType(revisionEstimateId, RevisionType.ADDITIONAL_QUANTITY,
+                RevisionType.REDUCED_QUANTITY);
     }
-} 
+}

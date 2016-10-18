@@ -39,7 +39,6 @@
  */
 package org.egov.works.web.controller.milestone;
 
-
 import java.io.IOException;
 
 import javax.servlet.http.HttpServletRequest;
@@ -59,7 +58,6 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
-
 @Controller
 @RequestMapping(value = "/milestone")
 public class CreateMilestoneController {
@@ -73,7 +71,7 @@ public class CreateMilestoneController {
     @Autowired
     @Qualifier("messageSource")
     private MessageSource messageSource;
-    
+
     @RequestMapping(value = "/newform", method = RequestMethod.GET)
     public String showNewMilestoneForm(
             final Model model, final HttpServletRequest request) throws ApplicationException {

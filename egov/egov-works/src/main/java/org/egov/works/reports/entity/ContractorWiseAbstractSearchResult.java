@@ -148,7 +148,7 @@ public class ContractorWiseAbstractSearchResult {
         return electionWard;
     }
 
-    public void setElectionWard(String electionWard) {
+    public void setElectionWard(final String electionWard) {
         this.electionWard = electionWard;
     }
 
@@ -156,7 +156,7 @@ public class ContractorWiseAbstractSearchResult {
         return contractorCode;
     }
 
-    public void setContractorCode(String contractorCode) {
+    public void setContractorCode(final String contractorCode) {
         this.contractorCode = contractorCode;
     }
 
@@ -164,7 +164,7 @@ public class ContractorWiseAbstractSearchResult {
         return lagecyWorkCommencedEstimates;
     }
 
-    public void setLagecyWorkCommencedEstimates(Integer lagecyWorkCommencedEstimates) {
+    public void setLagecyWorkCommencedEstimates(final Integer lagecyWorkCommencedEstimates) {
         this.lagecyWorkCommencedEstimates = lagecyWorkCommencedEstimates;
     }
 
@@ -172,7 +172,7 @@ public class ContractorWiseAbstractSearchResult {
         return lagecyWorkCommencedAmount;
     }
 
-    public void setLagecyWorkCommencedAmount(BigDecimal lagecyWorkCommencedAmount) {
+    public void setLagecyWorkCommencedAmount(final BigDecimal lagecyWorkCommencedAmount) {
         this.lagecyWorkCommencedAmount = lagecyWorkCommencedAmount;
     }
 

@@ -63,7 +63,7 @@ public class HistoryMBController {
 
     @RequestMapping(value = "/history/{mbHeaderId}", method = RequestMethod.GET)
     public String showSearchWorkOrder(@PathVariable final String mbHeaderId, final Model model) {
-        List<MBHistory> mbHistorys = mbHistoryService.getMBHistory(Long.parseLong(mbHeaderId));
+        final List<MBHistory> mbHistorys = mbHistoryService.getMBHistory(Long.parseLong(mbHeaderId));
         model.addAttribute("mbHistorys", mbHistorys);
         return "mb-history";
     }

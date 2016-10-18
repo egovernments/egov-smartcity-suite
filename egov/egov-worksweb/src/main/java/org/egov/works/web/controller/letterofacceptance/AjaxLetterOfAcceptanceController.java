@@ -42,8 +42,6 @@ package org.egov.works.web.controller.letterofacceptance;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
 import org.egov.works.letterofacceptance.entity.SearchRequestContractor;
 import org.egov.works.letterofacceptance.entity.SearchRequestLetterOfAcceptance;
 import org.egov.works.letterofacceptance.entity.SearchRequestLetterOfAcceptanceForRE;
@@ -75,6 +73,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
+
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 
 @Controller
 @RequestMapping(value = "/letterofacceptance")
@@ -120,7 +121,7 @@ public class AjaxLetterOfAcceptanceController {
 
     @Autowired
     private SearchWorkOrderForREJsonAdaptor searchWorkOrderForREJsonAdaptor;
-    
+
     @Autowired
     private RevisionWorkOrderService revisionWorkOrderService;
 
@@ -308,7 +309,7 @@ public class AjaxLetterOfAcceptanceController {
         final WorkOrder workOrder = letterOfAcceptanceService.getWorkOrderById(id);
         final WorkOrderEstimate workOrderEstimate = workOrder.getWorkOrderEstimates().get(0);
         String message = "";
-       if (workOrderEstimate.getWorkOrderActivities().isEmpty()) {
+        if (workOrderEstimate.getWorkOrderActivities().isEmpty()) {
             final String billNumbers = letterOfAcceptanceService.checkIfBillsCreated(id);
             if (!billNumbers.equals(""))
                 message = messageSource.getMessage("error.loa.bills.created", new String[] { billNumbers }, null);
@@ -316,10 +317,11 @@ public class AjaxLetterOfAcceptanceController {
             final String mbRefNumbers = letterOfAcceptanceService.checkIfMBCreatedForLOA(workOrderEstimate);
             if (!mbRefNumbers.equals(""))
                 message = messageSource.getMessage("error.loa.mb.created", new String[] { mbRefNumbers }, null);
-            else if(!workOrderEstimate.getWorkOrderActivities().isEmpty()) {
+            else if (!workOrderEstimate.getWorkOrderActivities().isEmpty()) {
                 final String revisionEstimates = revisionWorkOrderService.getRevisionEstimatesForWorkOrder(workOrder.getId());
                 if (!revisionEstimates.equals(""))
-                    message = messageSource.getMessage("error.revisionestimates.created", new String[] { revisionEstimates }, null);
+                    message = messageSource.getMessage("error.revisionestimates.created", new String[] { revisionEstimates },
+                            null);
             }
         }
         return message;
@@ -429,12 +431,12 @@ public class AjaxLetterOfAcceptanceController {
         final String json = gson.toJson(object);
         return json;
     }
-    
+
     @RequestMapping(value = "/getworkordernumber-viewestimatephotograph", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
     public @ResponseBody List<String> findWorkOrderNumbersForViewEstimatePhotograph(@RequestParam final String workOrderNumber) {
         return letterOfAcceptanceService.getWorkOrderNumbersForViewEstimatePhotograph(workOrderNumber);
     }
-    
+
     @RequestMapping(value = "/getcontractorname-viewestimatephotograph", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
     public @ResponseBody List<String> findContractorsNamesForViewEstimatePhotograph(@RequestParam final String contractorName) {
         return letterOfAcceptanceService.getContractorsNamesForViewEstimatePhotograph(contractorName);

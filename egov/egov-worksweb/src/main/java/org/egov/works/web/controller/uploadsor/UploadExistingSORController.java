@@ -217,7 +217,7 @@ public class UploadExistingSORController {
         return "uploadSor-result";
     }
 
-    private void validateMandatoryFeilds(List<UploadScheduleOfRate> uploadSORRatesList) {
+    private void validateMandatoryFeilds(final List<UploadScheduleOfRate> uploadSORRatesList) {
         try {
             String error = "";
             final Map<String, ScheduleCategory> sorCategoryMap = new HashMap<String, ScheduleCategory>();

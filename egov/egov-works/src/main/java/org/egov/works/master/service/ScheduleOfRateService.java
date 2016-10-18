@@ -95,7 +95,7 @@ public class ScheduleOfRateService {
     @Autowired
     @Qualifier("parentMessageSource")
     private MessageSource messageSource;
-    
+
     public ScheduleOfRate getScheduleOfRateById(final Long scheduleOfRateId) {
         final ScheduleOfRate scheduleOfRate = entityManager.find(ScheduleOfRate.class,
                 scheduleOfRateId);
@@ -328,7 +328,7 @@ public class ScheduleOfRateService {
     }
 
     @Transactional(propagation = Propagation.REQUIRES_NEW, readOnly = true)
-    public Boolean validateRates(List<UploadScheduleOfRate> uploadSORRatesList) {
+    public Boolean validateRates(final List<UploadScheduleOfRate> uploadSORRatesList) {
         Boolean errorInMasterData = false;
         List<AbstractEstimate> estimates = null;
         List<WorkOrderEstimate> woe = null;
@@ -337,10 +337,9 @@ public class ScheduleOfRateService {
         LocalDate existingStartDate = null;
         LocalDate existingEndDate = null;
         LocalDate checkStartDate = null;
-        LocalDate checkEndDate = null;
         Boolean toDateUpdated = false;
         Boolean isLatestRate = false;
-        for (UploadScheduleOfRate obj : uploadSORRatesList) {
+        for (final UploadScheduleOfRate obj : uploadSORRatesList) {
             checkPeriod = new Period(obj.getFromDate(), obj.getToDate());
             error = "";
             if (obj.getScheduleOfRate() != null)
@@ -349,7 +348,7 @@ public class ScheduleOfRateService {
             isLatestRate = false;
             toDateUpdated = false;
             if (obj.getScheduleOfRate() != null)
-                for (SORRate rate : obj.getScheduleOfRate().getSorRatesOrderById()) {
+                for (final SORRate rate : obj.getScheduleOfRate().getSorRatesOrderById()) {
                     if (!isLatestRate)
                         isLatestRate = true;
                     existingStartDate = new LocalDate(rate.getValidity().getStartDate());
@@ -357,7 +356,7 @@ public class ScheduleOfRateService {
                         existingEndDate = new LocalDate(rate.getValidity().getEndDate());
                     checkStartDate = new LocalDate(obj.getFromDate());
                     if (obj.getToDate() != null)
-                        checkEndDate = new LocalDate(obj.getToDate());
+                        new LocalDate(obj.getToDate());
 
                     if (isLatestRate)
                         if (checkStartDate.compareTo(existingStartDate) <= 0) {
@@ -369,21 +368,21 @@ public class ScheduleOfRateService {
                         }
                     /**
                      * If latest existing SOR Rate to date is null
-                     * 
+                     *
                      * then
-                     * 
+                     *
                      * Check any active estimates is exist after new SOR from date
-                     * 
+                     *
                      * if exist
-                     * 
+                     *
                      * throw error
-                     * 
+                     *
                      * else
-                     * 
+                     *
                      * update to date of existing SOR to before date of new SOR from date
-                     * 
+                     *
                      * And check overlap issue for from dates ,to dates of existing and new SOR rates both
-                     * 
+                     *
                      */
                     if (obj.getIsToDateNull() != null && obj.getIsToDateNull()) {
 
@@ -391,20 +390,20 @@ public class ScheduleOfRateService {
                                 obj.getFromDate());
                         woe = estimateService.getBySorIdAndWorkOrderDate(obj.getScheduleOfRate().getId(),
                                 obj.getFromDate());
-                        
+
                         if (woe != null && !woe.isEmpty())
                             error = error + " " + messageSource
-                            .getMessage("error.active.revisionestimate.exist.for.given.date.range", null, null)
-                            + ",";
-                        
+                                    .getMessage("error.active.revisionestimate.exist.for.given.date.range", null, null)
+                                    + ",";
+
                         if (estimates != null && !estimates.isEmpty())
                             error = error + " " + messageSource
                                     .getMessage("error.active.estimates.exist.for.given.date.range", null, null)
                                     + ",";
-                        
+
                         else if (!toDateUpdated && isLatestRate) {
-                            LocalDate rateFromDate = new LocalDate(rate.getValidity().getStartDate());
-                            LocalDate previousDay = new LocalDate(obj.getFromDate()).minusDays(1);
+                            final LocalDate rateFromDate = new LocalDate(rate.getValidity().getStartDate());
+                            final LocalDate previousDay = new LocalDate(obj.getFromDate()).minusDays(1);
                             if (previousDay.compareTo(rateFromDate) > 0)
                                 rate.setValidity(new Period(rate.getValidity().getStartDate(), previousDay.toDate()));
                             else {
@@ -419,11 +418,11 @@ public class ScheduleOfRateService {
                         }
 
                         if (obj.getScheduleOfRate().isWithin(rate.getValidity(), obj.getFromDate())
-                                || (obj.getToDate() != null
-                                        && obj.getScheduleOfRate().isWithin(rate.getValidity(), obj.getToDate()))
+                                || obj.getToDate() != null
+                                        && obj.getScheduleOfRate().isWithin(rate.getValidity(), obj.getToDate())
                                 || obj.getScheduleOfRate().isWithin(checkPeriod, rate.getValidity().getStartDate())
-                                || (rate.getValidity().getEndDate() != null
-                                        && obj.getScheduleOfRate().isWithin(checkPeriod, rate.getValidity().getEndDate()))) {
+                                || rate.getValidity().getEndDate() != null
+                                        && obj.getScheduleOfRate().isWithin(checkPeriod, rate.getValidity().getEndDate())) {
                             error = error + " " + messageSource.getMessage("error.sor.rate.dates.overlap", null, null) + ",";
                             if (obj.getErrorReason() != null)
                                 error = obj.getErrorReason() + error;
@@ -434,41 +433,41 @@ public class ScheduleOfRateService {
 
                         /**
                          * If latest existing SOR Rate to date is present and to date is grater then new SOR rate from date
-                         * 
+                         *
                          * then Check any active estimates is exist after new SOR from date
-                         * 
+                         *
                          * if exist
-                         * 
+                         *
                          * throw error
-                         * 
+                         *
                          * else
-                         * 
+                         *
                          * update to date of existing SOR to before date of new SOR from date
-                         * 
+                         *
                          * And check overlap issue for from dates ,to dates of existing and new SOR rates both
-                         * 
+                         *
                          */
 
                         if (existingEndDate.compareTo(checkStartDate) > 0) {
 
                             estimates = estimateService.getBySorIdAndEstimateDate(obj.getScheduleOfRate().getId(),
                                     obj.getFromDate());
-                            
+
                             woe = estimateService.getBySorIdAndWorkOrderDate(obj.getScheduleOfRate().getId(),
                                     obj.getFromDate());
-                            
+
                             if (woe != null && !woe.isEmpty())
                                 error = error + " " + messageSource
-                                .getMessage("error.active.revisionestimate.exist.for.given.date.range", null, null)
-                                + ",";
+                                        .getMessage("error.active.revisionestimate.exist.for.given.date.range", null, null)
+                                        + ",";
 
                             if (estimates != null && !estimates.isEmpty())
                                 error = error + " " + messageSource
                                         .getMessage("error.active.estimates.exist.for.given.date.range", null, null)
                                         + ",";
                             else if (!toDateUpdated && isLatestRate) {
-                                LocalDate rateFromDate = new LocalDate(rate.getValidity().getStartDate());
-                                LocalDate previousDay = new LocalDate(obj.getFromDate()).minusDays(1);
+                                final LocalDate rateFromDate = new LocalDate(rate.getValidity().getStartDate());
+                                final LocalDate previousDay = new LocalDate(obj.getFromDate()).minusDays(1);
                                 if (previousDay.compareTo(rateFromDate) > 0)
                                     rate.setValidity(new Period(rate.getValidity().getStartDate(), previousDay.toDate()));
                                 else {
@@ -484,11 +483,11 @@ public class ScheduleOfRateService {
                         }
 
                         if (obj.getScheduleOfRate().isWithin(rate.getValidity(), obj.getFromDate())
-                                || (obj.getToDate() != null
-                                        && obj.getScheduleOfRate().isWithin(rate.getValidity(), obj.getToDate()))
+                                || obj.getToDate() != null
+                                        && obj.getScheduleOfRate().isWithin(rate.getValidity(), obj.getToDate())
                                 || obj.getScheduleOfRate().isWithin(checkPeriod, rate.getValidity().getStartDate())
-                                || (rate.getValidity().getEndDate() != null
-                                        && obj.getScheduleOfRate().isWithin(checkPeriod, rate.getValidity().getEndDate()))) {
+                                || rate.getValidity().getEndDate() != null
+                                        && obj.getScheduleOfRate().isWithin(checkPeriod, rate.getValidity().getEndDate())) {
                             error = error + " " + messageSource.getMessage("error.sor.rate.dates.overlap", null, null) + ",";
                             if (obj.getErrorReason() != null)
                                 error = obj.getErrorReason() + error;

@@ -50,7 +50,7 @@ public class MeasurementBookWFService extends PersistenceService<MBHeader, Long>
         super(MBHeader.class);
     }
 
-    public MeasurementBookWFService(Class<MBHeader> type) {
+    public MeasurementBookWFService(final Class<MBHeader> type) {
         super(type);
     }
 }

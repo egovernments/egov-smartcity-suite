@@ -113,7 +113,7 @@ public class UpdateRevisionEstimateController extends GenericWorkFlowController 
         revisionEstimateService.loadDataForView(revisionEstimate, workOrderEstimate, model);
 
         if (revisionEstimate.getCurrentState() != null
-            /*    && !WorksConstants.NEW.equals(revisionEstimate.getCurrentState().getValue())*/) {
+        /* && !WorksConstants.NEW.equals(revisionEstimate.getCurrentState().getValue()) */) {
             model.addAttribute("currentState", revisionEstimate.getCurrentState().getValue());
             model.addAttribute("amountRule", revisionEstimate.getEstimateValue());
             model.addAttribute("pendingActions", revisionEstimate.getCurrentState().getNextAction());
@@ -245,15 +245,14 @@ public class UpdateRevisionEstimateController extends GenericWorkFlowController 
             }
             model.addAttribute("revisionEstimate", updatedRevisionEstimate);
 
-            if (EstimateStatus.NEW.toString().equals(updatedRevisionEstimate.getEgwStatus().getCode())) {
+            if (EstimateStatus.NEW.toString().equals(updatedRevisionEstimate.getEgwStatus().getCode()))
                 return "redirect:/revisionestimate/update/" + updatedRevisionEstimate.getId() + "?mode=save";
-            } else if (approvalPosition == null) {
+            else if (approvalPosition == null)
                 return "redirect:/revisionestimate/revisionestimate-success?revisionEstimate=" + updatedRevisionEstimate.getId()
                         + "&approvalPosition=";
-            } else {
+            else
                 return "redirect:/revisionestimate/revisionestimate-success?revisionEstimate=" + updatedRevisionEstimate.getId()
                         + "&approvalPosition=" + approvalPosition;
-            }
 
         }
     }

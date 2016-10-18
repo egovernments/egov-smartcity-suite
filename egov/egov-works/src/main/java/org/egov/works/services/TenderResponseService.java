@@ -64,7 +64,7 @@ public class TenderResponseService extends PersistenceService<TenderResponse, Lo
         super(TenderResponse.class);
     }
 
-    public TenderResponseService(Class<TenderResponse> type) {
+    public TenderResponseService(final Class<TenderResponse> type) {
         super(type);
     }
 

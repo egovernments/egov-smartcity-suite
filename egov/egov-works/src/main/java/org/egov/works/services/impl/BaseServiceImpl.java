@@ -60,7 +60,7 @@ public class BaseServiceImpl<T, ID extends Serializable> implements BaseService<
      *
      * @param genericDAO
      */
-    
+
     public BaseServiceImpl(final PersistenceService<T, ID> persistenceService) {
         super();
         this.persistenceService = persistenceService;

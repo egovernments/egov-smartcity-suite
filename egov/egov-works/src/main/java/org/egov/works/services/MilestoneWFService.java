@@ -52,7 +52,7 @@ public class MilestoneWFService extends PersistenceService<Milestone, Long> {
         super(Milestone.class);
     }
 
-    public MilestoneWFService(Class<Milestone> type) {
+    public MilestoneWFService(final Class<Milestone> type) {
         super(type);
     }
 
