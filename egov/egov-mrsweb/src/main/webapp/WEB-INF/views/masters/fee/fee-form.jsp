@@ -56,7 +56,7 @@
 		</label>
 		<div class="col-sm-3 add-margin">
 			<form:input path="criteria" id="criteria" type="text"
-				class="form-control low-width is_valid_alphabet" maxlength="30"
+				class="form-control low-width" maxlength="30"
 				placeholder="" autocomplete="off" required="required" />
 			<form:errors path="criteria" cssClass="add-margin error-msg" />
 		</div>
