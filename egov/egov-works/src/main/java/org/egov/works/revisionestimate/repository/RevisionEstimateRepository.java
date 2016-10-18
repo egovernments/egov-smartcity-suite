@@ -80,5 +80,5 @@ public interface RevisionEstimateRepository extends JpaRepository<RevisionAbstra
             @Param("newStatus") String newStatus);
     
     List<RevisionAbstractEstimate> findByParent_IdAndEgwStatus_codeNotLike(@Param("id") final Long id,@Param("status") String status);
-
+    
 }

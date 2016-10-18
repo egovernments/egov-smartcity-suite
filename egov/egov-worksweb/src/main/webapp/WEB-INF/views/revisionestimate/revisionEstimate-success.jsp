@@ -44,6 +44,7 @@
 <%@ taglib uri="http://www.springframework.org/tags/form" prefix="form"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt"%>
 
+<input type="hidden" id="revisionEstimateId" value="${revisionEstimate.id }" />
 <div id="main">
 <div class="row">
 	<div class="col-md-12">
@@ -60,6 +61,9 @@
 </div>
 <div class="row text-center">
 	<div class="add-margin">
+	            <c:if test="${revisionEstimate.egwStatus.code == 'APPROVED' }">
+					<a href="javascript:void(0)" class="btn btn-primary" onclick="renderPDF()" ><spring:message code="lbl.view.revisionagreemantpdf" /></a>
+				</c:if>
 		<a href="javascript:void(0)" class="btn btn-default inboxload" onclick="self.close()" ><spring:message code="lbl.close" /></a>
 	</div>
 </div>

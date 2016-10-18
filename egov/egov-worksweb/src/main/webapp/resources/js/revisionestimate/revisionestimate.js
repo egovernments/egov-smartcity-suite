@@ -2155,3 +2155,8 @@ $(document).on('click','.reset-cq',function () {
 	$(this).closest('table').find('.runtime-update').attr('value', null);
 	$('.changequantity-msnet').html('');
 });
+
+function renderPDF() {
+	var revisionEstimateId = $('#revisionEstimateId').val();
+	window.open("/egworks/revisionestimate/revisionagreementPDF/" + revisionEstimateId, '', 'height=650,width=980,scrollbars=yes,left=0,top=0,status=yes');
+}

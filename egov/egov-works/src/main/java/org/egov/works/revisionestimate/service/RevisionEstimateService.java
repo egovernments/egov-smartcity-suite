@@ -75,6 +75,7 @@ import org.egov.works.abstractestimate.entity.AbstractEstimate.EstimateStatus;
 import org.egov.works.abstractestimate.entity.Activity;
 import org.egov.works.abstractestimate.entity.MeasurementSheet;
 import org.egov.works.abstractestimate.repository.ActivityRepository;
+import org.egov.works.abstractestimate.service.ActivityService;
 import org.egov.works.abstractestimate.service.MeasurementSheetService;
 import org.egov.works.letterofacceptance.service.WorkOrderActivityService;
 import org.egov.works.lineestimate.service.LineEstimateAppropriationService;
@@ -195,6 +196,9 @@ public class RevisionEstimateService {
 
     @Autowired
     private BudgetControlTypeService budgetControlTypeService;
+    
+    @Autowired
+    private ActivityService activityService;
 
     @Autowired
     public RevisionEstimateService(final RevisionEstimateRepository revisionEstimateRepository) {
@@ -1426,4 +1430,12 @@ public class RevisionEstimateService {
                 revisionEstimate.getChangeQuantityActivities().add(activity);
             }
     }
-}
+    
+    public List<Activity> getNonTenderedLumpSumActivities(final Long revisionEstimateId) {
+    	return activityService.findByRevisionType(revisionEstimateId, RevisionType.NON_TENDERED_ITEM,RevisionType.LUMP_SUM_ITEM);
+    }
+    
+    public List<Activity> getChangeQuatityActivities(final Long revisionEstimateId) {
+    	return activityService.findByRevisionType(revisionEstimateId, RevisionType.ADDITIONAL_QUANTITY,RevisionType.REDUCED_QUANTITY);
+    }
+} 
