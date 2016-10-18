@@ -74,14 +74,15 @@ public class NumberOfConnectionReportController {
 
     @Autowired
     private final BoundaryWiseReportService boundaryWiseReportService;
+    
+    @Autowired
+    private BoundaryService boundaryService;
+
 
     @Autowired
     public NumberOfConnectionReportController(final BoundaryWiseReportService drillDownReportService) {
         boundaryWiseReportService = drillDownReportService;
     }
-
-    @Autowired
-    private BoundaryService boundaryService;
 
     @ModelAttribute("wards")
     public List<Boundary> wards() {

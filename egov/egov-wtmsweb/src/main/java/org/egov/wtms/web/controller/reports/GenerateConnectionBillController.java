@@ -195,22 +195,15 @@ public class GenerateConnectionBillController {
         final List<Long> waterChargesDocumentslist = generateConnectionBillService.getDocuments(consumerCode,
                 waterConnectionDetailsService.findByApplicationNumberOrConsumerCode(consumerCode).getApplicationType()
                         .getName());
-        response.setHeader("content-disposition", "attachment; filename=\"" + consumerCode + ".pdf" + "\"");
         if (!waterChargesDocumentslist.isEmpty() && waterChargesDocumentslist.get(0) != null)
             try {
-
                 final FileStoreMapper fsm = fileStoreMapperRepository
                         .findByFileStoreId(waterChargesDocumentslist.get(0) + "");
                 final List<InputStream> pdfs = new ArrayList<InputStream>();
                 final File file = fileStoreService.fetch(fsm, WaterTaxConstants.FILESTORE_MODULECODE);
                 final byte[] bFile = FileUtils.readFileToByteArray(file);
                 pdfs.add(new ByteArrayInputStream(bFile));
-                final ByteArrayOutputStream output = new ByteArrayOutputStream();
-                final byte[] data = concatPDFs(pdfs, output);
-                response.setHeader("Content-disposition", "attachment;filename=" + consumerCode + ".pdf");
-                response.setContentType("application/pdf");
-                response.setContentLength(data.length);
-                response.getOutputStream().write(data);
+                getServletResponse( response,pdfs,consumerCode);
             } catch (final Exception e) {
                 throw new ValidationException(e.getMessage());
             }
@@ -249,29 +242,33 @@ public class GenerateConnectionBillController {
                 }
         if (LOGGER.isDebugEnabled())
             LOGGER.debug("Number of pdfs : " + (pdfs != null ? pdfs.size() : ZERO));
-        try {
+       
             if (!pdfs.isEmpty()) {
-                final ByteArrayOutputStream output = new ByteArrayOutputStream();
-                final byte[] data = concatPDFs(pdfs, output);
-                response.setHeader("Content-disposition", "attachment;filename=" + "search_bill" + ".pdf");
-                response.setContentType("application/pdf");
-                response.setContentLength(data.length);
-                response.getOutputStream().write(data);
+                getServletResponse( response,pdfs,"search_bill");
             } else
                 throw new ValidationException("err.demand.notice");
-
-        } catch (final IOException e) {
-
-            throw new ValidationException(e.getMessage());
-
-        }
         final long endTime = System.currentTimeMillis();
         if (LOGGER.isDebugEnabled()) {
             LOGGER.debug("GenerateBill | mergeAndDownload | Time taken(ms) " + (endTime - startTime));
             LOGGER.debug("Exit from mergeAndDownload method");
         }
-
         return null;
+    }
+    
+    private HttpServletResponse getServletResponse(HttpServletResponse response,List<InputStream> pdfs, String filename)
+    {
+        try {            
+          final ByteArrayOutputStream output = new ByteArrayOutputStream();
+          final byte[] data = concatPDFs(pdfs, output);
+          response.setHeader("Content-disposition", "attachment;filename=" + filename + ".pdf");
+          response.setContentType("application/pdf");
+          response.setContentLength(data.length);
+          response.getOutputStream().write(data);
+          return response;
+        }
+        catch (final IOException e) {
+            throw new ValidationException(e.getMessage());
+        }
     }
 
     private byte[] concatPDFs(final List<InputStream> streamOfPDFFiles, final ByteArrayOutputStream outputStream) {
