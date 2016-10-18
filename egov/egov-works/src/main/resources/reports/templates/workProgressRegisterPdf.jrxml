@@ -38,8 +38,8 @@
   ~
   ~   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
   -->
-<!-- Created with Jaspersoft Studio version 6.3.0.final using JasperReports Library version 6.3.0  -->
-<!-- 2016-08-24T12:19:36 -->
+<!-- Created with Jaspersoft Studio version 6.3.1.final using JasperReports Library version 6.3.1  -->
+<!-- 2016-10-18T12:52:40 -->
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="workProgressRegisterPdf" pageWidth="1684" pageHeight="595" orientation="Landscape" columnWidth="802" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="dde57000-7ab1-4a8b-9792-f74605077701">
 	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="One Empty Record"/>
 	<property name="ireport.zoom" value="0.9090909090909091"/>
@@ -409,7 +409,7 @@
 				<text><![CDATA[Contractor code and name]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="954" y="0" width="70" height="47" uuid="078d8dd0-762b-4ea6-a032-592ab0ada6cb"/>
+				<reportElement x="960" y="0" width="64" height="47" uuid="078d8dd0-762b-4ea6-a032-592ab0ada6cb"/>
 				<box topPadding="0" leftPadding="2" bottomPadding="0" rightPadding="2">
 					<topPen lineWidth="0.5"/>
 					<leftPen lineWidth="0.5"/>
@@ -422,7 +422,7 @@
 				<text><![CDATA[Agreement number and date]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="897" y="0" width="57" height="47" uuid="39623fea-7a75-4ad9-9817-1a1257cb7440"/>
+				<reportElement x="897" y="0" width="63" height="47" uuid="39623fea-7a75-4ad9-9817-1a1257cb7440"/>
 				<box topPadding="0" leftPadding="2" bottomPadding="0" rightPadding="2">
 					<topPen lineWidth="0.5"/>
 					<leftPen lineWidth="0.5"/>
@@ -432,7 +432,7 @@
 				<textElement textAlignment="Center" verticalAlignment="Middle">
 					<font size="8" isBold="true"/>
 				</textElement>
-				<text><![CDATA[Mode of Allotment]]></text>
+				<text><![CDATA[Mode Of Entrustment]]></text>
 			</staticText>
 			<staticText>
 				<reportElement x="834" y="0" width="63" height="47" uuid="a4fa1466-aa5f-4b47-b89a-24e1bf4643b1"/>
@@ -595,7 +595,7 @@
 				<textFieldExpression><![CDATA[$F{contractorCodeName}]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement stretchType="RelativeToTallestObject" x="954" y="0" width="70" height="40" uuid="d7fc9414-e427-40b0-9441-f83d9b38d35f"/>
+				<reportElement stretchType="RelativeToTallestObject" x="960" y="0" width="64" height="40" uuid="d7fc9414-e427-40b0-9441-f83d9b38d35f"/>
 				<box topPadding="0" leftPadding="2" bottomPadding="0" rightPadding="2">
 					<topPen lineWidth="0.5"/>
 					<leftPen lineWidth="0.5"/>
@@ -608,7 +608,7 @@
 				<textFieldExpression><![CDATA[$F{agreementNumberDate}]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement stretchType="RelativeToTallestObject" x="897" y="0" width="57" height="40" uuid="045aa1a2-b29e-4800-ba79-39cfd0702afe"/>
+				<reportElement stretchType="RelativeToTallestObject" x="897" y="0" width="63" height="40" uuid="045aa1a2-b29e-4800-ba79-39cfd0702afe"/>
 				<box topPadding="0" leftPadding="2" bottomPadding="0" rightPadding="2">
 					<topPen lineWidth="0.5"/>
 					<leftPen lineWidth="0.5"/>
