@@ -116,7 +116,16 @@ public class MarriageWitness extends AbstractAuditable {
 
     @Embedded
     private Contact contactInfo;
+    
+	public String getFullName() {
+        String fullName = getName().getFirstName();
 
+        fullName += getName().getMiddleName() == null ? "" : " " + getName().getMiddleName();
+        fullName += getName().getLastName() == null ? "" : " " + getName().getLastName();
+
+        return fullName;
+    }
+    
     @Override
     public Long getId() {
         return id;

@@ -109,6 +109,7 @@
 	    <table class="table table-bordered table-hover multiheadertbl" id="registrationstatus_table">
 	    	<thead>
 	    		<tr>
+	    			<th>S.No</th>
 	    			<th>Registration No</th>
 	    			<th>Husband Name</th>
 	    			<th>Wife Name</th>

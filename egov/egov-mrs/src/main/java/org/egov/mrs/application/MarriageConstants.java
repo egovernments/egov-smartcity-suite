@@ -66,4 +66,6 @@ public class MarriageConstants {
     public static final String SENDSMSFROOMMARRIAGEMODULE="SENDSMSFROOMMARRIAGEMODULE";
     public static final String SENDEMAILFROOMMARRIAGEMODULE="SENDEMAILFROOMMARRIAGEMODULE";
     
+    public static final String APPL_INDEX_MODULE_NAME = "Marriage Registration";
+    
 }

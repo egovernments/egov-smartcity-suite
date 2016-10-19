@@ -68,9 +68,6 @@ import org.egov.infra.admin.master.service.BoundaryService;
 import org.egov.infra.exception.ApplicationRuntimeException;
 import org.egov.infra.filestore.entity.FileStoreMapper;
 import org.egov.infra.filestore.service.FileStoreService;
-import org.egov.infra.search.elastic.entity.ApplicationIndexBuilder;
-import org.egov.infra.search.elastic.service.ApplicationIndexService;
-import org.egov.infra.security.utils.SecurityUtils;
 import org.egov.infra.utils.DateUtils;
 import org.egov.infra.workflow.entity.State;
 import org.egov.infra.workflow.entity.StateHistory;
@@ -81,6 +78,7 @@ import org.egov.mrs.application.service.MarriageRegistrationDemandService;
 import org.egov.mrs.application.service.workflow.RegistrationWorkflowService;
 import org.egov.mrs.autonumber.MarriageRegistrationApplicationNumberGenerator;
 import org.egov.mrs.autonumber.MarriageRegistrationNumberGenerator;
+import org.egov.mrs.domain.elasticsearch.service.MarriageRegistrationUpdateIndexesService;
 import org.egov.mrs.domain.entity.IdentityProof;
 import org.egov.mrs.domain.entity.MarriageCertificate;
 import org.egov.mrs.domain.entity.MarriageDocument;
@@ -88,7 +86,6 @@ import org.egov.mrs.domain.entity.MarriageRegistration;
 import org.egov.mrs.domain.entity.MrApplicant;
 import org.egov.mrs.domain.entity.RegistrationDocument;
 import org.egov.mrs.domain.entity.SearchModel;
-import org.egov.mrs.domain.enums.MarriageFeeType;
 import org.egov.mrs.domain.repository.MarriageRegistrationRepository;
 import org.egov.mrs.domain.repository.WitnessRepository;
 import org.egov.mrs.masters.service.MarriageActService;
@@ -119,8 +116,6 @@ public class MarriageRegistrationService {
     @PersistenceContext
     private EntityManager entityManager;
 
-    @Autowired
-    private SecurityUtils securityUtils;
 
     @Autowired
     private MarriageSmsAndEmailService marriageSmsAndEmailService;
@@ -153,9 +148,6 @@ public class MarriageRegistrationService {
     private MarriageRegistrationNumberGenerator marriageRegistrationNumberGenerator;
 
     @Autowired
-    private ApplicationIndexService applicationIndexService;
-
-    @Autowired
     private FileStoreService fileStoreService;
 
     @Autowired
@@ -181,6 +173,10 @@ public class MarriageRegistrationService {
    
     @Autowired
     private MarriageFeeService marriageFeeService;
+    
+    @Autowired
+    private MarriageRegistrationUpdateIndexesService marriageRegistrationUpdateIndexesService;
+    
     
     @Autowired
     public MarriageRegistrationService(final MarriageRegistrationRepository registrationRepository) {
@@ -276,6 +272,7 @@ public class MarriageRegistrationService {
              marriageUtils.getStatusByCodeAndModuleType(MarriageRegistration.RegistrationStatus.CREATED.toString(), MarriageConstants.MODULE_NAME)); 
         workflowService.transition(registration, workflowContainer, registration.getApprovalComent());
         create(registration);
+        marriageRegistrationUpdateIndexesService.updateIndexes(registration);
         marriageSmsAndEmailService.sendSMS(registration,MarriageRegistration.RegistrationStatus.CREATED.toString());
         marriageSmsAndEmailService.sendEmail(registration,MarriageRegistration.RegistrationStatus.CREATED.toString());
 
@@ -298,6 +295,7 @@ public class MarriageRegistrationService {
         registration.setLegacy(true);
         registration.setRegistrationNo(marriageRegistrationNumberGenerator.generateMarriageRegistrationNumber(registration));
         create(registration);
+        marriageRegistrationUpdateIndexesService.updateIndexes(registration);
         return registration.getApplicationNo();         
     }
 
@@ -316,6 +314,7 @@ public class MarriageRegistrationService {
                 marriageUtils.getStatusByCodeAndModuleType(MarriageRegistration.RegistrationStatus.CREATED.toString(), MarriageConstants.MODULE_NAME));
 
         workflowService.transition(registration, workflowContainer, registration.getApprovalComent());
+        marriageRegistrationUpdateIndexesService.updateIndexes(registration);
         return update(registration);
     }
     
@@ -446,7 +445,7 @@ public class MarriageRegistrationService {
         registration.setRegistrationNo(marriageRegistrationNumberGenerator.generateMarriageRegistrationNumber(registration));
         registration = update(registration);
         workflowService.transition(registration, workflowContainer, workflowContainer.getApproverComments());
-        createRegistrationAppIndex(registration); 
+        marriageRegistrationUpdateIndexesService.updateIndexes(registration);
         return registration;
     }
     
@@ -459,27 +458,12 @@ public class MarriageRegistrationService {
         registration.addCertificate(marriageCertificate);
         registration.setActive(true);
         workflowService.transition(registration, workflowContainer, workflowContainer.getApproverComments()); 
+        marriageRegistrationUpdateIndexesService.updateIndexes(registration);
         marriageSmsAndEmailService.sendSMS(registration,MarriageRegistration.RegistrationStatus.REGISTERED.toString());
         marriageSmsAndEmailService.sendEmail(registration,MarriageRegistration.RegistrationStatus.REGISTERED.toString());
         return registration;
     }
     
-
-    private void createRegistrationAppIndex(final MarriageRegistration registration) {
-        final User user = securityUtils.getCurrentUser();
-        final ApplicationIndexBuilder applicationIndexBuilder = new ApplicationIndexBuilder(MarriageConstants.MODULE_NAME,
-                registration.getApplicationNo(),
-                registration.getApplicationDate(), MarriageFeeType.MRGREGISTRATION.name(),
-                registration.getHusband().getFullName().concat(registration.getWife().getFullName()),
-                registration.getStatus().getCode(),
-                "/mrs/registration/" + registration.getId(),
-                registration.getHusband().getContactInfo().getResidenceAddress(), user.getUsername() + "::" + user.getName(), "")//TODO CHECK THIS
-                        .mobileNumber(registration.getHusband().getContactInfo().getMobileNo());
-
-        applicationIndexService.createApplicationIndex(applicationIndexBuilder.build());
-    }
-
-   
 
     @Transactional
     public MarriageRegistration rejectRegistration(MarriageRegistration registration, final WorkflowContainer workflowContainer) {
@@ -488,6 +472,7 @@ public class MarriageRegistrationService {
                 :marriageUtils.getStatusByCodeAndModuleType(MarriageRegistration.RegistrationStatus.CANCELLED.toString(), MarriageConstants.MODULE_NAME));
         registration.setRejectionReason(workflowContainer.getApproverComments());
         workflowService.transition(registration, workflowContainer, workflowContainer.getApproverComments());
+        marriageRegistrationUpdateIndexesService.updateIndexes(registration);
         marriageSmsAndEmailService.sendSMS(registration,MarriageRegistration.RegistrationStatus.REJECTED.toString());
         marriageSmsAndEmailService.sendEmail(registration,MarriageRegistration.RegistrationStatus.REJECTED.toString());
         return registration;
@@ -497,7 +482,8 @@ public class MarriageRegistrationService {
         return registrationRepository.findAll();
     }
 
-    public List<MarriageRegistration> searchRegistration(final SearchModel searchModel, final boolean isForReport) {
+    @SuppressWarnings("unchecked")
+	public List<MarriageRegistration> searchRegistration(final SearchModel searchModel, final boolean isForReport) {
 
         final Criteria criteria = getCurrentSession().createCriteria(MarriageRegistration.class, "registration");
 
@@ -692,7 +678,8 @@ public class MarriageRegistrationService {
         return historyTable;
     }
 
-        public List<MarriageRegistration> searchRegistrationByStatus(MarriageRegistration registration,String status) throws ParseException {
+        @SuppressWarnings("unchecked")
+		public List<MarriageRegistration> searchRegistrationByStatus(MarriageRegistration registration,String status) throws ParseException {
 
                 final Criteria criteria = getCurrentSession().createCriteria(MarriageRegistration.class,"marriageRegistration")
                                 .createAlias("marriageRegistration.status", "status");
