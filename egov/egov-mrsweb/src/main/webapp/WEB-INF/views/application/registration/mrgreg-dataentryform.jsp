@@ -45,52 +45,6 @@
 <%@ taglib uri="/WEB-INF/taglib/cdn.tld" prefix="cdn" %>
 
 <script src="<cdn:url value='/resources/js/app/viewregistration.js'/> "></script>
-
-<!-- <style>
-	ul.nav-tabs > li.active>a:after {
-		background: none !important;
-	}
-	ul.nav-tabs-top > li.active > a:after {
-	    display: block;
-	    content: '';
-	    position: absolute;
-	    bottom: 0;
-	    left: 0;
-	    width: 100%;
-	    height: 4px;
-	    background: #F67B00;
-	}
-	
-	ul.nav-tabs-bottom > li.active > a:before {
-	    display: block;
-	    content: '';
-	    position: absolute;
-	    top: 0;
-	    left: 0;
-	    width: 100%;
-	    height: 4px;
-	    background: #F67B00;
-	}
-	
-	media (min-width: 768px)
-	.nav-tabs.nav-justified > li > a {
-	}
-	
-	media (min-width: 768px)
-	.nav-tabs.nav-justified.nav-tabs-top > li > a {
-	    border-bottom: 1px solid #ddd;
-	    border-radius: 4px 4px 0 0;
-	}
-	
-	media (min-width: 768px)
-	.nav-tabs.nav-justified.nav-tabs-bottom > li > a {
-	    border-top: 1px solid #ddd;
-	    border-radius: 4px 4px 0 0;
-	}
-
-
-</style>
- -->
  <div class="row">
 	<div class="col-md-12"> 
 		<div class="text-right error-msg" style="font-size:14px;"></div>
@@ -118,7 +72,26 @@
 					  </ul>
 					  <div class="tab-content">
 					    <div id="applicant-info" class="tab-pane fade in active">
-					    	<jsp:include page="generalinfo.jsp"></jsp:include>
+						    <div class="form-group">
+						    	<label class="col-sm-3 control-label text-right"><spring:message
+										code="lbl.appl.number" /><span class="mandatory"></span></label>
+								<div class="col-sm-3 add-margin">
+									<form:input path="applicationNo" id="applicationNum"
+										class="form-control text-left patternvalidation" data-pattern="alphanumericwithspecialcharacters" maxlength="20" required="required" />
+									<form:errors path="applicationNo" 
+										cssClass="add-margin error-msg" />
+								</div>
+								
+								<label class="col-sm-3 control-label text-right"><spring:message
+										code="lbl.registration.number" /><span class="mandatory"></span></label>
+								<div class="col-sm-3 add-margin">
+									<form:input path="registrationNo" id="registrationNum"
+										class="form-control text-left patternvalidation" data-pattern="number" maxlength="20" required="required" />
+									<form:errors path="registrationNo" 
+										cssClass="add-margin error-msg" />
+								</div>
+							</div>
+						    	<jsp:include page="generalinfo.jsp"></jsp:include>
 					    </div>
 					    <div id="witness-info" class="tab-pane fade">
 				    		<c:set value="witnesses[0]" var="witness" scope="request"></c:set>

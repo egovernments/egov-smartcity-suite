@@ -200,17 +200,17 @@ public class MarriageRegistrationService {
     public MarriageRegistration get(final Long id) {
         return registrationRepository.findById(id);
     }
-
-    public MarriageRegistration get(final String registrationNo) {
+    
+    public MarriageRegistration findByRegistrationNo(final String registrationNo) {
         return registrationRepository.findByRegistrationNo(registrationNo);
     }
     
+    public MarriageRegistration findByApplicationNo(final String applicationNo) {
+        return registrationRepository.findByApplicationNo(applicationNo);
+    }
+    
     public void setMarriageRegData(MarriageRegistration registration){
-        if (StringUtils.isBlank(registration.getApplicationNo())) {
-            registration.setApplicationNo(marriageRegistrationApplicationNumberGenerator.getNextApplicationNumberForMarriageRegistration(registration));
-            registration.setApplicationDate(new Date());
-        }
-
+        registration.setApplicationDate(new Date());
         registration.getHusband().setReligion(religionService.getProxy(registration.getHusband().getReligion().getId()));
         registration.getWife().setReligion(religionService.getProxy(registration.getWife().getReligion().getId()));
         registration.getWitnesses().forEach(witness -> witness.setRegistration(registration));
@@ -267,6 +267,9 @@ public class MarriageRegistrationService {
 
     @Transactional
     public String createRegistration(final MarriageRegistration registration, final WorkflowContainer workflowContainer) {
+        if (StringUtils.isBlank(registration.getApplicationNo())) {
+            registration.setApplicationNo(marriageRegistrationApplicationNumberGenerator.getNextApplicationNumberForMarriageRegistration(registration));
+        }
         setMarriageRegData(registration);
         registration.setStatus(
              marriageUtils.getStatusByCodeAndModuleType(MarriageRegistration.RegistrationStatus.CREATED.toString(), MarriageConstants.MODULE_NAME)); 
@@ -483,7 +486,7 @@ public class MarriageRegistrationService {
     }
 
     @SuppressWarnings("unchecked")
-	public List<MarriageRegistration> searchRegistration(final SearchModel searchModel, final boolean isForReport) {
+        public List<MarriageRegistration> searchRegistration(final SearchModel searchModel, final boolean isForReport) {
 
         final Criteria criteria = getCurrentSession().createCriteria(MarriageRegistration.class, "registration");
 
@@ -679,7 +682,7 @@ public class MarriageRegistrationService {
     }
 
         @SuppressWarnings("unchecked")
-		public List<MarriageRegistration> searchRegistrationByStatus(MarriageRegistration registration,String status) throws ParseException {
+                public List<MarriageRegistration> searchRegistrationByStatus(MarriageRegistration registration,String status) throws ParseException {
 
                 final Criteria criteria = getCurrentSession().createCriteria(MarriageRegistration.class,"marriageRegistration")
                                 .createAlias("marriageRegistration.status", "status");

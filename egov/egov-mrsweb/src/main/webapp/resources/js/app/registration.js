@@ -59,7 +59,6 @@ $(document).ready( function () {
 	       
 			fileReader.readAsDataURL(image);
 			var span = $(img).siblings('span');
-			//$(span).css({'color' : ''});
 			$(span).removeClass('error-msg');
 			$(span).text(image.name);
 		}
@@ -100,13 +99,6 @@ $(document).ready( function () {
 	    	
 	    	console.log('target' + e.target.id);
 	    	var imgAttach = e.target.id;
-	    	
-	    	/*if (imgAttach.search('.photo') > 0) {
-	    		var span = $(e.target).siblings('span'); 
-		    	//$(span).css({'color' : 'red'});
-		    	$(span).addClass('error-msg');
-		    	$(span).text("Photo is required");
-	    	}	 */   		    	
 	    }  
 	});
 
@@ -116,19 +108,7 @@ $(document).ready( function () {
     	$('#registration_table').fnFilter(this.value);
     });
 	
-	
-	/*$('#btn_viewdetails').click( function () {
-		console.log('registrationId = ' + registrationId);
-		window.open('/mrs/registration/' + registrationId + '?mode=view');
-	})
-	
-	$('#btn_collectfee').click( function () {
-		window.open('/mrs/collection/bill/' + registrationId);
-	})*/
-	
 	$('#select-marriagefees').change( function () {
-		//$('#txt-feepaid').val($(this).val());
-		//$('#txt_feecriteria').val($('#select-marriagefees option:selected').text());
 		showFee();
 	})
 	
@@ -170,10 +150,8 @@ $(document).ready( function () {
 		if($(this).parent().find('#toggle-his-icon').hasClass('fa fa-angle-down'))
 		{
 			$(this).parent().find('#toggle-his-icon').removeClass('fa fa-angle-down').addClass('fa fa-angle-up');
-			//$('#see-more-link').hide();
 			}else{
 			$(this).parent().find('#toggle-his-icon').removeClass('fa fa-angle-up').addClass('fa fa-angle-down');
-			//$('#see-more-link').show();
 		}
 	});
 	
@@ -213,7 +191,71 @@ $(document).ready( function () {
 			}
 		
 	   }
+
+// Called from Data Entry Screen - Starts
+	
+	$('#applicationNum').blur(function(){
+		validateApplicationNumber();
+	});
+	
+	$('#registrationNum').blur(function(){
+		validateRegistrationNumber();
+	});
+	
+	
+	function validateApplicationNumber(){
+		appNo=$('#applicationNum').val();
+		if(appNo != '') {
+			$.ajax({
+				url: "/mrs/registration/checkUniqueAppl-RegNo",      
+				type: "GET",
+				data: {
+					registrationNo : "",  
+					applicationNo  : appNo
+				},
+				dataType: "json",
+				success: function (response) { 
+					if(response != true) {
+							$('#applicationNum').val('');
+							bootbox.alert("Entered Application Number already exists. Please Enter Unique Number.");
+					}
+				}, 
+				error: function (response) {
+					$('#applicationNum').val('');
+					bootbox.alert("connection validation failed");
+				}
+			});
+		}	
+	}
+	
+	
+	function validateRegistrationNumber(){
+		regNo=$('#registrationNum').val();
+		if(regNo != '') {
+			$.ajax({
+				url: "/mrs/registration/checkUniqueAppl-RegNo",      
+				type: "GET",
+				data: {
+					registrationNo : regNo,  
+					applicationNo  : ""
+				},
+				dataType: "json",
+				success: function (response) { 
+					if(response != true) {
+							$('#registrationNum').val('');
+							bootbox.alert("Entered Registration Number already exists. Please Enter Unique Number.");
+					}
+				}, 
+				error: function (response) {
+					$('#registrationNum').val('');
+					bootbox.alert("connection validation failed");
+				}
+			});
+		}	
+	}
 })
+
+// Called from Data Entry Screen - Ends
 
 function validateChecklists() {
 	var noOfCheckboxes1 = $('input[id^="ageProofH"]:checked').length;
