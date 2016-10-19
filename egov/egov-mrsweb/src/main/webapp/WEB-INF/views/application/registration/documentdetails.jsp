@@ -42,13 +42,24 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 <%@ taglib uri="/WEB-INF/taglib/cdn.tld" prefix="cdn" %>
 
+<div class="panel panel-primary" data-collapsed="0">
+	<div class="panel-heading slide-document-menu">
+		<div class="panel-title">
+			<spring:message  code="lbl.applicant.docs"/>
+		</div>
+		<div class="history-icon">
+			<i class="fa fa-angle-up fa-2x" id="toggle-his-icon"></i>
+		</div>
+	</div>
+<div class="panel-body documentAttach-slide display-hide">
+	
 <div class="row">
 	<div class="col-sm-2"></div>
 	<div class="form-group">
 		<label class="col-sm-4 text-left view-content">
 			<spring:message code="lbl.common.docs"/>
 		</label>
-		<div class="col-sm-1 text-center view-content">
+		<div class="col-sm-2 text-center view-content">
 			<spring:message code="lbl.submitted.by.couple"/>
 		</div>
 	</div>
@@ -56,7 +67,7 @@
 </div>
 <c:forEach var="doc" items="${generalDocuments}" varStatus="status">	
 	<div class="form-group">	
-		<div class="col-sm-2"></div>
+		<div class="col-sm-1"></div>
 		<form:hidden id="documents[${status.index}].id" path="documents[${status.index}].id" value="${doc.id}" /> 
 		<div class="col-sm-4 add-margin text-right">
 			<c:out value="${doc.name}"></c:out>
@@ -65,7 +76,7 @@
 			<input type="file" id="file${status.index}id" name="documents[${status.index}].file" class="file-ellipsis upload-file">
 			<form:errors path="documents[${status.index}].file" cssClass="add-margin error-msg" />
 		</div>
-		<div class="col-sm-1">
+		<div class="col-sm-2">
 			<c:set value="false" var="isDocFound"></c:set>
 			<c:forEach items="${registration.registrationDocuments}" var="regdoc" varStatus="loopStatus">
 				<c:if test="${regdoc.document.id == doc.id}">
@@ -74,12 +85,13 @@
 					<a id="regdoc${status.index}">Download</a>
 				</c:if>
 			</c:forEach>
-			<c:if test="${!isDocFound}">
+			<%-- <c:if test="${!isDocFound}">
 				NA
-			</c:if>
+			</c:if> --%>
 		</div>
 	</div>
 </c:forEach>
+</b></b>
 <div class="row">
 	<div class="col-sm-2"></div>
 	<div class="form-group">
@@ -89,7 +101,7 @@
 		<div class="col-sm-1 text-center view-content">
 			<spring:message code="lbl.husband"/>
 		</div>
-		<div class="col-sm-1"></div>
+		<div class="col-sm-2"></div>
 		<div class="col-sm-1 text-center view-content">
 			<spring:message code="lbl.wife"/>
 		</div>
@@ -99,7 +111,7 @@
 <c:forEach var="doc" items="${individualDocuments}" varStatus="status">	
 	
 	<div class="form-group">	
-		<div class="col-sm-2"></div>
+		<div class="col-sm-1"></div>
 		<form:hidden id="husband.documents[${status.index}].id" path="husband.documents[${status.index}].id" value="${doc.id}" /> 
 		<form:hidden id="wife.documents[${status.index}].id" path="wife.documents[${status.index}].id" value="${doc.id}" /> 
 		<div class="col-sm-4 add-margin text-right">
@@ -117,10 +129,11 @@
 					<a id="husbanddoc${status.index}">Download</a>
 				</c:if>
 			</c:forEach>
-			<c:if test="${!isDocFound}">
+			<%-- <c:if test="${!isDocFound}">
 				NA
-			</c:if>
+			</c:if> --%>
 		</div>
+		<div class="col-sm-1"></div>
 		<div class="col-sm-2 add-margin text-center">
 			<input type="file" id="file${status.index}id" name="wife.documents[${status.index}].file" class="file-ellipsis upload-file">
 			<form:errors path="wife.documents[${status.index}].file" cssClass="add-margin error-msg" />
@@ -133,13 +146,13 @@
 					<a id="wifedoc${status.index}">Download</a>
 				</c:if>
 			</c:forEach>
-			<c:if test="${!isDocFound}">
+			<%-- <c:if test="${!isDocFound}">
 				NA
-			</c:if>
+			</c:if> --%>
 		</div>
-		<div class="col-sm-1"></div>
+		
 	</div>
 </c:forEach> 
-
+</div></div>
 <script src="<cdn:url value='/resources/js/app/documentsupload.js'/>"></script>
 <script src="<cdn:url value='/resources/js/app/viewdocumentsupload.js'/>"></script>

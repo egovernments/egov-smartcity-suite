@@ -130,7 +130,7 @@ public class SearchRegistrationController {
     
     @RequestMapping(value = "/searchApproved", method = RequestMethod.POST, produces = MediaType.TEXT_PLAIN_VALUE)
     public @ResponseBody String searchApprovedMarriageRecords(Model model,@ModelAttribute final MarriageRegistration registration) throws ParseException {
-    	List<MarriageRegistration> searchResultList = marriageRegistrationService.searchApprovedMarriageRegistrations(registration);
+    	List<MarriageRegistration> searchResultList = marriageRegistrationService.searchRegistrationByStatus(registration,MarriageRegistration.RegistrationStatus.REGISTERED.toString());
       	 String result = new StringBuilder("{ \"data\":").append(toJSON(searchResultList,MarriageRegistration.class,  MarriageRegistrationJsonAdaptor.class)).append("}")
                    .toString();
           return result;
