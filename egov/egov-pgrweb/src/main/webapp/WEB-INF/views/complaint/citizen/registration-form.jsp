@@ -55,6 +55,20 @@
 					</div> 
 				</div>
 				<div class="panel-body custom-form">
+					<c:if test="${not empty complaintTypes}">
+						<div class="form-group">
+							<label class="col-sm-3 control-label"><spring:message code="lbl.top.grievance.types" /></label>
+							<div class="col-sm-6 add-margin">
+								<c:forEach items="${complaintTypes}" var="complaintType">
+									<a onclick="setComplaintTypeId('${complaintType.id}','${complaintType.category.id}')" 
+									href="javascript:void(0)" class="btn btn-secondary btn-xs tag-element freq-ct"
+									data-toggle="popover" title='<spring:message code="lbl.top.grievance.toggle"/>'>
+									<c:out value="${complaintType.name }" /> </a>
+								</c:forEach>
+								<b class="view-content">OR</b>
+							</div>
+						</div>
+					</c:if>
 					<div class="form-group">
 						<label class="col-sm-3 control-label">
 							<spring:message code="lbl.category" /><span class="mandatory"></span>
@@ -83,19 +97,15 @@
 								<form:options items="${complaint.complaintType.category.complaintTypes}" itemLabel="name" itemValue="id"/>
 							</form:select>
 							<form:errors path="complaintType" cssClass="add-margin error-msg" />
-							<c:forEach items="${complaintTypes}" var="complaintType">
-								<a onclick="setComplaintTypeId('${complaintType.id}','${complaintType.category.id}')" href="javascript:void(0)" class="btn btn-secondary btn-xs tag-element freq-ct">
-									<c:out value="${complaintType.name }" /> </a>
-							</c:forEach>
 						</div>
 					</div>
-					
+					<br>
 					<div class="form-group">
 						<label class="col-sm-3 control-label">
 							<spring:message code="lbl.compDetails"/> <span class="mandatory"></span>
 						</label>
 						<div class="col-sm-6">
-							<form:textarea path="details" id="doc" placeholder="" minlength="10" maxlength="500" cssClass="form-control autogrow" required="required"/>
+							<form:textarea path="details" id="doc" placeholder="Give more details about the complaint to help us solve your issue" minlength="10" maxlength="500" cssClass="form-control autogrow" required="required"/>
 							<div class="text-left"><small><spring:message code="lbl.comp.details"/></small></div>
 							<form:errors path="details" cssClass="add-margin error-msg"/>
 						</div>
