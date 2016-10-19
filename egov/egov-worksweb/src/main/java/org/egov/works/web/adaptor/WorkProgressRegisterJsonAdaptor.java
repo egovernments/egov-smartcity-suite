@@ -45,6 +45,7 @@ import java.lang.reflect.Type;
 import org.egov.infra.utils.DateUtils;
 import org.egov.works.contractorbill.entity.enums.BillTypes;
 import org.egov.works.reports.entity.WorkProgressRegister;
+import org.egov.works.utils.WorksConstants;
 import org.egov.works.utils.WorksUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -64,10 +65,15 @@ public class WorkProgressRegisterJsonAdaptor implements JsonSerializer<WorkProgr
             final JsonSerializationContext jsc) {
         final JsonObject jsonObject = new JsonObject();
         if (workProgressRegister != null) {
-            if (workProgressRegister.getWard() != null)
-                jsonObject.addProperty("ward", workProgressRegister.getWard().getBoundaryNum());
-            else
+            if (workProgressRegister.getWard() != null) {
+                if (workProgressRegister.getWard().getBoundaryType().getName()
+                        .equalsIgnoreCase(WorksConstants.BOUNDARY_TYPE_CITY))
+                    jsonObject.addProperty("ward", workProgressRegister.getWard().getName());
+                else
+                    jsonObject.addProperty("ward", workProgressRegister.getWard().getBoundaryNum());
+            } else
                 jsonObject.addProperty("ward", "");
+            
             if (workProgressRegister.getLocation() != null)
                 jsonObject.addProperty("location", workProgressRegister.getLocation().getName());
             else

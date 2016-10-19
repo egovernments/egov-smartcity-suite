@@ -164,9 +164,12 @@ public class WorkProgressRegisterPDFController {
         if (workProgressRegisters != null && !workProgressRegisters.isEmpty())
             for (final WorkProgressRegister wpr : workProgressRegisters) {
                 final WorkProgressRegisterPdf pdf = new WorkProgressRegisterPdf();
-                if (wpr.getWard() != null)
-                    pdf.setWard(wpr.getWard().getBoundaryNum().toString());
-                else
+                if (wpr.getWard() != null) {
+                    if (wpr.getWard().getBoundaryType().getName().equalsIgnoreCase(WorksConstants.BOUNDARY_TYPE_CITY))
+                        pdf.setWard(wpr.getWard().getName());
+                    else
+                        pdf.setWard(wpr.getWard().getBoundaryNum().toString());
+                } else
                     pdf.setWard("");
                 if (wpr.getLocation() != null)
                     pdf.setLocation(wpr.getLocation().getName());
