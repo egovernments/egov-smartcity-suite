@@ -88,7 +88,7 @@ public class TrackMilestoneService {
                 criteria.add(Restrictions.eq("le.executingDepartment.id", searchRequestMilestone.getDepartment()));
             if (searchRequestMilestone.getTrackMilestoneFromDate() != null)
                 criteria.add(Restrictions.ge("createdDate", searchRequestMilestone.getTrackMilestoneFromDate()));
-            if (searchRequestMilestone.getTrackMilestoneToDate() != null){
+            if (searchRequestMilestone.getTrackMilestoneToDate() != null) {
                 final DateTime dateTime = new DateTime(searchRequestMilestone.getTrackMilestoneToDate().getTime()).plusDays(1);
                 criteria.add(Restrictions.le("createdDate", dateTime.toDate()));
             }
@@ -101,15 +101,14 @@ public class TrackMilestoneService {
             if (searchRequestMilestone.getWorkIdentificationNumber() != null)
                 criteria.add(Restrictions.eq("projectCode.code", searchRequestMilestone.getWorkIdentificationNumber())
                         .ignoreCase());
-            if (searchRequestMilestone.getWorkOrderNumber() != null) {
+            if (searchRequestMilestone.getWorkOrderNumber() != null)
                 criteria.add(Restrictions.ilike("wo.workOrderNumber", searchRequestMilestone.getWorkOrderNumber(),
                         MatchMode.ANYWHERE));
-            }
         }
         criteria.setResultTransformer(CriteriaSpecification.DISTINCT_ROOT_ENTITY);
         return criteria.list();
     }
-    
+
     public List<String> findWorkIdentificationNumbersTrackMilestone(final String code) {
         final List<String> workIdNumbers = trackMilestoneRepository
                 .findWorkIdentificationNumbersTrackMilestone("%" + code + "%");
@@ -120,21 +119,24 @@ public class TrackMilestoneService {
     public TrackMilestone save(final TrackMilestone trackMilestone) {
         return trackMilestoneRepository.save(trackMilestone);
     }
-    
+
     public TrackMilestone getTrackMilestoneByMilestoneId(final Long id) {
         return trackMilestoneRepository.findByMilestone_Id(id);
     }
-    
+
     public TrackMilestone getTrackMilestoneTotalPercentage(final Long workOrderEstimateId) {
-        return trackMilestoneRepository.findTrackMilestoneTotalPercentage(workOrderEstimateId,WorksConstants.APPROVED,WorksConstants.APPROVED,WorksConstants.APPROVED);
+        return trackMilestoneRepository.findTrackMilestoneTotalPercentage(workOrderEstimateId, WorksConstants.APPROVED,
+                WorksConstants.APPROVED, WorksConstants.APPROVED);
     }
-    
+
     public TrackMilestone getMinimumPercentageToCreateContractorBill(final Long workOrderEstimateId) {
-         return trackMilestoneRepository.findMinimunPercentageForTrackMileStone(workOrderEstimateId,WorksConstants.APPROVED,WorksConstants.APPROVED,WorksConstants.APPROVED);
+        return trackMilestoneRepository.findMinimunPercentageForTrackMileStone(workOrderEstimateId, WorksConstants.APPROVED,
+                WorksConstants.APPROVED, WorksConstants.APPROVED);
     }
-    
+
     public TrackMilestone getCompletionPercentageToCreateContractorFinalBill(final Long workOrderEstimateId) {
-        return trackMilestoneRepository.findCompletionPercentageForTrackMileStone(workOrderEstimateId,WorksConstants.APPROVED,WorksConstants.APPROVED,WorksConstants.APPROVED);
-   }
-    
+        return trackMilestoneRepository.findCompletionPercentageForTrackMileStone(workOrderEstimateId, WorksConstants.APPROVED,
+                WorksConstants.APPROVED, WorksConstants.APPROVED);
+    }
+
 }

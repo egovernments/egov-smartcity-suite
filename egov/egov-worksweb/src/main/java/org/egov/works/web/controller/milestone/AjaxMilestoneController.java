@@ -93,7 +93,7 @@ public class AjaxMilestoneController {
 
     @Autowired
     private SearchCancelMilestoneJsonAdaptor searchCancelMilestoneJsonAdaptor;
-    
+
     @Autowired
     @Qualifier("messageSource")
     private MessageSource messageSource;
@@ -164,8 +164,8 @@ public class AjaxMilestoneController {
         final List<Milestone> milestones = milestoneService
                 .searchMilestonesToCancel(searchRequestMilestone);
         final String result = new StringBuilder("{ \"data\":")
-        .append(toSearchMilestonesToCancelJson(milestones))
-        .append("}").toString();
+                .append(toSearchMilestonesToCancelJson(milestones))
+                .append("}").toString();
         return result;
     }
 
@@ -181,12 +181,12 @@ public class AjaxMilestoneController {
     public @ResponseBody List<String> findLOAsToCancelMilestone(@RequestParam final String code) {
         return milestoneService.findLoaNumbersToCancelMilestone(code);
     }
-    
+
     @RequestMapping(value = "/ajaxcontractors-milestonetocancel", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
     public @ResponseBody List<String> findContractorsToCancelMilestone(@RequestParam final String code) {
         return milestoneService.findContractorsToCancelMilestone(code);
     }
-    
+
     @RequestMapping(value = "/ajax-searchmilestoneforview", method = RequestMethod.POST, produces = MediaType.TEXT_PLAIN_VALUE)
     public @ResponseBody String searchMilestonesForView(@ModelAttribute final SearchRequestMilestone searchRequestMilestone) {
         final List<Milestone> searchMilestoneList = milestoneService
@@ -195,7 +195,7 @@ public class AjaxMilestoneController {
                 .append("}").toString();
         return result;
     }
-    
+
     @RequestMapping(value = "/validate-milestonepercentagetocreatecontractorbill", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
     public @ResponseBody String validateCreateContractorPartBill(
             @RequestParam("workOrderEstimateId") final Long workOrderEstimateId,
@@ -214,4 +214,4 @@ public class AjaxMilestoneController {
         return message;
     }
 
-  }
+}
