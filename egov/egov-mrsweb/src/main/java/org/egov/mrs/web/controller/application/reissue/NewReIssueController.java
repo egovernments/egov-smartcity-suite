@@ -106,7 +106,7 @@ public class NewReIssueController extends GenericWorkFlowController {
 			model.addAttribute("message", "msg.workflow.alreadyPresent");
 			return "marriagecommon-error";
 		}
-	     marriageRegistrationService.prepareDocumentsForView(registration);
+	   //  marriageRegistrationService.prepareDocumentsForView(registration);
         marriageApplicantService.prepareDocumentsForView(registration.getHusband());
         marriageApplicantService.prepareDocumentsForView(registration.getWife());
           /*
@@ -125,7 +125,7 @@ public class NewReIssueController extends GenericWorkFlowController {
         prepareWorkFlowForNewMarriageRegistration(reIssue, model);
         
         model.addAttribute("reIssue", reIssue);
-        model.addAttribute("documents", marriageDocumentService.getGeneralDocuments());
+        model.addAttribute("documents", marriageDocumentService.getIndividualDocuments());
         prepareWorkflow(model, reIssue, new WorkflowContainer());
         return "reissue-form";
     }

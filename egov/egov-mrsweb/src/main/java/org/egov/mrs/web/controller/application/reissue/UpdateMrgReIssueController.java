@@ -39,35 +39,29 @@ import org.springframework.web.bind.annotation.RequestParam;
 public class UpdateMrgReIssueController extends GenericWorkFlowController {
         
     private static final Logger LOG = Logger.getLogger(UpdateMrgReIssueController.class);
-        
-    @Autowired
-    private FileStoreService fileStoreService;
-        
-    @Autowired
-    private ReIssueService reIssueService;
 
-    @Autowired
-    private MarriageRegistrationService marriageRegistrationService;
+	@Autowired
+	private ReIssueService reIssueService;
 
-    @Autowired
-    private MarriageApplicantService marriageApplicantService;
+	@Autowired
+	private MarriageApplicantService marriageApplicantService;
 
-    @Autowired
-    private MarriageDocumentService marriageDocumentService;
-    
-    @Autowired
-    protected ResourceBundleMessageSource messageSource;
+	@Autowired
+	private MarriageDocumentService marriageDocumentService;
 
-    @Autowired
-    private ReIssueService reissueService;
+	@Autowired
+	protected ResourceBundleMessageSource messageSource;
+
+	@Autowired
+	private ReIssueService reissueService;
     
     @RequestMapping(value = "/update/{id}", method = RequestMethod.GET)
     public String showReIssueForm(@PathVariable final Long id, final Model model) {
         final ReIssue reIssue = reIssueService.get(id);
-        model.addAttribute("documents", marriageDocumentService.getReIssueApplicantDocs());
+        model.addAttribute("documents", marriageDocumentService.getIndividualDocuments());
         model.addAttribute("reissue", reIssue);
         
-        marriageRegistrationService.prepareDocumentsForView(reIssue.getRegistration());
+      //  marriageRegistrationService.prepareDocumentsForView(reIssue.getRegistration());
         marriageApplicantService.prepareDocumentsForView(reIssue.getRegistration().getHusband());
         marriageApplicantService.prepareDocumentsForView(reIssue.getRegistration().getWife());
         marriageApplicantService.prepareDocumentsForView(reIssue.getApplicant());
@@ -75,7 +69,7 @@ public class UpdateMrgReIssueController extends GenericWorkFlowController {
                 reissueService.getHistory(reIssue));
         prepareWorkFlowForReIssue(reIssue, model);
         model.addAttribute("reIssue", reIssue);
-        model.addAttribute("documents", marriageDocumentService.getGeneralDocuments());
+       // model.addAttribute("documents", marriageDocumentService.getGeneralDocuments());
         if(reIssue.getStatus().getCode().equalsIgnoreCase(ReIssue.ReIssueStatus.REJECTED.toString())){
             return "reissue-form"; 
         }

@@ -59,11 +59,11 @@
 			<form:errors path="applicant.documents[${status.index}].file" cssClass="add-margin error-msg" />
 			&nbsp;&nbsp;
 			<c:set value="false" var="isDocFound"></c:set>
-			<c:forEach items="${registration.husband.applicantDocuments}" var="appdoc" varStatus="loopStatus">
+			<c:forEach items="${reissue.applicant.applicantDocuments}" var="appdoc" varStatus="loopStatus">
 				<c:if test="${appdoc.document.id == doc.id}">
 					<c:set value="true" var="isDocFound"></c:set>
 					<input type="hidden" id="husbandfile${status.index}" value="${appdoc.fileStoreMapper.fileName}|${appdoc.fileStoreMapper.contentType}|${appdoc.base64EncodedFile}">
-					<a id="husbanddoc${status.index}">Download</a>
+					<a id="husbanddoc${status.index}"> ${appdoc.fileStoreMapper.fileName}</a>
 				</c:if>
 			</c:forEach>
 			<c:if test="${!isDocFound && reIssue.id != null}">

@@ -82,7 +82,7 @@
 				<c:if test="${regdoc.document.id == doc.id}">
 					<c:set value="true" var="isDocFound"></c:set>
 					<input type="hidden" id="registrationfile${status.index}" value="${regdoc.fileStoreMapper.fileName}|${regdoc.fileStoreMapper.contentType}|${regdoc.base64EncodedFile}">
-					<a id="regdoc${status.index}">Download</a>
+					<a id="regdoc${status.index}"> ${regdoc.fileStoreMapper.fileName}</a>
 				</c:if>
 			</c:forEach>
 			<%-- <c:if test="${!isDocFound}">
@@ -126,7 +126,7 @@
 				<c:if test="${appdoc.document.id == doc.id}">
 					<c:set value="true" var="isDocFound"></c:set>
 					<input type="hidden" id="husbandfile${status.index}" value="${appdoc.fileStoreMapper.fileName}|${appdoc.fileStoreMapper.contentType}|${appdoc.base64EncodedFile}">
-					<a id="husbanddoc${status.index}">Download</a>
+					<a id="husbanddoc${status.index}"> ${appdoc.fileStoreMapper.fileName}</a>
 				</c:if>
 			</c:forEach>
 			<%-- <c:if test="${!isDocFound}">
@@ -143,7 +143,7 @@
 				<c:if test="${appdoc.document.id == doc.id}">
 					<c:set value="true" var="isDocFound"></c:set>
 					<input type="hidden" id="wifefile${status.index}" value="${appdoc.fileStoreMapper.fileName}|${appdoc.fileStoreMapper.contentType}|${appdoc.base64EncodedFile}">
-					<a id="wifedoc${status.index}">Download</a>
+					<a id="wifedoc${status.index}"> ${appdoc.fileStoreMapper.fileName}</a>
 				</c:if>
 			</c:forEach>
 			<%-- <c:if test="${!isDocFound}">

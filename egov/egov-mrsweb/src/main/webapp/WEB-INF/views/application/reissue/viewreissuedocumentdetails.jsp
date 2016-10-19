@@ -66,7 +66,7 @@
 					<c:set value="true" var="isDocFound"></c:set>
 					<%-- <img src="data:image/jpeg;base64,${appdoc.base64EncodedFile}" width="250px" height="250px"> --%>
 					<input type="hidden" id="husbandfile${status.index}" value="${appdoc.fileStoreMapper.fileName}|${appdoc.fileStoreMapper.contentType}|${appdoc.base64EncodedFile}">
-					<a id="husbanddoc${status.index}">Click to download</a>
+					<a id="husbanddoc${status.index}">${appdoc.fileStoreMapper.fileName} </a>
 				</c:if>
 			</c:forEach>
 			<c:if test="${!isDocFound}">

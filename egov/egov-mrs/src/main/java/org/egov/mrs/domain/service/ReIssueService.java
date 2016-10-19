@@ -175,7 +175,7 @@ public class ReIssueService {
         }
 
         final Map<Long, MarriageDocument> applicantDocumentAndId = new HashMap<Long, MarriageDocument>();
-        marriageDocumentService.getGeneralDocuments().forEach(document -> applicantDocumentAndId.put(document.getId(), document));
+        marriageDocumentService.getIndividualDocuments().forEach(document -> applicantDocumentAndId.put(document.getId(), document));
 
         marriageApplicantService.addDocumentsToFileStore(null, reIssue.getApplicant(), applicantDocumentAndId);
 
@@ -267,7 +267,7 @@ public class ReIssueService {
     	marriageApplicantService.deleteDocuments(reissueModel.getApplicant(), reissue.getApplicant());
 
         final Map<Long, MarriageDocument> individualDocumentAndId = new HashMap<Long, MarriageDocument>();
-        marriageDocumentService.getGeneralDocuments().forEach(document -> individualDocumentAndId.put(document.getId(), document));
+        marriageDocumentService.getIndividualDocuments().forEach(document -> individualDocumentAndId.put(document.getId(), document));
 
         marriageApplicantService.addDocumentsToFileStore(reissueModel.getApplicant(), reissue.getApplicant(), individualDocumentAndId);
     }
