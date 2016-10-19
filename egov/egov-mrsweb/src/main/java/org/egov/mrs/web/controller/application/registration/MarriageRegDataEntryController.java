@@ -39,22 +39,16 @@
 
 package org.egov.mrs.web.controller.application.registration;
 
-import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
-import static org.springframework.web.bind.annotation.RequestMethod.GET;
-
 import javax.servlet.http.HttpServletRequest;
 
 import org.egov.eis.web.contract.WorkflowContainer;
 import org.egov.mrs.domain.entity.MarriageRegistration;
-import org.egov.mrs.masters.entity.MarriageFee;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseBody;
 
 @Controller
 @RequestMapping(value = "/registration")
@@ -83,17 +77,4 @@ public class MarriageRegDataEntryController extends MarriageRegistrationControll
         model.addAttribute("ackNumber", appNo);
         return "registration-ack";
     }
-
-    /**
-     * 
-     * @param feeId
-     * @return
-     */
-    @RequestMapping(value = "/calculatedataentrymarriagefee", method = GET, produces = APPLICATION_JSON_VALUE)
-        public @ResponseBody Double calculateMarriageFee(@RequestParam final Long feeId) {
-                MarriageFee marriageFee = marriageFeeService.getFee(feeId);
-                if (marriageFee != null)
-                        return marriageFee.getFees();
-                return null;
-        }
 }
