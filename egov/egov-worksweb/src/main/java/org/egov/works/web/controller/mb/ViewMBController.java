@@ -77,6 +77,9 @@ public class ViewMBController {
             }
         mBHeader.setDocumentDetails(worksUtils.findByObjectIdAndObjectType(mBHeader.getId(), WorksConstants.MBHEADER));
         model.addAttribute("mbHeader", mBHeader);
+        model.addAttribute("nameOfWork", mBHeader.getWorkOrderEstimate().getEstimate().getName());
+        model.addAttribute("loaNumber", mBHeader.getWorkOrderEstimate().getWorkOrder().getWorkOrderNumber());
+        model.addAttribute("loaAmount", mBHeader.getWorkOrderEstimate().getWorkOrder().getWorkOrderAmount());
         model.addAttribute("documentDetails", mBHeader.getDocumentDetails());
         model.addAttribute("mode", "view");
         model.addAttribute("workflowHistory",

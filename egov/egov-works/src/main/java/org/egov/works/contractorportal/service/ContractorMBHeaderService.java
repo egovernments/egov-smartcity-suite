@@ -95,6 +95,10 @@ public class ContractorMBHeaderService {
         return contractorMBHeaderRepository.findOne(id);
     }
 
+    public List<ContractorMBHeader> getContractorMBHeaderByWorkOrderEstimateId(final Long id) {
+        return contractorMBHeaderRepository.findByWorkOrderEstimate_Id(id);
+    }
+
     @Transactional
     public ContractorMBHeader create(final ContractorMBHeader contractorMBHeader, final MultipartFile[] files)
             throws IOException {

@@ -83,6 +83,7 @@
 		<spring:message code="lbl.mb.amount" /> : &#8377 <fmt:formatNumber groupingUsed="false" minFractionDigits="2" maxFractionDigits="2"><c:out value="${mbHeader.mbAmount}"/></fmt:formatNumber>
 	</div>
 	<input type="hidden" name="mbheaderid" id="mbheaderid" value="${mbHeader.id}"/>
+	<input type="hidden" name="workOrderEstimateId" id="workOrderEstimateId" value="${mbHeader.workOrderEstimate.id}"/>
 <div class="new-page-header"><spring:message code="title.viewmbheader" /></div>  
 	<div class="panel-heading">
 			<ul class="nav nav-tabs" id="settingstab">
@@ -94,6 +95,9 @@
 				</li>
 				<li>
 					<a data-toggle="tab" href="#nonTenderedItems" data-tabidx=1 ><spring:message code="lbl.nontendered.items" /> </a>
+				</li> 
+				<li class="hide" id="contractorMeasurementsTab">
+					<a data-toggle="tab" href="#contractorMeasurements" data-tabidx=1 ><spring:message code="lbl.contractor.measurements" /> </a>
 				</li> 
 			</ul>
 		</div>
@@ -120,6 +124,9 @@
 			<div class="tab-pane fade" id="nonTenderedItems">
 					<%@ include file="mbheader-viewnontenderitems.jsp"%>
 			</div>
+			<div class="tab-pane fade" id="contractorMeasurements" >
+				<%@ include file="contractorMeasurements.jsp"%>
+			</div>
 			<c:if test="${!workflowHistory.isEmpty()}">
 				<jsp:include page="../common/commonWorkflowhistory-view.jsp"></jsp:include>
 			</c:if>
@@ -135,6 +142,7 @@
 					    <c:if test="${mbHeader.mbDetails != null && mbHeader.mbDetails.size() > 0 && mbHeader.egwStatus.code != 'CANCELLED'}">
 					    <a href="javascript:void(0)" class="btn btn-primary" onclick="renderMBPDF()"><spring:message code="lbl.viewmb.pdf" /></a>
 					    </c:if>
+					    <a href="javascript:void(0)" class="btn btn-primary" id="ContractorMeasurements"><spring:message code="lbl.contractormeasurements" /></a>
 	                    <a href="javascript:void(0)" class="btn btn-default" onclick="self.close()"><spring:message code="lbl.close" /></a>
 					</c:otherwise>
 				</c:choose>

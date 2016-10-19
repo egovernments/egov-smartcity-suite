@@ -42,6 +42,19 @@
  */
 package org.egov.egf.commons;
 
+import java.io.Serializable;
+import java.math.BigDecimal;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.egov.billsaccounting.services.VoucherConstant;
@@ -58,7 +71,6 @@ import org.egov.commons.dao.FundHibernateDAO;
 import org.egov.commons.service.EntityTypeService;
 import org.egov.commons.utils.EntityType;
 import org.egov.eis.service.EisCommonService;
-import org.egov.infra.admin.master.entity.AppConfig;
 import org.egov.infra.admin.master.entity.AppConfigValues;
 import org.egov.infra.admin.master.entity.Boundary;
 import org.egov.infra.admin.master.entity.BoundaryType;
@@ -88,19 +100,6 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.ApplicationContext;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.io.Serializable;
-import java.math.BigDecimal;
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
 /**
  * @author msahoo
  *
@@ -121,13 +120,13 @@ public class EgovCommon {
 
     protected UserService userManager;
     private FundFlowService fundFlowService;
-    
+
     @Autowired
-    private  FinancialYearHibernateDAO financialYearDAO;
+    private FinancialYearHibernateDAO financialYearDAO;
 
     @Autowired
     private ApplicationContext context;
-    
+
     public FundFlowService getFundFlowService() {
         return fundFlowService;
     }
@@ -160,8 +159,6 @@ public class EgovCommon {
         this.fundDAO = fundDAO;
     }
 
-   
-
     public EgovCommon() {
 
     }
@@ -177,12 +174,11 @@ public class EgovCommon {
     public Department getDepartmentForUser(final User user, final EisCommonService eisCommonService,
             final EmployeeServiceOld employeeService, final PersistenceService persistenceService) {
         try {
-            final Query qry1 =
-                    persistenceService.getSession()
+            final Query qry1 = persistenceService.getSession()
                     .createSQLQuery(
                             " select is_primary, dept_id from EG_EIS_EMPLOYEEINFO employeevi0_ where upper(trim(employeevi0_.CODE))='"
                                     + employeeService.getEmpForUserId(user.getId())
-                                    .getCode()
+                                            .getCode()
                                     + "' and ((employeevi0_.TO_DATE is null) and employeevi0_.FROM_DATE<=CURRENT_DATE or employeevi0_.FROM_DATE<=CURRENT_DATE and employeevi0_.TO_DATE>CURRENT_DATE or employeevi0_.FROM_DATE in (select MAX(employeevi1_.FROM_DATE) from EG_EIS_EMPLOYEEINFO employeevi1_ where employeevi1_.ID=employeevi0_.ID and  not (exists (select employeevi2_.ID from EG_EIS_EMPLOYEEINFO employeevi2_ where employeevi2_.ID=employeevi0_.ID and ((employeevi2_.TO_DATE is null) and employeevi2_.FROM_DATE<=CURRENT_DATE or employeevi2_.FROM_DATE<=CURRENT_DATE and employeevi2_.TO_DATE>CURRENT_DATE))))) ");
             final List<Object[]> employeeViewList = qry1.list();
             if (!employeeViewList.isEmpty())
@@ -218,16 +214,16 @@ public class EgovCommon {
         try {
             final StringBuffer opBalncQuery1 = new StringBuffer(300);
             opBalncQuery1
-            .append(
-                    "SELECT case when sum(openingdebitbalance) is null then  0  else sum(openingdebitbalance) end  -")
+                    .append(
+                            "SELECT case when sum(openingdebitbalance) is null then  0  else sum(openingdebitbalance) end  -")
                     .append(
                             "  case when sum(openingcreditbalance) is null then 0 else sum(openingcreditbalance) end as openingBalance from TransactionSummary")
-                            .append(
-                                    " where financialyear.id = ( select id from CFinancialYear where startingDate <= '")
-                                    .append(Constants.DDMMYYYYFORMAT1.format(VoucherDate))
-                                    .append("' AND endingDate >='").append(
-                                            Constants.DDMMYYYYFORMAT1.format(VoucherDate))
-                                            .append("') and glcodeid.glcode=? and fund.id=?");
+                    .append(
+                            " where financialyear.id = ( select id from CFinancialYear where startingDate <= '")
+                    .append(Constants.DDMMYYYYFORMAT1.format(VoucherDate))
+                    .append("' AND endingDate >='").append(
+                            Constants.DDMMYYYYFORMAT1.format(VoucherDate))
+                    .append("') and glcodeid.glcode=? and fund.id=?");
             final List<Object> tsummarylist = getPersistenceService()
                     .findAllBy(opBalncQuery1.toString(), cashInHandCode, fundId);
             opeAvailable1 = BigDecimal.valueOf((Double) tsummarylist.get(0));
@@ -238,20 +234,20 @@ public class EgovCommon {
 
             final StringBuffer opBalncQuery2 = new StringBuffer(300);
             opBalncQuery2
-            .append(
-                    "SELECT (case when sum(gl.debitAmount) is null then 0 else sum(gl.debitAmount) end - case when sum(gl.creditAmount)  is null then 0 else sum(gl.creditAmount) end)")
+                    .append(
+                            "SELECT (case when sum(gl.debitAmount) is null then 0 else sum(gl.debitAmount) end - case when sum(gl.creditAmount)  is null then 0 else sum(gl.creditAmount) end)")
                     .append(
                             " as amount FROM  CGeneralLedger gl , CVoucherHeader vh WHERE gl.voucherHeaderId.id=vh.id and gl.glcode='")
-                            .append(cashInHandCode)
-                            .append(
-                                    "' and vh.voucherDate >= (select startingDate from CFinancialYear where  startingDate <= '")
-                                    .append(Constants.DDMMYYYYFORMAT1.format(VoucherDate))
-                                    .append("' AND endingDate >='").append(
-                                            Constants.DDMMYYYYFORMAT1.format(VoucherDate))
-                                            .append("') and vh.voucherDate <='").append(
-                                                    Constants.DDMMYYYYFORMAT1.format(VoucherDate))
-                                                    .append(" 'and vh.status not in (").append(statusExclude)
-                                                    .append(") and vh.fundId.id=?");
+                    .append(cashInHandCode)
+                    .append(
+                            "' and vh.voucherDate >= (select startingDate from CFinancialYear where  startingDate <= '")
+                    .append(Constants.DDMMYYYYFORMAT1.format(VoucherDate))
+                    .append("' AND endingDate >='").append(
+                            Constants.DDMMYYYYFORMAT1.format(VoucherDate))
+                    .append("') and vh.voucherDate <='").append(
+                            Constants.DDMMYYYYFORMAT1.format(VoucherDate))
+                    .append(" 'and vh.status not in (").append(statusExclude)
+                    .append(") and vh.fundId.id=?");
 
             final List<Object> list = getPersistenceService()
                     .findAllBy(opBalncQuery2.toString(), fundId);
@@ -300,8 +296,8 @@ public class EgovCommon {
         amountApprovedForPayment = getAmountApprovedForPaymentAndVoucherNotCreated(
                 VoucherDate, bankaccountId);
         LOGGER
-        .debug("Amount that are approved but voucher creation in progress:"
-                + amountApprovedForPayment);
+                .debug("Amount that are approved but voucher creation in progress:"
+                        + amountApprovedForPayment);
         TotalbankBalance = bankBalanceasofBankBookReport
                 .subtract(amountApprovedForPayment);
         if (LOGGER.isDebugEnabled())
@@ -321,7 +317,7 @@ public class EgovCommon {
     public BigDecimal getAmountApprovedForPaymentAndVoucherNotCreated(
             final Date VoucherDate, final Integer bankaccountId) {
         LOGGER
-        .debug("EgovCommon | getAmountApprovedForPaymentAndVoucherNotCreated");
+                .debug("EgovCommon | getAmountApprovedForPaymentAndVoucherNotCreated");
         BigDecimal bankBalance = BigDecimal.ZERO;
         try {
             String paymentWFStatus = "";
@@ -336,7 +332,7 @@ public class EgovCommon {
                     FinancialConstants.MODULE_NAME_APPCONFIG, "PAYMENT_WF_STATUS_FOR_BANK_BALANCE_CHECK");
             for (final AppConfigValues values : paymentStatusList)
                 paymentWFStatus = paymentWFStatus + "'" + values.getValue()
-                + "',";
+                        + "',";
             if (!paymentWFStatus.equals(""))
                 paymentWFStatus = paymentWFStatus.substring(0, paymentWFStatus
                         .length() - 1);
@@ -347,30 +343,30 @@ public class EgovCommon {
 
             final StringBuffer paymentQuery = new StringBuffer(400);
             paymentQuery
-            .append(
-                    "SELECT (case when sum(gl.debitAmount) is null then 0 else sum(gl.debitAmount) end - case when sum(gl.creditAmount) is null then 0 else sum(gl.creditAmount) end  )")
+                    .append(
+                            "SELECT (case when sum(gl.debitAmount) is null then 0 else sum(gl.debitAmount) end - case when sum(gl.creditAmount) is null then 0 else sum(gl.creditAmount) end  )")
                     .append(
                             " as amount FROM  CGeneralLedger gl , CVoucherHeader vh,Paymentheader ph WHERE gl.voucherHeaderId.id=vh.id and ph.voucherheader.id=vh.id and gl.glcodeId=? ")
-                            .append(
-                                    " and vh.voucherDate >= (select startingDate from CFinancialYear where  startingDate <= '")
-                                    .append(Constants.DDMMYYYYFORMAT1.format(VoucherDate))
-                                    .append("' AND endingDate >='")
-                                    .append(Constants.DDMMYYYYFORMAT1.format(VoucherDate))
-                                    .append("') and vh.voucherDate <='")
-                                    .append(Constants.DDMMYYYYFORMAT1.format(VoucherDate))
-                                    .append("'and vh.status in (")
-                                    .append(preApprovedStatus)
-                                    .append(")")
-                                    .append(
-                                            " and ph.state in (from org.egov.infra.workflow.entity.State where type='Paymentheader' and value in (")
-                                            .append(paymentWFStatus).append(") )");
+                    .append(
+                            " and vh.voucherDate >= (select startingDate from CFinancialYear where  startingDate <= '")
+                    .append(Constants.DDMMYYYYFORMAT1.format(VoucherDate))
+                    .append("' AND endingDate >='")
+                    .append(Constants.DDMMYYYYFORMAT1.format(VoucherDate))
+                    .append("') and vh.voucherDate <='")
+                    .append(Constants.DDMMYYYYFORMAT1.format(VoucherDate))
+                    .append("'and vh.status in (")
+                    .append(preApprovedStatus)
+                    .append(")")
+                    .append(
+                            " and ph.state in (from org.egov.infra.workflow.entity.State where type='Paymentheader' and value in (")
+                    .append(paymentWFStatus).append(") )");
             list = getPersistenceService().findAllBy(
                     paymentQuery.toString(), coa);
             bankBalance = BigDecimal.valueOf(Math.abs((Double) list.get(0)));
 
             LOGGER
-            .debug("Total payment amount that are approved by FM Unit but voucher not yet created :"
-                    + bankBalance);
+                    .debug("Total payment amount that are approved by FM Unit but voucher not yet created :"
+                            + bankBalance);
         } catch (final Exception e) {
             if (LOGGER.isDebugEnabled())
                 LOGGER.debug("exception occuered while geeting cash balance"
@@ -391,7 +387,7 @@ public class EgovCommon {
     public BigDecimal getAmountForApprovedPaymentAndChequeNotAssigned(
             final Date voucherDate, final Integer bankaccountId) {
         LOGGER
-        .debug("EgovCommon | getAmountForApprovedPaymentAndChequeNotAssigned");
+                .debug("EgovCommon | getAmountForApprovedPaymentAndChequeNotAssigned");
         BigDecimal bankBalance = BigDecimal.ZERO;
         try {
             final Bankaccount bankAccount = (Bankaccount) getPersistenceService()
@@ -409,29 +405,29 @@ public class EgovCommon {
                                     + " and "
                                     + "vh.voucherDate >= (select startingDate from FinancialYear where  startingDate <= :date AND endingDate >=:date) and "
                                     + " vh.voucherDate <= :date and ph.state_id=es.id and es.value='END' and vh.status=0 and vh1.id=vh.id and iv.VOUCHERHEADERID is null ")
-                                    .append(" union ")
-                                    // query to fetch vouchers for which cheque has been
-                                    // assigned and surrendered
-                                    .append(
-                                            "SELECT (case when sum(gl.debitAmount) is null then 0 else sum(gl.debitAmount) end - case when sum(gl.creditAmount) is "
-                                                    + "null then 0 else sum(gl.creditAmount) ) as amount FROM  GeneralLedger gl ,voucherheader vh, "
-                                                    + " Paymentheader ph ,eg_wf_states es ,egf_instrumentvoucher iv,egw_status egws,(select ih1.id,ih1.id_status from egf_instrumentheader "
-                                                    + "ih1, (select bankid,bankaccountid,instrumentnumber,max(lastmodifieddate) as lastmodifieddate from egf_instrumentheader group by bankid,"
-                                                    + "bankaccountid,instrumentnumber) max_rec where max_rec.bankid=ih1.bankid and max_rec.bankaccountid=ih1.bankaccountid and max_rec.instrumentnumber=ih1.instrumentnumber "
-                                                    + "and max_rec.lastmodifieddate=ih1.lastmodifieddate) ih WHERE gl.voucherHeaderId=vh.id and "
-                                                    + "ph.voucherheaderid=vh.id and gl.glcodeId="
-                                                    + bankAccount.getChartofaccounts().getId()
-                                                    + " and "
-                                                    + "vh.voucherDate >= (select startingDate from FinancialYear where  startingDate <= :date AND endingDate >=:date) and"
-                                                    + " vh.voucherDate <= :date and ph.state_id=es.id and es.value='END' and vh.status=0 and  iv.voucherheaderid=vh.id and iv.instrumentheaderid=ih.id and "
-                                                    + "ih.id_status=egws.id and egws.description in ('Surrendered','Surrender_For_Reassign')");
+                    .append(" union ")
+                    // query to fetch vouchers for which cheque has been
+                    // assigned and surrendered
+                    .append(
+                            "SELECT (case when sum(gl.debitAmount) is null then 0 else sum(gl.debitAmount) end - case when sum(gl.creditAmount) is "
+                                    + "null then 0 else sum(gl.creditAmount) ) as amount FROM  GeneralLedger gl ,voucherheader vh, "
+                                    + " Paymentheader ph ,eg_wf_states es ,egf_instrumentvoucher iv,egw_status egws,(select ih1.id,ih1.id_status from egf_instrumentheader "
+                                    + "ih1, (select bankid,bankaccountid,instrumentnumber,max(lastmodifieddate) as lastmodifieddate from egf_instrumentheader group by bankid,"
+                                    + "bankaccountid,instrumentnumber) max_rec where max_rec.bankid=ih1.bankid and max_rec.bankaccountid=ih1.bankaccountid and max_rec.instrumentnumber=ih1.instrumentnumber "
+                                    + "and max_rec.lastmodifieddate=ih1.lastmodifieddate) ih WHERE gl.voucherHeaderId=vh.id and "
+                                    + "ph.voucherheaderid=vh.id and gl.glcodeId="
+                                    + bankAccount.getChartofaccounts().getId()
+                                    + " and "
+                                    + "vh.voucherDate >= (select startingDate from FinancialYear where  startingDate <= :date AND endingDate >=:date) and"
+                                    + " vh.voucherDate <= :date and ph.state_id=es.id and es.value='END' and vh.status=0 and  iv.voucherheaderid=vh.id and iv.instrumentheaderid=ih.id and "
+                                    + "ih.id_status=egws.id and egws.description in ('Surrendered','Surrender_For_Reassign')");
             final List<Object> list = persistenceService.getSession().createSQLQuery(paymentQuery.toString())
                     .setDate("date", voucherDate).list();
             final BigDecimal amount = (BigDecimal) list.get(0);
             bankBalance = amount == null ? BigDecimal.ZERO : amount;
             LOGGER
-            .debug("Total payment amount that are approved by FM Unit but cheque not yet assigned:"
-                    + bankBalance);
+                    .debug("Total payment amount that are approved by FM Unit but cheque not yet assigned:"
+                            + bankBalance);
         } catch (final Exception e) {
             if (LOGGER.isDebugEnabled())
                 LOGGER.debug("exception occuered while getting cash balance"
@@ -458,8 +454,7 @@ public class EgovCommon {
      */
     @SuppressWarnings("unchecked")
     public List<Map<String, Object>> getInstrumentsDetailsForSubledgerTypeAndKey(final Integer accountdetailType,
-            final Integer accountdetailKey, Date voucherToDate)
-            {
+            final Integer accountdetailKey, Date voucherToDate) {
         final StringBuffer query = new StringBuffer(500);
         if (accountdetailType == null)
             throw new ApplicationRuntimeException("AccountDetailType cannot be null");
@@ -472,28 +467,24 @@ public class EgovCommon {
         try {
 
             query.append("select iv.instrumentHeaderId FROM CGeneralLedgerDetail gld, CGeneralLedger gl , CVoucherHeader vh, ")
-            .append(" InstrumentVoucher iv WHERE gld.generalLedgerId.id=gl.id AND gl.voucherHeaderId.id=vh.id")
-            .append(" AND iv.voucherHeaderId.id=vh.id AND gld.detailTypeId.id =? AND gld.detailKeyId=? AND gl.creditAmount >0")
-            .append(" AND vh.status=0 ")
-            .append(" AND vh.voucherDate<='")
-            .append(Constants.DDMMYYYYFORMAT1.format(voucherToDate))
-            .append("' AND upper(iv.instrumentHeaderId.statusId.description) not in ('CANCELLED' , 'DISHONORED' ) ");
+                    .append(" InstrumentVoucher iv WHERE gld.generalLedgerId.id=gl.id AND gl.voucherHeaderId.id=vh.id")
+                    .append(" AND iv.voucherHeaderId.id=vh.id AND gld.detailTypeId.id =? AND gld.detailKeyId=? AND gl.creditAmount >0")
+                    .append(" AND vh.status=0 ")
+                    .append(" AND vh.voucherDate<='")
+                    .append(Constants.DDMMYYYYFORMAT1.format(voucherToDate))
+                    .append("' AND upper(iv.instrumentHeaderId.statusId.description) not in ('CANCELLED' , 'DISHONORED' ) ");
             final List<InstrumentHeader> instrumentHeaderList = getPersistenceService()
                     .findAllBy(query.toString(), accountdetailType, accountdetailKey);
             resultList = new ArrayList<Map<String, Object>>();
             Map<String, Object> instrumentMap = null;
             if (instrumentHeaderList != null)
-                for (final InstrumentHeader ih : instrumentHeaderList)
-                {
+                for (final InstrumentHeader ih : instrumentHeaderList) {
                     instrumentMap = new HashMap<String, Object>();
                     instrumentMap.put("type", ih.getInstrumentType().getType());
-                    if (ih.getInstrumentNumber() == null)
-                    {
+                    if (ih.getInstrumentNumber() == null) {
                         instrumentMap.put("number", ih.getTransactionNumber());
                         instrumentMap.put("date", ih.getTransactionDate());
-                    }
-                    else
-                    {
+                    } else {
                         instrumentMap.put("number", ih.getInstrumentNumber());
                         instrumentMap.put("date", ih.getInstrumentDate());
                     }
@@ -507,7 +498,7 @@ public class EgovCommon {
         }
 
         return resultList == null || resultList.isEmpty() ? null : resultList;
-            }
+    }
 
     @SuppressWarnings("unchecked")
     public BigDecimal getAccountBalance(final Date VoucherDate,
@@ -515,14 +506,15 @@ public class EgovCommon {
         if (LOGGER.isDebugEnabled())
             LOGGER.debug("EgovCommon | getCashBalance");
         LOGGER
-        .info("--------------------------------------------------------------------------------getAccountBalance-----------------");
+                .info("--------------------------------------------------------------------------------getAccountBalance-----------------");
 
         LOGGER
-        .info("-------------------------------------------------------------------------------------------------");
+                .info("-------------------------------------------------------------------------------------------------");
 
         BigDecimal bankBalance = BigDecimal.ZERO;
 
-        final List<AppConfigValues> appList = appConfigValuesService.getConfigValuesByModuleAndKey(FinancialConstants.MODULE_NAME_APPCONFIG,
+        final List<AppConfigValues> appList = appConfigValuesService.getConfigValuesByModuleAndKey(
+                FinancialConstants.MODULE_NAME_APPCONFIG,
                 "Balance Check Based on Fund Flow Report");
         final String balanceChequeBasedOnFundFlowReport = appList.get(0).getValue();
 
@@ -533,8 +525,8 @@ public class EgovCommon {
                 bankBalance = getAccountBalanceFromLedger(VoucherDate, bankId.intValue(),
                         amount, paymentId);
             LOGGER
-            .info("-------------------------------------------------------------------------------------bankBalance"
-                    + bankBalance);
+                    .info("-------------------------------------------------------------------------------------bankBalance"
+                            + bankBalance);
         } catch (final ValidationException e) {
             LOGGER.error("Balance Check Failed" + e.getMessage(), e);
             throw e;
@@ -586,7 +578,8 @@ public class EgovCommon {
                     + " does not exists ")));
 
         final Query actQry = session
-                .createQuery("from Accountdetailkey adk where adk.accountdetailtype.name=:subledgerType and adk.detailkey=:detailkey");
+                .createQuery(
+                        "from Accountdetailkey adk where adk.accountdetailtype.name=:subledgerType and adk.detailkey=:detailkey");
         actQry.setString("subledgerType", subledgerType);
         actQry.setInteger("detailkey", accountdetailkeyId.intValue());
 
@@ -636,17 +629,17 @@ public class EgovCommon {
         try {
             final StringBuffer opBalncQuery1 = new StringBuffer(300);
             opBalncQuery1
-            .append(
-                    "SELECT CASE WHEN sum(openingdebitbalance) is null THEN 0 ELSE sum(openingdebitbalance) END -")
+                    .append(
+                            "SELECT CASE WHEN sum(openingdebitbalance) is null THEN 0 ELSE sum(openingdebitbalance) END -")
                     .append(
                             " CASE WHEN sum(openingcreditbalance) is null THEN 0 ELSE sum(openingcreditbalance) END  as openingBalance from TransactionSummary")
-                            .append(
-                                    " where financialyear.id = ( select id from CFinancialYear where startingDate <= '")
-                                    .append(Constants.DDMMYYYYFORMAT1.format(VoucherDate))
-                                    .append("' AND endingDate >='")
-                                    .append(Constants.DDMMYYYYFORMAT1.format(VoucherDate))
-                                    .append(
-                                            "') and glcodeid.id=(select chartofaccounts.id from Bankaccount where id=? )");
+                    .append(
+                            " where financialyear.id = ( select id from CFinancialYear where startingDate <= '")
+                    .append(Constants.DDMMYYYYFORMAT1.format(VoucherDate))
+                    .append("' AND endingDate >='")
+                    .append(Constants.DDMMYYYYFORMAT1.format(VoucherDate))
+                    .append(
+                            "') and glcodeid.id=(select chartofaccounts.id from Bankaccount where id=? )");
             final List<Object> tsummarylist = getPersistenceService()
                     .findAllBy(opBalncQuery1.toString(), bankId.longValue());
             opeAvailable = BigDecimal.valueOf(Double.parseDouble(tsummarylist.get(0).toString()));
@@ -666,19 +659,19 @@ public class EgovCommon {
             final String statusExclude = appList.get(0).getValue();
 
             opBalncQuery2
-            .append(
-                    "SELECT (CASE WHEN sum(gl.debitAmount) is null THEN 0 ELSE sum(gl.debitAmount) END - CASE WHEN sum(gl.creditAmount) is null THEN 0 ELSE sum(gl.creditAmount) END)")
+                    .append(
+                            "SELECT (CASE WHEN sum(gl.debitAmount) is null THEN 0 ELSE sum(gl.debitAmount) END - CASE WHEN sum(gl.creditAmount) is null THEN 0 ELSE sum(gl.creditAmount) END)")
                     .append(
                             " as amount FROM  CGeneralLedger gl , CVoucherHeader vh WHERE gl.voucherHeaderId.id=vh.id and gl.glcodeId=? ")
-                            .append(
-                                    " and vh.voucherDate >= (select startingDate from CFinancialYear where  startingDate <= '")
-                                    .append(Constants.DDMMYYYYFORMAT1.format(VoucherDate))
-                                    .append("' AND endingDate >='").append(
-                                            Constants.DDMMYYYYFORMAT1.format(VoucherDate))
-                                            .append("') and vh.voucherDate <='").append(
-                                                    Constants.DDMMYYYYFORMAT1.format(VoucherDate))
-                                                    .append("'and vh.status not in (").append(statusExclude)
-                                                    .append(")");
+                    .append(
+                            " and vh.voucherDate >= (select startingDate from CFinancialYear where  startingDate <= '")
+                    .append(Constants.DDMMYYYYFORMAT1.format(VoucherDate))
+                    .append("' AND endingDate >='").append(
+                            Constants.DDMMYYYYFORMAT1.format(VoucherDate))
+                    .append("') and vh.voucherDate <='").append(
+                            Constants.DDMMYYYYFORMAT1.format(VoucherDate))
+                    .append("'and vh.status not in (").append(statusExclude)
+                    .append(")");
 
             final CChartOfAccounts coa = (CChartOfAccounts) persistenceService.find(
                     "from CChartOfAccounts where id=?", Long.valueOf(glcodeid));
@@ -719,23 +712,23 @@ public class EgovCommon {
 
                 final StringBuffer paymentQuery = new StringBuffer(400);
                 paymentQuery
-                .append(
-                        "SELECT (CASE WHEN sum(gl.debitAmount) is null THEN 0 ELSE sum(gl.debitAmount) END  - CASE WHEN sum(gl.creditAmount) is null THEN 0 ELSE sum(gl.creditAmount) END )")
+                        .append(
+                                "SELECT (CASE WHEN sum(gl.debitAmount) is null THEN 0 ELSE sum(gl.debitAmount) END  - CASE WHEN sum(gl.creditAmount) is null THEN 0 ELSE sum(gl.creditAmount) END )")
                         .append(
                                 " as amount FROM  CGeneralLedger gl , CVoucherHeader vh,Paymentheader ph WHERE gl.voucherHeaderId.id=vh.id and ph.voucherheader.id=vh.id and gl.glcodeId=? ")
-                                .append(
-                                        " and vh.voucherDate >= (select startingDate from CFinancialYear where  startingDate <= '")
-                                        .append(Constants.DDMMYYYYFORMAT1.format(VoucherDate))
-                                        .append("' AND endingDate >='")
-                                        .append(Constants.DDMMYYYYFORMAT1.format(VoucherDate))
-                                        .append("') and vh.voucherDate <='")
-                                        .append(Constants.DDMMYYYYFORMAT1.format(VoucherDate))
-                                        .append("'and vh.status in (")
-                                        .append(preApprovedStatus)
-                                        .append(")")
-                                        .append(
-                                                " and ph.state in (from org.egov.infra.workflow.entity.State where type='Paymentheader' and value in (")
-                                                .append(paymentWFStatus).append(") )");
+                        .append(
+                                " and vh.voucherDate >= (select startingDate from CFinancialYear where  startingDate <= '")
+                        .append(Constants.DDMMYYYYFORMAT1.format(VoucherDate))
+                        .append("' AND endingDate >='")
+                        .append(Constants.DDMMYYYYFORMAT1.format(VoucherDate))
+                        .append("') and vh.voucherDate <='")
+                        .append(Constants.DDMMYYYYFORMAT1.format(VoucherDate))
+                        .append("'and vh.status in (")
+                        .append(preApprovedStatus)
+                        .append(")")
+                        .append(
+                                " and ph.state in (from org.egov.infra.workflow.entity.State where type='Paymentheader' and value in (")
+                        .append(paymentWFStatus).append(") )");
                 list = getPersistenceService().findAllBy(
                         paymentQuery.toString(), coa);
                 bankBalance = bankBalance.subtract(BigDecimal.valueOf(Math
@@ -919,7 +912,7 @@ public class EgovCommon {
     public BigDecimal getAccountBalanceforDate(final Date asondate, final String glcode, final String fundcode,
             final Integer accountdetailType,
             final Integer accountdetailkey, final Integer deptId)
-                    throws ValidationException {
+            throws ValidationException {
 
         if (LOGGER.isDebugEnabled())
             LOGGER.debug("EgovCommon | getAccountBalanceforDate | Start");
@@ -954,7 +947,7 @@ public class EgovCommon {
     public BigDecimal getAccountBalanceTillDate(final Date asondate, final String glcode, final String fundcode,
             final Integer accountdetailType,
             final Integer accountdetailkey, final Integer deptId)
-                    throws ValidationException {
+            throws ValidationException {
 
         if (LOGGER.isDebugEnabled())
             LOGGER.debug("EgovCommon | getAccountBalanceTillDate | Start");
@@ -993,7 +986,7 @@ public class EgovCommon {
             throw new ValidationException(Arrays
                     .asList(new ValidationError("fundcode",
                             "The Fundcode supplied : " + fundcode
-                            + " is not present in the system.")));
+                                    + " is not present in the system.")));
 
         if (null != accountdetailType) {
             final Session session = persistenceService.getSession();
@@ -1006,17 +999,18 @@ public class EgovCommon {
             if (null == qry.list() || qry.list().size() == 0)
                 throw new ValidationException(
                         Arrays
-                        .asList(new ValidationError(
-                                "accountdetailType",
-                                "Glcode "
-                                        + glcode
-                                        + " is not a control code for the supplied detailed type.")));
+                                .asList(new ValidationError(
+                                        "accountdetailType",
+                                        "Glcode "
+                                                + glcode
+                                                + " is not a control code for the supplied detailed type.")));
 
         }
         if (null != accountdetailkey) {
             final Session session = persistenceService.getSession();
             final Query qry = session
-                    .createQuery("from Accountdetailkey adk where adk.accountdetailtype=:detailtypeid and adk.detailkey=:detailkey");
+                    .createQuery(
+                            "from Accountdetailkey adk where adk.accountdetailtype=:detailtypeid and adk.detailkey=:detailkey");
             qry.setString(VoucherConstant.DETAILTYPEID, accountdetailType
                     .toString());
             qry.setString("detailkey", accountdetailkey.toString());
@@ -1024,20 +1018,20 @@ public class EgovCommon {
             if (null == qry.list() || qry.list().size() == 0)
                 throw new ValidationException(
                         Arrays
-                        .asList(new ValidationError(
-                                "accountdetailkey",
-                                "The accountdetailkey supplied : "
-                                        + accountdetailkey
-                                        + " for the accountdetailType : "
-                                        + accountdetailType
-                                        + " is not correct")));
+                                .asList(new ValidationError(
+                                        "accountdetailkey",
+                                        "The accountdetailkey supplied : "
+                                                + accountdetailkey
+                                                + " for the accountdetailType : "
+                                                + accountdetailType
+                                                + " is not correct")));
         }
     }
 
     @SuppressWarnings("unchecked")
     public BigDecimal getOpeningBalAsonDate(final Date asondate, final String glcode,
             final String fundCode, final Integer accountdetailType, final Integer accountdetailkey, final Integer deptId)
-                    throws ValidationException {
+            throws ValidationException {
         BigDecimal opBalAsonDate = BigDecimal.ZERO;
         final StringBuffer opBalncQuery = new StringBuffer(300);
         String deptCondition = "";
@@ -1048,15 +1042,17 @@ public class EgovCommon {
             deptCondition = " and departmentid.id=" + deptId;
 
         opBalncQuery
-        .append(
-                "SELECT case when sum(openingdebitbalance) is null then  0  else sum(openingdebitbalance) end -")
+                .append(
+                        "SELECT case when sum(openingdebitbalance) is null then  0  else sum(openingdebitbalance) end -")
                 .append(
                         "  case when sum(openingcreditbalance) is null then 0 else sum(openingcreditbalance) end  as openingBalance from TransactionSummary")
-                        .append(
-                                " where financialyear.id = ( select id from CFinancialYear where startingDate <= '")
-                                .append(Constants.DDMMYYYYFORMAT1.format(asondate)).append(
-                                        "' AND endingDate >='").append(Constants.DDMMYYYYFORMAT1.format(asondate)).append(
-                                                "') and glcodeid.glcode=? ").append(fundConidtion + deptCondition);
+                .append(
+                        " where financialyear.id = ( select id from CFinancialYear where startingDate <= '")
+                .append(Constants.DDMMYYYYFORMAT1.format(asondate)).append(
+                        "' AND endingDate >='")
+                .append(Constants.DDMMYYYYFORMAT1.format(asondate)).append(
+                        "') and glcodeid.glcode=? ")
+                .append(fundConidtion + deptCondition);
         if (null != accountdetailType)
             opBalncQuery.append(" and accountdetailtype.id=").append(
                     accountdetailType);
@@ -1091,49 +1087,49 @@ public class EgovCommon {
         // Opening balance query when sublegder info are there
         if (null != accountdetailkey && null != accountdetailType)
             opBalncQuery
-            .append(
-                    " Select sum(txns.openingcreditbalance) as openingBalance ")
+                    .append(
+                            " Select sum(txns.openingcreditbalance) as openingBalance ")
                     .append(
                             "From transactionsummary txns,fund fd, chartofaccounts coa,accountdetailtype adt,accountdetailkey adk")
-                            .append(
-                                    " where coa.id=txns.glcodeid and fd.id=txns.fundid  and adt.id=txns.accountdetailtypeid and adk.detailkey=txns.accountdetailkey ")
-                                    .append(" and coa.glcode='")
-                                    .append(glcode)
-                                    .append("' and fd.code='")
-                                    .append(fundCode)
-                                    .append(
-                                            "'and txns.financialyearid in(select id from financialyear where startingdate<='")
-                                            .append(Constants.DDMMYYYYFORMAT1.format(asondate))
-                                            .append("' and endingdate>='")
-                                            .append(Constants.DDMMYYYYFORMAT1.format(asondate))
-                                            .append("')")
-                                            .append(" and txns.accountdetailtypeid=")
-                                            .append(accountdetailType)
-                                            .append(" and txns.accountdetailkey=")
-                                            .append(accountdetailkey)
-                                            .append(" and adk.detailtypeid=")
-                                            .append(accountdetailType)
-                                            .append(
-                                                    " Group by txns.GLCODEID,txns.fundid,txns.FINANCIALYEARID,txns.accountdetailtypeid,txns.accountdetailkey ");
+                    .append(
+                            " where coa.id=txns.glcodeid and fd.id=txns.fundid  and adt.id=txns.accountdetailtypeid and adk.detailkey=txns.accountdetailkey ")
+                    .append(" and coa.glcode='")
+                    .append(glcode)
+                    .append("' and fd.code='")
+                    .append(fundCode)
+                    .append(
+                            "'and txns.financialyearid in(select id from financialyear where startingdate<='")
+                    .append(Constants.DDMMYYYYFORMAT1.format(asondate))
+                    .append("' and endingdate>='")
+                    .append(Constants.DDMMYYYYFORMAT1.format(asondate))
+                    .append("')")
+                    .append(" and txns.accountdetailtypeid=")
+                    .append(accountdetailType)
+                    .append(" and txns.accountdetailkey=")
+                    .append(accountdetailkey)
+                    .append(" and adk.detailtypeid=")
+                    .append(accountdetailType)
+                    .append(
+                            " Group by txns.GLCODEID,txns.fundid,txns.FINANCIALYEARID,txns.accountdetailtypeid,txns.accountdetailkey ");
         else
             // Opening balance query when subledger data is not there
             opBalncQuery
-            .append(
-                    " Select sum(txns.openingcreditbalance) as openingBalance From transactionsummary txns,fund fd, chartofaccounts coa")
+                    .append(
+                            " Select sum(txns.openingcreditbalance) as openingBalance From transactionsummary txns,fund fd, chartofaccounts coa")
                     .append(
                             " where coa.id=txns.glcodeid and fd.id=txns.fundid ")
-                            .append(" and coa.glcode='")
-                            .append(glcode)
-                            .append("' and fd.code='")
-                            .append(fundCode)
-                            .append(
-                                    "'and txns.financialyearid in(select id from financialyear where startingdate<='")
-                                    .append(Constants.DDMMYYYYFORMAT1.format(asondate))
-                                    .append("' and endingdate>='")
-                                    .append(Constants.DDMMYYYYFORMAT1.format(asondate))
-                                    .append("')")
-                                    .append(
-                                            " Group by txns.GLCODEID,txns.fundid,txns.FINANCIALYEARID ");
+                    .append(" and coa.glcode='")
+                    .append(glcode)
+                    .append("' and fd.code='")
+                    .append(fundCode)
+                    .append(
+                            "'and txns.financialyearid in(select id from financialyear where startingdate<='")
+                    .append(Constants.DDMMYYYYFORMAT1.format(asondate))
+                    .append("' and endingdate>='")
+                    .append(Constants.DDMMYYYYFORMAT1.format(asondate))
+                    .append("')")
+                    .append(
+                            " Group by txns.GLCODEID,txns.fundid,txns.FINANCIALYEARID ");
 
         final List<Object> list = persistenceService.getSession()
                 .createSQLQuery(opBalncQuery.toString()).list();
@@ -1145,7 +1141,7 @@ public class EgovCommon {
 
     protected BigDecimal getGlcodeBalBeforeDate(final Date asondate, final String glcode,
             final String fundcode, final Integer accountdetailType, final Integer accountdetailkey, final Integer deptId)
-                    throws ValidationException {
+            throws ValidationException {
         final StringBuffer glCodeBalQry = new StringBuffer(400);
         final StringBuffer glCodeDbtBalQry = new StringBuffer(400);
         final StringBuffer glCodeCrdBalQry = new StringBuffer(400);
@@ -1162,36 +1158,41 @@ public class EgovCommon {
             deptCond = " and mis.voucherheaderid.id=vh.id and mis.departmentid.id=" + deptId;
         }
 
-        final List<AppConfigValues> appList = appConfigValuesService.getConfigValuesByModuleAndKey(FinancialConstants.MODULE_NAME_APPCONFIG,
+        final List<AppConfigValues> appList = appConfigValuesService.getConfigValuesByModuleAndKey(
+                FinancialConstants.MODULE_NAME_APPCONFIG,
                 "statusexcludeReport");
         final String statusExclude = appList.get(0).getValue();
         if (null == accountdetailType && null == accountdetailkey) {
             glCodeBalQry
-            .append("SELECT (case when sum(gl.debitAmount) is null then 0 else sum(gl.debitAmount) end - case when sum(gl.creditAmount)  is null then 0 else sum(gl.creditAmount) end)")
-            .append(" as amount FROM  CGeneralLedger gl , CVoucherHeader vh  ").append(misTab)
-            .append(" WHERE gl.voucherHeaderId.id=vh.id and gl.glcodeId.glcode=?")
-            .append(fundCond + deptCond)
-            .append(" and vh.voucherDate >= (select startingDate from CFinancialYear where  startingDate <= '")
-            .append(Constants.DDMMYYYYFORMAT1.format(asondate)).append("' AND endingDate >='").append(
-                    Constants.DDMMYYYYFORMAT1.format(asondate)).append("') and vh.voucherDate <'").append(
-                            Constants.DDMMYYYYFORMAT1.format(asondate)).append("'and vh.status not in (").append(statusExclude)
-                            .append(")");
+                    .append("SELECT (case when sum(gl.debitAmount) is null then 0 else sum(gl.debitAmount) end - case when sum(gl.creditAmount)  is null then 0 else sum(gl.creditAmount) end)")
+                    .append(" as amount FROM  CGeneralLedger gl , CVoucherHeader vh  ").append(misTab)
+                    .append(" WHERE gl.voucherHeaderId.id=vh.id and gl.glcodeId.glcode=?")
+                    .append(fundCond + deptCond)
+                    .append(" and vh.voucherDate >= (select startingDate from CFinancialYear where  startingDate <= '")
+                    .append(Constants.DDMMYYYYFORMAT1.format(asondate)).append("' AND endingDate >='").append(
+                            Constants.DDMMYYYYFORMAT1.format(asondate))
+                    .append("') and vh.voucherDate <'").append(
+                            Constants.DDMMYYYYFORMAT1.format(asondate))
+                    .append("'and vh.status not in (").append(statusExclude)
+                    .append(")");
 
             final List<Object> list = getPersistenceService().findAllBy(glCodeBalQry.toString(), glcode);
             glCodeBalance = BigDecimal.valueOf((Integer) list.get(0));
         } else {
             // Getting the debit balance.
             glCodeDbtBalQry
-            .append("SELECT sum(gld.amount)  as debitamount from CVoucherHeader vh , CGeneralLedger gl,CGeneralLedgerDetail gld ")
-            .append(misTab)
-            .append(" WHERE gl.voucherHeaderId.id=vh.id and gl.id = gld.generalLedgerId.id and gl.glcodeId.glcode=? ")
-            .append(fundCond)
-            .append(deptCond)
-            .append(" and vh.voucherDate >= (select startingDate from CFinancialYear where  startingDate <= '")
-            .append(Constants.DDMMYYYYFORMAT1.format(asondate)).append("' AND endingDate >='").append(
-                    Constants.DDMMYYYYFORMAT1.format(asondate)).append("') and vh.voucherDate <'").append(
-                            Constants.DDMMYYYYFORMAT1.format(asondate)).append("'and vh.status not in (").append(statusExclude)
-                            .append(")").append(" and gld.detailTypeId.id =").append(accountdetailType);
+                    .append("SELECT sum(gld.amount)  as debitamount from CVoucherHeader vh , CGeneralLedger gl,CGeneralLedgerDetail gld ")
+                    .append(misTab)
+                    .append(" WHERE gl.voucherHeaderId.id=vh.id and gl.id = gld.generalLedgerId.id and gl.glcodeId.glcode=? ")
+                    .append(fundCond)
+                    .append(deptCond)
+                    .append(" and vh.voucherDate >= (select startingDate from CFinancialYear where  startingDate <= '")
+                    .append(Constants.DDMMYYYYFORMAT1.format(asondate)).append("' AND endingDate >='").append(
+                            Constants.DDMMYYYYFORMAT1.format(asondate))
+                    .append("') and vh.voucherDate <'").append(
+                            Constants.DDMMYYYYFORMAT1.format(asondate))
+                    .append("'and vh.status not in (").append(statusExclude)
+                    .append(")").append(" and gld.detailTypeId.id =").append(accountdetailType);
 
             if (null != accountdetailkey)
                 glCodeDbtBalQry.append(" and gld.detailKeyId =").append(
@@ -1207,15 +1208,17 @@ public class EgovCommon {
             // get the credit balance
 
             glCodeCrdBalQry
-            .append("SELECT sum(gld.amount) as creditamount from CVoucherHeader vh , CGeneralLedger gl,CGeneralLedgerDetail gld")
-            .append(misTab)
-            .append(" WHERE gl.voucherHeaderId.id=vh.id and gl.id = gld.generalLedgerId.id and gl.glcodeId.glcode=? ")
-            .append(fundCond).append(deptCond)
-            .append(" and vh.voucherDate >= (select startingDate from CFinancialYear where  startingDate <= '")
-            .append(Constants.DDMMYYYYFORMAT1.format(asondate)).append("' AND endingDate >='").append(
-                    Constants.DDMMYYYYFORMAT1.format(asondate)).append("') and vh.voucherDate <'").append(
-                            Constants.DDMMYYYYFORMAT1.format(asondate)).append("'and vh.status not in (").append(statusExclude)
-                            .append(")").append(" and gld.detailTypeId.id =").append(accountdetailType);
+                    .append("SELECT sum(gld.amount) as creditamount from CVoucherHeader vh , CGeneralLedger gl,CGeneralLedgerDetail gld")
+                    .append(misTab)
+                    .append(" WHERE gl.voucherHeaderId.id=vh.id and gl.id = gld.generalLedgerId.id and gl.glcodeId.glcode=? ")
+                    .append(fundCond).append(deptCond)
+                    .append(" and vh.voucherDate >= (select startingDate from CFinancialYear where  startingDate <= '")
+                    .append(Constants.DDMMYYYYFORMAT1.format(asondate)).append("' AND endingDate >='").append(
+                            Constants.DDMMYYYYFORMAT1.format(asondate))
+                    .append("') and vh.voucherDate <'").append(
+                            Constants.DDMMYYYYFORMAT1.format(asondate))
+                    .append("'and vh.status not in (").append(statusExclude)
+                    .append(")").append(" and gld.detailTypeId.id =").append(accountdetailType);
 
             if (null != accountdetailkey)
                 glCodeCrdBalQry.append(" and gld.detailKeyId =").append(
@@ -1237,7 +1240,7 @@ public class EgovCommon {
 
     protected BigDecimal getGlcodeBalTillDate(final Date asondate, final String glcode,
             final String fundcode, final Integer accountdetailType, final Integer accountdetailkey, final Integer deptId)
-                    throws ValidationException {
+            throws ValidationException {
         final StringBuffer glCodeBalQry = new StringBuffer(400);
         final StringBuffer glCodeDbtBalQry = new StringBuffer(400);
         final StringBuffer glCodeCrdBalQry = new StringBuffer(400);
@@ -1254,36 +1257,41 @@ public class EgovCommon {
             deptCond = " and mis.voucherheaderid.id=vh.id and mis.departmentid.id=" + deptId;
         }
 
-        final List<AppConfigValues> appList = appConfigValuesService.getConfigValuesByModuleAndKey(FinancialConstants.MODULE_NAME_APPCONFIG,
+        final List<AppConfigValues> appList = appConfigValuesService.getConfigValuesByModuleAndKey(
+                FinancialConstants.MODULE_NAME_APPCONFIG,
                 "statusexcludeReport");
         final String statusExclude = appList.get(0).getValue();
         if (null == accountdetailType && null == accountdetailkey) {
             glCodeBalQry
-            .append("SELECT (case when sum(gl.debitAmount)=null then 0 else sum(gl.debitAmount) end - case when sum(gl.creditAmount)  = null then 0 else sum(gl.creditAmount) end)")
-            .append(" as amount FROM  CGeneralLedger gl , CVoucherHeader vh  ").append(misTab)
-            .append(" WHERE gl.voucherHeaderId.id=vh.id and gl.glcodeId.glcode=?")
-            .append(fundCond + deptCond)
-            .append(" and vh.voucherDate >= (select startingDate from CFinancialYear where  startingDate <= '")
-            .append(Constants.DDMMYYYYFORMAT1.format(asondate)).append("' AND endingDate >='").append(
-                    Constants.DDMMYYYYFORMAT1.format(asondate)).append("') and vh.voucherDate <='").append(
-                            Constants.DDMMYYYYFORMAT1.format(asondate)).append("'and vh.status not in (").append(statusExclude)
-                            .append(")");
+                    .append("SELECT (case when sum(gl.debitAmount)=null then 0 else sum(gl.debitAmount) end - case when sum(gl.creditAmount)  = null then 0 else sum(gl.creditAmount) end)")
+                    .append(" as amount FROM  CGeneralLedger gl , CVoucherHeader vh  ").append(misTab)
+                    .append(" WHERE gl.voucherHeaderId.id=vh.id and gl.glcodeId.glcode=?")
+                    .append(fundCond + deptCond)
+                    .append(" and vh.voucherDate >= (select startingDate from CFinancialYear where  startingDate <= '")
+                    .append(Constants.DDMMYYYYFORMAT1.format(asondate)).append("' AND endingDate >='").append(
+                            Constants.DDMMYYYYFORMAT1.format(asondate))
+                    .append("') and vh.voucherDate <='").append(
+                            Constants.DDMMYYYYFORMAT1.format(asondate))
+                    .append("'and vh.status not in (").append(statusExclude)
+                    .append(")");
 
             final List<Object> list = getPersistenceService().findAllBy(glCodeBalQry.toString(), glcode);
             glCodeBalance = BigDecimal.valueOf((Double) list.get(0));
         } else {
             // Getting the debit balance.
             glCodeDbtBalQry
-            .append("SELECT sum(gld.amount)  as debitamount from CVoucherHeader vh , CGeneralLedger gl,CGeneralLedgerDetail gld ")
-            .append(misTab)
-            .append(" WHERE gl.voucherHeaderId.id=vh.id and gl.id = gld.generalLedgerId.id and gl.glcodeId.glcode=? ")
-            .append(fundCond)
-            .append(deptCond)
-            .append(" and vh.voucherDate >= (select startingDate from CFinancialYear where  startingDate <= '")
-            .append(Constants.DDMMYYYYFORMAT1.format(asondate)).append("' AND endingDate >='").append(
-                    Constants.DDMMYYYYFORMAT1.format(asondate)).append("') and vh.voucherDate <='").append(
-                            Constants.DDMMYYYYFORMAT1.format(asondate)).append("'and vh.status not in (").append(statusExclude)
-                            .append(")").append(" and gld.detailTypeId.id =").append(accountdetailType);
+                    .append("SELECT sum(gld.amount)  as debitamount from CVoucherHeader vh , CGeneralLedger gl,CGeneralLedgerDetail gld ")
+                    .append(misTab)
+                    .append(" WHERE gl.voucherHeaderId.id=vh.id and gl.id = gld.generalLedgerId.id and gl.glcodeId.glcode=? ")
+                    .append(fundCond)
+                    .append(deptCond)
+                    .append(" and vh.voucherDate >= (select startingDate from CFinancialYear where  startingDate <= '")
+                    .append(Constants.DDMMYYYYFORMAT1.format(asondate)).append("' AND endingDate >='").append(
+                            Constants.DDMMYYYYFORMAT1.format(asondate))
+                    .append("') and vh.voucherDate <='").append(
+                            Constants.DDMMYYYYFORMAT1.format(asondate))
+                    .append("'and vh.status not in (").append(statusExclude)
+                    .append(")").append(" and gld.detailTypeId.id =").append(accountdetailType);
 
             if (null != accountdetailkey)
                 glCodeDbtBalQry.append(" and gld.detailKeyId =").append(
@@ -1299,15 +1307,17 @@ public class EgovCommon {
             // get the credit balance
 
             glCodeCrdBalQry
-            .append("SELECT sum(gld.amount) as creditamount from CVoucherHeader vh , CGeneralLedger gl,CGeneralLedgerDetail gld")
-            .append(misTab)
-            .append(" WHERE gl.voucherHeaderId.id=vh.id and gl.id = gld.generalLedgerId.id and gl.glcodeId.glcode=? ")
-            .append(fundCond).append(deptCond)
-            .append(" and vh.voucherDate >= (select startingDate from CFinancialYear where  startingDate <= '")
-            .append(Constants.DDMMYYYYFORMAT1.format(asondate)).append("' AND endingDate >='").append(
-                    Constants.DDMMYYYYFORMAT1.format(asondate)).append("') and vh.voucherDate <='").append(
-                            Constants.DDMMYYYYFORMAT1.format(asondate)).append("'and vh.status not in (").append(statusExclude)
-                            .append(")").append(" and gld.detailTypeId.id =").append(accountdetailType);
+                    .append("SELECT sum(gld.amount) as creditamount from CVoucherHeader vh , CGeneralLedger gl,CGeneralLedgerDetail gld")
+                    .append(misTab)
+                    .append(" WHERE gl.voucherHeaderId.id=vh.id and gl.id = gld.generalLedgerId.id and gl.glcodeId.glcode=? ")
+                    .append(fundCond).append(deptCond)
+                    .append(" and vh.voucherDate >= (select startingDate from CFinancialYear where  startingDate <= '")
+                    .append(Constants.DDMMYYYYFORMAT1.format(asondate)).append("' AND endingDate >='").append(
+                            Constants.DDMMYYYYFORMAT1.format(asondate))
+                    .append("') and vh.voucherDate <='").append(
+                            Constants.DDMMYYYYFORMAT1.format(asondate))
+                    .append("'and vh.status not in (").append(statusExclude)
+                    .append(")").append(" and gld.detailTypeId.id =").append(accountdetailType);
 
             if (null != accountdetailkey)
                 glCodeCrdBalQry.append(" and gld.detailKeyId =").append(
@@ -1334,7 +1344,8 @@ public class EgovCommon {
                         "select DISTINCT concat(concat(bank.id,'-'),bankBranch.id) as bankbranchid,concat(concat(bank.name,' '),bankBranch.branchname) as bankbranchname "
                                 + " FROM Bank bank,Bankbranch bankBranch,Bankaccount bankaccount "
                                 + " where  bank.isactive=true  and bankBranch.isactive=true and bank.id = bankBranch.bank.id and bankBranch.id = bankaccount.bankbranch.id"
-                                + " and bankaccount.isactive=? ", true);
+                                + " and bankaccount.isactive=? ",
+                        true);
         // Ordering Starts
         final List<String> bankBranchStrings = new ArrayList<String>();
         int i, j;
@@ -1373,7 +1384,8 @@ public class EgovCommon {
             final Integer accountDetailTypeId) {
         if (accountDetailTypeId == 0 || accountDetailTypeId == -1)
             return persistenceService
-                    .findAllBy("from CChartOfAccounts a where a.isActiveForPosting=true and a.classification=4 and size(a.chartOfAccountDetails) = 0  order by a.id");
+                    .findAllBy(
+                            "from CChartOfAccounts a where a.isActiveForPosting=true and a.classification=4 and size(a.chartOfAccountDetails) = 0  order by a.id");
         else
             return persistenceService
                     .findAllBy(
@@ -1389,9 +1401,10 @@ public class EgovCommon {
     public List<CChartOfAccounts> getAllAccountCodesForAccountDetailType(
             final Integer accountDetailTypeId) {
         LOGGER
-        .debug("Initiating getAllAccountCodesForAccountDetailType for detailtypeId "
-                + accountDetailTypeId + "...");
-        final List<CChartOfAccounts> subledgerCodes = getSubledgerAccountCodesForAccountDetailTypeAndNonSubledgers(accountDetailTypeId);
+                .debug("Initiating getAllAccountCodesForAccountDetailType for detailtypeId "
+                        + accountDetailTypeId + "...");
+        final List<CChartOfAccounts> subledgerCodes = getSubledgerAccountCodesForAccountDetailTypeAndNonSubledgers(
+                accountDetailTypeId);
         // List<CChartOfAccounts> accountCodesForDetailType = new ArrayList<CChartOfAccounts>();
         // accountCodesForDetailType.addAll(subledgerCodes);
         if (LOGGER.isDebugEnabled())
@@ -1407,16 +1420,18 @@ public class EgovCommon {
         BigDecimal opBalAsonDate = BigDecimal.ZERO;
         final StringBuffer opBalncQuery = new StringBuffer(300);
         opBalncQuery
-        .append(
-                "SELECT case when sum(openingdebitbalance) = null then  0  else sum(openingdebitbalance) end -")
+                .append(
+                        "SELECT case when sum(openingdebitbalance) = null then  0  else sum(openingdebitbalance) end -")
                 .append(
                         "  case when sum(openingcreditbalance) = null then 0 else sum(openingcreditbalance) end  as openingBalance from TransactionSummary")
-                        .append(
-                                " where financialyear.id = ( select id from CFinancialYear where startingDate <= '")
-                                .append(Constants.DDMMYYYYFORMAT1.format(asondate)).append(
-                                        "' AND endingDate >='").append(
-                                                Constants.DDMMYYYYFORMAT1.format(asondate)).append(
-                                                        "') and glcodeid.glcode=? and fund.code=?");
+                .append(
+                        " where financialyear.id = ( select id from CFinancialYear where startingDate <= '")
+                .append(Constants.DDMMYYYYFORMAT1.format(asondate)).append(
+                        "' AND endingDate >='")
+                .append(
+                        Constants.DDMMYYYYFORMAT1.format(asondate))
+                .append(
+                        "') and glcodeid.glcode=? and fund.code=?");
         final List<Object> tsummarylist = getPersistenceService()
                 .findAllBy(opBalncQuery.toString(), glcode, fundCode);
         opBalAsonDate = BigDecimal.valueOf((Double) tsummarylist.get(0));
@@ -1437,16 +1452,17 @@ public class EgovCommon {
         final StringBuffer query = new StringBuffer();
         List<BudgetUsage> listBudgetUsage = null;
         query
-        .append("select bu from BudgetUsage bu,BudgetDetail bd where  bu.budgetDetail.id=bd.id");
+                .append("select bu from BudgetUsage bu,BudgetDetail bd where  bu.budgetDetail.id=bd.id");
         final Map<String, String> mandatoryFields = new HashMap<String, String>();
-        final List<AppConfigValues> appConfigList = appConfigValuesService.getConfigValuesByModuleAndKey(FinancialConstants.MODULE_NAME_APPCONFIG,"DEFAULTTXNMISATTRRIBUTES");
-            for (final AppConfigValues appConfigVal : appConfigList) {
-                final String value = appConfigVal.getValue();
-                final String header = value.substring(0, value.indexOf("|"));
-                final String mandate = value.substring(value.indexOf("|") + 1);
-                if (mandate.equalsIgnoreCase("M"))
-                    mandatoryFields.put(header, "M");
-            }
+        final List<AppConfigValues> appConfigList = appConfigValuesService
+                .getConfigValuesByModuleAndKey(FinancialConstants.MODULE_NAME_APPCONFIG, "DEFAULTTXNMISATTRRIBUTES");
+        for (final AppConfigValues appConfigVal : appConfigList) {
+            final String value = appConfigVal.getValue();
+            final String header = value.substring(0, value.indexOf("|"));
+            final String mandate = value.substring(value.indexOf("|") + 1);
+            if (mandate.equalsIgnoreCase("M"))
+                mandatoryFields.put(header, "M");
+        }
         if (isNotNull(mandatoryFields.get("fund"))
                 && !isNotNull(queryParamMap.get("fundId")))
             throw new ValidationException(Arrays.asList(new ValidationError(
@@ -1479,9 +1495,9 @@ public class EgovCommon {
                             .toString()));
         if (isNotNull(queryParamMap.get("budgetgroupId")))
             query.append(" and bd.budgetGroup.id=")
-            .append(
-                    Long.valueOf(queryParamMap.get("budgetgroupId")
-                            .toString()));
+                    .append(
+                            Long.valueOf(queryParamMap.get("budgetgroupId")
+                                    .toString()));
         if (isNotNull(queryParamMap.get("fromDate")))
             query.append(" and bu.updatedTime >=:from");
         if (isNotNull(queryParamMap.get("toDate")))
@@ -1547,10 +1563,10 @@ public class EgovCommon {
         if (LOGGER.isDebugEnabled())
             LOGGER.debug("EgovCommon | getBillAccountBalanceforDate | Start");
         LOGGER
-        .debug("Data Received asondate = " + asondate + " glcode = "
-                + glcode + " fundcode = " + fundcode
-                + " accountdetailType = " + accountdetailType
-                + " accountdetailkey = " + accountdetailkey);
+                .debug("Data Received asondate = " + asondate + " glcode = "
+                        + glcode + " fundcode = " + fundcode
+                        + " accountdetailType = " + accountdetailType
+                        + " accountdetailkey = " + accountdetailkey);
         validateParameterData(asondate, glcode, fundcode, accountdetailType,
                 accountdetailkey);
         if (LOGGER.isDebugEnabled())
@@ -1564,44 +1580,48 @@ public class EgovCommon {
 
     private BigDecimal getBillAccBalAsonDate(final Date asondate, final String glcode,
             final String fundcode, final Integer accountdetailType, final Integer accountdetailkey)
-                    throws ValidationException {
+            throws ValidationException {
 
         final StringBuffer query = new StringBuffer(400);
         BigDecimal billAccCodeBalance = BigDecimal.ZERO;
         if (null == accountdetailType && null == accountdetailkey) {
 
             query
-            .append(
-                    "SELECT (case when sum(egd.debitamount) = null then 0 else sum(egd.debitamount) end - case when sum(egd.creditamount) = null THEN 0 else sum(egd.creditamount) end)")
+                    .append(
+                            "SELECT (case when sum(egd.debitamount) = null then 0 else sum(egd.debitamount) end - case when sum(egd.creditamount) = null THEN 0 else sum(egd.creditamount) end)")
                     .append(
                             "as amount FROM EgBillregister egb, EgBilldetails egd,EgBillregistermis egmis ");
             query
-            .append(
-                    " Where egb.id = egmis.egBillregister.id and egd.egBillregister.id = egb.id and egmis.voucherHeader is null ")
+                    .append(
+                            " Where egb.id = egmis.egBillregister.id and egd.egBillregister.id = egb.id and egmis.voucherHeader is null ")
                     .append(
                             " and egd.glcodeid=(select id from CChartOfAccounts where glcode=?) and egmis.fund.code=?")
-                            .append(" and egb.billdate <='").append(
-                                    Constants.DDMMYYYYFORMAT1.format(asondate)).append(
-                                            "' and egb.status IN (select id from ").append(
-                                                    " EgwStatus where UPPER(code)!='CANCELLED')");
+                    .append(" and egb.billdate <='").append(
+                            Constants.DDMMYYYYFORMAT1.format(asondate))
+                    .append(
+                            "' and egb.status IN (select id from ")
+                    .append(
+                            " EgwStatus where UPPER(code)!='CANCELLED')");
 
         } else {
             query
-            .append(
-                    "SELECT (case when sum(egp.debitAmount) = null then 0 else sum(egp.debitAmount) - case when sum(egp.creditAmount) = null then 0 else sum(egp.creditAmount))")
+                    .append(
+                            "SELECT (case when sum(egp.debitAmount) = null then 0 else sum(egp.debitAmount) - case when sum(egp.creditAmount) = null then 0 else sum(egp.creditAmount))")
                     .append(
                             "as amount FROM EgBillregister egb, EgBilldetails egd,EgBillregistermis egmis,EgBillPayeedetails egp");
             query
-            .append(
-                    " Where egb.id = egmis.egBillregister.id and egd.egBillregister.id = egb.id and egmis.voucherHeader is null ")
+                    .append(
+                            " Where egb.id = egmis.egBillregister.id and egd.egBillregister.id = egb.id and egmis.voucherHeader is null ")
                     .append(
                             " and egp.egBilldetailsId.id=egd.id and egd.glcodeid=(select id from CChartOfAccounts where glcode=?) and egmis.fund.code=?")
-                            .append(" and egb.billdate <='").append(
-                                    Constants.DDMMYYYYFORMAT1.format(asondate)).append(
-                                            "' and egb.status IN (select id from ").append(
-                                                    " EgwStatus where UPPER(code)!='CANCELLED')")
-                                                    .append(" and egp.accountDetailTypeId=").append(
-                                                            accountdetailType);
+                    .append(" and egb.billdate <='").append(
+                            Constants.DDMMYYYYFORMAT1.format(asondate))
+                    .append(
+                            "' and egb.status IN (select id from ")
+                    .append(
+                            " EgwStatus where UPPER(code)!='CANCELLED')")
+                    .append(" and egp.accountDetailTypeId=").append(
+                            accountdetailType);
             if (null != accountdetailkey)
                 query.append(" and egp.accountDetailKeyId=").append(
                         accountdetailkey);
@@ -1636,15 +1656,15 @@ public class EgovCommon {
      */
     public BigDecimal getCreditBalanceforDate(final Date asondate, final String glcode,
             final String fundcode, final Integer accountdetailType, final Integer accountdetailkey)
-                    throws ValidationException {
+            throws ValidationException {
 
         if (LOGGER.isDebugEnabled())
             LOGGER.debug("EgovCommon | getCreditBalanceforDate | Start");
         LOGGER
-        .debug("Data Received asondate = " + asondate + " glcode = "
-                + glcode + " fundcode = " + fundcode
-                + " accountdetailType = " + accountdetailType
-                + " accountdetailkey = " + accountdetailkey);
+                .debug("Data Received asondate = " + asondate + " glcode = "
+                        + glcode + " fundcode = " + fundcode
+                        + " accountdetailType = " + accountdetailType
+                        + " accountdetailkey = " + accountdetailkey);
         validateParameterData(asondate, glcode, fundcode, accountdetailType,
                 accountdetailkey);
         if (LOGGER.isDebugEnabled())
@@ -1656,19 +1676,23 @@ public class EgovCommon {
         final StringBuffer query = new StringBuffer(400);
         if (null == accountdetailType && null == accountdetailkey) {
             query
-            .append("SELECT  sum(gl.creditAmount)")
-            .append(
-                    " as amount FROM  CGeneralLedger gl , CVoucherHeader vh WHERE ")
+                    .append("SELECT  sum(gl.creditAmount)")
+                    .append(
+                            " as amount FROM  CGeneralLedger gl , CVoucherHeader vh WHERE ")
                     .append(
                             " gl.voucherHeaderId.id=vh.id and gl.glcodeId.glcode=? and vh.fundId.code=? ")
-                            .append(
-                                    " and vh.voucherDate >= (select startingDate from CFinancialYear where  startingDate <= '")
-                                    .append(Constants.DDMMYYYYFORMAT1.format(asondate)).append(
-                                            "' AND endingDate >='").append(
-                                                    Constants.DDMMYYYYFORMAT1.format(asondate)).append(
-                                                            "') and vh.voucherDate <='").append(
-                                                                    Constants.DDMMYYYYFORMAT1.format(asondate)).append(
-                                                                            "'and vh.status=0");
+                    .append(
+                            " and vh.voucherDate >= (select startingDate from CFinancialYear where  startingDate <= '")
+                    .append(Constants.DDMMYYYYFORMAT1.format(asondate)).append(
+                            "' AND endingDate >='")
+                    .append(
+                            Constants.DDMMYYYYFORMAT1.format(asondate))
+                    .append(
+                            "') and vh.voucherDate <='")
+                    .append(
+                            Constants.DDMMYYYYFORMAT1.format(asondate))
+                    .append(
+                            "'and vh.status=0");
 
             final List<Object> list = getPersistenceService()
                     .findAllBy(query.toString(), glcode, fundcode);
@@ -1678,20 +1702,25 @@ public class EgovCommon {
 
         } else {
             query
-            .append(
-                    "SELECT sum(gld.amount) as creditamount from CVoucherHeader vh , CGeneralLedger gl,CGeneralLedgerDetail gld")
+                    .append(
+                            "SELECT sum(gld.amount) as creditamount from CVoucherHeader vh , CGeneralLedger gl,CGeneralLedgerDetail gld")
                     .append(
                             " WHERE gl.voucherHeaderId.id=vh.id and gl.id = gld.generalLedgerId.id and gl.glcodeId.glcode=? and vh.fundId.code=? ")
-                            .append(
-                                    " and vh.voucherDate >= (select startingDate from CFinancialYear where  startingDate <= '")
-                                    .append(Constants.DDMMYYYYFORMAT1.format(asondate)).append(
-                                            "' AND endingDate >='").append(
-                                                    Constants.DDMMYYYYFORMAT1.format(asondate)).append(
-                                                            "') and vh.voucherDate <='").append(
-                                                                    Constants.DDMMYYYYFORMAT1.format(asondate)).append(
-                                                                            "'and vh.status = 0").append(
-                                                                                    " and gld.detailTypeId.id =")
-                                                                                    .append(accountdetailType);
+                    .append(
+                            " and vh.voucherDate >= (select startingDate from CFinancialYear where  startingDate <= '")
+                    .append(Constants.DDMMYYYYFORMAT1.format(asondate)).append(
+                            "' AND endingDate >='")
+                    .append(
+                            Constants.DDMMYYYYFORMAT1.format(asondate))
+                    .append(
+                            "') and vh.voucherDate <='")
+                    .append(
+                            Constants.DDMMYYYYFORMAT1.format(asondate))
+                    .append(
+                            "'and vh.status = 0")
+                    .append(
+                            " and gld.detailTypeId.id =")
+                    .append(accountdetailType);
             if (null != accountdetailkey)
                 query.append(" and gld.detailKeyId =").append(accountdetailkey);
             query.append(" and gl.creditAmount >0");
@@ -1718,10 +1747,10 @@ public class EgovCommon {
         if (LOGGER.isDebugEnabled())
             LOGGER.debug("EgovCommon | getCreditBalanceforDate | Start");
         LOGGER
-        .debug("Data Received asondate = " + asondate + " glcode = "
-                + glcode + " fundcode = " + fundcode
-                + " accountdetailType = " + accountdetailType
-                + " accountdetailkey = " + accountdetailkey);
+                .debug("Data Received asondate = " + asondate + " glcode = "
+                        + glcode + " fundcode = " + fundcode
+                        + " accountdetailType = " + accountdetailType
+                        + " accountdetailkey = " + accountdetailkey);
         validateParameterData(asondate, glcode, fundcode, accountdetailType,
                 accountdetailkey);
         if (LOGGER.isDebugEnabled())
@@ -1730,11 +1759,11 @@ public class EgovCommon {
         final StringBuffer queryString = new StringBuffer(400);
 
         queryString
-        .append("SELECT MIN(vh.voucherDate) as vhDate from CVoucherHeader vh , CGeneralLedger gl,CGeneralLedgerDetail gld")
-        .append(" WHERE gl.voucherHeaderId.id=vh.id and gl.id = gld.generalLedgerId.id and gl.glcodeId.glcode=? and vh.fundId.code=? ")
-        .append(" and vh.voucherDate <= '").append(Constants.DDMMYYYYFORMAT1.format(asondate))
-        .append("' and vh.status = 0")
-        .append(" and gld.detailTypeId.id =").append(accountdetailType);
+                .append("SELECT MIN(vh.voucherDate) as vhDate from CVoucherHeader vh , CGeneralLedger gl,CGeneralLedgerDetail gld")
+                .append(" WHERE gl.voucherHeaderId.id=vh.id and gl.id = gld.generalLedgerId.id and gl.glcodeId.glcode=? and vh.fundId.code=? ")
+                .append(" and vh.voucherDate <= '").append(Constants.DDMMYYYYFORMAT1.format(asondate))
+                .append("' and vh.status = 0")
+                .append(" and gld.detailTypeId.id =").append(accountdetailType);
         queryString.append(" and gld.detailKeyId =").append(accountdetailkey);
         queryString.append(" and gl.creditAmount >0");
 
@@ -1750,14 +1779,15 @@ public class EgovCommon {
         final StringBuffer query = new StringBuffer(400);
 
         query
-        .append(
-                "SELECT sum(gld.amount) as creditamount from CVoucherHeader vh , CGeneralLedger gl,CGeneralLedgerDetail gld")
+                .append(
+                        "SELECT sum(gld.amount) as creditamount from CVoucherHeader vh , CGeneralLedger gl,CGeneralLedgerDetail gld")
                 .append(
                         " WHERE gl.voucherHeaderId.id=vh.id and gl.id = gld.generalLedgerId.id and gl.glcodeId.glcode=? and vh.fundId.code=? ")
-                        .append(" and vh.voucherDate <= '").append(
-                                Constants.DDMMYYYYFORMAT1.format(asondate)).append(
-                                        "' and vh.status = 0")
-                                        .append(" and gld.detailTypeId.id =").append(accountdetailType);
+                .append(" and vh.voucherDate <= '").append(
+                        Constants.DDMMYYYYFORMAT1.format(asondate))
+                .append(
+                        "' and vh.status = 0")
+                .append(" and gld.detailTypeId.id =").append(accountdetailType);
         if (null != accountdetailkey)
             query.append(" and gld.detailKeyId =").append(accountdetailkey);
         query.append(" and gl.creditAmount >0");
@@ -1792,18 +1822,22 @@ public class EgovCommon {
 
         if (null != accountdetailkey)
             opBalncQuery
-            .append("SELECT SUM(txns.openingcreditbalance) FROM transactionsummary txns, chartofaccounts coa, fund fd, accountdetailtype adt, financialyear fy "
-                    +
-                    "WHERE txns.fundid           = fd.id " +
-                    "AND fd.code                 = '").append(fundCode).append("' " +
-                            "AND txns.accountdetailkey   =").append(accountdetailkey)
-                            .append(" AND txns.accountdetailtypeid= adt.id " +
-                                    "AND upper(adt.name)         = 'DEPOSITCODE' " +
-                                    "AND txns.glcodeid           = coa.id " +
-                                    "AND coa.glcode              = '").append(glcode).append("' " +
-                                            "AND txns.financialyearid    = fy.id " +
-                                            "AND fy.startingdate        <='").append(Constants.DDMMYYYYFORMAT1.format(asondate)).append("' " +
-                                                    "GROUP BY fy.startingdate ORDER BY fy.startingdate");
+                    .append("SELECT SUM(txns.openingcreditbalance) FROM transactionsummary txns, chartofaccounts coa, fund fd, accountdetailtype adt, financialyear fy "
+                            +
+                            "WHERE txns.fundid           = fd.id " +
+                            "AND fd.code                 = '")
+                    .append(fundCode).append("' " +
+                            "AND txns.accountdetailkey   =")
+                    .append(accountdetailkey)
+                    .append(" AND txns.accountdetailtypeid= adt.id " +
+                            "AND upper(adt.name)         = 'DEPOSITCODE' " +
+                            "AND txns.glcodeid           = coa.id " +
+                            "AND coa.glcode              = '")
+                    .append(glcode).append("' " +
+                            "AND txns.financialyearid    = fy.id " +
+                            "AND fy.startingdate        <='")
+                    .append(Constants.DDMMYYYYFORMAT1.format(asondate)).append("' " +
+                            "GROUP BY fy.startingdate ORDER BY fy.startingdate");
 
         final List<Object> list = persistenceService.getSession().createSQLQuery(opBalncQuery.toString()).list();
         if (list != null && list.size() > 0)
@@ -1814,9 +1848,9 @@ public class EgovCommon {
 
     public BigDecimal getAccCodeBalanceForIndirectExpense(final Date asondate,
             final String glcode, final Integer accountdetailType, final String accountdetailkey)
-                    throws ValidationException, Exception {
+            throws ValidationException, Exception {
         LOGGER
-        .debug("EgovCommon | getAccCodeBalanceForIndirectExpense | Start");
+                .debug("EgovCommon | getAccCodeBalanceForIndirectExpense | Start");
         validateParameterData(asondate, glcode, accountdetailType,
                 accountdetailkey);
         final StringBuffer glCodeBalQry = new StringBuffer(400);
@@ -1831,21 +1865,21 @@ public class EgovCommon {
         final String statusExclude = appList.get(0).getValue();
         if (null == accountdetailType && null == accountdetailkey) {
             glCodeBalQry
-            .append(
-                    "SELECT (case when sum(gl.debitAmount)=null then 0 else sum(gl.debitAmount) end - case when sum(gl.creditAmount)  = null then 0 else sum(gl.creditAmount) end)")
+                    .append(
+                            "SELECT (case when sum(gl.debitAmount)=null then 0 else sum(gl.debitAmount) end - case when sum(gl.creditAmount)  = null then 0 else sum(gl.creditAmount) end)")
                     .append(
                             " as amount FROM  CGeneralLedger gl , CVoucherHeader vh WHERE  gl.voucherHeaderId.id=vh.id and gl.glcodeId.glcode=?")
-                            .append(
-                                    " and vh.voucherDate >= (select startingDate from CFinancialYear where  startingDate <= '")
-                                    .append(Constants.DDMMYYYYFORMAT1.format(asondate))
-                                    .append("' AND endingDate >='")
-                                    .append(Constants.DDMMYYYYFORMAT1.format(asondate))
-                                    .append("') and vh.voucherDate <='")
-                                    .append(Constants.DDMMYYYYFORMAT1.format(asondate))
-                                    .append("'and vh.status not in (")
-                                    .append(statusExclude)
-                                    .append(
-                                            ") and ((vh.name='Contractor Journal' and state_id is null) or(vh.name !='Contractor Journal' and vh.name !='CapitalisedAsset' ) )");
+                    .append(
+                            " and vh.voucherDate >= (select startingDate from CFinancialYear where  startingDate <= '")
+                    .append(Constants.DDMMYYYYFORMAT1.format(asondate))
+                    .append("' AND endingDate >='")
+                    .append(Constants.DDMMYYYYFORMAT1.format(asondate))
+                    .append("') and vh.voucherDate <='")
+                    .append(Constants.DDMMYYYYFORMAT1.format(asondate))
+                    .append("'and vh.status not in (")
+                    .append(statusExclude)
+                    .append(
+                            ") and ((vh.name='Contractor Journal' and state_id is null) or(vh.name !='Contractor Journal' and vh.name !='CapitalisedAsset' ) )");
 
             final List<Object> list = getPersistenceService()
                     .findAllBy(glCodeBalQry.toString(), glcode);
@@ -1853,23 +1887,23 @@ public class EgovCommon {
         } else {
             // Getting the debit balance.
             glCodeDbtBalQry
-            .append(
-                    "SELECT sum(gld.amount)  as debitamount from CVoucherHeader vh , CGeneralLedger gl,CGeneralLedgerDetail gld")
+                    .append(
+                            "SELECT sum(gld.amount)  as debitamount from CVoucherHeader vh , CGeneralLedger gl,CGeneralLedgerDetail gld")
                     .append(
                             " WHERE gl.voucherHeaderId.id=vh.id and gl.id = gld.generalLedgerId.id and gl.glcodeId.glcode=?  ")
-                            .append(
-                                    " and vh.voucherDate >= (select startingDate from CFinancialYear where  startingDate <= '")
-                                    .append(Constants.DDMMYYYYFORMAT1.format(asondate))
-                                    .append("' AND endingDate >='")
-                                    .append(Constants.DDMMYYYYFORMAT1.format(asondate))
-                                    .append("') and vh.voucherDate <='")
-                                    .append(Constants.DDMMYYYYFORMAT1.format(asondate))
-                                    .append("'and vh.status not in (")
-                                    .append(statusExclude)
-                                    .append(
-                                            ")and ((vh.name='Contractor Journal' and state_id is null) or(vh.name !='Contractor Journal' and vh.name !='CapitalisedAsset') ) ")
-                                            .append(" and gld.detailTypeId.id =")
-                                            .append(accountdetailType);
+                    .append(
+                            " and vh.voucherDate >= (select startingDate from CFinancialYear where  startingDate <= '")
+                    .append(Constants.DDMMYYYYFORMAT1.format(asondate))
+                    .append("' AND endingDate >='")
+                    .append(Constants.DDMMYYYYFORMAT1.format(asondate))
+                    .append("') and vh.voucherDate <='")
+                    .append(Constants.DDMMYYYYFORMAT1.format(asondate))
+                    .append("'and vh.status not in (")
+                    .append(statusExclude)
+                    .append(
+                            ")and ((vh.name='Contractor Journal' and state_id is null) or(vh.name !='Contractor Journal' and vh.name !='CapitalisedAsset') ) ")
+                    .append(" and gld.detailTypeId.id =")
+                    .append(accountdetailType);
             if (null != accountdetailkey)
                 glCodeDbtBalQry.append(" and gld.detailKeyId in (").append(
                         accountdetailkey).append(")");
@@ -1884,23 +1918,23 @@ public class EgovCommon {
             // get the credit balance
 
             glCodeCrdBalQry
-            .append(
-                    "SELECT sum(gld.amount) as creditamount from CVoucherHeader vh , CGeneralLedger gl,CGeneralLedgerDetail gld")
+                    .append(
+                            "SELECT sum(gld.amount) as creditamount from CVoucherHeader vh , CGeneralLedger gl,CGeneralLedgerDetail gld")
                     .append(
                             " WHERE gl.voucherHeaderId.id=vh.id and gl.id = gld.generalLedgerId.id and gl.glcodeId.glcode=?  ")
-                            .append(
-                                    " and vh.voucherDate >= (select startingDate from CFinancialYear where  startingDate <= '")
-                                    .append(Constants.DDMMYYYYFORMAT1.format(asondate))
-                                    .append("' AND endingDate >='")
-                                    .append(Constants.DDMMYYYYFORMAT1.format(asondate))
-                                    .append("') and vh.voucherDate <='")
-                                    .append(Constants.DDMMYYYYFORMAT1.format(asondate))
-                                    .append("'and vh.status not in (")
-                                    .append(statusExclude)
-                                    .append(
-                                            ")and ((vh.name='Contractor Journal' and state_id is null) or(vh.name !='Contractor Journal' and vh.name !='CapitalisedAsset' ) )")
-                                            .append(" and gld.detailTypeId.id =")
-                                            .append(accountdetailType);
+                    .append(
+                            " and vh.voucherDate >= (select startingDate from CFinancialYear where  startingDate <= '")
+                    .append(Constants.DDMMYYYYFORMAT1.format(asondate))
+                    .append("' AND endingDate >='")
+                    .append(Constants.DDMMYYYYFORMAT1.format(asondate))
+                    .append("') and vh.voucherDate <='")
+                    .append(Constants.DDMMYYYYFORMAT1.format(asondate))
+                    .append("'and vh.status not in (")
+                    .append(statusExclude)
+                    .append(
+                            ")and ((vh.name='Contractor Journal' and state_id is null) or(vh.name !='Contractor Journal' and vh.name !='CapitalisedAsset' ) )")
+                    .append(" and gld.detailTypeId.id =")
+                    .append(accountdetailType);
             if (null != accountdetailkey)
                 glCodeCrdBalQry.append(" and gld.detailKeyId in(").append(
                         accountdetailkey).append(")");
@@ -1947,17 +1981,18 @@ public class EgovCommon {
             if (null == qry.list() || qry.list().size() == 0)
                 throw new ValidationException(
                         Arrays
-                        .asList(new ValidationError(
-                                "accountdetailType",
-                                "Glcode "
-                                        + glcode
-                                        + " is not a control code for the supplied detailed type.")));
+                                .asList(new ValidationError(
+                                        "accountdetailType",
+                                        "Glcode "
+                                                + glcode
+                                                + " is not a control code for the supplied detailed type.")));
 
         }
         if (null != accountdetailkey) {
             final Session session = persistenceService.getSession();
             final Query qry = session
-                    .createQuery("from Accountdetailkey adk where adk.accountdetailtype=:detailtypeid and adk.detailkey=:detailkey");
+                    .createQuery(
+                            "from Accountdetailkey adk where adk.accountdetailtype=:detailtypeid and adk.detailkey=:detailkey");
             qry.setString(VoucherConstant.DETAILTYPEID, accountdetailType
                     .toString());
             qry.setString("detailkey", accountdetailkey.toString());
@@ -1965,13 +2000,13 @@ public class EgovCommon {
             if (null == qry.list() || qry.list().size() == 0)
                 throw new ValidationException(
                         Arrays
-                        .asList(new ValidationError(
-                                "accountdetailkey",
-                                "The accountdetailkey supplied : "
-                                        + accountdetailkey
-                                        + " for the accountdetailType : "
-                                        + accountdetailType
-                                        + " is not correct")));
+                                .asList(new ValidationError(
+                                        "accountdetailkey",
+                                        "The accountdetailkey supplied : "
+                                                + accountdetailkey
+                                                + " for the accountdetailType : "
+                                                + accountdetailType
+                                                + " is not correct")));
         }
     }
 
@@ -2109,11 +2144,13 @@ public class EgovCommon {
     /**
      * @description -This method returns the total payment amount and payment count made till date for a list of Project codes
      * that is passed.
+     * @param asOnDate TODO
      * @param entityList - Integer list containing ProjectCode ids.
      * @return - Map of total amount of approved payments and count made for all the bills made against the project codes send.
      * @throws ApplicationException - If anyone of the parameters is null or the ProjectCode list passed is empty.
      */
-    public Map<String, BigDecimal> getTotalPaymentforProjectCode(final List<Long> projectCodeIdList) throws ApplicationException {
+    public Map<String, BigDecimal> getTotalPaymentforProjectCode(final List<Long> projectCodeIdList, Date asOnDate)
+            throws ApplicationException {
         if (projectCodeIdList == null || projectCodeIdList.size() == 0)
             throw new ApplicationException("ProjectCode Id list is null or empty");
         if (LOGGER.isDebugEnabled())
@@ -2123,6 +2160,7 @@ public class EgovCommon {
         final List<String> commaSeperatedEntitiesList = new ArrayList<String>();
         final List<List<Long>> limitedEntityList = new ArrayList<List<Long>>();
         String commaSeperatedEntities = "";
+        String asondateCondition = "";
         List<Long> tempEntityIdList = new ArrayList<Long>();
         Long entityId;
         String projectCodeListCondition = "";
@@ -2152,8 +2190,13 @@ public class EgovCommon {
             else
                 projectCodeListCondition = stringIdsList;
         }
-        final String payQuery = "SELECT nvl(sum(mb.paidamount),0),count(vh1.id) FROM    miscbilldetail mb,voucherheader vh1 "
-                + "WHERE vh1.id=mb.PAYVHID and vh1.status="
+        if (asOnDate != null) {
+            asondateCondition = "and vh1.voucherdate <= '" + Constants.DDMMYYYYFORMAT1.format(asOnDate) + "'";
+        }
+        final String payQuery = "SELECT coalesce(sum(mb.paidamount),0),count(vh1.id) FROM    miscbilldetail mb,voucherheader vh1 "
+                + "WHERE vh1.id=mb.PAYVHID "
+                + asondateCondition
+                + " and vh1.status="
                 + FinancialConstants.CREATEDVOUCHERSTATUS
                 + " and mb.BILLVHID in( select vh.id FROM "
                 + "eg_billregister br,eg_billdetails bd, eg_billpayeedetails bp,voucherheader vh,eg_billregistermis ms "
@@ -2265,8 +2308,7 @@ public class EgovCommon {
                 if (ifDeptExist) {
                     result.put(deptName, totalExpensePaymentAmount.add(tempAmountObj).toString());
                     result.put("departmentname", deptName);
-                }
-                else {
+                } else {
                     result.put(deptName, tempAmountObj.toString());
                     result.put("departmentname", deptName);
                 }
@@ -2280,8 +2322,7 @@ public class EgovCommon {
                 if (ifDeptExist) {
                     result.put(deptName, totalExpensePaymentAmount.add(tempAmountObj).toString());
                     result.put("departmentname", deptName);
-                }
-                else {
+                } else {
                     result.put(deptName, tempAmountObj.toString());
                     result.put("departmentname", deptName);
                 }
@@ -2512,7 +2553,7 @@ public class EgovCommon {
     public List<Map<String, String>> getExpenditureDetailsforProjectforFinYear(
             final Long projectCodeId, final Date asOnDate) throws ApplicationRuntimeException {
         LOGGER
-        .debug("Starting getExpenditureDetailsforProjectforFinYear .....");
+                .debug("Starting getExpenditureDetailsforProjectforFinYear .....");
         if (projectCodeId.equals(Long.valueOf(0)))
             throw new ApplicationRuntimeException("ProjectCode is null or empty");
         if (asOnDate == null || asOnDate.equals(null))
@@ -2578,8 +2619,7 @@ public class EgovCommon {
      *
      */
 
-    public BigDecimal getVoucherExpenditureByEntities(final Integer detailTypeId, final List<Integer> entityIdList)
-    {
+    public BigDecimal getVoucherExpenditureByEntities(final Integer detailTypeId, final List<Integer> entityIdList) {
         BigDecimal voucherSum = BigDecimal.ZERO;
         if (detailTypeId == null || entityIdList == null || entityIdList.size() == 0)
             throw new ValidationException("DetailTypeId or EntityIdList not provided",
@@ -2612,8 +2652,7 @@ public class EgovCommon {
      *
      */
 
-    public BigDecimal getDirectBankPaymentExpenditureByEntities(final Integer detailTypeId, final List<Integer> entityIdList)
-    {
+    public BigDecimal getDirectBankPaymentExpenditureByEntities(final Integer detailTypeId, final List<Integer> entityIdList) {
         if (detailTypeId == null || entityIdList == null || entityIdList.size() == 0)
             throw new ValidationException("DetailTypeId or EntityIdList not provided",
                     "DetailTypeId or EntityIdList not provided");

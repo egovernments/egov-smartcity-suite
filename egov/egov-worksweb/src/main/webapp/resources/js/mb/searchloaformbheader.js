@@ -274,10 +274,17 @@ $('#btncreatemb').click(function(e) {
 							else
 								$('#tenderFinalisedPercentage').html(value);
 						} else if(key == 'estimateNumber' || key == 'nameOfWork' || key == 'projectCode' ||
-							key == 'workOrderNumber' || key == 'contractorName' || key == 'workOrderAssignedTo')
+							key == 'workOrderNumber' || key == 'contractorName' || key == 'workOrderAssignedTo'){
+							if(key == 'nameOfWork')
+								$('#' + key+'1').html(value);
+							if(key == 'workOrderNumber')
+								$('#loaNumber').html(value);
 							$('#' + key).html(value);
-						else
+						} else{
+							if(key == 'workOrderAmount')
+								$('#loaAmount').html(value);
 							$('#' + key).val(value);
+						}
 					});
 					if($('#isMeasurementsExist').val() == 'false') {
 						$('.openCloseAll').hide();

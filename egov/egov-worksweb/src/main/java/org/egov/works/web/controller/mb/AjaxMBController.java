@@ -49,6 +49,8 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.io.IOUtils;
+import org.egov.works.contractorportal.entity.ContractorMBHeader;
+import org.egov.works.contractorportal.service.ContractorMBHeaderService;
 import org.egov.works.letterofacceptance.service.WorkOrderActivityService;
 import org.egov.works.mb.entity.MBHeader;
 import org.egov.works.mb.entity.SearchRequestCancelMB;
@@ -96,6 +98,9 @@ public class AjaxMBController {
     @Autowired
     private SearchMBToCancelJson searchMBToCancelJson;
 
+    @Autowired
+    private ContractorMBHeaderService contractorMBHeaderService;
+
     @RequestMapping(value = "/workorder/validatemb/{workOrderEstimateId}", method = RequestMethod.GET, produces = MediaType.TEXT_PLAIN_VALUE)
     public @ResponseBody String validateWorkOrder(@PathVariable final Long workOrderEstimateId,
             final HttpServletRequest request, final HttpServletResponse response) {
@@ -132,6 +137,12 @@ public class AjaxMBController {
     @RequestMapping(value = "/mbheader/ajaxcontractors", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
     public @ResponseBody List<Contractor> findContractorsForWorkOrder(@RequestParam final String code) {
         return workOrderEstimateService.getContractorsByWorkOrderStatus(code);
+    }
+
+    @RequestMapping(value = "/mbheader/ajaxcontractormbheaders", method = RequestMethod.GET)
+    public @ResponseBody List<ContractorMBHeader> findContractorMBHeadersForWorkOrderEstimateId(
+            @RequestParam final String workOrderEstimateId) {
+        return contractorMBHeaderService.getContractorMBHeaderByWorkOrderEstimateId(Long.valueOf(workOrderEstimateId));
     }
 
     @RequestMapping(value = "/mbheader/ajax-searchmbheader", method = RequestMethod.POST, produces = MediaType.TEXT_PLAIN_VALUE)

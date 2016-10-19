@@ -86,6 +86,32 @@ function clearAllTenderedAndNonTenderedItems(){
 		}
 	}
 }
+
+$('#ContractorMeasurements').click(function(event) {
+	event.preventDefault();
+	$('#contractorMeasurementsTab').removeClass("hide");
+	$('#contractorMeasurementsTab a').tab('show');
+	$.ajax({
+		method : "GET",
+		url : "/egworks/mbheader/ajaxcontractormbheaders",
+		data : {
+			workOrderEstimateId : $('#workOrderEstimateId').val()
+		},
+		async : true
+	}).done(
+			function(response) {
+				$('#contractorMbs tbody').empty();
+				var output = '';
+				$.each(response, function(index, value) {
+					output = '<tr>';
+					output = output + '<td class="text-center"> <a href="javascript:void(0);" onclick="viewContractorMB('+value.id+')">' + value.mbRefNo + '</a></td>'
+					output = output + '<td class="text-center">' + value.mbDate + '</td>'
+					output = output + '<td class="text-right">' + value.mbAmount + '</td>'
+					output = output + '</tr>';
+					$('#contractorMbs tbody').append(output);
+				});
+		});
+});
 $('#searchAndAdd').click(function() {
 	var workOrderEstimateId = $('#workOrderEstimateId').val();
 	var workOrderNumber = $('#workOrderNumber').html();
@@ -2115,4 +2141,7 @@ function viewEstimate() {
 function viewMBHistory() {
 	var mbheaderId = $('#id').val();
 	window.open("/egworks/mb/history/" + mbheaderId, '', 'height=650,width=980,scrollbars=yes,left=0,top=0,status=yes');
+}
+function viewContractorMB(id) {
+	window.open("/egworks//contractorportal/mb/view/" + id, '', 'height=650,width=980,scrollbars=yes,left=0,top=0,status=yes');
 }

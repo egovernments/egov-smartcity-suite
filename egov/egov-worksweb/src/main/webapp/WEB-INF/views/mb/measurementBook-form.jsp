@@ -138,6 +138,8 @@
 							code="lbl.tendered.items" /> </a></li>
 				 <li><a data-toggle="tab" href="#nonTenderedItems"  data-tabidx=1 ><spring:message
 							code="lbl.nontendered.items" /> </a></li> 
+				<li class="hide" id="contractorMeasurementsTab"><a data-toggle="tab" href="#contractorMeasurements" data-tabidx=1 ><spring:message 
+							code="lbl.contractor.measurements" /> </a></li> 
 			</ul>
 		</div>
 		<div class="tab-content">
@@ -152,6 +154,9 @@
 			<div class="tab-pane fade" id="nonTenderedItems" >
 				<%@ include file="mb-nontendered.jsp"%>
 				<%@ include file="mb-lumpsum.jsp"%>
+			</div>
+			<div class="tab-pane fade" id="contractorMeasurements" >
+				<%@ include file="contractorMeasurements.jsp"%>
 			</div>
 			<c:if test="${!workflowHistory.isEmpty() && mode != null }">
 				<jsp:include page="../common/commonWorkflowhistory-view.jsp"></jsp:include>

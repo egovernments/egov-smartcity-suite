@@ -37,18 +37,9 @@
   ~
   ~   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
   --%>
-<div id="baseSORTable" class="panel panel-primary" data-collapsed="0">
-	<input type="hidden" id="errorquantitieszero" value="<spring:message code='error.quantity.zero' />">
-	<input type="hidden" id="errorcumulativequantity" value="<spring:message code='error.approved.quantity.cumulative' />">
-	<input type="hidden" id="isMeasurementsExist" value="${isMeasurementsExist }">
-	<div class="panel-heading">
-		<div class="position_alert3"><spring:message code="lbl.pagetotal" /> : &#8377 <span id="pageTotal"></span></div>
-		<div class="panel-title">
-			<spring:message code="title.mb.details" />
-		</div>
-	</div>
-	<div class="panel-body" id="sorHeaderTable">
-		<table class="table table-bordered" style="overflow: auto;" id="tblsor">
+<div class="panel panel-primary" data-collapsed="0">
+	<div class="panel-body">
+		<table class="table table-bordered" style="overflow: auto;">
 			<thead>
 				<tr>
 					<th><spring:message code="lbl.slNo" /></th>
@@ -64,11 +55,9 @@
 			</thead>
 			<tbody id="sorTable">
 				<c:forEach items="${contractorMB.contractorMBDetails }" var="details" varStatus="item">
-					<tr id="sorRow" class="sorRow" align="center">
+					<tr align="center">
 						<td>
 							<span class="spansorslno">${item.index + 1 }</span>
-							<form:input type="hidden" path="contractorMBDetails[${item.index }].id" id="contractorMBDetailsId_${item.index }" class="contractorMBDetailsId" value="${details.id }" />
-							<form:input type="hidden" path="contractorMBDetails[${item.index }].workOrderActivity.id" id="workOrderActivity_0" class="workOrderActivity" value="${details.workOrderActivity.id }" />
 						</td>
 						<td>
 							<span class="category_${item.index }">${details.workOrderActivity.activity.schedule.scheduleCategory.code }</span>
@@ -105,11 +94,9 @@
 							<span class="workOrderQuantity_${item.index }">${details.workOrderActivity.approvedQuantity }</span>
 						</td>
 						<td>
-							<form:input type="hidden" path="contractorMBDetails[${item.index }].rate" value="${details.workOrderActivity.activity.rate }" id="unitRate_${item.index }" class="form-control table-input text-right"/>
-							<form:input path="contractorMBDetails[${item.index }].quantity" value="${details.quantity }" id="quantity_${item.index }" data-errormsg="Quantity is mandatory!" data-pattern="decimalvalue" data-idx="${item.index }" data-optional="0" class="form-control input-sm text-right quantity" maxlength="64" onblur="calculateActivityAmounts(this);" onkeyup="validateQuantityInput(this);"/>
+							<span class="spansorslno">${details.quantity }</span>
 						</td>
 						<td align="right">
-							<form:input type="hidden" path="contractorMBDetails[${item.index }].amount" value="${details.amount }" id="hiddenAmount_${item.index }" class="form-control table-input text-right"/>
 							<c:choose>
 								<c:when test="${details.workOrderActivity.activity.revisionType == 'NON_TENDERED_ITEM' || details.workOrderActivity.activity.revisionType == 'LUMP_SUM_ITEM' }">
 									<span class="nontendered" id="amount_${item.index }"><fmt:formatNumber groupingUsed="false" minFractionDigits="2" maxFractionDigits="4">${details.amount }</fmt:formatNumber></span>
@@ -124,9 +111,12 @@
 			</tbody>
 			<tfoot>
 				<tr>
-					<form:input type="hidden" path="mbAmount" value="${contractorMB.mbAmount }" id="mbAmount" class="form-control table-input text-right"/>
+					<c:set var="total" value="${0}" scope="session" />
+					<c:forEach items="${contractorMB.contractorMBDetails}" var="details">
+						<c:set var="total"	value="${total + details.amount }" />  
+					</c:forEach>
 					<td colspan="8" class="text-right"><spring:message code="lbl.total" /></td>
-					<td class="text-right"> <span id="mbTotal">0.00</span> </td>
+					<td class="text-right"> <span id="mbTotal">${total }</span> </td>
 				</tr>
 			</tfoot>
 		</table>

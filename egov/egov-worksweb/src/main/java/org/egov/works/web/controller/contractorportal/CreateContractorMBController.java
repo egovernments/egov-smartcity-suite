@@ -41,14 +41,21 @@ package org.egov.works.web.controller.contractorportal;
 
 import java.io.IOException;
 import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.lang3.StringUtils;
+import org.egov.egf.commons.EgovCommon;
 import org.egov.infra.exception.ApplicationException;
 import org.egov.infra.messaging.MessagingService;
 import org.egov.works.abstractestimate.service.EstimateService;
+import org.egov.works.contractorbill.service.ContractorBillRegisterService;
 import org.egov.works.contractorportal.entity.ContractorMBHeader;
 import org.egov.works.contractorportal.service.ContractorMBHeaderService;
 import org.egov.works.letterofacceptance.service.LetterOfAcceptanceService;
@@ -97,6 +104,12 @@ public class CreateContractorMBController {
     @Autowired
     private MessagingService messagingService;
 
+    @Autowired
+    private ContractorBillRegisterService contractorBillRegisterService;
+
+    @Autowired
+    private EgovCommon egovCommon;
+
     @RequestMapping(value = "/search-loaform", method = RequestMethod.GET)
     public String showSearchLoaForm() {
         return "contractormb-loasearch";
@@ -119,10 +132,16 @@ public class CreateContractorMBController {
         model.addAttribute("contractorMB", contractorMBHeader);
         model.addAttribute("documentDetails", contractorMBHeader.getDocumentDetails());
 
-        // TODO: Show only the amount where cheque/RTGS assignment is done for the below 2 variables
-        model.addAttribute("totalBillsPaidSoFar",
-                estimateService.getPaymentsReleasedForLineEstimate(workOrderEstimate.getEstimate().getLineEstimateDetails()));
-        model.addAttribute("totalBillAmount", "");
+        List<Long> projectCodeIdList = new ArrayList<Long>();
+        projectCodeIdList.add(workOrderEstimate.getEstimate().getLineEstimateDetails().getProjectCode().getId());
+        Map<String, BigDecimal> result = new HashMap<String, BigDecimal>();
+        try {
+            result = egovCommon.getTotalPaymentforProjectCode(projectCodeIdList, new Date());
+        } catch (ApplicationException e) {
+            e.printStackTrace();
+        }
+        model.addAttribute("totalBillsPaidSoFar", result.get("amount"));
+        model.addAttribute("totalBillAmount", contractorBillRegisterService.getTotalBillAmountByWorkOrder(workOrderEstimate));
 
         final TrackMilestone trackMilestone = trackMilestoneService.getTrackMilestoneTotalPercentage(workOrderEstimate.getId());
         String mileStoneStatus = "";

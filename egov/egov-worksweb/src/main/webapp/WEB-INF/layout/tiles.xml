@@ -470,5 +470,10 @@
         <put-attribute name="page-title" value="title.mb.history" cascade="true"/>
         <put-attribute name="body" value="/WEB-INF/views/mb/mb-history.jsp"/>
      </definition>
+     
+     <definition name="contractormb-view" extends="base_layout">
+		<put-attribute name="page-title" value="lbl.viewcontractormb" cascade="true"/>
+		<put-attribute name="body" value="/WEB-INF/views/contractorportal/contractormb-view.jsp"/>
+	</definition>
 
 </tiles-definitions>

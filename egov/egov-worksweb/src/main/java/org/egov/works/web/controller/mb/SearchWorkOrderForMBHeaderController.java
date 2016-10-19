@@ -39,7 +39,7 @@
  */
 package org.egov.works.web.controller.mb;
 
-import java.util.Collections;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -85,11 +85,10 @@ public class SearchWorkOrderForMBHeaderController extends GenericWorkFlowControl
         final MBHeader mbHeader = new MBHeader();
         final WorkflowContainer workflowContainer = new WorkflowContainer();
         prepareWorkflow(model, mbHeader, workflowContainer);
-        List<String> validActions = Collections.emptyList();
-        validActions = customizedWorkFlowService.getNextValidActions(mbHeader.getStateType(),
-                workflowContainer.getWorkFlowDepartment(), workflowContainer.getAmountRule(),
-                workflowContainer.getAdditionalRule(), WorksConstants.NEW, workflowContainer.getPendingActions(),
-                mbHeader.getCreatedDate());
+        List<String> validActions = new ArrayList<String>();
+        validActions.add(WorksConstants.SAVE_ACTION);
+        validActions.add(WorksConstants.FORWARD_ACTION.toString());
+        validActions.add(WorksConstants.CONTRACTOR_MEASUREMENTS.toString());
         model.addAttribute("stateType", mbHeader.getClass().getSimpleName());
         if (mbHeader.getState() != null && mbHeader.getState().getNextAction() != null)
             model.addAttribute("nextAction", mbHeader.getState().getNextAction());

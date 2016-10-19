@@ -308,6 +308,10 @@ public class UpdateMBController extends GenericWorkFlowController {
         workflowContainer.setAmountRule(mbHeader.getMbAmount());
         workflowContainer.setPendingActions(mbHeader.getState().getNextAction());
         prepareWorkflow(model, mbHeader, workflowContainer);
+        List<String> validActionList = Collections.emptyList();
+        validActionList = new ArrayList<String>(getValidActions(mbHeader, workflowContainer));
+        validActionList.add(WorksConstants.CONTRACTOR_MEASUREMENTS);
+        model.addAttribute("validActionList", validActionList);
         if (mbHeader.getEgwStatus().getCode().equals(MBHeader.MeasurementBookStatus.NEW.toString())) {
             List<String> validActions = Collections.emptyList();
 
@@ -373,6 +377,10 @@ public class UpdateMBController extends GenericWorkFlowController {
             model.addAttribute("showHistory", "false");
         else
             model.addAttribute("showHistory", "true");
+        model.addAttribute("nameOfWork", updatedMBHeader.getWorkOrderEstimate().getEstimate().getName());
+        model.addAttribute("loaNumber", updatedMBHeader.getWorkOrderEstimate().getWorkOrder().getWorkOrderNumber());
+        model.addAttribute("loaAmount", updatedMBHeader.getWorkOrderEstimate().getWorkOrder().getWorkOrderAmount());
+
         // TODO: check if only quantities to be edited or the whole mb can be editable
         if (mbHeader.getEgwStatus().getCode().equals(MBHeader.MeasurementBookStatus.NEW.toString()) ||
                 updatedMBHeader.getEgwStatus().getCode().equals(MBHeader.MeasurementBookStatus.REJECTED.toString())

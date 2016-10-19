@@ -96,7 +96,8 @@ public class ContractorMBHeader extends AbstractAuditable {
     @Temporal(value = TemporalType.DATE)
     @Column(name = "MB_DATE")
     private Date mbDate;
-
+    
+    @JsonIgnore
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "WORKORDER_ESTIMATE_ID")
     private WorkOrderEstimate workOrderEstimate;
@@ -109,6 +110,7 @@ public class ContractorMBHeader extends AbstractAuditable {
 
     private transient List<DocumentDetails> documentDetails = new ArrayList<DocumentDetails>(0);
 
+    @JsonIgnore
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "STATUS_ID")
     private EgwStatus egwStatus;
