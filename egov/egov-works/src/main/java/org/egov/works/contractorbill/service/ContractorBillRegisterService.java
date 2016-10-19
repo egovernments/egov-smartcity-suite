@@ -217,7 +217,8 @@ public class ContractorBillRegisterService {
              
               toBeSavedVariables.put("workflowObject", contractorBillRegister);
               toBeSavedVariables.put("action", workFlowAction);
-              
+              toBeSavedVariables.put("objectId", contractorBillRegister.getId());
+             
               Map<String, String> workflowVariables = new HashMap<String, String>();
               workflowVariables.put("type", contractorBillRegister.getClass().getSimpleName());
               workflowVariables.put("description", approvalComent);
@@ -259,7 +260,7 @@ public class ContractorBillRegisterService {
             updatedContractorBillRegister = update(contractorBillRegister, files);
             contractorBillRegisterStatusChange(updatedContractorBillRegister, workFlowAction, mode);
         } else {
-            contractorBillRegisterStatusChange(contractorBillRegister, workFlowAction, mode);
+           // contractorBillRegisterStatusChange(contractorBillRegister, workFlowAction, mode);
 
             if (workFlowAction.equalsIgnoreCase(WorksConstants.ACTION_APPROVE)) {
                 contractorBillRegister.setApprovedDate(new Date());
@@ -276,19 +277,20 @@ public class ContractorBillRegisterService {
         
         toBeSavedVariables.put("workflowObject", contractorBillRegister);
         toBeSavedVariables.put("action", workFlowAction);
+        toBeSavedVariables.put("mode", "view");
         
         Map<String, String> workflowVariables = new HashMap<String, String>();
-        workflowVariables.put("taksId", contractorBillRegister.getTaskId());
+        workflowVariables.put("taskId", contractorBillRegister.getTaskId());
         workflowVariables.put("type", contractorBillRegister.getClass().getSimpleName());
-        workflowVariables.put("description", approvalComent);
+        workflowVariables.put("workflowComent", approvalComent);
         workflowVariables.put("assignee", approvalPosition.toString());
         workflowVariables.put("fullyQualifiedName", contractorBillRegister.getClass().getCanonicalName());
         
         activitiWorkflowService.update(toBeSavedVariables,workflowVariables);
        
 
-        createContractorBillRegisterWorkflowTransition(updatedContractorBillRegister,
-                approvalPosition, approvalComent, additionalRule, workFlowAction);
+       /* createContractorBillRegisterWorkflowTransition(updatedContractorBillRegister,
+                approvalPosition, approvalComent, additionalRule, workFlowAction);*/
         
         updatedContractorBillRegister = contractorBillRegisterRepository.save(contractorBillRegister);
 

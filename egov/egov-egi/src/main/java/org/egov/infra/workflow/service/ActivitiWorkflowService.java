@@ -68,9 +68,7 @@ public class ActivitiWorkflowService {
         if(assignee!=null)
         {
         Task task = taskService.createTaskQuery().processInstanceId(processInstance.getId()).singleResult();
-        task.setAssignee(assignee);
-        task.setOwner(assignee);
-        taskService.saveTask(task);
+        taskService.addCandidateGroup(task.getId(), assignee);
         workflowObject.setTaskId(task.getId());
         workflowObject.setProcessInstanceId(task.getProcessInstanceId()); 
         }
@@ -92,17 +90,13 @@ public class ActivitiWorkflowService {
         Task task = taskService.createTaskQuery().taskId(taskId).singleResult();
         //verify
         String processInstanceId = task.getProcessInstanceId();
-        Map<String, Object> variables = new HashMap<String, Object>();
-        variables.put("wfObject", workflowObject);
         taskService.addComment(task.getId(), task.getProcessInstanceId(), workflowComent);
-        taskService.complete(task.getId(), variables);
+        taskService.complete(task.getId(), toBeSavedVariables);
        
         task = taskService.createTaskQuery().processInstanceId(processInstanceId).singleResult();
-        if(task!=null)
+        if(task!=null && assignee!=null)
         {
-        task.setAssignee(assignee);
-        task.setOwner(assignee);
-        taskService.saveTask(task);
+        taskService.addCandidateGroup(task.getId(), assignee);
         workflowObject.setTaskId(task.getId());
         }
         return true;

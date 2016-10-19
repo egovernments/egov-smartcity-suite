@@ -40,7 +40,14 @@
 
 package org.egov.infra.web.controller;
 
-import com.google.gson.GsonBuilder;
+import static org.apache.commons.lang3.StringUtils.EMPTY;
+import static org.apache.commons.lang3.StringUtils.isBlank;
+import static org.egov.infra.utils.StringUtils.escapeSpecialChars;
+import static org.egov.infra.workflow.entity.StateAware.byCreatedDate;
+
+import java.util.LinkedList;
+import java.util.List;
+
 import org.egov.infra.security.utils.SecurityUtils;
 import org.egov.infra.web.support.ui.Inbox;
 import org.egov.infra.workflow.entity.State;
@@ -59,13 +66,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-import java.util.LinkedList;
-import java.util.List;
-
-import static org.apache.commons.lang3.StringUtils.EMPTY;
-import static org.apache.commons.lang3.StringUtils.isBlank;
-import static org.egov.infra.utils.StringUtils.escapeSpecialChars;
-import static org.egov.infra.workflow.entity.StateAware.byCreatedDate;
+import com.google.gson.GsonBuilder;
 
 @Controller
 @RequestMapping("/inbox")

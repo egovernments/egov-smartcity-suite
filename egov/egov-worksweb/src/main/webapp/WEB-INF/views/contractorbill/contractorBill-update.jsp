@@ -43,11 +43,13 @@
 <%@ taglib uri="http://www.springframework.org/tags" prefix="spring"%>
 <%@ taglib uri="http://www.springframework.org/tags/form" prefix="form"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
-
+  
 		<form:form id="contractorBillForm" class="form-horizontal form-groups-bordered" modelAttribute="contractorBillRegister" role="form" action="" method="post" enctype="multipart/form-data">
 			<input type="hidden" name="workOrderDate" id="workOrderDate" class="form-control datepicker" maxlength="10" data-inputmask="'mask': 'd/m/y'" data-date-end-date="0d" value='<fmt:formatDate value="${workOrder.workOrderDate}" pattern="dd/MM/yyyy"/>'> 
 			<form:hidden path="workOrder.id"  name="workOrder" id="workOrderId" value="${workOrder.id}" />
 			<input type="hidden" id="id" value="${contractorBillRegister.id }" /> 
+			<form:hidden path="taskId"  />
+			<form:hidden path="processInstanceId"  />  
 			<input type="hidden" name="mode" id="mode" value="${mode }" />
 			<input type="hidden" name="isSpillover" id="isSpillOver" value="${contractorBillRegister.workOrderEstimate.estimate.lineEstimateDetails.lineEstimate.spillOverFlag}"/>
 			<input type="hidden" name="contractorBillId" id="contractorBillId" value="${contractorBillRegister.id}" /> 

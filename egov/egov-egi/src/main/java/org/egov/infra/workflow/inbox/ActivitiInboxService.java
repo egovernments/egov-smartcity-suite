@@ -40,6 +40,9 @@ public class ActivitiInboxService {
 
             Inbox item;
             List<Task> tasks = taskService.createTaskQuery().taskAssignee(userName).list();
+            tasks.addAll(taskService.createTaskQuery().taskCandidateUser(userName).list());
+            //  tasks.addAll(taskService.createTaskQuery().taskCandidateOrAssigned(userName).list());
+            //tasks.addAll(taskService.createTaskQuery().taskCandidateGroup("35").list());
          //   tasks.addAll(taskService.createTaskQuery().taskOwner(userName).list());
             for (Task t : tasks) {
 
@@ -105,7 +108,10 @@ public class ActivitiInboxService {
     }
 
     private String getLink(Task t,String objectId) {
-        String link="";
+    	String link="";
+    	if(objectId==null)
+    		return link;
+        
         if (t.getCategory() != null)
             link= t.getCategory();
         else {
@@ -117,8 +123,8 @@ public class ActivitiInboxService {
         {
             if(link.indexOf(":objectId")!=-1)
                 link=link.replace(":objectId",objectId.toString());
-            if(link.indexOf(":taskId")!=-1)
-                link=link.replace(":taskId",t.getId());
+           /* if(link.indexOf(":taskId")!=-1)
+                link=link.replace(":taskId",t.getId());*/
         }
         return link;
 
