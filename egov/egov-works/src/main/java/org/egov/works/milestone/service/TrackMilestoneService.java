@@ -129,4 +129,12 @@ public class TrackMilestoneService {
         return trackMilestoneRepository.findTrackMilestoneTotalPercentage(workOrderEstimateId,WorksConstants.APPROVED,WorksConstants.APPROVED,WorksConstants.APPROVED);
     }
     
+    public TrackMilestone getMinimumPercentageToCreateContractorBill(final Long workOrderEstimateId) {
+         return trackMilestoneRepository.findMinimunPercentageForTrackMileStone(workOrderEstimateId,WorksConstants.APPROVED,WorksConstants.APPROVED,WorksConstants.APPROVED);
+    }
+    
+    public TrackMilestone getCompletionPercentageToCreateContractorFinalBill(final Long workOrderEstimateId) {
+        return trackMilestoneRepository.findCompletionPercentageForTrackMileStone(workOrderEstimateId,WorksConstants.APPROVED,WorksConstants.APPROVED,WorksConstants.APPROVED);
+   }
+    
 }

@@ -77,11 +77,14 @@ import org.egov.pims.commons.Position;
 import org.egov.services.voucher.VoucherService;
 import org.egov.works.contractorbill.entity.ContractorBillRegister;
 import org.egov.works.contractorbill.entity.SearchRequestContractorBill;
+import org.egov.works.contractorbill.entity.enums.BillTypes;
 import org.egov.works.contractorbill.repository.ContractorBillRegisterRepository;
 import org.egov.works.lineestimate.entity.DocumentDetails;
 import org.egov.works.lineestimate.entity.LineEstimateDetails;
 import org.egov.works.lineestimate.service.LineEstimateService;
 import org.egov.works.mb.service.MBHeaderService;
+import org.egov.works.milestone.entity.TrackMilestone;
+import org.egov.works.milestone.service.TrackMilestoneService;
 import org.egov.works.models.measurementbook.MBHeader;
 import org.egov.works.models.workorder.WorkOrder;
 import org.egov.works.models.workorder.WorkOrderEstimate;
@@ -149,6 +152,9 @@ public class ContractorBillRegisterService {
     
     @Autowired
     private ChartOfAccountsHibernateDAO chartOfAccountsHibernateDAO;
+    
+    @Autowired
+    private TrackMilestoneService trackMilestoneService;
 
     public Session getCurrentSession() {
         return entityManager.unwrap(Session.class);
@@ -779,6 +785,24 @@ public class ContractorBillRegisterService {
     
     public String getTotalDebitAndCreditAmountByAccountCode(final Long workOrderEstimateId,final BigDecimal glCodeId,final Long contractorBillId) {
         return contractorBillRegisterRepository.findSumOfDebitByAccountCodeForWorkOrder(workOrderEstimateId, glCodeId, ContractorBillRegister.BillStatus.APPROVED.toString(),contractorBillId);
+    }
+    
+    public void validateMileStonePercentage(final ContractorBillRegister contractorBillRegister,
+            final BindingResult resultBinder) {
+        TrackMilestone trackMileStone = null;
+        if (contractorBillRegister.getBilltype().equalsIgnoreCase(BillTypes.Final_Bill.toString())) {
+            trackMileStone = trackMilestoneService
+                    .getCompletionPercentageToCreateContractorFinalBill(contractorBillRegister.getWorkOrderEstimate().getId());
+            if (trackMileStone == null)
+                resultBinder.reject("error.contractor.finalbill.milestonepercentage",
+                        "error.contractor.finalbill.milestonepercentage");
+        } else {
+            trackMileStone = trackMilestoneService
+                    .getMinimumPercentageToCreateContractorBill(contractorBillRegister.getWorkOrderEstimate().getId());
+            if (trackMileStone == null)
+                resultBinder.reject("error.contractorbil.milestone.percentage",
+                        "error.contractorbil.milestone.percentage");
+        }
     }
     
 }
