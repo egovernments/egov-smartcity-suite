@@ -82,7 +82,7 @@ public class MarriageDocument extends AbstractAuditable {
     private String code;
 
     private boolean individual;
-    
+    private boolean active;
     @NotNull
     @Enumerated(EnumType.STRING)
     private MarriageDocumentType type;
@@ -100,7 +100,15 @@ public class MarriageDocument extends AbstractAuditable {
         this.id = id;
     }
 
-    public String getName() {
+    public boolean isActive() {
+		return active;
+	}
+
+	public void setActive(boolean active) {
+		this.active = active;
+	}
+
+	public String getName() {
         return name;
     }
 

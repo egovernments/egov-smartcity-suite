@@ -136,6 +136,7 @@ public class MarriageCertificateService {
                 reportParams.put("cityName", cityName);
                 reportParams.put("certificateDate", new Date());
                 reportParams.put("logoPath", logopath);
+                reportParams.put("registrationcenter", "");//TODO: ADD REGISTRATION CENTER 
                 if (registration.getWife() != null && registration.getWife().getPhotoFileStore()!= null)
                         wifePhoto=FileUtils.readFileToByteArray(fileStoreService.fetch(registration.getWife().getPhotoFileStore(), MarriageConstants.FILESTORE_MODULECODE));
                 if (registration.getHusband() != null && registration.getHusband().getPhotoFileStore()!= null)
@@ -251,6 +252,7 @@ public class MarriageCertificateService {
             reportParams.put("cityName", cityName);
             reportParams.put("certificateDate", new Date());
             reportParams.put("logoPath", logopath);
+            reportParams.put("registrationcenter", "");//TODO: ADD REGISTRATION CENTER 
             if (reIssue.getRegistration().getWife() != null && reIssue.getRegistration().getWife().getPhotoFileStore()!= null)
                     wifePhoto=FileUtils.readFileToByteArray(fileStoreService.fetch(reIssue.getRegistration().getWife().getPhotoFileStore(), MarriageConstants.FILESTORE_MODULECODE));
             if (reIssue.getRegistration().getHusband() != null && reIssue.getRegistration().getHusband().getPhotoFileStore()!= null)
@@ -262,8 +264,12 @@ public class MarriageCertificateService {
                 reportParams.put("placeOfMarriage", reIssue.getRegistration().getPlaceOfMarriage());
                 reportParams.put("zoneName", (reIssue.getRegistration().getZone()!=null)?reIssue.getRegistration().getZone().getName():"");
                 reportParams.put("userName", reIssue.getState().getSenderName().split("::")[1]);
+                reportParams.put("applicationNumber", reIssue.getRegistration().getApplicationNo());
+                reportParams.put("registrationNumber", reIssue.getRegistration().getRegistrationNo());
+              
                 SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
-                reportParams.put("rejectionDate", sdf.format(new Date()));
+                if(reIssue.getState().getCreatedDate()!=null)
+                reportParams.put("rejectionDate", sdf.format(reIssue.getState().getCreatedDate()));
                 reportInput = new ReportRequest(template,reIssue,reportParams);
             }
             reportOutput = reportService.createReport(reportInput);

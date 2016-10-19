@@ -192,4 +192,13 @@ public class RegistrationCertificate {
     public String getRejectionReason() {
         return registration.getRejectionReason();
     }
+    
+    public String getRegistrationNumber()
+    {
+    	return registration.getRegistrationNo();
+    }
+    public String getApplicationNumber()
+    {
+    	return registration.getApplicationNo();
+    }
 }

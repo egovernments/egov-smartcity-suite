@@ -100,6 +100,8 @@ public class MarriageFee extends AbstractAuditable {
     @Audited
     private Integer toDays;
 
+    private boolean active;
+    
     @Override
     public Long getId() {
         return id;
@@ -193,6 +195,14 @@ public class MarriageFee extends AbstractAuditable {
         
         return true;
     }
+
+	public boolean isActive() {
+		return active;
+	}
+
+	public void setActive(boolean active) {
+		this.active = active;
+	}
 
 	
 }
