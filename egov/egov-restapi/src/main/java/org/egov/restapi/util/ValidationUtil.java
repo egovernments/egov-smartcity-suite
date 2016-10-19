@@ -662,7 +662,7 @@ public class ValidationUtil {
 		
 	}
     
-    public  ErrorDetails validatePaymentDetails(final PayPropertyTaxDetails payPropTaxDetails, boolean isMutationFeePayment) {
+    public  ErrorDetails validatePaymentDetails(final PayPropertyTaxDetails payPropTaxDetails, boolean isMutationFeePayment, String propertyType) {
         ErrorDetails errorDetails = null;
         if (payPropTaxDetails.getAssessmentNo() == null || payPropTaxDetails.getAssessmentNo().trim().length() == 0) {
             errorDetails = new ErrorDetails();
@@ -710,7 +710,8 @@ public class ValidationUtil {
             errorDetails.setErrorMessage(PropertyTaxConstants.THIRD_PARTY_ERR_MSG_TRANSANCTIONID_REQUIRED);
         }
         else if(payPropTaxDetails.getTransactionId()!=null || !"".equals(payPropTaxDetails.getTransactionId())){
-           BillReceiptInfo billReceiptList=propertyExternalService.validateTransanctionIdPresent(payPropTaxDetails.getTransactionId());
+			BillReceiptInfo billReceiptList = propertyExternalService
+					.validateTransanctionIdPresent(payPropTaxDetails.getTransactionId(), propertyType);
         if(billReceiptList!=null)
         {
              errorDetails = new ErrorDetails();

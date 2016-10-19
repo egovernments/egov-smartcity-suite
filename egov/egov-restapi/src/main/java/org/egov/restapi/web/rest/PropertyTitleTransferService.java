@@ -197,7 +197,7 @@ public class PropertyTitleTransferService {
             PayPropertyTaxDetails payPropTaxDetails = (PayPropertyTaxDetails) getObjectFromJSONRequest(
                     payPropertyTaxDetails, PayPropertyTaxDetails.class);
 
-            ErrorDetails errorDetails = validationUtil.validatePaymentDetails(payPropTaxDetails,true);
+            ErrorDetails errorDetails = validationUtil.validatePaymentDetails(payPropTaxDetails,true, "");
             if (null != errorDetails) {
                 responseJson = getJSONResponse(errorDetails);
             } else {

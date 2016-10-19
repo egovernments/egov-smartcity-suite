@@ -47,6 +47,8 @@ import org.egov.works.letterofacceptance.entity.SearchRequestLetterOfAcceptance;
 import org.egov.works.letterofacceptance.entity.SearchRequestLetterOfAcceptanceForRE;
 import org.egov.works.letterofacceptance.service.LetterOfAcceptanceService;
 import org.egov.works.master.service.ContractorService;
+import org.egov.works.milestone.entity.TrackMilestone;
+import org.egov.works.milestone.service.TrackMilestoneService;
 import org.egov.works.models.masters.Contractor;
 import org.egov.works.models.masters.ContractorDetail;
 import org.egov.works.revisionestimate.service.RevisionWorkOrderService;
@@ -104,11 +106,14 @@ public class AjaxLetterOfAcceptanceController {
     private LetterOfAcceptanceForMilestoneJSONAdaptor letterOfAcceptanceForMilestoneJSONAdaptor;
 
     @Autowired
-    @Qualifier("messageSource")
-    private MessageSource messageSource;
-
+    private TrackMilestoneService trackMilestoneService;
+    
     @Autowired
     private WorkOrderEstimateService workOrderEstimateService;
+    
+    @Autowired
+    @Qualifier("messageSource")
+    private MessageSource messageSource;
 
     @Autowired
     private SearchLetterOfAcceptanceForOfflineStatusJsonAdaptor searchLetterOfAcceptanceForOfflineStatusJsonAdaptor;
@@ -199,9 +204,21 @@ public class AjaxLetterOfAcceptanceController {
     }
 
     @RequestMapping(value = "/ajaxvalidate-createcontractorbill", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
-    public @ResponseBody Boolean validateWorkOrderNumberForCreateContractorBill(
+    public @ResponseBody String validateWorkOrderNumberForCreateContractorBill(
             @RequestParam("workOrderId") final Long workOrderId) {
-        return letterOfAcceptanceService.validateContractorBillInWorkflowForWorkorder(workOrderId);
+        String message = "";
+        WorkOrderEstimate workOrderEstimate = workOrderEstimateService.getWorkOrderEstimateByWorkOrderId(workOrderId);
+        TrackMilestone trackMileStone = trackMilestoneService
+                .getMinimumPercentageToCreateContractorBill(workOrderEstimate.getId());
+        if (trackMileStone == null) {
+            message = messageSource.getMessage("error.contractorbil.milestone.percentage", null, null);
+        } else {
+            Boolean nonApprovedBills = letterOfAcceptanceService.validateContractorBillInWorkflowForWorkorder(workOrderId);
+            if (!nonApprovedBills)
+                message = messageSource.getMessage("error.contractorbill.nonapprovedbills",
+                        new String[] { workOrderEstimate.getWorkOrder().getWorkOrderNumber() }, null);
+        }
+        return message;
     }
 
     @RequestMapping(value = "/ajaxcontractorsbycode-loa", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)

@@ -218,6 +218,8 @@ public class CreateContractorBillController extends GenericWorkFlowController {
         contractorBillRegister = addBillDetails(contractorBillRegister, workOrderEstimate, resultBinder, request);
 
         contractorBillRegisterService.validateRefundAmount(contractorBillRegister, resultBinder);
+        
+        contractorBillRegisterService.validateMileStonePercentage(contractorBillRegister, resultBinder);
 
         if (!contractorBillRegisterService.checkForDuplicateAccountCodes(contractorBillRegister))
             resultBinder.reject("error.contractorbill.duplicate.accountcodes",
