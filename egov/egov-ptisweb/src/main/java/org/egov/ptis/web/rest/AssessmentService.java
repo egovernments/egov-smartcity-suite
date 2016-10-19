@@ -244,7 +244,7 @@ public class AssessmentService {
 				pt.setPaymentAmount(totalAmount);
 				pt.setPaidBy(paidBy);
 				
-				ReceiptDetails receiptDetails = propertyExternalService.payPropertyTax(pt);
+				ReceiptDetails receiptDetails = propertyExternalService.payPropertyTax(pt, "");
 				responseJson = getJSONResponse(receiptDetails);
 			}
 		}

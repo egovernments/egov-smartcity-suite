@@ -91,6 +91,7 @@ import static org.egov.ptis.constants.PropertyTaxConstants.PROP_CREATE_RSN;
 import static org.egov.ptis.constants.PropertyTaxConstants.PROP_CREATE_RSN_BIFUR;
 import static org.egov.ptis.constants.PropertyTaxConstants.PTIS_COLLECTION_SERVICE_CODE;
 import static org.egov.ptis.constants.PropertyTaxConstants.REVENUE_HIERARCHY_TYPE;
+import static org.egov.ptis.constants.PropertyTaxConstants.SERVICE_CODE_VACANTLANDTAX;
 import static org.egov.ptis.constants.PropertyTaxConstants.SOURCEOFDATA_MOBILE;
 import static org.egov.ptis.constants.PropertyTaxConstants.STATUS_BILL_NOTCREATED;
 import static org.egov.ptis.constants.PropertyTaxConstants.STATUS_DEMAND_INACTIVE;
@@ -736,13 +737,13 @@ public class PropertyExternalService {
         return propertyTaxDetails;
     }
 
-    public ReceiptDetails payPropertyTax(final PayPropertyTaxDetails payPropertyTaxDetails) {
+    public ReceiptDetails payPropertyTax(final PayPropertyTaxDetails payPropertyTaxDetails, String propertyType) {
         ReceiptDetails receiptDetails = null;
         ErrorDetails errorDetails = null;
         BigDecimal totalAmountToBePaid = BigDecimal.ZERO;
         final BasicProperty basicProperty = basicPropertyDAO.getBasicPropertyByPropertyID(payPropertyTaxDetails
                 .getAssessmentNo());
-        if(basicProperty.getProperty().getPropertyDetail().getPropertyTypeMaster().getCode().equalsIgnoreCase(OWNERSHIP_TYPE_VAC_LAND))
+        if(propertyType.equalsIgnoreCase(OWNERSHIP_TYPE_VAC_LAND))
         	propertyTaxBillable.setVacantLandTaxPayment(true);
         
         propertyTaxBillable.setBasicProperty(basicProperty);
@@ -1827,8 +1828,11 @@ public class PropertyExternalService {
         return document;
     }
 
-    public BillReceiptInfo validateTransanctionIdPresent(final String transantion) {
-        return collectionService.getReceiptInfo(PTIS_COLLECTION_SERVICE_CODE, transantion);
+    public BillReceiptInfo validateTransanctionIdPresent(final String transantion, String propertyType) {
+        if (propertyType.equals(OWNERSHIP_TYPE_VAC_LAND))
+            return collectionService.getReceiptInfo(SERVICE_CODE_VACANTLANDTAX, transantion);
+        else
+            return collectionService.getReceiptInfo(PTIS_COLLECTION_SERVICE_CODE, transantion);
     }
 
     private Document createDocument(final InputStream inputStream, final String fileName) {
@@ -2621,5 +2625,13 @@ public class PropertyExternalService {
         modProperty.setPropertyDetail(propDetail);
 
     }
-    
+
+    public String getPropertyType(String assessmentno) {
+        String pType = "";
+        final BasicProperty basicProperty = basicPropertyDAO.getBasicPropertyByPropertyID(assessmentno);
+        PropertyTypeMaster ptypeMaster = basicProperty.getProperty().getPropertyDetail().getPropertyTypeMaster();
+        if (ptypeMaster != null)
+            pType = ptypeMaster.getCode();
+        return pType;
+    }
 }
