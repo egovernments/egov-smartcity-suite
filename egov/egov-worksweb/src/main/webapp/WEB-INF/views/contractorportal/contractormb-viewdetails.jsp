@@ -115,7 +115,7 @@
 					<c:forEach items="${contractorMB.contractorMBDetails}" var="details">
 						<c:set var="total"	value="${total + details.amount }" />  
 					</c:forEach>
-					<td colspan="8" class="text-right"><spring:message code="lbl.total" /></td>
+					<td colspan="8" class="text-right"><spring:message code="lbl.mbamount" /></td>
 					<td class="text-right"> <span id="mbTotal">${total }</span> </td>
 				</tr>
 			</tfoot>

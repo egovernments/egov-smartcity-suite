@@ -125,7 +125,7 @@
 			<tfoot>
 				<tr>
 					<form:input type="hidden" path="mbAmount" value="${contractorMB.mbAmount }" id="mbAmount" class="form-control table-input text-right"/>
-					<td colspan="8" class="text-right"><spring:message code="lbl.total" /></td>
+					<td colspan="8" class="text-right"><spring:message code="lbl.mbamount" /></td>
 					<td class="text-right"> <span id="mbTotal">0.00</span> </td>
 				</tr>
 			</tfoot>
