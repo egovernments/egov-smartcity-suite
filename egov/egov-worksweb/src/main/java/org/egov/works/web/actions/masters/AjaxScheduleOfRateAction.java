@@ -182,7 +182,7 @@ public class AjaxScheduleOfRateAction extends BaseFormAction implements ServletR
 
     @Override
     public Object getModel() {
-        // TODO Auto-generated method stub
+
         return null;
     }
 

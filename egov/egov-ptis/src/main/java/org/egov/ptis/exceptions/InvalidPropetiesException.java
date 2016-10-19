@@ -49,7 +49,7 @@ public class InvalidPropetiesException extends Exception
 	public InvalidPropetiesException() 
 	{
 		super();
-		// TODO Auto-generated constructor stub
+
 	}
 
 	/**
@@ -57,7 +57,7 @@ public class InvalidPropetiesException extends Exception
 	 */
 	public InvalidPropetiesException(String message) {
 		super(message);
-		// TODO Auto-generated constructor stub
+
 	}
 
 	/**
@@ -66,7 +66,7 @@ public class InvalidPropetiesException extends Exception
 	 */
 	public InvalidPropetiesException(String message, Throwable cause) {
 		super(message, cause);
-		// TODO Auto-generated constructor stub
+
 	}
 
 	/**
@@ -74,7 +74,7 @@ public class InvalidPropetiesException extends Exception
 	 */
 	public InvalidPropetiesException(Throwable cause) {
 		super(cause);
-		// TODO Auto-generated constructor stub
+
 	}
 
 }

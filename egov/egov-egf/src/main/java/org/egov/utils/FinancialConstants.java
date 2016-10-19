@@ -240,6 +240,8 @@ public interface FinancialConstants {
     public static final String APPCONFIG_COA_MINORCODE_LENGTH = "coa_minorcode_length";
     public static final String APPCONFIG_COA_DETAILCODE_LENGTH = "coa_detailcode_length";
     public static final String APPCONFIG_COA_MAJORCODE_CAPITAL_EXP_FIE_REPORT = "coa_major_capital_exp_fie_report";
+    public static final String APPCONFIG_BUDGETGROUP_RANGE = "budgetgroup_range_minor_or_detailed";
+    public static final String APPCONFIG_EXCLUDE_STATUS = "exclude_status_forbudget_actual";
     public static final String DELIMITER_FOR_VOUCHER_STATUS_TO_CHECK_BANK_BALANCE = ",";
 
     public static final String BANKACCOUNT_WALKIN_PAYMENT_DESCRIPTION = "Walkin payment account";
@@ -312,6 +314,7 @@ public interface FinancialConstants {
     public static final String BUTTONREJECT = "Reject";
     public static final String BUTTONSAVE = "Save";
     public static final String BUTTONCANCEL = "Cancel";
+    public static final String BUTTONVERIFY = "Verify";
     
     public static final String WORKFLOW_STATE_NEW = "NEW";
     public static final String WORKFLOW_STATE_APPROVED = "Approved";
@@ -325,5 +328,11 @@ public interface FinancialConstants {
     
     public static final String CREATEANDAPPROVE="Create And Approve";
     public static final String BUDGET_CHECK_ERROR_MESSAGE = "Budgetary check is failed";
+    
+    public static final String BUDGET="BUDGET";
+    public static final String BUDGETDETAIL="BUDGETDETAIL";
+    public static final String BUDGETDETAIL_CREATED_STATUS="CREATED";
+    public static final String BUDGETDETAIL_VERIFIED_STATUS="VERIFIED";
+    
     
 }

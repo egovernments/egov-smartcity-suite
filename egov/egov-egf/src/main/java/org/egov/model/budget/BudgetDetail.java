@@ -39,6 +39,28 @@
  */
 package org.egov.model.budget;
 
+import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+
+import javax.persistence.CascadeType;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
+import javax.persistence.SequenceGenerator;
+import javax.persistence.Table;
+import javax.persistence.Transient;
+import javax.validation.constraints.NotNull;
+
 import org.egov.commons.CFunction;
 import org.egov.commons.EgwStatus;
 import org.egov.commons.Functionary;
@@ -49,44 +71,99 @@ import org.egov.infra.admin.master.entity.Boundary;
 import org.egov.infra.admin.master.entity.Department;
 import org.egov.infra.workflow.entity.State;
 import org.egov.infra.workflow.entity.StateAware;
+import org.hibernate.search.annotations.DocumentId;
+import org.hibernate.validator.constraints.Length;
 
-import javax.validation.constraints.NotNull;
-import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
-
+@Entity
+@Table(name = "EGF_BUDGETDETAIL")
+@SequenceGenerator(name = BudgetDetail.SEQ_BUDGETDETAIL, sequenceName = BudgetDetail.SEQ_BUDGETDETAIL, allocationSize = 1)
 public class BudgetDetail extends StateAware {
     private static final long serialVersionUID = 5908792258911500512L;
+    public static final String SEQ_BUDGETDETAIL = "SEQ_EGF_BUDGETDETAIL";
 
-    private Long id = null;
+    @DocumentId
+    @Id
+    @GeneratedValue(generator = SEQ_BUDGETDETAIL, strategy = GenerationType.SEQUENCE)
+    private Long id;
+
+    @Transient
     private Long nextYrId = null;
+
+    @NotNull
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "budgetgroup")
     private BudgetGroup budgetGroup;
+
+    @NotNull
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "budget")
     private Budget budget;
+
     private BigDecimal originalAmount = new BigDecimal("0.0");
     private BigDecimal approvedAmount = new BigDecimal("0.0");
+
+    @Transient
     private BigDecimal nextYroriginalAmount = new BigDecimal("0.0");
+
+    @Transient
     private BigDecimal nextYrapprovedAmount = new BigDecimal("0.0");
     private BigDecimal budgetAvailable = new BigDecimal("0.0");
+
+    @Column(name = "anticipatory_amount")
     private BigDecimal anticipatoryAmount = new BigDecimal("0.0");
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "using_department")
     private Department usingDepartment;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "executing_department")
     private Department executingDepartment;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "function")
     private CFunction function;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "scheme")
     private Scheme scheme;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "fund")
     private Fund fund;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "subScheme")
     private SubScheme subScheme;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "functionary")
     private Functionary functionary;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "boundary")
     private Boundary boundary;
-    private String comment;
+
+    @Length(max = 10)
     private String materializedPath;
-    private Set<BudgetReAppropriation> budgetReAppropriations;
+
+    @OneToMany(mappedBy = "budgetDetail", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private Set<BudgetReAppropriation> budgetReAppropriations = new HashSet<BudgetReAppropriation>(0);
+
+    @Column(name = "document_number")
     private Long documentNumber;
+
+    @Length(max = 32)
     private String uniqueNo;
     private BigDecimal planningPercent;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "status")
     private EgwStatus status;
-    
+
+    @Transient
+    private String comment;
+
     public Set<BudgetReAppropriation> getBudgetReAppropriations() {
         return budgetReAppropriations;
     }
@@ -167,7 +244,6 @@ public class BudgetDetail extends StateAware {
         this.functionary = functionary;
     }
 
-    @NotNull(message = "Please select a budget")
     public Budget getBudget() {
         return budget;
     }
@@ -184,7 +260,6 @@ public class BudgetDetail extends StateAware {
         this.budgetAvailable = budgetAvailable;
     }
 
-    @NotNull(message = "Please select a budget group")
     public BudgetGroup getBudgetGroup() {
         return budgetGroup;
     }
@@ -240,7 +315,8 @@ public class BudgetDetail extends StateAware {
     }
 
     /**
-     * @param materializedPath the materializedPath to set
+     * @param materializedPath
+     *            the materializedPath to set
      */
     public void setMaterializedPath(final String materializedPath) {
         this.materializedPath = materializedPath;
@@ -261,7 +337,8 @@ public class BudgetDetail extends StateAware {
 
     public List<BudgetReAppropriation> getNonApprovedReAppropriations() {
         final List<BudgetReAppropriation> reAppList = new ArrayList<BudgetReAppropriation>();
-        budgetReAppropriations = budgetReAppropriations == null ? new HashSet<BudgetReAppropriation>() : budgetReAppropriations;
+        budgetReAppropriations = budgetReAppropriations == null ? new HashSet<BudgetReAppropriation>()
+                : budgetReAppropriations;
         for (final BudgetReAppropriation entry : budgetReAppropriations)
             if (!entry.getStatus().getDescription().equalsIgnoreCase("Approved"))
                 reAppList.add(entry);
@@ -270,7 +347,8 @@ public class BudgetDetail extends StateAware {
 
     public BigDecimal getApprovedReAppropriationsTotal() {
         BigDecimal total = BigDecimal.ZERO;
-        budgetReAppropriations = budgetReAppropriations == null ? new HashSet<BudgetReAppropriation>() : budgetReAppropriations;
+        budgetReAppropriations = budgetReAppropriations == null ? new HashSet<BudgetReAppropriation>()
+                : budgetReAppropriations;
         for (final BudgetReAppropriation entry : budgetReAppropriations)
             if (!entry.getStatus().getDescription().equalsIgnoreCase("Cancelled"))
                 if (entry.getAdditionAmount() != null && !(BigDecimal.ZERO.compareTo(entry.getAdditionAmount()) == 0))
@@ -282,7 +360,8 @@ public class BudgetDetail extends StateAware {
 
     public BigDecimal getApprovedReAppropriationsTotalAsOnDate(final Date asOnDate) {
         BigDecimal total = BigDecimal.ZERO;
-        budgetReAppropriations = budgetReAppropriations == null ? new HashSet<BudgetReAppropriation>() : budgetReAppropriations;
+        budgetReAppropriations = budgetReAppropriations == null ? new HashSet<BudgetReAppropriation>()
+                : budgetReAppropriations;
         for (final BudgetReAppropriation entry : budgetReAppropriations)
             if (!entry.getStatus().getDescription().equalsIgnoreCase("Cancelled")
                     && entry.getCreatedDate().before(asOnDate))
@@ -295,13 +374,15 @@ public class BudgetDetail extends StateAware {
 
     public boolean compareTo(final BudgetDetail other) {
         boolean same = true;
-        if (budgetGroup != null && other.budgetGroup != null && !budgetGroup.getId().equals(other.getBudgetGroup().getId()))
+        if (budgetGroup != null && other.budgetGroup != null
+                && !budgetGroup.getId().equals(other.getBudgetGroup().getId()))
             same = false;
         if (function != null && other.function != null && !function.getId().equals(other.getFunction().getId()))
             same = false;
         if (fund != null && other.fund != null && !fund.getId().equals(other.getFund().getId()))
             same = false;
-        if (functionary != null && other.functionary != null && !functionary.getId().equals(other.getFunctionary().getId()))
+        if (functionary != null && other.functionary != null
+                && !functionary.getId().equals(other.getFunctionary().getId()))
             same = false;
         if (boundary != null && other.boundary != null && !boundary.getId().equals(other.getBoundary().getId()))
             same = false;
@@ -373,7 +454,7 @@ public class BudgetDetail extends StateAware {
         return getId().toString();
     }
 
-    public void setWfState(State state) {
+    public void setWfState(final State state) {
         setState(state);
     }
 
@@ -381,9 +462,8 @@ public class BudgetDetail extends StateAware {
         return status;
     }
 
-    public void setStatus(EgwStatus status) {
+    public void setStatus(final EgwStatus status) {
         this.status = status;
     }
-    
-    
+
 }

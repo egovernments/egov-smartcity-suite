@@ -237,8 +237,9 @@ public class SewerageChangeInClosetsUpdateController extends GenericWorkFlowCont
 
             if (!checkAnyTaxIsPendingToCollect(sewerageApplicationDetails)) {
                 additionalRule = SewerageTaxConstants.CHANGEINCLOSETS_NOCOLLECTION;
+                model.addAttribute("showApprovalDtls", "yes");
             }
-            model.addAttribute("showApprovalDtls", "yes");
+           
         } 
         else if(sewerageApplicationDetails.getStatus()!=null && 
                    sewerageApplicationDetails.getStatus().getCode().equalsIgnoreCase(SewerageTaxConstants.APPLICATION_STATUS_DEEAPPROVED)){    
@@ -541,8 +542,8 @@ public class SewerageChangeInClosetsUpdateController extends GenericWorkFlowCont
                 try {
                     sewerageFieldInspection.setInspectionDate(sdf.parse(inspectionDate));
                 } catch (ParseException e) {
-                    // TODO Auto-generated catch block
-                    e.printStackTrace();
+
+
                 }
                 final Set<FileStoreMapper> fileStoreSet = sewerageTaxUtils.addToFileStore(files);
                 Iterator<FileStoreMapper> fsIterator = null;

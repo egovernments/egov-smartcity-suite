@@ -40,6 +40,13 @@
 
 package org.egov.commons.service;
 
+import java.util.Calendar;
+import java.util.Date;
+import java.util.List;
+
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+
 import org.egov.commons.CFinancialYear;
 import org.egov.commons.CFiscalPeriod;
 import org.egov.commons.repository.CFinancialYearRepository;
@@ -47,12 +54,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.List;
 
 @Service
 @Transactional(readOnly = true)
@@ -104,5 +105,20 @@ public class CFinancialYearService {
     public CFiscalPeriod findByFiscalName(final String name) {
         return cFinancialYearRepository.findByFiscalName(name);
     }
+    
+    public CFinancialYear getFinancialYearByDate(final Date date) {
+        return cFinancialYearRepository.getFinancialYearByDate(date);
+    }
+        
+    public List<CFinancialYear> getFinancialYearNotClosed()
+    {
+        return cFinancialYearRepository.findByIsClosedFalseOrderByFinYearRangeDesc();
+    }
+    
+    public CFinancialYear findByFinYearRange(String finYearRange){
+        return cFinancialYearRepository.findByFinYearRange(finYearRange);
+    }
+    
+    
 
 }

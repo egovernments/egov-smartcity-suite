@@ -208,7 +208,7 @@ public class BasicPropertyHibernateDAO implements BasicPropertyDAO {
             try {
                 resultSet.close();
             } catch (SQLException e) {
-                e.printStackTrace();
+
             }
         }
         return regNum;
@@ -340,7 +340,7 @@ public class BasicPropertyHibernateDAO implements BasicPropertyDAO {
 
     @Override
     public BasicProperty findById(Integer id, boolean lock) {
-        // TODO Auto-generated method stub
+
         return null;
     }
 
@@ -352,19 +352,19 @@ public class BasicPropertyHibernateDAO implements BasicPropertyDAO {
 
     @Override
     public BasicProperty create(BasicProperty entity) {
-        // TODO Auto-generated method stub
+
         return null;
     }
 
     @Override
     public void delete(BasicProperty entity) {
-        // TODO Auto-generated method stub
+
 
     }
 
     @Override
     public BasicProperty update(BasicProperty entity) {
-        // TODO Auto-generated method stub
+
         return null;
     }
 

@@ -299,7 +299,7 @@ public class AjaxTenderNegotiationAction extends BaseFormAction {
 
     @Override
     public Object getModel() {
-        // TODO Auto-generated method stub
+
         return tenderResp;
     }
 

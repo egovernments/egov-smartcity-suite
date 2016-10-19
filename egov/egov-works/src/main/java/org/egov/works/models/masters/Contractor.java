@@ -305,13 +305,13 @@ public class Contractor extends AbstractAuditable implements EntityType {
 
     @Override
     public String getBankaccount() {
-        // TODO Auto-generated method stub
+
         return bankAccount;
     }
 
     @Override
     public String getBankname() {
-        // TODO Auto-generated method stub
+
         if (bank == null)
             return "";
         else
@@ -320,25 +320,25 @@ public class Contractor extends AbstractAuditable implements EntityType {
 
     @Override
     public String getIfsccode() {
-        // TODO Auto-generated method stub
+
         return ifscCode;
     }
 
     @Override
     public String getPanno() {
-        // TODO Auto-generated method stub
+
         return panNumber;
     }
 
     @Override
     public String getTinno() {
-        // TODO Auto-generated method stub
+
         return tinNumber;
     }
 
     @Override
     public String getModeofpay() {
-        // TODO Auto-generated method stub
+
         return null;
     }
 
@@ -355,7 +355,7 @@ public class Contractor extends AbstractAuditable implements EntityType {
 
     @Override
     public EgwStatus getEgwStatus() {
-        // TODO Auto-generated method stub
+
         return null;
     }
 

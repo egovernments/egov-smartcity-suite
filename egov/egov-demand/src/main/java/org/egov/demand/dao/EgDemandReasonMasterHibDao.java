@@ -67,25 +67,25 @@ public class EgDemandReasonMasterHibDao implements EgDemandReasonMasterDao {
 
 	@Override
 	public List<EgDemandReasonMaster> findAll() {
-		// TODO Auto-generated method stub
+
 		return null;
 	}
 
 	@Override
 	public EgDemandReasonMaster create(EgDemandReasonMaster egDemandReasonMaster) {
-		// TODO Auto-generated method stub
+
 		return null;
 	}
 
 	@Override
 	public void delete(EgDemandReasonMaster egDemandReasonMaster) {
-		// TODO Auto-generated method stub
+
 
 	}
 
 	@Override
 	public EgDemandReasonMaster update(EgDemandReasonMaster egDemandReasonMaster) {
-		// TODO Auto-generated method stub
+
 		return null;
 	}
 

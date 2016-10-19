@@ -1267,7 +1267,7 @@ public class CreateVoucher {
 			// insertIntoRecordStatus(vh);
 			final List<Transaxtion> transactions = createTransaction(
 					headerdetails, accountcodedetails, subledgerdetails, vh);
-			persistenceService.getSession().flush();
+			//persistenceService.getSession().flush();
 			// engine = ChartOfAccounts.getInstance();
 			// setChartOfAccounts();
 			Transaxtion txnList[] = new Transaxtion[transactions.size()];
@@ -1731,7 +1731,6 @@ public class CreateVoucher {
 
 				final String strVoucherNumber = v.getNextNumber(cVoucherHeader);
 
-				System.out.println(v.getClass().getSimpleName());
 				cVoucherHeader.setVoucherNumber(strVoucherNumber);
 			}
 			/*

@@ -104,7 +104,7 @@ public class ContractorBillPDFAction extends BaseFormAction {
             try {
                 pdfGenerator.generatePDF();
             } catch (final ApplicationException e) {
-                // TODO Auto-generated catch block
+
                 logger.debug("exception " + e);
             }
             egBillRegisterPDF = new ByteArrayInputStream(out.toByteArray());

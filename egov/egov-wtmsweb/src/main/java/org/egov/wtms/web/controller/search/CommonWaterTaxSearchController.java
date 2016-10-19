@@ -191,8 +191,8 @@ public class CommonWaterTaxSearchController {
                 return COMMON_FORM_SEARCH;
             }
         if (applicationType != null && applicationType.equals(WaterTaxConstants.DATAENTRYEDIT))
-            if (waterConnectionDetails.getApplicationType().getCode().equals(WaterTaxConstants.NEWCONNECTION)
-                    || waterConnectionDetails.getApplicationType().getCode().equals(WaterTaxConstants.ADDNLCONNECTION)
+            if ((waterConnectionDetails.getApplicationType().getCode().equals(WaterTaxConstants.NEWCONNECTION)
+                    || waterConnectionDetails.getApplicationType().getCode().equals(WaterTaxConstants.ADDNLCONNECTION))
                     && waterConnectionDetails.getConnectionStatus().equals(ConnectionStatus.ACTIVE)
                     && waterConnectionDetails.getLegacy())
                 return "redirect:/application/newConnection-editExisting/"

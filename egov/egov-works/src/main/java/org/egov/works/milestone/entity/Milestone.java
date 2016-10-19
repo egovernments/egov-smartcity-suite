@@ -155,7 +155,7 @@ public class Milestone extends StateAware implements Comparable {
 
     @Override
     public int compareTo(final Object o) {
-        // TODO Auto-generated method stub
+
         return 0;
     }
 

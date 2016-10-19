@@ -116,7 +116,7 @@ public class SearchBillAction extends BaseFormAction {
     // @Override
     @Override
     public Object getModel() {
-        // TODO Auto-generated method stub
+
         return null;
     }
 

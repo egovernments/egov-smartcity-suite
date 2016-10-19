@@ -267,10 +267,11 @@ public class WorksConstants {
 
     public static final String BOUNDARY_TYPE_WARD = "Ward";
     public static final String HIERARCHY_TYPE_ADMINISTRATION = "ADMINISTRATION";
+    public static final String BOUNDARY_TYPE_CITY = "City";
 
     public static final String APPCONFIG_KEY_ENGINEERINCHARGE_DESIGNATION = "ENGINEERINCHARGE_DESIGNATION";
 
-    public static final String WORKFLOWTYPE_DISPLAYNAME = "Line Estimate";
+    public static final String WORKFLOWTYPE_DISPLAYNAME = "Estimate";
 
     public static final String WORKFLOWTYPE_DISPLAYNAME_WORKORDER = "Letter Of Acceptance";
 

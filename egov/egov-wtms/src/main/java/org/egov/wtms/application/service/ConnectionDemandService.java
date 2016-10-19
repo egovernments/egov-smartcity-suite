@@ -140,13 +140,13 @@ public class ConnectionDemandService {
     private DemandGenericDao demandGenericDao;
 
     @Autowired
-    WaterConnectionService waterConnectionService;
+    private WaterConnectionService waterConnectionService;
 
     @Autowired
-    WaterConnectionDetailsService waterConnectionDetailsService;
+    private WaterConnectionDetailsService waterConnectionDetailsService;
 
     @Autowired
-    WaterDemandConnectionService waterDemandConnectionService;
+    private WaterDemandConnectionService waterDemandConnectionService;
 
     @Autowired
     private ApplicationContext context;
@@ -473,14 +473,14 @@ public class ConnectionDemandService {
     }
 
     public List<Object> getDmdCollAmtInstallmentWise(final EgDemand egDemand) {
-        final StringBuffer strBuf = new StringBuffer(2000);
-        strBuf.append(
+        final StringBuilder queryStringBuilder = new StringBuilder();
+        queryStringBuilder.append(
                 "select dmdRes.id,dmdRes.id_installment, sum(dmdDet.amount) as amount, sum(dmdDet.amt_collected) as amt_collected, "
                         + "sum(dmdDet.amt_rebate) as amt_rebate, inst.start_date from eg_demand_details dmdDet,eg_demand_reason dmdRes, "
                         + "eg_installment_master inst,eg_demand_reason_master dmdresmas where dmdDet.id_demand_reason=dmdRes.id "
                         + "and dmdDet.id_demand =:dmdId and dmdRes.id_installment = inst.id and dmdresmas.id = dmdres.id_demand_reason_master "
                         + "group by dmdRes.id,dmdRes.id_installment, inst.start_date order by inst.start_date ");
-        return getCurrentSession().createSQLQuery(strBuf.toString()).setLong("dmdId", egDemand.getId()).list();
+        return getCurrentSession().createSQLQuery(queryStringBuilder.toString()).setLong("dmdId", egDemand.getId()).list();
     }
 
     public List<Object> getDmdCollAmtInstallmentWiseUptoCurrentInstallmemt(final EgDemand egDemand,
@@ -932,7 +932,7 @@ public class ConnectionDemandService {
         final String query = "select installment from Installment installment,CFinancialYear finYear where installment.module.name = '"
                 + PTMODULENAME
                 + "'  and cast(installment.toDate as date) <= cast(finYear.startingDate as date) order by installment.id desc";
-        final Query qry = getCurrentSession().createQuery(query.toString());
+        final Query qry = getCurrentSession().createQuery(query);
         final List<Installment> installments = qry.list();
         currYearInstMap.put(WaterTaxConstants.PREVIOUS_SECOND_HALF, installments.get(0));
         return currYearInstMap;

@@ -59,8 +59,8 @@ public class CollectionApplicationProperties {
         return environment.getProperty("AXIS.transactionmessage");
     }
 
-    public Integer axisVersion() {
-        return environment.getProperty("axis.version", Integer.class);
+    public String axisVersion() {
+        return environment.getProperty("axis.version", String.class);
     }
 
     public String axisCommand() {

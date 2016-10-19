@@ -309,7 +309,7 @@ public class SewerageNoticeController {
 
         } catch (final IOException e) {
             LOGGER.error("Exception in Zip and Download : ", e);
-            e.printStackTrace();
+
             throw new ValidationException(Arrays.asList(new ValidationError("error", e.getMessage())));
         }
         final long endTime = System.currentTimeMillis();

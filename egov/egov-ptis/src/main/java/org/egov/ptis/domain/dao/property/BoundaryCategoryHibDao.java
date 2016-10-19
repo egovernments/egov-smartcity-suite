@@ -223,19 +223,19 @@ public class BoundaryCategoryHibDao implements BoundaryCategoryDao {
 
 	@Override
 	public BoundaryCategory findById(Integer id, boolean lock) {
-		// TODO Auto-generated method stub
+
 		return null;
 	}
 
 	@Override
 	public BoundaryCategory create(BoundaryCategory category) {
-		// TODO Auto-generated method stub
+
 		return null;
 	}
 
 	@Override
 	public void delete(BoundaryCategory category) {
-		// TODO Auto-generated method stub
+
 
 	}
 
@@ -247,7 +247,7 @@ public class BoundaryCategoryHibDao implements BoundaryCategoryDao {
 
 	@Override
 	public List<BoundaryCategory> findAll() {
-		// TODO Auto-generated method stub
+
 		return null;
 	}
 }

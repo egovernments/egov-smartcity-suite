@@ -73,7 +73,7 @@ public class DepositWorksUsageServiceImpl extends BaseServiceImpl<DepositWorksUs
 
     public DepositWorksUsageServiceImpl(final PersistenceService<DepositWorksUsage, Long> persistenceService) {
         super(persistenceService);
-        // TODO Auto-generated constructor stub
+
     }
 
     @Override

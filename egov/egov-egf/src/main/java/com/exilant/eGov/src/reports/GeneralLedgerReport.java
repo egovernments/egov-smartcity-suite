@@ -191,8 +191,6 @@ public class GeneralLedgerReport {
         try {
             dd = formatter1.parse(endDateformat);
         } catch (final ParseException e1) {
-            // TODO Auto-generated catch block
-            e1.printStackTrace();
         }
         final CFinancialYear finYearByDate = financialYearDAO.getFinYearByDate(dd);
 

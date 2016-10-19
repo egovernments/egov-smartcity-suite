@@ -44,7 +44,7 @@ FinancialIntegrationService {
 
     @Override
     public void updateCollectionsOnInstrumentDishonor(final Long instrumentHeaderId) {
-        // TODO Auto-generated method stub
+
 
     }
 

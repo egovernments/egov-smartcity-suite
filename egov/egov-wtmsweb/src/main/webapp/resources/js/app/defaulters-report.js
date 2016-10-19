@@ -44,24 +44,35 @@ jQuery(document).ready(function() {
 	
 	
 	jQuery('#defaultersReportSearch').click(function(e) {
-		var fromAmount = $("#fromAmount").val();
-		var toAmount = $("#toAmount").val(); 
+		var fromDemand = $("#fromAmount").val();
+		var toDemand = $("#toAmount").val(); 
 		var ward = $("#ward").val();
 		var topDefaulters = $("#topDefaulters").val();
 		console.log(parseInt(fromAmount)+'-'+parseInt(toAmount)+'-'+topDefaulters);
-		if ((fromAmount == undefined || parseInt(fromAmount) == 0) &&
-				(toAmount == undefined || parseInt(toAmount) == 0) && (topDefaulters == '')) {
-			bootbox.alert('Enter either From amount or  To Amount or Top Defaulters , One is mandatory');
+		
+		if (((fromDemand == null || fromDemand == "") &&
+				(toDemand == null || toDemand == ""))  ) {
+			bootbox.alert('From and To Amounts is mandatory');
 			return false;
 		}
-		 
-		if (parseInt(toAmount)!=0 && fromAmount > parseInt(toAmount)) {
-			bootbox.alert('From Amount should not be greater than to Amount');
+		
+		if ((fromDemand == null || fromDemand == "") && (toDemand != null && toDemand != "")) {
+			bootbox.alert('Please Enter From Amount');
+			return false;
+		}
+		if ((fromDemand != null || fromDemand != "") &&
+				(toDemand == null || toDemand == "")) {
+			bootbox.alert('Please Enter To Amount');
+	      return false;
+		}
+		if(parseInt($("#fromAmount").val()) > parseInt($("#toAmount").val())){
+			bootbox.alert('To Amount should be greather than From Amount');
 			return false;
 		}
 		loadingReport();
 	});
 	
+
 });
 
 function loadingReport()
@@ -78,7 +89,6 @@ function loadingReport()
 			$('#reportgeneration-header').show();
 	        $("#resultDateLabel").html(fromAmount+" - "+toAmount);	
 			var oDataTable=oTable.dataTable({
-				"sPaginationType": "bootstrap",
 				"sDom": "<'row'<'col-xs-12 hidden col-right'f>r>t<'row'<'col-md-3 col-xs-12'i><'col-md-3 col-xs-6 col-right'l><'col-xs-12 col-md-3 col-right'<'export-data'T>><'col-md-3 col-xs-6 text-right'p>>",
 				"aLengthMenu": [[10, 25, 50, 100,-1], [10, 25, 50, 100,"All"]],
 				"autoWidth": false,
@@ -118,24 +128,27 @@ function loadingReport()
 						'toAmount': toAmount
 					}
 				},
-				"columns" : [{"sTitle" : "S.no", "render": function ( data, type, full, meta ) {
+				aaSorting: [],	
+				"columns" : [{"sTitle" : "S.no","sortable": false,
+							  "render": function ( data, type, full, meta ) {
 						      return oTable.fnPagingInfo().iStart+meta.row+1;
-						    }},
-							  { "data" : "hscNo" , "title": "H.S.C NO"},  
-							  { "data" : "ownerName", "title": "Owner Name"},
-							  { "data" : "wardName", "title": "Revenue Ward"},
-							  { "data" : "houseNo", "title": "Door No"},
-							  { "data" : "locality", "title": "Locality"},
+						    }
+							},
+							  { "data" : "hscNo" , "title": "H.S.C NO", "sortable": false},  
+							  { "data" : "ownerName", "title": "Owner Name","sortable": false},
+							  { "data" : "wardName", "title": "Revenue Ward","sortable": false},
+							  { "data" : "houseNo", "title": "Door No","sortable": false},
+							  { "data" : "locality", "title": "Locality","sortable": false},
 							  { 
-								  "data" : "mobileNumber", "title": "Mobile Number",
+								  "data" : "mobileNumber", "title": "Mobile Number","sortable": false,
 								  "render" : function(data, type, row) {
 									  return (!data || parseInt(data)==0? "NA" : data);
 								  }
 							  },
-							  { "data" : "duePeriodFrom", "title": "Due Period From"},
-							  { "data" : "arrearsDue", "title": "Arears Amount","className": "text-right"},
-							  { "data" : "currentDue", "title": "Current Amount","className": "text-right"},
-							  { "data" : "totalDue", "title": "Total","className": "text-right"}
+							  { "data" : "duePeriodFrom", "title": "Due Period From","sortable": false},
+							  { "data" : "arrearsDue", "title": "Arears Amount","className": "text-right","sortable": false},
+							  { "data" : "currentDue", "title": "Current Amount","className": "text-right","sortable": false},
+							  { "data" : "totalDue", "title": "Total","className": "text-right","sortable": false}
 							],
 							 /* "aaSorting": [[3, 'asc'] , [8,'desc']] ,*/
 							  "footerCallback" : function(row, data, start, end, display) {
@@ -151,9 +164,9 @@ function loadingReport()
 										updateTotalFooter(10, api);
 									}
 								},
-					            "fnInitComplete": function() {
-					            	if(oDataTable){ oDataTable.fnSort( [ [7,'desc'] , [3,'asc'] ] ); }
-					            },
+					           /* "fnInitComplete": function() {
+					            	if(oDataTable){ oDataTable.fnSort( [ [0,'asc'] ] ); }
+					            },*/
 					            
 								"aoColumnDefs" : [ {
 									"aTargets" : [8,9,10],
@@ -163,11 +176,9 @@ function loadingReport()
 								} ]		
 					});
 			
-			
-			e.stopPropagation();
 		}
 		
-		function updateSerialNo()
+		/*function updateSerialNo()
 		{
 			$( "#defaultersReport-table tbody tr" ).each(function(index) {
 				if($(this).find('td').length>1)
@@ -176,7 +187,7 @@ function loadingReport()
 				}
 			});
 			
-		}
+		}*/
 		
 	
 }

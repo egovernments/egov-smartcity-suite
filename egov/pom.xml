@@ -124,19 +124,19 @@
         <javax-mail-version>1.5.5</javax-mail-version>
         <javax-el-version>3.0.1-b05</javax-el-version>
         <xerces-version>2.11.0.SP4</xerces-version>
-        <postgres-version>9.4.1210</postgres-version>
+        <postgres-version>9.4.1211</postgres-version>
 
         <!-- Other application dependency versions -->
         <struts2-version>2.5.2</struts2-version>
         <struts2-jquery-version>3.7.1</struts2-jquery-version>
         <xstream-version>1.4.9</xstream-version>
         <xpp3-version>1.1.4c</xpp3-version>
-        <spring-version>4.3.2.RELEASE</spring-version>
-        <spring-session-version>1.1.1.RELEASE</spring-session-version>
-        <spring-data-jpa-version>1.10.3.RELEASE</spring-data-jpa-version>
-        <spring-data-jpa-envers-version>1.0.2.RELEASE</spring-data-jpa-envers-version>
+        <spring-version>4.3.3.RELEASE</spring-version>
+        <spring-session-version>1.2.2.RELEASE</spring-session-version>
+        <spring-data-jpa-version>1.10.4.RELEASE</spring-data-jpa-version>
+        <spring-data-jpa-envers-version>1.0.4.RELEASE</spring-data-jpa-envers-version>
         <spring-security-version>4.0.3.RELEASE</spring-security-version>
-        <spring-security-oauth2-version>2.0.9.RELEASE</spring-security-oauth2-version>
+        <spring-security-oauth2-version>2.0.11.RELEASE</spring-security-oauth2-version>
         <apache-tiles-version>3.0.7</apache-tiles-version>
         <embedded-redis-version>0.6</embedded-redis-version>
         <quartz-version>2.2.3</quartz-version>
@@ -152,7 +152,7 @@
         <itext-version>2.1.7</itext-version>
         <commons-javaflow-version>20060411</commons-javaflow-version>
         <jexcelapi-version>2.6.12</jexcelapi-version>
-        <commons-beanutils-version>1.9.2</commons-beanutils-version>
+        <commons-beanutils-version>1.9.3</commons-beanutils-version>
         <commons-config-version>1.10</commons-config-version>
         <commons-lang-version>2.6</commons-lang-version>
         <commons-email-version>1.4</commons-email-version>
@@ -192,7 +192,7 @@
         <mvn.compiler.plugin.version>3.5.1</mvn.compiler.plugin.version>
         <mvn.dependency.plugin.version>2.10</mvn.dependency.plugin.version>
         <mvn.resource.plugin.version>3.0.1</mvn.resource.plugin.version>
-        <mvn.sonar.plugin.version>3.0.2</mvn.sonar.plugin.version>
+        <mvn.sonar.plugin.version>3.2</mvn.sonar.plugin.version>
         <mvn.wildfly.plugin.version>1.0.2.Final</mvn.wildfly.plugin.version>
         <mvn.versioneye.plugin.version>3.10.2</mvn.versioneye.plugin.version>
         <mvn.surefire.plugin.version>2.19.1</mvn.surefire.plugin.version>

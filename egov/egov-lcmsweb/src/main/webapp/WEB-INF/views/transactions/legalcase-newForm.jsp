@@ -50,7 +50,7 @@
 		<form:form method="post" action="" modelAttribute="legalCase"
 			id="newlegalcaseForm" class="form-horizontal form-groups-bordered"
 			enctype="multipart/form-data">
-			<form:hidden id="mode" path="" value="${mode}" />
+			<input type="hidden" id="mode"  name="mode" value="${mode}" />
 			<div class="panel panel-primary" data-collapsed="0">
 				<div class="panel-heading">
 					<div class="panel-title">

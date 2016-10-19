@@ -169,7 +169,7 @@ public class TrackMilestoneController {
             IOUtils.write(msg, httpResponseWriter);
             IOUtils.closeQuietly(httpResponseWriter);
         } catch (final IOException e) {
-            e.printStackTrace();
+
         }
     }
 }

@@ -65,11 +65,16 @@ import javax.validation.Valid;
 import org.egov.infra.persistence.entity.AbstractAuditable;
 import org.egov.infra.utils.DateUtils;
 import org.egov.infra.validation.exception.ValidationError;
+import org.hibernate.envers.AuditOverride;
+import org.hibernate.envers.AuditOverrides;
+import org.hibernate.envers.Audited;
 import org.hibernate.validator.constraints.Length;
 
 @Entity
 @Table(name = "EGLC_HEARINGS")
 @SequenceGenerator(name = Hearings.SEQ_EGLC_HEARINGS, sequenceName = Hearings.SEQ_EGLC_HEARINGS, allocationSize = 1)
+@AuditOverrides({ @AuditOverride(forClass = AbstractAuditable.class, name = "lastModifiedBy"),
+    @AuditOverride(forClass = AbstractAuditable.class, name = "lastModifiedDate") })
 public class Hearings extends AbstractAuditable {
 
     private static final long serialVersionUID = 1517694643078084884L;
@@ -80,35 +85,45 @@ public class Hearings extends AbstractAuditable {
     private Long id;
 
     @Temporal(TemporalType.DATE)
+    @Audited
     private Date hearingDate;
 
     @ManyToOne
     @Valid
     @JoinColumn(name = "legalcase", nullable = false)
+    @Audited
     private LegalCase legalCase;
 
     @Column(name = "isstandingcounselpresent")
+    @Audited
     private boolean isStandingCounselPresent;
 
     @Length(max = 128)
+    @Audited
     private String additionalLawyers;
 
     @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, mappedBy = "hearing", orphanRemoval = true)
+    @Audited
     Set<EmployeeHearing> employeeHearingList = new HashSet<EmployeeHearing>(0);
 
     @Transient
+    @Audited
     List<EmployeeHearing> positionTemplList = new ArrayList<EmployeeHearing>();
 
     @Length(max = 1024)
+    @Audited
     private String hearingOutcome;
 
+    @Audited
     private boolean isSeniorStandingCounselPresent;
 
     @Length(max = 1024)
     @Column(name = "purposeofhearing")
+    @Audited
     private String purposeofHearings;
 
     @Length(max = 50)
+    @Audited
     private String referenceNumber;
 
     public Date getHearingDate() {

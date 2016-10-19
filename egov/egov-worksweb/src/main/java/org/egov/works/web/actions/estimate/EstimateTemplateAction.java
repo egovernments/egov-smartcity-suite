@@ -101,7 +101,7 @@ public class EstimateTemplateAction extends SearchFormAction {
 
     @Override
     public Object getModel() {
-        // TODO Auto-generated method stub
+
         return estimateTemplate;
     }
 

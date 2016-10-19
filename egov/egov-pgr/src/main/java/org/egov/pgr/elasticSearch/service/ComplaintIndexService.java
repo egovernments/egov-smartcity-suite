@@ -52,8 +52,8 @@ import java.util.List;
 import org.apache.commons.lang.time.DateUtils;
 import org.egov.config.search.Index;
 import org.egov.config.search.IndexType;
+import org.egov.eis.entity.Assignment;
 import org.egov.eis.service.AssignmentService;
-import org.egov.eis.service.EisCommonService;
 import org.egov.infra.admin.master.entity.City;
 import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.admin.master.service.CityService;
@@ -76,6 +76,7 @@ import org.egov.search.domain.Sort;
 import org.egov.search.service.SearchService;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -87,9 +88,6 @@ public class ComplaintIndexService {
     private EscalationService escalationService;
 
     @Autowired
-    private EisCommonService eisCommonService;
-
-    @Autowired
     private SearchService searchService;
 
     @Autowired
@@ -98,19 +96,37 @@ public class ComplaintIndexService {
     @Autowired
     private ComplaintService complaintService;
 
+    @Autowired
+    private Environment environment;
+
     @Indexing(name = Index.PGR, type = IndexType.COMPLAINT)
     public ComplaintIndex createComplaintIndex(final ComplaintIndex complaintIndex) {
         final City cityWebsite = cityService.getCityByURL(ApplicationThreadLocals.getDomainName());
         complaintIndex.setCitydetails(cityWebsite);
-        if (complaintIndex.getReceivingMode().equals(ReceivingMode.MOBILE))
-            complaintIndex.setSource("PuraSeva");
+        if (complaintIndex.getReceivingMode().equals(ReceivingMode.MOBILE)
+                && complaintIndex.getCreatedBy().getType().equals(UserType.CITIZEN))
+            complaintIndex.setSource(environment.getProperty("complaint.source.citizen.app"));
+        if (complaintIndex.getReceivingMode().equals(ReceivingMode.MOBILE)
+                && complaintIndex.getCreatedBy().getType().equals(UserType.EMPLOYEE))
+            complaintIndex.setSource(environment.getProperty("complaint.source.emp.app"));
         else if (complaintIndex.getReceivingMode().equals(ReceivingMode.WEBSITE)
-                && (complaintIndex.getCreatedBy().getType().equals(UserType.CITIZEN)
-                        || complaintIndex.getCreatedBy().getType().equals(UserType.SYSTEM)))
-            complaintIndex.setSource("By citizens:ULB Portal");
-        else if (complaintIndex.getCreatedBy().getType().equals(UserType.EMPLOYEE)
-                || complaintIndex.getCreatedBy().getType().equals(UserType.SYSTEM))
-            complaintIndex.setSource("ULB counter");
+                && complaintIndex.getCreatedBy().getType().equals(UserType.CITIZEN))
+            complaintIndex.setSource(environment.getProperty("complaint.source.portal.citizen"));
+        else if (complaintIndex.getReceivingMode().equals(ReceivingMode.WEBSITE)
+                && complaintIndex.getCreatedBy().getType().equals(UserType.SYSTEM))
+            complaintIndex.setSource(environment.getProperty("complaint.source.portal.anonymous"));
+        else if (complaintIndex.getReceivingMode().equals(ReceivingMode.WEBSITE)
+                && complaintIndex.getCreatedBy().getType().equals(UserType.EMPLOYEE))
+            complaintIndex.setSource(environment.getProperty("complaint.source.emp.website"));
+        else if (complaintIndex.getReceivingMode().equals(ReceivingMode.CALL)
+                && complaintIndex.getCreatedBy().getType().equals(UserType.EMPLOYEE))
+            complaintIndex.setSource(environment.getProperty("complaint.source.website.emp.phone"));
+        else if (complaintIndex.getReceivingMode().equals(ReceivingMode.EMAIL)
+                && complaintIndex.getCreatedBy().getType().equals(UserType.EMPLOYEE))
+            complaintIndex.setSource(environment.getProperty("complaint.source.website.emp.email"));
+        else if (complaintIndex.getReceivingMode().equals(ReceivingMode.MANUAL)
+                && complaintIndex.getCreatedBy().getType().equals(UserType.EMPLOYEE))
+            complaintIndex.setSource(environment.getProperty("complaint.source.website.emp.manual"));
         complaintIndex.setIsClosed(false);
         complaintIndex.setComplaintIsClosed('N');
         complaintIndex.setIfClosed(0);
@@ -118,21 +134,24 @@ public class ComplaintIndexService {
         complaintIndex.setDurationRange("");
         // New fields included in PGR Index
         final Position position = complaintIndex.getAssignee();
-        final User assignedUser = eisCommonService.getUserForPosition(position.getId(), new Date());
+        final List<Assignment> assignments = assignmentService.getAssignmentsForPosition(position.getId(), new Date());
+        final User assignedUser = !assignments.isEmpty() ? assignments.get(0).getEmployee() : null;
         complaintIndex.setComplaintPeriod(0);
         complaintIndex.setComplaintSLADays(complaintIndex.getComplaintType().getSlaHours());
         complaintIndex.setComplaintAgeingFromDue(0);
         complaintIndex.setIsSLA('Y');
         complaintIndex.setIfSLA(1);
         complaintIndex
-                .setInitialFunctionaryName(assignedUser.getName() + ":" + position.getDeptDesig().getDesignation().getName());
+                .setInitialFunctionaryName(assignedUser != null ? assignedUser.getName()
+                        : "NO ASSIGNMENT" + ":" + position.getDeptDesig().getDesignation().getName());
         complaintIndex.setInitialFunctionaryAssigneddate(new Date());
         complaintIndex.setInitialFunctionarySLADays(getFunctionarySlaDays(complaintIndex));
         complaintIndex.setInitialFunctionaryAgeingFromDue(0);
         complaintIndex.setInitialFunctionaryIsSLA('Y');
         complaintIndex.setInitialFunctionaryIfSLA(1);
         complaintIndex
-                .setCurrentFunctionaryName(assignedUser.getName() + ":" + position.getDeptDesig().getDesignation().getName());
+                .setCurrentFunctionaryName(assignedUser != null ? assignedUser.getName()
+                        : "NO ASSIGNMENT" + ":" + position.getDeptDesig().getDesignation().getName());
         complaintIndex.setCurrentFunctionaryAssigneddate(new Date());
         complaintIndex.setCurrentFunctionarySLADays(getFunctionarySlaDays(complaintIndex));
         complaintIndex.setCurrentFunctionaryAgeingFromDue(0);
@@ -166,11 +185,13 @@ public class ComplaintIndexService {
         // Update the complaint index object with the existing values
         complaintIndex = populateFromIndex(complaintIndex);
         final Position position = complaintIndex.getAssignee();
-        final User assignedUser = eisCommonService.getUserForPosition(position.getId(), new Date());
+        final List<Assignment> assignments = assignmentService.getAssignmentsForPosition(position.getId(), new Date());
+        final User assignedUser = !assignments.isEmpty() ? assignments.get(0).getEmployee() : null;
         // If complaint is forwarded
         if (approvalPosition != null && !approvalPosition.equals(Long.valueOf(0))) {
             complaintIndex
-                    .setCurrentFunctionaryName(assignedUser.getName() + ":" + position.getDeptDesig().getDesignation().getName());
+                    .setCurrentFunctionaryName(assignedUser != null ? assignedUser.getName()
+                            : "NO ASSIGNMENT" + ":" + position.getDeptDesig().getDesignation().getName());
             complaintIndex.setCurrentFunctionaryAssigneddate(new Date());
             complaintIndex.setCurrentFunctionarySLADays(getFunctionarySlaDays(complaintIndex));
         }
@@ -182,7 +203,8 @@ public class ComplaintIndexService {
             complaintIndex.setComplaintIsClosed('Y');
             complaintIndex.setIfClosed(1);
             complaintIndex.setClosedByFunctionaryName(
-                    assignedUser.getName() + ":" + position.getDeptDesig().getDesignation().getName());
+                    assignedUser != null ? assignedUser.getName()
+                            : "NO ASSIGNMENT" + ":" + position.getDeptDesig().getDesignation().getName());
             final long duration = Math.abs(complaintIndex.getCreatedDate().getTime() - new Date().getTime())
                     / (24 * 60 * 60 * 1000);
             complaintIndex.setComplaintDuration(duration);
@@ -224,7 +246,8 @@ public class ComplaintIndexService {
     @Indexing(name = Index.PGR, type = IndexType.COMPLAINT)
     public ComplaintIndex updateComplaintEscalationIndexValues(ComplaintIndex complaintIndex) {
         final Position position = complaintIndex.getAssignee();
-        final User assignedUser = eisCommonService.getUserForPosition(position.getId(), new Date());
+        final List<Assignment> assignments = assignmentService.getAssignmentsForPosition(position.getId(), new Date());
+        final User assignedUser = !assignments.isEmpty() ? assignments.get(0).getEmployee() : null;
         final City cityWebsite = cityService.getCityByURL(ApplicationThreadLocals.getDomainName());
         complaintIndex.setCitydetails(cityWebsite);
         if (complaintIndex.getReceivingMode().equals(ReceivingMode.MOBILE))
@@ -240,7 +263,8 @@ public class ComplaintIndexService {
         complaintIndex = populateFromIndex(complaintIndex);
         // Update current Functionary Complaint index variables
         complaintIndex
-                .setCurrentFunctionaryName(assignedUser.getName() + ":" + position.getDeptDesig().getDesignation().getName());
+                .setCurrentFunctionaryName(assignedUser != null ? assignedUser.getName()
+                        : "NO ASSIGNMENT" + ":" + position.getDeptDesig().getDesignation().getName());
         complaintIndex.setCurrentFunctionaryAssigneddate(new Date());
         complaintIndex.setCurrentFunctionarySLADays(getFunctionarySlaDays(complaintIndex));
         complaintIndex = updateComplaintLevelIndexFields(complaintIndex);
@@ -248,7 +272,8 @@ public class ComplaintIndexService {
         // For Escalation level1
         if (escalationLevel == 0) {
             complaintIndex.setEscalation1FunctionaryName(
-                    assignedUser.getName() + ":" + position.getDeptDesig().getDesignation().getName());
+                    assignedUser != null ? assignedUser.getName()
+                            : "NO ASSIGNMENT" + ":" + position.getDeptDesig().getDesignation().getName());
             complaintIndex.setEscalation1FunctionaryAssigneddate(new Date());
             complaintIndex.setEscalation1FunctionarySLADays(getFunctionarySlaDays(complaintIndex));
             complaintIndex.setEscalation1FunctionaryAgeingFromDue(0);
@@ -258,7 +283,8 @@ public class ComplaintIndexService {
         } else if (escalationLevel == 1) {
             // update escalation level 2 fields
             complaintIndex.setEscalation2FunctionaryName(
-                    assignedUser.getName() + ":" + position.getDeptDesig().getDesignation().getName());
+                    assignedUser != null ? assignedUser.getName()
+                            : "NO ASSIGNMENT" + ":" + position.getDeptDesig().getDesignation().getName());
             complaintIndex.setEscalation2FunctionaryAssigneddate(new Date());
             complaintIndex.setEscalation2FunctionarySLADays(getFunctionarySlaDays(complaintIndex));
             complaintIndex.setEscalation2FunctionaryAgeingFromDue(0);
@@ -268,7 +294,8 @@ public class ComplaintIndexService {
         } else if (escalationLevel == 2) {
             // update escalation level 3 fields
             complaintIndex.setEscalation3FunctionaryName(
-                    assignedUser.getName() + ":" + position.getDeptDesig().getDesignation().getName());
+                    assignedUser != null ? assignedUser.getName()
+                            : "NO ASSIGNMENT" + ":" + position.getDeptDesig().getDesignation().getName());
             complaintIndex.setEscalation3FunctionaryAssigneddate(new Date());
             complaintIndex.setEscalation3FunctionarySLADays(getFunctionarySlaDays(complaintIndex));
             complaintIndex.setEscalation3FunctionaryAgeingFromDue(0);
@@ -418,7 +445,7 @@ public class ComplaintIndexService {
 
     private long getFunctionarySlaDays(final ComplaintIndex complaintIndex) {
         final Position position = complaintIndex.getAssignee();
-        final Designation designation = assignmentService.getPrimaryAssignmentForPositon(position.getId()).getDesignation();
+        final Designation designation = position.getDeptDesig().getDesignation();
         final Escalation complaintEscalation = escalationService
                 .getEscalationBycomplaintTypeAndDesignation(complaintIndex.getComplaintType().getId(), designation.getId());
         if (complaintEscalation != null) {

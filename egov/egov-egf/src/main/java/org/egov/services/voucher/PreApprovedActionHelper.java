@@ -87,7 +87,7 @@ public class PreApprovedActionHelper {
                 throw new ValidationException("Voucher creation failed", "Voucher creation failed");
 
         } catch (final Exception e) {
-            e.printStackTrace();
+
             final List<ValidationError> errors = new ArrayList<ValidationError>();
             errors.add(new ValidationError("exp", e.getMessage()));
             throw new ValidationException(errors);
@@ -112,12 +112,12 @@ public class PreApprovedActionHelper {
             voucherService.persist(voucherHeader);
 
         } catch (final ValidationException e) {
-            e.printStackTrace();
+
             final List<ValidationError> errors = new ArrayList<ValidationError>();
             errors.add(new ValidationError("exp", e.getErrors().get(0).getMessage()));
             throw new ValidationException(errors);
         } catch (final Exception e) {
-            e.printStackTrace();
+
             final List<ValidationError> errors = new ArrayList<ValidationError>();
             errors.add(new ValidationError("exp", e.getMessage()));
             throw new ValidationException(errors);

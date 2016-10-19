@@ -89,7 +89,7 @@ public class RelationService extends PersistenceService<Relation, Integer> imple
 	@Override
 	public List getAssetCodesForProjectCode(Integer accountdetailkey)
 			throws ValidationException {
-		// TODO Auto-generated method stub
+
 		return null;
 	}
 	

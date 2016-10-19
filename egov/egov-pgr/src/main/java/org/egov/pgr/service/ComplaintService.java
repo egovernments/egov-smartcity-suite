@@ -199,7 +199,7 @@ public class ComplaintService {
         if (null != complaint.getComplaintType() && null != complaint.getComplaintType().getDepartment())
             complaint.setDepartment(complaint.getComplaintType().getDepartment());
         else if (null != assignee)
-            complaint.setDepartment(assignmentService.getPrimaryAssignmentForPositon(assignee.getId()).getDepartment());
+            complaint.setDepartment(assignee.getDeptDesig().getDepartment());
 
         final Complaint savedComplaint = complaintRepository.save(complaint);
         pushMessage(savedComplaint);
@@ -228,22 +228,21 @@ public class ComplaintService {
         if (complaint.getStatus().getName().equalsIgnoreCase(ComplaintStatus.COMPLETED.toString())
                 || complaint.getStatus().getName().equalsIgnoreCase(ComplaintStatus.WITHDRAWN.toString())
                 || complaint.getStatus().getName().equalsIgnoreCase(ComplaintStatus.REJECTED.toString())) {
-            complaint.setDepartment(
-                    assignmentService.getPrimaryAssignmentForPositon(complaint.getAssignee().getId()).getDepartment());
+            complaint.setDepartment(complaint.getAssignee().getDeptDesig().getDepartment());
             LOG.debug("Terminating Grievance Workflow");
             if (!securityUtils.getCurrentUser().getRoles().contains(goRole))
                 complaint.transition(true).end().withComments(approvalComent)
                         .withStateValue(complaint.getStatus().getName()).withSenderName(userName)
                         .withDateInfo(new Date());
+
             else
                 complaint.transition(true).end().withComments(approvalComent)
                         .withStateValue(complaint.getStatus().getName()).withSenderName(userName)
                         .withDateInfo(new Date()).withOwner(complaint.getState().getOwnerPosition());
         } else if (null != approvalPosition && !approvalPosition.equals(Long.valueOf(0))) {
-            final Position owner = positionMasterService.getPrimaryAssignmentPositionForEmp(approvalPosition);
+            final Position owner = positionMasterService.getPositionById(approvalPosition);
             complaint.setAssignee(owner);
-            complaint.setDepartment(
-                    assignmentService.getPrimaryAssignmentForPositon(complaint.getAssignee().getId()).getDepartment());
+            complaint.setDepartment(complaint.getAssignee().getDeptDesig().getDepartment());
             if (!securityUtils.getCurrentUser().getRoles().contains(goRole))
                 complaint.transition(true).withOwner(owner).withComments(approvalComent).withSenderName(userName)
                         .withStateValue(complaint.getStatus().getName()).withDateInfo(new Date());
@@ -251,8 +250,7 @@ public class ComplaintService {
                 complaint.transition(true).withComments(approvalComent).withStateValue(complaint.getStatus().getName())
                         .withSenderName(userName).withDateInfo(new Date()).withOwner(owner);
         } else {
-            complaint.setDepartment(
-                    assignmentService.getPrimaryAssignmentForPositon(complaint.getAssignee().getId()).getDepartment());
+            complaint.setDepartment(complaint.getAssignee().getDeptDesig().getDepartment());
             if (!securityUtils.getCurrentUser().getRoles().contains(goRole))
                 complaint.transition(true).withComments(approvalComent).withSenderName(userName)
                         .withStateValue(complaint.getStatus().getName()).withDateInfo(new Date());
@@ -350,7 +348,7 @@ public class ComplaintService {
                 || state.getLastModifiedBy().getType().equals(UserType.SYSTEM))
             map.put("updatedBy", complaint.getComplainant().getName());
         else
-            map.put("updatedBy", state.getLastModifiedBy().getUsername() + "::" + state.getLastModifiedBy().getName());
+            map.put("updatedBy", state.getSenderName());
         map.put("updatedUserType", state.getLastModifiedBy().getType());
         map.put("status", state.getValue());
         final Position ownerPosition = state.getOwnerPosition();
@@ -366,7 +364,7 @@ public class ComplaintService {
             user = !assignmentList.isEmpty() ? assignmentList.get(0).getEmployee() : null;
             map.put("user", null != user
                     ? user.getUsername() + "::" + user.getName() + "::" + ownerPosition.getDeptDesig().getDesignation().getName()
-                    : ownerPosition.getName());
+                    : "NO ASSIGNMENT :: " + ownerPosition.getName());
             map.put("usertype", null != user ? user.getType() : "");
             map.put("department", null != ownerPosition.getDeptDesig().getDepartment()
                     ? ownerPosition.getDeptDesig().getDepartment().getName() : "");
@@ -383,8 +381,7 @@ public class ComplaintService {
                         || stateHistory.getLastModifiedBy().getType().equals(UserType.SYSTEM))
                     HistoryMap.put("updatedBy", complaint.getComplainant().getName());
                 else
-                    HistoryMap.put("updatedBy",
-                            stateHistory.getLastModifiedBy().getUsername() + "::" + stateHistory.getLastModifiedBy().getName());
+                    HistoryMap.put("updatedBy", stateHistory.getSenderName());
                 HistoryMap.put("updatedUserType", stateHistory.getLastModifiedBy().getType());
                 HistoryMap.put("status", stateHistory.getValue());
                 final Position owner = stateHistory.getOwnerPosition();
@@ -401,8 +398,8 @@ public class ComplaintService {
                             .put("user",
                                     null != user
                                             ? user.getUsername() + "::" + user.getName() + "::"
-                                                    + ownerPosition.getDeptDesig().getDesignation().getName()
-                                            : ownerPosition.getName());
+                                                    + owner.getDeptDesig().getDesignation().getName()
+                                            : "NO ASSIGNMENT :: " + owner.getName());
                     HistoryMap.put("usertype", null != user ? user.getType() : "");
                     HistoryMap.put("department", null != owner.getDeptDesig().getDepartment()
                             ? owner.getDeptDesig().getDepartment().getName() : "");
@@ -437,25 +434,28 @@ public class ComplaintService {
         messagingService.sendSMS(complaint.getComplainant().getMobile(), smsBody.toString());
         final Position owner = complaint.getState().getOwnerPosition();
         if (null != owner && null != owner.getDeptDesig()) {
-            final User user = eisCommonService.getUserForPosition(owner.getId(), new Date());
-            if (null != user) {
-                final StringBuffer smsBodyOfficial = new StringBuffer().append("New Grievance for ")
-                        .append(complaint.getComplaintType().getName())
-                        .append(" is registered by ").append(complaint.getComplainant().getName() == null ? "Anonymous User"
-                                : complaint.getComplainant().getName())
-                        .append(", ")
-                        .append(complaint.getComplainant().getMobile() == null ? "" : complaint.getComplainant().getMobile())
-                        .append(" at ").append(complaint.getLocation().getName());
-                if (complaint.getLatlngAddress() != null)
-                    smsBodyOfficial.append(", " + complaint.getLatlngAddress());
-                else
-                    smsBodyOfficial
-                            .append(complaint.getChildLocation() != null ? ", " + complaint.getChildLocation().getName() : "");
-                smsBodyOfficial.append(complaint.getLandmarkDetails() != null ? ", " + complaint.getLandmarkDetails() : "");
-                messagingService.sendSMS(user.getMobileNumber(), smsBodyOfficial.toString());
+            final List<Assignment> assignments = assignmentService.getAssignmentsForPosition(owner.getId(), new Date());
+            if (!assignments.isEmpty()) {
+                final User user = assignments.get(0).getEmployee();
+                if (null != user) {
+                    final StringBuffer smsBodyOfficial = new StringBuffer().append("New Grievance for ")
+                            .append(complaint.getComplaintType().getName())
+                            .append(" is registered by ").append(complaint.getComplainant().getName() == null ? "Anonymous User"
+                                    : complaint.getComplainant().getName())
+                            .append(", ")
+                            .append(complaint.getComplainant().getMobile() == null ? "" : complaint.getComplainant().getMobile())
+                            .append(" at ").append(complaint.getLocation().getName());
+                    if (complaint.getLatlngAddress() != null)
+                        smsBodyOfficial.append(", " + complaint.getLatlngAddress());
+                    else
+                        smsBodyOfficial
+                                .append(complaint.getChildLocation() != null ? ", " + complaint.getChildLocation().getName()
+                                        : "");
+                    smsBodyOfficial.append(complaint.getLandmarkDetails() != null ? ", " + complaint.getLandmarkDetails() : "");
+                    messagingService.sendSMS(user.getMobileNumber(), smsBodyOfficial.toString());
+                }
             }
         }
-
     }
 
     public void sendSmsOnCompletion(final Complaint complaint) {

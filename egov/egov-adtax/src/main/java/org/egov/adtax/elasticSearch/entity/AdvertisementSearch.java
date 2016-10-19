@@ -261,7 +261,7 @@ public class AdvertisementSearch implements Indexable {
 	}
 
 	public AdvertisementSearch() {
-		// TODO Auto-generated constructor stub
+
 	}
 
 	public String getWard() {

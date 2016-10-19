@@ -60,11 +60,16 @@ import org.egov.infra.persistence.entity.AbstractAuditable;
 import org.egov.infra.utils.DateUtils;
 import org.egov.infra.validation.exception.ValidationError;
 import org.egov.lcms.utils.constants.LcmsConstants;
+import org.hibernate.envers.AuditOverride;
+import org.hibernate.envers.AuditOverrides;
+import org.hibernate.envers.Audited;
 import org.hibernate.validator.constraints.Length;
 
 @Entity
 @Table(name = "EGLC_LEGALCASEDISPOSAL")
 @SequenceGenerator(name = LegalCaseDisposal.SEQ_EGLC_LEGALCASEDISPOSAL, sequenceName = LegalCaseDisposal.SEQ_EGLC_LEGALCASEDISPOSAL, allocationSize = 1)
+@AuditOverrides({ @AuditOverride(forClass = AbstractAuditable.class, name = "lastModifiedBy"),
+    @AuditOverride(forClass = AbstractAuditable.class, name = "lastModifiedDate") })
 public class LegalCaseDisposal extends AbstractAuditable {
     private static final long serialVersionUID = 1517694643078084884L;
     public static final String SEQ_EGLC_LEGALCASEDISPOSAL = "SEQ_EGLC_LEGALCASEDISPOSAL";
@@ -76,19 +81,23 @@ public class LegalCaseDisposal extends AbstractAuditable {
     @ManyToOne
     @NotNull
     @JoinColumn(name = "legalcase", nullable = false)
+    @Audited
     private LegalCase legalCase;
 
     @NotNull
     @Temporal(TemporalType.DATE)
     @Column(name = "disposaldate")
+    @Audited
     private Date disposalDate;
 
     @Length(max = 1024)
     @Column(name = "disposaldetails")
+    @Audited
     private String disposalDetails;
 
     @Temporal(TemporalType.DATE)
     @Column(name = "consignmenttorecordroomdate")
+    @Audited
     private Date consignmentDate;
 
     public Date getDisposalDate() {

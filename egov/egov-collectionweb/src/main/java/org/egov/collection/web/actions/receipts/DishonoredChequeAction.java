@@ -56,8 +56,8 @@ import org.apache.struts2.convention.annotation.Results;
 import org.apache.struts2.interceptor.validation.SkipValidation;
 import org.egov.collection.constants.CollectionConstants;
 import org.egov.collection.entity.DishonoredChequeBean;
-import org.egov.collection.entity.DishonoredChequeForm;
-import org.egov.collection.integration.services.DishonorChequeActionHelper;
+import org.egov.collection.entity.ReceiptVoucher;
+import org.egov.collection.integration.services.DishonorChequeService;
 import org.egov.collection.service.ReceiptHeaderService;
 import org.egov.commons.dao.BankBranchHibernateDAO;
 import org.egov.commons.dao.BankaccountHibernateDAO;
@@ -72,9 +72,9 @@ import org.egov.model.instrument.InstrumentType;
 import org.springframework.beans.factory.annotation.Autowired;
 
 @Results({ @Result(name = DishonoredChequeAction.SEARCH, location = "dishonoredCheque-search.jsp"),
-    @Result(name = DishonoredChequeAction.SUCCESS, location = "dishonoredCheque-success.jsp"),
-    @Result(name = "process", location = "dishonoredCheque-process.jsp"),
-    @Result(name = "accountList", location = "dishonoredCheque-accountList.jsp") })
+        @Result(name = DishonoredChequeAction.SUCCESS, location = "dishonoredCheque-success.jsp"),
+        @Result(name = "process", location = "dishonoredCheque-process.jsp"),
+        @Result(name = "accountList", location = "dishonoredCheque-accountList.jsp") })
 @ParentPackage("egov")
 public class DishonoredChequeAction extends SearchFormAction {
 
@@ -94,6 +94,7 @@ public class DishonoredChequeAction extends SearchFormAction {
     private Date chequeDate;
     private String instHeaderIds;
     private String voucherHeaderIds;
+    private String receiptHeaderIds;
     private String receiptGLDetails;
     private String remittanceGLDetails;
     private Date transactionDate;
@@ -103,19 +104,19 @@ public class DishonoredChequeAction extends SearchFormAction {
     private String referenceNo;
     private Long accountNumber;
     private EgovPaginatedList paginatedList;
-    private List<DishonoredChequeForm> generalLedger = new ArrayList<DishonoredChequeForm>(0);
-    private List<DishonoredChequeForm> subLedgerDetails = new ArrayList<DishonoredChequeForm>(0);
-    private List<DishonoredChequeForm> remittanceGeneralLedger = new ArrayList<DishonoredChequeForm>(0);
+    private List<DishonoredChequeBean> generalLedger = new ArrayList<DishonoredChequeBean>(0);
+    private List<DishonoredChequeBean> subLedgerDetails = new ArrayList<DishonoredChequeBean>(0);
+    private List<DishonoredChequeBean> remittanceGeneralLedger = new ArrayList<DishonoredChequeBean>(0);
     protected List<DishonoredChequeBean> dishonoredChequeDisplayList = new ArrayList<DishonoredChequeBean>(0);
     @Autowired
     private ReceiptHeaderService receiptHeaderService;
     @Autowired
-    private DishonorChequeActionHelper dishonorChequeActionHelper;
+    private DishonorChequeService dishonorChequeService;
     private BigDecimal reversalAmount;
 
     @Override
     public Object getModel() {
-        // TODO Auto-generated method stub
+
         return null;
     }
 
@@ -174,7 +175,7 @@ public class DishonoredChequeAction extends SearchFormAction {
                 "from InstrumentType where type=?", instrumentMode);
         final String searchQuery = receiptHeaderService.getReceiptHeaderforDishonor(instType.getId(), accountNumber,
                 bankId, chequeNumber, chequeDate.toString());
-        final String srchQry = "select vh.id as voucherHeaderId,vh.vouchernumber as voucherNumber, rpt.id as receiptheaderid,ih.id as instrumentheaderid,rpt.receiptnumber as receiptnumber,rpt.receiptdate as receiptdate,ih.instrumentnumber as instrumentnumber,"
+        final String srchQry = "select rpt.id as receiptheaderid,ih.id as instrumentheaderid,rpt.receiptnumber as receiptnumber,rpt.receiptdate as receiptdate,ih.instrumentnumber as instrumentnumber,"
                 + "ih.instrumentdate as instrumentdate,ih.instrumentamount as instrumentamount,b.name as bankname,ba.accountnumber as accountnumber,ih.payto as payto,status.description as description "
                 + searchQuery + " ORDER BY rpt.receiptnumber, rpt.receiptdate ";
         final String countQry = "select count(distinct rpt) " + searchQuery + "";
@@ -186,24 +187,25 @@ public class DishonoredChequeAction extends SearchFormAction {
     @Action(value = "/receipts/dishonoredCheque-create")
     public String create() throws Exception {
         try {
-            final DishonoredChequeForm chequeForm = new DishonoredChequeForm();
+            final DishonoredChequeBean chequeForm = new DishonoredChequeBean();
             chequeForm.setTransactionDate(transactionDate);
             chequeForm.setDishonorReason(dishonorReason);
             chequeForm.setReferenceNo(referenceNo);
             chequeForm.setRemarks(remarks);
             chequeForm.setInstHeaderIds(instHeaderIds);
             chequeForm.setVoucherHeaderIds(voucherHeaderIds);
+            chequeForm.setReceiptHeaderIds(receiptHeaderIds);
             chequeForm.setReceiptGLDetails(receiptGLDetails);
             chequeForm.setRemittanceGLDetails(remittanceGLDetails);
 
-            dishonorChequeActionHelper.createDishonorCheque(chequeForm);
+            dishonorChequeService.createDishonorCheque(chequeForm);
         } catch (final ValidationException e) {
-            e.printStackTrace();
+            LOGGER.error("Error in DishonorCheque >>>>" + e);
             final List<ValidationError> errors = new ArrayList<ValidationError>();
             errors.add(new ValidationError("exp", e.getErrors().get(0).getMessage()));
             throw new ValidationException(errors);
         } catch (final Exception e) {
-            e.printStackTrace();
+            LOGGER.error("Error in DishonorCheque >>>>" + e);
             final List<ValidationError> errors = new ArrayList<ValidationError>();
             errors.add(new ValidationError("exp", e.getMessage()));
             throw new ValidationException(errors);
@@ -212,31 +214,39 @@ public class DishonoredChequeAction extends SearchFormAction {
     }
 
     private void prepareResults() {
-
         LOGGER.debug("Entering into prepareResults");
         paginatedList = (EgovPaginatedList) searchResult;
         final List<Object[]> list = paginatedList.getList();
-
-        for (final Object[] object : list) {
-            final DishonoredChequeBean chequeBean = new DishonoredChequeBean();
-            chequeBean.setVoucherHeaderId(getLongValue(object[0]));
-            chequeBean.setVoucherNumber(getStringValue(object[1]));
-            chequeBean.setReceiptHeaderid(getLongValue(object[2]));
-            chequeBean.setInstrumentHeaderid(getLongValue(object[3]));
-            chequeBean.setReceiptNumber(getStringValue(object[4]));
-            chequeBean.setReceiptDate(getDateValue(object[5]));
-            chequeBean.setInstrumentNumber(getStringValue(object[6]));
-            chequeBean.setInstrumentDate(getDateValue(object[7]));
-            chequeBean.setInstrumentAmount(getBigDecimalValue(object[8]));
-            chequeBean.setBankName(getStringValue(object[9]));
-            chequeBean.setAccountNumber(getStringValue(object[10]));
-            chequeBean.setPayTo(getStringValue(object[11]));
-            chequeBean.setDescription(getStringValue(object[12]));
-
-            dishonoredChequeDisplayList.add(chequeBean);
-        }
-        paginatedList.setList(dishonoredChequeDisplayList);
+        paginatedList.setList(populateDishonorChequeBean(list));
         LOGGER.debug("Exiting from prepareResults");
+    }
+
+    public List<DishonoredChequeBean> populateDishonorChequeBean(final List<Object[]> list) {
+        Long receiptId;
+        List<DishonoredChequeBean> dishonoredChequeList = new ArrayList<DishonoredChequeBean>();
+        for (final Object[] object : list) {
+            receiptId = getLongValue(object[0]);
+            final DishonoredChequeBean chequeBean = new DishonoredChequeBean();
+            final ReceiptVoucher receiptVoucher = (ReceiptVoucher) persistenceService.findByNamedQuery(
+                    CollectionConstants.QUERY_RECEIPT_VOUCHER_BY_RECEIPTID, receiptId);
+            if (receiptVoucher != null) {
+                chequeBean.setVoucherHeaderId(receiptVoucher.getVoucherheader().getId());
+                chequeBean.setVoucherNumber(receiptVoucher.getVoucherheader().getVoucherNumber());
+            }
+            chequeBean.setReceiptHeaderid(receiptId);
+            chequeBean.setInstrumentHeaderid(getLongValue(object[1]));
+            chequeBean.setReceiptNumber(getStringValue(object[2]));
+            chequeBean.setReceiptDate(getDateValue(object[3]));
+            chequeBean.setInstrumentNumber(getStringValue(object[4]));
+            chequeBean.setInstrumentDate(getDateValue(object[5]));
+            chequeBean.setInstrumentAmount(getBigDecimalValue(object[6]));
+            chequeBean.setBankName(getStringValue(object[7]));
+            chequeBean.setAccountNumber(getStringValue(object[8]));
+            chequeBean.setPayTo(getStringValue(object[9]));
+            chequeBean.setDescription(getStringValue(object[10]));
+            dishonoredChequeList.add(chequeBean);
+        }
+        return dishonoredChequeList;
     }
 
     @Action(value = "/receipts/dishonoredCheque-process")
@@ -246,8 +256,9 @@ public class DishonoredChequeAction extends SearchFormAction {
     }
 
     /**
-     * Populates all the glcodes for which reversal gl entries have to be made fetches all glcodes with creditamount > 0 for
-     * receipt and fetches all glcodes with debitamount > 0 for all others(payment,contra)
+     * Populates all the glcodes for which reversal rd entries have to be made
+     * fetches all glcodes with creditamount > 0 for receipt and fetches all
+     * glcodes with debitamount > 0 for all others(payment,contra)
      */
     @SuppressWarnings("unchecked")
     public void getReversalGlCodes() {
@@ -258,74 +269,64 @@ public class DishonoredChequeAction extends SearchFormAction {
         reversalAmount = (BigDecimal) persistenceService
                 .find("select sum(instrumentAmount) from InstrumentHeader where id in (" + instHeaderIds + ")");
         glCodescredit = persistenceService
-                .findAllBy("select gl.voucherHeaderId.id ,gl.glcodeId.id, gl.glcode,gl.glcodeId.name, sum(gl.creditAmount),sum(gl.debitAmount),gl.functionId from CGeneralLedger gl where gl.voucherHeaderId in("
-                        + voucherHeaderIds
-                        + ") and gl.debitAmount<>0 and gl.creditAmount=0 and gl.glcode not in (select glcode from CChartOfAccounts where purposeId in (select id from AccountCodePurpose where name='Cheque In Hand')) group by gl.voucherHeaderId.id ,gl.glcodeId.id,gl.glcode,gl.glcodeId.name,gl.functionId order by gl.glcode");
+                .findAllBy("select rh.id ,accounthead.id, accounthead.glcode,accounthead.name, sum(rd.cramount),sum(rd.dramount),function.id from ReceiptDetail rd  inner join rd.accounthead as accounthead inner join rd.receiptHeader as rh inner join rd.function as function where rh.id in("
+                        + receiptHeaderIds
+                        + ") and rd.dramount<>0 and rd.cramount=0 and accounthead.glcode not in (select glcode from CChartOfAccounts where purposeId in (select id from AccountCodePurpose where name='Cheque In Hand')) group by rh.id ,accounthead.id,accounthead.glcode,accounthead.name,function.id order by accounthead");
+
         glCodes = persistenceService
-                .findAllBy("select gl.voucherHeaderId.id ,gl.glcodeId.id,gl.glcode,gl.glcodeId.name,sum(gl.creditAmount),sum(gl.debitAmount),gl.functionId  from CGeneralLedger gl where gl.voucherHeaderId in("
-                        + voucherHeaderIds
-                        + ") and gl.creditAmount<>0 and gl.debitAmount=0 group by gl.voucherHeaderId.id ,gl.glcodeId.id, gl.glcode,gl.glcodeId.name,gl.functionId order by gl.glcode");
+                .findAllBy("select rh.id ,accounthead.id, accounthead.glcode,accounthead.name, sum(rd.cramount),sum(rd.dramount),function.id from ReceiptDetail rd  inner join rd.accounthead as accounthead inner join rd.receiptHeader as rh inner join rd.function as function where rh.id in("
+                        + receiptHeaderIds
+                        + ") and rd.cramount<>0 and rd.dramount=0  group by rh.id ,accounthead.id,accounthead.glcode,accounthead.name,function.id order by accounthead");
         glCodes.addAll(glCodescredit);
 
         String reversalGlCodesStr = "";
-        for (final Object[] gl : glCodes) {
-            final DishonoredChequeForm detail = new DishonoredChequeForm();
-            detail.setVoucherHeaderId(getStringValue(gl[0]));
-            detail.setGlcodeId(getStringValue(gl[1]));
-            detail.setGlcode(getStringValue(gl[2]));
-            detail.setDescription(getStringValue(gl[3]));
-            detail.setDebitAmount(getStringValue(gl[4]));
-            detail.setCreditAmount(getStringValue(gl[5]));
-            detail.setFunctionId(getStringValue(gl[6]));
+        for (final Object[] rd : glCodes) {
+            final DishonoredChequeBean detail = new DishonoredChequeBean();
+            final ReceiptVoucher receiptVoucher = (ReceiptVoucher) persistenceService.findByNamedQuery(
+                    CollectionConstants.QUERY_RECEIPT_VOUCHER_BY_RECEIPTID, getLongValue(rd[0]));
+            if (receiptVoucher != null) {
+                detail.setVoucherHeaderId(receiptVoucher.getVoucherheader().getId());
+            }
+            detail.setGlcodeId(getStringValue(rd[1]));
+            detail.setGlcode(getStringValue(rd[2]));
+            detail.setDescription(getStringValue(rd[3]));
+            detail.setDebitAmount(getStringValue(rd[4]));
+            detail.setCreditAmount(getStringValue(rd[5]));
+            detail.setFunctionId(getStringValue(rd[6]));
             generalLedger.add(detail);
             if (reversalGlCodesStr.equalsIgnoreCase(""))
-                reversalGlCodesStr = "'" + getStringValue(gl[2]) + "'";
+                reversalGlCodesStr = "'" + getStringValue(rd[2]) + "'";
             else
-                reversalGlCodesStr = reversalGlCodesStr + "," + "'" + getStringValue(gl[2]) + "'";
+                reversalGlCodesStr = reversalGlCodesStr + "," + "'" + getStringValue(rd[2]) + "'";
         }
-
         remittanceDetailsCredit = persistenceService
-                .findAllBy("select gl.voucherHeaderId.id ,gl.glcodeId.id, gl.glcode,gl.glcodeId.name, sum(gl.creditAmount),sum(gl.debitAmount),gl.functionId from CGeneralLedger gl ,InstrumentOtherDetails iod where gl.voucherHeaderId.id = iod.payinslipId.id and iod.instrumentHeaderId.id   in ("
+                .findAllBy("select rh.id ,accounthead.id, accounthead.glcode,accounthead.name, sum(rd.cramount),sum(rd.dramount),function.id from ReceiptDetail rd  inner join rd.accounthead as accounthead inner join rd.receiptHeader as rh inner join rd.function as function inner join rh.receiptInstrument ri where ri.id in ("
                         + instHeaderIds
-                        + ") and gl.debitAmount<>0 and gl.creditAmount=0  group by gl.voucherHeaderId.id ,gl.glcodeId.id,gl.glcode,gl.glcodeId.name,gl.functionId order by gl.glcode");
-        for (final Object[] gl : remittanceDetailsCredit) {
-            final DishonoredChequeForm detail = new DishonoredChequeForm();
-            detail.setVoucherHeaderId(getStringValue(gl[0]));
-            detail.setGlcodeId(getStringValue(gl[1]));
-            detail.setGlcode(getStringValue(gl[2]));
-            detail.setDescription(getStringValue(gl[3]));
-            detail.setDebitAmount(getStringValue(gl[4]));
-            detail.setCreditAmount(getStringValue(gl[5]));
-            detail.setFunctionId(getStringValue(gl[6]));
+                        + ") and rd.dramount<>0 and rd.cramount=0  group by rh.id ,accounthead.id,accounthead.glcode,accounthead.name,function.id order by accounthead");
+        for (final Object[] rd : remittanceDetailsCredit) {
+            final DishonoredChequeBean detail = new DishonoredChequeBean();
+            final ReceiptVoucher receiptVoucher = (ReceiptVoucher) persistenceService.findByNamedQuery(
+                    CollectionConstants.QUERY_RECEIPT_VOUCHER_BY_RECEIPTID, getLongValue(rd[0]));
+            if (receiptVoucher != null) {
+                detail.setVoucherHeaderId(receiptVoucher.getVoucherheader().getId());
+            }
+            detail.setGlcodeId(getStringValue(rd[1]));
+            detail.setGlcode(getStringValue(rd[2]));
+            detail.setDescription(getStringValue(rd[3]));
+            detail.setDebitAmount(getStringValue(rd[4]));
+            detail.setCreditAmount(getStringValue(rd[5]));
+            detail.setFunctionId(getStringValue(rd[6]));
             remittanceGeneralLedger.add(detail);
         }
         instrumentDetails = persistenceService
                 .getSession()
                 .createSQLQuery(
-                        "select vh.id as voucherHeaderId,vh.vouchernumber as voucherNumber, rpt.id as receiptheaderid,ih.id as instrumentheaderid,rpt.receiptnumber as receiptnumber,rpt.receiptdate as receiptdate,ih.instrumentnumber as instrumentnumber,"
-                                + "ih.instrumentdate as instrumentdate,ih.instrumentamount as instrumentamount,b.name as bankname,ba.accountnumber as accountnumber,ih.payto as payto,status.description as description from voucherheader vh,egf_instrumentvoucher iv,egcl_collectionheader rpt,egcl_collectioninstrument ci,egf_instrumentheader ih,egw_status status,bank b,"
-                                + "bankbranch bb,bankaccount ba where  iv.voucherheaderid=vh.id and iv.instrumentheaderid = ih.id  and rpt.id = ci.collectionheader AND ci.instrumentheader = ih.id AND status.id = ih.id_status "
+                        "select rpt.id as receiptheaderid,ih.id as instrumentheaderid,rpt.receiptnumber as receiptnumber,rpt.receiptdate as receiptdate,ih.instrumentnumber as instrumentnumber,"
+                                + "ih.instrumentdate as instrumentdate,ih.instrumentamount as instrumentamount,b.name as bankname,ba.accountnumber as accountnumber,ih.payto as payto,status.description as description from egcl_collectionheader rpt,egcl_collectioninstrument ci,egf_instrumentheader ih,egw_status status,bank b,"
+                                + "bankbranch bb,bankaccount ba where rpt.id = ci.collectionheader AND ci.instrumentheader = ih.id AND status.id = ih.id_status "
                                 + "AND b.id = bb.bankid AND bb.id = ba.branchid AND ba.id = ih.bankaccountid and ih.id in  ("
-                                + instHeaderIds
-                                + ")").list();
-        dishonoredChequeDisplayList = new ArrayList<DishonoredChequeBean>(0);
-        for (final Object[] object : instrumentDetails) {
-            final DishonoredChequeBean chequeBean = new DishonoredChequeBean();
-            chequeBean.setVoucherHeaderId(getLongValue(object[0]));
-            chequeBean.setVoucherNumber(getStringValue(object[1]));
-            chequeBean.setReceiptHeaderid(getLongValue(object[2]));
-            chequeBean.setInstrumentHeaderid(getLongValue(object[3]));
-            chequeBean.setReceiptNumber(getStringValue(object[4]));
-            chequeBean.setReceiptDate(getDateValue(object[5]));
-            chequeBean.setInstrumentNumber(getStringValue(object[6]));
-            chequeBean.setInstrumentDate(getDateValue(object[7]));
-            chequeBean.setInstrumentAmount(getBigDecimalValue(object[8]));
-            chequeBean.setBankName(getStringValue(object[9]));
-            chequeBean.setAccountNumber(getStringValue(object[10]));
-            chequeBean.setPayTo(getStringValue(object[11]));
-            chequeBean.setDescription(getStringValue(object[12]));
-            dishonoredChequeDisplayList.add(chequeBean);
-        }
+                                + instHeaderIds + ")").list();
+        dishonoredChequeDisplayList = populateDishonorChequeBean(instrumentDetails);
     }
 
     protected String getStringValue(final Object object) {
@@ -422,19 +423,19 @@ public class DishonoredChequeAction extends SearchFormAction {
         this.voucherHeaderIds = voucherHeaderIds;
     }
 
-    public List<DishonoredChequeForm> getGeneralLedger() {
+    public List<DishonoredChequeBean> getGeneralLedger() {
         return generalLedger;
     }
 
-    public void setGeneralLedger(final List<DishonoredChequeForm> generalLedger) {
+    public void setGeneralLedger(final List<DishonoredChequeBean> generalLedger) {
         this.generalLedger = generalLedger;
     }
 
-    public List<DishonoredChequeForm> getSubLedgerDetails() {
+    public List<DishonoredChequeBean> getSubLedgerDetails() {
         return subLedgerDetails;
     }
 
-    public void setSubLedgerDetails(final List<DishonoredChequeForm> subLedgerDetails) {
+    public void setSubLedgerDetails(final List<DishonoredChequeBean> subLedgerDetails) {
         this.subLedgerDetails = subLedgerDetails;
     }
 
@@ -446,11 +447,11 @@ public class DishonoredChequeAction extends SearchFormAction {
         this.reversalAmount = reversalAmount;
     }
 
-    public List<DishonoredChequeForm> getRemittanceGeneralLedger() {
+    public List<DishonoredChequeBean> getRemittanceGeneralLedger() {
         return remittanceGeneralLedger;
     }
 
-    public void setRemittanceGeneralLedger(final List<DishonoredChequeForm> remittanceGeneralLedger) {
+    public void setRemittanceGeneralLedger(final List<DishonoredChequeBean> remittanceGeneralLedger) {
         this.remittanceGeneralLedger = remittanceGeneralLedger;
     }
 
@@ -516,6 +517,14 @@ public class DishonoredChequeAction extends SearchFormAction {
 
     public void setDishonoredChequeDisplayList(final List<DishonoredChequeBean> dishonoredChequeDisplayList) {
         this.dishonoredChequeDisplayList = dishonoredChequeDisplayList;
+    }
+
+    public String getReceiptHeaderIds() {
+        return receiptHeaderIds;
+    }
+
+    public void setReceiptHeaderIds(final String receiptHeaderIds) {
+        this.receiptHeaderIds = receiptHeaderIds;
     }
 
 }

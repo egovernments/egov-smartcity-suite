@@ -144,7 +144,7 @@ public class SewerageBillServiceImpl extends BillServiceInterface {
 
     @Override
     public void cancelBill() {
-        // TODO Auto-generated method stub
+
 
     }
 
@@ -155,7 +155,7 @@ public class SewerageBillServiceImpl extends BillServiceInterface {
             collectXML = URLEncoder.encode(super.getBillXML(billObj),"UTF-8");
             LOGGER.info("collectXML --------------------------> "+collectXML); 
         } catch (UnsupportedEncodingException e) {
-            e.printStackTrace();
+
             throw new RuntimeException(e.getMessage());
         }
         return collectXML;

@@ -154,7 +154,6 @@ function loadingReport()
 			
 			oTable= $('#generateBill-table');
 			var oDataTable=oTable.dataTable({
-				"sPaginationType": "bootstrap",
 				"sDom": "<'row'<'col-xs-12 hidden col-right'f>r>t<'row'<'col-md-3 col-xs-12'i><'col-md-3 col-xs-6 col-right'l><'col-xs-12 col-md-3 col-right'<'export-data'T>><'col-md-3 col-xs-6 text-right'p>>",
 				"aLengthMenu": [[10, 25, 50, -1], [10, 25, 50, "All"]],
 				"autoWidth": false,
@@ -354,3 +353,19 @@ function updateTotalFooter(colidx, api) {
 			formatNumberInr(pageTotal) + ' (' + formatNumberInr(total)
 					+ ')');
 }
+
+
+jQuery.fn.dataTableExt.oApi.fnPagingInfo = function ( oSettings )
+{
+	return {
+		"iStart":         oSettings._iDisplayStart,
+		"iEnd":           oSettings.fnDisplayEnd(),
+		"iLength":        oSettings._iDisplayLength,
+		"iTotal":         oSettings.fnRecordsTotal(),
+		"iFilteredTotal": oSettings.fnRecordsDisplay(),
+		"iPage":          oSettings._iDisplayLength === -1 ?
+			0 : Math.ceil( oSettings._iDisplayStart / oSettings._iDisplayLength ),
+		"iTotalPages":    oSettings._iDisplayLength === -1 ?
+			0 : Math.ceil( oSettings.fnRecordsDisplay() / oSettings._iDisplayLength )
+	};
+};

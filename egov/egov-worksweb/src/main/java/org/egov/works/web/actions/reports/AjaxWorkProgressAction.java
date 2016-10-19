@@ -59,7 +59,7 @@ public class AjaxWorkProgressAction extends BaseFormAction {
 
     @Override
     public Object getModel() {
-        // TODO Auto-generated method stub
+
         return null;
     }
 

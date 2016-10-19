@@ -72,85 +72,86 @@ import org.springframework.web.multipart.MultipartFile;
 @Service
 public class LegalCaseUtil {
 
-    @Autowired
-    private EgwStatusHibernateDAO egwStatusDAO;
+	@Autowired
+	private EgwStatusHibernateDAO egwStatusDAO;
 
-    @Autowired
-    private LegalCaseRepository legalCaseRepository;
+	@Autowired
+	private LegalCaseRepository legalCaseRepository;
 
-    @Autowired
-    private PositionMasterService positionMasterService;
+	@Autowired
+	private PositionMasterService positionMasterService;
 
-    @Autowired
-    private EmployeeService employeeService;
+	@Autowired
+	private EmployeeService employeeService;
 
-    @Autowired
-    private DepartmentService departmentService;
+	@Autowired
+	private DepartmentService departmentService;
 
-    @Autowired
-    private FileStoreUtils fileStoreUtils;
+	@Autowired
+	private FileStoreUtils fileStoreUtils;
 
-    @Autowired
-    private JudgmentRepository judgmentRepository;
+	@Autowired
+	private JudgmentRepository judgmentRepository;
 
-    @Autowired
-    private LegalCaseInterimOrderRepository legalCaseInterimOrderRepository;
+	@Autowired
+	private LegalCaseInterimOrderRepository legalCaseInterimOrderRepository;
 
-    @Transactional(propagation = Propagation.REQUIRES_NEW, readOnly = true)
-    public EgwStatus getStatusForModuleAndCode(final String moduleName, final String statusCode) {
-        final EgwStatus status = egwStatusDAO.getStatusByModuleAndCode(moduleName, statusCode);
-        return status;
-    }
+	@Transactional(propagation = Propagation.REQUIRES_NEW, readOnly = true)
+	public EgwStatus getStatusForModuleAndCode(final String moduleName, final String statusCode) {
+		final EgwStatus status = egwStatusDAO.getStatusByModuleAndCode(moduleName, statusCode);
+		return status;
+	}
 
-    @Transactional(propagation = Propagation.REQUIRES_NEW, readOnly = true)
-    public List<EgwStatus> getStatusForModule() {
-        final List<EgwStatus> statusList = egwStatusDAO.getStatusByModule(LcmsConstants.MODULE_TYPE_LEGALCASE);
-        return statusList;
-    }
+	@Transactional(propagation = Propagation.REQUIRES_NEW, readOnly = true)
+	public List<EgwStatus> getStatusForModule() {
+		final List<EgwStatus> statusList = egwStatusDAO.getStatusByModule(LcmsConstants.MODULE_TYPE_LEGALCASE);
+		return statusList;
+	}
 
-    @Transactional(propagation = Propagation.REQUIRES_NEW, readOnly = true)
-    public Position getPositionByName(final String name) {
-        return positionMasterService.getPositionByName(name);
-    }
+	@Transactional(propagation = Propagation.REQUIRES_NEW, readOnly = true)
+	public Position getPositionByName(final String name) {
+		return positionMasterService.getPositionByName(name);
+	}
 
-    @Transactional(propagation = Propagation.REQUIRES_NEW, readOnly = true)
-    public Department getDepartmentByName(final String name) {
-        return departmentService.getDepartmentByName(name);
-    }
+	@Transactional(propagation = Propagation.REQUIRES_NEW, readOnly = true)
+	public Department getDepartmentByName(final String name) {
+		return departmentService.getDepartmentByName(name);
+	}
 
-    @Transactional(propagation = Propagation.REQUIRES_NEW, readOnly = true)
-    public List<BipartisanDetails> getBipartitionList(final LegalCase legalcase) {
-        return legalCaseRepository.getBipartitionDetList(legalcase.getId());
-    }
+	@Transactional(propagation = Propagation.REQUIRES_NEW, readOnly = true)
+	public List<BipartisanDetails> getBipartitionList(final LegalCase legalcase) {
+		return legalCaseRepository.getBipartitionDetList(legalcase.getId());
+	}
 
-    @Transactional(propagation = Propagation.REQUIRES_NEW, readOnly = true)
-    public List<LegalCaseDocuments> getLegalCaseDocumentList(final LegalCase legalcase) {
-        final List<LegalCaseDocuments> legalDoc = legalCaseRepository.getLegalCaseDocumentList(legalcase.getId());
-        return legalDoc;
-    }
+	@Transactional(propagation = Propagation.REQUIRES_NEW, readOnly = true)
+	public List<LegalCaseDocuments> getLegalCaseDocumentList(final LegalCase legalcase) {
+		final List<LegalCaseDocuments> legalDoc = legalCaseRepository.getLegalCaseDocumentList(legalcase.getId());
+		return legalDoc;
+	}
 
-    @Transactional(propagation = Propagation.REQUIRES_NEW, readOnly = true)
-    public List<JudgmentDocuments> getJudgmentDocumentList(final Judgment judgment) {
-        final List<JudgmentDocuments> judgmentDoc = judgmentRepository.getJudgmentDocumentList(judgment.getId());
-        return judgmentDoc;
-    }
+	@Transactional(propagation = Propagation.REQUIRES_NEW, readOnly = true)
+	public List<JudgmentDocuments> getJudgmentDocumentList(final Judgment judgment) {
+		final List<JudgmentDocuments> judgmentDoc = judgmentRepository.getJudgmentDocumentList(judgment.getId());
+		return judgmentDoc;
+	}
 
-    @Transactional(propagation = Propagation.REQUIRES_NEW, readOnly = true)
-    public List<LcInterimOrderDocuments> getLcInterimOrderDocumentList(
-            final LegalCaseInterimOrder legalCaseInterimOrder) {
-        final List<LcInterimOrderDocuments> interimOrderDoc = legalCaseInterimOrderRepository
-                .getLcInterimOrderDocumentList(legalCaseInterimOrder.getId());
-        return interimOrderDoc;
-    }
+	@Transactional(propagation = Propagation.REQUIRES_NEW, readOnly = true)
+	public List<LcInterimOrderDocuments> getLcInterimOrderDocumentList(
+			final LegalCaseInterimOrder legalCaseInterimOrder) {
+		final List<LcInterimOrderDocuments> interimOrderDoc = legalCaseInterimOrderRepository
+				.getLcInterimOrderDocumentList(legalCaseInterimOrder.getId());
+		return interimOrderDoc;
+	}
 
-    @Transactional(propagation = Propagation.REQUIRES_NEW, readOnly = true)
-    public Employee getEmployeeByUserName(final String userName) {
-        final Employee employee = employeeService.getEmployeeByUserName(userName);
-        return employee;
+	@Transactional(propagation = Propagation.REQUIRES_NEW, readOnly = true)
+	public Employee getEmployeeByUserName(final String userName) {
+		final Employee employee = employeeService.getEmployeeByUserName(userName);
+		return employee;
 
-    }
+	}
 
-    public Set<FileStoreMapper> addToFileStore(final MultipartFile[] files) {
-        return fileStoreUtils.addToFileStore(files, LcmsConstants.FILESTORE_MODULECODE);
-    }
+	@Transactional
+	public Set<FileStoreMapper> addToFileStore(final MultipartFile[] files) {
+		return fileStoreUtils.addToFileStore(files, LcmsConstants.FILESTORE_MODULECODE);
+	}
 }

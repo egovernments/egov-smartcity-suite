@@ -59,17 +59,23 @@ import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import javax.validation.constraints.NotNull;
 
-import org.egov.infra.persistence.entity.AbstractPersistable;
+import org.egov.infra.persistence.entity.AbstractAuditable;
 import org.egov.infra.persistence.validator.annotation.ValidateDate;
 import org.egov.infra.utils.DateUtils;
 import org.egov.infra.validation.exception.ValidationError;
 import org.egov.lcms.utils.constants.LcmsConstants;
+import org.hibernate.envers.AuditOverride;
+import org.hibernate.envers.AuditOverrides;
+import org.hibernate.envers.Audited;
+import org.hibernate.envers.NotAudited;
 import org.hibernate.validator.constraints.Length;
 
 @Entity
 @Table(name = "EGLC_APPEAL")
 @SequenceGenerator(name = Appeal.SEQ_EGLC_APPEAL, sequenceName = Appeal.SEQ_EGLC_APPEAL, allocationSize = 1)
-public class Appeal extends AbstractPersistable<Long> {
+@AuditOverrides({ @AuditOverride(forClass = AbstractAuditable.class, name = "lastModifiedBy"),
+    @AuditOverride(forClass = AbstractAuditable.class, name = "lastModifiedDate") })
+public class Appeal extends AbstractAuditable {
 
     private static final long serialVersionUID = 1517694643078084884L;
     public static final String SEQ_EGLC_APPEAL = "SEQ_EGLC_APPEAL";
@@ -81,23 +87,28 @@ public class Appeal extends AbstractPersistable<Long> {
     @ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @NotNull
     @JoinColumn(name = "judgmentimpl")
+    @Audited
     private JudgmentImpl judgmentImpl;
 
     @Length(max = 50)
     @NotNull
     @Column(name = "srnumber")
+    @Audited
     private String srNumber;
 
     @ValidateDate(allowPast = true, dateFormat = LcmsConstants.DATE_FORMAT)
     @Temporal(TemporalType.DATE)
     @Column(name = "appealfiledon")
+    @Audited
     private Date appealFiledOn;
 
     @Length(max = 100)
     @Column(name = "appealfiledby")
+    @Audited
     private String appealFiledBy;
 
     @OneToMany(mappedBy = "appeal", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @NotAudited
     private List<AppealDocuments> appealDocuments = new ArrayList<AppealDocuments>(0);
 
     @Override

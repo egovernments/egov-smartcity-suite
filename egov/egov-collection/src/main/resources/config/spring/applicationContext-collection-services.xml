@@ -85,7 +85,6 @@
 	<bean id="financialsUtil" class="org.egov.collection.utils.FinancialsUtil">
 		<property name="instrumentService" ref="instrumentService" />
 		<property name="contraService" ref="contraService" />
-		<property name="collectionsUtil" ref="collectionsUtil" />
 		<property name="instrumentHeaderService" ref="instrumentHeaderService" />
 	</bean>
 
@@ -160,14 +159,6 @@
 		id="schedularService">
 		<property name="persistenceService" ref="persistenceService" />
 		<property name="reconciliationService" ref="reconciliationService" />
-	</bean>
-
-	<bean class="org.egov.collection.integration.services.DishonorChequeService"
-		id="dishonorChequeService">
-		<property name="persistenceService" ref="persistenceService" />
-		<property name="receiptHeaderService" ref="receiptHeaderService" />
-		<property name="collectionsUtil" ref="collectionsUtil" />
-		<property name="financialsUtil" ref="financialsUtil" />
 	</bean>
 
 	<bean id="challanPersistenceService" class="org.egov.infstr.services.PersistenceService">

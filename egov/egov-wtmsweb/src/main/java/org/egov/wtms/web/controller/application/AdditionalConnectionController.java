@@ -182,13 +182,14 @@ public class AdditionalConnectionController extends GenericConnectionController 
         processAndStoreApplicationDocuments(addConnection);
 
         Long approvalPosition = 0l;
-        String approvalComent = "";
+        String approvalComment = "";
+        String workFlowActionValue = "";
 
         if (request.getParameter("approvalComent") != null)
-            approvalComent = request.getParameter("approvalComent");
+            approvalComment = request.getParameter("approvalComent");
 
         if (request.getParameter("workFlowAction") != null)
-            workFlowAction = request.getParameter("workFlowAction");
+            workFlowActionValue = request.getParameter("workFlowAction");
 
         if (request.getParameter("approvalPosition") != null && !request.getParameter("approvalPosition").isEmpty())
             approvalPosition = Long.valueOf(request.getParameter("approvalPosition"));
@@ -215,8 +216,8 @@ public class AdditionalConnectionController extends GenericConnectionController 
                 approvalPosition = userPosition.getId();
         }
 
-        waterConnectionDetailsService.createNewWaterConnection(addConnection, approvalPosition, approvalComent,
-                addConnection.getApplicationType().getCode(), workFlowAction,sourceChannel);
+        waterConnectionDetailsService.createNewWaterConnection(addConnection, approvalPosition, approvalComment,
+                addConnection.getApplicationType().getCode(), workFlowActionValue,sourceChannel);
         final Assignment currentUserAssignment = assignmentService.getPrimaryAssignmentForGivenRange(securityUtils
                 .getCurrentUser().getId(), new Date(), new Date());
         String nextDesign = "";
