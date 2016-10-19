@@ -51,7 +51,7 @@ import static org.egov.ptis.constants.PropertyTaxConstants.DEMAND_RSNS_LIST;
 import static org.egov.ptis.constants.PropertyTaxConstants.OWNERSHIP_TYPE_VAC_LAND;
 import static org.egov.ptis.constants.PropertyTaxConstants.QUERY_BASICPROPERTY_BY_UPICNO;
 import static org.egov.ptis.constants.PropertyTaxConstants.VACANT_PROPERTY_DMDRSN_CODE_MAP;
-import static org.egov.ptis.constants.PropertyTaxConstants.DEMANDRSN_STR_VACANT_TAX; 
+import static org.egov.ptis.constants.PropertyTaxConstants.DEMANDRSN_STR_VACANT_TAX;
 import static org.egov.ptis.constants.PropertyTaxConstants.CURRENTYEAR_SECOND_HALF;
 import static org.egov.ptis.constants.PropertyTaxConstants.CURRENTYEAR_FIRST_HALF;
 
@@ -89,6 +89,7 @@ import org.egov.demand.model.EgDemand;
 import org.egov.demand.model.EgDemandDetails;
 import org.egov.demand.model.EgDemandReason;
 import org.egov.infra.exception.ApplicationRuntimeException;
+import org.egov.infstr.utils.DateUtils;
 import org.egov.infra.web.struts.actions.BaseFormAction;
 import org.egov.infra.web.struts.annotation.ValidationErrorPage;
 import org.egov.ptis.bean.DemandDetail;
@@ -323,11 +324,17 @@ public class EditDemandAction extends BaseFormAction {
                 addActionError(getText("error.editDemand.badInstallmentSelection"));
             }
 
-            Map<String, Installment> currYearInstMap = propertyTaxUtil.getInstallmentsForCurrYear(new Date());
-            if ((newInstallments.contains(currYearInstMap.get(CURRENTYEAR_FIRST_HALF)) && !newInstallments.contains(currYearInstMap.get(CURRENTYEAR_SECOND_HALF))) ||
-                    (!newInstallments.contains(currYearInstMap.get(CURRENTYEAR_FIRST_HALF)) && newInstallments.contains(currYearInstMap.get(CURRENTYEAR_SECOND_HALF)))) {
-                addActionError(getText("error.currentyearinstallments"));
+            Date currDate = new Date();
+            Map<String, Installment> currYearInstMap = propertyTaxUtil.getInstallmentsForCurrYear(currDate);
+            if(!DateUtils.compareDates(currDate,currYearInstMap.get(CURRENTYEAR_SECOND_HALF).getFromDate())) {
+                if ((newInstallments.contains(currYearInstMap.get(CURRENTYEAR_FIRST_HALF)) && !newInstallments.contains(currYearInstMap.get(CURRENTYEAR_SECOND_HALF))) ||
+                        (!newInstallments.contains(currYearInstMap.get(CURRENTYEAR_FIRST_HALF)) && newInstallments.contains(currYearInstMap.get(CURRENTYEAR_SECOND_HALF)))) {
+                    addActionError(getText("error.currentyearinstallments"));
+                }
+            } else if(!newInstallments.contains(currYearInstMap.get(CURRENTYEAR_SECOND_HALF))) {
+                addActionError(getText("error.currentInst"));
             }
+          
         }
 
         if (installmentsChqPenalty.size() > 0) {
