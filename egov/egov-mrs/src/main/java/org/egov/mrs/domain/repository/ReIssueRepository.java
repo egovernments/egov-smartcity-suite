@@ -42,6 +42,8 @@ package org.egov.mrs.domain.repository;
 import org.egov.mrs.domain.entity.ReIssue;
 import org.egov.mrs.domain.entity.MarriageRegistration;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 @Repository
@@ -50,4 +52,7 @@ public interface ReIssueRepository extends JpaRepository<ReIssue, Long> {
     ReIssue findById(Long id);
     
     ReIssue findByRegistration(MarriageRegistration registration);
+   
+    @Query("select scd from ReIssue scd where scd.registration.registrationNo =:registrationNo and scd.isActive='f' and upper(scd.status.code) not in ('CANCELLED','CERTIFICATEREISSUED')")
+    ReIssue findReIssueInProgressForRegistration(@Param("registrationNo") String registrationNo);
 }

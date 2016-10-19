@@ -71,6 +71,7 @@ import org.egov.mrs.application.service.workflow.RegistrationWorkflowService;
 import org.egov.mrs.autonumber.MarriageRegistrationApplicationNumberGenerator;
 import org.egov.mrs.domain.entity.MarriageCertificate;
 import org.egov.mrs.domain.entity.MarriageDocument;
+import org.egov.mrs.domain.entity.MarriageRegistration;
 import org.egov.mrs.domain.entity.MrApplicant;
 import org.egov.mrs.domain.entity.ReIssue;
 import org.egov.mrs.domain.enums.MarriageCertificateType;
@@ -387,5 +388,10 @@ public class ReIssueService {
         }
         return historyTable;
     }
+
+	public boolean checkAnyWorkFlowInProgressForRegistration(MarriageRegistration registration) {
+		if(reIssueRepository.findReIssueInProgressForRegistration(registration.getRegistrationNo())==null) return false; 
+	return true;
+	}
 
 }

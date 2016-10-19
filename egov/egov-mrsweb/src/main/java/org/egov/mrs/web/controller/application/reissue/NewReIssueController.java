@@ -48,7 +48,6 @@ import org.egov.eis.web.controller.workflow.GenericWorkFlowController;
 import org.egov.mrs.application.MarriageConstants;
 import org.egov.mrs.domain.entity.MarriageRegistration;
 import org.egov.mrs.domain.entity.ReIssue;
-import org.egov.mrs.domain.enums.MarriageCertificateType;
 import org.egov.mrs.domain.service.MarriageApplicantService;
 import org.egov.mrs.domain.service.MarriageDocumentService;
 import org.egov.mrs.domain.service.MarriageRegistrationService;
@@ -98,7 +97,16 @@ public class NewReIssueController extends GenericWorkFlowController {
 
         final MarriageRegistration registration = marriageRegistrationService.get(registrationId);
 
-        marriageRegistrationService.prepareDocumentsForView(registration);
+		if (registration == null) {
+			model.addAttribute("message", "msg.invalid.request");
+			return "marriagecommon-error";
+		} // CHECK ANY RECORD ALREADY IN ISSUE CERTIFICATE WORKFLOW FOR THE SELECTED REGISTRATION.IF YES, DO NOT ALLOW THEM TO PROCESS THE
+			// REQUEST.
+		else if (reIssueService.checkAnyWorkFlowInProgressForRegistration(registration)) {
+			model.addAttribute("message", "msg.workflow.alreadyPresent");
+			return "marriagecommon-error";
+		}
+	     marriageRegistrationService.prepareDocumentsForView(registration);
         marriageApplicantService.prepareDocumentsForView(registration.getHusband());
         marriageApplicantService.prepareDocumentsForView(registration.getWife());
           /*

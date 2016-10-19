@@ -204,4 +204,9 @@
         <put-attribute name="page-title" value="title.mrgRegistration.dataEntry" cascade="true"/>
         <put-attribute name="body" value="/WEB-INF/views/application/registration/mrgreg-dataentryform.jsp"/>
     </definition> 
+        <definition name="marriagecommon-error" extends="base_layout">	 
+        <put-attribute name="page-title" value="title.registration.common.error" cascade="true"/>
+        <put-attribute name="body" value="/WEB-INF/views/application/collection/marriage-error.jsp"/>
+    </definition>
+    
 </tiles-definitions>
