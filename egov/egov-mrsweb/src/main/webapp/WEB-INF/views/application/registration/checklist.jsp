@@ -45,7 +45,7 @@
 <%@ taglib uri="http://www.springframework.org/tags" prefix="spring" %>
 <%@ taglib uri="http://www.springframework.org/tags/form" prefix="form" %>
 
-
+<br />
 <div class="row">
 	<div class="col-sm-2"></div>
 	<div class="form-group">
@@ -317,5 +317,3 @@
 	</div>
 	<div class="col-sm-4"></div>
 </div>
-
-<jsp:include page="documentdetails.jsp"></jsp:include>

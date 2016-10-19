@@ -66,21 +66,6 @@ $(document).ready( function () {
 		$(inputPhoto).trigger('click');
 	});
 	
-	if($('#registrationStatus').val()=='CREATED' || $('#registrationStatus').val()=='APPROVED'){  
-		$(".show-row").hide(); 
-		$('#approverDetailHeading').hide();
-		$('#approvalDepartment').removeAttr('required');
-		$('#approvalDesignation').removeAttr('required');
-		$('#approvalPosition').removeAttr('required');
-	} else {
-		$(".show-row").show(); 
-		$('#approverDetailHeading').show();
-		$('#approvalDepartment').attr('required', 'required');
-		$('#approvalDesignation').attr('required', 'required');
-		$('#approvalPosition').attr('required', 'required');
-	}
-	
-
 
 	// Showing the respective tab when mandatory data is not filled in
 	$('div.tab-content input').bind('invalid', function(e) {
@@ -191,8 +176,69 @@ $(document).ready( function () {
 			}
 		
 	   }
-	
 
+// Called from Data Entry Screen - Starts
+	
+	$('#applicationNum').blur(function(){
+		validateApplicationNumber();
+	});
+	
+	$('#registrationNum').blur(function(){
+		validateRegistrationNumber();
+	});
+	
+	
+	function validateApplicationNumber(){
+		appNo=$('#applicationNum').val();
+		if(appNo != '') {
+			$.ajax({
+				url: "/mrs/registration/checkUniqueAppl-RegNo",      
+				type: "GET",
+				data: {
+					registrationNo : "",  
+					applicationNo  : appNo
+				},
+				dataType: "json",
+				success: function (response) { 
+					if(response != true) {
+							$('#applicationNum').val('');
+							bootbox.alert("Entered Application Number already exists. Please Enter Unique Number.");
+					}
+				}, 
+				error: function (response) {
+					$('#applicationNum').val('');
+					bootbox.alert("connection validation failed");
+				}
+			});
+		}	
+	}
+	
+	
+	function validateRegistrationNumber(){
+		regNo=$('#registrationNum').val();
+		if(regNo != '') {
+			$.ajax({
+				url: "/mrs/registration/checkUniqueAppl-RegNo",      
+				type: "GET",
+				data: {
+					registrationNo : regNo,  
+					applicationNo  : ""
+				},
+				dataType: "json",
+				success: function (response) { 
+					if(response != true) {
+							$('#registrationNum').val('');
+							bootbox.alert("Entered Registration Number already exists. Please Enter Unique Number.");
+					}
+				}, 
+				error: function (response) {
+					$('#registrationNum').val('');
+					bootbox.alert("connection validation failed");
+				}
+			});
+		}	
+	}
+	
 	jQuery('form').validate({
 	    ignore: ".ignore",
 	    invalidHandler: function(e, validator){
@@ -200,18 +246,19 @@ $(document).ready( function () {
 	        	$('#settingstab a[href="#' + jQuery(validator.errorList[0].element).closest(".tab-pane").attr('id') + '"]').tab('show');
 	    }
 	});
-	
-	// New Marriage Registration Screen
-	$('#Forward').click(function(e){
+
+	$('#dataEntrySubmit').click(function(e){
+		alert("hi123");
 		if($('form').valid()){
 			
 		}else{
 			e.preventDefault();
 		}
 	});
-
+	
 })
 
+// Called from Data Entry Screen - Ends
 
 function validateChecklists() {
 	var noOfCheckboxes1 = $('input[id^="ageProofH"]:checked').length;
@@ -244,56 +291,3 @@ function validateChecklists() {
 	
 	return true;
 }
-
-function removeMandatory() {
-	if($('#registrationStatus').val()=='Created'){  
-		$('#husband-photo').removeAttr('required');
-		$('#wife-photo').removeAttr('required');
-	}
-}
-
-
-$(".btn-primary").click(function() { 
-	removeMandatory();
-	var action = $('#workFlowAction').val();
-	if(action == 'Reject') { 
-		 $('#Reject').attr('formnovalidate','true');
-		 var r = confirm("Do You Really Want to Reject The Registration!");
-		 if (r == true) {
-			 var approvalComent=$('#approvalComent').val();
-			  if(approvalComent == "") {
-				  bootbox.alert("Please enter rejection comments!");
-					$('#approvalComent').focus();
-					return false; 
-			  }
-			  else {
-				  validateWorkFlowApprover(action);
-				  document.forms[0].submit(); 
-			  }
-		 } else {
-		     return false;
-		 }
-	}
-	
-	 if(action == 'Cancel Registration') { 
-		 $('#Cancel Registration').attr('formnovalidate','true');
-		 var r = confirm("Do You Really Want to Cancel The Registration!");
-		 if (r == true) {
-			 var approvalComent=$('#approvalComent').val();
-			  if(approvalComent == "") {
-				  bootbox.alert("Please enter cancellation comments!");
-					$('#approvalComent').focus();
-					return false; 
-			  }
-			  else {
-				  validateWorkFlowApprover(action);
-				  document.forms[0].submit();
-			  }
-		 } else {
-		     return false;
-		 }
-	} 
-	
-	validateWorkFlowApprover(action);  
-});
-

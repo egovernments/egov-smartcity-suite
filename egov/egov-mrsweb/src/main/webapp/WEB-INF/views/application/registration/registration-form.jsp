@@ -45,56 +45,10 @@
 <%@ taglib uri="/WEB-INF/taglib/cdn.tld" prefix="cdn" %>
 
 <script src="<cdn:url value='/resources/js/app/viewregistration.js'/> "></script>
-
-<!-- <style>
-	ul.nav-tabs > li.active>a:after {
-		background: none !important;
-	}
-	ul.nav-tabs-top > li.active > a:after {
-	    display: block;
-	    content: '';
-	    position: absolute;
-	    bottom: 0;
-	    left: 0;
-	    width: 100%;
-	    height: 4px;
-	    background: #F67B00;
-	}
-	
-	ul.nav-tabs-bottom > li.active > a:before {
-	    display: block;
-	    content: '';
-	    position: absolute;
-	    top: 0;
-	    left: 0;
-	    width: 100%;
-	    height: 4px;
-	    background: #F67B00;
-	}
-	
-	media (min-width: 768px)
-	.nav-tabs.nav-justified > li > a {
-	}
-	
-	media (min-width: 768px)
-	.nav-tabs.nav-justified.nav-tabs-top > li > a {
-	    border-bottom: 1px solid #ddd;
-	    border-radius: 4px 4px 0 0;
-	}
-	
-	media (min-width: 768px)
-	.nav-tabs.nav-justified.nav-tabs-bottom > li > a {
-	    border-top: 1px solid #ddd;
-	    border-radius: 4px 4px 0 0;
-	}
-
-
-</style>
- -->
- <div class="row">
+ 
+ <div class="row" id="page-content">
 	<div class="col-md-12"> 
 		<div class="text-right error-msg" style="font-size:14px;"></div>
-		
 		<c:set value="/mrs/registration/register" var="actionUrl" />
 		<c:if test="${registration.status == 'Rejected'}">
 			 <c:set value="/mrs/registration/workflow?id=${registration.id}" var="actionUrl" />
@@ -109,25 +63,19 @@
 
 			<input type="hidden" id="registrationId" value="${registration.id}" />
 			<input type="hidden" id="registrationStatus" value="${registration.status}" />
-			
-			<div class="panel panel-primary" data-collapsed="0">
-				<div class="panel-heading">
-					<div class="panel-title">
-						<spring:message code="title.registration" />
-					</div>
-				</div>
-				<div class="panel-body custom-form ">
-					  <div class="container-fluid">	
-					  <ul class="nav nav-tabs nav-justified nav-tabs-top">
-					    <li class="active"><a data-toggle="tab" href="#applicant-info">Applicant's Information</a></li>
-					    <li><a data-toggle="tab" href="#witness-info">Witnesses Information</a></li>
-					    <li><a data-toggle="tab" href="#checklist-info">Checklist</a></li>
-					  </ul>
-					  <div class="tab-content">
-					    <div id="applicant-info" class="tab-pane fade in active">
-					    	<jsp:include page="generalinfo.jsp"></jsp:include>
-					    </div>
-					    <div id="witness-info" class="tab-pane fade">
+				  <ul class="nav nav-tabs nav-justified nav-tabs-top">
+				    <li class="active"><a data-toggle="tab" href="#applicant-info" data-tabidx=0>Applicant's Information</a></li>
+				    <li><a data-toggle="tab" href="#witness-info" data-tabidx=1>Witnesses Information</a></li>
+				    <li><a data-toggle="tab" href="#checklist-info" data-tabidx=2>Checklist</a></li>
+				  </ul>
+				<div class="tab-content">	 
+				    <div id="applicant-info" class="tab-pane fade in active">
+				    	<div class="panel panel-primary" data-collapsed="0">
+				    		<jsp:include page="generalinfo.jsp"></jsp:include>
+				    	</div>
+				    </div>
+				    <div id="witness-info" class="tab-pane fade">
+				    	<div class="panel panel-primary" data-collapsed="0">
 				    		<c:set value="witnesses[0]" var="witness" scope="request"></c:set>
 				    		<form:hidden path="witnesses[0].id"/>
 					    	<jsp:include page="witnessinfo.jsp">
@@ -146,19 +94,17 @@
 								<jsp:param value="subheading.witness3.info" name="header" />
 							</jsp:include>	
 							<jsp:include page="priestinfo.jsp"></jsp:include>
-					    </div>
-					    <div id="checklist-info" class="tab-pane fade">
-					    	<jsp:include page="checklist.jsp"></jsp:include>
-					    </div>
-					  </div>
-					  <ul class="nav nav-tabs nav-justified nav-tabs-bottom">
-					    <li class="active"><a data-toggle="tab" href="#applicant-info">Applicant's Information</a></li>
-					    <li><a data-toggle="tab" href="#witness-info">Witnesses Information</a></li>
-					    <li><a data-toggle="tab" href="#checklist-info">Checklist</a></li>
-					  </ul>
-					  </div>
+						</div>
+				    </div>
+				    <div id="checklist-info" class="tab-pane fade">
+				    	<div class="panel panel-primary" data-collapsed="0">
+				    		<jsp:include page="checklist.jsp"></jsp:include>
+				    	</div>
+				    	<div class="panel panel-primary" data-collapsed="0">
+				    		<jsp:include page="documentdetails.jsp"></jsp:include>
+			    		</div>
+				    </div>
 				</div>
-			</div>
 			<c:if test="${registration.rejectionReason != null}">
 				<div class="row">
 					<label class="col-sm-3 control-label text-right"><spring:message code="lbl.reason.rejection"/></label>
@@ -173,10 +119,8 @@
 				<jsp:include page="../../common/commonWorkflowMatrix-button.jsp" />
 			</div>
 		</form:form>
-		
 	</div>
 </div>
-
+ 
 <script src="<cdn:url value='/resources/global/js/egov/inbox.js' context='/egi'/>"></script>
 <script src="<cdn:url value='/resources/js/app/registration.js'/> "></script>
-<script src="<cdn:url value='/resources/js/app/navtabclickhandler.js'/> "></script>

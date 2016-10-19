@@ -45,9 +45,10 @@
 <%@ taglib uri="http://www.springframework.org/tags" prefix="spring" %>
 <%@ taglib uri="http://www.springframework.org/tags/form" prefix="form" %>
 
-<div class="row add-margin view-content">
-	<div class="col-sm-3 text-center"><spring:message code="${param.header}"/></div>
-	<div class="col-sm-9 text-center"></div>
+<div class="panel-heading">
+	<div class="panel-title">
+		<spring:message code="${param.header}"/>
+	</div>
 </div>
 <div class="row">
 	<div class="col-sm-7">
@@ -71,7 +72,7 @@
 	<div class="col-sm-5">
 	<div class="row">
 		<div class="form-group">
-			<label class="col-sm-5 text-right" style="padding-right: 25px;">
+			<label class="col-sm-3 text-right" style="padding-right: 25px;">
 				<spring:message code="lbl.signature"/>
 			</label>
 			<div class="col-sm-5">
@@ -164,7 +165,7 @@
 	</div>
 	<div class="col-sm-5">
 		<div class="row">
-			<label class="col-sm-5 text-right" style="padding: 25prequired="required"x;">
+			<label class="col-sm-3 text-right" style="padding: 25p required="required"x;">
 				<spring:message code="lbl.photo"/><span class="mandatory"></span>
 			</label>
 			
@@ -225,7 +226,7 @@
 	<div class="col-sm-6">
 		<div class="row">
 			<div class="form-group">
-				<label class="col-sm-6 control-label">
+				<label class="col-sm-5 control-label">
 					<spring:message code="lbl.applicant.aadhaarNo"/>
 				</label>
 				<div class="col-sm-6">
@@ -266,7 +267,7 @@
 	<div class="col-sm-6">
 		<div class="row">
 			<div class="form-group">
-				<label class="col-sm-6 control-label">
+				<label class="col-sm-5 control-label">
 					<spring:message code="lbl.office.address"/><span class="mandatory"></span>
 				</label>
 				<div class="col-sm-6">
@@ -294,7 +295,7 @@
 	<div class="col-sm-6">
 		<div class="row">
 			<div class="form-group">
-				<label class="col-sm-6 control-label">
+				<label class="col-sm-5 control-label">
 					<spring:message code="lbl.email"/>
 				</label>
 				<div class="col-sm-6">

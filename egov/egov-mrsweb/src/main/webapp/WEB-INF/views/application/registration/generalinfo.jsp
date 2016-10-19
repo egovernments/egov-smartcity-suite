@@ -46,10 +46,12 @@
 <%@ taglib uri="http://www.springframework.org/tags/form" prefix="form" %>
 
 <br />
-<div class="row add-margin view-content">
-	<div class="col-sm-3 text-center"><spring:message code="subheading.general.info"/></div>
-	<div class="col-sm-9 text-center"></div>
+<div class="panel-heading">
+	<div class="panel-title">
+		<spring:message code="subheading.general.info"/>
+	</div>
 </div>
+<div class="panel-body custom-form">
 <form:hidden path="id"/>
 <div class="row">
 	<div class="form-group">
@@ -60,7 +62,7 @@
 			<form:input path="dateOfMarriage" id="txt-dateOfMarriage" type="text" class="form-control low-width datepicker today" data-date-today-highlight="true" data-date-end-date="0d" placeholder="" autocomplete="off" required="required"/>
             <form:errors path="dateOfMarriage" cssClass="add-margin error-msg"/>
 		</div>
-		<label class="col-sm-3 control-label">
+		<label class="col-sm-2 control-label">
 			<spring:message code="lbl.zone"/><span class="mandatory"></span>
 		</label>
 		<div class="col-sm-3">
@@ -86,7 +88,7 @@
              </form:select>
             <form:errors path="marriageAct.id" cssClass="add-margin error-msg"/>
 		</div>
-		<label class="col-sm-3 control-label">
+		<label class="col-sm-2 control-label">
 			<spring:message code="lbl.place.of.marriage"/><span class="mandatory"></span>
 		</label>
 		<div class="col-sm-3">
@@ -109,7 +111,7 @@
             <%--  <form:hidden path="feeCriteria.criteria" name="feeCriteria" id="txt_feecriteria"/> --%>
                <form:errors path="feeCriteria.id" cssClass="add-margin error-msg"/>
 		</div>
-		<label class="col-sm-3 control-label">
+		<label class="col-sm-2 control-label">
 			<spring:message code="lbl.marriage.fee"/><span class="mandatory"></span>
 		</label>
 		<div class="col-sm-3">
@@ -129,3 +131,4 @@
 <jsp:include page="applicantinfo.jsp">
 	<jsp:param value="subheading.wife.info" name="header" />
 </jsp:include>
+</div>

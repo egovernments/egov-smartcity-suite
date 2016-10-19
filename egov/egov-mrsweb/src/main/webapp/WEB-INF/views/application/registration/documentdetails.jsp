@@ -42,7 +42,7 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 <%@ taglib uri="/WEB-INF/taglib/cdn.tld" prefix="cdn" %>
 
-<div class="panel panel-primary" data-collapsed="0">
+<!-- <div class="panel panel-primary" data-collapsed="0"> -->
 	<div class="panel-heading slide-document-menu">
 		<div class="panel-title">
 			<spring:message  code="lbl.applicant.docs"/>
@@ -153,6 +153,6 @@
 		
 	</div>
 </c:forEach> 
-</div></div>
+</div><!-- </div> -->
 <script src="<cdn:url value='/resources/js/app/documentsupload.js'/>"></script>
 <script src="<cdn:url value='/resources/js/app/viewdocumentsupload.js'/>"></script>

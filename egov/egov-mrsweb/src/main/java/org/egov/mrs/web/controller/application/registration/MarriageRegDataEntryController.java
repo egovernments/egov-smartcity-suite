@@ -46,7 +46,6 @@ import javax.servlet.http.HttpServletRequest;
 
 import org.egov.eis.web.contract.WorkflowContainer;
 import org.egov.mrs.domain.entity.MarriageRegistration;
-import org.egov.mrs.masters.entity.MarriageFee;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;

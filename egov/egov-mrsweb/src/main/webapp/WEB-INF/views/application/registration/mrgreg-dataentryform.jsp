@@ -45,96 +45,86 @@
 <%@ taglib uri="/WEB-INF/taglib/cdn.tld" prefix="cdn" %>
 
 <script src="<cdn:url value='/resources/js/app/viewregistration.js'/> "></script>
- <div class="row">
+
+<div class="row" id="page-content">
 	<div class="col-md-12"> 
 		<div class="text-right error-msg" style="font-size:14px;"></div>
-		
 		<form:form role="form" action="/mrs/registration/createdataentry"
 			modelAttribute="registration" id="form-registration"
 			cssClass="form-horizontal form-groups-bordered"
 			enctype="multipart/form-data">
-
 			<input type="hidden" id="registrationId" value="${registration.id}" />
 			<input type="hidden" id="registrationStatus" value="${registration.status}" />
-			
-			<div class="panel panel-primary" data-collapsed="0">
-				<div class="panel-heading">
-					<div class="panel-title">
-						<spring:message code="title.mrgRegistration.dataEntry" />
-					</div>
-				</div>
-				<div class="panel-body custom-form ">
-					  <div class="container-fluid">	
-					  <ul class="nav nav-tabs nav-justified nav-tabs-top">
-					    <li class="active"><a data-toggle="tab" href="#applicant-info">Applicant's Information</a></li>
-					    <li><a data-toggle="tab" href="#witness-info">Witnesses Information</a></li>
-					    <li><a data-toggle="tab" href="#checklist-info">Checklist</a></li>
-					  </ul>
-					  <div class="tab-content">
-					    <div id="applicant-info" class="tab-pane fade in active">
-						    <div class="form-group">
-						    	<label class="col-sm-3 control-label text-right"><spring:message
-										code="lbl.appl.number" /><span class="mandatory"></span></label>
-								<div class="col-sm-3 add-margin">
-									<form:input path="applicationNo" id="applicationNum"
-										class="form-control text-left patternvalidation" data-pattern="alphanumericwithspecialcharacters" maxlength="20" required="required" />
-									<form:errors path="applicationNo" 
-										cssClass="add-margin error-msg" />
-								</div>
-								
-								<label class="col-sm-3 control-label text-right"><spring:message
-										code="lbl.registration.number" /><span class="mandatory"></span></label>
-								<div class="col-sm-3 add-margin">
-									<form:input path="registrationNo" id="registrationNum"
-										class="form-control text-left patternvalidation" data-pattern="number" maxlength="20" required="required" />
-									<form:errors path="registrationNo" 
-										cssClass="add-margin error-msg" />
-								</div>
+			 <ul class="nav nav-tabs nav-justified nav-tabs-top">
+			    <li class="active"><a data-toggle="tab" href="#applicant-info" data-tabidx=0>Applicant's Information</a></li>
+			    <li><a data-toggle="tab" href="#witness-info" data-tabidx=1>Witnesses Information</a></li>
+			    <li><a data-toggle="tab" href="#checklist-info" data-tabidx=2>Checklist</a></li>
+			  </ul>
+					   
+			<div class="tab-content">	 
+				<div id="applicant-info" class="tab-pane fade in active">
+				    <div class="panel panel-primary" data-collapsed="0">
+				    	<br />
+					    <div class="form-group">
+					    	<label class="col-sm-3 control-label text-right"><spring:message
+									code="lbl.appl.number" /><span class="mandatory"></span></label>
+							<div class="col-sm-3 add-margin">
+								<form:input path="applicationNo" id="applicationNum"
+									class="form-control text-left patternvalidation" data-pattern="alphanumericwithspecialcharacters" maxlength="20" required="required" />
+								<form:errors path="applicationNo" 
+									cssClass="add-margin error-msg" />
 							</div>
-						    	<jsp:include page="generalinfo.jsp"></jsp:include>
-					    </div>
-					    <div id="witness-info" class="tab-pane fade">
-				    		<c:set value="witnesses[0]" var="witness" scope="request"></c:set>
-				    		<form:hidden path="witnesses[0].id"/>
-					    	<jsp:include page="witnessinfo.jsp">
-								<jsp:param value="subheading.witness1.info" name="header" />
-							</jsp:include>
 							
-							<c:set value="witnesses[1]" var="witness" scope="request"></c:set>
-							<form:hidden path="witnesses[1].id"/>
-							<jsp:include page="witnessinfo.jsp">
-								<jsp:param value="subheading.witness2.info" name="header" />
-							</jsp:include>
-							
-							<c:set value="witnesses[2]" var="witness" scope="request"></c:set>
-							<form:hidden path="witnesses[2].id"/>
-							<jsp:include page="witnessinfo.jsp">
-								<jsp:param value="subheading.witness3.info" name="header" />
-							</jsp:include>	
-							<jsp:include page="priestinfo.jsp"></jsp:include>
-					    </div>
-					    <div id="checklist-info" class="tab-pane fade">
-					    	<jsp:include page="checklist.jsp"></jsp:include>
-					    </div>
-					  </div>
-					  <ul class="nav nav-tabs nav-justified nav-tabs-bottom">
-					    <li class="active"><a data-toggle="tab" href="#applicant-info">Applicant's Information</a></li>
-					    <li><a data-toggle="tab" href="#witness-info">Witnesses Information</a></li>
-					    <li><a data-toggle="tab" href="#checklist-info">Checklist</a></li>
-					  </ul>
-					  </div>
-				</div>
-			</div>
-			<br />
+							<label class="col-sm-2 control-label text-right"><spring:message
+									code="lbl.registration.number" /><span class="mandatory"></span></label>
+							<div class="col-sm-3 add-margin">
+								<form:input path="registrationNo" id="registrationNum"
+									class="form-control text-left patternvalidation" data-pattern="number" maxlength="20" required="required" />
+								<form:errors path="registrationNo" 
+									cssClass="add-margin error-msg" />
+							</div>
+						</div>
+			    		<jsp:include page="generalinfo.jsp"></jsp:include>
+			    	</div>
+			    </div>
+			    <div id="witness-info" class="tab-pane fade">
+			    	<div class="panel panel-primary" data-collapsed="0">
+			    		<c:set value="witnesses[0]" var="witness" scope="request"></c:set>
+			    		<form:hidden path="witnesses[0].id"/>
+				    	<jsp:include page="witnessinfo.jsp">
+							<jsp:param value="subheading.witness1.info" name="header" />
+						</jsp:include>
+						
+						<c:set value="witnesses[1]" var="witness" scope="request"></c:set>
+						<form:hidden path="witnesses[1].id"/>
+						<jsp:include page="witnessinfo.jsp">
+							<jsp:param value="subheading.witness2.info" name="header" />
+						</jsp:include>
+						
+						<c:set value="witnesses[2]" var="witness" scope="request"></c:set>
+						<form:hidden path="witnesses[2].id"/>
+						<jsp:include page="witnessinfo.jsp">
+							<jsp:param value="subheading.witness3.info" name="header" />
+						</jsp:include>	
+						<jsp:include page="priestinfo.jsp"></jsp:include>
+					</div>
+			    </div>
+			    <div id="checklist-info" class="tab-pane fade">
+			    	<div class="panel panel-primary" data-collapsed="0">
+			    		<jsp:include page="checklist.jsp"></jsp:include>
+			    	</div>
+			    	<div class="panel panel-primary" data-collapsed="0">
+			    		<jsp:include page="documentdetails.jsp"></jsp:include>
+		    		</div>
+			    </div>
+			</div><br />
 			<div class="text-center">
-				<button type="submit" class="btn btn-primary" id = "submit"><spring:message code="lbl.submit"/></button>
+				<button type="submit" class="btn btn-primary" id ="dataEntrySubmit"><spring:message code="lbl.submit"/></button>
 			    <a href="javascript:void(0)" class="btn btn-default" onclick="self.close()"><spring:message code="lbl.close"/></a>
 			</div>
 		</form:form>
-		
 	</div>
 </div>
 
 <script src="<cdn:url value='/resources/global/js/egov/inbox.js' context='/egi'/>"></script>
-<script src="<cdn:url value='/resources/js/app/registration.js'/> "></script>
-<script src="<cdn:url value='/resources/js/app/navtabclickhandler.js'/> "></script>
+<script src="<cdn:url value='/resources/js/app/mrgregdataentry.js'/> "></script> 
