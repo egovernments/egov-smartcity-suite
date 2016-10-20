@@ -41,6 +41,7 @@ package org.egov.works.letterofacceptance.repository;
 
 import java.util.List;
 
+import org.egov.works.abstractestimate.entity.Activity;
 import org.egov.works.revisionestimate.entity.enums.RevisionType;
 import org.egov.works.workorder.entity.WorkOrderActivity;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -66,5 +67,10 @@ public interface WorkOrderActivityRepository extends JpaRepository<WorkOrderActi
 
     @Query("select woa from WorkOrderActivity woa where woa.workOrderEstimate.workOrder.id = :workOrderId or woa.workOrderEstimate.workOrder.parent.id= :workOrderId")
     List<WorkOrderActivity> getWorkOrderActivitiesForContractorPortal(@Param("workOrderId") Long workOrderId);
+    
+    @Query("select woa from WorkOrderActivity woa where woa.workOrderEstimate.id =:revisionWorkOrderEstimateId and woa.activity.revisionType in(:nonTenderderRevisionType,:lumpSumRevisionType)")
+    List<WorkOrderActivity> findByRevisionEstimate_IdAndRevisionType(@Param("revisionWorkOrderEstimateId") Long revisionWorkOrderEstimateId,
+            @Param("nonTenderderRevisionType") RevisionType nonTenderderRevisionType,
+            @Param("lumpSumRevisionType") RevisionType lumpSumRevisionType);
 
 }

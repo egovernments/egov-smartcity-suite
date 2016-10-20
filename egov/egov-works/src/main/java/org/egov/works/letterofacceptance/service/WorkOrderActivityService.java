@@ -45,6 +45,7 @@ import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 
 import org.egov.infra.utils.DateUtils;
+import org.egov.works.abstractestimate.entity.Activity;
 import org.egov.works.letterofacceptance.repository.WorkOrderActivityRepository;
 import org.egov.works.revisionestimate.entity.RevisionAbstractEstimate;
 import org.egov.works.revisionestimate.entity.enums.RevisionType;
@@ -169,6 +170,12 @@ public class WorkOrderActivityService {
 
     public List<WorkOrderActivity> getWorkOrderActivitiesForContractorPortal(final Long workOrderId) {
         return workOrderActivityRepository.getWorkOrderActivitiesForContractorPortal(workOrderId);
+    }
+    
+    public List<WorkOrderActivity> findActivitiesByRevisionType(final Long revisionWorkOrderEstimateId, final RevisionType nonTenderderRevisionType,
+            final RevisionType lumpSumRevisionType) {
+        return workOrderActivityRepository.findByRevisionEstimate_IdAndRevisionType(revisionWorkOrderEstimateId, nonTenderderRevisionType,
+                lumpSumRevisionType);
     }
 
 }

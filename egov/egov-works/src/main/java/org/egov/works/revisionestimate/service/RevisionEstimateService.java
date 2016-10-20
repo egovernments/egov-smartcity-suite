@@ -1419,12 +1419,12 @@ public class RevisionEstimateService {
             }
     }
 
-    public List<Activity> getNonTenderedLumpSumActivities(final Long revisionEstimateId) {
-        return activityService.findByRevisionType(revisionEstimateId, RevisionType.NON_TENDERED_ITEM, RevisionType.LUMP_SUM_ITEM);
+    public List<WorkOrderActivity> getNonTenderedLumpSumActivities(final Long revisionWorkOrderEstimateId) {
+        return workOrderActivityService.findActivitiesByRevisionType(revisionWorkOrderEstimateId, RevisionType.NON_TENDERED_ITEM, RevisionType.LUMP_SUM_ITEM);
     }
 
-    public List<Activity> getChangeQuatityActivities(final Long revisionEstimateId) {
-        return activityService.findByRevisionType(revisionEstimateId, RevisionType.ADDITIONAL_QUANTITY,
+    public List<WorkOrderActivity> getChangeQuatityActivities(final Long revisionWorkOrderEstimateId) {
+        return workOrderActivityService.findActivitiesByRevisionType(revisionWorkOrderEstimateId, RevisionType.ADDITIONAL_QUANTITY,
                 RevisionType.REDUCED_QUANTITY);
     }
 }
