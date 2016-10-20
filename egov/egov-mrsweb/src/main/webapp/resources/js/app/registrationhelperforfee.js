@@ -136,6 +136,9 @@ $(document)
 													{
 														"data" : "status",
 														"sClass" : "text-left"
+													},{
+														"data" : "marriageRegistrationUnit",
+														"sClass" : "text-left"
 													},
 													{
 														"data" : null,

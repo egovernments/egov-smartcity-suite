@@ -56,6 +56,7 @@ import org.egov.mrs.application.service.MarriageCertificateService;
 import org.egov.mrs.domain.entity.MarriageCertificate;
 import org.egov.mrs.domain.entity.MarriageRegistration;
 import org.egov.mrs.domain.service.MarriageRegistrationService;
+import org.egov.mrs.masters.service.MarriageRegistrationUnitService;
 import org.egov.mrs.web.adaptor.MarriageCerftificateJsonAdaptor;
 import org.egov.mrs.web.adaptor.MarriageRegistrationJsonAdaptor;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -76,7 +77,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
  */
 @Controller
 @RequestMapping(value = "/registration")
-public class SearchRegistrationController {
+public class SearchRegistrationController{
 
     private final MarriageRegistrationService marriageRegistrationService;
     private final SecurityUtils securityUtils;
@@ -84,13 +85,19 @@ public class SearchRegistrationController {
     private MarriageCertificateService marriageCertificateService;
     @Autowired
     private FileStoreUtils fileStoreUtils;
-
+    @Autowired
+    protected MarriageRegistrationUnitService marriageRegistrationUnitService;
+    
     @Autowired
     public SearchRegistrationController(final MarriageRegistrationService marriageRegistrationService, final SecurityUtils securityUtils) {
         this.marriageRegistrationService = marriageRegistrationService;
         this.securityUtils = securityUtils;
     }
+    
+    public void prepareSearchForm(final Model model){
+        model.addAttribute("marriageRegistrationUnit", marriageRegistrationUnitService.getActiveRegistrationunit());
 
+    }
     @RequestMapping(value = "/search", method = RequestMethod.GET)
     public String showSearch( final Model model) {
         
@@ -99,6 +106,7 @@ public class SearchRegistrationController {
         model.addAttribute("registration", new MarriageRegistration());
         final boolean isCollectionOperator = operatorRoles == null || operatorRoles.isEmpty() ? false : true;
         model.addAttribute("isCollectionOperator", isCollectionOperator);
+        prepareSearchForm(model);
         return "registration-search";
     }
     
@@ -110,6 +118,7 @@ public class SearchRegistrationController {
         model.addAttribute("registration", new MarriageRegistration());
         final boolean isCollectionOperator = operatorRoles == null || operatorRoles.isEmpty() ? false : true;
         model.addAttribute("isCollectionOperator", isCollectionOperator);
+        prepareSearchForm(model);
         return "registration-search-approved";
     }
     
@@ -117,6 +126,7 @@ public class SearchRegistrationController {
     @RequestMapping(value = "/collectmrfee", method = RequestMethod.GET)
     public String showSearchApprovedforFee( final Model model) {
          model.addAttribute("registration", new MarriageRegistration());
+         prepareSearchForm(model);
          return "registration-search-forfee";
     }
     
@@ -129,7 +139,7 @@ public class SearchRegistrationController {
     }
     
     @RequestMapping(value = "/searchApproved", method = RequestMethod.POST, produces = MediaType.TEXT_PLAIN_VALUE)
-    public @ResponseBody String searchApprovedMarriageRecords(Model model,@ModelAttribute final MarriageRegistration registration) throws ParseException {
+    public @ResponseBody String searchRegisterStatusMarriageRecords(Model model,@ModelAttribute final MarriageRegistration registration) throws ParseException {
     	List<MarriageRegistration> searchResultList = marriageRegistrationService.searchRegistrationByStatus(registration,MarriageRegistration.RegistrationStatus.REGISTERED.toString());
       	 String result = new StringBuilder("{ \"data\":").append(toJSON(searchResultList,MarriageRegistration.class,  MarriageRegistrationJsonAdaptor.class)).append("}")
                    .toString();
@@ -153,6 +163,7 @@ public class SearchRegistrationController {
     @RequestMapping(value = "/reissuecertificate", method = RequestMethod.GET)
     public String reissueCertificateSearch( final Model model) {
         model.addAttribute("registration", new MarriageRegistration());
+          prepareSearchForm(model);
           return "registration-search-certificateissue";
     }
     

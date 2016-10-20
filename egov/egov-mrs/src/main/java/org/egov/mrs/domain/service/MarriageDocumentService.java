@@ -77,13 +77,13 @@ public class MarriageDocumentService {
     }
     
     public List<MarriageDocument> getIndividualDocuments() {
-        return documentRepository.findByIndividual(true);
+        return documentRepository.findByIndividualAndActive(true,true);
     }
-    
+   
     public List<MarriageDocument> getGeneralDocuments() {
-        return documentRepository.findByIndividual(false);
+        return documentRepository.findByIndividualAndActive(false,true);
     }
-    
+   
     public List<MarriageDocument> getReIssueApplicantDocs() {
         return documentRepository.findByType(MarriageDocumentType.CERTIFICATEREISSUE);
     }

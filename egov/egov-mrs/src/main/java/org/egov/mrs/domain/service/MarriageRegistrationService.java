@@ -628,6 +628,8 @@ public class MarriageRegistrationService {
                 if ( registration.getFromDate() != null && registration.getToDate() != null)
                         criteria.add(Restrictions.between("marriageRegistration.dateOfMarriage", registration.getFromDate(),
                                         DateUtils.addDays(registration.getToDate(), 1)));
+                if(null!=registration.getMarriageRegistrationUnit() &&	registration.getMarriageRegistrationUnit().getId() != null)
+                	criteria.add(Restrictions.eq("marriageRegistrationUnit.id",registration.getMarriageRegistrationUnit().getId() ));
         }
     
     /**

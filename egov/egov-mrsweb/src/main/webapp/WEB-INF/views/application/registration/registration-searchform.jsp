@@ -98,6 +98,19 @@
 								<form:input id="registrationDate" path="applicationDate" type="text" cssClass="form-control datepicker" data-date-today-highlight="true" data-date-end-date="0d" />
 								<form:errors path="applicationDate" cssClass="error-msg"/>
 							</div>
+							
+							<label class="col-sm-2 control-label">
+			<spring:message code="lbl.registrationunit"/></span>
+		</label>
+			<div class="col-sm-3 add-margin">
+			<form:select path="marriageRegistrationUnit" id="select-registrationunit" cssClass="form-control" 
+						cssErrorClass="form-control error">
+                 <form:option value=""> <spring:message code="lbl.default.option"/> </form:option>
+                 <form:options items="${marriageRegistrationUnit}" itemValue="id" itemLabel="name"/>
+             </form:select>
+            <form:errors path="marriageRegistrationUnit.id" cssClass="add-margin error-msg"/>
+            
+            </div>
 						</div>
 					</div>
 				</div>

@@ -56,5 +56,9 @@ public interface MarriageDocumentRepository extends JpaRepository<MarriageDocume
     List<MarriageDocument> findByIndividual(boolean individual);
 
     List<MarriageDocument> findByType(MarriageDocumentType type);
+    
+    List<MarriageDocument> findByActive(Boolean active);
+    
+    List<MarriageDocument> findByIndividualAndActive(Boolean individual, Boolean active);
 
 }

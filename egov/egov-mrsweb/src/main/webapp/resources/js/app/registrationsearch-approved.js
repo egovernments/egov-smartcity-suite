@@ -119,6 +119,9 @@ $(document).ready( function () {
 								"data" : "status",
 								"sClass" : "text-left"
 							},{
+								"data" : "marriageRegistrationUnit",
+								"sClass" : "text-left"
+							},{
 								"data" : null,
 							    sortable: false,
 							    "render": function ( data, type, row, meta ) {

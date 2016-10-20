@@ -112,9 +112,9 @@ public class MarriageFeeService {
 	        return criteria.list();
 	}
 
-	public List<MarriageFee> searchGeneralTypeFeeses() {
+	public List<MarriageFee> getActiveGeneralTypeFeeses() {
 		final Criteria criteria = getCurrentSession().createCriteria(MarriageFee.class);
-		criteria.add(Restrictions.eq("feeType", MarriageFeeCriteriaType.GENERAL));
+		criteria.add(Restrictions.eq("feeType", MarriageFeeCriteriaType.GENERAL)).add(Restrictions.eq("active",Boolean.TRUE));
 	        return criteria.list();
 	}
 
@@ -125,6 +125,7 @@ public class MarriageFeeService {
 		return criteria.list();
 		
 	}
+	
 	
 	public Criteria buildSearchCriteria(MarriageFee fee) {
 		final Criteria criteria = getCurrentSession().createCriteria(MarriageFee.class);
