@@ -828,7 +828,6 @@ public class DishonorChequeWorkflowAction extends BaseFormAction {
         final List<Map<String, Object>> iList = new ArrayList<Map<String, Object>>();
         iMap.put("Transaction number", dishonorChequeView.getInstrumentHeader().getInstrumentNumber());
         iMap.put("Transaction date", dishonorChequeView.getTransactionDate());
-        // System.out.println(dishonorChequeView.getBankChargesAmt());
         iMap.put("Instrument amount", null != instrumentAmount ? instrumentAmount.doubleValue() : 0);
         iMap.put("Instrument type", instrumentType);
         iMap.put("Bank code", dishonorChequeView.getInstrumentHeader().getBankAccountId().getBankbranch().getBank().getCode());

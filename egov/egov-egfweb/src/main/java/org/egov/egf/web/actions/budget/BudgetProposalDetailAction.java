@@ -316,7 +316,6 @@ public class BudgetProposalDetailAction extends BaseBudgetDetailAction {
             sqlQuery.setInteger("deptId", deptId).setString("accountType", accountType);
             sqlQuery.addScalar("name").addScalar("id", LongType.INSTANCE)
                     .setResultTransformer(Transformers.aliasToBean(CFunction.class));
-            System.out.println("QUERY+++++" + sqlQuery.toString());
             if (!sqlQuery.list().isEmpty())
                 functionList = sqlQuery.list();
             else

@@ -65,21 +65,13 @@ public class DueLegalCaseReportController extends GenericLegalCaseController {
 		String[] tmp = (String[]) new String[tempArray.length *2];
         System.arraycopy(tempArray, 0, tmp, 0, 0);
         tempArray=tmp;
-		System.out.println(tmp);
 		int arr1[] = { 0, 1, 2, 3, 4, 5 };
 		   int arr2[] = { 5, 10, 20, 30, 40, 50 };
 		    
 		   // copies an array from the specified source array
 		   System.arraycopy(arr1, 0, arr2, 0, 1);
-		   System.out.print("array2 = ");
-		   System.out.print(arr2[0] + " ");
-		   System.out.print(arr2[1] + " ");
-		   System.out.print(arr2[2] + " ");
-		   System.out.print(arr2[3] + " ");
-		   System.out.print(arr2[4] + " ");
 		   for(int dd:arr2)
 		   {
-			   System.out.println(dd);
 		   }*/
 		
 		return new DueReportResult();

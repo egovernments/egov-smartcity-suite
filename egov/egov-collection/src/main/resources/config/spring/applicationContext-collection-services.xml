@@ -85,7 +85,6 @@
 	<bean id="financialsUtil" class="org.egov.collection.utils.FinancialsUtil">
 		<property name="instrumentService" ref="instrumentService" />
 		<property name="contraService" ref="contraService" />
-		<property name="collectionsUtil" ref="collectionsUtil" />
 		<property name="instrumentHeaderService" ref="instrumentHeaderService" />
 	</bean>
 

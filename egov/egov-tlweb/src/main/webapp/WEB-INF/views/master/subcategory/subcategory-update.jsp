@@ -94,9 +94,13 @@
      	    <c:choose>
 		     <c:when test="${not empty licenseSubCategory.licenseSubCategoryDetails}">
                    <c:forEach items="${licenseSubCategory.licenseSubCategoryDetails}" var="licenseSubCategoryDetail" varStatus="item">
-							<tr >
+                   			<c:set var="display" value="table-row"/>
+							<c:if test="${licenseSubCategoryDetail.markedForRemoval}">
+							<c:set var="display" value="none"/>
+							</c:if>
+							<tr style="display:${display}">
 					    		<td>
-									<form:select path="licenseSubCategoryDetails[${item.index}].feeType" id="licenseSubCategoryDetails[${item.index}].feeType" value="${licenseSubCategoryDetail.feeType}" cssClass="form-control feeType"  autocomplete="off" required="required" >
+									<form:select path="licenseSubCategoryDetails[${item.index}].feeType" id="licenseSubCategoryDetails[${item.index}].feeType" value="${licenseSubCategoryDetail.feeType}" cssClass="form-control feeType" required="required" >
 										<form:option value="">
 											<spring:message code="lbl.select" />
 										</form:option>
@@ -130,7 +134,7 @@
 						    </tr>
 						</c:forEach>
 					   </c:when>
-					    <c:otherwise>	
+					     <c:otherwise>	
 			             <tr >
 							   <td>
 									<form:select path="licenseSubCategoryDetails[0].feeType" id="licenseSubCategoryDetails[0].feeType" cssClass="form-control feeType"  required="required" >
@@ -161,10 +165,10 @@
           							<form:errors path="licenseSubCategoryDetails[0].uom" cssClass="add-margin error-msg" />
                            		</td>
 							  <td align="center"> 
-                              <span class="add-padding"><i class="fa fa-trash" data-func="add" aria-hidden="true" id="deleterow"></i></span> 
+                              <span class="add-padding"><i class="fa fa-trash" aria-hidden="true" id="deleterow"></i></span> 
 							 </td>
 						</tr>
-				</c:otherwise>					   
+				</c:otherwise>			   
 				</c:choose>
             </tbody>
      </table>

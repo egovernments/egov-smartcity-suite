@@ -68,4 +68,8 @@ public interface CFinancialYearRepository extends JpaRepository<CFinancialYear, 
 
     @Query("from CFinancialYear cfinancialyear where cfinancialyear.startingDate <=:givenDate and cfinancialyear.endingDate >=:givenDate  and cfinancialyear.isActiveForPosting=true")
     CFinancialYear getFinancialYearByDate(@Param("givenDate") Date givenDate);
+
+    //All financial year that are not closed
+    List<CFinancialYear> findByIsClosedFalseOrderByFinYearRangeDesc();
+
 }

@@ -229,6 +229,7 @@ public class LegalCase extends AbstractAuditable {
 
    
     @OneToMany(mappedBy = "legalCase", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
+    @Audited
     private List<Judgment> judgment = new ArrayList<Judgment>(0);
 
    
@@ -238,14 +239,17 @@ public class LegalCase extends AbstractAuditable {
 
   
     @OneToMany(mappedBy = "legalCase", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
+    @Audited
     private final List<Pwr> pwrList = new ArrayList<Pwr>(0);
 
    
     @OneToMany(mappedBy = "legalCase", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
+    @Audited
     private final List<CounterAffidavit> counterAffidavits = new ArrayList<CounterAffidavit>(0);
 
    
     @OneToMany(mappedBy = "legalCase", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
+    @Audited
     private List<LegalCaseInterimOrder> legalCaseInterimOrder = new ArrayList<LegalCaseInterimOrder>(0);
 
     @Audited
@@ -254,18 +258,22 @@ public class LegalCase extends AbstractAuditable {
 
     @OrderBy("id")
     @OneToMany(mappedBy = "legalCase", cascade = CascadeType.ALL, fetch = FetchType.LAZY, orphanRemoval = true)
+    @Audited
     private List<LegalCaseAdvocate> legalCaseAdvocates = new ArrayList<LegalCaseAdvocate>(0);
 
    
     @OneToMany(mappedBy = "legalCase", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
+    @Audited
     private List<Hearings> hearings = new ArrayList<Hearings>(0);
 
     
     @OneToMany(mappedBy = "legalCase", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
+    @Audited
     private List<LegalCaseDisposal> legalCaseDisposal = new ArrayList<LegalCaseDisposal>(0);
 
   
     @OneToMany(mappedBy = "legalCase", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @Audited
     private final List<LegalCaseDepartment> legalCaseDepartment = new ArrayList<LegalCaseDepartment>(0);
 
     

@@ -250,11 +250,11 @@ public class WaterTaxExternalService {
                 if (paidFrom != null)
                     fromInstallment = installmentDao.getInsatllmentByModuleAndDescription(
                             moduleService.getModuleByName(WaterTaxConstants.WATER_RATES_NONMETERED_PTMODULE),
-                            paidFrom[0].toString().trim());
+                            paidFrom[0].trim());
                 if (paidTo != null)
                     toInstallment = installmentDao.getInsatllmentByModuleAndDescription(
                             moduleService.getModuleByName(WaterTaxConstants.WATER_RATES_NONMETERED_PTMODULE),
-                            paidTo[0].toString().trim());
+                            paidTo[0].trim());
             }
             if (totalAmountToBePaid.compareTo(BigDecimal.ZERO) == 0) {
                 waterReceiptDetails.setPaymentPeriod(StringUtils.EMPTY);

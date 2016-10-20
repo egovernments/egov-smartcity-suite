@@ -61,27 +61,25 @@ package org.egov.ptis.domain.entity.demand;
  * public InterestCalculator getInterestCalculator()
 	{
 			String 	temp = EGovConfig.getProperty("INTEREST_CALCULATOR",null,"PT");
-			System.out.println("temp===="+temp);
 			assert temp!=null;
 			try
 			{
 			InterestCalculator intrstCalc = (InterestCalculator)Class.forName(temp).newInstance();
-			System.out.println("temp===="+temp);
 			return intrstCalc;
 			}
 			catch (InstantiationException e)
 			{
-				e.printStackTrace();
+
 				throw new ApplicationRuntimeException("PTDCBBroker Unable to load the class ",  e);
 			} 
 			catch (IllegalAccessException e)
 			{
-				e.printStackTrace();
+
 				throw new ApplicationRuntimeException("PTDCBBroker Unable to load the class ",  e);
 			}
 			catch (ClassNotFoundException e)
 			{
-				e.printStackTrace();
+
 				throw new ApplicationRuntimeException("PTDCBBroker Unable to load the class ",  e);
 			} 
 	}*/

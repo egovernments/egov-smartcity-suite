@@ -60,31 +60,31 @@ public class PropertyModifyReasonsHibernateDAO implements PropertyModifyReasonsD
 
 	@Override
 	public PropertyModifyReason findById(Integer id, boolean lock) {
-		// TODO Auto-generated method stub
+
 		return null;
 	}
 
 	@Override
 	public List<PropertyModifyReason> findAll() {
-		// TODO Auto-generated method stub
+
 		return null;
 	}
 
 	@Override
 	public PropertyModifyReason create(PropertyModifyReason propertyModifyReason) {
-		// TODO Auto-generated method stub
+
 		return null;
 	}
 
 	@Override
 	public void delete(PropertyModifyReason propertyModifyReason) {
-		// TODO Auto-generated method stub
+
 
 	}
 
 	@Override
 	public PropertyModifyReason update(PropertyModifyReason propertyModifyReason) {
-		// TODO Auto-generated method stub
+
 		return null;
 	}
 

@@ -222,10 +222,10 @@ public class EisUtilService implements EISServeable {
                 mainStr += " upper(trim(ev.employeeCode)) = :employeeCode and ";
             }
             if (departmentId != null && departmentId.intValue() != 0) {
-                mainStr += " ev.deptId.id= :deptId and ";
+                mainStr += " ev.department.id= :deptId and ";
             }
             if (designationId != null && designationId.intValue() != 0) {
-                mainStr += " ev.desigId.designationId = :designationId and ";
+                mainStr += " ev.designation.id = :designationId and ";
             }
             if (functionaryId != null && functionaryId.intValue() != 0) {
                 mainStr += " ev.functionary.id = :functionaryId and ";
@@ -246,8 +246,8 @@ public class EisUtilService implements EISServeable {
             }
             if (!roleList.isEmpty()) {
                 mainStr += "ev.userMaster.id in(select userRole.user.id from UserRole userRole where "
-                        + "((userRole.fromDate <= SYSDATE and userRole.toDate >= SYSDATE) or "
-                        + "(userRole.fromDate <= SYSDATE and userRole.toDate is null)) and "
+                        + "((userRole.fromDate <= current_date and userRole.toDate >= current_date) or "
+                        + "(userRole.fromDate <= current_date and userRole.toDate is null)) and "
                         + "userRole.role.roleName in(:roleList) ) and";
             }
             if (name != null && !name.equals("")) {
@@ -257,28 +257,28 @@ public class EisUtilService implements EISServeable {
                 mainStr += " ev.employeeStatus.id = :employeeStatus and ";
             }
             if (status != null && status.intValue() != 0 && designationId != null && designationId.intValue() == 0) {
-                mainStr += " ((ev.toDate is null and ev.fromDate <= SYSDATE ) OR (ev.fromDate <= SYSDATE AND ev.toDate > SYSDATE)) and ev.employeeStatus.id = :employeeStatus ";
+                mainStr += " ((ev.toDate is null and ev.fromDate <= current_date ) OR (ev.fromDate <= current_date AND ev.toDate > current_date)) and ev.employeeStatus.id = :employeeStatus ";
             } else if (status != null && status.intValue() == 0 && designationId != null
                     && designationId.intValue() != 0) {
-                mainStr += " ((ev.toDate is null and ev.fromDate <= SYSDATE ) OR (ev.fromDate <= SYSDATE AND ev.toDate > SYSDATE)) ";
+                mainStr += " ((ev.toDate is null and ev.fromDate <= current_date ) OR (ev.fromDate <= current_date AND ev.toDate > current_date)) ";
             }
             // Inspite of SearchAll is true or false, if employee code is
             // entered, search for all active and inactive employees
             else if (code != null && !code.equals("")) {
-                mainStr += "  ((ev.toDate IS NULL AND ev.fromDate <= SYSDATE) OR (ev.fromDate <= SYSDATE AND ev.toDate > SYSDATE) "
+                mainStr += "  ((ev.toDate IS NULL AND ev.fromDate <= current_date) OR (ev.fromDate <= current_date AND ev.toDate > current_date) "
                         + " OR (ev.fromDate IN (SELECT MAX (evn.fromDate)  FROM EmployeeView  evn   "
                         + " WHERE evn.id = ev.id AND NOT EXISTS  (SELECT evn2.id FROM EmployeeView evn2 WHERE evn2.id = ev.id AND "
-                        + " ((evn2.toDate  IS NULL AND evn2.fromDate <= SYSDATE) OR (evn2.fromDate <= SYSDATE AND evn2.toDate > SYSDATE)) )))) ";
+                        + " ((evn2.toDate  IS NULL AND evn2.fromDate <= current_date) OR (evn2.fromDate <= current_date AND evn2.toDate > current_date)) )))) ";
             } else if ((status != null && status.intValue() != 0)
                     || (designationId != null && designationId.intValue() == 0)) {
-                mainStr += "  ((ev.toDate IS NULL AND ev.fromDate <= SYSDATE) OR (ev.fromDate <= SYSDATE AND ev.toDate > SYSDATE) "
+                mainStr += "  ((ev.toDate IS NULL AND ev.fromDate <= current_date) OR (ev.fromDate <= current_date AND ev.toDate > current_date) "
                         + " OR (ev.fromDate IN (SELECT MAX (evn.fromDate)  FROM EmployeeView  evn   "
                         + " WHERE evn.id = ev.id AND NOT EXISTS  (SELECT evn2.id FROM EmployeeView evn2 WHERE evn2.id = ev.id AND "
-                        + " ((evn2.toDate  IS NULL AND evn2.fromDate <= SYSDATE) OR (evn2.fromDate <= SYSDATE AND evn2.toDate > SYSDATE)) )))) ";
+                        + " ((evn2.toDate  IS NULL AND evn2.fromDate <= current_date) OR (evn2.fromDate <= current_date AND evn2.toDate > current_date)) )))) ";
             } else {
-                mainStr += " ((ev.toDate is null and ev.fromDate <= SYSDATE ) OR (ev.fromDate <= SYSDATE AND ev.toDate > SYSDATE)) ";
+                mainStr += " ((ev.toDate is null and ev.fromDate <= current_date ) OR (ev.fromDate <= current_date AND ev.toDate > current_date)) ";
             }
-            mainStr += " and ev.isActive='1' "; // getting only active employees
+            mainStr += " and ev.userActive='1' "; // getting only active employees
                                                 // for any kind of search
             Query qry = null;
             qry = persistenceService.getSession().createQuery(mainStr);

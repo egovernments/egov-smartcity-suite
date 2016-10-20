@@ -97,9 +97,6 @@ public class DishonorChequeService implements FinancialIntegrationService {
     private FinancialsUtil financialsUtil;
 
     @Autowired
-    private ChartOfAccountsHibernateDAO chartOfAccountsHibernateDAO;
-
-    @Autowired
     @Qualifier("instrumentHeaderService")
     public InstrumentHeaderService instrumentHeaderService;
 
@@ -505,7 +502,7 @@ public class DishonorChequeService implements FinancialIntegrationService {
 
     @Override
     public void updateSourceInstrumentVoucher(final String event, final Long instrumentHeaderId) {
-        // TODO Auto-generated method stub
+
 
     }
 

@@ -114,13 +114,13 @@ public class MutationFeeCollection extends TaxCollection {
     @Override
     public List<ReceiptDetail> reconstructReceiptDetail(final String billReferenceNumber, final BigDecimal actualAmountPaid,
             final List<ReceiptDetail> receiptDetailList) {
-        // TODO Auto-generated method stub
+
         return null;
     }
 
     @Override
     public String constructAdditionalInfoForReceipt(final BillReceiptInfo billReceiptInfo) {
-        // TODO Auto-generated method stub
+
         return null;
     }
 

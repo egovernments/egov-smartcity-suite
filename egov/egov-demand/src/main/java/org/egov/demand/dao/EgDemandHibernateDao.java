@@ -66,13 +66,13 @@ public class EgDemandHibernateDao implements EgDemandDao {
 
 	@Override
 	public List<EgDemand> findAll() {
-		// TODO Auto-generated method stub
+
 		return null;
 	}
 
 	@Override
 	public EgDemand create(EgDemand egDemand) {
-		// TODO Auto-generated method stub
+
 		return null;
 	}
 
@@ -84,7 +84,7 @@ public class EgDemandHibernateDao implements EgDemandDao {
 
 	@Override
 	public EgDemand update(EgDemand egDemand) {
-		// TODO Auto-generated method stub
+
 		return null;
 	}
 

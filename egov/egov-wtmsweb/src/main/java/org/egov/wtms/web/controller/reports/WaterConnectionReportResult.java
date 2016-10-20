@@ -137,9 +137,6 @@ public class WaterConnectionReportResult {
         return newconnection.add(addconnection).add(changeofusage).add(closeconnection).add(reconnection);
     }
 
-    public void setTotal(final BigInteger total) {
-    }
-
     public String getLocality() {
         return locality;
     }

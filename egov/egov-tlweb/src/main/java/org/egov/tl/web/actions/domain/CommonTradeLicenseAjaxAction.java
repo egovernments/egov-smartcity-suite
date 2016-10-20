@@ -198,7 +198,7 @@ public class CommonTradeLicenseAjaxAction extends BaseFormAction implements Serv
 
     @Override
     public Object getModel() {
-        // TODO Auto-generated method stub
+
         return null;
     }
 

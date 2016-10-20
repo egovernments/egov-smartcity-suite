@@ -50,7 +50,7 @@ public class SewerageSearch implements Indexable {
 
 	@Override
 	public String getIndexId() {
-		// TODO Auto-generated method stub
+
 		return ApplicationThreadLocals.getCityCode() + "-" + applicationNumber;
 	}
 	

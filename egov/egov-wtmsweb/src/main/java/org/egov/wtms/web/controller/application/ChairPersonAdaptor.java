@@ -40,28 +40,29 @@
 
 package org.egov.wtms.web.controller.application;
 
+import java.lang.reflect.Type;
+import java.text.SimpleDateFormat;
+
+import org.egov.commons.entity.ChairPerson;
+import org.egov.wtms.utils.constants.WaterTaxConstants;
+
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonSerializationContext;
 import com.google.gson.JsonSerializer;
-import org.egov.commons.entity.ChairPerson;
-import org.egov.wtms.utils.constants.WaterTaxConstants;
-
-import java.lang.reflect.Type;
-import java.text.SimpleDateFormat;
 
 public class ChairPersonAdaptor implements JsonSerializer<ChairPerson> {
-    
-    SimpleDateFormat dateformat =  new SimpleDateFormat("dd-MM-yyyy");
 
     @Override
     public JsonElement serialize(final ChairPerson chairPerson, final Type type, final JsonSerializationContext jsc) {
+        final SimpleDateFormat dateformat = new SimpleDateFormat("dd-MM-yyyy");
         final JsonObject jsonObject = new JsonObject();
         jsonObject.addProperty("chairPerson", chairPerson.getName());
         jsonObject.addProperty("fromDate", dateformat.format(chairPerson.getFromDate()));
-        jsonObject.addProperty("toDate", chairPerson.getToDate() != null ? dateformat.format(chairPerson.getToDate())
-                : "Till Date");
-        jsonObject.addProperty("status", chairPerson.isActive() ? WaterTaxConstants.MASTERSTATUSACTIVE : WaterTaxConstants.MASTERSTATUSINACTIVE);
+        jsonObject.addProperty("toDate",
+                chairPerson.getToDate() != null ? dateformat.format(chairPerson.getToDate()) : "Till Date");
+        jsonObject.addProperty("status",
+                chairPerson.isActive() ? WaterTaxConstants.MASTERSTATUSACTIVE : WaterTaxConstants.MASTERSTATUSINACTIVE);
         return jsonObject;
     }
 }

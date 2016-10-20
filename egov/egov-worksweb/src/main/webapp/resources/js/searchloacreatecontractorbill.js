@@ -71,9 +71,9 @@ jQuery('#btncreateloa').click(function(e) {
 			url : '/egworks/letterofacceptance/ajaxvalidate-createcontractorbill?workOrderId='+ workOrderId,
 			cache : true,
 			dataType : "json",
-			success : function(response) {
-				if (!response) {
-					bootbox.alert("There is a bill created for this work identification number " +workOrderNumber+ " which is not approved yet.Please approve it and proceed for creating a new one");
+			success : function(message) {
+				if (message != "") {
+					bootbox.alert(message);
 				} else {
 					window.location = "/egworks/contractorbill/newform?loaNumber=" + workOrderNumber;
 				}

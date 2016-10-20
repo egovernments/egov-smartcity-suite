@@ -73,10 +73,11 @@ function callAjaxSearch() {
 				},
 				aaSorting: [],				
 				columns : [ { 
-"data" : "interimOrderType", "sClass" : "text-left"} ,{ 
-"data" : "code", "sClass" : "text-left"} ,{ 
-"data" : "active", "sClass" : "text-left"},{ 
-"data" : "id","visible": false, "searchable": false }]				
+					
+					"data" : "code",  "sClass" : "text-center" } ,{ 
+					"data" : "interimOrderType", "sClass": "text-center"},{ 
+					"data" : "active", "sClass" : "text-center"},{ 
+					"data" : "id","visible": false, "searchable": false }]				
 			});
 			}
 $("#resultTable").on('click','tbody tr',function(event) {

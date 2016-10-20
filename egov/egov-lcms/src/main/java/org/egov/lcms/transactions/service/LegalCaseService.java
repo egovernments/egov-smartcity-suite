@@ -134,16 +134,16 @@ public class LegalCaseService {
 		legalcase.getCounterAffidavits().clear();
 		legalcase.setCounterAffidavits(caListtemp);
 		for (final LegalCaseDepartment legaldeptObj : legalDept) {
-			String[] stremp=null;
+			String[] stremp = null;
 			legaldeptObj.setLegalCase(legalcase);
-			if(legaldeptObj.getPosition().getName()!=null && legaldeptObj.getPosition().getName().contains("@")){
-				stremp=legaldeptObj.getPosition().getName().split("@");
-			legaldeptObj.setPosition(legalCaseUtil.getPositionByName(stremp[0]));
+			if (legaldeptObj.getPosition().getName() != null && legaldeptObj.getPosition().getName().contains("@")) {
+				stremp = legaldeptObj.getPosition().getName().split("@");
+				legaldeptObj.setPosition(legalCaseUtil.getPositionByName(stremp[0]));
+			} else {
+				legaldeptObj.setPosition(legalCaseUtil.getPositionByName(legaldeptObj.getPosition().getName()));
 			}
-			else{
-			legaldeptObj.setPosition(legalCaseUtil.getPositionByName(legaldeptObj.getPosition().getName()));
-			
-			legaldeptObj.setDepartment(legalCaseUtil.getDepartmentByName(legaldeptObj.getDepartment().getName()));}
+
+			legaldeptObj.setDepartment(legalCaseUtil.getDepartmentByName(legaldeptObj.getDepartment().getName()));
 			legalcaseDetails.add(legaldeptObj);
 		}
 		legalcase.getLegalCaseDepartment().clear();
@@ -200,7 +200,7 @@ public class LegalCaseService {
 		if (!legalcase.getPwrList().isEmpty()) {
 			for (final Pwr legalpwr : legalcase.getPwrList()) {
 				legalpwr.setLegalCase(legalcase);
-				// legalpwr.setCaFilingdate(new Date());
+				legalpwr.setCaFilingdate(new Date());
 				pwrListtemp.add(legalpwr);
 			}
 			legalcase.getPwrList().clear();

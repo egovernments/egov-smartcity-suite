@@ -560,7 +560,6 @@ public class ChartOfAccounts {
 			LOGGER.error(e.getMessage(), e);
 			throw new TaskFailedException(e.getMessage());
 		}
-		System.out.println(entityManager.getFlushMode());
 		// entityManager.flush();
 		if (!postInGL(txnList))
 			return false;

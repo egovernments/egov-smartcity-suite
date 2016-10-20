@@ -313,7 +313,7 @@ public class AssessmentService {
                 responseJson = JsonConvertor.convert(receiptDetails);
             }
         } catch (ValidationException e) {
-            e.printStackTrace();
+
             List<ErrorDetails> errorList = new ArrayList<ErrorDetails>(0);
 
             List<ValidationError> errors = e.getErrors();
@@ -326,7 +326,7 @@ public class AssessmentService {
             }
             responseJson = JsonConvertor.convert(errorList);
         } catch (Exception e) {
-            e.printStackTrace();
+
             List<ErrorDetails> errorList = new ArrayList<ErrorDetails>(0);
             ErrorDetails er = new ErrorDetails();
             er.setErrorCode(e.getMessage());

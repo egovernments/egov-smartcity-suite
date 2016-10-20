@@ -655,31 +655,31 @@ public class PropertyHibernateDAO implements PropertyDAO {
 
     @Override
     public Property findById(Integer id, boolean lock) {
-        // TODO Auto-generated method stub
+
         return null;
     }
 
     @Override
     public List<Property> findAll() {
-        // TODO Auto-generated method stub
+
         return null;
     }
 
     @Override
     public Property create(Property property) {
-        // TODO Auto-generated method stub
+
         return null;
     }
 
     @Override
     public void delete(Property property) {
-        // TODO Auto-generated method stub
+
 
     }
 
     @Override
     public Property update(Property property) {
-        // TODO Auto-generated method stub
+
         return null;
     }
 

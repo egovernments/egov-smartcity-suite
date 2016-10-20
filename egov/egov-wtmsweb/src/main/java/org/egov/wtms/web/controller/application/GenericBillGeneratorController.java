@@ -124,7 +124,7 @@ public class GenericBillGeneratorController {
                 waterconnectionDetails.getConnection().getPropertyIdentifier(),
                 PropertyExternalService.FLAG_FULL_DETAILS, BasicPropertyStatus.ALL);
         if (assessmentDetails != null )
-            return generateBillAndRedirectToCollection(waterConnectionDetails, applicationCode, applicationTypeCode,
+            return generateBillAndRedirectToCollection(applicationCode, applicationTypeCode,
                     model);
         else
             throw new ValidationException("invalid.property");
@@ -139,23 +139,15 @@ public class GenericBillGeneratorController {
                 waterconnectionDetails.getConnection().getPropertyIdentifier(),
                 PropertyExternalService.FLAG_FULL_DETAILS, BasicPropertyStatus.ALL);
         if (assessmentDetails != null )
-            return generateBillAndRedirectToCollection(waterConnectionDetails, applicationCode, applicationTypeCode,
+            return generateBillAndRedirectToCollection(applicationCode, applicationTypeCode,
                     model);
         else
             throw new ValidationException("invalid.property");
             
     }
 
-    private String generateBillAndRedirectToCollection(WaterConnectionDetails waterConnectionDetails,
+    private String generateBillAndRedirectToCollection(
             final String applicationCode, final String applicationTypeCode, final Model model) {
-
-        if (applicationTypeCode.equals(WaterTaxConstants.CHANGEOFUSE)
-                || applicationTypeCode.equals(WaterTaxConstants.RECONNECTIONCONNECTION))
-            waterConnectionDetails = waterConnectionDetailsService.findByApplicationNumberOrConsumerCodeAndStatus(
-                    applicationCode, ConnectionStatus.ACTIVE);
-        else
-            waterConnectionDetails = waterConnectionDetailsService.findByApplicationNumberOrConsumerCodeAndStatus(
-                    applicationCode, ConnectionStatus.ACTIVE);
         if (ApplicationThreadLocals.getUserId() == null)
             if (securityUtils.getCurrentUser().getUsername().equals("anonymous"))
                 ApplicationThreadLocals.setUserId(userService.getUserByUsername(WaterTaxConstants.USERNAME_ANONYMOUS).getId());

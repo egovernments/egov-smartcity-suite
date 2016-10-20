@@ -558,7 +558,7 @@ public class RevisionPetitionAction extends PropertyTaxBaseAction {
             try {
                 bFile = FileUtils.readFileToByteArray(file);
             } catch (final IOException e) {
-                e.printStackTrace();
+
                 throw new ApplicationRuntimeException("Exception while generating Hearing Notcie : " + e);
             }
             reportOutput.setReportOutputData(bFile);
@@ -951,7 +951,7 @@ public class RevisionPetitionAction extends PropertyTaxBaseAction {
                 try {
                     bFile = FileUtils.readFileToByteArray(file);
                 } catch (final IOException e) {
-                    e.printStackTrace();
+
                     throw new ApplicationRuntimeException("Exception while generating Hearing Notcie : " + e);
                 }
                 reportOutput.setReportOutputData(bFile);
@@ -1018,7 +1018,7 @@ public class RevisionPetitionAction extends PropertyTaxBaseAction {
                 try {
                     bFile = FileUtils.readFileToByteArray(file);
                 } catch (final IOException e) {
-                    e.printStackTrace();
+
                     throw new ApplicationRuntimeException("Exception while generating Hearing Notcie : " + e);
                 }
                 reportOutput.setReportOutputData(bFile);
@@ -1082,7 +1082,7 @@ public class RevisionPetitionAction extends PropertyTaxBaseAction {
                 try {
                     bFile = FileUtils.readFileToByteArray(file);
                 } catch (final IOException e) {
-                    e.printStackTrace();
+
                     throw new ApplicationRuntimeException("Exception while generating Hearing Notcie : " + e);
                 }
                 reportOutput.setReportOutputData(bFile);

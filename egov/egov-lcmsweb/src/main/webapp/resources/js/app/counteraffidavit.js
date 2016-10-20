@@ -60,10 +60,7 @@ jQuery(document).ready(
 	}
 	$('#buttonsubmitid').click(function(){
 	var modeval=$("#mode").val();
-	/*var $tableBody = $('#caffidavitdetails').find("tbody"),
-    $trLast = $tableBody.find("tr:last");
-	*/
-	if(modeval =='counteredit'){
+	if(modeval =='countercreate'){
 	var dept=$("#departmentId").val();
 	var positionval=$("#positionId").val();
 	

@@ -736,11 +736,11 @@ public class WaterConnectionDetailsService {
             aadharNumber.append(primaryOwner.getAadhaarNumber() != null ? primaryOwner.getAadhaarNumber() : "");
             while (ownerNameItr.hasNext()) {
                 final OwnerName secondaryOwner = ownerNameItr.next();
-                consumerName.append(",")
+                consumerName.append(',')
                         .append(secondaryOwner.getOwnerName() != null ? secondaryOwner.getOwnerName() : "");
-                mobileNumber.append(",")
+                mobileNumber.append(',')
                         .append(secondaryOwner.getMobileNumber() != null ? secondaryOwner.getMobileNumber() : "");
-                aadharNumber.append(",")
+                aadharNumber.append(',')
                         .append(secondaryOwner.getAadhaarNumber() != null ? secondaryOwner.getAadhaarNumber() : "");
             }
 

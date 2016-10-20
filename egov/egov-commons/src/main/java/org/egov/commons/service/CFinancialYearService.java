@@ -105,8 +105,16 @@ public class CFinancialYearService {
     public CFiscalPeriod findByFiscalName(final String name) {
         return cFinancialYearRepository.findByFiscalName(name);
     }
-    
+
     public CFinancialYear getFinancialYearByDate(Date date) {
     	return cFinancialYearRepository.getFinancialYearByDate(date);
+    }
+
+    public List<CFinancialYear> getFinancialYearNotClosed() {
+        return cFinancialYearRepository.findByIsClosedFalseOrderByFinYearRangeDesc();
+    }
+
+    public CFinancialYear findByFinYearRange(String finYearRange){
+        return cFinancialYearRepository.findByFinYearRange(finYearRange);
     }
 }

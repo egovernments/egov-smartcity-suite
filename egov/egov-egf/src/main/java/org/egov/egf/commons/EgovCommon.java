@@ -1134,14 +1134,12 @@ public class EgovCommon {
                                     .append("')")
                                     .append(
                                             " Group by txns.GLCODEID,txns.fundid,txns.FINANCIALYEARID ");
-        System.out.println("Opening balance query :" + opBalncQuery);
 
         final List<Object> list = persistenceService.getSession()
                 .createSQLQuery(opBalncQuery.toString()).list();
         if (list != null && list.size() > 0)
             opBalAsonDate = (BigDecimal) list.get(0);
         opBalAsonDate = opBalAsonDate == null ? BigDecimal.ZERO : opBalAsonDate;
-        System.out.println("Opening balance  :" + opBalAsonDate);
         return opBalAsonDate;
     }
 
@@ -1806,13 +1804,11 @@ public class EgovCommon {
                                             "AND txns.financialyearid    = fy.id " +
                                             "AND fy.startingdate        <='").append(Constants.DDMMYYYYFORMAT1.format(asondate)).append("' " +
                                                     "GROUP BY fy.startingdate ORDER BY fy.startingdate");
-        System.out.println("Opening balance query :" + opBalncQuery);
 
         final List<Object> list = persistenceService.getSession().createSQLQuery(opBalncQuery.toString()).list();
         if (list != null && list.size() > 0)
             opBalAsonDate = (BigDecimal) list.get(0);
         opBalAsonDate = opBalAsonDate == null ? BigDecimal.ZERO : opBalAsonDate;
-        System.out.println("Opening balance  :" + opBalAsonDate);
         return opBalAsonDate;
     }
 

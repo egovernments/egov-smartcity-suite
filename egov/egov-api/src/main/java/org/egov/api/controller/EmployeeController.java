@@ -40,6 +40,22 @@
 
 package org.egov.api.controller;
 
+import static java.util.Arrays.asList;
+import static org.egov.infra.utils.ApplicationConstant.N;
+import static org.egov.infra.utils.ApplicationConstant.Y;
+import static org.egov.infra.workflow.entity.StateAware.byCreatedDate;
+
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
+
+import javax.servlet.http.HttpServletRequest;
+
 import org.apache.log4j.Logger;
 import org.egov.api.adapter.ForwardDetailsAdapter;
 import org.egov.api.adapter.UserAdapter;
@@ -50,8 +66,8 @@ import org.egov.api.model.ComplaintSearchRequest;
 import org.egov.api.model.ForwardDetails;
 import org.egov.config.search.Index;
 import org.egov.config.search.IndexType;
+import org.egov.eis.entity.EmployeeView;
 import org.egov.eis.service.PositionMasterService;
-import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.security.utils.SecurityUtils;
 import org.egov.infra.workflow.entity.State.StateStatus;
 import org.egov.infra.workflow.entity.StateAware;
@@ -93,20 +109,6 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import com.google.gson.reflect.TypeToken;
 
-import javax.servlet.http.HttpServletRequest;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Set;
-
-import static java.util.Arrays.asList;
-import static org.egov.infra.utils.ApplicationConstant.N;
-import static org.egov.infra.utils.ApplicationConstant.Y;
-import static org.egov.infra.workflow.entity.StateAware.byCreatedDate;
-
 @org.springframework.web.bind.annotation.RestController
 @RequestMapping("/v1.0")
 public class EmployeeController extends ApiController {
@@ -143,11 +145,10 @@ public class EmployeeController extends ApiController {
     public ResponseEntity<String> getWorkFlowTypesWithItemsCount(final HttpServletRequest request) {
         final ApiResponse res = ApiResponse.newInstance();
         try {
-            final List<Long> ownerpostitions = new ArrayList<>();
-            ownerpostitions.add(posMasterService.getPositionByUserId(securityUtils.getCurrentUser().getId()).getId());
-
             return res.setDataAdapter(new UserAdapter())
-                    .success(getWorkflowTypesWithCount(securityUtils.getCurrentUser().getId(), ownerpostitions));
+                    .success(getWorkflowTypesWithCount(securityUtils.getCurrentUser().getId(), posMasterService
+                            .getPositionsForEmployee(securityUtils.getCurrentUser().getId(), new Date()).parallelStream()
+                            .map(position -> position.getId()).collect(Collectors.toList())));
         } catch (final Exception ex) {
             LOGGER.error(EGOV_API_ERROR, ex);
             return res.error(getMessage("server.error"));
@@ -159,72 +160,72 @@ public class EmployeeController extends ApiController {
             @PathVariable final int resultsFrom, @PathVariable final int resultsTo) {
         final ApiResponse res = ApiResponse.newInstance();
         try {
-            final List<Long> ownerpostitions = new ArrayList<>();
-            ownerpostitions.add(posMasterService.getPositionByUserId(securityUtils.getCurrentUser().getId()).getId());
             return res.setDataAdapter(new UserAdapter())
                     .success(createInboxData(getWorkflowItemsByUserAndWFType(securityUtils.getCurrentUser().getId(),
-                            ownerpostitions, workFlowType, resultsFrom, resultsTo)));
+                            posMasterService.getPositionsForEmployee(securityUtils.getCurrentUser().getId(), new Date())
+                                    .parallelStream()
+                                    .map(position -> position.getId()).collect(Collectors.toList()),
+                            workFlowType, resultsFrom, resultsTo)));
         } catch (final Exception ex) {
             LOGGER.error(EGOV_API_ERROR, ex);
             return res.error(getMessage("server.error"));
         }
     }
-    
+
     @RequestMapping(value = ApiUrl.EMPLOYEE_SEARCH_INBOX, method = RequestMethod.POST, produces = MediaType.TEXT_PLAIN_VALUE)
-    public ResponseEntity<String> searchEmployeeInbox(@PathVariable final Integer pageno, @PathVariable final Integer limit, @RequestBody final ComplaintSearchRequest searchRequest) {
-    	try {
-    		
-    		org.egov.search.domain.Page page=org.egov.search.domain.Page.at(pageno);
-    		page.ofSize(limit);
-    		
-        	final SearchResult searchResult = searchService.search(
+    public ResponseEntity<String> searchEmployeeInbox(@PathVariable final Integer pageno, @PathVariable final Integer limit,
+            @RequestBody final ComplaintSearchRequest searchRequest) {
+        try {
+
+            final org.egov.search.domain.Page page = org.egov.search.domain.Page.at(pageno);
+            page.ofSize(limit);
+
+            final SearchResult searchResult = searchService.search(
                     asList(Index.PGR.toString()),
                     asList(IndexType.COMPLAINT.toString()),
                     searchRequest.searchQuery(), searchRequest.searchFilters(),
                     Sort.by().field("common.createdDate", SortOrder.DESC), page);
-        	
-        	String jsonString=searchResult.rawResponse();
-        	
-        	JSONObject respObj= (JSONObject)new JSONParser().parse(jsonString);
-        	
-        	JSONObject jObjHits=(JSONObject)respObj.get("hits");
-        	
-        	Long total=(Long)jObjHits.get("total");
-        	
-        	boolean hasNextPage = total > pageno * limit;
-        	
-        	ArrayList<Document> inboxItems=new ArrayList<>();
-        	
-        	for(Document document : searchResult.getDocuments())
-        	{
-        		JSONObject jResourceObj= document.getResource();
-        		
-        		LinkedHashMap<String, Object> jSearchableObj=(LinkedHashMap<String, Object>)jResourceObj.get("searchable");
-        		
-        		LinkedHashMap<String, Object> jOwnerObj= (LinkedHashMap<String, Object>)jSearchableObj.get("owner");
-        		
-        		if((int)jOwnerObj.get("id") ==  posMasterService.getPositionByUserId(securityUtils.getCurrentUser().getId()).getId())
-        		{
-        			inboxItems.add(document);
-        		}
-        	}
 
-        	JsonArray result = (JsonArray) new Gson().toJsonTree(inboxItems,
+            final String jsonString = searchResult.rawResponse();
+
+            final JSONObject respObj = (JSONObject) new JSONParser().parse(jsonString);
+
+            final JSONObject jObjHits = (JSONObject) respObj.get("hits");
+
+            final Long total = (Long) jObjHits.get("total");
+
+            final boolean hasNextPage = total > pageno * limit;
+
+            final ArrayList<Document> inboxItems = new ArrayList<>();
+
+            for (final Document document : searchResult.getDocuments()) {
+                final JSONObject jResourceObj = document.getResource();
+
+                final LinkedHashMap<String, Object> jSearchableObj = (LinkedHashMap<String, Object>) jResourceObj
+                        .get("searchable");
+
+                final LinkedHashMap<String, Object> jOwnerObj = (LinkedHashMap<String, Object>) jSearchableObj.get("owner");
+
+                if ((int) jOwnerObj.get("id") == posMasterService.getPositionByUserId(securityUtils.getCurrentUser().getId())
+                        .getId())
+                    inboxItems.add(document);
+            }
+
+            final JsonArray result = (JsonArray) new Gson().toJsonTree(inboxItems,
                     new TypeToken<List<Document>>() {
                     }.getType());
-        	
-        	
-        	JsonObject jsonResp=new JsonObject();
-        	jsonResp.add("searchItems", result);
-        	jsonResp.addProperty("hasNextPage", hasNextPage);
-        	
+
+            final JsonObject jsonResp = new JsonObject();
+            jsonResp.add("searchItems", result);
+            jsonResp.addProperty("hasNextPage", hasNextPage);
+
             return getResponseHandler().success(jsonResp);
-            
+
         } catch (final Exception e) {
-        	LOGGER.error(EGOV_API_ERROR, e);
-			return getResponseHandler().error(getMessage("server.error"));
+            LOGGER.error(EGOV_API_ERROR, e);
+            return getResponseHandler().error(getMessage("server.error"));
         }
-        
+
     }
 
     // --------------------------------------------------------------------------------//
@@ -248,53 +249,55 @@ public class EmployeeController extends ApiController {
             return ApiResponse.newInstance().error(getMessage("server.error"));
         }
     }
-    
+
     @RequestMapping(value = ApiUrl.EMPLOYEE_FORWARD_DEPT_DESIGNATION_USER, method = RequestMethod.GET, produces = MediaType.TEXT_PLAIN_VALUE)
-    public ResponseEntity<String> getForwardDetails(@RequestParam(value = "department", required = true) Integer departmentId, @RequestParam(value = "designation", required = false) Integer designationId) {
+    public ResponseEntity<String> getForwardDetails(
+            @RequestParam(value = "department", required = true) final Integer departmentId,
+            @RequestParam(value = "designation", required = false) final Integer designationId) {
         try {
-        	
-        	ForwardDetails forwardDetails=new ForwardDetails();
-        	
-        	//identify requesting for users or designations with this if condition
-        	if(departmentId!=null && designationId!=null)
-        	{
-        		final Set<User> users = new HashSet<>();
-                eisService.getUsersByDeptAndDesig(departmentId, designationId, new Date()).stream().forEach(user ->
-                    user.getRoles().stream().forEach(role -> {
+
+            final ForwardDetails forwardDetails = new ForwardDetails();
+
+            // identify requesting for users or designations with this if condition
+            if (departmentId != null && designationId != null) {
+                final Set<EmployeeView> users = new HashSet<>();
+                final HashMap<String, String> paramMap = new HashMap<String, String>();
+                paramMap.put("departmentId", String.valueOf(departmentId));
+                paramMap.put("designationId", String.valueOf(designationId));
+                final List<EmployeeView> empViewList = (List<EmployeeView>) eisService.getEmployeeInfoList(paramMap);
+                empViewList.stream().forEach(user -> {
+                    user.getEmployee().getRoles().stream().forEach(role -> {
                         if (role.getName().matches("Redressal Officer|Grievance Officer|Grievance Routing Officer"))
                             users.add(user);
-                    })
-                );
+                    });
+                });
                 forwardDetails.setUsers(users);
-        	}
-        	else if(departmentId!=null)
-        	{
-        		forwardDetails.setDesignations(eisService.getAllDesignationByDept(departmentId, new Date()));
-        	}
-        	        	
+            } else if (departmentId != null)
+                forwardDetails.setDesignations(eisService.getAllDesignationByDept(departmentId, new Date()));
+
             return getResponseHandler().setDataAdapter(new ForwardDetailsAdapter()).success(forwardDetails);
-            
+
         } catch (final Exception e) {
-        	LOGGER.error(EGOV_API_ERROR, e);
-			return getResponseHandler().error(getMessage("server.error"));
+            LOGGER.error(EGOV_API_ERROR, e);
+            return getResponseHandler().error(getMessage("server.error"));
         }
     }
 
     /* DATA RELATED FUCNTIONS */
 
     private JsonArray createInboxData(final List<StateAware> inboxStates) {
-        JsonArray inboxItems = new JsonArray();
+        final JsonArray inboxItems = new JsonArray();
         inboxStates.sort(byCreatedDate());
-        for (final StateAware stateAware : inboxStates) {
+        for (final StateAware stateAware : inboxStates)
             inboxItems.add(new JsonParser().parse(stateAware.getStateInfoJson()).getAsJsonObject());
-        }
         return inboxItems;
     }
 
     @SuppressWarnings("unchecked")
     public List<StateAware> getWorkflowItemsByUserAndWFType(final Long userId, final List<Long> owners, final String workFlowType,
             final int resultsFrom, final int resultsTo) throws HibernateException, ClassNotFoundException {
-        return entityQueryService.getSession().createCriteria(Class.forName(workflowTypeService.getEnabledWorkflowTypeByType(workFlowType).getTypeFQN()))
+        return entityQueryService.getSession()
+                .createCriteria(Class.forName(workflowTypeService.getEnabledWorkflowTypeByType(workFlowType).getTypeFQN()))
                 .setFirstResult(resultsFrom)
                 .setMaxResults(resultsTo)
                 .setFetchMode("state", FetchMode.JOIN).createAlias("state", "state")
@@ -340,7 +343,7 @@ public class EmployeeController extends ApiController {
             final Long wftitemscount = (Long) getWorkflowItemsCountByWFType(userId, ownerPostitions, String.valueOf(rowObj[0]));
             if (wftitemscount > 0) {
                 final HashMap<String, Object> workFlowType = new HashMap<>();
-                WorkflowTypes workFlowTypeObj = workflowTypeService.getEnabledWorkflowTypeByType(String.valueOf(rowObj[0]));
+                final WorkflowTypes workFlowTypeObj = workflowTypeService.getEnabledWorkflowTypeByType(String.valueOf(rowObj[0]));
                 workFlowType.put("workflowtype", rowObj[0]);
                 workFlowType.put("inboxlistcount", wftitemscount);
                 workFlowType.put("workflowtypename", workFlowTypeObj.getDisplayName());

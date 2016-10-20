@@ -44,6 +44,7 @@
 	cssClass="form-horizontal form-groups-bordered"
 	enctype="multipart/form-data">
 	<input type="hidden" name="legalCase" value="${legalCase.id}" />
+	<input type="hidden" id="mode" name="mode" value="${mode}" />
 	
 	<jsp:include page="../transactions/viewSummarizedCase.jsp" />
 	<%@ include file="legalcase-assignedDeptDet.jsp"%>

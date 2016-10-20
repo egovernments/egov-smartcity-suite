@@ -79,7 +79,7 @@ public class ApplicationSearchRequest {
                     logger.debug("Date Range From start.. :" + ft.format(dtft.parse(fromDate)));
                 this.fromDate = ft.format(dtft.parse(fromDate));
             } catch (final ParseException e) {
-                e.printStackTrace();
+
             }
     }
 
@@ -93,7 +93,7 @@ public class ApplicationSearchRequest {
                     logger.debug("Date Range Till .. :" + ft.format(cal.getTime()));
                 this.toDate = ft.format(cal.getTime());
             } catch (final ParseException e) {
-                e.printStackTrace();
+
             }
     }
 

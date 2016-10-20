@@ -1731,7 +1731,6 @@ public class CreateVoucher {
 
 				final String strVoucherNumber = v.getNextNumber(cVoucherHeader);
 
-				System.out.println(v.getClass().getSimpleName());
 				cVoucherHeader.setVoucherNumber(strVoucherNumber);
 			}
 			/*

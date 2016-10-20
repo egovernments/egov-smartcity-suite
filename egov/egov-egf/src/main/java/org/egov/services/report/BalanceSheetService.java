@@ -153,8 +153,7 @@ public class BalanceSheetService extends ReportService {
                 }
         } catch (final Exception exp)
         {
-            //TODO- need to re-throw exception
-            exp.printStackTrace();
+
         }
     }
 

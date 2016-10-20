@@ -210,9 +210,28 @@ function lessThanOrEqualToCurrentDate(dt) {
 		return false;
 	}
 }
-function setupAjaxSubCategory(elem) {
-	category_id = elem.options[elem.selectedIndex].value;
-	populatesubCategory({
-		categoryId : category_id
-	});
-}
+
+
+jQuery(document).ready(function () {
+    jQuery('#category').change(function () {
+        jQuery.ajax({
+            url: "/tl/licensesubcategory/subcategories-by-category",
+            type: "GET",
+            data: {
+                categoryId: jQuery('#category').val()
+            },
+            dataType: "json",
+            success: function (response) {
+                var subCategory = jQuery('#subCategory');
+                subCategory.find("option:gt(0)").remove();
+                jQuery.each(response, function (index, value) {
+                    subCategory.append(jQuery('<option>').text(value.name).attr('value', value.id));
+                });
+            },
+            error: function (response) {
+                console.log("failed");
+            }
+
+        });
+    });
+});

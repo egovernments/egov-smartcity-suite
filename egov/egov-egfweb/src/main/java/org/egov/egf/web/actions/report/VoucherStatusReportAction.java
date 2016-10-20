@@ -249,7 +249,7 @@ public class VoucherStatusReportAction extends BaseFormAction
         finYearDate();
 
         /*
-         * try { Thread.sleep(30000); } catch (InterruptedException e) { // TODO Auto-generated catch block e.printStackTrace(); }
+         * try { Thread.sleep(30000); } catch (InterruptedException e) {   }
          */
         //
         // LOGGER.errorpersistenceService.getSession().getFlushMode());

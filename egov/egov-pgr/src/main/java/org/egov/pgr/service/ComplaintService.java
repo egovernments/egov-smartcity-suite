@@ -240,7 +240,7 @@ public class ComplaintService {
                         .withStateValue(complaint.getStatus().getName()).withSenderName(userName)
                         .withDateInfo(new Date()).withOwner(complaint.getState().getOwnerPosition());
         } else if (null != approvalPosition && !approvalPosition.equals(Long.valueOf(0))) {
-            final Position owner = positionMasterService.getPrimaryAssignmentPositionForEmp(approvalPosition);
+            final Position owner = positionMasterService.getPositionById(approvalPosition);
             complaint.setAssignee(owner);
             complaint.setDepartment(complaint.getAssignee().getDeptDesig().getDepartment());
             if (!securityUtils.getCurrentUser().getRoles().contains(goRole))

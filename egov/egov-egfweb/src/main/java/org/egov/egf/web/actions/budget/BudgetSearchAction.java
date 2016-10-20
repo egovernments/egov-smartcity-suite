@@ -257,7 +257,6 @@ public class BudgetSearchAction extends BaseFormAction {
         if (shouldShowField(Constants.BOUNDARY))
             addRelatedEntity(Constants.BOUNDARY, Boundary.class);
         if (!parameters.containsKey("skipPrepare")) {
-            System.out.println(parameters);
             headerFields = budgetDetailConfig.getHeaderFields();
             gridFields = budgetDetailConfig.getGridFields();
             // setupDropdownDataExcluding(Constants.SUB_SCHEME);
