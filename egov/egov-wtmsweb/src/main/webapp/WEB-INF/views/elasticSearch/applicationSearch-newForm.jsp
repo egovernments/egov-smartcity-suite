@@ -150,7 +150,7 @@
 							<form:options items="${sourceList}"  />  
 						</form:select>
 						</div>
-						<label for="field-1" class="col-sm-3 control-label"> <spring:message
+						<label for="field-1" class="col-sm-2 control-label"> <spring:message
 										code="lbl.recordsOpenAndClosed" /></label>
 						<div class="col-sm-3 add-margin">
 						<form:select name="applicationStatus" path="" data-first-option="false" id="applicationStatus"
