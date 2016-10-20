@@ -79,100 +79,86 @@ $(document).ready(function(){
 			//TODO: remove code till billdate < workOrderDate condition check
 			var billType = $('#billtype').val();
 			var workOrderEstimateId = $('#workOrderEstimateId').val();
-			$.ajax({
-				type : "POST",
-				url : '/egworks/milestone/validate-milestonepercentagetocreatecontractorbill?workOrderEstimateId='+ workOrderEstimateId +"&billType=" + billType,
-				cache : true,
-				dataType : "json",
-				success : function(message) {
-					if (message != "") {
-						bootbox.alert(message);
-					} else {
-						var billDate = $('#billdate').data('datepicker').date;
-						var workOrderDate = $('#workOrderDate').data('datepicker').date;
-						var workCompletionDate = $('#workCompletionDate').data('datepicker').date;
-						var currentDate = new Date();
-						if(currentDate.getMonth() == 0 || currentDate.getMonth() == 1 || currentDate.getMonth() == 2) {
-							currentDate = new Date(currentDate.getFullYear() - 1, 3, 1);
-						}
-						var currentFinYearDate = new Date(currentDate.getFullYear(), 3, 1);
-						if(billDate < currentFinYearDate) {
-							bootbox.alert($('#errorBillDateFinYear').val());
-							$('#billdate').val(""); 
-							return false;
-						}
-						
-						if(billDate < workOrderDate) {
-							bootbox.alert($('#errorBillDateWorkOrder').val());
-							$('#billdate').val(""); 
-							return false;
-						}
-						if(billType == 'Final Bill') {
-							$('#workCompletionDate').attr('required', 'required');
-							
-							if($('#workCompletionDate').val() != '') {
-							if(workCompletionDate > billDate) {
-								bootbox.alert($('#errorWorkCompletionDateGreaterThanBillDate').val());
-								$('#workCompletionDate').val(""); 
-								return false;
-							}
-							
-							if(workCompletionDate < workOrderDate) {
-								bootbox.alert($('#errorWorkCompletionDateGreaterThanWorkOrderDate').val());
-								$('#workCompletionDate').val(""); 
-								return false;
-							}
-							
-							if(workCompletionDate > currentDate) {
-								bootbox.alert($('#errorWorkCompletionDateFutureDate').val());
-								$('#workCompletionDate').val(""); 
-								return false;
-							}
-							}
-							
-						}
-						
-						var debitamount = 0;
-						$( "input[name$='debitamount']" ).each(function(){
-							debitamount = debitamount + parseFloat(($(this).val()?$(this).val():"0"));
-						});
-						$('#billamount').val(debitamount);
-						if($('#partyBillDate').val() != '') { 
-							var workOrderDate = $('#workOrderDate').data('datepicker').date;
-							var partyBillDate = $('#partyBillDate').data('datepicker').date;
-							if(workOrderDate > partyBillDate) {
-								bootbox.alert($('#errorPartyBillDate').val());
-								$('#partyBillDate').val(""); 
-								return false;
-							}
-							//TODO: remove this condition
-							if(partyBillDate > billDate) {
-								bootbox.alert($('#errorPartyBillDateBillDate').val());
-								$('#partyBillDate').val(""); 
-								return false;
-							}
-						}	
-						if($('#mbDate').val() != '') { 
-							var workOrderDate = $('#workOrderDate').data('datepicker').date;
-							var mbDate = $('#mbDate').data('datepicker').date;
-							if(workOrderDate > mbDate) {
-								bootbox.alert($('#errorMBDate').val());
-								$('#mbDate').val("");
-								return false;
-							}
-						}	
-						if(!validateMBPageNumbers())
-							return false;
-						if(!validateNetPayableAmount())
-							return false;
-						if(!validateCreditAndDebitAmount())
-							return false;
-						return validateWorkFlowApprover(button);
-					}
-				},
-				error : function(response) {
+			var billDate = $('#billdate').data('datepicker').date;
+			var workOrderDate = $('#workOrderDate').data('datepicker').date;
+			var workCompletionDate = $('#workCompletionDate').data('datepicker').date;
+			var currentDate = new Date();
+			if(currentDate.getMonth() == 0 || currentDate.getMonth() == 1 || currentDate.getMonth() == 2) {
+				currentDate = new Date(currentDate.getFullYear() - 1, 3, 1);
+			}
+			var currentFinYearDate = new Date(currentDate.getFullYear(), 3, 1);
+			if(billDate < currentFinYearDate) {
+				bootbox.alert($('#errorBillDateFinYear').val());
+				$('#billdate').val(""); 
+				return false;
+			}
+			
+			if(billDate < workOrderDate) {
+				bootbox.alert($('#errorBillDateWorkOrder').val());
+				$('#billdate').val(""); 
+				return false;
+			}
+			if(billType == 'Final Bill') {
+				$('#workCompletionDate').attr('required', 'required');
+				
+				if($('#workCompletionDate').val() != '') {
+				if(workCompletionDate > billDate) {
+					bootbox.alert($('#errorWorkCompletionDateGreaterThanBillDate').val());
+					$('#workCompletionDate').val(""); 
+					return false;
 				}
+				
+				if(workCompletionDate < workOrderDate) {
+					bootbox.alert($('#errorWorkCompletionDateGreaterThanWorkOrderDate').val());
+					$('#workCompletionDate').val(""); 
+					return false;
+				}
+				
+				if(workCompletionDate > currentDate) {
+					bootbox.alert($('#errorWorkCompletionDateFutureDate').val());
+					$('#workCompletionDate').val(""); 
+					return false;
+				}
+				}
+				
+			}
+			
+			var debitamount = 0;
+			$( "input[name$='debitamount']" ).each(function(){
+				debitamount = debitamount + parseFloat(($(this).val()?$(this).val():"0"));
 			});
+			$('#billamount').val(debitamount);
+			if($('#partyBillDate').val() != '') { 
+				var workOrderDate = $('#workOrderDate').data('datepicker').date;
+				var partyBillDate = $('#partyBillDate').data('datepicker').date;
+				if(workOrderDate > partyBillDate) {
+					bootbox.alert($('#errorPartyBillDate').val());
+					$('#partyBillDate').val(""); 
+					return false;
+				}
+				//TODO: remove this condition
+				if(partyBillDate > billDate) {
+					bootbox.alert($('#errorPartyBillDateBillDate').val());
+					$('#partyBillDate').val(""); 
+					return false;
+				}
+			}	
+			if($('#mbDate').val() != '') { 
+				var workOrderDate = $('#workOrderDate').data('datepicker').date;
+				var mbDate = $('#mbDate').data('datepicker').date;
+				if(workOrderDate > mbDate) {
+					bootbox.alert($('#errorMBDate').val());
+					$('#mbDate').val("");
+					return false;
+				}
+			}	
+			if(!validateMBPageNumbers())
+				return false;
+			if(!validateNetPayableAmount())
+				return false;
+			if(!validateCreditAndDebitAmount())
+				return false;
+			return validateWorkFlowApprover(button);
 		}
 		return validateWorkFlowApprover(button);
 	});
