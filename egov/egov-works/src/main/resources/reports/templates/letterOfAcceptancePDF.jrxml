@@ -38,9 +38,8 @@
   ~
   ~   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
   -->
-
-<!-- Created with Jaspersoft Studio version 6.2.2.final using JasperReports Library version 6.2.2  -->
-<!-- 2016-07-07T17:33:22 -->
+<!-- Created with Jaspersoft Studio version 6.3.1.final using JasperReports Library version 6.3.1  -->
+<!-- 2016-10-20T16:41:02 -->
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="letterOfAcceptance" pageWidth="595" pageHeight="842" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="c1d5c7e8-57e5-4396-98bf-17f9bb000b84">
 	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="One Empty Record"/>
 	<import value="java.util.*"/>
@@ -271,7 +270,7 @@
 			</textField>
 			<staticText>
 				<reportElement stretchType="RelativeToBandHeight" x="92" y="126" width="255" height="20" uuid="2c574dbe-aac6-404a-a6fb-56ec05525f1a"/>
-				<text><![CDATA[6. Moad of allotment                                     :]]></text>
+				<text><![CDATA[6. Mode Of Entrustment                                     :]]></text>
 			</staticText>
 			<textField>
 				<reportElement stretchType="RelativeToTallestObject" x="15" y="201" width="527" height="30" uuid="e13dc80c-5f00-4442-ba72-5123025ee505">
