@@ -44,20 +44,15 @@ import java.io.IOException;
 import java.util.List;
 
 import org.codehaus.jackson.JsonGenerationException;
-import org.codehaus.jackson.annotate.JsonAutoDetect.Visibility;
-import org.codehaus.jackson.annotate.JsonMethod;
 import org.codehaus.jackson.map.JsonMappingException;
-import org.codehaus.jackson.map.ObjectMapper;
-import org.codehaus.jackson.map.SerializationConfig;
-import org.egov.dcb.bean.ChequePayment;
 import org.egov.ptis.bean.dashboard.CollReceiptDetails;
-import org.egov.ptis.bean.dashboard.CollectionDetailsRequest;
 import org.egov.ptis.bean.dashboard.CollectionDetails;
-import org.egov.ptis.bean.dashboard.TotalCollectionStats;
+import org.egov.ptis.bean.dashboard.CollectionDetailsRequest;
 import org.egov.ptis.bean.dashboard.PropertyTaxDefaultersRequest;
 import org.egov.ptis.bean.dashboard.StateCityInfo;
 import org.egov.ptis.bean.dashboard.TaxDefaulters;
 import org.egov.ptis.bean.dashboard.TaxPayerResponseDetails;
+import org.egov.ptis.bean.dashboard.TotalCollectionStats;
 import org.egov.ptis.service.dashboard.PropTaxDashboardService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -93,7 +88,7 @@ public class CMDashboardController {
         Long startTime = System.currentTimeMillis();
         final List<StateCityInfo> stateDetails = propTaxDashboardService.getStateCityDetails();
         Long timeTaken = System.currentTimeMillis() - startTime;
-        LOGGER.debug("Time taken to serve statecityinfo is : " + timeTaken / 1000 + " (secs)");
+        LOGGER.debug("Time taken to serve statecityinfo is : " + timeTaken + " (millisecs)");
         return stateDetails;
     }
 
@@ -109,7 +104,7 @@ public class CMDashboardController {
         Long startTime = System.currentTimeMillis();
         TotalCollectionStats consolidatedCollectionDetails = propTaxDashboardService.getTotalCollectionStats();
         Long timeTaken = System.currentTimeMillis() - startTime;
-        LOGGER.debug("Time taken to serve collectionstats is : " + timeTaken / 1000 + " (secs)");
+        LOGGER.debug("Time taken to serve collectionstats is : " + timeTaken + " (millisecs)");
         return consolidatedCollectionDetails;
 
     }
@@ -121,10 +116,9 @@ public class CMDashboardController {
      * @throws IOException
      */
     @RequestMapping(value = "/collectiondashboard", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
-    public CollectionDetails getCollectionDetails(@RequestBody String collDetailsRequestStr) throws IOException {
+    public CollectionDetails getCollectionDetails(@RequestBody CollectionDetailsRequest collectionDetailsRequest)
+            throws IOException {
         Long startTime = System.currentTimeMillis();
-        CollectionDetailsRequest collectionDetailsRequest = (CollectionDetailsRequest) getObjectFromJSONRequest(
-                collDetailsRequestStr, CollectionDetailsRequest.class);
         LOGGER.debug("CollectionDetailsRequest input : regionName = " + collectionDetailsRequest.getRegionName()
                 + ", districtName = " + collectionDetailsRequest.getDistrictName() + ", ulbGrade = "
                 + collectionDetailsRequest.getUlbGrade() + ", ulbCode = " + collectionDetailsRequest.getUlbCode()
@@ -133,7 +127,7 @@ public class CMDashboardController {
         CollectionDetails collectionDetails = propTaxDashboardService
                 .getCollectionIndexDetails(collectionDetailsRequest);
         Long timeTaken = System.currentTimeMillis() - startTime;
-        LOGGER.debug("Time taken to serve collectiondashboard is : " + timeTaken / 1000 + " (secs)");
+        LOGGER.debug("Time taken to serve collectiondashboard is : " + timeTaken + " (millisecs)");
         return collectionDetails;
     }
 
@@ -144,10 +138,9 @@ public class CMDashboardController {
      * @return CollReceiptDetails
      */
     @RequestMapping(value = "/receipttransactions", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
-    public CollReceiptDetails getReceiptTransactions(@RequestBody String rcptDetailsRequestStr) throws IOException {
+    public CollReceiptDetails getReceiptTransactions(@RequestBody CollectionDetailsRequest collectionDetailsRequest)
+            throws IOException {
         Long startTime = System.currentTimeMillis();
-        CollectionDetailsRequest collectionDetailsRequest = (CollectionDetailsRequest) getObjectFromJSONRequest(
-                rcptDetailsRequestStr, CollectionDetailsRequest.class);
         LOGGER.debug("CollectionDetailsRequest input : regionName = " + collectionDetailsRequest.getRegionName()
                 + ", districtName = " + collectionDetailsRequest.getDistrictName() + ", ulbGrade = "
                 + collectionDetailsRequest.getUlbGrade() + ", ulbCode = " + collectionDetailsRequest.getUlbCode()
@@ -155,7 +148,7 @@ public class CMDashboardController {
                 + collectionDetailsRequest.getToDate());
         CollReceiptDetails collReceiptDetails = propTaxDashboardService.getReceiptDetails(collectionDetailsRequest);
         Long timeTaken = System.currentTimeMillis() - startTime;
-        LOGGER.debug("Time taken to serve receipttransactions is : " + timeTaken / 1000 + " (secs)");
+        LOGGER.debug("Time taken to serve receipttransactions is : " + timeTaken + " (millisecs)");
         return collReceiptDetails;
     }
 
@@ -167,10 +160,9 @@ public class CMDashboardController {
      * @throws IOException
      */
     @RequestMapping(value = "/toptentaxers", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
-    public TaxPayerResponseDetails getTopTenTaxProducers(@RequestBody String collDetailsRequestStr) throws IOException {
+    public TaxPayerResponseDetails getTopTenTaxProducers(@RequestBody CollectionDetailsRequest collectionDetailsRequest)
+            throws IOException {
         Long startTime = System.currentTimeMillis();
-        CollectionDetailsRequest collectionDetailsRequest = (CollectionDetailsRequest) getObjectFromJSONRequest(
-                collDetailsRequestStr, CollectionDetailsRequest.class);
         LOGGER.debug("CollectionDetailsRequest input : regionName = " + collectionDetailsRequest.getRegionName()
                 + ", districtName = " + collectionDetailsRequest.getDistrictName() + ", ulbGrade = "
                 + collectionDetailsRequest.getUlbGrade() + ", ulbCode = " + collectionDetailsRequest.getUlbCode()
@@ -179,7 +171,7 @@ public class CMDashboardController {
         TaxPayerResponseDetails taxPayerDetails = propTaxDashboardService
                 .getTopTenTaxProducers(collectionDetailsRequest);
         Long timeTaken = System.currentTimeMillis() - startTime;
-        LOGGER.debug("Time taken to serve toptentaxers is : " + timeTaken / 1000 + " (secs)");
+        LOGGER.debug("Time taken to serve toptentaxers is : " + timeTaken + " (millisecs)");
         return taxPayerDetails;
     }
 
@@ -191,11 +183,9 @@ public class CMDashboardController {
      * @throws IOException
      */
     @RequestMapping(value = "/bottomtentaxers", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
-    public TaxPayerResponseDetails getBottomTenTaxProducers(@RequestBody String collDetailsRequestStr)
-            throws IOException {
+    public TaxPayerResponseDetails getBottomTenTaxProducers(
+            @RequestBody CollectionDetailsRequest collectionDetailsRequest) throws IOException {
         Long startTime = System.currentTimeMillis();
-        CollectionDetailsRequest collectionDetailsRequest = (CollectionDetailsRequest) getObjectFromJSONRequest(
-                collDetailsRequestStr, CollectionDetailsRequest.class);
         LOGGER.debug("CollectionDetailsRequest input : regionName = " + collectionDetailsRequest.getRegionName()
                 + ", districtName = " + collectionDetailsRequest.getDistrictName() + ", ulbGrade = "
                 + collectionDetailsRequest.getUlbGrade() + ", ulbCode = " + collectionDetailsRequest.getUlbCode()
@@ -204,39 +194,22 @@ public class CMDashboardController {
         TaxPayerResponseDetails taxPayerDetails = propTaxDashboardService
                 .getBottomTenTaxProducers(collectionDetailsRequest);
         Long timeTaken = System.currentTimeMillis() - startTime;
-        LOGGER.debug("Time taken to serve bottomtentaxers is : " + timeTaken / 1000 + " (secs)");
+        LOGGER.debug("Time taken to serve bottomtentaxers is : " + timeTaken + " (millisecs)");
         return taxPayerDetails;
     }
 
     @RequestMapping(value = "/topdefaulters", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
-    public List<TaxDefaulters> getTopTaxDefaulters(@RequestBody String taxDefaultersRequestStr) throws IOException {
+    public List<TaxDefaulters> getTopTaxDefaulters(
+            @RequestBody PropertyTaxDefaultersRequest propertyTaxDefaultersRequest) throws IOException {
         Long startTime = System.currentTimeMillis();
-        PropertyTaxDefaultersRequest propertyTaxDefaultersRequest = (PropertyTaxDefaultersRequest) getObjectFromJSONRequest(
-                taxDefaultersRequestStr, PropertyTaxDefaultersRequest.class);
         LOGGER.debug("PropertyTaxDefaultersRequest input : regionName = " + propertyTaxDefaultersRequest.getRegionName()
                 + ", districtName = " + propertyTaxDefaultersRequest.getDistrictName() + ", ulbName = "
                 + propertyTaxDefaultersRequest.getUlbName() + ", ulbCode = " + propertyTaxDefaultersRequest.getUlbCode()
                 + ", wardName = " + propertyTaxDefaultersRequest.getWardName());
         List<TaxDefaulters> taxDefaulters = propTaxDashboardService.getTaxDefaulters(propertyTaxDefaultersRequest);
         Long timeTaken = System.currentTimeMillis() - startTime;
-        LOGGER.debug("Time taken to serve topdefaulters is : " + timeTaken / 1000 + " (secs)");
+        LOGGER.debug("Time taken to serve topdefaulters is : " + timeTaken + " (millisecs)");
         return taxDefaulters;
-    }
-
-    /**
-     * This method is used to get POJO object from JSON request.
-     * 
-     * @param jsonString
-     *            - request JSON string
-     * @return
-     * @throws IOException
-     */
-    private Object getObjectFromJSONRequest(String jsonString, Class cls) throws IOException {
-        ObjectMapper mapper = new ObjectMapper();
-        mapper.setVisibility(JsonMethod.FIELD, Visibility.ANY);
-        mapper.configure(SerializationConfig.Feature.AUTO_DETECT_FIELDS, true);
-        mapper.setDateFormat(ChequePayment.CHEQUE_DATE_FORMAT);
-        return mapper.readValue(jsonString, cls);
     }
 
 }

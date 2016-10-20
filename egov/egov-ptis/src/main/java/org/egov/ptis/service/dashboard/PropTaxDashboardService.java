@@ -55,19 +55,19 @@ import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 
 import org.egov.infra.utils.DateUtils;
-import org.egov.ptis.bean.dashboard.CollTableData;
 import org.egov.ptis.bean.dashboard.CollReceiptDetails;
-import org.egov.ptis.bean.dashboard.CollectionDetailsRequest;
+import org.egov.ptis.bean.dashboard.CollTableData;
 import org.egov.ptis.bean.dashboard.CollectionDetails;
-import org.egov.ptis.bean.dashboard.CollectionTrend;
+import org.egov.ptis.bean.dashboard.CollectionDetailsRequest;
 import org.egov.ptis.bean.dashboard.CollectionStats;
-import org.egov.ptis.bean.dashboard.TotalCollectionStats;
+import org.egov.ptis.bean.dashboard.CollectionTrend;
 import org.egov.ptis.bean.dashboard.PropertyTaxDefaultersRequest;
 import org.egov.ptis.bean.dashboard.ReceiptTableData;
 import org.egov.ptis.bean.dashboard.ReceiptsTrend;
 import org.egov.ptis.bean.dashboard.StateCityInfo;
 import org.egov.ptis.bean.dashboard.TaxDefaulters;
 import org.egov.ptis.bean.dashboard.TaxPayerResponseDetails;
+import org.egov.ptis.bean.dashboard.TotalCollectionStats;
 import org.egov.ptis.domain.model.ErrorDetails;
 import org.egov.ptis.service.elasticsearch.CollectionIndexElasticSearchService;
 import org.egov.ptis.service.elasticsearch.PropertyTaxElasticSearchIndexService;
@@ -77,6 +77,8 @@ import org.hibernate.Session;
 import org.hibernate.transform.AliasToBeanResultTransformer;
 import org.hibernate.type.StandardBasicTypes;
 import org.joda.time.DateTime;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -86,6 +88,8 @@ import org.springframework.stereotype.Service;
 
 @Service
 public class PropTaxDashboardService {
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(PropTaxDashboardService.class);
 
     @PersistenceContext
     private EntityManager entityManager;
@@ -126,14 +130,20 @@ public class PropTaxDashboardService {
     public TotalCollectionStats getTotalCollectionStats() {
         TotalCollectionStats consolidatedCollectionDetails = new TotalCollectionStats();
         // For Property Tax collections
+        Long startTime = System.currentTimeMillis();
         CollectionStats consolidatedData = new CollectionStats();
         Map<String, BigDecimal> consolidatedColl = collectionIndexElasticSearchService
                 .getFinYearsCollByService(COLLECION_BILLING_SERVICE_PT);
+        Long timeTaken = System.currentTimeMillis() - startTime;
+        LOGGER.debug("Time taken by getFinYearsCollByService() for Property Tax is : " + timeTaken + " (millisecs) ");
         if (!consolidatedColl.isEmpty()) {
             consolidatedData.setCytdColl(consolidatedColl.get("cytdColln"));
             consolidatedData.setLytdColl(consolidatedColl.get("lytdColln"));
         }
+        startTime = System.currentTimeMillis();
         BigDecimal totalDmd = propertyTaxElasticSearchIndexService.getTotalDemand();
+        timeTaken = System.currentTimeMillis() - startTime;
+        LOGGER.debug("Time taken by Property Tax getTotalDemand() is : " + timeTaken + " (millisecs) ");
         int noOfMonths = DateUtils
                 .noOfMonths(new DateTime().withMonthOfYear(4).dayOfMonth().withMinimumValue().toDate(), new Date()) + 1;
         consolidatedData.setTotalDmd(totalDmd.divide(BigDecimal.valueOf(12), BigDecimal.ROUND_HALF_UP)
@@ -147,12 +157,18 @@ public class PropTaxDashboardService {
 
         // For Water Tax collections
         consolidatedData = new CollectionStats();
+        startTime = System.currentTimeMillis();
         consolidatedColl = collectionIndexElasticSearchService.getFinYearsCollByService(COLLECION_BILLING_SERVICE_WTMS);
+        timeTaken = System.currentTimeMillis() - startTime;
+        LOGGER.debug("Time taken by getFinYearsCollByService() for Water Tax is : " + timeTaken + " (millisecs) ");
         if (!consolidatedColl.isEmpty()) {
             consolidatedData.setCytdColl(consolidatedColl.get("cytdColln"));
             consolidatedData.setLytdColl(consolidatedColl.get("lytdColln"));
         }
+        startTime = System.currentTimeMillis();
         consolidatedData.setTotalDmd(waterTaxElasticSearchIndexService.getTotalDemand());
+        timeTaken = System.currentTimeMillis() - startTime;
+        LOGGER.debug("Time taken by Water Tax getTotalDemand() is : " + timeTaken + " (millisecs) ");
         consolidatedData.setPerformance((consolidatedData.getCytdColl().multiply(BIGDECIMAL_100))
                 .divide(consolidatedData.getTotalDmd(), 1, BigDecimal.ROUND_HALF_UP));
         consolidatedData.setLyVar(

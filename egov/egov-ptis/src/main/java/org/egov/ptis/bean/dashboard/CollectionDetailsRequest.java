@@ -42,48 +42,68 @@ package org.egov.ptis.bean.dashboard;
 
 public class CollectionDetailsRequest {
 
-	private String regionName;
-	private String districtName;
-	private String ulbGrade;
-	private String ulbCode;
-	private String fromDate;
-	private String toDate;
-	
-	public String getRegionName() {
-		return regionName;
-	}
-	public void setRegionName(String regionName) {
-		this.regionName = regionName;
-	}
-	public String getDistrictName() {
-		return districtName;
-	}
-	public void setDistrictName(String districtName) {
-		this.districtName = districtName;
-	}
-	public String getUlbGrade() {
-		return ulbGrade;
-	}
-	public void setUlbGrade(String ulbGrade) {
-		this.ulbGrade = ulbGrade;
-	}
-	public String getUlbCode() {
-		return ulbCode;
-	}
-	public void setUlbCode(String ulbCode) {
-		this.ulbCode = ulbCode;
-	}
-	public String getFromDate() {
-		return fromDate;
-	}
-	public void setFromDate(String fromDate) {
-		this.fromDate = fromDate;
-	}
-	public String getToDate() {
-		return toDate;
-	}
-	public void setToDate(String toDate) {
-		this.toDate = toDate;
-	}
-	
+    private String regionName;
+    private String districtName;
+    private String ulbGrade;
+    private String ulbCode;
+    private String fromDate;
+    private String toDate;
+    private String type;
+
+    public String getRegionName() {
+        return regionName;
+    }
+
+    public void setRegionName(String regionName) {
+        this.regionName = regionName;
+    }
+
+    public String getDistrictName() {
+        return districtName;
+    }
+
+    public void setDistrictName(String districtName) {
+        this.districtName = districtName;
+    }
+
+    public String getUlbGrade() {
+        return ulbGrade;
+    }
+
+    public void setUlbGrade(String ulbGrade) {
+        this.ulbGrade = ulbGrade;
+    }
+
+    public String getUlbCode() {
+        return ulbCode;
+    }
+
+    public void setUlbCode(String ulbCode) {
+        this.ulbCode = ulbCode;
+    }
+
+    public String getFromDate() {
+        return fromDate;
+    }
+
+    public void setFromDate(String fromDate) {
+        this.fromDate = fromDate;
+    }
+
+    public String getToDate() {
+        return toDate;
+    }
+
+    public void setToDate(String toDate) {
+        this.toDate = toDate;
+    }
+
+    public String getType() {
+        return type;
+    }
+
+    public void setType(String type) {
+        this.type = type;
+    }
+
 }

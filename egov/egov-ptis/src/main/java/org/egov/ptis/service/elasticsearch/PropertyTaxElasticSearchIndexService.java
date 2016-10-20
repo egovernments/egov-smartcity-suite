@@ -72,6 +72,8 @@ import org.elasticsearch.search.aggregations.metrics.sum.Sum;
 import org.elasticsearch.search.sort.FieldSortBuilder;
 import org.elasticsearch.search.sort.SortOrder;
 import org.joda.time.DateTime;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -83,6 +85,8 @@ import org.springframework.stereotype.Service;
 
 @Service
 public class PropertyTaxElasticSearchIndexService {
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(PropertyTaxElasticSearchIndexService.class);
 
     private PropertyTaxIndexRepository propertyTaxIndexRepository;
 
@@ -144,7 +148,12 @@ public class PropertyTaxElasticSearchIndexService {
             fromDate = new DateTime().withMonthOfYear(4).dayOfMonth().withMinimumValue().toDate();
             toDate = DateUtils.addDays(new Date(), 1);
         }
+        Long startTime = System.currentTimeMillis();
         BigDecimal totalDemand = getTotalDemandBasedOnInputFilters(collectionDetailsRequest);
+        Long timeTaken = System.currentTimeMillis() - startTime;
+        LOGGER.debug("Time taken by getTotalDemandBasedOnInputFilters() is : " + timeTaken + " (millisecs) ");
+
+        startTime = System.currentTimeMillis();
         int noOfMonths = DateUtils.noOfMonths(fromDate, toDate) + 1;
         collectionIndexDetails.setTotalDmd(totalDemand);
 
@@ -168,6 +177,9 @@ public class PropertyTaxElasticSearchIndexService {
                     .multiply(PropertyTaxConstants.BIGDECIMAL_100)).divide(collectionIndexDetails.getLytdColl(), 1,
                             BigDecimal.ROUND_HALF_UP);
         collectionIndexDetails.setLyVar(variation);
+        timeTaken = System.currentTimeMillis() - startTime;
+        LOGGER.debug(
+                "Time taken for setting values in getConsolidatedDemandInfo() is : " + timeTaken + " (millisecs) ");
     }
 
     /**
@@ -250,6 +262,7 @@ public class PropertyTaxElasticSearchIndexService {
         // order the results
         // IN this case can be one of "totaldemand" or "total_collection" or
         // "avg_achievement"
+        Long startTime = System.currentTimeMillis();
         AggregationBuilder aggregation = AggregationBuilders.terms("by_aggregationField").field("cityname").size(size)
                 .order(Terms.Order.aggregation(orderingAggregationName, order))
                 .subAggregation(AggregationBuilders.sum("totaldemand").field("totaldemand"))
@@ -265,7 +278,11 @@ public class PropertyTaxElasticSearchIndexService {
             }
         });
 
+        Long timeTaken = System.currentTimeMillis() - startTime;
+        LOGGER.debug("Time taken by ulbWiseAggregations is : " + timeTaken + " (millisecs) ");
+
         TaxPayerDetails taxDetail;
+        startTime = System.currentTimeMillis();
         Date fromDate = new DateTime().withMonthOfYear(4).dayOfMonth().withMinimumValue().toDate();
         Date toDate = DateUtils.addDays(new Date(), 1);
         Date lastYearFromDate = DateUtils.addYears(fromDate, -1);
@@ -311,6 +328,9 @@ public class PropertyTaxElasticSearchIndexService {
             taxDetail.setLyVar(variation);
             taxPayers.add(taxDetail);
         }
+        timeTaken = System.currentTimeMillis() - startTime;
+        LOGGER.debug("Time taken for setting values in returnUlbWiseAggregationResults() is : " + timeTaken
+                + " (millisecs) ");
         return returnTopResults(taxPayers, size, order);
     }
 
@@ -333,8 +353,11 @@ public class PropertyTaxElasticSearchIndexService {
      * @return
      */
     public List<TaxDefaulters> getTopDefaulters(PropertyTaxDefaultersRequest propertyTaxDefaultersRequest) {
-
+        Long startTime = System.currentTimeMillis();
         BoolQueryBuilder boolQuery = filterBasedOnRequest(propertyTaxDefaultersRequest);
+        boolQuery = boolQuery.mustNot(QueryBuilders.matchQuery("cityname", "Guntur"))
+                .mustNot(QueryBuilders.matchQuery("cityname", "Vijayawada"))
+                .mustNot(QueryBuilders.matchQuery("cityname", "Visakhapatnam"));
 
         SearchQuery searchQuery = new NativeSearchQueryBuilder().withIndices(PROPERTY_TAX_INDEX_NAME)
                 .withQuery(boolQuery).withSort(new FieldSortBuilder("totalbalance").order(SortOrder.DESC))
@@ -342,9 +365,12 @@ public class PropertyTaxElasticSearchIndexService {
 
         final Page<PropertyTaxIndex> propertyTaxRecords = elasticsearchTemplate.queryForPage(searchQuery,
                 PropertyTaxIndex.class);
+        Long timeTaken = System.currentTimeMillis() - startTime;
+        LOGGER.debug("Time taken by defaulters aggregation is : " + timeTaken + " (millisecs) ");
 
         List<TaxDefaulters> taxDefaulters = new ArrayList<>();
         TaxDefaulters taxDfaulter;
+        startTime = System.currentTimeMillis();
         for (PropertyTaxIndex property : propertyTaxRecords) {
             taxDfaulter = new TaxDefaulters();
             taxDfaulter.setOwnerName(property.getConsumername());
@@ -354,6 +380,8 @@ public class PropertyTaxElasticSearchIndexService {
             taxDfaulter.setPeriod(StringUtils.EMPTY);
             taxDefaulters.add(taxDfaulter);
         }
+        timeTaken = System.currentTimeMillis() - startTime;
+        LOGGER.debug("Time taken for setting values in getTopDefaulters() is : " + timeTaken + " (millisecs) ");
         return taxDefaulters;
     }
 
@@ -366,18 +394,20 @@ public class PropertyTaxElasticSearchIndexService {
      */
     private BoolQueryBuilder filterBasedOnRequest(PropertyTaxDefaultersRequest propertyTaxDefaultersRequest) {
         BoolQueryBuilder boolQuery = QueryBuilders.boolQuery()
-                .must(QueryBuilders.rangeQuery("totaldemand").from(0).to(null));
+                .filter(QueryBuilders.rangeQuery("totaldemand").from(0).to(null));
         if (StringUtils.isNotBlank(propertyTaxDefaultersRequest.getRegionName()))
             boolQuery = boolQuery
-                    .must(QueryBuilders.matchQuery("regionname", propertyTaxDefaultersRequest.getRegionName()));
+                    .filter(QueryBuilders.matchQuery("regionname", propertyTaxDefaultersRequest.getRegionName()));
         if (StringUtils.isNotBlank(propertyTaxDefaultersRequest.getDistrictName()))
             boolQuery = boolQuery
-                    .must(QueryBuilders.matchQuery("districtname", propertyTaxDefaultersRequest.getDistrictName()));
+                    .filter(QueryBuilders.matchQuery("districtname", propertyTaxDefaultersRequest.getDistrictName()));
         if (StringUtils.isNotBlank(propertyTaxDefaultersRequest.getUlbName()))
-            boolQuery = boolQuery.must(QueryBuilders.matchQuery("cityname", propertyTaxDefaultersRequest.getUlbName()));
+            boolQuery = boolQuery
+                    .filter(QueryBuilders.matchQuery("cityname", propertyTaxDefaultersRequest.getUlbName()));
         if (StringUtils.isNotBlank(propertyTaxDefaultersRequest.getWardName()))
             boolQuery = boolQuery
-                    .must(QueryBuilders.matchQuery("revwardname", propertyTaxDefaultersRequest.getWardName()));
+                    .filter(QueryBuilders.matchQuery("revwardname", propertyTaxDefaultersRequest.getWardName()));
+
         return boolQuery;
     }
 
@@ -391,19 +421,19 @@ public class PropertyTaxElasticSearchIndexService {
      */
     private BoolQueryBuilder prepareWhereClause(CollectionDetailsRequest collectionDetailsRequest) {
         BoolQueryBuilder boolQuery = QueryBuilders.boolQuery()
-                .must(QueryBuilders.rangeQuery("totaldemand").from(0).to(null));
+                .filter(QueryBuilders.rangeQuery("totaldemand").from(0).to(null));
         if (StringUtils.isNotBlank(collectionDetailsRequest.getRegionName()))
             boolQuery = boolQuery
-                    .must(QueryBuilders.matchQuery("regionname", collectionDetailsRequest.getRegionName()));
+                    .filter(QueryBuilders.matchQuery("regionname", collectionDetailsRequest.getRegionName()));
         if (StringUtils.isNotBlank(collectionDetailsRequest.getDistrictName()))
             boolQuery = boolQuery
-                    .must(QueryBuilders.matchQuery("districtname", collectionDetailsRequest.getDistrictName()));
+                    .filter(QueryBuilders.matchQuery("districtname", collectionDetailsRequest.getDistrictName()));
         if (StringUtils.isNotBlank(collectionDetailsRequest.getUlbGrade()))
-            boolQuery = boolQuery.must(QueryBuilders.matchQuery("citygrade", collectionDetailsRequest.getUlbGrade()));
+            boolQuery = boolQuery.filter(QueryBuilders.matchQuery("citygrade", collectionDetailsRequest.getUlbGrade()));
         // To be enabled later
         /*
          * if(StringUtils.isNotBlank(collectionDetailsRequest.getUlbCode()))
-         * boolQuery = boolQuery.must(QueryBuilders.matchQuery("ulbcode",
+         * boolQuery = boolQuery.filter(QueryBuilders.matchQuery("ulbcode",
          * collectionDetailsRequest.getUlbCode()));
          */
         return boolQuery;

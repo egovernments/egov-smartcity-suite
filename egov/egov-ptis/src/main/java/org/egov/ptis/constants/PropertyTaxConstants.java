@@ -1504,4 +1504,8 @@ public interface PropertyTaxConstants {
 	
 	public static final String DATE_FORMAT_YYYYMMDD = "yyyy-MM-dd";
 	public static final SimpleDateFormat DATEFORMATTER_YYYY_MM_DD = new SimpleDateFormat(DATE_FORMAT_YYYYMMDD);
+	
+    public static final String DASHBOARD_GROUPING_DISTRICTWISE = "district";
+    public static final String DASHBOARD_GROUPING_ULBWISE = "ulb";
+    public static final String DASHBOARD_GROUPING_REGIONWISE = "region";
 }
