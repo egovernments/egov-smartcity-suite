@@ -149,7 +149,7 @@ public class AbstractEstimatePDFController {
         final HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.parseMediaType("application/pdf"));
         headers.add("content-disposition",
-                "inline;filename=AbstractEstimate_" + abstractEstimate.getEstimateNumber() + ".pdf");
+                "inline;filename=Abstract/DetailedEstimate_" + abstractEstimate.getEstimateNumber() + ".pdf");
         reportOutput = reportService.createReport(reportInput);
         return new ResponseEntity<byte[]>(reportOutput.getReportOutputData(), headers, HttpStatus.CREATED);
 

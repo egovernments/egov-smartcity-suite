@@ -42,7 +42,7 @@
 <%@ taglib uri="http://www.springframework.org/tags" prefix="spring"%>
 <%@ taglib uri="http://www.springframework.org/tags/form" prefix="form"%> 
 <div class="form-group">
-	<label class="col-sm-3 control-label text-right"><spring:message code="lbl.estimatenumber" /></label>
+	<label class="col-sm-3 control-label text-right"><spring:message code="lbl.abstractestimatenumber" /></label>
 	<div class="col-sm-3 add-margin">  
 		<form:input path="estimateNumber" name="estimateNumber"  id = "estimateNumber" value="${abstractEstimate.estimateNumber}" type="text" class="form-control" disabled="true" /> 
 	</div>

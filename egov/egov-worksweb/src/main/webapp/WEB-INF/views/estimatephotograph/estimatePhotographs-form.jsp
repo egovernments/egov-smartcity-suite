@@ -89,7 +89,7 @@
 						<%-- <div class="panel-title" style="text-align:center;"><spring:message code="lbl.header" /></div> --%>
 						</div>
 						<div class="row add-border">
-								<div class="col-md-2 col-xs-6 add-margin"><spring:message code="lbl.estimatenumber" />.</div> 
+								<div class="col-md-2 col-xs-6 add-margin"><spring:message code="lbl.abstractestimatenumber" />.</div> 
 								<div class="col-md-2 col-xs-6 add-margin view-content">
 								<%-- <a href='javascript:void(0)' onclick="viewLineEstimate('<c:out value="${abstractEstimate.estimateNumber}"/>')"> <c:out value="${abstractEstimate.estimateNumber}"/> </a> --%>
 								<c:out value="${lineEstimateDetails.estimateNumber}"/>

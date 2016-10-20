@@ -53,7 +53,7 @@
 					<th><spring:message code="lbl.redate" /></th>
 					<th><spring:message code="lbl.loanumber" /></th>
 					<th><spring:message code="lbl.contractorname" /></th>
-					<th><spring:message code="lbl.estimatenumber" /></th>
+					<th><spring:message code="lbl.abstractestimatenumber" /></th>
 					<th><spring:message code="lbl.revalue" /></th>
 					<th><spring:message code="lbl.status" /></th>
 					<th><spring:message code="lbl.owner" /></th>

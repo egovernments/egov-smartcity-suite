@@ -55,7 +55,7 @@
 					<th><spring:message code="lbl.appropriationnumber" /></th>
 					<th><spring:message code="lbl.appropriationdate" /></th>
 					<th><spring:message code="lbl.appropriatedvalue" /></th>
-					<th><spring:message code="lbl.estimatenumber" /></th>
+					<th><spring:message code="lbl.abstractestimatenumber" /></th>
 					<th><spring:message code="lbl.wincode" /></th>
 					<th><spring:message code="lbl.nameofwork" /></th>
 					<th><spring:message code="lbl.estimate.date" /></th>

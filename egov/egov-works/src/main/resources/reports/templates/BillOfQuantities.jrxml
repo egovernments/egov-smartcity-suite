@@ -38,8 +38,8 @@
   ~
   ~   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
   -->
-  <!-- Created with Jaspersoft Studio version 6.3.0.final using JasperReports Library version 6.3.0  -->
-<!-- 2016-07-28T19:01:39 -->
+<!-- Created with Jaspersoft Studio version 6.3.1.final using JasperReports Library version 6.3.1  -->
+<!-- 2016-10-20T12:41:15 -->
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="BillOfQunatities" pageWidth="842" pageHeight="595" orientation="Landscape" whenNoDataType="AllSectionsNoDetail" columnWidth="802" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="0" uuid="c4f28d66-9453-4365-9c94-520990d7d3ae">
 	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="One Empty Record"/>
 	<import value="java.math.BigDecimal"/>
@@ -268,14 +268,14 @@
 				<textFieldExpression><![CDATA[$P{workName}]]></textFieldExpression>
 			</textField>
 			<staticText>
-				<reportElement x="1" y="108" width="118" height="20" uuid="7714679b-8bb6-42f4-b303-1f241dbb7bca"/>
+				<reportElement x="1" y="108" width="118" height="30" uuid="7714679b-8bb6-42f4-b303-1f241dbb7bca"/>
 				<textElement verticalAlignment="Middle">
 					<font fontName="Times New Roman" size="12" isBold="true"/>
 				</textElement>
-				<text><![CDATA[Estimate Number :-]]></text>
+				<text><![CDATA[Abstract/Detailed Estimate Number :-]]></text>
 			</staticText>
 			<textField>
-				<reportElement x="119" y="108" width="300" height="20" uuid="f1de0442-8b92-4faf-965e-4d61456217c4"/>
+				<reportElement x="119" y="108" width="300" height="30" uuid="f1de0442-8b92-4faf-965e-4d61456217c4"/>
 				<textElement verticalAlignment="Middle">
 					<font fontName="Times New Roman" size="12" isBold="true"/>
 				</textElement>
@@ -300,7 +300,7 @@
 				<textElement verticalAlignment="Middle">
 					<font fontName="Times New Roman" size="12" isBold="true"/>
 				</textElement>
-				<text><![CDATA[Estimate Date :-]]></text>
+				<text><![CDATA[Abstract/Detailed Estimate Date :-]]></text>
 			</staticText>
 			<textField>
 				<reportElement x="604" y="108" width="176" height="24" uuid="5e49931d-ec95-4d6d-b69b-19ac87e875ca"/>

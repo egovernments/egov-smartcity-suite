@@ -72,9 +72,9 @@
 			</div>
 			<input type="hidden" id="mode" name="mode" value="${mode}" />
 			<div class="form-group">
-				<label class="col-sm-3 control-label text-right"><spring:message code="lbl.estimatenumber" /></label>
+				<label class="col-sm-3 control-label text-right"><spring:message code="lbl.abstractestimatenumber" /></label>
 				<div class="col-sm-3 add-margin">
-					<form:input path="estimateNumber" id="estimateNumber" class="form-control" placeholder="Type first 3 letters of Abstract Estimate Number"/>
+					<form:input path="estimateNumber" id="estimateNumber" class="form-control" placeholder="Type first 3 letters of Abstract/Detailed Estimate Number"/>
 				</div>
 				<label class="col-sm-2 control-label text-right"><spring:message code="lbl.loanumber" /></label>
 				<div class="col-sm-3 add-margin">
@@ -134,7 +134,7 @@
 				<tr>
 					<th><spring:message code="lbl.selectonly" /></th>
 					<th><spring:message code="lbl.slno" /></th>
-					<th><spring:message code="lbl.estimatenumber" /></th>
+					<th><spring:message code="lbl.abstractestimatenumber" /></th>
 					<th><spring:message code="lbl.typeofwork" /></th>
 					<th><spring:message code="lbl.subtypeofwork" /></th>
 					<th><spring:message code="lbl.estimate.date" /></th>

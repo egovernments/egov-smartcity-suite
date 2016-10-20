@@ -52,7 +52,7 @@
 					<th><spring:message code="lbl.selectonly" /></th>
 					<th><spring:message code="lbl.billnumber" /></th>
 					<th><spring:message code="lbl.billdate" /></th>
-					<th><spring:message code="lbl.estimatenumber" /></th>
+					<th><spring:message code="lbl.abstractestimatenumber" /></th>
 					<th><spring:message code="lbl.workidentificationnumber" /></th>
 					<th><spring:message code="lbl.loanumber" /></th>
 					<th><spring:message code="lbl.contractor" /></th>

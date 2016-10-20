@@ -38,8 +38,8 @@
   ~
   ~   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
   -->
-<!-- Created with Jaspersoft Studio version 6.3.0.final using JasperReports Library version 6.3.0  -->
-<!-- 2016-10-07T15:49:14 -->
+<!-- Created with Jaspersoft Studio version 6.3.1.final using JasperReports Library version 6.3.1  -->
+<!-- 2016-10-20T12:41:22 -->
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="abstractEstimatePDF" pageWidth="595" pageHeight="842" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" isSummaryNewPage="true" isSummaryWithPageHeaderAndFooter="true" isFloatColumnFooter="true" uuid="21febbd0-09ca-473a-b5e5-726fffd82711">
 	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="One Empty Record"/>
 	<property name="com.jaspersoft.studio.unit." value="pixel"/>
@@ -85,7 +85,7 @@
 						<font fontName="Times New Roman"/>
 						<paragraph lineSpacingSize="0.0"/>
 					</textElement>
-					<textFieldExpression><![CDATA["Estimate Number : "+$F{estimateNumber}]]></textFieldExpression>
+					<textFieldExpression><![CDATA[" Abstract/Detailed Estimate Number : "+$F{estimateNumber}]]></textFieldExpression>
 				</textField>
 				<textField isStretchWithOverflow="true">
 					<reportElement positionType="Float" stretchType="RelativeToTallestObject" x="200" y="28" width="180" height="21" uuid="c959ad0c-719a-4498-b8c9-fe8c2e3349bb"/>
@@ -126,7 +126,7 @@
 					<textElement textAlignment="Left" verticalAlignment="Middle">
 						<font fontName="Times New Roman"/>
 					</textElement>
-					<textFieldExpression><![CDATA["Estimate Date : "+$P{estimateDate}]]></textFieldExpression>
+					<textFieldExpression><![CDATA["Abstract/Detailed Estimate Date : "+$P{estimateDate}]]></textFieldExpression>
 				</textField>
 				<textField isStretchWithOverflow="true">
 					<reportElement positionType="Float" stretchType="RelativeToTallestObject" x="200" y="0" width="180" height="20" uuid="81c9e575-9004-4c55-a765-ce872a0057ce"/>

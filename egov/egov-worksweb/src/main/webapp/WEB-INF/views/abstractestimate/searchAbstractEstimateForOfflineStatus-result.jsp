@@ -49,7 +49,7 @@
 			<thead>
 				<tr>
 					<th><spring:message code="lbl.slno" /></th>
-					<th><spring:message code="lbl.estimatenumber" /></th>
+					<th><spring:message code="lbl.abstractestimatenumber" /></th>
 					<th><spring:message code="lbl.estimate.date" /></th>
 					<th><spring:message code="lbl.nameofthework" /></th>
 					<th><spring:message code="lbl.estimateamount" /></th>

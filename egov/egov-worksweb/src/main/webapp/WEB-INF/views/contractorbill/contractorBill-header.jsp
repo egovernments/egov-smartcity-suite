@@ -158,7 +158,7 @@
 	<div class="col-sm-3 add-margin">
 		<input type="text" class="form-control" id="projectCode" value="${workOrderEstimate.estimate.projectCode.code}" disabled> 
 	</div>
-	<label class="col-sm-2 control-label text-right"><spring:message code="lbl.estimatenumber" /></label>
+	<label class="col-sm-2 control-label text-right"><spring:message code="lbl.abstractestimatenumber" /></label>
 	<div class="col-sm-3 add-margin">
 		<input type="text" class="form-control" id="estimateNumber" value="${workOrderEstimate.estimate.estimateNumber}" disabled> 
 	</div>

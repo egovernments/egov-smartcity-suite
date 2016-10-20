@@ -38,9 +38,8 @@
   ~
   ~   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
   -->
-
-<!-- Created with Jaspersoft Studio version 6.2.1.final using JasperReports Library version 6.2.1  -->
-<!-- 2016-04-27T13:03:57 -->
+<!-- Created with Jaspersoft Studio version 6.3.1.final using JasperReports Library version 6.3.1  -->
+<!-- 2016-10-19T20:49:04 -->
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="BudgetFolio" pageWidth="875" pageHeight="595" columnWidth="802" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="571536ea-4ec2-408b-b49f-9fddb4041eec">
 	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="One Empty Record"/>
 	<import value="org.egov.infra.reporting.util.*"/>
@@ -108,11 +107,11 @@
 			</textField>
 			<textField>
 				<reportElement x="431" y="49" width="131" height="30" uuid="a2f5f4e1-ad76-4537-987d-561f6dce9812"/>
-				<textFieldExpression><![CDATA["Function 		: " ]]></textFieldExpression>
+				<textFieldExpression><![CDATA["Function 		: "]]></textFieldExpression>
 			</textField>
 			<textField>
 				<reportElement x="431" y="81" width="131" height="30" uuid="477f3554-f5b1-4a46-85ab-fbc60860e394"/>
-				<textFieldExpression><![CDATA["Fund 	   		: " ]]></textFieldExpression>
+				<textFieldExpression><![CDATA["Fund 	   		: "]]></textFieldExpression>
 			</textField>
 			<textField>
 				<reportElement x="154" y="16" width="524" height="30" uuid="b79a9617-a071-4a85-a3c4-086adc4a6604"/>
@@ -240,7 +239,7 @@ Date]]></text>
 				<text><![CDATA[Name of the Work]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="366" y="14" width="86" height="35" uuid="1c8d0ba7-79b3-4c05-9313-843990dd33e8"/>
+				<reportElement x="370" y="14" width="82" height="35" uuid="1c8d0ba7-79b3-4c05-9313-843990dd33e8"/>
 				<box leftPadding="2" rightPadding="2">
 					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
@@ -250,14 +249,14 @@ Date]]></text>
 				<text><![CDATA[WIN Code]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="276" y="14" width="90" height="35" uuid="480ba481-bf50-4871-bd1a-6d67163089c9"/>
+				<reportElement x="276" y="14" width="94" height="35" uuid="480ba481-bf50-4871-bd1a-6d67163089c9"/>
 				<box leftPadding="2" rightPadding="2">
 					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
 					<bottomPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
 					<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
 				</box>
-				<text><![CDATA[Estimate Number]]></text>
+				<text><![CDATA[Abstract/Detailed Estimate Number]]></text>
 			</staticText>
 			<staticText>
 				<reportElement x="751" y="14" width="72" height="35" uuid="ea60cc9a-5974-4aa8-bcdd-5c87ff6f55f8"/>
@@ -310,7 +309,7 @@ Date]]></text>
 				<textFieldExpression><![CDATA[$F{appDate}]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true">
-				<reportElement stretchType="RelativeToTallestObject" x="276" y="0" width="90" height="30" uuid="2063aa25-5301-476a-bcc5-32496da36003"/>
+				<reportElement stretchType="RelativeToTallestObject" x="276" y="0" width="94" height="30" uuid="2063aa25-5301-476a-bcc5-32496da36003"/>
 				<box topPadding="2" leftPadding="2" bottomPadding="2" rightPadding="2">
 					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
@@ -333,7 +332,7 @@ Date]]></text>
 				<textFieldExpression><![CDATA[$F{appropriatedValue}]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true">
-				<reportElement stretchType="RelativeToTallestObject" x="366" y="0" width="86" height="30" uuid="40198ab4-496a-4107-b1bd-b83e8bf04e0a"/>
+				<reportElement stretchType="RelativeToTallestObject" x="370" y="0" width="82" height="30" uuid="40198ab4-496a-4107-b1bd-b83e8bf04e0a"/>
 				<box topPadding="2" leftPadding="2" bottomPadding="2" rightPadding="2">
 					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>

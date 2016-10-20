@@ -91,11 +91,11 @@ function callAjaxSearch() {
 					if (data.statusSize != 6){
 						$('td:eq(6)', row).html(
 								'<a href="javascript:void(0);" onclick="setStatus(\''
-										+ data.abstractEstimateId + '\')">Set work status for Abstract Estimate</a>');
+										+ data.abstractEstimateId + '\')">Set work status for Abstract/Detailed Estimate</a>');
 						} else {
 							$('td:eq(6)', row).html(
 									'<a href="javascript:void(0);" onclick="setStatus(\''
-											+ data.abstractEstimateId + '\')">View work status for Abstract Estimate</a>');
+											+ data.abstractEstimateId + '\')">View work status for Abstract/Detailed Estimate</a>');
 						}
 					$('td:eq(4)',row).html(parseFloat(Math.round(data.estimateAmount * 100) / 100).toFixed(2));
 					return row;

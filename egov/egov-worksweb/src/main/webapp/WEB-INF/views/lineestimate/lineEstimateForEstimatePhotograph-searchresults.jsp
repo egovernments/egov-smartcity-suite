@@ -49,7 +49,7 @@
 			id="resultTable">
 			<thead>
 				<tr>
-					<th><spring:message code="lbl.estimatenumber" /></th>
+					<th><spring:message code="lbl.abstractestimatenumber" /></th>
 					<th><spring:message code="lbl.estimateamount" /></th>
 					<th><spring:message code="lbl.nameofwork" /></th>
 					<th><spring:message code="lbl.estimate.date" /></th>

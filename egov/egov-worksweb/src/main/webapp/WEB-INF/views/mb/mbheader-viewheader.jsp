@@ -109,7 +109,7 @@
 			<div class="panel-body">
 				<div class="row add-border">
 					<div class="col-xs-3 add-margin">
-						<spring:message code="lbl.estimatenumber" />
+						<spring:message code="lbl.abstractestimatenumber" />
 					</div>
 					<div class="col-xs-2 add-margin view-content">
 						<c:out default="N/A" value="${mbHeader.workOrderEstimate.estimate.estimateNumber}"></c:out>

@@ -97,18 +97,18 @@ function callAjaxSearch() {
 					"aButtons" : [
 					    {
 					    	"sExtends": "pdf",
-					    	"sTitle": "Search Abstract Estimate",
+					    	"sTitle": "Search Abstract/Detailed Estimate",
                             "sPdfOrientation": "landscape"
 		                },
 		                {
 				             "sExtends": "xls",
-                             "sPdfMessage": "Search Abstract Estimate",
-                             "sTitle": "Search Abstract Estimate"
+                             "sPdfMessage": "Search Abstract/Detailedt Estimate",
+                             "sTitle": "Search Abstract/Detailed Estimate"
 			             },
 			             {
 				             "sExtends": "print",
-                             "sPdfMessage": "Search Abstract Estimate",
-                             "sTitle": "Search Abstract Estimate"
+                             "sPdfMessage": "Search Abstract/Detailed Estimate",
+                             "sTitle": "Search Abstract/Detailed Estimate"
 			             }],
 				},
 				"fnRowCallback" : function(row, data, index) {

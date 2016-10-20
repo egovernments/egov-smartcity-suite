@@ -68,7 +68,7 @@
 								<label class="col-sm-3 control-label text-right"><spring:message code="lbl.abstractestimatenumber" /></label>
 								<div class="col-sm-3 add-margin">
 									<input type="hidden" id="id" name="id"/>
-									<form:input path="abstractEstimateNumber" id="abstractEstimateNumber" class="form-control" placeholder="Type first 3 letters of Abstract Estimate Number"/>
+									<form:input path="abstractEstimateNumber" id="abstractEstimateNumber" class="form-control" placeholder="Type first 3 letters of Abstract/Detailed Estimate Number"/>
 									<form:errors path="abstractEstimateNumber" cssClass="add-margin error-msg" />
 								</div>
 								<label class="col-sm-2 control-label text-right"><spring:message code="lbl.createdby" /></label>

@@ -49,7 +49,7 @@
 			<thead>
 				<tr id="mbheaderRow">
 					<th><spring:message code="lbl.slno" /></th>
-					<th><spring:message code="lbl.estimatenumber" /></th>
+					<th><spring:message code="lbl.abstractestimatenumber" /></th>
 					<th><spring:message code="lbl.loanumber" /></th>
 					<th class="departmentcolumn"><spring:message code="lbl.department" /></th>
 					<th><spring:message code="lbl.contractor.name" /></th>

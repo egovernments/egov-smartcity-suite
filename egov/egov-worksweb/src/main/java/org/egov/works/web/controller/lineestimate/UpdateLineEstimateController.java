@@ -377,15 +377,15 @@ public class UpdateLineEstimateController extends GenericWorkFlowController {
         model.addAttribute("stateType", lineEstimate.getClass().getSimpleName());
         model.addAttribute("amountRule", lineEstimate.getTotalEstimateAmount());
 
+        final WorkflowContainer workflowContainer = new WorkflowContainer();
         if (lineEstimate.getCurrentState() != null)
             model.addAttribute("currentState", lineEstimate.getCurrentState().getValue());
         if (lineEstimate.getState() != null && lineEstimate.getState().getNextAction() != null) {
             model.addAttribute("nextAction", lineEstimate.getState().getNextAction());
             model.addAttribute("pendingActions", lineEstimate.getState().getNextAction());
+            workflowContainer.setPendingActions(lineEstimate.getCurrentState().getNextAction());
         }
-        final WorkflowContainer workflowContainer = new WorkflowContainer();
         workflowContainer.setAmountRule(lineEstimate.getTotalEstimateAmount());
-        workflowContainer.setPendingActions(lineEstimate.getCurrentState().getNextAction());
         prepareWorkflow(model, lineEstimate, workflowContainer);
         if (lineEstimate.getState() != null && lineEstimate.getState().getValue().equals(WorksConstants.WF_STATE_REJECTED))
             model.addAttribute("mode", "edit");

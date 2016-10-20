@@ -624,7 +624,7 @@ public class AbstractEstimate extends StateAware implements Auditable {
 
     @Override
     public String getStateDetails() {
-        return "Abstract Estimate Number : " + getEstimateNumber();
+        return "Abstract/Detailed Estimate Number : " + getEstimateNumber();
     }
 
     // @Required(message = "estimate.fund.null")

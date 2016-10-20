@@ -122,7 +122,7 @@
 						<div class="col-sm-3 add-margin">
 							<form:input path="estimateNumber" id="estimateNumber"
 								class="form-control"
-								placeholder="Type first 3 letters of Estimate Number" />
+								placeholder="Type first 3 letters of Abstract/Detailed Estimate Number" />
 							<form:errors path="estimateNumber"
 								cssClass="add-margin error-msg" />
 						</div>
@@ -165,7 +165,7 @@
 					<th><spring:message code="lbl.slno" /></th>
 					<th><spring:message code="lbl.loanumber" /></th>
 					<th><spring:message code="lbl.loadate" /></th>
-					<th><spring:message code="lbl.estimatenumber" /></th>
+					<th><spring:message code="lbl.abstractestimatenumber" /></th>
 					<th><spring:message code="lbl.nameofwork" /></th>
 					<th><spring:message code="lbl.contractor.name" /></th>
 					<th><spring:message code="lbl.agreement.amount" /></th>

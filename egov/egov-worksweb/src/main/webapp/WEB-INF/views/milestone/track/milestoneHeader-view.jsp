@@ -57,7 +57,7 @@
 			<div class="panel-body">
 				<div class="row add-border">
 					<div class="col-xs-3 add-margin">
-						<spring:message code="lbl.estimatenumber" />
+						<spring:message code="lbl.abstractestimatenumber" />
 					</div>
 					<div class="col-xs-3 add-margin view-content" id="estimateNumber">
 					</div>

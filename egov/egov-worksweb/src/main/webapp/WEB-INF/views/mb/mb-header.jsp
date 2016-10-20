@@ -111,7 +111,7 @@
 	<div class="panel-body custom-form">
 		<div class="form-group">
 			<label class="col-sm-3 control-label text-right">
-			    <spring:message code="lbl.estimatenumber" />
+			    <spring:message code="lbl.abstractestimatenumber" />
 			</label>
 			<div class="col-sm-3 add-margin view-content">
 				<a href="javascript:void(0);" onclick="viewEstimate()"><span name="estimateNumber" id="estimateNumber">${mbHeader.workOrderEstimate.estimate.estimateNumber }</span></a>

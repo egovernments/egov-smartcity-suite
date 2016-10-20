@@ -54,7 +54,7 @@
 				<form:input path="workOrderNumber" id="workOrderNumber" class="form-control" placeholder="Type first 3 letters of LOA Number" />
 				<form:errors path="workOrderNumber" cssClass="add-margin error-msg" />
 			</div>
-			<label class="col-sm-2 control-label text-right"><spring:message code="lbl.estimatenumber" /></label>
+			<label class="col-sm-2 control-label text-right"><spring:message code="lbl.abstractestimatenumber" /></label>
 			<div class="col-sm-3 add-margin">
 				<form:input path="estimateNumber" id="estimateNumber" class="form-control" />
 				<form:errors path="estimateNumber" cssClass="add-margin error-msg" />
