@@ -154,7 +154,7 @@
 								<form:textarea path="sorMbDetails[0].remarks" id="remarks_0" data-idx="0" data-optional="1" class="form-control table-input" maxlength="1024"></form:textarea>
 							</td>
 							<td>
-								<span class="add-padding delete_0" onclick="deleteSor(this);"><i class="fa fa-trash" data-toggle="tooltip" title="" data-original-title="Delete!"></i></span>
+								<span class="add-padding sordelete delete_0" onclick="deleteSor(this);"><i class="fa fa-trash" data-toggle="tooltip" title="" data-original-title="Delete!"></i></span>
 							</td>
 						</tr>
 					</c:when>
@@ -235,7 +235,7 @@
 									<form:textarea path="sorMbDetails[${item.index }].remarks" value="${details.remarks }" id="remarks_${item.index }" data-idx="${item.index }" data-optional="1" class="form-control table-input" maxlength="1024"></form:textarea>
 								</td>
 								<td>
-									<span class="add-padding delete_${item.index }" onclick="deleteSor(this);"><i class="fa fa-trash" data-toggle="tooltip" title="" data-original-title="Delete!"></i></span>
+									<span class="add-padding sordelete delete_${item.index }" onclick="deleteSor(this);"><i class="fa fa-trash" data-toggle="tooltip" title="" data-original-title="Delete!"></i></span>
 								</td>
 							</tr>
 						</c:forEach>

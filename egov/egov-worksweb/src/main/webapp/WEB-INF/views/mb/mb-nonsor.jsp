@@ -127,7 +127,7 @@
 								<form:textarea path="nonSorMbDetails[0].remarks" id="nonSorRemarks_0" data-idx="0" data-optional="1" class="form-control table-input" maxlength="1024"></form:textarea>
 							</td>
 							<td>
-								<span class="add-padding nonSorDelete_0" onclick="deleteNonSor(this);"><i class="fa fa-trash" data-toggle="tooltip" title="" data-original-title="Delete!"></i></span>
+								<span class="add-padding nonSorDelete nonSorDelete_0" onclick="deleteNonSor(this);"><i class="fa fa-trash" data-toggle="tooltip" title="" data-original-title="Delete!"></i></span>
 							</td>
 						</tr>
 					</c:when>
@@ -203,7 +203,7 @@
 									<form:textarea path="nonSorMbDetails[${item.index }].remarks" value="${details.remarks }" id="nonSorRemarks_${item.index }" data-idx="${item.index }" data-optional="1" class="form-control table-input" maxlength="1024"></form:textarea>
 								</td>
 								<td>
-									<span class="add-padding nonSorDelete_${item.index }" onclick="deleteNonSor(this);"><i class="fa fa-trash" data-toggle="tooltip" title="" data-original-title="Delete!"></i></span>
+									<span class="add-padding nonSorDelete nonSorDelete_${item.index }" onclick="deleteNonSor(this);"><i class="fa fa-trash" data-toggle="tooltip" title="" data-original-title="Delete!"></i></span>
 								</td>
 							</tr>
 						</c:forEach>

@@ -40,8 +40,17 @@
 var hint='<a href="#" class="hintanchor" title="@fulldescription@"><i class="fa fa-question-circle" aria-hidden="true"></i></a>';
 var isDatepickerOpened=false;
 $(document).ready(function(){
-	if($("#isMBHeaderEditable") && $("#isMBHeaderEditable").val()!="" && $("#isMBHeaderEditable").val()=="false")
+	if($("#isMBHeaderEditable") && $("#isMBHeaderEditable").val()!="" && $("#isMBHeaderEditable").val()=="false"){
 		$("#mbHeaderTab").find('input,button,textarea').prop('disabled',true);
+		$("#searchAndAdd").addClass('hide');
+		$("#addAll").addClass('hide');
+		$("#searchNonTenderedAndAdd").addClass('hide');
+		$("#addAllNonTendered").addClass('hide');
+		$(".sordelete").addClass('hide');
+		$(".nonTenderedDelete").addClass('hide');
+		$(".nonSorDelete").addClass('hide');
+		$(".lumpSumDelete").addClass('hide');
+	}
 		
 	sorTotal();
 	nonSorTotal();
