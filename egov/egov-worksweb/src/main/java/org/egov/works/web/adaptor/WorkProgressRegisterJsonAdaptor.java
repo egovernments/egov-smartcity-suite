@@ -73,7 +73,7 @@ public class WorkProgressRegisterJsonAdaptor implements JsonSerializer<WorkProgr
                     jsonObject.addProperty("ward", workProgressRegister.getWard().getBoundaryNum());
             } else
                 jsonObject.addProperty("ward", "");
-            
+
             if (workProgressRegister.getLocation() != null)
                 jsonObject.addProperty("location", workProgressRegister.getLocation().getName());
             else

@@ -100,13 +100,13 @@ public class ViewContractorMBController {
         final ContractorMBHeader newcontractorMB = getContractorMBDocuments(contractorMB);
         model.addAttribute("documentDetails", newcontractorMB.getDocumentDetails());
         model.addAttribute("mode", "view");
-        List<Long> projectCodeIdList = new ArrayList<Long>();
+        final List<Long> projectCodeIdList = new ArrayList<Long>();
         projectCodeIdList
                 .add(contractorMB.getWorkOrderEstimate().getEstimate().getLineEstimateDetails().getProjectCode().getId());
         Map<String, BigDecimal> result = new HashMap<String, BigDecimal>();
         try {
             result = egovCommon.getTotalPaymentforProjectCode(projectCodeIdList, new Date());
-        } catch (ApplicationException e) {
+        } catch (final ApplicationException e) {
             e.printStackTrace();
         }
         model.addAttribute("totalBillsPaidSoFar", result.get("amount"));

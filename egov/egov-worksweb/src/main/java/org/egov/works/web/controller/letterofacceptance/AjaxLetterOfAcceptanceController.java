@@ -107,10 +107,10 @@ public class AjaxLetterOfAcceptanceController {
 
     @Autowired
     private TrackMilestoneService trackMilestoneService;
-    
+
     @Autowired
     private WorkOrderEstimateService workOrderEstimateService;
-    
+
     @Autowired
     @Qualifier("messageSource")
     private MessageSource messageSource;
@@ -207,13 +207,13 @@ public class AjaxLetterOfAcceptanceController {
     public @ResponseBody String validateWorkOrderNumberForCreateContractorBill(
             @RequestParam("workOrderId") final Long workOrderId) {
         String message = "";
-        WorkOrderEstimate workOrderEstimate = workOrderEstimateService.getWorkOrderEstimateByWorkOrderId(workOrderId);
-        TrackMilestone trackMileStone = trackMilestoneService
+        final WorkOrderEstimate workOrderEstimate = workOrderEstimateService.getWorkOrderEstimateByWorkOrderId(workOrderId);
+        final TrackMilestone trackMileStone = trackMilestoneService
                 .getMinimumPercentageToCreateContractorBill(workOrderEstimate.getId());
-        if (trackMileStone == null) {
+        if (trackMileStone == null)
             message = messageSource.getMessage("error.contractorbil.milestone.percentage", null, null);
-        } else {
-            Boolean nonApprovedBills = letterOfAcceptanceService.validateContractorBillInWorkflowForWorkorder(workOrderId);
+        else {
+            final Boolean nonApprovedBills = letterOfAcceptanceService.validateContractorBillInWorkflowForWorkorder(workOrderId);
             if (!nonApprovedBills)
                 message = messageSource.getMessage("error.contractorbill.nonapprovedbills",
                         new String[] { workOrderEstimate.getWorkOrder().getWorkOrderNumber() }, null);

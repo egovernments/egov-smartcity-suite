@@ -85,7 +85,7 @@ public class SearchWorkOrderForMBHeaderController extends GenericWorkFlowControl
         final MBHeader mbHeader = new MBHeader();
         final WorkflowContainer workflowContainer = new WorkflowContainer();
         prepareWorkflow(model, mbHeader, workflowContainer);
-        List<String> validActions = new ArrayList<String>();
+        final List<String> validActions = new ArrayList<String>();
         validActions.add(WorksConstants.SAVE_ACTION);
         validActions.add(WorksConstants.FORWARD_ACTION.toString());
         validActions.add(WorksConstants.CONTRACTOR_MEASUREMENTS.toString());

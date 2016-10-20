@@ -87,9 +87,9 @@ import org.egov.works.mb.entity.MBHeader;
 import org.egov.works.mb.service.MBDetailsService;
 import org.egov.works.mb.service.MBForCancelledBillService;
 import org.egov.works.mb.service.MBHeaderService;
-import org.egov.works.models.contractorBill.ContractorBillCertificateInfo;
 import org.egov.works.milestone.entity.TrackMilestone;
 import org.egov.works.milestone.service.TrackMilestoneService;
+import org.egov.works.models.contractorBill.ContractorBillCertificateInfo;
 import org.egov.works.utils.WorksConstants;
 import org.egov.works.utils.WorksUtils;
 import org.egov.works.workorder.entity.WorkOrderActivity;
@@ -150,7 +150,7 @@ public class ContractorBillRegisterService {
 
     @Autowired
     private ChartOfAccountsHibernateDAO chartOfAccountsHibernateDAO;
-    
+
     @Autowired
     private TrackMilestoneService trackMilestoneService;
 
@@ -946,7 +946,7 @@ public class ContractorBillRegisterService {
         return contractorBillRegisterRepository.findSumOfDebitByAccountCodeForWorkOrder(workOrderEstmateId, glCodeId,
                 ContractorBillRegister.BillStatus.APPROVED.toString(), contractorBillId);
     }
-    
+
     public void validateMileStonePercentage(final ContractorBillRegister contractorBillRegister,
             final BindingResult resultBinder) {
         TrackMilestone trackMileStone = null;
@@ -964,5 +964,5 @@ public class ContractorBillRegisterService {
                         "error.contractorbil.milestone.percentage");
         }
     }
-    
+
 }

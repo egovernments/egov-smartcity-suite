@@ -59,11 +59,15 @@ public interface TrackMilestoneRepository extends JpaRepository<TrackMilestone, 
     TrackMilestone findTrackMilestoneTotalPercentage(@Param("workOrderEstimateId") Long workOrderEstimateId,
             @Param("workOrderStatus") String workOrderStatus, @Param("trackMilestoneStatus") String trackMilestoneStatus,
             @Param("milestoneStatus") String milestoneStatus);
-    
+
     @Query("select distinct(tms) from TrackMilestone tms where tms.milestone.workOrderEstimate.id =:workOrderEstimateId and tms.milestone.workOrderEstimate.workOrder.egwStatus.code=:workOrderStatus and tms.status.code =:trackMilestoneStatus and tms.status.code =:milestoneStatus and tms.totalPercentage >= 1 ")
-    TrackMilestone findMinimunPercentageForTrackMileStone(@Param("workOrderEstimateId") Long workOrderEstimateId,@Param("workOrderStatus") String workOrderStatus,@Param("trackMilestoneStatus") String trackMilestoneStatus,@Param("milestoneStatus") String milestoneStatus);
-    
+    TrackMilestone findMinimunPercentageForTrackMileStone(@Param("workOrderEstimateId") Long workOrderEstimateId,
+            @Param("workOrderStatus") String workOrderStatus, @Param("trackMilestoneStatus") String trackMilestoneStatus,
+            @Param("milestoneStatus") String milestoneStatus);
+
     @Query("select distinct(tms) from TrackMilestone tms where tms.milestone.workOrderEstimate.id =:workOrderEstimateId and tms.milestone.workOrderEstimate.workOrder.egwStatus.code=:workOrderStatus and tms.status.code =:trackMilestoneStatus and tms.status.code =:milestoneStatus and tms.totalPercentage = 100 ")
-    TrackMilestone findCompletionPercentageForTrackMileStone(@Param("workOrderEstimateId") Long workOrderEstimateId,@Param("workOrderStatus") String workOrderStatus,@Param("trackMilestoneStatus") String trackMilestoneStatus,@Param("milestoneStatus") String milestoneStatus);
+    TrackMilestone findCompletionPercentageForTrackMileStone(@Param("workOrderEstimateId") Long workOrderEstimateId,
+            @Param("workOrderStatus") String workOrderStatus, @Param("trackMilestoneStatus") String trackMilestoneStatus,
+            @Param("milestoneStatus") String milestoneStatus);
 
 }

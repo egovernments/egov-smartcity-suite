@@ -54,7 +54,6 @@ import org.apache.commons.lang3.StringUtils;
 import org.egov.egf.commons.EgovCommon;
 import org.egov.infra.exception.ApplicationException;
 import org.egov.infra.messaging.MessagingService;
-import org.egov.works.abstractestimate.service.EstimateService;
 import org.egov.works.contractorbill.service.ContractorBillRegisterService;
 import org.egov.works.contractorportal.entity.ContractorMBHeader;
 import org.egov.works.contractorportal.service.ContractorMBHeaderService;
@@ -96,9 +95,6 @@ public class CreateContractorMBController {
     private MessageSource messageSource;
 
     @Autowired
-    private EstimateService estimateService;
-
-    @Autowired
     private TrackMilestoneService trackMilestoneService;
 
     @Autowired
@@ -132,12 +128,12 @@ public class CreateContractorMBController {
         model.addAttribute("contractorMB", contractorMBHeader);
         model.addAttribute("documentDetails", contractorMBHeader.getDocumentDetails());
 
-        List<Long> projectCodeIdList = new ArrayList<Long>();
+        final List<Long> projectCodeIdList = new ArrayList<Long>();
         projectCodeIdList.add(workOrderEstimate.getEstimate().getLineEstimateDetails().getProjectCode().getId());
         Map<String, BigDecimal> result = new HashMap<String, BigDecimal>();
         try {
             result = egovCommon.getTotalPaymentforProjectCode(projectCodeIdList, new Date());
-        } catch (ApplicationException e) {
+        } catch (final ApplicationException e) {
             e.printStackTrace();
         }
         model.addAttribute("totalBillsPaidSoFar", result.get("amount"));
