@@ -63,6 +63,7 @@
 	    			<th>Marriage Fee</th>
 	    			<th>Is fee collected?</th>
 	    			<th>Status</th>
+	    			<th>Registration Unit</th>
 	    			<th>Action</th>
 	    		</tr>
 	    	</thead>

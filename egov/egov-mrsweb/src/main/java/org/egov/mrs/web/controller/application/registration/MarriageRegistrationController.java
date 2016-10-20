@@ -54,6 +54,7 @@ import org.egov.mrs.domain.service.MarriageDocumentService;
 import org.egov.mrs.domain.service.MarriageRegistrationService;
 import org.egov.mrs.masters.service.MarriageActService;
 import org.egov.mrs.masters.service.MarriageFeeService;
+import org.egov.mrs.masters.service.MarriageRegistrationUnitService;
 import org.egov.mrs.masters.service.ReligionService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.support.ResourceBundleMessageSource;
@@ -89,7 +90,8 @@ public class MarriageRegistrationController extends GenericWorkFlowController {
     @Autowired
     protected MarriageApplicantService marriageApplicantService;
     
-
+    @Autowired
+    protected MarriageRegistrationUnitService marriageRegistrationUnitService;
     
     @ModelAttribute
     public void prepareForm(final Model model) {
@@ -102,6 +104,7 @@ public class MarriageRegistrationController extends GenericWorkFlowController {
         model.addAttribute("feesList", marriageFeeService.searchGeneralTypeFeeses());
         model.addAttribute("generalDocuments", marriageDocumentService.getGeneralDocuments());
         model.addAttribute("individualDocuments", marriageDocumentService.getIndividualDocuments());
+        model.addAttribute("marriageRegistrationUnit", marriageRegistrationUnitService.getActiveRegistrationunit());
     }
 
 }

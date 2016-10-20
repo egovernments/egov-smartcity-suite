@@ -67,6 +67,7 @@ import org.egov.infra.admin.master.entity.Boundary;
 import org.egov.infra.workflow.entity.StateAware;
 import org.egov.mrs.masters.entity.MarriageAct;
 import org.egov.mrs.masters.entity.MarriageFee;
+import org.egov.mrs.masters.entity.MarriageRegistrationUnit;
 import org.hibernate.validator.constraints.Length;
 import org.hibernate.validator.constraints.SafeHtml;
 
@@ -158,6 +159,12 @@ public class MarriageRegistration extends StateAware {
     @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "zone")
     private Boundary zone;
+    
+    
+    @NotNull
+    @OneToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "registrationUnit")
+    private MarriageRegistrationUnit marriageRegistrationUnit;
 
     @ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @JoinColumn(name = "demand")
@@ -486,14 +493,21 @@ public class MarriageRegistration extends StateAware {
 		this.toDate = toDate;
 	}
 
-    public boolean isLegacy() {
-        return isLegacy;
-    }
+	public MarriageRegistrationUnit getMarriageRegistrationUnit() {
+		return marriageRegistrationUnit;
+	}
 
-    public void setLegacy(boolean isLegacy) {
-        this.isLegacy = isLegacy;
-    }
+	public void setMarriageRegistrationUnit(
+			MarriageRegistrationUnit marriageRegistrationUnit) {
+		this.marriageRegistrationUnit = marriageRegistrationUnit;
+	}
     
-    
+	 public boolean isLegacy() {
+	        return isLegacy;
+	    }
+
+	    public void setLegacy(boolean isLegacy) {
+	        this.isLegacy = isLegacy;
+	    }
 
 }

@@ -66,6 +66,10 @@ public class MarriageRegistrationJsonAdaptor implements JsonSerializer<MarriageR
 				jsonObject.addProperty("applicationType", registration.getStateType());
 			else
 				jsonObject.addProperty("remarks", StringUtils.EMPTY);
+			if (registration.getMarriageRegistrationUnit() != null)
+				jsonObject.addProperty("marriageRegistrationUnit", registration.getMarriageRegistrationUnit().getName());
+			else
+				jsonObject.addProperty("marriageRegistrationUnit", StringUtils.EMPTY);
 			jsonObject.addProperty("id", registration.getId());
 		}
 		return jsonObject;

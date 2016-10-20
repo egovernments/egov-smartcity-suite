@@ -90,6 +90,7 @@ import org.egov.mrs.domain.repository.MarriageRegistrationRepository;
 import org.egov.mrs.domain.repository.WitnessRepository;
 import org.egov.mrs.masters.service.MarriageActService;
 import org.egov.mrs.masters.service.MarriageFeeService;
+import org.egov.mrs.masters.service.MarriageRegistrationUnitService;
 import org.egov.mrs.masters.service.ReligionService;
 import org.egov.pims.commons.Position;
 import org.hibernate.Criteria;
@@ -177,6 +178,8 @@ public class MarriageRegistrationService {
     @Autowired
     private MarriageRegistrationUpdateIndexesService marriageRegistrationUpdateIndexesService;
     
+    @Autowired
+    private MarriageRegistrationUnitService marriageRegistrationUnitService;
     
     @Autowired
     public MarriageRegistrationService(final MarriageRegistrationRepository registrationRepository) {
@@ -219,6 +222,9 @@ public class MarriageRegistrationService {
                 registration.setDemand(
                                 marriageRegistrationDemandService.createDemand(new BigDecimal(registration.getFeePaid())));
         }
+        if (registration.getMarriageRegistrationUnit() != null)
+        registration.setMarriageRegistrationUnit(marriageRegistrationUnitService.findById(registration.getMarriageRegistrationUnit().getId()));
+        
         if (registration.getPriest().getReligion().getId() != null)
             registration.getPriest().setReligion(religionService.getProxy(registration.getPriest().getReligion().getId()));
         else
@@ -271,7 +277,7 @@ public class MarriageRegistrationService {
             registration.setApplicationNo(marriageRegistrationApplicationNumberGenerator.getNextApplicationNumberForMarriageRegistration(registration));
         }
         setMarriageRegData(registration);
-        registration.setStatus(
+       registration.setStatus(
              marriageUtils.getStatusByCodeAndModuleType(MarriageRegistration.RegistrationStatus.CREATED.toString(), MarriageConstants.MODULE_NAME)); 
         workflowService.transition(registration, workflowContainer, registration.getApprovalComent());
         create(registration);
@@ -355,7 +361,8 @@ public class MarriageRegistrationService {
                 registration.setFeeCriteria(marriageFeeService.getFee(regModel.getFeeCriteria().getId()));
         registration.setFeePaid(regModel.getFeePaid());
         registration.setMarriageAct(marriageActService.getAct(registration.getMarriageAct().getId()));
-        
+        if (registration.getMarriageRegistrationUnit() != null)
+        registration.setMarriageRegistrationUnit(marriageRegistrationUnitService.findById(regModel.getMarriageRegistrationUnit().getId()));
                 if (registration.getFeePaid() != null) {
                         if (registration.getDemand() == null){
                                 registration.setDemand(

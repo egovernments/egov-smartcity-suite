@@ -50,6 +50,9 @@
 		<spring:message code="subheading.general.info"/>
 	</div>	
 </div>
+
+<div class="col-sm-3 add-margin"><spring:message code="lbl.registrationunit"/></div>
+		<div class="col-sm-3 add-margin view-content"><c:out value="${registration.marriageRegistrationUnit.name}"></c:out></div>
 <div class="row">
 	<div class="form-group">
 		<div class="col-sm-3 add-margin"><spring:message code="lbl.application.no"/></div>
