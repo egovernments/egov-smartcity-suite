@@ -42,12 +42,12 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 <%@ taglib uri="/WEB-INF/taglib/cdn.tld" prefix="cdn" %>
 
-<div class="row add-margin view-content">
-	<div class="col-sm-3 text-center">	<spring:message code="lbl.applicant.docs"/></div>
-	<div class="col-sm-9 text-center"></div>
+<div class="panel-heading">
+	<div class="panel-title">
+		<spring:message code="lbl.applicant.docs"/>
+	</div>
 </div>
 <c:forEach var="doc" items="${documents}" varStatus="status">	
-	
 	<div class="form-group">	
 		<div class="col-sm-2"></div>
 		<form:hidden id="applicant.documents[${status.index}].id" path="applicant.documents[${status.index}].id" value="${doc.id}" /> 

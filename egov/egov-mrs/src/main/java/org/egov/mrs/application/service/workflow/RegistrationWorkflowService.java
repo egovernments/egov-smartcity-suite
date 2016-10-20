@@ -201,7 +201,8 @@ public class RegistrationWorkflowService {
                 
                 nextState = "Assistant Engineer Rejected";
                 nextAction = "Revenue Clerk Approval Pending";
-            }else if (workflowContainer.getWorkFlowAction().equalsIgnoreCase(STEP_CANCEL_REISSUE)) {
+            }else if (workflowContainer.getWorkFlowAction().equalsIgnoreCase(STEP_CANCEL_REISSUE) ||
+                    workflowContainer.getWorkFlowAction().equalsIgnoreCase(STEP_PRINT_CERTIFICATE)) {
                 nextAction = STATE_END;
             } else if (workflowContainer.getWorkFlowAction().equalsIgnoreCase(STEP_APPROVE)) {
 

@@ -45,13 +45,14 @@
 <%@ taglib uri="http://www.springframework.org/tags" prefix="spring" %>
 <%@ taglib uri="http://www.springframework.org/tags/form" prefix="form" %>
 
-<div class="row add-margin view-content">
-	<div class="col-sm-3 text-center"><spring:message code="${param.header}"/></div>
-	<div class="col-sm-9 text-center"></div>
+<div class="panel-heading">
+	<div class="panel-title">
+		<spring:message code="${param.header}"/>
+	</div>
 </div>
 <div class="row">
 	<div class="form-group">
-		<div class="col-sm-3 add-margin">
+		<div class="col-sm-3 control-label">
 			<spring:message code="lbl.fullname"/>
 		</div>
 		<div class="col-sm-3 add-margin view-content">
@@ -59,7 +60,7 @@
 			<c:out value="${reissue.applicant.name.middleName}"></c:out>&nbsp; &nbsp;
 			<c:out value="${reissue.applicant.name.lastName}"></c:out>
 		</div>
-		<div class="col-sm-3 add-margin">
+		<div class="col-sm-3 control-label">
 			<spring:message code="lbl.othername"/>
 		</div>
 		<div class="col-sm-3 add-margin view-content">
@@ -69,13 +70,13 @@
 </div>
 <div class="row">
 	<div class="form-group">
-		<div class="col-sm-3 add-margin">
+		<div class="col-sm-3 control-label">
 			<spring:message code="lbl.residence.address"/>
 		</div>
 		<div class="col-sm-3 add-margin view-content">
 			<c:out value="${reissue.applicant.contactInfo.residenceAddress}" />
 		</div>
-		<div class="col-sm-3 add-margin">
+		<div class="col-sm-3 control-label">
 			<spring:message code="lbl.office.address"/>
 		</div>
 		<div class="col-sm-3 add-margin view-content">
@@ -85,13 +86,13 @@
 </div>
 <div class="row">
 	<div class="form-group">
-		<div class="col-sm-3 add-margin">
+		<div class="col-sm-3 control-label">
 			<spring:message code="lbl.phoneno"/>
 		</div>
 		<div class="col-sm-3 add-margin view-content">
 			<c:out value="${reissue.applicant.contactInfo.mobileNo}" />
 		</div>
-		<div class="col-sm-3 add-margin">
+		<div class="col-sm-3 control-label">
 			<spring:message code="lbl.email"/>
 		</div>
 		<div class="col-sm-3 add-margin view-content">

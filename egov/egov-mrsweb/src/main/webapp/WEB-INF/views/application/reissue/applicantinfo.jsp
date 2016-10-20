@@ -45,13 +45,14 @@
 <%@ taglib uri="http://www.springframework.org/tags" prefix="spring" %>
 <%@ taglib uri="http://www.springframework.org/tags/form" prefix="form" %>
 
-<div class="row add-margin view-content">
-	<div class="col-sm-3 text-center"><spring:message code="${param.header}"/></div>
-	<div class="col-sm-9 text-center"></div>
+<div class="panel-heading">
+	<div class="panel-title">
+		<spring:message code="${param.header}"/>
+	</div>
 </div>
 <div class="row">
 	<div class="form-group">
-		<div class="col-sm-3 add-margin" style="padding-right: 5px;">
+		<div class="col-sm-3 control-label" style="padding-right: 5px;">
 			<spring:message code="lbl.fullname"/><span class="mandatory"></span>
 		</div>
 		<div class="col-sm-3" style="padding-left: 15px;">
@@ -62,7 +63,7 @@
             <form:errors path="${applicant}.name.middleName" cssClass="add-margin error-msg"/>
             <form:errors path="${applicant}.name.lastName" cssClass="add-margin error-msg"/>
 		</div>
-		<div class="col-sm-3 add-margin" style="padding-right: 5px;">
+		<div class="col-sm-2 control-label" style="padding-right: 5px;">
 			<spring:message code="lbl.othername"/>
 		</div>
 		<div class="col-sm-3" style="padding-left: 15px;">
@@ -73,14 +74,14 @@
 </div>
 <div class="row">
 	<div class="form-group">
-		<div class="col-sm-3 add-margin">
+		<div class="col-sm-3 control-label">
 			<spring:message code="lbl.residence.address"/><span class="mandatory"></span>
 		</div>
 		<div class="col-sm-3">
 			<form:textarea path="${applicant}.contactInfo.residenceAddress" id="txt-residenceAddress" type="text" class="form-control low-width patternvalidation" data-pattern="alphabetwithspacehyphenunderscore" maxlength="256" placeholder="" autocomplete="off" required="required"/>
                   <form:errors path="${applicant}.contactInfo.residenceAddress" cssClass="add-margin error-msg"/>
 		</div>
-		<div class="col-sm-3 add-margin">
+		<div class="col-sm-2 control-label">
 			<spring:message code="lbl.office.address"/><span class="mandatory"></span>
 		</div>
 		<div class="col-sm-3">
@@ -91,14 +92,14 @@
 </div>
 <div class="row">
 	<div class="form-group">
-		<div class="col-sm-3 add-margin">
+		<div class="col-sm-3 control-label">
 			<spring:message code="lbl.phoneno"/><span class="mandatory"></span>
 		</div>
 		<div class="col-sm-3">
 			<form:input path="${applicant}.contactInfo.mobileNo" id="txt-phoneNo" type="text" cssClass="form-control low-width patternvalidation" data-pattern="number" maxlength="10" placeholder="" autocomplete="off" required="required" />
                   <form:errors path="${applicant}.contactInfo.mobileNo" cssClass="add-margin error-msg"/>
 		</div>
-		<div class="col-sm-3 add-margin">
+		<div class="col-sm-2 control-label">
 			<spring:message code="lbl.email"/>
 		</div>
 		<div class="col-sm-3">

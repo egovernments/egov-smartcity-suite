@@ -41,6 +41,7 @@
 <%@ taglib uri="http://www.springframework.org/tags/form" prefix="form"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 
+<br />
 <c:set value="applicant" var="applicant" scope="request"></c:set>
 <form:hidden path="applicant.id" />
 <jsp:include page="applicantinfo.jsp">
@@ -49,14 +50,14 @@
 <br />
 <div class="row">
 	<div class="form-group">
-		<div class="col-sm-3 add-margin">
+		<div class="col-sm-3 control-label">
 			<spring:message code="lbl.fee.criteria"/>
 		</div>
-		<div class="col-sm-3 add-margin view-content">
+		<div class="col-sm-3 view-content">
 			 <c:out value="${reIssue.feeCriteria.criteria}" />
 			 <form:hidden path="feeCriteria.id"  value="${reIssue.feeCriteria.id}"/>	 
 		</div>
-		<div class="col-sm-3 add-margin">
+		<div class="col-sm-2 control-label">
 			<spring:message code="lbl.fee"/><span class="mandatory"></span>
 		</div>
 		<div class="col-sm-3">

@@ -46,7 +46,7 @@
 
 <script src="<cdn:url value='/resources/js/app/viewregistration.js'/> "></script>
 
- <div class="row">
+  <div class="row" id="page-content">
 	<div class="col-md-12"> 
 		<div class="text-right error-msg" style="font-size:14px;"></div>
 		
@@ -65,36 +65,53 @@
 
 			<input type="hidden" id="reIssueId" value="${reissue.id}" />
 			<input type="hidden" id="reIssueStatus" value="${reissue.status.code}" />
+			<input type="hidden" id="feeCollected" value="${reissue.feeCollected}" />
 			<form:hidden path="" name="registration.id" id="reIssueRegistrationId" value="${reissue.registration.id}"/>	
 			<form:hidden path="" id="workFlowAction" name="workFlowAction"/>
 			
-			<div class="panel panel-primary" data-collapsed="0">
+			<c:if test="${reissue.status.code =='APPROVED' && !reissue.feeCollected}"> 
+			 <div  data-collapsed="0">
 				<div class="panel-heading">
-					<div class="panel-title">
-						<spring:message code="title.reissue" />
-					</div>
+					<div  style="color: red; font-size: 16px;" align="center">
+						<spring:message  code="lbl.collect.marriageFee"/> 
+					</div> 
 				</div>
-				<div class="panel-body custom-form ">
-					  <div class="container-fluid">	
-					  <ul class="nav nav-tabs nav-justified nav-tabs-top">
-					    <li class="active"><a data-toggle="tab" href="#applicant-info">Applicant's Information</a></li>
-					    <li><a data-toggle="tab" href="#checklist-info">Checklist</a></li>
-					  </ul>
+			</div>	
+			</c:if>
+			
+			<ul class="nav nav-tabs nav-justified nav-tabs-top">
+			    <li class="active"><a data-toggle="tab" href="#applicant-info" data-tabidx=0><spring:message code="subheading.applicant.info"/></a></li>
+			    <li><a data-toggle="tab" href="#checklist-info" data-tabidx=1><spring:message code="lbl.registration.detail"/></a></li>
+			 </ul>
+					  
 					  <div class="tab-content">
 					    <div id="applicant-info" class="tab-pane fade in active">
-					    	<jsp:include page="viewgeneralinfo.jsp" />
+					    	<div class="panel panel-primary" data-collapsed="0">
+								<c:set value="applicant" var="applicant" scope="request"></c:set>
+								<form:hidden path="applicant.id" />
+								<jsp:include page="viewapplicantinfo.jsp">
+									<jsp:param value="subheading.applicant.info" name="header" />
+								</jsp:include>
+								
+								<div class="row">
+										<div class="col-sm-3 control-label"><spring:message code="lbl.fee.criteria"/></div>
+										<div class="col-sm-3 add-margin view-content"><c:out value="${reissue.feeCriteria.criteria}" /></div>
+										<div class="col-sm-3 control-label"><spring:message code="lbl.fee"/></div>
+										<div class="col-sm-3 add-margin view-content"><c:out value="${reissue.feePaid}" /></div>
+								</div>
+
+					    		<jsp:include page="viewreissuedocumentdetails.jsp"></jsp:include>
+					    	</div>
 					    </div>
+					    
 					    <div id="checklist-info" class="tab-pane fade">
-					    	<jsp:include page="viewreissuedocumentdetails.jsp"></jsp:include>
+					    <div class="panel panel-primary" data-collapsed="0">
+					    	<jsp:include page="../../common/generalinfo.jsp" />
+					    	
+					    	</div>
 					    </div>
 					  </div>
-					  <ul class="nav nav-tabs nav-justified nav-tabs-bottom">
-					    <li class="active"><a data-toggle="tab" href="#applicant-info">Applicant's Information</a></li>
-					    <li><a data-toggle="tab" href="#checklist-info">Checklist</a></li>
-					  </ul>
-					  </div>
-				</div>
-			</div>
+					
 			<jsp:include page="../../common/reg-reissue-wfhistory.jsp"></jsp:include>
 			<c:choose>
 				<c:when test="${mode != 'view'}">			
@@ -112,4 +129,3 @@
 </div>
 <script src="<cdn:url value='/resources/js/app/mrgcert-reissue.js'/> "></script> 
 <script src="<cdn:url value='/resources/global/js/egov/inbox.js' context='/egi'/>"></script>
-<script src="<cdn:url value='/resources/js/app/navtabclickhandler.js'/> "></script>

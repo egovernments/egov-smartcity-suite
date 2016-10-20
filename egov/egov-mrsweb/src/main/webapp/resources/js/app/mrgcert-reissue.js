@@ -39,6 +39,10 @@
  */
 
 $(document).ready( function () {
+	 if($('#reIssueStatus').val()=='APPROVED' && $("#feeCollected").val()=='false'){
+		 $("[id='Print Certificate']").hide();
+	 }  
+	 
 	if($('#reIssueStatus').val()=='CREATED' || $('#reIssueStatus').val()=='APPROVED'){  
 		$(".show-row").hide(); 
 		$('#approverDetailHeading').hide();
@@ -65,7 +69,25 @@ $(document).ready( function () {
 		}
 	});
 	
+
+	
 })
+
+jQuery('form').validate({
+	    ignore: ".ignore",
+	    invalidHandler: function(e, validator){
+	        if(validator.errorList.length)
+	        	$('#settingstab a[href="#' + jQuery(validator.errorList[0].element).closest(".tab-pane").attr('id') + '"]').tab('show');
+	    }
+	});
+	
+	$('#Forward').click(function(e){
+		if($('form').valid()){
+			
+		}else{
+			e.preventDefault();
+		}
+	});
 
 $(".btn-primary").click(function() { 
 	var action = $('#workFlowAction').val();
@@ -108,12 +130,4 @@ $(".btn-primary").click(function() {
 	} 
 	
 	validateWorkFlowApprover(action);  
-	
-	/*if ($('form').valid()) {
-		document.forms[0].submit();	
-	} else {
-		e.stopPropagation();
-		e.preventDefault();
-	}*/
-	
 });
