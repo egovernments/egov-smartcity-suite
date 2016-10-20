@@ -38,22 +38,10 @@
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
 
-$adminSanctionNameId = 0;
 $(document).ready(function(){
 	$('#designation').val($('#designationValue').val());
 	$('#designation').trigger('change');
-	$adminSanctionNameId = $('#authorityValueForAdmin').val();
-
-	var authorityValue = $('#authorityValue').val();
-	$('#authority option').each(function() {
-		var value = $(this).val();
-		if(value == authorityValue)
-			$(this).attr('selected', 'selected');
-	});
-	
 });
-
-
 
 $('#designation').change(function(){
 	$.ajax({
@@ -244,39 +232,6 @@ function initializeDatePicker(){
 
 }
 
-$('#adminSanctionAuthority').change(function(){
-	$.ajax({
-		url: "/egworks/abstractestimate/ajax-assignmentByDesignation",     
-		type: "GET",
-		dataType: "json",
-		data: {
-			approvalDesignation : $('#adminSanctionAuthority').val(),
-		},
-		success: function (response) {
-			$('#adminSanctionDesignation').empty();
-			$('#adminSanctionDesignation').append($("<option value=''>Select from below</option>"));
-			var responseObj = JSON.parse(response);
-			$.each(responseObj, function(index, value) {
-				var selected="";
-				if($adminSanctionNameId)
-				{
-					if($adminSanctionNameId==value.id)
-					{
-						selected="selected";
-					}
-				}
-				$('#adminSanctionDesignation').append($("<option "+ selected +" value='" + value.id + "'>" + value.name + "</option>"));
-			
-			});
-			var adminSanctionAuthorityValue = $('#adminSanctionAuthorityValue').val();
-			$('#adminSanctionAuthorityValue').val(authorityValue);
-		}, 
-		error: function (response) {
-			console.log("failed");
-		}
-	});
-});
-
 $('#saveSpillAbstractEstimate').click(function() {
 	if($('#abstractEstimate').valid()) {
 		var flag = validateSORDetails();
@@ -302,33 +257,7 @@ function resetFormOnSubmit(){
 	initializeDatePicker();
 	if($("#description").val() == '')
 		$('#estimateDate').val('');
-	var adminSanctionDesignation = $('#adminSanctionAuthority').val();
-	$("#adminSanctionAuthority").each(function() {
-		if($(this).children('option').length == 2) {
-		 	$(this).find('option').eq(1).prop('selected', true);
-		} else {
-			$(this).val(adminSanctionAuthority);
-		}
-	});
 	$('#designation').val($('#designationValue').val());
 	$('#designation').trigger('change');
-	
-	var authorityValue = $('#authorityValue').val();
-	$('#authority option').each(function() {
-		var value = $(this).val();
-		if(value == authorityValue)
-			$(this).attr('selected', 'selected');
-	});
-	
-	var adminAuthorityValue = $('#authorityValueForAdmin').val();
-	$('#adminSanctionDesignation').val(adminAuthorityValue);
-	$('#adminSanctionAuthority').trigger('change');
-	
-	$('#adminSanctionDesignation option').each(function() {
-		var value = $(this).val();
-		if(value == adminAuthorityValue)
-			$(this).attr('selected', 'selected');
-	});
-	
-	
+		
 }

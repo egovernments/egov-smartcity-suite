@@ -56,8 +56,7 @@
 						class="mandatory"></span></th>
 					<th><spring:message code="lbl.technical.authority" /><span
 						class="mandatory"></span></th>
-					<th><spring:message code="lbl.authority" /><span
-						class="mandatory"></span></th>
+					<th><spring:message code="lbl.authority" /></th>
 				</tr>
 			</thead>
 			<tbody>
@@ -96,7 +95,7 @@
 						value="${technicalSanctionBy}" /> <form:select
 							path="estimateTechnicalSanctions[0].technicalSanctionBy"
 							id="authority" data-first-option="false" class="form-control"
-							required="required">
+							>
 							<form:option value="">
 								<spring:message code="lbl.select" />
 							</form:option>

@@ -1081,9 +1081,6 @@ public class EstimateService {
                 && abstractEstimate.getEstimateTechnicalSanctions().get(0).getTechnicalSanctionNumber() == null)
             errors.reject("error.technumber.notnull", "error.technumber.notnull");
         if (abstractEstimate.getEstimateTechnicalSanctions() != null
-                && abstractEstimate.getEstimateTechnicalSanctions().get(0).getTechnicalSanctionBy() == null)
-            errors.reject("error.techby.notnull", "error.techby.notnull");
-        if (abstractEstimate.getEstimateTechnicalSanctions() != null
                 && abstractEstimate.getEstimateTechnicalSanctions().get(0).getTechnicalSanctionNumber() != null) {
             final AbstractEstimate esistingAbstractEstimate = abstractEstimateRepository
                     .findByEstimateTechnicalSanctionsIgnoreCase_TechnicalSanctionNumberAndEgwStatus_CodeNot(
@@ -1099,17 +1096,6 @@ public class EstimateService {
                 && abstractEstimate.getEstimateDate() != null && abstractEstimate.getEstimateDate()
                         .before(abstractEstimate.getLineEstimateDetails().getLineEstimate().getAdminSanctionDate()))
             errors.reject("error.abstractadminsanctiondatele", "error.abstractadminsanctiondatele");
-    }
-
-    public void validateAdminSanctionDetail(final AbstractEstimate abstractEstimate, final BindingResult errors) {
-        if (abstractEstimate.getApprovedDate() == null)
-            errors.reject("error.adminsanctiondate.notnull", "error.adminsanctiondate.notnull");
-        if (abstractEstimate.getApprovedBy() == null)
-            errors.reject("error.adminby.notnull", "error.adminby.notnull");
-        if (abstractEstimate.getApprovedDate() != null
-                && abstractEstimate.getEstimateDate().after(abstractEstimate.getApprovedDate()))
-            errors.reject("error.abstractadminsanctiondate", "error.abstractadminsanctiondate");
-
     }
 
     public void setTechnicalSanctionDetails(final AbstractEstimate abstractEstimate) {

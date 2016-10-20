@@ -105,7 +105,6 @@
 				<%@ include file="estimate-multiYearEstimate.jsp"%>
 				<c:if test="${abstractEstimate.lineEstimateDetails != null && abstractEstimate.lineEstimateDetails.lineEstimate.abstractEstimateCreated == true }">
 	 				<%@ include file="spilloverestimate-technicalsanction.jsp"%>
-	 				<%@ include file="spilloverestimate-adminsanction.jsp"%>
 				</c:if>
  				<%@ include file="../common/uploadDocuments.jsp"%>
 			</div>

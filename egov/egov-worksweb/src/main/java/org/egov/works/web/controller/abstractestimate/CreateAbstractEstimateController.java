@@ -137,16 +137,6 @@ public class CreateAbstractEstimateController extends GenericWorkFlowController 
                 designations.add(designationService.getDesignationByName(valuesFordesignation.getValue()));
             model.addAttribute("designations", designations);
 
-            final List<AppConfigValues> configValuesForAdminSanctionAuthority = appConfigValuesService
-                    .getConfigValuesByModuleAndKey(
-                            WorksConstants.WORKS_MODULE_NAME, WorksConstants.APPCONFIG_KEY_DESIGNATION_ADMINSANCTION_AUTHORITY);
-
-            final List<Designation> adminSanctionAuthority = new ArrayList<Designation>();
-
-            for (final AppConfigValues valuesForAdminSanctiondesignation : configValuesForAdminSanctionAuthority)
-                adminSanctionAuthority
-                        .add(designationService.getDesignationByName(valuesForAdminSanctiondesignation.getValue()));
-            model.addAttribute("adminSanctionAuthority", adminSanctionAuthority);
         } else {
 
             final WorkflowContainer workflowContainer = new WorkflowContainer();
@@ -192,7 +182,6 @@ public class CreateAbstractEstimateController extends GenericWorkFlowController 
         if (abstractEstimate.getLineEstimateDetails() != null
                 && abstractEstimate.getLineEstimateDetails().getLineEstimate().isAbstractEstimateCreated()) {
             estimateService.validateTechnicalSanctionDetail(abstractEstimate, bindErrors);
-            estimateService.validateAdminSanctionDetail(abstractEstimate, bindErrors);
             if (!estimateService.checkForDuplicateAccountCodesInEstimateDeductions(abstractEstimate))
                 bindErrors.reject("error.abstractestimate.duplicate.accountcodes",
                         "error.abstractestimate.duplicate.accountcodes");

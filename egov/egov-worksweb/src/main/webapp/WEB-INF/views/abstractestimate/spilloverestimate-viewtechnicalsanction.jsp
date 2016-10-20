@@ -66,8 +66,13 @@
 					<td><fmt:formatDate
 							value="${technicalSanctionDetails.technicalSanctionDate}"
 							pattern="dd/MM/yyyy" /></td>
-					<td><c:out default="N/A"
+						<c:if test="${technicalSanctionDetails.technicalSanctionBy != null }">
+ 							<td><c:out default="N/A"
 							value="${technicalsanctionbydesignation} - ${technicalSanctionDetails.technicalSanctionBy.name }"></c:out></td>
+ 						</c:if>
+ 						<c:if test="${technicalSanctionDetails.technicalSanctionBy == null }">
+ 							<td><c:out default="N/A" value="N/A"></c:out></td>
+ 						</c:if>
 					</tr>
 				</c:forEach>
 			</tbody>

@@ -101,7 +101,6 @@
 				<%@ include file="abstractestimate-viewmultiyearestimate.jsp"%>
 				<c:if test="${abstractEstimate.lineEstimateDetails != null && abstractEstimate.lineEstimateDetails.lineEstimate.abstractEstimateCreated == true}">
 					<%@ include file="spilloverestimate-viewtechnicalsanction.jsp"%>
-					<%@ include file="spilloverestimate-viewadminsanction.jsp"%>
 				</c:if>
 				<%@ include file="../common/uploadDocuments.jsp"%>
 			</div>
@@ -160,3 +159,4 @@ var msg = '<spring:message code="lbl.header" />';
 	src="<cdn:url value='/resources/js/abstractestimate/abstractestimate.js?rnd=${app_release_no}'/>"></script>
 	<script src="<cdn:url value='/resources/global/js/egov/inbox.js?rnd=${app_release_no}' context='/egi'/>"></script>
 	<script src="<cdn:url value='/resources/js/viewlocationmap.js?rnd=${app_release_no}'/>"></script>
+	<script src="<cdn:url value='/resources/js/loadmaps.js?rnd=${app_release_no}'/>"></script>
