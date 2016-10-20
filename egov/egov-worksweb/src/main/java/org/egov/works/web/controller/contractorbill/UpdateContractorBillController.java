@@ -216,7 +216,7 @@ public class UpdateContractorBillController extends GenericWorkFlowController {
             contractorBillRegisterService.validateTotalDebitAndCreditAmount(contractorBillRegister, errors);
 
             contractorBillRegisterService.validateRefundAmount(contractorBillRegister, errors);
-            
+
             contractorBillRegisterService.validateMileStonePercentage(contractorBillRegister, errors);
         }
 
@@ -456,22 +456,21 @@ public class UpdateContractorBillController extends GenericWorkFlowController {
             } else if (egBilldetails.getGlcodeid() != null)
                 contractorBillRegister.addEgBilldetailes(contractorBillRegisterService.getBillDetails(
                         contractorBillRegister, egBilldetails, workOrderEstimate, resultBinder, request));
-            else {
-                request.getParameter("netPayableAccountId");
-                final String netPayableAccountCodeId = request.getParameter("netPayableAccountCode");
-                final String netPayableAmount = request.getParameter("netPayableAmount");
-                if (StringUtils.isNotBlank(netPayableAccountCodeId)
-                        && StringUtils.isNotBlank(netPayableAccountCodeId)
-                        && StringUtils.isNotBlank(netPayableAmount)) {
-                    final EgBilldetails billdetails = new EgBilldetails();
-                    // billdetails.setId(new Integer(netPayableAccountId));
-                    billdetails.setGlcodeid(new BigDecimal(netPayableAccountCodeId));
-                    billdetails.setCreditamount(new BigDecimal(netPayableAmount));
 
-                    contractorBillRegister.addEgBilldetailes(contractorBillRegisterService.getBillDetails(
-                            contractorBillRegister, billdetails, workOrderEstimate, resultBinder, request));
-                }
-            }
+        request.getParameter("netPayableAccountId");
+        final String netPayableAccountCodeId = request.getParameter("netPayableAccountCode");
+        final String netPayableAmount = request.getParameter("netPayableAmount");
+        if (StringUtils.isNotBlank(netPayableAccountCodeId)
+                && StringUtils.isNotBlank(netPayableAccountCodeId)
+                && StringUtils.isNotBlank(netPayableAmount)) {
+            final EgBilldetails billdetails = new EgBilldetails();
+            // billdetails.setId(new Integer(netPayableAccountId));
+            billdetails.setGlcodeid(new BigDecimal(netPayableAccountCodeId));
+            billdetails.setCreditamount(new BigDecimal(netPayableAmount));
+
+            contractorBillRegister.addEgBilldetailes(contractorBillRegisterService.getBillDetails(
+                    contractorBillRegister, billdetails, workOrderEstimate, resultBinder, request));
+        }
 
         return contractorBillRegister;
     }
