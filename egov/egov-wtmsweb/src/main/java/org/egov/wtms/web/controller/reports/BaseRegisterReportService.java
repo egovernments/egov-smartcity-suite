@@ -46,6 +46,7 @@ import javax.persistence.PersistenceContext;
 
 import org.apache.commons.lang.StringUtils;
 import org.egov.wtms.application.entity.BaseRegisterResult;
+import org.egov.wtms.masters.entity.enums.ConnectionStatus;
 import org.hibernate.SQLQuery;
 import org.hibernate.Session;
 import org.hibernate.transform.AliasToBeanResultTransformer;
@@ -71,11 +72,13 @@ public class BaseRegisterReportService {
         queryStr.append(
                 "dcbinfo.houseno as \"doorNo\", dcbinfo.connectiontype as \"connectionType\" , dcbinfo.arr_demand as \"arrears\" ,  dcbinfo.curr_demand as \"current\" ,  ");
         queryStr.append(
-                "dcbinfo.arr_coll as \"arrearsCollection\" ,  dcbinfo.curr_coll as \"currentCollection\" , dcbinfo.arr_demand+dcbinfo.curr_demand as \"totalDemand\"  ");
+                "dcbinfo.arr_coll as \"arrearsCollection\" ,  dcbinfo.curr_coll as \"currentCollection\" , dcbinfo.arr_demand+dcbinfo.curr_demand as \"totalDemand\" ,  ");
+        queryStr.append(
+                "dcbinfo.usagetype as \"usageType\" ,  dcbinfo.pipesize as \"pipeSize\" , dcbinfo.arr_coll+dcbinfo.curr_coll as \"totalCollection\" ,  ");
         queryStr.append("from egwtr_mv_dcb_view dcbinfo");
         queryStr.append(
                 " INNER JOIN eg_boundary wardboundary on dcbinfo.wardid = wardboundary.id INNER JOIN eg_boundary localboundary on dcbinfo.locality = localboundary.id");
-
+        queryStr.append(" where dcbinfo.connectionstatus = '" + ConnectionStatus.ACTIVE.toString() + "'");
         if (StringUtils.isNotBlank(ward))
             queryStr.append(" and wardboundary.id = :ward");
         final SQLQuery finalQuery = getCurrentSession().createSQLQuery(queryStr.toString());
