@@ -89,13 +89,7 @@ import org.springframework.transaction.annotation.Transactional;
 @Transactional(readOnly = true)
 public class ReIssueService {
 
-    private final String MSG_KEY_SMS_REISSUE_NEW = "msg.newregistration.sms";
-    private final String MSG_KEY_SMS_REISSUE_REJECTION = "msg.rejectregistration.sms";
-    private final String MSG_KEY_EMAIL_REISSUE_NEW_EMAIL = "msg.newregistration.mail";
-    private final String MSG_KEY_EMAIL_REISSUE_NEW_SUBJECT = "msg.newregistration.mail.subject";
-    private final String MSG_KEY_EMAIL_REISSUE_REJECTION_EMAIL = "msg.rejectionregistration.mail";
-    private final String MSG_KEY_EMAIL_REISSUE_REJECTION_SUBJECT = "msg.rejectionregistration.mail.subject";
-
+    
     private final ReIssueRepository reIssueRepository;
 
     @PersistenceContext
@@ -140,7 +134,8 @@ public class ReIssueService {
     
     @Autowired
     private MarriageCertificateService marriageCertificateService;
-
+    @Autowired
+    private MarriageSmsAndEmailService marriageSmsAndEmailService;
     @Autowired
     public ReIssueService(final ReIssueRepository reIssueRepository) {
         this.reIssueRepository = reIssueRepository;
@@ -182,7 +177,8 @@ public class ReIssueService {
         workflowService.transition(reIssue, workflowContainer, reIssue.getApprovalComent());
 
         create(reIssue);
-
+        marriageSmsAndEmailService.sendSMSForReIssueApplication(reIssue);
+        marriageSmsAndEmailService.sendEmailForReIssueApplication(reIssue); 
         return reIssue.getApplicationNo();
     }
 
@@ -208,8 +204,8 @@ public class ReIssueService {
                 marriageUtils.getStatusByCodeAndModuleType(ReIssue.ReIssueStatus.APPROVED.toString(), MarriageConstants.MODULE_NAME));
         reissue = update(reissue);
         workflowService.transition(reissue, workflowContainer, workflowContainer.getApproverComments());
-        sendSMS(reissue);
-        sendEmail(reissue);
+        marriageSmsAndEmailService.sendSMSForReIssueApplication(reissue);
+        marriageSmsAndEmailService.sendEmailForReIssueApplication(reissue);
         createReIssueAppIndex(reissue); 
         return reissue;
     }
@@ -222,11 +218,12 @@ public class ReIssueService {
         if(workflowContainer.getWorkFlowAction().equalsIgnoreCase(MarriageConstants.WFLOW_ACTION_STEP_CANCEL_REISSUE)){
             MarriageCertificate marriageCertificate = marriageCertificateService.reIssueCertificate(reIssue,request,MarriageCertificateType.REJECTION.toString());
             reIssue.addCertificate(marriageCertificate);
+            marriageSmsAndEmailService.sendSMSForReIssueApplication(reIssue);
+            marriageSmsAndEmailService.sendEmailForReIssueApplication(reIssue);
         }
         reIssue.setRejectionReason(workflowContainer.getApproverComments());
         workflowService.transition(reIssue, workflowContainer, workflowContainer.getApproverComments());
-        sendSMS(reIssue);
-        sendEmail(reIssue);
+       
         return reIssue;
     }
 
@@ -282,41 +279,6 @@ public class ReIssueService {
         dbApplicant.getContactInfo().setMobileNo(modelApplicant.getContactInfo().getMobileNo());
         dbApplicant.getContactInfo().setEmail(modelApplicant.getContactInfo().getEmail());
     }
-
-    private void sendSMS(final ReIssue reIssue) {
-        String msgKey = MSG_KEY_SMS_REISSUE_NEW;
-
-        if (reIssue.getStatus().getCode().equalsIgnoreCase(ReIssue.ReIssueStatus.REJECTED.toString()))
-            msgKey = MSG_KEY_SMS_REISSUE_REJECTION;
-
-        final String message = mrsMessageSource.getMessage(msgKey,
-                new String[] { reIssue.getRegistration().getHusband().getFullName(),
-                        reIssue.getRegistration().getWife().getFullName(),
-                        reIssue.getRegistration().getRegistrationNo() },
-                null);
-        messagingService.sendSMS(reIssue.getRegistration().getHusband().getContactInfo().getMobileNo(), message);
-        messagingService.sendSMS(reIssue.getRegistration().getWife().getContactInfo().getMobileNo(), message);
-    }
-
-    private void sendEmail(final ReIssue reIssue) {
-        String msgKeyMail = MSG_KEY_EMAIL_REISSUE_NEW_EMAIL;
-        String msgKeyMailSubject = MSG_KEY_EMAIL_REISSUE_NEW_SUBJECT;
-
-        if (reIssue.getStatus().getCode().equalsIgnoreCase(ReIssue.ReIssueStatus.REJECTED.toString())) {
-            msgKeyMail = MSG_KEY_EMAIL_REISSUE_REJECTION_EMAIL;
-            msgKeyMailSubject = MSG_KEY_EMAIL_REISSUE_REJECTION_SUBJECT;
-        }
-
-        final String message = mrsMessageSource.getMessage(msgKeyMail,
-                new String[] { reIssue.getRegistration().getHusband().getFullName(),
-                        reIssue.getRegistration().getWife().getFullName(),
-                        reIssue.getRegistration().getRegistrationNo() },
-                null);
-
-        final String subject = mrsMessageSource.getMessage(msgKeyMailSubject, null, null);
-        messagingService.sendEmail(reIssue.getRegistration().getHusband().getContactInfo().getEmail(), subject, message);
-        messagingService.sendEmail(reIssue.getRegistration().getWife().getContactInfo().getEmail(), subject, message);
-    }
     
     @Transactional
     public ReIssue printCertificate(ReIssue reIssue, final WorkflowContainer workflowContainer,final HttpServletRequest request) throws IOException {
@@ -326,8 +288,8 @@ public class ReIssueService {
         reIssue.addCertificate(marriageCertificate);
         reIssue.setActive(true);
         workflowService.transition(reIssue, workflowContainer, workflowContainer.getApproverComments()); 
-        sendSMS(reIssue);
-        sendEmail(reIssue);
+  /*      marriageSmsAndEmailService.sendSMSForReIssueApplication(reIssue);
+        marriageSmsAndEmailService.sendEmailForReIssueApplication(reIssue);*/
         return reIssue;
     }
     

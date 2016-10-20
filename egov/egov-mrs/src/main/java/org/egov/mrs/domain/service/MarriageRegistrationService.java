@@ -456,6 +456,9 @@ public class MarriageRegistrationService {
         registration = update(registration);
         workflowService.transition(registration, workflowContainer, workflowContainer.getApproverComments());
         marriageRegistrationUpdateIndexesService.updateIndexes(registration);
+        marriageSmsAndEmailService.sendSMS(registration,MarriageRegistration.RegistrationStatus.APPROVED.toString());
+        marriageSmsAndEmailService.sendEmail(registration,MarriageRegistration.RegistrationStatus.APPROVED.toString());
+ 
         return registration;
     }
     
@@ -469,8 +472,6 @@ public class MarriageRegistrationService {
         registration.setActive(true);
         workflowService.transition(registration, workflowContainer, workflowContainer.getApproverComments()); 
         marriageRegistrationUpdateIndexesService.updateIndexes(registration);
-        marriageSmsAndEmailService.sendSMS(registration,MarriageRegistration.RegistrationStatus.REGISTERED.toString());
-        marriageSmsAndEmailService.sendEmail(registration,MarriageRegistration.RegistrationStatus.REGISTERED.toString());
         return registration;
     }
     
@@ -594,13 +595,14 @@ public class MarriageRegistrationService {
         }
     
     @SuppressWarnings("unchecked")
-        public List<MarriageRegistration> searchApprovedMarriageRegistrations(MarriageRegistration registration) throws ParseException {
-                final Criteria criteria = getCurrentSession().createCriteria(MarriageRegistration.class,"marriageRegistration")
-                                .createAlias("marriageRegistration.status", "status");
-         buildMarriageRegistrationSearchCriteria(registration, criteria);
-                 criteria.add(Restrictions.in("status.code", new String[] { MarriageRegistration.RegistrationStatus.APPROVED.toString()}));
-                return criteria.list();
-        }
+    public List<MarriageRegistration> searchMarriageRegistrationsForFeeCollection(MarriageRegistration registration) throws ParseException {
+            final Criteria criteria = getCurrentSession().createCriteria(MarriageRegistration.class,"marriageRegistration")
+                            .createAlias("marriageRegistration.status", "status");
+     buildMarriageRegistrationSearchCriteria(registration, criteria);
+             criteria.add(Restrictions.in("status.code", new String[] { MarriageRegistration.RegistrationStatus.APPROVED.toString(),MarriageRegistration.RegistrationStatus.REGISTERED.toString()}));
+            return criteria.list();
+    }
+
     
     private void buildMarriageRegistrationSearchCriteria(MarriageRegistration registration, final Criteria criteria) throws ParseException {
         if (registration.getRegistrationNo() != null)
