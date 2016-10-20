@@ -40,6 +40,10 @@
 
 package org.egov.api.controller;
 
+import java.util.Date;
+
+import javax.servlet.http.HttpServletRequest;
+
 import org.apache.log4j.Logger;
 import org.egov.api.adapter.UserAdapter;
 import org.egov.api.controller.core.ApiController;
@@ -49,7 +53,6 @@ import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.admin.master.service.UserService;
 import org.egov.infra.persistence.entity.enums.Gender;
 import org.egov.infra.security.utils.SecurityUtils;
-import org.egov.infra.utils.StringUtils;
 import org.egov.portal.entity.Citizen;
 import org.egov.portal.service.CitizenService;
 import org.joda.time.format.DateTimeFormat;
@@ -65,15 +68,11 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
-import javax.servlet.http.HttpServletRequest;
-
-import java.util.Date;
-
 @org.springframework.web.bind.annotation.RestController
 @RequestMapping("/v1.0")
 public class CitizenController extends ApiController {
-	
-	private static final Logger LOGGER = Logger.getLogger(CitizenController.class);
+
+    private static final Logger LOGGER = Logger.getLogger(CitizenController.class);
 
     @Autowired
     private UserService userService;
@@ -91,101 +90,92 @@ public class CitizenController extends ApiController {
 
     /**
      * It will return user information belongs to identity Identity may be the user email or mobile number.
-     * 
+     *
      * @param request
      * @return User
-     * 
+     *
      * @since version 1.0
-     *  
+     * 
      */
 
     @RequestMapping(value = ApiUrl.CITIZEN_GET_PROFILE, method = RequestMethod.GET, produces = MediaType.TEXT_PLAIN_VALUE)
-    public ResponseEntity<String> getProfle(HttpServletRequest request) {
-        ApiResponse res = ApiResponse.newInstance();
-        try
-        {
-	        User user = userService.getUserByUsername(securityUtils.getCurrentUser().getUsername());
-	        if (user == null) {
-	            return res.error(getMessage("user.not.found"));
-	        }
-	        return res.setDataAdapter(new UserAdapter()).success(user);
-        }
-        catch(Exception ex)
-        {
-            LOGGER.error("EGOV-API ERROR ",ex);
-        	return res.error(getMessage("server.error"));
+    public ResponseEntity<String> getProfle(final HttpServletRequest request) {
+        final ApiResponse res = ApiResponse.newInstance();
+        try {
+            final User user = userService.getUserByUsername(securityUtils.getCurrentUser().getUsername());
+            if (user == null)
+                return res.error(getMessage("user.not.found"));
+            return res.setDataAdapter(new UserAdapter()).success(user);
+        } catch (final Exception ex) {
+            LOGGER.error("EGOV-API ERROR ", ex);
+            return res.error(getMessage("server.error"));
         }
     }
 
     // --------------------------------------------------------------------------------//
     /**
      * Clear the session
-     * 
+     *
      * @param request
      * @return
      */
     @RequestMapping(value = ApiUrl.CITIZEN_LOGOUT, method = RequestMethod.POST)
-    public ResponseEntity<String> logout(HttpServletRequest request, OAuth2Authentication authentication) {
-    	try
-    	{
-	        OAuth2AccessToken token = tokenStore.getAccessToken(authentication);
-	        if (token == null) {
-	            return ApiResponse.newInstance().error(getMessage("msg.logout.unknown"));
-	        }
-	
-	        tokenStore.removeAccessToken(token);
-	        return ApiResponse.newInstance().success("",getMessage("msg.logout.success"));
-    	}
-        catch(Exception ex)
-        {
-            LOGGER.error("EGOV-API ERROR ",ex);
-        	return ApiResponse.newInstance().error(getMessage("server.error"));
+    public ResponseEntity<String> logout(final HttpServletRequest request, final OAuth2Authentication authentication) {
+        try {
+            final OAuth2AccessToken token = tokenStore.getAccessToken(authentication);
+            if (token == null)
+                return ApiResponse.newInstance().error(getMessage("msg.logout.unknown"));
+
+            tokenStore.removeAccessToken(token);
+            return ApiResponse.newInstance().success("", getMessage("msg.logout.success"));
+        } catch (final Exception ex) {
+            LOGGER.error("EGOV-API ERROR ", ex);
+            return ApiResponse.newInstance().error(getMessage("server.error"));
         }
     }
 
     // --------------------------------------------------------------------------------//
     /**
      * This will update the profile of login user
-     * 
-     * 
+     *
+     *
      * @param citizen - As json Object
      * @return Citizen
      */
     @RequestMapping(value = ApiUrl.CITIZEN_UPDATE_PROFILE, method = RequestMethod.PUT, consumes = { "application/json" })
-    public ResponseEntity<String> updateProfile(@RequestBody JSONObject citizen) {
+    public ResponseEntity<String> updateProfile(@RequestBody final JSONObject citizen) {
 
-        ApiResponse res = ApiResponse.newInstance();
+        final ApiResponse res = ApiResponse.newInstance();
         try {
-            Citizen citizenUpdate = citizenService.getCitizenByUserName(citizen.get("userName").toString());
+            final Citizen citizenUpdate = citizenService.getCitizenByUserName(citizen.get("userName").toString());
             citizenUpdate.setName(citizen.get("name").toString());
             citizenUpdate.setGender(Gender.valueOf(citizen.get("gender").toString()));
-            /*citizenUpdate.setMobileNumber(citizen.get("mobileNumber").toString());*/
-            
-            if(citizen.get("emailId")!=null)
-            citizenUpdate.setEmailId(citizen.get("emailId").toString());
-            
-           
-            if(citizen.get("altContactNumber")!=null)
-            citizenUpdate.setAltContactNumber(citizen.get("altContactNumber").toString());
-            
-            DateTimeFormatter ft = DateTimeFormat.forPattern("yyyy-MM-dd");
-            Date dt = ft.parseDateTime(citizen.get("dob").toString()).toDate();            
-            citizenUpdate.setDob(dt);
-            
-            if(citizen.get("pan")!=null)
-            citizenUpdate.setPan(citizen.get("pan").toString());
-            
-            if(citizen.get("aadhaarNumber")!=null)
-            citizenUpdate.setAadhaarNumber(citizen.get("aadhaarNumber").toString());
-            
-            citizenService.update(citizenUpdate);
-            return res.setDataAdapter(new UserAdapter()).success(citizen, this.getMessage("msg.citizen.update.success"));
+            /* citizenUpdate.setMobileNumber(citizen.get("mobileNumber").toString()); */
 
-        } catch (Exception e) {
-        	LOGGER.error("EGOV-API ERROR ",e);
-        	return ApiResponse.newInstance().error(getMessage("server.error"));
+            if (citizen.get("emailId") != null)
+                citizenUpdate.setEmailId(citizen.get("emailId").toString());
+
+            if (citizen.get("altContactNumber") != null)
+                citizenUpdate.setAltContactNumber(citizen.get("altContactNumber").toString());
+
+            final DateTimeFormatter ft = DateTimeFormat.forPattern("yyyy-MM-dd");
+            final Date dt = ft.parseDateTime(citizen.get("dob").toString()).toDate();
+            citizenUpdate.setDob(dt);
+
+            if (citizen.get("pan") != null)
+                citizenUpdate.setPan(citizen.get("pan").toString());
+
+            if (citizen.get("aadhaarNumber") != null)
+                citizenUpdate.setAadhaarNumber(citizen.get("aadhaarNumber").toString());
+
+            citizenService.update(citizenUpdate);
+            return res.setDataAdapter(new UserAdapter()).success(citizen, getMessage("msg.citizen.update.success"));
+
+        } catch (final Exception e) {
+            LOGGER.error("EGOV-API ERROR ", e);
+            return ApiResponse.newInstance().error(getMessage("server.error"));
         }
-        
+
     }
 
 }
