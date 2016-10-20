@@ -44,24 +44,35 @@ jQuery(document).ready(function() {
 	
 	
 	jQuery('#defaultersReportSearch').click(function(e) {
-		var fromAmount = $("#fromAmount").val();
-		var toAmount = $("#toAmount").val(); 
+		var fromDemand = $("#fromAmount").val();
+		var toDemand = $("#toAmount").val(); 
 		var ward = $("#ward").val();
 		var topDefaulters = $("#topDefaulters").val();
 		console.log(parseInt(fromAmount)+'-'+parseInt(toAmount)+'-'+topDefaulters);
-		if ((fromAmount == undefined || parseInt(fromAmount) == 0) &&
-				(toAmount == undefined || parseInt(toAmount) == 0) && (topDefaulters == '')) {
-			bootbox.alert('Enter either From amount or  To Amount or Top Defaulters , One is mandatory');
+		
+		if (((fromDemand == null || fromDemand == "") &&
+				(toDemand == null || toDemand == ""))  ) {
+			bootbox.alert('From and To Amounts is mandatory');
 			return false;
 		}
-		 
-		if (parseInt(toAmount)!=0 && fromAmount > parseInt(toAmount)) {
-			bootbox.alert('From Amount should not be greater than to Amount');
+		
+		if ((fromDemand == null || fromDemand == "") && (toDemand != null && toDemand != "")) {
+			bootbox.alert('Please Enter From Amount');
+			return false;
+		}
+		if ((fromDemand != null || fromDemand != "") &&
+				(toDemand == null || toDemand == "")) {
+			bootbox.alert('Please Enter To Amount');
+	      return false;
+		}
+		if(parseInt($("#fromAmount").val()) > parseInt($("#toAmount").val())){
+			bootbox.alert('To Amount should be greather than From Amount');
 			return false;
 		}
 		loadingReport();
 	});
 	
+
 });
 
 function loadingReport()
@@ -78,7 +89,6 @@ function loadingReport()
 			$('#reportgeneration-header').show();
 	        $("#resultDateLabel").html(fromAmount+" - "+toAmount);	
 			var oDataTable=oTable.dataTable({
-				"sPaginationType": "bootstrap",
 				"sDom": "<'row'<'col-xs-12 hidden col-right'f>r>t<'row'<'col-md-3 col-xs-12'i><'col-md-3 col-xs-6 col-right'l><'col-xs-12 col-md-3 col-right'<'export-data'T>><'col-md-3 col-xs-6 text-right'p>>",
 				"aLengthMenu": [[10, 25, 50, 100,-1], [10, 25, 50, 100,"All"]],
 				"autoWidth": false,
@@ -119,9 +129,11 @@ function loadingReport()
 					}
 				},
 				aaSorting: [],	
-				"columns" : [{"sTitle" : "S.no", "sortable": false,"render": function ( data, type, full, meta ) {
+				"columns" : [{"sTitle" : "S.no","sortable": false,
+							  "render": function ( data, type, full, meta ) {
 						      return oTable.fnPagingInfo().iStart+meta.row+1;
-						    }},
+						    }
+							},
 							  { "data" : "hscNo" , "title": "H.S.C NO", "sortable": false},  
 							  { "data" : "ownerName", "title": "Owner Name","sortable": false},
 							  { "data" : "wardName", "title": "Revenue Ward","sortable": false},
@@ -152,9 +164,9 @@ function loadingReport()
 										updateTotalFooter(10, api);
 									}
 								},
-					            "fnInitComplete": function() {
+					           /* "fnInitComplete": function() {
 					            	if(oDataTable){ oDataTable.fnSort( [ [0,'asc'] ] ); }
-					            },
+					            },*/
 					            
 								"aoColumnDefs" : [ {
 									"aTargets" : [8,9,10],
@@ -166,7 +178,7 @@ function loadingReport()
 			
 		}
 		
-		function updateSerialNo()
+		/*function updateSerialNo()
 		{
 			$( "#defaultersReport-table tbody tr" ).each(function(index) {
 				if($(this).find('td').length>1)
@@ -175,7 +187,7 @@ function loadingReport()
 				}
 			});
 			
-		}
+		}*/
 		
 	
 }

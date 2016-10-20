@@ -966,7 +966,7 @@ b, label, strong{
             #signform {
                 border: 1px solid #f2f2f2;
                 box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-                padding: 15px 22px 10px 10px;
+                padding: 15px 22px 15px 10px;
                 
                 .signin-leftpadding {
                     padding-left: 18px;
@@ -1001,7 +1001,6 @@ b, label, strong{
             .login-body {
                 background: @whitecolor;
                 padding: 20px;
-                padding-bottom: 5px;
             }
             
         }
@@ -1971,14 +1970,14 @@ b, label, strong{
     thead:first-child > tr:first-child{
         
         th {
+        	border-bottom:none;
             background: @active;
             color: @whitecolor;
             font-weight: normal;
-        }
-
-        th:first-child {
-            border-left: 1px solid transparent;
-            border-top-left-radius: 5px;
+            
+            &:first-child {
+	            border-left: 1px solid transparent;
+	        }
         }
         
     }
@@ -2041,31 +2040,6 @@ table.dataTable{
     {
         cursor:default;
     }
-}
-
-table.dataTable thead th {
-    background-image: none !important;
-    border:1px solid #ccc;
-}
-
-table.dataTable thead th.sorting:after, table.dataTable th.sorting_asc:after, table.dataTable th.sorting_desc:after {
-    float:right;
-    font-family: FontAwesome;
-}
-
-table.dataTable#official_inbox thead th.sorting:not(:last-child):after, table.dataTable:not(#official_inbox) thead th.sorting:after {
-    content: "\f0dc";
-    color: @whitecolor;
-    .font-size(0.8em);
-    padding-top: 0.12em;
-}
-
-table.dataTable#official_inbox thead th.sorting_asc:not(:last-child):after, table.dataTable:not(#official_inbox) thead th.sorting_asc:after {
-    content: "\f0de";
-}
-
-table.dataTable#official_inbox thead th.sorting_desc:not(:last-child):after, table.dataTable:not(#official_inbox) thead th.sorting_desc:after {
-    content: "\f0dd";
 }
 
 .table-bordered{

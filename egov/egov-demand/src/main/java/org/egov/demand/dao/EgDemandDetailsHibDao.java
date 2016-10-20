@@ -61,13 +61,13 @@ public class EgDemandDetailsHibDao implements EgDemandDetailsDao {
 
     @Override
     public EgDemandDetails findById(Integer id, boolean lock) {
-        // TODO Auto-generated method stub
+
         return null;
     }
 
     @Override
     public List<EgDemandDetails> findAll() {
-        // TODO Auto-generated method stub
+
         return null;
     }
 
@@ -80,7 +80,7 @@ public class EgDemandDetailsHibDao implements EgDemandDetailsDao {
 
     @Override
     public void delete(EgDemandDetails egDemandDetails) {
-        // TODO Auto-generated method stub
+
 
     }
 

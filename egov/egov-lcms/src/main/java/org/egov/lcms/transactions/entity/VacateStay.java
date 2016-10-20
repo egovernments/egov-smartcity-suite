@@ -61,11 +61,16 @@ import org.egov.infra.persistence.validator.annotation.ValidateDate;
 import org.egov.infra.utils.DateUtils;
 import org.egov.infra.validation.exception.ValidationError;
 import org.egov.lcms.utils.constants.LcmsConstants;
+import org.hibernate.envers.AuditOverride;
+import org.hibernate.envers.AuditOverrides;
+import org.hibernate.envers.Audited;
 import org.hibernate.validator.constraints.Length;
 
 @Entity
 @Table(name = "EGLC_VACATESTAY_PETITION")
 @SequenceGenerator(name = VacateStay.SEQ_EGLC_VACATESTAY_PETITION, sequenceName = VacateStay.SEQ_EGLC_VACATESTAY_PETITION, allocationSize = 1)
+@AuditOverrides({ @AuditOverride(forClass = AbstractAuditable.class, name = "lastModifiedBy"),
+    @AuditOverride(forClass = AbstractAuditable.class, name = "lastModifiedDate") })
 public class VacateStay extends AbstractAuditable {
 
     private static final long serialVersionUID = 1517694643078084884L;
@@ -78,23 +83,28 @@ public class VacateStay extends AbstractAuditable {
     @ManyToOne
     @NotNull
     @JoinColumn(name = "lcinterimorder", nullable = false)
+    @Audited
     private LegalCaseInterimOrder legalCaseInterimOrder;
 
     @Temporal(TemporalType.DATE)
     @Column(name = "receivedfromstandingcounsel")
+    @Audited
     private Date vsReceivedFromStandingCounsel;
 
     @Temporal(TemporalType.DATE)
     @Column(name = "sendtostandingcounsel")
+    @Audited
     private Date vsSendToStandingCounsel;
 
     @NotNull
     @Temporal(TemporalType.DATE)
     @ValidateDate(allowPast = true, dateFormat = LcmsConstants.DATE_FORMAT)
     @Column(name = "petitionfiledon")
+    @Audited
     private Date vsPetitionFiledOn;
 
     @Length(max = 1024)
+    @Audited
     private String remarks;
 
     @Override

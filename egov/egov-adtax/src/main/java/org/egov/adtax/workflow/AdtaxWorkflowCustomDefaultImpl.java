@@ -49,7 +49,7 @@ import org.springframework.transaction.annotation.Transactional;;
 public class AdtaxWorkflowCustomDefaultImpl extends AdtaxWorkflowCustomImpl {
 
     public AdtaxWorkflowCustomDefaultImpl() {
-        // TODO Auto-generated constructor stub
+
     }
 
     @Override

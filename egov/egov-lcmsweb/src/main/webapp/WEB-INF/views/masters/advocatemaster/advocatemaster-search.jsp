@@ -51,7 +51,7 @@
 					</div>
 					<div class="panel-body">
 						<div class="form-group">
-							<label class="col-sm-3 control-label text-right"><spring:message
+							<label class="col-sm-2 control-label text-right"><spring:message
 									code="lbl.names" />: </label>
 							<div class="col-sm-3 add-margin">
 								<form:input path="name"
@@ -59,22 +59,22 @@
 									data-pattern="alphanumericwithspecialcharacterswithspace" maxlength="100" />
 								<form:errors path="name" cssClass="error-msg" />
 							</div>
-							<label class="col-sm-3 control-label text-right"><spring:message
+							<label class="col-sm-2 control-label text-right"><spring:message
 									code="lbl.mobilenumber" /> :</label>
 							<div class="col-sm-3 add-margin">
 								<form:input path="mobileNumber"
 									class="form-control text-left patternvalidation"
-									data-pattern="alphanumeric" maxlength="0" />
+									data-pattern="number" maxlength="12" />
 								<form:errors path="mobileNumber" cssClass="error-msg" />
 							</div>
 						</div>
 						<div class="form-group">
-							<label class="col-sm-3 control-label text-right"><spring:message
+							<label class="col-sm-2 control-label text-right"><spring:message
 									code="lbl.email" /> :</label>
 							<div class="col-sm-3 add-margin">
 								<form:input path="email"
 									class="form-control text-left patternvalidation"
-									data-pattern="alphanumericwithspecialcharacters" maxlength="0" />
+									data-pattern="alphanumericwithspecialcharacters" maxlength="50" />
 								<form:errors path="email" cssClass="error-msg" />
 							</div>
 							</div>
@@ -117,10 +117,8 @@
 		}
 	});
 </script>
-<link rel="stylesheet"
-	href="<cdn:url value='/resources/global/css/font-icons/entypo/css/entypo.css' context='/egi'/>" />
-<link rel="stylesheet"
-	href="<cdn:url value='/resources/global/css/bootstrap/bootstrap-datepicker.css' context='/egi'/>" />
+<link rel="stylesheet" href="<cdn:url value='/resources/global/css/jquery/plugins/datatables/jquery.dataTables.min.css' context='/egi'/>"/>
+<link rel="stylesheet" href="<cdn:url value='/resources/global/css/jquery/plugins/datatables/dataTables.bootstrap.min.css' context='/egi'/>">
 <script type="text/javascript"
 	src="<cdn:url value='/resources/global/js/jquery/plugins/datatables/jquery.dataTables.min.js' context='/egi'/>"></script>
 <script type="text/javascript"
@@ -130,15 +128,6 @@
 <script type="text/javascript"
 	src="<cdn:url value='/resources/global/js/jquery/plugins/datatables/TableTools.min.js' context='/egi'/>"></script>
 <script type="text/javascript"
-	src="<cdn:url value='/resources/global/js/jquery/plugins/datatables/jquery.dataTables.columnFilter.js' context='/egi'/>"></script>
-<script type="text/javascript"
-	src="<cdn:url value='/resources/global/js/bootstrap/typeahead.bundle.js' context='/egi'/>"></script>
-<script
-	src="<cdn:url value='/resources/global/js/jquery/plugins/jquery.inputmask.bundle.min.js' context='/egi'/>"></script>
-<script type="text/javascript"
 	src="<cdn:url value='/resources/global/js/jquery/plugins/jquery.validate.min.js' context='/egi'/>"></script>
-<script
-	src="<cdn:url value='/resources/global/js/bootstrap/bootstrap-datepicker.js' context='/egi'/>"
-	type="text/javascript"></script>
 <script type="text/javascript"
 	src="<cdn:url value='/resources/js/app/advocateMasterHelper.js?rnd=${app_release_no}'/>"></script>

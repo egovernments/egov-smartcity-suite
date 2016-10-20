@@ -185,8 +185,6 @@ function check()
 function loadBank(obj){}
 function search()
 {
-
-	
 	if(document.getElementById('vouchermis.departmentid'))
 		document.getElementById('vouchermis.departmentid').disabled=false;
 	var fund = document.getElementById('fundId').value;
@@ -194,14 +192,72 @@ function search()
 		bootbox.alert("Please select fund");   
 		return false;  
 	}else{
-		 document.getElementById("search").innerHTML="";
+		document.getElementById("search").innerHTML="";
 		document.getElementById("search").innerHTML=document.getElementById("searchtab").innerHTML;
+		setSelectedValues();
 		document.form2.action='${pageContext.request.contextPath}/payment/payment-search.action';
-		document.form2.submit();
+		document.form2.submit();  
 		
 	}
 	
 }
+
+function setSelectedValues()
+{
+	var billNumber=document.getElementById("billNumber");
+	var fromDate=document.getElementById("fromDate");
+	var toDate=document.getElementById("toDate");
+	var expType=document.getElementById("expType");
+	var fundId=document.getElementById("fundId");
+	var fundsource=document.getElementById("vouchermis.fundsource");
+	var schemeid=document.getElementById("vouchermis.schemeid");
+	var subschemeid=document.getElementById("vouchermis.subschemeid");
+	var functionId=document.getElementById("vouchermis.function"); 
+	var departmentid=document.getElementById('vouchermis.departmentid');
+
+	jQuery("#search input[name='billNumber']").val('');
+	jQuery("#search input[name='fromDate']").val('');
+	jQuery("#search input[name='toDate']").val('');
+	jQuery('#search select[name="vouchermis.departmentid"] option:selected').removeAttr('selected');
+	jQuery('#search select[name="expType"] option:selected').removeAttr('selected');
+	jQuery('#search select[name="fundId"] option:selected').removeAttr('selected');
+	jQuery('#search select[name="vouchermis.fundsource"] option:selected').removeAttr('selected');
+	jQuery('#search select[name="vouchermis.schemeid"] option:selected').removeAttr('selected');
+	jQuery('#search select[name="vouchermis.subschemeid"] option:selected').removeAttr('selected');
+	jQuery('#search select[name="vouchermis.function"] option:selected').removeAttr('selected');
+	
+	if(billNumber!=null&& billNumber.value!=""){
+		
+		jQuery("#search input[name='billNumber']").val(billNumber.value);
+		jQuery("#search input[name='billNumber']").attr('value',billNumber.value); 
+	}
+	if(fromDate!=null&& fromDate.value!="")
+	{
+		jQuery("#search input[name='fromDate']").val(fromDate.value);
+		jQuery("#search input[name='fromDate']").attr('value',fromDate.value);
+	}
+	if(toDate!=null&& toDate.value!="")
+		{
+		jQuery("#search input[name='toDate']").val(toDate.value);
+		jQuery("#search input[name='toDate']").attr('value',toDate.value);
+		}
+	if(expType!=null && expType.value!="-1")
+		jQuery("#search").find('select[name="expType"]').val(expType.value);
+	if(fundId!=null && fundId.value!="-1")
+		jQuery("#search").find('select[name="fundId"]').val(fundId.value);
+	if(fundsource!=null && fundsource.value!="-1" )
+		jQuery("#search").find('select[name="vouchermis.fundsource"]').val(fundsource.value);
+	if(schemeid !=null && schemeid.value!="-1")
+		jQuery("#search").find('select[name="vouchermis.schemeid"]').val(schemeid.value);
+	if(subschemeid!=null && subschemeid.value!="-1" )
+		jQuery("#search").find('select[name="vouchermis.subschemeid"]').val(subschemeid.value);
+	if(departmentid!=null && departmentid.value!="-1"){
+		jQuery("#search").find('select[name="vouchermis.departmentid"]').val(departmentid.value);
+	}
+	if(functionId!=null && functionId.value!="-1")
+		jQuery("#search").find('select[name="vouchermis.function"]').val(functionId.value); 
+}
+
 function selectAllContractors(element){
 	var length = 0;
 	<s:if test="%{contractorList!=null}">

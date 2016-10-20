@@ -52,7 +52,6 @@ import org.egov.collection.constants.CollectionConstants;
 import org.egov.collection.entity.ReceiptHeader;
 import org.egov.collection.service.ReceiptHeaderService;
 import org.egov.collection.utils.CollectionsUtil;
-import org.egov.infra.admin.master.service.UserService;
 import org.egov.infra.security.utils.SecurityUtils;
 import org.egov.infra.web.struts.actions.BaseFormAction;
 import org.egov.infra.web.struts.annotation.ValidationErrorPage;
@@ -64,8 +63,7 @@ import org.springframework.beans.factory.annotation.Autowired;
  * Action class for "Approve Collections"
  */
 @ParentPackage("egov")
-@Results({
-        @Result(name = CollectionsWorkflowAction.SUCCESS, location = "collectionsWorkflow-success.jsp"),
+@Results({ @Result(name = CollectionsWorkflowAction.SUCCESS, location = "collectionsWorkflow-success.jsp"),
         @Result(name = CollectionsWorkflowAction.INDEX, location = "collectionsWorkflow-index.jsp"),
         @Result(name = CollectionsWorkflowAction.ERROR, location = "collectionsWorkflow-error.jsp"),
         @Result(name = CollectionsWorkflowAction.SUBMISSION_REPORT_CASH, type = "redirectAction", location = "cashCollectionReport-submissionReport.action", params = {
@@ -127,9 +125,6 @@ public class CollectionsWorkflowAction extends BaseFormAction {
      * Receipt header service
      */
     private ReceiptHeaderService receiptHeaderService;
-
-    @Autowired
-    private UserService userservice;
 
     /**
      * Approval/Rejection remarks
@@ -390,8 +385,8 @@ public class CollectionsWorkflowAction extends BaseFormAction {
     private String updateReceiptWorkflowStatus(final String wfAction, final String remarks) {
         for (final Long receiptId : receiptIds) {
             // Get the next receipt that is to be updated
-            final ReceiptHeader receiptHeader = receiptHeaderService.findByNamedQuery(
-                    CollectionConstants.QUERY_RECEIPT_BY_ID_AND_STATUSNOTCANCELLED, receiptId);
+            final ReceiptHeader receiptHeader = receiptHeaderService
+                    .findByNamedQuery(CollectionConstants.QUERY_RECEIPT_BY_ID_AND_STATUSNOTCANCELLED, receiptId);
             if (receiptHeader != null) {
                 receiptHeaderService.performWorkflow(wfAction, receiptHeader, remarks);
                 approverName = collectionsUtil.getApproverName(receiptHeader.getState().getOwnerPosition());
@@ -410,10 +405,9 @@ public class CollectionsWorkflowAction extends BaseFormAction {
         final Position approverPosition = receiptHeaderService.getApproverPosition(receiptHeaders.get(0));
         receiptIds = new Long[receiptHeaders.size()];
         int i = 0;
-        for (ReceiptHeader receiptHeader : receiptHeaders) {
-            if (receiptHeader != null) {
+        for (final ReceiptHeader receiptHeader : receiptHeaders) {
+            if (receiptHeader != null)
                 receiptIds[i] = receiptHeader.getId();
-            }
             i++;
         }
         receiptHeaderService.performWorkflowForAllReceipts(wfAction, receiptHeaders, remarks, operatorPosition,

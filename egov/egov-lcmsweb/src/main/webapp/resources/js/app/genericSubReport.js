@@ -55,18 +55,32 @@ function submitForm() {
 		oTable = $('#genericSubReport-table');
 		$('#genericSubReport-header').show();
 		$('#reportgeneration-header').show();
-		var oDataTable = oTable
-				.dataTable({
-					"sPaginationType" : "bootstrap",
-					"sDom" : "<'row'<'col-xs-12 hidden col-right'f>r>t<'row'<'col-md-3 col-xs-12'i><'col-md-3 col-xs-6 col-right'l><'col-xs-12 col-md-3 col-right'<'export-data'T>><'col-md-3 col-xs-6 text-right'p>>",
-					"aLengthMenu" : [ [ 10, 25, 50, 100 ], [ 10, 25, 50, 100 ] ],
-					"autoWidth" : false,
-					"bDestroy" : true,
-					"processing" : true,
-					"oTableTools" : {
-						"sSwfPath" : "../../../../../../egi/resources/global/swf/copy_csv_xls_pdf.swf"
-
-					},
+		var oDataTable=oTable.dataTable({
+			"sDom": "<'row'<'col-xs-12 hidden col-right'f>r>t<'row'<'col-md-3 col-xs-12'i><'col-md-3 col-xs-6 col-right'l><'col-xs-12 col-md-3 col-right'<'export-data'T>><'col-md-3 col-xs-6 text-right'p>>",
+			"aLengthMenu": [[10, 25, 50, 100], [10, 25, 50, 100]],
+			"autoWidth": false,
+			"bDestroy": true,
+			"processing": true,
+			"oTableTools" : {
+				"sSwfPath" : "../../../../../../egi/resources/global/swf/copy_csv_xls_pdf.swf",
+				"aButtons" : [ 
+					               {
+							             "sExtends": "pdf",
+							            "sPdfMessage": "Report generated on "+today+"",
+		                                 "sTitle": "LegalCase Generic Sub Report",
+		                                 "sPdfOrientation": "landscape"
+						                },
+						                {
+								             "sExtends": "xls",
+			                                 "sPdfMessage": " Generic Sub Report",
+			                                 "sTitle": "LegalCase Generic Sub Report"
+							             },
+							             {
+								             "sExtends": "print",
+			                                 "sPdfMessage": "Generic Sub Report",
+			                                 "sTitle": "LegalCase Generic Sub Report"
+							             }],
+				},
 					ajax : {
 
 						url : "/lcms/reports/genericSubResult?"+$('#genericSubregisterform').serialize(),

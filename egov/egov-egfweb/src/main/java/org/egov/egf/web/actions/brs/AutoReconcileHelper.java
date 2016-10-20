@@ -312,7 +312,6 @@ public class AutoReconcileHelper {
                     "Unable to read uploaded file")));
         } catch (final ValidationException ve)
         {
-            ve.printStackTrace();
             throw ve;
         } catch (final NullPointerException npe)
         {

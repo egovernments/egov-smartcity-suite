@@ -44,12 +44,15 @@
 <html>
 <head>
 <title><s:text name="budgetdetail" /></title>
-<link rel="stylesheet" href="/EGF/resources/css/tabber.css?rnd=${app_release_no}"
+<link rel="stylesheet"
+	href="/EGF/resources/css/tabber.css?rnd=${app_release_no}"
 	TYPE="text/css">
-<script type="text/javascript" src="/EGF/resources/javascript/tabber.js?rnd=${app_release_no}"></script>
+<script type="text/javascript"
+	src="/EGF/resources/javascript/tabber.js?rnd=${app_release_no}"></script>
 <script type="text/javascript"
 	src="/EGF/resources/javascript/tabber2.js?rnd=${app_release_no}"></script>
-<script type="text/javascript" src="/EGF/resources/javascript/helper.js?rnd=${app_release_no}"></script>
+<script type="text/javascript"
+	src="/EGF/resources/javascript/helper.js?rnd=${app_release_no}"></script>
 <script type="text/javascript"
 	src="/EGF/resources/javascript/jquery-1.7.2.min.js"></script>
 <script type="text/javascript"
@@ -79,10 +82,6 @@
 		    }
 		}
 		
-		function defaultDept(){
-			var url = '/EGF/voucher/common!ajaxLoadDefaultDepartment.action';
-			YAHOO.util.Connect.asyncRequest('POST', url, dept_callback, null);
-		}
     </SCRIPT>
 </head>
 <body>
@@ -131,7 +130,7 @@
 								table.deleteRow(rownum.rowIndex);
 								} 
 							bootbox.alert("Sending Request to server Please wait for Confirmation");
-							var transaction = YAHOO.util.Connect.asyncRequest('POST', 'budgetProposal!ajaxDeleteBudgetDetail.action?bpBean.id='+re+'&bpBean.nextYrId='+be, callback, null);
+							var transaction = YAHOO.util.Connect.asyncRequest('POST', 'budgetProposal-ajaxDeleteBudgetDetail.action?bpBean.id='+re+'&bpBean.nextYrId='+be, callback, null);
 						}else{
 							bootbox.alert("This Budget detail cannot be deleted ");
 						}  
@@ -161,8 +160,7 @@
 
 									</div>
 								</s:if>
-								<br />
-								<br />
+								<br /> <br />
 								<script>
 								function validateAmounts(){
 									var len = <s:property value="savedbudgetDetailList.size"/>;
@@ -174,21 +172,9 @@
 									}
 									return true;
 								}
-								function validateAppoveUser(name,value){
-									<s:if test="%{wfitemstate =='END'}">
-										if(value == 'Approve' || value == 'Reject') {
-											document.getElementById("approverUserId").value=-1;
-											return true;
-										}
-									</s:if>
-									<s:else>
-										if( (value == 'forward' || value == 'Forward') && null != document.getElementById("approverUserId") && document.getElementById("approverUserId").value == -1){
-											bootbox.alert("Please select User");
-											return false;
-										}
-									</s:else>
-										      
-									return true;
+								function validateAppoveUser(value){
+									document.forms[0].action = "${pageContext.request.contextPath}/budget/budgetProposal-update.action";
+									document.forms[0].submit();
 								}
 							</script>
 								<s:hidden id="scriptName" value="BudgetDetail.nextDesg" />
@@ -236,14 +222,6 @@
 									</tr>
 								</table>
 
-								<s:if test='%{!"END".equalsIgnoreCase(wfitemstate)}'>
-									<%@include file="../voucher/workflowApproval.jsp"%>
-									<script>
-								document.getElementById('departmentid').value='<s:property value="savedbudgetDetailList[0].executingDepartment.id"/>';
-								populateDesg();
-								defaultDept();
-							</script>
-								</s:if>
 
 								<div class="buttonholderwk" id="buttonsDiv">
 									<s:hidden name="actionName" />
@@ -251,28 +229,22 @@
 									<centre>
 									<div class="buttonbottom" id="sbuttons"
 										style="text-align: center">
-
-										<s:iterator value="%{getValidActions()}">
-
-											<s:submit cssClass="buttonsubmit"
-												value="%{capitalize(description)}" id="%{name}"
-												name="%{name}" method="update"
-												onclick=" document.budgetProposal.actionName.value='%{name}';return validateAppoveUser('%{name}','%{description}')" />
+										<s:iterator value="%{getValidActions()}" var="validAction">
+											<s:if test="%{validAction!=''}">
+												<s:submit type="submit" cssClass="buttonsubmit"
+													value="%{validAction}" id="%{validAction}"
+													name="%{validAction}" method="update"
+													onclick="document.budgetProposal.actionName.value='%{validAction}';return validateAppoveUser('%{validAction}');" />
+											</s:if>
 										</s:iterator>
+
+
 										<input type="button" value="Close"
 											onclick="javascript:window.close()" class="button" />
 									</div>
 
 									<div id="exportButton" class="buttonbottom"
-										style="text-align: center">
-										<!--<s:submit method="generatePdf" value="Save As Pdf" cssClass="buttonsubmit" id="generatePdf" />
-				<s:submit method="generateXls" value="Save As Xls" cssClass="buttonsubmit" id="generateXls" />-->
-										<input type="button" class="buttonsubmit" value="EXPORT PDF"
-											id="exportpdf" name="exportpdf" onclick="return exportPDF();" />
-										<input type="button" class="buttonsubmit" value="EXPORT EXCEL"
-											id="exportpdf" name="exportpdf"
-											onclick="return exportExcel();" />
-									</div>
+										style="text-align: center"></div>
 									</centre>
 								</div>
 
@@ -304,20 +276,20 @@
 
 		 function exportPDF() {
 		 	 var budgetId=document.getElementById("budgetDetail.budget.id").value;
-			 var url="${pageContext.request.contextPath}/budget/budgetProposal!generatePdf.action?budgetDetail.budget.id="+budgetId;
+			 var url="${pageContext.request.contextPath}/budget/budgetProposal-generatePdf.action?budgetDetail.budget.id="+budgetId;
 			 window.open(url,'','height=650,width=980,scrollbars=yes,left=0,top=0,status=yes');
 			 }
 
 		 function exportExcel() {
 		 	 var budgetId=document.getElementById("budgetDetail.budget.id").value;
-			 var url="${pageContext.request.contextPath}/budget/budgetProposal!generateXls.action?budgetDetail.budget.id="+budgetId;
+			 var url="${pageContext.request.contextPath}/budget/budgetProposal-generateXls.action?budgetDetail.budget.id="+budgetId;
 			 window.open(url,'','height=650,width=980,scrollbars=yes,left=0,top=0,status=yes');
 			 }
 
 	function updateNew(){
 		var asOndate = document.getElementById("asOndate").value;
 		var budid = document.getElementById("budgetDetail.budget.id").value;
-		window.location = "/EGF/budget/budgetProposal!modifyBudgetDetailList.action?budgetDetail.budget.id="+budid+"&asOndate="+asOndate;
+		window.location = "/EGF/budget/budgetProposal-modifyBudgetDetailList.action?budgetDetail.budget.id="+budid+"&asOndate="+asOndate;
 		return true;
 	}
 

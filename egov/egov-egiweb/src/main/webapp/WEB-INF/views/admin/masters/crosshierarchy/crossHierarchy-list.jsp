@@ -43,66 +43,72 @@
 <%@ taglib uri="http://www.springframework.org/tags" prefix="spring" %>
 <%@ taglib uri="http://www.springframework.org/tags/form" prefix="form" %>
 <%@ taglib uri="/WEB-INF/taglib/cdn.tld" prefix="cdn" %>
-<script src="<cdn:url  value='/resources/js/app/crosshierarchy.js'/>"></script>
 <%@ taglib prefix="egov" tagdir="/WEB-INF/tags" %>
 <div class="row" id="page-content">
     <div class="col-md-12">
-                <c:if test="${not empty message}">
-                    <div id="message" class="success"><spring:message code="${message}"/></div>
-                </c:if>
+        <c:if test="${not empty message}">
+        <div id="message" class="success"><spring:message code="${message}"/></div>
+        </c:if>
 
-                <form:form id="searchCrossHierarchyForm" method="post"   modelAttribute="crossHierarchy" class="form-horizontal form-groups-bordered">
-					<div class="panel panel-primary" data-collapsed="0">
-						<div class="panel-heading">
-							<div class="panel-title">
-								<strong><spring:message
-										code="title.crosshierarchy.mapping" /></strong>
-							</div>
-						</div> 
-						
-						<div class="panel-body custom-form">
-					
-						 <div class="form-group">
-								<label class="col-sm-3 control-label"><spring:message
-										code="lbl.boundaryType" /> <span class="mandatory"></span></label>
-								<div class="col-sm-6 add-margin">
-	                            <form:select path="parentType.name"  onchange="populateBoundary(this);"
-	                                         id="boundaryTypeName" cssClass="form-control" cssErrorClass="form-control error" required="required" >
-	                                <form:option value=""> <spring:message code="lbl.select"/> </form:option>
-	                                <form:options items="${boundaryTypeList}" itemValue="id" itemLabel="hierarchyType.code"/>
-	                            </form:select><input type="hidden" id="boundaryTypeId" value="" />
-	                            <form:errors path="parentType.name" cssClass="error-msg"/>
-	                        </div>
-	                    	</div> 
-	                  
-	                    	<div class="form-group">
-								<label class="col-sm-3 control-label"><spring:message
-										code="lbl.boundary" /> <span class="mandatory"></span></label>
-								<div class="col-sm-6 add-margin">
-									<egov:ajaxdropdown id="boundaryAjax" fields="['Text','Value']"
-										dropdownId="boundarySelect"
-										url="../egi/boundaries-by-boundaryType" />
-									<form:select path="parent.name"
-		                                         id="boundarySelect" cssClass="form-control" cssErrorClass="form-control error" required="required">
-		                                <form:option value=""> <spring:message code="lbl.select"/> </form:option>
-		                            </form:select><input type="hidden" id="boundaryId" value="" />
-		                            <form:errors path="parent" cssClass="error-msg"/> 
-								</div>
-	                    	
-	                    	
-	                    <div class="panel-body custom-form">
-					
-	                </div>
-	                </div>
-
-                    <div class="form-group">
-                        <div class="text-center">
-                            <button type="submit" class="btn btn-primary"><spring:message code="lbl.submit"/></button>                           
-                            <button type="reset" class="btn btn-default"><spring:message code="lbl.reset"/></button>
-<button type="button" class="btn btn-default" data-dismiss="modal" onclick="self.close()" ><spring:message code="lbl.close"/></button>
-                        </div>
-                    </div>
-                    
-                </form:form>
+        <form:form id="searchCrossHierarchyForm" method="post" modelAttribute="crossHierarchy"
+                   class="form-horizontal form-groups-bordered">
+        <div class="panel panel-primary" data-collapsed="0">
+            <div class="panel-heading">
+                <div class="panel-title">
+                    <strong><spring:message
+                            code="title.crosshierarchy.mapping"/></strong>
+                </div>
             </div>
+
+            <div class="panel-body custom-form">
+
+                <div class="form-group">
+                    <label class="col-sm-3 control-label"><spring:message
+                            code="lbl.boundaryType"/> <span class="mandatory"></span></label>
+                    <div class="col-sm-6 add-margin">
+                        <form:select path="parentType.name" onchange="populateBoundary(this);"
+                                     id="boundaryTypeName" cssClass="form-control" cssErrorClass="form-control error"
+                                     required="required">
+                            <form:option value=""> <spring:message code="lbl.select"/> </form:option>
+                            <form:options items="${boundaryTypeList}" itemValue="id" itemLabel="hierarchyType.code"/>
+                        </form:select><input type="hidden" id="boundaryTypeId" value=""/>
+                        <form:errors path="parentType.name" cssClass="error-msg"/>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label class="col-sm-3 control-label"><spring:message
+                            code="lbl.boundary"/> <span class="mandatory"></span></label>
+                    <div class="col-sm-6 add-margin">
+                        <egov:ajaxdropdown id="boundaryAjax" fields="['Text','Value']"
+                                           dropdownId="boundarySelect"
+                                           url="../egi/boundaries-by-boundaryType"/>
+                        <form:select path="parent.name"
+                                     id="boundarySelect" cssClass="form-control" cssErrorClass="form-control error"
+                                     required="required">
+                            <form:option value=""> <spring:message code="lbl.select"/> </form:option>
+                        </form:select><input type="hidden" id="boundaryId" value=""/>
+                        <form:errors path="parent" cssClass="error-msg"/>
+                    </div>
+
+
+                    <div class="panel-body custom-form">
+
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <div class="text-center">
+                        <button type="submit" class="btn btn-primary"><spring:message code="lbl.submit"/></button>
+                        <button type="reset" class="btn btn-default"><spring:message code="lbl.reset"/></button>
+                        <button type="button" class="btn btn-default" data-dismiss="modal" onclick="self.close()">
+                            <spring:message code="lbl.close"/></button>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+        </form:form>
+    </div>
 </div>
+<script src="<cdn:url  value='/resources/js/app/crosshierarchy.js'/>"></script>

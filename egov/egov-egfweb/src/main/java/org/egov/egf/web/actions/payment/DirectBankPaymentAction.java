@@ -230,7 +230,7 @@ public class DirectBankPaymentAction extends BasePaymentAction {
                 date = df.parse(cutOffDateconfigValue.get(0).getValue());
                 cutOffDate = formatter.format(date);
             } catch (ParseException e) {
-                e.printStackTrace();
+
             }
         }
         voucherHeader.reset();
@@ -291,7 +291,7 @@ public class DirectBankPaymentAction extends BasePaymentAction {
                         date = sdf.parse(cutOffDate);
                         cutOffDate1 = formatter1.format(date);
                     } catch (ParseException e) {
-                        e.printStackTrace();
+
                     }
                 }
                 if (cutOffDate1 != null && voucherDate.compareTo(cutOffDate1) <= 0
@@ -854,7 +854,7 @@ public class DirectBankPaymentAction extends BasePaymentAction {
      * private boolean validateOnlyRTGS() { boolean isValFailed = false; final String paymentRestrictionDateForCJV =
      * paymentService.getAppConfDateValForCJVPaymentModeRTGS(); Date rtgsModeRestrictionDateForCJV = null; try {
      * rtgsModeRestrictionDateForCJV = formatter.parse(paymentRestrictionDateForCJV); } catch (final ParseException e) { // TODO
-     * Auto-generated catch block e.printStackTrace(); } if (voucherHeader.getVoucherDate().after(rtgsModeRestrictionDateForCJV)
+     * Auto-generated catch block  } if (voucherHeader.getVoucherDate().after(rtgsModeRestrictionDateForCJV)
      * && !commonBean.getModeOfPayment().equalsIgnoreCase(MDP_RTGS)) { EntityType entity = null; new ArrayList<ValidationError>();
      * Relation rel = null; String type = null; if (subLedgerlist != null && !subLedgerlist.isEmpty()) for (final VoucherDetails
      * voucherDetail : subLedgerlist) { try { type = voucherDetail.getDetailTypeName(); entity =

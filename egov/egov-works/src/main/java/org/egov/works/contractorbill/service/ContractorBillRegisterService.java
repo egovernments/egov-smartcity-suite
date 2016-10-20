@@ -77,11 +77,14 @@ import org.egov.pims.commons.Position;
 import org.egov.services.voucher.VoucherService;
 import org.egov.works.contractorbill.entity.ContractorBillRegister;
 import org.egov.works.contractorbill.entity.SearchRequestContractorBill;
+import org.egov.works.contractorbill.entity.enums.BillTypes;
 import org.egov.works.contractorbill.repository.ContractorBillRegisterRepository;
 import org.egov.works.lineestimate.entity.DocumentDetails;
 import org.egov.works.lineestimate.entity.LineEstimateDetails;
 import org.egov.works.lineestimate.service.LineEstimateService;
 import org.egov.works.mb.service.MBHeaderService;
+import org.egov.works.milestone.entity.TrackMilestone;
+import org.egov.works.milestone.service.TrackMilestoneService;
 import org.egov.works.models.measurementbook.MBHeader;
 import org.egov.works.models.workorder.WorkOrder;
 import org.egov.works.models.workorder.WorkOrderEstimate;
@@ -149,6 +152,9 @@ public class ContractorBillRegisterService {
     
     @Autowired
     private ChartOfAccountsHibernateDAO chartOfAccountsHibernateDAO;
+    
+    @Autowired
+    private TrackMilestoneService trackMilestoneService;
 
     public Session getCurrentSession() {
         return entityManager.unwrap(Session.class);
@@ -604,7 +610,7 @@ public class ContractorBillRegisterService {
                 billDetails.put("isDebit", true);
                 billDetails.put("isNetPayable", false);
                 if(!contractorRefundAccountList.isEmpty() && contractorRefundAccountList.contains(coa))  {
-                    String amounts = getTotalDebitAndCreditAmountByAccountCode(contractorBillRegister.getWorkOrderEstimate().getWorkOrder().getId(),new BigDecimal(coa.getId()),contractorBillRegister.getId() != null ? contractorBillRegister.getId() : -1);
+                    String amounts = getTotalDebitAndCreditAmountByAccountCode(contractorBillRegister.getWorkOrderEstimate().getId(),new BigDecimal(coa.getId()),contractorBillRegister.getId() != null ? contractorBillRegister.getId() : -1);
                     String[] creditDebitAmounts = amounts.split(",");
                     billDetails.put("withHeldAmount", creditDebitAmounts[0]);
                     billDetails.put("RefundedAmount", creditDebitAmounts[1]);
@@ -686,7 +692,7 @@ public class ContractorBillRegisterService {
             if(egBillDetail.getGlcodeid() != null && egBillDetail.getDebitamount() != null) {
             final CChartOfAccounts coa = chartOfAccountsHibernateDAO
                         .findById(egBillDetail.getGlcodeid().longValue(), false);
-                String amounts = getTotalDebitAndCreditAmountByAccountCode(contractorBillRegister.getWorkOrderEstimate().getWorkOrder().getId(),new BigDecimal(coa.getId()),contractorBillRegister.getId() != null ? contractorBillRegister.getId() : -1);
+                String amounts = getTotalDebitAndCreditAmountByAccountCode(contractorBillRegister.getWorkOrderEstimate().getId(),new BigDecimal(coa.getId()),contractorBillRegister.getId() != null ? contractorBillRegister.getId() : -1);
                 if(!StringUtils.isBlank(amounts)) {
                   String[] creditDebitAmounts = amounts.split(",");
                   BigDecimal withheldAmount = BigDecimal.ZERO;
@@ -777,8 +783,26 @@ public class ContractorBillRegisterService {
         return egBilldetails;
     }
     
-    public String getTotalDebitAndCreditAmountByAccountCode(final Long workOrderId,final BigDecimal glCodeId,final Long contractorBillId) {
-        return contractorBillRegisterRepository.findSumOfDebitByAccountCodeForWorkOrder(workOrderId, glCodeId, ContractorBillRegister.BillStatus.APPROVED.toString(),contractorBillId);
+    public String getTotalDebitAndCreditAmountByAccountCode(final Long workOrderEstimateId,final BigDecimal glCodeId,final Long contractorBillId) {
+        return contractorBillRegisterRepository.findSumOfDebitByAccountCodeForWorkOrder(workOrderEstimateId, glCodeId, ContractorBillRegister.BillStatus.APPROVED.toString(),contractorBillId);
+    }
+    
+    public void validateMileStonePercentage(final ContractorBillRegister contractorBillRegister,
+            final BindingResult resultBinder) {
+        TrackMilestone trackMileStone = null;
+        if (contractorBillRegister.getBilltype().equalsIgnoreCase(BillTypes.Final_Bill.toString())) {
+            trackMileStone = trackMilestoneService
+                    .getCompletionPercentageToCreateContractorFinalBill(contractorBillRegister.getWorkOrderEstimate().getId());
+            if (trackMileStone == null)
+                resultBinder.reject("error.contractor.finalbill.milestonepercentage",
+                        "error.contractor.finalbill.milestonepercentage");
+        } else {
+            trackMileStone = trackMilestoneService
+                    .getMinimumPercentageToCreateContractorBill(contractorBillRegister.getWorkOrderEstimate().getId());
+            if (trackMileStone == null)
+                resultBinder.reject("error.contractorbil.milestone.percentage",
+                        "error.contractorbil.milestone.percentage");
+        }
     }
     
 }

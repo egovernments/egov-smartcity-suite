@@ -75,7 +75,7 @@ public class TotalWrapper extends TableDecorator
      */
     public TotalWrapper() {
         super();
-        // TODO Auto-generated constructor stub
+
     }
 
     /**

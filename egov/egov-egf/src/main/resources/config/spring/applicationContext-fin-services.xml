@@ -138,6 +138,17 @@
 			ref="paymentHeaderPersistenceService" />
 	</bean>
 
+    <bean id="budgetDetailHeaderPersistenceService" parent="abstractPersistenceService">
+        <constructor-arg name="type" value="org.egov.model.budget.BudgetDetail" />
+	</bean>
+
+
+	<bean id="BudgetDetailInboxRenderService"
+		class="org.egov.infra.workflow.inbox.DefaultInboxRenderServiceImpl">
+		<constructor-arg index="0"
+			ref="budgetDetailHeaderPersistenceService" />
+	</bean>
+	
 	<bean id="billRegisterPersistenceService" parent="abstractPersistenceService">
         <constructor-arg name="type" value="org.egov.model.bills.EgBillregister" />
 	</bean>

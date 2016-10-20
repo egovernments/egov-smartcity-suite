@@ -118,31 +118,31 @@ public class PropertyIDHibernateDAO implements PropertyIDDAO {
 
 	@Override
 	public PropertyID findById(Integer id, boolean lock) {
-		// TODO Auto-generated method stub
+
 		return null;
 	}
 
 	@Override
 	public List<PropertyID> findAll() {
-		// TODO Auto-generated method stub
+
 		return null;
 	}
 
 	@Override
 	public PropertyID create(PropertyID propertyID) {
-		// TODO Auto-generated method stub
+
 		return null;
 	}
 
 	@Override
 	public void delete(PropertyID propertyID) {
-		// TODO Auto-generated method stub
+
 
 	}
 
 	@Override
 	public PropertyID update(PropertyID propertyID) {
-		// TODO Auto-generated method stub
+
 		return null;
 	}
 }

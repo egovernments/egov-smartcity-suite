@@ -163,7 +163,7 @@ public class GeneralLedgerReportAction extends BaseFormAction {
         try {
             generalLedgerDisplayList = generalLedgerReport.getGeneralLedgerList(generalLedgerReportBean);
         } catch (final Exception e) {
-            e.printStackTrace();
+
         }
         if (LOGGER.isDebugEnabled())
             LOGGER.debug("GeneralLedgerAction | list | End");
@@ -183,7 +183,7 @@ public class GeneralLedgerReportAction extends BaseFormAction {
         try {
             generalLedgerDisplayList = generalLedgerReport.getGeneralLedgerList(generalLedgerReportBean);
         } catch (final Exception e) {
-            e.printStackTrace();
+
         }
         if (LOGGER.isDebugEnabled())
             LOGGER.debug("GeneralLedgerAction | list | End");

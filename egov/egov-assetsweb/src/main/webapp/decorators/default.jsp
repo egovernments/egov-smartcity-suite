@@ -47,7 +47,7 @@
 <link href="<c:url value='/resources/css/assetmanagement.css?${app_release_no}'/>" rel="stylesheet" type="text/css" />
 <%-- <link href="<c:url value='/css/commonegov.css' context='/egi'/>" rel="stylesheet" type="text/css" /> --%>
 
-<link rel="icon" href="<c:url value='/resources/global/images/favicon.png" sizes="32x32' context='/egi'/>">
+<link rel="icon" href="<c:url value='/resources/global/images/favicon.png' context='/egi'/>" sizes="32x32">
 <link href="<c:url value='/resources/global/css/bootstrap/bootstrap.css' context='/egi'/>" rel="stylesheet" type="text/css" />
 <link href="<c:url value='/resources/global/css/egov/custom.css' context='/egi'/>" rel="stylesheet" type="text/css" />
 <link href="<c:url value='/resources/global/css/bootstrap/bootstrap-datepicker.css' context='/egi'/>" rel="stylesheet" type="text/css" />

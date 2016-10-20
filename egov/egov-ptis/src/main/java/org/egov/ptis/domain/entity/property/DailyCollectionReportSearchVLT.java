@@ -20,7 +20,7 @@ public class DailyCollectionReportSearchVLT {
 	private static final Logger logger = Logger.getLogger(DailyCollectionReportSearchVLT.class);
 	private String fromDate;
 	private String toDate;
-	private SimpleDateFormat ft = new SimpleDateFormat("yyyy-MM-dd");
+	private SimpleDateFormat ft = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
 	private SimpleDateFormat dtft = new SimpleDateFormat("dd/MM/yyyy");
 	private String collectionMode;
 	private String collectionOperator;
@@ -48,8 +48,11 @@ public class DailyCollectionReportSearchVLT {
 		if (null != toDate)
 			try {
 				logger.info("setToDate,Date Range Till:" + ft.format(cal.getTime()));
-				cal.setTime(dtft.parse(toDate));
-				cal.add(Calendar.DAY_OF_YEAR, 1);
+				  cal.setTime(dtft.parse(toDate));
+                                  cal.set(Calendar.HOUR_OF_DAY, 23);
+			          cal.set(Calendar.MINUTE, 59);
+			          cal.set(Calendar.SECOND, 59);
+			          cal.set(Calendar.MILLISECOND, 999);
 				if (logger.isDebugEnabled())
 					logger.debug("Date Range Till .. :" + ft.format(cal.getTime()));
 				this.toDate = ft.format(cal.getTime());

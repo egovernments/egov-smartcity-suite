@@ -63,7 +63,6 @@ function callAjaxSearch() {
 					type: "POST",
 					"data":  getFormData(jQuery('form'))
 				},
-				"sPaginationType" : "bootstrap",
 				"bDestroy" : true,
 				'bAutoWidth': false,
 				"sDom" : "<'row'<'col-xs-12 hidden col-right'f>r>t<'row'<'col-xs-3'i><'col-xs-3 col-right'l><'col-xs-3 col-right'<'export-data'T>><'col-xs-3 text-right'p>>",
@@ -74,9 +73,9 @@ function callAjaxSearch() {
 				},
 				aaSorting: [],				
 				columns : [ { 
-"data" : "name", "sClass" : "text-left"} ,{ 
-"data" : "courtType", "sClass" : "text-left"} ,{ 
-"data" : "active", "sClass" : "text-left"},{ 
+"data" : "name", "sClass" : "text-center"} ,{ 
+"data" : "courtType", "sClass" : "text-center"} ,{ 
+"data" : "active", "sClass" : "text-center"},{ 
 	"data" : "id","visible": false, "searchable": false }]				
 			});
 			}

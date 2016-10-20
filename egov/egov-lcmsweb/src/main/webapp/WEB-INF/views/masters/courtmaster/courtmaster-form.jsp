@@ -45,7 +45,7 @@
 			</div>
 			<div class="panel-body">
 				<div class="form-group">
-					<label class="col-sm-3 control-label text-right"><spring:message
+					<label class="col-sm-2 control-label text-right"><spring:message
 							code="lbl.courttype" /> :<span class="mandatory"></span> </label>
 					<div class="col-sm-3 add-margin">
 						<form:select path="courtType" id="courtType"
@@ -59,7 +59,7 @@
 						</form:select>
 						<form:errors path="courtType" cssClass="error-msg" />
 					</div>
-					<label class="col-sm-3 control-label text-right"><spring:message
+					<label class="col-sm-2 control-label text-right"><spring:message
 							code="lbl.name" /> :<span class="mandatory"></span> </label>
 					<div class="col-sm-3 add-margin">
 						<form:input path="name" class="form-control text-left pattern"
@@ -69,7 +69,7 @@
 
 				</div>
 				<div class="form-group">
-					<label class="col-sm-3 control-label text-right"><spring:message
+					<label class="col-sm-2 control-label text-right"><spring:message
 							code="lbl.address" /> :<span class="mandatory"></span> </label>
 					<div class="col-sm-3 add-margin">
 						<form:textarea class="form-control text-left patternvalidation"
@@ -78,7 +78,7 @@
 							maxlength="256" required="required" />
 						<form:errors path="address" cssClass="error-msg" />
 					</div>
-					<label class="col-sm-3 control-label text-right"><spring:message
+					<label class="col-sm-2 control-label text-right"><spring:message
 							code="lbl.ordernumber" />: </label>
 					<div class="col-sm-3 add-margin">
 						<form:input path="orderNumber"
@@ -89,7 +89,7 @@
 
 				</div>
 				<div class="form-group">
-					<label class="col-sm-3 control-label text-right"><spring:message
+					<label class="col-sm-2 control-label text-right"><spring:message
 							code="lbl.active" /> :<span class="mandatory"></span></label>
 					<div class="col-sm-2 add-margin">
 						<form:select path="active" id="active" cssClass="form-control"

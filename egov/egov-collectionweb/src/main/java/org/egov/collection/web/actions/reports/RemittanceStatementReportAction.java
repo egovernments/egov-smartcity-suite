@@ -61,7 +61,6 @@ import org.egov.collection.entity.CollectionRemittanceReportResult;
 import org.egov.collection.entity.ReceiptHeader;
 import org.egov.collection.entity.Remittance;
 import org.egov.collection.entity.RemittanceDetail;
-import org.egov.collection.service.CollectionReportService;
 import org.egov.collection.service.RemittanceServiceImpl;
 import org.egov.collection.utils.CollectionsUtil;
 import org.egov.eis.entity.Employee;
@@ -97,17 +96,14 @@ public class RemittanceStatementReportAction extends ReportFormAction {
     private static final String EGOV_DEPT_ID = "EGOV_DEPT_ID";
     private static final String EGOV_CASH_AMOUNT = "EGOV_CASH_AMOUNT";
     private static final String EGOV_CHEQUE_AMOUNT = "EGOV_CHEQUE_AMOUNT";
-    private static final String EGOV_ONLINE_AMOUNT = "EGOV_ONLINE_AMOUNT";
     private static final String EGOV_BANK = "EGOV_BANK";
     private static final String EGOV_BANK_ACCOUNT = "EGOV_BANK_ACCOUNT";
     private static final String EGOV_REMITTANCE_VOUCHER = "EGOV_REMITTANCE_VOUCHER";
-    private static final String EGOV_REMITTANCE_DATE="EGOV_REMITTANCE_DATE";
+    private static final String EGOV_REMITTANCE_DATE = "EGOV_REMITTANCE_DATE";
     private static final String PRINT_BANK_CHALLAN_TEMPLATE = "collection_remittance_bankchallan_report";
     private final Map<String, Object> critParams = new HashMap<String, Object>(0);
     @Autowired
     private EmployeeService employeeService;
-    @Autowired
-    private CollectionReportService collectionReportService;
     @Autowired
     private ReportService reportService;
     @Autowired
@@ -118,14 +114,11 @@ public class RemittanceStatementReportAction extends ReportFormAction {
     private List<CollectionBankRemittanceReport> bankRemittanceList;
     private Double totalCashAmount;
     private Double totalChequeAmount;
-    private Double totalOnlineAmount;
     private String bank;
     private String bankAccount;
     private Date remittanceDate;
     private String voucherNumber;
     private RemittanceServiceImpl remittanceService;
-
-
 
     @Override
     public void prepare() {
@@ -150,9 +143,9 @@ public class RemittanceStatementReportAction extends ReportFormAction {
         final User user = collectionsUtil.getLoggedInUser();
         final List<Boundary> boundaryList = new ArrayList<Boundary>();
         final Employee employee = employeeService.getEmployeeById(user.getId());
-        if(employee!=null)
-        for (final Jurisdiction element : employee.getJurisdictions())
-            boundaryList.add(element.getBoundary());
+        if (employee != null)
+            for (final Jurisdiction element : employee.getJurisdictions())
+                boundaryList.add(element.getBoundary());
         addDropdownData("boundaryList", boundaryList);
         return INDEX;
     }
@@ -172,20 +165,17 @@ public class RemittanceStatementReportAction extends ReportFormAction {
         new ArrayList<Boundary>();
         final Employee employee = employeeService.getEmployeeById(user.getId());
 
-        if (employee != null) 
-        {
+        if (employee != null)
             for (final Jurisdiction element : employee.getJurisdictions()) {
-                    if (jurValuesId.length() > 0)
-                            jurValuesId.append(',');
-                    jurValuesId.append(element.getBoundary().getId());
+                if (jurValuesId.length() > 0)
+                    jurValuesId.append(',');
+                jurValuesId.append(element.getBoundary().getId());
 
-                    for (final Boundary boundary : element.getBoundary()
-                                    .getChildren()) {
-                            jurValuesId.append(',');
-                            jurValuesId.append(boundary.getId());
-                    }
+                for (final Boundary boundary : element.getBoundary().getChildren()) {
+                    jurValuesId.append(',');
+                    jurValuesId.append(boundary.getId());
+                }
             }
-       }
         if (null == jurValuesId.toString() || StringUtils.isEmpty(jurValuesId.toString())
                 || "-1".equals(jurValuesId.toString()))
             critParams.put(EGOV_DEPT_ID, null);
@@ -204,13 +194,13 @@ public class RemittanceStatementReportAction extends ReportFormAction {
     public String printBankChallan() {
         critParams.put(EGOV_CASH_AMOUNT, totalCashAmount);
         critParams.put(EGOV_CHEQUE_AMOUNT, totalChequeAmount);
-        critParams.put(EGOV_ONLINE_AMOUNT, totalOnlineAmount);
         critParams.put(EGOV_BANK, bank);
         critParams.put(EGOV_BANK_ACCOUNT, bankAccount);
-        critParams.put(EGOV_REMITTANCE_DATE, remittanceDate==null?new Date():remittanceDate);
+        critParams.put(EGOV_REMITTANCE_DATE, remittanceDate == null ? new Date() : remittanceDate);
         final CollectionRemittanceReportResult collReportResult = new CollectionRemittanceReportResult();
         bankRemittanceList = (List<CollectionBankRemittanceReport>) getSession().get("REMITTANCE_LIST");
-        critParams.put(EGOV_REMITTANCE_VOUCHER, bankRemittanceList.isEmpty()?"":bankRemittanceList.get(0).getVoucherNumber());
+        critParams.put(EGOV_REMITTANCE_VOUCHER,
+                bankRemittanceList.isEmpty() ? "" : bankRemittanceList.get(0).getVoucherNumber());
         collReportResult.setCollectionBankRemittanceReportList(bankRemittanceList);
         final ReportRequest reportInput = new ReportRequest(PRINT_BANK_CHALLAN_TEMPLATE, collReportResult, critParams);
         final ReportOutput reportOutput = reportService.createReport(reportInput);
@@ -222,28 +212,28 @@ public class RemittanceStatementReportAction extends ReportFormAction {
     public String reportPrintBankChallan() {
         final Remittance remittanceObj = (Remittance) persistenceService
                 .findByNamedQuery(CollectionConstants.REMITTANCE_BY_VOUCHER_NUMBER, voucherNumber);
-        List<ReceiptHeader> remittanceList = new ArrayList<ReceiptHeader>(remittanceObj.getCollectionRemittance());
-        double totalCashAmt=0;
-        double totalChequeAmt=0;
-        bankRemittanceList = remittanceService.prepareBankRemittanceReport(remittanceList);         
-        for(RemittanceDetail rd:remittanceObj.getRemittanceDetails())
-        {
-            if(rd.getChartOfAccount().getPurposeId()==(getAccountCodePurpose(CollectionConstants.PURPOSE_NAME_CASH_IN_HAND).getId()))
-            {
-                totalCashAmt=rd.getCreditAmount().doubleValue();
-            }
-            
-            if(rd.getChartOfAccount().getPurposeId().equals(getAccountCodePurpose(CollectionConstants.PURPOSE_NAME_CHEQUE_IN_HAND).getId()))
-                    {
-                totalChequeAmt=rd.getCreditAmount().doubleValue();
-                    }
+        final List<ReceiptHeader> remittanceList = new ArrayList<ReceiptHeader>(
+                remittanceObj.getCollectionRemittance());
+        double totalCashAmt = 0;
+        double totalChequeAmt = 0;
+        bankRemittanceList = remittanceService.prepareBankRemittanceReport(remittanceList);
+        for (final RemittanceDetail rd : remittanceObj.getRemittanceDetails()) {
+            if (rd.getChartOfAccount()
+                    .getPurposeId() == getAccountCodePurpose(CollectionConstants.PURPOSE_NAME_CASH_IN_HAND).getId())
+                totalCashAmt = rd.getCreditAmount().doubleValue();
+
+            if (rd.getChartOfAccount().getPurposeId()
+                    .equals(getAccountCodePurpose(CollectionConstants.PURPOSE_NAME_CHEQUE_IN_HAND).getId()))
+                totalChequeAmt = rd.getCreditAmount().doubleValue();
         }
         critParams.put(EGOV_CASH_AMOUNT, totalCashAmt);
         critParams.put(EGOV_CHEQUE_AMOUNT, totalChequeAmt);
-        critParams.put(EGOV_REMITTANCE_VOUCHER, remittanceObj==null?"":remittanceObj.getReferenceNumber());
-        critParams.put(EGOV_REMITTANCE_DATE, remittanceObj==null?new Date():remittanceObj.getReferenceDate());
-        critParams.put(EGOV_BANK, remittanceObj.getBankAccount()!= null ? remittanceObj.getBankAccount().getBankbranch().getBank().getName() : "");
-        critParams.put(EGOV_BANK_ACCOUNT, remittanceObj.getBankAccount()!= null ? remittanceObj.getBankAccount().getAccountnumber() : "");
+        critParams.put(EGOV_REMITTANCE_VOUCHER, remittanceObj == null ? "" : remittanceObj.getReferenceNumber());
+        critParams.put(EGOV_REMITTANCE_DATE, remittanceObj == null ? new Date() : remittanceObj.getReferenceDate());
+        critParams.put(EGOV_BANK, remittanceObj.getBankAccount() != null
+                ? remittanceObj.getBankAccount().getBankbranch().getBank().getName() : "");
+        critParams.put(EGOV_BANK_ACCOUNT,
+                remittanceObj.getBankAccount() != null ? remittanceObj.getBankAccount().getAccountnumber() : "");
         final CollectionRemittanceReportResult collReportResult = new CollectionRemittanceReportResult();
         collReportResult.setCollectionBankRemittanceReportList(bankRemittanceList);
         final ReportRequest reportInput = new ReportRequest(PRINT_BANK_CHALLAN_TEMPLATE, collReportResult, critParams);
@@ -251,14 +241,12 @@ public class RemittanceStatementReportAction extends ReportFormAction {
         reportId = reportViewerUtil.addReportToTempCache(reportOutput);
         return REPORT;
     }
-   
-    public AccountCodePurpose getAccountCodePurpose(String purposeName)
-    {
-       AccountCodePurpose acctCodePurposeObj = (AccountCodePurpose) getPersistenceService()
-                .find(" from AccountCodePurpose"+ " where name = ? ",purposeName);
+
+    public AccountCodePurpose getAccountCodePurpose(final String purposeName) {
+        final AccountCodePurpose acctCodePurposeObj = (AccountCodePurpose) getPersistenceService()
+                .find(" from AccountCodePurpose" + " where name = ? ", purposeName);
         return acctCodePurposeObj;
     }
-    
 
     @Override
     protected String getReportTemplateName() {
@@ -384,14 +372,6 @@ public class RemittanceStatementReportAction extends ReportFormAction {
         this.totalChequeAmount = totalChequeAmount;
     }
 
-    public Double getTotalOnlineAmount() {
-        return totalOnlineAmount;
-    }
-
-    public void setTotalOnlineAmount(final Double totalOnlineAmount) {
-        this.totalOnlineAmount = totalOnlineAmount;
-    }
-
     public List<CollectionBankRemittanceReport> getBankRemittanceList() {
         return bankRemittanceList;
     }
@@ -420,7 +400,7 @@ public class RemittanceStatementReportAction extends ReportFormAction {
         return remittanceDate;
     }
 
-    public void setRemittanceDate(Date remittanceDate) {
+    public void setRemittanceDate(final Date remittanceDate) {
         this.remittanceDate = remittanceDate;
     }
 
@@ -428,12 +408,12 @@ public class RemittanceStatementReportAction extends ReportFormAction {
         return voucherNumber;
     }
 
-    public void setVoucherNumber(String voucherNumber) {
+    public void setVoucherNumber(final String voucherNumber) {
         this.voucherNumber = voucherNumber;
     }
-    
+
     public void setRemittanceService(final RemittanceServiceImpl remittanceService) {
         this.remittanceService = remittanceService;
     }
-    
+
 }

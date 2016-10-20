@@ -925,7 +925,7 @@ public class EmployeeServiceImpl implements EmployeeServiceOld {
      * java.sql.Date(stFyDate.getTime()); } l.add(new
      * SearchEmpDTO(desig,Integer.
      * valueOf(0),"","",Integer.valueOf(empId),fromdesDate,todesDate)); } } }
-     * catch (Exception e) { // TODO Auto-generated catch block LOGGER.error(e);
+     * catch (Exception e) {  LOGGER.error(e);
      * ApplicationRuntimeException("Exception:" + e.getMessage(),e); } }
      */
 
@@ -1038,7 +1038,7 @@ public class EmployeeServiceImpl implements EmployeeServiceOld {
         try {
             assignmentDAO.create(egEmpAssignment);
         } catch (Exception e) {
-            // TODO Auto-generated catch block
+
             LOGGER.error(e);
             throw new ApplicationRuntimeException("Exception:" + e.getMessage(), e);
         }
@@ -1069,7 +1069,7 @@ public class EmployeeServiceImpl implements EmployeeServiceOld {
             if (egpimsPersonalInformation != null)
                 personalInformationDAO.update(egpimsPersonalInformation);
         } catch (Exception e) {
-            // TODO Auto-generated catch block
+
             LOGGER.error(e);
             throw new ApplicationRuntimeException("Exception:" + e.getMessage(), e);
         }
@@ -1098,7 +1098,7 @@ public class EmployeeServiceImpl implements EmployeeServiceOld {
             if (assignment != null)
                 assignmentDAO.update(assignment);
         } catch (RuntimeException e) {
-            // TODO Auto-generated catch block
+
             LOGGER.error(e);
             throw new ApplicationRuntimeException("Exception:" + e.getMessage(), e);
         }
@@ -1108,7 +1108,7 @@ public class EmployeeServiceImpl implements EmployeeServiceOld {
         try {
             personalInformation.addLangKnown(langKnown);
         } catch (RuntimeException e) {
-            // TODO Auto-generated catch block
+
             LOGGER.error(e);
             throw new ApplicationRuntimeException("Exception:" + e.getMessage(), e);
         }
@@ -1179,7 +1179,7 @@ public class EmployeeServiceImpl implements EmployeeServiceOld {
             employeeNamePoJo = new EmployeeNamePoJo(fn, mn, ln);
             return employeeNamePoJo;
         } catch (Exception e) {
-            // TODO Auto-generated catch block
+
             LOGGER.error(e);
             throw new ApplicationRuntimeException("Exception:" + e.getMessage(), e);
         }
@@ -1251,7 +1251,7 @@ public class EmployeeServiceImpl implements EmployeeServiceOld {
         try {
             personalInformationDAO.deleteLangKnownForEmp(personalInformation);
         } catch (Exception e) {
-            // TODO Auto-generated catch block
+
             LOGGER.error(e);
             throw new ApplicationRuntimeException("Exception:" + e.getMessage(), e);
         }
@@ -2070,7 +2070,7 @@ public class EmployeeServiceImpl implements EmployeeServiceOld {
             }
 
         } catch (Exception e) {
-            // TODO Auto-generated catch block
+
             throw new ApplicationRuntimeException("Exception:" + e.getMessage(), e);
         }
         return deptList;

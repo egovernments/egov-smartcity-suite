@@ -199,6 +199,8 @@ public class UpdateContractorBillController extends GenericWorkFlowController {
             contractorBillRegisterService.validateTotalDebitAndCreditAmount(contractorBillRegister, errors);
             
             contractorBillRegisterService.validateRefundAmount(contractorBillRegister, errors);
+            
+            contractorBillRegisterService.validateMileStonePercentage(contractorBillRegister, errors);
         }
 
         if (errors.hasErrors()) {

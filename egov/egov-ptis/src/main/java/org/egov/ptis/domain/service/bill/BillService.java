@@ -187,7 +187,7 @@ public class BillService {
             noticeService.getSession().flush(); // Added since notice was not
                                                 // getting saved
         } catch (final Exception e) {
-            e.printStackTrace();
+
             throw new ApplicationRuntimeException("Bill Generation Exception : " + e);
         }
         if (LOGGER.isDebugEnabled())

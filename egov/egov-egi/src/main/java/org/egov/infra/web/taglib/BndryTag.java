@@ -149,24 +149,16 @@ public class BndryTag extends BodyTagSupport {
 	public Map getExtractMap(final List al, final Map typeMap) {
 		final Set set = typeMap.keySet();
 		final HashMap hm = new HashMap(typeMap);
-		System.out.println("set............." + set);
 		for (final Iterator itr = set.iterator(); itr.hasNext();) {
-			System.out.println("1111111111");
 			final Integer i = (Integer) itr.next();
-			System.out.println("22222222222");
 			final String s = (String) typeMap.get(i);
-			System.out.println("3333333333");
 			for (final Iterator itr1 = al.iterator(); itr1.hasNext();) {
-				System.out.println("44444444");
 				final String s1 = (String) itr1.next();
-				System.out.println("s1............." + s1 + s);
 				if (s.equals(s1)) {
 					hm.remove(i);
 
 				}
-				System.out.println("555555555555");
 			}
-			System.out.println("666666666666");
 
 		}
 		return hm;
@@ -179,50 +171,6 @@ public class BndryTag extends BodyTagSupport {
 
 	@Override
 	public int doEndTag() {
-		/*
-		 * try { // *********************************************************************************************** // String bndry = (String)session.getAttribute("com.egov.cityID"); final Integer
-		 * bndryid = new Integer("99"); final HeirarchyType htype = hmang.getHeirarchyTypeByID(1); final String bndryName = bmang.getBoundaryNameForID(bndryid); final Boundary topLevelBoundary =
-		 * (Boundary) bmang.getTopBoundary(bndryName, htype); System.out.println("topLevelBoundary>>>>>>>>>>>>>>>>>>>>>>>>" + topLevelBoundary.getName()); final StringBuffer setBndryTypeStr = new
-		 * StringBuffer(1000); final int j = 1; String bndrySelect1 = ""; String bndrySelect2 = ""; final EgovInfrastrUtilInteface inteface = new EgovInfrastrUtil(); final ArrayList al = (ArrayList)
-		 * ExcludeBndryType.getExcludeType(); final Map typeMap = inteface.getMapOfBoundryTypes(); System.out.println("typeMap>>>>>>>>>>>>>>>>>>>>>>>>" + typeMap.keySet()); final Map typeMapm1 =
-		 * this.getExtractMap(al, typeMap); System.out.println("typeMap>>>>>>>>>>>>>>>>>>>>>>>>" + typeMapm1); final Set typeset = new TreeSet(typeMapm1.keySet()); Iterator itr = typeset.iterator();
-		 * if (itr.hasNext()) { final Integer parentType = (Integer) itr.next(); final String typeName = (String) typeMapm1.get(parentType); System.out.println("typeName>>>>>>>>>>>>>>>>>>>>>>>>" +
-		 * typeName); final BoundaryType btype = (BoundaryType) btmang.getBoundaryType(typeName, htype); final List bondryList = (List) bmang.getAllBoundaries(btype,
-		 * topLevelBoundary.getId().intValue()); final Set bondrySet = new HashSet(); bondrySet.addAll(bondryList); System.out.println("bondrySet>>>>>>>>>>>>>>>>>>>>>>>>" + bondrySet);
-		 * setBndryTypeStr.append("function setBndryTypenValue" + j + "(name,value)\n{\n document.forms[0].bndryType.value=\"" + typeName + "\"\n}"); if (bondrySet != null && !bondrySet.isEmpty()) {
-		 * final List bndryidlist = inteface.getBoundaryList(bondrySet); // request.setAttribute("bndryidlist",bndryidlist); final Map bndrymap = inteface.getBoundaryMap(bondrySet);
-		 * System.out.println("bndryidlist>>>>>>>>>>>>>>>>>>>>>>>>" + bndryidlist); final String admin = "adminBndry" + j; final String onchang = "javascript:" + typeName + "Match()";
-		 * logger.info("admin  ::" + admin); bndrySelect1 = "<TR><TD width=\"40%\" align=\"left\" class=\"eGovTblContent\" >" + typeName + "<font class=\"ErrorText\">*</font></TD>" +
-		 * "<TD width=\"40%\" class=\"eGovTblContent\"><select name=\"" + admin + "\" size=\"2\" class=\"controlText\" onchange = \"" + onchang + ";setBndryTypenValue" + j + "(" + admin +
-		 * ",document.forms[0]." + admin + ".options[document.forms[0]." + admin + ".selectedIndex].value" + ");\" multiple>" + "<option value=\"\">Choose"; String name = ""; for (final Iterator iter
-		 * = bndryidlist.iterator(); iter.hasNext();) { final Integer bndryId = (Integer) iter.next(); logger.info("bndryId  ::" + bndryId); name = (String) bndrymap.get(bndryId); bndrySelect1 +=
-		 * "<option value=\"" + bndryId.toString() + "\">" + name; } bndrySelect1 += "</select></TD></TR>"; logger.info("bndrySelect1  ::" + bndrySelect1); <TD width="200"
-		 * align="left"><b>&nbsp;</b><FONT id="LocalLang_size10pt"> <bean:message key="zone"/> / </font> <font id="normal_font">Complaint <%=typeName%><b>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </b><br></font>
-		 * <html:select property= "<%=admin%>" onchange = "<%=onchang%>"> <html:option value = "0"> Choose </html:option> <logic:iterate id = "id" name = "bndryidlist"> String name =
-		 * (String)bndrymap.get((Integer)id); <option value = "<%= id.toString() %>"><%= name %></option> </logic:iterate> </html:select>&nbsp; </TD> } } int x = 2; while (itr.hasNext()) { final
-		 * Integer parentType = (Integer) itr.next(); final String typeName = (String) typeMapm1.get(parentType); System.out.println("typeName>>>>>>>>>>>>>>>>>>>>>>>>" + typeName); final BoundaryType
-		 * btype = (BoundaryType) btmang.getBoundaryType(typeName, htype); final List bondryList = (List) bmang.getAllBoundaries(btype, topLevelBoundary.getId().intValue()); final Set bondrySet = new
-		 * HashSet(); bondrySet.addAll(bondryList); System.out.println("bondrySet>>>>>>>>>>>>>>>>>>>>>>>>" + bondrySet); // if(bondrySet!=null && !bondrySet.isEmpty()) // { final List bndryidlist =
-		 * inteface.getBoundaryList(bondrySet); // request.setAttribute("bndryidlist",bndryidlist); final Map bndrymap = inteface.getBoundaryMap(bondrySet);
-		 * System.out.println("bndryidlist>>>>>>>>>>>>>>>>>>>>>>>>" + bndryidlist); String onchang = ""; final String admin = "adminBndry" + x; if (btype.getChildBoundaryTypes() != null &&
-		 * !btype.getChildBoundaryTypes().isEmpty()) { onchang = "javascript:" + typeName + "Match()"; } for(Iterator itr1 = bondrySet.iterator();itr1.hasNext();) { getChildBoundaryTypes Boundary
-		 * bndry = (Boundary)itr1.next(); if(!bndry.isLeaf()) { onchang= "javascript:"+typeName+"Match()"; } } setBndryTypeStr.append("function setBndryTypenValue" + x +
-		 * "(name,value)\n{\n document.forms[0].bndryType.value=\"" + typeName + "\"\n}"); bndrySelect2 += "<TR><TD width=\"40%\" class=\"eGovTblContent\"  align=\"left\">" + typeName +
-		 * "<font class=\"ErrorText\">*</font></TD>" + "<TD width=\"40%\" class=\"eGovTblContent\"><select name=\"" + admin + "\" size=\"2\" class=\"controlText\"  onchange = \"" + onchang +
-		 * ";setBndryTypenValue" + x + "(" + admin + ",document.forms[0]." + admin + ".options[document.forms[0]." + admin + ".selectedIndex].value" + ");\" multiple>" + "<option value=\"\">Choose" +
-		 * "</select></TD></TR>"; logger.info("bndrySelect2  ::" + bndrySelect2); <TD width="200" align="left"><b>&nbsp;</b><FONT id="LocalLang_size10pt"> <bean:message key="zone"/> / </font> <font
-		 * id="normal_font">Complaint <%=typeName%><b>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </b><br></font> <html:select property= "<%=admin%>" onchange = "<%=onchang%>"> <html:option value = "0"> Choose
-		 * </html:option> </html:select>&nbsp; </TD> // } x++; } // go over again to load all the javascript functions dynamically. // typeset is a list of boundary type primary keys. It omits all the
-		 * boundary // types which are excluded. itr = typeset.iterator(); final StringBuffer functionString = new StringBuffer(5000); int k = 1; while (itr.hasNext()) { final Integer parentType =
-		 * (Integer) itr.next(); final String typeName = (String) typeMapm1.get(parentType); System.out.println("2nd loop typeName>>>>>>>>>>>>>>>>>>>>>>>>" + typeName); final BoundaryType btype =
-		 * (BoundaryType) btmang.getBoundaryType(typeName, htype); // set of boundary values for the above declared boundary type. final List bndryList = (List) bmang.getAllBoundaries(btype,
-		 * topLevelBoundary.getId().intValue()); final Set bndrySet = new HashSet(); bndrySet.addAll(bndryList); System.out.println("bndrySet>>>>>>>>>>>>>>>>>>>>>>>>" + bndrySet); final Set
-		 * chBndryTypes = btype.getChildBoundaryTypes(); for (final Iterator itr1 = chBndryTypes.iterator(); itr1.hasNext();) { final BoundaryType chBndryType = (BoundaryType) itr1.next(); if
-		 * (bndrySet != null && !bndrySet.isEmpty()) { functionString.append(this.generateAllJSForBoundaries(btype, chBndryType, bndrySet, k)); } } k++; } final JspWriter out =
-		 * this.pageContext.getOut(); out.print(bndrySelect1); out.print(bndrySelect2); out.print(this.getScript(setBndryTypeStr)); out.print(this.getScript(functionString)); } catch (final Exception
-		 * ioe) { System.out.println("Error in HeadingTag: " + ioe); try { throw new JspTagException("Exception occured --------- ", ioe); } catch (final JspTagException e) { 
-		 * catch block e.printStackTrace(); } }
-		 */
 		return EVAL_PAGE;
 	}
 }

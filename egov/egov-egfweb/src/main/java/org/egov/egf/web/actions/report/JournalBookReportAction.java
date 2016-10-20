@@ -202,7 +202,7 @@ public class JournalBookReportAction extends BaseFormAction {
             startDate = formatter.format(sdf.parse(journalBookReport.getStartDate()));
             endDate = formatter.format(sdf.parse(journalBookReport.getEndDate()));
         } catch (ParseException e) {
-            e.printStackTrace();
+
         }
         String query = "", subQuery = "";
         if (journalBookReport.getFund_id() != null && !journalBookReport.getFund_id().equals(""))

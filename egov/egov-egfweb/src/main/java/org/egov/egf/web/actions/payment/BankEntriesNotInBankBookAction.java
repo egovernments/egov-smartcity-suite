@@ -211,12 +211,12 @@ public class BankEntriesNotInBankBookAction extends BasePaymentAction {
         try {
             bankEntriesNotInBankBookActionHelper.create(voucherHeader, bankaccount, bankEntriesNotInBankBookList);
         } catch (final ValidationException e) {
-            e.printStackTrace();
+
             final List<ValidationError> errors = new ArrayList<ValidationError>();
             errors.add(new ValidationError("exp", e.getErrors().get(0).getMessage()));
             throw new ValidationException(errors);
         } catch (final Exception e) {
-            e.printStackTrace();
+
             final List<ValidationError> errors = new ArrayList<ValidationError>();
             errors.add(new ValidationError("exp", e.getMessage()));
             throw new ValidationException(errors);

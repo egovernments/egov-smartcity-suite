@@ -205,7 +205,7 @@ public class AdvertisementBillServiceImpl extends BillServiceInterface {
 
     @Override
     public void cancelBill() {
-        // TODO Auto-generated method stub
+
 
     }
 
@@ -215,7 +215,7 @@ public class AdvertisementBillServiceImpl extends BillServiceInterface {
         try {
             collectXML = URLEncoder.encode(super.getBillXML(billObj),"UTF-8");
         } catch (UnsupportedEncodingException e) {
-            e.printStackTrace();
+
             throw new RuntimeException(e.getMessage());
         }
         return collectXML;

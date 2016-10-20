@@ -301,7 +301,7 @@ public class RemitRecoveryAction extends BasePaymentAction {
                 date = df.parse(cutOffDateconfigValue.get(0).getValue());
                 setCutOffDate(formatter.format(date));
             } catch (ParseException e) {
-                e.printStackTrace();
+
             }
         }
         voucherHeader.setType(FinancialConstants.STANDARD_VOUCHER_TYPE_PAYMENT);
@@ -364,7 +364,7 @@ public class RemitRecoveryAction extends BasePaymentAction {
                     date = sdf1.parse(cutOffDate);
                     cutOffDate1 = formatter1.format(date);
                 } catch (ParseException e) {
-                    // e.printStackTrace();
+                    //
                 }
             }
             if (cutOffDate1 != null && voucherDate.compareTo(cutOffDate1) <= 0
@@ -455,7 +455,6 @@ public class RemitRecoveryAction extends BasePaymentAction {
 
     public Paymentheader getPayment() {
         String paymentid = null;
-        // System.out.println("Payment id is"+parameters.get(PAYMENTID));
         if (parameters.get(PAYMENTID) == null)
         {
             final Object obj = getSession().get(PAYMENTID);

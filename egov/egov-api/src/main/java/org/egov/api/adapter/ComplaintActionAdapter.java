@@ -55,7 +55,7 @@ public class ComplaintActionAdapter extends DataAdapter<ComplaintAction> {
 	@Override
 	public JsonElement serialize(ComplaintAction complaintDetails, Type typeOfSrc,
 			JsonSerializationContext context) {
-		// TODO Auto-generated method stub
+
 		JsonObject jo = new JsonObject(); 
 		
 		JsonArray jsonArry=new JsonArray();

@@ -42,8 +42,6 @@ package org.egov.collection.entity;
 import java.io.Serializable;
 import java.util.Date;
 
-import org.joda.time.DateTime;
-
 public class CollectionBankRemittanceReport implements Serializable {
     private static final long serialVersionUID = 1L;
     private String receiptNumber;

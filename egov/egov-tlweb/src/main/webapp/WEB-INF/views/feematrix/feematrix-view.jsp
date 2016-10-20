@@ -125,7 +125,6 @@ function callAjaxSearch() {
 					url : "/tl/feematrix/viewresult?category="+$('#licenseCategory').val()+"&subCategory="+$("#subCategory").val()+"&finyear="+$("#financialYear").val(),
 					type : "POST"
 				},
-				"sPaginationType" : "bootstrap",
 				"bDestroy" : true,
 				"autoWidth": false,
 				"sDom" : "<'row'<'col-xs-12 hidden col-right'f>r>t<'row'<'col-xs-3'i><'col-xs-3 col-right'l><'col-xs-3 col-right'<'export-data'T>><'col-xs-3 text-right'p>>",
@@ -162,6 +161,8 @@ function callAjaxSearch() {
 			});
 }
 </script>
+<link rel="stylesheet" href="<cdn:url value='/resources/global/css/jquery/plugins/datatables/jquery.dataTables.min.css' context='/egi'/>"/>
+<link rel="stylesheet" href="<cdn:url value='/resources/global/css/jquery/plugins/datatables/dataTables.bootstrap.min.css' context='/egi'/>">
 <script type="text/javascript" src="<cdn:url  value='/resources/global/js/jquery/plugins/datatables/jquery.dataTables.min.js' context='/egi'/>"></script>
 <script type="text/javascript" src="<cdn:url  value='/resources/global/js/jquery/plugins/datatables/dataTables.bootstrap.js' context='/egi'/>"></script>
 <script type="text/javascript" src="<cdn:url  value='/resources/global/js/jquery/plugins/datatables/dataTables.tableTools.js' context='/egi'/>"></script>

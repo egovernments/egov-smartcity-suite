@@ -586,22 +586,22 @@ public void setEmployeeTypeMaster(EmployeeType employeeTypeMaster) {
 	}
 	
 	public String getModeofpay() {
-		// TODO Auto-generated method stub
+
 		return null;
 	}
 	
 	public String getName() {
-		// TODO Auto-generated method stub
+
 		return this.employeeName;
 	}
 	
 	public String getPanno() {
-		// TODO Auto-generated method stub
+
 		return this.panNumber;
 	}
 	
 	public String getTinno() {
-		// TODO Auto-generated method stub
+
 		return null;
 	}
 	public Integer getEntityId()
@@ -616,7 +616,7 @@ public void setEmployeeTypeMaster(EmployeeType employeeTypeMaster) {
 	
 	@Override
 	public EgwStatus getEgwStatus() {
-		// TODO Auto-generated method stub
+
 		return null;
 	}
 }

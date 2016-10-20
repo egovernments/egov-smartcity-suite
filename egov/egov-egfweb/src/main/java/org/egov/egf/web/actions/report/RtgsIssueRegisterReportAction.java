@@ -117,7 +117,7 @@ public class RtgsIssueRegisterReportAction extends ReportAction {
 
     @Override
     public Object getModel() {
-        // TODO Auto-generated method stub
+
         return null;
     }
 
@@ -342,7 +342,7 @@ public class RtgsIssueRegisterReportAction extends ReportAction {
                             +
                             " ih.transactiondate, vh.id,  vh.vouchernumber,vh.voucherDate, vmis.departmentid,  dept.name, b.name,branch.branchname,ba.accountnumber,stat.description,gld.detailtypeid,gld.detailkeyid,gld.amount ORDER BY b.name,branch.branchname,ba.accountnumber,ih.transactiondate,ih.transactionnumber,dept.name");
         } catch (ParseException e) {
-            e.printStackTrace();
+
         }
         return queryString;
     }

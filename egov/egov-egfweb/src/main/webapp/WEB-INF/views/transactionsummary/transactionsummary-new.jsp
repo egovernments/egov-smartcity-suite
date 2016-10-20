@@ -61,7 +61,7 @@
 
 <title></title>
 <link rel="icon"
-	href="<c:url value='/resources/global/images/favicon.png" sizes="32x32' context='/egi'/>">
+	href="<c:url value='/resources/global/images/favicon.png' context='/egi'/>" sizes="32x32">
 <link rel="stylesheet"
 	href="<c:url value='/resources/global/css/bootstrap/bootstrap.css' context='/egi'/>">
 <link rel="stylesheet"

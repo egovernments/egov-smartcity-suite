@@ -225,7 +225,6 @@ public class TrialBalanceAction extends BaseFormAction {
                 dt = sdf.parse(sDate);
             } catch (ParseException e1) {
 
-                e1.printStackTrace();
             }
 
             CFinancialYear finYearByDate = financialYearDAO.getFinYearByDate(dt);
@@ -233,8 +232,7 @@ public class TrialBalanceAction extends BaseFormAction {
             try {
                 dd = sdf.parse(eDate);
             } catch (ParseException e1) {
-                // TODO Auto-generated catch block
-                e1.printStackTrace();
+
             }
             String endFormat = formatter.format(dd);
             String endDate1 = formatter.format(finYearByDate.getEndingDate());
@@ -592,8 +590,8 @@ public class TrialBalanceAction extends BaseFormAction {
             al.add(tbTotal);
 
         } catch (final Exception e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
+
+
         }
 
     }

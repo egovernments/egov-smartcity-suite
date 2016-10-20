@@ -128,7 +128,7 @@ public class DishonoredChequeReportAction extends BaseFormAction {
         try {
             dishonoredChequeDisplayList = dishonoredCheque.getDishonoredChequeDetails(dishonoredChequeReport);
         } catch (final Exception e) {
-            e.printStackTrace();
+
         }
         if (LOGGER.isDebugEnabled())
             LOGGER.debug("DishonoredChequeAction | list | End");

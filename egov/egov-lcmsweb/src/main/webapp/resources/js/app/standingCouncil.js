@@ -41,6 +41,8 @@
 jQuery(document).ready(function($)
 {
 	
+	
+	
 	if($('#seniourAdvisRequired').val() == 'false')
 	{
 			    $("#seniordov1").hide(); 
@@ -67,4 +69,25 @@ jQuery(document).ready(function($)
 		      dom.get("orderNumber").value="";
 	}
 }
+	
+	$("#subitstandingcouncil").click(function(event){
+		 var elm = document.getElementById('isSeniorAdvocate');
+		 var junstandingcouncil=document.getElementById('standingCouncilName');
+		 var assignedDate=document.getElementById('assignedDate');
+		 
+		  if(!elm.checked){
+			  if(!(junstandingcouncil.value =='' || assignedDate.value =='')){
+			  $('#legalCaseAdvocateform :not([type=submit])').removeAttr('required');
+			  }
+			  $('#seniorAdvocateName').removeAttr('required');
+			  $('#assignedtodateForsenior').removeAttr('required');
+			  $('#orderdate').removeAttr('required');
+			  $('#orderNumber').removeAttr('required');
+		  }
+		$('#legalCaseAdvocateform :not([type=submit])').prop('disabled',false);
+		document.forms[0].submit;
+		
 	});
+    
+	
+});

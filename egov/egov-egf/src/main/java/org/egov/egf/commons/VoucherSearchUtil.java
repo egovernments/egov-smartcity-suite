@@ -74,7 +74,6 @@ public class VoucherSearchUtil {
             throws ApplicationException,
             ParseException {
 
-        System.out.println("Inside search ----- in voucher util");
 
         String sql = "", editModeQuery1, editModeQuery2;
         List<CVoucherHeader> voucherList = new ArrayList<CVoucherHeader>();
