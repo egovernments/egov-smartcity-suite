@@ -138,6 +138,13 @@ public class SearchAbstractEstimateController {
             model.addAttribute("isServiceVATRequired", true);
         else
             model.addAttribute("isServiceVATRequired", false);
+        final List<AppConfigValues> showDeductions = appConfigValuesService.getConfigValuesByModuleAndKey(
+                WorksConstants.WORKS_MODULE_NAME, WorksConstants.APPCONFIG_KEY_SHOW_DEDUCTION_GRID);
+        final AppConfigValues showDeduction = showDeductions.get(0);
+        if (showDeduction.getValue().equalsIgnoreCase("Yes"))
+            model.addAttribute("isEstimateDeductionGrid", true);
+        else
+            model.addAttribute("isEstimateDeductionGrid", false);
         model.addAttribute("mode", "view");
         model.addAttribute("abstractEstimate", abstractEstimate);
         model.addAttribute("documentDetails", abstractEstimate.getDocumentDetails());

@@ -254,9 +254,9 @@ public class UpdateAbstractEstimateController extends GenericWorkFlowController 
                 WorksConstants.WORKS_MODULE_NAME, WorksConstants.APPCONFIG_KEY_SHOW_DEDUCTION_GRID);
         final AppConfigValues showDeduction = showDeductions.get(0);
         if (showDeduction.getValue().equalsIgnoreCase("Yes"))
-            model.addAttribute("isDeductionGrid", true);
+            model.addAttribute("isEstimateDeductionGrid", true);
         else
-            model.addAttribute("isDeductionGrid", false);
+            model.addAttribute("isEstimateDeductionGrid", false);
 
         estimateService.loadLocationAppConfigValue(model);
 
