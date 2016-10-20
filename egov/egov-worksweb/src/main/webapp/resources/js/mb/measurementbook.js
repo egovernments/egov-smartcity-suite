@@ -42,14 +42,14 @@ var isDatepickerOpened=false;
 $(document).ready(function(){
 	if($("#isMBHeaderEditable") && $("#isMBHeaderEditable").val()!="" && $("#isMBHeaderEditable").val()=="false"){
 		$("#mbHeaderTab").find('input,button,textarea').prop('disabled',true);
-		$("#searchAndAdd").addClass('hide');
+		/*$("#searchAndAdd").addClass('hide');
 		$("#addAll").addClass('hide');
 		$("#searchNonTenderedAndAdd").addClass('hide');
 		$("#addAllNonTendered").addClass('hide');
 		$(".sordelete").addClass('hide');
 		$(".nonTenderedDelete").addClass('hide');
 		$(".nonSorDelete").addClass('hide');
-		$(".lumpSumDelete").addClass('hide');
+		$(".lumpSumDelete").addClass('hide');*/
 	}
 		
 	sorTotal();
