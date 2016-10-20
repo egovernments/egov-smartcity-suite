@@ -90,7 +90,7 @@ public class BudgetDetail extends StateAware {
     private Long nextYrId = null;
 
 //    @NotNull
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "budgetgroup")
     private BudgetGroup budgetGroup;
 
