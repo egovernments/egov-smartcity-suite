@@ -94,6 +94,11 @@ public class WorkflowTypeService {
         return workflowTypeRepository.findByTypeFQN(fullClassname);
 
     }
+    
+    public WorkflowTypes findByBusinessKey(String businessKey) {
+        return workflowTypeRepository.findByBusinessKey(businessKey);
+
+    }
     public WorkflowTypes findByClassNameAnType(String fullClassname,String type) {
         return workflowTypeRepository.findByTypeFQNAndType(fullClassname,type);
 

@@ -426,7 +426,7 @@ public class ContractorBillRegisterService {
         if (LOG.isDebugEnabled())
             LOG.debug(" WorkFlow Transition Completed  ...");
     }
-
+ 
     public void contractorBillRegisterStatusChange(final ContractorBillRegister contractorBillRegister,
             final String workFlowAction,
             final String mode) throws ValidationException {

@@ -73,7 +73,7 @@ public class ProcessUserGroupManager extends AbstractManager implements GroupEnt
 
     @Override
     public GroupEntity findById(final String entityId) {
-        return mapUserGroupToGroupEntity(userGroupService.getGroupByName(entityId));
+        return mapUserGroupToGroupEntity(userGroupService.findOne(Long.valueOf(entityId)));
     }
 
     @Override
@@ -93,7 +93,11 @@ public class ProcessUserGroupManager extends AbstractManager implements GroupEnt
 
     @Override
     public List<org.activiti.engine.identity.Group> findGroupsByUser(final String userId) {
-        return Collections.emptyList();
+        
+    return	userGroupService.findGroupsByUser(userId).stream().
+        map(this::mapUserGroupToGroupEntity).collect(Collectors.toList());
+    	
+    	 
     }
 
     @Override

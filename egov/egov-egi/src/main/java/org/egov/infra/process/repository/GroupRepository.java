@@ -40,11 +40,13 @@
 
 package org.egov.infra.process.repository;
 
+import java.util.List;
+
 import org.egov.infra.process.entity.Group;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
-
-import java.util.List;
 
 @Repository
 public interface GroupRepository extends JpaRepository<Group, Long> {
@@ -52,4 +54,8 @@ public interface GroupRepository extends JpaRepository<Group, Long> {
     Group findByName(String name);
 
     List<Group> findByNameContains(String name);
+  
+    @Query("select g from Group g, IN (g.users) user where user.name = :userName")
+    List<Group> findGroupByUserName(@Param("userName") String userName);
+    
 }

@@ -40,6 +40,11 @@
 
 package org.egov.infra.process.service;
 
+import java.util.ArrayList;
+import java.util.List;
+
+import org.egov.infra.admin.master.entity.User;
+import org.egov.infra.admin.master.service.UserService;
 import org.egov.infra.process.entity.Group;
 import org.egov.infra.process.repository.GroupRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -47,13 +52,13 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.List;
-
 @Service
 public class GroupService {
 
     @Autowired
     private GroupRepository groupRepository;
+    @Autowired
+	private UserService userService;
 
     public Group getGroupByName(String name) {
         return groupRepository.findByName(name);
@@ -88,5 +93,12 @@ public class GroupService {
     public List<Group> search() {
         return groupRepository.findAll();
     }
+    public List<Group> findGroupsByUser(String userName ){
+    	/*User userById = userService.getUserByUsername(userName);
+    	List<User> users = new ArrayList();
+    	users.add(userById);*/
+        return groupRepository.findGroupByUserName(userName);
+    }
+    
 
 }
