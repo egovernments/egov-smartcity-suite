@@ -39,4 +39,6 @@ public interface BudgetingGroupRepository extends JpaRepository<BudgetGroup, Lon
 
     public List<BudgetGroup> findBybudgetingTypeIs(String budgetingType);
 
+    public List<BudgetGroup> findByIsActiveTrue();
+
 }

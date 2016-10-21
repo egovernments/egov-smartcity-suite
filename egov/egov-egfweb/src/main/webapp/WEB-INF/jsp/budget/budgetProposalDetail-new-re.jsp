@@ -244,18 +244,21 @@
 			bootbox.alert("Select Financial Year");
 			result=false;
 		}
-		else if('<s:property value="budgetDetail.budget.financialYear.id"/>'==''){
+		 else if('<s:property value="budgetDetail.budget.financialYear.id"/>'==''){
 			document.getElementById('hidden_year').value = document.getElementById('financialYear').value;
-		}
+		} 
+		
 		
 		if(document.getElementById('budgetDetail_budget').value==0 )
 		{
 			bootbox.alert("Select Budget");
 			result=false;
 		}
-		else if('<s:property value="budgetDetail.budget.id"/>'==''){
+		
+		 /* else if('<s:property value="budgetDetail.budget.id"/>'==''){
 			document.getElementById('hidden_budget').value = document.getElementById('budgetDetail_budget').value;
-		}
+			
+		}  */
 		
 		if(document.getElementById('budgetDetail_executingDepartment').value==0 )
 		{
@@ -264,18 +267,21 @@
 		
 		}
 		
-		if(document.getElementById('budgetDetail_filtered_function').value==0 )
+		//bootbox.alert('<s:property value="function.id"/>');
+		/* if(document.getElementById('budgetDetail_filtered_function').value==0 )
 		{
 			bootbox.alert("Select Function");
 			result=false;
-		}
-		/* else if('<s:property value="budgetDetail.function.id"/>'==''){
-			document.getElementById('hidden_function').value = document.getElementById('function').value;
 		} */
+		
+		/*  if(document.getElementById('budgetDetail_filtered_function').value!=0){
+			document.getElementById('hidden_function').value = document.getElementById('budgetDetail_filtered_function').value;
+		}  */  
 		
 		return result;
 	}
-		 document.getElementById('hidden_budget').value = '<s:property value="budgetDetail.budget.id"/>' 
+	/* if(document.getElementById('hidden_budget')!=null)
+		 document.getElementById('hidden_budget').value = '<s:property value="budgetDetail.budget.id"/>' */ 
 	     
 			 
 	</script>
@@ -311,23 +317,22 @@
 										<td>&nbsp;</td>
 									</tr>
 									<tr>
-										<td width="15%" class="greybox">&nbsp;</td>
-										<td width="15%" class="greybox"><s:text
+										<td width="15%" class="bluebox">&nbsp;</td> 
+										<td width="15%" class="bluebox"><s:text
 												name="budgetdetail.budget.asOnDate" /></td>
-										<td class="greybox" width="15%"><input type="text"
+										<td class="bluebox" width="20%"><input type="text"
 											id="asOnDate" name="asOnDate" style="width: 100px"
 											value='<s:date name="asOnDate" format="dd/MM/yyyy"/>'
 											onkeyup="DateFormat(this,this.value,event,false,'3')" readonly /><a tabindex="-1"
 								href="javascript:show_calendar('budget.asOnDate');"
-								style="text-decoration: none">&nbsp;<img
-									src="/egi/resources/erp2/images/calendaricon.gif" border="0" />(dd/mm/yyyy)
+								style="text-decoration: none">&nbsp;(dd/mm/yyyy)
 										</td>
-										<td width="15%" class="greybox"><s:text name="function" /></td>
+										<td width="15%" class="bluebox"><s:text name="function" /></td>
 										<egov:ajaxdropdown id="function_filtered"
 											fields="['Text','Value']"
 											dropdownId="budgetDetail_filtered_function"
 											url="budget/budgetProposalDetail-ajaxLoadFunctions.action" />
-										<td class="greybox"><s:select name="function.id"
+										<td class="bluebox"><s:select name="function.id"
 												id="budgetDetail_filtered_function" list="%{functionList}"
 												value="function.id" listKey="id" listValue="name"
 												headerValue="---Select---" headerKey="0" /></td>
@@ -350,7 +355,7 @@
 										<td>&nbsp;</td>
 									</tr>
 									<tr>
-										<td align="center" colspan="5" class="greybox"><div
+										<td align="center" colspan="5" class="bluebox"><div
 												align="center">
 												<input type="submit" value="Search" id="Search"
 													name="method:loadBudgetDetailList"
@@ -382,7 +387,8 @@
 								</s:if>
 							</script> <br /> <br /> 
 						<s:hidden name="financialYear.id" id="hidden_year" />
-                        <s:hidden name="budget.id" id="hidden_budget" />
+                       <%--  <s:hidden name="budget.id" id="hidden_budget" /> --%>
+                       <%--  <s:hidden name="function.id" id="hidden_function"/> --%>
                         
                         
 						<div id="savedDataGrid"></div> <script>

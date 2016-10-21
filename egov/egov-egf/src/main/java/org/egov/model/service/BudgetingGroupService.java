@@ -71,6 +71,10 @@ public class BudgetingGroupService {
         return budgetGroupRepository.findCOAByLength(getMajorCodeLength());
     }
 
+    public List<BudgetGroup> getActiveBudgetGroups() {
+        return budgetGroupRepository.findByIsActiveTrue();
+    }
+
     public List<CChartOfAccounts> getMinCodeList() {
         final String range = appConfigValueService
                 .getConfigValuesByModuleAndKey(Constants.EGF, FinancialConstants.APPCONFIG_BUDGETGROUP_RANGE).get(0)
@@ -93,19 +97,20 @@ public class BudgetingGroupService {
 
         BudgetGroup bg = null;
         List<BudgetGroup> bgCode = null;
-        if (budgetGroup.getMajorCode() != null && budgetGroup.getId() == null)
+        if ((budgetGroup.getMajorCode() != null) && (budgetGroup.getId() == null))
             bg = budgetGroupRepository.findByMajorCode_Id(budgetGroup.getMajorCode().getId());
-        else if (budgetGroup.getMajorCode() != null && budgetGroup.getId() != null)
+        else if ((budgetGroup.getMajorCode() != null) && (budgetGroup.getId() != null))
             bg = budgetGroupRepository.findByMajorCode_IdAndIdNotIn(budgetGroup.getMajorCode().getId(),
                     budgetGroup.getId());
         if (bg != null)
             validationMessage = messageSource.getMessage("budgetgroup.invalid.majorcode", new String[] { bg.getName() },
                     null);
 
-        if (budgetGroup.getMinCode() != null && budgetGroup.getMaxCode() != null && budgetGroup.getId() == null)
+        if ((budgetGroup.getMinCode() != null) && (budgetGroup.getMaxCode() != null) && (budgetGroup.getId() == null))
             bgCode = budgetGroupRepository.findByMinCodeGlcodeLessThanEqualAndMaxCodeGlcodeGreaterThanEqual(
                     budgetGroup.getMaxCode().getGlcode(), budgetGroup.getMinCode().getGlcode());
-        else if (budgetGroup.getMinCode() != null && budgetGroup.getMaxCode() != null && budgetGroup.getId() != null)
+        else if ((budgetGroup.getMinCode() != null) && (budgetGroup.getMaxCode() != null)
+                && (budgetGroup.getId() != null))
             bgCode = budgetGroupRepository.findByMinCodeGlcodeLessThanEqualAndMaxCodeGlcodeGreaterThanEqualAndIdNotIn(
                     budgetGroup.getMinCode().getGlcode(), budgetGroup.getMinCode().getGlcode(), budgetGroup.getId());
         else
@@ -115,7 +120,7 @@ public class BudgetingGroupService {
             validationMessage = messageSource.getMessage("budgetgroup.invalid.maxmincode",
                     new String[] { bgCode.get(0).getName() }, null, Locale.ENGLISH);
 
-        List<BudgetGroup> bgList = budgetGroup.getMajorCode() != null
+        final List<BudgetGroup> bgList = budgetGroup.getMajorCode() != null
                 ? budgetGroupRepository.getBudgetGroupForMappedMajorCode(
                         budgetGroup.getMajorCode().getGlcode().length(), budgetGroup.getMajorCode().getGlcode())
                 : Collections.emptyList();
@@ -140,9 +145,9 @@ public class BudgetingGroupService {
     }
 
     public List<BudgetGroup> search(final BudgetGroup budgetGroup) {
-        if (budgetGroup.getName() != null) {
+        if (budgetGroup.getName() != null)
             return budgetGroupRepository.findBudgetGroupByNameLike(budgetGroup.getName());
-        } else
+        else
             return budgetGroupRepository.findAll();
     }
 
