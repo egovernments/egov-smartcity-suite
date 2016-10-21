@@ -52,7 +52,7 @@ public class GenericSubReportResult {
     private String courtType;
     private Integer courtName;
     private String judgmentType;
-    private Integer petitionType;
+    private String petitionType;
     private Integer caseStatus;
     private String officerIncharge;
     private Date fromDate;
@@ -65,12 +65,12 @@ public class GenericSubReportResult {
     public void setOfficerIncharge(final String officerIncharge) {
         this.officerIncharge = officerIncharge;
     }
-    
+
     public Integer getCaseStatus() {
         return caseStatus;
     }
 
-    public void setCaseStatus(Integer caseStatus) {
+    public void setCaseStatus(final Integer caseStatus) {
         this.caseStatus = caseStatus;
     }
 
@@ -114,11 +114,11 @@ public class GenericSubReportResult {
         this.judgmentType = judgmentType;
     }
 
-    public Integer getPetitionType() {
+    public String getPetitionType() {
         return petitionType;
     }
 
-    public void setPetitionType(final Integer petitionType) {
+    public void setPetitionType(final String petitionType) {
         this.petitionType = petitionType;
     }
 

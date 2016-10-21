@@ -100,7 +100,7 @@ public class GenericSubReportService {
         if (genericSubReportResultObj.getCourtType() != null)
             queryResult.setString("courtType", genericSubReportResultObj.getCourtType());
         if (genericSubReportResultObj.getPetitionType() != null)
-            queryResult.setInteger("petitionType", genericSubReportResultObj.getPetitionType());
+            queryResult.setString("petitionType", genericSubReportResultObj.getPetitionType());
         if (genericSubReportResultObj.getCaseStatus() != null)
             queryResult.setInteger("caseStatus", genericSubReportResultObj.getCaseStatus());
         if (genericSubReportResultObj.getOfficerIncharge() != null)
@@ -155,8 +155,7 @@ public class GenericSubReportService {
     private void getAggregateQueryByPetitionType(final GenericSubReportResult genericSubReportResult,
             final StringBuilder queryStr) {
         queryStr.append("SELECT COUNT(DISTINCT legalcase.id) as noOfCase,petmaster.petitionType as aggregatedBy ");
-        queryStr.append(
-                "from LegalCase legalcase,PetitionTypeMaster petmaster where legalcase.petitionTypeMaster.id=petmaster.id and ");
+        queryStr.append("from LegalCase legalcase,PetitionTypeMaster petmaster where legalcase.petitionTypeMaster.id=petmaster.id and ");
         getAppendQuery(genericSubReportResult, queryStr);
         queryStr.append("group by petmaster.petitionType");
         queryStr.append(" order by petmaster.petitionType");
