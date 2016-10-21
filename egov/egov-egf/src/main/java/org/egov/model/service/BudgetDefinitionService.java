@@ -67,10 +67,17 @@ public class BudgetDefinitionService {
     }
 
     public List<Budget> search(Budget budget) {
-        if (budget.getFinancialYear() != null) {
-            return budgetDefinitionRepository.findByIsbereIsAndFinancialYearIdIs(budget.getIsbere(),
+        if (budget.getFinancialYear() != null && budget.getSearchBere()!=null) {
+            return budgetDefinitionRepository.findByIsbereIsAndFinancialYearIdIsOrderByFinancialYearIdAscNameAsc(budget.getSearchBere(),
                     budget.getFinancialYear().getId());
-        } else
+        }
+        if (budget.getFinancialYear() != null && budget.getSearchBere()==null) {
+            return budgetDefinitionRepository.findByFinancialYearIdIsOrderByFinancialYearIdAscNameAsc(budget.getFinancialYear().getId());
+        }
+        if (budget.getFinancialYear() == null && budget.getSearchBere()!=null) {
+            return budgetDefinitionRepository.findByIsbereIsOrderByFinancialYearIdAscNameAsc(budget.getSearchBere());
+        }
+        else
             return budgetDefinitionRepository.findAll();
     }
 
@@ -85,7 +92,7 @@ public class BudgetDefinitionService {
      */
     public List<Budget> getReferenceBudgetByFinancialYear() {
         Long financialYearId = null;
-        return budgetDefinitionRepository.findByIsbereIsAndFinancialYearIdIs("RE", financialYearId);
+        return budgetDefinitionRepository.findByIsbereIsAndFinancialYearIdIsOrderByFinancialYearIdAscNameAsc("RE", financialYearId);
     }
 
     public List<Budget> getReferenceBudgetList(Long financialYearId, List<Long> referenceBudgetIdList) {

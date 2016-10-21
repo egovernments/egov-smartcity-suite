@@ -13,7 +13,7 @@
 					</div>
 					<div class="panel-body">
 						<div class="form-group">
-							<label class="col-sm-4 control-label text-right"><spring:message
+							<label class="col-sm-2 control-label text-right"><spring:message
 									code="lbl.financialyear" /> </label>
 							<div class="col-sm-3 add-margin">
 								<form:select path="financialYear" id="financialYear"
@@ -27,6 +27,18 @@
 								</form:select>
 								<form:errors path="financialYear" cssClass="error-msg" />
 								</div>
+								<label class="col-sm-2 control-label text-right"><spring:message
+									code="lbl.isbere" /> </label>
+						<div class="col-sm-3 add-margin">
+							<form:select path="searchBere" id="searchBere" cssClass="form-control"
+								cssErrorClass="form-control error">
+								<form:option value="">
+									<spring:message code="lbl.select" />
+								</form:option>
+								<form:options items="${isBereList}" />
+							</form:select>
+							<form:errors path="isbere" cssClass="error-msg" />
+						</div>
 						</div>
 						<div>
 							<input type="hidden" id="mode" name="mode" value="${mode}" />

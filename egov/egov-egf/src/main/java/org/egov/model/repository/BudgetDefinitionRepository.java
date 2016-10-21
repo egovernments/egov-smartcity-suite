@@ -15,7 +15,7 @@ public interface BudgetDefinitionRepository extends JpaRepository<Budget, java.l
 
     public List<Budget> findByIsbereIsOrderByFinancialYearIdAscNameAsc(String isBere);
 
-    public List<Budget> findByIsbereIsAndFinancialYearIdIs(String bere, Long id);
+    public List<Budget> findByIsbereIsAndFinancialYearIdIsOrderByFinancialYearIdAscNameAsc(String bere, Long id);
 
     @Query("from Budget be where isActiveBudget=true and isbere =:isbere and financialYear.id=:financialYearId and id not in :rbIds")
     public List<Budget> findReferenceBudget(@Param("isbere") final String isbere,
@@ -28,5 +28,7 @@ public interface BudgetDefinitionRepository extends JpaRepository<Budget, java.l
 
     public List<Budget> findByIsbereIsAndFinancialYearIdIsAndIsPrimaryBudgetTrueAndParentIsNull(String isbere,
             Long financialYearId);
+
+    public List<Budget> findByFinancialYearIdIsOrderByFinancialYearIdAscNameAsc(Long financialYearId);
 
 }

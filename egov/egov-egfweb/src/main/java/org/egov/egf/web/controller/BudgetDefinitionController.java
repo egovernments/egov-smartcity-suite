@@ -40,6 +40,7 @@
 
 package org.egov.egf.web.controller;
 
+import java.util.Arrays;
 import java.util.List;
 import java.util.Locale;
 
@@ -51,6 +52,7 @@ import org.egov.egf.web.adaptor.BudgetJsonAdaptor;
 import org.egov.model.budget.Budget;
 import org.egov.model.budget.BudgetDetail;
 import org.egov.model.service.BudgetDefinitionService;
+import org.egov.utils.BeReType;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
 import org.springframework.http.MediaType;
@@ -85,6 +87,7 @@ public class BudgetDefinitionController {
 
     private void prepareNewForm(Model model) {
         model.addAttribute("financialYearList", cFinancialYearService.getFinancialYearNotClosed());
+        model.addAttribute("isBereList", Arrays.asList(BeReType.values()));
     };
 
     @RequestMapping(value = "/new", method = RequestMethod.GET)
