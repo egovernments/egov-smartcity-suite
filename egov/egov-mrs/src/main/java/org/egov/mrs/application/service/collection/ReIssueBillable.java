@@ -77,7 +77,7 @@ public class ReIssueBillable extends AbstractBillable implements Billable {
     public static final String DEFAULT_FUNCTIONARY_CODE = "1";
     public static final String DEFAULT_FUND_SRC_CODE = "01";
     public static final String DEFAULT_FUND_CODE = "01";
-    public static final String DISPLAY_MESSAGE = "Marriage Registration Collection";
+    public static final String DISPLAY_MESSAGE = "Marriage Certificate fee Collection";
     public static final String BILLTYPE_AUTO = "AUTO";
 
     private Long userId;
@@ -203,7 +203,7 @@ public class ReIssueBillable extends AbstractBillable implements Billable {
 
     @Override
     public String getDescription() {
-        return "Marriage Registration Re-Issue with Registration No : " + reIssue.getRegistration().getRegistrationNo();
+        return "Marriage Certificate Re-Issue with application No. : " + reIssue.getApplicationNo();
     }
 
     @Override
@@ -224,7 +224,7 @@ public class ReIssueBillable extends AbstractBillable implements Billable {
 
     @Override
     public String getConsumerId() {
-        return reIssue.getRegistration().getRegistrationNo();
+        return reIssue.getApplicationNo();
     }
 
     @Override

@@ -77,7 +77,7 @@ public class RegistrationBillable extends AbstractBillable implements Billable {
     public static final String DEFAULT_FUNCTIONARY_CODE = "1";
     public static final String DEFAULT_FUND_SRC_CODE = "01";
     public static final String DEFAULT_FUND_CODE = "01";
-    public static final String DISPLAY_MESSAGE = "Marriage Registration Collection";
+    public static final String DISPLAY_MESSAGE = "Marriage Registration Fee Collection";
     public static final String BILLTYPE_AUTO = "AUTO";
 
     private Long userId;
@@ -224,7 +224,7 @@ public class RegistrationBillable extends AbstractBillable implements Billable {
 
     @Override
     public String getConsumerId() {
-        return registration.getRegistrationNo();
+        return registration.getApplicationNo();
     }
 
     @Override

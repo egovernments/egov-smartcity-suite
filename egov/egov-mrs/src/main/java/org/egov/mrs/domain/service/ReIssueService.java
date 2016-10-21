@@ -48,6 +48,7 @@ import java.util.HashMap;
 import java.util.Hashtable;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.TimeUnit;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
@@ -57,8 +58,10 @@ import org.apache.commons.lang3.StringUtils;
 import org.egov.eis.service.EisCommonService;
 import org.egov.eis.web.contract.WorkflowContainer;
 import org.egov.infra.admin.master.entity.User;
-import org.egov.infra.messaging.MessagingService;
+import org.egov.infra.search.elastic.entity.ApplicationIndex;
 import org.egov.infra.search.elastic.entity.ApplicationIndexBuilder;
+import org.egov.infra.search.elastic.entity.enums.ApprovalStatus;
+import org.egov.infra.search.elastic.entity.enums.ClosureStatus;
 import org.egov.infra.search.elastic.service.ApplicationIndexService;
 import org.egov.infra.security.utils.SecurityUtils;
 import org.egov.infra.workflow.entity.State;
@@ -97,9 +100,6 @@ public class ReIssueService {
 
     @Autowired
     private SecurityUtils securityUtils;
-
-    @Autowired
-    private MessagingService messagingService;
 
     @Autowired
     @Qualifier("parentMessageSource")
@@ -177,6 +177,7 @@ public class ReIssueService {
         workflowService.transition(reIssue, workflowContainer, reIssue.getApprovalComent());
 
         create(reIssue);
+        createReIssueAppIndex(reIssue); 
         marriageSmsAndEmailService.sendSMSForReIssueApplication(reIssue);
         marriageSmsAndEmailService.sendEmailForReIssueApplication(reIssue); 
         return reIssue.getApplicationNo();
@@ -206,25 +207,26 @@ public class ReIssueService {
         workflowService.transition(reissue, workflowContainer, workflowContainer.getApproverComments());
         marriageSmsAndEmailService.sendSMSForReIssueApplication(reissue);
         marriageSmsAndEmailService.sendEmailForReIssueApplication(reissue);
-        createReIssueAppIndex(reissue); 
+        updateReIssueAppIndex(reissue); 
         return reissue;
     }
 
     @Transactional
-    public ReIssue rejectReIssue(ReIssue reIssue, final WorkflowContainer workflowContainer, final HttpServletRequest request) throws IOException {
-        reIssue.setStatus(workflowContainer.getWorkFlowAction().equalsIgnoreCase(MarriageConstants.WFLOW_ACTION_STEP_REJECT)?
+    public ReIssue rejectReIssue(ReIssue reissue, final WorkflowContainer workflowContainer, final HttpServletRequest request) throws IOException {
+        reissue.setStatus(workflowContainer.getWorkFlowAction().equalsIgnoreCase(MarriageConstants.WFLOW_ACTION_STEP_REJECT)?
                 marriageUtils.getStatusByCodeAndModuleType(ReIssue.ReIssueStatus.REJECTED.toString(), MarriageConstants.MODULE_NAME)
                 :marriageUtils.getStatusByCodeAndModuleType(ReIssue.ReIssueStatus.CANCELLED.toString(), MarriageConstants.MODULE_NAME));
         if(workflowContainer.getWorkFlowAction().equalsIgnoreCase(MarriageConstants.WFLOW_ACTION_STEP_CANCEL_REISSUE)){
-            MarriageCertificate marriageCertificate = marriageCertificateService.reIssueCertificate(reIssue,request,MarriageCertificateType.REJECTION.toString());
-            reIssue.addCertificate(marriageCertificate);
-            marriageSmsAndEmailService.sendSMSForReIssueApplication(reIssue);
-            marriageSmsAndEmailService.sendEmailForReIssueApplication(reIssue);
+            MarriageCertificate marriageCertificate = marriageCertificateService.reIssueCertificate(reissue,request,MarriageCertificateType.REJECTION.toString());
+            reissue.addCertificate(marriageCertificate);
+            updateReIssueAppIndex(reissue); 
+            marriageSmsAndEmailService.sendSMSForReIssueApplication(reissue);
+            marriageSmsAndEmailService.sendEmailForReIssueApplication(reissue);
         }
-        reIssue.setRejectionReason(workflowContainer.getApproverComments());
-        workflowService.transition(reIssue, workflowContainer, workflowContainer.getApproverComments());
+        reissue.setRejectionReason(workflowContainer.getApproverComments());
+        workflowService.transition(reissue, workflowContainer, workflowContainer.getApproverComments());
        
-        return reIssue;
+        return reissue;
     }
 
     private void createReIssueAppIndex(final ReIssue reIssue) {
@@ -241,6 +243,37 @@ public class ReIssueService {
         applicationIndexService.createApplicationIndex(applicationIndexBuilder.build());
     }
 
+	private void updateReIssueAppIndex(final ReIssue reissue) {
+		ApplicationIndex applicationIndex = applicationIndexService.findByApplicationNumber(reissue.getApplicationNo());
+		Integer elapsedDays = 0;
+		if (applicationIndex != null) {
+			if (!reissue.getStatus().getDescription().equalsIgnoreCase(ReIssue.ReIssueStatus.CREATED.toString())) {
+				applicationIndex.setStatus(reissue.getStatus().getDescription());
+				applicationIndex.setApplicantAddress(reissue.getApplicant().getContactInfo().getResidenceAddress());
+				applicationIndex.setApplicantName(reissue.getApplicant().getFullName());
+				if (reissue.getStatus().getCode().equals(ReIssue.ReIssueStatus.APPROVED)) {
+					elapsedDays = (int) TimeUnit.DAYS.convert(
+							new Date().getTime() - reissue.getApplicationDate().getTime(), TimeUnit.MILLISECONDS);
+					applicationIndex.setElapsedDays(elapsedDays);
+					applicationIndex.setApproved(ApprovalStatus.APPROVED);
+					applicationIndex.setClosed(ClosureStatus.YES);
+				}
+				// mark application index as rejected and closed on Application
+				// cancellation
+				else if (reissue.getStatus().getCode().equals(ReIssue.ReIssueStatus.REJECTED.toString())
+						|| reissue.getStatus().getCode().equals(ReIssue.ReIssueStatus.CANCELLED.toString())) {
+					elapsedDays = (int) TimeUnit.DAYS.convert(
+							new Date().getTime() - reissue.getApplicationDate().getTime(), TimeUnit.MILLISECONDS);
+					applicationIndex.setElapsedDays(elapsedDays);
+					applicationIndex.setApproved(ApprovalStatus.REJECTED);
+					applicationIndex.setClosed(ClosureStatus.YES);
+				}
+
+			}
+			applicationIndexService.updateApplicationIndex(applicationIndex);
+		} else
+			createReIssueAppIndex(reissue);
+	}
     private void updateReIssueData(final ReIssue reissueModel, final ReIssue reissue) {
         if(reissueModel.getFeeCriteria()!=null)
             reissue.setFeeCriteria(marriageFeeService.getFee(reissueModel.getFeeCriteria().getId()));
