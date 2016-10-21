@@ -104,7 +104,7 @@ public class JudgmentImplController {
         model.addAttribute("mode", "create");
         model.addAttribute("appealDocList", judgmentImplService.getAppealDocList(judgmentImpl));
         redirectAttrs.addFlashAttribute("judgmentImpl", judgmentImpl);
-        model.addAttribute("message", "Judgment Implementation Created successfully.");
+        model.addAttribute("message", "Judgment Implementation Saved successfully.");
         return "judgmentimpl-success";
 
     }

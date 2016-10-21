@@ -109,7 +109,7 @@ public class VacateStayController {
         model.addAttribute("lcNumber", legalCaseInterimOrder.getLegalCase().getLcNumber());
         model.addAttribute("legalCase", legalCaseInterimOrder.getLegalCase());
         redirectAttrs.addFlashAttribute("vacateStay", vacateStay);
-        model.addAttribute("message", "Vacate Stay Created successfully.");
+        model.addAttribute("message", "Vacate Stay Saved successfully.");
         return "vacatestay-success";
 
     }
