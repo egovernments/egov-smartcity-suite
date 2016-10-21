@@ -41,84 +41,40 @@
 <!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
 "http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
 <!-- Generated 10 Sep, 2009 12:59:28 PM by Hibernate Tools 3.2.0.CR1 -->
-<hibernate-mapping>
-	<class name="org.egov.collection.entity.Remittance" table="EGCL_REMITTANCE">
+<hibernate-mapping auto-import="false">
+	<class name="org.egov.collection.entity.RemittanceInstrument"
+		table="EGCL_REMITTANCE_INSTRUMENT">
 		<id name="id" type="long">
 			<column name="ID" precision="22" scale="0" />
 			<generator class="org.hibernate.id.enhanced.SequenceStyleGenerator">
-				<param name="sequence_name">SEQ_EGCL_REMITTANCE</param>
+				<param name="sequence_name">SEQ_EGCL_REMITTANCE_INSTRUMENT</param>
 			</generator>
 		</id>
-		<!-- version name="version" column="VERSION" type="long" / -->
-		<property name="referenceNumber" type="string">
-			<column name="REFERENCENUMBER" length="50" />
-		</property>
-		<property name="referenceDate" type="timestamp">
-			<column name="REFERENCEDATE" length="50" />
-		</property>
-		<many-to-one name="voucherHeader" class="org.egov.commons.CVoucherHeader"
+
+		<many-to-one name="remittance" class="org.egov.collection.entity.Remittance"
 			fetch="select">
-			<column name="voucherheader" precision="22" scale="0" />
+			<column name="remittance" />
 		</many-to-one>
-		<many-to-one name="function" class="org.egov.commons.CFunction"
-			fetch="select">
-			<column name="function" precision="22" scale="0" />
+		<many-to-one name="instrumentHeader"
+			class="org.egov.model.instrument.InstrumentHeader" fetch="select">
+			<column name="instrumentheader" />
 		</many-to-one>
-		<many-to-one name="fund" class="org.egov.commons.Fund"
-			fetch="select">
-			<column name="fund" precision="22" scale="0" />
-		</many-to-one>
-		<property name="remarks" type="string">
-			<column name="remarks" length="250" />
+		<property name="reconciled" type="boolean">
+			<column name="reconciled" />
 		</property>
-		<property name="reasonForDelay" type="string">
-			<column name="reasonfordelay" length="250" />
-		</property>
-		<many-to-one name="status" class="org.egov.commons.EgwStatus"
-			fetch="select">
-			<column name="status" precision="22" scale="0" not-null="true" />
-		</many-to-one>
-		<many-to-one name="state" class="org.egov.infra.workflow.entity.State"
-			cascade="all">
-			<column name="state" precision="22" scale="0" />
-		</many-to-one>
+
 		<many-to-one name="createdBy"
 			class="org.egov.infra.admin.master.entity.User" fetch="select">
 			<column name="CREATEDBY" precision="22" scale="0" />
 		</many-to-one>
-		<property name="createdDate" column="CREATEDDATE" type="timestamp" />
-		<many-to-one name="lastModifiedBy"
+
+		<many-to-one name="modifiedBy"
 			class="org.egov.infra.admin.master.entity.User" fetch="select">
 			<column name="LASTMODIFIEDBY" precision="22" scale="0" />
 		</many-to-one>
-		<property name="lastModifiedDate" column="LASTMODIFIEDDATE"
-			type="timestamp" />
-		<many-to-one name="bankAccount" class="org.egov.commons.Bankaccount"
-			fetch="select">
-			<column name="bankaccount" precision="22" scale="0" />
-		</many-to-one>
-		<set name="remittanceDetails" inverse="true" cascade="all,delete-orphan">
-			<key>
-				<column name="remittance" precision="22" scale="0" />
-			</key>
-			<one-to-many class="org.egov.collection.entity.RemittanceDetail" />
-		</set>
-		<set name="remittanceInstruments" inverse="true" cascade="all,delete-orphan">
-			<key>
-				<column name="remittance" precision="22" scale="0" />
-			</key>
-			<one-to-many class="org.egov.collection.entity.RemittanceInstrument" />
-		</set>
-		<set name="collectionRemittance" table="EGCL_COLLECTIONREMITTANCE">
-			<key>
-				<column name="remittance" precision="22" scale="0" />
-			</key>
-			<many-to-many class="org.egov.collection.entity.ReceiptHeader"
-				column="collectionheader" />
-		</set>
-	</class>
 
-	<query name="getRemitanceByVoucherNumber">
-    <![CDATA[select r from Remittance r where r.voucherHeader.voucherNumber= ?]]></query>
+		<property name="createdDate" column="CREATEDDATE" type="timestamp" />
+		<property name="modifiedDate" column="LASTMODIFIEDDATE" type="timestamp" />
+	</class>
 
 </hibernate-mapping>

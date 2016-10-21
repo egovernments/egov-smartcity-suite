@@ -49,7 +49,6 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
-import java.util.Map;
 
 import org.apache.log4j.Logger;
 import org.egov.billsaccounting.services.VoucherConstant;
@@ -57,6 +56,7 @@ import org.egov.collection.constants.CollectionConstants;
 import org.egov.collection.entity.ReceiptHeader;
 import org.egov.collection.entity.Remittance;
 import org.egov.collection.entity.RemittanceDetail;
+import org.egov.collection.entity.RemittanceInstrument;
 import org.egov.collection.utils.CollectionsNumberGenerator;
 import org.egov.collection.utils.CollectionsUtil;
 import org.egov.collection.utils.FinancialsUtil;
@@ -72,7 +72,6 @@ import org.egov.infra.exception.ApplicationRuntimeException;
 import org.egov.infstr.models.ServiceDetails;
 import org.egov.infstr.services.PersistenceService;
 import org.egov.model.instrument.InstrumentHeader;
-import org.egov.model.instrument.InstrumentType;
 import org.egov.pims.commons.Position;
 import org.hibernate.Query;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -275,8 +274,7 @@ public class RemittanceServiceImpl extends RemittanceService {
         }
         final Remittance remittance = populateAndPersistRemittance(totalCashAmt, totalChequeAmount, fundCode,
                 cashInHandGLCode, chequeInHandGlcode, serviceGlCode, functionCode, bankRemitList, createVoucher,
-                voucherDate, instrumentHeaderListCash, instrumentHeaderListCheque, depositedBankAccount,
-                totalCashVoucherAmt, totalChequeVoucherAmt);
+                voucherDate, depositedBankAccount, totalCashVoucherAmt, totalChequeVoucherAmt);
 
         for (final ReceiptHeader receiptHeader : bankRemitList) {
             receiptHeader.setStatus(receiptStatusRemitted);
@@ -332,8 +330,7 @@ public class RemittanceServiceImpl extends RemittanceService {
     public Remittance populateAndPersistRemittance(final BigDecimal totalCashAmount, final BigDecimal totalChequeAmount,
             final String fundCode, final String cashInHandGLCode, final String chequeInHandGLcode,
             final String serviceGLCode, final String functionCode, final List<ReceiptHeader> receiptHeadList,
-            final String createVoucher, final Date voucherDate, final List<InstrumentHeader> instrumentHeaderListCash,
-            final List<InstrumentHeader> instrumentHeaderListCheque, final Bankaccount depositedBankAccount,
+            final String createVoucher, final Date voucherDate, final Bankaccount depositedBankAccount,
             final BigDecimal totalCashVoucherAmt, final BigDecimal totalChequeVoucherAmt) {
         CVoucherHeader voucherHeader = null;
         final CFinancialYear financialYear = collectionsUtil.getFinancialYearforDate(new Date());
@@ -370,33 +367,23 @@ public class RemittanceServiceImpl extends RemittanceService {
             voucherHeader = createVoucherForRemittance(cashInHandGLCode, chequeInHandGLcode, serviceGLCode,
                     functionCode, totalCashVoucherAmt, totalChequeVoucherAmt, voucherDate, fundCode);
             remittance.setVoucherHeader(voucherHeader);
-            Boolean voucherTypeForChequeDDCard = false;
-            if (collectionsUtil
-                    .getAppConfigValue(CollectionConstants.MODULE_NAME_COLLECTIONS_CONFIG,
-                            CollectionConstants.APPCONFIG_VALUE_REMITTANCEVOUCHERTYPEFORCHEQUEDDCARD)
-                    .equals(CollectionConstants.FINANCIAL_RECEIPTS_VOUCHERTYPE))
-                voucherTypeForChequeDDCard = true;
-            final Map<String, Object> instrumentDepositMap = financialsUtil.prepareForUpdateInstrumentDepositSQL();
-            for (final InstrumentHeader instrumentHeaderCheque : instrumentHeaderListCheque)
-                if (voucherHeader.getId() != null && serviceGLCode != null) {
-                    final Map<String, Object> chequeMap = constructInstrumentMap(instrumentDepositMap,
-                            depositedBankAccount, instrumentHeaderCheque, voucherHeader, voucherDate);
-                    if (voucherTypeForChequeDDCard)
-                        financialsUtil.updateCheque_DD_Card_Deposit_Receipt(chequeMap);
-                    else
-                        financialsUtil.updateCheque_DD_Card_Deposit(chequeMap, voucherHeader, instrumentHeaderCheque,
-                                depositedBankAccount);
+            for (ReceiptHeader receiptHeader : receiptHeadList) {
+                for (InstrumentHeader instHead : receiptHeader.getReceiptInstrument()) {
+                    persistRemittanceInstrument(remittance, instHead);
                 }
-            for (final InstrumentHeader instrumentHeaderCash : instrumentHeaderListCash)
-                if (voucherHeader.getId() != null && serviceGLCode != null) {
-                    final Map<String, Object> cashMap = constructInstrumentMap(instrumentDepositMap,
-                            depositedBankAccount, instrumentHeaderCash, voucherHeader, voucherDate);
-                    financialsUtil.updateCashDeposit(cashMap, voucherHeader, instrumentHeaderCash,
-                            depositedBankAccount);
-                }
-            remittancePersistService.update(remittance);
+            }
+            remittancePersistService.persist(remittance);
         }
         return remittance;
+    }
+
+    @Transactional
+    private void persistRemittanceInstrument(Remittance remittance, InstrumentHeader instrumentHeader) {
+        RemittanceInstrument remittanceInstrument = new RemittanceInstrument();
+        remittanceInstrument.setRemittance(remittance);
+        remittanceInstrument.setInstrumentHeader(instrumentHeader);
+        remittanceInstrument.setReconciled(Boolean.FALSE);
+        persistenceService.persist(remittanceInstrument);
     }
 
     public HashMap<String, Object> prepareAccountCodeDetails(final String glCode, final String functionCode,
@@ -425,23 +412,6 @@ public class RemittanceServiceImpl extends RemittanceService {
         headerdetails.put(VoucherConstant.MODULEID, CollectionConstants.COLLECTIONS_EG_MODULES_ID);
         headerdetails.put(VoucherConstant.MODULEID, CollectionConstants.COLLECTIONS_EG_MODULES_ID);
         return headerdetails;
-    }
-
-    private Map<String, Object> constructInstrumentMap(final Map<String, Object> instrumentDepositMap,
-            final Bankaccount bankaccount, final InstrumentHeader instrumentHeader, final CVoucherHeader voucherHeader,
-            final Date voucherDate) {
-        final InstrumentType instrumentType = (InstrumentType) persistenceService.find(
-                "select it from InstrumentType it,InstrumentHeader ih where " + "ih.instrumentType=it.id and ih.id=?",
-                instrumentHeader.getId());
-        instrumentDepositMap.put("instrumentheader", instrumentHeader.getId());
-        instrumentDepositMap.put("bankaccountid", bankaccount.getId());
-        instrumentDepositMap.put("instrumentamount", instrumentHeader.getInstrumentAmount());
-        instrumentDepositMap.put("instrumenttype", instrumentType.getType());
-        instrumentDepositMap.put("depositdate", voucherDate);
-        instrumentDepositMap.put("createdby", voucherHeader.getCreatedBy().getId());
-        instrumentDepositMap.put("ispaycheque", instrumentHeader.getIsPayCheque());
-        instrumentDepositMap.put("payinid", voucherHeader.getId());
-        return instrumentDepositMap;
     }
 
     private void startWorkflow(final Remittance remittance) {
@@ -586,7 +556,7 @@ public class RemittanceServiceImpl extends RemittanceService {
                     if (arrayObjectInitialIndex[3].equals(CollectionConstants.INSTRUMENTTYPE_CHEQUE)
                             || arrayObjectInitialIndex[3].equals(CollectionConstants.INSTRUMENTTYPE_DD)) {
                         BigDecimal existingAmount = BigDecimal.ZERO;
-                        if (objHashMap.get(CollectionConstants.BANKREMITTANCE_SERVICETOTALCHEQUEAMOUNT) != "")
+                        if (!objHashMap.get(CollectionConstants.BANKREMITTANCE_SERVICETOTALCHEQUEAMOUNT).equals(""))
                             existingAmount = new BigDecimal(objHashMap
                                     .get(CollectionConstants.BANKREMITTANCE_SERVICETOTALCHEQUEAMOUNT).toString());
                         existingAmount = existingAmount.add(new BigDecimal(arrayObjectInitialIndex[0].toString()));
