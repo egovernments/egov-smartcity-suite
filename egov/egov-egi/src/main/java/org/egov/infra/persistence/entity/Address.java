@@ -44,25 +44,24 @@ import com.google.gson.annotations.Expose;
 import org.apache.commons.lang3.StringUtils;
 import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.persistence.entity.enums.AddressType;
-import org.hibernate.search.annotations.DocumentId;
 import org.hibernate.validator.constraints.SafeHtml;
 
 import javax.persistence.*;
 
+import static org.egov.infra.persistence.entity.Address.SEQ_ADDRESS;
+
 @Entity
 @Table(name = "eg_address")
 @Inheritance(strategy = InheritanceType.JOINED)
-@SequenceGenerator(name = Address.SEQ_ADDRESS, sequenceName = Address.SEQ_ADDRESS, allocationSize = 1)
+@SequenceGenerator(name = SEQ_ADDRESS, sequenceName = SEQ_ADDRESS, allocationSize = 1)
 @Cacheable
 public abstract class Address extends AbstractPersistable<Long> {
 
-    private static final long serialVersionUID = 4842889134725565148L;
     public static final String SEQ_ADDRESS = "seq_eg_address";
-
+    private static final long serialVersionUID = 4842889134725565148L;
     @Expose
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = SEQ_ADDRESS)
-    @DocumentId
     private Long id;
 
     @ManyToOne(fetch = FetchType.LAZY)

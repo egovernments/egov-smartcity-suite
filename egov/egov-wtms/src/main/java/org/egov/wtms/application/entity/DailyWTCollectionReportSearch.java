@@ -39,20 +39,14 @@
  */
 package org.egov.wtms.application.entity;
 
-import static org.egov.search.domain.Filter.rangeFilter;
-import static org.egov.search.domain.Filter.termsStringFilter;
+import org.jboss.logging.Logger;
 
+import javax.validation.ValidationException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
-
-import javax.validation.ValidationException;
-
-import org.egov.search.domain.Filter;
-import org.egov.search.domain.Filters;
-import org.jboss.logging.Logger;
 
 public class DailyWTCollectionReportSearch {
     private static final Logger logger = Logger.getLogger(DailyWTCollectionReportSearch.class);
@@ -77,6 +71,10 @@ public class DailyWTCollectionReportSearch {
         this.consumerCode = consumerCode;
     }
 
+    public String getFromDate() {
+        return fromDate;
+    }
+
     public void setFromDate(final String fromDate) {
         if (null != fromDate)
             try {
@@ -86,6 +84,10 @@ public class DailyWTCollectionReportSearch {
             } catch (final ParseException e) {
                 throw new ValidationException(e.getMessage());
             }
+    }
+
+    public String getToDate() {
+        return toDate;
     }
 
     public void setToDate(final String toDate) {
@@ -103,14 +105,6 @@ public class DailyWTCollectionReportSearch {
             } catch (final ParseException e) {
                 throw new ValidationException(e.getMessage());
             }
-    }
-
-    public String getFromDate() {
-        return fromDate;
-    }
-
-    public String getToDate() {
-        return toDate;
     }
 
     public String getCollectionMode() {
@@ -161,7 +155,7 @@ public class DailyWTCollectionReportSearch {
         this.ulbName = ulbName;
     }
 
-    public Filters searchCollectionFilters() {
+    /*public Filters searchCollectionFilters() {
         final List<Filter> andFilters = new ArrayList<>(0);
         andFilters.add(termsStringFilter("clauses.cityname", ulbName));
         andFilters.add(termsStringFilter("clauses.channel", collectionMode));
@@ -184,7 +178,7 @@ public class DailyWTCollectionReportSearch {
         andFilters.add(termsStringFilter("clauses.ulbname", ulbName));
         andFilters.add(termsStringFilter("clauses.ward", revenueWard));
         return Filters.withAndFilters(andFilters);
-    }
+    }*/
 
     public String searchQuery() {
         return searchText;

@@ -42,7 +42,6 @@ package org.egov.eis.entity;
 import org.egov.infra.admin.master.entity.Boundary;
 import org.egov.infra.admin.master.entity.BoundaryType;
 import org.egov.infra.persistence.entity.AbstractAuditable;
-import org.hibernate.search.annotations.DocumentId;
 
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -54,16 +53,15 @@ import javax.persistence.ManyToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 
+import static org.egov.eis.entity.Jurisdiction.SEQ_JURISDICTION;
+
 @Entity
 @Table(name = "egeis_jurisdiction")
-@SequenceGenerator(name = Jurisdiction.SEQ_JURISDICTION, sequenceName = Jurisdiction.SEQ_JURISDICTION, allocationSize = 1)
+@SequenceGenerator(name = SEQ_JURISDICTION, sequenceName = SEQ_JURISDICTION, allocationSize = 1)
 public class Jurisdiction extends AbstractAuditable {
 
-    private static final long serialVersionUID = 8931560836436430730L;
-
     public static final String SEQ_JURISDICTION = "SEQ_EGEIS_JURISDICTION";
-
-    @DocumentId
+    private static final long serialVersionUID = 8931560836436430730L;
     @Id
     @GeneratedValue(generator = SEQ_JURISDICTION, strategy = GenerationType.SEQUENCE)
     private Long id;
@@ -74,12 +72,12 @@ public class Jurisdiction extends AbstractAuditable {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "boundarytype")
-    private BoundaryType boundaryType; 
+    private BoundaryType boundaryType;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name="boundary")
+    @JoinColumn(name = "boundary")
     private Boundary boundary;
-    
+
     public Employee getEmployee() {
         return employee;
     }
@@ -106,11 +104,11 @@ public class Jurisdiction extends AbstractAuditable {
         this.boundaryType = boundaryType;
     }
 
-	public Boundary getBoundary() {
-		return boundary;
-	}
+    public Boundary getBoundary() {
+        return boundary;
+    }
 
-	public void setBoundary(Boundary boundary) {
-		this.boundary = boundary;
-	}
+    public void setBoundary(Boundary boundary) {
+        this.boundary = boundary;
+    }
 }

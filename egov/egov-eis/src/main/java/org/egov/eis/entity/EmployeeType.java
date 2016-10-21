@@ -42,7 +42,6 @@ package org.egov.eis.entity;
 import org.egov.commons.CChartOfAccounts;
 import org.egov.infra.persistence.entity.AbstractAuditable;
 import org.egov.infra.validation.regex.Constants;
-import org.hibernate.search.annotations.DocumentId;
 import org.hibernate.validator.constraints.SafeHtml;
 
 import javax.persistence.Column;
@@ -57,23 +56,22 @@ import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.validation.constraints.Pattern;
 
+import static org.egov.eis.entity.EmployeeType.SEQ_EMPLOYEETYPE;
+
 @Entity
 @Table(name = "egeis_employeetype")
-@SequenceGenerator(name = EmployeeType.SEQ_EMPLOYEETYPE, sequenceName = EmployeeType.SEQ_EMPLOYEETYPE, allocationSize = 1)
+@SequenceGenerator(name = SEQ_EMPLOYEETYPE, sequenceName = SEQ_EMPLOYEETYPE, allocationSize = 1)
 public class EmployeeType extends AbstractAuditable {
 
-    private static final long serialVersionUID = 747671541670667791L;
     public static final String SEQ_EMPLOYEETYPE = "SEQ_EGEIS_EMPLOYEETYPE";
-
-    @DocumentId
+    private static final long serialVersionUID = 747671541670667791L;
+    @SafeHtml
+    @Column(name = "name", unique = true)
+    @Pattern(regexp = Constants.ALPHABETS)
+    public String name;
     @Id
     @GeneratedValue(generator = SEQ_EMPLOYEETYPE, strategy = GenerationType.SEQUENCE)
     private Long id;
-   
-    @SafeHtml
-    @Column(name="name",unique=true)
-    @Pattern(regexp = Constants.ALPHABETS)
-    public String name;
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "chartofaccounts")
     private CChartOfAccounts chartOfAccounts;

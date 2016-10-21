@@ -181,7 +181,7 @@ public class BudgetService extends PersistenceService<Budget, Long> {
      * @return boolean Finds out whether RE is created and Approved for the given date
      */
     public boolean hasApprovedReAsonDate(final Long finYearId, final Date budgetApprovedDate) {
-        final Query qry = getSearchSession()
+        final Query qry = getSession()
                 .createQuery(
                         "select name from  Budget where financialYear.id=:finYearId and isbere='RE' "
                                 +

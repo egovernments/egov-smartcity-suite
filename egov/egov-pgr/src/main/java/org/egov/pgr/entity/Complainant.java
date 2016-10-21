@@ -43,7 +43,6 @@ package org.egov.pgr.entity;
 import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.persistence.entity.AbstractPersistable;
 import org.egov.infra.validation.regex.Constants;
-import org.egov.search.domain.Searchable;
 import org.hibernate.validator.constraints.Email;
 import org.hibernate.validator.constraints.Length;
 import org.hibernate.validator.constraints.SafeHtml;
@@ -58,34 +57,31 @@ import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.validation.constraints.Pattern;
 
+import static org.egov.pgr.entity.Complainant.SEQ_COMPLAINANT;
+
 @Entity
 @Table(name = "egpgr_complainant")
-@Searchable
-@SequenceGenerator(name = Complainant.SEQ_COMPLAINANT, sequenceName = Complainant.SEQ_COMPLAINANT, allocationSize = 1)
+@SequenceGenerator(name = SEQ_COMPLAINANT, sequenceName = SEQ_COMPLAINANT, allocationSize = 1)
 public class Complainant extends AbstractPersistable<Long> {
 
-    private static final long serialVersionUID = 5691022600220045218L;
     public static final String SEQ_COMPLAINANT = "SEQ_EGPGR_COMPLAINANT";
-
+    private static final long serialVersionUID = 5691022600220045218L;
     @Id
     @GeneratedValue(generator = SEQ_COMPLAINANT, strategy = GenerationType.SEQUENCE)
     private Long id;
 
     @Length(max = 150)
     @SafeHtml
-    @Searchable
     private String name;
 
     @Length(max = 20)
     @SafeHtml
     @Pattern(regexp = Constants.MOBILE_NUM)
-    @Searchable
     private String mobile;
 
     @Length(max = 100)
     @SafeHtml
     @Email(regexp = Constants.EMAIL)
-    @Searchable
     private String email;
 
     @ManyToOne

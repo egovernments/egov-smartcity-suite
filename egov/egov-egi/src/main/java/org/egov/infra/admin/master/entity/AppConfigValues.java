@@ -43,8 +43,6 @@ package org.egov.infra.admin.master.entity;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.google.gson.annotations.Expose;
 import org.egov.infra.persistence.entity.AbstractAuditable;
-import org.egov.search.domain.Searchable;
-import org.hibernate.search.annotations.DocumentId;
 import org.hibernate.validator.constraints.Length;
 import org.hibernate.validator.constraints.NotBlank;
 import org.hibernate.validator.constraints.SafeHtml;
@@ -70,15 +68,12 @@ import static org.egov.infra.admin.master.entity.AppConfigValues.SEQ_APPCONFIG_V
 
 @Entity
 @Table(name = "eg_appconfig_values")
-@Searchable
 @SequenceGenerator(name = SEQ_APPCONFIG_VALUE, sequenceName = SEQ_APPCONFIG_VALUE, allocationSize = 1)
 public class AppConfigValues extends AbstractAuditable {
 
-    private static final long serialVersionUID = 1L;
     public static final String SEQ_APPCONFIG_VALUE = "SEQ_EG_APPCONFIG_VALUES";
-
+    private static final long serialVersionUID = 1L;
     @Expose
-    @DocumentId
     @Id
     @GeneratedValue(generator = SEQ_APPCONFIG_VALUE, strategy = SEQUENCE)
     private Long id;
@@ -86,7 +81,6 @@ public class AppConfigValues extends AbstractAuditable {
     @NotBlank
     @SafeHtml
     @Length(max = 4000)
-    @Searchable
     @Column(name = "value")
     private String value;
 

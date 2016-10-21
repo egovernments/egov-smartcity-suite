@@ -1,11 +1,7 @@
 package org.egov.stms.elasticSearch.entity;
 
-import java.util.Map;
-
-import org.egov.search.domain.Document;
-
 public class SewerageSearchResult {
-	private Document document;
+	/*private Document document;
 	private Map<String, String> actions;
 	
 	public Document getDocument() {
@@ -19,7 +15,7 @@ public class SewerageSearchResult {
 	}
 	public void setActions(Map<String, String> actions) {
 		this.actions = actions;
-	}
+	}*/
 	
 	
 	

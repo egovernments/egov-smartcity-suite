@@ -44,7 +44,6 @@ import org.egov.infra.admin.master.entity.Department;
 import org.egov.infra.workflow.entity.StateAware;
 import org.egov.pims.commons.Designation;
 import org.egov.pims.commons.Position;
-import org.hibernate.search.annotations.DocumentId;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -59,15 +58,15 @@ import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
 
+import static org.egov.pims.model.EmpPosition.SEQ_EMPPOSITION;
+
 @Entity
 @Table(name = "EGEIS_POST_CREATION")
-@SequenceGenerator(name = EmpPosition.SEQ_EMPPOSITION, sequenceName = EmpPosition.SEQ_EMPPOSITION, allocationSize = 1)
+@SequenceGenerator(name = SEQ_EMPPOSITION, sequenceName = SEQ_EMPPOSITION, allocationSize = 1)
 public class EmpPosition extends StateAware {
 
-    private static final long serialVersionUID = 9220002621595085170L;
     public static final String SEQ_EMPPOSITION = "SEQ_EGEIS_POST_CREATION";
-
-    @DocumentId
+    private static final long serialVersionUID = 9220002621595085170L;
     @Id
     @GeneratedValue(generator = SEQ_EMPPOSITION, strategy = GenerationType.SEQUENCE)
     private Long id;

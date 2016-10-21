@@ -41,7 +41,6 @@
 package org.egov.infra.workflow.matrix.entity;
 
 import org.egov.infra.persistence.entity.AbstractPersistable;
-import org.hibernate.search.annotations.DocumentId;
 import org.hibernate.validator.constraints.SafeHtml;
 
 import javax.persistence.Entity;
@@ -56,17 +55,17 @@ import javax.validation.constraints.NotNull;
 import java.math.BigDecimal;
 import java.util.Date;
 
+import static org.egov.infra.workflow.matrix.entity.WorkFlowMatrix.SEQ_WF_MATRIX;
+
 @Entity
 @Table(name = "EG_WF_MATRIX")
-@SequenceGenerator(name = WorkFlowMatrix.SEQ_WF_MATRIX, sequenceName = WorkFlowMatrix.SEQ_WF_MATRIX, allocationSize = 1)
-public class WorkFlowMatrix extends AbstractPersistable<Long>implements Cloneable {
+@SequenceGenerator(name = SEQ_WF_MATRIX, sequenceName = SEQ_WF_MATRIX, allocationSize = 1)
+public class WorkFlowMatrix extends AbstractPersistable<Long> implements Cloneable {
 
-    private static final long serialVersionUID = 4954386159285858993L;
     public static final String SEQ_WF_MATRIX = "SEQ_EG_WF_MATRIX";
-
+    private static final long serialVersionUID = 4954386159285858993L;
     @Id
     @GeneratedValue(generator = SEQ_WF_MATRIX, strategy = GenerationType.SEQUENCE)
-    @DocumentId
     private Long id;
 
     @SafeHtml
@@ -121,9 +120,9 @@ public class WorkFlowMatrix extends AbstractPersistable<Long>implements Cloneabl
     }
 
     public WorkFlowMatrix(final String department, final String objectType, final String currentState, final String currentStatus,
-            final String pendingActions, final String currentDesignation, final String additionalRule, final String nextState,
-            final String nextAction, final String nextDesignation, final String nextStatus,
-            final String validActions, final BigDecimal fromQty, final BigDecimal toQty, final Date fromDate, final Date toDate) {
+                          final String pendingActions, final String currentDesignation, final String additionalRule, final String nextState,
+                          final String nextAction, final String nextDesignation, final String nextStatus,
+                          final String validActions, final BigDecimal fromQty, final BigDecimal toQty, final Date fromDate, final Date toDate) {
         super();
         this.department = department;
         this.objectType = objectType;

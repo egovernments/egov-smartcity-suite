@@ -41,7 +41,6 @@ package org.egov.eis.entity;
 
 import org.egov.infra.admin.master.entity.Department;
 import org.egov.infra.persistence.entity.AbstractAuditable;
-import org.hibernate.search.annotations.DocumentId;
 
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -53,15 +52,15 @@ import javax.persistence.ManyToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 
+import static org.egov.eis.entity.HeadOfDepartments.SEQ_HOD;
+
 @Entity
 @Table(name = "egeis_employee_hod")
-@SequenceGenerator(name = HeadOfDepartments.SEQ_HOD, sequenceName = HeadOfDepartments.SEQ_HOD, allocationSize = 1)
+@SequenceGenerator(name = SEQ_HOD, sequenceName = SEQ_HOD, allocationSize = 1)
 public class HeadOfDepartments extends AbstractAuditable {
 
-    private static final long serialVersionUID = -5048152219787528507L;
     public static final String SEQ_HOD = "SEQ_EGEIS_EMPLOYEE_HOD";
-
-    @DocumentId
+    private static final long serialVersionUID = -5048152219787528507L;
     @Id
     @GeneratedValue(generator = SEQ_HOD, strategy = GenerationType.SEQUENCE)
     private Long id;

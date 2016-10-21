@@ -41,7 +41,6 @@
 package org.egov.tl.entity;
 
 import org.egov.infra.persistence.entity.AbstractAuditable;
-import org.hibernate.search.annotations.DocumentId;
 import org.hibernate.validator.constraints.Length;
 import org.hibernate.validator.constraints.NotBlank;
 import org.hibernate.validator.constraints.SafeHtml;
@@ -61,13 +60,10 @@ import javax.persistence.Table;
 @Table(name = "EGTL_LICENSEE")
 @SequenceGenerator(name = Licensee.SEQUENCE, sequenceName = Licensee.SEQUENCE, allocationSize = 1)
 public class Licensee extends AbstractAuditable {
-    private static final long serialVersionUID = 6723590685484215531L;
-
     public static final String SEQUENCE = "SEQ_EGTL_LICENSEE";
-
+    private static final long serialVersionUID = 6723590685484215531L;
     @Id
     @GeneratedValue(generator = SEQUENCE, strategy = GenerationType.SEQUENCE)
-    @DocumentId
     private Long id;
 
     @NotBlank(message = "licensee.name.err.required")
@@ -107,13 +103,13 @@ public class Licensee extends AbstractAuditable {
     private License license;
 
     @Override
-    protected void setId(final Long id) {
-        this.id = id;
+    public Long getId() {
+        return this.id;
     }
 
     @Override
-    public Long getId() {
-        return this.id;
+    protected void setId(final Long id) {
+        this.id = id;
     }
 
     public String getMobilePhoneNumber() {

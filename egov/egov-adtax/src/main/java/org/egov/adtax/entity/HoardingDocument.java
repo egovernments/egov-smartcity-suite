@@ -42,7 +42,6 @@ package org.egov.adtax.entity;
 
 import org.egov.infra.filestore.entity.FileStoreMapper;
 import org.egov.infra.persistence.entity.AbstractAuditable;
-import org.hibernate.search.annotations.DocumentId;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.persistence.*;
@@ -55,14 +54,12 @@ import java.util.Set;
 @SequenceGenerator(name = HoardingDocument.SEQ_HOARDING_DOCUMENT, sequenceName = HoardingDocument.SEQ_HOARDING_DOCUMENT, allocationSize = 1)
 public class HoardingDocument extends AbstractAuditable {
 
-    private static final long serialVersionUID = 1938612090916339332L;
     public static final String SEQ_HOARDING_DOCUMENT = "SEQ_EGADTAX_DOCUMENT";
-   
+    private static final long serialVersionUID = 1938612090916339332L;
     @Id
     @GeneratedValue(generator = SEQ_HOARDING_DOCUMENT, strategy = GenerationType.SEQUENCE)
-    @DocumentId
     private Long id;
-    
+
     @ManyToOne
     @JoinColumn(name = "doctype")
     private HoardingDocumentType doctype;
@@ -71,11 +68,11 @@ public class HoardingDocument extends AbstractAuditable {
 
     @Temporal(TemporalType.DATE)
     private Date docDate;
-    
+
     private boolean enclosed;
 
     @OneToMany(fetch = FetchType.LAZY, orphanRemoval = true, cascade = CascadeType.ALL)
-    @JoinTable(name = "EGADTAX_DOCUMENT_FILES", joinColumns = @JoinColumn(name = "document") , inverseJoinColumns = @JoinColumn(name = "filestore") )
+    @JoinTable(name = "EGADTAX_DOCUMENT_FILES", joinColumns = @JoinColumn(name = "document"), inverseJoinColumns = @JoinColumn(name = "filestore"))
     private Set<FileStoreMapper> files = new HashSet<>();
 
     @Transient
@@ -130,11 +127,11 @@ public class HoardingDocument extends AbstractAuditable {
     public void setFiles(final Set<FileStoreMapper> files) {
         this.files = files;
     }
-    
+
     public void addFiles(final Set<FileStoreMapper> files) {
         this.files.addAll(files);
     }
-    
+
 
     public MultipartFile[] getAttachments() {
         return attachments;

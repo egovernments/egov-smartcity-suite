@@ -40,43 +40,17 @@
 
 package org.egov.stms.web.controller.elasticSearch;
 
-import static java.util.Arrays.asList;
-import static org.egov.ptis.constants.PropertyTaxConstants.REVENUE_HIERARCHY_TYPE;
-import static org.egov.stms.utils.constants.SewerageTaxConstants.COLLECTDONATIONCHARHGES;
-import static org.egov.stms.utils.constants.SewerageTaxConstants.REVENUE_WARD;
-import static org.egov.stms.utils.constants.SewerageTaxConstants.SEARCHABLE_SHSCNO;
-
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
-import javax.servlet.http.HttpServletRequest;
-
 import org.apache.log4j.Logger;
-import org.egov.config.search.Index;
-import org.egov.config.search.IndexType;
 import org.egov.infra.admin.master.entity.Boundary;
-import org.egov.infra.admin.master.entity.City;
-import org.egov.infra.admin.master.entity.Role;
 import org.egov.infra.admin.master.service.BoundaryService;
 import org.egov.infra.admin.master.service.CityService;
-import org.egov.infra.config.core.ApplicationThreadLocals;
 import org.egov.ptis.domain.model.AssessmentDetails;
-import org.egov.search.domain.Document;
-import org.egov.search.domain.Page;
-import org.egov.search.domain.SearchResult;
-import org.egov.search.domain.Sort;
-import org.egov.search.service.SearchService;
 import org.egov.stms.elasticSearch.entity.SewerageCollectFeeSearchRequest;
-import org.egov.stms.elasticSearch.entity.SewerageSearchResult;
 import org.egov.stms.transactions.entity.SewerageApplicationDetails;
 import org.egov.stms.transactions.service.SewerageApplicationDetailsService;
 import org.egov.stms.transactions.service.SewerageConnectionService;
 import org.egov.stms.transactions.service.SewerageThirdPartyServices;
-import org.egov.stms.utils.SewerageActionDropDownUtil;
 import org.egov.stms.utils.SewerageTaxUtils;
-import org.elasticsearch.search.sort.SortOrder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -85,15 +59,18 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
+
+import javax.servlet.http.HttpServletRequest;
+import java.util.List;
+
+import static org.egov.ptis.constants.PropertyTaxConstants.REVENUE_HIERARCHY_TYPE;
+import static org.egov.stms.utils.constants.SewerageTaxConstants.REVENUE_WARD;
 
 @Controller
 @RequestMapping(value = "/collectfee/search")
 public class SewerageCollectFeeSearchController {
 
-    @Autowired
-    private SearchService searchService;
     @Autowired
     private CityService cityService;
     @Autowired
@@ -145,7 +122,7 @@ public class SewerageCollectFeeSearchController {
     }
     
    
-    @SuppressWarnings("unchecked")
+    /*@SuppressWarnings("unchecked")
     @RequestMapping(method = RequestMethod.POST)
     @ResponseBody
     public List<SewerageSearchResult> searchApplication(@ModelAttribute final SewerageCollectFeeSearchRequest searchRequest) {
@@ -191,6 +168,6 @@ public class SewerageCollectFeeSearchController {
             }
         }
         return searchResultFomatted;
-    }
+    }*/
 
 }

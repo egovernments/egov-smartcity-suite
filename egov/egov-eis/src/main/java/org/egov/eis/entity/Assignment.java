@@ -39,9 +39,14 @@
  */
 package org.egov.eis.entity;
 
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
+import org.egov.commons.CFunction;
+import org.egov.commons.Functionary;
+import org.egov.commons.Fund;
+import org.egov.infra.admin.master.entity.Department;
+import org.egov.infra.persistence.entity.AbstractAuditable;
+import org.egov.pims.commons.Designation;
+import org.egov.pims.commons.Position;
+import org.egov.pims.model.GradeMaster;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -56,78 +61,59 @@ import javax.persistence.OneToMany;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
 
-import org.egov.commons.CFunction;
-import org.egov.commons.Functionary;
-import org.egov.commons.Fund;
-import org.egov.infra.admin.master.entity.Department;
-import org.egov.infra.persistence.entity.AbstractAuditable;
-import org.egov.pims.commons.Designation;
-import org.egov.pims.commons.Position;
-import org.egov.pims.model.GradeMaster;
-import org.hibernate.search.annotations.DocumentId;
+import static org.egov.eis.entity.Assignment.SEQ_ASSIGNMENT;
 
 @Entity
 @Table(name = "egeis_assignment")
-@SequenceGenerator(name = Assignment.SEQ_ASSIGNMENT, sequenceName = Assignment.SEQ_ASSIGNMENT, allocationSize = 1)
+@SequenceGenerator(name = SEQ_ASSIGNMENT, sequenceName = SEQ_ASSIGNMENT, allocationSize = 1)
 public class Assignment extends AbstractAuditable {
 
-    private static final long serialVersionUID = -2720951718725134740L;
-
     public static final String SEQ_ASSIGNMENT = "SEQ_EGEIS_ASSIGNMENT";
-
-    @DocumentId
+    private static final long serialVersionUID = -2720951718725134740L;
     @Id
     @GeneratedValue(generator = SEQ_ASSIGNMENT, strategy = GenerationType.SEQUENCE)
     private Long id;
-
     @NotNull
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "position")
     private Position position;
-
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "functionary")
     private Functionary functionary;
-
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "fund")
     private Fund fund;
-
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "function")
     private CFunction function;
-
     @NotNull
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "designation")
     private Designation designation;
-
     @NotNull
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "department")
     private Department department;
-
     @Column(name = "isprimary")
     private boolean primary;
-
     @NotNull
     private Date fromDate;
-
     @NotNull
     private Date toDate;
-
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "grade")
     private GradeMaster grade;
-
     @NotNull
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "employee")
     private Employee employee;
 
     @OneToMany(mappedBy = "assignment", orphanRemoval = true, fetch = FetchType.EAGER, cascade = CascadeType.ALL)
-    private final List<HeadOfDepartments> deptSet = new ArrayList<HeadOfDepartments>(0);
+    private List<HeadOfDepartments> deptSet = new ArrayList<HeadOfDepartments>(0);
 
     @Override
     public Long getId() {

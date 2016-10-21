@@ -40,8 +40,6 @@
 
 package org.egov.infra.admin.master.entity;
 
-import org.hibernate.search.annotations.DocumentId;
-
 import javax.persistence.Cacheable;
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
@@ -58,16 +56,16 @@ import java.io.Serializable;
 import java.util.Collections;
 import java.util.Set;
 
+import static org.egov.infra.admin.master.entity.Module.SEQ_MODULE;
+
 @Entity
 @Table(name = "eg_module")
-@SequenceGenerator(name = Module.SEQ_MODULE, sequenceName = Module.SEQ_MODULE, allocationSize = 1)
+@SequenceGenerator(name = SEQ_MODULE, sequenceName = SEQ_MODULE, allocationSize = 1)
 @Cacheable
 public class Module implements Serializable {
 
-    private static final long serialVersionUID = -632195454827894969L;
     public static final String SEQ_MODULE = "SEQ_EG_MODULE";
-
-    @DocumentId
+    private static final long serialVersionUID = -632195454827894969L;
     @Id
     @GeneratedValue(generator = SEQ_MODULE, strategy = GenerationType.SEQUENCE)
     private Long id;
@@ -84,9 +82,8 @@ public class Module implements Serializable {
 
     private Integer orderNumber;
 
-    
 
-    @OneToMany(mappedBy="parentModule", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "parentModule", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private Set<Action> actions = Collections.emptySet();
 
     private String contextRoot;
@@ -163,7 +160,7 @@ public class Module implements Serializable {
         result = prime * result + (name == null ? 0 : name.hashCode());
         return result;
     }
-    
+
 
     @Override
     public boolean equals(final Object obj) {

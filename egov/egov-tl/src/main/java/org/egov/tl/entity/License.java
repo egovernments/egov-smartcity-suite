@@ -48,7 +48,6 @@ import org.egov.infra.workflow.entity.StateAware;
 import org.egov.tl.utils.Constants;
 import org.hibernate.envers.Audited;
 import org.hibernate.envers.RelationTargetAuditMode;
-import org.hibernate.search.annotations.DocumentId;
 import org.hibernate.validator.constraints.Length;
 import org.hibernate.validator.constraints.NotBlank;
 import org.hibernate.validator.constraints.SafeHtml;
@@ -66,17 +65,15 @@ import java.util.List;
 @Inheritance(strategy = InheritanceType.JOINED)
 @SequenceGenerator(name = License.SEQUENCE, sequenceName = License.SEQUENCE, allocationSize = 1)
 @Unique(fields = {"licenseNumber", "applicationNumber"}, enableDfltMsg = true, isSuperclass = true)
-@NamedQuery(name = "LICENSE_BY_APPLICATION_NO", query = "select license FROM License license WHERE applicationNumber=:applicationNumber")
+@NamedQuery(name = "LICENSE_BY_APPLICATION_NO",
+        query = "select license FROM License license WHERE applicationNumber=:applicationNumber")
 public class License extends StateAware {
-
-    private static final long serialVersionUID = -4621190785979222546L;
 
     public static final String SEQUENCE = "SEQ_EGTL_LICENSE";
     public static final String BY_APPLICATION_NO = "LICENSE_BY_APPLICATION_NO";
-
+    private static final long serialVersionUID = -4621190785979222546L;
     @Id
     @GeneratedValue(generator = SEQUENCE, strategy = GenerationType.SEQUENCE)
-    @DocumentId
     @Expose
     protected Long id;
 

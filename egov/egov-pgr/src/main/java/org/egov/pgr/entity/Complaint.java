@@ -49,8 +49,6 @@ import org.egov.infra.workflow.entity.contract.StateInfoBuilder;
 import org.egov.pgr.entity.enums.CitizenFeedback;
 import org.egov.pgr.entity.enums.ReceivingMode;
 import org.egov.pims.commons.Position;
-import org.egov.search.domain.Searchable;
-import org.egov.search.domain.Searchable.Group;
 import org.hibernate.validator.constraints.Length;
 import org.hibernate.validator.constraints.SafeHtml;
 import org.joda.time.DateTime;
@@ -65,21 +63,20 @@ import java.util.Date;
 import java.util.Set;
 
 import static org.egov.pgr.entity.Complaint.SEQ_COMPLAINT;
+
 @Entity
 @Table(name = "egpgr_complaint")
 @SequenceGenerator(name = SEQ_COMPLAINT, sequenceName = SEQ_COMPLAINT, allocationSize = 1)
-@Unique(id = "id", tableName = "egpgr_complaint", columnName = "crn", fields = "crn", enableDfltMsg = true)
+@Unique(fields = "crn", enableDfltMsg = true)
 public class Complaint extends StateAware {
 
-    private static final long serialVersionUID = 4020616083055647372L;
     public static final String SEQ_COMPLAINT = "SEQ_EGPGR_COMPLAINT";
-
+    private static final long serialVersionUID = 4020616083055647372L;
     @Id
     @GeneratedValue(generator = SEQ_COMPLAINT, strategy = GenerationType.SEQUENCE)
     private Long id;
 
     @Column(name = "crn", unique = true)
-    @Searchable(name = "crn", group = Group.CLAUSES)
     @Length(max = 32)
     @SafeHtml
     private String crn = "";
@@ -87,45 +84,37 @@ public class Complaint extends StateAware {
     @ManyToOne
     @NotNull
     @JoinColumn(name = "complaintType", nullable = false)
-    @Searchable
     private ComplaintType complaintType;
 
     @ManyToOne(cascade = CascadeType.ALL)
     @Valid
     @NotNull
     @JoinColumn(name = "complainant", nullable = false)
-    @Searchable(name = "citizen", group = Group.COMMON)
     private Complainant complainant = new Complainant();
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "assignee")
-    @Searchable(name = "owner")
     private Position assignee;
 
     @ManyToOne(optional = true)
     @JoinColumn(name = "location", nullable = true)
-    @Searchable(name = "boundary", group = Group.COMMON)
     private Boundary location;
 
     @ManyToOne
     @NotNull
     @JoinColumn(name = "status")
-    @Searchable(group = Group.CLAUSES)
     private ComplaintStatus status = new ComplaintStatus();
 
     @Length(min = 10, max = 500)
     @SafeHtml
-    @Searchable
     private String details;
 
     @Length(max = 200)
     @SafeHtml
-    @Searchable
     private String landmarkDetails;
 
     @Enumerated(EnumType.ORDINAL)
     @NotNull
-    @Searchable(group = Group.CLAUSES)
     private ReceivingMode receivingMode = ReceivingMode.WEBSITE;
 
     @ManyToOne
@@ -145,7 +134,6 @@ public class Complaint extends StateAware {
 
     @ManyToOne
     @JoinColumn(name = "department", nullable = false)
-    @Searchable(name = "department", group = Group.CLAUSES)
     private Department department;
 
     @Enumerated(EnumType.ORDINAL)
@@ -153,7 +141,6 @@ public class Complaint extends StateAware {
 
     @ManyToOne
     @JoinColumn(name = "childLocation", nullable = true)
-    @Searchable(name = "locationBoundary", group = Group.COMMON)
     private Boundary childLocation;
 
     @Transient

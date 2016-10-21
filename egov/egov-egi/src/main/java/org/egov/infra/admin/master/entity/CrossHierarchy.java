@@ -43,7 +43,6 @@ package org.egov.infra.admin.master.entity;
 import org.egov.infra.persistence.entity.AbstractPersistable;
 import org.hibernate.annotations.Fetch;
 import org.hibernate.annotations.FetchMode;
-import org.hibernate.search.annotations.DocumentId;
 
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -54,14 +53,14 @@ import javax.persistence.ManyToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 
+import static org.egov.infra.admin.master.entity.CrossHierarchy.SEQ_CROSSHIERARCHY;
+
 @Entity
 @Table(name = "EG_CROSSHIERARCHY")
-@SequenceGenerator(name = CrossHierarchy.SEQ_CROSSHIERARCHY, sequenceName = CrossHierarchy.SEQ_CROSSHIERARCHY, allocationSize = 1)
+@SequenceGenerator(name = SEQ_CROSSHIERARCHY, sequenceName = SEQ_CROSSHIERARCHY, allocationSize = 1)
 public class CrossHierarchy extends AbstractPersistable<Long> {
-    private static final long serialVersionUID = 5586809829548733921L;
     public static final String SEQ_CROSSHIERARCHY = "seq_eg_crosshierarchy";
-
-    @DocumentId
+    private static final long serialVersionUID = 5586809829548733921L;
     @Id
     @GeneratedValue(generator = SEQ_CROSSHIERARCHY, strategy = GenerationType.SEQUENCE)
     private Long id;
@@ -75,25 +74,25 @@ public class CrossHierarchy extends AbstractPersistable<Long> {
     @JoinColumn(name = "child")
     @Fetch(value = FetchMode.JOIN)
     private Boundary child;
-    
+
     @ManyToOne
     @JoinColumn(name = "parenttype")
     @Fetch(value = FetchMode.JOIN)
     private BoundaryType parentType;
-    
+
     @ManyToOne
     @JoinColumn(name = "childtype")
     @Fetch(value = FetchMode.JOIN)
     private BoundaryType childType;
 
     @Override
-    protected void setId(final Long id) {
-        this.id = id;
+    public Long getId() {
+        return id;
     }
 
     @Override
-    public Long getId() {
-        return id;
+    protected void setId(final Long id) {
+        this.id = id;
     }
 
     public Boundary getParent() {
@@ -127,5 +126,5 @@ public class CrossHierarchy extends AbstractPersistable<Long> {
     public void setChildType(BoundaryType childType) {
         this.childType = childType;
     }
-    
+
 }

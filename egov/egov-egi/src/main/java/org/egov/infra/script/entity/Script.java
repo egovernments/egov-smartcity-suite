@@ -42,7 +42,6 @@ package org.egov.infra.script.entity;
 
 import org.egov.infra.persistence.entity.AbstractAuditable;
 import org.egov.infra.persistence.entity.component.Period;
-import org.hibernate.search.annotations.DocumentId;
 import org.joda.time.DateTime;
 
 import javax.persistence.Embedded;
@@ -57,28 +56,31 @@ import javax.persistence.Table;
 import javax.persistence.Transient;
 import javax.script.CompiledScript;
 
+import static org.egov.infra.script.entity.Script.SEQ_SCRIPT;
+
 @Entity
 @Table(name = "eg_script")
-@SequenceGenerator(name = Script.SEQ_SCRIPT, sequenceName = Script.SEQ_SCRIPT, allocationSize = 1)
+@SequenceGenerator(name = SEQ_SCRIPT, sequenceName = SEQ_SCRIPT, allocationSize = 1)
 @NamedQueries({
-        @NamedQuery(name = Script.BY_NAME, query = "select s from Script s where s.name=:name and current_date between period.startDate and period.endDate"),
-        @NamedQuery(name = Script.BY_NAME_AND_DATE, query = "select s from Script as s where s.name=:name and :date between period.startDate and period.endDate") })
+        @NamedQuery(name = Script.BY_NAME,
+                query = "select s from Script s where s.name=:name and current_date between period.startDate and period.endDate"),
+        @NamedQuery(name = Script.BY_NAME_AND_DATE,
+                query = "select s from Script as s where s.name=:name and :date between period.startDate and period.endDate")
+})
 public class Script extends AbstractAuditable {
-    private static final long serialVersionUID = -2464312999181924258L;
     public static final String SEQ_SCRIPT = "SEQ_EG_SCRIPT";
     public static final String BY_NAME = "Script.findByName";
     public static final String BY_NAME_AND_DATE = "Script.findByNameAndPeriod";
-    
+    private static final long serialVersionUID = -2464312999181924258L;
     @Id
     @GeneratedValue(generator = SEQ_SCRIPT, strategy = GenerationType.SEQUENCE)
-    @DocumentId
     private Long id;
     private String type;
     private String script;
     private String name;
     @Embedded
     private Period period;
-    
+
     @Transient
     private CompiledScript compiledScript;
 
@@ -97,13 +99,13 @@ public class Script extends AbstractAuditable {
     }
 
     @Override
-    protected void setId(final Long id) {
-        this.id = id;
+    public Long getId() {
+        return this.id;
     }
 
     @Override
-    public Long getId() {
-        return this.id;
+    protected void setId(final Long id) {
+        this.id = id;
     }
 
     public String getType() {

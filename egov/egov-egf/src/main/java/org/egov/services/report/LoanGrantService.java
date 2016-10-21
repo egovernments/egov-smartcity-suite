@@ -159,7 +159,7 @@ public class LoanGrantService extends PersistenceService {
          * if(schemeId!=null && subSchemeId==null) { sql.append(" ss.name ,"); }
          */
         sql.append(" ss.name , fa.name order by ss.name,fa.name");
-        final SQLQuery patternSql = getSearchSession().createSQLQuery(sql.toString());
+        final SQLQuery patternSql = getSession().createSQLQuery(sql.toString());
         patternSql.addScalar("subScheme", StringType.INSTANCE).addScalar("name", StringType.INSTANCE)
         .addScalar("amount", BigDecimalType.INSTANCE)
         .setResultTransformer(Transformers.aliasToBean(LoanGrantBean.class));
@@ -356,7 +356,7 @@ public class LoanGrantService extends PersistenceService {
         if (LOGGER.isInfoEnabled())
             LOGGER.info("GrantAmoountSql for Schemeid" + schemeId + " SubSchemeId " + subSchemeId + "  agencyId" + agencyId + ":"
                     + gaSql.toString());
-        final SQLQuery gaSQLQuery = getSearchSession().createSQLQuery(gaSql.toString());
+        final SQLQuery gaSQLQuery = getSession().createSQLQuery(gaSql.toString());
         gaSQLQuery.addScalar("agencyName").addScalar("grantAmount", BigDecimalType.INSTANCE)
         .setResultTransformer(Transformers.aliasToBean(LoanGrantBean.class));
         final List<LoanGrantBean> galist = gaSQLQuery.list();
@@ -408,7 +408,7 @@ public class LoanGrantService extends PersistenceService {
         if (agencyId != null && agencyId != -1)
             sql.append(" and  gld.detailkeyid =" + agencyId);
         sql.append(" order by vh.voucherdate ");
-        final SQLQuery loanSql = getSearchSession().createSQLQuery(sql.toString());
+        final SQLQuery loanSql = getSession().createSQLQuery(sql.toString());
         if (LOGGER.isDebugEnabled())
             LOGGER.debug("getLoanByAgency sql:" + sql.toString());
         loanSql.addScalar("voucherNumber")
@@ -472,7 +472,7 @@ public class LoanGrantService extends PersistenceService {
         loanSql.append(" group by fa.name");
         if (LOGGER.isInfoEnabled())
             LOGGER.info("GrantAmoountSql for Schemeid" + schemeId + "  agencyId" + agencyId + ":" + loanSql.toString());
-        final SQLQuery gaSQLQuery = getSearchSession().createSQLQuery(loanSql.toString());
+        final SQLQuery gaSQLQuery = getSession().createSQLQuery(loanSql.toString());
         gaSQLQuery.addScalar("agencyName")
         .addScalar("loanAmount", BigDecimalType.INSTANCE)
         .setResultTransformer(Transformers.aliasToBean(LoanGrantBean.class));

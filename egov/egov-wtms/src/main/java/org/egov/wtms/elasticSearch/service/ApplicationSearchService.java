@@ -43,7 +43,7 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.egov.infra.search.elastic.entity.ApplicationIndex;
+import org.egov.infra.es.entity.ApplicationIndex;
 import org.egov.wtms.elasticSearch.repository.ApplicationSearchRepository;
 import org.egov.wtms.utils.constants.WaterTaxConstants;
 import org.springframework.beans.factory.annotation.Autowired;

@@ -42,7 +42,6 @@ package org.egov.pims.commons;
 
 import org.egov.infra.admin.master.entity.Department;
 import org.egov.infra.persistence.entity.AbstractAuditable;
-import org.hibernate.search.annotations.DocumentId;
 
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -54,14 +53,14 @@ import javax.persistence.ManyToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 
+import static org.egov.pims.commons.DeptDesig.SEQ_DEPTDESIG;
+
 @Entity
 @Table(name = "egeis_deptdesig")
-@SequenceGenerator(name = DeptDesig.SEQ_DEPTDESIG, sequenceName = DeptDesig.SEQ_DEPTDESIG, allocationSize = 1)
+@SequenceGenerator(name = SEQ_DEPTDESIG, sequenceName = SEQ_DEPTDESIG, allocationSize = 1)
 public class DeptDesig extends AbstractAuditable {
-    private static final long serialVersionUID = 6184300877653586028L;
     public static final String SEQ_DEPTDESIG = "SEQ_egeis_deptdesig";
-
-    @DocumentId
+    private static final long serialVersionUID = 6184300877653586028L;
     @Id
     @GeneratedValue(generator = SEQ_DEPTDESIG, strategy = GenerationType.SEQUENCE)
     private Long id;

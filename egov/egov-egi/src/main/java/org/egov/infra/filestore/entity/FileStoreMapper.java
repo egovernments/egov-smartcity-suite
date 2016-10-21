@@ -41,7 +41,6 @@
 package org.egov.infra.filestore.entity;
 
 import org.egov.infra.persistence.entity.AbstractPersistable;
-import org.hibernate.search.annotations.DocumentId;
 import org.hibernate.validator.constraints.NotBlank;
 
 import javax.persistence.Column;
@@ -52,14 +51,14 @@ import javax.persistence.Id;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 
+import static org.egov.infra.filestore.entity.FileStoreMapper.SEQ_FILESTOREMAPPER;
+
 @Table(name = "eg_filestoremap")
 @Entity
-@SequenceGenerator(name = FileStoreMapper.SEQ_FILESTOREMAPPER, sequenceName = FileStoreMapper.SEQ_FILESTOREMAPPER, allocationSize = 1)
+@SequenceGenerator(name = SEQ_FILESTOREMAPPER, sequenceName = SEQ_FILESTOREMAPPER, allocationSize = 1)
 public class FileStoreMapper extends AbstractPersistable<Long> {
-    private static final long serialVersionUID = -2997164207274266823L;
     public static final String SEQ_FILESTOREMAPPER = "SEQ_EG_FILESTOREMAP";
-
-    @DocumentId
+    private static final long serialVersionUID = -2997164207274266823L;
     @Id
     @GeneratedValue(generator = SEQ_FILESTOREMAPPER, strategy = GenerationType.SEQUENCE)
     private Long id;

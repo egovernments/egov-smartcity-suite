@@ -39,17 +39,11 @@
  */
 package org.egov.wtms.elasticSearch.service;
 
-import java.math.BigDecimal;
-import java.util.Iterator;
-
-import org.egov.config.search.Index;
-import org.egov.config.search.IndexType;
 import org.egov.infra.admin.master.entity.Boundary;
 import org.egov.infra.admin.master.entity.City;
 import org.egov.infra.admin.master.service.BoundaryService;
 import org.egov.infra.admin.master.service.CityService;
 import org.egov.infra.config.core.ApplicationThreadLocals;
-import org.egov.infra.search.elastic.annotation.Indexing;
 import org.egov.ptis.domain.model.AssessmentDetails;
 import org.egov.ptis.domain.model.OwnerName;
 import org.egov.wtms.application.entity.WaterConnectionDetails;
@@ -60,6 +54,9 @@ import org.elasticsearch.common.geo.GeoPoint;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.math.BigDecimal;
+import java.util.Iterator;
 
 @Service
 @Transactional(readOnly = true)
@@ -77,9 +74,8 @@ public class ConsumerIndexService {
     @Autowired
     private ConnectionDemandService connectionDemandService;
 
-    @Indexing(name = Index.WATERCHARGES, type = IndexType.CONNECTIONSEARCH)
     public ConsumerSearch createConsumerIndex(final WaterConnectionDetails waterConnectionDetails,
-            final AssessmentDetails assessmentDetails, final BigDecimal amountTodisplayInIndex) {
+                                              final AssessmentDetails assessmentDetails, final BigDecimal amountTodisplayInIndex) {
 
         String mobileNumber = null;
         Iterator<OwnerName> ownerNameItr = assessmentDetails.getOwnerNames().iterator();
@@ -126,7 +122,7 @@ public class ConsumerIndexService {
                 .setArrearsDemand(waterConnectionDetailsService.getArrearsDemand(waterConnectionDetails));
         if (connectionDemandService.getWaterRatesDetailsForDemandUpdate(waterConnectionDetails) != null
                 && connectionDemandService.getWaterRatesDetailsForDemandUpdate(waterConnectionDetails)
-                        .getMonthlyRate() != null)
+                .getMonthlyRate() != null)
             consumerSearch.setMonthlyRate(new BigDecimal(connectionDemandService
                     .getWaterRatesDetailsForDemandUpdate(waterConnectionDetails).getMonthlyRate()));
         else

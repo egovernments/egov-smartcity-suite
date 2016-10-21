@@ -41,7 +41,6 @@
 package org.egov.pgr.entity;
 
 import org.egov.infra.persistence.entity.AbstractPersistable;
-import org.egov.search.domain.Searchable;
 
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -51,20 +50,19 @@ import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
 
+import static org.egov.pgr.entity.ComplaintStatus.SEQ_COMPLAINTSTATUS;
+
 @Entity
 @Table(name = "egpgr_complaintstatus")
-@Searchable
-@SequenceGenerator(name = ComplaintStatus.SEQ_COMPLAINTSTATUS, sequenceName = ComplaintStatus.SEQ_COMPLAINTSTATUS, allocationSize = 1)
+@SequenceGenerator(name = SEQ_COMPLAINTSTATUS, sequenceName = SEQ_COMPLAINTSTATUS, allocationSize = 1)
 public class ComplaintStatus extends AbstractPersistable<Long> {
-    private static final long serialVersionUID = -9009821412847211632L;
     public static final String SEQ_COMPLAINTSTATUS = "SEQ_EGPGR_COMPLAINTSTATUS";
-
+    private static final long serialVersionUID = -9009821412847211632L;
     @Id
     @GeneratedValue(generator = SEQ_COMPLAINTSTATUS, strategy = GenerationType.SEQUENCE)
     private Long id;
 
     @NotNull
-    @Searchable
     private String name;
 
     public Long getId() {

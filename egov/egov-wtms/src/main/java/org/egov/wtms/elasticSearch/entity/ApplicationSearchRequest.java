@@ -39,20 +39,9 @@
  */
 package org.egov.wtms.elasticSearch.entity;
 
-import static org.egov.search.domain.Filter.queryStringFilter;
-import static org.egov.search.domain.Filter.rangeFilter;
-import static org.egov.search.domain.Filter.termsStringFilter;
-
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.List;
-
-import org.egov.search.domain.Filter;
-import org.egov.search.domain.Filters;
-import org.egov.wtms.utils.constants.WaterTaxConstants;
-import org.jboss.logging.Logger;
 
 public class ApplicationSearchRequest {
     private String searchText;
@@ -65,37 +54,8 @@ public class ApplicationSearchRequest {
     private String fromDate;
     private String toDate;
     private String cityName;
-    private String applicationStatus;;
+    private String applicationStatus;
     private String source;
-    SimpleDateFormat ft = new SimpleDateFormat("yyyy-MM-dd");
-    SimpleDateFormat dtft = new SimpleDateFormat("dd/MM/yyyy");
-
-    private static final Logger logger = Logger.getLogger(ApplicationSearchRequest.class);
-
-    public void setFromDate(final String fromDate) {
-        if (null != fromDate)
-            try {
-                if (logger.isDebugEnabled())
-                    logger.debug("Date Range From start.. :" + ft.format(dtft.parse(fromDate)));
-                this.fromDate = ft.format(dtft.parse(fromDate));
-            } catch (final ParseException e) {
-
-            }
-    }
-
-    public void setToDate(final String toDate) {
-        final Calendar cal = Calendar.getInstance();
-        if (null != toDate)
-            try {
-                cal.setTime(dtft.parse(toDate));
-                cal.add(Calendar.DAY_OF_YEAR, 1);
-                if (logger.isDebugEnabled())
-                    logger.debug("Date Range Till .. :" + ft.format(cal.getTime()));
-                this.toDate = ft.format(cal.getTime());
-            } catch (final ParseException e) {
-
-            }
-    }
 
     public String getModuleName() {
         return moduleName;
@@ -149,8 +109,33 @@ public class ApplicationSearchRequest {
         return fromDate;
     }
 
+    public void setFromDate(final String fromDate) {
+        SimpleDateFormat ft = new SimpleDateFormat("yyyy-MM-dd");
+        SimpleDateFormat dtft = new SimpleDateFormat("dd/MM/yyyy");
+        if (null != fromDate)
+            try {
+                this.fromDate = ft.format(dtft.parse(fromDate));
+            } catch (final ParseException e) {
+
+            }
+    }
+
     public String getToDate() {
         return toDate;
+    }
+
+    public void setToDate(final String toDate) {
+        SimpleDateFormat ft = new SimpleDateFormat("yyyy-MM-dd");
+        SimpleDateFormat dtft = new SimpleDateFormat("dd/MM/yyyy");
+        final Calendar cal = Calendar.getInstance();
+        if (null != toDate)
+            try {
+                cal.setTime(dtft.parse(toDate));
+                cal.add(Calendar.DAY_OF_YEAR, 1);
+                this.toDate = ft.format(cal.getTime());
+            } catch (final ParseException e) {
+
+            }
     }
 
     public String getCityName() {
@@ -173,7 +158,7 @@ public class ApplicationSearchRequest {
         this.source = source;
     }
 
-    public Filters searchFilters() {
+    /*public Filters searchFilters() {
         final List<Filter> andFilters = new ArrayList<>(0);
         andFilters.add(termsStringFilter("clauses.cityname", cityName));
         andFilters.add(queryStringFilter("searchable.applicationnumber", applicationNumber != null
@@ -194,7 +179,7 @@ public class ApplicationSearchRequest {
             logger.debug("finished filters");
         logger.info("$$$$$$$$$$$$$$$$ Filters : " + andFilters);
         return Filters.withAndFilters(andFilters);
-    }
+    }*/
 
     public String searchQuery() {
         return searchText;
@@ -208,5 +193,5 @@ public class ApplicationSearchRequest {
         this.applicationStatus = applicationStatus;
     }
 
-    
+
 }

@@ -39,16 +39,6 @@
  */
 package org.egov.wtms.elasticSearch.entity;
 
-import org.egov.search.domain.Filter;
-import org.egov.search.domain.Filters;
-import org.jboss.logging.Logger;
-
-import java.util.ArrayList;
-import java.util.List;
-
-import static org.egov.search.domain.Filter.queryStringFilter;
-import static org.egov.search.domain.Filter.termsStringFilter;
-
 public class ConnectionSearchRequest {
     private String searchText;
     private String consumerCode;
@@ -58,8 +48,6 @@ public class ConnectionSearchRequest {
     private String ulbName;
     private String revenueWard;
     private String doorNumber;
-
-    private static final Logger logger = Logger.getLogger(ConnectionSearchRequest.class);
 
     public String getConsumerCode() {
         return consumerCode;
@@ -105,7 +93,7 @@ public class ConnectionSearchRequest {
         this.searchText = searchText;
     }
 
-    public Filters searchFilters() {
+   /* public Filters searchFilters() {
         final List<Filter> andFilters = new ArrayList<>(0);
         andFilters.add(termsStringFilter("clauses.ulbname", ulbName));
         andFilters.add(queryStringFilter("searchable.consumername", applicantName));
@@ -117,7 +105,7 @@ public class ConnectionSearchRequest {
         if (logger.isDebugEnabled())
             logger.debug("finished filters");
         return Filters.withAndFilters(andFilters);
-    }
+    }*/
 
     public String searchQuery() {
         return searchText;

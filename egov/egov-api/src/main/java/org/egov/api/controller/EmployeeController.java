@@ -40,32 +40,15 @@
 
 package org.egov.api.controller;
 
-import static java.util.Arrays.asList;
-import static org.egov.infra.utils.ApplicationConstant.N;
-import static org.egov.infra.utils.ApplicationConstant.Y;
-import static org.egov.infra.workflow.entity.StateAware.byCreatedDate;
-
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Set;
-import java.util.stream.Collectors;
-
-import javax.servlet.http.HttpServletRequest;
-
+import com.google.gson.JsonArray;
+import com.google.gson.JsonParser;
 import org.apache.log4j.Logger;
 import org.egov.api.adapter.ForwardDetailsAdapter;
 import org.egov.api.adapter.UserAdapter;
 import org.egov.api.controller.core.ApiController;
 import org.egov.api.controller.core.ApiResponse;
 import org.egov.api.controller.core.ApiUrl;
-import org.egov.api.model.ComplaintSearchRequest;
 import org.egov.api.model.ForwardDetails;
-import org.egov.config.search.Index;
-import org.egov.config.search.IndexType;
 import org.egov.eis.entity.EmployeeView;
 import org.egov.eis.service.PositionMasterService;
 import org.egov.infra.security.utils.SecurityUtils;
@@ -76,11 +59,6 @@ import org.egov.infra.workflow.inbox.InboxRenderServiceDeligate;
 import org.egov.infra.workflow.service.WorkflowTypeService;
 import org.egov.infstr.services.EISServeable;
 import org.egov.infstr.services.PersistenceService;
-import org.egov.search.domain.Document;
-import org.egov.search.domain.SearchResult;
-import org.egov.search.domain.Sort;
-import org.egov.search.service.SearchService;
-import org.elasticsearch.search.sort.SortOrder;
 import org.hibernate.FetchMode;
 import org.hibernate.FlushMode;
 import org.hibernate.HibernateException;
@@ -88,8 +66,6 @@ import org.hibernate.Query;
 import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
-import org.json.simple.JSONObject;
-import org.json.simple.parser.JSONParser;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.MediaType;
@@ -98,46 +74,42 @@ import org.springframework.security.oauth2.common.OAuth2AccessToken;
 import org.springframework.security.oauth2.provider.OAuth2Authentication;
 import org.springframework.security.oauth2.provider.token.TokenStore;
 import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 
-import com.google.gson.Gson;
-import com.google.gson.JsonArray;
-import com.google.gson.JsonObject;
-import com.google.gson.JsonParser;
-import com.google.gson.reflect.TypeToken;
+import javax.servlet.http.HttpServletRequest;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
+
+import static org.egov.infra.utils.ApplicationConstant.N;
+import static org.egov.infra.utils.ApplicationConstant.Y;
+import static org.egov.infra.workflow.entity.StateAware.byCreatedDate;
 
 @org.springframework.web.bind.annotation.RestController
 @RequestMapping("/v1.0")
 public class EmployeeController extends ApiController {
 
-    private static final Logger LOGGER = Logger.getLogger(EmployeeController.class);
     public static final String EGOV_API_ERROR = "EGOV-API ERROR ";
-
+    private static final Logger LOGGER = Logger.getLogger(EmployeeController.class);
+    @Autowired
+    InboxRenderServiceDeligate<StateAware> inboxRenderServiceDelegate;
     @Autowired
     private TokenStore tokenStore;
-
     @Autowired
     @Qualifier("entityQueryService")
     private PersistenceService entityQueryService;
-
     @Autowired
     private WorkflowTypeService workflowTypeService;
-
     @Autowired
     private PositionMasterService posMasterService;
-
-    @Autowired
-    private SearchService searchService;
-
     @Autowired
     private SecurityUtils securityUtils;
-
-    @Autowired
-    InboxRenderServiceDeligate<StateAware> inboxRenderServiceDelegate;
-
     @Autowired
     private EISServeable eisService;
 
@@ -157,7 +129,7 @@ public class EmployeeController extends ApiController {
 
     @RequestMapping(value = ApiUrl.EMPLOYEE_INBOX_LIST_FILTER_BY_WFT, method = RequestMethod.GET, produces = MediaType.TEXT_PLAIN_VALUE)
     public ResponseEntity<String> getInboxListByWorkFlowType(@PathVariable final String workFlowType,
-            @PathVariable final int resultsFrom, @PathVariable final int resultsTo) {
+                                                             @PathVariable final int resultsFrom, @PathVariable final int resultsTo) {
         final ApiResponse res = ApiResponse.newInstance();
         try {
             return res.setDataAdapter(new UserAdapter())
@@ -171,7 +143,7 @@ public class EmployeeController extends ApiController {
             return res.error(getMessage("server.error"));
         }
     }
-
+/*
     @RequestMapping(value = ApiUrl.EMPLOYEE_SEARCH_INBOX, method = RequestMethod.POST, produces = MediaType.TEXT_PLAIN_VALUE)
     public ResponseEntity<String> searchEmployeeInbox(@PathVariable final Integer pageno, @PathVariable final Integer limit,
             @RequestBody final ComplaintSearchRequest searchRequest) {
@@ -226,9 +198,10 @@ public class EmployeeController extends ApiController {
             return getResponseHandler().error(getMessage("server.error"));
         }
 
-    }
+    }*/
 
     // --------------------------------------------------------------------------------//
+
     /**
      * Clear the session
      *
@@ -295,7 +268,7 @@ public class EmployeeController extends ApiController {
 
     @SuppressWarnings("unchecked")
     public List<StateAware> getWorkflowItemsByUserAndWFType(final Long userId, final List<Long> owners, final String workFlowType,
-            final int resultsFrom, final int resultsTo) throws HibernateException, ClassNotFoundException {
+                                                            final int resultsFrom, final int resultsTo) throws HibernateException, ClassNotFoundException {
         return entityQueryService.getSession()
                 .createCriteria(Class.forName(workflowTypeService.getEnabledWorkflowTypeByType(workFlowType).getTypeFQN()))
                 .setFirstResult(resultsFrom)

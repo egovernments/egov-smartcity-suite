@@ -46,7 +46,6 @@ import org.egov.infra.persistence.entity.AbstractAuditable;
 import org.egov.infra.persistence.validator.annotation.Unique;
 import org.egov.infra.validation.regex.Constants;
 import org.hibernate.annotations.NamedQuery;
-import org.hibernate.search.annotations.DocumentId;
 import org.hibernate.validator.constraints.NotBlank;
 import org.hibernate.validator.constraints.SafeHtml;
 
@@ -66,44 +65,38 @@ import javax.validation.constraints.Pattern;
 import java.util.HashSet;
 import java.util.Set;
 
+import static org.egov.pims.commons.Designation.SEQ_DESIGNATION;
+
 @Entity
 @Table(name = "eg_designation")
-@Unique(id = "id", tableName = "eg_designation", fields = { "name", "code" }, columnName = { "name",
-        "code" }, enableDfltMsg = true)
-@SequenceGenerator(name = Designation.SEQ_DESIGNATION, sequenceName = Designation.SEQ_DESIGNATION, allocationSize = 1)
+@Unique(fields = {"name", "code"}, enableDfltMsg = true)
+@SequenceGenerator(name = SEQ_DESIGNATION, sequenceName = SEQ_DESIGNATION, allocationSize = 1)
 @NamedQuery(name = "getDesignationForListOfDesgNames", query = "from Designation where trim(upper(name)) in(:param_0)")
 public class Designation extends AbstractAuditable {
 
-    private static final long serialVersionUID = -3775503109625394145L;
-
     public static final String SEQ_DESIGNATION = "SEQ_EG_DESIGNATION";
-
-    @DocumentId
+    private static final long serialVersionUID = -3775503109625394145L;
     @Id
     @GeneratedValue(generator = SEQ_DESIGNATION, strategy = GenerationType.SEQUENCE)
     private Long id;
-
     @NotBlank
     @SafeHtml
     @Pattern(regexp = Constants.ALLTYPESOFALPHABETS_WITHMIXEDCHAR, message = "Name should contain letters with space and (-,_)")
     private String name;
-
     @NotBlank
     @SafeHtml
     // @Pattern(regexp = Constants.ALLTYPESOFALPHABETS_WITHMIXEDCHAR, message =
     // "Name should contain letters with space and (-,_)")
     private String code;
-
     @SafeHtml
     private String description;
-
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "chartofaccounts")
     private CChartOfAccounts chartOfAccounts;
 
     @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @JoinTable(name = "egeis_desig_rolemapping", joinColumns = @JoinColumn(name = "designationid") , inverseJoinColumns = @JoinColumn(name = "roleid") )
-    private final Set<Role> roles = new HashSet<>();
+    private Set<Role> roles = new HashSet<>();
 
     @Override
     public Long getId() {

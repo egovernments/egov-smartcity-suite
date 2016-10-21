@@ -39,12 +39,17 @@
  */
 package org.egov.model.budget;
 
-import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import org.egov.commons.CFunction;
+import org.egov.commons.EgwStatus;
+import org.egov.commons.Functionary;
+import org.egov.commons.Fund;
+import org.egov.commons.Scheme;
+import org.egov.commons.SubScheme;
+import org.egov.infra.admin.master.entity.Boundary;
+import org.egov.infra.admin.master.entity.Department;
+import org.egov.infra.workflow.entity.State;
+import org.egov.infra.workflow.entity.StateAware;
+import org.hibernate.validator.constraints.Length;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -60,28 +65,21 @@ import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 import javax.validation.constraints.NotNull;
+import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 
-import org.egov.commons.CFunction;
-import org.egov.commons.EgwStatus;
-import org.egov.commons.Functionary;
-import org.egov.commons.Fund;
-import org.egov.commons.Scheme;
-import org.egov.commons.SubScheme;
-import org.egov.infra.admin.master.entity.Boundary;
-import org.egov.infra.admin.master.entity.Department;
-import org.egov.infra.workflow.entity.State;
-import org.egov.infra.workflow.entity.StateAware;
-import org.hibernate.search.annotations.DocumentId;
-import org.hibernate.validator.constraints.Length;
+import static org.egov.model.budget.BudgetDetail.SEQ_BUDGETDETAIL;
 
 @Entity
 @Table(name = "EGF_BUDGETDETAIL")
-@SequenceGenerator(name = BudgetDetail.SEQ_BUDGETDETAIL, sequenceName = BudgetDetail.SEQ_BUDGETDETAIL, allocationSize = 1)
+@SequenceGenerator(name = SEQ_BUDGETDETAIL, sequenceName = SEQ_BUDGETDETAIL, allocationSize = 1)
 public class BudgetDetail extends StateAware {
-    private static final long serialVersionUID = 5908792258911500512L;
     public static final String SEQ_BUDGETDETAIL = "SEQ_EGF_BUDGETDETAIL";
-
-    @DocumentId
+    private static final long serialVersionUID = 5908792258911500512L;
     @Id
     @GeneratedValue(generator = SEQ_BUDGETDETAIL, strategy = GenerationType.SEQUENCE)
     private Long id;
@@ -315,8 +313,7 @@ public class BudgetDetail extends StateAware {
     }
 
     /**
-     * @param materializedPath
-     *            the materializedPath to set
+     * @param materializedPath the materializedPath to set
      */
     public void setMaterializedPath(final String materializedPath) {
         this.materializedPath = materializedPath;
@@ -401,12 +398,12 @@ public class BudgetDetail extends StateAware {
         approvedAmount.add(reAppAmount == null ? BigDecimal.ZERO : reAppAmount);
     }
 
-    public void setDocumentNumber(final Long documentNumber) {
-        this.documentNumber = documentNumber;
-    }
-
     public Long getDocumentNumber() {
         return documentNumber;
+    }
+
+    public void setDocumentNumber(final Long documentNumber) {
+        this.documentNumber = documentNumber;
     }
 
     public String getUniqueNo() {

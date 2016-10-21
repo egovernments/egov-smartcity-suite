@@ -43,9 +43,7 @@ package org.egov.api.controller;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
-
 import net.coobird.thumbnailator.Thumbnails;
-
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.ArrayUtils;
@@ -57,9 +55,6 @@ import org.egov.api.adapter.ComplaintTypeAdapter;
 import org.egov.api.controller.core.ApiController;
 import org.egov.api.controller.core.ApiUrl;
 import org.egov.api.model.ComplaintAction;
-import org.egov.api.model.ComplaintSearchRequest;
-import org.egov.config.search.Index;
-import org.egov.config.search.IndexType;
 import org.egov.infra.admin.master.entity.CrossHierarchy;
 import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.admin.master.service.BoundaryService;
@@ -83,11 +78,6 @@ import org.egov.pgr.service.ComplaintStatusService;
 import org.egov.pgr.service.ComplaintTypeCategoryService;
 import org.egov.pgr.service.ComplaintTypeService;
 import org.egov.pgr.utils.constants.PGRConstants;
-import org.egov.search.domain.Document;
-import org.egov.search.domain.SearchResult;
-import org.egov.search.domain.Sort;
-import org.egov.search.service.SearchService;
-import org.elasticsearch.search.sort.SortOrder;
 import org.json.simple.JSONObject;
 import org.json.simple.JSONValue;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -104,7 +94,6 @@ import org.springframework.web.multipart.MultipartFile;
 import javax.imageio.ImageIO;
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.ValidationException;
-
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
@@ -120,7 +109,6 @@ import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-import static java.util.Arrays.asList;
 import static org.springframework.web.bind.annotation.RequestMethod.GET;
 
 @org.springframework.web.bind.annotation.RestController
@@ -131,9 +119,6 @@ public class ComplaintController extends ApiController {
 	
     @Autowired
     protected ComplaintStatusService complaintStatusService;
-
-    @Autowired
-    private SearchService searchService;
 
     @Autowired
     private BoundaryService boundaryService;
@@ -253,7 +238,7 @@ public class ComplaintController extends ApiController {
      * @param searchRequest
      * @return
      */
-    @RequestMapping(value = { ApiUrl.COMPLAINT_SEARCH }, method = RequestMethod.POST, produces = MediaType.TEXT_PLAIN_VALUE)
+   /* @RequestMapping(value = { ApiUrl.COMPLAINT_SEARCH }, method = RequestMethod.POST, produces = MediaType.TEXT_PLAIN_VALUE)
     public ResponseEntity<String> complaintSearch(@RequestBody final ComplaintSearchRequest searchRequest) {
        try
        {
@@ -269,7 +254,7 @@ public class ComplaintController extends ApiController {
     	 LOGGER.error("EGOV-API ERROR ",e);
        	 return getResponseHandler().error(getMessage("server.error"));
        }
-    }
+    }*/
 
     // --------------------------------------------------------------------------------//
     /**

@@ -38,46 +38,17 @@
  */
 package org.egov.stms.web.controller.masters;
 
-import static java.util.Arrays.asList;
-import static org.egov.stms.utils.constants.SewerageTaxConstants.BOUNDARYTYPE_WARD;
-import static org.egov.stms.utils.constants.SewerageTaxConstants.CLOSESEWERAGECONNECTION;
-import static org.egov.stms.utils.constants.SewerageTaxConstants.HIERARCHYTYPE_REVENUE;
-
-import java.io.IOException;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
-import org.apache.commons.io.IOUtils;
-import org.egov.config.search.Index;
-import org.egov.config.search.IndexType;
 import org.egov.infra.admin.master.entity.Boundary;
-import org.egov.infra.admin.master.entity.City;
 import org.egov.infra.admin.master.service.BoundaryService;
 import org.egov.infra.admin.master.service.CityService;
-import org.egov.infra.config.core.ApplicationThreadLocals;
 import org.egov.infra.config.properties.ApplicationProperties;
 import org.egov.ptis.domain.model.AssessmentDetails;
-import org.egov.search.domain.Document;
-import org.egov.search.domain.Page;
-import org.egov.search.domain.SearchResult;
-import org.egov.search.domain.Sort;
-import org.egov.search.service.SearchService;
 import org.egov.stms.masters.entity.enums.PropertyType;
 import org.egov.stms.masters.pojo.DCBReportWardwiseResult;
 import org.egov.stms.transactions.entity.SewerageApplicationDetails;
 import org.egov.stms.transactions.service.SewerageApplicationDetailsService;
 import org.egov.stms.transactions.service.SewerageDCBReporService;
 import org.egov.stms.transactions.service.SewerageThirdPartyServices;
-import org.elasticsearch.search.sort.SortOrder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -86,10 +57,15 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 
-import com.google.gson.GsonBuilder;
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+import javax.servlet.http.HttpServletRequest;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
 
 @Controller
 @RequestMapping(value = "/reports")
@@ -109,9 +85,6 @@ public class SewerageRateDCBReportController {
     
     @PersistenceContext
     EntityManager entityManager;
-    
-    @Autowired
-    private SearchService searchService;
     
     @Autowired
     private CityService cityService;
@@ -167,7 +140,7 @@ public class SewerageRateDCBReportController {
     }
     
     
-    @RequestMapping(value="/dcbReportWardwiseList", method = RequestMethod.GET)
+    /*@RequestMapping(value="/dcbReportWardwiseList", method = RequestMethod.GET)
     public @ResponseBody void searchApplication(@ModelAttribute final DCBReportWardwiseResult searchRequest, final Model model,
             final HttpServletResponse response) throws IOException {
         List<Boundary> wardList = new ArrayList<Boundary>();
@@ -289,5 +262,5 @@ public class SewerageRateDCBReportController {
         model.addAttribute("revenueWard", revenueWard);
         model.addAttribute("dcbResultList",sewerageDCBReporService.getSewerageDCBWardConnections(wardConnectionMap, propType, request));
         return "sewerage-dcbWardConnections";
-    }
+    }*/
 }

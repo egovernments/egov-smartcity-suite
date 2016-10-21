@@ -45,11 +45,8 @@ import com.google.gson.annotations.Expose;
 import org.egov.infra.persistence.entity.AbstractAuditable;
 import org.egov.infra.persistence.validator.annotation.CompositeUnique;
 import org.egov.infra.persistence.validator.annotation.DateFormat;
-import org.egov.search.domain.Searchable;
-import org.elasticsearch.common.geo.GeoPoint;
 import org.hibernate.annotations.Fetch;
 import org.hibernate.annotations.FetchMode;
-import org.hibernate.search.annotations.DocumentId;
 import org.hibernate.validator.constraints.Length;
 import org.hibernate.validator.constraints.NotBlank;
 import org.hibernate.validator.constraints.SafeHtml;
@@ -72,25 +69,24 @@ import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
 
+import static org.egov.infra.admin.master.entity.Boundary.SEQ_BOUNDARY;
+
 @Entity
 @CompositeUnique(fields = {"boundaryNum", "boundaryType"}, enableDfltMsg = true)
 @Table(name = "EG_BOUNDARY")
-@Searchable
-@NamedQuery(name = "Boundary.findBoundariesByBoundaryType", query = "select b from Boundary b where b.boundaryType.id = :boundaryTypeId")
-@SequenceGenerator(name = Boundary.SEQ_BOUNDARY, sequenceName = Boundary.SEQ_BOUNDARY, allocationSize = 1)
+@NamedQuery(name = "Boundary.findBoundariesByBoundaryType",
+        query = "select b from Boundary b where b.boundaryType.id = :boundaryTypeId")
+@SequenceGenerator(name = SEQ_BOUNDARY, sequenceName = SEQ_BOUNDARY, allocationSize = 1)
 public class Boundary extends AbstractAuditable {
 
-    private static final long serialVersionUID = 3054956514161912026L;
     public static final String SEQ_BOUNDARY = "seq_eg_boundary";
-
+    private static final long serialVersionUID = 3054956514161912026L;
     @Expose
-    @DocumentId
     @Id
     @GeneratedValue(generator = SEQ_BOUNDARY, strategy = GenerationType.SEQUENCE)
     private Long id;
 
     @Length(max = 512)
-    @Searchable(name = "name")
     @SafeHtml
     @NotBlank
     private String name;
@@ -124,9 +120,9 @@ public class Boundary extends AbstractAuditable {
 
     @SafeHtml
     private String localName;
-   
+
     private Float longitude;
- 
+
     private Float latitude;
 
     @Length(max = 32)
@@ -134,10 +130,6 @@ public class Boundary extends AbstractAuditable {
 
     @Transient
     private City city = new City();
-    
-    @Transient
-    @Searchable(name = "boundaryLocation", group = Searchable.Group.COMMON)
-    private transient GeoPoint boundaryLocation;
 
     @Override
     public Long getId() {
@@ -169,6 +161,10 @@ public class Boundary extends AbstractAuditable {
         return children;
     }
 
+    public void setChildren(final Set<Boundary> boundaries) {
+        children = boundaries;
+    }
+
     public String getName() {
         return name;
     }
@@ -186,16 +182,12 @@ public class Boundary extends AbstractAuditable {
         return boundaryType;
     }
 
-    public Long getBoundaryNum() {
-        return boundaryNum;
-    }
-
-    public boolean isRoot() {
-        return getParent() == null;
-    }
-
     public void setBoundaryType(final BoundaryType boundaryType) {
         this.boundaryType = boundaryType;
+    }
+
+    public Long getBoundaryNum() {
+        return boundaryNum;
     }
 
     public void setBoundaryNum(final Long number) {
@@ -203,9 +195,8 @@ public class Boundary extends AbstractAuditable {
         boundaryNum = number;
     }
 
-    public void setChildren(final Set<Boundary> boundaries) {
-        children = boundaries;
-
+    public boolean isRoot() {
+        return getParent() == null;
     }
 
     public Date getFromDate() {
@@ -270,17 +261,6 @@ public class Boundary extends AbstractAuditable {
 
     public void setCity(final City city) {
         this.city = city;
-    }
-    
-    public GeoPoint getBoundaryLocation() {
-        if (this.getLatitude() != null && this.getLongitude() != null) {
-            this.boundaryLocation = new GeoPoint(this.getLatitude(), this.getLongitude());
-        }
-        return boundaryLocation;
-    }
-
-    public void setBoundaryLocation(GeoPoint boundaryLocation) {
-        this.boundaryLocation = boundaryLocation;
     }
 
     @Override

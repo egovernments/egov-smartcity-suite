@@ -42,13 +42,11 @@ package org.egov.infra.admin.master.entity;
 
 import org.egov.infra.persistence.entity.AbstractAuditable;
 import org.egov.infra.persistence.validator.annotation.Unique;
-import org.egov.search.domain.Searchable;
 import org.hibernate.annotations.Fetch;
 import org.hibernate.annotations.FetchMode;
 import org.hibernate.envers.Audited;
 import org.hibernate.envers.NotAudited;
 import org.hibernate.envers.RelationTargetAuditMode;
-import org.hibernate.search.annotations.DocumentId;
 import org.hibernate.validator.constraints.NotBlank;
 import org.hibernate.validator.constraints.SafeHtml;
 
@@ -67,29 +65,27 @@ import java.util.HashMap;
 import java.util.Map;
 
 import static org.apache.commons.lang3.StringUtils.EMPTY;
+import static org.egov.infra.admin.master.entity.City.QUERY_CITY_BY_URL;
+import static org.egov.infra.admin.master.entity.City.SEQ_CITY;
 import static org.egov.infra.utils.ApplicationConstant.*;
 
 @Entity
-@Searchable
-@Unique(id = "id", tableName = "eg_city", fields = { "domainURL" }, columnName = { "domainURL" }, enableDfltMsg = true)
+@Unique(fields = "domainURL", enableDfltMsg = true)
 @Table(name = "eg_city")
-@NamedQuery(name = City.QUERY_CITY_BY_URL, query = "Select cw FROM City cw WHERE cw.domainURL=:domainURL")
-@SequenceGenerator(name = City.SEQ_CITY, sequenceName = City.SEQ_CITY, allocationSize = 1)
+@NamedQuery(name = QUERY_CITY_BY_URL, query = "Select cw FROM City cw WHERE cw.domainURL=:domainURL")
+@SequenceGenerator(name = SEQ_CITY, sequenceName = SEQ_CITY, allocationSize = 1)
 @Audited(targetAuditMode = RelationTargetAuditMode.NOT_AUDITED)
 public class City extends AbstractAuditable {
 
-    private static final long serialVersionUID = -6267923687226233397L;
     public static final String SEQ_CITY = "SEQ_EG_CITY";
     public static final String QUERY_CITY_BY_URL = "CITY_BY_URL";
-
-    @DocumentId
+    private static final long serialVersionUID = -6267923687226233397L;
     @Id
     @GeneratedValue(generator = SEQ_CITY, strategy = GenerationType.SEQUENCE)
     private Long id;
 
     @SafeHtml
     @NotBlank
-    @Searchable(group = Searchable.Group.CLAUSES)
     private String name;
 
     @SafeHtml
@@ -100,7 +96,6 @@ public class City extends AbstractAuditable {
 
     @SafeHtml
     @NotBlank
-    @Searchable(group = Searchable.Group.CLAUSES)
     private String domainURL;
 
     @SafeHtml
@@ -113,25 +108,20 @@ public class City extends AbstractAuditable {
 
     @SafeHtml
     @NotBlank
-    @Searchable(group = Searchable.Group.CLAUSES)
     private String code;
 
     @SafeHtml
     @NotBlank
-    @Searchable(group = Searchable.Group.CLAUSES)
     private String districtCode;
 
     @SafeHtml
     @NotBlank
-    @Searchable(group = Searchable.Group.CLAUSES)
     private String districtName;
 
     @SafeHtml
-    @Searchable(group = Searchable.Group.CLAUSES)
     private String regionName;
 
     @SafeHtml
-    @Searchable(group = Searchable.Group.CLAUSES)
     private String grade;
 
     private Float longitude;

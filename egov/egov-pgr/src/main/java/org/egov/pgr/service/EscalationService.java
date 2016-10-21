@@ -40,12 +40,6 @@
 
 package org.egov.pgr.service;
 
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.Set;
-
 import org.egov.commons.ObjectType;
 import org.egov.commons.service.ObjectTypeService;
 import org.egov.eis.entity.Assignment;
@@ -60,20 +54,17 @@ import org.egov.infra.admin.master.service.UserService;
 import org.egov.infra.messaging.MessagingService;
 import org.egov.infra.security.utils.SecurityUtils;
 import org.egov.pgr.config.properties.PgrApplicationProperties;
-import org.egov.pgr.elasticSearch.entity.ComplaintIndex;
 import org.egov.pgr.entity.Complaint;
 import org.egov.pgr.entity.ComplaintType;
 import org.egov.pgr.entity.Escalation;
 import org.egov.pgr.repository.ComplaintRepository;
 import org.egov.pgr.repository.EscalationRepository;
-import org.egov.pgr.service.elasticsearch.ComplaintIndexService;
 import org.egov.pgr.utils.constants.PGRConstants;
 import org.egov.pims.commons.Designation;
 import org.egov.pims.commons.Position;
 import org.joda.time.DateTime;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -81,6 +72,12 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+import java.util.Set;
 
 @Service
 @Transactional(readOnly = true)
@@ -116,18 +113,14 @@ public class EscalationService {
 
     @Autowired
     private PositionMasterService positionMasterService;
-
     @Autowired
-    private ComplaintIndexService complaintIndexService;
+    private SecurityUtils securityUtils;
 
     @Autowired
     public EscalationService(final EscalationRepository escalationRepository) {
 
         this.escalationRepository = escalationRepository;
     }
-
-    @Autowired
-    private SecurityUtils securityUtils;
 
     @Transactional
     public void create(final Escalation escalation) {
@@ -192,7 +185,7 @@ public class EscalationService {
     }
 
     public void updateOnEscalation(final Complaint complaint, final Position superiorPosition,
-            final User superiorUser) {
+                                   final User superiorUser) {
         final Position previousOwner = complaint.getAssignee();
         final List<Assignment> prevUserAssignments = assignmentService
                 .getAssignmentsForPosition(previousOwner.getId(), new Date());
@@ -203,7 +196,7 @@ public class EscalationService {
                 .withDateInfo(new Date())
                 .withStateValue(complaint.getStatus().getName())
                 .withSenderName(securityUtils.getCurrentUser().getName());
-        final Complaint savedComplaint = complaintRepository.save(complaint);
+        complaintRepository.save(complaint);
         final AppConfigValues appConfigValue = appConfigValuesService
                 .getConfigValuesByModuleAndKey(PGRConstants.MODULE_NAME, "SENDEMAILFORESCALATION").get(0);
         if ("YES".equalsIgnoreCase(appConfigValue.getValue())) {
@@ -232,11 +225,11 @@ public class EscalationService {
             messagingService.sendEmail(superiorUser.getEmailId(), emailSubject.toString(), emailBody.toString());
             messagingService.sendSMS(superiorUser.getMobileNumber(), smsBody.toString());
         }
-        // update complaint index values
+        /*// update complaint index values
         final Complaint savedComplaintIndex = new ComplaintIndex();
         BeanUtils.copyProperties(savedComplaint, savedComplaintIndex);
         final ComplaintIndex complaintIndex = ComplaintIndex.method(savedComplaintIndex);
-        complaintIndexService.updateComplaintEscalationIndexValues(complaintIndex);
+        complaintIndexService.updateComplaintEscalationIndexValues(complaintIndex);*/
     }
 
     protected DateTime getExpiryDate(final Complaint complaint) {
@@ -264,7 +257,7 @@ public class EscalationService {
     }
 
     public Page<Escalation> getPageOfEscalations(final Integer pageNumber, final Integer pageSize,
-            final Long complaintTypeId, final Long designationId) {
+                                                 final Long complaintTypeId, final Long designationId) {
         final Pageable pageable = new PageRequest(pageNumber - 1, pageSize, Sort.Direction.ASC, "id");
         if (complaintTypeId != 0 && designationId != 0)
             return escalationRepository.findEscalationBycomplaintTypeAndDesignation(complaintTypeId, designationId,
@@ -279,7 +272,7 @@ public class EscalationService {
     }
 
     public List<PositionHierarchy> getEscalationObjByComplaintTypeFromPosition(final List<ComplaintType> complaintTypes,
-            final Position fromPosition) {
+                                                                               final Position fromPosition) {
         final List<String> compTypeCodes = new ArrayList<String>();
         for (final ComplaintType complaintType : complaintTypes)
             compTypeCodes.add(complaintType.getCode());
@@ -297,9 +290,5 @@ public class EscalationService {
                     positionHierarchy.getObjectSubType());
 
         return existingPosHierarchy != null ? existingPosHierarchy : null;
-    }
-
-    public Escalation getEscalationBycomplaintTypeAndDesignation(final Long complaintTypeId, final Long designationId) {
-        return escalationRepository.findByDesignationAndComplaintType(designationId, complaintTypeId);
     }
 }

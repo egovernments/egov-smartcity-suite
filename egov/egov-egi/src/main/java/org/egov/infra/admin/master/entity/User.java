@@ -51,7 +51,6 @@ import org.egov.infra.persistence.validator.annotation.CompositeUnique;
 import org.egov.infra.persistence.validator.annotation.Unique;
 import org.egov.infra.validation.regex.Constants;
 import org.hibernate.envers.Audited;
-import org.hibernate.search.annotations.DocumentId;
 import org.hibernate.validator.constraints.Email;
 import org.hibernate.validator.constraints.Length;
 import org.hibernate.validator.constraints.SafeHtml;
@@ -80,7 +79,6 @@ public class User extends AbstractAuditable {
     @Expose
     @Id
     @GeneratedValue(generator = SEQ_USER, strategy = GenerationType.SEQUENCE)
-    @DocumentId
     private Long id;
 
     @Column(name = "username", unique = true)

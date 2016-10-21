@@ -41,7 +41,6 @@ package org.egov.commons;
 
 import org.egov.commons.utils.BankAccountType;
 import org.egov.infra.persistence.entity.AbstractAuditable;
-import org.hibernate.search.annotations.DocumentId;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -63,14 +62,15 @@ import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
 
+import static org.egov.commons.Bankaccount.SEQ_BANKACCOUNT;
+
 @Entity
 @Table(name = "BANKACCOUNT")
-@SequenceGenerator(name = Bankaccount.SEQ_BANKACCOUNT, sequenceName = Bankaccount.SEQ_BANKACCOUNT, allocationSize = 1)
+@SequenceGenerator(name = SEQ_BANKACCOUNT, sequenceName = SEQ_BANKACCOUNT, allocationSize = 1)
 public class Bankaccount extends AbstractAuditable implements java.io.Serializable {
 
-    private static final long serialVersionUID = 1L;
     public static final String SEQ_BANKACCOUNT = "SEQ_BANKACCOUNT";
-    @DocumentId
+    private static final long serialVersionUID = 1L;
     @Id
     @GeneratedValue(generator = SEQ_BANKACCOUNT, strategy = GenerationType.SEQUENCE)
     private Long id;
@@ -97,15 +97,15 @@ public class Bankaccount extends AbstractAuditable implements java.io.Serializab
     private Set<EgSurrenderedCheques> egSurrenderedChequeses = new HashSet<EgSurrenderedCheques>(0);
 
     @ManyToOne
-    @JoinColumn(name="chequeformatid")
-    private ChequeFormat chequeformat ;
-    
+    @JoinColumn(name = "chequeformatid")
+    private ChequeFormat chequeformat;
+
     public Bankaccount() {
         // For hibernate to work
     }
 
     public Bankaccount(Bankbranch bankbranch, String accountnumber, String accounttype, Boolean isactive, Date created,
-            BigDecimal modifiedby, Date lastmodified, BigDecimal currentbalance, String payTo, BankAccountType type) {
+                       BigDecimal modifiedby, Date lastmodified, BigDecimal currentbalance, String payTo, BankAccountType type) {
         this.bankbranch = bankbranch;
         this.accountnumber = accountnumber;
         this.accounttype = accounttype;
@@ -115,9 +115,9 @@ public class Bankaccount extends AbstractAuditable implements java.io.Serializab
     }
 
     public Bankaccount(Bankbranch bankbranch, CChartOfAccounts chartofaccounts, Fund fund, String accountnumber,
-            String accounttype, String narration, Boolean isactive, Date created, BigDecimal modifiedby, Date lastmodified,
-            BigDecimal currentbalance,
-            String payTo, Set<EgSurrenderedCheques> egSurrenderedChequeses) {
+                       String accounttype, String narration, Boolean isactive, Date created, BigDecimal modifiedby, Date lastmodified,
+                       BigDecimal currentbalance,
+                       String payTo, Set<EgSurrenderedCheques> egSurrenderedChequeses) {
         this.bankbranch = bankbranch;
         this.chartofaccounts = chartofaccounts;
         this.fund = fund;

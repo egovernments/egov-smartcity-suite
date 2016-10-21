@@ -43,9 +43,7 @@ package org.egov.infra.admin.master.entity;
 import com.google.gson.annotations.Expose;
 import org.egov.infra.persistence.entity.AbstractAuditable;
 import org.egov.infra.persistence.validator.annotation.CompositeUnique;
-import org.egov.search.domain.Searchable;
 import org.hibernate.annotations.Fetch;
-import org.hibernate.search.annotations.DocumentId;
 import org.hibernate.validator.constraints.Length;
 import org.hibernate.validator.constraints.NotBlank;
 import org.hibernate.validator.constraints.SafeHtml;
@@ -78,18 +76,14 @@ import static org.hibernate.annotations.FetchMode.JOIN;
 @Entity
 @Table(name = "eg_appconfig")
 @SequenceGenerator(name = SEQ_APPCONFIG, sequenceName = SEQ_APPCONFIG, allocationSize = 1)
-@CompositeUnique(fields = { "keyName", "module" }, enableDfltMsg = true)
-@Searchable
-@NamedEntityGraph(name = FETCH_WITH_VALUES,
-        attributeNodes = @NamedAttributeNode("confValues"))
+@CompositeUnique(fields = {"keyName", "module"}, enableDfltMsg = true)
+@NamedEntityGraph(name = FETCH_WITH_VALUES, attributeNodes = @NamedAttributeNode("confValues"))
 public class AppConfig extends AbstractAuditable {
 
-    private static final long serialVersionUID = 8904645810221559541L;
     public static final String SEQ_APPCONFIG = "SEQ_EG_APPCONFIG";
     public static final String FETCH_WITH_VALUES = "AppConfig.values";
-
+    private static final long serialVersionUID = 8904645810221559541L;
     @Expose
-    @DocumentId
     @Id
     @GeneratedValue(generator = SEQ_APPCONFIG, strategy = SEQUENCE)
     private Long id;
@@ -98,19 +92,16 @@ public class AppConfig extends AbstractAuditable {
     @SafeHtml
     @Length(max = 250)
     @Column(name = "key_name", updatable = false)
-    @Searchable
     private String keyName;
 
     @ManyToOne(fetch = LAZY)
     @JoinColumn(name = "module", nullable = false, updatable = false)
     @NotNull
-    @Searchable
     private Module module;
 
     @NotBlank
     @SafeHtml
     @Length(max = 250)
-    @Searchable
     @Column(name = "description")
     private String description;
 

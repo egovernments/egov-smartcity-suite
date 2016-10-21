@@ -44,7 +44,6 @@ import org.egov.infra.filestore.entity.FileStoreMapper;
 import org.egov.infra.persistence.entity.AbstractAuditable;
 import org.hibernate.annotations.Fetch;
 import org.hibernate.annotations.FetchMode;
-import org.hibernate.search.annotations.DocumentId;
 import org.hibernate.validator.constraints.Length;
 import org.hibernate.validator.constraints.SafeHtml;
 
@@ -59,16 +58,15 @@ import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
 
+import static org.egov.infra.admin.master.entity.CityPreferences.SEQ_CITY_PREF;
+
 @Entity
 @Table(name = "eg_citypreferences")
-@SequenceGenerator(name = CityPreferences.SEQ_CITY_PREF, sequenceName = CityPreferences.SEQ_CITY_PREF, allocationSize = 1)
+@SequenceGenerator(name = SEQ_CITY_PREF, sequenceName = SEQ_CITY_PREF, allocationSize = 1)
 public class CityPreferences extends AbstractAuditable {
 
-    private static final long serialVersionUID = -7160795726709889116L;
-
     public static final String SEQ_CITY_PREF = "SEQ_EG_CITYPREFERENCES";
-
-    @DocumentId
+    private static final long serialVersionUID = -7160795726709889116L;
     @Id
     @GeneratedValue(generator = SEQ_CITY_PREF, strategy = GenerationType.SEQUENCE)
     private Long id;
@@ -113,13 +111,13 @@ public class CityPreferences extends AbstractAuditable {
     private String municipalityTwitterLink;
 
     @Override
-    protected void setId(final Long id) {
-        this.id = id;
+    public Long getId() {
+        return id;
     }
 
     @Override
-    public Long getId() {
-        return id;
+    protected void setId(final Long id) {
+        this.id = id;
     }
 
     public FileStoreMapper getMunicipalityLogo() {

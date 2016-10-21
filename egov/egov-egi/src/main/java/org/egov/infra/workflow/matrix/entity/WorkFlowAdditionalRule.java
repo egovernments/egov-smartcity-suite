@@ -42,7 +42,6 @@ package org.egov.infra.workflow.matrix.entity;
 
 import org.egov.infra.persistence.entity.AbstractPersistable;
 import org.egov.infra.workflow.entity.WorkflowTypes;
-import org.hibernate.search.annotations.DocumentId;
 
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -60,13 +59,10 @@ import static org.egov.infra.workflow.matrix.entity.WorkFlowAdditionalRule.SEQ_W
 @SequenceGenerator(name = SEQ_WF_ADDITIONALRULE, sequenceName = SEQ_WF_ADDITIONALRULE, allocationSize = 1)
 public class WorkFlowAdditionalRule extends AbstractPersistable<Long> {
 
-    private static final long serialVersionUID = 6698631796849930996L;
-
     public static final String SEQ_WF_ADDITIONALRULE = "SEQ_EG_WF_ADDITIONALRULE";
-
+    private static final long serialVersionUID = 6698631796849930996L;
     @Id
     @GeneratedValue(generator = SEQ_WF_ADDITIONALRULE, strategy = GenerationType.SEQUENCE)
-    @DocumentId
     private Long id;
 
     @ManyToOne

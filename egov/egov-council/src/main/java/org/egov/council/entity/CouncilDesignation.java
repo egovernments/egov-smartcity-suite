@@ -1,5 +1,9 @@
 package org.egov.council.entity;
 
+import org.egov.infra.persistence.entity.AbstractAuditable;
+import org.egov.infra.persistence.validator.annotation.Unique;
+import org.hibernate.validator.constraints.Length;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -9,25 +13,16 @@ import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
 
-import org.egov.infra.persistence.entity.AbstractAuditable;
-import org.egov.infra.persistence.validator.annotation.Unique;
-import org.egov.search.domain.Searchable;
-import org.hibernate.validator.constraints.Length;
+import static org.egov.council.entity.CouncilDesignation.SEQ_COUNCILDESIGNATION;
 
 @Entity
-@Unique(id = "id", tableName = "egcncl_designation", fields = {"name"}, columnName = { "name"}, enableDfltMsg = true)
+@Unique(fields = {"name"}, enableDfltMsg = true)
 @Table(name = "egcncl_designation")
-@Searchable
-@SequenceGenerator(name = CouncilDesignation.SEQ_COUNCILDESIGNATION, sequenceName = CouncilDesignation.SEQ_COUNCILDESIGNATION, allocationSize = 1)
+@SequenceGenerator(name = SEQ_COUNCILDESIGNATION, sequenceName = SEQ_COUNCILDESIGNATION, allocationSize = 1)
 public class CouncilDesignation extends AbstractAuditable {
 
-    /**
-     * 
-     */
-    private static final long serialVersionUID = -1288716453376474299L;
-
     public static final String SEQ_COUNCILDESIGNATION = "seq_egcncl_designation";
-
+    private static final long serialVersionUID = -1288716453376474299L;
     @Id
     @GeneratedValue(generator = SEQ_COUNCILDESIGNATION, strategy = GenerationType.SEQUENCE)
     private Long id;
@@ -40,9 +35,9 @@ public class CouncilDesignation extends AbstractAuditable {
     @Length(max = 20)
     @Column(name = "code", updatable = false)
     private String code;
-    
+
     @NotNull
-     private Boolean isActive;
+    private Boolean isActive;
 
     public String getName() {
         return name;

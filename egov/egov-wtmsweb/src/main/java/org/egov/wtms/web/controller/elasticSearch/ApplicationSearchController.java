@@ -40,27 +40,11 @@
 
 package org.egov.wtms.web.controller.elasticSearch;
 
-import static java.util.Arrays.asList;
-
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-
-import org.egov.config.search.Index;
-import org.egov.config.search.IndexType;
-import org.egov.infra.admin.master.entity.City;
 import org.egov.infra.admin.master.service.CityService;
-import org.egov.infra.config.core.ApplicationThreadLocals;
-import org.egov.infra.search.elastic.entity.ApplicationIndex;
-import org.egov.search.domain.Document;
-import org.egov.search.domain.Page;
-import org.egov.search.domain.SearchResult;
-import org.egov.search.domain.Sort;
-import org.egov.search.service.SearchService;
+import org.egov.infra.es.entity.ApplicationIndex;
 import org.egov.wtms.elasticSearch.entity.ApplicationSearchRequest;
 import org.egov.wtms.elasticSearch.service.ApplicationSearchService;
 import org.egov.wtms.utils.WaterTaxUtils;
-import org.elasticsearch.search.sort.SortOrder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
@@ -71,12 +55,14 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import java.util.List;
+import java.util.Map;
+
 @Controller
 @RequestMapping(value = "/elastic/appSearch/")
 public class ApplicationSearchController {
 
     private final ApplicationSearchService applicationSearchService;
-    private final SearchService searchService;
     private final CityService cityService;
 
     @Autowired
@@ -84,21 +70,22 @@ public class ApplicationSearchController {
 
     @Autowired
     public ApplicationSearchController(final ApplicationSearchService applicationSearchService,
-            final SearchService searchService, final CityService cityService) {
+                                       final CityService cityService) {
         this.applicationSearchService = applicationSearchService;
-        this.searchService = searchService;
         this.cityService = cityService;
     }
 
     @RequestMapping(value = "/ajax-moduleTypepopulate", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
-    public @ResponseBody List<ApplicationIndex> getAppConfigs(
+    @ResponseBody
+    public List<ApplicationIndex> getAppConfigs(
             @ModelAttribute("appConfig") @RequestParam final String appModuleName) {
         final List<ApplicationIndex> applicationIndexList = applicationSearchService
                 .findApplicationIndexApplicationTypes(appModuleName);
         return applicationIndexList;
     }
 
-    public @ModelAttribute("applicationstatusList") Map<String, String> connectionTypes() {
+    @ModelAttribute("applicationstatusList")
+    public Map<String, String> connectionTypes() {
         return applicationSearchService.getApplicationStatusMap();
     }
 
@@ -123,7 +110,7 @@ public class ApplicationSearchController {
         return applicationSearchService.findApplicationIndexModules();
     }
 
-    @RequestMapping(method = RequestMethod.POST)
+    /*@RequestMapping(method = RequestMethod.POST)
     @ResponseBody
     public List<Document> searchApplication(@ModelAttribute final ApplicationSearchRequest searchRequest) {
         final City cityWebsite = cityService.getCityByURL(ApplicationThreadLocals.getDomainName());
@@ -141,5 +128,5 @@ public class ApplicationSearchController {
         }
         return searchResultFomatted;
 
-    }
+    }*/
 }

@@ -40,16 +40,6 @@
 
 package org.egov.collection.utils;
 
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
 import org.apache.log4j.Logger;
 import org.egov.collection.config.properties.CollectionApplicationProperties;
 import org.egov.collection.constants.CollectionConstants;
@@ -57,8 +47,6 @@ import org.egov.collection.entity.Challan;
 import org.egov.collection.entity.OnlinePayment;
 import org.egov.collection.entity.ReceiptDetail;
 import org.egov.collection.entity.ReceiptHeader;
-import org.egov.collection.integration.models.BillReceiptInfoImpl;
-import org.egov.collection.integration.models.ReceiptAmountInfo;
 import org.egov.collection.integration.services.BillingIntegrationService;
 import org.egov.commons.CFinancialYear;
 import org.egov.commons.EgwStatus;
@@ -91,12 +79,9 @@ import org.egov.infra.messaging.MessagingService;
 import org.egov.infra.reporting.engine.ReportOutput;
 import org.egov.infra.reporting.engine.ReportRequest;
 import org.egov.infra.reporting.engine.ReportService;
-import org.egov.infra.search.elastic.entity.CollectionIndex;
-import org.egov.infra.search.elastic.entity.CollectionIndexBuilder;
 import org.egov.infra.security.utils.SecurityUtils;
 import org.egov.infra.validation.exception.ValidationError;
 import org.egov.infra.validation.exception.ValidationException;
-import org.egov.infstr.models.ServiceDetails;
 import org.egov.infstr.services.EISServeable;
 import org.egov.infstr.services.PersistenceService;
 import org.egov.pims.commons.Designation;
@@ -109,9 +94,21 @@ import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
 public class CollectionsUtil {
-    private static final Logger LOGGER = Logger.getLogger(CollectionsUtil.class);
     public static final SimpleDateFormat CHEQUE_DATE_FORMAT = new SimpleDateFormat("dd-MM-yyyy");
+    private static final Logger LOGGER = Logger.getLogger(CollectionsUtil.class);
+    @Autowired
+    protected AssignmentService assignmentService;
     private PersistenceService persistenceService;
     @Autowired
     private UserService userService;
@@ -125,18 +122,14 @@ public class CollectionsUtil {
     private SearchPositionService searchPositionService;
     @Autowired
     private ApplicationContext context;
-
     @Autowired
     private EISServeable eisService;
-
     @Autowired
     private SecurityUtils securityUtils;
     @Autowired
     private PositionMasterService posService;
     @Autowired
     private DepartmentService departmentService;
-    @Autowired
-    protected AssignmentService assignmentService;
     @Autowired
     private InstallmentHibDao installmentHibDao;
     @Autowired
@@ -318,7 +311,7 @@ public class CollectionsUtil {
                     "billreceipt.counter.deptcode.null")));
         else if (!isEmp || isDeptAllowed)
             collectionsModeNotAllowed.add(CollectionConstants.INSTRUMENTTYPE_CARD);
-        // collectionsModeNotAllowed.add(CollectionConstants.INSTRUMENTTYPE_BANK);
+            // collectionsModeNotAllowed.add(CollectionConstants.INSTRUMENTTYPE_BANK);
         else {
             collectionsModeNotAllowed.add(CollectionConstants.INSTRUMENTTYPE_CASH);
             collectionsModeNotAllowed.add(CollectionConstants.INSTRUMENTTYPE_CARD);
@@ -361,7 +354,7 @@ public class CollectionsUtil {
         for (final String dept : department) {
             for (final String desg : designation) {
                 assignment = assignmentService.findByDepartmentDesignationAndBoundary(departmentService
-                        .getDepartmentByName(dept).getId(), designationService.getDesignationByName(desg).getId(),
+                                .getDepartmentByName(dept).getId(), designationService.getDesignationByName(desg).getId(),
                         boundary.getId());
                 if (!assignment.isEmpty())
                     break;
@@ -412,7 +405,7 @@ public class CollectionsUtil {
                 .createQuery(
                         "from CFinancialYear cfinancialyear where ? between "
                                 + "cfinancialyear.startingDate and cfinancialyear.endingDate").setDate(0, date).list()
-                                .get(0);
+                .get(0);
     }
 
     /**
@@ -470,8 +463,8 @@ public class CollectionsUtil {
     /**
      * This method returns the currently active config value for the given module name and key
      *
-     * @param moduleName a <code>String<code> representing the module name
-     * @param key a <code>String</code> representing the key
+     * @param moduleName   a <code>String<code> representing the module name
+     * @param key          a <code>String</code> representing the key
      * @param defaultValue Default value to be returned in case the key is not defined
      * @return <code>String</code> representing the configuration value
      */
@@ -484,7 +477,7 @@ public class CollectionsUtil {
      * This method returns the config value for the given module name and key
      *
      * @param moduleName a <code>String<code> representing the module name
-     * @param key a <code>String</code> representing the key
+     * @param key        a <code>String</code> representing the key
      * @return <code>String</code> representing the configuration value
      */
     public String getAppConfigValue(final String moduleName, final String key) {
@@ -500,7 +493,7 @@ public class CollectionsUtil {
      * This method returns the list of config values for the given module name and key
      *
      * @param moduleName a <code>String<code> representing the module name
-     * @param key a <code>String</code> representing the key
+     * @param key        a <code>String</code> representing the key
      * @return <code>List<AppConfigValues></code> representing the list of configuration values
      */
     public List<AppConfigValues> getAppConfigValues(final String moduleName, final String key) {
@@ -533,15 +526,15 @@ public class CollectionsUtil {
      * This method is invoked from the ReceiptHeader.workFlow script and returns Employee object for the given Department Id,
      * Designation Id ,Boundary Id and FunctionaryId
      *
-     * @param deptId Department Id
+     * @param deptId        Department Id
      * @param designationId Designation Id
-     * @param boundaryId Boundary Id
+     * @param boundaryId    Boundary Id
      * @param functionaryId Functionary Id
      * @return PersonalInformation
      */
 
     public PersonalInformation getEmployeeByDepartmentDesignationBoundaryandFunctionary(final Long deptId,
-            final Long designationId, final Integer boundaryId, final Integer functionaryId) {
+                                                                                        final Long designationId, final Integer boundaryId, final Integer functionaryId) {
         PersonalInformation personalInformation = null;
         try {
             personalInformation = EisManagersUtill.getEmployeeService().getEmployeeByFunctionary(deptId, designationId,
@@ -597,7 +590,7 @@ public class CollectionsUtil {
     }
 
     public List<Designation> getDesignationsAllowedForChallanApproval(final Integer departmentId,
-            final ReceiptHeader receiptHeaderObj) {
+                                                                      final ReceiptHeader receiptHeaderObj) {
         List<Designation> designations = new ArrayList<Designation>(0);
         designations = designationService.getAllDesignationByDepartment(Long.valueOf(departmentId), new Date());
         final List<Designation> designation = new ArrayList<Designation>(0);
@@ -613,7 +606,7 @@ public class CollectionsUtil {
     }
 
     public List<Department> getDepartmentsAllowedForChallanApproval(final User loggedInUser,
-            final ReceiptHeader receiptHeaderObj) {
+                                                                    final ReceiptHeader receiptHeaderObj) {
         final List<Department> departments = new ArrayList<Department>(0);
         final List<AppConfigValues> appConfigValue = appConfigValuesService.getConfigValuesByModuleAndKey(
                 CollectionConstants.MODULE_NAME_COLLECTIONS_CONFIG,
@@ -633,7 +626,7 @@ public class CollectionsUtil {
      * This method checks if the given glcode belongs to an account head representing an arrear account head (for Property Tax).
      * The glcodes for such accounts are retrieved from App Config.
      *
-     * @param glcode The Chart of Accounts Code
+     * @param glcode      The Chart of Accounts Code
      * @param description Description of the glcode
      * @returna a <code>Boolean</code> indicating if the glcode is arrear account head
      */
@@ -666,8 +659,8 @@ public class CollectionsUtil {
     }
 
     public List<EmployeeView> getPositionBySearchParameters(final String beginsWith, final Integer desId,
-            final Integer deptId, final Integer jurdId, final Integer roleId, final Date userDate,
-            final Integer maxResults) throws NoSuchObjectException {
+                                                            final Integer deptId, final Integer jurdId, final Integer roleId, final Date userDate,
+                                                            final Integer maxResults) throws NoSuchObjectException {
 
         return searchPositionService.getPositionBySearchParameters(beginsWith, desId, deptId,
                 jurdId != null ? Long.valueOf(jurdId) : null, roleId, userDate, maxResults);
@@ -724,7 +717,7 @@ public class CollectionsUtil {
         return reportService.createReport(reportRequest);
     }
 
-    public CollectionIndex constructCollectionIndex(final ReceiptHeader receiptHeader) {
+   /* public CollectionIndex constructCollectionIndex(final ReceiptHeader receiptHeader) {
         ReceiptAmountInfo receiptAmountInfo = new ReceiptAmountInfo();
         final ServiceDetails billingService = receiptHeader.getService();
 
@@ -773,7 +766,7 @@ public class CollectionsUtil {
             collectionIndexBuilder.installmentTo(receiptAmountInfo.getInstallmentTo());
 
         return collectionIndexBuilder.build();
-    }
+    }*/
 
     public Boolean checkVoucherCreation(final ReceiptHeader receiptHeader) {
         Boolean createVoucherForBillingService = Boolean.FALSE;
@@ -796,7 +789,7 @@ public class CollectionsUtil {
     }
 
     public List<ReceiptDetail> reconstructReceiptDetail(final ReceiptHeader receiptHeader,
-            final List<ReceiptDetail> receiptDetailList) {
+                                                        final List<ReceiptDetail> receiptDetailList) {
         final BillingIntegrationService billingService = (BillingIntegrationService) getBean(receiptHeader.getService()
                 .getCode() + CollectionConstants.COLLECTIONS_INTERFACE_SUFFIX);
         return billingService.reconstructReceiptDetail(receiptHeader.getReferencenumber(),
@@ -837,7 +830,7 @@ public class CollectionsUtil {
         Boolean voucherTypeForChequeDDCard = false;
         if (getAppConfigValue(CollectionConstants.MODULE_NAME_COLLECTIONS_CONFIG,
                 CollectionConstants.APPCONFIG_VALUE_REMITTANCEVOUCHERTYPEFORCHEQUEDDCARD).equals(
-                        CollectionConstants.FINANCIAL_RECEIPTS_VOUCHERTYPE))
+                CollectionConstants.FINANCIAL_RECEIPTS_VOUCHERTYPE))
             voucherTypeForChequeDDCard = true;
         return voucherTypeForChequeDDCard;
     }
@@ -850,32 +843,32 @@ public class CollectionsUtil {
         String templateName = null;
 
         switch (receiptType) {
-        case CollectionConstants.RECEIPT_TYPE_BILL:
-            templateName = serviceCode + CollectionConstants.SEPARATOR_UNDERSCORE
-            + CollectionConstants.RECEIPT_TEMPLATE_NAME;// <servicecode>_collection_receipt
-            if (!isValidTemplate(templateName)) {
-                LOGGER.info("Billing system specific report template [" + templateName
-                        + "] not available. Using the default template [" + CollectionConstants.RECEIPT_TEMPLATE_NAME
-                        + "]");
-                templateName = "PT_collection_receipt"; // CollectionConstants.RECEIPT_TEMPLATE_NAME;
-
+            case CollectionConstants.RECEIPT_TYPE_BILL:
+                templateName = serviceCode + CollectionConstants.SEPARATOR_UNDERSCORE
+                        + CollectionConstants.RECEIPT_TEMPLATE_NAME;// <servicecode>_collection_receipt
                 if (!isValidTemplate(templateName)) {
-                    // No template available for creating the receipt report.
-                    // Throw
-                    // exception.
-                    final String errMsg = "Report template [" + templateName
-                            + "] not available! Receipt report cannot be generated.";
-                    LOGGER.error(errMsg);
-                    throw new ApplicationRuntimeException(errMsg);
+                    LOGGER.info("Billing system specific report template [" + templateName
+                            + "] not available. Using the default template [" + CollectionConstants.RECEIPT_TEMPLATE_NAME
+                            + "]");
+                    templateName = "PT_collection_receipt"; // CollectionConstants.RECEIPT_TEMPLATE_NAME;
+
+                    if (!isValidTemplate(templateName)) {
+                        // No template available for creating the receipt report.
+                        // Throw
+                        // exception.
+                        final String errMsg = "Report template [" + templateName
+                                + "] not available! Receipt report cannot be generated.";
+                        LOGGER.error(errMsg);
+                        throw new ApplicationRuntimeException(errMsg);
+                    }
                 }
-            }
-            break;
-        case CollectionConstants.RECEIPT_TYPE_CHALLAN:
-            templateName = CollectionConstants.CHALLAN_RECEIPT_TEMPLATE_NAME;
-            break;
-        case CollectionConstants.RECEIPT_TYPE_ADHOC:
-            templateName = CollectionConstants.RECEIPT_TEMPLATE_NAME;
-            break;
+                break;
+            case CollectionConstants.RECEIPT_TYPE_CHALLAN:
+                templateName = CollectionConstants.CHALLAN_RECEIPT_TEMPLATE_NAME;
+                break;
+            case CollectionConstants.RECEIPT_TYPE_ADHOC:
+                templateName = CollectionConstants.RECEIPT_TEMPLATE_NAME;
+                break;
         }
         return templateName;
     }

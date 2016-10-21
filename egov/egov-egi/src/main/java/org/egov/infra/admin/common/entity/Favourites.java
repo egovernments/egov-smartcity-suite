@@ -41,7 +41,6 @@
 package org.egov.infra.admin.common.entity;
 
 import org.egov.infra.persistence.entity.AbstractPersistable;
-import org.hibernate.search.annotations.DocumentId;
 import org.hibernate.validator.constraints.NotBlank;
 import org.hibernate.validator.constraints.SafeHtml;
 
@@ -53,16 +52,15 @@ import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
 
+import static org.egov.infra.admin.common.entity.Favourites.SEQ_FAVOURITES;
+
 @Entity
-@Table(name = "eg_favourites", uniqueConstraints = @UniqueConstraint(columnNames = { "userId", "actionId" }) )
-@SequenceGenerator(name = Favourites.SEQ_FAVOURITES, sequenceName = Favourites.SEQ_FAVOURITES, allocationSize = 1)
+@Table(name = "eg_favourites", uniqueConstraints = @UniqueConstraint(columnNames = {"userId", "actionId"}))
+@SequenceGenerator(name = SEQ_FAVOURITES, sequenceName = SEQ_FAVOURITES, allocationSize = 1)
 public class Favourites extends AbstractPersistable<Long> {
 
-    private static final long serialVersionUID = 8966137226966715994L;
-
     public static final String SEQ_FAVOURITES = "SEQ_EG_FAVOURITES";
-
-    @DocumentId
+    private static final long serialVersionUID = 8966137226966715994L;
     @Id
     @GeneratedValue(generator = SEQ_FAVOURITES, strategy = GenerationType.SEQUENCE)
     private Long id;

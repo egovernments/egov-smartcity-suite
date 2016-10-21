@@ -40,10 +40,7 @@
 
 package org.egov.pgr.service;
 
-import org.egov.config.search.Index;
-import org.egov.config.search.IndexType;
 import org.egov.infra.admin.master.entity.Department;
-import org.egov.infra.search.elastic.annotation.Indexing;
 import org.egov.pgr.entity.Complaint;
 import org.egov.pgr.entity.ComplaintType;
 import org.egov.pgr.repository.ComplaintTypeRepository;
@@ -84,7 +81,6 @@ public class ComplaintTypeService {
         return complaintTypeRepository.findOne(complaintTypeId);
     }
 
-    @Indexing(name = Index.PGR, type = IndexType.COMPLAINT_TYPE)
     @Transactional
     public ComplaintType createComplaintType(final ComplaintType complaintType) {
         return complaintTypeRepository.save(complaintType);

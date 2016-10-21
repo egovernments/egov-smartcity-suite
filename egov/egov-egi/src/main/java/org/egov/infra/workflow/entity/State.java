@@ -43,7 +43,6 @@ package org.egov.infra.workflow.entity;
 import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.persistence.entity.AbstractAuditable;
 import org.egov.pims.commons.Position;
-import org.hibernate.search.annotations.DocumentId;
 import org.hibernate.validator.constraints.Length;
 
 import javax.persistence.CascadeType;
@@ -65,46 +64,35 @@ import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
 
+import static org.egov.infra.workflow.entity.State.SEQ_STATE;
+
 @Entity
 @Table(name = "EG_WF_STATES")
-@SequenceGenerator(name = State.SEQ_STATE, sequenceName = State.SEQ_STATE, allocationSize = 1)
+@SequenceGenerator(name = SEQ_STATE, sequenceName = SEQ_STATE, allocationSize = 1)
 public class State extends AbstractAuditable {
-
-    private static final long serialVersionUID = -9159043292636575746L;
-    static final String SEQ_STATE = "SEQ_EG_WF_STATES";
 
     public static final String DEFAULT_STATE_VALUE_CREATED = "Created";
     public static final String DEFAULT_STATE_VALUE_CLOSED = "Closed";
     public static final String STATE_REOPENED = "Reopened";
-
-    public enum StateStatus {
-        STARTED, INPROGRESS, ENDED
-    }
-
-    @DocumentId
+    static final String SEQ_STATE = "SEQ_EG_WF_STATES";
+    private static final long serialVersionUID = -9159043292636575746L;
     @Id
     @GeneratedValue(generator = SEQ_STATE, strategy = GenerationType.SEQUENCE)
     private Long id;
-
     @NotNull
     private String type;
-
     @NotNull
     @Length(min = 1)
     private String value;
-
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "OWNER_POS")
     private Position ownerPosition;
-
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "OWNER_USER")
     private User ownerUser;
-
-    @OneToMany(cascade = { CascadeType.PERSIST, CascadeType.MERGE }, fetch = FetchType.LAZY, mappedBy = "state")
+    @OneToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE}, fetch = FetchType.LAZY, mappedBy = "state")
     @OrderBy("id")
     private Set<StateHistory> history = new HashSet<>();
-
     private String senderName;
     private String nextAction;
     private String comments;
@@ -112,19 +100,16 @@ public class State extends AbstractAuditable {
     private String extraInfo;
     private Date dateInfo;
     private Date extraDateInfo;
-
     @Enumerated(EnumType.ORDINAL)
     @NotNull
     private StateStatus status;
-
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "INITIATOR_POS")
     private Position initiatorPosition;
-  
+
     protected State() {
     }
-    
-     
+
     @Override
     public Long getId() {
         return id;
@@ -259,5 +244,9 @@ public class State extends AbstractAuditable {
     public void setInitiatorPosition(Position initiatorPosition) {
         this.initiatorPosition = initiatorPosition;
     }
-    
+
+    public enum StateStatus {
+        STARTED, INPROGRESS, ENDED
+    }
+
 }

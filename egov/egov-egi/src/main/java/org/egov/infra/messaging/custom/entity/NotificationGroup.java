@@ -42,7 +42,6 @@ package org.egov.infra.messaging.custom.entity;
 
 import org.egov.infra.persistence.entity.AbstractAuditable;
 import org.egov.pims.commons.Position;
-import org.hibernate.search.annotations.DocumentId;
 import org.hibernate.validator.constraints.Length;
 import org.hibernate.validator.constraints.SafeHtml;
 
@@ -64,74 +63,71 @@ import static org.egov.infra.messaging.custom.entity.NotificationGroup.SEQ_EG_NO
 @SequenceGenerator(name = SEQ_EG_NOTIFICATION_GROUP, sequenceName = SEQ_EG_NOTIFICATION_GROUP, allocationSize = 1)
 public class NotificationGroup extends AbstractAuditable {
 
-    private static final long serialVersionUID = -6657657337034880987L;
-
     public static final String SEQ_EG_NOTIFICATION_GROUP = "SEQ_EG_NOTIFICATION_GROUP";
-
+    private static final long serialVersionUID = -6657657337034880987L;
     @Id
     @GeneratedValue(generator = SEQ_EG_NOTIFICATION_GROUP, strategy = GenerationType.SEQUENCE)
-    @DocumentId
     private Long id;
 
-	@Length(min = 1, max = 100)
+    @Length(min = 1, max = 100)
     @SafeHtml
-	private String name;
+    private String name;
 
-	@Length(max = 250)
+    @Length(max = 250)
     @SafeHtml
-	private String description;
+    private String description;
 
-	@NotNull
-	private Date effectiveDate;
+    @NotNull
+    private Date effectiveDate;
 
     private boolean active;
 
     //Should think about using UserGroup rather than depending on EIS, when add this feature.
     //It should be an many to many relation with notification_users table, contains group id and UserGroup id
     @Transient
-	private Set<Position> members;
+    private Set<Position> members;
 
-	@Override
-	protected void setId(Long id) {
+    @Override
+    public Long getId() {
+        return id;
+    }
+
+    @Override
+    protected void setId(Long id) {
         this.id = id;
-	}
+    }
 
-	@Override
-	public Long getId() {
-		return id;
-	}
+    public String getName() {
+        return this.name;
+    }
 
-	public String getName() {
-		return this.name;
-	}
+    public void setName(String name) {
+        this.name = name;
+    }
 
-	public void setName(String name) {
-		this.name = name;
-	}
+    public String getDescription() {
+        return this.description;
+    }
 
-	public String getDescription() {
-		return this.description;
-	}
+    public void setDescription(String description) {
+        this.description = description;
+    }
 
-	public void setDescription(String description) {
-		this.description = description;
-	}
+    public Date getEffectiveDate() {
+        return this.effectiveDate;
+    }
 
-	public Date getEffectiveDate() {
-		return this.effectiveDate;
-	}
+    public void setEffectiveDate(Date effectiveDate) {
+        this.effectiveDate = effectiveDate;
+    }
 
-	public void setEffectiveDate(Date effectiveDate) {
-		this.effectiveDate = effectiveDate;
-	}
+    public Set<Position> getMembers() {
+        return this.members;
+    }
 
-	public Set<Position> getMembers() {
-		return this.members;
-	}
-
-	public void setMembers(Set<Position> members) {
-		this.members = members;
-	}
+    public void setMembers(Set<Position> members) {
+        this.members = members;
+    }
 
     public boolean isActive() {
         return active;
@@ -141,8 +137,8 @@ public class NotificationGroup extends AbstractAuditable {
         this.active = active;
     }
 
-	@Override
-	public String toString() {
-		return name;
-	}
+    @Override
+    public String toString() {
+        return name;
+    }
 }

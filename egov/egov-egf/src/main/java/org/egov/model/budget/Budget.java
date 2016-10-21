@@ -39,7 +39,13 @@
  */
 package org.egov.model.budget;
 
-import java.util.Date;
+import org.egov.commons.CFinancialYear;
+import org.egov.commons.EgwStatus;
+import org.egov.infra.persistence.validator.annotation.Required;
+import org.egov.infra.persistence.validator.annotation.Unique;
+import org.egov.infra.workflow.entity.State;
+import org.egov.infra.workflow.entity.StateAware;
+import org.hibernate.validator.constraints.Length;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -52,17 +58,7 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
-
-import org.egov.commons.CFinancialYear;
-import org.egov.commons.EgwStatus;
-import org.egov.infra.persistence.validator.annotation.Required;
-import org.egov.infra.persistence.validator.annotation.Unique;
-import org.egov.infra.workflow.entity.State;
-import org.egov.infra.workflow.entity.StateAware;
-import org.hibernate.annotations.Fetch;
-import org.hibernate.annotations.FetchMode;
-import org.hibernate.search.annotations.DocumentId;
-import org.hibernate.validator.constraints.Length;
+import java.util.Date;
 
 @Entity
 @Table(name = "EGF_BUDGET")
@@ -70,10 +66,8 @@ import org.hibernate.validator.constraints.Length;
 @Unique(fields = "name", id = "id", columnName = "NAME", tableName = "EGF_BUDGET", enableDfltMsg = true)
 public class Budget extends StateAware {
 
-    private static final long serialVersionUID = 3592259793739732756L;
     public static final String SEQ_BUDGET = "SEQ_EGF_BUDGET";
-
-    @DocumentId
+    private static final long serialVersionUID = 3592259793739732756L;
     @Id
     @GeneratedValue(generator = SEQ_BUDGET, strategy = GenerationType.SEQUENCE)
     private Long id;
@@ -179,8 +173,7 @@ public class Budget extends StateAware {
     }
 
     /**
-     * @param isbere
-     *            the isbere to set
+     * @param isbere the isbere to set
      */
     public void setIsbere(final String isbere) {
         this.isbere = isbere;
@@ -194,8 +187,7 @@ public class Budget extends StateAware {
     }
 
     /**
-     * @param isActiveBudget
-     *            the isActiveBudget to set
+     * @param isActiveBudget the isActiveBudget to set
      */
     public void setIsActiveBudget(final boolean isActiveBudget) {
         this.isActiveBudget = isActiveBudget;
@@ -209,8 +201,7 @@ public class Budget extends StateAware {
     }
 
     /**
-     * @param isPrimaryBudget
-     *            the isPrimaryBudget to set
+     * @param isPrimaryBudget the isPrimaryBudget to set
      */
     public void setIsPrimaryBudget(final boolean isPrimaryBudget) {
         this.isPrimaryBudget = isPrimaryBudget;
@@ -229,27 +220,26 @@ public class Budget extends StateAware {
     }
 
     /**
-     * @param materialized_path
-     *            the materialized_path to set
+     * @param materialized_path the materialized_path to set
      */
     public void setMaterializedPath(final String materializedPath) {
         this.materializedPath = materializedPath;
-    }
-
-    public void setReferenceBudget(final Budget reference) {
-        referenceBudget = reference;
     }
 
     public Budget getReferenceBudget() {
         return referenceBudget;
     }
 
-    public void setDocumentNumber(final Long documentNumber) {
-        this.documentNumber = documentNumber;
+    public void setReferenceBudget(final Budget reference) {
+        referenceBudget = reference;
     }
 
     public Long getDocumentNumber() {
         return documentNumber;
+    }
+
+    public void setDocumentNumber(final Long documentNumber) {
+        this.documentNumber = documentNumber;
     }
 
     @Override

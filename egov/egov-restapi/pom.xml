@@ -134,9 +134,4 @@
 		<!-- HIBERNATE END -->
 	</dependencies>
 
-	<!--  
-	<build>
-		<outputDirectory>Y:\etc\wildfly-9.0.0.CR1\standalone\deployments\egov-ear-1.0.0-SNAPSHOT.ear\egov-api-1.0.0-SNAPSHOT.war\WEB-INF\classes</outputDirectory>
-	</build>
-	-->
 </project>

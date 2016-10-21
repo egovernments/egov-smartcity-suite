@@ -1,6 +1,12 @@
 package org.egov.council.entity;
 
-import java.util.Date;
+import org.egov.infra.admin.master.entity.Boundary;
+import org.egov.infra.filestore.entity.FileStoreMapper;
+import org.egov.infra.persistence.entity.AbstractAuditable;
+import org.egov.infra.persistence.entity.enums.Gender;
+import org.egov.infra.persistence.validator.annotation.Unique;
+import org.hibernate.validator.constraints.Length;
+import org.springframework.web.multipart.MultipartFile;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
@@ -15,27 +21,18 @@ import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 import javax.validation.constraints.NotNull;
+import java.util.Date;
 
-import org.egov.infra.admin.master.entity.Boundary;
-import org.egov.infra.filestore.entity.FileStoreMapper;
-import org.egov.infra.persistence.entity.AbstractAuditable;
-import org.egov.infra.persistence.entity.enums.Gender;
-import org.egov.infra.persistence.validator.annotation.Unique;
-import org.egov.search.domain.Searchable;
-import org.hibernate.validator.constraints.Length;
-import org.springframework.web.multipart.MultipartFile;
+import static org.egov.council.entity.CouncilMember.SEQ_COUNCILMEMBER;
 
 @Entity
-@Unique(id = "id", tableName = "egcncl_members", fields = { "name" }, columnName = { "name" }, enableDfltMsg = true)
+@Unique(fields = {"name"}, enableDfltMsg = true)
 @Table(name = "egcncl_members")
-@Searchable
-@SequenceGenerator(name = CouncilMember.SEQ_COUNCILMEMBER, sequenceName = CouncilMember.SEQ_COUNCILMEMBER, allocationSize = 1)
+@SequenceGenerator(name = SEQ_COUNCILMEMBER, sequenceName = SEQ_COUNCILMEMBER, allocationSize = 1)
 public class CouncilMember extends AbstractAuditable {
 
+    public static final String SEQ_COUNCILMEMBER = "seq_egcncl_members";
     private static final long serialVersionUID = 8227838067322332444L;
-
-    public static final String SEQ_COUNCILMEMBER = "seq_egcncl_members"; 
-
     @Id
     @GeneratedValue(generator = SEQ_COUNCILMEMBER, strategy = GenerationType.SEQUENCE)
     private Long id;
@@ -55,7 +52,7 @@ public class CouncilMember extends AbstractAuditable {
     @ManyToOne
     @JoinColumn(name = "caste")
     private CouncilCaste caste;
-    
+
     @ManyToOne
     @JoinColumn(name = "partyAffiliation")
     private CouncilParty partyAffiliation;
@@ -66,42 +63,39 @@ public class CouncilMember extends AbstractAuditable {
 
 
     private Date birthDate;
-  
+
     private Date electionDate;
-    
+
     private Date oathDate;
 
 
-    
     @Length(max = 15)
     private String mobileNumber;
 
-   
-   
+
     @Length(max = 52)
     private String emailId;
 
     @NotNull
     @Length(min = 2, max = 100)
     private String name;
-    
+
     @NotNull
     @Enumerated(EnumType.ORDINAL)
-    private CouncilMemberStatus status=CouncilMemberStatus.ACTIVE;
-    
+    private CouncilMemberStatus status = CouncilMemberStatus.ACTIVE;
+
     @NotNull
     private String residentialAddress;
-  
-    
+
+
     @Transient
     private MultipartFile attachments;
-    
-    @ManyToOne(cascade = CascadeType.ALL)
-     @JoinColumn(name = "filestoreid")
-    private FileStoreMapper photo;
-    
 
-   
+    @ManyToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name = "filestoreid")
+    private FileStoreMapper photo;
+
+
     public FileStoreMapper getPhoto() {
         return photo;
     }
@@ -229,7 +223,7 @@ public class CouncilMember extends AbstractAuditable {
     public void setResidentialAddress(String residentialAddress) {
         this.residentialAddress = residentialAddress;
     }
- 
+
 
     public CouncilMemberStatus getStatus() {
         return status;

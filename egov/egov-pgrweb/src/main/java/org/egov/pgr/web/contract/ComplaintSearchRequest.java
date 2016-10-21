@@ -40,19 +40,11 @@
 
 package org.egov.pgr.web.contract;
 
-import org.egov.search.domain.Filter;
-import org.egov.search.domain.Filters;
 import org.joda.time.DateTime;
-
-import java.util.ArrayList;
-import java.util.List;
 
 import static org.egov.infra.utils.DateUtils.TO_DEFAULT_DATE_FORMAT;
 import static org.egov.infra.utils.DateUtils.endOfGivenDate;
 import static org.egov.infra.utils.DateUtils.startOfGivenDate;
-import static org.egov.search.domain.Filter.queryStringFilter;
-import static org.egov.search.domain.Filter.rangeFilter;
-import static org.egov.search.domain.Filter.termsStringFilter;
 
 public class ComplaintSearchRequest {
     public static final String SEARCH_DATE_FORMAT = "yyyy-MM-dd'T'HH:mm";
@@ -114,12 +106,12 @@ public class ComplaintSearchRequest {
     }
 
     public void setFromDate(final String fromDate) {
-        if(fromDate != null)
+        if (fromDate != null)
             this.fromDate = startOfGivenDate(TO_DEFAULT_DATE_FORMAT.parseDateTime(fromDate)).toString(SEARCH_DATE_FORMAT);
     }
 
     public void setToDate(final String toDate) {
-        if(toDate != null)
+        if (toDate != null)
             this.toDate = endOfGivenDate(TO_DEFAULT_DATE_FORMAT.parseDateTime(toDate)).toString(SEARCH_DATE_FORMAT);
     }
 
@@ -150,7 +142,7 @@ public class ComplaintSearchRequest {
 
     }
 
-    public Filters searchFilters() {
+   /* public Filters searchFilters() {
         final List<Filter> andFilters = new ArrayList<>();
         andFilters.add(termsStringFilter("clauses.citydetails.name", currentUlb));
         andFilters.add(termsStringFilter("clauses.crn", complaintNumber));
@@ -165,7 +157,7 @@ public class ComplaintSearchRequest {
         andFilters.add(termsStringFilter("clauses.department.name", complaintDepartment));
         andFilters.add(queryStringFilter("common.boundary.name", location));
         return Filters.withAndFilters(andFilters);
-    }
+    }*/
 
     public String searchQuery() {
         return searchText;

@@ -42,7 +42,6 @@ package org.egov.tl.entity;
 
 import org.egov.infra.filestore.entity.FileStoreMapper;
 import org.egov.infra.persistence.entity.AbstractAuditable;
-import org.hibernate.search.annotations.DocumentId;
 
 import javax.persistence.*;
 import java.io.File;
@@ -52,17 +51,17 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import static org.egov.tl.entity.LicenseDocument.SEQ_EGTL_DOCUMENT;
+
 @Entity
 @Table(name = "egtl_document")
-@SequenceGenerator(name = LicenseDocument.SEQ_EGTL_DOCUMENT, sequenceName = LicenseDocument.SEQ_EGTL_DOCUMENT, allocationSize = 1)
+@SequenceGenerator(name = SEQ_EGTL_DOCUMENT, sequenceName = SEQ_EGTL_DOCUMENT, allocationSize = 1)
 public class LicenseDocument extends AbstractAuditable {
 
-    private static final long serialVersionUID = 7655384098687964458L;
     public static final String SEQ_EGTL_DOCUMENT = "seq_egtl_document";
-
+    private static final long serialVersionUID = 7655384098687964458L;
     @Id
     @GeneratedValue(generator = SEQ_EGTL_DOCUMENT, strategy = GenerationType.SEQUENCE)
-    @DocumentId
     private Long id;
 
     @ManyToOne
@@ -80,8 +79,8 @@ public class LicenseDocument extends AbstractAuditable {
     @JoinTable(name = "egtl_document_files", joinColumns = @JoinColumn(name = "document"), inverseJoinColumns = @JoinColumn(name = "filestore"))
     private Set<FileStoreMapper> files = new HashSet<>();
 
-    @ManyToOne(fetch=FetchType.LAZY)
-    @JoinColumn(name="license")
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "license")
     private License license;
 
     @Transient
@@ -94,13 +93,13 @@ public class LicenseDocument extends AbstractAuditable {
     private List<String> uploadsContentType = new ArrayList<>();
 
     @Override
-    public void setId(final Long id) {
-        this.id = id;
+    public Long getId() {
+        return id;
     }
 
     @Override
-    public Long getId() {
-        return id;
+    public void setId(final Long id) {
+        this.id = id;
     }
 
     public LicenseDocumentType getType() {

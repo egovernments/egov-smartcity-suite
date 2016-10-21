@@ -42,7 +42,6 @@ package org.egov.infra.admin.master.entity;
 
 import org.egov.infra.persistence.entity.AbstractAuditable;
 import org.egov.infra.persistence.validator.annotation.Unique;
-import org.hibernate.search.annotations.DocumentId;
 import org.hibernate.validator.constraints.NotBlank;
 import org.hibernate.validator.constraints.SafeHtml;
 
@@ -54,93 +53,91 @@ import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 
 @Entity
-@Unique(id = "id", tableName = "eg_device", fields = { "deviceuid" }, columnName = { "deviceuid" }, enableDfltMsg = true)
+@Unique(fields = "deviceuid", enableDfltMsg = true)
 @Table(name = "eg_device")
 @SequenceGenerator(name = Device.SEQ_DEVICE, sequenceName = Device.SEQ_DEVICE, allocationSize = 1)
 public class Device extends AbstractAuditable {
 
-	private static final long serialVersionUID = 7034114743461088547L;
-	public static final String SEQ_DEVICE = "SEQ_EG_DEVICE";
+    public static final String SEQ_DEVICE = "SEQ_EG_DEVICE";
+    private static final long serialVersionUID = 7034114743461088547L;
+    @Id
+    @GeneratedValue(generator = SEQ_DEVICE, strategy = GenerationType.SEQUENCE)
+    private Long id;
 
-	@DocumentId
-	@Id
-	@GeneratedValue(generator = SEQ_DEVICE, strategy = GenerationType.SEQUENCE)
-	private Long id;
+    @NotBlank
+    @SafeHtml
+    private String deviceUId;
 
-	@NotBlank
-	@SafeHtml	
-	private String deviceUId;
+    @SafeHtml
+    private String type;
 
-	@SafeHtml
-	private String type;
+    @SafeHtml
+    private String OSVersion;
 
-	@SafeHtml
-	private String OSVersion;
+    @Override
+    public Long getId() {
+        return id;
+    }
 
-	@Override
-	public Long getId() {
-		return id;
-	}
+    @Override
+    public void setId(Long id) {
+        this.id = id;
+    }
 
-	@Override
-	public void setId(Long id) {
-		this.id = id;
-	}
+    public String getDeviceId() {
+        return deviceUId;
+    }
 
-	public String getDeviceId() {
-		return deviceUId;
-	}
+    public void setDeviceId(String deviceUId) {
+        this.deviceUId = deviceUId;
+    }
 
-	public void setDeviceId(String deviceUId) {
-		this.deviceUId = deviceUId;
-	}
+    public String getType() {
+        return type;
+    }
 
-	public String getType() {
-		return type;
-	}
+    public void setType(String type) {
+        this.type = type;
+    }
 
-	public void setType(String type) {
-		this.type = type;
-	}
+    public String getOSVersion() {
+        return OSVersion;
+    }
 
-	public String getOSVersion() {
-		return OSVersion;
-	}
+    public void setOSVersion(String OSVersion) {
+        this.OSVersion = OSVersion;
+    }
 
-	public void setOSVersion(String OSVersion) {
-		this.OSVersion = OSVersion;
-	}
+    @Override
+    public int hashCode() {
+        final int prime = 31;
+        int result = 1;
+        result = prime * result + ((id == null) ? 0 : id.hashCode());
+        result = prime * result
+                + ((deviceUId == null) ? 0 : deviceUId.hashCode());
+        return result;
+    }
 
-	@Override
-	public int hashCode() {
-		final int prime = 31;
-		int result = 1;
-		result = prime * result + ((id == null) ? 0 : id.hashCode());
-		result = prime * result
-				+ ((deviceUId == null) ? 0 : deviceUId.hashCode());
-		return result;
-	}
-
-	@Override
-	public boolean equals(Object obj) {
-		if (this == obj)
-			return true;
-		if (obj == null)
-			return false;
-		if (getClass() != obj.getClass())
-			return false;
-		Device other = (Device) obj;
-		if (id == null) {
-			if (other.id != null)
-				return false;
-		} else if (!id.equals(other.id))
-			return false;
-		if (deviceUId == null) {
-			if (other.deviceUId != null)
-				return false;
-		} else if (!deviceUId.equals(other.deviceUId))
-			return false;
-		return true;
-	}
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj)
+            return true;
+        if (obj == null)
+            return false;
+        if (getClass() != obj.getClass())
+            return false;
+        Device other = (Device) obj;
+        if (id == null) {
+            if (other.id != null)
+                return false;
+        } else if (!id.equals(other.id))
+            return false;
+        if (deviceUId == null) {
+            if (other.deviceUId != null)
+                return false;
+        } else if (!deviceUId.equals(other.deviceUId))
+            return false;
+        return true;
+    }
 
 }

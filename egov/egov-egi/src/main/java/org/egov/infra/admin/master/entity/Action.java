@@ -43,7 +43,6 @@ package org.egov.infra.admin.master.entity;
 import org.egov.infra.persistence.entity.AbstractAuditable;
 import org.hibernate.annotations.Fetch;
 import org.hibernate.annotations.FetchMode;
-import org.hibernate.search.annotations.DocumentId;
 
 import javax.persistence.Cacheable;
 import javax.persistence.CascadeType;
@@ -62,30 +61,30 @@ import javax.persistence.Table;
 import java.util.HashSet;
 import java.util.Set;
 
+import static org.egov.infra.admin.master.entity.Action.SEQ_ACTION;
+
 @Entity
 @Table(name = "eg_action")
-@SequenceGenerator(name = Action.SEQ_ACTION, sequenceName = Action.SEQ_ACTION, allocationSize = 1)
+@SequenceGenerator(name = SEQ_ACTION, sequenceName = SEQ_ACTION, allocationSize = 1)
 @Cacheable
 public class Action extends AbstractAuditable {
 
-    private static final long serialVersionUID = -5459067787684736822L;
     public static final String SEQ_ACTION = "SEQ_EG_ACTION";
-    
-    @DocumentId
+    private static final long serialVersionUID = -5459067787684736822L;
     @Id
     @GeneratedValue(generator = SEQ_ACTION, strategy = GenerationType.SEQUENCE)
     private Long id;
-    
-    @Column(unique=true)
+
+    @Column(unique = true)
     private String name;
     private String url;
     private String queryParams;
-    
+
     @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    @JoinTable(name = "eg_roleaction", joinColumns = @JoinColumn(name = "actionid") , inverseJoinColumns = @JoinColumn(name = "roleid") )
+    @JoinTable(name = "eg_roleaction", joinColumns = @JoinColumn(name = "actionid"), inverseJoinColumns = @JoinColumn(name = "roleid"))
     @Fetch(FetchMode.SUBSELECT)
     private Set<Role> roles = new HashSet<>();
-    
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "parentModule")
     private Module parentModule;
@@ -176,14 +175,14 @@ public class Action extends AbstractAuditable {
         this.contextRoot = contextRoot;
     }
 
-    public void addRole(Role role) { 
+    public void addRole(Role role) {
         if (!hasRole(role))
             getRoles().add(role);
-    }   
-    
-    public void removeRole(Role role) { 
+    }
+
+    public void removeRole(Role role) {
         if (hasRole(role))
-            getRoles().remove(role); 
+            getRoles().remove(role);
     }
 
     public boolean hasRole(Role role) {

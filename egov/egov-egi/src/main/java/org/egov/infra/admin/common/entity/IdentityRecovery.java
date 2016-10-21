@@ -42,7 +42,6 @@ package org.egov.infra.admin.common.entity;
 
 import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.persistence.entity.AbstractPersistable;
-import org.hibernate.search.annotations.DocumentId;
 import org.hibernate.validator.constraints.NotBlank;
 import org.joda.time.DateTime;
 
@@ -58,15 +57,15 @@ import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import java.util.Date;
 
+import static org.egov.infra.admin.common.entity.IdentityRecovery.SEQ_IDENTITYRECOVERY;
+
 @Entity
 @Table(name = "eg_identityrecovery")
-@SequenceGenerator(name = IdentityRecovery.SEQ_IDENTITYRECOVERY, sequenceName = IdentityRecovery.SEQ_IDENTITYRECOVERY, allocationSize = 1)
+@SequenceGenerator(name = SEQ_IDENTITYRECOVERY, sequenceName = SEQ_IDENTITYRECOVERY, allocationSize = 1)
 public class IdentityRecovery extends AbstractPersistable<Long> {
 
-    private static final long serialVersionUID = -1636403427637104041L;
     public static final String SEQ_IDENTITYRECOVERY = "SEQ_EG_IDENTITYRECOVERY";
-
-    @DocumentId
+    private static final long serialVersionUID = -1636403427637104041L;
     @Id
     @GeneratedValue(generator = SEQ_IDENTITYRECOVERY, strategy = GenerationType.SEQUENCE)
     private Long id;

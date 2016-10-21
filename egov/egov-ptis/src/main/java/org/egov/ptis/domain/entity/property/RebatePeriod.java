@@ -41,7 +41,6 @@ package org.egov.ptis.domain.entity.property;
 
 import org.egov.commons.Installment;
 import org.egov.infra.persistence.entity.AbstractAuditable;
-import org.egov.search.domain.Searchable;
 
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -56,13 +55,11 @@ import java.util.Date;
 
 @Entity
 @Table(name = "EGPT_REBATE_PERIOD")
-@Searchable
 @SequenceGenerator(name = RebatePeriod.SEQ_REBATE_PERIOD, sequenceName = RebatePeriod.SEQ_REBATE_PERIOD, allocationSize = 1)
 public class RebatePeriod extends AbstractAuditable {
 
-    private static final long serialVersionUID = 859229842367886338L;
     public static final String SEQ_REBATE_PERIOD = "SEQ_EGPT_REBATE_PERIOD";
-
+    private static final long serialVersionUID = 859229842367886338L;
     @Id
     @GeneratedValue(generator = SEQ_REBATE_PERIOD, strategy = GenerationType.SEQUENCE)
     private Long id;

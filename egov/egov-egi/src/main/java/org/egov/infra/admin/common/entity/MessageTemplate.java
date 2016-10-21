@@ -41,7 +41,6 @@
 package org.egov.infra.admin.common.entity;
 
 import org.egov.infra.persistence.entity.AbstractPersistable;
-import org.hibernate.search.annotations.DocumentId;
 
 import javax.persistence.Cacheable;
 import javax.persistence.Entity;
@@ -52,15 +51,15 @@ import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import java.util.Locale;
 
+import static org.egov.infra.admin.common.entity.MessageTemplate.SEQ_MESSAGETEMPLATE;
+
 @Entity
 @Table(name = "eg_messagetemplate")
 @Cacheable
-@SequenceGenerator(name = MessageTemplate.SEQ_MESSAGETEMPLATE, sequenceName = MessageTemplate.SEQ_MESSAGETEMPLATE, allocationSize = 1)
+@SequenceGenerator(name = SEQ_MESSAGETEMPLATE, sequenceName = SEQ_MESSAGETEMPLATE, allocationSize = 1)
 public class MessageTemplate extends AbstractPersistable<Long> {
-    private static final long serialVersionUID = 3650406178933970435L;
     public static final String SEQ_MESSAGETEMPLATE = "SEQ_EG_MESSAGETEMPLATE";
-    
-    @DocumentId
+    private static final long serialVersionUID = 3650406178933970435L;
     @Id
     @GeneratedValue(generator = SEQ_MESSAGETEMPLATE, strategy = GenerationType.SEQUENCE)
     private Long id;

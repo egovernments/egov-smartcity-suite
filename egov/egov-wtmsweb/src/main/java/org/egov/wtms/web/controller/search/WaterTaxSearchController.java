@@ -40,10 +40,7 @@
 
 package org.egov.wtms.web.controller.search;
 
-import org.egov.config.search.Index;
-import org.egov.config.search.IndexType;
 import org.egov.infra.admin.master.entity.Boundary;
-import org.egov.infra.admin.master.entity.City;
 import org.egov.infra.admin.master.entity.Role;
 import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.admin.master.service.BoundaryService;
@@ -51,33 +48,24 @@ import org.egov.infra.admin.master.service.CityService;
 import org.egov.infra.admin.master.service.UserService;
 import org.egov.infra.config.core.ApplicationThreadLocals;
 import org.egov.infra.security.utils.SecurityUtils;
-import org.egov.search.domain.Document;
-import org.egov.search.domain.Page;
-import org.egov.search.domain.SearchResult;
-import org.egov.search.domain.Sort;
-import org.egov.search.service.SearchService;
 import org.egov.wtms.elasticSearch.entity.ConnectionSearchRequest;
 import org.egov.wtms.utils.WaterTaxUtils;
 import org.egov.wtms.utils.constants.WaterTaxConstants;
-import org.elasticsearch.search.sort.SortOrder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.ResponseBody;
 
 import java.util.List;
 
-import static java.util.Arrays.asList;
 import static org.egov.ptis.constants.PropertyTaxConstants.REVENUE_HIERARCHY_TYPE;
 
 @Controller
 @RequestMapping(value = "/search/waterSearch/")
 public class WaterTaxSearchController {
 
-    private final SearchService searchService;
     private final CityService cityService;
 
     @Autowired
@@ -93,8 +81,7 @@ public class WaterTaxSearchController {
     private BoundaryService boundaryService;
 
     @Autowired
-    public WaterTaxSearchController(final SearchService searchService, final CityService cityService) {
-        this.searchService = searchService;
+    public WaterTaxSearchController(final CityService cityService) {
         this.cityService = cityService;
     }
 
@@ -278,7 +265,7 @@ public class WaterTaxSearchController {
         return "waterTaxSearch-newForm";
     }
 
-    @RequestMapping(method = RequestMethod.POST)
+    /*@RequestMapping(method = RequestMethod.POST)
     @ResponseBody
     public List<Document> searchConnection(@ModelAttribute final ConnectionSearchRequest searchRequest) {
         final City cityWebsite = cityService.getCityByURL(ApplicationThreadLocals.getDomainName());
@@ -290,6 +277,6 @@ public class WaterTaxSearchController {
                 searchRequest.searchFilters(), sort, Page.NULL);
         return searchResult.getDocuments();
 
-    }
+    }*/
 
 }

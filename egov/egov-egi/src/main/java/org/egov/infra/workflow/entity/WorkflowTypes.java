@@ -42,7 +42,6 @@ package org.egov.infra.workflow.entity;
 
 import org.egov.infra.admin.master.entity.Module;
 import org.egov.infra.persistence.entity.AbstractAuditable;
-import org.hibernate.search.annotations.DocumentId;
 
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -54,15 +53,15 @@ import javax.persistence.ManyToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 
+import static org.egov.infra.workflow.entity.WorkflowTypes.SEQ_WORKFLOWTYPES;
+
 @Entity
 @Table(name = "EG_WF_TYPES")
-@SequenceGenerator(name = WorkflowTypes.SEQ_WORKFLOWTYPES, sequenceName = WorkflowTypes.SEQ_WORKFLOWTYPES, allocationSize = 1)
+@SequenceGenerator(name = SEQ_WORKFLOWTYPES, sequenceName = SEQ_WORKFLOWTYPES, allocationSize = 1)
 public class WorkflowTypes extends AbstractAuditable {
 
-    private static final long serialVersionUID = 1L;
     static final String SEQ_WORKFLOWTYPES = "SEQ_EG_WF_TYPES";
-
-    @DocumentId
+    private static final long serialVersionUID = 1L;
     @Id
     @GeneratedValue(generator = SEQ_WORKFLOWTYPES, strategy = GenerationType.SEQUENCE)
     private Long id;

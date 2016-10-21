@@ -39,33 +39,6 @@
  */
 package org.egov.lcms.transactions.entity;
 
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.HashSet;
-import java.util.Hashtable;
-import java.util.List;
-import java.util.Set;
-
-import javax.persistence.CascadeType;
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.EnumType;
-import javax.persistence.Enumerated;
-import javax.persistence.FetchType;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
-import javax.persistence.OneToMany;
-import javax.persistence.OrderBy;
-import javax.persistence.SequenceGenerator;
-import javax.persistence.Table;
-import javax.persistence.Temporal;
-import javax.persistence.TemporalType;
-import javax.persistence.Transient;
-import javax.validation.constraints.NotNull;
-
 import org.apache.commons.lang.StringUtils;
 import org.egov.commons.EgwStatus;
 import org.egov.infra.persistence.entity.AbstractAuditable;
@@ -76,12 +49,20 @@ import org.egov.lcms.masters.entity.PetitionTypeMaster;
 import org.egov.lcms.masters.entity.enums.LCNumberType;
 import org.egov.lcms.utils.constants.LcmsConstants;
 import org.egov.pims.commons.Position;
-import org.egov.search.domain.Searchable;
 import org.hibernate.envers.AuditOverride;
 import org.hibernate.envers.AuditOverrides;
 import org.hibernate.envers.Audited;
 import org.hibernate.envers.NotAudited;
 import org.hibernate.validator.constraints.Length;
+
+import javax.persistence.*;
+import javax.validation.constraints.NotNull;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.HashSet;
+import java.util.Hashtable;
+import java.util.List;
+import java.util.Set;
 
 @Entity
 @Table(name = "EGLC_LEGALCASE")
@@ -89,7 +70,6 @@ import org.hibernate.validator.constraints.Length;
 // columnName = { "casenumber" }, enableDfltMsg =
 // true)
 @SequenceGenerator(name = LegalCase.SEQ_LEGALCASE_TYPE, sequenceName = LegalCase.SEQ_LEGALCASE_TYPE, allocationSize = 1)
-@Searchable
 @AuditOverrides({ @AuditOverride(forClass = AbstractAuditable.class, name = "lastModifiedBy"),
     @AuditOverride(forClass = AbstractAuditable.class, name = "lastModifiedDate") })
 public class LegalCase extends AbstractAuditable {

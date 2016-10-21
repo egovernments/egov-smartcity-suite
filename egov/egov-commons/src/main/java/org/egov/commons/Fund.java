@@ -40,13 +40,10 @@
 
 package org.egov.commons;
 
-// Generated Jul 19, 2007 2:41:17 PM by Hibernate Tools 3.2.0.b9
-
 import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.persistence.entity.AbstractPersistable;
 import org.egov.infra.persistence.validator.annotation.Required;
 import org.egov.infra.persistence.validator.annotation.Unique;
-import org.hibernate.search.annotations.Field;
 import org.hibernate.validator.constraints.Length;
 
 import javax.persistence.Entity;
@@ -64,18 +61,15 @@ import java.util.Date;
 @Entity
 @Table(name = "fund")
 @SequenceGenerator(name = Fund.SEQ, sequenceName = Fund.SEQ, allocationSize = 1)
-@Unique(id = "id", tableName = "Fund", fields = { "code","name" }, columnName = { "code","name" }, enableDfltMsg = true)
+@Unique(fields = {"code", "name"}, enableDfltMsg = true)
 public class Fund extends AbstractPersistable<Integer> {
 
-	private static final long serialVersionUID =7977534010758407945L;
-
-	public static final String SEQ = "SEQ_Fund";
-
+    public static final String SEQ = "SEQ_Fund";
+    private static final long serialVersionUID = 7977534010758407945L;
     @Id
     @GeneratedValue(generator = Fund.SEQ, strategy = GenerationType.SEQUENCE)
     private Integer id;
 
-    @Field
     @Length(max = 50, min = 2)
     @Required
     private String name;
