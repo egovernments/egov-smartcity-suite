@@ -373,28 +373,24 @@
 				</tbody>
 			</table>
 		</div>
-		<div class="main-content">
 			<div class="row">
 				<div class="col-md-12">
 					<div class="panel panel-primary" data-collapsed="0">
 						<div class="panel-body">
-							<div class="form-group">
 								<div class="row add-border">
-									<div class="col-xs-3 add-margin">
-										<spring:message code="lbl.representedby" />
-									</div>
-									<div class="col-xs-3 add-margin view-content">
+									<div class="col-md-2 col-xs-6 add-margin">
+										<spring:message code="lbl.representedby" /></div>
+									<div class="col-md-3 col-xs-6 add-margin view-content">
 										<c:out value="${legalCase.representedby}" />
 									</div>
-									<div class="col-xs-2 add-margin">Standing Council Name:</div>
-									<div class="col-xs-3 add-margin view-content">
+									<div class="col-md-2 col-xs-6 add-margin">Standing Council Name:</div>
+									<div class="col-md-3 col-xs-6 add-margin view-content">
 										<c:out value="${legalCase.oppPartyAdvocate}" />
 									</div>
 									</div>
-							
 								<div class="row add-border">
-									<div class="col-xs-2 add-margin">Remarks:</div>
-									<div class="col-xs-3 add-margin view-content">
+									<div class="col-md-2 col-xs-6 add-margin">Remarks:</div>
+									<div class="col-md-3 col-xs-6 add-margin view-content">
 										<c:out value="${legalCase.remarks}" />
 									</div>
 								</div>
@@ -402,8 +398,6 @@
 						</div>
 					</div>
 				</div>
-			</div>
-			</div>
 <jsp:include page="documentdetails-view.jsp"></jsp:include> 
 			<%-- <div class="form-group">
 		<label class="col-sm-3 control-label text-right"><font
