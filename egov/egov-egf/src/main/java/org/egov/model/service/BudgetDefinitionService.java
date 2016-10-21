@@ -1,6 +1,5 @@
 package org.egov.model.service;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import javax.persistence.EntityManager;
@@ -10,11 +9,12 @@ import org.apache.commons.lang.StringUtils;
 import org.egov.commons.CFinancialYear;
 import org.egov.commons.EgwStatus;
 import org.egov.commons.dao.EgwStatusHibernateDAO;
-import org.egov.commons.repository.CFinancialYearRepository;
-import org.egov.dao.budget.BudgetDetailsHibernateDAO;
+import org.egov.commons.service.CFinancialYearService;
+import org.egov.infstr.services.PersistenceService;
 import org.egov.model.budget.Budget;
 import org.egov.model.budget.BudgetDetail;
 import org.egov.model.repository.BudgetDefinitionRepository;
+import org.egov.services.budget.BudgetDetailService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.MessageSource;
@@ -30,16 +30,19 @@ public class BudgetDefinitionService {
     private final BudgetDefinitionRepository budgetDefinitionRepository;
     @PersistenceContext
     private EntityManager entityManager;
-    private Long financialYearId;
-    private CFinancialYearRepository financialYear;
     @Autowired
     @Qualifier("parentMessageSource")
     private MessageSource messageSource;
     @Autowired
-    private BudgetDetailsHibernateDAO budgetDetails;
-    @Autowired
     private EgwStatusHibernateDAO egwStatusHibernate;
-    
+    @Autowired
+    private CFinancialYearService cFinancialYearService;
+    @Autowired
+    private BudgetDetailService budgetDetailService;
+    @Autowired
+    @Qualifier("persistenceService")
+    private PersistenceService persistenceService;
+
     @Autowired
     public BudgetDefinitionService(final BudgetDefinitionRepository budgetDefinitionRepository) {
         this.budgetDefinitionRepository = budgetDefinitionRepository;
@@ -64,14 +67,7 @@ public class BudgetDefinitionService {
     }
 
     public List<Budget> search(Budget budget) {
-        if (budget.getFinancialYear() != null && budget.getIsbere().isEmpty()) {
-            return budgetDefinitionRepository
-                    .findByFinancialYearIdOrderByFinancialYearIdAscNameAsc(budget.getFinancialYear().getId());
-        }
-        if (!budget.getIsbere().isEmpty() && budget.getFinancialYear() == null) {
-            return budgetDefinitionRepository.findByIsbereIsOrderByFinancialYearIdAscNameAsc(budget.getIsbere());
-        }
-        if (budget.getFinancialYear() != null && !budget.getIsbere().isEmpty()) {
+        if (budget.getFinancialYear() != null) {
             return budgetDefinitionRepository.findByIsbereIsAndFinancialYearIdIs(budget.getIsbere(),
                     budget.getFinancialYear().getId());
         } else
@@ -82,35 +78,23 @@ public class BudgetDefinitionService {
         return budgetDefinitionRepository.findByFinancialYearIdOrderByFinancialYearIdAscNameAsc(financialYearId);
     }
 
+    /**
+     * Referenece Budget is Always RE
+     * 
+     * @return
+     */
     public List<Budget> getReferenceBudgetByFinancialYear() {
+        Long financialYearId = null;
         return budgetDefinitionRepository.findByIsbereIsAndFinancialYearIdIs("RE", financialYearId);
     }
 
-    public List<CFinancialYear> getFinancialYear() {
-        return financialYear.getAllFinancialYears();
+    public List<Budget> getReferenceBudgetList(Long financialYearId, List<Long> referenceBudgetIdList) {
+        return budgetDefinitionRepository.findReferenceBudget("RE", financialYearId, referenceBudgetIdList);
     }
 
-    public List<Long> getreferenceBudget(Long financialYearId) {
-        final List<Budget> budget =budgetDefinitionRepository.findByFinancialYearIdIsAndReferenceBudgetIsNotNull(financialYearId);
-         List<Long> referenceBudgetIdList = new ArrayList<Long>();
-         for (Budget b : budget) {
-             referenceBudgetIdList.add(b.getReferenceBudget().getId());
-         }
-         return referenceBudgetIdList;
-    }
-
-    public List<Long> getBudgetIdList()
-    {
-        final List<BudgetDetail> budgetDetailsList = budgetDetails.findAll();
-        List<Long> budgetIdList = new ArrayList<Long>();
-        for (BudgetDetail b : budgetDetailsList) {
-            budgetIdList.add(b.getBudget().getId());
-        }
-        return budgetIdList;
-    }
-    public List<Budget> getreferenceBudget1(Long financialYearId, List<Long> referenceBudgetIdList) {
-        return budgetDefinitionRepository.findByIsActiveBudgetTrueAndIsbereIsAndFinancialYearIdIsAndIdNotIn("RE",
-                financialYearId, referenceBudgetIdList);
+    public List<Budget> getReferenceBudgetEmpty(Long financialYearId) {
+        return budgetDefinitionRepository.findByIsActiveBudgetTrueAndIsbereIsAndFinancialYearIdIs("RE",
+                financialYearId);
     }
 
     public List<Budget> getParentList(String isbere, Long financialYearId, List<Long> budgetIdList) {
@@ -118,28 +102,31 @@ public class BudgetDefinitionService {
                 budgetIdList);
     }
 
-    public List<Budget> getReferenceBudgetForEdit(Long id) {
-        return budgetDefinitionRepository.findByIdIs(id);
-    }
-    
+    /**
+     * @param budget
+     * @param errors
+     * @return
+     */
     public String validate(final Budget budget, final BindingResult errors) {
         String validationMessage = "";
-       
-        if (budget.getParent()!=null && budget.getParent().getId() != null && budget.getParent().getId() > 0) {
-            final List<Budget> b =budgetDefinitionRepository.findByIdIs(Long.valueOf(budget.getParent().getId()));
-            if (!b.get(0).getIsbere().equals(budget.getIsbere()))
-                validationMessage = messageSource.getMessage("budget.invalid.parent", new String[] { b.get(0).getName() },
+
+        if (budget.getParent() != null && budget.getParent().getId() != null && budget.getParent().getId() > 0) {
+            final Budget b = budgetDefinitionRepository.findOne(Long.valueOf(budget.getParent().getId()));
+            if (!b.getIsbere().equals(budget.getIsbere()))
+                validationMessage = messageSource.getMessage("budget.invalid.parent", new String[] { b.getName() },
                         null);
         }
         if (budget.getIsPrimaryBudget() && budget.getFinancialYear() != null && (budget.getParent() == null)) {
-            final List<Budget> budgetList =budgetDefinitionRepository.findByIsbereIsAndFinancialYearIdIsAndIsPrimaryBudgetTrueAndParentIsNull(budget.getIsbere(),budget.getFinancialYear().getId());
-           if(!budgetList.isEmpty())
-            validationMessage = messageSource.getMessage("budget.primary.invalid1", new String[] { budgetList.get(0).getName(),budgetList.get(0).getFinancialYear().getFinYearRange() },
-                    null);
+            final List<Budget> budgetList = budgetDefinitionRepository
+                    .findByIsbereIsAndFinancialYearIdIsAndIsPrimaryBudgetTrueAndParentIsNull(budget.getIsbere(),
+                            budget.getFinancialYear().getId());
+            if (!budgetList.isEmpty())
+                validationMessage = messageSource.getMessage("budget.primary.invalid1", new String[] {
+                        budgetList.get(0).getName(), budgetList.get(0).getFinancialYear().getFinYearRange() }, null);
         }
-        return validationMessage;       
+        return validationMessage;
     }
-    
+
     protected String subtract(final String value) {
         final int val = Integer.parseInt(value) - 1;
         if (val < 10)
@@ -154,15 +141,38 @@ public class BudgetDefinitionService {
         }
         return "";
     }
-    
-    public EgwStatus getBudgetStatus()
-    {
-        return egwStatusHibernate.getStatusByModuleAndCode("BUDGET","Created");
+
+    public EgwStatus getBudgetStatus() {
+        return egwStatusHibernate.getStatusByModuleAndCode("BUDGET", "Created");
     }
-    
-    public List<BudgetDetail> getBudgetDetailList(Long budgetId)
-    {
-        return budgetDetails.getBudgetDetailsByBudgetId(budgetId);
+
+    public List<BudgetDetail> getBudgetDetailList(Long budgetId) {
+        return budgetDetailService.getBudgetDetailsByBudgetId(budgetId);
     }
-  
+
+    public List<Budget> referenceBudgetList(Long financialYearId) {
+        CFinancialYear financialYear;
+        final List<Long> referenceBudgetIdList = getReferenceBudgetList(financialYearId);
+        financialYear = cFinancialYearService.findOne(financialYearId);
+        final CFinancialYear previousYear = cFinancialYearService
+                .findByFinYearRange(computeYearRange(financialYear.getFinYearRange()));
+        if (!referenceBudgetIdList.isEmpty())
+            return getReferenceBudgetList(previousYear.getId(), referenceBudgetIdList);
+        else
+            return getReferenceBudgetEmpty(previousYear.getId());
+    }
+
+    public List<Budget> parentList(String isBere, Long financialYearId) {
+        final List<Long> budgetIdList = budgetDetailService.getBudgetIdList();
+        return getParentList(isBere, financialYearId, budgetIdList);
+    }
+
+    public List<Long> getReferenceBudgetList(Long financialYearId) {
+        final String query = "select bd.referenceBudget.id from Budget bd where bd.referenceBudget.id is not null and "
+                + "bd.financialYear.id=:financialYearId";
+        List<Long> budgetDetailsList = persistenceService.getSession().createQuery(query)
+                .setParameter("financialYearId", financialYearId).list();
+        return budgetDetailsList;
+    }
+
 }

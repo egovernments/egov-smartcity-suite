@@ -7,7 +7,6 @@ import java.util.Locale;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 
-import org.apache.lucene.util.CollectionUtil;
 import org.egov.commons.CChartOfAccounts;
 import org.egov.infra.admin.master.entity.AppConfigValues;
 import org.egov.infra.admin.master.service.AppConfigValueService;
@@ -89,7 +88,7 @@ public class BudgetingGroupService {
         return budgetGroupRepository.findCOAByLength(minorCodeLength);
     }
 
-    public String validateBudgetGroup(final BudgetGroup budgetGroup, final BindingResult errors) {
+    public String validate(final BudgetGroup budgetGroup, final BindingResult errors) {
         String validationMessage = "";
 
         BudgetGroup bg = null;
@@ -122,20 +121,20 @@ public class BudgetingGroupService {
                 : Collections.emptyList();
 
         if (!bgList.isEmpty())
-            validationMessage = messageSource.getMessage("budgetgroup.invalid.majorcode1",
+            validationMessage = messageSource.getMessage("budgetgroup.invalid.majormincode",
                     new String[] { bgList.get(0).getName() }, null);
 
         bg = budgetGroup.getMaxCode() != null ? budgetGroupRepository.getBudgetGroupForMinorCodesMajorCode(
                 budgetGroup.getMaxCode().getGlcode().substring(0, getMajorCodeLength())) : null;
         if (bg != null)
-            validationMessage = messageSource.getMessage("budgetgroup.invalid.maxcode1", new String[] { bg.getName() },
-                    null, Locale.ENGLISH);
+            validationMessage = messageSource.getMessage("budgetgroup.invalid.maxmajorcode",
+                    new String[] { bg.getName() }, null, Locale.ENGLISH);
 
         bg = budgetGroup.getMinCode() != null ? budgetGroupRepository.getBudgetGroupForMinorCodesMajorCode(
                 budgetGroup.getMinCode().getGlcode().substring(0, getMajorCodeLength())) : null;
         if (bg != null)
-            validationMessage = messageSource.getMessage("budgetgroup.invalid.mincode1", new String[] { bg.getName() },
-                    null, Locale.ENGLISH);
+            validationMessage = messageSource.getMessage("budgetgroup.invalid.minmajorcode",
+                    new String[] { bg.getName() }, null, Locale.ENGLISH);
 
         return validationMessage;
     }
@@ -146,4 +145,5 @@ public class BudgetingGroupService {
         } else
             return budgetGroupRepository.findAll();
     }
+
 }

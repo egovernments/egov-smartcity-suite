@@ -34,9 +34,9 @@ public interface BudgetingGroupRepository extends JpaRepository<BudgetGroup, Lon
 
     @Query("from CChartOfAccounts  where length(glcode)=:length order by glcode")
     List<CChartOfAccounts> findCOAByLength(@Param("length") Integer length);
-    
+
     public List<BudgetGroup> findByAccountTypeIs(String accountType);
-    
+
     public List<BudgetGroup> findBybudgetingTypeIs(String budgetingType);
 
 }

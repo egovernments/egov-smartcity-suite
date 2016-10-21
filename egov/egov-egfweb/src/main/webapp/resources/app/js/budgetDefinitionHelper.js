@@ -83,7 +83,7 @@ function getParentByFinancialYear(financialYearId) {
 	} else {
 		$.ajax(
 				{
-					url : "/EGF/budgetdefinition/ajaxgetparentbyfinancialyear"
+					url : "/EGF/budgetdefinition/parents"
 							+ "?financialYearId=" + financialYearId
 							+ "&isBeRe=" + isBereChecked,
 					type : "GET",
@@ -116,7 +116,7 @@ function getReferenceBudgets(financialYearId) {
 		$
 				.ajax(
 						{
-							url : "/EGF/budgetdefinition/ajaxgetrefencebudget?financialYearId="
+							url : "/EGF/budgetdefinition/referencebudget?financialYearId="
 									+ financialYearId,
 							type : "GET",
 							dataType : "json"
