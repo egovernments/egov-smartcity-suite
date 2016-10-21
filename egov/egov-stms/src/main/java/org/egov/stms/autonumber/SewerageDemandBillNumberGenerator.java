@@ -45,5 +45,5 @@ import org.springframework.stereotype.Service;
 
 @Service
 public interface SewerageDemandBillNumberGenerator {
-    public String generateSewerageDemandBillNumber(SewerageApplicationDetails sewerageApplicationDetails);
+    String generateSewerageDemandBillNumber(SewerageApplicationDetails sewerageApplicationDetails);
 }

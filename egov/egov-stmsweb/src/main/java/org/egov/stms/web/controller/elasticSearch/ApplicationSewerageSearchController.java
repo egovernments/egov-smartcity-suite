@@ -170,14 +170,15 @@ public class ApplicationSewerageSearchController {
                 sewerageApplicationDetails = sewerageApplicationDetailsService.findByApplicationNumber(consumernumber);
                 final SewerageSearchResult searchActions = SewerageActionDropDownUtil.getSearchResultWithActions(
                         roleList, searchableObjects.get("status"), sewerageApplicationDetails);
-                if (searchActions != null && searchActions.getActions() != null) {
+                if (searchActions == null) {
+                    return searchResultFomatted;
+                }
                     for (final Map.Entry<String, String> entry : searchActions.getActions().entrySet())
                         if (!entry.getValue().equals(COLLECTDONATIONCHARHGES))
                             actionMap.put(entry.getKey(), entry.getValue());
                     searchActions.setActions(actionMap);
                     searchActions.setDocument(document);
                     searchResultFomatted.add(searchActions);
-                }
             }
         }
         return searchResultFomatted;

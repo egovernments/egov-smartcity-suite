@@ -70,7 +70,6 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -104,44 +103,46 @@ public class SewerageGenerateDemandBillController {
     private static final Logger LOGGER = Logger.getLogger(SewerageGenerateDemandBillController.class);
 
     @RequestMapping(value = "/generate-sewerage-demand-bill/{consumernumber}/{assessmentnumber}", method = RequestMethod.GET)
-    private ResponseEntity<byte[]> generateSewerageDemandBill(
-            @ModelAttribute SewerageApplicationDetails sewerageApplicationDetails, @PathVariable final String consumernumber,
-            @PathVariable final String assessmentnumber, final Model model, final HttpServletRequest request,
-            final HttpSession session, final RedirectAttributes redirectAttributes) {
+    public ResponseEntity<byte[]> generateSewerageDemandBill(@PathVariable final String consumernumber,
+            @PathVariable final String assessmentnumber, final HttpServletRequest request,
+            final HttpSession session) {
         ReportOutput reportOutput = new ReportOutput();
         final HttpHeaders headers = new HttpHeaders();
         SewerageNotice sewerageNotice = null;
+        SewerageApplicationDetails sewerageApplicationDetails =null;
         String errorMessage = "";
         if (consumernumber != null)
             sewerageApplicationDetails = sewerageApplicationDetailsService.findByApplicationNumber(consumernumber);
 
-        sewerageNotice = sewerageNoticeService.findByNoticeTypeAndApplicationNumber(NOTICE_TYPE_DEMAND_BILL_NOTICE,
-                sewerageApplicationDetails.getApplicationNumber());
-        // GET DEMAND BILL IF ALREADY SAVED
-        if (sewerageNotice != null && sewerageNotice.getFileStore() != null) {
-
-            final FileStoreMapper fmp = sewerageNotice.getFileStore();
-            if (fmp != null) {
-                reportOutput = new ReportOutput();
-                final File file = fileStoreService.fetch(fmp, FILESTORE_MODULECODE);
-                try {
-                    reportOutput.setReportOutputData(FileUtils.readFileToByteArray(file));
-                } catch (final IOException e) {
-                    LOGGER.error("Error in loading sewerage demand bill" + e.getMessage(), e);
+        if(sewerageApplicationDetails!=null && sewerageApplicationDetails.getApplicationNumber()!=null){
+            sewerageNotice = sewerageNoticeService.findByNoticeTypeAndApplicationNumber(NOTICE_TYPE_DEMAND_BILL_NOTICE,
+                    sewerageApplicationDetails.getApplicationNumber());
+            // GET DEMAND BILL IF ALREADY SAVED
+            if (sewerageNotice != null && sewerageNotice.getFileStore() != null) {
+    
+                final FileStoreMapper fmp = sewerageNotice.getFileStore();
+                if (fmp != null) {
+                    reportOutput = new ReportOutput();
+                    final File file = fileStoreService.fetch(fmp, FILESTORE_MODULECODE);
+                    try {
+                        reportOutput.setReportOutputData(FileUtils.readFileToByteArray(file));
+                    } catch (final IOException e) {
+                        LOGGER.error("Error in loading sewerage demand bill" + e.getMessage(), e);
+                    }
+                    reportOutput.setReportFormat(FileFormat.PDF);
                 }
-                reportOutput.setReportFormat(FileFormat.PDF);
+            } else if (sewerageDemandService
+                    .checkAnyTaxIsPendingToCollectExcludingAdvance(sewerageApplicationDetails.getCurrentDemand()))
+                reportOutput = sewerageDCBReportService.generateAndSaveDemandBillNotice(sewerageApplicationDetails,
+                        sewerageThirdPartyServices.getPropertyDetails(assessmentnumber, request), request, session);
+            else {
+                errorMessage = messageSource.getMessage("err.demandbill.demandpaid", new String[] { "" }, null);
+                return redirect(errorMessage);
             }
-        } else if (sewerageDemandService
-                .checkAnyTaxIsPendingToCollectExcludingAdvance(sewerageApplicationDetails.getCurrentDemand()))
-            reportOutput = sewerageDCBReportService.generateAndSaveDemandBillNotice(sewerageApplicationDetails,
-                    sewerageThirdPartyServices.getPropertyDetails(assessmentnumber, request), request, session);
-        else {
-            errorMessage = messageSource.getMessage("err.demandbill.demandpaid", new String[] { "" }, null);
-            return redirect(errorMessage);
-        }
-        if (reportOutput != null && reportOutput.getReportOutputData() != null) {
-            headers.setContentType(MediaType.parseMediaType("application/pdf"));
-            headers.add("content-disposition", "inline;filename=DemandBill.pdf");
+            if (reportOutput != null && reportOutput.getReportOutputData() != null) {
+                headers.setContentType(MediaType.parseMediaType("application/pdf"));
+                headers.add("content-disposition", "inline;filename=DemandBill.pdf");
+            }
         }
         return new ResponseEntity<byte[]>(reportOutput.getReportOutputData(), headers, HttpStatus.CREATED);
     }
