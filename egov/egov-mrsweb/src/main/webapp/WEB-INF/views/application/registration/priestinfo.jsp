@@ -50,38 +50,19 @@
 		<spring:message code="subheading.priest.info"/>
 	</div>
 </div>
-<div class="row">
-	<div class="col-sm-7">
-	<div class="row">
+
 	<div class="form-group">
-		<label class="col-sm-5 text-right" style="padding-right: 5px;">
+		<label class="col-sm-3 text-right" >
 			<spring:message code="lbl.fullname"/>
 		</label>
-		<div class="col-sm-5" style="padding-left: 26px;">
+		<div class="col-sm-3" >
 			<form:input path="priest.name.firstName" id="txt-priest-firstName" type="text" class="form-control low-width is_valid_alphabet" maxlength="30" placeholder="First Name" autocomplete="off" />
             <form:errors path="priest.name.firstName" cssClass="add-margin error-msg"/>
 		</div>
-		<div class="col-sm-2"></div>
-	</div>
-	</div>
-	</div>
-	<div class="col-sm-5">
-	<div class="row">
-		<div class="col-sm-6">
-		</div>		
-		<div class="col-sm-6">
-		</div>
-	</div>
-	</div>
-</div>
-<div class="row">
-	<div class="col-sm-7">
-	<div class="row">
-		<div class="form-group">
-			<label class="col-sm-5 text-right" style="padding-right: 5px;">
+		<label class="col-sm-2 text-right" >
 				<spring:message code="lbl.religion"/>
 			</label>
-			<div class="col-sm-5" style="padding-left: 26px;">
+			<div class="col-sm-3" >
 				<form:select path="priest.religion.id" id="select-marriageAct" cssClass="form-control" 
 							cssErrorClass="form-control error" >
 	                 <form:option value=""> <spring:message code="lbl.default.option"/> </form:option>
@@ -89,29 +70,17 @@
 	            </form:select>
 	            <form:errors path="priest.religion.id" cssClass="add-margin error-msg"/>
 			</div>
-			<div class="col-sm-2"></div>
-		</div>
 	</div>
-	</div>
-	<div class="col-sm-5">
-	</div>
-</div>
-
-<div class="row">
-	<div class="col-sm-7">
-	<div class="row">
+	
+		
+	
 		<div class="form-group">
-			<label class="col-sm-5 text-right" style="padding-right: 5px;">
+			<label class="col-sm-3 text-right" >
 				<spring:message code="lbl.residence.address"/>
 			</label>
-			<div class="col-sm-5" style="padding-left: 26px;">
+			<div class="col-sm-3" >
 				<form:textarea path="priest.contactInfo.residenceAddress" id="txt-priest-residenceAddress" type="text" class="form-control low-width" data-pattern="alphanumericwithspecialcharacters" maxlength="256" placeholder="" autocomplete="off" />
                 <form:errors path="priest.contactInfo.residenceAddress" cssClass="add-margin error-msg"/>
 			</div>
-			<div class="col-sm-2"></div>
 		</div>
-	</div>
-	</div>
-	<div class="col-sm-5">
-	</div>
-</div>
+	

@@ -294,6 +294,5 @@ $(".btn-primary").click(function() {
 		 }
 	} 
 	
-	validateWorkFlowApprover(action);  
+	//validateWorkFlowApprover(action);  
 });
-

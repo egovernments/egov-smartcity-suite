@@ -50,36 +50,62 @@
 		<spring:message code="${param.header}"/>
 	</div>
 </div>
-<div class="row">
-	<div class="col-sm-7">
-	<div class="row">
-	<div class="form-group">
-		<label class="col-sm-5 text-right" style="padding-right: 5px;">
-			<spring:message code="lbl.fullname"/><span class="mandatory"></span>
+<div class="form-group">
+	<div class="col-sm-6">
+		<label class="col-sm-6 text-right">
+		<spring:message code="lbl.fullname"/><span class="mandatory"></span>
 		</label>
-		<div class="col-sm-5" style="padding-left: 26px;">
-			<form:input path="${applicant}.name.firstName" id="txt-firstName" type="text" class="form-control is_valid_alphabet inline-elem" maxlength="30" autocomplete="off" required="required" style="width: 33%" placeholder="First Name" />
+		<div class="col-sm-6">
+			<form:input path="${applicant}.name.firstName" id="${applicant}.name.firstName" type="text" class="form-control is_valid_alphabet inline-elem" maxlength="30" autocomplete="off" required="required" style="width: 33%" placeholder="First Name" />
 			<form:input path="${applicant}.name.middleName" id="txt-middleName" type="text" class="form-control is_valid_alphabet inline-elem" maxlength="20" autocomplete="off"  style="width: 33%" placeholder="Middle Name"/>
 			<form:input path="${applicant}.name.lastName" id="txt-lastName" type="text" class="form-control is_valid_alphabet inline-elem" maxlength="20" autocomplete="off" style="width: 30%" placeholder="Last Name"/>
-            <form:errors path="${applicant}.name.firstName" cssClass="add-margin error-msg"/>
-            <form:errors path="${applicant}.name.middleName" cssClass="add-margin error-msg"/>
-            <form:errors path="${applicant}.name.lastName" cssClass="add-margin error-msg"/>
+	           <form:errors path="${applicant}.name.firstName" cssClass="add-margin error-msg"/>
+	           <form:errors path="${applicant}.name.middleName" cssClass="add-margin error-msg"/>
+	           <form:errors path="${applicant}.name.lastName" cssClass="add-margin error-msg"/>
 		</div>
-		<div class="col-sm-2"></div>
+		<label class="col-sm-6 text-right">
+			<spring:message code="lbl.othername"/>
+		</label>
+		<div class="col-sm-6">
+			<form:input path="${applicant}.otherName" id="txt-placeOfMarriage" type="text" class="form-control low-width is_valid_alphabet" maxlength="20" placeholder="" autocomplete="off"/>
+	           <form:errors path="${applicant}.otherName" cssClass="add-margin error-msg"/>
+		</div>
+		<label class="col-sm-6 text-right">
+				<spring:message code="lbl.religion"/><span class="mandatory"></span>
+		</label>
+		<div class="col-sm-6">
+			<form:select path="${applicant}.religion.id" id="${applicant}.religion" cssClass="form-control" 
+						cssErrorClass="form-control error" required="required" data-toggle="popover" data-trigger="focus" data-content="${helptext}">
+	                <form:option value=""> <spring:message code="lbl.default.option"/> </form:option>
+	                <form:options items="${religions}" itemValue="id" itemLabel="name"/>
+	           </form:select>
+	           <form:errors path="${applicant}.religion.id" cssClass="add-margin error-msg"/>
+		</div>
+		<label class="col-sm-6 text-right">
+			<spring:message code="lbl.religiontype"/>
+		</label>
+		<div class="col-sm-6 dynamic-span capitalize">
+			<form:radiobuttons path="${applicant}.religionPractice" items="${religionPractice}" element="span"/>
+		</div>
+		<label class="col-sm-6 text-right">
+					<spring:message code="lbl.ageason.marriage"/><span class="mandatory"></span>
+		</label>
+		<div class="col-sm-6">
+			<form:input path="${applicant}.ageInYearsAsOnMarriage" id="${applicant}.ageInYearsAsOnMarriage" type="text" class="form-control inline-elem patternvalidation" data-pattern="number" style="width: 40%;" maxlength="2" placeholder="Years" autocomplete="off" required="required"/>
+			<form:input path="${applicant}.ageInMonthsAsOnMarriage" id="${applicant}.ageInMonthsAsOnMarriage" type="text" class="form-control inline-elem patternvalidation month-field" data-pattern="number" style="width: 40%;" maxlength="2" placeholder="Months" autocomplete="off" required="required" />
+	           <form:errors path="${applicant}.ageInYearsAsOnMarriage" cssClass="add-margin error-msg"/>
+	           <form:errors path="${applicant}.ageInMonthsAsOnMarriage" cssClass="add-margin error-msg"/>
+		</div>
 	</div>
-	</div>
-	</div>
-	<div class="col-sm-5">
-	<div class="row">
-		<div class="form-group">
-			<label class="col-sm-3 text-right" style="padding-right: 25px;">
-				<spring:message code="lbl.signature"/>
-			</label>
-			<div class="col-sm-5">
+	<div class="col-sm-6">
+		<label class="col-sm-4 text-right">
+			<spring:message code="lbl.signature"/>
+		</label>
+		<div class="col-sm-8">
 			<c:choose>
 					<c:when test="${currentState != 'NEW'}">
 						<form:hidden  path="${applicant}.signatureFileStore"/>
-						<img class="add-border" id="${applicant}-signature" height="150" width="130" name="${applicant}.signature">
+						<%-- <img class="add-border" id="${applicant}-signature" height="150" width="130" name="${applicant}.signature"> --%>
 						<script>
 							var applicant = '<c:out value="${applicant}" />';
 							var strData = '';
@@ -98,212 +124,107 @@
 						<input type="file" id="${applicant}.signatureFile" name="${applicant}.signatureFile" class="file-ellipsis upload-file">
 					</c:when>
 					<c:otherwise>
-						<img class="add-border" id="${applicant}-signature" height="150" width="130" name="${applicant}.signature">
+						<%-- <img class="add-border" id="${applicant}-signature" height="150" width="130" name="${applicant}.signature"> --%>
 						<input type="file" id="${applicant}.signatureFile" name="${applicant}.signatureFile" class="file-ellipsis upload-file">
 					</c:otherwise>
 			</c:choose>
-			</div>
 		</div>
-	</div>
-	</div>
-</div>
-<div class="row">
-	<div class="col-sm-7">
-	<div class="row">
-		<div class="form-group">
-			<label class="col-sm-5 text-right" style="padding-right: 5px;">
-				<spring:message code="lbl.othername"/>
-			</label>
-			<div class="col-sm-5" style="padding-left: 26px;">
-				<form:input path="${applicant}.otherName" id="txt-placeOfMarriage" type="text" class="form-control low-width is_valid_alphabet" maxlength="20" placeholder="" autocomplete="off"/>
-	            <form:errors path="${applicant}.otherName" cssClass="add-margin error-msg"/>
-			</div>
-			<div class="col-sm-2"></div>
-		</div>
-	</div>
-	<div class="row">
-		<div class="form-group">
-			<label class="col-sm-5 text-right" style="padding-right: 5px;">
-				<spring:message code="lbl.religion"/><span class="mandatory"></span>
-			</label>
-			<div class="col-sm-5" style="padding-left: 26px;">
-				<form:select path="${applicant}.religion.id" id="select-marriageAct" cssClass="form-control" 
-							cssErrorClass="form-control error" required="required">
-	                 <form:option value=""> <spring:message code="lbl.default.option"/> </form:option>
-	                 <form:options items="${religions}" itemValue="id" itemLabel="name"/>
-	            </form:select>
-	            <form:errors path="${applicant}.religion.id" cssClass="add-margin error-msg"/>
-			</div>
-			<div class="col-sm-2"></div>
-		</div>
-	</div>
-	<div class="row">
-		<div class="form-group">
-			<label class="col-sm-5 text-right" style="padding-right: 5px;">
-				<spring:message code="lbl.religiontype"/>
-			</label>
-			<div class="col-sm-5" style="padding-left: 26px;">
-				<form:radiobuttons path="${applicant}.religionPractice" items="${religionPractice}" name="religionPractice" element="span" />
-			</div>
-			<div class="col-sm-2"></div>
-		</div>
-	</div>
-	<div class="row">
-		<div class="form-group">
-			<label class="col-sm-5 text-right" style="padding-right: 5px;">
-				<spring:message code="lbl.ageason.marriage"/><span class="mandatory"></span>
-			</label>
-			<div class="col-sm-5" style="padding-left: 26px;">
-				<form:input path="${applicant}.ageInYearsAsOnMarriage" id="txt-ageInYearsAsOnMarriage" type="text" class="form-control inline-elem patternvalidation" data-pattern="number" style="width: 40%;" maxlength="2" placeholder="Years" autocomplete="off" required="required"/>
-				<form:input path="${applicant}.ageInMonthsAsOnMarriage" id="txt-ageInYearsAsOnMarriage" type="text" class="form-control inline-elem patternvalidation month-field" data-pattern="number" style="width: 40%;" maxlength="2" placeholder="Months" autocomplete="off" required="required"/>
-	            <form:errors path="${applicant}.ageInYearsAsOnMarriage" cssClass="add-margin error-msg"/>
-	            <form:errors path="${applicant}.ageInMonthsAsOnMarriage" cssClass="add-margin error-msg"/>
-			</div>
-			<div class="col-sm-2"></div>
-		</div>
-	</div>
-	</div>
-	<div class="col-sm-5">
-		<div class="row">
-			<label class="col-sm-3 text-right" style="padding: 25p required="required"x;">
+		<label class="col-sm-4 text-right">
 				<spring:message code="lbl.photo"/><span class="mandatory"></span>
-			</label>
-			
-			<div class="col-sm-6 setimage">
-				<c:choose>
-					<c:when test="${currentState != 'NEW'}">
-						<form:hidden  path="${applicant}.photoFileStore"/>
-							<img class="add-border" id="${applicant}-photo" height="150" width="130" name="${applicant}.photo">
-							<script>
-								var applicant = '<c:out value="${applicant}" />';
-								var strData = '';
-			
-								if (applicant == 'husband') {
-									strData = '<c:out value="${registration.husband.encodedPhoto}" />';
-								} else {
-									strData = '<c:out value="${registration.wife.encodedPhoto}" />';
-								} 
-								
-								if (strData != null && strData.length > 0) {
-									$('#'+applicant+'-photo').prop('src', "data:image/jpg;base64," + strData);
-									$('#'+applicant+'-photo').attr('data-exist');
-								}
-								
-							</script>
-							<input type="file" id="${applicant}-photo" name="${applicant}.photoFile" class="file-ellipsis upload-file"  >
-					</c:when>
-					<c:otherwise>
+		</label>
+		
+		<div class="col-sm-8 setimage">
+			<c:choose>
+				<c:when test="${currentState != 'NEW'}">
+					<form:hidden  path="${applicant}.photoFileStore"/>
 						<img class="add-border" id="${applicant}-photo" height="150" width="130" name="${applicant}.photo">
-						<input type="file" id="${applicant}-photo" name="${applicant}.photoFile" class="file-ellipsis upload-file" required="true">
-					</c:otherwise> 
-				</c:choose>
-				
-				
-			</div>
+						<script>
+							var applicant = '<c:out value="${applicant}" />';
+							var strData = '';
+		
+							if (applicant == 'husband') {
+								strData = '<c:out value="${registration.husband.encodedPhoto}" />';
+							} else {
+								strData = '<c:out value="${registration.wife.encodedPhoto}" />';
+							} 
+							
+							if (strData != null && strData.length > 0) {
+								$('#'+applicant+'-photo').prop('src', "data:image/jpg;base64," + strData);
+								$('#'+applicant+'-photo').attr('data-exist');
+							}
+							
+						</script>
+						<input type="file" id="${applicant}-photo" name="${applicant}.photoFile" class="file-ellipsis upload-file"  >
+				</c:when>
+				<c:otherwise>
+					<img class="add-border" id="${applicant}-photo" height="150" width="130" name="${applicant}.photo">
+					<input type="file" id="${applicant}-photo" name="${applicant}.photoFile" class="file-ellipsis upload-file" required="true" >
+				</c:otherwise> 
+			</c:choose>
 			
 			
 		</div>
 	</div>
 </div>
-<div class="row">
-	<div class="col-sm-6">
-		<div class="row">
-			<div class="form-group">
-				<label class="col-sm-6 control-label">
-					<spring:message code="lbl.applicant.status"/><span class="mandatory"></span>
-				</label>
-				<div class="col-sm-6">
-					<form:select path="${applicant}.maritalStatus" id="select-maritalstatus" cssClass="form-control" 
-								cssErrorClass="form-control error" required="required">
-		                 <form:option value=""> <spring:message code="lbl.default.option"/> </form:option>
-		                 <form:options items="${maritalStatusList}"/>
-		            </form:select>
-		            <form:errors path="${applicant}.maritalStatus" cssClass="add-margin error-msg"/>
-				</div>
-			</div>
-		</div>
+<div class="form-group">
+	<label class="col-sm-3 control-label">
+		<spring:message code="lbl.applicant.status"/><span class="mandatory"></span>
+	</label>
+	<div class="col-sm-3">
+		<form:select path="${applicant}.maritalStatus" id="${applicant}.maritalStatus" cssClass="form-control" 
+					cssErrorClass="form-control error" required="required" >
+                <form:option value=""> <spring:message code="lbl.default.option"/> </form:option>
+                <form:options items="${maritalStatusList}"/>
+           </form:select>
+           <form:errors path="${applicant}.maritalStatus" cssClass="add-margin error-msg"/>
 	</div>
-	<div class="col-sm-6">
-		<div class="row">
-			<div class="form-group">
-				<label class="col-sm-5 control-label">
-					<spring:message code="lbl.applicant.aadhaarNo"/>
-				</label>
-				<div class="col-sm-6">
-					<form:input path="${applicant}.aadhaarNo" id="txt-aadhaarNo" type="text" cssClass="form-control low-width patternvalidation" data-pattern="number" maxlength="12" placeholder="aadhaarNo"/>
-	            	<form:errors path="${applicant}.aadhaarNo" cssClass="add-margin error-msg"/>
-				</div>
-			</div>	
-		</div>
-	</div>
-	<div class="col-sm-6">
-		<div class="row">
-			<div class="form-group">
-				<label class="col-sm-6 control-label">
-					<spring:message code="lbl.occupation"/><span class="mandatory"></span>
-				</label>
-				<div class="col-sm-6">
-					<form:input path="${applicant}.occupation" id="txt-occupation" type="text" class="form-control low-width is_valid_alphabet" maxlength="20" placeholder="" autocomplete="off" required="required"/>
-	            	<form:errors path="${applicant}.occupation" cssClass="add-margin error-msg"/>
-				</div>
-			</div>
-		</div>
+	<label class="col-sm-2 control-label">
+		<spring:message code="lbl.applicant.aadhaarNo"/>
+	</label>
+	<div class="col-sm-3">
+		<form:input path="${applicant}.aadhaarNo" id="${applicant}.aadhaarNo" type="text" cssClass="form-control low-width patternvalidation" data-pattern="number" maxlength="12"/>
+          	<form:errors path="${applicant}.aadhaarNo" cssClass="add-margin error-msg"/>
 	</div>
 </div>
-<div class="row">
-	<div class="col-sm-6">
-		<div class="row">
-			<div class="form-group">
-				<label class="col-sm-6 control-label">
-					<spring:message code="lbl.residence.address"/><span class="mandatory"></span>
-				</label>
-				<div class="col-sm-6">
-					<form:textarea path="${applicant}.contactInfo.residenceAddress" id="txt-residenceAddress" type="text" class="form-control low-width patternvalidation" data-pattern="regexp_alphabetspecialcharacters" maxlength="256" placeholder="" autocomplete="off" required="required"/>
-                    <form:errors path="${applicant}.contactInfo.residenceAddress" cssClass="add-margin error-msg"/>
-				</div>
-			</div>
-		</div>
+<div class="form-group">
+	<label class="col-sm-3 control-label">
+		<spring:message code="lbl.residence.address"/><span class="mandatory"></span>
+	</label>
+	<div class="col-sm-3">
+		<form:textarea path="${applicant}.contactInfo.residenceAddress" id="${applicant}.contactInfo.residenceAddress" type="text" class="form-control low-width patternvalidation" data-pattern="regexp_alphabetspecialcharacters" maxlength="256" placeholder="" autocomplete="off" required="required" />
+                 <form:errors path="${applicant}.contactInfo.residenceAddress" cssClass="add-margin error-msg"/>
 	</div>
-	<div class="col-sm-6">
-		<div class="row">
-			<div class="form-group">
-				<label class="col-sm-5 control-label">
-					<spring:message code="lbl.office.address"/><span class="mandatory"></span>
-				</label>
-				<div class="col-sm-6">
-					<form:textarea path="${applicant}.contactInfo.officeAddress" id="txt-officeAddress" type="text" class="form-control low-width patternvalidation" data-pattern="regexp_alphabetspecialcharacters" maxlength="256" placeholder="" autocomplete="off" required="required"/>
-                    <form:errors path="${applicant}.contactInfo.officeAddress" cssClass="add-margin error-msg"/>
-				</div>
-			</div>
-		</div>
+	<label class="col-sm-2 control-label">
+		<spring:message code="lbl.office.address"/><span class="mandatory"></span>
+	</label>
+	<div class="col-sm-3">
+		<form:textarea path="${applicant}.contactInfo.officeAddress" id="${applicant}.contactInfo.officeAddress" type="text" class="form-control low-width patternvalidation" data-pattern="regexp_alphabetspecialcharacters" maxlength="256" placeholder="" autocomplete="off" required="required" />
+                 <form:errors path="${applicant}.contactInfo.officeAddress" cssClass="add-margin error-msg"/>
 	</div>
 </div>
-<div class="row">
-	<div class="col-sm-6">
-		<div class="row">
-			<div class="form-group">
-				<label class="col-sm-6 control-label">
-					<spring:message code="lbl.phoneno"/><span class="mandatory"></span>
-				</label>
-				<div class="col-sm-6">
-					<form:input path="${applicant}.contactInfo.mobileNo" id="txt-phoneNo" type="text" cssClass="form-control low-width patternvalidation" data-pattern="number" maxlength="10" placeholder="" autocomplete="off" required="required" />
-                    <form:errors path="${applicant}.contactInfo.mobileNo" cssClass="add-margin error-msg"/>
-				</div>
-			</div>
-		</div>
+<div class="form-group">
+	<label class="col-sm-3 control-label">
+		<spring:message code="lbl.phoneno"/><span class="mandatory"></span>
+	</label>
+	<div class="col-sm-3">
+		<form:input path="${applicant}.contactInfo.mobileNo" id="${applicant}.contactInfo.mobileNo" type="text" cssClass="form-control low-width patternvalidation" data-pattern="number" maxlength="10" placeholder="" autocomplete="off" required="required" />
+                 <form:errors path="${applicant}.contactInfo.mobileNo" cssClass="add-margin error-msg"/>
 	</div>
-	<div class="col-sm-6">
-		<div class="row">
-			<div class="form-group">
-				<label class="col-sm-5 control-label">
-					<spring:message code="lbl.email"/>
-				</label>
-				<div class="col-sm-6">
-					<form:input path="${applicant}.contactInfo.email" id="${applicant}email" type="text" cssClass="form-control low-width" maxlength="128" placeholder="" autocomplete="off" />
-					<span class=""></span>
-                    <form:errors path="${applicant}.contactInfo.email" cssClass="add-margin error-msg"/>
-				</div>
-			</div>
-		</div>
+	<label class="col-sm-2 control-label">
+		<spring:message code="lbl.occupation"/><span class="mandatory"></span>
+	</label>
+	<div class="col-sm-3">
+		<form:input path="${applicant}.occupation" id="${applicant}.occupation" type="text" class="form-control low-width is_valid_alphabet" maxlength="20" placeholder="" autocomplete="off" required="required" />
+          	<form:errors path="${applicant}.occupation" cssClass="add-margin error-msg"/>
+	</div>
+</div>
+<div class="form-group">
+	<label class="col-sm-3 control-label">
+		<spring:message code="lbl.email"/>
+	</label>
+	<div class="col-sm-3">
+		<form:input path="${applicant}.contactInfo.email" id="${applicant}email" type="text" cssClass="form-control low-width" maxlength="128" placeholder="" autocomplete="off" />
+		<span class=""></span>
+                 <form:errors path="${applicant}.contactInfo.email" cssClass="add-margin error-msg"/>
 	</div>
 </div>

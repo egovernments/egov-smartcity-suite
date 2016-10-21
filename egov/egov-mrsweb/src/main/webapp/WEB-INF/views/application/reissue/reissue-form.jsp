@@ -61,7 +61,7 @@
 				<input type="hidden" id="reIssueId" value="${reIssue.id}" />
 				<input type="hidden" id="reIssueStatus" value="${reIssue.status.code}" />
 				<form:hidden path="" name="registration.id" id="reIssueRegistrationId" value="${reIssue.registration.id}"/>	
-				  <ul class="nav nav-tabs nav-justified nav-tabs-top">
+				  <ul class="nav nav-tabs" id="settingstab">
 				    <li class="active"><a data-toggle="tab" href="#applicant-info" data-tabidx=0><spring:message code="subheading.applicant.info"/></a></li>
 				    <li><a data-toggle="tab" href="#checklist-info" data-tabidx=1><spring:message code="lbl.registration.detail"/></a></li>
 				  </ul>

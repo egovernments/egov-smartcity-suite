@@ -45,11 +45,10 @@ $(document).ready(function(){
 		var contentType = val[1]
 		var content = val[2];
 		var value = "data:"+contentType+";base64," + content;
-		var link = document.createElement('a');
-		link.href = value;
-		console.log('link.href=' + link.href);
-		link.download = fileName;
-		link.click();		
+		$(this).attr({
+		    href:value, 
+		    download:fileName
+		});	
 	})
 	
 });

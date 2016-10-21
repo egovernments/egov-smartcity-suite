@@ -55,7 +55,7 @@
 			<input type="hidden" id="registrationStatus" value="${registration.status.code}" /> 
 			<form:hidden path="" id="workFlowAction" name="workFlowAction"/>
 			
-			 <ul class="nav nav-tabs nav-justified nav-tabs-top">
+			 <ul class="nav nav-tabs" id="settingstab">
 			    <li class="active"><a data-toggle="tab" href="#applicant-info" data-tabidx=0>Applicant's Information</a></li>
 			    <li><a data-toggle="tab" href="#witness-info" data-tabidx=1>Witnesses Information</a></li>
 			    <li><a data-toggle="tab" href="#checklist-info" data-tabidx=2>Checklist</a></li>

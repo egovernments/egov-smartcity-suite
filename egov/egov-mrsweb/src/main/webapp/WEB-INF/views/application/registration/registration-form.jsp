@@ -45,8 +45,8 @@
 <%@ taglib uri="/WEB-INF/taglib/cdn.tld" prefix="cdn" %>
 
 <script src="<cdn:url value='/resources/js/app/viewregistration.js'/> "></script>
- 
- <div class="row" id="page-content">
+
+ <div class="row">
 	<div class="col-md-12"> 
 		<div class="text-right error-msg" style="font-size:14px;"></div>
 		<c:set value="/mrs/registration/register" var="actionUrl" />
@@ -63,7 +63,7 @@
 
 			<input type="hidden" id="registrationId" value="${registration.id}" />
 			<input type="hidden" id="registrationStatus" value="${registration.status}" />
-				  <ul class="nav nav-tabs nav-justified nav-tabs-top">
+				  <ul class="nav nav-tabs" id="settingstab">
 				    <li class="active"><a data-toggle="tab" href="#applicant-info" data-tabidx=0>Applicant's Information</a></li>
 				    <li><a data-toggle="tab" href="#witness-info" data-tabidx=1>Witnesses Information</a></li>
 				    <li><a data-toggle="tab" href="#checklist-info" data-tabidx=2>Checklist</a></li>
@@ -105,15 +105,14 @@
 			    		</div>
 				    </div>
 				</div>
-			<c:if test="${registration.rejectionReason != null}">
+			<%-- <c:if test="${registration.rejectionReason != null}">
 				<div class="row">
 					<label class="col-sm-3 control-label text-right"><spring:message code="lbl.reason.rejection"/></label>
 					<div class="col-sm-8 add-margin view-content">
 						<c:out value="${registration.rejectionReason}" />
 					</div>
 				</div>
-			</c:if>			
-			<br />
+			</c:if>	 --%>		
 			<jsp:include page="../../common/commonWorkflowMatrix.jsp"/>
 			<div class="buttonbottom" align="center">
 				<jsp:include page="../../common/commonWorkflowMatrix-button.jsp" />

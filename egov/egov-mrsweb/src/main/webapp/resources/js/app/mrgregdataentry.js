@@ -248,7 +248,6 @@ $(document).ready( function () {
 	});
 
 	$('#dataEntrySubmit').click(function(e){
-		alert("hi123");
 		if($('form').valid()){
 			
 		}else{

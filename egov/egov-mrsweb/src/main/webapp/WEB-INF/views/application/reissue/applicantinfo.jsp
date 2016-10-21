@@ -50,14 +50,14 @@
 		<spring:message code="${param.header}"/>
 	</div>
 </div>
-<div class="row">
+
 	<div class="form-group">
 		<div class="col-sm-3 control-label" style="padding-right: 5px;">
 			<spring:message code="lbl.fullname"/><span class="mandatory"></span>
 		</div>
 		<div class="col-sm-3" style="padding-left: 15px;">
 			<form:input path="${applicant}.name.firstName" id="txt-firstName" type="text" class="form-control is_valid_alphabet inline-elem" maxlength="30" autocomplete="off" required="required" style="width: 33%" placeholder="First Name" />
-			<form:input path="${applicant}.name.middleName" id="txt-middleName" type="text" class="form-control is_valid_alphabet inline-elem" maxlength="20" autocomplete="off" required="required" style="width: 33%" placeholder="Middle Name"/>
+			<form:input path="${applicant}.name.middleName" id="txt-middleName" type="text" class="form-control is_valid_alphabet inline-elem" maxlength="20" autocomplete="off"  style="width: 33%" placeholder="Middle Name"/>
 			<form:input path="${applicant}.name.lastName" id="txt-lastName" type="text" class="form-control is_valid_alphabet inline-elem" maxlength="20" autocomplete="off" style="width: 30%" placeholder="Last Name"/>
             <form:errors path="${applicant}.name.firstName" cssClass="add-margin error-msg"/>
             <form:errors path="${applicant}.name.middleName" cssClass="add-margin error-msg"/>
@@ -71,8 +71,7 @@
             <form:errors path="${applicant}.otherName" cssClass="add-margin error-msg"/>
 		</div>
 	</div>
-</div>
-<div class="row">
+
 	<div class="form-group">
 		<div class="col-sm-3 control-label">
 			<spring:message code="lbl.residence.address"/><span class="mandatory"></span>
@@ -89,8 +88,7 @@
                   <form:errors path="${applicant}.contactInfo.officeAddress" cssClass="add-margin error-msg"/>
 		</div>
 	</div>
-</div>
-<div class="row">
+
 	<div class="form-group">
 		<div class="col-sm-3 control-label">
 			<spring:message code="lbl.phoneno"/><span class="mandatory"></span>
@@ -108,4 +106,3 @@
                   <form:errors path="${applicant}.contactInfo.email" cssClass="add-margin error-msg"/>
 		</div>
 	</div>
-</div>

@@ -47,7 +47,7 @@
 
 <div class="row">
 	<div class="col-md-12"> 
-		<div class="text-right error-msg" style="font-size:14px;"></div>
+		<div class="text-right error-msg"></div>
 		
 		<c:set value="/mrs/registration/workflow" var="actionUrl"></c:set>
 		<c:if test="${registration.status == 'Approved'}">
@@ -58,46 +58,34 @@
 			cssClass="form-horizontal form-groups-bordered"
 			enctype="multipart/form-data">
 
-			<div class="panel panel-primary" data-collapsed="0">
-				<div class="panel-heading">
-					<div class="panel-title">
-						<spring:message code="title.registration" />
-						<input id="registrationId"type="hidden" name="id" value="${registration.id}" />
-					</div>
-				</div>
-				<div class="panel-body custom-form ">
-					  <div class="container-fluid">	
-					  <ul class="nav nav-tabs nav-justified nav-tabs-top">
+					  <ul class="nav nav-tabs" id="settingstab">
 					    <li class="active"><a data-toggle="tab" href="#applicant-info">Applicant's Information</a></li>
 					    <li><a data-toggle="tab" href="#witness-info">Witnesses Information</a></li>
 					    <li><a data-toggle="tab" href="#checklist">Checklist</a></li>
 					  </ul>
 					  <div class="tab-content">
 					    <div id="applicant-info" class="tab-pane fade in active">
-					    	<jsp:include page="viewgeneralinfo.jsp"></jsp:include>
+					    	<div class="panel panel-primary" data-collapsed="0">
+					    		<jsp:include page="viewgeneralinfo.jsp"></jsp:include>
+					    	</div>
 					    </div>
 					    <div id="witness-info" class="tab-pane fade">
-					    	<%-- <c:forEach items="${registration.witnesses}" varStatus="loop" var="w"> --%>
-						    	<jsp:include page="viewwitnessinfo.jsp">
-									<jsp:param value="subheading.witness1.info" name="header" />
-								</jsp:include>
-					    	<%-- </c:forEach> --%>					    	
-							<jsp:include page="viewpriestinfo.jsp"></jsp:include>
+					    		<div class="panel panel-primary" data-collapsed="0">
+						    		<jsp:include page="viewwitnessinfo.jsp">
+						    		<jsp:param value="subheading.witness1.info" name="header" />
+						    		</jsp:include>
+						    	</div>
+						    	<div class="panel panel-primary" data-collapsed="0">				    	
+									<jsp:include page="viewpriestinfo.jsp"></jsp:include>
+								</div>
 					    </div>
 					    <div id="checklist" class="tab-pane fade">
-					    	<jsp:include page="viewchecklist.jsp"></jsp:include>
+						    <div class="panel panel-primary" data-collapsed="0">		
+						    	<jsp:include page="viewchecklist.jsp"></jsp:include>
+					    	</div>
 					    </div>
 					  </div>
-					  <ul class="nav nav-tabs nav-justified nav-tabs-bottom">
-					    <li class="active"><a data-toggle="tab" href="#applicant-info">Applicant's Information</a></li>
-					    <li><a data-toggle="tab" href="#witness-info">Witnesses Information</a></li>
-					    <li><a data-toggle="tab" href="#checklist">Checklist</a></li>
-					  </ul>
-					  </div>
-				</div>
-			</div>
-			stateValue : <c:out value="${stateValue}"></c:out>
-			
+					 
 			<div class="buttonbottom" align="center"><a href="javascript:void(0)" class="btn btn-default" onclick="self.close()"><spring:message code="lbl.close"/></a></div>
 			<%-- <c:choose>
 				<c:when test="${mode != 'view'}">			

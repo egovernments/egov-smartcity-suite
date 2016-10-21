@@ -63,7 +63,7 @@
 				</div>
 				<div class="panel-body custom-form ">
 					  <div class="container-fluid">	
-					  <ul class="nav nav-tabs nav-justified nav-tabs-top">
+					  <ul class="nav nav-tabs" id="settingstab">
 					    <li class="active"><a data-toggle="tab" href="#applicant-info">Applicant's Information</a></li>
 					    <li><a data-toggle="tab" href="#witness-info">Witnesses Information</a></li>
 					    <li><a data-toggle="tab" href="#checklist-info">Checklist</a></li>
@@ -92,19 +92,19 @@
 							</jsp:include>	
 							<jsp:include page="priestinfo.jsp"></jsp:include>
 					    </div>
-					    <div id="checklist-info" class="tab-pane fade">
-					    	<jsp:include page="checklist.jsp"></jsp:include>
-					    </div>
-					  </div>
-					  <ul class="nav nav-tabs nav-justified nav-tabs-bottom">
-					    <li class="active"><a data-toggle="tab" href="#applicant-info">Applicant's Information</a></li>
-					    <li><a data-toggle="tab" href="#witness-info">Witnesses Information</a></li>
-					    <li><a data-toggle="tab" href="#checklist-info">Checklist</a></li>
-					  </ul>
+					     <div id="checklist-info" class="tab-pane fade">
+					    	<div class="panel panel-primary" data-collapsed="0">
+					    		<jsp:include page="checklist.jsp"></jsp:include>
+					    	</div>
+					    	<div class="panel panel-primary" data-collapsed="0">
+					    		<jsp:include page="documentdetails.jsp"></jsp:include>
+				    		</div>
+				   		 </div>
+					 
 					  </div>
 				</div>
 			</div>
-			
+			</div>
 			<div class="row">
 				<div class="text-center">					
 					<button type="submit" class="btn btn-primary"><spring:message code="lbl.update"/></button>

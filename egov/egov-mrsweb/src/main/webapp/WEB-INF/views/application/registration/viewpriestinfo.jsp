@@ -45,51 +45,27 @@
 <%@ taglib uri="http://www.springframework.org/tags" prefix="spring" %>
 <%@ taglib uri="http://www.springframework.org/tags/form" prefix="form" %>
 
-<div class="row">
-	<span class="bold"><spring:message code="subheading.priest.info"/></span>
+
+<div class="panel-heading">
+	<div class="panel-title">
+		<spring:message code="subheading.priest.info"/>
+	</div>
 </div>
-<div class="row">
-	<div class="col-sm-7">
-	<div class="row">
-		<div class="col-sm-5 add-margin"><spring:message code="lbl.fullname"/></div>
-		<div class="col-sm-5 add-margin view-content">
-			<c:out value="${priest.name.firstName}"></c:out>&nbsp; &nbsp;
+<div class="panel-body">
+	<div class="row add-border">
+		<div class="col-sm-3 add-margin"><spring:message code="lbl.fullname"/></div>
+		<div class="col-sm-3 add-margin view-content">
+			<c:out value="${priest.name.firstName}" ></c:out>&nbsp; &nbsp;
 			<c:out value="${priest.name.middleName}"></c:out>&nbsp; &nbsp;
 			<c:out value="${priest.name.lastName}"></c:out>
 		</div>
-		<div class="col-sm-2"></div>
+		<div class="col-sm-3 add-margin"><spring:message code="lbl.religion"/></div>
+		<div class="col-sm-3 add-margin view-content"><c:out value="${priest.religion.name}" ></c:out></div>
 	</div>
-	</div>
-	<div class="col-sm-5">
-	<div class="row">
-		<div class="col-sm-6">
-		</div>		
-		<div class="col-sm-6">
-		</div>
-	</div>
+	
+	<div class="row add-border">
+			<div class="col-sm-3 add-margin"><spring:message code="lbl.residence.address"/></div>
+			<div class="col-sm-3 add-margin view-content"><c:out value="${priest.contactInfo.residenceAddress}"></c:out></div>
 	</div>
 </div>
-<div class="row">
-	<div class="col-sm-7">
-	<div class="row">
-			<div class="col-sm-5 add-margin"><spring:message code="lbl.religion"/></div>
-			<div class="col-sm-5 add-margin view-content"><c:out value="${priest.religion.name}"></c:out></div>
-			<div class="col-sm-2"></div>
-	</div>
-	</div>
-	<div class="col-sm-5">
-	</div>
-</div>
-<div class="row">
-	<div class="col-sm-7">
-	<div class="row">
-		<div class="form-group">
-			<div class="col-sm-5 add-margin"><spring:message code="lbl.residence.address"/></div>
-			<div class="col-sm-5 add-margin view-content"><c:out value="${priest.contactInfo.residenceAddress}"></c:out></div>
-			<div class="col-sm-2"></div>
-		</div>
-	</div>
-	</div>
-	<div class="col-sm-5">
-	</div>
-</div>
+	

@@ -48,21 +48,19 @@
 	<jsp:param value="subheading.applicant.info" name="header" />
 </jsp:include>
 <br />
-<div class="row">
 	<div class="form-group">
 		<div class="col-sm-3 control-label">
 			<spring:message code="lbl.fee.criteria"/>
 		</div>
 		<div class="col-sm-3 view-content">
-			 <c:out value="${reIssue.feeCriteria.criteria}" />
-			 <form:hidden path="feeCriteria.id"  value="${reIssue.feeCriteria.id}"/>	 
+			 <form:hidden path="feeCriteria.id"  value="${reIssue.feeCriteria.id}"/>	
+			 <c:out value="${reIssue.feeCriteria.criteria}" /> 
 		</div>
 		<div class="col-sm-2 control-label">
 			<spring:message code="lbl.fee"/><span class="mandatory"></span>
 		</div>
-		<div class="col-sm-3">
+		<div class="col-sm-3 view-content">
 			<form:input path="feePaid" id="txt-feepaid" type="text" class="form-control low-width patternvalidation" data-pattern="decimalvalue" placeholder="" autocomplete="off" required="required"/>
             <form:errors path="feePaid" cssClass="add-margin error-msg"/>
 		</div>
-	</div>
 </div>

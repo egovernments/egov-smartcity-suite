@@ -45,74 +45,46 @@
 <%@ taglib uri="http://www.springframework.org/tags" prefix="spring" %>
 <%@ taglib uri="http://www.springframework.org/tags/form" prefix="form" %>
 
-<div class="row">
-	<span class="bold"><spring:message code="${param.header}"/></span>
-</div>
+
 <c:forEach items="${registration.witnesses}" varStatus="loop" var="witness">
-	<div class="row">
-		<div class="col-sm-1"></div>
-		<div class="col-sm-6">
-		<div class="row">
-		<div class="form-group">
-			<div class="col-sm-5 add-margin"><spring:message code="lbl.fullname"/></div>
-			<div class="col-sm-5 add-margin view-content">
+<div class="panel-heading">
+	<div class="panel-title">
+		Information Of Witness #<c:out value="${loop.index+1}"></c:out>
+	</div>
+</div>
+<div class="panel-body">
+	<div class="row add-border">
+			<div class="col-xs-3 add-margin"><spring:message code="lbl.fullname"/></div>
+			<div class="col-xs-3 add-margin view-content">
 				<c:out value="${witness.name.firstName}"></c:out>&nbsp; &nbsp;
 				<c:out value="${witness.name.middleName}"></c:out>&nbsp; &nbsp;
 				<c:out value="${witness.name.lastName}"></c:out>
 			</div>
-			<div class="col-sm-2"></div>
+			<div class="col-xs-3 add-margin"><spring:message code="lbl.occupation"/></div>
+			<div class="col-xs-3 add-margin view-content"><c:out value="${witness.occupation}" default="N/A"></c:out></div>
 		</div>
-		</div>
-		</div>
-		<div class="col-sm-5">
-		<div class="row">
-			<div class="col-sm-6">
-			</div>		
-			<div class="col-sm-6">
+		
+		<div class="row add-border">
+				<div class="col-xs-3 add-margin"><spring:message code="lbl.relationship.applicant"/></div>
+				<div class="col-xs-3 add-margin view-content"><c:out value="${witness.relationshipWithApplicant}" default="N/A"></c:out></div>
+				<div class="col-xs-3 add-margin"><spring:message code="lbl.age"/></div>
+				<div class="col-xs-3 add-margin view-content"><c:out value="${witness.age}" default="NA"></c:out></div>
 			</div>
+
+		<div class="row add-border">
+				<div class="col-xs-3 add-margin"><spring:message code="lbl.residence.address"/></div>
+				<div class="col-xs-3 add-margin view-content"><c:out value="${witness.contactInfo.residenceAddress}" default="N/A"></c:out></div>
+				<div class="col-xs-3 add-margin"><spring:message code="lbl.residence.address"/></div>
+				<div class="col-xs-3 add-margin view-content"><c:out value="${witness.contactInfo.officeAddress}" default="N/A"></c:out></div>
 		</div>
-		</div>
-	</div>
-	<div class="row">
-		<div class="col-sm-1"></div>
-		<div class="col-sm-6">
-		<div class="row">
-				<div class="col-sm-5 add-margin"><spring:message code="lbl.occupation"/></div>
-				<div class="col-sm-5 add-margin view-content"><c:out value="${witness.occupation}" default="NA"></c:out></div>
-				<div class="col-sm-2"></div>
-		</div>
-		<div class="row">
-			<div class="form-group">
-				<div class="col-sm-5 add-margin"><spring:message code="lbl.relationship.applicant"/></div>
-				<div class="col-sm-5 add-margin view-content"><c:out value="${witness.relationshipWithApplicant}" default="NA"></c:out></div>
-				<div class="col-sm-2"></div>
-			</div>
-		</div>
-		<div class="row">
-				<div class="col-sm-5 add-margin"><spring:message code="lbl.age"/></div>
-				<div class="col-sm-5 add-margin view-content"><c:out value="${witness.age}" default="NA"></c:out></div>
-				<div class="col-sm-2"></div>
-		</div>
-		<div class="row">
-				<div class="col-sm-5 add-margin"><spring:message code="lbl.residence.address"/></div>
-				<div class="col-sm-5 add-margin view-content"><c:out value="${witness.contactInfo.residenceAddress}" default="NA"></c:out></div>
-				<div class="col-sm-2"></div>
-		</div>
-		<div class="row">
-				<div class="col-sm-5 add-margin"><spring:message code="lbl.residence.address"/></div>
-				<div class="col-sm-5 add-margin view-content"><c:out value="${witness.contactInfo.officeAddress}" default="NA"></c:out></div>
-				<div class="col-sm-2"></div>
-		</div>
-		</div>
-		<div class="col-sm-5">
-			<div class="row">
-				<div class="col-sm-5 add-margin">
+		<div class="row add-border">
+				<div class="col-xs-3 add-margin">
 					<spring:message code="lbl.photo"/>
 				</div>
-				<div class="col-sm-6">			 	
+				<div class="col-xs-3">			 	
 					<c:set value="${witness.encodedPhoto}" var="ph"/>
 					<c:set value="${loop.index}" var="index" />
-					<img class="add-border" id="witness${index}-imgphoto" height="160" width="140">
+					<img  id="witness${index}-imgphoto" height="160" width="140">
 					<script>
 						var strData = '<c:out value="${ph}" />';
 						var index = '<c:out value="${index}" />';
@@ -122,6 +94,5 @@
 					</script>
 				</div>
 			</div>
-		</div>
-	</div>
+	</div>	
 </c:forEach>

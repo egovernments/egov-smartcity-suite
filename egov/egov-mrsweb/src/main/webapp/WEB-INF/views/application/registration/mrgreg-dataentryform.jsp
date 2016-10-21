@@ -55,7 +55,7 @@
 			enctype="multipart/form-data">
 			<input type="hidden" id="registrationId" value="${registration.id}" />
 			<input type="hidden" id="registrationStatus" value="${registration.status}" />
-			 <ul class="nav nav-tabs nav-justified nav-tabs-top">
+			 <ul class="nav nav-tabs" id="settingstab">
 			    <li class="active"><a data-toggle="tab" href="#applicant-info" data-tabidx=0>Applicant's Information</a></li>
 			    <li><a data-toggle="tab" href="#witness-info" data-tabidx=1>Witnesses Information</a></li>
 			    <li><a data-toggle="tab" href="#checklist-info" data-tabidx=2>Checklist</a></li>
@@ -63,29 +63,29 @@
 					   
 			<div class="tab-content">	 
 				<div id="applicant-info" class="tab-pane fade in active">
-				    <div class="panel panel-primary" data-collapsed="0">
-				    	<br />
-					    <div class="form-group">
-					    	<label class="col-sm-3 control-label text-right"><spring:message
-									code="lbl.appl.number" /><span class="mandatory"></span></label>
-							<div class="col-sm-3 add-margin">
-								<form:input path="applicationNo" id="applicationNum"
-									class="form-control text-left patternvalidation" data-pattern="alphanumericwithspecialcharacters" maxlength="20" required="required" />
-								<form:errors path="applicationNo" 
-									cssClass="add-margin error-msg" />
+						<div class="panel panel-primary" data-collapsed="0">
+							<br>
+							<div class="form-group">
+						    	<label class="col-sm-3 control-label text-right"><spring:message
+										code="lbl.appl.number" /><span class="mandatory"></span></label>
+								<div class="col-sm-3 add-margin">
+									<form:input path="applicationNo" id="applicationNum"
+										class="form-control text-left patternvalidation" data-pattern="alphanumericwithspecialcharacters" maxlength="20" required="required" />
+									<form:errors path="applicationNo" 
+										cssClass="add-margin error-msg" />
+								</div>
+								
+								<label class="col-sm-2 control-label text-right"><spring:message
+										code="lbl.registration.number" /><span class="mandatory"></span></label>
+								<div class="col-sm-3 add-margin">
+									<form:input path="registrationNo" id="registrationNum"
+										class="form-control text-left patternvalidation" data-pattern="number" maxlength="20" required="required" />
+									<form:errors path="registrationNo" 
+										cssClass="add-margin error-msg" />
+								</div>
 							</div>
-							
-							<label class="col-sm-2 control-label text-right"><spring:message
-									code="lbl.registration.number" /><span class="mandatory"></span></label>
-							<div class="col-sm-3 add-margin">
-								<form:input path="registrationNo" id="registrationNum"
-									class="form-control text-left patternvalidation" data-pattern="number" maxlength="20" required="required" />
-								<form:errors path="registrationNo" 
-									cssClass="add-margin error-msg" />
-							</div>
-						</div>
-			    		<jsp:include page="generalinfo.jsp"></jsp:include>
-			    	</div>
+			    			<jsp:include page="generalinfo.jsp"></jsp:include>
+			    		</div>
 			    </div>
 			    <div id="witness-info" class="tab-pane fade">
 			    	<div class="panel panel-primary" data-collapsed="0">

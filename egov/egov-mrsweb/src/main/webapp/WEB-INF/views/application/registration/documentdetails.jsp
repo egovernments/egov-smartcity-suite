@@ -53,18 +53,19 @@
 	</div>
 <div class="panel-body documentAttach-slide display-hide">
 	
-<div class="row">
-	<div class="col-sm-2"></div>
-	<div class="form-group">
-		<label class="col-sm-4 text-left view-content">
-			<spring:message code="lbl.common.docs"/>
-		</label>
-		<div class="col-sm-2 text-center view-content">
-			<spring:message code="lbl.submitted.by.couple"/>
+
+	<div class="panel-heading">
+		<div class="panel-title">
+				<spring:message code="lbl.common.docs"/>
 		</div>
 	</div>
-	<div class="col-sm-2"></div>
-</div>
+	
+	<div class="form-group">
+		<label class="col-sm-offset-5 view-content">
+			<spring:message code="lbl.submitted.by.couple"/>
+		</label>
+	</div>
+
 <c:forEach var="doc" items="${generalDocuments}" varStatus="status">	
 	<div class="form-group">	
 		<div class="col-sm-1"></div>
@@ -92,22 +93,22 @@
 	</div>
 </c:forEach>
 </b></b>
-<div class="row">
-	<div class="col-sm-2"></div>
+
+	<div class="panel-heading">
+		<div class="panel-title">
+				<spring:message code="lbl.indi.docs"/>
+		</div>
+	</div>
+	
 	<div class="form-group">
-		<label class="col-sm-4 text-left view-content">
-			<spring:message code="lbl.indi.docs"/>
-		</label>
-		<div class="col-sm-1 text-center view-content">
+		<div class="col-sm-offset-5 col-sm-1 view-content">
 			<spring:message code="lbl.husband"/>
 		</div>
-		<div class="col-sm-2"></div>
-		<div class="col-sm-1 text-center view-content">
+		<div class="col-sm-5 text-center view-content">
 			<spring:message code="lbl.wife"/>
 		</div>
 	</div>
-	<div class="col-sm-1"></div>
-</div>
+	
 <c:forEach var="doc" items="${individualDocuments}" varStatus="status">	
 	
 	<div class="form-group">	
@@ -137,7 +138,7 @@
 		<div class="col-sm-2 add-margin text-center">
 			<input type="file" id="file${status.index}id" name="wife.documents[${status.index}].file" class="file-ellipsis upload-file">
 			<form:errors path="wife.documents[${status.index}].file" cssClass="add-margin error-msg" />
-			&nbsp;&nbsp;
+			
 			<c:set value="false" var="isDocFound"></c:set>
 			<c:forEach items="${registration.wife.applicantDocuments}" var="appdoc" varStatus="loopStatus">
 				<c:if test="${appdoc.document.id == doc.id}">

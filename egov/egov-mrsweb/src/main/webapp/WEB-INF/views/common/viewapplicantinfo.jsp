@@ -48,86 +48,68 @@
 		<spring:message code="${param.header}"/>
 	</div>
 </div>
-<div class="row">
-	<div class="form-group">
-		<div  class="col-sm-3 control-label"><spring:message code="lbl.fullname"/></div>
-		<div class="col-sm-3 add-margin view-content" style="padding-left: 28px;">
-			<c:out value="${param.appFirstName}"></c:out>&nbsp; &nbsp;
-			<c:out value="${param.appMiddleName}"></c:out>&nbsp; &nbsp;
-			<c:out value="${param.appLastName}"></c:out>
-		</div>
+<div class="panel-body">
+<div class="row add-border">
+	<div  class="col-sm-3 control-label"><spring:message code="lbl.fullname"/></div>
+	<div class="col-sm-3 add-margin view-content" >
+		<c:out value="${param.appFirstName}"></c:out>&nbsp; &nbsp;
+		<c:out value="${param.appMiddleName}"></c:out>&nbsp; &nbsp;
+		<c:out value="${param.appLastName}"></c:out>
+	</div>
 		
-		<div  class="col-sm-3 control-label"><spring:message code="lbl.signature"/></div>
-		<div class="col-sm-3 add-margin view-content">
-			<c:choose>
-				<c:when test="${param.signature == null || param.signature == ''}">
-					NA
-				</c:when>
-				<c:otherwise>
-					<input type="hidden" id="signaturecontent${status.index}" value="${param.signature}">
-					<a id="signaturelink${status.index}">Click to download</a>
-				</c:otherwise>
-			</c:choose>
-		</div>
+	<div  class="col-sm-3 control-label"><spring:message code="lbl.signature"/></div>
+	<div class="col-sm-3 add-margin view-content">
+		<c:choose>
+			<c:when test="${param.signature == null || param.signature == ''}">
+				N/A
+			</c:when>
+			<c:otherwise>
+				<input type="hidden" id="signaturecontent${status.index}" value="${param.signature}">
+				<a id="signaturelink${status.index}">Click to download</a>
+			</c:otherwise>
+		</c:choose>
 	</div>
 </div>
 
-<div class="row">
-	<div class="form-group">
-		<div class="col-sm-7">
-			<div class="row">
-					<div  class="col-sm-5 control-label"><spring:message code="lbl.othername"/></div>
-					<div class="col-sm-3 add-margin view-content" style="padding-left: 28px;"><c:out value="${param.appOtherName}" default="NA"></c:out></div>
-			</div>
-			<div class="row">
-					<div  class="col-sm-5 control-label"><spring:message code="lbl.religion"/></div>
-					<div class="col-sm-3 add-margin view-content" style="padding-left: 28px;"><c:out value="${param.appReligion}" default="NA"></c:out></div>
-			</div>
-			<div class="row">
-					<div  class="col-sm-5 control-label"><spring:message code="lbl.religiontype"/></div>
-					<div class="col-sm-3 add-margin view-content" style="padding-left: 28px;"><c:out value="${param.appReligionPractice}" default="NA"></c:out></div>
-			</div>
-			<div class="row">
-				<div  class="col-sm-5 control-label"><spring:message code="lbl.ageason.marriage"/></div>
-				<div class="col-sm-3 add-margin view-content" style="padding-left: 28px;"><c:out value="${param.appAgeInYears}"></c:out> Years, <c:out value="${param.appAgeInMonths}"></c:out> Months</div>
-			</div>
-		</div>
-		
-		<div class="col-sm-5">
-			<div class="row">
-				<div  class="col-sm-5 control-label"><spring:message code="lbl.photo"/></div>
-				<div class="col-sm-3 add-margin">
-					<img class="add-border" id="${applicant}-photo" height="150" width="130" src="data:image/jpeg;base64,${param.photo}">
-				</div>
-			</div>
-		</div>
-	</div>
+<div class="row add-border">
+	<div  class="col-sm-3 control-label"><spring:message code="lbl.othername"/></div>
+	<div class="col-sm-3 add-margin view-content"><c:out value="${param.appOtherName}"></c:out></div>
+	<div  class="col-sm-3 control-label"><spring:message code="lbl.religion"/></div>
+	<div class="col-sm-3 add-margin view-content"><c:out value="${param.appReligion}"></c:out></div>
+</div>
+	
+<div class="row add-border">
+	<div  class="col-sm-3 control-label"><spring:message code="lbl.religiontype"/></div>
+	<div class="col-sm-3 add-margin view-content"><c:out value="${param.appReligionPractice}"></c:out></div>
+	<div  class="col-sm-3 control-label"><spring:message code="lbl.ageason.marriage"/></div>
+	<div class="col-sm-3 add-margin view-content" ><c:out value="${param.appAgeInYears}"></c:out> Years, <c:out value="${param.appAgeInMonths}"></c:out> Months</div>
 </div>
 
 
-<div class="row">
-	<div class="form-group">
+<div class="row add-border">
 		<div class="col-sm-3 control-label"><spring:message code="lbl.applicant.status"/></div>
 		<div class="col-sm-3 add-margin view-content"><c:out value="${param.appPresentRelation}"></c:out></div>
 		<div class="col-sm-3 control-label"><spring:message code="lbl.occupation"/></div>
-		<div class="col-sm-3 add-margin view-content"><c:out value="${param.appOccupation}" default="NA"></c:out></div>
-	</div>
+		<div class="col-sm-3 add-margin view-content"><c:out value="${param.appOccupation}"></c:out></div>
 </div>
 
-<div class="row">
-	<div class="form-group">
+<div class="row add-border">
 		<div class="col-sm-3 control-label"><spring:message code="lbl.residence.address"/></div>
 		<div class="col-sm-3 add-margin view-content"><c:out value="${param.appResidenceAddress}"></c:out></div>
 		<div class="col-sm-3 control-label"><spring:message code="lbl.office.address"/></div>
 		<div class="col-sm-3 add-margin view-content"><c:out value="${param.appOfficeAddress}"></c:out></div>
-	</div>
 </div>
 
-<div class="row">
-	<div class="form-group">
+<div class="row add-border">
 		<div class="col-sm-3 control-label"><spring:message code="lbl.phoneno"/></div>
-		<div class="col-sm-3 add-margin view-content"><c:out value="${param.appMobileNo}" default="NA"></c:out></div>
+		<div class="col-sm-3 add-margin view-content"><c:out value="${param.appMobileNo}" ></c:out></div>
 		<div class="col-sm-3 control-label"><spring:message code="lbl.email"/></div>
-		<div class="col-sm-3 add-margin view-content"><c:out value="${param.appEmail}" default="NA"></c:out></div>
+		<div class="col-sm-3 add-margin view-content"><c:out value="${param.appEmail}" ></c:out></div>
+</div>
+<div class="row add-border">
+	<div  class="col-sm-3 control-label"><spring:message code="lbl.photo"/></div>
+	<div class="col-sm-3 add-margin">
+		<img class="add-border" id="${applicant}-photo" height="150" width="130" src="data:image/jpeg;base64,${param.photo}">
 	</div>
+</div>
 </div>

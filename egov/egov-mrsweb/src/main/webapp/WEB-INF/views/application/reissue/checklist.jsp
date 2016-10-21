@@ -45,19 +45,17 @@
 <%@ taglib uri="http://www.springframework.org/tags" prefix="spring" %>
 <%@ taglib uri="http://www.springframework.org/tags/form" prefix="form" %>
 
-<div class="row">
-	<div class="col-sm-2"></div>
-	<div class="form-group">
-		<label class="col-sm-4 text-left view-content">
-		</label>
-		<div class="col-sm-1 text-center view-content">
-			<spring:message code="lbl.applicant"/>
-		</div>
-		<div class="col-sm-1 text-center view-content">
+<div class="panel-heading">
+		<div class="panel-title">
+				<spring:message code="lbl.common.docs"/>
 		</div>
 	</div>
-	<div class="col-sm-1"></div>
-</div>
+	
+	<div class="form-group">
+		<label class="col-sm-offset-6 view-content">
+			<spring:message code="lbl.submitted.by.couple"/>
+		</label>
+	</div>
 <div class="row">
 	<div class="col-sm-2"></div>
 	<div class="form-group">

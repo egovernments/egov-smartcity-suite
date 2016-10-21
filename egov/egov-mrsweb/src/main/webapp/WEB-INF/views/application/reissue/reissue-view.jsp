@@ -79,7 +79,7 @@
 			</div>	
 			</c:if>
 			
-			<ul class="nav nav-tabs nav-justified nav-tabs-top">
+			<ul class="nav nav-tabs" id="settingstab">
 			    <li class="active"><a data-toggle="tab" href="#applicant-info" data-tabidx=0><spring:message code="subheading.applicant.info"/></a></li>
 			    <li><a data-toggle="tab" href="#checklist-info" data-tabidx=1><spring:message code="lbl.registration.detail"/></a></li>
 			 </ul>
@@ -96,15 +96,16 @@
 								<div class="row">
 										<div class="col-sm-3 control-label"><spring:message code="lbl.fee.criteria"/></div>
 										<div class="col-sm-3 add-margin view-content"><c:out value="${reissue.feeCriteria.criteria}" /></div>
-										<div class="col-sm-3 control-label"><spring:message code="lbl.fee"/></div>
+										<div class="col-sm-4 control-label"><spring:message code="lbl.fee"/></div>
 										<div class="col-sm-3 add-margin view-content"><c:out value="${reissue.feePaid}" /></div>
 								</div>
 
 					    		<jsp:include page="viewreissuedocumentdetails.jsp"></jsp:include>
 					    	</div>
 					    </div>
-					    
+					    <div class="panel panel-primary" data-collapsed="0">
 					    <div id="checklist-info" class="tab-pane fade">
+					    </div>
 					    <div class="panel panel-primary" data-collapsed="0">
 					    	<jsp:include page="../../common/generalinfo.jsp" />
 					    	

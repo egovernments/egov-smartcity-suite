@@ -63,6 +63,7 @@ public class MarriageRegDataEntryController extends MarriageRegistrationControll
     public String showRegistration( final Model model) { 
          MarriageRegistration registration= new MarriageRegistration();   
          model.addAttribute("registration",registration);
+         model.addAttribute("currentState", "DATAENTRY");
        return "mrgreg-dataentryform";
     }
 
