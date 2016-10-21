@@ -45,127 +45,87 @@
 <%@ taglib uri="http://www.springframework.org/tags" prefix="spring" %>
 <%@ taglib uri="http://www.springframework.org/tags/form" prefix="form" %>
 
-<br />
 <div class="panel-heading">
 	<div class="panel-title">
 		<spring:message code="${param.header}"/>
 	</div>
 </div>
-<div class="row">
-	<div class="col-sm-7">
-	<div class="row">
-	<div class="form-group">
-		<label class="col-sm-5 text-right" style="padding-right: 5px;">
+<div class="form-group">
+	<div class="col-sm-6">
+		<label class="col-sm-6 text-right">
 			<spring:message code="lbl.fullname"/><span class="mandatory"></span>
 		</label>
-		<div class="col-sm-5" style="padding-left: 26px;">
-			<form:input path="${witness}.name.firstName" id="txt-firstName" type="text" class="form-control is_valid_alphabet inline-elem" maxlength="30" placeholder="First Name" autocomplete="off" required="required" style="width: 33%"/>
-			<form:input path="${witness}.name.middleName" id="txt-middleName" type="text" class="form-control is_valid_alphabet inline-elem" maxlength="20" placeholder="Middle Name" autocomplete="off" required="required" style="width: 30%" />
-			<form:input path="${witness}.name.lastName" id="txt-lastName" type="text" class="form-control is_valid_alphabet inline-elem" maxlength="20" placeholder="Last Name" autocomplete="off" required="required" style="width: 30%" />
+		<div class="col-sm-6" >
+			<form:input path="${witness}.name.firstName"  type="text" class="form-control is_valid_alphabet inline-elem" maxlength="30" placeholder="First Name" autocomplete="off" required="required" style="width: 33%"/>
+			<form:input path="${witness}.name.middleName"  type="text" class="form-control is_valid_alphabet inline-elem" maxlength="20" placeholder="Middle Name" autocomplete="off" style="width: 30%" />
+			<form:input path="${witness}.name.lastName"  type="text" class="form-control is_valid_alphabet inline-elem" maxlength="20" placeholder="Last Name" autocomplete="off" style="width: 30%" />
             <form:errors path="${witness}.name.firstName" cssClass="add-margin error-msg"/>
             <form:errors path="${witness}.name.middleName" cssClass="add-margin error-msg"/>
             <form:errors path="${witness}.name.lastName" cssClass="add-margin error-msg"/>
 		</div>
-		<div class="col-sm-2"></div>
-	</div>
-	</div>
-	</div>
-	<div class="col-sm-5">
-	<div class="row">
+		<label class="col-sm-6 text-right" >
+			<spring:message code="lbl.occupation"/>
+		</label>
+		<div class="col-sm-6" >
+			<form:input path="${witness}.occupation" id="${witness}.occupation" type="text" class="form-control low-width is_valid_alphanumeric" maxlength="60" placeholder="" autocomplete="off" />
+	           <form:errors path="${witness}.occupation" cssClass="add-margin error-msg"/>
+		</div>
+		<label class="col-sm-6 text-right" >
+			<spring:message code="lbl.relationship.applicant"/>
+		</label>
+		<div class="col-sm-6" >
+			<form:input path="${witness}.relationshipWithApplicant" id="${witness}.relationshipWithApplicant" type="text" class="form-control low-width is_valid_alphabet" maxlength="30" placeholder="" autocomplete="off" />
+	           <form:errors path="${witness}.relationshipWithApplicant" cssClass="add-margin error-msg"/>
+		</div>
+		<label class="col-sm-6 text-right" >
+			<spring:message code="lbl.age"/><span class="mandatory"></span>
+		</label>
 		<div class="col-sm-6">
-		</div>		
-		<div class="col-sm-6">
+			<form:input path="${witness}.age" id="${witness}.age" type="text" class="form-control low-width patternvalidation" maxlength="2" data-pattern="number" placeholder="" autocomplete="off"  required="required"/>
+	           <form:errors path="${witness}.age" cssClass="add-margin error-msg"/>
+		</div>
+		
+	</div>
+	<div class="col-sm-6">
+		<label class="col-sm-4 text-right" >
+			<spring:message code="lbl.photo"/>
+		</label>
+		<div class="col-sm-6 setimage">			
+		 	
+			<c:choose>
+				<c:when test="${currentState != 'NEW' && currentState != 'DATAENTRY'}">
+				    <form:hidden  path="${witness}.photoFileStore"/>
+					<form:hidden class="encodedPhoto" path="${witness}.encodedPhoto"/>
+					<img id="${witness}.photo" class="add-margin marriage-img" height="150" width="130" />
+					<input type="file" id="${witness}-photo" name="${witness}.photoFile" class="file-ellipsis upload-file validate-file" data-fileto="#${witness}.photo" >
+				</c:when>
+				<c:otherwise>
+					<img id="${witness}.photo" class="add-margin marriage-img" height="150" width="130" />
+					<input type="file" id="${witness}-photo" name="${witness}.photoFile" class="file-ellipsis upload-file validate-file" data-fileto="#${witness}.photo">
+				</c:otherwise>
+			</c:choose>
 		</div>
 	</div>
+</div>	
+<div class="form-group">
+	<label class="col-sm-3 text-right" >
+			<spring:message code="lbl.residence.address"/><span class="mandatory"></span>
+	</label>
+	<div class="col-sm-3" >
+		<form:textarea path="${witness}.contactInfo.residenceAddress" id="${witness}.contactInfo.residenceAddress" type="text" class="form-control low-width patternvalidation" data-pattern="regexp_alphabetspecialcharacters" maxlength="256" placeholder="" autocomplete="off" required="required" />
+              <form:errors path="${witness}.contactInfo.residenceAddress" cssClass="add-margin error-msg"/>
+	</div>
+	<label class="col-sm-2 text-right" >
+		<spring:message code="lbl.office.address"/><span class="mandatory"></span>
+	</label>
+	<div class="col-sm-3" >
+		<form:textarea path="${witness}.contactInfo.officeAddress" id="${witness}.contactInfo.officeAddress" type="text" class="form-control low-width patternvalidation" data-pattern="regexp_alphabetspecialcharacters" maxlength="256" placeholder="" autocomplete="off" required="required" />
+              <form:errors path="${witness}.contactInfo.officeAddress" cssClass="add-margin error-msg"/>
 	</div>
 </div>
-<div class="row">
-	<div class="col-sm-7">
-	<div class="row">
-		<div class="form-group">
-			<label class="col-sm-5 text-right" style="padding-right: 5px;">
-				<spring:message code="lbl.occupation"/>
-			</label>
-			<div class="col-sm-5" style="padding-left: 26px;">
-				<form:input path="${witness}.occupation" id="txt-witness-occupation" type="text" class="form-control low-width is_valid_alphanumeric" maxlength="60" placeholder="" autocomplete="off" />
-	            <form:errors path="${witness}.occupation" cssClass="add-margin error-msg"/>
-			</div>
-			<div class="col-sm-2"></div>
-		</div>
-	</div>
-	<div class="row">
-		<div class="form-group">
-			<label class="col-sm-5 text-right" style="padding-right: 5px;">
-				<spring:message code="lbl.relationship.applicant"/>
-			</label>
-			<div class="col-sm-5" style="padding-left: 26px;">
-				<form:input path="${witness}.relationshipWithApplicant" id="txt-witness-relationship" type="text" class="form-control low-width is_valid_alphabet" maxlength="30" placeholder="" autocomplete="off" />
-	            <form:errors path="${witness}.relationshipWithApplicant" cssClass="add-margin error-msg"/>
-			</div>
-			<div class="col-sm-2"></div>
-		</div>
-	</div>
-	<div class="row">
-		<div class="form-group">
-			<label class="col-sm-5 text-right" style="padding-right: 5px;">
-				<spring:message code="lbl.age"/><span class="mandatory"></span>
-			</label>
-			<div class="col-sm-5" style="padding-left: 26px;">
-				<form:input path="${witness}.age" id="txt-witness-age" type="text" class="form-control low-width patternvalidation" maxlength="2" data-pattern="number" placeholder="" autocomplete="off"  required="required"/>
-	            <form:errors path="${witness}.age" cssClass="add-margin error-msg"/>
-			</div>
-			<div class="col-sm-2"></div>
-		</div>
-	</div>
-	<div class="row">
-		<div class="form-group">
-			<label class="col-sm-5 text-right" style="padding-right: 5px;">
-				<spring:message code="lbl.residence.address"/><span class="mandatory"></span>
-			</label>
-			<div class="col-sm-5" style="padding-left: 26px;">
-				<form:textarea path="${witness}.contactInfo.residenceAddress" id="txt-witness-residenceAddress" type="text" class="form-control low-width patternvalidation" data-pattern="regexp_alphabetspecialcharacters" maxlength="256" placeholder="" autocomplete="off" required="required" />
-                <form:errors path="${witness}.contactInfo.residenceAddress" cssClass="add-margin error-msg"/>
-			</div>
-			<div class="col-sm-2"></div>
-		</div>
-	</div>
-	<div class="row">
-		<div class="form-group">
-			<label class="col-sm-5 text-right" style="padding-right: 5px;">
-				<spring:message code="lbl.office.address"/><span class="mandatory"></span>
-			</label>
-			<div class="col-sm-5" style="padding-left: 26px;">
-				<form:textarea path="${witness}.contactInfo.officeAddress" id="txt-witness-officeAddress" type="text" class="form-control low-width patternvalidation" data-pattern="regexp_alphabetspecialcharacters" maxlength="256" placeholder="" autocomplete="off" required="required" />
-                <form:errors path="${witness}.contactInfo.officeAddress" cssClass="add-margin error-msg"/>
-			</div>
-			<div class="col-sm-2"></div>
-		</div>
-	</div>
-	</div>
-	<div class="col-sm-5">
-		<div class="row">
-			<label class="col-sm-5 text-right" style="padding: 25px;">
-				<spring:message code="lbl.photo"/>
-			</label>
-			<div class="col-sm-6 setimage">			
-			 	
-				<c:choose>
-					<c:when test="${currentState != 'NEW'}">
-					    <form:hidden  path="${witness}.photoFileStore"/>
-						<form:hidden class="encodedPhoto" path="${witness}.encodedPhoto"/>
-						<img id="${witness}.photo" class="img-width add-margin marriage-img" height="160" width="140" />
-						<input type="file" id="${witness}-photo" name="${witness}.photoFile" class="file-ellipsis upload-file validate-file" data-fileto="#${witness}.photo" >
-					</c:when>
-					<c:otherwise>
-						<img id="${witness}.photo" class="img-width add-margin marriage-img" height="160" width="140" />
-						<input type="file" id="${witness}-photo" name="${witness}.photoFile" class="file-ellipsis upload-file validate-file" data-fileto="#${witness}.photo">
-					</c:otherwise>
-				</c:choose>
-			</div>
-		</div>
-	</div>
-</div>
-<c:if test="${currentState != 'NEW'}">
+
+
+<c:if test="${currentState != 'NEW' && currentState != 'DATAENTRY'}">
 <script>
 	$('.setimage').each(function(){
 		var encodedPhoto = $(this).find('.encodedPhoto').val();
