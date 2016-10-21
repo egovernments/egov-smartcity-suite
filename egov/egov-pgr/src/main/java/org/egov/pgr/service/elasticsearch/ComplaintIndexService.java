@@ -6,15 +6,16 @@ import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 
 import org.apache.commons.lang.time.DateUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.egov.config.search.Index;
 import org.egov.config.search.IndexType;
 import org.egov.eis.entity.Assignment;
 import org.egov.eis.service.AssignmentService;
-import org.egov.eis.service.EisCommonService;
 import org.egov.infra.admin.master.entity.City;
 import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.admin.master.service.CityService;
@@ -24,8 +25,11 @@ import org.egov.infra.search.elastic.annotation.Indexing;
 import org.egov.pgr.elasticSearch.entity.ComplaintIndex;
 import org.egov.pgr.entity.Complaint;
 import org.egov.pgr.entity.Escalation;
+import org.egov.pgr.entity.elasticsearch.ComplaintDashBoardRequest;
 import org.egov.pgr.entity.enums.ComplaintStatus;
 import org.egov.pgr.entity.enums.ReceivingMode;
+import org.egov.pgr.repository.elasticsearch.ComplaintIndexRepository;
+import org.egov.pgr.repository.elasticsearch.util.ComplaintElasticsearchUtils;
 import org.egov.pgr.service.ComplaintService;
 import org.egov.pgr.service.EscalationService;
 import org.egov.pims.commons.Designation;
@@ -35,6 +39,8 @@ import org.egov.search.domain.Page;
 import org.egov.search.domain.SearchResult;
 import org.egov.search.domain.Sort;
 import org.egov.search.service.SearchService;
+import org.elasticsearch.index.query.BoolQueryBuilder;
+import org.elasticsearch.index.query.QueryBuilders;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.env.Environment;
@@ -60,6 +66,9 @@ public class ComplaintIndexService {
 
     @Autowired
     private Environment environment;
+    
+    @Autowired
+    private ComplaintIndexRepository complaintIndexRepository; 
 
     @Indexing(name = Index.PGR, type = IndexType.COMPLAINT)
     public ComplaintIndex createComplaintIndex(final ComplaintIndex complaintIndex) {
@@ -616,5 +625,34 @@ public class ComplaintIndexService {
         }
         return complaintIndex;
     }
-
+    
+    
+    //These are the methods for dashboard results written
+    
+    public HashMap<String, Object> getGrievanceReport(ComplaintDashBoardRequest complaintDashBoardRequest){
+    	
+    	return complaintIndexRepository.findAllGrievanceByFilter(complaintDashBoardRequest,
+    			getFilterQuery(complaintDashBoardRequest),ComplaintElasticsearchUtils.getAggregationGroupingField(complaintDashBoardRequest));
+    }
+    
+    
+    private BoolQueryBuilder getFilterQuery(ComplaintDashBoardRequest complaintDashBoardRequest){
+    	BoolQueryBuilder boolQuery = QueryBuilders.boolQuery().filter(QueryBuilders.termQuery("registered", 1));
+    	if (StringUtils.isNotBlank(complaintDashBoardRequest.getDistrictCode()))
+    		boolQuery = boolQuery.filter(QueryBuilders.matchQuery("cityDistrictCode", complaintDashBoardRequest.getDistrictCode()));
+    	if (StringUtils.isNotBlank(complaintDashBoardRequest.getUlbCode()))
+    		boolQuery = boolQuery.filter(QueryBuilders.matchQuery("cityCode", complaintDashBoardRequest.getUlbCode()));
+    	if (StringUtils.isNotBlank(complaintDashBoardRequest.getWardNo()))
+    		boolQuery = boolQuery.filter(QueryBuilders.matchQuery("wardNo", complaintDashBoardRequest.getWardNo()));
+    	if (StringUtils.isNotBlank(complaintDashBoardRequest.getDepartmentCode()))
+    		boolQuery = boolQuery.filter(QueryBuilders.matchQuery("departmentCode", complaintDashBoardRequest.getDepartmentCode()));
+    	if (StringUtils.isNotBlank(complaintDashBoardRequest.getFromDate()) &&
+    			StringUtils.isNotBlank(complaintDashBoardRequest.getToDate()))
+    		boolQuery = boolQuery.must(QueryBuilders.rangeQuery("createdDate")
+    				    .from(complaintDashBoardRequest.getFromDate())
+    				    .to(complaintDashBoardRequest.getToDate()));
+		
+		return boolQuery;
+    }
+   
 }

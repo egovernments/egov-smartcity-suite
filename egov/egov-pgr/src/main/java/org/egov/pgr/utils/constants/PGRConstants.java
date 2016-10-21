@@ -46,4 +46,6 @@ public class PGRConstants {
     public static final String EG_OBJECT_TYPE_COMPLAINT = "Complaint";
     public static final String GO_ROLE_NAME = "Grievance Officer";
     public static final String GRO_ROLE_NAME = "Grievance Routing Officer";
+    public static final String PGR_INDEX_NAME = "complaint";
+    public static final String PGR_INDEX_DATE_FORMAT = "yyyy-MM-dd";
 }
