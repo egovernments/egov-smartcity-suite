@@ -128,25 +128,25 @@ public class RemittanceSchedulerService {
         return instrumentDepositMap;
     }
 
-    public void setFinancialsUtil(final FinancialsUtil financialsUtil) {
-        this.financialsUtil = financialsUtil;
+    public void setFinancialsUtil(final FinancialsUtil financialsUtils) {
+        this.financialsUtil = financialsUtils;
     }
 
-    public void setCollectionsUtil(final CollectionsUtil collectionsUtil) {
-        this.collectionsUtil = collectionsUtil;
+    public void setCollectionsUtil(final CollectionsUtil collectionsUtils) {
+        this.collectionsUtil = collectionsUtils;
     }
 
     public void setRemittanceInstrumentService(
-            final PersistenceService<RemittanceInstrument, Long> remittanceInstrumentService) {
-        this.remittanceInstrumentService = remittanceInstrumentService;
+            final PersistenceService<RemittanceInstrument, Long> remittanceInstService) {
+        this.remittanceInstrumentService = remittanceInstService;
     }
 
     public PersistenceService getPersistenceService() {
         return persistenceService;
     }
 
-    public void setPersistenceService(final PersistenceService persistenceService) {
-        this.persistenceService = persistenceService;
+    public void setPersistenceService(final PersistenceService persistService) {
+        this.persistenceService = persistService;
     }
 
 }

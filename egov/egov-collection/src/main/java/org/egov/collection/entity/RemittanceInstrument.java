@@ -56,23 +56,23 @@ public class RemittanceInstrument extends BaseModel {
         return remittance;
     }
 
-    public void setRemittance(Remittance remittance) {
-        this.remittance = remittance;
+    public void setRemittance(final Remittance remit) {
+        this.remittance = remit;
     }
 
     public InstrumentHeader getInstrumentHeader() {
         return instrumentHeader;
     }
 
-    public void setInstrumentHeader(InstrumentHeader instrumentHeader) {
-        this.instrumentHeader = instrumentHeader;
+    public void setInstrumentHeader(final InstrumentHeader instrumentHead) {
+        this.instrumentHeader = instrumentHead;
     }
 
     public Boolean getReconciled() {
         return reconciled;
     }
 
-    public void setReconciled(Boolean reconciled) {
-        this.reconciled = reconciled;
+    public void setReconciled(final Boolean reconcile) {
+        this.reconciled = reconcile;
     }
 }

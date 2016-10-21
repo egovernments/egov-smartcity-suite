@@ -15,15 +15,15 @@ public class RemittanceInstrumentJob  extends AbstractQuartzJob {
         remittanceSchedulerService.remittanceInstrumentProcess(instrumentType, modulo);
     }
 
-    public void setInstrumentType(String instrumentType) {
-        this.instrumentType = instrumentType;
+    public void setInstrumentType(String instType) {
+        this.instrumentType = instType;
     }
 
-    public void setRemittanceSchedulerService(RemittanceSchedulerService remittanceSchedulerService) {
-        this.remittanceSchedulerService = remittanceSchedulerService;
+    public void setRemittanceSchedulerService(RemittanceSchedulerService remitSchedulerService) {
+        this.remittanceSchedulerService = remitSchedulerService;
     }
 
-    public void setModulo(Integer modulo) {
-        this.modulo = modulo;
+    public void setModulo(Integer modul) {
+        this.modulo = modul;
     }
 }
