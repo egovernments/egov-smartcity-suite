@@ -87,8 +87,8 @@ public class MBHistory {
         return status;
     }
 
-    public void setStatus(String status) {
-        this.status = status;
+    public void setStatus(String mbStatus) {
+        this.status = mbStatus;
     }
 
     public void setOwnerName(final String ownerName) {
