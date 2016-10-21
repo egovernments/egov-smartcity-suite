@@ -99,10 +99,10 @@ public class GenericSubReportService {
             queryResult.setInteger("courtName", genericSubReportResultObj.getCourtName());
         if (genericSubReportResultObj.getCourtType() != null)
             queryResult.setString("courtType", genericSubReportResultObj.getCourtType());
-        if (genericSubReportResultObj.getPetitionType() != null)
-            queryResult.setString("petitionType", genericSubReportResultObj.getPetitionType());
-        if (genericSubReportResultObj.getCaseStatus() != null)
-            queryResult.setInteger("caseStatus", genericSubReportResultObj.getCaseStatus());
+        if (genericSubReportResultObj.getPetitionTypeId() != null)
+            queryResult.setInteger("petitionType", genericSubReportResultObj.getPetitionTypeId());
+        if (genericSubReportResultObj.getStatusId() != null)
+            queryResult.setInteger("caseStatus", genericSubReportResultObj.getStatusId());
         if (genericSubReportResultObj.getOfficerIncharge() != null)
             queryResult.setString("officerIncharge", genericSubReportResultObj.getOfficerIncharge());
         if (genericSubReportResultObj.getJudgmentType() != null)
@@ -132,8 +132,8 @@ public class GenericSubReportService {
             queryStr.append(" and legalcase.oppPartyAdvocate like :standingCouncil ");
         if (genericSubReportResult.getOfficerIncharge() != null)
             queryStr.append(" and legalcase.officerIncharge like :officerIncharge ");
-        if (genericSubReportResult.getCaseStatus() != null)
-            queryStr.append(" and legalcase.status  =:caseStatus ");
+        if (genericSubReportResult.getStatusId()!= null)
+            queryStr.append(" and egwStatus.id =:caseStatus ");
         if (genericSubReportResult.getCourtType() != null)
             queryStr.append(" and courtmaster.courtType.courtType like :courtType ");
         if (genericSubReportResult.getJudgmentType() != null)
