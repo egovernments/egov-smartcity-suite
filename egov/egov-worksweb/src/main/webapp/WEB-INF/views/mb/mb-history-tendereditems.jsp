@@ -42,7 +42,7 @@
 			<spring:message code="lbl.tendered.items" />
 		</div>
 	</div>
-	<table class="table table-bordered tbltendered" id="tbltendered_${count}" >
+	<table class="table table-bordered tbltendered" id="tbltendered" >
 		<thead>
 			<tr>
 				<th><spring:message code="lbl.sor.category" /></th>

@@ -59,6 +59,8 @@ public class MBHistory {
 
     private BigDecimal mbAmount;
 
+    private String status;
+
     private Set<Activity> sorActivities = new HashSet<Activity>(0);
 
     private Set<Activity> nonSorActivities = new HashSet<Activity>(0);
@@ -79,6 +81,14 @@ public class MBHistory {
 
     public String getOwnerName() {
         return ownerName;
+    }
+
+    public String getStatus() {
+        return status;
+    }
+
+    public void setStatus(String status) {
+        this.status = status;
     }
 
     public void setOwnerName(final String ownerName) {

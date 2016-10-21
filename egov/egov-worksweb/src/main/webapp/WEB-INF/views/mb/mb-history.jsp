@@ -59,14 +59,14 @@
 	</thead>
 	<tbody>
 		<tr>
-			<c:set var="count" value="${0}" scope="session" />
 			<c:forEach items="${mbHistorys}" var="history" varStatus="item">
-				<c:if test="${count == 0 }">
 					<td>
-						 <table class="table table-bordered" >
+						<table class="table table-bordered" >
 						 <thead>
 				  			<tr>
-				  				<td colspan="6">${history.ownerName}</td>
+				  				<td colspan="4">${history.ownerName}</td>
+				  				<td><spring:message code="lbl.status" /></td>
+				  				<td>${history.status}</td>
 				  				<td><spring:message code="lbl.date.time" /></td>
 				  				<td colspan="2">${history.dateTime}</td>
 				  				<td><spring:message code="lbl.mbamount" /></td>
@@ -83,31 +83,6 @@
 						    </tbody>
 						</table> 
 					</td>
-				</c:if>
-				<c:if test="${count > 0 }">
-						<td>
-							 <table class="table table-bordered" >
-							 <thead>
-					  			<tr>
-					  				<td colspan="3">${history.ownerName} </td>
-					  				<td><spring:message code="lbl.date.time" /></td>
-					  				<td >${history.dateTime}</td>
-					  				<td><spring:message code="lbl.mbamount" /></td>
-					  				<td ><fmt:formatNumber groupingUsed="false" maxFractionDigits="2"	minFractionDigits="2" value="${history.mbAmount}" /></td>
-					  			</tr>
-								</thead>
-								<tbody>
-					  			<tr>
-					  				<td colspan="7">
-										<%@ include file="mb-history-tendereditems.jsp" %>
-										<%@ include file="mb-history-nontendereditems.jsp" %>
-									</td>
-								</tr>
-							    </tbody>
-							</table> 
-						</td>
-				</c:if>
-				<c:set value="${count + 1}" var="count" scope="session" />
 			</c:forEach>
 		</tr>
 	</tbody>

@@ -127,6 +127,7 @@ public class MBHistoryService {
                 history = new MBHistory();
                 userAssignment = assignmentService.findByEmployeeAndGivenDate(header.getLastModifiedBy().getId(), new Date())
                         .get(0);
+                history.setStatus(header.getEgwStatus().getDescription());
                 history.setOwnerName(userAssignment.getDesignation().getName() + " - " +
                         header.getLastModifiedBy().getName());
                 history.setDateTime(DateUtils.getFormattedDateWithTimeStamp(new DateTime(header.getLastModifiedDate())));
