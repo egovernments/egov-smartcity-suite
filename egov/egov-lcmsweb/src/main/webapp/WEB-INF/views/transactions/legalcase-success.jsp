@@ -183,7 +183,6 @@
 				</div>
 			</div>
 		</div>
-		<div class="row form-group">
 			<div class="panel-heading">
 				<div class="panel-title">
 					<spring:message code="lbl.bipartisanDetails.details" />
@@ -277,7 +276,6 @@
 					</c:forEach>
 				</tbody>
 			</table>
-		</div>
 		<div class="panel-heading">
 	<div class="panel-title">
 		<spring:message code="lbl.bipartisanDetails.respondant" />
