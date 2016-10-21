@@ -81,7 +81,7 @@
 								<input type="text" id="billDetailes[1].creditAccountHead" name="billDetailes[1].creditAccountHead" value="${billDetailes[1].creditAccountHead}" class="form-control creditaccountheadname" disabled>  
 							</td>
 							<td>
-								<form:input path="billDetailes[1].creditamount" id="billDetailes[1].creditamount" name="billDetailes[1].creditamount" data-errormsg="Credit Amount is mandatory!" onkeyup="decimalvalue(this);" data-pattern="decimalvalue" data-idx="0" data-optional="0" class="form-control table-input text-right creditAmount" onblur="calculateNetPayableAmount();"  maxlength="12" required="required" />
+								<form:input path="billDetailes[1].creditamount" id="billDetailes[1].creditamount" name="billDetailes[1].creditamount" data-errormsg="Credit Amount is mandatory!" onkeyup="decimalvalue(this);" data-pattern="decimalvalue" data-idx="0" data-optional="0" class="form-control table-input text-right creditAmount validateZero" onblur="calculateNetPayableAmount();"  maxlength="12" required="required" />
 								<form:errors path="billDetailes[1].creditamount" cssClass="add-margin error-msg" /> 
 							</td> 
 							<td class="text-center"><span style="cursor:pointer;" onclick="addDeductionRow();"><i class="fa fa-plus"></i></span>
@@ -103,7 +103,7 @@
 										<input type="text" id="billDetailes[${rowIndex}].creditAccountHead" name="billDetailes[${rowIndex}].creditAccountHead" value="${billDetail.accountHead}" class="form-control creditaccountheadname" disabled>  
 									</td>
 									<td>
-										<form:input path="billDetailes[${rowIndex}].creditamount" id="billDetailes[${rowIndex}].creditamount" name="billDetailes[${rowIndex}].creditamount" value="${billDetail.amount }" data-errormsg="Credit Amount is mandatory!" onkeyup="decimalvalue(this);" data-pattern="decimalvalue" data-idx="0" data-optional="0" class="form-control table-input text-right creditAmount" onblur="calculateNetPayableAmount();"  maxlength="12" required="required" />
+										<form:input path="billDetailes[${rowIndex}].creditamount" id="billDetailes[${rowIndex}].creditamount" name="billDetailes[${rowIndex}].creditamount" value="${billDetail.amount }" data-errormsg="Credit Amount is mandatory!" onkeyup="decimalvalue(this);" data-pattern="decimalvalue" data-idx="0" data-optional="0" class="form-control table-input text-right creditAmount validateZero" onblur="calculateNetPayableAmount();"  maxlength="12" required="required" />
 										<form:errors path="billDetailes[${rowIndex}].creditamount" cssClass="add-margin error-msg" /> 
 									</td> 
 									<td class="text-center"><span style="cursor:pointer;" onclick="addDeductionRow();"><i class="fa fa-plus"></i></span>

@@ -335,7 +335,6 @@ function deleteDeductionRow(obj) {
 }
 
 function calculateNetPayableAmount(){
-	validateAmount();
 	var debitAmount = 0;
 	var totalDeductionAmount = 0;
 	$( "input[name$='creditamount']" ).each(function(){
@@ -368,26 +367,16 @@ function validateNetPayableAmount() {
 	return true;
 }
 
-function validateAmount() {
-	$( "input[name$='debitamount']" ).on("keyup", function(){
-	    var valid = /^[1-9](\d{0,9})(\.\d{0,2})?$/.test(this.value),
-	        val = this.value;
-	    
-	    if(!valid){
-	        console.log("Invalid input!");
-	        this.value = val.substring(0, val.length - 1);
-	    }
-	});
-	$( "input[name$='creditamount']" ).on("keyup", function(){
-	    var valid = /^[1-9](\d{0,9})(\.\d{0,2})?$/.test(this.value),
-	        val = this.value;
-	    
-	    if(!valid){
-	        console.log("Invalid input!");
-	        this.value = val.substring(0, val.length - 1);
-	    }
-	});
-}
+$(document).on('keyup','.validateZero', function(){
+  var valid = /^[1-9](\d{0,9})(\.\d{0,2})?$/.test(this.value),
+  val = this.value;
+  
+  if(!valid){
+    console.log("Invalid input!");
+    this.value = val.substring(0, val.length - 1);
+   }
+});
+
 
 function roundTo(value, decimals, decimal_padding) {
 	if (!decimals)

@@ -68,7 +68,7 @@
 								<input type="text" id="debitAccountHead" value="${lineEstimateDetails.lineEstimate.budgetHead.minCode.name}" class="form-control" disabled > 
 							</td>
 							<td>
-								<form:input path="billDetailes[0].debitamount" id="debitamount" name="billDetailes[0].debitamount" data-errormsg="Debit Amount is mandatory!" onkeyup="decimalvalue(this);" data-pattern="decimalvalue" data-idx="0" data-optional="1" class="form-control table-input text-right debitamount" onblur="calculateNetPayableAmount();" maxlength="12" required="required" />
+								<form:input path="billDetailes[0].debitamount" id="debitamount" name="billDetailes[0].debitamount" data-errormsg="Debit Amount is mandatory!" onkeyup="decimalvalue(this);" data-pattern="decimalvalue" data-idx="0" data-optional="1" class="form-control table-input text-right debitamount validateZero" onblur="calculateNetPayableAmount();" maxlength="12" required="required" />
 								<form:errors path="billDetailes[0].debitamount" cssClass="add-margin error-msg" /> 
 							</td>
 						</tr>
@@ -87,7 +87,7 @@
 										<input type="text" id="debitAccountHead" value="${debitBillDetails.accountHead}" class="form-control" disabled > 
 									</td>
 									<td>
-										<form:input path="billDetailes[0].debitamount" id="debitamount" name="billDetailes[0].debitamount" value="${debitBillDetails.amount }" data-errormsg="Debit Amount is mandatory!" onkeyup="decimalvalue(this);" data-pattern="decimalvalue" data-idx="0" data-optional="1" class="form-control table-input text-right debitamount" onblur="calculateNetPayableAmount();" maxlength="12" required="required" />
+										<form:input path="billDetailes[0].debitamount" id="debitamount" name="billDetailes[0].debitamount" value="${debitBillDetails.amount }" data-errormsg="Debit Amount is mandatory!" onkeyup="decimalvalue(this);" data-pattern="decimalvalue" data-idx="0" data-optional="1" class="form-control table-input text-right debitamount validateZero" onblur="calculateNetPayableAmount();" maxlength="12" required="required" />
 										<form:errors path="billDetailes[0].debitamount" cssClass="add-margin error-msg" /> 
 									</td>
 								</tr>
