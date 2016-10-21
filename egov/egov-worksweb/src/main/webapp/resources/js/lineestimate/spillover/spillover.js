@@ -87,6 +87,13 @@ $(document).ready(function(){
 	
 	replaceWorkCategoryChar();
 	replaceBeneficiaryChar();
+	
+	var boundaryType = $('#boundaryType').val();
+	if(boundaryType != undefined && boundaryType.toUpperCase() == 'CITY')  {
+		$('#wardInput').val($("#boundaryName").val());
+	}
+	else
+		$('#wardInput').val($("#boundaryNumber").val());
 
 });
 
@@ -204,7 +211,7 @@ function validateEstimateNumber(obj) {
 	.each(
 			function() {
 				if($(this).val() == $(obj).val() && $(this).attr('name') != $(obj).attr('name')) {
-					bootbox.alert("Estimate Numbers should be unique");
+					bootbox.alert("Abstract Estimate Numbers should be unique");
 					$(obj).val("");
 				}
 			});
@@ -548,7 +555,7 @@ $(document).ready(function(){
             filter: function (data) {
                 return $.map(data, function (ct) {
                     return {
-                        name: '' + ct.boundaryNum + '',
+                    	name: ct.boundaryType.name.toUpperCase() == 'CITY' ? ct.name : ct.boundaryNum + '' ,
                         value: ct.id
                     };
                 });

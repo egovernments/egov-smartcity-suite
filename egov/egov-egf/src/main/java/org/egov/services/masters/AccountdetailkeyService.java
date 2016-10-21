@@ -55,7 +55,7 @@ public class AccountdetailkeyService extends PersistenceService<Accountdetailkey
 
     @Override
     public Accountdetailkey persist(final Accountdetailkey model) {
-        // TODO Auto-generated method stub
+
         return super.persist(model);
     }
 

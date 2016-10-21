@@ -43,15 +43,14 @@
 <div class="panel-heading ">
 	<div class="panel-title"  style="font-weight: bold">Assigned Department</div>
 </div>
-<table class="table table-striped table-bordered" id="estimateDetails">
+<table class="table table-striped table-bordered" id="caffidavitdetails">
 	<thead>
 		<tr>
 			<th class="text-center">Is Primary Dept</th>
-			<th class="text-center">Department :<span class="mandatory"></span></th>
-			<th class="text-center">Assigned To :<span class="mandatory"></span></th>
+			<th class="text-center">Department <span class="mandatory"></span></th>
+			<th class="text-center">Assigned To <span class="mandatory"></span></th>
 			<th class="text-center">Date Of Receipt Of PWR (DD/MM/YYYY)<span
 				class="mandatory"></span></th>
-			<th class="text-center">Add/Delete Department</th>
 		</tr>
 	</thead>
 	<tbody>
@@ -66,7 +65,7 @@
 					path="legalCaseDepartment[0].department.name"
 					name="legalCaseDepartment[0].department.name"
 					value="${legalCaseDepartment[0].department.name}"
-					placeholder="Department" />
+					placeholder="" />
 					 <input type="hidden" id="departmentId"
 				value="" /> 
 				<c:forEach items="${departments}" var="department">
@@ -94,8 +93,7 @@
 					class="form-control datepicker" data-date-end-date="0d"
 					id="legalCaseDepartment[0].dateofreceiptofpwr"
 					data-inputmask="'mask': 'd/m/y'" /></td>
-			<td class="text-center"><span style="cursor: pointer;"
-				id="addRowId"><i class="fa fa-plus"></i></span></td>
+			
 		</tr>
 
 

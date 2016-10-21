@@ -40,14 +40,15 @@
 
 package org.egov.commons.repository;
 
+import java.util.Date;
+import java.util.List;
+
 import org.egov.commons.CFinancialYear;
 import org.egov.commons.CFiscalPeriod;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
-
-import java.util.List;
 
 @Repository
 public interface CFinancialYearRepository extends JpaRepository<CFinancialYear, Long> {
@@ -64,4 +65,10 @@ public interface CFinancialYearRepository extends JpaRepository<CFinancialYear, 
 
     @Query("from CFiscalPeriod where name=:name order by id desc")
     CFiscalPeriod findByFiscalName(@Param("name") String name);
-}
+    
+    @Query("from CFinancialYear cfinancialyear where cfinancialyear.startingDate <=:givenDate and cfinancialyear.endingDate >=:givenDate  and cfinancialyear.isActiveForPosting=true")
+    CFinancialYear getFinancialYearByDate(@Param("givenDate") Date givenDate);
+    
+    //All financial year that are not closed
+    public List<CFinancialYear> findByIsClosedFalseOrderByFinYearRangeDesc();
+    }

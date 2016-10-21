@@ -170,15 +170,13 @@ public class VacancyRemissionService {
             LOG.debug(" Create WorkFlow Transition Started  ...");
         final User user = securityUtils.getCurrentUser();
         final DateTime currentDate = new DateTime();
-        final Assignment userAssignment = assignmentService.getPrimaryAssignmentForUser(user.getId());
         Position pos = null;
         Assignment wfInitiator = null;
         String currentState = "";
 
         if (!propertyByEmployee) {
             currentState = "Created";
-            final Assignment assignment = propertyService.getUserPositionByZone(vacancyRemission.getBasicProperty(),
-            		vacancyRemission.getBasicProperty().getSource());
+            final Assignment assignment = propertyService.getUserPositionByZone(vacancyRemission.getBasicProperty(), false);
             if (null != assignment)
                 approvalPosition = assignment.getPosition().getId();
         } else
@@ -188,11 +186,13 @@ public class VacancyRemissionService {
                 && (workFlowAction.equalsIgnoreCase(WFLOW_ACTION_STEP_REJECT) || workFlowAction
                         .equalsIgnoreCase(WFLOW_ACTION_STEP_NOTICE_GENERATE)))
             wfInitiator = getWorkflowInitiator(vacancyRemission);
+        else
+            wfInitiator = propertyTaxCommonUtils.getWorkflowInitiatorAssignment(user.getId());
 
         if (StringUtils.isBlank(vacancyRemission.getApplicationNumber()))
             vacancyRemission.setApplicationNumber(applicationNumberGenerator.generate());
         if (workFlowAction.equalsIgnoreCase(WFLOW_ACTION_STEP_NOTICE_GENERATE)) {
-            if (wfInitiator.equals(userAssignment)) {
+            if (wfInitiator.getPosition().equals(vacancyRemission.getState().getOwnerPosition())) {
                 vacancyRemission.setStatus(VR_STATUS_REJECTION_ACK_GENERATED);
                 vacancyRemission.transition(true).end().withSenderName(user.getUsername() + "::" + user.getName())
                         .withComments(approvalComent).withDateInfo(currentDate.toDate());
@@ -219,7 +219,8 @@ public class VacancyRemissionService {
                         additionalRule, currentState, null);
                 vacancyRemission.transition().start().withSenderName(user.getUsername() + "::" + user.getName())
                         .withComments(approvalComent).withStateValue(wfmatrix.getNextState()).withDateInfo(new Date())
-                        .withOwner(pos).withNextAction(wfmatrix.getNextAction()).withNatureOfTask(NATURE_VACANCY_REMISSION);
+                        .withOwner(pos).withNextAction(wfmatrix.getNextAction()).withNatureOfTask(NATURE_VACANCY_REMISSION)
+                        .withInitiator(wfInitiator != null ? wfInitiator.getPosition() : null);
                 vacancyRemission.getBasicProperty().setUnderWorkflow(true);
                 //to be enabled once acknowledgement feature is developed
                 //buildSMS(vacancyRemission, workFlowAction);
@@ -323,15 +324,21 @@ public class VacancyRemissionService {
     }
 
     protected Assignment getWorkflowInitiator(final VacancyRemission vacancyRemission) {
-        Assignment wfInitiator;
-        if (checkIfEmployee(vacancyRemission.getCreatedBy()))
-            wfInitiator = assignmentService.getPrimaryAssignmentForUser(vacancyRemission.getCreatedBy().getId());
-        else if (!vacancyRemission.getStateHistory().isEmpty())
-            wfInitiator = assignmentService.getPrimaryAssignmentForPositon(vacancyRemission.getStateHistory().get(0)
-                    .getOwnerPosition().getId());
-        else
-            wfInitiator = assignmentService.getPrimaryAssignmentForPositon(vacancyRemission.getState()
-                    .getOwnerPosition().getId());
+        Assignment wfInitiator = null;
+        if (checkIfEmployee(vacancyRemission.getCreatedBy())) {
+            if (vacancyRemission.getState() != null && vacancyRemission.getState().getInitiatorPosition() != null)
+                wfInitiator = propertyTaxCommonUtils.getUserAssignmentByPassingPositionAndUser(
+                        vacancyRemission.getCreatedBy(), vacancyRemission.getState().getInitiatorPosition());
+            else
+                wfInitiator = assignmentService.getPrimaryAssignmentForUser(vacancyRemission.getCreatedBy().getId());
+        } else if (!vacancyRemission.getStateHistory().isEmpty())
+            wfInitiator = assignmentService.getPrimaryAssignmentForPositon(
+                    vacancyRemission.getStateHistory().get(0).getOwnerPosition().getId());
+        else {
+            wfInitiator = assignmentService
+                    .getPrimaryAssignmentForPositon(vacancyRemission.getState().getOwnerPosition().getId());
+        }
+        
         return wfInitiator;
     }
 

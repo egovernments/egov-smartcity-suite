@@ -51,11 +51,10 @@ import com.google.gson.JsonSerializer;
 
 public class DataEntryConnectionReportAdaptor implements JsonSerializer<DataEntryConnectionReport> {
 
-    SimpleDateFormat dateformat = new SimpleDateFormat("dd-MM-yyyy");
-
     @Override
     public JsonElement serialize(final DataEntryConnectionReport dataEntryConnectionReport, final Type typeOfSrc,
             final JsonSerializationContext context) {
+        SimpleDateFormat dateformat = new SimpleDateFormat("dd-MM-yyyy");
         final JsonObject jsonObject = new JsonObject();
         jsonObject.addProperty("hscNo", dataEntryConnectionReport.getHscNo());
         jsonObject.addProperty("assessmentNo", dataEntryConnectionReport.getAssessmentNo());

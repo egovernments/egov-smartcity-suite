@@ -107,7 +107,11 @@ public class StateHistory implements Serializable {
     private String extraInfo;
     private Date dateInfo;
     private Date extraDateInfo;
-
+    
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "INITIATOR_POS")
+    private Position initiatorPosition;
+    
     StateHistory() {
     }
 
@@ -127,6 +131,7 @@ public class StateHistory implements Serializable {
         dateInfo = state.getDateInfo();
         extraDateInfo = state.getExtraDateInfo();
         natureOfTask = state.getNatureOfTask();
+        initiatorPosition = state.getInitiatorPosition();
     }
 
     public State getState() {
@@ -255,6 +260,14 @@ public class StateHistory implements Serializable {
 
     public void setLastModifiedDate(final Date lastModifiedDate) {
         this.lastModifiedDate = lastModifiedDate;
+    }
+
+    public Position getInitiatorPosition() {
+        return initiatorPosition;
+    }
+
+    public void setInitiatorPosition(Position initiatorPosition) {
+        this.initiatorPosition = initiatorPosition;
     }
 
 }

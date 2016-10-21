@@ -56,6 +56,9 @@ jQuery(document).ready(
 			});
 
 		});
+$('#searchapp').keyup(function(){
+	tableContainer.fnFilter(this.value);
+	});
 
 function submitForm() {
 
@@ -68,23 +71,9 @@ function submitForm() {
 	reportdatatable = tableContainer
 			.dataTable({
 				ajax : {
-					url : "/lcms/search/legalsearchResult",
-					data : {
-						'caseNumber' : caseNumber,
-						'lcNumber' : lcNumber,
-						'court' : $("#courtName").val(),
-						'caseType' : $("#caseCatogory").val(),
-						'standingCouncil' : $("#standingCouncil").val(),
-						'courtType' : $("#courtType").val(),
-						'isStatusExcluded' : isCancelled,
-						'caseFromDate' : $("#caseFromDate").val(),
-						'caseToDate' : $("#caseToDate").val(),
-						'caseStatus' : $("#statusId").val(),
-						'petionType' : $("#petitionTypeId").val()
-
-					}
+					url : "/lcms/search/legalsearchResult?"+$('#searchlegalcaseForm').serialize(),
+					
 				},
-				"sPaginationType" : "bootstrap",
 				"autoWidth" : false,
 				"bDestroy" : true,
 				"sDom" : "<'row'<'col-xs-12 hidden col-right'f>r>t<'row'<'col-md-3 col-xs-12'i><'col-md-3 col-xs-6 col-right'l><'col-xs-12 col-md-3 col-right'<'export-data'T>><'col-md-3 col-xs-6 text-right'p>>",
@@ -157,7 +146,7 @@ function submitForm() {
 								} else if (full.casestatus == 'CLOSED') {
 									return ('<select class="dropchange" id="additionconn" ><option>Select from Below</option><option value="9">Edit Close Case</option></select>');
 								} else if (full.casestatus == 'JUDGEMENT_IMPL') {
-									return ('<select class="dropchange" id="additionconn" ><option>Select from Below</option><option value="12">Edit Judgment Implementation</option></select>');
+									return ('<select class="dropchange" id="additionconn" ><option>Select from Below</option><option value="12">Edit Judgment Implementation</option><option value="8">Close Case</option></select>');
 								}
 							}
 						} ],

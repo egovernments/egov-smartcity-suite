@@ -43,9 +43,10 @@
 <%@ taglib uri="http://www.springframework.org/tags/form" prefix="form"%>
 <%@ taglib uri="http://www.springframework.org/tags" prefix="spring"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %> 
-<link rel="stylesheet" href="<c:url value='/resources/global/css/bootstrap/typeahead.css' context='/egi'/>">
-<script type="text/javascript" src="<c:url value='/resources/js/app/appconfig.js' context='/egi'/>"></script>
-<script src="<c:url value='/resources/global/js/egov/patternvalidation.js' context='/egi'/>"></script>     
+<%@ taglib uri="/WEB-INF/taglib/cdn.tld" prefix="cdn" %>
+<link rel="stylesheet" href="<cdn:url value='/resources/global/css/bootstrap/typeahead.css' context='/egi'/>">
+<script type="text/javascript" src="<cdn:url value='/resources/js/app/appconfig.js' context='/egi'/>"></script>
+<script src="<cdn:url value='/resources/global/js/egov/patternvalidation.js' context='/egi'/>"></script>     
 <div class="row">
 	<div class="col-md-12">
 		<form:form id="penaltyRatesChangeForm" method="post" class="form-horizontal form-groups-bordered" modelAttribute="hoardingPenaltyRates" commandName="hoardingPenaltyRates" >
@@ -117,4 +118,4 @@
 		</form:form>
 	</div>
 </div>
-<script src="<c:url value='/resources/app/js/penaltyRates.js'/>"></script>
+<script src="<cdn:url value='/resources/app/js/penaltyRates.js?rnd=${app_release_no}'/>"></script>

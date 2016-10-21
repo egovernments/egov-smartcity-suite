@@ -70,7 +70,8 @@
 					<div class="col-sm-3 add-margin">
 						<form:textarea path="purposeofHearings"
 							class="form-control text-left patternvalidation"
-							data-pattern="alphanumeric" maxlength="1024" required="required" />
+							data-pattern="alphanumericwithspecialcharacterswithspace"
+							maxlength="1024" required="required" />
 						<form:errors path="purposeofHearings" cssClass="error-msg" />
 					</div>
 
@@ -79,21 +80,23 @@
 					<div class="col-sm-3 add-margin">
 						<form:textarea path="hearingOutcome"
 							class="form-control text-left patternvalidation"
-							data-pattern="alphanumeric" maxlength="2056" />
+							data-pattern="alphanumericwithspecialcharacterswithspace"
+							maxlength="2056" />
 						<form:errors path="hearingOutcome" cssClass="error-msg" />
 					</div>
 				</div>
 				<div class="form-group">
 					<label class="col-sm-2 control-label text-right"><spring:message
-							code="lbl.additionallawyer" /> :</label>
+							code="lbl.additionallawyer" />:</label>
 					<div class="col-sm-3 add-margin">
 						<form:input path="additionalLawyers"
 							class="form-control text-left patternvalidation"
-							data-pattern="alphabetwithspace" maxlength="50" />
+							data-pattern="alphanumericwithspecialcharacterswithspace"
+							maxlength="50" />
 						<form:errors path="additionalLawyers" cssClass="error-msg" />
 					</div>
 					<label class="col-sm-3 control-label text-right"><spring:message
-							code="lbl.standingcounsel" /></label>
+							code="lbl.standingcounsel" /> ?</label>
 					<div class="col-sm-2 add-margin">
 						<form:checkbox path="isStandingCounselPresent"
 							value="${isStandingCounselPresent}" />
@@ -101,22 +104,27 @@
 					</div>
 				</div>
 				<div class="form-group">
-					<div class="panel-heading">
-						<div class="panel-title">Employee Details</div>
-					</div>
+					<c:choose>
+						<c:when test="${not empty hearings.getTempEmplyeeHearing()}">
+							<div class="panel-heading">
+								<div class="panel-title">Employee</div>
+							</div>
+						</c:when>
+						<c:otherwise>
+							<div class="panel-heading">
+								<div class="panel-title">Employee Details</div>
+							</div>
+						</c:otherwise>
+					</c:choose>
 					<div class="form-group">
 						<label class="col-sm-2 control-label text-right"><spring:message
 								code="lbl.positionofemployee" /> :</label>
 						<div class="col-sm-3 add-margin">
-							<form:input id="positionName" type="text" class="form-control "
-								autocomplete="off" path="" name="" value="" placeholder="" />
-							<input type="hidden" id="positionId" value="" />
-							<c:forEach items="${position}" var="position">
-								<a onclick="setPositionId(<c:out value="${position.id}"/>)"
-									href="javascript:void(0)"
-									class="btn btn-secondary btn-xs tag-element freq-ct"><c:out
-										value="${position.name }" /> </a>
-							</c:forEach>
+							<form:input id="positionEmpName" type="text"
+								class="form-control " autocomplete="off" path="" name=""
+								value="" placeholder="" />
+							<input type="hidden" id="positionEmpId" value="" />
+
 						</div>
 						<button type="button" class="btn btn-default" value="Add"
 							id="addid">Add</button>
@@ -126,12 +134,39 @@
 						<thead>
 							<tr>
 								<th class="text-center">Position-Employee</th>
-								<th class="text-center">Delete</th>
 							</tr>
 						</thead>
 
 						<tbody>
+							<c:choose>
+								<c:when test="${not empty hearings.getTempEmplyeeHearing()}">
+									<c:forEach items="${hearings.getTempEmplyeeHearing()}"
+										var="positionTemplList" varStatus="counter">
+										<tr>
+											<td class="text-right"><form:input
+													path="positionTemplList[${counter.index}].employee.name"
+													cssClass="form-control confValues"
+													value="${positionTemplList.employee.name}"
+													id="positionTemplList[${counter.index}].employee.name" />
+												<%--   <input type="hidden" name="positionTemplList[${counter.index}].id" value="${positionTemplList.id}" />  --%>
+											</td>
 
+										</tr>
+									</c:forEach>
+								</c:when>
+								<c:otherwise>
+
+									<tr>
+										<td><form:input path="positionTemplList[0].empPosName"
+												cssClass="form-control" id="positionTemplList[0].empPosName" />
+										</td>
+
+										<td><span class="add-padding"><i
+												class="fa fa-trash" data-func="add" aria-hidden="true"
+												id="emp_delete_row"></i></span></td>
+									</tr>
+								</c:otherwise>
+							</c:choose>
 						</tbody>
 					</table>
 				</div>

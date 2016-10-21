@@ -50,7 +50,9 @@ import java.util.List;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
+import javax.persistence.Query;
 
+import org.apache.commons.lang.StringUtils;
 import org.egov.commons.CFinancialYear;
 import org.egov.commons.dao.EgwStatusHibernateDAO;
 import org.egov.commons.dao.FinancialYearHibernateDAO;
@@ -75,6 +77,7 @@ import org.egov.infra.workflow.service.SimpleWorkflowService;
 import org.egov.model.budget.BudgetUsage;
 import org.egov.pims.commons.Position;
 import org.egov.works.abstractestimate.entity.AbstractEstimate;
+import org.egov.works.abstractestimate.entity.EstimatePhotographSearchRequest;
 import org.egov.works.abstractestimate.service.EstimateService;
 import org.egov.works.autonumber.BudgetAppropriationNumberGenerator;
 import org.egov.works.autonumber.EstimateNumberGenerator;
@@ -895,6 +898,85 @@ public class LineEstimateService {
     public LineEstimate getLineEstimateByCouncilResolutionNumber(final String councilResolutionNumber) {
         return lineEstimateRepository.findByCouncilResolutionNumberIgnoreCaseAndStatus_codeNotLike(councilResolutionNumber,
                 WorksConstants.CANCELLED_STATUS);
+    }
+    
+    public List<String> getEstimateNumbersForEstimatePhotograph(final String estimateNumber) {
+        return lineEstimateDetailsRepository.findEstimateNumbersForEstimatePhotograph("%" + estimateNumber + "%",WorksConstants.CANCELLED_STATUS);
+    }
+    
+    public List<String> getWinForEstimatePhotograph(final String workIdentificationNumber) {
+        return lineEstimateDetailsRepository.findWorkIdentificationNumberForEstimatePhotograph("%" + workIdentificationNumber + "%",WorksConstants.CANCELLED_STATUS);
+    }
+    
+    public List<LineEstimateDetails> searchLineEstimatesForEstimatePhotograph(final EstimatePhotographSearchRequest estimatePhotographSearchRequest) {
+        final StringBuilder queryStr = new StringBuilder(500);
+
+        buildWhereClauseForEstimatePhotograph(estimatePhotographSearchRequest, queryStr);
+        final Query query = setParameterForEstimatePhotograph(estimatePhotographSearchRequest, queryStr);
+        final List<LineEstimateDetails> lineEstimateDetailsList = query.getResultList();
+        return lineEstimateDetailsList;
+    }
+
+    private void buildWhereClauseForEstimatePhotograph(final EstimatePhotographSearchRequest estimatePhotographSearchRequest, final StringBuilder queryStr) {
+
+        queryStr.append(
+                "select distinct led from LineEstimateDetails as led where led.lineEstimate.status.code != :lineEstimateStatus ");
+        
+        //TODO : remove this comment when search result need to restrict after create contractor bill
+        /*queryStr.append(
+                "and not exists(select distinct(cbr.workOrderEstimate.estimate.lineEstimateDetails) from ContractorBillRegister as cbr where cbr.workOrderEstimate.estimate.lineEstimateDetails.id = led.id and upper(cbr.billstatus) != :billstatus and cbr.billtype = :billtype)");*/
+        
+        if (estimatePhotographSearchRequest.getExecutingDepartment() != null)
+            queryStr.append(
+                    " and led.lineEstimate.executingDepartment.id = :executingDepartment");
+        
+        if (StringUtils.isNotBlank(estimatePhotographSearchRequest.getWorkIdentificationNumber()))
+            queryStr.append(
+                    " and upper(led.projectCode.code) = :workIdentificationNumber");
+
+        if (StringUtils.isNotBlank(estimatePhotographSearchRequest.getEstimateNumber()))
+            queryStr.append(" and upper(led.estimateNumber) = :estimateNumber");
+
+        if (estimatePhotographSearchRequest.getFromDate() != null)
+            queryStr.append(
+                    " and led.lineEstimate.createdDate >= :createdDate");
+
+        if (estimatePhotographSearchRequest.getToDate() != null)
+            queryStr.append(
+                    " and led.lineEstimate.createdDate >= :createdDate");
+        
+        if (estimatePhotographSearchRequest.getNatureOfWork() != null)
+            queryStr.append(
+                    " and led.lineEstimate.natureOfWork.id = :natureOfWork");
+
+    }
+
+    private Query setParameterForEstimatePhotograph(final EstimatePhotographSearchRequest estimatePhotographSearchRequest,
+            final StringBuilder queryStr) {
+        final Query qry = entityManager.createQuery(queryStr.toString());
+
+        qry.setParameter("lineEstimateStatus", WorksConstants.CANCELLED_STATUS);
+        //TODO : remove this comment when search result need to restrict after create contractor bill
+        /*qry.setParameter("billstatus", ContractorBillRegister.BillStatus.CANCELLED.toString());
+        qry.setParameter("billtype", BillTypes.Final_Bill.toString());*/
+        
+        if (estimatePhotographSearchRequest != null) {
+            if(estimatePhotographSearchRequest.getExecutingDepartment() != null)
+                qry.setParameter("executingDepartment", estimatePhotographSearchRequest.getExecutingDepartment());
+            if (StringUtils.isNotBlank(estimatePhotographSearchRequest.getWorkIdentificationNumber()))
+                qry.setParameter("workIdentificationNumber",
+                        estimatePhotographSearchRequest.getWorkIdentificationNumber().toUpperCase());
+            if (StringUtils.isNotBlank(estimatePhotographSearchRequest.getEstimateNumber()))
+                qry.setParameter("estimateNumber", estimatePhotographSearchRequest.getEstimateNumber().toUpperCase());
+            if (estimatePhotographSearchRequest.getFromDate() != null)
+                qry.setParameter("createdDate", estimatePhotographSearchRequest.getFromDate());
+            if (estimatePhotographSearchRequest.getToDate() != null)
+                qry.setParameter("createdDate", estimatePhotographSearchRequest.getToDate());
+            if(estimatePhotographSearchRequest.getNatureOfWork() != null)
+                qry.setParameter("natureOfWork", estimatePhotographSearchRequest.getNatureOfWork());
+
+        }
+        return qry;
     }
 
 }

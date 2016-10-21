@@ -110,6 +110,7 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.math.BigInteger;
@@ -188,7 +189,7 @@ public class PaymentService extends PersistenceService<Paymentheader, Long> {
 	@Autowired
 	@Qualifier("miscbilldetailService")
 	private MiscbilldetailService miscbilldetailService;
-	@Autowired
+	@PersistenceContext
 	private EntityManager entityManager;
 	@Autowired
 	ChartOfAccounts chartOfAccounts;
@@ -428,14 +429,14 @@ public class PaymentService extends PersistenceService<Paymentheader, Long> {
 			update(paymentheader);
 			entityManager.flush();
 		} catch (final ValidationException e) {
-			e.printStackTrace();
+
 			LOGGER.error(e.getMessage(), e);
 			final List<ValidationError> errors = new ArrayList<ValidationError>();
 			errors.add(new ValidationError("createPayment", e.getErrors()
 					.get(0).getMessage()));
 			throw new ValidationException(errors);
 		} catch (final Exception e) {
-			e.printStackTrace();
+
 			LOGGER.error(e.getMessage(), e);
 			final List<ValidationError> errors = new ArrayList<ValidationError>();
 			errors.add(new ValidationError("createPayment", e.getMessage()));
@@ -3435,6 +3436,9 @@ public class PaymentService extends PersistenceService<Paymentheader, Long> {
 					paymentBean.setBillVoucherDate(billregister
 							.getEgBillregistermis().getVoucherHeader()
 							.getVoucherDate());
+					paymentBean.setBillVoucherId(billregister
+                                                .getEgBillregistermis().getVoucherHeader()
+                                                .getId());
 				}
 				if (billregister.getEgBillregistermis().getEgBillSubType() != null)
 					if (billregister.getEgBillregistermis().getEgBillSubType()

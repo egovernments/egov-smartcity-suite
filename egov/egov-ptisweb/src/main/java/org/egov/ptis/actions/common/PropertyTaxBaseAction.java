@@ -48,10 +48,10 @@ import static org.egov.ptis.constants.PropertyTaxConstants.ALTERATION_OF_ASSESSM
 import static org.egov.ptis.constants.PropertyTaxConstants.APPLICATION_TYPE_ALTER_ASSESSENT;
 import static org.egov.ptis.constants.PropertyTaxConstants.APPLICATION_TYPE_GRP;
 import static org.egov.ptis.constants.PropertyTaxConstants.APPLICATION_TYPE_NEW_ASSESSENT;
-import static org.egov.ptis.constants.PropertyTaxConstants.ARR_DMD_STR;
 import static org.egov.ptis.constants.PropertyTaxConstants.CURRENTYEAR_FIRST_HALF;
 import static org.egov.ptis.constants.PropertyTaxConstants.CURRENTYEAR_SECOND_HALF;
 import static org.egov.ptis.constants.PropertyTaxConstants.CURR_FIRSTHALF_DMD_STR;
+import static org.egov.ptis.constants.PropertyTaxConstants.CURR_SECONDHALF_DMD_STR;
 import static org.egov.ptis.constants.PropertyTaxConstants.DEMANDRSN_STR_EDUCATIONAL_CESS;
 import static org.egov.ptis.constants.PropertyTaxConstants.DEMANDRSN_STR_GENERAL_TAX;
 import static org.egov.ptis.constants.PropertyTaxConstants.DEMANDRSN_STR_LIBRARY_CESS;
@@ -197,6 +197,7 @@ public abstract class PropertyTaxBaseAction extends GenericWorkFlowAction {
 
     protected Boolean propertyByEmployee = Boolean.TRUE;
     protected String userDesignationList = new String();
+    protected String applicationType;
 
     public List<File> getUpload() {
         return uploads;
@@ -577,7 +578,7 @@ public abstract class PropertyTaxBaseAction extends GenericWorkFlowAction {
 
         if (!propertyByEmployee) {
             currentState = "Created";
-            final Assignment assignment = propertyService.getUserPositionByZone(property.getBasicProperty(),property.getBasicProperty().getSource());
+            final Assignment assignment = propertyService.getUserPositionByZone(property.getBasicProperty(), false);
             if (null != assignment) {
                 approverPositionId = assignment.getPosition().getId();
                 approverName = (assignment.getEmployee().getName()).concat("~").concat(
@@ -592,11 +593,13 @@ public abstract class PropertyTaxBaseAction extends GenericWorkFlowAction {
                         .concat(assignment.getPosition().getName());
             }
         }
-        if (null != property.getId())
+        if (property.getId() != null)
             wfInitiator = propertyService.getWorkflowInitiator(property);
+        else
+            wfInitiator = propertyTaxCommonUtils.getWorkflowInitiatorAssignment(user.getId());
 
         if (WFLOW_ACTION_STEP_REJECT.equalsIgnoreCase(workFlowAction)) {
-            if (wfInitiator.equals(userAssignment)) {
+            if (wfInitiator.getPosition().equals(property.getState().getOwnerPosition())) {
                 property.transition(true).end().withSenderName(user.getUsername() + "::" + user.getName())
                         .withComments(approverComments).withDateInfo(currentDate.toDate());
                 property.setStatus(STATUS_CANCELLED);
@@ -605,9 +608,9 @@ public abstract class PropertyTaxBaseAction extends GenericWorkFlowAction {
                 final String stateValue = property.getCurrentState().getValue().split(":")[0] + ":" + WF_STATE_REJECTED;
                 property.transition(true).withSenderName(user.getUsername() + "::" + user.getName())
                         .withComments(approverComments).withStateValue(stateValue).withDateInfo(currentDate.toDate())
-                        .withOwner(wfInitiator.getPosition()).withNextAction(
-                        		property.getBasicProperty().getSource().equals(SOURCEOFDATA_MOBILE)?
-                        				UD_REVENUE_INSPECTOR_APPROVAL_PENDING : WF_STATE_ASSISTANT_APPROVAL_PENDING);
+                        .withOwner(wfInitiator!=null ? wfInitiator.getPosition() : null).withNextAction(
+                                        property.getBasicProperty().getSource().equals(SOURCEOFDATA_MOBILE)?
+                                                        UD_REVENUE_INSPECTOR_APPROVAL_PENDING : WF_STATE_ASSISTANT_APPROVAL_PENDING);
             }
 
         } else {
@@ -623,7 +626,7 @@ public abstract class PropertyTaxBaseAction extends GenericWorkFlowAction {
                 property.transition().start().withSenderName(user.getUsername() + "::" + user.getName())
                         .withComments(approverComments).withStateValue(wfmatrix.getNextState())
                         .withDateInfo(currentDate.toDate()).withOwner(pos).withNextAction(wfmatrix.getNextAction())
-                        .withNatureOfTask(nature);
+                        .withNatureOfTask(nature).withInitiator(wfInitiator!=null ?wfInitiator.getPosition():null);
             } else if (property.getCurrentState().getNextAction().equalsIgnoreCase("END"))
                 property.transition(true).end().withSenderName(user.getUsername() + "::" + user.getName())
                         .withComments(approverComments).withDateInfo(currentDate.toDate());
@@ -748,7 +751,12 @@ public abstract class PropertyTaxBaseAction extends GenericWorkFlowAction {
                 }
             } else if (propertyState.getValue().endsWith(WF_STATE_COMMISSIONER_APPROVED)) {
                 args.add(property.getBasicProperty().getUpicNo());
-                args.add(demandCollMap.get(CURR_FIRSTHALF_DMD_STR).add(demandCollMap.get(ARR_DMD_STR)).toString());
+                Map<String, Installment> installmentMap = propertyTaxUtil.getInstallmentsForCurrYear(new Date());
+                Installment installmentFirstHalf = installmentMap.get(CURRENTYEAR_FIRST_HALF);
+                args.add(demandCollMap
+                        .get(DateUtils.between(new Date(), installmentFirstHalf.getFromDate(), installmentFirstHalf.getToDate())
+                                ? CURR_FIRSTHALF_DMD_STR : CURR_SECONDHALF_DMD_STR)
+                        .toString());
                 args.add(DateUtils.getFormattedDate(property.getBasicProperty().getPropOccupationDate(), "dd/MM/yyyy"));
                 args.add(ApplicationThreadLocals.getMunicipalityName());
                 if (APPLICATION_TYPE_NEW_ASSESSENT.equals(applicationType)) {
@@ -967,6 +975,14 @@ public abstract class PropertyTaxBaseAction extends GenericWorkFlowAction {
     }
     public void setUserDesignationList(String userDesignationList) {
         this.userDesignationList = userDesignationList;
+    }
+
+    public void setApplicationType(String applicationType) {
+        this.applicationType = applicationType;
+    }
+
+    public String getApplicationType() {
+        return applicationType;
     }
     
     

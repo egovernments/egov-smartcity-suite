@@ -81,6 +81,9 @@
 		if(<s:property value="%{!mutationFeePaid}"/> && state == '<s:property value="%{model.state.nextAction}"/>'){
 			document.getElementById('Forward').style.visibility = 'hidden';
 		}
+		if('<s:property value="%{type}" />' == '<s:property value="%{@org.egov.ptis.constants.PropertyTaxConstants@ADDTIONAL_RULE_FULL_TRANSFER}" />'){
+			document.getElementById('Reject').value="Cancel";
+		}
 	}
 </script>
 <script
@@ -90,7 +93,9 @@
 	<div class="formmainbox">
 		<s:if test="%{hasErrors()}">
 			<div class="errorstyle" id="property_error_area">
-				<s:actionerror />
+				<div class="errortext">
+					<s:actionerror />
+				</div>
 			</div>
 		</s:if>
 		<%-- <s:if
@@ -461,11 +466,9 @@
 				</s:if>
 				<br />
 				<s:if
-					test="%{!model.state.nextAction.equalsIgnoreCase(@org.egov.ptis.constants.PropertyTaxConstants@WFLOW_ACTION_READY_FOR_PAYMENT) &&
-				!model.state.value.equalsIgnoreCase(@org.egov.ptis.constants.PropertyTaxConstants@WF_STATE_REVENUE_OFFICER_APPROVED) && 
+					test="%{!model.state.value.equalsIgnoreCase(@org.egov.ptis.constants.PropertyTaxConstants@WF_STATE_REVENUE_OFFICER_APPROVED) && 
 				!model.state.value.equalsIgnoreCase(@org.egov.ptis.constants.PropertyTaxConstants@WF_STATE_COMMISSIONER_APPROVED) &&
 				!model.state.value.equalsIgnoreCase(@org.egov.ptis.constants.PropertyTaxConstants@WF_STATE_REGISTRATION_COMPLETED)  &&
-				!model.state.nextAction.equalsIgnoreCase(@org.egov.ptis.constants.PropertyTaxConstants@WF_STATE_REGISTRATION_PENDING) &&
 				!model.state.nextAction.equalsIgnoreCase(@org.egov.ptis.constants.PropertyTaxConstants@WF_STATE_COMMISSIONER_APPROVAL_PENDING)}">
 					<div>
 						<%@ include file="../workflow/commonWorkflowMatrix.jsp"%>

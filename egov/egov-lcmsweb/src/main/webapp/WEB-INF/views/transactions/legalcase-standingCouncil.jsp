@@ -110,7 +110,7 @@
 				<form:input id="seniorAdvocateName" type="text"
 					class="form-control " autocomplete="off"
 					path="seniorAdvocate.name"
-					name="seniorAdvocate.name"
+					name="seniorAdvocate.name" required="required"
 					value="${seniorAdvocate.name}" placeholder="" />
 				<input type="hidden" id="senioradvocateId" value="" />
 				<c:forEach items="${departments}" var="advocate">
@@ -137,7 +137,7 @@
 			<div class="col-sm-3 add-margin">
 				<form:input path="orderdate" class="form-control datepicker"
 					title="Please enter a valid date" pattern="\d{1,2}/\d{1,2}/\d{4}"
-					data-date-end-date="-1d" id="orderDate"
+					data-date-end-date="-1d" id="orderDate" required="required"
 					data-inputmask="'mask': 'd/m/y'" />
 				<form:errors path="orderdate" cssClass="add-margin error-msg" />
 			</div>
@@ -146,7 +146,7 @@
 			</label>
 			<div class="col-sm-3 add-margin">
 				<form:input class="form-control patternvalidation"
-					data-pattern="string" maxlength="50" id="orderNumber"
+					data-pattern="string" maxlength="50" id="orderNumber" required="required"
 					path="ordernumber" />
 				<form:errors path="ordernumber" cssClass="add-margin error-msg" />
 			</div>

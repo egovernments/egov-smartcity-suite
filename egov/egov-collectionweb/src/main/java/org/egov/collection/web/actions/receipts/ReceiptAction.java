@@ -300,6 +300,8 @@ public class ReceiptAction extends BaseFormAction {
     private FinancialYearDAO financialYearDAO;
 
     private Date financialYearDate;
+    
+    private String instrumentType;
 
     @Override
     public void prepare() {
@@ -945,9 +947,9 @@ public class ReceiptAction extends BaseFormAction {
         if (instrumentProxyList != null && !CollectionConstants.INSTRUMENTTYPE_CASH.equals(instrumentTypeCashOrCard)
                 && !CollectionConstants.INSTRUMENTTYPE_CARD.equals(instrumentTypeCashOrCard)
                 && !CollectionConstants.INSTRUMENTTYPE_BANK.equals(instrumentTypeCashOrCard))
-            if (instrumentProxyList.get(0).getInstrumentType().getType()
+            if (getInstrumentType()
                     .equals(CollectionConstants.INSTRUMENTTYPE_CHEQUE)
-                    || instrumentProxyList.get(0).getInstrumentType().getType()
+                    || getInstrumentType()
                             .equals(CollectionConstants.INSTRUMENTTYPE_DD))
                 instrumentHeaderList = populateInstrumentHeaderForChequeDD(instrumentHeaderList, instrumentProxyList);
         instrumentHeaderList = receiptHeaderService.createInstrument(instrumentHeaderList);
@@ -969,10 +971,10 @@ public class ReceiptAction extends BaseFormAction {
             final List<InstrumentHeader> instrumentHeaderList, final List<InstrumentHeader> instrumentProxyList) {
 
         for (final InstrumentHeader instrumentHeader : instrumentProxyList) {
-            if (instrumentHeader.getInstrumentType().getType().equals(CollectionConstants.INSTRUMENTTYPE_CHEQUE))
+            if (getInstrumentType().equals(CollectionConstants.INSTRUMENTTYPE_CHEQUE))
                 instrumentHeader.setInstrumentType(financialsUtil
                         .getInstrumentTypeByType(CollectionConstants.INSTRUMENTTYPE_CHEQUE));
-            else if (instrumentHeader.getInstrumentType().getType().equals(CollectionConstants.INSTRUMENTTYPE_DD))
+            else if (getInstrumentType().equals(CollectionConstants.INSTRUMENTTYPE_DD))
                 instrumentHeader.setInstrumentType(financialsUtil
                         .getInstrumentTypeByType(CollectionConstants.INSTRUMENTTYPE_DD));
             if (instrumentHeader.getBankId() != null && instrumentHeader.getBankId().getId() == null) {
@@ -1656,7 +1658,7 @@ public class ReceiptAction extends BaseFormAction {
                     addActionError(getText("miscreciept.subledger.entrymissing", new String[] { map.get("glcode")
                             .toString() }));
                     return false;
-                } else if (!subledAmtmap.get(glcodeId).equals(new BigDecimal(map.get("amount").toString()))) {
+                } else if (subledAmtmap.get(glcodeId).compareTo(new BigDecimal(map.get("amount").toString()))!=0) {
                     addActionError(getText("miscreciept.subledger.amtnotmatchinng", new String[] { map.get("glcode")
                             .toString() }));
                     return false;
@@ -1882,6 +1884,14 @@ public class ReceiptAction extends BaseFormAction {
 
     public void setFinancialYearDate(Date financialYearDate) {
         this.financialYearDate = financialYearDate;
+    }
+
+    public String getInstrumentType() {
+        return instrumentType;
+    }
+
+    public void setInstrumentType(String instrumentType) {
+        this.instrumentType = instrumentType;
     }
 
 }

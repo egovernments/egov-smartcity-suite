@@ -77,7 +77,7 @@ public class AssignmentService {
 
     private final AssignmentRepository assignmentRepository;
     private final HeadOfDepartmentsRepository employeeDepartmentRepository;
-    
+
     @PersistenceContext
     private EntityManager entityManager;
 
@@ -394,55 +394,49 @@ public class AssignmentService {
         return assignmentRepository.findByDepartmentDesignationsAndGivenDate(deptId, desigIds, givenDate);
     }
 
+    public List<Assignment> getAllAssignmentsByPositionNameForGivenRange(final String positionName) {
+        return assignmentRepository.getAllAssignmentForPositionNameLike(new Date(), positionName);
+    }
+
     public List<Position> findPositionsForEmployees(final String name) {
         return assignmentRepository.findEmployeePositions("%" + name + "%");
     }
-    
+
     public List<Employee> searchEmployeeAssignments(final EmployeeAssignmentSearch employeeAssignmentSearch) {
-        StringBuilder queryString = new StringBuilder();
+        final StringBuilder queryString = new StringBuilder();
         queryString.append("select distinct(assign.employee) from Assignment assign where assign.id is not null ");
-        if(StringUtils.isNotBlank(employeeAssignmentSearch.getEmployeeCode())) {
+        if (StringUtils.isNotBlank(employeeAssignmentSearch.getEmployeeCode()))
             queryString.append(" AND assign.employee.code =:code ");
-        }
-        if(StringUtils.isNotBlank(employeeAssignmentSearch.getEmployeeName())) {
+        if (StringUtils.isNotBlank(employeeAssignmentSearch.getEmployeeName()))
             queryString.append(" AND upper(assign.employee.name) like :name ");
-        }
-        if(employeeAssignmentSearch.getDepartment() != null) {
+        if (employeeAssignmentSearch.getDepartment() != null)
             queryString.append(" AND assign.department.id =:department ");
-        }
-        if(employeeAssignmentSearch.getDesignation() != null) {
+        if (employeeAssignmentSearch.getDesignation() != null)
             queryString.append(" AND assign.designation.id =:designation ");
-        }
-        if(employeeAssignmentSearch.getPosition() != null) {
+        if (employeeAssignmentSearch.getPosition() != null)
             queryString.append(" AND assign.position.id =:position ");
-        }
-        if(employeeAssignmentSearch.getAssignmentDate() != null) {
+        if (employeeAssignmentSearch.getAssignmentDate() != null)
             queryString.append(" AND assign.fromDate <=:assignDate AND assign.toDate >= :assignDate ");
-        }
         queryString.append(" Order by assign.employee.code, assign.employee.name ");
-        Query query = entityManager.unwrap(Session.class).createQuery(queryString.toString());
-        if(StringUtils.isNotBlank(employeeAssignmentSearch.getEmployeeCode())) {
+        final Query query = entityManager.unwrap(Session.class).createQuery(queryString.toString());
+        if (StringUtils.isNotBlank(employeeAssignmentSearch.getEmployeeCode()))
             query.setParameter("code", employeeAssignmentSearch.getEmployeeCode());
-        }
-        if(StringUtils.isNotBlank(employeeAssignmentSearch.getEmployeeName())) {
-            query.setParameter("name","%" + employeeAssignmentSearch.getEmployeeName().toUpperCase() + "%");
-        }
-        if(employeeAssignmentSearch.getDepartment() != null) {
-            query.setParameter("department",employeeAssignmentSearch.getDepartment());
-        }
-        if(employeeAssignmentSearch.getDesignation() != null) {
-            query.setParameter("designation",employeeAssignmentSearch.getDesignation());
-        }
-        if(employeeAssignmentSearch.getPosition() != null) {
-            query.setParameter("position",employeeAssignmentSearch.getPosition());
-        }
-        if(employeeAssignmentSearch.getAssignmentDate() != null) {
-            query.setParameter("assignDate",employeeAssignmentSearch.getAssignmentDate());
-        }
-        List<Employee> employees = query.list();
+        if (StringUtils.isNotBlank(employeeAssignmentSearch.getEmployeeName()))
+            query.setParameter("name", "%" + employeeAssignmentSearch.getEmployeeName().toUpperCase() + "%");
+        if (employeeAssignmentSearch.getDepartment() != null)
+            query.setParameter("department", employeeAssignmentSearch.getDepartment());
+        if (employeeAssignmentSearch.getDesignation() != null)
+            query.setParameter("designation", employeeAssignmentSearch.getDesignation());
+        if (employeeAssignmentSearch.getPosition() != null)
+            query.setParameter("position", employeeAssignmentSearch.getPosition());
+        if (employeeAssignmentSearch.getAssignmentDate() != null)
+            query.setParameter("assignDate", employeeAssignmentSearch.getAssignmentDate());
+        final List<Employee> employees = query.list();
         return employees;
     }
-    
-    
+
+    public List<Assignment> findAllAssignmentsByHODDeptAndDates(final Long deptId, final Date givenDate) {
+        return assignmentRepository.findAllAssignmentsByHODDeptAndGivenDate(deptId, givenDate);
+    }
 
 }

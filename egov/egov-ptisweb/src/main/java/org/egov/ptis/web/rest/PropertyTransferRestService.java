@@ -432,7 +432,7 @@ public class PropertyTransferRestService {
             out.flush();
             out.close();
         } catch (IOException e) {
-            e.printStackTrace();
+
         }
         return file;
     }
@@ -468,7 +468,7 @@ public class PropertyTransferRestService {
         try {
             propertyMutation.setDeedDate(dateformat.parse(deedDate));
         } catch (ParseException e) {
-            e.printStackTrace();
+
         }
         propertyMutation.setDeedNo(deedNo);
         propertyMutation.setSaleDetail(saleDetail);
@@ -486,7 +486,7 @@ public class PropertyTransferRestService {
         Position pos = null;
         DateTime currentDate = new DateTime();
         User user = propertyTransferService.getLoggedInUser();
-        Assignment assignment = propertyService.getUserPositionByZone(basicProperty,basicProperty.getSource());
+        Assignment assignment = propertyService.getUserPositionByZone(basicProperty, false);
         pos = assignment.getPosition();
 
         if (null == propertyMutation.getState()) {
@@ -658,7 +658,7 @@ public class PropertyTransferRestService {
                                             + owner.getAadhaarNo());
                         }
                     } catch (Exception e) {
-                        e.printStackTrace();
+
                         errorDetails = new ErrorDetails();
                         errorDetails.setErrorCode(THIRD_PARTY_ERR_CODE_AADHAAR_NUMBER_NOTEXISTS);
                         errorDetails.setErrorMessage(THIRD_PARTY_ERR_MSG_AADHAAR_NUMBER_NOTEXISTS

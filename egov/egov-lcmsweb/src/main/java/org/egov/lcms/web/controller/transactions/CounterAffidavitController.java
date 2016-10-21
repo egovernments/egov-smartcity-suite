@@ -66,6 +66,10 @@ public class CounterAffidavitController {
             @RequestParam("lcNumber") final String lcNumber, final Model model, final HttpServletRequest request) {
         model.addAttribute("legalCase", legalCase);
         model.addAttribute("pwrDocList", legalCaseService.getPwrDocList(legalCase));
+		if (legalCase.getLegalCaseDepartment().isEmpty())
+			model.addAttribute("mode", "countercreate");
+		else
+			model.addAttribute("mode", "counteredit");
         return "legalcase-caaffidavit";
     }
 
@@ -85,10 +89,9 @@ public class CounterAffidavitController {
         } else
             legalCaseService.update(legalCase);
         redirectAttrs.addFlashAttribute("legalCase", legalCase);
-        model.addAttribute("message", "LegalCase Updated successfully.");
+        model.addAttribute("message", "Counter Affidavit details Updated successfully.");
         model.addAttribute("legalcase", legalCase);
-        model.addAttribute("legalCaseDocList",
-                legalCaseService.getLegalCaseDocList(legalCase));
+        model.addAttribute("supportDocs",(!legalCase.getLegalCaseDocuments().isEmpty() && legalCase.getLegalCaseDocuments().get(0)!=null ?legalCase.getLegalCaseDocuments().get(0).getSupportDocs():null));
         model.addAttribute("pwrDocList", legalCaseService.getPwrDocList(legalCase));
         model.addAttribute("mode", "view");
         return "legalcasedetails-view";

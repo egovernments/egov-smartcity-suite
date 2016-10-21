@@ -301,19 +301,19 @@ public class AssessmentService {
             responseJson = new String();
             PayPropertyTaxDetails payPropTaxDetails = (PayPropertyTaxDetails) getObjectFromJSONRequest(
                     payPropertyTaxDetails, PayPropertyTaxDetails.class);
-
-            ErrorDetails errorDetails = validationUtil.validatePaymentDetails(payPropTaxDetails,false);
+			String propertyType = propertyExternalService.getPropertyType(payPropTaxDetails.getAssessmentNo());
+			ErrorDetails errorDetails = validationUtil.validatePaymentDetails(payPropTaxDetails, false, propertyType);
             if (null != errorDetails) {
                 responseJson = JsonConvertor.convert(errorDetails);
             } else {
                 payPropTaxDetails.setSource(request.getSession().getAttribute("source") != null ? request.getSession()
                         .getAttribute("source").toString()
                         : "");
-                ReceiptDetails receiptDetails = propertyExternalService.payPropertyTax(payPropTaxDetails);
+                ReceiptDetails receiptDetails = propertyExternalService.payPropertyTax(payPropTaxDetails, propertyType);
                 responseJson = JsonConvertor.convert(receiptDetails);
             }
         } catch (ValidationException e) {
-            e.printStackTrace();
+
             List<ErrorDetails> errorList = new ArrayList<ErrorDetails>(0);
 
             List<ValidationError> errors = e.getErrors();
@@ -326,7 +326,7 @@ public class AssessmentService {
             }
             responseJson = JsonConvertor.convert(errorList);
         } catch (Exception e) {
-            e.printStackTrace();
+
             List<ErrorDetails> errorList = new ArrayList<ErrorDetails>(0);
             ErrorDetails er = new ErrorDetails();
             er.setErrorCode(e.getMessage());
@@ -690,7 +690,7 @@ public class AssessmentService {
     public String getWardWisePropertyDetails(@RequestBody String assessmentRequest) throws JsonParseException, JsonMappingException, IOException {
     	AssessmentRequest assessmentReq = (AssessmentRequest) getObjectFromJSONRequest(assessmentRequest,
                 AssessmentRequest.class);
-    	List<ViewPropertyDetails> propertyDetails = propertyExternalService.getPropertyDetails(assessmentReq.getUlbCode(), assessmentReq.getWardNum());
+    	List<ViewPropertyDetails> propertyDetails = propertyExternalService.getPropertyDetailsForTheWard(assessmentReq.getUlbCode(), assessmentReq.getWardNum());
     	return getJSONResponse(propertyDetails);
     }
     /**

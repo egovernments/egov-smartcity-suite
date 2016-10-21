@@ -838,8 +838,8 @@ public class ChallanActionTest {/* extends AbstractPersistenceServiceTest<Challa
 		try {
 			expect(egovCommon.getEntityType(EasyMock.isA(Accountdetailtype.class),EasyMock.isA(Integer.class))).andReturn(null).anyTimes();
 		} catch (ApplicationException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+
+
 		}
 		//aDetail.getAccountDetailType(),aDetail.getAccountDetailKey().getDetailkey());
 		
@@ -945,7 +945,7 @@ public class ChallanActionTest {/* extends AbstractPersistenceServiceTest<Challa
 		try {
 			EasyMock.expect(egovCommon.getEntityType(EasyMock.isA(Accountdetailtype.class), EasyMock.isA(Integer.class))).andReturn(null);
 		} catch (ApplicationException e) {
-			//e.printStackTrace();
+			//
 		}
 		replay(egovCommon);
 		
@@ -1026,7 +1026,7 @@ public class ChallanActionTest {/* extends AbstractPersistenceServiceTest<Challa
 		try {
 			EasyMock.expect(egovCommon.getEntityType(EasyMock.isA(Accountdetailtype.class), EasyMock.isA(Integer.class))).andReturn(null);
 		} catch (ApplicationException e) {
-			//e.printStackTrace();
+			//
 		}
 		replay(egovCommon);
 		
@@ -1106,7 +1106,7 @@ public class ChallanActionTest {/* extends AbstractPersistenceServiceTest<Challa
 		try {
 			EasyMock.expect(egovCommon.getEntityType(EasyMock.isA(Accountdetailtype.class), EasyMock.isA(Integer.class))).andReturn(null);
 		} catch (ApplicationException e) {
-			//e.printStackTrace();
+			//
 		}
 		replay(egovCommon);
 		
@@ -1182,7 +1182,7 @@ public class ChallanActionTest {/* extends AbstractPersistenceServiceTest<Challa
 		try {
 			EasyMock.expect(egovCommon.getEntityType(EasyMock.isA(Accountdetailtype.class), EasyMock.isA(Integer.class))).andReturn(null);
 		} catch (ApplicationException e) {
-			//e.printStackTrace();
+			//
 		}
 		replay(egovCommon);;
 		

@@ -1,0 +1,2 @@
+INSERT INTO eg_feature_action (ACTION, FEATURE) VALUES ((select id FROM eg_action  WHERE name = 'getTotalDebitCreditAmountByAccountCode') ,(select id FROM eg_feature WHERE name = 'Create Contractor Bill'));
+INSERT INTO eg_feature_action (ACTION, FEATURE) VALUES ((select id FROM eg_action  WHERE name = 'getTotalDebitCreditAmountByAccountCode') ,(select id FROM eg_feature WHERE name = 'Update Contractor Bill'));

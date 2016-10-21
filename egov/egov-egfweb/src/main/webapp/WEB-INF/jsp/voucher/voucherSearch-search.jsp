@@ -60,6 +60,10 @@
 		{
 		loadVoucherNames(document.getElementById('type').value);
 		}
+		if(document.getElementById('voucherNumber')!=null && document.getElementById('voucherNumber').value!="")
+		{
+			changeField();
+		}
 	}
 	</script>
 </head>
@@ -83,7 +87,7 @@
 					<td style="width: 5%"></td>
 					<td class="greybox"><s:text name="voucher.number" /></td>
 					<td class="greybox"><s:textfield name="voucherNumber"
-							id="voucherNumber" maxlength="25" value="%{voucherNumber}" /></td>
+							id="voucherNumber" maxlength="25" value="%{voucherNumber}"  onblur="changeField();" /></td>
 					<td class="greybox"></td>
 					<td class="greybox"></td>
 				</tr>
@@ -101,7 +105,7 @@
 				<tr>
 					<td style="width: 5%"></td>
 					<td class="greybox"><s:text name="voucher.fromdate" /><span
-						class="mandatory1">*</span></td>
+						class="mandatory1" id="disableFromDateCheck">*</span></td>
 					<s:date name="fromDate" format="dd/MM/yyyy" var="tempFromDate" />
 					<td class="greybox">
 							<s:textfield id="fromDate" name="fromDate"
@@ -112,7 +116,7 @@
 							</td>
 					<s:date name="toDate" format="dd/MM/yyyy" var="tempToDate" />
 					<td class="greybox"><s:text name="voucher.todate" /><span
-						class="mandatory1">*</span></td>
+						class="mandatory1" id="disableToDateCheck">*</span></td>
 					<td class="greybox">
 							<s:textfield id="toDate" name="toDate"
 							value="%{tempToDate}"  data-date-end-date="0d" 
@@ -309,13 +313,23 @@
 			window.open(url,'','width=900, height=700');
 		}
 		function validateAndSubmit(){
-			if(validate()){
+			if(document.getElementById('voucherNumber')!=null && document.getElementById('voucherNumber').value!="")
+				{
+				document.voucherSearch.action='${pageContext.request.contextPath}/voucher/voucherSearch-search.action';
+	    		document.voucherSearch.submit();
+	    		return true;
+				}
+			else{
+			if(!validate()){
+				return false;
+			}
+			else
+				{
 				document.voucherSearch.action='${pageContext.request.contextPath}/voucher/voucherSearch-search.action';
 	    		document.voucherSearch.submit();
 				return true;
-			}else{
-				return false;
 				}
+			}
 		}
 		
 		function validate()
@@ -356,6 +370,23 @@
 			document.getElementById('type').disabled=true;
 			}
 			document.title="Non Bill Payment Search";
+		}
+		
+		function changeField()
+		{
+			if(document.getElementById('voucherNumber')!=null && document.getElementById('voucherNumber').value!="")
+				{
+			document.getElementById("disableFromDateCheck").innerHTML="";
+			document.getElementById("disableToDateCheck").innerHTML="";
+			document.getElementById("disableFundCheck").innerHTML="";
+				}
+			else
+				{
+				document.getElementById("disableFromDateCheck").innerHTML="*";
+				document.getElementById("disableToDateCheck").innerHTML="*";
+				document.getElementById("disableFundCheck").innerHTML="*";
+				}
+			
 		}
 		</script>
 </body>

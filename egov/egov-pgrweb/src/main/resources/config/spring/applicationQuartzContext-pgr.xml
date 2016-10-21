@@ -66,8 +66,8 @@
 		<property name="jobDataAsMap">
             <map>
                 <entry key="jobBeanName" value="complaintEscalationJob"/>
-				<entry key="userName" value="egovernments"/>
-				<entry key="transactional"  value="true" />
+				<entry key="userName" value="egovernments" />
+				<entry key="cityDataRequired" value="true"/>
 				<entry key="moduleName" value="pgr"/>
             </map>
         </property>   	
@@ -92,8 +92,8 @@
 		<property name="jobDataAsMap">
             <map>
                 <entry key="jobBeanName" value="complaintIndexingJob"/>
-				<entry key="userName" value="egovernments"/>
-				<entry key="transactional"  value="true" />
+				<entry key="userName" value="egovernments" />
+				<entry key="cityDataRequired" value="true"/>
 				<entry key="moduleName" value="pgr"/>
             </map>
         </property>   	

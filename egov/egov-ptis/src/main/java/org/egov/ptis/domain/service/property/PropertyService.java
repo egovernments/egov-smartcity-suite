@@ -2030,11 +2030,11 @@ public class PropertyService {
         else
             user = assignmentService.getAssignmentsForPosition(position.getId(), new Date()).get(0).getEmployee();
         User owner = null;
-        String source=null;
-        if (applictionType != null
-                && (applictionType.equalsIgnoreCase(APPLICATION_TYPE_NEW_ASSESSENT)
-                        || applictionType.equalsIgnoreCase(APPLICATION_TYPE_ALTER_ASSESSENT) || applictionType
-                            .equalsIgnoreCase(APPLICATION_TYPE_BIFURCATE_ASSESSENT))|| applictionType.equalsIgnoreCase(APPLICATION_TYPE_GRP)) {
+        String source;
+		if (!applictionType.isEmpty() && (applictionType.equalsIgnoreCase(APPLICATION_TYPE_NEW_ASSESSENT)
+				|| applictionType.equalsIgnoreCase(APPLICATION_TYPE_ALTER_ASSESSENT)
+				|| applictionType.equalsIgnoreCase(APPLICATION_TYPE_BIFURCATE_ASSESSENT)
+				|| applictionType.equalsIgnoreCase(APPLICATION_TYPE_GRP))) {
             final PropertyImpl property = (PropertyImpl) stateAwareObject;
             final ApplicationIndex applicationIndex = applicationIndexService.findByApplicationNumber(property
                     .getApplicationNo());
@@ -2049,7 +2049,7 @@ public class PropertyService {
             	source=Source.MOBILE.toString();
             else
             	source=Source.SYSTEM.toString();
-            if (null == applicationIndex) {
+            if (applicationIndex==null) {
                 final ApplicationIndexBuilder applicationIndexBuilder = new ApplicationIndexBuilder(PTMODULENAME,
                         property.getApplicationNo(), new Date(), applictionType, owner.getName(), property
                                 .getState().getValue(), url, property.getBasicProperty().getAddress().toString(),
@@ -2072,7 +2072,7 @@ public class PropertyService {
                 applicationIndexService.updateApplicationIndex(applicationIndex);
             }
 
-        } else if (applictionType != null && applictionType.equalsIgnoreCase(APPLICATION_TYPE_REVISION_PETITION)) {
+        } else if (!applictionType.isEmpty() && applictionType.equalsIgnoreCase(APPLICATION_TYPE_REVISION_PETITION)) {
             final RevisionPetition property = (RevisionPetition) stateAwareObject;
             final ApplicationIndex applicationIndex = applicationIndexService.findByApplicationNumber(property
                     .getObjectionNumber());
@@ -2086,7 +2086,7 @@ public class PropertyService {
              	source=Source.MOBILE.toString();
              else
              	source=Source.SYSTEM.toString();
-            if (null == applicationIndex) {
+            if (applicationIndex == null) {
                 owner = property.getBasicProperty().getPrimaryOwner();
                 final ApplicationIndexBuilder applicationIndexBuilder = new ApplicationIndexBuilder(PTMODULENAME,
                         property.getObjectionNumber(), property.getCreatedDate() != null ? property.getCreatedDate()
@@ -2103,7 +2103,7 @@ public class PropertyService {
                 applicationIndexService.updateApplicationIndex(applicationIndex);
             }
 
-        } else if (applictionType != null && applictionType.equalsIgnoreCase(APPLICATION_TYPE_TRANSFER_OF_OWNERSHIP)) {
+        } else if (!applictionType.isEmpty() && applictionType.equalsIgnoreCase(APPLICATION_TYPE_TRANSFER_OF_OWNERSHIP)) {
             final PropertyMutation property = (PropertyMutation) stateAwareObject;
             final ApplicationIndex applicationIndex = applicationIndexService.findByApplicationNumber(property
                     .getApplicationNo());
@@ -2118,7 +2118,7 @@ public class PropertyService {
              	source=Source.MOBILE.toString();
              else
              	source=Source.SYSTEM.toString();
-            if (null == applicationIndex) {
+            if (applicationIndex == null) {
                 final ApplicationIndexBuilder applicationIndexBuilder = new ApplicationIndexBuilder(PTMODULENAME,
                         property.getApplicationNo(), property.getCreatedDate() != null ? property.getCreatedDate()
                                 : new Date(), applictionType, owner.getName(),
@@ -2329,8 +2329,8 @@ public class PropertyService {
      * @param basicProperty
      * @return
      */
-    public Assignment getUserPositionByZone(final BasicProperty basicProperty, Character source) {
-        final String designationStr = getDesignationForThirdPartyUser(source);
+    public Assignment getUserPositionByZone(final BasicProperty basicProperty, boolean isForMobile) {
+        final String designationStr = getDesignationForThirdPartyUser(isForMobile);
         final String departmentStr = getDepartmentForWorkFlow();
         final String[] department = departmentStr.split(",");
         final String[] designation = designationStr.split(",");
@@ -2368,9 +2368,9 @@ public class PropertyService {
      *
      * @return
      */
-    public String getDesignationForThirdPartyUser(Character source) {
+    public String getDesignationForThirdPartyUser(boolean isForMobile) {
     	String appConfigKey;
-    	if(source.equals(SOURCEOFDATA_MOBILE))
+    	if(isForMobile)
     		appConfigKey = PT_WORKFLOWDESIGNATION_MOBILE;
     	else
     		appConfigKey = PROPERTYTAX_WORKFLOWDESIGNATION;
@@ -2532,19 +2532,26 @@ public List<PropertyMaterlizeView> getPropertyByAssessmentAndOwnerDetails(final 
     public Assignment getWorkflowInitiator(final PropertyImpl property) {
         Assignment wfInitiator = null;
         if(property.getBasicProperty().getSource().equals(PropertyTaxConstants.SOURCEOFDATA_ONLINE) ||
-        	property.getBasicProperty().getSource().equals(PropertyTaxConstants.SOURCEOFDATA_MOBILE)){
-        	if(!property.getStateHistory().isEmpty())
-        		wfInitiator = assignmentService.getPrimaryAssignmentForPositon(property.getStateHistory().get(0)
+                property.getBasicProperty().getSource().equals(PropertyTaxConstants.SOURCEOFDATA_MOBILE)){
+                if(!property.getStateHistory().isEmpty())
+                        wfInitiator = assignmentService.getPrimaryAssignmentForPositon(property.getStateHistory().get(0)
                     .getOwnerPosition().getId());
         } else{
-	        if (isEmployee(property.getCreatedBy()))
-	            wfInitiator = assignmentService.getPrimaryAssignmentForUser(property.getCreatedBy().getId());
-	        else if (!property.getStateHistory().isEmpty())
-	            wfInitiator = assignmentService.getPrimaryAssignmentForPositon(property.getStateHistory().get(0)
-	                    .getOwnerPosition().getId());
-	        else
-	            wfInitiator = assignmentService.getPrimaryAssignmentForPositon(property.getState().getOwnerPosition()
-	                    .getId());
+                if (isEmployee(property.getCreatedBy())){
+                        if(property.getState() != null  && property.getState().getInitiatorPosition() != null)
+                            wfInitiator = propertyTaxCommonUtils.getUserAssignmentByPassingPositionAndUser(property
+                                    .getCreatedBy(),property.getState().getInitiatorPosition());
+                        else 
+                            wfInitiator = assignmentService.getPrimaryAssignmentForUser(property
+                           .getCreatedBy().getId());
+                }
+                else if (!property.getStateHistory().isEmpty())
+                    wfInitiator = assignmentService.getPrimaryAssignmentForPositon(property.getStateHistory().get(0)
+                            .getOwnerPosition().getId());
+                else{
+                    wfInitiator = assignmentService.getPrimaryAssignmentForPositon(property.getState().getOwnerPosition()
+                            .getId());
+                }
         }
         return wfInitiator;
     }

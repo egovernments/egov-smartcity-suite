@@ -39,37 +39,86 @@
  */
 package org.egov.model.budget;
 
+import java.util.Date;
+
+import javax.persistence.CascadeType;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.SequenceGenerator;
+import javax.persistence.Table;
+import javax.persistence.Transient;
+
 import org.egov.commons.CFinancialYear;
 import org.egov.commons.EgwStatus;
 import org.egov.infra.persistence.validator.annotation.Required;
 import org.egov.infra.persistence.validator.annotation.Unique;
 import org.egov.infra.workflow.entity.State;
 import org.egov.infra.workflow.entity.StateAware;
+import org.hibernate.search.annotations.DocumentId;
 import org.hibernate.validator.constraints.Length;
 
-import java.util.Date;
-
-@Unique(fields = "name", id = "id", columnName = "NAME", tableName = "EGF_BUDGET", message = "budget.name.isunique")
+@Entity
+@Table(name = "EGF_BUDGET")
+@SequenceGenerator(name = Budget.SEQ_BUDGET, sequenceName = Budget.SEQ_BUDGET, allocationSize = 1)
+@Unique(fields = "name", id = "id", columnName = "NAME", tableName = "EGF_BUDGET", enableDfltMsg = true)
 public class Budget extends StateAware {
 
     private static final long serialVersionUID = 3592259793739732756L;
+    public static final String SEQ_BUDGET = "SEQ_EGF_BUDGET";
 
+    @DocumentId
+    @Id
+    @GeneratedValue(generator = SEQ_BUDGET, strategy = GenerationType.SEQUENCE)
     private Long id;
 
+    @Required(message = "Name should not be empty")
+    @Length(max = 250, message = "Max 250 characters are allowed for description")
     private String name;
+
     private String isbere;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "FINANCIALYEARID")
     private CFinancialYear financialYear;
+
+    @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @JoinColumn(name = "parent")
     private Budget parent;
+
     @Length(max = 250, message = "Max 250 characters are allowed for description")
     private String description;
+
+    @Column(name = "AS_ON_DATE")
     private Date asOnDate;
+
     private boolean isActiveBudget;
+
     private boolean isPrimaryBudget;
+
+    @Length(max = 10, message = "Max 10 characters are allowed for description")
     private String materializedPath;
+
+    @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @JoinColumn(name = "reference_budget")
     private Budget referenceBudget;
+
+    @Column(name = "DOCUMENT_NUMBER")
     private Long documentNumber;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "STATUS")
     private EgwStatus status;
 
+    @Transient
+    private String searchBere;
+
+    
     @Override
     public Long getId() {
         return id;
@@ -133,7 +182,8 @@ public class Budget extends StateAware {
     }
 
     /**
-     * @param isbere the isbere to set
+     * @param isbere
+     *            the isbere to set
      */
     public void setIsbere(final String isbere) {
         this.isbere = isbere;
@@ -147,7 +197,8 @@ public class Budget extends StateAware {
     }
 
     /**
-     * @param isActiveBudget the isActiveBudget to set
+     * @param isActiveBudget
+     *            the isActiveBudget to set
      */
     public void setIsActiveBudget(final boolean isActiveBudget) {
         this.isActiveBudget = isActiveBudget;
@@ -161,7 +212,8 @@ public class Budget extends StateAware {
     }
 
     /**
-     * @param isPrimaryBudget the isPrimaryBudget to set
+     * @param isPrimaryBudget
+     *            the isPrimaryBudget to set
      */
     public void setIsPrimaryBudget(final boolean isPrimaryBudget) {
         this.isPrimaryBudget = isPrimaryBudget;
@@ -180,7 +232,8 @@ public class Budget extends StateAware {
     }
 
     /**
-     * @param materialized_path the materialized_path to set
+     * @param materialized_path
+     *            the materialized_path to set
      */
     public void setMaterializedPath(final String materializedPath) {
         this.materializedPath = materializedPath;
@@ -218,4 +271,13 @@ public class Budget extends StateAware {
     public void setWfState(State state) {
         setState(state);
     }
+
+    public String getSearchBere() {
+        return searchBere;
+    }
+
+    public void setSearchBere(String searchBere) {
+        this.searchBere = searchBere;
+    }
+    
 }

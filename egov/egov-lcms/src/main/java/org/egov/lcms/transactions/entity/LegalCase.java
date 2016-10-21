@@ -74,8 +74,13 @@ import org.egov.lcms.masters.entity.CaseTypeMaster;
 import org.egov.lcms.masters.entity.CourtMaster;
 import org.egov.lcms.masters.entity.PetitionTypeMaster;
 import org.egov.lcms.masters.entity.enums.LCNumberType;
+import org.egov.lcms.utils.constants.LcmsConstants;
 import org.egov.pims.commons.Position;
 import org.egov.search.domain.Searchable;
+import org.hibernate.envers.AuditOverride;
+import org.hibernate.envers.AuditOverrides;
+import org.hibernate.envers.Audited;
+import org.hibernate.envers.NotAudited;
 import org.hibernate.validator.constraints.Length;
 
 @Entity
@@ -85,6 +90,8 @@ import org.hibernate.validator.constraints.Length;
 // true)
 @SequenceGenerator(name = LegalCase.SEQ_LEGALCASE_TYPE, sequenceName = LegalCase.SEQ_LEGALCASE_TYPE, allocationSize = 1)
 @Searchable
+@AuditOverrides({ @AuditOverride(forClass = AbstractAuditable.class, name = "lastModifiedBy"),
+    @AuditOverride(forClass = AbstractAuditable.class, name = "lastModifiedDate") })
 public class LegalCase extends AbstractAuditable {
     private static final long serialVersionUID = 1517694643078084884L;
     public static final String SEQ_LEGALCASE_TYPE = "SEQ_EGLC_LEGALCASE";
@@ -94,97 +101,121 @@ public class LegalCase extends AbstractAuditable {
     private Long id;
 
     @Temporal(TemporalType.DATE)
+    @Audited
     private Date nextDate;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @NotNull
     @JoinColumn(name = "CASETYPE", nullable = false)
+    @Audited
     private CaseTypeMaster caseTypeMaster;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @NotNull
     @JoinColumn(name = "COURT", nullable = false)
+    @Audited
     private CourtMaster courtMaster;
 
     @ManyToOne
     @JoinColumn(name = "STATUS", nullable = false)
+    @NotAudited
     private EgwStatus status;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @NotNull
     @JoinColumn(name = "PETITIONTYPE", nullable = false)
+    @Audited
     private PetitionTypeMaster petitionTypeMaster;
 
     @NotNull
     @Column(name = "casenumber")
+    @Audited
     private String caseNumber;
 
     @NotNull
     @Temporal(TemporalType.DATE)
     @Column(name = "casedate")
+    @Audited
     private Date caseDate;
 
     @NotNull
     @Length(max = 1024)
     @Column(name = "casetitle")
+    @Audited
     private String caseTitle;
 
     @Length(max = 50)
     @Column(name = "appealnum")
+    @Audited
     private String appealNum;
 
     @Length(max = 1024)
+    @Audited
     private String remarks;
 
     @Column(name = "casereceivingdate")
     @Temporal(TemporalType.DATE)
+    @Audited
     private Date caseReceivingDate;
 
+    @Audited
     private Boolean isfiledbycorporation;
 
     @Length(max = 50)
     @Column(name = "lcnumber")
+    @Audited
     private String lcNumber;
 
     @NotNull
     @Length(max = 1024)
+    @Audited
     private String prayer;
 
     @Column(name = "isSenioradvrequired")
+    @Audited
     private Boolean isSenioradvrequired = Boolean.FALSE;
 
     @Column(name = "assigntoIdboundary")
+    @Audited
     private Long assigntoIdboundary;
 
     @Length(max = 128)
     @Column(name = "oppPartyAdvocate")
+    @Audited
     private String oppPartyAdvocate;
 
     @Length(max = 256)
     @Column(name = "representedby")
+    @Audited
     private String representedby;
 
     @Column(name = "lcNumberType")
     @Enumerated(EnumType.STRING)
+    @Audited
     private LCNumberType lcNumberType;
 
     @Temporal(TemporalType.DATE)
     @Column(name = "previousDate")
+    @Audited
     private Date previousDate;
 
     @Column(name = "stampNumber")
+    @Audited
     private String stampNumber;
 
     @Length(max = 50)
     @Column(name = "officerincharge")
+    @Audited
     private String officerIncharge;
 
     @NotNull
     @Temporal(TemporalType.DATE)
     @Column(name = "noticedate")
+    @Audited
     private Date noticeDate;
 
     @Temporal(TemporalType.DATE)
+    @Audited
     private Date casefirstappearancedate;
 
     @Transient
@@ -196,37 +227,56 @@ public class LegalCase extends AbstractAuditable {
     @Transient
     private String finwpYear;
 
+   
     @OneToMany(mappedBy = "legalCase", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
+    @Audited
     private List<Judgment> judgment = new ArrayList<Judgment>(0);
 
+   
     @OneToMany(mappedBy = "legalCase", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<LegalCaseDocuments> legalCaseDocuments = new ArrayList<LegalCaseDocuments>(0);
+    @NotAudited
+    private List<LegalCaseDocuments> legalCaseDocuments = new ArrayList<LegalCaseDocuments>();
 
+  
     @OneToMany(mappedBy = "legalCase", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
+    @Audited
     private final List<Pwr> pwrList = new ArrayList<Pwr>(0);
 
+   
     @OneToMany(mappedBy = "legalCase", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
+    @Audited
     private final List<CounterAffidavit> counterAffidavits = new ArrayList<CounterAffidavit>(0);
 
+   
     @OneToMany(mappedBy = "legalCase", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
+    @Audited
     private List<LegalCaseInterimOrder> legalCaseInterimOrder = new ArrayList<LegalCaseInterimOrder>(0);
 
+    @Audited
     @OneToMany(mappedBy = "legalCase", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
     private List<BipartisanDetails> bipartisanDetails = new ArrayList<BipartisanDetails>(0);
 
     @OrderBy("id")
     @OneToMany(mappedBy = "legalCase", cascade = CascadeType.ALL, fetch = FetchType.LAZY, orphanRemoval = true)
+    @Audited
     private List<LegalCaseAdvocate> legalCaseAdvocates = new ArrayList<LegalCaseAdvocate>(0);
 
+   
     @OneToMany(mappedBy = "legalCase", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
+    @Audited
     private List<Hearings> hearings = new ArrayList<Hearings>(0);
 
+    
     @OneToMany(mappedBy = "legalCase", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
+    @Audited
     private List<LegalCaseDisposal> legalCaseDisposal = new ArrayList<LegalCaseDisposal>(0);
 
+  
     @OneToMany(mappedBy = "legalCase", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @Audited
     private final List<LegalCaseDepartment> legalCaseDepartment = new ArrayList<LegalCaseDepartment>(0);
 
+    
     @OneToMany(mappedBy = "legalCase", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
     private List<BatchCase> batchCaseSet = new ArrayList<BatchCase>(0);
 
@@ -245,9 +295,11 @@ public class LegalCase extends AbstractAuditable {
     private List<LegalCaseMiscDetails> legalCaseMiscDetails = new ArrayList<LegalCaseMiscDetails>(0);
 
     @Transient
+    @Audited
     private List<BipartisanDetails> bipartisanRespondentDetailsList = new ArrayList<BipartisanDetails>(0);
 
     @Transient
+    @Audited
     private List<BipartisanDetails> bipartisanPetitionerDetailsList = new ArrayList<BipartisanDetails>(0);
 
     @Transient
@@ -388,6 +440,7 @@ public class LegalCase extends AbstractAuditable {
         return bipartisanPetitionerDetailsList;
 
     }
+    
 
     public List<BipartisanDetails> getRespondents() {
         // iterate through this.getBipartisan and return only petitioners (based
@@ -408,7 +461,7 @@ public class LegalCase extends AbstractAuditable {
                 if (tempStr.length() == 0)
                     tempStr.append(temp.getName());
                 else
-                    tempStr.append(",\n" + temp.getName());
+                    tempStr.append(LcmsConstants.APPENDSEPERATE ).append(temp.getName());
         return tempStr.toString();
     }
 
@@ -419,7 +472,7 @@ public class LegalCase extends AbstractAuditable {
                 if (tempStr.length() == 0)
                     tempStr.append(temp.getName());
                 else
-                    tempStr.append(",\n" + temp.getName());
+                    tempStr.append(LcmsConstants.APPENDSEPERATE ).append(temp.getName());
         return tempStr.toString();
     }
 

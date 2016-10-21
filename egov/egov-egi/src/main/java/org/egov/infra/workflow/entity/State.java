@@ -117,9 +117,14 @@ public class State extends AbstractAuditable {
     @NotNull
     private StateStatus status;
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "INITIATOR_POS")
+    private Position initiatorPosition;
+  
     protected State() {
     }
-
+    
+     
     @Override
     public Long getId() {
         return id;
@@ -246,4 +251,13 @@ public class State extends AbstractAuditable {
     public boolean isEnded() {
         return status.equals(StateStatus.ENDED);
     }
+
+    public Position getInitiatorPosition() {
+        return initiatorPosition;
+    }
+
+    public void setInitiatorPosition(Position initiatorPosition) {
+        this.initiatorPosition = initiatorPosition;
+    }
+    
 }

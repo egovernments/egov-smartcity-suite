@@ -41,11 +41,12 @@ package org.egov.lcms.web.controller.ajax;
 
 import static org.springframework.web.bind.annotation.RequestMethod.GET;
 
-import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
-import org.egov.eis.service.PositionMasterService;
-import org.egov.pims.commons.Position;
+import org.egov.eis.entity.Assignment;
+import org.egov.eis.service.AssignmentService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
@@ -53,19 +54,24 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
+
 @Controller
 public class AjaxEmployeePositionController {
-    @Autowired
-    PositionMasterService positionMasterService;
 
-    @RequestMapping(value = "/ajax/positions", method = GET, produces = MediaType.APPLICATION_JSON_VALUE)
-    public @ResponseBody List<Position> getPositionForDeptAndDesig(
-            @ModelAttribute("employeeBean") 
-             @RequestParam final String positionName) {
-        List<Position> posList = new ArrayList<Position>();
-  
-        
-            posList = positionMasterService.getAllPositionsByNameLike(positionName);
-        return posList;
-    }
+    @Autowired
+    private AssignmentService assignmentService;
+
+    @RequestMapping(value = "/ajax/getpositionEmployee", method = GET, produces = MediaType.APPLICATION_JSON_VALUE)
+    public @ResponseBody Map<Long, String> getPositionForDeptAndDesig(
+			@ModelAttribute("employeeBean") @RequestParam final String positionName) {
+		final Map<Long, String> positionEmployeeMap = new HashMap<Long, String>();
+		String posEmpName;
+		final List<Assignment> assignmentList = assignmentService
+				.getAllAssignmentsByPositionNameForGivenRange(positionName);
+		for (final Assignment assign : assignmentList) {
+			posEmpName = assign.getPosition().getName().concat("@").concat(assign.getEmployee().getUsername());
+			positionEmployeeMap.put(assign.getEmployee().getId(), posEmpName);
+		}
+		return positionEmployeeMap;
+	}
 }

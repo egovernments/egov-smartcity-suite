@@ -40,12 +40,7 @@
 
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
-<%@ taglib uri="http://tiles.apache.org/tags-tiles" prefix="tiles" %>
-<%@ taglib uri="http://www.springframework.org/tags" prefix="spring" %>
-<%@ page contentType="text/html;charset=UTF-8" language="java" %>
-<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
-<%@ taglib uri="http://tiles.apache.org/tags-tiles" prefix="tiles" %>
-<%@ taglib uri="http://www.springframework.org/tags" prefix="spring" %>
+<%@ taglib uri="/WEB-INF/taglib/cdn.tld" prefix="cdn" %>
 <header><!-- set fixed position by adding class "navbar-fixed-top" -->
 				
 				<nav class="navbar navbar-default navbar-custom navbar-fixed-top">
@@ -93,7 +88,7 @@
 								
 								<li class="ico-menu">
 									<a href="http://www.egovernments.org" data-strwindname = "egovsite" class="open-popup">
-										<img src="../egi/resources/global/images/logo@2x.png" title="Powered by eGovernments" height="20px">
+										<img src="<cdn:url value='/resources/global/images/logo@2x.png' context="/egi"/>" title="Powered by eGovernments" height="20px">
 									</a>
 								</li>
 								

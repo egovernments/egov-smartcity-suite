@@ -85,6 +85,8 @@ import org.egov.infra.workflow.entity.StateHistory;
 import org.egov.infra.workflow.matrix.entity.WorkFlowMatrix;
 import org.egov.infra.workflow.service.SimpleWorkflowService;
 import org.egov.pims.commons.Position;
+import org.egov.ptis.client.util.PropertyTaxUtil;
+import org.egov.ptis.constants.PropertyTaxConstants;
 import org.egov.wtms.application.entity.WaterConnectionDetails;
 import org.egov.wtms.application.entity.WaterDemandConnection;
 import org.egov.wtms.application.rest.CollectionApportioner;
@@ -142,6 +144,10 @@ public class WaterTaxCollection extends TaxCollection {
 
     @Autowired
     private ChartOfAccountsHibernateDAO chartOfAccountsDAO;
+    
+    @Autowired
+    private PropertyTaxUtil propertyTaxUtil;
+
 
     public Session getCurrentSession() {
         return entityManager.unwrap(Session.class);
@@ -180,7 +186,7 @@ public class WaterTaxCollection extends TaxCollection {
             if (LOGGER.isDebugEnabled())
                 LOGGER.debug("updateDemandDetails : Demand after processed : " + demand);
         } catch (final Exception e) {
-            e.printStackTrace();
+
             throw new ApplicationRuntimeException("Error occured during back update of DCB : " + e.getMessage(), e);
         }
     }
@@ -271,7 +277,7 @@ public class WaterTaxCollection extends TaxCollection {
         try {
             updateDemandDetailForReceiptCreate(billRcptInfo.getAccountDetails(), demand, billRcptInfo, totalAmount);
         } catch (final Exception e) {
-            e.printStackTrace();
+
             throw new ApplicationRuntimeException(
                     "Error occured during back update of DCB : updateCollForRcptCreate() " + e.getMessage(), e);
         }
@@ -311,9 +317,12 @@ public class WaterTaxCollection extends TaxCollection {
 
         EgDemandDetails demandDetail = null;
         final Map<String, Installment> currInstallments = new HashMap<String, Installment>();
-        final List<Installment> currInstallmentList = waterTaxUtils.getInstallmentsForCurrYear(new Date());
-        currInstallments.put(WaterTaxConstants.CURRENTYEAR_FIRST_HALF, currInstallmentList.get(0));
-        currInstallments.put(WaterTaxConstants.CURRENTYEAR_FIRST_HALF, currInstallmentList.get(1));
+        final Installment currFirstHalf = propertyTaxUtil.getInstallmentsForCurrYear(new Date())
+                .get(PropertyTaxConstants.CURRENTYEAR_FIRST_HALF);
+        final Installment currSecondHalf = propertyTaxUtil.getInstallmentsForCurrYear(new Date())
+                .get(PropertyTaxConstants.CURRENTYEAR_SECOND_HALF);
+        currInstallments.put(WaterTaxConstants.CURRENTYEAR_FIRST_HALF, currFirstHalf);
+        currInstallments.put(WaterTaxConstants.CURRENTYEAR_FIRST_HALF, currSecondHalf);
         for (final ReceiptAccountInfo rcptAccInfo : accountDetails)
             if (rcptAccInfo.getDescription() != null && !rcptAccInfo.getDescription().isEmpty())
                 if (rcptAccInfo.getCrAmount() != null && rcptAccInfo.getCrAmount().compareTo(BigDecimal.ZERO) == 1) {
@@ -435,7 +444,7 @@ public class WaterTaxCollection extends TaxCollection {
             updateDmdDetForRcptCancel(demand, billRcptInfo);
             LOGGER.debug("reconcileCollForRcptCancel : Updating Collection finished For Demand : " + demand);
         } catch (final Exception e) {
-            e.printStackTrace();
+
             throw new ApplicationRuntimeException("Error occured during back update of DCB : " + e.getMessage(), e);
         }
     }

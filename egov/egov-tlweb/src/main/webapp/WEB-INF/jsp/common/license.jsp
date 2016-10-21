@@ -92,15 +92,14 @@ function getUom(){
 <div class="form-group">
     <label class="col-sm-3 control-label text-right"><s:text name='license.category.lbl' /><span class="mandatory"></span></label>
     <div class="col-sm-3 add-margin">
-        <s:select name="category" id="category" list="dropdownData.categoryList"
-	listKey="id" listValue="name" headerKey="-1" headerValue="%{getText('default.select')}" value="%{category.id}" class="form-control" onChange="setupAjaxSubCategory(this);" />
-	<egov:ajaxdropdown id="populateSubCategory" fields="['Text','Value']" dropdownId='subCategory' url='domain/commonTradeLicenseAjax-populateSubCategory.action' />
+        <s:select name="category" id="category" list="dropdownData.categoryList" listKey="id" listValue="name"
+				  headerKey="-1" headerValue="%{getText('default.select')}" value="%{category.id}" class="form-control" />
     </div>
     
     <label class="col-sm-2 control-label text-right"><s:text name='license.subCategory.lbl' /><span class="mandatory"></span></label>
     <div class="col-sm-3 add-margin">
-        <s:select name="tradeName" id="subCategory" list="dropdownData.subCategoryList"
-	listKey="id" listValue="name" headerKey="-1" headerValue="%{getText('default.select')}" value="%{tradeName.id}" class="form-control"/>
+        <s:select name="tradeName" id="subCategory" list="dropdownData.subCategoryList" listKey="id" listValue="name"
+				  headerKey="-1" headerValue="%{getText('default.select')}" value="%{tradeName.id}" class="form-control"/>
     </div> 
 </div>
 

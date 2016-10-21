@@ -48,6 +48,7 @@ import org.hibernate.validator.constraints.SafeHtml;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -58,13 +59,14 @@ import javax.persistence.OneToMany;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.validation.Valid;
-import java.util.HashSet;
-import java.util.Set;
+
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Table(name = "EGTL_MSTR_SUB_CATEGORY")
 @SequenceGenerator(name = LicenseSubCategory.SEQUENCE, sequenceName = LicenseSubCategory.SEQUENCE, allocationSize = 1)
-@Unique(fields = "code", message = "masters.code.isunique")
+@Unique(fields = {"code","name"},enableDfltMsg = true)
 @NamedQuery(name = "LICENSE_SUBCATEGORY_BY_NAME", query = "select lsc FROM LicenseSubCategory lsc where name =:name")
 public class LicenseSubCategory extends AbstractAuditable {
 
@@ -102,9 +104,9 @@ public class LicenseSubCategory extends AbstractAuditable {
     @JoinColumn(name = "ID_LICENSE_SUB_TYPE")
     private LicenseSubType licenseSubType;
 
-    @OneToMany(mappedBy = "subCategory", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "subCategory", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
     @Valid
-    private Set<LicenseSubCategoryDetails> licenseSubCategoryDetails = new HashSet<LicenseSubCategoryDetails>();
+	private List<LicenseSubCategoryDetails> licenseSubCategoryDetails = new ArrayList<>();
 
     public Long getId() {
         return id;
@@ -166,14 +168,14 @@ public class LicenseSubCategory extends AbstractAuditable {
         getLicenseSubCategoryDetails().add(licenseSubCategoryDetail);
     }
 
-    public Set<LicenseSubCategoryDetails> getLicenseSubCategoryDetails() {
+    public List<LicenseSubCategoryDetails> getLicenseSubCategoryDetails() {
         return licenseSubCategoryDetails;
     }
 
-    public void setLicenseSubCategoryDetails(Set<LicenseSubCategoryDetails> licenseSubCategoryDetails) {
+    public void setLicenseSubCategoryDetails(List<LicenseSubCategoryDetails> licenseSubCategoryDetails) {
         this.licenseSubCategoryDetails = licenseSubCategoryDetails;
     }
-
+   
     @Override
     public boolean equals(final Object o) {
         if (this == o) return true;

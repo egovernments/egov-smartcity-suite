@@ -605,7 +605,7 @@ public class DeactivatePropertyAction extends PropertyTaxBaseAction {
 
     @Override
     public StateAware getModel() {
-        // TODO Auto-generated method stub
+
         return null;
     }
 

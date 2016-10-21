@@ -39,8 +39,6 @@
  */
 package org.egov.wtms.masters.repository;
 
-import org.egov.wtms.masters.entity.DonationDetails;
-import org.egov.wtms.masters.entity.DonationHeader;
 import org.egov.wtms.masters.entity.UsageType;
 import org.egov.wtms.masters.entity.WaterRatesDetails;
 import org.egov.wtms.masters.entity.WaterRatesHeader;

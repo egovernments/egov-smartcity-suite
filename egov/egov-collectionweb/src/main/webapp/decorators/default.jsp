@@ -90,7 +90,7 @@
         <title>eGov  - <decorator:title/> </title>
 
    
-    <link rel="icon" href="<cdn:url value='/resources/global/images/favicon.png" sizes="32x32' context='/egi'/>">
+    <link rel="icon" href="<cdn:url value='/resources/global/images/favicon.png' context='/egi'/>" sizes="32x32">
 	<link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/resources/css/collections.css?rnd=${app_release_no}"/>
 	<link rel="stylesheet" type="text/css" href="/collection/resources/commonyui/yui2.8/fonts/fonts-min.css"/>
 	<link rel="stylesheet" type="text/css" href="/collection/resources/commonyui/yui2.8/datatable/assets/skins/sam/datatable.css"/>

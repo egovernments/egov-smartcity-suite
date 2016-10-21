@@ -58,6 +58,7 @@ import java.util.Map;
 import java.util.Set;
 
 import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
 
 import org.apache.log4j.Logger;
 import org.egov.commons.Accountdetailtype;
@@ -156,8 +157,8 @@ public class ChartOfAccounts {
 	@Autowired
 	private BudgetDetailsHibernateDAO budgetDetailsDAO;
 
-	@Autowired
-	EntityManager entityManager;
+	@PersistenceContext
+	private EntityManager entityManager;
 
 	@Autowired
 	private FinancialYearHibernateDAO financialYearDAO;
@@ -534,8 +535,8 @@ public class ChartOfAccounts {
 			if (txnObj.getBillId() != null)
 				paramMap.put("bill", txnObj.getBillId());
 			if (!budgetDetailsDAO.budgetaryCheck(paramMap))
-				throw new ValidationException("Budgetary check failed for "
-						+ txnObj.getGlCode(), "Budgetary check is failed for "
+				throw new ValidationException("Budget check failed: Insufficient Budget for "
+						+ txnObj.getGlCode(), "Budget check failed: Insufficient Budget for "
 						+ txnObj.getGlCode());
 		}
 		return true;
@@ -559,7 +560,6 @@ public class ChartOfAccounts {
 			LOGGER.error(e.getMessage(), e);
 			throw new TaskFailedException(e.getMessage());
 		}
-		System.out.println(entityManager.getFlushMode());
 		// entityManager.flush();
 		if (!postInGL(txnList))
 			return false;
@@ -624,9 +624,7 @@ public class ChartOfAccounts {
 				gLedger.setDebitAmount(Double.parseDouble(txn.getDrAmount()));
 				gLedger.setCreditAmount(Double.parseDouble(txn.getCrAmount()));
 				gLedger.setDescription(txn.getNarration());
-				CVoucherHeader cVoucherHeader = (CVoucherHeader) persistenceService
-						.find("from CVoucherHeader where id=?",
-								Long.parseLong(txn.getVoucherHeaderId()));
+				CVoucherHeader cVoucherHeader = (CVoucherHeader) voucherService.findById(Long.valueOf(txn.getVoucherHeaderId()), false);
 				gLedger.setVoucherHeaderId(cVoucherHeader);
 				gLedger.setEffectiveDate(new Date());
 				if (LOGGER.isInfoEnabled())
@@ -814,9 +812,7 @@ public class ChartOfAccounts {
 				gLedger.setDebitAmount(Double.parseDouble(txn.getDrAmount()));
 				gLedger.setCreditAmount(Double.parseDouble(txn.getCrAmount()));
 				gLedger.setDescription(txn.getNarration());
-				CVoucherHeader cVoucherHeader = (CVoucherHeader) persistenceService
-						.find("from CVoucherHeader where id=?",
-								Long.parseLong(txn.getVoucherHeaderId()));
+				CVoucherHeader cVoucherHeader = voucherService.findById(Long.valueOf(txn.getVoucherHeaderId()), false);
 				gLedger.setVoucherHeaderId(cVoucherHeader);
 				gLedger.setEffectiveDate(new Date());
 				if (LOGGER.isInfoEnabled())

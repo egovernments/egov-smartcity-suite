@@ -98,7 +98,10 @@
 				</label>
 				<div class="col-sm-3 add-margin">
 					<form:hidden path="ward" id="ward" value="" cssClass="selectwk" />
-					<form:input id="wardInput" path="ward.boundaryNum" class="form-control" type="text" required="required"/>
+					<form:input id="wardInput" path="" class="form-control" type="text" required="required"/>
+					<input type="hidden" name="boundaryName" id="boundaryName" value="${lineEstimate.ward.name}"/>
+					<input type="hidden" name="boundaryNumber" id="boundaryNumber" value="${lineEstimate.ward.boundaryNum}"/>
+					<input type="hidden" name="boundaryType" id="boundaryType" value="${lineEstimate.ward.boundaryType.name}"/>
 					<form:errors path="ward" cssClass="add-margin error-msg" />
 				</div>
 				<label class="col-sm-2 control-label text-right"> <spring:message code="lbl.location" /></label>

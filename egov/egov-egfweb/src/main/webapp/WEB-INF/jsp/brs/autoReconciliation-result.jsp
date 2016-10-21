@@ -73,7 +73,7 @@
 					<td><input type="button" value="Close"
 						onclick="javascript:window.close()" class="button" /></td>
 					<td><s:submit type="submit" cssClass="buttonsubmit"
-							value="GenearateReport" name="generateReport"
+							value="Generate Report" name="generateReport"
 							method="generateReport" onclick="return validate();" /></td>
 				</tr>
 			</table>

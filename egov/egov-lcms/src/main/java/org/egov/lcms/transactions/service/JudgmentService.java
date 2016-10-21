@@ -77,20 +77,14 @@ public class JudgmentService {
 
     @Transactional
     public Judgment persist(final Judgment judgment) {
-        processAndStoreApplicationDocuments(judgment);
+        final List<JudgmentDocuments> judgmentDoc = legalCaseUtil.getJudgmentDocumentList(judgment);
+        processAndStoreApplicationDocuments(judgment, judgmentDoc);
         final EgwStatus statusObj = legalCaseUtil.getStatusForModuleAndCode(LcmsConstants.MODULE_TYPE_LEGALCASE,
                 LcmsConstants.LEGALCASE_STATUS_JUDGMENT);
         judgment.getLegalCase().setStatus(statusObj);
         legalCaseRepository.save(judgment.getLegalCase());
         return judgmentRepository.save(judgment);
 
-    }
-
-    public List<JudgmentDocuments> getJudgmentDocList(final Judgment judgment) {
-        final List<JudgmentDocuments> judgmentDOc = new ArrayList<JudgmentDocuments>();
-        for (final JudgmentDocuments judgmentDoc : judgment.getJudgmentDocuments())
-            judgmentDOc.add(judgmentDoc);
-        return judgmentDOc;
     }
 
     public List<Judgment> findAll() {
@@ -101,13 +95,32 @@ public class JudgmentService {
         return judgmentRepository.findOne(id);
     }
 
-    protected void processAndStoreApplicationDocuments(final Judgment judgment) {
-        if (!judgment.getJudgmentDocuments().isEmpty())
-            for (final JudgmentDocuments applicationDocument : judgment.getJudgmentDocuments()) {
+    public List<JudgmentDocuments> getJudgmentDocList(final Judgment judgment) {
+        return judgment.getJudgmentDocuments();
+    }
+
+    protected void processAndStoreApplicationDocuments(final Judgment judgment,
+            final List<JudgmentDocuments> judgmentDoc) {
+        if (judgment.getId() == null) {
+            if (!judgment.getJudgmentDocuments().isEmpty())
+                for (final JudgmentDocuments applicationDocument : judgment.getJudgmentDocuments()) {
+                    applicationDocument.setJudgment(judgment);
+                    applicationDocument.setDocumentName("Judgment");
+                    applicationDocument.setSupportDocs(legalCaseUtil.addToFileStore(applicationDocument.getFiles()));
+                }
+        } else {
+            final List<JudgmentDocuments> tempJudgmentDoc = new ArrayList<JudgmentDocuments>(
+                    judgment.getJudgmentDocuments());
+            for (final JudgmentDocuments applicationDocument : tempJudgmentDoc) {
                 applicationDocument.setJudgment(judgment);
                 applicationDocument.setDocumentName("Judgment");
-                applicationDocument.setSupportDocs(legalCaseUtil.addToFileStore(applicationDocument.getFiles()));
+                applicationDocument.getSupportDocs()
+                        .addAll(legalCaseUtil.addToFileStore(applicationDocument.getFiles()));
+                judgment.getJudgmentDocuments().add(applicationDocument);
             }
+            judgment.getJudgmentDocuments().addAll(judgmentDoc);
+        }
+
     }
 
     @Transactional(propagation = Propagation.REQUIRES_NEW, readOnly = true)

@@ -50,7 +50,6 @@
 <%@ taglib uri="http://www.springframework.org/tags" prefix="spring"%>
 <%@ taglib uri="http://www.springframework.org/tags/form" prefix="form"%>
 
-<div class="main-content">
 	<div class="row">
 		<div class="col-md-12">
 			<div class="panel panel-primary" data-collapsed="0">
@@ -170,3 +169,7 @@
 								onclick='self.close()'><spring:message code='lbl.close' /></a>
 						</div>
 					</div>
+			</div>
+		</div>
+	</div>
+</div>

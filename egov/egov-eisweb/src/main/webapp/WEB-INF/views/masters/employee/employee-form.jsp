@@ -94,6 +94,7 @@
 								<form:hidden path="locale" value="en_IN"/>
 								<input type="hidden" value="" id="removedJurisdictionIds" name ="removedJurisdictionIds"/>
 								<input type="hidden" value="" id="removedassignIds" name ="removedassignIds"/>
+								<input type="hidden" value="" id="editassignIds" name ="editassignIds"/>
 								<input type="hidden" value="${mode}" id="mode"/>
 									<div class="form-group">
 										<label for="field-1" class="col-sm-3 control-label"><spring:message code="lbl.name"/><span class="mandatory"></span></label>
@@ -149,6 +150,7 @@
 										
 										<div class="col-sm-3">
 											<form:input type="text" cssClass="form-control" id="emial" path="emailId" placeholder="abc@xyz.com" />
+											<form:errors path="emailId" cssClass="error-msg"/>
 										</div>
 										
 									</div>

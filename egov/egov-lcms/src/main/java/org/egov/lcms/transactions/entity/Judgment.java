@@ -69,6 +69,10 @@ import org.egov.lcms.masters.entity.JudgmentType;
 import org.egov.lcms.utils.constants.LcmsConstants;
 import org.hibernate.annotations.Fetch;
 import org.hibernate.annotations.FetchMode;
+import org.hibernate.envers.AuditOverride;
+import org.hibernate.envers.AuditOverrides;
+import org.hibernate.envers.Audited;
+import org.hibernate.envers.NotAudited;
 import org.hibernate.validator.constraints.Length;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
@@ -76,6 +80,8 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 @Entity
 @Table(name = "EGLC_JUDGMENT")
 @SequenceGenerator(name = Judgment.SEQ_EGLC_JUDGMENT, sequenceName = Judgment.SEQ_EGLC_JUDGMENT, allocationSize = 1)
+@AuditOverrides({ @AuditOverride(forClass = AbstractAuditable.class, name = "lastModifiedBy"),
+    @AuditOverride(forClass = AbstractAuditable.class, name = "lastModifiedDate") })
 public class Judgment extends AbstractAuditable {
 
     private static final long serialVersionUID = 1517694643078084884L;
@@ -88,48 +94,59 @@ public class Judgment extends AbstractAuditable {
     @ManyToOne
     @NotNull
     @JoinColumn(name = "legalcase", nullable = false)
+    @Audited
     private LegalCase legalCase;
 
     @ManyToOne
     @NotNull
     @JoinColumn(name = "judgmenttype", nullable = false)
+    @Audited
     private JudgmentType judgmentType;
 
     @NotNull
     @Temporal(TemporalType.DATE)
     @ValidateDate(allowPast = true, dateFormat = LcmsConstants.DATE_FORMAT)
     @Column(name = "orderdate")
+    @Audited
     private Date orderDate;
 
     @NotNull
     @Temporal(TemporalType.DATE)
     @ValidateDate(allowPast = true, dateFormat = LcmsConstants.DATE_FORMAT)
     @Column(name = "senttodepton")
+    @Audited
     private Date sentToDeptOn;
 
     @Column(name = "implementbydate")
     @Temporal(TemporalType.DATE)
+    @Audited
     private Date implementByDate;
 
     @Column(name = "costawarded")
+    @Audited
     private double costAwarded;
 
     @Column(name = "compensationAwarded")
+    @Audited
     private double compensationAwarded;
 
     @NotNull
     @Length(max = 1024)
     @Column(name = "judgmentdetails")
+    @Audited
     private String judgmentDetails;
 
     @Column(name = "advisorfee")
+    @Audited
     private Double advisorFee;
 
     @Column(name = "arbitratorfee")
+    @Audited
     private Double arbitratorFee;
 
     @Length(max = 1024)
     @Column(name = "enquirydetails")
+    @Audited
     private String enquiryDetails;
 
     @Temporal(TemporalType.DATE)
@@ -138,17 +155,21 @@ public class Judgment extends AbstractAuditable {
 
     @Temporal(TemporalType.DATE)
     @Column(name = "setasidepetitiondate")
+    @Audited
     private Date setasidePetitionDate;
 
     @Length(max = 1024)
     @Column(name = "setasidepetitiondetails")
+    @Audited
     private String setasidePetitionDetails;
 
     @Temporal(TemporalType.DATE)
     @Column(name = "saphearingdate")
+    @Audited
     private Date sapHearingDate;
 
     @Column(name = "issapaccepted")
+    @Audited
     private boolean sapAccepted;
 
     @ManyToOne
@@ -157,9 +178,11 @@ public class Judgment extends AbstractAuditable {
     private Judgment parent;
 
     @OneToMany(mappedBy = "judgment", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
+    @NotAudited
     private List<JudgmentDocuments> judgmentDocuments = new ArrayList<JudgmentDocuments>(0);
 
     @OneToMany(mappedBy = "judgment", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
+    @Audited
     private List<JudgmentImpl> judgmentImpl = new ArrayList<JudgmentImpl>(0);
 
     @OneToMany(cascade = CascadeType.REMOVE)
@@ -169,9 +192,11 @@ public class Judgment extends AbstractAuditable {
     private Set<Judgment> children = new HashSet<Judgment>();
 
     @Column(name = "ismemorequired")
+    @Audited
     private boolean isMemoRequired;
 
     @Column(name = "certifiedmemofwddate")
+    @Audited
     private Date certifiedMemoFwdDate;
 
     @Override

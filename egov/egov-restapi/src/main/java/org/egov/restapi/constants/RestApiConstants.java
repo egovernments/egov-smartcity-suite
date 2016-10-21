@@ -44,13 +44,13 @@ public class RestApiConstants {
 	public static final String OWNERSHIP_CATEGORY_TYPE_REQ_MSG = "Category of Ownership is required.";
 	
 	public static final String OWNERSHIP_CATEGORY_TYPE_INVALID_CODE = "02";
-	public static final String OWNERSHIP_CATEGORY_TYPE_INVALID_MSG = "Invalid Category of Ownership. It can be VAC_LAND/PRIVATE/STATE_GOVT/CENTRAL_GOVT_33.5/CENTRAL_GOVT_50/CENTRAL_GOVT_75.";
+	public static final String OWNERSHIP_CATEGORY_TYPE_INVALID_MSG = "Invalid Category of Ownership. ";
 	
 	public static final String PROPERTY_CATEGORY_TYPE_REQ_CODE = "03";
 	public static final String PROPERTY_CATEGORY_TYPE_REQ_MSG = "Property Type is required.";
 	
 	public static final String PROPERTY_CATEGORY_TYPE_INVALID_CODE = "04";
-	public static final String PROPERTY_CATEGORY_TYPE_INVALID_MSG = "Invalid Property Type. It can be RESIDENTIAl/NON_RESIDENTIAL/MIXED";
+	public static final String PROPERTY_CATEGORY_TYPE_INVALID_MSG = "Invalid Property Type.";
 	
 	public static final String REG_DOC_NO_REQ_CODE = "05";
 	public static final String REG_DOC_NO_REQ_MSG = "Registration Doc No is required.";
@@ -252,10 +252,22 @@ public class RestApiConstants {
 	public static final String PLINTH_AREA_GREATER_THAN_PLOT_AREA_MSG = "Plinth Area cannot be greater than Extent of Site.";
 	
 	public static final String MOBILENO_ALPHANUMERIC_ERROR_CODE = "78";
-	public static final String MOBILENO_ALPHANUMERIC_ERROR_MSG = "Mobile number cannot be alphanumeric.";
+	public static final String MOBILENO_ALPHANUMERIC_ERROR_MSG = "Invalid Mobile number.";
 	
 	public static final String MOBILENO_MAX_LENGTH_ERROR_CODE = "79";
 	public static final String MOBILENO_MAX_LENGTH_ERROR_MSG = "Maximum of 10 digits can be entered for the mobile number.";
+	
+	public static final String TRANSACTION_TYPE_REQUIRED_CODE = "80";
+	public static final String TRANSACTION_TYPE_REQUIRED_MSG = "Transaction type is required.";
+	
+	public static final String FROM_DATE_REQUIRED_CODE = "81";
+	public static final String FROM_DATE_REQUIRED_MSG = "From date is required.";
+	
+	public static final String TO_DATE_REQUIRED_CODE = "82";
+	public static final String TO_DATE_REQUIRED_MSG = "To date is required.";
+	
+	public static final String PROPERTIES_LIST_EXCEED_LIMIT_CODE = "83";
+	public static final String PROPERTIES_LIST_EXCEED_LIMIT_MSG = "More than 100 records found, please narrow the search criteria.";
 	
 	//Water TAx
 	public static final String PROPERTY_USAGETYPE_COMBINATION_VALID_CODE="42";
@@ -276,6 +288,9 @@ public class RestApiConstants {
         
         public static final String CONSUMERCODE_IS_NOT_VALID_CONNECTION_CODE="50";
         public static final String CONSUMERCODE_IS_NOT_VALID_CONNECTION = "Either ConsumerCode is not valid or Due is present";
+        
+        public static final String THIRD_PARTY_ERR_CODE_SUCCESS = "WCMS-REST-0";
+        public static final String THIRD_PARTY_ERR_MSG_SUCCESS = "SUCCESS";
         
         public static final String THIRD_PARTY_ERR_CODE_CONSUMER_NO_VALID= "WCMS-REST-8";
         public static final String THIRD_PARTY_ERR_MSG_CONSUMER_NO_VALID= "Either ConsumerCode is not valid or ApplicationNumber not valid";

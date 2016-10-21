@@ -1164,7 +1164,7 @@ public class CreatePropertyAction extends PropertyTaxBaseAction {
             propertyid.setElectionBoundary(boundaryService.getBoundaryById(getElectionWardId()));
             property.getBasicProperty().setPropertyID(propertyid);
             if (null != getElectionWardId() && getElectionWardId() != -1 && null != property.getBasicProperty()
-                    && null == propService.getUserPositionByZone(property.getBasicProperty(),PropertyTaxConstants.SOURCEOFDATA_MEESEWA)) {
+                    && null == propService.getUserPositionByZone(property.getBasicProperty(), false)) {
                 addActionError(getText("notexists.position"));
             }
         }

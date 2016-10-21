@@ -416,7 +416,6 @@ function clearnow(){
 function worklist(){
 	tableContainer1 = $("#official_inbox"); 
 	tableContainer1.dataTable({
-		"sPaginationType": "bootstrap",
 		"sDom": "<'row'<'col-xs-12 hidden col-right'f>r>t<'row'<'col-md-5 col-xs-12'i><'col-md-3 col-xs-6'l><'col-md-4 col-xs-6 text-right'p>>",
 		"aLengthMenu": [[10, 25, 50, -1], [10, 25, 50, "All"]],
 		"bDestroy": true,
@@ -482,7 +481,6 @@ function worklist(){
 function drafts(){
 	tableContainer1 = $("#official_drafts"); 
 	tableContainer1.dataTable({
-		"sPaginationType": "bootstrap",
 		"sDom": "<'row'<'col-xs-12 hidden col-right'f>r>t<'row'<'col-md-5 col-xs-12'i><'col-md-3 col-xs-6'l><'col-md-4 col-xs-6 text-right'p>>",
 		"aLengthMenu": [[10, 25, 50, -1], [10, 25, 50, "All"]],
 		"bDestroy": true,
@@ -513,7 +511,6 @@ function drafts(){
 function notifications(){
 	tableContainer1 = $("#official_notify");
 	tableContainer1.dataTable({
-		"sPaginationType": "bootstrap",
 		"sDom": "<'row'<'col-xs-12 hidden col-right'f>r>t<'row'<'col-md-5 col-xs-12'i><'col-md-3 col-xs-6'l><'col-md-4 col-xs-6 text-right'p>>",
 		"aLengthMenu": [[10, 25, 50, -1], [10, 25, 50, "All"]],
 		"bDestroy": true,
@@ -528,7 +525,6 @@ function worklistwrtnow(json){
 	//$("#official_inbox").empty();
 	tableContainer1 = $("#official_inbox"); 
 	tableContainer1.dataTable({
-		"sPaginationType": "bootstrap",
 		"sDom": "<'row'<'col-xs-12 hidden col-right'f>r>t<'row'<'col-md-5 col-xs-12'i><'col-md-3 col-xs-6'l><'col-md-4 col-xs-6 text-right'p>>",
 		"aLengthMenu": [[10, 25, 50, -1], [10, 25, 50, "All"]],
 		"bDestroy": true,

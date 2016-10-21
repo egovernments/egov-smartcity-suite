@@ -39,11 +39,14 @@
  */
 package org.egov.works.abstractestimate.service;
 
+import java.util.List;
+
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 
 import org.egov.commons.dao.EgwStatusHibernateDAO;
 import org.egov.commons.dao.FinancialYearHibernateDAO;
+import org.egov.infra.admin.master.entity.User;
 import org.egov.works.abstractestimate.entity.AbstractEstimate;
 import org.egov.works.abstractestimate.entity.EstimateTechnicalSanction;
 import org.egov.works.abstractestimate.entity.FinancialDetail;
@@ -172,6 +175,11 @@ public class EstimateService {
     public AbstractEstimate getAbstractEstimateByLineEstimateDetailsForCancelLineEstimate(final Long id) {
         return abstractEstimateRepository.findByLineEstimateDetails_IdAndEgwStatus_codeEquals(id,
                 AbstractEstimate.EstimateStatus.ADMIN_SANCTIONED.toString());
+    }
+
+    public List<User> getCreatedByForEstimatePhotograph() {
+        return abstractEstimateRepository.findCreatedByForEstimatePhotograph(
+                AbstractEstimate.EstimateStatus.TECH_SANCTIONED.toString());
     }
 
 }

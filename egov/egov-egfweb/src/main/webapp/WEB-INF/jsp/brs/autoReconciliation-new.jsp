@@ -42,65 +42,17 @@
 <html>
 <%@ include file="/includes/taglibs.jsp"%>
 <%@ page language="java"%>
-
+<%@ taglib uri="/WEB-INF/tags/cdn.tld" prefix="cdn" %>
 <head>
+<script src="<cdn:url value='/resources/app/js/reconciliationHelper.js?rnd=${app_release_no}' />"></script>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 <title><s:text name="bankreconciliation" /></title>
 <script type="text/javascript">
-	function validate() {
-		if (document.getElementById("bankId").value == "") {
-			bootbox.alert("Select Bank");
+function validateSubmit() {
+	if(!validate())
+		{
 			return false;
 		}
-		if (document.getElementById("branchId").value == "") {
-			bootbox.alert("Select Branch");
-			return false;
-		}
-		if (document.getElementById("accountId").value == "") {
-			bootbox.alert("Select Account");
-			return false;
-		}
-		var toDateStr = document.getElementById("toDate").value;
-
-		var reconDateStr = document.getElementById("reconciliationDate").value;
-		if (reconDateStr == "") {
-			bootbox.alert("Select <s:text name='reconciliationdate'/>");
-			return false;
-		}
-		if (document.getElementById("fromDate").value == "") {
-			bootbox.alert("Select <s:text name='fromdate'/>");
-			return false;
-		}
-		if (toDateStr == "") {
-			bootbox.alert("Select <s:text name='todate'/>");
-			return false;
-		}
-
-		if (toDateStr != null && reconDateStr != null) {
-
-			var toDateParts = toDateStr.split("/");
-			if (toDateParts.length != 3) {
-				bootbox.alert("Enter date is 'DD/MM/YYYY' format only");
-				return false;
-			}
-			var toDate = new Date(toDateParts[1] + "/" + toDateParts[0] + "/"
-					+ toDateParts[2]);
-			var reconDateParts = reconDateStr.split("/");
-
-			if (reconDateParts.length != 3) {
-				bootbox.alert("Enter date is 'DD/MM/YYYY' format only");
-				return false;
-			}
-			var reconDate = new Date(reconDateParts[1] + "/"
-					+ reconDateParts[0] + "/" + reconDateParts[2]);
-			//bootbox.alert(reconDate.toString('MM-dd-yyyy'));
-			if (reconDate < toDate) {
-				bootbox
-						.alert("<s:text name='reconciliationdate'/> must be higher or equal to <s:text name='todate'/>");
-				return false;
-			}
-		}
-
 		document.forms[0].action = "autoReconciliation-schedule.action"
 
 		return true;
@@ -211,7 +163,7 @@
 						<tr>
 							<td><input type="submit" class="buttonsubmit"
 								value="Process" name="Schedule" method="schedule"
-								onclick="return validate();" /></td>
+								onclick="return validateSubmit();" /></td>
 							<td><input type="button" value="Close"
 								onclick="javascript:window.close()" class="buttonsubmit" /></td>
 						</tr>

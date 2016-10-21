@@ -197,7 +197,7 @@ public class PropertyTitleTransferService {
             PayPropertyTaxDetails payPropTaxDetails = (PayPropertyTaxDetails) getObjectFromJSONRequest(
                     payPropertyTaxDetails, PayPropertyTaxDetails.class);
 
-            ErrorDetails errorDetails = validationUtil.validatePaymentDetails(payPropTaxDetails,true);
+            ErrorDetails errorDetails = validationUtil.validatePaymentDetails(payPropTaxDetails,true, "");
             if (null != errorDetails) {
                 responseJson = getJSONResponse(errorDetails);
             } else {
@@ -211,7 +211,7 @@ public class PropertyTitleTransferService {
                 responseJson = getJSONResponse(receiptDetails);
             }
         } catch (ValidationException e) {
-            e.printStackTrace();
+
             List<ErrorDetails> errorList = new ArrayList<ErrorDetails>(0);
 
             List<ValidationError> errors = e.getErrors();
@@ -224,7 +224,7 @@ public class PropertyTitleTransferService {
             }
             responseJson = JsonConvertor.convert(errorList);
         } catch (Exception e) {
-            e.printStackTrace();
+
             List<ErrorDetails> errorList = new ArrayList<ErrorDetails>(0);
             ErrorDetails er = new ErrorDetails();
             er.setErrorCode(e.getMessage());

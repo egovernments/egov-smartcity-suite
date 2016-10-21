@@ -222,7 +222,7 @@ public class TaxExemptionController extends GenericWorkFlowController {
         String target = "";
         loggedUserIsMeesevaUser = propertyService.isMeesevaUser(securityUtils.getCurrentUser());
         if ((!propertyByEmployee || loggedUserIsMeesevaUser)
-                && null == propertyService.getUserPositionByZone(property.getBasicProperty(),property.getBasicProperty().getSource())) {
+                && null == propertyService.getUserPositionByZone(property.getBasicProperty(), false)) {
             model.addAttribute("errorMsg", "No Senior or Junior assistants exists,Please check");
             model.addAttribute("stateType", propertyImpl.getClass().getSimpleName());
             taxExemptionService.addModelAttributes(model, basicProperty);

@@ -42,6 +42,8 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 <%@ taglib uri="http://www.springframework.org/tags" prefix="spring"%>
 <%@ taglib uri="http://www.springframework.org/tags/form" prefix="form"%>
+<%@ taglib uri="/WEB-INF/taglib/cdn.tld" prefix="cdn" %>
+
 <div class="row">
 	<div class="col-md-12">
 		<c:if test="${not empty message}">
@@ -93,5 +95,5 @@ $('#submit').click(function(e){
 		return false;
 });
 </script>
-<script src="<c:url value='/resources/global/js/jquery/plugins/exif.js' context='/egi'/>"></script>
-<script src="<c:url value='/resources/app/js/legacyAdvertisement.js'/>"></script>
+<script src="<cdn:url value='/resources/global/js/jquery/plugins/exif.js' context='/egi'/>"></script>
+<script src="<cdn:url value='/resources/app/js/legacyAdvertisement.js?rnd=${app_release_no}'/>"></script>

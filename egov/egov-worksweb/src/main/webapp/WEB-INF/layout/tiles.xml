@@ -67,7 +67,7 @@
     </definition>
     
     <definition name="newLineEstimate-edit" extends="base_layout">
-        <put-attribute name="page-title" value="title.new.lineestimate" cascade="true"/>
+        <put-attribute name="page-title" value="title.lineestimate.view" cascade="true"/>
         <put-attribute name="body" value="/WEB-INF/views/lineestimate/newLineEstimate-edit.jsp"/>
     </definition>
     
@@ -246,4 +246,25 @@
         <put-attribute name="body" value="/WEB-INF/views/milestone/track/trackMilestone-view.jsp"/>
     </definition>
     
+    <definition name="searchLineEstimateForEstimatePhotograph-form" extends="base_layout">
+		<put-attribute name="page-title" value="lbl.uploadestimatephotograph" cascade="true"/>
+		<put-attribute name="body" value="/WEB-INF/views/lineestimate/searchLineEstimateForEstimatePhotograph-form.jsp"/>
+	</definition>
+	
+    <definition name="estimatePhotographs-form" extends="base_layout">
+		<put-attribute name="page-title" value="lbl.uploadestimatephotograph" cascade="true"/>
+		<put-attribute name="body" value="/WEB-INF/views/estimatephotograph/estimatePhotographs-form.jsp"/>
+	</definition>
+
+    <definition name="estimatePhotographs-view" extends="base_layout">
+		<put-attribute name="page-title" value="lbl.viewestimatephotograph" cascade="true"/>
+		<put-attribute name="body" value="/WEB-INF/views/estimatephotograph/estimatePhotograph-view.jsp"/>
+	</definition>
+	
+	<definition name="searchEstimatePhotograph-form" extends="base_layout">
+		<put-attribute name="page-title" value="lbl.viewestimatephotograph" cascade="true"/>
+		<put-attribute name="body" value="/WEB-INF/views/estimatephotograph/searchEstimatePhotograph-form.jsp"/>
+	</definition>
+
 </tiles-definitions>
+

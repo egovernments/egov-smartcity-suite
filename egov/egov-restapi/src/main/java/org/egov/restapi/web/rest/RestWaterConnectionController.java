@@ -162,12 +162,11 @@ public class RestWaterConnectionController {
                 applicationCode);
         return waterConnectionDetails.getApplicationNumber();
         /*
-         * String httpStatus = HttpStatus.OK.getReasonPhrase(); try { System.out.println("newConnection :  " +
-         * WaterConnectionInfo.toString()); System.out.println("token : " + token); final Boolean isAuthenticatedUser =
+         * String httpStatus = HttpStatus.OK.getReasonPhrase(); try { final Boolean isAuthenticatedUser =
          * authenticateUser("mahesh", "demo"); final Token tokenObj = validateToken(token); if (tokenObj != null) { if
          * (isAuthenticatedUser) { tokenService.redeem(tokenObj); } else httpStatus = HttpStatus.UNAUTHORIZED.getReasonPhrase(); }
          * else httpStatus = HttpStatus.PRECONDITION_FAILED.getReasonPhrase(); } catch (final Exception exp) {
-         * exp.printStackTrace(); } return httpStatus;
+         *  } return httpStatus;
          */
     }
 

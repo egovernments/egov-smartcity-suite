@@ -83,11 +83,10 @@ public class DefaultersWTReportService {
         queryStr.append(" and dcbinfo.connectionstatus = '" + ConnectionStatus.ACTIVE.toString() + "'");
         if (ward != null && !ward.isEmpty())
             queryStr.append(" and wardboundary.name = '" + ward + "'");
-        
-        
+
         queryStr.append(" and dcbinfo.demand IS NOT NULL");
         if (!topDefaulters.isEmpty())
-            queryStr.append(" order by dcbinfo.arr_balance+dcbinfo.curr_balance desc limit " + topDefaulters);
+            queryStr.append(" order by dcbinfo.arr_balance+dcbinfo.curr_balance desc ");
         final SQLQuery finalQuery = getCurrentSession().createSQLQuery(queryStr.toString());
         finalQuery.setFirstResult(startsFrom);
         finalQuery.setMaxResults(maxResults);
@@ -95,12 +94,30 @@ public class DefaultersWTReportService {
         return finalQuery.list();
     }
 
-    public long getTotalCount(final String fromAmount, final String toAmount, final String ward,
+    public long getTotalCount(final String fromAmount, final String toAmount, final String ward) throws ParseException {
+
+        StringBuilder queryStr = new StringBuilder();
+        queryStr = queryStr.append("select count(dcbinfo.hscno) from egwtr_mv_dcb_view dcbinfo")
+                .append(" INNER JOIN eg_boundary wardboundary on dcbinfo.wardid = wardboundary.id INNER JOIN eg_boundary localboundary")
+                .append(" on dcbinfo.locality = localboundary.id");
+        if (Double.parseDouble(toAmount) == 0)
+            queryStr.append(" where dcbinfo.arr_balance+dcbinfo.curr_balance >" + fromAmount);
+        else
+            queryStr.append(" where dcbinfo.arr_balance+dcbinfo.curr_balance >" + fromAmount
+                    + " and dcbinfo.arr_balance+dcbinfo.curr_balance <" + toAmount);
+        queryStr.append(" and dcbinfo.connectionstatus = '" + ConnectionStatus.ACTIVE.toString() + "'");
+        if (ward != null && !ward.isEmpty())
+            queryStr.append(" and wardboundary.name = '" + ward + "'");
+        final SQLQuery finalQuery = getCurrentSession().createSQLQuery(queryStr.toString());
+        final Long count = ((BigInteger) finalQuery.uniqueResult()).longValue();
+        return count;
+    }
+
+    public long getTotalCountFromLimit(final String fromAmount, final String toAmount, final String ward,
             final String topDefaulters) throws ParseException {
 
         StringBuilder queryStr = new StringBuilder();
-        queryStr = queryStr
-                .append("select count(dcbinfo.hscno) from egwtr_mv_dcb_view dcbinfo")
+        queryStr = queryStr.append("select count(*) from (select * from egwtr_mv_dcb_view dcbinfo")
                 .append(" INNER JOIN eg_boundary wardboundary on dcbinfo.wardid = wardboundary.id INNER JOIN eg_boundary localboundary")
                 .append(" on dcbinfo.locality = localboundary.id");
         if (Double.parseDouble(toAmount) == 0)
@@ -112,7 +129,8 @@ public class DefaultersWTReportService {
         if (ward != null && !ward.isEmpty())
             queryStr.append(" and wardboundary.name = '" + ward + "'");
         if (!topDefaulters.isEmpty())
-            queryStr.append(" order by dcbinfo.arr_balance+dcbinfo.curr_balance desc limit " + topDefaulters);
+            queryStr.append(" limit " + topDefaulters);
+        queryStr.append(") as count");
         final SQLQuery finalQuery = getCurrentSession().createSQLQuery(queryStr.toString());
         final Long count = ((BigInteger) finalQuery.uniqueResult()).longValue();
         return count;

@@ -576,6 +576,13 @@ public class ContraService extends PersistenceService<ContraJournalVoucher, Long
         addToContraSql(instrumentDetailsMap);
         // if(LOGGER.isDebugEnabled()) LOGGER.debug(" updateCheque_DD_Card_Deposit | End"+instrumentCount);
     }
+    
+    public void updateCheque_DD_Card_Deposit(final Map instrumentDetailsMap, CVoucherHeader cVoucherHeader, InstrumentHeader instrumentHeader, Bankaccount bankaccount)
+    {
+        updateInstrumentAndPayinSql(instrumentDetailsMap);
+        addToBankReconcilationSQL(instrumentDetailsMap);
+        addToContraJournal(cVoucherHeader,instrumentHeader,bankaccount);
+    }
 
     /**
      * @see public void updateCheque_DD_Card_Deposit_Receipt(Map isntrumentDetailsMap) fordetails
@@ -586,6 +593,14 @@ public class ContraService extends PersistenceService<ContraJournalVoucher, Long
         updateInstrumentAndPayinSql(instrumentDetailsMap);
         addToBankReconcilationSQL(instrumentDetailsMap);
         addToContraSql(instrumentDetailsMap);
+    }
+    
+    @Transactional
+    public void updateCashDeposit(final Map instrumentDetailsMap, CVoucherHeader cVoucherHeader, InstrumentHeader instrumentHeader, Bankaccount bankaccount)
+    {
+        updateInstrumentAndPayinSql(instrumentDetailsMap);
+        addToBankReconcilationSQL(instrumentDetailsMap);
+        addToContraJournal(cVoucherHeader,instrumentHeader,bankaccount);
     }
 
     private void updateInstrumentAndPayinSql(final Map instrumentDetailsMap) {
@@ -612,7 +627,7 @@ public class ContraService extends PersistenceService<ContraJournalVoucher, Long
         ihSQLQuery.executeUpdate();
 
     }
-
+    
     /**
      *
      * @param instrumentDetailsMap
@@ -679,6 +694,15 @@ public class ContraService extends PersistenceService<ContraJournalVoucher, Long
                 .setLong("createdBy", (Long) instrumentDetailsMap.get("createdby"));
         ioSQLQuery.executeUpdate();
 
+    }
+    
+    @Transactional
+    public void addToContraJournal(CVoucherHeader cVoucherHeader, InstrumentHeader instrumentHeader, Bankaccount bankaccount) {
+        ContraJournalVoucher contraJournalVoucher = new ContraJournalVoucher();
+        contraJournalVoucher.setVoucherHeaderId(cVoucherHeader);
+        contraJournalVoucher.setInstrumentHeaderId(instrumentHeader);
+        contraJournalVoucher.setToBankAccountId(bankaccount);
+        persistenceService.persist(contraJournalVoucher);
     }
 
     @SuppressWarnings("unchecked")

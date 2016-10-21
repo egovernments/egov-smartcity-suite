@@ -39,6 +39,8 @@
  */
 package org.egov.restapi.web.rest;
 
+import static org.springframework.web.bind.annotation.RequestMethod.POST;
+
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.util.ArrayList;
@@ -55,6 +57,7 @@ import org.egov.collection.integration.models.BillReceiptInfo;
 import org.egov.infra.validation.exception.ValidationError;
 import org.egov.infra.validation.exception.ValidationException;
 import org.egov.ptis.constants.PropertyTaxConstants;
+import org.egov.ptis.domain.dao.property.BasicPropertyDAO;
 import org.egov.ptis.domain.model.ErrorDetails;
 import org.egov.ptis.domain.model.PropertyTaxDetails;
 import org.egov.ptis.domain.model.RestPropertyTaxDetails;
@@ -76,7 +79,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.BindException;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
@@ -94,6 +96,9 @@ public class RestWaterConnectionCollection {
 
     @Autowired
     private PropertyExternalService propertyExternalService;
+
+    @Autowired
+    private BasicPropertyDAO basicPropertyDAO;
 
     /**
      * This method is used to pay the water tax.
@@ -114,7 +119,7 @@ public class RestWaterConnectionCollection {
 
     // http://localhost:8080/restapi/watercharges/getwatertaxdetails
     // http://localhost:8080/restapi/watercharges/categories
-    @RequestMapping(value = "/watercharges/paywatertax", method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON, produces = MediaType.APPLICATION_JSON)
+    @RequestMapping(value = "/watercharges/paywatertax", method = POST, consumes = MediaType.APPLICATION_JSON, produces = MediaType.APPLICATION_JSON)
     public String payWaterTax(@Valid @RequestBody final PayWaterTaxDetails payWaterTaxDetails,
             final HttpServletRequest request) {
         WaterReceiptDetails waterReceiptDetails = null;
@@ -128,7 +133,7 @@ public class RestWaterConnectionCollection {
                 waterReceiptDetails = waterTaxExternalService.payWaterTax(payWaterTaxDetails);
             }
         } catch (final ValidationException e) {
-            e.printStackTrace();
+
             final List<ErrorDetails> errorList = new ArrayList<ErrorDetails>(0);
 
             final List<ValidationError> errors = e.getErrors();
@@ -140,7 +145,7 @@ public class RestWaterConnectionCollection {
             }
             JsonConvertor.convert(errorList);
         } catch (final Exception e) {
-            e.printStackTrace();
+
             final List<ErrorDetails> errorList = new ArrayList<ErrorDetails>(0);
             final ErrorDetails er = new ErrorDetails();
             er.setErrorCode(e.getMessage());
@@ -151,7 +156,7 @@ public class RestWaterConnectionCollection {
         return JsonConvertor.convert(waterReceiptDetails);
     }
 
-    @RequestMapping(value = "/watercharges/getwatertaxdetails", method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON, produces = MediaType.APPLICATION_JSON)
+    @RequestMapping(value = "/watercharges/getwatertaxdetails", method = POST, consumes = MediaType.APPLICATION_JSON, produces = MediaType.APPLICATION_JSON)
     public String getWaterTaxDetailsByAppLicationOrConsumerNumber(
             @Valid @RequestBody final PayWaterTaxDetails payWaterTaxDetails)
             throws JsonGenerationException, JsonMappingException, IOException, BindException {
@@ -159,88 +164,86 @@ public class RestWaterConnectionCollection {
         if (null != errorDetails)
             return JsonConvertor.convert(errorDetails);
         else {
-
             final WaterTaxDetails waterTaxDetails = waterTaxExternalService.getWaterTaxDemandDet(payWaterTaxDetails);
-            if (waterTaxDetails.getConsumerNo() == null || "".equals(waterTaxDetails.getConsumerNo()))
-                waterTaxDetails.setConsumerNo("");
-            if (waterTaxDetails.getOwnerName() == null)
-                waterTaxDetails.setOwnerName("");
-            if (waterTaxDetails.getLocalityName() == null)
-                waterTaxDetails.setLocalityName("");
-            if (waterTaxDetails.getPropertyAddress() == null)
-                waterTaxDetails.setPropertyAddress("");
-            if (waterTaxDetails.getTaxDetails() == null) {
-                final RestPropertyTaxDetails ar = new RestPropertyTaxDetails();
-                final List<RestPropertyTaxDetails> taxDetails = new ArrayList<RestPropertyTaxDetails>(0);
-                taxDetails.add(ar);
-                waterTaxDetails.setTaxDetails(taxDetails);
-            }
-            return JsonConvertor.convert(waterTaxDetails);
+            return JsonConvertor.convert(getWaterTaxDetails(waterTaxDetails));
         }
     }
 
-    @RequestMapping(value = "/watercharges/getwatertaxdetailsByOwnerDetails", method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON, produces = MediaType.APPLICATION_JSON)
+    @RequestMapping(value = "/watercharges/getwatertaxdetailsByOwnerDetails", method = POST, consumes = MediaType.APPLICATION_JSON, produces = MediaType.APPLICATION_JSON)
     public String getWaterTaxDetailsByAppLicationOrConsumerNumberByOwnerDetails(
             @Valid @RequestBody final WaterConnectionRequestDetails waterConnectionRequestDetails)
             throws JsonGenerationException, JsonMappingException, IOException, BindException {
+        final List<WaterTaxDetails> waterTaxDetailsList = new ArrayList<WaterTaxDetails>();
         ErrorDetails errorDetails = null;
-        if (waterConnectionRequestDetails.getConsumerNo() != null)
+        if (!waterConnectionRequestDetails.getConsumerNo().isEmpty())
             errorDetails = validateConsumerNumber(waterConnectionRequestDetails.getConsumerNo());
-        if (null != errorDetails)
-            return JsonConvertor.convert(errorDetails);
-        else {
+        if (!waterConnectionRequestDetails.getAssessmentNo().isEmpty())
+            errorDetails = validateAssessmentNumber(waterConnectionRequestDetails.getAssessmentNo());
+        if (null != errorDetails) {
+            final WaterTaxDetails watertaxDetails = new WaterTaxDetails();
+            watertaxDetails.setErrorDetails(errorDetails);
+            waterTaxDetailsList.add(watertaxDetails);
+            return JsonConvertor.convert(waterTaxDetailsList);
+        } else {
             List<PropertyTaxDetails> propertyTaxDetailsList = new ArrayList<PropertyTaxDetails>();
             String assessmentNo = "";
-            if (waterConnectionRequestDetails.getConsumerNo() != null)
-                assessmentNo = waterConnectionService.findByConsumerCode(waterConnectionRequestDetails.getConsumerNo())
-                        .getPropertyIdentifier();
-            String ownerName = "";
-            String mobileNumber = "";
-            if (waterConnectionRequestDetails.getOwnerName() != null)
-                ownerName = waterConnectionRequestDetails.getOwnerName();
-            if (waterConnectionRequestDetails.getMobileNo() != null)
-                mobileNumber = waterConnectionRequestDetails.getMobileNo();
-            final String category = "";
-            final String doorNo = "";
-            if (!org.apache.commons.lang.StringUtils.isBlank(assessmentNo)
-                    || !org.apache.commons.lang.StringUtils.isBlank(ownerName)
-                    || !org.apache.commons.lang.StringUtils.isBlank(mobileNumber)
-                    || !org.apache.commons.lang.StringUtils.isBlank(doorNo))
-                propertyTaxDetailsList = propertyExternalService.getPropertyTaxDetails(assessmentNo, ownerName,
-                        mobileNumber, category, doorNo);
+
+            List<WaterConnection> waterconnectionList = new ArrayList<WaterConnection>();
+            Boolean consumerExists = false;
+            Boolean ownerdetailsnotexists = false;
+            waterConnectionRequestDetails.setAssessmentNo(waterConnectionRequestDetails.getAssessmentNo() == null
+                    ? assessmentNo : waterConnectionRequestDetails.getAssessmentNo());
+            if (!waterConnectionRequestDetails.getAssessmentNo().isEmpty()
+                    && !waterConnectionRequestDetails.getConsumerNo().isEmpty()) {
+                ownerdetailsnotexists = true;
+                waterconnectionList = waterConnectionService
+                        .findByPropertyIdentifier(waterConnectionRequestDetails.getAssessmentNo());
+                for (final WaterConnection waterconnection : waterconnectionList)
+                    if (waterconnection.getConsumerCode()
+                            .equalsIgnoreCase(waterConnectionRequestDetails.getConsumerNo())) {
+                        consumerExists = true;
+                        ownerdetailsnotexists = false;
+                        break;
+                    }
+            } else if (waterConnectionRequestDetails.getAssessmentNo().isEmpty()
+                    && !waterConnectionRequestDetails.getConsumerNo().isEmpty()) {
+                consumerExists = true;
+                ownerdetailsnotexists = false;
+            } else
+                assessmentNo = waterConnectionRequestDetails.getAssessmentNo();
+            if (!consumerExists && ownerdetailsnotexists)
+                return JsonConvertor.convert(isEmptyWaterTaxDetails());
+            if (!consumerExists) {
+                propertyTaxDetailsList = propertyExternalService.getPropertyTaxDetails(assessmentNo,
+                        waterConnectionRequestDetails.getOwnerName(), waterConnectionRequestDetails.getMobileNo(), null,
+                        null);
+                if (propertyTaxDetailsList == null || propertyTaxDetailsList.isEmpty())
+                    return JsonConvertor.convert(isEmptyWaterTaxDetails());
+            }
             List<WaterConnection> waterConnectionList = new ArrayList<WaterConnection>();
             final List<String> consumerCodesList = new ArrayList<String>();
-            for (final PropertyTaxDetails propertyTaxDetails : propertyTaxDetailsList) {
-                waterConnectionList = waterConnectionService
-                        .findByPropertyIdentifier(propertyTaxDetails.getAssessmentNo());
-                for (final WaterConnection waterconnection : waterConnectionList)
-                    consumerCodesList.add(waterconnection.getConsumerCode());
-            }
-            if (consumerCodesList.size() == 0 || consumerCodesList.size() > 1000) {
-                final ErrorDetails errordetails = new ErrorDetails();
-                errordetails.setErrorCode(RestApiConstants.THIRD_PARTY_ERR_CODE_WATERTAXDETAILS_SIZE);
-                errordetails.setErrorMessage(RestApiConstants.THIRD_PARTY_ERR_MSG_WATERTAXDETAILS_SIZE);
-                return JsonConvertor.convert(errordetails);
-            } else {
-                final List<WaterTaxDetails> waterTaxDetailsList = new ArrayList<WaterTaxDetails>();
+            if (consumerExists && !ownerdetailsnotexists)
+                consumerCodesList.add(waterConnectionRequestDetails.getConsumerNo());
+            else
+                for (final PropertyTaxDetails propertyTaxDetails : propertyTaxDetailsList) {
+                    waterConnectionList = waterConnectionService
+                            .findByPropertyIdentifier(propertyTaxDetails.getAssessmentNo());
+                    for (final WaterConnection waterconnection : waterConnectionList)
+                        consumerCodesList.add(waterconnection.getConsumerCode());
+                }
+            if (consumerCodesList.size() == 0 || consumerCodesList.size() > 100)
+                return JsonConvertor.convert(isEmptyWaterTaxDetails());
+            else {
                 WaterTaxDetails watertaxdetails = new WaterTaxDetails();
                 for (final String consumerCode : consumerCodesList) {
                     watertaxdetails = waterTaxExternalService.getWaterTaxDemandDetByConsumerCode(consumerCode);
-                    if (watertaxdetails.getConsumerNo() == null || "".equals(watertaxdetails.getConsumerNo()))
-                        watertaxdetails.setConsumerNo("");
-                    if (watertaxdetails.getOwnerName() == null)
-                        watertaxdetails.setOwnerName("");
-                    if (watertaxdetails.getLocalityName() == null)
-                        watertaxdetails.setLocalityName("");
-                    if (watertaxdetails.getPropertyAddress() == null)
-                        watertaxdetails.setPropertyAddress("");
-                    if (watertaxdetails.getTaxDetails() == null) {
-                        final RestPropertyTaxDetails ar = new RestPropertyTaxDetails();
-                        final List<RestPropertyTaxDetails> taxDetails = new ArrayList<RestPropertyTaxDetails>(0);
-                        taxDetails.add(ar);
-                        watertaxdetails.setTaxDetails(taxDetails);
+                    waterTaxDetailsList.add(getWaterTaxDetails(watertaxdetails));
+                    if (watertaxdetails.getErrorDetails() == null) {
+                        final ErrorDetails errordetails = new ErrorDetails();
+                        errordetails.setErrorCode(RestApiConstants.THIRD_PARTY_ERR_CODE_SUCCESS);
+                        errordetails.setErrorMessage(RestApiConstants.THIRD_PARTY_ERR_MSG_SUCCESS);
+                        watertaxdetails.setErrorDetails(errorDetails);
                     }
-                    waterTaxDetailsList.add(watertaxdetails);
                 }
                 return JsonConvertor.convert(waterTaxDetailsList);
             }
@@ -272,19 +275,13 @@ public class RestWaterConnectionCollection {
         }
         if (waterConnDetailsObj != null && waterConnDetailsObj.getConnectionType().equals(ConnectionType.NON_METERED)) {
             final BigDecimal totalAmountDue = waterConnectionDetailsService.getTotalAmount(waterConnDetailsObj);
-            LOG.error("totalAmountDue:" + totalAmountDue);
+            LOG.info("totalAmountDue:" + totalAmountDue);
 
-            LOG.error("payWaterTaxDetails.getTotalAmount():" + payWaterTaxDetails.getTotalAmount());
+            LOG.info("payWaterTaxDetails.getTotalAmount():" + payWaterTaxDetails.getTotalAmount());
 
-            LOG.error("compare " + totalAmountDue.compareTo(payWaterTaxDetails.getTotalAmount()));
+            LOG.info("compare " + totalAmountDue.compareTo(payWaterTaxDetails.getTotalAmount()));
 
-            LOG.error("compare " + totalAmountDue.compareTo(payWaterTaxDetails.getTotalAmount()));
-
-            if (totalAmountDue.compareTo(payWaterTaxDetails.getTotalAmount()) == -1) {
-                errorDetails = new ErrorDetails();
-                errorDetails.setErrorCode(RestApiConstants.THIRD_PARTY_ERR_CODE_DEMAND_AMOUNT_VALID);
-                errorDetails.setErrorMessage(RestApiConstants.THIRD_PARTY_ERR_MSG_DEMAND_AMOUNT_VALID);
-            }
+            LOG.info("compare " + totalAmountDue.compareTo(payWaterTaxDetails.getTotalAmount()));
 
         }
         if (payWaterTaxDetails.getTransactionId() == null || "".equals(payWaterTaxDetails.getTransactionId())) {
@@ -390,23 +387,69 @@ public class RestWaterConnectionCollection {
             errorDetails.setErrorMessage(RestApiConstants.THIRD_PARTY_ERR_MSG_CONSUMER_NO_LEN);
         }
         WaterConnection waterConnection = null;
-        if (consumerCode != null)
+        if (!consumerCode.isEmpty()) {
             waterConnection = waterConnectionService.findByConsumerCode(consumerCode);
-        if (waterConnection == null) {
-            errorDetails = new ErrorDetails();
-            errorDetails.setErrorCode(RestApiConstants.THIRD_PARTY_ERR_CODE_CONSUMERCODE_NOT_EXIST);
-            errorDetails.setErrorMessage(RestApiConstants.THIRD_PARTY_ERR_MSG_CONSUMERCODE_NOT_EXIST);
+            if (waterConnection == null) {
+                errorDetails = new ErrorDetails();
+                errorDetails.setErrorCode(RestApiConstants.THIRD_PARTY_ERR_CODE_CONSUMERCODE_NOT_EXIST);
+                errorDetails.setErrorMessage(RestApiConstants.THIRD_PARTY_ERR_MSG_CONSUMERCODE_NOT_EXIST);
+            }
         }
         WaterConnectionDetails waterConnDetailsObj = null;
-        if (consumerCode != null)
+        if (!consumerCode.isEmpty()) {
             waterConnDetailsObj = waterConnectionDetailsService.findByConsumerCodeAndConnectionStatus(consumerCode,
                     ConnectionStatus.INACTIVE);
-        if (waterConnDetailsObj != null) {
-            errorDetails = new ErrorDetails();
-            errorDetails.setErrorCode(RestApiConstants.THIRD_PARTY_ERR_CODE_INACTIVE_CONSUMERNO);
-            errorDetails.setErrorMessage(RestApiConstants.THIRD_PARTY_ERR_MSG_INACTIVE_CONSUMERNO);
+            if (waterConnDetailsObj != null) {
+                errorDetails = new ErrorDetails();
+                errorDetails.setErrorCode(RestApiConstants.THIRD_PARTY_ERR_CODE_INACTIVE_CONSUMERNO);
+                errorDetails.setErrorMessage(RestApiConstants.THIRD_PARTY_ERR_MSG_INACTIVE_CONSUMERNO);
+            }
         }
         return errorDetails;
+    }
+
+    private List<WaterTaxDetails> isEmptyWaterTaxDetails() {
+        final List<WaterTaxDetails> waterTaxDetailsList = new ArrayList<WaterTaxDetails>();
+        final WaterTaxDetails watertaxDetails = new WaterTaxDetails();
+        final ErrorDetails errordetails = new ErrorDetails();
+        errordetails.setErrorCode(RestApiConstants.THIRD_PARTY_ERR_CODE_WATERTAXDETAILS_SIZE);
+        errordetails.setErrorMessage(RestApiConstants.THIRD_PARTY_ERR_MSG_WATERTAXDETAILS_SIZE);
+        watertaxDetails.setErrorDetails(errordetails);
+        waterTaxDetailsList.add(watertaxDetails);
+        return waterTaxDetailsList;
+    }
+
+    private ErrorDetails validateAssessmentNumber(final String assessmentNumber) {
+        ErrorDetails errorDetails = null;
+        if (assessmentNumber.trim().length() > 0 && assessmentNumber.trim().length() < 10) {
+            errorDetails = new ErrorDetails();
+            errorDetails.setErrorCode(PropertyTaxConstants.THIRD_PARTY_ERR_CODE_ASSESSMENT_NO_LEN);
+            errorDetails.setErrorMessage(PropertyTaxConstants.THIRD_PARTY_ERR_MSG_ASSESSMENT_NO_LEN);
+        }
+        if (!basicPropertyDAO.isAssessmentNoExist(assessmentNumber)) {
+            errorDetails = new ErrorDetails();
+            errorDetails.setErrorCode(PropertyTaxConstants.THIRD_PARTY_ERR_CODE_ASSESSMENT_NO_NOT_FOUND);
+            errorDetails.setErrorMessage(PropertyTaxConstants.THIRD_PARTY_ERR_MSG_ASSESSMENT_NO_NOT_FOUND);
+        }
+        return errorDetails;
+    }
+
+    private WaterTaxDetails getWaterTaxDetails(final WaterTaxDetails waterTaxDetails) {
+        if (waterTaxDetails.getConsumerNo() == null || "".equals(waterTaxDetails.getConsumerNo()))
+            waterTaxDetails.setConsumerNo("");
+        if (waterTaxDetails.getOwnerName() == null)
+            waterTaxDetails.setOwnerName("");
+        if (waterTaxDetails.getLocalityName() == null)
+            waterTaxDetails.setLocalityName("");
+        if (waterTaxDetails.getPropertyAddress() == null)
+            waterTaxDetails.setPropertyAddress("");
+        if (waterTaxDetails.getTaxDetails() == null) {
+            final RestPropertyTaxDetails ar = new RestPropertyTaxDetails();
+            final List<RestPropertyTaxDetails> taxDetails = new ArrayList<RestPropertyTaxDetails>(0);
+            taxDetails.add(ar);
+            waterTaxDetails.setTaxDetails(taxDetails);
+        }
+        return waterTaxDetails;
     }
 
 }

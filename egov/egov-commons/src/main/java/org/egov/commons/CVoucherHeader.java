@@ -304,7 +304,7 @@ public class CVoucherHeader extends StateAware {
 
     @Override
     public String getStateDetails() {
-        return voucherNumber;
+        return voucherNumber+"-"+getState().getComments();
     }
 
     public Set<CGeneralLedger> getGeneralledger() {

@@ -85,7 +85,6 @@ function callAjaxSearch() {
 					type: "POST",
 					"data":  getFormData(jQuery('form'))
 				},
-				"sPaginationType" : "bootstrap",
 				"bDestroy" : true,
 				'bAutoWidth': false,
 				"sDom" : "<'row'<'col-xs-12 hidden col-right'f>r>t<'row'<'col-xs-3'i><'col-xs-3 col-right'l><'col-xs-3 col-right'<'export-data'T>><'col-xs-3 text-right'p>>",
@@ -98,9 +97,9 @@ function callAjaxSearch() {
 					$('td:eq(0)',row).html(index+1);
 					$('td:eq(10)',row).html(parseFloat(Math.round(data.totalAmount * 100) / 100).toFixed(2));
 					if(data.status == 'Administrative Sanctioned' || data.status == 'Technical Sanctioned')
-						$('td:eq(11)',row).html('<select id="actionDropdown" class="form-control" onchange="renderAction('+ data.id +', this.value)"><option value="">Select from below</option><option value="1">View Line Estimate</option><option value="2">View PDF</option></select>');
+						$('td:eq(11)',row).html('<select id="actionDropdown" class="form-control" onchange="renderAction('+ data.id +', this.value)"><option value="">Select from below</option><option value="1">View Estimate</option><option value="2">View PDF</option></select>');
 					else
-						$('td:eq(11)',row).html('<select id="actionDropdown" class="form-control" onchange="renderAction('+ data.id +', this.value)"><option value="">Select from below</option><option value="1">View Line Estimate</option></select>');
+						$('td:eq(11)',row).html('<select id="actionDropdown" class="form-control" onchange="renderAction('+ data.id +', this.value)"><option value="">Select from below</option><option value="1">View Estimate</option></select>');
 					return row;
 				},
 				aaSorting: [],				

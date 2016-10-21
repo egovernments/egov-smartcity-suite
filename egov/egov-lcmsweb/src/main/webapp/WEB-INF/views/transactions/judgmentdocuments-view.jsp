@@ -42,7 +42,7 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ taglib uri="http://www.springframework.org/tags" prefix="spring" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
-
+<c:if test="${not empty supportDocs}">
 <table class="table table-bordered">
 <thead>
 		<tr>
@@ -51,15 +51,15 @@
 		</tr>
 	</thead>
 	<c:choose>
-		<c:when test="${not empty judgmentDocList}">
-			<c:forEach items="${judgmentDocList}" var="docs" varStatus="serialNo">
+		<c:when test="${not empty supportDocs}">
+			<c:forEach items="${supportDocs}" var="file" varStatus="serialNo">
 				<tbody>
 					<tr>
 						
-						<td><c:forEach items="${docs.getSupportDocs()}" var="file">
+						<td>
 							<a href="/egi/downloadfile?fileStoreId=${file.fileStoreId}&moduleName=LCMS" target="_blank">  
 								<c:out value="${file.fileName}"/> </a> 
-							</c:forEach>
+							
 						</td>
 						
 					</tr>
@@ -71,3 +71,4 @@
 		</c:otherwise>
 	</c:choose>
 </table>
+</c:if>

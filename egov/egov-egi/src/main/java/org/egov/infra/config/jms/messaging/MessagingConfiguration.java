@@ -59,7 +59,7 @@ import javax.jms.Destination;
 public class MessagingConfiguration {
 
     @Bean(name = "smsQueue")
-    public JndiObjectFactoryBean smsQueue() throws IllegalArgumentException {
+    public JndiObjectFactoryBean smsQueue() {
         JndiObjectFactoryBean smsQueue = new JndiObjectFactoryBean();
         smsQueue.setExpectedType(Destination.class);
         smsQueue.setResourceRef(true);
@@ -68,7 +68,7 @@ public class MessagingConfiguration {
     }
 
     @Bean(name = "emailQueue")
-    public JndiObjectFactoryBean emailQueue() throws IllegalArgumentException {
+    public JndiObjectFactoryBean emailQueue() {
         JndiObjectFactoryBean emailQueue = new JndiObjectFactoryBean();
         emailQueue.setExpectedType(Destination.class);
         emailQueue.setResourceRef(true);

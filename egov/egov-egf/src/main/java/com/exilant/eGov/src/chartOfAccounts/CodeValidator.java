@@ -54,7 +54,7 @@ public class CodeValidator {
     {// This fix is for Phoenix Migration.
         /*
          * try { cache=(TreeCacheMBean)MBeanProxyExt.create(TreeCacheMBean.class, "jboss.cache:service=TreeCache", server); }
-         * catch (MalformedObjectNameException e) { // TODO Auto-generated catch block if(LOGGER.isDebugEnabled())
+         * catch (MalformedObjectNameException e) {  if(LOGGER.isDebugEnabled())
          * LOGGER.debug("Exp="+e.getMessage()); throw new ApplicationRuntimeException(e.getMessage()); }
          */
     }
@@ -73,7 +73,7 @@ public class CodeValidator {
          * ()+"/"+gLFilterCode+"::::::"+cache.get(rootNode+"/"+ApplicationThreadLocals.getDomainName(),gLFilterCode));
          * if(cache.get(ROOTNODE+"/"+ApplicationThreadLocals.getDomainName(),GLFILTERCODE) == null) { if(LOGGER.isInfoEnabled())
          * LOGGER.info("calling loadFilterData::for "+ApplicationThreadLocals.getDomainName()); loadFilterData(); } } catch (Exception e)
-         * { // TODO Auto-generated catch block if(LOGGER.isDebugEnabled()) LOGGER.debug("Exp="+e.getMessage()); throw new
+         * {  if(LOGGER.isDebugEnabled()) LOGGER.debug("Exp="+e.getMessage()); throw new
          * TaskFailedException(); }
          */
 

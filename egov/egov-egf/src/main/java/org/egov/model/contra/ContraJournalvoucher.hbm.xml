@@ -67,7 +67,15 @@
         <many-to-one name="state" class="org.egov.infra.workflow.entity.State" cascade="all">
             <column name="STATE_ID"/>
          </many-to-one>
-        <many-to-one name="createdBy" class="org.egov.infra.admin.master.entity.User" column="CREATEDBY"/>
-        <many-to-one name="lastModifiedBy" class="org.egov.infra.admin.master.entity.User" column="LASTMODIFIEDBY"/>
+        <property name="createdDate" column="CREATEDDATE" type="timestamp"/>
+		<property name="lastModifiedDate" column="LASTMODIFIEDDATE" type="timestamp" />
+		<many-to-one name="createdBy" class="org.egov.infra.admin.master.entity.User"
+			fetch="select">
+			<column name="CREATEDBY" precision="22" scale="0" />
+		</many-to-one>
+		<many-to-one name="lastModifiedBy" class="org.egov.infra.admin.master.entity.User"
+			fetch="select">
+			<column name="LASTMODIFIEDBY" precision="22" scale="0" />
+		</many-to-one>
 	</class>
 </hibernate-mapping>

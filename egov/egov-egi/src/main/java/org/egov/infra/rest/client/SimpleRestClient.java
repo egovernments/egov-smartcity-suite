@@ -52,13 +52,15 @@ import org.springframework.stereotype.Service;
 import java.io.IOException;
 import java.util.HashMap;
 
+import static java.nio.charset.StandardCharsets.UTF_8;
+
 @Service
 public class SimpleRestClient {
     private static final Logger LOG = LoggerFactory.getLogger(SimpleRestClient.class);
 
     public String getRESTResponse(final String restUrl) {
         try {
-            return IOUtils.toString(HttpClientBuilder.create().build().execute(new HttpGet(restUrl)).getEntity().getContent());
+            return IOUtils.toString(HttpClientBuilder.create().build().execute(new HttpGet(restUrl)).getEntity().getContent(), UTF_8);
         } catch (UnsupportedOperationException | IOException e) {
             //TODO yet to decide to rethrow 
             LOG.error("Error occurred while rest response from url {}", restUrl, e);

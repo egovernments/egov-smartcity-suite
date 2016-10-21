@@ -192,7 +192,7 @@ function createAmountFieldFormatter(values,prefix,suffix){
 			mandatoryFields.boundary = <s:if test="%{isFieldMandatory('boundary')}">true</s:if><s:else>false</s:else>;
 			mandatoryFields.fund = <s:if test="%{isFieldMandatory('fund')}">true</s:if><s:else>false</s:else>;
 			if(mandatoryFields[field] == true)
-				return '<span class="mandatory">*</span>';
+				return '<span class="mandatory"></span>';
 			else 
 				return ''; 
 		}
@@ -212,13 +212,13 @@ function createAmountFieldFormatter(values,prefix,suffix){
 			{key:"id",label:'documentNumber',hidden:true, formatter:createIdFieldFormatter("budgetDetailList",".id")},
 			{key:"documentNumber",label:'documentNumber',hidden:true, formatter:createHiddenTextFieldFormatter("budgetDetailList",".documentNumber")},
 			<s:if test="%{shouldShowField('fund')}">				
-				{key:"fund.id",label:'<s:text name="fund"/>'+mandatorySign('fund'),width:90,formatter:createDropdownFormatter(BUDGETDETAILLIST),  dropdownOptions:fundOptions} ,
+				{key:"fund.id",label:'<s:text name="fund"/>'+mandatorySign('fund'),width:130,formatter:createDropdownFormatter(BUDGETDETAILLIST),  dropdownOptions:fundOptions} ,
 			</s:if>
 			<s:if test="%{shouldShowField('function')}">				
-				{key:"function.id",label:'<s:text name="function"/>'+mandatorySign('Function'),width:90,formatter:createDropdownFormatter(BUDGETDETAILLIST),  dropdownOptions:functionOptions} ,
+				{key:"function.id",label:'<s:text name="function"/>'+mandatorySign('Function'),width:450,formatter:createDropdownFormatter(BUDGETDETAILLIST),  dropdownOptions:functionOptions} ,
 			</s:if>
 			{key:"budget.id",label:'<s:text name="budget.budget"/>',width:90, formatter:createHiddenTextFieldFormatter("budgetDetailList",".budget.id")},
-			{key:"budgetGroup.id",label:'Budget Group <span class="mandatory">*</span>',width:90, formatter:createDropdownFormatter(BUDGETDETAILLIST),dropdownOptions:budgetGroupOptions},
+			{key:"budgetGroup.id",label:'Budget Group <span class="mandatory">*</span>',width:250, formatter:createDropdownFormatter(BUDGETDETAILLIST),dropdownOptions:budgetGroupOptions},
 			<s:if test="%{shouldShowField('executingDepartment')}">				
 				{key:"executingDepartment.id", label:'Executing Department'+mandatorySign('executingDepartment'),width:90,formatter:createDropdownFormatter(BUDGETDETAILLIST), dropdownOptions:executingDepartmentOptions},				
 			</s:if>
@@ -245,7 +245,7 @@ function createAmountFieldFormatter(values,prefix,suffix){
 			{key:"re_amount",label:'RE '+'<br/>'+currentYearRange+'<span class="mandatory">*</span>',width:"50em", formatter:createTextFieldFormatterOnblur(BUDGETDETAILLIST,".originalAmount")},
 			{key:"be_next_year_amount",label:'BE '+'<br/>'+nextYearRange+'<span class="mandatory">*</span>',width:"50em", formatter:createTextFieldFormatter("beAmounts","")},
 			{key:'Add',label:'Add',formatter:createAddImageFormatter("${pageContext.request.contextPath}")},
-			{key:'Upload',label:'Upload',formatter:createDocUploadFormatter("budgetDetailsTable","budgetDetailList",".documentNumber")}
+			{key:'Upload',label:'Upload',width:70,formatter:createDocUploadFormatter("budgetDetailsTable","budgetDetailList",".documentNumber")}
 		];
 	    var budgetDetailDS = new YAHOO.util.DataSource(); 
 		budgetDetailsTable = new YAHOO.widget.DataTable("budgetDetailTable",budgetDetailColumns, budgetDetailDS);	

@@ -266,10 +266,11 @@ public class WorksConstants {
 
     public static final String BOUNDARY_TYPE_WARD = "Ward";
     public static final String HIERARCHY_TYPE_ADMINISTRATION = "ADMINISTRATION";
+    public static final String BOUNDARY_TYPE_CITY = "City";
 
     public static final String APPCONFIG_KEY_ENGINEERINCHARGE_DESIGNATION = "ENGINEERINCHARGE_DESIGNATION";
 
-    public static final String WORKFLOWTYPE_DISPLAYNAME = "Line Estimate";
+    public static final String WORKFLOWTYPE_DISPLAYNAME = "Estimate";
 
     public static final String WORKFLOWTYPE_CBR_DISPLAYNAME = "Contractor Bill";
 
@@ -304,4 +305,11 @@ public class WorksConstants {
     public static final String NATUREOFWORK_EXPENDITURETYPE_CAPITAL = "CAPITAL";
 
     public static final String NATUREOFWORK_EXPENDITURETYPE_REVENUE = "REVENUE";
+    
+    public static final String CONTRACTOR_RETENTION_MONEY_PURPOSE = "RETENTION_MONEY";
+    
+    public static final String CONTRACTOR_SECURITY_DEPOSITE_PURPOSE = "Security Deposit";
+    
+    public static final String [] CONTRACTOR_REFUND_PURPOSE = {CONTRACTOR_RETENTION_MONEY_PURPOSE , CONTRACTOR_SECURITY_DEPOSITE_PURPOSE};
+    
 }

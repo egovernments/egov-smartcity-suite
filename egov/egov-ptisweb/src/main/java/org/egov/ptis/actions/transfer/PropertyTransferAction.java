@@ -405,11 +405,13 @@ public class PropertyTransferAction extends GenericWorkFlowAction {
     @SkipValidation
     @Action(value = "/reject")
     public String reject() {
-        if (propertyMutation.getState().getValue().equals("Rejected")
-                && (propertyMutation.getReceiptNum() != null && !propertyMutation.getReceiptNum().isEmpty())
-                && !receiptCanceled) {
+        if ((propertyMutation.getState().getValue().equals("Rejected") || propertyMutation.getType().equalsIgnoreCase(ADDTIONAL_RULE_FULL_TRANSFER))
+                && propertyMutation.getReceiptNum() != null && !receiptCanceled) {
             addActionError(getText("error.mutation.reject.notallowed"));
-            return EDIT;
+            if(propertyMutation.getType().equalsIgnoreCase(ADDTIONAL_RULE_FULL_TRANSFER))
+                return VIEW;
+            else
+                return EDIT;
         }
         transitionWorkFlow(propertyMutation);
         transferOwnerService.viewPropertyTransfer(basicproperty, propertyMutation);
@@ -646,7 +648,7 @@ public class PropertyTransferAction extends GenericWorkFlowAction {
         }
 
         if (loggedUserIsMeesevaUser || !propertyByEmployee) {
-            if (null != basicproperty && null == propertyService.getUserPositionByZone(basicproperty,basicproperty.getSource())) {
+            if (null != basicproperty && null == propertyService.getUserPositionByZone(basicproperty, false)) {
                 addActionError(getText("notexists.position"));
             }
         }
@@ -656,30 +658,24 @@ public class PropertyTransferAction extends GenericWorkFlowAction {
     public void transitionWorkFlow(final PropertyMutation propertyMutation) {
         final DateTime currentDate = new DateTime();
         final User user = transferOwnerService.getLoggedInUser();
-        final Assignment userAssignment = assignmentService.getPrimaryAssignmentForUser(user.getId());
         Position pos = null;
         Assignment wfInitiator = null;
 
         if (!propertyByEmployee) {
             currentState = "Created";
-            final Assignment assignment = propertyService.getUserPositionByZone(basicproperty,basicproperty.getSource());
+            final Assignment assignment = propertyService.getUserPositionByZone(basicproperty, false);
             approverPositionId = assignment.getPosition().getId();
             approverName = assignment.getEmployee().getName().concat("~").concat(assignment.getPosition().getName());
         } else
             currentState = null;
 
-        if (null != propertyMutation.getId())
-            if (propertyService.isEmployee(propertyMutation.getCreatedBy()))
-                wfInitiator = assignmentService.getPrimaryAssignmentForUser(propertyMutation.getCreatedBy().getId());
-            else if (!propertyMutation.getStateHistory().isEmpty())
-                wfInitiator = assignmentService.getPrimaryAssignmentForPositon(propertyMutation.getStateHistory()
-                        .get(0).getOwnerPosition().getId());
-            else
-                wfInitiator = assignmentService.getPrimaryAssignmentForPositon(propertyMutation.getState()
-                        .getOwnerPosition().getId());
+        if (propertyMutation.getId() != null)
+            wfInitiator =  transferOwnerService.getWorkflowInitiator(propertyMutation);
+        else
+            wfInitiator = propertyTaxCommonUtils.getWorkflowInitiatorAssignment(user.getId());
 
         if (WFLOW_ACTION_STEP_REJECT.equalsIgnoreCase(workFlowAction)) {
-            if (wfInitiator.equals(userAssignment)) {
+            if (wfInitiator.getPosition().equals(propertyMutation.getState().getOwnerPosition()) || propertyMutation.getType().equalsIgnoreCase(ADDTIONAL_RULE_FULL_TRANSFER)) {
                 propertyMutation.transition(true).end().withSenderName(user.getUsername() + "::" + user.getName())
                         .withComments(approverComments).withDateInfo(currentDate.toDate());
                 propertyMutation.getBasicProperty().setUnderWorkflow(Boolean.FALSE);
@@ -687,7 +683,8 @@ public class PropertyTransferAction extends GenericWorkFlowAction {
                 final String stateValue = WF_STATE_REJECTED;
                 propertyMutation.transition(true).withSenderName(user.getUsername() + "::" + user.getName())
                         .withComments(approverComments).withStateValue(stateValue).withDateInfo(currentDate.toDate())
-                        .withOwner(wfInitiator.getPosition()).withNextAction(WF_STATE_ASSISTANT_APPROVAL_PENDING);
+                        .withOwner(wfInitiator != null ? wfInitiator.getPosition() : null)
+                        .withNextAction(WF_STATE_ASSISTANT_APPROVAL_PENDING);
             }
 
         } else {
@@ -703,7 +700,8 @@ public class PropertyTransferAction extends GenericWorkFlowAction {
                 propertyMutation.transition().start().withSenderName(user.getUsername() + "::" + user.getName())
                         .withComments(approverComments).withStateValue(wfmatrix.getNextState())
                         .withDateInfo(currentDate.toDate()).withOwner(pos).withNextAction(wfmatrix.getNextAction())
-                        .withNatureOfTask(getNatureOfTask());
+                        .withNatureOfTask(getNatureOfTask())
+                        .withInitiator(wfInitiator != null ? wfInitiator.getPosition() : null);
             } else if (propertyMutation.getCurrentState().getNextAction().equalsIgnoreCase("END"))
                 propertyMutation.transition(true).end().withSenderName(user.getUsername() + "::" + user.getName())
                         .withComments(approverComments).withDateInfo(currentDate.toDate());

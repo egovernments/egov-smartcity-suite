@@ -77,8 +77,7 @@ public class ViewAndEditLegalCaseController extends GenericLegalCaseController {
         final LegalCase legalCase = legalCaseService.findByLcNumber(lcNumber);
         model.addAttribute("legalCase", legalCase);
         model.addAttribute("mode", "view");
-        model.addAttribute("legalCaseDocList",
-                legalCaseService.getLegalCaseDocList(legalCase));
+        model.addAttribute("supportDocs",(!legalCase.getLegalCaseDocuments().isEmpty() && legalCase.getLegalCaseDocuments().get(0)!=null ?legalCase.getLegalCaseDocuments().get(0).getSupportDocs():null));
         model.addAttribute("pwrDocList", legalCaseService.getPwrDocList(legalCase));
         return "legalcasedetails-view";
     }
@@ -93,9 +92,8 @@ public class ViewAndEditLegalCaseController extends GenericLegalCaseController {
         if (casenumberyear.length > 1)
             legalCase.setWpYear(casenumberyear[1]);
         legalCase.getBipartisanPetitionerDetailsList().addAll(legalCase.getPetitioners());
-        legalCase.getBipartisanRespondentDetailsList().addAll(legalCase.getRespondents());
-        model.addAttribute("legalCaseDocList",
-                legalCaseService.getLegalCaseDocList(legalCase));
+       legalCase.getBipartisanRespondentDetailsList().addAll(legalCase.getRespondents());
+        model.addAttribute("supportDocs",(!legalCase.getLegalCaseDocuments().isEmpty() && legalCase.getLegalCaseDocuments().get(0)!=null ?legalCase.getLegalCaseDocuments().get(0).getSupportDocs():null));
         model.addAttribute("mode", "edit");
         return "legalcase-edit";
     }
@@ -105,13 +103,13 @@ public class ViewAndEditLegalCaseController extends GenericLegalCaseController {
             final BindingResult errors, final Model model, final RedirectAttributes redirectAttrs) {
         if (errors.hasErrors())
             return "legalcase-edit";
+        
         legalCaseService.persist(legalCase);
         setDropDownValues(model);
         redirectAttrs.addFlashAttribute("legalCase", legalCase);
         model.addAttribute("mode", "edit");
         model.addAttribute("message", "LegalCase updated successfully.");
-        model.addAttribute("legalCaseDocList",
-                legalCaseService.getLegalCaseDocList(legalCase));
+        model.addAttribute("supportDocs",(!legalCase.getLegalCaseDocuments().isEmpty() && legalCase.getLegalCaseDocuments().get(0)!=null ?legalCase.getLegalCaseDocuments().get(0).getSupportDocs():null));
         return "legalcase-success";
     }
 

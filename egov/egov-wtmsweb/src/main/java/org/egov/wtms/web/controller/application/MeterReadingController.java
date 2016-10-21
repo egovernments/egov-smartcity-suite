@@ -93,7 +93,7 @@ public class MeterReadingController {
         return waterConnectionDetails;
     }
 
-    private String loadViewData(final Model model, final HttpServletRequest request,
+    private String loadViewData(final Model model,
             final WaterConnectionDetails waterConnectionDetails) {
         final SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
         model.addAttribute("waterConnectionDetails", waterConnectionDetails);
@@ -132,7 +132,7 @@ public class MeterReadingController {
             return "redirect:/application/meterdemandnotice?pathVar="
                     + waterConnectionDetails.getConnection().getConsumerCode();
         else
-            return loadViewData(model, request, waterConnectionDetails);
+            return loadViewData(model, waterConnectionDetails);
 
     }
 
@@ -163,17 +163,17 @@ public class MeterReadingController {
             model.addAttribute("message", message);
             return "newconnection-meterEntry";
         }
-        waterConnectionDetails = billCalculationAndDemandUpdate(waterConnectionDetails, errors, model, request,
+        final WaterConnectionDetails waterconnectionDetails = billCalculationAndDemandUpdate(waterConnectionDetails, errors,  request,
                 meterReadingConnectionDeatilObj, previousReading, dateFormat);
         final WaterConnectionDetails savedWaterConnectionDetails = waterConnectionDetailsRepository
-                .save(waterConnectionDetails);
+                .save(waterconnectionDetails);
         waterConnectionDetailsService.updateIndexes(savedWaterConnectionDetails,sourceChannel);
         return "redirect:/application/meterdemandnotice?pathVar="
         + savedWaterConnectionDetails.getConnection().getConsumerCode();
     }
 
     private WaterConnectionDetails billCalculationAndDemandUpdate(WaterConnectionDetails waterConnectionDetails,
-            final BindingResult errors, final Model model, final HttpServletRequest request,
+            final BindingResult errors, final HttpServletRequest request,
             final MeterReadingConnectionDetails meterReadingConnectionDeatilObj, final Long previousReading,
             final SimpleDateFormat dateFormat) {
         Date currentDate = null;
@@ -187,7 +187,7 @@ public class MeterReadingController {
             if (request.getParameter("previousreadingDate") != null)
                 previousDate = dateFormat.parse(request.getParameter("previousreadingDate"));
         } catch (final ParseException e) {
-            e.printStackTrace();
+
         }
         meterReadingConnectionDeatilObj.setCurrentReading(Long.valueOf(request.getParameter("metercurrentReading")));
         meterReadingConnectionDeatilObj.setCurrentReadingDate(currentDate);
@@ -207,11 +207,11 @@ public class MeterReadingController {
 
         final double finalAmountToBePaid = calculateAmountTobePaid(waterConnectionDetails, noofmonths,
                 noOfUnitsForPerMonth);
-
+        WaterConnectionDetails waterconnectionDetails =null;
         if (BigDecimal.valueOf(finalAmountToBePaid).compareTo(BigDecimal.ZERO) > 0)
-            waterConnectionDetails = connectionDemandService.updateDemandForMeteredConnection(waterConnectionDetails,
+            waterconnectionDetails = connectionDemandService.updateDemandForMeteredConnection(waterConnectionDetails,
                     BigDecimal.valueOf(finalAmountToBePaid), currentDate);
-        return waterConnectionDetails;
+        return waterconnectionDetails;
     }
 
     private double calculateAmountTobePaid(final WaterConnectionDetails waterConnectionDetails, final int noofmonths,
@@ -220,7 +220,6 @@ public class MeterReadingController {
         final List<WaterRatesDetails> waterDetList = waterRatesDetailsRepository
                 .findByWaterRate(waterConnectionDetails.getConnectionType(), waterConnectionDetails.getUsageType(),
                         noOfUnitsForPerMonth);
-
         if (!waterDetList.isEmpty())
             waterRateDetail = waterDetList.get(0);
         final double amountToBeCollectedWithUnitRatePerMonth = noOfUnitsForPerMonth

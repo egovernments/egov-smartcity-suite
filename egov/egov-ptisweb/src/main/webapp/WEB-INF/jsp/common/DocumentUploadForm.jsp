@@ -114,6 +114,17 @@
 
 	jQuery(".doctable input:file").change(function (){
 	     var fileName = jQuery(this).val();
+	     var fileInput = jQuery(this);
+	   	 var maxSize = 2097152; //file size  in bytes(2MB)
+		 var inMB = maxSize/1024/1024;
+		 if(fileInput.get(0).files.length){
+			var fileSize = this.files[0].size; // in bytes
+			if(fileSize > maxSize){
+				bootbox.alert('File size should not exceed '+ inMB +' MB!');
+				fileInput.replaceWith(fileInput.val('').clone(true));
+				return false;
+				}			
+			}
 	     if(fileName)
 	     {
 	       jQuery(this).after("<a href='javascript:void(0);' onclick='clearSelectedFile(this);' class='fileclear'><span class='tblactionicon delete'><i class='fa fa-times-circle'></i></span></a>"); 
