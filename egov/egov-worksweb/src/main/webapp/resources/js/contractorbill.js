@@ -360,8 +360,8 @@ function validateMBPageNumbers() {
 }
 
 function validateNetPayableAmount() {
-	if($('#debitamount').val() != '' && $('#netPayableAmount').val() < 0) {
-		bootbox.alert("Net Payable amount cannot be less than zero!");
+	if($('#debitamount').val() != '' && $('#netPayableAmount').val() <= 0) {
+		bootbox.alert("Net Payable amount should be greater than zero!");
 		return false;
 	}
 	return true;

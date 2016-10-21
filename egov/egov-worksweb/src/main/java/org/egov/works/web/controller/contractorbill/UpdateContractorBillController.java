@@ -280,7 +280,7 @@ public class UpdateContractorBillController extends GenericWorkFlowController {
         if (StringUtils.isBlank(request.getParameter("netPayableAccountCode")))
             resultBinder.reject("error.netpayable.accountcode.required", "error.netpayable.accountcode.required");
         if (StringUtils.isBlank(request.getParameter("netPayableAmount"))
-                || Double.valueOf(request.getParameter("netPayableAmount").toString()) < 0)
+                || Double.valueOf(request.getParameter("netPayableAmount").toString()) <= 0)
             resultBinder.reject("error.netpayable.amount.required", "error.netpayable.amount.required");
 
         if (contractorBillRegister.getBilltype().equals(BillTypes.Final_Bill.toString())
