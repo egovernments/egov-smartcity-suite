@@ -50,8 +50,8 @@ import org.elasticsearch.search.aggregations.metrics.valuecount.ValueCountBuilde
 
 public class ComplaintElasticsearchUtils {
 
-	public static AggregationBuilder getCountWithGrouping(String aggregationName, String fieldName){
-		return AggregationBuilders.terms(aggregationName).field(fieldName);
+	public static AggregationBuilder getCountWithGrouping(String aggregationName, String fieldName, int size){
+		return AggregationBuilders.terms(aggregationName).field(fieldName).size(size);
 	}
 	
 	public static ValueCountBuilder getCount(String aggregationName, String fieldName){
@@ -84,9 +84,9 @@ public class ComplaintElasticsearchUtils {
 	public static String getAggregationGroupingField(ComplaintDashBoardRequest complaintDashBoardRequest){
 		String aggregationField = "cityDistrictCode";
         if (StringUtils.isNotBlank(complaintDashBoardRequest.getDistrictCode()))
-        	aggregationField = "cityName";
+        	aggregationField = "cityCode";
         if(StringUtils.isNotBlank(complaintDashBoardRequest.getUlbCode()))
-        	aggregationField = "wardNo";
+        	aggregationField = "wardName";
         if (StringUtils.isNotBlank(complaintDashBoardRequest.getUlbCode()) &&
         		StringUtils.isNotBlank(complaintDashBoardRequest.getWardNo()))
         	aggregationField = "assigneeName";

@@ -63,6 +63,9 @@ public class ComplaintIndex {
 	@Field(type = FieldType.String, index = FieldIndex.not_analyzed)
 	private String wardName;
 	
+	@Field(type = FieldType.String, index = FieldIndex.not_analyzed)
+	private String wardNo;
+	
 	@GeoPointField
 	private GeoPointField wardGeo;
 	
@@ -371,6 +374,14 @@ public class ComplaintIndex {
 
 	public void setLocationName(String locationName) {
 		this.wardName = locationName;
+	}
+
+	public String getWardNo() {
+		return wardNo;
+	}
+
+	public void setWardNo(String wardNo) {
+		this.wardNo = wardNo;
 	}
 
 	public GeoPointField getWardGeo() {

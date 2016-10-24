@@ -51,4 +51,6 @@ public interface ComplaintIndexCustomRepository {
 
 	public HashMap<String, Object> findAllGrievanceByFilter(ComplaintDashBoardRequest complaintDashBoardRequest, BoolQueryBuilder query,String grouByField);
 	
+	public String getWardName(String wardNo);
+	
 }

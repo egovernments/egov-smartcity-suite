@@ -60,6 +60,7 @@
 				<security:filter-chain pattern="/downloadfile/logo**" filters="none" />
 				<security:filter-chain pattern="/downloadfile/gis**" filters="none" />
 				<security:filter-chain pattern="/error/**" filters="none" />
+				<security:filter-chain pattern="/city/details" filters="none" />
 				<security:filter-chain pattern="/public/**" filters="anonymousAuthenticationFilter"/>
 				<security:filter-chain pattern="/**"  filters="concurrentSessionFilter,securityContextPersistenceFilter,logoutFilter,authenticationProcessingFilter,securityContextHolderAwareRequestFilter,rememberMeAuthenticationFilter,anonymousAuthenticationFilter,exceptionTranslationFilter,filterSecurityInterceptor" />
 			</list>

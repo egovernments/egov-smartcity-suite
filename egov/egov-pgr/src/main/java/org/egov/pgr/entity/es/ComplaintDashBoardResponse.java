@@ -42,9 +42,11 @@ package org.egov.pgr.entity.es;
 
 public class ComplaintDashBoardResponse {
 	private String districtName;
+	private String ulbCode;
 	private String ulbName;
 	private String ulbGrade;
 	private String wardName;
+	private String domainURL;
 	private String functionaryName;
 	private String departmentName;
 	private String ComplaintTypeName;
@@ -66,6 +68,12 @@ public class ComplaintDashBoardResponse {
 	public void setDistrictName(String districtName) {
 		this.districtName = districtName;
 	}
+	public String getUlbCode() {
+		return ulbCode;
+	}
+	public void setUlbCode(String ulbCode) {
+		this.ulbCode = ulbCode;
+	}
 	public String getUlbName() {
 		return ulbName;
 	}
@@ -83,6 +91,12 @@ public class ComplaintDashBoardResponse {
 	}
 	public void setWardName(String wardName) {
 		this.wardName = wardName;
+	}
+	public String getDomainURL() {
+		return domainURL;
+	}
+	public void setDomainURL(String domainURL) {
+		this.domainURL = domainURL;
 	}
 	public String getFunctionaryName() {
 		return functionaryName;

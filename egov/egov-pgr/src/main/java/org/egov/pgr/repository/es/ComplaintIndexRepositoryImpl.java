@@ -46,14 +46,20 @@ import static org.egov.pgr.utils.constants.PGRConstants.PGR_INDEX_NAME;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.commons.lang3.StringUtils;
+import org.egov.infra.admin.master.entity.Department;
+import org.egov.infra.admin.master.entity.es.CityIndex;
+import org.egov.infra.admin.master.service.DepartmentService;
+import org.egov.infra.admin.master.service.es.CityIndexService;
 import org.egov.pgr.entity.es.ComplaintDashBoardRequest;
 import org.egov.pgr.entity.es.ComplaintDashBoardResponse;
 import org.egov.pgr.repository.es.util.ComplaintElasticsearchUtils;
 import org.elasticsearch.action.search.SearchResponse;
 import org.elasticsearch.index.query.BoolQueryBuilder;
 import org.elasticsearch.index.query.QueryBuilders;
+import org.elasticsearch.search.SearchHit;
 import org.elasticsearch.search.aggregations.AggregationBuilders;
 import org.elasticsearch.search.aggregations.bucket.filter.Filter;
 import org.elasticsearch.search.aggregations.bucket.range.Range;
@@ -65,12 +71,21 @@ import org.joda.time.DateTime;
 import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.elasticsearch.core.ElasticsearchTemplate;
+import org.springframework.data.elasticsearch.core.query.NativeSearchQueryBuilder;
+import org.springframework.data.elasticsearch.core.query.SearchQuery;
 
 public class ComplaintIndexRepositoryImpl implements ComplaintIndexCustomRepository{
 
 	@Autowired
 	private ElasticsearchTemplate elasticsearchTemplate;
+	
+	@Autowired
+	private CityIndexService cityIndexService;
+	
+	@Autowired
+	private DepartmentService departmentService;
 
 	@Override
 	public HashMap<String, Object> findAllGrievanceByFilter(ComplaintDashBoardRequest complaintDashBoardRequest, BoolQueryBuilder query,String grouByField) {
@@ -82,8 +97,8 @@ public class ComplaintIndexRepositoryImpl implements ComplaintIndexCustomReposit
 		SearchResponse consolidatedResponse = elasticsearchTemplate.getClient().prepareSearch(PGR_INDEX_NAME)
 				.setQuery(QueryBuilders.matchAllQuery()).setSize(0)
 				.addAggregation(ComplaintElasticsearchUtils.getCount("countAggregation", "crn"))
-				.addAggregation(ComplaintElasticsearchUtils.getCountWithGrouping("closedCount", "ifClosed"))
-				.addAggregation(ComplaintElasticsearchUtils.getCountWithGrouping("slaCount", "ifSLA"))
+				.addAggregation(ComplaintElasticsearchUtils.getCountWithGrouping("closedCount", "ifClosed",2))
+				.addAggregation(ComplaintElasticsearchUtils.getCountWithGrouping("slaCount", "ifSLA",2))
 				.addAggregation(ComplaintElasticsearchUtils.getAverageWithFilter("ifClosed",1,"AgeingInWeeks", "complaintAgeingdaysFromDue"))
 				.addAggregation(ComplaintElasticsearchUtils.getAverageWithExclusion("satisfactionAverage", "satisfactionIndex"))
 				.addAggregation(ComplaintElasticsearchUtils.getCountBetweenSpecifiedDates("currentYear", 
@@ -92,21 +107,23 @@ public class ComplaintIndexRepositoryImpl implements ComplaintIndexCustomReposit
 		
 		SearchResponse tableResponse = elasticsearchTemplate.getClient().prepareSearch(PGR_INDEX_NAME)
 									   .setQuery(query).setSize(0)
-									   .addAggregation(ComplaintElasticsearchUtils.getCountWithGrouping("complaintTypeWise", "complaintTypeName")
+									   .addAggregation(ComplaintElasticsearchUtils.getCountWithGrouping("complaintTypeWise", "complaintTypeName",50)
 											   		   .subAggregation(AggregationBuilders.range("ComplaintTypeAgeing").field("complaintAgeingdaysFromDue")
 											   				           .addRange("1week", 0, 8).addRange("1month",8 ,32)
 											   				           .addRange("3months", 32, 91).addUnboundedFrom("remainingMonths", 91))
 											   		   .subAggregation(ComplaintElasticsearchUtils.getAverageWithExclusion("complaintTypeSatisfactionAverage", "satisfactionIndex"))
-											   		   .subAggregation(ComplaintElasticsearchUtils.getCountWithGrouping("complaintTypeWiseOpenAndClosedCount", "ifClosed")
-											   				   			.subAggregation(ComplaintElasticsearchUtils.getCountWithGrouping("complaintTypeSla", "ifSLA"))))
-									   .addAggregation(ComplaintElasticsearchUtils.getCountWithGrouping("groupByField", grouByField)
+											   		   .subAggregation(ComplaintElasticsearchUtils.getCountWithGrouping("complaintTypeWiseOpenAndClosedCount", "ifClosed",2)
+											   				   			.subAggregation(ComplaintElasticsearchUtils.getCountWithGrouping("complaintTypeSla", "ifSLA",2))))
+									   .addAggregation(ComplaintElasticsearchUtils.getCountWithGrouping("groupByField", grouByField,120)
 											   			.subAggregation(AggregationBuilders.range("groupByFieldAgeing").field("complaintAgeingdaysFromDue")
 											   							.addRange("1week", 0, 8).addRange("1month",8 ,32)
 											   							.addRange("3months", 32, 91).addUnboundedFrom("remainingMonths", 91))
 											   			.subAggregation(ComplaintElasticsearchUtils.getAverageWithExclusion("groupByFieldSatisfactionAverage", "satisfactionIndex"))
-											   			.subAggregation(ComplaintElasticsearchUtils.getCountWithGrouping("groupFieldWiseOpenAndClosedCount", "ifClosed")
-											   							.subAggregation(ComplaintElasticsearchUtils.getCountWithGrouping("groupByFieldSla", "ifSLA"))))
+											   			.subAggregation(ComplaintElasticsearchUtils.getCountWithGrouping("groupFieldWiseOpenAndClosedCount", "ifClosed",2)
+											   							.subAggregation(ComplaintElasticsearchUtils.getCountWithGrouping("groupByFieldSla", "ifSLA",2))))
 									   .execute().actionGet();
+		
+		
 
 		HashMap<String, Object> result = new HashMap<>();
 		List<ComplaintDashBoardResponse> responseDetailsList = new ArrayList<>();
@@ -145,6 +162,7 @@ public class ComplaintIndexRepositoryImpl implements ComplaintIndexCustomReposit
 		//For Dynamic results based on grouping fields
 		terms = tableResponse.getAggregations().get("groupByField");
 		for (Bucket bucket : terms.getBuckets()) {
+			
 			ComplaintDashBoardResponse responseDetail = new ComplaintDashBoardResponse();
 			responseDetail.setDistrictName(StringUtils.EMPTY);
 			responseDetail.setUlbName(StringUtils.EMPTY);
@@ -153,9 +171,45 @@ public class ComplaintIndexRepositoryImpl implements ComplaintIndexCustomReposit
 			responseDetail.setFunctionaryName(StringUtils.EMPTY);
 			responseDetail.setComplaintTypeName(StringUtils.EMPTY);
 			responseDetail.setUlbGrade(StringUtils.EMPTY);
+			responseDetail.setUlbCode(StringUtils.EMPTY);
+			responseDetail.setDomainURL(StringUtils.EMPTY);
 			
-			if(StringUtils.isNotBlank(complaintDashBoardRequest.getDistrictCode()))
-				responseDetail.setUlbName(bucket.getKeyAsString());
+			CityIndex city;
+			if (StringUtils.isBlank(complaintDashBoardRequest.getDistrictCode())){
+				city = cityIndexService.findByDistrictcode(bucket.getKeyAsString());
+				responseDetail.setDistrictName(city.getDistrictname());
+			}
+			if (StringUtils.isNotBlank(complaintDashBoardRequest.getDistrictCode())){
+				if(StringUtils.isBlank(complaintDashBoardRequest.getUlbCode()))
+					city = cityIndexService.findByCitycode(bucket.getKeyAsString());
+				else
+					city = cityIndexService.findByCitycode(complaintDashBoardRequest.getUlbCode());
+				responseDetail.setDistrictName(city.getDistrictname());
+				responseDetail.setUlbName(city.getName());
+				responseDetail.setUlbGrade(city.getCitygrade());
+				responseDetail.setUlbCode(city.getCitycode());
+				responseDetail.setDomainURL(city.getDomainurl());
+			}
+			if(StringUtils.isNotBlank(complaintDashBoardRequest.getUlbCode())){
+				if(StringUtils.isBlank(complaintDashBoardRequest.getWardNo())
+						&& StringUtils.isBlank(complaintDashBoardRequest.getDepartmentCode())){
+					responseDetail.setWardName(bucket.getKeyAsString());
+				}
+				else{
+					responseDetail.setWardName(getWardName(complaintDashBoardRequest.getWardNo()));
+				}
+			
+				
+				if(StringUtils.isNotBlank(complaintDashBoardRequest.getDepartmentCode())){
+					Department department = departmentService.getDepartmentByCode(complaintDashBoardRequest.getDepartmentCode());
+					if(department != null)
+						responseDetail.setDepartmentName(department.getName());
+				}
+			}
+			
+			if(StringUtils.isNotBlank(complaintDashBoardRequest.getDepartmentCode())
+					|| StringUtils.isNotBlank(complaintDashBoardRequest.getWardNo()))
+				responseDetail.setFunctionaryName(bucket.getKeyAsString());
 			
 			satisfactionAverage = bucket.getAggregations().get("excludeZero");
 			Avg groupByFieldAverageSatisfaction = satisfactionAverage.getBuckets().get(0).getAggregations().get("groupByFieldSatisfactionAverage");
@@ -205,6 +259,8 @@ public class ComplaintIndexRepositoryImpl implements ComplaintIndexCustomReposit
 			complaintType.setComplaintTypeName(bucket.getKey().toString());
 			complaintType.setTotalComplaintCount(bucket.getDocCount());
 			complaintType.setUlbGrade(StringUtils.EMPTY);
+			complaintType.setUlbCode(StringUtils.EMPTY);
+			complaintType.setDomainURL(StringUtils.EMPTY);
 			
 			satisfactionAverage = bucket.getAggregations().get("excludeZero");
 			Avg complaintTypeAverageSatisfaction = satisfactionAverage.getBuckets().get(0).getAggregations().get("complaintTypeSatisfactionAverage");
@@ -241,5 +297,20 @@ public class ComplaintIndexRepositoryImpl implements ComplaintIndexCustomReposit
 		}
 		result.put("complaintTypes",complaintTypeList);
 		return result;
+	}
+	
+	@Override
+	public String getWardName(String wardNo){
+		SearchResponse response = elasticsearchTemplate.getClient().prepareSearch(PGR_INDEX_NAME)
+											  .setSize(1)
+											  .setQuery(QueryBuilders.matchQuery("wardNo", wardNo))
+											  .execute().actionGet();
+		
+		for (SearchHit hit : response.getHits()) {
+			final Map<String,Object> fields = hit.getSource();
+			return fields.get("wardName").toString();
+	    }		
+		
+		return StringUtils.EMPTY;
 	}
 }
