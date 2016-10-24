@@ -43,8 +43,10 @@ package org.egov.works.elasticsearch.service;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.commons.lang3.StringUtils;
 import org.egov.works.elasticsearch.model.WorksMilestoneIndexRequest;
 import org.egov.works.elasticsearch.model.WorksMilestoneIndexResponse;
+import org.elasticsearch.index.query.BoolQueryBuilder;
 import org.elasticsearch.index.query.QueryBuilders;
 import org.elasticsearch.search.aggregations.AggregationBuilder;
 import org.elasticsearch.search.aggregations.AggregationBuilders;
@@ -53,6 +55,8 @@ import org.elasticsearch.search.aggregations.bucket.terms.StringTerms;
 import org.elasticsearch.search.aggregations.bucket.terms.Terms;
 import org.elasticsearch.search.aggregations.metrics.avg.InternalAvg;
 import org.elasticsearch.search.aggregations.metrics.sum.Sum;
+import org.elasticsearch.search.sort.SortBuilders;
+import org.elasticsearch.search.sort.SortOrder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -84,13 +88,12 @@ public class WorksMilestoneIndexService {
             final WorksMilestoneIndexRequest worksMilestoneIndexRequest, final Boolean order,
             final String orderingAggregationName) {
         final List<WorksMilestoneIndexResponse> worksMilestoneIndexResponses = new ArrayList<>();
-        // BoolQueryBuilder boolQuery = prepareWhereClause(worksMilestoneIndexRequest);
+        final BoolQueryBuilder boolQuery = prepareWhereClause(worksMilestoneIndexRequest);
 
         // orderingAggregationName is the aggregation name by which we have to
         // order the results
         Long startTime = System.currentTimeMillis();
         final AggregationBuilder aggregation = AggregationBuilders.terms("by_aggregationField").field(orderingAggregationName)
-                // .order(Terms.Order.aggregation(orderingAggregationName, order))
                 .subAggregation(AggregationBuilders.sum("totalestimatedcostinlakhs").field("estimatevalue"))
                 .subAggregation(AggregationBuilders.sum("totalworkordervalueinlakhs").field("loaamount"))
                 .subAggregation(AggregationBuilders.sum("totalbillamountinlakhs").field("loatotalbillamt"))
@@ -101,7 +104,8 @@ public class WorksMilestoneIndexService {
                 .subAggregation(AggregationBuilders.avg("oct16to31target").field("oct16to31target"));
 
         final SearchQuery searchQueryColl = new NativeSearchQueryBuilder().withIndices(WORKSMILESTONE_INDEX_NAME)
-                .withQuery(QueryBuilders.matchAllQuery())
+                .withQuery(boolQuery)
+                .withSort(SortBuilders.fieldSort(orderingAggregationName).order(SortOrder.DESC))
                 .addAggregation(aggregation).build();
 
         final Aggregations worksMilestoneAggr = elasticsearchTemplate.query(searchQueryColl,
@@ -142,6 +146,21 @@ public class WorksMilestoneIndexService {
         LOGGER.debug("Time taken for setting values in returnUlbWiseAggregationResults() is : " + timeTaken
                 + " (millisecs) ");
         return worksMilestoneIndexResponses;
+    }
+
+    private BoolQueryBuilder prepareWhereClause(final WorksMilestoneIndexRequest worksMilestoneIndexRequest) {
+        BoolQueryBuilder boolQuery = QueryBuilders.boolQuery();
+        if (StringUtils.isNotBlank(worksMilestoneIndexRequest.getTypeofwork()))
+            boolQuery = boolQuery
+                    .filter(QueryBuilders.matchQuery("lineestimatetypeofwork", worksMilestoneIndexRequest.getTypeofwork()));
+        if (StringUtils.isNotBlank(worksMilestoneIndexRequest.getDistname()))
+            boolQuery = boolQuery
+                    .filter(QueryBuilders.matchQuery("distname", worksMilestoneIndexRequest.getDistname()));
+        if (StringUtils.isNotBlank(worksMilestoneIndexRequest.getUlbcode()))
+            boolQuery = boolQuery.filter(QueryBuilders.matchQuery("ulbcode", worksMilestoneIndexRequest.getUlbcode()));
+        if (worksMilestoneIndexRequest.getUlbcodes() != null && !worksMilestoneIndexRequest.getUlbcodes().isEmpty())
+            boolQuery.filter(QueryBuilders.termsQuery("ulbcode", worksMilestoneIndexRequest.getUlbcodes()));
+        return boolQuery;
     }
 
 }

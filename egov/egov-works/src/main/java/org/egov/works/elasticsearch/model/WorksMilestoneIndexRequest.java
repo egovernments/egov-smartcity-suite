@@ -40,6 +40,8 @@
 
 package org.egov.works.elasticsearch.model;
 
+import java.util.List;
+
 public class WorksMilestoneIndexRequest {
 
     private String typeofwork;
@@ -47,6 +49,8 @@ public class WorksMilestoneIndexRequest {
     private String distname;
 
     private String ulbcode;
+
+    private List<String> ulbcodes;
 
     public String getTypeofwork() {
         return typeofwork;
@@ -70,6 +74,14 @@ public class WorksMilestoneIndexRequest {
 
     public void setUlbcode(final String ulbcode) {
         this.ulbcode = ulbcode;
+    }
+
+    public List<String> getUlbcodes() {
+        return ulbcodes;
+    }
+
+    public void setUlbcodes(final List<String> ulbcodes) {
+        this.ulbcodes = ulbcodes;
     }
 
 }
