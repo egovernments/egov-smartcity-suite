@@ -44,6 +44,7 @@ import static org.egov.stms.utils.constants.SewerageTaxConstants.NOTICE_TYPE_CLO
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
+import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.ArrayList;
@@ -57,6 +58,8 @@ import javax.servlet.http.HttpSession;
 import javax.validation.Valid;
 import javax.validation.ValidationException;
 
+import org.apache.commons.io.FileUtils;
+import org.apache.log4j.Logger;
 import org.egov.eis.entity.Assignment;
 import org.egov.eis.service.AssignmentService;
 import org.egov.eis.web.contract.WorkflowContainer;
@@ -64,9 +67,11 @@ import org.egov.eis.web.controller.workflow.GenericWorkFlowController;
 import org.egov.infra.admin.master.service.DepartmentService;
 import org.egov.infra.filestore.entity.FileStoreMapper;
 import org.egov.infra.filestore.service.FileStoreService;
+import org.egov.infra.reporting.engine.ReportConstants.FileFormat;
 import org.egov.infra.reporting.engine.ReportOutput;
 import org.egov.infra.reporting.engine.ReportService;
 import org.egov.infra.security.utils.SecurityUtils;
+import org.egov.infra.validation.exception.ValidationError;
 import org.egov.ptis.domain.model.AssessmentDetails;
 import org.egov.stms.masters.entity.enums.PropertyType;
 import org.egov.stms.notice.entity.SewerageNotice;
@@ -80,6 +85,10 @@ import org.egov.stms.utils.SewerageTaxUtils;
 import org.egov.stms.utils.constants.SewerageTaxConstants;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -101,6 +110,8 @@ import com.lowagie.text.pdf.PdfWriter;;
 @RequestMapping(value = "/transactions")
 public class SewerageCloseUpdateConnectionController extends GenericWorkFlowController {
 
+    private static final Logger LOGGER = Logger.getLogger(SewerageCloseUpdateConnectionController.class);
+    
     @Autowired
     private SewerageApplicationDetailsService sewerageApplicationDetailsService;
 
@@ -170,7 +181,7 @@ public class SewerageCloseUpdateConnectionController extends GenericWorkFlowCont
             final BindingResult resultBinder, final RedirectAttributes redirectAttributes,
             final HttpServletRequest request, final HttpSession session, final Model model,@RequestParam String workFlowAction, 
             @RequestParam("files") final MultipartFile[] files,final HttpServletResponse response) throws Exception {
-        
+        ReportOutput reportOutput=null;
         Long approvalPosition = 0l;
         String approvalComment = "";
 
@@ -205,11 +216,7 @@ public class SewerageCloseUpdateConnectionController extends GenericWorkFlowCont
         if (workFlowAction != null && !workFlowAction.isEmpty()
                 && workFlowAction.equalsIgnoreCase(SewerageTaxConstants.WF_STATE_CONNECTION_CLOSE_BUTTON)
                 && sewerageApplicationDetails.getClosureNoticeNumber()!=null) {
-             SewerageNotice sewerageNotice = sewerageNoticeService.findByNoticeNoAndNoticeType(sewerageApplicationDetails.getClosureNoticeNumber(),
-                    NOTICE_TYPE_CLOSER_NOTICE);
-            FileStoreMapper fmp = sewerageNotice.getFileStore();
-            File file = fileStoreService.fetch(fmp, SewerageTaxConstants.FILESTORE_MODULECODE);
-            sewerageNoticeService.getSewerageCloseConnectionNotice(sewerageApplicationDetails, file, session, response);
+            return "redirect:/transactions/viewcloseconnectionnotice/"+sewerageApplicationDetails.getApplicationNumber()+"?closureNoticeNumber="+sewerageApplicationDetails.getClosureNoticeNumber(); 
         }
         
         final Assignment currentUserAssignment = assignmentService.getPrimaryAssignmentForGivenRange(securityUtils
@@ -233,5 +240,36 @@ public class SewerageCloseUpdateConnectionController extends GenericWorkFlowCont
                 + (currentUserAssignment != null ? currentUserAssignment.getDesignation().getName() : "") + ","
                 + (nextDesign != null ? nextDesign : "");
         return "redirect:/transactions/closeConnection-success?pathVars=" + pathVars;   
+    }
+    
+    @RequestMapping(value="/viewcloseconnectionnotice/{applicationNumber}", method=RequestMethod.GET)
+    public ResponseEntity<byte[]> viewCloseConnectionNotice(@ModelAttribute SewerageApplicationDetails sewerageApplicationDetails,
+            final HttpSession session, final HttpServletResponse response, final HttpServletRequest request){
+        ReportOutput reportOutput=new ReportOutput();
+        HttpHeaders headers = new HttpHeaders();
+        SewerageNotice sewerageNotice = null;
+        File file =null;
+        FileStoreMapper fmp = null;
+        String closureNoticeNumber=request.getParameter("closureNoticeNumber");
+        if(closureNoticeNumber!=null){
+            sewerageNotice = sewerageNoticeService.findByNoticeNoAndNoticeType(closureNoticeNumber,
+                    NOTICE_TYPE_CLOSER_NOTICE);
+        }
+        if(sewerageNotice!=null)
+        fmp = sewerageNotice.getFileStore();
+        if(fmp!=null)
+        file = fileStoreService.fetch(fmp, SewerageTaxConstants.FILESTORE_MODULECODE);
+        try{
+            if(file!=null)
+            reportOutput.setReportOutputData(FileUtils.readFileToByteArray(file));
+            reportOutput.setReportFormat(FileFormat.PDF);
+        }
+        catch(IOException ioe){
+            LOGGER.error("Exception while generating close connection notice",ioe);
+            throw new ValidationException(ioe.getMessage());
+        }
+        headers.setContentType(MediaType.parseMediaType("application/pdf"));
+        headers.add("content-disposition", "inline;filename=CloseConnectionNotice.pdf");
+        return new ResponseEntity<byte[]>(reportOutput.getReportOutputData(), headers,HttpStatus.CREATED);
     }
 }
