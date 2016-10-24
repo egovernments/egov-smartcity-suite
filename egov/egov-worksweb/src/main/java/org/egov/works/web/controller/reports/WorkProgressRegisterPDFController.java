@@ -127,7 +127,7 @@ public class WorkProgressRegisterPDFController {
 
         String queryParameters = "Work Progress Register Report ";
         if (spillOverFlag)
-            queryParameters = "Work Progress Register for Spill Over Line Estimates ";
+            queryParameters = "Work Progress Register for Spill Over Estimates ";
         if (adminSanctionFromDate != null
                 || adminSanctionToDate != null
                 || workIdentificationNumber != null

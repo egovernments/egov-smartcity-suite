@@ -64,7 +64,7 @@ jQuery('#btnsearch').click(function(e) {
     
 	var queryParameters = "Work Progress Register Report ";
 	if(spillOverFlag)
-		queryParameters = "Work Progress Register for Spill Over Line Estimates ";
+		queryParameters = "Work Progress Register for Spill Over Estimates ";
 	
 	if (adminSanctionFromDate != ""
 			|| adminSanctionToDate != ""

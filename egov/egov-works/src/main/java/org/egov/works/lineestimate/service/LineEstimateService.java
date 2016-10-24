@@ -448,7 +448,7 @@ public class LineEstimateService {
 
     public List<String> findAdminSanctionNumbersForLoa(final String name) {
         final List<String> adminSanctionNumbers = lineEstimateDetailsRepository.findAdminSanctionNumbersForLoa(
-                "%" + name.toUpperCase() + "%", AbstractEstimate.EstimateStatus.ADMIN_SANCTIONED.toString(),
+                "%" + name.toUpperCase() + "%", AbstractEstimate.EstimateStatus.APPROVED.toString(),
                 WorksConstants.CANCELLED_STATUS);
 
         return adminSanctionNumbers;
@@ -469,7 +469,7 @@ public class LineEstimateService {
         final List<String> workIdNumbers = lineEstimateDetailsRepository
                 .findWorkIdentificationNumbersToSearchEstimatesForLoa("%" + name.toUpperCase() + "%",
                         WorksConstants.CANCELLED_STATUS,
-                        AbstractEstimate.EstimateStatus.ADMIN_SANCTIONED.toString().toUpperCase());
+                        AbstractEstimate.EstimateStatus.APPROVED.toString().toUpperCase());
 
         return workIdNumbers;
     }

@@ -292,15 +292,7 @@ public class CreateAbstractEstimateController extends GenericWorkFlowController 
                 && !WorksConstants.WF_STATE_REJECTED.equals(abstractEstimate.getState().getValue()))
             message = messageSource.getMessage("msg.estimate.resubmitted",
                     new String[] { approverName, nextDesign, abstractEstimate.getEstimateNumber() }, null);
-        else if (EstimateStatus.ADMIN_SANCTIONED.toString().equals(abstractEstimate.getEgwStatus().getCode())
-                && !WorksConstants.WF_STATE_REJECTED.equals(abstractEstimate.getState().getValue()))
-            message = messageSource.getMessage("msg.estimate.techsanctioned",
-                    new String[] { abstractEstimate.getEstimateNumber(),
-                            abstractEstimate.getEstimateTechnicalSanctions()
-                                    .get(abstractEstimate.getEstimateTechnicalSanctions().size() - 1)
-                                    .getTechnicalSanctionNumber() },
-                    null);
-        else if (EstimateStatus.TECH_SANCTIONED.toString().equals(abstractEstimate.getEgwStatus().getCode())
+        else if (EstimateStatus.APPROVED.toString().equals(abstractEstimate.getEgwStatus().getCode())
                 && !WorksConstants.WF_STATE_REJECTED.equals(abstractEstimate.getState().getValue()))
             message = messageSource.getMessage("msg.estimate.techsanctioned",
                     new String[] { abstractEstimate.getEstimateNumber(),

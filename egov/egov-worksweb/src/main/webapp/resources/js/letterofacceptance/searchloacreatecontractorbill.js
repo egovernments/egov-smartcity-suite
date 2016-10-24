@@ -63,13 +63,13 @@ jQuery('#btnsearch').click(function(e) {
 
 jQuery('#btncreateloa').click(function(e) {
 	var workOrderId = $('input[name=selectCheckbox]:checked').val();
-	var workOrderNumber = $('input[name=selectCheckbox]:checked').attr('data').split(':')[0];
-	var woeId = $('input[name=selectCheckbox]:checked').attr('data').split(':')[1];
 	if(workOrderId == null) {
 		var message = $('#errorMessage').html();
 		bootbox.alert(message);
 	}
 	else {
+	var workOrderNumber = $('input[name=selectCheckbox]:checked').attr('data').split(':')[0];
+	var woeId = $('input[name=selectCheckbox]:checked').attr('data').split(':')[1];
 		$.ajax({
 			type : "GET",
 			url : '/egworks/letterofacceptance/ajaxvalidate-createcontractorbill?workOrderId='+ workOrderId,

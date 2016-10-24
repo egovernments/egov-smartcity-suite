@@ -210,7 +210,7 @@ public class SearchAbstractEstimateController {
             if (!egwStatus.getCode().equalsIgnoreCase(WorksConstants.NEW)
                     && !egwStatus.getCode().equalsIgnoreCase(WorksConstants.REJECTED)
                     && !egwStatus.getCode().equalsIgnoreCase(WorksConstants.CANCELLED)
-                    && !egwStatus.getCode().equalsIgnoreCase(EstimateStatus.TECH_SANCTIONED.toString())
+                    && !egwStatus.getCode().equalsIgnoreCase(WorksConstants.CHECKED_STATUS.toString())
                     && !egwStatus.getCode().equalsIgnoreCase(WorksConstants.CREATED_STATUS)
                     && !egwStatus.getCode().equalsIgnoreCase(WorksConstants.RESUBMITTED_STATUS))
                 newEgwStatuses.add(egwStatus);

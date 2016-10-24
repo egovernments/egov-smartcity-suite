@@ -80,7 +80,7 @@
 			</div>
 			<label class="col-sm-2 control-label text-right"><spring:message code="lbl.status" /></label>
 			<div class="col-sm-3 add-margin">
-				<form:input path="status" id="status" class="form-control" value="ADMIN SANCTIONED" readonly="true" />
+				<form:input path="status" id="status" class="form-control" value="APPROVED" readonly="true" />
 				<form:errors path="status" cssClass="add-margin error-msg" />
 			</div>
 		</div>

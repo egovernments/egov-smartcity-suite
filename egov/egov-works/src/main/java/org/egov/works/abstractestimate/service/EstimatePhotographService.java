@@ -208,7 +208,7 @@ public class EstimatePhotographService {
                 qry.setParameter("workOrderNumber", estimatePhotographSearchRequest.getWorkOrderNumber().toUpperCase());
             }
             if (estimatePhotographSearchRequest.getEstimateCreatedBy() != null) {
-                qry.setParameter("abstractEstimateStatus", AbstractEstimate.EstimateStatus.TECH_SANCTIONED.toString());
+                qry.setParameter("abstractEstimateStatus", AbstractEstimate.EstimateStatus.APPROVED.toString());
                 qry.setParameter("aeCreatedById", estimatePhotographSearchRequest.getEstimateCreatedBy());
             }
             if (StringUtils.isNotBlank(estimatePhotographSearchRequest.getContractorName())) {

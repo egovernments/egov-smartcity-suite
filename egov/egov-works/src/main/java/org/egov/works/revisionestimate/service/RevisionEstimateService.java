@@ -1037,7 +1037,7 @@ public class RevisionEstimateService {
     private Query setParameterForSearchActivities(final Long estimateId, final Query query) {
         if (estimateId != null)
             query.setLong("estimateId", estimateId);
-        query.setString("aeStatus", EstimateStatus.ADMIN_SANCTIONED.toString());
+        query.setString("aeStatus", EstimateStatus.APPROVED.toString());
         query.setString("reStatus", RevisionEstimateStatus.APPROVED.toString());
         return query;
     }

@@ -150,7 +150,7 @@ public class EstimateAbstractReportPDFController {
         if (adminSanctionFromDate != null
                 || adminSanctionToDate != null
                 || department != null)
-            queryParameters += "for ";
+            queryParameters += " for ";
 
         if (adminSanctionFromDate != null && adminSanctionToDate != null)
             queryParameters += messageSource.getMessage("msg.daterange", null, null) + sdf.format(adminSanctionFromDate) + " - "
@@ -381,7 +381,7 @@ public class EstimateAbstractReportPDFController {
             queryParameters = messageSource.getMessage("msg.estimateabstractreport.by.typeofworkwise.for.spillover", null, null);
         if (adminSanctionFromDate != null
                 || adminSanctionToDate != null)
-            queryParameters += "for ";
+            queryParameters += " for ";
 
         if (adminSanctionFromDate != null && adminSanctionToDate != null)
             queryParameters += messageSource.getMessage("msg.daterange", null, null) + sdf.format(adminSanctionFromDate) + " - "

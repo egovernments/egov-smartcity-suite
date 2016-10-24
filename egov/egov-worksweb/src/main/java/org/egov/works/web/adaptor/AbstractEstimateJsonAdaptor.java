@@ -126,7 +126,7 @@ public class AbstractEstimateJsonAdaptor implements JsonSerializer<AbstractEstim
 
             if (abstractEstimate.getState() != null) {
                 if (abstractEstimate.getEgwStatus() != null
-                        && (abstractEstimate.getEgwStatus().getCode().equalsIgnoreCase(WorksConstants.ADMIN_SANCTIONED_STATUS)
+                        && (abstractEstimate.getEgwStatus().getCode().equalsIgnoreCase(WorksConstants.APPROVED)
                                 || abstractEstimate.getEgwStatus().getCode().equalsIgnoreCase(WorksConstants.CANCELLED_STATUS)))
                     jsonObject.addProperty("currentowner", "NA");
                 else

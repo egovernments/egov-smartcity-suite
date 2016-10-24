@@ -255,7 +255,7 @@ public class EstimateService {
         if (newAbstractEstimate.getLineEstimateDetails() != null
                 && newAbstractEstimate.getLineEstimateDetails().getLineEstimate().isAbstractEstimateCreated())
             newAbstractEstimate.setEgwStatus(egwStatusHibernateDAO.getStatusByModuleAndCode(WorksConstants.ABSTRACTESTIMATE,
-                    EstimateStatus.ADMIN_SANCTIONED.toString()));
+                    EstimateStatus.APPROVED.toString()));
         else
             createAbstractEstimateWorkflowTransition(newAbstractEstimate, approvalPosition, approvalComent, additionalRule,
                     workFlowAction);
@@ -488,7 +488,7 @@ public class EstimateService {
         abstractEstimate.setWorkValue(lineEstimateDetails.getActualEstimateAmount().doubleValue());
         abstractEstimate.setEstimateValue(lineEstimateDetails.getActualEstimateAmount());
         abstractEstimate.setEgwStatus(worksUtils.getStatusByModuleAndCode(WorksConstants.ABSTRACTESTIMATE,
-                AbstractEstimate.EstimateStatus.ADMIN_SANCTIONED.toString()));
+                AbstractEstimate.EstimateStatus.APPROVED.toString()));
         abstractEstimate.setProjectCode(lineEstimateDetails.getProjectCode());
         abstractEstimate.setApprovedDate(lineEstimateDetails.getLineEstimate().getTechnicalSanctionDate());
         abstractEstimate.setLineEstimateDetails(lineEstimateDetails);
@@ -544,12 +544,12 @@ public class EstimateService {
 
     public AbstractEstimate getAbstractEstimateByEstimateNumberAndStatus(final String estimateNumber) {
         return abstractEstimateRepository.findByLineEstimateDetails_EstimateNumberAndEgwStatus_codeEquals(
-                estimateNumber, AbstractEstimate.EstimateStatus.ADMIN_SANCTIONED.toString());
+                estimateNumber, AbstractEstimate.EstimateStatus.APPROVED.toString());
     }
 
     public AbstractEstimate getAbstractEstimateByLineEstimateDetailsForCancelLineEstimate(final Long id) {
         return abstractEstimateRepository.findByLineEstimateDetails_IdAndEgwStatus_codeEquals(id,
-                AbstractEstimate.EstimateStatus.ADMIN_SANCTIONED.toString());
+                AbstractEstimate.EstimateStatus.APPROVED.toString());
     }
 
     public BigDecimal getPaymentsReleasedForLineEstimate(final LineEstimateDetails lineEstimateDetails) {
@@ -761,7 +761,7 @@ public class EstimateService {
 
             else if (abstractEstimate.getState() != null && workFlowAction.equalsIgnoreCase(WorksConstants.ACTION_APPROVE))
                 abstractEstimate.setEgwStatus(worksUtils.getStatusByModuleAndCode(WorksConstants.ABSTRACTESTIMATE,
-                        EstimateStatus.ADMIN_SANCTIONED.toString()));
+                        EstimateStatus.APPROVED.toString()));
 
             else if ((abstractEstimate.getEgwStatus().getCode().equals(EstimateStatus.CREATED.toString()) ||
                     abstractEstimate.getEgwStatus().getCode().equals(EstimateStatus.CHECKED.toString()) ||
@@ -937,7 +937,7 @@ public class EstimateService {
                 qry.setParameter("projectCode", abstractEstimateForLoaSearchRequest.getWorkIdentificationNumber());
             qry.setParameter("spillOverFlag", abstractEstimateForLoaSearchRequest.isSpillOverFlag());
             qry.setParameter("woStatus", WorksConstants.CANCELLED_STATUS);
-            qry.setParameter("aeStatus", AbstractEstimate.EstimateStatus.ADMIN_SANCTIONED.toString());
+            qry.setParameter("aeStatus", AbstractEstimate.EstimateStatus.APPROVED.toString());
             qry.setParameter("objectType", WorksConstants.ABSTRACTESTIMATE);
             qry.setParameter("offStatus", AbstractEstimate.OfflineStatusesForAbstractEstimate.L1_TENDER_FINALIZED.toString());
         }
@@ -1099,8 +1099,11 @@ public class EstimateService {
     }
 
     public void setTechnicalSanctionDetails(final AbstractEstimate abstractEstimate) {
-        if (abstractEstimate.getEstimateTechnicalSanctions() != null)
+        if (abstractEstimate.getEstimateTechnicalSanctions() != null){
             abstractEstimate.getEstimateTechnicalSanctions().get(0).setAbstractEstimate(abstractEstimate);
+            abstractEstimate.setApprovedDate(abstractEstimate.getEstimateTechnicalSanctions().get(0).getTechnicalSanctionDate());
+        }
+        abstractEstimate.setApprovedBy(securityUtils.getCurrentUser());
     }
 
     public List<String> getAbstractEstimateNumbersToCancelLineEstimate(final Long lineEstimateId) {
@@ -1156,7 +1159,7 @@ public class EstimateService {
             if (searchRequestCancelEstimate.getWinCode() != null)
                 qry.setParameter("projectCode", "%" + searchRequestCancelEstimate.getWinCode() + "%");
             if (searchRequestCancelEstimate.getStatus() != null)
-                qry.setParameter("status", AbstractEstimate.EstimateStatus.ADMIN_SANCTIONED.toString());
+                qry.setParameter("status", AbstractEstimate.EstimateStatus.APPROVED.toString());
             if (searchRequestCancelEstimate.getFromDate() != null)
                 qry.setParameter("fromDate", searchRequestCancelEstimate.getFromDate());
             if (searchRequestCancelEstimate.getToDate() != null)
@@ -1191,7 +1194,7 @@ public class EstimateService {
                 queryStr.append(" and ae.createdBy.id = :abstractEstimateCreatedBy");
 
             if (abstractEstimateForLoaSearchRequest.getEgwStatus() != null)
-                if (abstractEstimateForLoaSearchRequest.getEgwStatus().equals(WorksConstants.ADMIN_SANCTIONED_STATUS))
+                if (abstractEstimateForLoaSearchRequest.getEgwStatus().equals(WorksConstants.APPROVED))
                     queryStr.append(
                             " and not exists (select distinct(os.objectId) from OfflineStatus as os where os.objectType = :objectType and ae.id = os.objectId )");
                 else if (abstractEstimateForLoaSearchRequest.getEgwStatus() != null)
@@ -1220,11 +1223,11 @@ public class EstimateService {
 
             if (abstractEstimateForLoaSearchRequest.getEgwStatus() != null) {
                 qry.setParameter("objectType", WorksConstants.ABSTRACTESTIMATE);
-                if (!abstractEstimateForLoaSearchRequest.getEgwStatus().equals(WorksConstants.ADMIN_SANCTIONED_STATUS))
+                if (!abstractEstimateForLoaSearchRequest.getEgwStatus().equals(WorksConstants.APPROVED))
                     qry.setParameter("offlineStatus",
                             abstractEstimateForLoaSearchRequest.getEgwStatus().toString().toLowerCase());
             }
-            qry.setParameter("abstractEstimateStatus", WorksConstants.ADMIN_SANCTIONED_STATUS);
+            qry.setParameter("abstractEstimateStatus", WorksConstants.APPROVED);
             qry.setParameter("workOrderStatus", WorksConstants.CANCELLED_STATUS);
 
         }
@@ -1234,7 +1237,7 @@ public class EstimateService {
     public List<String> getAbstractEstimateNumbersToSetOfflineStatus(final String code) {
         final List<String> estimateNumbers = abstractEstimateRepository
                 .findAbstractEstimateNumbersToSetOfflineStatus("%" + code + "%",
-                        WorksConstants.ADMIN_SANCTIONED_STATUS, WorksConstants.CANCELLED_STATUS);
+                        WorksConstants.APPROVED, WorksConstants.CANCELLED_STATUS);
         return estimateNumbers;
     }
 
@@ -1263,7 +1266,7 @@ public class EstimateService {
     public List<String> getApprovedEstimateNumbersForCreateLOA(final String estimateNumber) {
         final List<String> estimateNumbers = abstractEstimateRepository
                 .findEstimateNumbersToCreateLOA("%" + estimateNumber + "%",
-                        EstimateStatus.ADMIN_SANCTIONED.toString(), WorksConstants.CANCELLED_STATUS,
+                        EstimateStatus.APPROVED.toString(), WorksConstants.CANCELLED_STATUS,
                         WorksConstants.ABSTRACTESTIMATE,
                         OfflineStatusesForAbstractEstimate.L1_TENDER_FINALIZED.toString());
         return estimateNumbers;
@@ -1272,7 +1275,7 @@ public class EstimateService {
     public List<String> getApprovedAdminSanctionNumbersForCreateLOA(final String adminSanctionNumber) {
         final List<String> adminSanctionNumbers = abstractEstimateRepository
                 .findAdminSanctionNumbersToCreateLOA("%" + adminSanctionNumber + "%",
-                        EstimateStatus.ADMIN_SANCTIONED.toString(), WorksConstants.CANCELLED_STATUS,
+                        EstimateStatus.APPROVED.toString(), WorksConstants.CANCELLED_STATUS,
                         WorksConstants.ABSTRACTESTIMATE,
                         OfflineStatusesForAbstractEstimate.L1_TENDER_FINALIZED.toString());
         return adminSanctionNumbers;
@@ -1281,7 +1284,7 @@ public class EstimateService {
     public List<String> getApprovedWorkIdentificationNumbersForCreateLOA(final String workIdentificationNumber) {
         final List<String> workIdentificationNumbers = abstractEstimateRepository
                 .findWorkIdentificationNumbersToCreateLOA("%" + workIdentificationNumber + "%",
-                        EstimateStatus.ADMIN_SANCTIONED.toString(), WorksConstants.CANCELLED_STATUS,
+                        EstimateStatus.APPROVED.toString(), WorksConstants.CANCELLED_STATUS,
                         WorksConstants.ABSTRACTESTIMATE,
                         OfflineStatusesForAbstractEstimate.L1_TENDER_FINALIZED.toString());
         return workIdentificationNumbers;
@@ -1385,7 +1388,7 @@ public class EstimateService {
 
     public List<User> getCreatedByForEstimatePhotograph() {
         return abstractEstimateRepository.findCreatedByForEstimatePhotograph(
-                AbstractEstimate.EstimateStatus.TECH_SANCTIONED.toString());
+                AbstractEstimate.EstimateStatus.APPROVED.toString());
     }
 
     private void createEstimateDeductionValues(final AbstractEstimate abstractEstimate) {
@@ -1412,4 +1415,5 @@ public class EstimateService {
         return true;
 
     }
+
 }

@@ -54,7 +54,7 @@ jQuery('#btnsearch').click(function(e) {
 	if(adminSanctionToDate != '' && adminSanctionFromDate != '') {
 		if(adminSanctionFromDate > adminSanctionToDate) {
 			flag = false;
-			bootbox.alert('Line Estimate Admin Sanction To Date should be greater than Line Estimate Admin Sanction From Date');
+			bootbox.alert('Estimate Admin Sanction To Date should be greater than Estimate Admin Sanction From Date');
 		}
 	}
 	if(flag && $('form').valid())
@@ -65,16 +65,16 @@ jQuery('#btnsearch').click(function(e) {
     
 	var queryParameters = "Estimate Abstract Report By Type Of Work  ";
 	if(spillOverFlag)
-		queryParameters = "Estimate Abstract Report By Type Of Work for Spill Over Line Estimates ";
+		queryParameters = "Estimate Abstract Report By Type Of Work for Spill Over Estimates ";
 	
 	if(adminSanctionFromDate != "" && adminSanctionToDate != "") {
 		queryParameters += "Date Range : " + $('#adminSanctionFromDate').val() + " - " + $('#adminSanctionToDate').val() + ", ";
 	}
     if(adminSanctionFromDate != "" && adminSanctionToDate == "") {
-        queryParameters += "Line Estimate Admin Sanction From Date : " + $('#adminSanctionFromDate').val() + ", ";
+        queryParameters += "Estimate Admin Sanction From Date : " + $('#adminSanctionFromDate').val() + ", ";
     }
     if(adminSanctionToDate != "" && adminSanctionFromDate == "") {
-        queryParameters += "Line Estimate Admin Sanction To Date : " + $('#adminSanctionToDate').val() + ", ";
+        queryParameters += "Estimate Admin Sanction To Date : " + $('#adminSanctionToDate').val() + ", ";
     }
     
     if($('#typeOfWork').val() != "") {
