@@ -41,15 +41,10 @@ package org.egov.stms.web.controller.transactions;
 
 import static org.egov.stms.utils.constants.SewerageTaxConstants.NOTICE_TYPE_CLOSER_NOTICE;
 
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.Iterator;
 import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
@@ -69,9 +64,7 @@ import org.egov.infra.filestore.entity.FileStoreMapper;
 import org.egov.infra.filestore.service.FileStoreService;
 import org.egov.infra.reporting.engine.ReportConstants.FileFormat;
 import org.egov.infra.reporting.engine.ReportOutput;
-import org.egov.infra.reporting.engine.ReportService;
 import org.egov.infra.security.utils.SecurityUtils;
-import org.egov.infra.validation.exception.ValidationError;
 import org.egov.ptis.domain.model.AssessmentDetails;
 import org.egov.stms.masters.entity.enums.PropertyType;
 import org.egov.stms.notice.entity.SewerageNotice;
@@ -98,20 +91,14 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
-import org.springframework.web.servlet.mvc.support.RedirectAttributes;
-
-import com.lowagie.text.Document;
-import com.lowagie.text.pdf.PdfContentByte;
-import com.lowagie.text.pdf.PdfImportedPage;
-import com.lowagie.text.pdf.PdfReader;
-import com.lowagie.text.pdf.PdfWriter;;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;;
 
 @Controller
 @RequestMapping(value = "/transactions")
 public class SewerageCloseUpdateConnectionController extends GenericWorkFlowController {
 
     private static final Logger LOGGER = Logger.getLogger(SewerageCloseUpdateConnectionController.class);
-    
+
     @Autowired
     private SewerageApplicationDetailsService sewerageApplicationDetailsService;
 
@@ -133,15 +120,12 @@ public class SewerageCloseUpdateConnectionController extends GenericWorkFlowCont
 
     @Autowired
     private SewerageThirdPartyServices sewerageThirdPartyServices;
-    
+
     @Autowired
     private SewerageConnectionService sewerageConnectionService;
-    
+
     @Autowired
     private SewerageNoticeService sewerageNoticeService;
-    
-    @Autowired
-    private ReportService reportService;
 
     @ModelAttribute("sewerageApplicationDetails")
     public SewerageApplicationDetails getSewerageApplicationDetails(@PathVariable final String applicationNumber) {
@@ -155,33 +139,33 @@ public class SewerageCloseUpdateConnectionController extends GenericWorkFlowCont
         final SewerageApplicationDetails sewerageApplicationDetails = sewerageApplicationDetailsService
                 .findByApplicationNumber(applicationNumber);
         model.addAttribute("sewerageApplcationDetails", sewerageApplicationDetails);
-        
-        final AssessmentDetails propertyOwnerDetails = sewerageThirdPartyServices.getPropertyDetails(sewerageApplicationDetails.getConnection().getShscNumber(), request);
-        if(propertyOwnerDetails!=null){
-           model.addAttribute("propertyOwnerDetails", propertyOwnerDetails); 
-        }
-        
+
+        final AssessmentDetails propertyOwnerDetails = sewerageThirdPartyServices
+                .getPropertyDetails(sewerageApplicationDetails.getConnection().getShscNumber(), request);
+        if (propertyOwnerDetails != null)
+            model.addAttribute("propertyOwnerDetails", propertyOwnerDetails);
+
         model.addAttribute("stateType", sewerageApplicationDetails.getClass().getSimpleName());
         model.addAttribute("sewerageApplicationDetails", sewerageApplicationDetails);
         model.addAttribute("approvalDepartmentList", departmentService.getAllDepartments());
         model.addAttribute("currentUser", sewerageTaxUtils.getCurrentUserRole(securityUtils.getCurrentUser()));
         model.addAttribute("currentState", sewerageApplicationDetails.getCurrentState().getValue());
-        WorkflowContainer container = new WorkflowContainer();
-        container.setAdditionalRule(sewerageApplicationDetails.getApplicationType().getCode()); 
+        final WorkflowContainer container = new WorkflowContainer();
+        container.setAdditionalRule(sewerageApplicationDetails.getApplicationType().getCode());
         prepareWorkflow(model, sewerageApplicationDetails, container);
         model.addAttribute("additionalRule", sewerageApplicationDetails.getApplicationType().getCode());
         model.addAttribute("propertyTypes", PropertyType.values());
-        List<SewerageApplicationDetailsDocument> docList = sewerageConnectionService.getSewerageApplicationDoc(sewerageApplicationDetails);
+        final List<SewerageApplicationDetailsDocument> docList = sewerageConnectionService
+                .getSewerageApplicationDoc(sewerageApplicationDetails);
         model.addAttribute("documentNamesList", docList);
         return "closeSewerageConnection";
     }
-    
+
     @RequestMapping(value = "/closeSewerageConnection-update/{applicationNumber}", method = RequestMethod.POST)
-    public String update(@Valid @ModelAttribute SewerageApplicationDetails sewerageApplicationDetails,
+    public String update(@Valid @ModelAttribute final SewerageApplicationDetails sewerageApplicationDetails,
             final BindingResult resultBinder, final RedirectAttributes redirectAttributes,
-            final HttpServletRequest request, final HttpSession session, final Model model,@RequestParam String workFlowAction, 
-            @RequestParam("files") final MultipartFile[] files,final HttpServletResponse response) throws Exception {
-        ReportOutput reportOutput=null;
+            final HttpServletRequest request, final HttpSession session, final Model model, @RequestParam String workFlowAction,
+            @RequestParam("files") final MultipartFile[] files, final HttpServletResponse response) throws Exception {
         Long approvalPosition = 0l;
         String approvalComment = "";
 
@@ -196,37 +180,37 @@ public class SewerageCloseUpdateConnectionController extends GenericWorkFlowCont
 
         try {
             if (workFlowAction != null && !workFlowAction.isEmpty()
-                    && workFlowAction.equalsIgnoreCase(SewerageTaxConstants.APPROVEWORKFLOWACTION)){
-                SewerageApplicationDetails parentSewerageAppDtls = sewerageApplicationDetailsService.findByConnection_ShscNumberAndIsActive(sewerageApplicationDetails.getConnection().getShscNumber());
-                if(parentSewerageAppDtls!=null){
+                    && workFlowAction.equalsIgnoreCase(SewerageTaxConstants.APPROVEWORKFLOWACTION)) {
+                final SewerageApplicationDetails parentSewerageAppDtls = sewerageApplicationDetailsService
+                        .findByConnection_ShscNumberAndIsActive(sewerageApplicationDetails.getConnection().getShscNumber());
+                if (parentSewerageAppDtls != null) {
                     parentSewerageAppDtls.setActive(false);
                     sewerageApplicationDetails.setParent(parentSewerageAppDtls);
                 }
             }
 
-            SewerageApplicationDetails sdc = sewerageApplicationDetailsService.updateCloseSewerageApplicationDetails(sewerageApplicationDetails,
+            sewerageApplicationDetailsService.updateCloseSewerageApplicationDetails(sewerageApplicationDetails,
                     approvalPosition, approvalComment, sewerageApplicationDetails.getApplicationType().getCode(),
-                    workFlowAction, null,request,session);
+                    workFlowAction, null, request, session);
         } catch (final ValidationException e) {
             throw new ValidationException(e.getMessage());
         }
-        
-        
-        //TODO : show closer notice from sewerage tax notice object.
+
+        // TODO : show closer notice from sewerage tax notice object.
         if (workFlowAction != null && !workFlowAction.isEmpty()
                 && workFlowAction.equalsIgnoreCase(SewerageTaxConstants.WF_STATE_CONNECTION_CLOSE_BUTTON)
-                && sewerageApplicationDetails.getClosureNoticeNumber()!=null) {
-            return "redirect:/transactions/viewcloseconnectionnotice/"+sewerageApplicationDetails.getApplicationNumber()+"?closureNoticeNumber="+sewerageApplicationDetails.getClosureNoticeNumber(); 
-        }
-        
+                && sewerageApplicationDetails.getClosureNoticeNumber() != null)
+            return "redirect:/transactions/viewcloseconnectionnotice/" + sewerageApplicationDetails.getApplicationNumber()
+                    + "?closureNoticeNumber=" + sewerageApplicationDetails.getClosureNoticeNumber();
+
         final Assignment currentUserAssignment = assignmentService.getPrimaryAssignmentForGivenRange(securityUtils
                 .getCurrentUser().getId(), new Date(), new Date());
         String nextDesign = "";
         Assignment assignObj = null;
         List<Assignment> asignList = null;
-        if(approvalPosition==null || approvalPosition==0){
-            approvalPosition=assignmentService.getPrimaryAssignmentForUser(sewerageApplicationDetails.getCreatedBy().getId()).getPosition().getId();
-        }
+        if (approvalPosition == null || approvalPosition == 0)
+            approvalPosition = assignmentService.getPrimaryAssignmentForUser(sewerageApplicationDetails.getCreatedBy().getId())
+                    .getPosition().getId();
         if (approvalPosition != null)
             assignObj = assignmentService.getPrimaryAssignmentForPositon(approvalPosition);
         if (assignObj != null) {
@@ -239,37 +223,36 @@ public class SewerageCloseUpdateConnectionController extends GenericWorkFlowCont
                 + sewerageTaxUtils.getApproverName(approvalPosition) + ","
                 + (currentUserAssignment != null ? currentUserAssignment.getDesignation().getName() : "") + ","
                 + (nextDesign != null ? nextDesign : "");
-        return "redirect:/transactions/closeConnection-success?pathVars=" + pathVars;   
+        return "redirect:/transactions/closeConnection-success?pathVars=" + pathVars;
     }
-    
-    @RequestMapping(value="/viewcloseconnectionnotice/{applicationNumber}", method=RequestMethod.GET)
-    public ResponseEntity<byte[]> viewCloseConnectionNotice(@ModelAttribute SewerageApplicationDetails sewerageApplicationDetails,
-            final HttpSession session, final HttpServletResponse response, final HttpServletRequest request){
-        ReportOutput reportOutput=new ReportOutput();
-        HttpHeaders headers = new HttpHeaders();
+
+    @RequestMapping(value = "/viewcloseconnectionnotice/{applicationNumber}", method = RequestMethod.GET)
+    public ResponseEntity<byte[]> viewCloseConnectionNotice(
+            @ModelAttribute final SewerageApplicationDetails sewerageApplicationDetails,
+            final HttpSession session, final HttpServletResponse response, final HttpServletRequest request) {
+        final ReportOutput reportOutput = new ReportOutput();
+        final HttpHeaders headers = new HttpHeaders();
         SewerageNotice sewerageNotice = null;
-        File file =null;
+        File file = null;
         FileStoreMapper fmp = null;
-        String closureNoticeNumber=request.getParameter("closureNoticeNumber");
-        if(closureNoticeNumber!=null){
+        final String closureNoticeNumber = request.getParameter("closureNoticeNumber");
+        if (closureNoticeNumber != null)
             sewerageNotice = sewerageNoticeService.findByNoticeNoAndNoticeType(closureNoticeNumber,
                     NOTICE_TYPE_CLOSER_NOTICE);
-        }
-        if(sewerageNotice!=null)
-        fmp = sewerageNotice.getFileStore();
-        if(fmp!=null)
-        file = fileStoreService.fetch(fmp, SewerageTaxConstants.FILESTORE_MODULECODE);
-        try{
-            if(file!=null)
-            reportOutput.setReportOutputData(FileUtils.readFileToByteArray(file));
+        if (sewerageNotice != null)
+            fmp = sewerageNotice.getFileStore();
+        if (fmp != null)
+            file = fileStoreService.fetch(fmp, SewerageTaxConstants.FILESTORE_MODULECODE);
+        try {
+            if (file != null)
+                reportOutput.setReportOutputData(FileUtils.readFileToByteArray(file));
             reportOutput.setReportFormat(FileFormat.PDF);
-        }
-        catch(IOException ioe){
-            LOGGER.error("Exception while generating close connection notice",ioe);
+        } catch (final IOException ioe) {
+            LOGGER.error("Exception while generating close connection notice", ioe);
             throw new ValidationException(ioe.getMessage());
         }
         headers.setContentType(MediaType.parseMediaType("application/pdf"));
         headers.add("content-disposition", "inline;filename=CloseConnectionNotice.pdf");
-        return new ResponseEntity<byte[]>(reportOutput.getReportOutputData(), headers,HttpStatus.CREATED);
+        return new ResponseEntity<byte[]>(reportOutput.getReportOutputData(), headers, HttpStatus.CREATED);
     }
 }
