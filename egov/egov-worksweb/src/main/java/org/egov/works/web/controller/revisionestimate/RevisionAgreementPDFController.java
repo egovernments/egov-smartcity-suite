@@ -60,6 +60,7 @@ import org.egov.works.revisionestimate.entity.RevisionAbstractEstimate;
 import org.egov.works.revisionestimate.service.RevisionEstimateService;
 import org.egov.works.utils.WorksUtils;
 import org.egov.works.workorder.entity.WorkOrder;
+import org.egov.works.workorder.entity.WorkOrderActivity;
 import org.egov.works.workorder.entity.WorkOrderEstimate;
 import org.egov.works.workorder.service.WorkOrderEstimateService;
 import org.joda.time.DateTime;
@@ -116,10 +117,14 @@ public class RevisionAgreementPDFController {
             final String url = WebUtils.extractRequestDomainURL(request, false);
             reportParams.put("cityLogo", url.concat(ReportConstants.IMAGE_CONTEXT_PATH)
                     .concat((String) request.getSession().getAttribute("citylogo")));
+            BigDecimal suplimentAgreementAmount = BigDecimal.ZERO;
+            for (final WorkOrderActivity rwoa : revisionWorkOrderEstimate.getWorkOrderActivities())
+                suplimentAgreementAmount = suplimentAgreementAmount.add(new BigDecimal(rwoa.getApprovedAmount()));
 
             final String cityName = ApplicationThreadLocals.getMunicipalityName();
             reportParams.put("cityName", cityName);
             reportParams.put("revisionEstimate", revisionEstimate);
+            reportParams.put("suplimentAgreementAmount", suplimentAgreementAmount.setScale(2, BigDecimal.ROUND_DOWN));
             reportParams.put("workOrderNumber",
                     revisionworkOrder.getWorkOrderNumber() != null ? revisionworkOrder.getWorkOrderNumber() : "");
             reportParams.put("workOrderDate", revisionworkOrder.getWorkOrderDate() != null
@@ -130,9 +135,11 @@ public class RevisionAgreementPDFController {
             reportParams.put("contractorAddress", revisionworkOrder.getContractor().getBankaccount() != null
                     ? revisionworkOrder.getContractor().getCorrespondenceAddress() : "");
             reportParams.put("panNo",
-                    revisionworkOrder.getContractor().getPanNumber() != null ? revisionworkOrder.getContractor().getPanNumber() : "");
+                    revisionworkOrder.getContractor().getPanNumber() != null ? revisionworkOrder.getContractor().getPanNumber()
+                            : "");
             reportParams.put("bank",
-                    revisionworkOrder.getContractor().getBank() != null ? revisionworkOrder.getContractor().getBank().getName() : "");
+                    revisionworkOrder.getContractor().getBank() != null ? revisionworkOrder.getContractor().getBank().getName()
+                            : "");
             reportParams.put("accountNo", revisionworkOrder.getContractor().getBankaccount() != null
                     ? revisionworkOrder.getContractor().getBankaccount() : "");
             reportParams.put("subject", originalEstimate.getName());
@@ -142,16 +149,15 @@ public class RevisionAgreementPDFController {
             else
                 reportParams.put("modeOfAllotment", "");
             reportParams.put("agreementAmount", df.format(revisionworkOrder.getWorkOrderAmount()));
-            reportParams.put("emd", df.format(revisionworkOrder.getEmdAmountDeposited()));
-            reportParams.put("asd", df.format(revisionworkOrder.getSecurityDeposit()));
             reportParams.put("WINCode", originalEstimate.getProjectCode().getCode());
             reportParams.put("amountOfEstimate",
                     revisionEstimate.getEstimateValue().setScale(2, BigDecimal.ROUND_HALF_EVEN));
             reportParams.put("ward", originalEstimate.getWard().getName());
-            reportParams.put("nonTenderedLumpSumActivities",
-                    revisionEstimateService.getNonTenderedLumpSumActivities(revisionWorkOrderEstimate.getId()));
-            reportParams.put("changeQuatityActivities",
-                    revisionEstimateService.getChangeQuatityActivities(revisionWorkOrderEstimate.getId()));
+            revisionEstimateService.prepareNonTenderedAndLumpSumActivities(revisionEstimate);
+            reportParams.put("nonTenderedActivities", revisionEstimate.getNonTenderedActivities());
+            reportParams.put("LumpSumActivities", revisionEstimate.getLumpSumActivities());
+            revisionEstimateService.prepareChangeQuantityActivities(revisionEstimate);
+            reportParams.put("changeQuatityActivities", revisionEstimate.getChangeQuantityActivities());
             reportParams.put("tenderFinalizedPercentage", revisionworkOrder.getTenderFinalizedPercentage());
             reportParams.put("currDate", DateUtils.getFormattedDateWithTimeStamp(new DateTime()));
             reportParams.put("workValue", revisionEstimate.getWorkValue());

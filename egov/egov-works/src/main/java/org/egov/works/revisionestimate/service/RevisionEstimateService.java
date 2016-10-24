@@ -75,7 +75,6 @@ import org.egov.works.abstractestimate.entity.AbstractEstimate.EstimateStatus;
 import org.egov.works.abstractestimate.entity.Activity;
 import org.egov.works.abstractestimate.entity.MeasurementSheet;
 import org.egov.works.abstractestimate.repository.ActivityRepository;
-import org.egov.works.abstractestimate.service.ActivityService;
 import org.egov.works.abstractestimate.service.MeasurementSheetService;
 import org.egov.works.letterofacceptance.service.WorkOrderActivityService;
 import org.egov.works.lineestimate.service.LineEstimateAppropriationService;
@@ -196,9 +195,6 @@ public class RevisionEstimateService {
 
     @Autowired
     private BudgetControlTypeService budgetControlTypeService;
-
-    @Autowired
-    private ActivityService activityService;
 
     @Autowired
     public RevisionEstimateService(final RevisionEstimateRepository revisionEstimateRepository) {
@@ -419,10 +415,10 @@ public class RevisionEstimateService {
             if (activity.getRevisionType() != null && RevisionType.REDUCED_QUANTITY.equals(activity.getRevisionType()))
                 approvedAmount = approvedAmount * -1;
 
-            // Apply percentage for change quantity items in case of percentage
+            // Apply percentage for change quantity items for tender items in case of percentage
             // tender
-            if (activity != null
-                    && activity.getRevisionType() != null
+            if (activity != null && activity.getParent() != null
+                    && activity.getRevisionType() == null
                     && (RevisionType.ADDITIONAL_QUANTITY.toString()
                             .equalsIgnoreCase(activity.getRevisionType().toString())
                             || RevisionType.REDUCED_QUANTITY.toString().equalsIgnoreCase(activity
@@ -1417,14 +1413,5 @@ public class RevisionEstimateService {
                 }
                 revisionEstimate.getChangeQuantityActivities().add(activity);
             }
-    }
-
-    public List<WorkOrderActivity> getNonTenderedLumpSumActivities(final Long revisionWorkOrderEstimateId) {
-        return workOrderActivityService.findActivitiesByRevisionType(revisionWorkOrderEstimateId, RevisionType.NON_TENDERED_ITEM, RevisionType.LUMP_SUM_ITEM);
-    }
-
-    public List<WorkOrderActivity> getChangeQuatityActivities(final Long revisionWorkOrderEstimateId) {
-        return workOrderActivityService.findActivitiesByRevisionType(revisionWorkOrderEstimateId, RevisionType.ADDITIONAL_QUANTITY,
-                RevisionType.REDUCED_QUANTITY);
     }
 }

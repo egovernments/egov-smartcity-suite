@@ -61,9 +61,15 @@
 </div>
 <div class="row text-center">
 	<div class="add-margin">
-	            <c:if test="${revisionEstimate.egwStatus.code == 'APPROVED' }">
-					<a href="javascript:void(0)" class="btn btn-primary" onclick="renderPDF()" ><spring:message code="lbl.view.revisionagreemantpdf" /></a>
-				</c:if>
+        <c:if test="${revisionEstimate.egwStatus.code == 'APPROVED' }">
+		  <a href="javascript:void(0)" class="btn btn-primary" id="viewPdf" ><spring:message code="lbl.view.revisionagreemantpdf" /></a>
+	    </c:if>
 		<a href="javascript:void(0)" class="btn btn-default inboxload" onclick="self.close()" ><spring:message code="lbl.close" /></a>
 	</div>
 </div>
+<script type="text/javascript">
+$('#viewPdf').click(function() {
+	var revisionEstimateId = $("#revisionEstimateId").val();
+	window.open("/egworks/revisionestimate/revisionagreementPDF/"+revisionEstimateId,"","height=600,width=1200,scrollbars=yes,left=0,top=0,status=yes");
+});
+</script>

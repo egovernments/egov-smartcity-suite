@@ -72,7 +72,7 @@
 	enctype="multipart/form-data">
 	<input type="hidden" name="removedActivityIds" id="removedActivityIds" value="${removedActivityIds }" class="form-control table-input hidden-input"/>
 	<div class="new-page-header"><spring:message code="lbl.re" /></div> 
-	
+	<input type="hidden" name="revisionEstimateId" id="revisionEstimateId" value="${revisionEstimate.id}"/>
 	<div class="panel-title text-center" style="color: green;">
 		<c:out value="${message}" /><br />
 	</div>
@@ -127,6 +127,9 @@
 		</c:when>
 		<c:otherwise>
 			<div class="row text-center">
+			    <c:if test="${revisionEstimate.egwStatus.code == 'APPROVED' }">
+					<a href="javascript:void(0)" class="btn btn-primary" onclick="renderPDF()" ><spring:message code="lbl.view.revisionagreemantpdf" /></a>
+				</c:if>
 				<a href="javascript:void(0)" class="btn btn-default" onclick="self.close()"><spring:message code="lbl.close" /></a>
 			</div>
 		</c:otherwise>

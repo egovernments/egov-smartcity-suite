@@ -171,11 +171,5 @@ public class WorkOrderActivityService {
     public List<WorkOrderActivity> getWorkOrderActivitiesForContractorPortal(final Long workOrderId) {
         return workOrderActivityRepository.getWorkOrderActivitiesForContractorPortal(workOrderId);
     }
-    
-    public List<WorkOrderActivity> findActivitiesByRevisionType(final Long revisionWorkOrderEstimateId, final RevisionType nonTenderderRevisionType,
-            final RevisionType lumpSumRevisionType) {
-        return workOrderActivityRepository.findByRevisionEstimate_IdAndRevisionType(revisionWorkOrderEstimateId, nonTenderderRevisionType,
-                lumpSumRevisionType);
-    }
 
 }
