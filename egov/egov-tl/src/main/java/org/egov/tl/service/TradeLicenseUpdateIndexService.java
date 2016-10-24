@@ -39,13 +39,11 @@
  */
 package org.egov.tl.service;
 
-import org.egov.commons.entity.Source;
 import org.egov.eis.entity.Assignment;
 import org.egov.eis.service.AssignmentService;
 import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.admin.master.service.UserService;
 import org.egov.infra.es.entity.ApplicationIndex;
-import org.egov.infra.es.entity.ApplicationIndexBuilder;
 import org.egov.infra.es.entity.enums.ApprovalStatus;
 import org.egov.infra.es.entity.enums.ClosureStatus;
 import org.egov.infra.es.service.ApplicationIndexService;
@@ -54,7 +52,6 @@ import org.egov.infra.utils.DateUtils;
 import org.egov.infra.workflow.entity.StateHistory;
 import org.egov.tl.entity.License;
 import org.egov.tl.utils.Constants;
-import org.hibernate.Query;
 import org.hibernate.Session;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -65,8 +62,16 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import static java.lang.String.format;
+import static org.egov.commons.entity.Source.SYSTEM;
+import static org.egov.infra.es.entity.enums.ApprovalStatus.INPROGRESS;
+import static org.egov.infra.es.entity.enums.ClosureStatus.NO;
+import static org.egov.tl.utils.Constants.TRADELICENSE_MODULENAME;
+
 @Service
 public class TradeLicenseUpdateIndexService {
+
+    private static final String APPLICATION_VIEW_URL = "/tl/viewtradelicense/viewTradeLicense-view.action?applicationNo=%s";
 
     @PersistenceContext
     private EntityManager entityManager;
@@ -108,10 +113,10 @@ public class TradeLicenseUpdateIndexService {
             if (applicationIndex != null && null != license.getId() && license.getEgwStatus() != null
                     && license.getEgwStatus() != null
                     && (license.getEgwStatus().getCode().equals(Constants.APPLICATION_STATUS_INSPE_CODE)
-                            || license.getEgwStatus().getCode().equals(Constants.APPLICATION_STATUS_APPROVED_CODE)
-                            || license.getEgwStatus().getCode().equals(Constants.APPLICATION_STATUS_COLLECTION_CODE)
-                            || license.getEgwStatus().getCode().equals(Constants.APPLICATION_STATUS_GENECERT_CODE) || license
-                            .getEgwStatus().getCode().equals(Constants.APPLICATION_STATUS_DIGUPDATE_CODE))
+                    || license.getEgwStatus().getCode().equals(Constants.APPLICATION_STATUS_APPROVED_CODE)
+                    || license.getEgwStatus().getCode().equals(Constants.APPLICATION_STATUS_COLLECTION_CODE)
+                    || license.getEgwStatus().getCode().equals(Constants.APPLICATION_STATUS_GENECERT_CODE) || license
+                    .getEgwStatus().getCode().equals(Constants.APPLICATION_STATUS_DIGUPDATE_CODE))
                     || license.getStatus().getStatusCode().equals(Constants.STATUS_CANCELLED)
                     || license.getEgwStatus().getCode().equals(Constants.APPLICATION_STATUS_CREATED_CODE)
                     && license.getState().getValue().contains(Constants.WORKFLOW_STATE_REJECTED)) {
@@ -121,8 +126,8 @@ public class TradeLicenseUpdateIndexService {
                 if (license.getLicenseNumber() != null)
                     applicationIndex.setConsumerCode(license.getLicenseNumber());
                 int noofDays = 0;
-                applicationIndex.setClosed(ClosureStatus.NO);
-                applicationIndex.setApproved(ApprovalStatus.INPROGRESS);
+                applicationIndex.setClosed(NO);
+                applicationIndex.setApproved(INPROGRESS);
                 Date endDate = null;
                 if (license.getEgwStatus().getCode().equals(Constants.APPLICATION_STATUS_GENECERT_CODE)) {
                     final List<StateHistory> stateHistoryList = license.getStateHistory();
@@ -145,32 +150,20 @@ public class TradeLicenseUpdateIndexService {
                 applicationIndexService.updateApplicationIndex(applicationIndex);
             }
         } else {
-            final String strQuery = "select md from EgModules md where md.name=:name";
-            final Query hql = getCurrentSession().createQuery(strQuery);
-            hql.setParameter("name", Constants.TRADELICENSE_MODULENAME);
             if (license.getApplicationDate() == null)
                 license.setApplicationDate(new Date());
             if (license.getApplicationNumber() == null)
                 license.setApplicationNumber(license.getApplicationNumber());
-            if (applicationIndex == null) {
-                final String url = "/tl/viewtradelicense/viewTradeLicense-view.action?applicationNo="
-                        + license.getApplicationNumber();
-                final ApplicationIndexBuilder applicationIndexBuilder = new ApplicationIndexBuilder(
-                        Constants.TRADELICENSE_MODULENAME, license.getApplicationNumber(),
-                        license.getApplicationDate(), license.getLicenseAppType().getName().toString(), license
-                        .getLicensee().getApplicantName(), license.getEgwStatus().getDescription().toString(),
-                        url, license.getAddress()
-                        .toString(), user.getUsername() + "::" + user.getName(), Source.SYSTEM.toString());
-
-                applicationIndexBuilder.mobileNumber(license.getLicensee().getMobilePhoneNumber().toString());
-                applicationIndexBuilder.aadharNumber(license.getLicensee().getUid());
-                applicationIndexBuilder.closed(ClosureStatus.NO);
-                applicationIndexBuilder.approved(ApprovalStatus.INPROGRESS);
-                applicationIndex = applicationIndexBuilder.build();
-                if (license.getIsActive())
-                    applicationIndexService.createApplicationIndex(applicationIndex);
-            }
-
+            applicationIndex = ApplicationIndex.builder().withModuleName(TRADELICENSE_MODULENAME)
+                    .withApplicationNumber(license.getApplicationNumber()).withApplicationDate(license.getApplicationDate())
+                    .withApplicationType(license.getLicenseAppType().getName()).withApplicantName(license.getLicensee().getApplicantName())
+                    .withStatus(license.getEgwStatus().getDescription()).withUrl(format(APPLICATION_VIEW_URL, license.getApplicationNumber()))
+                    .withApplicantAddress(license.getAddress()).withOwnername(user.getUsername() + "::" + user.getName())
+                    .withChannel(SYSTEM.toString()).withMobileNumber(license.getLicensee().getMobilePhoneNumber())
+                    .withAadharNumber(license.getLicensee().getUid()).withClosed(NO).withApproved(INPROGRESS)
+                    .build();
+            if (license.getIsActive())
+                applicationIndexService.createApplicationIndex(applicationIndex);
         }
     }
 

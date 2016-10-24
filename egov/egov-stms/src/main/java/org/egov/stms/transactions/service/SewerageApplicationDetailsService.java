@@ -90,7 +90,6 @@ import org.egov.infra.admin.master.service.UserService;
 import org.egov.infra.filestore.entity.FileStoreMapper;
 import org.egov.infra.reporting.engine.ReportOutput;
 import org.egov.infra.es.entity.ApplicationIndex;
-import org.egov.infra.es.entity.ApplicationIndexBuilder;
 import org.egov.infra.es.entity.enums.ApprovalStatus;
 import org.egov.infra.es.entity.enums.ClosureStatus;
 import org.egov.infra.es.service.ApplicationIndexService;
@@ -133,6 +132,7 @@ import org.springframework.web.multipart.MultipartFile;
 public class SewerageApplicationDetailsService {
 
     private static final Logger LOG = LoggerFactory.getLogger(SewerageApplicationDetailsService.class);
+    private static final String STMS_APPLICATION_VIEW = "/stms/existing/sewerage/view/%s/%s";
 
     @Autowired
     private SewerageTaxUtils sewerageTaxUtils;
@@ -494,25 +494,18 @@ public class SewerageApplicationDetailsService {
             if (sewerageApplicationDetails.getApplicationDate() == null)
                 sewerageApplicationDetails.setApplicationDate(new Date());
             // final String url = "/stms/application/view/" + sewerageApplicationDetails.getApplicationNumber();
-            final String url = "/stms/existing/sewerage/view/" + sewerageApplicationDetails.getApplicationNumber() + "/"
-                    + sewerageApplicationDetails.getConnectionDetail().getPropertyIdentifier();
             if (LOG.isDebugEnabled())
                 LOG.debug("Application Index creation Started... ");
-            final ApplicationIndexBuilder applicationIndexBuilder = new ApplicationIndexBuilder(
-                    APPL_INDEX_MODULE_NAME, sewerageApplicationDetails.getApplicationNumber(),
-                    sewerageApplicationDetails.getApplicationDate(), sewerageApplicationDetails.getApplicationType()
-                            .getName(),
-                    consumerName.toString(), sewerageApplicationDetails.getStatus()
-                            .getDescription().toString(),
-                    url, assessmentDetails.getPropertyAddress(),
-                    user.getUsername() + "::" + user.getName(), Source.SYSTEM.toString());
-            if (sewerageApplicationDetails.getDisposalDate() != null)
-                applicationIndexBuilder.disposalDate(sewerageApplicationDetails.getDisposalDate());
-            applicationIndexBuilder.mobileNumber(mobileNumber.toString());
-            applicationIndexBuilder.aadharNumber(aadharNumber.toString());
-            applicationIndexBuilder.approved(ApprovalStatus.INPROGRESS);
-            applicationIndexBuilder.closed(ClosureStatus.NO);
-            applicationIndex = applicationIndexBuilder.build();
+            applicationIndex = ApplicationIndex.builder().withModuleName(APPL_INDEX_MODULE_NAME)
+                    .withApplicationNumber(sewerageApplicationDetails.getApplicationNumber()).withApplicationDate(sewerageApplicationDetails.getApplicationDate())
+                    .withApplicationType(sewerageApplicationDetails.getApplicationType().getName()).withApplicantName(consumerName.toString())
+                    .withStatus(sewerageApplicationDetails.getStatus().getDescription()).withUrl(
+                            String.format(STMS_APPLICATION_VIEW, sewerageApplicationDetails.getApplicationNumber(),
+                                    sewerageApplicationDetails.getConnectionDetail().getPropertyIdentifier()))
+                    .withApplicantAddress(assessmentDetails.getPropertyAddress()).withOwnername(user.getUsername() + "::" + user.getName())
+                    .withChannel(Source.SYSTEM.toString()).withDisposalDate(sewerageApplicationDetails.getDisposalDate())
+                    .withMobileNumber(mobileNumber.toString()).withClosed(ClosureStatus.NO).withAadharNumber(aadharNumber.toString())
+                    .withApproved(ApprovalStatus.INPROGRESS).build();
             applicationIndexService.createApplicationIndex(applicationIndex);
             if (LOG.isDebugEnabled())
                 LOG.debug("Application Index creation completed...");

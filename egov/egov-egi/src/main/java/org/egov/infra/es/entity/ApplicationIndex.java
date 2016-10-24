@@ -58,12 +58,7 @@ import javax.validation.constraints.NotNull;
 import java.util.Date;
 
 import static org.egov.infra.es.entity.ApplicationIndex.SEQ_APPLICATIONINDEX;
-
-/**
- * ApplicationIndex class
- *
- * @author rishi
- */
+import static org.egov.infra.validation.ValidatorUtils.assertNotNull;
 
 @Entity
 @Table(name = "EG_APPLICATIONINDEX")
@@ -152,6 +147,10 @@ public class ApplicationIndex extends AbstractAuditable {
     @Transient
     private Integer isClosed;
 
+    public static Builder builder() {
+        return new Builder();
+    }
+
     @Override
     public Long getId() {
         return id;
@@ -167,6 +166,7 @@ public class ApplicationIndex extends AbstractAuditable {
     }
 
     public void setModuleName(final String moduleName) {
+        assertNotNull(moduleName, "Module Name is mandatory");
         this.moduleName = moduleName;
     }
 
@@ -175,6 +175,7 @@ public class ApplicationIndex extends AbstractAuditable {
     }
 
     public void setApplicationNumber(final String applicationNumber) {
+        assertNotNull(applicationNumber, "Application Number is mandatory");
         this.applicationNumber = applicationNumber;
     }
 
@@ -183,6 +184,7 @@ public class ApplicationIndex extends AbstractAuditable {
     }
 
     public void setApplicationDate(final Date applicationDate) {
+        assertNotNull(applicationDate, "Application Date is mandatory");
         this.applicationDate = applicationDate;
     }
 
@@ -191,6 +193,7 @@ public class ApplicationIndex extends AbstractAuditable {
     }
 
     public void setApplicationType(final String applicationType) {
+        assertNotNull(applicationType, "Application Type is mandatory");
         this.applicationType = applicationType;
     }
 
@@ -199,6 +202,7 @@ public class ApplicationIndex extends AbstractAuditable {
     }
 
     public void setApplicantName(final String applicantName) {
+        assertNotNull(applicantName, "Applicant Name is mandatory");
         this.applicantName = applicantName;
     }
 
@@ -239,6 +243,7 @@ public class ApplicationIndex extends AbstractAuditable {
     }
 
     public void setStatus(final String status) {
+        assertNotNull(status, "Application Status is mandatory");
         this.status = status;
     }
 
@@ -247,6 +252,7 @@ public class ApplicationIndex extends AbstractAuditable {
     }
 
     public void setUrl(final String url) {
+        assertNotNull(url, "URL is mandatory");
         this.url = url;
     }
 
@@ -315,6 +321,7 @@ public class ApplicationIndex extends AbstractAuditable {
     }
 
     public void setChannel(final String channel) {
+        assertNotNull(channel, "Channel is mandatory");
         this.channel = channel;
     }
 
@@ -346,4 +353,170 @@ public class ApplicationIndex extends AbstractAuditable {
         this.cityGrade = cityGrade;
     }
 
+
+    public static final class Builder {
+        private String moduleName;
+        private String applicationNumber;
+        private Date applicationDate;
+        private String applicationType;
+        private String applicantName;
+        private String applicantAddress;
+        private Date disposalDate;
+        private String status;
+        private String url;
+        private String consumerCode;
+        private String mobileNumber;
+        private String ownername;
+        private String aadharNumber;
+        private Integer elapsedDays;
+        private ClosureStatus closed;
+        private ApprovalStatus approved;
+        private String channel;
+        private String cityCode;
+        private String cityName;
+        private String cityGrade;
+        private String districtName;
+        private String regionName;
+
+        private Builder() {
+        }
+
+        public Builder withModuleName(String moduleName) {
+            this.moduleName = moduleName;
+            return this;
+        }
+
+        public Builder withApplicationNumber(String applicationNumber) {
+            this.applicationNumber = applicationNumber;
+            return this;
+        }
+
+        public Builder withApplicationDate(Date applicationDate) {
+            this.applicationDate = applicationDate;
+            return this;
+        }
+
+        public Builder withApplicationType(String applicationType) {
+            this.applicationType = applicationType;
+            return this;
+        }
+
+        public Builder withApplicantName(String applicantName) {
+            this.applicantName = applicantName;
+            return this;
+        }
+
+        public Builder withApplicantAddress(String applicantAddress) {
+            this.applicantAddress = applicantAddress;
+            return this;
+        }
+
+        public Builder withDisposalDate(Date disposalDate) {
+            this.disposalDate = disposalDate;
+            return this;
+        }
+
+        public Builder withStatus(String status) {
+            this.status = status;
+            return this;
+        }
+
+        public Builder withUrl(String url) {
+            this.url = url;
+            return this;
+        }
+
+        public Builder withConsumerCode(String consumerCode) {
+            this.consumerCode = consumerCode;
+            return this;
+        }
+
+        public Builder withMobileNumber(String mobileNumber) {
+            this.mobileNumber = mobileNumber;
+            return this;
+        }
+
+        public Builder withOwnername(String ownername) {
+            this.ownername = ownername;
+            return this;
+        }
+
+        public Builder withAadharNumber(String aadharNumber) {
+            this.aadharNumber = aadharNumber;
+            return this;
+        }
+
+        public Builder withElapsedDays(Integer elapsedDays) {
+            this.elapsedDays = elapsedDays;
+            return this;
+        }
+
+        public Builder withClosed(ClosureStatus closed) {
+            this.closed = closed;
+            return this;
+        }
+
+        public Builder withApproved(ApprovalStatus approved) {
+            this.approved = approved;
+            return this;
+        }
+
+        public Builder withChannel(String channel) {
+            this.channel = channel;
+            return this;
+        }
+
+        public Builder withCityCode(String cityCode) {
+            this.cityCode = cityCode;
+            return this;
+        }
+
+        public Builder withCityName(String cityName) {
+            this.cityName = cityName;
+            return this;
+        }
+
+        public Builder withCityGrade(String cityGrade) {
+            this.cityGrade = cityGrade;
+            return this;
+        }
+
+        public Builder withDistrictName(String districtName) {
+            this.districtName = districtName;
+            return this;
+        }
+
+        public Builder withRegionName(String regionName) {
+            this.regionName = regionName;
+            return this;
+        }
+
+        public ApplicationIndex build() {
+            ApplicationIndex applicationIndex = new ApplicationIndex();
+            applicationIndex.setModuleName(moduleName);
+            applicationIndex.setApplicationNumber(applicationNumber);
+            applicationIndex.setApplicationDate(applicationDate);
+            applicationIndex.setApplicationType(applicationType);
+            applicationIndex.setApplicantName(applicantName);
+            applicationIndex.setApplicantAddress(applicantAddress);
+            applicationIndex.setDisposalDate(disposalDate);
+            applicationIndex.setStatus(status);
+            applicationIndex.setUrl(url);
+            applicationIndex.setConsumerCode(consumerCode);
+            applicationIndex.setMobileNumber(mobileNumber);
+            applicationIndex.setOwnername(ownername);
+            applicationIndex.setAadharNumber(aadharNumber);
+            applicationIndex.setElapsedDays(elapsedDays);
+            applicationIndex.setClosed(closed);
+            applicationIndex.setApproved(approved);
+            applicationIndex.setChannel(channel);
+            applicationIndex.setCityCode(cityCode);
+            applicationIndex.setCityName(cityName);
+            applicationIndex.setCityGrade(cityGrade);
+            applicationIndex.setDistrictName(districtName);
+            applicationIndex.setRegionName(regionName);
+            applicationIndex.setClosed(closed);
+            return applicationIndex;
+        }
+    }
 }

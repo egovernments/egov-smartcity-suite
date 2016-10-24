@@ -75,7 +75,6 @@ import org.egov.infra.filestore.entity.FileStoreMapper;
 import org.egov.infra.filestore.service.FileStoreService;
 import org.egov.infra.reporting.engine.ReportOutput;
 import org.egov.infra.es.entity.ApplicationIndex;
-import org.egov.infra.es.entity.ApplicationIndexBuilder;
 import org.egov.infra.es.entity.enums.ApprovalStatus;
 import org.egov.infra.es.entity.enums.ClosureStatus;
 import org.egov.infra.es.service.ApplicationIndexService;
@@ -133,6 +132,7 @@ import com.google.gson.reflect.TypeToken;
 @Transactional(readOnly = true)
 public class WaterConnectionDetailsService {
 
+    private static final String WTMS_APPLICATION_VIEW = "/wtms/application/view/%s";
     protected WaterConnectionDetailsRepository waterConnectionDetailsRepository;
     private static final Logger LOG = LoggerFactory.getLogger(WaterConnectionDetailsService.class);
 
@@ -894,22 +894,15 @@ public class WaterConnectionDetailsService {
             if (applicationIndex == null) {
                 if (LOG.isDebugEnabled())
                     LOG.debug(" updating Application Index creation Started... ");
-                final ApplicationIndexBuilder applicationIndexBuilder = new ApplicationIndexBuilder(
-                        ((EgModules) hql.uniqueResult()).getName(), waterConnectionDetails.getApplicationNumber(),
-                        waterConnectionDetails.getApplicationDate(),
-                        waterConnectionDetails.getApplicationType().getName(), consumerName.toString(),
-                        waterConnectionDetails.getStatus().getDescription().toString(),
-                        "/wtms/application/view/" + waterConnectionDetails.getApplicationNumber(),
-                        assessmentDetails.getPropertyAddress(), user.getUsername() + "::" + user.getName(),
-                        sourceChannel != null ? sourceChannel : WaterTaxConstants.SYSTEM);
-
-                if (waterConnectionDetails.getDisposalDate() != null)
-                    applicationIndexBuilder.disposalDate(waterConnectionDetails.getDisposalDate());
-                applicationIndexBuilder.mobileNumber(mobileNumber.toString());
-                applicationIndexBuilder.aadharNumber(aadharNumber.toString());
-                applicationIndexBuilder.closed(ClosureStatus.NO);
-                applicationIndexBuilder.approved(ApprovalStatus.INPROGRESS);
-                applicationIndex = applicationIndexBuilder.build();
+                applicationIndex = ApplicationIndex.builder().withModuleName(((EgModules) hql.uniqueResult()).getName())
+                        .withApplicationNumber(waterConnectionDetails.getApplicationNumber()).withApplicationDate(waterConnectionDetails.getApplicationDate())
+                        .withApplicationType(waterConnectionDetails.getApplicationType().getName()).withApplicantName(consumerName.toString())
+                        .withStatus(waterConnectionDetails.getStatus().getDescription()).withUrl(
+                                String.format(WTMS_APPLICATION_VIEW, waterConnectionDetails.getApplicationNumber()))
+                        .withApplicantAddress(assessmentDetails.getPropertyAddress()).withOwnername(user.getUsername() + "::" + user.getName())
+                        .withChannel(sourceChannel != null ? sourceChannel : WaterTaxConstants.SYSTEM).withDisposalDate(waterConnectionDetails.getDisposalDate())
+                        .withMobileNumber(mobileNumber.toString()).withClosed(ClosureStatus.NO).withAadharNumber(aadharNumber.toString())
+                        .withApproved(ApprovalStatus.INPROGRESS).build();
                 if (!waterConnectionDetails.getLegacy() && !waterConnectionDetails.getStatus().getCode()
                         .equals(WaterTaxConstants.APPLICATION_STATUS_SANCTIONED))
                     applicationIndexService.createApplicationIndex(applicationIndex);

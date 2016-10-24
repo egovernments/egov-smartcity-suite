@@ -46,11 +46,9 @@ import org.egov.adtax.utils.constants.AdvertisementTaxConstants;
 import org.egov.commons.entity.Source;
 import org.egov.eis.entity.Assignment;
 import org.egov.eis.service.AssignmentService;
-import org.egov.eis.service.EisCommonService;
 import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.admin.master.service.UserService;
 import org.egov.infra.es.entity.ApplicationIndex;
-import org.egov.infra.es.entity.ApplicationIndexBuilder;
 import org.egov.infra.es.entity.enums.ApprovalStatus;
 import org.egov.infra.es.entity.enums.ClosureStatus;
 import org.egov.infra.es.service.ApplicationIndexService;
@@ -66,10 +64,13 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import static org.apache.commons.lang3.StringUtils.EMPTY;
+
 @Service
 public class AdvertisementPermitDetailUpdateIndexService {
-	
-	    @PersistenceContext
+
+    private static final String ADTAX_APPLICATION_VIEW = "/adtax/hoarding/view/%s";
+    @PersistenceContext
 	    private EntityManager entityManager;
 
 	    @Autowired
@@ -77,9 +78,6 @@ public class AdvertisementPermitDetailUpdateIndexService {
 
 	    @Autowired
 	    private AssignmentService assignmentService;
-
-	    @Autowired
-	    private EisCommonService eisCommonService;
 
 	    @Autowired
 	    private SecurityUtils securityUtils;
@@ -169,32 +167,24 @@ public class AdvertisementPermitDetailUpdateIndexService {
 	        	 advertisementIndexService.createAdvertisementIndex(advertisementPermitDetail);
 	        	 
 	         } else {   // Create New ApplicationIndex on create advertisement
-	        	 final String strQuery = "select md from EgModules md where md.name=:name";
-	             final Query hql = getCurrentSession().createQuery(strQuery);
-	             hql.setParameter("name", AdvertisementTaxConstants.MODULE_NAME);
 	             if (advertisementPermitDetail.getApplicationDate() == null)
 	            	 advertisementPermitDetail.setApplicationDate(new Date());
 	             if (advertisementPermitDetail.getApplicationNumber() == null)
 	            	 advertisementPermitDetail.setApplicationNumber(advertisementPermitDetail.getApplicationNumber());
 	             if (applicationIndex == null) {
-	                 final String url = "/adtax/hoarding/view/"
-	                         + advertisementPermitDetail.getId();
 	                 String applicantName=advertisementPermitDetail.getAgency()!=null?advertisementPermitDetail.getAgency().getName():
 	                	 advertisementPermitDetail.getOwnerDetail();
 	                 String address=advertisementPermitDetail.getAgency()!=null?advertisementPermitDetail.getAgency().getAddress():
 	                	 advertisementPermitDetail.getOwnerDetail();
-	                 final ApplicationIndexBuilder applicationIndexBuilder = new ApplicationIndexBuilder(
-	                		 AdvertisementTaxConstants.MODULE_NAME, advertisementPermitDetail.getApplicationNumber(),
-	                         advertisementPermitDetail.getApplicationDate(), advertisementPermitDetail.getState().getNatureOfTask(), applicantName, 
-	                         advertisementPermitDetail.getStatus().getDescription(),
-	                         url, address, user.getUsername() + "::" + user.getName(), Source.SYSTEM.toString());
-
-	                 applicationIndexBuilder.mobileNumber(advertisementPermitDetail.getAgency()!=null?
-	                		 advertisementPermitDetail.getAgency().getMobileNumber():"");
-	                 applicationIndexBuilder.aadharNumber(null);
-	                 applicationIndexBuilder.approved(ApprovalStatus.INPROGRESS);
-                	 applicationIndexBuilder.closed(ClosureStatus.NO);
-	                 applicationIndex = applicationIndexBuilder.build();
+					 applicationIndex = ApplicationIndex.builder().withModuleName(AdvertisementTaxConstants.MODULE_NAME)
+							 .withApplicationNumber(advertisementPermitDetail.getApplicationNumber()).withApplicationDate(advertisementPermitDetail.getApplicationDate())
+							 .withApplicationType(advertisementPermitDetail.getState().getNatureOfTask()).withApplicantName(applicantName)
+							 .withStatus(advertisementPermitDetail.getStatus().getDescription()).withUrl(
+									 String.format(ADTAX_APPLICATION_VIEW, advertisementPermitDetail.getId()))
+							 .withApplicantAddress(address).withOwnername(user.getUsername() + "::" + user.getName())
+							 .withChannel(Source.SYSTEM.toString()).withMobileNumber(advertisementPermitDetail.getAgency()!=null?
+                                     advertisementPermitDetail.getAgency().getMobileNumber() : EMPTY).withClosed(ClosureStatus.NO)
+							 .withApproved(ApprovalStatus.INPROGRESS).build();
 	                 applicationIndexService.createApplicationIndex(applicationIndex);
 	             }
 	         }
