@@ -39,10 +39,26 @@
  */
 package org.egov.ptis.web.rest;
 
-import com.sun.jersey.core.header.FormDataContentDisposition;
-import com.sun.jersey.multipart.FormDataParam;
+import static org.egov.ptis.constants.PropertyTaxConstants.ADMIN_HIERARCHY_TYPE;
+import static org.egov.ptis.constants.PropertyTaxConstants.REVENUE_HIERARCHY_TYPE;
+import static org.egov.ptis.constants.PropertyTaxConstants.WARD;
+import static org.egov.ptis.constants.PropertyTaxConstants.ZONE;
 
-import net.sf.json.JSONObject;
+import java.io.IOException;
+import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Set;
+import java.util.TreeMap;
+
+import javax.ws.rs.Consumes;
+import javax.ws.rs.FormParam;
+import javax.ws.rs.GET;
+import javax.ws.rs.POST;
+import javax.ws.rs.Path;
+import javax.ws.rs.PathParam;
+import javax.ws.rs.Produces;
+import javax.ws.rs.core.MediaType;
 
 import org.apache.commons.lang.StringUtils;
 import org.codehaus.jackson.JsonGenerationException;
@@ -65,28 +81,7 @@ import org.egov.ptis.domain.service.property.PropertyExternalService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import javax.ws.rs.Consumes;
-import javax.ws.rs.FormParam;
-import javax.ws.rs.GET;
-import javax.ws.rs.POST;
-import javax.ws.rs.Path;
-import javax.ws.rs.PathParam;
-import javax.ws.rs.Produces;
-import javax.ws.rs.core.MediaType;
-
-import static org.egov.ptis.constants.PropertyTaxConstants.ADMIN_HIERARCHY_TYPE;
-import static org.egov.ptis.constants.PropertyTaxConstants.REVENUE_HIERARCHY_TYPE;
-import static org.egov.ptis.constants.PropertyTaxConstants.WARD;
-import static org.egov.ptis.constants.PropertyTaxConstants.ZONE;
-
-import java.io.IOException;
-import java.io.InputStream;
-import java.math.BigDecimal;
-import java.text.ParseException;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Set;
-import java.util.TreeMap;
+import net.sf.json.JSONObject;
 
 /**
  * The AssessmentService class is used as the RESTFul service to handle user
@@ -1026,213 +1021,6 @@ public class AssessmentService {
 		return responseJson;
 	}
 
-	/**
-	 * This method is used to create property.
-	 * 
-	 * @param propertyTypeMasterCode
-	 *            - category of ownership code
-	 * @param propertyCategoryCode
-	 *            - property type code
-	 * @param apartmentCmplxCode
-	 *            - apartment/complex code
-	 * @param ownerDetails
-	 *            - a list of owner details
-	 * @param mutationReasonCode
-	 *            - reason for creation or mutation code
-	 * @param extentOfSite
-	 *            - extent of site
-	 * @param isExtentAppurtenantLand
-	 *            - extent appurtenant land
-	 * @param occupancyCertificationNo
-	 *            - occupancy certification number
-	 * @param isSuperStructure
-	 *            - super structure
-	 * @param isBuildingPlanDetails
-	 *            - building plan details
-	 * @param regdDocNo
-	 *            - registration document number
-	 * @param regdDocDate
-	 *            - registration document date
-	 * @param localityCode
-	 *            - locality code
-	 * @param street
-	 *            - street name
-	 * @param electionWardCode
-	 *            - election ward code
-	 * @param doorNo
-	 *            - door number
-	 * @param enumerationBlockCode
-	 *            - enumeration block code
-	 * @param pinCode
-	 *            - pin code
-	 * @param isCorrAddrDiff
-	 *            - is correspondence address different
-	 * @param corrAddr1
-	 *            - correspondence address 1
-	 * @param corrAddr2
-	 *            - correspondence address 2
-	 * @param corrPinCode
-	 *            - correspondence address pin code
-	 * @param hasLift
-	 *            - has lift
-	 * @param hasToilet
-	 *            - has toilet
-	 * @param hasWaterTap
-	 *            - has water tap
-	 * @param hasElectricity
-	 *            - has electricity
-	 * @param hasAttachedBathroom
-	 *            - has attached bathroom
-	 * @param hasWaterHarvesting
-	 *            - has water harvesting
-	 * @param floorTypeCode
-	 *            - floor type code
-	 * @param roofTypeCode
-	 *            - roof type code
-	 * @param wallTypeCode
-	 *            - wall type code
-	 * @param woodTypeCode
-	 *            - wood type code
-	 * @param floorDetails
-	 *            - a list of floor details
-	 * @param surveyNumber
-	 *            - survey number
-	 * @param pattaNumber
-	 *            - patta number
-	 * @param vacantLandArea
-	 *            - vacant land area value
-	 * @param marketValue
-	 *            - market value
-	 * @param currentCapitalValue
-	 *            - current capital value
-	 * @param completionDate
-	 *            - date of completion
-	 * @param northBoundary
-	 *            - north boundary
-	 * @param southBoundary
-	 *            - south boundary
-	 * @param eastBoundary
-	 *            - east boundary
-	 * @param westBoundary
-	 *            - west boundary
-	 * @param photoAsmntStream-
-	 *            photo of assessment input stream object
-	 * @param photoAsmntDisp-
-	 *            photo of assessment content disposition object
-	 * @param bldgPermCopyStream-
-	 *            building permission copy input stream object
-	 * @param bldgPermCopyDisp-
-	 *            building permission copy content disposition object
-	 * @param atstdCopyPropDocStream-
-	 *            attested copy of property document input stream object
-	 * @param atstdCopyPropDocDisp-
-	 *            attested copy of property document content disposition
-	 * @param nonJudcStampStream
-	 *            - non judicial stamp input stream object
-	 * @param nonJudcStampDisp
-	 *            - non judicial stamp content disposition object
-	 * @param afdvtBondStream
-	 *            - affidavit bond paper input stream object
-	 * @param afdvtBondDisp
-	 *            - affidavit bond paper content disposition object
-	 * @param deathCertCopyStream
-	 *            - death certificate copy input stream object
-	 * @param deathCertCopyDisp
-	 *            - death certificate copy content disposition object
-	 * @param username
-	 *            - username credential
-	 * @param password-
-	 *            password credential
-	 * @return - server response in JSON format
-	 * @throws JsonGenerationException
-	 * @throws JsonMappingException
-	 * @throws IOException
-	 * @throws ParseException
-	 */
-	@POST
-	@Path("/property/createProperty")
-	@Consumes({MediaType.MULTIPART_FORM_DATA})
-	@Produces(MediaType.APPLICATION_JSON)
-	public String createProperty(@FormDataParam("propertyTypeMasterCode") String propertyTypeMasterCode,
-			@FormDataParam("propertyCategoryCode") String propertyCategoryCode,
-			@FormDataParam("apartmentCmplxCode") String apartmentCmplxCode,
-			@FormDataParam("ownerDetails") String ownerDetails,
-			@FormDataParam("mutationReasonCode") String mutationReasonCode,
-			@FormDataParam("extentOfSite") String extentOfSite,
-			@FormDataParam("isExtentAppurtenantLand") String isExtentAppurtenantLand,
-			@FormDataParam("occupancyCertificationNo") String occupancyCertificationNo,
-			@FormDataParam("isSuperStructure") Boolean isSuperStructure,
-			@FormDataParam("isBuildingPlanDetails") Boolean isBuildingPlanDetails,
-			@FormDataParam("regdDocNo") String regdDocNo, @FormDataParam("regdDocDate") String regdDocDate,
-			@FormDataParam("localityCode") String localityCode, @FormDataParam("street") String street,
-			@FormDataParam("electionWardCode") String electionWardCode, @FormDataParam("doorNo") String doorNo,
-			@FormDataParam("enumerationBlockCode") String enumerationBlockCode,
-			@FormDataParam("pinCode") String pinCode, @FormDataParam("isCorrAddrDiff") Boolean isCorrAddrDiff,
-			@FormDataParam("corrAddr1") String corrAddr1, @FormDataParam("corrAddr2") String corrAddr2,
-			@FormDataParam("corrPinCode") String corrPinCode, @FormDataParam("hasLift") Boolean hasLift,
-			@FormDataParam("hasToilet") Boolean hasToilet, @FormDataParam("hasWaterTap") Boolean hasWaterTap,
-			@FormDataParam("hasElectricity") Boolean hasElectricity,
-			@FormDataParam("hasAttachedBathroom") String hasAttachedBathroom,
-			@FormDataParam("hasWaterHarvesting") String hasWaterHarvesting,
-			@FormDataParam("floorTypeCode") String floorTypeCode, @FormDataParam("roofTypeCode") String roofTypeCode,
-			@FormDataParam("wallTypeCode") String wallTypeCode, @FormDataParam("woodTypeCode") String woodTypeCode,
-			@FormDataParam("floorDetails") String floorDetails, @FormDataParam("surveyNumber") String surveyNumber,
-			@FormDataParam("pattaNumber") String pattaNumber, @FormDataParam("vacantLandArea") Double vacantLandArea,
-			@FormDataParam("marketValue") Double marketValue,
-			@FormDataParam("currentCapitalValue") Double currentCapitalValue,
-			@FormDataParam("completionDate") String completionDate,
-			@FormDataParam("northBoundary") String northBoundary, @FormDataParam("southBoundary") String southBoundary,
-			@FormDataParam("eastBoundary") String eastBoundary, @FormDataParam("westBoundary") String westBoundary,
-			@FormDataParam("photoAsmnt") InputStream photoAsmntStream,
-			@FormDataParam("photoAsmnt") FormDataContentDisposition photoAsmntDisp,
-			@FormDataParam("bldgPermCopy") InputStream bldgPermCopyStream,
-			@FormDataParam("bldgPermCopy") FormDataContentDisposition bldgPermCopyDisp,
-			@FormDataParam("atstdCopyPropDoc") InputStream atstdCopyPropDocStream,
-			@FormDataParam("atstdCopyPropDoc") FormDataContentDisposition atstdCopyPropDocDisp,
-			@FormDataParam("nonJudcStamp") InputStream nonJudcStampStream,
-			@FormDataParam("nonJudcStamp") FormDataContentDisposition nonJudcStampDisp,
-			@FormDataParam("afdvtBond") InputStream afdvtBondStream,
-			@FormDataParam("afdvtBond") FormDataContentDisposition afdvtBondDisp,
-			@FormDataParam("deathCertCopy") InputStream deathCertCopyStream,
-			@FormDataParam("deathCertCopy") FormDataContentDisposition deathCertCopyDisp,
-			@FormDataParam("username") String username, @FormDataParam("password") String password)
-					throws JsonGenerationException, JsonMappingException, IOException, ParseException {
-		/*
-		ErrorDetails errorDetails = null;
-		String responseJson = null;
-		Boolean isAuthenticatedUser = propertyExternalService.authenticateUser(username, password);
-		if (isAuthenticatedUser) {
-			ApplicationThreadLocals.setUserId(Long.valueOf("38"));
-			List<FloorDetails> floorDetailsList = new ObjectMapper().readValue(floorDetails.toString(),
-					new TypeReference<Collection<FloorDetails>>() {
-					});
-			List<OwnerDetails> ownerDetailsList = new ObjectMapper().readValue(ownerDetails.toString(),
-					new TypeReference<Collection<OwnerDetails>>() {
-					});
-			List<Document> documents = propertyExternalService.getDocuments(photoAsmntStream, photoAsmntDisp, bldgPermCopyStream,
-					bldgPermCopyDisp, atstdCopyPropDocStream, atstdCopyPropDocDisp, nonJudcStampStream,
-					nonJudcStampDisp, afdvtBondStream, afdvtBondDisp, deathCertCopyStream, deathCertCopyDisp);
-			NewPropertyDetails newPropertyDetails = propertyExternalService.createNewProperty(propertyTypeMasterCode,
-					propertyCategoryCode, apartmentCmplxCode, ownerDetailsList, mutationReasonCode, extentOfSite,
-					isExtentAppurtenantLand, occupancyCertificationNo, isSuperStructure, isBuildingPlanDetails,
-					regdDocNo, regdDocDate, localityCode, street, electionWardCode, doorNo, enumerationBlockCode,
-					pinCode, isCorrAddrDiff, corrAddr1, corrAddr2, corrPinCode, hasLift, hasToilet, hasWaterTap,
-					hasElectricity, hasAttachedBathroom, hasWaterHarvesting, floorTypeCode, roofTypeCode, wallTypeCode,
-					woodTypeCode, floorDetailsList, surveyNumber, pattaNumber, vacantLandArea, marketValue,
-					currentCapitalValue, completionDate, northBoundary, southBoundary, eastBoundary, westBoundary, documents);
-			if (null != newPropertyDetails) {
-				responseJson = getJSONResponse(newPropertyDetails);
-			} else {
-				errorDetails = getRequestFailedErrorDetails();
-				responseJson = getJSONResponse(errorDetails);
-			}
-		} else {
-			errorDetails = getInvalidCredentialsErrorDetails();
-			responseJson = getJSONResponse(errorDetails);
-		}
-		return responseJson;*/
-		return null;
-	}
 
 	/**
 	 * This method is used to get list of all Ward-Block-Locality Mappings 
