@@ -583,7 +583,7 @@ public class MBHeaderService {
             if (null != approvalPosition && approvalPosition != -1 && !approvalPosition.equals(Long.valueOf(0)))
                 pos = positionMasterService.getPositionById(approvalPosition);
             if (null == mbHeader.getState()) {
-                wfmatrix = mbHeaderWorkflowService.getWfMatrix(mbHeader.getStateType(), null, null,
+                wfmatrix = mbHeaderWorkflowService.getWfMatrix(mbHeader.getStateType(), null, mbHeader.getMbAmount(),
                         additionalRule, currState, null);
                 mbHeader.transition().start().withSenderName(user.getUsername() + "::" + user.getName())
                         .withComments(approvalComent).withStateValue(wfmatrix.getNextState()).withDateInfo(new Date())
@@ -613,8 +613,10 @@ public class MBHeaderService {
         if (mbHeader.getCurrentState() != null
                 && !mbHeader.getCurrentState().getValue().equals(MBHeader.MeasurementBookStatus.NEW.toString()))
             jsonObject.addProperty("currentState", mbHeader.getCurrentState().getValue());
-        if (mbHeader.getState() != null && mbHeader.getState().getNextAction() != null)
+        if (mbHeader.getState() != null && mbHeader.getState().getNextAction() != null) {
             jsonObject.addProperty("nextAction", mbHeader.getState().getNextAction());
+            jsonObject.addProperty("pendingActions", mbHeader.getState().getNextAction());
+        }
 
         jsonObject.addProperty("id", mbHeader.getId());
 
