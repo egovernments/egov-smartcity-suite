@@ -19,7 +19,7 @@ public class CityIndexService {
 		return cityIndexRepository.findOneByCityCode(cityCode);
 	}
 	
-	public CityIndex findByDistrictcode(String districtCode){
+	public CityIndex findByDistrictCode(String districtCode){
 		return cityIndexRepository.findOneByDistrictCode(districtCode);
 	}
 }
