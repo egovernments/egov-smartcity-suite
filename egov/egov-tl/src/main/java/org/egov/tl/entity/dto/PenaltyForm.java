@@ -38,7 +38,7 @@
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
 
-package org.egov.tl.dto;
+package org.egov.tl.entity.dto;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -48,39 +48,38 @@ import org.egov.tl.entity.PenaltyRates;
 
 public class PenaltyForm {
 
-	private LicenseAppType licenseAppType;
-	private List<PenaltyRates> penaltyRatesList = new ArrayList<PenaltyRates>();
+    private LicenseAppType licenseAppType;
+    private List<PenaltyRates> penaltyRatesList = new ArrayList<PenaltyRates>();
 
-	public LicenseAppType getLicenseAppType() {
-		return licenseAppType;
-	}
+    public LicenseAppType getLicenseAppType() {
+        return licenseAppType;
+    }
 
-	public void setLicenseAppType(final LicenseAppType licenseAppType) {
-		this.licenseAppType = licenseAppType;
-	}
+    public void setLicenseAppType(final LicenseAppType licenseAppType) {
+        this.licenseAppType = licenseAppType;
+    }
 
-	public List<PenaltyRates> getPenaltyRatesList() {
-		return penaltyRatesList;
-	}
+    public List<PenaltyRates> getPenaltyRatesList() {
+        return penaltyRatesList;
+    }
 
-	public void setPenaltyRatesList(final List<PenaltyRates> penaltyRatesList) {
-		this.penaltyRatesList = penaltyRatesList;
-	}
+    public void setPenaltyRatesList(final List<PenaltyRates> penaltyRatesList) {
+        this.penaltyRatesList = penaltyRatesList;
+    }
 
-	public void addpenaltyRatesList(final PenaltyRates penaltyRates) {
-		penaltyRatesList.add(penaltyRates);
-	}
+    public void addpenaltyRatesList(final PenaltyRates penaltyRates) {
+        penaltyRatesList.add(penaltyRates);
+    }
 
-	public List<PenaltyRates> getPenaltyRates() {
+    public List<PenaltyRates> getPenaltyRates() {
 
-		if (licenseAppType != null && getPenaltyRatesList() != null && getPenaltyRatesList().size() > 0);
-
-		for (PenaltyRates penaltyRates : getPenaltyRatesList()) {
-			penaltyRates.setLicenseAppType(licenseAppType);
-			penaltyRates.setFromRange(penaltyRates.getFromRange());
-			penaltyRates.setToRange(penaltyRates.getToRange());
-			penaltyRates.setRate(penaltyRates.getRate());
-		}
-		return penaltyRatesList;
-	}
+        if (licenseAppType != null && getPenaltyRatesList() != null && getPenaltyRatesList().size() > 0)
+            for (final PenaltyRates penaltyRates : getPenaltyRatesList()) {
+                penaltyRates.setLicenseAppType(licenseAppType);
+                penaltyRates.setFromRange(penaltyRates.getFromRange());
+                penaltyRates.setToRange(penaltyRates.getToRange());
+                penaltyRates.setRate(penaltyRates.getRate());
+            }
+        return penaltyRatesList;
+    }
 }
