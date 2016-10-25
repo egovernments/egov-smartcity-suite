@@ -162,7 +162,7 @@ public class WorksMilestoneIndexService {
             final Sum totalEstimatedCostInLakhsAggregation = entry.getAggregations().get("totalestimatedcostinlakhs");
             final Sum totalWorkorderValueInLakhsAggregation = entry.getAggregations().get("totalworkordervalueinlakhs");
             final Sum totalBillAmountInLakhsAggregation = entry.getAggregations().get("totalbillamountinlakhs");
-            final Sum totalPaidAmountInLakhsAggregation = entry.getAggregations().get("totalworkordervalueinlakhs");
+            final Sum totalPaidAmountInLakhsAggregation = entry.getAggregations().get("totalpaidamountinlakhs");
             final InternalAvg jan01to15actual = entry.getAggregations().get("jan01to15actual");
             final InternalAvg jan01to15target = entry.getAggregations().get("jan01to15target");
             final InternalAvg jan16to31actual = entry.getAggregations().get("jan16to31actual");
