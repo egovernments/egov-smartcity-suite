@@ -185,7 +185,12 @@
 					<c:otherwise>
 						<c:if test="${lineEstimate.status.code == 'BUDGET_SANCTIONED' || lineEstimate.status.code == 'ADMINISTRATIVE_SANCTIONED' || lineEstimate.status.code == 'TECHNICAL_SANCTIONED' 
 						|| ((lineEstimate.status.code == 'CANCELLED' || lineEstimate.status.code == 'REJECTED') && (lineEstimate.lineEstimateDetails[0].lineEstimateAppropriations != null &&  lineEstimate.lineEstimateDetails[0].lineEstimateAppropriations[0].budgetUsage != null))}">
-							<td colspan="2" class="text-right"><spring:message code="lbl.total" /></td>
+							<c:if test="${mode == 'view' }" >
+								<td colspan="3" class="text-right"><spring:message code="lbl.total" /></td>
+							</c:if>
+							<c:if test="${mode == 'readOnly' }" >
+								<td colspan="4" class="text-right"><spring:message code="lbl.total" /></td>
+							</c:if>
 						</c:if>
 						<c:if test="${!(lineEstimate.status.code == 'BUDGET_SANCTIONED' || lineEstimate.status.code == 'ADMINISTRATIVE_SANCTIONED' || lineEstimate.status.code == 'TECHNICAL_SANCTIONED' 
 						|| ((lineEstimate.status.code == 'CANCELLED' || lineEstimate.status.code == 'REJECTED') && (lineEstimate.lineEstimateDetails[0].lineEstimateAppropriations != null && lineEstimate.lineEstimateDetails[0].lineEstimateAppropriations[0].budgetUsage != null)))}">
