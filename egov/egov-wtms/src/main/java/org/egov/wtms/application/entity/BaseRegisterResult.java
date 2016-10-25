@@ -52,8 +52,10 @@ public class BaseRegisterResult {
     private Double current;
     private Double arrearsCollection;
     private Double currentCollection;
-    private Double penalty;
     private Double totalDemand;
+    private Double totalCollection;
+    private String usageType;
+    private String pipeSize;
 
     public String getConsumerNo() {
         return consumerNo;
@@ -119,14 +121,6 @@ public class BaseRegisterResult {
         this.arrears = arrears;
     }
 
-    public Double getPenalty() {
-        return penalty;
-    }
-
-    public void setPenalty(final Double penalty) {
-        this.penalty = penalty;
-    }
-
     public Double getTotalDemand() {
         return totalDemand;
     }
@@ -155,8 +149,32 @@ public class BaseRegisterResult {
         return connectionType;
     }
 
-    public void setConnectionType(String connectionType) {
+    public void setConnectionType(final String connectionType) {
         this.connectionType = connectionType;
+    }
+
+    public String getUsageType() {
+        return usageType;
+    }
+
+    public void setUsageType(final String usageType) {
+        this.usageType = usageType;
+    }
+
+    public String getPipeSize() {
+        return pipeSize;
+    }
+
+    public void setPipeSize(final String pipeSize) {
+        this.pipeSize = pipeSize;
+    }
+
+    public Double getTotalCollection() {
+        return totalCollection;
+    }
+
+    public void setTotalCollection(final Double totalCollection) {
+        this.totalCollection = totalCollection;
     }
 
 }

@@ -52,6 +52,7 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 
 import org.egov.commons.CFinancialYear;
 import org.egov.commons.EgwStatus;
@@ -59,8 +60,6 @@ import org.egov.infra.persistence.validator.annotation.Required;
 import org.egov.infra.persistence.validator.annotation.Unique;
 import org.egov.infra.workflow.entity.State;
 import org.egov.infra.workflow.entity.StateAware;
-import org.hibernate.annotations.Fetch;
-import org.hibernate.annotations.FetchMode;
 import org.hibernate.search.annotations.DocumentId;
 import org.hibernate.validator.constraints.Length;
 
@@ -116,6 +115,10 @@ public class Budget extends StateAware {
     @JoinColumn(name = "STATUS")
     private EgwStatus status;
 
+    @Transient
+    private String searchBere;
+
+    
     @Override
     public Long getId() {
         return id;
@@ -268,4 +271,13 @@ public class Budget extends StateAware {
     public void setWfState(State state) {
         setState(state);
     }
+
+    public String getSearchBere() {
+        return searchBere;
+    }
+
+    public void setSearchBere(String searchBere) {
+        this.searchBere = searchBere;
+    }
+    
 }

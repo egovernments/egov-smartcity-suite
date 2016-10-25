@@ -40,20 +40,18 @@
 
 package org.egov.collection.web.actions.reports;
 
+import java.util.Date;
+import java.util.Map;
+
 import org.apache.struts2.convention.annotation.Action;
 import org.apache.struts2.convention.annotation.Result;
 import org.apache.struts2.convention.annotation.Results;
 import org.egov.collection.constants.CollectionConstants;
 import org.egov.collection.utils.CollectionsUtil;
 import org.egov.infra.web.struts.actions.ReportFormAction;
-import org.egov.pims.commons.service.EisCommonsService;
-import org.springframework.beans.factory.annotation.Autowired;
-
-import java.util.Date;
-import java.util.Map;
 
 @Results({ @Result(name = BankRemittanceReportAction.INDEX, location = "dishonoredChequeReport-index.jsp"),
-    @Result(name = BankRemittanceReportAction.REPORT, location = "dishonoredChequeReport-report.jsp") })
+        @Result(name = BankRemittanceReportAction.REPORT, location = "dishonoredChequeReport-report.jsp") })
 public class DishonoredChequeReportAction extends ReportFormAction {
 
     private static final long serialVersionUID = 1L;
@@ -72,8 +70,6 @@ public class DishonoredChequeReportAction extends ReportFormAction {
 
     private CollectionsUtil collectionsUtil;
     private Map<String, String> paymentModes;
-    @Autowired
-    private EisCommonsService eisCommonsService;
 
     @Override
     public Object getModel() {

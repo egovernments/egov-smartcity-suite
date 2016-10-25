@@ -40,27 +40,31 @@
 
 package org.egov.api.model;
 
-import org.egov.infra.admin.master.entity.User;
-import org.egov.pims.commons.Designation;
-
 import java.util.List;
 import java.util.Set;
 
+import org.egov.eis.entity.EmployeeView;
+import org.egov.pims.commons.Designation;
+
 public class ForwardDetails {
-	
-	List<Designation> designations;
-	Set<User> users;
-	public List<Designation> getDesignations() {
-		return designations;
-	}
-	public void setDesignations(List<Designation> designations) {
-		this.designations = designations;
-	}
-	public Set<User> getUsers() {
-		return users;
-	}
-	public void setUsers(Set<User> users) {
-		this.users = users;
-	}
+
+    private List<Designation> designations;
+    private Set<EmployeeView> users;
+
+    public List<Designation> getDesignations() {
+        return designations;
+    }
+
+    public void setDesignations(final List<Designation> designations) {
+        this.designations = designations;
+    }
+
+    public Set<EmployeeView> getUsers() {
+        return users;
+    }
+
+    public void setUsers(final Set<EmployeeView> users) {
+        this.users = users;
+    }
 
 }

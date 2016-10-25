@@ -202,11 +202,11 @@ public class ChallanAction extends BaseFormAction {
      */
     private String voucherNumber;
 
-    List<ValidationError> errors = new ArrayList<ValidationError>(0);
+    private List<ValidationError> errors = new ArrayList<ValidationError>(0);
 
     private String reportId;
 
-    Position position = null;
+    private Position position = null;
 
     /**
      * A <code>Long</code> array of receipt header ids , which have to be

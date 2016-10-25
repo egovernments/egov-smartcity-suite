@@ -77,6 +77,8 @@ $(document).ready(function(){
 		var button = $(this).attr('id');
 		if (button != null && button == 'Forward') {
 			//TODO: remove code till billdate < workOrderDate condition check
+			var billType = $('#billtype').val();
+			var workOrderEstimateId = $('#workOrderEstimateId').val();
 			var billDate = $('#billdate').data('datepicker').date;
 			var workOrderDate = $('#workOrderDate').data('datepicker').date;
 			var workCompletionDate = $('#workCompletionDate').data('datepicker').date;
@@ -96,7 +98,6 @@ $(document).ready(function(){
 				$('#billdate').val(""); 
 				return false;
 			}
-			var billType = $('#billtype').val();
 			if(billType == 'Final Bill') {
 				$('#workCompletionDate').attr('required', 'required');
 				
@@ -334,7 +335,6 @@ function deleteDeductionRow(obj) {
 }
 
 function calculateNetPayableAmount(){
-	validateAmount();
 	var debitAmount = 0;
 	var totalDeductionAmount = 0;
 	$( "input[name$='creditamount']" ).each(function(){
@@ -360,33 +360,23 @@ function validateMBPageNumbers() {
 }
 
 function validateNetPayableAmount() {
-	if($('#debitamount').val() != '' && $('#netPayableAmount').val() < 0) {
-		bootbox.alert("Net Payable amount cannot be less than zero!");
+	if($('#debitamount').val() != '' && $('#netPayableAmount').val() <= 0) {
+		bootbox.alert("Net Payable amount should be greater than zero!");
 		return false;
 	}
 	return true;
 }
 
-function validateAmount() {
-	$( "input[name$='debitamount']" ).on("keyup", function(){
-	    var valid = /^[1-9](\d{0,9})(\.\d{0,2})?$/.test(this.value),
-	        val = this.value;
-	    
-	    if(!valid){
-	        console.log("Invalid input!");
-	        this.value = val.substring(0, val.length - 1);
-	    }
-	});
-	$( "input[name$='creditamount']" ).on("keyup", function(){
-	    var valid = /^[1-9](\d{0,9})(\.\d{0,2})?$/.test(this.value),
-	        val = this.value;
-	    
-	    if(!valid){
-	        console.log("Invalid input!");
-	        this.value = val.substring(0, val.length - 1);
-	    }
-	});
-}
+$(document).on('keyup','.validateZero', function(){
+  var valid = /^[1-9](\d{0,9})(\.\d{0,2})?$/.test(this.value),
+  val = this.value;
+  
+  if(!valid){
+    console.log("Invalid input!");
+    this.value = val.substring(0, val.length - 1);
+   }
+});
+
 
 function roundTo(value, decimals, decimal_padding) {
 	if (!decimals)

@@ -75,10 +75,9 @@ import org.springframework.web.bind.annotation.ResponseBody;
 public class SewerageWorkOrderNoticeController {
 
     @Autowired
-    private MessageSource messageSource ;
+    private MessageSource messageSource;
 
     public static final String WORKORDERNOTICE = "sewerageWorkOrderNotice";
-
 
     String errorMessage = "";
     @Autowired
@@ -86,7 +85,7 @@ public class SewerageWorkOrderNoticeController {
     @Autowired
     @Qualifier("fileStoreService")
     protected FileStoreService fileStoreService;
-    
+
     @Autowired
     private SewerageNoticeService sewerageNoticeService;
 
@@ -97,37 +96,35 @@ public class SewerageWorkOrderNoticeController {
                 .findByApplicationNumber(request.getParameter("pathVar"));
         if (!errorMessage.isEmpty())
             return redirect();
-        return generateReport(sewerageApplicationDetails, session);
+        return generateReport(sewerageApplicationDetails, session, request);
     }
 
     private ResponseEntity<byte[]> generateReport(final SewerageApplicationDetails sewerageApplicationDetails,
-            final HttpSession session) throws IOException {
+            final HttpSession session, final HttpServletRequest request) throws IOException {
         final HttpHeaders headers = new HttpHeaders();
         ReportOutput reportOutput = new ReportOutput();
         InputStream generateNoticePDF;
         SewerageNotice sewerageNotice = sewerageNoticeService.findByNoticeNoAndNoticeType(
                 sewerageApplicationDetails.getWorkOrderNumber(), SewerageTaxConstants.NOTICE_TYPE_WORK_ORDER_NOTICE);
-        if(sewerageNotice!=null && sewerageNotice.getFileStore()!=null){
-            FileStoreMapper fmp = sewerageNotice.getFileStore();
-            File file=fileStoreService.fetch(fmp, SewerageTaxConstants.FILESTORE_MODULECODE);
+        if (sewerageNotice != null && sewerageNotice.getFileStore() != null) {
+            final FileStoreMapper fmp = sewerageNotice.getFileStore();
+            final File file = fileStoreService.fetch(fmp, SewerageTaxConstants.FILESTORE_MODULECODE);
             reportOutput.setReportOutputData(FileUtils.readFileToByteArray(file));
             reportOutput.setReportFormat(FileFormat.PDF);
-            return new ResponseEntity<byte[]>(reportOutput.getReportOutputData(), headers, HttpStatus.CREATED);
-        }
-        else{
-            headers.setContentType(MediaType.parseMediaType("application/pdf"));
-            headers.add("content-disposition", "inline;filename=WorkOrderNotice.pdf");
-            reportOutput = sewerageNoticeService.generateReportOutputForWorkOrder(sewerageApplicationDetails, session);
+        } else {
+            reportOutput = sewerageNoticeService.generateReportOutputForWorkOrder(sewerageApplicationDetails, session, request);
             if (reportOutput != null && reportOutput.getReportOutputData() != null) {
                 generateNoticePDF = new ByteArrayInputStream(reportOutput.getReportOutputData());
                 sewerageNotice = sewerageNoticeService.saveWorkOrderNotice(sewerageApplicationDetails, generateNoticePDF);
-                if(sewerageNotice!=null){
+                if (sewerageNotice != null) {
                     sewerageApplicationDetails.addNotice(sewerageNotice);
                     sewerageApplicationDetailsService.save(sewerageApplicationDetails);
                 }
             }
-            return new ResponseEntity<byte[]>(reportOutput.getReportOutputData(), headers, HttpStatus.CREATED);
         }
+        headers.setContentType(MediaType.parseMediaType("application/pdf"));
+        headers.add("content-disposition", "inline;filename=WorkOrderNotice.pdf");
+        return new ResponseEntity<byte[]>(reportOutput.getReportOutputData(), headers, HttpStatus.CREATED);
     }
 
     public void validateWorkOrder(final SewerageApplicationDetails sewerageApplicationDetails, final Boolean isView) {
@@ -145,13 +142,13 @@ public class SewerageWorkOrderNoticeController {
 
     @RequestMapping(value = "/workorder/view/{applicationNumber}", method = RequestMethod.GET)
     public @ResponseBody ResponseEntity<byte[]> viewReport(@PathVariable final String applicationNumber,
-            final HttpSession session) throws IOException {
+            final HttpSession session, final HttpServletRequest request) throws IOException {
         final SewerageApplicationDetails sewerageApplicationDetails = sewerageApplicationDetailsService
                 .findByApplicationNumber(applicationNumber);
         validateWorkOrder(sewerageApplicationDetails, true);
         if (!errorMessage.isEmpty())
             return redirect();
-        return generateReport(sewerageApplicationDetails, session);
+        return generateReport(sewerageApplicationDetails, session, request);
     }
 
     private ResponseEntity<byte[]> redirect() {
@@ -161,5 +158,5 @@ public class SewerageWorkOrderNoticeController {
         errorMessage = "";
         return new ResponseEntity<byte[]>(byteData, HttpStatus.CREATED);
     }
-    
+
 }

@@ -48,15 +48,15 @@
 				<div class="panel-body custom">
 					<div class="row add-border">
 						<div class="col-xs-3 add-margin">
-							<spring:message code="lbl.interimordertype" />
-						</div>
-						<div class="col-sm-3 add-margin view-content">
-							${interimOrder.interimOrderType}</div>
-						<div class="col-xs-3 add-margin">
 							<spring:message code="lbl.code" />
 						</div>
 						<div class="col-sm-3 add-margin view-content">
 							${interimOrder.code}</div>
+							<div class="col-xs-3 add-margin">
+							<spring:message code="lbl.interimordertype" />
+						</div>
+						<div class="col-sm-3 add-margin view-content">
+							${interimOrder.interimOrderType}</div>
 					</div>
 					<div class="row add-border">
 						<div class="col-xs-3 add-margin">

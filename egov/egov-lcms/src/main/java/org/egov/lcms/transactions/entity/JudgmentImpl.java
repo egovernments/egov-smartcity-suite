@@ -68,11 +68,16 @@ import org.egov.infra.validation.exception.ValidationError;
 import org.egov.lcms.masters.entity.enums.ImplementationFailure;
 import org.egov.lcms.masters.entity.enums.JudgmentImplIsComplied;
 import org.egov.lcms.utils.constants.LcmsConstants;
+import org.hibernate.envers.AuditOverride;
+import org.hibernate.envers.AuditOverrides;
+import org.hibernate.envers.Audited;
 import org.hibernate.validator.constraints.Length;
 
 @Entity
 @Table(name = "EGLC_JUDGMENTIMPL")
 @SequenceGenerator(name = JudgmentImpl.SEQ_EGLC_JUDGMENTIMPL, sequenceName = JudgmentImpl.SEQ_EGLC_JUDGMENTIMPL, allocationSize = 1)
+@AuditOverrides({ @AuditOverride(forClass = AbstractAuditable.class, name = "lastModifiedBy"),
+    @AuditOverride(forClass = AbstractAuditable.class, name = "lastModifiedDate") })
 public class JudgmentImpl extends AbstractAuditable {
 
     private static final long serialVersionUID = 1517694643078084884L;
@@ -85,35 +90,43 @@ public class JudgmentImpl extends AbstractAuditable {
     @ManyToOne
     @NotNull
     @JoinColumn(name = "judgment", nullable = false)
+    @Audited
     private Judgment judgment;
 
    
     @Enumerated(EnumType.STRING)
     @Column(name = "iscompiled")
+    @Audited
     private JudgmentImplIsComplied judgmentImplIsComplied;
 
   
     @Temporal(TemporalType.DATE)
     @Column(name = "dateofcompliance")
     @ValidateDate(allowPast = true, dateFormat = LcmsConstants.DATE_FORMAT, message = "invalid.compliance.date")
+    @Audited
     private Date dateOfCompliance;
 
     @Length(max = 1024)
     @Column(name = "compliancereport")
+    @Audited
     private String complianceReport;
 
     @Enumerated(EnumType.STRING)
     @Column(name = "reason")
+    @Audited
     private ImplementationFailure implementationFailure;
 
     @Length(max = 128)
     @Column(name = "implementationdetails")
+    @Audited
     private String details;
 
     @OneToMany(mappedBy = "judgmentImpl", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @Audited
     private List<Contempt> contempt = new ArrayList<Contempt>(0);
 
     @OneToMany(mappedBy = "judgmentImpl", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @Audited
     private List<Appeal> appeal = new ArrayList<Appeal>(0);
 
     @Override

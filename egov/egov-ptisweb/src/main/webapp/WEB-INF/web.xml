@@ -288,27 +288,6 @@
  		<location>/error/404</location>
  	</error-page>
 
-	<!-- RESTFUL WEBSERVICE START -->
-	
-	<servlet>
-		<servlet-name>ptisRestServlet</servlet-name>
-		<servlet-class>com.sun.jersey.spi.spring.container.servlet.SpringServlet</servlet-class>
-		<init-param>
-			<param-name>com.sun.jersey.config.property.packages</param-name>
-			<param-value>org.egov.ptis</param-value>
-		</init-param>
-		<init-param>
-			<param-name>com.sun.jersey.api.json.POJOMappingFeature</param-name>
-			<param-value>true</param-value>
-		</init-param>
-	</servlet>
-	<servlet-mapping>
-		<servlet-name>ptisRestServlet</servlet-name>
-		<url-pattern>/rest/*</url-pattern>
-	</servlet-mapping>
-	
-	<!-- RESTFUL WEBSERVICE END -->
-	
 	<servlet>
 		<servlet-name>reportViewer</servlet-name>
 		<servlet-class>org.egov.infra.reporting.viewer.ReportViewer</servlet-class>

@@ -42,17 +42,22 @@ package org.egov.wtms.web.controller.reports;
 
 import static org.springframework.web.bind.annotation.RequestMethod.GET;
 
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.io.PrintWriter;
+import java.io.InputStream;
+import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.ValidationException;
 
+import org.apache.commons.io.FileUtils;
+import org.apache.log4j.Logger;
 import org.egov.infra.exception.ApplicationRuntimeException;
 import org.egov.infra.filestore.entity.FileStoreMapper;
 import org.egov.infra.filestore.repository.FileStoreMapperRepository;
@@ -68,6 +73,12 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
+
+import com.lowagie.text.Document;
+import com.lowagie.text.pdf.PdfContentByte;
+import com.lowagie.text.pdf.PdfImportedPage;
+import com.lowagie.text.pdf.PdfReader;
+import com.lowagie.text.pdf.PdfWriter;
 
 @Controller
 @RequestMapping(value = "/report")
@@ -88,6 +99,8 @@ public class GenerateBillForConsumerCodeController {
     @Autowired
     private FileStoreService fileStoreService;
 
+    private static final Logger LOGGER = Logger.getLogger(GenerateBillForConsumerCodeController.class);
+
     @RequestMapping(value = "/generateBillForHSCNo/{consumerCode}", method = GET)
     public String newForm(final Model model, @PathVariable final String consumerCode, final HttpServletRequest request,
             final HttpServletResponse response) {
@@ -104,7 +117,7 @@ public class GenerateBillForConsumerCodeController {
                 waterConnectionDetailsService.findByApplicationNumberOrConsumerCode(consumerCode).getApplicationType()
                         .getName());
         model.addAttribute("successMessage", "Demand Bill got generated, Please click on download.");
-        model.addAttribute("fileStoreId",!waterChargesDocumentslist.isEmpty() ? waterChargesDocumentslist.get(0) : "");
+        model.addAttribute("fileStoreId", !waterChargesDocumentslist.isEmpty() ? waterChargesDocumentslist.get(0) : "");
         return "generatebill-consumercode";
 
     }
@@ -112,20 +125,16 @@ public class GenerateBillForConsumerCodeController {
     @RequestMapping(value = "/generateBillForHSCNo/downloadDemandBill")
     public void generatePDF(final String consumerCode, final HttpServletRequest request,
             final HttpServletResponse response) {
-          String signedFileStoreId = request.getParameter("signedFileStoreId");
+        final String signedFileStoreId = request.getParameter("signedFileStoreId");
         response.setHeader("content-disposition", "attachment; filename=\"" + "generate_bill.pdf" + "\"");
         if (signedFileStoreId != null)
             try {
-                final FileStoreMapper fsm = fileStoreMapperRepository
-                        .findByFileStoreId(signedFileStoreId);
+                final FileStoreMapper fsm = fileStoreMapperRepository.findByFileStoreId(signedFileStoreId);
+                final List<InputStream> pdfs = new ArrayList<InputStream>();
                 final File file = fileStoreService.fetch(fsm, WaterTaxConstants.FILESTORE_MODULECODE);
-                final FileInputStream inStream = new FileInputStream(file);
-                final PrintWriter outStream = response.getWriter();
-                int bytesRead = -1;
-                while ((bytesRead = inStream.read()) != -1)
-                    outStream.write(bytesRead);
-                inStream.close();
-                outStream.close();
+                final byte[] bFile = FileUtils.readFileToByteArray(file);
+                pdfs.add(new ByteArrayInputStream(bFile));
+                getServletResponse(response, pdfs, consumerCode);
             } catch (final FileNotFoundException fileNotFoundExcep) {
                 throw new ApplicationRuntimeException("Exception while loading file : " + fileNotFoundExcep);
             } catch (final IOException ioExcep) {
@@ -133,5 +142,81 @@ public class GenerateBillForConsumerCodeController {
             }
         else
             throw new ValidationException("err.demand.notice");
+    }
+
+    private HttpServletResponse getServletResponse(final HttpServletResponse response, final List<InputStream> pdfs,
+            final String filename) {
+        try {
+            final ByteArrayOutputStream output = new ByteArrayOutputStream();
+            final byte[] data = concatPDFs(pdfs, output);
+            response.setHeader(WaterTaxConstants.CONTENT_DISPOSITION, "attachment;filename=" + filename + ".pdf");
+            response.setContentType("application/pdf");
+            response.setContentLength(data.length);
+            response.getOutputStream().write(data);
+            return response;
+        } catch (final IOException e) {
+            throw new ValidationException(e.getMessage());
+        }
+    }
+
+    private byte[] concatPDFs(final List<InputStream> streamOfPDFFiles, final ByteArrayOutputStream outputStream) {
+
+        Document document = null;
+        try {
+            final List<InputStream> pdfs = streamOfPDFFiles;
+            final List<PdfReader> readers = new ArrayList<PdfReader>();
+            final Iterator<InputStream> iteratorPDFs = pdfs.iterator();
+
+            // Create Readers for the pdfs.
+            while (iteratorPDFs.hasNext()) {
+                final InputStream pdf = iteratorPDFs.next();
+                final PdfReader pdfReader = new PdfReader(pdf);
+                readers.add(pdfReader);
+                if (null == document)
+                    document = new Document(pdfReader.getPageSize(1));
+            }
+            // Create a writer for the outputstream
+            final PdfWriter writer = PdfWriter.getInstance(document, outputStream);
+
+            document.open();
+            final PdfContentByte cb = writer.getDirectContent(); // Holds the
+            // PDF
+            // data
+
+            PdfImportedPage page;
+            int pageOfCurrentReaderPDF = 0;
+            final Iterator<PdfReader> iteratorPDFReader = readers.iterator();
+
+            // Loop through the PDF files and add to the output.
+            while (iteratorPDFReader.hasNext()) {
+                final PdfReader pdfReader = iteratorPDFReader.next();
+
+                // Create a new page in the target for each source page.
+                while (pageOfCurrentReaderPDF < pdfReader.getNumberOfPages()) {
+                    document.newPage();
+                    pageOfCurrentReaderPDF++;
+                    page = writer.getImportedPage(pdfReader, pageOfCurrentReaderPDF);
+                    cb.addTemplate(page, 0, 0);
+                }
+                pageOfCurrentReaderPDF = 0;
+            }
+            outputStream.flush();
+            document.close();
+            outputStream.close();
+
+        } catch (final Exception e) {
+
+            LOGGER.error("Exception in concat PDFs : ", e);
+        } finally {
+            if (document.isOpen())
+                document.close();
+            try {
+                if (outputStream != null)
+                    outputStream.close();
+            } catch (final IOException ioe) {
+                LOGGER.error("Exception in concat PDFs : ", ioe);
+            }
+        }
+        return outputStream.toByteArray();
     }
 }

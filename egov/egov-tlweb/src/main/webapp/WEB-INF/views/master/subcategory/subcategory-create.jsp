@@ -96,7 +96,7 @@
                    <c:forEach items="${licenseSubCategory.licenseSubCategoryDetails}" var="licenseSubCategoryDetail" varStatus="item">
 							<tr >
 								<td>
-									<form:select path="licenseSubCategoryDetails[${item.index}].feeType" id="licenseSubCategoryDetails[${item.index}].feeType" value="${licenseSubCategoryDetail.feeType}" cssClass="form-control feeType"  required="required" >
+									<form:select path="licenseSubCategoryDetails[${item.index}].feeType" id="licenseSubCategoryDetails[${item.index}].feeType" value="${licenseSubCategoryDetail.feeType}" cssClass="form-control feeType dynamicInput"  required="required" >
 										<form:option value="">
 											<spring:message code="lbl.select" />
 										</form:option>

@@ -238,7 +238,7 @@ public class PositionMasterService {
      * @param forDate
      * @return list of position object
      */
-    List<Position> getPositionsForEmployee(final Long employeeId, final Date forDate) {
+    public List<Position> getPositionsForEmployee(final Long employeeId, final Date forDate) {
         final Date userGivenDate = null == forDate ? new Date() : forDate;
         final Set<Position> positions = new HashSet<Position>();
         final List<Assignment> assignments = assignmentService.findByEmployeeAndGivenDate(employeeId, userGivenDate);

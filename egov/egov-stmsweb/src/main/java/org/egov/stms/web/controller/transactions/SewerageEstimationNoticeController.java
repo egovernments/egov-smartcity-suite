@@ -43,8 +43,6 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.OutputStream;
-import java.util.HashMap;
-import java.util.Map;
 
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
@@ -53,14 +51,9 @@ import javax.servlet.http.HttpSession;
 
 import org.egov.infra.filestore.service.FileStoreService;
 import org.egov.infra.reporting.engine.ReportOutput;
-import org.egov.infra.reporting.engine.ReportRequest;
-import org.egov.infra.reporting.engine.ReportService;
-import org.egov.stms.masters.service.FeesDetailMasterService;
 import org.egov.stms.notice.service.SewerageNoticeService;
 import org.egov.stms.transactions.entity.SewerageApplicationDetails;
 import org.egov.stms.transactions.service.SewerageApplicationDetailsService;
-import org.egov.stms.transactions.service.SewerageConnectionFeeService;
-import org.egov.stms.utils.SewerageTaxUtils;
 import org.egov.stms.utils.constants.SewerageTaxConstants;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -78,21 +71,9 @@ import org.springframework.web.bind.annotation.ResponseBody;
 public class SewerageEstimationNoticeController {
 
     @Autowired
-    private ReportService reportService;
-
-    @Autowired
-    private SewerageTaxUtils sewerageTaxUtils;
-
-    @Autowired
     @Qualifier("fileStoreService")
     protected FileStoreService fileStoreService;
 
-    @Autowired
-    private FeesDetailMasterService feesDetailMasterService;
-
-    @Autowired
-    private SewerageConnectionFeeService SewerageConnectionFeeService;
-    
     @Autowired
     private SewerageNoticeService sewerageNoticeService;
 
@@ -109,15 +90,15 @@ public class SewerageEstimationNoticeController {
             final HttpSession session) {
         final SewerageApplicationDetails sewerageApplicationDetails = sewerageApplicationDetailsService
                 .findByApplicationNumber(request.getParameter("pathVar"));
-        return generateReport(sewerageApplicationDetails, session);
+        return generateReport(sewerageApplicationDetails, session, request);
     }
 
     private ResponseEntity<byte[]> generateReport(final SewerageApplicationDetails sewerageApplicationDetails,
-            final HttpSession session) {
+            final HttpSession session, final HttpServletRequest request) {
         final HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.parseMediaType("application/pdf"));
         headers.add("content-disposition", "inline;filename=EstimationNotice.pdf");
-        reportOutput = sewerageNoticeService.generateReportOutputDataForEstimation(sewerageApplicationDetails, session);
+        reportOutput = sewerageNoticeService.generateReportOutputDataForEstimation(sewerageApplicationDetails, session, request);
         return new ResponseEntity<byte[]>(reportOutput.getReportOutputData(), headers, HttpStatus.CREATED);
     }
 
@@ -160,7 +141,7 @@ public class SewerageEstimationNoticeController {
         inputStream.close();
         outStream.close();
     }
-    
+
     @RequestMapping(value = "/closeConnectionNotice", method = RequestMethod.GET)
     public @ResponseBody ResponseEntity<byte[]> generateCloserNotice(final HttpServletRequest request,
             final HttpSession session) {

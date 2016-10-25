@@ -98,7 +98,7 @@ public class DataEntryConnectionReportController {
                 REVENUE_HIERARCHY_TYPE);
     }
 
-    @RequestMapping(value = "/result/", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+    @RequestMapping(value = "/result/", method = GET, produces = MediaType.APPLICATION_JSON_VALUE)
     public @ResponseBody void searchResult(final HttpServletRequest request, final HttpServletResponse response)
             throws IOException, ParseException {
         String ward = "";

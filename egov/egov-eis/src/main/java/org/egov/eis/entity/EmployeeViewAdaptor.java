@@ -38,35 +38,24 @@
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
 
-package org.egov.tl.web.controller;
+package org.egov.eis.entity;
 
-import org.egov.tl.entity.LicenseAppType;
-import org.egov.tl.entity.PenaltyRates;
+import java.lang.reflect.Type;
 
-import java.util.ArrayList;
-import java.util.List;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonSerializationContext;
+import com.google.gson.JsonSerializer;
 
-public class PenaltyForm {
-    private LicenseAppType licenseAppType;
-    private List<PenaltyRates> penaltyRatesList = new ArrayList<PenaltyRates>();
+public class EmployeeViewAdaptor implements JsonSerializer<EmployeeView> {
 
-    public LicenseAppType getLicenseAppType() {
-        return licenseAppType;
+    @Override
+    public JsonElement serialize(final EmployeeView src, final Type typeOfSrc, final JsonSerializationContext context) {
+        final JsonObject empJsonObject = new JsonObject();
+        empJsonObject.addProperty("name", src.getName());
+        empJsonObject.addProperty("id", src.getPosition().getId());
+        return empJsonObject;
+
     }
 
-    public void setLicenseAppType(final LicenseAppType licenseAppType) {
-        this.licenseAppType = licenseAppType;
-    }
-
-    public List<PenaltyRates> getPenaltyRatesList() {
-        return penaltyRatesList;
-    }
-
-    public void setPenaltyRatesList(final List<PenaltyRates> penaltyRatesList) {
-        this.penaltyRatesList = penaltyRatesList;
-    }
-
-    public void addpenaltyRatesList(final PenaltyRates penaltyRates) {
-        penaltyRatesList.add(penaltyRates);
-    }
 }
