@@ -94,13 +94,16 @@ public class WorksMilestoneIndex {
     private Double estimatevalue;
 
     @Field(type = FieldType.String, index = FieldIndex.not_analyzed)
-    private String lineestimatetypeofwork;
+    private String lineestimatetypeofworkname;
 
     @Field(type = FieldType.String, index = FieldIndex.not_analyzed)
     private String lineestimatetypeofworkcode;
 
     @Field(type = FieldType.String, index = FieldIndex.not_analyzed)
-    private String lineestimatesubtypeofwork;
+    private String lineestimatesubtypeofworkname;
+
+    @Field(type = FieldType.String, index = FieldIndex.not_analyzed)
+    private String lineestimatesubtypeofworkcode;
 
     @Field(type = FieldType.Date)
     private Date createddate;
@@ -353,20 +356,28 @@ public class WorksMilestoneIndex {
         this.estimatevalue = estimatevalue;
     }
 
-    public String getLineestimatetypeofwork() {
-        return lineestimatetypeofwork;
+    public String getLineestimatetypeofworkname() {
+        return lineestimatetypeofworkname;
     }
 
-    public void setLineestimatetypeofwork(final String lineestimatetypeofwork) {
-        this.lineestimatetypeofwork = lineestimatetypeofwork;
+    public void setLineestimatetypeofworkname(final String lineestimatetypeofworkname) {
+        this.lineestimatetypeofworkname = lineestimatetypeofworkname;
     }
 
-    public String getLineestimatesubtypeofwork() {
-        return lineestimatesubtypeofwork;
+    public String getLineestimatesubtypeofworkname() {
+        return lineestimatesubtypeofworkname;
     }
 
-    public void setLineestimatesubtypeofwork(final String lineestimatesubtypeofwork) {
-        this.lineestimatesubtypeofwork = lineestimatesubtypeofwork;
+    public void setLineestimatesubtypeofworkname(final String lineestimatesubtypeofworkname) {
+        this.lineestimatesubtypeofworkname = lineestimatesubtypeofworkname;
+    }
+
+    public String getLineestimatesubtypeofworkcode() {
+        return lineestimatesubtypeofworkcode;
+    }
+
+    public void setLineestimatesubtypeofworkcode(final String lineestimatesubtypeofworkcode) {
+        this.lineestimatesubtypeofworkcode = lineestimatesubtypeofworkcode;
     }
 
     public Date getCreateddate() {

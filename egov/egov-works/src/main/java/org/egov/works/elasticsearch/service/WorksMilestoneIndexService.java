@@ -278,7 +278,7 @@ public class WorksMilestoneIndexService {
         BoolQueryBuilder boolQuery = QueryBuilders.boolQuery();
         if (StringUtils.isNotBlank(worksMilestoneIndexRequest.getTypeofwork()))
             boolQuery = boolQuery
-                    .filter(QueryBuilders.matchQuery("lineestimatetypeofwork", worksMilestoneIndexRequest.getTypeofwork()));
+                    .filter(QueryBuilders.matchQuery("lineestimatetypeofworkname", worksMilestoneIndexRequest.getTypeofwork()));
         if (StringUtils.isNotBlank(worksMilestoneIndexRequest.getDistname()))
             boolQuery = boolQuery
                     .filter(QueryBuilders.matchQuery("distname", worksMilestoneIndexRequest.getDistname()));
