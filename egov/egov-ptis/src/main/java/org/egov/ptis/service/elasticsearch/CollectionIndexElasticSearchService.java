@@ -45,6 +45,7 @@ import static org.egov.ptis.constants.PropertyTaxConstants.COLLECTION_INDEX_NAME
 import static org.egov.ptis.constants.PropertyTaxConstants.DASHBOARD_GROUPING_DISTRICTWISE;
 import static org.egov.ptis.constants.PropertyTaxConstants.DASHBOARD_GROUPING_REGIONWISE;
 import static org.egov.ptis.constants.PropertyTaxConstants.DASHBOARD_GROUPING_ULBWISE;
+import static org.egov.ptis.constants.PropertyTaxConstants.DASHBOARD_GROUPING_GRADEWISE;
 import static org.egov.ptis.constants.PropertyTaxConstants.DATEFORMATTER_YYYY_MM_DD;
 import static org.egov.ptis.constants.PropertyTaxConstants.DATE_FORMAT_YYYYMMDD;
 import static org.egov.ptis.constants.PropertyTaxConstants.PROPERTY_TAX_INDEX_NAME;
@@ -330,6 +331,8 @@ public class CollectionIndexElasticSearchService {
                 aggregationField = "districtname";
             else if (collectionDetailsRequest.getType().equalsIgnoreCase(DASHBOARD_GROUPING_ULBWISE))
                 aggregationField = "cityname";
+            else if (collectionDetailsRequest.getType().equalsIgnoreCase(DASHBOARD_GROUPING_GRADEWISE))
+                aggregationField = "citygrade";
         }
         // Wardwise group to be implemented later
 
@@ -399,7 +402,8 @@ public class CollectionIndexElasticSearchService {
                 collIndData.setUlbName(name);
                 collIndData.setDistrictName(collectionDetailsRequest.getDistrictName());
                 collIndData.setUlbGrade(collectionDetailsRequest.getUlbGrade());
-            }
+            } else if (aggregationField.equals("citygrade"))
+                collIndData.setUlbGrade(name);
 
             collIndData.setTodayColl(todayCollMap.get(name) == null ? BigDecimal.ZERO : todayCollMap.get(name));
             collIndData.setCytdColl(entry.getValue());
@@ -885,6 +889,8 @@ public class CollectionIndexElasticSearchService {
                 aggregationField = "districtname";
             else if (collectionDetailsRequest.getType().equalsIgnoreCase(DASHBOARD_GROUPING_ULBWISE))
                 aggregationField = "cityname";
+            else if (collectionDetailsRequest.getType().equalsIgnoreCase(DASHBOARD_GROUPING_GRADEWISE))
+                aggregationField = "citygrade";
         }
         /**
          * For Current day's collection if dates are sent in the request,
@@ -939,7 +945,9 @@ public class CollectionIndexElasticSearchService {
                 receiptData.setUlbName(name);
                 receiptData.setDistrictName(collectionDetailsRequest.getDistrictName());
                 receiptData.setUlbGrade(collectionDetailsRequest.getUlbGrade());
-            }
+            } else if (aggregationField.equals("citygrade"))
+                receiptData.setUlbGrade(name);
+            
             receiptData.setCytdColl(entry.getValue());
             receiptData.setCurrDayColl(
                     currDayCollMap.get(name) == null ? BigDecimal.valueOf(0) : currDayCollMap.get(name));
