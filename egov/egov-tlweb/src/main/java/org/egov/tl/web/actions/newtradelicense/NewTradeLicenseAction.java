@@ -138,6 +138,11 @@ public class NewTradeLicenseAction extends BaseLicenseAction<TradeLicense> {
                 || license().getEgwStatus().getCode().equals(Constants.APPLICATION_STATUS_APPROVED_CODE)
                         && license().getState().getValue().contains(Constants.WF_STATE_COMMISSIONER_APPROVED_STR))
             mode = Constants.DISABLE_APPROVER_MODE;
+        else if (licenseUtils.isDigitalSignEnabled() &&
+                license().getState().getValue().equals(Constants.DIGI_ENABLED_WF_SECOND_LVL_FEECOLLECTED)
+                || license().getState().getValue().equals(Constants.WF_DIGI_SIGNED)
+                || license().getState().getValue().equals(Constants.WF_ACTION_DIGI_SIGN_COMMISSION_NO_COLLECTION))
+            mode = Constants.DISABLE_APPROVER_MODE;
         if (license().getState().getValue().contains(Constants.WF_STATE_COMMISSIONER_APPROVED_STR)
                 && license().getEgwStatus().getCode().equals(Constants.APPLICATION_STATUS_SECONDCOLLECTION_CODE)
                 || license().getState().getValue().contains(Constants.WF_LICENSE_CREATED))

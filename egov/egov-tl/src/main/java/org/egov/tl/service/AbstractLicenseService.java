@@ -96,6 +96,7 @@ import org.egov.tl.entity.enums.ApplicationType;
 import org.egov.tl.repository.LicenseRepository;
 import org.egov.tl.utils.Constants;
 import org.egov.tl.utils.LicenseNumberUtils;
+import org.egov.tl.utils.LicenseUtils;
 import org.hibernate.CacheMode;
 import org.hibernate.criterion.Restrictions;
 import org.hibernate.sql.JoinType;
@@ -165,6 +166,9 @@ public abstract class AbstractLicenseService<T extends License> {
 
     @Autowired
     protected NatureOfBusinessService natureOfBusinessService;
+
+    @Autowired
+    private LicenseUtils licenseUtils;
 
     protected abstract LicenseAppType getLicenseApplicationTypeForRenew();
 
@@ -480,12 +484,21 @@ public abstract class AbstractLicenseService<T extends License> {
                         .withStateValue(wfmatrix.getNextState()).withDateInfo(currentDate.toDate()).withOwner(pos)
                         .withNextAction(wfmatrix.getNextAction());
             } else if (BUTTONAPPROVE.equalsIgnoreCase(workflowBean.getWorkFlowAction())
-                    && license.getEgwStatus().getCode().equals(Constants.APPLICATION_STATUS_APPROVED_CODE))
+                    && license.getEgwStatus().getCode().equals(Constants.APPLICATION_STATUS_APPROVED_CODE)
+                    && !licenseUtils.isDigitalSignEnabled())
                 license.transition(true).withSenderName(user.getUsername() + DELIMITER_COLON + user.getName())
                         .withComments(workflowBean.getApproverComments()).withNatureOfTask(natureOfWork)
                         .withStateValue(Constants.WF_COMMISSIONER_APPRVD_WITHOUT_COLLECTION).withDateInfo(currentDate.toDate())
                         .withOwner(wfInitiator.getPosition())
                         .withNextAction(Constants.WF_CERTIFICATE_GEN_PENDING);
+            else if (BUTTONAPPROVE.equalsIgnoreCase(workflowBean.getWorkFlowAction())
+                    && license.getEgwStatus().getCode().equals(Constants.APPLICATION_STATUS_APPROVED_CODE)
+                    && licenseUtils.isDigitalSignEnabled())
+                license.transition(true).withSenderName(user.getUsername() + DELIMITER_COLON + user.getName())
+                        .withComments(workflowBean.getApproverComments()).withNatureOfTask(natureOfWork)
+                        .withStateValue(Constants.WF_ACTION_DIGI_SIGN_COMMISSION_NO_COLLECTION).withDateInfo(currentDate.toDate())
+                        .withOwner(pos)
+                        .withNextAction(Constants.WF_ACTION_DIGI_PENDING);
             else {
                 final WorkFlowMatrix wfmatrix = this.licenseWorkflowService.getWfMatrix(license.getStateType(), null,
                         null, workflowBean.getAdditionaRule(), license.getCurrentState().getValue(), null);

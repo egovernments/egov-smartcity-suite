@@ -166,7 +166,8 @@ public class SearchTradeAction extends BaseFormAction {
                     licenseActions.add("Collect Fees");
                 else if (license.getStatus() != null
                         && license.getStatus().getStatusCode().equalsIgnoreCase(Constants.STATUS_ACTIVE)
-                        && !roleName.contains(Constants.ROLE_BILLCOLLECTOR))
+                        && (roleName.contains(Constants.TL_CREATOR_ROLENAME)
+                                || roleName.contains(Constants.TL_APPROVER_ROLENAME)))
                     licenseActions.add("Print Certificate");
             } else if (license.isLegacy() && !license.isPaid())
                 licenseActions.add("Modify Legacy License");

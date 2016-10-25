@@ -47,8 +47,6 @@ import static org.egov.tl.utils.Constants.DEMANDRSN_STR_CHQ_BOUNCE_PENALTY;
 import static org.egov.tl.utils.Constants.DMD_STATUS_CHEQUE_BOUNCED;
 import static org.egov.tl.utils.Constants.PENALTY_DMD_REASON_CODE;
 import static org.egov.tl.utils.Constants.TRADELICENSE;
-import static org.egov.tl.utils.Constants.WF_STATE_DIGITAL_SIGN_NEWTL;
-import static org.egov.tl.utils.Constants.WF_STATE_DIGITAL_SIGN_RENEWAL;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
@@ -426,25 +424,21 @@ public class LicenseBillService extends BillServiceInterface implements BillingI
         WorkFlowMatrix wfmatrix = null;
         final String natureOfWork = licenseObj.getLicenseAppType().getName().equals(Constants.RENEWAL_LIC_APPTYPE)
                 ? Constants.RENEWAL_NATUREOFWORK : Constants.NEW_NATUREOFWORK;
-        if (digitalSignEnabled) {
+        if (digitalSignEnabled && !licenseObj.getEgwStatus().getCode().equals(Constants.APPLICATION_STATUS_CREATED_CODE)) {
             licenseUtils.applicationStatusChange(licenseObj, APPLICATION_STATUS_DIGUPDATE_CODE);
             pos = licenseUtils.getCityLevelCommissioner();
+            licenseUtils.applicationStatusChange(licenseObj, Constants.APPLICATION_STATUS_APPROVED_CODE);
             if (licenseObj.getLicenseAppType() != null
-                    && licenseObj.getLicenseAppType().getName().equals(Constants.RENEWAL_LIC_APPTYPE)) {
-                wfmatrix = tradeLicenseWorkflowService.getWfMatrix(TRADELICENSE, null, null, Constants.RENEW_ADDITIONAL_RULE,
-                        WF_STATE_DIGITAL_SIGN_RENEWAL, null);
+                    && licenseObj.getLicenseAppType().getName().equals(Constants.RENEWAL_LIC_APPTYPE))
                 licenseObj.transition(true).withSenderName(user.getUsername() + Constants.DELIMITER_COLON + user.getName())
-                        .withComments(Constants.WORKFLOW_STATE_COLLECTED)
-                        .withStateValue(WF_STATE_DIGITAL_SIGN_RENEWAL).withDateInfo(currentDate.toDate())
-                        .withOwner(pos).withNextAction(wfmatrix.getNextAction());
-            } else {
-                wfmatrix = tradeLicenseWorkflowService.getWfMatrix(TRADELICENSE, null, null, null,
-                        WF_STATE_DIGITAL_SIGN_NEWTL, null);
+                        .withComments(Constants.WF_SECOND_LVL_FEECOLLECTED)
+                        .withStateValue(Constants.DIGI_ENABLED_WF_SECOND_LVL_FEECOLLECTED).withDateInfo(currentDate.toDate())
+                        .withOwner(pos).withNextAction(Constants.WF_ACTION_DIGI_PENDING);
+            else
                 licenseObj.transition(true).withSenderName(user.getUsername() + Constants.DELIMITER_COLON + user.getName())
-                        .withComments(Constants.WORKFLOW_STATE_COLLECTED)
-                        .withStateValue(WF_STATE_DIGITAL_SIGN_NEWTL).withDateInfo(currentDate.toDate())
-                        .withOwner(pos).withNextAction(wfmatrix.getNextAction());
-            }
+                        .withComments(Constants.WF_SECOND_LVL_FEECOLLECTED)
+                        .withStateValue(Constants.DIGI_ENABLED_WF_SECOND_LVL_FEECOLLECTED).withDateInfo(currentDate.toDate())
+                        .withOwner(pos).withNextAction(Constants.WF_ACTION_DIGI_PENDING);
         } else {
             licenseUtils.licenseStatusUpdate(licenseObj, Constants.STATUS_UNDERWORKFLOW);
             if (licenseObj.getEgwStatus().getCode().equals(Constants.APPLICATION_STATUS_CREATED_CODE))

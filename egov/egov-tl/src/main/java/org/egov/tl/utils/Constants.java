@@ -214,6 +214,9 @@ public class Constants {
         public static final String NEW_LIC_APPTYPE = "New";
         public static final String DELIMITER_COLON = "::";
         public static final String EDIT_APPROVAL_MODE = "editForApproval";
-        
+        public static final String DIGI_ENABLED_WF_SECOND_LVL_FEECOLLECTED  = "Digital sign-Second level fee collected";
+        public static final String WF_ACTION_DIGI_PENDING ="Digital Signature Pending";
+        public static final String WF_ACTION_DIGI_SIGN_COMMISSION_NO_COLLECTION ="Digital sign-Commissioner Approved no collection";
+        public static final String WF_DIGI_SIGNED ="Digital signed";
 }
 
