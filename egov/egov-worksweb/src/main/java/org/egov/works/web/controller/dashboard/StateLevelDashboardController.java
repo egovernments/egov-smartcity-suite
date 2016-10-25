@@ -81,7 +81,7 @@ public class StateLevelDashboardController {
         final WorksMilestoneIndexRequest worksMilestoneIndexRequest = new WorksMilestoneIndexRequest();
         worksMilestoneIndexRequest.setReportType("SECTOR");
         final List<WorksMilestoneIndexResponse> resultList = worksMilestoneIndexService
-                .returnAggregationResults(worksMilestoneIndexRequest, true, "lineestimatetypeofwork");
+                .returnAggregationResults(worksMilestoneIndexRequest, true, "lineestimatetypeofworkname");
         final String result = new StringBuilder("{ \"data\":").append(toStateWiseTypeOfWorkDetailsJson(resultList))
                 .append("}").toString();
         final Long timeTaken = System.currentTimeMillis() - startTime;

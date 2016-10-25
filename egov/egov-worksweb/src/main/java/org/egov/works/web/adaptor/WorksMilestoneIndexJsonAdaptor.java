@@ -554,7 +554,7 @@ public class WorksMilestoneIndexJsonAdaptor implements JsonSerializer<WorksMiles
                 break;
             }
             
-            jsonObject.addProperty("Financial progress",
+            jsonObject.addProperty("Financial progress %",
                     BigDecimal.valueOf(response.getFinancialprogress()).setScale(2, BigDecimal.ROUND_HALF_EVEN).toString());
         }
         return jsonObject;
