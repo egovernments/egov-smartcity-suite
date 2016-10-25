@@ -43,18 +43,18 @@ package org.egov.pgr.entity.es;
 
 public class ComplaintDashBoardRequest {
 	
-	String districtCode;
+	String districtName;
 	String ulbCode;
 	String wardNo;
 	String departmentCode;
 	String fromDate;
 	String toDate;
 	
-	public String getDistrictCode() {
-		return districtCode;
+	public String getDistrictName() {
+		return districtName;
 	}
-	public void setDistrictCode(String districtCode) {
-		this.districtCode = districtCode;
+	public void setDistrictName(String districtName) {
+		this.districtName = districtName;
 	}
 	public String getUlbCode() {
 		return ulbCode;

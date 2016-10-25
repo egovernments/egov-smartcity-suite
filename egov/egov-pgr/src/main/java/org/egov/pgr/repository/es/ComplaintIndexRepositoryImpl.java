@@ -71,10 +71,7 @@ import org.joda.time.DateTime;
 import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.data.elasticsearch.core.ElasticsearchTemplate;
-import org.springframework.data.elasticsearch.core.query.NativeSearchQueryBuilder;
-import org.springframework.data.elasticsearch.core.query.SearchQuery;
 
 public class ComplaintIndexRepositoryImpl implements ComplaintIndexCustomRepository{
 
@@ -175,11 +172,11 @@ public class ComplaintIndexRepositoryImpl implements ComplaintIndexCustomReposit
 			responseDetail.setDomainURL(StringUtils.EMPTY);
 			
 			CityIndex city;
-			if (StringUtils.isBlank(complaintDashBoardRequest.getDistrictCode())){
-				city = cityIndexService.findByDistrictcode(bucket.getKeyAsString());
+			if (StringUtils.isBlank(complaintDashBoardRequest.getDistrictName())){
+				city = cityIndexService.findByDistrictCode(bucket.getKeyAsString());
 				responseDetail.setDistrictName(city.getDistrictname());
 			}
-			if (StringUtils.isNotBlank(complaintDashBoardRequest.getDistrictCode())){
+			if (StringUtils.isNotBlank(complaintDashBoardRequest.getDistrictName())){
 				if(StringUtils.isBlank(complaintDashBoardRequest.getUlbCode()))
 					city = cityIndexService.findByCitycode(bucket.getKeyAsString());
 				else

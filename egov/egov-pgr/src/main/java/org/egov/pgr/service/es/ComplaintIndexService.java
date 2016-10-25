@@ -648,8 +648,8 @@ public class ComplaintIndexService {
 
     private BoolQueryBuilder getFilterQuery(ComplaintDashBoardRequest complaintDashBoardRequest) {
         BoolQueryBuilder boolQuery = QueryBuilders.boolQuery().filter(QueryBuilders.termQuery("registered", 1));
-        if (StringUtils.isNotBlank(complaintDashBoardRequest.getDistrictCode()))
-            boolQuery = boolQuery.filter(QueryBuilders.matchQuery("cityDistrictCode", complaintDashBoardRequest.getDistrictCode()));
+        if (StringUtils.isNotBlank(complaintDashBoardRequest.getDistrictName()))
+            boolQuery = boolQuery.filter(QueryBuilders.matchQuery("cityDistrictName", complaintDashBoardRequest.getDistrictName()));
         if (StringUtils.isNotBlank(complaintDashBoardRequest.getUlbCode()))
             boolQuery = boolQuery.filter(QueryBuilders.matchQuery("cityCode", complaintDashBoardRequest.getUlbCode()));
         if (StringUtils.isNotBlank(complaintDashBoardRequest.getWardNo()))

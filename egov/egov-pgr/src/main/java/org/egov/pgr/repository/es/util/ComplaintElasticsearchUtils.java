@@ -83,7 +83,7 @@ public class ComplaintElasticsearchUtils {
 	
 	public static String getAggregationGroupingField(ComplaintDashBoardRequest complaintDashBoardRequest){
 		String aggregationField = "cityDistrictCode";
-        if (StringUtils.isNotBlank(complaintDashBoardRequest.getDistrictCode()))
+        if (StringUtils.isNotBlank(complaintDashBoardRequest.getDistrictName()))
         	aggregationField = "cityCode";
         if(StringUtils.isNotBlank(complaintDashBoardRequest.getUlbCode()))
         	aggregationField = "wardName";
