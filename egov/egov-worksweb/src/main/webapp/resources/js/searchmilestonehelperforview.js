@@ -129,6 +129,7 @@ function callAjaxSearch() {
 				ajax : {
 					url : "/egworks/milestone/ajax-searchmilestoneforview",
 					type : "POST",
+					"data" : getFormData(jQuery('form'))
 				},
 				"bDestroy" : true,
 				'bAutoWidth': false,
