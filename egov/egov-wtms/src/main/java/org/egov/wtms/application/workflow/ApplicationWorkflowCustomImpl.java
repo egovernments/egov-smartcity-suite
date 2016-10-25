@@ -39,6 +39,13 @@
  */
 package org.egov.wtms.application.workflow;
 
+import static org.egov.wtms.utils.constants.WaterTaxConstants.WFLOW_ACTION_STEP_REJECT;
+import static org.egov.wtms.utils.constants.WaterTaxConstants.WFLOW_ACTION_STEP_THIRDPARTY_CREATED;
+import static org.egov.wtms.utils.constants.WaterTaxConstants.WF_STATE_REJECTED;
+
+import java.math.BigDecimal;
+import java.util.Date;
+
 import org.egov.eis.entity.Assignment;
 import org.egov.eis.service.AssignmentService;
 import org.egov.eis.service.EisCommonService;
@@ -57,7 +64,7 @@ import org.egov.wtms.application.entity.WaterConnectionDetails;
 import org.egov.wtms.application.repository.WaterConnectionDetailsRepository;
 import org.egov.wtms.application.service.WaterConnectionDetailsService;
 import org.egov.wtms.application.service.WaterConnectionSmsAndEmailService;
-import org.egov.wtms.elasticSearch.service.ConsumerIndexService;
+import org.egov.wtms.es.service.WaterChargeIndexService;
 import org.egov.wtms.masters.entity.enums.ConnectionStatus;
 import org.egov.wtms.utils.PropertyExtnUtils;
 import org.egov.wtms.utils.WaterTaxUtils;
@@ -67,13 +74,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
-
-import java.math.BigDecimal;
-import java.util.Date;
-
-import static org.egov.wtms.utils.constants.WaterTaxConstants.WFLOW_ACTION_STEP_REJECT;
-import static org.egov.wtms.utils.constants.WaterTaxConstants.WFLOW_ACTION_STEP_THIRDPARTY_CREATED;
-import static org.egov.wtms.utils.constants.WaterTaxConstants.WF_STATE_REJECTED;
 
 /**
  * The Class ApplicationCommonWorkflow.
@@ -104,7 +104,7 @@ public abstract class ApplicationWorkflowCustomImpl implements ApplicationWorkfl
     private WaterTaxUtils waterTaxUtils;
 
     @Autowired
-    private ConsumerIndexService consumerIndexService;
+    private WaterChargeIndexService waterChargeIndexService;
 
     @Autowired
     private UserService userService;
@@ -216,7 +216,7 @@ public abstract class ApplicationWorkflowCustomImpl implements ApplicationWorkfl
                     final BigDecimal amountTodisplayInIndex = waterConnectionDetailsService
                             .getTotalAmount(waterConnectionDetails);
                     waterConnectionDetails.setConnectionStatus(ConnectionStatus.ACTIVE);
-                    consumerIndexService.createConsumerIndex(waterConnectionDetails, assessmentDetailsFullFlag,
+                    waterChargeIndexService.createWaterChargeIndex(waterConnectionDetails, assessmentDetailsFullFlag,
                             amountTodisplayInIndex);
                 }
                 if (wfmatrix.getNextAction().equalsIgnoreCase("END"))

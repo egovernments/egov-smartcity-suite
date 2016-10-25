@@ -37,56 +37,50 @@
  *
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
+package org.egov.wtms.es.service;
 
-package org.egov.ptis.service.elasticsearch;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
 
-import static org.egov.ptis.constants.PropertyTaxConstants.WATER_TAX_INDEX_NAME;
-
-import java.math.BigDecimal;
-
-import org.egov.ptis.repository.elasticsearch.WaterTaxIndexRepository;
-import org.elasticsearch.action.search.SearchResponse;
-import org.elasticsearch.search.aggregations.AggregationBuilders;
-import org.elasticsearch.search.aggregations.Aggregations;
-import org.elasticsearch.search.aggregations.metrics.sum.Sum;
+import org.egov.infra.es.entity.ApplicationIndex;
+import org.egov.wtms.es.repository.ApplicationSearchRepository;
+import org.egov.wtms.utils.constants.WaterTaxConstants;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.elasticsearch.core.ElasticsearchTemplate;
-import org.springframework.data.elasticsearch.core.ResultsExtractor;
-import org.springframework.data.elasticsearch.core.query.NativeSearchQueryBuilder;
-import org.springframework.data.elasticsearch.core.query.SearchQuery;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
 @Service
-public class WaterTaxElasticSearchIndexService {
+@Transactional(readOnly = true)
+public class ApplicationSearchService {
 
-	private WaterTaxIndexRepository waterTaxIndexRepository;
-	
-	@Autowired
-	private ElasticsearchTemplate elasticsearchTemplate;
-	
-	@Autowired
-	public WaterTaxElasticSearchIndexService(final WaterTaxIndexRepository waterTaxIndexRepository) {
-        this.waterTaxIndexRepository = waterTaxIndexRepository;
+    private final ApplicationSearchRepository applicationSearchRepository;
+
+    @Autowired
+    public ApplicationSearchService(final ApplicationSearchRepository applicationSearchRepository) {
+        this.applicationSearchRepository = applicationSearchRepository;
     }
-	
-	/**
-	 * API returns the current year total demand from Water Tax index
-	 * @return BigDecimal
-	 */
-	public BigDecimal getTotalDemand(){
-		SearchQuery searchQuery = new NativeSearchQueryBuilder()
-				.withIndices(WATER_TAX_INDEX_NAME)
-				.addAggregation(AggregationBuilders.sum("totaldemand").field("currentDemand"))
-				.build();
 
-		Aggregations aggregations = elasticsearchTemplate.query(searchQuery, new ResultsExtractor<Aggregations>() {
-			@Override
-			public Aggregations extract(SearchResponse response) {
-				return response.getAggregations();
-			}
-		});
+    public ApplicationIndex load(final Long id) {
+        return applicationSearchRepository.getOne(id);
+    }
 
-		Sum aggr = aggregations.get("totaldemand");
-		return BigDecimal.valueOf(aggr.getValue()).setScale(0, BigDecimal.ROUND_HALF_UP);
-	}
-	
+    public List<ApplicationIndex> findApplicationIndexModules() {
+        return applicationSearchRepository.findApplicationIndexModules();
+    }
+    public List<ApplicationIndex> getSourceList() {
+        return applicationSearchRepository.getSourceList();
+    }
+
+    public List<ApplicationIndex> findApplicationIndexApplicationTypes(final String moduleName) {
+        return applicationSearchRepository.findAllApplicationTypes(moduleName);
+    }
+
+    public Map<String, String> getApplicationStatusMap() {
+        final Map<String, String> connectionTypeMap = new LinkedHashMap<String, String>(0);
+        connectionTypeMap.put(WaterTaxConstants.APPLICATIONSTATUSOPEN.toString(), WaterTaxConstants.APPLICATIONSTATUSOPEN);
+        connectionTypeMap.put(WaterTaxConstants.APPLICATIONSTATUSCLOSED.toString(), WaterTaxConstants.APPLICATIONSTATUSCLOSED);
+        connectionTypeMap.put(WaterTaxConstants.APPLICATIONSTATUSALL.toString(), WaterTaxConstants.APPLICATIONSTATUSALL);
+        return connectionTypeMap;
+    }
 }

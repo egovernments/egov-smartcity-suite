@@ -95,7 +95,8 @@ import org.egov.wtms.application.entity.WaterConnection;
 import org.egov.wtms.application.entity.WaterConnectionDetails;
 import org.egov.wtms.application.repository.WaterConnectionDetailsRepository;
 import org.egov.wtms.application.workflow.ApplicationWorkflowCustomDefaultImpl;
-import org.egov.wtms.elasticSearch.service.ConsumerIndexService;
+import org.egov.wtms.es.entity.WaterChargeIndex;
+import org.egov.wtms.es.service.WaterChargeIndexService;
 import org.egov.wtms.masters.entity.ApplicationType;
 import org.egov.wtms.masters.entity.DocumentNames;
 import org.egov.wtms.masters.entity.DonationDetails;
@@ -180,7 +181,7 @@ public class WaterConnectionDetailsService {
     private WaterTaxNumberGenerator waterTaxNumberGenerator;
 
     @Autowired
-    private ConsumerIndexService consumerIndexService;
+    private WaterChargeIndexService waterChargeIndexService;
 
     @Autowired
     private WaterTaxUtils waterTaxUtils;
@@ -703,9 +704,13 @@ public class WaterConnectionDetailsService {
                 PropertyExternalService.FLAG_FULL_DETAILS, BasicPropertyStatus.ALL);
         final BigDecimal amountTodisplayInIndex = getTotalAmount(waterConnectionDetails);
         if (waterConnectionDetails.getLegacy())
-            consumerIndexService.createConsumerIndex(waterConnectionDetails, assessmentDetails, amountTodisplayInIndex);
+            createWaterChargeIndex(waterConnectionDetails, assessmentDetails, amountTodisplayInIndex);
     }
+    public WaterChargeIndex createWaterChargeIndex(final WaterConnectionDetails waterConnectionDetails,
+            final AssessmentDetails assessmentDetails, final BigDecimal amountTodisplayInIndex) {
+       return  waterChargeIndexService.createWaterChargeIndex(waterConnectionDetails, assessmentDetails, amountTodisplayInIndex);
 
+    }
     public void updateIndexes(final WaterConnectionDetails waterConnectionDetails, final String sourceChannel) {
         final AssessmentDetails assessmentDetails = propertyExtnUtils.getAssessmentDetailsForFlag(
                 waterConnectionDetails.getConnection().getPropertyIdentifier(),
@@ -718,7 +723,7 @@ public class WaterConnectionDetailsService {
         if (waterConnectionDetails.getLegacy() && (null == waterConnectionDetails.getId()
                 || null != waterConnectionDetails.getId() && waterConnectionDetails.getStatus().getCode()
                         .equals(WaterTaxConstants.APPLICATION_STATUS_SANCTIONED))) {
-            consumerIndexService.createConsumerIndex(waterConnectionDetails, assessmentDetails, amountTodisplayInIndex);
+            createWaterChargeIndex(waterConnectionDetails, assessmentDetails, amountTodisplayInIndex);
             return;
         }
         Iterator<OwnerName> ownerNameItr = null;
@@ -855,7 +860,7 @@ public class WaterConnectionDetailsService {
                         LOG.debug(" updating Consumer Index Started... ");
                     if (!waterConnectionDetails.getConnectionStatus().equals(ConnectionStatus.INACTIVE)
                             || !waterConnectionDetails.getConnectionStatus().equals(ConnectionStatus.INPROGRESS))
-                        consumerIndexService.createConsumerIndex(waterConnectionDetails, assessmentDetails,
+                        createWaterChargeIndex(waterConnectionDetails, assessmentDetails,
                                 amountTodisplayInIndex);
                     if (LOG.isDebugEnabled())
                         LOG.debug(" updating Consumer Index completed... ");
@@ -863,14 +868,14 @@ public class WaterConnectionDetailsService {
             // To Update After ClosureConnection is rejected
             if (waterConnectionDetails.getStatus().getCode().equals(WaterTaxConstants.APPLICATION_STATUS_SANCTIONED)
                     && waterConnectionDetails.getConnectionStatus().equals(ConnectionStatus.ACTIVE))
-                consumerIndexService.createConsumerIndex(waterConnectionDetails, assessmentDetails,
+                createWaterChargeIndex(waterConnectionDetails, assessmentDetails,
                         amountTodisplayInIndex);
             if (waterConnectionDetails.getStatus().getCode()
                     .equals(WaterTaxConstants.APPLICATION_STATUS_CLOSERSANCTIONED)
                     || waterConnectionDetails.getStatus().getCode()
                             .equals(WaterTaxConstants.APPLICATION_STATUS_CLOSERAPRROVED)
                             && waterConnectionDetails.getConnectionStatus().equals(ConnectionStatus.CLOSED))
-                consumerIndexService.createConsumerIndex(waterConnectionDetails, assessmentDetails,
+                createWaterChargeIndex(waterConnectionDetails, assessmentDetails,
                         amountTodisplayInIndex);
 
             if (waterConnectionDetails.getCloseConnectionType() != null
@@ -880,7 +885,7 @@ public class WaterConnectionDetailsService {
                             || waterConnectionDetails.getStatus().getCode()
                                     .equals(WaterTaxConstants.APPLICATION_STATUS__RECONNCTIONSANCTIONED))) {
                 waterConnectionDetails.setConnectionStatus(ConnectionStatus.ACTIVE);
-                consumerIndexService.createConsumerIndex(waterConnectionDetails, assessmentDetails,
+                createWaterChargeIndex(waterConnectionDetails, assessmentDetails,
                         amountTodisplayInIndex);
             }
         } else {

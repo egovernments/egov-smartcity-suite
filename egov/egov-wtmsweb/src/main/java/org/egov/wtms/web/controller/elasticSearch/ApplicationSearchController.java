@@ -40,10 +40,13 @@
 
 package org.egov.wtms.web.controller.elasticSearch;
 
+import java.util.List;
+import java.util.Map;
+
 import org.egov.infra.admin.master.service.CityService;
 import org.egov.infra.es.entity.ApplicationIndex;
-import org.egov.wtms.elasticSearch.entity.ApplicationSearchRequest;
-import org.egov.wtms.elasticSearch.service.ApplicationSearchService;
+import org.egov.wtms.es.entity.ApplicationSearchRequest;
+import org.egov.wtms.es.service.ApplicationSearchService;
 import org.egov.wtms.utils.WaterTaxUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
@@ -54,9 +57,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
-
-import java.util.List;
-import java.util.Map;
 
 @Controller
 @RequestMapping(value = "/elastic/appSearch/")

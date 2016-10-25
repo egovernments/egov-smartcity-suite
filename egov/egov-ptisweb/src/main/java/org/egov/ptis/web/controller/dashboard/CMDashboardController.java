@@ -43,6 +43,9 @@ package org.egov.ptis.web.controller.dashboard;
 import java.io.IOException;
 import java.util.List;
 
+import javax.servlet.http.HttpServletRequest;
+
+import org.apache.http.HttpRequest;
 import org.codehaus.jackson.JsonGenerationException;
 import org.codehaus.jackson.map.JsonMappingException;
 import org.egov.ptis.bean.dashboard.CollReceiptDetails;
@@ -100,9 +103,9 @@ public class CMDashboardController {
      * @throws IOException
      */
     @RequestMapping(value = "/collectionstats", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
-    public TotalCollectionStats getConsolidatedCollDetails() throws IOException {
+    public TotalCollectionStats getConsolidatedCollDetails(final HttpServletRequest request) throws IOException {
         Long startTime = System.currentTimeMillis();
-        TotalCollectionStats consolidatedCollectionDetails = propTaxDashboardService.getTotalCollectionStats();
+        TotalCollectionStats consolidatedCollectionDetails = propTaxDashboardService.getTotalCollectionStats(request);
         Long timeTaken = System.currentTimeMillis() - startTime;
         LOGGER.debug("Time taken to serve collectionstats is : " + timeTaken + " (millisecs)");
         return consolidatedCollectionDetails;

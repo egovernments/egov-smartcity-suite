@@ -40,7 +40,12 @@
 
 package org.egov.wtms.web.controller.search;
 
+import static org.egov.ptis.constants.PropertyTaxConstants.REVENUE_HIERARCHY_TYPE;
+
+import java.util.List;
+
 import org.egov.infra.admin.master.entity.Boundary;
+import org.egov.infra.admin.master.entity.City;
 import org.egov.infra.admin.master.entity.Role;
 import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.admin.master.service.BoundaryService;
@@ -48,7 +53,7 @@ import org.egov.infra.admin.master.service.CityService;
 import org.egov.infra.admin.master.service.UserService;
 import org.egov.infra.config.core.ApplicationThreadLocals;
 import org.egov.infra.security.utils.SecurityUtils;
-import org.egov.wtms.elasticSearch.entity.ConnectionSearchRequest;
+import org.egov.wtms.es.entity.ConnectionSearchRequest;
 import org.egov.wtms.utils.WaterTaxUtils;
 import org.egov.wtms.utils.constants.WaterTaxConstants;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -57,16 +62,13 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
-
-import java.util.List;
-
-import static org.egov.ptis.constants.PropertyTaxConstants.REVENUE_HIERARCHY_TYPE;
+import org.springframework.web.bind.annotation.ResponseBody;
 
 @Controller
 @RequestMapping(value = "/search/waterSearch/")
 public class WaterTaxSearchController {
 
-    private final CityService cityService;
+    private  CityService cityService;
 
     @Autowired
     private WaterTaxUtils waterTaxUtils;
@@ -267,15 +269,11 @@ public class WaterTaxSearchController {
 
     /*@RequestMapping(method = RequestMethod.POST)
     @ResponseBody
-    public List<Document> searchConnection(@ModelAttribute final ConnectionSearchRequest searchRequest) {
+    public List<String> searchConnection(@ModelAttribute final ConnectionSearchRequest searchRequest) {
         final City cityWebsite = cityService.getCityByURL(ApplicationThreadLocals.getDomainName());
         searchRequest.setUlbName(cityWebsite.getName());
 
-        final Sort sort = Sort.by().field("common.createdDate", SortOrder.DESC);
-        final SearchResult searchResult = searchService.search(asList(Index.WATERCHARGES.toString()),
-                asList(IndexType.CONNECTIONSEARCH.toString()), searchRequest.searchQuery(),
-                searchRequest.searchFilters(), sort, Page.NULL);
-        return searchResult.getDocuments();
+        return null;
 
     }*/
 

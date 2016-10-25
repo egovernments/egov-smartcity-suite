@@ -37,13 +37,12 @@
  *
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
-package org.egov.wtms.elasticSearch.entity;
-
-import org.egov.infra.config.core.ApplicationThreadLocals;
-import org.elasticsearch.common.geo.GeoPoint;
+package org.egov.wtms.es.entity;
 
 import java.math.BigDecimal;
 import java.util.Date;
+
+import org.elasticsearch.common.geo.GeoPoint;
 
 public class ConsumerSearch {
 

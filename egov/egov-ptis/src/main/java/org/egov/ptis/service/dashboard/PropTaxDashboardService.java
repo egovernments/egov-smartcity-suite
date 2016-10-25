@@ -40,6 +40,7 @@
 
 package org.egov.ptis.service.dashboard;
 
+import static java.lang.String.format;
 import static org.egov.ptis.constants.PropertyTaxConstants.BIGDECIMAL_100;
 import static org.egov.ptis.constants.PropertyTaxConstants.COLLECION_BILLING_SERVICE_PT;
 import static org.egov.ptis.constants.PropertyTaxConstants.COLLECION_BILLING_SERVICE_WTMS;
@@ -48,13 +49,19 @@ import static org.egov.ptis.constants.PropertyTaxConstants.THIRD_PARTY_ERR_MSG_S
 
 import java.math.BigDecimal;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
+import javax.servlet.http.HttpServletRequest;
 
+import org.apache.http.HttpRequest;
+import org.apache.struts2.ServletActionContext;
+import org.egov.infra.rest.client.SimpleRestClient;
 import org.egov.infra.utils.DateUtils;
+import org.egov.infra.web.utils.WebUtils;
 import org.egov.ptis.bean.dashboard.CollReceiptDetails;
 import org.egov.ptis.bean.dashboard.CollTableData;
 import org.egov.ptis.bean.dashboard.CollectionDetails;
@@ -68,10 +75,11 @@ import org.egov.ptis.bean.dashboard.StateCityInfo;
 import org.egov.ptis.bean.dashboard.TaxDefaulters;
 import org.egov.ptis.bean.dashboard.TaxPayerResponseDetails;
 import org.egov.ptis.bean.dashboard.TotalCollectionStats;
+import org.egov.ptis.constants.PropertyTaxConstants;
 import org.egov.ptis.domain.model.ErrorDetails;
+import org.egov.ptis.domain.service.property.PropertyService;
 import org.egov.ptis.service.elasticsearch.CollectionIndexElasticSearchService;
 import org.egov.ptis.service.elasticsearch.PropertyTaxElasticSearchIndexService;
-import org.egov.ptis.service.elasticsearch.WaterTaxElasticSearchIndexService;
 import org.hibernate.SQLQuery;
 import org.hibernate.Session;
 import org.hibernate.transform.AliasToBeanResultTransformer;
@@ -93,6 +101,9 @@ public class PropTaxDashboardService {
 
     @PersistenceContext
     private EntityManager entityManager;
+    
+    @Autowired
+    private PropertyService propertyService;
 
     @Autowired
     private CollectionIndexElasticSearchService collectionIndexElasticSearchService;
@@ -101,8 +112,8 @@ public class PropTaxDashboardService {
     private PropertyTaxElasticSearchIndexService propertyTaxElasticSearchIndexService;
 
     @Autowired
-    private WaterTaxElasticSearchIndexService waterTaxElasticSearchIndexService;
-
+    private SimpleRestClient simpleRestClient;
+    
     /**
      * Gives the State-City information across all ULBs
      * 
@@ -127,7 +138,7 @@ public class PropTaxDashboardService {
      * 
      * @return CollectionStats
      */
-    public TotalCollectionStats getTotalCollectionStats() {
+    public TotalCollectionStats getTotalCollectionStats(final HttpServletRequest request) {
         TotalCollectionStats consolidatedCollectionDetails = new TotalCollectionStats();
         // For Property Tax collections
         Long startTime = System.currentTimeMillis();
@@ -166,7 +177,7 @@ public class PropTaxDashboardService {
             consolidatedData.setLytdColl(consolidatedColl.get("lytdColln"));
         }
         startTime = System.currentTimeMillis();
-        consolidatedData.setTotalDmd(waterTaxElasticSearchIndexService.getTotalDemand());
+        consolidatedData.setTotalDmd(getWaterChargeTotalDemand(request));
         timeTaken = System.currentTimeMillis() - startTime;
         LOGGER.debug("Time taken by Water Tax getTotalDemand() is : " + timeTaken + " (millisecs) ");
         consolidatedData.setPerformance((consolidatedData.getCytdColl().multiply(BIGDECIMAL_100))
@@ -188,6 +199,13 @@ public class PropTaxDashboardService {
         return consolidatedCollectionDetails;
     }
 
+    public BigDecimal getWaterChargeTotalDemand(final HttpServletRequest request) {
+        //BigDecimal dd=propertyService.getWaterTaxDues("1148004237",  request);
+        final String wtmsRestURL = format(PropertyTaxConstants.WTMS_TOTALDUE_RESTURL, WebUtils.extractRequestDomainURL(request, false));
+        final HashMap<String, Object> waterTaxInfo = simpleRestClient.getRESTResponseAsMap(wtmsRestURL);
+        return waterTaxInfo.get("currentDemand") == null ? BigDecimal.ZERO : new BigDecimal(
+                Double.valueOf((Double) waterTaxInfo.get("currentDemand")));
+    }
     /**
      * Gives the Collection Index details across all ULBs
      * 

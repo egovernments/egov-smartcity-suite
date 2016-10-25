@@ -59,7 +59,6 @@ import org.egov.wtms.application.entity.WaterConnectionDetails;
 import org.egov.wtms.application.service.ConnectionDemandService;
 import org.egov.wtms.application.service.WaterConnectionDetailsService;
 import org.egov.wtms.application.service.WaterConnectionService;
-import org.egov.wtms.elasticSearch.service.ConsumerIndexService;
 import org.egov.wtms.masters.entity.enums.ConnectionStatus;
 import org.egov.wtms.masters.entity.enums.ConnectionType;
 import org.egov.wtms.utils.constants.WaterTaxConstants;
@@ -76,8 +75,6 @@ public class WaterChargesIntegrationServiceImpl implements WaterChargesIntegrati
     private ConnectionDemandService connectionDemandService;
     @Autowired
     private InstallmentHibDao installmentDao;
-    @Autowired
-    private ConsumerIndexService consumerIndexService;
 
     @Override
     public PropertyWiseConsumptions getPropertyWiseConsumptionsForWaterCharges(final String propertyId) {
@@ -166,7 +163,7 @@ public class WaterChargesIntegrationServiceImpl implements WaterChargesIntegrati
                         .findByConnection(waterConnection);
                 if (waterConnectionDetails.getConnectionStatus().equals(ConnectionStatus.INPROGRESS)
                         || waterConnectionDetails.getConnectionStatus().equals(ConnectionStatus.ACTIVE))
-                    consumerIndexService.createConsumerIndex(waterConnectionDetails, assessmentDetails,
+                    waterConnectionDetailsService.createWaterChargeIndex(waterConnectionDetails, assessmentDetails,
                             waterConnectionDetailsService.getTotalAmount(waterConnectionDetails));
             }
 
