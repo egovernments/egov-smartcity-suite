@@ -1,5 +1,3 @@
-<%@ page contentType="text/html;charset=UTF-8" language="java"%>
-<%@ include file="/includes/taglibs.jsp"%>
 <%--
   ~ eGov suite of products aim to improve the internal efficiency,transparency,
   ~    accountability and the service delivery of the government  organizations.
@@ -39,16 +37,30 @@
   ~
   ~   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
   --%>
+<%@ page contentType="text/html;charset=UTF-8" language="java"%>
+<%@ taglib uri="http://www.springframework.org/tags" prefix="spring"%>
+<%@ taglib uri="http://www.springframework.org/tags/form" prefix="form"%>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ taglib uri="/WEB-INF/taglib/cdn.tld" prefix="cdn" %>
-<div class="row">
-  <div class="col-sm-12">
+
+<form:form role="form" action="create" modelAttribute="penaltyForm" commandName="penaltyForm" id="penaltyform"  cssClass="form-horizontal form-groups-bordered">
+	<div class="row">
+          <div class="form-group" id="penalty" >
+			    <form:select path="licenseAppType" id="licenseAppType" cssClass="form-control" cssErrorClass="form-control error"  required ="required">
+			          <form:option value="">
+			              <spring:message code="lbl.select" />
+			          </form:option>
+			          <form:options items="${licenseAppTypes}" itemValue="id" itemLabel="name"  />
+			     </form:select>
+          </div>
+   <div class="col-sm-12"> 
     <input type="hidden"  name="licenseAppTypeId"  value="${penaltyForm.licenseAppType.id}"  />
     <table class="table table-bordered" id="result">
       <thead>
         <th><spring:message code="lbl.from" /></th>
         <th><spring:message code="lbl.to" /></th>
         <th><spring:message code="lbl.penaltyrate" /></th>
-        <th><spring:message code="lbl.action" /></th>
+        <th></th>
       </thead>
       <c:choose>
       <c:when test="${not empty penaltyForm.getPenaltyRatesList()}">  
@@ -57,13 +69,13 @@
       <tr id="resultrow${vs.index}">
         <td><input type="hidden"  name="penaltyRatesList[${vs.index}]" id="penaltyId" value="${penaltyRatesList.id}" />
         <input type="text"  name="penaltyRatesList[${vs.index}].fromRange"  id="fromRange" value="${penaltyRatesList.fromRange}" class="form-control fromRange text-right patternvalidation"
-            pattern="-?\d*" data-pattern="numerichyphen" maxlength="8" readonly="readonly" /></td>
+            pattern="-?\d*" data-pattern="numerichyphen" maxlength="8" readonly="readonly" required ="required"/></td>
         <td><input type="text"  name="penaltyRatesList[${vs.index}].toRange" id="toRange" value="${penaltyRatesList.toRange}" class="form-control text-right patternvalidation"
-           pattern="-?\d*" data-pattern="numerichyphen" maxlength="8" onchange="return checkValue(this);" /></td>
+           pattern="-?\d*" data-pattern="numerichyphen" maxlength="8" onchange="return checkValue(this);" required ="required" /></td>
         <td><input type="text"  name="penaltyRatesList[${vs.index}].rate" id="rate" value="${penaltyRatesList.rate}"  class="form-control text-right patternvalidation"
-            data-pattern="number" maxlength="8"  /></td>
-        <td><button type="button" id="del-row" class="btn btn-primary" onclick="deleteThisRow(this)"><spring:message code="lbl.delete"/></button></td>
-     </tr>   
+            data-pattern="number" maxlength="8"  required ="required"/></td>
+        <td><span class="add-padding" id="del-row" class="btn btn-primary" onclick="deleteThisRow(this)"><i class="fa fa-trash" aria-hidden="true"></i></span></td>
+  		</tr>   
       </c:forEach>
        </tbody>
       </c:when>
@@ -72,13 +84,12 @@
        <tr id="resultrow0">
        <td><input type="hidden"  name="penaltyRatesList[0].id" id="penaltyId"/>
         <input type="text"  name="penaltyRatesList[0].fromRange"  id="fromRange" value="0" class="form-control text-right patternvalidation" 
-           pattern="-?\d*" data-pattern="numerichyphen"/></td>
+           pattern="-?\d*" data-pattern="numerichyphen" required ="required"/></td>
         <td><input type="text"  name="penaltyRatesList[0].toRange" id="toRange" class="form-control text-right patternvalidation"
-            pattern="-?\d*" data-pattern="numerichyphen" onchange="return checkValue(this);"/></td>
+            pattern="-?\d*" data-pattern="numerichyphen" onchange="return checkValue(this);" required ="required"/></td>
         <td><input type="text"  name="penaltyRatesList[0].rate" id="rate"   class="form-control text-right patternvalidation"
-            data-pattern="number"  /></td>
-         <td><span class="add-padding">
-         	<button type="button" id="del-row" class="btn btn-primary" onclick="deleteThisRow(this)"><spring:message code="lbl.delete"/></button></i></span></td>  
+            data-pattern="number" required ="required" /></td>
+         <td><span class="add-padding" id="del-row" class="btn btn-primary" onclick="deleteThisRow(this)"><i class="fa fa-trash" aria-hidden="true"></i></span></td>  
          </tr> 
          <tbody>
       </c:otherwise>
@@ -87,8 +98,9 @@
   </div>
   <div class="col-sm-12 text-center">
     <button type="button" id="add-row" class="btn btn-primary"><spring:message code="lbl.add"/></button>
-    <button type="button" id="save" class="btn btn-primary"><spring:message code="lbl.save"/></button>
+     <button type='submit' class='btn btn-primary' id="buttonSubmit"><spring:message code="lbl.save"/></button>
   </div>
 </div>
+</form:form>
 <script src="<cdn:url  value='/resources/global/js/egov/patternvalidation.js?rnd=${app_release_no}' context='/egi'/>"></script>
 <script type="text/javascript" src="<cdn:url  value='/resources/app/js/penaltyRates.js?rnd=${app_release_no}'/>"></script>

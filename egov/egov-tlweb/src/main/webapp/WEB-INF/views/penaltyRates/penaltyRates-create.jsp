@@ -1,8 +1,3 @@
-<%@ page contentType="text/html;charset=UTF-8" language="java"%>
-<%@ taglib uri="http://www.springframework.org/tags" prefix="spring"%>
-<%@ taglib uri="http://www.springframework.org/tags/form" prefix="form"%>
-<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
-<%@ taglib uri="/WEB-INF/taglib/cdn.tld" prefix="cdn" %>
 <%--
   ~ eGov suite of products aim to improve the internal efficiency,transparency,
   ~    accountability and the service delivery of the government  organizations.
@@ -42,6 +37,12 @@
   ~
   ~   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
   --%>
+<%@ page contentType="text/html;charset=UTF-8" language="java"%>
+<%@ taglib uri="http://www.springframework.org/tags" prefix="spring"%>
+<%@ taglib uri="http://www.springframework.org/tags/form" prefix="form"%>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
+<%@ taglib uri="/WEB-INF/taglib/cdn.tld" prefix="cdn" %>
+
 <form:form role="form" action="search" modelAttribute="penaltyForm" commandName="penaltyForm" id="penaltyform"  cssClass="form-horizontal form-groups-bordered">
 	<div class="row">
     	<div class="col-md-12">
@@ -49,12 +50,7 @@
 		        <div class="panel-heading">
 		          <div class="panel-title"><spring:message code="title.penaltyRate"/></div>
 		        </div>
-        		<div class="panel-body">
-        		<c:if test="${not empty message}">
-	        		<div class="alert alert-danger">
-	            		<strong><spring:message code='${message}'/></strong>
-	          		</div>
-	          	</c:if>
+        		<div class="panel-body">     
             		<div class="form-group" >
             			<label class="col-sm-5 control-label text-right"><spring:message code="lbl.licenseAppType" />
             				<span class="mandatory"></span> </label>
@@ -80,7 +76,7 @@
 	      <a href='javascript:void(0)' class='btn btn-default' onclick='self.close()'><spring:message code='lbl.close' /></a>
 	    </div>
   	</div>
-  	<div id="resultdiv"></div>
+ <div id="resultdiv"></div>  
 </form:form>
 <script type="text/javascript">
 function checkforNonEmptyPrevRow(){
@@ -136,10 +132,10 @@ function deleteThisRow(obj){
 	  	  	tbl.deleteRow(curRow);
 			return true;
 	    } else if(getControlInBranch(tbl.rows[lastRow],'penaltyId').value!=''){
-	    	var r = confirm("This will delete the row permanently. Press OK to Continue. ");
-			if (r != true) {
-				return false;
-			} else{
+	    	bootbox.confirm("This will delete the row permanently. Press OK to Continue. ",function(r)
+			 {
+				 if(r)
+					 {
 					$.ajax({
 						url: "/tl/domain/commonAjax-deleteRow.action?penaltyRateId="+getControlInBranch(tbl.rows[lastRow],'penaltyId').value+"",
 						type: "GET",
@@ -152,10 +148,11 @@ function deleteThisRow(obj){
 							console.log("failed");
 						}
 					});
-			}
-		}
-  	}
-}
+			   }
+		  });
+	   }
+   }
+}	
 
 function validateDetailsBeforeSubmit(){
 	var tbl=document.getElementById("result");
@@ -206,15 +203,16 @@ $( "#search" ).click(function( event ) {
 			url: "/tl/penaltyRates/search?"+param,
 			type: "GET",
 			//dataType: "json",
-			success: function (response) {
+			  success: function (response) {
 				 $('#resultdiv').html(response);
-				 if(jQuery('#resultdiv #result tbody tr').length == 1){
+				 $("#penalty").hide();
+				 if(jQuery('#result tbody tr').length == 1){
 					 jQuery('input[name="penaltyRatesList[0].fromRange"]').attr("readonly", false);
 				 }
-			}, 
+			},  
 			error: function (response) {
 				console.log("failed");
-			}
+			} 
 		});
 	 
 });

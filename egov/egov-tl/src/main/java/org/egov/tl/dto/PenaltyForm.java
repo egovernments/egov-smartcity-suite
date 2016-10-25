@@ -38,35 +38,49 @@
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
 
-package org.egov.tl.web.controller;
-
-import org.egov.tl.entity.LicenseAppType;
-import org.egov.tl.entity.PenaltyRates;
+package org.egov.tl.dto;
 
 import java.util.ArrayList;
 import java.util.List;
 
+import org.egov.tl.entity.LicenseAppType;
+import org.egov.tl.entity.PenaltyRates;
+
 public class PenaltyForm {
-    private LicenseAppType licenseAppType;
-    private List<PenaltyRates> penaltyRatesList = new ArrayList<PenaltyRates>();
 
-    public LicenseAppType getLicenseAppType() {
-        return licenseAppType;
-    }
+	private LicenseAppType licenseAppType;
+	private List<PenaltyRates> penaltyRatesList = new ArrayList<PenaltyRates>();
 
-    public void setLicenseAppType(final LicenseAppType licenseAppType) {
-        this.licenseAppType = licenseAppType;
-    }
+	public LicenseAppType getLicenseAppType() {
+		return licenseAppType;
+	}
 
-    public List<PenaltyRates> getPenaltyRatesList() {
-        return penaltyRatesList;
-    }
+	public void setLicenseAppType(final LicenseAppType licenseAppType) {
+		this.licenseAppType = licenseAppType;
+	}
 
-    public void setPenaltyRatesList(final List<PenaltyRates> penaltyRatesList) {
-        this.penaltyRatesList = penaltyRatesList;
-    }
+	public List<PenaltyRates> getPenaltyRatesList() {
+		return penaltyRatesList;
+	}
 
-    public void addpenaltyRatesList(final PenaltyRates penaltyRates) {
-        penaltyRatesList.add(penaltyRates);
-    }
+	public void setPenaltyRatesList(final List<PenaltyRates> penaltyRatesList) {
+		this.penaltyRatesList = penaltyRatesList;
+	}
+
+	public void addpenaltyRatesList(final PenaltyRates penaltyRates) {
+		penaltyRatesList.add(penaltyRates);
+	}
+
+	public List<PenaltyRates> getPenaltyRates() {
+
+		if (licenseAppType != null && getPenaltyRatesList() != null && getPenaltyRatesList().size() > 0);
+
+		for (PenaltyRates penaltyRates : getPenaltyRatesList()) {
+			penaltyRates.setLicenseAppType(licenseAppType);
+			penaltyRates.setFromRange(penaltyRates.getFromRange());
+			penaltyRates.setToRange(penaltyRates.getToRange());
+			penaltyRates.setRate(penaltyRates.getRate());
+		}
+		return penaltyRatesList;
+	}
 }

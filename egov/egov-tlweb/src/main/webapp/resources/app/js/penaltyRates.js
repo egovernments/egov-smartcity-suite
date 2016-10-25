@@ -54,32 +54,8 @@ $( "#add-row" ).click(function( event ) {
 	$('.fromRange').attr("readonly", true); 
 	intiUOMFromData(prevUOMFromVal);  
 	patternvalidation(); 
-});    
+     })
+  });  
 
-$( "#save" ).click(function( event ) {
-	if(!validateDetailsBeforeSubmit()){
-		return false;
-	} 
-	var licenseAppTypeDisabled=$('#licenseAppType').is(':disabled');
-		$('#licenseAppType').removeAttr("disabled");
-		var pr=$('#penaltyform').serialize();
-		  $.ajax({
-				url: "/tl/penaltyRates/create",
-				type: "POST",
-				data: pr,
-				success: function (response) {
-					console.log("success"+response );
-					 $('#resultdiv').html(response);
-					 if(licenseAppTypeDisabled)
-						 $('#licenseAppType').attr("disabled", true); 
-					 bootbox.alert("Details saved Successfully");
-				}, 
-				error: function (response) {
-					console.log("failed");
-					if(licenseAppTypeDisabled)
-						$('#licenseAppType').attr("disabled", true);
-					bootbox.alert("Failed to Save Details");
-				}
-			});
-	});
-});
+
+
