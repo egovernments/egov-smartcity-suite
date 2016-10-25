@@ -108,7 +108,8 @@
 		
 	var budgetsCallback = {
 		     success: function(o) {
-		     		document.getElementById('budgets').innerHTML = o.responseText;
+		     		//document.getElementById('budgets').innerHTML = o.responseText;
+		     		document.getElementById('budgetDetail_budget').innerHTML = o.responseText;
 		        },
 		     failure: function(o) {
 		     }
@@ -159,13 +160,12 @@
 		<td class="bluebox" width="15%"><s:text
 				name="budgetdetail.budget" /><span class="mandatory1">*</span>
 		<td class="bluebox">
-			<div id="budgets">
-				
+			<div id="budgets"> 
 				<s:select list="dropdownData.budgetList" listKey="id"
-					listValue="name" name="budget.id" value="budget.id"
-					id="budgetDetail_budget" disabled="%{headerDisabled}" headerKey="0"
-					headerValue="--- Select ---"></s:select>
-			</div>
+					listValue="name" name="budget.id"  headerKey="0"
+					headerValue="--- Select ---" value="budget.id" id="budgetDetail_budget" 
+					></s:select>
+			 </div> 
 		</td>
 
 
@@ -188,10 +188,10 @@
 					id="budgetDetail_executingDepartment"></s:select></td>
 		</s:if>
 		<s:if test="%{showRe}">
-			<td class="bluebox" width="15%">Reference Budget</td>
+			<!-- <td class="bluebox" width="15%">Reference Budget</td>
 			<td class="bluebox">
 				<div id="referenceBudget"></div>
-			</td>
+			</td> -->
 		</s:if>
 	</tr>
 	<tr>
@@ -209,6 +209,7 @@
 		</s:if>
 		<s:if test="%{shouldShowHeaderField('function')}">
 			<td class="bluebox">&nbsp;</td>
+			<s:hidden name="function.id" id="hidden_function"/>
 			<td class="bluebox"><s:text name="function" /> <s:if
 					test="%{isFieldMandatory('function')}">
 					<span class="mandatory1">*</span>

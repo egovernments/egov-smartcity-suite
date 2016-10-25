@@ -50,7 +50,7 @@
 		<% count++; %>
 		<td class="bluebox"><s:text name="voucher.fund" /> <s:if
 				test="%{isFieldMandatory('fund')}">
-				<span class="mandatory1">*</span>
+				<span class="mandatory1" id="disableFundCheck">*</span>
 			</s:if></td>
 		<td class="bluebox"><s:select name="fundId" id="fundId"
 				list="dropdownData.fundList" listKey="id" listValue="name"

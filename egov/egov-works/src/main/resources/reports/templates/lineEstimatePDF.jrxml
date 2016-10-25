@@ -236,7 +236,7 @@
 				<textElement textAlignment="Left">
 					<font size="10"/>
 				</textElement>
-				<textFieldExpression><![CDATA["Mode of Allotment : "+$P{modeOfAllotment}]]></textFieldExpression>
+				<textFieldExpression><![CDATA["Mode Of Entrustment : "+$P{modeOfAllotment}]]></textFieldExpression>
 			</textField>
 			<staticText>
 				<reportElement x="230" y="320" width="100" height="20" uuid="b83ae8d6-0ace-4e6a-bbb9-b9e25aeeca8b"/>

@@ -53,7 +53,6 @@ import org.egov.egf.budget.service.BudgetControlTypeService;
 import org.egov.eis.web.contract.WorkflowContainer;
 import org.egov.eis.web.controller.workflow.GenericWorkFlowController;
 import org.egov.infra.exception.ApplicationRuntimeException;
-import org.egov.infra.utils.StringUtils;
 import org.egov.infra.utils.autonumber.AutonumberServiceBeanResolver;
 import org.egov.infra.validation.exception.ValidationException;
 import org.egov.model.bills.EgBilldetails;
@@ -136,7 +135,7 @@ public class CreateContractorBillController extends GenericWorkFlowController {
         // TODO: remove this condition to check if spillover
         if (!lineEstimateDetails.getLineEstimate().isSpillOverFlag())
             contractorBillRegister.setBilldate(new Date());
-        
+
         final WorkOrderEstimate workOrderEstimate = workOrderEstimateService.getWorkOrderEstimateByWorkOrderId(workOrder.getId());
         model.addAttribute("workOrderEstimate", workOrderEstimate);
         model.addAttribute("workOrder", workOrder);
@@ -176,17 +175,19 @@ public class CreateContractorBillController extends GenericWorkFlowController {
         validateInput(contractorBillRegister, lineEstimateDetails, resultBinder, request);
 
         contractorBillRegister = addBillDetails(contractorBillRegister, lineEstimateDetails, resultBinder, request);
-        
+
         contractorBillRegisterService.validateRefundAmount(contractorBillRegister, resultBinder);
+
+        contractorBillRegisterService.validateMileStonePercentage(contractorBillRegister, resultBinder);
 
         if (!contractorBillRegisterService.checkForDuplicateAccountCodes(contractorBillRegister))
             resultBinder.reject("error.contractorbill.duplicate.accountcodes",
                     "error.contractorbill.duplicate.accountcodes");
-        
-        if(!contractorBillRegisterService.validateDuplicateRefundAccountCodes(contractorBillRegister)) 
+
+        if (!contractorBillRegisterService.validateDuplicateRefundAccountCodes(contractorBillRegister))
             resultBinder.reject("error.contractorbill.duplicate.refund.accountcodes",
                     "error.contractorbill.duplicate.refund.accountcodes");
-        
+
         contractorBillRegisterService.validateTotalDebitAndCreditAmount(contractorBillRegister, resultBinder);
 
         if (resultBinder.hasErrors()) {
@@ -205,8 +206,8 @@ public class CreateContractorBillController extends GenericWorkFlowController {
 
             model.addAttribute("mode", "edit");
 
-            model.addAttribute("billDetailsMap", contractorBillRegisterService.getBillDetailsMap(contractorBillRegister,model));
-            
+            model.addAttribute("billDetailsMap", contractorBillRegisterService.getBillDetailsMap(contractorBillRegister, model));
+
             return "contractorBill-form";
         } else {
 
@@ -225,7 +226,7 @@ public class CreateContractorBillController extends GenericWorkFlowController {
             else
                 partBillCount++;
             contractorBillRegister.setBillSequenceNumber(partBillCount);
-            ContractorBillNumberGenerator c = beanResolver.getAutoNumberServiceFor(ContractorBillNumberGenerator.class);
+            final ContractorBillNumberGenerator c = beanResolver.getAutoNumberServiceFor(ContractorBillNumberGenerator.class);
             final String contractorBillNumber = c.getNextNumber(contractorBillRegister);
             contractorBillRegister.setBillnumber(contractorBillNumber);
             contractorBillRegister.setPassedamount(contractorBillRegister.getBillamount());
@@ -317,7 +318,7 @@ public class CreateContractorBillController extends GenericWorkFlowController {
                             String.valueOf(contractorBillRegister.getWorkOrder().getWorkOrderAmount()) },
                     null);
 
-        if (StringUtils.isBlank(contractorBillRegister.getBilltype()))
+        if (org.apache.commons.lang.StringUtils.isBlank(contractorBillRegister.getBilltype()))
             resultBinder.rejectValue("billtype", "error.billtype.required");
         if (contractorBillRegister.getEgBillregistermis() != null
                 && contractorBillRegister.getEgBillregistermis().getPartyBillDate() != null
@@ -327,7 +328,7 @@ public class CreateContractorBillController extends GenericWorkFlowController {
                     "error.validate.partybilldate.lessthan.loadate");
 
         if (contractorBillRegister.getMbHeader() != null) {
-            if (StringUtils.isBlank(contractorBillRegister.getMbHeader().getMbRefNo()))
+            if (org.apache.commons.lang.StringUtils.isBlank(contractorBillRegister.getMbHeader().getMbRefNo()))
                 resultBinder.rejectValue("mbHeader.mbRefNo", "error.mbrefno.required");
 
             if (contractorBillRegister.getMbHeader().getMbDate() == null)
@@ -354,52 +355,45 @@ public class CreateContractorBillController extends GenericWorkFlowController {
                 resultBinder.rejectValue("mbHeader.mbDate", "error.validate.mbdate.lessthan.loadate");
         }
 
-        if (StringUtils.isBlank(request.getParameter("netPayableAccountCode")))
+        if (org.apache.commons.lang.StringUtils.isBlank(request.getParameter("netPayableAccountCode")))
             resultBinder.reject("error.netpayable.accountcode.required", "error.netpayable.accountcode.required");
-        if (StringUtils.isBlank(request.getParameter("netPayableAmount"))
-                || Double.valueOf(request.getParameter("netPayableAmount").toString()) < 0)
+        if (org.apache.commons.lang.StringUtils.isBlank(request.getParameter("netPayableAmount"))
+                || Double.valueOf(request.getParameter("netPayableAmount").toString()) <= 0)
             resultBinder.reject("error.netpayable.amount.required", "error.netpayable.amount.required");
 
         // TODO: from this line code should be removed after user data entry is
         // finished.
         if (contractorBillRegister.getEgBillregistermis() != null
                 && contractorBillRegister.getEgBillregistermis().getPartyBillDate() != null && contractorBillRegister
-                        .getEgBillregistermis().getPartyBillDate().after(contractorBillRegister.getBilldate())) {
+                        .getEgBillregistermis().getPartyBillDate().after(contractorBillRegister.getBilldate()))
             resultBinder.rejectValue("egBillregistermis.partyBillDate", "error.partybilldate.billdate");
-        }
-        Date workCompletionDate = contractorBillRegister.getWorkOrderEstimate().getWorkCompletionDate();
+        final Date workCompletionDate = contractorBillRegister.getWorkOrderEstimate().getWorkCompletionDate();
         if (contractorBillRegister.getBilltype().equals(BillTypes.Final_Bill.toString())
-                && workCompletionDate == null) {
+                && workCompletionDate == null)
             resultBinder.rejectValue("workOrderEstimate.workCompletionDate", "error.workcompletiondate.required");
-        }
 
         final Date currentDate = new Date();
         if (workCompletionDate != null) {
-            if (workCompletionDate.after(currentDate)) {
+            if (workCompletionDate.after(currentDate))
                 resultBinder.rejectValue("workOrderEstimate.workCompletionDate", "error.workcompletiondate.futuredate");
-            }
             if (workCompletionDate
-                    .before(contractorBillRegister.getWorkOrderEstimate().getWorkOrder().getWorkOrderDate())) {
+                    .before(contractorBillRegister.getWorkOrderEstimate().getWorkOrder().getWorkOrderDate()))
                 resultBinder.rejectValue("workOrderEstimate.workCompletionDate",
                         "error.workcompletiondate.workorderdate");
-            }
-            if (workCompletionDate.after(contractorBillRegister.getBilldate())) {
+            if (workCompletionDate.after(contractorBillRegister.getBilldate()))
                 resultBinder.rejectValue("workOrderEstimate.workCompletionDate", "error.workcompletiondate.billdate");
-            }
         }
 
         if (lineEstimateDetails.getLineEstimate().isSpillOverFlag()) {
             final Date currentFinYear = lineEstimateService.getCurrentFinancialYear(currentDate).getStartingDate();
-            if (contractorBillRegister.getBilldate().after(currentDate)) {
+            if (contractorBillRegister.getBilldate().after(currentDate))
                 resultBinder.rejectValue("billdate", "error.billdate.futuredate");
-            }
-            if (contractorBillRegister.getBilldate().before(contractorBillRegister.getWorkOrder().getWorkOrderDate())) {
+            if (contractorBillRegister.getBilldate().before(contractorBillRegister.getWorkOrder().getWorkOrderDate()))
                 resultBinder.rejectValue("billdate", "error.billdate.workorderdate");
-            }
-            if (contractorBillRegister.getBilldate().before(currentFinYear)) {
+            if (contractorBillRegister.getBilldate().before(currentFinYear))
                 resultBinder.rejectValue("billdate", "error.billdate.finyear");
-            }
         }
+
     }
 
     private String getMessageByStatus(final ContractorBillRegister contractorBillRegister, final String approverName,
@@ -407,7 +401,8 @@ public class CreateContractorBillController extends GenericWorkFlowController {
         String message = "";
 
         if (contractorBillRegister.getStatus().getCode().equals(ContractorBillRegister.BillStatus.CREATED.toString())) {
-            if (StringUtils.isNotBlank(contractorBillRegister.getEgBillregistermis().getBudgetaryAppnumber())
+            if (org.apache.commons.lang.StringUtils
+                    .isNotBlank(contractorBillRegister.getEgBillregistermis().getBudgetaryAppnumber())
                     && !BudgetControlType.BudgetCheckOption.NONE.toString()
                             .equalsIgnoreCase(budgetControlTypeService.getConfigValue()))
                 message = messageSource.getMessage("msg.contractorbill.create.success.with.budgetappropriation",
@@ -439,29 +434,31 @@ public class CreateContractorBillController extends GenericWorkFlowController {
             resultBinder.reject("error.contractorbill.accountdetails.required",
                     "error.contractorbill.accountdetails.required");
         for (final EgBilldetails egBilldetails : contractorBillRegister.getBillDetailes())
-            if(!contractorBillRegister.getEgBilldetailes().isEmpty() && contractorBillRegister.getEgBilldetailes().size() == 1) {
-                for(final EgBilldetails refundBill : contractorBillRegister.getRefundBillDetails()) {
+            if (!contractorBillRegister.getEgBilldetailes().isEmpty() && contractorBillRegister.getEgBilldetailes().size() == 1) {
+                for (final EgBilldetails refundBill : contractorBillRegister.getRefundBillDetails())
                     if (refundBill.getGlcodeid() != null)
-                        contractorBillRegister.addEgBilldetailes(contractorBillRegisterService.getBillDetails(contractorBillRegister, refundBill,
+                        contractorBillRegister.addEgBilldetailes(
+                                contractorBillRegisterService.getBillDetails(contractorBillRegister, refundBill,
+                                        lineEstimateDetails, resultBinder, request));
+                if (egBilldetails.getGlcodeid() != null)
+                    contractorBillRegister
+                            .addEgBilldetailes(contractorBillRegisterService.getBillDetails(contractorBillRegister, egBilldetails,
+                                    lineEstimateDetails, resultBinder, request));
+            } else if (egBilldetails.getGlcodeid() != null)
+                contractorBillRegister
+                        .addEgBilldetailes(contractorBillRegisterService.getBillDetails(contractorBillRegister, egBilldetails,
                                 lineEstimateDetails, resultBinder, request));
-                }
-                if(egBilldetails.getGlcodeid() != null) {
-                contractorBillRegister.addEgBilldetailes(contractorBillRegisterService.getBillDetails(contractorBillRegister, egBilldetails,
-                        lineEstimateDetails, resultBinder, request));
-                }
-            } else {
-            if (egBilldetails.getGlcodeid() != null)
-                contractorBillRegister.addEgBilldetailes(contractorBillRegisterService.getBillDetails(contractorBillRegister, egBilldetails,
-                        lineEstimateDetails, resultBinder, request));
-            }
+        contractorBillRegisterService.validateZeroCreditAndDebitAmount(contractorBillRegister, resultBinder);
         final String netPayableAccountCodeId = request.getParameter("netPayableAccountCode");
         final String netPayableAmount = request.getParameter("netPayableAmount");
-        if (StringUtils.isNotBlank(netPayableAccountCodeId) && StringUtils.isNotBlank(netPayableAmount)) {
+        if (org.apache.commons.lang.StringUtils.isNotBlank(netPayableAccountCodeId)
+                && org.apache.commons.lang.StringUtils.isNotBlank(netPayableAmount)) {
             final EgBilldetails billdetails = new EgBilldetails();
             billdetails.setGlcodeid(new BigDecimal(netPayableAccountCodeId));
             billdetails.setCreditamount(new BigDecimal(netPayableAmount));
             contractorBillRegister.addEgBilldetailes(
-                    contractorBillRegisterService.getBillDetails(contractorBillRegister, billdetails, lineEstimateDetails, resultBinder, request));
+                    contractorBillRegisterService.getBillDetails(contractorBillRegister, billdetails, lineEstimateDetails,
+                            resultBinder, request));
         }
 
         return contractorBillRegister;

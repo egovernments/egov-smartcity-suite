@@ -275,7 +275,10 @@ public class WaterConnectionBillable extends AbstractBillable implements Billabl
 
     @Override
     public String getConsumerId() {
-        return getWaterConnectionDetails().getApplicationNumber();
+        if (getWaterConnectionDetails().getConnection().getConsumerCode()!= null)
+            return getWaterConnectionDetails().getConnection().getConsumerCode();
+        else
+            return getWaterConnectionDetails().getApplicationNumber();
     }
 
     @Override

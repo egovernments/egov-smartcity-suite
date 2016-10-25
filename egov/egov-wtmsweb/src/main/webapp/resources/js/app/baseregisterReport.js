@@ -78,17 +78,15 @@ $('#baseRegisterReportSearch').click(function(e){
 						  { "data" : "ownerName", "title": "Owner Name"},
 						  { "data" : "doorNo", "title": "Door No"},
 						  { "data" : "categoryType", "title": "Category Type"},
-						  { "data" : "period", "title": "Period"},
-						  { "data" : "arrears", "title": "Arrears", class : 'text-right'},
-						  { "data" : "current", "title": "Current", class : 'text-right'},
+						  { "data" : "usageType", "title": "Usage"},
+						  { "data" : "pipeSize", "title": "Pipe Size"},
+						  { "data" : "period", "title": "Arrears Period"},
+						  { "data" : "arrears", "title": "Arrears Demand", class : 'text-right'},
+						  { "data" : "current", "title": "Current Demand", class : 'text-right'},
+						  { "data" : "totalDemand", "title": "Total Demand", class : 'text-right'},
 						  { "data" : "arrearsCollection", "title": "Arrears Collection", class : 'text-right'},
 						  { "data" : "currentCollection", "title": "Current Collection", class : 'text-right'},
-						  { "data" : "penalty", "title": "Penalty", class : 'text-center',
-							  "render": function(data, type, row){
-								  return (!data || parseInt(data)==0 ? "-" : data);
-							  }
-						  },
-						  { "data" : "totalDemand", "title": "Total Demand", class : 'text-right'},
+						  { "data" : "totalCollection", "title": "Total Collection", class : 'text-right'},
 						  ],
 						  "aaSorting": [] 
 				});

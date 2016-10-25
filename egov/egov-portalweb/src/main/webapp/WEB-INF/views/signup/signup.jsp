@@ -199,7 +199,7 @@
 			                                </div>
 			                            </div>
                                         <div class="form-group text-left">
-                                        	<div>Use your registered mobile number as username to <a href="/egi/login/secure" class="btn btn-custom btn-xs">Sign in</a></div>
+                                        	<div>Use your registered mobile number to <a href="/egi/login/secure" class="btn btn-custom btn-xs">Sign in</a></div>
                                         </div>
                                     </c:when>
                                     <c:otherwise>

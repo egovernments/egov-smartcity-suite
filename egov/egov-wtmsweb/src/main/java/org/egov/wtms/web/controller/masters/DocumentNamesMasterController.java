@@ -74,8 +74,8 @@ public class DocumentNamesMasterController {
     }
 
     @RequestMapping(value = "/documentNamesMaster", method = RequestMethod.GET)
-    public String viewForm(@ModelAttribute DocumentNames documentNames, final Model model) {
-        documentNames = new DocumentNames();
+    public String viewForm(final Model model) {
+        DocumentNames documentNames = new DocumentNames();
         model.addAttribute("documentNames", documentNames);
         model.addAttribute("applicationTypes", applicationTypeService.findAll());
         model.addAttribute("reqAttr", "false");

@@ -44,14 +44,9 @@ import java.text.ParseException;
 import java.util.Collections;
 import java.util.List;
 
-import javax.ws.rs.core.MediaType;
-
 import org.apache.commons.lang3.StringUtils;
-import org.codehaus.jackson.JsonGenerationException;
-import org.codehaus.jackson.JsonParseException;
 import org.codehaus.jackson.annotate.JsonMethod;
 import org.codehaus.jackson.annotate.JsonAutoDetect.Visibility;
-import org.codehaus.jackson.map.JsonMappingException;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.codehaus.jackson.map.SerializationConfig;
 import org.egov.dcb.bean.ChequePayment;
@@ -78,6 +73,8 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 import org.egov.ptis.constants.PropertyTaxConstants;
 
+import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
+
 @RestController
 public class CreateAssessmentController {
 
@@ -95,10 +92,10 @@ public class CreateAssessmentController {
      * @throws IOException
      * @throws ParseException
      */
-	@RequestMapping(value = "/property/createProperty", method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON, produces = MediaType.APPLICATION_JSON)
+	@RequestMapping(value = "/property/createProperty", method = RequestMethod.POST, consumes = APPLICATION_JSON_VALUE, produces = APPLICATION_JSON_VALUE)
 	public String createProperty(@RequestBody String createPropertyDetails)
 			throws IOException, ParseException {
-		String responseJson = new String();
+		String responseJson;
 		ApplicationThreadLocals.setUserId(2L);
 		CreatePropertyDetails createPropDetails = (CreatePropertyDetails) getObjectFromJSONRequest(
                 createPropertyDetails, CreatePropertyDetails.class);
@@ -122,7 +119,7 @@ public class CreateAssessmentController {
         }
 
         List<Document> documents = null;
-        NewPropertyDetails newPropertyDetails = null;
+        NewPropertyDetails newPropertyDetails;
         if(createPropDetails.getPropertyTypeMasterCode().equalsIgnoreCase(PropertyTaxConstants.OWNERSHIP_TYPE_VAC_LAND)){
         	VacantLandDetails vacantLandDetails = createPropDetails.getVacantLandDetails();
             SurroundingBoundaryDetails surroundingBoundaryDetails = createPropDetails.getSurroundingBoundaryDetails();

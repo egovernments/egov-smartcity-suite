@@ -118,6 +118,9 @@ $(document).ready(function(e){
 			  
 			  var isSuccess=true;
 			  
+			var prevInstallmentAmt=-1;
+			var prevActualAmt=-1;
+			  
 			$("#dcbOnlinePaymentTable tr.item").each(function() {
 				i++;
 			  $this = $(this);
@@ -131,6 +134,7 @@ $(document).ready(function(e){
 			  if(actamount == 0 && actcollection == 0){
 				  j++;
 			  }
+			  
 			  if(actcollection > actamount){
 				  bootbox.alert('Collection should not be greater than actual amount');
 				  e.preventDefault();
@@ -153,7 +157,18 @@ $(document).ready(function(e){
 				  }
 			  }
 			  
+			  if(prevInstallmentAmt==0 &&  prevActualAmt > 0)
+			  {
+				  bootbox.alert('Enter collection of Current Year First installment ' +installmentfirst );
+				  e.preventDefault();
+				  isSuccess=false;
+				  return false;
+			  }
+			  
 			  collectedAmount =collectedAmount+(actcollection-oldVal);
+			
+			  prevInstallmentAmt = $actualCollectionTextbox.val();
+			  prevActualAmt=actamount;
 			  
 		   });
 			

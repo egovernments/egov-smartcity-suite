@@ -175,13 +175,7 @@ public class LicenseSubCategory extends AbstractAuditable {
     public void setLicenseSubCategoryDetails(List<LicenseSubCategoryDetails> licenseSubCategoryDetails) {
         this.licenseSubCategoryDetails = licenseSubCategoryDetails;
     }
-    public List<LicenseSubCategoryDetails> getSubCategory() {
-    	licenseSubCategoryDetails.forEach(licenseSubCategoryDetail -> licenseSubCategoryDetail.setSubCategory(this));
-        return licenseSubCategoryDetails;
-    }
-    public void setSubCategory(final List<LicenseSubCategoryDetails> licenseSubCategoryDetails) {
-        this.licenseSubCategoryDetails = licenseSubCategoryDetails;
-    }
+   
     @Override
     public boolean equals(final Object o) {
         if (this == o) return true;

@@ -85,9 +85,9 @@ function callAjaxSearch() {
 				},
 				aaSorting: [],				
 				columns : [ { 
-"data" : "name", "sClass" : "text-left"} ,{ 
-"data" : "mobileNumber", "sClass" : "text-left"} ,{ 
-"data" : "email", "sClass" : "text-left"},{ 
+"data" : "name", "sClass" : "text-center"} ,{ 
+"data" : "mobileNumber", "sClass" : "text-center"} ,{ 
+"data" : "email", "sClass" : "text-center"},{ 
 	"data" : "id","visible": false, "searchable": false }]				
 			});
 			}

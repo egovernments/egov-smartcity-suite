@@ -58,8 +58,8 @@ public class DailyWTCollectionReportSearch {
     private static final Logger logger = Logger.getLogger(DailyWTCollectionReportSearch.class);
     private String fromDate;
     private String toDate;
-    SimpleDateFormat ft = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
-    SimpleDateFormat dtft = new SimpleDateFormat("dd/MM/yyyy");
+    private SimpleDateFormat ft = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
+    private SimpleDateFormat dtft = new SimpleDateFormat("dd/MM/yyyy");
     private List<String> consumerCode = new ArrayList<String>();
     private String collectionMode;
     private String collectionOperator;

@@ -14,45 +14,45 @@
 						<div class="col-xs-3 add-margin">
 							<spring:message code="lbl.name" />
 						</div>
-						<div class="col-sm-3 add-margin t">${budget.name}</div>
+						<div class="col-sm-3 add-margin view-content">${budget.name}</div>
 						<div class="col-xs-3 add-margin">
 							<spring:message code="lbl.isbere" />
 						</div>
-						<div class="col-sm-3 add-margin t">${budget.isbere}</div>
+						<div class="col-sm-3 add-margin view-content">${budget.isbere}</div>
 					</div>
 					<div class="row add-border">
 						<div class="col-xs-3 add-margin">
 							<spring:message code="lbl.financialyear" />
 						</div>
-						<div class="col-sm-3 add-margin t">
+						<div class="col-sm-3 add-margin view-content">
 							${budget.financialYear.finYearRange}</div>
 						<div class="col-xs-3 add-margin">
 							<spring:message code="lbl.parent" />
 						</div>
-						<div class="col-sm-3 add-margin t">${budget.parent.name}</div>
+						<div class="col-sm-3 add-margin view-content">${budget.parent.name}</div>
 					</div>
 					<div class="row add-border">
 						<div class="col-xs-3 add-margin">
 							<spring:message code="lbl.isactivebudget" />
 						</div>
-						<div class="col-sm-3 add-margin t">${fn:toUpperCase(budget.isActiveBudget)}</div>
+						<div class="col-sm-3 add-margin view-content">${fn:toUpperCase(budget.isActiveBudget)}</div>
 						<div class="col-xs-3 add-margin">
 							<spring:message code="lbl.isprimarybudget" />
 						</div>
-						<div class="col-sm-3 add-margin t">${fn:toUpperCase(budget.isPrimaryBudget)}</div>
+						<div class="col-sm-3 add-margin view-content">${fn:toUpperCase(budget.isPrimaryBudget)}</div>
 					</div>
 					<div class="row add-border">
 						<div class="col-xs-3 add-margin">
 							<spring:message code="lbl.referencebudget" />
 						</div>
-						<div class="col-sm-3 add-margin t">
+						<div class="col-sm-3 add-margin view-content">
 							${budget.referenceBudget.name}</div>
 					</div>
 					<div class="row add-border">
 						<div class="col-xs-3 add-margin">
 							<spring:message code="lbl.description" />
 						</div>
-						<div class="col-sm-9 add-margin t">${budget.description}</div>
+						<div class="col-sm-9 add-margin view-content">${budget.description}</div>
 					</div>
 				</div>
 			</div>

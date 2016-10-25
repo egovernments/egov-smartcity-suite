@@ -151,7 +151,12 @@
 		<put-attribute name="body" value="/WEB-INF/views/penaltyRates/penaltyRates-create.jsp" />
 	</definition>
 	
-	<definition name="penaltyRates-result" template="/WEB-INF/views/penaltyRates/penaltyRates-result.jsp"/>
+	<definition name="penaltyRates-view" extends="base_layout">
+		<put-attribute name="page-title" value="title.searchpenaltyRate" cascade="true" />
+		<put-attribute name="body" value="/WEB-INF/views/penaltyRates/penaltyRates-view.jsp" />
+	</definition>
+	
+	<definition name="penaltyRates-result" template="/WEB-INF/views/penaltyRates/penaltyRates-result.jsp"/> 
 	
 	 <definition name="digitalSignature-success" extends="base_layout">
     	<put-attribute name="page-title" value="lbl.digitalSignature.success.title" cascade="true"/>
@@ -221,5 +226,25 @@
 	<definition name="subcategory-search-view" extends="base_layout">
 	     <put-attribute name="page-title" value="title.document.new" cascade="true"/>
 	     <put-attribute name="body" value="/WEB-INF/views/master/subcategory/subcategory-search-view.jsp"/>
+	</definition>
+	<definition name="uom-create" extends="base_layout">
+	     <put-attribute name="page-title" value="title.document.new" cascade="true"/>
+	     <put-attribute name="body" value="/WEB-INF/views/master/unitofmeasurement/uom-create.jsp"/>
+	</definition>
+	<definition name="uom-update" extends="base_layout">
+	     <put-attribute name="page-title" value="title.document.new" cascade="true"/>
+	     <put-attribute name="body" value="/WEB-INF/views/master/unitofmeasurement/uom-update.jsp"/>
+	</definition>
+	<definition name="uom-search-update" extends="base_layout">
+	     <put-attribute name="page-title" value="title.document.new" cascade="true"/>
+	     <put-attribute name="body" value="/WEB-INF/views/master/unitofmeasurement/uom-search-update.jsp"/>
+	</definition>
+	<definition name="uom-search-view" extends="base_layout">
+	     <put-attribute name="page-title" value="title.document.new" cascade="true"/>
+	     <put-attribute name="body" value="/WEB-INF/views/master/unitofmeasurement/uom-search-view.jsp"/>
+	</definition>
+	<definition name="uom-view" extends="base_layout">
+	     <put-attribute name="page-title" value="title.document.new" cascade="true"/>
+	     <put-attribute name="body" value="/WEB-INF/views/master/unitofmeasurement/uom-view.jsp"/>
 	</definition>
 </tiles-definitions>

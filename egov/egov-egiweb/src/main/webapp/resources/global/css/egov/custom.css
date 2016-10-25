@@ -807,7 +807,7 @@ label.error {
 .page-container .main-content .signin-formcontent #signform {
   border: 1px solid #f2f2f2;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-  padding: 15px 22px 10px 10px;
+  padding: 15px 22px 15px 10px;
 }
 .page-container .main-content .signin-formcontent #signform .signin-leftpadding {
   padding-left: 18px;
@@ -835,7 +835,6 @@ label.error {
 .page-container .main-content .login-content .login-body {
   background: #fff;
   padding: 20px;
-  padding-bottom: 5px;
 }
 .page-container .main-content .login-content-margin {
   margin: 1% auto 0% auto;
@@ -1789,13 +1788,13 @@ label.error {
   padding: 0;
 }
 .table thead:first-child > tr:first-child th {
+  border-bottom: none;
   background: #f2851f;
   color: #fff;
   font-weight: normal;
 }
 .table thead:first-child > tr:first-child th:first-child {
   border-left: 1px solid transparent;
-  border-top-left-radius: 5px;
 }
 .table thead > tr > th {
   vertical-align: top;

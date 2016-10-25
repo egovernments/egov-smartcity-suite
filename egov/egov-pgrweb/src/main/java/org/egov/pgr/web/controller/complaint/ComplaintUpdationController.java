@@ -40,6 +40,14 @@
 
 package org.egov.pgr.web.controller.complaint;
 
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.Set;
+import java.util.stream.Collectors;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.validation.Valid;
+
 import org.apache.commons.lang3.ArrayUtils;
 import org.egov.infra.admin.master.service.BoundaryService;
 import org.egov.infra.admin.master.service.CrossHierarchyService;
@@ -50,6 +58,7 @@ import org.egov.infra.filestore.service.FileStoreService;
 import org.egov.infra.persistence.entity.enums.UserType;
 import org.egov.infra.security.utils.SecurityUtils;
 import org.egov.pgr.entity.Complaint;
+import org.egov.pgr.entity.enums.CitizenFeedback;
 import org.egov.pgr.service.ComplaintService;
 import org.egov.pgr.service.ComplaintStatusMappingService;
 import org.egov.pgr.service.ComplaintTypeService;
@@ -69,13 +78,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
-
-import javax.servlet.http.HttpServletRequest;
-import javax.validation.Valid;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.Set;
-import java.util.stream.Collectors;
 
 @Controller
 @RequestMapping(value = "/complaint/update/{crnNo}")
@@ -122,6 +124,8 @@ public class ComplaintUpdationController {
         model.addAttribute("approvalDepartmentList", departmentService.getAllDepartments());
         model.addAttribute("complaintType", complaintTypeService.findActiveComplaintTypes());
         model.addAttribute("ward", Collections.EMPTY_LIST);
+        if (complaint.getCitizenFeedback() != null)
+            model.addAttribute("citizenRating", complaint.getCitizenFeedback().ordinal());
         if (complaint.getLocation() != null && complaint.getChildLocation() != null) {
             model.addAttribute("ward",
                     boundaryService.getBoundariesByBndryTypeNameAndHierarchyTypeName(
@@ -142,6 +146,8 @@ public class ComplaintUpdationController {
             model.addAttribute("mailSubject", "Grievance regarding " + complaint.getComplaintType().getName());
             model.addAttribute("mailBody", complaintService.getEmailBody(complaint));
         }
+        if (complaint.getStatus() != null)
+            model.addAttribute("complaintStatus", complaint.getStatus().getName());
     }
 
     @RequestMapping(method = RequestMethod.GET)
@@ -153,21 +159,19 @@ public class ComplaintUpdationController {
     public String update(@Valid @ModelAttribute Complaint complaint, final BindingResult errors,
             final RedirectAttributes redirectAttrs, final Model model, final HttpServletRequest request,
             @RequestParam("files") final MultipartFile[] files) {
-        // this validation is common for citizen and official. Any more
-        // specific
-        // validation required for official then write different method
+        // this validation is common for citizen and official. Any more specific validation required for official then write
+        // different method
         validateUpdate(complaint, errors, request);
 
         Long approvalPosition = 0l;
         String approvalComent = "";
         String result = "";
-
         if (request.getParameter("approvalComent") != null && !request.getParameter("approvalComent").trim().isEmpty())
             approvalComent = request.getParameter("approvalComent");
-
         if (request.getParameter("approvalPosition") != null && !request.getParameter("approvalPosition").isEmpty())
             approvalPosition = Long.valueOf(request.getParameter("approvalPosition"));
-
+        if (request.getParameter("citizenRating") != null && !request.getParameter("citizenRating").isEmpty())
+            complaint.setCitizenFeedback(CitizenFeedback.values()[Integer.valueOf(request.getParameter("citizenRating"))]);
         if (!errors.hasErrors()) {
             if (!securityUtils.currentUserType().equals(UserType.CITIZEN))
                 if (files != null)

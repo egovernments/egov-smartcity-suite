@@ -39,6 +39,9 @@
  */
 package org.egov.restapi.web.rest;
 
+import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
+import static org.springframework.web.bind.annotation.RequestMethod.POST;
+
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.util.ArrayList;
@@ -46,11 +49,8 @@ import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
-import javax.ws.rs.core.MediaType;
 
 import org.apache.log4j.Logger;
-import org.codehaus.jackson.JsonGenerationException;
-import org.codehaus.jackson.map.JsonMappingException;
 import org.egov.collection.integration.models.BillReceiptInfo;
 import org.egov.infra.validation.exception.ValidationError;
 import org.egov.infra.validation.exception.ValidationException;
@@ -77,12 +77,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.BindException;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 public class RestWaterConnectionCollection {
-    private static Logger LOG = Logger.getLogger(RestWaterConnectionCollection.class);
+    private static final Logger LOG = Logger.getLogger(RestWaterConnectionCollection.class);
 
     @Autowired
     private WaterTaxExternalService waterTaxExternalService;
@@ -102,23 +101,13 @@ public class RestWaterConnectionCollection {
     /**
      * This method is used to pay the water tax.
      *
-     * @param consumerNo
-     *            - consumer number
-     * @param paymentMode
-     *            - mode of payment
-     * @param totalAmount
-     *            - total amount paid
-     * @param paidBy
-     *            - payer's name
+     * @param payWaterTaxDetails
+     * @param request
      * @return responseJson - server response in JSON format
-     * @throws JsonGenerationException
-     * @throws JsonMappingException
      * @throws IOException
      */
 
-    // http://localhost:8080/restapi/watercharges/getwatertaxdetails
-    // http://localhost:8080/restapi/watercharges/categories
-    @RequestMapping(value = "/watercharges/paywatertax", method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON, produces = MediaType.APPLICATION_JSON)
+    @RequestMapping(value = "/watercharges/paywatertax", method = POST, consumes = APPLICATION_JSON_VALUE, produces = APPLICATION_JSON_VALUE)
     public String payWaterTax(@Valid @RequestBody final PayWaterTaxDetails payWaterTaxDetails,
             final HttpServletRequest request) {
         WaterReceiptDetails waterReceiptDetails = null;
@@ -133,7 +122,7 @@ public class RestWaterConnectionCollection {
             }
         } catch (final ValidationException e) {
 
-            final List<ErrorDetails> errorList = new ArrayList<ErrorDetails>(0);
+            final List<ErrorDetails> errorList = new ArrayList<>(0);
 
             final List<ValidationError> errors = e.getErrors();
             for (final ValidationError ve : errors) {
@@ -145,7 +134,7 @@ public class RestWaterConnectionCollection {
             JsonConvertor.convert(errorList);
         } catch (final Exception e) {
 
-            final List<ErrorDetails> errorList = new ArrayList<ErrorDetails>(0);
+            final List<ErrorDetails> errorList = new ArrayList<>(0);
             final ErrorDetails er = new ErrorDetails();
             er.setErrorCode(e.getMessage());
             er.setErrorMessage(e.getMessage());
@@ -155,10 +144,10 @@ public class RestWaterConnectionCollection {
         return JsonConvertor.convert(waterReceiptDetails);
     }
 
-    @RequestMapping(value = "/watercharges/getwatertaxdetails", method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON, produces = MediaType.APPLICATION_JSON)
+    @RequestMapping(value = "/watercharges/getwatertaxdetails", method = POST, consumes = APPLICATION_JSON_VALUE, produces = APPLICATION_JSON_VALUE)
     public String getWaterTaxDetailsByAppLicationOrConsumerNumber(
             @Valid @RequestBody final PayWaterTaxDetails payWaterTaxDetails)
-            throws JsonGenerationException, JsonMappingException, IOException, BindException {
+            throws IOException, BindException {
         final ErrorDetails errorDetails = validateConsumerAndApplicationNumber(payWaterTaxDetails);
         if (null != errorDetails)
             return JsonConvertor.convert(errorDetails);
@@ -168,11 +157,11 @@ public class RestWaterConnectionCollection {
         }
     }
 
-    @RequestMapping(value = "/watercharges/getwatertaxdetailsByOwnerDetails", method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON, produces = MediaType.APPLICATION_JSON)
+    @RequestMapping(value = "/watercharges/getwatertaxdetailsByOwnerDetails", method = POST, consumes = APPLICATION_JSON_VALUE, produces = APPLICATION_JSON_VALUE)
     public String getWaterTaxDetailsByAppLicationOrConsumerNumberByOwnerDetails(
             @Valid @RequestBody final WaterConnectionRequestDetails waterConnectionRequestDetails)
-            throws JsonGenerationException, JsonMappingException, IOException, BindException {
-        final List<WaterTaxDetails> waterTaxDetailsList = new ArrayList<WaterTaxDetails>();
+            throws IOException, BindException {
+        final List<WaterTaxDetails> waterTaxDetailsList = new ArrayList<>();
         ErrorDetails errorDetails = null;
         if (!waterConnectionRequestDetails.getConsumerNo().isEmpty())
             errorDetails = validateConsumerNumber(waterConnectionRequestDetails.getConsumerNo());
@@ -184,10 +173,9 @@ public class RestWaterConnectionCollection {
             waterTaxDetailsList.add(watertaxDetails);
             return JsonConvertor.convert(waterTaxDetailsList);
         } else {
-            List<PropertyTaxDetails> propertyTaxDetailsList = new ArrayList<PropertyTaxDetails>();
+            List<PropertyTaxDetails> propertyTaxDetailsList = new ArrayList<>();
             String assessmentNo = "";
 
-            List<WaterConnection> waterconnectionList = new ArrayList<WaterConnection>();
             Boolean consumerExists = false;
             Boolean ownerdetailsnotexists = false;
             waterConnectionRequestDetails.setAssessmentNo(waterConnectionRequestDetails.getAssessmentNo() == null
@@ -195,7 +183,7 @@ public class RestWaterConnectionCollection {
             if (!waterConnectionRequestDetails.getAssessmentNo().isEmpty()
                     && !waterConnectionRequestDetails.getConsumerNo().isEmpty()) {
                 ownerdetailsnotexists = true;
-                waterconnectionList = waterConnectionService
+                List<WaterConnection> waterconnectionList = waterConnectionService
                         .findByPropertyIdentifier(waterConnectionRequestDetails.getAssessmentNo());
                 for (final WaterConnection waterconnection : waterconnectionList)
                     if (waterconnection.getConsumerCode()
@@ -219,13 +207,12 @@ public class RestWaterConnectionCollection {
                 if (propertyTaxDetailsList == null || propertyTaxDetailsList.isEmpty())
                     return JsonConvertor.convert(isEmptyWaterTaxDetails());
             }
-            List<WaterConnection> waterConnectionList = new ArrayList<WaterConnection>();
-            final List<String> consumerCodesList = new ArrayList<String>();
+            final List<String> consumerCodesList = new ArrayList<>();
             if (consumerExists && !ownerdetailsnotexists)
                 consumerCodesList.add(waterConnectionRequestDetails.getConsumerNo());
             else
                 for (final PropertyTaxDetails propertyTaxDetails : propertyTaxDetailsList) {
-                    waterConnectionList = waterConnectionService
+                    List<WaterConnection> waterConnectionList = waterConnectionService
                             .findByPropertyIdentifier(propertyTaxDetails.getAssessmentNo());
                     for (final WaterConnection waterconnection : waterConnectionList)
                         consumerCodesList.add(waterconnection.getConsumerCode());
@@ -233,9 +220,8 @@ public class RestWaterConnectionCollection {
             if (consumerCodesList.size() == 0 || consumerCodesList.size() > 100)
                 return JsonConvertor.convert(isEmptyWaterTaxDetails());
             else {
-                WaterTaxDetails watertaxdetails = new WaterTaxDetails();
                 for (final String consumerCode : consumerCodesList) {
-                    watertaxdetails = waterTaxExternalService.getWaterTaxDemandDetByConsumerCode(consumerCode);
+                    WaterTaxDetails watertaxdetails = waterTaxExternalService.getWaterTaxDemandDetByConsumerCode(consumerCode);
                     waterTaxDetailsList.add(getWaterTaxDetails(watertaxdetails));
                     if (watertaxdetails.getErrorDetails() == null) {
                         final ErrorDetails errordetails = new ErrorDetails();
@@ -250,7 +236,7 @@ public class RestWaterConnectionCollection {
     }
 
     public ErrorDetails validatePaymentDetails(final PayWaterTaxDetails payWaterTaxDetails) {
-        ErrorDetails errorDetails = null;
+        ErrorDetails errorDetails;
         WaterConnectionDetails waterConnDetailsObj = null;
         errorDetails = validateConsumerAndApplicationNumber(payWaterTaxDetails);
         if (payWaterTaxDetails.getApplicaionNumber() != null && !"".equals(payWaterTaxDetails.getApplicaionNumber()))
@@ -281,7 +267,6 @@ public class RestWaterConnectionCollection {
             LOG.info("compare " + totalAmountDue.compareTo(payWaterTaxDetails.getTotalAmount()));
 
             LOG.info("compare " + totalAmountDue.compareTo(payWaterTaxDetails.getTotalAmount()));
-
 
         }
         if (payWaterTaxDetails.getTransactionId() == null || "".equals(payWaterTaxDetails.getTransactionId())) {
@@ -386,18 +371,16 @@ public class RestWaterConnectionCollection {
             errorDetails.setErrorCode(RestApiConstants.THIRD_PARTY_ERR_CODE_CONSUMER_NO_LEN);
             errorDetails.setErrorMessage(RestApiConstants.THIRD_PARTY_ERR_MSG_CONSUMER_NO_LEN);
         }
-        WaterConnection waterConnection = null;
         if (!consumerCode.isEmpty()) {
-            waterConnection = waterConnectionService.findByConsumerCode(consumerCode);
+            WaterConnection waterConnection = waterConnectionService.findByConsumerCode(consumerCode);
             if (waterConnection == null) {
                 errorDetails = new ErrorDetails();
                 errorDetails.setErrorCode(RestApiConstants.THIRD_PARTY_ERR_CODE_CONSUMERCODE_NOT_EXIST);
                 errorDetails.setErrorMessage(RestApiConstants.THIRD_PARTY_ERR_MSG_CONSUMERCODE_NOT_EXIST);
             }
         }
-        WaterConnectionDetails waterConnDetailsObj = null;
         if (!consumerCode.isEmpty()) {
-            waterConnDetailsObj = waterConnectionDetailsService.findByConsumerCodeAndConnectionStatus(consumerCode,
+            WaterConnectionDetails waterConnDetailsObj = waterConnectionDetailsService.findByConsumerCodeAndConnectionStatus(consumerCode,
                     ConnectionStatus.INACTIVE);
             if (waterConnDetailsObj != null) {
                 errorDetails = new ErrorDetails();
@@ -408,8 +391,8 @@ public class RestWaterConnectionCollection {
         return errorDetails;
     }
 
-    private List<WaterTaxDetails>  isEmptyWaterTaxDetails() {
-        final List<WaterTaxDetails> waterTaxDetailsList = new ArrayList<WaterTaxDetails>();
+    private List<WaterTaxDetails> isEmptyWaterTaxDetails() {
+        final List<WaterTaxDetails> waterTaxDetailsList = new ArrayList<>();
         final WaterTaxDetails watertaxDetails = new WaterTaxDetails();
         final ErrorDetails errordetails = new ErrorDetails();
         errordetails.setErrorCode(RestApiConstants.THIRD_PARTY_ERR_CODE_WATERTAXDETAILS_SIZE);

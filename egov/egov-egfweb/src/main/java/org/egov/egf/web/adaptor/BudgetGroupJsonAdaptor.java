@@ -36,7 +36,7 @@ public class BudgetGroupJsonAdaptor implements JsonSerializer<BudgetGroup> {
                 jsonObject.addProperty("budgetingType", budgetGroup.getBudgetingType().toString());
             else
                 jsonObject.addProperty("budgetingType", "");
-                jsonObject.addProperty("isActive", budgetGroup.getIsActive());
+                jsonObject.addProperty("isActive", Boolean.toString(budgetGroup.getIsActive()).toUpperCase());
             jsonObject.addProperty("id", budgetGroup.getId());
         }
         return jsonObject;

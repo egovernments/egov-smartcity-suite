@@ -148,10 +148,20 @@ $(document).ready(function()
 	var elements = document.querySelectorAll('input,select,textarea');
 
 	for(var i = 0; i<elements.length; i++){
-	    elements[i].addEventListener('invalid', function () {
-    	off = (elements[0].offsetTop + 50);
-    	$('html, body').animate({scrollTop: off }, 0);
-	    });
+		 if(elements[i].addEventListener){
+			 elements[i].addEventListener('invalid', function () {
+				 offsettoinvalid();
+			 });
+		 }else if(elements[i].attachEvent){
+			 elements[i].attachEvent('invalid', function () {
+				 offsettoinvalid();
+			 });
+		 }
+	}
+	
+	function offsettoinvalid(){
+		off = (elements[0].offsetTop + 50);
+		$('html, body').animate({scrollTop: off }, 0);
 	}
 	
 	try{

@@ -129,9 +129,9 @@ $(document).ready(function () {
         return '<table class="table table-bordered" style="width: 90%;margin: 0 auto;"><thead><th>Effective Date</th><th>Values</th></thead><tbody>'+tablerows+'</tbody></table>';
     }
     
-    var count = $("#configs tbody  tr").length - 1;
-    
+   
     $('#addrow').click(function(){
+    	var count = $("#configs tbody  tr").length - 1;
     	var $tableBody = $('#configs').find("tbody"),
         $trLast = $tableBody.find("tr:last"),
         $trNew = $trLast.clone();

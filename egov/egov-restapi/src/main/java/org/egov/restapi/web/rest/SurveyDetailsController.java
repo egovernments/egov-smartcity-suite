@@ -44,13 +44,8 @@ import java.io.IOException;
 import java.text.ParseException;
 import java.util.List;
 
-import javax.ws.rs.core.MediaType;
-
-import org.apache.commons.lang3.StringUtils;
-import org.codehaus.jackson.JsonParseException;
 import org.codehaus.jackson.annotate.JsonAutoDetect.Visibility;
 import org.codehaus.jackson.annotate.JsonMethod;
-import org.codehaus.jackson.map.JsonMappingException;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.codehaus.jackson.map.SerializationConfig;
 import org.egov.dcb.bean.ChequePayment;
@@ -65,6 +60,8 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
+
+import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 
 @RestController
 public class SurveyDetailsController {
@@ -81,10 +78,10 @@ public class SurveyDetailsController {
      * @throws IOException
      * @throws ParseException
      */
-    @RequestMapping(value = "/property/pulseAssessmentDetails", method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON, produces = MediaType.APPLICATION_JSON)
+    @RequestMapping(value = "/property/pulseAssessmentDetails", method = RequestMethod.POST, consumes = APPLICATION_JSON_VALUE, produces = APPLICATION_JSON_VALUE)
     public String getAssessmentDetails(@RequestBody String assessmentRequest)
             throws IOException, ParseException {
-    	String responseJson = StringUtils.EMPTY;
+    	String responseJson;
     	AssessmentRequest assessmentReq = (AssessmentRequest) getObjectFromJSONRequest(assessmentRequest, AssessmentRequest.class);
         ErrorDetails errorDetails = validationUtil.validateSurveyRequest(assessmentReq);
         if (errorDetails != null) {
@@ -101,12 +98,10 @@ public class SurveyDetailsController {
      * 
      * @param jsonString - request JSON string
      * @return
-     * @throws JsonParseException
-     * @throws JsonMappingException
      * @throws IOException
      */
     private Object getObjectFromJSONRequest(String jsonString, Class cls)
-            throws JsonParseException, JsonMappingException, IOException {
+            throws IOException {
         ObjectMapper mapper = new ObjectMapper();
         mapper.setVisibility(JsonMethod.FIELD, Visibility.ANY);
         mapper.configure(SerializationConfig.Feature.AUTO_DETECT_FIELDS, true);

@@ -97,7 +97,7 @@
 			<input type="text" id="refundBillDetails[0].refundedAmount" name="refundBillDetails[0].refundedAmount" value="" class="form-control text-right refundedamount" onkeyup="decimalvalue(this);" disabled>  
 		</td>
 		<td>
-		   <form:input path="" id="refundBillDetails[0].debitamount" name="refundBillDetails[0].debitamount" value="" data-errormsg="Refund Amount is mandatory!" onkeyup="decimalvalue(this);" data-pattern="decimalvalue" data-idx="0" data-optional="0" class="form-control table-input text-right refundAmount" onblur="calculateNetPayableAmount();"  maxlength="12" />
+		   <form:input path="" id="refundBillDetails[0].debitamount" name="refundBillDetails[0].debitamount" value="" data-errormsg="Refund Amount is mandatory!" onkeyup="decimalvalue(this);" data-pattern="decimalvalue" data-idx="0" data-optional="0" class="form-control table-input text-right refundAmount validateZero" onblur="calculateNetPayableAmount();"  maxlength="12" />
 		   <form:errors path="refundBillDetails[0].debitamount" cssClass="add-margin error-msg" /> 
 		</td>
 		    <td class="text-center"><span style="cursor:pointer;" onclick="addRefundRow();"><i class="fa fa-plus"></i></span>
@@ -131,7 +131,7 @@
 			        <input type="text" id="refundBillDetails[${index}].refundedAmount" name="refundBillDetails[${index}].refundedAmount" value="${billDetail.RefundedAmount}" class="form-control text-right refundedamount" onkeyup="decimalvalue(this);" disabled>  
 		        </td>
 				<td>
-					<form:input path="refundBillDetails[${index}].debitamount" id="refundBillDetails[${index}].debitamount" name="refundBillDetails[${rowIndex}].debitamount" value="${billDetail.amount}" data-errormsg="Refund Amount is mandatory!" onkeyup="decimalvalue(this);" data-pattern="decimalvalue" data-idx="${index}" data-optional="0" class="form-control table-input text-right refundAmount" onblur="calculateNetPayableAmount();"  maxlength="12" />
+					<form:input path="refundBillDetails[${index}].debitamount" id="refundBillDetails[${index}].debitamount" name="refundBillDetails[${rowIndex}].debitamount" value="${billDetail.amount}" data-errormsg="Refund Amount is mandatory!" onkeyup="decimalvalue(this);" data-pattern="decimalvalue" data-idx="${index}" data-optional="0" class="form-control table-input text-right refundAmount validateZero" onblur="calculateNetPayableAmount();"  maxlength="12" />
 					<form:errors path="refundBillDetails[${index}].debitamount" cssClass="add-margin error-msg" /> 
 				</td> 
 				   <td class="text-center"><span style="cursor:pointer;" onclick="addRefundRow();"><i class="fa fa-plus"></i></span>

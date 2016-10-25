@@ -200,7 +200,7 @@ public class LegalCaseService {
 		if (!legalcase.getPwrList().isEmpty()) {
 			for (final Pwr legalpwr : legalcase.getPwrList()) {
 				legalpwr.setLegalCase(legalcase);
-				// legalpwr.setCaFilingdate(new Date());
+				legalpwr.setCaFilingdate(new Date());
 				pwrListtemp.add(legalpwr);
 			}
 			legalcase.getPwrList().clear();

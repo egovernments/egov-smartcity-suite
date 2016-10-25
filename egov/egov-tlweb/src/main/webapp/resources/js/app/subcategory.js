@@ -39,10 +39,43 @@
  */
 
 $(document).ready(function () {
-
-var count = $("#subcat tbody  tr").length - 1;
+	
+	$('#categories').change(function(){
+		$.ajax({
+			url: "/tl/licensesubcategory/subcategories-by-category",    
+			type: "GET",
+			data: {
+				categoryId : $('#categories').val()   
+			},
+			dataType: "json",
+			success: function (response) {
+				console.log("success"+response);
+				var subCategory = $('#licenseSubCategories')
+				subCategory.find("option:gt(0)").remove();
+				$.each(response, function(index, value) {
+					subCategory.append($('<option>').text(value.name).attr('value', value.code));
+				});
+				
+			}, 
+			error: function (response) {
+				console.log("failed");
+			}
+		})
+	});
+	$('#subcat').on('change', 'select', function(){
+	    var obj = $("[id$='feeType']:visible");
+	    for (var i=0 ;i < $("[id$='feeType']:visible").length - 1; i++) {
+	    	for (var j=i+1 ;j <= $("[id$='feeType']:visible").length - 1; j++) {
+	    		if(obj[i].options[obj[i].selectedIndex].text == obj[j].options[obj[j].selectedIndex].text){
+	    			var selected = obj[j];
+	    			bootbox.alert('The Fee Type  '+selected.options[selected.selectedIndex].text+' is already selected',function(){ $(selected).val(''); }); 	
+	    		}
+	    	}
+	    }
+	});
 
 $('#addrow').click(function(){
+	var count = $("#subcat tbody  tr").length - 1;
 	var $tableBody = $('#subcat').find("tbody"),
     $trLast = $tableBody.find("tr:last"),
     $trNew = $trLast.clone();
@@ -59,10 +92,9 @@ $('#addrow').click(function(){
 	    });
 		$trLast.after($trNew);
 		$trNew.show().find('select').val('').removeAttr('disabled').addClass('dynamicInput');
-        $trNew.find('select.markedForRemoval').val('false');
-	}
+        $trNew.find('input.markedForRemoval').val('false');
+	 }
 	});
-
 
 $(document).on('click','#deleterow',function(){
 	var length = $('#subcat').find("tbody tr:visible").length;
@@ -73,11 +105,9 @@ $(document).on('click','#deleterow',function(){
         	deleteandreplaceindexintable($(this));
         } else {
             if($(this).closest('tr').find('select').hasClass('dynamicInput')){
-            	console.log('Dynamic Row deleted');
             	deleteandreplaceindexintable($(this));
             }
             else{
-            	console.log('Existing Row deleted');
             	$(this).closest('tr').hide().find('input.markedForRemoval').val('true');
             }
             
@@ -89,60 +119,24 @@ $(document).on('click','#deleterow',function(){
 
 });
 
-function deleteandreplaceindexintable(obj){
-obj.closest('tr').remove();
-var idx=0;
-//regenerate index existing inputs in table row
-jQuery("#subcat tbody tr").each(function() {
-	 jQuery(this).find("select").each(function() {
-		 jQuery(this).attr({
-		 'id': function(_, id) {
-			 return id.replace(/\[.\]/g, '['+ idx +']');
-		 },
-		 'name': function(_, name) {
-			 return name.replace(/\[.\]/g, '['+ idx +']');
-		 }
-		 });
-	 });
-	 idx++;
- });
-}
-$('#categories').change(function(){
-	$.ajax({
-		url: "/tl/licensesubcategory/subcategories-by-category",    
-		type: "GET",
-		data: {
-			categoryId : $('#categories').val()   
-		},
-		dataType: "json",
-		success: function (response) {
-			console.log("success"+response);
-			$('#licenseSubCategories').empty();
-			//$('#licenseSubCategories').append($("<option value=''>Select from below</option>"));
-			$.each(response, function(index, value) {
-				$('#licenseSubCategories').append($('<option>').text(value.name).attr('value', value.code));
-			});
-			
-		}, 
-		error: function (response) {
-			console.log("failed");
-		}
-	
-	});
-});
-
-function redirect(href){
-	window.location.href = href;
-} 
-
-$('#subcat').on('change', 'select', function(){
-    var obj = $("[id$='feeType']");
-    for (var i=0 ;i < $("[id$='feeType']").length - 1; i++) {
-    	for (var j=i+1 ;j <= $("[id$='feeType']").length - 1; j++) {
-    		if(obj[i].options[obj[i].selectedIndex].text == obj[j].options[obj[j].selectedIndex].text){
-    			var selected = obj[j];
-    			bootbox.alert('The Fee Type  '+selected.options[selected.selectedIndex].text+' is already selected',function(){ $(selected).val(''); }); 	
-    		}
-    	}
-    }
-});
+	function deleteandreplaceindexintable(obj){
+		obj.closest('tr').remove();
+		var idx=0;
+	    //regenerate index existing inputs in table row
+	    jQuery("#subcat tbody tr").each(function() {
+			 jQuery(this).find("select").each(function() {
+				 jQuery(this).attr({
+				 'id': function(_, id) {
+					 return id.replace(/\[.\]/g, '['+ idx +']');
+				 },
+				 'name': function(_, name) {
+					 return name.replace(/\[.\]/g, '['+ idx +']');
+				 }
+				 });
+			 });
+			 idx++;
+	     });
+	}
+    function redirect(href){
+		window.location.href = href;
+	} 

@@ -55,19 +55,26 @@ import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
 import javax.validation.constraints.NotNull;
 
 import org.egov.infra.admin.master.entity.Department;
-import org.egov.infra.persistence.entity.AbstractPersistable;
-import org.egov.infra.persistence.validator.annotation.DateFormat;
+import org.egov.infra.persistence.entity.AbstractAuditable;
 import org.egov.infra.utils.DateUtils;
 import org.egov.infra.validation.exception.ValidationError;
 import org.egov.pims.commons.Position;
+import org.hibernate.envers.AuditOverride;
+import org.hibernate.envers.AuditOverrides;
+import org.hibernate.envers.Audited;
+import org.hibernate.envers.NotAudited;
 
 @Entity
 @Table(name = "EGLC_LEGALCASE_DEPT")
 @SequenceGenerator(name = LegalCaseDepartment.SEQ_EGLC_LEGALCASE_DEPT, sequenceName = LegalCaseDepartment.SEQ_EGLC_LEGALCASE_DEPT, allocationSize = 1)
-public class LegalCaseDepartment extends AbstractPersistable<Long> {
+@AuditOverrides({ @AuditOverride(forClass = AbstractAuditable.class, name = "lastModifiedBy"),
+    @AuditOverride(forClass = AbstractAuditable.class, name = "lastModifiedDate") })
+public class LegalCaseDepartment extends AbstractAuditable {
 
     private static final long serialVersionUID = 1517694643078084884L;
     public static final String SEQ_EGLC_LEGALCASE_DEPT = "SEQ_EGLC_LEGALCASE_DEPT";
@@ -79,29 +86,36 @@ public class LegalCaseDepartment extends AbstractPersistable<Long> {
     @ManyToOne(cascade = CascadeType.ALL,fetch = FetchType.LAZY)
     @NotNull
     @JoinColumn(name = "legalcase", nullable = false)
+    @Audited
     private LegalCase legalCase;
 
-    @DateFormat(message = "invalid.fieldvalue.dateOfReceipt")
+    @Temporal(TemporalType.DATE)
     @Column(name = "dateofreceiptofpwr")
+    @Audited
     private Date dateofreceiptofpwr;
 
     @ManyToOne
     @NotNull
     @JoinColumn(name = "DEPARTMENT")
+    @NotAudited
     private Department department;
 
     @ManyToOne
     @NotNull
     @JoinColumn(name = "POSITION")
+    @NotAudited
     private Position position;
 
     @Column(name = "isprimarydepartment")
+    @Audited
     private boolean isPrimaryDepartment;
 
     @OneToMany(mappedBy = "legalCaseDepartment", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
+    @NotAudited
     private List<Reminder> legalCaseReminders = new ArrayList<Reminder>(0);
 
-    @DateFormat(message = "invalid.fieldvalue.assignOnDate")
+    @Temporal(TemporalType.DATE)
+    @Audited
     private Date assignOn;
 
     public boolean getIsPrimaryDepartment() {

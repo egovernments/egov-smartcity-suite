@@ -55,18 +55,23 @@ import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
 
-import org.egov.infra.persistence.entity.AbstractPersistable;
-import org.egov.infra.persistence.validator.annotation.DateFormat;
-import org.egov.infra.persistence.validator.annotation.ValidateDate;
+import org.egov.infra.persistence.entity.AbstractAuditable;
 import org.egov.infra.utils.DateUtils;
 import org.egov.infra.validation.exception.ValidationError;
-import org.egov.lcms.utils.constants.LcmsConstants;
+import org.hibernate.envers.AuditOverride;
+import org.hibernate.envers.AuditOverrides;
+import org.hibernate.envers.Audited;
+import org.hibernate.envers.NotAudited;
 
 @Entity
 @Table(name = "EGLC_PWR")
 @SequenceGenerator(name = Pwr.SEQ_EGLC_PWR, sequenceName = Pwr.SEQ_EGLC_PWR, allocationSize = 1)
-public class Pwr extends AbstractPersistable<Long> {
+@AuditOverrides({ @AuditOverride(forClass = AbstractAuditable.class, name = "lastModifiedBy"),
+    @AuditOverride(forClass = AbstractAuditable.class, name = "lastModifiedDate") })
+public class Pwr extends AbstractAuditable {
 
     private static final long serialVersionUID = 1517694643078084884L;
     public static final String SEQ_EGLC_PWR = "seq_eglc_pwr";
@@ -77,26 +82,31 @@ public class Pwr extends AbstractPersistable<Long> {
 
     @ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @JoinColumn(name = "legalcase", nullable = false)
+    @Audited
     private LegalCase legalCase;
 
-    @DateFormat(message = "invalid.fieldvalue.caFilingdate")
-    @ValidateDate(allowPast = true, dateFormat = LcmsConstants.DATE_FORMAT, message = "invalid.cafiling.date")
+    @Temporal(TemporalType.DATE)
     @Column(name = "cafilingdate")
+    @Audited
     private Date caFilingdate;
 
     @OneToMany(mappedBy = "pwr", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
+    @NotAudited
     private List<PwrDocuments> pwrDocuments = new ArrayList<PwrDocuments>(0);
 
-    @DateFormat(message = "invalid.fieldvalue.caDueDate")
+    @Temporal(TemporalType.DATE)
     @Column(name = "caduedate")
+    @Audited
     private Date caDueDate;
 
-    @DateFormat(message = "invalid.fieldvalue.pwrDueDate")
+    @Temporal(TemporalType.DATE)
     @Column(name = "pwrduedate")
+    @Audited
     private Date pwrDueDate;
 
-    @DateFormat(message = "invalid.fieldvalue.pwrDueDate")
+    @Temporal(TemporalType.DATE)
     @Column(name = "pwrapprovaldate")
+    @Audited
     private Date pwrApprovalDate;
 
     public Date getCaFilingdate() {

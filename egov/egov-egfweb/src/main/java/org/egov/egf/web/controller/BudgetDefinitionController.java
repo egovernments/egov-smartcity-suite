@@ -40,22 +40,19 @@
 
 package org.egov.egf.web.controller;
 
-import static org.egov.infra.web.utils.WebUtils.toJSON;
-
-import java.io.IOException;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Locale;
 
 import javax.validation.Valid;
 
 import org.apache.commons.lang.StringUtils;
-import org.egov.commons.CFinancialYear;
 import org.egov.commons.service.CFinancialYearService;
 import org.egov.egf.web.adaptor.BudgetJsonAdaptor;
-import org.egov.infra.exception.ApplicationException;
 import org.egov.model.budget.Budget;
 import org.egov.model.budget.BudgetDetail;
 import org.egov.model.service.BudgetDefinitionService;
+import org.egov.utils.BeReType;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
 import org.springframework.http.MediaType;
@@ -87,11 +84,10 @@ public class BudgetDefinitionController {
     private MessageSource messageSource;
     @Autowired
     private CFinancialYearService cFinancialYearService;
-    private CFinancialYear financialYear;
-   
-   
+
     private void prepareNewForm(Model model) {
         model.addAttribute("financialYearList", cFinancialYearService.getFinancialYearNotClosed());
+        model.addAttribute("isBereList", Arrays.asList(BeReType.values()));
     };
 
     @RequestMapping(value = "/new", method = RequestMethod.GET)
@@ -123,7 +119,7 @@ public class BudgetDefinitionController {
         Budget budget = budgetDefinitionService.findOne(id);
         prepareNewForm(model);
         model.addAttribute("budget", budget);
-        model.addAttribute("modify","modify");
+        model.addAttribute("modify", "modify");
         List<BudgetDetail> bd = budgetDefinitionService.getBudgetDetailList(budget.getId());
         if (!bd.isEmpty()) {
             model.addAttribute("mode", "edit");
@@ -135,9 +131,10 @@ public class BudgetDefinitionController {
     public String update(@Valid @ModelAttribute final Budget budget, final BindingResult errors, final Model model,
             final RedirectAttributes redirectAttrs) {
         String validationMessage = budgetDefinitionService.validate(budget, errors);
-        if (errors.hasErrors()) {
+        if (errors.hasErrors() || !StringUtils.isEmpty(validationMessage)) {
             prepareNewForm(model);
             model.addAttribute("validationMessage", validationMessage);
+            model.addAttribute("modify", "modify");
             return BUDGET_EDIT;
         }
         budgetDefinitionService.update(budget);
@@ -185,35 +182,28 @@ public class BudgetDefinitionController {
         return json;
     }
 
-    @RequestMapping(value = "/ajaxgetparentbyfinancialyear", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
-    public @ResponseBody String getParentByFinancialYearId(
-            @RequestParam("financialYearId") final String financialYearId, @RequestParam("isBeRe") String isBere)
-            throws IOException, NumberFormatException, ApplicationException {
-        final List<Long> budgetIdList = budgetDefinitionService.getBudgetIdList();
-        final List<Budget> budget = budgetDefinitionService.getParentList(isBere, Long.parseLong(financialYearId),
-                budgetIdList);
-        final String jsonResponse = toJSON(budget, Budget.class, BudgetJsonAdaptor.class);
+    @RequestMapping(value = "/parents", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+    public @ResponseBody String getParents(@RequestParam("financialYearId") final String financialYearId,
+            @RequestParam("isBeRe") String isBere) {
+        final List<Budget> budgetList = budgetDefinitionService.parentList(isBere, Long.parseLong(financialYearId));
+        String jsonResponse = toSearchResultJson(budgetList).toString();
         return jsonResponse;
     }
 
-    @RequestMapping(value = "/ajaxgetrefencebudget", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
-    public @ResponseBody String getRefencebudget(@RequestParam("financialYearId") final String financialYearId)
-            throws IOException, NumberFormatException, ApplicationException {
-        final List<Long> referenceBudgetIdList = budgetDefinitionService.getreferenceBudget(Long.parseLong(financialYearId));
-        financialYear = cFinancialYearService.findOne(Long.parseLong(financialYearId));
-        final CFinancialYear previousYear = cFinancialYearService.findByFinYearRange(budgetDefinitionService.computeYearRange(financialYear.getFinYearRange()));
-        final List<Budget> budget1 = budgetDefinitionService.getreferenceBudget1(previousYear.getId(),
-                referenceBudgetIdList);
-        final String jsonResponse = toJSON(budget1, Budget.class, BudgetJsonAdaptor.class);
+    @RequestMapping(value = "/referencebudget", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+    public @ResponseBody String getRefencebudget(@RequestParam("financialYearId") final String financialYearId) {
+        final List<Budget> referenceBudgetList = budgetDefinitionService
+                .referenceBudgetList(Long.parseLong(financialYearId));
+        final String jsonResponse = toSearchResultJson(referenceBudgetList).toString();
         return jsonResponse;
     }
 
     @RequestMapping(value = "/ajaxgetdropdownsformodify", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
-    public @ResponseBody String getReferenceBudgetForModify(@RequestParam("budgetId") final String budgetId)
-            throws IOException, NumberFormatException, ApplicationException {
-        final List<Budget> budgetList= budgetDefinitionService.getReferenceBudgetForEdit(Long.parseLong(budgetId));
-        final String jsonResponse = toJSON(budgetList, Budget.class, BudgetJsonAdaptor.class);
+    public @ResponseBody String getReferenceBudgetForModify(@RequestParam("budgetId") final String budgetId) {
+        final Budget budget = budgetDefinitionService.findOne((Long.parseLong(budgetId)));
+        String jsonResponse = new StringBuilder("{ \"data\":").append(toSearchResultJson(budget)).append("}")
+                .toString();
         return jsonResponse;
     }
-  
+
 }

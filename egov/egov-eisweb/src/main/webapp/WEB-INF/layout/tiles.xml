@@ -117,5 +117,8 @@
 		<put-attribute name="body" value="/WEB-INF/views/reports/employeeassignmentpdf-result.jsp"/>
 	</definition>  
 	
-	
+	<definition name="employeePositionReport-form" extends="base_layout">
+		<put-attribute name="page-title" value="title.searchemployeeposition" cascade="true"/>
+		<put-attribute name="body" value="/WEB-INF/views/reports/employeePositionReport-form.jsp"/>
+	</definition>
 </tiles-definitions>

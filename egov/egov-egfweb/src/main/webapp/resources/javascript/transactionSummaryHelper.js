@@ -909,6 +909,8 @@ function validateOnCreate() {
 				+ '].openingdebitbalance').value;
 		var credit = document.getElementById('transactionSummaryList[' + index
 				+ '].openingcreditbalance').value;
+		var transactionId=document.getElementById('transactionSummaryList['
+				+ index + '].id').value;
 		if ((glcode != '') && (glcodeid == null || glcodeid == '')) {
 			bootbox
 					.alert('Please select account code from auto complete for row '
@@ -927,7 +929,7 @@ function validateOnCreate() {
 				&& (entity == null || entity == '')) {
 			bootbox.alert('Please select entity for account code  ' + glcode);
 			flag = false;
-		} else if ((debit == '' && credit == '') || (debit < 1 && credit < 1)) {
+		} else if (((debit == '' && credit == '') || (debit < 1 && credit < 1)) && transactionId=="") {
 			bootbox
 					.alert('Please select debit amount or credit amount for account code  '
 							+ glcode);

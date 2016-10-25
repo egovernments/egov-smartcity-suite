@@ -55,7 +55,7 @@ import javax.persistence.Table;
 @Entity
 @Table(name = "EGTL_MSTR_UNITOFMEASURE")
 @SequenceGenerator(name = UnitOfMeasurement.SEQUENCE, sequenceName = UnitOfMeasurement.SEQUENCE, allocationSize = 1)
-@Unique(fields = {"name", "code"})
+@Unique(fields = {"name", "code"},enableDfltMsg = true)
 public class UnitOfMeasurement extends AbstractAuditable {
 
     public static final String SEQUENCE = "SEQ_EGTL_MSTR_UNITOFMEASURE";
