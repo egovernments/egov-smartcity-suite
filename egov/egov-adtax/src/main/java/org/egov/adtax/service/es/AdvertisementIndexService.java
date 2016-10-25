@@ -38,23 +38,27 @@
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
 
-package org.egov.adtax.elasticSearch.service;
+package org.egov.adtax.service.es;
 
-import org.egov.adtax.elasticSearch.entity.AdvertisementSearch;
+import java.math.BigDecimal;
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.Map;
+
 import org.egov.adtax.entity.AdvertisementPermitDetail;
+import org.egov.adtax.entity.es.AdvertisementIndex;
+import org.egov.adtax.repository.es.AdvertisementIndexRepository;
 import org.egov.adtax.service.AdvertisementDemandService;
 import org.egov.adtax.utils.constants.AdvertisementTaxConstants;
 import org.egov.infra.admin.master.entity.City;
-import org.egov.infra.admin.master.service.BoundaryService;
 import org.egov.infra.admin.master.service.CityService;
 import org.egov.infra.config.core.ApplicationThreadLocals;
 import org.elasticsearch.common.geo.GeoPoint;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.math.BigDecimal;
-import java.util.Map;
 
 @Service
 @Transactional(readOnly = true)
@@ -64,13 +68,13 @@ public class AdvertisementIndexService {
     private CityService cityService;
 
     @Autowired
-    private BoundaryService boundaryService;
+    private AdvertisementIndexRepository advertisementIndexRepository;
 
     @Autowired
     private AdvertisementDemandService advertisementDemandService;
 
-    public AdvertisementSearch createAdvertisementIndex(final AdvertisementPermitDetail advertisementPermitDetailIndex) {
-        AdvertisementSearch advertisementSearch = null;
+    public AdvertisementIndex createAdvertisementIndex(final AdvertisementPermitDetail advertisementPermitDetailIndex) {
+        AdvertisementIndex advertisementSearch = null;
         if (advertisementPermitDetailIndex.getStatus() != null &&
                 (advertisementPermitDetailIndex.getStatus().getCode().equalsIgnoreCase(AdvertisementTaxConstants.APPLICATION_STATUS_APPROVED)
                         || advertisementPermitDetailIndex.getStatus().getCode().equalsIgnoreCase(AdvertisementTaxConstants.APPLICATION_STATUS_ADTAXAMOUNTPAID)
@@ -82,11 +86,15 @@ public class AdvertisementIndexService {
         return advertisementSearch;
     }
 
-    public AdvertisementSearch createOrUpdateAdvIndex(final AdvertisementPermitDetail advertisementPermitDetail) {
+    public AdvertisementIndex createOrUpdateAdvIndex(final AdvertisementPermitDetail advertisementPermitDetail) {
+    	 final SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm");
         final City cityWebsite = cityService.getCityByURL(ApplicationThreadLocals.getDomainName());
-        final AdvertisementSearch advertisementSearch = new AdvertisementSearch(advertisementPermitDetail.getAdvertisement().getAdvertisementNumber(),
+        final AdvertisementIndex advertisementSearch = new AdvertisementIndex(advertisementPermitDetail.getAdvertisement().getAdvertisementNumber(),
                 cityWebsite.getName(), cityWebsite.getCode(), advertisementPermitDetail.getCreatedDate(), cityWebsite.getDistrictName(), cityWebsite.getRegionName(),
                 cityWebsite.getGrade());
+    /*    AdvertisementIndex advertisementSearch = new AdvertisementIndex();
+    */  
+        advertisementSearch.setId(cityWebsite.getCode().concat("-").concat(advertisementPermitDetail.getApplicationNumber()));
         advertisementSearch.setAddress(advertisementPermitDetail.getAdvertisement().getAddress() != null ? advertisementPermitDetail.getAdvertisement().getAddress() : "");
         advertisementSearch.setAdvertisementClass(advertisementPermitDetail.getAdvertisement().getRateClass().getDescription());
         advertisementSearch.setAdvertisementCreatedBy(advertisementPermitDetail.getAdvertisement().getCreatedBy().getName());
@@ -98,13 +106,16 @@ public class AdvertisementIndexService {
         advertisementSearch.setAdvertiser(advertisementPermitDetail.getAdvertiser() != null ? advertisementPermitDetail.getAdvertiser() : "");
         advertisementSearch.setAdvertiserParticular(advertisementPermitDetail.getAdvertisementParticular() != null ? advertisementPermitDetail.getAdvertisementParticular() : "");
         advertisementSearch.setAgencyName(advertisementPermitDetail.getAgency() != null ? advertisementPermitDetail.getAgency().getName() : "");
-        advertisementSearch.setApplicationDate(advertisementPermitDetail.getApplicationDate());
+        advertisementSearch.setApplicationDate(formatDate(formatter.format(advertisementPermitDetail.getApplicationDate())));
+        
         advertisementSearch.setApplicationNumber(advertisementPermitDetail.getApplicationNumber());
 
         advertisementSearch.setBlock(advertisementPermitDetail.getAdvertisement().getBlock() != null ? advertisementPermitDetail.getAdvertisement().getBlock().getName() : "");
         advertisementSearch.setBreadth(advertisementPermitDetail.getBreadth() != null ? advertisementPermitDetail.getBreadth() : 0.0);
         advertisementSearch.setCategory(advertisementPermitDetail.getAdvertisement().getCategory().getName());
-        advertisementSearch.setCreatedDate(advertisementPermitDetail.getAdvertisement().getCreatedDate());
+        
+        
+        advertisementSearch.setCreatedDate(formatDate(formatter.format(advertisementPermitDetail.getAdvertisement().getCreatedDate())));
         advertisementSearch.setElectionWard(advertisementPermitDetail.getAdvertisement().getElectionWard() != null ? advertisementPermitDetail.getAdvertisement().getElectionWard().getName() : "");
         advertisementSearch.setElectricityServiceNumber(advertisementPermitDetail.getAdvertisement().getElectricityServiceNumber() != null ? advertisementPermitDetail.getAdvertisement().getElectricityServiceNumber() : "");
         advertisementSearch.setEncroachmentFee(advertisementPermitDetail.getEncroachmentFee() != null ? advertisementPermitDetail.getEncroachmentFee() : BigDecimal.ZERO);
@@ -114,9 +125,12 @@ public class AdvertisementIndexService {
         advertisementSearch.setMeasurement(advertisementPermitDetail.getMeasurement());
         advertisementSearch.setMobileNumber(advertisementPermitDetail.getAgency() != null ? advertisementPermitDetail.getAgency().getMobileNumber() : "");
         advertisementSearch.setOwnerDetail(advertisementPermitDetail.getOwnerDetail() != null ? advertisementPermitDetail.getOwnerDetail() : "");
-        advertisementSearch.setPermissionEndDate(advertisementPermitDetail.getPermissionenddate());
+       
+        
+        advertisementSearch.setPermissionEndDate( formatDate(formatter.format(advertisementPermitDetail.getPermissionenddate())));
         advertisementSearch.setPermissionNumber(advertisementPermitDetail.getPermissionNumber());
-        advertisementSearch.setPermissionStartDate(advertisementPermitDetail.getPermissionstartdate());
+       
+        advertisementSearch.setPermissionStartDate( formatDate(formatter.format(advertisementPermitDetail.getPermissionstartdate())));
         advertisementSearch.setPermitStatus(advertisementPermitDetail.getStatus().getDescription());
         advertisementSearch.setAssessmentNumber(advertisementPermitDetail.getAdvertisement().getPropertyNumber() != null ? advertisementPermitDetail.getAdvertisement().getPropertyNumber() : "");
         advertisementSearch.setPropertyType(advertisementPermitDetail.getAdvertisement().getPropertyType().name());
@@ -201,11 +215,19 @@ public class AdvertisementIndexService {
 
         //Deactivation
         if (advertisementPermitDetail.getAdvertisement().getStatus().name().equalsIgnoreCase("INACTIVE")) {
-            advertisementSearch.setDeactivationDate(advertisementPermitDetail.getDeactivation_date());
+        	
+            advertisementSearch.setDeactivationDate( formatDate(formatter.format(advertisementPermitDetail.getDeactivation_date())));
             advertisementSearch.setDeactivationRemarks(advertisementPermitDetail.getDeactivation_remarks());
         }
-
+        advertisementIndexRepository.save(advertisementSearch);
         return advertisementSearch;
     }
-
+    public Date formatDate(final String date) {
+        final DateFormat formatter = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm'Z'");
+        try {
+            return formatter.parse(date);
+        } catch (final ParseException e) {
+        }
+        return null;
+    }
 }

@@ -40,6 +40,13 @@
 
 package org.egov.adtax.service.collection;
 
+import java.math.BigDecimal;
+import java.util.Date;
+import java.util.List;
+
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+
 import org.apache.log4j.Logger;
 import org.egov.adtax.entity.AdvertisementPermitDetail;
 import org.egov.adtax.entity.AgencyWiseCollection;
@@ -47,9 +54,9 @@ import org.egov.adtax.entity.AgencyWiseCollectionDetail;
 import org.egov.adtax.repository.AdvertisementPermitDetailRepository;
 import org.egov.adtax.service.AdvertisementDemandService;
 import org.egov.adtax.service.AdvertisementPermitDetailService;
-import org.egov.adtax.service.AdvertisementPermitDetailUpdateIndexService;
 import org.egov.adtax.service.AdvertisementService;
 import org.egov.adtax.service.AgencyWiseCollectionService;
+import org.egov.adtax.service.es.AdvertisementPermitDetailUpdateIndexService;
 import org.egov.adtax.utils.constants.AdvertisementTaxConstants;
 import org.egov.collection.entity.ReceiptDetail;
 import org.egov.collection.integration.models.BillReceiptInfo;
@@ -67,12 +74,6 @@ import org.hibernate.Session;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
-import java.math.BigDecimal;
-import java.util.Date;
-import java.util.List;
 
 @Service
 @Transactional(readOnly = true)

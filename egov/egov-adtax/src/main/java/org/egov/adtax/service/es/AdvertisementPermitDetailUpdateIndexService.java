@@ -38,9 +38,17 @@
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
 
-package org.egov.adtax.service;
+package org.egov.adtax.service.es;
 
-import org.egov.adtax.elasticSearch.service.AdvertisementIndexService;
+import static org.apache.commons.lang3.StringUtils.EMPTY;
+
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+
 import org.egov.adtax.entity.AdvertisementPermitDetail;
 import org.egov.adtax.utils.constants.AdvertisementTaxConstants;
 import org.egov.commons.entity.Source;
@@ -58,19 +66,10 @@ import org.hibernate.Session;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-
-import static org.apache.commons.lang3.StringUtils.EMPTY;
-
 @Service
 public class AdvertisementPermitDetailUpdateIndexService {
-
     private static final String ADTAX_APPLICATION_VIEW = "/adtax/hoarding/view/%s";
-    @PersistenceContext
+	    @PersistenceContext
 	    private EntityManager entityManager;
 
 	    @Autowired
@@ -166,27 +165,28 @@ public class AdvertisementPermitDetailUpdateIndexService {
 	        	 //create advertisement index
 	        	 advertisementIndexService.createAdvertisementIndex(advertisementPermitDetail);
 	        	 
-	         } else {   // Create New ApplicationIndex on create advertisement
-	             if (advertisementPermitDetail.getApplicationDate() == null)
-	            	 advertisementPermitDetail.setApplicationDate(new Date());
-	             if (advertisementPermitDetail.getApplicationNumber() == null)
-	            	 advertisementPermitDetail.setApplicationNumber(advertisementPermitDetail.getApplicationNumber());
-	             if (applicationIndex == null) {
-	                 String applicantName=advertisementPermitDetail.getAgency()!=null?advertisementPermitDetail.getAgency().getName():
-	                	 advertisementPermitDetail.getOwnerDetail();
-	                 String address=advertisementPermitDetail.getAgency()!=null?advertisementPermitDetail.getAgency().getAddress():
-	                	 advertisementPermitDetail.getOwnerDetail();
-					 applicationIndex = ApplicationIndex.builder().withModuleName(AdvertisementTaxConstants.MODULE_NAME)
-							 .withApplicationNumber(advertisementPermitDetail.getApplicationNumber()).withApplicationDate(advertisementPermitDetail.getApplicationDate())
-							 .withApplicationType(advertisementPermitDetail.getState().getNatureOfTask()).withApplicantName(applicantName)
-							 .withStatus(advertisementPermitDetail.getStatus().getDescription()).withUrl(
-									 String.format(ADTAX_APPLICATION_VIEW, advertisementPermitDetail.getId()))
-							 .withApplicantAddress(address).withOwnername(user.getUsername() + "::" + user.getName())
-							 .withChannel(Source.SYSTEM.toString()).withMobileNumber(advertisementPermitDetail.getAgency()!=null?
-                                     advertisementPermitDetail.getAgency().getMobileNumber() : EMPTY).withClosed(ClosureStatus.NO)
-							 .withApproved(ApprovalStatus.INPROGRESS).build();
-	                 applicationIndexService.createApplicationIndex(applicationIndex);
-	             }
+	         } else {
+	        	 
+	         if (advertisementPermitDetail.getApplicationDate() == null)
+	        	 advertisementPermitDetail.setApplicationDate(new Date());
+             if (advertisementPermitDetail.getApplicationNumber() == null)
+            	 advertisementPermitDetail.setApplicationNumber(advertisementPermitDetail.getApplicationNumber());
+             if (applicationIndex == null) {
+                 String applicantName=advertisementPermitDetail.getAgency()!=null?advertisementPermitDetail.getAgency().getName():
+                	 advertisementPermitDetail.getOwnerDetail();
+                 String address=advertisementPermitDetail.getAgency()!=null?advertisementPermitDetail.getAgency().getAddress():
+                	 advertisementPermitDetail.getOwnerDetail();
+				 applicationIndex = ApplicationIndex.builder().withModuleName(AdvertisementTaxConstants.MODULE_NAME)
+						 .withApplicationNumber(advertisementPermitDetail.getApplicationNumber()).withApplicationDate(advertisementPermitDetail.getApplicationDate())
+						 .withApplicationType(advertisementPermitDetail.getState().getNatureOfTask()).withApplicantName(applicantName)
+						 .withStatus(advertisementPermitDetail.getStatus().getDescription()).withUrl(
+								 String.format(ADTAX_APPLICATION_VIEW, advertisementPermitDetail.getId()))
+						 .withApplicantAddress(address).withOwnername(user.getUsername() + "::" + user.getName())
+						 .withChannel(Source.SYSTEM.toString()).withMobileNumber(advertisementPermitDetail.getAgency()!=null?
+                                 advertisementPermitDetail.getAgency().getMobileNumber() : EMPTY).withClosed(ClosureStatus.NO)
+						 .withApproved(ApprovalStatus.INPROGRESS).build();
+                 applicationIndexService.createApplicationIndex(applicationIndex);
+                 }
 	         }
 	    }
 }
