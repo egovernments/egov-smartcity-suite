@@ -40,9 +40,9 @@
 
 package org.egov.works.elasticsearch.model;
 
-import org.springframework.data.elasticsearch.annotations.Field;
-import org.springframework.data.elasticsearch.annotations.FieldType;
-
+/**
+ * @author venki
+ */
 public class WorksMilestoneIndexResponse {
 
     private String name;
@@ -57,221 +57,103 @@ public class WorksMilestoneIndexResponse {
 
     private Double totalpaidamountinlakhs;
 
-    @Field(type = FieldType.Double)
     private Double jan01to15actual;
 
-    @Field(type = FieldType.Double)
     private Double jan01to15target;
 
-    @Field(type = FieldType.Double)
-    private Double jan01to15variance;
-
-    @Field(type = FieldType.Double)
     private Double jan16to31actual;
 
-    @Field(type = FieldType.Double)
     private Double jan16to31target;
 
-    @Field(type = FieldType.Double)
-    private Double jan16to31variance;
-
-    @Field(type = FieldType.Double)
     private Double feb01to15actual;
 
-    @Field(type = FieldType.Double)
     private Double feb01to15target;
 
-    @Field(type = FieldType.Double)
-    private Double feb01to15variance;
-
-    @Field(type = FieldType.Double)
     private Double feb16to28or29actual;
 
-    @Field(type = FieldType.Double)
     private Double feb16to28or29target;
 
-    @Field(type = FieldType.Double)
-    private Double feb16to28or29variance;
-
-    @Field(type = FieldType.Double)
     private Double mar01to15actual;
 
-    @Field(type = FieldType.Double)
     private Double mar01to15target;
 
-    @Field(type = FieldType.Double)
-    private Double mar01to15variance;
-
-    @Field(type = FieldType.Double)
     private Double mar16to31actual;
 
-    @Field(type = FieldType.Double)
     private Double mar16to31target;
 
-    @Field(type = FieldType.Double)
-    private Double mar16to31variance;
-
-    @Field(type = FieldType.Double)
     private Double apr01to15actual;
 
-    @Field(type = FieldType.Double)
     private Double apr01to15target;
 
-    @Field(type = FieldType.Double)
-    private Double apr01to15variance;
-
-    @Field(type = FieldType.Double)
     private Double apr16to30actual;
 
-    @Field(type = FieldType.Double)
     private Double apr16to30target;
 
-    @Field(type = FieldType.Double)
-    private Double apr16to30variance;
-
-    @Field(type = FieldType.Double)
     private Double may01to15actual;
 
-    @Field(type = FieldType.Double)
     private Double may01to15target;
 
-    @Field(type = FieldType.Double)
-    private Double may01to15variance;
-
-    @Field(type = FieldType.Double)
     private Double may16to31actual;
 
-    @Field(type = FieldType.Double)
     private Double may16to31target;
 
-    @Field(type = FieldType.Double)
-    private Double may16to31variance;
-
-    @Field(type = FieldType.Double)
     private Double jun01to15actual;
 
-    @Field(type = FieldType.Double)
     private Double jun01to15target;
 
-    @Field(type = FieldType.Double)
-    private Double jun01to15variance;
-
-    @Field(type = FieldType.Double)
     private Double jun16to30actual;
 
-    @Field(type = FieldType.Double)
     private Double jun16to30target;
 
-    @Field(type = FieldType.Double)
-    private Double jun16to30variance;
-
-    @Field(type = FieldType.Double)
     private Double jul01to15actual;
 
-    @Field(type = FieldType.Double)
     private Double jul01to15target;
 
-    @Field(type = FieldType.Double)
-    private Double jul01to15variance;
-
-    @Field(type = FieldType.Double)
     private Double jul16to31actual;
 
-    @Field(type = FieldType.Double)
     private Double jul16to31target;
 
-    @Field(type = FieldType.Double)
-    private Double jul16to31variance;
-
-    @Field(type = FieldType.Double)
     private Double aug01to15actual;
 
-    @Field(type = FieldType.Double)
     private Double aug01to15target;
 
-    @Field(type = FieldType.Double)
-    private Double aug01to15variance;
-
-    @Field(type = FieldType.Double)
     private Double aug16to31actual;
 
-    @Field(type = FieldType.Double)
     private Double aug16to31target;
 
-    @Field(type = FieldType.Double)
-    private Double aug16to31variance;
-
-    @Field(type = FieldType.Double)
     private Double sep01to15actual;
 
-    @Field(type = FieldType.Double)
     private Double sep01to15target;
 
-    @Field(type = FieldType.Double)
-    private Double sep01to15variance;
-
-    @Field(type = FieldType.Double)
     private Double sep16to30actual;
 
-    @Field(type = FieldType.Double)
     private Double sep16to30target;
 
-    @Field(type = FieldType.Double)
-    private Double sep16to30variance;
-
-    @Field(type = FieldType.Double)
     private Double oct01to15actual;
 
-    @Field(type = FieldType.Double)
     private Double oct01to15target;
 
-    @Field(type = FieldType.Double)
-    private Double oct01to15variance;
-
-    @Field(type = FieldType.Double)
     private Double oct16to31actual;
 
-    @Field(type = FieldType.Double)
     private Double oct16to31target;
 
-    @Field(type = FieldType.Double)
-    private Double oct16to31variance;
-
-    @Field(type = FieldType.Double)
     private Double nov01to15actual;
 
-    @Field(type = FieldType.Double)
     private Double nov01to15target;
 
-    @Field(type = FieldType.Double)
-    private Double nov01to15variance;
-
-    @Field(type = FieldType.Double)
     private Double nov16to30actual;
 
-    @Field(type = FieldType.Double)
     private Double nov16to30target;
 
-    @Field(type = FieldType.Double)
-    private Double nov16to30variance;
-
-    @Field(type = FieldType.Double)
     private Double dec01to15actual;
 
-    @Field(type = FieldType.Double)
     private Double dec01to15target;
 
-    @Field(type = FieldType.Double)
-    private Double dec01to15variance;
-
-    @Field(type = FieldType.Double)
     private Double dec16to31actual;
 
-    @Field(type = FieldType.Double)
     private Double dec16to31target;
 
-    @Field(type = FieldType.Double)
-    private Double dec16to31variance;
+    private String reporttype;
 
     public String getName() {
         return name;
@@ -338,11 +220,10 @@ public class WorksMilestoneIndexResponse {
     }
 
     public Double getJan01to15variance() {
-        return jan01to15variance;
-    }
-
-    public void setJan01to15variance(final Double jan01to15variance) {
-        this.jan01to15variance = jan01to15variance;
+        if (jan01to15actual != null && !jan01to15actual.isNaN() && jan01to15actual != null && !jan01to15actual.isNaN())
+            return jan01to15actual - jan01to15actual;
+        else
+            return null;
     }
 
     public Double getJan16to31actual() {
@@ -362,11 +243,10 @@ public class WorksMilestoneIndexResponse {
     }
 
     public Double getJan16to31variance() {
-        return jan16to31variance;
-    }
-
-    public void setJan16to31variance(final Double jan16to31variance) {
-        this.jan16to31variance = jan16to31variance;
+        if (jan16to31actual != null && !jan16to31actual.isNaN() && jan16to31target != null && !jan16to31target.isNaN())
+            return jan16to31actual - jan16to31target;
+        else
+            return null;
     }
 
     public Double getFeb01to15actual() {
@@ -386,11 +266,10 @@ public class WorksMilestoneIndexResponse {
     }
 
     public Double getFeb01to15variance() {
-        return feb01to15variance;
-    }
-
-    public void setFeb01to15variance(final Double feb01to15variance) {
-        this.feb01to15variance = feb01to15variance;
+        if (feb01to15actual != null && !feb01to15actual.isNaN() && feb01to15target != null && !feb01to15target.isNaN())
+            return feb01to15actual - feb01to15target;
+        else
+            return null;
     }
 
     public Double getFeb16to28or29actual() {
@@ -410,11 +289,11 @@ public class WorksMilestoneIndexResponse {
     }
 
     public Double getFeb16to28or29variance() {
-        return feb16to28or29variance;
-    }
-
-    public void setFeb16to28or29variance(final Double feb16to28or29variance) {
-        this.feb16to28or29variance = feb16to28or29variance;
+        if (feb16to28or29actual != null && !feb16to28or29actual.isNaN() && feb16to28or29target != null
+                && !feb16to28or29target.isNaN())
+            return feb16to28or29actual - feb16to28or29target;
+        else
+            return null;
     }
 
     public Double getMar01to15actual() {
@@ -434,11 +313,10 @@ public class WorksMilestoneIndexResponse {
     }
 
     public Double getMar01to15variance() {
-        return mar01to15variance;
-    }
-
-    public void setMar01to15variance(final Double mar01to15variance) {
-        this.mar01to15variance = mar01to15variance;
+        if (mar01to15actual != null && !mar01to15actual.isNaN() && mar01to15target != null && !mar01to15target.isNaN())
+            return mar01to15actual - mar01to15target;
+        else
+            return null;
     }
 
     public Double getMar16to31actual() {
@@ -458,11 +336,10 @@ public class WorksMilestoneIndexResponse {
     }
 
     public Double getMar16to31variance() {
-        return mar16to31variance;
-    }
-
-    public void setMar16to31variance(final Double mar16to31variance) {
-        this.mar16to31variance = mar16to31variance;
+        if (mar16to31actual != null && !mar16to31actual.isNaN() && mar16to31target != null && !mar16to31target.isNaN())
+            return mar16to31actual - mar16to31target;
+        else
+            return null;
     }
 
     public Double getApr01to15actual() {
@@ -482,11 +359,10 @@ public class WorksMilestoneIndexResponse {
     }
 
     public Double getApr01to15variance() {
-        return apr01to15variance;
-    }
-
-    public void setApr01to15variance(final Double apr01to15variance) {
-        this.apr01to15variance = apr01to15variance;
+        if (apr01to15actual != null && !apr01to15actual.isNaN() && apr01to15target != null && !apr01to15target.isNaN())
+            return apr01to15actual - apr01to15target;
+        else
+            return null;
     }
 
     public Double getApr16to30actual() {
@@ -506,11 +382,10 @@ public class WorksMilestoneIndexResponse {
     }
 
     public Double getApr16to30variance() {
-        return apr16to30variance;
-    }
-
-    public void setApr16to30variance(final Double apr16to30variance) {
-        this.apr16to30variance = apr16to30variance;
+        if (apr16to30actual != null && !apr16to30actual.isNaN() && apr16to30target != null && !apr16to30target.isNaN())
+            return apr16to30actual - apr16to30target;
+        else
+            return null;
     }
 
     public Double getMay01to15actual() {
@@ -530,11 +405,10 @@ public class WorksMilestoneIndexResponse {
     }
 
     public Double getMay01to15variance() {
-        return may01to15variance;
-    }
-
-    public void setMay01to15variance(final Double may01to15variance) {
-        this.may01to15variance = may01to15variance;
+        if (may01to15actual != null && !may01to15actual.isNaN() && may01to15target != null && !may01to15target.isNaN())
+            return may01to15actual - may01to15target;
+        else
+            return null;
     }
 
     public Double getMay16to31actual() {
@@ -554,11 +428,10 @@ public class WorksMilestoneIndexResponse {
     }
 
     public Double getMay16to31variance() {
-        return may16to31variance;
-    }
-
-    public void setMay16to31variance(final Double may16to31variance) {
-        this.may16to31variance = may16to31variance;
+        if (may16to31actual != null && !may16to31actual.isNaN() && may16to31target != null && !may16to31target.isNaN())
+            return may16to31actual - may16to31target;
+        else
+            return null;
     }
 
     public Double getJun01to15actual() {
@@ -578,11 +451,11 @@ public class WorksMilestoneIndexResponse {
     }
 
     public Double getJun01to15variance() {
-        return jun01to15variance;
-    }
 
-    public void setJun01to15variance(final Double jun01to15variance) {
-        this.jun01to15variance = jun01to15variance;
+        if (jun01to15actual != null && !jun01to15actual.isNaN() && jun01to15target != null && !jun01to15target.isNaN())
+            return jun01to15actual - jun01to15target;
+        else
+            return null;
     }
 
     public Double getJun16to30actual() {
@@ -602,11 +475,10 @@ public class WorksMilestoneIndexResponse {
     }
 
     public Double getJun16to30variance() {
-        return jun16to30variance;
-    }
-
-    public void setJun16to30variance(final Double jun16to30variance) {
-        this.jun16to30variance = jun16to30variance;
+        if (jun16to30actual != null && !jun16to30actual.isNaN() && jun16to30target != null && !jun16to30target.isNaN())
+            return jun16to30actual - jun16to30target;
+        else
+            return null;
     }
 
     public Double getJul01to15actual() {
@@ -626,11 +498,10 @@ public class WorksMilestoneIndexResponse {
     }
 
     public Double getJul01to15variance() {
-        return jul01to15variance;
-    }
-
-    public void setJul01to15variance(final Double jul01to15variance) {
-        this.jul01to15variance = jul01to15variance;
+        if (jul01to15actual != null && !jul01to15actual.isNaN() && jul01to15target != null && !jul01to15target.isNaN())
+            return jul01to15actual - jul01to15target;
+        else
+            return null;
     }
 
     public Double getJul16to31actual() {
@@ -650,11 +521,10 @@ public class WorksMilestoneIndexResponse {
     }
 
     public Double getJul16to31variance() {
-        return jul16to31variance;
-    }
-
-    public void setJul16to31variance(final Double jul16to31variance) {
-        this.jul16to31variance = jul16to31variance;
+        if (jul16to31actual != null && !jul16to31actual.isNaN() && jul16to31target != null && !jul16to31target.isNaN())
+            return jul16to31actual - jul16to31target;
+        else
+            return null;
     }
 
     public Double getAug01to15actual() {
@@ -674,11 +544,10 @@ public class WorksMilestoneIndexResponse {
     }
 
     public Double getAug01to15variance() {
-        return aug01to15variance;
-    }
-
-    public void setAug01to15variance(final Double aug01to15variance) {
-        this.aug01to15variance = aug01to15variance;
+        if (aug01to15actual != null && !aug01to15actual.isNaN() && aug01to15target != null && !aug01to15target.isNaN())
+            return aug01to15actual - aug01to15target;
+        else
+            return null;
     }
 
     public Double getAug16to31actual() {
@@ -698,11 +567,10 @@ public class WorksMilestoneIndexResponse {
     }
 
     public Double getAug16to31variance() {
-        return aug16to31variance;
-    }
-
-    public void setAug16to31variance(final Double aug16to31variance) {
-        this.aug16to31variance = aug16to31variance;
+        if (aug16to31actual != null && !aug16to31actual.isNaN() && aug16to31target != null && !aug16to31target.isNaN())
+            return aug16to31actual - aug16to31target;
+        else
+            return null;
     }
 
     public Double getSep01to15actual() {
@@ -722,11 +590,10 @@ public class WorksMilestoneIndexResponse {
     }
 
     public Double getSep01to15variance() {
-        return sep01to15variance;
-    }
-
-    public void setSep01to15variance(final Double sep01to15variance) {
-        this.sep01to15variance = sep01to15variance;
+        if (sep01to15actual != null && !sep01to15actual.isNaN() && sep01to15target != null && !sep01to15target.isNaN())
+            return sep01to15actual - sep01to15target;
+        else
+            return null;
     }
 
     public Double getSep16to30actual() {
@@ -746,11 +613,10 @@ public class WorksMilestoneIndexResponse {
     }
 
     public Double getSep16to30variance() {
-        return sep16to30variance;
-    }
-
-    public void setSep16to30variance(final Double sep16to30variance) {
-        this.sep16to30variance = sep16to30variance;
+        if (sep16to30actual != null && !sep16to30actual.isNaN() && sep16to30target != null && !sep16to30target.isNaN())
+            return sep16to30actual - sep16to30target;
+        else
+            return null;
     }
 
     public Double getOct01to15actual() {
@@ -770,11 +636,10 @@ public class WorksMilestoneIndexResponse {
     }
 
     public Double getOct01to15variance() {
-        return (oct01to15actual != null ? oct01to15actual : 0) - (oct01to15target != null ? oct01to15target : 0);
-    }
-
-    public void setOct01to15variance(final Double oct01to15variance) {
-        this.oct01to15variance = oct01to15variance;
+        if (oct01to15actual != null && !oct01to15actual.isNaN() && oct01to15target != null && !oct01to15target.isNaN())
+            return oct01to15actual - oct01to15target;
+        else
+            return null;
     }
 
     public Double getOct16to31actual() {
@@ -794,11 +659,10 @@ public class WorksMilestoneIndexResponse {
     }
 
     public Double getOct16to31variance() {
-        return (oct16to31actual != null ? oct16to31actual : 0) - (oct16to31target != null ? oct16to31target : 0);
-    }
-
-    public void setOct16to31variance(final Double oct16to31variance) {
-        this.oct16to31variance = oct16to31variance;
+        if (oct16to31actual != null && !oct16to31actual.isNaN() && oct16to31target != null && !oct16to31target.isNaN())
+            return oct16to31actual - oct16to31target;
+        else
+            return null;
     }
 
     public Double getNov01to15actual() {
@@ -818,11 +682,10 @@ public class WorksMilestoneIndexResponse {
     }
 
     public Double getNov01to15variance() {
-        return nov01to15variance;
-    }
-
-    public void setNov01to15variance(final Double nov01to15variance) {
-        this.nov01to15variance = nov01to15variance;
+        if (nov01to15actual != null && !nov01to15actual.isNaN() && nov01to15target != null && !nov01to15target.isNaN())
+            return nov01to15actual - nov01to15target;
+        else
+            return null;
     }
 
     public Double getNov16to30actual() {
@@ -842,11 +705,10 @@ public class WorksMilestoneIndexResponse {
     }
 
     public Double getNov16to30variance() {
-        return nov16to30variance;
-    }
-
-    public void setNov16to30variance(final Double nov16to30variance) {
-        this.nov16to30variance = nov16to30variance;
+        if (nov16to30actual != null && !nov16to30actual.isNaN() && nov16to30target != null && !nov16to30target.isNaN())
+            return nov16to30actual - nov16to30target;
+        else
+            return null;
     }
 
     public Double getDec01to15actual() {
@@ -866,11 +728,10 @@ public class WorksMilestoneIndexResponse {
     }
 
     public Double getDec01to15variance() {
-        return dec01to15variance;
-    }
-
-    public void setDec01to15variance(final Double dec01to15variance) {
-        this.dec01to15variance = dec01to15variance;
+        if (dec01to15actual != null && !dec01to15actual.isNaN() && dec01to15target != null && !dec01to15target.isNaN())
+            return dec01to15actual - dec01to15target;
+        else
+            return null;
     }
 
     public Double getDec16to31actual() {
@@ -890,11 +751,18 @@ public class WorksMilestoneIndexResponse {
     }
 
     public Double getDec16to31variance() {
-        return dec16to31variance;
+        if (dec16to31actual != null && !dec16to31actual.isNaN() && dec16to31target != null && !dec16to31target.isNaN())
+            return dec16to31actual - dec16to31target;
+        else
+            return null;
     }
 
-    public void setDec16to31variance(final Double dec16to31variance) {
-        this.dec16to31variance = dec16to31variance;
+    public String getReporttype() {
+        return reporttype;
+    }
+
+    public void setReporttype(final String reporttype) {
+        this.reporttype = reporttype;
     }
 
     public Double getFinancialprogress() {

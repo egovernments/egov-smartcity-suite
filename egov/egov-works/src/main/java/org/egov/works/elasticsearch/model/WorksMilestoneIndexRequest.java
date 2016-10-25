@@ -42,15 +42,23 @@ package org.egov.works.elasticsearch.model;
 
 import java.util.List;
 
+/**
+ * @author venki
+ */
+
 public class WorksMilestoneIndexRequest {
 
     private String typeofwork;
 
     private String distname;
 
+    private String ulbname;
+
     private String ulbcode;
 
     private List<String> ulbcodes;
+
+    private String reportType;
 
     public String getTypeofwork() {
         return typeofwork;
@@ -76,12 +84,28 @@ public class WorksMilestoneIndexRequest {
         this.ulbcode = ulbcode;
     }
 
+    public String getUlbname() {
+        return ulbname;
+    }
+
+    public void setUlbname(final String ulbname) {
+        this.ulbname = ulbname;
+    }
+
     public List<String> getUlbcodes() {
         return ulbcodes;
     }
 
     public void setUlbcodes(final List<String> ulbcodes) {
         this.ulbcodes = ulbcodes;
+    }
+
+    public String getReportType() {
+        return reportType;
+    }
+
+    public void setReportType(final String reportType) {
+        this.reportType = reportType;
     }
 
 }

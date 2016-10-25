@@ -44,8 +44,6 @@ import java.io.IOException;
 import java.util.Arrays;
 import java.util.List;
 
-import org.codehaus.jackson.JsonGenerationException;
-import org.codehaus.jackson.map.JsonMappingException;
 import org.egov.works.elasticsearch.model.WorksMilestoneIndexRequest;
 import org.egov.works.elasticsearch.model.WorksMilestoneIndexResponse;
 import org.egov.works.elasticsearch.service.WorksMilestoneIndexService;
@@ -63,6 +61,9 @@ import org.springframework.web.bind.annotation.RestController;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
+/**
+ * @author venki
+ */
 @RestController
 @RequestMapping(value = "/public/worksdashboard")
 public class StateLevelDashboardController {
@@ -74,53 +75,49 @@ public class StateLevelDashboardController {
     @Autowired
     private WorksMilestoneIndexJsonAdaptor worksMilestoneIndexJsonAdaptor;
 
-    /**
-     * Gives the State Wise TypeOfWork Details across all ULBs
-     *
-     * @return string
-     * @throws IOException
-     * @throws JsonMappingException
-     * @throws JsonGenerationException
-     */
     @RequestMapping(value = "/statewisetypeofwork", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
     public @ResponseBody String getStateWiseTypeOfWorkDetails() throws IOException {
         final Long startTime = System.currentTimeMillis();
+        final WorksMilestoneIndexRequest worksMilestoneIndexRequest = new WorksMilestoneIndexRequest();
+        worksMilestoneIndexRequest.setReportType("SECTOR");
         final List<WorksMilestoneIndexResponse> resultList = worksMilestoneIndexService
-                .returnTypeOfWorkWiseAggregationResults(new WorksMilestoneIndexRequest(), true, "lineestimatetypeofwork");
+                .returnAggregationResults(worksMilestoneIndexRequest, true, "lineestimatetypeofwork");
         final String result = new StringBuilder("{ \"data\":").append(toStateWiseTypeOfWorkDetailsJson(resultList))
                 .append("}").toString();
         final Long timeTaken = System.currentTimeMillis() - startTime;
-        LOGGER.debug("Time taken to serve statecityinfo is : " + timeTaken + " (millisecs)");
+        LOGGER.debug("Time taken to serve getStateWiseTypeOfWorkDetails is : " + timeTaken + " (millisecs)");
         return result;
     }
 
     @RequestMapping(value = "/districtwise-bytypeofwork", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
-    public @ResponseBody String getDistrictWiseDistrictDetails(@RequestParam("typeofwork") final String typeofwork)
+    public @ResponseBody String getDistrictWiseByTypeOfWork(@RequestParam("typeofwork") final String typeofwork)
             throws IOException {
         final WorksMilestoneIndexRequest worksMilestoneIndexRequest = new WorksMilestoneIndexRequest();
         worksMilestoneIndexRequest.setTypeofwork(typeofwork);
+        worksMilestoneIndexRequest.setReportType("District Name");
         final Long startTime = System.currentTimeMillis();
         final List<WorksMilestoneIndexResponse> resultList = worksMilestoneIndexService
-                .returnTypeOfWorkWiseAggregationResults(worksMilestoneIndexRequest, true, "distname");
+                .returnAggregationResults(worksMilestoneIndexRequest, true, "distname");
         final String result = new StringBuilder("{ \"data\":").append(toStateWiseTypeOfWorkDetailsJson(resultList))
                 .append("}").toString();
         final Long timeTaken = System.currentTimeMillis() - startTime;
-        LOGGER.debug("Time taken to serve statecityinfo is : " + timeTaken + " (millisecs)");
+        LOGGER.debug("Time taken to serve getDistrictWiseDistrictDetails is : " + timeTaken + " (millisecs)");
         return result;
     }
 
     @RequestMapping(value = "/ulbwise-bytypeofwork", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
-    public @ResponseBody String getUlbWiseDistrictDetails(@RequestParam("typeofwork") final String typeofwork)
+    public @ResponseBody String getUlbWiseByTypeOfWork(@RequestParam("typeofwork") final String typeofwork)
             throws IOException {
         final WorksMilestoneIndexRequest worksMilestoneIndexRequest = new WorksMilestoneIndexRequest();
         worksMilestoneIndexRequest.setTypeofwork(typeofwork);
+        worksMilestoneIndexRequest.setReportType("ULB Name");
         final Long startTime = System.currentTimeMillis();
         final List<WorksMilestoneIndexResponse> resultList = worksMilestoneIndexService
-                .returnTypeOfWorkWiseAggregationResults(worksMilestoneIndexRequest, true, "ulbname");
+                .returnAggregationResults(worksMilestoneIndexRequest, true, "ulbname");
         final String result = new StringBuilder("{ \"data\":").append(toStateWiseTypeOfWorkDetailsJson(resultList))
                 .append("}").toString();
         final Long timeTaken = System.currentTimeMillis() - startTime;
-        LOGGER.debug("Time taken to serve statecityinfo is : " + timeTaken + " (millisecs)");
+        LOGGER.debug("Time taken to serve getUlbWiseDistrictDetails is : " + timeTaken + " (millisecs)");
         return result;
     }
 
@@ -130,13 +127,14 @@ public class StateLevelDashboardController {
         final WorksMilestoneIndexRequest worksMilestoneIndexRequest = new WorksMilestoneIndexRequest();
         worksMilestoneIndexRequest.setTypeofwork(typeofwork);
         worksMilestoneIndexRequest.setDistname(districtname);
+        worksMilestoneIndexRequest.setReportType("ULB Name");
         final Long startTime = System.currentTimeMillis();
         final List<WorksMilestoneIndexResponse> resultList = worksMilestoneIndexService
-                .returnTypeOfWorkWiseAggregationResults(worksMilestoneIndexRequest, true, "ulbname");
+                .returnAggregationResults(worksMilestoneIndexRequest, true, "ulbname");
         final String result = new StringBuilder("{ \"data\":").append(toStateWiseTypeOfWorkDetailsJson(resultList))
                 .append("}").toString();
         final Long timeTaken = System.currentTimeMillis() - startTime;
-        LOGGER.debug("Time taken to serve statecityinfo is : " + timeTaken + " (millisecs)");
+        LOGGER.debug("Time taken to serve getUlbWiseByDistrictAndTypeOfWork is : " + timeTaken + " (millisecs)");
         return result;
     }
 
@@ -146,13 +144,14 @@ public class StateLevelDashboardController {
         final WorksMilestoneIndexRequest worksMilestoneIndexRequest = new WorksMilestoneIndexRequest();
         worksMilestoneIndexRequest.setTypeofwork(typeofwork);
         worksMilestoneIndexRequest.setUlbcodes(Arrays.asList(ulbcodes.split(",")));
+        worksMilestoneIndexRequest.setReportType("ULB Name");
         final Long startTime = System.currentTimeMillis();
         final List<WorksMilestoneIndexResponse> resultList = worksMilestoneIndexService
-                .returnTypeOfWorkWiseAggregationResults(worksMilestoneIndexRequest, true, "ulbname");
+                .returnAggregationResults(worksMilestoneIndexRequest, true, "ulbname");
         final String result = new StringBuilder("{ \"data\":").append(toStateWiseTypeOfWorkDetailsJson(resultList))
                 .append("}").toString();
         final Long timeTaken = System.currentTimeMillis() - startTime;
-        LOGGER.debug("Time taken to serve statecityinfo is : " + timeTaken + " (millisecs)");
+        LOGGER.debug("Time taken to serve getUlbWiseByTypeOfWorkAndUlbs is : " + timeTaken + " (millisecs)");
         return result;
     }
 
