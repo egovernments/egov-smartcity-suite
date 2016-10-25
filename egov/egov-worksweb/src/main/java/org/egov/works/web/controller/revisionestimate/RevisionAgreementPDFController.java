@@ -49,6 +49,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
 import org.egov.infra.config.core.ApplicationThreadLocals;
+import org.egov.infra.persistence.entity.component.Money;
 import org.egov.infra.reporting.engine.ReportConstants;
 import org.egov.infra.reporting.engine.ReportOutput;
 import org.egov.infra.reporting.engine.ReportRequest;
@@ -56,7 +57,10 @@ import org.egov.infra.reporting.engine.ReportService;
 import org.egov.infra.utils.DateUtils;
 import org.egov.infra.web.utils.WebUtils;
 import org.egov.works.abstractestimate.entity.AbstractEstimate;
+import org.egov.works.abstractestimate.entity.Activity;
+import org.egov.works.letterofacceptance.service.WorkOrderActivityService;
 import org.egov.works.revisionestimate.entity.RevisionAbstractEstimate;
+import org.egov.works.revisionestimate.entity.enums.RevisionType;
 import org.egov.works.revisionestimate.service.RevisionEstimateService;
 import org.egov.works.utils.WorksUtils;
 import org.egov.works.workorder.entity.WorkOrder;
@@ -93,6 +97,9 @@ public class RevisionAgreementPDFController {
     @Autowired
     private ReportService reportService;
 
+    @Autowired
+    private WorkOrderActivityService workOrderActivityService;
+
     @RequestMapping(value = "/revisionagreementPDF/{revisionEstimateId}", method = RequestMethod.GET)
     public @ResponseBody ResponseEntity<byte[]> generateContractorBillPDF(final HttpServletRequest request,
             @PathVariable("revisionEstimateId") final Long revisionEstimateId, final HttpSession session)
@@ -117,14 +124,12 @@ public class RevisionAgreementPDFController {
             final String url = WebUtils.extractRequestDomainURL(request, false);
             reportParams.put("cityLogo", url.concat(ReportConstants.IMAGE_CONTEXT_PATH)
                     .concat((String) request.getSession().getAttribute("citylogo")));
-            BigDecimal suplimentAgreementAmount = BigDecimal.ZERO;
-            for (final WorkOrderActivity rwoa : revisionWorkOrderEstimate.getWorkOrderActivities())
-                suplimentAgreementAmount = suplimentAgreementAmount.add(new BigDecimal(rwoa.getApprovedAmount()));
 
             final String cityName = ApplicationThreadLocals.getMunicipalityName();
             reportParams.put("cityName", cityName);
             reportParams.put("revisionEstimate", revisionEstimate);
-            reportParams.put("suplimentAgreementAmount", suplimentAgreementAmount.setScale(2, BigDecimal.ROUND_DOWN));
+            reportParams.put("suplimentAgreementAmount",
+                    BigDecimal.valueOf(revisionworkOrder.getWorkOrderAmount()).setScale(2, BigDecimal.ROUND_UP).toString());
             reportParams.put("workOrderNumber",
                     revisionworkOrder.getWorkOrderNumber() != null ? revisionworkOrder.getWorkOrderNumber() : "");
             reportParams.put("workOrderDate", revisionworkOrder.getWorkOrderDate() != null
@@ -158,10 +163,38 @@ public class RevisionAgreementPDFController {
             reportParams.put("LumpSumActivities", revisionEstimate.getLumpSumActivities());
             revisionEstimateService.prepareChangeQuantityActivities(revisionEstimate);
             reportParams.put("changeQuatityActivities", revisionEstimate.getChangeQuantityActivities());
-            reportParams.put("tenderFinalizedPercentage", revisionworkOrder.getTenderFinalizedPercentage());
+            double tenderAmount = 0;
+            double nonTenderAmount = 0;
+            double approvedAmount = 0;
+            final Double tenderFinalizedPercentage = revisionworkOrder.getParent().getTenderFinalizedPercentage();
+            for (final Activity activity : revisionEstimate.getChangeQuantityActivities()) {
+                final WorkOrderActivity workOrderActivity = workOrderActivityService
+                        .getWorkOrderActivityByActivity(activity.getId());
+                approvedAmount = new Money(activity.getRate() * workOrderActivity.getApprovedQuantity())
+                        .getValue();
+                if (activity.getRevisionType() != null && RevisionType.REDUCED_QUANTITY.equals(activity.getRevisionType()))
+                    approvedAmount = approvedAmount * -1;
+                if (activity != null && activity.getParent() != null
+                        && activity.getParent().getRevisionType() == null
+                        && (RevisionType.ADDITIONAL_QUANTITY.toString()
+                                .equalsIgnoreCase(activity.getRevisionType().toString())
+                                || RevisionType.REDUCED_QUANTITY.toString().equalsIgnoreCase(activity
+                                        .getRevisionType().toString())))
+                    tenderAmount = tenderAmount + approvedAmount;
+                else
+                    nonTenderAmount = nonTenderAmount + approvedAmount;
+            }
+            // Apply percentage for change quantity items for tender items in case of percentage
+            // tender
+            if (!tenderFinalizedPercentage.equals(Double.valueOf(0)))
+                tenderAmount = tenderAmount + tenderAmount * tenderFinalizedPercentage / 100;
+
+            reportParams.put("tenderFinalizedPercentage", tenderFinalizedPercentage);
             reportParams.put("currDate", DateUtils.getFormattedDateWithTimeStamp(new DateTime()));
-            reportParams.put("workValue", revisionEstimate.getWorkValue());
+            reportParams.put("workValue", df.format(revisionEstimate.getWorkValue()));
             reportParams.put("reportRunDate", DateUtils.getFormattedDateWithTimeStamp(new DateTime()));
+            reportParams.put("changeQtyTenderAmount", tenderAmount);
+            reportParams.put("changeQtyNonTenderAmount", nonTenderAmount);
 
             if (!originalEstimate.getEstimateTechnicalSanctions().isEmpty()) {
                 final String technicalSanctionByDesignation = worksUtils.getUserDesignation(originalEstimate

@@ -45,7 +45,6 @@ import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 
 import org.egov.infra.utils.DateUtils;
-import org.egov.works.abstractestimate.entity.Activity;
 import org.egov.works.letterofacceptance.repository.WorkOrderActivityRepository;
 import org.egov.works.revisionestimate.entity.RevisionAbstractEstimate;
 import org.egov.works.revisionestimate.entity.enums.RevisionType;

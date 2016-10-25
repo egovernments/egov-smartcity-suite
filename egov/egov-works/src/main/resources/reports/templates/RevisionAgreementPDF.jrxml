@@ -39,7 +39,7 @@
   ~   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
   -->
 <!-- Created with Jaspersoft Studio version 6.2.2.final using JasperReports Library version 6.2.2  -->
-<!-- 2016-10-24T19:34:43 -->
+<!-- 2016-10-25T16:36:51 -->
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="RevisionAgreementPDF" pageWidth="920" pageHeight="842" orientation="Landscape" columnWidth="880" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" isSummaryNewPage="true" isSummaryWithPageHeaderAndFooter="true" uuid="b859b601-587a-4825-b964-d9bb5328ed8e">
 	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="One Empty Record"/>
 	<property name="com.jaspersoft.studio.unit." value="pixel"/>
@@ -70,7 +70,7 @@
 	<parameter name="modeOfAllotment" class="java.lang.String"/>
 	<parameter name="WINCode" class="java.lang.String"/>
 	<parameter name="amountOfEstimate" class="java.math.BigDecimal"/>
-	<parameter name="suplimentAgreementAmount" class="java.math.BigDecimal"/>
+	<parameter name="suplimentAgreementAmount" class="java.lang.String"/>
 	<parameter name="emd" class="java.lang.String"/>
 	<parameter name="asd" class="java.lang.String"/>
 	<parameter name="headOfAccount" class="java.lang.String"/>
@@ -81,7 +81,9 @@
 	<parameter name="activitySize" class="java.lang.Integer"/>
 	<parameter name="currDate" class="java.lang.String"/>
 	<parameter name="tenderFinalizedPercentage" class="java.lang.Double"/>
-	<parameter name="workValue" class="java.lang.Double"/>
+	<parameter name="changeQtyTenderAmount" class="java.lang.Double"/>
+	<parameter name="changeQtyNonTenderAmount" class="java.lang.Double"/>
+	<parameter name="workValue" class="java.lang.String"/>
 	<queryString>
 		<![CDATA[]]>
 	</queryString>
@@ -249,19 +251,19 @@
 					<property name="com.jaspersoft.studio.unit.x" value="pixel"/>
 					<printWhenExpression><![CDATA[$P{modeOfAllotment}.equalsIgnoreCase("E-Procurement (For above 1 Lakh)")]]></printWhenExpression>
 				</reportElement>
-				<textElement textAlignment="Justified"/>
-				<textFieldExpression><![CDATA["	This is to inform that supplement agreement is issued for the above specified work and the supplement agreement amount is Rs."+$P{suplimentAgreementAmount}+"/-.You can now execute the work as per the revised value."]]></textFieldExpression>
+				<textElement textAlignment="Justified" markup="styled"/>
+				<textFieldExpression><![CDATA["    This is to inform that supplement agreement is issued for the above specified work and the supplement agreement amount is Rs. <style forecolor=\"#000000\" isBold=\"true\" pdfEncoding=\"Cp1252\" isPdfEmbedded=\"true\"> "+ $P{suplimentAgreementAmount} + "</style>/-.You can now execute the work as per the revised value."]]></textFieldExpression>
 			</textField>
 			<staticText>
 				<reportElement stretchType="RelativeToBandHeight" x="621" y="512" width="100" height="20" isPrintInFirstWholeBand="true" uuid="4d351ce5-6b71-43f1-a75b-8f467d8c28a8"/>
 				<text><![CDATA[Yours Faithfullly]]></text>
 			</staticText>
 			<textField>
-				<reportElement stretchType="RelativeToTallestObject" x="621" y="556" width="141" height="30" isPrintInFirstWholeBand="true" uuid="1889092b-9951-4631-9ad3-222022392e34"/>
+				<reportElement stretchType="RelativeToTallestObject" x="621" y="551" width="169" height="30" isPrintInFirstWholeBand="true" uuid="1889092b-9951-4631-9ad3-222022392e34"/>
 				<textFieldExpression><![CDATA[$P{ward} +" , "+ $P{cityName}]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement stretchType="RelativeToTallestObject" x="621" y="530" width="137" height="29" isPrintInFirstWholeBand="true" uuid="6992a57b-c711-426a-b6c0-1f6f3fc62409"/>
+				<reportElement stretchType="RelativeToTallestObject" x="621" y="530" width="169" height="29" isPrintInFirstWholeBand="true" uuid="6992a57b-c711-426a-b6c0-1f6f3fc62409"/>
 				<textFieldExpression><![CDATA[$P{technicalSanctionByDesignation}]]></textFieldExpression>
 			</textField>
 			<staticText>
@@ -298,8 +300,7 @@
 		</band>
 	</pageFooter>
 	<summary>
-		<band height="70" splitType="Stretch">
-			<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
+		<band height="108" splitType="Stretch">
 			<subreport>
 				<reportElement positionType="Float" x="22" y="0" width="506" height="20" uuid="d118533d-c4ca-43f3-aaca-299d3618d00e">
 					<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
@@ -324,9 +325,25 @@
 				<reportElement positionType="Float" x="5" y="44" width="506" height="20" uuid="9a48332f-7595-4933-a2ec-a7d7efabd792">
 					<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
 				</reportElement>
+				<subreportParameter name="tenderFinalizedPercentage">
+					<subreportParameterExpression><![CDATA[$P{tenderFinalizedPercentage}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="changeQtyNonTenderAmount">
+					<subreportParameterExpression><![CDATA[$P{changeQtyNonTenderAmount}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="changeQtyTenderAmount">
+					<subreportParameterExpression><![CDATA[$P{changeQtyTenderAmount}]]></subreportParameterExpression>
+				</subreportParameter>
 				<dataSourceExpression><![CDATA[new net.sf.jasperreports.engine.data.JRBeanCollectionDataSource($P{changeQuatityActivities},false)]]></dataSourceExpression>
 				<subreportExpression><![CDATA[ReportUtil.getTemplateAsStream("RevisionAgreement_ChangeQuantityActivities.jasper")]]></subreportExpression>
 			</subreport>
+			<textField isStretchWithOverflow="true">
+				<reportElement positionType="Float" x="10" y="74" width="830" height="25" uuid="14f64af5-c340-4961-b923-3bb6fc381d34"/>
+				<textElement textAlignment="Left" verticalAlignment="Middle">
+					<font size="12" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA["Supplement agreement amount Rs ( Non tendered + Lump sum + (Tender finalised % *(Change qty))    : " + $P{suplimentAgreementAmount}]]></textFieldExpression>
+			</textField>
 		</band>
 	</summary>
 </jasperReport>

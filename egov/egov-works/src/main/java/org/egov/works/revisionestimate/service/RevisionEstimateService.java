@@ -418,7 +418,7 @@ public class RevisionEstimateService {
             // Apply percentage for change quantity items for tender items in case of percentage
             // tender
             if (activity != null && activity.getParent() != null
-                    && activity.getRevisionType() == null
+                    && activity.getParent().getRevisionType() == null
                     && (RevisionType.ADDITIONAL_QUANTITY.toString()
                             .equalsIgnoreCase(activity.getRevisionType().toString())
                             || RevisionType.REDUCED_QUANTITY.toString().equalsIgnoreCase(activity
