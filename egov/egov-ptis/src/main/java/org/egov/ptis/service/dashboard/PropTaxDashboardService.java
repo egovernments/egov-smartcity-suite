@@ -57,8 +57,6 @@ import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.servlet.http.HttpServletRequest;
 
-import org.apache.http.HttpRequest;
-import org.apache.struts2.ServletActionContext;
 import org.egov.infra.rest.client.SimpleRestClient;
 import org.egov.infra.utils.DateUtils;
 import org.egov.infra.web.utils.WebUtils;
@@ -77,7 +75,6 @@ import org.egov.ptis.bean.dashboard.TaxPayerResponseDetails;
 import org.egov.ptis.bean.dashboard.TotalCollectionStats;
 import org.egov.ptis.constants.PropertyTaxConstants;
 import org.egov.ptis.domain.model.ErrorDetails;
-import org.egov.ptis.domain.service.property.PropertyService;
 import org.egov.ptis.service.elasticsearch.CollectionIndexElasticSearchService;
 import org.egov.ptis.service.elasticsearch.PropertyTaxElasticSearchIndexService;
 import org.hibernate.SQLQuery;
@@ -102,9 +99,6 @@ public class PropTaxDashboardService {
     @PersistenceContext
     private EntityManager entityManager;
     
-    @Autowired
-    private PropertyService propertyService;
-
     @Autowired
     private CollectionIndexElasticSearchService collectionIndexElasticSearchService;
 
@@ -199,13 +193,18 @@ public class PropTaxDashboardService {
         return consolidatedCollectionDetails;
     }
 
+    /**
+     * Gives the total demand for Water Charges
+     * @param request
+     * @return BigDecimal
+     */
     public BigDecimal getWaterChargeTotalDemand(final HttpServletRequest request) {
-        //BigDecimal dd=propertyService.getWaterTaxDues("1148004237",  request);
-        final String wtmsRestURL = format(PropertyTaxConstants.WTMS_TOTALDUE_RESTURL, WebUtils.extractRequestDomainURL(request, false));
+        final String wtmsRestURL = format(PropertyTaxConstants.WTMS_TOTALDEMAND_RESTURL, WebUtils.extractRequestDomainURL(request, false));
         final HashMap<String, Object> waterTaxInfo = simpleRestClient.getRESTResponseAsMap(wtmsRestURL);
         return waterTaxInfo.get("currentDemand") == null ? BigDecimal.ZERO : new BigDecimal(
                 Double.valueOf((Double) waterTaxInfo.get("currentDemand")));
     }
+    
     /**
      * Gives the Collection Index details across all ULBs
      * 
