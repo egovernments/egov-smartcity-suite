@@ -40,7 +40,19 @@
 
 package org.egov.pgr.web.controller.es;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+
+import net.sf.json.JSONObject;
+
+import org.egov.infra.admin.master.entity.Boundary;
+import org.egov.infra.admin.master.entity.Department;
+import org.egov.infra.admin.master.service.BoundaryService;
+import org.egov.infra.admin.master.service.DepartmentService;
+import org.egov.pgr.entity.ComplaintType;
 import org.egov.pgr.entity.es.ComplaintDashBoardRequest;
+import org.egov.pgr.service.ComplaintTypeService;
 import org.egov.pgr.service.es.ComplaintIndexService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
@@ -49,17 +61,66 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.util.HashMap;
-
 @RestController
 @RequestMapping(value = "/complaint/aggregate")
 public class ComplaintIndexController {
 
     @Autowired
     private ComplaintIndexService complaintIndexService;
+    
+    @Autowired
+    private DepartmentService departmentService;
+    
+    @Autowired
+    private ComplaintTypeService complaintTypeService;
+    
+    @Autowired
+    private BoundaryService boundaryService;
 
     @RequestMapping(value = "/grievance", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
     public HashMap<String, Object> getDashBoardResponse(@RequestBody ComplaintDashBoardRequest complaintRequest) {
         return complaintIndexService.getGrievanceReport(complaintRequest);
+    }
+    
+    @RequestMapping(value = "/departments" , method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
+    public List<JSONObject>  getDepartments(){
+    	List<Department> departments = departmentService.getAllDepartments();
+    	List<JSONObject> jsonList = new ArrayList<>();
+    	for(Department department: departments){
+    		JSONObject jsonObject = new JSONObject();
+    		jsonObject.put("name", department.getName());
+    		jsonObject.put("code", department.getCode());
+    		jsonList.add(jsonObject);
+    	}
+    	return jsonList;
+    }
+    
+    @RequestMapping(value = "/complainttypes", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
+    public List<JSONObject> getComplaintTypes(){
+    	List<ComplaintType> complaintTypeList = complaintTypeService.findAll();
+    	List<JSONObject> jsonList = new ArrayList<>();
+    	for(ComplaintType complaintType: complaintTypeList){
+    		JSONObject jsonObject = new JSONObject();
+    		jsonObject.put("name", complaintType.getName());
+    		jsonObject.put("code", complaintType.getCode());
+    		jsonList.add(jsonObject);
+    	}
+    	return jsonList;
+    }
+    
+    @RequestMapping(value = "/wards", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
+    public List<JSONObject> getWards(){
+    	List<Boundary> boundaryList = boundaryService.getActiveBoundariesByBndryTypeNameAndHierarchyTypeName("Ward","ADMINISTRATION");
+    	List<JSONObject> jsonList = new ArrayList<>();
+    	
+    	for(Boundary boundary: boundaryList){
+    		JSONObject jsonObject = new JSONObject();
+    		jsonObject.put("name", boundary.getName());
+    		jsonObject.put("boundaryNumber", boundary.getBoundaryNum());
+    		jsonObject.put("lat", boundary.getLatitude());
+    		jsonObject.put("lon", boundary.getLongitude());
+    		jsonList.add(jsonObject);
+    	}
+    	return jsonList;
     }
 }

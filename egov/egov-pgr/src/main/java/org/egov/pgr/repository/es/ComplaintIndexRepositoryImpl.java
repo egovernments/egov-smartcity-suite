@@ -108,18 +108,18 @@ public class ComplaintIndexRepositoryImpl implements ComplaintIndexCustomReposit
 		SearchResponse tableResponse = elasticsearchTemplate.getClient().prepareSearch(PGR_INDEX_NAME)
 									   .setQuery(query).setSize(0)
 									   .addAggregation(ComplaintElasticsearchUtils.getCountWithGrouping("complaintTypeWise", "complaintTypeName",50)
-											   		   .subAggregation(AggregationBuilders.range("ComplaintTypeAgeing").field("complaintAgeingdaysFromDue")
-											   				           .addRange("1week", 0, 8).addRange("1month",8 ,32)
-											   				           .addRange("3months", 32, 91).addUnboundedFrom("remainingMonths", 91))
 											   		   .subAggregation(ComplaintElasticsearchUtils.getAverageWithExclusion("complaintTypeSatisfactionAverage", "satisfactionIndex"))
 											   		   .subAggregation(ComplaintElasticsearchUtils.getCountWithGrouping("complaintTypeWiseOpenAndClosedCount", "ifClosed",2)
+											   				   			.subAggregation(AggregationBuilders.range("ComplaintTypeAgeing").field("complaintAgeingdaysFromDue")
+											   				   							.addRange("1week", 0, 8).addRange("1month",8 ,32)
+											   				   							.addRange("3months", 32, 91).addUnboundedFrom("remainingMonths", 91))
 											   				   			.subAggregation(ComplaintElasticsearchUtils.getCountWithGrouping("complaintTypeSla", "ifSLA",2))))
 									   .addAggregation(ComplaintElasticsearchUtils.getCountWithGrouping("groupByField", grouByField,120)
-											   			.subAggregation(AggregationBuilders.range("groupByFieldAgeing").field("complaintAgeingdaysFromDue")
-											   							.addRange("1week", 0, 8).addRange("1month",8 ,32)
-											   							.addRange("3months", 32, 91).addUnboundedFrom("remainingMonths", 91))
 											   			.subAggregation(ComplaintElasticsearchUtils.getAverageWithExclusion("groupByFieldSatisfactionAverage", "satisfactionIndex"))
 											   			.subAggregation(ComplaintElasticsearchUtils.getCountWithGrouping("groupFieldWiseOpenAndClosedCount", "ifClosed",2)
+											   							.subAggregation(AggregationBuilders.range("groupByFieldAgeing").field("complaintAgeingdaysFromDue")
+											   											.addRange("1week", 0, 8).addRange("1month",8 ,32)
+											   											.addRange("3months", 32, 91).addUnboundedFrom("remainingMonths", 91))
 											   							.subAggregation(ComplaintElasticsearchUtils.getCountWithGrouping("groupByFieldSla", "ifSLA",2))))
 									   .execute().actionGet();
 		
@@ -221,7 +221,7 @@ public class ComplaintIndexRepositoryImpl implements ComplaintIndexCustomReposit
 			Terms openAndClosedTerms = bucket.getAggregations().get("groupFieldWiseOpenAndClosedCount");
 			for (Bucket closedCountbucket : openAndClosedTerms.getBuckets()) {
 				if(closedCountbucket.getKeyAsNumber().intValue() == 1){
-					responseDetail.setOpenComplaintCount(closedCountbucket.getDocCount());
+					responseDetail.setClosedComplaintCount(closedCountbucket.getDocCount());
 					Terms slaTerms = closedCountbucket.getAggregations().get("groupByFieldSla");
 					for(Bucket slaBucket : slaTerms.getBuckets()){
 						if(slaBucket.getKeyAsNumber().intValue() == 1)
@@ -229,9 +229,19 @@ public class ComplaintIndexRepositoryImpl implements ComplaintIndexCustomReposit
 						else
 							responseDetail.setOpenOutSideSLACount(slaBucket.getDocCount());
 					}
+					//To set Ageing Buckets Result
+					Range ageingRange = closedCountbucket.getAggregations().get("groupByFieldAgeing");
+					Range.Bucket rangeBucket = ageingRange.getBuckets().get(0);
+					responseDetail.setAgeingGroup1(rangeBucket.getDocCount());
+					rangeBucket = ageingRange.getBuckets().get(1);
+					responseDetail.setAgeingGroup2(rangeBucket.getDocCount());
+					rangeBucket = ageingRange.getBuckets().get(2);
+					responseDetail.setAgeingGroup3(rangeBucket.getDocCount());
+					rangeBucket = ageingRange.getBuckets().get(3);
+					responseDetail.setAgeingGroup4(rangeBucket.getDocCount());
 				}
 				else{
-					responseDetail.setClosedComplaintCount(closedCountbucket.getDocCount());
+					responseDetail.setOpenComplaintCount(closedCountbucket.getDocCount());
 					Terms slaTerms = closedCountbucket.getAggregations().get("groupByFieldSla");
 					for(Bucket slaBucket : slaTerms.getBuckets()){
 						if(slaBucket.getKeyAsNumber().intValue() == 1)
@@ -268,11 +278,11 @@ public class ComplaintIndexRepositoryImpl implements ComplaintIndexCustomReposit
 				complaintType.setAvgSatisfactionIndex(0);
 			else
 				complaintType.setAvgSatisfactionIndex(complaintTypeAverageSatisfaction.getValue());
-
+			
 			Terms openAndClosedTerms = bucket.getAggregations().get("complaintTypeWiseOpenAndClosedCount");
 			for (Bucket closedCountbucket : openAndClosedTerms.getBuckets()) {
 				if(closedCountbucket.getKeyAsNumber().intValue() == 1){
-					complaintType.setOpenComplaintCount(closedCountbucket.getDocCount());
+					complaintType.setClosedComplaintCount(closedCountbucket.getDocCount());
 					Terms slaTerms = closedCountbucket.getAggregations().get("complaintTypeSla");
 					for(Bucket slaBucket : slaTerms.getBuckets()){
 						if(slaBucket.getKeyAsNumber().intValue() == 1)
@@ -280,9 +290,20 @@ public class ComplaintIndexRepositoryImpl implements ComplaintIndexCustomReposit
 						else
 							complaintType.setOpenOutSideSLACount(slaBucket.getDocCount());
 					}
+					
+					//To set Ageing Buckets Result
+					Range ageingRange = closedCountbucket.getAggregations().get("ComplaintTypeAgeing");
+					Range.Bucket rangeBucket = ageingRange.getBuckets().get(0);
+					complaintType.setAgeingGroup1(rangeBucket.getDocCount());
+					rangeBucket = ageingRange.getBuckets().get(1);
+					complaintType.setAgeingGroup2(rangeBucket.getDocCount());
+					rangeBucket = ageingRange.getBuckets().get(2);
+					complaintType.setAgeingGroup3(rangeBucket.getDocCount());
+					rangeBucket = ageingRange.getBuckets().get(3);
+					complaintType.setAgeingGroup4(rangeBucket.getDocCount());
 				}
 				else{
-					complaintType.setClosedComplaintCount(closedCountbucket.getDocCount());
+					complaintType.setOpenComplaintCount(closedCountbucket.getDocCount());
 					Terms slaTerms = closedCountbucket.getAggregations().get("complaintTypeSla");
 					for(Bucket slaBucket : slaTerms.getBuckets()){
 						if(slaBucket.getKeyAsNumber().intValue() == 1)
