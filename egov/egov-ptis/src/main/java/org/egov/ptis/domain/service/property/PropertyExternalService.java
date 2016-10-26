@@ -91,16 +91,13 @@ import static org.egov.ptis.constants.PropertyTaxConstants.PROP_CREATE_RSN;
 import static org.egov.ptis.constants.PropertyTaxConstants.PROP_CREATE_RSN_BIFUR;
 import static org.egov.ptis.constants.PropertyTaxConstants.PTIS_COLLECTION_SERVICE_CODE;
 import static org.egov.ptis.constants.PropertyTaxConstants.REVENUE_HIERARCHY_TYPE;
+import static org.egov.ptis.constants.PropertyTaxConstants.SERVICE_CODE_VACANTLANDTAX;
 import static org.egov.ptis.constants.PropertyTaxConstants.SOURCEOFDATA_MOBILE;
 import static org.egov.ptis.constants.PropertyTaxConstants.STATUS_BILL_NOTCREATED;
 import static org.egov.ptis.constants.PropertyTaxConstants.STATUS_DEMAND_INACTIVE;
 import static org.egov.ptis.constants.PropertyTaxConstants.STATUS_ISACTIVE;
 import static org.egov.ptis.constants.PropertyTaxConstants.STATUS_WORKFLOW;
 import static org.egov.ptis.constants.PropertyTaxConstants.STATUS_YES_XML_MIGRATION;
-import static org.egov.ptis.constants.PropertyTaxConstants.THIRD_PARTY_ATTESTED_COPY_PROPERTY_DOCUMENT_CODE;
-import static org.egov.ptis.constants.PropertyTaxConstants.THIRD_PARTY_BUILDING_PERMISSION_COPY_CODE;
-import static org.egov.ptis.constants.PropertyTaxConstants.THIRD_PARTY_CONTENT_TYPE;
-import static org.egov.ptis.constants.PropertyTaxConstants.THIRD_PARTY_DEATH_CERTIFICATE_COPY_CODE;
 import static org.egov.ptis.constants.PropertyTaxConstants.THIRD_PARTY_ERR_CODE_ASSESSMENT_NO_LEN;
 import static org.egov.ptis.constants.PropertyTaxConstants.THIRD_PARTY_ERR_CODE_ASSESSMENT_NO_NOT_FOUND;
 import static org.egov.ptis.constants.PropertyTaxConstants.THIRD_PARTY_ERR_CODE_ASSESSMENT_NO_REQUIRED;
@@ -119,12 +116,9 @@ import static org.egov.ptis.constants.PropertyTaxConstants.THIRD_PARTY_ERR_MSG_P
 import static org.egov.ptis.constants.PropertyTaxConstants.THIRD_PARTY_ERR_MSG_SUCCESS;
 import static org.egov.ptis.constants.PropertyTaxConstants.THIRD_PARTY_ERR_MSG_VACANTLAND_ASSESSMENT_NOT_FOUND;
 import static org.egov.ptis.constants.PropertyTaxConstants.THIRD_PARTY_ERR_MSG_WRONG_CATEGORY;
-import static org.egov.ptis.constants.PropertyTaxConstants.THIRD_PARTY_NON_JUDICIAL_STAMP_PAPERS_CODE;
-import static org.egov.ptis.constants.PropertyTaxConstants.THIRD_PARTY_NOTARIZED_AFFIDAVIT_CUM_IDEMNITY_BOND_CODE;
 import static org.egov.ptis.constants.PropertyTaxConstants.THIRD_PARTY_PAYMENT_MODE_CASH;
 import static org.egov.ptis.constants.PropertyTaxConstants.THIRD_PARTY_PAYMENT_MODE_CHEQUE;
 import static org.egov.ptis.constants.PropertyTaxConstants.THIRD_PARTY_PAYMENT_MODE_DD;
-import static org.egov.ptis.constants.PropertyTaxConstants.THIRD_PARTY_PHOTO_OF_ASSESSMENT_CODE;
 import static org.egov.ptis.constants.PropertyTaxConstants.TOTAL_AMOUNT;
 import static org.egov.ptis.constants.PropertyTaxConstants.UD_REVENUE_INSPECTOR_APPROVAL_PENDING;
 import static org.egov.ptis.constants.PropertyTaxConstants.VAC_LAND_PROPERTY_TYPE_CATEGORY;
@@ -135,12 +129,7 @@ import static org.egov.ptis.constants.PropertyTaxConstants.PAYMENT_TYPE_FULLY;
 import static org.egov.ptis.constants.PropertyTaxConstants.PAYMENT_TYPE_ADVANCE;
 
 import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
 import java.math.BigDecimal;
-import java.text.MessageFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -157,7 +146,6 @@ import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
 
-import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.egov.collection.integration.models.BillReceiptInfo;
 import org.egov.collection.integration.models.ReceiptAccountInfo;
@@ -206,7 +194,6 @@ import org.egov.ptis.domain.dao.property.BasicPropertyDAO;
 import org.egov.ptis.domain.dao.property.PropertyMutationDAO;
 import org.egov.ptis.domain.dao.property.PropertyTypeMasterDAO;
 import org.egov.ptis.domain.entity.demand.Ptdemand;
-import org.egov.ptis.domain.entity.enums.TransactionType;
 import org.egov.ptis.domain.entity.property.Apartment;
 import org.egov.ptis.domain.entity.property.BasicProperty;
 import org.egov.ptis.domain.entity.property.BasicPropertyImpl;
@@ -263,16 +250,12 @@ import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.ApplicationContext;
-import org.springframework.web.multipart.MultipartFile;
-
-import com.sun.jersey.core.header.FormDataContentDisposition;
 
 public class PropertyExternalService {
     private static final String ASSESSMENT = "Assessment";
     public static final Integer FLAG_MOBILE_EMAIL = 0;
     public static final Integer FLAG_TAX_DETAILS = 1;
     public static final Integer FLAG_FULL_DETAILS = 2;
-    public static final int FLAG_NONE = 0;
 
     @Autowired
     private BasicPropertyDAO basicPropertyDAO;
@@ -736,13 +719,13 @@ public class PropertyExternalService {
         return propertyTaxDetails;
     }
 
-    public ReceiptDetails payPropertyTax(final PayPropertyTaxDetails payPropertyTaxDetails) {
+    public ReceiptDetails payPropertyTax(final PayPropertyTaxDetails payPropertyTaxDetails, String propertyType) {
         ReceiptDetails receiptDetails = null;
         ErrorDetails errorDetails = null;
         BigDecimal totalAmountToBePaid = BigDecimal.ZERO;
         final BasicProperty basicProperty = basicPropertyDAO.getBasicPropertyByPropertyID(payPropertyTaxDetails
                 .getAssessmentNo());
-        if(basicProperty.getProperty().getPropertyDetail().getPropertyTypeMaster().getCode().equalsIgnoreCase(OWNERSHIP_TYPE_VAC_LAND))
+        if(propertyType.equalsIgnoreCase(OWNERSHIP_TYPE_VAC_LAND))
         	propertyTaxBillable.setVacantLandTaxPayment(true);
         
         propertyTaxBillable.setBasicProperty(basicProperty);
@@ -930,26 +913,6 @@ public class PropertyExternalService {
             mstrCodeNamepairDetails.setCode(code);
             mstrCodeNamepairDetails.setName(nonVacLandMap.get(code));
             mstrCodeNamePairDetailsList.add(mstrCodeNamepairDetails);
-        }
-        return mstrCodeNamePairDetailsList;
-    }
-
-    public List<MasterCodeNamePairDetails> getPropertyTypes(final String categoryCode) {
-        final List<MasterCodeNamePairDetails> mstrCodeNamePairDetailsList = new ArrayList<MasterCodeNamePairDetails>(0);
-        Map<String, String> codeNameMap = null;
-        final PropertyTypeMaster propertyTypeMasters = propertyTypeMasterDAO.getPropertyTypeMasterByCode(categoryCode);
-        if (null != propertyTypeMasters) {
-            if (propertyTypeMasters.getCode().equalsIgnoreCase(OWNERSHIP_TYPE_VAC_LAND))
-                codeNameMap = VAC_LAND_PROPERTY_TYPE_CATEGORY;
-            else
-                codeNameMap = NON_VAC_LAND_PROPERTY_TYPE_CATEGORY;
-            if (null != codeNameMap && !codeNameMap.isEmpty())
-                for (final String code : codeNameMap.keySet()) {
-                    final MasterCodeNamePairDetails mstrCodeNamepairDetails = new MasterCodeNamePairDetails();
-                    mstrCodeNamepairDetails.setCode(code);
-                    mstrCodeNamepairDetails.setName(codeNameMap.get(code));
-                    mstrCodeNamePairDetailsList.add(mstrCodeNamepairDetails);
-                }
         }
         return mstrCodeNamePairDetailsList;
     }
@@ -1611,268 +1574,11 @@ public class PropertyExternalService {
         return proeprtyOwnerInfoList;
     }
 
-    public List<MasterCodeNamePairDetails> getPropertyCreateDocumentTypes() {
-        final List<MasterCodeNamePairDetails> mstrCodeNamePairDetailsList = new ArrayList<MasterCodeNamePairDetails>(0);
-        final PropertyService propService = beanProvider.getBean("propService", PropertyService.class);
-        final List<DocumentType> documentTypes = propService.getDocumentTypesForTransactionType(TransactionType.CREATE);
-        for (final DocumentType documentType : documentTypes) {
-            final MasterCodeNamePairDetails mstrCodeNamePairDetails = new MasterCodeNamePairDetails();
-            mstrCodeNamePairDetails.setCode(documentType.getId().toString());
-            mstrCodeNamePairDetails.setName(documentType.getName());
-            mstrCodeNamePairDetailsList.add(mstrCodeNamePairDetails);
-        }
-        return mstrCodeNamePairDetailsList;
-    }
-
-    public DocumentType getDocumentTypeByCode(final String docTypeCode) {
-        final PropertyService propService = beanProvider.getBean("propService", PropertyService.class);
-        final List<DocumentType> documentTypes = propService.getDocumentTypesForTransactionType(TransactionType.CREATE);
-        DocumentType documentType = null;
-        for (final DocumentType docType : documentTypes)
-            if (docType.getId() == Long.valueOf(docTypeCode))
-                documentType = docType;
-        return documentType;
-    }
-
-    // TODO: Need to uncomment when it is required to check whether aadhaar
-    // number or mobile number is exists or not
-    /*
-     * public ErrorDetails isAadhaarNumberExist(List<OwnerDetails>
-     * ownerDetailsList) { ErrorDetails errorDetails = null; for (OwnerDetails
-     * ownerDetails : ownerDetailsList) { Query qry =
-     * entityManager.createQuery("from User u where u.aadhaarNumber =:aadhaarNumber"
-     * ); qry.setParameter("aadhaarNumber", ownerDetails.getAadhaarNo()); List
-     * list = qry.getResultList(); if (null != list && !list.isEmpty()) {
-     * errorDetails = new ErrorDetails();
-     * errorDetails.setErrorCode(PropertyTaxConstants
-     * .THIRD_PARTY_ERR_CODE_AADHAAR_NUMBER_EXISTS);
-     * errorDetails.setErrorMessage(MessageFormat.format(
-     * THIRD_PARTY_ERR_MSG_AADHAAR_NUMBER_EXISTS,
-     * ownerDetails.getAadhaarNo())); } } return errorDetails; } public
-     * ErrorDetails isMobileNumberExist(List<OwnerDetails> ownerDetailsList) {
-     * ErrorDetails errorDetails = null; for (OwnerDetails ownerDetails :
-     * ownerDetailsList) { Query qry =
-     * entityManager.createQuery("from User u where u.mobileNumber =:mobileNumber"
-     * ); qry.setParameter("mobileNumber", ownerDetails.getMobileNumber()); List
-     * list = qry.getResultList(); if (null != list && !list.isEmpty()) {
-     * errorDetails = new ErrorDetails();
-     * errorDetails.setErrorCode(PropertyTaxConstants
-     * .THIRD_PARTY_ERR_CODE_MOBILE_NUMBER_EXISTS);
-     * errorDetails.setErrorMessage(MessageFormat.format(
-     * THIRD_PARTY_ERR_MSG_MOBILE_NUMBER_EXISTS,
-     * ownerDetails.getMobileNumber())); } } return errorDetails; }
-     */
-
-    /**
-     * This method is used to get document's list to upload the documents.
-     *
-     * @param photoAsmntStream
-     *            - photo of assessment input stream object
-     * @param photoAsmntDisp
-     *            - photo of assessment content disposition object
-     * @param bldgPermCopyStream
-     *            - building permission copy input stream object
-     * @param bldgPermCopyDisp
-     *            - building permission copy content disposition object
-     * @param atstdCopyPropDocStream
-     *            - attested copy of property document input stream object
-     * @param atstdCopyPropDocDisp
-     *            - attested copy of property document content disposition
-     *            object
-     * @param nonJudcStampStream
-     *            - non judicial stamp input stream object
-     * @param nonJudcStampDisp
-     *            - non judicial stamp content disposition object
-     * @param afdvtBondStream
-     *            - affidavit bond paper input stream object
-     * @param afdvtBondDisp
-     *            - affidavit bond paper content disposition object
-     * @param deathCertCopyStream
-     *            - death certificate copy input stream object
-     * @param deathCertCopyDisp
-     *            - death certificate copy content disposition object
-     * @return document - list of document
-     */
-    public List<Document> getDocuments(final InputStream photoAsmntStream,
-            final FormDataContentDisposition photoAsmntDisp, final InputStream bldgPermCopyStream,
-            final FormDataContentDisposition bldgPermCopyDisp, final InputStream atstdCopyPropDocStream,
-            final FormDataContentDisposition atstdCopyPropDocDisp, final InputStream nonJudcStampStream,
-            final FormDataContentDisposition nonJudcStampDisp, final InputStream afdvtBondStream,
-            final FormDataContentDisposition afdvtBondDisp, final InputStream deathCertCopyStream,
-            final FormDataContentDisposition deathCertCopyDisp) {
-        final List<Document> documents = new ArrayList<Document>(0);
-        DocumentType documentType = null;
-        Document document = null;
-        if (photoAsmntStream != null && photoAsmntDisp != null) {
-            documentType = getDocumentTypeByCode(THIRD_PARTY_PHOTO_OF_ASSESSMENT_CODE);
-            document = createDocument(photoAsmntStream, photoAsmntDisp);
-            document.setType(documentType);
-            documents.add(document);
-        }
-
-        if (bldgPermCopyStream != null && bldgPermCopyDisp != null) {
-            documentType = getDocumentTypeByCode(THIRD_PARTY_BUILDING_PERMISSION_COPY_CODE);
-            document = createDocument(bldgPermCopyStream, bldgPermCopyDisp);
-            document.setType(documentType);
-            documents.add(document);
-        }
-
-        if (atstdCopyPropDocStream != null && atstdCopyPropDocDisp != null) {
-            documentType = getDocumentTypeByCode(THIRD_PARTY_ATTESTED_COPY_PROPERTY_DOCUMENT_CODE);
-            document = createDocument(atstdCopyPropDocStream, atstdCopyPropDocDisp);
-            document.setType(documentType);
-            documents.add(document);
-        }
-
-        if (nonJudcStampStream != null && nonJudcStampDisp != null) {
-            documentType = getDocumentTypeByCode(THIRD_PARTY_NON_JUDICIAL_STAMP_PAPERS_CODE);
-            document = createDocument(nonJudcStampStream, nonJudcStampDisp);
-            document.setType(documentType);
-            documents.add(document);
-        }
-
-        if (afdvtBondStream != null && afdvtBondDisp != null) {
-            documentType = getDocumentTypeByCode(THIRD_PARTY_NOTARIZED_AFFIDAVIT_CUM_IDEMNITY_BOND_CODE);
-            document = createDocument(afdvtBondStream, afdvtBondDisp);
-            document.setType(documentType);
-            documents.add(document);
-        }
-
-        if (deathCertCopyStream != null && deathCertCopyDisp != null) {
-            documentType = getDocumentTypeByCode(THIRD_PARTY_DEATH_CERTIFICATE_COPY_CODE);
-            document = createDocument(deathCertCopyStream, deathCertCopyDisp);
-            document.setType(documentType);
-            documents.add(document);
-        }
-        return documents;
-    }
-
-    public List<Document> getDocuments(final MultipartFile photoAsmntDisp, final MultipartFile bldgPermCopyDisp,
-            final MultipartFile atstdCopyPropDocDisp, final MultipartFile nonJudcStampDisp,
-            final MultipartFile afdvtBondDisp, final MultipartFile deathCertCopyDisp) throws IOException {
-        final List<Document> documents = new ArrayList<Document>(0);
-        DocumentType documentType = null;
-        Document document = null;
-
-        if (!photoAsmntDisp.isEmpty() && photoAsmntDisp != null) {
-            documentType = getDocumentTypeByCode(THIRD_PARTY_PHOTO_OF_ASSESSMENT_CODE);
-            document = createDocument(photoAsmntDisp.getInputStream(), photoAsmntDisp.getName());
-            document.setType(documentType);
-            documents.add(document);
-        }
-
-        if (!bldgPermCopyDisp.isEmpty() && bldgPermCopyDisp != null) {
-            documentType = getDocumentTypeByCode(THIRD_PARTY_BUILDING_PERMISSION_COPY_CODE);
-            document = createDocument(bldgPermCopyDisp.getInputStream(), bldgPermCopyDisp.getName());
-            document.setType(documentType);
-            documents.add(document);
-        }
-
-        if (!atstdCopyPropDocDisp.isEmpty() && atstdCopyPropDocDisp != null) {
-            documentType = getDocumentTypeByCode(THIRD_PARTY_ATTESTED_COPY_PROPERTY_DOCUMENT_CODE);
-            document = createDocument(atstdCopyPropDocDisp.getInputStream(), atstdCopyPropDocDisp.getName());
-            document.setType(documentType);
-            documents.add(document);
-        }
-
-        if (!nonJudcStampDisp.isEmpty() && nonJudcStampDisp != null) {
-            documentType = getDocumentTypeByCode(THIRD_PARTY_NON_JUDICIAL_STAMP_PAPERS_CODE);
-            document = createDocument(nonJudcStampDisp.getInputStream(), nonJudcStampDisp.getName());
-            document.setType(documentType);
-            documents.add(document);
-        }
-
-        if (!afdvtBondDisp.isEmpty() && afdvtBondDisp != null) {
-            documentType = getDocumentTypeByCode(THIRD_PARTY_NOTARIZED_AFFIDAVIT_CUM_IDEMNITY_BOND_CODE);
-            document = createDocument(afdvtBondDisp.getInputStream(), afdvtBondDisp.getName());
-            document.setType(documentType);
-            documents.add(document);
-        }
-
-        if (!deathCertCopyDisp.isEmpty() && deathCertCopyDisp != null) {
-            documentType = getDocumentTypeByCode(THIRD_PARTY_DEATH_CERTIFICATE_COPY_CODE);
-            document = createDocument(deathCertCopyDisp.getInputStream(), deathCertCopyDisp.getName());
-            document.setType(documentType);
-            documents.add(document);
-        }
-        return documents;
-    }
-
-    /**
-     * This method is used to create Document object to upload the files.
-     *
-     * @param inputStream
-     *            - InputStream object coming as request
-     * @param formDataContentDisposition
-     *            - FormDataContentDisposition object coming as request
-     * @return document - Document object
-     */
-    private Document createDocument(final InputStream inputStream,
-            final FormDataContentDisposition formDataContentDisposition) {
-        final Document document = new Document();
-        final List<File> files = new ArrayList<File>(0);
-        final List<String> contentTypes = new ArrayList<String>(0);
-        final List<String> fileNames = new ArrayList<String>(0);
-        File file = null;
-        if (inputStream != null && formDataContentDisposition != null) {
-            fileNames.add(formDataContentDisposition.getFileName());
-            document.setUploadsFileName(fileNames);
-            file = writeToFile(inputStream, formDataContentDisposition.getFileName());
-            files.add(file);
-            document.setUploads(files);
-            contentTypes.add(MessageFormat.format(THIRD_PARTY_CONTENT_TYPE,
-                    FilenameUtils.getExtension(file.getPath())));
-            document.setUploadsContentType(contentTypes);
-        }
-        return document;
-    }
-
-    public BillReceiptInfo validateTransanctionIdPresent(final String transantion) {
-        return collectionService.getReceiptInfo(PTIS_COLLECTION_SERVICE_CODE, transantion);
-    }
-
-    private Document createDocument(final InputStream inputStream, final String fileName) {
-        final Document document = new Document();
-        final List<File> files = new ArrayList<File>(0);
-        final List<String> contentTypes = new ArrayList<String>(0);
-        final List<String> fileNames = new ArrayList<String>(0);
-        File file = null;
-        if (inputStream != null && fileName != null) {
-            fileNames.add(fileName);
-            document.setUploadsFileName(fileNames);
-            file = writeToFile(inputStream, fileName);
-            files.add(file);
-            document.setUploads(files);
-            contentTypes.add(MessageFormat.format(THIRD_PARTY_CONTENT_TYPE,
-                    FilenameUtils.getExtension(file.getPath())));
-            document.setUploadsContentType(contentTypes);
-        }
-        return document;
-    }
-
-    /**
-     * This method is used to convert incoming InputStream object to File object
-     *
-     * @param uploadedInputStream
-     *            - InputStream object
-     * @param fileName
-     *            - name od the file
-     * @return file - File object
-     */
-    private File writeToFile(final InputStream uploadedInputStream, final String fileName) {
-        final File file = new File(fileName);
-        try {
-            final OutputStream out = new FileOutputStream(new File(fileName));
-            int read = 0;
-            final byte[] bytes = new byte[1024];
-            while ((read = uploadedInputStream.read(bytes)) != -1)
-                out.write(bytes, 0, read);
-            out.flush();
-            out.close();
-        } catch (final IOException e) {
-
-        }
-        return file;
+    public BillReceiptInfo validateTransanctionIdPresent(final String transantion, String propertyType) {
+        if (propertyType.equals(OWNERSHIP_TYPE_VAC_LAND))
+            return collectionService.getReceiptInfo(SERVICE_CODE_VACANTLANDTAX, transantion);
+        else
+            return collectionService.getReceiptInfo(PTIS_COLLECTION_SERVICE_CODE, transantion);
     }
 
     private PropertyImpl transitionWorkFlow(PropertyImpl property, PropertyService propService, String mode) {
@@ -1977,13 +1683,14 @@ public class PropertyExternalService {
     	}
         return assessmentDetails;
     }
-    
+
     /**
-     * Fetches Assessment Details - owner details, tax dues, plinth area, mutation fee related information - used in MeeSeva 
+     * Fetches Assessment Details - owner details, tax dues, plinth area, mutation fee related information - used in MeeSeva
      * @param applicationNo
      * @return RestAssessmentDetails
      */
     public RestAssessmentDetails loadAssessmentDetails(final String applicationNo) {
+        //FIXME move this method to meeseva itself
         RestAssessmentDetails assessmentDetails = new RestAssessmentDetails();
         PropertyMutation propertyMutation = getPropertyMutationByAssesmentNoAndApplicationNo(null, applicationNo);
         BasicProperty basicProperty;
@@ -2028,7 +1735,7 @@ public class PropertyExternalService {
         }
         return assessmentDetails;
     }
-    
+
     /**
      * API for Mutation Fee Payment
      * @param payPropertyTaxDetails
@@ -2621,5 +2328,13 @@ public class PropertyExternalService {
         modProperty.setPropertyDetail(propDetail);
 
     }
-    
+
+    public String getPropertyType(String assessmentno) {
+        String pType = "";
+        final BasicProperty basicProperty = basicPropertyDAO.getBasicPropertyByPropertyID(assessmentno);
+        PropertyTypeMaster ptypeMaster = basicProperty.getProperty().getPropertyDetail().getPropertyTypeMaster();
+        if (ptypeMaster != null)
+            pType = ptypeMaster.getCode();
+        return pType;
+    }
 }

@@ -126,10 +126,8 @@ public class DailyCollectionReportSearchVLT {
 		andFilters.add(termsStringFilter("clauses.channel", collectionMode));
 		andFilters.add(termsStringFilter("clauses.status", status));
 		andFilters.add(termsStringFilter("clauses.receiptcreator", collectionOperator));
-		andFilters.add(termsStringFilter("clauses.billingservice",
-				PropertyTaxConstants.INDEX_COLLECTION_CLAUSES_BILLINGSERVICE_VACANT_LAND));
-		logger.info("searchCollectionFilters,clauses.billingservice:"
-				+ PropertyTaxConstants.INDEX_COLLECTION_CLAUSES_BILLINGSERVICE_VACANT_LAND);
+		andFilters.add(termsStringFilter("clauses.billingservice", "VLT"));
+		logger.info("searchCollectionFilters,clauses.billingservice:"+ "VLT");
 		if (!consumerCode.isEmpty()) {
 			String[] consumerCodes = consumerCode.toArray(new String[consumerCode.size()]);
 			andFilters.add(termsStringFilter("common.consumercode", consumerCodes));

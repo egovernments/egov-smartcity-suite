@@ -45,14 +45,10 @@ import java.util.ArrayList;
 import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
-import javax.ws.rs.core.MediaType;
 
 import org.apache.commons.lang3.StringUtils;
-import org.codehaus.jackson.JsonGenerationException;
-import org.codehaus.jackson.JsonParseException;
 import org.codehaus.jackson.annotate.JsonAutoDetect.Visibility;
 import org.codehaus.jackson.annotate.JsonMethod;
-import org.codehaus.jackson.map.JsonMappingException;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.codehaus.jackson.map.SerializationConfig;
 import org.egov.dcb.bean.ChequePayment;
@@ -78,6 +74,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
+import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
+
 @RestController
 public class PropertyTitleTransferService {
 
@@ -94,15 +92,13 @@ public class PropertyTitleTransferService {
 	 * Initiates property transfer
 	 * @param titleTransferDetails
 	 * @return
-	 * @throws JsonGenerationException
-	 * @throws JsonMappingException
 	 * @throws IOException
 	 * @throws ParseException
 	 */
-	@RequestMapping(value = "/property/titletransfer", method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON, produces = MediaType.APPLICATION_JSON)
+	@RequestMapping(value = "/property/titletransfer", method = RequestMethod.POST, consumes = APPLICATION_JSON_VALUE, produces = APPLICATION_JSON_VALUE)
     public String transferProperty(@RequestBody String titleTransferDetails)
-            throws JsonGenerationException, JsonMappingException, IOException, ParseException {
-		String responseJson = new String();
+            throws IOException, ParseException {
+		String responseJson;
 		ApplicationThreadLocals.setUserId(2L);
 		
 		PropertyTransferDetails propertyTransferDetails = (PropertyTransferDetails) getObjectFromJSONRequest(
@@ -134,7 +130,7 @@ public class PropertyTitleTransferService {
 	 * @return
 	 */
 	private List<OwnerDetails> getOwnerDetails(List<OwnerInformation> ownerInfoList){
-		List<OwnerDetails> ownerDetailsList = new ArrayList<OwnerDetails>();
+		List<OwnerDetails> ownerDetailsList = new ArrayList<>();
 		OwnerDetails ownerDetails ;
 		for(OwnerInformation ownerInfo : ownerInfoList){
 			ownerDetails = new OwnerDetails();
@@ -156,16 +152,14 @@ public class PropertyTitleTransferService {
      * 
      * @param assessmentNumber - assessment number i.e. property id
      * @return
-     * @throws JsonGenerationException
-     * @throws JsonMappingException
      * @throws IOException
      */
-    @RequestMapping(value = "/property/assessmentdetails", method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON, produces = MediaType.APPLICATION_JSON)
+    @RequestMapping(value = "/property/assessmentdetails", method = RequestMethod.POST, consumes = APPLICATION_JSON_VALUE, produces = APPLICATION_JSON_VALUE)
     public String fetchAssessmentDetails(@RequestBody String assessmentRequest)
-            throws JsonGenerationException, JsonMappingException, IOException {
+            throws IOException {
         AssessmentRequest assessmentReq = (AssessmentRequest) getObjectFromJSONRequest(assessmentRequest,
                 AssessmentRequest.class);
-        String responseJson = new String();
+        String responseJson;
         
         ErrorDetails errorDetails = validationUtil.validateAssessmentDetailsRequest(assessmentReq);
         if (errorDetails != null) {
@@ -184,20 +178,17 @@ public class PropertyTitleTransferService {
      * @param payPropertyTaxDetails - JSON request string
      * @param request - HttpServletRequest
      * @return responseJson - server response in JSON format
-     * @throws JsonGenerationException
-     * @throws JsonMappingException
      * @throws IOException
      */
-    @RequestMapping(value = "/property/paymutationfee", method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON, produces = MediaType.APPLICATION_JSON)
+    @RequestMapping(value = "/property/paymutationfee", method = RequestMethod.POST, consumes = APPLICATION_JSON_VALUE, produces = APPLICATION_JSON_VALUE)
     public String payMutationFee(@RequestBody String payPropertyTaxDetails, final HttpServletRequest request, String source)
-            throws JsonGenerationException, JsonMappingException, IOException {
+            throws IOException {
         String responseJson;
         try {
-            responseJson = new String();
             PayPropertyTaxDetails payPropTaxDetails = (PayPropertyTaxDetails) getObjectFromJSONRequest(
                     payPropertyTaxDetails, PayPropertyTaxDetails.class);
 
-            ErrorDetails errorDetails = validationUtil.validatePaymentDetails(payPropTaxDetails,true);
+            ErrorDetails errorDetails = validationUtil.validatePaymentDetails(payPropTaxDetails,true, "");
             if (null != errorDetails) {
                 responseJson = getJSONResponse(errorDetails);
             } else {
@@ -212,7 +203,7 @@ public class PropertyTitleTransferService {
             }
         } catch (ValidationException e) {
 
-            List<ErrorDetails> errorList = new ArrayList<ErrorDetails>(0);
+            List<ErrorDetails> errorList = new ArrayList<>(0);
 
             List<ValidationError> errors = e.getErrors();
             for (ValidationError ve : errors)
@@ -225,7 +216,7 @@ public class PropertyTitleTransferService {
             responseJson = JsonConvertor.convert(errorList);
         } catch (Exception e) {
 
-            List<ErrorDetails> errorList = new ArrayList<ErrorDetails>(0);
+            List<ErrorDetails> errorList = new ArrayList<>(0);
             ErrorDetails er = new ErrorDetails();
             er.setErrorCode(e.getMessage());
             er.setErrorMessage(e.getMessage());
@@ -240,12 +231,10 @@ public class PropertyTitleTransferService {
      * 
      * @param jsonString - request JSON string
      * @return
-     * @throws JsonParseException
-     * @throws JsonMappingException
      * @throws IOException
      */
     private Object getObjectFromJSONRequest(String jsonString, Class cls)
-            throws JsonParseException, JsonMappingException, IOException {
+            throws IOException {
         ObjectMapper mapper = new ObjectMapper();
         mapper.setVisibility(JsonMethod.FIELD, Visibility.ANY);
         mapper.configure(SerializationConfig.Feature.AUTO_DETECT_FIELDS, true);
@@ -258,11 +247,9 @@ public class PropertyTitleTransferService {
      * 
      * @param obj - a POJO object
      * @return jsonResponse - JSON response string
-     * @throws JsonGenerationException
-     * @throws JsonMappingException
      * @throws IOException
      */
-    private String getJSONResponse(Object obj) throws JsonGenerationException, JsonMappingException, IOException {
+    private String getJSONResponse(Object obj) throws IOException {
         ObjectMapper objectMapper = new ObjectMapper();
         objectMapper.setVisibility(JsonMethod.FIELD, Visibility.ANY);
         String jsonResponse = objectMapper.writeValueAsString(obj);

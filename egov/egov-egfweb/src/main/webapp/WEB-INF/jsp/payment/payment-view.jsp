@@ -81,6 +81,11 @@ function showHistory(stateId)
 var url="../voucher/common-showHistory.action?stateId="+stateId;
 		window.open(url,'Search','resizable=yes,scrollbars=yes,left=300,top=40, width=900, height=700');
 }
+function openVoucher(vid)
+{
+	var url = "/EGF/voucher/preApprovedVoucher-loadvoucherview.action?vhid="+ vid;
+	window.open(url,'','width=900, height=700');
+}
 </script>
 
 </head>
@@ -268,6 +273,10 @@ var url="../voucher/common-showHistory.action?stateId="+stateId;
 																				</td>
 																				<th class="bluebgheadtdnew">Bill Date
 																				</td>
+																				<th class="bluebgheadtdnew">Bill Voucher Number
+																				</th>
+																				<th class="bluebgheadtdnew">Bill Voucher Date
+																				</th>
 																				<th class="bluebgheadtdnew">Party Name
 																				</td>
 																				<th class="bluebgheadtdnew">Bill Amount(Rs)
@@ -286,6 +295,15 @@ var url="../voucher/common-showHistory.action?stateId="+stateId;
 																						<td style="text-align: center"
 																							class="blueborderfortdnew"><s:date
 																								name="%{billdate}" format="dd/MM/yyyy" /></td>
+																						<td style="text-align: center"
+																							class="blueborderfortdnew">
+																							<a href="#" onclick="openVoucher('<s:property value='%{billVoucherHeader.id}'/>');">
+																								 <s:property value="%{billVoucherHeader.voucherNumber}" />
+																						    </a>
+																						</td>		 
+																						<td style="text-align: center"
+																							class="blueborderfortdnew"><s:date
+																								name="%{billVoucherHeader.voucherDate}" format="dd/MM/yyyy" /></td>			
 																						<td style="text-align: center"
 																							class="blueborderfortdnew"><s:property
 																								value="%{paidto}" /></td>

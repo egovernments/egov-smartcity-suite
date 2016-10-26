@@ -118,8 +118,7 @@ public class ApplicationSewerageSearchController {
                 sewerageConnectionService.getSewerageApplicationDoc(sewerageApplicationDetails));
         return new ModelAndView("viewseweragedetails", "sewerageApplicationDetails", sewerageApplicationDetails);
     }
-    
-   
+
     /*@SuppressWarnings("unchecked")
     @RequestMapping(method = RequestMethod.POST)
     @ResponseBody
@@ -131,33 +130,31 @@ public class ApplicationSewerageSearchController {
                 asList(IndexType.SEWARAGESEARCH.toString()), searchRequest.searchQuery(),
                 searchRequest.searchFilters(), sort, Page.NULL);
 
-        List<String> roleList = new ArrayList<String>();
-        for (final Role userrole : sewerageTaxUtils.getLoginUserRoles()) {
+        final List<String> roleList = new ArrayList<String>();
+        for (final Role userrole : sewerageTaxUtils.getLoginUserRoles())
             roleList.add(userrole.getName());
-        }
 
         final List<SewerageSearchResult> searchResultFomatted = new ArrayList<SewerageSearchResult>(0);
-        SewerageApplicationDetails  sewerageApplicationDetails = new SewerageApplicationDetails();
+        SewerageApplicationDetails sewerageApplicationDetails = new SewerageApplicationDetails();
         for (final Document document : searchResult.getDocuments()) {
-            Map<String,String> actionMap = new HashMap<>();
+            final Map<String, String> actionMap = new HashMap<>();
             final Map<String, String> searchableObjects = (Map<String, String>) document.getResource()
                     .get("searchable");
             if (searchableObjects != null) {
-                 String consumernumber = searchableObjects.get("consumernumber");
-                 sewerageApplicationDetails = sewerageApplicationDetailsService.findByApplicationNumber(consumernumber);
-                 SewerageSearchResult searchActions = SewerageActionDropDownUtil.getSearchResultWithActions(
-                        roleList, searchableObjects.get("status"),sewerageApplicationDetails);
-                 if (searchActions != null) {
-                    for(Map.Entry<String, String> entry : searchActions.getActions().entrySet()){
-                        if(!entry.getValue().equals(COLLECTDONATIONCHARHGES)){
+                final String consumernumber = searchableObjects.get("consumernumber");
+                sewerageApplicationDetails = sewerageApplicationDetailsService.findByApplicationNumber(consumernumber);
+                final SewerageSearchResult searchActions = SewerageActionDropDownUtil.getSearchResultWithActions(
+                        roleList, searchableObjects.get("status"), sewerageApplicationDetails);
+                if (searchActions == null) {
+                    return searchResultFomatted;
+                }
+                    for (final Map.Entry<String, String> entry : searchActions.getActions().entrySet())
+                        if (!entry.getValue().equals(COLLECTDONATIONCHARHGES))
                             actionMap.put(entry.getKey(), entry.getValue());
-                        }
-                    }
                     searchActions.setActions(actionMap);
                     searchActions.setDocument(document);
                     searchResultFomatted.add(searchActions);
-                }
-               }
+            }
         }
         return searchResultFomatted;
     }*/

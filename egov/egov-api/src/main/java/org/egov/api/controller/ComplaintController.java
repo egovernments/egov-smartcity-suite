@@ -115,8 +115,9 @@ import static org.springframework.web.bind.annotation.RequestMethod.GET;
 @RequestMapping("/v1.0")
 public class ComplaintController extends ApiController {
 
-	private static final Logger LOGGER = Logger.getLogger(ComplaintController.class);
-	
+    private static final Logger LOGGER = Logger.getLogger(ComplaintController.class);
+    private static final String SATISFACTORY = "SATISFACTORY";
+    private static final String UNSATISFACTORY = "UNSATISFACTORY";
     @Autowired
     protected ComplaintStatusService complaintStatusService;
 
@@ -128,25 +129,25 @@ public class ComplaintController extends ApiController {
 
     @Autowired
     protected ComplaintTypeCategoryService complaintTypeCategoryService;
-    
+
     @Autowired
     protected ComplaintTypeService complaintTypeService;
 
     @Autowired
     protected CrossHierarchyService crossHierarchyService;
-    
+
     @Autowired
     protected FileStoreUtils fileStoreUtils;
 
     @Autowired
     protected ComplaintStatusMappingService complaintStatusMappingService;
-    
+
     @Autowired
     private DepartmentService departmentService;
-    
+
     @Autowired
     private SecurityUtils securityUtils;
-    
+
     // --------------------------------------------------------------------------------//
     /**
      * This will returns all complaint types
@@ -156,46 +157,45 @@ public class ComplaintController extends ApiController {
     @RequestMapping(value = { ApiUrl.COMPLAINT_TYPES_BY_CATEGORIES }, method = GET, produces = { MediaType.TEXT_PLAIN_VALUE })
     public ResponseEntity<String> getAllComplaintCategories() {
         try {
-        	
-        	final List<ComplaintTypeCategory> complaintCategories = complaintTypeCategoryService.findAll();
-        	
-        	JsonArray jAryComplaintCategories=new JsonArray();
-        	
-        	for(ComplaintTypeCategory complaintTypeCategory:complaintCategories)
-        	{
-        		
-        		JsonObject jComplaintCategory=new JsonObject();
-        		jComplaintCategory.addProperty("categoryId", complaintTypeCategory.getId());
-        		jComplaintCategory.addProperty("categoryName", complaintTypeCategory.getName());
-        		
-        		List<ComplaintType> complaintTypes = complaintTypeService.findActiveComplaintTypesByCategory(complaintTypeCategory.getId());
-        		
-        		JsonArray jAryComplaintTypes=new JsonArray();
-        		
-        		for(ComplaintType complaintType:complaintTypes)
-        		{
-        			JsonObject jComplaintType=new JsonObject();
-        			jComplaintType.addProperty("id", complaintType.getId());
-        			jComplaintType.addProperty("name", complaintType.getName());
-        			jComplaintType.addProperty("description", complaintType.getDescription());
-        			jAryComplaintTypes.add(jComplaintType);
-        		}
-        		
-        		jComplaintCategory.add("complaintTypes", jAryComplaintTypes);
-        		jAryComplaintCategories.add(jComplaintCategory);
-        	}
-        	
-        	JsonObject jresp=new JsonObject();
-        	jresp.add("complaintCategories", jAryComplaintCategories);
-        	
+
+            final List<ComplaintTypeCategory> complaintCategories = complaintTypeCategoryService.findAll();
+
+            final JsonArray jAryComplaintCategories = new JsonArray();
+
+            for (final ComplaintTypeCategory complaintTypeCategory : complaintCategories) {
+
+                final JsonObject jComplaintCategory = new JsonObject();
+                jComplaintCategory.addProperty("categoryId", complaintTypeCategory.getId());
+                jComplaintCategory.addProperty("categoryName", complaintTypeCategory.getName());
+
+                final List<ComplaintType> complaintTypes = complaintTypeService
+                        .findActiveComplaintTypesByCategory(complaintTypeCategory.getId());
+
+                final JsonArray jAryComplaintTypes = new JsonArray();
+
+                for (final ComplaintType complaintType : complaintTypes) {
+                    final JsonObject jComplaintType = new JsonObject();
+                    jComplaintType.addProperty("id", complaintType.getId());
+                    jComplaintType.addProperty("name", complaintType.getName());
+                    jComplaintType.addProperty("description", complaintType.getDescription());
+                    jAryComplaintTypes.add(jComplaintType);
+                }
+
+                jComplaintCategory.add("complaintTypes", jAryComplaintTypes);
+                jAryComplaintCategories.add(jComplaintCategory);
+            }
+
+            final JsonObject jresp = new JsonObject();
+            jresp.add("complaintCategories", jAryComplaintCategories);
+
             return getResponseHandler().success(jresp);
-            
+
         } catch (final Exception e) {
-        	LOGGER.error("EGOV-API ERROR ",e);
-        	return getResponseHandler().error(getMessage("server.error"));
+            LOGGER.error("EGOV-API ERROR ", e);
+            return getResponseHandler().error(getMessage("server.error"));
         }
     }
-    
+
     // --------------------------------------------------------------------------------//
     /**
      * This will returns all complaint types
@@ -208,8 +208,8 @@ public class ComplaintController extends ApiController {
             final List<ComplaintType> complaintTypes = complaintTypeService.findActiveComplaintTypes();
             return getResponseHandler().setDataAdapter(new ComplaintTypeAdapter()).success(complaintTypes);
         } catch (final Exception e) {
-        	LOGGER.error("EGOV-API ERROR ",e);
-        	return getResponseHandler().error(getMessage("server.error"));
+            LOGGER.error("EGOV-API ERROR ", e);
+            return getResponseHandler().error(getMessage("server.error"));
         }
     }
 
@@ -226,8 +226,8 @@ public class ComplaintController extends ApiController {
             final List<ComplaintType> complaintTypes = complaintTypeService.getFrequentlyFiledComplaints();
             return getResponseHandler().setDataAdapter(new ComplaintTypeAdapter()).success(complaintTypes);
         } catch (final Exception e) {
-        	LOGGER.error("EGOV-API ERROR ",e);
-        	return getResponseHandler().error(getMessage("server.error"));
+            LOGGER.error("EGOV-API ERROR ", e);
+            return getResponseHandler().error(getMessage("server.error"));
         }
     }
 
@@ -240,20 +240,17 @@ public class ComplaintController extends ApiController {
      */
    /* @RequestMapping(value = { ApiUrl.COMPLAINT_SEARCH }, method = RequestMethod.POST, produces = MediaType.TEXT_PLAIN_VALUE)
     public ResponseEntity<String> complaintSearch(@RequestBody final ComplaintSearchRequest searchRequest) {
-       try
-       {
-    	final SearchResult searchResult = searchService.search(
-                asList(Index.PGR.toString()),
-                asList(IndexType.COMPLAINT.toString()),
-                searchRequest.searchQuery(), searchRequest.searchFilters(),
-                Sort.by().field("common.createdDate", SortOrder.DESC), org.egov.search.domain.Page.NULL);
-        return getResponseHandler().success(searchResult.getDocuments());
-       }
-       catch(Exception e)
-       {
-    	 LOGGER.error("EGOV-API ERROR ",e);
-       	 return getResponseHandler().error(getMessage("server.error"));
-       }
+        try {
+            final SearchResult searchResult = searchService.search(
+                    asList(Index.PGR.toString()),
+                    asList(IndexType.COMPLAINT.toString()),
+                    searchRequest.searchQuery(), searchRequest.searchFilters(),
+                    Sort.by().field("common.createdDate", SortOrder.DESC), org.egov.search.domain.Page.NULL);
+            return getResponseHandler().success(searchResult.getDocuments());
+        } catch (final Exception e) {
+            LOGGER.error("EGOV-API ERROR ", e);
+            return getResponseHandler().error(getMessage("server.error"));
+        }
     }*/
 
     // --------------------------------------------------------------------------------//
@@ -263,90 +260,66 @@ public class ComplaintController extends ApiController {
      * @param Complaint - As json Object
      * @return Complaint
      */
-    /*@RequestMapping(value = ApiUrl.COMPLAINT_CREATE, method = RequestMethod.POST)
-    public ResponseEntity<String> complaintCreate(@RequestBody final JSONObject complaintRequest) {
+    /*
+     * @RequestMapping(value = ApiUrl.COMPLAINT_CREATE, method = RequestMethod.POST) public ResponseEntity<String>
+     * complaintCreate(@RequestBody final JSONObject complaintRequest) { try { final Complaint complaint = new Complaint(); final
+     * long complaintTypeId = (int) complaintRequest.get("complaintTypeId"); if (complaintRequest.get("locationId") != null &&
+     * (int) complaintRequest.get("locationId") > 0) { final long locationId = (int) complaintRequest.get("locationId"); final
+     * CrossHierarchy crosshierarchy = crossHierarchyService.findById(locationId);
+     * complaint.setLocation(crosshierarchy.getParent()); complaint.setChildLocation(crosshierarchy.getChild()); } if
+     * (complaintRequest.get("lng") != null && (double) complaintRequest.get("lng") > 0) { final double lng = (double)
+     * complaintRequest.get("lng"); complaint.setLng(lng); } if (complaintRequest.get("lat") != null && (double)
+     * complaintRequest.get("lat") > 0) { final double lat = (double) complaintRequest.get("lat"); complaint.setLat(lat); } if
+     * (complaint.getLocation() == null && (complaint.getLat() == 0 || complaint.getLng() == 0)) return
+     * getResponseHandler().error(getMessage("location.required"));
+     * complaint.setDetails(complaintRequest.get("details").toString());
+     * complaint.setLandmarkDetails(complaintRequest.get("landmarkDetails").toString()); if (complaintTypeId > 0) { final
+     * ComplaintType complaintType = complaintTypeService.findBy(complaintTypeId); complaint.setComplaintType(complaintType); }
+     * complaintService.createComplaint(complaint); return getResponseHandler().setDataAdapter(new
+     * ComplaintAdapter()).success(complaint, getMessage("msg.complaint.reg.success")); } catch (final Exception e) { return
+     * getResponseHandler().error(e.getMessage()); } }
+     */
 
-        try {
-            final Complaint complaint = new Complaint();
-            final long complaintTypeId = (int) complaintRequest.get("complaintTypeId");
-            if (complaintRequest.get("locationId") != null && (int) complaintRequest.get("locationId") > 0) {
-                final long locationId = (int) complaintRequest.get("locationId");
-                final CrossHierarchy crosshierarchy = crossHierarchyService.findById(locationId);
-                complaint.setLocation(crosshierarchy.getParent());
-                complaint.setChildLocation(crosshierarchy.getChild());
-            }
-            if (complaintRequest.get("lng") != null && (double) complaintRequest.get("lng") > 0) {
-                final double lng = (double) complaintRequest.get("lng");
-                complaint.setLng(lng);
-            }
-            if (complaintRequest.get("lat") != null && (double) complaintRequest.get("lat") > 0) {
-                final double lat = (double) complaintRequest.get("lat");
-                complaint.setLat(lat);
-            }
-            if (complaint.getLocation() == null && (complaint.getLat() == 0 || complaint.getLng() == 0))
-                return getResponseHandler().error(getMessage("location.required"));
-            complaint.setDetails(complaintRequest.get("details").toString());
-            complaint.setLandmarkDetails(complaintRequest.get("landmarkDetails").toString());
-            if (complaintTypeId > 0) {
-                final ComplaintType complaintType = complaintTypeService.findBy(complaintTypeId);
-                complaint.setComplaintType(complaintType);
-            }
-            complaintService.createComplaint(complaint);
-            return getResponseHandler().setDataAdapter(new ComplaintAdapter()).success(complaint,
-                    getMessage("msg.complaint.reg.success"));
-        } catch (final Exception e) {
-            return getResponseHandler().error(e.getMessage());
-        }
-    }*/
-    
-    
     @RequestMapping(value = ApiUrl.COMPLAINT_CREATE, method = RequestMethod.POST)
-    public ResponseEntity<String> complaintCreate(@RequestParam(value = "json_complaint", required = false) String complaintJSON, @RequestParam("files") final MultipartFile[] files) {
-    	try {
-    		
-    		JSONObject complaintRequest=(JSONObject)JSONValue.parse(complaintJSON);
-    		
+    public ResponseEntity<String> complaintCreate(
+            @RequestParam(value = "json_complaint", required = false) final String complaintJSON,
+            @RequestParam("files") final MultipartFile[] files) {
+        try {
+
+            final JSONObject complaintRequest = (JSONObject) JSONValue.parse(complaintJSON);
+
             final Complaint complaint = new Complaint();
-                        
-            
-            
-            if (securityUtils.currentUserType().equals(UserType.EMPLOYEE)) {
-            	
-            	if(complaintRequest.containsKey("complainantName") && 
-            			complaintRequest.containsKey("complainantMobileNo"))
-            	{
-            		
-            		if(StringUtils.isEmpty(complaintRequest.get("complainantName").toString()) || StringUtils.isEmpty(complaintRequest.get("complainantMobileNo").toString()))
-            		{
-            			return getResponseHandler().error(getMessage("msg.complaint.reg.failed.user"));
-            		}
-            		
-            		complaint.getComplainant().setName(complaintRequest.get("complainantName").toString());
+
+            if (securityUtils.currentUserType().equals(UserType.EMPLOYEE))
+                if (complaintRequest.containsKey("complainantName") &&
+                        complaintRequest.containsKey("complainantMobileNo")) {
+
+                    if (org.apache.commons.lang.StringUtils.isEmpty(complaintRequest.get("complainantName").toString())
+                            || org.apache.commons.lang.StringUtils
+                                    .isEmpty(complaintRequest.get("complainantMobileNo").toString()))
+                        return getResponseHandler().error(getMessage("msg.complaint.reg.failed.user"));
+
+                    complaint.getComplainant().setName(complaintRequest.get("complainantName").toString());
                     complaint.getComplainant().setMobile(complaintRequest.get("complainantMobileNo").toString());
-                    
-                    if(complaintRequest.containsKey("complainantEmail")){
-                    String email=complaintRequest.get("complainantEmail").toString();
-                    	if(!email.matches("^[A-Za-z0-9+_.-]+@(.+)$")){
-                    		return getResponseHandler().error(getMessage("msg.invalid.mail"));
-                    	}
-                    	complaint.getComplainant().setEmail(email);
+
+                    if (complaintRequest.containsKey("complainantEmail")) {
+                        final String email = complaintRequest.get("complainantEmail").toString();
+                        if (!email.matches("^[A-Za-z0-9+_.-]+@(.+)$"))
+                            return getResponseHandler().error(getMessage("msg.invalid.mail"));
+                        complaint.getComplainant().setEmail(email);
                     }
-                    
-            	}
-            	else if(!complaintRequest.containsKey("complainantName") && 
-            			!complaintRequest.containsKey("complainantMobileNo") &&
-            			!complaintRequest.containsKey("complainantEmail")){
-            		User currentUser=securityUtils.getCurrentUser();
-            		complaint.getComplainant().setName(currentUser.getUsername());
+
+                } else if (!complaintRequest.containsKey("complainantName") &&
+                        !complaintRequest.containsKey("complainantMobileNo") &&
+                        !complaintRequest.containsKey("complainantEmail")) {
+                    final User currentUser = securityUtils.getCurrentUser();
+                    complaint.getComplainant().setName(currentUser.getUsername());
                     complaint.getComplainant().setMobile(currentUser.getMobileNumber());
-                    if(!StringUtils.isEmpty(currentUser.getEmailId()))
-            		complaint.getComplainant().setEmail(currentUser.getEmailId());
-            	}
-            	else{
-            		return getResponseHandler().error(getMessage("msg.complaint.reg.failed.user"));
-            	}
-            }
-            
+                    if (!org.apache.commons.lang.StringUtils.isEmpty(currentUser.getEmailId()))
+                        complaint.getComplainant().setEmail(currentUser.getEmailId());
+                } else
+                    return getResponseHandler().error(getMessage("msg.complaint.reg.failed.user"));
+
             final long complaintTypeId = (long) complaintRequest.get("complaintTypeId");
             if (complaintRequest.get("locationId") != null && (long) complaintRequest.get("locationId") > 0) {
                 final long locationId = (long) complaintRequest.get("locationId");
@@ -371,22 +344,20 @@ public class ComplaintController extends ApiController {
                 complaint.setComplaintType(complaintType);
             }
             complaint.setReceivingMode(ReceivingMode.MOBILE);
-            if(files.length>0)
-            {
-            	complaint.setSupportDocs(addToFileStore(files));	
-            }
+            if (files.length > 0)
+                complaint.setSupportDocs(addToFileStore(files));
             complaintService.createComplaint(complaint);
             return getResponseHandler().setDataAdapter(new ComplaintAdapter()).success(complaint,
-                   getMessage("msg.complaint.reg.success"));
-        } catch (ValidationException e) {
-        	return getResponseHandler().error(getMessage(e.getMessage()));
-        } catch (Exception e) {
-			// TODO: handle exception
-        	LOGGER.error("EGOV-API ERROR ",e);
-          	return getResponseHandler().error(getMessage("server.error"));
-		}
+                    getMessage("msg.complaint.reg.success"));
+        } catch (final ValidationException e) {
+            return getResponseHandler().error(getMessage(e.getMessage()));
+        } catch (final Exception e) {
+            // TODO: handle exception
+            LOGGER.error("EGOV-API ERROR ", e);
+            return getResponseHandler().error(getMessage("server.error"));
+        }
     }
-    
+
     protected Set<FileStoreMapper> addToFileStore(final MultipartFile[] files) {
         if (ArrayUtils.isNotEmpty(files))
             return Arrays.asList(files).stream().filter(file -> !file.isEmpty()).map(file -> {
@@ -400,7 +371,6 @@ public class ComplaintController extends ApiController {
         else
             return null;
     }
-    
 
     // --------------------------------------------------------------------------------//
     /**
@@ -413,7 +383,7 @@ public class ComplaintController extends ApiController {
     @RequestMapping(value = { ApiUrl.COMPLAINT_UPLOAD_SUPPORT_DOCUMENT }, method = RequestMethod.POST)
     public ResponseEntity<String> uploadSupportDocs(@PathVariable final String complaintNo,
             @RequestParam("files") final MultipartFile file) {
-    	try {
+        try {
             final Complaint complaint = complaintService.getComplaintByCRN(complaintNo);
 
             final FileStoreMapper uploadFile = fileStoreService.store(
@@ -423,8 +393,8 @@ public class ComplaintController extends ApiController {
             complaintService.update(complaint, null, null);
             return getResponseHandler().success("", getMessage("msg.complaint.update.success"));
         } catch (final Exception e) {
-        	LOGGER.error("EGOV-API ERROR ",e);
-          	return getResponseHandler().error(getMessage("server.error"));
+            LOGGER.error("EGOV-API ERROR ", e);
+            return getResponseHandler().error(getMessage("server.error"));
         }
     }
 
@@ -437,20 +407,17 @@ public class ComplaintController extends ApiController {
      */
     @RequestMapping(value = { ApiUrl.COMPLAINT_DETAIL }, method = RequestMethod.GET, produces = MediaType.TEXT_PLAIN_VALUE)
     public ResponseEntity<String> getDetail(@PathVariable final String complaintNo) {
-    	try
-    	{
-	        if (complaintNo == null)
-	            return getResponseHandler().error("Invalid number");
-	        final Complaint complaint = complaintService.getComplaintByCRN(complaintNo);
-	        if (complaint == null)
-	            return getResponseHandler().error("no complaint information");
-	        return getResponseHandler().setDataAdapter(new ComplaintAdapter()).success(complaint);
-    	}
-    	catch(Exception e)
-    	{
-    		LOGGER.error("EGOV-API ERROR ",e);
-          	return getResponseHandler().error(getMessage("server.error"));
-    	}
+        try {
+            if (complaintNo == null)
+                return getResponseHandler().error("Invalid number");
+            final Complaint complaint = complaintService.getComplaintByCRN(complaintNo);
+            if (complaint == null)
+                return getResponseHandler().error("no complaint information");
+            return getResponseHandler().setDataAdapter(new ComplaintAdapter()).success(complaint);
+        } catch (final Exception e) {
+            LOGGER.error("EGOV-API ERROR ", e);
+            return getResponseHandler().error(getMessage("server.error"));
+        }
     }
 
     // --------------------------------------------------------------------------------//
@@ -462,21 +429,21 @@ public class ComplaintController extends ApiController {
      */
     @RequestMapping(value = { ApiUrl.COMPLAINT_STATUS }, method = RequestMethod.GET, produces = MediaType.TEXT_PLAIN_VALUE)
     public ResponseEntity<String> getStatus(@PathVariable final String complaintNo) {
-		try {
-			if (complaintNo == null)
-				return getResponseHandler().error("Invalid number");
-			final Complaint complaint = complaintService
-					.getComplaintByCRN(complaintNo);
-			if (complaint == null)
-				return getResponseHandler().error("no complaint information");
-			else
-				return getResponseHandler().setDataAdapter(
-						new ComplaintStatusAdapter()).success(
-						complaint.getStateHistory());
-		} catch (Exception e) {
-			LOGGER.error("EGOV-API ERROR ", e);
-			return getResponseHandler().error(getMessage("server.error"));
-		}
+        try {
+            if (complaintNo == null)
+                return getResponseHandler().error("Invalid number");
+            final Complaint complaint = complaintService
+                    .getComplaintByCRN(complaintNo);
+            if (complaint == null)
+                return getResponseHandler().error("no complaint information");
+            else
+                return getResponseHandler().setDataAdapter(
+                        new ComplaintStatusAdapter()).success(
+                                complaint.getStateHistory());
+        } catch (final Exception e) {
+            LOGGER.error("EGOV-API ERROR ", e);
+            return getResponseHandler().error(getMessage("server.error"));
+        }
     }
 
     // --------------------------------------------------------------------------------//
@@ -499,8 +466,8 @@ public class ComplaintController extends ApiController {
             return getResponseHandler().putStatusAttribute("hasNextPage", String.valueOf(hasNextPage))
                     .setDataAdapter(new ComplaintAdapter()).success(pagelist.getContent());
         } catch (final Exception e) {
-        	LOGGER.error("EGOV-API ERROR ", e);
-			return getResponseHandler().error(getMessage("server.error"));
+            LOGGER.error("EGOV-API ERROR ", e);
+            return getResponseHandler().error(getMessage("server.error"));
         }
 
     }
@@ -515,18 +482,17 @@ public class ComplaintController extends ApiController {
      */
     @RequestMapping(value = { ApiUrl.COMPLAINT_GET_LOCATION }, method = RequestMethod.GET, produces = MediaType.TEXT_PLAIN_VALUE)
     public ResponseEntity<String> getLocation(@RequestParam("locationName") final String locationName) {
-    	try
-    	{
-	        if (locationName == null || locationName.isEmpty() || locationName.length() < 3)
-	            return getResponseHandler().error(getMessage("location.search.invalid"));
-	        final List<Map<String, Object>> list = boundaryService.getBoundaryDataByNameLike(locationName);
-	        return getResponseHandler().success(list);
-    	} catch (final Exception e) {
-        	LOGGER.error("EGOV-API ERROR ", e);
-			return getResponseHandler().error(getMessage("server.error"));
+        try {
+            if (locationName == null || locationName.isEmpty() || locationName.length() < 3)
+                return getResponseHandler().error(getMessage("location.search.invalid"));
+            final List<Map<String, Object>> list = boundaryService.getBoundaryDataByNameLike(locationName);
+            return getResponseHandler().success(list);
+        } catch (final Exception e) {
+            LOGGER.error("EGOV-API ERROR ", e);
+            return getResponseHandler().error(getMessage("server.error"));
         }
     }
-    
+
     // --------------------------------------------------------------------------------//
     /**
      * This will returns resolved and unresolved complaints count in the city.
@@ -539,15 +505,14 @@ public class ComplaintController extends ApiController {
     @RequestMapping(value = {
             ApiUrl.COMPLAINT_RESOLVED_UNRESOLVED_COUNT }, method = RequestMethod.GET, produces = MediaType.TEXT_PLAIN_VALUE)
     public ResponseEntity<String> getComplaintsTotalCount() {
-    	try {
-    		return getResponseHandler().success(complaintService.getComplaintsTotalCount());
+        try {
+            return getResponseHandler().success(complaintService.getComplaintsTotalCount());
         } catch (final Exception e) {
-        	LOGGER.error("EGOV-API ERROR ", e);
-			return getResponseHandler().error(getMessage("server.error"));
+            LOGGER.error("EGOV-API ERROR ", e);
+            return getResponseHandler().error(getMessage("server.error"));
         }
     }
-    
-    
+
     // --------------------------------------------------------------------------------//
     /**
      * This will returns complaints count by status of current user.
@@ -560,11 +525,11 @@ public class ComplaintController extends ApiController {
     @RequestMapping(value = {
             ApiUrl.CITIZEN_COMPLAINT_COUNT }, method = RequestMethod.GET, produces = MediaType.TEXT_PLAIN_VALUE)
     public ResponseEntity<String> getComplaintsCount() {
-    	try {
-    		return getResponseHandler().success(complaintService.getMyComplaintsCount());
+        try {
+            return getResponseHandler().success(complaintService.getMyComplaintsCount());
         } catch (final Exception e) {
-        	LOGGER.error("EGOV-API ERROR ", e);
-			return getResponseHandler().error(getMessage("server.error"));
+            LOGGER.error("EGOV-API ERROR ", e);
+            return getResponseHandler().error(getMessage("server.error"));
         }
     }
 
@@ -575,53 +540,45 @@ public class ComplaintController extends ApiController {
      * @param page
      * @param pageSize
      * @return Complaint
-    
+     *
      */
 
     @RequestMapping(value = {
             ApiUrl.CITIZEN_GET_MY_COMPLAINT }, method = RequestMethod.GET, produces = MediaType.TEXT_PLAIN_VALUE)
     public ResponseEntity<String> getMyComplaint(@PathVariable("page") final int page,
-            @PathVariable("pageSize") final int pageSize, @RequestParam(value="complaintStatus", required=false) final String complaintStatus) {
+            @PathVariable("pageSize") final int pageSize,
+            @RequestParam(value = "complaintStatus", required = false) final String complaintStatus) {
 
         if (page < 1)
             return getResponseHandler().error("Invalid Page Number");
         try {
-        	
-        	Page<Complaint> pagelist=null;
-        	boolean hasNextPage=false;
-        	if(StringUtils.isEmpty(complaintStatus) || complaintStatus.equals(complaintService.COMPLAINT_ALL))
-        	{
-        		pagelist = complaintService.getMyComplaint(page, pageSize);
+
+            Page<Complaint> pagelist = null;
+            boolean hasNextPage = false;
+            if (org.apache.commons.lang.StringUtils.isEmpty(complaintStatus)
+                    || complaintStatus.equals(complaintService.COMPLAINT_ALL)) {
+                pagelist = complaintService.getMyComplaint(page, pageSize);
                 hasNextPage = pagelist.getTotalElements() > page * pageSize;
-        	}
-        	else if(complaintStatus.equals(complaintService.COMPLAINT_PENDING))
-        	{
-        		pagelist = complaintService.getMyPendingGrievances(page, pageSize);
+            } else if (complaintStatus.equals(complaintService.COMPLAINT_PENDING)) {
+                pagelist = complaintService.getMyPendingGrievances(page, pageSize);
                 hasNextPage = pagelist.getTotalElements() > page * pageSize;
-        	}
-        	else if(complaintStatus.equals(complaintService.COMPLAINT_COMPLETED))
-        	{
-        		pagelist = complaintService.getMyCompletedGrievances(page, pageSize);
+            } else if (complaintStatus.equals(complaintService.COMPLAINT_COMPLETED)) {
+                pagelist = complaintService.getMyCompletedGrievances(page, pageSize);
                 hasNextPage = pagelist.getTotalElements() > page * pageSize;
-        	}
-        	else if(complaintStatus.equals(complaintService.COMPLAINT_REJECTED))
-        	{
-        		pagelist = complaintService.getMyRejectedGrievances(page, pageSize);
+            } else if (complaintStatus.equals(complaintService.COMPLAINT_REJECTED)) {
+                pagelist = complaintService.getMyRejectedGrievances(page, pageSize);
                 hasNextPage = pagelist.getTotalElements() > page * pageSize;
-        	}
-        	
-        	if(pagelist!=null)
-        	{
-        		return getResponseHandler().putStatusAttribute("hasNextPage", String.valueOf(hasNextPage))
+            }
+
+            if (pagelist != null)
+                return getResponseHandler().putStatusAttribute("hasNextPage", String.valueOf(hasNextPage))
                         .setDataAdapter(new ComplaintAdapter()).success(pagelist.getContent());
-        	}
-        	else{
-        		return getResponseHandler().error("Invalid Complaint Status!");
-        	}
-            
+            else
+                return getResponseHandler().error("Invalid Complaint Status!");
+
         } catch (final Exception e) {
-        	LOGGER.error("EGOV-API ERROR ", e);
-			return getResponseHandler().error(getMessage("server.error"));
+            LOGGER.error("EGOV-API ERROR ", e);
+            return getResponseHandler().error(getMessage("server.error"));
         }
 
     }
@@ -655,8 +612,8 @@ public class ComplaintController extends ApiController {
             return getResponseHandler().putStatusAttribute("hasNextPage", String.valueOf(hasNextPage))
                     .setDataAdapter(new ComplaintAdapter()).success(list);
         } catch (final Exception e) {
-        	LOGGER.error("EGOV-API ERROR ", e);
-			return getResponseHandler().error(getMessage("server.error"));
+            LOGGER.error("EGOV-API ERROR ", e);
+            return getResponseHandler().error(getMessage("server.error"));
         }
     }
 
@@ -710,11 +667,11 @@ public class ComplaintController extends ApiController {
                 i++;
             }
         } catch (final Exception e) {
-        	LOGGER.error("EGOV-API ERROR ", e);
+            LOGGER.error("EGOV-API ERROR ", e);
             throw new IOException();
         }
     }
-    
+
     @RequestMapping(value = ApiUrl.COMPLAINT_DOWNLOAD_SUPPORT_DOCUMENT_BY_ID)
     public void download(@PathVariable final String fileStoreId, final HttpServletResponse response) throws IOException {
         fileStoreUtils.fetchFileAndWriteToStream(fileStoreId, PGRConstants.MODULE_NAME, false, response);
@@ -733,20 +690,23 @@ public class ComplaintController extends ApiController {
     public ResponseEntity<String> updateComplaintStatus(
             @PathVariable final String complaintNo, @RequestBody final JSONObject jsonData) {
 
-        String msg = null;
         try {
             final Complaint complaint = complaintService.getComplaintByCRN(complaintNo);
             final ComplaintStatus cmpStatus = complaintStatusService.getByName(jsonData.get("action").toString());
-            if(complaint.getStatus().getName().equals("COMPLETED"))
-            {
-            	complaint.setCitizenFeedback(CitizenFeedback.valueOf(jsonData.get("feedback").toString()));
+            String citizenfeedback = jsonData.get("feedback").toString();
+            if (complaint.getStatus().getName().equals("COMPLETED")) {
+                if (UNSATISFACTORY.equals(citizenfeedback))
+                    citizenfeedback = CitizenFeedback.TWO.name();
+                else if (SATISFACTORY.equals(citizenfeedback))
+                    citizenfeedback = CitizenFeedback.FIVE.name();
+                complaint.setCitizenFeedback(CitizenFeedback.valueOf(citizenfeedback));
             }
             complaint.setStatus(cmpStatus);
             complaintService.update(complaint, Long.valueOf(0), jsonData.get("comment").toString());
             return getResponseHandler().success("", getMessage("msg.complaint.status.update.success"));
         } catch (final Exception e) {
-        	LOGGER.error("EGOV-API ERROR ", e);
-			return getResponseHandler().error(getMessage("server.error"));
+            LOGGER.error("EGOV-API ERROR ", e);
+            return getResponseHandler().error(getMessage("server.error"));
         }
 
     }
@@ -760,65 +720,63 @@ public class ComplaintController extends ApiController {
             container.put("comments", list);
             return getResponseHandler().setDataAdapter(new ComplaintTypeAdapter()).success(container);
         } catch (final Exception e) {
-        	LOGGER.error("EGOV-API ERROR ", e);
-			return getResponseHandler().error(getMessage("server.error"));
+            LOGGER.error("EGOV-API ERROR ", e);
+            return getResponseHandler().error(getMessage("server.error"));
         }
     }
-    
+
     /* EMPLOYEE RELATED COMPLAINT OPERATIONS START */
 
-    //get complaint available status and forward departments
+    // get complaint available status and forward departments
     @RequestMapping(value = ApiUrl.EMPLOYEE_COMPLAINT_ACTIONS, method = RequestMethod.GET, produces = MediaType.TEXT_PLAIN_VALUE)
     public ResponseEntity<String> getComplaintActions(@PathVariable final String complaintNo) {
         try {
-        	
-        	final Complaint complaint = complaintService.getComplaintByCRN(complaintNo);
-        	
-        	ComplaintAction complaintActions=new ComplaintAction();
-        	complaintActions.setStatus(complaintStatusMappingService.getStatusByRoleAndCurrentStatus(securityUtils.getCurrentUser().getRoles(),
-                    complaint.getStatus()));
-        	complaintActions.setApprovalDepartments(departmentService.getAllDepartments());
-        	
+
+            final Complaint complaint = complaintService.getComplaintByCRN(complaintNo);
+
+            final ComplaintAction complaintActions = new ComplaintAction();
+            complaintActions.setStatus(
+                    complaintStatusMappingService.getStatusByRoleAndCurrentStatus(securityUtils.getCurrentUser().getRoles(),
+                            complaint.getStatus()));
+            complaintActions.setApprovalDepartments(departmentService.getAllDepartments());
+
             return getResponseHandler().setDataAdapter(new ComplaintActionAdapter()).success(complaintActions);
-            
+
         } catch (final Exception e) {
-        	LOGGER.error("EGOV-API ERROR ", e);
-			return getResponseHandler().error(getMessage("server.error"));
+            LOGGER.error("EGOV-API ERROR ", e);
+            return getResponseHandler().error(getMessage("server.error"));
         }
     }
-    
-    @RequestMapping(value = ApiUrl.EMPLOYEE_UPDATE_COMPLAINT, method = RequestMethod.POST, produces = MediaType.TEXT_PLAIN_VALUE)
-    public ResponseEntity<String> updateComplaintFromEmployee(@PathVariable final String complaintNo, @RequestParam(value = "jsonParams", required = false) String complaintJsonStr, @RequestParam("files") final MultipartFile[] files) {
 
-    	try {
-        	
-        	JsonObject complaintJson=new JsonParser().parse(complaintJsonStr).getAsJsonObject();
-        	
+    @RequestMapping(value = ApiUrl.EMPLOYEE_UPDATE_COMPLAINT, method = RequestMethod.POST, produces = MediaType.TEXT_PLAIN_VALUE)
+    public ResponseEntity<String> updateComplaintFromEmployee(@PathVariable final String complaintNo,
+            @RequestParam(value = "jsonParams", required = false) final String complaintJsonStr,
+            @RequestParam("files") final MultipartFile[] files) {
+
+        try {
+
+            final JsonObject complaintJson = new JsonParser().parse(complaintJsonStr).getAsJsonObject();
+
             final Complaint complaint = complaintService.getComplaintByCRN(complaintNo);
             final ComplaintStatus cmpStatus = complaintStatusService.getByName(complaintJson.get("action").getAsString());
             complaint.setStatus(cmpStatus);
-            
+
             Long approvalPosition;
-            
-            if(!complaintJson.has("approvalposition"))
-            {
-            	approvalPosition=securityUtils.getCurrentUser().getId();
-            }
-            else{
-            	approvalPosition= Long.valueOf(complaintJson.get("approvalposition").getAsString());
-            }
-            
-            if(files.length>0)
-            {
-            	complaint.getSupportDocs().addAll(addToFileStore(files));
-            }
+
+            if (!complaintJson.has("approvalposition"))
+                approvalPosition = securityUtils.getCurrentUser().getId();
+            else
+                approvalPosition = Long.valueOf(complaintJson.get("approvalposition").getAsString());
+
+            if (files.length > 0)
+                complaint.getSupportDocs().addAll(addToFileStore(files));
             complaintService.update(complaint, approvalPosition, complaintJson.get("comment").getAsString());
             return getResponseHandler().success("", getMessage("msg.complaint.status.update.success"));
         } catch (final Exception e) {
-        	LOGGER.error("EGOV-API ERROR ", e);
-			return getResponseHandler().error(getMessage("server.error"));
+            LOGGER.error("EGOV-API ERROR ", e);
+            return getResponseHandler().error(getMessage("server.error"));
         }
 
     }
-  
+
 }

@@ -41,9 +41,7 @@ package org.egov.restapi.web.rest;
 
 import java.io.IOException;
 import java.text.ParseException;
-import javax.ws.rs.core.MediaType;
 
-import org.apache.commons.lang3.StringUtils;
 import org.codehaus.jackson.annotate.JsonAutoDetect.Visibility;
 import org.codehaus.jackson.annotate.JsonMethod;
 import org.codehaus.jackson.map.ObjectMapper;
@@ -69,6 +67,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
+import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
+
 @RestController
 public class UpdateAssessmentController {
 
@@ -86,10 +86,10 @@ public class UpdateAssessmentController {
      * @throws IOException
      * @throws ParseException
      */
-	@RequestMapping(value = "/property/updateProperty", method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON, produces = MediaType.APPLICATION_JSON)
+	@RequestMapping(value = "/property/updateProperty", method = RequestMethod.POST, consumes = APPLICATION_JSON_VALUE, produces = APPLICATION_JSON_VALUE)
 	public String updateProperty(@RequestBody String createPropertyDetails)
 			throws IOException, ParseException {
-		String responseJson = StringUtils.EMPTY;
+		String responseJson;
 		ApplicationThreadLocals.setUserId(2L);
 		CreatePropertyDetails createPropDetails = (CreatePropertyDetails) getObjectFromJSONRequest(createPropertyDetails, CreatePropertyDetails.class);
 		

@@ -50,10 +50,10 @@ $(document).ready(function () {
 			dataType: "json",
 			success: function (response) {
 				console.log("success"+response);
-				$('#licenseSubCategories').empty();
-				//$('#licenseSubCategories').append($("<option value=''>Select from below</option>"));
+				var subCategory = $('#licenseSubCategories')
+				subCategory.find("option:gt(0)").remove();
 				$.each(response, function(index, value) {
-					$('#licenseSubCategories').append($('<option>').text(value.name).attr('value', value.code));
+					subCategory.append($('<option>').text(value.name).attr('value', value.code));
 				});
 				
 			}, 

@@ -43,7 +43,7 @@ package org.egov.pgr.entity.enums;
 import org.apache.commons.lang3.StringUtils;
 
 public enum CitizenFeedback {
-    UNSPECIFIED, SATISFACTORY, UNSATISFACTORY;
+    UNSPECIFIED, ONE, TWO, THREE, FOUR, FIVE;
     @Override
     public String toString() {
         return StringUtils.capitalize(name());

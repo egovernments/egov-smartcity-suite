@@ -154,15 +154,6 @@ public class ComplaintIndexService {
             final String approvalComment) {
         final City cityWebsite = cityService.getCityByURL(ApplicationThreadLocals.getDomainName());
         complaintIndex.setCitydetails(cityWebsite);
-        if (complaintIndex.getReceivingMode().equals(ReceivingMode.MOBILE))
-            complaintIndex.setSource("PuraSeva");
-        else if (complaintIndex.getReceivingMode().equals(ReceivingMode.WEBSITE)
-                && (complaintIndex.getCreatedBy().getType().equals(UserType.CITIZEN)
-                        || complaintIndex.getCreatedBy().getType().equals(UserType.SYSTEM)))
-            complaintIndex.setSource("By citizens:ULB Portal");
-        else if (complaintIndex.getCreatedBy().getType().equals(UserType.EMPLOYEE)
-                || complaintIndex.getCreatedBy().getType().equals(UserType.SYSTEM))
-            complaintIndex.setSource("ULB counter");
         // Update the complaint index object with the existing values
         complaintIndex = populateFromIndex(complaintIndex);
         final Position position = complaintIndex.getAssignee();
@@ -231,15 +222,6 @@ public class ComplaintIndexService {
         final User assignedUser = !assignments.isEmpty() ? assignments.get(0).getEmployee() : null;
         final City cityWebsite = cityService.getCityByURL(ApplicationThreadLocals.getDomainName());
         complaintIndex.setCitydetails(cityWebsite);
-        if (complaintIndex.getReceivingMode().equals(ReceivingMode.MOBILE))
-            complaintIndex.setSource("PuraSeva");
-        else if (complaintIndex.getReceivingMode().equals(ReceivingMode.WEBSITE)
-                && (complaintIndex.getCreatedBy().getType().equals(UserType.CITIZEN)
-                        || complaintIndex.getCreatedBy().getType().equals(UserType.SYSTEM)))
-            complaintIndex.setSource("By citizens:ULB Portal");
-        else if (complaintIndex.getCreatedBy().getType().equals(UserType.EMPLOYEE)
-                || complaintIndex.getCreatedBy().getType().equals(UserType.SYSTEM))
-            complaintIndex.setSource("ULB counter");
         // Update the complaint index object with the existing values
         complaintIndex = populateFromIndex(complaintIndex);
         // Update current Functionary Complaint index variables

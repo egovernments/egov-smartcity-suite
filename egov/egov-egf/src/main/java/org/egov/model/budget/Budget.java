@@ -58,12 +58,15 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 import java.util.Date;
+
+import static org.egov.model.budget.Budget.SEQ_BUDGET;
 
 @Entity
 @Table(name = "EGF_BUDGET")
-@SequenceGenerator(name = Budget.SEQ_BUDGET, sequenceName = Budget.SEQ_BUDGET, allocationSize = 1)
-@Unique(fields = "name", id = "id", columnName = "NAME", tableName = "EGF_BUDGET", enableDfltMsg = true)
+@SequenceGenerator(name = SEQ_BUDGET, sequenceName = SEQ_BUDGET, allocationSize = 1)
+@Unique(fields = "name", enableDfltMsg = true)
 public class Budget extends StateAware {
 
     public static final String SEQ_BUDGET = "SEQ_EGF_BUDGET";
@@ -109,6 +112,10 @@ public class Budget extends StateAware {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "STATUS")
     private EgwStatus status;
+
+    @Transient
+    private String searchBere;
+
 
     @Override
     public Long getId() {
@@ -258,4 +265,13 @@ public class Budget extends StateAware {
     public void setWfState(State state) {
         setState(state);
     }
+
+    public String getSearchBere() {
+        return searchBere;
+    }
+
+    public void setSearchBere(String searchBere) {
+        this.searchBere = searchBere;
+    }
+
 }

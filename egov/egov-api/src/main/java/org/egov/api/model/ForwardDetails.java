@@ -48,8 +48,8 @@ import org.egov.pims.commons.Designation;
 
 public class ForwardDetails {
 
-    List<Designation> designations;
-    Set<EmployeeView> users;
+    private List<Designation> designations;
+    private Set<EmployeeView> users;
 
     public List<Designation> getDesignations() {
         return designations;
