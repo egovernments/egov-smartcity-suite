@@ -129,6 +129,10 @@ $(document)
 														"sClass" : "text-left"
 													},
 													{
+														"data" : "marriageRegistrationUnit",
+														"sClass" : "text-left"
+													},
+													{
 														"data" : null,
 														sortable : false,
 														"render" : function(
