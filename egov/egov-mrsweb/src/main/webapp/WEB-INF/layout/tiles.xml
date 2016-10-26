@@ -233,4 +233,19 @@
         <put-attribute name="page-title" value="title.registration.common.error" cascade="true"/>
         <put-attribute name="body" value="/WEB-INF/views/application/collection/marriage-error.jsp"/>
     </definition>
+       
+    <definition name="report-registration-agewise" extends="base_layout">
+        <put-attribute name="page-title" value="title.registration.agewise.report" cascade="true"/>
+        <put-attribute name="body" value="/WEB-INF/views/reports/report-registration-agewise.jsp"/>
+    </definition>
+    
+    <definition name="marriage-agewise-view" extends="base_layout">
+        <put-attribute name="page-title" value="title.registration.agewise.report" cascade="true"/>
+        <put-attribute name="body" value="/WEB-INF/views/reports/marriage-agewise-view.jsp"/>
+    </definition>
+    
+    <definition name="registration-certificates-report" extends="base_layout">
+        <put-attribute name="page-title" value="title.registration.certificate.report" cascade="true"/>
+        <put-attribute name="body" value="/WEB-INF/views/reports/registration-certificates-report.jsp"/>
+    </definition>
 </tiles-definitions>

@@ -49,14 +49,14 @@
 </jsp:include>
 <br />
 	<div class="form-group">
-		<div class="col-sm-3 ">
+		<div class="col-sm-3 control-label">
 			<spring:message code="lbl.fee.criteria"/>
 		</div>
 		<div class="col-sm-3 view-content">
 			 <form:hidden path="feeCriteria.id"  value="${reIssue.feeCriteria.id}"/>	
 			 <c:out value="${reIssue.feeCriteria.criteria}" /> 
 		</div>
-		<div class="col-sm-2 ">
+		<div class="col-sm-2 control-label">
 			<spring:message code="lbl.fee"/><span class="mandatory"></span>
 		</div>
 		<div class="col-sm-3 view-content">

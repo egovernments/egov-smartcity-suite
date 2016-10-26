@@ -43,6 +43,7 @@ import java.io.File;
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Base64;
 import java.util.Collections;
@@ -703,4 +704,35 @@ public class MarriageRegistrationService {
                 return criteria.list();
         
         }
+        
+	public String[] searchRegistrationOfHusbandAgeWise(int year) throws ParseException {
+
+		return registrationRepository.getHusbandCountAgeWise(year);
+	}
+	
+	public String[] searchRegistrationOfWifeAgeWise(int year) throws ParseException {
+
+		return registrationRepository.getWifeCountAgeWise(year);
+	}
+    
+	@SuppressWarnings("unchecked")
+    public List<MarriageRegistration> getAgewiseDetails(String age,String applicant,int year) throws ParseException {
+            final Criteria criteria = getCurrentSession().createCriteria(MarriageRegistration.class,"marriageRegistration");
+            String[] values=age.split("-");
+            
+            SimpleDateFormat formatter = new SimpleDateFormat("yyyy/MM/dd");
+            Date fromDate = formatter.parse(year + "/" + 1 + "/" + 1);
+            Date toDate = formatter.parse(year + "/" + 12 + "/" + 31);
+            if ( age != null && applicant.equals("husband"))
+            {
+                criteria.createAlias("marriageRegistration.husband", "husband").add(Restrictions.between("husband.ageInYearsAsOnMarriage", Integer.valueOf(values[0]),Integer.valueOf(values[1])));
+                criteria.add(Restrictions.between("marriageRegistration.dateOfMarriage", fromDate,toDate));
+            } else{
+            	criteria.createAlias("marriageRegistration.wife", "wife").add(Restrictions.between("wife.ageInYearsAsOnMarriage", Integer.valueOf(values[0]),Integer.valueOf(values[1])));
+            	criteria.add(Restrictions.between("marriageRegistration.dateOfMarriage", fromDate,toDate));
+            }
+            criteria.createAlias("marriageRegistration.status", "status").add(Restrictions.in("status.code", new String[] {MarriageRegistration.RegistrationStatus.REGISTERED.toString()}));
+            return criteria.list();
+    }
+       
 }

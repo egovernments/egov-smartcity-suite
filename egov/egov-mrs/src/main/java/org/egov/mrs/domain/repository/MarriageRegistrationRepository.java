@@ -45,6 +45,8 @@ import java.util.List;
 import org.egov.commons.EgwStatus;
 import org.egov.mrs.domain.entity.MarriageRegistration;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 @Repository
@@ -57,5 +59,11 @@ public interface MarriageRegistrationRepository extends JpaRepository<MarriageRe
     
     //List<Registration> findByRegistrationNoAndDateOfMarriageAndHusbandNameFirstName();
     
-    List<MarriageRegistration> findByCreatedDateAfterAndCreatedDateBeforeAndStatus(Date fromDate, Date toDate, EgwStatus status);    
+    List<MarriageRegistration> findByCreatedDateAfterAndCreatedDateBeforeAndStatus(Date fromDate, Date toDate, EgwStatus status);   
+    
+    @Query(value="select ap.ageInYearsAsOnMarriage , count(*) from MarriageRegistration rg, MrApplicant ap where rg.husband=ap.id and rg.status.code='REGISTERED' and YEAR(rg.dateOfMarriage)=:year group by ap.ageInYearsAsOnMarriage order by ap.ageInYearsAsOnMarriage")
+    String[] getHusbandCountAgeWise( @Param("year") int year);
+    
+    @Query(value="select ap.ageInYearsAsOnMarriage, count(*) from MarriageRegistration rg, MrApplicant ap where rg.wife=ap.id and rg.status.code='REGISTERED' and YEAR(rg.dateOfMarriage)=:year group by ap.ageInYearsAsOnMarriage order by ap.ageInYearsAsOnMarriage")
+    String[] getWifeCountAgeWise( @Param("year") int year);
 }
