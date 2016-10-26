@@ -38,14 +38,17 @@
 		<div class="row add-border">
 			<div class="col-xs-3 add-margin">
 				<spring:message code="lbl.locality" />
-			</div> 
-		
-			<div class="col-xs-3 add-margin view-content">
-				<c:out value="${abstractEstimate.lineEstimateDetails.lineEstimate.location.name}"></c:out>
 			</div>
-			<div class="col-xs-3 add-margin">
-				<spring:message code="lbl.workcategory" />
-			</div> 
+			<div class="col-xs-3 add-margin view-content"> 
+				<c:choose>
+					<c:when test="${abstractEstimate.lineEstimateDetails.lineEstimate.location != null}">
+						<c:out value="${abstractEstimate.lineEstimateDetails.lineEstimate.location.name}"></c:out>
+					</c:when>
+					<c:otherwise>
+						<c:out default="N/A" value="N/A"></c:out>
+					</c:otherwise>
+				</c:choose>
+			</div>
 		</div>
 			<div class="row add-border">
 				<div class="col-xs-3 add-margin">
