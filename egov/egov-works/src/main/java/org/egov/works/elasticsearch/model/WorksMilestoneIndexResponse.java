@@ -40,6 +40,8 @@
 
 package org.egov.works.elasticsearch.model;
 
+import java.util.Date;
+
 /**
  * @author venki
  */
@@ -154,6 +156,30 @@ public class WorksMilestoneIndexResponse {
     private Double dec16to31target;
 
     private String reporttype;
+
+    private String fund;
+
+    private String scheme;
+
+    private String subscheme;
+
+    private String estimatenumber;
+
+    private String win;
+
+    private String nameofthework;
+
+    private String ward;
+
+    private String agreementnumber;
+
+    private Date agreementdate;
+
+    private String contractornamecode;
+
+    private String workstatus;
+
+    private Double contractperiod;
 
     public String getName() {
         return name;
@@ -765,9 +791,106 @@ public class WorksMilestoneIndexResponse {
         this.reporttype = reporttype;
     }
 
+    public String getFund() {
+        return fund;
+    }
+
+    public void setFund(final String fund) {
+        this.fund = fund;
+    }
+
+    public String getScheme() {
+        return scheme;
+    }
+
+    public void setScheme(final String scheme) {
+        this.scheme = scheme;
+    }
+
+    public String getSubscheme() {
+        return subscheme;
+    }
+
+    public void setSubscheme(final String subscheme) {
+        this.subscheme = subscheme;
+    }
+
+    public String getEstimatenumber() {
+        return estimatenumber;
+    }
+
+    public void setEstimatenumber(final String estimatenumber) {
+        this.estimatenumber = estimatenumber;
+    }
+
+    public String getWin() {
+        return win;
+    }
+
+    public void setWin(final String win) {
+        this.win = win;
+    }
+
+    public String getNameofthework() {
+        return nameofthework;
+    }
+
+    public void setNameofthework(final String nameofthework) {
+        this.nameofthework = nameofthework;
+    }
+
+    public String getWard() {
+        return ward;
+    }
+
+    public void setWard(final String ward) {
+        this.ward = ward;
+    }
+
+    public String getAgreementnumber() {
+        return agreementnumber;
+    }
+
+    public void setAgreementnumber(final String agreementnumber) {
+        this.agreementnumber = agreementnumber;
+    }
+
+    public Date getAgreementdate() {
+        return agreementdate;
+    }
+
+    public void setAgreementdate(final Date agreementdate) {
+        this.agreementdate = agreementdate;
+    }
+
+    public String getContractornamecode() {
+        return contractornamecode;
+    }
+
+    public void setContractornamecode(final String contractornamecode) {
+        this.contractornamecode = contractornamecode;
+    }
+
+    public String getWorkstatus() {
+        return workstatus;
+    }
+
+    public void setWorkstatus(final String workstatus) {
+        this.workstatus = workstatus;
+    }
+
+    public Double getContractperiod() {
+        return contractperiod;
+    }
+
+    public void setContractperiod(final Double contractperiod) {
+        this.contractperiod = contractperiod;
+    }
+
     public Double getFinancialprogress() {
         return (totalpaidamountinlakhs != null ? totalpaidamountinlakhs : (double) 0)
-                / (totalworkordervalueinlakhs != null ? totalworkordervalueinlakhs : 1) * 100;
+                / (totalworkordervalueinlakhs != null ? (totalworkordervalueinlakhs > 0 ? totalworkordervalueinlakhs : 1) : 1)
+                * 100;
     }
 
 }
