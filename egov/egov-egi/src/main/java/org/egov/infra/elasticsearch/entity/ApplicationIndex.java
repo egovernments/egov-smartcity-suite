@@ -38,10 +38,10 @@
  *    In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
 
-package org.egov.infra.es.entity;
+package org.egov.infra.elasticsearch.entity;
 
-import org.egov.infra.es.entity.enums.ApprovalStatus;
-import org.egov.infra.es.entity.enums.ClosureStatus;
+import org.egov.infra.elasticsearch.entity.enums.ApprovalStatus;
+import org.egov.infra.elasticsearch.entity.enums.ClosureStatus;
 import org.egov.infra.persistence.entity.AbstractAuditable;
 import org.hibernate.validator.constraints.Length;
 
@@ -57,7 +57,7 @@ import javax.persistence.Transient;
 import javax.validation.constraints.NotNull;
 import java.util.Date;
 
-import static org.egov.infra.es.entity.ApplicationIndex.SEQ_APPLICATIONINDEX;
+import static org.egov.infra.elasticsearch.entity.ApplicationIndex.SEQ_APPLICATIONINDEX;
 import static org.egov.infra.validation.ValidatorUtils.assertNotNull;
 
 @Entity

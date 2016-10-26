@@ -73,6 +73,8 @@ public final class ApplicationConstant {
     public static final Character Y = Character.valueOf('Y');
     public static final Character N = Character.valueOf('N');
 
+    public static final String ES_DATE_FORMAT = "yyyy-MM-dd HH:mm";
+
     private ApplicationConstant() {
     }
 }

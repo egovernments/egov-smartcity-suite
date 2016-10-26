@@ -38,15 +38,17 @@
  *    In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
 
-package org.egov.infra.es.repository;
+package org.egov.infra.elasticsearch.service.util;
 
-import org.egov.infra.es.entity.ApplicationIndex;
-import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.stereotype.Repository;
+import ma.glasnost.orika.MapperFactory;
+import ma.glasnost.orika.impl.ConfigurableMapper;
+import org.egov.infra.elasticsearch.entity.ApplicationIndex;
+import org.egov.infra.elasticsearch.entity.es.ApplicationDocument;
+import org.springframework.stereotype.Component;
 
-@Repository
-public interface ApplicationIndexRepository extends JpaRepository<ApplicationIndex, Long> {
-
-    ApplicationIndex findByApplicationNumberAndCityName(String applicationNumber, String cityName);
-
+@Component
+public class ApplicationDocumentMapper extends ConfigurableMapper {
+    protected void configure(MapperFactory factory) {
+        factory.classMap(ApplicationIndex.class, ApplicationDocument.class);
+    }
 }

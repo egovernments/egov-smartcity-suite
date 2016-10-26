@@ -39,7 +39,7 @@
  */
 package org.egov.pgr.service;
 
-import org.egov.infra.es.aop.IndexingAdvice;
+import org.egov.infra.elasticsearch.aop.IndexingAdvice;
 import org.egov.pgr.entity.ComplaintType;
 import org.egov.pgr.entity.ComplaintTypeBuilder;
 import org.egov.pgr.repository.ComplaintTypeRepository;

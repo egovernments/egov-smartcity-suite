@@ -70,6 +70,7 @@ import org.egov.tl.entity.NatureOfBusiness;
 import org.egov.tl.entity.WorkflowBean;
 import org.egov.tl.entity.enums.ApplicationType;
 import org.egov.tl.repository.LicenseRepository;
+import org.egov.tl.service.es.LicenseApplicationIndexService;
 import org.egov.tl.utils.Constants;
 import org.egov.tl.utils.LicenseNumberUtils;
 import org.hibernate.CacheMode;
@@ -109,17 +110,17 @@ public abstract class AbstractLicenseService<T extends License> {
     @Autowired
     @Qualifier("entityQueryService")
     protected PersistenceService entityQueryService;
-    
+
     @Autowired
     protected InstallmentHibDao installmentDao;
 
     @Autowired
     protected LicenseNumberUtils licenseNumberUtils;
-   
+
     @Autowired
     protected DocumentTypeService documentTypeService;
 
-    
+
     @Autowired
     protected AssignmentService assignmentService;
 
@@ -134,7 +135,7 @@ public abstract class AbstractLicenseService<T extends License> {
     protected PersistenceService<LicenseDocumentType, Long> licenseDocumentTypeService;
 
     @Autowired
-    protected TradeLicenseUpdateIndexService updateIndexService;
+    protected LicenseApplicationIndexService licenseApplicationIndexService;
 
     @Autowired
     protected SecurityUtils securityUtils;
@@ -152,18 +153,14 @@ public abstract class AbstractLicenseService<T extends License> {
 
     @Autowired
     protected LicenseStatusService licenseStatusService;
-
-    @Autowired
-    private EgwStatusHibernateDAO egwStatusHibernateDAO;
-
     @Autowired
     protected LicenseAppTypeService licenseAppTypeService;
-
     @Autowired
     protected PositionMasterService positionMasterService;
-
     @Autowired
     protected NatureOfBusinessService natureOfBusinessService;
+    @Autowired
+    private EgwStatusHibernateDAO egwStatusHibernateDAO;
 
     protected abstract LicenseAppType getLicenseApplicationTypeForRenew();
 
@@ -195,7 +192,7 @@ public abstract class AbstractLicenseService<T extends License> {
         transitionWorkFlow(license, workflowBean);
         licenseRepository.save(license);
         sendEmailAndSMS(license, workflowBean.getWorkFlowAction());
-        updateIndexService.updateTradeLicenseIndexes(license);
+        licenseApplicationIndexService.createOrUpdateLicenseApplicationIndex(license);
 
     }
 
@@ -241,10 +238,10 @@ public abstract class AbstractLicenseService<T extends License> {
             for (FeeMatrixDetail fm : feeList)
                 if (installment.getId().equals(dmd.getEgDemandReason().getEgInstallmentMaster().getId()) &&
                         (dmd.getEgDemandReason().getEgDemandReasonMaster().getCode()
-                            .equalsIgnoreCase(fm.getFeeMatrix().getFeeType().getName()))) {
-                        dmd.setAmount(fm.getAmount());
-                        dmd.setModifiedDate(new Date());
-                    }
+                                .equalsIgnoreCase(fm.getFeeMatrix().getFeeType().getName()))) {
+                    dmd.setAmount(fm.getAmount());
+                    dmd.setModifiedDate(new Date());
+                }
         this.recalculateBaseDemand(licenseDemand);
         return license;
 
@@ -260,11 +257,11 @@ public abstract class AbstractLicenseService<T extends License> {
             for (FeeMatrixDetail fm : feeList)
                 if (installment.getId().equals(dmd.getEgDemandReason().getEgInstallmentMaster().getId()) &&
                         (dmd.getEgDemandReason().getEgDemandReasonMaster().getCode()
-                            .equalsIgnoreCase(fm.getFeeMatrix().getFeeType().getName()))) {
-                        dmd.setAmount(fm.getAmount());
-                        dmd.setAmtCollected(ZERO);
-                        totalAmount = totalAmount.add(fm.getAmount());
-                    }
+                                .equalsIgnoreCase(fm.getFeeMatrix().getFeeType().getName()))) {
+                    dmd.setAmount(fm.getAmount());
+                    dmd.setAmtCollected(ZERO);
+                    totalAmount = totalAmount.add(fm.getAmount());
+                }
         this.recalculateBaseDemand(licenseDemand);
         return totalAmount;
     }
@@ -401,7 +398,7 @@ public abstract class AbstractLicenseService<T extends License> {
                 .withNextAction(wfmatrix.getNextAction());
         this.licenseRepository.save(license);
         sendEmailAndSMS(license, workflowBean.getWorkFlowAction());
-        updateIndexService.updateTradeLicenseIndexes(license);
+        licenseApplicationIndexService.createOrUpdateLicenseApplicationIndex(license);
     }
 
     @Transactional
@@ -416,7 +413,7 @@ public abstract class AbstractLicenseService<T extends License> {
             wfInitiator = this.getWorkflowInitiator(license);
 
         if (wfInitiator != null && BUTTONREJECT.equalsIgnoreCase(workflowBean.getWorkFlowAction())) {
-            if ( wfInitiator.equals(userAssignment)) {
+            if (wfInitiator.equals(userAssignment)) {
                 license.transition(true).end().withSenderName(user.getUsername() + "::" + user.getName())
                         .withComments(workflowBean.getApproverComments())
                         .withDateInfo(currentDate.toDate());
@@ -490,7 +487,7 @@ public abstract class AbstractLicenseService<T extends License> {
             document.setLicense(license);
         });
     }
-    
+
     public List<LicenseDocumentType> getDocumentTypesByApplicationType(ApplicationType applicationType) {
         return this.documentTypeService.getDocumentTypesByApplicationType(applicationType);
     }
@@ -500,11 +497,11 @@ public abstract class AbstractLicenseService<T extends License> {
     }
 
     public T getLicenseByLicenseNumber(String licenseNumber) {
-        return (T)this.licenseRepository.findByLicenseNumber(licenseNumber);
+        return (T) this.licenseRepository.findByLicenseNumber(licenseNumber);
     }
 
     public T getLicenseByApplicationNumber(String applicationNumber) {
-        return (T)this.licenseRepository.findByApplicationNumber(applicationNumber);
+        return (T) this.licenseRepository.findByApplicationNumber(applicationNumber);
     }
 
     public List<Installment> getLastFiveYearInstallmentsForLicense() {

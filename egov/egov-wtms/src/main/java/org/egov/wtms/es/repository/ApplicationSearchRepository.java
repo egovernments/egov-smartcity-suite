@@ -39,7 +39,7 @@
  */
 package org.egov.wtms.es.repository;
 
-import org.egov.infra.es.entity.ApplicationIndex;
+import org.egov.infra.elasticsearch.entity.ApplicationIndex;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;

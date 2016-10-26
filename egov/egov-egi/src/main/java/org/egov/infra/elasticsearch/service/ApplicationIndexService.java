@@ -38,12 +38,13 @@
  *    In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
 
-package org.egov.infra.es.service;
+package org.egov.infra.elasticsearch.service;
 
 import org.egov.infra.admin.master.service.CityService;
 import org.egov.infra.config.core.ApplicationThreadLocals;
-import org.egov.infra.es.entity.ApplicationIndex;
-import org.egov.infra.es.repository.ApplicationIndexRepository;
+import org.egov.infra.elasticsearch.entity.ApplicationIndex;
+import org.egov.infra.elasticsearch.repository.ApplicationIndexRepository;
+import org.egov.infra.elasticsearch.service.es.ApplicationDocumentService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -62,13 +63,16 @@ import static org.egov.infra.utils.ApplicationConstant.CITY_REGION_NAME_KEY;
 public class ApplicationIndexService {
 
     private final ApplicationIndexRepository applicationIndexRepository;
+    private final ApplicationDocumentService applicationDocumentService;
 
     @Autowired
     private CityService cityService;
 
     @Autowired
-    public ApplicationIndexService(ApplicationIndexRepository applicationIndexRepository) {
+    public ApplicationIndexService(ApplicationIndexRepository applicationIndexRepository,
+                                   ApplicationDocumentService applicationDocumentService) {
         this.applicationIndexRepository = applicationIndexRepository;
+        this.applicationDocumentService = applicationDocumentService;
     }
 
     @Transactional
@@ -79,12 +83,16 @@ public class ApplicationIndexService {
         applicationIndex.setCityGrade(defaultString((String) cityInfo.get(CITY_CORP_GRADE_KEY)));
         applicationIndex.setDistrictName(defaultString((String) cityInfo.get(CITY_DIST_NAME_KEY)));
         applicationIndex.setRegionName(defaultString((String) cityInfo.get(CITY_REGION_NAME_KEY)));
-        return applicationIndexRepository.save(applicationIndex);
+        applicationIndexRepository.save(applicationIndex);
+        applicationDocumentService.createOrUpdateApplicationDocument(applicationIndex);
+        return applicationIndex;
     }
 
     @Transactional
     public ApplicationIndex updateApplicationIndex(ApplicationIndex applicationIndex) {
-        return applicationIndexRepository.save(applicationIndex);
+        applicationIndexRepository.save(applicationIndex);
+        applicationDocumentService.createOrUpdateApplicationDocument(applicationIndex);
+        return applicationIndex;
     }
 
     public ApplicationIndex findByApplicationNumber(String applicationNumber) {

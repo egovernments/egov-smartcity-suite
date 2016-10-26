@@ -37,16 +37,15 @@
  *
  *    In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
+package org.egov.infra.elasticsearch.entity.enums;
 
-package org.egov.infra.es.annotation;
+import org.apache.commons.lang3.StringUtils;
 
-import java.lang.annotation.Retention;
-import java.lang.annotation.Target;
+public enum ClosureStatus {
+    YES, NO;
 
-import static java.lang.annotation.ElementType.METHOD;
-import static java.lang.annotation.RetentionPolicy.RUNTIME;
-
-@Target(METHOD)
-@Retention(RUNTIME)
-public @interface Indexing {
+    @Override
+    public String toString() {
+        return StringUtils.capitalize(name());
+    }
 }

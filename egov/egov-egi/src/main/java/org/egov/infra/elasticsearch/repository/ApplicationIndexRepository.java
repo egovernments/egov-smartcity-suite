@@ -37,15 +37,14 @@
  *
  *    In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
-package org.egov.infra.es.entity.enums;
 
-import org.apache.commons.lang3.StringUtils;
+package org.egov.infra.elasticsearch.repository;
 
-public enum ClosureStatus {
-    YES, NO;
+import org.egov.infra.elasticsearch.entity.ApplicationIndex;
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.stereotype.Repository;
 
-    @Override
-    public String toString() {
-        return StringUtils.capitalize(name());
-    }
+@Repository
+public interface ApplicationIndexRepository extends JpaRepository<ApplicationIndex, Long> {
+    ApplicationIndex findByApplicationNumberAndCityName(String applicationNumber, String cityName);
 }

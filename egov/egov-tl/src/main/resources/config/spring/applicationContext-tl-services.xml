@@ -81,8 +81,6 @@
 
     <bean id="licenseUtils" class="org.egov.tl.utils.LicenseUtils"/>
 
-    <bean id="updateIndexService" class="org.egov.tl.service.TradeLicenseUpdateIndexService"/>
-
     <bean id="tradeLicenseSmsAndEmailService" class="org.egov.tl.service.TradeLicenseSmsAndEmailService"/>
 
     <bean id="tradeLicenseNumberGenerator" class="org.egov.tl.service.TradeLicenseNumberGenerator"/>

@@ -37,29 +37,15 @@
  *
  *    In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
+package org.egov.infra.elasticsearch.entity.enums;
 
-package org.egov.infra.es.aop;
+import org.apache.commons.lang3.StringUtils;
 
-import org.aspectj.lang.annotation.AfterReturning;
-import org.aspectj.lang.annotation.Aspect;
-import org.aspectj.lang.annotation.Pointcut;
-import org.egov.infra.es.annotation.Indexing;
-import org.springframework.stereotype.Component;
+public enum ApprovalStatus {
+    APPROVED, REJECTED, INPROGRESS;
 
-@Aspect
-@Component
-public class IndexingAdvice {
-
-    @Pointcut("@annotation(org.egov.infra.es.annotation.Indexing)")
-    private void methodAnnotatedWithIndexing() {
+    @Override
+    public String toString() {
+        return StringUtils.capitalize(name());
     }
-
-    @AfterReturning(pointcut = "methodAnnotatedWithIndexing() && @annotation(indexing)", returning = "retVal")
-    public void indexForSearch(final Indexing indexing, final Object retVal) {
-        /*final JSONObject resourceJSON = new ResourceGenerator<>(retVal.getClass(), retVal).generate();
-        final Document document = new Document(indexing.name().toString(), indexing.type().toString(),
-                ((Indexable) retVal).getIndexId(), resourceJSON);
-        indexService.index(document);*/
-    }
-
 }
