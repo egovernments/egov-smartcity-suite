@@ -95,7 +95,7 @@
 				id="bipartisanPetitionerDetailsList[${status.index}].contactNumber"
 				data-pattern="number"
 				value="${bipartisanPetitionerDetailsList.contactNumber}"
-				 maxlength="10"/></td>
+				 maxlength="10" onkeyup="decimalvalue(this);"/></td>
 			<%-- <td class="text-right"><form:select path=""
 					data-first-option="false"
 					name="bipartisanPetitionerDetailsList[${status.index}].governmentDepartment"
@@ -170,7 +170,7 @@
 						id="bipartisanRespondentDetailsList[${status.index}].contactNumber"
 						name="bipartisanRespondentDetailsList[${status.index}].contactNumber" 
 					class="form-control table-input text-left patternvalidation" 
-					data-pattern="number"
+					onkeyup="decimalvalue(this);"
 					value="${bipartisanRespondentDetailsList.contactNumber}" /></td>
 <%-- 
 				<td>

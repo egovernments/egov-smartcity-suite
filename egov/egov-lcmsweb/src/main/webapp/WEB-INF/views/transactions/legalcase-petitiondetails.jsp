@@ -139,8 +139,8 @@
 				id="bipartisanPetitionerDetailsList[0].address" maxlength="256"></td>
 			<td class="text-right"><input type="text"
 				class="form-control table-input text-left patternvalidation"
-				data-pattern="number" name="bipartisanPetitionerDetailsList[0].contactNumber"
-				id="bipartisanPetitionerDetailsList[0].contactNumber" maxlength="10"></td>
+				 name="bipartisanPetitionerDetailsList[0].contactNumber"
+				id="bipartisanPetitionerDetailsList[0].contactNumber" onkeyup="decimalvalue(this);" maxlength="10"></td>
 			<%-- <td class="text-right"><form:select path=""
 					data-first-option="false"
 					name="bipartisanPetitionerDetailsList[0].governmentDepartment"
@@ -216,7 +216,7 @@
 				<td class="text-right"><input type="text" 
 						id="bipartisanRespondentDetailsList[${status.index}].contactNumber"
 						name="bipartisanRespondentDetailsList[${status.index}].contactNumber" 
-					class="form-control table-input text-left patternvalidation" data-pattern="number"  maxlength="10"
+					class="form-control table-input text-left patternvalidation" 
 					value="${bipartisanRespondentDetailsList.contactNumber}" /></td>
 <%-- 
 				<td>
@@ -269,9 +269,8 @@
 				id="bipartisanRespondentDetailsList[0].address" maxlength="256"></td>
 			<td class="text-right"><input type="text"
 				class="form-control table-input text-left patternvalidation"
-				data-pattern="number"
 				name="bipartisanRespondentDetailsList[0].contactNumber"
-				id="bipartisanRespondentDetailsList[0].contactNumber" data-pattern="number" maxlength="10"></td>
+				id="bipartisanRespondentDetailsList[0].contactNumber" onkeyup="decimalvalue(this);" maxlength="10"></td>
 		<%-- 	<td class="text-right"><form:select path=""
 					data-first-option="false"
 					name="bipartisanRespondentDetailsList[0].governmentDepartment"
