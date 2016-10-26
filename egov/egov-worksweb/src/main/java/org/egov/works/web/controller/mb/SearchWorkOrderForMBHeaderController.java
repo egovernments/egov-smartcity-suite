@@ -91,11 +91,11 @@ public class SearchWorkOrderForMBHeaderController extends GenericWorkFlowControl
         validActions.add(WorksConstants.FORWARD_ACTION.toString());
         validActions.add(WorksConstants.CONTRACTOR_MEASUREMENTS.toString());
         model.addAttribute("stateType", mbHeader.getClass().getSimpleName());
-        if (mbHeader.getState() != null && mbHeader.getState().getNextAction() != null){
+        if (mbHeader.getState() != null && mbHeader.getState().getNextAction() != null) {
             model.addAttribute("nextAction", mbHeader.getState().getNextAction());
             model.addAttribute("pendingActions", mbHeader.getState().getNextAction());
         }
-            
+
         model.addAttribute("validActionList", validActions);
         model.addAttribute("currentDate", new Date());
         model.addAttribute("mbHeader", mbHeader);

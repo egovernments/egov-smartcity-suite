@@ -458,7 +458,7 @@ public class UpdateContractorBillController extends GenericWorkFlowController {
                         contractorBillRegister, egBilldetails, workOrderEstimate, resultBinder, request));
 
         contractorBillRegisterService.validateZeroCreditAndDebitAmount(contractorBillRegister, resultBinder);
-        
+
         final String netPayableAccountCodeId = request.getParameter("netPayableAccountCode");
         final String netPayableAmount = request.getParameter("netPayableAmount");
         if (StringUtils.isNotBlank(netPayableAccountCodeId)

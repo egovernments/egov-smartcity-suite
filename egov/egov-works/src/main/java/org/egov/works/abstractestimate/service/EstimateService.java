@@ -1099,7 +1099,7 @@ public class EstimateService {
     }
 
     public void setTechnicalSanctionDetails(final AbstractEstimate abstractEstimate) {
-        if (abstractEstimate.getEstimateTechnicalSanctions() != null){
+        if (abstractEstimate.getEstimateTechnicalSanctions() != null) {
             abstractEstimate.getEstimateTechnicalSanctions().get(0).setAbstractEstimate(abstractEstimate);
             abstractEstimate.setApprovedDate(abstractEstimate.getEstimateTechnicalSanctions().get(0).getTechnicalSanctionDate());
         }
