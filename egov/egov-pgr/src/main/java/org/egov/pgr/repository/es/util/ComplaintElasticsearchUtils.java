@@ -49,7 +49,7 @@ import org.elasticsearch.search.aggregations.metrics.MetricsAggregationBuilder;
 import org.elasticsearch.search.aggregations.metrics.valuecount.ValueCountBuilder;
 
 public class ComplaintElasticsearchUtils {
-
+	
 	public static AggregationBuilder getCountWithGrouping(String aggregationName, String fieldName, int size){
 		return AggregationBuilders.terms(aggregationName).field(fieldName).size(size);
 	}
@@ -89,10 +89,10 @@ public class ComplaintElasticsearchUtils {
         	aggregationField = "wardName";
         if (StringUtils.isNotBlank(complaintDashBoardRequest.getUlbCode()) &&
         		StringUtils.isNotBlank(complaintDashBoardRequest.getWardNo()))
-        	aggregationField = "assigneeName";
+        	aggregationField = "currentFunctionaryName";
         if (StringUtils.isNotBlank(complaintDashBoardRequest.getUlbCode()) &&
         		StringUtils.isNotBlank(complaintDashBoardRequest.getDepartmentCode()))
-        	aggregationField = "assigneeName";
+        	aggregationField = "currentFunctionaryName";
         
         return aggregationField;
 	}

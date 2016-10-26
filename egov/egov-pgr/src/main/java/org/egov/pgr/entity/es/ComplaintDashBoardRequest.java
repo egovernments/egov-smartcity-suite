@@ -49,6 +49,7 @@ public class ComplaintDashBoardRequest {
 	String departmentCode;
 	String fromDate;
 	String toDate;
+	String complaintTypeCode;
 	
 	public String getDistrictName() {
 		return districtName;
@@ -90,5 +91,11 @@ public class ComplaintDashBoardRequest {
 	}
 	public void setToDate(String toDate) {
 		this.toDate = toDate;
+	}
+	public String getComplaintTypeCode() {
+		return complaintTypeCode;
+	}
+	public void setComplaintTypeCode(String complaintTypeCode) {
+		this.complaintTypeCode = complaintTypeCode;
 	}
 }

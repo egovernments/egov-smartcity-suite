@@ -61,6 +61,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+
 @RestController
 @RequestMapping(value = "/complaint/aggregate")
 public class ComplaintIndexController {
@@ -80,6 +82,11 @@ public class ComplaintIndexController {
     @RequestMapping(value = "/grievance", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
     public HashMap<String, Object> getDashBoardResponse(@RequestBody ComplaintDashBoardRequest complaintRequest) {
         return complaintIndexService.getGrievanceReport(complaintRequest);
+    }
+    
+    @RequestMapping(value = "/grievance/complainttype", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
+    public HashMap<String,Object> getGrievanceComplaintTypeResponse(@RequestBody ComplaintDashBoardRequest complaintRequest){
+    	return complaintIndexService.getComplaintTypeReport(complaintRequest);
     }
     
     @RequestMapping(value = "/departments" , method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
@@ -123,4 +130,10 @@ public class ComplaintIndexController {
     	}
     	return jsonList;
     }
+    
+    @RequestMapping(value = "/sourcenames", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
+    public List<String> getSourceNameList() throws JsonProcessingException{
+    	return complaintIndexService.getSourceNameList();
+    }
+    
 }

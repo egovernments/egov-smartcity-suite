@@ -43,13 +43,16 @@ package org.egov.pgr.repository.es;
 import java.util.HashMap;
 
 import org.egov.pgr.entity.es.ComplaintDashBoardRequest;
+import org.elasticsearch.action.search.SearchResponse;
 import org.elasticsearch.index.query.BoolQueryBuilder;
 
 
 
 public interface ComplaintIndexCustomRepository {
 
-	public HashMap<String, Object> findAllGrievanceByFilter(ComplaintDashBoardRequest complaintDashBoardRequest, BoolQueryBuilder query,String grouByField);
+	public HashMap<String, SearchResponse> findAllGrievanceByFilter(ComplaintDashBoardRequest complaintDashBoardRequest, BoolQueryBuilder query,String grouByField);
+	
+	public SearchResponse findAllGrievanceByComplaintType(ComplaintDashBoardRequest complaintDashBoardRequest, BoolQueryBuilder query,String grouByField);
 	
 	public String getWardName(String wardNo);
 	
