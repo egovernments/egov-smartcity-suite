@@ -114,7 +114,7 @@
 	
 	var budgetsCallback = {
 		     success: function(o) {
-		     		document.getElementById('budgets').innerHTML = o.responseText;
+		     		document.getElementById('budgetDetail_budget').innerHTML = o.responseText;
 		        },
 		     failure: function(o) {
 		     }

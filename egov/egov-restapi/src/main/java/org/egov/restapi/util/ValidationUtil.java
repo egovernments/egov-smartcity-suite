@@ -49,9 +49,7 @@ import java.util.regex.Pattern;
 
 import org.apache.commons.lang3.StringUtils;
 import org.egov.collection.integration.models.BillReceiptInfo;
-import org.egov.ptis.client.util.PropertyTaxUtil;
 import org.egov.ptis.constants.PropertyTaxConstants;
-import org.egov.ptis.domain.dao.demand.PtDemandDao;
 import org.egov.ptis.domain.dao.property.BasicPropertyDAO;
 import org.egov.ptis.domain.entity.property.BasicProperty;
 import org.egov.ptis.domain.entity.property.Property;
@@ -71,6 +69,7 @@ import org.egov.restapi.model.SurroundingBoundaryDetails;
 import org.egov.restapi.model.VacantLandDetails;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
 @Service
 public class ValidationUtil {
     @Autowired
@@ -78,12 +77,6 @@ public class ValidationUtil {
     
     @Autowired
     private PropertyExternalService propertyExternalService;
-    
-    @Autowired
-    private PtDemandDao ptDemandDAO;
-    
-    @Autowired
-    private PropertyTaxUtil propertyTaxUtil;
     
     /**
      * Validates Property Transfer request
@@ -767,7 +760,7 @@ public class ValidationUtil {
 
     /**
      * Validates Assessment Details request
-     * @param assessmentReq
+     * @param assessmentRequest
      * @return ErrorDetails
      */
     public ErrorDetails validateAssessmentDetailsRequest(AssessmentRequest assessmentRequest){

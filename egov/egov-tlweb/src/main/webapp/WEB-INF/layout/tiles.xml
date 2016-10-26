@@ -151,7 +151,12 @@
 		<put-attribute name="body" value="/WEB-INF/views/penaltyRates/penaltyRates-create.jsp" />
 	</definition>
 	
-	<definition name="penaltyRates-result" template="/WEB-INF/views/penaltyRates/penaltyRates-result.jsp"/>
+	<definition name="penaltyRates-view" extends="base_layout">
+		<put-attribute name="page-title" value="title.searchpenaltyRate" cascade="true" />
+		<put-attribute name="body" value="/WEB-INF/views/penaltyRates/penaltyRates-view.jsp" />
+	</definition>
+	
+	<definition name="penaltyRates-result" template="/WEB-INF/views/penaltyRates/penaltyRates-result.jsp"/> 
 	
 	 <definition name="digitalSignature-success" extends="base_layout">
     	<put-attribute name="page-title" value="lbl.digitalSignature.success.title" cascade="true"/>

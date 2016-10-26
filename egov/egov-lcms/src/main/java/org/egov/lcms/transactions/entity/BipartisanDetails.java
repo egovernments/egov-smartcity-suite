@@ -70,7 +70,6 @@ import org.hibernate.validator.constraints.Length;
 
 import com.google.gson.annotations.Expose;
 
-
 @Entity
 @Table(name = "EGLC_BIPARTISANDETAILS")
 @Searchable
@@ -94,6 +93,7 @@ public class BipartisanDetails extends AbstractAuditable {
     @Audited
     private LegalCase legalCase;
 
+    @NotNull
     @Length(max = 128)
     @Audited
     private String name;
@@ -102,7 +102,7 @@ public class BipartisanDetails extends AbstractAuditable {
     @Audited
     private String address;
 
-    @Pattern(regexp = LcmsConstants.lengthCheckForMobileNo)
+    @Pattern(regexp = LcmsConstants.numericiValForPhoneNo)
     @Audited
     private String contactNumber;
 
@@ -148,21 +148,21 @@ public class BipartisanDetails extends AbstractAuditable {
         this.address = address;
     }
 
-	public String getContactNumber() {
-		return contactNumber;
-	}
+    public String getContactNumber() {
+        return contactNumber;
+    }
 
-	public void setContactNumber(String contactNumber) {
-		this.contactNumber = contactNumber;
-	}
+    public void setContactNumber(final String contactNumber) {
+        this.contactNumber = contactNumber;
+    }
 
-	@Override
-	public Long getId() {
+    @Override
+    public Long getId() {
         return id;
     }
 
     @Override
-	public void setId(final Long id) {
+    public void setId(final Long id) {
         this.id = id;
     }
 

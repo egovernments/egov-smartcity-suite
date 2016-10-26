@@ -38,15 +38,16 @@
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
 
-package org.egov.tl.web.controller;
-
-import org.egov.tl.entity.LicenseAppType;
-import org.egov.tl.entity.PenaltyRates;
+package org.egov.tl.entity.dto;
 
 import java.util.ArrayList;
 import java.util.List;
 
+import org.egov.tl.entity.LicenseAppType;
+import org.egov.tl.entity.PenaltyRates;
+
 public class PenaltyForm {
+
     private LicenseAppType licenseAppType;
     private List<PenaltyRates> penaltyRatesList = new ArrayList<PenaltyRates>();
 
@@ -68,5 +69,17 @@ public class PenaltyForm {
 
     public void addpenaltyRatesList(final PenaltyRates penaltyRates) {
         penaltyRatesList.add(penaltyRates);
+    }
+
+    public List<PenaltyRates> getPenaltyRates() {
+
+        if (licenseAppType != null && getPenaltyRatesList() != null && getPenaltyRatesList().size() > 0)
+            for (final PenaltyRates penaltyRates : getPenaltyRatesList()) {
+                penaltyRates.setLicenseAppType(licenseAppType);
+                penaltyRates.setFromRange(penaltyRates.getFromRange());
+                penaltyRates.setToRange(penaltyRates.getToRange());
+                penaltyRates.setRate(penaltyRates.getRate());
+            }
+        return penaltyRatesList;
     }
 }

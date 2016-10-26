@@ -965,4 +965,16 @@ public class ContractorBillRegisterService {
         }
     }
 
+    public void validateZeroCreditAndDebitAmount(final ContractorBillRegister contractorBillRegister,
+            final BindingResult resultBinder) {
+        for (final EgBilldetails egBillDetail : contractorBillRegister.getEgBilldetailes())
+            if (egBillDetail.getCreditamount() != null && BigDecimal.ZERO.compareTo(egBillDetail.getCreditamount()) == 0 ||
+                    egBillDetail.getDebitamount() != null && BigDecimal.ZERO.compareTo(egBillDetail.getDebitamount()) == 0) {
+                resultBinder.reject("error.creditordebitamount.zero",
+                        "error.creditordebitamount.zero");
+                break;
+            }
+
+    }
+
 }

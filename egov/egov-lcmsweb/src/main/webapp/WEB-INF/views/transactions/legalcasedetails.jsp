@@ -40,6 +40,7 @@
 <%@ taglib uri="http://www.springframework.org/tags" prefix="spring"%>
 <%@ taglib uri="http://www.springframework.org/tags/form" prefix="form"%>
 <%@ taglib uri="/WEB-INF/taglib/cdn.tld" prefix="cdn" %>
+             
 <div class="form-group">
 	<label class="col-sm-3 control-label text-right"><spring:message
 			code="lbl.courttype" /><span class="mandatory"></span>:</label>
@@ -104,8 +105,9 @@
 	<label class="col-sm-3 control-label text-right"><spring:message
 			code="lbl.caseNumber" /><span class="mandatory"></span>:</label>
 	<div class="col-sm-2 add-margin text-center">
-		<form:input class="form-control" data-pattern="" maxlength="50"
+		<form:input class="form-control patternvalidation" data-pattern="number" maxlength="50"
 			id="caseNumber" required="required" path="caseNumber" />
+			<form:errors path="caseNumber" cssClass="add-margin error-msg" />
 	</div>
 	<div class="col-sm-1 add-margin text-center">
 		<form:select path="wpYear" data-first-option="false" id="wpYear"

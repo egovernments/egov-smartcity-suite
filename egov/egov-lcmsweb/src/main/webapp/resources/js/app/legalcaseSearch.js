@@ -80,7 +80,7 @@ function submitForm() {
 				"aLengthMenu" : [ [ 10, 25, 50, -1 ], [ 10, 25, 50, "All" ] ],
 				"oTableTools" : {
 					"sSwfPath" : "../../../../../../egi/resources/global/swf/copy_csv_xls_pdf.swf",
-					"aButtons" : [ "xls", "pdf", "print" ]
+					"aButtons" : []
 				},
 				columns : [
 						{
@@ -130,7 +130,7 @@ function submitForm() {
 						},
 						{
 							"data" : "respondants",
-							"sTitle" : "Respondants",
+							"sTitle" : "Respondents",
 							"className" : "text-left"
 						},
 						{
