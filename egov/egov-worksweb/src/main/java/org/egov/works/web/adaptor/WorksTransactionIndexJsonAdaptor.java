@@ -61,9 +61,15 @@ public class WorksTransactionIndexJsonAdaptor implements JsonSerializer<WorksMil
         final JsonObject jsonObject = new JsonObject();
         if (response != null) {
             jsonObject.addProperty("Fund", response.getFund());
-            jsonObject.addProperty("Scheme", response.getScheme());
-            jsonObject.addProperty("Sub Scheme", response.getSubscheme());
-            jsonObject.addProperty("Election Ward", response.getWard());
+            if (response.getScheme() != null)
+                jsonObject.addProperty("Scheme", response.getScheme());
+            else
+                jsonObject.addProperty("Scheme", "NA");
+            if (response.getSubscheme() != null)
+                jsonObject.addProperty("Sub Scheme", response.getSubscheme());
+            else
+                jsonObject.addProperty("Sub Scheme", "NA");
+            jsonObject.addProperty("Ward", response.getWard());
             jsonObject.addProperty("Estimate Number", response.getEstimatenumber());
             jsonObject.addProperty("Work Identification Number", response.getWin());
             jsonObject.addProperty("Name of the work", response.getNameofthework());
@@ -72,7 +78,7 @@ public class WorksTransactionIndexJsonAdaptor implements JsonSerializer<WorksMil
             jsonObject.addProperty("Agreement Number", response.getAgreementnumber());
             jsonObject.addProperty("Agreement Date",
                     response.getAgreementdate() != null ? DateUtils.getDefaultFormattedDate(response.getAgreementdate()) : "");
-            jsonObject.addProperty("Contract Period", response.getContractperiod());
+            jsonObject.addProperty("Contract Period(in days)", response.getContractperiod());
             jsonObject.addProperty("Work order value in lakhs", BigDecimal.valueOf(response.getTotalworkordervalueinlakhs())
                     .setScale(2, BigDecimal.ROUND_HALF_EVEN).toString());
             jsonObject.addProperty("Total bill amount in lakhs",
