@@ -40,6 +40,12 @@
 
 package org.egov.works.elasticsearch.service;
 
+import static org.egov.works.utils.WorksConstants.WORKSMILESTONE_DISTNAME_COLUMN_NAME;
+import static org.egov.works.utils.WorksConstants.WORKSMILESTONE_ESTIMATEDETAILID_COLUMN_NAME;
+import static org.egov.works.utils.WorksConstants.WORKSMILESTONE_TYPEOFWORKNAME_COLUMN_NAME;
+import static org.egov.works.utils.WorksConstants.WORKSMILESTONE_ULBCODE_COLUMN_NAME;
+import static org.egov.works.utils.WorksConstants.WORKSMILESTONE_ULBNAME_COLUMN_NAME;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -69,6 +75,7 @@ import org.springframework.stereotype.Service;
 /**
  * @author venki
  */
+
 @Service
 public class WorksMilestoneIndexService {
 
@@ -79,15 +86,25 @@ public class WorksMilestoneIndexService {
     @Autowired
     private ElasticsearchTemplate elasticsearchTemplate;
 
-    public List<WorksMilestoneIndexResponse> returnAggregationResults(
-            final WorksMilestoneIndexRequest worksMilestoneIndexRequest, final Boolean order,
+    public List<WorksMilestoneIndexResponse> getAggregationResults(final WorksMilestoneIndexRequest worksMilestoneIndexRequest,
             final String orderingAggregationName) {
+
+        Long startTime, timeTaken;
+        final AggregationBuilder aggregation;
         final List<WorksMilestoneIndexResponse> worksMilestoneIndexResponses = new ArrayList<>();
-        final BoolQueryBuilder boolQuery = prepareWhereClause(worksMilestoneIndexRequest);
-        // orderingAggregationName is the aggregation name by which we have to
-        // order the results
-        Long startTime = System.currentTimeMillis();
-        final AggregationBuilder aggregation = AggregationBuilders.terms("by_aggregationField").field(orderingAggregationName)
+        final BoolQueryBuilder boolQuery;
+        final SearchQuery searchQueryColl;
+        final Aggregations worksMilestoneAggr;
+        WorksMilestoneIndexResponse wmIndexResponse;
+        List<Terms.Bucket> resultBuckets;
+        StringTerms saggr;
+        LongTerms laggr;
+
+        /* orderingAggregationName is the aggregation name by which we have to order the results */
+
+        startTime = System.currentTimeMillis();
+        boolQuery = prepareWhereClause(worksMilestoneIndexRequest);
+        aggregation = AggregationBuilders.terms("by_aggregationField").field(orderingAggregationName)
                 .subAggregation(AggregationBuilders.sum("totalestimatedcostinlakhs").field("estimatevalue"))
                 .subAggregation(AggregationBuilders.sum("totalworkordervalueinlakhs").field("loaamount"))
                 .subAggregation(AggregationBuilders.sum("totalbillamountinlakhs").field("loatotalbillamt"))
@@ -141,24 +158,14 @@ public class WorksMilestoneIndexService {
                 .subAggregation(AggregationBuilders.avg("dec16to31actual").field("dec16to31actual"))
                 .subAggregation(AggregationBuilders.avg("dec16to31target").field("dec16to31target"));
 
-        final SearchQuery searchQueryColl = new NativeSearchQueryBuilder().withIndices(WORKSMILESTONE_INDEX_NAME)
+        searchQueryColl = new NativeSearchQueryBuilder().withIndices(WORKSMILESTONE_INDEX_NAME)
                 .withQuery(boolQuery)
                 .withSort(SortBuilders.fieldSort(orderingAggregationName).order(SortOrder.DESC))
                 .addAggregation(aggregation).build();
 
-        final Aggregations worksMilestoneAggr = elasticsearchTemplate.query(searchQueryColl,
-                response -> response.getAggregations());
+        worksMilestoneAggr = elasticsearchTemplate.query(searchQueryColl, response -> response.getAggregations());
 
-        Long timeTaken = System.currentTimeMillis() - startTime;
-        if (LOGGER.isDebugEnabled())
-            LOGGER.debug("Time taken by type of work WiseAggregations is : " + timeTaken + " (millisecs) ");
-
-        WorksMilestoneIndexResponse wmIndexResponse;
-        startTime = System.currentTimeMillis();
-        List<Terms.Bucket> resultBuckets;
-        StringTerms saggr;
-        LongTerms laggr;
-        if (!orderingAggregationName.equals("lineestimatedetailid")) {
+        if (!orderingAggregationName.equals(WORKSMILESTONE_ESTIMATEDETAILID_COLUMN_NAME)) {
             saggr = worksMilestoneAggr.get("by_aggregationField");
             resultBuckets = saggr.getBuckets();
         } else {
@@ -224,10 +231,8 @@ public class WorksMilestoneIndexService {
             final Avg dec16to31actual = entry.getAggregations().get("dec16to31actual");
             final Avg dec16to31target = entry.getAggregations().get("dec16to31target");
             wmIndexResponse.setTotalnoofworks(entry.getDocCount());
-            wmIndexResponse
-                    .setTotalestimatedcostinlakhs(totalEstimatedCostInLakhsAggregation.getValue());
-            wmIndexResponse
-                    .setTotalworkordervalueinlakhs(totalWorkorderValueInLakhsAggregation.getValue());
+            wmIndexResponse.setTotalestimatedcostinlakhs(totalEstimatedCostInLakhsAggregation.getValue());
+            wmIndexResponse.setTotalworkordervalueinlakhs(totalWorkorderValueInLakhsAggregation.getValue());
             wmIndexResponse.setTotalbillamountinlakhs(totalBillAmountInLakhsAggregation.getValue());
             wmIndexResponse.setTotalpaidamountinlakhs(totalPaidAmountInLakhsAggregation.getValue());
             wmIndexResponse.setJan01to15actual(jan01to15actual.getValue());
@@ -280,25 +285,37 @@ public class WorksMilestoneIndexService {
             wmIndexResponse.setDec16to31target(dec16to31target.getValue());
             worksMilestoneIndexResponses.add(wmIndexResponse);
         }
+
         timeTaken = System.currentTimeMillis() - startTime;
+
         if (LOGGER.isDebugEnabled())
-            LOGGER.debug("Time taken for setting values in returnUlbWiseAggregationResults() is : " + timeTaken
+            LOGGER.debug("Time taken for setting values in getAggregationResults() is : " + timeTaken
                     + " (millisecs) ");
+
         return worksMilestoneIndexResponses;
+
     }
 
     private BoolQueryBuilder prepareWhereClause(final WorksMilestoneIndexRequest worksMilestoneIndexRequest) {
+
         BoolQueryBuilder boolQuery = QueryBuilders.boolQuery();
+
         if (StringUtils.isNotBlank(worksMilestoneIndexRequest.getTypeofwork()))
-            boolQuery = boolQuery
-                    .filter(QueryBuilders.matchQuery("lineestimatetypeofworkname", worksMilestoneIndexRequest.getTypeofwork()));
+            boolQuery = boolQuery.filter(QueryBuilders.matchQuery(WORKSMILESTONE_TYPEOFWORKNAME_COLUMN_NAME,
+                    worksMilestoneIndexRequest.getTypeofwork()));
+
         if (StringUtils.isNotBlank(worksMilestoneIndexRequest.getDistname()))
-            boolQuery = boolQuery
-                    .filter(QueryBuilders.matchQuery("distname", worksMilestoneIndexRequest.getDistname()));
+            boolQuery = boolQuery.filter(
+                    QueryBuilders.matchQuery(WORKSMILESTONE_DISTNAME_COLUMN_NAME, worksMilestoneIndexRequest.getDistname()));
+
         if (StringUtils.isNotBlank(worksMilestoneIndexRequest.getUlbname()))
-            boolQuery = boolQuery.filter(QueryBuilders.matchQuery("ulbname", worksMilestoneIndexRequest.getUlbname()));
+            boolQuery = boolQuery.filter(
+                    QueryBuilders.matchQuery(WORKSMILESTONE_ULBNAME_COLUMN_NAME, worksMilestoneIndexRequest.getUlbname()));
+
         if (worksMilestoneIndexRequest.getUlbcodes() != null && !worksMilestoneIndexRequest.getUlbcodes().isEmpty())
-            boolQuery.filter(QueryBuilders.termsQuery("ulbcode", worksMilestoneIndexRequest.getUlbcodes()));
+            boolQuery.filter(
+                    QueryBuilders.termsQuery(WORKSMILESTONE_ULBCODE_COLUMN_NAME, worksMilestoneIndexRequest.getUlbcodes()));
+
         return boolQuery;
     }
 

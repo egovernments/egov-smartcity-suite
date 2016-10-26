@@ -40,6 +40,12 @@
 
 package org.egov.works.elasticsearch.service;
 
+import static org.egov.works.utils.WorksConstants.APPROVED;
+import static org.egov.works.utils.WorksConstants.WORKSMILESTONE_DISTNAME_COLUMN_NAME;
+import static org.egov.works.utils.WorksConstants.WORKSMILESTONE_ESTIMATEDETAILID_COLUMN_NAME;
+import static org.egov.works.utils.WorksConstants.WORKSMILESTONE_LOASTATUS_COLUMN_NAME;
+import static org.egov.works.utils.WorksConstants.WORKSMILESTONE_ULBNAME_COLUMN_NAME;
+
 import java.util.List;
 
 import org.apache.commons.lang3.StringUtils;
@@ -71,13 +77,18 @@ public class WorksTransactionIndexService {
 
     public void getWorksTransactionDetails(final WorksTransactionIndexRequest worksTransactionIndexRequest,
             final WorksMilestoneIndexResponse wmIndexResponse) {
+
+        Long startTime, timeTaken;
         final BoolQueryBuilder boolQuery = prepareWhereClause(worksTransactionIndexRequest);
-        Long startTime = System.currentTimeMillis();
-        final SearchQuery searchQuery = new NativeSearchQueryBuilder().withIndices(WORKSTRANSACTION_INDEX_NAME)
+        final SearchQuery searchQuery;
+        final List<WorksTransactionIndex> worksTransactionIndexs;
+
+        startTime = System.currentTimeMillis();
+        searchQuery = new NativeSearchQueryBuilder().withIndices(WORKSTRANSACTION_INDEX_NAME)
                 .withQuery(boolQuery)
                 .build();
-        final List<WorksTransactionIndex> worksTransactionIndexs = elasticsearchTemplate.queryForList(searchQuery,
-                WorksTransactionIndex.class);
+        worksTransactionIndexs = elasticsearchTemplate.queryForList(searchQuery, WorksTransactionIndex.class);
+
         for (final WorksTransactionIndex response : worksTransactionIndexs) {
             wmIndexResponse.setFund(response.getLineestimatefund());
             wmIndexResponse.setScheme(response.getLineestimatescheme());
@@ -92,28 +103,35 @@ public class WorksTransactionIndexService {
             wmIndexResponse.setWorkstatus(response.getWorkstatus());
             wmIndexResponse.setContractperiod(response.getLoacontractperiod());
         }
-        Long timeTaken = System.currentTimeMillis() - startTime;
-        if (LOGGER.isDebugEnabled())
-            LOGGER.debug("Time taken by type of work WiseAggregations is : " + timeTaken + " (millisecs) ");
 
-        startTime = System.currentTimeMillis();
         timeTaken = System.currentTimeMillis() - startTime;
+
         if (LOGGER.isDebugEnabled())
-            LOGGER.debug("Time taken for setting values in returnUlbWiseAggregationResults() is : " + timeTaken
-                    + " (millisecs) ");
+            LOGGER.debug("Time taken by getWorksTransactionDetails is : " + timeTaken + " (millisecs) ");
+
     }
 
     private BoolQueryBuilder prepareWhereClause(final WorksTransactionIndexRequest worksTransactionIndexRequest) {
+
         BoolQueryBuilder boolQuery = QueryBuilders.boolQuery();
+
         if (StringUtils.isNotBlank(worksTransactionIndexRequest.getDistname()))
-            boolQuery = boolQuery
-                    .filter(QueryBuilders.matchQuery("distname", worksTransactionIndexRequest.getDistname()));
+            boolQuery = boolQuery.filter(QueryBuilders.matchQuery(WORKSMILESTONE_DISTNAME_COLUMN_NAME,
+                    worksTransactionIndexRequest.getDistname()));
+
         if (StringUtils.isNotBlank(worksTransactionIndexRequest.getUlbname()))
-            boolQuery = boolQuery.filter(QueryBuilders.matchQuery("ulbname", worksTransactionIndexRequest.getUlbname()));
+            boolQuery = boolQuery.filter(
+                    QueryBuilders.matchQuery(WORKSMILESTONE_ULBNAME_COLUMN_NAME, worksTransactionIndexRequest.getUlbname()));
+
         if (worksTransactionIndexRequest.getLineestimatedetailid() != null)
             boolQuery.filter(
-                    QueryBuilders.matchQuery("lineestimatedetailid", worksTransactionIndexRequest.getLineestimatedetailid()));
+                    QueryBuilders.matchQuery(WORKSMILESTONE_ESTIMATEDETAILID_COLUMN_NAME,
+                            worksTransactionIndexRequest.getLineestimatedetailid()));
+
+        boolQuery.filter(QueryBuilders.matchQuery(WORKSMILESTONE_LOASTATUS_COLUMN_NAME, APPROVED));
+
         return boolQuery;
+
     }
 
 }

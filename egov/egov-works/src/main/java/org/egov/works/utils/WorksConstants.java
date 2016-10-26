@@ -305,11 +305,29 @@ public class WorksConstants {
     public static final String NATUREOFWORK_EXPENDITURETYPE_CAPITAL = "CAPITAL";
 
     public static final String NATUREOFWORK_EXPENDITURETYPE_REVENUE = "REVENUE";
-    
+
     public static final String CONTRACTOR_RETENTION_MONEY_PURPOSE = "RETENTION_MONEY";
-    
+
     public static final String CONTRACTOR_SECURITY_DEPOSITE_PURPOSE = "Security Deposit";
-    
-    public static final String [] CONTRACTOR_REFUND_PURPOSE = {CONTRACTOR_RETENTION_MONEY_PURPOSE , CONTRACTOR_SECURITY_DEPOSITE_PURPOSE};
-    
+
+    public static final String[] CONTRACTOR_REFUND_PURPOSE = { CONTRACTOR_RETENTION_MONEY_PURPOSE,
+            CONTRACTOR_SECURITY_DEPOSITE_PURPOSE };
+
+    public final static String SECTOR_COLUMN_HEADER_NAME = "SECTOR";
+
+    public final static String DISTRICT_COLUMN_HEADER_NAME = "District Name";
+
+    public final static String ULB_COLUMN_HEADER_NAME = "ULB Name";
+
+    public final static String WORKSMILESTONE_TYPEOFWORKNAME_COLUMN_NAME = "lineestimatetypeofworkname";
+
+    public final static String WORKSMILESTONE_DISTNAME_COLUMN_NAME = "distname";
+
+    public final static String WORKSMILESTONE_ULBNAME_COLUMN_NAME = "ulbname";
+
+    public final static String WORKSMILESTONE_ULBCODE_COLUMN_NAME = "ulbcode";
+
+    public final static String WORKSMILESTONE_LOASTATUS_COLUMN_NAME = "loastatus";
+
+    public final static String WORKSMILESTONE_ESTIMATEDETAILID_COLUMN_NAME = "lineestimatedetailid";
 }
