@@ -39,6 +39,10 @@
  */
 
 $(document).ready( function () {
+	if($('#registrationStatus').val()=='APPROVED' && $("#feeCollected").val()=='false'){
+		 $("[id='Print Certificate']").hide();
+	 }  
+	
 	$('body').on('click', 'img.attach-photo', function () {
 	    
 		var img = $(this);

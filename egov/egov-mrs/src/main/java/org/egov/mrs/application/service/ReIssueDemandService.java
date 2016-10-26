@@ -51,6 +51,7 @@ import org.egov.demand.model.EgDemandReason;
 import org.egov.demand.model.EgDemandReasonMaster;
 import org.egov.infra.admin.master.entity.Module;
 import org.egov.mrs.application.MarriageConstants;
+import org.egov.mrs.domain.entity.ReIssue;
 import org.egov.mrs.domain.enums.MarriageFeeType;
 import org.springframework.stereotype.Service;
 
@@ -89,4 +90,24 @@ public class ReIssueDemandService extends MarriageDemandService {
 			}
 		}
 	}
+	
+	/**
+         * 
+         * @param marriageRegistration
+         * @return
+         */
+        public Boolean checkAnyTaxIsPendingToCollect(final ReIssue reIssue) {
+        Boolean pendingTaxCollection = false;
+
+        if (reIssue != null && reIssue.getDemand() != null)
+            for (final EgDemandDetails demandDtl : reIssue.getDemand().getEgDemandDetails())
+                if (demandDtl.getAmount().subtract(demandDtl.getAmtCollected()).compareTo(BigDecimal.ZERO) > 0) {
+                    pendingTaxCollection = true;
+                    break;
+
+                }
+
+        return pendingTaxCollection;
+
+    }
 }

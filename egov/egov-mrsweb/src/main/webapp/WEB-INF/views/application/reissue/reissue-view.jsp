@@ -73,7 +73,7 @@
 			 <div  data-collapsed="0">
 				<div class="panel-heading">
 					<div  style="color: red; font-size: 16px;" align="center">
-						<spring:message  code="lbl.collect.marriageFee"/> 
+						<spring:message  code="lbl.collect.reissuemarriageFee"/> 
 					</div> 
 				</div>
 			</div>	

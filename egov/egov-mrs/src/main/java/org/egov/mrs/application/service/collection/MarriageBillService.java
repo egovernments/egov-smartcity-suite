@@ -133,7 +133,7 @@ public class MarriageBillService extends BillServiceInterface {
         billableReIssue.setReIssue(reIssue);
         billableReIssue.setUserId(securityUtils.getCurrentUser().getId());
         billableReIssue.setBillType(egBillDAO.getBillTypeByCode(RegistrationBillable.BILLTYPE_AUTO));
-        billableReIssue.setReferenceNumber(reIssue.getRegistration().getApplicationNo());
+        billableReIssue.setReferenceNumber(reIssue.getApplicationNo());
 
         final String billXml;
 

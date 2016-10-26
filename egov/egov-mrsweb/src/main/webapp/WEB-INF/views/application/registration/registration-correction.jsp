@@ -54,8 +54,17 @@
 			<input type="hidden" id="registrationId" value="${registration.id}" />
 			<input type="hidden" id="registrationStatus" value="${registration.status.code}" /> 
 			<form:hidden path="" id="workFlowAction" name="workFlowAction"/>
-			
-			 <ul class="nav nav-tabs" id="settingstab">
+			<input type="hidden" id="feeCollected" value="${registration.feeCollected}" />
+				<c:if test="${registration.status.code =='APPROVED' && !registration.feeCollected}"> 
+				 <div  data-collapsed="0">
+					<div class="panel-heading">
+						<div  style="color: red; font-size: 16px;" align="center">
+							<spring:message  code="lbl.collect.marriageFee"/> 
+						</div> 
+					</div>
+				</div>	
+				</c:if>
+			<ul class="nav nav-tabs" id="settingstab">
 			    <li class="active"><a data-toggle="tab" href="#applicant-info" data-tabidx=0>Applicant's Information</a></li>
 			    <li><a data-toggle="tab" href="#witness-info" data-tabidx=1>Witnesses Information</a></li>
 			    <li><a data-toggle="tab" href="#checklist-info" data-tabidx=2>Checklist</a></li>

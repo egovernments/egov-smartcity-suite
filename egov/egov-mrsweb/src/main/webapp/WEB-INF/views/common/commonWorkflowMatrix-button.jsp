@@ -84,17 +84,8 @@
 	<table>
 		<tr>
 			<td>
-				<c:set value="" var="disabledClass" />
-				<c:if test="${registration.id != null && registration.status.code == 'APPROVED'}">
-					<c:set value="${registration.feeCollected}" var="isFeeCollected"></c:set>
-					<c:if test="${!isFeeCollected}">
-						<c:set value="disabled" var="disabledClass" />
-						<c:out value="${registration.currentState.nextAction}" />
-						<div class="add-margin error-msg" align="center"><font size="3px;">Fee collection is pending.</font></div><br/>
-					</c:if>
-				</c:if>
 				<c:forEach items="${validActionList}" var="validButtons">
-					<form:button type="submit" id="${validButtons}" class="btn btn-primary ${disabledClass}" value="${validButtons}" onclick="return validateWorkFlowApprover('${validButtons}');" >
+					<form:button type="submit" id="${validButtons}" class="btn btn-primary" value="${validButtons}" onclick="return validateWorkFlowApprover('${validButtons}');" >
 						<c:out value="${validButtons}" /> 
 					</form:button>
 				</c:forEach>

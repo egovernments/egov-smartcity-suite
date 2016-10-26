@@ -65,6 +65,7 @@ import org.egov.commons.EgwStatus;
 import org.egov.demand.model.EgDemand;
 import org.egov.infra.admin.master.entity.Boundary;
 import org.egov.infra.workflow.entity.StateAware;
+import org.egov.mrs.domain.enums.MarriageCertificateType;
 import org.egov.mrs.masters.entity.MarriageAct;
 import org.egov.mrs.masters.entity.MarriageFee;
 import org.egov.mrs.masters.entity.MarriageRegistrationUnit;
@@ -107,7 +108,7 @@ public class MarriageRegistration extends StateAware {
     @SafeHtml
     @Length(max = 30)
     private String placeOfMarriage;
-
+    
     /*
      * @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY, mappedBy = "registration") //Refers to registration field of
      * the Applicant class private Applicant husband = new Applicant();
@@ -210,7 +211,10 @@ public class MarriageRegistration extends StateAware {
     }
 
     public boolean isFeeCollected() {
-        return demand.getBaseDemand().compareTo(demand.getAmtCollected()) == 0 ? true : false;
+        if(demand!=null)
+            return demand.getBaseDemand().compareTo(demand.getAmtCollected()) == 0 ? true : false;
+        else 
+            return false;
     }
 
     public void addRegistrationDocument(final RegistrationDocument registrationDocument) {
@@ -509,5 +513,6 @@ public class MarriageRegistration extends StateAware {
 	    public void setLegacy(boolean isLegacy) {
 	        this.isLegacy = isLegacy;
 	    }
+
 
 }

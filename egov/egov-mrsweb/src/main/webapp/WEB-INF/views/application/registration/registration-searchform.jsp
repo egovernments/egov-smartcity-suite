@@ -57,7 +57,7 @@
 					<div class="row">
 					<div class="form-group">
 						<label for="registrationNo" class="col-sm-2 control-label"><spring:message
-								code="lbl.application.no" /></label>
+								code="lbl.registration.number" /></label>
 
 						<div class="col-sm-3 add-margin">
 							<form:input id="registrationNo" path="registrationNo" type="text" cssClass="form-control low-width is_valid_alphnumeric" autocomplete="off" required="required" />
@@ -90,7 +90,6 @@
 						</div>
 					</div>
 					<div class="row">
-
 						<div class="form-group">
 							<label for="dateOfMarriage" class="col-sm-2 control-label"><spring:message code="lbl.application.date" /></label>
 	
@@ -100,20 +99,35 @@
 							</div>
 							
 							<label class="col-sm-2 control-label">
-			<spring:message code="lbl.registrationunit"/></span>
-		</label>
-			<div class="col-sm-3 add-margin">
-			<form:select path="marriageRegistrationUnit" id="select-registrationunit" cssClass="form-control" 
-						cssErrorClass="form-control error">
-                 <form:option value=""> <spring:message code="lbl.default.option"/> </form:option>
-                 <form:options items="${marriageRegistrationUnit}" itemValue="id" itemLabel="name"/>
-             </form:select>
-            <form:errors path="marriageRegistrationUnit.id" cssClass="add-margin error-msg"/>
-            
-            </div>
+								<spring:message code="lbl.registrationunit"/></span>
+							</label>
+							<div class="col-sm-3 add-margin">
+							<form:select path="marriageRegistrationUnit" id="select-registrationunit" cssClass="form-control" 
+										cssErrorClass="form-control error">
+				                 <form:option value=""> <spring:message code="lbl.default.option"/> </form:option>
+				                 <form:options items="${marriageRegistrationUnit}" itemValue="id" itemLabel="name"/>
+				             </form:select>
+				            <form:errors path="marriageRegistrationUnit.id" cssClass="add-margin error-msg"/>
 						</div>
 					</div>
 				</div>
+				
+				<c:if test="${mode=='collectmrfee'}">
+				<div class="row">
+					<div class="form-group">
+						<label for="mrType" class="col-sm-2 control-label"><spring:message code="lbl.marriageRegistration.type" /></label>
+						<div class="col-sm-3 add-margin">
+							<select name="marriageRegistrationType" id="marriageRegistrationType" class="form-control" data-first-option="false">
+								  <c:forEach items="${marriageRegistrationTypes}" var="mrt">
+                                     <option value="${mrt}"> ${mrt} </option>
+                                </c:forEach>
+					     	</select>
+							<%-- <form:errors path="marriageRegistrationType" cssClass="error-msg"/> --%>
+						</div>
+					</div>
+				</div>
+				</c:if>
+				
 			</div>
 			<div class="row">
 				<div class="text-center">						

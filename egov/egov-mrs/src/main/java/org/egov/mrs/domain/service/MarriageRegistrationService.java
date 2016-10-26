@@ -84,7 +84,9 @@ import org.egov.mrs.domain.entity.IdentityProof;
 import org.egov.mrs.domain.entity.MarriageCertificate;
 import org.egov.mrs.domain.entity.MarriageDocument;
 import org.egov.mrs.domain.entity.MarriageRegistration;
+import org.egov.mrs.domain.entity.MarriageRegistrationSearchFilter;
 import org.egov.mrs.domain.entity.MrApplicant;
+import org.egov.mrs.domain.entity.ReIssue;
 import org.egov.mrs.domain.entity.RegistrationDocument;
 import org.egov.mrs.domain.entity.SearchModel;
 import org.egov.mrs.domain.repository.MarriageRegistrationRepository;
@@ -181,6 +183,8 @@ public class MarriageRegistrationService {
     
     @Autowired
     private MarriageRegistrationUnitService marriageRegistrationUnitService;
+    
+    
     
     @Autowired
     public MarriageRegistrationService(final MarriageRegistrationRepository registrationRepository) {
@@ -604,6 +608,40 @@ public class MarriageRegistrationService {
             return criteria.list();
     }
 
+    
+    @SuppressWarnings("unchecked")
+    public List<ReIssue> searchApprovedReIssueRecordsForFeeCollection(final MarriageRegistrationSearchFilter mrSearchFilter) throws ParseException {
+            final Criteria criteria = getCurrentSession().createCriteria(ReIssue.class,"reIssue")
+                            .createAlias("reIssue.status", "status");
+            buildReIssueSearchCriteria(mrSearchFilter, criteria);
+             criteria.add(Restrictions.in("status.code", new String[] { ReIssue.ReIssueStatus.APPROVED.toString()}));
+            return criteria.list();
+    }
+    
+    
+    private void buildReIssueSearchCriteria(final MarriageRegistrationSearchFilter mrSearchFilter, final Criteria criteria) throws ParseException {
+        SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
+        if (mrSearchFilter.getRegistrationNo() != null)
+                criteria.createAlias("reIssue.registration", "registration").add(Restrictions.ilike("registration.registrationNo", mrSearchFilter.getRegistrationNo(),
+                                        MatchMode.ANYWHERE)); 
+                if ( mrSearchFilter.getHusbandName() != null)
+                criteria.createAlias("reIssue.registration.husband", "husband").add(Restrictions.disjunction( Restrictions.ilike("husband.name.firstName", mrSearchFilter.getHusbandName(),
+                                MatchMode.ANYWHERE)).add(Restrictions.ilike("husband.name.lastName", mrSearchFilter.getHusbandName(),
+                                                MatchMode.ANYWHERE)).add(Restrictions.ilike("husband.name.middleName", mrSearchFilter.getHusbandName(),
+                                                                MatchMode.ANYWHERE))); 
+                if ( mrSearchFilter.getWifeName()!=null)
+                criteria.createAlias("reIssue.registration.wife", "wife").add(Restrictions.disjunction(Restrictions.ilike("wife.name.firstName",  mrSearchFilter.getWifeName(),
+                                MatchMode.ANYWHERE)).add(Restrictions.ilike("wife.name.lastName",  mrSearchFilter.getWifeName(),
+                                                MatchMode.ANYWHERE)).add(Restrictions.ilike("wife.name.middleName",  mrSearchFilter.getWifeName(),
+                                                                MatchMode.ANYWHERE)));
+                if ( mrSearchFilter.getApplicationDate() != null)
+                        criteria.add(Restrictions.between("reIssue.applicationDate", sdf.parse(mrSearchFilter.getApplicationDate()),
+                                        DateUtils.addDays(sdf.parse(mrSearchFilter.getApplicationDate()), 1)));
+                if ( mrSearchFilter.getDateOfMarriage() != null)
+                    criteria.createAlias("reIssue.registration", "registration").add(Restrictions.between("registration.dateOfMarriage", sdf.parse(mrSearchFilter.getDateOfMarriage()),
+                                        DateUtils.addDays(sdf.parse(mrSearchFilter.getDateOfMarriage()), 1)));
+        }
+    
     
     private void buildMarriageRegistrationSearchCriteria(MarriageRegistration registration, final Criteria criteria) throws ParseException {
         if (registration.getRegistrationNo() != null)
