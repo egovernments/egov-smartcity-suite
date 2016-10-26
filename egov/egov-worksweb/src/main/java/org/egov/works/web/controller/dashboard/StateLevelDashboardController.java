@@ -94,7 +94,8 @@ public class StateLevelDashboardController {
         final String result = new StringBuilder("{ \"data\":").append(toMilestoneJson(resultList))
                 .append("}").toString();
         final Long timeTaken = System.currentTimeMillis() - startTime;
-        LOGGER.debug("Time taken to serve getStateWiseTypeOfWorkDetails is : " + timeTaken + " (millisecs)");
+        if (LOGGER.isDebugEnabled())
+            LOGGER.debug("Time taken to serve getStateWiseTypeOfWorkDetails is : " + timeTaken + " (millisecs)");
         return result;
     }
 
@@ -110,7 +111,8 @@ public class StateLevelDashboardController {
         final String result = new StringBuilder("{ \"data\":").append(toMilestoneJson(resultList))
                 .append("}").toString();
         final Long timeTaken = System.currentTimeMillis() - startTime;
-        LOGGER.debug("Time taken to serve getDistrictWiseDistrictDetails is : " + timeTaken + " (millisecs)");
+        if (LOGGER.isDebugEnabled())
+            LOGGER.debug("Time taken to serve getDistrictWiseDistrictDetails is : " + timeTaken + " (millisecs)");
         return result;
     }
 
@@ -126,7 +128,8 @@ public class StateLevelDashboardController {
         final String result = new StringBuilder("{ \"data\":").append(toMilestoneJson(resultList))
                 .append("}").toString();
         final Long timeTaken = System.currentTimeMillis() - startTime;
-        LOGGER.debug("Time taken to serve getUlbWiseDistrictDetails is : " + timeTaken + " (millisecs)");
+        if (LOGGER.isDebugEnabled())
+            LOGGER.debug("Time taken to serve getUlbWiseDistrictDetails is : " + timeTaken + " (millisecs)");
         return result;
     }
 
@@ -143,7 +146,8 @@ public class StateLevelDashboardController {
         final String result = new StringBuilder("{ \"data\":").append(toMilestoneJson(resultList))
                 .append("}").toString();
         final Long timeTaken = System.currentTimeMillis() - startTime;
-        LOGGER.debug("Time taken to serve getUlbWiseByDistrictAndTypeOfWork is : " + timeTaken + " (millisecs)");
+        if (LOGGER.isDebugEnabled())
+            LOGGER.debug("Time taken to serve getUlbWiseByDistrictAndTypeOfWork is : " + timeTaken + " (millisecs)");
         return result;
     }
 
@@ -160,7 +164,8 @@ public class StateLevelDashboardController {
         final String result = new StringBuilder("{ \"data\":").append(toMilestoneJson(resultList))
                 .append("}").toString();
         final Long timeTaken = System.currentTimeMillis() - startTime;
-        LOGGER.debug("Time taken to serve getUlbWiseByTypeOfWorkAndUlbs is : " + timeTaken + " (millisecs)");
+        if (LOGGER.isDebugEnabled())
+            LOGGER.debug("Time taken to serve getUlbWiseByTypeOfWorkAndUlbs is : " + timeTaken + " (millisecs)");
         return result;
     }
 
@@ -183,7 +188,8 @@ public class StateLevelDashboardController {
         final String result = new StringBuilder("{ \"data\":").append(toTransactionJson(resultList))
                 .append("}").toString();
         final Long timeTaken = System.currentTimeMillis() - startTime;
-        LOGGER.debug("Time taken to serve getStateWiseULBDetails is : " + timeTaken + " (millisecs)");
+        if (LOGGER.isDebugEnabled())
+            LOGGER.debug("Time taken to serve getStateWiseULBDetails is : " + timeTaken + " (millisecs)");
         return result;
     }
 

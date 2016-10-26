@@ -62,7 +62,7 @@ import org.springframework.stereotype.Service;
 @Service
 public class WorksTransactionIndexService {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(WorksMilestoneIndexService.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(WorksTransactionIndexService.class);
 
     public static final String WORKSTRANSACTION_INDEX_NAME = "workstransaction";
 
@@ -72,8 +72,6 @@ public class WorksTransactionIndexService {
     public void getWorksTransactionDetails(final WorksTransactionIndexRequest worksTransactionIndexRequest,
             final WorksMilestoneIndexResponse wmIndexResponse) {
         final BoolQueryBuilder boolQuery = prepareWhereClause(worksTransactionIndexRequest);
-        // orderingAggregationName is the aggregation name by which we have to
-        // order the results
         Long startTime = System.currentTimeMillis();
         final SearchQuery searchQuery = new NativeSearchQueryBuilder().withIndices(WORKSTRANSACTION_INDEX_NAME)
                 .withQuery(boolQuery)
@@ -95,12 +93,14 @@ public class WorksTransactionIndexService {
             wmIndexResponse.setContractperiod(response.getLoacontractperiod());
         }
         Long timeTaken = System.currentTimeMillis() - startTime;
-        LOGGER.debug("Time taken by type of work WiseAggregations is : " + timeTaken + " (millisecs) ");
+        if (LOGGER.isDebugEnabled())
+            LOGGER.debug("Time taken by type of work WiseAggregations is : " + timeTaken + " (millisecs) ");
 
         startTime = System.currentTimeMillis();
         timeTaken = System.currentTimeMillis() - startTime;
-        LOGGER.debug("Time taken for setting values in returnUlbWiseAggregationResults() is : " + timeTaken
-                + " (millisecs) ");
+        if (LOGGER.isDebugEnabled())
+            LOGGER.debug("Time taken for setting values in returnUlbWiseAggregationResults() is : " + timeTaken
+                    + " (millisecs) ");
     }
 
     private BoolQueryBuilder prepareWhereClause(final WorksTransactionIndexRequest worksTransactionIndexRequest) {

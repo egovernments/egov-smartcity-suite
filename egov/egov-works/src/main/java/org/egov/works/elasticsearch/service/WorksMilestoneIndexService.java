@@ -150,7 +150,8 @@ public class WorksMilestoneIndexService {
                 response -> response.getAggregations());
 
         Long timeTaken = System.currentTimeMillis() - startTime;
-        LOGGER.debug("Time taken by type of work WiseAggregations is : " + timeTaken + " (millisecs) ");
+        if (LOGGER.isDebugEnabled())
+            LOGGER.debug("Time taken by type of work WiseAggregations is : " + timeTaken + " (millisecs) ");
 
         WorksMilestoneIndexResponse wmIndexResponse;
         startTime = System.currentTimeMillis();
@@ -280,8 +281,9 @@ public class WorksMilestoneIndexService {
             worksMilestoneIndexResponses.add(wmIndexResponse);
         }
         timeTaken = System.currentTimeMillis() - startTime;
-        LOGGER.debug("Time taken for setting values in returnUlbWiseAggregationResults() is : " + timeTaken
-                + " (millisecs) ");
+        if (LOGGER.isDebugEnabled())
+            LOGGER.debug("Time taken for setting values in returnUlbWiseAggregationResults() is : " + timeTaken
+                    + " (millisecs) ");
         return worksMilestoneIndexResponses;
     }
 
