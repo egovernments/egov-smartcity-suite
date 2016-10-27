@@ -60,6 +60,8 @@ import org.egov.works.utils.WorksUtils;
 import org.egov.works.workorder.entity.WorkOrderActivity;
 import org.hibernate.Session;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.context.MessageSource;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
@@ -81,6 +83,10 @@ public class ContractorMBHeaderService {
 
     @Autowired
     private AutonumberServiceBeanResolver beanResolver;
+
+    @Autowired
+    @Qualifier("parentMessageSource")
+    private MessageSource messageSource;
 
     public Session getCurrentSession() {
         return entityManager.unwrap(Session.class);
@@ -139,11 +145,33 @@ public class ContractorMBHeaderService {
                 if (workOrderActivity.getActivity().getParent() != null
                         && activity.getActivity().getId() == workOrderActivity.getActivity().getParent().getId())
                     activity.setApprovedQuantity(activity.getApprovedQuantity() + workOrderActivity.getApprovedQuantity());
-        for (final WorkOrderActivity activity : mergedActivities) {
-            final ContractorMBDetails details = new ContractorMBDetails();
-            details.setWorkOrderActivity(activity);
-            details.setRate(activity.getApprovedRate());
-            contractorMBHeader.getContractorMBDetails().add(details);
-        }
+        if (contractorMBHeader.getContractorMBDetails().isEmpty())
+            for (final WorkOrderActivity activity : mergedActivities) {
+                final ContractorMBDetails details = new ContractorMBDetails();
+                details.setWorkOrderActivity(activity);
+                details.setRate(activity.getApprovedRate());
+                contractorMBHeader.getContractorMBDetails().add(details);
+            }
+        else
+            for (final ContractorMBDetails contractorMBDetails : contractorMBHeader.getContractorMBDetails()) {
+                final WorkOrderActivity woa = workOrderActivityService
+                        .getWorkOrderActivityById(contractorMBDetails.getWorkOrderActivity().getId());
+                contractorMBDetails.setWorkOrderActivity(woa);
+                contractorMBDetails.setRate(woa.getApprovedRate());
+            }
     }
+
+    public String validateContractorMBHeader(final ContractorMBHeader contractorMBHeader) {
+        String message = "";
+        boolean quantityExists = false;
+        for (final ContractorMBDetails contractorMBDetails : contractorMBHeader.getContractorMBDetails())
+            if (contractorMBDetails.getQuantity() > 0)
+                quantityExists = true;
+
+        if (!quantityExists)
+            message = messageSource.getMessage("error.mbdetails.quantity.zero", new String[] {}, null);
+
+        return message;
+    }
+
 }

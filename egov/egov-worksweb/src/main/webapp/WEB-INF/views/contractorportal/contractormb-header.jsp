@@ -49,62 +49,68 @@
 		</div>
 	</div>
 	<div class="panel-body custom-form">
-		<div class="form-group">
-			<label class="col-sm-3 control-label text-right">
-			    <spring:message code="lbl.mb.nameofwork" />
-			</label>
-			<div class="col-sm-3 add-margin view-content">
-				<span name="nameOfWork" id="nameOfWork">${contractorMB.workOrderEstimate.estimate.name }</span>
+		<div class="row add-border">
+			<div class="col-xs-3 add-margin">
+				<spring:message code="lbl.mb.nameofwork" />
 			</div>
-			<label class="col-sm-2 control-label text-right">
-			    <spring:message code="lbl.workordernumber" />
-			</label>
-			<div class="col-sm-3 add-margin view-content">
+			<div class="col-xs-3 add-margin view-content">
+				<c:out default="N/A" value="${contractorMB.workOrderEstimate.estimate.name}" />
+			</div>
+			<div class="col-xs-3 add-margin">
+				<spring:message code="lbl.workordernumber" />
+			</div>
+			<div class="col-xs-3 add-margin view-content">
 				<input name="workOrder.id" type="hidden" id="workOrderId" value="${contractorMB.workOrderEstimate.workOrder.id }" />
-				<span name="workOrderNumber" id="workOrderNumber">${contractorMB.workOrderEstimate.workOrder.workOrderNumber }</span>
+				 <span name="workOrderNumber" id="workOrderNumber">${contractorMB.workOrderEstimate.workOrder.workOrderNumber }</span>
 			</div>
 		</div>
-		<div class="form-group">
-			<label class="col-sm-3 control-label text-right">
-			    <spring:message code="lbl.workorderdate" />
-			</label>
-			<div class="col-sm-3 add-margin view-content">
-				<span name=workOrderDate id="workOrderDate"><fmt:formatDate value="${contractorMB.workOrderEstimate.workOrder.workOrderDate }" pattern="dd/MM/yyyy"/></span>
+
+
+		<div class="row add-border">
+			<div class="col-xs-3 add-margin">
+				<spring:message code="lbl.workorderdate" />
 			</div>
-			<label class="col-sm-2 control-label text-right">
-			    <spring:message code="lbl.tenderfinalizedpercentage" />
-			</label>
-			<div class="col-sm-3 add-margin view-content">
+			<div class="col-xs-3 add-margin view-content">
+				<span name=workOrderDate id="workOrderDate">
+				<fmt:formatDate value="${contractorMB.workOrderEstimate.workOrder.workOrderDate }" pattern="dd/MM/yyyy" /></span>
+			</div>
+			<div class="col-xs-3 add-margin">
+				<spring:message code="lbl.tenderfinalizedpercentage" />
+			</div>
+			<div class="col-xs-3 add-margin view-content">
 				<span name="tenderFinalizedPercentage" id="tenderFinalizedPercentage">${contractorMB.workOrderEstimate.workOrder.tenderFinalizedPercentage }</span>
 			</div>
 		</div>
-		<div class="form-group">
-			<label class="col-sm-3 control-label text-right">
-			    <spring:message code="lbl.workorderamount" />
-			</label>
-			<div class="col-sm-3 add-margin view-content">
+
+		<div class="row add-border">
+			<div class="col-xs-3 add-margin">
+				<spring:message code="lbl.workorderamount" />
+			</div>
+			<div class="col-xs-3 add-margin view-content">
 				<span name=workOrderAmount id="workOrderAmount">${contractorMB.workOrderEstimate.workOrder.workOrderAmount }</span>
 			</div>
-			<label class="col-sm-2 control-label text-right">
-			    <spring:message code="lbl.total.bills.paid" />
-			</label>
-			<div class="col-sm-3 add-margin view-content">
-				<span name="totalBillsPaid" id="totalBillsPaid">${totalBillsPaidSoFar }</span>
+			<div class="col-xs-3 add-margin">
+				<spring:message code="lbl.total.bill.amount" />
 			</div>
-		</div>
-		<div class="form-group">
-			<label class="col-sm-3 control-label text-right">
-			    <spring:message code="lbl.total.bill.amount" />
-			</label>
-			<div class="col-sm-3 add-margin view-content">
+			<div class="col-xs-3 add-margin view-content">
 				<span name="totalBillAmount" id="totalBillAmount">${totalBillAmount }</span>
 			</div>
-			<label class="col-sm-2 control-label text-right">
-			    <spring:message code="lbl.status" />
-			</label>
-			<div class="col-sm-3 add-margin view-content">
+		</div>
+
+		<div class="row add-border">
+			<div class="col-xs-3 add-margin">
+				<spring:message code="lbl.total.bills.paid" />
+			</div>
+			<div class="col-xs-3 add-margin view-content">
+				<span name="totalBillsPaid" id="totalBillsPaid">${totalBillsPaidSoFar }</span>
+			</div>
+			<div class="col-xs-3 add-margin">
+				<spring:message code="lbl.status" />
+			</div>
+			<div class="col-xs-3 add-margin view-content">
 				<span name="mileStoneStatus" id="mileStoneStatus">${mileStoneStatus }</span>
 			</div>
 		</div>
+
 	</div>
 </div>

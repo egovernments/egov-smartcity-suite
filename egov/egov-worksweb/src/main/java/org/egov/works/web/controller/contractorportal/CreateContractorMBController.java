@@ -55,6 +55,7 @@ import org.egov.egf.commons.EgovCommon;
 import org.egov.infra.exception.ApplicationException;
 import org.egov.infra.messaging.MessagingService;
 import org.egov.works.contractorbill.service.ContractorBillRegisterService;
+import org.egov.works.contractorportal.entity.ContractorMBDetails;
 import org.egov.works.contractorportal.entity.ContractorMBHeader;
 import org.egov.works.contractorportal.service.ContractorMBHeaderService;
 import org.egov.works.letterofacceptance.service.LetterOfAcceptanceService;
@@ -112,12 +113,11 @@ public class CreateContractorMBController {
     }
 
     @RequestMapping(value = "/create", method = RequestMethod.GET)
-    public String showContractorMBForm(@ModelAttribute("contractorMB") final ContractorMBHeader contractorMBHeader,
+    public String showContractorMBForm(@ModelAttribute("contractorMBHeader") final ContractorMBHeader contractorMBHeader,
             @RequestParam final String loaNumber, final Model model) {
         final WorkOrder workOrder = letterOfAcceptanceService.getApprovedWorkOrder(loaNumber);
         final WorkOrderEstimate workOrderEstimate = workOrderEstimateService.getWorkOrderEstimateByWorkOrderId(workOrder.getId());
         loadViewData(contractorMBHeader, workOrderEstimate, model);
-
         return "contractormb-form";
     }
 
@@ -153,27 +153,34 @@ public class CreateContractorMBController {
 
     @RequestMapping(value = "/create", method = RequestMethod.POST)
     public String create(@ModelAttribute("contractorMBHeader") final ContractorMBHeader contractorMBHeader,
-            final Model model, final BindingResult errors, final HttpServletRequest request, final BindingResult resultBinder,
+            final Model model, final BindingResult errors, final HttpServletRequest request,
             final HttpServletResponse response, @RequestParam("file") final MultipartFile[] files)
             throws ApplicationException, IOException {
 
         contractorMBHeader.setWorkOrderEstimate(
                 workOrderEstimateService.getWorkOrderEstimateById(contractorMBHeader.getWorkOrderEstimate().getId()));
+        final String errorMessage = contractorMBHeaderService.validateContractorMBHeader(contractorMBHeader);
+        if (!StringUtils.EMPTY.equals(errorMessage)) {
+            model.addAttribute("errorMessage", errorMessage);
+            loadViewData(contractorMBHeader, contractorMBHeader.getWorkOrderEstimate(), model);
+            return "contractormb-form";
+        } else {
 
-        final ContractorMBHeader savedContractorMBHeader = contractorMBHeaderService.create(contractorMBHeader, files);
+            final ContractorMBHeader savedContractorMBHeader = contractorMBHeaderService.create(contractorMBHeader, files);
 
-        final String smsMessage = messageSource.getMessage("msg.mb.created.sms",
-                new String[] { contractorMBHeader.getWorkOrderEstimate().getWorkOrder().getWorkOrderNumber(),
-                        contractorMBHeader.getWorkOrderEstimate().getWorkOrder().getContractor().getName(),
-                        contractorMBHeader.getMbAmount().toString() },
-                null);
+            final String smsMessage = messageSource.getMessage("msg.mb.created.sms",
+                    new String[] { contractorMBHeader.getWorkOrderEstimate().getWorkOrder().getWorkOrderNumber(),
+                            contractorMBHeader.getWorkOrderEstimate().getWorkOrder().getContractor().getName(),
+                            contractorMBHeader.getMbAmount().toString() },
+                    null);
 
-        final String mobileNumber = contractorMBHeader.getWorkOrderEstimate().getWorkOrder().getEngineerIncharge()
-                .getMobileNumber();
-        if (StringUtils.isNotBlank(mobileNumber))
-            messagingService.sendSMS(mobileNumber, smsMessage);
+            final String mobileNumber = contractorMBHeader.getWorkOrderEstimate().getWorkOrder().getEngineerIncharge()
+                    .getMobileNumber();
+            if (StringUtils.isNotBlank(mobileNumber))
+                messagingService.sendSMS(mobileNumber, smsMessage);
 
-        return "redirect:/contractorportal/mb/contractormb-success?contractormb=" + savedContractorMBHeader.getId();
+            return "redirect:/contractorportal/mb/contractormb-success?contractormb=" + savedContractorMBHeader.getId();
+        }
     }
 
     @RequestMapping(value = "/contractormb-success", method = RequestMethod.GET)

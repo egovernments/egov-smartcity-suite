@@ -58,7 +58,7 @@
 					<th><spring:message code="lbl.uom" /></th>
 					<th><spring:message code="lbl.rate" /></th>
 					<th><spring:message code="lbl.workorderquantity" /></th>
-					<th><spring:message code="lbl.current.entry" /></th>
+					<th><spring:message code="lbl.current.entry" /><span class="mandatory"></span></th>
 					<th><spring:message code="lbl.amount" /></th>
 				</tr>
 			</thead>

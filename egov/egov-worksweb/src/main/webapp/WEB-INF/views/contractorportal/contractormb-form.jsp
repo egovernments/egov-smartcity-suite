@@ -44,7 +44,7 @@
 <%@ taglib uri="http://www.springframework.org/tags/form" prefix="form"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt"%>
 <%@ taglib uri="/WEB-INF/taglibs/cdn.tld" prefix="cdn"%>
-<form:form modelAttribute="contractorMB" name="contractorMB" role="form" method="post" id="contractorMB"
+<form:form modelAttribute="contractorMBHeader" name="contractorMBHeader" role="form" method="post" id="contractorMBHeader"
 	class="form-horizontal form-groups-bordered"
 	accept-charset="utf-8"
 	enctype="multipart/form-data">
@@ -55,9 +55,9 @@
 	<input id="errorMandatory" type="hidden" value="<spring:message code="error.mandatory.fields" />" />
 	
 	<div class="new-page-header"><spring:message code="lbl.createmb" /></div> 
-	
+	   <span class="error-msg add-margin" ><c:out value="${errorMessage}"></c:out></span>
 	<div>
-	       <spring:hasBindErrors name="contractorMB">
+	       <spring:hasBindErrors name="contractorMBHeader">
 			    <div class="col-md-10 col-md-offset-1">
 					<form:errors path="*" cssClass="error-msg add-margin" /><br/>
 			   </div>
@@ -66,11 +66,11 @@
 	<%@ include file="contractormb-header.jsp"%>
 	<%@ include file="contractormb-details.jsp"%>
 	<jsp:include page="../common/uploadDocuments.jsp"/>
-	<div class="form-group">
-		<label class="col-sm-2 control-label text-right">
+	<div class="form-group" align="center">
+		<label class="col-sm-4 control-label text-right">
 		    <spring:message code="lbl.remarks" />
 		</label>
-		<div class="col-sm-3 add-margin">
+		<div class="col-sm-3 add-margin" >
 			<form:textarea path="remarks" id="remarks" class="form-control patternvalidation" data-pattern="alphanumericwithallspecialcharacters" maxlength="1056"></form:textarea>
 		</div>
 	</div>
