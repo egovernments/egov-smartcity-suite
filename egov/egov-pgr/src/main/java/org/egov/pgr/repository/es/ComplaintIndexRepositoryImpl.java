@@ -43,30 +43,19 @@ package org.egov.pgr.repository.es;
 import static org.egov.pgr.utils.constants.PGRConstants.PGR_INDEX_DATE_FORMAT;
 import static org.egov.pgr.utils.constants.PGRConstants.PGR_INDEX_NAME;
 
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.lang3.StringUtils;
-import org.egov.infra.admin.master.entity.Department;
-import org.egov.infra.admin.master.entity.es.CityIndex;
 import org.egov.infra.admin.master.service.DepartmentService;
 import org.egov.infra.admin.master.service.es.CityIndexService;
 import org.egov.pgr.entity.es.ComplaintDashBoardRequest;
-import org.egov.pgr.entity.es.ComplaintDashBoardResponse;
 import org.egov.pgr.repository.es.util.ComplaintElasticsearchUtils;
 import org.elasticsearch.action.search.SearchResponse;
 import org.elasticsearch.index.query.BoolQueryBuilder;
 import org.elasticsearch.index.query.QueryBuilders;
 import org.elasticsearch.search.SearchHit;
 import org.elasticsearch.search.aggregations.AggregationBuilders;
-import org.elasticsearch.search.aggregations.bucket.filter.Filter;
-import org.elasticsearch.search.aggregations.bucket.range.Range;
-import org.elasticsearch.search.aggregations.bucket.terms.Terms;
-import org.elasticsearch.search.aggregations.bucket.terms.Terms.Bucket;
-import org.elasticsearch.search.aggregations.metrics.avg.Avg;
-import org.elasticsearch.search.aggregations.metrics.valuecount.ValueCount;
 import org.joda.time.DateTime;
 import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
@@ -88,8 +77,27 @@ public class ComplaintIndexRepositoryImpl implements ComplaintIndexCustomReposit
 	public HashMap<String, SearchResponse> findAllGrievanceByFilter(ComplaintDashBoardRequest complaintDashBoardRequest, BoolQueryBuilder query,String grouByField) {
 
 		DateTimeFormatter formatter = DateTimeFormat.forPattern(PGR_INDEX_DATE_FORMAT);
-		DateTime fromDate = new DateTime().withMonthOfYear(4).dayOfMonth().withMinimumValue();
+		DateTime currentYearfromDate = new DateTime().withMonthOfYear(4).dayOfMonth().withMinimumValue();
+		DateTime currentYeartoDate = new DateTime();
+		
+		/**
+         * For Current day's complaint count if dates are sent in the request,
+         * consider the toDate, else take date range between current date +1 day
+         */
+		DateTime fromDate = new DateTime();
 		DateTime toDate = new DateTime();
+        if (StringUtils.isNotBlank(complaintDashBoardRequest.getFromDate())
+                && StringUtils.isNotBlank(complaintDashBoardRequest.getToDate())) {
+        	fromDate = new DateTime(complaintDashBoardRequest.getFromDate());
+        	toDate = fromDate.plusDays(1);
+        } else {
+            toDate = fromDate.plusDays(1);
+        }
+		
+		//This is size used to fetch those many number of documents
+		int size = 120;
+		if(complaintDashBoardRequest.getSize() >= 0)
+			size = complaintDashBoardRequest.getSize();
 
 		SearchResponse consolidatedResponse = elasticsearchTemplate.getClient().prepareSearch(PGR_INDEX_NAME)
 				.setQuery(QueryBuilders.matchAllQuery()).setSize(0)
@@ -99,19 +107,23 @@ public class ComplaintIndexRepositoryImpl implements ComplaintIndexCustomReposit
 				.addAggregation(ComplaintElasticsearchUtils.getAverageWithFilter("ifClosed",1,"AgeingInWeeks", "complaintAgeingdaysFromDue"))
 				.addAggregation(ComplaintElasticsearchUtils.getAverageWithExclusion("satisfactionAverage", "satisfactionIndex"))
 				.addAggregation(ComplaintElasticsearchUtils.getCountBetweenSpecifiedDates("currentYear", 
+								"createdDate", currentYearfromDate.toString(formatter), currentYeartoDate.toString(formatter)))
+				.addAggregation(ComplaintElasticsearchUtils.getCountBetweenSpecifiedDates("todaysComplaintCount", 
 								"createdDate", fromDate.toString(formatter), toDate.toString(formatter)))
 				.execute().actionGet();
 		
 		SearchResponse tableResponse = elasticsearchTemplate.getClient().prepareSearch(PGR_INDEX_NAME)
 									   .setQuery(query).setSize(0)
-									   .addAggregation(ComplaintElasticsearchUtils.getCountWithGrouping("complaintTypeWise", "complaintTypeName",50)
+									   .addAggregation(ComplaintElasticsearchUtils.getCountWithGroupingAndOrder("complaintTypeWise", "complaintTypeName",size,
+											   													complaintDashBoardRequest.getSortField(),complaintDashBoardRequest.getSortDirection())
 											   		   .subAggregation(ComplaintElasticsearchUtils.getAverageWithExclusion("complaintTypeSatisfactionAverage", "satisfactionIndex"))
 											   		   .subAggregation(ComplaintElasticsearchUtils.getCountWithGrouping("complaintTypeWiseOpenAndClosedCount", "ifClosed",2)
 											   				   			.subAggregation(AggregationBuilders.range("ComplaintTypeAgeing").field("complaintAgeingdaysFromDue")
 											   				   							.addRange("1week", 0, 8).addRange("1month",8 ,32)
 											   				   							.addRange("3months", 32, 91).addUnboundedFrom("remainingMonths", 91))
 											   				   			.subAggregation(ComplaintElasticsearchUtils.getCountWithGrouping("complaintTypeSla", "ifSLA",2))))
-									   .addAggregation(ComplaintElasticsearchUtils.getCountWithGrouping("groupByField", grouByField,120)
+									   .addAggregation(ComplaintElasticsearchUtils.getCountWithGroupingAndOrder("groupByField", grouByField,size,
+											   								complaintDashBoardRequest.getSortField(),complaintDashBoardRequest.getSortDirection())
 											   			.subAggregation(ComplaintElasticsearchUtils.getAverageWithExclusion("groupByFieldSatisfactionAverage", "satisfactionIndex"))
 											   			.subAggregation(ComplaintElasticsearchUtils.getCountWithGrouping("groupFieldWiseOpenAndClosedCount", "ifClosed",2)
 											   							.subAggregation(AggregationBuilders.range("groupByFieldAgeing").field("complaintAgeingdaysFromDue")
@@ -119,8 +131,6 @@ public class ComplaintIndexRepositoryImpl implements ComplaintIndexCustomReposit
 											   											.addRange("3months", 32, 91).addUnboundedFrom("remainingMonths", 91))
 											   							.subAggregation(ComplaintElasticsearchUtils.getCountWithGrouping("groupByFieldSla", "ifSLA",2))))
 									   .execute().actionGet();
-		
-		
 
 		HashMap<String, SearchResponse> result = new HashMap<>();
 		result.put("consolidatedResponse", consolidatedResponse);
@@ -155,5 +165,20 @@ public class ComplaintIndexRepositoryImpl implements ComplaintIndexCustomReposit
 				   .execute().actionGet();
 		
 		return complaintTypeResponse;
+	}
+	
+	@Override
+	public SearchResponse findAllGrievanceBySource(ComplaintDashBoardRequest complaintDashBoardRequest, 
+			BoolQueryBuilder query,String grouByField){
+		
+		SearchResponse sourceResponse = elasticsearchTemplate.getClient().prepareSearch(PGR_INDEX_NAME)
+				   .setQuery(query).setSize(0)
+				   .addAggregation(ComplaintElasticsearchUtils.getCountWithGrouping("groupByField", grouByField,120)
+						   		   .subAggregation(ComplaintElasticsearchUtils.getCountWithGrouping("groupByFieldSource", "source",30)))
+				   .addAggregation(ComplaintElasticsearchUtils.getCountWithGrouping("complaintTypeWise", "complaintTypeName",120)
+						   		   .subAggregation(ComplaintElasticsearchUtils.getCountWithGrouping("complaintTypeWiseSource", "source",30)))
+				   .execute().actionGet();
+		
+		return sourceResponse;
 	}
 }

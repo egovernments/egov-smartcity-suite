@@ -45,6 +45,8 @@ import org.egov.pgr.entity.es.ComplaintDashBoardRequest;
 import org.elasticsearch.index.query.QueryBuilders;
 import org.elasticsearch.search.aggregations.AggregationBuilder;
 import org.elasticsearch.search.aggregations.AggregationBuilders;
+import org.elasticsearch.search.aggregations.bucket.terms.Terms;
+import org.elasticsearch.search.aggregations.bucket.terms.TermsBuilder;
 import org.elasticsearch.search.aggregations.metrics.MetricsAggregationBuilder;
 import org.elasticsearch.search.aggregations.metrics.valuecount.ValueCountBuilder;
 
@@ -52,6 +54,18 @@ public class ComplaintElasticsearchUtils {
 	
 	public static AggregationBuilder getCountWithGrouping(String aggregationName, String fieldName, int size){
 		return AggregationBuilders.terms(aggregationName).field(fieldName).size(size);
+	}
+	
+	public static AggregationBuilder getCountWithGroupingAndOrder(String aggregationName, String fieldName, 
+										int size, String sortField,String sortOrder){
+		TermsBuilder  aggregation = AggregationBuilders.terms(aggregationName).field(fieldName).size(size);
+		if(StringUtils.isNotBlank(sortField) && StringUtils.isNotEmpty(sortField) && sortField.equalsIgnoreCase("complaintCount")){
+			Boolean order = true;
+			if(StringUtils.isNotEmpty(sortOrder) && StringUtils.isNotBlank(sortOrder)&& StringUtils.equalsIgnoreCase(sortOrder, "desc"))
+			  order = false;
+			aggregation.order(Terms.Order.aggregation("_count", order));
+		}
+		return aggregation;
 	}
 	
 	public static ValueCountBuilder getCount(String aggregationName, String fieldName){

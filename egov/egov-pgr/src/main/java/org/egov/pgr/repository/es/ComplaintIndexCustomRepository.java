@@ -56,4 +56,6 @@ public interface ComplaintIndexCustomRepository {
 	
 	public String getWardName(String wardNo);
 	
+	public SearchResponse findAllGrievanceBySource(ComplaintDashBoardRequest complaintDashBoardRequest, BoolQueryBuilder query,String grouByField);
+	
 }

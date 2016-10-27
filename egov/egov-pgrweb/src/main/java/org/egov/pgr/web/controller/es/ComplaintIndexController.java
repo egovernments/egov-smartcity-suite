@@ -89,6 +89,11 @@ public class ComplaintIndexController {
     	return complaintIndexService.getComplaintTypeReport(complaintRequest);
     }
     
+    @RequestMapping(value = "/sourcewisegrievance", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
+    public HashMap<String, Object> getSourceWiseGrievanceResponse(@RequestBody ComplaintDashBoardRequest complaintRequest){
+    	return complaintIndexService.getSourceWiseResponse(complaintRequest);
+    }
+    
     @RequestMapping(value = "/departments" , method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
     public List<JSONObject>  getDepartments(){
     	List<Department> departments = departmentService.getAllDepartments();

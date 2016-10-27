@@ -50,6 +50,9 @@ public class ComplaintDashBoardRequest {
 	String fromDate;
 	String toDate;
 	String complaintTypeCode;
+	String sortField;
+	String sortDirection;
+	int size;
 	
 	public String getDistrictName() {
 		return districtName;
@@ -97,5 +100,23 @@ public class ComplaintDashBoardRequest {
 	}
 	public void setComplaintTypeCode(String complaintTypeCode) {
 		this.complaintTypeCode = complaintTypeCode;
+	}
+	public String getSortField() {
+		return sortField;
+	}
+	public void setSortField(String sortField) {
+		this.sortField = sortField;
+	}
+	public String getSortDirection() {
+		return sortDirection;
+	}
+	public void setSortDirection(String sortDirection) {
+		this.sortDirection = sortDirection;
+	}
+	public int getSize() {
+		return size;
+	}
+	public void setSize(int size) {
+		this.size = size;
 	}
 }
