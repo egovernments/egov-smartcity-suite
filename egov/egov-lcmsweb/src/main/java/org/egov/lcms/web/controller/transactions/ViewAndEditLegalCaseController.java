@@ -108,9 +108,8 @@ public class ViewAndEditLegalCaseController extends GenericLegalCaseController {
         final String caseNumber = legalCase.getCaseNumber() + "/" + legalCase.getWpYear();
         final LegalCase validateCasenumber = legalCaseService.getLegalCaseByCaseNumber(caseNumber);
         if (validateCasenumber != null)
-            errors.reject("error.legalCase.caseNumber", "error.legalCase.caseNumber");
+            errors.reject("error.legalCase.caseNumber");
         if (errors.hasErrors()) {
-            model.addAttribute("legalCase", legalCase);
             return "legalcase-edit";
         }
 
