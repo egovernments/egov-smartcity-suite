@@ -21,12 +21,12 @@ public class ElasticSearchConfiguration {
     @Autowired
     private ApplicationProperties applicationProperties;
 
-    @Bean
     public Client transportClient() {
         Settings settings = Settings.settingsBuilder()
                 .put("cluster.name", applicationProperties.searchClusterName()).build();
         Client client = TransportClient.builder().settings(settings).build();
-        applicationProperties.searchHosts().stream().forEach(host -> addTransportClient(client, host, applicationProperties.searchPort()));
+        applicationProperties.searchHosts().stream().forEach(host ->
+                addTransportClient(client, host, applicationProperties.searchPort()));
         return client;
     }
 

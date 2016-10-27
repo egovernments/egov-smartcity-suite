@@ -39,7 +39,6 @@
  */
 package org.egov.pgr.service;
 
-import org.egov.infra.elasticsearch.aop.IndexingAdvice;
 import org.egov.pgr.entity.ComplaintType;
 import org.egov.pgr.entity.ComplaintTypeBuilder;
 import org.egov.pgr.repository.ComplaintTypeRepository;
@@ -65,8 +64,6 @@ public class ComplaintTypeServiceTest {
 
         complaintTypeService = new ComplaintTypeService(complaintTypeRepository);
         AspectJProxyFactory factory = new AspectJProxyFactory(complaintTypeService);
-        IndexingAdvice aspect = new IndexingAdvice();
-        factory.addAspect(aspect);
         complaintTypeService = factory.getProxy();
     }
 

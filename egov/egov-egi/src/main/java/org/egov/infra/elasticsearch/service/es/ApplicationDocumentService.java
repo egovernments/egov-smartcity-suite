@@ -40,10 +40,10 @@
 
 package org.egov.infra.elasticsearch.service.es;
 
+import org.egov.infra.config.mapper.BeanMapperConfiguration;
 import org.egov.infra.elasticsearch.entity.ApplicationIndex;
 import org.egov.infra.elasticsearch.entity.es.ApplicationDocument;
 import org.egov.infra.elasticsearch.repository.es.ApplicationDocumentRepository;
-import org.egov.infra.elasticsearch.service.util.ApplicationDocumentMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -55,7 +55,7 @@ public class ApplicationDocumentService {
     private final ApplicationDocumentRepository applicationDocumentRepository;
 
     @Autowired
-    private ApplicationDocumentMapper applicationDocumentMapper;
+    private BeanMapperConfiguration beanMapperConfiguration;
 
     @Autowired
     public ApplicationDocumentService(ApplicationDocumentRepository applicationDocumentRepository) {
@@ -63,10 +63,14 @@ public class ApplicationDocumentService {
     }
 
     @Transactional
-    public ApplicationDocument createOrUpdateApplicationDocument(ApplicationIndex applicationIndex) {
-        ApplicationDocument applicationDocument = new ApplicationDocument();
-        applicationDocumentMapper.map(applicationIndex, applicationDocument);
-        applicationDocument.setId(String.valueOf(applicationIndex.getId()));
+    public ApplicationDocument createApplicationDocument(ApplicationIndex applicationIndex) {
+        ApplicationDocument applicationDocument = beanMapperConfiguration.map(applicationIndex, ApplicationDocument.class);
+        return applicationDocumentRepository.save(applicationDocument);
+    }
+
+    @Transactional
+    public ApplicationDocument updateApplicationDocument(ApplicationIndex applicationIndex, ApplicationDocument applicationDocument) {
+        beanMapperConfiguration.map(applicationIndex, applicationDocument);
         return applicationDocumentRepository.save(applicationDocument);
     }
 }

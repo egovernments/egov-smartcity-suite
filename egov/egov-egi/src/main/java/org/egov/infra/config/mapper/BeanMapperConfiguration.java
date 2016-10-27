@@ -38,28 +38,54 @@
  *    In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
 
-package org.egov.infra.elasticsearch.aop;
+package org.egov.infra.config.mapper;
 
-import org.aspectj.lang.annotation.AfterReturning;
-import org.aspectj.lang.annotation.Aspect;
-import org.aspectj.lang.annotation.Pointcut;
-import org.egov.infra.elasticsearch.annotation.Indexing;
+import ma.glasnost.orika.Converter;
+import ma.glasnost.orika.Mapper;
+import ma.glasnost.orika.MapperFactory;
+import ma.glasnost.orika.impl.ConfigurableMapper;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Component;
 
-@Aspect
+import javax.annotation.PostConstruct;
+
 @Component
-public class IndexingAdvice {
+public class BeanMapperConfiguration extends ConfigurableMapper {
 
-    @Pointcut("@annotation(org.egov.infra.elasticsearch.annotation.Indexing)")
-    private void methodAnnotatedWithIndexing() {
+    private MapperFactory factory;
+
+    @Autowired
+    private ApplicationContext applicationContext;
+
+    public BeanMapperConfiguration() {
+        super(false);
     }
 
-    @AfterReturning(pointcut = "methodAnnotatedWithIndexing() && @annotation(indexing)", returning = "retVal")
-    public void indexForSearch(final Indexing indexing, final Object retVal) {
-        /*final JSONObject resourceJSON = new ResourceGenerator<>(retVal.getClass(), retVal).generate();
-        final Document document = new Document(indexing.name().toString(), indexing.type().toString(),
-                ((Indexable) retVal).getIndexId(), resourceJSON);
-        indexService.index(document);*/
+    @Override
+    protected void configure(MapperFactory factory) {
+        this.factory = factory;
+        registerBeanMappers();
     }
 
+    public void addMapper(Mapper<?, ?> mapper) {
+        factory.classMap(mapper.getAType(), mapper.getBType())
+                .byDefault()
+                .customize((Mapper) mapper)
+                .register();
+    }
+
+    public void addConverter(Converter<?, ?> converter) {
+        factory.getConverterFactory().registerConverter(converter);
+    }
+
+    private void registerBeanMappers() {
+        applicationContext.getBeansOfType(Mapper.class).values().parallelStream().forEach(this::addMapper);
+        applicationContext.getBeansOfType(Converter.class).values().parallelStream().forEach(this::addConverter);
+    }
+
+    @PostConstruct
+    public void initialize() {
+        super.init();
+    }
 }

@@ -41,7 +41,6 @@
 package org.egov.infra.elasticsearch.entity.es;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
-import org.egov.infra.elasticsearch.entity.enums.ApprovalStatus;
 import org.egov.infra.elasticsearch.entity.enums.ClosureStatus;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.elasticsearch.annotations.Document;
@@ -54,7 +53,7 @@ import static org.egov.infra.utils.ApplicationConstant.ES_DATE_FORMAT;
 import static org.springframework.data.elasticsearch.annotations.DateFormat.date_optional_time;
 import static org.springframework.data.elasticsearch.annotations.FieldIndex.not_analyzed;
 
-@Document(indexName = "applicationindex", type = "applicationdetail")
+@Document(indexName = "applications", type = "applications")
 public class ApplicationDocument {
 
     @Id
@@ -104,11 +103,11 @@ public class ApplicationDocument {
     @Field(type = FieldType.Integer, index = not_analyzed)
     private Integer elapsedDays;
 
-    @Field(type = FieldType.Auto, index = not_analyzed)
-    private ClosureStatus closed;
+    @Field(type = FieldType.String, index = not_analyzed)
+    private String closed;
 
-    @Field(type = FieldType.Auto, index = not_analyzed)
-    private ApprovalStatus approved;
+    @Field(type = FieldType.String, index = not_analyzed)
+    private String approved;
 
     @Field(type = FieldType.String, index = not_analyzed)
     private String channel;
@@ -136,7 +135,7 @@ public class ApplicationDocument {
     }
 
     public void setId(final String id) {
-        this.id = id + "-" + this.getCityCode();
+        this.id = id;
     }
 
     public String getModuleName() {
@@ -267,23 +266,23 @@ public class ApplicationDocument {
         this.elapsedDays = elapsedDays;
     }
 
-    public ClosureStatus getClosed() {
+    public String getClosed() {
         return closed;
     }
 
-    public void setClosed(final ClosureStatus closed) {
+    public void setClosed(final String closed) {
         this.closed = closed;
-        if (this.closed.toString().equals(ClosureStatus.YES.toString()))
+        if (this.closed.equals(ClosureStatus.YES.toString()))
             isClosed = 0;
         else
             isClosed = 1;
     }
 
-    public ApprovalStatus getApproved() {
+    public String getApproved() {
         return approved;
     }
 
-    public void setApproved(final ApprovalStatus approved) {
+    public void setApproved(final String approved) {
         this.approved = approved;
     }
 

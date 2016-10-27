@@ -84,14 +84,14 @@ public class ApplicationIndexService {
         applicationIndex.setDistrictName(defaultString((String) cityInfo.get(CITY_DIST_NAME_KEY)));
         applicationIndex.setRegionName(defaultString((String) cityInfo.get(CITY_REGION_NAME_KEY)));
         applicationIndexRepository.save(applicationIndex);
-        applicationDocumentService.createOrUpdateApplicationDocument(applicationIndex);
+        applicationDocumentService.createApplicationDocument(applicationIndex);
         return applicationIndex;
     }
 
     @Transactional
     public ApplicationIndex updateApplicationIndex(ApplicationIndex applicationIndex) {
         applicationIndexRepository.save(applicationIndex);
-        applicationDocumentService.createOrUpdateApplicationDocument(applicationIndex);
+        applicationDocumentService.createApplicationDocument(applicationIndex);
         return applicationIndex;
     }
 
