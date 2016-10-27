@@ -40,11 +40,12 @@
 
 
 <%@ page contentType="text/html;charset=UTF-8" language="java"%>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 <%@ taglib uri="http://www.springframework.org/tags" prefix="spring"%>
 <%@ taglib uri="http://www.springframework.org/tags/form" prefix="form"%>
-<%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt"%>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
 <%@ taglib uri="/WEB-INF/taglib/cdn.tld" prefix="cdn" %>
-<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
+
 
 <div class="row">
 	<div class="col-md-12">
@@ -59,9 +60,6 @@
 					</div>
 				</div>
 				<div class="panel-body custom-form ">
-				<c:if test="${not empty message}">
-                  <div role="alert">${message}</div>
-             </c:if>
 					<%@ include file="legalcasedetails.jsp"%>
 					<%@ include file="legalcase-petitiondetails.jsp"%>
 					<%-- <%@ include file="legalcase-assignedDeptDet.jsp"%>
