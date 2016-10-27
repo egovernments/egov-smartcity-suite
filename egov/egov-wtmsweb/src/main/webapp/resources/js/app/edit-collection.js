@@ -157,14 +157,6 @@ $(document).ready(function(e){
 				  }
 			  }
 			  
-			  if(actcollection>0 && prevInstallmentAmt==0 &&  prevActualAmt > 0)
-			  {
-				  bootbox.alert('Enter collection of Current Year First installment ' +installmentfirst );
-				  e.preventDefault();
-				  isSuccess=false;
-				  return false;
-			  }
-			  
 			  collectedAmount =collectedAmount+(actcollection-oldVal);
 			
 			  prevInstallmentAmt = $actualCollectionTextbox.val();
