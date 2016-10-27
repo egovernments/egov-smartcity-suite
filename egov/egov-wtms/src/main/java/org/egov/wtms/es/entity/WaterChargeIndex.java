@@ -39,35 +39,29 @@
  */
 package org.egov.wtms.es.entity;
 
-import java.util.Date;
 import org.egov.infra.config.core.ApplicationThreadLocals;
-
-
 import org.springframework.data.annotation.Id;
-import org.springframework.data.elasticsearch.annotations.DateFormat;
 import org.springframework.data.elasticsearch.annotations.Document;
 import org.springframework.data.elasticsearch.annotations.Field;
 import org.springframework.data.elasticsearch.annotations.FieldIndex;
 import org.springframework.data.elasticsearch.annotations.FieldType;
 
-import com.fasterxml.jackson.annotation.JsonFormat;
-
 @Document(indexName = "waterconncharges", type = "watercharges_details")
 public class WaterChargeIndex {
 
+    /*@JsonFormat (shape = JsonFormat.Shape.STRING, pattern ="yyyy-MM-dd HH:mm")
+    @Field(type = FieldType.Date, index = FieldIndex.not_analyzed, format = DateFormat.date_optional_time, pattern = "yyyy-MM-dd HH:mm")
+    private Date createdDate;*/
+    /*
+    
+    private GeoPoint wardlocation;
+    
+    
+    private GeoPoint propertylocation;*/ 
+    
     @Id
     private String indexId;
     
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm'Z'")
-    @Field(type = FieldType.Date, index = FieldIndex.not_analyzed, format = DateFormat.date_optional_time, pattern = "yyyy-MM-dd'T'hh:mm'Z'")
-    private Date createdDate;
-
-    /*
-     * //To be changed to GeoPoint later 
-     * private String wardlocation;
-     
-    
-    private String propertylocation; */
     @Field(type = FieldType.String)
     private String closureType;
     
@@ -98,7 +92,7 @@ public class WaterChargeIndex {
     @Field(type = FieldType.String, index = FieldIndex.not_analyzed)
     private String ulbname;
 
-    @Id
+    
     @Field(type = FieldType.String, index = FieldIndex.not_analyzed)
     private String consumercode;
 
@@ -171,13 +165,13 @@ public class WaterChargeIndex {
     @Field(type = FieldType.Long)
     private Long currentDemand;
 
-    public Date getCreatedDate() {
+    /*public Date getCreatedDate() {
         return createdDate;
     }
 
     public void setCreatedDate(Date createdDate) {
         this.createdDate = createdDate;
-    }
+    }*/
 
     /*
      * public String getWardlocation() { return wardlocation; } public void
@@ -187,6 +181,15 @@ public class WaterChargeIndex {
 
     public String getWatersource() {
         return watersource;
+    }
+    
+
+    public String getBpaid() {
+        return bpaid;
+    }
+
+    public void setBpaid(String bpaid) {
+        this.bpaid = bpaid;
     }
 
     public void setWatersource(String watersource) {
@@ -453,6 +456,25 @@ public class WaterChargeIndex {
     public void setClosureType(String closureType) {
         this.closureType = closureType;
     }
+
+  /*  public GeoPoint getWardlocation() {
+        return wardlocation;
+    }
+
+    public void setWardlocation(GeoPoint wardlocation) {
+        this.wardlocation = wardlocation;
+    }
+
+    public GeoPoint getPropertylocation() {
+        return propertylocation;
+    }
+
+    public void setPropertylocation(GeoPoint propertylocation) {
+        this.propertylocation = propertylocation;
+    }
+*/
+
+    
 
     
 

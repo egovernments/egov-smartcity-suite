@@ -48,6 +48,41 @@ public class ConnectionSearchRequest {
     private String ulbName;
     private String revenueWard;
     private String doorNumber;
+private String watersource;
+private Long propertyTaxDue;
+ private boolean islegacy;
+ private String address;
+ private String mobilenumber;
+    private Long numberofperson;
+ private Long totaldue;
+private String usage;
+private String propertytype;
+ private String ulbname;
+private String consumercode;
+ private String ward;
+private String applicationcode;
+ private String districtname;
+ private String zone;
+ private String adminward;
+ private String grade;
+ private String bpaid;
+ private String regionname;
+ private String pipesize;
+ private String doorno;
+ private String category;
+ private String connectiontype;
+ private String propertyid;
+private String status;
+private Long monthlyRate;
+ private String aadhaarnumber;
+ private Long waterTaxDue;
+    private Long arrearsDue;
+ private String consumername;
+ private Long currentDue;
+private Long arrearsDemand;
+private Long currentDemand;
+
+
 
     public String getConsumerCode() {
         return consumerCode;
@@ -126,5 +161,276 @@ public class ConnectionSearchRequest {
     public void setDoorNumber(String doorNumber) {
         this.doorNumber = doorNumber;
     }
+
+    public String getWatersource() {
+        return watersource;
+    }
+
+    public void setWatersource(String watersource) {
+        this.watersource = watersource;
+    }
+
+    public boolean isIslegacy() {
+        return islegacy;
+    }
+
+    public void setIslegacy(boolean islegacy) {
+        this.islegacy = islegacy;
+    }
+
+    
+
+    public String getAddress() {
+        return address;
+    }
+
+    public void setAddress(String address) {
+        this.address = address;
+    }
+
+    public String getMobilenumber() {
+        return mobilenumber;
+    }
+
+    public void setMobilenumber(String mobilenumber) {
+        this.mobilenumber = mobilenumber;
+    }
+
+    public Long getNumberofperson() {
+        return numberofperson;
+    }
+
+    public void setNumberofperson(Long numberofperson) {
+        this.numberofperson = numberofperson;
+    }
+
+    public Long getTotaldue() {
+        return totaldue;
+    }
+
+    public void setTotaldue(Long totaldue) {
+        this.totaldue = totaldue;
+    }
+
+    public String getUsage() {
+        return usage;
+    }
+
+    public void setUsage(String usage) {
+        this.usage = usage;
+    }
+
+    public String getPropertytype() {
+        return propertytype;
+    }
+
+    public void setPropertytype(String propertytype) {
+        this.propertytype = propertytype;
+    }
+
+    public String getUlbname() {
+        return ulbname;
+    }
+
+    public void setUlbname(String ulbname) {
+        this.ulbname = ulbname;
+    }
+
+    public String getConsumercode() {
+        return consumercode;
+    }
+
+    public void setConsumercode(String consumercode) {
+        this.consumercode = consumercode;
+    }
+
+    public String getWard() {
+        return ward;
+    }
+
+    public void setWard(String ward) {
+        this.ward = ward;
+    }
+
+    public String getApplicationcode() {
+        return applicationcode;
+    }
+
+    public void setApplicationcode(String applicationcode) {
+        this.applicationcode = applicationcode;
+    }
+
+    public String getDistrictname() {
+        return districtname;
+    }
+
+    public void setDistrictname(String districtname) {
+        this.districtname = districtname;
+    }
+
+    public String getZone() {
+        return zone;
+    }
+
+    public void setZone(String zone) {
+        this.zone = zone;
+    }
+
+    public String getAdminward() {
+        return adminward;
+    }
+
+    public void setAdminward(String adminward) {
+        this.adminward = adminward;
+    }
+
+    public String getGrade() {
+        return grade;
+    }
+
+    public void setGrade(String grade) {
+        this.grade = grade;
+    }
+
+    public String getBpaid() {
+        return bpaid;
+    }
+
+    public void setBpaid(String bpaid) {
+        this.bpaid = bpaid;
+    }
+
+    public String getRegionname() {
+        return regionname;
+    }
+
+    public void setRegionname(String regionname) {
+        this.regionname = regionname;
+    }
+
+    public String getPipesize() {
+        return pipesize;
+    }
+
+    public void setPipesize(String pipesize) {
+        this.pipesize = pipesize;
+    }
+
+    public String getDoorno() {
+        return doorno;
+    }
+
+    public void setDoorno(String doorno) {
+        this.doorno = doorno;
+    }
+
+    public String getCategory() {
+        return category;
+    }
+
+    public void setCategory(String category) {
+        this.category = category;
+    }
+
+    public String getConnectiontype() {
+        return connectiontype;
+    }
+
+    public void setConnectiontype(String connectiontype) {
+        this.connectiontype = connectiontype;
+    }
+
+    public String getPropertyid() {
+        return propertyid;
+    }
+
+    public void setPropertyid(String propertyid) {
+        this.propertyid = propertyid;
+    }
+
+    public String getStatus() {
+        return status;
+    }
+
+    public void setStatus(String status) {
+        this.status = status;
+    }
+
+    public Long getMonthlyRate() {
+        return monthlyRate;
+    }
+
+    public void setMonthlyRate(Long monthlyRate) {
+        this.monthlyRate = monthlyRate;
+    }
+
+    public String getAadhaarnumber() {
+        return aadhaarnumber;
+    }
+
+    public void setAadhaarnumber(String aadhaarnumber) {
+        this.aadhaarnumber = aadhaarnumber;
+    }
+
+    public Long getWaterTaxDue() {
+        return waterTaxDue;
+    }
+
+    public void setWaterTaxDue(Long waterTaxDue) {
+        this.waterTaxDue = waterTaxDue;
+    }
+
+    public Long getArrearsDue() {
+        return arrearsDue;
+    }
+
+    public void setArrearsDue(Long arrearsDue) {
+        this.arrearsDue = arrearsDue;
+    }
+
+    public String getConsumername() {
+        return consumername;
+    }
+
+    public void setConsumername(String consumername) {
+        this.consumername = consumername;
+    }
+
+    public Long getCurrentDue() {
+        return currentDue;
+    }
+
+    public void setCurrentDue(Long currentDue) {
+        this.currentDue = currentDue;
+    }
+
+    public Long getArrearsDemand() {
+        return arrearsDemand;
+    }
+
+    public void setArrearsDemand(Long arrearsDemand) {
+        this.arrearsDemand = arrearsDemand;
+    }
+
+    public Long getCurrentDemand() {
+        return currentDemand;
+    }
+
+    public void setCurrentDemand(Long currentDemand) {
+        this.currentDemand = currentDemand;
+    }
+
+    public String getSearchText() {
+        return searchText;
+    }
+
+    public Long getPropertyTaxDue() {
+        return propertyTaxDue;
+    }
+
+    public void setPropertyTaxDue(Long propertyTaxDue) {
+        this.propertyTaxDue = propertyTaxDue;
+    }
+    
 
 }
