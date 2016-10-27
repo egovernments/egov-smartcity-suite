@@ -63,23 +63,23 @@ public class UpdateActController {
 
 	@Autowired
 	private MessageSource messageSource;
-
+	
 	@RequestMapping(value = "/act/edit/{id}", method = RequestMethod.GET)
 	public String editAct(@PathVariable("id") Long id, final Model model) {
-		model.addAttribute("act", marriageActService.getAct(id));
+		model.addAttribute("marriageAct", marriageActService.getAct(id));
 		return MRG_ACT_UPDATE;
 	}
 
 	@RequestMapping(value = "/act/update", method = RequestMethod.POST)
-	public String updateAct(@Valid @ModelAttribute final MarriageAct act,
+	public String updateAct(@Valid @ModelAttribute final MarriageAct marriageAct,
 			final BindingResult errors,
 			final RedirectAttributes redirectAttributes) {
 		if (errors.hasErrors()) {
 			return MRG_ACT_UPDATE;
 		}
-		marriageActService.update(act);
+		marriageActService.update(marriageAct);
 		redirectAttributes.addFlashAttribute("message",
 				messageSource.getMessage("msg.act.update.success", null, null));
-		return "redirect:/masters/act/success/" + act.getId();
+		return "redirect:/masters/act/success/" + marriageAct.getId();
 	}
 }

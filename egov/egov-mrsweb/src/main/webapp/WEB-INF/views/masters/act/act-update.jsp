@@ -43,7 +43,9 @@
 <%@ taglib uri="http://www.springframework.org/tags" prefix="spring" %>
 <%@ taglib uri="http://www.springframework.org/tags/form" prefix="form" %>
 
-<form:form  method="post" action="/mrs/masters/act/update" class="form-horizontal form-groups-bordered" commandName="act" id="form-act" >
+<form:form role="form" method="post" modelAttribute="marriageAct" action="/mrs/masters/act/update" class="form-horizontal form-groups-bordered" 
+ id="form-act"  commandName="marriageAct">
+			
 			<div class="row" id="page-content">
 			<div class="col-md-12">
 			<div class="panel" data-collapsed="0">

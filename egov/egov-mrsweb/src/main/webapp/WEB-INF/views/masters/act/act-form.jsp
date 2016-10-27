@@ -37,11 +37,10 @@
   ~
   ~   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
   --%>
-<%@ page contentType="text/html;charset=UTF-8" language="java" %>
-<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
-<%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
-<%@ taglib uri="http://www.springframework.org/tags" prefix="spring" %>
-<%@ taglib uri="http://www.springframework.org/tags/form" prefix="form" %>
+<%@ taglib uri="http://www.springframework.org/tags" prefix="spring"%>
+<%@ taglib uri="http://www.springframework.org/tags/form" prefix="form"%>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
+
 <c:if test="${not empty message}">
                     <div class="alert alert-success" role="alert"><spring:message code="${message}"/></div>
                 </c:if>
@@ -63,8 +62,8 @@
 						<div class="col-sm-6">
 							<form:textarea path="description" id="name" type="text" class="form-control low-width" data-pattern="alphanumericwithspecialcharacters" maxlength="50" placeholder="" autocomplete="off" />
                             <form:errors path="description" cssClass="add-margin error-msg"/>
+                             <input type="hidden" name="marriageAct" value="${marriageAct.id}" /> 
 						</div>
-					</div>
-					<input type="hidden" name="act" value="${act.id}" />
+					</div>				
 				</div>
 			
