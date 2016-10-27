@@ -55,7 +55,6 @@ import org.egov.egf.commons.EgovCommon;
 import org.egov.infra.exception.ApplicationException;
 import org.egov.infra.messaging.MessagingService;
 import org.egov.works.contractorbill.service.ContractorBillRegisterService;
-import org.egov.works.contractorportal.entity.ContractorMBDetails;
 import org.egov.works.contractorportal.entity.ContractorMBHeader;
 import org.egov.works.contractorportal.service.ContractorMBHeaderService;
 import org.egov.works.letterofacceptance.service.LetterOfAcceptanceService;
