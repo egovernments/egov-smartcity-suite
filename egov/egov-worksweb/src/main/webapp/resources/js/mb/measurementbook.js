@@ -54,6 +54,9 @@ $(document).ready(function(){
 		
 	sorTotal();
 	nonSorTotal();
+	nonTenderedTotal();
+	lumpSumTotal();
+	
 	if($('#isMeasurementsExist').val() == 'false') {
 		$('.openCloseAll').hide();
 	}
@@ -1918,7 +1921,7 @@ function calculateTotalValue() {
 	if(lumpSumTotal == '')
 		lumpSumTotal = 0.0;
 	
-	var total = parseFloat(parseFloat(sorTotal) + parseFloat(nonSorTotal) +parseFloat(nonTenderedTotal) + parseFloat(lumpSumTotal) ).toFixed(2);
+	var total = parseFloat(parseFloat(sorTotal) + parseFloat(nonSorTotal)).toFixed(2);
 	
 	$('#pageTotal').html(parseFloat(parseFloat(sorTotal) + parseFloat(nonSorTotal)).toFixed(2));
 	$('#nonTenderedPageTotal').html(parseFloat(parseFloat(nonTenderedTotal) + parseFloat(lumpSumTotal)).toFixed(2));
@@ -1927,7 +1930,7 @@ function calculateTotalValue() {
 	if($('#tenderFinalisedPercentage').html().trim() != '')
 		tenderFinalisedPercentage = parseFloat($('#tenderFinalisedPercentage').html());
 	var mbAmount = parseFloat(parseFloat(total) + (parseFloat(parseFloat(tenderFinalisedPercentage) / 100) * parseFloat(total))).toFixed(2);
-	
+	mbAmount = parseFloat(parseFloat(mbAmount) + parseFloat(nonTenderedTotal) + parseFloat(lumpSumTotal)).toFixed(2);
 	$('#mbAmount').val(mbAmount);
 	$('#mbAmountSpan').html(mbAmount);
 }

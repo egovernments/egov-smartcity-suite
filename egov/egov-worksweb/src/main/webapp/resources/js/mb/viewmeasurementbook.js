@@ -41,6 +41,8 @@
 $(document).ready(function() {
 	var sorTotal = 0;
 	var nonSorTotal = 0;
+	var nonTenderedTotal = 0;
+	var totalLumpsumTotal = 0;
 	
 	if($('#tenderFinalizedPerc').val() > 0) {
 	  var tenderPercentage = $('#tenderPerc').html('<span class="sign-text">+</span>'+$('#tenderFinalizedPerc').val());
@@ -80,14 +82,52 @@ $(document).ready(function() {
          if(cumulativeAmtCurrEnrty != 'NaN')
            nonSorTotal = parseFloat((parseFloat(nonSorTotal) + parseFloat(amountCurrMBEntry))).toFixed(2); 
 	 });
+	 $('#tblNonTenderedItems tr:not(:first)').each(function () {
+		 var unitrate = $(this).find('input[name="unitrate"]').val(); 
+		 var currMbEnrty = $(this).find('input[name="currMbEnrty"]').val(); 
+		 var cumulativeQuantitycurrEnrty = $(this).find('input[name="cumulativeQuantitycurrEnrty"]').val(); 
+		 var apprQuantity = $(this).find('input[name="apprQuantity"]').val();
+         
+         var amountCurrMBEntry = parseFloat(parseFloat(unitrate) * parseFloat(currMbEnrty)).toFixed(2);
+         var cumulativeAmtCurrEnrty = parseFloat(parseFloat(unitrate) * parseFloat(cumulativeQuantitycurrEnrty)).toFixed(2);
+         var apprAmt = parseFloat(parseFloat(unitrate) * parseFloat(apprQuantity)).toFixed(2);
+         
+         $(this).find('span[id="amountCurrentEntry"]').html(amountCurrMBEntry);
+         $(this).find('span[id="cumulativeAmountCurrentEntry"]').html(cumulativeAmtCurrEnrty);
+         $(this).find('span[id="approvedAmount"]').html(apprAmt);
+         if(cumulativeAmtCurrEnrty != 'NaN')
+        	 nonTenderedTotal = parseFloat((parseFloat(nonTenderedTotal) + parseFloat(amountCurrMBEntry))).toFixed(2); 
+        
+	 });
+	 $('#tblLumpsum tr:not(:first)').each(function () {
+		 var unitrate = $(this).find('input[name="nonSorUnitrate"]').val(); 
+		 var currMbEnrty = $(this).find('input[name="nonSorCurrMbEnrty"]').val(); 
+		 var cumulativeQuantitycurrEnrty = $(this).find('input[name="nonSorCumulativeQuantityCurrEnrty"]').val(); 
+		 var apprQuantity = $(this).find('input[name="nonSorApprQuantity"]').val();
+         
+         var amountCurrMBEntry = parseFloat(parseFloat(unitrate) * parseFloat(currMbEnrty)).toFixed(2);
+         var cumulativeAmtCurrEnrty = parseFloat(parseFloat(unitrate) * parseFloat(cumulativeQuantitycurrEnrty)).toFixed(2);
+         var apprAmt = parseFloat(parseFloat(unitrate) * parseFloat(apprQuantity)).toFixed(2);
+         
+         $(this).find('span[id="nonSorAmountCurrentEntry"]').html(amountCurrMBEntry);
+         $(this).find('span[id="nonSorCumulativeAmountCurrentEntry"]').html(cumulativeAmtCurrEnrty);
+         $(this).find('span[id="nonSorApprovedAmount"]').html(apprAmt);
+         if(cumulativeAmtCurrEnrty != 'NaN')
+        	 totalLumpsumTotal = parseFloat((parseFloat(totalLumpsumTotal) + parseFloat(amountCurrMBEntry))).toFixed(2); 
+	 });
+
 	 $("#sorTotal").html(sorTotal);
 	 $("#nonSorTotal").html(nonSorTotal);
+	 $("#nonTenderedTotal").html(nonTenderedTotal);
+	 $("#totalLumpsumTotal").html(totalLumpsumTotal);
 	 var pageTotal = parseFloat((parseFloat(sorTotal) + parseFloat(nonSorTotal))).toFixed(2);  
 	 $("#pageTotal").html(pageTotal);
-	 
+	 var nonTenderedPageTotal = parseFloat((parseFloat(nonTenderedTotal) + parseFloat(totalLumpsumTotal))).toFixed(2);
+	 $("#nonTenderedPageTotal").html(nonTenderedPageTotal);
 	 if($('#isMeasurementsExist').val() == 'false') {
 		$('.openCloseAll').hide();
 	 }
+	 
 });
 
 $('#ContractorMeasurements').click(function(event) {

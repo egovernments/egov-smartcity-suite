@@ -41,7 +41,7 @@
 <div class="panel panel-primary" data-collapsed="0"
 	style="text-align: left">
 	<div class="panel-heading">
-	<div class="position_alert3"><spring:message code="lbl.pagetotal" /> : &#8377 <span class="text-right" id="pageTotal"></span></div>
+	<div class="position_alert3"><spring:message code="lbl.pagetotal" /> : &#8377 <span class="text-right" id="nonTenderedPageTotal"></span></div>
 		<div class="panel-title">
 			<spring:message code="title.mb.details" />
 		</div>
@@ -58,7 +58,7 @@
 										onclick="closeAllmsheet()" /> <input type="button" class="btn btn-sm btn-secondary"
 										value="Open all m-sheet" onclick="openAllmsheet()" />
 								</div>
-								<table class="table table-bordered" id="tblsor">
+								<table class="table table-bordered" id="tblNonTenderedItems">
 									<thead>
 										<tr>
 											<th><spring:message code="lbl.slNo" /></th>
@@ -134,7 +134,7 @@
 										<tr>
 											<td colspan="10" class="text-right view-content" ><spring:message code="lbl.total" /></td>
 											<td class="text-right view-content"><span data-pattern="decimalvalue"
-												id="sorTotal"></span></td>
+												id="nonTenderedTotal"></span></td>
 											<td></td>
 											<td></td>
 											<td></td>
@@ -148,7 +148,7 @@
 										<spring:message code="title.lumpsum" />
 									</div>
 								</div>
-								<table class="table table-bordered" id="tblnonsor">
+								<table class="table table-bordered" id="tblLumpsum">
 									<thead>
 										<tr>
 											<th><spring:message code="lbl.slNo" /></th>
@@ -220,7 +220,7 @@
 										<tr>
 											<td colspan="8" class="text-right view-content"><spring:message code="lbl.total" /></td>
 											<td class="text-right view-content"><span data-pattern="decimalvalue"
-												id="nonSorTotal"></span></td>
+												id="totalLumpsumTotal"></span></td>
 											<td></td>
 											<td></td>
 											<td></td>

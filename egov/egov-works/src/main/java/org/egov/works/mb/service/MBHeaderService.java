@@ -754,13 +754,24 @@ public class MBHeaderService {
             details.setMbHeader(mbHeader);
             validateMBDetail(details, jsonObject, errors, Double.parseDouble(value.getValue()));
         }
+
+        for (final MBDetails details : mbHeader.getNonTenderedMbDetails()) {
+            details.setMbHeader(mbHeader);
+            validateMBDetail(details, jsonObject, errors, Double.parseDouble(value.getValue()));
+        }
+
+        for (final MBDetails details : mbHeader.getLumpSumMbDetails()) {
+            details.setMbHeader(mbHeader);
+            validateMBDetail(details, jsonObject, errors, Double.parseDouble(value.getValue()));
+        }
+
     }
 
     private void validateMBDetail(final MBDetails details, final JsonObject jsonObject, final BindingResult errors,
             final Double toleranceLimit) {
         details.setWorkOrderActivity(workOrderActivityService.getWorkOrderActivityById(details.getWorkOrderActivity().getId()));
         final String message = messageSource.getMessage("error.approved.quantity.cumulative",
-                new String[] {},
+                new String[] { Double.toString(toleranceLimit) },
                 null);
         final Double toleranceQuantity = details.getWorkOrderActivity().getApprovedQuantity() * (toleranceLimit / 100);
         Double prevCumulativeQuantity = getPreviousCumulativeQuantity(details.getMbHeader().getId(),
