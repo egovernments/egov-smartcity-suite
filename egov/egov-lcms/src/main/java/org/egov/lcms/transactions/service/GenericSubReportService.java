@@ -99,10 +99,10 @@ public class GenericSubReportService {
             queryResult.setInteger("courtName", genericSubReportResultObj.getCourtName());
         if (genericSubReportResultObj.getCourtType() != null)
             queryResult.setString("courtType", genericSubReportResultObj.getCourtType());
-        if (genericSubReportResultObj.getPetitionType() != null)
-            queryResult.setInteger("petitionType", genericSubReportResultObj.getPetitionType());
-        if (genericSubReportResultObj.getCaseStatus() != null)
-            queryResult.setInteger("caseStatus", genericSubReportResultObj.getCaseStatus());
+        if (genericSubReportResultObj.getPetitionTypeId() != null)
+            queryResult.setInteger("petitionType", genericSubReportResultObj.getPetitionTypeId());
+        if (genericSubReportResultObj.getStatusId() != null)
+            queryResult.setInteger("caseStatus", genericSubReportResultObj.getStatusId());
         if (genericSubReportResultObj.getOfficerIncharge() != null)
             queryResult.setString("officerIncharge", genericSubReportResultObj.getOfficerIncharge());
         if (genericSubReportResultObj.getJudgmentType() != null)
@@ -121,9 +121,9 @@ public class GenericSubReportService {
     private void getAppendQuery(final GenericSubReportResult genericSubReportResult, final StringBuilder queryStr) {
 
         if (genericSubReportResult.getFromDate() != null)
-            queryStr.append(" and legalcase.caseDate >=:fromDate ");
+            queryStr.append(" legalcase.caseDate >=:fromDate  and");
         if (genericSubReportResult.getToDate() != null)
-            queryStr.append(" and legalcase.caseReceivingDate <=:toDate ");
+            queryStr.append(" legalcase.caseReceivingDate <=:toDate ");
         if (genericSubReportResult.getCourtName() != null)
             queryStr.append(" and legalcase.courtMaster =:courtName ");
         if (genericSubReportResult.getCaseCategory() != null)
@@ -132,8 +132,8 @@ public class GenericSubReportService {
             queryStr.append(" and legalcase.oppPartyAdvocate like :standingCouncil ");
         if (genericSubReportResult.getOfficerIncharge() != null)
             queryStr.append(" and legalcase.officerIncharge like :officerIncharge ");
-        if (genericSubReportResult.getCaseStatus() != null)
-            queryStr.append(" and legalcase.status  =:caseStatus ");
+        if (genericSubReportResult.getStatusId()!= null)
+            queryStr.append(" and egwStatus.id =:caseStatus ");
         if (genericSubReportResult.getCourtType() != null)
             queryStr.append(" and courtmaster.courtType.courtType like :courtType ");
         if (genericSubReportResult.getJudgmentType() != null)
@@ -146,7 +146,7 @@ public class GenericSubReportService {
             final StringBuilder queryStr) {
         queryStr.append("SELECT COUNT(DISTINCT legalcase.id) as noOfCase,courtmaster.name  as aggregatedBy ");
         queryStr.append(
-                "from LegalCase legalcase,CourtMaster courtmaster,Judgment judgment where legalcase.courtMaster.id=courtmaster.id");
+                "from LegalCase legalcase,CourtMaster courtmaster where legalcase.courtMaster.id=courtmaster.id and ");
         getAppendQuery(genericSubReportResult, queryStr);
         queryStr.append("group by courtmaster.name");
         queryStr.append(" order by courtmaster.name");
@@ -154,9 +154,8 @@ public class GenericSubReportService {
 
     private void getAggregateQueryByPetitionType(final GenericSubReportResult genericSubReportResult,
             final StringBuilder queryStr) {
-        queryStr.append("SELECT COUNT(DISTINCT legalcase.id) as noOfCase,petmaster.petitionType  as aggregatedBy ");
-        queryStr.append(
-                "from LegalCase legalcase,PetitionTypeMaster petmaster,CourtMaster courtmaster,Judgment judgment where legalcase.petitionTypeMaster.id=petmaster.id");
+        queryStr.append("SELECT COUNT(DISTINCT legalcase.id) as noOfCase,petmaster.petitionType as aggregatedBy ");
+        queryStr.append("from LegalCase legalcase,PetitionTypeMaster petmaster where legalcase.petitionTypeMaster.id=petmaster.id and ");
         getAppendQuery(genericSubReportResult, queryStr);
         queryStr.append("group by petmaster.petitionType");
         queryStr.append(" order by petmaster.petitionType");
@@ -167,7 +166,7 @@ public class GenericSubReportService {
         queryStr.append(
                 "SELECT COUNT(DISTINCT legalcase.id) as noOfCase,courtmaster.courtType.courtType  as aggregatedBy ");
         queryStr.append(
-                "from LegalCase legalcase,CourtMaster courtmaster,Judgment judgment where legalcase.courtMaster.id=courtmaster.id");
+                "from LegalCase legalcase,CourtMaster courtmaster where legalcase.courtMaster.id=courtmaster.id and ");
         getAppendQuery(genericSubReportResult, queryStr);
         queryStr.append("group by courtmaster.courtType.courtType");
         queryStr.append(" order by courtmaster.courtType.courtType");
@@ -177,7 +176,7 @@ public class GenericSubReportService {
             final StringBuilder queryStr) {
         queryStr.append("SELECT COUNT(DISTINCT legalcase.id) as noOfCase,egwStatus.description  as aggregatedBy ");
         queryStr.append(
-                "from LegalCase legalcase,EgwStatus egwStatus,CourtMaster courtmaster,Judgment judgment where legalcase.status.id=egwStatus.id and egwStatus.moduletype =:moduleType");
+                "from LegalCase legalcase,EgwStatus egwStatus where legalcase.status.id=egwStatus.id and egwStatus.moduletype =:moduleType and ");
         getAppendQuery(genericSubReportResult, queryStr);
         queryStr.append("group by egwStatus.description");
         queryStr.append(" order by egwStatus.description");
@@ -187,7 +186,7 @@ public class GenericSubReportService {
             final StringBuilder queryStr) {
         queryStr.append("SELECT COUNT(DISTINCT legalcase.id) as noOfCase,legalcase.officerIncharge as aggregatedBy ");
         queryStr.append(
-                "from LegalCase legalcase,CourtMaster courtmaster,Judgment judgment where legalcase.officerIncharge = legalcase.officerIncharge");
+                "from LegalCase legalcase where ");
         getAppendQuery(genericSubReportResult, queryStr);
         queryStr.append("group by legalcase.officerIncharge");
         queryStr.append(" order by legalcase.officerIncharge");
@@ -197,7 +196,7 @@ public class GenericSubReportService {
             final StringBuilder queryStr) {
         queryStr.append("SELECT COUNT(DISTINCT legalcase.id) as noOfCase,judgment.judgmentType.name  as aggregatedBy ");
         queryStr.append(
-                "from LegalCase legalcase,Judgment judgment,CourtMaster courtmaster where judgment.legalCase.id = legalcase.id");
+                "from LegalCase legalcase,Judgment judgment  where legalcase.id = judgment.legalCase and ");
         getAppendQuery(genericSubReportResult, queryStr);
         queryStr.append("group by judgment.judgmentType.name");
         queryStr.append(" order by judgment.judgmentType.name");

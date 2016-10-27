@@ -47,11 +47,11 @@ import java.util.Locale;
 import javax.validation.Valid;
 
 import org.apache.commons.lang3.StringUtils;
-import org.egov.dao.budget.BudgetDetailsHibernateDAO;
 import org.egov.egf.web.adaptor.BudgetGroupJsonAdaptor;
 import org.egov.model.budget.BudgetDetail;
 import org.egov.model.budget.BudgetGroup;
 import org.egov.model.service.BudgetingGroupService;
+import org.egov.services.budget.BudgetDetailService;
 import org.egov.utils.BudgetAccountType;
 import org.egov.utils.BudgetingType;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -83,7 +83,7 @@ public class BudgetGroupController {
     @Autowired
     private MessageSource messageSource;
     @Autowired
-    private BudgetDetailsHibernateDAO bdh;
+    private BudgetDetailService budgetDetailService;
 
     private void prepareNewForm(final Model model) {
         model.addAttribute("majorCodeList", budgetGroupService.getMajorCodeList());
@@ -116,8 +116,7 @@ public class BudgetGroupController {
             else if (budgetGroup.getMaxCode() == null)
                 errors.rejectValue("maxCode", "budgetgroup.invalidmajorcode.mapping");
         }
-        String validationMessage = budgetGroupService.validateBudgetGroup(budgetGroup, errors);
-
+        String validationMessage = budgetGroupService.validate(budgetGroup, errors);
         if (errors.hasErrors() || !StringUtils.isEmpty(validationMessage)) {
             prepareNewForm(model);
             model.addAttribute("majorCode", validationMessage);
@@ -132,7 +131,7 @@ public class BudgetGroupController {
     @RequestMapping(value = "/edit/{id}", method = RequestMethod.GET)
     public String edit(@PathVariable("id") final Long id, final Model model) {
         final BudgetGroup budgetGroup = budgetGroupService.findOne(id);
-        List<BudgetDetail> bd = bdh.getBudgetDetailsByBudgetGroupId(budgetGroup.getId());
+        List<BudgetDetail> bd = budgetDetailService.getBudgetDetailsByBudgetGroupId(budgetGroup.getId());
         if (!bd.isEmpty()) {
             model.addAttribute("mode", "edit");
         }
@@ -144,8 +143,7 @@ public class BudgetGroupController {
     @RequestMapping(value = "/update", method = RequestMethod.POST)
     public String update(@Valid @ModelAttribute final BudgetGroup budgetGroup, final BindingResult errors,
             final Model model, final RedirectAttributes redirectAttrs) {
-        String validationMessage = budgetGroupService.validateBudgetGroup(budgetGroup, errors);
-
+        String validationMessage = budgetGroupService.validate(budgetGroup, errors);
         if (errors.hasErrors() || !StringUtils.isEmpty(validationMessage)) {
             model.addAttribute("majorCode", validationMessage);
             prepareNewForm(model);

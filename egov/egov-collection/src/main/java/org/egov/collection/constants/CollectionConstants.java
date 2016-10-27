@@ -573,4 +573,5 @@ public final class CollectionConstants {
 
     public static final char[] REVENUEHEADS=new char[] {'I','A','L'};
     public static final Integer DEFAULT_PAGE_SIZE = 30;
+    public static final Integer QUARTZ_BULKBILL_JOBS = 2;
 }

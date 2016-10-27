@@ -151,6 +151,8 @@ public class SewerageTaxConstants {
     public static final String VIEWDCBURL="/stms/reports/sewerageRateReportView/{consumerno}/{assessmentno}";
     public static final String CLOSECONNECTION_ACTIONDROPDOWN="Close Sewerage Connection";
     public static final String CLOSESEWERAGECONNECTIONURL="/stms/transactions/closeConnection/{shscNumber}";
+    public static final String GENERATEBEMANDBILL = "Generate Demand Bill";
+    public static final String GENERATEBEMANDBILLURL = "/stms/reports/generate-sewerage-demand-bill/{consumerno}/{assessmentno}";
     // Elastic Search Constants
     public static final String SEARCHABLE_SHSCNO = "searchable.shscnumber";
     public static final String CLAUSES_CITYNAME = "clauses.cityname";

@@ -89,7 +89,6 @@ public class BudgetDetail extends StateAware {
     @Transient
     private Long nextYrId = null;
 
-    @NotNull
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "budgetgroup")
     private BudgetGroup budgetGroup;
@@ -148,7 +147,8 @@ public class BudgetDetail extends StateAware {
     private String materializedPath;
 
     @OneToMany(mappedBy = "budgetDetail", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    private Set<BudgetReAppropriation> budgetReAppropriations = new HashSet<BudgetReAppropriation>(0);
+    private Set<BudgetReAppropriation> budgetReAppropriations = new HashSet<BudgetReAppropriation>(
+            0);
 
     @Column(name = "document_number")
     private Long documentNumber;
@@ -168,7 +168,8 @@ public class BudgetDetail extends StateAware {
         return budgetReAppropriations;
     }
 
-    public void setBudgetReAppropriations(final Set<BudgetReAppropriation> budgetReAppropriations) {
+    public void setBudgetReAppropriations(
+            final Set<BudgetReAppropriation> budgetReAppropriations) {
         this.budgetReAppropriations = budgetReAppropriations;
     }
 
@@ -315,8 +316,7 @@ public class BudgetDetail extends StateAware {
     }
 
     /**
-     * @param materializedPath
-     *            the materializedPath to set
+     * @param materializedPath the materializedPath to set
      */
     public void setMaterializedPath(final String materializedPath) {
         this.materializedPath = materializedPath;
@@ -337,35 +337,46 @@ public class BudgetDetail extends StateAware {
 
     public List<BudgetReAppropriation> getNonApprovedReAppropriations() {
         final List<BudgetReAppropriation> reAppList = new ArrayList<BudgetReAppropriation>();
-        budgetReAppropriations = budgetReAppropriations == null ? new HashSet<BudgetReAppropriation>()
+        budgetReAppropriations = budgetReAppropriations == null
+                ? new HashSet<BudgetReAppropriation>()
                 : budgetReAppropriations;
         for (final BudgetReAppropriation entry : budgetReAppropriations)
-            if (!entry.getStatus().getDescription().equalsIgnoreCase("Approved"))
+            if (!entry.getStatus().getDescription()
+                    .equalsIgnoreCase("Approved"))
                 reAppList.add(entry);
         return reAppList;
     }
 
     public BigDecimal getApprovedReAppropriationsTotal() {
         BigDecimal total = BigDecimal.ZERO;
-        budgetReAppropriations = budgetReAppropriations == null ? new HashSet<BudgetReAppropriation>()
+        budgetReAppropriations = budgetReAppropriations == null
+                ? new HashSet<BudgetReAppropriation>()
                 : budgetReAppropriations;
         for (final BudgetReAppropriation entry : budgetReAppropriations)
-            if (!entry.getStatus().getDescription().equalsIgnoreCase("Cancelled"))
-                if (entry.getAdditionAmount() != null && !(BigDecimal.ZERO.compareTo(entry.getAdditionAmount()) == 0))
+            if (!entry.getStatus().getDescription()
+                    .equalsIgnoreCase("Cancelled"))
+                if ((entry.getAdditionAmount() != null)
+                        && !(BigDecimal.ZERO
+                                .compareTo(entry.getAdditionAmount()) == 0))
                     total = total.add(entry.getAdditionAmount());
                 else
                     total = total.subtract(entry.getDeductionAmount());
         return total;
     }
 
-    public BigDecimal getApprovedReAppropriationsTotalAsOnDate(final Date asOnDate) {
+    public BigDecimal getApprovedReAppropriationsTotalAsOnDate(
+            final Date asOnDate) {
         BigDecimal total = BigDecimal.ZERO;
-        budgetReAppropriations = budgetReAppropriations == null ? new HashSet<BudgetReAppropriation>()
+        budgetReAppropriations = budgetReAppropriations == null
+                ? new HashSet<BudgetReAppropriation>()
                 : budgetReAppropriations;
         for (final BudgetReAppropriation entry : budgetReAppropriations)
-            if (!entry.getStatus().getDescription().equalsIgnoreCase("Cancelled")
+            if (!entry.getStatus().getDescription()
+                    .equalsIgnoreCase("Cancelled")
                     && entry.getCreatedDate().before(asOnDate))
-                if (entry.getAdditionAmount() != null && !(BigDecimal.ZERO.compareTo(entry.getAdditionAmount()) == 0))
+                if ((entry.getAdditionAmount() != null)
+                        && !(BigDecimal.ZERO
+                                .compareTo(entry.getAdditionAmount()) == 0))
                     total = total.add(entry.getAdditionAmount());
                 else
                     total = total.subtract(entry.getDeductionAmount());
@@ -374,24 +385,30 @@ public class BudgetDetail extends StateAware {
 
     public boolean compareTo(final BudgetDetail other) {
         boolean same = true;
-        if (budgetGroup != null && other.budgetGroup != null
+        if ((budgetGroup != null) && (other.budgetGroup != null)
                 && !budgetGroup.getId().equals(other.getBudgetGroup().getId()))
             same = false;
-        if (function != null && other.function != null && !function.getId().equals(other.getFunction().getId()))
+        if ((function != null) && (other.function != null)
+                && !function.getId().equals(other.getFunction().getId()))
             same = false;
-        if (fund != null && other.fund != null && !fund.getId().equals(other.getFund().getId()))
+        if ((fund != null) && (other.fund != null)
+                && !fund.getId().equals(other.getFund().getId()))
             same = false;
-        if (functionary != null && other.functionary != null
+        if ((functionary != null) && (other.functionary != null)
                 && !functionary.getId().equals(other.getFunctionary().getId()))
             same = false;
-        if (boundary != null && other.boundary != null && !boundary.getId().equals(other.getBoundary().getId()))
+        if ((boundary != null) && (other.boundary != null)
+                && !boundary.getId().equals(other.getBoundary().getId()))
             same = false;
-        if (executingDepartment != null && other.executingDepartment != null
-                && !executingDepartment.getId().equals(other.getExecutingDepartment().getId()))
+        if ((executingDepartment != null) && (other.executingDepartment != null)
+                && !executingDepartment.getId()
+                        .equals(other.getExecutingDepartment().getId()))
             same = false;
-        if (scheme != null && other.scheme != null && !scheme.getId().equals(other.getScheme().getId()))
+        if ((scheme != null) && (other.scheme != null)
+                && !scheme.getId().equals(other.getScheme().getId()))
             same = false;
-        if (subScheme != null && other.subScheme != null && !subScheme.getId().equals(other.getSubScheme().getId()))
+        if ((subScheme != null) && (other.subScheme != null)
+                && !subScheme.getId().equals(other.getSubScheme().getId()))
             same = false;
         return same;
     }
@@ -451,7 +468,7 @@ public class BudgetDetail extends StateAware {
 
     @Override
     public String myLinkId() {
-        return getId().toString();
+        return getBudget().getId().toString();
     }
 
     public void setWfState(final State state) {

@@ -70,7 +70,7 @@
 				class="mandatory1">*</span>
 			<td width="22%" class="bluebox"><s:select
 					list="dropdownData.financialYearList" listKey="id"
-					listValue="finYearRange" name="financialYear"
+					listValue="finYearRange" name="budget.financialYear.id"
 					id="financialYearRange" onchange="populateBudgets(this);"></s:select></td>
 		</tr>
 		<tr>
@@ -81,7 +81,7 @@
 			<td class="greybox"><s:text name="budgetdetail.budget" />
 			<td width="22%" class="greybox"><s:select
 					list="dropdownData.budgetList" listKey="id" listValue="name"
-					name="budget" value="model.budget.id" id="budgetDetail_budget"
+					name="budget.id" value="model.budget.id" id="budgetDetail_budget"
 					disabled="%{headerDisabled}" headerKey="0"
 					headerValue="--- Select ---"></s:select></td>
 			<s:if
@@ -90,7 +90,7 @@
 						name="budgetdetail.executingDepartment" /></td>
 				<td width="22%" class="greybox"><s:select
 						list="dropdownData.executingDepartmentList" listKey="id"
-						listValue="name" name="executingDepartment" headerKey="0"
+						listValue="name" name="executingDepartment.id" headerKey="0"
 						headerValue="--- Select ---"
 						onchange="updateGrid('executingDepartment.id',document.getElementById('budgetDetail_executingDepartment').selectedIndex)"
 						value="executingDepartment.id"
@@ -103,7 +103,7 @@
 				<td class="bluebox">&nbsp;</td>
 				<td class="bluebox"><s:text name="budgetdetail.fund" /></td>
 				<td class="bluebox"><s:select list="dropdownData.fundList"
-						listKey="id" listValue="name" name="fund" headerKey="0"
+						listKey="id" listValue="name" name="fund.id" headerKey="0"
 						headerValue="--- Select ---"
 						onchange="updateGrid('fund.id',document.getElementById('budgetDetail_fund').selectedIndex)"
 						value="fund.id" id="budgetDetail_fund"></s:select></td>
@@ -112,7 +112,7 @@
 				test="%{shouldShowHeaderField('function') || shouldShowGridField('function')}">
 				<td class="bluebox"><s:text name="budgetdetail.function" /></td>
 				<td class="bluebox"><s:select list="dropdownData.functionList"
-						listKey="id" listValue="name" name="function" headerKey="0"
+						listKey="id" listValue="name" name="function.id" headerKey="0"
 						headerValue="--- Select ---"
 						onchange="updateGrid('function.id',document.getElementById('budgetDetail_function').selectedIndex)"
 						value="function.id" id="budgetDetail_function"></s:select></td>

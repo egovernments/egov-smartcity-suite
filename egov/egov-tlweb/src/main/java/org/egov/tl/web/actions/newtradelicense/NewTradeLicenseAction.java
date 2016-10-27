@@ -201,7 +201,7 @@ public class NewTradeLicenseAction extends BaseLicenseAction<TradeLicense> {
     }
 
     @Override
-    @ValidationErrorPage(Constants.BEFORE_RENEWAL)
+    @ValidationErrorPageExt(action = Constants.BEFORE_RENEWAL, makeCall = true, toMethod = "prepareRenew")
     @Action(value = "/newtradelicense/newTradeLicense-renewal")
     public String renew() {
         return super.renew();

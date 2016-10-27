@@ -1,10 +1,10 @@
 /**
- * eGov suite of products aim to improve the internal efficiency,transparency, 
+ * eGov suite of products aim to improve the internal efficiency,transparency,
    accountability and the service delivery of the government  organizations.
 
     Copyright (C) <2015>  eGovernments Foundation
 
-    The updated version of eGov suite of products as by eGovernments Foundation 
+    The updated version of eGov suite of products as by eGovernments Foundation
     is available at http://www.egovernments.org
 
     This program is free software: you can redistribute it and/or modify
@@ -18,21 +18,21 @@
     GNU General Public License for more details.
 
     You should have received a copy of the GNU General Public License
-    along with this program. If not, see http://www.gnu.org/licenses/ or 
+    along with this program. If not, see http://www.gnu.org/licenses/ or
     http://www.gnu.org/licenses/gpl.html .
 
     In addition to the terms of the GPL license to be adhered to in using this
     program, the following additional terms are to be complied with:
 
-	1) All versions of this program, verbatim or modified must carry this 
+	1) All versions of this program, verbatim or modified must carry this
 	   Legal Notice.
 
-	2) Any misrepresentation of the origin of the material is prohibited. It 
-	   is required that all modified versions of this material be marked in 
+	2) Any misrepresentation of the origin of the material is prohibited. It
+	   is required that all modified versions of this material be marked in
 	   reasonable ways as different from the original version.
 
-	3) This license does not grant any rights to any user of the program 
-	   with regards to rights under trademark law for use of the trade names 
+	3) This license does not grant any rights to any user of the program
+	   with regards to rights under trademark law for use of the trade names
 	   or trademarks of eGovernments Foundation.
 
   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
@@ -77,7 +77,9 @@ public class ViewAndEditLegalCaseController extends GenericLegalCaseController {
         final LegalCase legalCase = legalCaseService.findByLcNumber(lcNumber);
         model.addAttribute("legalCase", legalCase);
         model.addAttribute("mode", "view");
-        model.addAttribute("supportDocs",(!legalCase.getLegalCaseDocuments().isEmpty() && legalCase.getLegalCaseDocuments().get(0)!=null ?legalCase.getLegalCaseDocuments().get(0).getSupportDocs():null));
+        model.addAttribute("supportDocs",
+                !legalCase.getLegalCaseDocuments().isEmpty() && legalCase.getLegalCaseDocuments().get(0) != null
+                        ? legalCase.getLegalCaseDocuments().get(0).getSupportDocs() : null);
         model.addAttribute("pwrDocList", legalCaseService.getPwrDocList(legalCase));
         return "legalcasedetails-view";
     }
@@ -92,8 +94,10 @@ public class ViewAndEditLegalCaseController extends GenericLegalCaseController {
         if (casenumberyear.length > 1)
             legalCase.setWpYear(casenumberyear[1]);
         legalCase.getBipartisanPetitionerDetailsList().addAll(legalCase.getPetitioners());
-       legalCase.getBipartisanRespondentDetailsList().addAll(legalCase.getRespondents());
-        model.addAttribute("supportDocs",(!legalCase.getLegalCaseDocuments().isEmpty() && legalCase.getLegalCaseDocuments().get(0)!=null ?legalCase.getLegalCaseDocuments().get(0).getSupportDocs():null));
+        legalCase.getBipartisanRespondentDetailsList().addAll(legalCase.getRespondents());
+        model.addAttribute("supportDocs",
+                !legalCase.getLegalCaseDocuments().isEmpty() && legalCase.getLegalCaseDocuments().get(0) != null
+                        ? legalCase.getLegalCaseDocuments().get(0).getSupportDocs() : null);
         model.addAttribute("mode", "edit");
         return "legalcase-edit";
     }
@@ -101,15 +105,22 @@ public class ViewAndEditLegalCaseController extends GenericLegalCaseController {
     @RequestMapping(value = "/edit/", method = RequestMethod.POST)
     public String update(@ModelAttribute final LegalCase legalCase, @RequestParam("lcNumber") final String lcNumber,
             final BindingResult errors, final Model model, final RedirectAttributes redirectAttrs) {
-        if (errors.hasErrors())
+        final String caseNumber = legalCase.getCaseNumber() + "/" + legalCase.getWpYear();
+        final LegalCase validateCasenumber = legalCaseService.getLegalCaseByCaseNumber(caseNumber);
+        if (validateCasenumber != null)
+            errors.reject("error.legalCase.caseNumber");
+        if (errors.hasErrors()) {
             return "legalcase-edit";
-        
+        }
+
         legalCaseService.persist(legalCase);
         setDropDownValues(model);
         redirectAttrs.addFlashAttribute("legalCase", legalCase);
         model.addAttribute("mode", "edit");
         model.addAttribute("message", "LegalCase updated successfully.");
-        model.addAttribute("supportDocs",(!legalCase.getLegalCaseDocuments().isEmpty() && legalCase.getLegalCaseDocuments().get(0)!=null ?legalCase.getLegalCaseDocuments().get(0).getSupportDocs():null));
+        model.addAttribute("supportDocs",
+                !legalCase.getLegalCaseDocuments().isEmpty() && legalCase.getLegalCaseDocuments().get(0) != null
+                        ? legalCase.getLegalCaseDocuments().get(0).getSupportDocs() : null);
         return "legalcase-success";
     }
 

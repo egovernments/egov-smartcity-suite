@@ -60,6 +60,8 @@ import org.egov.search.domain.Searchable;
 import org.hibernate.search.annotations.DocumentId;
 import org.hibernate.validator.constraints.Length;
 
+import com.fasterxml.jackson.annotation.JsonTypeInfo;
+
 /**
  * ApplicationIndex class
  *
@@ -69,6 +71,7 @@ import org.hibernate.validator.constraints.Length;
 @Entity
 @Table(name = "EG_APPLICATIONINDEX")
 @SequenceGenerator(name = ApplicationIndex.SEQ_APPLICATIONINDEX, sequenceName = ApplicationIndex.SEQ_APPLICATIONINDEX, allocationSize = 1)
+@JsonTypeInfo(use = JsonTypeInfo.Id.CLASS, include = JsonTypeInfo.As.PROPERTY, property = "version")
 public class ApplicationIndex extends AbstractAuditable {
 
     private static final long serialVersionUID = 1L;

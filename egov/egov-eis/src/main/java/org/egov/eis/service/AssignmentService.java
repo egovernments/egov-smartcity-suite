@@ -53,6 +53,7 @@ import org.egov.eis.entity.Assignment;
 import org.egov.eis.entity.Employee;
 import org.egov.eis.entity.HeadOfDepartments;
 import org.egov.eis.reports.entity.EmployeeAssignmentSearch;
+import org.egov.eis.reports.entity.EmployeePositionSearch;
 import org.egov.eis.repository.AssignmentRepository;
 import org.egov.eis.repository.HeadOfDepartmentsRepository;
 import org.egov.infra.admin.master.entity.Boundary;
@@ -122,8 +123,8 @@ public class AssignmentService {
     }
 
     /**
-     * Get all assignments for position and given date as given date which is
-     * passed as parameter. Includes both primary and secondary assignments.
+     * Get all assignments for position and given date as given date which is passed as parameter. Includes both primary and
+     * secondary assignments.
      *
      * @param posId
      * @param givenDate
@@ -239,20 +240,19 @@ public class AssignmentService {
     public List<Assignment> getPositionsByDepartmentAndDesignationForGivenRange(final Long departmentId,
             final Long designationId, final Date givenDate) {
 
-        if (departmentId != null && designationId != null)
+        if ((departmentId != null) && (designationId != null))
             return assignmentRepository.getPrimaryAssignmentForDepartmentAndDesignation(departmentId, designationId,
                     givenDate);
-        else if (designationId != null && departmentId == null)
+        else if ((designationId != null) && (departmentId == null))
             return assignmentRepository.getPrimaryAssignmentForDesignation(designationId, givenDate);
-        else if (designationId == null && departmentId != null)
+        else if ((designationId == null) && (departmentId != null))
             return assignmentRepository.getPrimaryAssignmentForDepartment(departmentId, givenDate);
         return new ArrayList<Assignment>();
 
     }
 
     /**
-     * Get employee primary/temporary assignment for given department and
-     * designation
+     * Get employee primary/temporary assignment for given department and designation
      *
      * @param departmentId
      * @param designationId
@@ -262,12 +262,12 @@ public class AssignmentService {
     public List<Assignment> getAllPositionsByDepartmentAndDesignationForGivenRange(final Long departmentId,
             final Long designationId, final Date givenDate) {
 
-        if (departmentId != null && designationId != null)
+        if ((departmentId != null) && (designationId != null))
             return assignmentRepository.getAllAssignmentForDepartmentAndDesignation(departmentId, designationId,
                     givenDate);
-        else if (designationId != null && departmentId == null)
+        else if ((designationId != null) && (departmentId == null))
             return assignmentRepository.getAllAssignmentForDesignation(designationId, givenDate);
-        else if (designationId == null && departmentId != null)
+        else if ((designationId == null) && (departmentId != null))
             return assignmentRepository.getAllAssignmentForDepartment(departmentId, givenDate);
         return new ArrayList<Assignment>();
 
@@ -280,8 +280,7 @@ public class AssignmentService {
     }
 
     /**
-     * Get list of primary assignments for deparment,designation,fromdate and
-     * todate
+     * Get list of primary assignments for deparment,designation,fromdate and todate
      *
      * @param deptId
      * @param desigId
@@ -320,8 +319,8 @@ public class AssignmentService {
     }
 
     /**
-     * Gets all assignments for a particular department,designation and given
-     * boundary or all the employees who can operate under this boundary
+     * Gets all assignments for a particular department,designation and given boundary or all the employees who can operate under
+     * this boundary
      *
      * @param deptId
      * @param desigId
@@ -435,8 +434,39 @@ public class AssignmentService {
         return employees;
     }
 
+    @SuppressWarnings("unchecked")
+    public List<Assignment> getAssignmentList(final EmployeePositionSearch employeePositionSearch) {
+        final StringBuilder queryString = new StringBuilder();
+        queryString.append("select distinct(assignment) from Assignment assignment where assignment.id is not null ");
+        if (employeePositionSearch.getDepartment() != null)
+            queryString.append(" AND assignment.department.id =:dept ");
+        if (employeePositionSearch.getDesignation() != null)
+            queryString.append(" AND assignment.designation.id =:desig ");
+        if (employeePositionSearch.getPosition() != null)
+            queryString.append(" AND assignment.position.id =:pos ");
+        if (employeePositionSearch.getIsPrimary() != null)
+            queryString.append(" AND assignment.primary =:primary ");
+        Query queryResult = entityManager.unwrap(Session.class).createQuery(queryString.toString());
+        queryResult = setParametersToQuery(employeePositionSearch, queryResult);
+
+        final List<Assignment> assignments = queryResult.list();
+        return assignments;
+    }
+
     public List<Assignment> findAllAssignmentsByHODDeptAndDates(final Long deptId, final Date givenDate) {
         return assignmentRepository.findAllAssignmentsByHODDeptAndGivenDate(deptId, givenDate);
+    }
+
+    private Query setParametersToQuery(final EmployeePositionSearch employeePositionSearch, final Query queryResult) {
+        if (employeePositionSearch.getDepartment() != null)
+            queryResult.setParameter("dept", Long.valueOf(employeePositionSearch.getDepartment()));
+        if (employeePositionSearch.getDesignation() != null)
+            queryResult.setParameter("desig", Long.valueOf(employeePositionSearch.getDesignation()));
+        if (employeePositionSearch.getPosition() != null)
+            queryResult.setParameter("pos", Long.valueOf(employeePositionSearch.getPosition()));
+        if (employeePositionSearch.getIsPrimary() != null)
+            queryResult.setParameter("primary", Boolean.valueOf(employeePositionSearch.getIsPrimary()));
+        return queryResult;
     }
 
 }

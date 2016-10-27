@@ -416,9 +416,7 @@ function alertTimeOut()
 									value="remarks" /></textarea></td>
 
 
-						<td><input type="button" class="buttonsubmit" value="Edit"
-							id="budgetDocUploadButton"
-							onclick='showDocumentManager(<s:property value="#stat.index"/>);' /></td>
+						<td></td>
 						<s:if test="%{isAsstFMU()}">
 							<td><a href="#" id="<s:property value='id'/>"
 								onclick="return deleteBudgetDetail(<s:property value='id'/>, <s:property value='nextYrId'/>,this,'bpBeanList[<s:property value="#stat.index"/>].approvedBE','bpBeanList[<s:property value="#stat.index"/>].approvedRE');"><img

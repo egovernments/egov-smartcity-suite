@@ -39,10 +39,10 @@
  */
 package org.egov.egf.web.actions.budget;
 
-import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Collections;
 import java.util.Date;
@@ -51,6 +51,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.apache.struts2.convention.annotation.Action;
 import org.apache.struts2.convention.annotation.ParentPackage;
@@ -60,23 +61,23 @@ import org.apache.struts2.interceptor.validation.SkipValidation;
 import org.egov.commons.CFinancialYear;
 import org.egov.commons.CFunction;
 import org.egov.commons.Fund;
+import org.egov.commons.dao.EgwStatusHibernateDAO;
 import org.egov.commons.dao.FinancialYearHibernateDAO;
 import org.egov.eis.entity.Assignment;
+import org.egov.eis.entity.Employee;
+import org.egov.eis.service.AssignmentService;
 import org.egov.eis.service.EisCommonService;
+import org.egov.eis.service.EmployeeService;
+import org.egov.eis.web.actions.workflow.GenericWorkFlowAction;
 import org.egov.infra.admin.master.entity.AppConfigValues;
 import org.egov.infra.admin.master.entity.Department;
 import org.egov.infra.admin.master.service.AppConfigValueService;
 import org.egov.infra.config.core.ApplicationThreadLocals;
 import org.egov.infra.exception.ApplicationRuntimeException;
-import org.egov.infra.reporting.engine.ReportConstants.FileFormat;
-import org.egov.infra.reporting.engine.ReportOutput;
-import org.egov.infra.reporting.engine.ReportRequest;
 import org.egov.infra.reporting.engine.ReportService;
-import org.egov.infra.reporting.viewer.ReportViewerUtil;
 import org.egov.infra.validation.exception.ValidationException;
-import org.egov.infra.web.struts.actions.BaseFormAction;
 import org.egov.infra.workflow.entity.State;
-import org.egov.infra.workflow.entity.WorkflowAction;
+import org.egov.infra.workflow.entity.StateAware;
 import org.egov.infra.workflow.service.WorkflowService;
 import org.egov.infstr.services.PersistenceService;
 import org.egov.infstr.utils.EgovMasterDataCaching;
@@ -84,43 +85,35 @@ import org.egov.model.budget.Budget;
 import org.egov.model.budget.BudgetDetail;
 import org.egov.model.budget.BudgetGroup;
 import org.egov.model.budget.BudgetProposalBean;
+import org.egov.model.voucher.WorkflowBean;
 import org.egov.pims.commons.Designation;
 import org.egov.pims.commons.Position;
-import org.egov.pims.model.PersonalInformation;
 import org.egov.pims.service.EisUtilService;
 import org.egov.services.budget.BudgetDetailService;
 import org.egov.services.budget.BudgetService;
 import org.egov.services.voucher.VoucherService;
 import org.egov.utils.BudgetDetailHelper;
 import org.egov.utils.Constants;
+import org.egov.utils.FinancialConstants;
 import org.egov.utils.ReportHelper;
 import org.hibernate.HibernateException;
 import org.hibernate.Query;
-import org.hibernate.SQLQuery;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 
 @ParentPackage("egov")
-/*
- * @Results(value={
- * @Result(name="PDF",type=StreamResult.class,value=Constants.INPUT_STREAM,
- * params={Constants.INPUT_NAME,Constants.INPUT_STREAM,Constants
- * .CONTENT_TYPE,"application/pdf",Constants.CONTENT_DISPOSITION,"no-cache;filename=BudgetReport.pdf"}),
- * @Result(name="XLS",type=StreamResult.class,value=Constants.INPUT_STREAM,
- * params={Constants.INPUT_NAME,Constants.INPUT_STREAM,Constants
- * .CONTENT_TYPE,"application/xls",Constants.CONTENT_DISPOSITION,"no-cache;filename=BudgetReport.xls"}) })
- */
-@Results({
-        @Result(name = "reportview", location = "budgetProposal-reportview.jsp"),
-        @Result(name = "message", location = "budgetProposal-message.jsp"),
+
+@Results({ @Result(name = BudgetProposalAction.REPORTVIEW, location = "budgetProposal-reportview.jsp"),
+        @Result(name = BudgetProposalAction.FAILURE, location = "budgetProposal-message.jsp"),
         @Result(name = Constants.DETAILLIST, location = "budgetProposal-" + Constants.DETAILLIST + ".jsp"),
-        @Result(name = "failure", location = "budgetProposal-failure.jsp"),
-        @Result(name = "reportview", type = "stream", location = "inputStream", params = { "contentType", "${contentType}",
-                "contentDisposition", "attachment; filename=${fileName}" })
-})
-public class BudgetProposalAction extends BaseFormAction {
+        @Result(name = BudgetProposalAction.FAILURE, location = "budgetProposal-failure.jsp"),
+        @Result(name = BudgetProposalAction.REPORTVIEW, type = "stream", location = "inputStream", params = {
+                "contentType",
+                "${contentType}", "contentDisposition", "attachment; filename=${fileName}" }) })
+public class BudgetProposalAction extends GenericWorkFlowAction {
     private static final long serialVersionUID = 1L;
     private static final String ACTIONNAME = "actionName";
+    public static final String REPORTVIEW = "reportview";
     private static final Logger LOGGER = Logger.getLogger(BudgetProposalAction.class);
     private BudgetProposalBean bpBean = new BudgetProposalBean();
     private BudgetDetail budgetDetail;
@@ -133,6 +126,9 @@ public class BudgetProposalAction extends BaseFormAction {
     protected String twopreviousfinYearRange = "";
     private List<BudgetDetail> budgetDetailList = new ArrayList<BudgetDetail>();
     protected List<BudgetDetail> savedbudgetDetailList = new ArrayList<BudgetDetail>();
+    protected WorkflowBean workflowBean = new WorkflowBean();
+    @Autowired
+    @Qualifier("budgetDetailService")
     protected BudgetDetailService budgetDetailService;
     protected BudgetService budgetService;
     private BudgetDetailHelper budgetDetailHelper;
@@ -154,23 +150,32 @@ public class BudgetProposalAction extends BaseFormAction {
     private static final String MAJORCODE = "majorcode";
     private static final String DETAIL = "detail";
     private static final String TOTAL = "total";
-    private static final String FAILURE = "failure";
+    public static final String FAILURE = "failure";
     private static final String SUCCESSFUL = "successful";
     private Date asOndate;
-    private Date headerAsOnDate;
 
     @Autowired
     @Qualifier("persistenceService")
     private PersistenceService persistenceService;
+
     @Autowired
-    AppConfigValueService appConfigValuesService;
+    private AppConfigValueService appConfigValuesService;
+
+    @Autowired
+    private AssignmentService assignmentService;
+
+    @Autowired
+    private EmployeeService employeeService;
+
+    @Autowired
+    private EgwStatusHibernateDAO egwStatusHibernateDAO;
     private InputStream inputStream;
     private ReportHelper reportHelper;
     private Long docNo;
 
     protected WorkflowService<Budget> budgetWorkflowService;
     protected EisCommonService eisCommonService;
-    private boolean consolidatedScreen = false;
+    private boolean consolidatedScreen;
     private boolean allfunctionsArrived;
     private Integer approverUserId;
     private Integer userId;
@@ -182,22 +187,20 @@ public class BudgetProposalAction extends BaseFormAction {
     private CFinancialYear nextFinancialYear;
     private CFinancialYear beforeLastFinancialYear;
     private boolean hod;
-    private boolean updateApprovedRE;
-    private boolean asstFMU = false;
+    private boolean asstFMU;
     private boolean functionHeading = true;
     private boolean deptHeading = true;
     private String functionsNotYetReceiced;
     private Map<Long, BudgetGroup> budgetGroupMap;
     private Map<Integer, Fund> fundMap;
     private Map<Long, CFunction> functionMap;
-    private Map<Integer, Department> deptMap;
-    List<AppConfigValues> excludelist = new ArrayList<AppConfigValues>();
+    private Map<Long, Department> deptMap;
+    private List<AppConfigValues> excludelist = new ArrayList<AppConfigValues>();
     protected EisUtilService eisService;
 
     // report
     private String contentType;
     private String fileName;
-    private ReportService reportService;
     private String amountField;
     private BigDecimal amount;
     private Long detailId;
@@ -209,23 +212,23 @@ public class BudgetProposalAction extends BaseFormAction {
     private EgovMasterDataCaching masterDataCache;
 
     public void setReportService(final ReportService reportService) {
-        this.reportService = reportService;
     }
 
     @Override
-    public String execute() throws Exception {
-
-        super.execute();
+    public String execute() {
+        try {
+            super.execute();
+        } catch (final Exception e) {
+            e.printStackTrace();
+        }
         return update();
     }
 
     @Override
-    public Object getModel() {
-
+    public StateAware getModel() {
         return budgetDetail;
     }
 
-    @Override
     public void prepare() {
         super.prepare();
     }
@@ -235,9 +238,9 @@ public class BudgetProposalAction extends BaseFormAction {
         loadToMasterDataMap();
         if (LOGGER.isInfoEnabled())
             LOGGER.info("starting modifyDetailList...");
-        if (parameters.get("budgetDetail.id")[0] != null) {
-            budgetDetail = (BudgetDetail) persistenceService.find("from BudgetDetail where id=?",
-                    Long.valueOf(parameters.get("budgetDetail.id")[0]));
+        if (parameters.get("budgetDetail.budget.id")[0] != null) {
+            budgetDetail = (BudgetDetail) persistenceService.find("from BudgetDetail where budget.id=?",
+                    Long.valueOf(parameters.get("budgetDetail.budget.id")[0]));
             setTopBudget(budgetDetail.getBudget());
         }
         /*
@@ -256,7 +259,7 @@ public class BudgetProposalAction extends BaseFormAction {
         twopreviousfinYearRange = beforeLastFinancialYear.getFinYearRange();
 
         budgetDetailApprove();
-        loadApproverUser(savedbudgetDetailList);
+        // loadApproverUser(savedbudgetDetailList);
         if (LOGGER.isInfoEnabled())
             LOGGER.info("completed modifyDetailList");
         /* return Constants.DETAILLIST; */
@@ -276,11 +279,10 @@ public class BudgetProposalAction extends BaseFormAction {
 
     private void populateBudgetDetailReport() {
         loadToMasterDataMap();
-        if (budgetDetail.getBudget().getId() != null) {
-            topBudget = budgetService.find("from Budget where id=?", budgetDetail.getBudget().getId());
+        if (budgetDetail.getBudget().getId() != null)
+            /* topBudget = budgetService.find("from Budget where id=?", budgetDetail.getBudget().getId()); */
             budgetDetail = (BudgetDetail) persistenceService.find("from BudgetDetail where budget.id=?",
                     Long.valueOf(parameters.get("budgetDetail.budget.id")[0]));
-        }
         consolidatedScreen = budgetDetailService.toBeConsolidated();
         hod = isHOD();
         if (hod)
@@ -299,10 +301,28 @@ public class BudgetProposalAction extends BaseFormAction {
         twopreviousfinYearRange = beforeLastFinancialYear.getFinYearRange();
 
         budgetApprove();
-        if (isConsolidatedScreen())
-            divideByThousand();
+
         loadApproverUser(budgetDetailList);
 
+    }
+
+    @Override
+    public List<String> getValidActions() {
+
+        List<String> validActions = Collections.emptyList();
+
+        if ((budgetDetail.getId() == null) || (budgetDetail.getId() == 0))
+            validActions = Arrays.asList(FinancialConstants.BUTTONSAVE, FinancialConstants.BUTTONFORWARD);
+        else if (budgetDetail.getCurrentState() != null)
+            validActions = customizedWorkFlowService.getNextValidActions(budgetDetail.getStateType(),
+                    getWorkFlowDepartment(), getAmountRule(), getAdditionalRule(),
+                    budgetDetail.getCurrentState().getValue(), getPendingActions(), budgetDetail.getCreatedDate());
+        else if ((budgetDetail.getId() == null) || (budgetDetail.getId() == 0)
+                || budgetDetail.getCurrentState().getValue().endsWith("NEW"))
+            // read from constant
+            validActions = Arrays.asList(FinancialConstants.BUTTONFORWARD);
+
+        return validActions;
     }
 
     private void loadToMasterDataMap() {
@@ -322,10 +342,11 @@ public class BudgetProposalAction extends BaseFormAction {
         for (final Fund f : fundList)
             fundMap.put(f.getId(), f);
         final List<Department> deptList = masterDataCache.get("egi-department");
-        deptMap = new HashMap<Integer, Department>();
+        deptMap = new HashMap<Long, Department>();
         for (final Department d : deptList)
-            deptMap.put(d.getId().intValue(), d);
-        excludelist = appConfigValuesService.getConfigValuesByModuleAndKey(Constants.EGF, "exclude_status_forbudget_actual");
+            deptMap.put(d.getId().longValue(), d);
+        excludelist = appConfigValuesService.getConfigValuesByModuleAndKey(Constants.EGF,
+                "exclude_status_forbudget_actual");
         if (excludelist.isEmpty())
             throw new ValidationException("", "exclude_status_forbudget_actual is not defined in AppConfig");
         if (LOGGER.isInfoEnabled())
@@ -336,7 +357,7 @@ public class BudgetProposalAction extends BaseFormAction {
     public String ajaxUpdateBudgetDetail() {
 
         if (validateOwner()) {
-            if (factor.equalsIgnoreCase("thousand"))
+            if (factor.equalsIgnoreCase(bigThousand.toString()))
                 amount = amount.multiply(bigThousand);
 
             final String query = "update egf_budgetdetail set  " + amountField
@@ -345,8 +366,7 @@ public class BudgetProposalAction extends BaseFormAction {
                 LOGGER.info(query);
 
             final Query updateQuery = persistenceService.getSession().createSQLQuery(query)
-                    .setBigDecimal("amount", amount)
-                    .setLong("detailId", detailId)
+                    .setBigDecimal("amount", amount).setLong("detailId", detailId)
                     .setDate("modifiedate", new java.sql.Date(new Date().getTime()))
                     .setInteger("modifiedby", ApplicationThreadLocals.getUserId().intValue());
             final int executeUpdate = updateQuery.executeUpdate();
@@ -363,11 +383,9 @@ public class BudgetProposalAction extends BaseFormAction {
     @Action(value = "/budget/budgetProposal-ajaxDeleteBudgetDetail")
     public String ajaxDeleteBudgetDetail() {
         try {
-            if (bpBean.getId() != null && bpBean.getNextYrId() != null) {
-                persistenceService.getSession()
-                        .createSQLQuery(
-                                "delete from egf_budgetdetail where id in (" + bpBean.getId() + "," + bpBean.getNextYrId() + ")")
-                        .executeUpdate();
+            if ((bpBean.getId() != null) && (bpBean.getNextYrId() != null)) {
+                persistenceService.getSession().createSQLQuery("delete from egf_budgetdetail where id in ("
+                        + bpBean.getId() + "," + bpBean.getNextYrId() + ")").executeUpdate();
                 persistenceService.getSession().flush();
             }
         } catch (final HibernateException e) {
@@ -390,13 +408,17 @@ public class BudgetProposalAction extends BaseFormAction {
         if (LOGGER.isInfoEnabled())
             LOGGER.info("Starting budgetDetailApprove()..............");
 
-        // if u want only selected function centre filter here by owner fecthing logic to be changed only
-        final String query = " from BudgetDetail bd where bd.budget=? and (state.value='END' or state.owner=?) and bd.function="
+        // if u want only selected function centre filter here by owner fecthing
+        // logic to be changed only
+        final String query = " from BudgetDetail bd where bd.budget=? and (state.value='END' or state.ownerPosition=?) and bd.function="
                 + budgetDetail.getFunction().getId() + "  order by bd.function.name,bd.budgetGroup.name";
         savedbudgetDetailList = budgetDetailService.findAllBy(query, topBudget, getPosition());
 
-        // check what actuals needs to be shown for next year be AND possible remove if
-        /* CFinancialYear previousYearFor = budgetDetailHelper.getPreviousYearFor(topBudget.getFinancialYear()); */
+        // check what actuals needs to be shown for next year be AND possible
+        // remove if
+        /*
+         * CFinancialYear previousYearFor = budgetDetailHelper.getPreviousYearFor(topBudget.getFinancialYear());
+         */
         if (!savedbudgetDetailList.isEmpty()) {
             populateMajorCodewiseData();
             populateNextYrBEinBudgetDetailList();
@@ -417,8 +439,8 @@ public class BudgetProposalAction extends BaseFormAction {
 
         for (final CFunction function : functionList) {
             if (LOGGER.isInfoEnabled())
-                LOGGER.info("Starting budgetDetailApprove...for functin ....centre......." + function.getName() + "     count "
-                        + ++i);
+                LOGGER.info("Starting budgetDetailApprove...for functin ....centre......." + function.getName()
+                        + "     count " + ++i);
             budgetDetail = (BudgetDetail) persistenceService.find(
                     "from BudgetDetail where budget=? and function=? order by budgetGroup.name", topBudget, function);
             budgetDetailApprove();
@@ -429,80 +451,7 @@ public class BudgetProposalAction extends BaseFormAction {
             LOGGER.info("Finished budgetApprove");
     }
 
-    public void divideByThousand() {
-        final BigDecimal bigThousand = new BigDecimal(1000);
-        final BigDecimal bigZero = new BigDecimal(0).setScale(2);
-
-        for (final BudgetProposalBean bpBean : bpBeanList)
-            if (!bpBean.getRowType().equals(HEADING)) {
-                if (bpBean.getPreviousYearActuals() != null && !bpBean.getPreviousYearActuals().equalsIgnoreCase("0.00"))
-                    bpBean.setPreviousYearActuals(new BigDecimal(bpBean.getPreviousYearActuals()).divide(bigThousand)
-                            .setScale(0, BigDecimal.ROUND_HALF_UP).toString());
-                else
-                    bpBean.setPreviousYearActuals("0");
-                if (bpBean.getTwoPreviousYearActuals() != null && !bpBean.getTwoPreviousYearActuals().equalsIgnoreCase("0.00"))
-                    bpBean.setTwoPreviousYearActuals(new BigDecimal(bpBean.getTwoPreviousYearActuals()).divide(bigThousand)
-                            .setScale(0, BigDecimal.ROUND_HALF_UP).toString());
-                else
-                    bpBean.setTwoPreviousYearActuals("0");
-                if (bpBean.getCurrentYearActuals() != null && !bpBean.getCurrentYearActuals().equalsIgnoreCase("0.00"))
-                    bpBean.setCurrentYearActuals(new BigDecimal(bpBean.getCurrentYearActuals()).divide(bigThousand)
-                            .setScale(0, BigDecimal.ROUND_HALF_UP).toString());
-                else
-                    bpBean.setCurrentYearActuals("0");
-
-                if (bpBean.getCurrentYearBE() != null && !bpBean.getCurrentYearBE().equalsIgnoreCase("0.00"))
-                    bpBean.setCurrentYearBE(new BigDecimal(bpBean.getCurrentYearBE()).divide(bigThousand)
-                            .setScale(0, BigDecimal.ROUND_HALF_UP).toString());
-                else
-                    bpBean.setCurrentYearBE("0");
-                if (bpBean.getReappropriation() != null && !bpBean.getReappropriation().equalsIgnoreCase("0.00"))
-                    bpBean.setReappropriation(new BigDecimal(bpBean.getReappropriation()).divide(bigThousand)
-                            .setScale(0, BigDecimal.ROUND_HALF_UP).toString());
-                else
-                    bpBean.setReappropriation("0");
-                if (bpBean.getTotal() != null && !bpBean.getTotal().equalsIgnoreCase("0.00"))
-                    bpBean.setTotal(new BigDecimal(bpBean.getTotal()).divide(bigThousand).setScale(0, BigDecimal.ROUND_HALF_UP)
-                            .toString());
-                else
-                    bpBean.setTotal("0");
-                if (bpBean.getAnticipatory() != null && !bpBean.getAnticipatory().equalsIgnoreCase("0.00"))
-                    bpBean.setAnticipatory(new BigDecimal(bpBean.getAnticipatory()).divide(bigThousand)
-                            .setScale(0, BigDecimal.ROUND_HALF_UP).toString());
-                else
-                    bpBean.setAnticipatory("0");
-                if (bpBean.getProposedRE() != null && !bpBean.getProposedRE().equals(bigZero))
-                    bpBean.setProposedRE(bpBean.getProposedRE().divide(bigThousand).setScale(0, BigDecimal.ROUND_HALF_UP));
-                else
-                    bpBean.setProposedRE(bigZero.setScale(0));
-                if (bpBean.getProposedBE() != null && !bpBean.getProposedBE().equals(bigZero))
-                    bpBean.setProposedBE(bpBean.getProposedBE().divide(bigThousand).setScale(0, BigDecimal.ROUND_HALF_UP));
-                else
-                    bpBean.setProposedBE(bigZero.setScale(0));
-
-                if (updateApprovedRE) {
-
-                    bpBean.setApprovedRE(bpBean.getProposedRE());
-                    if (bpBean.getBudgetGroup().startsWith("2101001") || bpBean.getBudgetGroup().startsWith("2101002"))
-                        bpBean.setApprovedBE(bpBean.getApprovedRE().multiply(new BigDecimal(1.25))
-                                .setScale(0, BigDecimal.ROUND_HALF_UP));
-                    else
-                        bpBean.setApprovedBE(bpBean.getProposedRE().setScale(0, BigDecimal.ROUND_HALF_UP));
-
-                } else {
-                    if (bpBean.getApprovedRE() != null && !bpBean.getApprovedRE().equals(bigZero))
-                        bpBean.setApprovedRE(bpBean.getApprovedRE().divide(bigThousand).setScale(0, BigDecimal.ROUND_HALF_UP));
-                    else
-                        bpBean.setApprovedRE(bigZero.setScale(0));
-                    if (bpBean.getApprovedBE() != null && !bpBean.getApprovedBE().equals(bigZero))
-                        bpBean.setApprovedBE(bpBean.getApprovedBE().divide(bigThousand).setScale(0, BigDecimal.ROUND_HALF_UP));
-                    else
-                        bpBean.setApprovedBE(bigZero.setScale(0));
-                }
-            }
-    }
-
-    void populateMajorCodewiseData() {
+    private void populateMajorCodewiseData() {
         if (LOGGER.isInfoEnabled())
             LOGGER.info("Starting populateMajorCodewiseData()...........");
         final Map<String, BigDecimal> majorCodeAndCurrentActuals = new HashMap<String, BigDecimal>();
@@ -524,31 +473,29 @@ public class BudgetProposalAction extends BaseFormAction {
                 budgetDetail.getFunction(), pos);
         addToMap(resultMajorCode, majorCodeAndNameMap);
 
-        final List<Object[]> resultCurrentActuals = budgetDetailService.fetchMajorCodeAndActuals(financialYear, topBudget,
-                asOndate, budgetDetail.getFunction(), budgetDetail.getExecutingDepartment(), pos);
+        final List<Object[]> resultCurrentActuals = budgetDetailService.fetchMajorCodeAndActuals(financialYear,
+                topBudget, asOndate, budgetDetail.getFunction(), budgetDetail.getExecutingDepartment(), pos);
         addToMapStringBigDecimal(resultCurrentActuals, majorCodeAndCurrentActuals);
 
-        final List<Object[]> resultPreviousActuals = budgetDetailService.fetchMajorCodeAndActuals(prevFinancialYear, topBudget,
-                null,
-                budgetDetail.getFunction(), budgetDetail.getExecutingDepartment(), pos);
+        final List<Object[]> resultPreviousActuals = budgetDetailService.fetchMajorCodeAndActuals(prevFinancialYear,
+                topBudget, null, budgetDetail.getFunction(), budgetDetail.getExecutingDepartment(), pos);
         addToMapStringBigDecimal(resultPreviousActuals, majorCodeAndPreviousActuals);
 
-        final List<Object[]> resultBeforePreviousActuals = budgetDetailService.fetchMajorCodeAndActuals(beforeLastFinancialYear,
-                topBudget, null, budgetDetail.getFunction(), budgetDetail.getExecutingDepartment(), pos);
+        final List<Object[]> resultBeforePreviousActuals = budgetDetailService.fetchMajorCodeAndActuals(
+                beforeLastFinancialYear, topBudget, null, budgetDetail.getFunction(),
+                budgetDetail.getExecutingDepartment(), pos);
         addToMapStringBigDecimal(resultBeforePreviousActuals, majorCodeAndBeforePreviousActuals);
 
         final List<Object[]> resultMajorCodeBE = budgetDetailService.fetchMajorCodeAndBEAmount(topBudget, budgetDetail,
                 budgetDetail.getFunction(), pos);
         addToMapStringBigDecimal(resultMajorCodeBE, majorCodeAndBEMap);
 
-        final List<Object[]> resultMajorCodeAppropriation = budgetDetailService.fetchMajorCodeAndAppropriation(topBudget,
-                budgetDetail,
-                budgetDetail.getFunction(), pos, asOndate);
+        final List<Object[]> resultMajorCodeAppropriation = budgetDetailService
+                .fetchMajorCodeAndAppropriation(topBudget, budgetDetail, budgetDetail.getFunction(), pos, asOndate);
         addToMapStringBigDecimal(resultMajorCodeAppropriation, majorCodeAndAppropriationMap);
 
         final List<Object[]> resultMajorCodeAncipatory = budgetDetailService.fetchMajorCodeAndAnticipatory(topBudget,
-                budgetDetail,
-                budgetDetail.getFunction(), pos);
+                budgetDetail, budgetDetail.getFunction(), pos);
         // addToMapStringBigDecimal(resultMajorCodeAncipatory,majorCodeAndAnticipatoryMap,majorCodeAndOriginalMap,majorCodeAndApprovedMap);
         for (final Object[] row : resultMajorCodeAncipatory) {
             majorCodeAndAnticipatoryMap.put(row[0].toString(), ((BigDecimal) row[1]).setScale(2));
@@ -556,12 +503,14 @@ public class BudgetProposalAction extends BaseFormAction {
             majorCodeAndApprovedMap.put(row[0].toString(), ((BigDecimal) row[3]).setScale(2));
         }
 
-        // List<Object[]> resultMajorCodeOriginal = budgetDetailService.fetchMajorCodeAndOriginalAmount(topBudget, budgetDetail,
+        // List<Object[]> resultMajorCodeOriginal =
+        // budgetDetailService.fetchMajorCodeAndOriginalAmount(topBudget,
+        // budgetDetail,
         // budgetDetail.getFunction(), pos);
         // addToMapStringBigDecimal(resultMajorCodeOriginal,majorCodeAndOriginalMap);
 
-        final List<Object[]> resultMajorCodeBENextYr = budgetDetailService.fetchMajorCodeAndBENextYr(topBudget, budgetDetail,
-                budgetDetail.getFunction(), pos);
+        final List<Object[]> resultMajorCodeBENextYr = budgetDetailService.fetchMajorCodeAndBENextYr(topBudget,
+                budgetDetail, budgetDetail.getFunction(), pos);
         // addToMapStringBigDecimal(resultMajorCodeBENextYr,majorCodeAndBENextYrMap,majorCodeAndBENextYrApprovedMap);
 
         for (final Object[] row : resultMajorCodeBENextYr) {
@@ -570,11 +519,14 @@ public class BudgetProposalAction extends BaseFormAction {
 
         }
 
-        // List<Object[]> resultMajorCodeApproved = budgetDetailService.fetchMajorCodeAndApprovedAmount(topBudget, budgetDetail,
+        // List<Object[]> resultMajorCodeApproved =
+        // budgetDetailService.fetchMajorCodeAndApprovedAmount(topBudget,
+        // budgetDetail,
         // budgetDetail.getFunction(), pos);
         // addToMapStringBigDecimal(resultMajorCodeApproved,majorCodeAndApprovedMap);
 
-        // List<Object[]> resultMajorCodeBENextYrApproved = budgetDetailService.fetchMajorCodeAndBENextYrApproved(topBudget,
+        // List<Object[]> resultMajorCodeBENextYrApproved =
+        // budgetDetailService.fetchMajorCodeAndBENextYrApproved(topBudget,
         // budgetDetail, budgetDetail.getFunction(), pos);
         // addToMapStringBigDecimal(resultMajorCodeBENextYrApproved,majorCodeAndBENextYrApprovedMap);
 
@@ -597,28 +549,33 @@ public class BudgetProposalAction extends BaseFormAction {
             bpbean.setReference(formValue);
             bpbean.setRowType(MAJORCODE);
             bpbean.setBudgetGroup(entry.getValue());
-            bpbean.setCurrentYearActuals(majorCodeAndCurrentActuals.get(entry.getKey()) == null ? BigDecimal.ZERO.setScale(2)
-                    .toString() : majorCodeAndCurrentActuals.get(entry.getKey()).toString());
-            bpbean.setPreviousYearActuals(majorCodeAndPreviousActuals.get(entry.getKey()) == null ? BigDecimal.ZERO.setScale(2)
-                    .toString() : majorCodeAndPreviousActuals.get(entry.getKey()).toString());
-            bpbean.setTwoPreviousYearActuals(majorCodeAndBeforePreviousActuals.get(entry.getKey()) == null ? BigDecimal.ZERO
-                    .setScale(2).toString() : majorCodeAndBeforePreviousActuals.get(entry.getKey()).toString());
-            bpbean.setCurrentYearBE(majorCodeAndBEMap.get(entry.getKey()) == null ? BigDecimal.ZERO.setScale(2).toString()
-                    : majorCodeAndBEMap.get(entry.getKey()).toString());
-            bpbean.setReappropriation(majorCodeAndAppropriationMap.get(entry.getKey()) == null ? BigDecimal.ZERO.setScale(2)
-                    .toString() : majorCodeAndAppropriationMap.get(entry.getKey()).toString());
-            bpbean.setTotal(
-                    new BigDecimal(bpbean.getCurrentYearBE()).add(new BigDecimal(bpbean.getReappropriation())).toString());
-            bpbean.setAnticipatory(majorCodeAndAnticipatoryMap.get(entry.getKey()) == null ? BigDecimal.ZERO.setScale(2)
-                    .toString() : majorCodeAndAnticipatoryMap.get(entry.getKey()).toString());
+            bpbean.setCurrentYearActuals(
+                    majorCodeAndCurrentActuals.get(entry.getKey()) == null ? BigDecimal.ZERO.setScale(2).toString()
+                            : majorCodeAndCurrentActuals.get(entry.getKey()).toString());
+            bpbean.setPreviousYearActuals(
+                    majorCodeAndPreviousActuals.get(entry.getKey()) == null ? BigDecimal.ZERO.setScale(2).toString()
+                            : majorCodeAndPreviousActuals.get(entry.getKey()).toString());
+            bpbean.setTwoPreviousYearActuals(majorCodeAndBeforePreviousActuals.get(entry.getKey()) == null
+                    ? BigDecimal.ZERO.setScale(2).toString()
+                    : majorCodeAndBeforePreviousActuals.get(entry.getKey()).toString());
+            bpbean.setCurrentYearBE(majorCodeAndBEMap.get(entry.getKey()) == null
+                    ? BigDecimal.ZERO.setScale(2).toString() : majorCodeAndBEMap.get(entry.getKey()).toString());
+            bpbean.setReappropriation(
+                    majorCodeAndAppropriationMap.get(entry.getKey()) == null ? BigDecimal.ZERO.setScale(2).toString()
+                            : majorCodeAndAppropriationMap.get(entry.getKey()).toString());
+            bpbean.setTotal(new BigDecimal(bpbean.getCurrentYearBE()).add(new BigDecimal(bpbean.getReappropriation()))
+                    .toString());
+            bpbean.setAnticipatory(
+                    majorCodeAndAnticipatoryMap.get(entry.getKey()) == null ? BigDecimal.ZERO.setScale(2).toString()
+                            : majorCodeAndAnticipatoryMap.get(entry.getKey()).toString());
             bpbean.setProposedRE(majorCodeAndOriginalMap.get(entry.getKey()) == null ? BigDecimal.ZERO.setScale(2)
                     : majorCodeAndOriginalMap.get(entry.getKey()));
             bpbean.setProposedBE(majorCodeAndBENextYrMap.get(entry.getKey()) == null ? BigDecimal.ZERO.setScale(2)
                     : majorCodeAndBENextYrMap.get(entry.getKey()));
             bpbean.setApprovedRE(majorCodeAndApprovedMap.get(entry.getKey()) == null ? BigDecimal.ZERO.setScale(2)
                     : majorCodeAndApprovedMap.get(entry.getKey()));
-            bpbean.setApprovedBE(majorCodeAndBENextYrApprovedMap.get(entry.getKey()) == null ? BigDecimal.ZERO.setScale(2)
-                    : majorCodeAndBENextYrApprovedMap.get(entry.getKey()));
+            bpbean.setApprovedBE(majorCodeAndBENextYrApprovedMap.get(entry.getKey()) == null
+                    ? BigDecimal.ZERO.setScale(2) : majorCodeAndBENextYrApprovedMap.get(entry.getKey()));
             bpBeanList.add(bpbean);
 
             computeTotal(bpbeanTotal, bpbean);
@@ -644,59 +601,57 @@ public class BudgetProposalAction extends BaseFormAction {
 
         final Position pos = getPosition();
 
-        final List<Object[]> resultMajorCode = budgetDetailService.fetchMajorCodeAndName(topBudget, budgetDetail, null, pos);
+        final List<Object[]> resultMajorCode = budgetDetailService.fetchMajorCodeAndName(topBudget, budgetDetail, null,
+                pos);
         addToMap(resultMajorCode, majorCodeAndNameMap);
 
-        final List<Object[]> resultCurrentActuals = budgetDetailService.fetchMajorCodeAndActuals(financialYear, topBudget,
-                asOndate, null, budgetDetail.getExecutingDepartment(), pos);
+        final List<Object[]> resultCurrentActuals = budgetDetailService.fetchMajorCodeAndActuals(financialYear,
+                topBudget, asOndate, null, budgetDetail.getExecutingDepartment(), pos);
         addToMapStringBigDecimal(resultCurrentActuals, majorCodeAndCurrentActuals);
 
-        final List<Object[]> resultPreviousActuals = budgetDetailService.fetchMajorCodeAndActuals(prevFinancialYear, topBudget,
-                null,
-                null, budgetDetail.getExecutingDepartment(), pos);
+        final List<Object[]> resultPreviousActuals = budgetDetailService.fetchMajorCodeAndActuals(prevFinancialYear,
+                topBudget, null, null, budgetDetail.getExecutingDepartment(), pos);
         addToMapStringBigDecimal(resultPreviousActuals, majorCodeAndPreviousActuals);
 
-        final List<Object[]> resultBeforePreviousActuals = budgetDetailService.fetchMajorCodeAndActuals(beforeLastFinancialYear,
-                topBudget, null, null, budgetDetail.getExecutingDepartment(), pos);
+        final List<Object[]> resultBeforePreviousActuals = budgetDetailService.fetchMajorCodeAndActuals(
+                beforeLastFinancialYear, topBudget, null, null, budgetDetail.getExecutingDepartment(), pos);
         addToMapStringBigDecimal(resultBeforePreviousActuals, majorCodeAndBeforePreviousActuals);
 
-        final List<Object[]> resultMajorCodeBE = budgetDetailService
-                .fetchMajorCodeAndBEAmount(topBudget, budgetDetail, null, pos);
+        final List<Object[]> resultMajorCodeBE = budgetDetailService.fetchMajorCodeAndBEAmount(topBudget, budgetDetail,
+                null, pos);
         addToMapStringBigDecimal(resultMajorCodeBE, majorCodeAndBEMap);
 
-        final List<Object[]> resultMajorCodeAppropriation = budgetDetailService.fetchMajorCodeAndAppropriation(topBudget,
-                budgetDetail,
-                null, pos, asOndate);
+        final List<Object[]> resultMajorCodeAppropriation = budgetDetailService
+                .fetchMajorCodeAndAppropriation(topBudget, budgetDetail, null, pos, asOndate);
         addToMapStringBigDecimal(resultMajorCodeAppropriation, majorCodeAndAppropriationMap);
 
-        budgetDetailService.fetchMajorCodeAndAnticipatory(topBudget, budgetDetail,
-                null, pos);
+        budgetDetailService.fetchMajorCodeAndAnticipatory(topBudget, budgetDetail, null, pos);
         addToMapStringBigDecimal(resultMajorCodeAppropriation, majorCodeAndAnticipatoryMap);
 
         final List<Object[]> resultMajorCodeOriginal = budgetDetailService.fetchMajorCodeAndOriginalAmount(topBudget,
-                budgetDetail,
-                null, pos);
+                budgetDetail, null, pos);
         addToMapStringBigDecimal(resultMajorCodeOriginal, majorCodeAndOriginalMap);
 
-        final List<Object[]> resultMajorCodeBENextYr = budgetDetailService
-                .fetchMajorCodeAndBENextYr(topBudget, budgetDetail, null, pos);
+        final List<Object[]> resultMajorCodeBENextYr = budgetDetailService.fetchMajorCodeAndBENextYr(topBudget,
+                budgetDetail, null, pos);
         addToMapStringBigDecimal(resultMajorCodeBENextYr, majorCodeAndBENextYrMap);
 
         final List<Object[]> resultMajorCodeApproved = budgetDetailService.fetchMajorCodeAndApprovedAmount(topBudget,
-                budgetDetail,
-                null, pos);
+                budgetDetail, null, pos);
         addToMapStringBigDecimal(resultMajorCodeApproved, majorCodeAndApprovedMap);
 
-        final List<Object[]> resultMajorCodeBENextYrApproved = budgetDetailService.fetchMajorCodeAndBENextYrApproved(topBudget,
-                budgetDetail, null, pos);
+        final List<Object[]> resultMajorCodeBENextYrApproved = budgetDetailService
+                .fetchMajorCodeAndBENextYrApproved(topBudget, budgetDetail, null, pos);
         addToMapStringBigDecimal(resultMajorCodeBENextYrApproved, majorCodeAndBENextYrApprovedMap);
 
         bpBeanList.add(new BudgetProposalBean(budgetDetail.getExecutingDepartment().getName(), HEADING));
         deptHeading = false;
         bpBeanList.add(new BudgetProposalBean("DEPARTMENTWISE BUDGET SUMMARY", HEADING));
-        // bpBeanList.add(new BudgetProposalBean("FUNCTIONWISE EXPENSE BUDGET SUMMARY", this.HEADING));
+        // bpBeanList.add(new BudgetProposalBean("FUNCTIONWISE EXPENSE BUDGET
+        // SUMMARY", this.HEADING));
 
-        // bpBeanList.add(new BudgetProposalBean("FUNCTION CENTRE-"+budgetDetail.getFunction().getName(), this.HEADING));
+        // bpBeanList.add(new BudgetProposalBean("FUNCTION
+        // CENTRE-"+budgetDetail.getFunction().getName(), this.HEADING));
 
         final BudgetProposalBean bpbeanTotal = new BudgetProposalBean();
 
@@ -706,28 +661,33 @@ public class BudgetProposalAction extends BaseFormAction {
             bpbean.setReference(formValue);
             bpbean.setRowType(MAJORCODE);
             bpbean.setBudgetGroup(entry.getValue());
-            bpbean.setCurrentYearActuals(majorCodeAndCurrentActuals.get(entry.getKey()) == null ? BigDecimal.ZERO.setScale(2)
-                    .toString() : majorCodeAndCurrentActuals.get(entry.getKey()).toString());
-            bpbean.setPreviousYearActuals(majorCodeAndPreviousActuals.get(entry.getKey()) == null ? BigDecimal.ZERO.setScale(2)
-                    .toString() : majorCodeAndPreviousActuals.get(entry.getKey()).toString());
-            bpbean.setTwoPreviousYearActuals(majorCodeAndBeforePreviousActuals.get(entry.getKey()) == null ? BigDecimal.ZERO
-                    .setScale(2).toString() : majorCodeAndBeforePreviousActuals.get(entry.getKey()).toString());
-            bpbean.setCurrentYearBE(majorCodeAndBEMap.get(entry.getKey()) == null ? BigDecimal.ZERO.setScale(2).toString()
-                    : majorCodeAndBEMap.get(entry.getKey()).toString());
-            bpbean.setReappropriation(majorCodeAndAppropriationMap.get(entry.getKey()) == null ? BigDecimal.ZERO.setScale(2)
-                    .toString() : majorCodeAndAppropriationMap.get(entry.getKey()).toString());
-            bpbean.setTotal(
-                    new BigDecimal(bpbean.getCurrentYearBE()).add(new BigDecimal(bpbean.getReappropriation())).toString());
-            bpbean.setAnticipatory(majorCodeAndAnticipatoryMap.get(entry.getKey()) == null ? BigDecimal.ZERO.setScale(2)
-                    .toString() : majorCodeAndAnticipatoryMap.get(entry.getKey()).toString());
+            bpbean.setCurrentYearActuals(
+                    majorCodeAndCurrentActuals.get(entry.getKey()) == null ? BigDecimal.ZERO.setScale(2).toString()
+                            : majorCodeAndCurrentActuals.get(entry.getKey()).toString());
+            bpbean.setPreviousYearActuals(
+                    majorCodeAndPreviousActuals.get(entry.getKey()) == null ? BigDecimal.ZERO.setScale(2).toString()
+                            : majorCodeAndPreviousActuals.get(entry.getKey()).toString());
+            bpbean.setTwoPreviousYearActuals(majorCodeAndBeforePreviousActuals.get(entry.getKey()) == null
+                    ? BigDecimal.ZERO.setScale(2).toString()
+                    : majorCodeAndBeforePreviousActuals.get(entry.getKey()).toString());
+            bpbean.setCurrentYearBE(majorCodeAndBEMap.get(entry.getKey()) == null
+                    ? BigDecimal.ZERO.setScale(2).toString() : majorCodeAndBEMap.get(entry.getKey()).toString());
+            bpbean.setReappropriation(
+                    majorCodeAndAppropriationMap.get(entry.getKey()) == null ? BigDecimal.ZERO.setScale(2).toString()
+                            : majorCodeAndAppropriationMap.get(entry.getKey()).toString());
+            bpbean.setTotal(new BigDecimal(bpbean.getCurrentYearBE()).add(new BigDecimal(bpbean.getReappropriation()))
+                    .toString());
+            bpbean.setAnticipatory(
+                    majorCodeAndAnticipatoryMap.get(entry.getKey()) == null ? BigDecimal.ZERO.setScale(2).toString()
+                            : majorCodeAndAnticipatoryMap.get(entry.getKey()).toString());
             bpbean.setProposedRE(majorCodeAndOriginalMap.get(entry.getKey()) == null ? BigDecimal.ZERO.setScale(2)
                     : majorCodeAndOriginalMap.get(entry.getKey()));
             bpbean.setProposedBE(majorCodeAndBENextYrMap.get(entry.getKey()) == null ? BigDecimal.ZERO.setScale(2)
                     : majorCodeAndBENextYrMap.get(entry.getKey()));
             bpbean.setApprovedRE(majorCodeAndApprovedMap.get(entry.getKey()) == null ? BigDecimal.ZERO.setScale(2)
                     : majorCodeAndApprovedMap.get(entry.getKey()));
-            bpbean.setApprovedBE(majorCodeAndBENextYrApprovedMap.get(entry.getKey()) == null ? BigDecimal.ZERO.setScale(2)
-                    : majorCodeAndBENextYrApprovedMap.get(entry.getKey()));
+            bpbean.setApprovedBE(majorCodeAndBENextYrApprovedMap.get(entry.getKey()) == null
+                    ? BigDecimal.ZERO.setScale(2) : majorCodeAndBENextYrApprovedMap.get(entry.getKey()));
             bpBeanList.add(bpbean);
 
             computeTotal(bpbeanTotal, bpbean);
@@ -748,25 +708,24 @@ public class BudgetProposalAction extends BaseFormAction {
         final Position pos = getPosition();
 
         final CFinancialYear financialYear = topBudget.getFinancialYear();
-        final CFinancialYear lastFinancialYearByDate = getFinancialYearDAO().getPreviousFinancialYearByDate(
-                financialYear.getStartingDate());
-        final CFinancialYear beforeLastFinancialYearByDate = null;// getFinancialYearDAO().getTwoPreviousYearByDate(financialYear.getStartingDate());
+        final CFinancialYear lastFinancialYearByDate = getFinancialYearDAO()
+                .getPreviousFinancialYearByDate(financialYear.getStartingDate());
+        final CFinancialYear beforeLastFinancialYearByDate = getFinancialYearDAO()
+                .getTwoPreviousYearByDate(financialYear.getStartingDate());
 
-        final List<Object[]> resultCurrentActuals = budgetDetailService.fetchActualsForFinYear(financialYear, mandatoryFields,
-                topBudget, null, asOndate, budgetDetail.getExecutingDepartment().getId().intValue(), budgetDetail
-                        .getFunction().getId(),
-                excludelist);
+        final List<Object[]> resultCurrentActuals = budgetDetailService.fetchActualsForFinYear(financialYear,
+                mandatoryFields, topBudget, null, asOndate, budgetDetail.getExecutingDepartment().getId().intValue(),
+                budgetDetail.getFunction().getId(), excludelist);
         addToMapStringBigDecimal(resultCurrentActuals, budgetDetailIdsAndAmount);
 
         final List<Object[]> resultPreviousActuals = budgetDetailService.fetchActualsForFinYear(lastFinancialYearByDate,
-                mandatoryFields, topBudget, null, null, budgetDetail.getExecutingDepartment().getId().intValue(), budgetDetail
-                        .getFunction().getId(),
-                excludelist);
+                mandatoryFields, topBudget, null, null, budgetDetail.getExecutingDepartment().getId().intValue(),
+                budgetDetail.getFunction().getId(), excludelist);
         addToMapStringBigDecimal(resultPreviousActuals, previousYearBudgetDetailIdsAndAmount);
 
-        final List<Object[]> resultTwoPreviousActuals = budgetDetailService.fetchActualsForFinYear(beforeLastFinancialYearByDate,
-                mandatoryFields, topBudget, null, null, budgetDetail.getExecutingDepartment().getId().intValue(), budgetDetail
-                        .getFunction().getId(),
+        final List<Object[]> resultTwoPreviousActuals = budgetDetailService.fetchActualsForFinYear(
+                beforeLastFinancialYearByDate, mandatoryFields, topBudget, null, null,
+                budgetDetail.getExecutingDepartment().getId().intValue(), budgetDetail.getFunction().getId(),
                 excludelist);
         addToMapStringBigDecimal(resultTwoPreviousActuals, twopreviousYearBudgetDetailIdsAndAmount);
 
@@ -774,8 +733,8 @@ public class BudgetProposalAction extends BaseFormAction {
                 budgetDetail.getFunction(), pos);
         addToMapStringBigDecimal(resultUniqueNoBE, uniqueNoAndBEMap);
 
-        final List<Object[]> resultUniqueNoAppr = budgetDetailService.fetchUniqueNoAndApprAmount(topBudget, budgetDetail,
-                budgetDetail.getFunction(), pos);
+        final List<Object[]> resultUniqueNoAppr = budgetDetailService.fetchUniqueNoAndApprAmount(topBudget,
+                budgetDetail, budgetDetail.getFunction(), pos);
         addToMapStringBigDecimal(resultUniqueNoAppr, uniqueNoAndApprMap);
 
         for (final Map.Entry<String, String> entry : majorCodeAndNameMap.entrySet()) {
@@ -787,7 +746,7 @@ public class BudgetProposalAction extends BaseFormAction {
             for (final BudgetDetail bd : savedbudgetDetailList)
                 if (entry.getKey().equals(bd.getBudgetGroup().getMinCode().getMajorCode())) {
                     detailExist = true;
-                    if (headerAdded == false) {
+                    if (!headerAdded) {
                         bpBeanList.add(new BudgetProposalBean(entry.getValue(), HEADING, formValue));
                         headerAdded = true;
                     }
@@ -819,18 +778,18 @@ public class BudgetProposalAction extends BaseFormAction {
         bpbean.setFunction(functionMap.get(bd.getFunction().getId()).getName());
         bpbean.setBudgetGroup(budgetGroupMap.get(bd.getBudgetGroup().getId()).getName());
         bpbean.setExecutingDepartment(deptMap.get(bd.getExecutingDepartment().getId()).getCode());
-        bpbean.setPreviousYearActuals(previousYearBudgetDetailIdsAndAmount.get(bd.getUniqueNo()) == null ? BigDecimal.ZERO
-                .setScale(2).toString() : previousYearBudgetDetailIdsAndAmount.get(bd.getUniqueNo()).toString());
-        bpbean.setTwoPreviousYearActuals(twopreviousYearBudgetDetailIdsAndAmount.get(bd.getUniqueNo()) == null ? BigDecimal.ZERO
-                .setScale(2).toString() : twopreviousYearBudgetDetailIdsAndAmount.get(bd.getUniqueNo()).toString());
-        bpbean.setCurrentYearActuals(budgetDetailIdsAndAmount.get(bd.getUniqueNo()) == null ? BigDecimal.ZERO.setScale(2)
-                .toString() : budgetDetailIdsAndAmount.get(bd.getUniqueNo()).toString());
+        bpbean.setPreviousYearActuals(previousYearBudgetDetailIdsAndAmount.get(bd.getUniqueNo()) == null
+                ? BigDecimal.ZERO.setScale(2).toString()
+                : previousYearBudgetDetailIdsAndAmount.get(bd.getUniqueNo()).toString());
+        bpbean.setTwoPreviousYearActuals(twopreviousYearBudgetDetailIdsAndAmount.get(bd.getUniqueNo()) == null
+                ? BigDecimal.ZERO.setScale(2).toString()
+                : twopreviousYearBudgetDetailIdsAndAmount.get(bd.getUniqueNo()).toString());
+        bpbean.setCurrentYearActuals(budgetDetailIdsAndAmount.get(bd.getUniqueNo()) == null
+                ? BigDecimal.ZERO.setScale(2).toString() : budgetDetailIdsAndAmount.get(bd.getUniqueNo()).toString());
         final BigDecimal lastBEAmount = uniqueNoAndBEMap.get(bd.getUniqueNo()) == null ? BigDecimal.ZERO.setScale(2)
-                : uniqueNoAndBEMap
-                        .get(bd.getUniqueNo());
-        final BigDecimal approvedReAppropriationsTotal = uniqueNoAndApprMap.get(bd.getUniqueNo()) == null ? BigDecimal.ZERO
-                .setScale(2)
-                : uniqueNoAndApprMap.get(bd.getUniqueNo());
+                : uniqueNoAndBEMap.get(bd.getUniqueNo());
+        final BigDecimal approvedReAppropriationsTotal = uniqueNoAndApprMap.get(bd.getUniqueNo()) == null
+                ? BigDecimal.ZERO.setScale(2) : uniqueNoAndApprMap.get(bd.getUniqueNo());
         bpbean.setCurrentYearBE(lastBEAmount.toString());
         bpbean.setReappropriation(approvedReAppropriationsTotal.toString());
         bpbean.setTotal(lastBEAmount.add(approvedReAppropriationsTotal).toString());
@@ -880,8 +839,8 @@ public class BudgetProposalAction extends BaseFormAction {
     private void loadApproverUser(final List<BudgetDetail> budgetDetailList) {
         if (LOGGER.isInfoEnabled())
             LOGGER.info("Starting loadApproverUser.....");
-        final Map<String, Object> map = voucherService.getDesgBYPassingWfItem("BudgetDetail.nextDesg", null, budgetDetail
-                .getExecutingDepartment().getId().intValue());
+        final Map<String, Object> map = voucherService.getDesgBYPassingWfItem("BudgetDetail.nextDesg", null,
+                budgetDetail.getExecutingDepartment().getId().intValue());
         addDropdownData("departmentList", masterDataCache.get("egi-department"));
         addDropdownData("designationList", Collections.EMPTY_LIST);
         addDropdownData("userList", Collections.EMPTY_LIST);
@@ -913,7 +872,8 @@ public class BudgetProposalAction extends BaseFormAction {
 
         addDropdownData("designationList", (List<Designation>) map.get("designationList"));
         if (bDefaultDeptId && !dName.equals("")) {
-            final Department dept = (Department) persistenceService.find("from Department where deptName like '%" + dName + "' ");
+            final Department dept = (Department) persistenceService
+                    .find("from Department where deptName like '%" + dName + "' ");
             defaultDept = dept.getId().intValue();
         }
         wfitemstate = map.get("wfitemstate") != null ? map.get("wfitemstate").toString() : "";
@@ -925,8 +885,8 @@ public class BudgetProposalAction extends BaseFormAction {
         return consolidatedScreen;
     }
 
-    public void setConsolidatedScreen(final boolean consolidatedScreen) {
-        this.consolidatedScreen = consolidatedScreen;
+    public void setConsolidatedScreen(final boolean consolidated) {
+        consolidatedScreen = consolidated;
     }
 
     public boolean isAllfunctionsArrived() {
@@ -961,8 +921,7 @@ public class BudgetProposalAction extends BaseFormAction {
         this.actionName = actionName;
     }
 
-    public void setBudgetWorkflowService(
-            final WorkflowService<Budget> budgetWorkflowService) {
+    public void setBudgetWorkflowService(final WorkflowService<Budget> budgetWorkflowService) {
         this.budgetWorkflowService = budgetWorkflowService;
     }
 
@@ -990,31 +949,36 @@ public class BudgetProposalAction extends BaseFormAction {
     void computeTotal(final BudgetProposalBean bpbeanTotal, final BudgetProposalBean bpbean) {
         if (LOGGER.isInfoEnabled())
             LOGGER.info("Starting computeTotal................");
-        bpbeanTotal.setPreviousYearActuals(bpbeanTotal.getPreviousYearActuals() == null ? bpbean.getPreviousYearActuals()
-                : new BigDecimal(bpbeanTotal.getPreviousYearActuals()).add(new BigDecimal(bpbean.getPreviousYearActuals()))
-                        .toString());
-        bpbeanTotal.setTwoPreviousYearActuals(bpbeanTotal.getTwoPreviousYearActuals() == null ? bpbean
-                .getTwoPreviousYearActuals() : new BigDecimal(bpbeanTotal.getTwoPreviousYearActuals()).add(
-                        new BigDecimal(bpbean.getTwoPreviousYearActuals())).toString());
+        bpbeanTotal
+                .setPreviousYearActuals(bpbeanTotal.getPreviousYearActuals() == null ? bpbean.getPreviousYearActuals()
+                        : new BigDecimal(bpbeanTotal.getPreviousYearActuals())
+                                .add(new BigDecimal(bpbean.getPreviousYearActuals())).toString());
+        bpbeanTotal.setTwoPreviousYearActuals(
+                bpbeanTotal.getTwoPreviousYearActuals() == null ? bpbean.getTwoPreviousYearActuals()
+                        : new BigDecimal(bpbeanTotal.getTwoPreviousYearActuals())
+                                .add(new BigDecimal(bpbean.getTwoPreviousYearActuals())).toString());
         bpbeanTotal.setCurrentYearActuals(bpbeanTotal.getCurrentYearActuals() == null ? bpbean.getCurrentYearActuals()
-                : new BigDecimal(bpbeanTotal.getCurrentYearActuals()).add(new BigDecimal(bpbean.getCurrentYearActuals()))
+                : new BigDecimal(bpbeanTotal.getCurrentYearActuals())
+                        .add(new BigDecimal(bpbean.getCurrentYearActuals())).toString());
+        bpbeanTotal.setCurrentYearBE(bpbeanTotal.getCurrentYearBE() == null ? bpbean.getCurrentYearBE()
+                : new BigDecimal(bpbeanTotal.getCurrentYearBE()).add(new BigDecimal(bpbean.getCurrentYearBE()))
                         .toString());
-        bpbeanTotal.setCurrentYearBE(bpbeanTotal.getCurrentYearBE() == null ? bpbean.getCurrentYearBE() : new BigDecimal(
-                bpbeanTotal.getCurrentYearBE()).add(new BigDecimal(bpbean.getCurrentYearBE())).toString());
-        bpbeanTotal.setReappropriation(bpbeanTotal.getReappropriation() == null ? bpbean.getReappropriation() : new BigDecimal(
-                bpbeanTotal.getReappropriation()).add(new BigDecimal(bpbean.getReappropriation())).toString());
-        bpbeanTotal.setTotal(bpbeanTotal.getTotal() == null ? bpbean.getTotal() : new BigDecimal(bpbeanTotal.getTotal()).add(
-                new BigDecimal(bpbean.getTotal())).toString());
-        bpbeanTotal.setAnticipatory(bpbeanTotal.getAnticipatory() == null ? bpbean.getAnticipatory() : new BigDecimal(
-                bpbeanTotal.getAnticipatory()).add(new BigDecimal(bpbean.getAnticipatory())).toString());
-        bpbeanTotal.setProposedRE(bpbeanTotal.getProposedRE() == null ? bpbean.getProposedRE() : bpbeanTotal.getProposedRE()
-                .add(bpbean.getProposedRE()).setScale(2));
-        bpbeanTotal.setProposedBE(bpbeanTotal.getProposedBE() == null ? bpbean.getProposedBE() : bpbeanTotal.getProposedBE()
-                .add(bpbean.getProposedBE()).setScale(2));
-        bpbeanTotal.setApprovedRE(bpbeanTotal.getApprovedRE() == null ? bpbean.getApprovedRE() : bpbeanTotal.getApprovedRE()
-                .add(bpbean.getApprovedRE()).setScale(2));
-        bpbeanTotal.setApprovedBE(bpbeanTotal.getApprovedBE() == null ? bpbean.getApprovedBE() : bpbeanTotal.getApprovedBE()
-                .add(bpbean.getApprovedBE()).setScale(2));
+        bpbeanTotal.setReappropriation(bpbeanTotal.getReappropriation() == null ? bpbean.getReappropriation()
+                : new BigDecimal(bpbeanTotal.getReappropriation()).add(new BigDecimal(bpbean.getReappropriation()))
+                        .toString());
+        bpbeanTotal.setTotal(bpbeanTotal.getTotal() == null ? bpbean.getTotal()
+                : new BigDecimal(bpbeanTotal.getTotal()).add(new BigDecimal(bpbean.getTotal())).toString());
+        bpbeanTotal.setAnticipatory(bpbeanTotal.getAnticipatory() == null ? bpbean.getAnticipatory()
+                : new BigDecimal(bpbeanTotal.getAnticipatory()).add(new BigDecimal(bpbean.getAnticipatory()))
+                        .toString());
+        bpbeanTotal.setProposedRE(bpbeanTotal.getProposedRE() == null ? bpbean.getProposedRE()
+                : bpbeanTotal.getProposedRE().add(bpbean.getProposedRE()).setScale(2));
+        bpbeanTotal.setProposedBE(bpbeanTotal.getProposedBE() == null ? bpbean.getProposedBE()
+                : bpbeanTotal.getProposedBE().add(bpbean.getProposedBE()).setScale(2));
+        bpbeanTotal.setApprovedRE(bpbeanTotal.getApprovedRE() == null ? bpbean.getApprovedRE()
+                : bpbeanTotal.getApprovedRE().add(bpbean.getApprovedRE()).setScale(2));
+        bpbeanTotal.setApprovedBE(bpbeanTotal.getApprovedBE() == null ? bpbean.getApprovedBE()
+                : bpbeanTotal.getApprovedBE().add(bpbean.getApprovedBE()).setScale(2));
         bpbeanTotal.setRowType(TOTAL);
         bpbeanTotal.setBudgetGroup("TOTAL");
         if (LOGGER.isInfoEnabled())
@@ -1027,150 +991,96 @@ public class BudgetProposalAction extends BaseFormAction {
         // Only save the items
         if (LOGGER.isDebugEnabled())
             LOGGER.debug("Stating updation .....");
-        if (approverUserId != null && approverUserId != -1)
+        if ((approverUserId != null) && (approverUserId != -1))
             userId = approverUserId;
         else
             userId = ApplicationThreadLocals.getUserId().intValue();
+        for (final BudgetProposalBean bpBean : bpBeanList) {
+            if ((bpBean == null) || (bpBean.getId() == null))
+                continue;
+            budgetDetail = budgetDetailService.find("from BudgetDetail where id=?", bpBean.getId());
+            break;
+        }
+        final List<Assignment> assignment = assignmentService.findAllAssignmentsByHODDeptAndDates(
+                budgetDetail.getExecutingDepartment().getId(), budgetDetail.getBudget().getAsOnDate());
+        if (!assignment.isEmpty())
+            approverPositionId = assignment.get(0).getPosition().getId();
+        populateWorkflowBean();
 
-        topBudget = budgetService.find("from Budget where id=?", topBudget.getId());
-        final Position positionByUserId = eisCommonService.getPositionByUserId(userId.longValue());
-        final PersonalInformation empForCurrentUser = budgetDetailService.getEmpForCurrentUser();
-        String name = "";
+        eisCommonService.getPositionByUserId(userId.longValue());
+        final Employee empForCurrentUser = employeeService.getEmployeeById(userId.longValue());
         if (empForCurrentUser != null)
-            name = empForCurrentUser.getName();
-        if (name == null)
-            name = empForCurrentUser.getEmployeeFirstName();
+            empForCurrentUser.getName();
 
-        if (actionName.contains("save")) {
-            if (consolidatedScreen)
-                save(BigDecimal.valueOf(1000));
-            else
-                save(null);
-            addActionMessage("Budget/BudgetDetails Saved Succesfully");
+        saveWithForward(actionName, assignment);
 
-        }
-        // Save and Push the items
-        else if (actionName.contains("forward")) {
-            final boolean hod = isHOD();
-            if (consolidatedScreen || hod) {
-                if (hod)
-                    save(null);
-                else
-                    save(BigDecimal.valueOf(1000));
-                topBudget.transition(true).withStateValue("Forwarded by " + name).withOwner(positionByUserId)
-                        .withComments(comment);
-
-            } else {
-
-                saveWithForward(positionByUserId, name, hod);
-                if (isNextUserHOD(approverUserId) || hod)
-                    topBudget.transition(true).withStateValue("Forwarded by " + name).withOwner(positionByUserId)
-                            .withComments(comment);
-
-            }
-            addActionMessage("Budget/BudgetDetails Forwarded Succesfully to "
-                    + budgetService.getEmployeeNameAndDesignationForPosition(positionByUserId));
-
-        }
-        // Final approval
-        else if (actionName.contains("approve")) {
-            save(BigDecimal.valueOf(1000));
-            topBudget.transition(true).withStateValue("END").withOwner(positionByUserId).withComments(comment);
-            addActionMessage("Budget/BudgetDetails Approved Succesfully ");
-        }
-        budgetService.persist(topBudget);
         if (LOGGER.isDebugEnabled())
             LOGGER.debug("Completed updation .....");
         return "message";
     }
 
-    private void save(final BigDecimal multiplicationFactor) {
-        String columntoupdate = "originalAmount";
-        if (multiplicationFactor != null) {
-            columntoupdate = "approvedAmount";
-        }
-        final String sql = "update egf_budgetdetail set " + columntoupdate + "=:amount,document_Number=:docNo where id=:id";
-        String commentsql = "";
-        if (isHOD())
-            commentsql = "update eg_wf_states set  text1=:text1, value='END' where id=(select state_id from egf_budgetdetail where  id=:id)";
-        else
-            commentsql = "update eg_wf_states set  text1=:text1 where id=(select state_id from egf_budgetdetail where  id=:id)";
-        final SQLQuery updateQuery = persistenceService.getSession().createSQLQuery(sql);
-        final SQLQuery updateCommentQuery = persistenceService.getSession().createSQLQuery(commentsql);
-        int i = 0;
-
-        for (final BudgetProposalBean bpBean : bpBeanList) {
-
-            if (bpBean == null || bpBean.getId() == null)
-                continue;
-            if (multiplicationFactor != null)
-                updateQuery.setBigDecimal("amount", bpBean.getApprovedRE().multiply(multiplicationFactor));
-            else
-                updateQuery.setBigDecimal("amount", bpBean.getProposedRE());
-
-            updateQuery.setString("docNo", bpBean.getDocumentNumber() == null ? null : bpBean.getDocumentNumber().toString());
-            updateQuery.setLong("id", bpBean.getId());
-            updateQuery.executeUpdate();
-            if (multiplicationFactor != null)
-                updateQuery.setBigDecimal("amount", bpBean.getApprovedBE().multiply(multiplicationFactor));
-            else
-                updateQuery.setBigDecimal("amount", bpBean.getProposedBE());
-            updateQuery.setLong("id", bpBean.getNextYrId());
-            updateQuery.executeUpdate();
-            updateCommentQuery.setString("text1", bpBean.getRemarks());
-            updateCommentQuery.setLong("id", bpBean.getId());
-            updateCommentQuery.executeUpdate();
-
-            i++;
-            if (LOGGER.isDebugEnabled())
-                LOGGER.debug("Updated  " + i + "record.....");
-            if (i % 10 == 0) {
-                persistenceService.getSession().flush();
-                if (LOGGER.isDebugEnabled())
-                    LOGGER.debug("flushed for " + i + "record.....");
-
-            }
-
-        }
-        persistenceService.getSession().flush();
-        if (LOGGER.isDebugEnabled())
-            LOGGER.debug("Completed Save .....");
-    }
-
-    private void saveWithForward(final Position pos, final String name, final boolean hod) {
+    private void saveWithForward(final String actionName, final List<Assignment> assignment) {
 
         BudgetDetail bd = null;
-        BudgetDetail nextYearBd = null;
-        String stateString = "Forwarded by " + name;
+
         int i = 0;
-        if (hod)
-            stateString = "END";
+
         for (final BudgetProposalBean bpBean : bpBeanList) {
-            if (bpBean == null || bpBean.getId() == null)
+            if ((bpBean == null) || (bpBean.getId() == null))
                 continue;
             bd = budgetDetailService.find("from BudgetDetail where id=?", bpBean.getId());
             bd.setOriginalAmount(bpBean.getProposedRE());
             if (bpBean.getDocumentNumber() != null)
                 bd.setDocumentNumber(bpBean.getDocumentNumber());
-            bd.transition(true).withStateValue(stateString).withOwner(pos).withComments(bpBean.getRemarks());
+
+            bd = budgetDetailService.transitionWorkFlow(bd, workflowBean);
+            budgetDetailService.applyAuditing(bd.getState());
             budgetDetailService.persist(bd);
-
-            nextYearBd = budgetDetailService.find("from BudgetDetail where id=?", bpBean.getNextYrId());
-            nextYearBd.setOriginalAmount(bpBean.getProposedBE());
-            nextYearBd.transition(true).withStateValue(stateString).withOwner(pos).withComments(bpBean.getRemarks());
-            budgetDetailService.persist(nextYearBd);
-            if (LOGGER.isDebugEnabled())
-                LOGGER.debug("Updated  " + i + "record.....");
-            i++;
-            if (i % 10 == 0) {
-                persistenceService.getSession().flush();
-                if (LOGGER.isDebugEnabled())
-                    LOGGER.debug("flushed for " + i + "record.....");
-            }
-
         }
+        // Save and Push the items
+        if (actionName.contains("Forward")) {
+            if (!assignment.isEmpty())
+                addActionMessage(getText("budgetdetail.forward",
+                        new String[] { assignment.get(0).getEmployee().getName() }));
+            else
+                throw new ValidationException(StringUtils.EMPTY, "Approver doesn't exists for the selected department");
+        }
+        // Final approval
+        else if (actionName.contains("Verify")) {
+            for (final BudgetProposalBean bp : bpBeanList) {
+                if ((bp == null) || (bp.getId() == null))
+                    continue;
+                budgetDetail = budgetDetailService.find("from BudgetDetail where id=?", bp.getNextYrId());
+                budgetDetail.setStatus(egwStatusHibernateDAO.getStatusByModuleAndCode(FinancialConstants.BUDGETDETAIL,
+                        FinancialConstants.WORKFLOW_STATE_APPROVED));
+                budgetDetailService.persist(budgetDetail);
+            }
+            addActionMessage(getText("budgetdetail.approve"));
+        } else if (actionName.contains("Cancel"))
+            addActionMessage(getText("budgetdetail.cancel"));
+        else {
+            final Assignment initiator = budgetDetailService.getWorkflowInitiator(budgetDetail);
+            workflowBean.setApproverPositionId(initiator.getPosition().getId());
+            addActionMessage(getText("budgetdetail.reject",
+                    new String[] { initiator.getEmployee().getName() }));
+        }
+
         if (LOGGER.isDebugEnabled())
-            LOGGER.debug("Completed saveWithForward .....");
+            LOGGER.debug("Updated  " + i + "record.....");
+        i++;
+        if ((i % 10) == 0) {
+            persistenceService.getSession().flush();
+            if (LOGGER.isDebugEnabled())
+                LOGGER.debug("flushed for " + i + "record.....");
+        }
+
+    }
+
+    protected void populateWorkflowBean() {
+        workflowBean.setApproverPositionId(approverPositionId);
+        workflowBean.setApproverComments(approverComments);
+        workflowBean.setWorkFlowAction(actionName);
+        workflowBean.setCurrentState(currentState);
     }
 
     public String modifyList() {
@@ -1180,23 +1090,20 @@ public class BudgetProposalAction extends BaseFormAction {
         if (isHOD())
             allfunctionsArrived = validateForAllFunctionsMappedForDept(topBudget, getPosition());
 
-        return "detailList";
+        return Constants.DETAILLIST;
 
     }
 
     private boolean isHOD() {
-        // TODO: Now employee is extending user so passing userid to get assingment -- changes done by Vaibhav
-        final Assignment empAssignment = eisCommonService.getLatestAssignmentForEmployeeByToDate(
-                ApplicationThreadLocals.getUserId(),
-                new Date());
+        final Assignment empAssignment = eisCommonService
+                .getLatestAssignmentForEmployeeByToDate(ApplicationThreadLocals.getUserId(), new Date());
         if (empAssignment.getDesignation().getName().equalsIgnoreCase("assistant")) {
             asstFMU = true;
-            final BudgetDetail approvedBd = (BudgetDetail) persistenceService.find(
-                    " from  BudgetDetail where budget=? and approvedAmount>0 ", topBudget);
-            if (approvedBd != null)
-                updateApprovedRE = false;
-            else
-                updateApprovedRE = true;
+            final BudgetDetail approvedBd = (BudgetDetail) persistenceService
+                    .find(" from  BudgetDetail where budget=? and approvedAmount>0 ", topBudget);
+            if (approvedBd != null) {
+            } else {
+            }
         } else if (empAssignment.getDesignation().getName().equalsIgnoreCase("CHIEF ACCOUNTS OFFICER"))
             asstFMU = true;
 
@@ -1205,28 +1112,19 @@ public class BudgetProposalAction extends BaseFormAction {
 
     public Position getPosition() throws ApplicationRuntimeException {
         Position pos;
-        // TODO: Now employee is extending user so passing userid to get assingment -- changes done by Vaibhav
         pos = eisCommonService.getPrimaryAssignmentPositionForEmp(ApplicationThreadLocals.getUserId());
         return pos;
     }
 
-    private boolean isNextUserHOD(final Integer approverUserId) {
-        final Assignment empAssignment = eisCommonService
-                .getLatestAssignmentForEmployeeByToDate(approverUserId.longValue(), new Date());
-        return eisCommonService.isHod(empAssignment.getId());
-    }
-
     private boolean validateForAllFunctionsMappedForDept(final Budget topBudget, final Position position) {
         final BudgetDetail bd = budgetDetailService.find("from BudgetDetail  where budget.id=?", topBudget.getId());
-        final String Query = "select distinct(f.name) as functionid from eg_dept_functionmap m,function f where departmentid=" +
-                bd.getExecutingDepartment().getId() + " and f.id= m.functionid and m.budgetaccount_Type='"
-                + budgetDetailHelper.accountTypeForFunctionDeptMap(topBudget.getName()) + "'" +
-                " minus " +
-                " select distinct(f.name) as functionid from egf_budgetdetail bd,eg_wf_states s,function f where bd.budget="
+        final String Query = "select distinct(f.name) as functionid from eg_dept_functionmap m,function f where departmentid="
+                + bd.getExecutingDepartment().getId() + " and f.id= m.functionid and m.budgetaccount_Type='"
+                + budgetDetailHelper.accountTypeForFunctionDeptMap(topBudget.getName()) + "'" + " minus "
+                + " select distinct(f.name) as functionid from egf_budgetdetail bd,eg_wf_states s,function f where bd.budget="
                 + topBudget.getId() + " and bd.state_id=s.id and s.owner=" + position.getId()
                 + " and bd.function=f.id order by functionid";
-        final Query functionsNotUsed = persistenceService.getSession()
-                .createSQLQuery(Query);
+        final Query functionsNotUsed = persistenceService.getSession().createSQLQuery(Query);
         final List<String> notUsedList = functionsNotUsed.list();
 
         if (notUsedList.size() > 0) {
@@ -1239,15 +1137,8 @@ public class BudgetProposalAction extends BaseFormAction {
             return true;
     }
 
-    public List<WorkflowAction> getValidActions() {
-        List<WorkflowAction> validButtons = null;
-        validButtons = budgetWorkflowService.getValidActions(getTopBudget());
-        return validButtons;
-
-    }
-
     public String capitalize(final String value) {
-        if (value == null || value.length() == 0)
+        if ((value == null) || (value.length() == 0))
             return value;
         return value.substring(0, 1).toUpperCase() + value.substring(1).toLowerCase();
     }
@@ -1261,107 +1152,20 @@ public class BudgetProposalAction extends BaseFormAction {
         return "";
     }
 
-    @Action(value = "/budget/budgetProposal-generatePdf")
-    public String generatePdf() throws Exception {
-        try {
-            bpBeanList = new ArrayList<BudgetProposalBean>();
-            populateBudgetDetailReport();
-            final Map<String, Object> reportParams = new HashMap<String, Object>();
-            reportParams.put("title", getUlbName());
-            reportParams.put("subtitle", getTopBudget().getName() != null ? "Budget-:" + getTopBudget().getName() : "");
-            reportParams.put("amount", isConsolidatedScreen() ? "Amount in Thousand" : "Amount in Rupees");
-            reportParams.put("twopreviousfinYearRange", twopreviousfinYearRange);
-            reportParams.put("previousfinYearRange", previousfinYearRange);
-            reportParams.put("currentfinYearRange", currentfinYearRange);
-            reportParams.put("nextfinYearRange", nextfinYearRange);
-            // bpBeanList=new ArrayList<BudgetProposalBean>();
-            String templateName = "";
-            if (isConsolidatedScreen() || isHod()) {
-                templateName = "budgetProposalReport";
-                fileName = "BudgetProposalReport." + FileFormat.PDF.toString().toLowerCase();
-            } else {
-                templateName = "budgetProposalReport-draft";
-                fileName = "BudgetProposalReport-draft." + FileFormat.PDF.toString().toLowerCase();
-            }
-
-            final ReportRequest reportInput = new ReportRequest(templateName, bpBeanList, reportParams);
-            reportInput.setReportFormat(FileFormat.PDF);
-            contentType = ReportViewerUtil.getContentType(FileFormat.PDF);
-            final ReportOutput reportOutput = reportService.createReport(reportInput);
-            if (reportOutput != null && reportOutput.getReportOutputData() != null)
-                inputStream = new ByteArrayInputStream(reportOutput.getReportOutputData());
-        } catch (final Exception e) {
-            LOGGER.error(e, e);
-        }
-        return "reportview";
-        /*
-         * bpBeanList=new ArrayList<BudgetProposalBean>(); populateBudgetDetailReport(); String title=getUlbName() ; String
-         * subtitle=getTopBudget().getName()!=null?"Budget-:"+getTopBudget().getName():""; JasperPrint jasper =
-         * reportHelper.generateBudgetReportForHOD
-         * (bpBeanList,title,subtitle,twopreviousfinYearRange,previousfinYearRange,currentfinYearRange
-         * ,nextfinYearRange,isConsolidatedScreen()); inputStream = reportHelper.exportPdf(inputStream, jasper); return "PDF";
-         */
-    }
-
-    /*
-     * public String generateXls() throws Exception{ //String subtitle="Amount in Rupess"; bpBeanList=new
-     * ArrayList<BudgetProposalBean>(); populateBudgetDetailReport(); String title=getUlbName() ; String
-     * subtitle=getTopBudget().getName()!=null?"Budget-:"+getTopBudget().getName():""; JasperPrint jasper =
-     * reportHelper.generateBudgetReportForHOD
-     * (bpBeanList,title,subtitle,twopreviousfinYearRange,previousfinYearRange,currentfinYearRange
-     * ,nextfinYearRange,isConsolidatedScreen()); inputStream = reportHelper.exportXls(inputStream, jasper); return "XLS"; }
-     */
-
-    @Action(value = "/budget/budgetProposal-generateXls")
-    public String generateXls() {
-        try {
-            bpBeanList = new ArrayList<BudgetProposalBean>();
-            populateBudgetDetailReport();
-            final Map<String, Object> reportParams = new HashMap<String, Object>();
-            reportParams.put("title", getUlbName());
-            reportParams.put("subtitle", getTopBudget().getName() != null ? "Budget-:" + getTopBudget().getName() : "");
-            reportParams.put("amount", isConsolidatedScreen() ? "Amount in Thousand" : "Amount in Rupees");
-            reportParams.put("twopreviousfinYearRange", twopreviousfinYearRange);
-            reportParams.put("previousfinYearRange", previousfinYearRange);
-            reportParams.put("currentfinYearRange", currentfinYearRange);
-            reportParams.put("nextfinYearRange", nextfinYearRange);
-            // bpBeanList=new ArrayList<BudgetProposalBean>();
-            String templateName = "";
-            if (isConsolidatedScreen() || isHod()) {
-                templateName = "budgetProposalReport";
-                fileName = "BudgetProposalReport." + FileFormat.XLS.toString().toLowerCase();
-            } else {
-                templateName = "budgetProposalReport-draft";
-                fileName = "BudgetProposalReport-draft." + FileFormat.XLS.toString().toLowerCase();
-            }
-
-            final ReportRequest reportInput = new ReportRequest(templateName, bpBeanList, reportParams);
-            reportInput.setReportFormat(FileFormat.XLS);
-            contentType = ReportViewerUtil.getContentType(FileFormat.XLS);
-
-            final ReportOutput reportOutput = reportService.createReport(reportInput);
-            if (reportOutput != null && reportOutput.getReportOutputData() != null)
-                inputStream = new ByteArrayInputStream(reportOutput.getReportOutputData());
-        } catch (final Exception e) {
-            LOGGER.error(e, e);
-        }
-
-        return "reportview";
-    }
-
     protected Boolean validateOwner() {
         if (LOGGER.isDebugEnabled())
             LOGGER.debug("validating owner for user " + ApplicationThreadLocals.getUserId());
         List<Position> positionsForUser = null;
-        positionsForUser = eisService.getPositionsForUser(Long.valueOf(ApplicationThreadLocals.getUserId()), new Date());
+        positionsForUser = eisService.getPositionsForUser(Long.valueOf(ApplicationThreadLocals.getUserId()),
+                new Date());
         State state = null;
-        if (factor.equalsIgnoreCase("thousand"))
-            state = (State) persistenceService
-                    .find("select b.state from Budget b where b.id =(select bd.budget.id from BudgetDetail bd where bd.id=?) ",
-                            validId);
+        if (factor.equalsIgnoreCase(bigThousand.toString()))
+            state = (State) persistenceService.find(
+                    "select b.state from Budget b where b.id =(select bd.budget.id from BudgetDetail bd where bd.id=?) ",
+                    validId);
         else
             state = (State) persistenceService.find("select bd.state from BudgetDetail bd where bd.id=? ", validId);
-        if (state != null && positionsForUser.contains(state.getOwnerPosition())) {
+        if ((state != null) && positionsForUser.contains(state.getOwnerPosition())) {
             if (LOGGER.isDebugEnabled())
                 LOGGER.debug("Valid Owner :return true");
             return true;
@@ -1480,8 +1284,7 @@ public class BudgetProposalAction extends BaseFormAction {
         return previuosYearBudgetDetailMap;
     }
 
-    public void setPreviuosYearBudgetDetailMap(
-            final Map<Long, String> previuosYearBudgetDetailMap) {
+    public void setPreviuosYearBudgetDetailMap(final Map<Long, String> previuosYearBudgetDetailMap) {
         this.previuosYearBudgetDetailMap = previuosYearBudgetDetailMap;
     }
 
@@ -1489,8 +1292,7 @@ public class BudgetProposalAction extends BaseFormAction {
         return beforePreviousYearBudgetDetailMap;
     }
 
-    public void setBeforePreviousYearBudgetDetailMap(
-            final Map<Long, String> beforePreviousYearBudgetDetailMap) {
+    public void setBeforePreviousYearBudgetDetailMap(final Map<Long, String> beforePreviousYearBudgetDetailMap) {
         this.beforePreviousYearBudgetDetailMap = beforePreviousYearBudgetDetailMap;
     }
 
@@ -1498,8 +1300,7 @@ public class BudgetProposalAction extends BaseFormAction {
         return budgetDetailIdsAndAmount;
     }
 
-    public void setBudgetDetailIdsAndAmount(
-            final Map<String, BigDecimal> budgetDetailIdsAndAmount) {
+    public void setBudgetDetailIdsAndAmount(final Map<String, BigDecimal> budgetDetailIdsAndAmount) {
         this.budgetDetailIdsAndAmount = budgetDetailIdsAndAmount;
     }
 
@@ -1531,10 +1332,6 @@ public class BudgetProposalAction extends BaseFormAction {
 
     public Integer getDefaultDept() {
         return defaultDept;
-    }
-
-    public Date getHeaderAsOnDate() {
-        return headerAsOnDate = asOndate != null ? asOndate : new Date();
     }
 
     /*
@@ -1677,4 +1474,11 @@ public class BudgetProposalAction extends BaseFormAction {
         this.validId = validId;
     }
 
+    public WorkflowBean getWorkflowBean() {
+        return workflowBean;
+    }
+
+    public void setWorkflowBean(final WorkflowBean workflowBean) {
+        this.workflowBean = workflowBean;
+    }
 }
