@@ -48,7 +48,7 @@ public class WaterTaxConstants {
     public static final String FILESTORE_MODULECODE = "WTMS";
     public static final String MODULE_NAME = "Water Tax Management";
     public static final String PROPERTY_MODULE_NAME = "Property Tax";
-    public static final String  DATAENTRYEDIT ="DATAENTRYEDIT";
+    public static final String DATAENTRYEDIT = "DATAENTRYEDIT";
     public static final String MODULETYPE = "WATERTAXAPPLICATION";
     public static final String DASH_DELIM = "-";
     public static final String APPROVED = "APPROVED";
@@ -81,10 +81,7 @@ public class WaterTaxConstants {
     public static final String REVENUE_WARD = "WARD";
     public static final String SYSTEM = "SYSTEM";
     public static final String REVENUE_HIERARCHY_TYPE = "REVENUE";
-    public static final String  EDITCOLLECTION ="EDITCOLLECTION";
-   
-    
-    
+    public static final String EDITCOLLECTION = "EDITCOLLECTION";
 
     public static final String SMSEMAILTYPENEWCONNFEEPAID = "newconnfeepaid";
     public static final String SMSEMAILTYPEADDCONNFEEPAID = "addconnfeepaid";
@@ -183,20 +180,19 @@ public class WaterTaxConstants {
     public static final String SEARCH_MENUTREE_APPLICATIONTYPE_COLLECTTAX = "COLLECTTAX";
     public static final String APPLICATION_STATUS_CLOSER = "Close Connection By AE";
     public static final String APPLICATION_STATUS_RE_CONN = "ReConnection By AE";
-    
 
     // appconfig key
     public static final String SENDSMSFORWATERTAX = "SENDSMSFORWATERTAX";
     public static final String WATERTAXWORKFLOWDEPARTEMENT = "DEPARTMENTFORWORKFLOW";
     public static final String CLERKDESIGNATIONFORCSCOPERATOR = "CLERKDESIGNATIONFORCSCOPERATOR";
     public static final String SENDEMAILFORWATERTAX = "SENDEMAILFORWATERTAX";
-    public static final String 	DEPTCODEGENBILL = "DEPTCODEFORGENERATEBILL";
+    public static final String DEPTCODEGENBILL = "DEPTCODEFORGENERATEBILL";
     public static final String SERVEICECODEGENBILL = "SERVICECODEFORGENERATEBILL";
     public static final String ESTSERVICECODEGENBILL = "ESTSERVICECODEFORGENERATEBILL";
     public static final String FUNCTIONARYCODEGENBILL = "FUNCTIONARYCODEFORGENERATEBILL";
     public static final String FUNDSOURCEGENBILL = "FUNDSOURCECODEFORGENERATEBILL";
     public static final String FUNDCODEGENBILL = "FUNDCODEFORGENERATEBILL";
-    
+
     public static final String NEWCONNECTIONALLOWEDIFPTDUE = "NEWCONNECTIONALLOWEDIFPTDUE";
     public static final String MULTIPLENEWCONNECTIONFORPID = "MULTIPLENEWCONNECTIONFORPID";
     public static final String DOCUMENTREQUIREDFORBPL = "DOCUMENTREQUIREDFORBPL";
@@ -204,7 +200,7 @@ public class WaterTaxConstants {
     public static final String ROLESFORLOGGEDINUSER = "RolesForSearchWAterTaxConnection";
     public static final String ENABLEDIGITALSIGNATURE = "ENABLEDIGITALSIGNATURE";
     public static final String ENABLEDEMANEDBILLSCHEDULAR = "ENABLEBILLSCHEDULAR";
-    public static final String APPCONFIGVALUEOFENABLED="YES";
+    public static final String APPCONFIGVALUEOFENABLED = "YES";
 
     // this is just another name to new connection
     public static final String PRIMARYCONNECTION = "Primary Connection";
@@ -239,20 +235,17 @@ public class WaterTaxConstants {
     public static final String MASTERSTATUSACTIVE = "ACTIVE";
     public static final String MASTERSTATUSINACTIVE = "IN ACTIVE";
     public static final String COLLECTION_STRING_SERVICE_CODE = "WT";
-    public static final String  GENERATEBILL ="GENERATEBILL";
-    public static final String  PREVIOUS_SECOND_HALF ="Previous 2nd Half";
+    public static final String GENERATEBILL = "GENERATEBILL";
+    public static final String PREVIOUS_SECOND_HALF = "Previous 2nd Half";
 
-    public static final String  DEMANDREASONANDGLCODEMAP ="DemandReasonGlcodeMap";
-    
+    public static final String DEMANDREASONANDGLCODEMAP = "DemandReasonGlcodeMap";
+
     public static final String PAYMENT_TYPE_PARTIALLY = "Partially";
     public static final String PAYMENT_TYPE_FULLY = "Fully";
     public static final String PAYMENT_TYPE_ADVANCE = "Advance";
     public static final String CONTENT_DISPOSITION = "Content-disposition";
     // HashMap map b/n Demand reason string and code
     public static final LinkedHashMap<String, String> NON_METERED_DMDRSN_CODE_MAP = new LinkedHashMap<String, String>() {
-        /**
-         *
-         */
         private static final long serialVersionUID = -9153822216362973956L;
 
         {
@@ -267,13 +260,13 @@ public class WaterTaxConstants {
     public static final String CURRENTYEAR_SECOND_HALF = "Current 2nd Half";
     public static final String GLCODE_FOR_ADVANCE = "3504106";
 
-
-    public static final List<String> ORDERED_DEMAND_RSNS_LIST = Arrays.asList(WATERTAXREASONCODE, DEMANDRSN_CODE_ADVANCE);
+    public static final List<String> ORDERED_DEMAND_RSNS_LIST = Arrays.asList(WATERTAXREASONCODE,
+            DEMANDRSN_CODE_ADVANCE);
 
     // List for GLCodes for Current Taxes
-     
+
     public static final HashMap<String, Integer> DEMAND_REASON_ORDER_MAP = new HashMap<String, Integer>() {
-    private static final long serialVersionUID = -376251525790947906L;
+        private static final long serialVersionUID = -376251525790947906L;
 
         {
             put(WATERTAXREASONCODE, 0);
@@ -286,15 +279,15 @@ public class WaterTaxConstants {
     public static final String MEESEVA_REDIRECT_URL = "/meeseva/generatereceipt?transactionServiceNumber=";
     public static final String USERNAME_ANONYMOUS = "anonymous";
     public static final String USERNAME_MEESEVA = "meeseva";
-    
+
     public static final String PREVIEWWORKFLOWACTION = "Preview";
     public static final String SIGNWORKFLOWACTION = "Sign";
     public static final String WF_PREVIEW_BUTTON = "Preview";
     public static final String WF_SIGN_BUTTON = "Sign";
-    
+
     public static final String CONNECTION_WORK_ORDER = "connectionWorkOrder";
     public static final String SIGNED_DOCUMENT_PREFIX = "SN/";
-    
+
     public static final String MODE = "mode";
     public static final String APPROVAL_POSITION = "approvalPosition";
     public static final String APPROVAL_COMMENT = "approvalComment";
@@ -303,19 +296,21 @@ public class WaterTaxConstants {
     public static final String DIGITAL_SIGNATURE_PENDING = "Digital Signature Pending";
     public static final String WATER_TAP_CONNECTION = "Water Tap Connection";
     public static final String FILE_STORE_ID_APPLICATION_NUMBER = "fileStoreIdApplicationNumber";
-    public static final String[] CREATECONNECTIONDMDDESC = {"Water Security Charges","Water Donation Charges","Water Estimation Charges"};
-    public static final String[] WATERCHARGESDMDDESC = {"Water Charges"};
-    
+    public static final String[] CREATECONNECTIONDMDDESC = { "Water Security Charges", "Water Donation Charges",
+            "Water Estimation Charges" };
+    public static final String[] WATERCHARGESDMDDESC = { "Water Charges" };
+
     public static final String CLOSECONNECTION = "CLOSECONNECTION";
     public static final String APPLICATIONSTATUSOPEN = "Open";
     public static final String APPLICATIONSTATUSCLOSED = "Closed";
     public static final String APPLICATIONSTATUSALL = "All";
-    
+
     public static final String RECONNECTION_ESTIMATION_NOTICE = "ReconnacknowlgementNotice";
     public static final String CLOSURE_ESTIMATION_NOTICE = "CloserConnectionAcknowldgemt";
     public static final String SIGN_ALL = "SIGN_ALL";
-    public static final String  PDFEXTENTION =".pdf";
-    public static final String  APPLICATIONPDFNAME ="application/pdf";
-    public static final String  DOCUMENTNAMEFORBILL ="DemandBill";
+    public static final String PDFEXTENTION = ".pdf";
+    public static final String APPLICATIONPDFNAME = "application/pdf";
+    public static final String DOCUMENTNAMEFORBILL = "DemandBill";
     public static final Integer QUARTZ_BULKBILL_JOBS = 3;
+    public static final String WATERCHARGES_CONSUMERCODE = "consumerCode";
 }

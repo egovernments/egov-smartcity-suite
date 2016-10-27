@@ -40,6 +40,7 @@
 
 package org.egov.wtms.web.controller.reports;
 
+import static org.egov.wtms.utils.constants.WaterTaxConstants.WATERCHARGES_CONSUMERCODE;
 import static java.math.BigDecimal.ZERO;
 import static org.egov.infra.web.utils.WebUtils.toJSON;
 import static org.egov.ptis.constants.PropertyTaxConstants.REVENUE_HIERARCHY_TYPE;
@@ -166,12 +167,12 @@ public class GenerateConnectionBillController {
         generateConnectionBillList = generateConnectionBillService.getBillReportDetails(request.getParameter("zone"),
                 request.getParameter("revenueWard"), request.getParameter("propertyType"),
                 request.getParameter("applicationType"), request.getParameter("connectionType"),
-                request.getParameter("consumerCode"), request.getParameter("houseNumber"),
+                request.getParameter(WATERCHARGES_CONSUMERCODE), request.getParameter("houseNumber"),
                 request.getParameter("assessmentNumber"));
         final long foundRows = generateConnectionBillService.getTotalCountofBills(request.getParameter("zone"),
                 request.getParameter("revenueWard"), request.getParameter("propertyType"),
                 request.getParameter("applicationType"), request.getParameter("connectionType"),
-                request.getParameter("consumerCode"), request.getParameter("houseNumber"),
+                request.getParameter(WATERCHARGES_CONSUMERCODE), request.getParameter("houseNumber"),
                 request.getParameter("assessmentNumber"));
 
         final int count = generateConnectionBillList.size();
@@ -218,7 +219,7 @@ public class GenerateConnectionBillController {
         final List<GenerateConnectionBill> generateConnectionBillList = generateConnectionBillService
                 .getBillReportDetails(request.getParameter("zone"), request.getParameter("revenueWard"),
                         request.getParameter("propertyType"), request.getParameter("applicationType"),
-                        request.getParameter("connectionType"), request.getParameter("consumerCode"),
+                        request.getParameter("connectionType"), request.getParameter(WATERCHARGES_CONSUMERCODE),
                         request.getParameter("houseNumber"), request.getParameter("assessmentNumber"));
 
         if (LOGGER.isDebugEnabled())
@@ -339,7 +340,7 @@ public class GenerateConnectionBillController {
         final List<GenerateConnectionBill> generateConnectionBillList = generateConnectionBillService
                 .getBillReportDetails(request.getParameter("zone"), request.getParameter("revenueWard"),
                         request.getParameter("propertyType"), request.getParameter("applicationType"),
-                        request.getParameter("connectionType"), request.getParameter("consumerCode"),
+                        request.getParameter("connectionType"), request.getParameter(WATERCHARGES_CONSUMERCODE),
                         request.getParameter("houseNumber"), request.getParameter("assessmentNumber"));
         if (LOGGER.isDebugEnabled())
             LOGGER.debug("Number of BIlls : "
