@@ -82,7 +82,6 @@
 			                    <td id="nontenderedmsrowwidth_${item.index }_${index.index }" align="right">${details.workOrderActivity.workOrderMeasurementSheets.get(index.index).width }</td>
 			                    <td id="nontenderedmsrowdepthOrHeight_${item.index }_${index.index }" align="right">${details.workOrderActivity.workOrderMeasurementSheets.get(index.index).depthOrHeight }</td>
 			                    <td id="nontenderedmsrowquantity_${item.index }_${index.index }" align="right">${details.workOrderActivity.workOrderMeasurementSheets.get(index.index).quantity }</td>
-			                    <td id="nontenderedmsrowmbmsPreviousEntry_${item.index }_${index.index }" align="right">${details.workOrderActivity.workOrderMeasurementSheets.get(index.index).cumulativeQuantity }</td>
 			                    <c:if test="${details.workOrderActivity.workOrderMeasurementSheets.get(index.index).measurementSheet.identifier == 'A'}">
 									<c:set var="total" value="${total + details.workOrderActivity.workOrderMeasurementSheets.get(index.index).quantity}" />
 								</c:if>
@@ -95,6 +94,7 @@
 			                    		<c:otherwise>Yes</c:otherwise>
 			                    	</c:choose>
 			                    </td>
+			                    <td id="nontenderedmsrowmbmsPreviousEntry_${item.index }_${index.index }" align="right">${details.workOrderActivity.workOrderMeasurementSheets.get(index.index).cumulativeQuantity }</td>
 			                    <td>
 			                        <form:textarea path="nonTenderedMbDetails[${item.index }].measurementSheets[${index.index }].remarks" id="nonTenderedMbDetails[${item.index }].measurementSheets[${index.index }].remarks" class="form-control text-left patternvalidation runtime-update"
 			                               data-pattern="alphanumeric" maxlength="1024" ></form:textarea>
