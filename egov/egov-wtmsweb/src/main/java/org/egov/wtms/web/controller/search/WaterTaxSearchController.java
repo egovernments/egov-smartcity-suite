@@ -51,11 +51,9 @@ import org.egov.infra.admin.master.entity.Boundary;
 import org.egov.infra.admin.master.entity.City;
 import org.egov.infra.admin.master.entity.Role;
 import org.egov.infra.admin.master.entity.User;
-import org.egov.infra.admin.master.entity.es.CityIndex;
 import org.egov.infra.admin.master.service.BoundaryService;
 import org.egov.infra.admin.master.service.CityService;
 import org.egov.infra.admin.master.service.UserService;
-import org.egov.infra.admin.master.service.es.CityIndexService;
 import org.egov.infra.config.core.ApplicationThreadLocals;
 import org.egov.infra.security.utils.SecurityUtils;
 import org.egov.wtms.entity.es.ConnectionSearchRequest;
@@ -84,9 +82,6 @@ public class WaterTaxSearchController {
     @Autowired
     private WaterTaxUtils waterTaxUtils;
     
-    @Autowired
-    private CityIndexService cityIndexService;
-
     @Autowired
     private SecurityUtils securityUtils;
 

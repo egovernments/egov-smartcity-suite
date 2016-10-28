@@ -39,14 +39,11 @@
  */
 package org.egov.wtms.entity.es;
 
-import static org.egov.infra.utils.ApplicationConstant.ES_DATE_FORMAT;
-import static org.springframework.data.elasticsearch.annotations.DateFormat.date_optional_time;
-import static org.springframework.data.elasticsearch.annotations.FieldIndex.not_analyzed;
-
 import java.util.Date;
 
 import org.egov.infra.config.core.ApplicationThreadLocals;
 import org.springframework.data.annotation.Id;
+import org.springframework.data.elasticsearch.annotations.DateFormat;
 import org.springframework.data.elasticsearch.annotations.Document;
 import org.springframework.data.elasticsearch.annotations.Field;
 import org.springframework.data.elasticsearch.annotations.FieldIndex;
@@ -57,8 +54,8 @@ import com.fasterxml.jackson.annotation.JsonFormat;
 @Document(indexName = "waterconncharges", type = "watercharges_details")
 public class WaterChargeDocument {
 
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = ES_DATE_FORMAT)
-    @Field(type = FieldType.Date, index = not_analyzed, format = date_optional_time, pattern = ES_DATE_FORMAT)
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm'Z'")
+    @Field(type = FieldType.Date, index = FieldIndex.not_analyzed, format = DateFormat.date_optional_time, pattern = "yyyy-MM-dd'T'hh:mm'Z'")
     private Date createdDate;
     /*
      * private GeoPoint wardlocation; private GeoPoint propertylocation;
@@ -467,11 +464,7 @@ public class WaterChargeDocument {
         this.closureType = closureType;
     }
 
-    /*
-     * public Date getCreatedDate() { return createdDate; } public void
-     * setCreatedDate(Date createdDate) { this.createdDate = createdDate; }
-     */
-
+    
     /*
      * public GeoPoint getWardlocation() { return wardlocation; } public void
      * setWardlocation(GeoPoint wardlocation) { this.wardlocation =
@@ -489,7 +482,6 @@ public class WaterChargeDocument {
         private Long waterTaxDue;
         private Long totaldue;
         private String status;
-        private String bpaid;
         private String category;
         private String closureType;
         private String connectiontype;
@@ -575,10 +567,6 @@ public class WaterChargeDocument {
             return this;
         }
 
-        public Builder withBpaid(final String bpaid) {
-            this.bpaid = bpaid;
-            return this;
-        }
 
         public Builder withCategory(final String category) {
             this.category = category;
@@ -715,13 +703,12 @@ public class WaterChargeDocument {
             waterChargeIndex.setWaterTaxDue(waterTaxDue);
             waterChargeIndex.setTotaldue(totaldue);
             waterChargeIndex.setStatus(status);
-            waterChargeIndex.setBpaid(bpaid);
             waterChargeIndex.setCategory(category);
             waterChargeIndex.setClosureType(closureType);
             waterChargeIndex.setConnectiontype(connectiontype);
             waterChargeIndex.setConsumercode(consumercode);
             waterChargeIndex.setConsumername(consumername);
-            // waterChargeIndex.setCreatedDate(createdDate);
+            waterChargeIndex.setCreatedDate(createdDate);
             waterChargeIndex.setCurrentDemand(currentDemand);
             waterChargeIndex.setCurrentDue(currentDue);
             waterChargeIndex.setDistrictname(districtname);

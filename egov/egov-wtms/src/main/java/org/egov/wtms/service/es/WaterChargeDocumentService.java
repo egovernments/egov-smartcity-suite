@@ -120,7 +120,7 @@ public class WaterChargeDocumentService {
         Map<String, Object> cityInfo = cityService.cityDataAsMap();
         WaterChargeDocument  waterChargeIndex = WaterChargeDocument.builder().withZone(assessmentDetails.getBoundaryDetails().getZoneName())
                 .withWard(assessmentDetails.getBoundaryDetails().getWardName())
-                .withAdminward(assessmentDetails.getBoundaryDetails().getWardName())
+                .withAdminward(assessmentDetails.getBoundaryDetails().getAdminWardName())
                 .withDoorno(assessmentDetails.getHouseNo())
                 .withTotaldue(assessmentDetails.getPropertyDetails().getTaxDue().longValue())
                 .withIslegacy(waterConnectionDetails.getLegacy())
@@ -131,7 +131,7 @@ public class WaterChargeDocumentService {
                         ? assessmentDetails.getBoundaryDetails().getLocalityName() : "")
                 .withPropertyid(waterConnectionDetails.getConnection().getPropertyIdentifier())
                 .withApplicationcode(waterConnectionDetails.getApplicationType().getCode())
-                //.withCreatedDate(new Date())
+                .withCreatedDate(waterConnectionDetails.getExecutionDate())
                 .withMobilenumber(mobilNumber)
                 .withStatus(waterConnectionDetails.getConnectionStatus().name())
                 .withDistrictname(defaultString((String) cityInfo.get(CITY_DIST_NAME_KEY)))
