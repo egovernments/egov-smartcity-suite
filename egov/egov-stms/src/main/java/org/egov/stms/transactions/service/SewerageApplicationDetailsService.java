@@ -106,7 +106,7 @@ import org.egov.stms.autonumber.SewerageApplicationNumberGenerator;
 import org.egov.stms.autonumber.SewerageCloseConnectionNoticeNumberGenerator;
 import org.egov.stms.autonumber.SewerageEstimationNumberGenerator;
 import org.egov.stms.autonumber.SewerageWorkOrderNumberGenerator;
-import org.egov.stms.elasticSearch.service.SewerageIndexService;
+import org.egov.stms.service.es.SewerageIndexService;
 import org.egov.stms.masters.entity.enums.SewerageConnectionStatus;
 import org.egov.stms.masters.service.DocumentTypeMasterService;
 import org.egov.stms.notice.entity.SewerageNotice;

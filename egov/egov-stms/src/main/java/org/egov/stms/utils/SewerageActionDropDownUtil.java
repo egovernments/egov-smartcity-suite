@@ -177,8 +177,8 @@ public class SewerageActionDropDownUtil {
 
     public static final SewerageSearchResult getSearchResultWithActions(List<String> roleName, final String status, final SewerageApplicationDetails sewerageApplicationDetails) {
         SewerageSearchResult searchActions = new SewerageSearchResult();
-        //if (status != null && sewerageApplicationDetails != null)
-        //    searchActions.setActions(getActionsByRoles(roleName, status,sewerageApplicationDetails));
+        if (status != null && sewerageApplicationDetails != null)
+            searchActions.setActions(getActionsByRoles(roleName, status,sewerageApplicationDetails));
         return searchActions;
     }
 
