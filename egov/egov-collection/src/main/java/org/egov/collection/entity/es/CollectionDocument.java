@@ -139,7 +139,7 @@ public class CollectionDocument {
     @Field(type = FieldType.String)
     private String consumerCode;
     
-    @Field(type = FieldType.String, index = FieldIndex.not_analyzed)
+    @Field(type = FieldType.String)
     private String revenueWard;
 
 
