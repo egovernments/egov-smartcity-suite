@@ -115,7 +115,7 @@ public class WaterChargeDocument {
     @Field(type = FieldType.String, index = FieldIndex.not_analyzed)
     private String grade;
 
-    @Field(type = FieldType.String, index = FieldIndex.not_analyzed)
+    @Field(type = FieldType.String)
     private String bpaid;
 
     @Field(type = FieldType.String, index = FieldIndex.not_analyzed)
