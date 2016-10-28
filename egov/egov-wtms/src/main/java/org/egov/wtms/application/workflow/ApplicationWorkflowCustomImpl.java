@@ -64,8 +64,8 @@ import org.egov.wtms.application.entity.WaterConnectionDetails;
 import org.egov.wtms.application.repository.WaterConnectionDetailsRepository;
 import org.egov.wtms.application.service.WaterConnectionDetailsService;
 import org.egov.wtms.application.service.WaterConnectionSmsAndEmailService;
-import org.egov.wtms.es.service.WaterChargeIndexService;
 import org.egov.wtms.masters.entity.enums.ConnectionStatus;
+import org.egov.wtms.service.es.WaterChargeDocumentService;
 import org.egov.wtms.utils.PropertyExtnUtils;
 import org.egov.wtms.utils.WaterTaxUtils;
 import org.egov.wtms.utils.constants.WaterTaxConstants;
@@ -104,7 +104,7 @@ public abstract class ApplicationWorkflowCustomImpl implements ApplicationWorkfl
     private WaterTaxUtils waterTaxUtils;
 
     @Autowired
-    private WaterChargeIndexService waterChargeIndexService;
+    private WaterChargeDocumentService waterChargeIndexService;
 
     @Autowired
     private UserService userService;

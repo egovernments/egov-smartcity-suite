@@ -95,8 +95,7 @@ import org.egov.wtms.application.entity.WaterConnection;
 import org.egov.wtms.application.entity.WaterConnectionDetails;
 import org.egov.wtms.application.repository.WaterConnectionDetailsRepository;
 import org.egov.wtms.application.workflow.ApplicationWorkflowCustomDefaultImpl;
-import org.egov.wtms.es.entity.WaterChargeIndex;
-import org.egov.wtms.es.service.WaterChargeIndexService;
+import org.egov.wtms.entity.es.WaterChargeDocument;
 import org.egov.wtms.masters.entity.ApplicationType;
 import org.egov.wtms.masters.entity.DocumentNames;
 import org.egov.wtms.masters.entity.DonationDetails;
@@ -106,6 +105,7 @@ import org.egov.wtms.masters.entity.enums.ConnectionType;
 import org.egov.wtms.masters.service.ApplicationProcessTimeService;
 import org.egov.wtms.masters.service.ApplicationTypeService;
 import org.egov.wtms.masters.service.DocumentNamesService;
+import org.egov.wtms.service.es.WaterChargeDocumentService;
 import org.egov.wtms.utils.PropertyExtnUtils;
 import org.egov.wtms.utils.WaterTaxNumberGenerator;
 import org.egov.wtms.utils.WaterTaxUtils;
@@ -181,7 +181,7 @@ public class WaterConnectionDetailsService {
     private WaterTaxNumberGenerator waterTaxNumberGenerator;
 
     @Autowired
-    private WaterChargeIndexService waterChargeIndexService;
+    private WaterChargeDocumentService waterChargeIndexService;
 
     @Autowired
     private WaterTaxUtils waterTaxUtils;
@@ -706,7 +706,7 @@ public class WaterConnectionDetailsService {
         if (waterConnectionDetails.getLegacy())
             createWaterChargeIndex(waterConnectionDetails, assessmentDetails, amountTodisplayInIndex);
     }
-    public WaterChargeIndex createWaterChargeIndex(final WaterConnectionDetails waterConnectionDetails,
+    public WaterChargeDocument createWaterChargeIndex(final WaterConnectionDetails waterConnectionDetails,
             final AssessmentDetails assessmentDetails, final BigDecimal amountTodisplayInIndex) {
        return  waterChargeIndexService.createWaterChargeIndex(waterConnectionDetails, assessmentDetails, amountTodisplayInIndex);
 

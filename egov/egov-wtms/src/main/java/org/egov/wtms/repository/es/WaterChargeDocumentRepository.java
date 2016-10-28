@@ -37,25 +37,13 @@
  *
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
-package org.egov.wtms.es.repository;
 
-import org.egov.infra.elasticsearch.entity.ApplicationIndex;
-import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.data.jpa.repository.Query;
-import org.springframework.data.repository.query.Param;
-import org.springframework.stereotype.Repository;
+package org.egov.wtms.repository.es;
 
-import java.util.List;
+import org.egov.wtms.entity.es.WaterChargeDocument;
+import org.springframework.data.elasticsearch.repository.ElasticsearchRepository;
 
-@Repository
-public interface ApplicationSearchRepository extends JpaRepository<ApplicationIndex, Long> {
 
-    @Query("select distinct ct.moduleName from ApplicationIndex ct order by ct.moduleName asc")
-    List<ApplicationIndex> findApplicationIndexModules();
-    @Query("select distinct ct.channel from ApplicationIndex ct where ct.channel !=''  order by ct.channel asc")
-    List<ApplicationIndex> getSourceList();
-
-    @Query("select distinct ct.applicationType from ApplicationIndex ct where ct.moduleName=:moduleName order by ct.applicationType asc")
-    List<ApplicationIndex> findAllApplicationTypes(@Param("moduleName") String moduleName);
+public interface WaterChargeDocumentRepository extends ElasticsearchRepository<WaterChargeDocument, String> {
 
 }

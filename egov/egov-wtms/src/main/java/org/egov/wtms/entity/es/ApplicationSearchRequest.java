@@ -37,7 +37,7 @@
  *
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
-package org.egov.wtms.es.entity;
+package org.egov.wtms.entity.es;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;

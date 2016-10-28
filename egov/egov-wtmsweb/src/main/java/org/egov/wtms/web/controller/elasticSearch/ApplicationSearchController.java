@@ -42,8 +42,8 @@ package org.egov.wtms.web.controller.elasticSearch;
 
 import org.egov.infra.admin.master.service.CityService;
 import org.egov.infra.elasticsearch.entity.ApplicationIndex;
-import org.egov.wtms.es.entity.ApplicationSearchRequest;
-import org.egov.wtms.es.service.ApplicationSearchService;
+import org.egov.wtms.entity.es.ApplicationSearchRequest;
+import org.egov.wtms.service.es.ApplicationSearchService;
 import org.egov.wtms.utils.WaterTaxUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;

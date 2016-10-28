@@ -51,13 +51,15 @@ import org.egov.infra.admin.master.entity.Boundary;
 import org.egov.infra.admin.master.entity.City;
 import org.egov.infra.admin.master.entity.Role;
 import org.egov.infra.admin.master.entity.User;
+import org.egov.infra.admin.master.entity.es.CityIndex;
 import org.egov.infra.admin.master.service.BoundaryService;
 import org.egov.infra.admin.master.service.CityService;
 import org.egov.infra.admin.master.service.UserService;
+import org.egov.infra.admin.master.service.es.CityIndexService;
 import org.egov.infra.config.core.ApplicationThreadLocals;
 import org.egov.infra.security.utils.SecurityUtils;
-import org.egov.wtms.es.entity.ConnectionSearchRequest;
-import org.egov.wtms.es.entity.WaterChargeIndex;
+import org.egov.wtms.entity.es.ConnectionSearchRequest;
+import org.egov.wtms.entity.es.WaterChargeDocument;
 import org.egov.wtms.utils.WaterTaxUtils;
 import org.egov.wtms.utils.constants.WaterTaxConstants;
 import org.elasticsearch.index.query.BoolQueryBuilder;
@@ -81,6 +83,9 @@ public class WaterTaxSearchController {
 
     @Autowired
     private WaterTaxUtils waterTaxUtils;
+    
+    @Autowired
+    private CityIndexService cityIndexService;
 
     @Autowired
     private SecurityUtils securityUtils;
@@ -282,10 +287,10 @@ public class WaterTaxSearchController {
     @RequestMapping(method = RequestMethod.POST)
     @ResponseBody
     public List<ConnectionSearchRequest> searchConnection(@ModelAttribute final ConnectionSearchRequest searchRequest) {
-        List<WaterChargeIndex> temList = new ArrayList<WaterChargeIndex>();
+        List<WaterChargeDocument> temList = new ArrayList<WaterChargeDocument>();
         final List<ConnectionSearchRequest> finalResult = new ArrayList<ConnectionSearchRequest>();
         temList = findAllWaterChargeIndexByFilter(searchRequest);
-       for (final WaterChargeIndex waterChargeIndex : temList) {
+       for (final WaterChargeDocument waterChargeIndex : temList) {
             final ConnectionSearchRequest customerObj = new ConnectionSearchRequest();
             customerObj.setApplicantName(waterChargeIndex.getConsumercode());
             customerObj.setConsumerCode(waterChargeIndex.getConsumercode());
@@ -305,9 +310,8 @@ public class WaterTaxSearchController {
 
     private BoolQueryBuilder getFilterQuery(final ConnectionSearchRequest searchRequest) {
         final City cityWebsite = cityService.getCityByCode(ApplicationThreadLocals.getCityCode());
-        BoolQueryBuilder boolQuery =QueryBuilders.boolQuery().filter(QueryBuilders.termQuery("ulbname",cityWebsite.getLocalName()));
-  
-        if (StringUtils.isNotBlank(searchRequest.getApplicantName()))
+        BoolQueryBuilder boolQuery =QueryBuilders.boolQuery().filter(QueryBuilders.termQuery("ulbname",cityWebsite.getName()));
+       if (StringUtils.isNotBlank(searchRequest.getApplicantName()))
             boolQuery = boolQuery.filter(QueryBuilders.matchQuery("consumername", searchRequest.getApplicantName()));
         if (StringUtils.isNotBlank(searchRequest.getConsumerCode()))
             boolQuery = boolQuery.filter(QueryBuilders.matchQuery("consumercode", searchRequest.getConsumerCode()));
@@ -323,14 +327,14 @@ public class WaterTaxSearchController {
         return boolQuery;
     }
 
-    public List<WaterChargeIndex> findAllWaterChargeIndexByFilter(final ConnectionSearchRequest searchRequest) {
+    public List<WaterChargeDocument> findAllWaterChargeIndexByFilter(final ConnectionSearchRequest searchRequest) {
 
         final BoolQueryBuilder query = getFilterQuery(searchRequest);
         final SearchQuery searchQuery = new NativeSearchQueryBuilder().withIndices(WATER_TAX_INDEX_NAME)
                 .withQuery(query).build();
 
-        final List<WaterChargeIndex> sampleEntities = elasticsearchTemplate.queryForList(searchQuery,
-                WaterChargeIndex.class);
+        final List<WaterChargeDocument> sampleEntities = elasticsearchTemplate.queryForList(searchQuery,
+                WaterChargeDocument.class);
         return sampleEntities;
     }
 

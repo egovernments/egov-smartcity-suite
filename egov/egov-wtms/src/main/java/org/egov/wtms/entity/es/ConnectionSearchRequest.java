@@ -37,159 +37,133 @@
  *
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
-package org.egov.wtms.es.entity;
+package org.egov.wtms.entity.es;
 
-import org.egov.infra.config.core.ApplicationThreadLocals;
-import org.springframework.data.annotation.Id;
-import org.springframework.data.elasticsearch.annotations.Document;
-import org.springframework.data.elasticsearch.annotations.Field;
-import org.springframework.data.elasticsearch.annotations.FieldIndex;
-import org.springframework.data.elasticsearch.annotations.FieldType;
-
-@Document(indexName = "waterconncharges", type = "watercharges_details")
-public class WaterChargeIndex {
-
-    /*@JsonFormat (shape = JsonFormat.Shape.STRING, pattern ="yyyy-MM-dd HH:mm")
-    @Field(type = FieldType.Date, index = FieldIndex.not_analyzed, format = DateFormat.date_optional_time, pattern = "yyyy-MM-dd HH:mm")
-    private Date createdDate;*/
-    /*
-    
-    private GeoPoint wardlocation;
-    
-    
-    private GeoPoint propertylocation;*/ 
-    
-    @Id
-    private String indexId;
-    
-    @Field(type = FieldType.String)
-    private String closureType;
-    
-    @Field(type = FieldType.String, index = FieldIndex.not_analyzed)
-    private String watersource;
-
-    @Field(type = FieldType.Boolean)
-    private boolean islegacy;
-
-    @Field(type = FieldType.Long)
-    private Long sumpcapacity;
-
-    @Field(type = FieldType.String, index = FieldIndex.not_analyzed)
-    private String mobilenumber;
-
-    @Field(type = FieldType.Long)
-    private Long numberofperson;
-
-    @Field(type = FieldType.Long)
-    private Long totaldue;
-
-    @Field(type = FieldType.String, index = FieldIndex.not_analyzed)
-    private String usage;
-
-    @Field(type = FieldType.String, index = FieldIndex.not_analyzed)
-    private String propertytype;
-
-    @Field(type = FieldType.String, index = FieldIndex.not_analyzed)
-    private String ulbname;
-
-    
-    @Field(type = FieldType.String, index = FieldIndex.not_analyzed)
-    private String consumercode;
-
-    @Field(type = FieldType.String, index = FieldIndex.not_analyzed)
-    private String ward;
-
-    @Field(type = FieldType.String, index = FieldIndex.not_analyzed)
-    private String applicationcode;
-
-    @Field(type = FieldType.String, index = FieldIndex.not_analyzed)
-    private String districtname;
-
-    @Field(type = FieldType.String, index = FieldIndex.not_analyzed)
-    private String zone;
-
-    @Field(type = FieldType.String, index = FieldIndex.not_analyzed)
-    private String adminward;
-
-    @Field(type = FieldType.String, index = FieldIndex.not_analyzed)
-    private String grade;
-    
-    @Field(type = FieldType.String, index = FieldIndex.not_analyzed)
-    private String bpaid;
-
-    @Field(type = FieldType.String, index = FieldIndex.not_analyzed)
-    private String regionname;
-
-    @Field(type = FieldType.String, index = FieldIndex.not_analyzed)
-    private String pipesize;
-
-    @Field(type = FieldType.String, index = FieldIndex.not_analyzed)
-    private String doorno;
-
-    @Field(type = FieldType.String, index = FieldIndex.not_analyzed)
-    private String category;
-
-    @Field(type = FieldType.String, index = FieldIndex.not_analyzed)
-    private String connectiontype;
-
-    @Field(type = FieldType.String, index = FieldIndex.not_analyzed)
-    private String propertyid;
-
-    @Field(type = FieldType.String, index = FieldIndex.not_analyzed)
-    private String status;
-
-    @Field(type = FieldType.Long)
-    private Long monthlyRate;
-
-    // Check for other properties given in json
-    private String aadhaarnumber;
-
-    @Field(type = FieldType.Long)
-    private Long waterTaxDue;
-
-    // Check for other properties given in json
+public class ConnectionSearchRequest {
+    private String searchText;
+    private String consumerCode;
+    private String applicantName;
     private String locality;
-
-    @Field(type = FieldType.Long)
+    private String mobileNumber;
+    private String ulbName;
+    private String revenueWard;
+    private String doorNumber;
+private String watersource;
+private Long propertyTaxDue;
+ private boolean islegacy;
+ private String address;
+ private String mobilenumber;
+    private Long numberofperson;
+ private Long totaldue;
+private String usage;
+private String propertytype;
+ private String ulbname;
+private String consumercode;
+ private String ward;
+private String applicationcode;
+ private String districtname;
+ private String zone;
+ private String adminward;
+ private String grade;
+ private String bpaid;
+ private String regionname;
+ private String pipesize;
+ private String doorno;
+ private String category;
+ private String connectiontype;
+ private String propertyid;
+private String status;
+private Long monthlyRate;
+ private String aadhaarnumber;
+ private Long waterTaxDue;
     private Long arrearsDue;
+ private String consumername;
+ private Long currentDue;
+private Long arrearsDemand;
+private Long currentDemand;
 
-    // Check for other properties given in json
-    private String consumername;
 
-    @Field(type = FieldType.Long)
-    private Long currentDue;
 
-    @Field(type = FieldType.Long)
-    private Long arrearsDemand;
-
-    @Field(type = FieldType.Long)
-    private Long currentDemand;
-
-    /*public Date getCreatedDate() {
-        return createdDate;
+    public String getConsumerCode() {
+        return consumerCode;
     }
 
-    public void setCreatedDate(Date createdDate) {
-        this.createdDate = createdDate;
-    }*/
+    public void setConsumerCode(final String consumerCode) {
+        this.consumerCode = consumerCode;
+    }
 
-    /*
-     * public String getWardlocation() { return wardlocation; } public void
-     * setWardlocation(String wardlocation) { this.wardlocation = wardlocation;
-     * }
-     */
+    public String getApplicantName() {
+        return applicantName;
+    }
+
+    public void setApplicantName(final String applicantName) {
+        this.applicantName = applicantName;
+    }
+
+    public String getLocality() {
+        return locality;
+    }
+
+    public void setLocality(final String locality) {
+        this.locality = locality;
+    }
+
+    public String getMobileNumber() {
+        return mobileNumber;
+    }
+
+    public void setMobileNumber(final String mobileNumber) {
+        this.mobileNumber = mobileNumber;
+    }
+
+    public String getUlbName() {
+        return ulbName;
+    }
+
+    public void setUlbName(final String ulbName) {
+        this.ulbName = ulbName;
+    }
+
+    public void setSearchText(final String searchText) {
+        this.searchText = searchText;
+    }
+
+   /* public Filters searchFilters() {
+        final List<Filter> andFilters = new ArrayList<>(0);
+        andFilters.add(termsStringFilter("clauses.ulbname", ulbName));
+        andFilters.add(queryStringFilter("searchable.consumername", applicantName));
+        andFilters.add(queryStringFilter("clauses.consumercode", consumerCode));
+        andFilters.add(queryStringFilter("searchable.locality", locality));
+        andFilters.add(queryStringFilter("clauses.mobilenumber", mobileNumber));
+        andFilters.add(termsStringFilter("clauses.doorno", doorNumber));
+        andFilters.add(termsStringFilter("clauses.ward", revenueWard));
+        if (logger.isDebugEnabled())
+            logger.debug("finished filters");
+        return Filters.withAndFilters(andFilters);
+    }
+*/
+    public String searchQuery() {
+        return searchText;
+    }
+
+    public String getRevenueWard() {
+        return revenueWard;
+    }
+
+    public void setRevenueWard(String revenueWard) {
+        this.revenueWard = revenueWard;
+    }
+
+    public String getDoorNumber() {
+        return doorNumber;
+    }
+
+    public void setDoorNumber(String doorNumber) {
+        this.doorNumber = doorNumber;
+    }
 
     public String getWatersource() {
         return watersource;
-    }
-    
-
-    public String getBpaid() {
-        return bpaid;
-    }
-
-    public void setBpaid(String bpaid) {
-        this.bpaid = bpaid;
     }
 
     public void setWatersource(String watersource) {
@@ -204,12 +178,14 @@ public class WaterChargeIndex {
         this.islegacy = islegacy;
     }
 
-    public Long getSumpcapacity() {
-        return sumpcapacity;
+    
+
+    public String getAddress() {
+        return address;
     }
 
-    public void setSumpcapacity(Long sumpcapacity) {
-        this.sumpcapacity = sumpcapacity;
+    public void setAddress(String address) {
+        this.address = address;
     }
 
     public String getMobilenumber() {
@@ -316,6 +292,14 @@ public class WaterChargeIndex {
         this.grade = grade;
     }
 
+    public String getBpaid() {
+        return bpaid;
+    }
+
+    public void setBpaid(String bpaid) {
+        this.bpaid = bpaid;
+    }
+
     public String getRegionname() {
         return regionname;
     }
@@ -396,14 +380,6 @@ public class WaterChargeIndex {
         this.waterTaxDue = waterTaxDue;
     }
 
-    public String getLocality() {
-        return locality;
-    }
-
-    public void setLocality(String locality) {
-        this.locality = locality;
-    }
-
     public Long getArrearsDue() {
         return arrearsDue;
     }
@@ -444,38 +420,17 @@ public class WaterChargeIndex {
         this.currentDemand = currentDemand;
     }
 
-   
-    public String getIndexId() {
-        return ApplicationThreadLocals.getCityCode() + "-" + consumercode;
+    public String getSearchText() {
+        return searchText;
     }
 
-    public String getClosureType() {
-        return closureType;
+    public Long getPropertyTaxDue() {
+        return propertyTaxDue;
     }
 
-    public void setClosureType(String closureType) {
-        this.closureType = closureType;
+    public void setPropertyTaxDue(Long propertyTaxDue) {
+        this.propertyTaxDue = propertyTaxDue;
     }
-
-  /*  public GeoPoint getWardlocation() {
-        return wardlocation;
-    }
-
-    public void setWardlocation(GeoPoint wardlocation) {
-        this.wardlocation = wardlocation;
-    }
-
-    public GeoPoint getPropertylocation() {
-        return propertylocation;
-    }
-
-    public void setPropertylocation(GeoPoint propertylocation) {
-        this.propertylocation = propertylocation;
-    }
-*/
-
-    
-
     
 
 }
