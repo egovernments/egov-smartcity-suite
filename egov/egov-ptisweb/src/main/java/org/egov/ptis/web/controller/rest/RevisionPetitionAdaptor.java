@@ -37,7 +37,7 @@
  *
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
-package org.egov.ptis.web.rest;
+package org.egov.ptis.web.controller.rest;
 
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
