@@ -80,6 +80,7 @@ $('#baseRegisterReportSearch').click(function(e){
 						  { "data" : "categoryType", "title": "Category Type"},
 						  { "data" : "usageType", "title": "Usage"},
 						  { "data" : "pipeSize", "title": "Pipe Size"},
+						  { "data" : "monthlyRate", "title": "Monthly Rate"},
 						  { "data" : "period", "title": "Arrears Period"},
 						  { "data" : "arrears", "title": "Arrears Demand", class : 'text-right'},
 						  { "data" : "current", "title": "Current Demand", class : 'text-right'},

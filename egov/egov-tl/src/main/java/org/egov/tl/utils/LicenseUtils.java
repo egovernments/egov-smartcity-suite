@@ -40,6 +40,13 @@
 
 package org.egov.tl.utils;
 
+import static org.apache.commons.lang3.StringUtils.EMPTY;
+import static org.egov.tl.utils.Constants.TRADELICENSEMODULE;
+
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+
 import org.egov.commons.Installment;
 import org.egov.commons.dao.EgwStatusHibernateDAO;
 import org.egov.commons.dao.InstallmentDao;
@@ -63,17 +70,11 @@ import org.egov.pims.commons.Designation;
 import org.egov.pims.commons.Position;
 import org.egov.tl.entity.License;
 import org.egov.tl.entity.LicenseSubCategory;
+import org.egov.tl.service.LicenseStatusService;
 import org.egov.tl.service.masters.LicenseSubCategoryService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
-
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-
-import static org.apache.commons.lang3.StringUtils.EMPTY;
-import static org.egov.tl.utils.Constants.TRADELICENSEMODULE;
 
 @Service
 public class LicenseUtils {
@@ -107,12 +108,15 @@ public class LicenseUtils {
     @Autowired
     private LicenseSubCategoryService licenseSubCategoryService;
 
+    @Autowired
+    private LicenseStatusService licenseStatusService;
+
     public Module getModule(final String moduleName) {
         return moduleService.getModuleByName(moduleName);
     }
 
     public List<Boundary> getAllCity() {
-        HierarchyType hType = hierarchyTypeService.getHierarchyTypeByName(ADMIN_HIERARCHY_TYPE);
+        final HierarchyType hType = hierarchyTypeService.getHierarchyTypeByName(ADMIN_HIERARCHY_TYPE);
         final BoundaryType bType = boundaryTypeService.getBoundaryTypeByNameAndHierarchyType(CITY_BOUNDARY_TYPE, hType);
         return boundaryService.getAllBoundariesByBoundaryTypeId(bType.getId());
     }
@@ -134,8 +138,8 @@ public class LicenseUtils {
                 Constants.TRADELICENSE_MODULENAME, Constants.DIGITALSIGNINCLUDEINWORKFLOW).get(0);
         return "YES".equalsIgnoreCase(appConfigValue.getValue());
     }
-    
-    public String getDepartmentCodeForBillGenerate(){
+
+    public String getDepartmentCodeForBillGenerate() {
         final List<AppConfigValues> appConfigValue = appConfigValuesService.getConfigValuesByModuleAndKey(
                 Constants.TRADELICENSE_MODULENAME, "DEPARTMENTFORGENERATEBILL");
         return appConfigValue.isEmpty() ? EMPTY : appConfigValue.get(0).getValue();
@@ -145,18 +149,24 @@ public class LicenseUtils {
         final Department deptObj = departmentService.getDepartmentByName(Constants.ROLE_COMMISSIONERDEPARTEMNT);
         final Designation desgnObj = designationService.getDesignationByName("Commissioner");
         List<Assignment> assignlist = new ArrayList<>();
-        if(deptObj !=null)
+        if (deptObj != null)
             assignlist = assignmentService.getAssignmentsByDeptDesigAndDates(deptObj.getId(), desgnObj.getId(), new Date(),
-                new Date());
-       if(assignlist.isEmpty())
-            assignlist = assignmentService.getAllPositionsByDepartmentAndDesignationForGivenRange(null, desgnObj.getId(), new Date());
-       if(assignlist.isEmpty())
-           assignlist = assignmentService.getAllActiveAssignments(desgnObj.getId());
+                    new Date());
+        if (assignlist.isEmpty())
+            assignlist = assignmentService.getAllPositionsByDepartmentAndDesignationForGivenRange(null, desgnObj.getId(),
+                    new Date());
+        if (assignlist.isEmpty())
+            assignlist = assignmentService.getAllActiveAssignments(desgnObj.getId());
         return !assignlist.isEmpty() ? assignlist.get(0).getPosition() : null;
     }
 
     public License applicationStatusChange(final License licenseObj, final String code) {
         licenseObj.setEgwStatus(egwStatusHibernateDAO.getStatusByModuleAndCode(TRADELICENSEMODULE, code));
+        return licenseObj;
+    }
+
+    public License licenseStatusUpdate(final License licenseObj, final String code) {
+        licenseObj.setStatus(licenseStatusService.getLicenseStatusByCode(code));
         return licenseObj;
     }
 }

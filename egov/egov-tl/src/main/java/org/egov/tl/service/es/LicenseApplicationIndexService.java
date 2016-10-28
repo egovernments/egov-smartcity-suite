@@ -63,7 +63,8 @@ import static org.egov.commons.entity.Source.SYSTEM;
 import static org.egov.infra.elasticsearch.entity.enums.ApprovalStatus.INPROGRESS;
 import static org.egov.infra.elasticsearch.entity.enums.ClosureStatus.NO;
 import static org.egov.tl.utils.Constants.APPLICATION_STATUS_APPROVED_CODE;
-import static org.egov.tl.utils.Constants.APPLICATION_STATUS_COLLECTION_CODE;
+import static org.egov.tl.utils.Constants.APPLICATION_STATUS_SECONDCOLLECTION_CODE;
+import static org.egov.tl.utils.Constants.APPLICATION_STATUS_FIRSTCOLLECTIONDONE_CODE;
 import static org.egov.tl.utils.Constants.APPLICATION_STATUS_CREATED_CODE;
 import static org.egov.tl.utils.Constants.APPLICATION_STATUS_GENECERT_CODE;
 import static org.egov.tl.utils.Constants.APPLICATION_STATUS_INSPE_CODE;
@@ -71,6 +72,7 @@ import static org.egov.tl.utils.Constants.STATUS_CANCELLED;
 import static org.egov.tl.utils.Constants.TRADELICENSE_MODULENAME;
 import static org.egov.tl.utils.Constants.WF_STATE_GENERATE_CERTIFICATE;
 import static org.egov.tl.utils.Constants.WORKFLOW_STATE_REJECTED;
+import static org.egov.tl.utils.Constants.DELIMITER_COLON;
 
 @Service
 public class LicenseApplicationIndexService {
@@ -104,7 +106,7 @@ public class LicenseApplicationIndexService {
                 .withApplicationNumber(license.getApplicationNumber()).withApplicationDate(license.getApplicationDate())
                 .withApplicationType(license.getLicenseAppType().getName()).withApplicantName(license.getLicensee().getApplicantName())
                 .withStatus(license.getEgwStatus().getDescription()).withUrl(format(APPLICATION_VIEW_URL, license.getApplicationNumber()))
-                .withApplicantAddress(license.getAddress()).withOwnername(user.getUsername() + "::" + user.getName())
+                .withApplicantAddress(license.getAddress()).withOwnername(user.getUsername() + DELIMITER_COLON + user.getName())
                 .withChannel(SYSTEM.toString()).withMobileNumber(license.getLicensee().getMobilePhoneNumber())
                 .withAadharNumber(license.getLicensee().getUid()).withClosed(NO).withApproved(INPROGRESS)
                 .build());
@@ -115,16 +117,17 @@ public class LicenseApplicationIndexService {
         if (license.getId() != null && license.getEgwStatus() != null
                 && (license.getEgwStatus().getCode().equals(APPLICATION_STATUS_INSPE_CODE)
                 || license.getEgwStatus().getCode().equals(APPLICATION_STATUS_APPROVED_CODE)
-                || license.getEgwStatus().getCode().equals(APPLICATION_STATUS_COLLECTION_CODE)
+                || license.getEgwStatus().getCode().equals(APPLICATION_STATUS_SECONDCOLLECTION_CODE)
                 || license.getEgwStatus().getCode().equals(APPLICATION_STATUS_GENECERT_CODE) || license
                 .getEgwStatus().getCode().equals(Constants.APPLICATION_STATUS_DIGUPDATE_CODE))
                 || license.getStatus().getStatusCode().equals(STATUS_CANCELLED)
                 || license.getEgwStatus().getCode().equals(APPLICATION_STATUS_CREATED_CODE)
+                || license.getStatus().getStatusCode().equals(APPLICATION_STATUS_FIRSTCOLLECTIONDONE_CODE)
                 && license.getState().getValue().contains(WORKFLOW_STATE_REJECTED)) {
             User user = getApplicationCurrentOwner(license);
             applicationIndex.setStatus(license.getEgwStatus().getDescription());
             applicationIndex.setApplicantAddress(license.getAddress());
-            applicationIndex.setOwnername(user.getUsername() + "::" + user.getName());
+            applicationIndex.setOwnername(user.getUsername() + DELIMITER_COLON + user.getName());
             applicationIndex.setConsumerCode(license.getLicenseNumber());
             applicationIndex.setClosed(NO);
             applicationIndex.setApproved(INPROGRESS);

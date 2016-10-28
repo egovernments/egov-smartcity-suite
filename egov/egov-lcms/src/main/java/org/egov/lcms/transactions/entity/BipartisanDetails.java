@@ -66,7 +66,6 @@ import javax.validation.constraints.Pattern;
 import java.util.ArrayList;
 import java.util.List;
 
-
 @Entity
 @Table(name = "EGLC_BIPARTISANDETAILS")
 @SequenceGenerator(name = BipartisanDetails.SEQ_EGLC_BIPARTISANDETAILS, sequenceName = BipartisanDetails.SEQ_EGLC_BIPARTISANDETAILS, allocationSize = 1)
@@ -75,7 +74,7 @@ import java.util.List;
 public class BipartisanDetails extends AbstractAuditable {
 
     public static final String SEQ_EGLC_BIPARTISANDETAILS = "SEQ_EGLC_BIPARTISANDETAILS";
-    private static final long serialVersionUID = 845357231248646624L;
+
     @Expose
     @Id
     @GeneratedValue(generator = SEQ_EGLC_BIPARTISANDETAILS, strategy = GenerationType.SEQUENCE)
@@ -87,6 +86,7 @@ public class BipartisanDetails extends AbstractAuditable {
     @Audited
     private LegalCase legalCase;
 
+    @NotNull
     @Length(max = 128)
     @Audited
     private String name;
@@ -95,7 +95,7 @@ public class BipartisanDetails extends AbstractAuditable {
     @Audited
     private String address;
 
-    @Pattern(regexp = LcmsConstants.lengthCheckForMobileNo)
+    @Pattern(regexp = LcmsConstants.numericiValForPhoneNo)
     @Audited
     private String contactNumber;
 
@@ -145,7 +145,7 @@ public class BipartisanDetails extends AbstractAuditable {
         return contactNumber;
     }
 
-    public void setContactNumber(String contactNumber) {
+    public void setContactNumber(final String contactNumber) {
         this.contactNumber = contactNumber;
     }
 

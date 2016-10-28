@@ -1044,20 +1044,6 @@ public class WaterConnectionDetailsService {
         }
     }
 
-    /*
-     * public void validateWaterRateAndDonationHeader(final
-     * WaterConnectionDetails waterConnectionDetails, final BindingResult
-     * errors) { DonationDetails donationDetails =
-     * connectionDemandService.getDonationDetails(waterConnectionDetails);
-     * if(donationDetails ==null) { errors.rejectValue("usageType",
-     * "donation.combination.required"); }
-     * if(waterConnectionDetails.getConnectionType
-     * ().name().equals(ConnectionType.NON_METERED)){ WaterRatesDetails
-     * waterRatesDetails
-     * =connectionDemandService.getWaterRatesDetailsForDemandUpdate
-     * (waterConnectionDetails); if(waterRatesDetails==null){
-     * errors.rejectValue("usageType", "err.water.rate.not.found"); } } }
-     */
     public String getApprovalPositionOnValidate(final Long approvalPositionId) {
         Assignment assignmentObj = null;
         final List<Assignment> assignmentList = new ArrayList<Assignment>();
@@ -1105,7 +1091,7 @@ public class WaterConnectionDetailsService {
             balance = BigDecimal.ZERO;
         return balance;
     }
-    
+
     public BigDecimal getArrearsDemand(final WaterConnectionDetails waterConnectionDetails) {
         final EgDemand currentDemand = waterTaxUtils.getCurrentDemand(waterConnectionDetails).getDemand();
         BigDecimal balance = BigDecimal.ZERO;
@@ -1118,7 +1104,7 @@ public class WaterConnectionDetailsService {
             balance = BigDecimal.ZERO;
         return balance;
     }
-    
+
     public BigDecimal getTotalDemandTillCurrentFinYear(final WaterConnectionDetails waterConnectionDetails) {
         final EgDemand currentDemand = waterTaxUtils.getCurrentDemand(waterConnectionDetails).getDemand();
         BigDecimal balance = BigDecimal.ZERO;
@@ -1131,24 +1117,21 @@ public class WaterConnectionDetailsService {
             balance = BigDecimal.ZERO;
         return balance;
     }
-    
-    public BigDecimal getTotalBalance(final List<Object> instVsAmt)
-    {
+
+    public BigDecimal getTotalBalance(final List<Object> instVsAmt) {
         BigDecimal balance = BigDecimal.ZERO;
         for (final Object object : instVsAmt) {
             final Object[] ddObject = (Object[]) object;
-            if (ddObject[2] != null)
-            {
-            final BigDecimal dmdAmt = new BigDecimal((Double) ddObject[2]);           
-            balance = balance.add(dmdAmt);
+            if (ddObject[2] != null) {
+                final BigDecimal dmdAmt = new BigDecimal((Double) ddObject[2]);
+                balance = balance.add(dmdAmt);
             }
         }
         return balance;
     }
-    
+
     @Transactional
-    public void saveAndFlushWaterConnectionDetail(final WaterConnectionDetails waterConnectionDetails)
-    {
+    public void saveAndFlushWaterConnectionDetail(final WaterConnectionDetails waterConnectionDetails) {
         waterConnectionDetailsRepository.saveAndFlush(waterConnectionDetails);
     }
 }
