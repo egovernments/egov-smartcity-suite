@@ -49,7 +49,7 @@ public class CancelRevisionEstimateController {
         String message = "";
         RevisionAbstractEstimate revisionEstimate = revisionEstimateService.getRevisionEstimateById(revisionEstimateId);
         final WorkOrderEstimate workOrderEstimate = workOrderEstimateService
-                .getWorkOrderEstimateByAbstractEstimateId(revisionEstimate.getId());
+                .getWorkOrderEstimateByAbstractEstimateId(revisionEstimate.getParent().getId());
 
         final String revisionEstimates = revisionEstimateService.getRevisionEstimatesGreaterThanCurrent(
                 revisionEstimate.getParent().getId(), revisionEstimate.getCreatedDate());

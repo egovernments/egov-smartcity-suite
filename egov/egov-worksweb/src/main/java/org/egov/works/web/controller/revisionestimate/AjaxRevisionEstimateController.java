@@ -189,7 +189,7 @@ public class AjaxRevisionEstimateController {
         String message = "";
         final RevisionAbstractEstimate revisionEstimate = revisionEstimateService.getRevisionEstimateById(reId);
         final WorkOrderEstimate workOrderEstimate = workOrderEstimateService
-                .getWorkOrderEstimateByAbstractEstimateId(revisionEstimate.getId());
+                .getWorkOrderEstimateByAbstractEstimateId(revisionEstimate.getParent().getId());
         final String revisionEstimates = revisionEstimateService.getRevisionEstimatesGreaterThanCurrent(
                 revisionEstimate.getParent().getId(), revisionEstimate.getCreatedDate());
         if (!revisionEstimates.equals(""))
