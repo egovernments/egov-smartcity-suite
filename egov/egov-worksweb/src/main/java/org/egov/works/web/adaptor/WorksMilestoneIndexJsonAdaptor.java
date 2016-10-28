@@ -494,14 +494,20 @@ public class WorksMilestoneIndexJsonAdaptor implements JsonSerializer<WorksMiles
                         jsonObject.addProperty("Oct 16 to 31 target",
                                 BigDecimal.valueOf(response.getOct16to31target()).setScale(2, BigDecimal.ROUND_HALF_EVEN)
                                         .toString());
+                    else
+                        jsonObject.addProperty("Oct 16 to 31 target", "0");
                     if (response.getOct16to31actual() != null && !response.getOct16to31actual().isNaN())
                         jsonObject.addProperty("Oct 16 to 31 actual",
                                 BigDecimal.valueOf(response.getOct16to31actual()).setScale(2, BigDecimal.ROUND_HALF_EVEN)
                                         .toString());
+                    else
+                        jsonObject.addProperty("Oct 16 to 31 actual", "0");
                     if (response.getOct16to31variance() != null)
                         jsonObject.addProperty("Oct 16 to 31 variance",
                                 BigDecimal.valueOf(response.getOct16to31variance()).setScale(2, BigDecimal.ROUND_HALF_EVEN)
                                         .toString());
+                    else
+                        jsonObject.addProperty("Oct 16 to 31 variance", "0");
                     if (response.getOct16to31actual() != null && !response.getOct16to31actual().isNaN())
                         jsonObject.addProperty("Total % of Balance work",
                                 BigDecimal.valueOf(100 - response.getOct16to31actual()).setScale(2, BigDecimal.ROUND_HALF_EVEN)
