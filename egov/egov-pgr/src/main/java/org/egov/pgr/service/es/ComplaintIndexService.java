@@ -666,9 +666,9 @@ public class ComplaintIndexService {
 		Terms terms = consolidatedResponse.getAggregations().get("closedCount");
 		for (Bucket bucket : terms.getBuckets()) {
 			if(bucket.getKeyAsNumber().intValue() == 1)
-				result.put("OpenComplaints",bucket.getDocCount());
-			else
 				result.put("ClosedComplaints",bucket.getDocCount());
+			else
+				result.put("OpenComplaints",bucket.getDocCount());
 		}
 
 		//To get the count of closed and open complaints
