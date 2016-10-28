@@ -43,9 +43,9 @@ package org.egov.ptis.service.elasticsearch;
 import static org.egov.ptis.constants.PropertyTaxConstants.COLLECION_BILLING_SERVICE_PT;
 import static org.egov.ptis.constants.PropertyTaxConstants.COLLECTION_INDEX_NAME;
 import static org.egov.ptis.constants.PropertyTaxConstants.DASHBOARD_GROUPING_DISTRICTWISE;
+import static org.egov.ptis.constants.PropertyTaxConstants.DASHBOARD_GROUPING_GRADEWISE;
 import static org.egov.ptis.constants.PropertyTaxConstants.DASHBOARD_GROUPING_REGIONWISE;
 import static org.egov.ptis.constants.PropertyTaxConstants.DASHBOARD_GROUPING_ULBWISE;
-import static org.egov.ptis.constants.PropertyTaxConstants.DASHBOARD_GROUPING_GRADEWISE;
 import static org.egov.ptis.constants.PropertyTaxConstants.DATEFORMATTER_YYYY_MM_DD;
 import static org.egov.ptis.constants.PropertyTaxConstants.DATE_FORMAT_YYYYMMDD;
 import static org.egov.ptis.constants.PropertyTaxConstants.PROPERTY_TAX_INDEX_NAME;
@@ -70,7 +70,6 @@ import org.egov.ptis.bean.dashboard.CollectionTrend;
 import org.egov.ptis.bean.dashboard.ReceiptTableData;
 import org.egov.ptis.bean.dashboard.ReceiptsTrend;
 import org.egov.ptis.constants.PropertyTaxConstants;
-import org.egov.ptis.repository.elasticsearch.CollectionIndexESRepository;
 import org.elasticsearch.action.search.SearchResponse;
 import org.elasticsearch.index.query.BoolQueryBuilder;
 import org.elasticsearch.index.query.QueryBuilder;
@@ -99,18 +98,11 @@ public class CollectionIndexElasticSearchService {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(CollectionIndexElasticSearchService.class);
 
-    private CollectionIndexESRepository collectionIndexESRepository;
-
     @Autowired
     private CFinancialYearService cFinancialYearService;
 
     @Autowired
     private ElasticsearchTemplate elasticsearchTemplate;
-
-    @Autowired
-    public CollectionIndexElasticSearchService(final CollectionIndexESRepository collectionIndexESRepository) {
-        this.collectionIndexESRepository = collectionIndexESRepository;
-    }
 
     /**
      * Gives the consolidated collection for the dates and billing service

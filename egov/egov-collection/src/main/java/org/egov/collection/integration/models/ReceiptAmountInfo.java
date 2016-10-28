@@ -54,6 +54,8 @@ public class ReceiptAmountInfo {
     private String installmentFrom;
     private String installmentTo;
     private BigDecimal reductionAmount = BigDecimal.ZERO;
+    private String revenueWard;
+
 
     public BigDecimal getArrearsAmount() {
         return arrearsAmount;
@@ -184,6 +186,14 @@ public class ReceiptAmountInfo {
      */
     public void setReductionAmount(BigDecimal reductionAmount) {
         this.reductionAmount = reductionAmount;
+    }
+
+    public String getRevenueWard() {
+        return revenueWard;
+    }
+
+    public void setRevenueWard(String revenueWard) {
+        this.revenueWard = revenueWard;
     }
 
 }

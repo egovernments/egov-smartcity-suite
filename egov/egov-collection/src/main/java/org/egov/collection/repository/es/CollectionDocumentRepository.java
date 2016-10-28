@@ -38,13 +38,12 @@
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
 
-package org.egov.ptis.repository.elasticsearch;
+package org.egov.collection.repository.es;
 
-import org.egov.collection.elasticsearch.CollectionIndex;
+import org.egov.collection.entity.es.CollectionDocument;
 import org.springframework.data.elasticsearch.repository.ElasticsearchRepository;
 import org.springframework.stereotype.Repository;
 
 @Repository
-public interface CollectionIndexESRepository extends ElasticsearchRepository<CollectionIndex, String> {
-
+public interface CollectionDocumentRepository extends ElasticsearchRepository<CollectionDocument, String> {
 }
