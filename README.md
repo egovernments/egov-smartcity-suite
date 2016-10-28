@@ -151,10 +151,10 @@ By default eGov suit uses embedded redis server (work only in Linux & OSx), to m
   ```
   <socket-binding name="http" port="${jboss.http.port:8080}"/>
   ```
-4. Change directory back to `<CLONED_REPO_DIR>/egov` and run the below command
+4. Change directory back to `<CLONED_REPO_DIR>/egov/dev-utils/deployment/` and run the below command
   ```
-   $  chmod +x deploy-local.sh
-$ ./deploy-local.sh
+   $  chmod +x deploy.sh
+$ ./deploy.sh
   ```
 
  Alternatively this can be done manually by following the below steps.
