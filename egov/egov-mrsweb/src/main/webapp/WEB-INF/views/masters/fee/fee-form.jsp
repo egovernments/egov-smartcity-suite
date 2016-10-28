@@ -77,7 +77,7 @@
 				code="lbl.fromDays" />
 		</label>
 		<div class="col-sm-3 add-margin">
-			<input type="text" name="fromDays" id="fromDays" 
+			<form:input path="fromDays" id="fromDays" 
 				class="form-control patternvalidation" maxlength="3" placeholder="" data-pattern="number" 
 				autocomplete="off" />
 			<form:errors path="fromDays" cssClass="add-margin error-msg" />
@@ -87,12 +87,12 @@
 				code="lbl.toDays" />
 		</label>
 		<div class="col-sm-3 add-margin">
-			<input type="text" name="toDays" id="toDays" 
+			<form:input path="toDays" id="toDays" 
 				class="form-control patternvalidation" maxlength="3" placeholder="" data-pattern="number" 
 				autocomplete="off" />
 			<form:errors path="toDays" cssClass="add-margin error-msg" />
 		</div>
 	</div>
 
-<input type="hidden" name="fee" value="${fee.id}" />
+<input type="hidden" name="marriageFee" value="${marriageFee.id}" />
 </div>

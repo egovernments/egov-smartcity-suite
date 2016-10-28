@@ -68,7 +68,8 @@ import org.hibernate.validator.constraints.SafeHtml;
 
 @Entity
 @Table(name = "egmrs_fee")
-@Unique(id = "id", tableName = "egmrs_fee", fields = { "criteria" }, columnName = { "criteria" }, enableDfltMsg = true)
+@Unique(id = "id", tableName = "egmrs_fee", columnName = { "criteria" }, fields = {
+"criteria" }, enableDfltMsg = true, message = "Already Exist.name should be unique.")
 @Searchable
 @SequenceGenerator(name = MarriageFee.SEQ_FEE, sequenceName = MarriageFee.SEQ_FEE, allocationSize = 1)
 @AuditOverrides({ @AuditOverride(forClass = AbstractAuditable.class, name = "lastModifiedBy"),

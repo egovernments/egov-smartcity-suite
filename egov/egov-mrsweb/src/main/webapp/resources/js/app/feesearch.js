@@ -116,7 +116,7 @@ $('#btnSearch').click(function(e) {
 	
 	$("#feeResultTable").on('click','tbody tr td  .view',function(event) {
 		var id = reportdatatable.fnGetData($(this).parent().parent(),4);
-		window.open('/mrs/masters/fee/success' +'/'+id,'','width=800, height=600,scrollbars=yes');
+		window.open('/mrs/masters/fee/view' +'/'+id,'','width=800, height=600,scrollbars=yes');
 	});
 
 	$("#feeResultTable").on('click','tbody tr td  .edit',function(event) {

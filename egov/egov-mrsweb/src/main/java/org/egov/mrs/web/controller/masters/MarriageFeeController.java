@@ -66,9 +66,10 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 @RequestMapping(value = "/masters")
 public class MarriageFeeController {
 	private static final String MRG_FEE_CREATE = "fee-create";
-	private static final String MRG_FEE_VIEW = "fee-success";
+	private static final String MRG_FEE_SUCCESS = "fee-success";
 	private static final String MRG_FEE_SEARCH = "fee-search";
 	private static final String MRG_FEE_UPDATE = "fee-update";
+	private static final String MRG_FEE_VIEW = "fee-view";
 
 	@Autowired
 	private MessageSource messageSource;
@@ -99,7 +100,15 @@ public class MarriageFeeController {
 
 	@RequestMapping(value = "/fee/success/{id}", method = RequestMethod.GET)
 	public String viewFee(@PathVariable Long id, final Model model) {
-		model.addAttribute("fee", marriageFeeService.getFee(id));
+		model.addAttribute("marriageFee", marriageFeeService.getFee(id));
+		return MRG_FEE_SUCCESS;
+	}
+
+	@RequestMapping(value = "/fee/view/{id}", method = RequestMethod.GET)
+	public String viewRegistrationunit(@PathVariable("id") final Long id,
+			Model model) {
+		MarriageFee marriageFee = marriageFeeService.getFee(id);
+		model.addAttribute("marriageFee", marriageFee);
 		return MRG_FEE_VIEW;
 	}
 
@@ -111,36 +120,40 @@ public class MarriageFeeController {
 	}
 
 	@RequestMapping(value = "/fee/searchResult/{mode}", method = RequestMethod.POST, produces = MediaType.TEXT_PLAIN_VALUE)
-	public @ResponseBody String searchFeeResult(@PathVariable("mode") final String mode, Model model,
+	public @ResponseBody String searchFeeResult(
+			@PathVariable("mode") final String mode, Model model,
 			@ModelAttribute final MarriageFee fee) {
-		
+
 		List<MarriageFee> searchResultList = null;
-		if(mode.equalsIgnoreCase("edit")){
-			searchResultList	= marriageFeeService.searchRegistrationFeesWithGeneralType(fee);
-		}else{
-			searchResultList=  marriageFeeService.searchFee(fee);
+		if (mode.equalsIgnoreCase("edit")) {
+			searchResultList = marriageFeeService
+					.searchRegistrationFeesWithGeneralType(fee);
+		} else {
+			searchResultList = marriageFeeService.searchFee(fee);
 		}
-			String result = new StringBuilder("{ \"data\":")
+		String result = new StringBuilder("{ \"data\":")
 				.append(toJSON(searchResultList, MarriageFee.class,
 						FeeJsonAdaptor.class)).append("}").toString();
 		return result;
 	}
+
 	@RequestMapping(value = "/fee/edit/{id}", method = RequestMethod.GET)
 	public String editFee(@PathVariable("id") Long id, final Model model) {
-		model.addAttribute("fee", marriageFeeService.getFee(id));
+		model.addAttribute("marriageFee", marriageFeeService.getFee(id));
 		return MRG_FEE_UPDATE;
 	}
 
 	@RequestMapping(value = "/fee/update", method = RequestMethod.POST)
-	public String updateFee(@Valid @ModelAttribute final MarriageFee fee,
+	public String updateFee(
+			@Valid @ModelAttribute final MarriageFee marriageFee,
 			final BindingResult errors,
 			final RedirectAttributes redirectAttributes) {
 		if (errors.hasErrors()) {
 			return MRG_FEE_UPDATE;
 		}
-		marriageFeeService.update(fee);
+		marriageFeeService.update(marriageFee);
 		redirectAttributes.addFlashAttribute("message",
 				messageSource.getMessage("msg.fee.update.success", null, null));
-		return "redirect:/masters/fee/success/" + fee.getId();
+		return "redirect:/masters/fee/success/" + marriageFee.getId();
 	}
 }

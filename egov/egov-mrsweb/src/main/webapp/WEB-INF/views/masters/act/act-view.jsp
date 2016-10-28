@@ -43,7 +43,31 @@
 <%@ taglib uri="http://www.springframework.org/tags" prefix="spring" %>
 <%@ taglib uri="http://www.springframework.org/tags/form" prefix="form" %>
 
-<div class="alert alert-success" role="alert">
-	<strong>${message}</strong>
-</div>
-<jsp:include page="act-view.jsp"></jsp:include>
+<div class="row">
+		<div class="col-md-12">
+			<div class="panel panel-primary" data-collapsed="0">
+				<div class="panel-heading">
+					<div class="panel-title">Act</div>
+				</div>
+				<div class="panel-body custom">
+					<div class="row add-border">
+						<div class="col-xs-3 add-margin">
+							<spring:message code="lbl.act" />
+						</div>
+						<div class="col-sm-3 add-margin view-content">
+							${marriageAct.name}</div>
+						<div class="col-xs-3 add-margin">
+							<spring:message code="lbl.act.desc" />
+						</div>
+						<div class="col-sm-3 add-margin view-content">
+							${marriageAct.description}</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+	<div class="row">
+					<div class="text-center">					
+				        <a href="javascript:void(0)" class="btn btn-default" onclick="self.close()"><spring:message code="lbl.close"/></a>
+					</div>
+				</div>

@@ -54,16 +54,16 @@
 							<strong><spring:message code="title.Fee.search"/></strong>
 						</div>
 					</div> 
-					
+				
 					<div class="panel-body custom-form">
 					<div class="form-group">
 						<label class="col-sm-2 control-label text-right"> <spring:message
-								code="lbl.fee.criteria" /><span class="mandatory"></span>
+								code="lbl.fee.criteria" />
 						</label>
 						<div class="col-sm-3 add-margin">
 							<form:input path="criteria" id="criteria" type="text"
 								class="form-control low-width" maxlength="30"
-								placeholder="" autocomplete="off" required="required" />
+								placeholder="" autocomplete="off" />
 							<form:errors path="criteria" cssClass="add-margin error-msg" />
 						</div>
 					</div>

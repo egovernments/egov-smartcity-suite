@@ -43,7 +43,7 @@
 <%@ taglib uri="http://www.springframework.org/tags" prefix="spring" %>
 <%@ taglib uri="http://www.springframework.org/tags/form" prefix="form" %>
 
-<form:form  method="post" action="/mrs/masters/fee/update" class="form-horizontal form-groups-bordered" commandName="fee" id="form-fee" >
+<form:form role="form" method="post" modelAttribute="marriageFee" action="/mrs/masters/fee/update" class="form-horizontal form-groups-bordered" commandName="marriageFee" id="form-fee" >
 			<div class="row" id="page-content">
 			<div class="col-md-12">
 			<div class="panel" data-collapsed="0">

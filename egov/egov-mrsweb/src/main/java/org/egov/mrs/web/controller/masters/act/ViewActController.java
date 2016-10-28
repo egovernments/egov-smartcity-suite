@@ -44,6 +44,7 @@ import static org.egov.infra.web.utils.WebUtils.toJSON;
 import java.util.List;
 
 import org.egov.mrs.masters.entity.MarriageAct;
+import org.egov.mrs.masters.entity.MarriageReligion;
 import org.egov.mrs.masters.service.MarriageActService;
 import org.egov.mrs.web.adaptor.ActJsonAdaptor;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -63,17 +64,26 @@ public class ViewActController {
 	private  MarriageActService marriageActService;
 
 
-	private static final String MRG_ACT_VIEW = "act-success";
+	private static final String MRG_ACT_SUCCESS = "act-success";
 	private static final String MRG_ACT_SEARCH = "act-search";
+	private static final String MRG_ACT_VIEW = "act-view";
 
 	
 
 	@RequestMapping(value = "/act/success/{id}", method = RequestMethod.GET)
 	public String viewAct(@PathVariable Long id, final Model model) {
-		model.addAttribute("act", marriageActService.getAct(id));
+		model.addAttribute("marriageAct", marriageActService.getAct(id));
+		return MRG_ACT_SUCCESS;
+	}
+	
+	@RequestMapping(value = "/act/view/{id}", method = RequestMethod.GET)
+	public String viewRegistrationunit(@PathVariable("id") final Long id,
+			Model model) {
+		MarriageAct marriageAct = marriageActService.getAct(id);
+		model.addAttribute("marriageAct", marriageAct);
 		return MRG_ACT_VIEW;
 	}
-
+	
 	@RequestMapping(value = "/act/search/{mode}", method = RequestMethod.GET)
 	public String getSearchPage(@PathVariable("mode") final String mode,
 			final Model model) {

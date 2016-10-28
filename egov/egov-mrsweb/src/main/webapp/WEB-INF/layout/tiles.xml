@@ -259,4 +259,12 @@
 	<put-attribute name="page-title" value="lbl.religion" cascade="true"/>
 	<put-attribute name="body" value="/WEB-INF/views/masters/religion/religion-view.jsp"/>
 </definition>
+ <definition name="fee-view" extends="base_layout">
+	<put-attribute name="page-title" value="tiltle.fee" cascade="true"/>
+	<put-attribute name="body" value="/WEB-INF/views/masters/fee/fee-view.jsp"/>
+</definition>
+<definition name="act-view" extends="base_layout">
+	<put-attribute name="page-title" value="tiltle.act" cascade="true"/>
+	<put-attribute name="body" value="/WEB-INF/views/masters/act/act-view.jsp"/>
+</definition>
 </tiles-definitions>

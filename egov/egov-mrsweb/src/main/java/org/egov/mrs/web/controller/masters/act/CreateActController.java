@@ -66,7 +66,7 @@ public class CreateActController {
 
 	@RequestMapping(value = "/act/create", method = RequestMethod.GET)
 	public String loadCreateForm(final Model model) {
-		model.addAttribute("act", new MarriageAct());
+		model.addAttribute("marriageact", new MarriageAct());
 		return MRG_ACT_CREATE;
 	}
 

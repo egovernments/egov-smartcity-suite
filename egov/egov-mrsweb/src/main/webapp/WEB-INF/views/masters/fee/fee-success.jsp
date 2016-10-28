@@ -46,43 +46,4 @@
 <div class="alert alert-success" role="alert">
 	<strong>${message}</strong>
 </div>
-<div class="row">
-		<div class="col-md-12">
-			<div class="panel panel-primary" data-collapsed="0">
-				<div class="panel-heading">
-					<div class="panel-title">Marriage Fee</div>
-				</div>
-				<div class="panel-body custom">
-					<div class="row add-border">
-						<div class="col-xs-3 add-margin">
-							<spring:message code="lbl.fee.criteria" />
-						</div>
-						<div class="col-sm-3 add-margin view-content">
-							${fee.criteria}</div>
-						<div class="col-xs-3 add-margin">
-							<spring:message code="lbl.marriage.fee" />
-						</div>
-						<div class="col-sm-3 add-margin view-content">
-							${fee.fees}</div>
-						<div class="col-xs-3 add-margin">
-							<spring:message code="lbl.fromDays" />
-						</div>
-						<div class="col-sm-3 add-margin view-content">
-							${fee.fromDays}</div>
-				
-					<div class="col-xs-3 add-margin">
-							<spring:message code="lbl.toDays" />
-						</div>
-						<div class="col-sm-3 add-margin view-content">
-							${fee.toDays}</div>
-					</div>
-					
-				</div>
-			</div>
-		</div>
-	</div>
-	<div class="row">
-					<div class="text-center">					
-				        <a href="javascript:void(0)" class="btn btn-default" onclick="self.close()"><spring:message code="lbl.close"/></a>
-					</div>
-				</div>
+<jsp:include page="fee-view.jsp"></jsp:include>
