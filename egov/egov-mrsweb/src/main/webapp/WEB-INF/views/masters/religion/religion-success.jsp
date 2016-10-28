@@ -46,31 +46,4 @@
 <div class="alert alert-success" role="alert">
 	<strong>${message}</strong>
 </div>
-<div class="row">
-		<div class="col-md-12">
-			<div class="panel panel-primary" data-collapsed="0">
-				<div class="panel-heading">
-					<div class="panel-title">Religion</div>
-				</div>
-				<div class="panel-body custom">
-					<div class="row add-border">
-						<div class="col-xs-3 add-margin">
-							<spring:message code="lbl.religion" />
-						</div>
-						<div class="col-sm-3 add-margin view-content">
-							${religion.name}</div>
-						<div class="col-xs-3 add-margin">
-							<spring:message code="lbl.religion.desc" />
-						</div>
-						<div class="col-sm-3 add-margin view-content">
-							${religion.description}</div>
-					</div>
-				</div>
-			</div>
-		</div>
-	</div>
-	<div class="row">
-					<div class="text-center">					
-				        <a href="javascript:void(0)" class="btn btn-default" onclick="self.close()"><spring:message code="lbl.close"/></a>
-					</div>
-				</div>
+<jsp:include page="religion-view.jsp"></jsp:include>

@@ -109,7 +109,7 @@ $('#btnSearch').click(function(e) {
 	
 	$("#religionResultTable").on('click','tbody tr td  .view',function(event) {
 		var id = reportdatatable.fnGetData($(this).parent().parent(),3);
-		window.open('/mrs/masters/religion/success' +'/'+id,'','width=800, height=600,scrollbars=yes');
+		window.open('/mrs/masters/religion/view' +'/'+id,'','width=800, height=600,scrollbars=yes');
 	});
 
 	$("#religionResultTable").on('click','tbody tr td  .edit',function(event) {

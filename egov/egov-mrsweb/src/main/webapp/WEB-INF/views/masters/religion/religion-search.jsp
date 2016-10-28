@@ -51,7 +51,7 @@
 				<div class="panel panel-primary" data-collapsed="0">
 					<div class="panel-heading">
 						<div class="panel-title">
-								<strong><spring:message code="lbl.search"/></strong>
+								<strong><spring:message code="lbl.search.religion"/></strong>
 						</div>
 					</div> 
 					

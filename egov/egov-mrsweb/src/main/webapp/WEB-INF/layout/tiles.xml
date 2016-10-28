@@ -110,6 +110,14 @@
         <put-attribute name="body" value="/WEB-INF/views/reports/report-registrationstatus.jsp"/>
     </definition>
     
+    <definition name="report-datewiseregsitration" extends="base_layout">
+        <put-attribute name="page-title" value="title.registration" cascade="true"/>
+        <put-attribute name="body" value="/WEB-INF/views/reports/report-datewiseregsitration.jsp"/>
+    </definition>
+    <definition name="report-monthwiseregistration" extends="base_layout">
+        <put-attribute name="page-title" value="title.registration" cascade="true"/>
+        <put-attribute name="body" value="/WEB-INF/views/reports/report-monthwiseregistration.jsp"/>
+    </definition>
     <definition name="reissue-form" extends="base_layout">
         <put-attribute name="page-title" value="title.reissue" cascade="true"/>
         <put-attribute name="body" value="/WEB-INF/views/application/reissue/reissue-form.jsp"/>
@@ -233,7 +241,6 @@
         <put-attribute name="page-title" value="title.registration.common.error" cascade="true"/>
         <put-attribute name="body" value="/WEB-INF/views/application/collection/marriage-error.jsp"/>
     </definition>
-       
     <definition name="report-registration-agewise" extends="base_layout">
         <put-attribute name="page-title" value="title.registration.agewise.report" cascade="true"/>
         <put-attribute name="body" value="/WEB-INF/views/reports/report-registration-agewise.jsp"/>
@@ -248,4 +255,8 @@
         <put-attribute name="page-title" value="title.registration.certificate.report" cascade="true"/>
         <put-attribute name="body" value="/WEB-INF/views/reports/registration-certificates-report.jsp"/>
     </definition>
+    <definition name="religion-view" extends="base_layout">
+	<put-attribute name="page-title" value="lbl.religion" cascade="true"/>
+	<put-attribute name="body" value="/WEB-INF/views/masters/religion/religion-view.jsp"/>
+</definition>
 </tiles-definitions>

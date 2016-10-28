@@ -63,6 +63,8 @@
 						<div class="col-sm-6">
 							<form:textarea path="description" id="name" type="text" class="form-control low-width" data-pattern="alphanumericwithspecialcharacters" maxlength="50" placeholder="" autocomplete="off" />
                             <form:errors path="description" cssClass="add-margin error-msg"/>
+                            <input type="hidden" name="marriageReligion" value="${marriageReligion.id}" /> 
+                            
 						</div>
 					</div>
 				</div>
