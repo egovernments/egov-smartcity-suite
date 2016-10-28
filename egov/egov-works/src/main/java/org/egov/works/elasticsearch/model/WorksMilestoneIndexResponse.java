@@ -181,6 +181,10 @@ public class WorksMilestoneIndexResponse {
 
     private Double contractperiod;
 
+    private Long milestonenotcreatedcount;
+
+    private Integer lineestimatedetailid;
+
     public String getName() {
         return name;
     }
@@ -887,9 +891,25 @@ public class WorksMilestoneIndexResponse {
         this.contractperiod = contractperiod;
     }
 
+    public Long getMilestonenotcreatedcount() {
+        return milestonenotcreatedcount;
+    }
+
+    public void setMilestonenotcreatedcount(final Long milestonenotcreatedcount) {
+        this.milestonenotcreatedcount = milestonenotcreatedcount;
+    }
+
+    public Integer getLineestimatedetailid() {
+        return lineestimatedetailid;
+    }
+
+    public void setLineestimatedetailid(final Integer lineestimatedetailid) {
+        this.lineestimatedetailid = lineestimatedetailid;
+    }
+
     public Double getFinancialprogress() {
         return (totalpaidamountinlakhs != null ? totalpaidamountinlakhs : (double) 0)
-                / (totalworkordervalueinlakhs != null ? (totalworkordervalueinlakhs > 0 ? totalworkordervalueinlakhs : 1) : 1)
+                / (totalworkordervalueinlakhs != null ? totalworkordervalueinlakhs > 0 ? totalworkordervalueinlakhs : 1 : 1)
                 * 100;
     }
 

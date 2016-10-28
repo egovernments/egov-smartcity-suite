@@ -94,10 +94,16 @@ public class WorksTransactionIndex {
     private String lineestimatecreatedby;
 
     @Field(type = FieldType.String, index = FieldIndex.not_analyzed)
-    private String lineestimatetypeofwork;
+    private String lineestimatetypeofworkname;
 
     @Field(type = FieldType.String, index = FieldIndex.not_analyzed)
-    private String lineestimatesubtypeofwork;
+    private String lineestimatetypeofworkcode;
+
+    @Field(type = FieldType.String, index = FieldIndex.not_analyzed)
+    private String lineestimatesubtypeofworkname;
+
+    @Field(type = FieldType.String, index = FieldIndex.not_analyzed)
+    private String lineestimatesubtypeofworkcode;
 
     @Field(type = FieldType.String, index = FieldIndex.not_analyzed)
     private String lineestimatenatureofwork;
@@ -383,20 +389,36 @@ public class WorksTransactionIndex {
         this.lineestimatecreatedby = lineestimatecreatedby;
     }
 
-    public String getLineestimatetypeofwork() {
-        return lineestimatetypeofwork;
+    public String getLineestimatetypeofworkname() {
+        return lineestimatetypeofworkname;
     }
 
-    public void setLineestimatetypeofwork(final String lineestimatetypeofwork) {
-        this.lineestimatetypeofwork = lineestimatetypeofwork;
+    public void setLineestimatetypeofworkname(final String lineestimatetypeofworkname) {
+        this.lineestimatetypeofworkname = lineestimatetypeofworkname;
     }
 
-    public String getLineestimatesubtypeofwork() {
-        return lineestimatesubtypeofwork;
+    public String getLineestimatetypeofworkcode() {
+        return lineestimatetypeofworkcode;
     }
 
-    public void setLineestimatesubtypeofwork(final String lineestimatesubtypeofwork) {
-        this.lineestimatesubtypeofwork = lineestimatesubtypeofwork;
+    public void setLineestimatetypeofworkcode(final String lineestimatetypeofworkcode) {
+        this.lineestimatetypeofworkcode = lineestimatetypeofworkcode;
+    }
+
+    public String getLineestimatesubtypeofworkname() {
+        return lineestimatesubtypeofworkname;
+    }
+
+    public void setLineestimatesubtypeofworkname(final String lineestimatesubtypeofworkname) {
+        this.lineestimatesubtypeofworkname = lineestimatesubtypeofworkname;
+    }
+
+    public String getLineestimatesubtypeofworkcode() {
+        return lineestimatesubtypeofworkcode;
+    }
+
+    public void setLineestimatesubtypeofworkcode(final String lineestimatesubtypeofworkcode) {
+        this.lineestimatesubtypeofworkcode = lineestimatesubtypeofworkcode;
     }
 
     public String getLineestimatenatureofwork() {

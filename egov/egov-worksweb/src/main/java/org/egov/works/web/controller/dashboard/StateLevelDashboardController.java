@@ -52,9 +52,8 @@ import java.io.IOException;
 import java.util.Arrays;
 import java.util.List;
 
-import org.egov.works.elasticsearch.model.WorksMilestoneIndexRequest;
+import org.egov.works.elasticsearch.model.WorksIndexsRequest;
 import org.egov.works.elasticsearch.model.WorksMilestoneIndexResponse;
-import org.egov.works.elasticsearch.model.WorksTransactionIndexRequest;
 import org.egov.works.elasticsearch.service.WorksMilestoneIndexService;
 import org.egov.works.elasticsearch.service.WorksTransactionIndexService;
 import org.egov.works.web.adaptor.WorksMilestoneIndexJsonAdaptor;
@@ -100,11 +99,11 @@ public class StateLevelDashboardController {
         final Long startTime, timeTaken;
         final List<WorksMilestoneIndexResponse> resultList;
         final String result;
-        final WorksMilestoneIndexRequest worksMilestoneIndexRequest = new WorksMilestoneIndexRequest();
+        final WorksIndexsRequest worksIndexsRequest = new WorksIndexsRequest();
 
         startTime = System.currentTimeMillis();
-        worksMilestoneIndexRequest.setReportType(SECTOR_COLUMN_HEADER_NAME);
-        resultList = worksMilestoneIndexService.getAggregationResults(worksMilestoneIndexRequest,
+        worksIndexsRequest.setReportType(SECTOR_COLUMN_HEADER_NAME);
+        resultList = worksMilestoneIndexService.getAggregationResults(worksIndexsRequest,
                 WORKSMILESTONE_TYPEOFWORKNAME_COLUMN_NAME);
         result = new StringBuilder("{ \"data\":").append(toMilestoneJson(resultList)).append("}").toString();
         timeTaken = System.currentTimeMillis() - startTime;
@@ -123,12 +122,12 @@ public class StateLevelDashboardController {
         final Long startTime, timeTaken;
         final List<WorksMilestoneIndexResponse> resultList;
         final String result;
-        final WorksMilestoneIndexRequest worksMilestoneIndexRequest = new WorksMilestoneIndexRequest();
+        final WorksIndexsRequest worksIndexsRequest = new WorksIndexsRequest();
 
-        worksMilestoneIndexRequest.setTypeofwork(typeofwork);
-        worksMilestoneIndexRequest.setReportType(DISTRICT_COLUMN_HEADER_NAME);
+        worksIndexsRequest.setTypeofwork(typeofwork);
+        worksIndexsRequest.setReportType(DISTRICT_COLUMN_HEADER_NAME);
         startTime = System.currentTimeMillis();
-        resultList = worksMilestoneIndexService.getAggregationResults(worksMilestoneIndexRequest,
+        resultList = worksMilestoneIndexService.getAggregationResults(worksIndexsRequest,
                 WORKSMILESTONE_DISTNAME_COLUMN_NAME);
         result = new StringBuilder("{ \"data\":").append(toMilestoneJson(resultList)).append("}").toString();
         timeTaken = System.currentTimeMillis() - startTime;
@@ -146,12 +145,12 @@ public class StateLevelDashboardController {
         final Long startTime, timeTaken;
         final List<WorksMilestoneIndexResponse> resultList;
         final String result;
-        final WorksMilestoneIndexRequest worksMilestoneIndexRequest = new WorksMilestoneIndexRequest();
+        final WorksIndexsRequest worksIndexsRequest = new WorksIndexsRequest();
 
-        worksMilestoneIndexRequest.setTypeofwork(typeofwork);
-        worksMilestoneIndexRequest.setReportType(ULB_COLUMN_HEADER_NAME);
+        worksIndexsRequest.setTypeofwork(typeofwork);
+        worksIndexsRequest.setReportType(ULB_COLUMN_HEADER_NAME);
         startTime = System.currentTimeMillis();
-        resultList = worksMilestoneIndexService.getAggregationResults(worksMilestoneIndexRequest,
+        resultList = worksMilestoneIndexService.getAggregationResults(worksIndexsRequest,
                 WORKSMILESTONE_ULBNAME_COLUMN_NAME);
         result = new StringBuilder("{ \"data\":").append(toMilestoneJson(resultList)).append("}").toString();
         timeTaken = System.currentTimeMillis() - startTime;
@@ -169,13 +168,13 @@ public class StateLevelDashboardController {
         final Long startTime, timeTaken;
         final List<WorksMilestoneIndexResponse> resultList;
         final String result;
-        final WorksMilestoneIndexRequest worksMilestoneIndexRequest = new WorksMilestoneIndexRequest();
+        final WorksIndexsRequest worksIndexsRequest = new WorksIndexsRequest();
 
-        worksMilestoneIndexRequest.setTypeofwork(typeofwork);
-        worksMilestoneIndexRequest.setDistname(districtname);
-        worksMilestoneIndexRequest.setReportType(ULB_COLUMN_HEADER_NAME);
+        worksIndexsRequest.setTypeofwork(typeofwork);
+        worksIndexsRequest.setDistname(districtname);
+        worksIndexsRequest.setReportType(ULB_COLUMN_HEADER_NAME);
         startTime = System.currentTimeMillis();
-        resultList = worksMilestoneIndexService.getAggregationResults(worksMilestoneIndexRequest,
+        resultList = worksMilestoneIndexService.getAggregationResults(worksIndexsRequest,
                 WORKSMILESTONE_ULBNAME_COLUMN_NAME);
         result = new StringBuilder("{ \"data\":").append(toMilestoneJson(resultList)).append("}").toString();
         timeTaken = System.currentTimeMillis() - startTime;
@@ -193,13 +192,13 @@ public class StateLevelDashboardController {
         final Long startTime, timeTaken;
         final List<WorksMilestoneIndexResponse> resultList;
         final String result;
-        final WorksMilestoneIndexRequest worksMilestoneIndexRequest = new WorksMilestoneIndexRequest();
+        final WorksIndexsRequest worksIndexsRequest = new WorksIndexsRequest();
 
-        worksMilestoneIndexRequest.setTypeofwork(typeofwork);
-        worksMilestoneIndexRequest.setUlbcodes(Arrays.asList(ulbcodes.split(",")));
-        worksMilestoneIndexRequest.setReportType(ULB_COLUMN_HEADER_NAME);
+        worksIndexsRequest.setTypeofwork(typeofwork);
+        worksIndexsRequest.setUlbcodes(Arrays.asList(ulbcodes.split(",")));
+        worksIndexsRequest.setReportType(ULB_COLUMN_HEADER_NAME);
         startTime = System.currentTimeMillis();
-        resultList = worksMilestoneIndexService.getAggregationResults(worksMilestoneIndexRequest,
+        resultList = worksMilestoneIndexService.getAggregationResults(worksIndexsRequest,
                 WORKSMILESTONE_ULBNAME_COLUMN_NAME);
         result = new StringBuilder("{ \"data\":").append(toMilestoneJson(resultList)).append("}").toString();
         timeTaken = System.currentTimeMillis() - startTime;
@@ -217,20 +216,21 @@ public class StateLevelDashboardController {
         final Long startTime, timeTaken;
         final List<WorksMilestoneIndexResponse> resultList;
         final String result;
-        final WorksMilestoneIndexRequest worksMilestoneIndexRequest = new WorksMilestoneIndexRequest();
-        WorksTransactionIndexRequest worksTransactionIndexRequest;
+        WorksIndexsRequest worksIndexsRequest = new WorksIndexsRequest();
 
         startTime = System.currentTimeMillis();
-        worksMilestoneIndexRequest.setTypeofwork(typeofwork);
-        worksMilestoneIndexRequest.setUlbname(ulbname);
-        resultList = worksMilestoneIndexService.getAggregationResults(worksMilestoneIndexRequest,
-                WORKSMILESTONE_ESTIMATEDETAILID_COLUMN_NAME);
+        worksIndexsRequest.setTypeofwork(typeofwork);
+        worksIndexsRequest.setUlbname(ulbname);
+        resultList = worksTransactionIndexService.getWorksTransactionDetails(worksIndexsRequest);
 
         for (final WorksMilestoneIndexResponse response : resultList) {
-            worksTransactionIndexRequest = new WorksTransactionIndexRequest();
-            worksTransactionIndexRequest.setUlbname(ulbname);
-            worksTransactionIndexRequest.setLineestimatedetailid(Integer.valueOf(response.getName()));
-            worksTransactionIndexService.getWorksTransactionDetails(worksTransactionIndexRequest, response);
+            worksIndexsRequest = new WorksIndexsRequest();
+            worksIndexsRequest.setUlbname(ulbname);
+            worksIndexsRequest.setLineestimatedetailid(response.getLineestimatedetailid());
+            worksTransactionIndexService.getAggregationResults(worksIndexsRequest, response,
+                    WORKSMILESTONE_ESTIMATEDETAILID_COLUMN_NAME);
+            worksMilestoneIndexService.getAggregationResultsForUlb(worksIndexsRequest, response,
+                    WORKSMILESTONE_ESTIMATEDETAILID_COLUMN_NAME);
         }
 
         result = new StringBuilder("{ \"data\":").append(toTransactionJson(resultList)).append("}").toString();
