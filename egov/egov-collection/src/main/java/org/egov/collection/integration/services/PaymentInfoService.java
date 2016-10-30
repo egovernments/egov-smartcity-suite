@@ -37,81 +37,17 @@
  *
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
-package org.egov.collection.integration.models;
+package org.egov.collection.integration.services;
 
 import org.egov.collection.entity.ReceiptHeader;
-import org.egov.collection.utils.CollectionsUtil;
+import org.egov.collection.integration.models.RestReceiptInfo;
 
-import java.math.BigDecimal;
-
-
-public class RestReceiptInfo {
-    private String transactionId="";
-    private String receiptNo="";
-    private String referenceNo="";
-    private BigDecimal amount=BigDecimal.ZERO;
-    private String txnDate=""; 
-    private String paymentPeriod;
-    private String paymentType;
+public interface PaymentInfoService {
     
-    public RestReceiptInfo(final ReceiptHeader receiptHeader) {
-        this.transactionId = receiptHeader.getManualreceiptnumber();
-        this.receiptNo = receiptHeader.getReceiptnumber();
-        this.referenceNo = receiptHeader.getConsumerCode();
-        this.amount = receiptHeader.getTotalAmount();
-        this.txnDate=CollectionsUtil.CHEQUE_DATE_FORMAT.format(receiptHeader.getReceiptdate());
-    }
-
-    public String getTransactionId() {
-        return transactionId;
-    }
-
-    public RestReceiptInfo() {
-        super();
-    }
-
-    public void setTransactionId(String transactionId) {
-        this.transactionId = transactionId;
-    }
-
-    public String getReceiptNo() {
-        return receiptNo;
-    }
-
-    public void setReceiptNo(String receiptNo) {
-        this.receiptNo = receiptNo;
-    }
-
-    public String getReferenceNo() {
-        return referenceNo;
-    }
-
-    public void setReferenceNo(String referenceNo) {
-        this.referenceNo = referenceNo;
-    }
-
-    public BigDecimal getAmount() {
-        return amount;
-    }
-
-    public void setAmount(BigDecimal amount) {
-        this.amount = amount;
-    }
-
-    public String getPaymentPeriod() {
-        return paymentPeriod;
-    }
-
-    public void setPaymentPeriod(String paymentPeriod) {
-        this.paymentPeriod = paymentPeriod;
-    }
-
-    public String getPaymentType() {
-        return paymentType;
-    }
-
-    public void setPaymentType(String paymentType) {
-        this.paymentType = paymentType;
-    }
+    /**
+     * API gives information regarding the payment period and payment type
+     * (Partially/Fully/Advance)
+     */
+    public void setPaymentInfo(RestReceiptInfo restReceiptInfo, ReceiptHeader receiptHeader);
 
 }

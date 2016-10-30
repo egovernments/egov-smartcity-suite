@@ -37,81 +37,28 @@
  *
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
-package org.egov.collection.integration.models;
+package org.egov.collection.entity;
 
-import org.egov.collection.entity.ReceiptHeader;
-import org.egov.collection.utils.CollectionsUtil;
+import org.egov.infra.admin.master.entity.Module;
+import org.egov.infstr.models.BaseModel;
+import org.egov.infstr.models.ServiceDetails;
 
-import java.math.BigDecimal;
+public class ServiceModuleMapping extends BaseModel{
 
+    private static final long serialVersionUID = -1001282528493258269L;
+    private ServiceDetails serviceDetails;
+    private Module module;
 
-public class RestReceiptInfo {
-    private String transactionId="";
-    private String receiptNo="";
-    private String referenceNo="";
-    private BigDecimal amount=BigDecimal.ZERO;
-    private String txnDate=""; 
-    private String paymentPeriod;
-    private String paymentType;
-    
-    public RestReceiptInfo(final ReceiptHeader receiptHeader) {
-        this.transactionId = receiptHeader.getManualreceiptnumber();
-        this.receiptNo = receiptHeader.getReceiptnumber();
-        this.referenceNo = receiptHeader.getConsumerCode();
-        this.amount = receiptHeader.getTotalAmount();
-        this.txnDate=CollectionsUtil.CHEQUE_DATE_FORMAT.format(receiptHeader.getReceiptdate());
+    public ServiceDetails getServiceDetails() {
+        return serviceDetails;
     }
-
-    public String getTransactionId() {
-        return transactionId;
+    public void setServiceDetails(ServiceDetails serviceDetails) {
+        this.serviceDetails = serviceDetails;
     }
-
-    public RestReceiptInfo() {
-        super();
+    public Module getModule() {
+        return module;
     }
-
-    public void setTransactionId(String transactionId) {
-        this.transactionId = transactionId;
+    public void setModule(Module module) {
+        this.module = module;
     }
-
-    public String getReceiptNo() {
-        return receiptNo;
-    }
-
-    public void setReceiptNo(String receiptNo) {
-        this.receiptNo = receiptNo;
-    }
-
-    public String getReferenceNo() {
-        return referenceNo;
-    }
-
-    public void setReferenceNo(String referenceNo) {
-        this.referenceNo = referenceNo;
-    }
-
-    public BigDecimal getAmount() {
-        return amount;
-    }
-
-    public void setAmount(BigDecimal amount) {
-        this.amount = amount;
-    }
-
-    public String getPaymentPeriod() {
-        return paymentPeriod;
-    }
-
-    public void setPaymentPeriod(String paymentPeriod) {
-        this.paymentPeriod = paymentPeriod;
-    }
-
-    public String getPaymentType() {
-        return paymentType;
-    }
-
-    public void setPaymentType(String paymentType) {
-        this.paymentType = paymentType;
-    }
-
 }
