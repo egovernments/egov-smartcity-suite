@@ -42,18 +42,22 @@ package org.egov.collection.integration.services;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
 import org.egov.collection.constants.CollectionConstants;
 import org.egov.collection.entity.OnlinePayment;
 import org.egov.collection.entity.ReceiptDetail;
 import org.egov.collection.entity.ReceiptHeader;
 import org.egov.collection.entity.ReceiptVoucher;
+import org.egov.collection.entity.ServiceModuleMapping;
 import org.egov.collection.integration.models.BillInfo;
 import org.egov.collection.integration.models.BillInfoImpl;
 import org.egov.collection.integration.models.BillReceiptInfo;
@@ -71,14 +75,17 @@ import org.egov.collection.utils.CollectionCommon;
 import org.egov.collection.utils.CollectionsUtil;
 import org.egov.commons.CVoucherHeader;
 import org.egov.commons.Fund;
+import org.egov.commons.Installment;
 import org.egov.commons.dao.ChartOfAccountsHibernateDAO;
 import org.egov.commons.dao.EgwStatusHibernateDAO;
 import org.egov.commons.dao.FundHibernateDAO;
+import org.egov.commons.dao.InstallmentHibDao;
 import org.egov.commons.entity.Source;
 import org.egov.infra.admin.master.entity.Department;
 import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.config.core.ApplicationThreadLocals;
 import org.egov.infra.exception.ApplicationRuntimeException;
+import org.egov.infra.utils.DateUtils;
 import org.egov.infra.validation.exception.ValidationError;
 import org.egov.infra.validation.exception.ValidationException;
 import org.egov.infstr.models.ServiceDetails;
@@ -119,9 +126,10 @@ public class CollectionIntegrationServiceImpl extends PersistenceService<Receipt
 
     @Autowired
     private FundHibernateDAO fundDAO;
-    
+
+    @SuppressWarnings("rawtypes")
     @Autowired
-    private PaymentInfoService paymentInfoService;
+    private InstallmentHibDao installmentDao;
 
     public CollectionIntegrationServiceImpl() {
         super(ReceiptHeader.class);
@@ -234,7 +242,7 @@ public class CollectionIntegrationServiceImpl extends PersistenceService<Receipt
         if (header == null)
             throw new RuntimeException("No data found");
         RestReceiptInfo restReceiptInfo = new RestReceiptInfo(header);
-        paymentInfoService.setPaymentInfo(restReceiptInfo, header);
+        setPaymentInfo(restReceiptInfo, header);
         return restReceiptInfo;
 
     }
@@ -570,9 +578,9 @@ public class CollectionIntegrationServiceImpl extends PersistenceService<Receipt
             receipts.add(new RestReceiptInfo());
             return receipts;
         } else {
-            for (final ReceiptHeader receiptHeader : receiptHeaders){
-                restReceiptInfo = new RestReceiptInfo(receiptHeader); 
-                paymentInfoService.setPaymentInfo(restReceiptInfo, receiptHeader);
+            for (final ReceiptHeader receiptHeader : receiptHeaders) {
+                restReceiptInfo = new RestReceiptInfo(receiptHeader);
+                setPaymentInfo(restReceiptInfo, receiptHeader);
                 receipts.add(restReceiptInfo);
             }
             return receipts;
@@ -734,6 +742,79 @@ public class CollectionIntegrationServiceImpl extends PersistenceService<Receipt
 
         return collectionCommon.createPaymentRequest(paymentService, receiptHeader);
     }// end of method
+
+    /**
+     * API gives information regarding the payment period and payment type
+     * (Partially/Fully/Advance)
+     */
+    private void setPaymentInfo(RestReceiptInfo restReceiptInfo, ReceiptHeader receiptHeader) {
+        String[] paidFrom = null;
+        String[] paidTo = null;
+        Installment fromInstallment = null;
+        Installment toInstallment = null;
+        BigDecimal totalAmountToBePaid = BigDecimal.ZERO;
+        for (ReceiptDetail receiptDetail : receiptHeader.getReceiptDetails()) {
+            if (receiptDetail.getCramountToBePaid() != null
+                    && receiptDetail.getCramountToBePaid().compareTo(BigDecimal.ZERO) > 0
+                    && !receiptDetail.getDescription().contains("Advance"))
+                totalAmountToBePaid = totalAmountToBePaid.add(receiptDetail.getCramountToBePaid());
+        }
+        ServiceModuleMapping serviceModuleMapping = (ServiceModuleMapping) persistenceService.find(
+                "from ServiceModuleMapping smm where smm.serviceDetails.code = ? ",
+                receiptHeader.getService().getCode());
+        if (serviceModuleMapping != null
+                && serviceModuleMapping.getServiceDetails().getCode().equals(receiptHeader.getService().getCode())
+                && totalAmountToBePaid.compareTo(BigDecimal.ZERO) > 0) {
+
+            if (receiptHeader.getService().getCode().equals("PT")
+                    || receiptHeader.getService().getCode().equals("VLT")) {
+                List<ReceiptDetail> receiptDetailsList = new ArrayList<ReceiptDetail>(
+                        receiptHeader.getReceiptDetails());
+                Collections.sort(receiptDetailsList, new Comparator<ReceiptDetail>() {
+                    @Override
+                    public int compare(ReceiptDetail receiptDetail1, ReceiptDetail receiptDetail2) {
+                        if (receiptDetail1.getOrdernumber() != null && receiptDetail2.getOrdernumber() != null)
+                            return receiptDetail1.getOrdernumber().compareTo(receiptDetail2.getOrdernumber());
+                        return 0;
+                    }
+                });
+
+                for (ReceiptDetail receiptDetail : receiptDetailsList) {
+                    if (receiptDetail.getCramount().compareTo(BigDecimal.ZERO) > 0
+                            && !receiptDetail.getDescription().contains("Advance")) {
+                        if (paidFrom == null)
+                            paidFrom = receiptDetail.getDescription().split("-", 2);
+                        paidTo = receiptDetail.getDescription().split("-", 2);
+                    }
+                }
+
+                if (paidFrom != null)
+                    fromInstallment = installmentDao.getInsatllmentByModuleAndDescription(
+                            serviceModuleMapping.getModule(), paidFrom[1].toString());
+                if (paidTo != null)
+                    toInstallment = installmentDao.getInsatllmentByModuleAndDescription(
+                            serviceModuleMapping.getModule(), paidTo[1].toString());
+                if (totalAmountToBePaid.compareTo(BigDecimal.ZERO) == 0) {
+                    restReceiptInfo.setPaymentPeriod(StringUtils.EMPTY);
+                    restReceiptInfo.setPaymentType("Advance");
+                } else
+                    restReceiptInfo.setPaymentPeriod(DateUtils.getDefaultFormattedDate(fromInstallment.getFromDate())
+                            .concat(" to ").concat(DateUtils.getDefaultFormattedDate(toInstallment.getToDate())));
+            } else if (receiptHeader.getService().getCode().equals("PTMF")) {
+                restReceiptInfo.setPaymentPeriod(DateUtils.getDefaultFormattedDate(receiptHeader.getReceiptdate())
+                        .concat(" to ").concat(DateUtils.getDefaultFormattedDate(receiptHeader.getReceiptdate())));
+            } else {
+                restReceiptInfo.setPaymentPeriod(StringUtils.EMPTY);
+            }
+        }
+
+        if (receiptHeader.getTotalAmount().compareTo(totalAmountToBePaid) > 0)
+            restReceiptInfo.setPaymentType("Advance");
+        else if (totalAmountToBePaid.compareTo(receiptHeader.getTotalAmount()) > 0)
+            restReceiptInfo.setPaymentType("Partially");
+        else
+            restReceiptInfo.setPaymentType("Fully");
+    }
 
     public void setCollectionCommon(final CollectionCommon collectionCommon) {
         this.collectionCommon = collectionCommon;
