@@ -52,7 +52,7 @@ public class Constants {
         public static final String ROLE_BILLCOLLECTOR = "Collection Operator";
         public static final String WF_STATE_COLLECTION_PENDING = "Create License:Commissioner Approved";
         public static final String WF_STATE_INSPECTION_APPROVED_STR="Sanitary inspector Approved";
-        public static final String WF_STATE_COMMISSIONER_APPROVED_STR="Commissioner Approved";
+        public static final String WF_STATE_COMMISSIONER_APPROVED_STR="Commissioner approved";
         public static final String WF_STATE_GENERATE_CERTIFICATE="Create License:generate Certificate";
         public static final String WF_STATE_RENEWAL_COMM_APPROVED="Renewal License:Commissioner Approved";
         public static final String WF_STATE_SANITORY_INSPECTOR_APPROVAL_PENDING = "Sanitary inspector Approve pending";
@@ -103,6 +103,7 @@ public class Constants {
         public static final String STATUS_ACTIVE = "ACT";
         public static final String STATUS_ACKNOLEDGED = "ACK";
         public static final String STATUS_UNDERWORKFLOW = "UWF";
+        public static final String STATUS_REJECTED = "REJ";
         public static final int RENEWALTIMEPERIOD = -90;
         public static final String TRADELICENSE = "TradeLicense";
         public static final String TRADELICENSEMODULE = "TRADELICENSE";
@@ -165,9 +166,12 @@ public class Constants {
         public static final String APPLICATION_STATUS_CREATED_CODE = "CREATED";
         public static final String APPLICATION_STATUS_INSPE_CODE = "INSPECTIONDONE";
         public static final String APPLICATION_STATUS_APPROVED_CODE = "APPROVED";
-        public static final String APPLICATION_STATUS_COLLECTION_CODE = "COLLECTIONPENDING";
+        public static final String APPLICATION_STATUS_SECONDCOLLECTION_CODE = "SECONDLVLCOLLECTIONPENDING";
+        public static final String APPLICATION_STATUS_FIRSTCOLLECTIONDONE_CODE = "FIRSTLVLCOLLECTIONDONE";
         public static final String APPLICATION_STATUS_DIGUPDATE_CODE = "DIGITALSIGNPENDING";
         public static final String APPLICATION_STATUS_GENECERT_CODE = "CERTIFICATEGENERATED";
+        public static final String APPLICATION_STATUS_REJECTED = "REJECTED";
+        public static final String APPLICATION_STATUS_CANCELLED = "CANCELLED";
         public static final String RENEWAL_LIC_APPTYPE ="Renew";
         public static final String REVENUE_HIERARCHYTYPE = "REVENUE";
         public static final String STR_FOR_EMAILSUBJECT="Trade License application Amount Collected for TIN No.";
@@ -192,5 +196,27 @@ public class Constants {
         public static final String SIGNED_DOCUMENT_PREFIX = "SN/";
         public static final String ROLE_COMMISSIONERDEPARTEMNT ="Health";
         public static final String PERMANENT_NATUREOFBUSINESS = "Permanent";
+        public static final String RENEWAL_NATUREOFWORK = "Renewal of Trade License";
+        public static final String NEW_NATUREOFWORK = "New Trade License";
+        public static final String WF_FIRST_LVL_FEECOLLECTED = "First level fee collected";
+        public static final String WF_SI_APPROVED = "SI/MHO approved";
+        public static final String WF_REVENUECLERK_APPROVED = "Revenue clerk approved";
+        public static final String WF_LICENSE_CREATED = "License Created";
+        public static final String EDIT_REJECT_MODE = "editForReject";
+        public static final String ACK_MODE = "ACK"; 
+        public static final String DISABLE_APPROVER_MODE = "disableApprover";
+        public static final String PENDING_COLLECTION_MSG = "Pending for Collection";
+        public static final String WF_SECOND_LVL_FEECOLLECTED  = "Second level fee collected";
+        public static final String WF_COMMISSIONER_APPRVD_WITHOUT_COLLECTION = "Commissioner approved no collection";
+        public static final String WF_CERTIFICATE_GEN_PENDING = "Certificate generation pending";
+        public static final String RENEW_ADDITIONAL_RULE = "RENEWTRADELICENSE";
+        public static final String NEW_ADDITIONAL_RULE = "NEWTRADELICENSE";
+        public static final String NEW_LIC_APPTYPE = "New";
+        public static final String DELIMITER_COLON = "::";
+        public static final String EDIT_APPROVAL_MODE = "editForApproval";
+        public static final String DIGI_ENABLED_WF_SECOND_LVL_FEECOLLECTED  = "Digital sign-Second level fee collected";
+        public static final String WF_ACTION_DIGI_PENDING ="Digital Signature Pending";
+        public static final String WF_ACTION_DIGI_SIGN_COMMISSION_NO_COLLECTION ="Digital sign-Commissioner Approved no collection";
+        public static final String WF_DIGI_SIGNED ="Digital signed";
 }
 

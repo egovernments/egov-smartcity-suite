@@ -150,7 +150,7 @@
 							<form:options items="${sourceList}"  />  
 						</form:select>
 						</div>
-						<label for="field-1" class="col-sm-3 control-label"> <spring:message
+						<label for="field-1" class="col-sm-2 control-label"> <spring:message
 										code="lbl.recordsOpenAndClosed" /></label>
 						<div class="col-sm-3 add-margin">
 						<form:select name="applicationStatus" path="" data-first-option="false" id="applicationStatus"
@@ -209,6 +209,8 @@
 
 <link rel="stylesheet"
 	href="<cdn:url value='/resources/global/js/jquery/plugins/datatables/responsive/css/datatables.responsive.css' context='/egi'/>">
+<link rel="stylesheet" href="<cdn:url value='/resources/global/css/jquery/plugins/datatables/jquery.dataTables.min.css' context='/egi'/>"/>
+<link rel="stylesheet" href="<cdn:url value='/resources/global/css/jquery/plugins/datatables/dataTables.bootstrap.min.css' context='/egi'/>">
 <script
 	src="<cdn:url  value='/resources/global/js/jquery/plugins/datatables/jquery.dataTables.min.js' context='/egi'/>"
 	type="text/javascript"></script>

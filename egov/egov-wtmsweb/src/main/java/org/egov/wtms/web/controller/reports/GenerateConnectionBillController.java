@@ -40,6 +40,7 @@
 
 package org.egov.wtms.web.controller.reports;
 
+import static org.egov.wtms.utils.constants.WaterTaxConstants.WATERCHARGES_CONSUMERCODE;
 import static java.math.BigDecimal.ZERO;
 import static org.egov.infra.web.utils.WebUtils.toJSON;
 import static org.egov.ptis.constants.PropertyTaxConstants.REVENUE_HIERARCHY_TYPE;
@@ -49,11 +50,9 @@ import static org.springframework.web.bind.annotation.RequestMethod.GET;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.PrintWriter;
 import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -72,7 +71,6 @@ import org.apache.commons.io.IOUtils;
 import org.apache.log4j.Logger;
 import org.egov.infra.admin.master.entity.Boundary;
 import org.egov.infra.admin.master.service.BoundaryService;
-import org.egov.infra.exception.ApplicationRuntimeException;
 import org.egov.infra.filestore.entity.FileStoreMapper;
 import org.egov.infra.filestore.repository.FileStoreMapperRepository;
 import org.egov.infra.filestore.service.FileStoreService;
@@ -169,12 +167,12 @@ public class GenerateConnectionBillController {
         generateConnectionBillList = generateConnectionBillService.getBillReportDetails(request.getParameter("zone"),
                 request.getParameter("revenueWard"), request.getParameter("propertyType"),
                 request.getParameter("applicationType"), request.getParameter("connectionType"),
-                request.getParameter("consumerCode"), request.getParameter("houseNumber"),
+                request.getParameter(WATERCHARGES_CONSUMERCODE), request.getParameter("houseNumber"),
                 request.getParameter("assessmentNumber"));
         final long foundRows = generateConnectionBillService.getTotalCountofBills(request.getParameter("zone"),
                 request.getParameter("revenueWard"), request.getParameter("propertyType"),
                 request.getParameter("applicationType"), request.getParameter("connectionType"),
-                request.getParameter("consumerCode"), request.getParameter("houseNumber"),
+                request.getParameter(WATERCHARGES_CONSUMERCODE), request.getParameter("houseNumber"),
                 request.getParameter("assessmentNumber"));
 
         final int count = generateConnectionBillList.size();
@@ -186,7 +184,7 @@ public class GenerateConnectionBillController {
                 .append(foundRows).append(", \"recordsFiltered\":").append(foundRows).append(", \"data\":")
                 .append(toJSON(generateConnectionBillList, GenerateConnectionBill.class,
                         GenerateConnectionBillAdaptor.class))
-                        .append(", \"recordsCount\":").append(Long.valueOf(count)).append("}").toString();
+                .append(", \"recordsCount\":").append(Long.valueOf(count)).append("}").toString();
         response.setContentType(MediaType.APPLICATION_JSON_VALUE);
         IOUtils.write(result, response.getWriter());
 
@@ -197,25 +195,18 @@ public class GenerateConnectionBillController {
             @PathVariable final String consumerCode) {
         final List<Long> waterChargesDocumentslist = generateConnectionBillService.getDocuments(consumerCode,
                 waterConnectionDetailsService.findByApplicationNumberOrConsumerCode(consumerCode).getApplicationType()
-                .getName());
-        response.setHeader("content-disposition", "attachment; filename=\"" + consumerCode + ".pdf" + "\"");
+                        .getName());
         if (!waterChargesDocumentslist.isEmpty() && waterChargesDocumentslist.get(0) != null)
             try {
-
                 final FileStoreMapper fsm = fileStoreMapperRepository
                         .findByFileStoreId(waterChargesDocumentslist.get(0) + "");
+                final List<InputStream> pdfs = new ArrayList<InputStream>();
                 final File file = fileStoreService.fetch(fsm, WaterTaxConstants.FILESTORE_MODULECODE);
-                final FileInputStream inStream = new FileInputStream(file);
-                final PrintWriter outStream = response.getWriter();
-                int bytesRead = -1;
-                while ((bytesRead = inStream.read()) != -1)
-                    outStream.write(bytesRead);
-                inStream.close();
-                outStream.close();
-            } catch (final FileNotFoundException fileNotFoundExcep) {
-                throw new ApplicationRuntimeException("Exception while loading file : " + fileNotFoundExcep);
-            } catch (final IOException ioExcep) {
-                throw new ApplicationRuntimeException("Exception while generating bill : " + ioExcep);
+                final byte[] bFile = FileUtils.readFileToByteArray(file);
+                pdfs.add(new ByteArrayInputStream(bFile));
+                getServletResponse(response, pdfs, consumerCode);
+            } catch (final Exception e) {
+                throw new ValidationException(e.getMessage());
             }
         else
             throw new ValidationException("err.demand.notice");
@@ -228,7 +219,7 @@ public class GenerateConnectionBillController {
         final List<GenerateConnectionBill> generateConnectionBillList = generateConnectionBillService
                 .getBillReportDetails(request.getParameter("zone"), request.getParameter("revenueWard"),
                         request.getParameter("propertyType"), request.getParameter("applicationType"),
-                        request.getParameter("connectionType"), request.getParameter("consumerCode"),
+                        request.getParameter("connectionType"), request.getParameter(WATERCHARGES_CONSUMERCODE),
                         request.getParameter("houseNumber"), request.getParameter("assessmentNumber"));
 
         if (LOGGER.isDebugEnabled())
@@ -252,29 +243,32 @@ public class GenerateConnectionBillController {
                 }
         if (LOGGER.isDebugEnabled())
             LOGGER.debug("Number of pdfs : " + (pdfs != null ? pdfs.size() : ZERO));
-        try {
-            if (!pdfs.isEmpty()) {
-                final ByteArrayOutputStream output = new ByteArrayOutputStream();
-                final byte[] data = concatPDFs(pdfs, output);
-                response.setHeader("Content-disposition", "attachment;filename=" + "search_bill" + ".pdf");
-                response.setContentType("application/pdf");
-                response.setContentLength(data.length);
-                response.getOutputStream().write(data);
-            } else
-                throw new ValidationException("err.demand.notice");
 
-        } catch (final IOException e) {
-
-            throw new ValidationException(e.getMessage());
-
-        }
+        if (!pdfs.isEmpty())
+            getServletResponse(response, pdfs, "search_bill");
+        else
+            throw new ValidationException("err.demand.notice");
         final long endTime = System.currentTimeMillis();
         if (LOGGER.isDebugEnabled()) {
             LOGGER.debug("GenerateBill | mergeAndDownload | Time taken(ms) " + (endTime - startTime));
             LOGGER.debug("Exit from mergeAndDownload method");
         }
-
         return null;
+    }
+
+    private HttpServletResponse getServletResponse(final HttpServletResponse response, final List<InputStream> pdfs,
+            final String filename) {
+        try {
+            final ByteArrayOutputStream output = new ByteArrayOutputStream();
+            final byte[] data = concatPDFs(pdfs, output);
+            response.setHeader(WaterTaxConstants.CONTENT_DISPOSITION, "attachment;filename=" + filename + ".pdf");
+            response.setContentType("application/pdf");
+            response.setContentLength(data.length);
+            response.getOutputStream().write(data);
+            return response;
+        } catch (final IOException e) {
+            throw new ValidationException(e.getMessage());
+        }
     }
 
     private byte[] concatPDFs(final List<InputStream> streamOfPDFFiles, final ByteArrayOutputStream outputStream) {
@@ -346,7 +340,7 @@ public class GenerateConnectionBillController {
         final List<GenerateConnectionBill> generateConnectionBillList = generateConnectionBillService
                 .getBillReportDetails(request.getParameter("zone"), request.getParameter("revenueWard"),
                         request.getParameter("propertyType"), request.getParameter("applicationType"),
-                        request.getParameter("connectionType"), request.getParameter("consumerCode"),
+                        request.getParameter("connectionType"), request.getParameter(WATERCHARGES_CONSUMERCODE),
                         request.getParameter("houseNumber"), request.getParameter("assessmentNumber"));
         if (LOGGER.isDebugEnabled())
             LOGGER.debug("Number of BIlls : "
@@ -356,7 +350,7 @@ public class GenerateConnectionBillController {
             if (null != generateConnectionBillList && generateConnectionBillList.size() >= 0) {
 
                 zipOutputStream = new ZipOutputStream(response.getOutputStream());
-                response.setHeader("Content-disposition", "attachment;filename=" + "searchbill" + ".zip");
+                response.setHeader(WaterTaxConstants.CONTENT_DISPOSITION, "attachment;filename=" + "searchbill" + ".zip");
                 response.setContentType("application/zip");
             }
 

@@ -85,7 +85,6 @@
 	<bean id="financialsUtil" class="org.egov.collection.utils.FinancialsUtil">
 		<property name="instrumentService" ref="instrumentService" />
 		<property name="contraService" ref="contraService" />
-		<property name="collectionsUtil" ref="collectionsUtil" />
 		<property name="instrumentHeaderService" ref="instrumentHeaderService" />
 	</bean>
 
@@ -137,6 +136,12 @@
 		<constructor-arg name="type"
 			value="org.egov.collection.entity.Remittance" />
 	</bean>
+	
+	<bean id="remittanceInstrumentService" parent="abstractPersistenceService"
+		scope="prototype">
+		<constructor-arg name="type"
+			value="org.egov.collection.entity.RemittanceInstrument" />
+	</bean>
 
 	<bean id="bankAccountMappingService" parent="abstractPersistenceService">
 		<constructor-arg name="type"
@@ -161,9 +166,18 @@
 		<property name="persistenceService" ref="persistenceService" />
 		<property name="reconciliationService" ref="reconciliationService" />
 	</bean>
+	
+	<bean class="org.egov.collection.integration.services.RemittanceSchedulerService"
+		id="remittanceSchedulerService">
+		<property name="persistenceService" ref="persistenceService" />
+		<property name="collectionsUtil" ref="collectionsUtil" />
+		<property name="financialsUtil" ref="financialsUtil" />
+		<property name="remittanceInstrumentService" ref="remittanceInstrumentService" />
+	</bean>
 
 	<bean id="challanPersistenceService" class="org.egov.infstr.services.PersistenceService">
-		<constructor-arg index="0" value="org.egov.collection.entity.Challan" />
+		<constructor-arg index="0"
+			value="org.egov.collection.entity.Challan" />
 	</bean>
 
 	<bean id="challanWorkflowService" class="org.egov.infra.workflow.service.SimpleWorkflowService">

@@ -62,31 +62,31 @@ public class PropertyReferenceHibDAO implements PropertyReferenceDAO {
 
 	@Override
 	public PropertyReference findById(Integer id, boolean lock) {
-		// TODO Auto-generated method stub
+
 		return null;
 	}
 
 	@Override
 	public List<PropertyReference> findAll() {
-		// TODO Auto-generated method stub
+
 		return null;
 	}
 
 	@Override
 	public PropertyReference create(PropertyReference propertyReference) {
-		// TODO Auto-generated method stub
+
 		return null;
 	}
 
 	@Override
 	public void delete(PropertyReference propertyReference) {
-		// TODO Auto-generated method stub
+
 
 	}
 
 	@Override
 	public PropertyReference update(PropertyReference propertyReference) {
-		// TODO Auto-generated method stub
+
 		return null;
 	}
 }

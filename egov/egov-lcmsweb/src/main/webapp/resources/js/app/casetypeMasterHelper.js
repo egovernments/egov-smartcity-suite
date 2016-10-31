@@ -75,13 +75,13 @@ function callAjaxSearch() {
 				aaSorting : [],
 				columns : [ {
 					"data" : "code",
-					"sClass" : "text-left"
+					"sClass" : "text-center"
 				}, {
 					"data" : "caseType",
-					"sClass" : "text-left"
+					"sClass" : "text-center"
 				}, {
 					"data" : "active",
-					"sClass" : "text-left"
+					"sClass" : "text-center"
 				},{ 
 					"data" : "id","visible": false, "searchable": false } ]
 			});

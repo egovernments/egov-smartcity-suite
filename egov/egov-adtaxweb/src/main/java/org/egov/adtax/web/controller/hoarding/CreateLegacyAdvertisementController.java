@@ -117,7 +117,7 @@ public class CreateLegacyAdvertisementController extends HoardingControllerSuppo
                 advertisementPermitDetail.getAdvertisement()
                         .setPenaltyCalculationDate(formatter.parse(formatter.format(installmentObj.getFromDate())));
             } catch (final ParseException e) {
-                e.printStackTrace();// TODO: CHECK THIS CASE AGAIN.
+                // TODO: CHECK THIS CASE AGAIN.
             }
 
         advertisementPermitDetailService.createAdvertisementPermitDetail(advertisementPermitDetail, null, null, null, null);

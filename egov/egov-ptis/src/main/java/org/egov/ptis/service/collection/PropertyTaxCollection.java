@@ -189,7 +189,7 @@ public class PropertyTaxCollection extends TaxCollection {
                 updateCollForChequeBounce(demand, billRcptInfo);
             LOGGER.info("updateDemandDetails : Demand after processed : " + demand);
         } catch (final Exception e) {
-            e.printStackTrace();
+
             throw new ApplicationRuntimeException("Error occured during back update of DCB : " + e.getMessage(), e);
         }
         LOGGER.debug("updateDemandDetails : Updating Demand Details Finished...");
@@ -252,7 +252,7 @@ public class PropertyTaxCollection extends TaxCollection {
                 demand.setMinAmtPayable(BigDecimal.ZERO);
             updateDemandDetailForReceiptCreate(billRcptInfo.getAccountDetails(), demand, billRcptInfo);
         } catch (final Exception e) {
-            e.printStackTrace();
+
             throw new ApplicationRuntimeException(
                     "Error occured during back update of DCB : updateCollForRcptCreate() " + e.getMessage(), e);
         }
@@ -779,7 +779,7 @@ public class PropertyTaxCollection extends TaxCollection {
 
     @Override
     public String constructAdditionalInfoForReceipt(final BillReceiptInfo billReceiptInfo) {
-        // TODO Auto-generated method stub
+
         return null;
     }
 

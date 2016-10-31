@@ -45,7 +45,6 @@ import java.util.Date;
 
 import org.egov.collection.autonumber.RemittanceNumberGenerator;
 import org.egov.collection.constants.CollectionConstants;
-import org.egov.collection.utils.CollectionsUtil;
 import org.egov.commons.CFinancialYear;
 import org.egov.infra.persistence.utils.ApplicationSequenceNumberGenerator;
 import org.egov.infra.utils.DateUtils;
@@ -54,9 +53,6 @@ import org.springframework.stereotype.Service;
 
 @Service
 public class RemittanceNumberGeneratorImpl implements RemittanceNumberGenerator {
-
-    @Autowired
-    private CollectionsUtil collectionsUtil;
 
     @Autowired
     private ApplicationSequenceNumberGenerator applicationSequenceNumberGenerator;
@@ -70,10 +66,10 @@ public class RemittanceNumberGeneratorImpl implements RemittanceNumberGenerator 
 
         final String currentYear = DateUtils.currentDateToYearFormat();
         final String sequenceName = String.format(APP_NUMBER_SEQ_PREFIX, currentYear);
-        Serializable sequenceNumber  = applicationSequenceNumberGenerator.getNextSequence(sequenceName);
+        final Serializable sequenceNumber = applicationSequenceNumberGenerator.getNextSequence(sequenceName);
 
-        final String result = String.format("%s/%06d/%s/%s", CollectionConstants.REMITTANCE_NUMBER_PREFIX, sequenceNumber,formattedDate,
-                financialYear.getFinYearRange());
+        final String result = String.format("%s/%06d/%s/%s", CollectionConstants.REMITTANCE_NUMBER_PREFIX,
+                sequenceNumber, formattedDate, financialYear.getFinYearRange());
         return result;
     }
 

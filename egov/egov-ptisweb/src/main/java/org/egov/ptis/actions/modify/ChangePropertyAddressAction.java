@@ -495,7 +495,7 @@ public class ChangePropertyAddressAction extends PropertyTaxBaseAction {
 
     @Override
     public StateAware getModel() {
-        // TODO Auto-generated method stub
+
         return null;
     }
 

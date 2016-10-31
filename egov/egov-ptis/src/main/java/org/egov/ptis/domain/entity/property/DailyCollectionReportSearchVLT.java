@@ -20,7 +20,7 @@ public class DailyCollectionReportSearchVLT {
 	private static final Logger logger = Logger.getLogger(DailyCollectionReportSearchVLT.class);
 	private String fromDate;
 	private String toDate;
-	private SimpleDateFormat ft = new SimpleDateFormat("yyyy-MM-dd");
+	private SimpleDateFormat ft = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
 	private SimpleDateFormat dtft = new SimpleDateFormat("dd/MM/yyyy");
 	private String collectionMode;
 	private String collectionOperator;
@@ -48,8 +48,11 @@ public class DailyCollectionReportSearchVLT {
 		if (null != toDate)
 			try {
 				logger.info("setToDate,Date Range Till:" + ft.format(cal.getTime()));
-				cal.setTime(dtft.parse(toDate));
-				cal.add(Calendar.DAY_OF_YEAR, 1);
+				  cal.setTime(dtft.parse(toDate));
+                                  cal.set(Calendar.HOUR_OF_DAY, 23);
+			          cal.set(Calendar.MINUTE, 59);
+			          cal.set(Calendar.SECOND, 59);
+			          cal.set(Calendar.MILLISECOND, 999);
 				if (logger.isDebugEnabled())
 					logger.debug("Date Range Till .. :" + ft.format(cal.getTime()));
 				this.toDate = ft.format(cal.getTime());
@@ -130,10 +133,8 @@ public class DailyCollectionReportSearchVLT {
 		andFilters.add(termsStringFilter("clauses.channel", collectionMode));
 		andFilters.add(termsStringFilter("clauses.status", status));
 		andFilters.add(termsStringFilter("clauses.receiptcreator", collectionOperator));
-		andFilters.add(termsStringFilter("clauses.billingservice",
-				PropertyTaxConstants.INDEX_COLLECTION_CLAUSES_BILLINGSERVICE_VACANT_LAND));
-		logger.info("searchCollectionFilters,clauses.billingservice:"
-				+ PropertyTaxConstants.INDEX_COLLECTION_CLAUSES_BILLINGSERVICE_VACANT_LAND);
+		andFilters.add(termsStringFilter("clauses.billingservice", "VLT"));
+		logger.info("searchCollectionFilters,clauses.billingservice:"+ "VLT");
 		if (!consumerCode.isEmpty()) {
 			String[] consumerCodes = consumerCode.toArray(new String[consumerCode.size()]);
 			andFilters.add(termsStringFilter("common.consumercode", consumerCodes));

@@ -39,6 +39,21 @@
  */
 package org.egov.wtms.web.controller.application;
 
+import static org.egov.wtms.utils.constants.WaterTaxConstants.WATERCHARGES_CONSUMERCODE;
+import static org.springframework.web.bind.annotation.RequestMethod.GET;
+import static org.springframework.web.bind.annotation.RequestMethod.POST;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.validation.Valid;
+
 import org.apache.commons.lang3.ArrayUtils;
 import org.egov.commons.entity.Source;
 import org.egov.eis.entity.Assignment;
@@ -66,7 +81,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
-import org.springframework.validation.SmartValidator;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -77,20 +91,6 @@ import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import org.springframework.web.servlet.support.RequestContextUtils;
 import org.springframework.web.servlet.view.RedirectView;
-
-import javax.servlet.http.HttpServletRequest;
-import javax.validation.Valid;
-
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-
-import static org.springframework.web.bind.annotation.RequestMethod.GET;
-import static org.springframework.web.bind.annotation.RequestMethod.POST;
 
 @Controller
 @RequestMapping(value = "/application")
@@ -110,8 +110,8 @@ public class NewConnectionController extends GenericConnectionController {
     @Autowired
     public NewConnectionController(final WaterConnectionDetailsService waterConnectionDetailsService,
             final ApplicationTypeService applicationTypeService, final ConnectionDemandService connectionDemandService,
-            final WaterTaxUtils waterTaxUtils, final NewConnectionService newConnectionService, final WaterConnectionService waterConnectionService,
-            final SmartValidator validator) {
+            final WaterTaxUtils waterTaxUtils, final NewConnectionService newConnectionService,
+            final WaterConnectionService waterConnectionService) {
         this.waterConnectionDetailsService = waterConnectionDetailsService;
         this.applicationTypeService = applicationTypeService;
         this.connectionDemandService = connectionDemandService;
@@ -134,7 +134,7 @@ public class NewConnectionController extends GenericConnectionController {
         waterConnectionDetails.setConnectionStatus(ConnectionStatus.INPROGRESS);
         model.addAttribute("allowIfPTDueExists", waterTaxUtils.isNewConnectionAllowedIfPTDuePresent());
         model.addAttribute("additionalRule", waterConnectionDetails.getApplicationType().getCode());
-        WorkflowContainer workflowContainer= new WorkflowContainer();
+        final WorkflowContainer workflowContainer = new WorkflowContainer();
         workflowContainer.setAdditionalRule(waterConnectionDetails.getApplicationType().getCode());
         prepareWorkflow(model, waterConnectionDetails, workflowContainer);
         model.addAttribute("currentUser", waterTaxUtils.getCurrentUserRole(securityUtils.getCurrentUser()));
@@ -152,7 +152,8 @@ public class NewConnectionController extends GenericConnectionController {
     }
 
     @RequestMapping(value = "/newConnection-dataEntryForm", method = GET)
-    public String dataEntryForm(@ModelAttribute final WaterConnectionDetails waterConnectionDetails, final Model model) {
+    public String dataEntryForm(@ModelAttribute final WaterConnectionDetails waterConnectionDetails,
+            final Model model) {
         waterConnectionDetails.setApplicationDate(new Date());
         waterConnectionDetails.setConnectionStatus(ConnectionStatus.ACTIVE);
         final Map<Long, String> connectionTypeMap = new HashMap<Long, String>();
@@ -168,17 +169,15 @@ public class NewConnectionController extends GenericConnectionController {
 
     @RequestMapping(value = "/newConnection-existingMessage/{consumerCode}", method = GET)
     public String dataEntryMessage(final Model model, @PathVariable final String consumerCode) {
-        model.addAttribute("consumerCode", consumerCode);
+        model.addAttribute(WATERCHARGES_CONSUMERCODE, consumerCode);
         final WaterConnectionDetails waterConnectionDetails = waterConnectionDetailsService
                 .findByApplicationNumberOrConsumerCode(consumerCode);
-        model.addAttribute(
-                "connectionType",
-                waterConnectionDetailsService.getConnectionTypesMap().get(
-                        waterConnectionDetails.getConnectionType().name()));
-        if(waterConnectionDetails.getId() !=null)
-            model.addAttribute("mode","edit");
-            else
-            	 model.addAttribute("mode","");
+        model.addAttribute("connectionType", waterConnectionDetailsService.getConnectionTypesMap()
+                .get(waterConnectionDetails.getConnectionType().name()));
+        if (waterConnectionDetails.getId() != null)
+            model.addAttribute("mode", "edit");
+        else
+            model.addAttribute("mode", "");
         return "newconnection-dataEntryMessage";
     }
 
@@ -187,8 +186,7 @@ public class NewConnectionController extends GenericConnectionController {
             final BindingResult resultBinder, final RedirectAttributes redirectAttributes,
             final HttpServletRequest request, final Model model, @RequestParam String workFlowAction,
             final BindingResult errors) {
-        String sourceChannel = request.getParameter("Source");
-        System.out.println("sourceChannel"+sourceChannel);
+        final String sourceChannel = request.getParameter("Source");
         validatePropertyID(waterConnectionDetails, resultBinder);
         waterConnectionDetailsService.validateWaterRateAndDonationHeader(waterConnectionDetails, resultBinder);
         final List<ApplicationDocuments> applicationDocs = new ArrayList<ApplicationDocuments>();
@@ -196,8 +194,8 @@ public class NewConnectionController extends GenericConnectionController {
         final String documentRequired = waterTaxUtils.documentRequiredForBPLCategory();
         if (!waterConnectionDetails.getApplicationDocs().isEmpty())
             for (final ApplicationDocuments applicationDocument : waterConnectionDetails.getApplicationDocs()) {
-                validateDocuments(applicationDocs, applicationDocument, i, resultBinder, waterConnectionDetails
-                        .getCategory().getId(), documentRequired);
+                validateDocuments(applicationDocs, applicationDocument, i, resultBinder,
+                        waterConnectionDetails.getCategory().getId(), documentRequired);
                 i++;
             }
         if (waterConnectionDetails.getState() == null)
@@ -208,9 +206,9 @@ public class NewConnectionController extends GenericConnectionController {
         if (resultBinder.hasErrors()) {
             waterConnectionDetails.setApplicationDate(new Date());
             model.addAttribute("validateIfPTDueExists", waterTaxUtils.isNewConnectionAllowedIfPTDuePresent());
-            WorkflowContainer workflowContainer= new WorkflowContainer();
+            final WorkflowContainer workflowContainer = new WorkflowContainer();
             workflowContainer.setAdditionalRule(waterConnectionDetails.getApplicationType().getCode());
-           prepareWorkflow(model, waterConnectionDetails, workflowContainer);
+            prepareWorkflow(model, waterConnectionDetails, workflowContainer);
             model.addAttribute("additionalRule", waterConnectionDetails.getApplicationType().getCode());
             model.addAttribute("currentUser", waterTaxUtils.getCurrentUserRole(securityUtils.getCurrentUser()));
             model.addAttribute("approvalPosOnValidate", request.getParameter("approvalPosition"));
@@ -236,11 +234,11 @@ public class NewConnectionController extends GenericConnectionController {
         final Boolean applicationByOthers = waterTaxUtils.getCurrentUserRole(securityUtils.getCurrentUser());
 
         if (applicationByOthers != null && applicationByOthers.equals(true)) {
-            final Position userPosition = waterTaxUtils.getZonalLevelClerkForLoggedInUser(waterConnectionDetails
-                    .getConnection().getPropertyIdentifier());
+            final Position userPosition = waterTaxUtils
+                    .getZonalLevelClerkForLoggedInUser(waterConnectionDetails.getConnection().getPropertyIdentifier());
             if (userPosition == null) {
                 model.addAttribute("validateIfPTDueExists", waterTaxUtils.isNewConnectionAllowedIfPTDuePresent());
-                WorkflowContainer workflowContainer= new WorkflowContainer();
+                final WorkflowContainer workflowContainer = new WorkflowContainer();
                 workflowContainer.setAdditionalRule(waterConnectionDetails.getApplicationType().getCode());
                 prepareWorkflow(model, waterConnectionDetails, workflowContainer);
                 model.addAttribute("additionalRule", waterConnectionDetails.getApplicationType().getCode());
@@ -264,15 +262,16 @@ public class NewConnectionController extends GenericConnectionController {
                 waterConnectionDetails.setSource(Source.MEESEVA);
                 waterConnectionDetailsService.createNewWaterConnection(waterConnectionDetails, approvalPosition,
                         approvalComent, waterConnectionDetails.getApplicationType().getCode(), workFlowAction,
-                        meesevaParams,sourceChannel);
+                        meesevaParams, sourceChannel);
             }
         } else
             waterConnectionDetailsService.createNewWaterConnection(waterConnectionDetails, approvalPosition,
-                    approvalComent, waterConnectionDetails.getApplicationType().getCode(), workFlowAction,sourceChannel);
+                    approvalComent, waterConnectionDetails.getApplicationType().getCode(), workFlowAction,
+                    sourceChannel);
         if (LOG.isDebugEnabled())
             LOG.debug("createNewWaterConnection is completed ");
-        final Assignment currentUserAssignment = assignmentService.getPrimaryAssignmentForGivenRange(securityUtils
-                .getCurrentUser().getId(), new Date(), new Date());
+        final Assignment currentUserAssignment = assignmentService
+                .getPrimaryAssignmentForGivenRange(securityUtils.getCurrentUser().getId(), new Date(), new Date());
         String nextDesign = "";
         Assignment assignObj = null;
         List<Assignment> asignList = null;
@@ -290,7 +289,7 @@ public class NewConnectionController extends GenericConnectionController {
                 + (nextDesign != null ? nextDesign : "");
         if (loggedUserIsMeesevaUser)
             return "redirect:/application/generate-meesevareceipt?transactionServiceNumber="
-            + waterConnectionDetails.getApplicationNumber();
+                    + waterConnectionDetails.getApplicationNumber();
         else
             return "redirect:/application/application-success?pathVars=" + pathVars;
 
@@ -312,14 +311,12 @@ public class NewConnectionController extends GenericConnectionController {
             final BindingResult resultBinder, final RedirectAttributes redirectAttributes,
             final HttpServletRequest request, final Model model) {
 
-    	return createAndUpdateDataEntryRecord(waterConnectionDetails,
-				resultBinder, model);
+        return createAndUpdateDataEntryRecord(waterConnectionDetails, resultBinder, model);
     }
 
-	private String createAndUpdateDataEntryRecord(
-			final WaterConnectionDetails waterConnectionDetails,
-			final BindingResult resultBinder, final Model model) {
-		validatePropertyIDForDataEntry(waterConnectionDetails, resultBinder);
+    private String createAndUpdateDataEntryRecord(final WaterConnectionDetails waterConnectionDetails,
+            final BindingResult resultBinder, final Model model) {
+        validatePropertyIDForDataEntry(waterConnectionDetails, resultBinder);
         validateExisting(waterConnectionDetails, resultBinder);
         if (resultBinder.hasErrors()) {
             model.addAttribute("validateIfPTDueExists", waterTaxUtils.isNewConnectionAllowedIfPTDuePresent());
@@ -341,7 +338,7 @@ public class NewConnectionController extends GenericConnectionController {
         }
         waterConnectionDetailsService.createExisting(waterConnectionDetails);
         return "redirect:newConnection-existingMessage/" + waterConnectionDetails.getConnection().getConsumerCode();
-	}
+    }
 
     private void validateDocuments(final List<ApplicationDocuments> applicationDocs,
             final ApplicationDocuments applicationDocument, final int i, final BindingResult resultBinder,
@@ -364,9 +361,9 @@ public class NewConnectionController extends GenericConnectionController {
             Iterator<MultipartFile> stream = null;
             if (ArrayUtils.isNotEmpty(applicationDocument.getFiles()))
                 stream = Arrays.asList(applicationDocument.getFiles()).stream().filter(file -> !file.isEmpty())
-                .iterator();
-            if (ArrayUtils.isEmpty(applicationDocument.getFiles()) || stream == null || stream != null
-                    && !stream.hasNext()) {
+                        .iterator();
+            if (ArrayUtils.isEmpty(applicationDocument.getFiles()) || stream == null
+                    || stream != null && !stream.hasNext()) {
                 final String fieldError = "applicationDocs[" + i + "].files";
                 resultBinder.rejectValue(fieldError, "files.required");
             } else if (validApplicationDocument(applicationDocument))
@@ -384,9 +381,9 @@ public class NewConnectionController extends GenericConnectionController {
                 Iterator<MultipartFile> stream = null;
                 if (ArrayUtils.isNotEmpty(applicationDocument.getFiles()))
                     stream = Arrays.asList(applicationDocument.getFiles()).stream().filter(file -> !file.isEmpty())
-                    .iterator();
-                if (ArrayUtils.isEmpty(applicationDocument.getFiles()) || stream == null || stream != null
-                        && !stream.hasNext()) {
+                            .iterator();
+                if (ArrayUtils.isEmpty(applicationDocument.getFiles()) || stream == null
+                        || stream != null && !stream.hasNext()) {
                     final String fieldError = "applicationDocs[" + i + "].files";
                     resultBinder.rejectValue(fieldError, "files.required");
                 }
@@ -435,10 +432,8 @@ public class NewConnectionController extends GenericConnectionController {
         model.addAttribute("approverName", approverName);
         model.addAttribute("currentUserDesgn", currentUserDesgn);
         model.addAttribute("nextDesign", nextDesign);
-        model.addAttribute(
-                "connectionType",
-                waterConnectionDetailsService.getConnectionTypesMap().get(
-                        waterConnectionDetails.getConnectionType().name()));
+        model.addAttribute("connectionType", waterConnectionDetailsService.getConnectionTypesMap()
+                .get(waterConnectionDetails.getConnectionType().name()));
         model.addAttribute("cityName", waterTaxUtils.getMunicipalityName());
         model.addAttribute("applicationDocList",
                 waterConnectionDetailsService.getApplicationDocForExceptClosureAndReConnection(waterConnectionDetails));
@@ -453,13 +448,13 @@ public class NewConnectionController extends GenericConnectionController {
         if (waterConnectionDetails.getConnection() != null
                 && waterConnectionDetails.getConnection().getPropertyIdentifier() != null
                 && !waterConnectionDetails.getConnection().getPropertyIdentifier().equals("")) {
-            String errorMessage = newConnectionService.checkValidPropertyAssessmentNumber(waterConnectionDetails
-                    .getConnection().getPropertyIdentifier());
+            String errorMessage = newConnectionService
+                    .checkValidPropertyAssessmentNumber(waterConnectionDetails.getConnection().getPropertyIdentifier());
             if (errorMessage != null && !errorMessage.equals(""))
                 errors.rejectValue("connection.propertyIdentifier", errorMessage, errorMessage);
             else {
-                errorMessage = newConnectionService.checkConnectionPresentForProperty(waterConnectionDetails
-                        .getConnection().getPropertyIdentifier());
+                errorMessage = newConnectionService.checkConnectionPresentForProperty(
+                        waterConnectionDetails.getConnection().getPropertyIdentifier());
                 if (errorMessage != null && !errorMessage.equals(""))
                     errors.rejectValue("connection.propertyIdentifier", errorMessage, errorMessage);
             }
@@ -471,20 +466,18 @@ public class NewConnectionController extends GenericConnectionController {
         if (waterConnectionDetails.getConnection() != null
                 && waterConnectionDetails.getConnection().getPropertyIdentifier() != null
                 && !waterConnectionDetails.getConnection().getPropertyIdentifier().equals("")) {
-            String errorMessage = newConnectionService.checkValidPropertyForDataEntry(waterConnectionDetails
-                    .getConnection().getPropertyIdentifier());
+            String errorMessage = newConnectionService
+                    .checkValidPropertyForDataEntry(waterConnectionDetails.getConnection().getPropertyIdentifier());
             if (errorMessage != null && !errorMessage.equals(""))
                 errors.rejectValue("connection.propertyIdentifier", errorMessage, errorMessage);
             else // if it is not edit mode then only validate for existing
-                // connection
-            if (waterConnectionDetails.getId() == null)
-                    if (waterConnectionDetails.getApplicationType().getCode()
-                        .equalsIgnoreCase(WaterTaxConstants.NEWCONNECTION)) {
-                        errorMessage = newConnectionService.checkConnectionPresentForProperty(waterConnectionDetails
-                                .getConnection().getPropertyIdentifier());
-                        if (errorMessage != null && !errorMessage.equals(""))
-                            errors.rejectValue("connection.propertyIdentifier", errorMessage, errorMessage);
-                    }
+                 // connection
+            if (waterConnectionDetails.getId() == null && waterConnectionDetails.getApplicationType().getCode()
+                    .equalsIgnoreCase(WaterTaxConstants.NEWCONNECTION))
+                errorMessage = newConnectionService.checkConnectionPresentForProperty(
+                        waterConnectionDetails.getConnection().getPropertyIdentifier());
+            if (errorMessage != null && !errorMessage.equals(""))
+                errors.rejectValue("connection.propertyIdentifier", errorMessage, errorMessage);
         }
     }
 
@@ -492,24 +485,27 @@ public class NewConnectionController extends GenericConnectionController {
 
         if (waterConnectionDetails.getExistingConnection().getDonationCharges() == null)
             errors.rejectValue("existingConnection.donationCharges", "err.required");
-        if (waterConnectionDetails.getConnection()!=null)
-        {
-        WaterConnection validateWaterConnDet=waterConnectionService.findByConsumerCode(waterConnectionDetails.getConnection().getConsumerCode());
-        if (validateWaterConnDet !=null &&  !waterConnectionDetails.getConnection().getId().equals(validateWaterConnDet.getId()))
-            errors.rejectValue("connection.consumerCode", "err.exist.consumerCode");
+        if (waterConnectionDetails.getConnection() != null) {
+            final WaterConnection validateWaterConnDet = waterConnectionService
+                    .findByConsumerCode(waterConnectionDetails.getConnection().getConsumerCode());
+            if (validateWaterConnDet != null
+                    && !waterConnectionDetails.getConnection().getId().equals(validateWaterConnDet.getId()))
+                errors.rejectValue("connection.consumerCode", "err.exist.consumerCode");
         }
-         if (waterConnectionDetails.getConnectionType() != null
-                 && waterConnectionDetails.getConnectionType() == ConnectionType.METERED) {
-             if (waterConnectionDetails.getExistingConnection().getMeterCost() == null)
-                 errors.rejectValue("existingConnection.meterCost", "err.required");
-             if (waterConnectionDetails.getConnection().getConsumerCode() == null)
-                 errors.rejectValue("connection.consumerCode", "err.required");
-             if (waterConnectionDetails.getConnection().getConsumerCode() != null) {
-                 final WaterConnectionDetails validateExistWaterConnectionDet = waterConnectionDetailsService
-                         .findByApplicationNumberOrConsumerCode(waterConnectionDetails.getConnection().getConsumerCode());
-                 if (validateExistWaterConnectionDet != null && !validateExistWaterConnectionDet.getId().equals(waterConnectionDetails.getId()) )
-                     errors.rejectValue("connection.consumerCode", "err.exist.consumerCode");
-             }
+        if (waterConnectionDetails.getConnectionType() != null
+                && waterConnectionDetails.getConnectionType() == ConnectionType.METERED) {
+            if (waterConnectionDetails.getExistingConnection().getMeterCost() == null)
+                errors.rejectValue("existingConnection.meterCost", "err.required");
+            if (waterConnectionDetails.getConnection().getConsumerCode() == null)
+                errors.rejectValue("connection.consumerCode", "err.required");
+            if (waterConnectionDetails.getConnection().getConsumerCode() != null) {
+                final WaterConnectionDetails validateExistWaterConnectionDet = waterConnectionDetailsService
+                        .findByApplicationNumberOrConsumerCode(
+                                waterConnectionDetails.getConnection().getConsumerCode());
+                if (validateExistWaterConnectionDet != null
+                        && !validateExistWaterConnectionDet.getId().equals(waterConnectionDetails.getId()))
+                    errors.rejectValue("connection.consumerCode", "err.exist.consumerCode");
+            }
             if (waterConnectionDetails.getExecutionDate() == null)
                 errors.rejectValue("executionDate", "err.required");
             if (waterConnectionDetails.getExistingConnection().getMeterName() == null)
@@ -549,11 +545,11 @@ public class NewConnectionController extends GenericConnectionController {
         model.addAttribute("pipeSizes", pipeSizeService.getAllActivePipeSize());
         return "newconnection-dataEntryEditForm";
     }
+
     @RequestMapping(value = "/newConnection-editExisting/{consumerCode}", method = POST)
-    public String modifyExisting(@Valid @ModelAttribute final WaterConnectionDetails waterConnectionDetails, @PathVariable final String consumerCode,
-            final BindingResult resultBinder, final RedirectAttributes redirectAttributes,
-            final HttpServletRequest request, final Model model) {
-    	 return createAndUpdateDataEntryRecord(waterConnectionDetails,
- 				resultBinder, model);
+    public String modifyExisting(@Valid @ModelAttribute final WaterConnectionDetails waterConnectionDetails,
+            @PathVariable final String consumerCode, final BindingResult resultBinder,
+            final RedirectAttributes redirectAttributes, final HttpServletRequest request, final Model model) {
+        return createAndUpdateDataEntryRecord(waterConnectionDetails, resultBinder, model);
     }
 }

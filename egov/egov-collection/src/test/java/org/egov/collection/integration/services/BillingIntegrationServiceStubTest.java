@@ -44,7 +44,7 @@ public class BillingIntegrationServiceStubTest  {
 				}
 			}
 		} catch(Exception e) {
-			e.printStackTrace();
+
 		}
 	}
 	
@@ -55,8 +55,8 @@ public class BillingIntegrationServiceStubTest  {
 			  try {
 				throw new FileNotFoundException();
 			} catch (FileNotFoundException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();   
+
+
 			}
 			return null;
 			 }

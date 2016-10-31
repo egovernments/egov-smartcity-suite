@@ -55,6 +55,8 @@ import java.util.Map.Entry;
 import java.util.Set;
 import java.util.TreeSet;
 
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
 import javax.script.ScriptContext;
 
 import org.apache.commons.lang.StringUtils;
@@ -71,6 +73,7 @@ import org.egov.commons.dao.EgwStatusHibernateDAO;
 import org.egov.commons.service.ChartOfAccountsService;
 import org.egov.eis.entity.Assignment;
 import org.egov.eis.entity.Employee;
+import org.egov.eis.service.AssignmentService;
 import org.egov.eis.service.EisCommonService;
 import org.egov.infra.admin.master.entity.AppConfigValues;
 import org.egov.infra.admin.master.entity.Boundary;
@@ -83,33 +86,43 @@ import org.egov.infra.exception.ApplicationRuntimeException;
 import org.egov.infra.persistence.utils.SequenceNumberGenerator;
 import org.egov.infra.script.entity.Script;
 import org.egov.infra.script.service.ScriptService;
+import org.egov.infra.security.utils.SecurityUtils;
 import org.egov.infra.validation.exception.ValidationError;
 import org.egov.infra.validation.exception.ValidationException;
 import org.egov.infra.workflow.entity.State;
+import org.egov.infra.workflow.matrix.entity.WorkFlowMatrix;
+import org.egov.infra.workflow.service.SimpleWorkflowService;
 import org.egov.infra.workflow.service.WorkflowService;
 import org.egov.infstr.services.PersistenceService;
 import org.egov.model.budget.Budget;
 import org.egov.model.budget.BudgetDetail;
 import org.egov.model.budget.BudgetGroup;
 import org.egov.model.budget.BudgetUpload;
+import org.egov.model.voucher.WorkflowBean;
 import org.egov.pims.commons.Designation;
 import org.egov.pims.commons.Position;
 import org.egov.pims.model.PersonalInformation;
 import org.egov.utils.BudgetAccountType;
 import org.egov.utils.BudgetingType;
 import org.egov.utils.Constants;
+import org.egov.utils.FinancialConstants;
 import org.hibernate.Criteria;
 import org.hibernate.Query;
+import org.hibernate.Session;
 import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Property;
 import org.hibernate.criterion.Restrictions;
 import org.hibernate.exception.ConstraintViolationException;
 import org.hibernate.exception.SQLGrammarException;
+import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+@Service
+@Transactional(readOnly = true)
 public class BudgetDetailService extends PersistenceService<BudgetDetail, Long> {
     protected EisCommonService eisCommonService;
     protected WorkflowService<BudgetDetail> budgetDetailWorkflowService;
@@ -132,6 +145,9 @@ public class BudgetDetailService extends PersistenceService<BudgetDetail, Long> 
     private SequenceNumberGenerator sequenceNumberGenerator;
 
     @Autowired
+    private EgwStatusHibernateDAO egwStatusHibernateDAO;
+
+    @Autowired
     @Qualifier("chartOfAccountsService")
     private ChartOfAccountsService chartOfAccountsService;
 
@@ -141,9 +157,29 @@ public class BudgetDetailService extends PersistenceService<BudgetDetail, Long> 
     @Autowired
     private DepartmentService departmentService;
 
+    @Autowired
+    private SecurityUtils securityUtils;
+
+    @Autowired
+    private AssignmentService assignmentService;
+
+    @Autowired
+    @Qualifier("workflowService")
+    private SimpleWorkflowService<BudgetDetail> budgetDetailWFService;
+
+    @PersistenceContext
+    private EntityManager entityManager;
+
+    private static final String DUPLICATE = "budgetDetail.duplicate";
+    private static final String EXISTS = "budgetdetail.exists";
+
     private static final Logger LOGGER = Logger.getLogger(BudgetDetailService.class);
     private static final String BUDGET_STATES_INSERT = "insert into eg_wf_states (ID,TYPE,VALUE,CREATEDBY,CREATEDDATE,LASTMODIFIEDDATE,LASTMODIFIEDBY,DATEINFO,OWNER_POS,STATUS,VERSION) values (:stateId,'Budget','NEW',1,current_date,current_date,1,current_date,1,1,0)";
     private static final String BUDGETDETAIL_STATES_INSERT = "insert into eg_wf_states (ID,TYPE,VALUE,CREATEDBY,CREATEDDATE,LASTMODIFIEDDATE,LASTMODIFIEDBY,DATEINFO,OWNER_POS,STATUS,VERSION) values (:stateId,'BudgetDetail','NEW',1,current_date,current_date,1,current_date,1,1,0)";
+
+    public Session getCurrentSession() {
+        return entityManager.unwrap(Session.class);
+    }
 
     public BudgetDetailService() {
         super(BudgetDetail.class);
@@ -153,29 +189,32 @@ public class BudgetDetailService extends PersistenceService<BudgetDetail, Long> 
         super(type);
     }
 
-    public Long getCountByBudget(Long budgetId) {
+    public Long getCountByBudget(final Long budgetId) {
         return ((BigInteger) persistenceService.getSession()
-                .createSQLQuery("select count(*) from egf_budgetdetail where budget = " + budgetId).uniqueResult()).longValue();
+                .createSQLQuery("select count(*) from egf_budgetdetail where budget = " + budgetId).uniqueResult())
+                        .longValue();
     }
 
     public boolean canViewApprovedAmount(final PersistenceService persistenceService, final Budget budget) {
-        final Script script = (Script) persistenceService.findAllByNamedQuery(Script.BY_NAME, "budget.report.view.access").get(0);
-        final ScriptContext context = ScriptService.createContext("wfItem", budget, "eisCommonServiceBean", eisCommonService,
-                "userId",
-                ApplicationThreadLocals.getUserId().intValue());
+        final Script script = (Script) persistenceService
+                .findAllByNamedQuery(Script.BY_NAME, "budget.report.view.access").get(0);
+        final ScriptContext context = ScriptService.createContext("wfItem", budget, "eisCommonServiceBean",
+                eisCommonService, "userId", ApplicationThreadLocals.getUserId().intValue());
         final Integer result = (Integer) scriptExecutionService.executeScript(script, context);
         if (result == 1)
             return true;
         return false;
     }
 
-    public BudgetDetail createBudgetDetail(final BudgetDetail detail, final Position position, final PersistenceService service) {
+    public BudgetDetail createBudgetDetail(final BudgetDetail detail, final Position position,
+            final PersistenceService service) {
         try {
             setRelatedEntitesOn(detail, service);
-            // chequeUnique(detail,service);
+
             return detail;
         } catch (final ConstraintViolationException e) {
-            throw new ValidationException(Arrays.asList(new ValidationError("budgetDetail.duplicate", "budgetdetail.exists")));
+            throw new ValidationException(
+                    Arrays.asList(new ValidationError(DUPLICATE, EXISTS)));
         }
     }
 
@@ -184,10 +223,10 @@ public class BudgetDetailService extends PersistenceService<BudgetDetail, Long> 
 
     }
 
-    public List<BudgetDetail> searchByCriteriaAndFY(final Long financialYear, final BudgetDetail detail, final boolean isApprove,
-            final Position pos) {
-        final Criteria criteria = constructCriteria(detail).createCriteria(Constants.BUDGET).add(
-                Restrictions.eq("financialYear.id", financialYear));
+    public List<BudgetDetail> searchByCriteriaAndFY(final Long financialYear, final BudgetDetail detail,
+            final boolean isApprove, final Position pos) {
+        final Criteria criteria = constructCriteria(detail).createCriteria(Constants.BUDGET)
+                .add(Restrictions.eq("financialYear.id", financialYear));
         if (isApprove)
             criteria.createCriteria(Constants.STATE).add(Restrictions.eq("owner", pos));
         else
@@ -195,18 +234,21 @@ public class BudgetDetailService extends PersistenceService<BudgetDetail, Long> 
         return criteria.list();
     }
 
-    public List<BudgetDetail> searchByCriteriaWithTypeAndFY(final Long financialYear, final String type, final BudgetDetail detail) {
-        if (detail.getBudget() != null && detail.getBudget().getId() != 0l) {
+    public List<BudgetDetail> searchByCriteriaWithTypeAndFY(final Long financialYear, final String type,
+            final BudgetDetail detail) {
+        if ((detail.getBudget() != null) && (detail.getBudget().getId() != 0l)) {
             final Map<String, Object> map = new HashMap<String, Object>();
             addCriteriaExcludingBudget(detail, map);
             final Criteria criteria = getSession().createCriteria(BudgetDetail.class);
             addBudgetDetailCriteria(map, criteria);
+            criteria.addOrder(Order.asc("id"));
+
             return criteria.createCriteria(Constants.BUDGET).add(Restrictions.eq("financialYear.id", financialYear))
                     .add(Restrictions.eq("isbere", type)).list();
         } else
             return constructCriteria(detail).createCriteria(Constants.BUDGET)
-                    .add(Restrictions.eq("financialYear.id", financialYear))
-                    .add(Restrictions.eq("isbere", type)).list();
+                    .add(Restrictions.eq("financialYear.id", financialYear)).add(Restrictions.eq("isbere", type))
+                    .list();
     }
 
     private Map<String, Object> createCriteriaMap(final BudgetDetail detail) {
@@ -222,7 +264,8 @@ public class BudgetDetailService extends PersistenceService<BudgetDetail, Long> 
         map.put("functionary", detail.getFunctionary() == null ? 0 : detail.getFunctionary().getId());
         map.put("scheme", detail.getScheme() == null ? 0 : detail.getScheme().getId());
         map.put("subScheme", detail.getSubScheme() == null ? 0 : detail.getSubScheme().getId());
-        map.put("executingDepartment", detail.getExecutingDepartment() == null ? 0 : detail.getExecutingDepartment().getId());
+        map.put("executingDepartment",
+                detail.getExecutingDepartment() == null ? 0 : detail.getExecutingDepartment().getId());
         map.put("boundary", detail.getBoundary() == null ? 0 : detail.getBoundary().getId());
         map.put("fund", detail.getFund() == null ? 0 : detail.getFund().getId());
         map.put("status", detail.getStatus() == null ? 0 : detail.getStatus().getId());
@@ -242,15 +285,17 @@ public class BudgetDetailService extends PersistenceService<BudgetDetail, Long> 
 
     public List<BudgetDetail> findAllBudgetDetailsForParent(Budget budget, final BudgetDetail example,
             final PersistenceService persistenceService) {
-        if (budget == null || budget.getId() == null)
+        if ((budget == null) || (budget.getId() == null))
             return Collections.EMPTY_LIST;
         budget = (Budget) persistenceService.find("from Budget where id=?", budget.getId());
         final BudgetDetail detail = new BudgetDetail();
         detail.copyFrom(example);
         detail.setBudget(null);
         final String materializedPath = budget.getMaterializedPath();
-        return constructCriteria(detail).addOrder(Property.forName("executingDepartment").asc()).createCriteria(Constants.BUDGET)
-                .add(Restrictions.like("materializedPath", materializedPath == null ? "" : materializedPath.concat("%"))).list();
+        return constructCriteria(detail).addOrder(Property.forName("executingDepartment").asc())
+                .createCriteria(Constants.BUDGET).add(Restrictions.like("materializedPath",
+                        materializedPath == null ? "" : materializedPath.concat("%")))
+                .list();
     }
 
     public List<BudgetDetail> findAllBudgetDetailsWithReAppropriation(final Budget budget, final BudgetDetail example) {
@@ -263,55 +308,51 @@ public class BudgetDetailService extends PersistenceService<BudgetDetail, Long> 
     }
 
     private Budget findBudget(final Budget budget) {
-        return (Budget) getSession().load(Budget.class, budget.getId());
+        return getSession().load(Budget.class, budget.getId());
     }
 
     public List<Budget> findBudgetsForFY(final Long financialYear) {
         final Criteria criteria = getSession().createCriteria(Budget.class);
-        return criteria.add(Restrictions.eq("financialYear.id", financialYear)).add(Restrictions.eq("isActiveBudget", true))
-                .list();
+        return criteria.add(Restrictions.eq("financialYear.id", financialYear))
+                .add(Restrictions.eq("isActiveBudget", true)).list();
     }
 
     public List<Budget> findApprovedBudgetsForFY(final Long financialYear) {
         if (LOGGER.isDebugEnabled())
             LOGGER.debug("starting findApprovedBudgetsForFY...");
         final Criteria criteria = getSession().createCriteria(Budget.class);
-        return criteria.add(Restrictions.eq("financialYear.id", financialYear)).add(Restrictions.eq("isActiveBudget", true))
-                .addOrder(Property.forName("name").asc())
-                .createCriteria("status", "status").add(Restrictions.eq("status.code", "Approved"))
-                .list();
+        return criteria.add(Restrictions.eq("financialYear.id", financialYear))
+                .add(Restrictions.eq("isActiveBudget", true)).addOrder(Property.forName("name").asc())
+                .createCriteria("status", "status").add(Restrictions.eq("status.code", "Approved")).list();
     }
 
     public List<Budget> findBudgetsForFYWithNewState(final Long financialYear) {
         final Criteria criteria = getSession().createCriteria(Budget.class);
         criteria.createCriteria("status", "status").add(Restrictions.eq("status.code", "Created"));
-        return criteria.add(Restrictions.eq("financialYear.id", financialYear)).add(Restrictions.eq("isActiveBudget", true))
-                .list();
+        return criteria.add(Restrictions.eq("financialYear.id", financialYear))
+                .add(Restrictions.eq("isActiveBudget", true)).list();
     }
 
     public List<Budget> findPrimaryBudgetForFY(final Long financialYear) {
         final Criteria criteria = getSession().createCriteria(Budget.class);
-        return criteria.add(Restrictions.eq("financialYear.id", financialYear)).add(Restrictions.eq("isActiveBudget", true))
-                .add(Restrictions.eq("isPrimaryBudget", true)).add(Restrictions.isNull("parent")).list();
+        return criteria.add(Restrictions.eq("financialYear.id", financialYear))
+                .add(Restrictions.eq("isActiveBudget", true)).add(Restrictions.eq("isPrimaryBudget", true))
+                .add(Restrictions.isNull("parent")).list();
     }
 
     public Budget findApprovedPrimaryParentBudgetForFY(final Long financialYear) {
         final Criteria criteria = getSession().createCriteria(Budget.class);
         List<Budget> budgetList = criteria.add(Restrictions.eq("financialYear.id", financialYear))
-                .add(Restrictions.eq("isbere", "RE"))
-                .add(Restrictions.eq("isActiveBudget", true)).add(Restrictions.eq("isPrimaryBudget", true))
-                .add(Restrictions.isNull("parent"))
-                .addOrder(Property.forName("name").asc())
-                .createCriteria("status", "status").add(Restrictions.eq("status.code", "Approved"))
-                .list();
+                .add(Restrictions.eq("isbere", "RE")).add(Restrictions.eq("isActiveBudget", true))
+                .add(Restrictions.eq("isPrimaryBudget", true)).add(Restrictions.isNull("parent"))
+                .addOrder(Property.forName("name").asc()).createCriteria("status", "status")
+                .add(Restrictions.eq("status.code", "Approved")).list();
         if (budgetList.isEmpty()) {
             final Criteria c = getSession().createCriteria(Budget.class);
             budgetList = c.add(Restrictions.eq("financialYear.id", financialYear)).add(Restrictions.eq("isbere", "BE"))
                     .add(Restrictions.eq("isActiveBudget", true)).add(Restrictions.eq("isPrimaryBudget", true))
-                    .add(Restrictions.isNull("parent"))
-                    .addOrder(Property.forName("name").asc())
-                    .createCriteria("status", "status").add(Restrictions.eq("status.code", "Approved"))
-                    .list();
+                    .add(Restrictions.isNull("parent")).addOrder(Property.forName("name").asc())
+                    .createCriteria("status", "status").add(Restrictions.eq("status.code", "Approved")).list();
             if (budgetList.isEmpty())
                 return null;
         }
@@ -323,13 +364,13 @@ public class BudgetDetailService extends PersistenceService<BudgetDetail, Long> 
             return Collections.EMPTY_SET;
         final Criteria budgetDetailCriteria = constructCriteria(example);
         budgetDetailCriteria.createCriteria(Constants.BUDGET);
-        final List<Budget> leafBudgets = budgetDetailCriteria.setProjection(
-                Projections.distinct(Projections.property(Constants.BUDGET))).list();
+        final List<Budget> leafBudgets = budgetDetailCriteria
+                .setProjection(Projections.distinct(Projections.property(Constants.BUDGET))).list();
         final List<Budget> parents = new ArrayList<Budget>();
         final Set<Budget> budgetTree = new LinkedHashSet<Budget>();
         for (Budget leaf : leafBudgets) {
             parents.clear();
-            while (leaf != null && leaf.getId() != budget.getId()) {
+            while ((leaf != null) && (leaf.getId() != budget.getId())) {
                 parents.add(leaf);
                 leaf = leaf.getParent();
             }
@@ -368,7 +409,8 @@ public class BudgetDetailService extends PersistenceService<BudgetDetail, Long> 
                 criteria.createCriteria(criterion.getKey()).add(Restrictions.idEq(criterion.getValue()));
     }
 
-    private void addBudgetDetailCriteriaIncudingNullRestrictions(final Map<String, Object> map, final Criteria criteria) {
+    private void addBudgetDetailCriteriaIncudingNullRestrictions(final Map<String, Object> map,
+            final Criteria criteria) {
         for (final Entry<String, Object> criterion : map.entrySet())
             if (isIdPresent(criterion.getValue()))
                 criteria.createCriteria(criterion.getKey()).add(Restrictions.idEq(criterion.getValue()));
@@ -377,7 +419,7 @@ public class BudgetDetailService extends PersistenceService<BudgetDetail, Long> 
     }
 
     protected boolean isIdPresent(final Object value) {
-        return Long.valueOf(value.toString()) != 0l && Long.valueOf(value.toString()) != -1;
+        return (Long.valueOf(value.toString()) != 0l) && (Long.valueOf(value.toString()) != -1);
     }
 
     @Override
@@ -385,11 +427,27 @@ public class BudgetDetailService extends PersistenceService<BudgetDetail, Long> 
         try {
             detail.setUniqueNo(detail.getFund().getId() + "-" + detail.getExecutingDepartment().getId() + "-"
                     + detail.getFunction().getId() + "-" + detail.getBudgetGroup().getId());
+            if (!chequeUnique(detail) && (detail.getId() == null))
+                throw new ValidationException(
+                        Arrays.asList(new ValidationError(DUPLICATE, EXISTS)));
             checkForDuplicates(detail);
             return super.persist(detail);
         } catch (final Exception e) {
-            throw new ValidationException(Arrays.asList(new ValidationError("budgetDetail.duplicate", "budgetdetail.exists")));
+            throw new ValidationException(
+                    Arrays.asList(new ValidationError(DUPLICATE, EXISTS)));
         }
+    }
+
+    private Boolean chequeUnique(final BudgetDetail detail) {
+
+        final Criteria criteria = constructCriteria(detail)
+                .add(Restrictions.eq("budget.id", detail.getBudget().getId()));
+        criteria.add(Restrictions.eq("budgetGroup.id", detail.getBudgetGroup().getId()));
+        criteria.add(Restrictions.eq("fund.id", detail.getFund().getId()));
+        criteria.add(Restrictions.eq("function.id", detail.getFunction().getId()));
+        criteria.add(Restrictions.eq("executingDepartment.id", detail.getExecutingDepartment().getId()));
+
+        return criteria.list().isEmpty();
     }
 
     public void checkForDuplicates(final BudgetDetail detail) {
@@ -397,20 +455,22 @@ public class BudgetDetailService extends PersistenceService<BudgetDetail, Long> 
         final Map<String, Object> map = new HashMap<String, Object>();
         addCriteriaExcludingBudget(detail, map);
         addBudgetDetailCriteriaIncudingNullRestrictions(map, criteria);
-        if (detail.getBudget() == null || detail.getBudget().getId() == null || detail.getBudget().getId() == 0
-                || detail.getBudget().getId() == -1)
+        if ((detail.getBudget() == null) || (detail.getBudget().getId() == null) || (detail.getBudget().getId() == 0)
+                || (detail.getBudget().getId() == -1))
             return;
-        // add restriction to check if budgetdetail with is combination exists in the current year within a tree
+        // add restriction to check if budgetdetail with is combination exists
+        // in the current year within a tree
         final Budget root = getRootFor(detail.getBudget());
-        criteria.createCriteria(Constants.BUDGET).add(
-                Restrictions.eq("materializedPath", root == null ? "" : root.getMaterializedPath()));
+        criteria.createCriteria(Constants.BUDGET)
+                .add(Restrictions.eq("materializedPath", root == null ? "" : root.getMaterializedPath()));
         final List<BudgetDetail> existingDetails = criteria.list();
         if (!existingDetails.isEmpty() && !existingDetails.get(0).getId().equals(detail.getId()))
-            throw new ValidationException(Arrays.asList(new ValidationError("budgetDetail.duplicate", "budgetdetail.exists")));
+            throw new ValidationException(
+                    Arrays.asList(new ValidationError(DUPLICATE, EXISTS)));
     }
 
     private Budget getRootFor(final Budget budget) {
-        if (budget == null || StringUtils.isBlank(budget.getMaterializedPath()))
+        if ((budget == null) || StringUtils.isBlank(budget.getMaterializedPath()))
             return null;
         if (budget.getMaterializedPath().length() == 1)
             return budget;
@@ -434,19 +494,16 @@ public class BudgetDetailService extends PersistenceService<BudgetDetail, Long> 
         return appConfigValuesService;
     }
 
-    public void setAppConfigValuesService(
-            final AppConfigValueService appConfigValuesService) {
+    public void setAppConfigValuesService(final AppConfigValueService appConfigValuesService) {
         this.appConfigValuesService = appConfigValuesService;
     }
 
     /**
-     *
      * @param detail
      * @return department of the budgetdetail
      * @throws ApplicationRuntimeException
      */
-    public Department getDepartmentForBudget(final BudgetDetail detail) throws ApplicationRuntimeException
-    {
+    public Department getDepartmentForBudget(final BudgetDetail detail) throws ApplicationRuntimeException {
         Department dept = null;
         if (detail.getExecutingDepartment() != null)
             dept = detail.getExecutingDepartment();
@@ -457,19 +514,19 @@ public class BudgetDetailService extends PersistenceService<BudgetDetail, Long> 
 
     /**
      * returns department of the employee from assignment for the current date
+     *
      * @param emp
      * @return
      */
-    public Department depertmentForEmployee(final Employee emp)
-    {
+    public Department depertmentForEmployee(final Employee emp) {
         Department dept = null;
         final Date currDate = new Date();
         try {
-            final Assignment empAssignment = eisCommonService.getLatestAssignmentForEmployeeByToDate(emp.getId(), currDate);
+            final Assignment empAssignment = eisCommonService.getLatestAssignmentForEmployeeByToDate(emp.getId(),
+                    currDate);
             dept = empAssignment.getDepartment();
             return dept;
-        } catch (final NullPointerException ne)
-        {
+        } catch (final NullPointerException ne) {
             throw new ApplicationRuntimeException(ne.getMessage());
         } catch (final Exception e) {
             throw new ApplicationRuntimeException("Error while getting Department fort the employee" + emp.getName());
@@ -479,14 +536,14 @@ public class BudgetDetailService extends PersistenceService<BudgetDetail, Long> 
 
     public List<BudgetDetail> getRemainingDetailsForApproveOrReject(final Budget budget) {
         final Criteria criteria = getSession().createCriteria(BudgetDetail.class);
-        // criteria.createCriteria("materializedPath", "state").add(Restrictions.eq("state.value","NEW"));
+        // criteria.createCriteria("materializedPath",
+        // "state").add(Restrictions.eq("state.value","NEW"));
         criteria.createCriteria(Constants.BUDGET, Constants.BUDGET).add(Restrictions.eq("budget.id", budget.getId()));
         return criteria.list();
 
     }
 
-    public List<BudgetDetail> getRemainingDetailsForSave(
-            final Budget budget, final Position currPos) {
+    public List<BudgetDetail> getRemainingDetailsForSave(final Budget budget, final Position currPos) {
         final Criteria criteria = getSession().createCriteria(BudgetDetail.class);
         criteria.createCriteria(Constants.STATE, Constants.STATE).add(Restrictions.eq("state.owner", currPos));
         criteria.createCriteria(Constants.BUDGET, Constants.BUDGET).add(Restrictions.eq("budget.id", budget.getId()));
@@ -496,7 +553,8 @@ public class BudgetDetailService extends PersistenceService<BudgetDetail, Long> 
 
     public void setRelatedEntitesOn(final BudgetDetail detail, final PersistenceService service) {
 
-        detail.setStatus(egwStatusDAO.getStatusByModuleAndCode("BUDGETDETAIL", "Approved"));
+        // detail.setStatus(egwStatusDAO.getStatusByModuleAndCode("BUDGETDETAIL",
+        // "Approved"));
         if (detail.getBudget() != null) {
             detail.setBudget((Budget) service.find("from Budget where id=?", detail.getBudget().getId()));
             addMaterializedPath(detail);
@@ -504,10 +562,11 @@ public class BudgetDetailService extends PersistenceService<BudgetDetail, Long> 
         if (detail.getFunction() != null)
             detail.setFunction((CFunction) service.find("from CFunction where id=?", detail.getFunction().getId()));
         if (detail.getFunctionary() != null)
-            detail.setFunctionary((Functionary) service.find("from Functionary where id=?", detail.getFunctionary().getId()));
+            detail.setFunctionary(
+                    (Functionary) service.find("from Functionary where id=?", detail.getFunctionary().getId()));
         if (detail.getExecutingDepartment() != null)
-            detail.setExecutingDepartment((Department) service.find("from Department where id=?", detail
-                    .getExecutingDepartment().getId()));
+            detail.setExecutingDepartment(
+                    (Department) service.find("from Department where id=?", detail.getExecutingDepartment().getId()));
         if (detail.getScheme() != null)
             detail.setScheme((Scheme) service.find("from Scheme where id=?", detail.getScheme().getId()));
         if (detail.getSubScheme() != null)
@@ -515,7 +574,8 @@ public class BudgetDetailService extends PersistenceService<BudgetDetail, Long> 
         if (detail.getFund() != null)
             detail.setFund((Fund) service.find("from Fund where id=?", detail.getFund().getId()));
         if (detail.getBudgetGroup() != null)
-            detail.setBudgetGroup((BudgetGroup) service.find("from BudgetGroup where id=?", detail.getBudgetGroup().getId()));
+            detail.setBudgetGroup(
+                    (BudgetGroup) service.find("from BudgetGroup where id=?", detail.getBudgetGroup().getId()));
         if (detail.getBoundary() != null)
             detail.setBoundary((Boundary) service.find("from Boundary where id=?", detail.getBoundary().getId()));
     }
@@ -529,7 +589,7 @@ public class BudgetDetailService extends PersistenceService<BudgetDetail, Long> 
                     detail.getBudget());
             if (parallelBudgetDetails != null)
                 count = String.valueOf(parallelBudgetDetails.size() + 1);
-            if (materializedPath != null && !materializedPath.isEmpty())
+            if ((materializedPath != null) && !materializedPath.isEmpty())
                 materializedPath = materializedPath + "." + count;
             detail.setMaterializedPath(materializedPath);
         }
@@ -549,54 +609,28 @@ public class BudgetDetailService extends PersistenceService<BudgetDetail, Long> 
             throw new ValidationException("", "exclude_status_forbudget_actual is not defined in AppConfig");
         final StringBuffer miscQuery = getMiscQuery(mandatoryFields, "vmis", "gl", "vh");
         final StringBuffer budgetGroupQuery = new StringBuffer();
-        budgetGroupQuery
-                .append(" (select bg1.id as id,bg1.accounttype as accounttype, c1.glcode "
-                        +
-                        "as mincode,c2.glcode as maxcode,c3.glcode as majorcode "
-                        +
-                        "from egf_budgetgroup bg1 left outer join chartofaccounts c1 on c1.id=bg1.mincode left outer join chartofaccounts c2 on "
-                        +
-                        "c2.id=bg1.maxcode left outer join chartofaccounts c3 on c3.id=bg1.majorcode ) bg ");
+        budgetGroupQuery.append(" (select bg1.id as id,bg1.accounttype as accounttype, c1.glcode "
+                + "as mincode,c2.glcode as maxcode,c3.glcode as majorcode "
+                + "from egf_budgetgroup bg1 left outer join chartofaccounts c1 on c1.id=bg1.mincode left outer join chartofaccounts c2 on "
+                + "c2.id=bg1.maxcode left outer join chartofaccounts c3 on c3.id=bg1.majorcode ) bg ");
         final String voucherstatusExclude = list.get(0).getValue();
         StringBuffer query = new StringBuffer();
         query = query
                 .append("select bd.id,SUM(gl.debitAmount)-SUM(gl.creditAmount) from egf_budgetdetail bd,generalledger gl,voucherheader vh,"
-                        +
-                        "vouchermis vmis,"
-                        + budgetGroupQuery
+                        + "vouchermis vmis," + budgetGroupQuery
                         + ",egf_budget b where bd.budget=b.id and vmis.VOUCHERHEADERID=vh.id and gl.VOUCHERHEADERID=vh.id and bd.budgetgroup=bg.id and "
-                        +
-                        "(bg.ACCOUNTTYPE='REVENUE_EXPENDITURE' or bg.ACCOUNTTYPE='CAPITAL_EXPENDITURE') and vh.status not in ("
-                        + voucherstatusExclude
-                        + ") and "
-                        +
-                        "vh.voucherDate>= to_date('"
-                        + fromDate
-                        + "','dd/MM/yyyy') and vh.voucherDate <= to_date('"
-                        + toVoucherDate
-                        + "','dd/MM/yyyy') "
-                        + miscQuery
-                        + " and (gl.glcode = bg.mincode or gl.glcode=bg.majorcode) group by bd.id"
-                        +
-                        " union "
-                        +
-                        "select bd.id,SUM(gl.creditAmount)-SUM(gl.debitAmount) from egf_budgetdetail bd,generalledger gl,voucherheader vh,"
-                        +
-                        "vouchermis vmis,"
-                        + budgetGroupQuery
+                        + "(bg.ACCOUNTTYPE='REVENUE_EXPENDITURE' or bg.ACCOUNTTYPE='CAPITAL_EXPENDITURE') and vh.status not in ("
+                        + voucherstatusExclude + ") and " + "vh.voucherDate>= to_date('" + fromDate
+                        + "','dd/MM/yyyy') and vh.voucherDate <= to_date('" + toVoucherDate + "','dd/MM/yyyy') "
+                        + miscQuery + " and (gl.glcode = bg.mincode or gl.glcode=bg.majorcode) group by bd.id"
+                        + " union "
+                        + "select bd.id,SUM(gl.creditAmount)-SUM(gl.debitAmount) from egf_budgetdetail bd,generalledger gl,voucherheader vh,"
+                        + "vouchermis vmis," + budgetGroupQuery
                         + ",egf_budget b where bd.budget=b.id and vmis.VOUCHERHEADERID=vh.id and gl.VOUCHERHEADERID=vh.id and bd.budgetgroup=bg.id and "
-                        +
-                        "(bg.ACCOUNTTYPE='REVENUE_RECEIPTS' or bg.ACCOUNTTYPE='CAPITAL_RECEIPTS') and vh.status not in ("
-                        + voucherstatusExclude
-                        + ") and "
-                        +
-                        "vh.voucherDate>= to_date('"
-                        + fromDate
-                        + "','dd/MM/yyyy') and vh.voucherDate <= to_date('"
-                        + toVoucherDate
-                        + "','dd/MM/yyyy') "
-                        + miscQuery
-                        + " and (gl.glcode = bg.mincode or gl.glcode=bg.majorcode) group by bd.id");
+                        + "(bg.ACCOUNTTYPE='REVENUE_RECEIPTS' or bg.ACCOUNTTYPE='CAPITAL_RECEIPTS') and vh.status not in ("
+                        + voucherstatusExclude + ") and " + "vh.voucherDate>= to_date('" + fromDate
+                        + "','dd/MM/yyyy') and vh.voucherDate <= to_date('" + toVoucherDate + "','dd/MM/yyyy') "
+                        + miscQuery + " and (gl.glcode = bg.mincode or gl.glcode=bg.majorcode) group by bd.id");
         final List<Object[]> result = getSession().createSQLQuery(query.toString()).list();
         if (LOGGER.isDebugEnabled())
             LOGGER.debug("Finished fetchActualsForFY" + fromDate);
@@ -605,6 +639,7 @@ public class BudgetDetailService extends PersistenceService<BudgetDetail, Long> 
 
     /**
      * vouchers are of the passed finaicial year budget is of passed topBudgets financialyear
+     *
      * @param fy
      * @param mandatoryFields
      * @param topBudget
@@ -616,12 +651,12 @@ public class BudgetDetailService extends PersistenceService<BudgetDetail, Long> 
      * @return
      */
 
-    public List<Object[]> fetchActualsForFY(final CFinancialYear fy, final List<String> mandatoryFields, final Budget topBudget,
-            final Budget referingTopBudget, final Date date, final Integer dept, final Long fun) {
+    public List<Object[]> fetchActualsForFY(final CFinancialYear fy, final List<String> mandatoryFields,
+            final Budget topBudget, final Budget referingTopBudget, final Date date, final Integer dept,
+            final Long fun) {
         if (LOGGER.isInfoEnabled())
-            LOGGER.info("==============================================================================================");
-        if (LOGGER.isInfoEnabled())
-            LOGGER.info("Starting fetchActualsForFY" + fy.getStartingDate().getYear() + "-" + fy.getEndingDate().getYear());
+            LOGGER.info(
+                    "Starting fetchActualsForFY" + fy.getStartingDate().getYear() + "-" + fy.getEndingDate().getYear());
         String dateCondition = "";
         if (date != null)
             dateCondition = " AND vh.voucherdate <='" + Constants.DDMMYYYYFORMAT1.format(date) + "' ";
@@ -637,77 +672,35 @@ public class BudgetDetailService extends PersistenceService<BudgetDetail, Long> 
         final StringBuffer referingUniqueNoQry = new StringBuffer(200);
         referingUniqueNoQry.append(" ");
         if (referingTopBudget != null)
-            referingUniqueNoQry.append(" and bd.uniqueno in (select uniqueno from egf_budgetdetail where MATERIALIZEDPATH like '"
-                    + referingTopBudget.getMaterializedPath() + "%'  )");
+            referingUniqueNoQry
+                    .append(" and bd.uniqueno in (select uniqueno from egf_budgetdetail where MATERIALIZEDPATH like '"
+                            + referingTopBudget.getMaterializedPath() + "%'  )");
 
         final StringBuffer budgetGroupQuery = new StringBuffer();
         budgetGroupQuery
                 .append(" (select bg1.id as id,bg1.accounttype as accounttype,case when c1.glcode =  NULL then -1 else to_number(c1.glcode,'999999999') end "
-                        +
-                        "as mincode,case when c2.glcode = null then  999999999 else c2.glcode end as maxcode,case when c3.glcode = null then -1 else to_number(c3.glcode,'999999999') end  as majorcode "
-                        +
-                        "from egf_budgetgroup bg1 left outer join chartofaccounts c1 on c1.id=bg1.mincode left outer join chartofaccounts c2 on "
-                        +
-                        "c2.id=bg1.maxcode left outer join chartofaccounts c3 on c3.id=bg1.majorcode ) bg ");
+                        + "as mincode,case when c2.glcode = null then  999999999 else c2.glcode end as maxcode,case when c3.glcode = null then -1 else to_number(c3.glcode,'999999999') end  as majorcode "
+                        + "from egf_budgetgroup bg1 left outer join chartofaccounts c1 on c1.id=bg1.mincode left outer join chartofaccounts c2 on "
+                        + "c2.id=bg1.maxcode left outer join chartofaccounts c3 on c3.id=bg1.majorcode ) bg ");
         final String voucherstatusExclude = list.get(0).getValue();
         StringBuffer query = new StringBuffer();
-        /*
-         * query = query.append("select bd.uniqueno,SUM(gl.debitAmount)-SUM(gl.creditAmount) from egf_budgetdetail bd," +
-         * "vouchermis vmis,"+budgetGroupQuery+",egf_budget b,financialyear f,fiscalperiod p,voucherheader vh,generalledger gl " +
-         * "where bd.budget=b.id and p.financialyearid=f.id and f.id="
-         * +fy.getId()+" and vh.fiscalperiodid=p.id "+dateCondition+" and " +
-         * " b.financialyearid="+topBudget.getFinancialYear().getId
-         * ()+" and b.MATERIALIZEDPATH like '"+topBudget.getMaterializedPath()+"%' " +referingUniqueNoQry.toString()+
-         * " and  vmis.VOUCHERHEADERID=vh.id and gl.VOUCHERHEADERID=vh.id " +
-         * " and bd.budgetgroup=bg.id and (bg.ACCOUNTTYPE='REVENUE_EXPENDITURE' or bg.ACCOUNTTYPE='CAPITAL_EXPENDITURE')" +
-         * " and vh.status not in ("+voucherstatusExclude+")  " +miscQuery+" " +
-         * " and ((gl.glcode between bg.mincode and bg.maxcode) or gl.glcode=bg.majorcode) and bg.mincode!=bg.maxcode group by bd.uniqueno"
-         * + " union "+
-         * "select bd.uniqueno,SUM(gl.creditAmount)-SUM(gl.debitAmount) from egf_budgetdetail bd,generalledger gl,voucherheader vh,"
-         * + "vouchermis vmis,"+budgetGroupQuery+",egf_budget b,financialyear f,fiscalperiod p where bd.budget=b.id " +
-         * "and p.financialyearid=f.id and f.id="
-         * +fy.getId()+" and vh.fiscalperiodid=p.id "+dateCondition+" and b.financialyearid="
-         * +topBudget.getFinancialYear().getId()+ " and b.MATERIALIZEDPATH like '"+topBudget.getMaterializedPath()+
-         * "%' and vmis.VOUCHERHEADERID=vh.id and gl.VOUCHERHEADERID=vh.id " + referingUniqueNoQry.toString()+
-         * " and bd.budgetgroup=bg.id and (bg.ACCOUNTTYPE='REVENUE_RECEIPTS' or bg.ACCOUNTTYPE='CAPITAL_RECEIPTS')" +
-         * " and vh.status not in ("+voucherstatusExclude+") " +miscQuery+" and ((gl.glcode between bg.mincode and bg.maxcode)" +
-         * " or gl.glcode=bg.majorcode) and bg.mincode!=bg.maxcode group by bd.uniqueno");
-         */
 
-        query = query
-                .append("  select bd.uniqueno,SUM(gl.debitAmount)-SUM(gl.creditAmount) from egf_budgetdetail bd,"
-                        +
-                        "vouchermis vmis,egf_budgetgroup bg,egf_budget b,financialyear f,fiscalperiod p,voucherheader vh,generalledger gl "
-                        +
-                        "where bd.budget=b.id and p.financialyearid=f.id and f.id=" + fy.getId() + " and vh.fiscalperiodid=p.id "
-                        + dateCondition + " and " +
-                        " b.financialyearid=" + topBudget.getFinancialYear().getId() + " and b.MATERIALIZEDPATH like '"
-                        + topBudget.getMaterializedPath() + "%' " +
-                        referingUniqueNoQry.toString() +
-                        " and  vmis.VOUCHERHEADERID=vh.id and gl.VOUCHERHEADERID=vh.id " +
-                        " and bd.budgetgroup=bg.id " +
-                        " and vh.status not in (" + voucherstatusExclude + ")  " + miscQuery + " " +
-                        " and gl.glcodeid=bg.mincode and gl.glcodeid=bg.maxcode and  bg.majorcode is null group by bd.uniqueno");
-        /*
-         * " union "+
-         * "select bd.uniqueno,SUM(gl.creditAmount)-SUM(gl.debitAmount) from egf_budgetdetail bd,generalledger gl,voucherheader vh,"
-         * + "vouchermis vmis,egf_budgetgroup bg,egf_budget b,financialyear f,fiscalperiod p where bd.budget=b.id " +
-         * " and p.financialyearid=f.id and f.id="
-         * +fy.getId()+" and vh.fiscalperiodid=p.id "+dateCondition+" and b.financialyearid="
-         * +topBudget.getFinancialYear().getId()+ " and b.MATERIALIZEDPATH like '"+topBudget.getMaterializedPath()+
-         * "%' and vmis.VOUCHERHEADERID=vh.id and gl.VOUCHERHEADERID=vh.id " + referingUniqueNoQry.toString()+
-         * " and bd.budgetgroup=bg.id and (bg.ACCOUNTTYPE='REVENUE_RECEIPTS' or bg.ACCOUNTTYPE='CAPITAL_RECEIPTS')" +
-         * " and vh.status not in ("+voucherstatusExclude+") "
-         * +miscQuery+" and gl.glcodeid= bg.mincode and gl.glcodeid=bg.maxcode  and bg.majorcode is null group by bd.uniqueno");
-         */
+        query = query.append("  select bd.uniqueno,SUM(gl.debitAmount)-SUM(gl.creditAmount) from egf_budgetdetail bd,"
+                + "vouchermis vmis,egf_budgetgroup bg,egf_budget b,financialyear f,fiscalperiod p,voucherheader vh,generalledger gl "
+                + "where bd.budget=b.id and p.financialyearid=f.id and f.id=" + fy.getId()
+                + " and vh.fiscalperiodid=p.id " + dateCondition + " and " + " b.financialyearid="
+                + topBudget.getFinancialYear().getId() + " and b.MATERIALIZEDPATH like '"
+                + topBudget.getMaterializedPath() + "%' " + referingUniqueNoQry.toString()
+                + " and  vmis.VOUCHERHEADERID=vh.id and gl.VOUCHERHEADERID=vh.id " + " and bd.budgetgroup=bg.id "
+                + " and vh.status not in (" + voucherstatusExclude + ")  " + miscQuery + " "
+                + " and gl.glcodeid=bg.mincode and gl.glcodeid=bg.maxcode and  bg.majorcode is null group by bd.uniqueno");
 
-        // if(LOGGER.isDebugEnabled())
-        // LOGGER.debug("Query for fetchActualsForFY "+fy.getStartingDate().getYear()+"-"+fy.getEndingDate().getYear()+"------"+query.toString());
         final List<Object[]> result = getSession().createSQLQuery(query.toString()).list();
         if (LOGGER.isInfoEnabled())
             LOGGER.info("Finished fetchActualsForFY " + result.size() + "      " + query.toString());
         if (LOGGER.isInfoEnabled())
-            LOGGER.info("==============================================================================================");
+            LOGGER.info(
+                    "==============================================================================================");
         return result;
     }
 
@@ -716,12 +709,12 @@ public class BudgetDetailService extends PersistenceService<BudgetDetail, Long> 
      */
 
     public List<Object[]> fetchActualsForFinYear(final CFinancialYear fy, final List<String> mandatoryFields,
-            final Budget topBudget,
-            final Budget referingTopBudget, final Date date, final Integer dept, final Long fun, final List<AppConfigValues> list) {
+            final Budget topBudget, final Budget referingTopBudget, final Date date, final Integer dept, final Long fun,
+            final List<AppConfigValues> list) {
+
         if (LOGGER.isInfoEnabled())
-            LOGGER.info("==============================================================================================");
-        if (LOGGER.isInfoEnabled())
-            LOGGER.info("Starting fetchActualsForFY" + fy.getStartingDate().getYear() + "-" + fy.getEndingDate().getYear());
+            LOGGER.info(
+                    "Starting fetchActualsForFY" + fy.getStartingDate().getYear() + "-" + fy.getEndingDate().getYear());
         String dateCondition = "";
         if (date != null)
             dateCondition = " AND vh.voucherdate <='" + Constants.DDMMYYYYFORMAT1.format(date) + "' ";
@@ -734,42 +727,18 @@ public class BudgetDetailService extends PersistenceService<BudgetDetail, Long> 
         final StringBuffer referingUniqueNoQry = new StringBuffer(200);
         referingUniqueNoQry.append(" ");
         if (referingTopBudget != null)
-            referingUniqueNoQry.append(" and bd.uniqueno in (select uniqueno from egf_budgetdetail where MATERIALIZEDPATH like '"
-                    + referingTopBudget.getMaterializedPath() + "%'  )");
+            referingUniqueNoQry
+                    .append(" and bd.uniqueno in (select uniqueno from egf_budgetdetail where MATERIALIZEDPATH like '"
+                            + referingTopBudget.getMaterializedPath() + "%'  )");
 
         final StringBuffer budgetGroupQuery = new StringBuffer();
         budgetGroupQuery
                 .append(" (select bg1.id as id,bg1.accounttype as accounttype,case when c1.glcode =  NULL then -1 else to_number(c1.glcode,'999999999') end "
-                        +
-                        "as mincode,case when c2.glcode = null then  999999999 else c2.glcode end as maxcode,case when c3.glcode = null then -1 else to_number(c3.glcode,'999999999') end  as majorcode "
-                        +
-                        "from egf_budgetgroup bg1 left outer join chartofaccounts c1 on c1.id=bg1.mincode left outer join chartofaccounts c2 on "
-                        +
-                        "c2.id=bg1.maxcode left outer join chartofaccounts c3 on c3.id=bg1.majorcode ) bg ");
+                        + "as mincode,case when c2.glcode = null then  999999999 else c2.glcode end as maxcode,case when c3.glcode = null then -1 else to_number(c3.glcode,'999999999') end  as majorcode "
+                        + "from egf_budgetgroup bg1 left outer join chartofaccounts c1 on c1.id=bg1.mincode left outer join chartofaccounts c2 on "
+                        + "c2.id=bg1.maxcode left outer join chartofaccounts c3 on c3.id=bg1.majorcode ) bg ");
         final String voucherstatusExclude = list.get(0).getValue();
         StringBuffer query = new StringBuffer();
-        /*
-         * query = query.append("select bd.uniqueno,SUM(gl.debitAmount)-SUM(gl.creditAmount) from egf_budgetdetail bd," +
-         * "vouchermis vmis,"+budgetGroupQuery+",egf_budget b,financialyear f,fiscalperiod p,voucherheader vh,generalledger gl " +
-         * "where bd.budget=b.id and p.financialyearid=f.id and f.id="
-         * +fy.getId()+" and vh.fiscalperiodid=p.id "+dateCondition+" and " +
-         * " b.financialyearid="+topBudget.getFinancialYear().getId
-         * ()+" and b.MATERIALIZEDPATH like '"+topBudget.getMaterializedPath()+"%' " +referingUniqueNoQry.toString()+
-         * " and  vmis.VOUCHERHEADERID=vh.id and gl.VOUCHERHEADERID=vh.id " +
-         * " and bd.budgetgroup=bg.id and (bg.ACCOUNTTYPE='REVENUE_EXPENDITURE' or bg.ACCOUNTTYPE='CAPITAL_EXPENDITURE')" +
-         * " and vh.status not in ("+voucherstatusExclude+")  " +miscQuery+" " +
-         * " and ((gl.glcode between bg.mincode and bg.maxcode) or gl.glcode=bg.majorcode) and bg.mincode!=bg.maxcode group by bd.uniqueno"
-         * + " union "+
-         * "select bd.uniqueno,SUM(gl.creditAmount)-SUM(gl.debitAmount) from egf_budgetdetail bd,generalledger gl,voucherheader vh,"
-         * + "vouchermis vmis,"+budgetGroupQuery+",egf_budget b,financialyear f,fiscalperiod p where bd.budget=b.id " +
-         * "and p.financialyearid=f.id and f.id="
-         * +fy.getId()+" and vh.fiscalperiodid=p.id "+dateCondition+" and b.financialyearid="
-         * +topBudget.getFinancialYear().getId()+ " and b.MATERIALIZEDPATH like '"+topBudget.getMaterializedPath()+
-         * "%' and vmis.VOUCHERHEADERID=vh.id and gl.VOUCHERHEADERID=vh.id " + referingUniqueNoQry.toString()+
-         * " and bd.budgetgroup=bg.id and (bg.ACCOUNTTYPE='REVENUE_RECEIPTS' or bg.ACCOUNTTYPE='CAPITAL_RECEIPTS')" +
-         * " and vh.status not in ("+voucherstatusExclude+") " +miscQuery+" and ((gl.glcode between bg.mincode and bg.maxcode)" +
-         * " or gl.glcode=bg.majorcode) and bg.mincode!=bg.maxcode group by bd.uniqueno");
-         */
 
         String sum = "";
         if (topBudget.getName().contains("Receipt"))
@@ -777,42 +746,23 @@ public class BudgetDetailService extends PersistenceService<BudgetDetail, Long> 
         else
             sum = "SUM(gl.debitAmount)-SUM(gl.creditAmount)";
 
-        query = query
-                .append("  select bd.uniqueno,"
-                        + sum
-                        + " from egf_budgetdetail bd,"
-                        +
-                        "vouchermis vmis,egf_budgetgroup bg,egf_budget b,financialyear f,fiscalperiod p,voucherheader vh,generalledger gl "
-                        +
-                        "where bd.budget=b.id and p.financialyearid=f.id and f.id=" + fy.getId() + " and vh.fiscalperiodid=p.id "
-                        + dateCondition + " and " +
-                        " b.financialyearid=" + topBudget.getFinancialYear().getId() + " and b.MATERIALIZEDPATH like '"
-                        + topBudget.getMaterializedPath() + "%' " +
-                        referingUniqueNoQry.toString() +
-                        " and  vmis.VOUCHERHEADERID=vh.id and gl.VOUCHERHEADERID=vh.id " +
-                        " and bd.budgetgroup=bg.id " +
-                        " and vh.status not in (" + voucherstatusExclude + ")  " + miscQuery + " " +
-                        " and gl.glcodeid=bg.mincode and gl.glcodeid=bg.maxcode and  bg.majorcode is null group by bd.uniqueno");
-        /*
-         * " union "+
-         * "select bd.uniqueno,SUM(gl.creditAmount)-SUM(gl.debitAmount) from egf_budgetdetail bd,generalledger gl,voucherheader vh,"
-         * + "vouchermis vmis,egf_budgetgroup bg,egf_budget b,financialyear f,fiscalperiod p where bd.budget=b.id " +
-         * " and p.financialyearid=f.id and f.id="
-         * +fy.getId()+" and vh.fiscalperiodid=p.id "+dateCondition+" and b.financialyearid="
-         * +topBudget.getFinancialYear().getId()+ " and b.MATERIALIZEDPATH like '"+topBudget.getMaterializedPath()+
-         * "%' and vmis.VOUCHERHEADERID=vh.id and gl.VOUCHERHEADERID=vh.id " + referingUniqueNoQry.toString()+
-         * " and bd.budgetgroup=bg.id and (bg.ACCOUNTTYPE='REVENUE_RECEIPTS' or bg.ACCOUNTTYPE='CAPITAL_RECEIPTS')" +
-         * " and vh.status not in ("+voucherstatusExclude+") "
-         * +miscQuery+" and gl.glcodeid= bg.mincode and gl.glcodeid=bg.maxcode  and bg.majorcode is null group by bd.uniqueno");
-         */
+        query = query.append("  select bd.uniqueno," + sum + " from egf_budgetdetail bd,"
+                + "vouchermis vmis,egf_budgetgroup bg,egf_budget b,financialyear f,fiscalperiod p,voucherheader vh,generalledger gl "
+                + "where bd.budget=b.id and p.financialyearid=f.id and f.id=" + fy.getId()
+                + " and vh.fiscalperiodid=p.id " + dateCondition + " and " + " b.financialyearid="
+                + topBudget.getFinancialYear().getId() + " and b.MATERIALIZEDPATH like '"
+                + topBudget.getMaterializedPath() + "%' " + referingUniqueNoQry.toString()
+                + " and  vmis.VOUCHERHEADERID=vh.id and gl.VOUCHERHEADERID=vh.id " + " and bd.budgetgroup=bg.id "
+                + " and vh.status not in (" + voucherstatusExclude + ")  " + miscQuery + " "
+                + " and gl.glcodeid=bg.mincode and gl.glcodeid=bg.maxcode and  bg.majorcode is null group by bd.uniqueno");
 
         // if(LOGGER.isDebugEnabled())
-        // LOGGER.debug("Query for fetchActualsForFY "+fy.getStartingDate().getYear()+"-"+fy.getEndingDate().getYear()+"------"+query.toString());
+        // LOGGER.debug("Query for fetchActualsForFY
+        // "+fy.getStartingDate().getYear()+"-"+fy.getEndingDate().getYear()+"------"+query.toString());
         final List<Object[]> result = getSession().createSQLQuery(query.toString()).list();
         if (LOGGER.isInfoEnabled())
             LOGGER.info("Finished fetchActualsForFY " + result.size() + "      " + query.toString());
-        if (LOGGER.isInfoEnabled())
-            LOGGER.info("==============================================================================================");
+
         return result;
     }
 
@@ -820,9 +770,8 @@ public class BudgetDetailService extends PersistenceService<BudgetDetail, Long> 
      * vouchers are of the passed finaicial year budget is of passed topBudgets financialyear
      */
 
-    public List<Object[]> fetchMajorCodeAndActuals(final CFinancialYear financialYear, final Budget topBudget, final Date date,
-            final CFunction function,
-            final Department dept, final Position pos) {
+    public List<Object[]> fetchMajorCodeAndActuals(final CFinancialYear financialYear, final Budget topBudget,
+            final Date date, final CFunction function, final Department dept, final Position pos) {
         if (LOGGER.isInfoEnabled())
             LOGGER.info("Starting fetchMajorCodeAndActuals................");
         StringBuffer query = new StringBuffer();
@@ -837,87 +786,24 @@ public class BudgetDetailService extends PersistenceService<BudgetDetail, Long> 
         if (list.isEmpty())
             throw new ValidationException("", "exclude_status_forbudget_actual is not defined in AppConfig");
         final String voucherstatusExclude = list.get(0).getValue();
-        /*
-         * query = query.append(
-         * "SELECT substr(gl.glcode,1,3), SUM(gl.debitAmount)-SUM(gl.creditAmount) FROM egf_budgetdetail bd, vouchermis vmis," +
-         * " (SELECT bg1.id AS id, bg1.accounttype AS accounttype, case when c1.glcode =  NULL then -1 else to_number(c1.glcode) end AS mincode, case when c2.glcode = null then  999999999 else c2.glcode end AS maxcode, case when c3.glcode = null then -1 else to_number(c3.glcode) end  AS majorcode"
-         * +
-         * " FROM egf_budgetgroup bg1 LEFT OUTER JOIN chartofaccounts c1 ON c1.id=bg1.mincode LEFT OUTER JOIN chartofaccounts c2 ON c2.id=bg1.maxcode LEFT OUTER JOIN chartofaccounts c3 ON c3.id=bg1.majorcode) bg ,"
-         * + " egf_budget b, financialyear f, fiscalperiod p, voucherheader vh, generalledger gl, eg_wf_states wf" +
-         * " WHERE bd.budget =b.id AND p.financialyearid=f.id AND f.id ="
-         * +financialYear.getId()+" AND vh.fiscalperiodid=p.id "+dateCondition
-         * +" AND b.financialyearid="+topBudget.getFinancialYear
-         * ().getId()+" AND b.MATERIALIZEDPATH LIKE '"+topBudget.getMaterializedPath
-         * ()+"%' AND vmis.VOUCHERHEADERID=vh.id AND gl.VOUCHERHEADERID  =vh.id" +
-         * " AND bd.budgetgroup =bg.id AND (bg.ACCOUNTTYPE ='REVENUE_EXPENDITURE' OR bg.ACCOUNTTYPE ='CAPITAL_EXPENDITURE') AND vh.status NOT IN ("
-         * +voucherstatusExclude+") AND vh.fundId =bd.fund "+functionCondition+
-         * " AND vmis.departmentid =bd.executing_department and bd.executing_department =" +dept.getId()+
-         * " AND ((gl.glcode BETWEEN bg.mincode AND bg.maxcode) OR gl.glcode =bg.majorcode) AND bg.mincode!=bg.maxcode AND (wf.value='END' OR wf.owner="
-         * +pos.getId()+") AND bd.state_id = wf.id GROUP BY substr(gl.glcode,1,3)"); query = query.append(" UNION "); query =
-         * query.append(
-         * "SELECT substr(gl.glcode,1,3), SUM(gl.creditAmount)-SUM(gl.debitAmount) FROM egf_budgetdetail bd, generalledger gl, voucherheader vh, vouchermis vmis,"
-         * +
-         * " (SELECT bg1.id AS id, bg1.accounttype AS accounttype, case when c1.glcode =  NULL then -1 else to_number(c1.glcode) end AS mincode, case when c2.glcode = null then  999999999 else c2.glcode end     AS maxcode, case when c3.glcode = null then -1 else to_number(c3.glcode) end  AS majorcode"
-         * +
-         * " FROM egf_budgetgroup bg1 LEFT OUTER JOIN chartofaccounts c1 ON c1.id=bg1.mincode LEFT OUTER JOIN chartofaccounts c2 ON c2.id=bg1.maxcode LEFT OUTER JOIN chartofaccounts c3 ON c3.id=bg1.majorcode) bg ,"
-         * + " egf_budget b, financialyear f, fiscalperiod p, eg_wf_states wf" +
-         * " WHERE bd.budget =b.id AND p.financialyearid=f.id AND f.id ="
-         * +financialYear.getId()+" AND vh.fiscalperiodid=p.id "+dateCondition
-         * +" AND b.financialyearid="+topBudget.getFinancialYear
-         * ().getId()+" AND b.MATERIALIZEDPATH LIKE '"+topBudget.getMaterializedPath
-         * ()+"%' AND vmis.VOUCHERHEADERID=vh.id AND gl.VOUCHERHEADERID  =vh.id" +
-         * " AND bd.budgetgroup =bg.id AND (bg.ACCOUNTTYPE ='REVENUE_RECEIPTS' OR bg.ACCOUNTTYPE ='CAPITAL_RECEIPTS') AND vh.status NOT IN ("
-         * +voucherstatusExclude+") AND vh.fundId =bd.fund "+functionCondition+
-         * " AND vmis.departmentid =bd.executing_department and bd.executing_department =" +dept.getId()+
-         * " AND ((gl.glcode BETWEEN bg.mincode AND bg.maxcode) OR gl.glcode   =bg.majorcode) AND bg.mincode!=bg.maxcode AND (wf.value='END' OR wf.owner="
-         * +pos.getId()+") AND bd.state_id = wf.id GROUP BY substr(gl.glcode,1,3)"); query = query.append(" UNION ");
-         */
         String sum = "";
         if (topBudget.getName().contains("Receipt"))
             sum = "SUM(gl.creditAmount)-SUM(gl.debitAmount)";
         else
             sum = "SUM(gl.debitAmount)-SUM(gl.creditAmount)";
 
-        query = query
-                .append("SELECT substr(gl.glcode,1,3),"
-                        + sum
-                        + " FROM egf_budgetdetail bd, vouchermis vmis, egf_budgetgroup bg, egf_budget b, financialyear f, fiscalperiod p, voucherheader vh, generalledger gl, eg_wf_states wf"
-                        +
-                        " WHERE bd.budget      =b.id AND p.financialyearid=f.id AND f.id ="
-                        + financialYear.getId()
-                        + " AND vh.fiscalperiodid=p.id "
-                        + dateCondition
-                        + " AND b.financialyearid="
-                        + topBudget.getFinancialYear().getId()
-                        + " AND b.id = "
-                        + topBudget.getId()
-                        + " AND vmis.VOUCHERHEADERID=vh.id AND gl.VOUCHERHEADERID  =vh.id"
-                        +
-                        " AND bd.budgetgroup      =bg.id  AND vh.status NOT      IN ("
-                        + voucherstatusExclude
-                        + ") AND vh.fundId =bd.fund AND gl.functionId =bd.function "
-                        + functionCondition
-                        + ""
-                        +
-                        " AND vmis.departmentid   =bd.executing_department and bd.executing_department ="
-                        + dept.getId()
-                        + " AND gl.glcodeid         =bg.mincode AND gl.glcodeid         =bg.maxcode AND bg.majorcode       IS NULL AND (wf.value='END' OR wf.owner="
-                        + pos.getId() + ") AND bd.state_id = wf.id GROUP BY substr(gl.glcode,1,3)");
+        query = query.append("SELECT substr(gl.glcode,1,3)," + sum
+                + " FROM egf_budgetdetail bd, vouchermis vmis, egf_budgetgroup bg, egf_budget b, financialyear f, fiscalperiod p, voucherheader vh, generalledger gl, eg_wf_states wf"
+                + " WHERE bd.budget      =b.id AND p.financialyearid=f.id AND f.id =" + financialYear.getId()
+                + " AND vh.fiscalperiodid=p.id " + dateCondition + " AND b.financialyearid="
+                + topBudget.getFinancialYear().getId() + " AND b.id = " + topBudget.getId()
+                + " AND vmis.VOUCHERHEADERID=vh.id AND gl.VOUCHERHEADERID  =vh.id"
+                + " AND bd.budgetgroup      =bg.id  AND vh.status NOT      IN (" + voucherstatusExclude
+                + ") AND vh.fundId =bd.fund AND gl.functionId =bd.function " + functionCondition + ""
+                + " AND vmis.departmentid   =bd.executing_department and bd.executing_department =" + dept.getId()
+                + " AND gl.glcodeid         =bg.mincode AND gl.glcodeid         =bg.maxcode AND bg.majorcode       IS NULL AND (wf.value='END' OR wf.owner_pos="
+                + pos.getId() + ") AND bd.state_id = wf.id GROUP BY substr(gl.glcode,1,3)");
 
-        /*
-         * query = query.append(" UNION "); query = query.append(
-         * "SELECT substr(gl.glcode,1,3), SUM(gl.creditAmount)-SUM(gl.debitAmount) FROM egf_budgetdetail bd, generalledger gl, voucherheader vh, vouchermis vmis, egf_budgetgroup bg, egf_budget b, financialyear f, fiscalperiod p, eg_wf_states wf"
-         * +
-         * " WHERE bd.budget      =b.id AND p.financialyearid=f.id AND f.id ="+financialYear.getId()+" AND vh.fiscalperiodid=p.id "
-         * +
-         * dateCondition+" AND b.financialyearid="+topBudget.getFinancialYear().getId()+" AND b.MATERIALIZEDPATH LIKE '"+topBudget
-         * .getMaterializedPath()+"%' AND vmis.VOUCHERHEADERID=vh.id AND gl.VOUCHERHEADERID  =vh.id" +
-         * " AND bd.budgetgroup      =bg.id AND (bg.ACCOUNTTYPE     ='REVENUE_RECEIPTS' OR bg.ACCOUNTTYPE ='CAPITAL_RECEIPTS') AND vh.status NOT      IN ("
-         * +voucherstatusExclude+") AND vh.fundId           =bd.fund "+functionCondition+"" +
-         * " AND vmis.departmentid   =bd.executing_department and bd.executing_department =" +dept.getId()+
-         * " AND gl.glcodeid         = bg.mincode AND gl.glcodeid         =bg.maxcode AND bg.majorcode       IS NULL AND (wf.value='END' OR wf.owner="
-         * +pos.getId()+") AND bd.state_id = wf.id GROUP BY substr(gl.glcode,1,3)");
-         */
         final List<Object[]> result = getSession().createSQLQuery(query.toString()).list();
         if (LOGGER.isInfoEnabled())
             LOGGER.info("Finished fetchMajorCodeAndActuals......." + query.toString());
@@ -933,57 +819,18 @@ public class BudgetDetailService extends PersistenceService<BudgetDetail, Long> 
         String functionCondition = "";
         if (function != null)
             functionCondition = " AND bd.function = " + function.getId();
-        /*
-         * query = query.append(
-         * "SELECT cao.majorcode, cao1.glcode||'-'||cao1.name FROM egf_budgetdetail bd, egf_budgetgroup bg, egf_budget b, chartofaccounts cao, chartofaccounts cao1, financialyear f, eg_wf_states wf"
-         * +
-         * " WHERE bd.budget=b.id AND f.id="+topBudget.getFinancialYear().getId()+" AND b.financialyearid="+topBudget.getFinancialYear
-         * ().getId()+" AND b.MATERIALIZEDPATH LIKE '"+topBudget.getMaterializedPath()+
-         * "%' AND bd.budgetgroup  =bg.id AND (bg.ACCOUNTTYPE ='REVENUE_EXPENDITURE' OR bg.ACCOUNTTYPE   ='CAPITAL_EXPENDITURE')"
-         * +
-         * " AND ((cao.id BETWEEN bg.mincode AND bg.maxcode) OR cao.majorcode=bg.majorcode) AND bg.mincode!=bg.maxcode AND bd.executing_department = "
-         * +budgetDetail.getExecutingDepartment().getId()+functionCondition+ " AND (wf.value='END' OR wf.owner="+pos.getId()+
-         * ") AND bd.state_id = wf.id GROUP BY cao.majorcode, cao1.glcode||'-'||cao1.name"); query = query.append(" UNION ");
-         * query = query.append(
-         * "SELECT cao.majorcode, cao1.glcode||'-'||cao1.name FROM egf_budgetdetail bd, egf_budgetgroup bg, egf_budget b, chartofaccounts cao, chartofaccounts cao1, financialyear f, eg_wf_states wf"
-         * +
-         * " WHERE bd.budget=b.id AND f.id="+topBudget.getFinancialYear().getId()+" AND b.financialyearid="+topBudget.getFinancialYear
-         * ().getId()+" AND b.MATERIALIZEDPATH LIKE '"+topBudget.getMaterializedPath()+
-         * "%' AND bd.budgetgroup=bg.id AND (bg.ACCOUNTTYPE ='REVENUE_RECEIPTS' OR bg.ACCOUNTTYPE='CAPITAL_RECEIPTS')" +
-         * " AND ((cao.id BETWEEN bg.mincode AND bg.maxcode) OR cao.majorcode=bg.majorcode) AND bg.mincode!=bg.maxcode AND bd.executing_department = "
-         * +budgetDetail.getExecutingDepartment().getId()+functionCondition+" AND (wf.value='END' OR wf.owner="+pos.getId()+
-         * ") AND bd.state_id = wf.id GROUP BY cao.majorcode, cao1.glcode||'-'||cao1.name"); query = query.append(" UNION ");
-         */
 
         query = query
                 .append("SELECT cao.majorcode, cao1.glcode||'-'||cao1.name FROM egf_budgetdetail bd, egf_budgetgroup bg, egf_budget b, chartofaccounts cao, chartofaccounts cao1, financialyear f, eg_wf_states wf"
-                        +
-                        " WHERE bd.budget=b.id AND f.id="
-                        + topBudget.getFinancialYear().getId()
-                        + " AND b.financialyearid="
-                        + topBudget.getFinancialYear().getId()
-                        + " AND b.MATERIALIZEDPATH LIKE '"
-                        + topBudget.getMaterializedPath()
+                        + " WHERE bd.budget=b.id AND f.id=" + topBudget.getFinancialYear().getId()
+                        + " AND b.financialyearid=" + topBudget.getFinancialYear().getId()
+                        + " AND b.MATERIALIZEDPATH LIKE '" + topBudget.getMaterializedPath()
                         + "%' AND bd.budgetgroup=bg.id "
-                        +
-                        " AND cao.id=bg.mincode AND cao.id=bg.maxcode AND bg.majorcode IS NULL AND bd.executing_department = "
-                        + budgetDetail.getExecutingDepartment().getId()
-                        + functionCondition
-                        + " and cao1.glcode = cao.majorcode AND (wf.value='END' OR wf.owner="
-                        + pos.getId()
+                        + " AND cao.id=bg.mincode AND cao.id=bg.maxcode AND bg.majorcode IS NULL AND bd.executing_department = "
+                        + budgetDetail.getExecutingDepartment().getId() + functionCondition
+                        + " and cao1.glcode = cao.majorcode AND (wf.value='END' OR wf.owner_pos=" + pos.getId()
                         + ") AND bd.state_id = wf.id GROUP BY cao.majorcode, cao1.glcode||'-'||cao1.name");
 
-        /*
-         * query = query.append(" UNION "); query = query.append(
-         * "SELECT cao.majorcode, cao1.glcode||'-'||cao1.name FROM egf_budgetdetail bd, egf_budgetgroup bg, egf_budget b, chartofaccounts cao, chartofaccounts cao1, financialyear f, eg_wf_states wf"
-         * +
-         * " WHERE bd.budget=b.id AND f.id="+topBudget.getFinancialYear().getId()+" AND b.financialyearid="+topBudget.getFinancialYear
-         * ().getId()+" AND b.MATERIALIZEDPATH LIKE '"+topBudget.getMaterializedPath()+
-         * "%' AND bd.budgetgroup=bg.id AND (bg.ACCOUNTTYPE='REVENUE_RECEIPTS' OR bg.ACCOUNTTYPE='CAPITAL_RECEIPTS')" +
-         * " AND cao.id =bg.mincode AND cao.id =bg.maxcode AND bg.majorcode IS NULL and cao1.glcode = cao.majorcode AND bd.executing_department = "
-         * +budgetDetail.getExecutingDepartment().getId()+functionCondition+" AND (wf.value='END' OR wf.owner="+pos.getId()+
-         * ") AND bd.state_id = wf.id GROUP BY cao.majorcode, cao1.glcode||'-'||cao1.name");
-         */
         final List<Object[]> result = getSession().createSQLQuery(query.toString()).list();
         if (LOGGER.isInfoEnabled())
             LOGGER.info("Finished fetchMajorCodeAndName..........." + query.toString());
@@ -1002,69 +849,20 @@ public class BudgetDetailService extends PersistenceService<BudgetDetail, Long> 
             functionCondition1 = " AND bd1.function = " + function.getId();
             functionCondition2 = " AND bd2.function = " + function.getId();
         }
-        /*
-         * query = query.append(
-         * "SELECT cao.majorcode, SUM(bd2.approvedamount) FROM egf_budgetdetail bd1, egf_budgetdetail bd2, egf_budgetgroup bg, egf_budget b1, egf_budget b2, chartofaccounts cao, financialyear f, eg_wf_states wf"
-         * +
-         * " WHERE bd1.budget =b1.id AND bd2.budget =b2.id AND f.id ="+topBudget.getFinancialYear().getId()+" AND b1.financialyearid="
-         * +topBudget.getFinancialYear().getId()+" AND b2.financialyearid="+topBudget.getFinancialYear().getId()+
-         * " AND b1.MATERIALIZEDPATH LIKE '"+topBudget.getMaterializedPath()+
-         * "%' AND bd2.budgetgroup =bg.id AND (bg.ACCOUNTTYPE ='REVENUE_EXPENDITURE' OR bg.ACCOUNTTYPE ='CAPITAL_EXPENDITURE')" +
-         * " AND ((cao.id BETWEEN bg.mincode AND bg.maxcode) OR cao.majorcode   =bg.majorcode) AND bd2.executing_department = "
-         * +budgetDetail
-         * .getExecutingDepartment().getId()+functionCondition2+" AND bd1.executing_department = "+budgetDetail.getExecutingDepartment
-         * ().getId()+functionCondition1+" AND bd1.uniqueno = bd2.uniqueno AND (wf.value='END' OR wf.owner="+pos.getId()+
-         * ") AND bd1.state_id = wf.id GROUP BY cao.majorcode"); query = query.append(" UNION "); query = query.append(
-         * "SELECT cao.majorcode, SUM(bd2.approvedamount) FROM egf_budgetdetail bd1, egf_budgetdetail bd2, egf_budgetgroup bg, egf_budget b1, egf_budget b2, chartofaccounts cao, financialyear f, eg_wf_states wf"
-         * +
-         * " WHERE bd1.budget =b1.id AND bd2.budget =b2.id AND f.id ="+topBudget.getFinancialYear().getId()+" AND b1.financialyearid="
-         * +topBudget.getFinancialYear().getId()+" AND b2.financialyearid="+topBudget.getFinancialYear().getId()+
-         * " AND b1.MATERIALIZEDPATH LIKE '"+topBudget.getMaterializedPath()+
-         * "%' AND bd2.budgetgroup =bg.id AND (bg.ACCOUNTTYPE ='REVENUE_RECEIPTS' OR bg.ACCOUNTTYPE ='CAPITAL_RECEIPTS')" +
-         * " AND ((cao.id BETWEEN bg.mincode AND bg.maxcode) OR cao.majorcode   =bg.majorcode) AND bd2.executing_department = "
-         * +budgetDetail
-         * .getExecutingDepartment().getId()+functionCondition2+" AND bd1.executing_department = "+budgetDetail.getExecutingDepartment
-         * ().getId()+functionCondition1+" AND bd1.uniqueno = bd2.uniqueno AND (wf.value='END' OR wf.owner="+pos.getId()+
-         * ") AND bd1.state_id = wf.id GROUP BY cao.majorcode"); query = query.append(" UNION ");
-         */
         // / need to add b2.isbere='BE'
         query = query
                 .append("SELECT cao.majorcode, SUM(bd2.approvedamount) FROM egf_budgetdetail bd1, egf_budgetdetail bd2, egf_budgetgroup bg, egf_budget b1, egf_budget b2, chartofaccounts cao, financialyear f, eg_wf_states wf"
-                        +
-                        " WHERE bd1.budget =b1.id AND bd2.budget =b2.id AND f.id ="
-                        + topBudget.getFinancialYear().getId()
-                        + " AND b1.financialyearid="
-                        + topBudget.getFinancialYear().getId()
-                        + " AND b2.financialyearid="
-                        + topBudget.getFinancialYear().getId()
-                        + " AND b1.MATERIALIZEDPATH LIKE '"
-                        + topBudget.getMaterializedPath()
-                        + "%' and b2.isbere='BE' AND bd2.budgetgroup =bg.id  "
-                        +
-                        " AND cao.id =bg.mincode AND cao.id =bg.maxcode AND bg.majorcode IS NULL AND bd2.executing_department = "
-                        + budgetDetail.getExecutingDepartment().getId()
-                        + functionCondition2
-                        + " AND bd1.executing_department = "
-                        + budgetDetail.getExecutingDepartment().getId()
-                        + functionCondition1
-                        + " AND bd1.uniqueno = bd2.uniqueno AND (wf.value='END' OR wf.owner="
-                        + pos.getId()
-                        + ") AND bd1.state_id = wf.id GROUP BY cao.majorcode");
+                        + " WHERE bd1.budget =b1.id AND bd2.budget =b2.id AND f.id ="
+                        + topBudget.getFinancialYear().getId() + " AND b1.financialyearid="
+                        + topBudget.getFinancialYear().getId() + " AND b2.financialyearid="
+                        + topBudget.getFinancialYear().getId() + " AND b1.MATERIALIZEDPATH LIKE '"
+                        + topBudget.getMaterializedPath() + "%' and b2.isbere='BE' AND bd2.budgetgroup =bg.id  "
+                        + " AND cao.id =bg.mincode AND cao.id =bg.maxcode AND bg.majorcode IS NULL AND bd2.executing_department = "
+                        + budgetDetail.getExecutingDepartment().getId() + functionCondition2
+                        + " AND bd1.executing_department = " + budgetDetail.getExecutingDepartment().getId()
+                        + functionCondition1 + " AND bd1.uniqueno = bd2.uniqueno AND (wf.value='END' OR wf.owner_pos="
+                        + pos.getId() + ") AND bd1.state_id = wf.id GROUP BY cao.majorcode");
 
-        /*
-         * query = query.append(" UNION "); query = query.append(
-         * "SELECT cao.majorcode, SUM(bd2.approvedamount) FROM egf_budgetdetail bd1, egf_budgetdetail bd2, egf_budgetgroup bg, egf_budget b1, egf_budget b2, chartofaccounts cao, financialyear f, eg_wf_states wf"
-         * +
-         * " WHERE bd1.budget =b1.id AND bd2.budget =b2.id AND f.id ="+topBudget.getFinancialYear().getId()+" AND b1.financialyearid="
-         * +topBudget.getFinancialYear().getId()+" AND b2.financialyearid="+topBudget.getFinancialYear().getId()+
-         * " AND b1.MATERIALIZEDPATH LIKE '"+topBudget.getMaterializedPath()+
-         * "%' AND bd2.budgetgroup =bg.id AND (bg.ACCOUNTTYPE ='REVENUE_RECEIPTS' OR bg.ACCOUNTTYPE ='CAPITAL_RECEIPTS')" +
-         * " AND cao.id =bg.mincode AND cao.id =bg.maxcode AND bg.majorcode IS NULL AND bd2.executing_department = "
-         * +budgetDetail.getExecutingDepartment
-         * ().getId()+functionCondition2+" AND bd1.executing_department = "+budgetDetail.getExecutingDepartment
-         * ().getId()+functionCondition1+" AND bd1.uniqueno = bd2.uniqueno AND (wf.value='END' OR wf.owner="+pos.getId()+
-         * ") AND bd1.state_id = wf.id GROUP BY cao.majorcode");
-         */
         final List<Object[]> result = getSession().createSQLQuery(query.toString()).list();
         if (LOGGER.isInfoEnabled())
             LOGGER.info("Finished fetchMajorCodeAndBEAmount");
@@ -1086,26 +884,16 @@ public class BudgetDetailService extends PersistenceService<BudgetDetail, Long> 
 
         query = query
                 .append("SELECT bd2.uniqueno, SUM(bd2.approvedamount) FROM egf_budgetdetail bd1, egf_budgetdetail bd2, egf_budgetgroup bg, egf_budget b1, egf_budget b2, chartofaccounts cao, financialyear f, eg_wf_states wf"
-                        +
-                        " WHERE bd1.budget =b1.id AND bd2.budget =b2.id AND f.id ="
-                        + topBudget.getFinancialYear().getId()
-                        + " AND b1.financialyearid="
-                        + topBudget.getFinancialYear().getId()
-                        + " AND b2.financialyearid="
-                        + topBudget.getFinancialYear().getId()
-                        + " AND b1.MATERIALIZEDPATH LIKE '"
-                        + topBudget.getMaterializedPath()
-                        + "%' and b2.isbere='BE' AND bd2.budgetgroup =bg.id  "
-                        +
-                        " AND cao.id =bg.mincode AND cao.id =bg.maxcode AND bg.majorcode IS NULL AND bd2.executing_department = "
-                        + budgetDetail.getExecutingDepartment().getId()
-                        + functionCondition2
-                        + " AND bd1.executing_department = "
-                        + budgetDetail.getExecutingDepartment().getId()
-                        + functionCondition1
-                        + " AND bd1.uniqueno = bd2.uniqueno AND (wf.value='END' OR wf.owner="
-                        + pos.getId()
-                        + ") AND bd1.state_id = wf.id GROUP BY bd2.uniqueno");
+                        + " WHERE bd1.budget =b1.id AND bd2.budget =b2.id AND f.id ="
+                        + topBudget.getFinancialYear().getId() + " AND b1.financialyearid="
+                        + topBudget.getFinancialYear().getId() + " AND b2.financialyearid="
+                        + topBudget.getFinancialYear().getId() + " AND b1.MATERIALIZEDPATH LIKE '"
+                        + topBudget.getMaterializedPath() + "%' and b2.isbere='BE' AND bd2.budgetgroup =bg.id  "
+                        + " AND cao.id =bg.mincode AND cao.id =bg.maxcode AND bg.majorcode IS NULL AND bd2.executing_department = "
+                        + budgetDetail.getExecutingDepartment().getId() + functionCondition2
+                        + " AND bd1.executing_department = " + budgetDetail.getExecutingDepartment().getId()
+                        + functionCondition1 + " AND bd1.uniqueno = bd2.uniqueno AND (wf.value='END' OR wf.owner_pos="
+                        + pos.getId() + ") AND bd1.state_id = wf.id GROUP BY bd2.uniqueno");
 
         final List<Object[]> result = getSession().createSQLQuery(query.toString()).list();
         if (LOGGER.isInfoEnabled())
@@ -1115,8 +903,7 @@ public class BudgetDetailService extends PersistenceService<BudgetDetail, Long> 
     }
 
     public List<Object[]> fetchMajorCodeAndAppropriation(final Budget topBudget, final BudgetDetail budgetDetail,
-            final CFunction function,
-            final Position pos, final Date asOnDate) {
+            final CFunction function, final Position pos, final Date asOnDate) {
         if (LOGGER.isInfoEnabled())
             LOGGER.info("Starting fetchMajorCodeAndAppropriation................");
         StringBuffer query = new StringBuffer();
@@ -1133,79 +920,23 @@ public class BudgetDetailService extends PersistenceService<BudgetDetail, Long> 
             dateCondition = " and bapp.reappropriation_misc= bmisc.id and  bmisc.reappropriation_date <= '"
                     + Constants.DDMMYYYYFORMAT1.format(asOnDate) + "'";
         }
-        /*
-         * query = query.append(
-         * "SELECT cao.majorcode, SUM(bapp.addition_amount)-SUM(bapp.deduction_amount) FROM egf_budgetdetail bd1, egf_budgetdetail bd2, egf_budgetgroup bg, egf_budget b1, egf_budget b2, chartofaccounts cao, financialyear f, egf_budget_reappropriation bapp, eg_wf_states wf"
-         * + " WHERE bd1.budget      =b1.id and bd2.budget =b2.id AND f.id ="+topBudget.getFinancialYear().getId()+
-         * " AND b1.financialyearid="
-         * +topBudget.getFinancialYear().getId()+" AND b2.financialyearid="+topBudget.getFinancialYear().
-         * getId()+" AND b1.MATERIALIZEDPATH LIKE '"+topBudget.getMaterializedPath()+
-         * "%' AND bd2.budgetgroup  =bg.id AND (bg.ACCOUNTTYPE ='REVENUE_EXPENDITURE' OR bg.ACCOUNTTYPE   ='CAPITAL_EXPENDITURE')"
-         * +
-         * " AND ((cao.id BETWEEN bg.mincode AND bg.maxcode) OR cao.majorcode            =bg.majorcode) AND bg.mincode! =bg.maxcode AND bd1.executing_department = "
-         * +budgetDetail.getExecutingDepartment().getId()+" "+functionCondition1+" AND bd2.executing_department = "+budgetDetail.
-         * getExecutingDepartment().getId()+" "+functionCondition2+" " +
-         * " AND bapp.budgetdetail       = bd2.id AND (wf.value               ='END' OR wf.owner ="
-         * +pos.getId()+") AND bd1.state_id             = wf.id and bd1.uniqueno = bd2.uniqueno GROUP BY cao.majorcode"); query =
-         * query.append(" UNION "); query = query.append(
-         * "SELECT cao.majorcode, SUM(bapp.addition_amount)-SUM(bapp.deduction_amount) FROM egf_budgetdetail bd1, egf_budgetdetail bd2, egf_budgetgroup bg, egf_budget b1, egf_budget b2, chartofaccounts cao, financialyear f, egf_budget_reappropriation bapp, eg_wf_states wf"
-         * + " WHERE bd1.budget      =b1.id and bd2.budget =b2.id AND f.id ="+topBudget.getFinancialYear().getId()+
-         * " AND b1.financialyearid="
-         * +topBudget.getFinancialYear().getId()+" AND b2.financialyearid="+topBudget.getFinancialYear().
-         * getId()+" AND b1.MATERIALIZEDPATH LIKE '"+topBudget.getMaterializedPath()+
-         * "%' AND bd2.budgetgroup  =bg.id AND (bg.ACCOUNTTYPE ='REVENUE_RECEIPTS' OR bg.ACCOUNTTYPE   ='CAPITAL_RECEIPTS')" +
-         * " AND ((cao.id BETWEEN bg.mincode AND bg.maxcode) OR cao.majorcode            =bg.majorcode) AND bg.mincode! =bg.maxcode AND bd1.executing_department = "
-         * +budgetDetail.getExecutingDepartment().getId()+" "+functionCondition1+" AND bd2.executing_department = "+budgetDetail.
-         * getExecutingDepartment().getId()+" "+functionCondition2+" " +
-         * " AND bapp.budgetdetail       = bd2.id AND (wf.value               ='END' OR wf.owner ="
-         * +pos.getId()+") AND bd1.state_id             = wf.id and bd1.uniqueno = bd2.uniqueno GROUP BY cao.majorcode"); query =
-         * query.append(" UNION ");
-         */
 
         query = query
                 .append("SELECT cao.majorcode, SUM(bapp.addition_amount)-SUM(bapp.deduction_amount) FROM egf_budgetdetail bd1, egf_budgetdetail bd2, egf_budgetgroup bg, egf_budget b1, egf_budget b2, chartofaccounts cao, financialyear f, egf_budget_reappropriation bapp, "
-                        + ReappropriationTable
-                        + " eg_wf_states wf"
-                        +
-                        " WHERE bd1.budget=b1.id and bd2.budget=b2.id AND f.id   ="
-                        + topBudget.getFinancialYear().getId()
-                        + " AND b1.financialyearid="
-                        + topBudget.getFinancialYear().getId()
-                        + " AND b2.financialyearid="
-                        + topBudget.getFinancialYear().getId()
-                        + " AND b1.MATERIALIZEDPATH LIKE '"
-                        + topBudget.getMaterializedPath()
-                        + "%' and b2.isbere='BE' AND bd2.budgetgroup          =bg.id "
+                        + ReappropriationTable + " eg_wf_states wf"
+                        + " WHERE bd1.budget=b1.id and bd2.budget=b2.id AND f.id   ="
+                        + topBudget.getFinancialYear().getId() + " AND b1.financialyearid="
+                        + topBudget.getFinancialYear().getId() + " AND b2.financialyearid="
+                        + topBudget.getFinancialYear().getId() + " AND b1.MATERIALIZEDPATH LIKE '"
+                        + topBudget.getMaterializedPath() + "%' and b2.isbere='BE' AND bd2.budgetgroup          =bg.id "
                         + dateCondition
-                        +
-                        " AND cao.id=bg.mincode AND cao.id=bg.maxcode AND bg.majorcode IS NULL AND bd1.executing_department = "
-                        + budgetDetail.getExecutingDepartment().getId()
-                        + " "
-                        + functionCondition1
-                        + " AND bd2.executing_department = "
-                        + budgetDetail.getExecutingDepartment().getId()
-                        + ""
-                        +
-                        " "
-                        + functionCondition2
-                        + " AND bapp.budgetdetail  = bd2.id AND (wf.value ='END' OR wf.owner ="
+                        + " AND cao.id=bg.mincode AND cao.id=bg.maxcode AND bg.majorcode IS NULL AND bd1.executing_department = "
+                        + budgetDetail.getExecutingDepartment().getId() + " " + functionCondition1
+                        + " AND bd2.executing_department = " + budgetDetail.getExecutingDepartment().getId() + "" + " "
+                        + functionCondition2 + " AND bapp.budgetdetail  = bd2.id AND (wf.value ='END' OR wf.owner_pos ="
                         + pos.getId()
                         + ") AND bd1.state_id             = wf.id and bd1.uniqueno = bd2.uniqueno GROUP BY cao.majorcode");
 
-        /*
-         * query = query.append(" UNION "); query = query.append(
-         * "SELECT cao.majorcode, SUM(bapp.addition_amount)-SUM(bapp.deduction_amount) FROM egf_budgetdetail bd1, egf_budgetdetail bd2, egf_budgetgroup bg, egf_budget b1, egf_budget b2, chartofaccounts cao, financialyear f, egf_budget_reappropriation bapp, eg_wf_states wf"
-         * + " WHERE bd1.budget      =b1.id and bd2.budget =b2.id AND f.id ="+topBudget.getFinancialYear().getId()+
-         * " AND b1.financialyearid="
-         * +topBudget.getFinancialYear().getId()+" AND b2.financialyearid="+topBudget.getFinancialYear().
-         * getId()+" AND b1.MATERIALIZEDPATH LIKE '"
-         * +topBudget.getMaterializedPath()+"%' AND bd2.budgetgroup          =bg.id AND (bg.ACCOUNTTYPE ='REVENUE_RECEIPTS'" +
-         * " OR bg.ACCOUNTTYPE           ='CAPITAL_RECEIPTS') AND cao.id                  =bg.mincode AND cao.id =bg.maxcode AND bg.majorcode           IS NULL AND bd1.executing_department = "
-         * +budgetDetail.getExecutingDepartment().getId()+" "+functionCondition1+" AND bd2.executing_department = "+budgetDetail.
-         * getExecutingDepartment().getId()+"" +
-         * " "+functionCondition2+" AND bapp.budgetdetail = bd2.id AND (wf.value               ='END' OR wf.owner                 ="
-         * +pos.getId()+") AND bd1.state_id             = wf.id and bd1.uniqueno = bd2.uniqueno GROUP BY cao.majorcode");
-         */
         final List<Object[]> result = getSession().createSQLQuery(query.toString()).list();
         if (LOGGER.isInfoEnabled())
             LOGGER.info("Finished fetchMajorCodeAndAppropriation");
@@ -1227,28 +958,16 @@ public class BudgetDetailService extends PersistenceService<BudgetDetail, Long> 
 
         query = query
                 .append("SELECT bd2.uniqueno, SUM(bapp.addition_amount)-SUM(bapp.deduction_amount) FROM egf_budgetdetail bd1, egf_budgetdetail bd2, egf_budgetgroup bg, egf_budget b1, egf_budget b2, chartofaccounts cao, financialyear f, egf_budget_reappropriation bapp, eg_wf_states wf"
-                        +
-                        " WHERE bd1.budget      =b1.id and bd2.budget =b2.id AND f.id ="
-                        + topBudget.getFinancialYear().getId()
-                        + " AND b1.financialyearid="
-                        + topBudget.getFinancialYear().getId()
-                        + " AND b2.financialyearid="
-                        + topBudget.getFinancialYear().getId()
-                        + " AND b1.MATERIALIZEDPATH LIKE '"
-                        + topBudget.getMaterializedPath()
-                        + "%' and b2.isbere='BE' AND bd2.budgetgroup          =bg.id "
-                        +
-                        " AND cao.id                  =bg.mincode AND cao.id                  =bg.maxcode AND bg.majorcode           IS NULL AND bd1.executing_department = "
-                        + budgetDetail.getExecutingDepartment().getId()
-                        + " "
-                        + functionCondition1
-                        + " AND bd2.executing_department = "
-                        + budgetDetail.getExecutingDepartment().getId()
-                        + ""
-                        +
-                        " "
+                        + " WHERE bd1.budget      =b1.id and bd2.budget =b2.id AND f.id ="
+                        + topBudget.getFinancialYear().getId() + " AND b1.financialyearid="
+                        + topBudget.getFinancialYear().getId() + " AND b2.financialyearid="
+                        + topBudget.getFinancialYear().getId() + " AND b1.MATERIALIZEDPATH LIKE '"
+                        + topBudget.getMaterializedPath() + "%' and b2.isbere='BE' AND bd2.budgetgroup          =bg.id "
+                        + " AND cao.id                  =bg.mincode AND cao.id                  =bg.maxcode AND bg.majorcode           IS NULL AND bd1.executing_department = "
+                        + budgetDetail.getExecutingDepartment().getId() + " " + functionCondition1
+                        + " AND bd2.executing_department = " + budgetDetail.getExecutingDepartment().getId() + "" + " "
                         + functionCondition2
-                        + " AND bapp.budgetdetail = bd2.id AND (wf.value               ='END' OR wf.owner                 ="
+                        + " AND bapp.budgetdetail = bd2.id AND (wf.value               ='END' OR wf.owner_pos                 ="
                         + pos.getId()
                         + ") AND bd1.state_id             = wf.id and bd1.uniqueno = bd2.uniqueno GROUP BY bd2.uniqueno");
 
@@ -1260,53 +979,23 @@ public class BudgetDetailService extends PersistenceService<BudgetDetail, Long> 
     }
 
     public List<Object[]> fetchMajorCodeAndAnticipatory(final Budget topBudget, final BudgetDetail budgetDetail,
-            final CFunction function,
-            final Position pos) {
+            final CFunction function, final Position pos) {
         if (LOGGER.isInfoEnabled())
             LOGGER.info("Starting fetchMajorCodeAndAnticipatory................");
         StringBuffer query = new StringBuffer();
         String functionCondition = "";
         if (function != null)
             functionCondition = " AND bd.function = " + function.getId();
-        /*
-         * query = query.append(
-         * "SELECT cao.majorcode, SUM(bd.anticipatory_amount) FROM egf_budgetdetail bd, egf_budgetgroup bg, egf_budget b, chartofaccounts cao, financialyear f, eg_wf_states wf"
-         * + " WHERE bd.budget =b.id AND f.id ="+topBudget.getFinancialYear().getId()+" AND b.financialyearid="+topBudget.
-         * getFinancialYear().getId()+" AND b.MATERIALIZEDPATH LIKE '"+topBudget.getMaterializedPath()+
-         * "%' AND bd.budgetgroup  =bg.id AND (bg.ACCOUNTTYPE ='REVENUE_EXPENDITURE' OR bg.ACCOUNTTYPE   ='CAPITAL_EXPENDITURE') AND ((cao.id BETWEEN bg.mincode AND bg.maxcode) OR cao.majorcode =bg.majorcode) AND bg.mincode! =bg.maxcode AND bd.executing_department = "
-         * +budgetDetail.getExecutingDepartment().getId()+functionCondition+" AND (wf.value='END' OR wf.owner="+pos.getId()+
-         * ") AND bd.state_id = wf.id GROUP BY cao.majorcode"); query = query.append(" UNION "); query = query.append(
-         * "SELECT cao.majorcode, SUM(bd.anticipatory_amount) FROM egf_budgetdetail bd, egf_budgetgroup bg, egf_budget b, chartofaccounts cao, financialyear f, eg_wf_states wf"
-         * + " WHERE bd.budget =b.id AND f.id ="+topBudget.getFinancialYear().getId()+" AND b.financialyearid="+topBudget.
-         * getFinancialYear().getId()+" AND b.MATERIALIZEDPATH LIKE '"+topBudget.getMaterializedPath()+
-         * "%' AND bd.budgetgroup  =bg.id AND (bg.ACCOUNTTYPE ='REVENUE_RECEIPTS' OR bg.ACCOUNTTYPE ='CAPITAL_RECEIPTS') AND ((cao.id BETWEEN bg.mincode AND bg.maxcode) OR cao.majorcode =bg.majorcode) AND bg.mincode! =bg.maxcode AND bd.executing_department = "
-         * +budgetDetail.getExecutingDepartment().getId()+functionCondition+" AND (wf.value='END' OR wf.owner="+pos.getId()+
-         * ") AND bd.state_id = wf.id GROUP BY cao.majorcode"); query = query.append(" UNION ");
-         */
         query = query
-                .append("SELECT cao.majorcode, SUM(bd.anticipatory_amount), SUM(bd.originalamount),SUM(bd.approvedamount) FROM egf_budgetdetail bd, egf_budgetgroup bg, egf_budget b, chartofaccounts cao, financialyear f, eg_wf_states wf"
-                        +
-                        " WHERE bd.budget =b.id AND f.id ="
-                        + topBudget.getFinancialYear().getId()
-                        + " AND b.financialyearid="
-                        + topBudget.getFinancialYear().getId()
-                        + " AND b.MATERIALIZEDPATH LIKE '"
-                        + topBudget.getMaterializedPath()
+                .append("SELECT cao.majorcode, SUM(bd.anticipatory_amount) as anticipatory_amount, SUM(bd.originalamount) as originalamount, SUM(bd.approvedamount) as approvedamount FROM egf_budgetdetail bd, egf_budgetgroup bg, egf_budget b, chartofaccounts cao, financialyear f, eg_wf_states wf"
+                        + " WHERE bd.budget =b.id AND f.id =" + topBudget.getFinancialYear().getId()
+                        + " AND b.financialyearid=" + topBudget.getFinancialYear().getId()
+                        + " AND b.MATERIALIZEDPATH LIKE '" + topBudget.getMaterializedPath()
                         + "%' AND bd.budgetgroup =bg.id  AND cao.id =bg.mincode AND cao.id =bg.maxcode AND bg.majorcode IS NULL AND bd.executing_department = "
-                        + budgetDetail.getExecutingDepartment().getId()
-                        + functionCondition
-                        + " AND (wf.value='END' OR wf.owner="
-                        + pos.getId() + ") AND bd.state_id = wf.id GROUP BY cao.majorcode");
+                        + budgetDetail.getExecutingDepartment().getId() + functionCondition
+                        + " AND (wf.value='END' OR wf.owner_pos=" + pos.getId()
+                        + ") AND bd.state_id = wf.id GROUP BY cao.majorcode");
 
-        /*
-         * query = query.append(" UNION "); query = query.append(
-         * "SELECT cao.majorcode, SUM(bd.anticipatory_amount) FROM egf_budgetdetail bd, egf_budgetgroup bg, egf_budget b, chartofaccounts cao, financialyear f, eg_wf_states wf"
-         * + " WHERE bd.budget =b.id AND f.id ="+topBudget.getFinancialYear().getId()+" AND b.financialyearid="+topBudget.
-         * getFinancialYear().getId()+" AND b.MATERIALIZEDPATH LIKE '"+topBudget.getMaterializedPath()+
-         * "%' AND bd.budgetgroup =bg.id AND (bg.ACCOUNTTYPE ='REVENUE_RECEIPTS' OR bg.ACCOUNTTYPE ='CAPITAL_RECEIPTS') AND cao.id =bg.mincode AND cao.id =bg.maxcode AND bg.majorcode IS NULL AND bd.executing_department = "
-         * +budgetDetail.getExecutingDepartment().getId()+functionCondition+" AND (wf.value='END' OR wf.owner="+pos.getId()+
-         * ") AND bd.state_id = wf.id GROUP BY cao.majorcode");
-         */
         final List<Object[]> result = getSession().createSQLQuery(query.toString()).list();
         if (LOGGER.isInfoEnabled())
             LOGGER.info("Finished fetchMajorCodeAndAnticipatory");
@@ -1315,54 +1004,24 @@ public class BudgetDetailService extends PersistenceService<BudgetDetail, Long> 
     }
 
     public List<Object[]> fetchMajorCodeAndOriginalAmount(final Budget topBudget, final BudgetDetail budgetDetail,
-            final CFunction function,
-            final Position pos) {
+            final CFunction function, final Position pos) {
         if (LOGGER.isInfoEnabled())
             LOGGER.info("Starting fetchMajorCodeAndOriginalAmount................");
         StringBuffer query = new StringBuffer();
         String functionCondition = "";
         if (function != null)
             functionCondition = " AND bd.function = " + function.getId();
-        /*
-         * query = query.append(
-         * "SELECT cao.majorcode, SUM(bd.originalamount) FROM egf_budgetdetail bd, egf_budgetgroup bg, egf_budget b, chartofaccounts cao, financialyear f, eg_wf_states wf"
-         * + " WHERE bd.budget =b.id AND f.id ="+topBudget.getFinancialYear().getId()+" AND b.financialyearid="+topBudget.
-         * getFinancialYear().getId()+" AND b.MATERIALIZEDPATH LIKE '"+topBudget.getMaterializedPath()+
-         * "%' AND bd.budgetgroup  =bg.id AND (bg.ACCOUNTTYPE ='REVENUE_EXPENDITURE' OR bg.ACCOUNTTYPE   ='CAPITAL_EXPENDITURE') AND ((cao.id BETWEEN bg.mincode AND bg.maxcode) OR cao.majorcode =bg.majorcode) AND bg.mincode! =bg.maxcode AND bd.executing_department = "
-         * +budgetDetail.getExecutingDepartment().getId()+functionCondition+" AND (wf.value='END' OR wf.owner="+pos.getId()+
-         * ") AND bd.state_id = wf.id GROUP BY cao.majorcode"); query = query.append(" UNION "); query = query.append(
-         * "SELECT cao.majorcode, SUM(bd.originalamount) FROM egf_budgetdetail bd, egf_budgetgroup bg, egf_budget b, chartofaccounts cao, financialyear f, eg_wf_states wf"
-         * + " WHERE bd.budget =b.id AND f.id ="+topBudget.getFinancialYear().getId()+" AND b.financialyearid="+topBudget.
-         * getFinancialYear().getId()+" AND b.MATERIALIZEDPATH LIKE '"+topBudget.getMaterializedPath()+
-         * "%' AND bd.budgetgroup  =bg.id AND (bg.ACCOUNTTYPE ='REVENUE_RECEIPTS' OR bg.ACCOUNTTYPE ='CAPITAL_RECEIPTS') AND ((cao.id BETWEEN bg.mincode AND bg.maxcode) OR cao.majorcode =bg.majorcode) AND bg.mincode! =bg.maxcode AND bd.executing_department = "
-         * +budgetDetail.getExecutingDepartment().getId()+functionCondition+" AND (wf.value='END' OR wf.owner="+pos.getId()+
-         * ") AND bd.state_id = wf.id GROUP BY cao.majorcode"); query = query.append(" UNION ");
-         */
 
         query = query
                 .append("SELECT cao.majorcode, SUM(bd.originalamount) FROM egf_budgetdetail bd, egf_budgetgroup bg, egf_budget b, chartofaccounts cao, financialyear f, eg_wf_states wf"
-                        +
-                        " WHERE bd.budget =b.id AND f.id ="
-                        + topBudget.getFinancialYear().getId()
-                        + " AND b.financialyearid="
-                        + topBudget.getFinancialYear().getId()
-                        + " AND b.MATERIALIZEDPATH LIKE '"
-                        + topBudget.getMaterializedPath()
+                        + " WHERE bd.budget =b.id AND f.id =" + topBudget.getFinancialYear().getId()
+                        + " AND b.financialyearid=" + topBudget.getFinancialYear().getId()
+                        + " AND b.MATERIALIZEDPATH LIKE '" + topBudget.getMaterializedPath()
                         + "%' AND bd.budgetgroup =bg.id  AND cao.id =bg.mincode AND cao.id =bg.maxcode AND bg.majorcode IS NULL AND bd.executing_department = "
-                        + budgetDetail.getExecutingDepartment().getId()
-                        + functionCondition
-                        + " AND (wf.value='END' OR wf.owner="
-                        + pos.getId() + ") AND bd.state_id = wf.id GROUP BY cao.majorcode");
+                        + budgetDetail.getExecutingDepartment().getId() + functionCondition
+                        + " AND (wf.value='END' OR wf.owner_pos=" + pos.getId()
+                        + ") AND bd.state_id = wf.id GROUP BY cao.majorcode");
 
-        /*
-         * query = query.append(" UNION "); query = query.append(
-         * "SELECT cao.majorcode, SUM(bd.originalamount) FROM egf_budgetdetail bd, egf_budgetgroup bg, egf_budget b, chartofaccounts cao, financialyear f, eg_wf_states wf"
-         * + " WHERE bd.budget =b.id AND f.id ="+topBudget.getFinancialYear().getId()+" AND b.financialyearid="+topBudget.
-         * getFinancialYear().getId()+" AND b.MATERIALIZEDPATH LIKE '"+topBudget.getMaterializedPath()+
-         * "%' AND bd.budgetgroup =bg.id AND (bg.ACCOUNTTYPE ='REVENUE_RECEIPTS' OR bg.ACCOUNTTYPE ='CAPITAL_RECEIPTS') AND cao.id =bg.mincode AND cao.id =bg.maxcode AND bg.majorcode IS NULL AND bd.executing_department = "
-         * +budgetDetail.getExecutingDepartment().getId()+functionCondition+" AND (wf.value='END' OR wf.owner="+pos.getId()+
-         * ") AND bd.state_id = wf.id GROUP BY cao.majorcode");
-         */
         final List<Object[]> result = getSession().createSQLQuery(query.toString()).list();
         if (LOGGER.isInfoEnabled())
             LOGGER.info("Finished fetchMajorCodeAndOriginalAmount");
@@ -1381,62 +1040,19 @@ public class BudgetDetailService extends PersistenceService<BudgetDetail, Long> 
             functionCondition1 = " AND bd1.function = " + function.getId();
             functionCondition2 = " AND bd2.function = " + function.getId();
         }
-        /*
-         * query = query.append(
-         * "SELECT cao.majorcode, SUM(bd2.originalamount) FROM egf_budgetdetail bd1, egf_budgetdetail bd2, egf_budgetgroup bg, egf_budget b1, egf_budget b2, chartofaccounts cao, eg_wf_states wf"
-         * + " WHERE bd1.budget =b1.id AND bd2.budget =b2.id AND b1.financialyearid="+topBudget.getFinancialYear().getId()+
-         * " AND b1.MATERIALIZEDPATH LIKE '"+topBudget.getMaterializedPath()+
-         * "%' AND bd2.budgetgroup =bg.id AND (bg.ACCOUNTTYPE ='REVENUE_EXPENDITURE' OR bg.ACCOUNTTYPE ='CAPITAL_EXPENDITURE')" +
-         * " AND ((cao.id BETWEEN bg.mincode AND bg.maxcode) OR cao.majorcode   =bg.majorcode) AND bd2.executing_department = "
-         * +budgetDetail
-         * .getExecutingDepartment().getId()+functionCondition2+" AND bd1.executing_department = "+budgetDetail.getExecutingDepartment
-         * ().getId()+functionCondition1+
-         * " AND bd1.uniqueno = bd2.uniqueno AND b2.reference_budget = b1.id AND (wf.value='END' OR wf.owner="
-         * +pos.getId()+") AND bd1.state_id = wf.id GROUP BY cao.majorcode"); query = query.append(" UNION "); query =
-         * query.append(
-         * "SELECT cao.majorcode, SUM(bd2.originalamount) FROM egf_budgetdetail bd1, egf_budgetdetail bd2, egf_budgetgroup bg, egf_budget b1, egf_budget b2, chartofaccounts cao, eg_wf_states wf"
-         * + " WHERE bd1.budget =b1.id AND bd2.budget =b2.id AND b1.financialyearid="+topBudget.getFinancialYear().getId()+
-         * " AND b1.MATERIALIZEDPATH LIKE '"+topBudget.getMaterializedPath()+
-         * "%' AND bd2.budgetgroup =bg.id AND (bg.ACCOUNTTYPE ='REVENUE_RECEIPTS' OR bg.ACCOUNTTYPE ='CAPITAL_RECEIPTS')" +
-         * " AND ((cao.id BETWEEN bg.mincode AND bg.maxcode) OR cao.majorcode   =bg.majorcode) AND bd2.executing_department = "
-         * +budgetDetail
-         * .getExecutingDepartment().getId()+functionCondition2+" AND bd1.executing_department = "+budgetDetail.getExecutingDepartment
-         * ().getId()+functionCondition1+
-         * " AND bd1.uniqueno = bd2.uniqueno AND b2.reference_budget = b1.id AND (wf.value='END' OR wf.owner="
-         * +pos.getId()+") AND bd1.state_id = wf.id GROUP BY cao.majorcode"); query = query.append(" UNION ");
-         */
 
         query = query
-                .append("SELECT cao.majorcode, SUM(bd2.originalamount), SUM(bd2.approvedamount) FROM egf_budgetdetail bd1, egf_budgetdetail bd2, egf_budgetgroup bg, egf_budget b1, egf_budget b2, chartofaccounts cao, eg_wf_states wf"
-                        +
-                        " WHERE bd1.budget =b1.id AND bd2.budget =b2.id AND b1.financialyearid="
-                        + topBudget.getFinancialYear().getId()
-                        + " AND b1.MATERIALIZEDPATH LIKE '"
-                        + topBudget.getMaterializedPath()
-                        + "%' AND bd2.budgetgroup =bg.id "
-                        +
-                        " AND cao.id =bg.mincode AND cao.id =bg.maxcode AND bg.majorcode IS NULL AND bd2.executing_department = "
-                        + budgetDetail.getExecutingDepartment().getId()
-                        + functionCondition2
-                        + " AND bd1.executing_department = "
-                        + budgetDetail.getExecutingDepartment().getId()
+                .append("SELECT cao.majorcode, SUM(bd2.originalamount) as originalamount, SUM(bd2.approvedamount) as approvedamount  FROM egf_budgetdetail bd1, egf_budgetdetail bd2, egf_budgetgroup bg, egf_budget b1, egf_budget b2, chartofaccounts cao, eg_wf_states wf"
+                        + " WHERE bd1.budget =b1.id AND bd2.budget =b2.id AND b1.financialyearid="
+                        + topBudget.getFinancialYear().getId() + " AND b1.MATERIALIZEDPATH LIKE '"
+                        + topBudget.getMaterializedPath() + "%' AND bd2.budgetgroup =bg.id "
+                        + " AND cao.id =bg.mincode AND cao.id =bg.maxcode AND bg.majorcode IS NULL AND bd2.executing_department = "
+                        + budgetDetail.getExecutingDepartment().getId() + functionCondition2
+                        + " AND bd1.executing_department = " + budgetDetail.getExecutingDepartment().getId()
                         + functionCondition1
-                        + " AND bd1.uniqueno = bd2.uniqueno AND b2.reference_budget = b1.id AND (wf.value='END' OR wf.owner="
+                        + " AND bd1.uniqueno = bd2.uniqueno AND b2.reference_budget = b1.id AND (wf.value='END' OR wf.owner_pos="
                         + pos.getId() + ") AND bd1.state_id = wf.id GROUP BY cao.majorcode");
 
-        /*
-         * query = query.append(" UNION "); query = query.append(
-         * "SELECT cao.majorcode, SUM(bd2.originalamount) FROM egf_budgetdetail bd1, egf_budgetdetail bd2, egf_budgetgroup bg, egf_budget b1, egf_budget b2, chartofaccounts cao, eg_wf_states wf"
-         * + " WHERE bd1.budget =b1.id AND bd2.budget =b2.id AND b1.financialyearid="+topBudget.getFinancialYear().getId()+
-         * " AND b1.MATERIALIZEDPATH LIKE '"+topBudget.getMaterializedPath()+
-         * "%' AND bd2.budgetgroup =bg.id AND (bg.ACCOUNTTYPE ='REVENUE_RECEIPTS' OR bg.ACCOUNTTYPE ='CAPITAL_RECEIPTS')" +
-         * " AND cao.id =bg.mincode AND cao.id =bg.maxcode AND bg.majorcode IS NULL AND bd2.executing_department = "
-         * +budgetDetail.getExecutingDepartment
-         * ().getId()+functionCondition2+" AND bd1.executing_department = "+budgetDetail.getExecutingDepartment
-         * ().getId()+functionCondition1
-         * +" AND bd1.uniqueno = bd2.uniqueno AND b2.reference_budget = b1.id AND (wf.value='END' OR wf.owner="
-         * +pos.getId()+") AND bd1.state_id = wf.id GROUP BY cao.majorcode");
-         */
         final List<Object[]> result = getSession().createSQLQuery(query.toString()).list();
         if (LOGGER.isInfoEnabled())
             LOGGER.info("Finished fetchMajorCodeAndBENextYr");
@@ -1445,54 +1061,24 @@ public class BudgetDetailService extends PersistenceService<BudgetDetail, Long> 
     }
 
     public List<Object[]> fetchMajorCodeAndApprovedAmount(final Budget topBudget, final BudgetDetail budgetDetail,
-            final CFunction function,
-            final Position pos) {
+            final CFunction function, final Position pos) {
         if (LOGGER.isInfoEnabled())
             LOGGER.info("Starting fetchMajorCodeAndApprovedAmount................");
         StringBuffer query = new StringBuffer();
         String functionCondition = "";
         if (function != null)
             functionCondition = " AND bd.function = " + function.getId();
-        /*
-         * query = query.append(
-         * "SELECT cao.majorcode, SUM(bd.approvedamount) FROM egf_budgetdetail bd, egf_budgetgroup bg, egf_budget b, chartofaccounts cao, financialyear f, eg_wf_states wf"
-         * + " WHERE bd.budget =b.id AND f.id ="+topBudget.getFinancialYear().getId()+" AND b.financialyearid="+topBudget.
-         * getFinancialYear().getId()+" AND b.MATERIALIZEDPATH LIKE '"+topBudget.getMaterializedPath()+
-         * "%' AND bd.budgetgroup  =bg.id AND (bg.ACCOUNTTYPE ='REVENUE_EXPENDITURE' OR bg.ACCOUNTTYPE   ='CAPITAL_EXPENDITURE') AND ((cao.id BETWEEN bg.mincode AND bg.maxcode) OR cao.majorcode =bg.majorcode) AND bg.mincode! =bg.maxcode AND bd.executing_department = "
-         * +budgetDetail.getExecutingDepartment().getId()+functionCondition+" AND (wf.value='END' OR wf.owner="+pos.getId()+
-         * ") AND bd.state_id = wf.id GROUP BY cao.majorcode"); query = query.append(" UNION "); query = query.append(
-         * "SELECT cao.majorcode, SUM(bd.approvedamount) FROM egf_budgetdetail bd, egf_budgetgroup bg, egf_budget b, chartofaccounts cao, financialyear f, eg_wf_states wf"
-         * + " WHERE bd.budget =b.id AND f.id ="+topBudget.getFinancialYear().getId()+" AND b.financialyearid="+topBudget.
-         * getFinancialYear().getId()+" AND b.MATERIALIZEDPATH LIKE '"+topBudget.getMaterializedPath()+
-         * "%' AND bd.budgetgroup  =bg.id AND (bg.ACCOUNTTYPE ='REVENUE_RECEIPTS' OR bg.ACCOUNTTYPE ='CAPITAL_RECEIPTS') AND ((cao.id BETWEEN bg.mincode AND bg.maxcode) OR cao.majorcode =bg.majorcode) AND bg.mincode! =bg.maxcode AND bd.executing_department = "
-         * +budgetDetail.getExecutingDepartment().getId()+functionCondition+" AND (wf.value='END' OR wf.owner="+pos.getId()+
-         * ") AND bd.state_id = wf.id GROUP BY cao.majorcode"); query = query.append(" UNION ");
-         */
 
         query = query
-                .append("SELECT cao.majorcode, SUM(bd.approvedamount) FROM egf_budgetdetail bd, egf_budgetgroup bg, egf_budget b, chartofaccounts cao, financialyear f, eg_wf_states wf"
-                        +
-                        " WHERE bd.budget =b.id AND f.id ="
-                        + topBudget.getFinancialYear().getId()
-                        + " AND b.financialyearid="
-                        + topBudget.getFinancialYear().getId()
-                        + " AND b.MATERIALIZEDPATH LIKE '"
-                        + topBudget.getMaterializedPath()
+                .append("SELECT cao.majorcode, SUM(bd.approvedamount) as approvedamount  FROM egf_budgetdetail bd, egf_budgetgroup bg, egf_budget b, chartofaccounts cao, financialyear f, eg_wf_states wf"
+                        + " WHERE bd.budget =b.id AND f.id =" + topBudget.getFinancialYear().getId()
+                        + " AND b.financialyearid=" + topBudget.getFinancialYear().getId()
+                        + " AND b.MATERIALIZEDPATH LIKE '" + topBudget.getMaterializedPath()
                         + "%' AND bd.budgetgroup =bg.id  AND cao.id =bg.mincode AND cao.id =bg.maxcode AND bg.majorcode IS NULL AND bd.executing_department = "
-                        + budgetDetail.getExecutingDepartment().getId()
-                        + functionCondition
-                        + " AND (wf.value='END' OR wf.owner="
-                        + pos.getId() + ") AND bd.state_id = wf.id GROUP BY cao.majorcode");
+                        + budgetDetail.getExecutingDepartment().getId() + functionCondition
+                        + " AND (wf.value='END' OR wf.owner_pos=" + pos.getId()
+                        + ") AND bd.state_id = wf.id GROUP BY cao.majorcode");
 
-        /*
-         * query = query.append(" UNION "); query = query.append(
-         * "SELECT cao.majorcode, SUM(bd.approvedamount) FROM egf_budgetdetail bd, egf_budgetgroup bg, egf_budget b, chartofaccounts cao, financialyear f, eg_wf_states wf"
-         * + " WHERE bd.budget =b.id AND f.id ="+topBudget.getFinancialYear().getId()+" AND b.financialyearid="+topBudget.
-         * getFinancialYear().getId()+" AND b.MATERIALIZEDPATH LIKE '"+topBudget.getMaterializedPath()+
-         * "%' AND bd.budgetgroup =bg.id AND (bg.ACCOUNTTYPE ='REVENUE_RECEIPTS' OR bg.ACCOUNTTYPE ='CAPITAL_RECEIPTS') AND cao.id =bg.mincode AND cao.id =bg.maxcode AND bg.majorcode IS NULL AND bd.executing_department = "
-         * +budgetDetail.getExecutingDepartment().getId()+functionCondition+" AND (wf.value='END' OR wf.owner="+pos.getId()+
-         * ") AND bd.state_id = wf.id GROUP BY cao.majorcode");
-         */
         final List<Object[]> result = getSession().createSQLQuery(query.toString()).list();
         if (LOGGER.isInfoEnabled())
             LOGGER.info("Finished fetchMajorCodeAndApprovedAmount");
@@ -1501,8 +1087,7 @@ public class BudgetDetailService extends PersistenceService<BudgetDetail, Long> 
     }
 
     public List<Object[]> fetchMajorCodeAndBENextYrApproved(final Budget topBudget, final BudgetDetail budgetDetail,
-            final CFunction function,
-            final Position pos) {
+            final CFunction function, final Position pos) {
         if (LOGGER.isInfoEnabled())
             LOGGER.info("Starting fetchMajorCodeAndBENextYrApproved................");
         StringBuffer query = new StringBuffer();
@@ -1512,62 +1097,19 @@ public class BudgetDetailService extends PersistenceService<BudgetDetail, Long> 
             functionCondition1 = " AND bd1.function = " + function.getId();
             functionCondition2 = " AND bd2.function = " + function.getId();
         }
-        /*
-         * query = query.append(
-         * "SELECT cao.majorcode, SUM(bd2.approvedamount) FROM egf_budgetdetail bd1, egf_budgetdetail bd2, egf_budgetgroup bg, egf_budget b1, egf_budget b2, chartofaccounts cao, eg_wf_states wf"
-         * + " WHERE bd1.budget =b1.id AND bd2.budget =b2.id AND b1.financialyearid="+topBudget.getFinancialYear().getId()+
-         * " AND b1.MATERIALIZEDPATH LIKE '"+topBudget.getMaterializedPath()+
-         * "%' AND bd2.budgetgroup =bg.id AND (bg.ACCOUNTTYPE ='REVENUE_EXPENDITURE' OR bg.ACCOUNTTYPE ='CAPITAL_EXPENDITURE')" +
-         * " AND ((cao.id BETWEEN bg.mincode AND bg.maxcode) OR cao.majorcode   =bg.majorcode) AND bd2.executing_department = "
-         * +budgetDetail
-         * .getExecutingDepartment().getId()+functionCondition2+" AND bd1.executing_department = "+budgetDetail.getExecutingDepartment
-         * ().getId()+functionCondition1+
-         * " AND bd1.uniqueno = bd2.uniqueno AND b2.reference_budget = b1.id AND (wf.value='END' OR wf.owner="
-         * +pos.getId()+") AND bd1.state_id = wf.id GROUP BY cao.majorcode"); query = query.append(" UNION "); query =
-         * query.append(
-         * "SELECT cao.majorcode, SUM(bd2.approvedamount) FROM egf_budgetdetail bd1, egf_budgetdetail bd2, egf_budgetgroup bg, egf_budget b1, egf_budget b2, chartofaccounts cao, eg_wf_states wf"
-         * + " WHERE bd1.budget =b1.id AND bd2.budget =b2.id AND b1.financialyearid="+topBudget.getFinancialYear().getId()+
-         * " AND b1.MATERIALIZEDPATH LIKE '"+topBudget.getMaterializedPath()+
-         * "%' AND bd2.budgetgroup =bg.id AND (bg.ACCOUNTTYPE ='REVENUE_RECEIPTS' OR bg.ACCOUNTTYPE ='CAPITAL_RECEIPTS')" +
-         * " AND ((cao.id BETWEEN bg.mincode AND bg.maxcode) OR cao.majorcode   =bg.majorcode) AND bd2.executing_department = "
-         * +budgetDetail
-         * .getExecutingDepartment().getId()+functionCondition2+" AND bd1.executing_department = "+budgetDetail.getExecutingDepartment
-         * ().getId()+functionCondition1+
-         * " AND bd1.uniqueno = bd2.uniqueno AND b2.reference_budget = b1.id AND (wf.value='END' OR wf.owner="
-         * +pos.getId()+") AND bd1.state_id = wf.id GROUP BY cao.majorcode"); query = query.append(" UNION ");
-         */
 
         query = query
                 .append("SELECT cao.majorcode, SUM(bd2.approvedamount) FROM egf_budgetdetail bd1, egf_budgetdetail bd2, egf_budgetgroup bg, egf_budget b1, egf_budget b2, chartofaccounts cao, eg_wf_states wf"
-                        +
-                        " WHERE bd1.budget =b1.id AND bd2.budget =b2.id AND b1.financialyearid="
-                        + topBudget.getFinancialYear().getId()
-                        + " AND b1.MATERIALIZEDPATH LIKE '"
-                        + topBudget.getMaterializedPath()
-                        + "%' AND bd2.budgetgroup =bg.id "
-                        +
-                        " AND cao.id =bg.mincode AND cao.id =bg.maxcode AND bg.majorcode IS NULL AND bd2.executing_department = "
-                        + budgetDetail.getExecutingDepartment().getId()
-                        + functionCondition2
-                        + " AND bd1.executing_department = "
-                        + budgetDetail.getExecutingDepartment().getId()
+                        + " WHERE bd1.budget =b1.id AND bd2.budget =b2.id AND b1.financialyearid="
+                        + topBudget.getFinancialYear().getId() + " AND b1.MATERIALIZEDPATH LIKE '"
+                        + topBudget.getMaterializedPath() + "%' AND bd2.budgetgroup =bg.id "
+                        + " AND cao.id =bg.mincode AND cao.id =bg.maxcode AND bg.majorcode IS NULL AND bd2.executing_department = "
+                        + budgetDetail.getExecutingDepartment().getId() + functionCondition2
+                        + " AND bd1.executing_department = " + budgetDetail.getExecutingDepartment().getId()
                         + functionCondition1
-                        + " AND bd1.uniqueno = bd2.uniqueno AND b2.reference_budget = b1.id AND (wf.value='END' OR wf.owner="
+                        + " AND bd1.uniqueno = bd2.uniqueno AND b2.reference_budget = b1.id AND (wf.value='END' OR wf.owner_pos="
                         + pos.getId() + ") AND bd1.state_id = wf.id GROUP BY cao.majorcode");
 
-        /*
-         * query = query.append(" UNION "); query = query.append(
-         * "SELECT cao.majorcode, SUM(bd2.approvedamount) FROM egf_budgetdetail bd1, egf_budgetdetail bd2, egf_budgetgroup bg, egf_budget b1, egf_budget b2, chartofaccounts cao, eg_wf_states wf"
-         * + " WHERE bd1.budget =b1.id AND bd2.budget =b2.id AND b1.financialyearid="+topBudget.getFinancialYear().getId()+
-         * " AND b1.MATERIALIZEDPATH LIKE '"+topBudget.getMaterializedPath()+
-         * "%' AND bd2.budgetgroup =bg.id AND (bg.ACCOUNTTYPE ='REVENUE_RECEIPTS' OR bg.ACCOUNTTYPE ='CAPITAL_RECEIPTS')" +
-         * " AND cao.id =bg.mincode AND cao.id =bg.maxcode AND bg.majorcode IS NULL AND bd2.executing_department = "
-         * +budgetDetail.getExecutingDepartment
-         * ().getId()+functionCondition2+" AND bd1.executing_department = "+budgetDetail.getExecutingDepartment
-         * ().getId()+functionCondition1
-         * +" AND bd1.uniqueno = bd2.uniqueno AND b2.reference_budget = b1.id AND (wf.value='END' OR wf.owner="
-         * +pos.getId()+") AND bd1.state_id = wf.id GROUP BY cao.majorcode");
-         */
         final List<Object[]> result = getSession().createSQLQuery(query.toString()).list();
         if (LOGGER.isInfoEnabled())
             LOGGER.info("Finished fetchMajorCodeAndBENextYrApproved");
@@ -1585,33 +1127,19 @@ public class BudgetDetailService extends PersistenceService<BudgetDetail, Long> 
         StringBuffer query = new StringBuffer();
         query = query
                 .append("SELECT cao.majorcode, cao1.glcode||'-'||cao1.name FROM egf_budgetdetail bd, egf_budgetgroup bg, egf_budget b, chartofaccounts cao, chartofaccounts cao1, financialyear f, egw_status wf"
-                        +
-                        " WHERE bd.budget=b.id AND b.isbere='RE' AND f.id="
-                        + financialYear.getId()
-                        + " AND b.financialyearid="
-                        + financialYear.getId()
-                        + " AND bd.budgetgroup =bg.id AND bg.ACCOUNTTYPE ='"
-                        + budgetingType
-                        + "'"
-                        + excludeDept
-                        +
-                        " AND ((cao.id BETWEEN bg.mincode AND bg.maxcode) OR cao.majorcode=bg.majorcode) AND bg.mincode!=bg.maxcode AND wf.code='Approved' AND bd.status = wf.id GROUP BY cao.majorcode, cao1.glcode||'-'||cao1.name");
+                        + " WHERE bd.budget=b.id AND b.isbere='RE' AND f.id=" + financialYear.getId()
+                        + " AND b.financialyearid=" + financialYear.getId()
+                        + " AND bd.budgetgroup =bg.id AND bg.ACCOUNTTYPE ='" + budgetingType + "'" + excludeDept
+                        + " AND ((cao.id BETWEEN bg.mincode AND bg.maxcode) OR cao.majorcode=bg.majorcode) AND bg.mincode!=bg.maxcode AND wf.code='Approved' AND bd.status = wf.id GROUP BY cao.majorcode, cao1.glcode||'-'||cao1.name");
 
         query = query.append(" UNION ");
 
         query = query
                 .append("SELECT cao.majorcode, cao1.glcode||'-'||cao1.name FROM egf_budgetdetail bd, egf_budgetgroup bg, egf_budget b, chartofaccounts cao, chartofaccounts cao1, financialyear f, egw_status wf"
-                        +
-                        " WHERE bd.budget=b.id AND b.isbere='RE' AND f.id="
-                        + financialYear.getId()
-                        + " AND b.financialyearid="
-                        + financialYear.getId()
-                        + " AND bd.budgetgroup=bg.id AND bg.ACCOUNTTYPE ='"
-                        + budgetingType
-                        + "'"
-                        + excludeDept
-                        +
-                        " AND cao.id=bg.mincode AND cao.id=bg.maxcode AND bg.majorcode IS NULL and cao1.glcode = cao.majorcode AND wf.code='Approved' AND bd.status = wf.id GROUP BY cao.majorcode, cao1.glcode||'-'||cao1.name");
+                        + " WHERE bd.budget=b.id AND b.isbere='RE' AND f.id=" + financialYear.getId()
+                        + " AND b.financialyearid=" + financialYear.getId()
+                        + " AND bd.budgetgroup=bg.id AND bg.ACCOUNTTYPE ='" + budgetingType + "'" + excludeDept
+                        + " AND cao.id=bg.mincode AND cao.id=bg.maxcode AND bg.majorcode IS NULL and cao1.glcode = cao.majorcode AND wf.code='Approved' AND bd.status = wf.id GROUP BY cao.majorcode, cao1.glcode||'-'||cao1.name");
 
         final List<Object[]> result = getSession().createSQLQuery(query.toString()).list();
         if (LOGGER.isInfoEnabled())
@@ -1621,8 +1149,8 @@ public class BudgetDetailService extends PersistenceService<BudgetDetail, Long> 
     }
 
     // For Consolidated Budget Report
-    public List<Object[]> fetchMajorCodeAndActualsForReport(final CFinancialYear financialYear, final CFinancialYear prevFinYear,
-            final String fundType, final String budgetType) {
+    public List<Object[]> fetchMajorCodeAndActualsForReport(final CFinancialYear financialYear,
+            final CFinancialYear prevFinYear, final String fundType, final String budgetType) {
         if (LOGGER.isInfoEnabled())
             LOGGER.info("Starting fetchMajorCodeAndActuals................");
         final String excludeDept = " and bd.executing_department!=(Select id_dept from eg_department where dept_code='Z') ";
@@ -1636,55 +1164,30 @@ public class BudgetDetailService extends PersistenceService<BudgetDetail, Long> 
         if (list.isEmpty())
             throw new ValidationException("", "exclude_status_forbudget_actual is not defined in AppConfig");
         final String voucherstatusExclude = list.get(0).getValue();
-        query = query
-                .append("SELECT substr(gl.glcode,1,3), "
-                        + condition
-                        + " FROM egf_budgetdetail bd, vouchermis vmis,"
-                        +
-                        " (SELECT bg1.id AS id, bg1.accounttype AS accounttype, case when c1.glcode =  NULL then -1 else to_number(c1.glcode,'999999999') end  AS mincode, case when c2.glcode = null then  999999999 else c2.glcode end AS maxcode, case when c3.glcode = null then -1 else to_number(c3.glcode,'999999999') end  AS majorcode"
-                        +
-                        " FROM egf_budgetgroup bg1 LEFT OUTER JOIN chartofaccounts c1 ON c1.id=bg1.mincode LEFT OUTER JOIN chartofaccounts c2 ON c2.id=bg1.maxcode LEFT OUTER JOIN chartofaccounts c3 ON c3.id=bg1.majorcode) bg ,"
-                        +
-                        " egf_budget b, financialyear f, fiscalperiod p, voucherheader vh, generalledger gl, egw_status wf"
-                        +
-                        " WHERE bd.budget =b.id AND b.isbere='RE' AND p.financialyearid=f.id AND f.id ="
-                        + prevFinYear.getId()
-                        + " AND vh.fiscalperiodid=p.id AND b.financialyearid="
-                        + financialYear.getId()
-                        + " AND vmis.VOUCHERHEADERID=vh.id AND gl.VOUCHERHEADERID  =vh.id"
-                        +
-                        " AND bd.budgetgroup =bg.id AND bg.ACCOUNTTYPE ='"
-                        + budgetingType
-                        + "'"
-                        + excludeDept
-                        + " AND vh.status NOT IN ("
-                        + voucherstatusExclude
-                        + ") AND vh.fundId =bd.fund AND vmis.departmentid =bd.executing_department AND gl.functionid = bd.function "
-                        +
-                        " AND ((gl.glcode BETWEEN bg.mincode AND bg.maxcode) OR gl.glcode =bg.majorcode) AND bg.mincode!=bg.maxcode AND wf.code='Approved' AND bd.status = wf.id GROUP BY substr(gl.glcode,1,3)");
+        query = query.append("SELECT substr(gl.glcode,1,3), " + condition
+                + " FROM egf_budgetdetail bd, vouchermis vmis,"
+                + " (SELECT bg1.id AS id, bg1.accounttype AS accounttype, case when c1.glcode =  NULL then -1 else to_number(c1.glcode,'999999999') end  AS mincode, case when c2.glcode = null then  999999999 else c2.glcode end AS maxcode, case when c3.glcode = null then -1 else to_number(c3.glcode,'999999999') end  AS majorcode"
+                + " FROM egf_budgetgroup bg1 LEFT OUTER JOIN chartofaccounts c1 ON c1.id=bg1.mincode LEFT OUTER JOIN chartofaccounts c2 ON c2.id=bg1.maxcode LEFT OUTER JOIN chartofaccounts c3 ON c3.id=bg1.majorcode) bg ,"
+                + " egf_budget b, financialyear f, fiscalperiod p, voucherheader vh, generalledger gl, egw_status wf"
+                + " WHERE bd.budget =b.id AND b.isbere='RE' AND p.financialyearid=f.id AND f.id =" + prevFinYear.getId()
+                + " AND vh.fiscalperiodid=p.id AND b.financialyearid=" + financialYear.getId()
+                + " AND vmis.VOUCHERHEADERID=vh.id AND gl.VOUCHERHEADERID  =vh.id"
+                + " AND bd.budgetgroup =bg.id AND bg.ACCOUNTTYPE ='" + budgetingType + "'" + excludeDept
+                + " AND vh.status NOT IN (" + voucherstatusExclude
+                + ") AND vh.fundId =bd.fund AND vmis.departmentid =bd.executing_department AND gl.functionid = bd.function "
+                + " AND ((gl.glcode BETWEEN bg.mincode AND bg.maxcode) OR gl.glcode =bg.majorcode) AND bg.mincode!=bg.maxcode AND wf.code='Approved' AND bd.status = wf.id GROUP BY substr(gl.glcode,1,3)");
 
         query = query.append(" UNION ");
 
-        query = query
-                .append("SELECT substr(gl.glcode,1,3), "
-                        + condition
-                        + " FROM egf_budgetdetail bd, vouchermis vmis, egf_budgetgroup bg, egf_budget b, financialyear f, fiscalperiod p, voucherheader vh, generalledger gl, egw_status wf"
-                        +
-                        " WHERE bd.budget      =b.id AND b.isbere='RE' AND p.financialyearid=f.id AND f.id             ="
-                        + prevFinYear.getId()
-                        + " AND vh.fiscalperiodid=p.id AND b.financialyearid="
-                        + financialYear.getId()
-                        + " AND vmis.VOUCHERHEADERID=vh.id AND gl.VOUCHERHEADERID  =vh.id"
-                        +
-                        " AND bd.budgetgroup      =bg.id AND bg.ACCOUNTTYPE ='"
-                        + budgetingType
-                        + "'"
-                        + excludeDept
-                        + " AND vh.status NOT      IN ("
-                        + voucherstatusExclude
-                        + ") AND vh.fundId           =bd.fund AND gl.functionid = bd.function "
-                        +
-                        " AND vmis.departmentid   =bd.executing_department AND gl.glcodeid         =bg.mincode AND gl.glcodeid =bg.maxcode AND bg.majorcode       IS NULL AND wf.code='Approved' AND bd.status = wf.id GROUP BY substr(gl.glcode,1,3)");
+        query = query.append("SELECT substr(gl.glcode,1,3), " + condition
+                + " FROM egf_budgetdetail bd, vouchermis vmis, egf_budgetgroup bg, egf_budget b, financialyear f, fiscalperiod p, voucherheader vh, generalledger gl, egw_status wf"
+                + " WHERE bd.budget      =b.id AND b.isbere='RE' AND p.financialyearid=f.id AND f.id             ="
+                + prevFinYear.getId() + " AND vh.fiscalperiodid=p.id AND b.financialyearid=" + financialYear.getId()
+                + " AND vmis.VOUCHERHEADERID=vh.id AND gl.VOUCHERHEADERID  =vh.id"
+                + " AND bd.budgetgroup      =bg.id AND bg.ACCOUNTTYPE ='" + budgetingType + "'" + excludeDept
+                + " AND vh.status NOT      IN (" + voucherstatusExclude
+                + ") AND vh.fundId           =bd.fund AND gl.functionid = bd.function "
+                + " AND vmis.departmentid   =bd.executing_department AND gl.glcodeid         =bg.mincode AND gl.glcodeid =bg.maxcode AND bg.majorcode       IS NULL AND wf.code='Approved' AND bd.status = wf.id GROUP BY substr(gl.glcode,1,3)");
 
         final List<Object[]> result = getSession().createSQLQuery(query.toString()).list();
         if (LOGGER.isInfoEnabled())
@@ -1704,52 +1207,38 @@ public class BudgetDetailService extends PersistenceService<BudgetDetail, Long> 
 
         query = query
                 .append("SELECT cao.majorcode, SUM(round(bd2.approvedamount/1000,0)) FROM egf_budgetdetail bd1, egf_budgetdetail bd2, egf_budgetgroup bg, egf_budget b1, egf_budget b2, chartofaccounts cao, financialyear f, egw_status wf"
-                        +
-                        " WHERE bd1.budget =b1.id AND bd2.budget =b2.id AND b1.isbere='RE' AND b2.isbere='BE' AND f.id ="
-                        + financialYear.getId()
-                        + " AND b1.financialyearid="
-                        + financialYear.getId()
-                        + " AND b2.financialyearid="
-                        + financialYear.getId()
-                        + " AND bd2.budgetgroup =bg.id AND bg.ACCOUNTTYPE ='"
-                        + budgetingType
-                        + "'"
-                        + excludeDept
-                        +
-                        " AND ((cao.id BETWEEN bg.mincode AND bg.maxcode) OR cao.majorcode   =bg.majorcode) AND bd1.uniqueno = bd2.uniqueno AND wf.code='Approved' AND bd1.status = wf.id GROUP BY cao.majorcode");
+                        + " WHERE bd1.budget =b1.id AND bd2.budget =b2.id AND b1.isbere='RE' AND b2.isbere='BE' AND f.id ="
+                        + financialYear.getId() + " AND b1.financialyearid=" + financialYear.getId()
+                        + " AND b2.financialyearid=" + financialYear.getId()
+                        + " AND bd2.budgetgroup =bg.id AND bg.ACCOUNTTYPE ='" + budgetingType + "'" + excludeDept
+                        + " AND ((cao.id BETWEEN bg.mincode AND bg.maxcode) OR cao.majorcode   =bg.majorcode) AND bd1.uniqueno = bd2.uniqueno AND wf.code='Approved' AND bd1.status = wf.id GROUP BY cao.majorcode");
 
         query = query.append(" UNION ");
 
         query = query
                 .append("SELECT cao.majorcode, SUM(round(bd2.approvedamount/1000,0)) FROM egf_budgetdetail bd1, egf_budgetdetail bd2, egf_budgetgroup bg, egf_budget b1, egf_budget b2, chartofaccounts cao, financialyear f, egw_status wf"
-                        +
-                        " WHERE bd1.budget =b1.id AND bd2.budget =b2.id AND b1.isbere='RE' AND b2.isbere='BE' AND f.id ="
-                        + financialYear.getId()
-                        + " AND b1.financialyearid="
-                        + financialYear.getId()
-                        + " AND b2.financialyearid="
-                        + financialYear.getId()
-                        + "  AND bd2.budgetgroup =bg.id AND bg.ACCOUNTTYPE ='"
-                        + budgetingType
-                        + "'"
-                        + excludeDept
-                        +
-                        " AND cao.id =bg.mincode AND cao.id =bg.maxcode AND bg.majorcode IS NULL AND bd1.uniqueno = bd2.uniqueno AND wf.value='Approved' AND bd1.status = wf.id GROUP BY cao.majorcode");
+                        + " WHERE bd1.budget =b1.id AND bd2.budget =b2.id AND b1.isbere='RE' AND b2.isbere='BE' AND f.id ="
+                        + financialYear.getId() + " AND b1.financialyearid=" + financialYear.getId()
+                        + " AND b2.financialyearid=" + financialYear.getId()
+                        + "  AND bd2.budgetgroup =bg.id AND bg.ACCOUNTTYPE ='" + budgetingType + "'" + excludeDept
+                        + " AND cao.id =bg.mincode AND cao.id =bg.maxcode AND bg.majorcode IS NULL AND bd1.uniqueno = bd2.uniqueno AND wf.value='Approved' AND bd1.status = wf.id GROUP BY cao.majorcode");
 
         final List<Object[]> result = getSession().createSQLQuery(query.toString()).list();
         if (LOGGER.isInfoEnabled())
-            LOGGER.info("------------------------------------------------------------------------------------------------------");
+            LOGGER.info(
+                    "------------------------------------------------------------------------------------------------------");
         if (LOGGER.isInfoEnabled())
             LOGGER.info("Finished fetchMajorCodeAndBEAmount" + query.toString());
         if (LOGGER.isInfoEnabled())
-            LOGGER.info("------------------------------------------------------------------------------------------------------");
+            LOGGER.info(
+                    "------------------------------------------------------------------------------------------------------");
 
         return result;
     }
 
     // For Consolidated Budget Report
-    public List<Object[]> fetchMajorCodeAndApprovedAmountForReport(final CFinancialYear financialYear, final String fundType,
-            final String budgetType) {
+    public List<Object[]> fetchMajorCodeAndApprovedAmountForReport(final CFinancialYear financialYear,
+            final String fundType, final String budgetType) {
         if (LOGGER.isInfoEnabled())
             LOGGER.info("Starting fetchMajorCodeAndApprovedAmount................");
         final String excludeDept = " and bd.executing_department!=(Select id_dept from eg_department where dept_code='Z') ";
@@ -1758,30 +1247,18 @@ public class BudgetDetailService extends PersistenceService<BudgetDetail, Long> 
 
         query = query
                 .append("SELECT cao.majorcode, SUM(round(bd.approvedamount/1000,0)) FROM egf_budgetdetail bd, egf_budgetgroup bg, egf_budget b, chartofaccounts cao, financialyear f, egw_status wf"
-                        +
-                        " WHERE bd.budget =b.id AND b.isbere='RE' AND f.id ="
-                        + financialYear.getId()
-                        + " AND b.financialyearid="
-                        + financialYear.getId()
-                        + " AND bd.budgetgroup =bg.id AND bg.ACCOUNTTYPE ='"
-                        + budgetingType
-                        + "'"
-                        + excludeDept
+                        + " WHERE bd.budget =b.id AND b.isbere='RE' AND f.id =" + financialYear.getId()
+                        + " AND b.financialyearid=" + financialYear.getId()
+                        + " AND bd.budgetgroup =bg.id AND bg.ACCOUNTTYPE ='" + budgetingType + "'" + excludeDept
                         + " AND ((cao.id BETWEEN bg.mincode AND bg.maxcode) OR cao.majorcode =bg.majorcode) AND bg.mincode! =bg.maxcode AND wf.code='Approved' AND bd.status = wf.id GROUP BY cao.majorcode");
 
         query = query.append(" UNION ");
 
         query = query
                 .append("SELECT cao.majorcode, SUM(round(bd.approvedamount/1000,0)) FROM egf_budgetdetail bd, egf_budgetgroup bg, egf_budget b, chartofaccounts cao, financialyear f, egw_status wf"
-                        +
-                        " WHERE bd.budget =b.id AND b.isbere='RE' AND f.id ="
-                        + financialYear.getId()
-                        + " AND b.financialyearid="
-                        + financialYear.getId()
-                        + " AND bd.budgetgroup =bg.id AND bg.ACCOUNTTYPE ='"
-                        + budgetingType
-                        + "'"
-                        + excludeDept
+                        + " WHERE bd.budget =b.id AND b.isbere='RE' AND f.id =" + financialYear.getId()
+                        + " AND b.financialyearid=" + financialYear.getId()
+                        + " AND bd.budgetgroup =bg.id AND bg.ACCOUNTTYPE ='" + budgetingType + "'" + excludeDept
                         + " AND cao.id =bg.mincode AND cao.id =bg.maxcode AND bg.majorcode IS NULL AND wf.code='Approved' AND bd.status = wf.id GROUP BY cao.majorcode");
 
         final List<Object[]> result = getSession().createSQLQuery(query.toString()).list();
@@ -1792,8 +1269,8 @@ public class BudgetDetailService extends PersistenceService<BudgetDetail, Long> 
     }
 
     // For Consolidated Budget Report
-    public List<Object[]> fetchMajorCodeAndBENextYrApprovedForReport(final CFinancialYear financialYear, final String fundType,
-            final String budgetType) {
+    public List<Object[]> fetchMajorCodeAndBENextYrApprovedForReport(final CFinancialYear financialYear,
+            final String fundType, final String budgetType) {
         if (LOGGER.isInfoEnabled())
             LOGGER.info("Starting fetchMajorCodeAndBENextYrApproved................");
         final String excludeDept = " and bd2.executing_department!=(Select id_dept from eg_department where dept_code='Z') ";
@@ -1802,29 +1279,19 @@ public class BudgetDetailService extends PersistenceService<BudgetDetail, Long> 
 
         query = query
                 .append("SELECT cao.majorcode, SUM(round(bd2.approvedamount/1000,0)) FROM egf_budgetdetail bd1, egf_budgetdetail bd2, egf_budgetgroup bg, egf_budget b1, egf_budget b2, chartofaccounts cao, egw_status wf"
-                        +
-                        " WHERE bd1.budget =b1.id AND bd2.budget =b2.id AND b1.isbere='RE' AND b2.isbere='BE' AND b1.financialyearid="
-                        + financialYear.getId()
-                        + " AND bd2.budgetgroup =bg.id AND bg.ACCOUNTTYPE ='"
-                        + budgetingType
-                        + "'"
-                        + excludeDept
-                        +
-                        " AND ((cao.id BETWEEN bg.mincode AND bg.maxcode) OR cao.majorcode   =bg.majorcode) AND bd1.uniqueno = bd2.uniqueno AND b2.reference_budget = b1.id AND wf.code='Approved' AND bd1.status = wf.id GROUP BY cao.majorcode");
+                        + " WHERE bd1.budget =b1.id AND bd2.budget =b2.id AND b1.isbere='RE' AND b2.isbere='BE' AND b1.financialyearid="
+                        + financialYear.getId() + " AND bd2.budgetgroup =bg.id AND bg.ACCOUNTTYPE ='" + budgetingType
+                        + "'" + excludeDept
+                        + " AND ((cao.id BETWEEN bg.mincode AND bg.maxcode) OR cao.majorcode   =bg.majorcode) AND bd1.uniqueno = bd2.uniqueno AND b2.reference_budget = b1.id AND wf.code='Approved' AND bd1.status = wf.id GROUP BY cao.majorcode");
 
         query = query.append(" UNION ");
 
         query = query
                 .append("SELECT cao.majorcode, SUM(round(bd2.approvedamount/1000,0)) FROM egf_budgetdetail bd1, egf_budgetdetail bd2, egf_budgetgroup bg, egf_budget b1, egf_budget b2, chartofaccounts cao, egw_status wf"
-                        +
-                        " WHERE bd1.budget =b1.id AND bd2.budget =b2.id AND b1.isbere='RE' AND b2.isbere='BE' AND b1.financialyearid="
-                        + financialYear.getId()
-                        + " AND bd2.budgetgroup =bg.id AND bg.ACCOUNTTYPE ='"
-                        + budgetingType
-                        + "'"
-                        + excludeDept
-                        +
-                        " AND cao.id =bg.mincode AND cao.id =bg.maxcode AND bg.majorcode IS NULL AND bd1.uniqueno = bd2.uniqueno AND b2.reference_budget = b1.id AND wf.code='Approved' AND bd1.status = wf.id GROUP BY cao.majorcode");
+                        + " WHERE bd1.budget =b1.id AND bd2.budget =b2.id AND b1.isbere='RE' AND b2.isbere='BE' AND b1.financialyearid="
+                        + financialYear.getId() + " AND bd2.budgetgroup =bg.id AND bg.ACCOUNTTYPE ='" + budgetingType
+                        + "'" + excludeDept
+                        + " AND cao.id =bg.mincode AND cao.id =bg.maxcode AND bg.majorcode IS NULL AND bd1.uniqueno = bd2.uniqueno AND b2.reference_budget = b1.id AND wf.code='Approved' AND bd1.status = wf.id GROUP BY cao.majorcode");
 
         final List<Object[]> result = getSession().createSQLQuery(query.toString()).list();
         if (LOGGER.isInfoEnabled())
@@ -1843,33 +1310,19 @@ public class BudgetDetailService extends PersistenceService<BudgetDetail, Long> 
         StringBuffer query = new StringBuffer();
         query = query
                 .append("SELECT substr(cao.glcode,0,3)||'-'||substr(cao.glcode,4,2)||'-'||substr(cao.glcode,6,2)||'-'||substr(cao.glcode,8,2), cao.glcode||'-'||cao.name FROM egf_budgetdetail bd, egf_budgetgroup bg, egf_budget b, chartofaccounts cao, chartofaccounts cao1, financialyear f, egw_status wf"
-                        +
-                        " WHERE bd.budget=b.id AND b.isbere='RE' AND f.id="
-                        + financialYear.getId()
-                        + " AND b.financialyearid="
-                        + financialYear.getId()
-                        + " AND bd.budgetgroup =bg.id AND bg.ACCOUNTTYPE ='"
-                        + budgetingType
-                        + "'"
-                        + excludeDept
-                        +
-                        " AND ((cao.id BETWEEN bg.mincode AND bg.maxcode) OR cao.majorcode=bg.majorcode) AND bg.mincode!=bg.maxcode AND wf.code='Approved' AND bd.status = wf.id GROUP BY substr(cao.glcode,0,3)||'-'||substr(cao.glcode,4,2)||'-'||substr(cao.glcode,6,2)||'-'||substr(cao.glcode,8,2), cao.glcode||'-'||cao.name");
+                        + " WHERE bd.budget=b.id AND b.isbere='RE' AND f.id=" + financialYear.getId()
+                        + " AND b.financialyearid=" + financialYear.getId()
+                        + " AND bd.budgetgroup =bg.id AND bg.ACCOUNTTYPE ='" + budgetingType + "'" + excludeDept
+                        + " AND ((cao.id BETWEEN bg.mincode AND bg.maxcode) OR cao.majorcode=bg.majorcode) AND bg.mincode!=bg.maxcode AND wf.code='Approved' AND bd.status = wf.id GROUP BY substr(cao.glcode,0,3)||'-'||substr(cao.glcode,4,2)||'-'||substr(cao.glcode,6,2)||'-'||substr(cao.glcode,8,2), cao.glcode||'-'||cao.name");
 
         query = query.append(" UNION ");
 
         query = query
                 .append("SELECT substr(cao.glcode,0,3)||'-'||substr(cao.glcode,4,2)||'-'||substr(cao.glcode,6,2)||'-'||substr(cao.glcode,8,2), cao.glcode||'-'||cao.name FROM egf_budgetdetail bd, egf_budgetgroup bg, egf_budget b, chartofaccounts cao, chartofaccounts cao1, financialyear f, egw_status wf"
-                        +
-                        " WHERE bd.budget=b.id AND b.isbere='RE' AND f.id="
-                        + financialYear.getId()
-                        + " AND b.financialyearid="
-                        + financialYear.getId()
-                        + " AND bd.budgetgroup=bg.id AND bg.ACCOUNTTYPE ='"
-                        + budgetingType
-                        + "'"
-                        + excludeDept
-                        +
-                        " AND cao.id=bg.mincode AND cao.id=bg.maxcode AND bg.majorcode IS NULL and cao1.glcode = cao.majorcode AND wf.code='Approved' AND bd.status = wf.id GROUP BY substr(cao.glcode,0,3)||'-'||substr(cao.glcode,4,2)||'-'||substr(cao.glcode,6,2)||'-'||substr(cao.glcode,8,2), cao.glcode||'-'||cao.name");
+                        + " WHERE bd.budget=b.id AND b.isbere='RE' AND f.id=" + financialYear.getId()
+                        + " AND b.financialyearid=" + financialYear.getId()
+                        + " AND bd.budgetgroup=bg.id AND bg.ACCOUNTTYPE ='" + budgetingType + "'" + excludeDept
+                        + " AND cao.id=bg.mincode AND cao.id=bg.maxcode AND bg.majorcode IS NULL and cao1.glcode = cao.majorcode AND wf.code='Approved' AND bd.status = wf.id GROUP BY substr(cao.glcode,0,3)||'-'||substr(cao.glcode,4,2)||'-'||substr(cao.glcode,6,2)||'-'||substr(cao.glcode,8,2), cao.glcode||'-'||cao.name");
 
         final List<Object[]> result = getSession().createSQLQuery(query.toString()).list();
         if (LOGGER.isInfoEnabled())
@@ -1880,8 +1333,7 @@ public class BudgetDetailService extends PersistenceService<BudgetDetail, Long> 
 
     // For Consolidated Budget Report
     public List<Object[]> fetchActualsForReport(final CFinancialYear financialYear, final CFinancialYear prevFinYear,
-            final String fundType,
-            final String budgetType) {
+            final String fundType, final String budgetType) {
         if (LOGGER.isInfoEnabled())
             LOGGER.info("Starting fetchActualsForReport................");
         final String excludeDept = " and bd.executing_department!=(Select id_dept from eg_department where dept_code='Z') ";
@@ -1897,30 +1349,17 @@ public class BudgetDetailService extends PersistenceService<BudgetDetail, Long> 
         final String voucherstatusExclude = list.get(0).getValue();
         query = query
                 .append("SELECT substr(gl.glcode,0,3)||'-'||substr(gl.glcode,4,2)||'-'||substr(gl.glcode,6,2)||'-'||substr(gl.glcode,8,2),"
-                        + condition
-                        + " FROM egf_budgetdetail bd, vouchermis vmis,"
-                        +
-                        " (SELECT bg1.id AS id, bg1.accounttype AS accounttype, case when c1.glcode =  NULL then -1 else to_number(c1.glcode,'999999999') end AS mincode, case when c2.glcode = null then  999999999 else c2.glcode end AS maxcode, case when c3.glcode = null then -1 else to_number(c3.glcode,'999999999') end  AS majorcode"
-                        +
-                        " FROM egf_budgetgroup bg1 LEFT OUTER JOIN chartofaccounts c1 ON c1.id=bg1.mincode LEFT OUTER JOIN chartofaccounts c2 ON c2.id=bg1.maxcode LEFT OUTER JOIN chartofaccounts c3 ON c3.id=bg1.majorcode) bg ,"
-                        +
-                        " egf_budget b, financialyear f, fiscalperiod p, voucherheader vh, generalledger gl, egw_status wf"
-                        +
-                        " WHERE bd.budget =b.id AND b.isbere='RE' AND p.financialyearid=f.id AND f.id ="
-                        + prevFinYear.getId()
-                        + " AND vh.fiscalperiodid=p.id AND b.financialyearid="
-                        + financialYear.getId()
-                        + " AND vmis.VOUCHERHEADERID=vh.id AND gl.VOUCHERHEADERID  =vh.id"
-                        +
-                        " AND bd.budgetgroup =bg.id AND bg.ACCOUNTTYPE ='"
-                        + budgetingType
-                        + "'"
-                        + excludeDept
-                        + " AND vh.status NOT IN ("
-                        + voucherstatusExclude
+                        + condition + " FROM egf_budgetdetail bd, vouchermis vmis,"
+                        + " (SELECT bg1.id AS id, bg1.accounttype AS accounttype, case when c1.glcode =  NULL then -1 else to_number(c1.glcode,'999999999') end AS mincode, case when c2.glcode = null then  999999999 else c2.glcode end AS maxcode, case when c3.glcode = null then -1 else to_number(c3.glcode,'999999999') end  AS majorcode"
+                        + " FROM egf_budgetgroup bg1 LEFT OUTER JOIN chartofaccounts c1 ON c1.id=bg1.mincode LEFT OUTER JOIN chartofaccounts c2 ON c2.id=bg1.maxcode LEFT OUTER JOIN chartofaccounts c3 ON c3.id=bg1.majorcode) bg ,"
+                        + " egf_budget b, financialyear f, fiscalperiod p, voucherheader vh, generalledger gl, egw_status wf"
+                        + " WHERE bd.budget =b.id AND b.isbere='RE' AND p.financialyearid=f.id AND f.id ="
+                        + prevFinYear.getId() + " AND vh.fiscalperiodid=p.id AND b.financialyearid="
+                        + financialYear.getId() + " AND vmis.VOUCHERHEADERID=vh.id AND gl.VOUCHERHEADERID  =vh.id"
+                        + " AND bd.budgetgroup =bg.id AND bg.ACCOUNTTYPE ='" + budgetingType + "'" + excludeDept
+                        + " AND vh.status NOT IN (" + voucherstatusExclude
                         + ") AND vh.fundId =bd.fund AND vmis.departmentid =bd.executing_department AND gl.functionid = bd.function "
-                        +
-                        " AND ((gl.glcode BETWEEN bg.mincode AND bg.maxcode) OR gl.glcode =bg.majorcode) AND bg.mincode!=bg.maxcode AND wf.code='Approved' AND bd.status = wf.id GROUP BY substr(gl.glcode,0,3)||'-'||substr(gl.glcode,4,2)||'-'||substr(gl.glcode,6,2)||'-'||substr(gl.glcode,8,2)");
+                        + " AND ((gl.glcode BETWEEN bg.mincode AND bg.maxcode) OR gl.glcode =bg.majorcode) AND bg.mincode!=bg.maxcode AND wf.code='Approved' AND bd.status = wf.id GROUP BY substr(gl.glcode,0,3)||'-'||substr(gl.glcode,4,2)||'-'||substr(gl.glcode,6,2)||'-'||substr(gl.glcode,8,2)");
 
         query = query.append(" UNION ");
 
@@ -1928,22 +1367,13 @@ public class BudgetDetailService extends PersistenceService<BudgetDetail, Long> 
                 .append("SELECT substr(gl.glcode,0,3)||'-'||substr(gl.glcode,4,2)||'-'||substr(gl.glcode,6,2)||'-'||substr(gl.glcode,8,2),"
                         + condition
                         + " FROM egf_budgetdetail bd, vouchermis vmis, egf_budgetgroup bg, egf_budget b, financialyear f, fiscalperiod p, voucherheader vh, generalledger gl, egw_status wf"
-                        +
-                        " WHERE bd.budget      =b.id AND b.isbere='RE' AND p.financialyearid=f.id AND f.id ="
-                        + prevFinYear.getId()
-                        + " AND vh.fiscalperiodid=p.id AND b.financialyearid="
-                        + financialYear.getId()
-                        + " AND vmis.VOUCHERHEADERID=vh.id AND gl.VOUCHERHEADERID  =vh.id"
-                        +
-                        " AND bd.budgetgroup      =bg.id AND bg.ACCOUNTTYPE ='"
-                        + budgetingType
-                        + "'"
-                        + excludeDept
-                        + " AND vh.status NOT      IN ("
-                        + voucherstatusExclude
+                        + " WHERE bd.budget      =b.id AND b.isbere='RE' AND p.financialyearid=f.id AND f.id ="
+                        + prevFinYear.getId() + " AND vh.fiscalperiodid=p.id AND b.financialyearid="
+                        + financialYear.getId() + " AND vmis.VOUCHERHEADERID=vh.id AND gl.VOUCHERHEADERID  =vh.id"
+                        + " AND bd.budgetgroup      =bg.id AND bg.ACCOUNTTYPE ='" + budgetingType + "'" + excludeDept
+                        + " AND vh.status NOT      IN (" + voucherstatusExclude
                         + ") AND vh.fundId           =bd.fund AND gl.functionid = bd.function "
-                        +
-                        " AND vmis.departmentid   =bd.executing_department AND gl.glcodeid  =bg.mincode AND gl.glcodeid =bg.maxcode AND bg.majorcode IS NULL AND wf.code='Approved' AND bd.status = wf.id GROUP BY substr(gl.glcode,0,3)||'-'||substr(gl.glcode,4,2)||'-'||substr(gl.glcode,6,2)||'-'||substr(gl.glcode,8,2)");
+                        + " AND vmis.departmentid   =bd.executing_department AND gl.glcodeid  =bg.mincode AND gl.glcodeid =bg.maxcode AND bg.majorcode IS NULL AND wf.code='Approved' AND bd.status = wf.id GROUP BY substr(gl.glcode,0,3)||'-'||substr(gl.glcode,4,2)||'-'||substr(gl.glcode,6,2)||'-'||substr(gl.glcode,8,2)");
 
         final List<Object[]> result = getSession().createSQLQuery(query.toString()).list();
         if (LOGGER.isInfoEnabled())
@@ -1963,52 +1393,38 @@ public class BudgetDetailService extends PersistenceService<BudgetDetail, Long> 
 
         query = query
                 .append("SELECT substr(cao.glcode,0,3)||'-'||substr(cao.glcode,4,2)||'-'||substr(cao.glcode,6,2)||'-'||substr(cao.glcode,8,2), SUM(round(bd2.approvedamount/1000,0)) FROM egf_budgetdetail bd1, egf_budgetdetail bd2, egf_budgetgroup bg, egf_budget b1, egf_budget b2, chartofaccounts cao, financialyear f, egw_status wf"
-                        +
-                        " WHERE bd1.budget =b1.id AND bd2.budget =b2.id AND b1.isbere='RE' AND b2.isbere='BE' AND f.id ="
-                        + financialYear.getId()
-                        + " AND b1.financialyearid="
-                        + financialYear.getId()
-                        + " AND b2.financialyearid="
-                        + financialYear.getId()
-                        + " AND bd2.budgetgroup =bg.id AND bg.ACCOUNTTYPE ='"
-                        + budgetingType
-                        + "'"
-                        + excludeDept
-                        +
-                        " AND ((cao.id BETWEEN bg.mincode AND bg.maxcode) OR cao.majorcode   =bg.majorcode) AND bd1.uniqueno = bd2.uniqueno AND wf.code='Approved' AND bd1.status = wf.id GROUP BY substr(cao.glcode,0,3)||'-'||substr(cao.glcode,4,2)||'-'||substr(cao.glcode,6,2)||'-'||substr(cao.glcode,8,2)");
+                        + " WHERE bd1.budget =b1.id AND bd2.budget =b2.id AND b1.isbere='RE' AND b2.isbere='BE' AND f.id ="
+                        + financialYear.getId() + " AND b1.financialyearid=" + financialYear.getId()
+                        + " AND b2.financialyearid=" + financialYear.getId()
+                        + " AND bd2.budgetgroup =bg.id AND bg.ACCOUNTTYPE ='" + budgetingType + "'" + excludeDept
+                        + " AND ((cao.id BETWEEN bg.mincode AND bg.maxcode) OR cao.majorcode   =bg.majorcode) AND bd1.uniqueno = bd2.uniqueno AND wf.code='Approved' AND bd1.status = wf.id GROUP BY substr(cao.glcode,0,3)||'-'||substr(cao.glcode,4,2)||'-'||substr(cao.glcode,6,2)||'-'||substr(cao.glcode,8,2)");
 
         query = query.append(" UNION ");
 
         query = query
                 .append("SELECT substr(cao.glcode,0,3)||'-'||substr(cao.glcode,4,2)||'-'||substr(cao.glcode,6,2)||'-'||substr(cao.glcode,8,2), SUM(round(bd2.approvedamount/1000,0)) FROM egf_budgetdetail bd1, egf_budgetdetail bd2, egf_budgetgroup bg, egf_budget b1, egf_budget b2, chartofaccounts cao, financialyear f, egw_status wf"
-                        +
-                        " WHERE bd1.budget =b1.id AND bd2.budget =b2.id AND b1.isbere='RE' AND b2.isbere='BE' AND f.id ="
-                        + financialYear.getId()
-                        + " AND b1.financialyearid="
-                        + financialYear.getId()
-                        + " AND b2.financialyearid="
-                        + financialYear.getId()
-                        + "  AND bd2.budgetgroup =bg.id AND bg.ACCOUNTTYPE ='"
-                        + budgetingType
-                        + "'"
-                        + excludeDept
-                        +
-                        " AND cao.id =bg.mincode AND cao.id =bg.maxcode AND bg.majorcode IS NULL AND bd1.uniqueno = bd2.uniqueno AND wf.code='Approved' AND bd1.status = wf.id GROUP BY substr(cao.glcode,0,3)||'-'||substr(cao.glcode,4,2)||'-'||substr(cao.glcode,6,2)||'-'||substr(cao.glcode,8,2)");
+                        + " WHERE bd1.budget =b1.id AND bd2.budget =b2.id AND b1.isbere='RE' AND b2.isbere='BE' AND f.id ="
+                        + financialYear.getId() + " AND b1.financialyearid=" + financialYear.getId()
+                        + " AND b2.financialyearid=" + financialYear.getId()
+                        + "  AND bd2.budgetgroup =bg.id AND bg.ACCOUNTTYPE ='" + budgetingType + "'" + excludeDept
+                        + " AND cao.id =bg.mincode AND cao.id =bg.maxcode AND bg.majorcode IS NULL AND bd1.uniqueno = bd2.uniqueno AND wf.code='Approved' AND bd1.status = wf.id GROUP BY substr(cao.glcode,0,3)||'-'||substr(cao.glcode,4,2)||'-'||substr(cao.glcode,6,2)||'-'||substr(cao.glcode,8,2)");
 
         final List<Object[]> result = getSession().createSQLQuery(query.toString()).list();
         if (LOGGER.isInfoEnabled())
-            LOGGER.info("------------------------------------------------------------------------------------------------------");
+            LOGGER.info(
+                    "------------------------------------------------------------------------------------------------------");
         if (LOGGER.isInfoEnabled())
             LOGGER.info("Finished fetchGlCodeAndBEAmountForReport" + query.toString());
         if (LOGGER.isInfoEnabled())
-            LOGGER.info("------------------------------------------------------------------------------------------------------");
+            LOGGER.info(
+                    "------------------------------------------------------------------------------------------------------");
 
         return result;
     }
 
     // For Consolidated Budget Report
-    public List<Object[]> fetchGlCodeAndApprovedAmountForReport(final CFinancialYear financialYear, final String fundType,
-            final String budgetType) {
+    public List<Object[]> fetchGlCodeAndApprovedAmountForReport(final CFinancialYear financialYear,
+            final String fundType, final String budgetType) {
         if (LOGGER.isInfoEnabled())
             LOGGER.info("Starting fetchGlCodeAndApprovedAmountForReport................");
         final String excludeDept = " and bd.executing_department!=(Select id_dept from eg_department where dept_code='Z') ";
@@ -2017,30 +1433,18 @@ public class BudgetDetailService extends PersistenceService<BudgetDetail, Long> 
 
         query = query
                 .append("SELECT substr(cao.glcode,0,3)||'-'||substr(cao.glcode,4,2)||'-'||substr(cao.glcode,6,2)||'-'||substr(cao.glcode,8,2), SUM(round(bd.approvedamount/1000,0)) FROM egf_budgetdetail bd, egf_budgetgroup bg, egf_budget b, chartofaccounts cao, financialyear f, egw_status wf"
-                        +
-                        " WHERE bd.budget =b.id AND b.isbere='RE' AND f.id ="
-                        + financialYear.getId()
-                        + " AND b.financialyearid="
-                        + financialYear.getId()
-                        + " AND bd.budgetgroup =bg.id AND bg.ACCOUNTTYPE ='"
-                        + budgetingType
-                        + "'"
-                        + excludeDept
+                        + " WHERE bd.budget =b.id AND b.isbere='RE' AND f.id =" + financialYear.getId()
+                        + " AND b.financialyearid=" + financialYear.getId()
+                        + " AND bd.budgetgroup =bg.id AND bg.ACCOUNTTYPE ='" + budgetingType + "'" + excludeDept
                         + " AND ((cao.id BETWEEN bg.mincode AND bg.maxcode) OR cao.majorcode =bg.majorcode) AND bg.mincode! =bg.maxcode AND wf.code='Approved' AND bd.status = wf.id GROUP BY substr(cao.glcode,0,3)||'-'||substr(cao.glcode,4,2)||'-'||substr(cao.glcode,6,2)||'-'||substr(cao.glcode,8,2)");
 
         query = query.append(" UNION ");
 
         query = query
                 .append("SELECT substr(cao.glcode,0,3)||'-'||substr(cao.glcode,4,2)||'-'||substr(cao.glcode,6,2)||'-'||substr(cao.glcode,8,2), SUM(round(bd.approvedamount/1000,0)) FROM egf_budgetdetail bd, egf_budgetgroup bg, egf_budget b, chartofaccounts cao, financialyear f, egw_status wf"
-                        +
-                        " WHERE bd.budget =b.id AND b.isbere='RE' AND f.id ="
-                        + financialYear.getId()
-                        + " AND b.financialyearid="
-                        + financialYear.getId()
-                        + " AND bd.budgetgroup =bg.id AND bg.ACCOUNTTYPE ='"
-                        + budgetingType
-                        + "'"
-                        + excludeDept
+                        + " WHERE bd.budget =b.id AND b.isbere='RE' AND f.id =" + financialYear.getId()
+                        + " AND b.financialyearid=" + financialYear.getId()
+                        + " AND bd.budgetgroup =bg.id AND bg.ACCOUNTTYPE ='" + budgetingType + "'" + excludeDept
                         + " AND cao.id =bg.mincode AND cao.id =bg.maxcode AND bg.majorcode IS NULL AND wf.code='Approved' AND bd.status = wf.id GROUP BY substr(cao.glcode,0,3)||'-'||substr(cao.glcode,4,2)||'-'||substr(cao.glcode,6,2)||'-'||substr(cao.glcode,8,2)");
 
         final List<Object[]> result = getSession().createSQLQuery(query.toString()).list();
@@ -2051,8 +1455,8 @@ public class BudgetDetailService extends PersistenceService<BudgetDetail, Long> 
     }
 
     // For Consolidated Budget Report
-    public List<Object[]> fetchGlCodeAndBENextYrApprovedForReport(final CFinancialYear financialYear, final String fundType,
-            final String budgetType) {
+    public List<Object[]> fetchGlCodeAndBENextYrApprovedForReport(final CFinancialYear financialYear,
+            final String fundType, final String budgetType) {
         if (LOGGER.isInfoEnabled())
             LOGGER.info("Starting fetchGlCodeAndBENextYrApprovedForReport................");
         final String excludeDept = " and bd2.executing_department!=(Select id_dept from eg_department where dept_code='Z') ";
@@ -2061,29 +1465,19 @@ public class BudgetDetailService extends PersistenceService<BudgetDetail, Long> 
 
         query = query
                 .append("SELECT substr(cao.glcode,0,3)||'-'||substr(cao.glcode,4,2)||'-'||substr(cao.glcode,6,2)||'-'||substr(cao.glcode,8,2), SUM(round(bd2.approvedamount/1000,0)) FROM egf_budgetdetail bd1, egf_budgetdetail bd2, egf_budgetgroup bg, egf_budget b1, egf_budget b2, chartofaccounts cao, egw_status wf"
-                        +
-                        " WHERE bd1.budget =b1.id AND bd2.budget =b2.id AND b1.isbere='RE' AND b2.isbere='BE' AND b1.financialyearid="
-                        + financialYear.getId()
-                        + " AND bd2.budgetgroup =bg.id AND bg.ACCOUNTTYPE ='"
-                        + budgetingType
-                        + "'"
-                        + excludeDept
-                        +
-                        " AND ((cao.id BETWEEN bg.mincode AND bg.maxcode) OR cao.majorcode   =bg.majorcode) AND bd1.uniqueno = bd2.uniqueno AND b2.reference_budget = b1.id AND wf.code='Approved' AND bd1.status = wf.id GROUP BY substr(cao.glcode,0,3)||'-'||substr(cao.glcode,4,2)||'-'||substr(cao.glcode,6,2)||'-'||substr(cao.glcode,8,2)");
+                        + " WHERE bd1.budget =b1.id AND bd2.budget =b2.id AND b1.isbere='RE' AND b2.isbere='BE' AND b1.financialyearid="
+                        + financialYear.getId() + " AND bd2.budgetgroup =bg.id AND bg.ACCOUNTTYPE ='" + budgetingType
+                        + "'" + excludeDept
+                        + " AND ((cao.id BETWEEN bg.mincode AND bg.maxcode) OR cao.majorcode   =bg.majorcode) AND bd1.uniqueno = bd2.uniqueno AND b2.reference_budget = b1.id AND wf.code='Approved' AND bd1.status = wf.id GROUP BY substr(cao.glcode,0,3)||'-'||substr(cao.glcode,4,2)||'-'||substr(cao.glcode,6,2)||'-'||substr(cao.glcode,8,2)");
 
         query = query.append(" UNION ");
 
         query = query
                 .append("SELECT substr(cao.glcode,0,3)||'-'||substr(cao.glcode,4,2)||'-'||substr(cao.glcode,6,2)||'-'||substr(cao.glcode,8,2), SUM(round(bd2.approvedamount/1000,0)) FROM egf_budgetdetail bd1, egf_budgetdetail bd2, egf_budgetgroup bg, egf_budget b1, egf_budget b2, chartofaccounts cao, egw_status wf"
-                        +
-                        " WHERE bd1.budget =b1.id AND bd2.budget =b2.id AND b1.isbere='RE' AND b2.isbere='BE' AND b1.financialyearid="
-                        + financialYear.getId()
-                        + " AND bd2.budgetgroup =bg.id AND bg.ACCOUNTTYPE ='"
-                        + budgetingType
-                        + "'"
-                        + excludeDept
-                        +
-                        " AND cao.id =bg.mincode AND cao.id =bg.maxcode AND bg.majorcode IS NULL AND bd1.uniqueno = bd2.uniqueno AND b2.reference_budget = b1.id AND wf.code='Approved' AND bd1.status = wf.id GROUP BY substr(cao.glcode,0,3)||'-'||substr(cao.glcode,4,2)||'-'||substr(cao.glcode,6,2)||'-'||substr(cao.glcode,8,2)");
+                        + " WHERE bd1.budget =b1.id AND bd2.budget =b2.id AND b1.isbere='RE' AND b2.isbere='BE' AND b1.financialyearid="
+                        + financialYear.getId() + " AND bd2.budgetgroup =bg.id AND bg.ACCOUNTTYPE ='" + budgetingType
+                        + "'" + excludeDept
+                        + " AND cao.id =bg.mincode AND cao.id =bg.maxcode AND bg.majorcode IS NULL AND bd1.uniqueno = bd2.uniqueno AND b2.reference_budget = b1.id AND wf.code='Approved' AND bd1.status = wf.id GROUP BY substr(cao.glcode,0,3)||'-'||substr(cao.glcode,4,2)||'-'||substr(cao.glcode,6,2)||'-'||substr(cao.glcode,8,2)");
 
         final List<Object[]> result = getSession().createSQLQuery(query.toString()).list();
         if (LOGGER.isInfoEnabled())
@@ -2098,38 +1492,21 @@ public class BudgetDetailService extends PersistenceService<BudgetDetail, Long> 
         StringBuffer query = new StringBuffer();
         query = query
                 .append("select bd.id,SUM(case when bdetail.debitAmount = null then 0  else bdetail.debitAmount  end)-SUM(case when bdetail.creditAmount=null then 0 else bdetail.creditAmount end) from egf_budgetdetail bd,eg_billdetails bdetail, eg_billregistermis bmis, eg_billregister br,"
-                        +
-                        "egf_budgetgroup bg where bmis.billid=br.id and bdetail.billid=br.id and bd.budgetgroup=bg.id and "
-                        +
-                        "(bg.ACCOUNTTYPE='REVENUE_EXPENDITURE' or bg.ACCOUNTTYPE='CAPITAL_EXPENDITURE') and br.billstatus != 'Cancelled'  and "
-                        +
-                        "bmis.voucherheaderid is null and br.billdate>=to_date('"
-                        + fromDate
-                        + "','dd/MM/yyyy') and br.billdate <= to_date('"
-                        + toVoucherDate
-                        + "','dd/MM/yyyy') "
-                        + miscQuery
-                        + " and "
-                        +
-                        " (bmis.budgetCheckReq is null or bmis.budgetCheckReq=true) and "
-                        +
-                        "((bdetail.glcodeid between bg.mincode and bg.maxcode) or bdetail.glcodeid=bg.majorcode) group by bd.id"
-                        +
-                        " union "
-                        +
-                        "select bd.id,SUM(case when bdetail.creditAmount=null then 0 else bdetail.creditAmount end)-SUM(case when bdetail.debitAmount = null then 0  else bdetail.debitAmount  end) from egf_budgetdetail bd,eg_billdetails bdetail, eg_billregistermis bmis, eg_billregister br,"
-                        +
-                        "egf_budgetgroup bg where bmis.billid=br.id and bdetail.billid=br.id and bd.budgetgroup=bg.id and "
-                        +
-                        " (bmis.budgetCheckReq is null or bmis.budgetCheckReq=true) and "
-                        +
-                        "(bg.ACCOUNTTYPE='REVENUE_RECEIPTS' or bg.ACCOUNTTYPE='CAPITAL_RECEIPTS') and br.billstatus != 'Cancelled' and bmis.voucherheaderid "
-                        +
-                        "is null and br.billdate>= to_date('"
-                        + fromDate
-                        + "','dd/MM/yyyy') and br.billdate <= to_date('"
-                        + toVoucherDate + "','dd/MM/yyyy') " + miscQuery + " and ((bdetail.glcodeid between bg.mincode " +
-                        "and bg.maxcode) or bdetail.glcodeid=bg.majorcode) group by bd.id");
+                        + "egf_budgetgroup bg where bmis.billid=br.id and bdetail.billid=br.id and bd.budgetgroup=bg.id and "
+                        + "(bg.ACCOUNTTYPE='REVENUE_EXPENDITURE' or bg.ACCOUNTTYPE='CAPITAL_EXPENDITURE') and br.billstatus != 'Cancelled'  and "
+                        + "bmis.voucherheaderid is null and br.billdate>=to_date('" + fromDate
+                        + "','dd/MM/yyyy') and br.billdate <= to_date('" + toVoucherDate + "','dd/MM/yyyy') "
+                        + miscQuery + " and " + " (bmis.budgetCheckReq is null or bmis.budgetCheckReq=true) and "
+                        + "((bdetail.glcodeid between bg.mincode and bg.maxcode) or bdetail.glcodeid=bg.majorcode) group by bd.id"
+                        + " union "
+                        + "select bd.id,SUM(case when bdetail.creditAmount=null then 0 else bdetail.creditAmount end)-SUM(case when bdetail.debitAmount = null then 0  else bdetail.debitAmount  end) from egf_budgetdetail bd,eg_billdetails bdetail, eg_billregistermis bmis, eg_billregister br,"
+                        + "egf_budgetgroup bg where bmis.billid=br.id and bdetail.billid=br.id and bd.budgetgroup=bg.id and "
+                        + " (bmis.budgetCheckReq is null or bmis.budgetCheckReq=true) and "
+                        + "(bg.ACCOUNTTYPE='REVENUE_RECEIPTS' or bg.ACCOUNTTYPE='CAPITAL_RECEIPTS') and br.billstatus != 'Cancelled' and bmis.voucherheaderid "
+                        + "is null and br.billdate>= to_date('" + fromDate
+                        + "','dd/MM/yyyy') and br.billdate <= to_date('" + toVoucherDate + "','dd/MM/yyyy') "
+                        + miscQuery + " and ((bdetail.glcodeid between bg.mincode "
+                        + "and bg.maxcode) or bdetail.glcodeid=bg.majorcode) group by bd.id");
         final List<Object[]> result = getSession().createSQLQuery(query.toString()).list();
         return result;
     }
@@ -2149,41 +1526,22 @@ public class BudgetDetailService extends PersistenceService<BudgetDetail, Long> 
         StringBuffer query = new StringBuffer();
         query = query
                 .append("select bd.id as id,(SUM(gl.debitAmount)-SUM(gl.creditAmount)) as amount from egf_budgetdetail bd,generalledger gl,voucherheader vh,"
-                        +
-                        "vouchermis vmis,"
-                        + budgetGroupQuery
+                        + "vouchermis vmis," + budgetGroupQuery
                         + ",egf_budget b where bd.budget=b.id and vmis.VOUCHERHEADERID=vh.id and gl.VOUCHERHEADERID=vh.id and bd.budgetgroup=bg.id and "
-                        +
-                        "(bg.ACCOUNTTYPE='REVENUE_EXPENDITURE' or bg.ACCOUNTTYPE='CAPITAL_EXPENDITURE') and vh.status not in ("
+                        + "(bg.ACCOUNTTYPE='REVENUE_EXPENDITURE' or bg.ACCOUNTTYPE='CAPITAL_EXPENDITURE') and vh.status not in ("
                         + voucherstatusExclude
                         + ") and (vmis.budgetary_appnumber  != 'null' and vmis.budgetary_appnumber is not null) and "
-                        +
-                        "vh.voucherDate>= to_date('"
-                        + fromDate
-                        + "','dd/MM/yyyy') and vh.voucherDate <= to_date("
-                        + toVoucherDate
-                        + ",'dd/MM/yyyy') "
-                        + miscQuery
-                        + " and (gl.glcode =bg.mincode or gl.glcode=bg.majorcode ) group by bd.id"
-                        +
-                        " union "
-                        +
-                        "select bd.id as id,(SUM(gl.creditAmount)-SUM(gl.debitAmount)) as amount from egf_budgetdetail bd,generalledger gl,voucherheader vh,"
-                        +
-                        "vouchermis vmis,"
-                        + budgetGroupQuery
+                        + "vh.voucherDate>= to_date('" + fromDate + "','dd/MM/yyyy') and vh.voucherDate <= to_date("
+                        + toVoucherDate + ",'dd/MM/yyyy') " + miscQuery
+                        + " and (gl.glcode =bg.mincode or gl.glcode=bg.majorcode ) group by bd.id" + " union "
+                        + "select bd.id as id,(SUM(gl.creditAmount)-SUM(gl.debitAmount)) as amount from egf_budgetdetail bd,generalledger gl,voucherheader vh,"
+                        + "vouchermis vmis," + budgetGroupQuery
                         + ",egf_budget b where bd.budget=b.id and vmis.VOUCHERHEADERID=vh.id and gl.VOUCHERHEADERID=vh.id and bd.budgetgroup=bg.id and "
-                        +
-                        "(bg.ACCOUNTTYPE='REVENUE_RECEIPTS' or bg.ACCOUNTTYPE='CAPITAL_RECEIPTS') and vh.status not in ("
+                        + "(bg.ACCOUNTTYPE='REVENUE_RECEIPTS' or bg.ACCOUNTTYPE='CAPITAL_RECEIPTS') and vh.status not in ("
                         + voucherstatusExclude
                         + ") and (vmis.budgetary_appnumber  != 'null' and vmis.budgetary_appnumber is not null) and "
-                        +
-                        "vh.voucherDate>= to_date('"
-                        + fromDate
-                        + "','dd/MM/yyyy') and vh.voucherDate <= to_date("
-                        + toVoucherDate
-                        + ",'dd/MM/yyyy') "
-                        + miscQuery
+                        + "vh.voucherDate>= to_date('" + fromDate + "','dd/MM/yyyy') and vh.voucherDate <= to_date("
+                        + toVoucherDate + ",'dd/MM/yyyy') " + miscQuery
                         + " and (gl.glcode = bg.mincode  or gl.glcode=bg.majorcode ) group by bd.id");
         final List<Object[]> result = getSession().createSQLQuery(query.toString()).list();
 
@@ -2193,83 +1551,38 @@ public class BudgetDetailService extends PersistenceService<BudgetDetail, Long> 
     public List<Object[]> fetchActualsForBillWithParams(final String fromDate, final String toVoucherDate,
             final StringBuffer miscQuery) {
         StringBuffer query = new StringBuffer();
-        query = query
-                .append("select bud,sum(amt) from ("
-                        +
-                        "select bd.id as bud,SUM(case when bdetail.debitAmount = null then 0  else bdetail.debitAmount  end)-SUM(case when bdetail.creditAmount=null then 0 else bdetail.creditAmount end) as amt from egf_budgetdetail bd,eg_billdetails bdetail, eg_billregistermis bmis, eg_billregister br,"
-                        +
-                        "egf_budgetgroup bg where bmis.billid=br.id and bdetail.billid=br.id and bd.budgetgroup=bg.id and "
-                        +
-                        "(bg.ACCOUNTTYPE='REVENUE_EXPENDITURE' or bg.ACCOUNTTYPE='CAPITAL_EXPENDITURE') and br.statusid not in (select id from egw_status where description='Cancelled' and moduletype in ('EXPENSEBILL', 'SALBILL', 'WORKSBILL', 'PURCHBILL', 'CBILL', 'SBILL', 'CONTRACTORBILL'))  and "
-                        +
-                        "bmis.voucherheaderid is null and br.billdate>=to_date('"
-                        + fromDate
-                        + "','dd/MM/yyyy') and br.billdate <= to_date("
-                        + toVoucherDate
-                        + ",'dd/MM/yyyy') "
-                        + miscQuery
-                        + " and "
-                        +
-                        " (bmis.budgetCheckReq is null or bmis.budgetCheckReq=true) and "
-                        +
-                        "((bdetail.glcodeid between bg.mincode and bg.maxcode) or bdetail.glcodeid=bg.majorcode) group by bd.id"
-                        +
-                        " union "
-                        +
-                        "select bd.id as bud,SUM(case when bdetail.debitAmount = null then 0  else bdetail.debitAmount  end)-SUM(case when bdetail.creditAmount=null then 0 else bdetail.creditAmount end) as amt from egf_budgetdetail bd,eg_billdetails bdetail, eg_billregistermis bmis, eg_billregister br,"
-                        +
-                        "egf_budgetgroup bg,voucherheader vh where bmis.billid=br.id and bdetail.billid=br.id and bd.budgetgroup=bg.id and "
-                        +
-                        "(bg.ACCOUNTTYPE='REVENUE_EXPENDITURE' or bg.ACCOUNTTYPE='CAPITAL_EXPENDITURE') and br.statusid not in (select id from egw_status where description='Cancelled' and moduletype in ('EXPENSEBILL', 'SALBILL', 'WORKSBILL', 'PURCHBILL', 'CBILL', 'SBILL', 'CONTRACTORBILL'))  and "
-                        +
-                        "bmis.voucherheaderid =vh.id and vh.status=4 and br.billdate>=to_date('"
-                        + fromDate
-                        + "','dd/MM/yyyy') and br.billdate <= to_date("
-                        + toVoucherDate
-                        + ",'dd/MM/yyyy') "
-                        + miscQuery
-                        + " and "
-                        +
-                        " (bmis.budgetCheckReq is null or bmis.budgetCheckReq=true) and "
-                        +
-                        "((bdetail.glcodeid between bg.mincode and bg.maxcode) or bdetail.glcodeid=bg.majorcode) group by bd.id"
-                        +
-                        " union "
-                        +
-                        "select bd.id as bud,SUM(case when bdetail.creditAmount=null then 0 else bdetail.creditAmount end)-SUM(case when bdetail.debitAmount = null then 0  else bdetail.debitAmount  end) as amt from egf_budgetdetail bd,eg_billdetails bdetail, eg_billregistermis bmis, eg_billregister br,"
-                        +
-                        "egf_budgetgroup bg,voucherheader vh where bmis.billid=br.id and bdetail.billid=br.id and bd.budgetgroup=bg.id and "
-                        +
-                        " (bmis.budgetCheckReq is null or bmis.budgetCheckReq=true) and "
-                        +
-                        "(bg.ACCOUNTTYPE='REVENUE_RECEIPTS' or bg.ACCOUNTTYPE='CAPITAL_RECEIPTS') and br.statusid not in (select id from egw_status where description='Cancelled' and moduletype in ('EXPENSEBILL', 'SALBILL', 'WORKSBILL', 'PURCHBILL', 'CBILL', 'SBILL', 'CONTRACTORBILL'))  and "
-                        +
-                        " bmis.voucherheaderid =vh.id and vh.status=4 and br.billdate>= to_date('"
-                        + fromDate
-                        + "','dd/MM/yyyy') and br.billdate <= to_date("
-                        + toVoucherDate
-                        + ",'dd/MM/yyyy') "
-                        + miscQuery
-                        + " and ((bdetail.glcodeid between bg.mincode "
-                        +
-                        "and bg.maxcode) or bdetail.glcodeid=bg.majorcode) group by bd.id"
-                        +
-                        " union "
-                        +
-                        "select bd.id as bud,SUM(case when bdetail.creditAmount=null then 0 else bdetail.creditAmount end)-SUM(case when bdetail.debitAmount = null then 0  else bdetail.debitAmount  end) as amt from egf_budgetdetail bd,eg_billdetails bdetail, eg_billregistermis bmis, eg_billregister br,"
-                        +
-                        "egf_budgetgroup bg where bmis.billid=br.id and bdetail.billid=br.id and bd.budgetgroup=bg.id and "
-                        +
-                        " (bmis.budgetCheckReq is null or bmis.budgetCheckReq=true) and "
-                        +
-                        "(bg.ACCOUNTTYPE='REVENUE_RECEIPTS' or bg.ACCOUNTTYPE='CAPITAL_RECEIPTS') and br.statusid not in (select id from egw_status where description='Cancelled' and moduletype in ('EXPENSEBILL', 'SALBILL', 'WORKSBILL', 'PURCHBILL', 'CBILL', 'SBILL', 'CONTRACTORBILL'))  and bmis.voucherheaderid "
-                        +
-                        "is null and br.billdate>= to_date('"
-                        + fromDate
-                        + "','dd/MM/yyyy') and br.billdate <= to_date("
-                        + toVoucherDate + ",'dd/MM/yyyy') " + miscQuery + " and ((bdetail.glcodeid between bg.mincode " +
-                        "and bg.maxcode) or bdetail.glcodeid=bg.majorcode) group by bd.id" +
-                        " ) group by bud ");
+        query = query.append("select bud,sum(amt) from ("
+                + "select bd.id as bud,SUM(case when bdetail.debitAmount = null then 0  else bdetail.debitAmount  end)-SUM(case when bdetail.creditAmount=null then 0 else bdetail.creditAmount end) as amt from egf_budgetdetail bd,eg_billdetails bdetail, eg_billregistermis bmis, eg_billregister br,"
+                + "egf_budgetgroup bg where bmis.billid=br.id and bdetail.billid=br.id and bd.budgetgroup=bg.id and "
+                + "(bg.ACCOUNTTYPE='REVENUE_EXPENDITURE' or bg.ACCOUNTTYPE='CAPITAL_EXPENDITURE') and br.statusid not in (select id from egw_status where description='Cancelled' and moduletype in ('EXPENSEBILL', 'SALBILL', 'WORKSBILL', 'PURCHBILL', 'CBILL', 'SBILL', 'CONTRACTORBILL'))  and "
+                + "bmis.voucherheaderid is null and br.billdate>=to_date('" + fromDate
+                + "','dd/MM/yyyy') and br.billdate <= to_date(" + toVoucherDate + ",'dd/MM/yyyy') " + miscQuery
+                + " and " + " (bmis.budgetCheckReq is null or bmis.budgetCheckReq=true) and "
+                + "((bdetail.glcodeid between bg.mincode and bg.maxcode) or bdetail.glcodeid=bg.majorcode) group by bd.id"
+                + " union "
+                + "select bd.id as bud,SUM(case when bdetail.debitAmount = null then 0  else bdetail.debitAmount  end)-SUM(case when bdetail.creditAmount=null then 0 else bdetail.creditAmount end) as amt from egf_budgetdetail bd,eg_billdetails bdetail, eg_billregistermis bmis, eg_billregister br,"
+                + "egf_budgetgroup bg,voucherheader vh where bmis.billid=br.id and bdetail.billid=br.id and bd.budgetgroup=bg.id and "
+                + "(bg.ACCOUNTTYPE='REVENUE_EXPENDITURE' or bg.ACCOUNTTYPE='CAPITAL_EXPENDITURE') and br.statusid not in (select id from egw_status where description='Cancelled' and moduletype in ('EXPENSEBILL', 'SALBILL', 'WORKSBILL', 'PURCHBILL', 'CBILL', 'SBILL', 'CONTRACTORBILL'))  and "
+                + "bmis.voucherheaderid =vh.id and vh.status=4 and br.billdate>=to_date('" + fromDate
+                + "','dd/MM/yyyy') and br.billdate <= to_date(" + toVoucherDate + ",'dd/MM/yyyy') " + miscQuery
+                + " and " + " (bmis.budgetCheckReq is null or bmis.budgetCheckReq=true) and "
+                + "((bdetail.glcodeid between bg.mincode and bg.maxcode) or bdetail.glcodeid=bg.majorcode) group by bd.id"
+                + " union "
+                + "select bd.id as bud,SUM(case when bdetail.creditAmount=null then 0 else bdetail.creditAmount end)-SUM(case when bdetail.debitAmount = null then 0  else bdetail.debitAmount  end) as amt from egf_budgetdetail bd,eg_billdetails bdetail, eg_billregistermis bmis, eg_billregister br,"
+                + "egf_budgetgroup bg,voucherheader vh where bmis.billid=br.id and bdetail.billid=br.id and bd.budgetgroup=bg.id and "
+                + " (bmis.budgetCheckReq is null or bmis.budgetCheckReq=true) and "
+                + "(bg.ACCOUNTTYPE='REVENUE_RECEIPTS' or bg.ACCOUNTTYPE='CAPITAL_RECEIPTS') and br.statusid not in (select id from egw_status where description='Cancelled' and moduletype in ('EXPENSEBILL', 'SALBILL', 'WORKSBILL', 'PURCHBILL', 'CBILL', 'SBILL', 'CONTRACTORBILL'))  and "
+                + " bmis.voucherheaderid =vh.id and vh.status=4 and br.billdate>= to_date('" + fromDate
+                + "','dd/MM/yyyy') and br.billdate <= to_date(" + toVoucherDate + ",'dd/MM/yyyy') " + miscQuery
+                + " and ((bdetail.glcodeid between bg.mincode "
+                + "and bg.maxcode) or bdetail.glcodeid=bg.majorcode) group by bd.id" + " union "
+                + "select bd.id as bud,SUM(case when bdetail.creditAmount=null then 0 else bdetail.creditAmount end)-SUM(case when bdetail.debitAmount = null then 0  else bdetail.debitAmount  end) as amt from egf_budgetdetail bd,eg_billdetails bdetail, eg_billregistermis bmis, eg_billregister br,"
+                + "egf_budgetgroup bg where bmis.billid=br.id and bdetail.billid=br.id and bd.budgetgroup=bg.id and "
+                + " (bmis.budgetCheckReq is null or bmis.budgetCheckReq=true) and "
+                + "(bg.ACCOUNTTYPE='REVENUE_RECEIPTS' or bg.ACCOUNTTYPE='CAPITAL_RECEIPTS') and br.statusid not in (select id from egw_status where description='Cancelled' and moduletype in ('EXPENSEBILL', 'SALBILL', 'WORKSBILL', 'PURCHBILL', 'CBILL', 'SBILL', 'CONTRACTORBILL'))  and bmis.voucherheaderid "
+                + "is null and br.billdate>= to_date('" + fromDate + "','dd/MM/yyyy') and br.billdate <= to_date("
+                + toVoucherDate + ",'dd/MM/yyyy') " + miscQuery + " and ((bdetail.glcodeid between bg.mincode "
+                + "and bg.maxcode) or bdetail.glcodeid=bg.majorcode) group by bd.id" + " ) group by bud ");
         if (LOGGER.isDebugEnabled())
             LOGGER.debug(" Main Query :" + query);
         final List<Object[]> result = getSession().createSQLQuery(query.toString()).list();
@@ -2284,16 +1597,11 @@ public class BudgetDetailService extends PersistenceService<BudgetDetail, Long> 
             final StringBuffer miscQuery) {
         StringBuffer query = new StringBuffer();
         query = query
-                .append(
-                "select bd.id as bud,SUM(case when bdetail.debitAmount is null then 0  else bdetail.debitAmount  end)   -SUM(case when bdetail.creditAmount is null then 0 else bdetail.creditAmount end)   as amt from egf_budgetdetail bd,eg_billdetails bdetail, eg_billregistermis bmis, eg_billregister br,"
+                .append("select bd.id as bud,SUM(case when bdetail.debitAmount is null then 0  else bdetail.debitAmount  end)   -SUM(case when bdetail.creditAmount is null then 0 else bdetail.creditAmount end)   as amt from egf_budgetdetail bd,eg_billdetails bdetail, eg_billregistermis bmis, eg_billregister br,"
                         + "egf_budgetgroup bg,voucherheader vh, vouchermis vmis where bmis.billid=br.id and bdetail.billid=br.id and bd.budgetgroup=bg.id and "
                         + "(bg.ACCOUNTTYPE='REVENUE_EXPENDITURE' or bg.ACCOUNTTYPE='CAPITAL_EXPENDITURE') and br.statusid not in (select id from egw_status where description='Cancelled' and moduletype in ('EXPENSEBILL', 'SALBILL', 'WORKSBILL', 'PURCHBILL', 'CBILL', 'SBILL', 'CONTRACTORBILL'))  and "
-                        + "bmis.voucherheaderid =vh.id and vh.status!=4 and br.billdate>=to_date('"
-                        + fromDate
-                        + "','dd/MM/yyyy') and br.billdate <= to_date("
-                        + toVoucherDate
-                        + ",'dd/MM/yyyy') "
-                        + miscQuery
+                        + "bmis.voucherheaderid =vh.id and vh.status!=4 and br.billdate>=to_date('" + fromDate
+                        + "','dd/MM/yyyy') and br.billdate <= to_date(" + toVoucherDate + ",'dd/MM/yyyy') " + miscQuery
                         + " and (bmis.budgetCheckReq is null or bmis.budgetCheckReq=true) and vh.id = vmis.voucherheaderid and (bmis.budgetary_appnumber != 'null' and bmis.budgetary_appnumber is not null) "
                         + " and ((bdetail.glcodeid between bg.mincode  and bg.maxcode ) or bdetail.glcodeid=bg.majorcode ) group by bd.id"
                         + " UNION "
@@ -2301,24 +1609,16 @@ public class BudgetDetailService extends PersistenceService<BudgetDetail, Long> 
                         + "egf_budgetgroup bg,voucherheader vh, vouchermis vmis where bmis.billid=br.id and bdetail.billid=br.id and bd.budgetgroup=bg.id and "
                         + " (bmis.budgetCheckReq is null or bmis.budgetCheckReq=true) and vh.id = vmis.voucherheaderid and (bmis.budgetary_appnumber != 'null' and bmis.budgetary_appnumber is not null) "
                         + " and (bg.ACCOUNTTYPE='REVENUE_RECEIPTS' or bg.ACCOUNTTYPE='CAPITAL_RECEIPTS') and br.statusid not in (select id as idd from egw_status where description='Cancelled' and moduletype in ('EXPENSEBILL', 'SALBILL', 'WORKSBILL', 'PURCHBILL', 'CBILL', 'SBILL', 'CONTRACTORBILL'))  and "
-                        + " bmis.voucherheaderid =vh.id and vh.status!=4 and br.billdate>= to_date('"
-                        + fromDate
-                        + "','dd/MM/yyyy') and br.billdate <= to_date("
-                        + toVoucherDate
-                        + ",'dd/MM/yyyy') "
-                        + miscQuery
+                        + " bmis.voucherheaderid =vh.id and vh.status!=4 and br.billdate>= to_date('" + fromDate
+                        + "','dd/MM/yyyy') and br.billdate <= to_date(" + toVoucherDate + ",'dd/MM/yyyy') " + miscQuery
                         + " and ((bdetail.glcodeid between bg.mincode and bg.maxcode ) or bdetail.glcodeid=bg.majorcode  ) group by bd.id"
                         + " UNION "
                         + " select bd.id as bud,SUM(case when bdetail.debitAmount is null then 0  else bdetail.debitAmount  end)   -SUM(case when bdetail.creditAmount is null then 0 else bdetail.creditAmount end)   as amt "
                         + " from egf_budgetdetail bd,eg_billdetails bdetail, eg_billregister br,egf_budgetgroup bg, eg_billregistermis bmis left outer join voucherheader vh on vh.id=bmis.voucherheaderid "
                         + " where bmis.billid=br.id and bdetail.billid=br.id and bd.budgetgroup=bg.id and "
                         + "(bg.ACCOUNTTYPE='REVENUE_EXPENDITURE' or bg.ACCOUNTTYPE='CAPITAL_EXPENDITURE') and br.statusid not in (select id from egw_status where description='Cancelled' and moduletype in ('EXPENSEBILL', 'SALBILL', 'WORKSBILL', 'PURCHBILL', 'CBILL', 'SBILL', 'CONTRACTORBILL'))  and "
-                        + "(bmis.voucherheaderid is NULL or vh.status=4) and  br.billdate>=to_date('"
-                        + fromDate
-                        + "','dd/MM/yyyy') and br.billdate <= to_date("
-                        + toVoucherDate
-                        + ",'dd/MM/yyyy') "
-                        + miscQuery
+                        + "(bmis.voucherheaderid is NULL or vh.status=4) and  br.billdate>=to_date('" + fromDate
+                        + "','dd/MM/yyyy') and br.billdate <= to_date(" + toVoucherDate + ",'dd/MM/yyyy') " + miscQuery
                         + " and (bmis.budgetCheckReq is null or bmis.budgetCheckReq=true) and (bmis.budgetary_appnumber != 'null' and bmis.budgetary_appnumber is not null) "
                         + " and ((bdetail.glcodeid between bg.mincode  and bg.maxcode ) or bdetail.glcodeid=bg.majorcode ) group by bd.id"
                         + " UNION "
@@ -2327,14 +1627,9 @@ public class BudgetDetailService extends PersistenceService<BudgetDetail, Long> 
                         + " where bmis.billid=br.id and bdetail.billid=br.id and bd.budgetgroup=bg.id and "
                         + " (bmis.budgetCheckReq is null or bmis.budgetCheckReq=true) and (bmis.budgetary_appnumber != 'null' and bmis.budgetary_appnumber is not null) "
                         + " and (bg.ACCOUNTTYPE='REVENUE_RECEIPTS' or bg.ACCOUNTTYPE='CAPITAL_RECEIPTS') and br.statusid not in (select id as idd from egw_status where description='Cancelled' and moduletype in ('EXPENSEBILL', 'SALBILL', 'WORKSBILL', 'PURCHBILL', 'CBILL', 'SBILL', 'CONTRACTORBILL'))  and "
-                        + " (bmis.voucherheaderid is NULL or vh.status=4)  and  br.billdate>= to_date('"
-                        + fromDate
-                        + "','dd/MM/yyyy') and br.billdate <= to_date("
-                        + toVoucherDate
-                        + ",'dd/MM/yyyy') "
-                        + miscQuery
-                        + " and ((bdetail.glcodeid between bg.mincode and bg.maxcode ) or bdetail.glcodeid=bg.majorcode  ) group by bd.id"
-                );
+                        + " (bmis.voucherheaderid is NULL or vh.status=4)  and  br.billdate>= to_date('" + fromDate
+                        + "','dd/MM/yyyy') and br.billdate <= to_date(" + toVoucherDate + ",'dd/MM/yyyy') " + miscQuery
+                        + " and ((bdetail.glcodeid between bg.mincode and bg.maxcode ) or bdetail.glcodeid=bg.majorcode  ) group by bd.id");
 
         if (LOGGER.isDebugEnabled())
             LOGGER.debug(" Main Query :" + query);
@@ -2342,7 +1637,8 @@ public class BudgetDetailService extends PersistenceService<BudgetDetail, Long> 
         return result;
     }
 
-    private StringBuffer getMiscQuery(final List<String> mandatoryFields, final String mis, final String gl, final String detail) {
+    private StringBuffer getMiscQuery(final List<String> mandatoryFields, final String mis, final String gl,
+            final String detail) {
         StringBuffer miscQuery = new StringBuffer();
         if (mandatoryFields.contains(Constants.FIELD))
             miscQuery = miscQuery.append(" and " + mis + ".divisionid=bd.boundary ");
@@ -2361,8 +1657,7 @@ public class BudgetDetailService extends PersistenceService<BudgetDetail, Long> 
         return miscQuery;
     }
 
-    public PersonalInformation getEmpForCurrentUser()
-    {
+    public PersonalInformation getEmpForCurrentUser() {
         return eisCommonService.getEmployeeByUserId(ApplicationThreadLocals.getUserId());
     }
 
@@ -2375,14 +1670,13 @@ public class BudgetDetailService extends PersistenceService<BudgetDetail, Long> 
     }
 
     public void setScriptExecutionService(final ScriptService scriptService) {
-        scriptExecutionService = scriptService;
     }
 
-    public boolean toBeConsolidated()
-    {
-        // TODO: Now employee is extending user so passing userid to get assingment -- changes done by Vaibhav
-        final Assignment empAssignment = eisCommonService.getLatestAssignmentForEmployeeByToDate(ApplicationThreadLocals.getUserId(),
-                new Date());
+    public boolean toBeConsolidated() {
+        // TODO: Now employee is extending user so passing userid to get
+        // assingment -- changes done by Vaibhav
+        final Assignment empAssignment = eisCommonService
+                .getLatestAssignmentForEmployeeByToDate(ApplicationThreadLocals.getUserId(), new Date());
         final Functionary empfunctionary = empAssignment.getFunctionary();
         final Designation designation = empAssignment.getDesignation();
         Boolean consolidateBudget = Boolean.FALSE;
@@ -2401,7 +1695,7 @@ public class BudgetDetailService extends PersistenceService<BudgetDetail, Long> 
         for (final String strObj : functionaryDesignationObj)
             if (strObj.contains(":")) {
                 final String[] functionaryName = strObj.split(":");
-                if (empfunctionary != null && empfunctionary.getName().equalsIgnoreCase(functionaryName[0])) {
+                if ((empfunctionary != null) && empfunctionary.getName().equalsIgnoreCase(functionaryName[0])) {
                     consolidateBudget = Boolean.TRUE;
                     break;
                 }
@@ -2415,60 +1709,57 @@ public class BudgetDetailService extends PersistenceService<BudgetDetail, Long> 
     }
 
     @Transactional
-    public List<BudgetUpload> loadBudget(List<BudgetUpload> budgetUploadList, CFinancialYear reFYear,
-            CFinancialYear beFYear) {
+    public List<BudgetUpload> loadBudget(List<BudgetUpload> budgetUploadList, final CFinancialYear reFYear,
+            final CFinancialYear beFYear) {
 
         try {
 
-            Budget budget = budgetService.getByName("RE-" + reFYear.getFinYearRange());
+            final Budget budget = budgetService.getByName("RE-" + reFYear.getFinYearRange());
             if (budget == null) {
-                Set<String> deptSet = new TreeSet<String>();
-                List<String> deptList = new ArrayList<String>();
-                List<Department> departments = departmentService.getAllDepartments();
+                final Set<String> deptSet = new TreeSet<String>();
+                final List<String> deptList = new ArrayList<String>();
+                final List<Department> departments = departmentService.getAllDepartments();
 
-                for (Department dept : departments)
+                for (final Department dept : departments)
                     deptSet.add(dept.getCode());
 
                 deptList.addAll(deptSet);
-                EgwStatus budgetStatus = egwStatusDAO.getStatusByModuleAndCode("BUDGET", "Created");
+                final EgwStatus budgetStatus = egwStatusDAO.getStatusByModuleAndCode("BUDGET", "Created");
                 createRootBudget("RE", beFYear, reFYear, deptList, budgetStatus);
 
                 createRootBudget("BE", beFYear, reFYear, deptList, budgetStatus);
 
             }
-            EgwStatus budgetDetailStatus = egwStatusDAO.getStatusByModuleAndCode("BUDGETDETAIL", "Created");
+            final EgwStatus budgetDetailStatus = egwStatusDAO.getStatusByModuleAndCode("BUDGETDETAIL", "Created");
 
             budgetUploadList = createBudgetDetails("RE", budgetUploadList, reFYear, budgetDetailStatus);
 
             budgetUploadList = createBudgetDetails("BE", budgetUploadList, beFYear, budgetDetailStatus);
 
-        } catch (SQLException e) {
-            throw new ValidationException(Arrays.asList(new ValidationError(e.getMessage(),
-                    e.getMessage())));
-        } catch (final ValidationException e)
-        {
-            throw new ValidationException(Arrays.asList(new ValidationError(e.getErrors().get(0).getMessage(),
-                    e.getErrors().get(0).getMessage())));
-        } catch (final Exception e)
-        {
-            throw new ValidationException(Arrays.asList(new ValidationError(e.getMessage(),
-                    e.getMessage())));
+        } catch (final SQLException e) {
+            throw new ValidationException(Arrays.asList(new ValidationError(e.getMessage(), e.getMessage())));
+        } catch (final ValidationException e) {
+            throw new ValidationException(Arrays
+                    .asList(new ValidationError(e.getErrors().get(0).getMessage(), e.getErrors().get(0).getMessage())));
+        } catch (final Exception e) {
+            throw new ValidationException(Arrays.asList(new ValidationError(e.getMessage(), e.getMessage())));
         }
         return budgetUploadList;
     }
 
     @Transactional
-    public List<BudgetUpload> createBudgetDetails(String budgetType, List<BudgetUpload> budgetUploadList, CFinancialYear fyear,
-            EgwStatus status) {
-        List<BudgetUpload> tempList = new ArrayList<BudgetUpload>();
+    public List<BudgetUpload> createBudgetDetails(final String budgetType, final List<BudgetUpload> budgetUploadList,
+            final CFinancialYear fyear, final EgwStatus status) {
+        final List<BudgetUpload> tempList = new ArrayList<BudgetUpload>();
         try {
 
-            for (BudgetUpload budgetUpload : budgetUploadList) {
+            for (final BudgetUpload budgetUpload : budgetUploadList) {
                 BudgetDetail budgetDetail = new BudgetDetail();
-                BudgetDetail temp = getBudgetDetail(budgetUpload.getFund().getId(), budgetUpload.getFunction().getId(),
-                        budgetUpload.getDept()
+                final BudgetDetail temp = getBudgetDetail(budgetUpload.getFund().getId(),
+                        budgetUpload.getFunction().getId(), budgetUpload.getDept()
 
-                                .getId(), budgetUpload.getCoa().getId(), fyear, budgetType);
+                                .getId(),
+                        budgetUpload.getCoa().getId(), fyear, budgetType);
 
                 if (temp != null) {
                     if (temp.getStatus().getCode().equalsIgnoreCase("Created")) {
@@ -2482,8 +1773,7 @@ public class BudgetDetailService extends PersistenceService<BudgetDetail, Long> 
                             temp.setApprovedAmount(amount);
                             temp.setOriginalAmount(amount);
                             temp.setBudgetAvailable(temp.getApprovedAmount().multiply(temp.getPlanningPercent())
-                                    .divide(new BigDecimal(String
-                                            .valueOf(100))));
+                                    .divide(new BigDecimal(String.valueOf(100))));
 
                             applyAuditing(temp);
                             budgetDetail = update(temp);
@@ -2508,21 +1798,20 @@ public class BudgetDetailService extends PersistenceService<BudgetDetail, Long> 
                     if (budgetType.equalsIgnoreCase("RE")) {
                         budgetDetail.setOriginalAmount(budgetUpload.getReAmount());
                         budgetDetail.setApprovedAmount(budgetUpload.getReAmount());
-                        budgetDetail.setBudgetAvailable(budgetUpload.getReAmount().multiply(budgetDetail.getPlanningPercent())
-                                .divide(new BigDecimal(String
-                                        .valueOf(100))));
+                        budgetDetail.setBudgetAvailable(
+                                budgetUpload.getReAmount().multiply(budgetDetail.getPlanningPercent())
+                                        .divide(new BigDecimal(String.valueOf(100))));
 
                     } else {
                         budgetDetail.setOriginalAmount(budgetUpload.getBeAmount());
                         budgetDetail.setApprovedAmount(budgetUpload.getBeAmount());
-                        budgetDetail.setBudgetAvailable(budgetUpload.getBeAmount().multiply(budgetDetail.getPlanningPercent())
-                                .divide(new BigDecimal(String
-                                        .valueOf(100))));
+                        budgetDetail.setBudgetAvailable(
+                                budgetUpload.getBeAmount().multiply(budgetDetail.getPlanningPercent())
+                                        .divide(new BigDecimal(String.valueOf(100))));
                     }
                     budgetDetail.setBudgetGroup(createBudgetGroup(budgetUpload.getCoa()));
-                    budgetDetail.setBudget(budgetService.getBudget(budgetUpload.getBudgetHead(), budgetUpload.getDeptCode(),
-                            budgetType,
-                            fyear.getFinYearRange()));
+                    budgetDetail.setBudget(budgetService.getBudget(budgetUpload.getBudgetHead(),
+                            budgetUpload.getDeptCode(), budgetType, fyear.getFinYearRange()));
                     budgetDetail.setMaterializedPath(getmaterializedpathforbudget(budgetDetail.getBudget()));
                     budgetDetail.setStatus(status);
                     // budgetDetail = setBudgetDetailStatus(budgetDetail);
@@ -2532,20 +1821,17 @@ public class BudgetDetailService extends PersistenceService<BudgetDetail, Long> 
                     tempList.add(budgetUpload);
                 }
             }
-        } catch (final ValidationException e)
-        {
-            throw new ValidationException(Arrays.asList(new ValidationError(e.getErrors().get(0).getMessage(),
-                    e.getErrors().get(0).getMessage())));
-        } catch (final Exception e)
-        {
-            throw new ValidationException(Arrays.asList(new ValidationError(e.getMessage(),
-                    e.getMessage())));
+        } catch (final ValidationException e) {
+            throw new ValidationException(Arrays
+                    .asList(new ValidationError(e.getErrors().get(0).getMessage(), e.getErrors().get(0).getMessage())));
+        } catch (final Exception e) {
+            throw new ValidationException(Arrays.asList(new ValidationError(e.getMessage(), e.getMessage())));
         }
         return tempList;
     }
 
     @Transactional
-    public BudgetDetail setBudgetDetailStatus(BudgetDetail budgetDetail) {
+    public BudgetDetail setBudgetDetailStatus(final BudgetDetail budgetDetail) {
         Long stateId;
         Serializable sequenceNumber = null;
         State budgetDetailState = null;
@@ -2555,9 +1841,7 @@ public class BudgetDetailService extends PersistenceService<BudgetDetail, Long> 
         }
         stateId = Long.valueOf(sequenceNumber.toString());
 
-        persistenceService
-                .getSession()
-                .createSQLQuery(BUDGETDETAIL_STATES_INSERT).setLong("stateId", stateId)
+        persistenceService.getSession().createSQLQuery(BUDGETDETAIL_STATES_INSERT).setLong("stateId", stateId)
                 .executeUpdate();
 
         budgetDetailState = (State) persistenceService.find("from State where id = ?", stateId);
@@ -2565,7 +1849,7 @@ public class BudgetDetailService extends PersistenceService<BudgetDetail, Long> 
         return budgetDetail;
     }
 
-    private String getmaterializedpathforbudget(Budget budget) {
+    private String getmaterializedpathforbudget(final Budget budget) {
 
         return budget.getMaterializedPath() + "." + (getCountByBudget(budget.getId()) + 1);
     }
@@ -2574,19 +1858,17 @@ public class BudgetDetailService extends PersistenceService<BudgetDetail, Long> 
     public BudgetGroup createBudgetGroup(CChartOfAccounts coa) {
         BudgetGroup budgetGroup = budgetGroupService.getBudgetGroup(coa.getId());
         try {
-            Long bgroupId = null;
             Serializable sequenceNumber = null;
             try {
                 sequenceNumber = sequenceNumberGenerator.getNextSequence("seq_egf_budgetgroup");
             } catch (final SQLGrammarException e) {
             }
 
-            bgroupId = Long.valueOf(sequenceNumber.toString());
+            Long.valueOf(sequenceNumber.toString());
 
             if (budgetGroup == null) {
                 budgetGroup = new BudgetGroup();
-                budgetGroup.setName(coa.getGlcode() + "-" +
-                        coa.getName());
+                budgetGroup.setName(coa.getGlcode() + "-" + coa.getName());
                 budgetGroup.setDescription(coa.getName());
                 budgetGroup.setIsActive(true);
                 if (coa.getType().compareTo('E') == 0) {
@@ -2602,36 +1884,32 @@ public class BudgetDetailService extends PersistenceService<BudgetDetail, Long> 
                     budgetGroup.setAccountType(BudgetAccountType.REVENUE_RECEIPTS);
                     budgetGroup.setBudgetingType(BudgetingType.CREDIT);
                 }
-                if (coa.getClassification().compareTo(1l) == 0 ||
-                        coa.getClassification().compareTo(2l) == 0 || coa.getClassification().compareTo(4l) == 0) {
+                if ((coa.getClassification().compareTo(1l) == 0) || (coa.getClassification().compareTo(2l) == 0)
+                        || (coa.getClassification().compareTo(4l) == 0)) {
                     budgetGroup.setMinCode(coa);
                     budgetGroup.setMaxCode(coa);
                 }
                 budgetGroup.setMajorCode(null);
                 budgetGroupService.applyAuditing(budgetGroup);
                 budgetGroup = budgetGroupService.persist(budgetGroup);
-                if (coa.getType().compareTo('E') == 0 || coa.getType().compareTo('A') == 0) {
+                if ((coa.getType().compareTo('E') == 0) || (coa.getType().compareTo('A') == 0)) {
                     coa.setBudgetCheckReq(true);
                     coa = chartOfAccountsService.update(coa);
                 }
             }
 
-        } catch (final ValidationException e)
-        {
-            throw new ValidationException(Arrays.asList(new ValidationError(e.getErrors().get(0).getMessage(),
-                    e.getErrors().get(0).getMessage())));
-        } catch (final Exception e)
-        {
-            throw new ValidationException(Arrays.asList(new ValidationError(e.getMessage(),
-                    e.getMessage())));
+        } catch (final ValidationException e) {
+            throw new ValidationException(Arrays
+                    .asList(new ValidationError(e.getErrors().get(0).getMessage(), e.getErrors().get(0).getMessage())));
+        } catch (final Exception e) {
+            throw new ValidationException(Arrays.asList(new ValidationError(e.getMessage(), e.getMessage())));
         }
         return budgetGroup;
     }
 
     @Transactional
-    public void createRootBudget(String budgetType, CFinancialYear beFYear, CFinancialYear reFYear,
-            List<String> deptList, EgwStatus status)
-            throws SQLException {
+    public void createRootBudget(final String budgetType, final CFinancialYear beFYear, final CFinancialYear reFYear,
+            final List<String> deptList, final EgwStatus status) throws SQLException {
         String budgetName, budgetDes;
         CFinancialYear budgetFinancialYear;
         String rootmaterial;
@@ -2647,13 +1925,13 @@ public class BudgetDetailService extends PersistenceService<BudgetDetail, Long> 
                 budgetDes = "Budget - " + budgetType + " for the year " + reFYear.getFinYearRange();
                 budgetFinancialYear = reFYear;
             }
-            Query query = persistenceService.getSession().createSQLQuery(
-                    "select count(*)+1 from egf_budget where parent is null");
+            final Query query = persistenceService.getSession()
+                    .createSQLQuery("select count(*)+1 from egf_budget where parent is null");
 
             rootmaterial = query.uniqueResult().toString();
 
             if (budgetType.equalsIgnoreCase("BE")) {
-                Budget refBudget = budgetService.getByName("RE-" + reFYear.getFinYearRange());
+                final Budget refBudget = budgetService.getByName("RE-" + reFYear.getFinYearRange());
                 budget.setName(budgetName);
                 budget.setIsActiveBudget(true);
                 budget.setIsPrimaryBudget(true);
@@ -2686,19 +1964,16 @@ public class BudgetDetailService extends PersistenceService<BudgetDetail, Long> 
             createCapitalOrRevenueBudget(budget, "Revenue", rootmaterial + ".2", budgetType, beFYear, reFYear, deptList,
                     status);
 
-        } catch (final ValidationException e)
-        {
-            throw new ValidationException(Arrays.asList(new ValidationError(e.getErrors().get(0).getMessage(),
-                    e.getErrors().get(0).getMessage())));
-        } catch (final Exception e)
-        {
-            throw new ValidationException(Arrays.asList(new ValidationError(e.getMessage(),
-                    e.getMessage())));
+        } catch (final ValidationException e) {
+            throw new ValidationException(Arrays
+                    .asList(new ValidationError(e.getErrors().get(0).getMessage(), e.getErrors().get(0).getMessage())));
+        } catch (final Exception e) {
+            throw new ValidationException(Arrays.asList(new ValidationError(e.getMessage(), e.getMessage())));
         }
     }
 
     @Transactional
-    public Budget setBudgetState(Budget budget) {
+    public Budget setBudgetState(final Budget budget) {
         State budgetState;
         Serializable sequenceNumber = null;
         Long stateId;
@@ -2706,12 +1981,9 @@ public class BudgetDetailService extends PersistenceService<BudgetDetail, Long> 
             sequenceNumber = sequenceNumberGenerator.getNextSequence("seq_eg_wf_states");
             stateId = Long.valueOf(sequenceNumber.toString());
         } catch (final SQLGrammarException e) {
-            throw new ValidationException(Arrays.asList(new ValidationError(e.getMessage(),
-                    e.getMessage())));
+            throw new ValidationException(Arrays.asList(new ValidationError(e.getMessage(), e.getMessage())));
         }
-        persistenceService
-                .getSession()
-                .createSQLQuery(BUDGET_STATES_INSERT).setLong("stateId", stateId)
+        persistenceService.getSession().createSQLQuery(BUDGET_STATES_INSERT).setLong("stateId", stateId)
                 .executeUpdate();
         budgetState = (State) persistenceService.find("from State where id = ?", stateId);
         budget.setWfState(budgetState);
@@ -2719,28 +1991,25 @@ public class BudgetDetailService extends PersistenceService<BudgetDetail, Long> 
     }
 
     @Transactional
-    public void createCapitalOrRevenueBudget(Budget parent, String capitalOrRevenue, String rootmaterial,
-            String budgetType, CFinancialYear beFYear, CFinancialYear reFYear, List<String> deptList, EgwStatus status)
-            throws SQLException {
+    public void createCapitalOrRevenueBudget(final Budget parent, final String capitalOrRevenue,
+            final String rootmaterial, final String budgetType, final CFinancialYear beFYear,
+            final CFinancialYear reFYear, final List<String> deptList, final EgwStatus status) throws SQLException {
         String budgetName, budgetDes;
         CFinancialYear budgetFinancialYear;
         Budget budget = new Budget();
         try {
             if (budgetType.equalsIgnoreCase("BE")) {
                 budgetName = capitalOrRevenue + "-" + budgetType + "-" + beFYear.getFinYearRange();
-                budgetDes = capitalOrRevenue + " Budget - " + budgetType + " for the year "
-                        + beFYear.getFinYearRange();
+                budgetDes = capitalOrRevenue + " Budget - " + budgetType + " for the year " + beFYear.getFinYearRange();
                 budgetFinancialYear = beFYear;
             } else {
                 budgetName = capitalOrRevenue + "-" + budgetType + "-" + reFYear.getFinYearRange();
-                budgetDes = capitalOrRevenue + " Budget - " + budgetType + " for the year "
-                        + reFYear.getFinYearRange();
+                budgetDes = capitalOrRevenue + " Budget - " + budgetType + " for the year " + reFYear.getFinYearRange();
                 budgetFinancialYear = reFYear;
             }
 
             if (budgetType.equalsIgnoreCase("BE")) {
-                Budget refBudget = budgetService.getByName(capitalOrRevenue + "-RE-"
-                        + reFYear.getFinYearRange());
+                final Budget refBudget = budgetService.getByName(capitalOrRevenue + "-RE-" + reFYear.getFinYearRange());
                 budget.setName(budgetName);
                 budget.setDescription(budgetDes);
                 budget.setFinancialYear(budgetFinancialYear);
@@ -2769,36 +2038,33 @@ public class BudgetDetailService extends PersistenceService<BudgetDetail, Long> 
                 budget = budgetService.persist(budget);
             }
 
-            createDeptBudgetHeads(budget, capitalOrRevenue, budgetType, beFYear, reFYear, capitalOrRevenue.substring(0, 3),
-                    deptList, status);
-        } catch (final ValidationException e)
-        {
-            throw new ValidationException(Arrays.asList(new ValidationError(e.getErrors().get(0).getMessage(),
-                    e.getErrors().get(0).getMessage())));
-        } catch (final Exception e)
-        {
-            throw new ValidationException(Arrays.asList(new ValidationError(e.getMessage(),
-                    e.getMessage())));
+            createDeptBudgetHeads(budget, capitalOrRevenue, budgetType, beFYear, reFYear,
+                    capitalOrRevenue.substring(0, 3), deptList, status);
+        } catch (final ValidationException e) {
+            throw new ValidationException(Arrays
+                    .asList(new ValidationError(e.getErrors().get(0).getMessage(), e.getErrors().get(0).getMessage())));
+        } catch (final Exception e) {
+            throw new ValidationException(Arrays.asList(new ValidationError(e.getMessage(), e.getMessage())));
         }
     }
 
     @Transactional
-    public void createDeptBudgetHeads(Budget parent, String capitalOrRevenue, String budgetType,
-            CFinancialYear beFYear, CFinancialYear reFYear, String revOrCap, List<String> deptList, EgwStatus status)
-            throws SQLException {
+    public void createDeptBudgetHeads(final Budget parent, final String capitalOrRevenue, final String budgetType,
+            final CFinancialYear beFYear, final CFinancialYear reFYear, final String revOrCap,
+            final List<String> deptList, final EgwStatus status) throws SQLException {
         String budgetName, budgetDes, rootmaterial;
         CFinancialYear budgetFinancialYear;
         rootmaterial = parent.getMaterializedPath() + ".";
         String materialPath = rootmaterial;
-        Serializable sequenceNumber = null;
         try {
-            Query query = persistenceService.getSession().createSQLQuery(
-                    "select count(*)+1 from egf_budget c,egf_budget p where c.parent = p.id and p.name = :parentName")
+            final Query query = persistenceService.getSession()
+                    .createSQLQuery(
+                            "select count(*)+1 from egf_budget c,egf_budget p where c.parent = p.id and p.name = :parentName")
                     .setString("parentName", parent.getName());
 
-            String count = query.uniqueResult().toString();
+            final String count = query.uniqueResult().toString();
             Integer capOrRevCount = Integer.valueOf(count);
-            for (String deptCode : deptList) {
+            for (final String deptCode : deptList) {
                 Budget budget = new Budget();
 
                 if (budgetType.equalsIgnoreCase("BE")) {
@@ -2816,7 +2082,7 @@ public class BudgetDetailService extends PersistenceService<BudgetDetail, Long> 
                     materialPath = rootmaterial + capOrRevCount++;
 
                     if (budgetType.equalsIgnoreCase("BE")) {
-                        Budget refBudget = budgetService
+                        final Budget refBudget = budgetService
                                 .getByName(deptCode + "-RE-" + revOrCap + "-" + reFYear.getFinYearRange());
                         budget.setName(budgetName);
                         budget.setDescription(budgetDes);
@@ -2847,27 +2113,24 @@ public class BudgetDetailService extends PersistenceService<BudgetDetail, Long> 
                     }
                 }
             }
-        } catch (final ValidationException e)
-        {
-            throw new ValidationException(Arrays.asList(new ValidationError(e.getErrors().get(0).getMessage(),
-                    e.getErrors().get(0).getMessage())));
-        } catch (final Exception e)
-        {
-            throw new ValidationException(Arrays.asList(new ValidationError(e.getMessage(),
-                    e.getMessage())));
+        } catch (final ValidationException e) {
+            throw new ValidationException(Arrays
+                    .asList(new ValidationError(e.getErrors().get(0).getMessage(), e.getErrors().get(0).getMessage())));
+        } catch (final Exception e) {
+            throw new ValidationException(Arrays.asList(new ValidationError(e.getMessage(), e.getMessage())));
         }
     }
 
-    public BudgetDetail getBudgetDetail(final Integer fundId, final Long functionId, final Long deptId, final Long glCodeId,
-            final CFinancialYear fYear, String budgetType) {
+    public BudgetDetail getBudgetDetail(final Integer fundId, final Long functionId, final Long deptId,
+            final Long glCodeId, final CFinancialYear fYear, final String budgetType) {
         return find(
                 "from BudgetDetail bd where bd.fund.id = ? and bd.function.id = ? and bd.executingDepartment.id = ? and bd.budgetGroup.maxCode.id = ? and bd.budget.financialYear.id = ? and bd.budget.isbere = ?",
                 fundId, functionId, deptId, glCodeId, fYear.getId(), budgetType);
 
     }
 
-    public BudgetDetail getBudgetDetail(final Integer fundId, final Long functionId, final Long deptId, final Long budgetGroupId,
-            final Long budgetId) {
+    public BudgetDetail getBudgetDetail(final Integer fundId, final Long functionId, final Long deptId,
+            final Long budgetGroupId, final Long budgetId) {
         return find(
                 "from BudgetDetail bd where bd.fund.id = ? and bd.function.id = ? and bd.executingDepartment.id = ? and bd.budgetGroup.id= ? and bd.budget.id = ?",
                 fundId, functionId, deptId, budgetGroupId, budgetId);
@@ -2876,7 +2139,7 @@ public class BudgetDetailService extends PersistenceService<BudgetDetail, Long> 
     public List<BudgetDetail> getDepartmentFromBudgetDetailByFundId(final Integer fundId) {
 
         final Criteria criteria = getSession().createCriteria(BudgetDetail.class);
-        
+
         return criteria.add(Restrictions.eq("fund.id", fundId))
                 .setProjection(Projections.distinct(Projections.property("executingDepartment")))
                 .addOrder(Order.asc("executingDepartment")).list();
@@ -2885,26 +2148,27 @@ public class BudgetDetailService extends PersistenceService<BudgetDetail, Long> 
     public List<BudgetDetail> getFunctionFromBudgetDetailByDepartmentId(final Long departmentId) {
         final Criteria criteria = getSession().createCriteria(BudgetDetail.class);
         return criteria.add(Restrictions.eq("executingDepartment.id", departmentId))
-                .setProjection(Projections.distinct(Projections.property("function")))
-                .addOrder(Order.asc("function")).list();
+                .setProjection(Projections.distinct(Projections.property("function"))).addOrder(Order.asc("function"))
+                .list();
     }
 
     public List<BudgetDetail> getBudgetDetailByFunctionId(final Long functionId) {
         final Criteria criteria = getSession().createCriteria(BudgetDetail.class);
-        return criteria.add(Restrictions.eq("function.id", functionId)).setProjection(Projections.distinct(Projections.property("budgetGroup")))
+        return criteria.add(Restrictions.eq("function.id", functionId))
+                .setProjection(Projections.distinct(Projections.property("budgetGroup")))
                 .addOrder(Order.asc("budgetGroup")).list();
     }
 
     @Transactional
     public void updateByMaterializedPath(final String materializedPath) {
-        EgwStatus approvedStatus = egwStatusDAO.getStatusByModuleAndCode("BUDGETDETAIL", "Approved");
-        EgwStatus createdStatus = egwStatusDAO.getStatusByModuleAndCode("BUDGETDETAIL", "Created");
-        persistenceService
-                .getSession()
+        final EgwStatus approvedStatus = egwStatusDAO.getStatusByModuleAndCode("BUDGETDETAIL", "Approved");
+        final EgwStatus createdStatus = egwStatusDAO.getStatusByModuleAndCode("BUDGETDETAIL", "Created");
+        persistenceService.getSession()
                 .createSQLQuery(
                         "update egf_budgetdetail  set status = :approvedStatus where status =:createdStatus and  materializedPath like'"
-                                + materializedPath + "%'").setLong("approvedStatus", approvedStatus.getId())
-                .setLong("createdStatus", createdStatus.getId()).executeUpdate();
+                                + materializedPath + "%'")
+                .setLong("approvedStatus", approvedStatus.getId()).setLong("createdStatus", createdStatus.getId())
+                .executeUpdate();
     }
 
     public List<BudgetDetail> sortByDepartmentName(final List<BudgetDetail> budgetDetails) {
@@ -2912,4 +2176,118 @@ public class BudgetDetailService extends PersistenceService<BudgetDetail, Long> 
                 .compareTo(o2.getExecutingDepartment().getName().toUpperCase()));
         return budgetDetails;
     }
+
+    public Assignment getWorkflowInitiator(final BudgetDetail budgetDetail) {
+        final Assignment wfInitiator = assignmentService
+                .findByEmployeeAndGivenDate(budgetDetail.getCreatedBy().getId(), new Date()).get(0);
+        return wfInitiator;
+    }
+
+    @Transactional
+    public BudgetDetail transitionWorkFlow(final BudgetDetail budgetDetail, final WorkflowBean workflowBean) {
+        final DateTime currentDate = new DateTime();
+        final User user = securityUtils.getCurrentUser();
+        final Assignment userAssignment = assignmentService.findByEmployeeAndGivenDate(user.getId(), new Date()).get(0);
+        Position pos = null;
+        Assignment wfInitiator = null;
+        if ((budgetDetail.getId() != null) && (budgetDetail.getId() != 0))
+            wfInitiator = getWorkflowInitiator(budgetDetail);
+
+        if (FinancialConstants.BUTTONREJECT.equalsIgnoreCase(workflowBean.getWorkFlowAction())) {
+            if (wfInitiator.equals(userAssignment))
+                budgetDetail.transition(true).end().withSenderName(user.getName())
+                        .withComments(workflowBean.getApproverComments()).withDateInfo(currentDate.toDate());
+            else {
+                final String stateValue = FinancialConstants.WORKFLOW_STATE_REJECTED;
+                budgetDetail.transition(true).withSenderName(user.getName())
+                        .withComments(workflowBean.getApproverComments()).withStateValue(stateValue)
+                        .withDateInfo(currentDate.toDate()).withOwner(wfInitiator.getPosition())
+                        .withNextAction(FinancialConstants.WF_STATE_EOA_Approval_Pending);
+            }
+
+        } else if (FinancialConstants.BUTTONVERIFY.equalsIgnoreCase(workflowBean.getWorkFlowAction())) {
+            final WorkFlowMatrix wfmatrix = budgetDetailWFService.getWfMatrix(budgetDetail.getStateType(), null, null,
+                    null, budgetDetail.getCurrentState().getValue(), null);
+            budgetDetail.transition(true).withSenderName(user.getName())
+                    .withComments(workflowBean.getApproverComments())
+                    .withStateValue(wfmatrix.getCurrentDesignation() + " Approved").withDateInfo(currentDate.toDate())
+                    .withOwner(pos).withNextAction(wfmatrix.getNextAction());
+            budgetDetail.transition(true).end().withSenderName(user.getName())
+                    .withComments(workflowBean.getApproverComments()).withDateInfo(currentDate.toDate());
+            budgetDetail.setStatus(egwStatusHibernateDAO.getStatusByModuleAndCode(FinancialConstants.BUDGETDETAIL,
+                    FinancialConstants.BUDGETDETAIL_VERIFIED_STATUS));
+        } else if (FinancialConstants.BUTTONCANCEL.equalsIgnoreCase(workflowBean.getWorkFlowAction())) {
+            budgetDetail.setStatus(egwStatusHibernateDAO.getStatusByModuleAndCode(FinancialConstants.BUDGETDETAIL,
+                    FinancialConstants.WORKFLOW_STATE_CANCELLED));
+            budgetDetail.transition(true).end().withStateValue(FinancialConstants.WORKFLOW_STATE_CANCELLED)
+                    .withSenderName(user.getName()).withComments(workflowBean.getApproverComments())
+                    .withDateInfo(currentDate.toDate());
+        } else if (FinancialConstants.BUTTONSAVE.equalsIgnoreCase(workflowBean.getWorkFlowAction())) {
+            if (budgetDetail.getState() == null) {
+                final WorkFlowMatrix wfmatrix = budgetDetailWFService.getWfMatrix(budgetDetail.getStateType(), null,
+                        null, null, workflowBean.getCurrentState(), null);
+                budgetDetail.transition().start().withSenderName(user.getName())
+                        .withComments(workflowBean.getApproverComments()).withStateValue(wfmatrix.getCurrentState())
+                        .withDateInfo(currentDate.toDate()).withOwner(userAssignment.getPosition());
+                budgetDetail.setStatus(egwStatusHibernateDAO.getStatusByModuleAndCode(FinancialConstants.BUDGETDETAIL,
+                        FinancialConstants.WORKFLOW_STATE_NEW));
+            }
+        } else {
+            if ((null != workflowBean.getApproverPositionId()) && (workflowBean.getApproverPositionId() != -1))
+                pos = (Position) persistenceService.find("from Position where id=?",
+                        workflowBean.getApproverPositionId());
+            if (null == budgetDetail.getState()) {
+                final WorkFlowMatrix wfmatrix = budgetDetailWFService.getWfMatrix(budgetDetail.getStateType(), null,
+                        null, null, workflowBean.getCurrentState(), null);
+                budgetDetail.transition().start().withSenderName(user.getName())
+                        .withComments(workflowBean.getApproverComments()).withStateValue(wfmatrix.getNextState())
+                        .withDateInfo(currentDate.toDate()).withOwner(pos).withNextAction(wfmatrix.getNextAction());
+                budgetDetail.setStatus(egwStatusHibernateDAO.getStatusByModuleAndCode(FinancialConstants.BUDGETDETAIL,
+                        FinancialConstants.BUDGETDETAIL_CREATED_STATUS));
+            } else if ((budgetDetail.getCurrentState().getNextAction() != null)
+                    && budgetDetail.getCurrentState().getNextAction().equalsIgnoreCase("END"))
+                budgetDetail.transition(true).end().withSenderName(user.getName())
+                        .withComments(workflowBean.getApproverComments()).withDateInfo(currentDate.toDate());
+            else {
+                final WorkFlowMatrix wfmatrix = budgetDetailWFService.getWfMatrix(budgetDetail.getStateType(), null,
+                        null, null, budgetDetail.getCurrentState().getValue(), null);
+                budgetDetail.transition(true).withSenderName(user.getName())
+                        .withComments(workflowBean.getApproverComments()).withStateValue(wfmatrix.getNextState())
+                        .withDateInfo(currentDate.toDate()).withOwner(pos).withNextAction(wfmatrix.getNextAction());
+
+            }
+        }
+        return budgetDetail;
+    }
+
+    public List<Long> getBudgetIdList() {
+        final String query = "select bd.budget.id from BudgetDetail bd ";
+        final List<Long> budgetDetailsList = persistenceService.getSession().createQuery(query).list();
+        return budgetDetailsList;
+    }
+
+    public List<BudgetDetail> getBudgetDetailsByBudgetGroupId(final Long budgetGroupId) {
+        final Query qry = getCurrentSession().createQuery("from BudgetDetail where budgetGroup.id=:budgetGroupId");
+        qry.setLong("budgetGroupId", budgetGroupId);
+        List<BudgetDetail> budgetDetails = null;
+        if (qry.list().size() != 0)
+            budgetDetails = qry.list();
+        else
+            budgetDetails = Collections.emptyList();
+
+        return budgetDetails;
+    }
+
+    public List<BudgetDetail> getBudgetDetailsByBudgetId(final Long budgetId) {
+        final Query qry = getCurrentSession().createQuery("from BudgetDetail where budget.id=:budgetId");
+        qry.setLong("budgetId", budgetId);
+        List<BudgetDetail> budgetDetails = null;
+        if (qry.list().size() != 0)
+            budgetDetails = qry.list();
+        else
+            budgetDetails = Collections.emptyList();
+
+        return budgetDetails;
+    }
+
 }

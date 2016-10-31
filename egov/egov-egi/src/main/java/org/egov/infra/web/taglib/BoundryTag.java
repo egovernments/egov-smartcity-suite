@@ -125,18 +125,7 @@ public class BoundryTag extends BodyTagSupport {
 
 	@Override
 	public int doEndTag() {
-		new HashMap();
-		/*
-		 * try { // *********************************************************************************************** final javax.servlet.http.HttpSession gSession = this.pageContext.getSession(); final
-		 * String toplevelID = (String) gSession.getAttribute("org.egov.topBndryID"); final Integer bndryid = new Integer(toplevelID); StringBuffer finalString = null; final ConstructString cnsString
-		 * = new ConstructString(); final JspWriter out = this.pageContext.getOut(); logger.info("1" + this.getFormName()); if ((!bndryCombo.containsKey(bndryid)) && (this.getFormName() == null ||
-		 * this.getFormName().equals("") || this.getFormName().equals("0"))) { logger.info("1" + this.getFormName()); this.createCombo(bndryid, this.functionName); finalString = new
-		 * StringBuffer(cnsString.getFnString(toplevelID)); out.print(bndryCombo.get(bndryid)); out.print(this.getScript(finalString)); } else if (this.getFormName() != null ||
-		 * !this.getFormName().equals("") || !this.getFormName().equals("0")) { logger.info("2" + this.getFormName()); finalString = new StringBuffer(cnsString.getFnString(toplevelID,
-		 * this.getFormName())); out.print(this.getFnString(bndryid.toString(), this.getFormName(), this.functionName)); out.print(this.getScript(finalString)); } } catch (final Exception ioe) {
-		 * System.out.println("Error in HeadingTag: " + ioe); try { throw new JspTagException("Exception occured --------- ", ioe); } catch (final JspTagException e) {
-		 * block e.printStackTrace(); } }
-		 */
+
 		return EVAL_PAGE;
 	}
 

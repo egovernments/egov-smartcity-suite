@@ -38,9 +38,12 @@
   ~   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
   --%>
 
+<%@ page contentType="text/html;charset=UTF-8" language="java"%>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 <%@ taglib uri="http://www.springframework.org/tags" prefix="spring"%>
 <%@ taglib uri="http://www.springframework.org/tags/form" prefix="form"%>
-<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
+<%@ taglib uri="/WEB-INF/taglib/cdn.tld" prefix="cdn" %>
 <div class="panel-heading">
 	<div class="panel-title">
 		<spring:message code="lbl.bipartisanDetails.details" />
@@ -90,11 +93,12 @@
 				
 				 maxlength="256"/></td>
 			<td class="text-right"><input type="text"
-				class="form-control table-input text-left patternvalidation"
-				data-pattern="number" name="bipartisanPetitionerDetailsList[${status.index}].contactNumber"
+			class="form-control table-input text-left patternvalidation"
+				 name="bipartisanPetitionerDetailsList[${status.index}].contactNumber"
 				id="bipartisanPetitionerDetailsList[${status.index}].contactNumber"
+				data-pattern="number"
 				value="${bipartisanPetitionerDetailsList.contactNumber}"
-				 maxlength="10"/></td>
+				 maxlength="10" onkeyup="decimalvalue(this);"/></td>
 			<%-- <td class="text-right"><form:select path=""
 					data-first-option="false"
 					name="bipartisanPetitionerDetailsList[${status.index}].governmentDepartment"
@@ -152,23 +156,24 @@
 			value="${bipartisanRespondentDetailsList.isRespondentGovernment}"
 				onblur="onChangeofPetitioncheck(this)" /></td> --%>
 			
-				<td><input type="text"
-				class="form-control table-input text-right"
+				<td class="text-right"><input type="text"
+				class="form-control table-input text-left"
 						id="bipartisanRespondentDetailsList[${status.index}].name"
 						name="bipartisanRespondentDetailsList[${status.index}].name" 
 						value="${bipartisanRespondentDetailsList.name}" /></td>
 					
 
-				<td><input type="text"
-				class="form-control table-input text-right"
+				<td class="text-right"><input type="text"
+				class="form-control table-input text-left"
 						id="bipartisanRespondentDetailsList[${status.index}].address"
 						name="bipartisanRespondentDetailsList[${status.index}].address" 
 						value="${bipartisanRespondentDetailsList.address}" /></td>
 
-				<td><input type="text" 
+				<td class="text-right"><input type="text" 
 						id="bipartisanRespondentDetailsList[${status.index}].contactNumber"
 						name="bipartisanRespondentDetailsList[${status.index}].contactNumber" 
-					class="form-control table-input text-right" style="text-align: center"
+					class="form-control table-input text-left patternvalidation" 
+					onkeyup="decimalvalue(this);"
 					value="${bipartisanRespondentDetailsList.contactNumber}" /></td>
 <%-- 
 				<td>

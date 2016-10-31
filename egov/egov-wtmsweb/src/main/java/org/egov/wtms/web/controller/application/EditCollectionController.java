@@ -112,12 +112,11 @@ public class EditCollectionController {
     public String newForm(final Model model, @PathVariable final String consumerCode,
             @ModelAttribute final WaterConnectionDetails waterConnectionDetails, final HttpServletRequest request) {
 
-        return loadViewData(model, request, waterConnectionDetails);
+        return loadViewData(model, waterConnectionDetails);
 
     }
 
-    private String loadViewData(final Model model, final HttpServletRequest request,
-            final WaterConnectionDetails waterConnectionDetails) {
+    private String loadViewData(final Model model, final WaterConnectionDetails waterConnectionDetails) {
         final List<DemandDetail> demandDetailBeanList = new ArrayList<DemandDetail>();
         final Set<DemandDetail> tempDemandDetail = new LinkedHashSet<DemandDetail>();
         List<Installment> allInstallments = new ArrayList<Installment>();
@@ -207,21 +206,21 @@ public class EditCollectionController {
             final HttpServletRequest request) {
         final String sourceChannel = request.getParameter("Source");
         final List<LegacyReceipts> legacyReceipts = waterConnectionDetails.getLegacyReceipts();
-        if (waterConnectionDetails.getLegacyReceipts().size()>0)
-        {
-          LegacyReceipts legacyreceipts = new LegacyReceipts();
-          LegacyReceipts legacyreceipt = waterConnectionDetails.getLegacyReceipts().get(waterConnectionDetails.getLegacyReceipts().size()-1);
-          legacyreceipts = legacyReceiptsSevice.findByReceiptNumber(legacyreceipt.getReceiptNumber());
-          if (legacyreceipts != null)
-              throw new ValidationException("err.receipt.number.exists");
+        if (waterConnectionDetails.getLegacyReceipts().size() > 0) {
+            LegacyReceipts legacyreceipts = new LegacyReceipts();
+            final LegacyReceipts legacyreceipt = waterConnectionDetails.getLegacyReceipts()
+                    .get(waterConnectionDetails.getLegacyReceipts().size() - 1);
+            legacyreceipts = legacyReceiptsSevice.findByReceiptNumber(legacyreceipt.getReceiptNumber());
+            if (legacyreceipts != null)
+                throw new ValidationException("err.receipt.number.exists");
         }
         for (final LegacyReceipts legacyReceipt : legacyReceipts)
             legacyReceipt.setWaterConnectionDetails(waterConnectionDetails);
-        waterConnectionDetails = connectionDemandService
+        final WaterConnectionDetails waterconnectionDetails = connectionDemandService
                 .updateDemandForNonMeteredConnectionDataEntry(waterConnectionDetails, sourceChannel);
         legacyReceiptsSevice.createLegacyReceipts(legacyReceipts);
         final WaterConnectionDetails savedWaterConnectionDetails = waterConnectionDetailsRepository
-                .save(waterConnectionDetails);
+                .save(waterconnectionDetails);
         model.addAttribute("waterConnectionDetails", savedWaterConnectionDetails);
         return "editCollection-Ack";
     }

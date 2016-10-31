@@ -456,14 +456,21 @@ $(document).ready(function(){
 		$("#primary_yes").prop("checked",false);
 	});
 	
+	
+	$("#isactive_no").click(function () {
+		$("#isactive_no").prop("checked",true);
+		$("#isactive_yes").prop("checked",false);
+	});
+	
 	$("#submit").click(function () {
 		var count = 0;
+		var isactive_no = $("#isactive_no").prop("checked");
         jQuery(".table-bordered tr").find('input').each(function(){
                 if(jQuery(this).val() == "true"){
                         count++;
                 }
         });
-		if($("#assignmentTable tr").length==1 || count == 0 ){
+		if(($("#assignmentTable tr").length==1 || count == 0) && !isactive_no){
 			$('.assignmentserror').html('Employee should have primary assignment').show().fadeOut(7000);
 			$('.fromdateerror').hide();
 			$('.departmenterror').hide();

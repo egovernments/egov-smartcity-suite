@@ -66,10 +66,10 @@ function getSavedData()
 		//bootbox.alert(budgetName);
 		//bootbox.alert(budgetId);
 	//	bootbox.alert(budgetId+"   "+budgetName+" "+deptId);
-		populatebudgetDetail_filtered_function({"id":budgetId,"budgetDetail.budget.name":budgetName,"budgetDetail.executingDepartment.id":deptId});
+		populatebudgetDetail_filtered_function({"budgetDetail.budget.id":budgetId,"budgetDetail.budget.name":budgetName,"budgetDetail.executingDepartment.id":deptId});
 	}
 	function populateBudgetGroup(budgetId){
-  		populatebudgetDetail_filtered_budgetGroup({id:budgetId});
+  		populatebudgetDetail_filtered_budgetGroup({"budgetDetail.budget.id":budgetId});
 	}
 	
 function updateGrid(field,index){

@@ -595,6 +595,7 @@ public class ContraService extends PersistenceService<ContraJournalVoucher, Long
         addToContraSql(instrumentDetailsMap);
     }
     
+    @Transactional
     public void updateCashDeposit(final Map instrumentDetailsMap, CVoucherHeader cVoucherHeader, InstrumentHeader instrumentHeader, Bankaccount bankaccount)
     {
         updateInstrumentAndPayinSql(instrumentDetailsMap);
@@ -695,11 +696,12 @@ public class ContraService extends PersistenceService<ContraJournalVoucher, Long
 
     }
     
-    private void addToContraJournal(CVoucherHeader cVoucherHeader, InstrumentHeader instrumentHeader, Bankaccount bankaccount) {
+    @Transactional
+    public void addToContraJournal(CVoucherHeader cVoucherHeader, InstrumentHeader instrumentHeader, Bankaccount bankaccount) {
         ContraJournalVoucher contraJournalVoucher = new ContraJournalVoucher();
         contraJournalVoucher.setVoucherHeaderId(cVoucherHeader);
         contraJournalVoucher.setInstrumentHeaderId(instrumentHeader);
-        contraJournalVoucher.setFromBankAccountId(bankaccount);
+        contraJournalVoucher.setToBankAccountId(bankaccount);
         persistenceService.persist(contraJournalVoucher);
     }
 

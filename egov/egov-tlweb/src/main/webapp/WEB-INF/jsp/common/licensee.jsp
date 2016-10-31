@@ -53,7 +53,7 @@
 	    <div class="col-sm-3 add-margin" style="margin-bottom:15px;">
 	    	<div class="input-group">
 			  <span class="input-group-addon" id="basic-addon1">+91</span>
-			  <s:textfield name="licensee.mobilePhoneNumber" id="mobilePhoneNumber"  maxlength="10" cssClass="form-control"/>
+			  <s:textfield name="licensee.mobilePhoneNumber" id="mobilePhoneNumber"  maxlength="10" cssClass="form-control patternvalidation"  data-pattern="number" />
 			 </div>
 			 <div class="error-msg hide" id="mobileError">Should be 10 digits</div>
 	    </div>

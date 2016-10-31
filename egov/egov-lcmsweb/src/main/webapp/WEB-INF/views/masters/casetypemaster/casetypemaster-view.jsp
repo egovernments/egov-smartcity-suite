@@ -60,16 +60,15 @@
 					</div>
 					<div class="row add-border">
 						<div class="col-xs-3 add-margin">
-							<spring:message code="lbl.ordernumber" />
-						</div>
-						<div class="col-sm-3 add-margin view-content">
-							${casetypeMaster.ordernumber}</div>
-
-						<div class="col-xs-3 add-margin">
 							<spring:message code="lbl.description" />
 						</div>
 						<div class="col-sm-3 add-margin view-content">
 							${casetypeMaster.notes}</div>
+							<div class="col-xs-3 add-margin">
+							<spring:message code="lbl.ordernumber" />
+						</div>
+						<div class="col-sm-3 add-margin view-content">
+							${casetypeMaster.ordernumber}</div>
 					</div>
 					<div class="row add-border">
 					

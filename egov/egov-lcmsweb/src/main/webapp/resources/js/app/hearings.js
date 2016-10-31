@@ -43,15 +43,19 @@ $(document).ready(function() {
 	 $("#hearingsTbl tbody tr:gt(2)").each(function( index ) {
 		 $(this).find('a').hide();
 	    });
-	 
+	 $("#employeeDetails").find("*").attr("disabled", "disabled");
 	
 	$('#buttonid').click(function(){
 	if(!validateHearingDate())
 	{
 	return false;
 	}else{
+		$("#employeeDetails").find("*").removeAttr('disabled');
 		document.forms["hearingsform"].submit();
 	}
+	
+	$("#employeeDetails").find("*").removeAttr('disabled');
+	$("#employeeDetails").find("*").prop('disabled', false);
 	});
 	var assignPosition = new Bloodhound({
 		datumTokenizer : function(datum) {

@@ -4067,8 +4067,6 @@ public class CommonAction extends BaseFormAction {
     @Action(value = "/voucher/common-ajaxYearCode")
     public String ajaxYearCode()
     {
-        System.out.println("bankaccount" + bankaccount);
-        System.out.println("departmentId" + departmentId);
         try
         {
             if (bankaccount != null && departmentId != null)

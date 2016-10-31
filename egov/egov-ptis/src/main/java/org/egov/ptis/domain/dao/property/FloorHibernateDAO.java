@@ -57,31 +57,31 @@ public class FloorHibernateDAO implements FloorDAO {
 
 	@Override
 	public Floor findById(Integer id, boolean lock) {
-		// TODO Auto-generated method stub
+
 		return null;
 	}
 
 	@Override
 	public List<Floor> findAll() {
-		// TODO Auto-generated method stub
+
 		return null;
 	}
 
 	@Override
 	public Floor create(Floor floorIF) {
-		// TODO Auto-generated method stub
+
 		return null;
 	}
 
 	@Override
 	public void delete(Floor floorIF) {
-		// TODO Auto-generated method stub
+
 
 	}
 
 	@Override
 	public Floor update(Floor floorIF) {
-		// TODO Auto-generated method stub
+
 		return null;
 	}
 

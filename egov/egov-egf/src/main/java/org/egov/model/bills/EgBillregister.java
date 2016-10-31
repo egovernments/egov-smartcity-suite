@@ -363,7 +363,6 @@ public class EgBillregister extends WorkflowAware implements java.io.Serializabl
 
     public void addEgBilldetailes(final EgBilldetails egBilldetail)
     {
-        // System.out.println("adding egbilldetails to billregister"+egBilldetail);
         getEgBilldetailes().add(egBilldetail);
     }
 

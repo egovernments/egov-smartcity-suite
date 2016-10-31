@@ -130,13 +130,13 @@ public class EnumUserType implements UserType, ParameterizedType {
 
 	@Override
 	public Object nullSafeGet(ResultSet arg0, String[] arg1, SessionImplementor arg2, Object arg3) throws HibernateException, SQLException {
-		// TODO Auto-generated method stub
+
 		return null;
 	}
 
 	@Override
 	public void nullSafeSet(PreparedStatement arg0, Object arg1, int arg2, SessionImplementor arg3) throws HibernateException, SQLException {
-		// TODO Auto-generated method stub
+
 
 	}
 }

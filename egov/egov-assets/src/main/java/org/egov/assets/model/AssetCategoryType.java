@@ -31,8 +31,8 @@ public class AssetCategoryType {
 		try {
 			 writer = new PrintWriter("/home/mani/jsonbsql.sql");
 		} catch (FileNotFoundException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+
+
 		}
 		for(int i=0;i<1000;i++)
 		{
@@ -57,8 +57,8 @@ public class AssetCategoryType {
 		try {
 			jsonResponse = objectMapper.writeValueAsString(obj);
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+
+
 		}
         return jsonResponse;
 	}

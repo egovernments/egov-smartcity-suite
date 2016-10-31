@@ -61,8 +61,6 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 
-import net.sf.jasperreports.engine.JRException;
-
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.apache.struts2.convention.annotation.Action;
@@ -90,6 +88,7 @@ import org.egov.infra.admin.master.entity.Department;
 import org.egov.infra.admin.master.service.AppConfigValueService;
 import org.egov.infra.exception.ApplicationException;
 import org.egov.infra.exception.ApplicationRuntimeException;
+import org.egov.infra.reporting.engine.ReportConstants.FileFormat;
 import org.egov.infra.script.entity.Script;
 import org.egov.infra.utils.autonumber.AutonumberServiceBeanResolver;
 import org.egov.infra.validation.exception.ValidationError;
@@ -107,6 +106,7 @@ import org.egov.services.cheque.ChequeService;
 import org.egov.services.contra.ContraService;
 import org.egov.services.instrument.InstrumentHeaderService;
 import org.egov.services.instrument.InstrumentService;
+import org.egov.services.instrument.InstrumentVoucherService;
 import org.egov.services.masters.BankService;
 import org.egov.services.payment.ChequeAssignmentHelper;
 import org.egov.services.payment.PaymentService;
@@ -119,6 +119,8 @@ import org.hibernate.Query;
 import org.hibernate.transform.Transformers;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+
+import net.sf.jasperreports.engine.JRException;
 
 @ParentPackage("egov")
 @Results({
@@ -145,7 +147,7 @@ import org.springframework.beans.factory.annotation.Qualifier;
                 "no-cache;filename=BandAdvice.pdf" }),
         @Result(name = "bankAdvice-XLS", type = "stream", location = Constants.INPUT_STREAM, params = { Constants.INPUT_NAME,
                 Constants.INPUT_STREAM, Constants.CONTENT_TYPE, "application/xls", Constants.CONTENT_DISPOSITION,
-                "no-cache;filename=BandAdvice.xls" }),
+                "no-cache;filename=${fileName}" }),
         @Result(name = "bankAdvice-HTML", type = "stream", location = Constants.INPUT_STREAM, params = { Constants.INPUT_NAME,
                 Constants.INPUT_STREAM, Constants.CONTENT_TYPE, "text/html" })
 })
@@ -165,6 +167,7 @@ public class ChequeAssignmentAction extends BaseVoucherAction
     private boolean rtgsNoGenerationAuto;
     private String typeOfAccount;
     private List<Map<String, Object>> bankbranchList;
+    private String fileName;
 
     @Autowired
     @Qualifier("persistenceService")
@@ -265,7 +268,8 @@ public class ChequeAssignmentAction extends BaseVoucherAction
     private String instrumentHeader;
     private String chequeFormat;
     private Long instHeaderId;
-
+    @Autowired
+    private InstrumentVoucherService instrumentVoucherService;
     public List<String> getChequeSlNoList() {
         return chequeSlNoList;
     }
@@ -1153,7 +1157,6 @@ public class ChequeAssignmentAction extends BaseVoucherAction
                         Date rtgsdate = null;
                         final Date autoNoCutOffDate = FinancialConstants.RTGS_FINYEAR_WISE_ROLLING_SEQ_CUTOFF_DATE;
                         String rtgsNo = "";
-                        System.out.println(autoNoCutOffDate);
                         if (dateArray[0] != null)
                         {
                             final String date = dateArray[0];
@@ -2143,12 +2146,13 @@ public class ChequeAssignmentAction extends BaseVoucherAction
     @Action(value = "/payment/chequeAssignment-bankAdviceExcel")
     public String bankAdviceExcel() throws JRException, IOException {
         BankAdviceReportInfo bankAdvice = new BankAdviceReportInfo();
-        final InstrumentHeader instrumentHeader = (InstrumentHeader) persistenceService.find("from InstrumentHeader where id=?",
-                instHeaderId);
-        bankAdvice.setPartyName(instrumentHeader.getPayTo());
-        bankAdvice.setAmount(instrumentHeader.getInstrumentAmount());
+        final InstrumentVoucher instrumentHeader =instrumentVoucherService.getInstrumentVoucherByVoucherHeader(instHeaderId);
+        bankAdvice.setPartyName(instrumentHeader.getInstrumentHeaderId().getPayTo());
+        bankAdvice.setAmount(instrumentHeader.getInstrumentHeaderId().getInstrumentAmount());
         final List<Object> data = new ArrayList<Object>();
         data.add(bankAdvice);
+        
+        setFileName(instrumentHeader.getVoucherHeaderId().getVoucherNumber()+"." + FileFormat.XLS.toString().toLowerCase());
         inputStream = reportHelper.exportXls(getInputStream(), bankAdviceJasperPath, null, data);
         return "bankAdvice-XLS";
     }
@@ -2679,5 +2683,13 @@ public class ChequeAssignmentAction extends BaseVoucherAction
 
     public void setInstHeaderId(Long instHeaderId) {
         this.instHeaderId = instHeaderId;
+    }
+
+    public String getFileName() {
+        return fileName;
+    }
+
+    public void setFileName(String fileName) {
+        this.fileName = fileName;
     }
 }

@@ -40,50 +40,47 @@
 
 package org.egov.api.adapter;
 
+import java.lang.reflect.Type;
+
+import org.egov.api.model.ForwardDetails;
+import org.egov.eis.entity.EmployeeView;
+import org.egov.pims.commons.Designation;
+
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonSerializationContext;
-import org.egov.api.model.ForwardDetails;
-import org.egov.infra.admin.master.entity.User;
-import org.egov.pims.commons.Designation;
-
-import java.lang.reflect.Type;
 
 public class ForwardDetailsAdapter extends DataAdapter<ForwardDetails> {
-	
-	@Override
-	public JsonElement serialize(ForwardDetails src, Type typeOfSrc,
-			JsonSerializationContext context) {
-	
-		JsonObject jsonObject=new JsonObject();
-		
-		if(src.getUsers()!=null)
-		{
-			JsonArray jUsers=new JsonArray();
-			for(User user : src.getUsers())
-			{
-				JsonObject jUser=new JsonObject();
-				jUser.addProperty("id", user.getId());
-				jUser.addProperty("name", user.getName());
-				jUsers.add(jUser);
-			}
-			jsonObject.add("users", jUsers);
-			
-		}
-		else if(src.getDesignations()!=null){
-			JsonArray jDesingations=new JsonArray();
-			for(Designation designation : src.getDesignations())
-			{
-				JsonObject jDes=new JsonObject();
-				jDes.addProperty("id", designation.getId());
-				jDes.addProperty("name", designation.getName());
-				jDesingations.add(jDes);
-			}
-			jsonObject.add("designations", jDesingations);
-		}
-		
-		return jsonObject;
-	}
-	
+
+    @Override
+    public JsonElement serialize(final ForwardDetails src, final Type typeOfSrc,
+            final JsonSerializationContext context) {
+
+        final JsonObject jsonObject = new JsonObject();
+
+        if (src.getUsers() != null) {
+            final JsonArray jUsers = new JsonArray();
+            for (final EmployeeView user : src.getUsers()) {
+                final JsonObject jUser = new JsonObject();
+                jUser.addProperty("id", user.getPosition().getId());
+                jUser.addProperty("name", user.getName());
+                jUsers.add(jUser);
+            }
+            jsonObject.add("users", jUsers);
+
+        } else if (src.getDesignations() != null) {
+            final JsonArray jDesingations = new JsonArray();
+            for (final Designation designation : src.getDesignations()) {
+                final JsonObject jDes = new JsonObject();
+                jDes.addProperty("id", designation.getId());
+                jDes.addProperty("name", designation.getName());
+                jDesingations.add(jDes);
+            }
+            jsonObject.add("designations", jDesingations);
+        }
+
+        return jsonObject;
+    }
+
 }

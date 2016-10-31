@@ -68,7 +68,6 @@ public class MyHtmlParser {
 
 	public String parseMyHtml(final Reader r, final boolean removeSpaces) {
 		HTMLEditorKit.Parser parser;
-		// System.out.println("About to parse ");
 		parser = new ParserDelegator();
 		setBRemoveSpaces(removeSpaces);
 		// Reader r = getInReader();
@@ -76,8 +75,7 @@ public class MyHtmlParser {
 			parser.parse(r, new HTMLParseLister(), true);
 			r.close();
 		} catch (final IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+
 		}
 		return getOutText();
 
@@ -104,7 +102,7 @@ public class MyHtmlParser {
 
 	public MyHtmlParser() {
 		super();
-		// TODO Auto-generated constructor stub
+
 
 	}
 

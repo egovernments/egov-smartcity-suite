@@ -41,6 +41,7 @@ package org.egov.works.web.controller.milestone;
 
 import java.util.List;
 
+import org.egov.works.contractorbill.entity.enums.BillTypes;
 import org.egov.works.master.service.MilestoneTemplateService;
 import org.egov.works.milestone.entity.Milestone;
 import org.egov.works.milestone.entity.SearchRequestMilestone;
@@ -54,6 +55,8 @@ import org.egov.works.web.adaptor.SearchMilestoneJsonAdaptor;
 import org.egov.works.web.adaptor.SearchMilestoneTemplateJsonAdaptor;
 import org.egov.works.web.adaptor.SearchTrackMilestoneJsonAdaptor;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.context.MessageSource;
 import org.springframework.http.MediaType;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.ModelAttribute;
@@ -90,6 +93,10 @@ public class AjaxMilestoneController {
 
     @Autowired
     private SearchCancelMilestoneJsonAdaptor searchCancelMilestoneJsonAdaptor;
+
+    @Autowired
+    @Qualifier("messageSource")
+    private MessageSource messageSource;
 
     @RequestMapping(value = "/ajax-search", method = RequestMethod.POST, produces = MediaType.TEXT_PLAIN_VALUE)
     public @ResponseBody String searchMilestones(@ModelAttribute final SearchRequestMilestone searchRequestMilestone) {
@@ -157,8 +164,8 @@ public class AjaxMilestoneController {
         final List<Milestone> milestones = milestoneService
                 .searchMilestonesToCancel(searchRequestMilestone);
         final String result = new StringBuilder("{ \"data\":")
-        .append(toSearchMilestonesToCancelJson(milestones))
-        .append("}").toString();
+                .append(toSearchMilestonesToCancelJson(milestones))
+                .append("}").toString();
         return result;
     }
 
@@ -174,12 +181,12 @@ public class AjaxMilestoneController {
     public @ResponseBody List<String> findLOAsToCancelMilestone(@RequestParam final String code) {
         return milestoneService.findLoaNumbersToCancelMilestone(code);
     }
-    
+
     @RequestMapping(value = "/ajaxcontractors-milestonetocancel", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
     public @ResponseBody List<String> findContractorsToCancelMilestone(@RequestParam final String code) {
         return milestoneService.findContractorsToCancelMilestone(code);
     }
-    
+
     @RequestMapping(value = "/ajax-searchmilestoneforview", method = RequestMethod.POST, produces = MediaType.TEXT_PLAIN_VALUE)
     public @ResponseBody String searchMilestonesForView(@ModelAttribute final SearchRequestMilestone searchRequestMilestone) {
         final List<Milestone> searchMilestoneList = milestoneService
@@ -188,4 +195,23 @@ public class AjaxMilestoneController {
                 .append("}").toString();
         return result;
     }
+
+    @RequestMapping(value = "/validate-milestonepercentagetocreatecontractorbill", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
+    public @ResponseBody String validateCreateContractorPartBill(
+            @RequestParam("workOrderEstimateId") final Long workOrderEstimateId,
+            @RequestParam("billType") final String billType) {
+        String message = "";
+        TrackMilestone trackMileStone = null;
+        if (billType.equalsIgnoreCase(BillTypes.Final_Bill.toString())) {
+            trackMileStone = trackMilestoneService.getCompletionPercentageToCreateContractorFinalBill(workOrderEstimateId);
+            if (trackMileStone == null)
+                message = messageSource.getMessage("error.contractor.finalbill.milestonepercentage", null, null);
+        } else {
+            trackMileStone = trackMilestoneService.getMinimumPercentageToCreateContractorBill(workOrderEstimateId);
+            if (trackMileStone == null)
+                message = messageSource.getMessage("error.contractorbil.milestone.percentage", null, null);
+        }
+        return message;
+    }
+
 }

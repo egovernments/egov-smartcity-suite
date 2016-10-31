@@ -40,8 +40,9 @@
 package org.egov.tl.entity;
 
 import org.egov.infra.persistence.entity.AbstractPersistable;
-import org.egov.infstr.models.BaseModel;
 import org.egov.tl.entity.enums.RateTypeEnum;
+
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -54,6 +55,7 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 
 @Entity
 @Table(name = "egtl_subcategory_details")
@@ -67,6 +69,7 @@ public class LicenseSubCategoryDetails extends AbstractPersistable<Long> {
     @GeneratedValue(generator = SEQUENCE, strategy = GenerationType.SEQUENCE)
     private Long id;
 
+    @JsonIgnore
     @ManyToOne
     @JoinColumn(name = "subcategory_id")
     private LicenseSubCategory subCategory;
@@ -82,6 +85,9 @@ public class LicenseSubCategoryDetails extends AbstractPersistable<Long> {
     @Enumerated(EnumType.STRING)
     @Column(name = "RATETYPE")
     private RateTypeEnum rateType;
+    
+    @Transient
+    private boolean markedForRemoval;
 
     public Long getId() {
         return id;
@@ -121,6 +127,14 @@ public class LicenseSubCategoryDetails extends AbstractPersistable<Long> {
 
     public void setFeeType(FeeType feeType) {
         this.feeType = feeType;
+    }
+    
+    public boolean isMarkedForRemoval() {
+        return markedForRemoval;
+    }
+
+    public void setMarkedForRemoval(final boolean markedForRemoval) {
+        this.markedForRemoval = markedForRemoval;
     }
 
     @Override

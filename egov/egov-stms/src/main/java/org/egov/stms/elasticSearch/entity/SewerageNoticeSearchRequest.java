@@ -206,7 +206,7 @@ public class SewerageNoticeSearchRequest {
                     logger.debug("Date Range From start.. :" + formatterYYYYMMDD.format(dtft.parse(noticeGeneratedFrom)));
                 this.noticeGeneratedFrom = formatterYYYYMMDD.format(dtft.parse(noticeGeneratedFrom));
             } catch (final ParseException e) {
-                e.printStackTrace();
+
             }
 
     }
@@ -226,7 +226,7 @@ public class SewerageNoticeSearchRequest {
                     logger.debug("Date Range Till .. :" + formatterYYYYMMDD.format(cal.getTime()));
                 this.noticeGeneratedTo = formatterYYYYMMDD.format(cal.getTime());
             } catch (final ParseException e) {
-                e.printStackTrace();
+
             }
         }
             else

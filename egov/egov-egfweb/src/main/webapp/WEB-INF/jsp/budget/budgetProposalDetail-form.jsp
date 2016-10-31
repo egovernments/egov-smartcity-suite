@@ -38,7 +38,7 @@
   ~   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
   --%>
 
-
+<%@ include file="/includes/taglibs.jsp"%>
 <script>
 
 
@@ -90,10 +90,10 @@
 		document.getElementById('yui-dt0-th-actual_current_year-liner').innerHTML = '<span class="yui-dt-label">BE Actuals<br/>'+newCurrent+'(Rs)</span>';
 		document.getElementById('yui-dt0-th-approved_current_year-liner').innerHTML = '<span class="yui-dt-label">BE <br/>'+newCurrent+'(Rs)</span>';
 		if(document.getElementById('yui-dt0-th-re_amount-liner')){
-			document.getElementById('yui-dt0-th-re_amount-liner').innerHTML = '<span class="yui-dt-label">RE Amount(Rs)<br/>'+newCurrent+'<span class="mandatory">*</span></span>';
+			document.getElementById('yui-dt0-th-re_amount-liner').innerHTML = '<span class="yui-dt-label">RE Amount(Rs)<br/>'+newCurrent+'<span class="mandatory1">*</span></span>';
 		}
 		if(document.getElementById('yui-dt0-th-amount-liner')){
-			document.getElementById('yui-dt0-th-amount-liner').innerHTML = '<span class="yui-dt-label">BE Amount(Rs)<br/>'+newNext+'<span class="mandatory">*</span></span>';
+			document.getElementById('yui-dt0-th-amount-liner').innerHTML = '<span class="yui-dt-label">BE Amount(Rs)<br/>'+newNext+'<span class="mandatory1">*</span></span>';
 		}
 		if(document.getElementById('yui-dt0-th-total-liner')){
 			document.getElementById('yui-dt0-th-total-liner').innerHTML = '<span class="yui-dt-label">Total<br/>'+newCurrent+'(Rs)</span>';
@@ -108,49 +108,68 @@
 		
 	var budgetsCallback = {
 		     success: function(o) {
-		     		document.getElementById('budgets').innerHTML = o.responseText;
+		     		//document.getElementById('budgets').innerHTML = o.responseText;
+		     		document.getElementById('budgetDetail_budget').innerHTML = o.responseText;
 		        },
 		     failure: function(o) {
 		     }
 	} 
-	function fetchBudgets(){
+	 function fetchBudgets(){
 		var financialYear = document.getElementById('financialYear');
 		id = financialYear.value;
 		beRe = document.getElementById('bere').value;
 		if(document.getElementById("addNewDetails"))
 			{
 			var addNew=document.getElementById("addNewDetails").value;
-			var transaction = YAHOO.util.Connect.asyncRequest('GET', 'budgetProposalDetail!ajaxLoadBudgets.action?financialYear.id='+id+'&bere='+beRe+'&addNewDetails='+addNew, budgetsCallback, null);
+			var transaction = YAHOO.util.Connect.asyncRequest('GET', 'budgetProposalDetail-ajaxLoadBudgets.action?financialYear.id='+id+'&bere='+beRe+'&addNewDetails='+addNew, budgetsCallback, null);
 			}
 		else
-		var transaction = YAHOO.util.Connect.asyncRequest('GET', 'budgetProposalDetail!ajaxLoadBudgets.action?financialYear.id='+id+'&bere='+beRe, budgetsCallback, null);
-	}
+		var transaction = YAHOO.util.Connect.asyncRequest('GET', 'budgetProposalDetail-ajaxLoadBudgets.action?financialYear.id='+id+'&bere='+beRe, budgetsCallback, null);
+	} 
 	
+	<s:if test="%{shouldShowHeaderField('scheme') and shouldShowHeaderField('subScheme')}">
+	populateSubSchemes(document.getElementById('budgetDetail_scheme'))
+	function preselectSubScheme(){
+		subSchemes =  document.getElementById('budgetDetail_subScheme');
+		selectedValue="<s:property value='subScheme.id'/>"
+		for(i=0;i<subSchemes.options.length;i++){
+		  if(subSchemes.options[i].value==selectedValue){
+			subSchemes.selectedIndex=i;
+			break;
+		  }
+		}
+		updateGrid('subScheme.id',document.getElementById('budgetDetail_subScheme').selectedIndex);
+	}
+	</s:if>
 </script>
 
 <script type="text/javascript"
 	src="${pageContext.request.contextPath}/resources/javascript/calenderNew.js"></script>
+		
 <table width="100%" border="0" cellspacing="0" cellpadding="0">
 	<tr>
 		<td class="bluebox" width="15%">&nbsp;</td>
 		<td class="bluebox" width="15%"><s:text
-				name="budgetdetail.financialYear" /><span class="mandatory">*</span>
+				name="budgetdetail.financialYear" /><span class="mandatory1">*</span>
 		</td>
 		<td class="bluebox"><s:select
 				list="dropdownData.financialYearList" listKey="id"
-				listValue="finYearRange" name="financialYear.id" headerKey="0"
-				headerValue="--- Select ---" value="financialYear.id"
+				listValue="finYearRange" name="budget.financialYear.id"
+				headerKey="0" headerValue="--- Select ---" value="financialYear.id"
 				id="financialYear" onchange="fetchBudgets()"></s:select></td>
 		<td class="bluebox" width="15%"><s:text
-				name="budgetdetail.budget" /><span class="mandatory">*</span>
+				name="budgetdetail.budget" /><span class="mandatory1">*</span>
 		<td class="bluebox">
-			<div id="budgets">
+			<div id="budgets"> 
 				<s:select list="dropdownData.budgetList" listKey="id"
-					listValue="name" name="budget" value="model.budget.id"
-					id="budgetDetail_budget" disabled="%{headerDisabled}" headerKey="0"
-					headerValue="--- Select ---"></s:select>
-			</div>
+					listValue="name" name="budget.id"  headerKey="0"
+					headerValue="--- Select ---" value="budget.id" id="budgetDetail_budget" 
+					></s:select>
+			 </div> 
 		</td>
+
+
+
 	</tr>
 	<tr>
 		<td width="10%" class="bluebox">&nbsp;</td>
@@ -158,21 +177,21 @@
 			<td class="bluebox" width="15%"><s:text
 					name="budgetdetail.executingDepartment" /> <s:if
 					test="%{isFieldMandatory('executingDepartment')}">
-					<span class="mandatory">*</span>
+					<span class="mandatory1">*</span>
 				</s:if></td>
 			<td width="15%" class="bluebox"><s:select
 					list="dropdownData.executingDepartmentList" listKey="id"
-					listValue="name" name="executingDepartment" headerKey="0"
+					listValue="name" name="executingDepartment.id" headerKey="0"
 					headerValue="--- Select ---"
 					onchange="getSavedData();updateGrid('executingDepartment.id',document.getElementById('budgetDetail_executingDepartment').selectedIndex);updateApproverDepartment(this)"
 					value="executingDepartment.id"
 					id="budgetDetail_executingDepartment"></s:select></td>
 		</s:if>
 		<s:if test="%{showRe}">
-			<td class="bluebox" width="15%">Reference Budget</td>
+			<!-- <td class="bluebox" width="15%">Reference Budget</td>
 			<td class="bluebox">
 				<div id="referenceBudget"></div>
-			</td>
+			</td> -->
 		</s:if>
 	</tr>
 	<tr>
@@ -180,22 +199,23 @@
 			<td class="bluebox">&nbsp;</td>
 			<td class="bluebox"><s:text name="fund" /> <s:if
 					test="%{isFieldMandatory('fund')}">
-					<span class="mandatory">*</span>
+					<span class="mandatory1">*</span>
 				</s:if></td>
 			<td class="bluebox"><s:select list="dropdownData.fundList"
-					listKey="id" listValue="name" name="fund" headerKey="0"
+					listKey="id" listValue="name" name="fund.id" headerKey="0"
 					headerValue="--- Select ---"
 					onchange="updateGrid('fund.id',document.getElementById('budgetDetail_fund').selectedIndex)"
 					value="fund.id" id="budgetDetail_fund"></s:select></td>
 		</s:if>
 		<s:if test="%{shouldShowHeaderField('function')}">
 			<td class="bluebox">&nbsp;</td>
+			<s:hidden name="function.id" id="hidden_function"/>
 			<td class="bluebox"><s:text name="function" /> <s:if
 					test="%{isFieldMandatory('function')}">
-					<span class="mandatory">*</span>
+					<span class="mandatory1">*</span>
 				</s:if></td>
 			<td class="bluebox"><s:select list="dropdownData.functionList"
-					listKey="id" listValue="name" name="function" headerKey="0"
+					listKey="id" listValue="name" name="function.id" headerKey="0"
 					headerValue="--- Select ---"
 					onchange="updateGrid('function.id',document.getElementById('budgetDetail_function').selectedIndex)"
 					value="function.id" id="budgetDetail_function"></s:select></td>
@@ -206,7 +226,7 @@
 			<td width="10%" class="bluebox">&nbsp;</td>
 			<td class="bluebox"><s:text name="scheme" /> <s:if
 					test="%{isFieldMandatory('scheme')}">
-					<span class="mandatory">*</span>
+					<span class="mandatory1">*</span>
 				</s:if></td>
 			<td class="bluebox"><s:select list="dropdownData.schemeList"
 					listKey="id" listValue="name" headerKey="0"
@@ -217,11 +237,11 @@
 		<s:if test="%{shouldShowHeaderField('subScheme')}">
 			<egov:ajaxdropdown id="subScheme" fields="['Text','Value']"
 				dropdownId="budgetDetail_subScheme"
-				url="budget/budgetProposalDetail!ajaxLoadSubSchemes.action"
+				url="budget/budgetProposalDetail-ajaxLoadSubSchemes.action"
 				afterSuccess="onHeaderSubSchemePopulation" />
 			<td class="bluebox"><s:text name="subScheme" /> <s:if
 					test="%{isFieldMandatory('subScheme')}">
-					<span class="mandatory">*</span>
+					<span class="mandatory1">*</span>
 				</s:if></td>
 			<td class="bluebox"><s:select list="dropdownData.subSchemeList"
 					listKey="id" listValue="name" headerKey="0"
@@ -234,7 +254,7 @@
 		<s:if test="%{shouldShowHeaderField('functionary')}">
 			<td class="bluebox"><s:text name="functionary" /> <s:if
 					test="%{isFieldMandatory('functionary')}">
-					<span class="mandatory">*</span>
+					<span class="mandatory1">*</span>
 				</s:if></td>
 			<td class="bluebox"><s:select
 					list="dropdownData.functionaryList" listKey="id" listValue="name"
@@ -245,7 +265,7 @@
 		<s:if test="%{shouldShowHeaderField('boundary')}">
 			<td class="bluebox"><s:text name="field" /> <s:if
 					test="%{isFieldMandatory('boundary')}">
-					<span class="mandatory">*</span>
+					<span class="mandatory1">*</span>
 				</s:if></td>
 			<td class="bluebox"><s:select list="dropdownData.boundaryList"
 					listKey="id" listValue="name" headerKey="0"
@@ -256,19 +276,4 @@
 	</tr>
 </table>
 </div>
-<script>
-<s:if test="%{shouldShowHeaderField('scheme') and shouldShowHeaderField('subScheme')}">
-populateSubSchemes(document.getElementById('budgetDetail_scheme'))
-function preselectSubScheme(){
-	subSchemes =  document.getElementById('budgetDetail_subScheme');
-	selectedValue="<s:property value='subScheme.id'/>"
-	for(i=0;i<subSchemes.options.length;i++){
-	  if(subSchemes.options[i].value==selectedValue){
-		subSchemes.selectedIndex=i;
-		break;
-	  }
-	}
-	updateGrid('subScheme.id',document.getElementById('budgetDetail_subScheme').selectedIndex);
-}
-</s:if>
-</script>
+

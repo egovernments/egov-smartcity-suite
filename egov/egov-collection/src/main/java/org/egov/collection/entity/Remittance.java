@@ -68,6 +68,8 @@ public class Remittance extends StateAware implements Auditable {
     private EgwStatus status;
     private Set<RemittanceDetail> remittanceDetails = new LinkedHashSet<RemittanceDetail>(0);
     private Set<ReceiptHeader> collectionRemittance = new HashSet<ReceiptHeader>(0);
+    private Set<RemittanceInstrument> remittanceInstruments = new LinkedHashSet<RemittanceInstrument>(0);
+
     private Bankaccount bankAccount;
 
     @Override
@@ -171,6 +173,14 @@ public class Remittance extends StateAware implements Auditable {
 
     public void setBankAccount(Bankaccount bankAccount) {
         this.bankAccount = bankAccount;
+    }
+
+    public Set<RemittanceInstrument> getRemittanceInstruments() {
+        return remittanceInstruments;
+    }
+
+    public void setRemittanceInstruments(Set<RemittanceInstrument> remittanceInstruments) {
+        this.remittanceInstruments = remittanceInstruments;
     }
 
 

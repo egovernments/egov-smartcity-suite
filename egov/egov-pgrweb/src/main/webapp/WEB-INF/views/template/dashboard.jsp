@@ -56,7 +56,7 @@
 		<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
 		<title><tiles:insertAttribute name="title"/></title>
 		<meta name="viewport" content="width=device-width, initial-scale=1.0">
-       
+        <link rel="icon" href="<cdn:url value='/resources/global/images/favicon.png' context='/egi'/>" sizes="32x32">
         <link rel="stylesheet" href="<cdn:url value='/resources/global/css/bootstrap/bootstrap.css' context='/egi'/>">
         <link rel="stylesheet" href="<cdn:url value='/resources/css/global.css?rnd=${app_release_no}' context='/dashboard'/>">
         <link rel="stylesheet" href="<cdn:url value='/resources/css/jquery.loadmask.css' context='/dashboard'/>">
@@ -71,8 +71,8 @@
     	<!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
     	<!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
     	<!--[if lt IE 9]>
-		<script src="<cdn:url  value='/resources/global/js/ie8/html5shiv.min.js'/>"></script>
-		<script src="<cdn:url  value='/resources/global/js/ie8/respond.min.js'/>"></script>
+		<script src="<cdn:url  value='/resources/global/js/ie8/html5shiv.min.js' context='/egi'/>"></script>
+		<script src="<cdn:url  value='/resources/global/js/ie8/respond.min.js' context='/egi'/>"></script>
     	<![endif]-->    		
 		<script>
 			$(window).load(function() {
@@ -152,6 +152,8 @@
 	<script src="<cdn:url value='/resources/js/date.js' context='/dashboard'/>"></script>
 	<script src="<cdn:url value='/resources/js/jquery/plugins/jquery.loadmask.min.js' context='/dashboard'/>"></script>
 	<script src="<cdn:url value='/resources/js/jquery/plugins/jquery-ui/jquery-ui.min.js' context='/dashboard'/>"></script>
+	<link rel="stylesheet" href="<cdn:url value='/resources/global/css/jquery/plugins/datatables/jquery.dataTables.min.css' context='/egi'/>"/>
+	<link rel="stylesheet" href="<cdn:url value='/resources/global/css/jquery/plugins/datatables/dataTables.bootstrap.min.css' context='/egi'/>">
 	<script src="<cdn:url value='/resources/js/jquery/plugins/datatable/js/jquery.dataTables.min.js' context='/dashboard'/>"></script>
 	<script src="<cdn:url value='/resources/global/js/jquery/plugins/datatables/dataTables.bootstrap.js' context='/egi'/>"></script>
 	<script src="<cdn:url value='/resources/js/jquery/plugins/datatable/extensions/responsive/js/dataTables.responsive.min.js' context='/dashboard'/>"></script>

@@ -49,7 +49,6 @@ import org.egov.infra.admin.master.entity.Department;
 import org.egov.infra.reporting.engine.ReportConstants.FileFormat;
 import org.egov.infra.reporting.engine.ReportRequest.ReportDataSourceType;
 import org.egov.infra.web.struts.actions.ReportFormAction;
-import org.springframework.transaction.annotation.Transactional;
 
 /**
  * Action class for pending challans report action
@@ -80,12 +79,10 @@ public class PendingChallansReportAction extends ReportFormAction {
         setupDropdownDataExcluding();
 
         // Add dropdown data for challan services (serviceList)
-        addDropdownData(CollectionConstants.DROPDOWN_DATA_SERVICE_LIST,
-                collectionsUtil.getChallanServiceList());
+        addDropdownData(CollectionConstants.DROPDOWN_DATA_SERVICE_LIST, collectionsUtil.getChallanServiceList());
 
         // Set default values of criteria fields
-        final Department dept = collectionsUtil
-                .getDepartmentOfLoggedInUser();
+        final Department dept = collectionsUtil.getDepartmentOfLoggedInUser();
         if (dept != null)
             setReportParam(EGOV_DEPT_ID, dept.getId());
 
@@ -102,7 +99,8 @@ public class PendingChallansReportAction extends ReportFormAction {
     }
 
     /**
-     * @param collectionsUtil The collections util object
+     * @param collectionsUtil
+     *            The collections util object
      */
     public void setCollectionsUtil(final CollectionsUtil collectionsUtil) {
         this.collectionsUtil = collectionsUtil;
@@ -116,7 +114,8 @@ public class PendingChallansReportAction extends ReportFormAction {
     }
 
     /**
-     * @param deptId the department id to set
+     * @param deptId
+     *            the department id to set
      */
     public void setDeptId(final Integer deptId) {
         setReportParam(EGOV_DEPT_ID, deptId);
@@ -130,7 +129,8 @@ public class PendingChallansReportAction extends ReportFormAction {
     }
 
     /**
-     * @param fromDate the from date to set
+     * @param fromDate
+     *            the from date to set
      */
     public void setFromDate(final Date fromDate) {
         setReportParam(EGOV_FROM_DATE, fromDate);
@@ -144,7 +144,8 @@ public class PendingChallansReportAction extends ReportFormAction {
     }
 
     /**
-     * @param toDate the to date to set
+     * @param toDate
+     *            the to date to set
      */
     public void setToDate(final Date toDate) {
         setReportParam(EGOV_TO_DATE, toDate);
@@ -158,7 +159,8 @@ public class PendingChallansReportAction extends ReportFormAction {
     }
 
     /**
-     * @param challanServiceId The challan service id to set
+     * @param challanServiceId
+     *            The challan service id to set
      */
     public void setChallanServiceId(final Long challanServiceId) {
         setReportParam(EGOV_CHALLAN_SERVICE_ID, challanServiceId);

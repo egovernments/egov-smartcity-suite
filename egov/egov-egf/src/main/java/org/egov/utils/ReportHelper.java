@@ -170,7 +170,7 @@ public class ReportHelper {
             } catch (final IOException e) {
                 if (LOGGER.isDebugEnabled())
                     LOGGER.debug("Error" + e.getMessage());
-                e.printStackTrace();
+
             }
     }
 

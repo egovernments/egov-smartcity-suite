@@ -56,7 +56,7 @@ public class UnitOfMeasurementService{
     private UnitOfMeasurementRepository unitOfMeasurementRepository;
     
     @Transactional
-    public UnitOfMeasurement create(UnitOfMeasurement unitOfMeasurement){
+    public UnitOfMeasurement persistUnitOfMeasurement(UnitOfMeasurement unitOfMeasurement){
         return  unitOfMeasurementRepository.save(unitOfMeasurement);
     }
 

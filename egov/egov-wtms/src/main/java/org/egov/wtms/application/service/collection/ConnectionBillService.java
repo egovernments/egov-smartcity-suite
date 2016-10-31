@@ -77,7 +77,6 @@ import org.egov.wtms.application.service.ConnectionDemandService;
 import org.egov.wtms.application.service.WaterConnectionDetailsService;
 import org.egov.wtms.masters.entity.enums.ConnectionStatus;
 import org.egov.wtms.masters.entity.enums.ConnectionType;
-import org.egov.wtms.utils.WaterTaxUtils;
 import org.egov.wtms.utils.constants.WaterTaxConstants;
 import org.hibernate.Session;
 import org.joda.time.DateTime;
@@ -99,8 +98,6 @@ public class ConnectionBillService extends BillServiceInterface {
 
     @Autowired
     private ApplicationContext context;
-    @Autowired
-    private WaterTaxUtils waterTaxUtils;;
 
     @Autowired
     private ModuleService moduleService;
@@ -116,11 +113,9 @@ public class ConnectionBillService extends BillServiceInterface {
 
     @Autowired
     private FinancialYearDAO financialYearDAO;
-    
+
     @Autowired
     private PropertyTaxUtil propertyTaxUtil;
-    
-    
 
     public Session getCurrentSession() {
         return entityManager.unwrap(Session.class);
@@ -216,10 +211,10 @@ public class ConnectionBillService extends BillServiceInterface {
             final Map<String, Installment> currInstallments = new HashMap<String, Installment>();
             final Installment currFirstHalf = propertyTaxUtil.getInstallmentsForCurrYear(new Date())
                     .get(PropertyTaxConstants.CURRENTYEAR_FIRST_HALF);
-           final Installment currSecondHalf = propertyTaxUtil.getInstallmentsForCurrYear(new Date())
+            final Installment currSecondHalf = propertyTaxUtil.getInstallmentsForCurrYear(new Date())
                     .get(PropertyTaxConstants.CURRENTYEAR_SECOND_HALF);
             currInstallments.put(WaterTaxConstants.CURRENTYEAR_FIRST_HALF, currFirstHalf);
-                currInstallments.put(WaterTaxConstants.CURRENTYEAR_SECOND_HALF, currSecondHalf);
+            currInstallments.put(WaterTaxConstants.CURRENTYEAR_SECOND_HALF, currSecondHalf);
             final Date advanceStartDate = org.apache.commons.lang3.time.DateUtils
                     .addYears(currInstallments.get(WaterTaxConstants.CURRENTYEAR_FIRST_HALF).getFromDate(), 1);
 
@@ -320,7 +315,6 @@ public class ConnectionBillService extends BillServiceInterface {
 
     @Override
     public void cancelBill() {
-        // TODO Auto-generated method stub
 
     }
 

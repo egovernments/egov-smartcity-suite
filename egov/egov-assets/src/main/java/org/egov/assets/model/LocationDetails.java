@@ -67,7 +67,7 @@ public class LocationDetails extends AbstractAuditable {
 	
 	//Default constructor
 	public LocationDetails() {
-		// TODO Auto-generated constructor stub
+
 	}
 	
 	@Id
@@ -174,13 +174,13 @@ public class LocationDetails extends AbstractAuditable {
 
 	@Override
 	protected void setId(Long id) {
-		// TODO Auto-generated method stub
+
 		
 	}
 
 	@Override
 	public Long getId() {
-		// TODO Auto-generated method stub
+
 		return null;
 	}
 }

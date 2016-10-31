@@ -104,12 +104,31 @@
 						</div>
 					</div>
 				</div>
-				<div class="panel-heading custom_form_panel_heading">
+			</div>
+			<div class="panel panel-primary" data-collapsed="0">
+				<div class="panel-heading">
 					<div class="panel-title">
-						<strong><spring:message code="lbl.hdr.complaintInfo"/></strong>
+						<spring:message code="lbl.hdr.complaintInfo"/>
 					</div>
-				</div> 
-				<div class="panel-body custom-form">
+				</div>
+				<div class="panel-body custom-form ">
+					<c:if test="${not empty complaintTypes}">
+						<div class="form-group">
+							<label class="col-sm-3 control-label"><spring:message code="lbl.top.grievance.types" /></label>
+							<div class="col-sm-9 add-margin">
+								<c:forEach items="${complaintTypes}" var="complaintType">
+									<a onclick="setComplaintTypeId('${complaintType.id}','${complaintType.category.id}')" 
+									href="javascript:void(0)" class="btn btn-secondary btn-xs tag-element freq-ct" 
+									data-toggle="popover" title='<spring:message code="lbl.top.grievance.toggle"/>'>
+									<c:out value="${complaintType.name }" /> </a>
+								</c:forEach>
+							</div>
+						</div>
+						<div class="or-spacer">
+						  <div class="mask"></div>
+						  <span><i>OR</i></span>
+						</div>
+					</c:if>									
 					<div class="form-group">
 						<label class="col-sm-3 control-label">
 							<spring:message code="lbl.category" /><span class="mandatory"></span>
@@ -138,17 +157,21 @@
 								<form:options items="${complaint.complaintType.category.complaintTypes}" itemLabel="name" itemValue="id"/>
 							</form:select>
 							<form:errors path="complaintType" cssClass="add-margin error-msg" />
-							<c:forEach items="${complaintTypes}" var="complaintType">
-								<a onclick="setComplaintTypeId('${complaintType.id}','${complaintType.category.id}')" href="javascript:void(0)" class="btn btn-secondary btn-xs tag-element freq-ct">
-									<c:out value="${complaintType.name }" /> </a>
-							</c:forEach>
 						</div>
 					</div>
-					
+				</div>
+			</div>
+			<div class="panel panel-primary" data-collapsed="0">
+				<div class="panel-heading">
+					<div class="panel-title">
+						More Details
+					</div>
+				</div>
+				<div class="panel-body custom-form">
 					<div class="form-group">
 						<label class="col-sm-3 control-label"><spring:message code="lbl.compDetails"/> <span class="mandatory"></span></label>
 						<div class="col-sm-6">
-							<form:textarea path="details" id="doc" placeholder="" minlength="10" maxlength="500" cssClass="form-control autogrow" required="required"/>
+							<form:textarea path="details" id="doc" placeholder="Give more details about the complaint to help us solve your issue" minlength="10" maxlength="500" cssClass="form-control autogrow" required="required"/>
 							<div class="text-left"><small><spring:message code="lbl.comp.details"/></small></div>
 							<form:errors path="details" cssClass="add-margin error-msg"/>
 						</div>
@@ -257,3 +280,49 @@
 		enabledCRN();
 	}
 </script>
+<style>
+.or-spacer {
+  margin: 17px auto 12px auto;
+  width: 75%;
+  position: relative;
+}
+.or-spacer .mask {
+  overflow: hidden;
+  height: 20px;
+}
+.or-spacer .mask:after {
+  content: '';
+  display: block;
+  margin: -20px auto 0;
+  width: 100%;
+  height: 21px;
+  background: -moz-linear-gradient(left, rgba(255,0,0,0) 0%, rgba(255,0,0,0) 15%, rgba(60, 60, 60, 0.65) 50%, rgba(255,0,0,0) 85%, rgba(255,0,0,0) 100%); /* FF3.6+ */
+  background: -webkit-gradient(linear, left top, right top, color-stop(0%,rgba(255,0,0,0)), color-stop(15%,rgba(255,0,0,0)), color-stop(50%,rgba(60, 60, 60, 0.65)), color-stop(85%,rgba(255,0,0,0)), color-stop(100%,rgba(255,0,0,0))); /* Chrome,Safari4+ */
+  background: -webkit-linear-gradient(left, rgba(255,0,0,0) 0%,rgba(255,0,0,0) 15%,rgba(60, 60, 60, 0.65) 50%,rgba(255,0,0,0) 85%,rgba(255,0,0,0) 100%); /* Chrome10+,Safari5.1+ */
+  background: -o-linear-gradient(left, rgba(255,0,0,0) 0%,rgba(255,0,0,0) 15%,rgba(60, 60, 60, 0.65) 50%,rgba(255,0,0,0) 85%,rgba(255,0,0,0) 100%);
+}
+.or-spacer span {
+  width: 40px;
+  height: 40px;
+  position: absolute;
+  bottom: 100%;
+  margin-bottom: -21px;
+  left: 50%;
+  margin-left: -25px;
+  border-radius: 100%;
+  border:1px solid #999;
+  background: white;
+}
+.or-spacer span i {
+  position: absolute;
+  top: 4px;
+  bottom: 4px;
+  left: 4px;
+  right: 4px;
+  border-radius: 100%;
+  text-align: center;
+  line-height: 31px;
+  font-style: normal;
+  color: #999;
+}
+</style>
