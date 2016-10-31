@@ -49,5 +49,5 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface PropertyTaxIndexRepository extends ElasticsearchRepository<PropertyTaxIndex, String> {
 
-    Page<PropertyTaxIndex> findByConsumercode(String consumerCode, Pageable pageable);
+    Page<PropertyTaxIndex> findByConsumerCode(String consumerCode, Pageable pageable);
 }

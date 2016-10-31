@@ -50,61 +50,61 @@ import org.springframework.data.elasticsearch.annotations.FieldType;
 public class PropertyTaxIndex {
 
     @Id
-    private String consumercode;
+    private String consumerCode;
 
     @Field(type = FieldType.Double, index = FieldIndex.not_analyzed)
-    private Double builtuparea;
+    private Double builtupArea;
 
     @Field(type = FieldType.String, index = FieldIndex.not_analyzed)
-    private String citygrade;
+    private String cityGrade;
 
     @Field(type = FieldType.String, index = FieldIndex.not_analyzed)
-    private String cityname;
+    private String cityName;
 
     @Field(type = FieldType.String, index = FieldIndex.not_analyzed)
-    private String districtname;
+    private String districtName;
 
     @Field(type = FieldType.String, index = FieldIndex.not_analyzed)
-    private String ulbcode;
+    private String ulbCode;
 
     @Field(type = FieldType.String, index = FieldIndex.not_analyzed)
-    private String adminwardname;
+    private String adminWardName;
 
     @Field(type = FieldType.String, index = FieldIndex.not_analyzed)
-    private String propertytype;
+    private String propertyType;
 
     @Field(type = FieldType.String, index = FieldIndex.not_analyzed)
-    private String regionname;
+    private String regionName;
 
     @Field(type = FieldType.String, index = FieldIndex.not_analyzed)
-    private String revwardname;
+    private String revenueWard;
 
     @Field(type = FieldType.String, index = FieldIndex.not_analyzed)
-    private String revzonename;
+    private String revZoneName;
 
     @Field(type = FieldType.String, index = FieldIndex.not_analyzed)
-    private String revenueblock;
+    private String revenueBlock;
 
     @Field(type = FieldType.String, index = FieldIndex.not_analyzed)
-    private String sitalarea;
+    private String sitalArea;
 
     @Field(type = FieldType.String, index = FieldIndex.not_analyzed)
-    private String propertyusage;
+    private String propertyUsage;
 
     @Field(type = FieldType.String, index = FieldIndex.not_analyzed)
-    private String propertycategory;
+    private String propertyCategory;
 
     @Field(type = FieldType.String, index = FieldIndex.not_analyzed)
-    private String locationname;
+    private String locationName;
 
     @Field(type = FieldType.String, index = FieldIndex.not_analyzed)
-    private String aadhaarnumber;
+    private String aadhaarNumber;
 
     @Field(type = FieldType.String, index = FieldIndex.not_analyzed)
-    private String mobilenumber;
+    private String mobileNumber;
 
     @Field(type = FieldType.String, index = FieldIndex.not_analyzed)
-    private String ptassesmentno;
+    private String ptAssesmentNo;
 
     /*
      * @GeoPointField private GeoPoint propertygeo;
@@ -112,414 +112,407 @@ public class PropertyTaxIndex {
      */
 
     @Field(type = FieldType.String, index = FieldIndex.not_analyzed)
-    private String propertyaddress;
+    private String propertyAddress;
 
     @Field(type = FieldType.String)
-    private String billcollector;
+    private String billCollector;
 
     @Field(type = FieldType.Double)
-    private Double annualcollection;
+    private Double annualCollection;
 
     @Field(type = FieldType.Double)
-    private Double annualdemand;
+    private Double annualDemand;
 
     @Field(type = FieldType.Double)
-    private Double arrearbalance;
+    private Double arrearBalance;
 
     @Field(type = FieldType.Double)
-    private Double arrearcollection;
+    private Double arrearCollection;
 
     @Field(type = FieldType.Double)
-    private Double arreardemand;
+    private Double arrearDemand;
 
     @Field(type = FieldType.Double)
-    private Double arvamount;
+    private Double arvAmount;
 
     @Field(type = FieldType.Double)
-    private Double firstinstallmentdemand;
+    private Double firstInstallmentDemand;
 
     @Field(type = FieldType.Double)
-    private Double firstinstallmentcollection;
+    private Double firstInstallmentCollection;
 
     @Field(type = FieldType.Double)
-    private Double secondinstallmentdemand;
+    private Double secondInstallmentDemand;
 
     @Field(type = FieldType.Double)
-    private Double secondinstallmentcollection;
+    private Double secondInstallmentCollection;
 
     @Field(type = FieldType.String, index = FieldIndex.not_analyzed)
-    private String consumername;
+    private String consumerName;
 
     @Field(type = FieldType.Double)
-    private Double totalbalance;
+    private Double totalBalance;
 
     @Field(type = FieldType.Double)
-    private Double annualbalance;
+    private Double annualBalance;
 
     @Field(type = FieldType.Double)
-    private Double totaldemand;
+    private Double totalDemand;
 
     @Field(type = FieldType.Double)
-    private Double arrearinterestdemand;
+    private Double arrearInterestDemand;
 
     @Field(type = FieldType.Double)
-    private Double arrearinterestcollection;
+    private Double arrearInterestCollection;
 
     @Field(type = FieldType.Double)
-    private Double currentinterestdemand;
-
+    private Double currentInterestDemand;
+ 
     @Field(type = FieldType.Double)
-    private Double currentinterestcollection;
+    private Double currentInterestCollection;
 
     @Field(type = FieldType.Double)
     private Double currentyearcoll;
     
     @Field(type = FieldType.Boolean)
-    private Boolean isactive;
+    private Boolean isActive;
     
     @Field(type = FieldType.Boolean)
-    private Boolean isundercourtcase;
-
-    public Double getBuiltuparea() {
-        return builtuparea;
-    }
-
-    public void setBuiltuparea(Double builtuparea) {
-        this.builtuparea = builtuparea;
-    }
-
-    public String getCitygrade() {
-        return citygrade;
-    }
-
-    public void setCitygrade(String citygrade) {
-        this.citygrade = citygrade;
-    }
-
-    public String getCityname() {
-        return cityname;
-    }
-
-    public void setCityname(String cityname) {
-        this.cityname = cityname;
-    }
-
-    public String getDistrictname() {
-        return districtname;
-    }
-
-    public void setDistrictname(String districtname) {
-        this.districtname = districtname;
-    }
-
-    public String getUlbcode() {
-        return ulbcode;
-    }
-
-    public void setUlbcode(String ulbcode) {
-        this.ulbcode = ulbcode;
-    }
-
-    public String getAdminwardname() {
-        return adminwardname;
-    }
-
-    public void setAdminwardname(String adminwardname) {
-        this.adminwardname = adminwardname;
-    }
-
-    public String getPropertytype() {
-        return propertytype;
-    }
-
-    public void setPropertytype(String propertytype) {
-        this.propertytype = propertytype;
-    }
-
-    public String getRegionname() {
-        return regionname;
-    }
-
-    public void setRegionname(String regionname) {
-        this.regionname = regionname;
-    }
-
-    public String getRevwardname() {
-        return revwardname;
-    }
-
-    public void setRevwardname(String revwardname) {
-        this.revwardname = revwardname;
-    }
-
-    public String getRevzonename() {
-        return revzonename;
-    }
-
-    public void setRevzonename(String revzonename) {
-        this.revzonename = revzonename;
-    }
-
-    public String getRevenueblock() {
-        return revenueblock;
-    }
-
-    public void setRevenueblock(String revenueblock) {
-        this.revenueblock = revenueblock;
-    }
-
-    public String getSitalarea() {
-        return sitalarea;
-    }
-
-    public void setSitalarea(String sitalarea) {
-        this.sitalarea = sitalarea;
-    }
-
-    public String getPropertyusage() {
-        return propertyusage;
-    }
-
-    public void setPropertyusage(String propertyusage) {
-        this.propertyusage = propertyusage;
-    }
-
-    public String getPropertycategory() {
-        return propertycategory;
-    }
-
-    public void setPropertycategory(String propertycategory) {
-        this.propertycategory = propertycategory;
-    }
-
-    public String getLocationname() {
-        return locationname;
-    }
-
-    public void setLocationname(String locationname) {
-        this.locationname = locationname;
-    }
-
-    public String getAadhaarnumber() {
-        return aadhaarnumber;
-    }
-
-    public void setAadhaarnumber(String aadhaarnumber) {
-        this.aadhaarnumber = aadhaarnumber;
-    }
-
-    public String getConsumercode() {
-        return consumercode;
-    }
-
-    public void setConsumercode(String consumercode) {
-        this.consumercode = consumercode;
-    }
-
-    public String getMobilenumber() {
-        return mobilenumber;
-    }
-
-    public void setMobilenumber(String mobilenumber) {
-        this.mobilenumber = mobilenumber;
-    }
-
-    public String getPtassesmentno() {
-        return ptassesmentno;
-    }
-
-    public void setPtassesmentno(String ptassesmentno) {
-        this.ptassesmentno = ptassesmentno;
-    }
-
-    /*
-     * public GeoPoint getPropertygeo() { return propertygeo; } public void
-     * setPropertygeo(GeoPoint propertygeo) { this.propertygeo = propertygeo; }
-     * public GeoPoint getBoundarygeo() { return boundarygeo; } public void
-     * setBoundarygeo(GeoPoint boundarygeo) { this.boundarygeo = boundarygeo; }
-     */
-
-    public String getPropertyaddress() {
-        return propertyaddress;
-    }
-
-    public void setPropertyaddress(String propertyaddress) {
-        this.propertyaddress = propertyaddress;
-    }
-
-    public String getBillcollector() {
-        return billcollector;
-    }
-
-    public void setBillcollector(String billcollector) {
-        this.billcollector = billcollector;
-    }
-
-    public Double getAnnualcollection() {
-        return annualcollection;
-    }
-
-    public void setAnnualcollection(Double annualcollection) {
-        this.annualcollection = annualcollection;
-    }
-
-    public Double getAnnualdemand() {
-        return annualdemand;
-    }
-
-    public void setAnnualdemand(Double annualdemand) {
-        this.annualdemand = annualdemand;
-    }
-
-    public Double getArrearbalance() {
-        return arrearbalance;
-    }
-
-    public void setArrearbalance(Double arrearbalance) {
-        this.arrearbalance = arrearbalance;
-    }
-
-    public Double getArrearcollection() {
-        return arrearcollection;
-    }
-
-    public void setArrearcollection(Double arrearcollection) {
-        this.arrearcollection = arrearcollection;
-    }
-
-    public Double getArreardemand() {
-        return arreardemand;
-    }
-
-    public void setArreardemand(Double arreardemand) {
-        this.arreardemand = arreardemand;
-    }
-
-    public Double getArvamount() {
-        return arvamount;
-    }
-
-    public void setArvamount(Double arvamount) {
-        this.arvamount = arvamount;
-    }
-
-    public Double getFirstinstallmentdemand() {
-        return firstinstallmentdemand;
-    }
-
-    public void setFirstinstallmentdemand(Double firstinstallmentdemand) {
-        this.firstinstallmentdemand = firstinstallmentdemand;
-    }
-
-    public Double getFirstinstallmentcollection() {
-        return firstinstallmentcollection;
-    }
-
-    public void setFirstinstallmentcollection(Double firstinstallmentcollection) {
-        this.firstinstallmentcollection = firstinstallmentcollection;
-    }
-
-    public Double getSecondinstallmentdemand() {
-        return secondinstallmentdemand;
-    }
-
-    public void setSecondinstallmentdemand(Double secondinstallmentdemand) {
-        this.secondinstallmentdemand = secondinstallmentdemand;
-    }
-
-    public Double getSecondinstallmentcollection() {
-        return secondinstallmentcollection;
-    }
-
-    public void setSecondinstallmentcollection(Double secondinstallmentcollection) {
-        this.secondinstallmentcollection = secondinstallmentcollection;
-    }
-
-    public String getConsumername() {
-        return consumername;
-    }
-
-    public void setConsumername(String consumername) {
-        this.consumername = consumername;
-    }
-
-    public Double getTotalbalance() {
-        return totalbalance;
-    }
-
-    public void setTotalbalance(Double totalbalance) {
-        this.totalbalance = totalbalance;
-    }
-
-    public Double getAnnualbalance() {
-        return annualbalance;
-    }
-
-    public void setAnnualbalance(Double annualbalance) {
-        this.annualbalance = annualbalance;
-    }
-
-    public Double getTotaldemand() {
-        return totaldemand;
-    }
-
-    public void setTotaldemand(Double totaldemand) {
-        this.totaldemand = totaldemand;
-    }
-
-    public Double getArrearinterestdemand() {
-        return arrearinterestdemand;
-    }
-
-    public void setArrearinterestdemand(Double arrearinterestdemand) {
-        this.arrearinterestdemand = arrearinterestdemand;
-    }
-
-    public Double getArrearinterestcollection() {
-        return arrearinterestcollection;
-    }
-
-    public void setArrearinterestcollection(Double arrearinterestcollection) {
-        this.arrearinterestcollection = arrearinterestcollection;
-    }
-
-    public Double getCurrentinterestdemand() {
-        return currentinterestdemand;
-    }
-
-    public void setCurrentinterestdemand(Double currentinterestdemand) {
-        this.currentinterestdemand = currentinterestdemand;
-    }
-
-    public Double getCurrentinterestcollection() {
-        return currentinterestcollection;
-    }
-
-    public void setCurrentinterestcollection(Double currentinterestcollection) {
-        this.currentinterestcollection = currentinterestcollection;
-    }
-
-    public Double getCurrentyearcoll() {
-        return currentyearcoll;
-    }
-
-    public void setCurrentyearcoll(Double currentyearcoll) {
-        this.currentyearcoll = currentyearcoll;
-    }
-    
-        public Boolean getIsactive() {
-        return isactive;
-    }
-
-    public void setIsactive(Boolean isactive) {
-        this.isactive = isactive;
-    }
-
-    public Boolean getIsundercourtcase() {
-        return isundercourtcase;
-    }
-
-    public void setIsundercourtcase(Boolean isundercourtcase) {
-        this.isundercourtcase = isundercourtcase;
-    }
+    private Boolean isUnderCourtcase;
+
+	public String getConsumerCode() {
+		return consumerCode;
+	}
+
+	public void setConsumerCode(String consumerCode) {
+		this.consumerCode = consumerCode;
+	}
+
+	public Double getBuiltupArea() {
+		return builtupArea;
+	}
+
+	public void setBuiltupArea(Double builtupArea) {
+		this.builtupArea = builtupArea;
+	}
+
+	public String getCityGrade() {
+		return cityGrade;
+	}
+
+	public void setCityGrade(String cityGrade) {
+		this.cityGrade = cityGrade;
+	}
+
+	public String getCityName() {
+		return cityName;
+	}
+
+	public void setCityName(String cityName) {
+		this.cityName = cityName;
+	}
+
+	public String getDistrictName() {
+		return districtName;
+	}
+
+	public void setDistrictName(String districtName) {
+		this.districtName = districtName;
+	}
+
+	public String getUlbCode() {
+		return ulbCode;
+	}
+
+	public void setUlbCode(String ulbCode) {
+		this.ulbCode = ulbCode;
+	}
+
+	public String getAdminWardName() {
+		return adminWardName;
+	}
+
+	public void setAdminWardName(String adminWardName) {
+		this.adminWardName = adminWardName;
+	}
+
+	public String getPropertyType() {
+		return propertyType;
+	}
+
+	public void setPropertyType(String propertyType) {
+		this.propertyType = propertyType;
+	}
+
+	public String getRegionName() {
+		return regionName;
+	}
+
+	public void setRegionName(String regionName) {
+		this.regionName = regionName;
+	}
+
+	public String getRevenueWard() {
+		return revenueWard;
+	}
+
+	public void setRevenueWard(String revenueWard) {
+		this.revenueWard = revenueWard;
+	}
+
+	public String getRevZoneName() {
+		return revZoneName;
+	}
+
+	public void setRevZoneName(String revZoneName) {
+		this.revZoneName = revZoneName;
+	}
+
+	public String getRevenueBlock() {
+		return revenueBlock;
+	}
+
+	public void setRevenueBlock(String revenueBlock) {
+		this.revenueBlock = revenueBlock;
+	}
+
+	public String getSitalArea() {
+		return sitalArea;
+	}
+
+	public void setSitalArea(String sitalArea) {
+		this.sitalArea = sitalArea;
+	}
+
+	public String getPropertyUsage() {
+		return propertyUsage;
+	}
+
+	public void setPropertyUsage(String propertyUsage) {
+		this.propertyUsage = propertyUsage;
+	}
+
+	public String getPropertyCategory() {
+		return propertyCategory;
+	}
+
+	public void setPropertyCategory(String propertyCategory) {
+		this.propertyCategory = propertyCategory;
+	}
+
+	public String getLocationName() {
+		return locationName;
+	}
+
+	public void setLocationName(String locationName) {
+		this.locationName = locationName;
+	}
+
+	public String getAadhaarNumber() {
+		return aadhaarNumber;
+	}
+
+	public void setAadhaarNumber(String aadhaarNumber) {
+		this.aadhaarNumber = aadhaarNumber;
+	}
+
+	public String getMobileNumber() {
+		return mobileNumber;
+	}
+
+	public void setMobileNumber(String mobileNumber) {
+		this.mobileNumber = mobileNumber;
+	}
+
+	public String getPtAssesmentNo() {
+		return ptAssesmentNo;
+	}
+
+	public void setPtAssesmentNo(String ptAssesmentNo) {
+		this.ptAssesmentNo = ptAssesmentNo;
+	}
+
+	public String getPropertyAddress() {
+		return propertyAddress;
+	}
+
+	public void setPropertyAddress(String propertyAddress) {
+		this.propertyAddress = propertyAddress;
+	}
+
+	public String getBillCollector() {
+		return billCollector;
+	}
+
+	public void setBillCollector(String billCollector) {
+		this.billCollector = billCollector;
+	}
+
+	public Double getAnnualCollection() {
+		return annualCollection;
+	}
+
+	public void setAnnualCollection(Double annualCollection) {
+		this.annualCollection = annualCollection;
+	}
+
+	public Double getAnnualDemand() {
+		return annualDemand;
+	}
+
+	public void setAnnualDemand(Double annualDemand) {
+		this.annualDemand = annualDemand;
+	}
+
+	public Double getArrearBalance() {
+		return arrearBalance;
+	}
+
+	public void setArrearBalance(Double arrearBalance) {
+		this.arrearBalance = arrearBalance;
+	}
+
+	public Double getArrearCollection() {
+		return arrearCollection;
+	}
+
+	public void setArrearCollection(Double arrearCollection) {
+		this.arrearCollection = arrearCollection;
+	}
+
+	public Double getArrearDemand() {
+		return arrearDemand;
+	}
+
+	public void setArrearDemand(Double arrearDemand) {
+		this.arrearDemand = arrearDemand;
+	}
+
+	public Double getArvAmount() {
+		return arvAmount;
+	}
+
+	public void setArvAmount(Double arvAmount) {
+		this.arvAmount = arvAmount;
+	}
+
+	public Double getFirstInstallmentDemand() {
+		return firstInstallmentDemand;
+	}
+
+	public void setFirstInstallmentDemand(Double firstInstallmentDemand) {
+		this.firstInstallmentDemand = firstInstallmentDemand;
+	}
+
+	public Double getFirstInstallmentCollection() {
+		return firstInstallmentCollection;
+	}
+
+	public void setFirstInstallmentCollection(Double firstInstallmentCollection) {
+		this.firstInstallmentCollection = firstInstallmentCollection;
+	}
+
+	public Double getSecondInstallmentDemand() {
+		return secondInstallmentDemand;
+	}
+
+	public void setSecondInstallmentDemand(Double secondInstallmentDemand) {
+		this.secondInstallmentDemand = secondInstallmentDemand;
+	}
+
+	public Double getSecondInstallmentCollection() {
+		return secondInstallmentCollection;
+	}
+
+	public void setSecondInstallmentCollection(Double secondInstallmentCollection) {
+		this.secondInstallmentCollection = secondInstallmentCollection;
+	}
+
+	public String getConsumerName() {
+		return consumerName;
+	}
+
+	public void setConsumerName(String consumerName) {
+		this.consumerName = consumerName;
+	}
+
+	public Double getTotalBalance() {
+		return totalBalance;
+	}
+
+	public void setTotalBalance(Double totalBalance) {
+		this.totalBalance = totalBalance;
+	}
+
+	public Double getAnnualBalance() {
+		return annualBalance;
+	}
+
+	public void setAnnualBalance(Double annualBalance) {
+		this.annualBalance = annualBalance;
+	}
+
+	public Double getTotalDemand() {
+		return totalDemand;
+	}
+
+	public void setTotalDemand(Double totalDemand) {
+		this.totalDemand = totalDemand;
+	}
+
+	public Double getArrearInterestDemand() {
+		return arrearInterestDemand;
+	}
+
+	public void setArrearInterestDemand(Double arrearInterestDemand) {
+		this.arrearInterestDemand = arrearInterestDemand;
+	}
+
+	public Double getArrearInterestCollection() {
+		return arrearInterestCollection;
+	}
+
+	public void setArrearInterestCollection(Double arrearInterestCollection) {
+		this.arrearInterestCollection = arrearInterestCollection;
+	}
+
+	public Double getCurrentInterestDemand() {
+		return currentInterestDemand;
+	}
+
+	public void setCurrentInterestDemand(Double currentInterestDemand) {
+		this.currentInterestDemand = currentInterestDemand;
+	}
+
+	public Double getCurrentInterestCollection() {
+		return currentInterestCollection;
+	}
+
+	public void setCurrentInterestCollection(Double currentInterestCollection) {
+		this.currentInterestCollection = currentInterestCollection;
+	}
+
+	public Double getCurrentyearcoll() {
+		return currentyearcoll;
+	}
+
+	public void setCurrentyearcoll(Double currentyearcoll) {
+		this.currentyearcoll = currentyearcoll;
+	}
+
+	public Boolean getIsActive() {
+		return isActive;
+	}
+
+	public void setIsActive(Boolean isActive) {
+		this.isActive = isActive;
+	}
+
+	public Boolean getIsUnderCourtcase() {
+		return isUnderCourtcase;
+	}
+
+	public void setIsUnderCourtcase(Boolean isUnderCourtcase) {
+		this.isUnderCourtcase = isUnderCourtcase;
+	}
 }
