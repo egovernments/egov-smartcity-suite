@@ -41,6 +41,10 @@ cluster.name: elasticsearch-<username> ## Your local elasticsearch clustername, 
 transport.tcp.port: 9300 ## This is the default port
 
 ```
+NB: `<username>` user name of the loggedin system, enter the below command in terminal to find the username.
+```bash 
+$ id -un
+```
 
 #### Building Source
 1. Clone the eGov repository (development is done on the `develop` branch.
@@ -169,6 +173,8 @@ $ ./deploy.sh
    $ nohup ./standalone.sh -Dspring.profiles.active=production -b 0.0.0.0 &
 
   ```
+  In Mac OS, it may also required to specify `-Djboss.modules.system.pkgs=org.jboss.byteman`
+  
   `-b 0.0.0.0` only required if application accessed using IP address or  domain name.
 
 6. Monitor the logs and in case of successful deployment, just hit `http://localhost:<YOUR_HTTP_PORT>/egi` in your favorite browser.
