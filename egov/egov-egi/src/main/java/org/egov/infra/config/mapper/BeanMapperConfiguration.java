@@ -68,14 +68,14 @@ public class BeanMapperConfiguration extends ConfigurableMapper {
         registerBeanMappers();
     }
 
-    public void addMapper(Mapper<?, ?> mapper) {
+    private void addMapper(Mapper<?, ?> mapper) {
         factory.classMap(mapper.getAType(), mapper.getBType())
                 .byDefault()
                 .customize((Mapper) mapper)
                 .register();
     }
 
-    public void addConverter(Converter<?, ?> converter) {
+    private void addConverter(Converter<?, ?> converter) {
         factory.getConverterFactory().registerConverter(converter);
     }
 

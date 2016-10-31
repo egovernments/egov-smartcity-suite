@@ -63,14 +63,8 @@ public class ApplicationDocumentService {
     }
 
     @Transactional
-    public ApplicationDocument createApplicationDocument(ApplicationIndex applicationIndex) {
+    public ApplicationDocument createOrUpdateApplicationDocument(ApplicationIndex applicationIndex) {
         ApplicationDocument applicationDocument = beanMapperConfiguration.map(applicationIndex, ApplicationDocument.class);
-        return applicationDocumentRepository.save(applicationDocument);
-    }
-
-    @Transactional
-    public ApplicationDocument updateApplicationDocument(ApplicationIndex applicationIndex, ApplicationDocument applicationDocument) {
-        beanMapperConfiguration.map(applicationIndex, applicationDocument);
         return applicationDocumentRepository.save(applicationDocument);
     }
 }

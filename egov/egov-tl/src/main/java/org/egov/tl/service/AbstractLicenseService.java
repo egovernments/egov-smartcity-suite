@@ -195,9 +195,8 @@ public abstract class AbstractLicenseService<T extends License> {
         processAndStoreDocument(license.getDocuments(), license);
         transitionWorkFlow(license, workflowBean);
         licenseRepository.save(license);
-        sendEmailAndSMS(license, workflowBean.getWorkFlowAction());
         licenseApplicationIndexService.createOrUpdateLicenseApplicationIndex(license);
-
+        sendEmailAndSMS(license, workflowBean.getWorkFlowAction());
     }
 
     private BigDecimal raiseNewDemand(final T license) {
