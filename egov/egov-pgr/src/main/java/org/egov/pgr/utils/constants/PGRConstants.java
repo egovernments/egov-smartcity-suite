@@ -48,4 +48,10 @@ public class PGRConstants {
     public static final String GRO_ROLE_NAME = "Grievance Routing Officer";
     public static final String PGR_INDEX_NAME = "complaint";
     public static final String PGR_INDEX_DATE_FORMAT = "yyyy-MM-dd";
+    public static final String DASHBOARD_GROUPING_WARDWISE = "ward";
+    public static final String DASHBOARD_GROUPING_DEPARTMENTWISE = "department";
+    public static final String DASHBOARD_GROUPING_REGION = "region";
+    public static final String DASHBOARD_GROUPING_ULBGRADE = "ulbGrade";
+    public static final String DASHBOARD_GROUPING_DISTRICT = "district";
+    public static final String DASHBOARD_GROUPING_CITY = "ulb";
 }

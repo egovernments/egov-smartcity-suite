@@ -40,6 +40,12 @@
 
 package org.egov.pgr.repository.es.util;
 
+import static org.egov.pgr.utils.constants.PGRConstants.DASHBOARD_GROUPING_DISTRICT;
+import static org.egov.pgr.utils.constants.PGRConstants.DASHBOARD_GROUPING_REGION;
+import static org.egov.pgr.utils.constants.PGRConstants.DASHBOARD_GROUPING_ULBGRADE;
+import static org.egov.pgr.utils.constants.PGRConstants.DASHBOARD_GROUPING_WARDWISE;
+import static org.egov.pgr.utils.constants.PGRConstants.DASHBOARD_GROUPING_CITY;
+
 import org.apache.commons.lang3.StringUtils;
 import org.egov.pgr.entity.es.ComplaintDashBoardRequest;
 import org.elasticsearch.index.query.QueryBuilders;
@@ -65,6 +71,7 @@ public class ComplaintElasticsearchUtils {
 			  order = false;
 			aggregation.order(Terms.Order.aggregation("_count", order));
 		}
+		
 		return aggregation;
 	}
 	
@@ -97,13 +104,32 @@ public class ComplaintElasticsearchUtils {
 	
 	public static String getAggregationGroupingField(ComplaintDashBoardRequest complaintDashBoardRequest){
 		String aggregationField = "cityDistrictCode";
-        if (StringUtils.isNotBlank(complaintDashBoardRequest.getDistrictName()))
+		
+		if(StringUtils.isNotBlank(complaintDashBoardRequest.getType())){
+			if(complaintDashBoardRequest.getType().equalsIgnoreCase(DASHBOARD_GROUPING_REGION))
+					aggregationField = "cityRegionName";
+			if(complaintDashBoardRequest.getType().equalsIgnoreCase(DASHBOARD_GROUPING_DISTRICT))
+				aggregationField = "cityDistrictCode";
+			if(complaintDashBoardRequest.getType().equalsIgnoreCase(DASHBOARD_GROUPING_ULBGRADE))
+				aggregationField = "cityGrade";
+			if(complaintDashBoardRequest.getType().equalsIgnoreCase(DASHBOARD_GROUPING_CITY))
+				aggregationField = "cityCode";
+			return aggregationField;
+		}
+		
+        if (StringUtils.isNotBlank(complaintDashBoardRequest.getDistrictName()) 
+        		|| StringUtils.isNotBlank(complaintDashBoardRequest.getUlbGrade()))
         	aggregationField = "cityCode";
-        if(StringUtils.isNotBlank(complaintDashBoardRequest.getUlbCode()))
-        	aggregationField = "wardName";
+        if(StringUtils.isNotBlank(complaintDashBoardRequest.getUlbCode())){
+        	aggregationField = "departmentName";
+        	if(StringUtils.isNotBlank(complaintDashBoardRequest.getType())){
+        		if(complaintDashBoardRequest.getType().equalsIgnoreCase(DASHBOARD_GROUPING_WARDWISE))
+        			aggregationField = "wardName";
+        	}
+        }
         if (StringUtils.isNotBlank(complaintDashBoardRequest.getUlbCode()) &&
         		StringUtils.isNotBlank(complaintDashBoardRequest.getWardNo()))
-        	aggregationField = "currentFunctionaryName";
+        	aggregationField = "localityName";
         if (StringUtils.isNotBlank(complaintDashBoardRequest.getUlbCode()) &&
         		StringUtils.isNotBlank(complaintDashBoardRequest.getDepartmentCode()))
         	aggregationField = "currentFunctionaryName";

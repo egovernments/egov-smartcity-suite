@@ -43,6 +43,8 @@ package org.egov.pgr.entity.es;
 
 public class ComplaintDashBoardRequest {
 	
+	String regionName;
+	String ulbGrade;
 	String districtName;
 	String ulbCode;
 	String wardNo;
@@ -53,6 +55,7 @@ public class ComplaintDashBoardRequest {
 	String sortField;
 	String sortDirection;
 	int size;
+	String type;
 	
 	public String getDistrictName() {
 		return districtName;
@@ -118,5 +121,23 @@ public class ComplaintDashBoardRequest {
 	}
 	public void setSize(int size) {
 		this.size = size;
+	}
+	public String getRegionName() {
+		return regionName;
+	}
+	public void setRegionName(String regionName) {
+		this.regionName = regionName;
+	}
+	public String getUlbGrade() {
+		return ulbGrade;
+	}
+	public void setUlbGrade(String ulbGrade) {
+		this.ulbGrade = ulbGrade;
+	}
+	public String getType() {
+		return type;
+	}
+	public void setType(String type) {
+		this.type = type;
 	}
 }

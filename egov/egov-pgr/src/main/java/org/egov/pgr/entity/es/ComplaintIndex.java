@@ -11,6 +11,9 @@ import org.springframework.data.elasticsearch.annotations.FieldIndex;
 import org.springframework.data.elasticsearch.annotations.FieldType;
 import org.springframework.data.elasticsearch.annotations.GeoPointField;
 
+import static org.egov.infra.utils.ApplicationConstant.ES_DATE_FORMAT;
+
+
 import com.fasterxml.jackson.annotation.JsonFormat;
 
 @Document(indexName = "complaint", type = "complaint")
@@ -22,12 +25,12 @@ public class ComplaintIndex {
 	@Field(type = FieldType.String, index = FieldIndex.not_analyzed)
 	private String crn;
 	
-	@JsonFormat (shape = JsonFormat.Shape.STRING, pattern ="yyyy-MM-dd HH:mm")
-	@Field(type = FieldType.Date, index = FieldIndex.not_analyzed, format = DateFormat.date_optional_time, pattern = "yyyy-MM-dd HH:mm")
+	@JsonFormat (shape = JsonFormat.Shape.STRING, pattern =ES_DATE_FORMAT)
+	@Field(type = FieldType.Date, index = FieldIndex.not_analyzed, format = DateFormat.date_optional_time, pattern = ES_DATE_FORMAT)
 	private Date createdDate;
 	
-	@JsonFormat (shape = JsonFormat.Shape.STRING, pattern ="yyyy-MM-dd HH:mm")
-	@Field(type = FieldType.Date, index = FieldIndex.not_analyzed, format = DateFormat.date_optional_time, pattern = "yyyy-MM-dd HH:mm")
+	@JsonFormat (shape = JsonFormat.Shape.STRING, pattern =ES_DATE_FORMAT)
+	@Field(type = FieldType.Date, index = FieldIndex.not_analyzed, format = DateFormat.date_optional_time, pattern = ES_DATE_FORMAT)
 	private Date escalationDate;
 	
 	@Field(type = FieldType.String, index = FieldIndex.not_analyzed )
@@ -46,6 +49,9 @@ public class ComplaintIndex {
 	private String complaintTypeName;
 	
 	@Field(type = FieldType.String, index = FieldIndex.not_analyzed)
+	private String complaintTypeCode;
+	
+	@Field(type = FieldType.String, index = FieldIndex.not_analyzed)
 	private String assigneeName;
 	
 	@Field(type = FieldType.String, index = FieldIndex.not_analyzed)
@@ -61,6 +67,9 @@ public class ComplaintIndex {
 	private String departmentName;
 	
 	@Field(type = FieldType.String, index = FieldIndex.not_analyzed)
+	private String departmentCode;
+	
+	@Field(type = FieldType.String, index = FieldIndex.not_analyzed)
 	private String wardName;
 	
 	@Field(type = FieldType.String, index = FieldIndex.not_analyzed)
@@ -72,11 +81,20 @@ public class ComplaintIndex {
 	@Field(type = FieldType.String, index = FieldIndex.not_analyzed)
 	private String localityName;
 	
+	@Field(type = FieldType.String, index = FieldIndex.not_analyzed)
+	private String localityNo;
+	
 	@GeoPointField
 	private GeoPointField  localityGeo;
 	
 	@GeoPointField
 	private GeoPoint complaintGeo;
+	
+	@Field(type = FieldType.Double)
+	private double satisfactionIndex;
+	
+	@Field(type = FieldType.Long)
+	private long complaintAgeingdaysFromDue;
 	
 	//ComplaintIndex additional fields
 	@Field(type = FieldType.String, index = FieldIndex.not_analyzed)
@@ -136,8 +154,8 @@ public class ComplaintIndex {
 	@Field(type = FieldType.String, index = FieldIndex.not_analyzed)
 	private String currentFunctionaryName;
 	
-	@JsonFormat (shape = JsonFormat.Shape.STRING, pattern ="yyyy-MM-dd HH:mm")
-	@Field(type = FieldType.Date, index = FieldIndex.not_analyzed, format = DateFormat.date_optional_time, pattern = "yyyy-MM-dd HH:mm")
+	@JsonFormat (shape = JsonFormat.Shape.STRING, pattern =ES_DATE_FORMAT)
+	@Field(type = FieldType.Date, index = FieldIndex.not_analyzed, format = DateFormat.date_optional_time, pattern = ES_DATE_FORMAT)
 	private Date currentFunctionaryAssigneddate;
 	
 	@Field(type = FieldType.Long)
@@ -158,8 +176,8 @@ public class ComplaintIndex {
 	@Field(type = FieldType.String, index = FieldIndex.not_analyzed)
 	private String initialFunctionaryName;
 	
-	@JsonFormat (shape = JsonFormat.Shape.STRING, pattern ="yyyy-MM-dd HH:mm")
-	@Field(type = FieldType.Date, index = FieldIndex.not_analyzed, format = DateFormat.date_optional_time, pattern = "yyyy-MM-dd HH:mm")
+	@JsonFormat (shape = JsonFormat.Shape.STRING, pattern =ES_DATE_FORMAT)
+	@Field(type = FieldType.Date, index = FieldIndex.not_analyzed, format = DateFormat.date_optional_time, pattern = ES_DATE_FORMAT)
 	private Date initialFunctionaryAssigneddate;
 	
 	@Field(type = FieldType.Long)
@@ -177,8 +195,8 @@ public class ComplaintIndex {
 	@Field(type = FieldType.String, index = FieldIndex.not_analyzed)
 	private String escalation1FunctionaryName;
 	
-	@JsonFormat (shape = JsonFormat.Shape.STRING, pattern ="yyyy-MM-dd HH:mm")
-	@Field(type = FieldType.Date, index = FieldIndex.not_analyzed, format = DateFormat.date_optional_time, pattern = "yyyy-MM-dd HH:mm")
+	@JsonFormat (shape = JsonFormat.Shape.STRING, pattern = ES_DATE_FORMAT)
+	@Field(type = FieldType.Date, index = FieldIndex.not_analyzed, format = DateFormat.date_optional_time, pattern = ES_DATE_FORMAT)
 	private Date escalation1FunctionaryAssigneddate;
 	
 	@Field(type = FieldType.Long)
@@ -196,8 +214,8 @@ public class ComplaintIndex {
 	@Field(type = FieldType.String, index = FieldIndex.not_analyzed)
 	private String escalation2FunctionaryName;
 	
-	@JsonFormat (shape = JsonFormat.Shape.STRING, pattern ="yyyy-MM-dd HH:mm")
-	@Field(type = FieldType.Date, index = FieldIndex.not_analyzed, format = DateFormat.date_optional_time, pattern = "yyyy-MM-dd HH:mm")
+	@JsonFormat (shape = JsonFormat.Shape.STRING, pattern = ES_DATE_FORMAT)
+	@Field(type = FieldType.Date, index = FieldIndex.not_analyzed, format = DateFormat.date_optional_time, pattern = ES_DATE_FORMAT)
 	private Date escalation2FunctionaryAssigneddate;
 	
 	@Field(type = FieldType.Long)
@@ -215,8 +233,8 @@ public class ComplaintIndex {
 	@Field(type = FieldType.String, index = FieldIndex.not_analyzed)
 	private String escalation3FunctionaryName;
 	
-	@JsonFormat (shape = JsonFormat.Shape.STRING, pattern ="yyyy-MM-dd HH:mm")
-	@Field(type = FieldType.Date, index = FieldIndex.not_analyzed, format = DateFormat.date_optional_time, pattern = "yyyy-MM-dd HH:mm")
+	@JsonFormat (shape = JsonFormat.Shape.STRING, pattern = ES_DATE_FORMAT)
+	@Field(type = FieldType.Date, index = FieldIndex.not_analyzed, format = DateFormat.date_optional_time, pattern = ES_DATE_FORMAT)
 	private Date escalation3FunctionaryAssigneddate;
 	
 	@Field(type = FieldType.Long)
@@ -234,8 +252,8 @@ public class ComplaintIndex {
 	@Field(type = FieldType.Integer)
 	private int escalationLevel;
 	
-	@JsonFormat (shape = JsonFormat.Shape.STRING, pattern ="yyyy-MM-dd HH:mm")
-	@Field(type = FieldType.Date, index = FieldIndex.not_analyzed, format = DateFormat.date_optional_time, pattern = "yyyy-MM-dd HH:mm")
+	@JsonFormat (shape = JsonFormat.Shape.STRING, pattern = ES_DATE_FORMAT)
+	@Field(type = FieldType.Date, index = FieldIndex.not_analyzed, format = DateFormat.date_optional_time, pattern = ES_DATE_FORMAT)
 	private Date complaintReOpenedDate;
 	
 	@Field(type = FieldType.String, index = FieldIndex.not_analyzed)
@@ -328,6 +346,14 @@ public class ComplaintIndex {
 		this.complaintTypeName = complaintTypeName;
 	}
 
+	public String getComplaintTypeCode() {
+		return complaintTypeCode;
+	}
+
+	public void setComplaintTypeCode(String complaintTypeCode) {
+		this.complaintTypeCode = complaintTypeCode;
+	}
+
 	public String getAssigneeName() {
 		return assigneeName;
 	}
@@ -344,12 +370,12 @@ public class ComplaintIndex {
 		this.details = details;
 	}
 
-	public String getLandMarkDetails() {
+	public String getLandmarkDetails() {
 		return landmarkDetails;
 	}
 
-	public void setLandMarkDetails(String landMarkDetails) {
-		this.landmarkDetails = landMarkDetails;
+	public void setLandmarkDetails(String landmarkDetails) {
+		this.landmarkDetails = landmarkDetails;
 	}
 
 	public String getReceivingMode() {
@@ -368,12 +394,20 @@ public class ComplaintIndex {
 		this.departmentName = departmentName;
 	}
 
-	public String getLocationName() {
+	public String getDepartmentCode() {
+		return departmentCode;
+	}
+
+	public void setDepartmentCode(String departmentCode) {
+		this.departmentCode = departmentCode;
+	}
+
+	public String getWardName() {
 		return wardName;
 	}
 
-	public void setLocationName(String locationName) {
-		this.wardName = locationName;
+	public void setWardName(String wardName) {
+		this.wardName = wardName;
 	}
 
 	public String getWardNo() {
@@ -400,12 +434,44 @@ public class ComplaintIndex {
 		this.localityName = localityName;
 	}
 
+	public String getLocalityNo() {
+		return localityNo;
+	}
+
+	public void setLocalityNo(String localityNo) {
+		this.localityNo = localityNo;
+	}
+
 	public GeoPointField getLocalityGeo() {
 		return localityGeo;
 	}
 
 	public void setLocalityGeo(GeoPointField localityGeo) {
 		this.localityGeo = localityGeo;
+	}
+
+	public GeoPoint getComplaintGeo() {
+		return complaintGeo;
+	}
+
+	public void setComplaintGeo(GeoPoint complaintGeo) {
+		this.complaintGeo = complaintGeo;
+	}
+
+	public double getSatisfactionIndex() {
+		return satisfactionIndex;
+	}
+
+	public void setSatisfactionIndex(double satisfactionIndex) {
+		this.satisfactionIndex = satisfactionIndex;
+	}
+
+	public long getComplaintAgeingdaysFromDue() {
+		return complaintAgeingdaysFromDue;
+	}
+
+	public void setComplaintAgeingdaysFromDue(long complaintAgeingdaysFromDue) {
+		this.complaintAgeingdaysFromDue = complaintAgeingdaysFromDue;
 	}
 
 	public String getCityCode() {
@@ -476,7 +542,7 @@ public class ComplaintIndex {
 		return isClosed;
 	}
 
-	public void setClosed(boolean isClosed) {
+	public void setIsClosed(boolean isClosed) {
 		this.isClosed = isClosed;
 	}
 
@@ -872,13 +938,5 @@ public class ComplaintIndex {
 
 	public void setReOpened(int reOpened) {
 		this.reOpened = reOpened;
-	}
-
-	public GeoPoint getComplaintGeo() {
-		return complaintGeo;
-	}
-
-	public void setComplaintGeo(GeoPoint complaintGeo) {
-		this.complaintGeo = complaintGeo;
 	}	
 }

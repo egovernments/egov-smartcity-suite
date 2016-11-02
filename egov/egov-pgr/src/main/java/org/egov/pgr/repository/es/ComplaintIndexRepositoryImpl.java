@@ -131,7 +131,7 @@ public class ComplaintIndexRepositoryImpl implements ComplaintIndexCustomReposit
 											   											.addRange("3months", 32, 91).addUnboundedFrom("remainingMonths", 91))
 											   							.subAggregation(ComplaintElasticsearchUtils.getCountWithGrouping("groupByFieldSla", "ifSLA",2))))
 									   .execute().actionGet();
-
+		
 		HashMap<String, SearchResponse> result = new HashMap<>();
 		result.put("consolidatedResponse", consolidatedResponse);
 		result.put("tableResponse", tableResponse);
@@ -180,5 +180,19 @@ public class ComplaintIndexRepositoryImpl implements ComplaintIndexCustomReposit
 				   .execute().actionGet();
 		
 		return sourceResponse;
+	}
+
+	@Override
+	public String getFunctionryMobileNumber(String functionaryName) {
+		SearchResponse response = elasticsearchTemplate.getClient().prepareSearch(PGR_INDEX_NAME)
+				.setSize(1)
+				.setQuery(QueryBuilders.matchQuery("currentFunctionaryName", functionaryName))
+				.execute().actionGet();
+
+		for (SearchHit hit : response.getHits()) {
+			final Map<String,Object> fields = hit.getSource();
+			return fields.get("currentFunctionaryMobileNumber").toString();
+		}		
+		return StringUtils.EMPTY;
 	}
 }

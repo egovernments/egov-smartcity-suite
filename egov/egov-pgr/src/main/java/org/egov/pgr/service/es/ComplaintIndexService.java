@@ -40,6 +40,8 @@
 
 package org.egov.pgr.service.es;
 
+import static org.egov.pgr.utils.constants.PGRConstants.DASHBOARD_GROUPING_CITY;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -52,6 +54,7 @@ import org.egov.infra.admin.master.entity.es.CityIndex;
 import org.egov.infra.admin.master.service.CityService;
 import org.egov.infra.admin.master.service.DepartmentService;
 import org.egov.infra.admin.master.service.es.CityIndexService;
+import org.egov.infra.config.mapper.BeanMapperConfiguration;
 import org.egov.pgr.entity.es.ComplaintDashBoardRequest;
 import org.egov.pgr.entity.es.ComplaintDashBoardResponse;
 import org.egov.pgr.entity.es.ComplaintSourceResponse;
@@ -101,144 +104,160 @@ public class ComplaintIndexService {
     private DepartmentService departmentService;
 
     @Autowired
-    private ComplaintIndexRepository complaintIndexRepository; 
+    private ComplaintIndexRepository complaintIndexRepository;
+    
+    @Autowired
+    private  BeanMapperConfiguration beanMapperConfiguration;
 
-   /* @Indexing(name = Index.PGR, type = IndexType.COMPLAINT)
-    public ComplaintIndex createComplaintIndex(final ComplaintIndex complaintIndex) {
-        final City cityWebsite = cityService.getCityByURL(ApplicationThreadLocals.getDomainName());
-        complaintIndex.setCitydetails(cityWebsite);
-        if (complaintIndex.getReceivingMode().equals(ReceivingMode.MOBILE)
-                && complaintIndex.getCreatedBy().getType().equals(UserType.CITIZEN))
-            complaintIndex.setSource(environment.getProperty("complaint.source.citizen.app"));
-        if (complaintIndex.getReceivingMode().equals(ReceivingMode.MOBILE)
-                && complaintIndex.getCreatedBy().getType().equals(UserType.EMPLOYEE))
-            complaintIndex.setSource(environment.getProperty("complaint.source.emp.app"));
-        else if (complaintIndex.getReceivingMode().equals(ReceivingMode.WEBSITE)
-                && complaintIndex.getCreatedBy().getType().equals(UserType.CITIZEN))
-            complaintIndex.setSource(environment.getProperty("complaint.source.portal.citizen"));
-        else if (complaintIndex.getReceivingMode().equals(ReceivingMode.WEBSITE)
-                && complaintIndex.getCreatedBy().getType().equals(UserType.SYSTEM))
-            complaintIndex.setSource(environment.getProperty("complaint.source.portal.anonymous"));
-        else if (complaintIndex.getReceivingMode().equals(ReceivingMode.WEBSITE)
-                && complaintIndex.getCreatedBy().getType().equals(UserType.EMPLOYEE))
-            complaintIndex.setSource(environment.getProperty("complaint.source.emp.website"));
-        else if (complaintIndex.getReceivingMode().equals(ReceivingMode.CALL)
-                && complaintIndex.getCreatedBy().getType().equals(UserType.EMPLOYEE))
-            complaintIndex.setSource(environment.getProperty("complaint.source.website.emp.phone"));
-        else if (complaintIndex.getReceivingMode().equals(ReceivingMode.EMAIL)
-                && complaintIndex.getCreatedBy().getType().equals(UserType.EMPLOYEE))
-            complaintIndex.setSource(environment.getProperty("complaint.source.website.emp.email"));
-        else if (complaintIndex.getReceivingMode().equals(ReceivingMode.MANUAL)
-                && complaintIndex.getCreatedBy().getType().equals(UserType.EMPLOYEE))
-            complaintIndex.setSource(environment.getProperty("complaint.source.website.emp.manual"));
-        complaintIndex.setIsClosed(false);
-        complaintIndex.setComplaintIsClosed('N');
-        complaintIndex.setIfClosed(0);
-        complaintIndex.setComplaintDuration(0);
-        complaintIndex.setDurationRange("");
-        // New fields included in PGR Index
-        final Position position = complaintIndex.getAssignee();
-        final List<Assignment> assignments = assignmentService.getAssignmentsForPosition(position.getId(), new Date());
-        final User assignedUser = !assignments.isEmpty() ? assignments.get(0).getEmployee() : null;
-        complaintIndex.setComplaintPeriod(0);
-        complaintIndex.setComplaintSLADays(complaintIndex.getComplaintType().getSlaHours());
-        complaintIndex.setComplaintAgeingFromDue(0);
-        complaintIndex.setIsSLA('Y');
-        complaintIndex.setIfSLA(1);
-        complaintIndex
-                .setInitialFunctionaryName(assignedUser != null ? assignedUser.getName()
-                        : "NO ASSIGNMENT" + ":" + position.getDeptDesig().getDesignation().getName());
-        complaintIndex.setInitialFunctionaryAssigneddate(new Date());
-        complaintIndex.setInitialFunctionarySLADays(getFunctionarySlaDays(complaintIndex));
-        complaintIndex.setInitialFunctionaryAgeingFromDue(0);
-        complaintIndex.setInitialFunctionaryIsSLA('Y');
-        complaintIndex.setInitialFunctionaryIfSLA(1);
-        complaintIndex
-                .setCurrentFunctionaryName(assignedUser != null ? assignedUser.getName()
-                        : "NO ASSIGNMENT" + ":" + position.getDeptDesig().getDesignation().getName());
-        complaintIndex.setCurrentFunctionaryAssigneddate(new Date());
-        complaintIndex.setCurrentFunctionarySLADays(getFunctionarySlaDays(complaintIndex));
-        complaintIndex.setCurrentFunctionaryAgeingFromDue(0);
-        complaintIndex.setCurrentFunctionaryIsSLA('Y');
-        complaintIndex.setCurrentFunctionaryIfSLA(1);
-        complaintIndex.setEscalationLevel(0);
-        complaintIndex.setReasonForRejection("");
-        complaintIndex.setRegistered(1);
-        complaintIndex.setInProcess(1);
-        complaintIndex.setAddressed(0);
-        complaintIndex.setRejected(0);
-        complaintIndex.setReOpened(0);
+   
+//    public void createComplaintIndex(final Complaint complaint) {
+//    	
+//    	ComplaintIndex complaintIndex = new ComplaintIndex();
+//    	beanMapperConfiguration.map(complaint, complaintIndex);
+//    	
+//        final City city = cityService.getCityByURL(ApplicationThreadLocals.getDomainName());
+//        complaintIndex.setCityCode(city.getCode());
+//        complaintIndex.setCityDistrictCode(city.getDistrictCode());
+//        complaintIndex.setCityDistrictName(city.getDistrictName());
+//        complaintIndex.setCityGrade(city.getGrade());
+//        complaintIndex.setCityDomainUrl(city.getDomainURL());
+//        complaintIndex.setCityName(city.getName());
+//        complaintIndex.setCityRegionName(city.getRegionName());
+//        if (complaint.getReceivingMode().equals(ReceivingMode.MOBILE)
+//                && complaint.getCreatedBy().getType().equals(UserType.CITIZEN))
+//            complaintIndex.setSource(environment.getProperty("complaint.source.citizen.app"));
+//        if (complaint.getReceivingMode().equals(ReceivingMode.MOBILE)
+//                && complaint.getCreatedBy().getType().equals(UserType.EMPLOYEE))
+//            complaintIndex.setSource(environment.getProperty("complaint.source.emp.app"));
+//        else if (complaint.getReceivingMode().equals(ReceivingMode.WEBSITE)
+//                && complaint.getCreatedBy().getType().equals(UserType.CITIZEN))
+//            complaintIndex.setSource(environment.getProperty("complaint.source.portal.citizen"));
+//        else if (complaint.getReceivingMode().equals(ReceivingMode.WEBSITE)
+//                && complaint.getCreatedBy().getType().equals(UserType.SYSTEM))
+//            complaintIndex.setSource(environment.getProperty("complaint.source.portal.anonymous"));
+//        else if (complaint.getReceivingMode().equals(ReceivingMode.WEBSITE)
+//                && complaint.getCreatedBy().getType().equals(UserType.EMPLOYEE))
+//            complaintIndex.setSource(environment.getProperty("complaint.source.emp.website"));
+//        else if (complaint.getReceivingMode().equals(ReceivingMode.CALL)
+//                && complaint.getCreatedBy().getType().equals(UserType.EMPLOYEE))
+//            complaintIndex.setSource(environment.getProperty("complaint.source.website.emp.phone"));
+//        else if (complaint.getReceivingMode().equals(ReceivingMode.EMAIL)
+//                && complaint.getCreatedBy().getType().equals(UserType.EMPLOYEE))
+//            complaintIndex.setSource(environment.getProperty("complaint.source.website.emp.email"));
+//        else if (complaint.getReceivingMode().equals(ReceivingMode.MANUAL)
+//                && complaint.getCreatedBy().getType().equals(UserType.EMPLOYEE))
+//            complaintIndex.setSource(environment.getProperty("complaint.source.website.emp.manual"));
+//        
+//        complaintIndexRepository.save(complaintIndex);
+//        complaintIndex.setIsClosed(false);
+//        complaintIndex.setComplaintIsClosed("N");
+//        complaintIndex.setIfClosed(0);
+//        complaintIndex.setComplaintDuration(0);
+//        complaintIndex.setDurationRange("");
+//        // New fields included in PGR Index
+//        final Position position = complaint.getAssignee();
+//        final List<Assignment> assignments = assignmentService.getAssignmentsForPosition(position.getId(), new Date());
+//        final User assignedUser = !assignments.isEmpty() ? assignments.get(0).getEmployee() : null;
+//        complaintIndex.setComplaintPeriod(0);
+//        complaintIndex.setComplaintSLADays(complaint.getComplaintType().getSlaHours());
+//        complaintIndex.setComplaintAgeingFromDue(0);
+//        complaintIndex.setIsSLA("Y");
+//        complaintIndex.setIfSLA(1);
+//        complaintIndex.setInitialFunctionaryName(assignedUser != null ? assignedUser.getName()
+//                        : "NO ASSIGNMENT" + ":" + position.getDeptDesig().getDesignation().getName());
+//        complaintIndex.setInitialFunctionaryAssigneddate(new Date());
+//        complaintIndex.setInitialFunctionarySLADays(getFunctionarySlaDays(complaint));
+//        complaintIndex.setInitialFunctionaryAgeingFromDue(0);
+//        complaintIndex.setInitialFunctionaryIsSLA("Y");
+//        complaintIndex.setInitialFunctionaryIfSLA(1);
+//        complaintIndex.setCurrentFunctionaryName(assignedUser != null ? assignedUser.getName()
+//                        : "NO ASSIGNMENT" + ":" + position.getDeptDesig().getDesignation().getName());
+//        complaintIndex.setCurrentFunctionaryAssigneddate(new Date());
+//        complaintIndex.setCurrentFunctionarySLADays(getFunctionarySlaDays(complaint));
+//        complaintIndex.setCurrentFunctionaryAgeingFromDue(0);
+//        complaintIndex.setCurrentFunctionaryIsSLA("Y");
+//        complaintIndex.setCurrentFunctionaryIfSLA(1);
+//        complaintIndex.setEscalationLevel(0);
+//        complaintIndex.setReasonForRejection("");
+//        complaintIndex.setRegistered(1);
+//        complaintIndex.setInProcess(1);
+//        complaintIndex.setAddressed(0);
+//        complaintIndex.setRejected(0);
+//        complaintIndex.setReOpened(0);
+//    }
 
-        return complaintIndex;
-    }
-
-    @Indexing(name = Index.PGR, type = IndexType.COMPLAINT)
-    public ComplaintIndex updateComplaintIndex(ComplaintIndex complaintIndex, final Long approvalPosition,
-            final String approvalComment) {
-        final City cityWebsite = cityService.getCityByURL(ApplicationThreadLocals.getDomainName());
-        complaintIndex.setCitydetails(cityWebsite);
-        // Update the complaint index object with the existing values
-        complaintIndex = populateFromIndex(complaintIndex);
-        final Position position = complaintIndex.getAssignee();
-        final List<Assignment> assignments = assignmentService.getAssignmentsForPosition(position.getId(), new Date());
-        final User assignedUser = !assignments.isEmpty() ? assignments.get(0).getEmployee() : null;
-        // If complaint is forwarded
-        if (approvalPosition != null && !approvalPosition.equals(Long.valueOf(0))) {
-            complaintIndex
-                    .setCurrentFunctionaryName(assignedUser != null ? assignedUser.getName()
-                            : "NO ASSIGNMENT" + ":" + position.getDeptDesig().getDesignation().getName());
-            complaintIndex.setCurrentFunctionaryAssigneddate(new Date());
-            complaintIndex.setCurrentFunctionarySLADays(getFunctionarySlaDays(complaintIndex));
-        }
-        complaintIndex = updateComplaintLevelIndexFields(complaintIndex);
-        if (complaintIndex.getStatus().getName().equalsIgnoreCase(ComplaintStatus.COMPLETED.toString())
-                || complaintIndex.getStatus().getName().equalsIgnoreCase(ComplaintStatus.WITHDRAWN.toString())
-                || complaintIndex.getStatus().getName().equalsIgnoreCase(ComplaintStatus.REJECTED.toString())) {
-            complaintIndex.setIsClosed(true);
-            complaintIndex.setComplaintIsClosed('Y');
-            complaintIndex.setIfClosed(1);
-            complaintIndex.setClosedByFunctionaryName(
-                    assignedUser != null ? assignedUser.getName()
-                            : "NO ASSIGNMENT" + ":" + position.getDeptDesig().getDesignation().getName());
-            final long duration = Math.abs(complaintIndex.getCreatedDate().getTime() - new Date().getTime())
-                    / (24 * 60 * 60 * 1000);
-            complaintIndex.setComplaintDuration(duration);
-            if (duration < 3)
-                complaintIndex.setDurationRange("(<3 days)");
-            else if (duration < 7)
-                complaintIndex.setDurationRange("(3-7 days)");
-            else if (duration < 15)
-                complaintIndex.setDurationRange("(8-15 days)");
-            else if (duration < 30)
-                complaintIndex.setDurationRange("(16-30 days)");
-            else
-                complaintIndex.setDurationRange("(>30 days)");
-        } else {
-            complaintIndex.setIsClosed(false);
-            complaintIndex.setComplaintIsClosed('N');
-            complaintIndex.setIfClosed(0);
-            complaintIndex.setComplaintDuration(0);
-            complaintIndex.setDurationRange("");
-        }
-        // update status related fields in index
-        complaintIndex = updateComplaintIndexStatusRelatedFields(complaintIndex);
-        // If complaint is re-opened
-        if (complaintIndex.getStatus().getName().equalsIgnoreCase(ComplaintStatus.REOPENED.toString()) &&
-                !checkComplaintStatusFromIndex(complaintIndex)) {
-            complaintIndex.setComplaintReOpenedDate(new Date());
-            complaintIndex.setIsClosed(false);
-            complaintIndex.setComplaintIsClosed('N');
-            complaintIndex.setIfClosed(0);
-        }
-        // If complaint is rejected update the Reason For Rejection with comments
-        if (complaintIndex.getStatus().getName().equalsIgnoreCase(ComplaintStatus.REJECTED.toString()))
-            complaintIndex.setReasonForRejection(approvalComment);
-
-        return complaintIndex;
-    }
+//    public ComplaintIndex updateComplaintIndex(Complaint complaint, final Long approvalPosition,
+//            final String approvalComment) {
+//    	final City city = cityService.getCityByURL(ApplicationThreadLocals.getDomainName());
+//        complaintIndex.setCityCode(city.getCode());
+//        complaintIndex.setCityDistrictCode(city.getDistrictCode());
+//        complaintIndex.setCityDistrictName(city.getDistrictName());
+//        complaintIndex.setCityGrade(city.getGrade());
+//        complaintIndex.setCityDomainUrl(city.getDomainURL());
+//        complaintIndex.setCityName(city.getName());
+//        complaintIndex.setCityRegionName(city.getRegionName());
+//        // Update the complaint index object with the existing values
+//        complaintIndex = populateFromIndex(complaintIndex);
+//        final Position position = complaintIndex.getAssignee();
+//        final List<Assignment> assignments = assignmentService.getAssignmentsForPosition(position.getId(), new Date());
+//        final User assignedUser = !assignments.isEmpty() ? assignments.get(0).getEmployee() : null;
+//        // If complaint is forwarded
+//        if (approvalPosition != null && !approvalPosition.equals(Long.valueOf(0))) {
+//            complaintIndex
+//                    .setCurrentFunctionaryName(assignedUser != null ? assignedUser.getName()
+//                            : "NO ASSIGNMENT" + ":" + position.getDeptDesig().getDesignation().getName());
+//            complaintIndex.setCurrentFunctionaryAssigneddate(new Date());
+//            complaintIndex.setCurrentFunctionarySLADays(getFunctionarySlaDays(complaintIndex));
+//        }
+//        complaintIndex = updateComplaintLevelIndexFields(complaintIndex);
+//        if (complaintIndex.getStatus().getName().equalsIgnoreCase(ComplaintStatus.COMPLETED.toString())
+//                || complaintIndex.getStatus().getName().equalsIgnoreCase(ComplaintStatus.WITHDRAWN.toString())
+//                || complaintIndex.getStatus().getName().equalsIgnoreCase(ComplaintStatus.REJECTED.toString())) {
+//            complaintIndex.setIsClosed(true);
+//            complaintIndex.setComplaintIsClosed('Y');
+//            complaintIndex.setIfClosed(1);
+//            complaintIndex.setClosedByFunctionaryName(
+//                    assignedUser != null ? assignedUser.getName()
+//                            : "NO ASSIGNMENT" + ":" + position.getDeptDesig().getDesignation().getName());
+//            final long duration = Math.abs(complaintIndex.getCreatedDate().getTime() - new Date().getTime())
+//                    / (24 * 60 * 60 * 1000);
+//            complaintIndex.setComplaintDuration(duration);
+//            if (duration < 3)
+//                complaintIndex.setDurationRange("(<3 days)");
+//            else if (duration < 7)
+//                complaintIndex.setDurationRange("(3-7 days)");
+//            else if (duration < 15)
+//                complaintIndex.setDurationRange("(8-15 days)");
+//            else if (duration < 30)
+//                complaintIndex.setDurationRange("(16-30 days)");
+//            else
+//                complaintIndex.setDurationRange("(>30 days)");
+//        } else {
+//            complaintIndex.setIsClosed(false);
+//            complaintIndex.setComplaintIsClosed('N');
+//            complaintIndex.setIfClosed(0);
+//            complaintIndex.setComplaintDuration(0);
+//            complaintIndex.setDurationRange("");
+//        }
+//        // update status related fields in index
+//        complaintIndex = updateComplaintIndexStatusRelatedFields(complaintIndex);
+//        // If complaint is re-opened
+//        if (complaintIndex.getStatus().getName().equalsIgnoreCase(ComplaintStatus.REOPENED.toString()) &&
+//                !checkComplaintStatusFromIndex(complaintIndex)) {
+//            complaintIndex.setComplaintReOpenedDate(new Date());
+//            complaintIndex.setIsClosed(false);
+//            complaintIndex.setComplaintIsClosed('N');
+//            complaintIndex.setIfClosed(0);
+//        }
+//        // If complaint is rejected update the Reason For Rejection with comments
+//        if (complaintIndex.getStatus().getName().equalsIgnoreCase(ComplaintStatus.REJECTED.toString()))
+//            complaintIndex.setReasonForRejection(approvalComment);
+//
+//        return complaintIndex;
+//    }
 
     // This method is used to populate PGR index during complaint escalation
-    @Indexing(name = Index.PGR, type = IndexType.COMPLAINT)
+    /*@Indexing(name = Index.PGR, type = IndexType.COMPLAINT)
     public ComplaintIndex updateComplaintEscalationIndexValues(ComplaintIndex complaintIndex) {
         final Position position = complaintIndex.getAssignee();
         final List<Assignment> assignments = assignmentService.getAssignmentsForPosition(position.getId(), new Date());
@@ -427,21 +446,21 @@ public class ComplaintIndexService {
             }
         }
         return complaintIndex;
-    }
+    }*/
 
-    private long getFunctionarySlaDays(final ComplaintIndex complaintIndex) {
-        final Position position = complaintIndex.getAssignee();
-        final Designation designation = position.getDeptDesig().getDesignation();
-        final Escalation complaintEscalation = escalationService
-                .getEscalationBycomplaintTypeAndDesignation(complaintIndex.getComplaintType().getId(), designation.getId());
-        if (complaintEscalation != null) {
-            final long slaHours = complaintEscalation.getNoOfHrs();
-            return slaHours;
-        } else
-            return 0;
-    }
+//    private long getFunctionarySlaDays(final Complaint complaint) {
+//        final Position position = complaint.getAssignee();
+//        final Designation designation = position.getDeptDesig().getDesignation();
+//        final Escalation complaintEscalation = escalationService
+//                .getEscalationBycomplaintTypeAndDesignation(complaint.getComplaintType().getId(), designation.getId());
+//        if (complaintEscalation != null) {
+//            final long slaHours = complaintEscalation.getNoOfHrs();
+//            return slaHours;
+//        } else
+//            return 0;
+//    }
 
-    public ComplaintIndex populateFromIndex(final ComplaintIndex complaintIndex) {
+  /*  public ComplaintIndex populateFromIndex(final ComplaintIndex complaintIndex) {
         final SearchResult searchResult = searchService.search(asList(Index.PGR.toString()),
                 asList(IndexType.COMPLAINT.toString()),
                 null, complaintIndex.searchFilters(), Sort.NULL, Page.NULL);
@@ -645,9 +664,9 @@ public class ComplaintIndexService {
     //These are the methods for dashboard results written
 
     public HashMap<String, Object> getGrievanceReport(ComplaintDashBoardRequest complaintDashBoardRequest) {
+    	String groupByField = ComplaintElasticsearchUtils.getAggregationGroupingField(complaintDashBoardRequest);
     	HashMap<String, SearchResponse> response = complaintIndexRepository.findAllGrievanceByFilter(complaintDashBoardRequest,
-                getFilterQuery(complaintDashBoardRequest),
-                ComplaintElasticsearchUtils.getAggregationGroupingField(complaintDashBoardRequest));
+                getFilterQuery(complaintDashBoardRequest),groupByField);
         
         SearchResponse consolidatedResponse = response.get("consolidatedResponse");
         SearchResponse tableResponse = response.get("tableResponse");
@@ -688,7 +707,7 @@ public class ComplaintIndexService {
 		//For Dynamic results based on grouping fields
 		terms = tableResponse.getAggregations().get("groupByField");
 		for (Bucket bucket : terms.getBuckets()) {
-			ComplaintDashBoardResponse responseDetail = populateResponse(complaintDashBoardRequest, bucket);
+			ComplaintDashBoardResponse responseDetail = populateResponse(complaintDashBoardRequest, bucket,groupByField);
 			responseDetail.setTotalComplaintCount(bucket.getDocCount());
 			
 			satisfactionAverage = bucket.getAggregations().get("excludeZero");
@@ -795,9 +814,10 @@ public class ComplaintIndexService {
     }
     
     public HashMap<String, Object> getComplaintTypeReport(ComplaintDashBoardRequest complaintDashBoardRequest){
+    	String groupByField = ComplaintElasticsearchUtils.getAggregationGroupingField(complaintDashBoardRequest);
     	SearchResponse complaintTypeResponse =  complaintIndexRepository.findAllGrievanceByComplaintType(complaintDashBoardRequest,
     											getFilterQuery(complaintDashBoardRequest),
-    											ComplaintElasticsearchUtils.getAggregationGroupingField(complaintDashBoardRequest));
+    											groupByField);
     	
     	HashMap<String, Object> result = new HashMap<>();
 		List<ComplaintDashBoardResponse> responseDetailsList = new ArrayList<>();
@@ -806,7 +826,7 @@ public class ComplaintIndexService {
 		Terms terms = complaintTypeResponse.getAggregations().get("groupByField");
 		for (Bucket bucket : terms.getBuckets()) {
 			
-			ComplaintDashBoardResponse responseDetail = populateResponse(complaintDashBoardRequest, bucket);
+			ComplaintDashBoardResponse responseDetail = populateResponse(complaintDashBoardRequest, bucket,groupByField);
 			responseDetail.setTotalComplaintCount(bucket.getDocCount());
 			
 			Terms openAndClosedTerms = bucket.getAggregations().get("closedComplaintCount");
@@ -850,6 +870,7 @@ public class ComplaintIndexService {
 				complaintSouce.setUlbCode(city.getCitycode());
 				complaintSouce.setDomainURL(city.getDomainurl());
 			}
+			
 			if(StringUtils.isNotBlank(complaintDashBoardRequest.getUlbCode())){
 				if(StringUtils.isBlank(complaintDashBoardRequest.getWardNo())
 						&& StringUtils.isBlank(complaintDashBoardRequest.getDepartmentCode()))
@@ -902,6 +923,10 @@ public class ComplaintIndexService {
     
     private BoolQueryBuilder getFilterQuery(ComplaintDashBoardRequest complaintDashBoardRequest) {
         BoolQueryBuilder boolQuery = QueryBuilders.boolQuery().filter(QueryBuilders.termQuery("registered", 1));
+        if(StringUtils.isNotBlank(complaintDashBoardRequest.getRegionName()))
+        	boolQuery = boolQuery.filter(QueryBuilders.matchQuery("cityRegionName", complaintDashBoardRequest.getRegionName()));
+        if(StringUtils.isNotBlank(complaintDashBoardRequest.getUlbGrade()))
+        	boolQuery = boolQuery.filter(QueryBuilders.matchQuery("cityGrade", complaintDashBoardRequest.getUlbGrade()));
         if (StringUtils.isNotBlank(complaintDashBoardRequest.getDistrictName()))
             boolQuery = boolQuery.filter(QueryBuilders.matchQuery("cityDistrictName", complaintDashBoardRequest.getDistrictName()));
         if (StringUtils.isNotBlank(complaintDashBoardRequest.getUlbCode()))
@@ -915,48 +940,56 @@ public class ComplaintIndexService {
             boolQuery = boolQuery.must(QueryBuilders.rangeQuery("createdDate")
                     .from(complaintDashBoardRequest.getFromDate())
                     .to(complaintDashBoardRequest.getToDate()));
+        if (StringUtils.isNotBlank(complaintDashBoardRequest.getComplaintTypeCode()))
+        	boolQuery = boolQuery.filter(QueryBuilders.matchQuery("complaintTypeCode", complaintDashBoardRequest.getComplaintTypeCode()));
 
         return boolQuery;
     }
     
-    private ComplaintDashBoardResponse populateResponse(ComplaintDashBoardRequest complaintDashBoardRequest, Bucket bucket){
+    private ComplaintDashBoardResponse populateResponse(ComplaintDashBoardRequest complaintDashBoardRequest, Bucket bucket,
+    		String groupByField){
     	ComplaintDashBoardResponse responseDetail = new ComplaintDashBoardResponse();
 
     	responseDetail = setDefaultValues(responseDetail);
-
+    	
     	CityIndex city;
-    	if (StringUtils.isBlank(complaintDashBoardRequest.getDistrictName())){
+    	
+    	if(groupByField.equals("cityRegionName"))
+    		responseDetail.setRegionName(bucket.getKeyAsString());
+    	if(groupByField.equals("cityGrade"))
+    		responseDetail.setUlbGrade(bucket.getKeyAsString());
+    	if(groupByField.equals("ulb") && complaintDashBoardRequest.getType().equalsIgnoreCase(DASHBOARD_GROUPING_CITY)){
+    		city = cityIndexService.findByDistrictCode(bucket.getKeyAsString());
+    		responseDetail.setUlbName(city.getName());
+    	}
+    		
+    	
+    	if(groupByField.equals("cityDistrictCode")){
     		city = cityIndexService.findByDistrictCode(bucket.getKeyAsString());
     		responseDetail.setDistrictName(city.getDistrictname());
-		}
-		if (StringUtils.isNotBlank(complaintDashBoardRequest.getDistrictName())){
-			if(StringUtils.isBlank(complaintDashBoardRequest.getUlbCode()))
-				city = cityIndexService.findByCitycode(bucket.getKeyAsString());
-			else
-				city = cityIndexService.findByCitycode(complaintDashBoardRequest.getUlbCode());
-			responseDetail.setDistrictName(city.getDistrictname());
+    	}
+    	//When UlbGrade is selected group by Ulb
+    	if(groupByField.equals("cityCode") &&
+    			complaintDashBoardRequest.getType() != DASHBOARD_GROUPING_CITY){
+    		city = cityIndexService.findOne(bucket.getKeyAsString());
+    		responseDetail.setDistrictName(city.getDistrictname());
 			responseDetail.setUlbName(city.getName());
 			responseDetail.setUlbGrade(city.getCitygrade());
 			responseDetail.setUlbCode(city.getCitycode());
 			responseDetail.setDomainURL(city.getDomainurl());
-		}
-		if(StringUtils.isNotBlank(complaintDashBoardRequest.getUlbCode())){
-			if(StringUtils.isBlank(complaintDashBoardRequest.getWardNo())
-					&& StringUtils.isBlank(complaintDashBoardRequest.getDepartmentCode()))
-				responseDetail.setWardName(bucket.getKeyAsString());
-			else
-				responseDetail.setWardName(complaintIndexRepository.getWardName(complaintDashBoardRequest.getWardNo()));
-			
-			if(StringUtils.isNotBlank(complaintDashBoardRequest.getDepartmentCode())){
-				Department department = departmentService.getDepartmentByCode(complaintDashBoardRequest.getDepartmentCode());
-				if(department != null)
-					responseDetail.setDepartmentName(department.getName());
-			}
-		}
-		
-		if(StringUtils.isNotBlank(complaintDashBoardRequest.getDepartmentCode())
-				|| StringUtils.isNotBlank(complaintDashBoardRequest.getWardNo()))
-			responseDetail.setFunctionaryName(bucket.getKeyAsString());
+    	}
+    	//When UlbCode is passed without type group by department else by type
+    	if(groupByField.equals("departmentName"))
+    		responseDetail.setDepartmentName(bucket.getKeyAsString());
+    	if(groupByField.equals("wardName"))
+    		responseDetail.setWardName(bucket.getKeyAsString());
+    	if(groupByField.equals("localityName"))
+    		responseDetail.setLocalityName(bucket.getKeyAsString());
+    	if(groupByField.equals("currentFunctionaryName")){
+    		responseDetail.setFunctionaryName(bucket.getKeyAsString());
+    		String mobileNumber = complaintIndexRepository.getFunctionryMobileNumber(bucket.getKeyAsString());
+    		responseDetail.setFunctionaryMobileNumber(mobileNumber);
+    	}
 		return responseDetail;
     }
     
@@ -966,6 +999,7 @@ public class ComplaintIndexService {
     	response.setWardName(StringUtils.EMPTY);
     	response.setDepartmentName(StringUtils.EMPTY);
     	response.setFunctionaryName(StringUtils.EMPTY);
+    	response.setLocalityName(StringUtils.EMPTY);
     	response.setComplaintTypeName(StringUtils.EMPTY);
     	response.setUlbGrade(StringUtils.EMPTY);
     	response.setUlbCode(StringUtils.EMPTY);

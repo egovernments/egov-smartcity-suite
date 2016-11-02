@@ -45,6 +45,7 @@ import com.fasterxml.jackson.annotation.JsonInclude.Include;
 
 @JsonInclude(value = Include.NON_EMPTY)
 public class ComplaintDashBoardResponse {
+	private String regionName;
 	private String districtName;
 	private String ulbCode;
 	private String ulbName;
@@ -52,6 +53,8 @@ public class ComplaintDashBoardResponse {
 	private String wardName;
 	private String domainURL;
 	private String functionaryName;
+	private String functionaryMobileNumber;
+	private String localityName;
 	private String departmentName;
 	private String ComplaintTypeName;
 	private long TotalComplaintCount;
@@ -191,5 +194,23 @@ public class ComplaintDashBoardResponse {
 	}
 	public void setAgeingGroup4(long ageingGroup4) {
 		AgeingGroup4 = ageingGroup4;
+	}
+	public String getLocalityName() {
+		return localityName;
+	}
+	public void setLocalityName(String localityName) {
+		this.localityName = localityName;
+	}
+	public String getFunctionaryMobileNumber() {
+		return functionaryMobileNumber;
+	}
+	public void setFunctionaryMobileNumber(String functionaryMobileNumber) {
+		this.functionaryMobileNumber = functionaryMobileNumber;
+	}
+	public String getRegionName() {
+		return regionName;
+	}
+	public void setRegionName(String regionName) {
+		this.regionName = regionName;
 	}
 }
