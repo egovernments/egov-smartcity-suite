@@ -73,18 +73,21 @@ public class WorksTransactionIndexJsonAdaptor implements JsonSerializer<WorksMil
             jsonObject.addProperty("Estimate Number", response.getEstimatenumber());
             jsonObject.addProperty("Work Identification Number", response.getWin());
             jsonObject.addProperty("Name of the work", response.getNameofthework());
-            jsonObject.addProperty("Estimated cost in lakhs", BigDecimal.valueOf(response.getTotalestimatedcostinlakhs())
+            jsonObject.addProperty("Estimated cost in lakhs", BigDecimal.valueOf(response.getTotalestimatedcostinlakhs() / 100000)
                     .setScale(2, BigDecimal.ROUND_HALF_EVEN).toString());
             jsonObject.addProperty("Agreement Number", response.getAgreementnumber());
             jsonObject.addProperty("Agreement Date",
                     response.getAgreementdate() != null ? DateUtils.getDefaultFormattedDate(response.getAgreementdate()) : "");
             jsonObject.addProperty("Contract Period(in days)", response.getContractperiod());
-            jsonObject.addProperty("Work order value in lakhs", BigDecimal.valueOf(response.getTotalworkordervalueinlakhs())
-                    .setScale(2, BigDecimal.ROUND_HALF_EVEN).toString());
+            jsonObject.addProperty("Work order value in lakhs",
+                    BigDecimal.valueOf(response.getTotalworkordervalueinlakhs() / 100000)
+                            .setScale(2, BigDecimal.ROUND_HALF_EVEN).toString());
             jsonObject.addProperty("Total bill amount in lakhs",
-                    BigDecimal.valueOf(response.getTotalbillamountinlakhs()).setScale(2, BigDecimal.ROUND_HALF_EVEN).toString());
+                    BigDecimal.valueOf(response.getTotalbillamountinlakhs() / 100000).setScale(2, BigDecimal.ROUND_HALF_EVEN)
+                            .toString());
             jsonObject.addProperty("Total paid amount in lakhs",
-                    BigDecimal.valueOf(response.getTotalpaidamountinlakhs()).setScale(2, BigDecimal.ROUND_HALF_EVEN).toString());
+                    BigDecimal.valueOf(response.getTotalpaidamountinlakhs() / 100000).setScale(2, BigDecimal.ROUND_HALF_EVEN)
+                            .toString());
 
             final DateTime currentDate = new DateTime();
             switch (currentDate.getMonthOfYear()) {
