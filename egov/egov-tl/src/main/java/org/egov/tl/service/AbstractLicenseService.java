@@ -392,6 +392,7 @@ public abstract class AbstractLicenseService<T extends License> {
 
     @Transactional
     public void renew(final T license, final WorkflowBean workflowBean) {
+        license.setLicenseAppType(getLicenseApplicationTypeForRenew());
         final String natureOfWork = license.getLicenseAppType().getName().equals(Constants.RENEWAL_LIC_APPTYPE)
                 ? Constants.RENEWAL_NATUREOFWORK : Constants.NEW_NATUREOFWORK;
         final Assignment wfInitiator = this.assignmentService
