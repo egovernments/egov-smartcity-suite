@@ -42,7 +42,7 @@ package org.egov.tl.web.controller;
 
 import java.lang.reflect.Type;
 
-import org.egov.tl.web.controller.DCBReportResult;
+import org.egov.tl.entity.dto.DCBReportResult;
 
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
