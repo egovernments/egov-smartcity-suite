@@ -65,10 +65,9 @@ public class DCBReportService {
         final StringBuilder selectQry2 = new StringBuilder();
         StringBuilder fromQry = new StringBuilder();
         StringBuilder whereQry = new StringBuilder();
-        final StringBuilder groupByQry = new StringBuilder();
         selectQry2
-                .append("  cast(SUM(arr_demand) as bigint) AS arr_demand,cast(SUM(curr_demand) as bigint) AS curr_demand,cast(SUM(arr_coll) as bigint) AS arr_coll,cast(SUM(curr_coll) as bigint) AS curr_coll,"
-                        + "cast(SUM(arr_balance) as bigint) AS arr_balance,cast(SUM(curr_balance) as bigint) AS curr_balance ");
+                .append("  cast(arr_demand as bigint) AS arr_demand,cast(curr_demand as bigint) AS curr_demand,cast(arr_coll as bigint) AS arr_coll,cast(curr_coll as bigint) AS curr_coll,"
+                        + "cast(arr_balance as bigint) AS arr_balance,cast(curr_balance as bigint) AS curr_balance ");
         fromQry = new StringBuilder(" from egtl_mv_dcb_view dcbinfo,eg_boundary boundary ");
 
         if (mode.equalsIgnoreCase("license")) {
@@ -77,7 +76,6 @@ public class DCBReportService {
             fromQry = new StringBuilder(" from egtl_mv_dcb_view dcbinfo ");
             if (licensenumber != null && !"".equals(licensenumber))
                 whereQry = whereQry.append(" where  dcbinfo.licenseNumber = '" + licensenumber.toUpperCase() + "'");
-            groupByQry.append("group by dcbinfo.licenseNumber,dcbinfo.licenseId,dcbinfo.username ");
             if (licensenumber != null && !"".equals(licensenumber))
                 whereQry.append(" and ");
             else
@@ -85,7 +83,7 @@ public class DCBReportService {
             whereQry.append(" dcbinfo.licenseNumber is not null  ");
         }
 
-        query = selectQry1.append(selectQry2).append(fromQry).append(whereQry).append(groupByQry);
+        query = selectQry1.append(selectQry2).append(fromQry).append(whereQry);
         final SQLQuery finalQuery = entityManager.unwrap(Session.class).createSQLQuery(query.toString());
         return finalQuery;
     }
