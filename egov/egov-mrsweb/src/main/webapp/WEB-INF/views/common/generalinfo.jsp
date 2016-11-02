@@ -71,7 +71,12 @@
 	<div  class="col-sm-3 "><spring:message code="lbl.place.of.marriage"/></div>
 	<div class="col-sm-3 add-margin view-content"><c:out value="${reIssue.registration.placeOfMarriage}" /></div>
 </div>
+<div class="row add-border">
+<div class="col-sm-3 "><spring:message code="lbl.registrationunit"/></div>
+	<div class="col-sm-3 add-margin view-content"><c:out value="${reIssue.registration.marriageRegistrationUnit.name}" /></div>
 </div>
+</div>
+
 <c:set value="registration.husband" var="applicant" scope="request"></c:set>
 <form:hidden path="registration.husband.id" />
 <jsp:include page="viewapplicantinfo.jsp">

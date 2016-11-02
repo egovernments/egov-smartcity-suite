@@ -97,7 +97,7 @@ public class MarriageRegistrationUnitService {
 		return MrregistrationUnitRepository.findAll();
 	}
 
-	public MarriageRegistrationUnit getProxy(final Long id) {
+	public MarriageRegistrationUnit getbyId(final Long id) {
 		return MrregistrationUnitRepository.getOne(id);
 	}
 

@@ -45,6 +45,7 @@ import javax.servlet.http.HttpServletRequest;
 
 import org.egov.eis.web.contract.WorkflowContainer;
 import org.egov.eis.web.controller.workflow.GenericWorkFlowController;
+import org.egov.infra.admin.master.service.BoundaryService;
 import org.egov.mrs.application.MarriageConstants;
 import org.egov.mrs.domain.entity.MarriageRegistration;
 import org.egov.mrs.domain.entity.ReIssue;
@@ -54,6 +55,7 @@ import org.egov.mrs.domain.service.MarriageRegistrationService;
 import org.egov.mrs.domain.service.ReIssueService;
 import org.egov.mrs.masters.entity.MarriageFee;
 import org.egov.mrs.masters.service.MarriageFeeService;
+import org.egov.mrs.masters.service.MarriageRegistrationUnitService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -88,10 +90,21 @@ public class NewReIssueController extends GenericWorkFlowController {
 
     @Autowired
     private MarriageDocumentService marriageDocumentService;
-
+  
     @Autowired
     private ReIssueService reissueService;
-
+    
+    @Autowired
+    private MarriageRegistrationUnitService marriageRegistrationUnitService;
+    
+    @Autowired
+    private BoundaryService boundaryService;
+    
+	public void prepareNewForm(final Model model) {
+		model.addAttribute("marriageRegistrationUnit",
+				marriageRegistrationUnitService.getActiveRegistrationunit());
+	}
+    
     @RequestMapping(value = "/create/{registrationId}", method = RequestMethod.GET)
     public String showReIssueForm(@PathVariable final Long registrationId, final Model model) {
 
@@ -126,6 +139,7 @@ public class NewReIssueController extends GenericWorkFlowController {
         
         model.addAttribute("reIssue", reIssue);
         model.addAttribute("documents", marriageDocumentService.getIndividualDocuments());
+        prepareNewForm(model);
         prepareWorkflow(model, reIssue, new WorkflowContainer());
         return "reissue-form";
     }

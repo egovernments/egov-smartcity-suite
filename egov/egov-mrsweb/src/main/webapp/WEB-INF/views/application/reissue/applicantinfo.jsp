@@ -51,6 +51,29 @@
 	</div>
 </div>
 
+<div class="form-group">
+<label class="col-sm-3 control-label">
+			<spring:message code="lbl.registrationunit"/><span class="mandatory"></span>
+		</label>
+		<div class="col-sm-3">
+			<form:select path="marriageRegistrationUnit" id="select-registrationunit" cssClass="form-control" 
+						cssErrorClass="form-control error" required="required">
+                 <form:option value=""> <spring:message code="lbl.default.option"/> </form:option>
+                 <form:options items="${marriageRegistrationUnit}" itemValue="id" itemLabel="name"/>
+             </form:select>
+            <form:errors path="marriageRegistrationUnit" cssClass="add-margin error-msg"/>
+		</div>
+<label class="col-sm-2 control-label">
+			<spring:message code="lbl.zone"/><span class="mandatory"></span>
+		</label>
+		<div class="col-sm-3">
+          <form:hidden path="zone" id="txt-zoneid" />
+			
+			<form:input path="zone.name" id="txt-zone" type="text" class="form-control low-width patternvalidation" readonly="true" data-pattern="decimalvalue" placeholder="" autocomplete="off" required="required"/>
+            <form:errors path="zone" cssClass="add-margin error-msg"/>
+		</div>
+		</div>
+	
 	<div class="form-group">
 		<div class="col-sm-3 control-label" style="padding-right: 5px;">
 			<spring:message code="lbl.fullname"/><span class="mandatory"></span>
@@ -106,3 +129,4 @@
                   <form:errors path="${applicant}.contactInfo.email" cssClass="add-margin error-msg"/>
 		</div>
 	</div>
+	

@@ -188,6 +188,11 @@ $(document).ready( function () {
 	});
 	
 	
+	$('#select-registrationunit').change( function () {
+		showRegistrationUnit();
+	});
+	
+	
 	function validateApplicationNumber(){
 		appNo=$('#applicationNum').val();
 		if(appNo != '') {
@@ -211,6 +216,30 @@ $(document).ready( function () {
 				}
 			});
 		}	
+	}
+	
+	function showRegistrationUnit()
+	{
+	 if ($('#select-registrationunit').val() === '') {
+	 	$('#txt-zone').val('');
+				return;
+			} else {
+			
+				$.ajax({
+					type: "GET",
+					url: "/mrs/registration/getmrregistrationunitzone",
+					cache: true,
+					dataType: "json",
+					data:{
+						'registrationUnitId' : $('#select-registrationunit').val()
+						}
+				}).done(function(value) {
+					$('#txt-zoneid').val(value.id);
+					$('#txt-zone').val(value.name);
+				
+				});
+			}
+		
 	}
 	
 	

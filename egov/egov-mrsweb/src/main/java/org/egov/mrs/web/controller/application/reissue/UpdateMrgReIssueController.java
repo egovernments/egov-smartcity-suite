@@ -7,15 +7,13 @@ import javax.servlet.http.HttpServletRequest;
 import org.apache.log4j.Logger;
 import org.egov.eis.web.contract.WorkflowContainer;
 import org.egov.eis.web.controller.workflow.GenericWorkFlowController;
-import org.egov.infra.filestore.service.FileStoreService;
+import org.egov.infra.admin.master.service.BoundaryService;
 import org.egov.mrs.application.MarriageConstants;
-import org.egov.mrs.domain.entity.MarriageRegistration;
 import org.egov.mrs.domain.entity.ReIssue;
 import org.egov.mrs.domain.service.MarriageApplicantService;
 import org.egov.mrs.domain.service.MarriageDocumentService;
-import org.egov.mrs.domain.service.MarriageRegistrationService;
 import org.egov.mrs.domain.service.ReIssueService;
-import org.egov.mrs.masters.entity.MarriageFee;
+import org.egov.mrs.masters.service.MarriageRegistrationUnitService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.support.ResourceBundleMessageSource;
 import org.springframework.stereotype.Controller;
@@ -55,6 +53,17 @@ public class UpdateMrgReIssueController extends GenericWorkFlowController {
 	@Autowired
 	private ReIssueService reissueService;
     
+	@Autowired
+	private MarriageRegistrationUnitService marriageRegistrationUnitService;
+
+	@Autowired
+	private BoundaryService boundaryService;
+	
+	public void prepareNewForm(final Model model) {
+		model.addAttribute("marriageRegistrationUnit",
+				marriageRegistrationUnitService.getActiveRegistrationunit());
+	}
+	
     @RequestMapping(value = "/update/{id}", method = RequestMethod.GET)
     public String showReIssueForm(@PathVariable final Long id, final Model model) {
         final ReIssue reIssue = reIssueService.get(id);
@@ -67,6 +76,7 @@ public class UpdateMrgReIssueController extends GenericWorkFlowController {
         marriageApplicantService.prepareDocumentsForView(reIssue.getApplicant());
         model.addAttribute("applicationHistory",
                 reissueService.getHistory(reIssue));
+        prepareNewForm(model);
         prepareWorkFlowForReIssue(reIssue, model);
         model.addAttribute("reIssue", reIssue);
        // model.addAttribute("documents", marriageDocumentService.getGeneralDocuments());

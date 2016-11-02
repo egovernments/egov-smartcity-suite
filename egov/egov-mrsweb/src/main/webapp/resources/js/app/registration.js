@@ -116,6 +116,10 @@ $(document).ready( function () {
 		showFee();
 	})
 	
+	$('#select-registrationunit').change( function () {
+		showRegistrationUnit();
+	})
+	
 	$('input[id$="email"]').blur(function() {
 		var pattern = new RegExp("^[\\w!#$%&'*+/=?`{|}~^-]+(?:\\.[\\w!#$%&'*+/=?`{|}~^-]+)*@(?:[a-zA-Z0-9-]+\\.)+[a-zA-Z]{2,6}$");
 		var email = $(this).val();
@@ -196,6 +200,34 @@ $(document).ready( function () {
 		
 	   }
 	
+	function showRegistrationUnit()
+	{
+	 if ($('#select-registrationunit').val() === '') {
+	 	$('#txt-zone').val('');
+				return;
+			} else {
+			
+				$.ajax({
+					type: "GET",
+					url: "/mrs/registration/getmrregistrationunitzone",
+					cache: true,
+					dataType: "json",
+					data:{
+						'registrationUnitId' : $('#select-registrationunit').val()
+						}
+				}).done(function(value) {
+										/*if (value == 0)
+											$('#ttxt-zone').val('');
+										else*/
+					console.log(value);
+					
+					$('#txt-zoneid').val(value.id);
+											$('#txt-zone').val(value.name);
+				
+				});
+			}
+		
+	}
 
 	jQuery('form').validate({
 	    ignore: ".ignore",

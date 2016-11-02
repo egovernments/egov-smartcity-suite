@@ -69,7 +69,36 @@ $(document).ready( function () {
 		}
 	});
 	
-
+	$('#select-registrationunit').change( function () {
+		showRegistrationUnit();
+	})
+	
+	function showRegistrationUnit()
+	{
+	 if ($('#select-registrationunit').val() === '') {
+	 	$('#txt-zone').val('');
+				return;
+			} else {
+			
+				$.ajax({
+					type: "GET",
+					url: "/mrs/registration/getmrregistrationunitzone",
+					cache: true,
+					dataType: "json",
+					data:{
+						'registrationUnitId' : $('#select-registrationunit').val()
+						}
+				}).done(function(value) {
+										/*if (value == 0)
+											$('#ttxt-zone').val('');
+										else*/
+					$('#txt-zoneid').val(value.id);
+					$('#txt-zone').val(value.name);
+				
+				});
+			}
+		
+	}
 	
 })
 

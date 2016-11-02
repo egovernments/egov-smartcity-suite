@@ -61,8 +61,10 @@ import javax.validation.constraints.NotNull;
 
 import org.egov.commons.EgwStatus;
 import org.egov.demand.model.EgDemand;
+import org.egov.infra.admin.master.entity.Boundary;
 import org.egov.infra.workflow.entity.StateAware;
 import org.egov.mrs.masters.entity.MarriageFee;
+import org.egov.mrs.masters.entity.MarriageRegistrationUnit;
 import org.hibernate.validator.constraints.Length;
 import org.egov.mrs.domain.entity.MrApplicant; 
 
@@ -95,6 +97,16 @@ public class ReIssue extends StateAware {
     private Date applicationDate;
     
     private Date reIssueDate;
+    
+    @NotNull
+    @OneToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "zone")
+    private Boundary zone;
+    
+    @NotNull
+    @OneToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "registrationUnit")
+    private MarriageRegistrationUnit marriageRegistrationUnit;
     
     @NotNull
     @Valid
@@ -285,4 +297,21 @@ public class ReIssue extends StateAware {
     public boolean isFeeCollected() {
         return demand.getBaseDemand().compareTo(demand.getAmtCollected()) == 0 ? true : false; 
     }
+
+	public Boundary getZone() {
+		return zone;
+	}
+
+	public void setZone(Boundary zone) {
+		this.zone = zone;
+	}
+
+	public MarriageRegistrationUnit getMarriageRegistrationUnit() {
+		return marriageRegistrationUnit;
+	}
+
+	public void setMarriageRegistrationUnit(
+			MarriageRegistrationUnit marriageRegistrationUnit) {
+		this.marriageRegistrationUnit = marriageRegistrationUnit;
+	}
 }

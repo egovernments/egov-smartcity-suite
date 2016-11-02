@@ -54,36 +54,34 @@
 <form:hidden path="id"/>
 	<div class="form-group">
 		<label class="col-sm-3 control-label">
-			<spring:message code="lbl.date.of.marriage"/><span class="mandatory"></span>
+			<spring:message code="lbl.registrationunit"/><span class="mandatory"></span>
 		</label>
 		<div class="col-sm-3">
-			<form:input path="dateOfMarriage" id="txt-dateOfMarriage" type="text" class="form-control low-width datepicker today" data-date-today-highlight="true" data-date-end-date="0d" placeholder="" autocomplete="off" required="required"/>
-            <form:errors path="dateOfMarriage" cssClass="add-margin error-msg"/>
+			<form:select path="marriageRegistrationUnit.id" id="select-registrationunit" cssClass="form-control" 
+						cssErrorClass="form-control error" required="required">
+                 <form:option value=""> <spring:message code="lbl.default.option"/> </form:option>
+                 <form:options items="${marriageRegistrationUnit}" itemValue="id" itemLabel="name"/>
+             </form:select>
+            <form:errors path="marriageRegistrationUnit.id" cssClass="add-margin error-msg"/>
 		</div>
 		<label class="col-sm-2 control-label">
 			<spring:message code="lbl.zone"/><span class="mandatory"></span>
 		</label>
 		<div class="col-sm-3">
-			<form:select path="zone.id" id="select-zones" cssClass="form-control" 
-						cssErrorClass="form-control error" required="required">
-                 <form:option value=""> <spring:message code="lbl.default.option"/> </form:option>
-                 <form:options items="${zones}" itemValue="id" itemLabel="name"/>
-             </form:select>
-            <form:errors path="zone.id" cssClass="add-margin error-msg"/>
+			<form:hidden path="zone" id="txt-zoneid" />
+			
+			<form:input path="zone.name" id="txt-zone" type="text" class="form-control low-width patternvalidation" readonly="true" data-pattern="decimalvalue" placeholder="" autocomplete="off" required="required"/>
+            <form:errors path="zone" cssClass="add-margin error-msg"/>
 		</div>
 	</div>
 
 	<div class="form-group">
 		<label class="col-sm-3 control-label">
-			<spring:message code="lbl.law"/><span class="mandatory"></span>
+			<spring:message code="lbl.date.of.marriage"/><span class="mandatory"></span>
 		</label>
 		<div class="col-sm-3">
-			<form:select path="marriageAct.id" id="select-marriageAct" cssClass="form-control" 
-						cssErrorClass="form-control error" required="required">
-                 <form:option value=""> <spring:message code="lbl.default.option"/> </form:option>
-                 <form:options items="${acts}" itemValue="id" itemLabel="name"/>
-             </form:select>
-            <form:errors path="marriageAct.id" cssClass="add-margin error-msg"/>
+			<form:input path="dateOfMarriage" id="txt-dateOfMarriage" type="text" class="form-control low-width datepicker today" data-date-today-highlight="true" data-date-end-date="0d" placeholder="" autocomplete="off" required="required"/>
+            <form:errors path="dateOfMarriage" cssClass="add-margin error-msg"/>
 		</div>
 		<label class="col-sm-2 control-label">
 			<spring:message code="lbl.place.of.marriage"/><span class="mandatory"></span>
@@ -117,15 +115,15 @@
 	</div>
 	<div class="form-group">
 	<label class="col-sm-3 control-label">
-			<spring:message code="lbl.registrationunit"/><span class="mandatory"></span>
+			<spring:message code="lbl.law"/><span class="mandatory"></span>
 		</label>
 		<div class="col-sm-3">
-			<form:select path="marriageRegistrationUnit.id" id="select-zones" cssClass="form-control" 
+			<form:select path="marriageAct.id" id="select-marriageAct" cssClass="form-control" 
 						cssErrorClass="form-control error" required="required">
                  <form:option value=""> <spring:message code="lbl.default.option"/> </form:option>
-                 <form:options items="${marriageRegistrationUnit}" itemValue="id" itemLabel="name"/>
+                 <form:options items="${acts}" itemValue="id" itemLabel="name"/>
              </form:select>
-            <form:errors path="marriageRegistrationUnit.id" cssClass="add-margin error-msg"/>
+            <form:errors path="marriageAct.id" cssClass="add-margin error-msg"/>
 		</div>
 	</div>
 

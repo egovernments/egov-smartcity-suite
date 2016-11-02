@@ -45,9 +45,11 @@ import static org.springframework.web.bind.annotation.RequestMethod.GET;
 import javax.servlet.http.HttpServletRequest;
 
 import org.egov.eis.web.contract.WorkflowContainer;
+import org.egov.infra.admin.master.entity.Boundary;
 import org.egov.mrs.application.MarriageConstants;
 import org.egov.mrs.domain.entity.MarriageRegistration;
 import org.egov.mrs.masters.entity.MarriageFee;
+import org.egov.mrs.masters.entity.MarriageRegistrationUnit;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -164,4 +166,14 @@ public class NewRegistrationController extends MarriageRegistrationController {
 			return marriageFee.getFees();
 		return null;
 	}
+    
+    @RequestMapping(value = "/getmrregistrationunitzone", method = GET, produces = APPLICATION_JSON_VALUE)
+   	public @ResponseBody Boundary getregistrationunitzone(@RequestParam final Long registrationUnitId) {
+   		MarriageRegistrationUnit marriageRegistrationUnit = marriageRegistrationUnitService.findById(registrationUnitId);
+   		if (marriageRegistrationUnit != null)
+   			return marriageRegistrationUnit.getZone();
+   		return null;
+   	}
+    
+   
 }
