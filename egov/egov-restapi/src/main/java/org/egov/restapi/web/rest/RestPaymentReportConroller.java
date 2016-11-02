@@ -79,7 +79,7 @@ public class RestPaymentReportConroller {
 
     @Autowired
     private CollectionIntegrationService collectionService;
-
+    
     @Autowired
     private PersistenceService<ServiceCategory, Long> serviceCategoryService;
 
@@ -105,6 +105,8 @@ public class RestPaymentReportConroller {
             detailsByTransactionId.setReceiptNo(detailsByTransactionId2.getReceiptNo());
             detailsByTransactionId.setReferenceNo(detailsByTransactionId2.getReferenceNo());
             detailsByTransactionId.setTransactionId(detailsByTransactionId2.getTransactionId());
+            detailsByTransactionId.setPaymentPeriod(detailsByTransactionId2.getPaymentPeriod());
+            detailsByTransactionId.setPaymentType(detailsByTransactionId2.getPaymentType());
 
         } catch (final Exception e) {
             detailsByTransactionId.setStatus(RestApiConstants.THIRD_PARTY_ACTION_FAILURE);

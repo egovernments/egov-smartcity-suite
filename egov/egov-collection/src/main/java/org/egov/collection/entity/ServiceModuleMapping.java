@@ -37,24 +37,28 @@
  *
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
-package org.egov.ptis.web.rest;
+package org.egov.collection.entity;
 
-import com.google.gson.JsonElement;
-import com.google.gson.JsonObject;
-import com.google.gson.JsonSerializationContext;
-import com.google.gson.JsonSerializer;
-import org.egov.ptis.domain.entity.objection.RevisionPetition;
+import org.egov.infra.admin.master.entity.Module;
+import org.egov.infstr.models.BaseModel;
+import org.egov.infstr.models.ServiceDetails;
 
-import java.lang.reflect.Type;
+public class ServiceModuleMapping extends BaseModel{
 
-public class RevisionPetitionAdaptor implements JsonSerializer<RevisionPetition> {
+    private static final long serialVersionUID = -1001282528493258269L;
+    private ServiceDetails serviceDetails;
+    private Module module;
 
-    @Override
-    public JsonElement serialize(final RevisionPetition revPetition, final Type type, final JsonSerializationContext jsc) {
-        final JsonObject jsonObject = new JsonObject();
-        jsonObject.addProperty("applicationNumber", revPetition.getObjectionNumber());
-        jsonObject.addProperty("accessmentnumber", "" + revPetition.getBasicProperty().getUpicNo());
-        return jsonObject;
+    public ServiceDetails getServiceDetails() {
+        return serviceDetails;
     }
-
+    public void setServiceDetails(ServiceDetails serviceDetails) {
+        this.serviceDetails = serviceDetails;
+    }
+    public Module getModule() {
+        return module;
+    }
+    public void setModule(Module module) {
+        this.module = module;
+    }
 }

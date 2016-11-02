@@ -169,6 +169,8 @@ public class SearchTradeAction extends BaseFormAction {
                         && (roleName.contains(Constants.TL_CREATOR_ROLENAME)
                                 || roleName.contains(Constants.TL_APPROVER_ROLENAME)))
                     licenseActions.add("Print Certificate");
+                if (license.getStatus().getStatusCode().equals(Constants.STATUS_UNDERWORKFLOW))
+                    licenseActions.add("Print Provisional Certificate");
             } else if (license.isLegacy() && !license.isPaid())
                 licenseActions.add("Modify Legacy License");
             if (roleName.contains(Constants.TL_CREATOR_ROLENAME) || roleName.contains(Constants.TL_APPROVER_ROLENAME))

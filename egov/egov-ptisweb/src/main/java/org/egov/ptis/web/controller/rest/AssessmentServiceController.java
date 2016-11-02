@@ -37,7 +37,7 @@
  *
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
-package org.egov.ptis.web.rest;
+package org.egov.ptis.web.controller.rest;
 
 import static org.egov.ptis.constants.PropertyTaxConstants.ADMIN_HIERARCHY_TYPE;
 import static org.egov.ptis.constants.PropertyTaxConstants.REVENUE_HIERARCHY_TYPE;
@@ -99,7 +99,7 @@ public class AssessmentServiceController {
 	 * @return
 	 * @throws IOException
 	 */
-	@RequestMapping(value = "/property/{assessmentNumber}", produces = APPLICATION_JSON_VALUE)
+	@RequestMapping(value ="/rest/property/{assessmentNumber}", produces = APPLICATION_JSON_VALUE)
 	public String getAssessmentDetails(@PathVariable String assessmentNumber) throws IOException {
 		AssessmentDetails assessmentDetail = propertyExternalService.loadAssessmentDetails(assessmentNumber,
 				PropertyExternalService.FLAG_FULL_DETAILS,BasicPropertyStatus.ACTIVE);

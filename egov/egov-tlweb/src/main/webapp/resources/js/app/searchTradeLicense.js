@@ -341,6 +341,8 @@ function goToAction(obj){
 		window.open("../renew/tradeRenewalNotice-renewalNotice.action?model.id="+jQuery('#licenseId').val(),  'rn'+jQuery('#licenseId').val(), 'scrollbars=yes,width=1000,height=700,status=yes');
 	else if(obj.options[obj.selectedIndex].innerHTML=='Renew License')
 		window.open("../newtradelicense/newTradeLicense-beforeRenew.action?model.id="+jQuery('#licenseId').val(),  'rl'+jQuery('#licenseId').val(), 'scrollbars=yes,width=1000,height=700,status=yes');
+	else if(obj.options[obj.selectedIndex].innerHTML=='Print Provisional Certificate')
+		window.open("/tl/viewtradelicense/viewTradeLicense-generateCertificate.action?model.id="+jQuery('#licenseId').val(),  'gc'+jQuery('#licenseId').val(), 'scrollbars=yes,width=1000,height=700,status=yes');
 }
 
   
