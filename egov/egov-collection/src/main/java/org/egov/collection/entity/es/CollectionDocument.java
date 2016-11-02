@@ -130,16 +130,16 @@ public class CollectionDocument {
     @Field(type = FieldType.String)
     private String installmentTo;
 
-    @Field(type = FieldType.String)
+    @Field(type = FieldType.String, index = FieldIndex.not_analyzed)
     private String consumerName;
 
     @Field(type = FieldType.Double)
     private Double reductionAmount;
 
-    @Field(type = FieldType.String)
+    @Field(type = FieldType.String, index = FieldIndex.not_analyzed)
     private String consumerCode;
     
-    @Field(type = FieldType.String)
+    @Field(type = FieldType.String, index = FieldIndex.not_analyzed)
     private String revenueWard;
 
 
