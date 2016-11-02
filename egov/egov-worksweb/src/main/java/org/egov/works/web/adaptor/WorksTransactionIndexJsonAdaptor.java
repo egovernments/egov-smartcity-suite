@@ -542,27 +542,39 @@ public class WorksTransactionIndexJsonAdaptor implements JsonSerializer<WorksMil
                 if (response.getNov01to15target() != null && !response.getNov01to15target().isNaN())
                     jsonObject.addProperty("Nov 01 to 15 target",
                             BigDecimal.valueOf(response.getNov01to15target()).setScale(2, BigDecimal.ROUND_HALF_EVEN).toString());
+                else
+                    jsonObject.addProperty("Nov 01 to 15 target", "0");
                 if (response.getNov01to15actual() != null && !response.getNov01to15actual().isNaN())
                     jsonObject.addProperty("Nov 01 to 15 actual",
                             BigDecimal.valueOf(response.getNov01to15actual()).setScale(2, BigDecimal.ROUND_HALF_EVEN).toString());
+                else
+                    jsonObject.addProperty("Nov 01 to 15 actual", "0");
                 if (response.getNov01to15variance() != null)
                     jsonObject.addProperty("Nov 01 to 15 variance",
                             BigDecimal.valueOf(response.getNov01to15variance()).setScale(2, BigDecimal.ROUND_HALF_EVEN)
                                     .toString());
+                else
+                    jsonObject.addProperty("Nov 01 to 15 variance", "0");
 
                 if (currentDate.getDayOfMonth() > 15) {
                     if (response.getNov16to30target() != null && !response.getNov16to30target().isNaN())
                         jsonObject.addProperty("Nov 16 to 30 target",
                                 BigDecimal.valueOf(response.getNov16to30target()).setScale(2, BigDecimal.ROUND_HALF_EVEN)
                                         .toString());
+                    else
+                        jsonObject.addProperty("Nov 16 to 30 target", "0");
                     if (response.getNov16to30actual() != null && !response.getNov16to30actual().isNaN())
                         jsonObject.addProperty("Nov 16 to 30 actual",
                                 BigDecimal.valueOf(response.getNov16to30actual()).setScale(2, BigDecimal.ROUND_HALF_EVEN)
                                         .toString());
+                    else
+                        jsonObject.addProperty("Nov 16 to 30 actual", "0");
                     if (response.getNov16to30variance() != null)
                         jsonObject.addProperty("Nov 16 to 30 variance",
                                 BigDecimal.valueOf(response.getNov16to30variance()).setScale(2, BigDecimal.ROUND_HALF_EVEN)
                                         .toString());
+                    else
+                        jsonObject.addProperty("Nov 16 to 30 variance", "0");
                     if (response.getNov16to30actual() != null && !response.getNov16to30actual().isNaN())
                         jsonObject.addProperty("Total % of Balance work",
                                 BigDecimal.valueOf(100 - response.getNov16to30actual()).setScale(2, BigDecimal.ROUND_HALF_EVEN)
@@ -872,14 +884,20 @@ public class WorksTransactionIndexJsonAdaptor implements JsonSerializer<WorksMil
             jsonObject.addProperty("Oct 16 to 31 target",
                     BigDecimal.valueOf(response.getOct16to31target()).setScale(2, BigDecimal.ROUND_HALF_EVEN)
                             .toString());
+        else
+            jsonObject.addProperty("Oct 16 to 31 target", "0");
         if (response.getOct16to31actual() != null && !response.getOct16to31actual().isNaN())
             jsonObject.addProperty("Oct 16 to 31 actual",
                     BigDecimal.valueOf(response.getOct16to31actual()).setScale(2, BigDecimal.ROUND_HALF_EVEN)
                             .toString());
+        else
+            jsonObject.addProperty("Oct 16 to 31 actual", "0");
         if (response.getOct16to31variance() != null)
             jsonObject.addProperty("Oct 16 to 31 variance",
                     BigDecimal.valueOf(response.getOct16to31variance()).setScale(2, BigDecimal.ROUND_HALF_EVEN)
                             .toString());
+        else
+            jsonObject.addProperty("Oct 16 to 31 variance", "0");
     }
 
     private void prepareNovemberData(final JsonObject jsonObject, final WorksMilestoneIndexResponse response) {

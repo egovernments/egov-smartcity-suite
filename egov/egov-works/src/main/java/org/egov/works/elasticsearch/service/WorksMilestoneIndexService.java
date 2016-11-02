@@ -548,10 +548,6 @@ public class WorksMilestoneIndexService {
                 finalResponse = new WorksMilestoneIndexResponse();
                 finalResponse = transactionResponse;
                 finalResponse.setMilestonenotcreatedcount(transactionResponse.getTotalnoofworks());
-                finalResponse.setOct16to31actual((double) 0);
-                finalResponse.setOct16to31target((double) 0);
-                // TODO:Data is there in transaction and not there in milestone for this combination.
-                // Physical progress will show as empty and total will come as NaN
             }
             finalResponses.add(finalResponse);
 
