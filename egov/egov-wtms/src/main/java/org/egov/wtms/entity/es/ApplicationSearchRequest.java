@@ -110,8 +110,8 @@ public class ApplicationSearchRequest {
     }
 
     public void setFromDate(final String fromDate) {
-        SimpleDateFormat ft = new SimpleDateFormat("yyyy-MM-dd");
-        SimpleDateFormat dtft = new SimpleDateFormat("dd/MM/yyyy");
+        final SimpleDateFormat ft = new SimpleDateFormat("yyyy-MM-dd");
+        final SimpleDateFormat dtft = new SimpleDateFormat("dd/MM/yyyy");
         if (null != fromDate)
             try {
                 this.fromDate = ft.format(dtft.parse(fromDate));
@@ -125,8 +125,8 @@ public class ApplicationSearchRequest {
     }
 
     public void setToDate(final String toDate) {
-        SimpleDateFormat ft = new SimpleDateFormat("yyyy-MM-dd");
-        SimpleDateFormat dtft = new SimpleDateFormat("dd/MM/yyyy");
+        final SimpleDateFormat ft = new SimpleDateFormat("yyyy-MM-dd");
+        final SimpleDateFormat dtft = new SimpleDateFormat("dd/MM/yyyy");
         final Calendar cal = Calendar.getInstance();
         if (null != toDate)
             try {
@@ -158,28 +158,31 @@ public class ApplicationSearchRequest {
         this.source = source;
     }
 
-    /*public Filters searchFilters() {
-        final List<Filter> andFilters = new ArrayList<>(0);
-        andFilters.add(termsStringFilter("clauses.cityname", cityName));
-        andFilters.add(queryStringFilter("searchable.applicationnumber", applicationNumber != null
-                && !applicationNumber.trim().isEmpty() ? "\"" + applicationNumber + "\"" : applicationNumber));
-        andFilters.add(termsStringFilter("clauses.modulename", moduleName));
-        andFilters.add(termsStringFilter("clauses.applicationtype", applicationType));
-        andFilters.add(termsStringFilter("clauses.channel", source));
-        andFilters.add(queryStringFilter("searchable.applicantname", applicantName));
-        andFilters.add(queryStringFilter("searchable.consumercode", consumerCode));
-        if(applicationStatus !=null && applicationStatus.equals(WaterTaxConstants.APPLICATIONSTATUSOPEN))
-            andFilters.add(queryStringFilter("searchable.isclosed",Integer.toString(1) ));
-        else   if(applicationStatus !=null && applicationStatus.equals(WaterTaxConstants.APPLICATIONSTATUSCLOSED))
-            andFilters.add(queryStringFilter("searchable.isclosed",Integer.toString(0) ));
-            
-        andFilters.add(queryStringFilter("searchable.mobilenumber", mobileNumber));
-        andFilters.add(rangeFilter("searchable.applicationdate", fromDate, toDate));
-        if (logger.isDebugEnabled())
-            logger.debug("finished filters");
-        logger.info("$$$$$$$$$$$$$$$$ Filters : " + andFilters);
-        return Filters.withAndFilters(andFilters);
-    }*/
+    /*
+     * public Filters searchFilters() { final List<Filter> andFilters = new
+     * ArrayList<>(0); andFilters.add(termsStringFilter("clauses.cityname",
+     * cityName));
+     * andFilters.add(queryStringFilter("searchable.applicationnumber",
+     * applicationNumber != null && !applicationNumber.trim().isEmpty() ? "\"" +
+     * applicationNumber + "\"" : applicationNumber));
+     * andFilters.add(termsStringFilter("clauses.modulename", moduleName));
+     * andFilters.add(termsStringFilter("clauses.applicationtype",
+     * applicationType)); andFilters.add(termsStringFilter("clauses.channel",
+     * source)); andFilters.add(queryStringFilter("searchable.applicantname",
+     * applicantName));
+     * andFilters.add(queryStringFilter("searchable.consumercode",
+     * consumerCode)); if(applicationStatus !=null &&
+     * applicationStatus.equals(WaterTaxConstants.APPLICATIONSTATUSOPEN))
+     * andFilters.add(queryStringFilter("searchable.isclosed",Integer.toString(
+     * 1) )); else if(applicationStatus !=null &&
+     * applicationStatus.equals(WaterTaxConstants.APPLICATIONSTATUSCLOSED))
+     * andFilters.add(queryStringFilter("searchable.isclosed",Integer.toString(
+     * 0) )); andFilters.add(queryStringFilter("searchable.mobilenumber",
+     * mobileNumber)); andFilters.add(rangeFilter("searchable.applicationdate",
+     * fromDate, toDate)); if (logger.isDebugEnabled()) logger.debug(
+     * "finished filters"); logger.info("$$$$$$$$$$$$$$$$ Filters : " +
+     * andFilters); return Filters.withAndFilters(andFilters); }
+     */
 
     public String searchQuery() {
         return searchText;
@@ -189,9 +192,8 @@ public class ApplicationSearchRequest {
         return applicationStatus;
     }
 
-    public void setApplicationStatus(String applicationStatus) {
+    public void setApplicationStatus(final String applicationStatus) {
         this.applicationStatus = applicationStatus;
     }
-
 
 }

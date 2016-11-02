@@ -40,6 +40,9 @@
 
 package org.egov.wtms.web.controller.elasticSearch;
 
+import java.util.List;
+import java.util.Map;
+
 import org.egov.infra.admin.master.service.CityService;
 import org.egov.infra.elasticsearch.entity.ApplicationIndex;
 import org.egov.wtms.entity.es.ApplicationSearchRequest;
@@ -55,30 +58,23 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-import java.util.List;
-import java.util.Map;
-
 @Controller
 @RequestMapping(value = "/elastic/appSearch/")
 public class ApplicationSearchController {
 
     private final ApplicationSearchService applicationSearchService;
-    private final CityService cityService;
-
     @Autowired
     private WaterTaxUtils waterTaxUtils;
 
     @Autowired
     public ApplicationSearchController(final ApplicationSearchService applicationSearchService,
-                                       final CityService cityService) {
+            final CityService cityService) {
         this.applicationSearchService = applicationSearchService;
-        this.cityService = cityService;
     }
 
     @RequestMapping(value = "/ajax-moduleTypepopulate", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
-    public List<ApplicationIndex> getAppConfigs(
-            @ModelAttribute("appConfig") @RequestParam final String appModuleName) {
+    public List<ApplicationIndex> getAppConfigs(@ModelAttribute("appConfig") @RequestParam final String appModuleName) {
         final List<ApplicationIndex> applicationIndexList = applicationSearchService
                 .findApplicationIndexApplicationTypes(appModuleName);
         return applicationIndexList;
@@ -110,23 +106,22 @@ public class ApplicationSearchController {
         return applicationSearchService.findApplicationIndexModules();
     }
 
-    /*@RequestMapping(method = RequestMethod.POST)
-    @ResponseBody
-    public List<Document> searchApplication(@ModelAttribute final ApplicationSearchRequest searchRequest) {
-        final City cityWebsite = cityService.getCityByURL(ApplicationThreadLocals.getDomainName());
-        searchRequest.setCityName(cityWebsite.getName());
-        final Sort sort = Sort.by().field("searchable.applicationdate", SortOrder.DESC);
-        final SearchResult searchResult = searchService.search(asList(Index.APPLICATION.toString()),
-                asList(IndexType.APPLICATIONSEARCH.toString()), searchRequest.searchQuery(),
-                searchRequest.searchFilters(), sort, Page.NULL);
-
-        final List<Document> searchResultFomatted = new ArrayList<Document>(0);
-        for (final Document document : searchResult.getDocuments()) {
-            document.getResource().remove("searchable.mobilenumber");
-            document.getResource().remove("searchable.aadharnumber");
-            searchResultFomatted.add(document);
-        }
-        return searchResultFomatted;
-
-    }*/
+    /*
+     * @RequestMapping(method = RequestMethod.POST)
+     * @ResponseBody public List<Document> searchApplication(@ModelAttribute
+     * final ApplicationSearchRequest searchRequest) { final City cityWebsite =
+     * cityService.getCityByURL(ApplicationThreadLocals.getDomainName());
+     * searchRequest.setCityName(cityWebsite.getName()); final Sort sort =
+     * Sort.by().field("searchable.applicationdate", SortOrder.DESC); final
+     * SearchResult searchResult =
+     * searchService.search(asList(Index.APPLICATION.toString()),
+     * asList(IndexType.APPLICATIONSEARCH.toString()),
+     * searchRequest.searchQuery(), searchRequest.searchFilters(), sort,
+     * Page.NULL); final List<Document> searchResultFomatted = new
+     * ArrayList<Document>(0); for (final Document document :
+     * searchResult.getDocuments()) {
+     * document.getResource().remove("searchable.mobilenumber");
+     * document.getResource().remove("searchable.aadharnumber");
+     * searchResultFomatted.add(document); } return searchResultFomatted; }
+     */
 }

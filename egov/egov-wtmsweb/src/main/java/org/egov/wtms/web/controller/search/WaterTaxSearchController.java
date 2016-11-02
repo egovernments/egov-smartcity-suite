@@ -81,7 +81,7 @@ public class WaterTaxSearchController {
 
     @Autowired
     private WaterTaxUtils waterTaxUtils;
-    
+
     @Autowired
     private SecurityUtils securityUtils;
 
@@ -285,7 +285,7 @@ public class WaterTaxSearchController {
         List<WaterChargeDocument> temList = new ArrayList<WaterChargeDocument>();
         final List<ConnectionSearchRequest> finalResult = new ArrayList<ConnectionSearchRequest>();
         temList = findAllWaterChargeIndexByFilter(searchRequest);
-       for (final WaterChargeDocument waterChargeIndex : temList) {
+        for (final WaterChargeDocument waterChargeIndex : temList) {
             final ConnectionSearchRequest customerObj = new ConnectionSearchRequest();
             customerObj.setApplicantName(waterChargeIndex.getConsumercode());
             customerObj.setConsumerCode(waterChargeIndex.getConsumercode());
@@ -305,8 +305,9 @@ public class WaterTaxSearchController {
 
     private BoolQueryBuilder getFilterQuery(final ConnectionSearchRequest searchRequest) {
         final City cityWebsite = cityService.getCityByCode(ApplicationThreadLocals.getCityCode());
-        BoolQueryBuilder boolQuery =QueryBuilders.boolQuery().filter(QueryBuilders.termQuery("ulbname",cityWebsite.getName()));
-       if (StringUtils.isNotBlank(searchRequest.getApplicantName()))
+        BoolQueryBuilder boolQuery = QueryBuilders.boolQuery()
+                .filter(QueryBuilders.termQuery("ulbname", cityWebsite.getName()));
+        if (StringUtils.isNotBlank(searchRequest.getApplicantName()))
             boolQuery = boolQuery.filter(QueryBuilders.matchQuery("consumername", searchRequest.getApplicantName()));
         if (StringUtils.isNotBlank(searchRequest.getConsumerCode()))
             boolQuery = boolQuery.filter(QueryBuilders.matchQuery("consumercode", searchRequest.getConsumerCode()));

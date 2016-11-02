@@ -1,7 +1,6 @@
 package org.egov.collection.utils.es;
 
 import org.egov.collection.entity.CollectionIndex;
-import org.egov.collection.entity.es.CollectionDocument;
 import org.egov.collection.repository.CollectionIndexRepository;
 import org.egov.infra.admin.master.entity.City;
 import org.egov.infra.admin.master.service.CityService;

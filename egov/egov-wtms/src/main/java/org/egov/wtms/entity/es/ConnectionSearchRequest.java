@@ -48,41 +48,39 @@ public class ConnectionSearchRequest {
     private String ulbName;
     private String revenueWard;
     private String doorNumber;
-private String watersource;
-private Long propertyTaxDue;
- private boolean islegacy;
- private String address;
- private String mobilenumber;
+    private String watersource;
+    private Long propertyTaxDue;
+    private boolean islegacy;
+    private String address;
+    private String mobilenumber;
     private Long numberofperson;
- private Long totaldue;
-private String usage;
-private String propertytype;
- private String ulbname;
-private String consumercode;
- private String ward;
-private String applicationcode;
- private String districtname;
- private String zone;
- private String adminward;
- private String grade;
- private String bpaid;
- private String regionname;
- private String pipesize;
- private String doorno;
- private String category;
- private String connectiontype;
- private String propertyid;
-private String status;
-private Long monthlyRate;
- private String aadhaarnumber;
- private Long waterTaxDue;
+    private Long totaldue;
+    private String usage;
+    private String propertytype;
+    private String ulbname;
+    private String consumercode;
+    private String ward;
+    private String applicationcode;
+    private String districtname;
+    private String zone;
+    private String adminward;
+    private String grade;
+    private String bpaid;
+    private String regionname;
+    private String pipesize;
+    private String doorno;
+    private String category;
+    private String connectiontype;
+    private String propertyid;
+    private String status;
+    private Long monthlyRate;
+    private String aadhaarnumber;
+    private Long waterTaxDue;
     private Long arrearsDue;
- private String consumername;
- private Long currentDue;
-private Long arrearsDemand;
-private Long currentDemand;
-
-
+    private String consumername;
+    private Long currentDue;
+    private Long arrearsDemand;
+    private Long currentDemand;
 
     public String getConsumerCode() {
         return consumerCode;
@@ -128,20 +126,18 @@ private Long currentDemand;
         this.searchText = searchText;
     }
 
-   /* public Filters searchFilters() {
-        final List<Filter> andFilters = new ArrayList<>(0);
-        andFilters.add(termsStringFilter("clauses.ulbname", ulbName));
-        andFilters.add(queryStringFilter("searchable.consumername", applicantName));
-        andFilters.add(queryStringFilter("clauses.consumercode", consumerCode));
-        andFilters.add(queryStringFilter("searchable.locality", locality));
-        andFilters.add(queryStringFilter("clauses.mobilenumber", mobileNumber));
-        andFilters.add(termsStringFilter("clauses.doorno", doorNumber));
-        andFilters.add(termsStringFilter("clauses.ward", revenueWard));
-        if (logger.isDebugEnabled())
-            logger.debug("finished filters");
-        return Filters.withAndFilters(andFilters);
-    }
-*/
+    /*
+     * public Filters searchFilters() { final List<Filter> andFilters = new
+     * ArrayList<>(0); andFilters.add(termsStringFilter("clauses.ulbname",
+     * ulbName)); andFilters.add(queryStringFilter("searchable.consumername",
+     * applicantName)); andFilters.add(queryStringFilter("clauses.consumercode",
+     * consumerCode)); andFilters.add(queryStringFilter("searchable.locality",
+     * locality)); andFilters.add(queryStringFilter("clauses.mobilenumber",
+     * mobileNumber)); andFilters.add(termsStringFilter("clauses.doorno",
+     * doorNumber)); andFilters.add(termsStringFilter("clauses.ward",
+     * revenueWard)); if (logger.isDebugEnabled()) logger.debug(
+     * "finished filters"); return Filters.withAndFilters(andFilters); }
+     */
     public String searchQuery() {
         return searchText;
     }
@@ -150,7 +146,7 @@ private Long currentDemand;
         return revenueWard;
     }
 
-    public void setRevenueWard(String revenueWard) {
+    public void setRevenueWard(final String revenueWard) {
         this.revenueWard = revenueWard;
     }
 
@@ -158,7 +154,7 @@ private Long currentDemand;
         return doorNumber;
     }
 
-    public void setDoorNumber(String doorNumber) {
+    public void setDoorNumber(final String doorNumber) {
         this.doorNumber = doorNumber;
     }
 
@@ -166,7 +162,7 @@ private Long currentDemand;
         return watersource;
     }
 
-    public void setWatersource(String watersource) {
+    public void setWatersource(final String watersource) {
         this.watersource = watersource;
     }
 
@@ -174,17 +170,15 @@ private Long currentDemand;
         return islegacy;
     }
 
-    public void setIslegacy(boolean islegacy) {
+    public void setIslegacy(final boolean islegacy) {
         this.islegacy = islegacy;
     }
-
-    
 
     public String getAddress() {
         return address;
     }
 
-    public void setAddress(String address) {
+    public void setAddress(final String address) {
         this.address = address;
     }
 
@@ -192,7 +186,7 @@ private Long currentDemand;
         return mobilenumber;
     }
 
-    public void setMobilenumber(String mobilenumber) {
+    public void setMobilenumber(final String mobilenumber) {
         this.mobilenumber = mobilenumber;
     }
 
@@ -200,7 +194,7 @@ private Long currentDemand;
         return numberofperson;
     }
 
-    public void setNumberofperson(Long numberofperson) {
+    public void setNumberofperson(final Long numberofperson) {
         this.numberofperson = numberofperson;
     }
 
@@ -208,7 +202,7 @@ private Long currentDemand;
         return totaldue;
     }
 
-    public void setTotaldue(Long totaldue) {
+    public void setTotaldue(final Long totaldue) {
         this.totaldue = totaldue;
     }
 
@@ -216,7 +210,7 @@ private Long currentDemand;
         return usage;
     }
 
-    public void setUsage(String usage) {
+    public void setUsage(final String usage) {
         this.usage = usage;
     }
 
@@ -224,7 +218,7 @@ private Long currentDemand;
         return propertytype;
     }
 
-    public void setPropertytype(String propertytype) {
+    public void setPropertytype(final String propertytype) {
         this.propertytype = propertytype;
     }
 
@@ -232,7 +226,7 @@ private Long currentDemand;
         return ulbname;
     }
 
-    public void setUlbname(String ulbname) {
+    public void setUlbname(final String ulbname) {
         this.ulbname = ulbname;
     }
 
@@ -240,7 +234,7 @@ private Long currentDemand;
         return consumercode;
     }
 
-    public void setConsumercode(String consumercode) {
+    public void setConsumercode(final String consumercode) {
         this.consumercode = consumercode;
     }
 
@@ -248,7 +242,7 @@ private Long currentDemand;
         return ward;
     }
 
-    public void setWard(String ward) {
+    public void setWard(final String ward) {
         this.ward = ward;
     }
 
@@ -256,7 +250,7 @@ private Long currentDemand;
         return applicationcode;
     }
 
-    public void setApplicationcode(String applicationcode) {
+    public void setApplicationcode(final String applicationcode) {
         this.applicationcode = applicationcode;
     }
 
@@ -264,7 +258,7 @@ private Long currentDemand;
         return districtname;
     }
 
-    public void setDistrictname(String districtname) {
+    public void setDistrictname(final String districtname) {
         this.districtname = districtname;
     }
 
@@ -272,7 +266,7 @@ private Long currentDemand;
         return zone;
     }
 
-    public void setZone(String zone) {
+    public void setZone(final String zone) {
         this.zone = zone;
     }
 
@@ -280,7 +274,7 @@ private Long currentDemand;
         return adminward;
     }
 
-    public void setAdminward(String adminward) {
+    public void setAdminward(final String adminward) {
         this.adminward = adminward;
     }
 
@@ -288,7 +282,7 @@ private Long currentDemand;
         return grade;
     }
 
-    public void setGrade(String grade) {
+    public void setGrade(final String grade) {
         this.grade = grade;
     }
 
@@ -296,7 +290,7 @@ private Long currentDemand;
         return bpaid;
     }
 
-    public void setBpaid(String bpaid) {
+    public void setBpaid(final String bpaid) {
         this.bpaid = bpaid;
     }
 
@@ -304,7 +298,7 @@ private Long currentDemand;
         return regionname;
     }
 
-    public void setRegionname(String regionname) {
+    public void setRegionname(final String regionname) {
         this.regionname = regionname;
     }
 
@@ -312,7 +306,7 @@ private Long currentDemand;
         return pipesize;
     }
 
-    public void setPipesize(String pipesize) {
+    public void setPipesize(final String pipesize) {
         this.pipesize = pipesize;
     }
 
@@ -320,7 +314,7 @@ private Long currentDemand;
         return doorno;
     }
 
-    public void setDoorno(String doorno) {
+    public void setDoorno(final String doorno) {
         this.doorno = doorno;
     }
 
@@ -328,7 +322,7 @@ private Long currentDemand;
         return category;
     }
 
-    public void setCategory(String category) {
+    public void setCategory(final String category) {
         this.category = category;
     }
 
@@ -336,7 +330,7 @@ private Long currentDemand;
         return connectiontype;
     }
 
-    public void setConnectiontype(String connectiontype) {
+    public void setConnectiontype(final String connectiontype) {
         this.connectiontype = connectiontype;
     }
 
@@ -344,7 +338,7 @@ private Long currentDemand;
         return propertyid;
     }
 
-    public void setPropertyid(String propertyid) {
+    public void setPropertyid(final String propertyid) {
         this.propertyid = propertyid;
     }
 
@@ -352,7 +346,7 @@ private Long currentDemand;
         return status;
     }
 
-    public void setStatus(String status) {
+    public void setStatus(final String status) {
         this.status = status;
     }
 
@@ -360,7 +354,7 @@ private Long currentDemand;
         return monthlyRate;
     }
 
-    public void setMonthlyRate(Long monthlyRate) {
+    public void setMonthlyRate(final Long monthlyRate) {
         this.monthlyRate = monthlyRate;
     }
 
@@ -368,7 +362,7 @@ private Long currentDemand;
         return aadhaarnumber;
     }
 
-    public void setAadhaarnumber(String aadhaarnumber) {
+    public void setAadhaarnumber(final String aadhaarnumber) {
         this.aadhaarnumber = aadhaarnumber;
     }
 
@@ -376,7 +370,7 @@ private Long currentDemand;
         return waterTaxDue;
     }
 
-    public void setWaterTaxDue(Long waterTaxDue) {
+    public void setWaterTaxDue(final Long waterTaxDue) {
         this.waterTaxDue = waterTaxDue;
     }
 
@@ -384,7 +378,7 @@ private Long currentDemand;
         return arrearsDue;
     }
 
-    public void setArrearsDue(Long arrearsDue) {
+    public void setArrearsDue(final Long arrearsDue) {
         this.arrearsDue = arrearsDue;
     }
 
@@ -392,7 +386,7 @@ private Long currentDemand;
         return consumername;
     }
 
-    public void setConsumername(String consumername) {
+    public void setConsumername(final String consumername) {
         this.consumername = consumername;
     }
 
@@ -400,7 +394,7 @@ private Long currentDemand;
         return currentDue;
     }
 
-    public void setCurrentDue(Long currentDue) {
+    public void setCurrentDue(final Long currentDue) {
         this.currentDue = currentDue;
     }
 
@@ -408,7 +402,7 @@ private Long currentDemand;
         return arrearsDemand;
     }
 
-    public void setArrearsDemand(Long arrearsDemand) {
+    public void setArrearsDemand(final Long arrearsDemand) {
         this.arrearsDemand = arrearsDemand;
     }
 
@@ -416,7 +410,7 @@ private Long currentDemand;
         return currentDemand;
     }
 
-    public void setCurrentDemand(Long currentDemand) {
+    public void setCurrentDemand(final Long currentDemand) {
         this.currentDemand = currentDemand;
     }
 
@@ -428,9 +422,8 @@ private Long currentDemand;
         return propertyTaxDue;
     }
 
-    public void setPropertyTaxDue(Long propertyTaxDue) {
+    public void setPropertyTaxDue(final Long propertyTaxDue) {
         this.propertyTaxDue = propertyTaxDue;
     }
-    
 
 }

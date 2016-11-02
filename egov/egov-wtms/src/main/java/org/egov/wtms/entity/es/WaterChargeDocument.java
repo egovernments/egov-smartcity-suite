@@ -39,6 +39,8 @@
  */
 package org.egov.wtms.entity.es;
 
+import static org.egov.infra.utils.ApplicationConstant.ES_DATE_FORMAT;
+
 import java.util.Date;
 
 import org.egov.infra.config.core.ApplicationThreadLocals;
@@ -54,8 +56,8 @@ import com.fasterxml.jackson.annotation.JsonFormat;
 @Document(indexName = "waterconncharges", type = "watercharges_details")
 public class WaterChargeDocument {
 
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm'Z'")
-    @Field(type = FieldType.Date, index = FieldIndex.not_analyzed, format = DateFormat.date_optional_time, pattern = "yyyy-MM-dd'T'hh:mm'Z'")
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = ES_DATE_FORMAT)
+    @Field(type = FieldType.Date, index = FieldIndex.not_analyzed, format = DateFormat.date_optional_time, pattern = ES_DATE_FORMAT)
     private Date createdDate;
     /*
      * private GeoPoint wardlocation; private GeoPoint propertylocation;
@@ -464,7 +466,6 @@ public class WaterChargeDocument {
         this.closureType = closureType;
     }
 
-    
     /*
      * public GeoPoint getWardlocation() { return wardlocation; } public void
      * setWardlocation(GeoPoint wardlocation) { this.wardlocation =
@@ -566,7 +567,6 @@ public class WaterChargeDocument {
             this.status = status;
             return this;
         }
-
 
         public Builder withCategory(final String category) {
             this.category = category;

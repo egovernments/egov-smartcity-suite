@@ -39,19 +39,20 @@
  */
 package org.egov.wtms.repository.es;
 
+import java.util.List;
+
 import org.egov.infra.elasticsearch.entity.ApplicationIndex;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
-import java.util.List;
-
 @Repository
 public interface ApplicationSearchRepository extends JpaRepository<ApplicationIndex, Long> {
 
     @Query("select distinct ct.moduleName from ApplicationIndex ct order by ct.moduleName asc")
     List<ApplicationIndex> findApplicationIndexModules();
+
     @Query("select distinct ct.channel from ApplicationIndex ct where ct.channel !=''  order by ct.channel asc")
     List<ApplicationIndex> getSourceList();
 

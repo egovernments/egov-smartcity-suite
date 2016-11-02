@@ -48,13 +48,11 @@ import org.codehaus.jackson.JsonGenerationException;
 import org.codehaus.jackson.map.JsonMappingException;
 import org.egov.wtms.application.rest.WaterTaxDue;
 import org.egov.wtms.application.service.ConnectionDemandService;
-import org.elasticsearch.action.search.SearchResponse;
 import org.elasticsearch.search.aggregations.AggregationBuilders;
 import org.elasticsearch.search.aggregations.Aggregations;
 import org.elasticsearch.search.aggregations.metrics.sum.Sum;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.elasticsearch.core.ElasticsearchTemplate;
-import org.springframework.data.elasticsearch.core.ResultsExtractor;
 import org.springframework.data.elasticsearch.core.query.NativeSearchQueryBuilder;
 import org.springframework.data.elasticsearch.core.query.SearchQuery;
 import org.springframework.http.MediaType;
@@ -66,10 +64,9 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 public class RestWaterTaxController {
 
-    
     @Autowired
     private ElasticsearchTemplate elasticsearchTemplate;
-    
+
     @Autowired
     private ConnectionDemandService connectionDemandService;
 
@@ -82,30 +79,26 @@ public class RestWaterTaxController {
         return connectionDemandService.getDueDetailsByConsumerCode(consumerCode);
 
     }
-    
 
     /*
-     * Returns Total tax due for the water connection for a given ConsumerCode from ELastic Search
+     * Returns Total tax due for the water connection for a given ConsumerCode
+     * from ELastic Search
      */
     @RequestMapping(value = "rest/watertax/totaldemandamount/", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
-    public WaterTaxDue getTotalDemand() throws JsonGenerationException, JsonMappingException, IOException
-    {
-        SearchQuery searchQuery = new NativeSearchQueryBuilder().withIndices(WATER_TAX_INDEX_NAME)
+    public WaterTaxDue getTotalDemand() throws JsonGenerationException, JsonMappingException, IOException {
+        final SearchQuery searchQuery = new NativeSearchQueryBuilder().withIndices(WATER_TAX_INDEX_NAME)
                 .addAggregation(AggregationBuilders.sum("totaldemand").field("currentDemand")).build();
-        Aggregations aggregations = elasticsearchTemplate.query(searchQuery, new ResultsExtractor<Aggregations>() {
-            @Override
-            public Aggregations extract(SearchResponse response) {
-                return response.getAggregations();
-            }
-        });
-        Sum aggr = aggregations.get("totaldemand");
-        WaterTaxDue waterTaxDue=new WaterTaxDue();
-         waterTaxDue.setCurrentDemand(BigDecimal.valueOf(aggr.getValue()).setScale(0, BigDecimal.ROUND_HALF_UP));
-         return waterTaxDue;
+        final Aggregations aggregations = elasticsearchTemplate.query(searchQuery,
+                response -> response.getAggregations());
+        final Sum aggr = aggregations.get("totaldemand");
+        final WaterTaxDue waterTaxDue = new WaterTaxDue();
+        waterTaxDue.setCurrentDemand(BigDecimal.valueOf(aggr.getValue()).setScale(0, BigDecimal.ROUND_HALF_UP));
+        return waterTaxDue;
     }
 
     /*
-     * Returns Total tax due for list of water connections for a given PropertyIdentifier
+     * Returns Total tax due for list of water connections for a given
+     * PropertyIdentifier
      */
     @RequestMapping(value = {
             "rest/watertax/due/byptno/{assessmentNumber}" }, method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
