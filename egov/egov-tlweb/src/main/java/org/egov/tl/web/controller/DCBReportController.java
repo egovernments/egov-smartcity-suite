@@ -40,67 +40,55 @@
 
 package org.egov.tl.web.controller;
 
-import static org.egov.infra.web.utils.WebUtils.toJSON;
-
-import java.io.IOException;
-import java.util.List;
-
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
 import org.egov.tl.entity.dto.DCBReportResult;
 import org.egov.tl.service.DCBReportService;
+import org.egov.tl.web.response.adaptor.DCBReportResponseAdaptor;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import javax.servlet.http.HttpServletRequest;
+import java.io.IOException;
+
+import static org.apache.commons.lang3.StringUtils.defaultString;
+import static org.egov.infra.web.utils.WebUtils.toJSON;
+import static org.springframework.http.MediaType.TEXT_PLAIN_VALUE;
+import static org.springframework.web.bind.annotation.RequestMethod.GET;
+
 @Controller
-@RequestMapping(value = { "/tlreports", "/public/report" })
+@RequestMapping(value = {"/tlreports", "/public/report"})
 public class DCBReportController {
 
-    public static final String LICENSE = "license";
+    private static final String LICENSE = "license";
+    private static final String REPORT_TYPE_ATTRIB_NAME = "reportType";
+
     @Autowired
     private DCBReportService dCBReportService;
-
-    @PersistenceContext
-    EntityManager entityManager;
 
     @ModelAttribute("dCBReportResult")
     public DCBReportResult dCBReportResultModel() {
         return new DCBReportResult();
     }
 
-    @RequestMapping(value = "/dcbreport/licensenumberwise", method = RequestMethod.GET)
-    public String licenseNumberWisesearch(final Model model) {
+    @RequestMapping(value = "/dcbreport/licensenumberwise", method = GET)
+    public String licenseNumberWisesearch(Model model) {
         model.addAttribute("mode", LICENSE);
-        model.addAttribute("reportType", LICENSE);
+        model.addAttribute(REPORT_TYPE_ATTRIB_NAME, LICENSE);
         return "dCBReport-search";
     }
 
-    @RequestMapping(value = "/dcbreportlist", method = RequestMethod.GET, produces = MediaType.TEXT_PLAIN_VALUE)
+    @RequestMapping(value = "/dcbreportlist", method = GET, produces = TEXT_PLAIN_VALUE)
     @ResponseBody
-    public String search(final HttpServletRequest request, final HttpServletResponse response,
-            final Model model) throws IOException {
-        String licensenumber = "", mode = "", reportType = "";
-        if (request.getParameter("mode") != null && !"".equals(request.getParameter("mode")))
-            mode = request.getParameter("mode");
-        if (request.getParameter("reportType") != null && !"".equals(request.getParameter("reportType")))
-            reportType = request.getParameter("reportType");
-        if (request.getParameter("licensenumber") != null && !"".equals(request.getParameter("licensenumber")))
-            licensenumber = request.getParameter("licensenumber");
-
-        final List<DCBReportResult> resultList = dCBReportService.generateReportResult(licensenumber, mode, reportType);
-
-        final String result = new StringBuilder("{ \"data\":")
-                .append(toJSON(resultList, DCBReportResult.class, DCBReportHelperAdaptor.class))
-                .append("}").toString();
-        return result;
+    public String search(HttpServletRequest request) throws IOException {
+        return new StringBuilder("{ \"data\":")
+                .append(toJSON(
+                        dCBReportService.generateReportResult(
+                        defaultString(request.getParameter("licensenumber")),
+                        defaultString(request.getParameter("mode")),
+                        defaultString(request.getParameter(REPORT_TYPE_ATTRIB_NAME))),
+                        DCBReportResult.class, DCBReportResponseAdaptor.class)).append("}").toString();
     }
 }

@@ -37,29 +37,28 @@
  *
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
-package org.egov.tl.web.adaptor;
-
-import java.lang.reflect.Type;
-
-import org.egov.tl.entity.LicenseDocumentType;
+package org.egov.tl.web.response.adaptor;
 
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonSerializationContext;
 import com.google.gson.JsonSerializer;
+import org.egov.tl.entity.LicenseDocumentType;
 
-public class LicenseDocumentTypeJsonAdaptor implements JsonSerializer<LicenseDocumentType> {
+import java.lang.reflect.Type;
+
+public class LicenseDocumentTypeResponseAdaptor implements JsonSerializer<LicenseDocumentType> {
 
     @Override
-    public JsonElement serialize(final LicenseDocumentType documenttype, final Type type, final JsonSerializationContext jsc) {
-        final JsonObject jsonObject = new JsonObject();
+    public JsonElement serialize(LicenseDocumentType documenttype, Type type, JsonSerializationContext jsc) {
+        JsonObject documentTypeResponse = new JsonObject();
 
         if (documenttype != null) {
-            jsonObject.addProperty("id", documenttype.getId());
-            jsonObject.addProperty("name", documenttype.getName());
-            jsonObject.addProperty("applicationType", documenttype.getApplicationType().name());
-            jsonObject.addProperty("mandatory", documenttype.isMandatory() ? "Yes" : "No");
+            documentTypeResponse.addProperty("id", documenttype.getId());
+            documentTypeResponse.addProperty("name", documenttype.getName());
+            documentTypeResponse.addProperty("applicationType", documenttype.getApplicationType().name());
+            documentTypeResponse.addProperty("mandatory", documenttype.isMandatory() ? "Yes" : "No");
         }
-        return jsonObject;
+        return documentTypeResponse;
     }
 }

@@ -37,7 +37,7 @@
  *
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
-package org.egov.tl.web.adaptor;
+package org.egov.tl.web.response.adaptor;
 
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
@@ -47,21 +47,23 @@ import org.egov.tl.entity.Validity;
 
 import java.lang.reflect.Type;
 
-public class ValidityJsonAdaptor implements JsonSerializer<Validity> {
+import static org.apache.commons.lang3.StringUtils.EMPTY;
+
+public class ValidityResponseAdaptor implements JsonSerializer<Validity> {
     @Override
-    public JsonElement serialize(final Validity validity, final Type type, final JsonSerializationContext jsc) {
-        final JsonObject jsonObject = new JsonObject();
+    public JsonElement serialize(Validity validity, Type type, JsonSerializationContext jsc) {
+        JsonObject validityResponse = new JsonObject();
         if (validity != null) {
-            jsonObject.addProperty("id", validity.getId());
-            jsonObject.addProperty("natureOfBusiness", validity.getNatureOfBusiness().getName());
-            jsonObject.addProperty("licenseCategory",
-                    validity.getLicenseCategory() == null ? "" : validity.getLicenseCategory().getName());
-            jsonObject.addProperty("basedOnFinancialYear", validity.isBasedOnFinancialYear() ? "Yes" : "No");
-            jsonObject.addProperty("day", validity.getDay());
-            jsonObject.addProperty("week", validity.getWeek());
-            jsonObject.addProperty("month", validity.getMonth());
-            jsonObject.addProperty("year", validity.getYear());
+            validityResponse.addProperty("id", validity.getId());
+            validityResponse.addProperty("natureOfBusiness", validity.getNatureOfBusiness().getName());
+            validityResponse.addProperty("licenseCategory",
+                    validity.getLicenseCategory() == null ? EMPTY : validity.getLicenseCategory().getName());
+            validityResponse.addProperty("basedOnFinancialYear", validity.isBasedOnFinancialYear() ? "Yes" : "No");
+            validityResponse.addProperty("day", validity.getDay());
+            validityResponse.addProperty("week", validity.getWeek());
+            validityResponse.addProperty("month", validity.getMonth());
+            validityResponse.addProperty("year", validity.getYear());
         }
-        return jsonObject;
+        return validityResponse;
     }
 }
