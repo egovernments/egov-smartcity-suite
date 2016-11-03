@@ -46,6 +46,7 @@ import static org.egov.ptis.constants.PropertyTaxConstants.DASHBOARD_GROUPING_DI
 import static org.egov.ptis.constants.PropertyTaxConstants.DASHBOARD_GROUPING_GRADEWISE;
 import static org.egov.ptis.constants.PropertyTaxConstants.DASHBOARD_GROUPING_REGIONWISE;
 import static org.egov.ptis.constants.PropertyTaxConstants.DASHBOARD_GROUPING_ULBWISE;
+import static org.egov.ptis.constants.PropertyTaxConstants.DASHBOARD_GROUPING_WARDWISE;
 import static org.egov.ptis.constants.PropertyTaxConstants.DATEFORMATTER_YYYY_MM_DD;
 import static org.egov.ptis.constants.PropertyTaxConstants.DATE_FORMAT_YYYYMMDD;
 import static org.egov.ptis.constants.PropertyTaxConstants.PROPERTY_TAX_INDEX_NAME;
@@ -165,8 +166,7 @@ public class CollectionIndexElasticSearchService {
      * @param ulbCodeField
      * @return BoolQueryBuilder
      */
-    private BoolQueryBuilder prepareWhereClause(CollectionDetailsRequest collectionDetailsRequest, String indexName,
-            String ulbCodeField) {
+    private BoolQueryBuilder prepareWhereClause(CollectionDetailsRequest collectionDetailsRequest, String indexName) {
         BoolQueryBuilder boolQuery = null;
         if (indexName.equals(PROPERTY_TAX_INDEX_NAME))
             boolQuery = QueryBuilders.boolQuery().filter(QueryBuilders.rangeQuery("totalDemand").from(0).to(null));
@@ -181,12 +181,10 @@ public class CollectionIndexElasticSearchService {
                     .filter(QueryBuilders.matchQuery("districtName", collectionDetailsRequest.getDistrictName()));
         if (StringUtils.isNotBlank(collectionDetailsRequest.getUlbGrade()))
             boolQuery = boolQuery.filter(QueryBuilders.matchQuery("cityGrade", collectionDetailsRequest.getUlbGrade()));
-        // To be enabled later
-        /*
-         * if(StringUtils.isNotBlank(collectionDetailsRequest.getUlbCode()))
-         * boolQuery = boolQuery.filter(QueryBuilders.matchQuery(ulbCodeField,
-         * collectionDetailsRequest.getUlbCode()));
-         */
+        if(StringUtils.isNotBlank(collectionDetailsRequest.getUlbCode()))
+            boolQuery = boolQuery
+                    .filter(QueryBuilders.matchQuery("cityCode", collectionDetailsRequest.getUlbCode()));
+         
         return boolQuery;
     }
 
@@ -267,7 +265,7 @@ public class CollectionIndexElasticSearchService {
     public BigDecimal getCollectionBetweenDates(CollectionDetailsRequest collectionDetailsRequest, Date fromDate,
             Date toDate, String cityName) {
         Long startTime = System.currentTimeMillis();
-        BoolQueryBuilder boolQuery = prepareWhereClause(collectionDetailsRequest, COLLECTION_INDEX_NAME, "cityCode");
+        BoolQueryBuilder boolQuery = prepareWhereClause(collectionDetailsRequest, COLLECTION_INDEX_NAME);
         boolQuery = boolQuery
                 .filter(QueryBuilders.rangeQuery("receiptDate").gte(DATEFORMATTER_YYYY_MM_DD.format(fromDate))
                         .lte(DATEFORMATTER_YYYY_MM_DD.format(toDate)).includeUpper(false))
@@ -325,6 +323,8 @@ public class CollectionIndexElasticSearchService {
                 aggregationField = "cityName";
             else if (collectionDetailsRequest.getType().equalsIgnoreCase(DASHBOARD_GROUPING_GRADEWISE))
                 aggregationField = "cityGrade";
+            else if (collectionDetailsRequest.getType().equalsIgnoreCase(DASHBOARD_GROUPING_WARDWISE))
+                aggregationField = "revenueWard";
         }
         // Wardwise group to be implemented later
 
@@ -347,7 +347,7 @@ public class CollectionIndexElasticSearchService {
         Long startTime = System.currentTimeMillis();
         // For today collection
         Map<String, BigDecimal> todayCollMap = getCollectionAndDemandValues(collectionDetailsRequest, fromDate, toDate,
-                COLLECTION_INDEX_NAME, "totalAmount", "cityCode", aggregationField);
+                COLLECTION_INDEX_NAME, "totalAmount", aggregationField);
 
         /**
          * For collection and demand between the date ranges if dates are sent
@@ -367,17 +367,17 @@ public class CollectionIndexElasticSearchService {
 
         // For current year's till date collection
         Map<String, BigDecimal> cytdCollMap = getCollectionAndDemandValues(collectionDetailsRequest, fromDate, toDate,
-                COLLECTION_INDEX_NAME, "totalAmount", "cityCode", aggregationField);
+                COLLECTION_INDEX_NAME, "totalAmount", aggregationField);
         // For total demand
         Map<String, BigDecimal> totalDemandMap = getCollectionAndDemandValues(collectionDetailsRequest, fromDate,
-                toDate, PROPERTY_TAX_INDEX_NAME, "totalDemand", "ulbcode", aggregationField);
+                toDate, PROPERTY_TAX_INDEX_NAME, "totalDemand", aggregationField);
         // For current year demand
         Map<String, BigDecimal> currYrTotalDemandMap = getCollectionAndDemandValues(collectionDetailsRequest, fromDate,
-                toDate, PROPERTY_TAX_INDEX_NAME, "totalDemand", "ulbcode", aggregationField);
+                toDate, PROPERTY_TAX_INDEX_NAME, "totalDemand", aggregationField);
         // For last year's till today's date collections
         Map<String, BigDecimal> lytdCollMap = getCollectionAndDemandValues(collectionDetailsRequest,
                 DateUtils.addYears(fromDate, -1), DateUtils.addYears(toDate, -1), COLLECTION_INDEX_NAME, "totalAmount",
-                "cityCode", aggregationField);
+                aggregationField);
         Long timeTaken = System.currentTimeMillis() - startTime;
         LOGGER.debug("Time taken by getCollectionAndDemandValues() is : " + timeTaken + " (millisecs) ");
 
@@ -397,6 +397,8 @@ public class CollectionIndexElasticSearchService {
                 collIndData.setUlbGrade(collectionDetailsRequest.getUlbGrade());
             } else if (aggregationField.equals("cityGrade"))
                 collIndData.setUlbGrade(name);
+              else if(aggregationField.equals("revenueWard"))
+                collIndData.setWardName(name);
 
             collIndData.setTodayColl(todayCollMap.get(name) == null ? BigDecimal.ZERO : todayCollMap.get(name));
             collIndData.setCytdColl(entry.getValue());
@@ -444,9 +446,8 @@ public class CollectionIndexElasticSearchService {
      * @return Map
      */
     public Map<String, BigDecimal> getCollectionAndDemandValues(CollectionDetailsRequest collectionDetailsRequest,
-            Date fromDate, Date toDate, String indexName, String fieldName, String ulbCodeField,
-            String aggregationField) {
-        BoolQueryBuilder boolQuery = prepareWhereClause(collectionDetailsRequest, indexName, ulbCodeField);
+            Date fromDate, Date toDate, String indexName, String fieldName, String aggregationField) {
+        BoolQueryBuilder boolQuery = prepareWhereClause(collectionDetailsRequest, indexName);
         if (indexName.equals(COLLECTION_INDEX_NAME))
             boolQuery = boolQuery
                     .filter(QueryBuilders.rangeQuery("receiptDate").gte(DATEFORMATTER_YYYY_MM_DD.format(fromDate))
@@ -601,7 +602,7 @@ public class CollectionIndexElasticSearchService {
      */
     private Aggregations getMonthwiseCollectionsForConsecutiveYears(CollectionDetailsRequest collectionDetailsRequest,
             Date fromDate, Date toDate) {
-        BoolQueryBuilder boolQuery = prepareWhereClause(collectionDetailsRequest, COLLECTION_INDEX_NAME, "cityCode");
+        BoolQueryBuilder boolQuery = prepareWhereClause(collectionDetailsRequest, COLLECTION_INDEX_NAME);
         boolQuery = boolQuery.mustNot(QueryBuilders.matchQuery("status", "Cancelled"));
         AggregationBuilder monthAggregation = AggregationBuilders.dateHistogram("date_agg").field("receiptDate")
                 .interval(DateHistogramInterval.MONTH)
@@ -689,7 +690,7 @@ public class CollectionIndexElasticSearchService {
      */
     private Long getTotalReceiptCountsForDates(CollectionDetailsRequest collectionDetailsRequest, Date fromDate,
             Date toDate) {
-        BoolQueryBuilder boolQuery = prepareWhereClause(collectionDetailsRequest, COLLECTION_INDEX_NAME, "cityCode");
+        BoolQueryBuilder boolQuery = prepareWhereClause(collectionDetailsRequest, COLLECTION_INDEX_NAME);
         boolQuery = boolQuery
                 .filter(QueryBuilders.rangeQuery("receiptDate").gte(DATEFORMATTER_YYYY_MM_DD.format(fromDate))
                         .lte(DATEFORMATTER_YYYY_MM_DD.format(toDate)).includeUpper(false))
@@ -833,7 +834,7 @@ public class CollectionIndexElasticSearchService {
      */
     private Aggregations getReceiptsCountForConsecutiveYears(CollectionDetailsRequest collectionDetailsRequest,
             Date fromDate, Date toDate) {
-        BoolQueryBuilder boolQuery = prepareWhereClause(collectionDetailsRequest, COLLECTION_INDEX_NAME, "cityCode");
+        BoolQueryBuilder boolQuery = prepareWhereClause(collectionDetailsRequest, COLLECTION_INDEX_NAME);
         boolQuery = boolQuery.mustNot(QueryBuilders.matchQuery("status", "Cancelled"));
         AggregationBuilder monthAggregation = AggregationBuilders.dateHistogram("date_agg").field("receiptDate")
                 .interval(DateHistogramInterval.MONTH)
@@ -884,6 +885,8 @@ public class CollectionIndexElasticSearchService {
                 aggregationField = "cityName";
             else if (collectionDetailsRequest.getType().equalsIgnoreCase(DASHBOARD_GROUPING_GRADEWISE))
                 aggregationField = "cityGrade";
+            else if (collectionDetailsRequest.getType().equalsIgnoreCase(DASHBOARD_GROUPING_WARDWISE))
+                aggregationField = "revenueWard";
         }
         /**
          * For Current day's collection if dates are sent in the request,
@@ -900,7 +903,7 @@ public class CollectionIndexElasticSearchService {
         }
         Long startTime = System.currentTimeMillis();
         Map<String, BigDecimal> currDayCollMap = getCollectionAndDemandCountResults(collectionDetailsRequest, fromDate,
-                toDate, COLLECTION_INDEX_NAME, "consumerCode", "cityCode", aggregationField);
+                toDate, COLLECTION_INDEX_NAME, "consumerCode", aggregationField);
         /**
          * For collections between the date ranges if dates are sent in the
          * request, consider the same, else calculate from current year start
@@ -916,12 +919,12 @@ public class CollectionIndexElasticSearchService {
             toDate = DateUtils.addDays(new Date(), 1);
         }
         Map<String, BigDecimal> cytdCollMap = getCollectionAndDemandCountResults(collectionDetailsRequest, fromDate,
-                toDate, COLLECTION_INDEX_NAME, "consumerCode", "cityCode", aggregationField);
+                toDate, COLLECTION_INDEX_NAME, "consumerCode", aggregationField);
 
         // For last year's till date collections
         Map<String, BigDecimal> lytdCollMap = getCollectionAndDemandCountResults(collectionDetailsRequest,
                 DateUtils.addYears(fromDate, -1), DateUtils.addYears(toDate, -1), COLLECTION_INDEX_NAME, "consumerCode",
-                "cityCode", aggregationField);
+                aggregationField);
         Long timeTaken = System.currentTimeMillis() - startTime;
         LOGGER.debug("Time taken by getCollectionAndDemandCountResults() is : " + timeTaken + " (millisecs) ");
 
@@ -940,6 +943,8 @@ public class CollectionIndexElasticSearchService {
                 receiptData.setUlbGrade(collectionDetailsRequest.getUlbGrade());
             } else if (aggregationField.equals("cityGrade"))
                 receiptData.setUlbGrade(name);
+              else if(aggregationField.equals("revenueWard"))
+                receiptData.setWardName(name);
             
             receiptData.setCytdColl(entry.getValue());
             receiptData.setCurrDayColl(
@@ -962,9 +967,8 @@ public class CollectionIndexElasticSearchService {
     }
 
     public Map<String, BigDecimal> getCollectionAndDemandCountResults(CollectionDetailsRequest collectionDetailsRequest,
-            Date fromDate, Date toDate, String indexName, String fieldName, String ulbCodeField,
-            String aggregationField) {
-        BoolQueryBuilder boolQuery = prepareWhereClause(collectionDetailsRequest, indexName, ulbCodeField);
+            Date fromDate, Date toDate, String indexName, String fieldName, String aggregationField) {
+        BoolQueryBuilder boolQuery = prepareWhereClause(collectionDetailsRequest, indexName);
         if (indexName.equals(COLLECTION_INDEX_NAME))
             boolQuery = boolQuery
                     .filter(QueryBuilders.rangeQuery("receiptDate").gte(DATEFORMATTER_YYYY_MM_DD.format(fromDate))

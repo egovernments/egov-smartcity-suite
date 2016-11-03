@@ -430,12 +430,9 @@ public class PropertyTaxElasticSearchIndexService {
                     .filter(QueryBuilders.matchQuery("districtName", collectionDetailsRequest.getDistrictName()));
         if (StringUtils.isNotBlank(collectionDetailsRequest.getUlbGrade()))
             boolQuery = boolQuery.filter(QueryBuilders.matchQuery("cityGrade", collectionDetailsRequest.getUlbGrade()));
-        // To be enabled later
-        /*
-         * if(StringUtils.isNotBlank(collectionDetailsRequest.getUlbCode()))
-         * boolQuery = boolQuery.filter(QueryBuilders.matchQuery("ulbcode",
-         * collectionDetailsRequest.getUlbCode()));
-         */
+        if(StringUtils.isNotBlank(collectionDetailsRequest.getUlbCode()))
+            boolQuery = boolQuery
+                    .filter(QueryBuilders.matchQuery("cityCode", collectionDetailsRequest.getUlbCode()));
         return boolQuery;
     }
 

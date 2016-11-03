@@ -1510,4 +1510,5 @@ public interface PropertyTaxConstants {
     public static final String DASHBOARD_GROUPING_ULBWISE = "ulb";
     public static final String DASHBOARD_GROUPING_REGIONWISE = "region";
     public static final String DASHBOARD_GROUPING_GRADEWISE = "grade";
+    public static final String DASHBOARD_GROUPING_WARDWISE = "ward";
 }

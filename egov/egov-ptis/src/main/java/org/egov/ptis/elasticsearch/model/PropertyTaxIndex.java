@@ -65,7 +65,7 @@ public class PropertyTaxIndex {
     private String districtName;
 
     @Field(type = FieldType.String, index = FieldIndex.not_analyzed)
-    private String ulbCode;
+    private String cityCode;
 
     @Field(type = FieldType.String, index = FieldIndex.not_analyzed)
     private String adminWardName;
@@ -220,12 +220,12 @@ public class PropertyTaxIndex {
 		this.districtName = districtName;
 	}
 
-	public String getUlbCode() {
-		return ulbCode;
+	public String getCityCode() {
+		return cityCode;
 	}
 
-	public void setUlbCode(String ulbCode) {
-		this.ulbCode = ulbCode;
+	public void setCityCode(String cityCode) {
+		this.cityCode = cityCode;
 	}
 
 	public String getAdminWardName() {
