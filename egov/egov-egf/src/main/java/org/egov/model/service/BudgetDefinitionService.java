@@ -15,6 +15,7 @@ import org.egov.model.budget.Budget;
 import org.egov.model.budget.BudgetDetail;
 import org.egov.model.repository.BudgetDefinitionRepository;
 import org.egov.services.budget.BudgetDetailService;
+import org.egov.utils.FinancialConstants;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.MessageSource;
@@ -149,8 +150,8 @@ public class BudgetDefinitionService {
         return "";
     }
 
-    public EgwStatus getBudgetStatus() {
-        return egwStatusHibernate.getStatusByModuleAndCode("BUDGET", "Created");
+    public EgwStatus getBudgetStatus(String code) {
+        return egwStatusHibernate.getStatusByModuleAndCode(FinancialConstants.BUDGET,code);
     }
 
     public List<BudgetDetail> getBudgetDetailList(Long budgetId) {
@@ -182,4 +183,19 @@ public class BudgetDefinitionService {
         return budgetDetailsList;
     }
 
+    public Long getApproved(Long financialYearId)
+    {
+        return budgetDefinitionRepository.countByStatusIdInAndFinancialYearIdIs(getBudgetStatus("Approved").getId(),financialYearId);
+    }
+    
+    public Long getVerified(Long financialYearId)
+    {
+        return budgetDefinitionRepository.countByStatusIdInAndFinancialYearIdIs(getBudgetStatus("Created").getId(),financialYearId);
+    }
+    
+    
+    public Long getNotInitalized(Long financialYearId) {
+        List<Long> bb=budgetDetailService.getBudgetIdList();
+        return budgetDefinitionRepository.countByIdNotInAndFinancialYearIdIs(bb, financialYearId);
+    }
 }

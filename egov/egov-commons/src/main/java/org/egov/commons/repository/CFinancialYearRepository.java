@@ -71,4 +71,7 @@ public interface CFinancialYearRepository extends JpaRepository<CFinancialYear, 
     
     //All financial year that are not closed
     public List<CFinancialYear> findByIsClosedFalseOrderByFinYearRangeDesc();
+    
+    public List<CFinancialYear> findByIdIn(List<Long> financialYearList);
+    
     }

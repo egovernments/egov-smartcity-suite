@@ -31,4 +31,11 @@ public interface BudgetDefinitionRepository extends JpaRepository<Budget, java.l
 
     public List<Budget> findByFinancialYearIdIsOrderByFinancialYearIdAscNameAsc(Long financialYearId);
 
+    
+    @Query("select count(b) from Budget b where b.status.id =:statusId")
+    Long countBudget(Integer statusId);
+    
+    public Long countByStatusIdInAndFinancialYearIdIs(Integer statusId,Long financialYearId);
+    
+    public Long countByIdNotInAndFinancialYearIdIs(List<Long> budgetId,Long financialYearId);
 }

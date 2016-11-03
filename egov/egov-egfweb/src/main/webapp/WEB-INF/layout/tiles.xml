@@ -483,4 +483,25 @@
 			value="/WEB-INF/views/budgetdefinition/budgetdefinition-search.jsp" />
 	</definition>
 
+	<definition name="budgetapproval-new" extends="base_layout">
+		<put-attribute name="page-title" value="title.budget.new"
+			cascade="true" />
+		<put-attribute name="body"
+			value="/WEB-INF/views/budgetapproval/budgetapproval-new.jsp" />
+	</definition>
+
+	<definition name="budgetapproval-result" extends="base_layout">
+		<put-attribute name="page-title" value="title.budget.result"
+			cascade="true" />
+		<put-attribute name="body"
+			value="/WEB-INF/views/budgetapproval/budgetapproval-result.jsp" />
+	</definition>
+
+	<definition name="budgetapproval-search" extends="base_layout">
+		<put-attribute name="page-title" value="title.budget.approval"
+			cascade="true" />
+		<put-attribute name="body"
+			value="/WEB-INF/views/budgetapproval/budgetapproval-search.jsp" />
+	</definition>
+
 </tiles-definitions>
