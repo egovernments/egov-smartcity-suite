@@ -67,7 +67,7 @@
 				
 				<div class="form-group">
 				<label class="col-sm-2 control-label text-right"><spring:message
-						code="lbl.upload" /></label>
+						code="lbl.upload" /><span class="mandatory"></span></label>
 				<%-- <div class="col-sm-3 add-margin">
 							<input type="file" id="attachments" name="attachments"
 								data-id="1" class="filechange inline btn" />
@@ -91,7 +91,7 @@
 							<small class="error-msg"><spring:message code="lbl.mesg.document"/></small>
 						</c:when>
 						<c:otherwise>
-							<form:input path ="attachments" type="file" id="attachments" name="attachments"
+							<form:input path ="attachments" type="file" id="attachments" name="attachments" required="true"
 								data-id="1" class="filechange inline btn upload-file" /><small class="error-msg"><spring:message code="lbl.mesg.document"/></small>
 							<form:errors path="attachments" cssClass="error-msg" />
 						</c:otherwise>
@@ -110,4 +110,5 @@
 				<spring:message code="lbl.pressCntrlToSelectMultipleWards"></spring:message>
 		</div>
 		
+		<div>Note: After getting the council preamble prepared and approved by the head of the section, the same should be uploaded here and forward to the competent authority for further action</div>
 	</div>

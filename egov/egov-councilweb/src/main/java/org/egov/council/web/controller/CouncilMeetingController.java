@@ -261,6 +261,7 @@ public class CouncilMeetingController {
     public String result(@PathVariable("id") final Long id, Model model) {
         CouncilMeeting councilMeeting = councilMeetingService.findOne(id);
         model.addAttribute("councilMeeting", councilMeeting);
+        model.addAttribute("commiteemembelist", councilMeeting.getCommitteeType().getCommiteemembers());
         return COUNCILMEETING_RESULT;
     }
 

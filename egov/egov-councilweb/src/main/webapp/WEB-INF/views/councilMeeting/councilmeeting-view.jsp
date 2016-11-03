@@ -87,6 +87,39 @@
 						${councilMeeting.meetingTime}</div>
 				</div>
 				<div class="panel-body">
+				<div class="panel-heading">
+						<div class="panel-title">
+							<spring:message code="lbl.committee.members" />
+						</div>
+					</div>
+					<table class="table table-bordered">
+						<thead>
+							<th align="center"><spring:message code="lbl.member.name" /></th>
+							<th><spring:message code="lbl.designation" /></th>
+						
+							
+						</thead>
+						<tbody>
+							<c:choose>
+								<c:when test="${!commiteemembelist.isEmpty()}">
+									<c:forEach items="${commiteemembelist}" var="mem"
+										varStatus="counter">
+										<tr>
+											<div class="row add-margin">
+												<td><c:out value="${mem.councilMember.name}" /></td>
+												<td align="center">${mem.councilMember.designation.name}</td>							
+											</div>
+										</tr>
+									</c:forEach>
+								</c:when>
+								<c:otherwise>
+									<div class="col-md-3 col-xs-6 add-margin">
+										<spring:message code="lbl.noAgenda.Detail" />
+									</div>
+								</c:otherwise>
+							</c:choose>
+						</tbody>
+					</table>
 					<div class="panel-heading">
 						<div class="panel-title">
 							<spring:message code="lbl.agenda.details" />
@@ -124,6 +157,9 @@
 							</c:choose>
 						</tbody>
 					</table>
+					
+					
+					
 				</div>
 			</div>
 

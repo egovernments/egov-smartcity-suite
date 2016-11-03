@@ -1,4 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
+<!-- Created with Jaspersoft Studio version 6.3.1.final using JasperReports Library version 6.3.1  -->
+<!-- 2016-11-03T14:15:12 -->
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="meetingMom" pageWidth="595" pageHeight="842" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="cee583e3-a0f8-4d29-92e7-b2c0afa5f324">
 	<property name="ireport.zoom" value="1.0"/>
 	<property name="ireport.x" value="16"/>
@@ -14,7 +16,7 @@
 	<field name="meetingMOMList" class="java.util.List"/>
 	<field name="meetingAttendenceList" class="java.util.List"/>
 	<title>
-		<band height="207">
+		<band height="191">
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
 				<reportElement x="127" y="13" width="366" height="33" uuid="c62d110f-2237-4e88-a1b5-0d9f40bc358a"/>
 				<textElement textAlignment="Center" verticalAlignment="Middle">
@@ -58,12 +60,12 @@
 				<textFieldExpression><![CDATA[$P{commiteeType}]]></textFieldExpression>
 			</textField>
 			<staticText>
-				<reportElement x="53" y="163" width="135" height="35" uuid="7fe593cc-c3cc-433a-a4fa-6cdd6bee3f79"/>
+				<reportElement x="53" y="163" width="135" height="28" uuid="7fe593cc-c3cc-433a-a4fa-6cdd6bee3f79"/>
 				<textElement verticalAlignment="Middle"/>
 				<text><![CDATA[Meeting Date/Time/Place:]]></text>
 			</staticText>
 			<textField isBlankWhenNull="true">
-				<reportElement x="188" y="163" width="367" height="35" isPrintWhenDetailOverflows="true" uuid="b1d7046d-3532-42f3-a918-f19da4848134"/>
+				<reportElement x="188" y="163" width="367" height="28" isPrintWhenDetailOverflows="true" uuid="b1d7046d-3532-42f3-a918-f19da4848134"/>
 				<textElement verticalAlignment="Middle">
 					<font isBold="true"/>
 				</textElement>
@@ -72,16 +74,9 @@
 		</band>
 	</title>
 	<detail>
-		<band height="48" splitType="Stretch">
+		<band height="55" splitType="Stretch">
 			<subreport isUsingCache="true">
-				<reportElement stretchType="RelativeToBandHeight" x="0" y="1" width="555" height="47" uuid="4b57bfd1-6948-4845-bef2-f916233b7f53"/>
-				<dataSourceExpression><![CDATA[new net.sf.jasperreports.engine.data.JRBeanCollectionDataSource($F{meetingAttendenceList},false)]]></dataSourceExpression>
-				<subreportExpression><![CDATA[ReportUtil.getTemplateAsStream("meetingAttendenceDetails.jasper")]]></subreportExpression>
-			</subreport>
-		</band>
-		<band height="47">
-			<subreport isUsingCache="true">
-				<reportElement stretchType="RelativeToBandHeight" x="0" y="0" width="555" height="47" uuid="345222b5-2287-4867-b4fa-06bc0aaf0e28"/>
+				<reportElement stretchType="RelativeToBandHeight" x="0" y="8" width="555" height="47" uuid="345222b5-2287-4867-b4fa-06bc0aaf0e28"/>
 				<dataSourceExpression><![CDATA[new net.sf.jasperreports.engine.data.JRBeanCollectionDataSource($F{meetingMOMList},false)]]></dataSourceExpression>
 				<subreportExpression><![CDATA[ReportUtil.getTemplateAsStream("meetingMomDetails.jasper")]]></subreportExpression>
 			</subreport>
