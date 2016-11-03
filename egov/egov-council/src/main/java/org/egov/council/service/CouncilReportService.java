@@ -132,6 +132,9 @@ public class CouncilReportService {
             meetingDateTimeLocation.append(' ');
             meetingDateTimeLocation.append(councilMeeting.getMeetingLocation());
         }
+        reportParams.put("meetingDate", councilMeeting.getMeetingDate().toString() != null ?councilMeeting.getMeetingDate().toString():" " );
+        reportParams.put("meetingTime", councilMeeting.getMeetingTime() != null ? councilMeeting.getMeetingTime():" ");
+        reportParams.put("meetingPlace", councilMeeting.getMeetingLocation() != null ? councilMeeting.getMeetingLocation():" ");
         reportParams.put("meetingDateTimePlace", meetingDateTimeLocation.toString());
         reportParams.put("cityName", ReportUtil.getCityName());
         //reportParams.put("agendaSubReportPath", ReportUtil.getTemplateAsStream(subReportPath));
