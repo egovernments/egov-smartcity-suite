@@ -45,6 +45,7 @@ import static org.egov.pgr.utils.constants.PGRConstants.DASHBOARD_GROUPING_REGIO
 import static org.egov.pgr.utils.constants.PGRConstants.DASHBOARD_GROUPING_ULBGRADE;
 import static org.egov.pgr.utils.constants.PGRConstants.DASHBOARD_GROUPING_WARDWISE;
 import static org.egov.pgr.utils.constants.PGRConstants.DASHBOARD_GROUPING_CITY;
+import static org.egov.pgr.utils.constants.PGRConstants.DASHBOARD_GROUPING_DEPARTMENTWISE;
 
 import org.apache.commons.lang3.StringUtils;
 import org.egov.pgr.entity.es.ComplaintDashBoardRequest;
@@ -114,6 +115,10 @@ public class ComplaintElasticsearchUtils {
 				aggregationField = "cityGrade";
 			if(complaintDashBoardRequest.getType().equalsIgnoreCase(DASHBOARD_GROUPING_CITY))
 				aggregationField = "cityCode";
+			if(complaintDashBoardRequest.getType().equalsIgnoreCase(DASHBOARD_GROUPING_DEPARTMENTWISE))
+				aggregationField = "departmentName";
+			if(complaintDashBoardRequest.getType().equalsIgnoreCase(DASHBOARD_GROUPING_WARDWISE))
+				aggregationField = "wardName";
 			return aggregationField;
 		}
 		

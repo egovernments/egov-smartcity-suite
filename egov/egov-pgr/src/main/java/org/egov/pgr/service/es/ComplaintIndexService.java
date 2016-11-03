@@ -958,8 +958,8 @@ public class ComplaintIndexService {
     		responseDetail.setRegionName(bucket.getKeyAsString());
     	if(groupByField.equals("cityGrade"))
     		responseDetail.setUlbGrade(bucket.getKeyAsString());
-    	if(groupByField.equals("ulb") && complaintDashBoardRequest.getType().equalsIgnoreCase(DASHBOARD_GROUPING_CITY)){
-    		city = cityIndexService.findByDistrictCode(bucket.getKeyAsString());
+    	if(groupByField.equals("cityCode") && complaintDashBoardRequest.getType().equalsIgnoreCase(DASHBOARD_GROUPING_CITY)){
+    		city = cityIndexService.findOne(bucket.getKeyAsString());
     		responseDetail.setUlbName(city.getName());
     	}
     		
@@ -970,7 +970,7 @@ public class ComplaintIndexService {
     	}
     	//When UlbGrade is selected group by Ulb
     	if(groupByField.equals("cityCode") &&
-    			complaintDashBoardRequest.getType() != DASHBOARD_GROUPING_CITY){
+    			!complaintDashBoardRequest.getType().equals(DASHBOARD_GROUPING_CITY)){
     		city = cityIndexService.findOne(bucket.getKeyAsString());
     		responseDetail.setDistrictName(city.getDistrictname());
 			responseDetail.setUlbName(city.getName());
