@@ -42,6 +42,8 @@ package org.egov.ptis.service.elasticsearch;
 
 import static org.egov.ptis.constants.PropertyTaxConstants.BIGDECIMAL_100;
 import static org.egov.ptis.constants.PropertyTaxConstants.PROPERTY_TAX_INDEX_NAME;
+import static org.egov.ptis.constants.PropertyTaxConstants.DASHBOARD_GROUPING_WARDWISE;
+
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
@@ -262,8 +264,16 @@ public class PropertyTaxElasticSearchIndexService {
         // order the results
         // IN this case can be one of "totaldemand" or "total_collection" or
         // "avg_achievement"
+        String groupingField;
+        if(StringUtils.isNotBlank(collectionDetailsRequest.getUlbGrade()) || 
+                (StringUtils.isNotBlank(collectionDetailsRequest.getType()) 
+                        && collectionDetailsRequest.getType().equals(DASHBOARD_GROUPING_WARDWISE))){
+            groupingField = "revenueWard";
+        } else
+            groupingField = "cityName";
+        
         Long startTime = System.currentTimeMillis();
-        AggregationBuilder aggregation = AggregationBuilders.terms("by_aggregationField").field("cityName").size(size)
+        AggregationBuilder aggregation = AggregationBuilders.terms("by_aggregationField").field(groupingField).size(size)
                 .order(Terms.Order.aggregation(orderingAggregationName, order))
                 .subAggregation(AggregationBuilders.sum("totaldemand").field("totalDemand"))
                 .subAggregation(AggregationBuilders.sum("total_collection").field("totalCollection"));
@@ -294,7 +304,10 @@ public class PropertyTaxElasticSearchIndexService {
             taxDetail.setDistrictName(collectionDetailsRequest.getDistrictName());
             taxDetail.setUlbGrade(collectionDetailsRequest.getUlbGrade());
             String fieldName = String.valueOf(entry.getKey());
-            taxDetail.setUlbName(fieldName);
+            if(groupingField.equals("revenueWard"))
+                taxDetail.setWardName(fieldName);
+            else
+                taxDetail.setUlbName(fieldName);
             // Proportional Demand = (totalDemand/12)*noOfmonths
             int noOfMonths = DateUtils.noOfMonths(fromDate, toDate) + 1;
             Sum totalDemandAggregation = entry.getAggregations().get("totaldemand");
