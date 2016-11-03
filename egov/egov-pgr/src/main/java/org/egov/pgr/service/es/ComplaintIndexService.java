@@ -696,6 +696,17 @@ public class ComplaintIndexService {
 		Avg averageSatisfaction = satisfactionAverage.getBuckets().get(0).getAggregations().get("satisfactionAverage");
 		result.put("AvgCustomeSatisfactionIndex", averageSatisfaction.getValue());
 		
+		if(StringUtils.isNotBlank(complaintDashBoardRequest.getUlbCode())){
+			CityIndex city = cityIndexService.findOne(complaintDashBoardRequest.getUlbCode());
+			result.put("regionName",city.getRegionname());
+			result.put("districtName",city.getDistrictname());
+			result.put("ulbCode",city.getCitycode());
+			result.put("ulbGrade",city.getCitygrade());
+			result.put("ulbName",city.getName());
+			result.put("domainURL",city.getDomainurl());
+		}
+		
+		
 		//To get the count of closed and open complaints
 		Terms terms = consolidatedResponse.getAggregations().get("closedCount");
 		for (Bucket bucket : terms.getBuckets()) {
