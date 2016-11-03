@@ -134,7 +134,7 @@ public class ApplicationSearchController {
             customerObj.setConsumerCode(applicationIndex.getConsumerCode());
             customerObj.setApplicationAddress(applicationIndex.getApplicantAddress());
             customerObj.setApplicationNumber(applicationIndex.getApplicationNumber());
-            customerObj.setOwnername(applicationIndex.getOwnername());
+            customerObj.setOwnername(applicationIndex.getOwnerName());
             customerObj.setSource(applicationIndex.getChannel());
             customerObj.setApplicationType(applicationIndex.getApplicationType());
             customerObj.setApplicationdate(applicationIndex.getApplicationDate());

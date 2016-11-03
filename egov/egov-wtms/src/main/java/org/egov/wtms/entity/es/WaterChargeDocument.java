@@ -50,19 +50,28 @@ import org.springframework.data.elasticsearch.annotations.Document;
 import org.springframework.data.elasticsearch.annotations.Field;
 import org.springframework.data.elasticsearch.annotations.FieldIndex;
 import org.springframework.data.elasticsearch.annotations.FieldType;
+import org.springframework.data.elasticsearch.annotations.GeoPointField;
+import org.springframework.data.elasticsearch.core.geo.GeoPoint;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 
-@Document(indexName = "waterconncharges", type = "watercharges_details")
+@Document(indexName = "waterchargeconsumer", type = "waterchargeconsumer")
 public class WaterChargeDocument {
 
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = ES_DATE_FORMAT)
     @Field(type = FieldType.Date, index = FieldIndex.not_analyzed, format = DateFormat.date_optional_time, pattern = ES_DATE_FORMAT)
     private Date createdDate;
-    /*
-     * private GeoPoint wardlocation; private GeoPoint propertylocation;
-     */
-
+   
+    
+    @Field(index = FieldIndex.not_analyzed)
+    @GeoPointField
+    private GeoPoint wardlocation;
+    
+    
+    @Field(index = FieldIndex.not_analyzed)
+    @GeoPointField
+    private GeoPoint propertylocation;
+    
     @Id
     private String id;
 
@@ -70,49 +79,49 @@ public class WaterChargeDocument {
     private String closureType;
 
     @Field(type = FieldType.String, index = FieldIndex.not_analyzed)
-    private String watersource;
+    private String waterSource;
 
     @Field(type = FieldType.Boolean)
-    private boolean islegacy;
+    private boolean isLegacy;
 
     @Field(type = FieldType.Long)
-    private Long sumpcapacity;
+    private Long sumpCapacity;
 
     @Field(type = FieldType.String, index = FieldIndex.not_analyzed)
-    private String mobilenumber;
+    private String mobileNumber;
 
     @Field(type = FieldType.Long)
-    private Long numberofperson;
+    private Long numberOfPerson;
 
     @Field(type = FieldType.Long)
-    private Long totaldue;
+    private Long totalDue;
 
     @Field(type = FieldType.String, index = FieldIndex.not_analyzed)
     private String usage;
 
     @Field(type = FieldType.String, index = FieldIndex.not_analyzed)
-    private String propertytype;
+    private String propertyType;
 
     @Field(type = FieldType.String, index = FieldIndex.not_analyzed)
-    private String ulbname;
+    private String ulbName;
 
     @Field(type = FieldType.String, index = FieldIndex.not_analyzed)
-    private String consumercode;
+    private String consumerCode;
 
     @Field(type = FieldType.String, index = FieldIndex.not_analyzed)
     private String ward;
 
     @Field(type = FieldType.String, index = FieldIndex.not_analyzed)
-    private String applicationcode;
+    private String applicationCode;
 
     @Field(type = FieldType.String, index = FieldIndex.not_analyzed)
-    private String districtname;
+    private String districtName;
 
     @Field(type = FieldType.String, index = FieldIndex.not_analyzed)
     private String zone;
 
     @Field(type = FieldType.String, index = FieldIndex.not_analyzed)
-    private String adminward;
+    private String adminWard;
 
     @Field(type = FieldType.String, index = FieldIndex.not_analyzed)
     private String grade;
@@ -121,22 +130,22 @@ public class WaterChargeDocument {
     private String bpaid;
 
     @Field(type = FieldType.String, index = FieldIndex.not_analyzed)
-    private String regionname;
+    private String regionName;
 
     @Field(type = FieldType.String, index = FieldIndex.not_analyzed)
-    private String pipesize;
+    private String pipeSize;
 
     @Field(type = FieldType.String, index = FieldIndex.not_analyzed)
-    private String doorno;
+    private String doorNo;
 
     @Field(type = FieldType.String, index = FieldIndex.not_analyzed)
     private String category;
 
     @Field(type = FieldType.String, index = FieldIndex.not_analyzed)
-    private String connectiontype;
+    private String connectionType;
 
     @Field(type = FieldType.String, index = FieldIndex.not_analyzed)
-    private String propertyid;
+    private String propertyId;
 
     @Field(type = FieldType.String, index = FieldIndex.not_analyzed)
     private String status;
@@ -144,20 +153,20 @@ public class WaterChargeDocument {
     @Field(type = FieldType.Long)
     private Long monthlyRate;
 
-    // Check for other properties given in json
-    private String aadhaarnumber;
+    @Field(type = FieldType.String , index = FieldIndex.not_analyzed)
+    private String aadhaarNumber;
 
     @Field(type = FieldType.Long)
     private Long waterTaxDue;
 
-    // Check for other properties given in json
+    @Field(type = FieldType.String , index = FieldIndex.not_analyzed)
     private String locality;
 
     @Field(type = FieldType.Long)
     private Long arrearsDue;
 
-    // Check for other properties given in json
-    private String consumername;
+    @Field(type = FieldType.String, index = FieldIndex.not_analyzed)
+    private String consumerName;
 
     @Field(type = FieldType.Long)
     private Long currentDue;
@@ -180,15 +189,9 @@ public class WaterChargeDocument {
         this.createdDate = createdDate;
     }
 
-    /*
-     * public String getWardlocation() { return wardlocation; } public void
-     * setWardlocation(String wardlocation) { this.wardlocation = wardlocation;
-     * }
-     */
+  
 
-    public String getWatersource() {
-        return watersource;
-    }
+   
 
     public String getBpaid() {
         return bpaid;
@@ -198,105 +201,7 @@ public class WaterChargeDocument {
         this.bpaid = bpaid;
     }
 
-    public void setWatersource(final String watersource) {
-        this.watersource = watersource;
-    }
-
-    public boolean isIslegacy() {
-        return islegacy;
-    }
-
-    public void setIslegacy(final boolean islegacy) {
-        this.islegacy = islegacy;
-    }
-
-    public Long getSumpcapacity() {
-        return sumpcapacity;
-    }
-
-    public void setSumpcapacity(final Long sumpcapacity) {
-        this.sumpcapacity = sumpcapacity;
-    }
-
-    public String getMobilenumber() {
-        return mobilenumber;
-    }
-
-    public void setMobilenumber(final String mobilenumber) {
-        this.mobilenumber = mobilenumber;
-    }
-
-    public Long getNumberofperson() {
-        return numberofperson;
-    }
-
-    public void setNumberofperson(final Long numberofperson) {
-        this.numberofperson = numberofperson;
-    }
-
-    public Long getTotaldue() {
-        return totaldue;
-    }
-
-    public void setTotaldue(final Long totaldue) {
-        this.totaldue = totaldue;
-    }
-
-    public String getUsage() {
-        return usage;
-    }
-
-    public void setUsage(final String usage) {
-        this.usage = usage;
-    }
-
-    public String getPropertytype() {
-        return propertytype;
-    }
-
-    public void setPropertytype(final String propertytype) {
-        this.propertytype = propertytype;
-    }
-
-    public String getUlbname() {
-        return ulbname;
-    }
-
-    public void setUlbname(final String ulbname) {
-        this.ulbname = ulbname;
-    }
-
-    public String getConsumercode() {
-        return consumercode;
-    }
-
-    public void setConsumercode(final String consumercode) {
-        this.consumercode = consumercode;
-    }
-
-    public String getWard() {
-        return ward;
-    }
-
-    public void setWard(final String ward) {
-        this.ward = ward;
-    }
-
-    public String getApplicationcode() {
-        return applicationcode;
-    }
-
-    public void setApplicationcode(final String applicationcode) {
-        this.applicationcode = applicationcode;
-    }
-
-    public String getDistrictname() {
-        return districtname;
-    }
-
-    public void setDistrictname(final String districtname) {
-        this.districtname = districtname;
-    }
+  
 
     public String getZone() {
         return zone;
@@ -306,13 +211,7 @@ public class WaterChargeDocument {
         this.zone = zone;
     }
 
-    public String getAdminward() {
-        return adminward;
-    }
-
-    public void setAdminward(final String adminward) {
-        this.adminward = adminward;
-    }
+   
 
     public String getGrade() {
         return grade;
@@ -322,28 +221,14 @@ public class WaterChargeDocument {
         this.grade = grade;
     }
 
-    public String getRegionname() {
-        return regionname;
+    
+
+    public String getDoorNo() {
+        return doorNo;
     }
 
-    public void setRegionname(final String regionname) {
-        this.regionname = regionname;
-    }
-
-    public String getPipesize() {
-        return pipesize;
-    }
-
-    public void setPipesize(final String pipesize) {
-        this.pipesize = pipesize;
-    }
-
-    public String getDoorno() {
-        return doorno;
-    }
-
-    public void setDoorno(final String doorno) {
-        this.doorno = doorno;
+    public void setDoorNo(String doorNo) {
+        this.doorNo = doorNo;
     }
 
     public String getCategory() {
@@ -354,22 +239,7 @@ public class WaterChargeDocument {
         this.category = category;
     }
 
-    public String getConnectiontype() {
-        return connectiontype;
-    }
-
-    public void setConnectiontype(final String connectiontype) {
-        this.connectiontype = connectiontype;
-    }
-
-    public String getPropertyid() {
-        return propertyid;
-    }
-
-    public void setPropertyid(final String propertyid) {
-        this.propertyid = propertyid;
-    }
-
+  
     public String getStatus() {
         return status;
     }
@@ -386,13 +256,6 @@ public class WaterChargeDocument {
         this.monthlyRate = monthlyRate;
     }
 
-    public String getAadhaarnumber() {
-        return aadhaarnumber;
-    }
-
-    public void setAadhaarnumber(final String aadhaarnumber) {
-        this.aadhaarnumber = aadhaarnumber;
-    }
 
     public Long getWaterTaxDue() {
         return waterTaxDue;
@@ -418,14 +281,7 @@ public class WaterChargeDocument {
         this.arrearsDue = arrearsDue;
     }
 
-    public String getConsumername() {
-        return consumername;
-    }
-
-    public void setConsumername(final String consumername) {
-        this.consumername = consumername;
-    }
-
+   
     public Long getCurrentDue() {
         return currentDue;
     }
@@ -451,7 +307,7 @@ public class WaterChargeDocument {
     }
 
     public String getId() {
-        return ApplicationThreadLocals.getCityCode() + "-" + consumercode;
+        return ApplicationThreadLocals.getCityCode() + "-" + consumerCode;
     }
 
     public String setId() {
@@ -466,80 +322,263 @@ public class WaterChargeDocument {
         this.closureType = closureType;
     }
 
-    /*
-     * public GeoPoint getWardlocation() { return wardlocation; } public void
-     * setWardlocation(GeoPoint wardlocation) { this.wardlocation =
-     * wardlocation; } public GeoPoint getPropertylocation() { return
-     * propertylocation; } public void setPropertylocation(GeoPoint
-     * propertylocation) { this.propertylocation = propertylocation; }
-     */
+    
+  
+
+    public String getWaterSource() {
+        return waterSource;
+    }
+
+    public void setWaterSource(String waterSource) {
+        this.waterSource = waterSource;
+    }
+
+    public boolean isLegacy() {
+        return isLegacy;
+    }
+
+    public void setIsLegacy(boolean isLegacy) {
+        this.isLegacy = isLegacy;
+    }
+
+    public Long getSumpCapacity() {
+        return sumpCapacity;
+    }
+
+    public void setSumpCapacity(Long sumpCapacity) {
+        this.sumpCapacity = sumpCapacity;
+    }
+
+    public String getMobileNumber() {
+        return mobileNumber;
+    }
+
+    public void setMobileNumber(String mobileNumber) {
+        this.mobileNumber = mobileNumber;
+    }
+
+    public Long getNumberOfPerson() {
+        return numberOfPerson;
+    }
+
+    public void setNumberOfPerson(Long numberOfPerson) {
+        this.numberOfPerson = numberOfPerson;
+    }
+
+    public Long getTotalDue() {
+        return totalDue;
+    }
+
+    public void setTotalDue(Long totalDue) {
+        this.totalDue = totalDue;
+    }
+
+    public String getUsage() {
+        return usage;
+    }
+
+    public void setUsage(String usage) {
+        this.usage = usage;
+    }
+
+    public String getPropertyType() {
+        return propertyType;
+    }
+
+    public void setPropertyType(String propertyType) {
+        this.propertyType = propertyType;
+    }
+
+    public String getUlbName() {
+        return ulbName;
+    }
+
+    public void setUlbName(String ulbName) {
+        this.ulbName = ulbName;
+    }
+
+    public String getConsumerCode() {
+        return consumerCode;
+    }
+
+    public void setConsumerCode(String consumerCode) {
+        this.consumerCode = consumerCode;
+    }
+
+    public String getWard() {
+        return ward;
+    }
+
+    public void setWard(String ward) {
+        this.ward = ward;
+    }
+
+    public String getApplicationCode() {
+        return applicationCode;
+    }
+
+    public void setApplicationCode(String applicationCode) {
+        this.applicationCode = applicationCode;
+    }
+
+    public String getDistrictName() {
+        return districtName;
+    }
+
+    public void setDistrictName(String districtName) {
+        this.districtName = districtName;
+    }
+
+    public String getAdminWard() {
+        return adminWard;
+    }
+
+    public void setAdminWard(String adminWard) {
+        this.adminWard = adminWard;
+    }
+
+    public String getRegionName() {
+        return regionName;
+    }
+
+    public void setRegionName(String regionName) {
+        this.regionName = regionName;
+    }
+
+    public String getPipeSize() {
+        return pipeSize;
+    }
+
+    public void setPipeSize(String pipeSize) {
+        this.pipeSize = pipeSize;
+    }
+
+    public String getConnectionType() {
+        return connectionType;
+    }
+
+    public void setConnectionType(String connectionType) {
+        this.connectionType = connectionType;
+    }
+
+    public String getPropertyId() {
+        return propertyId;
+    }
+
+    public void setPropertyId(String propertyId) {
+        this.propertyId = propertyId;
+    }
+
+    public String getAadhaarNumber() {
+        return aadhaarNumber;
+    }
+
+    public void setAadhaarNumber(String aadhaarNumber) {
+        this.aadhaarNumber = aadhaarNumber;
+    }
+
+    public String getConsumerName() {
+        return consumerName;
+    }
+
+    public void setConsumerName(String consumerName) {
+        this.consumerName = consumerName;
+    }
+
+  
+    public GeoPoint getWardlocation() {
+        return wardlocation;
+    }
+
+    public void setWardlocation(GeoPoint wardlocation) {
+        this.wardlocation = wardlocation;
+    }
+
+    public GeoPoint getPropertylocation() {
+        return propertylocation;
+    }
+
+    public void setPropertylocation(GeoPoint propertylocation) {
+        this.propertylocation = propertylocation;
+    }
+
 
     public static final class Builder {
-        private String aadhaarnumber;
-        private String adminward;
-        private String applicationcode;
+        private String aadhaarNumber;
+        private String adminWard;
+        private String applicationCode;
         private Long arrearsDemand;
         private Long arrearsDue;
         private Long waterTaxDue;
-        private Long totaldue;
+        private Long totalDue;
         private String status;
         private String category;
         private String closureType;
-        private String connectiontype;
-        private String consumercode;
-        private String consumername;
+        private String connectionType;
+        private String consumerCode;
+        private String consumerName;
         private Date createdDate;
         private Long currentDemand;
         private Long currentDue;
-        private String doorno;
-        private String districtname;
-        private String ulbname;
+        private String doorNo;
+        private String districtName;
+        private String ulbName;
         private String grade;
-        private Boolean islegacy;
-        private Long sumpcapacity;
-        private Long numberofperson;
+        private Boolean isLegacy;
+        private Long sumpCapacity;
+        private Long numberOfPerson;
         private String zone;
-        private String regionname;
-        private String pipesize;
-        private String propertyid;
+        private String regionName;
+        private String pipeSize;
+        private String propertyId;
         private Long monthlyRate;
-        private String mobilenumber;
+        private String mobileNumber;
         private String locality;
-        private String propertytype;
-        private String watersource;
+        private String propertyType;
+        private String waterSource;
         private String ward;
         private String usage;
+        private GeoPoint wardLocation;
+        private GeoPoint propertyLocation;
 
         private Builder() {
         }
 
-        public Builder withAadhaarnumber(final String aadhaarnumber) {
-            this.aadhaarnumber = aadhaarnumber;
+        public Builder withWardlocation(final GeoPoint wardlocation){
+            this.wardLocation = wardlocation;
+            return this;
+        }
+        public Builder withPropertylocation(final GeoPoint propertylocation) {
+            this.propertyLocation = propertylocation;
             return this;
         }
 
+        public Builder withAadhaarnumber(final String aadharNumber) {
+            this.aadhaarNumber = aadharNumber;
+            return this;
+        }
         public Builder withUsage(final String usage) {
             this.usage = usage;
             return this;
         }
 
         public Builder withAdminward(final String adminward) {
-            this.adminward = adminward;
+            this.adminWard = adminward;
             return this;
         }
 
         public Builder with(final String aapplicationcode) {
-            applicationcode = aapplicationcode;
+            applicationCode = aapplicationcode;
             return this;
         }
 
         public Builder withApplicationcode(final String aapplicationcode) {
-            applicationcode = aapplicationcode;
+            applicationCode = aapplicationcode;
             return this;
         }
 
         public Builder withSumpcapacity(final Long sumpcapacity) {
-            this.sumpcapacity = sumpcapacity;
+            this.sumpCapacity = sumpcapacity;
             return this;
         }
 
@@ -559,7 +598,7 @@ public class WaterChargeDocument {
         }
 
         public Builder withTotaldue(final Long totaldue) {
-            this.totaldue = totaldue;
+            this.totalDue = totaldue;
             return this;
         }
 
@@ -579,17 +618,17 @@ public class WaterChargeDocument {
         }
 
         public Builder withConnectiontype(final String connectiontype) {
-            this.connectiontype = connectiontype;
+            this.connectionType = connectiontype;
             return this;
         }
 
-        public Builder withConsumercode(final String consumercode) {
-            this.consumercode = consumercode;
+        public Builder withConsumerCode(final String consumerCode) {
+            this.consumerCode = consumerCode;
             return this;
         }
 
         public Builder withConsumername(final String consumername) {
-            this.consumername = consumername;
+            this.consumerName = consumername;
             return this;
         }
 
@@ -608,13 +647,13 @@ public class WaterChargeDocument {
             return this;
         }
 
-        public Builder withDistrictname(final String districtname) {
-            this.districtname = districtname;
+        public Builder withDistrictName(final String districtname) {
+            this.districtName = districtname;
             return this;
         }
 
-        public Builder withDoorno(final String doorno) {
-            this.doorno = doorno;
+        public Builder withDoorNo(final String doorNo) {
+            this.doorNo = doorNo;
             return this;
         }
 
@@ -623,13 +662,13 @@ public class WaterChargeDocument {
             return this;
         }
 
-        public Builder withNumberofperson(final Long numberofperson) {
-            this.numberofperson = numberofperson;
+        public Builder withNumberOfPerson(final Long numberofperson) {
+            this.numberOfPerson = numberofperson;
             return this;
         }
 
-        public Builder withMobilenumber(final String mobilenumber) {
-            this.mobilenumber = mobilenumber;
+        public Builder withMobileNumber(final String mobilenumber) {
+            this.mobileNumber = mobilenumber;
             return this;
         }
 
@@ -639,12 +678,12 @@ public class WaterChargeDocument {
         }
 
         public Builder withRegionname(final String regionname) {
-            this.regionname = regionname;
+            this.regionName = regionname;
             return this;
         }
 
         public Builder withIslegacy(final Boolean islegacy) {
-            this.islegacy = islegacy;
+            this.isLegacy = islegacy;
             return this;
         }
 
@@ -654,27 +693,27 @@ public class WaterChargeDocument {
         }
 
         public Builder withPropertyid(final String propertyid) {
-            this.propertyid = propertyid;
+            this.propertyId = propertyid;
             return this;
         }
 
         public Builder withPropertytype(final String propertytype) {
-            this.propertytype = propertytype;
+            this.propertyType = propertytype;
             return this;
         }
 
         public Builder withPipesize(final String pipesize) {
-            this.pipesize = pipesize;
+            this.pipeSize = pipesize;
             return this;
         }
 
         public Builder withUlbname(final String ulbname) {
-            this.ulbname = ulbname;
+            this.ulbName = ulbname;
             return this;
         }
 
         public Builder withWatersource(final String watersource) {
-            this.watersource = watersource;
+            this.waterSource = watersource;
             return this;
         }
 
@@ -695,39 +734,41 @@ public class WaterChargeDocument {
 
         public WaterChargeDocument build() {
             final WaterChargeDocument waterChargeIndex = new WaterChargeDocument();
-            waterChargeIndex.setAadhaarnumber(aadhaarnumber);
-            waterChargeIndex.setAdminward(adminward);
-            waterChargeIndex.setApplicationcode(applicationcode);
+            waterChargeIndex.setWardlocation(wardLocation);
+            waterChargeIndex.setPropertylocation(propertyLocation);
+            waterChargeIndex.setAadhaarNumber(aadhaarNumber);
+            waterChargeIndex.setAdminWard(adminWard);
+            waterChargeIndex.setApplicationCode(applicationCode);
             waterChargeIndex.setArrearsDemand(arrearsDemand);
             waterChargeIndex.setArrearsDue(arrearsDue);
             waterChargeIndex.setWaterTaxDue(waterTaxDue);
-            waterChargeIndex.setTotaldue(totaldue);
+            waterChargeIndex.setTotalDue(totalDue);
             waterChargeIndex.setStatus(status);
             waterChargeIndex.setCategory(category);
             waterChargeIndex.setClosureType(closureType);
-            waterChargeIndex.setConnectiontype(connectiontype);
-            waterChargeIndex.setConsumercode(consumercode);
-            waterChargeIndex.setConsumername(consumername);
+            waterChargeIndex.setConnectionType(connectionType);
+            waterChargeIndex.setConsumerCode(consumerCode);
+            waterChargeIndex.setConsumerName(consumerName);
             waterChargeIndex.setCreatedDate(createdDate);
             waterChargeIndex.setCurrentDemand(currentDemand);
             waterChargeIndex.setCurrentDue(currentDue);
-            waterChargeIndex.setDistrictname(districtname);
-            waterChargeIndex.setDoorno(doorno);
-            waterChargeIndex.setPipesize(pipesize);
-            waterChargeIndex.setNumberofperson(numberofperson);
+            waterChargeIndex.setDistrictName(districtName);
+            waterChargeIndex.setDoorNo(doorNo);
+            waterChargeIndex.setPipeSize(pipeSize);
+            waterChargeIndex.setNumberOfPerson(numberOfPerson);
             waterChargeIndex.setCreatedDate(createdDate);
-            waterChargeIndex.setUlbname(ulbname);
+            waterChargeIndex.setUlbName(ulbName);
             waterChargeIndex.setGrade(grade);
             waterChargeIndex.setUsage(usage);
-            waterChargeIndex.setIslegacy(islegacy);
+            waterChargeIndex.setIsLegacy(isLegacy);
             waterChargeIndex.setLocality(locality);
-            waterChargeIndex.setPropertyid(propertyid);
-            waterChargeIndex.setPropertytype(propertytype);
-            waterChargeIndex.setRegionname(regionname);
-            waterChargeIndex.setMobilenumber(mobilenumber);
+            waterChargeIndex.setPropertyId(propertyId);
+            waterChargeIndex.setPropertyType(propertyType);
+            waterChargeIndex.setRegionName(regionName);
+            waterChargeIndex.setMobileNumber(mobileNumber);
             waterChargeIndex.setMonthlyRate(monthlyRate);
-            waterChargeIndex.setSumpcapacity(sumpcapacity);
-            waterChargeIndex.setWatersource(watersource);
+            waterChargeIndex.setSumpCapacity(sumpCapacity);
+            waterChargeIndex.setWaterSource(waterSource);
             waterChargeIndex.setWard(ward);
             waterChargeIndex.setZone(zone);
             return waterChargeIndex;

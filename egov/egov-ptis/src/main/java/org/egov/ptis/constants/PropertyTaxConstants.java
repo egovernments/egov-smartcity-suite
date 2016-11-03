@@ -1501,7 +1501,7 @@ public interface PropertyTaxConstants {
 	
 	public static final String PROPERTY_TAX_INDEX_NAME = "propertytax";
 	public static final String COLLECTION_INDEX_NAME = "receipts";
-	public static final String WATER_TAX_INDEX_NAME = "waterconncharges";
+	public static final String WATER_TAX_INDEX_NAME = "waterchargeconsumer";
 	
 	public static final String DATE_FORMAT_YYYYMMDD = "yyyy-MM-dd";
 	public static final SimpleDateFormat DATEFORMATTER_YYYY_MM_DD = new SimpleDateFormat(DATE_FORMAT_YYYYMMDD);

@@ -66,7 +66,7 @@ public class ApplicationDocument {
     private String applicationNumber;
 
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = ES_DATE_FORMAT)
-    @Field(type = FieldType.Date, index = not_analyzed, format = date_optional_time, pattern = ES_DATE_FORMAT)
+    @Field(type = FieldType.Date, format = date_optional_time, pattern = ES_DATE_FORMAT)
     private Date applicationDate;
 
     @Field(type = FieldType.String, index = not_analyzed)
@@ -75,7 +75,7 @@ public class ApplicationDocument {
     @Field(type = FieldType.String, index = not_analyzed)
     private String applicantName;
 
-    @Field(type = FieldType.String, index = not_analyzed)
+    @Field(type = FieldType.String)
     private String applicantAddress;
 
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = ES_DATE_FORMAT)
@@ -85,7 +85,7 @@ public class ApplicationDocument {
     @Field(type = FieldType.String, index = not_analyzed)
     private String status;
 
-    @Field(type = FieldType.String, index = not_analyzed)
+    @Field(type = FieldType.String)
     private String url;
 
     @Field(type = FieldType.String, index = not_analyzed)
@@ -95,7 +95,7 @@ public class ApplicationDocument {
     private String mobileNumber;
 
     @Field(type = FieldType.String, index = not_analyzed)
-    private String ownername;
+    private String ownerName;
 
     @Field(type = FieldType.String, index = not_analyzed)
     private String aadharNumber;
@@ -127,7 +127,7 @@ public class ApplicationDocument {
     @Field(type = FieldType.String, index = not_analyzed)
     private String regionName;
 
-    @Field(type = FieldType.Integer, index = not_analyzed)
+    @Field(type = FieldType.Integer)
     private Integer isClosed;
 
     public String getId() {
@@ -242,12 +242,18 @@ public class ApplicationDocument {
         this.mobileNumber = mobileNumber;
     }
 
-    public String getOwnername() {
-        return ownername;
+   
+
+    public String getOwnerName() {
+        return ownerName;
     }
 
-    public void setOwnername(final String ownername) {
-        this.ownername = ownername;
+    public void setOwnerName(String ownerName) {
+        this.ownerName = ownerName;
+    }
+
+    public void setIsClosed(Integer isClosed) {
+        this.isClosed = isClosed;
     }
 
     public String getAadharNumber() {

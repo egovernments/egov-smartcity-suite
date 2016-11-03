@@ -287,15 +287,15 @@ public class WaterTaxSearchController {
         temList = findAllWaterChargeIndexByFilter(searchRequest);
         for (final WaterChargeDocument waterChargeIndex : temList) {
             final ConnectionSearchRequest customerObj = new ConnectionSearchRequest();
-            customerObj.setApplicantName(waterChargeIndex.getConsumercode());
-            customerObj.setConsumerCode(waterChargeIndex.getConsumercode());
+            customerObj.setApplicantName(waterChargeIndex.getConsumerName());
+            customerObj.setConsumerCode(waterChargeIndex.getConsumerCode());
             customerObj.setAddress(waterChargeIndex.getLocality());
-            customerObj.setApplicationcode(waterChargeIndex.getApplicationcode());
+            customerObj.setApplicationcode(waterChargeIndex.getApplicationCode());
             customerObj.setUsage(waterChargeIndex.getUsage());
-            customerObj.setIslegacy(waterChargeIndex.isIslegacy());
-            customerObj.setPropertyTaxDue(waterChargeIndex.getTotaldue());
+            customerObj.setIslegacy(waterChargeIndex.isLegacy());
+            customerObj.setPropertyTaxDue(waterChargeIndex.getTotalDue());
             customerObj.setStatus(waterChargeIndex.getStatus());
-            customerObj.setConnectiontype(waterChargeIndex.getConnectiontype());
+            customerObj.setConnectiontype(waterChargeIndex.getConnectionType());
             customerObj.setWaterTaxDue(waterChargeIndex.getWaterTaxDue());
             finalResult.add(customerObj);
         }

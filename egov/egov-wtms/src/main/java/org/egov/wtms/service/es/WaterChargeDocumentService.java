@@ -50,6 +50,8 @@ import java.math.BigDecimal;
 import java.util.Iterator;
 import java.util.Map;
 
+import org.egov.infra.admin.master.entity.Boundary;
+import org.egov.infra.admin.master.service.BoundaryService;
 import org.egov.infra.admin.master.service.CityService;
 import org.egov.infra.config.core.ApplicationThreadLocals;
 import org.egov.ptis.domain.model.AssessmentDetails;
@@ -60,6 +62,7 @@ import org.egov.wtms.application.service.WaterConnectionDetailsService;
 import org.egov.wtms.entity.es.WaterChargeDocument;
 import org.egov.wtms.repository.es.WaterChargeDocumentRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.elasticsearch.core.geo.GeoPoint;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -71,6 +74,9 @@ public class WaterChargeDocumentService {
     
     @Autowired
     private CityService cityService;
+    
+    @Autowired
+    private BoundaryService boundaryService;
    
     @Autowired
     private WaterConnectionDetailsService waterConnectionDetailsService;
@@ -92,6 +98,9 @@ public class WaterChargeDocumentService {
         String consumername="";
         String aadharNumber="";
         String mobilNumber="";
+        GeoPoint wardlocation=null;
+        GeoPoint propertylocation=null;
+        
         cityService.getCityByURL(ApplicationThreadLocals.getDomainName());
 
         if (connectionDemandService.getWaterRatesDetailsForDemandUpdate(waterConnectionDetails) != null
@@ -117,35 +126,45 @@ public class WaterChargeDocumentService {
                         ",".concat(multipleOwner.getAadhaarNumber() != null ? multipleOwner.getAadhaarNumber() : ""));
             }
         }
+        
+       if (assessmentDetails.getLatitude() != 0.0 &&  assessmentDetails.getLongitude() != 0.0)
+            propertylocation=new GeoPoint(assessmentDetails.getLatitude(),assessmentDetails.getLongitude()); 
+        
+        if (assessmentDetails.getBoundaryDetails().getAdminWardId() != null) {
+                final Boundary adminBoundary = boundaryService.getBoundaryById(assessmentDetails.getBoundaryDetails().getAdminWardId()); 
+                if (adminBoundary.getLatitude() != null &&  adminBoundary.getLongitude() != null)
+                    wardlocation=new GeoPoint(adminBoundary.getLatitude(), adminBoundary.getLongitude());
+                }
+                
         Map<String, Object> cityInfo = cityService.cityDataAsMap();
         WaterChargeDocument  waterChargeIndex = WaterChargeDocument.builder().withZone(assessmentDetails.getBoundaryDetails().getZoneName())
                 .withWard(assessmentDetails.getBoundaryDetails().getWardName())
                 .withAdminward(assessmentDetails.getBoundaryDetails().getAdminWardName())
-                .withDoorno(assessmentDetails.getHouseNo())
+                .withDoorNo(assessmentDetails.getHouseNo())
                 .withTotaldue(assessmentDetails.getPropertyDetails().getTaxDue().longValue())
                 .withIslegacy(waterConnectionDetails.getLegacy())
                 .withGrade(defaultString((String) cityInfo.get(CITY_CORP_GRADE_KEY)))
                 .withRegionname(defaultString((String) cityInfo.get(CITY_REGION_NAME_KEY)))
-                .withClosureType(waterConnectionDetails.getCloseConnectionType())
+                .withClosureType(waterConnectionDetails.getCloseConnectionType()!=null?waterConnectionDetails.getCloseConnectionType():"" )
                 .withLocality(assessmentDetails.getBoundaryDetails().getLocalityName() != null
                         ? assessmentDetails.getBoundaryDetails().getLocalityName() : "")
                 .withPropertyid(waterConnectionDetails.getConnection().getPropertyIdentifier())
                 .withApplicationcode(waterConnectionDetails.getApplicationType().getCode())
                 .withCreatedDate(waterConnectionDetails.getExecutionDate())
-                .withMobilenumber(mobilNumber)
+                .withMobileNumber(mobilNumber)
                 .withStatus(waterConnectionDetails.getConnectionStatus().name())
-                .withDistrictname(defaultString((String) cityInfo.get(CITY_DIST_NAME_KEY)))
+                .withDistrictName(defaultString((String) cityInfo.get(CITY_DIST_NAME_KEY)))
                 .withConnectiontype(waterConnectionDetails.getConnectionType().name())
                 .withWaterTaxDue(amountTodisplayInIndex.longValue())
                 .withUsage(waterConnectionDetails.getUsageType().getCode())
-                .withConsumercode(waterConnectionDetails.getConnection().getConsumerCode())
+                .withConsumerCode(waterConnectionDetails.getConnection().getConsumerCode())
                 .withWatersource(waterConnectionDetails.getWaterSource().getWaterSourceType())
                 .withPropertytype(waterConnectionDetails.getPropertyType().getName())
                 .withCategory(waterConnectionDetails.getCategory().getName())
                 .withUlbname(defaultString((String) cityInfo.get(CITY_NAME_KEY)))
                 .withSumpcapacity(waterConnectionDetails.getSumpCapacity())
                 .withPipesize(waterConnectionDetails.getPipeSize().getCode())
-                .withNumberofperson((waterConnectionDetails.getNumberOfPerson() !=null ? Long.valueOf(waterConnectionDetails.getNumberOfPerson()):0l))
+                .withNumberOfPerson((waterConnectionDetails.getNumberOfPerson() !=null ? Long.valueOf(waterConnectionDetails.getNumberOfPerson()):0l))
                 .withCurrentDue(waterConnectionDetailsService.getTotalAmountTillCurrentFinYear(waterConnectionDetails)
                         .subtract(
                                 waterConnectionDetailsService.getTotalAmountTillPreviousFinYear(waterConnectionDetails))
@@ -157,28 +176,12 @@ public class WaterChargeDocumentService {
                 .withArrearsDemand(waterConnectionDetailsService.getArrearsDemand(waterConnectionDetails).longValue())
                 .withMonthlyRate(monthlyRate)
                 .withConsumername(consumername)
-                .withAadhaarnumber(aadharNumber).build();
+                .withAadhaarnumber(aadharNumber)
+                .withWardlocation(wardlocation)
+                .withPropertylocation(propertylocation)
+                .build();
          createWaterChargeDocument(waterChargeIndex);
-                
-   
-       
-        /*
-         * if (assessmentDetails.getLatitude() != 0.0 &&
-         * assessmentDetails.getLongitude() != 0.0)
-         * consumerSearch.setPropertyLocation( new
-         * GeoPoint(assessmentDetails.getLatitude(),
-         * assessmentDetails.getLongitude())); if
-         * (assessmentDetails.getBoundaryDetails().getAdminWardId() != null) {
-         * final Boundary adminBoundary = boundaryService
-         * .getBoundaryById(assessmentDetails.getBoundaryDetails().
-         * getAdminWardId()); if (adminBoundary.getLatitude() != null &&
-         * adminBoundary.getLongitude() != null)
-         * consumerSearch.setWardLocation(new
-         * GeoPoint(adminBoundary.getLatitude(), adminBoundary.getLongitude()));
-         * }
-         */
-     
-        return waterChargeIndex;
+         return waterChargeIndex;
     }
     
     @Transactional

@@ -272,11 +272,13 @@ public class ApplicationIndex extends AbstractAuditable {
         this.mobileNumber = mobileNumber;
     }
 
+   
+
     public String getOwnername() {
         return ownername;
     }
 
-    public void setOwnername(final String ownername) {
+    public void setOwnername(String ownername) {
         this.ownername = ownername;
     }
 
@@ -366,7 +368,7 @@ public class ApplicationIndex extends AbstractAuditable {
         private String url;
         private String consumerCode;
         private String mobileNumber;
-        private String ownername;
+        private String ownerName;
         private String aadharNumber;
         private Integer elapsedDays;
         private ClosureStatus closed;
@@ -436,8 +438,8 @@ public class ApplicationIndex extends AbstractAuditable {
             return this;
         }
 
-        public Builder withOwnername(String ownername) {
-            this.ownername = ownername;
+        public Builder withOwnername(String ownerName) {
+            this.ownerName = ownerName;
             return this;
         }
 
@@ -504,7 +506,7 @@ public class ApplicationIndex extends AbstractAuditable {
             applicationIndex.setUrl(url);
             applicationIndex.setConsumerCode(consumerCode);
             applicationIndex.setMobileNumber(mobileNumber);
-            applicationIndex.setOwnername(ownername);
+            applicationIndex.setOwnername(ownerName);
             applicationIndex.setAadharNumber(aadharNumber);
             applicationIndex.setElapsedDays(elapsedDays);
             applicationIndex.setClosed(closed);
