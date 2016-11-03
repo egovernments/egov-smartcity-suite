@@ -73,7 +73,7 @@ public class BudgetApprovalService {
     }
 
     public List<CFinancialYear> financialYearList() {
-        final List<CFinancialYear> financialYears = cFinancialYearService.getFinancialYears(financialYear());;
+        final List<CFinancialYear> financialYears = cFinancialYearService.getFinancialYears(financialYear());
         return financialYears;
     }
 
