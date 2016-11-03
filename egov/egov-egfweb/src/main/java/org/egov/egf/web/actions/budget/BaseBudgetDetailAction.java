@@ -591,7 +591,7 @@ public abstract class BaseBudgetDetailAction extends GenericWorkFlowAction {
             budgetList.addAll(persistenceService
                     .findAllBy(
                             "from Budget where id not in (select parent from Budget where parent is not null) "
-                                    + "and isactivebudget = true and state.type='Budget' and isbere='"
+                                    + "and isactivebudget = true  and isbere='"
                                     + bere.toUpperCase()
                                     + "' and status.code!='Approved' and financialYear.id = "
                                     + getFinancialYear().getId()
@@ -600,7 +600,7 @@ public abstract class BaseBudgetDetailAction extends GenericWorkFlowAction {
             budgetList.addAll(persistenceService
                     .findAllBy(
                             "from Budget where id not in (select parent from Budget where parent is not null) "
-                                    + "and isactivebudget = true and state.type='Budget' and isbere='"
+                                    + "and isactivebudget = true  and isbere='"
                                     + bere.toUpperCase()
                                     + "'  and financialYear.id = "
                                     + getFinancialYear().getId()
