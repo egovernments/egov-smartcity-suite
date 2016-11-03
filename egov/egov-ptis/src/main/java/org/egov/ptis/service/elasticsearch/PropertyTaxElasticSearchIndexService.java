@@ -265,7 +265,7 @@ public class PropertyTaxElasticSearchIndexService {
         // IN this case can be one of "totaldemand" or "total_collection" or
         // "avg_achievement"
         String groupingField;
-        if(StringUtils.isNotBlank(collectionDetailsRequest.getUlbGrade()) || 
+        if(StringUtils.isNotBlank(collectionDetailsRequest.getUlbCode()) || 
                 (StringUtils.isNotBlank(collectionDetailsRequest.getType()) 
                         && collectionDetailsRequest.getType().equals(DASHBOARD_GROUPING_WARDWISE))){
             groupingField = "revenueWard";
