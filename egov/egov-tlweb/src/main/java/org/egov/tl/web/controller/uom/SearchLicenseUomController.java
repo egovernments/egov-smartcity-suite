@@ -1,4 +1,3 @@
-
 /*
  * eGov suite of products aim to improve the internal efficiency,transparency,
  *    accountability and the service delivery of the government  organizations.
@@ -39,75 +38,69 @@
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
 
-package org.egov.tl.web.controller.master.subcategory;
+package org.egov.tl.web.controller.uom;
 
-import org.egov.tl.entity.LicenseSubCategory;
-import org.egov.tl.service.FeeTypeService;
-import org.egov.tl.service.masters.LicenseCategoryService;
-import org.egov.tl.service.masters.LicenseSubCategoryService;
+import java.util.List;
+
+import javax.servlet.http.HttpServletRequest;
+
+import org.egov.tl.entity.LicenseCategory;
+import org.egov.tl.entity.UnitOfMeasurement;
 import org.egov.tl.service.masters.UnitOfMeasurementService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
-import javax.validation.Valid;
-
 @Controller
-@RequestMapping("/licensesubcategory")
-public class UpdateSubCategoryController {
+@RequestMapping("/licenseunitofmeasurement")
+public class SearchLicenseUomController {
 
-	private LicenseSubCategoryService licenseSubCategoryService;
+    private final UnitOfMeasurementService unitOfMeasurementService;
 
-	@Autowired
-	private LicenseCategoryService licenseCategoryService;
+    @Autowired
+    public SearchLicenseUomController(final UnitOfMeasurementService unitOfMeasurementService) {
+        this.unitOfMeasurementService = unitOfMeasurementService;
+    }
 
-	@Autowired
-	private UnitOfMeasurementService unitOfMeasurementService;
+    @ModelAttribute
+    public LicenseCategory licenseCategoryModel() {
+        return new LicenseCategory();
+    }
 
-	@Autowired
-	private FeeTypeService feeTypeService;
+    @ModelAttribute(value = "licenseUom")
+    public List<UnitOfMeasurement> getAllUom() {
+        return unitOfMeasurementService.findAll();
+    }
 
-	@Autowired
-	public UpdateSubCategoryController(LicenseSubCategoryService licenseSubCategoryService) {
-		this.licenseSubCategoryService = licenseSubCategoryService;
-	}
+    @RequestMapping(value = "/update", method = RequestMethod.GET)
+    public String updateLicenseUom(@ModelAttribute final UnitOfMeasurement unitOfMeasurement, final Model model) {
+        return "uom-search-update";
+    }
 
-	@ModelAttribute
-	public LicenseSubCategory licenseSubCategoryModel(@PathVariable String code) {
-		return licenseSubCategoryService.findSubCategoryByCode(code);
-	}
+    @RequestMapping(value = "/view", method = RequestMethod.GET)
+    public String viewLicenseUom(@ModelAttribute final UnitOfMeasurement unitOfMeasurement, final Model model) {
+        return "uom-search-view";
+    }
 
-	@RequestMapping(value = "/update/{code}", method = RequestMethod.GET)
-	public String subCategoryUpdateForm(@ModelAttribute @Valid LicenseSubCategory licenseSubCategory,
-			final Model model) {
-		populateDropdownData(model);
-		return "subcategory-update";
-	}
+    @RequestMapping(value = "/view", method = RequestMethod.POST)
+    public String searchViewUom(@ModelAttribute final UnitOfMeasurement unitOfMeasurement, final BindingResult errors,
+            final RedirectAttributes redirectAttrs, final HttpServletRequest request) {
+        if (errors.hasErrors())
+            return "uom-search-view";
+        return "redirect:/licenseunitofmeasurement/view/" + unitOfMeasurement.getCode();
+    }
 
-	@RequestMapping(value = "/update/{code}", method = RequestMethod.POST)
-	public String updateSubCategory(@ModelAttribute @Valid LicenseSubCategory licenseSubCategory, BindingResult errors,
-			RedirectAttributes additionalAttr, final Model model) {
+    @RequestMapping(value = "/update", method = RequestMethod.POST)
+    public String searchUpdateUom(@ModelAttribute final UnitOfMeasurement unitOfMeasurement, final BindingResult errors,
+            final RedirectAttributes redirectAttrs, final HttpServletRequest request) {
+        if (errors.hasErrors())
+            return "uom-search-update";
+        return "redirect:/licenseunitofmeasurement/update/" + unitOfMeasurement.getCode();
 
-		if (errors.hasErrors()) {
-			populateDropdownData(model);
-			return "subcategory-update";
-		}
-
-		licenseSubCategoryService.updateLicenseSubCategory(licenseSubCategory);
-		additionalAttr.addFlashAttribute("message", "msg.success.subcategory.update");
-		return "redirect:/licensesubcategory/view/" + licenseSubCategory.getCode();
-	}
-	
-	private void populateDropdownData(final Model model) {
-		model.addAttribute("licenseCategories", licenseCategoryService.findAll());
-		model.addAttribute("licenseFeeTypes", feeTypeService.findAll());
-		model.addAttribute("licenseUomTypes", unitOfMeasurementService.findAll());
-	}
-
+    }
 }

@@ -38,36 +38,53 @@
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
 
-package org.egov.tl.web.controller.master.category;
+package org.egov.tl.web.controller.uom;
 
+import javax.validation.Valid;
 
-import org.egov.tl.entity.LicenseCategory;
-import org.egov.tl.service.masters.LicenseCategoryService;
+import org.egov.tl.entity.UnitOfMeasurement;
+import org.egov.tl.service.masters.UnitOfMeasurementService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 @Controller
-@RequestMapping("/licensecategory")
-public class ViewCategoryController {
+@RequestMapping("/licenseunitofmeasurement")
+public class UpdateLicenseUomController {
 
-	private LicenseCategoryService licenseCategoryService;
+    private final UnitOfMeasurementService unitOfMeasurementService;
 
-	@Autowired
-	public ViewCategoryController(LicenseCategoryService licenseCategoryService) {
-		this.licenseCategoryService = licenseCategoryService;
-	}
+    @Autowired
+    public UpdateLicenseUomController(final UnitOfMeasurementService unitOfMeasurementService) {
+        this.unitOfMeasurementService = unitOfMeasurementService;
+    }
 
-	@ModelAttribute
-	public LicenseCategory licenseCategoryModel(@PathVariable String code) {
-		return licenseCategoryService.findCategoryByCode(code);
-	}
+    @ModelAttribute
+    public UnitOfMeasurement unitOfMeasurementModel(@PathVariable final String code) {
+        return unitOfMeasurementService.findUOMByCode(code);
+    }
 
-	@RequestMapping(value = "/view/{code}", method = RequestMethod.GET)
-	public String categoryView(@ModelAttribute LicenseCategory licenseCategory) {
-		return "licensecategory-view";
-	}
+    @RequestMapping(value = "/update/{code}", method = RequestMethod.GET)
+    public String categoryUpdateForm(@ModelAttribute @Valid final UnitOfMeasurement unitOfMeasurement, final Model model) {
+        return "uom-update";
+    }
+
+    @RequestMapping(value = "/update/{code}", method = RequestMethod.POST)
+    public String updateCategory(@ModelAttribute @Valid final UnitOfMeasurement unitOfMeasurement, final BindingResult errors,
+            final RedirectAttributes additionalAttr) {
+
+        if (errors.hasErrors())
+            return "uom-update";
+
+        unitOfMeasurementService.persistUnitOfMeasurement(unitOfMeasurement);
+        additionalAttr.addFlashAttribute("message", "msg.success.uom.update");
+        return "redirect:/licenseunitofmeasurement/view/" + unitOfMeasurement.getCode();
+    }
+
 }

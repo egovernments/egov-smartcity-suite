@@ -38,48 +38,36 @@
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
 
-package org.egov.tl.web.controller.master.unitofmeasurement;
-
-import javax.validation.Valid;
+package org.egov.tl.web.controller.uom;
 
 import org.egov.tl.entity.UnitOfMeasurement;
 import org.egov.tl.service.masters.UnitOfMeasurementService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
-import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 @Controller
 @RequestMapping("/licenseunitofmeasurement")
-public class CreateLicenseUomController {
+public class ViewUomController {
 
-	@Autowired
-	private UnitOfMeasurementService unitOfMeasurementService;
+    private final UnitOfMeasurementService unitOfMeasurementService;
 
-	@ModelAttribute
-	public UnitOfMeasurement unitOfMeasurementModel() {
-		return new UnitOfMeasurement();
-	}
+    @Autowired
+    public ViewUomController(final UnitOfMeasurementService unitOfMeasurementService) {
+        this.unitOfMeasurementService = unitOfMeasurementService;
+    }
 
-	@RequestMapping(value = "/create", method = RequestMethod.GET)
-	public String createUomForm(Model mode) {
-		return "uom-create";
-	}
+    @ModelAttribute
+    public UnitOfMeasurement licenseUomModel(@PathVariable final String code) {
+        return unitOfMeasurementService.findUOMByCode(code);
+    }
 
-	@RequestMapping(value = "/create", method = RequestMethod.POST)
-	public String createUom(@Valid @ModelAttribute UnitOfMeasurement unitOfMeasurement, BindingResult errors,
-			RedirectAttributes additionalAttr) {
+    @RequestMapping(value = "/view/{code}", method = RequestMethod.GET)
+    public String uomView(@ModelAttribute final UnitOfMeasurement unitOfMeasurement) {
 
-		if (errors.hasErrors()) {
-			return "uom-create";
-		}
-		unitOfMeasurementService.persistUnitOfMeasurement(unitOfMeasurement);
-		additionalAttr.addFlashAttribute("message", "msg.uom.save.success");
-
-		return "redirect:/licenseunitofmeasurement/view/" + unitOfMeasurement.getCode();
-	}
+        return "uom-view";
+    }
 }

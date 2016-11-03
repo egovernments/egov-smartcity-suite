@@ -39,7 +39,14 @@
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
 
-package org.egov.tl.web.controller.master.subcategory;
+package org.egov.tl.web.controller.subcategory;
+
+import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
+import static org.springframework.web.bind.annotation.RequestMethod.GET;
+
+import java.util.List;
+
+import javax.servlet.http.HttpServletRequest;
 
 import org.egov.tl.entity.LicenseCategory;
 import org.egov.tl.entity.LicenseSubCategory;
@@ -56,73 +63,66 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
-import javax.servlet.http.HttpServletRequest;
-
-import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
-import static org.springframework.web.bind.annotation.RequestMethod.GET;
-
-import java.util.List;
-
 @Controller
 @RequestMapping("/licensesubcategory")
 public class SearchSubCategoryController {
 
-	@Autowired
-	private LicenseCategoryService licenseCategoryService;
+    @Autowired
+    private LicenseCategoryService licenseCategoryService;
 
-	private final LicenseSubCategoryService licenseSubCategoryService;
+    private final LicenseSubCategoryService licenseSubCategoryService;
 
-	@Autowired
-	public SearchSubCategoryController(final LicenseSubCategoryService licenseSubCategoryService) {
-		this.licenseSubCategoryService = licenseSubCategoryService;
-	}
+    @Autowired
+    public SearchSubCategoryController(final LicenseSubCategoryService licenseSubCategoryService) {
+        this.licenseSubCategoryService = licenseSubCategoryService;
+    }
 
-	@ModelAttribute
-	public LicenseCategory licenseCategoryModel() {
-		return new LicenseCategory();
-	}
+    @ModelAttribute
+    public LicenseCategory licenseCategoryModel() {
+        return new LicenseCategory();
+    }
 
-	@ModelAttribute(value = "licenseCategories")
-	public List<LicenseCategory> getAllCategories() {
-		return licenseCategoryService.findAll();
-	}
+    @ModelAttribute(value = "licenseCategories")
+    public List<LicenseCategory> getAllCategories() {
+        return licenseCategoryService.findAll();
+    }
 
-	@ModelAttribute(value = "licenseSubCategories")
-	public List<LicenseSubCategory> getAllSubCategoryByCategory(final Long categoryId) {
-		return licenseSubCategoryService.findAllSubCategoryByCategory(categoryId);
-	}
-	@RequestMapping(value = "/subcategories-by-category", method = GET, produces = APPLICATION_JSON_VALUE)
+    @ModelAttribute(value = "licenseSubCategories")
+    public List<LicenseSubCategory> getAllSubCategoryByCategory(final Long categoryId) {
+        return licenseSubCategoryService.findAllSubCategoryByCategory(categoryId);
+    }
+
+    @RequestMapping(value = "/subcategories-by-category", method = GET, produces = APPLICATION_JSON_VALUE)
     public @ResponseBody List<LicenseSubCategory> getSubcategories(@RequestParam final Long categoryId) {
         return licenseSubCategoryService.findAllSubCategoryByCategory(categoryId);
-        
+
     }
-	@RequestMapping(value = "/update", method = RequestMethod.GET)
-	public String updateLicenseSubCategory(@ModelAttribute final LicenseSubCategory licenseSubCategory,
-			final Model model) {
-		return "subcategory-search-update";
-	}
 
-	@RequestMapping(value = "/view", method = RequestMethod.GET)
-	public String viewLicenseCategory(@ModelAttribute final LicenseSubCategory licenseSubCategory, final Model model) {
-		return "subcategory-search-view";
-	}
+    @RequestMapping(value = "/update", method = RequestMethod.GET)
+    public String updateLicenseSubCategory(@ModelAttribute final LicenseSubCategory licenseSubCategory,
+            final Model model) {
+        return "subcategory-search-update";
+    }
 
-	@RequestMapping(value = "/view", method = RequestMethod.POST)
-	public String searchView(@ModelAttribute final LicenseSubCategory licenseSubCategory, final BindingResult errors,
-			final RedirectAttributes redirectAttrs, final HttpServletRequest request) {
-		if (errors.hasErrors()) {
-			return "subcategory-search-view";
-		}
-		return "redirect:/licensesubcategory/view/" + licenseSubCategory.getCode();
-	}
+    @RequestMapping(value = "/view", method = RequestMethod.GET)
+    public String viewLicenseCategory(@ModelAttribute final LicenseSubCategory licenseSubCategory, final Model model) {
+        return "subcategory-search-view";
+    }
 
-	@RequestMapping(value = "/update", method = RequestMethod.POST)
-	public String searchUpdate(@ModelAttribute final LicenseSubCategory licenseSubCategory, final BindingResult errors,
-			final RedirectAttributes redirectAttrs, final HttpServletRequest request) {
-		if (errors.hasErrors()) {
-			return "subcategory-search-update";
-		}
-		return "redirect:/licensesubcategory/update/" + licenseSubCategory.getCode();
+    @RequestMapping(value = "/view", method = RequestMethod.POST)
+    public String searchView(@ModelAttribute final LicenseSubCategory licenseSubCategory, final BindingResult errors,
+            final RedirectAttributes redirectAttrs, final HttpServletRequest request) {
+        if (errors.hasErrors())
+            return "subcategory-search-view";
+        return "redirect:/licensesubcategory/view/" + licenseSubCategory.getCode();
+    }
 
-	}
+    @RequestMapping(value = "/update", method = RequestMethod.POST)
+    public String searchUpdate(@ModelAttribute final LicenseSubCategory licenseSubCategory, final BindingResult errors,
+            final RedirectAttributes redirectAttrs, final HttpServletRequest request) {
+        if (errors.hasErrors())
+            return "subcategory-search-update";
+        return "redirect:/licensesubcategory/update/" + licenseSubCategory.getCode();
+
+    }
 }

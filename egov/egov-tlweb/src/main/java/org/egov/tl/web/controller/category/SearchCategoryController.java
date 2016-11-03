@@ -38,7 +38,11 @@
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
 
-package org.egov.tl.web.controller.master.category;
+package org.egov.tl.web.controller.category;
+
+import java.util.List;
+
+import javax.servlet.http.HttpServletRequest;
 
 import org.egov.tl.entity.LicenseCategory;
 import org.egov.tl.service.masters.LicenseCategoryService;
@@ -47,45 +51,55 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
-import javax.validation.Valid;
-
 @Controller
 @RequestMapping("/licensecategory")
-public class UpdateCategoryController {
+public class SearchCategoryController {
 
-	private LicenseCategoryService licenseCategoryService;
+    private final LicenseCategoryService licenseCategoryService;
 
-	@Autowired
-	public UpdateCategoryController(LicenseCategoryService licenseCategoryService) {
-		this.licenseCategoryService = licenseCategoryService;
-	}
+    @Autowired
+    public SearchCategoryController(final LicenseCategoryService licenseCategoryService) {
+        this.licenseCategoryService = licenseCategoryService;
+    }
 
-	@ModelAttribute
-	public LicenseCategory licenseCategoryModel(@PathVariable String code) {
-		return licenseCategoryService.findCategoryByCode(code);
-	}
+    @ModelAttribute
+    public LicenseCategory licenseCategoryModel() {
+        return new LicenseCategory();
+    }
 
-	@RequestMapping(value = "/update/{code}", method = RequestMethod.GET)
-	public String categoryUpdateForm(@ModelAttribute @Valid LicenseCategory licenseCategory,final Model model) {
-		return "licensecategory-update";
-	}
+    @ModelAttribute(value = "licenseCategories")
+    public List<LicenseCategory> getAllCategories() {
+        return licenseCategoryService.findAll();
+    }
 
-	@RequestMapping(value = "/update/{code}", method = RequestMethod.POST)
-	public String updateCategory(@ModelAttribute @Valid LicenseCategory licenseCategory, BindingResult errors,
-			RedirectAttributes additionalAttr) {
+    @RequestMapping(value = "/update", method = RequestMethod.GET)
+    public String updateLicenseCategory(final Model model) {
+        return "licensecategory-search-update";
+    }
 
-		if (errors.hasErrors()) {
-			return "licensecategory-update";
-		}
+    @RequestMapping(value = "/view", method = RequestMethod.GET)
+    public String viewLicenseCategory(final Model model) {
+        return "licensecategory-search-view";
+    }
 
-		licenseCategoryService.persistCategory(licenseCategory);
-		additionalAttr.addFlashAttribute("message", "msg.success.category.update");
-		return "redirect:/licensecategory/view/" + licenseCategory.getCode();
-	}
+    @RequestMapping(value = "/view", method = RequestMethod.POST)
+    public String searchView(@ModelAttribute final LicenseCategory licenseCategory, final BindingResult errors,
+            final RedirectAttributes redirectAttrs, final HttpServletRequest request) {
+        if (errors.hasErrors())
+            return "licensecategory-search-view";
+        return "redirect:/licensecategory/view/" + licenseCategory.getCode();
+    }
 
+    @RequestMapping(value = "/update", method = RequestMethod.POST)
+    public String searchUpdate(@ModelAttribute final LicenseCategory licenseCategory, final BindingResult errors,
+            final RedirectAttributes redirectAttrs, final HttpServletRequest request) {
+        if (errors.hasErrors())
+            return "licensecategory-search-update";
+        return "redirect:/licensecategory/update/" + licenseCategory.getCode();
+
+    }
 }

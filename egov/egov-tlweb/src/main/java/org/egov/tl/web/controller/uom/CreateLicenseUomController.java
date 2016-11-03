@@ -38,53 +38,46 @@
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
 
-package org.egov.tl.web.controller.master.category;
+package org.egov.tl.web.controller.uom;
 
-import org.egov.tl.entity.LicenseCategory;
-import org.egov.tl.service.masters.LicenseCategoryService;
+import javax.validation.Valid;
+
+import org.egov.tl.entity.UnitOfMeasurement;
+import org.egov.tl.service.masters.UnitOfMeasurementService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
-import javax.validation.Valid;
-
 @Controller
-@RequestMapping("/licensecategory")
-public class CreateCategoryController {
+@RequestMapping("/licenseunitofmeasurement")
+public class CreateLicenseUomController {
 
-	private LicenseCategoryService licenseCategoryService;
+    @Autowired
+    private UnitOfMeasurementService unitOfMeasurementService;
 
-	@Autowired
-	public CreateCategoryController(LicenseCategoryService licenseCategoryService) {
-		this.licenseCategoryService = licenseCategoryService;
-	}
+    @ModelAttribute
+    public UnitOfMeasurement unitOfMeasurementModel() {
+        return new UnitOfMeasurement();
+    }
 
-	@ModelAttribute
-	public LicenseCategory licenseCategoryModel() {
-		return new LicenseCategory();
-	}
+    @RequestMapping(value = "/create", method = RequestMethod.GET)
+    public String createUomForm() {
+        return "uom-create";
+    }
 
-	@RequestMapping(value = "/create", method = RequestMethod.GET)
-	public String createCategoryForm(Model model) {
-		return "licensecategory-create";
-	}
+    @RequestMapping(value = "/create", method = RequestMethod.POST)
+    public String createUom(@Valid @ModelAttribute final UnitOfMeasurement unitOfMeasurement, final BindingResult errors,
+            final RedirectAttributes additionalAttr) {
 
-	@RequestMapping(value = "/create", method = RequestMethod.POST)
-	public String createCategory(@ModelAttribute @Valid LicenseCategory licenseCategory, BindingResult errors,
-			RedirectAttributes additionalAttr) {
+        if (errors.hasErrors())
+            return "uom-create";
+        unitOfMeasurementService.persistUnitOfMeasurement(unitOfMeasurement);
+        additionalAttr.addFlashAttribute("message", "msg.uom.save.success");
 
-		if (errors.hasErrors()) {
-			return "licensecategory-create";
-		}
-
-		licenseCategoryService.persistCategory(licenseCategory);
-		additionalAttr.addFlashAttribute("message", "msg.create.category.success");
-
-		return "redirect:/licensecategory/view/" + licenseCategory.getCode();
-	}
+        return "redirect:/licenseunitofmeasurement/view/" + unitOfMeasurement.getCode();
+    }
 }

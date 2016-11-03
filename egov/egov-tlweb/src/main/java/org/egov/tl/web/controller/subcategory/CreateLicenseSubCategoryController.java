@@ -38,9 +38,17 @@
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
 
-package org.egov.tl.web.controller.master.subcategory;
+package org.egov.tl.web.controller.subcategory;
 
+import java.util.List;
+
+import javax.validation.Valid;
+
+import org.egov.tl.entity.FeeType;
+import org.egov.tl.entity.LicenseCategory;
 import org.egov.tl.entity.LicenseSubCategory;
+import org.egov.tl.entity.UnitOfMeasurement;
+import org.egov.tl.entity.enums.RateTypeEnum;
 import org.egov.tl.service.FeeTypeService;
 import org.egov.tl.service.masters.LicenseCategoryService;
 import org.egov.tl.service.masters.LicenseSubCategoryService;
@@ -48,41 +56,72 @@ import org.egov.tl.service.masters.UnitOfMeasurementService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 @Controller
 @RequestMapping("/licensesubcategory")
-public class ViewSubCategoryController {
+public class CreateLicenseSubCategoryController {
 
-	private LicenseSubCategoryService licenseSubCategoryService;
+    private final LicenseSubCategoryService licenseSubCategoryService;
 
-	@Autowired
-	private LicenseCategoryService licenseCategoryService;
+    @Autowired
+    private LicenseCategoryService licenseCategoryService;
 
-	@Autowired
-	private UnitOfMeasurementService unitOfMeasurementService;
+    @Autowired
+    private UnitOfMeasurementService unitOfMeasurementService;
 
-	@Autowired
-	private FeeTypeService feeTypeService;
+    @Autowired
+    private FeeTypeService feeTypeService;
 
-	@Autowired
-	public ViewSubCategoryController(LicenseSubCategoryService licenseSubCategoryService) {
-		this.licenseSubCategoryService = licenseSubCategoryService;
-	}
+    @Autowired
+    public CreateLicenseSubCategoryController(final LicenseSubCategoryService licenseSubCategoryService) {
+        this.licenseSubCategoryService = licenseSubCategoryService;
+    }
 
-	@ModelAttribute
-	public LicenseSubCategory licenseCategoryModel(@PathVariable String code) {
-		return licenseSubCategoryService.findSubCategoryByCode(code);
-	}
+    @ModelAttribute
+    public LicenseSubCategory licenseSubCategoryModel() {
+        return new LicenseSubCategory();
+    }
 
-	@RequestMapping(value = "/view/{code}", method = RequestMethod.GET)
-	public String categoryView(Model model) {
-		model.addAttribute("licenseCategories", licenseCategoryService.findAll());
-		model.addAttribute("licenseFeeTypes", feeTypeService.findAll());
-		model.addAttribute("licenseUomTypes", unitOfMeasurementService.findAll());
-		return "subcategory-view";
-	}
+    @ModelAttribute(value = "licenseCategories")
+    public List<LicenseCategory> getAllCategories() {
+        return licenseCategoryService.findAll();
+    }
+
+    @ModelAttribute(value = "licenseUomTypes")
+    public List<UnitOfMeasurement> getAllUom() {
+        return unitOfMeasurementService.findAll();
+    }
+
+    @ModelAttribute(value = "licenseFeeTypes")
+    public List<FeeType> getAllFeeType() {
+        return feeTypeService.findAll();
+    }
+
+    @RequestMapping(value = "/create", method = RequestMethod.GET)
+    public String createSubCategoryForm(@ModelAttribute("licenseSubCategory") final LicenseSubCategory licenseSubCategory,
+            final Model model) {
+        model.addAttribute("rateTypes", RateTypeEnum.values());
+        return "subcategory-create";
+    }
+
+    @RequestMapping(value = "/create", method = RequestMethod.POST)
+    public String createSubCategory(@ModelAttribute @Valid final LicenseSubCategory licenseSubCategory,
+            final BindingResult errors,
+            final RedirectAttributes additionalAttr, final Model model) {
+
+        if (errors.hasErrors())
+            return "subcategory-create";
+        licenseSubCategoryService.createSubCategory(licenseSubCategory);
+        additionalAttr.addFlashAttribute("message", "msg.subcategory.save.success");
+
+        model.addAttribute("licenseFeeTypes", getAllFeeType());
+        model.addAttribute("licenseUomTypes", getAllUom());
+
+        return "redirect:/licensesubcategory/view/" + licenseSubCategory.getCode();
+    }
 }
