@@ -176,26 +176,26 @@ function submitForm(){
 			searchable:true,
 			data: searchResult,
 			columns: [
-			{title: 'Application Type', data: 'resource.clauses.applicationtype'},
-			{title: 'url' ,data: 'resource.searchable.url',"bVisible": false},
-			{title: 'Application Number', data: 'resource.searchable.applicationnumber'},
-			{title: 'Application Date',
+			{title: 'Application Type', data: 'applicationType'},
+			{title: 'url' ,data: 'url',"bVisible": false},
+			{title: 'Application Number', data: 'applicationNumber'},
+		/*{title: 'Application Date',
 				render: function (data, type, full) {
-					if(full!=null && full.resource!=undefined &&  full.resource.searchable.applicationdate != undefined) {
-						var regDateSplit = full.resource.searchable.applicationdate.split("T")[0].split("-");		
+					if(full!=null && full!=undefined &&  full.applicationdate != undefined) {
+						var regDateSplit = full.applicationdate.split("T")[0].split("-");		
 						return regDateSplit[2] + "/" + regDateSplit[1] + "/" + regDateSplit[0];
 					}
 					else return "";
 		    	}
-			},
-			{title: 'Applicant Name', data: 'resource.searchable.applicantname'},
-			{title: 'Channel', data: 'resource.clauses.channel'},
+			},*/
+			{title: 'Applicant Name', data: 'applicantName'},
+			{title: 'Channel', data: 'source'},
 			
-			{title: 'Applicant Address', data: 'resource.searchable.applicantAddress'},
-			{title: 'Status', data: 'resource.clauses.status'},
-			{title: 'Current Owner', data: 'resource.clauses.ownername'}
+			{title: 'Applicant Address', data: 'applicationAddress'},
+			{title: 'Status', data: 'applicationStatus'},
+			{title: 'Current Owner', data: 'ownername'}
 			],
-			"aaSorting": [[3, 'desc']]
+			"aaSorting": [[1, 'desc']]
 		});
 		
 	});

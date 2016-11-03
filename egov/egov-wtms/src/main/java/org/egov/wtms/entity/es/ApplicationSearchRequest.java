@@ -42,6 +42,7 @@ package org.egov.wtms.entity.es;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
+import java.util.Date;
 
 public class ApplicationSearchRequest {
     private String searchText;
@@ -53,8 +54,12 @@ public class ApplicationSearchRequest {
     private String mobileNumber;
     private String fromDate;
     private String toDate;
+    private String ownername;
+    private String url;
+    private String applicationAddress;
     private String cityName;
     private String applicationStatus;
+    private Date applicationdate;
     private String source;
 
     public String getModuleName() {
@@ -157,6 +162,7 @@ public class ApplicationSearchRequest {
     public void setSource(final String source) {
         this.source = source;
     }
+    
 
     /*
      * public Filters searchFilters() { final List<Filter> andFilters = new
@@ -184,6 +190,14 @@ public class ApplicationSearchRequest {
      * andFilters); return Filters.withAndFilters(andFilters); }
      */
 
+    public String getUrl() {
+        return url;
+    }
+
+    public void setUrl(String url) {
+        this.url = url;
+    }
+
     public String searchQuery() {
         return searchText;
     }
@@ -195,5 +209,33 @@ public class ApplicationSearchRequest {
     public void setApplicationStatus(final String applicationStatus) {
         this.applicationStatus = applicationStatus;
     }
+
+    public String getApplicationAddress() {
+        return applicationAddress;
+    }
+
+    public void setApplicationAddress(String applicationAddress) {
+        this.applicationAddress = applicationAddress;
+    }
+
+    public Date getApplicationdate() {
+        return applicationdate;
+    }
+
+    public void setApplicationdate(Date applicationdate) {
+        this.applicationdate = applicationdate;
+         
+    }
+
+    public String getOwnername() {
+        return ownername;
+    }
+
+    public void setOwnername(String ownername) {
+        this.ownername = ownername;
+    }
+
+    
+   
 
 }

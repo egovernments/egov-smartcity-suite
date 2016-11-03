@@ -40,15 +40,26 @@
 
 package org.egov.wtms.web.controller.elasticSearch;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.commons.lang3.StringUtils;
+import org.egov.infra.admin.master.entity.City;
 import org.egov.infra.admin.master.service.CityService;
+import org.egov.infra.config.core.ApplicationThreadLocals;
 import org.egov.infra.elasticsearch.entity.ApplicationIndex;
+import org.egov.infra.elasticsearch.entity.es.ApplicationDocument;
 import org.egov.wtms.entity.es.ApplicationSearchRequest;
 import org.egov.wtms.service.es.ApplicationSearchService;
 import org.egov.wtms.utils.WaterTaxUtils;
+import org.egov.wtms.utils.constants.WaterTaxConstants;
+import org.elasticsearch.index.query.BoolQueryBuilder;
+import org.elasticsearch.index.query.QueryBuilders;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.elasticsearch.core.ElasticsearchTemplate;
+import org.springframework.data.elasticsearch.core.query.NativeSearchQueryBuilder;
+import org.springframework.data.elasticsearch.core.query.SearchQuery;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -57,7 +68,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
-
 @Controller
 @RequestMapping(value = "/elastic/appSearch/")
 public class ApplicationSearchController {
@@ -65,7 +75,13 @@ public class ApplicationSearchController {
     private final ApplicationSearchService applicationSearchService;
     @Autowired
     private WaterTaxUtils waterTaxUtils;
+    
+    @Autowired
+    private CityService cityService;
 
+    
+    @Autowired
+    private ElasticsearchTemplate elasticsearchTemplate;
     @Autowired
     public ApplicationSearchController(final ApplicationSearchService applicationSearchService,
             final CityService cityService) {
@@ -106,22 +122,76 @@ public class ApplicationSearchController {
         return applicationSearchService.findApplicationIndexModules();
     }
 
-    /*
-     * @RequestMapping(method = RequestMethod.POST)
-     * @ResponseBody public List<Document> searchApplication(@ModelAttribute
-     * final ApplicationSearchRequest searchRequest) { final City cityWebsite =
-     * cityService.getCityByURL(ApplicationThreadLocals.getDomainName());
-     * searchRequest.setCityName(cityWebsite.getName()); final Sort sort =
-     * Sort.by().field("searchable.applicationdate", SortOrder.DESC); final
-     * SearchResult searchResult =
-     * searchService.search(asList(Index.APPLICATION.toString()),
-     * asList(IndexType.APPLICATIONSEARCH.toString()),
-     * searchRequest.searchQuery(), searchRequest.searchFilters(), sort,
-     * Page.NULL); final List<Document> searchResultFomatted = new
-     * ArrayList<Document>(0); for (final Document document :
-     * searchResult.getDocuments()) {
-     * document.getResource().remove("searchable.mobilenumber");
-     * document.getResource().remove("searchable.aadharnumber");
-     * searchResultFomatted.add(document); } return searchResultFomatted; }
-     */
+    @RequestMapping(method = RequestMethod.POST)
+    @ResponseBody
+    public List<ApplicationSearchRequest> searchApplication(@ModelAttribute final ApplicationSearchRequest searchRequest) {
+        List<ApplicationDocument> applicationDocumentList = new ArrayList<ApplicationDocument>();
+        final List<ApplicationSearchRequest> finalResult = new ArrayList<ApplicationSearchRequest>();
+        applicationDocumentList = findAllAppicationIndexByFilter(searchRequest);
+       for (final ApplicationDocument applicationIndex : applicationDocumentList) {
+            final ApplicationSearchRequest customerObj = new ApplicationSearchRequest();
+            customerObj.setApplicantName(applicationIndex.getApplicantName());
+            customerObj.setConsumerCode(applicationIndex.getConsumerCode());
+            customerObj.setApplicationAddress(applicationIndex.getApplicantAddress());
+            customerObj.setApplicationNumber(applicationIndex.getApplicationNumber());
+            customerObj.setOwnername(applicationIndex.getOwnername());
+            customerObj.setSource(applicationIndex.getChannel());
+            customerObj.setApplicationType(applicationIndex.getApplicationType());
+            customerObj.setApplicationdate(applicationIndex.getApplicationDate());
+            customerObj.setUrl(applicationIndex.getUrl());
+            customerObj.setApplicationStatus(applicationIndex.getStatus());
+            finalResult.add(customerObj);
+        }
+        return finalResult;
+
+    }
+
+    private BoolQueryBuilder getFilterQuery(final ApplicationSearchRequest searchRequest) {
+        final City cityWebsite = cityService.getCityByCode(ApplicationThreadLocals.getCityCode());
+        BoolQueryBuilder boolQuery =QueryBuilders.boolQuery().filter(QueryBuilders.termQuery("cityName",cityWebsite.getName()));
+       if (StringUtils.isNotBlank(searchRequest.getApplicantName()))
+            boolQuery = boolQuery.filter(QueryBuilders.matchQuery("applicantName", searchRequest.getApplicantName()));
+       
+       if (StringUtils.isNotBlank(searchRequest.getConsumerCode()))
+            boolQuery = boolQuery.filter(QueryBuilders.matchQuery("consumerCode", searchRequest.getConsumerCode()));
+       
+       if (StringUtils.isNotBlank(searchRequest.getApplicationStatus()))
+            boolQuery = boolQuery.filter(QueryBuilders.matchQuery("status", searchRequest.getApplicationStatus()));
+       
+       if (StringUtils.isNotBlank(searchRequest.getMobileNumber()))
+            boolQuery = boolQuery.filter(QueryBuilders.matchQuery("mobileNumber", searchRequest.getMobileNumber()));
+       
+       if (StringUtils.isNotBlank(searchRequest.getApplicationNumber()))
+            boolQuery = boolQuery.filter(QueryBuilders.matchQuery("applicationNumber", searchRequest.getApplicationNumber()));
+       
+       if (StringUtils.isNotBlank(searchRequest.getApplicationType()))
+            boolQuery = boolQuery.filter(QueryBuilders.matchQuery("applicationType", searchRequest.getApplicationType()));
+       
+       if (StringUtils.isNotBlank(searchRequest.getSource()))
+            boolQuery = boolQuery.filter(QueryBuilders.matchQuery("channel", searchRequest.getSource()));
+
+        
+        if (StringUtils.isNotBlank(searchRequest.getModuleName()))
+            boolQuery = boolQuery.filter(QueryBuilders.matchQuery("moduleName", searchRequest.getModuleName()));
+
+        if (StringUtils.isNotBlank(searchRequest.getFromDate()) &&
+                StringUtils.isNotBlank(searchRequest.getToDate()))
+            boolQuery = boolQuery.must(QueryBuilders.rangeQuery("applicationDate")
+                    .from(searchRequest.getFromDate())
+                    .to(searchRequest.getToDate()));
+        
+        return boolQuery;
+    }
+
+    public List<ApplicationDocument> findAllAppicationIndexByFilter(final ApplicationSearchRequest searchRequest) {
+
+        final BoolQueryBuilder query = getFilterQuery(searchRequest);
+        final SearchQuery searchQuery = new NativeSearchQueryBuilder().withIndices(WaterTaxConstants.APPLICATION_TAX_INDEX_NAME)
+                .withQuery(query).build();
+
+        final List<ApplicationDocument> sampleEntities = elasticsearchTemplate.queryForList(searchQuery,
+                ApplicationDocument.class);
+        return sampleEntities;
+    }
+
 }
