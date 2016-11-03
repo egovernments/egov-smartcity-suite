@@ -40,6 +40,8 @@
 package org.egov.mrs.web.controller.reports;
 
 import static org.egov.infra.web.utils.WebUtils.toJSON;
+import static org.egov.mrs.application.MarriageConstants.BOUNDARY_TYPE;
+import static org.egov.mrs.application.MarriageConstants.REVENUE_HIERARCHY_TYPE;
 
 import java.io.IOException;
 import java.text.ParseException;
@@ -47,9 +49,15 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
+import org.egov.infra.admin.master.entity.Boundary;
+import org.egov.infra.admin.master.service.BoundaryService;
+import org.egov.mrs.application.reports.service.MarriageRegistrationReportsService;
+import org.egov.mrs.domain.entity.MarriageCertificate;
 import org.egov.mrs.domain.entity.MarriageRegistration;
 import org.egov.mrs.domain.entity.MarriageRegistration.RegistrationStatus;
+import org.egov.mrs.domain.entity.RegistrationCertificatesResultForReport;
 import org.egov.mrs.domain.service.MarriageRegistrationService;
+import org.egov.mrs.web.adaptor.MarriageRegistrationCertificateReportJsonAdaptor;
 import org.egov.mrs.web.adaptor.MarriageRegistrationJsonAdaptor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
@@ -83,11 +91,21 @@ public class MarriageRegistrationReportsController {
 	private final static String KEY_AGE = "age";
 	private final static String KEY_HUSBANDCOUNT = "husbandcount";
 	private final static String KEY_WIFECOUNT = "wifecount";
-
+	
+	@Autowired
+    protected BoundaryService boundaryService;
+	
 	@Autowired
 	private MarriageRegistrationService marriageRegistrationService;
 	
-
+	@Autowired
+	private MarriageRegistrationReportsService marriageRegistrationReportsService;
+	
+	
+	
+	 public @ModelAttribute("zones") List<Boundary> getZonesList() {
+			return boundaryService.getActiveBoundariesByBndryTypeNameAndHierarchyTypeName(BOUNDARY_TYPE, REVENUE_HIERARCHY_TYPE);
+	 }	
 	@RequestMapping(value = "/registrationstatus", method = RequestMethod.GET)
 	public String showReportForm(final Model model) {
 		model.addAttribute("registration", new MarriageRegistration());
@@ -172,5 +190,35 @@ public class MarriageRegistrationReportsController {
 		model.addAttribute("applicantType", applicantType);
 		return "marriage-agewise-view";
 	}
+	
+	@RequestMapping(value = "/certificatescount", method = RequestMethod.GET)
+    public String searchCertificatesForReport(final Model model) {
+    	model.addAttribute("certificate", new MarriageCertificate());
+        return "registration-certificates-report";
+    }
+
+    @RequestMapping(value = "/certificatescount", method = RequestMethod.POST, produces = MediaType.TEXT_PLAIN_VALUE)
+    public @ResponseBody String searchApprovedMarriageRecords(Model model,@ModelAttribute final MarriageCertificate certificate) throws ParseException {
+    	List<RegistrationCertificatesResultForReport> regCertificateResult = new ArrayList<RegistrationCertificatesResultForReport>();
+    	List<Object[]> searchResultList = marriageRegistrationReportsService.searchMarriageRegistrationsForCertificateReport(certificate);
+    	for (Object[] objects : searchResultList) {
+    		RegistrationCertificatesResultForReport certificatesResultForReport = new RegistrationCertificatesResultForReport();
+    		certificatesResultForReport.setRegistrationNo(objects[0].toString());
+    		certificatesResultForReport.setDateOfMarriage(objects[1].toString());
+    		certificatesResultForReport.setRegistrationDate(objects[2].toString());
+    		//certificatesResultForReport.setRejectReason(objects[3].toString()!= null?objects[3].toString():"");
+    		certificatesResultForReport.setCertificateNo(objects[4].toString()!= null?objects[4].toString():"");
+    		certificatesResultForReport.setCertificateType(objects[5].toString());
+    		certificatesResultForReport.setCertificateDate(objects[6].toString());
+    		certificatesResultForReport.setZone(objects[7].toString());
+    		certificatesResultForReport.setHusbandName(objects[8].toString());
+    		certificatesResultForReport.setWifeName(objects[9].toString());
+    		certificatesResultForReport.setId(Long.valueOf(objects[10].toString()));
+    		regCertificateResult.add(certificatesResultForReport);
+		}
+      	 String result = new StringBuilder("{ \"data\":").append(toJSON(regCertificateResult,RegistrationCertificatesResultForReport.class,  MarriageRegistrationCertificateReportJsonAdaptor.class)).append("}")
+                   .toString();
+          return result;
+    } 
 	
 	}
