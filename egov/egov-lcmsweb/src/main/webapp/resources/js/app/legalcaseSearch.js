@@ -80,7 +80,25 @@ function submitForm() {
 				"aLengthMenu" : [ [ 10, 25, 50, -1 ], [ 10, 25, 50, "All" ] ],
 				"oTableTools" : {
 					"sSwfPath" : "../../../../../../egi/resources/global/swf/copy_csv_xls_pdf.swf",
-					"aButtons" : []
+					"aButtons" : [{
+			             "sExtends": "pdf",
+			             "mColumns": [0, 1, 2, 3, 4,5,6,7],
+			             "sPdfMessage": "",
+                         "sTitle": "Search LegalCase Report",
+                         "sPdfOrientation": "landscape"
+		                },
+		                {
+				             "sExtends": "xls",
+				             "mColumns": [ 0,1,2,3,4,5,6,7],
+                             "sPdfMessage": "Search LegalCase Report",
+                             "sTitle": "Search LegalCase Report"
+			             },
+			             {
+				             "sExtends": "print",
+				             "mColumns": [ 0,1,2,3,4,5,6,7],
+                             "sPdfMessage": "Search LegalCase Report",
+                             "sTitle": "Search LegalCase Report"
+			             }],
 				},
 				columns : [
 						{
@@ -118,11 +136,11 @@ function submitForm() {
 							"sTitle" : "Case Status",
 							"className" : "text-right"
 						},
-						{
+						/*{
 							"data" : "casestatus",
 							"sTitle" : "Case Status1",
 							"bVisible" : false
-						},
+						},*/
 						{
 							"data" : "petitioners",
 							"sTitle" : "Petitioners",

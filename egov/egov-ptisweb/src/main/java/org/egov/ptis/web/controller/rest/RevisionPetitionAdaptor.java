@@ -37,14 +37,24 @@
  *
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
+package org.egov.ptis.web.controller.rest;
 
-package org.egov.pgr.utils.constants;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonSerializationContext;
+import com.google.gson.JsonSerializer;
+import org.egov.ptis.domain.entity.objection.RevisionPetition;
 
-public class PGRConstants {
-    public static final String MODULE_NAME = "PGR";
-    public static final String DASH_DELIM = "-";
-    public static final String EG_OBJECT_TYPE_COMPLAINT = "Complaint";
-    public static final String GO_ROLE_NAME = "Grievance Officer";
-    public static final String GRO_ROLE_NAME = "Grievance Routing Officer";
-    public static final String DELIMITER_COLON = "::";
+import java.lang.reflect.Type;
+
+public class RevisionPetitionAdaptor implements JsonSerializer<RevisionPetition> {
+
+    @Override
+    public JsonElement serialize(final RevisionPetition revPetition, final Type type, final JsonSerializationContext jsc) {
+        final JsonObject jsonObject = new JsonObject();
+        jsonObject.addProperty("applicationNumber", revPetition.getObjectionNumber());
+        jsonObject.addProperty("accessmentnumber", "" + revPetition.getBasicProperty().getUpicNo());
+        return jsonObject;
+    }
+
 }

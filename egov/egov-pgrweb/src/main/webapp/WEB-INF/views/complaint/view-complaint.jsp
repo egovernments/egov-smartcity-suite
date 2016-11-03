@@ -44,6 +44,8 @@
 <%@ taglib uri="http://www.springframework.org/tags" prefix="spring"%>
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
 <%@ taglib uri="/WEB-INF/taglib/cdn.tld" prefix="cdn" %>
+<%@taglib prefix="joda" uri="http://www.joda.org/joda/time/tags" %>
+
 <c:if test="${not empty message}">
 	<div class="alert alert-success" role="alert">${message}</div>
 </c:if>
@@ -106,15 +108,20 @@
 					<div class="col-md-3 col-xs-6 add-margin view-content" id="ct-dept">
 						<c:out value="${complaint.department.name}"></c:out>
 					</div>
-					<div class="col-md-3 col-xs-6 add-margin"><spring:message code="lbl.filedVia" /></div>
-					<div class="col-md-3 col-xs-6 add-margin view-content" id="ct-filedvia">
-						<c:out value="${complaint.receivingMode}"/></div>
+					<div class="col-md-3 col-xs-6 add-margin"><spring:message code="lbl.nextescalation.date" /></div>
+					<div class="col-md-3 col-xs-6 add-margin view-content" id="ct-nextescalation">
+						<joda:format var="nextEscalationDate" value="${complaint.escalationDate}" pattern="dd-MM-yyyy HH:mm"/>
+						<c:out value="${nextEscalationDate}"/>
+					</div> 
 				</div>
 				<div class="row add-border">
 					<div class="col-md-3 col-xs-6 add-margin"><spring:message code="lbl.complaintType" /></div>
 					<div class="col-md-3 col-xs-6 add-margin view-content" id="ct-type">
 						<c:out value="${complaint.complaintType.name}"></c:out>
 					</div>
+					<div class="col-md-3 col-xs-6 add-margin"><spring:message code="lbl.filedVia" /></div>
+					<div class="col-md-3 col-xs-6 add-margin view-content" id="ct-filedvia">
+						<c:out value="${complaint.receivingMode}"/></div>
 				</div>
 				<div class="row add-border">
 					<div class="col-md-3 col-xs-6 add-margin"><spring:message code="lbl.compDetails" /></div>

@@ -1,6 +1,5 @@
-<%@ page contentType="text/json" %>
-<%@ taglib prefix="s" uri="/struts-tags" %>  
-<%--
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
   ~ eGov suite of products aim to improve the internal efficiency,transparency,
   ~    accountability and the service delivery of the government  organizations.
   ~
@@ -38,15 +37,28 @@
   ~            or trademarks of eGovernments Foundation.
   ~
   ~   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
-  --%>
-
-{
-"ResultSet": {
-    "Result":[
-    {"errorMsg":"<s:property value="%{errorMsg}" />",
-    "isUnique":"<s:property value="%{isUnique}" />",
-    "paramType":"<s:property value="%{paramType}" />"
-    }<s:if test="!#status.last">,</s:if>    
-    ]
-  } 
-}
+  -->
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+"http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
+<!-- Generated 10 Sep, 2009 12:59:28 PM by Hibernate Tools 3.2.0.CR1 -->
+<hibernate-mapping>
+	<class name="org.egov.collection.entity.ServiceModuleMapping"
+		table="EGCL_SERVICEMODULE_MAPPING">
+		<id name="id" column="ID" type="java.lang.Long">
+			<generator class="org.hibernate.id.enhanced.SequenceStyleGenerator">
+				<param name="sequence_name">SEQ_EGCL_SERVICEMODULE_MAPPING</param>
+			</generator>
+		</id>
+		<many-to-one name="serviceDetails" class="org.egov.infstr.models.ServiceDetails"
+			column="ID_SERVICE_DETAILS" fetch="select" />
+		<many-to-one name="module"
+			class="org.egov.infra.admin.master.entity.Module" column="ID_MODULE"
+			fetch="select" />
+		<many-to-one name="createdBy"
+			class="org.egov.infra.admin.master.entity.User" column="CREATED_BY" />
+		<property name="createdDate" column="CREATED_DATE" type="timestamp" />
+		<property name="modifiedDate" column="MODIFIED_DATE" type="timestamp" />
+		<many-to-one name="modifiedBy"
+			class="org.egov.infra.admin.master.entity.User" column="MODIFIED_BY" />
+	</class>
+</hibernate-mapping>

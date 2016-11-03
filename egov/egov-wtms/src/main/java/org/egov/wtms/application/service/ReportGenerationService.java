@@ -39,6 +39,17 @@
  */
 package org.egov.wtms.application.service;
 
+import static org.egov.wtms.utils.constants.WaterTaxConstants.WATERCHARGES_CONSUMERCODE;
+
+import java.io.ByteArrayInputStream;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+
 import org.apache.commons.lang.WordUtils;
 import org.egov.eis.entity.Assignment;
 import org.egov.eis.service.AssignmentService;
@@ -61,15 +72,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.MessageSource;
 import org.springframework.stereotype.Service;
-
-import java.io.ByteArrayInputStream;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
 
 @Service
 public class ReportGenerationService {
@@ -119,11 +121,14 @@ public class ReportGenerationService {
                 }
             if (WaterTaxConstants.NEWCONNECTION.equalsIgnoreCase(connectionDetails.getApplicationType().getCode()))
                 reportParams.put("applicationtype", wcmsMessageSource.getMessage("msg.new.watertap.conn", null, null));
-            else if (WaterTaxConstants.ADDNLCONNECTION.equalsIgnoreCase(connectionDetails.getApplicationType().getCode()))
+            else if (WaterTaxConstants.ADDNLCONNECTION
+                    .equalsIgnoreCase(connectionDetails.getApplicationType().getCode()))
                 reportParams.put("applicationtype", wcmsMessageSource.getMessage("msg.add.watertap.conn", null, null));
             else
-                reportParams.put("applicationtype", wcmsMessageSource.getMessage("msg.changeofuse.watertap.conn", null, null));
-            reportParams.put("conntitle", WordUtils.capitalize(connectionDetails.getApplicationType().getName()).toString());
+                reportParams.put("applicationtype",
+                        wcmsMessageSource.getMessage("msg.changeofuse.watertap.conn", null, null));
+            reportParams.put("conntitle",
+                    WordUtils.capitalize(connectionDetails.getApplicationType().getName()).toString());
             reportParams.put("municipality", cityMunicipalityName);
             reportParams.put("district", districtName);
             reportParams.put("purpose", connectionDetails.getUsageType().getName());
@@ -147,7 +152,8 @@ public class ReportGenerationService {
             reportParams.put("applicantname", WordUtils.capitalize(ownerName));
             reportParams.put("address", propAddress);
             reportParams.put("doorno", doorno != null ? doorno[0] : "");
-            reportParams.put("usersignature", securityUtils.getCurrentUser().getSignature()!=null ? new ByteArrayInputStream(securityUtils.getCurrentUser().getSignature()):null);
+            reportParams.put("usersignature", securityUtils.getCurrentUser().getSignature() != null
+                    ? new ByteArrayInputStream(securityUtils.getCurrentUser().getSignature()) : null);
             reportParams.put("applicationDate", formatter.format(connectionDetails.getApplicationDate()));
             reportInput = new ReportRequest(WaterTaxConstants.CONNECTION_WORK_ORDER, connectionDetails, reportParams);
         }
@@ -174,35 +180,33 @@ public class ReportGenerationService {
                 break;
             }
             List<Assignment> asignList = null;
-            final Position approverPos = waterTaxUtils.getCityLevelCommissionerPosition("Commissioner", waterConnectionDetails
-                    .getConnection().getPropertyIdentifier());
+            final Position approverPos = waterTaxUtils.getCityLevelCommissionerPosition("Commissioner",
+                    waterConnectionDetails.getConnection().getPropertyIdentifier());
             if (approverPos != null) {
-                assignment = assignmentService
-                        .getPrimaryAssignmentForPositionAndDate(
-                                approverPos.getId(), new Date());
+                assignment = assignmentService.getPrimaryAssignmentForPositionAndDate(approverPos.getId(), new Date());
                 if (assignment != null && assignment.getEmployee() != null) {
                     asignList = new ArrayList<Assignment>();
                     asignList.add(assignment);
                 } else if (assignment == null && approverPos != null)
-                    asignList = assignmentService.getAssignmentsForPosition(
-                            approverPos.getId(), new Date());
+                    asignList = assignmentService.getAssignmentsForPosition(approverPos.getId(), new Date());
                 if (!asignList.isEmpty())
-                    user = userService.getUserById(asignList.get(0)
-                            .getEmployee().getId());
+                    user = userService.getUserById(asignList.get(0).getEmployee().getId());
             }
             reportParams.put("applicationType", WordUtils.capitalize(WaterTaxConstants.RECONNECTIONWITHSLASH));
             reportParams.put("cityName", cityMunicipalityName);
             reportParams.put("district", districtName);
             reportParams.put("applicationDate", formatter.format(waterConnectionDetails.getApplicationDate()));
             reportParams.put("reconnApprovalDate",
-                    formatter.format(waterConnectionDetails.getReconnectionApprovalDate() != null ? waterConnectionDetails
-                            .getReconnectionApprovalDate() : new Date()));
+                    formatter.format(waterConnectionDetails.getReconnectionApprovalDate() != null
+                            ? waterConnectionDetails.getReconnectionApprovalDate() : new Date()));
             reportParams.put("applicantName", ownerName);
-            reportParams.put("consumerCode", waterConnectionDetails.getConnection().getConsumerCode());
-            reportParams.put("commissionerName", user != null && user.getUsername() != null ? user.getName() : ownerName);
+            reportParams.put(WATERCHARGES_CONSUMERCODE, waterConnectionDetails.getConnection().getConsumerCode());
+            reportParams.put("commissionerName",
+                    user != null && user.getUsername() != null ? user.getName() : ownerName);
             reportParams.put("address", assessmentDetails.getPropertyAddress());
             reportParams.put("houseNo", doorNo[0]);
-            reportParams.put("usersignature", securityUtils.getCurrentUser().getSignature()!=null ? new ByteArrayInputStream(securityUtils.getCurrentUser().getSignature()):null);
+            reportParams.put("usersignature", securityUtils.getCurrentUser().getSignature() != null
+                    ? new ByteArrayInputStream(securityUtils.getCurrentUser().getSignature()) : null);
             user = securityUtils.getCurrentUser();
             reportParams.put("userId", user.getId());
             reportParams.put("workFlowAction", workFlowAction);
@@ -235,15 +239,15 @@ public class ReportGenerationService {
             reportParams.put("district", districtName);
             reportParams.put("applicationDate", formatter.format(waterConnectionDetails.getApplicationDate()));
             reportParams.put("applicantName", ownerName);
-            reportParams.put("consumerCode", waterConnectionDetails.getConnection().getConsumerCode());
+            reportParams.put(WATERCHARGES_CONSUMERCODE, waterConnectionDetails.getConnection().getConsumerCode());
             reportParams.put("address", assessmentDetails.getPropertyAddress());
             reportParams.put("houseNo", doorNo[0]);
-            reportParams.put("usersignature",  securityUtils.getCurrentUser().getSignature()!=null ? new ByteArrayInputStream(securityUtils.getCurrentUser().getSignature()):null);
-            reportParams.put("closeApprovalDate",
-                    formatter.format(waterConnectionDetails.getCloseApprovalDate() != null ? waterConnectionDetails
-                            .getCloseApprovalDate() : new Date()));
-            reportParams.put("closeConnectionType", waterConnectionDetails.getCloseConnectionType().equals("T") ? "Temporary"
-                    : "Permanent");
+            reportParams.put("usersignature", securityUtils.getCurrentUser().getSignature() != null
+                    ? new ByteArrayInputStream(securityUtils.getCurrentUser().getSignature()) : null);
+            reportParams.put("closeApprovalDate", formatter.format(waterConnectionDetails.getCloseApprovalDate() != null
+                    ? waterConnectionDetails.getCloseApprovalDate() : new Date()));
+            reportParams.put("closeConnectionType",
+                    waterConnectionDetails.getCloseConnectionType().equals("T") ? "Temporary" : "Permanent");
             final User user = securityUtils.getCurrentUser();
             reportParams.put("userId", user.getId());
             reportParams.put("workFlowAction", workFlowAction);

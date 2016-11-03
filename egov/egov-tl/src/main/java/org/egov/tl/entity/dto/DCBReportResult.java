@@ -38,7 +38,7 @@
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
 
-package org.egov.tl.web.controller;
+package org.egov.tl.entity.dto;
 
 import java.math.BigInteger;
 

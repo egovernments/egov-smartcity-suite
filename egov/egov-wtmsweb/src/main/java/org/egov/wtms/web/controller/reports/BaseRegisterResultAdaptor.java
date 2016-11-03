@@ -77,6 +77,7 @@ public class BaseRegisterResultAdaptor implements JsonSerializer<BaseRegisterRes
         jsonObject.addProperty("arrearsCollection", baseRegisterResultObj.getArrearsCollection());
         jsonObject.addProperty("currentCollection", baseRegisterResultObj.getCurrentCollection());
         jsonObject.addProperty("totalCollection", baseRegisterResultObj.getTotalCollection());
+        jsonObject.addProperty("monthlyRate", baseRegisterResultObj.getMonthlyRate());
         return jsonObject;
     }
 

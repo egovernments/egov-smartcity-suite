@@ -40,11 +40,43 @@
 
 package org.egov.ptis.domain.service.demolition;
 
+import static java.lang.Boolean.FALSE;
+import static org.egov.ptis.constants.PropertyTaxConstants.ADVANCE_DMD_RSN_CODE;
+import static org.egov.ptis.constants.PropertyTaxConstants.APPCONFIG_CLIENT_SPECIFIC_DMD_BILL;
+import static org.egov.ptis.constants.PropertyTaxConstants.ARR_BAL_STR;
+import static org.egov.ptis.constants.PropertyTaxConstants.CURRENTYEAR_FIRST_HALF;
+import static org.egov.ptis.constants.PropertyTaxConstants.CURRENTYEAR_SECOND_HALF;
+import static org.egov.ptis.constants.PropertyTaxConstants.CURR_BAL_STR;
+import static org.egov.ptis.constants.PropertyTaxConstants.CURR_DMD_STR;
+import static org.egov.ptis.constants.PropertyTaxConstants.DEMANDRSN_STR_EDUCATIONAL_CESS;
+import static org.egov.ptis.constants.PropertyTaxConstants.DEMANDRSN_STR_GENERAL_TAX;
+import static org.egov.ptis.constants.PropertyTaxConstants.DEMANDRSN_STR_LIBRARY_CESS;
+import static org.egov.ptis.constants.PropertyTaxConstants.DEMANDRSN_STR_VACANT_TAX;
+import static org.egov.ptis.constants.PropertyTaxConstants.NATURE_DEMOLITION;
+import static org.egov.ptis.constants.PropertyTaxConstants.OWNERSHIP_TYPE_VAC_LAND;
+import static org.egov.ptis.constants.PropertyTaxConstants.PROPERTY_MODIFY_REASON_FULL_DEMOLITION;
+import static org.egov.ptis.constants.PropertyTaxConstants.PTMODULENAME;
+import static org.egov.ptis.constants.PropertyTaxConstants.STATUS_CANCELLED;
+import static org.egov.ptis.constants.PropertyTaxConstants.VACANTLAND_PROPERTY_CATEGORY;
+import static org.egov.ptis.constants.PropertyTaxConstants.WFLOW_ACTION_STEP_APPROVE;
+import static org.egov.ptis.constants.PropertyTaxConstants.WFLOW_ACTION_STEP_FORWARD;
+import static org.egov.ptis.constants.PropertyTaxConstants.WFLOW_ACTION_STEP_REJECT;
+import static org.egov.ptis.constants.PropertyTaxConstants.WFLOW_ACTION_STEP_SIGN;
+import static org.egov.ptis.constants.PropertyTaxConstants.WF_STATE_ASSISTANT_APPROVAL_PENDING;
+import static org.egov.ptis.constants.PropertyTaxConstants.WF_STATE_REJECTED;
+
+import java.math.BigDecimal;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.Map;
+
+import javax.servlet.http.HttpServletRequest;
+
 import org.apache.commons.lang3.StringUtils;
 import org.egov.commons.Installment;
 import org.egov.commons.dao.InstallmentDao;
+import org.egov.demand.model.EgDemandDetails;
 import org.egov.eis.entity.Assignment;
-import org.egov.eis.service.AssignmentService;
 import org.egov.eis.service.PositionMasterService;
 import org.egov.infra.admin.master.entity.Module;
 import org.egov.infra.admin.master.entity.User;
@@ -58,6 +90,7 @@ import org.egov.infra.workflow.matrix.entity.WorkFlowMatrix;
 import org.egov.infra.workflow.service.SimpleWorkflowService;
 import org.egov.infstr.services.PersistenceService;
 import org.egov.pims.commons.Position;
+import org.egov.ptis.client.bill.PTBillServiceImpl;
 import org.egov.ptis.client.util.PropertyTaxUtil;
 import org.egov.ptis.domain.dao.demand.PtDemandDao;
 import org.egov.ptis.domain.dao.property.PropertyTypeMasterDAO;
@@ -84,15 +117,6 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 
-import javax.servlet.http.HttpServletRequest;
-import java.math.BigDecimal;
-import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.Map;
-
-import static java.lang.Boolean.FALSE;
-import static org.egov.ptis.constants.PropertyTaxConstants.*;
-
 public class PropertyDemolitionService extends PersistenceService<PropertyImpl, Long> {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(PropertyDemolitionService.class);
@@ -110,10 +134,10 @@ public class PropertyDemolitionService extends PersistenceService<PropertyImpl, 
     private SecurityUtils securityUtils;
 
     @Autowired
-    private AssignmentService assignmentService;
-
-    @Autowired
     private PositionMasterService positionMasterService;
+    
+    @Autowired
+    private PTBillServiceImpl ptBillServiceImpl;
 
     @Autowired
     @Qualifier("workflowService")
@@ -166,18 +190,10 @@ public class PropertyDemolitionService extends PersistenceService<PropertyImpl, 
         Installment installmentFirstHalf = yearwiseInstMap.get(CURRENTYEAR_FIRST_HALF);
         Installment installmentSecondHalf = yearwiseInstMap.get(CURRENTYEAR_SECOND_HALF);
         Date effectiveDate = null;
-        boolean calculateForNextFinYear = false;
-        
-        /* If demolition is done in the 1st half of current financial year, then vacant land tax will be calculated only for 2nd half.
-         * If its done in 2nd half, then vacant land tax will be calculated for the next financial year, 
-         * i.e., for 1st and 2nd half of next financial year 
-         */
         if(DateUtils.between(new Date(), installmentFirstHalf.getFromDate(), installmentFirstHalf.getToDate()))
-        	effectiveDate = installmentSecondHalf.getFromDate();
-        else{
-        	effectiveDate = DateUtils.addYears(installmentFirstHalf.getFromDate(), 1);
-        	calculateForNextFinYear = true;
-        }
+            effectiveDate = installmentFirstHalf.getFromDate();
+        else
+            effectiveDate = installmentSecondHalf.getFromDate();
         propertyModel.setBasicProperty(basicProperty);
         propertyModel.setEffectiveDate(effectiveDate);
         if (!propertyModel.getPropertyDetail().getPropertyTypeMaster().getCode().equals(OWNERSHIP_TYPE_VAC_LAND)) {
@@ -190,7 +206,6 @@ public class PropertyDemolitionService extends PersistenceService<PropertyImpl, 
         getSession().setFlushMode(FlushMode.MANUAL);
         transitionWorkFlow(propertyModel, comments, workFlowAction, approverPosition, additionalRule);
         Installment currInstall = propertyTaxCommonUtils.getCurrentInstallment();
-        
         
         Property modProperty = propService.createDemand(propertyModel, effectiveDate);
         Ptdemand currPtDmd = null;
@@ -211,25 +226,53 @@ public class PropertyDemolitionService extends PersistenceService<PropertyImpl, 
             }
 
         Installment effectiveInstall = null;
-        /* If demolition is done in 1st half of the financial year, then arrear demand details will be copied till 1st half of the financial year.
-         * Else, demand details will be calculated till 2nd half of the financial year.
-         */
-        if(calculateForNextFinYear){
-        	Module module = moduleDao.getModuleByName(PTMODULENAME);
-        	effectiveInstall = installmentDao.getInsatllmentByModuleForGivenDate(module, effectiveDate);
-        	propService.addArrDmdDetToCurrentDmd(oldCurrPtDmd, currPtDmd, effectiveInstall, true);
-        } else {
-        	propService.addArrDmdDetToCurrentDmd(oldCurrPtDmd, currPtDmd, installmentSecondHalf, true);
-        }
-        
+        Module module = moduleDao.getModuleByName(PTMODULENAME);
+        effectiveInstall = installmentDao.getInsatllmentByModuleForGivenDate(module, effectiveDate);
+        propService.addArrDmdDetToCurrentDmd(oldCurrPtDmd, currPtDmd, effectiveInstall, true);
         basicProperty.addProperty(modProperty);
         for (Ptdemand ptDemand : modProperty.getPtDemandSet()) {
             propertyPerService.applyAuditing(ptDemand.getDmdCalculations());
         }
+        currPtDmd = adjustCollection(oldCurrPtDmd, currPtDmd, effectiveInstall);
         propertyPerService.update(basicProperty);
         getSession().flush();
     }
+   
+    private Ptdemand adjustCollection(Ptdemand oldCurrPtDmd, Ptdemand currPtDmd, Installment effectiveInstall) {
+        BigDecimal totalColl = BigDecimal.ZERO;
 
+        for (EgDemandDetails oldDmdDtls : oldCurrPtDmd.getEgDemandDetails()) {
+            if (oldDmdDtls.getInstallmentStartDate().equals(effectiveInstall.getFromDate())
+                    || oldDmdDtls.getInstallmentStartDate().after(effectiveInstall.getFromDate())) {
+                totalColl = totalColl.add(oldDmdDtls.getAmtCollected());
+            }
+        }
+        if (totalColl.compareTo(BigDecimal.ZERO) > 0) {
+
+            for (EgDemandDetails dmdDtls : currPtDmd.getEgDemandDetails()) {
+                if (dmdDtls.getInstallmentStartDate().equals(effectiveInstall.getFromDate())
+                        || dmdDtls.getInstallmentStartDate().after(effectiveInstall.getFromDate())) {
+                    if (dmdDtls.getAmount().compareTo(totalColl) >= 0) {
+                        dmdDtls.setAmtCollected(totalColl);
+                        totalColl = BigDecimal.ZERO;
+                    } else {
+                        dmdDtls.setAmtCollected(dmdDtls.getAmount());
+                        totalColl = totalColl.subtract(dmdDtls.getAmount());
+                    }
+                }
+            }
+            if (totalColl.compareTo(BigDecimal.ZERO) > 0) {
+                EgDemandDetails newDtls;
+                Map<String, Installment> yearwiseInstMap = propertyTaxUtil.getInstallmentsForCurrYear(new Date());
+                Installment installment = yearwiseInstMap.get(CURRENTYEAR_SECOND_HALF);
+                newDtls = ptBillServiceImpl.insertDemandDetails(ADVANCE_DMD_RSN_CODE, totalColl,
+                        installment);
+                currPtDmd.addEgDemandDetails(newDtls);
+            }
+        }
+        return currPtDmd;
+    }
+    
     public void updateProperty(Property newProperty, String comments, String workFlowAction, Long approverPosition,
             String additionalRule) {
         transitionWorkFlow((PropertyImpl) newProperty, comments, workFlowAction, approverPosition, additionalRule);
@@ -299,9 +342,15 @@ public class PropertyDemolitionService extends PersistenceService<PropertyImpl, 
                                 .withDateInfo(currentDate.toDate()).withOwner(pos)
                                 .withNextAction(wfmatrix.getNextAction());
                     }
-                    if(workFlowAction.equalsIgnoreCase(WFLOW_ACTION_STEP_APPROVE)){
-                		buildSMS(property, workFlowAction);
-                		propertyTaxCommonUtils.makeExistingDemandBillInactive(property.getBasicProperty().getUpicNo());
+                    if (workFlowAction.equalsIgnoreCase(WFLOW_ACTION_STEP_APPROVE)) {
+                        buildSMS(property, workFlowAction);
+                        String clientSpecificDmdBill = propertyTaxCommonUtils
+                                .getAppConfigValue(APPCONFIG_CLIENT_SPECIFIC_DMD_BILL, PTMODULENAME);
+                        if ("Y".equalsIgnoreCase(clientSpecificDmdBill)) {
+                            propertyTaxCommonUtils
+                                    .makeExistingDemandBillInactive(property.getBasicProperty().getUpicNo());
+                        } else
+                            propertyTaxUtil.makeTheEgBillAsHistory(property.getBasicProperty());
                     }
                 }
             }

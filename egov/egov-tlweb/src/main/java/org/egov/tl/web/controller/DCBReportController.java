@@ -40,10 +40,18 @@
 
 package org.egov.tl.web.controller;
 
-import org.apache.commons.io.IOUtils;
+import static org.egov.infra.web.utils.WebUtils.toJSON;
+
+import java.io.IOException;
+import java.util.List;
+
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
+import org.egov.tl.entity.dto.DCBReportResult;
 import org.egov.tl.service.DCBReportService;
-import org.hibernate.SQLQuery;
-import org.hibernate.transform.AliasToBeanResultTransformer;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
@@ -52,16 +60,6 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
-
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
-
-import static org.egov.infra.web.utils.WebUtils.toJSON;
 
 @Controller
 @RequestMapping(value = { "/tlreports", "/public/report" })
@@ -79,17 +77,17 @@ public class DCBReportController {
         return new DCBReportResult();
     }
 
-    @RequestMapping(value = "/dCBReport/licenseNumberWise", method = RequestMethod.GET)
+    @RequestMapping(value = "/dcbreport/licensenumberwise", method = RequestMethod.GET)
     public String licenseNumberWisesearch(final Model model) {
         model.addAttribute("mode", LICENSE);
         model.addAttribute("reportType", LICENSE);
         return "dCBReport-search";
     }
 
-    @RequestMapping(value = "/dCBReportList", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
-    public @ResponseBody void search(final HttpServletRequest request, final HttpServletResponse response,
+    @RequestMapping(value = "/dcbreportlist", method = RequestMethod.GET, produces = MediaType.TEXT_PLAIN_VALUE)
+    @ResponseBody
+    public String search(final HttpServletRequest request, final HttpServletResponse response,
             final Model model) throws IOException {
-        List<DCBReportResult> resultList = new ArrayList<DCBReportResult>();
         String licensenumber = "", mode = "", reportType = "";
         if (request.getParameter("mode") != null && !"".equals(request.getParameter("mode")))
             mode = request.getParameter("mode");
@@ -97,12 +95,12 @@ public class DCBReportController {
             reportType = request.getParameter("reportType");
         if (request.getParameter("licensenumber") != null && !"".equals(request.getParameter("licensenumber")))
             licensenumber = request.getParameter("licensenumber");
-        final SQLQuery query = dCBReportService.prepareQuery(licensenumber, mode, reportType);
-        query.setResultTransformer(new AliasToBeanResultTransformer(DCBReportResult.class));
-        resultList = query.list();
-        String result = null;
-        result = new StringBuilder("{ \"data\":").append(toJSON(resultList, DCBReportResult.class, DCBReportHelperAdaptor.class)).append("}").toString();
-        response.setContentType(MediaType.APPLICATION_JSON_VALUE);
-        IOUtils.write(result, response.getWriter());
+
+        final List<DCBReportResult> resultList = dCBReportService.generateReportResult(licensenumber, mode, reportType);
+
+        final String result = new StringBuilder("{ \"data\":")
+                .append(toJSON(resultList, DCBReportResult.class, DCBReportHelperAdaptor.class))
+                .append("}").toString();
+        return result;
     }
 }

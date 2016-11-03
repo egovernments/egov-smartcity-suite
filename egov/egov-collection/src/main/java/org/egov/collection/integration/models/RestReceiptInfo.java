@@ -51,6 +51,8 @@ public class RestReceiptInfo {
     private String referenceNo="";
     private BigDecimal amount=BigDecimal.ZERO;
     private String txnDate=""; 
+    private String paymentPeriod;
+    private String paymentType;
     
     public RestReceiptInfo(final ReceiptHeader receiptHeader) {
         this.transactionId = receiptHeader.getManualreceiptnumber();
@@ -94,6 +96,22 @@ public class RestReceiptInfo {
 
     public void setAmount(BigDecimal amount) {
         this.amount = amount;
+    }
+
+    public String getPaymentPeriod() {
+        return paymentPeriod;
+    }
+
+    public void setPaymentPeriod(String paymentPeriod) {
+        this.paymentPeriod = paymentPeriod;
+    }
+
+    public String getPaymentType() {
+        return paymentType;
+    }
+
+    public void setPaymentType(String paymentType) {
+        this.paymentType = paymentType;
     }
 
 }

@@ -358,13 +358,13 @@
 	<put-attribute name="page-title" value="title.editclosecase" cascade="true"/>
 	<put-attribute name="body" value="/WEB-INF/views/transactions/legalcaseDisposal-edit.jsp"/>
 </definition>
-  <definition name="legalcase-standingCouncil" extends="base_layout">
+<definition name="legalcase-standingCouncil" extends="base_layout">
 	<put-attribute name="page-title" value="title.standingCouncil" cascade="true"/>
 	<put-attribute name="body" value="/WEB-INF/views/transactions/legalcase-standing_newForm.jsp"/>
 </definition>
-  <definition name="legalcase-caaffidavit" extends="base_layout">
+<definition name="legalcase-caaffidavit" extends="base_layout">
 	<put-attribute name="page-title" value="title.caaffidavittile" cascade="true"/>
-	<put-attribute name="body" value="/WEB-INF/views/transactions/legalcase-caaffidavit_Form.jsp"/>
+	<put-attribute name="body" value="/WEB-INF/views/transactions/legalcase-caaffidavit-new.jsp"/>
 </definition>
 
 <definition name="vacatestay-new" extends="base_layout">
@@ -430,11 +430,5 @@
 	<put-attribute name="page-title" value="title.duereport" cascade="true"/>
 	<put-attribute name="body" value="/WEB-INF/views/reports/judgementImplDueReport-form.jsp"/>
 </definition>
-
-<definition name="employeehearingDueReport-form" extends="base_layout">
-	<put-attribute name="page-title" value="title.duereport" cascade="true"/>
-	<put-attribute name="body" value="/WEB-INF/views/reports/employeehearingDueReport-form.jsp"/>
-</definition>
-
 
 </tiles-definitions>

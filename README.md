@@ -41,6 +41,10 @@ cluster.name: elasticsearch-<username> ## Your local elasticsearch clustername, 
 transport.tcp.port: 9300 ## This is the default port
 
 ```
+NB: `<username>` user name of the loggedin system, enter the below command in terminal to find the username.
+```bash 
+$ id -un
+```
 
 #### Building Source
 1. Clone the eGov repository (development is done on the `develop` branch.
@@ -57,14 +61,14 @@ $ git checkout develop
  search.port=9300
  search.clusterName=elasticsearch-<username>
 
- mail.enabled=false ##Enables or disabled email sending, this is enabled (true) by default
+ mail.enabled=false ##Enables or disabled email sending, this is disabled by default
  mail.port=465
  mail.host=smtp.gmail.com
  mail.protocol=smtps
  mail.sender.username=abc123@gmail.com
  mail.sender.password=12345
 
- sms.enabled=false  ##Enables or disables SMS sending, this is enabled (true) by default
+ sms.enabled=false  ##Enables or disables SMS sending, this is disabled by default
  sms.provider.url=http://some.sms.provider.url
  sms.sender.username=sms_username
  sms.sender.password=sms_user_password
@@ -124,7 +128,7 @@ By default eGov suit uses embedded redis server (work only in Linux & OSx), to m
 
 ##### Configuring JBoss Wildfly
 
-1. Download and install customized JBoss Wildfly Server from [here][Wildfly Customized]. This server contains some additional jars that are required for the ERP.
+1. Download and unzip the customized JBoss Wildfly Server from [here][Wildfly Customized]. This server contains some additional jars that are required for the ERP.
 2. In case properties needs to be overridden, edit the below file (This is only required if `egov-erp-<username>.properties` is not present)
 
   ```
@@ -151,16 +155,15 @@ By default eGov suit uses embedded redis server (work only in Linux & OSx), to m
   ```
   <socket-binding name="http" port="${jboss.http.port:8080}"/>
   ```
-4. Change directory back to `<CLONED_REPO_DIR>/egov` and run the below command
+4. Change directory back to `<CLONED_REPO_DIR>/egov/dev-utils/deployment/` and run the below command
   ```
-   $  chmod +x deploy-local.sh
-$ ./deploy-local.sh
+   $  chmod +x deploy.sh
+$ ./deploy.sh
   ```
 
  Alternatively this can be done manually by following the below steps.
 
-  * Copy the generated exploded ear `<CLONED_REPO_DIR>/egov/egov-ear/target/egov-ear-<VERSION>` in to your JBoss deployment folder `<JBOSS_HOME>/standalone/deployments`
-  * Rename the copied folder `egov-ear-<VERSION>` to `egov-ear-<VERSION>.ear`
+  * Copy the generated exploded ear `<CLONED_REPO_DIR>/egov/egov-ear/target/egov-ear-<VERSION>.ear` in to your JBoss deployment folder `<JBOSS_HOME>/standalone/deployments`
   * Create or touch a file named `egov-ear-<VERSION>.ear.dodeploy` to make sure JBoss picks it up for auto deployment
 
 5. Start the wildfly server by executing the below command
@@ -170,6 +173,8 @@ $ ./deploy-local.sh
    $ nohup ./standalone.sh -Dspring.profiles.active=production -b 0.0.0.0 &
 
   ```
+  In Mac OS, it may also required to specify `-Djboss.modules.system.pkgs=org.jboss.byteman`
+  
   `-b 0.0.0.0` only required if application accessed using IP address or  domain name.
 
 6. Monitor the logs and in case of successful deployment, just hit `http://localhost:<YOUR_HTTP_PORT>/egi` in your favorite browser.

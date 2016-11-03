@@ -37,14 +37,17 @@
  *
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
+package org.egov.collection.integration.services;
 
-package org.egov.pgr.utils.constants;
+import org.egov.collection.entity.ReceiptHeader;
+import org.egov.collection.integration.models.RestReceiptInfo;
 
-public class PGRConstants {
-    public static final String MODULE_NAME = "PGR";
-    public static final String DASH_DELIM = "-";
-    public static final String EG_OBJECT_TYPE_COMPLAINT = "Complaint";
-    public static final String GO_ROLE_NAME = "Grievance Officer";
-    public static final String GRO_ROLE_NAME = "Grievance Routing Officer";
-    public static final String DELIMITER_COLON = "::";
+public interface PaymentInfoService {
+    
+    /**
+     * API gives information regarding the payment period and payment type
+     * (Partially/Fully/Advance)
+     */
+    public void setPaymentInfo(RestReceiptInfo restReceiptInfo, ReceiptHeader receiptHeader);
+
 }
