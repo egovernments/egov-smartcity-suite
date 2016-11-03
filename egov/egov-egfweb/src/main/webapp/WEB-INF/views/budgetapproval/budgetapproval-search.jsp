@@ -53,10 +53,11 @@
 					<div class="panel-body">
 						<div class="form-group">
 							<label class="col-sm-4 control-label text-right"><spring:message
-									code="lbl.financialyear" /> </label>
+									code="lbl.financialyear" /><span class="mandatory"></span> </label>
 							<div class="col-sm-3 add-margin">
 								<form:select path="budget.financialYear" id="financialYear"
-									cssClass="form-control" cssErrorClass="form-control error">
+									cssClass="form-control" cssErrorClass="form-control error"
+									required="required">
 									<form:option value="">
 										<spring:message code="lbl.select" />
 									</form:option>

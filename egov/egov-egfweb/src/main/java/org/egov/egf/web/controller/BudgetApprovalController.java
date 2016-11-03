@@ -100,8 +100,7 @@ public class BudgetApprovalController {
 
     @RequestMapping(value = "/search", method = RequestMethod.POST, produces = MediaType.TEXT_PLAIN_VALUE)
     public @ResponseBody String search(final Model model, @ModelAttribute final BudgetDetail budgetDetail) {
-        final List<BudgetDetail> searchResultList = budgetApprovalService
-                .search(budgetDetail.getBudget().getFinancialYear().getId());
+        final List<BudgetDetail> searchResultList = budgetApprovalService.search(budgetDetail.getBudget().getFinancialYear().getId());
         prepareNewForm(model);
         final List<BudgetApproval> budgetApprovalList = new ArrayList<BudgetApproval>();
         final BudgetApproval budgetApproval = new BudgetApproval();
@@ -127,7 +126,6 @@ public class BudgetApprovalController {
             @RequestParam(value = "checkedArray") final List<String> checkedArray,
             @RequestParam("comments") final String comments) {
         final List<Long> idList = new ArrayList<Long>();
-
         for (final String checkListId : checkedArray)
             if (!checkListId.isEmpty())
                 idList.add(Long.parseLong(checkListId));
@@ -142,13 +140,14 @@ public class BudgetApprovalController {
             budgetDefinitionService.update(budget);
             budgetDetailService.update(budgetDetails);
         }
-        return "success";
+        String message=messageSource.getMessage("msg.budgetdetail.approve", new String[]{budget.getReferenceBudget().getName(),budget.getParent().getName()}, Locale.ENGLISH);
+        return message;
     }
 
-    @RequestMapping(value = "/success", method = RequestMethod.GET, produces = MediaType.TEXT_PLAIN_VALUE)
-    public @ResponseBody String success(@ModelAttribute final Budget budget, final BindingResult errors,
-            final Model model, final RedirectAttributes redirectAttrs) {
-        model.addAttribute("message", messageSource.getMessage("msg.budgetdetail.approve", null, Locale.ENGLISH));
+    @RequestMapping(value = "/success")
+    public String success(@ModelAttribute final Budget budget, final BindingResult errors,
+            final Model model, @RequestParam("message") final String message) {
+        model.addAttribute("message",message);
         return BUDGETAPPROVAL_RESULT;
     }
 

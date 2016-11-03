@@ -23,14 +23,14 @@ jQuery('#approve').click(
 
 			var selected;
 			selected = chkArray.join(',');
-			var comments = $('#comments').val()
+			var comments = $('#comments').val();
 			$.ajax({
 				type : "POST",
 				url : "/EGF/budgetapproval/approve" + "?checkedArray="
 						+ selected.toString() + "&comments=" + comments,
 				success : function(response) {
 					console.log("success" + response);
-					window.location.href="/EGF/budgetapproval/success"
+					window.location.href="/EGF/budgetapproval/success"+"?message="+response
 				},
 				error : function(response) {
 					console.log("failed");
