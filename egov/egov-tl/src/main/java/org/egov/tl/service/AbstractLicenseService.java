@@ -411,7 +411,7 @@ public abstract class AbstractLicenseService<T extends License> {
         license.reinitiateTransition().start()
                 .withSenderName(currentUser.getUsername() + DELIMITER_COLON + currentUser.getName())
                 .withComments(workflowBean.getApproverComments()).withNatureOfTask(natureOfWork)
-                .withStateValue(wfmatrix.getNextState()).withDateInfo(new DateTime().toDate()).withOwner(pos)
+                .withStateValue(wfmatrix.getNextState()).withDateInfo(new DateTime().toDate()).withOwner(wfInitiator.getPosition())
                 .withNextAction(wfmatrix.getNextAction()).withInitiator(wfInitiator.getPosition());
         this.licenseRepository.save(license);
         sendEmailAndSMS(license, workflowBean.getWorkFlowAction());
@@ -468,7 +468,7 @@ public abstract class AbstractLicenseService<T extends License> {
                         null, workflowBean.getAdditionaRule(), workflowBean.getCurrentState(), null);
                 license.transition().start().withSenderName(user.getUsername() + DELIMITER_COLON + user.getName())
                         .withComments(workflowBean.getApproverComments()).withNatureOfTask(natureOfWork)
-                        .withStateValue(wfmatrix.getNextState()).withDateInfo(currentDate.toDate()).withOwner(pos)
+                        .withStateValue(wfmatrix.getNextState()).withDateInfo(currentDate.toDate()).withOwner(wfInitiator.getPosition())
                         .withNextAction(wfmatrix.getNextAction()).withInitiator(wfInitiator.getPosition());
                 license.setEgwStatus(
                         egwStatusHibernateDAO.getStatusByModuleAndCode(TRADELICENSEMODULE, APPLICATION_STATUS_CREATED_CODE));
