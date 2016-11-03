@@ -553,8 +553,7 @@ public class BudgetDetailService extends PersistenceService<BudgetDetail, Long> 
 
     public void setRelatedEntitesOn(final BudgetDetail detail, final PersistenceService service) {
 
-        // detail.setStatus(egwStatusDAO.getStatusByModuleAndCode("BUDGETDETAIL",
-        // "Approved"));
+        detail.setStatus(egwStatusDAO.getStatusByModuleAndCode("BUDGETDETAIL", "Approved"));
         if (detail.getBudget() != null) {
             detail.setBudget((Budget) service.find("from Budget where id=?", detail.getBudget().getId()));
             addMaterializedPath(detail);
