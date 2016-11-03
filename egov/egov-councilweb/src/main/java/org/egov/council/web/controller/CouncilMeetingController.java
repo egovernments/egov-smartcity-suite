@@ -506,7 +506,7 @@ public class CouncilMeetingController {
         
         final HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.parseMediaType("application/pdf"));
-        headers.add("content-disposition", "inline;filename=AgendaItems.pdf");
+        headers.add("content-disposition", "inline;filename=AgendaNotice.pdf");
         return new ResponseEntity<byte[]>(reportOutput, headers, HttpStatus.CREATED);
         
     } 
