@@ -20,24 +20,26 @@ jQuery('#approve').click(
 			$("#checkBoxList:checked").each(function() {
 				chkArray.push($(this).val());
 			});
-
-			var selected;
-			selected = chkArray.join(',');
-			var comments = $('#comments').val();
-			$.ajax({
-				type : "POST",
-				url : "/EGF/budgetapproval/approve" + "?checkedArray="
-						+ selected.toString() + "&comments=" + comments,
-				success : function(response) {
-					console.log("success" + response);
-					window.location.href="/EGF/budgetapproval/success"+"?message="+response
-				},
-				error : function(response) {
-					console.log("failed");
-				}
-			});
+			var checked=isChecked(chkArray);
+			if (checked!=false) {
+				var selected;
+				selected = chkArray.join(',');
+				var comments = $('#comments').val();
+				$.ajax({
+					type : "POST",
+					url : "/EGF/budgetapproval/approve" + "?checkedArray="
+							+ selected.toString() + "&comments=" + comments,
+					success : function(response) {
+						console.log("success" + response);
+						window.location.href = "/EGF/budgetapproval/success"
+								+ "?message=" + response
+					},
+					error : function(response) {
+						console.log("failed");
+					}
+				});
+			}
 		});
-
 
 function search() {
 	drillDowntableContainer = jQuery("#resultTable");
@@ -77,6 +79,14 @@ function search() {
 				}, {
 					"data" : "beAmount",
 					"sClass" : "text-left"
-				}]
+				} ]
 			});
+}
+
+function isChecked(chkArray) {
+	var checked = $(chkArray).length;
+	if (!checked) {
+		alert("Please check at least one checkbox");
+		return false;
+	}
 }

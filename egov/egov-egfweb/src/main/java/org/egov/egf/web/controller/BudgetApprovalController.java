@@ -103,8 +103,8 @@ public class BudgetApprovalController {
         final List<BudgetDetail> searchResultList = budgetApprovalService.search(budgetDetail.getBudget().getFinancialYear().getId());
         prepareNewForm(model);
         final List<BudgetApproval> budgetApprovalList = new ArrayList<BudgetApproval>();
-        final BudgetApproval budgetApproval = new BudgetApproval();
         for (final BudgetDetail ba : searchResultList) {
+            final BudgetApproval budgetApproval = new BudgetApproval();
             budgetApproval.setId(ba.getId());
             budgetApproval.setDepartment(ba.getExecutingDepartment().getName());
             budgetApproval.setParent(ba.getBudget().getParent().getName());
