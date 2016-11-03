@@ -79,6 +79,7 @@ import org.egov.pgr.entity.Complaint;
 import org.egov.pgr.entity.enums.ComplaintStatus;
 import org.egov.pgr.entity.enums.ReceivingMode;
 import org.egov.pgr.repository.ComplaintRepository;
+import org.egov.pgr.service.es.ComplaintIndexService;
 import org.egov.pgr.utils.constants.PGRConstants;
 import org.egov.pims.commons.Position;
 import org.egov.portal.entity.CitizenInbox;
@@ -147,6 +148,9 @@ public class ComplaintService {
 
     @PersistenceContext
     private EntityManager entityManager;
+    
+    @Autowired
+    private ComplaintIndexService complaintIndexService;
 
     final String[] pendingStatus = { "REGISTERED", "FORWARDED", "PROCESSING", "NOTCOMPLETED", "REOPENED" };
     final String[] completedStatus = { "COMPLETED", "WITHDRAWN", "CLOSED" };
@@ -204,6 +208,8 @@ public class ComplaintService {
         final Complaint savedComplaint = complaintRepository.save(complaint);
         pushMessage(savedComplaint);
         sendEmailandSms(complaint);
+        
+        complaintIndexService.createComplaintIndex(savedComplaint);
 
         return savedComplaint;
     }

@@ -291,4 +291,8 @@ public class EscalationService {
 
         return existingPosHierarchy != null ? existingPosHierarchy : null;
     }
+    
+    public Escalation getEscalationBycomplaintTypeAndDesignation(final Long complaintTypeId, final Long designationId) {
+        return escalationRepository.findByDesignationAndComplaintType(designationId, complaintTypeId);
+    }
 }

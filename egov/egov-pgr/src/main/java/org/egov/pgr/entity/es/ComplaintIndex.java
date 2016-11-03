@@ -1,8 +1,9 @@
 package org.egov.pgr.entity.es;
 
+import static org.egov.infra.utils.ApplicationConstant.ES_DATE_FORMAT;
+
 import java.util.Date;
 
-import org.elasticsearch.common.geo.GeoPoint;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.elasticsearch.annotations.DateFormat;
 import org.springframework.data.elasticsearch.annotations.Document;
@@ -10,9 +11,7 @@ import org.springframework.data.elasticsearch.annotations.Field;
 import org.springframework.data.elasticsearch.annotations.FieldIndex;
 import org.springframework.data.elasticsearch.annotations.FieldType;
 import org.springframework.data.elasticsearch.annotations.GeoPointField;
-
-import static org.egov.infra.utils.ApplicationConstant.ES_DATE_FORMAT;
-
+import org.springframework.data.elasticsearch.core.geo.GeoPoint;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 
@@ -76,7 +75,7 @@ public class ComplaintIndex {
 	private String wardNo;
 	
 	@GeoPointField
-	private GeoPointField wardGeo;
+	private GeoPoint wardGeo;
 	
 	@Field(type = FieldType.String, index = FieldIndex.not_analyzed)
 	private String localityName;
@@ -85,7 +84,7 @@ public class ComplaintIndex {
 	private String localityNo;
 	
 	@GeoPointField
-	private GeoPointField  localityGeo;
+	private GeoPoint  localityGeo;
 	
 	@GeoPointField
 	private GeoPoint complaintGeo;
@@ -418,11 +417,11 @@ public class ComplaintIndex {
 		this.wardNo = wardNo;
 	}
 
-	public GeoPointField getWardGeo() {
+	public GeoPoint getWardGeo() {
 		return wardGeo;
 	}
 
-	public void setWardGeo(GeoPointField wardGeo) {
+	public void setWardGeo(GeoPoint wardGeo) {
 		this.wardGeo = wardGeo;
 	}
 
@@ -442,11 +441,11 @@ public class ComplaintIndex {
 		this.localityNo = localityNo;
 	}
 
-	public GeoPointField getLocalityGeo() {
+	public GeoPoint getLocalityGeo() {
 		return localityGeo;
 	}
 
-	public void setLocalityGeo(GeoPointField localityGeo) {
+	public void setLocalityGeo(GeoPoint localityGeo) {
 		this.localityGeo = localityGeo;
 	}
 
