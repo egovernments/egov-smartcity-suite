@@ -106,7 +106,7 @@ public class CouncilReportService {
             });
 
             momDetails.put("meetingMOMList", meetingMomList);
-            momDetails.put("meetingAttendenceList", councilMeeting.getMeetingAttendence());
+            //momDetails.put("meetingAttendenceList", councilMeeting.getMeetingAttendence());
             reportInput = new ReportRequest(MEETINGMOM, momDetails, buildReportParameters(councilMeeting, logoPath));
         }
         reportInput.setReportFormat(ReportConstants.FileFormat.PDF);
