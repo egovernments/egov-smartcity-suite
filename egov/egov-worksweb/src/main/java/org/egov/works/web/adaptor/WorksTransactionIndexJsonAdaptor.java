@@ -123,18 +123,27 @@ public class WorksTransactionIndexJsonAdaptor implements JsonSerializer<WorksMil
                                         .toString());
 
                     if (response.getJan16to31actual() != null && !response.getJan16to31actual().isNaN())
-                        jsonObject.addProperty("Total % of Balance work",
-                                BigDecimal.valueOf(100 - response.getJan16to31actual()).setScale(2, BigDecimal.ROUND_HALF_EVEN)
-                                        .toString());
+                        if (response.getJan16to31target() != null && !response.getJan16to31target().isNaN()
+                                && response.getJan16to31target().compareTo((double) 0) == 0)
+                            jsonObject.addProperty("Total % of Balance work", "0.00");
+                        else
+                            jsonObject.addProperty("Total % of Balance work",
+                                    BigDecimal.valueOf(100 - response.getJan16to31actual())
+                                            .setScale(2, BigDecimal.ROUND_HALF_EVEN)
+                                            .toString());
                     else
-                        jsonObject.addProperty("Total % of Balance work", "0");
+                        jsonObject.addProperty("Total % of Balance work", "0.00");
 
-                } else if (response.getJan01to15actual() != null && !response.getJan01to15actual().isNaN())
-                    jsonObject.addProperty("Total % of Balance work",
-                            BigDecimal.valueOf(100 - response.getJan01to15actual()).setScale(2, BigDecimal.ROUND_HALF_EVEN)
-                                    .toString());
-                else
-                    jsonObject.addProperty("Total % of Balance work", "0");
+                } else if (response.getJan01to15actual() != null && !response.getJan01to15actual().isNaN()) {
+                    if (response.getJan01to15target() != null && !response.getJan01to15target().isNaN()
+                            && response.getJan01to15target().compareTo((double) 0) == 0)
+                        jsonObject.addProperty("Total % of Balance work", "0.00");
+                    else
+                        jsonObject.addProperty("Total % of Balance work",
+                                BigDecimal.valueOf(100 - response.getJan01to15actual()).setScale(2, BigDecimal.ROUND_HALF_EVEN)
+                                        .toString());
+                } else
+                    jsonObject.addProperty("Total % of Balance work", "0.00");
 
                 break;
             case 2:
@@ -166,20 +175,28 @@ public class WorksTransactionIndexJsonAdaptor implements JsonSerializer<WorksMil
                         jsonObject.addProperty("Feb 16 to 28 or 29 variance",
                                 BigDecimal.valueOf(response.getFeb16to28or29variance()).setScale(2, BigDecimal.ROUND_HALF_EVEN)
                                         .toString());
-                    if (response.getFeb16to28or29actual() != null && !response.getFeb16to28or29actual().isNaN())
-                        jsonObject.addProperty("Total % of Balance work",
-                                BigDecimal.valueOf(100 - response.getFeb16to28or29actual())
-                                        .setScale(2, BigDecimal.ROUND_HALF_EVEN)
-                                        .toString());
-                    else
-                        jsonObject.addProperty("Total % of Balance work", "0");
+                    if (response.getFeb16to28or29actual() != null && !response.getFeb16to28or29actual().isNaN()) {
+                        if (response.getFeb16to28or29target() != null && !response.getFeb16to28or29target().isNaN()
+                                && response.getFeb16to28or29target().compareTo((double) 0) == 0)
+                            jsonObject.addProperty("Total % of Balance work", "0.00");
+                        else
+                            jsonObject.addProperty("Total % of Balance work",
+                                    BigDecimal.valueOf(100 - response.getFeb16to28or29actual())
+                                            .setScale(2, BigDecimal.ROUND_HALF_EVEN)
+                                            .toString());
+                    } else
+                        jsonObject.addProperty("Total % of Balance work", "0.00");
 
-                } else if (response.getFeb01to15actual() != null && !response.getFeb01to15actual().isNaN())
-                    jsonObject.addProperty("Total % of Balance work",
-                            BigDecimal.valueOf(100 - response.getFeb01to15actual()).setScale(2, BigDecimal.ROUND_HALF_EVEN)
-                                    .toString());
-                else
-                    jsonObject.addProperty("Total % of Balance work", "0");
+                } else if (response.getFeb01to15actual() != null && !response.getFeb01to15actual().isNaN()) {
+                    if (response.getFeb01to15target() != null && !response.getFeb01to15target().isNaN()
+                            && response.getFeb01to15target().compareTo((double) 0) == 0)
+                        jsonObject.addProperty("Total % of Balance work", "0.00");
+                    else
+                        jsonObject.addProperty("Total % of Balance work",
+                                BigDecimal.valueOf(100 - response.getFeb01to15actual()).setScale(2, BigDecimal.ROUND_HALF_EVEN)
+                                        .toString());
+                } else
+                    jsonObject.addProperty("Total % of Balance work", "0.00");
 
                 break;
             case 3:
@@ -212,19 +229,28 @@ public class WorksTransactionIndexJsonAdaptor implements JsonSerializer<WorksMil
                                 BigDecimal.valueOf(response.getMar16to31variance()).setScale(2, BigDecimal.ROUND_HALF_EVEN)
                                         .toString());
 
-                    if (response.getMar16to31actual() != null && !response.getMar16to31actual().isNaN())
-                        jsonObject.addProperty("Total % of Balance work",
-                                BigDecimal.valueOf(100 - response.getMar16to31actual()).setScale(2, BigDecimal.ROUND_HALF_EVEN)
-                                        .toString());
-                    else
-                        jsonObject.addProperty("Total % of Balance work", "0");
+                    if (response.getMar16to31actual() != null && !response.getMar16to31actual().isNaN()) {
+                        if (response.getMar16to31target() != null && !response.getMar16to31target().isNaN()
+                                && response.getMar16to31target().compareTo((double) 0) == 0)
+                            jsonObject.addProperty("Total % of Balance work", "0.00");
+                        else
+                            jsonObject.addProperty("Total % of Balance work",
+                                    BigDecimal.valueOf(100 - response.getMar16to31actual())
+                                            .setScale(2, BigDecimal.ROUND_HALF_EVEN)
+                                            .toString());
+                    } else
+                        jsonObject.addProperty("Total % of Balance work", "0.00");
 
-                } else if (response.getMar01to15actual() != null && !response.getMar01to15actual().isNaN())
-                    jsonObject.addProperty("Total % of Balance work",
-                            BigDecimal.valueOf(100 - response.getMar01to15actual()).setScale(2, BigDecimal.ROUND_HALF_EVEN)
-                                    .toString());
-                else
-                    jsonObject.addProperty("Total % of Balance work", "0");
+                } else if (response.getMar01to15actual() != null && !response.getMar01to15actual().isNaN()) {
+                    if (response.getMar01to15target() != null && !response.getMar01to15target().isNaN()
+                            && response.getMar01to15target().compareTo((double) 0) == 0)
+                        jsonObject.addProperty("Total % of Balance work", "0.00");
+                    else
+                        jsonObject.addProperty("Total % of Balance work",
+                                BigDecimal.valueOf(100 - response.getMar01to15actual()).setScale(2, BigDecimal.ROUND_HALF_EVEN)
+                                        .toString());
+                } else
+                    jsonObject.addProperty("Total % of Balance work", "0.00");
 
                 break;
             case 4:
@@ -256,18 +282,27 @@ public class WorksTransactionIndexJsonAdaptor implements JsonSerializer<WorksMil
                         jsonObject.addProperty("Apr 16 to 30 variance",
                                 BigDecimal.valueOf(response.getApr16to30variance()).setScale(2, BigDecimal.ROUND_HALF_EVEN)
                                         .toString());
-                    if (response.getApr16to30actual() != null && !response.getApr16to30actual().isNaN())
-                        jsonObject.addProperty("Total % of Balance work",
-                                BigDecimal.valueOf(100 - response.getApr16to30actual()).setScale(2, BigDecimal.ROUND_HALF_EVEN)
-                                        .toString());
+                    if (response.getApr16to30actual() != null && !response.getApr16to30actual().isNaN()) {
+                        if (response.getApr16to30target() != null && !response.getApr16to30target().isNaN()
+                                && response.getApr16to30target().compareTo((double) 0) == 0)
+                            jsonObject.addProperty("Total % of Balance work", "0.00");
+                        else
+                            jsonObject.addProperty("Total % of Balance work",
+                                    BigDecimal.valueOf(100 - response.getApr16to30actual())
+                                            .setScale(2, BigDecimal.ROUND_HALF_EVEN)
+                                            .toString());
+                    } else
+                        jsonObject.addProperty("Total % of Balance work", "0.00");
+                } else if (response.getApr01to15actual() != null && !response.getApr01to15actual().isNaN()) {
+                    if (response.getApr01to15target() != null && !response.getApr01to15target().isNaN()
+                            && response.getApr01to15target().compareTo((double) 0) == 0)
+                        jsonObject.addProperty("Total % of Balance work", "0.00");
                     else
-                        jsonObject.addProperty("Total % of Balance work", "0");
-                } else if (response.getApr01to15actual() != null && !response.getApr01to15actual().isNaN())
-                    jsonObject.addProperty("Total % of Balance work",
-                            BigDecimal.valueOf(100 - response.getApr01to15actual()).setScale(2, BigDecimal.ROUND_HALF_EVEN)
-                                    .toString());
-                else
-                    jsonObject.addProperty("Total % of Balance work", "0");
+                        jsonObject.addProperty("Total % of Balance work",
+                                BigDecimal.valueOf(100 - response.getApr01to15actual()).setScale(2, BigDecimal.ROUND_HALF_EVEN)
+                                        .toString());
+                } else
+                    jsonObject.addProperty("Total % of Balance work", "0.00");
                 break;
             case 5:
                 prepareFebruaryData(jsonObject, response);
@@ -298,19 +333,28 @@ public class WorksTransactionIndexJsonAdaptor implements JsonSerializer<WorksMil
                         jsonObject.addProperty("May 16 to 31 variance",
                                 BigDecimal.valueOf(response.getMay16to31variance()).setScale(2, BigDecimal.ROUND_HALF_EVEN)
                                         .toString());
-                    if (response.getMay16to31actual() != null && !response.getMay16to31actual().isNaN())
-                        jsonObject.addProperty("Total % of Balance work",
-                                BigDecimal.valueOf(100 - response.getMay16to31actual()).setScale(2, BigDecimal.ROUND_HALF_EVEN)
-                                        .toString());
-                    else
-                        jsonObject.addProperty("Total % of Balance work", "0");
+                    if (response.getMay16to31actual() != null && !response.getMay16to31actual().isNaN()) {
+                        if (response.getMay16to31target() != null && !response.getMay16to31target().isNaN()
+                                && response.getMay16to31target().compareTo((double) 0) == 0)
+                            jsonObject.addProperty("Total % of Balance work", "0.00");
+                        else
+                            jsonObject.addProperty("Total % of Balance work",
+                                    BigDecimal.valueOf(100 - response.getMay16to31actual())
+                                            .setScale(2, BigDecimal.ROUND_HALF_EVEN)
+                                            .toString());
+                    } else
+                        jsonObject.addProperty("Total % of Balance work", "0.00");
 
-                } else if (response.getMay01to15actual() != null && !response.getMay01to15actual().isNaN())
-                    jsonObject.addProperty("Total % of Balance work",
-                            BigDecimal.valueOf(100 - response.getMay01to15actual()).setScale(2, BigDecimal.ROUND_HALF_EVEN)
-                                    .toString());
-                else
-                    jsonObject.addProperty("Total % of Balance work", "0");
+                } else if (response.getMay01to15actual() != null && !response.getMay01to15actual().isNaN()) {
+                    if (response.getMay01to15target() != null && !response.getMay01to15target().isNaN()
+                            && response.getMay01to15target().compareTo((double) 0) == 0)
+                        jsonObject.addProperty("Total % of Balance work", "0.00");
+                    else
+                        jsonObject.addProperty("Total % of Balance work",
+                                BigDecimal.valueOf(100 - response.getMay01to15actual()).setScale(2, BigDecimal.ROUND_HALF_EVEN)
+                                        .toString());
+                } else
+                    jsonObject.addProperty("Total % of Balance work", "0.00");
 
                 break;
             case 6:
@@ -343,19 +387,28 @@ public class WorksTransactionIndexJsonAdaptor implements JsonSerializer<WorksMil
                         jsonObject.addProperty("Jun 16 to 30 variance",
                                 BigDecimal.valueOf(response.getJun16to30variance()).setScale(2, BigDecimal.ROUND_HALF_EVEN)
                                         .toString());
-                    if (response.getJun16to30actual() != null && !response.getJun16to30actual().isNaN())
-                        jsonObject.addProperty("Total % of Balance work",
-                                BigDecimal.valueOf(100 - response.getJun16to30actual()).setScale(2, BigDecimal.ROUND_HALF_EVEN)
-                                        .toString());
-                    else
-                        jsonObject.addProperty("Total % of Balance work", "0");
+                    if (response.getJun16to30actual() != null && !response.getJun16to30actual().isNaN()) {
+                        if (response.getJun16to30target() != null && !response.getJun16to30target().isNaN()
+                                && response.getJun16to30target().compareTo((double) 0) == 0)
+                            jsonObject.addProperty("Total % of Balance work", "0.00");
+                        else
+                            jsonObject.addProperty("Total % of Balance work",
+                                    BigDecimal.valueOf(100 - response.getJun16to30actual())
+                                            .setScale(2, BigDecimal.ROUND_HALF_EVEN)
+                                            .toString());
+                    } else
+                        jsonObject.addProperty("Total % of Balance work", "0.00");
 
-                } else if (response.getJun01to15actual() != null && !response.getJun01to15actual().isNaN())
-                    jsonObject.addProperty("Total % of Balance work",
-                            BigDecimal.valueOf(100 - response.getJun01to15actual()).setScale(2, BigDecimal.ROUND_HALF_EVEN)
-                                    .toString());
-                else
-                    jsonObject.addProperty("Total % of Balance work", "0");
+                } else if (response.getJun01to15actual() != null && !response.getJun01to15actual().isNaN()) {
+                    if (response.getJun01to15target() != null && !response.getJun01to15target().isNaN()
+                            && response.getJun01to15target().compareTo((double) 0) == 0)
+                        jsonObject.addProperty("Total % of Balance work", "0.00");
+                    else
+                        jsonObject.addProperty("Total % of Balance work",
+                                BigDecimal.valueOf(100 - response.getJun01to15actual()).setScale(2, BigDecimal.ROUND_HALF_EVEN)
+                                        .toString());
+                } else
+                    jsonObject.addProperty("Total % of Balance work", "0.00");
                 break;
             case 7:
                 prepareAprilData(jsonObject, response);
@@ -386,19 +439,28 @@ public class WorksTransactionIndexJsonAdaptor implements JsonSerializer<WorksMil
                         jsonObject.addProperty("Jul 16 to 31 variance",
                                 BigDecimal.valueOf(response.getJul16to31variance()).setScale(2, BigDecimal.ROUND_HALF_EVEN)
                                         .toString());
-                    if (response.getJul16to31actual() != null && !response.getJul16to31actual().isNaN())
-                        jsonObject.addProperty("Total % of Balance work",
-                                BigDecimal.valueOf(100 - response.getJul16to31actual()).setScale(2, BigDecimal.ROUND_HALF_EVEN)
-                                        .toString());
-                    else
-                        jsonObject.addProperty("Total % of Balance work", "0");
+                    if (response.getJul16to31actual() != null && !response.getJul16to31actual().isNaN()) {
+                        if (response.getJul16to31target() != null && !response.getJul16to31target().isNaN()
+                                && response.getJul16to31target().compareTo((double) 0) == 0)
+                            jsonObject.addProperty("Total % of Balance work", "0.00");
+                        else
+                            jsonObject.addProperty("Total % of Balance work",
+                                    BigDecimal.valueOf(100 - response.getJul16to31actual())
+                                            .setScale(2, BigDecimal.ROUND_HALF_EVEN)
+                                            .toString());
+                    } else
+                        jsonObject.addProperty("Total % of Balance work", "0.00");
 
-                } else if (response.getJun01to15actual() != null && !response.getJul01to15actual().isNaN())
-                    jsonObject.addProperty("Total % of Balance work",
-                            BigDecimal.valueOf(100 - response.getJul01to15actual()).setScale(2, BigDecimal.ROUND_HALF_EVEN)
-                                    .toString());
-                else
-                    jsonObject.addProperty("Total % of Balance work", "0");
+                } else if (response.getJun01to15actual() != null && !response.getJul01to15actual().isNaN()) {
+                    if (response.getJul01to15target() != null && !response.getJul01to15target().isNaN()
+                            && response.getJul01to15target().compareTo((double) 0) == 0)
+                        jsonObject.addProperty("Total % of Balance work", "0.00");
+                    else
+                        jsonObject.addProperty("Total % of Balance work",
+                                BigDecimal.valueOf(100 - response.getJul01to15actual()).setScale(2, BigDecimal.ROUND_HALF_EVEN)
+                                        .toString());
+                } else
+                    jsonObject.addProperty("Total % of Balance work", "0.00");
 
                 break;
             case 8:
@@ -430,18 +492,27 @@ public class WorksTransactionIndexJsonAdaptor implements JsonSerializer<WorksMil
                         jsonObject.addProperty("Aug 16 to 31 variance",
                                 BigDecimal.valueOf(response.getAug16to31variance()).setScale(2, BigDecimal.ROUND_HALF_EVEN)
                                         .toString());
-                    if (response.getAug16to31actual() != null && !response.getAug16to31actual().isNaN())
-                        jsonObject.addProperty("Total % of Balance work",
-                                BigDecimal.valueOf(100 - response.getAug16to31actual()).setScale(2, BigDecimal.ROUND_HALF_EVEN)
-                                        .toString());
+                    if (response.getAug16to31actual() != null && !response.getAug16to31actual().isNaN()) {
+                        if (response.getAug16to31target() != null && !response.getAug16to31target().isNaN()
+                                && response.getAug16to31target().compareTo((double) 0) == 0)
+                            jsonObject.addProperty("Total % of Balance work", "0.00");
+                        else
+                            jsonObject.addProperty("Total % of Balance work",
+                                    BigDecimal.valueOf(100 - response.getAug16to31actual())
+                                            .setScale(2, BigDecimal.ROUND_HALF_EVEN)
+                                            .toString());
+                    } else
+                        jsonObject.addProperty("Total % of Balance work", "0.00");
+                } else if (response.getAug01to15actual() != null && !response.getAug01to15actual().isNaN()) {
+                    if (response.getAug01to15target() != null && !response.getAug01to15target().isNaN()
+                            && response.getAug01to15target().compareTo((double) 0) == 0)
+                        jsonObject.addProperty("Total % of Balance work", "0.00");
                     else
-                        jsonObject.addProperty("Total % of Balance work", "0");
-                } else if (response.getAug01to15actual() != null && !response.getAug01to15actual().isNaN())
-                    jsonObject.addProperty("Total % of Balance work",
-                            BigDecimal.valueOf(100 - response.getAug01to15actual()).setScale(2, BigDecimal.ROUND_HALF_EVEN)
-                                    .toString());
-                else
-                    jsonObject.addProperty("Total % of Balance work", "0");
+                        jsonObject.addProperty("Total % of Balance work",
+                                BigDecimal.valueOf(100 - response.getAug01to15actual()).setScale(2, BigDecimal.ROUND_HALF_EVEN)
+                                        .toString());
+                } else
+                    jsonObject.addProperty("Total % of Balance work", "0.00");
 
                 break;
             case 9:
@@ -473,19 +544,28 @@ public class WorksTransactionIndexJsonAdaptor implements JsonSerializer<WorksMil
                         jsonObject.addProperty("Sep 16 to 30 variance",
                                 BigDecimal.valueOf(response.getSep16to30variance()).setScale(2, BigDecimal.ROUND_HALF_EVEN)
                                         .toString());
-                    if (response.getSep16to30actual() != null && !response.getSep16to30actual().isNaN())
-                        jsonObject.addProperty("Total % of Balance work",
-                                BigDecimal.valueOf(100 - response.getSep16to30actual()).setScale(2, BigDecimal.ROUND_HALF_EVEN)
-                                        .toString());
-                    else
-                        jsonObject.addProperty("Total % of Balance work", "0");
+                    if (response.getSep16to30actual() != null && !response.getSep16to30actual().isNaN()) {
+                        if (response.getSep16to30target() != null && !response.getSep16to30target().isNaN()
+                                && response.getSep16to30target().compareTo((double) 0) == 0)
+                            jsonObject.addProperty("Total % of Balance work", "0.00");
+                        else
+                            jsonObject.addProperty("Total % of Balance work",
+                                    BigDecimal.valueOf(100 - response.getSep16to30actual())
+                                            .setScale(2, BigDecimal.ROUND_HALF_EVEN)
+                                            .toString());
+                    } else
+                        jsonObject.addProperty("Total % of Balance work", "0.00");
 
-                } else if (response.getSep01to15actual() != null && !response.getSep01to15actual().isNaN())
-                    jsonObject.addProperty("Total % of Balance work",
-                            BigDecimal.valueOf(100 - response.getSep01to15actual()).setScale(2, BigDecimal.ROUND_HALF_EVEN)
-                                    .toString());
-                else
-                    jsonObject.addProperty("Total % of Balance work", "0");
+                } else if (response.getSep01to15actual() != null && !response.getSep01to15actual().isNaN()) {
+                    if (response.getSep01to15target() != null && !response.getSep01to15target().isNaN()
+                            && response.getSep01to15target().compareTo((double) 0) == 0)
+                        jsonObject.addProperty("Total % of Balance work", "0.00");
+                    else
+                        jsonObject.addProperty("Total % of Balance work",
+                                BigDecimal.valueOf(100 - response.getSep01to15actual()).setScale(2, BigDecimal.ROUND_HALF_EVEN)
+                                        .toString());
+                } else
+                    jsonObject.addProperty("Total % of Balance work", "0.00");
 
                 break;
             case 10:
@@ -510,32 +590,41 @@ public class WorksTransactionIndexJsonAdaptor implements JsonSerializer<WorksMil
                                 BigDecimal.valueOf(response.getOct16to31target()).setScale(2, BigDecimal.ROUND_HALF_EVEN)
                                         .toString());
                     else
-                        jsonObject.addProperty("Oct 16 to 31 target", "0");
+                        jsonObject.addProperty("Oct 16 to 31 target", "0.00");
                     if (response.getOct16to31actual() != null && !response.getOct16to31actual().isNaN())
                         jsonObject.addProperty("Oct 16 to 31 actual",
                                 BigDecimal.valueOf(response.getOct16to31actual()).setScale(2, BigDecimal.ROUND_HALF_EVEN)
                                         .toString());
                     else
-                        jsonObject.addProperty("Oct 16 to 31 actual", "0");
+                        jsonObject.addProperty("Oct 16 to 31 actual", "0.00");
                     if (response.getOct16to31variance() != null)
                         jsonObject.addProperty("Oct 16 to 31 variance",
                                 BigDecimal.valueOf(response.getOct16to31variance()).setScale(2, BigDecimal.ROUND_HALF_EVEN)
                                         .toString());
                     else
-                        jsonObject.addProperty("Oct 16 to 31 variance", "0");
-                    if (response.getOct16to31actual() != null && !response.getOct16to31actual().isNaN())
-                        jsonObject.addProperty("Total % of Balance work",
-                                BigDecimal.valueOf(100 - response.getOct16to31actual()).setScale(2, BigDecimal.ROUND_HALF_EVEN)
-                                        .toString());
-                    else
-                        jsonObject.addProperty("Total % of Balance work", "0");
+                        jsonObject.addProperty("Oct 16 to 31 variance", "0.00");
+                    if (response.getOct16to31actual() != null && !response.getOct16to31actual().isNaN()) {
+                        if (response.getOct16to31target() != null && !response.getOct16to31target().isNaN()
+                                && response.getOct16to31target().compareTo((double) 0) == 0)
+                            jsonObject.addProperty("Total % of Balance work", "0.00");
+                        else
+                            jsonObject.addProperty("Total % of Balance work",
+                                    BigDecimal.valueOf(100 - response.getOct16to31actual())
+                                            .setScale(2, BigDecimal.ROUND_HALF_EVEN)
+                                            .toString());
+                    } else
+                        jsonObject.addProperty("Total % of Balance work", "0.00");
 
-                } else if (response.getOct01to15actual() != null && !response.getOct01to15actual().isNaN())
-                    jsonObject.addProperty("Total % of Balance work",
-                            BigDecimal.valueOf(100 - response.getOct01to15actual()).setScale(2, BigDecimal.ROUND_HALF_EVEN)
-                                    .toString());
-                else
-                    jsonObject.addProperty("Total % of Balance work", "0");
+                } else if (response.getOct01to15actual() != null && !response.getOct01to15actual().isNaN()) {
+                    if (response.getOct01to15target() != null && !response.getOct01to15target().isNaN()
+                            && response.getOct01to15target().compareTo((double) 0) == 0)
+                        jsonObject.addProperty("Total % of Balance work", "0.00");
+                    else
+                        jsonObject.addProperty("Total % of Balance work",
+                                BigDecimal.valueOf(100 - response.getOct01to15actual()).setScale(2, BigDecimal.ROUND_HALF_EVEN)
+                                        .toString());
+                } else
+                    jsonObject.addProperty("Total % of Balance work", "0.00");
                 break;
             case 11:
                 prepareAugustData(jsonObject, response);
@@ -546,18 +635,18 @@ public class WorksTransactionIndexJsonAdaptor implements JsonSerializer<WorksMil
                     jsonObject.addProperty("Nov 01 to 15 target",
                             BigDecimal.valueOf(response.getNov01to15target()).setScale(2, BigDecimal.ROUND_HALF_EVEN).toString());
                 else
-                    jsonObject.addProperty("Nov 01 to 15 target", "0");
+                    jsonObject.addProperty("Nov 01 to 15 target", "0.00");
                 if (response.getNov01to15actual() != null && !response.getNov01to15actual().isNaN())
                     jsonObject.addProperty("Nov 01 to 15 actual",
                             BigDecimal.valueOf(response.getNov01to15actual()).setScale(2, BigDecimal.ROUND_HALF_EVEN).toString());
                 else
-                    jsonObject.addProperty("Nov 01 to 15 actual", "0");
+                    jsonObject.addProperty("Nov 01 to 15 actual", "0.00");
                 if (response.getNov01to15variance() != null)
                     jsonObject.addProperty("Nov 01 to 15 variance",
                             BigDecimal.valueOf(response.getNov01to15variance()).setScale(2, BigDecimal.ROUND_HALF_EVEN)
                                     .toString());
                 else
-                    jsonObject.addProperty("Nov 01 to 15 variance", "0");
+                    jsonObject.addProperty("Nov 01 to 15 variance", "0.00");
 
                 if (currentDate.getDayOfMonth() > 15) {
                     if (response.getNov16to30target() != null && !response.getNov16to30target().isNaN())
@@ -565,31 +654,40 @@ public class WorksTransactionIndexJsonAdaptor implements JsonSerializer<WorksMil
                                 BigDecimal.valueOf(response.getNov16to30target()).setScale(2, BigDecimal.ROUND_HALF_EVEN)
                                         .toString());
                     else
-                        jsonObject.addProperty("Nov 16 to 30 target", "0");
+                        jsonObject.addProperty("Nov 16 to 30 target", "0.00");
                     if (response.getNov16to30actual() != null && !response.getNov16to30actual().isNaN())
                         jsonObject.addProperty("Nov 16 to 30 actual",
                                 BigDecimal.valueOf(response.getNov16to30actual()).setScale(2, BigDecimal.ROUND_HALF_EVEN)
                                         .toString());
                     else
-                        jsonObject.addProperty("Nov 16 to 30 actual", "0");
+                        jsonObject.addProperty("Nov 16 to 30 actual", "0.00");
                     if (response.getNov16to30variance() != null)
                         jsonObject.addProperty("Nov 16 to 30 variance",
                                 BigDecimal.valueOf(response.getNov16to30variance()).setScale(2, BigDecimal.ROUND_HALF_EVEN)
                                         .toString());
                     else
-                        jsonObject.addProperty("Nov 16 to 30 variance", "0");
-                    if (response.getNov16to30actual() != null && !response.getNov16to30actual().isNaN())
-                        jsonObject.addProperty("Total % of Balance work",
-                                BigDecimal.valueOf(100 - response.getNov16to30actual()).setScale(2, BigDecimal.ROUND_HALF_EVEN)
-                                        .toString());
+                        jsonObject.addProperty("Nov 16 to 30 variance", "0.00");
+                    if (response.getNov16to30actual() != null && !response.getNov16to30actual().isNaN()) {
+                        if (response.getNov16to30target() != null && !response.getNov16to30target().isNaN()
+                                && response.getNov16to30target().compareTo((double) 0) == 0)
+                            jsonObject.addProperty("Total % of Balance work", "0.00");
+                        else
+                            jsonObject.addProperty("Total % of Balance work",
+                                    BigDecimal.valueOf(100 - response.getNov16to30actual())
+                                            .setScale(2, BigDecimal.ROUND_HALF_EVEN)
+                                            .toString());
+                    } else
+                        jsonObject.addProperty("Total % of Balance work", "0.00");
+                } else if (response.getNov01to15actual() != null && !response.getNov01to15actual().isNaN()) {
+                    if (response.getNov01to15target() != null && !response.getNov01to15target().isNaN()
+                            && response.getNov01to15target().compareTo((double) 0) == 0)
+                        jsonObject.addProperty("Total % of Balance work", "0.00");
                     else
-                        jsonObject.addProperty("Total % of Balance work", "0");
-                } else if (response.getNov01to15actual() != null && !response.getNov01to15actual().isNaN())
-                    jsonObject.addProperty("Total % of Balance work",
-                            BigDecimal.valueOf(100 - response.getNov01to15actual()).setScale(2, BigDecimal.ROUND_HALF_EVEN)
-                                    .toString());
-                else
-                    jsonObject.addProperty("Total % of Balance work", "0");
+                        jsonObject.addProperty("Total % of Balance work",
+                                BigDecimal.valueOf(100 - response.getNov01to15actual()).setScale(2, BigDecimal.ROUND_HALF_EVEN)
+                                        .toString());
+                } else
+                    jsonObject.addProperty("Total % of Balance work", "0.00");
 
                 break;
             case 12:
@@ -622,18 +720,27 @@ public class WorksTransactionIndexJsonAdaptor implements JsonSerializer<WorksMil
                                 BigDecimal.valueOf(response.getDec16to31variance()).setScale(2, BigDecimal.ROUND_HALF_EVEN)
                                         .toString());
 
-                    if (response.getDec16to31actual() != null && !response.getDec16to31actual().isNaN())
-                        jsonObject.addProperty("Total % of Balance work",
-                                BigDecimal.valueOf(100 - response.getDec16to31actual()).setScale(2, BigDecimal.ROUND_HALF_EVEN)
-                                        .toString());
+                    if (response.getDec16to31actual() != null && !response.getDec16to31actual().isNaN()) {
+                        if (response.getDec16to31target() != null && !response.getDec16to31target().isNaN()
+                                && response.getDec16to31target().compareTo((double) 0) == 0)
+                            jsonObject.addProperty("Total % of Balance work", "0.00");
+                        else
+                            jsonObject.addProperty("Total % of Balance work",
+                                    BigDecimal.valueOf(100 - response.getDec16to31actual())
+                                            .setScale(2, BigDecimal.ROUND_HALF_EVEN)
+                                            .toString());
+                    } else
+                        jsonObject.addProperty("Total % of Balance work", "0.00");
+                } else if (response.getDec01to15actual() != null && !response.getDec01to15actual().isNaN()) {
+                    if (response.getDec01to15target() != null && !response.getDec01to15target().isNaN()
+                            && response.getDec01to15target().compareTo((double) 0) == 0)
+                        jsonObject.addProperty("Total % of Balance work", "0.00");
                     else
-                        jsonObject.addProperty("Total % of Balance work", "0");
-                } else if (response.getDec01to15actual() != null && !response.getDec01to15actual().isNaN())
-                    jsonObject.addProperty("Total % of Balance work",
-                            BigDecimal.valueOf(100 - response.getDec01to15actual()).setScale(2, BigDecimal.ROUND_HALF_EVEN)
-                                    .toString());
-                else
-                    jsonObject.addProperty("Total % of Balance work", "0");
+                        jsonObject.addProperty("Total % of Balance work",
+                                BigDecimal.valueOf(100 - response.getDec01to15actual()).setScale(2, BigDecimal.ROUND_HALF_EVEN)
+                                        .toString());
+                } else
+                    jsonObject.addProperty("Total % of Balance work", "0.00");
 
                 break;
             default:
@@ -888,19 +995,19 @@ public class WorksTransactionIndexJsonAdaptor implements JsonSerializer<WorksMil
                     BigDecimal.valueOf(response.getOct16to31target()).setScale(2, BigDecimal.ROUND_HALF_EVEN)
                             .toString());
         else
-            jsonObject.addProperty("Oct 16 to 31 target", "0");
+            jsonObject.addProperty("Oct 16 to 31 target", "0.00");
         if (response.getOct16to31actual() != null && !response.getOct16to31actual().isNaN())
             jsonObject.addProperty("Oct 16 to 31 actual",
                     BigDecimal.valueOf(response.getOct16to31actual()).setScale(2, BigDecimal.ROUND_HALF_EVEN)
                             .toString());
         else
-            jsonObject.addProperty("Oct 16 to 31 actual", "0");
+            jsonObject.addProperty("Oct 16 to 31 actual", "0.00");
         if (response.getOct16to31variance() != null)
             jsonObject.addProperty("Oct 16 to 31 variance",
                     BigDecimal.valueOf(response.getOct16to31variance()).setScale(2, BigDecimal.ROUND_HALF_EVEN)
                             .toString());
         else
-            jsonObject.addProperty("Oct 16 to 31 variance", "0");
+            jsonObject.addProperty("Oct 16 to 31 variance", "0.00");
     }
 
     private void prepareNovemberData(final JsonObject jsonObject, final WorksMilestoneIndexResponse response) {
