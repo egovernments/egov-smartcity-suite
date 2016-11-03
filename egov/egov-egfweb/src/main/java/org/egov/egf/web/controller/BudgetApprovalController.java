@@ -86,26 +86,26 @@ public class BudgetApprovalController {
     @Autowired
     private MessageSource messageSource;
 
-    private void prepareNewForm(Model model) {
+    private void prepareNewForm(final Model model) {
         model.addAttribute("financialYearList", budgetApprovalService.financialYearList());
     };
 
     @RequestMapping(value = "/new", method = RequestMethod.GET)
     public String newForm(final Model model) {
-        BudgetDetail budgetDetail = new BudgetDetail();
+        final BudgetDetail budgetDetail = new BudgetDetail();
         prepareNewForm(model);
         model.addAttribute("budgetDetail", budgetDetail);
         return BUDGETAPPROVAL_SEARCH;
     }
 
     @RequestMapping(value = "/search", method = RequestMethod.POST, produces = MediaType.TEXT_PLAIN_VALUE)
-    public @ResponseBody String search(Model model, @ModelAttribute final BudgetDetail budgetDetail) {
-        List<BudgetDetail> searchResultList = budgetApprovalService
+    public @ResponseBody String search(final Model model, @ModelAttribute final BudgetDetail budgetDetail) {
+        final List<BudgetDetail> searchResultList = budgetApprovalService
                 .search(budgetDetail.getBudget().getFinancialYear().getId());
         prepareNewForm(model);
         final List<BudgetApproval> budgetApprovalList = new ArrayList<BudgetApproval>();
-        for (BudgetDetail ba : searchResultList) {
-            final BudgetApproval budgetApproval = new BudgetApproval();
+        final BudgetApproval budgetApproval = new BudgetApproval();
+        for (final BudgetDetail ba : searchResultList) {
             budgetApproval.setId(ba.getId());
             budgetApproval.setDepartment(ba.getExecutingDepartment().getName());
             budgetApproval.setParent(ba.getBudget().getParent().getName());
@@ -124,20 +124,17 @@ public class BudgetApprovalController {
     @RequestMapping(value = "/approve", method = RequestMethod.POST, produces = MediaType.TEXT_PLAIN_VALUE)
     public @ResponseBody String approve(@ModelAttribute final BudgetDetail budgetDetail, final BindingResult errors,
             final Model model, final RedirectAttributes redirectAttrs,
-            @RequestParam(value = "checkedArray") List<String> checkedArray,
-            @RequestParam("comments") String comments) {
-        final List<String> sp = checkedArray;
+            @RequestParam(value = "checkedArray") final List<String> checkedArray,
+            @RequestParam("comments") final String comments) {
+        final List<Long> idList = new ArrayList<Long>();
 
-        List<Long> idList = new ArrayList<Long>();
-
-        for (String checkListId : sp) {
+        for (final String checkListId : checkedArray)
             if (!checkListId.isEmpty())
                 idList.add(Long.parseLong(checkListId));
-        }
 
-        List<BudgetDetail> budgetDetailList = budgetDetailService.getBudgets(idList);
+        final List<BudgetDetail> budgetDetailList = budgetDetailService.getBudgets(idList);
         Budget budget = new Budget();
-        for (BudgetDetail budgetDetails : budgetDetailList) {
+        for (final BudgetDetail budgetDetails : budgetDetailList) {
             budgetDetails.setStatus(egwStatusHibernate.getStatusByModuleAndCode("BUDGETDETAIL", "Approved"));
             budget = budgetDefinitionService.findOne(budgetDetails.getBudget().getId());
             budget.getParent().setStatus(egwStatusHibernate.getStatusByModuleAndCode("BUDGET", "Approved"));
@@ -151,8 +148,7 @@ public class BudgetApprovalController {
     @RequestMapping(value = "/success", method = RequestMethod.GET, produces = MediaType.TEXT_PLAIN_VALUE)
     public @ResponseBody String success(@ModelAttribute final Budget budget, final BindingResult errors,
             final Model model, final RedirectAttributes redirectAttrs) {
-        model.addAttribute("message",
-                messageSource.getMessage("msg.budgetdetail.approve", null, Locale.ENGLISH));
+        model.addAttribute("message", messageSource.getMessage("msg.budgetdetail.approve", null, Locale.ENGLISH));
         return BUDGETAPPROVAL_RESULT;
     }
 
