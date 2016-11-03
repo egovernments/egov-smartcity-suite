@@ -60,7 +60,7 @@ $(document)
 									            $("div.displayCount").html('Total No.of Records Available In Entered Search Criteria are : '+ info.recordsTotal);
 									        },
 											ajax : {
-												url : "/mrs/report/certificatescount",
+												url : "/mrs/report/certificatedetails",
 												type : "POST",
 												beforeSend : function() {
 													$('.loader-class')

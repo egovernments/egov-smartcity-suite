@@ -50,7 +50,7 @@ public class MarriageRegistrationReportsService {
 			
 		 }
 		 
-		 if(certificate.getFromDate() != null && certificate.getToDate() == null){
+		 if(certificate.getFromDate() != null && certificate.getToDate() != null){
 			 queryStrForRegistration.append(" and cert.certificatedate between to_timestamp(:fromDate,'yyyy-MM-dd HH24:mi:ss') and to_timestamp(:toDate,'YYYY-MM-DD HH24:MI:SS')");
 			 params.put("fromDate",sf.format(certificate.getFromDate()).toString());
 			 params.put("toDate", certificate.getToDate() != null ? sf.format(certificate.getToDate()).toString() :sf.format(new Date()).toString());
@@ -77,7 +77,7 @@ public class MarriageRegistrationReportsService {
 			 queryStrForReissue.append(" and cert.certificatetype in('REGISTRATION','REISSUE','REJECTION')");
 		 }
 		 
-		 if(certificate.getFromDate() != null && certificate.getToDate() == null){
+		 if(certificate.getFromDate() != null && certificate.getToDate() != null){
 			 queryStrForReissue.append(" and cert.certificatedate between to_timestamp(:fromDate,'yyyy-MM-dd HH24:mi:ss') and to_timestamp(:toDate,'YYYY-MM-DD HH24:MI:SS')");
 			 params.put("fromDate", sf.format(certificate.getFromDate()).toString());
 			 params.put("toDate", certificate.getToDate() != null ? sf.format(certificate.getToDate()).toString() :sf.format(new Date()).toString());

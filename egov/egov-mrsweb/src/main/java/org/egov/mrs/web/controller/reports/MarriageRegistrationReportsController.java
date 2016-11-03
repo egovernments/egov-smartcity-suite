@@ -191,13 +191,13 @@ public class MarriageRegistrationReportsController {
 		return "marriage-agewise-view";
 	}
 	
-	@RequestMapping(value = "/certificatescount", method = RequestMethod.GET)
+	@RequestMapping(value = "/certificatedetails", method = RequestMethod.GET)
     public String searchCertificatesForReport(final Model model) {
     	model.addAttribute("certificate", new MarriageCertificate());
         return "registration-certificates-report";
     }
 
-    @RequestMapping(value = "/certificatescount", method = RequestMethod.POST, produces = MediaType.TEXT_PLAIN_VALUE)
+    @RequestMapping(value = "/certificatedetails", method = RequestMethod.POST, produces = MediaType.TEXT_PLAIN_VALUE)
     public @ResponseBody String searchApprovedMarriageRecords(Model model,@ModelAttribute final MarriageCertificate certificate) throws ParseException {
     	List<RegistrationCertificatesResultForReport> regCertificateResult = new ArrayList<RegistrationCertificatesResultForReport>();
     	List<Object[]> searchResultList = marriageRegistrationReportsService.searchMarriageRegistrationsForCertificateReport(certificate);
