@@ -117,8 +117,12 @@ public class ComplaintElasticsearchUtils {
 				aggregationField = "cityCode";
 			if(complaintDashBoardRequest.getType().equalsIgnoreCase(DASHBOARD_GROUPING_DEPARTMENTWISE))
 				aggregationField = "departmentName";
-			if(complaintDashBoardRequest.getType().equalsIgnoreCase(DASHBOARD_GROUPING_WARDWISE))
+			if(complaintDashBoardRequest.getType().equalsIgnoreCase(DASHBOARD_GROUPING_WARDWISE)){
+				if(StringUtils.isNotBlank(complaintDashBoardRequest.getWardNo()))
+					aggregationField = "localityName";
+				else
 				aggregationField = "wardName";
+			}
 			return aggregationField;
 		}
 		
