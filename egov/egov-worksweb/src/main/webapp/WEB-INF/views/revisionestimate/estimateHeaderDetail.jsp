@@ -85,10 +85,12 @@
 									<c:out value="${workOrderEstimate.workOrder.workOrderNumber}"></c:out>
 								</a>
 							</div>
-							<div class="col-md-2 col-xs-6 add-margin"><spring:message code="lbl.revision.estimate.number" /> : </div> 
-							<div class="col-md-2 col-xs-6 add-margin view-content">
-								<c:out value="${revisionEstimate.estimateNumber}"></c:out>
-							</div>
+							<c:if test="${revisionEstimate.estimateNumber != null}">
+								<div class="col-md-2 col-xs-6 add-margin"><spring:message code="lbl.revision.estimate.number" /> : </div> 
+								<div class="col-md-2 col-xs-6 add-margin view-content">
+									<c:out value="${revisionEstimate.estimateNumber}"></c:out>
+								</div>
+							</c:if>
 						</div>
 						
 						<c:if test="${previousEstimates.size() != 0 }">

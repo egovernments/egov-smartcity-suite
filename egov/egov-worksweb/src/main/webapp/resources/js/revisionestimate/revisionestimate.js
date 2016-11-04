@@ -1113,7 +1113,9 @@ var sorSearch = new Bloodhound({
 		for(var i=0;i<len-1	;i++)
 		{
 			var qname=name[0]+'.measurementSheetList['+i+'].quantity';
-			var quantity=eval(document.getElementById(qname).value);
+			var quantity = 0;
+			if(document.getElementById(qname).value > 0)
+				quantity=eval(parseFloat(document.getElementById(qname).value));
 			
 			if(name[0].indexOf("changeQuantityActivities") >= 0) {
 				var oname= '#msrowidentifier_' + index + '_' + i;

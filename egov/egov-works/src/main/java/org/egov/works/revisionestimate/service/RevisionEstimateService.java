@@ -631,7 +631,7 @@ public class RevisionEstimateService {
         final List<MeasurementSheet> newMsList = new LinkedList<MeasurementSheet>(
                 oldActivity.getMeasurementSheetList());
         for (final MeasurementSheet msnew : activity.getMeasurementSheetList()) {
-            if (msnew.getId() == null) {
+            if (msnew.getId() == null && msnew.getQuantity() != null) {
                 msnew.setActivity(oldActivity);
                 oldActivity.getMeasurementSheetList().add(msnew);
                 continue;
@@ -694,19 +694,19 @@ public class RevisionEstimateService {
 
     private List<MeasurementSheet> mergeCQMeasurementSheet(final Activity oldActivity, final Activity activity) {
         for (final MeasurementSheet msnew : activity.getMeasurementSheetList()) {
-            if (msnew.getId() == null) {
+            if (msnew.getId() == null && msnew.getQuantity() != null) {
                 msnew.setActivity(oldActivity);
-                msnew.setIdentifier(msnew.getParent().getIdentifier());
+                if (msnew.getParent() != null)
+                    msnew.setIdentifier(msnew.getParent().getIdentifier());
                 oldActivity.getMeasurementSheetList().add(msnew);
                 continue;
             }
             for (final MeasurementSheet msold : oldActivity.getMeasurementSheetList())
-                if (msnew.getId().longValue() == msold.getId().longValue()) {
+                if (msnew.getId() == msold.getId()) {
                     msold.setLength(msnew.getLength());
                     msold.setWidth(msnew.getWidth());
                     msold.setDepthOrHeight(msnew.getDepthOrHeight());
                     msold.setNo(msnew.getNo());
-                    msold.setActivity(msnew.getActivity());
                     msold.setIdentifier(msnew.getParent().getIdentifier());
                     msold.setRemarks(msnew.getParent().getRemarks());
                     msold.setSlNo(msnew.getParent().getSlNo());
@@ -714,7 +714,7 @@ public class RevisionEstimateService {
                     msold.setActivity(oldActivity);
                 }
         }
-
+        
         removeEmptyMS(oldActivity);
         return oldActivity.getMeasurementSheetList();
     }
@@ -1353,10 +1353,9 @@ public class RevisionEstimateService {
         Double width = measurementSheet.getWidth() == null ? 0 : measurementSheet.getWidth().doubleValue();
         Double depthOrHeight = measurementSheet.getDepthOrHeight() == null ? 0
                 : measurementSheet.getDepthOrHeight().doubleValue();
+        Double quantity = measurementSheet.getQuantity() == null ? 0 : measurementSheet.getQuantity().doubleValue();
         for (final MeasurementSheet rems : remsList)
-            if (rems.getId() != measurementSheet.getId())
-            // if (measurementSheet.getIdentifier() == 'A')
-            {
+            if (rems.getId() != measurementSheet.getId()) {
                 if (rems.getNo() != null)
                     no = no + rems.getNo().doubleValue();
                 if (rems.getLength() != null)
@@ -1365,12 +1364,9 @@ public class RevisionEstimateService {
                     width = width + rems.getWidth().doubleValue();
                 if (rems.getDepthOrHeight() != null)
                     depthOrHeight = depthOrHeight + rems.getDepthOrHeight().doubleValue();
-            } /*
-               * else { if (rems.getNo() != null) no = no - rems.getNo().doubleValue(); if (rems.getLength() != null) length =
-               * length - rems.getLength().doubleValue(); if (rems.getWidth() != null) width = width -
-               * rems.getWidth().doubleValue(); if (rems.getDepthOrHeight() != null) depthOrHeight = depthOrHeight -
-               * rems.getDepthOrHeight().doubleValue(); }
-               */
+
+                quantity = quantity + rems.getQuantity().doubleValue();
+            }
         if (no != null && no != 0)
             measurementSheet.setNo(new BigDecimal(no));
         if (length != null && length != 0)
@@ -1379,11 +1375,8 @@ public class RevisionEstimateService {
             measurementSheet.setWidth(new BigDecimal(width));
         if (depthOrHeight != null && depthOrHeight != 0)
             measurementSheet.setDepthOrHeight(new BigDecimal(depthOrHeight));
-
-        measurementSheet.setQuantity(new BigDecimal(
-                (no == null || no == 0 ? 1 : no.doubleValue()) * (length == null || length == 0 ? 1 : length.doubleValue())
-                        * (width == null || width == 0 ? 1 : width.doubleValue())
-                        * (depthOrHeight == null || depthOrHeight == 0 ? 1 : depthOrHeight.doubleValue())));
+        
+        measurementSheet.setQuantity(new BigDecimal(quantity));
     }
 
     public List<RevisionAbstractEstimate> findRevisionEstimatesByParentAndStatus(final Long parentId) {
