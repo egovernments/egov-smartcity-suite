@@ -1,0 +1,1 @@
+alter table eg_collectionindex add column revenueward character varying(512);
