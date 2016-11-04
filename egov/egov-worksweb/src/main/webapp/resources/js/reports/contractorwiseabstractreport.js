@@ -129,7 +129,7 @@ jQuery('#btnsearch').click(function(e) {
 		callAjaxSearch();
 	
 	var queryParameters = "Contractor Wise Abstract Report For ";
-	queryParameters += "Date Range : " + $('#fromDate').val() + " - " + $('#toDate').val() + ", ";
+	queryParameters += "Date Range : " + $('#fromDate').val() + " - " + $('#toDate').val() + ",";
 	var financialyearid = $('#financialYear').val();
 	var natureofwork = $('#natureOfWork').val();
 	var workStatus = $('#workStatus').val();
@@ -137,7 +137,7 @@ jQuery('#btnsearch').click(function(e) {
 	var ward = $('#wardInput').val();
 	
 	if(natureofwork != "")
-		queryParameters += "Nature Of Work : "+natureofwork + ","
+		queryParameters += "Nature Of Work : "+ $('#natureOfWork').find(":selected").text() + ","
 	
     if(workStatus != "")
     	queryParameters += "Work Status : "+workStatus + ","
@@ -148,10 +148,14 @@ jQuery('#btnsearch').click(function(e) {
     if(ward != "")
     	queryParameters += "Election Ward : "+ward + ","
     	
-	if (queryParameters.endsWith(", "))
-        queryParameters = queryParameters.substring(0, queryParameters.length - 2);
+	if (queryParameters.endsWith(","))
+        queryParameters = queryParameters.substring(0, queryParameters.length - 1);
     
     $('#searchCriteria').html(queryParameters);
+    
+    $('#resultTable').stickyTableHeaders({
+			fixedOffset: $('nav').outerHeight()
+		});
     	
 });
 
