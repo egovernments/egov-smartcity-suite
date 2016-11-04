@@ -41,10 +41,6 @@
 package org.egov.adtax.service.es;
 
 import java.math.BigDecimal;
-import java.text.DateFormat;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.Date;
 import java.util.Map;
 
 import org.egov.adtax.entity.AdvertisementPermitDetail;
@@ -87,7 +83,6 @@ public class AdvertisementIndexService {
     }
 
     public AdvertisementIndex createOrUpdateAdvIndex(final AdvertisementPermitDetail advertisementPermitDetail) {
-    	 final SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm");
         final City cityWebsite = cityService.getCityByURL(ApplicationThreadLocals.getDomainName());
         final AdvertisementIndex advertisementSearch = new AdvertisementIndex(advertisementPermitDetail.getAdvertisement().getAdvertisementNumber(),
                 cityWebsite.getName(), cityWebsite.getCode(), advertisementPermitDetail.getCreatedDate(), cityWebsite.getDistrictName(), cityWebsite.getRegionName(),
@@ -106,7 +101,7 @@ public class AdvertisementIndexService {
         advertisementSearch.setAdvertiser(advertisementPermitDetail.getAdvertiser() != null ? advertisementPermitDetail.getAdvertiser() : "");
         advertisementSearch.setAdvertiserParticular(advertisementPermitDetail.getAdvertisementParticular() != null ? advertisementPermitDetail.getAdvertisementParticular() : "");
         advertisementSearch.setAgencyName(advertisementPermitDetail.getAgency() != null ? advertisementPermitDetail.getAgency().getName() : "");
-        advertisementSearch.setApplicationDate(formatDate(formatter.format(advertisementPermitDetail.getApplicationDate())));
+        advertisementSearch.setApplicationDate(advertisementPermitDetail.getApplicationDate());
         
         advertisementSearch.setApplicationNumber(advertisementPermitDetail.getApplicationNumber());
 
@@ -115,7 +110,7 @@ public class AdvertisementIndexService {
         advertisementSearch.setCategory(advertisementPermitDetail.getAdvertisement().getCategory().getName());
         
         
-        advertisementSearch.setCreatedDate(formatDate(formatter.format(advertisementPermitDetail.getAdvertisement().getCreatedDate())));
+        advertisementSearch.setCreatedDate(advertisementPermitDetail.getAdvertisement().getCreatedDate());
         advertisementSearch.setElectionWard(advertisementPermitDetail.getAdvertisement().getElectionWard() != null ? advertisementPermitDetail.getAdvertisement().getElectionWard().getName() : "");
         advertisementSearch.setElectricityServiceNumber(advertisementPermitDetail.getAdvertisement().getElectricityServiceNumber() != null ? advertisementPermitDetail.getAdvertisement().getElectricityServiceNumber() : "");
         advertisementSearch.setEncroachmentFee(advertisementPermitDetail.getEncroachmentFee() != null ? advertisementPermitDetail.getEncroachmentFee() : BigDecimal.ZERO);
@@ -127,10 +122,10 @@ public class AdvertisementIndexService {
         advertisementSearch.setOwnerDetail(advertisementPermitDetail.getOwnerDetail() != null ? advertisementPermitDetail.getOwnerDetail() : "");
        
         
-        advertisementSearch.setPermissionEndDate( formatDate(formatter.format(advertisementPermitDetail.getPermissionenddate())));
+        advertisementSearch.setPermissionEndDate( advertisementPermitDetail.getPermissionenddate());
         advertisementSearch.setPermissionNumber(advertisementPermitDetail.getPermissionNumber());
        
-        advertisementSearch.setPermissionStartDate( formatDate(formatter.format(advertisementPermitDetail.getPermissionstartdate())));
+        advertisementSearch.setPermissionStartDate( advertisementPermitDetail.getPermissionstartdate());
         advertisementSearch.setPermitStatus(advertisementPermitDetail.getStatus().getDescription());
         advertisementSearch.setAssessmentNumber(advertisementPermitDetail.getAdvertisement().getPropertyNumber() != null ? advertisementPermitDetail.getAdvertisement().getPropertyNumber() : "");
         advertisementSearch.setPropertyType(advertisementPermitDetail.getAdvertisement().getPropertyType().name());
@@ -216,18 +211,11 @@ public class AdvertisementIndexService {
         //Deactivation
         if (advertisementPermitDetail.getAdvertisement().getStatus().name().equalsIgnoreCase("INACTIVE")) {
         	
-            advertisementSearch.setDeactivationDate( formatDate(formatter.format(advertisementPermitDetail.getDeactivation_date())));
+            advertisementSearch.setDeactivationDate( advertisementPermitDetail.getDeactivation_date());
             advertisementSearch.setDeactivationRemarks(advertisementPermitDetail.getDeactivation_remarks());
         }
         advertisementIndexRepository.save(advertisementSearch);
         return advertisementSearch;
     }
-    public Date formatDate(final String date) {
-        final DateFormat formatter = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm'Z'");
-        try {
-            return formatter.parse(date);
-        } catch (final ParseException e) {
-        }
-        return null;
-    }
+    
 }
