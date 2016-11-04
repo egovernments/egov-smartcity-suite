@@ -125,7 +125,7 @@ public class CMDashboardController {
                 + ", districtName = " + collectionDetailsRequest.getDistrictName() + ", ulbGrade = "
                 + collectionDetailsRequest.getUlbGrade() + ", ulbCode = " + collectionDetailsRequest.getUlbCode()
                 + ", fromDate = " + collectionDetailsRequest.getFromDate() + ", toDate = "
-                + collectionDetailsRequest.getToDate());
+                + collectionDetailsRequest.getToDate() + ", type = " + collectionDetailsRequest.getType());
         CollectionDetails collectionDetails = propTaxDashboardService
                 .getCollectionIndexDetails(collectionDetailsRequest);
         Long timeTaken = System.currentTimeMillis() - startTime;
@@ -147,7 +147,7 @@ public class CMDashboardController {
                 + ", districtName = " + collectionDetailsRequest.getDistrictName() + ", ulbGrade = "
                 + collectionDetailsRequest.getUlbGrade() + ", ulbCode = " + collectionDetailsRequest.getUlbCode()
                 + ", fromDate = " + collectionDetailsRequest.getFromDate() + ", toDate = "
-                + collectionDetailsRequest.getToDate());
+                + collectionDetailsRequest.getToDate() + ", type = " + collectionDetailsRequest.getType());
         CollReceiptDetails collReceiptDetails = propTaxDashboardService.getReceiptDetails(collectionDetailsRequest);
         Long timeTaken = System.currentTimeMillis() - startTime;
         LOGGER.debug("Time taken to serve receipttransactions is : " + timeTaken + " (millisecs)");
@@ -169,7 +169,7 @@ public class CMDashboardController {
                 + ", districtName = " + collectionDetailsRequest.getDistrictName() + ", ulbGrade = "
                 + collectionDetailsRequest.getUlbGrade() + ", ulbCode = " + collectionDetailsRequest.getUlbCode()
                 + ", fromDate = " + collectionDetailsRequest.getFromDate() + ", toDate = "
-                + collectionDetailsRequest.getToDate());
+                + collectionDetailsRequest.getToDate() + ", type = " + collectionDetailsRequest.getType());
         TaxPayerResponseDetails taxPayerDetails = propTaxDashboardService
                 .getTopTenTaxProducers(collectionDetailsRequest);
         Long timeTaken = System.currentTimeMillis() - startTime;
@@ -192,7 +192,7 @@ public class CMDashboardController {
                 + ", districtName = " + collectionDetailsRequest.getDistrictName() + ", ulbGrade = "
                 + collectionDetailsRequest.getUlbGrade() + ", ulbCode = " + collectionDetailsRequest.getUlbCode()
                 + ", fromDate = " + collectionDetailsRequest.getFromDate() + ", toDate = "
-                + collectionDetailsRequest.getToDate());
+                + collectionDetailsRequest.getToDate() + ", type = " + collectionDetailsRequest.getType());
         TaxPayerResponseDetails taxPayerDetails = propTaxDashboardService
                 .getBottomTenTaxProducers(collectionDetailsRequest);
         Long timeTaken = System.currentTimeMillis() - startTime;
@@ -205,8 +205,8 @@ public class CMDashboardController {
             @RequestBody PropertyTaxDefaultersRequest propertyTaxDefaultersRequest) throws IOException {
         Long startTime = System.currentTimeMillis();
         LOGGER.debug("PropertyTaxDefaultersRequest input : regionName = " + propertyTaxDefaultersRequest.getRegionName()
-                + ", districtName = " + propertyTaxDefaultersRequest.getDistrictName() + ", ulbName = "
-                + propertyTaxDefaultersRequest.getUlbName() + ", ulbCode = " + propertyTaxDefaultersRequest.getUlbCode()
+                + ", districtName = " + propertyTaxDefaultersRequest.getDistrictName() + ", type = "
+                + propertyTaxDefaultersRequest.getType() + ", ulbCode = " + propertyTaxDefaultersRequest.getUlbCode()
                 + ", wardName = " + propertyTaxDefaultersRequest.getWardName());
         List<TaxDefaulters> taxDefaulters = propTaxDashboardService.getTaxDefaulters(propertyTaxDefaultersRequest);
         Long timeTaken = System.currentTimeMillis() - startTime;

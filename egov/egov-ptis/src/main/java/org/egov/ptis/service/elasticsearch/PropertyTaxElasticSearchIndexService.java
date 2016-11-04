@@ -41,6 +41,11 @@
 package org.egov.ptis.service.elasticsearch;
 
 import static org.egov.ptis.constants.PropertyTaxConstants.BIGDECIMAL_100;
+import static org.egov.ptis.constants.PropertyTaxConstants.DASHBOARD_GROUPING_DISTRICTWISE;
+import static org.egov.ptis.constants.PropertyTaxConstants.DASHBOARD_GROUPING_GRADEWISE;
+import static org.egov.ptis.constants.PropertyTaxConstants.DASHBOARD_GROUPING_REGIONWISE;
+import static org.egov.ptis.constants.PropertyTaxConstants.DASHBOARD_GROUPING_ULBWISE;
+import static org.egov.ptis.constants.PropertyTaxConstants.DASHBOARD_GROUPING_CITYWISE;
 import static org.egov.ptis.constants.PropertyTaxConstants.PROPERTY_TAX_INDEX_NAME;
 import static org.egov.ptis.constants.PropertyTaxConstants.DASHBOARD_GROUPING_WARDWISE;
 
@@ -414,12 +419,33 @@ public class PropertyTaxElasticSearchIndexService {
         if (StringUtils.isNotBlank(propertyTaxDefaultersRequest.getDistrictName()))
             boolQuery = boolQuery
                     .filter(QueryBuilders.matchQuery("districtName", propertyTaxDefaultersRequest.getDistrictName()));
-        if (StringUtils.isNotBlank(propertyTaxDefaultersRequest.getUlbName()))
+        if (StringUtils.isNotBlank(propertyTaxDefaultersRequest.getUlbCode()))
             boolQuery = boolQuery
-                    .filter(QueryBuilders.matchQuery("cityName", propertyTaxDefaultersRequest.getUlbName()));
+                    .filter(QueryBuilders.matchQuery("cityCode", propertyTaxDefaultersRequest.getUlbCode()));
+        if (StringUtils.isNotBlank(propertyTaxDefaultersRequest.getUlbGrade()))
+            boolQuery = boolQuery
+                    .filter(QueryBuilders.matchQuery("cityGrade", propertyTaxDefaultersRequest.getUlbGrade()));
         if (StringUtils.isNotBlank(propertyTaxDefaultersRequest.getWardName()))
             boolQuery = boolQuery
                     .filter(QueryBuilders.matchQuery("revenueWard", propertyTaxDefaultersRequest.getWardName()));
+        if (StringUtils.isNotBlank(propertyTaxDefaultersRequest.getType())){
+            if (propertyTaxDefaultersRequest.getType().equalsIgnoreCase(DASHBOARD_GROUPING_REGIONWISE) 
+                    && StringUtils.isNotBlank(propertyTaxDefaultersRequest.getRegionName()))
+                boolQuery = boolQuery
+                        .filter(QueryBuilders.matchQuery("regionName", propertyTaxDefaultersRequest.getRegionName()));
+            else if (propertyTaxDefaultersRequest.getType().equalsIgnoreCase(DASHBOARD_GROUPING_DISTRICTWISE)
+                    && StringUtils.isNotBlank(propertyTaxDefaultersRequest.getRegionName()))
+                boolQuery = boolQuery
+                        .filter(QueryBuilders.matchQuery("districtName", propertyTaxDefaultersRequest.getDistrictName()));
+            else if (propertyTaxDefaultersRequest.getType().equalsIgnoreCase(DASHBOARD_GROUPING_CITYWISE)
+                    && StringUtils.isNotBlank(propertyTaxDefaultersRequest.getRegionName()))
+                boolQuery = boolQuery
+                        .filter(QueryBuilders.matchQuery("cityCode", propertyTaxDefaultersRequest.getUlbCode()));
+            else if (propertyTaxDefaultersRequest.getType().equalsIgnoreCase(DASHBOARD_GROUPING_GRADEWISE)
+                    && StringUtils.isNotBlank(propertyTaxDefaultersRequest.getUlbGrade()))
+                boolQuery = boolQuery
+                        .filter(QueryBuilders.matchQuery("cityGrade", propertyTaxDefaultersRequest.getUlbGrade()));
+        }
 
         return boolQuery;
     }
