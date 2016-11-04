@@ -43,7 +43,6 @@ package org.egov.collection.service.elasticsearch;
 import org.egov.collection.entity.CollectionIndex;
 import org.egov.collection.entity.es.CollectionDocument;
 import org.egov.collection.repository.es.CollectionDocumentRepository;
-import org.egov.infra.admin.master.service.CityService;
 import org.egov.infra.config.mapper.BeanMapperConfiguration;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -52,7 +51,7 @@ import org.springframework.transaction.annotation.Transactional;
 @Service
 public class CollectionDocumentService {
 
-    private CollectionDocumentRepository collectionDocumentRepository;
+    private final CollectionDocumentRepository collectionDocumentRepository;
 
     @Autowired
     public CollectionDocumentService(final CollectionDocumentRepository collectionDocumentRepository) {
@@ -60,14 +59,12 @@ public class CollectionDocumentService {
     }
 
     @Autowired
-    private CityService cityService;
-    
-    @Autowired
     private BeanMapperConfiguration beanMapperConfiguration;
 
     @Transactional
     public CollectionDocument persistCollectionDocument(final CollectionIndex collectionIndex) {
-        CollectionDocument collectionDocument = beanMapperConfiguration.map(collectionIndex, CollectionDocument.class);
+        final CollectionDocument collectionDocument = beanMapperConfiguration.map(collectionIndex,
+                CollectionDocument.class);
         return collectionDocumentRepository.save(collectionDocument);
     }
 }

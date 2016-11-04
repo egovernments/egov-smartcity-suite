@@ -40,6 +40,8 @@
 
 package org.egov.collection.entity.es;
 
+import static org.egov.infra.utils.ApplicationConstant.ES_DATE_FORMAT;
+
 import java.util.Date;
 
 import org.springframework.data.annotation.Id;
@@ -96,8 +98,8 @@ public class CollectionDocument {
     @Field(type = FieldType.String, index = FieldIndex.not_analyzed)
     private String receiptCreator;
 
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm'Z'")
-    @Field(type = FieldType.Date, index = FieldIndex.not_analyzed, format = DateFormat.date_optional_time, pattern = "yyyy-MM-dd'T'hh:mm'Z'")
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = ES_DATE_FORMAT)
+    @Field(type = FieldType.Date, format = DateFormat.date_optional_time, pattern = ES_DATE_FORMAT)
     private Date receiptDate;
 
     @Field(type = FieldType.Double)
@@ -138,16 +140,19 @@ public class CollectionDocument {
 
     @Field(type = FieldType.String, index = FieldIndex.not_analyzed)
     private String consumerCode;
-    
+
     @Field(type = FieldType.String, index = FieldIndex.not_analyzed)
     private String revenueWard;
 
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = ES_DATE_FORMAT)
+    @Field(type = FieldType.Date, format = DateFormat.date_optional_time, pattern = ES_DATE_FORMAT)
+    private Date createdDate;
 
     public String getId() {
         return id;
     }
 
-    public void setId(String id) {
+    public void setId(final String id) {
         this.id = id;
     }
 
@@ -155,7 +160,7 @@ public class CollectionDocument {
         return receiptNumber;
     }
 
-    public void setReceiptNumber(String receiptNumber) {
+    public void setReceiptNumber(final String receiptNumber) {
         this.receiptNumber = receiptNumber;
     }
 
@@ -163,7 +168,7 @@ public class CollectionDocument {
         return cityCode;
     }
 
-    public void setCityCode(String cityCode) {
+    public void setCityCode(final String cityCode) {
         this.cityCode = cityCode;
     }
 
@@ -171,7 +176,7 @@ public class CollectionDocument {
         return billingService;
     }
 
-    public void setBillingService(String billingService) {
+    public void setBillingService(final String billingService) {
         this.billingService = billingService;
     }
 
@@ -179,7 +184,7 @@ public class CollectionDocument {
         return paymentMode;
     }
 
-    public void setPaymentMode(String paymentMode) {
+    public void setPaymentMode(final String paymentMode) {
         this.paymentMode = paymentMode;
     }
 
@@ -187,7 +192,7 @@ public class CollectionDocument {
         return channel;
     }
 
-    public void setChannel(String channel) {
+    public void setChannel(final String channel) {
         this.channel = channel;
     }
 
@@ -195,7 +200,7 @@ public class CollectionDocument {
         return paymentGateway;
     }
 
-    public void setPaymentGateway(String paymentGateway) {
+    public void setPaymentGateway(final String paymentGateway) {
         this.paymentGateway = paymentGateway;
     }
 
@@ -203,7 +208,7 @@ public class CollectionDocument {
         return billNumber;
     }
 
-    public void setBillNumber(Long billNumber) {
+    public void setBillNumber(final Long billNumber) {
         this.billNumber = billNumber;
     }
 
@@ -211,7 +216,7 @@ public class CollectionDocument {
         return cityName;
     }
 
-    public void setCityName(String cityName) {
+    public void setCityName(final String cityName) {
         this.cityName = cityName;
     }
 
@@ -219,7 +224,7 @@ public class CollectionDocument {
         return districtName;
     }
 
-    public void setDistrictName(String districtName) {
+    public void setDistrictName(final String districtName) {
         this.districtName = districtName;
     }
 
@@ -227,7 +232,7 @@ public class CollectionDocument {
         return regionName;
     }
 
-    public void setRegionName(String regionName) {
+    public void setRegionName(final String regionName) {
         this.regionName = regionName;
     }
 
@@ -235,7 +240,7 @@ public class CollectionDocument {
         return status;
     }
 
-    public void setStatus(String status) {
+    public void setStatus(final String status) {
         this.status = status;
     }
 
@@ -243,7 +248,7 @@ public class CollectionDocument {
         return cityGrade;
     }
 
-    public void setCityGrade(String cityGrade) {
+    public void setCityGrade(final String cityGrade) {
         this.cityGrade = cityGrade;
     }
 
@@ -251,7 +256,7 @@ public class CollectionDocument {
         return receiptCreator;
     }
 
-    public void setReceiptCreator(String receiptCreator) {
+    public void setReceiptCreator(final String receiptCreator) {
         this.receiptCreator = receiptCreator;
     }
 
@@ -259,7 +264,7 @@ public class CollectionDocument {
         return receiptDate;
     }
 
-    public void setReceiptDate(Date receiptDate) {
+    public void setReceiptDate(final Date receiptDate) {
         this.receiptDate = receiptDate;
     }
 
@@ -267,7 +272,7 @@ public class CollectionDocument {
         return arrearAmount;
     }
 
-    public void setArrearAmount(Double arrearAmount) {
+    public void setArrearAmount(final Double arrearAmount) {
         this.arrearAmount = arrearAmount;
     }
 
@@ -275,7 +280,7 @@ public class CollectionDocument {
         return penaltyAmount;
     }
 
-    public void setPenaltyAmount(Double penaltyAmount) {
+    public void setPenaltyAmount(final Double penaltyAmount) {
         this.penaltyAmount = penaltyAmount;
     }
 
@@ -283,7 +288,7 @@ public class CollectionDocument {
         return currentAmount;
     }
 
-    public void setCurrentAmount(Double currentAmount) {
+    public void setCurrentAmount(final Double currentAmount) {
         this.currentAmount = currentAmount;
     }
 
@@ -291,7 +296,7 @@ public class CollectionDocument {
         return totalAmount;
     }
 
-    public void setTotalAmount(Double totalAmount) {
+    public void setTotalAmount(final Double totalAmount) {
         this.totalAmount = totalAmount;
     }
 
@@ -299,7 +304,7 @@ public class CollectionDocument {
         return advanceAmount;
     }
 
-    public void setAdvanceAmount(Double advanceAmount) {
+    public void setAdvanceAmount(final Double advanceAmount) {
         this.advanceAmount = advanceAmount;
     }
 
@@ -307,7 +312,7 @@ public class CollectionDocument {
         return latePaymentCharges;
     }
 
-    public void setLatePaymentCharges(Double latePaymentCharges) {
+    public void setLatePaymentCharges(final Double latePaymentCharges) {
         this.latePaymentCharges = latePaymentCharges;
     }
 
@@ -315,7 +320,7 @@ public class CollectionDocument {
         return arrearCess;
     }
 
-    public void setArrearCess(Double arrearCess) {
+    public void setArrearCess(final Double arrearCess) {
         this.arrearCess = arrearCess;
     }
 
@@ -323,7 +328,7 @@ public class CollectionDocument {
         return currentCess;
     }
 
-    public void setCurrentCess(Double currentCess) {
+    public void setCurrentCess(final Double currentCess) {
         this.currentCess = currentCess;
     }
 
@@ -331,7 +336,7 @@ public class CollectionDocument {
         return installmentFrom;
     }
 
-    public void setInstallmentFrom(String installmentFrom) {
+    public void setInstallmentFrom(final String installmentFrom) {
         this.installmentFrom = installmentFrom;
     }
 
@@ -339,7 +344,7 @@ public class CollectionDocument {
         return installmentTo;
     }
 
-    public void setInstallmentTo(String installmentTo) {
+    public void setInstallmentTo(final String installmentTo) {
         this.installmentTo = installmentTo;
     }
 
@@ -347,7 +352,7 @@ public class CollectionDocument {
         return consumerName;
     }
 
-    public void setConsumerName(String consumerName) {
+    public void setConsumerName(final String consumerName) {
         this.consumerName = consumerName;
     }
 
@@ -355,7 +360,7 @@ public class CollectionDocument {
         return reductionAmount;
     }
 
-    public void setReductionAmount(Double reductionAmount) {
+    public void setReductionAmount(final Double reductionAmount) {
         this.reductionAmount = reductionAmount;
     }
 
@@ -363,7 +368,7 @@ public class CollectionDocument {
         return consumerCode;
     }
 
-    public void setConsumerCode(String consumerCode) {
+    public void setConsumerCode(final String consumerCode) {
         this.consumerCode = consumerCode;
     }
 
@@ -371,7 +376,15 @@ public class CollectionDocument {
         return revenueWard;
     }
 
-    public void setRevenueWard(String revenueWard) {
+    public void setRevenueWard(final String revenueWard) {
         this.revenueWard = revenueWard;
+    }
+
+    public Date getCreatedDate() {
+        return createdDate;
+    }
+
+    public void setCreatedDate(final Date createdDate) {
+        this.createdDate = createdDate;
     }
 }

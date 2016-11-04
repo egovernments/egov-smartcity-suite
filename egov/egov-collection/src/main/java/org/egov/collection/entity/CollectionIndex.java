@@ -143,7 +143,7 @@ public class CollectionIndex extends AbstractAuditable {
 
     @Length(max = 100)
     private String receiptCreator;
-    
+
     private String revenueWard;
 
     @Override
@@ -332,7 +332,8 @@ public class CollectionIndex extends AbstractAuditable {
     }
 
     /**
-     * @param installmentFrom the installmentFrom to set
+     * @param installmentFrom
+     *            the installmentFrom to set
      */
     public void setInstallmentFrom(final String installmentFrom) {
         this.installmentFrom = installmentFrom;
@@ -346,7 +347,8 @@ public class CollectionIndex extends AbstractAuditable {
     }
 
     /**
-     * @param installmentTo the installmentTo to set
+     * @param installmentTo
+     *            the installmentTo to set
      */
     public void setInstallmentTo(final String installmentTo) {
         this.installmentTo = installmentTo;
@@ -360,9 +362,10 @@ public class CollectionIndex extends AbstractAuditable {
     }
 
     /**
-     * @param reductionAmount the reductionAmount to set
+     * @param reductionAmount
+     *            the reductionAmount to set
      */
-    public void setReductionAmount(BigDecimal reductionAmount) {
+    public void setReductionAmount(final BigDecimal reductionAmount) {
         this.reductionAmount = reductionAmount;
     }
 
@@ -374,9 +377,10 @@ public class CollectionIndex extends AbstractAuditable {
     }
 
     /**
-     * @param cityGrade the cityGrade to set
+     * @param cityGrade
+     *            the cityGrade to set
      */
-    public void setCityGrade(String cityGrade) {
+    public void setCityGrade(final String cityGrade) {
         this.cityGrade = cityGrade;
     }
 
@@ -388,9 +392,10 @@ public class CollectionIndex extends AbstractAuditable {
     }
 
     /**
-     * @param ulbCode the ulbCode to set
+     * @param ulbCode
+     *            the ulbCode to set
      */
-    public void setCityCode(String cityCode) {
+    public void setCityCode(final String cityCode) {
         this.cityCode = cityCode;
     }
 
@@ -402,20 +407,21 @@ public class CollectionIndex extends AbstractAuditable {
     }
 
     /**
-     * @param receiptCreator the receiptCreator to set
+     * @param receiptCreator
+     *            the receiptCreator to set
      */
-    public void setReceiptCreator(String receiptCreator) {
+    public void setReceiptCreator(final String receiptCreator) {
         this.receiptCreator = receiptCreator;
     }
-    
+
     public String getRevenueWard() {
         return revenueWard;
     }
 
-    public void setRevenueWard(String revenueWard) {
+    public void setRevenueWard(final String revenueWard) {
         this.revenueWard = revenueWard;
     }
-    
+
     public static CollectionIndexBuilder builder() {
         return new CollectionIndexBuilder();
     }
@@ -488,12 +494,12 @@ public class CollectionIndex extends AbstractAuditable {
         }
 
         public CollectionIndexBuilder withBillingservice(final String billingService) {
-            this.billingservice = billingService;
+            billingservice = billingService;
             return this;
         }
 
         public CollectionIndexBuilder withPaymentMode(final String paymentMode) {
-            this.paymentmode = paymentMode;
+            paymentmode = paymentMode;
             return this;
         }
 
@@ -508,77 +514,77 @@ public class CollectionIndex extends AbstractAuditable {
         }
 
         public CollectionIndexBuilder withArrearAmount(final BigDecimal arrearAmount) {
-            this.arrearamount = arrearAmount;
+            arrearamount = arrearAmount;
             return this;
         }
 
         public CollectionIndexBuilder withPenaltyAmount(final BigDecimal penaltyAmount) {
-            this.penaltyamount = penaltyAmount;
+            penaltyamount = penaltyAmount;
             return this;
         }
 
         public CollectionIndexBuilder withCurrentAmount(final BigDecimal currentAmount) {
-            this.currentamount = currentAmount;
+            currentamount = currentAmount;
             return this;
         }
 
         public CollectionIndexBuilder withAdvanceAmount(final BigDecimal advanceAmount) {
-            this.advanceamount = advanceAmount;
+            advanceamount = advanceAmount;
             return this;
         }
 
         public CollectionIndexBuilder withPaymentGateway(final String paymentGateway) {
-            this.paymentgateway = paymentGateway;
+            paymentgateway = paymentGateway;
             return this;
         }
 
         public CollectionIndexBuilder withBillNumber(final String billNumber) {
-            this.billnumber = billNumber;
+            billnumber = billNumber;
             return this;
         }
 
         public CollectionIndexBuilder withLatePaymentChargesAmount(final BigDecimal latePaymentCharges) {
-            this.latepaymentcharges = latePaymentCharges;
+            latepaymentcharges = latePaymentCharges;
             return this;
         }
 
         public CollectionIndexBuilder withArrearCess(final BigDecimal arrearCess) {
-            this.arrearcess = arrearCess;
+            arrearcess = arrearCess;
             return this;
         }
 
         public CollectionIndexBuilder withCurrentCess(final BigDecimal currentCess) {
-            this.currentcess = currentCess;
+            currentcess = currentCess;
             return this;
         }
 
         public CollectionIndexBuilder withInstallmentFrom(final String installmentFrom) {
-            this.installmentfrom = installmentFrom;
+            installmentfrom = installmentFrom;
             return this;
         }
 
         public CollectionIndexBuilder withInstallmentTo(final String installmentTo) {
-            this.installmentto = installmentTo;
+            installmentto = installmentTo;
             return this;
         }
 
         public CollectionIndexBuilder withConsumerName(final String consumerName) {
-            this.consumername = consumerName;
+            consumername = consumerName;
             return this;
         }
 
         public CollectionIndexBuilder withReductionAmount(final BigDecimal reductionAmount) {
-            this.reductionamount = reductionAmount;
+            reductionamount = reductionAmount;
             return this;
         }
 
         public CollectionIndexBuilder withReceiptCreator(final String receiptCreator) {
-            this.receiptcreator = receiptCreator;
+            receiptcreator = receiptCreator;
             return this;
         }
 
         public CollectionIndexBuilder withRevenueWard(final String revenueWard) {
-            this.revenueward = revenueWard;
+            revenueward = revenueWard;
             return this;
         }
 
