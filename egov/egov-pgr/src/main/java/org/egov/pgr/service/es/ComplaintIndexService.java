@@ -846,6 +846,15 @@ public class ComplaintIndexService {
     											groupByField);
     	
     	HashMap<String, Object> result = new HashMap<>();
+    	if(StringUtils.isNotBlank(complaintDashBoardRequest.getUlbCode())){
+			CityIndex city = cityIndexService.findOne(complaintDashBoardRequest.getUlbCode());
+			result.put("regionName",city.getRegionname());
+			result.put("districtName",city.getDistrictname());
+			result.put("ulbCode",city.getCitycode());
+			result.put("ulbGrade",city.getCitygrade());
+			result.put("ulbName",city.getName());
+			result.put("domainURL",city.getDomainurl());
+		}
 		List<ComplaintDashBoardResponse> responseDetailsList = new ArrayList<>();
 		
 		//For Dynamic results based on grouping fields
