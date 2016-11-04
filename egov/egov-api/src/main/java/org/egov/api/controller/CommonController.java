@@ -115,7 +115,7 @@ public class CommonController extends ApiController {
             citizenCreate.setMobileNumber(citizen.get("mobileNumber").toString());
             citizenCreate.setName(citizen.get("name").toString());
             
-	   if(citizen.get("emailId")!=null && !citizen.get("emailId").toString().trim().equals(""))
+            if(citizen.get("emailId")!=null && !citizen.get("emailId").toString().trim().equals(""))
               citizenCreate.setEmailId(citizen.get("emailId").toString());
 	    
 		
@@ -129,6 +129,7 @@ public class CommonController extends ApiController {
             }
             
             User user=userservice.getUserByUsername(citizenCreate.getMobileNumber());
+            
             if(user!=null)
             {
             	return res.error(getMessage("user.register.duplicate.mobileno"));
@@ -143,9 +144,17 @@ public class CommonController extends ApiController {
                 }
             }
             
-           citizenCreate.getDevices().add(device);
-           citizenService.create(citizenCreate);
-           return res.setDataAdapter(new UserAdapter()).success(citizenCreate, this.getMessage("msg.citizen.reg.success"));
+            if(citizen.get("activationCode")!=null && 
+            		citizenService.isValidOTP(citizen.get("activationCode").toString(), citizen.get("mobileNumber").toString()))
+            {            	
+            	citizenCreate.setActive(true);
+            	citizenCreate.getDevices().add(device);
+            	citizenService.create(citizenCreate);
+            	return res.setDataAdapter(new UserAdapter()).success(citizenCreate, this.getMessage("msg.citizen.reg.success"));
+            }
+            else{
+            	return res.error(getMessage("msg.pwd.otp.invalid"));
+            }
             
         } catch (Exception e) {
         	LOGGER.error("EGOV-API ERROR ",e);
@@ -217,7 +226,6 @@ public class CommonController extends ApiController {
 	        //for reset password with otp
 	        if(!StringUtils.isEmpty(token))
 	        {
-	        	
 	        	newPassword=request.getParameter("newPassword");
 	        	confirmPassword=request.getParameter("confirmPassword");
 	        	
@@ -279,19 +287,13 @@ public class CommonController extends ApiController {
     @RequestMapping(value = ApiUrl.CITIZEN_SEND_OTP, method = RequestMethod.POST)
     public @ResponseBody ResponseEntity<String> sendOTP(HttpServletRequest request) {
         ApiResponse res = ApiResponse.newInstance();
-        String identity = request.getParameter("identity");
-        Citizen citizen = null;
+        String mobileNo = request.getParameter("identity");
         try {
-            if (identity.matches("\\d{10}")) {
-                citizen = citizenService.getCitizenByUserName(identity);
-            } else if (identity.contains("@") && identity.contains(".")) {
-                citizen = citizenService.getCitizenByEmailId(identity);
+            if (!mobileNo.matches("\\d{10}")) {
+            	return res.error(getMessage("msg.invalid.mobileno"));
             }
-            if (citizen == null) {
-                return res.error(getMessage("user.not.found"));
-            }
-           // citizenService.sendActivationMessage(citizen);
-            return res.setDataAdapter(new UserAdapter()).success(citizen, this.getMessage("sendOTP.success"));
+            citizenService.sendOTPMessage(mobileNo);
+            return res.setDataAdapter(new UserAdapter()).success(this.getMessage("sendOTP.success"));
         } catch (Exception e) {
         	LOGGER.error("EGOV-API ERROR ",e);
         	return res.error(getMessage("server.error"));
