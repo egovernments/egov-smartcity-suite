@@ -123,7 +123,7 @@ public class FunctionService {
 		predicates.add(cb.isNotNull(functions.get("code")));
 		predicates.add(cb.like(cb.lower(functions.get(CFunction_.getDeclaredSingularAttribute("code", String.class))),code));
 		}
-		if(function.getIsActive()==true)
+		if(function.getIsActive())
 		{
 			predicates.add(cb.equal(functions.get(CFunction_.getDeclaredSingularAttribute("isActive", Boolean.class)),true));
 		}

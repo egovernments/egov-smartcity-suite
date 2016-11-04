@@ -52,7 +52,6 @@ import javax.persistence.criteria.Root;
 import javax.persistence.metamodel.EntityType;
 import javax.persistence.metamodel.Metamodel;
 
-import org.egov.commons.Fund;
 import org.egov.commons.Fundsource;
 import org.egov.commons.repository.FundsourceRepository;
 import org.springframework.beans.factory.annotation.Autowired;

@@ -87,14 +87,15 @@ public class AccountEntityService implements  EntityTypeService {
 
 	@Transactional
 	public AccountEntity create(AccountEntity accountEntity) {
-		accountEntity	= accountEntityRepository.save(accountEntity);		
+	    AccountEntity accountEntitytmp =new AccountEntity();
+	    accountEntitytmp	= accountEntityRepository.save(accountEntity);		
 		Accountdetailkey ac=new Accountdetailkey();
-		ac.setDetailkey(accountEntity.getId());
-		ac.setDetailname(accountEntity.getName());
+		ac.setDetailkey(accountEntitytmp.getId());
+		ac.setDetailname(accountEntitytmp.getName());
 		ac.setGroupid(1);
-		ac.setAccountdetailtype(accountEntity.getAccountdetailtype());
+		ac.setAccountdetailtype(accountEntitytmp.getAccountdetailtype());
 		accountDetailKeyService.create(ac);
-		return accountEntity;
+		return accountEntitytmp;
 	} 
 	@Transactional
 	public AccountEntity update(final AccountEntity accountEntity) {
