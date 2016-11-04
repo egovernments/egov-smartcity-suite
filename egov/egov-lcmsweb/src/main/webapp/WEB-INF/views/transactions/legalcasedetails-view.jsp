@@ -181,35 +181,32 @@
 				</div>
 			</div>
 		</div>
-		<div class="row form-group">
-			<div class="panel-heading">
-				<div class="panel-title" align="center" style="font-weight: bold">
-					<spring:message code="lbl.bipartisanDetails.details" />
-				</div>
+		<div class="panel-heading">
+			<div class="panel-title" align="center" style="font-weight: bold">
+				<spring:message code="lbl.bipartisanDetails.details" />
 			</div>
-			<table class="table table-striped table-bordered"
-				id="petitionDetails">
-				<thead>
-					<tr>
-						<th class="text-center"><spring:message code="lbl.slno" /> <%-- <th class="text-center"><spring:message code="lbl.IsGovtDept" /></th> --%>
-						<th class="text-center"><spring:message code="lbl.name" /><span
-							class="mandatory"></span></th>
-						<th class="text-center"><spring:message
-								code="lbl.discription" /></th>
-						<th class="text-center"><spring:message
-								code="lbl.contactnumber" /></th>
-						<%-- <th class="text-center"><spring:message code="lbl.Govt_Dept" /></th> --%>
-					</tr>
-				</thead>
-				<tbody>
+		</div>
+		<table class="table table-striped table-bordered" id="petitionDetails">
+			<thead>
+				<tr>
+					<th class="text-center"><spring:message code="lbl.slno" /> <%-- <th class="text-center"><spring:message code="lbl.IsGovtDept" /></th> --%>
+					<th class="text-center"><spring:message code="lbl.name" /><span
+						class="mandatory"></span></th>
+					<th class="text-center"><spring:message code="lbl.discription" /></th>
+					<th class="text-center"><spring:message
+							code="lbl.contactnumber" /></th>
+					<%-- <th class="text-center"><spring:message code="lbl.Govt_Dept" /></th> --%>
+				</tr>
+			</thead>
+			<tbody>
 
-					<c:forEach var="bipartisanDetails"
-						items="${legalCase.getPetitioners()}" varStatus="status">
-						<tr>
-							<td><input type="text" id="table_name${status.index}"
-								class="form-control" readonly="readonly"
-								style="text-align: center" value="${status.index+1}" /></td>
-							<%-- <td><form:input type="hidden"
+				<c:forEach var="bipartisanDetails"
+					items="${legalCase.getPetitioners()}" varStatus="status">
+					<tr>
+						<td><input type="text" id="table_name${status.index}"
+							class="form-control" readonly="readonly"
+							style="text-align: center" value="${status.index+1}" /></td>
+						<%-- <td><form:input type="hidden"
 									id="bipartisanDetails[${status.index}].isRespondentGovernment"
 									path="bipartisanDetails[${status.index}].isRespondentGovernment" />
 									<c:choose>
@@ -229,29 +226,29 @@
 								
 								</c:otherwise>
 								</c:choose></td> --%>
-							<td><form:input type="hidden"
-									id="bipartisanDetails[${status.index}].name"
-									path="bipartisanDetails[${status.index}].name" /> <input
-								type="text" id="table_name${status.index}" class="form-control"
-								readonly="readonly" style="text-align: center"
-								value="${bipartisanDetails.name}" /></td>
-							<td><form:input type="hidden"
-									id="bipartisanDetails[${status.index}].address"
-									path="bipartisanDetails[${status.index}].address" /> <input
-								type="text" id="table_address${status.index}"
-								class="form-control" readonly="readonly"
-								style="text-align: center" value="${bipartisanDetails.address}" />
-							</td>
+						<td><form:input type="hidden"
+								id="bipartisanDetails[${status.index}].name"
+								path="bipartisanDetails[${status.index}].name" /> <input
+							type="text" id="table_name${status.index}" class="form-control"
+							readonly="readonly" style="text-align: center"
+							value="${bipartisanDetails.name}" /></td>
+						<td><form:input type="hidden"
+								id="bipartisanDetails[${status.index}].address"
+								path="bipartisanDetails[${status.index}].address" /> <input
+							type="text" id="table_address${status.index}"
+							class="form-control" readonly="readonly"
+							style="text-align: center" value="${bipartisanDetails.address}" />
+						</td>
 
-							<td><form:input type="hidden"
-									id="bipartisanDetails[${status.index}].contactNumber"
-									path="bipartisanDetails[${status.index}].contactNumber" /> <input
-								type="text" id="table_contactNumber${status.index}"
-								class="form-control" readonly="readonly"
-								style="text-align: center"
-								value="${bipartisanDetails.contactNumber}" /></td>
+						<td><form:input type="hidden"
+								id="bipartisanDetails[${status.index}].contactNumber"
+								path="bipartisanDetails[${status.index}].contactNumber" /> <input
+							type="text" id="table_contactNumber${status.index}"
+							class="form-control" readonly="readonly"
+							style="text-align: center"
+							value="${bipartisanDetails.contactNumber}" /></td>
 
-							<%-- <td><form:input type="hidden"
+						<%-- <td><form:input type="hidden"
 									id="bipartisanDetails[${status.index}].governmentDepartment"
 									path="bipartisanDetails[${status.index}].governmentDepartment" />
 								<input type="text"
@@ -261,40 +258,37 @@
 								value="${bipartisanDetails.governmentDepartment.name}" />
 								</td> --%>
 
-						</tr>
-					</c:forEach>
-				</tbody>
-			</table>
-		</div>
-		<div class="row form-group">
-			<div class="panel-heading">
-				<div class="panel-title" style="font-weight: bold" align="center">
-					<spring:message code="lbl.bipartisanDetails.respondant" />
-				</div>
-			</div>
-			<table class="table table-striped table-bordered"
-				id="respondantDetails">
-				<thead>
-					<tr>
-						<th class="text-center"><spring:message code="lbl.slno" /> <%-- <th class="text-center"><spring:message code="lbl.IsGovtDept" /></th> --%>
-						<th class="text-center"><spring:message code="lbl.name" /><span
-							class="mandatory"></span></th>
-						<th class="text-center"><spring:message
-								code="lbl.discription" /></th>
-						<th class="text-center"><spring:message
-								code="lbl.contactnumber" /></th>
-						<%-- <th class="text-center"><spring:message code="lbl.Govt_Dept" /></th> --%>
 					</tr>
-				</thead>
-				<tbody>
+				</c:forEach>
+			</tbody>
+		</table>
+		<div class="panel-heading">
+			<div class="panel-title" style="font-weight: bold" align="center">
+				<spring:message code="lbl.bipartisanDetails.respondant" />
+			</div>
+		</div>
+		<table class="table table-striped table-bordered"
+			id="respondantDetails">
+			<thead>
+				<tr>
+					<th class="text-center"><spring:message code="lbl.slno" /> <%-- <th class="text-center"><spring:message code="lbl.IsGovtDept" /></th> --%>
+					<th class="text-center"><spring:message code="lbl.name" /><span
+						class="mandatory"></span></th>
+					<th class="text-center"><spring:message code="lbl.discription" /></th>
+					<th class="text-center"><spring:message
+							code="lbl.contactnumber" /></th>
+					<%-- <th class="text-center"><spring:message code="lbl.Govt_Dept" /></th> --%>
+				</tr>
+			</thead>
+			<tbody>
 
-					<c:forEach var="bipartisanDetailsBeanList"
-						items="${legalCase.getRespondents()}" varStatus="status">
-						<tr>
-							<td><input type="text" id="table_name${status.index}"
-								class="form-control" readonly="readonly"
-								style="text-align: center" value="${status.index+1}" /></td>
-							<%-- <td>
+				<c:forEach var="bipartisanDetailsBeanList"
+					items="${legalCase.getRespondents()}" varStatus="status">
+					<tr>
+						<td><input type="text" id="table_name${status.index}"
+							class="form-control" readonly="readonly"
+							style="text-align: center" value="${status.index+1}" /></td>
+						<%-- <td>
 							<form:input type="hidden"
 									id="bipartisanDetailsBeanList[${status.index}].isRespondentGovernment"
 									path="bipartisanDetailsBeanList[${status.index}].isRespondentGovernment" />
@@ -317,30 +311,30 @@
 								</c:choose>
 								</td> --%>
 
-							<td><form:input type="hidden"
-									id="bipartisanDetailsBeanList[${status.index}].name"
-									path="bipartisanDetailsBeanList[${status.index}].name" /> <input
-								type="text" id="table_name${status.index}" class="form-control"
-								readonly="readonly" style="text-align: center"
-								value="${bipartisanDetailsBeanList.name}" /></td>
+						<td><form:input type="hidden"
+								id="bipartisanDetailsBeanList[${status.index}].name"
+								path="bipartisanDetailsBeanList[${status.index}].name" /> <input
+							type="text" id="table_name${status.index}" class="form-control"
+							readonly="readonly" style="text-align: center"
+							value="${bipartisanDetailsBeanList.name}" /></td>
 
-							<td><form:input type="hidden"
-									id="bipartisanDetailsBeanList[${status.index}].address"
-									path="bipartisanDetailsBeanList[${status.index}].address" /> <input
-								type="text" id="table_address${status.index}"
-								class="form-control" readonly="readonly"
-								style="text-align: center"
-								value="${bipartisanDetailsBeanList.address}" /></td>
+						<td><form:input type="hidden"
+								id="bipartisanDetailsBeanList[${status.index}].address"
+								path="bipartisanDetailsBeanList[${status.index}].address" /> <input
+							type="text" id="table_address${status.index}"
+							class="form-control" readonly="readonly"
+							style="text-align: center"
+							value="${bipartisanDetailsBeanList.address}" /></td>
 
-							<td><form:input type="hidden"
-									id="bipartisanDetailsBeanList[${status.index}].contactNumber"
-									path="bipartisanDetailsBeanList[${status.index}].contactNumber" />
-								<input type="text" id="table_contactNumber${status.index}"
-								class="form-control" readonly="readonly"
-								style="text-align: center"
-								value="${bipartisanDetailsBeanList.contactNumber}" /></td>
+						<td><form:input type="hidden"
+								id="bipartisanDetailsBeanList[${status.index}].contactNumber"
+								path="bipartisanDetailsBeanList[${status.index}].contactNumber" />
+							<input type="text" id="table_contactNumber${status.index}"
+							class="form-control" readonly="readonly"
+							style="text-align: center"
+							value="${bipartisanDetailsBeanList.contactNumber}" /></td>
 
-							<%-- <td>
+						<%-- <td>
 								<form:input type="hidden"
 									id="bipartisanDetailsBeanList[${status.index}].governmentDepartment"
 									path="bipartisanDetailsBeanList[${status.index}].governmentDepartment" />
@@ -351,42 +345,35 @@
 								value="${bipartisanDetailsBeanList.governmentDepartment.name}" />
 								</td> --%>
 
-						</tr>
-					</c:forEach>
-				</tbody>
-			</table>
-		</div>
-
-		<div class="main-content">
-			<div class="row">
-				<div class="col-md-12">
-					<div class="form-group">
-						<div class="row add-border">
-							<div class="col-xs-2 add-margin">
-								<spring:message code="lbl.representedby" />
-							</div>
-							<div class="col-xs-3 add-margin view-content">
-								<c:out value="${legalCase.representedby}" />
-							</div>
-							<div class="col-xs-2 add-margin">Standing Council Name:</div>
-							<div class="col-xs-3 add-margin view-content">
-								<c:out value="${legalCase.oppPartyAdvocate}" />
-							</div>
-						</div>
-
-						<div class="row add-border">
-							<div class="col-xs-2 add-margin">Remarks:</div>
-							<div class="col-xs-3 add-margin view-content">
-								<c:out value="${legalCase.remarks}" />
-							</div>
-						</div>
+					</tr>
+				</c:forEach>
+			</tbody>
+		</table>
+		<div class="row">
+			<div class="col-md-12">
+				<div class="row add-border">
+					<div class="col-md-2 col-xs-6 add-margin">
+						<spring:message code="lbl.representedby" />
 					</div>
-
+					<div class="col-md-3 col-xs-6 add-margin view-content">
+						<c:out value="${legalCase.representedby}" />
+					</div>
+					<div class="col-md-2 col-xs-6 add-margin">Standing Council
+						Name:</div>
+					<div class="col-md-3 col-xs-6 add-margin view-content">
+						<c:out value="${legalCase.oppPartyAdvocate}" />
+					</div>
+				</div>
+				<div class="row add-border">
+					<div class="col-md-2 col-xs-6 add-margin">Remarks:</div>
+					<div class="col-md-3 col-xs-6 add-margin view-content">
+						<c:out value="${legalCase.remarks}" />
+					</div>
 				</div>
 			</div>
 		</div>
 		<div class="row form-group">
-			<c:if test="${not empty legalCase.eglcLegalcaseAdvocates }">
+			<c:if test="${not empty legalCase.legalCaseAdvocates }">
 				<div class="panel-heading">
 					<div class="panel-title" align="center" style="font-weight: bold">
 						Standing Council Details:</div>
@@ -404,13 +391,13 @@
 													Council: </label>
 												<div class="col-sm-3 add-margin">
 													<c:out
-														value="${legalCase.eglcLegalcaseAdvocates[0].advocateMaster.name}" />
+														value="${legalCase.legalCaseAdvocates[0].advocateMaster.name}" />
 												</div>
 												<label class="col-sm-2 control-label text-right">Assigned
 													Date: </label>
 												<div class="col-sm-3 add-margin">
 													<fmt:formatDate pattern="dd/MM/yyyy"
-														value="${legalCase.eglcLegalcaseAdvocates[0].assignedtodate}"
+														value="${legalCase.legalCaseAdvocates[0].assignedToDate}"
 														var="assignDate" />
 													<c:out value="${assignDate}" />
 												</div>
@@ -420,9 +407,9 @@
 													on which Vakalaat filed:</label>
 												<div class="col-sm-3 add-margin">
 													<fmt:formatDate pattern="dd/MM/yyyy"
-														value="${legalCase.eglcLegalcaseAdvocates[0].vakalatdate}"
-														var="assignDate" />
-													<c:out value="${assignDate}" />
+														value="${legalCase.legalCaseAdvocates[0].vakalatDate}"
+														var="vakaltadate" />
+													<c:out value="${vakaltadate}" />
 												</div>
 											</div>
 											<div class="form-group">
@@ -446,7 +433,7 @@
 														Standing Council: </label>
 													<div class="col-sm-3 add-margin">
 														<c:out
-															value="${legalCase.eglcLegalcaseAdvocates[0].eglcSeniorAdvocateMaster.name}" />
+															value="${legalCase.legalCaseAdvocates[0].seniorAdvocate.name}" />
 
 													</div>
 													<div class="form-group" id="seniordov3">
@@ -455,9 +442,9 @@
 														<div class="col-sm-3 add-margin">
 
 															<fmt:formatDate pattern="dd/MM/yyyy"
-																value="${legalCase.eglcLegalcaseAdvocates[0].assignedtodateForsenior}"
-																var="assignDate" />
-															<c:out value="${assignDate}" />
+																value="${legalCase.legalCaseAdvocates[0].assignedToDateForSenior}"
+																var="assigntoDate" />
+															<c:out value="${assigntoDate}" />
 														</div>
 													</div>
 												</div>
@@ -467,7 +454,7 @@
 													<div class="col-sm-3 add-margin">
 
 														<fmt:formatDate pattern="dd/MM/yyyy"
-															value="${legalCase.eglcLegalcaseAdvocates[0].orderdate}"
+															value="${legalCase.legalCaseAdvocates[0].orderDate}"
 															var="assignDate" />
 														<c:out value="${assignDate}" />
 													</div>
@@ -475,7 +462,7 @@
 														Number: </label>
 													<div class="col-sm-3 add-margin">
 														<c:out
-															value="${legalCase.eglcLegalcaseAdvocates[0].ordernumber}" />
+															value="${legalCase.legalCaseAdvocates[0].orderNumber}" />
 													</div>
 											</c:if>
 										</div>

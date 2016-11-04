@@ -46,10 +46,9 @@
 
 <div class="row">
 	<div class="col-md-12">
-		<form:form method="get" modelAttribute="legalCaseReportResult"
-			name="searchlegalcaseForm" id="searchlegalcaseForm1"
-			class="form-horizontal form-groups-bordered"
-			enctype="multipart/form-data">
+		<form:form modelAttribute="legalCaseSearchResult"
+			name="searchlegalcaseForm" id="searchlegalcaseForm"
+			class="form-horizontal form-groups-bordered">
 			<div class="row">
 				<div class="panel panel-primary" data-collapsed="0">
 
@@ -80,8 +79,8 @@
 							<label for="field-1" class="col-sm-3 control-label">Case
 								category </label>
 							<div class="col-sm-3 add-margin">
-								<form:select name="caseCatogory" path=""
-									data-first-option="false" id="caseCatogory"
+								<form:select name="casecategory" path=""
+									data-first-option="false" id="casecategory"
 									cssClass="form-control">
 									<form:option value="">
 										<spring:message code="lbls.select" />
@@ -170,11 +169,10 @@
 							</div>
 						</div>
 						<div class="form-group">
-							<label class="col-sm-3 control-label"><spring:message
+							<label class="col-sm-4 control-label"><spring:message
 									code="lbl.exclude.closed.case" /></label>
-							<div class="col-sm-3 add-margin">
-								<form:checkbox id="isStatusExcluded" path=""
-									value="isStatusExcluded" />
+							<div class="col-sm-2 add-margin">
+							 <input type="checkbox" name="isStatusExcluded" value="isStatusExcluded"/>
 							</div>
 
 
@@ -182,8 +180,9 @@
 						<div class="row">
 
 							<div class="text-center">
-								<button type="button" id="legalcaseReportSearch"
-									class="btn btn-primary">Search</button>
+								<a href="javascript:void(0);" id="legalcaseReportSearch"
+								class="btn btn-primary"><spring:message code='lbl.search' /></a>
+								
 								<a href="javascript:void(0)" class="btn btn-default"
 									onclick="self.close()"> Close</a>
 							</div>
@@ -215,7 +214,8 @@
 	href="<cdn:url value='/resources/global/css/bootstrap/bootstrap-datepicker.css' context='/egi'/>" />
 <script
 	src="<cdn:url value='/resources/global/js/bootstrap/bootstrap-datepicker.js' context='/egi'/>"></script>
-
+<link rel="stylesheet" href="<cdn:url value='/resources/global/css/jquery/plugins/datatables/jquery.dataTables.min.css' context='/egi'/>"/>
+<link rel="stylesheet" href="<cdn:url value='/resources/global/css/jquery/plugins/datatables/dataTables.bootstrap.min.css' context='/egi'/>">
 <script type="text/javascript"
 	src="<cdn:url value='/resources/global/js/jquery/plugins/datatables/jquery.dataTables.min.js' context='/egi'/>"></script>
 <script type="text/javascript"
@@ -226,12 +226,6 @@
 	src="<cdn:url value='/resources/global/js/jquery/plugins/datatables/dataTables.tableTools.js' context='/egi'/>"></script>
 <script type="text/javascript"
 	src="<cdn:url value='/resources/global/js/jquery/plugins/datatables/TableTools.min.js' context='/egi'/>"></script>
-<script type="text/javascript"
-	src="<cdn:url value='/resources/global/js/jquery/plugins/datatables/jquery.dataTables.columnFilter.js' context='/egi'/>"></script>
-<script type="text/javascript"
-	src="<cdn:url value='/resources/global/js/bootstrap/typeahead.bundle.js' context='/egi'/>"></script>
-<script
-	src="<cdn:url value='/resources/global/js/jquery/plugins/jquery.inputmask.bundle.min.js' context='/egi'/>"></script>
 <script type="text/javascript"
 	src="<cdn:url value='/resources/global/js/jquery/plugins/jquery.validate.min.js' context='/egi'/>"></script>
 <script

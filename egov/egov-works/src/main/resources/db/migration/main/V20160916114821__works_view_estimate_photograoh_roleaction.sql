@@ -1,0 +1,69 @@
+insert into EG_ACTION (ID,NAME,URL,QUERYPARAMS,PARENTMODULE,ORDERNUMBER,DISPLAYNAME,ENABLED,CONTEXTROOT,VERSION,CREATEDBY,CREATEDDATE,LASTMODIFIEDBY,LASTMODIFIEDDATE,APPLICATION) values (NEXTVAL('SEQ_EG_ACTION'),'View Estimate Photographs','/estimatephotograph/viewestimatephotograph',null,(select id from EG_MODULE where name = 'WorksEstimatePhotograph'),3,'View Estimate Photographs','true','egworks',0,1,now(),1,now(),(select id from eg_module  where name = 'Works Management'));
+insert into eg_roleaction (roleid, actionid) values ((select id from eg_role where name = 'Super User'),(select id from eg_action where name ='View Estimate Photographs' and contextroot = 'egworks'));
+insert into eg_roleaction (roleid, actionid) values ((select id from eg_role where name = 'Works Creator'),(select id from eg_action where name ='View Estimate Photographs' and contextroot = 'egworks'));
+insert into eg_roleaction (roleid, actionid) values ((select id from eg_role where name = 'Works Approver'),(select id from eg_action where name ='View Estimate Photographs' and contextroot = 'egworks'));
+
+insert into EG_ACTION (ID,NAME,URL,QUERYPARAMS,PARENTMODULE,ORDERNUMBER,DISPLAYNAME,ENABLED,CONTEXTROOT,VERSION,CREATEDBY,CREATEDDATE,LASTMODIFIEDBY,LASTMODIFIEDDATE,APPLICATION) values (NEXTVAL('SEQ_EG_ACTION'),'Ajax Search Estimate Photographs','/estimatephotograph/searchestimatephotograph',null,(select id from EG_MODULE where name = 'WorksEstimatePhotograph'),1,'Ajax Search Estimate Photographs','false','egworks',0,1,now(),1,now(),(select id from eg_module  where name = 'Works Management'));
+insert into eg_roleaction (roleid, actionid) values ((select id from eg_role where name = 'Super User'),(select id from eg_action where name ='Ajax Search Estimate Photographs' and contextroot = 'egworks'));
+insert into eg_roleaction (roleid, actionid) values ((select id from eg_role where name = 'Works Creator'),(select id from eg_action where name ='Ajax Search Estimate Photographs' and contextroot = 'egworks'));
+insert into eg_roleaction (roleid, actionid) values ((select id from eg_role where name = 'Works Approver'),(select id from eg_action where name ='Ajax Search Estimate Photographs' and contextroot = 'egworks'));
+
+insert into EG_ACTION (ID,NAME,URL,QUERYPARAMS,PARENTMODULE,ORDERNUMBER,DISPLAYNAME,ENABLED,CONTEXTROOT,VERSION,CREATEDBY,CREATEDDATE,LASTMODIFIEDBY,LASTMODIFIEDDATE,APPLICATION) values (NEXTVAL('SEQ_EG_ACTION'),'Get Estimate Number to View Estimate Photograph','/estimatephotograph/getestimatenumbers-viewestimatephotograph',null,(select id from EG_MODULE where name = 'WorksEstimatePhotograph'),1,'Get Estimate Number to View Estimate Photograph','false','egworks',0,1,now(),1,now(),(select id from eg_module  where name = 'Works Management'));
+insert into eg_roleaction (roleid, actionid) values ((select id from eg_role where name = 'Super User'),(select id from eg_action where name ='Get Estimate Number to View Estimate Photograph' and contextroot = 'egworks'));
+insert into eg_roleaction (roleid, actionid) values ((select id from eg_role where name = 'Works Creator'),(select id from eg_action where name ='Get Estimate Number to View Estimate Photograph' and contextroot = 'egworks'));
+insert into eg_roleaction (roleid, actionid) values ((select id from eg_role where name = 'Works Approver'),(select id from eg_action where name ='Get Estimate Number to View Estimate Photograph' and contextroot = 'egworks'));
+
+insert into EG_ACTION (ID,NAME,URL,QUERYPARAMS,PARENTMODULE,ORDERNUMBER,DISPLAYNAME,ENABLED,CONTEXTROOT,VERSION,CREATEDBY,CREATEDDATE,LASTMODIFIEDBY,LASTMODIFIEDDATE,APPLICATION) values (NEXTVAL('SEQ_EG_ACTION'),'Get WIN to View Estimate Photograph','/estimatephotograph/getwin-viewestimatephotograph',null,(select id from EG_MODULE where name = 'WorksEstimatePhotograph'),1,'Get WIN to View Estimate Photograph','false','egworks',0,1,now(),1,now(),(select id from eg_module  where name = 'Works Management'));
+insert into eg_roleaction (roleid, actionid) values ((select id from eg_role where name = 'Super User'),(select id from eg_action where name ='Get WIN to View Estimate Photograph' and contextroot = 'egworks'));
+insert into eg_roleaction (roleid, actionid) values ((select id from eg_role where name = 'Works Creator'),(select id from eg_action where name ='Get WIN to View Estimate Photograph' and contextroot = 'egworks'));
+insert into eg_roleaction (roleid, actionid) values ((select id from eg_role where name = 'Works Approver'),(select id from eg_action where name ='Get WIN to View Estimate Photograph' and contextroot = 'egworks'));
+
+insert into EG_ACTION (ID,NAME,URL,QUERYPARAMS,PARENTMODULE,ORDERNUMBER,DISPLAYNAME,ENABLED,CONTEXTROOT,VERSION,CREATEDBY,CREATEDDATE,LASTMODIFIEDBY,LASTMODIFIEDDATE,APPLICATION) values (NEXTVAL('SEQ_EG_ACTION'),'View Estimate Photograph Form','/estimatephotograph/view',null,(select id from EG_MODULE where name = 'WorksEstimatePhotograph'),1,'View Estimate Photograph Form','false','egworks',0,1,now(),1,now(),(select id from eg_module  where name = 'Works Management'));
+insert into eg_roleaction (roleid, actionid) values ((select id from eg_role where name = 'Super User'),(select id from eg_action where name ='View Estimate Photograph Form' and contextroot = 'egworks'));
+insert into eg_roleaction (roleid, actionid) values ((select id from eg_role where name = 'Works Creator'),(select id from eg_action where name ='View Estimate Photograph Form' and contextroot = 'egworks'));
+insert into eg_roleaction (roleid, actionid) values ((select id from eg_role where name = 'Works Approver'),(select id from eg_action where name ='View Estimate Photograph Form' and contextroot = 'egworks'));
+
+insert into EG_ACTION (ID,NAME,URL,QUERYPARAMS,PARENTMODULE,ORDERNUMBER,DISPLAYNAME,ENABLED,CONTEXTROOT,VERSION,CREATEDBY,CREATEDDATE,LASTMODIFIEDBY,LASTMODIFIEDDATE,APPLICATION) values (NEXTVAL('SEQ_EG_ACTION'),'Get Work Order Number to View Estimate Photograph','/letterofacceptance/getworkordernumber-viewestimatephotograph',null,(select id from EG_MODULE where name = 'WorksEstimatePhotograph'),1,'Get Work Order Number to View Estimate Photograph','false','egworks',0,1,now(),1,now(),(select id from eg_module  where name = 'Works Management'));
+insert into eg_roleaction (roleid, actionid) values ((select id from eg_role where name = 'Super User'),(select id from eg_action where name ='Get Work Order Number to View Estimate Photograph' and contextroot = 'egworks'));
+insert into eg_roleaction (roleid, actionid) values ((select id from eg_role where name = 'Works Creator'),(select id from eg_action where name ='Get Work Order Number to View Estimate Photograph' and contextroot = 'egworks'));
+insert into eg_roleaction (roleid, actionid) values ((select id from eg_role where name = 'Works Approver'),(select id from eg_action where name ='Get Work Order Number to View Estimate Photograph' and contextroot = 'egworks'));
+
+insert into EG_ACTION (ID,NAME,URL,QUERYPARAMS,PARENTMODULE,ORDERNUMBER,DISPLAYNAME,ENABLED,CONTEXTROOT,VERSION,CREATEDBY,CREATEDDATE,LASTMODIFIEDBY,LASTMODIFIEDDATE,APPLICATION) values (NEXTVAL('SEQ_EG_ACTION'),'Get Contractors to View Estimate Photograph','/letterofacceptance/getcontractorname-viewestimatephotograph',null,(select id from EG_MODULE where name = 'WorksEstimatePhotograph'),1,'Get Contractors to View Estimate Photograph','false','egworks',0,1,now(),1,now(),(select id from eg_module  where name = 'Works Management'));
+insert into eg_roleaction (roleid, actionid) values ((select id from eg_role where name = 'Super User'),(select id from eg_action where name ='Get Contractors to View Estimate Photograph' and contextroot = 'egworks'));
+insert into eg_roleaction (roleid, actionid) values ((select id from eg_role where name = 'Works Creator'),(select id from eg_action where name ='Get Contractors to View Estimate Photograph' and contextroot = 'egworks'));
+insert into eg_roleaction (roleid, actionid) values ((select id from eg_role where name = 'Works Approver'),(select id from eg_action where name ='Get Contractors to View Estimate Photograph' and contextroot = 'egworks'));
+
+--rollback delete FROM EG_ROLEACTION WHERE roleid = (SELECT id FROM eg_role WHERE name = 'Works Creator') and actionid = (SELECT id FROM eg_action WHERE name ='Get Work Order Number to View Estimate Photograph' and contextroot = 'egworks');
+--rollback  delete FROM EG_ROLEACTION WHERE roleid = (SELECT id FROM eg_role WHERE name = 'Super User') and actionid = (SELECT id FROM eg_action WHERE name ='Get Work Order Number to View Estimate Photograph' and contextroot = 'egworks');
+--rollback  delete FROM EG_ROLEACTION WHERE roleid = (SELECT id FROM eg_role WHERE name = 'Works Approver') and actionid = (SELECT id FROM eg_action WHERE name ='Get Work Order Number to View Estimate Photograph' and contextroot = 'egworks');
+--rollback  delete FROM EG_ACTION WHERE name = 'Get Work Order Number to View Estimate Photograph' and contextroot = 'egworks';
+
+--rollback delete FROM EG_ROLEACTION WHERE roleid = (SELECT id FROM eg_role WHERE name = 'Works Creator') and actionid = (SELECT id FROM eg_action WHERE name ='Get Contractors to View Estimate Photograph' and contextroot = 'egworks');
+--rollback  delete FROM EG_ROLEACTION WHERE roleid = (SELECT id FROM eg_role WHERE name = 'Super User') and actionid = (SELECT id FROM eg_action WHERE name ='Get Contractors to View Estimate Photograph' and contextroot = 'egworks');
+--rollback  delete FROM EG_ROLEACTION WHERE roleid = (SELECT id FROM eg_role WHERE name = 'Works Approver') and actionid = (SELECT id FROM eg_action WHERE name ='Get Contractors to View Estimate Photograph' and contextroot = 'egworks');
+--rollback  delete FROM EG_ACTION WHERE name = 'Get Contractors to View Estimate Photograph' and contextroot = 'egworks';
+
+--rollback delete FROM EG_ROLEACTION WHERE roleid = (SELECT id FROM eg_role WHERE name = 'Works Creator') and actionid = (SELECT id FROM eg_action WHERE name ='View Estimate Photograph Form' and contextroot = 'egworks');
+--rollback  delete FROM EG_ROLEACTION WHERE roleid = (SELECT id FROM eg_role WHERE name = 'Super User') and actionid = (SELECT id FROM eg_action WHERE name ='View Estimate Photograph Form' and contextroot = 'egworks');
+--rollback  delete FROM EG_ROLEACTION WHERE roleid = (SELECT id FROM eg_role WHERE name = 'Works Approver') and actionid = (SELECT id FROM eg_action WHERE name ='View Estimate Photograph Form' and contextroot = 'egworks');
+--rollback  delete FROM EG_ACTION WHERE name = 'View Estimate Photograph Form' and contextroot = 'egworks';
+
+--rollback delete FROM EG_ROLEACTION WHERE roleid = (SELECT id FROM eg_role WHERE name = 'Works Creator') and actionid = (SELECT id FROM eg_action WHERE name ='Get Estimate Number to View Estimate Photograph' and contextroot = 'egworks');
+--rollback  delete FROM EG_ROLEACTION WHERE roleid = (SELECT id FROM eg_role WHERE name = 'Super User') and actionid = (SELECT id FROM eg_action WHERE name ='Get Estimate Number to View Estimate Photograph' and contextroot = 'egworks');
+--rollback  delete FROM EG_ROLEACTION WHERE roleid = (SELECT id FROM eg_role WHERE name = 'Works Approver') and actionid = (SELECT id FROM eg_action WHERE name ='Get Estimate Number to View Estimate Photograph' and contextroot = 'egworks');
+--rollback  delete FROM EG_ACTION WHERE name = 'Get Estimate Number to View Estimate Photograph' and contextroot = 'egworks';
+
+--rollback delete FROM EG_ROLEACTION WHERE roleid = (SELECT id FROM eg_role WHERE name = 'Works Creator') and actionid = (SELECT id FROM eg_action WHERE name ='Get WIN to View Estimate Photograph' and contextroot = 'egworks');
+--rollback  delete FROM EG_ROLEACTION WHERE roleid = (SELECT id FROM eg_role WHERE name = 'Super User') and actionid = (SELECT id FROM eg_action WHERE name ='Get WIN to View Estimate Photograph' and contextroot = 'egworks');
+--rollback  delete FROM EG_ROLEACTION WHERE roleid = (SELECT id FROM eg_role WHERE name = 'Works Approver') and actionid = (SELECT id FROM eg_action WHERE name ='Get WIN to View Estimate Photograph' and contextroot = 'egworks');
+--rollback  delete FROM EG_ACTION WHERE name = 'Get WIN to View Estimate Photograph' and contextroot = 'egworks';
+
+--rollback delete FROM EG_ROLEACTION WHERE roleid = (SELECT id FROM eg_role WHERE name = 'Works Creator') and actionid = (SELECT id FROM eg_action WHERE name ='Ajax Search Estimate Photographs' and contextroot = 'egworks');
+--rollback  delete FROM EG_ROLEACTION WHERE roleid = (SELECT id FROM eg_role WHERE name = 'Super User') and actionid = (SELECT id FROM eg_action WHERE name ='Ajax Search Estimate Photographs' and contextroot = 'egworks');
+--rollback  delete FROM EG_ROLEACTION WHERE roleid = (SELECT id FROM eg_role WHERE name = 'Works Approver') and actionid = (SELECT id FROM eg_action WHERE name ='Ajax Search Estimate Photographs' and contextroot = 'egworks');
+--rollback  delete FROM EG_ACTION WHERE name = 'Ajax Search Estimate Photographs' and contextroot = 'egworks';
+
+--rollback delete FROM EG_ROLEACTION WHERE roleid = (SELECT id FROM eg_role WHERE name = 'Works Creator') and actionid = (SELECT id FROM eg_action WHERE name ='View Estimate Photographs' and contextroot = 'egworks');
+--rollback  delete FROM EG_ROLEACTION WHERE roleid = (SELECT id FROM eg_role WHERE name = 'Super User') and actionid = (SELECT id FROM eg_action WHERE name ='View Estimate Photographs' and contextroot = 'egworks');
+--rollback  delete FROM EG_ROLEACTION WHERE roleid = (SELECT id FROM eg_role WHERE name = 'Works Approver') and actionid = (SELECT id FROM eg_action WHERE name ='View Estimate Photographs' and contextroot = 'egworks');
+--rollback  delete FROM EG_ACTION WHERE name = 'View Estimate Photographs' and contextroot = 'egworks';

@@ -50,6 +50,13 @@ import javax.jms.JMSException;
 import javax.jms.MapMessage;
 import javax.jms.Message;
 
+import static org.egov.infra.messaging.MessageConstants.ATTACHMENT;
+import static org.egov.infra.messaging.MessageConstants.EMAIL;
+import static org.egov.infra.messaging.MessageConstants.FILENAME;
+import static org.egov.infra.messaging.MessageConstants.FILETYPE;
+import static org.egov.infra.messaging.MessageConstants.MESSAGE;
+import static org.egov.infra.messaging.MessageConstants.SUBJECT;
+
 @Component
 public class EmailQueueListener {
 
@@ -60,13 +67,13 @@ public class EmailQueueListener {
     public void onMessage(Message message) {
         try {
             final MapMessage emailMessage = (MapMessage) message;
-            if (emailMessage.itemExists("type"))
-                emailService.sendMailWithAttachment(emailMessage.getString("email"), emailMessage.getString("subject"),
-                        emailMessage.getString("message"), emailMessage.getString("type"),
-                        emailMessage.getString("name"), emailMessage.getObject("attachment"));
+            if (emailMessage.itemExists(FILETYPE))
+                emailService.sendMailWithAttachment(emailMessage.getString(EMAIL), emailMessage.getString(SUBJECT),
+                        emailMessage.getString(MESSAGE), emailMessage.getString(FILETYPE),
+                        emailMessage.getString(FILENAME), emailMessage.getObject(ATTACHMENT));
             else
-                emailService.sendMail(emailMessage.getString("email"), emailMessage.getString("subject"),
-                        emailMessage.getString("message"));
+                emailService.sendMail(emailMessage.getString(EMAIL), emailMessage.getString(SUBJECT),
+                        emailMessage.getString(MESSAGE));
         } catch (final JMSException e) {
             throw JmsUtils.convertJmsAccessException(e);
         }

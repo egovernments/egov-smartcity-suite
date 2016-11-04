@@ -39,7 +39,7 @@
    ~   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
    -->
 <!-- Created with Jaspersoft Studio version 6.2.0.final using JasperReports Library version 6.2.0  -->
-<!-- 2016-08-26T11:21:52 -->
+<!-- 2016-09-07T11:06:44 -->
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="budgetVarianceReport" pageWidth="595" pageHeight="842" columnWidth="535" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="a9828aea-316e-4c57-888c-e2b817b926cb">
 	<property name="net.sf.jasperreports.export.pdf.exclude.origin.keep.first.band.columnHeader" value="columnHeader"/>
 	<property name="net.sf.jasperreports.export.xls.exclude.origin.keep.first.band.columnHeader" value="columnHeader"/>
@@ -162,7 +162,7 @@
 				<textElement textAlignment="Center" verticalAlignment="Middle">
 					<font isBold="true"/>
 				</textElement>
-				<text><![CDATA[Budget Group]]></text>
+				<text><![CDATA[Budget Head]]></text>
 			</staticText>
 			<staticText>
 				<reportElement x="373" y="0" width="67" height="50" uuid="337d8eb0-cf81-432f-ac12-e8bcb4b63393"/>

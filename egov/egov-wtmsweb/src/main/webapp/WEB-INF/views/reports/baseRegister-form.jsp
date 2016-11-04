@@ -73,7 +73,7 @@
 									<spring:message code="lbl.select" />
 								</form:option>
 								<c:forEach items="${wards}" var="ward">
-									<form:option value="${ward.name}"> ${ward.name} </form:option>
+									<form:option value="${ward.id}"> ${ward.name} </form:option>
 								</c:forEach>
 							</form:select>
 						</div>
@@ -106,6 +106,8 @@
 </div>
 <link rel="stylesheet"
 	href="<cdn:url value='/resources/global/css/bootstrap/bootstrap-datepicker.css' context='/egi'/>" />
+<link rel="stylesheet" href="<cdn:url value='/resources/global/css/jquery/plugins/datatables/jquery.dataTables.min.css' context='/egi'/>"/>
+<link rel="stylesheet" href="<cdn:url value='/resources/global/css/jquery/plugins/datatables/dataTables.bootstrap.min.css' context='/egi'/>">
 <script type="text/javascript"
 	src="<cdn:url value='/resources/global/js/jquery/plugins/datatables/jquery.dataTables.min.js' context='/egi'/>"></script>
 <script type="text/javascript"
@@ -127,4 +129,5 @@
 	src="<cdn:url value='/resources/global/js/bootstrap/bootstrap-datepicker.js' context='/egi'/>"
 	type="text/javascript"></script>
 <script type="text/javascript"
-	src="<cdn:url value='/resources/js/app/baseregisterReport.js'/>"></script>
+	src="<cdn:url value='/resources/js/app/baseregisterReport.js?rnd=${app_release_no}'/>"></script>
+

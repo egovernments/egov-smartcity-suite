@@ -58,41 +58,41 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 @RequestMapping("/counterAffidavit")
 public class CounterAffidavitController {
 
-	@Autowired
-	private LegalCaseService legalCaseService;
+    @Autowired
+    private LegalCaseService legalCaseService;
 
-	@RequestMapping(value = "/create/", method = RequestMethod.GET)
-	public String viewForm(@ModelAttribute("legalCase") LegalCase legalCase,
-			@RequestParam("lcNumber") final String lcNumber, final Model model, final HttpServletRequest request) {
-		model.addAttribute("legalCase", legalCase);
-		model.addAttribute("pwrDocList", legalCaseService.getPwrDocList(legalCase));
-		return "legalcase-caaffidavit";
-	}
+    @RequestMapping(value = "/create/", method = RequestMethod.GET)
+    public String viewForm(@ModelAttribute("legalCase") final LegalCase legalCase,
+            @RequestParam("lcNumber") final String lcNumber, final Model model, final HttpServletRequest request) {
+        model.addAttribute("legalCase", legalCase);
+        model.addAttribute("pwrDocList", legalCaseService.getPwrDocList(legalCase));
+        if (legalCase.getLegalCaseDepartment().isEmpty())
+            model.addAttribute("mode", "countercreate");
+        else
+            model.addAttribute("mode", "counteredit");
+        return "legalcase-caaffidavit";
+    }
 
-	@ModelAttribute
-	private LegalCase getLegalCase(@RequestParam("lcNumber") final String lcNumber) {
-		final LegalCase legalcase = legalCaseService.findByLcNumber(lcNumber);
-		return legalcase;
-	}
+    @ModelAttribute
+    private LegalCase getLegalCase(@RequestParam("lcNumber") final String lcNumber) {
+        final LegalCase legalcase = legalCaseService.findByLcNumber(lcNumber);
+        return legalcase;
+    }
 
-	@RequestMapping(value = "/create/", method = RequestMethod.POST)
-	public String create(@Valid @ModelAttribute("legalCase") final LegalCase legalCase,
-			final BindingResult errors, final RedirectAttributes redirectAttrs,
-			@RequestParam("lcNumber") final String lcNumber, final HttpServletRequest request, final Model model) {
-		if (errors.hasErrors()) {
-			model.addAttribute("legalcase", legalCase);
-			return "legalcase-caaffidavit";
-		} else
-		legalCaseService.update(legalCase);
-		redirectAttrs.addFlashAttribute("legalCase", legalCase);
-		model.addAttribute("message", "LegalCase Updated successfully.");
-		model.addAttribute("legalcase", legalCase);
-		  model.addAttribute("legalCaseDocList",
-	                legalCaseService.getLegalCaseDocList(legalCase));
-		model.addAttribute("pwrDocList", legalCaseService.getPwrDocList(legalCase));
-		model.addAttribute("mode", "view");
-		return "legalcasedetails-view";
+    @RequestMapping(value = "/create/", method = RequestMethod.POST)
+    public String create(@Valid @ModelAttribute("legalCase") final LegalCase legalCase, final BindingResult errors,
+            final RedirectAttributes redirectAttrs, @RequestParam("lcNumber") final String lcNumber,
+            final Model model) {
+        if (errors.hasErrors())
+            return "legalcase-caaffidavit";
+        else
+            legalCaseService.update(legalCase);
+        redirectAttrs.addFlashAttribute("legalCase", legalCase);
+        model.addAttribute("message", "Counter Affidavit Details Saved Successfully.");
+        model.addAttribute("legalcase", legalCase);
+        model.addAttribute("pwrDocList", legalCaseService.getPwrDocList(legalCase));
+        return "legalcase-ca-success";
 
-	}
+    }
 
 }

@@ -40,6 +40,8 @@
 
 package org.egov.wtms.web.controller.search;
 
+import static org.egov.wtms.utils.constants.WaterTaxConstants.WATERCHARGES_CONSUMERCODE;
+
 import java.math.BigDecimal;
 
 import javax.servlet.http.HttpServletRequest;
@@ -101,7 +103,7 @@ public class CommonWaterTaxSearchController {
                     searchRequest.getConsumerCode(), ConnectionStatus.ACTIVE);
         applicationType = request.getParameter("applicationType");
         if (waterConnectionDetails == null) {
-            resultBinder.rejectValue("consumerCode", "invalid.consumernuber");
+            resultBinder.rejectValue(WATERCHARGES_CONSUMERCODE, "invalid.consumernumber");
             return COMMON_FORM_SEARCH;
         }
 
@@ -110,16 +112,15 @@ public class CommonWaterTaxSearchController {
                     .getCloseConnectionType().equals(WaterTaxConstants.PERMENENTCLOSECODE)
                     || waterConnectionDetails.getCloseConnectionType().equals(WaterTaxConstants.TEMPERARYCLOSECODE))) {
                 model.addAttribute("mode", "errorMode");
-                resultBinder.rejectValue("consumerCode", "connection.closed");
+                resultBinder.rejectValue(WATERCHARGES_CONSUMERCODE, "connection.closed");
                 return COMMON_FORM_SEARCH;
             } else if (waterConnectionDetails.getApplicationType().getCode().equals(WaterTaxConstants.NEWCONNECTION)
                     && waterConnectionDetails.getConnectionStatus().equals(ConnectionStatus.ACTIVE))
                 return "redirect:/application/addconnection/"
-                + waterConnectionDetails.getConnection().getConsumerCode();
+                        + waterConnectionDetails.getConnection().getConsumerCode();
             else {
                 model.addAttribute("mode", "errorMode");
-                resultBinder.rejectValue("consumerCode", "invalid.consumernuber");
-                // model.addAttribute("validMessage", "InValid Number");
+                resultBinder.rejectValue(WATERCHARGES_CONSUMERCODE, "invalid.consumernumber");
                 return COMMON_FORM_SEARCH;
             }
         if (applicationType != null && applicationType.equals(WaterTaxConstants.CHANGEOFUSE))
@@ -127,7 +128,7 @@ public class CommonWaterTaxSearchController {
                     .getCloseConnectionType().equals(WaterTaxConstants.PERMENENTCLOSECODE)
                     || waterConnectionDetails.getCloseConnectionType().equals(WaterTaxConstants.TEMPERARYCLOSECODE))) {
                 model.addAttribute("mode", "errorMode");
-                resultBinder.rejectValue("consumerCode", "connection.closed");
+                resultBinder.rejectValue(WATERCHARGES_CONSUMERCODE, "connection.closed");
                 return COMMON_FORM_SEARCH;
             } else if ((waterConnectionDetails.getApplicationType().getCode().equals(WaterTaxConstants.NEWCONNECTION)
                     || waterConnectionDetails.getApplicationType().getCode().equals(WaterTaxConstants.ADDNLCONNECTION)
@@ -136,7 +137,7 @@ public class CommonWaterTaxSearchController {
                 return "redirect:/application/changeOfUse/" + waterConnectionDetails.getConnection().getConsumerCode();
             else {
                 model.addAttribute("mode", "errorMode");
-                resultBinder.rejectValue("consumerCode", "invalid.consumernuber");
+                resultBinder.rejectValue(WATERCHARGES_CONSUMERCODE, "invalid.consumernumber");
                 return COMMON_FORM_SEARCH;
             }
         if (applicationType != null
@@ -145,7 +146,7 @@ public class CommonWaterTaxSearchController {
                     .getCloseConnectionType().equals(WaterTaxConstants.PERMENENTCLOSECODE)
                     || waterConnectionDetails.getCloseConnectionType().equals(WaterTaxConstants.TEMPERARYCLOSECODE))) {
                 model.addAttribute("mode", "errorMode");
-                resultBinder.rejectValue("consumerCode", "connection.closed");
+                resultBinder.rejectValue(WATERCHARGES_CONSUMERCODE, "connection.closed");
                 return COMMON_FORM_SEARCH;
             } else if ((waterConnectionDetails.getApplicationType().getCode().equals(WaterTaxConstants.NEWCONNECTION)
                     || waterConnectionDetails.getApplicationType().getCode().equals(WaterTaxConstants.ADDNLCONNECTION)
@@ -155,25 +156,25 @@ public class CommonWaterTaxSearchController {
                 return "redirect:/application/close/" + waterConnectionDetails.getConnection().getConsumerCode();
             else {
                 model.addAttribute("mode", "errorMode");
-                resultBinder.rejectValue("consumerCode", "invalid.consumernuber");
+                resultBinder.rejectValue(WATERCHARGES_CONSUMERCODE, "invalid.consumernumber");
                 return COMMON_FORM_SEARCH;
             }
 
         if (applicationType != null && applicationType.equals(WaterTaxConstants.RECONNECTIONCONNECTION))
             if (waterConnectionDetails.getCloseConnectionType() != null
-            && waterConnectionDetails.getCloseConnectionType().equals(WaterTaxConstants.PERMENENTCLOSECODE)) {
+                    && waterConnectionDetails.getCloseConnectionType().equals(WaterTaxConstants.PERMENENTCLOSECODE)) {
                 model.addAttribute("mode", "errorMode");
-                resultBinder.rejectValue("consumerCode", "connection.closed");
+                resultBinder.rejectValue(WATERCHARGES_CONSUMERCODE, "connection.closed");
                 return COMMON_FORM_SEARCH;
             } else if (waterConnectionDetails.getApplicationType().getCode().equals(WaterTaxConstants.CLOSINGCONNECTION)
                     && waterConnectionDetails.getConnectionStatus().equals(ConnectionStatus.CLOSED)
                     && waterConnectionDetails.getStatus().getCode()
-                    .equals(WaterTaxConstants.APPLICATION_STATUS_CLOSERSANCTIONED)
+                            .equals(WaterTaxConstants.APPLICATION_STATUS_CLOSERSANCTIONED)
                     && waterConnectionDetails.getCloseConnectionType().equals("T"))
                 return "redirect:/application/reconnection/" + waterConnectionDetails.getConnection().getConsumerCode();
             else {
                 model.addAttribute("mode", "errorMode");
-                resultBinder.rejectValue("consumerCode", "invalid.consumernuber");
+                resultBinder.rejectValue(WATERCHARGES_CONSUMERCODE, "invalid.consumernumber");
                 return COMMON_FORM_SEARCH;
             }
         if (applicationType != null
@@ -183,24 +184,23 @@ public class CommonWaterTaxSearchController {
                     || waterConnectionDetails.getApplicationType().getCode().equals(WaterTaxConstants.CHANGEOFUSE))
                     && waterConnectionDetails.getConnectionStatus().equals(ConnectionStatus.ACTIVE)
                     && waterConnectionDetails.getConnectionType().name()
-                    .equals(WaterTaxConstants.CONNECTIONTYPE_METERED))
+                            .equals(WaterTaxConstants.CONNECTIONTYPE_METERED))
                 return "redirect:/application/meterentry/" + waterConnectionDetails.getConnection().getConsumerCode();
             else {
                 model.addAttribute("mode", "errorMode");
-                resultBinder.rejectValue("consumerCode", "invalid.consumernuber");
+                resultBinder.rejectValue(WATERCHARGES_CONSUMERCODE, "invalid.consumernumber");
                 return COMMON_FORM_SEARCH;
             }
         if (applicationType != null && applicationType.equals(WaterTaxConstants.DATAENTRYEDIT))
-            if (waterConnectionDetails.getApplicationType().getCode().equals(WaterTaxConstants.NEWCONNECTION)
-                    || waterConnectionDetails.getApplicationType().getCode().equals(WaterTaxConstants.ADDNLCONNECTION)
+            if ((waterConnectionDetails.getApplicationType().getCode().equals(WaterTaxConstants.NEWCONNECTION)
+                    || waterConnectionDetails.getApplicationType().getCode().equals(WaterTaxConstants.ADDNLCONNECTION))
                     && waterConnectionDetails.getConnectionStatus().equals(ConnectionStatus.ACTIVE)
                     && waterConnectionDetails.getLegacy())
                 return "redirect:/application/newConnection-editExisting/"
-                + waterConnectionDetails.getConnection().getConsumerCode();
+                        + waterConnectionDetails.getConnection().getConsumerCode();
             else {
                 model.addAttribute("mode", "errorMode");
-                resultBinder.rejectValue("consumerCode", "invalid.consumernuber");
-                // model.addAttribute("validMessage", "InValid Number");
+                resultBinder.rejectValue(WATERCHARGES_CONSUMERCODE, "invalid.consumernumber");
                 return COMMON_FORM_SEARCH;
             }
         if (applicationType != null
@@ -218,15 +218,15 @@ public class CommonWaterTaxSearchController {
                         && (waterConnectionDetails.getApplicationType().getCode()
                                 .equals(WaterTaxConstants.NEWCONNECTION)
                                 || waterConnectionDetails.getApplicationType().getCode()
-                                .equals(WaterTaxConstants.ADDNLCONNECTION)
+                                        .equals(WaterTaxConstants.ADDNLCONNECTION)
                                 || waterConnectionDetails.getApplicationType().getCode()
-                                .equals(WaterTaxConstants.CHANGEOFUSE))
-                                && waterConnectionDetails.getConnectionStatus().equals(ConnectionStatus.ACTIVE))
+                                        .equals(WaterTaxConstants.CHANGEOFUSE))
+                        && waterConnectionDetails.getConnectionStatus().equals(ConnectionStatus.ACTIVE))
                     return "redirect:/application/generatebill/"
-                    + waterConnectionDetails.getConnection().getConsumerCode();
+                            + waterConnectionDetails.getConnection().getConsumerCode();
                 else {
                     model.addAttribute("mode", "errorMode");
-                    resultBinder.rejectValue("consumerCode", "invalid.consumernuber");
+                    resultBinder.rejectValue(WATERCHARGES_CONSUMERCODE, "invalid.consumernumber");
                     return COMMON_FORM_SEARCH;
 
                 }
@@ -235,14 +235,13 @@ public class CommonWaterTaxSearchController {
         if (applicationType != null && applicationType.equals(WaterTaxConstants.EDITCOLLECTION))
             if (waterConnectionDetails.getApplicationType().getCode().equals(WaterTaxConstants.NEWCONNECTION)
                     || waterConnectionDetails.getApplicationType().getCode().equals(WaterTaxConstants.ADDNLCONNECTION)
-                    && waterConnectionDetails.getConnectionStatus().equals(ConnectionStatus.ACTIVE)
-                    && waterConnectionDetails.getLegacy())
+                            && waterConnectionDetails.getConnectionStatus().equals(ConnectionStatus.ACTIVE)
+                            && waterConnectionDetails.getLegacy())
                 return "redirect:/application/editCollection/"
-                + waterConnectionDetails.getConnection().getConsumerCode();
+                        + waterConnectionDetails.getConnection().getConsumerCode();
             else {
                 model.addAttribute("mode", "errorMode");
-                resultBinder.rejectValue("consumerCode", "invalid.consumernuber");
-                // model.addAttribute("validMessage", "InValid Number");
+                resultBinder.rejectValue(WATERCHARGES_CONSUMERCODE, "invalid.consumernumber");
                 return COMMON_FORM_SEARCH;
             }
 
@@ -250,14 +249,13 @@ public class CommonWaterTaxSearchController {
             if (waterConnectionDetails.getApplicationType().getCode().equals(WaterTaxConstants.NEWCONNECTION)
                     || waterConnectionDetails.getApplicationType().getCode().equals(WaterTaxConstants.ADDNLCONNECTION)
                     || waterConnectionDetails.getApplicationType().getCode().equals(WaterTaxConstants.CHANGEOFUSE)
-                    && waterConnectionDetails.getConnectionStatus().equals(ConnectionStatus.ACTIVE)
-                    && waterConnectionDetails.getConnectionType().equals(ConnectionType.NON_METERED))
+                            && waterConnectionDetails.getConnectionStatus().equals(ConnectionStatus.ACTIVE)
+                            && waterConnectionDetails.getConnectionType().equals(ConnectionType.NON_METERED))
                 return "redirect:/report/generateBillForHSCNo/"
-                + waterConnectionDetails.getConnection().getConsumerCode();
+                        + waterConnectionDetails.getConnection().getConsumerCode();
             else {
                 model.addAttribute("mode", "errorMode");
-                resultBinder.rejectValue("consumerCode", "invalid.consumernuber");
-                // model.addAttribute("validMessage", "InValid Number");
+                resultBinder.rejectValue(WATERCHARGES_CONSUMERCODE, "invalid.consumernumber");
                 return COMMON_FORM_SEARCH;
             }
 

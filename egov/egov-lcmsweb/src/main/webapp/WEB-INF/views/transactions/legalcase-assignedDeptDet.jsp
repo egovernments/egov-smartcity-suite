@@ -41,17 +41,17 @@
 <%@ taglib uri="http://www.springframework.org/tags/form" prefix="form"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 <div class="panel-heading ">
-	<div class="panel-title"  style="font-weight: bold">Assigned Department</div>
+	<div class="panel-title" style="font-weight: bold">Assigned
+		Department</div>
 </div>
-<table class="table table-striped table-bordered" id="estimateDetails">
+<table class="table table-striped table-bordered" id="caffidavitdetails">
 	<thead>
 		<tr>
-			<th class="text-center">Is Primary Dept</th>
-			<th class="text-center">Department :<span class="mandatory"></span></th>
-			<th class="text-center">Assigned To :<span class="mandatory"></span></th>
-			<th class="text-center">Date Of Receipt Of PWR (DD/MM/YYYY)<span
+			<th class="text-center"><spring:message code="lbl.isprimarydept" /></th>
+			<th class="text-center"><spring:message code="lbl.department" /><span class="mandatory"></span></th>
+			<th class="text-center"><spring:message code="lbl.assignto" /><span class="mandatory"></span></th>
+			<th class="text-center"><spring:message code="lbl.dateofreceptofpwr" /><span
 				class="mandatory"></span></th>
-			<th class="text-center">Add/Delete Department</th>
 		</tr>
 	</thead>
 	<tbody>
@@ -60,29 +60,27 @@
 					path="legalCaseDepartment[0].isPrimaryDepartment"
 					name="legalCaseDepartment[0].isPrimaryDepartment"
 					id="legalCaseDepartment[0].isPrimaryDepartment" /></td>
-					
+
 			<td class="text-center"><form:input id="departmentName"
 					type="text" class="form-control " autocomplete="off"
 					path="legalCaseDepartment[0].department.name"
 					name="legalCaseDepartment[0].department.name"
-					value="${legalCaseDepartment[0].department.name}"
-					placeholder="Department" />
-					 <input type="hidden" id="departmentId"
-				value="" /> 
-				<c:forEach items="${departments}" var="department">
+					value="${legalCaseDepartment[0].department.name}" required="required" />
+				<input type="hidden" id="departmentId" value="" /> <c:forEach
+					items="${departments}" var="department">
 					<a onclick="setDepartmentId(<c:out value="${department.id}"/>)"
 						href="javascript:void(0)"
 						class="btn btn-secondary btn-xs tag-element freq-ct"><c:out
 							value="${department.name }" /> </a>
 				</c:forEach></td>
-				
+
 			<td class="text-right"><form:input id="positionName" type="text"
-					class="form-control " autocomplete="off"
+					class="form-control " autocomplete="off" required="required"
 					path="legalCaseDepartment[0].position.name"
 					name="legalCaseDepartment[0].position.name"
-					value="${legalCaseDepartment[0].position.name}"
-					placeholder="" /> <input type="hidden" id="positionId" value="" />
-				<c:forEach items="${departments}" var="position">
+					value="${legalCaseDepartment[0].position.name}"/>
+				<input type="hidden" id="positionId" value="" /> <c:forEach
+					items="${departments}" var="position">
 					<a onclick="setPositionId(<c:out value="${position.id}"/>)"
 						href="javascript:void(0)"
 						class="btn btn-secondary btn-xs tag-element freq-ct"><c:out
@@ -93,88 +91,10 @@
 					path="legalCaseDepartment[0].dateofreceiptofpwr"
 					class="form-control datepicker" data-date-end-date="0d"
 					id="legalCaseDepartment[0].dateofreceiptofpwr"
-					data-inputmask="'mask': 'd/m/y'" /></td>
-			<td class="text-center"><span style="cursor: pointer;"
-				id="addRowId"><i class="fa fa-plus"></i></span></td>
+					data-inputmask="'mask': 'd/m/y'"  required="required"/></td>
+
 		</tr>
 
 
 	</tbody>
 </table>
-<div class="panel-heading ">
-	<div class="panel-title"  style="font-weight: bold">Pwr Details</div>
-</div>
-<div class="form-group">
-			<label class="col-sm-3 control-label text-right">
-				 Date of submission of PWR to GP/MSC:</label>
-			<div class="col-sm-3 add-margin">
-				<form:input name="eglcPwrs[0].pwrDueDate"
-					path="eglcPwrs[0].pwrDueDate"
-					 class="form-control datepicker"
-					title="Please enter a valid date" pattern="\d{1,2}/\d{1,2}/\d{4}"
-					data-date-end-date="-1d" id="eglcPwrs[0].pwrDueDate"
-					data-inputmask="'mask': 'd/m/y'" />
-				<form:errors path="eglcPwrs[0].pwrDueDate" cssClass="add-margin error-msg" />
-			</div>
-		<label class="col-sm-2 control-label text-right">
-		Date of Approval of PWR to GP/MSC:</label>
-		<div class="col-sm-3 add-margin">
-				<form:input name="eglcPwrs[0].pwrApprovalDate"
-					path="eglcPwrs[0].pwrApprovalDate" class="form-control datepicker"
-					title="Please enter a valid date" pattern="\d{1,2}/\d{1,2}/\d{4}"
-					 id="eglcPwrs[0].pwrApprovalDate"
-					data-inputmask="'mask': 'd/m/y'" />
-				<form:errors path="eglcPwrs[0].pwrApprovalDate" cssClass="add-margin error-msg" />
-			</div>
-		</div>
-	
-		<c:choose>
-		<c:when test="${not empty pwrDocList}">
-		
-		<jsp:include page="pwrDocumentdetails-view.jsp"></jsp:include> 
-		
-		</c:when>
-		<c:otherwise>
-			<div class="form-group">
-	<label class="col-sm-3 control-label text-right"><font size="4"><spring:message
-				code="lbl.mesg.document" /></font> </label>
-	<div class="col-sm-3 add-margin">
-
-		<input type="file" id="file" name="eglcPwrs[0].pwrDocuments[0].files"
-			class="file-ellipsis upload-file">
-
-		<form:errors path="eglcPwrs[0].pwrDocuments[0].files"
-			cssClass="add-margin error-msg" />
-		
-	</div>
-</div>
-		
-		</c:otherwise>
-		</c:choose>
-
-<div class="panel-heading ">
-	<div class="panel-title" style="font-weight: bold"> Counter Affidavit details</div>
-</div>
-<div class="form-group">
-			<label class="col-sm-3 control-label text-right">
-				 Date of submission of CA to GP/MSC:</label>
-			<div class="col-sm-3 add-margin">
-				<form:input name="eglcCounterAffidavit[0].counterAffidavitDueDate"
-					path="eglcCounterAffidavit[0].counterAffidavitDueDate"
-					 class="form-control datepicker"
-					title="Please enter a valid date" pattern="\d{1,2}/\d{1,2}/\d{4}"
-					data-date-end-date="-1d" id="eglcCounterAffidavit[0].counterAffidavitDueDate"
-					data-inputmask="'mask': 'd/m/y'" />
-				<form:errors path="eglcCounterAffidavit[0].counterAffidavitDueDate" cssClass="add-margin error-msg" />
-			</div>
-		<label class="col-sm-2 control-label text-right">
-		Date of Approval of CA to GP/MSC:</label>
-		<div class="col-sm-3 add-margin">
-				<form:input name="eglcCounterAffidavit[0].counterAffidavitApprovalDate"
-					path="eglcCounterAffidavit[0].counterAffidavitApprovalDate" class="form-control datepicker"
-					title="Please enter a valid date" pattern="\d{1,2}/\d{1,2}/\d{4}"
-					id="eglcCounterAffidavit[0].counterAffidavitApprovalDate"
-					data-inputmask="'mask': 'd/m/y'" />
-				<form:errors path="eglcCounterAffidavit[0].counterAffidavitApprovalDate" cssClass="add-margin error-msg" />
-			</div>
-		</div>

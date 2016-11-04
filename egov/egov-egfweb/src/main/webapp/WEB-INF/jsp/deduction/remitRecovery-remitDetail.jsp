@@ -180,8 +180,13 @@ function populateUser(){
 	function validate()
 		{
 		document.getElementById('lblError').innerHTML = "";
-			if(!validateMIS())
+		if(!validateMIS())
 			  return false;
+		if(document.getElementById('vouchermis.function')!=null && document.getElementById('vouchermis.function').value=='-1')
+		   {
+		   document.getElementById('lblError').innerHTML='Please select Function';
+		   return false;
+		   }
 		   if(document.getElementById('bank').value=='-1')
 		   {
 		   document.getElementById('lblError').innerHTML='Please select Bank';
@@ -206,8 +211,6 @@ function onLoad(){
 	jQuery(scheme).attr('disabled', 'disabled');
 	jQuery(subscheme).attr('disabled', 'disabled');
 	jQuery(fundsource).attr('disabled', 'disabled');
-	jQuery(department).attr('disabled', 'disabled');
-	jQuery(functionid).attr('disabled', 'disabled');
 	if(document.getElementById('approverDepartment'))
 		document.getElementById('approverDepartment').value = "-1";
 }

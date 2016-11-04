@@ -59,17 +59,21 @@ import javax.persistence.TemporalType;
 import javax.validation.constraints.NotNull;
 
 import org.egov.infra.persistence.entity.AbstractAuditable;
-import org.egov.infra.persistence.entity.AbstractPersistable;
 import org.egov.infra.persistence.validator.annotation.ValidateDate;
 import org.egov.infra.utils.DateUtils;
 import org.egov.infra.validation.exception.ValidationError;
 import org.egov.lcms.utils.constants.LcmsConstants;
+import org.hibernate.envers.AuditOverride;
+import org.hibernate.envers.AuditOverrides;
+import org.hibernate.envers.Audited;
 import org.hibernate.validator.constraints.Length;
 
 @Entity
 @Table(name = "EGLC_CONTEMPT")
 @SequenceGenerator(name = Contempt.SEQ_EGLC_CONTEMPT, sequenceName = Contempt.SEQ_EGLC_CONTEMPT, allocationSize = 1)
-public class Contempt extends  AbstractPersistable<Long> {
+@AuditOverrides({ @AuditOverride(forClass = AbstractAuditable.class, name = "lastModifiedBy"),
+    @AuditOverride(forClass = AbstractAuditable.class, name = "lastModifiedDate") })
+public class Contempt extends AbstractAuditable{
     private static final long serialVersionUID = 1517694643078084884L;
     public static final String SEQ_EGLC_CONTEMPT = "SEQ_EGLC_CONTEMPT";
 
@@ -77,28 +81,31 @@ public class Contempt extends  AbstractPersistable<Long> {
     @GeneratedValue(generator = SEQ_EGLC_CONTEMPT, strategy = GenerationType.SEQUENCE)
     private Long id;
 
-    @ManyToOne(cascade=CascadeType.ALL,fetch=FetchType.LAZY)
+    @ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @NotNull
     @JoinColumn(name = "judgmentimpl")
+    @Audited
     private JudgmentImpl judgmentImpl;
 
-  
     @Length(max = 50)
     @NotNull
     @Column(name = "canumber")
+    @Audited
     private String caNumber;
 
-   
     @Temporal(TemporalType.DATE)
     @ValidateDate(allowPast = true, dateFormat = LcmsConstants.DATE_FORMAT)
     @Column(name = "receivingdate")
+    @Audited
     private Date receivingDate;
 
     @Column(name = "iscommapprrequired")
+    @Audited
     private Boolean iscommapprRequired = false;
 
     @Temporal(TemporalType.DATE)
     @Column(name = "commappdate")
+    @Audited
     private Date commappDate;
 
     @Override

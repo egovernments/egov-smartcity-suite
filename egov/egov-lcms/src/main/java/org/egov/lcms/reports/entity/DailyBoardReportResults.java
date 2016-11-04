@@ -57,8 +57,8 @@ public class DailyBoardReportResults {
     private Integer courtId;
     private String govtDept;
     private String caseTitle;
-    private String petName;
-    private String resName;
+    private String petitionerName;
+    private String respondantName;
     private String caseStatus;
     private Integer statusId;
     private String assignDept;
@@ -85,7 +85,7 @@ public class DailyBoardReportResults {
         return nextDate;
     }
 
-    public void setNextDate(Date nextDate) {
+    public void setNextDate(final Date nextDate) {
         this.nextDate = nextDate;
     }
 
@@ -161,14 +161,6 @@ public class DailyBoardReportResults {
         this.govtDept = govtDept;
     }
 
-    public String getPetName() {
-        return petName;
-    }
-
-    public void setPetName(final String petName) {
-        this.petName = petName;
-    }
-
     public String getCaseStatus() {
         return caseStatus;
     }
@@ -209,12 +201,20 @@ public class DailyBoardReportResults {
         this.petitionTypeId = petitionTypeId;
     }
 
-    public String getResName() {
-        return resName;
+    public String getPetitionerName() {
+        return petitionerName;
     }
 
-    public void setResName(final String resName) {
-        this.resName = resName;
+    public void setPetitionerName(final String petitionerName) {
+        this.petitionerName = petitionerName;
+    }
+
+    public String getRespondantName() {
+        return respondantName;
+    }
+
+    public void setRespondantName(final String respondantName) {
+        this.respondantName = respondantName;
     }
 
     public LegalCase getLegalCase() {

@@ -41,10 +41,8 @@ package org.egov.restapi.web.rest;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
-import org.codehaus.jackson.JsonGenerationException;
 import org.codehaus.jackson.annotate.JsonAutoDetect.Visibility;
 import org.codehaus.jackson.annotate.JsonMethod;
-import org.codehaus.jackson.map.JsonMappingException;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.codehaus.jackson.map.SerializationConfig;
 import org.egov.infra.config.core.ApplicationThreadLocals;
@@ -59,13 +57,14 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import javax.ws.rs.FormParam;
-import javax.ws.rs.core.MediaType;
 import java.io.IOException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+
+import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 
 /**
  * The AssessmentService class is used as the RESTFul service to handle user
@@ -79,25 +78,20 @@ public class RevisionPetitionRestService {
     private RevisionPetitionService revisionPetitionService;
     @Autowired
     private BasicPropertyDAO basicPropertyDAO;
-    String USER_NAME = "mahesh";
-    String PASSWORD = "demo";
+
     String LOGIN_USERID = "16";
 
     /**
      * This method is used for handling user request for revision petition
      * details.
      * 
-     * @param applicationNumber
-     *            - applicationNumber number i.e. revision peatition application
-     *            number
+     * @param applicationNo
      * @return
-     * @throws JsonGenerationException
-     * @throws JsonMappingException
      * @throws IOException
      */
-    @RequestMapping(value = "/property/revisionPetition", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON)
-    public String getRevisionPetitionDetails(@FormParam("applicationNo") String applicationNo)
-            throws JsonGenerationException, JsonMappingException, IOException {
+    @RequestMapping(value = "/property/revisionPetition", method = RequestMethod.POST, produces = APPLICATION_JSON_VALUE)
+    public String getRevisionPetitionDetails(@RequestParam String applicationNo)
+            throws IOException {
         RevisionPetition revisionPetition = revisionPetitionService.getRevisionPetitionByApplicationNumber(applicationNo);
         if (revisionPetition != null)
             return convertRevisionPetitionObjectToJson(revisionPetition);
@@ -111,21 +105,15 @@ public class RevisionPetitionRestService {
     }
 
     /**
-     * @param accessmentnumber
-     * @param username
-     * @param password
-     * @param details
-     * @param receivedon
-     * @param recievedBy
+     * @param createRevionPetitionDetails
      * @return
-     * @throws JsonGenerationException
-     * @throws JsonMappingException
      * @throws IOException
      */
-	@RequestMapping(value = "/property/createRevisionPetition", method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON, produces = MediaType.APPLICATION_JSON)
+	@RequestMapping(value = "/property/createRevisionPetition", method = RequestMethod.POST, consumes = APPLICATION_JSON_VALUE, produces = APPLICATION_JSON_VALUE)
 	public String createRevisionPetitionFromRest(@RequestBody String createRevionPetitionDetails)
-			throws JsonGenerationException, JsonMappingException, IOException {
+			throws IOException {
 		String responseJson = new String();
+        //FIXME hardcode user id ?
 		ApplicationThreadLocals.setUserId(Long.valueOf(LOGIN_USERID));
 		ObjectMapper mapper = new ObjectMapper();
 		mapper.setVisibility(JsonMethod.FIELD, Visibility.ANY);
@@ -160,7 +148,7 @@ public class RevisionPetitionRestService {
 				responseJson = convertRevisionPetitionObjectToJson(
 						revisionPetitionService.createRevisionPetitionForRest(revPetition));
 			} catch (ParseException e) {
-				e.printStackTrace();
+
 			}
 
 		}
@@ -222,40 +210,10 @@ public class RevisionPetitionRestService {
         return json;
     }
 
-    private String getJSONResponse(Object obj) throws JsonGenerationException, JsonMappingException, IOException {
+    private String getJSONResponse(Object obj) throws IOException {
         ObjectMapper objectMapper = new ObjectMapper();
         objectMapper.setVisibility(JsonMethod.FIELD, Visibility.ANY);
         String jsonResponse = objectMapper.writeValueAsString(obj);
         return jsonResponse;
     }
-
-    /**
-     * This method is used to get the error details for invalid credentials.
-     * 
-     * @return
-     */
-    private ErrorDetails getInvalidCredentialsErrorDetails() {
-        ErrorDetails errorDetails = new ErrorDetails();
-        errorDetails.setErrorCode(PropertyTaxConstants.THIRD_PARTY_ERR_CODE_INVALIDCREDENTIALS);
-        errorDetails.setErrorMessage(PropertyTaxConstants.THIRD_PARTY_ERR_MSG_INVALIDCREDENTIALS);
-        return errorDetails;
-    }
-
-    public RevisionPetitionService getRevisionPetitionService() {
-        return revisionPetitionService;
-    }
-
-    public void setRevisionPetitionService(RevisionPetitionService revisionPetitionService) {
-        this.revisionPetitionService = revisionPetitionService;
-    }
-
-    public Boolean authenticateUser(String username, String password) {
-        Boolean isAuthenticated = false;
-
-        if (username != null && password != null && username.equals(USER_NAME) && password.equals(PASSWORD)) {
-            isAuthenticated = true;
-        }
-        return isAuthenticated;
-    }
-
 }

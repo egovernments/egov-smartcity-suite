@@ -39,24 +39,35 @@
  */
 package org.egov.portal.service;
 
-import org.apache.commons.lang3.RandomStringUtils;
-import org.apache.commons.lang3.StringUtils;
 import org.egov.infra.admin.master.service.RoleService;
-import org.egov.infra.config.core.ApplicationThreadLocals;
 import org.egov.infra.config.properties.ApplicationProperties;
-import org.egov.infra.exception.ApplicationRuntimeException;
 import org.egov.infra.messaging.MessagingService;
+import org.egov.infra.security.token.service.TokenService;
 import org.egov.portal.entity.Citizen;
 import org.egov.portal.repository.CitizenRepository;
-import org.egov.portal.utils.constants.CommonConstants;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.context.MessageSource;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Locale;
+
+import static java.lang.Boolean.TRUE;
+import static java.lang.String.format;
+import static org.apache.commons.lang3.RandomStringUtils.randomNumeric;
+import static org.egov.infra.config.core.ApplicationThreadLocals.getDomainURL;
+import static org.egov.infra.config.core.ApplicationThreadLocals.getMunicipalityName;
+import static org.egov.infra.messaging.MessagePriority.HIGH;
+import static org.egov.infra.utils.ApplicationConstant.CITIZEN_ROLE_NAME;
+import static org.egov.infra.utils.ApplicationConstant.CITY_LOGIN_URL;
+
 @Service
 @Transactional(readOnly = true)
 public class CitizenService {
+
+    private static final String CITIZEN_REG_SERVICE = "Citizen Registration";
 
     @Autowired
     private CitizenRepository citizenRepository;
@@ -73,65 +84,52 @@ public class CitizenService {
     @Autowired
     private ApplicationProperties applicationProperties;
 
+    @Autowired
+    @Qualifier("parentMessageSource")
+    private MessageSource messageSource;
+
+    @Autowired
+    private TokenService tokenService;
+
     @Transactional
-    public void create(final Citizen citizen) {
-        citizen.addRole(roleService.getRoleByName(CommonConstants.CITIZEN_ROLE));
+    public void create(Citizen citizen) {
+        citizen.addRole(roleService.getRoleByName(CITIZEN_ROLE_NAME));
         citizen.updateNextPwdExpiryDate(applicationProperties.userPasswordExpiryInDays());
         citizen.setPassword(passwordEncoder.encode(citizen.getPassword()));
-        citizen.setActivationCode(RandomStringUtils.random(5, Boolean.TRUE, Boolean.TRUE).toUpperCase());
-        citizenRepository.save(citizen);
-        sendActivationMessage(citizen);
+        citizenRepository.saveAndFlush(citizen);
+        messagingService.sendSMS(citizen.getMobileNumber(), getMessage("citizen.reg.sms"));
+        messagingService.sendEmail(citizen.getEmailId(), getMessage("citizen.reg.mail.subject"),
+                getMessage("citizen.reg.mail.body", citizen.getName(),
+                        format(CITY_LOGIN_URL, getDomainURL()), getMunicipalityName()));
     }
 
     @Transactional
-    public void update(final Citizen citizen) {
+    public void update(Citizen citizen) {
         citizenRepository.save(citizen);
     }
 
-    public Citizen getCitizenByEmailId(final String emailId) {
+    public Citizen getCitizenByEmailId(String emailId) {
         return citizenRepository.findByEmailId(emailId);
     }
 
-    public Citizen getCitizenByUserName(final String userName) {
+    public Citizen getCitizenByUserName(String userName) {
         return citizenRepository.findByUsername(userName);
     }
 
-    public Citizen getCitizenByActivationCode(final String activationCode) {
-        return citizenRepository.findByActivationCode(activationCode);
+    @Transactional
+    public boolean isValidOTP(String otp, String mobileNumber) {
+        return tokenService.redeemToken(otp, mobileNumber, CITIZEN_REG_SERVICE);
     }
 
     @Transactional
-    public Citizen activateCitizen(final String activationCode) {
-        final Citizen citizen = getCitizenByActivationCode(StringUtils.defaultString(activationCode));
-        if (citizen != null) {
-            citizen.setActive(true);
-            citizen.setActivationCode(null);
-            update(citizen);
-            messagingService
-                    .sendEmail(
-                            citizen.getEmailId(),
-                            "Portal Registration Success",
-                            String.format("Dear %s,\r\n You have successfully registered into our portal, you can use your registered mobile number " +
-                                            "as Username to login to our portal.\r\nRegards,\r\n%s", citizen.getName(), ApplicationThreadLocals.getMunicipalityName()));
-            messagingService.sendSMS(citizen.getMobileNumber(), "Your portal registration completed, please use your registered mobile number as Username to login");
-        }
-        return citizen;
+    public boolean sendOTPMessage(String mobileNumber) {
+        String otp = randomNumeric(5);
+        tokenService.generate(otp, mobileNumber, CITIZEN_REG_SERVICE);
+        messagingService.sendSMS(mobileNumber, getMessage("citizen.reg.otp.sms", otp), HIGH);
+        return TRUE;
     }
 
-    @Transactional
-    public void resendActivationCode(Citizen citizen) {
-        citizen.setActivationCode(RandomStringUtils.random(5, Boolean.TRUE, Boolean.TRUE).toUpperCase());
-        sendActivationMessage(citizen);
-        citizenRepository.save(citizen);
-    }
-
-    public void sendActivationMessage(final Citizen citizen) throws ApplicationRuntimeException {
-        messagingService
-                .sendEmail(
-                        citizen.getEmailId(),
-                        "Portal Activation",
-                        String.format("Dear %s,\r\n Your Portal Activation Code is : %s", citizen.getName(),
-                                citizen.getActivationCode()));
-        messagingService.sendSMS(citizen.getMobileNumber(), "Your Portal Activation Code is : " + citizen.getActivationCode());
+    private String getMessage(String msgKey, Object... arg) {
+        return messageSource.getMessage(msgKey, arg, Locale.getDefault());
     }
 }

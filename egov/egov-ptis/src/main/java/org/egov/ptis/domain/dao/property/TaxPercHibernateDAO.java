@@ -106,31 +106,31 @@ public class TaxPercHibernateDAO implements TaxPercDAO {
 
 	@Override
 	public TaxPerc findById(Integer id, boolean lock) {
-		// TODO Auto-generated method stub
+
 		return null;
 	}
 
 	@Override
 	public List<TaxPerc> findAll() {
-		// TODO Auto-generated method stub
+
 		return null;
 	}
 
 	@Override
 	public TaxPerc create(TaxPerc taxPerc) {
-		// TODO Auto-generated method stub
+
 		return null;
 	}
 
 	@Override
 	public void delete(TaxPerc taxPerc) {
-		// TODO Auto-generated method stub
+
 
 	}
 
 	@Override
 	public TaxPerc update(TaxPerc taxPerc) {
-		// TODO Auto-generated method stub
+
 		return null;
 	}
 }

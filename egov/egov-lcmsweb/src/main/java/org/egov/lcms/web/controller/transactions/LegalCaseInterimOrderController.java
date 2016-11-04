@@ -104,8 +104,10 @@ public class LegalCaseInterimOrderController {
             legalCaseInterimOrder.setLegalCase(legalCase);
         legalCaseInterimOrderService.persist(legalCaseInterimOrder);
         model.addAttribute("mode", "create");
-        model.addAttribute("lcInterimOrderDocList",
-                legalCaseInterimOrderService.getLcInterimOrderDocList(legalCaseInterimOrder));
+        model.addAttribute("supportDocs",
+                !legalCaseInterimOrder.getLcInterimOrderDocuments().isEmpty()
+                        && legalCaseInterimOrder.getLcInterimOrderDocuments().get(0) != null
+                                ? legalCaseInterimOrder.getLcInterimOrderDocuments().get(0).getSupportDocs() : null);
         model.addAttribute("lcNumber", legalCase.getLcNumber());
         redirectAttrs.addFlashAttribute("legalCaseInterimOrder", legalCaseInterimOrder);
         model.addAttribute("message", "Interim Order Created successfully.");
@@ -117,7 +119,7 @@ public class LegalCaseInterimOrderController {
     public String getInterimOrderList(final Model model, @RequestParam("lcNumber") final String lcNumber,
             final HttpServletRequest request) {
         final LegalCase legalCase = getLegalCase(lcNumber, request);
-        final List<LegalCaseInterimOrder> lcInterimOrderList = legalCaseInterimOrderService.findBYLcNumber(lcNumber);
+        final List<LegalCaseInterimOrder> lcInterimOrderList = legalCaseInterimOrderService.findByLCNumber(lcNumber);
         model.addAttribute("legalCase", legalCase);
         model.addAttribute("lcNumber", legalCase.getLcNumber());
         model.addAttribute("lcInterimOrderId", legalCase.getLegalCaseInterimOrder());

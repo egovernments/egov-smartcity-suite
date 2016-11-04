@@ -161,7 +161,9 @@ public class ChallanAction extends BaseFormAction {
 
     private Boolean cashAllowed = Boolean.TRUE;
     private Boolean cardAllowed = Boolean.TRUE;
-    private Boolean chequeDDAllowed = Boolean.TRUE;
+    private Boolean chequeAllowed = Boolean.TRUE;
+    private Boolean ddAllowed = Boolean.TRUE;
+    private Boolean bankAllowed = Boolean.TRUE;
 
     /**
      * An instance of <code>InstrumentHeader</code> representing the cash
@@ -200,11 +202,11 @@ public class ChallanAction extends BaseFormAction {
      */
     private String voucherNumber;
 
-    List<ValidationError> errors = new ArrayList<ValidationError>(0);
+    private List<ValidationError> errors = new ArrayList<ValidationError>(0);
 
     private String reportId;
 
-    Position position = null;
+    private Position position = null;
 
     /**
      * A <code>Long</code> array of receipt header ids , which have to be
@@ -242,6 +244,7 @@ public class ChallanAction extends BaseFormAction {
     private String approverName;
     private Long functionId;
     private Date cutOffDate;
+    private String instrumentType;
 
     /**
      * An array of <code>ReceiptHeader</code> instances which have to be
@@ -337,6 +340,7 @@ public class ChallanAction extends BaseFormAction {
      * @return the string
      */
     @ValidationErrorPage(value = "createReceipt")
+    @SkipValidation
     @Action(value = "/receipts/challan-createReceipt")
     public String createReceipt() {
         if (challanNumber != null && !"".equals(challanNumber)) {
@@ -656,9 +660,9 @@ public class ChallanAction extends BaseFormAction {
 
         // cheque/DD types
         if (instrumentProxyList != null)
-            if (instrumentProxyList.get(0).getInstrumentType().getType()
+            if (getInstrumentType()
                     .equals(CollectionConstants.INSTRUMENTTYPE_CHEQUE)
-                    || instrumentProxyList.get(0).getInstrumentType().getType()
+                    || getInstrumentType()
                             .equals(CollectionConstants.INSTRUMENTTYPE_DD))
                 instrumentHeaderList = populateInstrumentHeaderForChequeDD(instrumentHeaderList, instrumentProxyList);
         instrumentHeaderList = receiptHeaderService.createInstrument(instrumentHeaderList);
@@ -681,10 +685,10 @@ public class ChallanAction extends BaseFormAction {
             final List<InstrumentHeader> instrumentHeaderList, final List<InstrumentHeader> instrumentProxyList) {
 
         for (final InstrumentHeader instrumentHeader : instrumentProxyList) {
-            if (instrumentHeader.getInstrumentType().getType().equals(CollectionConstants.INSTRUMENTTYPE_CHEQUE))
+            if (getInstrumentType().equals(CollectionConstants.INSTRUMENTTYPE_CHEQUE))
                 instrumentHeader.setInstrumentType(financialsUtil
                         .getInstrumentTypeByType(CollectionConstants.INSTRUMENTTYPE_CHEQUE));
-            else if (instrumentHeader.getInstrumentType().getType().equals(CollectionConstants.INSTRUMENTTYPE_DD))
+            else if (getInstrumentType().equals(CollectionConstants.INSTRUMENTTYPE_DD))
                 instrumentHeader.setInstrumentType(financialsUtil
                         .getInstrumentTypeByType(CollectionConstants.INSTRUMENTTYPE_DD));
             if (instrumentHeader.getBankId() != null) {
@@ -1012,16 +1016,16 @@ public class ChallanAction extends BaseFormAction {
     private void setCollectionModesNotAllowed() {
         final List<String> modesNotAllowed = collectionsUtil.getCollectionModesNotAllowed(collectionsUtil
                 .getLoggedInUser());
-
         if (modesNotAllowed.contains(CollectionConstants.INSTRUMENTTYPE_CASH))
             setCashAllowed(Boolean.FALSE);
-
         if (modesNotAllowed.contains(CollectionConstants.INSTRUMENTTYPE_CARD))
             setCardAllowed(Boolean.FALSE);
-        if (modesNotAllowed.contains(CollectionConstants.INSTRUMENTTYPE_CHEQUE)
-                || modesNotAllowed.contains(CollectionConstants.INSTRUMENTTYPE_DD))
-            setChequeDDAllowed(Boolean.FALSE);
-
+        if (modesNotAllowed.contains(CollectionConstants.INSTRUMENTTYPE_CHEQUE))
+            setChequeAllowed(Boolean.FALSE);
+        if (modesNotAllowed.contains(CollectionConstants.INSTRUMENTTYPE_DD))
+            setDdAllowed(Boolean.FALSE);
+       // if (modesNotAllowed.contains(CollectionConstants.INSTRUMENTTYPE_BANK))
+            setBankAllowed(Boolean.FALSE);
     }
 
     /*
@@ -1101,6 +1105,8 @@ public class ChallanAction extends BaseFormAction {
             instrumentCount = 0;
         else
             instrumentCount = instrumentProxyList.size();
+        addDropdownData("bankBranchList", Collections.EMPTY_LIST);
+        addDropdownData("accountNumberList", Collections.EMPTY_LIST);
     }
 
     public boolean isFieldMandatory(final String field) {
@@ -1307,14 +1313,6 @@ public class ChallanAction extends BaseFormAction {
         this.cardAllowed = cardAllowed;
     }
 
-    public Boolean getChequeDDAllowed() {
-        return chequeDDAllowed;
-    }
-
-    public void setChequeDDAllowed(final Boolean chequeDDAllowed) {
-        this.chequeDDAllowed = chequeDDAllowed;
-    }
-
     public InstrumentHeader getInstrHeaderCash() {
         return instrHeaderCash;
     }
@@ -1502,6 +1500,38 @@ public class ChallanAction extends BaseFormAction {
         this.cutOffDate = cutOffDate;
     }
 
+    public Boolean getBankAllowed() {
+        return bankAllowed;
+    }
+
+    public void setBankAllowed(Boolean bankAllowed) {
+        this.bankAllowed = bankAllowed;
+    }
+
+    public Boolean getChequeAllowed() {
+        return chequeAllowed;
+    }
+
+    public void setChequeAllowed(Boolean chequeAllowed) {
+        this.chequeAllowed = chequeAllowed;
+    }
+
+    public Boolean getDdAllowed() {
+        return ddAllowed;
+    }
+
+    public void setDdAllowed(Boolean ddAllowed) {
+        this.ddAllowed = ddAllowed;
+    }
+
+    public String getInstrumentType() {
+        return instrumentType;
+    }
+
+    public void setInstrumentType(String instrumentType) {
+        this.instrumentType = instrumentType;
+    }
+    
     @Override
     public void validate() {
         super.validate();

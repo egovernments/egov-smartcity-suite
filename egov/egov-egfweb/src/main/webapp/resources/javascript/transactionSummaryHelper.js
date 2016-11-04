@@ -765,6 +765,7 @@ $('body').on('click', '#remove-row', function() {
 
 $('#buttonSubmit').click(function(e) {
 	if (validateOnCreate()) {
+		
 		var myform = $('#transactionSummaryform');
 
 		// Find disabled inputs, and remove the "disabled"
@@ -780,7 +781,10 @@ $('#buttonSubmit').click(function(e) {
 			url : formURL,
 			type : "post",
 			data : postData,
-			success : function(data, textStatus, jqXHR) {
+			beforeSend : function() {
+				jQuery('.loader-class').modal('show', {backdrop: 'static'});
+			},
+			success : function(data) {
 				bootbox.alert('Data Saved Successfully', function() {
 					location.reload();
 				});
@@ -789,8 +793,11 @@ $('#buttonSubmit').click(function(e) {
 					$(obj).children(':first-child').val(data[index].id);
 				});
 			},
-			error : function(jqXHR, textStatus, errorThrown) {
+			error : function() {
 				bootbox.alert("Error while saving data");
+			},
+			complete : function() {
+				jQuery('.loader-class').modal('hide');
 			}
 		});
 		e.preventDefault(); // STOP default action
@@ -902,6 +909,8 @@ function validateOnCreate() {
 				+ '].openingdebitbalance').value;
 		var credit = document.getElementById('transactionSummaryList[' + index
 				+ '].openingcreditbalance').value;
+		var transactionId=document.getElementById('transactionSummaryList['
+				+ index + '].id').value;
 		if ((glcode != '') && (glcodeid == null || glcodeid == '')) {
 			bootbox
 					.alert('Please select account code from auto complete for row '
@@ -920,7 +929,7 @@ function validateOnCreate() {
 				&& (entity == null || entity == '')) {
 			bootbox.alert('Please select entity for account code  ' + glcode);
 			flag = false;
-		} else if ((debit == '' && credit == '') || (debit < 1 && credit < 1)) {
+		} else if (((debit == '' && credit == '') || (debit < 1 && credit < 1)) && transactionId=="") {
 			bootbox
 					.alert('Please select debit amount or credit amount for account code  '
 							+ glcode);

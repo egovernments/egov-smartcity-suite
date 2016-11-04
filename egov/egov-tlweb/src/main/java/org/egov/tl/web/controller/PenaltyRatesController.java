@@ -39,8 +39,11 @@
  */
 package org.egov.tl.web.controller;
 
+import java.util.List;
+
 import org.egov.tl.entity.LicenseAppType;
 import org.egov.tl.entity.PenaltyRates;
+import org.egov.tl.entity.dto.PenaltyForm;
 import org.egov.tl.service.PenaltyRatesService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -51,54 +54,39 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
-import java.util.List;
-
 @Controller
 @RequestMapping("/penaltyRates")
 public class PenaltyRatesController {
+
     @Autowired
     private PenaltyRatesService penaltyRatesService;
 
+    @ModelAttribute("licenseAppTypes")
+    public List<LicenseAppType> licenseAppTypes() {
+        return penaltyRatesService.findAllLicenseAppType();
+    }
+
     @RequestMapping(value = "/create", method = RequestMethod.GET)
     public String penaltyRatesForm(@ModelAttribute final PenaltyForm penaltyForm, final Model model) {
-        model.addAttribute("licenseAppTypes", penaltyRatesService.findAllLicenseAppType());
         return "penaltyRates-create";
     }
 
     @RequestMapping(value = "/create", method = RequestMethod.POST)
     public String penaltyRatesCreate(@ModelAttribute final PenaltyForm penaltyForm, final BindingResult bindingResult,
             final RedirectAttributes redirectAttributes, final Model model) {
-        LicenseAppType licenseAppType = null;
-        licenseAppType = penaltyRatesService.findByLicenseAppType(penaltyForm.getLicenseAppType().getId());
-        if (bindingResult.hasErrors()) {
-            model.addAttribute("licenseAppTypes", penaltyRatesService.findAllLicenseAppType());
-            return "penaltyRates-create";
-        }
-        if (licenseAppType != null && penaltyForm.getPenaltyRatesList() != null
-                && penaltyForm.getPenaltyRatesList().size() > 0)
-            for (final PenaltyRates penaltyRates : penaltyForm.getPenaltyRatesList()) {
-                penaltyRates.setLicenseAppType(licenseAppType);
-                penaltyRates.setFromRange(penaltyRates.getFromRange());
-                penaltyRates.setToRange(penaltyRates.getToRange());
-                penaltyRates.setRate(penaltyRates.getRate());
-                penaltyRatesService.create(penaltyRates);
-            }
+        if (bindingResult.hasErrors())
+            return "penaltyRates-result";
+        penaltyRatesService.create(penaltyForm.getPenaltyRates());
         redirectAttributes.addFlashAttribute("message", "msg.penaltyRate.created");
-        return "penaltyRates-result";
+        return "penaltyRates-view";
     }
 
     @RequestMapping(value = "/search", method = RequestMethod.GET)
     public String search(@ModelAttribute final PenaltyForm penaltyForm, final BindingResult errors, final Model model) {
         if (errors.hasErrors())
             return "penaltyRates-result";
-        final List<PenaltyRates> searchResultList = penaltyRatesService.search(penaltyForm.getLicenseAppType().getId());
-        if (searchResultList.size() > 0)
-            penaltyForm.setPenaltyRatesList(searchResultList);
-        else {
-            penaltyForm.getPenaltyRatesList().clear();
-        }
+        penaltyForm.setPenaltyRatesList(penaltyRatesService.search(penaltyForm.getLicenseAppType().getId()));
         model.addAttribute("penaltyForm", penaltyForm);
         return "penaltyRates-result";
     }
-
 }

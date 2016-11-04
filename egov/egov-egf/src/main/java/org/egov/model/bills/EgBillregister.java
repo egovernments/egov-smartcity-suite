@@ -39,22 +39,41 @@
  */
 package org.egov.model.bills;
 
+import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.LinkedHashSet;
+import java.util.List;
+import java.util.Set;
+
+import javax.persistence.CascadeType;
+import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.Inheritance;
+import javax.persistence.InheritanceType;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
+import javax.persistence.OneToOne;
+import javax.persistence.OrderBy;
+import javax.persistence.SequenceGenerator;
+import javax.persistence.Table;
+import javax.persistence.Transient;
+import javax.validation.constraints.NotNull;
+
 import org.egov.commons.EgwStatus;
 import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.workflow.entity.StateAware;
+import org.egov.utils.CheckListHelper;
 import org.hibernate.search.annotations.DocumentId;
 import org.hibernate.validator.constraints.Length;
 
-import javax.persistence.*;
-import javax.validation.constraints.NotNull;
-import java.math.BigDecimal;
-import java.util.Date;
-import java.util.HashSet;
-import java.util.Set;
-
 @Entity
 @Table(name = "EG_BILLREGISTER")
-@Inheritance(strategy = InheritanceType.JOINED) 
+@Inheritance(strategy = InheritanceType.JOINED)
 @SequenceGenerator(name = EgBillregister.SEQ_EG_BILLREGISTER, sequenceName = EgBillregister.SEQ_EG_BILLREGISTER, allocationSize = 1)
 public class EgBillregister extends StateAware implements java.io.Serializable {
 
@@ -66,7 +85,7 @@ public class EgBillregister extends StateAware implements java.io.Serializable {
     @GeneratedValue(generator = SEQ_EG_BILLREGISTER, strategy = GenerationType.SEQUENCE)
     private Long id;
     @NotNull
-    @Length(min=1)
+    @Length(min = 1)
     private String billnumber;
     @NotNull
     private Date billdate;
@@ -115,7 +134,25 @@ public class EgBillregister extends StateAware implements java.io.Serializable {
 
     @OrderBy("id")
     @OneToMany(orphanRemoval = true, cascade = CascadeType.ALL, fetch = FetchType.LAZY, mappedBy = "egBillregister", targetEntity = EgBilldetails.class)
-    private Set<EgBilldetails> egBilldetailes = new HashSet<EgBilldetails>(0);
+    private Set<EgBilldetails> egBilldetailes = new LinkedHashSet<EgBilldetails>(0);
+
+    @Transient
+    private List<EgBilldetails> billDetails = new ArrayList<EgBilldetails>(0);
+
+    @Transient
+    private List<EgBilldetails> debitDetails = new ArrayList<EgBilldetails>(0);
+
+    @Transient
+    private List<EgBilldetails> creditDetails = new ArrayList<EgBilldetails>(0);
+
+    @Transient
+    private List<EgBilldetails> netPayableDetails = new ArrayList<EgBilldetails>(0);
+
+    @Transient
+    private List<EgBillPayeedetails> billPayeedetails = new ArrayList<EgBillPayeedetails>(0);
+
+    @Transient
+    private List<CheckListHelper> checkLists = new ArrayList<CheckListHelper>(0);
 
     /**
      * @return the worksdetail
@@ -134,9 +171,8 @@ public class EgBillregister extends StateAware implements java.io.Serializable {
     public EgBillregister() {
     }
 
-    public EgBillregister(final String billnumber, final Date billdate,
-            final BigDecimal billamount, final String billstatus, final String expendituretype,
-            final BigDecimal createdby, final Date createddate) {
+    public EgBillregister(final String billnumber, final Date billdate, final BigDecimal billamount,
+            final String billstatus, final String expendituretype, final BigDecimal createdby, final Date createddate) {
         this.billnumber = billnumber;
         this.billdate = billdate;
         this.billamount = billamount;
@@ -146,15 +182,14 @@ public class EgBillregister extends StateAware implements java.io.Serializable {
         // this.createddate = createddate;
     }
 
-    public EgBillregister(final String billnumber,
-            final Date billdate, final BigDecimal billamount, final BigDecimal fieldid,
-            final String billstatus, final String narration, final BigDecimal passedamount,
-            final String billtype, final String expendituretype,
-            final BigDecimal advanceadjusted, final BigDecimal createdby, final Date createddate,
-            final BigDecimal lastmodifiedby, final Date lastmodifieddate, final String zone,
-            final String division, final String workordernumber, final String billapprovalstatus,
-            final Boolean isactive, final Date billpasseddate, final Date workorderdate,
-            final EgBillregistermis egBillregistermis, final Set<EgBilldetails> egBilldetailes, final EgwStatus status) {
+    public EgBillregister(final String billnumber, final Date billdate, final BigDecimal billamount,
+            final BigDecimal fieldid, final String billstatus, final String narration, final BigDecimal passedamount,
+            final String billtype, final String expendituretype, final BigDecimal advanceadjusted,
+            final BigDecimal createdby, final Date createddate, final BigDecimal lastmodifiedby,
+            final Date lastmodifieddate, final String zone, final String division, final String workordernumber,
+            final String billapprovalstatus, final Boolean isactive, final Date billpasseddate,
+            final Date workorderdate, final EgBillregistermis egBillregistermis,
+            final Set<EgBilldetails> egBilldetailes, final EgwStatus status) {
         this.billnumber = billnumber;
         this.billdate = billdate;
         this.billamount = billamount;
@@ -344,9 +379,7 @@ public class EgBillregister extends StateAware implements java.io.Serializable {
         this.egBilldetailes = egBilldetailes;
     }
 
-    public void addEgBilldetailes(final EgBilldetails egBilldetail)
-    {
-        // System.out.println("adding egbilldetails to billregister"+egBilldetail);
+    public void addEgBilldetailes(final EgBilldetails egBilldetail) {
         getEgBilldetailes().add(egBilldetail);
     }
 
@@ -360,7 +393,7 @@ public class EgBillregister extends StateAware implements java.io.Serializable {
 
     @Override
     public String getStateDetails() {
-        return getBillnumber();
+        return getBillnumber() + "-" + getState().getComments();
     }
 
     public User getApprover() {
@@ -379,10 +412,57 @@ public class EgBillregister extends StateAware implements java.io.Serializable {
         this.approvedOn = approvedOn;
     }
 
-    public void removeEgBilldetailes(final EgBilldetails egBilldetail)
-    {
+    public void removeEgBilldetailes(final EgBilldetails egBilldetail) {
         if (egBilldetail != null)
             getEgBilldetailes().remove(egBilldetail);
+    }
+
+    public List<EgBilldetails> getBillDetails() {
+        return billDetails;
+    }
+
+    public void setBillDetails(final List<EgBilldetails> billDetails) {
+        this.billDetails = billDetails;
+    }
+
+    public List<EgBilldetails> getDebitDetails() {
+        return debitDetails;
+    }
+
+    public void setDebitDetails(final List<EgBilldetails> debitDetails) {
+        this.debitDetails = debitDetails;
+    }
+
+    public List<EgBilldetails> getCreditDetails() {
+        return creditDetails;
+    }
+
+    public void setCreditDetails(final List<EgBilldetails> creditDetails) {
+        this.creditDetails = creditDetails;
+    }
+
+    public List<EgBilldetails> getNetPayableDetails() {
+        return netPayableDetails;
+    }
+
+    public void setNetPayableDetails(final List<EgBilldetails> netPayableDetails) {
+        this.netPayableDetails = netPayableDetails;
+    }
+
+    public List<EgBillPayeedetails> getBillPayeedetails() {
+        return billPayeedetails;
+    }
+
+    public void setBillPayeedetails(final List<EgBillPayeedetails> billPayeedetails) {
+        this.billPayeedetails = billPayeedetails;
+    }
+
+    public List<CheckListHelper> getCheckLists() {
+        return checkLists;
+    }
+
+    public void setCheckLists(final List<CheckListHelper> checkLists) {
+        this.checkLists = checkLists;
     }
 
 }

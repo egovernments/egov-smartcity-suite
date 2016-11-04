@@ -222,7 +222,7 @@ public class CancelBillAction extends BaseFormAction {
 						+ Constants.DDMMYYYYFORMAT1.format(fDate) + "'");
 			} catch (final ParseException e) {
 				LOGGER.error(" From Date parse error");
-				// e.printStackTrace();
+				//
 			}
 		}
 		if (toDate != null && toDate.length() != 0) {
@@ -233,7 +233,7 @@ public class CancelBillAction extends BaseFormAction {
 						+ Constants.DDMMYYYYFORMAT1.format(tDate) + "'");
 			} catch (final ParseException e) {
 				LOGGER.error(" To Date parse error");
-				// e.printStackTrace();
+				//
 			}
 		}
 		if (expType == null || expType.equalsIgnoreCase("")) {

@@ -53,18 +53,31 @@ public class BaseRegisterResultAdaptor implements JsonSerializer<BaseRegisterRes
     @Override
     public JsonElement serialize(final BaseRegisterResult baseRegisterResultObj, final Type type,
             final JsonSerializationContext jsc) {
-       
+
         final JsonObject jsonObject = new JsonObject();
-        jsonObject.addProperty("consumerNo", null != baseRegisterResultObj.getConsumerNo() ? baseRegisterResultObj.getConsumerNo() : "");
-        jsonObject.addProperty("assessmentNo", null != baseRegisterResultObj.getAssementNo() ? baseRegisterResultObj.getAssementNo() : "");
-        jsonObject.addProperty("ownerName", null != baseRegisterResultObj.getOwnerName() ? baseRegisterResultObj.getOwnerName(): "");
-        jsonObject.addProperty("doorNo", null != baseRegisterResultObj.getDoorNo() ? baseRegisterResultObj.getDoorNo().toString(): "");
-        jsonObject.addProperty("categoryType", null != baseRegisterResultObj.getCategoryType() ? baseRegisterResultObj.getCategoryType() : "");
-        jsonObject.addProperty("period", null != baseRegisterResultObj.getPeriod() ? baseRegisterResultObj.getPeriod() : "");
+        jsonObject.addProperty("consumerNo",
+                null != baseRegisterResultObj.getConsumerNo() ? baseRegisterResultObj.getConsumerNo() : "");
+        jsonObject.addProperty("assessmentNo",
+                null != baseRegisterResultObj.getAssementNo() ? baseRegisterResultObj.getAssementNo() : "");
+        jsonObject.addProperty("ownerName",
+                null != baseRegisterResultObj.getOwnerName() ? baseRegisterResultObj.getOwnerName() : "");
+        jsonObject.addProperty("doorNo",
+                null != baseRegisterResultObj.getDoorNo() ? baseRegisterResultObj.getDoorNo().toString() : "");
+        jsonObject.addProperty("categoryType",
+                null != baseRegisterResultObj.getCategoryType() ? baseRegisterResultObj.getCategoryType() : "");
+        jsonObject.addProperty("usageType",
+                null != baseRegisterResultObj.getCategoryType() ? baseRegisterResultObj.getUsageType() : "");
+        jsonObject.addProperty("pipeSize",
+                null != baseRegisterResultObj.getCategoryType() ? baseRegisterResultObj.getPipeSize() : "");
+        jsonObject.addProperty("period",
+                null != baseRegisterResultObj.getPeriod() ? baseRegisterResultObj.getPeriod() : "");
         jsonObject.addProperty("arrears", baseRegisterResultObj.getArrears());
         jsonObject.addProperty("current", baseRegisterResultObj.getCurrent());
-        jsonObject.addProperty("penalty", null != baseRegisterResultObj.getPenalty() ? baseRegisterResultObj.getPenalty().toString() : "");
         jsonObject.addProperty("totalDemand", baseRegisterResultObj.getTotalDemand());
+        jsonObject.addProperty("arrearsCollection", baseRegisterResultObj.getArrearsCollection());
+        jsonObject.addProperty("currentCollection", baseRegisterResultObj.getCurrentCollection());
+        jsonObject.addProperty("totalCollection", baseRegisterResultObj.getTotalCollection());
+        jsonObject.addProperty("monthlyRate", baseRegisterResultObj.getMonthlyRate());
         return jsonObject;
     }
 

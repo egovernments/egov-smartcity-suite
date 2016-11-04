@@ -61,6 +61,8 @@
 	<parameter name="ownerAddress" class="java.lang.String"/>
 	<parameter name="copyType" class="java.lang.String"/>
 	<parameter name="userSignature" class="java.lang.Object"/>
+	<parameter name="noticeNumber" class="java.lang.String"/>
+	<parameter name="approverName" class="java.lang.String"/>
 	<queryString>
 		<![CDATA[]]>
 	</queryString>
@@ -358,6 +360,34 @@
 					<font size="10" isBold="false"/>
 				</textElement>
 				<textFieldExpression><![CDATA["Date : "+$P{approvedDate}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="158" y="78" width="110" height="15" uuid="d330d487-a49c-4d46-af88-57bd1b1388d6"/>
+				<box leftPadding="2">
+					<pen lineWidth="0.5"/>
+					<topPen lineWidth="0.0"/>
+					<leftPen lineWidth="0.0"/>
+					<bottomPen lineWidth="0.0"/>
+					<rightPen lineWidth="0.0"/>
+				</box>
+				<textElement textAlignment="Left">
+					<font size="10" isBold="false"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{approverName}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="78" y="96" width="110" height="15" uuid="487da23f-86e2-465f-88f7-dc97bf46add2"/>
+				<box leftPadding="2">
+					<pen lineWidth="0.5"/>
+					<topPen lineWidth="0.0"/>
+					<leftPen lineWidth="0.0"/>
+					<bottomPen lineWidth="0.0"/>
+					<rightPen lineWidth="0.0"/>
+				</box>
+				<textElement textAlignment="Left">
+					<font size="10" isBold="false"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{noticeNumber}]]></textFieldExpression>
 			</textField>
 		</band>
 	</title>

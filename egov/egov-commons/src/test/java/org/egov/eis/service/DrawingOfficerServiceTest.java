@@ -59,8 +59,8 @@ public class DrawingOfficerServiceTest {
     @Mock
     private DrawingOfficerRepository drawingOfficerRepository;
 
-    Position pos;
-    DrawingOfficer drawingOfficer;
+    private Position pos;
+    private DrawingOfficer drawingOfficer;
 
     @Before
     public void before() {

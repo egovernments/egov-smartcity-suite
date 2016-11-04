@@ -341,6 +341,8 @@ function goToAction(obj){
 		window.open("../renew/tradeRenewalNotice-renewalNotice.action?model.id="+jQuery('#licenseId').val(),  'rn'+jQuery('#licenseId').val(), 'scrollbars=yes,width=1000,height=700,status=yes');
 	else if(obj.options[obj.selectedIndex].innerHTML=='Renew License')
 		window.open("../newtradelicense/newTradeLicense-beforeRenew.action?model.id="+jQuery('#licenseId').val(),  'rl'+jQuery('#licenseId').val(), 'scrollbars=yes,width=1000,height=700,status=yes');
+	else if(obj.options[obj.selectedIndex].innerHTML=='Print Provisional Certificate')
+		window.open("/tl/viewtradelicense/viewTradeLicense-generateCertificate.action?model.id="+jQuery('#licenseId').val(),  'gc'+jQuery('#licenseId').val(), 'scrollbars=yes,width=1000,height=700,status=yes');
 }
 
   
@@ -373,7 +375,6 @@ function callAjaxForSearchTrade() {
 						isCancelled : isCancelled
 					}
 				},
-				"sPaginationType" : "bootstrap",
 				"bDestroy" : true,
 				"autoWidth": false,
 				"sDom" : "<'row'<'col-xs-12 hidden col-right'f>r>t<'row'<'col-xs-3'i><'col-xs-3 col-right'l><'col-xs-3 col-right'<'export-data'T>><'col-xs-3 text-right'p>>",

@@ -44,29 +44,26 @@ import static org.egov.ptis.constants.PropertyTaxConstants.REVENUE_HIERARCHY_TYP
 import static org.springframework.web.bind.annotation.RequestMethod.GET;
 
 import java.io.IOException;
+import java.math.BigInteger;
 import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.io.IOUtils;
+import org.egov.demand.dao.EgDemandDao;
 import org.egov.demand.model.EgDemandDetails;
 import org.egov.infra.admin.master.entity.Boundary;
 import org.egov.infra.admin.master.service.BoundaryService;
 import org.egov.wtms.application.entity.DefaultersReport;
-import org.egov.wtms.application.entity.WaterConnectionDetails;
 import org.egov.wtms.application.service.ConnectionDemandService;
 import org.egov.wtms.application.service.DefaultersWTReportService;
 import org.egov.wtms.application.service.WaterConnectionDetailsService;
-import org.egov.wtms.masters.entity.enums.ConnectionStatus;
 import org.egov.wtms.utils.DemandComparatorByInstallmentOrder;
-import org.egov.wtms.utils.WaterTaxUtils;
 import org.egov.wtms.utils.constants.WaterTaxConstants;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
@@ -94,7 +91,7 @@ public class DefaultersWTReportController {
     public ConnectionDemandService connectionDemandService;
 
     @Autowired
-    private WaterTaxUtils waterTaxUtils;
+    private EgDemandDao egDemandDao;
 
     @RequestMapping(method = GET)
     public String search(final Model model) {
@@ -142,10 +139,14 @@ public class DefaultersWTReportController {
         defaultersreportlist = defaultersWTReportService.getDefaultersReportDetails(fromAmount, toAmount, ward,
                 topDefaulters, Integer.valueOf(request.getParameter("start")),
                 Integer.valueOf(request.getParameter("length")));
-        final long foundRows = defaultersWTReportService.getTotalCount(fromAmount, toAmount, ward, topDefaulters);
+        long foundRows = 0;
+        if (null != request.getParameter("topDefaulters"))
+            foundRows = defaultersWTReportService.getTotalCountFromLimit(fromAmount, toAmount, ward, topDefaulters);
+        else
+            foundRows = defaultersWTReportService.getTotalCount(fromAmount, toAmount, ward);
         String result = null;
         for (final DefaultersReport dd : defaultersreportlist)
-            dd.setDuePeriodFrom(getDuePeriodFrom(dd.getHscNo()));
+            dd.setDuePeriodFrom(getDuePeriodFrom(dd.getDemandId()));
         result = new StringBuilder("{ \"draw\":").append(request.getParameter("draw")).append(", \"recordsTotal\":")
                 .append(foundRows).append(", \"recordsFiltered\":").append(foundRows).append(", \"data\":")
                 .append(toJSON(defaultersreportlist, DefaultersReport.class, DefaultersReportAdaptor.class)).append("}")
@@ -154,25 +155,21 @@ public class DefaultersWTReportController {
         IOUtils.write(result, response.getWriter());
     }
 
-    public String getDuePeriodFrom(final String consumerCode) {
-        final WaterConnectionDetails waterConnectionDetails = waterConnectionDetailsService
-                .findByApplicationNumberOrConsumerCodeAndStatus(consumerCode, ConnectionStatus.ACTIVE);
-        if (waterConnectionDetails != null) {
-            final DemandComparatorByInstallmentOrder demandComparatorByOrderId = new DemandComparatorByInstallmentOrder();
-            final Set<EgDemandDetails> egdemandtemplist = new HashSet<EgDemandDetails>();
-            final Set<EgDemandDetails> demnadDetList = waterTaxUtils.getCurrentDemand(waterConnectionDetails)
-                    .getDemand().getEgDemandDetails();
-            for (final EgDemandDetails egDemandTemp : demnadDetList)
-                if (!egDemandTemp.getAmount().equals(egDemandTemp.getAmtCollected()))
-                    egdemandtemplist.addAll(egDemandTemp.getEgDemand().getEgDemandDetails());
-            final List<EgDemandDetails> egdemandlist = new ArrayList<EgDemandDetails>(egdemandtemplist);
-            if (egdemandlist.isEmpty())
-                return "";
-            else {
-                Collections.sort(egdemandlist, demandComparatorByOrderId);
-                return egdemandlist.get(0).getEgDemandReason().getEgInstallmentMaster().getDescription();
-            }
-        } else
+    public String getDuePeriodFrom(final BigInteger demandId) {
+        final List<EgDemandDetails> demandDetList = new ArrayList<EgDemandDetails>(
+                egDemandDao.findById(demandId.longValue(), false).getEgDemandDetails());
+        final List<EgDemandDetails> demandDetFinalList = new ArrayList<EgDemandDetails>();
+        
+        for (final EgDemandDetails egDemandTemp : demandDetList)
+            if (!egDemandTemp.getAmount().equals(egDemandTemp.getAmtCollected()))
+                demandDetFinalList.addAll(egDemandTemp.getEgDemand().getEgDemandDetails());
+       
+        if (demandDetFinalList.isEmpty())
             return "";
+        else {
+            Collections.sort(demandDetFinalList, new DemandComparatorByInstallmentOrder());
+            return demandDetFinalList.get(0).getEgDemandReason().getEgInstallmentMaster().getDescription();
+        }
+
     }
 }

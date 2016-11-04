@@ -91,6 +91,7 @@ public class JudgmentTypeService {
     public List<JudgmentType> getJudgmentTypeList() {
         return judgmentTypeRepository.findAll();
     }
+
     public List<JudgmentType> getActiveJudgementTypes() {
         return judgmentTypeRepository.findByActiveTrueOrderByNameAsc();
     }
@@ -113,9 +114,9 @@ public class JudgmentTypeService {
                 final String interimOrderType = "%" + judgmentType.getName().toLowerCase() + "%";
                 predicates.add(cb.isNotNull(judgmentTypeObj.get("name")));
                 predicates
-                        .add(cb.like(
-                                cb.lower(judgmentTypeObj
-                                        .get(JudgmentType.getDeclaredSingularAttribute("name", String.class))),
+                .add(cb.like(
+                        cb.lower(judgmentTypeObj
+                                .get(JudgmentType.getDeclaredSingularAttribute("name", String.class))),
                                 interimOrderType));
             }
             if (judgmentType.getCode() != null) {
@@ -126,7 +127,7 @@ public class JudgmentTypeService {
                         code));
             }
             if (judgmentType.getActive() != null)
-                if (judgmentType.getActive() == true)
+                if (judgmentType.getActive())
                     predicates.add(cb.equal(
                             judgmentTypeObj.get(JudgmentType.getDeclaredSingularAttribute("active", Boolean.class)),
                             true));

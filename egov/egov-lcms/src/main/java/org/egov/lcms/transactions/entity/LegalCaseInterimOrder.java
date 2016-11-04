@@ -66,6 +66,10 @@ import org.egov.infra.utils.DateUtils;
 import org.egov.infra.validation.exception.ValidationError;
 import org.egov.lcms.masters.entity.InterimOrder;
 import org.egov.lcms.utils.constants.LcmsConstants;
+import org.hibernate.envers.AuditOverride;
+import org.hibernate.envers.AuditOverrides;
+import org.hibernate.envers.Audited;
+import org.hibernate.envers.NotAudited;
 import org.hibernate.validator.constraints.Length;
 
 @Entity
@@ -76,6 +80,8 @@ import org.hibernate.validator.constraints.Length;
  * dateFormat = "dd/MM/yyyy", message =
  * "sendtoStandingCounsel.greaterThan.iodate")
  */
+@AuditOverrides({ @AuditOverride(forClass = AbstractAuditable.class, name = "lastModifiedBy"),
+    @AuditOverride(forClass = AbstractAuditable.class, name = "lastModifiedDate") })
 public class LegalCaseInterimOrder extends AbstractAuditable {
     private static final long serialVersionUID = 1517694643078084884L;
     public static final String SEQ_EGLC_LCINTERIMORDER = "SEQ_EGLC_LCINTERIMORDER";
@@ -89,29 +95,35 @@ public class LegalCaseInterimOrder extends AbstractAuditable {
     @NotNull
     @JoinColumn(name = "LEGALCASE", nullable = false)
     @ManyToOne
+    @Audited
     private LegalCase legalCase;
 
     @Valid
     @NotNull
     @JoinColumn(name = "interimorder", nullable = false)
     @ManyToOne
+    @Audited
     private InterimOrder interimOrder;
 
     @Temporal(TemporalType.DATE)
     @ValidateDate(allowPast = true, dateFormat = LcmsConstants.DATE_FORMAT)
     @NotNull
     @Column(name = "iodate")
+    @Audited
     private Date ioDate;
 
     @Length(max = 50)
     @Column(name = "mpnumber")
+    @Audited
     private String mpNumber;
 
     @Length(max = 1024)
+    @Audited
     private String notes;
 
     @Temporal(TemporalType.DATE)
     @Column(name = "sendtostandingcounsel")
+    @Audited
     private Date sendtoStandingCounsel;
 
     @Temporal(TemporalType.DATE)
@@ -120,31 +132,39 @@ public class LegalCaseInterimOrder extends AbstractAuditable {
 
     @Temporal(TemporalType.DATE)
     @Column(name = "reportfilingdue")
+    @Audited
     private Date reportFilingDue;
 
     @Temporal(TemporalType.DATE)
     @Column(name = "senttodepartment")
+    @Audited
     private Date sendtoDepartment;
 
     @Temporal(TemporalType.DATE)
     @Column(name = "reportfromhod")
+    @Audited
     private Date reportFromHod;
 
     @Temporal(TemporalType.DATE)
     @Column(name = "reportsendtostandingcounsel")
+    @Audited
     private Date reportSendtoStandingCounsel;
 
     @Temporal(TemporalType.DATE)
     @Column(name = "reportfilingdate")
+    @Audited
     private Date reportFilingDate;
 
     @Length(max = 50)
+    @Audited
     private String referenceNumber;
 
     @OneToMany(mappedBy = "legalCaseInterimOrder", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
+    @NotAudited
     private List<LcInterimOrderDocuments> lcInterimOrderDocuments = new ArrayList<LcInterimOrderDocuments>(0);
     
     @OneToMany(mappedBy = "legalCaseInterimOrder", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
+    @Audited
     private List<VacateStay> vacateStay = new ArrayList<VacateStay>(0);
 
    
@@ -261,7 +281,7 @@ public class LegalCaseInterimOrder extends AbstractAuditable {
                 && getReportFilingDue() == null)
             errors.add(new ValidationError("reportFilingDue", "reportFilingDue.required"));
 
-        if (!DateUtils.compareDates(getIoDate(), legalCase.getCasedate()))
+        if (!DateUtils.compareDates(getIoDate(), legalCase.getCaseDate()))
             errors.add(new ValidationError("ioDate", "ioDate.greaterThan.caseDate"));
 
         if (!DateUtils.compareDates(getPetitionFiledOn(), getSendtoStandingCounsel()))

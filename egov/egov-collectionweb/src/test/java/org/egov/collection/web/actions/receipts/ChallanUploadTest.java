@@ -243,7 +243,7 @@ public class ChallanUploadTest {/* extends AbstractPersistenceServiceTest<Challa
 		try {
 			date = sdf.parse(inputArray[14]);
 		} catch (ParseException e) {
-			e.printStackTrace();
+
 		}
 		receiptHeader.setManualreceiptdate(date);
 		return receiptHeader;
@@ -270,7 +270,7 @@ public class ChallanUploadTest {/* extends AbstractPersistenceServiceTest<Challa
 		try {
 			date = sdf.parse(inputArray[1]);
 		} catch (ParseException e) {
-			e.printStackTrace();
+
 		}
 		challan.setChallanDate(date);
 		challan.setChallanNumber(inputArray[0]);
@@ -455,8 +455,8 @@ String[] inputArrayCheque = new String[21];
 				subLedgerlist=createEmptySubLedgerlist();
 			}
 		} catch (Exception e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+
+
 		}
 		action.setSubLedgerlist(subLedgerlist);
 		
@@ -621,7 +621,7 @@ String[] inputArrayCheque = new String[21];
 			throw new ApplicationRuntimeException(e.getMessage(),e);
         }
 		catch (ServiceLocatorException serviceLocatorEx) {
-			// TODO Auto-generated catch block
+
         	//LOGGER.error(serviceLocatorEx.getMessage());
 		}
 		

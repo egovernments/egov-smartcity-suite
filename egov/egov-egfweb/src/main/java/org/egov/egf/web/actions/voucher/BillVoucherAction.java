@@ -160,7 +160,7 @@ public class BillVoucherAction extends BaseVoucherAction {
             	addActionError("No records found.");
             }
         } catch (final ValidationException e) {
-            e.printStackTrace();
+
             final List<ValidationError> errors = new ArrayList<ValidationError>();
             errors.add(new ValidationError("exp", e.getErrors().get(0).getMessage()));
             throw new ValidationException(errors);

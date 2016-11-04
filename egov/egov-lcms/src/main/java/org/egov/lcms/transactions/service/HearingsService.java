@@ -45,8 +45,13 @@ import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
 
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+
 import org.egov.commons.EgwStatus;
+import org.egov.eis.entity.Employee;
 import org.egov.infra.utils.DateUtils;
+import org.egov.lcms.transactions.entity.EmployeeHearing;
 import org.egov.lcms.transactions.entity.Hearings;
 import org.egov.lcms.transactions.entity.LegalCase;
 import org.egov.lcms.transactions.repository.HearingsRepository;
@@ -56,6 +61,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.validation.BindingResult;
 
 @Service
 @Transactional(readOnly = true)
@@ -63,20 +69,57 @@ public class HearingsService {
 
     @Autowired
     private HearingsRepository hearingsRepository;
+    
+    @PersistenceContext
+    public EntityManager entityManager;
+
 
     @Autowired
     private LegalCaseUtil legalCaseUtil;
 
     @Transactional
     public Hearings persist(final Hearings hearings) {
+    	buildEmplyeeList(hearings);
         updateNextDate(hearings, hearings.getLegalCase());
         final EgwStatus statusObj = legalCaseUtil.getStatusForModuleAndCode(LcmsConstants.MODULE_TYPE_LEGALCASE,
                 LcmsConstants.LEGALCASE_STATUS_IN_PROGRESS);
-        hearings.setStatus(statusObj);
         hearings.getLegalCase().setStatus(statusObj);
         return hearingsRepository.save(hearings);
     }
 
+    @Transactional
+    public Hearings buildEmplyeeList(final Hearings hearings)
+	{
+		String empUserName = "";
+		for (EmployeeHearing hearingEmp : hearings.getPositionTemplList()) {
+				if (hearingEmp.getEmpPosName() != null) {
+					empUserName = hearingEmp.getEmpPosName().split("@")[1];
+					prepareEmployeeHearingList(hearings, empUserName, hearingEmp);
+				}
+					if (hearingEmp.getId() ==null && hearingEmp.getEmployee() !=null && hearingEmp.getEmployee().getName()!=null && 
+							hearingEmp.getEmployee().getName().contains("@")){
+						empUserName = hearingEmp.getEmployee().getName().split("@")[1];
+						prepareEmployeeHearingList(hearings, empUserName, hearingEmp);
+				}
+			}
+		if(hearings.getPositionTemplList().size() >0 && (hearings.getPositionTemplList().size() < hearings.getEmployeeHearingList().size())){
+			hearings.getEmployeeHearingList().clear();
+			for (EmployeeHearing hearingEmp : hearings.getPositionTemplList()) {
+				hearingEmp.setHearing(hearings);
+				
+				hearings.getEmployeeHearingList().add(hearingEmp);
+			}
+		}
+		return hearings;
+	}
+
+	private void prepareEmployeeHearingList(final Hearings hearings, String empUserName, EmployeeHearing hearingEmp) {
+		Employee employeeObj = legalCaseUtil.getEmployeeByUserName(empUserName);
+		hearingEmp.setHearing(hearings);
+		hearingEmp.setEmployee(employeeObj);
+		hearings.getEmployeeHearingList().add(hearingEmp);
+	}
+	
     public List<Hearings> findAll() {
         return hearingsRepository.findAll(new Sort(Sort.Direction.ASC, ""));
     }
@@ -85,7 +128,7 @@ public class HearingsService {
         return hearingsRepository.findOne(id);
     }
 
-    public List<Hearings> findBYLcNumber(final String lcNumber) {
+    public List<Hearings> findByLCNumber(final String lcNumber) {
         return hearingsRepository.findByLegalCase_lcNumber(lcNumber);
     }
 
@@ -106,6 +149,21 @@ public class HearingsService {
             legalCase.setNextDate(Collections.max(hearingDateList));
         }
 
+    }
+
+    public BindingResult validateDate(final Hearings hearings, final LegalCase legalCase, final BindingResult errors)
+    {
+
+        if (!DateUtils.compareDates(hearings.getHearingDate(), hearings.getLegalCase().getCaseDate()))
+            errors.rejectValue("hearingDate", "ValidateDate.hearing.casedate");
+        final List<Hearings> hearingsList = legalCase.getHearings();
+        int count = 0;
+        for (final Hearings hearings2 : hearingsList)
+            if (DateUtils.compareDates(hearings2.getHearingDate(), new Date()))
+                count++;
+        if (count >= 1)
+            errors.rejectValue("hearingDate", "ValidateDate.hearing.futuredate");
+        return errors;
     }
 
 }

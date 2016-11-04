@@ -40,16 +40,24 @@
 
 package org.egov.pgr.web.controller;
 
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
-import com.google.gson.reflect.TypeToken;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+
+import javax.servlet.http.HttpServletResponse;
+
+import org.egov.eis.entity.EmployeeView;
 import org.egov.eis.service.DesignationService;
 import org.egov.eis.service.PositionMasterService;
 import org.egov.infra.admin.master.entity.Boundary;
-import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.admin.master.service.CrossHierarchyService;
-import org.egov.infra.web.support.json.adapter.UserAdaptor;
 import org.egov.infstr.services.EISServeable;
+import org.egov.eis.entity.EmployeeViewAdaptor;
 import org.egov.pims.commons.Designation;
 import org.egov.pims.commons.Position;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -61,14 +69,9 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-import javax.servlet.http.HttpServletResponse;
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Date;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import com.google.gson.reflect.TypeToken;
 
 @Controller
 public class AjaxController {
@@ -133,17 +136,20 @@ public class AjaxController {
     public @ResponseBody String getPositions(@RequestParam final Integer approvalDepartment,
             @RequestParam final Integer approvalDesignation, final HttpServletResponse response) throws IOException {
         if (approvalDepartment != null && approvalDepartment != 0 && approvalDesignation != null && approvalDesignation != 0) {
-            final Set<User> users = new HashSet<>();
-            eisService.getUsersByDeptAndDesig(approvalDepartment, approvalDesignation, new Date()).stream().forEach(user -> {
-                user.getRoles().stream().forEach(role -> {
+            final Set<EmployeeView> users = new HashSet<>();
+            final HashMap<String, String> paramMap = new HashMap<String, String>();
+            paramMap.put("departmentId", String.valueOf(approvalDepartment));
+            paramMap.put("designationId", String.valueOf(approvalDesignation));
+            final List<EmployeeView> empViewList = (List<EmployeeView>) eisService.getEmployeeInfoList(paramMap);
+            empViewList.stream().forEach(user -> {
+                user.getEmployee().getRoles().stream().forEach(role -> {
                     if (role.getName().matches("Redressal Officer|Grievance Officer|Grievance Routing Officer"))
                         users.add(user);
                 });
             });
-            // below line should be removed once the commonService.getPosistions
-            // apis query joins and returns user
-            final Gson jsonCreator = new GsonBuilder().registerTypeAdapter(User.class, new UserAdaptor()).create();
-            return jsonCreator.toJson(users, new TypeToken<Collection<User>>() {
+            final Gson jsonCreator = new GsonBuilder().registerTypeAdapter(EmployeeView.class, new EmployeeViewAdaptor())
+                    .create();
+            return jsonCreator.toJson(users, new TypeToken<Collection<EmployeeView>>() {
             }.getType());
         }
         return "[]";

@@ -61,7 +61,7 @@
 
 <title></title>
 <link rel="icon"
-	href="<c:url value='/resources/global/images/favicon.png" sizes="32x32' context='/egi'/>">
+	href="<c:url value='/resources/global/images/favicon.png' context='/egi'/>" sizes="32x32">
 <link rel="stylesheet"
 	href="<c:url value='/resources/global/css/bootstrap/bootstrap.css' context='/egi'/>">
 <link rel="stylesheet"
@@ -173,18 +173,12 @@
 </style>
 <body class="page-body" oncontextmenu="return false;"
 	onload="loadDropDownCodesFunction();">
-	<div class="page-container">
 		<jsp:include page="../template/header.jsp" />
-		<div class="main-content">
-			<form:form role="form" action="create"
+	<form:form role="form" action="create"
 				modelAttribute="transactionSummaryDto" id="transactionSummaryform"
 				cssClass="form-horizontal form-groups-bordered"
 				enctype="multipart/form-data">
 				<jsp:include page="transactionsummary-form.jsp" />
-		</div>
-	</div>
-	</div>
-	</div>
 	<table class="table table-bordered display-hide" id="result">
 		<thead>
 			<tr>
@@ -264,8 +258,6 @@
 		</div>
 	</div>
 	</form:form>
-	</div>
-	</div>
 </body>
 <script type="text/javascript"
 	src="/EGF/resources/javascript/transactionSummaryHelper.js?rnd=${app_release_no}"></script>

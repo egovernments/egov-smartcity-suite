@@ -48,15 +48,14 @@ import java.util.Set;
 
 import org.egov.commons.ObjectType;
 import org.egov.commons.service.ObjectTypeService;
+import org.egov.eis.entity.Assignment;
 import org.egov.eis.entity.PositionHierarchy;
 import org.egov.eis.service.AssignmentService;
-import org.egov.eis.service.EisCommonService;
 import org.egov.eis.service.PositionHierarchyService;
 import org.egov.eis.service.PositionMasterService;
 import org.egov.infra.admin.master.entity.AppConfigValues;
 import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.admin.master.service.AppConfigValueService;
-import org.egov.infra.admin.master.service.CityService;
 import org.egov.infra.admin.master.service.UserService;
 import org.egov.infra.messaging.MessagingService;
 import org.egov.infra.security.utils.SecurityUtils;
@@ -71,7 +70,6 @@ import org.egov.pgr.repository.EscalationRepository;
 import org.egov.pgr.utils.constants.PGRConstants;
 import org.egov.pims.commons.Designation;
 import org.egov.pims.commons.Position;
-import org.egov.search.service.SearchService;
 import org.joda.time.DateTime;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -83,6 +81,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
 @Service
 @Transactional(readOnly = true)
 public class EscalationService {
@@ -94,9 +93,6 @@ public class EscalationService {
 
     @Autowired
     private ComplaintService complaintService;
-
-    @Autowired
-    private EisCommonService eisCommonService;
 
     @Autowired
     private ObjectTypeService objectTypeService;
@@ -120,10 +116,7 @@ public class EscalationService {
 
     @Autowired
     private PositionMasterService positionMasterService;
-    
-    @Autowired
-    private CityService cityService;
-    
+
     @Autowired
     private ComplaintIndexService complaintIndexService;
 
@@ -135,9 +128,6 @@ public class EscalationService {
 
     @Autowired
     private SecurityUtils securityUtils;
-    
-    @Autowired
-    private SearchService searchService;
 
     @Transactional
     public void create(final Escalation escalation) {
@@ -166,18 +156,19 @@ public class EscalationService {
                 LOG.error("Escalation can't be done, Object Type {} not found", PGRConstants.EG_OBJECT_TYPE_COMPLAINT);
                 return;
             }
-
             final List<Complaint> escalationComplaints = complaintService.getComplaintsEligibleForEscalation();
             for (final Complaint complaint : escalationComplaints) {
                 final PositionHierarchy positionHierarchy = positionHierarchyService.getPosHirByPosAndObjectTypeAndObjectSubType(
                         complaint.getAssignee().getId(),
                         objectType.getId(), complaint.getComplaintType().getCode());
-                final User previoususer = eisCommonService.getUserForPosition(complaint.getAssignee().getId(), new Date());
+
                 Position superiorPosition = null;
                 User superiorUser = null;
                 if (positionHierarchy != null) {
                     superiorPosition = positionHierarchy.getToPosition();
-                    superiorUser = eisCommonService.getUserForPosition(superiorPosition.getId(), new Date());
+                    final List<Assignment> superiorAssignments = assignmentService
+                            .getAssignmentsForPosition(superiorPosition.getId(), new Date());
+                    superiorUser = !superiorAssignments.isEmpty() ? superiorAssignments.get(0).getEmployee() : null;
                 } else {
                     final Set<User> users = userService.getUsersByRoleName(PGRConstants.GRO_ROLE_NAME);
                     if (!users.isEmpty())
@@ -186,53 +177,12 @@ public class EscalationService {
                         superiorPosition = positionMasterService.getCurrentPositionForUser(superiorUser.getId());
                     else {
                         LOG.error("Could not do escalation, no user defined for Grievance Officer role");
-                        return;
+                        continue;
                     }
                 }
-                //&& condition is to avoid escalation if a user does not have superior position.
-                if (superiorPosition != null && !superiorUser.equals(previoususer)) {
-                    complaint.setEscalationDate(getExpiryDate(complaint));
-                    complaint.setAssignee(superiorPosition);
-                    complaint.transition().withOwner(superiorPosition).withComments("Complaint is escalated")
-                            .withDateInfo(complaint.getEscalationDate().toDate())
-                            .withStateValue(complaint.getStatus().getName())
-                            .withSenderName(securityUtils.getCurrentUser().getName());
-                    final Complaint savedComplaint = complaintRepository.save(complaint);
-                    if (superiorUser != null) {
-                        final AppConfigValues appConfigValue = appConfigValuesService
-                                .getConfigValuesByModuleAndKey(PGRConstants.MODULE_NAME, "SENDEMAILFORESCALATION").get(0);
-                        if ("YES".equalsIgnoreCase(appConfigValue.getValue())) {
-                            final String formattedEscalationDate = new SimpleDateFormat("dd/MM/yyyy HH:mm")
-                                    .format(complaint.getEscalationDate().toDate());
-                            final StringBuffer emailBody = new StringBuffer().append("Dear ").append(superiorUser.getName())
-                                    .append(",\n \n     The complaint Number (").append(complaint.getCrn())
-                                    .append(") is escalated.\n").append("\n Complaint Details - \n \n Complaint type - ")
-                                    .append(complaint.getComplaintType().getName()).append(" \n Location details - ")
-                                    .append(complaint.getLocation().getName()).append("\n Complaint description - ")
-                                    .append(complaint.getDetails()).append("\n Complaint status -")
-                                    .append(complaint.getStatus().getName()).append("\n Complaint escalated to - ")
-                                    .append(superiorUser.getName()).append("\n Escalation Time - ")
-                                    .append(formattedEscalationDate);
-                            final StringBuffer emailSubject = new StringBuffer().append("Escalated Complaint Number -")
-                                    .append(complaint.getCrn()).append(" (").append(complaint.getStatus().getName()).append(")");
-                            final StringBuffer smsBody = new StringBuffer().append("Dear ").append(superiorUser.getName())
-                                    .append(", ").append(complaint.getCrn() + " by ")
-                                    .append(complaint.getComplainant().getName() != null ? complaint.getComplainant().getName()
-                                            : "Anonymous User")
-                                    .append(", " + complaint.getComplainant().getMobile())
-                                    .append(" for " + complaint.getComplaintType().getName() + " from ")
-                                    .append(complaint.getLocation().getName()).append(" handled by ")
-                                    .append(previoususer.getName() + " has been escalated to you. ");
-                            messagingService.sendEmail(superiorUser.getEmailId(), emailSubject.toString(), emailBody.toString());
-                            messagingService.sendSMS(superiorUser.getMobileNumber(), smsBody.toString());
-                        }
-                    }
-                   //update complaint index values
-                    final Complaint savedComplaintIndex = new ComplaintIndex();
-                    BeanUtils.copyProperties(savedComplaint, savedComplaintIndex);
-                    final ComplaintIndex complaintIndex = ComplaintIndex.method(savedComplaintIndex);
-                    complaintIndexService.updateComplaintEscalationIndexValues(complaintIndex);
-                }
+                // && condition is to avoid escalation if a user does not have superior position.
+                if (superiorPosition != null && superiorUser != null && !superiorPosition.equals(complaint.getAssignee()))
+                    updateOnEscalation(complaint, superiorPosition, superiorUser);
             }
         } catch (final Exception e) {
             // Ignoring and logging exception since exception will cause multi city scheduler to fail for all remaining cities.
@@ -241,11 +191,58 @@ public class EscalationService {
         }
     }
 
+    public void updateOnEscalation(final Complaint complaint, final Position superiorPosition,
+            final User superiorUser) {
+        final Position previousOwner = complaint.getAssignee();
+        final List<Assignment> prevUserAssignments = assignmentService
+                .getAssignmentsForPosition(previousOwner.getId(), new Date());
+        final User previoususer = !prevUserAssignments.isEmpty() ? prevUserAssignments.get(0).getEmployee() : null;
+        complaint.setEscalationDate(getExpiryDate(complaint));
+        complaint.setAssignee(superiorPosition);
+        complaint.transition().withOwner(superiorPosition).withComments("Complaint is escalated")
+                .withDateInfo(new Date())
+                .withStateValue(complaint.getStatus().getName())
+                .withSenderName(securityUtils.getCurrentUser().getName());
+        final Complaint savedComplaint = complaintRepository.save(complaint);
+        final AppConfigValues appConfigValue = appConfigValuesService
+                .getConfigValuesByModuleAndKey(PGRConstants.MODULE_NAME, "SENDEMAILFORESCALATION").get(0);
+        if ("YES".equalsIgnoreCase(appConfigValue.getValue())) {
+            final String formattedEscalationDate = new SimpleDateFormat("dd/MM/yyyy HH:mm")
+                    .format(complaint.getEscalationDate().toDate());
+            final StringBuffer emailBody = new StringBuffer().append("Dear ").append(superiorUser.getName())
+                    .append(",\n \n     The complaint Number (").append(complaint.getCrn())
+                    .append(") is escalated.\n").append("\n Complaint Details - \n \n Complaint type - ")
+                    .append(complaint.getComplaintType().getName()).append(" \n Location details - ")
+                    .append(complaint.getLocation().getName()).append("\n Complaint description - ")
+                    .append(complaint.getDetails()).append("\n Complaint status -")
+                    .append(complaint.getStatus().getName()).append("\n Complaint escalated to - ")
+                    .append(superiorUser.getName()).append("\n Escalation Time - ")
+                    .append(formattedEscalationDate);
+            final StringBuffer emailSubject = new StringBuffer().append("Escalated Complaint Number -")
+                    .append(complaint.getCrn()).append(" (").append(complaint.getStatus().getName()).append(")");
+            final StringBuffer smsBody = new StringBuffer().append("Dear ").append(superiorUser.getName())
+                    .append(", ").append(complaint.getCrn() + " by ")
+                    .append(complaint.getComplainant().getName() != null ? complaint.getComplainant().getName()
+                            : "Anonymous User")
+                    .append(", " + complaint.getComplainant().getMobile())
+                    .append(" for " + complaint.getComplaintType().getName() + " from ")
+                    .append(complaint.getLocation().getName()).append(" handled by ")
+                    .append(previoususer != null ? previoususer.getName()
+                            : previousOwner.getName() + " has been escalated to you. ");
+            messagingService.sendEmail(superiorUser.getEmailId(), emailSubject.toString(), emailBody.toString());
+            messagingService.sendSMS(superiorUser.getMobileNumber(), smsBody.toString());
+        }
+        // update complaint index values
+        final Complaint savedComplaintIndex = new ComplaintIndex();
+        BeanUtils.copyProperties(savedComplaint, savedComplaintIndex);
+        final ComplaintIndex complaintIndex = ComplaintIndex.method(savedComplaintIndex);
+        complaintIndexService.updateComplaintEscalationIndexValues(complaintIndex);
+    }
+
     protected DateTime getExpiryDate(final Complaint complaint) {
 
         DateTime expiryDate = complaint.getEscalationDate();
-        final Designation designation = assignmentService.getPrimaryAssignmentForPositon(complaint.getAssignee().getId())
-                .getDesignation();
+        final Designation designation = complaint.getAssignee().getDeptDesig().getDesignation();
         final Integer noOfhrs = getHrsToResolve(designation.getId(), complaint.getComplaintType().getId());
         expiryDate = expiryDate.plusHours(noOfhrs);
         return expiryDate;
@@ -301,8 +298,8 @@ public class EscalationService {
 
         return existingPosHierarchy != null ? existingPosHierarchy : null;
     }
-    
-    public Escalation getEscalationBycomplaintTypeAndDesignation(Long complaintTypeId, Long designationId){
-       return escalationRepository.findByDesignationAndComplaintType(designationId, complaintTypeId);  	
+
+    public Escalation getEscalationBycomplaintTypeAndDesignation(final Long complaintTypeId, final Long designationId) {
+        return escalationRepository.findByDesignationAndComplaintType(designationId, complaintTypeId);
     }
 }

@@ -512,7 +512,7 @@ public class PendingTDSReportAction extends BaseFormAction {
             entityType = egovCommon.getEntityType(entry.getEgRemittanceGldtl().getGeneralledgerdetail().getDetailTypeId(),
                     detailKeyId);
         } catch (final ApplicationException e) {
-            e.printStackTrace();
+
         }
         return entityType;
     }

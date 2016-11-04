@@ -50,9 +50,6 @@ import org.springframework.context.ApplicationContext;
 @DisallowConcurrentExecution
 public class BulkBillGenerationJob extends AbstractQuartzJob {
 
-    /**
-     *
-     */
     private static final long serialVersionUID = 8529011650151018147L;
 
     private static final Logger LOGGER = Logger.getLogger(BulkBillGenerationJob.class);
@@ -66,11 +63,10 @@ public class BulkBillGenerationJob extends AbstractQuartzJob {
     @Override
     public void executeJob() {
         LOGGER.debug("Entered into executeJob" + modulo);
-        super.prepareCityThreadLocal();
         DemandBillService demandBillService = null;
         try {
-            demandBillService = (DemandBillService) beanProvider.getBean("demandBillService");
-        } catch (final NoSuchBeanDefinitionException e) {
+            demandBillService = beanProvider.getBean("demandBillService", DemandBillService.class);
+        } catch (NoSuchBeanDefinitionException e) {
             LOGGER.warn("DemandBillService implementation not found");
         }
         if (demandBillService != null)

@@ -53,6 +53,10 @@ import static org.egov.infra.web.support.json.adapter.HibernateProxyTypeAdapter.
 
 public class WebUtils {
 
+    private WebUtils() {
+        //Since utils are with static methods
+    }
+
     /**
      * This will return only domain name from http request <br/>
      * eg: http://www.domain.com/cxt/xyz will return www.domain.com http://somehost:8090/cxt/xyz will return somehost
@@ -67,8 +71,10 @@ public class WebUtils {
      * eg: http://www.domain.com/cxt/xyz will return www.domain.com http://somehost:8090/cxt/xyz will return somehost
      **/
     public static String extractRequestedDomainName(final String requestURL) {
-        final int domainNameStartIndex = requestURL.indexOf("://") + 3;
-        String domainName = requestURL.substring(domainNameStartIndex, requestURL.indexOf('/', domainNameStartIndex));
+        int domainNameStartIndex = requestURL.indexOf("://") + 3;
+        int domainNameEndIndex = requestURL.indexOf('/', domainNameStartIndex);
+        String domainName = requestURL.substring(domainNameStartIndex,
+                domainNameEndIndex > 0 ? domainNameEndIndex : requestURL.length());
         if (domainName.contains(":"))
             domainName = domainName.split(":")[0];
         return domainName;
@@ -80,18 +86,18 @@ public class WebUtils {
      * http://www.domain.com/cxt/xyz withContext value as false will return http://www.domain.com
      **/
     public static String extractRequestDomainURL(final HttpServletRequest httpRequest, final boolean withContext) {
-        final StringBuffer url = httpRequest.getRequestURL();
+        final StringBuilder url = new StringBuilder(httpRequest.getRequestURL());
         final String uri = httpRequest.getRequestURI();
         return withContext ? url.substring(0, url.length() - uri.length() + httpRequest.getContextPath().length()) + "/"
                 : url.substring(0, url.length() - uri.length());
     }
 
     public static String extractQueryParamsFromUrl(final String url) {
-        return url.substring(url.indexOf("?") + 1, url.length());
+        return url.substring(url.indexOf('?') + 1, url.length());
     }
 
     public static String extractURLWithoutQueryParams(final String url) {
-        return url.substring(0, url.indexOf("?"));
+        return url.substring(0, url.indexOf('?'));
     }
 
     public static String currentContextPath(final ServletRequest request) {

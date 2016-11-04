@@ -146,7 +146,9 @@ public class BankService extends PersistenceService<Bank, Integer> {
 
             }
         } else
-            query.append("'").append(typeOfAccount).append("') order by 2 ");
+            query.append("'").append(typeOfAccount).append("'");
+
+        query.append(") order by 2 ");
 
         List<Object[]> bankBranch;
         if (fundId != null)

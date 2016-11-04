@@ -40,6 +40,7 @@
 
 package org.egov.infra.config.jms.messaging.listener;
 
+import org.egov.infra.messaging.MessagePriority;
 import org.egov.infra.messaging.sms.SMSService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jms.annotation.JmsListener;
@@ -49,6 +50,10 @@ import org.springframework.stereotype.Component;
 import javax.jms.JMSException;
 import javax.jms.MapMessage;
 import javax.jms.Message;
+
+import static org.egov.infra.messaging.MessageConstants.MESSAGE;
+import static org.egov.infra.messaging.MessageConstants.MOBILE;
+import static org.egov.infra.messaging.MessageConstants.PRIORITY;
 
 @Component
 public class SMSQueueListener {
@@ -60,7 +65,8 @@ public class SMSQueueListener {
     public void processMessage(Message message) {
         try {
             final MapMessage emailMessage = (MapMessage) message;
-            smsService.sendSMS(emailMessage.getString("mobile"), emailMessage.getString("message"));
+            smsService.sendSMS(emailMessage.getString(MOBILE), emailMessage.getString(MESSAGE),
+                    MessagePriority.valueOf(emailMessage.getString(PRIORITY)));
         } catch (final JMSException e) {
             throw JmsUtils.convertJmsAccessException(e);
         }

@@ -41,17 +41,11 @@ package org.egov.works.web.controller.contractorbill;
 
 import java.io.IOException;
 import java.math.BigDecimal;
-import java.util.ArrayList;
 import java.util.Date;
-import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Map;
-import java.util.Set;
 
 import javax.servlet.http.HttpServletRequest;
 
-import org.egov.commons.Accountdetailtype;
 import org.egov.commons.CChartOfAccounts;
 import org.egov.commons.dao.ChartOfAccountsHibernateDAO;
 import org.egov.egf.budget.model.BudgetControlType;
@@ -59,10 +53,8 @@ import org.egov.egf.budget.service.BudgetControlTypeService;
 import org.egov.eis.web.contract.WorkflowContainer;
 import org.egov.eis.web.controller.workflow.GenericWorkFlowController;
 import org.egov.infra.exception.ApplicationRuntimeException;
-import org.egov.infra.utils.StringUtils;
 import org.egov.infra.utils.autonumber.AutonumberServiceBeanResolver;
 import org.egov.infra.validation.exception.ValidationException;
-import org.egov.model.bills.EgBillPayeedetails;
 import org.egov.model.bills.EgBilldetails;
 import org.egov.works.abstractestimate.entity.AbstractEstimate;
 import org.egov.works.abstractestimate.service.EstimateService;
@@ -144,6 +136,8 @@ public class CreateContractorBillController extends GenericWorkFlowController {
         if (!lineEstimateDetails.getLineEstimate().isSpillOverFlag())
             contractorBillRegister.setBilldate(new Date());
 
+        final WorkOrderEstimate workOrderEstimate = workOrderEstimateService.getWorkOrderEstimateByWorkOrderId(workOrder.getId());
+        model.addAttribute("workOrderEstimate", workOrderEstimate);
         model.addAttribute("workOrder", workOrder);
         model.addAttribute("lineEstimateDetails", lineEstimateDetails);
         model.addAttribute("contractorBillRegister", contractorBillRegister);
@@ -153,7 +147,10 @@ public class CreateContractorBillController extends GenericWorkFlowController {
     private void setDropDownValues(final Model model) {
         final List<CChartOfAccounts> contractorPayableAccountList = chartOfAccountsHibernateDAO
                 .getAccountCodeByPurposeName(WorksConstants.CONTRACTOR_NETPAYABLE_PURPOSE);
+        final List<CChartOfAccounts> contractorRefundAccountList = chartOfAccountsHibernateDAO
+                .getAccountCodeByListOfPurposeName(WorksConstants.CONTRACTOR_REFUND_PURPOSE);
         model.addAttribute("netPayableAccounCodes", contractorPayableAccountList);
+        model.addAttribute("refundAccounCodes", contractorRefundAccountList);
         model.addAttribute("billTypes", BillTypes.values());
     }
 
@@ -179,15 +176,25 @@ public class CreateContractorBillController extends GenericWorkFlowController {
 
         contractorBillRegister = addBillDetails(contractorBillRegister, lineEstimateDetails, resultBinder, request);
 
-        if (!checkForDuplicateAccountCodes(contractorBillRegister))
+        contractorBillRegisterService.validateRefundAmount(contractorBillRegister, resultBinder);
+
+        contractorBillRegisterService.validateMileStonePercentage(contractorBillRegister, resultBinder);
+
+        if (!contractorBillRegisterService.checkForDuplicateAccountCodes(contractorBillRegister))
             resultBinder.reject("error.contractorbill.duplicate.accountcodes",
                     "error.contractorbill.duplicate.accountcodes");
-        validateTotalDebitAndCreditAmount(contractorBillRegister, resultBinder);
+
+        if (!contractorBillRegisterService.validateDuplicateRefundAccountCodes(contractorBillRegister))
+            resultBinder.reject("error.contractorbill.duplicate.refund.accountcodes",
+                    "error.contractorbill.duplicate.refund.accountcodes");
+
+        contractorBillRegisterService.validateTotalDebitAndCreditAmount(contractorBillRegister, resultBinder);
 
         if (resultBinder.hasErrors()) {
             setDropDownValues(model);
             model.addAttribute("lineEstimateDetails", lineEstimateDetails);
             model.addAttribute("workOrder", workOrder);
+            model.addAttribute("workOrderEstimate", workOrderEstimate);
             model.addAttribute("netPayableAmount", request.getParameter("netPayableAmount"));
             model.addAttribute("netPayableAccountCode", request.getParameter("netPayableAccountCode"));
             model.addAttribute("stateType", contractorBillRegister.getClass().getSimpleName());
@@ -199,7 +206,7 @@ public class CreateContractorBillController extends GenericWorkFlowController {
 
             model.addAttribute("mode", "edit");
 
-            model.addAttribute("billDetailsMap", getBillDetailsMap(contractorBillRegister));
+            model.addAttribute("billDetailsMap", contractorBillRegisterService.getBillDetailsMap(contractorBillRegister, model));
 
             return "contractorBill-form";
         } else {
@@ -219,7 +226,7 @@ public class CreateContractorBillController extends GenericWorkFlowController {
             else
                 partBillCount++;
             contractorBillRegister.setBillSequenceNumber(partBillCount);
-            ContractorBillNumberGenerator c = beanResolver.getAutoNumberServiceFor(ContractorBillNumberGenerator.class);
+            final ContractorBillNumberGenerator c = beanResolver.getAutoNumberServiceFor(ContractorBillNumberGenerator.class);
             final String contractorBillNumber = c.getNextNumber(contractorBillRegister);
             contractorBillRegister.setBillnumber(contractorBillNumber);
             contractorBillRegister.setPassedamount(contractorBillRegister.getBillamount());
@@ -311,7 +318,7 @@ public class CreateContractorBillController extends GenericWorkFlowController {
                             String.valueOf(contractorBillRegister.getWorkOrder().getWorkOrderAmount()) },
                     null);
 
-        if (StringUtils.isBlank(contractorBillRegister.getBilltype()))
+        if (org.apache.commons.lang.StringUtils.isBlank(contractorBillRegister.getBilltype()))
             resultBinder.rejectValue("billtype", "error.billtype.required");
         if (contractorBillRegister.getEgBillregistermis() != null
                 && contractorBillRegister.getEgBillregistermis().getPartyBillDate() != null
@@ -321,7 +328,7 @@ public class CreateContractorBillController extends GenericWorkFlowController {
                     "error.validate.partybilldate.lessthan.loadate");
 
         if (contractorBillRegister.getMbHeader() != null) {
-            if (StringUtils.isBlank(contractorBillRegister.getMbHeader().getMbRefNo()))
+            if (org.apache.commons.lang.StringUtils.isBlank(contractorBillRegister.getMbHeader().getMbRefNo()))
                 resultBinder.rejectValue("mbHeader.mbRefNo", "error.mbrefno.required");
 
             if (contractorBillRegister.getMbHeader().getMbDate() == null)
@@ -348,80 +355,45 @@ public class CreateContractorBillController extends GenericWorkFlowController {
                 resultBinder.rejectValue("mbHeader.mbDate", "error.validate.mbdate.lessthan.loadate");
         }
 
-        if (StringUtils.isBlank(request.getParameter("netPayableAccountCode")))
+        if (org.apache.commons.lang.StringUtils.isBlank(request.getParameter("netPayableAccountCode")))
             resultBinder.reject("error.netpayable.accountcode.required", "error.netpayable.accountcode.required");
-        if (StringUtils.isBlank(request.getParameter("netPayableAmount"))
-                || Double.valueOf(request.getParameter("netPayableAmount").toString()) < 0)
+        if (org.apache.commons.lang.StringUtils.isBlank(request.getParameter("netPayableAmount"))
+                || Double.valueOf(request.getParameter("netPayableAmount").toString()) <= 0)
             resultBinder.reject("error.netpayable.amount.required", "error.netpayable.amount.required");
 
         // TODO: from this line code should be removed after user data entry is
         // finished.
         if (contractorBillRegister.getEgBillregistermis() != null
                 && contractorBillRegister.getEgBillregistermis().getPartyBillDate() != null && contractorBillRegister
-                        .getEgBillregistermis().getPartyBillDate().after(contractorBillRegister.getBilldate())) {
+                        .getEgBillregistermis().getPartyBillDate().after(contractorBillRegister.getBilldate()))
             resultBinder.rejectValue("egBillregistermis.partyBillDate", "error.partybilldate.billdate");
-        }
-        Date workCompletionDate = contractorBillRegister.getWorkOrderEstimate().getWorkCompletionDate();
+        final Date workCompletionDate = contractorBillRegister.getWorkOrderEstimate().getWorkCompletionDate();
         if (contractorBillRegister.getBilltype().equals(BillTypes.Final_Bill.toString())
-                && workCompletionDate == null) {
+                && workCompletionDate == null)
             resultBinder.rejectValue("workOrderEstimate.workCompletionDate", "error.workcompletiondate.required");
-        }
 
         final Date currentDate = new Date();
         if (workCompletionDate != null) {
-            if (workCompletionDate.after(currentDate)) {
+            if (workCompletionDate.after(currentDate))
                 resultBinder.rejectValue("workOrderEstimate.workCompletionDate", "error.workcompletiondate.futuredate");
-            }
             if (workCompletionDate
-                    .before(contractorBillRegister.getWorkOrderEstimate().getWorkOrder().getWorkOrderDate())) {
+                    .before(contractorBillRegister.getWorkOrderEstimate().getWorkOrder().getWorkOrderDate()))
                 resultBinder.rejectValue("workOrderEstimate.workCompletionDate",
                         "error.workcompletiondate.workorderdate");
-            }
-            if (workCompletionDate.after(contractorBillRegister.getBilldate())) {
+            if (workCompletionDate.after(contractorBillRegister.getBilldate()))
                 resultBinder.rejectValue("workOrderEstimate.workCompletionDate", "error.workcompletiondate.billdate");
-            }
         }
 
         if (lineEstimateDetails.getLineEstimate().isSpillOverFlag()) {
             final Date currentFinYear = lineEstimateService.getCurrentFinancialYear(currentDate).getStartingDate();
-            if (contractorBillRegister.getBilldate().after(currentDate)) {
+            if (contractorBillRegister.getBilldate().after(currentDate))
                 resultBinder.rejectValue("billdate", "error.billdate.futuredate");
-            }
-            if (contractorBillRegister.getBilldate().before(contractorBillRegister.getWorkOrder().getWorkOrderDate())) {
+            if (contractorBillRegister.getBilldate().before(contractorBillRegister.getWorkOrder().getWorkOrderDate()))
                 resultBinder.rejectValue("billdate", "error.billdate.workorderdate");
-            }
-            if (contractorBillRegister.getBilldate().before(currentFinYear)) {
+            if (contractorBillRegister.getBilldate().before(currentFinYear))
                 resultBinder.rejectValue("billdate", "error.billdate.finyear");
-            }
         }
-    }
 
-    private void validateTotalDebitAndCreditAmount(final ContractorBillRegister contractorBillRegister,
-            final BindingResult resultBinder) {
-        BigDecimal totalDebitAmount = BigDecimal.ZERO;
-        BigDecimal totalCreditAmount = BigDecimal.ZERO;
-        for (final EgBilldetails egBilldetails : contractorBillRegister.getEgBilldetailes()) {
-            if (egBilldetails.getDebitamount() != null
-                    && !(BigDecimal.ZERO.compareTo(egBilldetails.getDebitamount()) == 0))
-                totalDebitAmount = totalDebitAmount.add(egBilldetails.getDebitamount());
-            if (egBilldetails.getCreditamount() != null
-                    && !(BigDecimal.ZERO.compareTo(egBilldetails.getCreditamount()) == 0))
-                totalCreditAmount = totalCreditAmount.add(egBilldetails.getCreditamount());
-        }
-        if (!(totalDebitAmount.compareTo(totalCreditAmount) == 0))
-            resultBinder.reject("error.total.debitamount.creditamount.notequal",
-                    "error.total.debitamount.creditamount.notequal");
-    }
-
-    private boolean checkForDuplicateAccountCodes(final ContractorBillRegister contractorBillRegister) {
-        final Set<Long> glCodeIdSet = new HashSet<Long>();
-        for (final EgBilldetails egBilldetails : contractorBillRegister.getEgBilldetailes())
-            if (egBilldetails.getGlcodeid() != null) {
-                if (glCodeIdSet.contains(egBilldetails.getGlcodeid().longValue()))
-                    return false;
-                glCodeIdSet.add(egBilldetails.getGlcodeid().longValue());
-            }
-        return true;
     }
 
     private String getMessageByStatus(final ContractorBillRegister contractorBillRegister, final String approverName,
@@ -429,7 +401,8 @@ public class CreateContractorBillController extends GenericWorkFlowController {
         String message = "";
 
         if (contractorBillRegister.getStatus().getCode().equals(ContractorBillRegister.BillStatus.CREATED.toString())) {
-            if (StringUtils.isNotBlank(contractorBillRegister.getEgBillregistermis().getBudgetaryAppnumber())
+            if (org.apache.commons.lang.StringUtils
+                    .isNotBlank(contractorBillRegister.getEgBillregistermis().getBudgetaryAppnumber())
                     && !BudgetControlType.BudgetCheckOption.NONE.toString()
                             .equalsIgnoreCase(budgetControlTypeService.getConfigValue()))
                 message = messageSource.getMessage("msg.contractorbill.create.success.with.budgetappropriation",
@@ -461,131 +434,34 @@ public class CreateContractorBillController extends GenericWorkFlowController {
             resultBinder.reject("error.contractorbill.accountdetails.required",
                     "error.contractorbill.accountdetails.required");
         for (final EgBilldetails egBilldetails : contractorBillRegister.getBillDetailes())
-            if (egBilldetails.getGlcodeid() != null)
-                contractorBillRegister.addEgBilldetailes(getBillDetails(contractorBillRegister, egBilldetails,
-                        lineEstimateDetails, resultBinder, request));
+            if (!contractorBillRegister.getEgBilldetailes().isEmpty() && contractorBillRegister.getEgBilldetailes().size() == 1) {
+                for (final EgBilldetails refundBill : contractorBillRegister.getRefundBillDetails())
+                    if (refundBill.getGlcodeid() != null)
+                        contractorBillRegister.addEgBilldetailes(
+                                contractorBillRegisterService.getBillDetails(contractorBillRegister, refundBill,
+                                        lineEstimateDetails, resultBinder, request));
+                if (egBilldetails.getGlcodeid() != null)
+                    contractorBillRegister
+                            .addEgBilldetailes(contractorBillRegisterService.getBillDetails(contractorBillRegister, egBilldetails,
+                                    lineEstimateDetails, resultBinder, request));
+            } else if (egBilldetails.getGlcodeid() != null)
+                contractorBillRegister
+                        .addEgBilldetailes(contractorBillRegisterService.getBillDetails(contractorBillRegister, egBilldetails,
+                                lineEstimateDetails, resultBinder, request));
+        contractorBillRegisterService.validateZeroCreditAndDebitAmount(contractorBillRegister, resultBinder);
         final String netPayableAccountCodeId = request.getParameter("netPayableAccountCode");
         final String netPayableAmount = request.getParameter("netPayableAmount");
-        if (StringUtils.isNotBlank(netPayableAccountCodeId) && StringUtils.isNotBlank(netPayableAmount)) {
+        if (org.apache.commons.lang.StringUtils.isNotBlank(netPayableAccountCodeId)
+                && org.apache.commons.lang.StringUtils.isNotBlank(netPayableAmount)) {
             final EgBilldetails billdetails = new EgBilldetails();
             billdetails.setGlcodeid(new BigDecimal(netPayableAccountCodeId));
             billdetails.setCreditamount(new BigDecimal(netPayableAmount));
             contractorBillRegister.addEgBilldetailes(
-                    getBillDetails(contractorBillRegister, billdetails, lineEstimateDetails, resultBinder, request));
+                    contractorBillRegisterService.getBillDetails(contractorBillRegister, billdetails, lineEstimateDetails,
+                            resultBinder, request));
         }
 
         return contractorBillRegister;
-    }
-
-    private EgBilldetails getBillDetails(final ContractorBillRegister billregister, final EgBilldetails egBilldetails,
-            final LineEstimateDetails lineEstimateDetails, final BindingResult resultBinder,
-            final HttpServletRequest request) {
-        egBilldetails.setFunctionid(new BigDecimal(lineEstimateDetails.getLineEstimate().getFunction().getId()));
-        boolean isDebit = false;
-        CChartOfAccounts coa = null;
-        if (!(BigDecimal.ZERO.compareTo(egBilldetails.getGlcodeid()) == 0))
-            coa = chartOfAccountsHibernateDAO.findById(egBilldetails.getGlcodeid().longValue(), false);
-        if (coa != null && coa.getId() != null)
-            egBilldetails.setGlcodeid(BigDecimal.valueOf(coa.getId()));
-        if (egBilldetails.getDebitamount() != null
-                && !(BigDecimal.ZERO.compareTo(egBilldetails.getDebitamount()) == 0)) {
-            egBilldetails.setDebitamount(egBilldetails.getDebitamount());
-            isDebit = true;
-        } else if (egBilldetails.getCreditamount() != null
-                && !(BigDecimal.ZERO.compareTo(egBilldetails.getCreditamount()) == 0))
-            egBilldetails.setCreditamount(egBilldetails.getCreditamount());
-        else if (!StringUtils.isBlank(request.getParameter("netPayableAccountCode"))
-                && request.getParameter("netPayableAccountCode").toString().equals(egBilldetails.getGlcodeid()))
-            resultBinder.reject("error.contractorbill.accountdetails.amount.required",
-                    "error.contractorbill.accountdetails.amount.required");
-
-        egBilldetails.setEgBillregister(billregister);
-        if (coa != null && coa.getGlcode() != null) {
-            Accountdetailtype projectCodeAccountDetailType = null;
-            Accountdetailtype contractorAccountDetailType = null;
-            if (isDebit) {
-                projectCodeAccountDetailType = chartOfAccountsHibernateDAO.getAccountDetailTypeIdByName(coa.getGlcode(),
-                        WorksConstants.PROJECTCODE);
-                if (projectCodeAccountDetailType == null)
-                    resultBinder.reject("error.contractorBill.validate.glcode.for.projectcode.subledger",
-                            new String[] { coa.getGlcode() }, null);
-            }
-            final List<Accountdetailtype> detailCode = chartOfAccountsHibernateDAO
-                    .getAccountdetailtypeListByGLCode(coa.getGlcode());
-            if (detailCode != null && !detailCode.isEmpty()) {
-                if (isDebit) {
-                    if (projectCodeAccountDetailType != null)
-                        egBilldetails.addEgBillPayeedetail(getEgPayeeDetails(egBilldetails,
-                                projectCodeAccountDetailType.getId(), egBilldetails.getDebitamount(), isDebit,
-                                Integer.valueOf(lineEstimateDetails.getProjectCode().getId().toString())));
-                } else {
-                    contractorAccountDetailType = chartOfAccountsHibernateDAO.getAccountDetailTypeIdByName(
-                            coa.getGlcode(), WorksConstants.ACCOUNTDETAIL_TYPE_CONTRACTOR);
-                    if (contractorAccountDetailType != null)
-                        egBilldetails.getEgBillPaydetailes().add(getEgPayeeDetails(egBilldetails,
-                                contractorAccountDetailType.getId(), egBilldetails.getCreditamount(), isDebit,
-                                Integer.valueOf(billregister.getWorkOrder().getContractor().getId().toString())));
-
-                }
-                if (projectCodeAccountDetailType == null && contractorAccountDetailType == null)
-                    resultBinder.reject("error.contractorbill.validate.glcode.for.subledger",
-                            new String[] { coa.getGlcode() }, null);
-            }
-        }
-        egBilldetails.setLastupdatedtime(new Date());
-        return egBilldetails;
-    }
-
-    private EgBillPayeedetails getEgPayeeDetails(final EgBilldetails billDetails, final Integer accountsDetailTypeId,
-            final BigDecimal amount, final boolean isDebit, final Integer accountsDetailKeyId) {
-        final EgBillPayeedetails egBillPaydetail = new EgBillPayeedetails();
-        egBillPaydetail.setAccountDetailKeyId(accountsDetailKeyId);
-        egBillPaydetail.setAccountDetailTypeId(accountsDetailTypeId);
-        if (isDebit)
-            egBillPaydetail.setDebitAmount(amount);
-        else
-            egBillPaydetail.setCreditAmount(amount);
-        egBillPaydetail.setEgBilldetailsId(billDetails);
-        egBillPaydetail.setLastUpdatedTime(new Date());
-        return egBillPaydetail;
-    }
-
-    public List<Map<String, Object>> getBillDetailsMap(final ContractorBillRegister contractorBillRegister) {
-        final List<Map<String, Object>> billDetailsList = new ArrayList<Map<String, Object>>();
-        Map<String, Object> billDetails = new HashMap<String, Object>();
-
-        final List<CChartOfAccounts> contractorPayableAccountList = chartOfAccountsHibernateDAO
-                .getAccountCodeByPurposeName(WorksConstants.CONTRACTOR_NETPAYABLE_PURPOSE);
-        for (final EgBilldetails egBilldetails : contractorBillRegister.getEgBilldetailes()) {
-            if (egBilldetails.getDebitamount() != null) {
-                billDetails = new HashMap<String, Object>();
-                final CChartOfAccounts coa = chartOfAccountsHibernateDAO
-                        .findById(egBilldetails.getGlcodeid().longValue(), false);
-                billDetails.put("glcodeId", coa.getId());
-                billDetails.put("glcode", coa.getGlcode());
-                billDetails.put("accountHead", coa.getName());
-                billDetails.put("amount", egBilldetails.getDebitamount());
-                billDetails.put("isDebit", true);
-                billDetails.put("isNetPayable", false);
-            } else if (egBilldetails.getCreditamount() != null) {
-                billDetails = new HashMap<String, Object>();
-                final CChartOfAccounts coa = chartOfAccountsHibernateDAO
-                        .findById(egBilldetails.getGlcodeid().longValue(), false);
-                billDetails.put("glcodeId", coa.getId());
-                billDetails.put("glcode", coa.getGlcode());
-                billDetails.put("accountHead", coa.getName());
-                billDetails.put("amount", egBilldetails.getCreditamount());
-                billDetails.put("isDebit", false);
-                if (contractorPayableAccountList != null && !contractorPayableAccountList.isEmpty()
-                        && contractorPayableAccountList.contains(coa))
-                    billDetails.put("isNetPayable", true);
-                else
-                    billDetails.put("isNetPayable", false);
-
-            }
-            billDetailsList.add(billDetails);
-        }
-        return billDetailsList;
     }
 
 }

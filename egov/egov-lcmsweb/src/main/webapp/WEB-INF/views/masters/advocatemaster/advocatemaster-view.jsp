@@ -39,131 +39,141 @@
   --%>
 <%@ page contentType="text/html;charset=UTF-8" language="java"%>
 <%@ include file="/includes/taglibs.jsp"%>
-	<div class="row">
-		<div class="col-md-12">
-			<div class="panel panel-primary" data-collapsed="0">
-				<div class="panel-heading">
-					<div class="panel-title">Standing Counsel Details</div>
+<%@ page contentType="text/html;charset=UTF-8" language="java"%>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt"%>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/functions" prefix="fn"%>
+<%@ taglib uri="http://www.springframework.org/tags" prefix="spring"%>
+<%@ taglib uri="http://www.springframework.org/tags/form" prefix="form"%>
+<div class="row">
+	<div class="col-md-12">
+		<div class="panel panel-primary" data-collapsed="0">
+			<div class="panel-heading">
+				<div class="panel-title">Standing Counsel Details</div>
+			</div>
+			<div class="panel-body custom">
+				<div class="row add-border">
+					<div class="col-xs-3 add-margin">
+						<spring:message code="lbl.salutation" />
+					</div>
+					<div class="col-sm-3 add-margin view-content">
+						${advocateMaster.salutation}</div>
+					<div class="col-xs-3 add-margin">
+						<spring:message code="lbl.names" />
+					</div>
+					<div class="col-sm-3 add-margin view-content">
+						${advocateMaster.name}</div>
 				</div>
-				<div class="panel-body custom">
-					<div class="row add-border">
-						<div class="col-xs-3 add-margin">
-							<spring:message code="lbl.salutation" />
-						</div>
-						<div class="col-sm-3 add-margin view-content">
-							${advocateMaster.salutation}</div>
-						<div class="col-xs-3 add-margin">
-							<spring:message code="lbl.names" />
-						</div>
-						<div class="col-sm-3 add-margin view-content">
-							${advocateMaster.name}</div>
+				<div class="row add-border">
+					<div class="col-xs-3 add-margin">
+						<spring:message code="lbl.issenioradvocate" />
+					</div>
+					<div class="col-sm-3 add-margin view-content">
+						${advocateMaster.isSenioradvocate}</div>
+				</div>
+				<div class="row add-border">
+					<div class="col-xs-3 add-margin">
+						<spring:message code="lbl.address" />
+					</div>
+					<div class="col-sm-3 add-margin view-content">
+						${advocateMaster.address}</div>
+					<div class="col-xs-3 add-margin">
+						<spring:message code="lbl.contactphone" />
+					</div>
+					<div class="col-sm-3 add-margin view-content">
+						${advocateMaster.contactPhone}</div>
+				</div>
+				<div class="row add-border">
+					<div class="col-xs-3 add-margin">
+						<spring:message code="lbl.mobilenumber" />
+					</div>
+					<div class="col-sm-3 add-margin view-content">
+						${advocateMaster.mobileNumber}</div>
+					<div class="col-xs-3 add-margin">
+						<spring:message code="lbl.email" />
+					</div>
+					<div class="col-sm-3 add-margin view-content">
+						${advocateMaster.email}</div>
+
+				</div>
+				<div class="row add-border">
+					<div class="col-xs-3 add-margin">
+						<spring:message code="lbl.pannumber" />
+					</div>
+					<div class="col-sm-3 add-margin view-content">
+						${advocateMaster.panNumber}</div>
+					<div class="col-xs-3 add-margin">
+						<spring:message code="lbl.specialization" />
+					</div>
+					<div class="col-sm-3 add-margin view-content">
+						${advocateMaster.specilization}</div>
+
+				</div>
+				<div class="row add-border">
+					<div class="col-xs-3 add-margin">
+						<spring:message code="lbl.isactive" />
+					</div>
+					<div class="col-sm-3 add-margin view-content">
+						${advocateMaster.isActive}</div>
+					<div class="col-xs-3 add-margin">
+						<spring:message code="lbl.paymentmode" />
+					</div>
+					<div class="col-sm-3 add-margin view-content">
+						${advocateMaster.paymentmode}</div>
+				</div>
+				<div class="row add-border">
+					<div class="col-xs-3 add-margin">
+						<spring:message code="lbl.monthlyrenumeration" />
+					</div>
+					<div class="col-sm-3 add-margin view-content">
+						<fmt:formatNumber var="formattedRate" type="number"
+							minFractionDigits="2" maxFractionDigits="2"
+							value="${advocateMaster.monthlyRenumeration}" />
+						<c:out value="${formattedRate}" />
+					</div>
+					<div class="col-xs-3 add-margin">
+						<spring:message code="lbl.isretaineradvocate" />
+					</div>
+					<div class="col-sm-3 add-margin view-content">
+						${advocateMaster.isRetaineradvocate}</div>
+				</div>
+				<c:choose>
+					<c:when test="${advocateMaster.paymentmode == 'RTGS'}">
+						<div class="row add-border">
+							<div class="col-xs-3 add-margin">
+								<spring:message code="lbl.bankname" />
+							</div>
+							<div class="col-sm-3 add-margin view-content">
+								${advocateMaster.bankName.name}</div>
+							<div class="col-xs-3 add-margin">
+								<spring:message code="lbl.bankbranch" />
+							</div>
+							<div class="col-sm-3 add-margin view-content">
+								${advocateMaster.bankBranch.branchname}</div>
+
 						</div>
 						<div class="row add-border">
-						<div class="col-xs-3 add-margin">
-							<spring:message code="lbl.issenioradvocate" />
-						</div>
-						<div class="col-sm-3 add-margin view-content">
-							${advocateMaster.isSenioradvocate}</div>
-						</div>
-					<div class="row add-border">
-						<div class="col-xs-3 add-margin">
-							<spring:message code="lbl.address" />
-						</div>
-						<div class="col-sm-3 add-margin view-content">
-							${advocateMaster.address}</div>
-						<div class="col-xs-3 add-margin">
-							<spring:message code="lbl.contactphone" />
-						</div>
-						<div class="col-sm-3 add-margin view-content">
-							${advocateMaster.contactPhone}</div>
-					</div>
-					<div class="row add-border">
-						<div class="col-xs-3 add-margin">
-							<spring:message code="lbl.mobilenumber" />
-						</div>
-						<div class="col-sm-3 add-margin view-content">
-							${advocateMaster.mobileNumber}</div>
 							<div class="col-xs-3 add-margin">
-							<spring:message code="lbl.email" />
+								<spring:message code="lbl.bankaccount" />
+							</div>
+							<div class="col-sm-3 add-margin view-content">
+								${advocateMaster.bankaccount}</div>
 						</div>
-						<div class="col-sm-3 add-margin view-content">
-							${advocateMaster.email}</div>
-						
-					</div>
-					<div class="row add-border">
-						<div class="col-xs-3 add-margin">
-							<spring:message code="lbl.pannumber" />
-						</div>
-						<div class="col-sm-3 add-margin view-content">
-							${advocateMaster.panNumber}</div>
-					<div class="col-xs-3 add-margin">
-							<spring:message code="lbl.specilization" />
-						</div>
-						<div class="col-sm-3 add-margin view-content">
-							${advocateMaster.specilization}</div>
-							
-					</div>
-					<div class="row add-border">
-						<div class="col-xs-3 add-margin">
-							<spring:message code="lbl.isactive" />
-						</div>
-						<div class="col-sm-3 add-margin view-content">
-							${advocateMaster.isActive}</div>
-						<div class="col-xs-3 add-margin">
-							<spring:message code="lbl.paymentmode" />
-						</div>
-						<div class="col-sm-3 add-margin view-content">
-							${advocateMaster.paymentmode}</div>
-						</div>	
-					<div class="row add-border">
-						<div class="col-xs-3 add-margin">
-							<spring:message code="lbl.monthlyrenumeration" />
-						</div>
-						<div class="col-sm-3 add-margin view-content">
-							${advocateMaster.monthlyRenumeration}</div>
-						<div class="col-xs-3 add-margin">
-							<spring:message code="lbl.isretaineradvocate" />
-						</div>
-						<div class="col-sm-3 add-margin view-content">
-							${advocateMaster.isRetaineradvocate}</div>
-					</div>
-					<c:choose>
-						<c:when test="${advocateMaster.paymentmode == 'RTGS'}">
-					<div class="row add-border">
-					<div class="col-xs-3 add-margin">
-							<spring:message code="lbl.bankname" />
-						</div>
-						<div class="col-sm-3 add-margin view-content">
-							${advocateMaster.bankName.name}</div>
-						<div class="col-xs-3 add-margin">
-							<spring:message code="lbl.bankbranch" />
-						</div>
-						<div class="col-sm-3 add-margin view-content">
-							${advocateMaster.bankBranch.branchname}</div>
-							
-					</div>
-					<div class="row add-border">
-						<div class="col-xs-3 add-margin">
-							<spring:message code="lbl.bankaccount" />
-						</div>
-						<div class="col-sm-3 add-margin view-content">
-							${advocateMaster.bankaccount}</div>
-						</div>
-					<div class="row add-border">
-						<div class="col-xs-3 add-margin">
-							<spring:message code="lbl.ifsccode" />
-						</div>
-						<div class="col-sm-3 add-margin view-content">
-							${advocateMaster.ifsccode}</div>
+						<div class="row add-border">
 							<div class="col-xs-3 add-margin">
-							<spring:message code="lbl.tinumber" />
+								<spring:message code="lbl.ifsccode" />
+							</div>
+							<div class="col-sm-3 add-margin view-content">
+								${advocateMaster.ifsccode}</div>
+							<div class="col-xs-3 add-margin">
+								<spring:message code="lbl.tinumber" />
+							</div>
+							<div class="col-sm-3 add-margin view-content">
+								${advocateMaster.tinumber}</div>
+
 						</div>
-						<div class="col-sm-3 add-margin view-content">
-							${advocateMaster.tinumber}</div>
-					
-				</div>
 					</c:when>
-					</c:choose>
+				</c:choose>
 			</div>
 		</div>
 	</div>
@@ -174,4 +184,3 @@
 		</div>
 	</div>
 </div>
-	

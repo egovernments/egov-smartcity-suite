@@ -110,7 +110,7 @@
 					</div>
 					<div class="col-md-6 side-space">
 						<div class="col-md-12 community-card">
-							<a href="/portal/citizen/register" target="_blank">
+							<a href="/portal/citizen/signup" target="_blank">
 								<div class="rounded-circle"><i class="fa fa-user a"></i></div>&nbsp;
 								<div class="label-font">
 									<spring:message code="lbl.create.ac"/><br>
@@ -169,8 +169,8 @@
 										</div>
 										<input type="text" class="form-control style-form"
 											name="j_username" id="j_username"
-											placeholder="Username" autocomplete="off"
-											required="required" autofocus="autofocus"/> <span class="mandatory set-mandatory"></span>
+											placeholder="Mobile Number / Login ID" autocomplete="off"
+											required="required" autofocus="autofocus"/>
 									</div>
 								</div>
 								<div class="form-group">
@@ -180,8 +180,11 @@
 										</div>
 										<input type="password" class="form-control style-form"
 											name="j_password" id="j_password" placeholder="Password"
-											autocomplete="new-password" required="required" /> <span
-											class="mandatory set-mandatory"></span>
+											autocomplete="new-password" required="required" />
+										<div class="input-group-addon font-12">
+											<a href="#" data-toggle="modal"
+											data-target="#fpassword" data-backdrop="static" style="color:#fff;">Forgot?</a>
+										</div>
 									</div>
 								</div>
 								<div class="form-group display-hide" id="counter-section">
@@ -206,13 +209,6 @@
 											<spring:message code="msg.cred.exprd2"/>
 											</a> <spring:message code="msg.cred.exprd3"/>
 										</c:when>
-										<c:when test="${security_message == 'Inactive User'}">
-		     							 	<div class="form-group signin-leftpadding">
-												<a href="/portal/citizen/register?activation=true" class="btn btn-custom btn-block btn-login signin-submit">
-												<spring:message code="msg.acc.not.activated"/>
-												</a> 
-											</div>
-	     								</c:when>
 										<c:when test="${fn:contains(security_message, 'User account is locked')}">
 											<spring:message code="msg.acc.locked"/>
 											<spring:eval expression="@environment.getProperty('captcha.strength')" var="strength"/>
@@ -248,13 +244,6 @@
 										class="btn btn-custom btn-block btn-login signin-submit" id="signin-action">
 										<i class="fa fa-sign-in"></i> <spring:message code="lbl.login"/>
 									</button>
-								</div>
-								<div class="row">
-									<div class="col-md-12 col-xs-12 text-right add-margin"
-										style="font-size: 12px;">
-										<a href="javascript:void(0);" data-toggle="modal"
-											data-target="#fpassword" data-backdrop="static"><spring:message code="lbl.forgot.pwd"/></a>
-									</div>
 								</div>
 								<input type="hidden" id="ipAddress" name="ipAddress" value="<%=ipAddress%>" /> 
 								<input type="hidden" id="loginType" name="loginType" />
@@ -315,7 +304,7 @@
 									</div>
 									<input type="text" class="form-control style-form"
 										name="identity" id="emailOrMobileNum"
-										required="required" placeholder="Username"
+										required="required" placeholder="Mobile Number / Login ID"
 										autocomplete="off" />
 										<input type="hidden" name="originURL" id="originURL">
                                         <input type="hidden" name="byOTP" id="byOtp">

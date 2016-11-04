@@ -41,6 +41,7 @@
 package org.egov.wtms.web.controller.reports;
 
 import static org.egov.demand.model.EgdmCollectedReceipt.RCPT_CANCEL_STATUS;
+import static org.egov.wtms.utils.constants.WaterTaxConstants.WATERCHARGES_CONSUMERCODE;
 
 import java.math.BigDecimal;
 import java.text.ParseException;
@@ -145,7 +146,7 @@ public class CurrentViewDcbController {
         waterChargesReceiptInfoList = sqlQuery.list();
         waterChargesReceiptInfoList.addAll(waterChargesReceiptInfo);
         model.addAttribute("waterChargesReceiptInfo", waterChargesReceiptInfoList);
-        model.addAttribute("consumerCode", consumerNumber);
+        model.addAttribute(WATERCHARGES_CONSUMERCODE, consumerNumber);
         return "dcbview-migdata";
     }
 
@@ -158,7 +159,7 @@ public class CurrentViewDcbController {
         List<Receipt> activeRcpts = new ArrayList<Receipt>();
         DCBReport dCBReport = new DCBReport();
 
-        model.addAttribute("consumerCode", waterConnectionDetails.getApplicationNumber());
+        model.addAttribute(WATERCHARGES_CONSUMERCODE, waterConnectionDetails.getApplicationNumber());
 
         model.addAttribute("connectionType", waterConnectionDetailsService.getConnectionTypesMap()
                 .get(waterConnectionDetails.getConnectionType().name()));

@@ -237,7 +237,6 @@ function callAjaxByBoundary(event) {
 						return json.data;
 					}       
 				},
-				"sPaginationType" : "bootstrap",
 				"autoWidth" : false,
 				"bDestroy" : true,
 				"bProcessing" : true,

@@ -42,7 +42,7 @@
 <beans xmlns="http://www.springframework.org/schema/beans"
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd"
-	default-lazy-init="false">
+	default-lazy-init="true">
     
     <bean name="pgrSchedular" id="pgrSchedular" parent="egovSchedular" lazy-init="false">
 		<property name="schedulerName" value="pgr-scheduler"/>
@@ -66,8 +66,8 @@
 		<property name="jobDataAsMap">
             <map>
                 <entry key="jobBeanName" value="complaintEscalationJob"/>
-				<entry key="userName" value="egovernments"/>
-				<entry key="transactional"  value="true" />
+				<entry key="userName" value="egovernments" />
+				<entry key="cityDataRequired" value="true"/>
 				<entry key="moduleName" value="pgr"/>
             </map>
         </property>   	
@@ -92,8 +92,8 @@
 		<property name="jobDataAsMap">
             <map>
                 <entry key="jobBeanName" value="complaintIndexingJob"/>
-				<entry key="userName" value="egovernments"/>
-				<entry key="transactional"  value="true" />
+				<entry key="userName" value="egovernments" />
+				<entry key="cityDataRequired" value="true"/>
 				<entry key="moduleName" value="pgr"/>
             </map>
         </property>   	

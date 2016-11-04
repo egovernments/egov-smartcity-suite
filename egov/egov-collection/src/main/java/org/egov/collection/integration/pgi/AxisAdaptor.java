@@ -39,26 +39,9 @@
  */
 package org.egov.collection.integration.pgi;
 
-import com.sun.jersey.api.client.Client;
-import com.sun.jersey.api.client.WebResource;
-import com.sun.jersey.api.representation.Form;
-import org.apache.log4j.Logger;
-import org.egov.collection.config.properties.CollectionApplicationProperties;
-import org.egov.collection.constants.CollectionConstants;
-import org.egov.collection.entity.OnlinePayment;
-import org.egov.collection.entity.ReceiptHeader;
-import org.egov.infra.admin.master.entity.City;
-import org.egov.infra.admin.master.service.CityService;
-import org.egov.infra.config.core.ApplicationThreadLocals;
-import org.egov.infra.exception.ApplicationException;
-import org.egov.infra.exception.ApplicationRuntimeException;
-import org.egov.infstr.models.ServiceDetails;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-
-import javax.persistence.EntityManager;
-import javax.persistence.Query;
-import javax.ws.rs.core.MediaType;
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
 import java.io.UnsupportedEncodingException;
 import java.math.BigDecimal;
 import java.net.URLDecoder;
@@ -76,7 +59,31 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
-// import com.billdesk.pgidsk.PGIUtil;
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+import javax.persistence.Query;
+
+import org.apache.http.HttpEntity;
+import org.apache.http.NameValuePair;
+import org.apache.http.client.entity.UrlEncodedFormEntity;
+import org.apache.http.client.methods.CloseableHttpResponse;
+import org.apache.http.client.methods.HttpPost;
+import org.apache.http.impl.client.CloseableHttpClient;
+import org.apache.http.impl.client.HttpClients;
+import org.apache.http.message.BasicNameValuePair;
+import org.apache.log4j.Logger;
+import org.egov.collection.config.properties.CollectionApplicationProperties;
+import org.egov.collection.constants.CollectionConstants;
+import org.egov.collection.entity.OnlinePayment;
+import org.egov.collection.entity.ReceiptHeader;
+import org.egov.infra.admin.master.entity.City;
+import org.egov.infra.admin.master.service.CityService;
+import org.egov.infra.config.core.ApplicationThreadLocals;
+import org.egov.infra.exception.ApplicationException;
+import org.egov.infra.exception.ApplicationRuntimeException;
+import org.egov.infstr.models.ServiceDetails;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
 /**
  * The PaymentRequestAdaptor class frames the request object for the payment
@@ -86,14 +93,16 @@ import java.util.Map;
 public class AxisAdaptor implements PaymentGatewayAdaptor {
 
     private static final Logger LOGGER = Logger.getLogger(AxisAdaptor.class);
-    @Autowired
+    public static final BigDecimal PAISE_RUPEE_CONVERTER = BigDecimal.valueOf(100);
+
+    @PersistenceContext
     private EntityManager entityManager;
 
     @Autowired
     private CollectionApplicationProperties collectionApplicationProperties;
-    public static final BigDecimal PAISE_RUPEE_CONVERTER = new BigDecimal(100);
+
     @Autowired
-    private  CityService cityService;
+    private CityService cityService;
 
     /**
      * This method invokes APIs to frame request object for the payment service
@@ -386,27 +395,51 @@ public class AxisAdaptor implements PaymentGatewayAdaptor {
     public PaymentResponse createOfflinePaymentRequest(final ServiceDetails paymentServiceDetails,
             final OnlinePayment onlinePayment) {
         LOGGER.debug("Inside createOfflinePaymentRequest");
-
         final PaymentResponse axisResponse = new DefaultPaymentResponse();
         try {
-            final Client client = Client.create();
-            final WebResource resource = client.resource(collectionApplicationProperties.axisReconcileUrl());
-            final Form formData = new Form();
-            formData.add(CollectionConstants.AXIS_VERSION, collectionApplicationProperties.axisVersion());
-            formData.add(CollectionConstants.AXIS_COMMAND, collectionApplicationProperties.axisCommandQuery());
-            formData.add(CollectionConstants.AXIS_ACCESS_CODE, collectionApplicationProperties.axisAccessCode());
-            formData.add(CollectionConstants.AXIS_MERCHANT, collectionApplicationProperties.axisMerchant());
+            final HttpPost httpPost = new HttpPost(collectionApplicationProperties.axisReconcileUrl());
+            final List<NameValuePair> formData = new ArrayList<NameValuePair>();
+            formData.add(new BasicNameValuePair(CollectionConstants.AXIS_VERSION, collectionApplicationProperties
+                    .axisVersion()));
+            formData.add(new BasicNameValuePair(CollectionConstants.AXIS_COMMAND, collectionApplicationProperties
+                    .axisCommandQuery()));
+            formData.add(new BasicNameValuePair(CollectionConstants.AXIS_ACCESS_CODE, collectionApplicationProperties
+                    .axisAccessCode()));
+            formData.add(new BasicNameValuePair(CollectionConstants.AXIS_MERCHANT, collectionApplicationProperties
+                    .axisMerchant()));
             final City cityWebsite = cityService.getCityByURL(ApplicationThreadLocals.getDomainName());
-            formData.add(CollectionConstants.AXIS_MERCHANT_TXN_REF, cityWebsite.getCode()
-                    + CollectionConstants.SEPARATOR_HYPHEN + onlinePayment.getReceiptHeader().getId().toString());
-            formData.add(CollectionConstants.AXIS_OPERATOR_ID, collectionApplicationProperties.axisOperator());
-            formData.add(CollectionConstants.AXIS_PASSWORD, collectionApplicationProperties.axisPassword());
-            formData.add(CollectionConstants.AXIS_ORDER_INFO, ApplicationThreadLocals.getCityCode()
-                    + CollectionConstants.SEPARATOR_HYPHEN + ApplicationThreadLocals.getCityName());
-            final String responseAxis = resource.type(MediaType.APPLICATION_FORM_URLENCODED_TYPE).post(String.class,
-                    formData);
+            formData.add(new BasicNameValuePair(CollectionConstants.AXIS_MERCHANT_TXN_REF, cityWebsite.getCode()
+                    + CollectionConstants.SEPARATOR_HYPHEN + onlinePayment.getReceiptHeader().getId().toString()));
+            formData.add(new BasicNameValuePair(CollectionConstants.AXIS_OPERATOR_ID, collectionApplicationProperties
+                    .axisOperator()));
+            formData.add(new BasicNameValuePair(CollectionConstants.AXIS_PASSWORD, collectionApplicationProperties
+                    .axisPassword()));
+            formData.add(new BasicNameValuePair(CollectionConstants.AXIS_ORDER_INFO, ApplicationThreadLocals
+                    .getCityCode() + CollectionConstants.SEPARATOR_HYPHEN + ApplicationThreadLocals.getCityName()));
+            try {
+                httpPost.setEntity(new UrlEncodedFormEntity(formData));
+            } catch (final UnsupportedEncodingException e1) {
+                LOGGER.error("Error Decoding Axis Bank Response" + e1.getMessage());
+            }
+            final CloseableHttpClient httpclient = HttpClients.createDefault();
+            CloseableHttpResponse response = null;
+            HttpEntity responseAxis = null;
+            response = httpclient.execute(httpPost);
+            LOGGER.debug("Response Status >>>>>" + response.getStatusLine());
+            responseAxis = response.getEntity();
+            String[] pairs = null;
+            final BufferedReader reader = new BufferedReader(new InputStreamReader(responseAxis.getContent()));
+            final StringBuilder data = new StringBuilder();
+            String line;
+            try {
+                while ((line = reader.readLine()) != null)
+                    data.append(line);
+                reader.close();
+            } catch (final IOException e) {
+                LOGGER.error("Error Reading InsputStrem from Axis Bank Response" + e.getMessage());
+            }
+            pairs = data.toString().split("&");
             final Map<String, String> responseAxisMap = new LinkedHashMap<String, String>();
-            final String[] pairs = responseAxis.split("&");
             for (final String pair : pairs) {
                 final int idx = pair.indexOf("=");
                 try {
@@ -419,7 +452,7 @@ public class AxisAdaptor implements PaymentGatewayAdaptor {
             axisResponse.setAdditionalInfo6(onlinePayment.getReceiptHeader().getConsumerCode().replace("-", "")
                     .replace("/", ""));
             axisResponse.setReceiptId(onlinePayment.getReceiptHeader().getId().toString());
-            LOGGER.info("ResponseAXIS: " + responseAxis.toString());
+            LOGGER.info("ResponseAXIS: " + data.toString());
             if (null != responseAxisMap.get(CollectionConstants.AXIS_TXN_RESPONSE_CODE)
                     && !"".equals(responseAxisMap.get(CollectionConstants.AXIS_TXN_RESPONSE_CODE))) {
                 axisResponse
@@ -444,15 +477,16 @@ public class AxisAdaptor implements PaymentGatewayAdaptor {
                         throw new ApplicationException(".transactiondate.parse.error", e);
                     }
                 }
-            } else if (responseAxis.contains(CollectionConstants.AXIS_CHECK_DR_EXISTS)) {
+            } else if (null != responseAxisMap.get(CollectionConstants.AXIS_CHECK_DR_EXISTS)
+                    && responseAxisMap.get(CollectionConstants.AXIS_CHECK_DR_EXISTS).equals("N")) {
                 axisResponse.setErrorDescription(CollectionConstants.AXIS_FAILED_ABORTED_MESSAGE);
                 axisResponse.setAuthStatus(CollectionConstants.AXIS_ABORTED_AUTH_STATUS);
             }
             LOGGER.debug("receiptid=" + axisResponse.getReceiptId() + "consumercode="
                     + axisResponse.getAdditionalInfo6());
         } catch (final Exception exp) {
-            exp.printStackTrace();
             LOGGER.error(exp.getMessage());
+            throw new ApplicationRuntimeException("Exception during create offline requests" + exp.getMessage());
         }
         return axisResponse;
     }

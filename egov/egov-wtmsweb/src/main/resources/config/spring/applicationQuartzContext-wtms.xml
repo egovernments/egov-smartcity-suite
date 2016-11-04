@@ -75,8 +75,8 @@
 		<property name="jobDataMap">
             <map>
                 <entry key="jobBeanName" value="wcmsBulkBillGenerationDelegate0"/>
-				<entry key="userName" value="egovernments"/>
-				<entry key="transactional"  value="true" />
+				<entry key="userName" value="egovernments" />
+				<entry key="cityDataRequired"  value="true" />
 				<entry key="moduleName" value="wtms"/>
             </map>
         </property>   	
@@ -105,8 +105,8 @@
 		<property name="jobDataMap">
             <map>
                 <entry key="jobBeanName" value="wcmsBulkBillGenerationDelegate1"/>
-				<entry key="userName" value="egovernments"/>
-				<entry key="transactional"  value="true" />
+				<entry key="userName" value="egovernments" />
+				<entry key="cityDataRequired"  value="true" />
 				<entry key="moduleName" value="wtms"/>
             </map>
         </property>   	
@@ -135,8 +135,8 @@
 		<property name="jobDataMap">
             <map>
                 <entry key="jobBeanName" value="wcmsBulkBillGenerationDelegate2"/>
-				<entry key="userName" value="egovernments"/>
-				<entry key="transactional"  value="true" />
+				<entry key="userName" value="egovernments" />
+				<entry key="cityDataRequired"  value="true" />
 				<entry key="moduleName" value="wtms"/>
             </map>
         </property>   	

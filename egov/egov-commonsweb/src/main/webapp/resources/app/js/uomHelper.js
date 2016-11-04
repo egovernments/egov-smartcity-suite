@@ -70,7 +70,6 @@ function callAjaxSearch() {
 				window.open('/common/uom/'+ $('#mode').val() +'/'+data.id,'','width=800, height=600');
 			});
 		},
-		"sPaginationType" : "bootstrap",
 		"bDestroy" : true,
 		"sDom" : "<'row'<'col-xs-12 hidden col-right'f>r>t<'row'<'col-xs-3'i><'col-xs-3 col-right'l><'col-xs-3 col-right'<'export-data'T>><'col-xs-3 text-right'p>>",
 		"aLengthMenu" : [ [ 10, 25, 50, -1 ], [ 10, 25, 50, "All" ] ],

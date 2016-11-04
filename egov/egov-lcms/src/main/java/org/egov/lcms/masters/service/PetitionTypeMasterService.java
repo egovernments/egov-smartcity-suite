@@ -134,7 +134,7 @@ public class PetitionTypeMasterService {
             if (petitionTypeMaster.getCourtType() != null)
                 predicates.add(cb.equal(petitionTypeMasterobj.get("courtType"), petitionTypeMaster.getCourtType()));
             if (petitionTypeMaster.getActive() != null)
-                if (petitionTypeMaster.getActive() == true)
+                if (petitionTypeMaster.getActive())
                     predicates
                             .add(cb.equal(
                                     petitionTypeMasterobj.get(

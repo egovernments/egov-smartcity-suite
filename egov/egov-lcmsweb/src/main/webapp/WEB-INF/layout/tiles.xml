@@ -204,7 +204,7 @@
 </definition>
 
 <definition name="legalcasedetails-view" extends="base_layout">
-	<put-attribute name="page-title" value="title.createCaseType" cascade="true"/>
+	<put-attribute name="page-title" value="title.legalcasedetailsview" cascade="true"/>
 	<put-attribute name="body" value="/WEB-INF/views/transactions/legalcasedetails-view.jsp"/>
 </definition>
 
@@ -358,13 +358,13 @@
 	<put-attribute name="page-title" value="title.editclosecase" cascade="true"/>
 	<put-attribute name="body" value="/WEB-INF/views/transactions/legalcaseDisposal-edit.jsp"/>
 </definition>
-  <definition name="legalcase-standingCouncil" extends="base_layout">
+<definition name="legalcase-standingCouncil" extends="base_layout">
 	<put-attribute name="page-title" value="title.standingCouncil" cascade="true"/>
 	<put-attribute name="body" value="/WEB-INF/views/transactions/legalcase-standing_newForm.jsp"/>
 </definition>
-  <definition name="legalcase-caaffidavit" extends="base_layout">
-	<put-attribute name="page-title" value="title.standingCouncil" cascade="true"/>
-	<put-attribute name="body" value="/WEB-INF/views/transactions/legalcase-caaffidavit_Form.jsp"/>
+<definition name="legalcase-caaffidavit" extends="base_layout">
+	<put-attribute name="page-title" value="title.caaffidavittile" cascade="true"/>
+	<put-attribute name="body" value="/WEB-INF/views/transactions/legalcase-caaffidavit-new.jsp"/>
 </definition>
 
 <definition name="vacatestay-new" extends="base_layout">
@@ -400,6 +400,39 @@
 <definition name="dailyboardreport-form" extends="base_layout">
 	<put-attribute name="page-title" value="title.dailyboardreport" cascade="true"/>
 	<put-attribute name="body" value="/WEB-INF/views/reports/dailyboardreport-form.jsp"/>
+</definition>
+<definition name="timeseriesreport-form" extends="base_layout">
+	<put-attribute name="page-title" value="title.timeseriesreport" cascade="true"/>
+	<put-attribute name="body" value="/WEB-INF/views/reports/timeseriesreport-form.jsp"/>
+</definition>
+
+<definition name="genericsub-form" extends="base_layout">
+	<put-attribute name="page-title" value="title.genericsubreport" cascade="true"/>
+	<put-attribute name="body" value="/WEB-INF/views/reports/genericsub-form.jsp"/>
+</definition>
+
+<definition name="pwrDueReport-form" extends="base_layout">
+	<put-attribute name="page-title" value="title.duereport" cascade="true"/>
+	<put-attribute name="body" value="/WEB-INF/views/reports/pwrDueReport-form.jsp"/>
+</definition>
+<definition name="duereport-form" extends="base_layout">
+	<put-attribute name="page-title" value="title.duereport" cascade="true"/>
+	<put-attribute name="body" value="/WEB-INF/views/reports/dueReport-form.jsp"/>
+</definition>
+
+
+<definition name="counterAffidavitDueReport-form" extends="base_layout">
+	<put-attribute name="page-title" value="title.duereport" cascade="true"/>
+	<put-attribute name="body" value="/WEB-INF/views/reports/counterAffidavitDueReport-form.jsp"/>
+</definition>
+
+<definition name="judgementImplDueReport-form" extends="base_layout">
+	<put-attribute name="page-title" value="title.duereport" cascade="true"/>
+	<put-attribute name="body" value="/WEB-INF/views/reports/judgementImplDueReport-form.jsp"/>
+</definition>
+<definition name="legalcase-ca-success" extends="base_layout">
+	<put-attribute name="page-title" value="title.caaffidavitdetails" cascade="true"/>
+	<put-attribute name="body" value="/WEB-INF/views/transactions/legalcase-ca-success.jsp"/>
 </definition>
 
 

@@ -131,7 +131,15 @@ public class ChartOfAccountsHibernateDAO implements ChartOfAccountsDAO {
                 .setCacheable(true).list();
 
     }
+    public List<CChartOfAccounts> getDetailedCodesList() {
+        return getCurrentSession()
+                .createQuery(
+                        "from CChartOfAccounts where classification=4")
+                .setCacheable(true).list();
 
+    }
+
+    
     public List<CChartOfAccounts> findDetailedAccountCodesByGlcodeOrNameLike(String searchString) {
         final Query qry = getCurrentSession()
                 .createQuery(
@@ -494,13 +502,13 @@ public class ChartOfAccountsHibernateDAO implements ChartOfAccountsDAO {
     @Override
     public List<CChartOfAccounts> findByGlcodeLikeIgnoreCaseAndClassificationAndMajorCode(String string,
             Long classification, String majorCode) {
-        // TODO Auto-generated method stub
+
         return null;
     }
 
     @Override
     public List<CChartOfAccounts> findByGlcodeLikeIgnoreCaseAndClassification(String string, Long classification) {
-        // TODO Auto-generated method stub
+
         return null;
     }
 

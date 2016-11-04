@@ -281,6 +281,70 @@ function initializeGrid() {
 			},{multipleSearch:true});
 }
 
+function viewGrid()
+{
+	jQuery("#listsg11")
+	.jqGrid(
+			{
+				caption : "Branch Details",
+				url : 'bankBranch.action?mode=LIST_BRANCH&bankId='+ jQuery("#bank_id").val(),
+				datatype : "json",
+				height : 300,
+				width : 800,
+				hiddengrid : true,
+				colNames : [ 'Srl No', 'Branch Name', 'Branch Code','MICR', 'Address', 'Contact Person', 'Phone Number', 'Narration', 'Active' ],
+				colModel : [ {name : 'id',index : 'id',key : true,hidden : true,width : 55,	editable : true,editoptions : {readonly : true, size : 10}}, 
+				             {name : 'branchname', index : 'branchname',align:'center', width : 90, editable : true, editoptions : {size : 25},editrules : {required : true},formoptions: { elmprefix: "<span class='mandatory1'>*</span>"}}, 
+				             {name : 'branchcode', index : 'branchcode',align:'center', width : 90, editable : true, editoptions : {size : 25}, editrules : {required : true},formoptions: { elmprefix: "<span class='mandatory1'>*</span>"}}, 
+				             {name : 'branchMICR', index : 'branchMICR',align:'center', width : 90, editable : true, searchoptions: { sopt: ['eq','ne','lt','le','gt','ge', 'in', 'ni'] },editoptions : {size : 25, dataEvents : [ {type : 'blur', fn : check_MICR} ]}}, 
+				             {name : 'branchaddress1', index : 'branchaddress1',align:'center', width : 100, sortable : false, editable : true, edittype : "textarea", editoptions : {rows : "2", cols : "20"}, editrules : {required : true},formoptions: { elmprefix: "<span class='mandatory1'>*</span>"}},
+				             {name : 'contactperson', index : 'contactperson',align:'center', width : 80, editable : true, editoptions : {size : 25}}, 
+				             {name : 'branchphone', index : 'branchphone',align:'center', width : 80, editable : true, editoptions : {size : 25}}, 
+				             {name : 'narration', index : 'narration',align:'center', width : 80, sortable : false, editable : true, edittype : "textarea", editoptions : {rows : "2", cols : "20"}}, 
+				             {name : 'isActive', index : 'isActive', align:'center',width : 80, editable : true, edittype : "checkbox",searchoptions: { sopt: ['eq','ne']}, editoptions : { value : "Y:N"}} 
+				             ],
+				             rowNum : 20,
+				             rowList : [ 20, 30, 40, 50 ],
+				             pager : '#pagersg11',
+				             sortname : 'id',
+				             viewrecords : true,
+				             sortorder : "desc",
+				             multiselect : false,
+				             subGrid : true,
+				             subGridRowExpanded : function(subgrid_id, row_id) {
+				            	 var subgrid_table_id, pager_id;
+				            	 subgrid_table_id = subgrid_id + "_t";
+				            	 pager_id = "p_" + subgrid_table_id;
+				            	 jQuery("#" + subgrid_id).html("<table id='"+ subgrid_table_id+ "' class='scroll'></table><div id='"+ pager_id+ "' class='scroll'></div>");
+				            	 jQuery("#" + subgrid_table_id)
+				            	 .jqGrid(
+				            			 {
+				            				 caption : "Account Details",
+				            				 url : 'bankAccount.action?mode=LIST_BRANCH_ACC&q=2&bankBranchId='+ row_id,
+				            				 colNames : [ 'ID', 'Account No', 'Fund', 'Account Type', 'Description', 'Pay To', 'Usage Type', 'Active' , 'GlCode'],
+				            				 colModel : [{name : 'id', index : 'id', key : true, hidden : true, width : 55, editable : true, editoptions : {readonly : true, size : 10}},
+				            				             {name : 'accountnumber', index : 'accountnumber',align:'center', width : 80, key : true, editable : true,searchoptions: { sopt: ['eq','ne','lt','le','gt','ge', 'in', 'ni'] }, editoptions : {size : 25}, editrules : { required : true},formoptions: { elmprefix: "<span class='mandatory1'>*</span>"}},
+				            				             {name : 'fundname', index : 'fundname',align:'center', width : 130, editable : true, edittype : "select", editoptions : {value : fundJson}, editrules : { required : true},formoptions: { elmprefix: "<span class='mandatory1'>*</span>"}},
+				            				             {name : 'accounttype', index : 'accounttype', width : 70, editable :true, edittype : "select", editoptions : {value : accTypeJson},formoptions: { elmprefix: "<span class='mandatory1'>*</span>"}},
+				            				             {name : 'narration', index : 'narration',align:'center', width : 70, editable : true, edittype : "textarea", editoptions : { rows : "2", cols : "20" } },
+				            				             {name : 'payto', index : 'payto',align:'center', width : 70, editable : true, editoptions : {size : 25}},
+				            				             {name : 'typename', index : 'typename',align:'center', width : 70, editable : true, edittype : "select", editoptions : {value : bankAccTypeJson}, editrules : { required : true},formoptions: { elmprefix: "<span class='mandatory1'>*</span>"}},
+				            				             {name : 'active', index : 'active',align:'center', width : 70, editable : true, edittype : "checkbox",searchoptions: { sopt: ['eq','ne']}, editoptions : { value : "Y:N"}},
+				            				             {name : 'glcode', index : 'glcode', align:'center',key : true, width : 60, editable : true,searchoptions: { sopt: ['eq','ne','lt','le','gt','ge', 'in', 'ni'] }, editoptions : { size : 20},formoptions: { elmprefix: "<span class='mandatory1'>*</span>"}}
+				            				             ],
+				            				             datatype : "json",
+				            				             rowNum : 20,
+				            				             width : 700,
+				            				             pager : pager_id,
+				            				             multiselect : false,
+				            				             viewrecords : true,
+				            				             sortname : 'id',
+				            				             sortorder : "asc",
+				            				             height : '100%'
+				            			 });}
+				            	 });
+	
+}
 function showMessage (msg) {
 	jQuery.jgrid.info_dialog("Info","<div class=\"ui-state-highlight\" style=\"padding:5px;\">"+msg+"!</div>");
 	jQuery("#info_dialog").delay(3000).fadeOut();

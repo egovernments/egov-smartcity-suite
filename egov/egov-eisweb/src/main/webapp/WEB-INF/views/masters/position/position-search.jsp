@@ -42,7 +42,7 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 <%@ taglib uri="http://www.springframework.org/tags" prefix="spring"%>
 <%@ taglib uri="http://www.springframework.org/tags/form" prefix="form"%>
-
+<%@ taglib uri="/WEB-INF/taglib/cdn.tld" prefix="cdn" %>
 <!DOCTYPE html>
 <html class="no-js">
 	<head>
@@ -53,24 +53,25 @@
 		<meta name="author" content="" />
 		
 		<title>Search Position</title>
-		<link rel="stylesheet" href="<c:url value='/resources/global/css/bootstrap/bootstrap.css' context='/egi'/>">
-		<link rel="stylesheet" href="<c:url value='/resources/global/css/font-icons/font-awesome/css/font-awesome.min.css' context='/egi'/>">
-		<link rel="stylesheet" href="<c:url value='/resources/global/css/egov/custom.css' context='/egi'/>">
+		<link rel="stylesheet" href="<cdn:url value='/resources/global/css/bootstrap/bootstrap.css' context='/egi'/>">
+		<link rel="stylesheet" href="<cdn:url value='/resources/global/css/font-icons/font-awesome/css/font-awesome.min.css' context='/egi'/>">
+		<link rel="stylesheet" href="<cdn:url value='/resources/global/css/egov/custom.css' context='/egi'/>">
 		
-		<script src="<c:url value='/resources/global/js/jquery/jquery.js' context='/egi'/>"></script>
-		<script src="<c:url value='/resources/global/js/bootstrap/bootstrap.js' context='/egi'/>"></script>
+		<script src="<cdn:url value='/resources/global/js/jquery/jquery.js' context='/egi'/>"></script>
+		<script src="<cdn:url value='/resources/global/js/bootstrap/bootstrap.js' context='/egi'/>"></script>
 		
 		
-		<script src="<c:url value='/resources/global/js/jquery/plugins/jquery.inputmask.bundle.min.js' context='/egi'/>"></script>
+		<script src="<cdn:url value='/resources/global/js/jquery/plugins/jquery.inputmask.bundle.min.js' context='/egi'/>"></script>
 	
+		<link rel="stylesheet" href="<cdn:url value='/resources/global/css/jquery/plugins/datatables/jquery.dataTables.min.css' context='/egi'/>"/>
+		<link rel="stylesheet" href="<cdn:url value='/resources/global/css/jquery/plugins/datatables/dataTables.bootstrap.min.css' context='/egi'/>">
+		<script type="text/javascript" src="<cdn:url value='/resources/global/js/jquery/plugins/datatables/jquery.dataTables.min.js' context='/egi'/>"></script>
+		<script type="text/javascript" src="<cdn:url value='/resources/global/js/jquery/plugins/datatables/dataTables.bootstrap.js' context='/egi'/>"></script>
+		<script type="text/javascript" src="<cdn:url value='/resources/global/js/jquery/plugins/datatables/responsive/js/datatables.responsive.js' context='/egi'/>"></script>
 		
-		<script type="text/javascript" src="<c:url value='/resources/global/js/jquery/plugins/datatables/jquery.dataTables.min.js' context='/egi'/>"></script>
-		<script type="text/javascript" src="<c:url value='/resources/global/js/jquery/plugins/datatables/dataTables.bootstrap.js' context='/egi'/>"></script>
-		<script type="text/javascript" src="<c:url value='/resources/global/js/jquery/plugins/datatables/responsive/js/datatables.responsive.js' context='/egi'/>"></script>
-		
-		<script src="<c:url value='/resources/global/js/bootstrap/bootbox.min.js' context='/egi'/>"></script>
-		<script src="<c:url value='/resources/global/js/egov/custom.js' context='/egi'/>"></script>	
-		<script src="<c:url value='/resources/js/app/positionsearch.js' context='/eis'/>"></script>	
+		<script src="<cdn:url value='/resources/global/js/bootstrap/bootbox.min.js' context='/egi'/>"></script>
+		<script src="<cdn:url value='/resources/global/js/egov/custom.js' context='/egi'/>"></script>	
+		<script src="<cdn:url value='/resources/js/app/positionsearch.js' context='/eis'/>"></script>	
 	</head>
 <body class="page-body">
 	
@@ -82,7 +83,7 @@
 						<div class="navbar-header col-md-10 col-xs-10">
 							<a class="navbar-brand" href="javascript:void(0);">
 								<c:if test="${not empty sessionScope.logopath || not empty sessionScope.citylogo}">
-									<img src="<c:url value='${sessionScope.logopath == null ? sessionScope.citylogo : sessionScope.logopath}' context='/egi'/>" height="60">
+									<img src="<cdn:url value='${sessionScope.logopath == null ? sessionScope.citylogo : sessionScope.logopath}' context='/egi'/>" height="60">
 								</c:if>
 								<div>
 									
@@ -95,7 +96,7 @@
 							<ul class="hr-menu text-right">
 								<li class="ico-menu">
 									<a href="javascript:void(0);">
-										<img src="<c:url value='/resources/global/images/logo@2x.png' context='/egi'/>" title="Powered by eGovernments" height="20px">
+										<img src="<cdn:url value='/resources/global/images/logo@2x.png' context='/egi'/>" title="Powered by eGovernments" height="20px">
 									</a>
 								</li>
 								

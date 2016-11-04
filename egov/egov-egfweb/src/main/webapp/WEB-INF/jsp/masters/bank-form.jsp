@@ -59,35 +59,64 @@
 				<td class="bluebox">&nbsp;</td>
 				<td class="bluebox"><s:text name="bank.create.name" /><span
 					class="mandatory1"> *</span></td>
-				<td class="bluebox"><s:textfield id="name" name="name"
-						onblur="checkUniqueBankName(this);" /> <span
-					style="display: none; color: red" id="nameuniquename"> <s:text
-							name="bank.name.already.exists" />
-				</span></td>
+				<s:if test="%{mode.equals('VIEW')}">
+					<td class="bluebox"><s:textfield id="name" name="name"
+							readonly="true" /></td>
+				</s:if>
+				<s:else>
+					<td class="bluebox"><s:textfield id="name" name="name"
+							onblur="checkUniqueBankName(this);" /> <span
+						style="display: none; color: red" id="nameuniquename"> <s:text
+								name="bank.name.already.exists" />
+					</span></td>
+
+				</s:else>
 
 			</tr>
 			<tr>
 				<td class="bluebox">&nbsp;</td>
 				<td class="bluebox"><s:text name="bank.create.code" /><span
 					class="mandatory1"> *</span></td>
-				<td class="bluebox"><s:textfield id="code" name="code"
-						onblur="checkUniqueBankCode(this);" /> <span
-					style="display: none; color: red" id="codeuniquecode"> <s:text
-							name="bank.code.already.exists" />
-				</span></td>
+				<s:if test="%{mode.equals('VIEW')}">
+					<td class="bluebox"><s:textfield id="code" name="code"
+							readonly="true" /></td>
+				</s:if>
+				<s:else>
+					<td class="bluebox"><s:textfield id="code" name="code"
+							onblur="checkUniqueBankCode(this);" /> <span
+						style="display: none; color: red" id="codeuniquecode"> <s:text
+								name="bank.code.already.exists" />
+					</span></td>
+
+				</s:else>
 			</tr>
 			<tr>
 				<td class="bluebox"></td>
 				<td class="bluebox"><s:text name="bank.create.isactive" /></td>
-				<td class="bluebox" colspan="2"><s:checkbox id="isActive"
-						name="isActive" value="%{isActive}" /></td>
+				<s:if test="%{mode.equals('VIEW')}">
+					<td class="bluebox" colspan="2"><s:checkbox id="isActive"
+							name="isActive" value="%{isActive}" disabled="disabled"
+							checked="checked" /></td>
+				</s:if>
+				<s:else>
+					<td class="bluebox" colspan="2"><s:checkbox id="isActive"
+							name="isActive" value="%{isActive}" /></td>
+
+				</s:else>
 			</tr>
 
 			<tr>
 				<td class="greybox"></td>
 				<td class="greybox"><s:text name="bank.create.remarks" /></td>
-				<td class="greybox" colspan="2"><s:textarea id="narration"
-						name="narration" cols="80" rows="5" /></td>
+				<s:if test="%{mode.equals('VIEW')}">
+					<td class="greybox" colspan="2"><s:textarea id="narration"
+							name="narration" cols="80" rows="5" readonly="true" /></td>
+				</s:if>
+				<s:else>
+					<td class="greybox" colspan="2"><s:textarea id="narration"
+							name="narration" cols="80" rows="5" /></td>
+
+				</s:else>
 			</tr>
 		</table>
 		<br />

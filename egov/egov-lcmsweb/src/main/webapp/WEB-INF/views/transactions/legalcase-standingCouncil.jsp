@@ -47,12 +47,6 @@
 <div class="row">
 	<div class="col-md-12">
 
-		<!-- 	<div class="panel-heading">
-					<div class="panel-title">
-						Assign Standing Counsel
-					</div>
-				</div> -->
-
 		<div class="form-group">
 			<label class="col-sm-3 control-label text-right">Standing
 				Council:<span class="mandatory"></span>:
@@ -74,22 +68,22 @@
 				Date:<span class="mandatory"></span>:
 			</label>
 			<div class="col-sm-3 add-margin">
-				<form:input path="assignedtodate" class="form-control datepicker"
+				<form:input path="assignedToDate" class="form-control datepicker"
 					title="Please enter a valid date" pattern="\d{1,2}/\d{1,2}/\d{4}"
 					data-date-end-date="-1d" id="assignedDate"
 					data-inputmask="'mask': 'd/m/y'" required="required" />
-				<form:errors path="assignedtodate" cssClass="add-margin error-msg" />
+				<form:errors path="assignedToDate" cssClass="add-margin error-msg" />
 			</div>
 		</div>
 		<div class="form-group">
 			<label class="col-sm-3 control-label text-right">Date on
 				which Vakalaat filed:</label>
 			<div class="col-sm-3 add-margin">
-				<form:input path="vakalatdate" class="form-control datepicker"
+				<form:input path="vakalatDate" class="form-control datepicker"
 					title="Please enter a valid date" pattern="\d{1,2}/\d{1,2}/\d{4}"
 					data-date-end-date="-1d" id="vakalatdate"
 					data-inputmask="'mask': 'd/m/y'" />
-				<form:errors path="vakalatdate" cssClass="add-margin error-msg" />
+				<form:errors path="vakalatDate" cssClass="add-margin error-msg" />
 			</div>
 		</div>
 		<div class="form-group">
@@ -108,10 +102,9 @@
 			</label>
 			<div class="col-sm-3 add-margin">
 				<form:input id="seniorAdvocateName" type="text"
-					class="form-control " autocomplete="off"
-					path="eglcSeniorAdvocateMaster.name"
-					name="eglcSeniorAdvocateMaster.name"
-					value="${eglcSeniorAdvocateMaster.name}" placeholder="" />
+					class="form-control " autocomplete="off" path="seniorAdvocate.name"
+					name="seniorAdvocate.name" required="required"
+					value="${seniorAdvocate.name}" placeholder="" />
 				<input type="hidden" id="senioradvocateId" value="" />
 				<c:forEach items="${departments}" var="advocate">
 
@@ -121,11 +114,11 @@
 				<label class="col-sm-2 control-label text-right">Assigned
 					On:</label>
 				<div class="col-sm-3 add-margin">
-					<form:input path="assignedtodateForsenior"
+					<form:input path="assignedToDateForSenior"
 						class="form-control datepicker" title="Please enter a valid date"
 						pattern="\d{1,2}/\d{1,2}/\d{4}" data-date-end-date="-1d"
-						id="assignedtodateForsenior" data-inputmask="'mask': 'd/m/y'" />
-					<form:errors path="assignedtodateForsenior"
+						id="assignedToDateForSenior" data-inputmask="'mask': 'd/m/y'" />
+					<form:errors path="assignedToDateForSenior"
 						cssClass="add-margin error-msg" />
 				</div>
 			</div>
@@ -135,20 +128,20 @@
 				class="mandatory"></span>:
 			</label>
 			<div class="col-sm-3 add-margin">
-				<form:input path="orderdate" class="form-control datepicker"
+				<form:input path="orderDate" class="form-control datepicker"
 					title="Please enter a valid date" pattern="\d{1,2}/\d{1,2}/\d{4}"
-					data-date-end-date="-1d" id="orderDate"
+					data-date-end-date="-1d" id="orderDate" required="required"
 					data-inputmask="'mask': 'd/m/y'" />
-				<form:errors path="orderdate" cssClass="add-margin error-msg" />
+				<form:errors path="orderDate" cssClass="add-margin error-msg" />
 			</div>
 			<label class="col-sm-2 control-label text-right">Order Number<span
 				class="mandatory"></span>:
 			</label>
 			<div class="col-sm-3 add-margin">
 				<form:input class="form-control patternvalidation"
-					data-pattern="string" maxlength="50" id="orderNumber"
-					path="ordernumber" />
-				<form:errors path="ordernumber" cssClass="add-margin error-msg" />
+					data-pattern="number" maxlength="50" id="orderNumber"
+					required="required" path="orderNumber" />
+				<form:errors path="orderNumber" cssClass="add-margin error-msg" />
 			</div>
 		</div>
 

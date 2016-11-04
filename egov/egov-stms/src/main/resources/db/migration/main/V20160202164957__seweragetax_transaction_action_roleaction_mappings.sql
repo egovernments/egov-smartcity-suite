@@ -1,0 +1,9 @@
+-----------------New Sewerage Connection Role action Mapping--------------------
+INSERT INTO eg_action(id, name, url, queryparams, parentmodule, ordernumber, displayname, enabled, contextroot, version, createdby, createddate, lastmodifiedby, lastmodifieddate, application) VALUES (nextval('seq_eg_action'), 'New Sewerage Connection', '/transactions/newConnection-newform', null, (select id from eg_module where name = 'SewerageTransactions'), 1, 'Apply for New Connection', true, 'stms', 0, 1, now(), 1, now(), (select id from eg_module where name = 'Sewerage Tax Management'));
+INSERT INTO eg_roleaction(roleid, actionid) VALUES ((select id from eg_role where name = 'Super User'), (select id from eg_action where name = 'New Sewerage Connection'));
+INSERT INTO eg_roleaction(roleid, actionid) VALUES ((select id from eg_role where name = 'ULB Operator'), (select id from eg_action where name = 'New Sewerage Connection'));
+
+-----------------Create Sewerage Connection Role Action Mapping----------------------
+INSERT INTO eg_action(id, name, url, queryparams, parentmodule, ordernumber, displayname, enabled, contextroot, version, createdby, createddate, lastmodifiedby, lastmodifieddate, application) VALUES (nextval('seq_eg_action'), 'Create Sewerage Connection', '/transactions/newConnection-create', null, (select id from eg_module where name = 'SewerageTransactions'), 1, 'Create New Connection', false, 'stms', 0, 1, now(), 1, now(), (select id from eg_module where name = 'Sewerage Tax Management'));
+INSERT INTO eg_roleaction(roleid, actionid) VALUES ((select id from eg_role where name = 'Super User'), (select id from eg_action where name = 'Create Sewerage Connection'));
+INSERT INTO eg_roleaction(roleid, actionid) VALUES ((select id from eg_role where name = 'ULB Operator'), (select id from eg_action where name = 'Create Sewerage Connection'));

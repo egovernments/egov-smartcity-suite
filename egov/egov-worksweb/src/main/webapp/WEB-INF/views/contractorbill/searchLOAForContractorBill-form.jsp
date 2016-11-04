@@ -106,7 +106,7 @@
 			<div class="col-sm-3 add-margin">
 				<form:input path="estimateNumber" id="estimateNumber"
 					class="form-control"
-					placeholder="Type first 3 letters of Estimate Number" />
+					placeholder="Type first 3 letters of Abstract Estimate Number" />
 				<form:errors path="estimateNumber" cssClass="add-margin error-msg" />
 			</div>
 		</div>

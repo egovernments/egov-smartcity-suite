@@ -44,13 +44,14 @@ import static java.math.BigDecimal.ZERO;
 import static org.apache.commons.lang3.StringUtils.isBlank;
 import static org.egov.ptis.constants.PropertyTaxConstants.ADDTIONAL_RULE_ALTER_ASSESSMENT;
 import static org.egov.ptis.constants.PropertyTaxConstants.ADDTIONAL_RULE_BIFURCATE_ASSESSMENT;
+import static org.egov.ptis.constants.PropertyTaxConstants.ALTERATION_OF_ASSESSMENT;
 import static org.egov.ptis.constants.PropertyTaxConstants.APPLICATION_TYPE_ALTER_ASSESSENT;
 import static org.egov.ptis.constants.PropertyTaxConstants.APPLICATION_TYPE_GRP;
 import static org.egov.ptis.constants.PropertyTaxConstants.APPLICATION_TYPE_NEW_ASSESSENT;
-import static org.egov.ptis.constants.PropertyTaxConstants.ARR_DMD_STR;
 import static org.egov.ptis.constants.PropertyTaxConstants.CURRENTYEAR_FIRST_HALF;
 import static org.egov.ptis.constants.PropertyTaxConstants.CURRENTYEAR_SECOND_HALF;
 import static org.egov.ptis.constants.PropertyTaxConstants.CURR_FIRSTHALF_DMD_STR;
+import static org.egov.ptis.constants.PropertyTaxConstants.CURR_SECONDHALF_DMD_STR;
 import static org.egov.ptis.constants.PropertyTaxConstants.DEMANDRSN_STR_EDUCATIONAL_CESS;
 import static org.egov.ptis.constants.PropertyTaxConstants.DEMANDRSN_STR_GENERAL_TAX;
 import static org.egov.ptis.constants.PropertyTaxConstants.DEMANDRSN_STR_LIBRARY_CESS;
@@ -122,7 +123,6 @@ import org.egov.infra.workflow.service.SimpleWorkflowService;
 import org.egov.pims.commons.Designation;
 import org.egov.pims.commons.Position;
 import org.egov.ptis.client.util.PropertyTaxUtil;
-import org.egov.ptis.constants.PropertyTaxConstants;
 import org.egov.ptis.domain.dao.demand.PtDemandDao;
 import org.egov.ptis.domain.entity.demand.Ptdemand;
 import org.egov.ptis.domain.entity.property.BasicProperty;
@@ -197,6 +197,7 @@ public abstract class PropertyTaxBaseAction extends GenericWorkFlowAction {
 
     protected Boolean propertyByEmployee = Boolean.TRUE;
     protected String userDesignationList = new String();
+    protected String applicationType;
 
     public List<File> getUpload() {
         return uploads;
@@ -577,7 +578,7 @@ public abstract class PropertyTaxBaseAction extends GenericWorkFlowAction {
 
         if (!propertyByEmployee) {
             currentState = "Created";
-            final Assignment assignment = propertyService.getUserPositionByZone(property.getBasicProperty(),property.getBasicProperty().getSource());
+            final Assignment assignment = propertyService.getUserPositionByZone(property.getBasicProperty(), false);
             if (null != assignment) {
                 approverPositionId = assignment.getPosition().getId();
                 approverName = (assignment.getEmployee().getName()).concat("~").concat(
@@ -592,11 +593,13 @@ public abstract class PropertyTaxBaseAction extends GenericWorkFlowAction {
                         .concat(assignment.getPosition().getName());
             }
         }
-        if (null != property.getId())
+        if (property.getId() != null)
             wfInitiator = propertyService.getWorkflowInitiator(property);
+        else
+            wfInitiator = propertyTaxCommonUtils.getWorkflowInitiatorAssignment(user.getId());
 
         if (WFLOW_ACTION_STEP_REJECT.equalsIgnoreCase(workFlowAction)) {
-            if (wfInitiator.equals(userAssignment)) {
+            if (wfInitiator.getPosition().equals(property.getState().getOwnerPosition())) {
                 property.transition(true).end().withSenderName(user.getUsername() + "::" + user.getName())
                         .withComments(approverComments).withDateInfo(currentDate.toDate());
                 property.setStatus(STATUS_CANCELLED);
@@ -605,9 +608,9 @@ public abstract class PropertyTaxBaseAction extends GenericWorkFlowAction {
                 final String stateValue = property.getCurrentState().getValue().split(":")[0] + ":" + WF_STATE_REJECTED;
                 property.transition(true).withSenderName(user.getUsername() + "::" + user.getName())
                         .withComments(approverComments).withStateValue(stateValue).withDateInfo(currentDate.toDate())
-                        .withOwner(wfInitiator.getPosition()).withNextAction(
-                        		property.getBasicProperty().getSource().equals(SOURCEOFDATA_MOBILE)?
-                        				UD_REVENUE_INSPECTOR_APPROVAL_PENDING : WF_STATE_ASSISTANT_APPROVAL_PENDING);
+                        .withOwner(wfInitiator!=null ? wfInitiator.getPosition() : null).withNextAction(
+                                        property.getBasicProperty().getSource().equals(SOURCEOFDATA_MOBILE)?
+                                                        UD_REVENUE_INSPECTOR_APPROVAL_PENDING : WF_STATE_ASSISTANT_APPROVAL_PENDING);
             }
 
         } else {
@@ -623,7 +626,7 @@ public abstract class PropertyTaxBaseAction extends GenericWorkFlowAction {
                 property.transition().start().withSenderName(user.getUsername() + "::" + user.getName())
                         .withComments(approverComments).withStateValue(wfmatrix.getNextState())
                         .withDateInfo(currentDate.toDate()).withOwner(pos).withNextAction(wfmatrix.getNextAction())
-                        .withNatureOfTask(nature);
+                        .withNatureOfTask(nature).withInitiator(wfInitiator!=null ?wfInitiator.getPosition():null);
             } else if (property.getCurrentState().getNextAction().equalsIgnoreCase("END"))
                 property.transition(true).end().withSenderName(user.getUsername() + "::" + user.getName())
                         .withComments(approverComments).withDateInfo(currentDate.toDate());
@@ -701,7 +704,8 @@ public abstract class PropertyTaxBaseAction extends GenericWorkFlowAction {
                                 new String[] { property.getApplicationNo() });
                         emailBody = getText("msg.newpropertycreate.email", args);
                     }
-                } else if (APPLICATION_TYPE_ALTER_ASSESSENT.equals(applicationType)) {
+                } else if (ALTERATION_OF_ASSESSMENT.equals(applicationType)
+                        || APPLICATION_TYPE_ALTER_ASSESSENT.equals(applicationType)) {
 
                     if (mobileNumber != null)
                         smsMsg = getText("msg.alterAssessmentForward.sms", args);
@@ -729,7 +733,8 @@ public abstract class PropertyTaxBaseAction extends GenericWorkFlowAction {
                                 new String[] { property.getApplicationNo() });
                         emailBody = getText("msg.newpropertyreject.email", args);
                     }
-                } else if (APPLICATION_TYPE_ALTER_ASSESSENT.equals(applicationType)) {
+                } else if (ALTERATION_OF_ASSESSMENT.equals(applicationType)
+                        || APPLICATION_TYPE_ALTER_ASSESSENT.equals(applicationType)) {
                     if (mobileNumber != null)
                         smsMsg = getText("msg.alterAssessmentReject.sms", args);
 
@@ -746,7 +751,12 @@ public abstract class PropertyTaxBaseAction extends GenericWorkFlowAction {
                 }
             } else if (propertyState.getValue().endsWith(WF_STATE_COMMISSIONER_APPROVED)) {
                 args.add(property.getBasicProperty().getUpicNo());
-                args.add(demandCollMap.get(CURR_FIRSTHALF_DMD_STR).add(demandCollMap.get(ARR_DMD_STR)).toString());
+                Map<String, Installment> installmentMap = propertyTaxUtil.getInstallmentsForCurrYear(new Date());
+                Installment installmentFirstHalf = installmentMap.get(CURRENTYEAR_FIRST_HALF);
+                args.add(demandCollMap
+                        .get(DateUtils.between(new Date(), installmentFirstHalf.getFromDate(), installmentFirstHalf.getToDate())
+                                ? CURR_FIRSTHALF_DMD_STR : CURR_SECONDHALF_DMD_STR)
+                        .toString());
                 args.add(DateUtils.getFormattedDate(property.getBasicProperty().getPropOccupationDate(), "dd/MM/yyyy"));
                 args.add(ApplicationThreadLocals.getMunicipalityName());
                 if (APPLICATION_TYPE_NEW_ASSESSENT.equals(applicationType)) {
@@ -757,7 +767,8 @@ public abstract class PropertyTaxBaseAction extends GenericWorkFlowAction {
                                 .getBasicProperty().getUpicNo() });
                         emailBody = getText("msg.newpropertyapprove.email", args);
                     }
-                } else if (APPLICATION_TYPE_ALTER_ASSESSENT.equals(applicationType)) {
+                } else if (ALTERATION_OF_ASSESSMENT.equals(applicationType)
+                        || APPLICATION_TYPE_ALTER_ASSESSENT.equals(applicationType)) {
                     if (mobileNumber != null)
                         smsMsg = getText("msg.alterAssessmentApprove.sms", args);
                     if (emailid != null) {
@@ -772,9 +783,9 @@ public abstract class PropertyTaxBaseAction extends GenericWorkFlowAction {
                 }
             }
         }
-        if (StringUtils.isNotBlank(mobileNumber)) 
+        if (StringUtils.isNotBlank(mobileNumber) && StringUtils.isNotBlank(smsMsg))
             messagingService.sendSMS(mobileNumber, smsMsg);
-        if (StringUtils.isNotBlank(emailid))
+        if (StringUtils.isNotBlank(emailid) && StringUtils.isNotBlank(emailSubject) && StringUtils.isNotBlank(emailBody))
             messagingService.sendEmail(emailid, emailSubject, emailBody);
 
     }
@@ -964,6 +975,14 @@ public abstract class PropertyTaxBaseAction extends GenericWorkFlowAction {
     }
     public void setUserDesignationList(String userDesignationList) {
         this.userDesignationList = userDesignationList;
+    }
+
+    public void setApplicationType(String applicationType) {
+        this.applicationType = applicationType;
+    }
+
+    public String getApplicationType() {
+        return applicationType;
     }
     
     

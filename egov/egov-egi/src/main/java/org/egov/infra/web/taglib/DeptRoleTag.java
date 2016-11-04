@@ -101,13 +101,11 @@ public class DeptRoleTag extends BodyTagSupport {
 
 	@Override
 	public int doStartTag() throws javax.servlet.jsp.JspTagException {
-		System.out.println("In doStartTag() " + this.getName());
 		return SKIP_BODY;
 	}
 
 	@Override
 	public int doEndTag() {
-		System.out.println("In doEndTag() " + this.getName());
 
 		try {
 			final List deptList = this.getName();
@@ -127,7 +125,6 @@ public class DeptRoleTag extends BodyTagSupport {
 				final String deptname = department.getName();
 				deptMap.put(deptname, deptID);
 			}
-			System.out.println("labelsList:::" + this.labelsList);
 
 			if (this.labelsList.size() == 6) {
 				if (this.labelsList.get(4) != null) {
@@ -146,7 +143,6 @@ public class DeptRoleTag extends BodyTagSupport {
 
 			deptRoleSelect += "</select></td></tr>";
 
-			// System.out.println("deptRoleSelect  ::" + deptRoleSelect);
 			deptRoleSelect += "<tr><td class=\"eGovTblContent\" width=\"40%\" height=\"23\" colspan=\"" + colspn + "\"> " + this.labelsList.get(1) + "<font class=\"ErrorText\">*</font></td> "
 					+ "<td align=\"left\" width=\"40%\" height=\"23\" class=\"eGovTblContent\" colspan=\"" + colspn + "\"> " + "<select name=\"" + this.labelsList.get(3)
 					+ "\" class=\"controlText\"></select></td></tr>";
@@ -180,7 +176,6 @@ public class DeptRoleTag extends BodyTagSupport {
 	private String allRolesForDepartment(final String dname, final int deptId, final List labelList) {
 
 		final String deptStr = "department" + deptId + ".value";
-		System.out.println("in allRolesForDepartment():: editroleid:::" + this.editroleid);
 		// labelsList =getLabels();
 		final String s1 = "if(document.forms[0]." + this.labelsList.get(2) + ".options[document.forms[0]." + this.labelsList.get(2) + ".selectedIndex].text ==" + deptStr + ")\n{\n";
 		String s2 = "";
@@ -197,19 +192,16 @@ public class DeptRoleTag extends BodyTagSupport {
 			final String roleName = role.getRoleName();
 			final Integer roleID = role.getId();
 			roleMap.put(roleName, roleID);
-			// System.out.println("roleName::" + roleName );
 		}
 		for (final Iterator itr = roleMap.keySet().iterator(); itr.hasNext();) {
 			final String rname = (String) itr.next();
 			final int roleid = ((Integer) roleMap.get(rname)).intValue();
-			// System.out.println("roleName::" + rname ); ((deptid==editdeptid && editdeptid!=0)?"selected":"")
 
 			s2 += "document.forms[0]." + this.labelsList.get(3) + ".options[" + i + "] = new Option(\"" + rname + "\"," + roleid + ","
 					+ (roleid == this.editroleid && this.editroleid != 0 ? true : false) + "," + (roleid == this.editroleid && this.editroleid != 0 ? true : false) + ");\n";
 			i++;
 		}
 
-		// System.out.println("in allRolesForDepartment()  ::" + s1+s2+"}\n");
 		return s1 + s2 + "}\n";*/
 	}
 

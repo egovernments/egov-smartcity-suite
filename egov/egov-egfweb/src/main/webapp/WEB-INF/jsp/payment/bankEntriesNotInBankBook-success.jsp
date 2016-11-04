@@ -38,15 +38,18 @@
   ~   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
   --%>
 
-<%@ include file="/includes/taglibs.jsp" %>
+<%@ include file="/includes/taglibs.jsp"%>
 <%@ page language="java"%>
 
 <html>
 
 <title>Bank Entries Not In Bank Book</title>
-<body >
-<script>
-</script>
- 	<b>Bank Entries Not In Bank Book Created Succesfully</b> 
+<body>
+	<div align="center">
+		<b><span class="mandatory1">Bank Entries Not In Bank Book
+				Created Succesfully</span></b> </br>
+		</br> <input type="button" value="Close"
+			onclick="javascript:window.close()" class="button" />
+	</div>
 </body>
 </html>

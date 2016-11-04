@@ -60,7 +60,7 @@ public class LegalCaseSearchResult {
     private String caseTitle;
     private String petName;
     private String resName;
-    private Boolean isStatusExcluded;
+    private String isStatusExcluded;
     private String caseStatus;
     private Integer statusId;
     private String assignDept;
@@ -192,13 +192,15 @@ public class LegalCaseSearchResult {
         this.assignDept = assignDept;
     }
 
-    public Boolean getIsStatusExcluded() {
-        return isStatusExcluded;
-    }
+  
 
-    public void setIsStatusExcluded(final Boolean isStatusExcluded) {
-        this.isStatusExcluded = isStatusExcluded;
-    }
+	public String getIsStatusExcluded() {
+		return isStatusExcluded;
+	}
+
+	public void setIsStatusExcluded(String isStatusExcluded) {
+		this.isStatusExcluded = isStatusExcluded;
+	}
 
 	public Integer getStatusId() {
 		return statusId;

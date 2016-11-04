@@ -151,7 +151,7 @@ public class DayBookReportAction extends BaseFormAction {
             startDate = sdf.format(formatter.parse(dayBookReport.getStartDate()));
             endDate = sdf.format(formatter.parse(dayBookReport.getEndDate()));
         } catch (ParseException e) {
-            e.printStackTrace();
+
         }
         String query = "SELECT voucherdate as vdate, TO_CHAR(voucherdate, 'dd-Mon-yyyy')  AS  voucherdate, vouchernumber as vouchernumber , gd.glcode AS glcode,ca.name AS particulars ,vh.name ||' - '|| vh.TYPE AS type"
                 + ", CASE WHEN vh.description is null THEN ' ' ELSE vh.description END AS narration, CASE  WHEN status=0 THEN ( 'Approved') ELSE ( case WHEN status=1 THEN 'Reversed' else (case WHEN status=2 THEN 'Reversal' else ' ' END) END ) END as status , debitamount  , "

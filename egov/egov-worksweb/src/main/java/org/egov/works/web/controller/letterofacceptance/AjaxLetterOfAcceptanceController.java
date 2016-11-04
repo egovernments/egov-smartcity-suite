@@ -39,19 +39,24 @@
  */
 package org.egov.works.web.controller.letterofacceptance;
 
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
+import java.util.ArrayList;
+import java.util.List;
+
 import org.egov.works.letterofacceptance.entity.SearchRequestContractor;
 import org.egov.works.letterofacceptance.entity.SearchRequestLetterOfAcceptance;
 import org.egov.works.letterofacceptance.service.LetterOfAcceptanceService;
 import org.egov.works.master.service.ContractorService;
+import org.egov.works.milestone.entity.TrackMilestone;
+import org.egov.works.milestone.service.TrackMilestoneService;
 import org.egov.works.models.masters.Contractor;
 import org.egov.works.models.masters.ContractorDetail;
 import org.egov.works.models.workorder.WorkOrder;
+import org.egov.works.models.workorder.WorkOrderEstimate;
 import org.egov.works.web.adaptor.LetterOfAcceptanceForMilestoneJSONAdaptor;
 import org.egov.works.web.adaptor.SearchContractorJsonAdaptor;
 import org.egov.works.web.adaptor.SearchLetterOfAcceptanceJsonAdaptor;
 import org.egov.works.web.adaptor.SearchLetterOfAcceptanceToCreateContractorBillJson;
+import org.egov.works.workorderestimate.service.WorkOrderEstimateService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.MessageSource;
@@ -64,8 +69,8 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-import java.util.ArrayList;
-import java.util.List;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 
 @Controller
 @RequestMapping(value = "/letterofacceptance")
@@ -87,6 +92,12 @@ public class AjaxLetterOfAcceptanceController {
     
     @Autowired
     private LetterOfAcceptanceForMilestoneJSONAdaptor letterOfAcceptanceForMilestoneJSONAdaptor;
+    
+    @Autowired
+    private TrackMilestoneService trackMilestoneService;
+    
+    @Autowired
+    private WorkOrderEstimateService workOrderEstimateService;
     
     @Autowired
     @Qualifier("messageSource")
@@ -115,12 +126,12 @@ public class AjaxLetterOfAcceptanceController {
 
     @RequestMapping(value = "/ajaxestimatenumbers", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
     public @ResponseBody List<String> findEstimateNumbersForLOA(@RequestParam final String name) {
-        return letterOfAcceptanceService.findLoaEstimateNumbers(name);
+        return letterOfAcceptanceService.getApprovedEstimateNumbersToModifyLOA(name);
     }
 
     @RequestMapping(value = "/ajaxloanumber", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
     public @ResponseBody List<String> findLoaNumbers(@RequestParam final String name) {
-        return letterOfAcceptanceService.getWorkOrderByNumber(name);
+        return letterOfAcceptanceService.getApprovedWorkOrderByNumberToModifyLOA(name);
     }
 
     @RequestMapping(value = "/ajaxsearchcontractors-loaforcontractorbill", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
@@ -163,9 +174,21 @@ public class AjaxLetterOfAcceptanceController {
     }
 
     @RequestMapping(value = "/ajaxvalidate-createcontractorbill", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
-    public @ResponseBody Boolean validateWorkOrderNumberForCreateContractorBill(
+    public @ResponseBody String validateWorkOrderNumberForCreateContractorBill(
             @RequestParam("workOrderId") final Long workOrderId) {
-        return letterOfAcceptanceService.validateContractorBillInWorkflowForWorkorder(workOrderId);
+        String message = "";
+        WorkOrderEstimate workOrderEstimate = workOrderEstimateService.getWorkOrderEstimateByWorkOrderId(workOrderId);
+        TrackMilestone trackMileStone = trackMilestoneService
+                .getMinimumPercentageToCreateContractorBill(workOrderEstimate.getId());
+        if (trackMileStone == null) {
+            message = messageSource.getMessage("error.contractorbil.milestone.percentage", null, null);
+        } else {
+            Boolean nonApprovedBills = letterOfAcceptanceService.validateContractorBillInWorkflowForWorkorder(workOrderId);
+            if (!nonApprovedBills)
+                message = messageSource.getMessage("error.contractorbill.nonapprovedbills",
+                        new String[] { workOrderEstimate.getWorkOrder().getWorkOrderNumber() }, null);
+        }
+        return message;
     }
     
     @RequestMapping(value = "/ajaxcontractorsbycode-loa", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
@@ -267,4 +290,15 @@ public class AjaxLetterOfAcceptanceController {
         
         return message;
     }
+    
+    @RequestMapping(value = "/getworkordernumber-viewestimatephotograph", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+    public @ResponseBody List<String> findWorkOrderNumbersForViewEstimatePhotograph(@RequestParam final String workOrderNumber) {
+        return letterOfAcceptanceService.getWorkOrderNumbersForViewEstimatePhotograph(workOrderNumber);
+    }
+    
+    @RequestMapping(value = "/getcontractorname-viewestimatephotograph", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+    public @ResponseBody List<String> findContractorsNamesForViewEstimatePhotograph(@RequestParam final String contractorName) {
+        return letterOfAcceptanceService.getContractorsNamesForViewEstimatePhotograph(contractorName);
+    }
+
 }

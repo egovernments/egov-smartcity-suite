@@ -41,8 +41,11 @@ package org.egov.lcms.transactions.repository;
 
 import java.util.List;
 
+import org.egov.lcms.transactions.entity.LcInterimOrderDocuments;
 import org.egov.lcms.transactions.entity.LegalCaseInterimOrder;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 @Repository
@@ -51,5 +54,8 @@ public interface LegalCaseInterimOrderRepository extends JpaRepository<LegalCase
     LegalCaseInterimOrder findById(final Long id);
 
     List<LegalCaseInterimOrder> findByLegalCase_lcNumber(final String lcNumber);
+
+    @Query("select iod from LcInterimOrderDocuments iod where iod.legalCaseInterimOrder.id=:interimOrderId order by iod.id desc")
+    List<LcInterimOrderDocuments> getLcInterimOrderDocumentList(@Param("interimOrderId") Long interimOrderId);
 
 }

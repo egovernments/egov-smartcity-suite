@@ -39,7 +39,9 @@ l * eGov suite of products aim to improve the internal efficiency,transparency,
  */
 package org.egov.ptis.domain.service.transfer;
 
+import static org.egov.ptis.constants.PropertyTaxConstants.ADDTIONAL_RULE_REGISTERED_TRANSFER;
 import static org.egov.ptis.constants.PropertyTaxConstants.APPLICATION_TYPE_TRANSFER_OF_OWNERSHIP;
+import static org.egov.ptis.constants.PropertyTaxConstants.COMMISSIONER_DESGN;
 import static org.egov.ptis.constants.PropertyTaxConstants.FILESTORE_MODULE_NAME;
 import static org.egov.ptis.constants.PropertyTaxConstants.NATURE_TITLE_TRANSFER;
 import static org.egov.ptis.constants.PropertyTaxConstants.NOTICE_TYPE_MUTATION_CERTIFICATE;
@@ -65,6 +67,9 @@ import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang.StringUtils;
 import org.egov.demand.utils.DemandConstants;
 import org.egov.eis.entity.Assignment;
+import org.egov.eis.service.AssignmentService;
+import org.egov.eis.service.DesignationService;
+import org.egov.eis.service.EisCommonService;
 import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.admin.master.service.CityService;
 import org.egov.infra.admin.master.service.UserService;
@@ -118,6 +123,7 @@ import org.egov.ptis.domain.service.notice.NoticeService;
 import org.egov.ptis.domain.service.property.PropertyService;
 import org.egov.ptis.notice.PtNotice;
 import org.egov.ptis.report.bean.PropertyAckNoticeInfo;
+import org.egov.ptis.service.utils.PropertyTaxCommonUtils;
 import org.egov.ptis.wtms.WaterChargesIntegrationService;
 import org.joda.time.DateTime;
 import org.joda.time.LocalDate;
@@ -206,6 +212,18 @@ public class PropertyTransferService {
     @Qualifier("mutationRegistrationService")
     private PersistenceService<MutationRegistrationDetails, Long> mutationRegistrationService;
     
+    @Autowired
+    private EisCommonService eisCommonService;
+    
+    @Autowired
+    private DesignationService designationService;
+    
+    @Autowired
+    private AssignmentService assignmentService;
+    
+    @Autowired
+    private PropertyTaxCommonUtils propertyTaxCommonUtils;
+    
     @Transactional
     public void initiatePropertyTransfer(final BasicProperty basicProperty, final PropertyMutation propertyMutation) {
         propertyMutation.setBasicProperty(basicProperty);
@@ -247,7 +265,8 @@ public class PropertyTransferService {
     public void updatePropertyTransfer(final BasicProperty basicProperty, final PropertyMutation propertyMutation) {
         processAndStoreDocument(propertyMutation.getDocuments());
         checkAllMandatoryDocumentsAttached(propertyMutation);
-     defineDocumentValue(propertyMutation);
+        updateMutationFee(propertyMutation);
+        defineDocumentValue(propertyMutation);
         createUserIfNotExist(propertyMutation,propertyMutation.getTransfereeInfosProxy());
         basicProperty.setUnderWorkflow(true);
         propertyService.updateIndexes(propertyMutation, APPLICATION_TYPE_TRANSFER_OF_OWNERSHIP);
@@ -257,6 +276,7 @@ public class PropertyTransferService {
 
     @Transactional
     public void viewPropertyTransfer(final BasicProperty basicProperty, final PropertyMutation propertyMutation) {
+        updateMutationFee(propertyMutation);
         propertyService.updateIndexes(propertyMutation, APPLICATION_TYPE_TRANSFER_OF_OWNERSHIP);
         basicPropertyService.persist(basicProperty);
     }
@@ -393,8 +413,12 @@ public class PropertyTransferService {
             noticeBean.setMunicipalityName(cityName);
             BasicProperty basicProp = propertyMutation.getBasicProperty();
             final Map<String, Object> reportParams = new HashMap<String, Object>();
+            final List<User> users = eisCommonService.getAllActiveUsersByGivenDesig(designationService
+                    .getDesignationByName(COMMISSIONER_DESGN).getId());
+            noticeBean.setApproverName(users.get(0).getName());
             reportParams.put("userSignature", securityUtils.getCurrentUser().getSignature() != null ? new ByteArrayInputStream(securityUtils.getCurrentUser().getSignature()) : null);
             reportParams.put("isCorporation", isCorporation);
+            noticeBean.setNoticeNumber(notice!=null ? notice.getNoticeNo() : "N/A");
             noticeBean.setOldOwnerName(propertyMutation.getFullTranferorName());
             noticeBean.setOldOwnerParentName(propertyMutation.getFullTransferorGuardianName());
             noticeBean.setNewOwnerName(propertyMutation.getFullTranfereeName());
@@ -686,7 +710,7 @@ public class PropertyTransferService {
     			}
     		}
     	}
-    	return mutationFee;
+    	return mutationFee.setScale(0, BigDecimal.ROUND_HALF_UP);
     }
     
     /**
@@ -699,4 +723,33 @@ public class PropertyTransferService {
                 (propertyMutation.getPartyValue().compareTo(propertyMutation.getDepartmentValue()) > 0)
                         ? propertyMutation.getPartyValue() : propertyMutation.getDepartmentValue());
     }
+    
+    public void updateMutationFee(final PropertyMutation propertyMutation) {
+        if (propertyMutation.getMutationFee() == null
+                && propertyMutation.getType().equalsIgnoreCase(ADDTIONAL_RULE_REGISTERED_TRANSFER)) {
+            propertyMutation.setMutationFee(
+                    calculateMutationFee(propertyMutation.getPartyValue(), propertyMutation.getDepartmentValue()));
+        }
+    }
+    
+    public Assignment getWorkflowInitiator(PropertyMutation propertyMutation) {
+        Assignment wfInitiator = null;
+        if (propertyService.isEmployee(propertyMutation.getCreatedBy())) {
+            if (propertyMutation.getState() != null && propertyMutation.getState().getInitiatorPosition() != null)
+                wfInitiator = propertyTaxCommonUtils.getUserAssignmentByPassingPositionAndUser(
+                        propertyMutation.getCreatedBy(), propertyMutation.getState().getInitiatorPosition());
+            else
+                wfInitiator = assignmentService.getPrimaryAssignmentForUser(propertyMutation.getCreatedBy().getId());
+        } else if (!propertyMutation.getStateHistory().isEmpty())
+            wfInitiator = assignmentService.getPrimaryAssignmentForPositon(
+                    propertyMutation.getStateHistory().get(0).getOwnerPosition().getId());
+        else {
+            wfInitiator = assignmentService
+                    .getPrimaryAssignmentForPositon(propertyMutation.getState().getOwnerPosition().getId());
+        }
+
+        return wfInitiator;
+    }
+    
+    
 }

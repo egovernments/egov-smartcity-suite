@@ -44,14 +44,14 @@
 	   xsi:schemaLocation="http://www.springframework.org/schema/beans
 	   http://www.springframework.org/schema/beans/spring-beans.xsd
 	   http://www.springframework.org/schema/security
-	   http://www.springframework.org/schema/security/spring-security.xsd" default-lazy-init="false">
+	   http://www.springframework.org/schema/security/spring-security.xsd" default-lazy-init="true">
 
 	<bean id="securityFilterChain" name="securityFilterChain" class="org.springframework.security.web.FilterChainProxy">
 		<constructor-arg>
 			<list>
 				<security:filter-chain pattern="/resources/**" filters="none" />
-				<security:filter-chain pattern="/citizen/register" filters="anonymousAuthenticationFilter"/>
-				<security:filter-chain pattern="/citizen/activation/**" filters="anonymousAuthenticationFilter"/>
+				<security:filter-chain pattern="/citizen/signup" filters="anonymousAuthenticationFilter"/>
+				<security:filter-chain pattern="/citizen/signup/**" filters="anonymousAuthenticationFilter"/>
 				<security:filter-chain pattern="/error/**" filters="none" />
 				<security:filter-chain pattern="/index.jsp" filters="none" />
 				<security:filter-chain pattern="/**"  filters="concurrentSessionFilter,securityContextPersistenceFilter,logoutFilter,authenticationProcessingFilter,securityContextHolderAwareRequestFilter,rememberMeAuthenticationFilter,anonymousAuthenticationFilter,exceptionTranslationFilter,filterSecurityInterceptor" />

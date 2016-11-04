@@ -108,7 +108,6 @@ public class DepartmentUserTag extends RequestContextAwareTag {
 	@Override
 	public int doEndTag()
 	{
-		System.out.println("In doEndTag() " + this.getDeptCollection());
 
 		try
 		{
@@ -143,7 +142,6 @@ public class DepartmentUserTag extends RequestContextAwareTag {
 
 			deptUserSelectStr += "</select></td></tr>";
 
-			// System.out.println("deptUserSelectStr  ::" + deptUserSelectStr);
 			deptUserSelectStr += "<tr><td class=\"eGovTblContent\" width=\"40%\" height=\"23\" >" + this.labelsList.get(1) + "<font class=\"ErrorText\">*</font></td> " +
 					"<td align=\"left\" width=\"40%\" height=\"23\" class=\"eGovTblContent\" >" +
 					"<select name=\"" + this.labelsList.get(3) + "\" class=\"controlText\"></select></td></tr>";
@@ -169,7 +167,6 @@ public class DepartmentUserTag extends RequestContextAwareTag {
 			}
 
 			deptUserStr += "}";
-			// System.out.println("deptUserStr" + deptUserStr);
 			final JspWriter out = this.pageContext.getOut();
 			out.print(deptUserSelectStr);
 			out.print(this.getScript(deptUserStr));
@@ -208,7 +205,6 @@ public class DepartmentUserTag extends RequestContextAwareTag {
 		{
 			final String usrName = (String) itr.next();
 			final int usrId = ((Integer) userMap.get(usrName)).intValue();
-			// System.out.println("roleName::" + rname );
 
 			s2 += "document.forms[0]." + this.labelsList.get(3) + ".options[" + i + "] = new Option(\"" + usrName + "\"," + usrId + ");\n";
 			i++;

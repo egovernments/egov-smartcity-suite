@@ -39,7 +39,8 @@
  */
 package org.egov.wtms.application.service;
 
-import org.egov.infra.utils.ApplicationNumberGenerator;
+import java.math.BigDecimal;
+
 import org.egov.ptis.domain.model.AssessmentDetails;
 import org.egov.ptis.domain.model.enums.BasicPropertyStatus;
 import org.egov.ptis.domain.service.property.PropertyExternalService;
@@ -47,7 +48,6 @@ import org.egov.wtms.application.entity.WaterConnectionDetails;
 import org.egov.wtms.application.repository.WaterConnectionDetailsRepository;
 import org.egov.wtms.application.workflow.ApplicationWorkflowCustomDefaultImpl;
 import org.egov.wtms.masters.entity.enums.ConnectionStatus;
-import org.egov.wtms.masters.service.ApplicationProcessTimeService;
 import org.egov.wtms.utils.PropertyExtnUtils;
 import org.egov.wtms.utils.WaterTaxUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -55,8 +55,6 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.MessageSource;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.math.BigDecimal;
 
 @Service
 @Transactional(readOnly = true)
@@ -76,32 +74,23 @@ public class CloserConnectionService {
     private WaterTaxUtils waterTaxUtils;
 
     @Autowired
-    private ApplicationNumberGenerator applicationNumberGenerator;
-
-    @Autowired
-    private ApplicationProcessTimeService applicationProcessTimeService;
-
-    @Autowired
     private WaterConnectionDetailsService waterConnectionDetailsService;
-
-    @Autowired
-    private WaterConnectionSmsAndEmailService waterConnectionSmsAndEmailService;
 
     public static final String CHANGEOFUSEALLOWEDIFWTDUE = "CHANGEOFUSEALLOWEDIFWTDUE";
 
     public String validateChangeOfUseConnection(final WaterConnectionDetails parentWaterConnectionDetail) {
         String validationMessage = "";
         final String propertyID = parentWaterConnectionDetail.getConnection().getPropertyIdentifier();
-        final WaterConnectionDetails inWorkflow = waterConnectionDetailsRepository.getConnectionDetailsInWorkflow(
-                propertyID, ConnectionStatus.INPROGRESS);
+        final WaterConnectionDetails inWorkflow = waterConnectionDetailsRepository
+                .getConnectionDetailsInWorkflow(propertyID, ConnectionStatus.INPROGRESS);
         final AssessmentDetails assessmentDetails = propertyExtnUtils.getAssessmentDetailsForFlag(propertyID,
                 PropertyExternalService.FLAG_FULL_DETAILS, BasicPropertyStatus.ALL);
         if (parentWaterConnectionDetail.getConnectionStatus().equals(ConnectionStatus.HOLDING))
-            validationMessage = wcmsMessageSource.getMessage("err.validate.primary.connection.holding", new String[] {
-                    parentWaterConnectionDetail.getConnection().getConsumerCode(), propertyID }, null);
+            validationMessage = wcmsMessageSource.getMessage("err.validate.primary.connection.holding",
+                    new String[] { parentWaterConnectionDetail.getConnection().getConsumerCode(), propertyID }, null);
         else if (parentWaterConnectionDetail.getConnectionStatus().equals(ConnectionStatus.DISCONNECTED))
-            validationMessage = wcmsMessageSource.getMessage("err.validate.primary.connection.disconnected", new String[] {
-                    parentWaterConnectionDetail.getConnection().getConsumerCode(), propertyID }, null);
+            validationMessage = wcmsMessageSource.getMessage("err.validate.primary.connection.disconnected",
+                    new String[] { parentWaterConnectionDetail.getConnection().getConsumerCode(), propertyID }, null);
         else if (null != assessmentDetails.getErrorDetails()
                 && null != assessmentDetails.getErrorDetails().getErrorCode())
             validationMessage = assessmentDetails.getErrorDetails().getErrorMessage();
@@ -109,24 +98,22 @@ public class CloserConnectionService {
                 && null != assessmentDetails.getPropertyDetails().getTaxDue()
                 && assessmentDetails.getPropertyDetails().getTaxDue().doubleValue() > 0) {
             if (!waterTaxUtils.isNewConnectionAllowedIfPTDuePresent())
-                validationMessage = wcmsMessageSource.getMessage("err.validate.property.taxdue", new String[] {
-                        assessmentDetails.getPropertyDetails().getTaxDue().toString(),
-                        parentWaterConnectionDetail.getConnection().getPropertyIdentifier(), "Closure" }, null);
-        } else if (!waterTaxUtils.isConnectionAllowedIfWTDuePresent(CHANGEOFUSEALLOWEDIFWTDUE)) {
-            final BigDecimal waterTaxDueforParent = waterConnectionDetailsService.getCurrentDue(parentWaterConnectionDetail);
-            if (waterTaxDueforParent.doubleValue() > 0)
                 validationMessage = wcmsMessageSource
-                .getMessage("err.closure.connection.watertaxdue", null, null);
-            /*
-             * if (parentWaterConnectionDetail.getConnection().getId() != null) if
-             * (waterTaxUtils.waterConnectionDue(parentWaterConnectionDetail.getConnection().getId()) > 0) validationMessage =
-             * messageSource.getMessage("err.validate.additional.connection.wtdue.forchangeofuse", null, null);
-             */
+                        .getMessage("err.validate.property.taxdue",
+                                new String[] { assessmentDetails.getPropertyDetails().getTaxDue().toString(),
+                                        parentWaterConnectionDetail.getConnection().getPropertyIdentifier(),
+                                        "Closure" },
+                                null);
+        } else if (!waterTaxUtils.isConnectionAllowedIfWTDuePresent(CHANGEOFUSEALLOWEDIFWTDUE)) {
+            final BigDecimal waterTaxDueforParent = waterConnectionDetailsService
+                    .getCurrentDue(parentWaterConnectionDetail);
+            if (waterTaxDueforParent.doubleValue() > 0)
+                validationMessage = wcmsMessageSource.getMessage("err.closure.connection.watertaxdue", null, null);
         } else if (null != inWorkflow)
-            validationMessage = wcmsMessageSource.getMessage(
-                    "err.validate.closeconnection.application.inprocess",
+            validationMessage = wcmsMessageSource.getMessage("err.validate.closeconnection.application.inprocess",
                     new String[] { parentWaterConnectionDetail.getConnection().getConsumerCode(),
-                            inWorkflow.getApplicationNumber() }, null);
+                            inWorkflow.getApplicationNumber() },
+                    null);
         return validationMessage;
     }
 
@@ -136,22 +123,24 @@ public class CloserConnectionService {
      * @param approvalComent
      * @param additionalRule
      * @param workFlowAction
-     * @return Update Old Connection Object And Creates New WaterConnectionDetails with INPROGRESS of ApplicationType as
-     * "CHNAGEOFUSE"
+     * @return Update Old Connection Object And Creates New
+     *         WaterConnectionDetails with INPROGRESS of ApplicationType as
+     *         "CHNAGEOFUSE"
      */
     @Transactional
     public WaterConnectionDetails updatecloserConnection(final WaterConnectionDetails waterConnectionDetails,
             final Long approvalPosition, final String approvalComent, final String additionalRule,
             final String workFlowAction, final String sourceChannel) {
 
-        waterConnectionDetailsService.applicationStatusChange(waterConnectionDetails, workFlowAction, "", sourceChannel);
+        waterConnectionDetailsService.applicationStatusChange(waterConnectionDetails, workFlowAction, "",
+                sourceChannel);
         final WaterConnectionDetails savedwaterConnectionDetails = waterConnectionDetailsRepository
                 .saveAndFlush(waterConnectionDetails);
 
         final ApplicationWorkflowCustomDefaultImpl applicationWorkflowCustomDefaultImpl = waterConnectionDetailsService
                 .getInitialisedWorkFlowBean();
-        applicationWorkflowCustomDefaultImpl.createCommonWorkflowTransition(savedwaterConnectionDetails, approvalPosition,
-                approvalComent, additionalRule, workFlowAction);
+        applicationWorkflowCustomDefaultImpl.createCommonWorkflowTransition(savedwaterConnectionDetails,
+                approvalPosition, approvalComent, additionalRule, workFlowAction);
         waterConnectionDetailsService.updateIndexes(savedwaterConnectionDetails, sourceChannel);
         return savedwaterConnectionDetails;
     }

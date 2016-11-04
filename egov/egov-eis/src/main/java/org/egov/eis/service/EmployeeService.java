@@ -237,9 +237,7 @@ public class EmployeeService implements EntityTypeService {
             for (final HeadOfDepartments hod : assign.getDeptSet())
                 hod.setAssignment(assign);
         }
-        employee.setJurisdictions(employee.getJurisdictions().parallelStream()
-                .filter(Jurisdictions -> Jurisdictions.getBoundaryType() != null && Jurisdictions.getBoundary() != null)
-                .collect(Collectors.toList()));
+
         for (final Jurisdiction jurisdiction : employee.getJurisdictions()) {
             jurisdiction.setEmployee(employee);
             jurisdiction.setBoundaryType(jurisdiction.getBoundaryType());
@@ -464,6 +462,10 @@ public class EmployeeService implements EntityTypeService {
         return employeeRepository.findEmployeeByCodeLike(code);
     }
 
+    public List<Employee> findActiveEmployeeByCodeLike(final String code) {
+        return employeeRepository.findActiveEmployeeByCodeLike(code);
+    }
+
     public String validatePosition(final Employee employee, final String removedassignIds) {
         boolean positionExistsInWF = false;
         boolean positionExistsInWFHistory = false;
@@ -491,11 +493,13 @@ public class EmployeeService implements EntityTypeService {
             for (final Role role : roles) {
                 user = userService.getUsersByUsernameAndRolename(employee.getUsername(),
                         roleService.getRoleByName(role.getName()).getName());
-                if (assign.getFromDate().before(new Date()) && assign.getToDate().after(new Date()))
-                    if (user.isEmpty())
-                        employee.addRole(roleService.getRoleByName(role.getName()));
+                if (assign.getFromDate().before(new Date()) && assign.getToDate().after(new Date()) && user.isEmpty())
+                    employee.addRole(roleService.getRoleByName(role.getName()));
             }
         }
+        employee.setJurisdictions(employee.getJurisdictions().parallelStream()
+                .filter(Jurisdictions -> Jurisdictions.getBoundaryType() != null && Jurisdictions.getBoundary() != null)
+                .collect(Collectors.toList()));
 
         getCurrentSession().evict(employee);
         final Employee updatedEmployee = getEmployeeById(employee.getId());
@@ -508,6 +512,22 @@ public class EmployeeService implements EntityTypeService {
                 return position.getName();
         }
         return StringUtils.EMPTY;
+    }
+
+    public Boolean validateEmployeeCode(final Employee employee) {
+        final String employeeCode = employee.getCode().replaceFirst("^0+(?!$)", "");
+
+        final List<Employee> employeeList = findActiveEmployeeByCodeLike(employeeCode);
+
+        if (!employeeList.isEmpty())
+            for (final Employee emp : employeeList) {
+                final String empCode = emp.getCode().replaceFirst("^0+(?!$)", "");
+                if (!emp.getCode().equals(employee.getCode()) && employeeCode.equals(empCode)
+                        && !emp.getId().equals(employee.getId()))
+                    return true;
+
+            }
+        return false;
     }
 
 }

@@ -55,13 +55,13 @@
 								<spring:message code="lbl.select" />
 							</form:option>
 							<form:option value="MR.">
-													Mr
+													Mr.
 											</form:option>
-							<form:option value="MISS.">
-													Miss
+							<form:option value="MS.">
+													Ms.
 											</form:option>
 							<form:option value="MRS.">
-													Mrs
+													Mrs.
 											</form:option>
 						</form:select>
 						<form:errors path="salutation" cssClass="error-msg" />
@@ -132,11 +132,11 @@
 						<form:errors path="panNumber" cssClass="error-msg" />
 					</div>
 					<label class="col-sm-2 control-label text-right"><spring:message
-							code="lbl.specilization" />:</label>
+							code="lbl.specialization" />:</label>
 					<div class="col-sm-3 add-margin">
 						<form:input path="specilization"
 							class="form-control text-left patternvalidation"
-							data-pattern="alphanumericspecialcharacters" maxlength="64" />
+							data-pattern="alphanumericspecialcharacters" maxlength="100" />
 						<form:errors path="specilization" cssClass="error-msg" />
 					</div>
 				</div>
@@ -172,8 +172,8 @@
 					<div class="col-sm-3 add-margin">
 						<form:input path="monthlyRenumeration" maxlength="10"
 							id="monthlyRenumeration"
-							class="form-control text-left patternvalidation"
-							data-pattern="decimalvalues" required="required" />
+							class="form-control patternvalidation" 
+							data-pattern="decimalvalues" required="required"  pattern="\d{0,5}(\.\d{1,2})?" title="It will allow upto 5 digits and 2 decimal points"  data-first-option="false&true"/>
 						<form:errors path="monthlyRenumeration" cssClass="error-msg" />
 					</div>
 					<label class="col-sm-2 control-label text-right"><spring:message

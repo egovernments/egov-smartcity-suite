@@ -66,7 +66,7 @@ public class LineEstimateNumberGeneratorImpl implements LineEstimateNumberGenera
     @Transactional
     public String getNextNumber(final LineEstimate lineEstimate) {
         final CFinancialYear financialYear = financialYearHibernateDAO
-                .getFinancialYearByDate(lineEstimate.getLineEstimateDate());
+                .getFinYearByDate(lineEstimate.getLineEstimateDate());
         final String finYearRange[] = financialYear.getFinYearRange().split("-");
         final String sequenceName = LINEESTIMATE_NUMBER_SEQ_PREFIX + "_" + finYearRange[0] + "_" + finYearRange[1];
         Serializable sequenceNumber;

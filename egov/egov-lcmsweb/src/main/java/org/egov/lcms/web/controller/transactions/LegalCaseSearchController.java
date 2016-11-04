@@ -39,12 +39,10 @@
  */
 package org.egov.lcms.web.controller.transactions;
 
-import java.io.IOException;
 import java.util.Date;
 import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 
 import org.egov.commons.EgwStatus;
 import org.egov.infra.web.utils.WebUtils;
@@ -53,14 +51,12 @@ import org.egov.lcms.transactions.service.SearchLegalCaseService;
 import org.egov.lcms.utils.LegalCaseUtil;
 import org.egov.lcms.web.adaptor.LegalCaseSearchJsonAdaptor;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.ExceptionHandler;
+import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 @Controller
@@ -69,50 +65,33 @@ public class LegalCaseSearchController extends GenericLegalCaseController {
 
     @Autowired
     private SearchLegalCaseService searchLegalCaseService;
-    
+
     @Autowired
     private LegalCaseUtil legalCaseUtil;
-    
+
     @ModelAttribute
-    private void getLegalCaseReport(final Model model) {
-        final LegalCaseSearchResult legalCaseReportResult = new LegalCaseSearchResult();
-        model.addAttribute("legalCaseReportResult", legalCaseReportResult);
+    public LegalCaseSearchResult searchRequest() {
+        return new LegalCaseSearchResult();
     }
+
     public @ModelAttribute("statusList") List<EgwStatus> getStatusList() {
         return legalCaseUtil.getStatusForModule();
     }
+
     @RequestMapping(method = RequestMethod.GET, value = "/searchForm")
     public String saechForm(final Model model) {
         model.addAttribute("currDate", new Date());
         return "search-legalCaseForm";
     }
 
-    @ExceptionHandler(Exception.class)
     @RequestMapping(value = "/legalsearchResult", method = RequestMethod.GET, produces = MediaType.TEXT_PLAIN_VALUE)
-    public @ResponseBody String getLegalCaseSearchResult(@RequestParam final String caseNumber,
-            @RequestParam final String lcNumber, @RequestParam final Integer court, @RequestParam final Integer caseType,
-            @RequestParam final String standingCouncil, @RequestParam final Integer courtType,@RequestParam final Date caseFromDate,
-            @RequestParam final Date caseToDate,@RequestParam final Integer caseStatus,@RequestParam final Integer petionType,
-            @RequestParam final String isStatusExcluded, final HttpServletRequest request,
-            final HttpServletResponse response) throws IOException {
-        Boolean caseExcluded = Boolean.FALSE;
-        if (request.getParameter("isStatusExcluded").equals("true"))
-            caseExcluded = Boolean.TRUE;
-        LegalCaseSearchResult legalCaseSearchResultOblj=new LegalCaseSearchResult();
-        legalCaseSearchResultOblj.setCaseNumber(caseNumber);
-        legalCaseSearchResultOblj.setLcNumber(lcNumber);
-        legalCaseSearchResultOblj.setCourtId(court);
-        legalCaseSearchResultOblj.setCasecategory(caseType);
-        legalCaseSearchResultOblj.setCourtType( courtType);
-        legalCaseSearchResultOblj.setStandingCouncil(standingCouncil);
-        legalCaseSearchResultOblj.setCaseFromDate(caseFromDate);
-        legalCaseSearchResultOblj.setStatusId(caseStatus);
-        legalCaseSearchResultOblj.setPetitionTypeId(petionType);
-        List<LegalCaseSearchResult>  legalcaseSearchList = searchLegalCaseService.getLegalCaseReport( legalCaseSearchResultOblj,caseExcluded);
-        String result = new StringBuilder("{ \"data\":")
-                .append(WebUtils.toJSON(legalcaseSearchList, LegalCaseSearchResult.class, 
-                		LegalCaseSearchJsonAdaptor.class)).append("}")
-                .toString();
-        return result;
+    public @ResponseBody String getLegalCaseSearchResult(final Model model, @ModelAttribute final LegalCaseSearchResult
+    		legalCaseSearchResult,final HttpServletRequest request) {
+		final List<LegalCaseSearchResult> legalcaseSearchList = searchLegalCaseService
+				.getLegalCaseReport(legalCaseSearchResult);
+		final String result = new StringBuilder("{ \"data\":").append(
+				WebUtils.toJSON(legalcaseSearchList, LegalCaseSearchResult.class, LegalCaseSearchJsonAdaptor.class))
+				.append("}").toString();
+		return result;
     }
 }

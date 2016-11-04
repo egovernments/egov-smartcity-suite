@@ -42,10 +42,10 @@
  */
 package org.egov.model.deduction;
 
-import org.apache.commons.collections.Predicate;
-
 import java.math.BigDecimal;
 import java.util.Date;
+
+import org.apache.commons.collections.Predicate;
 
 /**
  * @author manoranjan
@@ -74,6 +74,16 @@ public class RemittanceBean implements Predicate {
     private Integer remittance_gl_dtlId;
     private String fromDate;
     private Date fromVhDate;
+    private Long departmentId;
+    private Long functionId;
+
+    public Long getFunctionId() {
+        return functionId;
+    }
+
+    public void setFunctionId(Long functionId) {
+        this.functionId = functionId;
+    }
 
     public Integer getRemittance_gl_dtlId()
     {
@@ -258,6 +268,14 @@ public class RemittanceBean implements Predicate {
 
     public void setFromVhDate(final Date fromVhDate) {
         this.fromVhDate = fromVhDate;
+    }
+
+    public Long getDepartmentId() {
+        return departmentId;
+    }
+
+    public void setDepartmentId(Long departmentId) {
+        this.departmentId = departmentId;
     }
 
 }

@@ -494,8 +494,8 @@ public class BankAdviceReportAction extends BaseFormAction {
      * .append(rtgsDate) .append(seperatorForIOB) .append(bankAdviceReportInfo.getPartyName()) .append(seperatorForIOB)
      * .append(monthMap.get(ebDetails.getMonth())+" "+EBUtils.getYear(ebDetails.getDueDate())) .append(seperatorForIOB)
      * .append(bankAdviceReportInfo.getAmount()) .append("\n"); fos.write (fb.toString().getBytes()); } } fos.flush();
-     * fos.close(); inStream=new FileInputStream(textFileName); }catch (FileNotFoundException e) { e.printStackTrace(); }catch
-     * (IOException ioe){ System.out.println (ioe); } return "txtresult"; }
+     * fos.close(); inStream=new FileInputStream(textFileName); }catch (FileNotFoundException e) {  }catch
+     * (IOException ioe){  } return "txtresult"; }
      */
 
     private List getBankAdviceReportList() {
@@ -509,7 +509,7 @@ public class BankAdviceReportAction extends BaseFormAction {
 
     @Override
     public Object getModel() {
-        // TODO Auto-generated method stub
+
         return null;
     }
 

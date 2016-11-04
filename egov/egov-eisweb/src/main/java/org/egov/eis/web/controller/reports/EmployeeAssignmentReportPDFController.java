@@ -133,31 +133,29 @@ public class EmployeeAssignmentReportPDFController {
 
         final List<Employee> employeeList = assignmentService.searchEmployeeAssignments(employeeAssignmentSearch);
         final StringBuilder searchCriteria = new StringBuilder();
-        searchCriteria.append("Employee Assignment Report for ");
+        searchCriteria.append("Employee Assignment Report as on ");
         if (employeeAssignmentSearch.getAssignmentDate() != null)
-            searchCriteria.append("Date : ")
-                    .append(DateUtils.getDefaultFormattedDate(employeeAssignmentSearch.getAssignmentDate()))
-                    .append(",");
+            searchCriteria.append(DateUtils.getDefaultFormattedDate(employeeAssignmentSearch.getAssignmentDate()));
         if (StringUtils.isNotBlank(employeeAssignmentSearch.getEmployeeName()))
-            searchCriteria.append("Employee Name : ").append(employeeAssignmentSearch.getEmployeeName()).append(",");
+            searchCriteria.append(", Employee Name : ").append(employeeAssignmentSearch.getEmployeeName()).append("");
         if (StringUtils.isNotBlank(employeeAssignmentSearch.getEmployeeCode()))
-            searchCriteria.append("Employee Code : ").append(employeeAssignmentSearch.getEmployeeCode()).append(",");
+            searchCriteria.append(", Employee Code : ").append(employeeAssignmentSearch.getEmployeeCode()).append(" ");
         if (employeeAssignmentSearch.getDepartment() != null) {
             final Department department = departmentService.getDepartmentById(employeeAssignmentSearch.getDepartment());
-            searchCriteria.append("Department : ").append(department.getName()).append(",");
+            searchCriteria.append(" for Department : ").append(department.getName()).append(" ");
         }
         if (employeeAssignmentSearch.getDesignation() != null) {
             final Designation designation = designationService
                     .getDesignationById(employeeAssignmentSearch.getDesignation());
-            searchCriteria.append("Designation : ").append(designation.getName()).append(",");
+            searchCriteria.append(" and Designation : ").append(designation.getName()).append(" ");
         }
         if (employeeAssignmentSearch.getPosition() != null) {
             final Position position = positionMasterService.getPositionById(employeeAssignmentSearch.getPosition());
-            searchCriteria.append("Position : ").append(position.getName()).append(",");
+            searchCriteria.append(" and Position : ").append(position.getName()).append(" ");
         }
 
         String searchString = StringUtils.EMPTY;
-        if (searchCriteria.toString().endsWith(","))
+        if (searchCriteria.toString().endsWith(" "))
             searchString = searchCriteria.substring(0, searchCriteria.length() - 1);
 
         final List<EmployeeAssignmentSearch> searchResult = new ArrayList<EmployeeAssignmentSearch>();

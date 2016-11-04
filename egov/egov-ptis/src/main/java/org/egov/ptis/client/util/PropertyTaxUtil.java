@@ -2041,7 +2041,7 @@ public class PropertyTaxUtil {
             srchQryStr = baseQry + srchQryStr + orderbyQry;
 
         } catch (final Exception e) {
-            e.printStackTrace();
+
             LOGGER.error("Error occured in Class : CollectionSummaryReportAction  Method : list", e);
             throw new ApplicationRuntimeException(
                     "Error occured in Class : CollectionSummaryReportAction  Method : list " + e.getMessage());

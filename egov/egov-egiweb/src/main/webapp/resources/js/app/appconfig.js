@@ -129,9 +129,9 @@ $(document).ready(function () {
         return '<table class="table table-bordered" style="width: 90%;margin: 0 auto;"><thead><th>Effective Date</th><th>Values</th></thead><tbody>'+tablerows+'</tbody></table>';
     }
     
-    var count = $("#configs tbody  tr").length - 1;
-    
+   
     $('#addrow').click(function(){
+    	var count = $("#configs tbody  tr").length - 1;
     	var $tableBody = $('#configs').find("tbody"),
         $trLast = $tableBody.find("tr:last"),
         $trNew = $trLast.clone();
@@ -147,7 +147,7 @@ $(document).ready(function () {
     	        });
     	    });
     		$trLast.after($trNew);
-        	$trNew.find('input').val('').removeAttr('disabled');
+        	$trNew.show().find('input').val('').removeAttr('disabled').addClass('dynamicInput');
             $trNew.find('input.markedForRemoval').val('false');
         	dateinitialize();
     	}
@@ -170,31 +170,22 @@ $(document).ready(function () {
     }
     
     $(document).on('click','#deleterow',function(){
-    	var length = $('#configs').find("tbody tr").length;
+    	var length = $('#configs').find("tbody tr:visible").length;
     	if(length == 1){
     		bootbox.alert('First row cannot be deleted!');
     	}else{
             if($(this).data('func')){
-                $(this).closest('tr').remove();
-                var idx=0;
-                //regenerate index existing inputs in table row
-                jQuery("#configs tbody tr").each(function() {
-                 jQuery(this).find("input").each(function() {
-                 jQuery(this).attr({
-                 'id': function(_, id) {
-                 return id.replace(/\[.\]/g, '['+ idx +']');
-                 },
-                 'name': function(_, name) {
-                 return name.replace(/\[.\]/g, '['+ idx +']');
-                 }
-                 });
-                 });
-
-                 idx++;
-                 });
+            	deleteandreplaceindexintable($(this));
             } else {
-                $(this).closest('tr').find('input[type=hidden]').val('true');
-                $(this).closest('tr').hide();
+                if($(this).closest('tr').find('input').hasClass('dynamicInput')){
+                	console.log('Dynamic Row deleted');
+                	deleteandreplaceindexintable($(this));
+                }
+                else{
+                	console.log('Existing Row deleted');
+                	$(this).closest('tr').hide().find('input.markedForRemoval').val('true');
+                }
+                
             }
     		
     	}
@@ -202,3 +193,22 @@ $(document).ready(function () {
     })
 
 });
+
+function deleteandreplaceindexintable(obj){
+	obj.closest('tr').remove();
+	var idx=0;
+    //regenerate index existing inputs in table row
+    jQuery("#configs tbody tr").each(function() {
+		 jQuery(this).find("input").each(function() {
+			 jQuery(this).attr({
+			 'id': function(_, id) {
+				 return id.replace(/\[.\]/g, '['+ idx +']');
+			 },
+			 'name': function(_, name) {
+				 return name.replace(/\[.\]/g, '['+ idx +']');
+			 }
+			 });
+		 });
+		 idx++;
+     });
+}

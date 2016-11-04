@@ -40,6 +40,13 @@
 
 package org.egov.pgr.web.controller.masters;
 
+import static org.springframework.web.bind.annotation.RequestMethod.GET;
+import static org.springframework.web.bind.annotation.RequestMethod.POST;
+
+import java.util.List;
+
+import javax.validation.Valid;
+
 import org.egov.infra.admin.master.entity.BoundaryType;
 import org.egov.infra.admin.master.service.BoundaryTypeService;
 import org.egov.pgr.entity.ComplaintRouter;
@@ -53,19 +60,13 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
-import javax.validation.Valid;
-import java.util.List;
-
-import static org.springframework.web.bind.annotation.RequestMethod.GET;
-import static org.springframework.web.bind.annotation.RequestMethod.POST;
-
 @Controller
 @RequestMapping(value = "/router")
 class UpdateRouterController {
 
     private final BoundaryTypeService boundaryTypeService;
     private final ComplaintRouterService complaintRouterService;
-    
+
     @Autowired
     public UpdateRouterController(final BoundaryTypeService boundaryTypeService,
             final ComplaintRouterService complaintRouterService) {
@@ -106,7 +107,7 @@ class UpdateRouterController {
 
         complaintRouterService.updateComplaintRouter(complaintRouter);
         redirectAttrs.addFlashAttribute("complaintRouter", complaintRouter);
-        model.addAttribute("routerHeading","msg.router.update.heading");
+        model.addAttribute("routerHeading", "msg.router.update.heading");
         model.addAttribute("message", "msg.router.update.success");
         return "router-success";
     }
@@ -129,13 +130,21 @@ class UpdateRouterController {
             final RedirectAttributes redirectAttrs, final Model model) {
         if (errors.hasErrors())
             return "router-update";
+        if (!validateIfCityLevelRouter(complaintRouter)) {
+            complaintRouterService.deleteComplaintRouter(complaintRouter);
+            redirectAttrs.addFlashAttribute("complaintRouter", complaintRouter);
+            model.addAttribute("routerHeading", "msg.router.del.heading");
+            model.addAttribute("message", "msg.router.del.success");
+            return "router-deleteMsg";
+        } else {
+            model.addAttribute("message", "msg.router.cannot.delete");
+            return "router-update";
+        }
+    }
 
-        complaintRouterService.deleteComplaintRouter(complaintRouter);
-        redirectAttrs.addFlashAttribute("complaintRouter", complaintRouter);
-        model.addAttribute("routerHeading", "msg.router.del.heading");
-        model.addAttribute("message", "msg.router.del.success");
-        return "router-deleteMsg";
-
+    private boolean validateIfCityLevelRouter(final ComplaintRouter complaintRouter) {
+        return complaintRouter.getBoundary() != null && complaintRouter.getBoundary().getBoundaryType().getName().equals("City")
+                && complaintRouter.getComplaintType() == null ? true : false;
     }
 
 }

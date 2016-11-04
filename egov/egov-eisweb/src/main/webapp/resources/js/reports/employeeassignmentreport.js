@@ -157,29 +157,38 @@ jQuery('#btnsearch').click(function(e) {
 		return false;
 	}
 	
-	var searchCriteria = "Employee Assignment Report For ";
+	var searchCriteria = "Employee Assignment Report as on  ";
 	if(date != '') 
-		searchCriteria += "Date : " + date+ " ,";
+		searchCriteria +=  date+ " ";
 	if(name != "")
-		searchCriteria += "Employee Name  : " + name + " ,";
+		searchCriteria +=  "," +" Employee Name  : " + name + " ";
 	if(code != '')
-		searchCriteria += "Employee Code  : " + code + " ,";
+		searchCriteria += "," +" Employee Code  : " + code + " ";
 	if(department != '')
-		searchCriteria += "Department  : " + $('#department').find(":selected").text() + " ,";
+		searchCriteria += "for Department  : " + $('#department').find(":selected").text() + " ";
 	if(designation != '')
-		searchCriteria += "Designation  : " + $("#designationInput").val()+ " ,";
+		searchCriteria += "and Designation  : " + $("#designationInput").val()+ " ";
 	if(position != '')
-		searchCriteria += "Position  : " + $("#positionInput").val()+ " ,";
+		searchCriteria += "and Position  : " + $("#positionInput").val()+ " ";
 	
-	  if (searchCriteria.endsWith(","))
-		  searchCriteria = searchCriteria.substring(0, searchCriteria.length - 2);
+	  if (searchCriteria.endsWith(" "))
+		  searchCriteria = searchCriteria.substring(0, searchCriteria.length - 1);
 	  
 	  $('#searchCriteria').html(searchCriteria);
-	
+	  
 	if($('form').valid())
 		callAjaxSearch();
 });
 });
+
+function goToView(obj) {
+	jQuery('input[name=' + jQuery(obj).data('hiddenele') + ']')
+	.val(jQuery(obj).data('eleval'));   
+	/*window.open("/wtms/viewDcb/consumerCodeWis/"
+			+ boundaryId, '',
+			'scrollbars=yes,width=1000,height=700,status=yes');*/
+	window.open("/eis/employee/view/"+jQuery('#employeeCode').val(), '', 'scrollbars=yes,width=1000,height=700,status=yes');
+} 
 
 
 function callAjaxSearch() {
@@ -193,7 +202,6 @@ function callAjaxSearch() {
 					type: "POST",
 					"data":  getFormData(jQuery('form'))
 				},
-				"sPaginationType" : "bootstrap",
 				"bDestroy" : true,
 				'bAutoWidth': false,
 				"sDom" : "<'row'<'col-xs-12 hidden col-right'f>r>t<'row'<'col-xs-3'i><'col-xs-3 col-right'l><'col-xs-3 col-right'<'export-data'T>><'col-xs-3 text-right'p>>",
@@ -207,7 +215,15 @@ function callAjaxSearch() {
 					$('#btndownloadexcel').show();
 				},
 				columns : [  
-					{ "data" : "employeeCode", "sClass" : "text-center"} ,{
+                             {
+	                            "data" : function(row, type, set, meta){
+		                     	return { name:row.employeeCode, id:row.id };
+	                         },
+	                            "render" : function(data, type, row) {
+		                         return '<a href="javascript:void(0);" onclick="goToView(this);" data-hiddenele="employeeCode" data-eleval="'
+				                + data.name + '">' + data.name + '</a>';
+	                           },
+	                     } ,{
 					"data" : "employeeName", "sClass" : "text-center"} ,{
 					"data" : "primaryDepartment", "sClass" : "text-center"} ,{ 
 					"data" : "primaryDesignation", "sClass" : "text-center"} ,{

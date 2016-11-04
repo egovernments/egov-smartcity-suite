@@ -206,7 +206,7 @@ public class AccountEntity extends AbstractPersistable<Integer> implements java.
 
 	@Override
 	public EgwStatus getEgwStatus() {
-		// TODO Auto-generated method stub
+
 		return null;
 	}
 

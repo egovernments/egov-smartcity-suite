@@ -276,7 +276,7 @@ public class OnlineReceiptActionTest  { /*extends AbstractPersistenceServiceTest
 		try {
 			date = sdf.parse("21/09/2009");
 		} catch (ParseException e) {
-			e.printStackTrace();
+
 		}
 		onlineInstrumentHeader.setTransactionDate(date);
 		onlineInstrumentHeader.setIsPayCheque(CollectionConstants.ZERO_INT);

@@ -40,7 +40,9 @@
 
 package org.egov.api.controller;
 
+import java.util.Date;
 import java.util.List;
+
 import org.apache.log4j.Logger;
 import org.egov.api.adapter.UserAdapter;
 import org.egov.api.controller.core.ApiController;
@@ -51,10 +53,10 @@ import org.egov.infra.admin.master.entity.Device;
 import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.admin.master.repository.DeviceRepository;
 import org.egov.infra.admin.master.service.UserService;
-import org.egov.infra.persistence.entity.enums.UserType;
+import org.egov.infra.security.utils.SecurityUtils;
 import org.egov.infra.utils.StringUtils;
-import org.egov.infra.validation.ValidatorUtils;
 import org.egov.portal.entity.Citizen;
+import org.egov.portal.repository.CitizenRepository;
 import org.egov.portal.service.CitizenService;
 import org.json.simple.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -93,6 +95,10 @@ public class CommonController extends ApiController {
     @Autowired
     private UserService userservice;
     
+    @Autowired
+    private SecurityUtils securityUtils;
+ 
+    
     // -----------------------------------------------------------------
     /**
      * This will create a new citizen along with it will capture their device also.
@@ -109,9 +115,10 @@ public class CommonController extends ApiController {
             citizenCreate.setMobileNumber(citizen.get("mobileNumber").toString());
             citizenCreate.setName(citizen.get("name").toString());
             
-            if(citizen.get("emailId")!=null)
-            citizenCreate.setEmailId(citizen.get("emailId").toString());
-            
+            if(citizen.get("emailId")!=null && !citizen.get("emailId").toString().trim().equals(""))
+              citizenCreate.setEmailId(citizen.get("emailId").toString());
+	    
+		
             citizenCreate.setPassword(citizen.get("password").toString());
             Device device = deviceRepository.findByDeviceUId(citizen.get("deviceId").toString());
             if (device == null) {
@@ -121,8 +128,9 @@ public class CommonController extends ApiController {
                 device.setOSVersion(citizen.get("OSVersion").toString());
             }
             
-            List<User> users=userservice.findAllByMatchingUserNameForType(citizenCreate.getMobileNumber(), UserType.CITIZEN);
-            if(users.size()>0)
+            User user=userservice.getUserByUsername(citizenCreate.getMobileNumber());
+            
+            if(user!=null)
             {
             	return res.error(getMessage("user.register.duplicate.mobileno"));
             }
@@ -136,9 +144,17 @@ public class CommonController extends ApiController {
                 }
             }
             
-           citizenCreate.getDevices().add(device);
-           citizenService.create(citizenCreate);
-           return res.setDataAdapter(new UserAdapter()).success(citizenCreate, this.getMessage("msg.citizen.reg.success"));
+            if(citizen.get("activationCode")!=null && 
+            		citizenService.isValidOTP(citizen.get("activationCode").toString(), citizen.get("mobileNumber").toString()))
+            {            	
+            	citizenCreate.setActive(true);
+            	citizenCreate.getDevices().add(device);
+            	citizenService.create(citizenCreate);
+            	return res.setDataAdapter(new UserAdapter()).success(citizenCreate, this.getMessage("msg.citizen.reg.success"));
+            }
+            else{
+            	return res.error(getMessage("msg.pwd.otp.invalid"));
+            }
             
         } catch (Exception e) {
         	LOGGER.error("EGOV-API ERROR ",e);
@@ -210,7 +226,6 @@ public class CommonController extends ApiController {
 	        //for reset password with otp
 	        if(!StringUtils.isEmpty(token))
 	        {
-	        	
 	        	newPassword=request.getParameter("newPassword");
 	        	confirmPassword=request.getParameter("confirmPassword");
 	        	
@@ -272,24 +287,58 @@ public class CommonController extends ApiController {
     @RequestMapping(value = ApiUrl.CITIZEN_SEND_OTP, method = RequestMethod.POST)
     public @ResponseBody ResponseEntity<String> sendOTP(HttpServletRequest request) {
         ApiResponse res = ApiResponse.newInstance();
-        String identity = request.getParameter("identity");
-        String msg = "";
-        Citizen citizen = null;
+        String mobileNo = request.getParameter("identity");
         try {
-            if (identity.matches("\\d{10}")) {
-                citizen = citizenService.getCitizenByUserName(identity);
-            } else if (identity.contains("@") && identity.contains(".")) {
-                citizen = citizenService.getCitizenByEmailId(identity);
+            if (!mobileNo.matches("\\d{10}")) {
+            	return res.error(getMessage("msg.invalid.mobileno"));
             }
-            if (citizen == null) {
-                return res.error(getMessage("user.not.found"));
-            }
-            citizenService.sendActivationMessage(citizen);
-            return res.setDataAdapter(new UserAdapter()).success(citizen, this.getMessage("sendOTP.success"));
+            citizenService.sendOTPMessage(mobileNo);
+            return res.setDataAdapter(new UserAdapter()).success(this.getMessage("sendOTP.success"));
         } catch (Exception e) {
         	LOGGER.error("EGOV-API ERROR ",e);
         	return res.error(getMessage("server.error"));
         }
     }
-
+    
+    
+    /**
+     * This will record log of the current user
+     * 
+     * @param request
+     * @return Citizen
+     */
+    @RequestMapping(value = ApiUrl.USER_DEVICE_LOG, method = RequestMethod.POST)
+    public @ResponseBody ResponseEntity<String> deviceLog(HttpServletRequest request) {
+    	ApiResponse res = ApiResponse.newInstance();
+    	
+        try {
+        	
+        	User currentUser=securityUtils.getCurrentUser();
+        	if(currentUser==null)
+        	{
+        		return res.error(getMessage("user.not.found"));
+        	}
+        	
+        	String deviceId=request.getParameter("deviceId");
+        	String deviceType=request.getParameter("deviceType");
+        	String deviceOS=request.getParameter("OSVersion");
+        	
+        	Device device = deviceRepository.findByDeviceUId(deviceId);
+            if (device == null) {
+                device = new Device();
+                device.setDeviceId(deviceId);
+            }
+            device.setType(deviceType);	
+            device.setOSVersion(deviceOS);
+            device.setLastModifiedDate(new Date());
+            deviceRepository.save(device);
+            
+            return res.setDataAdapter(new UserAdapter()).success(getMessage("log.success"), this.getMessage("log.success"));
+            
+        } catch (Exception e) {
+        	LOGGER.error("EGOV-API ERROR ",e);
+        	return res.error(getMessage("server.error"));
+        }
+    }
+    
 }

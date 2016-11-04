@@ -47,6 +47,7 @@ import java.util.List;
 import org.egov.billsaccounting.services.CreateVoucher;
 import org.egov.commons.CVoucherHeader;
 import org.egov.infra.exception.ApplicationRuntimeException;
+import org.egov.infra.utils.StringUtils;
 import org.egov.infra.validation.exception.ValidationError;
 import org.egov.infra.validation.exception.ValidationException;
 import org.egov.model.voucher.WorkflowBean;
@@ -79,8 +80,14 @@ public class PreApprovedActionHelper {
                     voucherNumber, voucherDate);
             voucherHeader = voucherService.findById(voucherHeaderId, false);
             voucherHeader = sendForApproval(voucherHeader, workflowBean);
+        }catch (final ValidationException e) {
+            if (e.getErrors().get(0).getMessage() != null && !e.getErrors().get(0).getMessage().equals(StringUtils.EMPTY))
+                throw new ValidationException(e.getErrors().get(0).getMessage(), e.getErrors().get(0).getMessage());
+            else
+                throw new ValidationException("Voucher creation failed", "Voucher creation failed");
+
         } catch (final Exception e) {
-            e.printStackTrace();
+
             final List<ValidationError> errors = new ArrayList<ValidationError>();
             errors.add(new ValidationError("exp", e.getMessage()));
             throw new ValidationException(errors);
@@ -105,12 +112,12 @@ public class PreApprovedActionHelper {
             voucherService.persist(voucherHeader);
 
         } catch (final ValidationException e) {
-            e.printStackTrace();
+
             final List<ValidationError> errors = new ArrayList<ValidationError>();
             errors.add(new ValidationError("exp", e.getErrors().get(0).getMessage()));
             throw new ValidationException(errors);
         } catch (final Exception e) {
-            e.printStackTrace();
+
             final List<ValidationError> errors = new ArrayList<ValidationError>();
             errors.add(new ValidationError("exp", e.getMessage()));
             throw new ValidationException(errors);

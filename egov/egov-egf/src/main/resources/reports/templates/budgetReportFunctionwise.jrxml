@@ -1,46 +1,45 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
-  ~ eGov suite of products aim to improve the internal efficiency,transparency,
-  ~    accountability and the service delivery of the government  organizations.
-  ~
-  ~     Copyright (C) <2015>  eGovernments Foundation
-  ~
-  ~     The updated version of eGov suite of products as by eGovernments Foundation
-  ~     is available at http://www.egovernments.org
-  ~
-  ~     This program is free software: you can redistribute it and/or modify
-  ~     it under the terms of the GNU General Public License as published by
-  ~     the Free Software Foundation, either version 3 of the License, or
-  ~     any later version.
-  ~
-  ~     This program is distributed in the hope that it will be useful,
-  ~     but WITHOUT ANY WARRANTY; without even the implied warranty of
-  ~     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-  ~     GNU General Public License for more details.
-  ~
-  ~     You should have received a copy of the GNU General Public License
-  ~     along with this program. If not, see http://www.gnu.org/licenses/ or
-  ~     http://www.gnu.org/licenses/gpl.html .
-  ~
-  ~     In addition to the terms of the GPL license to be adhered to in using this
-  ~     program, the following additional terms are to be complied with:
-  ~
-  ~         1) All versions of this program, verbatim or modified must carry this
-  ~            Legal Notice.
-  ~
-  ~         2) Any misrepresentation of the origin of the material is prohibited. It
-  ~            is required that all modified versions of this material be marked in
-  ~            reasonable ways as different from the original version.
-  ~
-  ~         3) This license does not grant any rights to any user of the program
-  ~            with regards to rights under trademark law for use of the trade names
-  ~            or trademarks of eGovernments Foundation.
-  ~
-  ~   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
-  -->
-
+   ~ eGov suite of products aim to improve the internal efficiency,transparency,
+   ~    accountability and the service delivery of the government  organizations.
+   ~
+   ~     Copyright (C) <2015>  eGovernments Foundation
+   ~
+   ~     The updated version of eGov suite of products as by eGovernments Foundation
+   ~     is available at http://www.egovernments.org
+   ~
+   ~     This program is free software: you can redistribute it and/or modify
+   ~     it under the terms of the GNU General Public License as published by
+   ~     the Free Software Foundation, either version 3 of the License, or
+   ~     any later version.
+   ~
+   ~     This program is distributed in the hope that it will be useful,
+   ~     but WITHOUT ANY WARRANTY; without even the implied warranty of
+   ~     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+   ~     GNU General Public License for more details.
+   ~
+   ~     You should have received a copy of the GNU General Public License
+   ~     along with this program. If not, see http://www.gnu.org/licenses/ or
+   ~     http://www.gnu.org/licenses/gpl.html .
+   ~
+   ~     In addition to the terms of the GPL license to be adhered to in using this
+   ~     program, the following additional terms are to be complied with:
+   ~
+   ~         1) All versions of this program, verbatim or modified must carry this
+   ~            Legal Notice.
+   ~
+   ~         2) Any misrepresentation of the origin of the material is prohibited. It
+   ~            is required that all modified versions of this material be marked in
+   ~            reasonable ways as different from the original version.
+   ~
+   ~         3) This license does not grant any rights to any user of the program
+   ~            with regards to rights under trademark law for use of the trade names
+   ~            or trademarks of eGovernments Foundation.
+   ~
+   ~   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
+   -->
 <!-- Created with Jaspersoft Studio version 6.2.0.final using JasperReports Library version 6.2.0  -->
-<!-- 2016-04-19T17:41:20 -->
+<!-- 2016-08-28T22:50:44 -->
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="budgetReportFunctionwise" pageWidth="462" pageHeight="842" columnWidth="462" leftMargin="0" rightMargin="0" topMargin="0" bottomMargin="0" uuid="7f6aec9e-2404-44de-a191-e152fb4b78c5">
 	<property name="ireport.scriptlethandling" value="0"/>
 	<property name="ireport.encoding" value="UTF-8"/>
@@ -133,7 +132,7 @@
 				<text><![CDATA[Dept Code]]></text>
 			</staticText>
 			<staticText>
-				<reportElement key="staticText-3" x="34" y="0" width="53" height="60" uuid="4790d7f9-ee40-4b6b-90e4-9546e4d8ad57"/>
+				<reportElement key="staticText-3" x="34" y="0" width="67" height="60" uuid="4790d7f9-ee40-4b6b-90e4-9546e4d8ad57"/>
 				<box>
 					<pen lineWidth="0.25"/>
 					<topPen lineWidth="0.25"/>
@@ -147,7 +146,7 @@
 				<text><![CDATA[Function Code]]></text>
 			</staticText>
 			<staticText>
-				<reportElement key="staticText-4" x="87" y="0" width="50" height="60" uuid="6569298e-8145-4952-a7c5-f2b36ca67dec"/>
+				<reportElement key="staticText-4" x="101" y="0" width="75" height="60" uuid="6569298e-8145-4952-a7c5-f2b36ca67dec"/>
 				<box>
 					<pen lineWidth="0.25"/>
 					<topPen lineWidth="0.25"/>
@@ -158,10 +157,10 @@
 				<textElement textAlignment="Center">
 					<font size="10" isBold="true" pdfFontName="Helvetica-Bold"/>
 				</textElement>
-				<text><![CDATA[DP Code]]></text>
+				<text><![CDATA[Account Code]]></text>
 			</staticText>
 			<staticText>
-				<reportElement key="staticText-5" x="137" y="0" width="105" height="60" uuid="5f5c1f1c-a623-4743-b047-3efedcf84da8"/>
+				<reportElement key="staticText-5" x="176" y="0" width="104" height="60" uuid="5f5c1f1c-a623-4743-b047-3efedcf84da8"/>
 				<box>
 					<pen lineWidth="0.25"/>
 					<topPen lineWidth="0.25"/>
@@ -172,24 +171,10 @@
 				<textElement textAlignment="Center">
 					<font size="10" isBold="true" pdfFontName="Helvetica-Bold"/>
 				</textElement>
-				<text><![CDATA[Narration]]></text>
-			</staticText>
-			<staticText>
-				<reportElement key="staticText-6" x="242" y="0" width="58" height="60" uuid="6761b1b4-65c3-4af5-b844-d38e57a22dcf"/>
-				<box>
-					<pen lineWidth="0.25"/>
-					<topPen lineWidth="0.25"/>
-					<leftPen lineWidth="0.0"/>
-					<bottomPen lineWidth="0.25"/>
-					<rightPen lineWidth="0.25"/>
-				</box>
-				<textElement textAlignment="Center">
-					<font size="10" isBold="true" pdfFontName="Helvetica-Bold"/>
-				</textElement>
-				<text><![CDATA[Reference]]></text>
+				<text><![CDATA[Description]]></text>
 			</staticText>
 			<textField isBlankWhenNull="false">
-				<reportElement key="textField-1" x="300" y="0" width="63" height="60" uuid="c881bb10-93ee-4014-a38b-08a0bb6cd4cc"/>
+				<reportElement key="textField-1" x="280" y="0" width="83" height="60" uuid="c881bb10-93ee-4014-a38b-08a0bb6cd4cc"/>
 				<box>
 					<pen lineWidth="0.25"/>
 					<topPen lineWidth="0.25"/>
@@ -248,7 +233,7 @@
 				<textFieldExpression><![CDATA[$F{deptCode}==null?"":$F{deptCode}]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="true">
-				<reportElement key="textField" x="34" y="0" width="53" height="35" uuid="606c867a-7885-48de-9f18-457c9da78284"/>
+				<reportElement key="textField" x="34" y="0" width="67" height="35" uuid="606c867a-7885-48de-9f18-457c9da78284"/>
 				<box>
 					<pen lineWidth="0.0"/>
 					<topPen lineWidth="0.0"/>
@@ -262,7 +247,7 @@
 				<textFieldExpression><![CDATA[$F{functionCode}==null?"":$F{functionCode}]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="true">
-				<reportElement key="textField" x="87" y="0" width="50" height="35" uuid="a09b30a5-bcc7-4393-9745-78ecbdd38275"/>
+				<reportElement key="textField" x="101" y="0" width="75" height="35" uuid="a09b30a5-bcc7-4393-9745-78ecbdd38275"/>
 				<box>
 					<pen lineWidth="0.0"/>
 					<topPen lineWidth="0.0"/>
@@ -275,22 +260,8 @@
 				</textElement>
 				<textFieldExpression><![CDATA[$F{glCode}==null?"":$F{glCode}]]></textFieldExpression>
 			</textField>
-			<textField isBlankWhenNull="true">
-				<reportElement key="textField" x="242" y="0" width="58" height="35" uuid="6d173153-d05c-48ca-94f2-b5c58f11ac61"/>
-				<box>
-					<pen lineWidth="0.0"/>
-					<topPen lineWidth="0.0"/>
-					<leftPen lineWidth="0.0"/>
-					<bottomPen lineWidth="0.25"/>
-					<rightPen lineWidth="0.25"/>
-				</box>
-				<textElement verticalAlignment="Middle">
-					<font size="8"/>
-				</textElement>
-				<textFieldExpression><![CDATA[$F{reference}==null?"":$F{reference}]]></textFieldExpression>
-			</textField>
 			<textField pattern="###0.00" isBlankWhenNull="true">
-				<reportElement key="textField" x="300" y="0" width="63" height="35" uuid="5edd7726-45fb-4fe5-97b5-82ca38ed33bb"/>
+				<reportElement key="textField" x="280" y="0" width="83" height="35" uuid="5edd7726-45fb-4fe5-97b5-82ca38ed33bb"/>
 				<box>
 					<pen lineWidth="0.0"/>
 					<topPen lineWidth="0.0"/>
@@ -304,7 +275,7 @@
 				<textFieldExpression><![CDATA[$F{amount}==null?"":$F{amount}]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="false">
-				<reportElement key="textField-2" style="amountStyle" x="137" y="0" width="105" height="35" uuid="bead945c-4481-4161-ad71-c8f89018745c"/>
+				<reportElement key="textField-2" style="amountStyle" x="176" y="0" width="104" height="35" uuid="bead945c-4481-4161-ad71-c8f89018745c"/>
 				<box>
 					<bottomPen lineWidth="0.25"/>
 					<rightPen lineWidth="0.25"/>

@@ -49,6 +49,10 @@ public class AssessmentRequest {
     private String applicationNo;
     private String category;
     private String doorNo;
+    private String wardNum;
+    private String transactionType;
+    private String fromDate;
+    private String toDate;
 
     public String getAssessmentNo() {
         return assessmentNo;
@@ -111,6 +115,38 @@ public class AssessmentRequest {
 
 	public void setDoorNo(String doorNo) {
 		this.doorNo = doorNo;
+	}
+
+	public String getWardNum() {
+		return wardNum;
+	}
+
+	public void setWardNum(String wardNum) {
+		this.wardNum = wardNum;
+	}
+
+	public String getTransactionType() {
+		return transactionType;
+	}
+
+	public void setTransactionType(String transactionType) {
+		this.transactionType = transactionType;
+	}
+
+	public String getFromDate() {
+		return fromDate;
+	}
+
+	public void setFromDate(String fromDate) {
+		this.fromDate = fromDate;
+	}
+
+	public String getToDate() {
+		return toDate;
+	}
+
+	public void setToDate(String toDate) {
+		this.toDate = toDate;
 	}
 
 }

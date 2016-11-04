@@ -42,15 +42,10 @@ jQuery(document).ready(function() {
 $('#baseRegisterReportSearch').click(function(e){
 	  
 		var ward = $("#ward").val();
-		if ((ward == "" )) {
-			bootbox.alert('Please select the revenue ward');
-			return false;
-		}
 		
 		oTable= $('#baseRegisterReport-table');
 		$('#baseRegister-header').show();
 		oTable.dataTable({
-			"sPaginationType": "bootstrap",
 			"sDom": "<'row'<'col-xs-12 hidden col-right'f>r>t<'row'<'col-md-3 col-xs-12'i><'col-md-3 col-xs-6 col-right'l><'col-xs-12 col-md-3 col-right'<'export-data'T>><'col-md-3 col-xs-6 text-right'p>>",
 			"aLengthMenu": [[10, 25, 50, -1], [10, 25, 50, "All"]],
 			"autoWidth": false,
@@ -83,15 +78,16 @@ $('#baseRegisterReportSearch').click(function(e){
 						  { "data" : "ownerName", "title": "Owner Name"},
 						  { "data" : "doorNo", "title": "Door No"},
 						  { "data" : "categoryType", "title": "Category Type"},
-						  { "data" : "period", "title": "Period"},
-						  { "data" : "arrears", "title": "Arrears", class : 'text-right'},
-						  { "data" : "current", "title": "Current", class : 'text-right'},
-						  { "data" : "penalty", "title": "Penalty", class : 'text-center',
-							  "render": function(data, type, row){
-								  return (!data || parseInt(data)==0 ? "-" : data);
-							  }
-						  },
+						  { "data" : "usageType", "title": "Usage"},
+						  { "data" : "pipeSize", "title": "Pipe Size"},
+						  { "data" : "monthlyRate", "title": "Monthly Rate"},
+						  { "data" : "period", "title": "Arrears Period"},
+						  { "data" : "arrears", "title": "Arrears Demand", class : 'text-right'},
+						  { "data" : "current", "title": "Current Demand", class : 'text-right'},
 						  { "data" : "totalDemand", "title": "Total Demand", class : 'text-right'},
+						  { "data" : "arrearsCollection", "title": "Arrears Collection", class : 'text-right'},
+						  { "data" : "currentCollection", "title": "Current Collection", class : 'text-right'},
+						  { "data" : "totalCollection", "title": "Total Collection", class : 'text-right'},
 						  ],
 						  "aaSorting": [] 
 				});

@@ -51,6 +51,7 @@ import java.util.List;
 
 import org.egov.search.domain.Filter;
 import org.egov.search.domain.Filters;
+import org.egov.wtms.utils.constants.WaterTaxConstants;
 import org.jboss.logging.Logger;
 
 public class ApplicationSearchRequest {
@@ -64,6 +65,7 @@ public class ApplicationSearchRequest {
     private String fromDate;
     private String toDate;
     private String cityName;
+    private String applicationStatus;;
     private String source;
     SimpleDateFormat ft = new SimpleDateFormat("yyyy-MM-dd");
     SimpleDateFormat dtft = new SimpleDateFormat("dd/MM/yyyy");
@@ -77,7 +79,7 @@ public class ApplicationSearchRequest {
                     logger.debug("Date Range From start.. :" + ft.format(dtft.parse(fromDate)));
                 this.fromDate = ft.format(dtft.parse(fromDate));
             } catch (final ParseException e) {
-                e.printStackTrace();
+
             }
     }
 
@@ -91,7 +93,7 @@ public class ApplicationSearchRequest {
                     logger.debug("Date Range Till .. :" + ft.format(cal.getTime()));
                 this.toDate = ft.format(cal.getTime());
             } catch (final ParseException e) {
-                e.printStackTrace();
+
             }
     }
 
@@ -181,6 +183,11 @@ public class ApplicationSearchRequest {
         andFilters.add(termsStringFilter("clauses.channel", source));
         andFilters.add(queryStringFilter("searchable.applicantname", applicantName));
         andFilters.add(queryStringFilter("searchable.consumercode", consumerCode));
+        if(applicationStatus !=null && applicationStatus.equals(WaterTaxConstants.APPLICATIONSTATUSOPEN))
+            andFilters.add(queryStringFilter("searchable.isclosed",Integer.toString(1) ));
+        else   if(applicationStatus !=null && applicationStatus.equals(WaterTaxConstants.APPLICATIONSTATUSCLOSED))
+            andFilters.add(queryStringFilter("searchable.isclosed",Integer.toString(0) ));
+            
         andFilters.add(queryStringFilter("searchable.mobilenumber", mobileNumber));
         andFilters.add(rangeFilter("searchable.applicationdate", fromDate, toDate));
         if (logger.isDebugEnabled())
@@ -193,4 +200,13 @@ public class ApplicationSearchRequest {
         return searchText;
     }
 
+    public String getApplicationStatus() {
+        return applicationStatus;
+    }
+
+    public void setApplicationStatus(String applicationStatus) {
+        this.applicationStatus = applicationStatus;
+    }
+
+    
 }

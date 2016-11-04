@@ -52,30 +52,28 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
 import javax.persistence.Transient;
 import javax.validation.constraints.NotNull;
 
 import org.apache.commons.lang.StringUtils;
-import org.egov.infra.persistence.entity.AbstractPersistable;
-import org.egov.infra.persistence.validator.annotation.DateFormat;
-import org.egov.infra.persistence.validator.annotation.OptionalPattern;
-import org.egov.infra.persistence.validator.annotation.ValidateDate;
+import org.egov.infra.persistence.entity.AbstractAuditable;
 import org.egov.infra.utils.DateUtils;
 import org.egov.infra.validation.exception.ValidationError;
 import org.egov.lcms.masters.entity.AdvocateMaster;
 import org.egov.lcms.masters.entity.CaseStage;
-import org.egov.lcms.utils.constants.LcmsConstants;
+import org.hibernate.envers.AuditOverride;
+import org.hibernate.envers.AuditOverrides;
+import org.hibernate.envers.Audited;
 import org.hibernate.validator.constraints.Length;
 
-/**
- * LegalcaseAdvocate entity.
- *
- * @author MyEclipse Persistence Tools
- */
 @Entity
 @Table(name = "EGLC_LEGALCASE_ADVOCATE")
 @SequenceGenerator(name = LegalCaseAdvocate.SEQ_EGLC_LEGALCASE_ADVOCATE, sequenceName = LegalCaseAdvocate.SEQ_EGLC_LEGALCASE_ADVOCATE, allocationSize = 1)
-public class LegalCaseAdvocate extends AbstractPersistable<Long> {
+@AuditOverrides({ @AuditOverride(forClass = AbstractAuditable.class, name = "lastModifiedBy"),
+        @AuditOverride(forClass = AbstractAuditable.class, name = "lastModifiedDate") })
+public class LegalCaseAdvocate extends AbstractAuditable {
 
     private static final long serialVersionUID = 1517694643078084884L;
     public static final String SEQ_EGLC_LEGALCASE_ADVOCATE = "SEQ_EGLC_LEGALCASE_ADVOCATE";
@@ -83,71 +81,91 @@ public class LegalCaseAdvocate extends AbstractPersistable<Long> {
     @Id
     @GeneratedValue(generator = SEQ_EGLC_LEGALCASE_ADVOCATE, strategy = GenerationType.SEQUENCE)
     private Long id;
-    
+
     @ManyToOne
     @NotNull
     @JoinColumn(name = "legalcase", nullable = false)
+    @Audited
     private LegalCase legalCase;
-    
+
     @ManyToOne
     @JoinColumn(name = "advocatemaster")
+    @Audited
     private AdvocateMaster advocateMaster;
 
-    @DateFormat(message = "invalid.fieldvalue.assignedOnDate")
-    @ValidateDate(allowPast = true, dateFormat = LcmsConstants.DATE_FORMAT, message = "invalid.assignedtodate.date")
-    private Date assignedtodate;
-    
-    @DateFormat(message = "invalid.fieldvalue.assignedOnForSeniorAdv")
-     @Column(name = "seniorassignedtodate")
-    private Date assignedtodateForsenior;
-    
-    @DateFormat(message = "invalid.fieldvalue.vakalaatDate")
-    @ValidateDate(allowPast = true, dateFormat = LcmsConstants.DATE_FORMAT, message = "invalid.vakalatdate.date")
-    private Date vakalatdate;
-    
+    @Temporal(TemporalType.DATE)
+    @Column(name = "assignedtodate")
+    @Audited
+    private Date assignedToDate;
+
+    @Temporal(TemporalType.DATE)
+    @Column(name = "seniorassignedtodate")
+    @Audited
+    private Date assignedToDateForSenior;
+
+    @Temporal(TemporalType.DATE)
+    @Column(name = "vakalatdate")
+    @Audited
+    private Date vakalatDate;
+
+    @Audited
     private Boolean isActive;
-    
-    @Length(max = 32, message = "ordernumber.length")
-    @OptionalPattern(regex = LcmsConstants.orderNumberFormat, message = "orderNumber.format")
-    private String ordernumber;
-    
-    @DateFormat(message = "invalid.fieldvalue.orderDate")
-    @ValidateDate(allowPast = true, dateFormat = LcmsConstants.DATE_FORMAT, message = "invalid.orderdate.date")
-    private Date orderdate;
-    
+
+    @Length(max = 32)
+    @Audited
+    @Column(name = "ordernumber")
+    private String orderNumber;
+
+    @Temporal(TemporalType.DATE)
+    @Audited
+    @Column(name = "orderdate")
+    private Date orderDate;
+
     @ManyToOne
     @JoinColumn(name = "senioradvocate")
-    private AdvocateMaster eglcSeniorAdvocateMaster;
-    
-    @Length(max = 32, message = "ordernumberJunior.length")
+    @Audited
+    private AdvocateMaster seniorAdvocate;
+
+    @Length(max = 32)
     @JoinColumn(name = "ordernumberjunior")
-    private String ordernumberJunior;
-    
-    @DateFormat(message = "invalid.fieldvalue.juniororderDate")
+    @Audited
+    private String orderNumberJunior;
+
+    @Temporal(TemporalType.DATE)
     @Column(name = "orderdatejunior")
-    private Date orderdateJunior;
-    
+    @Audited
+    private Date orderDateJunior;
+
     @ManyToOne
     @JoinColumn(name = "JUNIORSTAGE")
+    @Audited
     private CaseStage juniorStage;
-    
+
     @ManyToOne
     @JoinColumn(name = "SENIORSTAGE")
+    @Audited
     private CaseStage seniorStage;
-    
-    @Length(max = 256, message = "reassignmentJunior.length")
-    private String reassignmentreasonjunior;
-    
-    @Length(max = 256, message = "reassignmentSenior.length")
-    private String reassignmentreasonsenior;
-    
+
+    @Length(max = 256)
+    @Audited
+    @Column(name = "reassignmentreasonjunior")
+    private String reassignmentReasonJunior;
+
+    @Length(max = 256)
+    @Audited
+    @Column(name = "reassignmentreasonsenior")
+    private String reassignmentReasonSenior;
+
+    @Audited
     private Boolean changeAdvocate = Boolean.FALSE;
-    
+
+    @Audited
     private Boolean changeSeniorAdvocate = Boolean.FALSE;
-    
+
     @Transient
-    private Boolean isSeniorAdvocate=Boolean.FALSE;
-    
+    @Audited
+    private Boolean isSeniorAdvocate = Boolean.FALSE;
+
     public Boolean getChangeAdvocate() {
         return changeAdvocate;
     }
@@ -172,20 +190,76 @@ public class LegalCaseAdvocate extends AbstractPersistable<Long> {
         this.advocateMaster = advocateMaster;
     }
 
-    public Date getAssignedtodate() {
-        return assignedtodate;
+    public Date getAssignedToDate() {
+        return assignedToDate;
     }
 
-    public void setAssignedtodate(final Date assignedtodate) {
-        this.assignedtodate = assignedtodate;
+    public void setAssignedToDate(final Date assignedToDate) {
+        this.assignedToDate = assignedToDate;
     }
 
-    public Date getVakalatdate() {
-        return vakalatdate;
+    public Date getAssignedToDateForSenior() {
+        return assignedToDateForSenior;
     }
 
-    public void setVakalatdate(final Date vakalatdate) {
-        this.vakalatdate = vakalatdate;
+    public void setAssignedToDateForSenior(final Date assignedToDateForSenior) {
+        this.assignedToDateForSenior = assignedToDateForSenior;
+    }
+
+    public Date getVakalatDate() {
+        return vakalatDate;
+    }
+
+    public void setVakalatDate(final Date vakalatDate) {
+        this.vakalatDate = vakalatDate;
+    }
+
+    public String getOrderNumber() {
+        return orderNumber;
+    }
+
+    public void setOrderNumber(final String orderNumber) {
+        this.orderNumber = orderNumber;
+    }
+
+    public Date getOrderDate() {
+        return orderDate;
+    }
+
+    public void setOrderDate(final Date orderDate) {
+        this.orderDate = orderDate;
+    }
+
+    public String getOrderNumberJunior() {
+        return orderNumberJunior;
+    }
+
+    public void setOrderNumberJunior(final String orderNumberJunior) {
+        this.orderNumberJunior = orderNumberJunior;
+    }
+
+    public Date getOrderDateJunior() {
+        return orderDateJunior;
+    }
+
+    public void setOrderDateJunior(final Date orderDateJunior) {
+        this.orderDateJunior = orderDateJunior;
+    }
+
+    public String getReassignmentReasonJunior() {
+        return reassignmentReasonJunior;
+    }
+
+    public void setReassignmentReasonJunior(final String reassignmentReasonJunior) {
+        this.reassignmentReasonJunior = reassignmentReasonJunior;
+    }
+
+    public String getReassignmentReasonSenior() {
+        return reassignmentReasonSenior;
+    }
+
+    public void setReassignmentReasonSenior(final String reassignmentReasonSenior) {
+        this.reassignmentReasonSenior = reassignmentReasonSenior;
     }
 
     public Boolean getIsActive() {
@@ -194,22 +268,6 @@ public class LegalCaseAdvocate extends AbstractPersistable<Long> {
 
     public void setIsActive(final Boolean isActive) {
         this.isActive = isActive;
-    }
-
-    public String getOrdernumber() {
-        return ordernumber;
-    }
-
-    public void setOrdernumber(final String ordernumber) {
-        this.ordernumber = ordernumber;
-    }
-
-    public Date getOrderdate() {
-        return orderdate;
-    }
-
-    public void setOrderdate(final Date orderdate) {
-        this.orderdate = orderdate;
     }
 
     @Override
@@ -225,63 +283,39 @@ public class LegalCaseAdvocate extends AbstractPersistable<Long> {
     public List<ValidationError> validate() {
         final List<ValidationError> errors = new ArrayList<ValidationError>();
         if (legalCase.getIsSenioradvrequired()) {
-            if (getEglcSeniorAdvocateMaster() == null)
-                errors.add(new ValidationError("eglcSeniorAdvocateMaster", "legalcase.eglcSeniorAdvocateMaster.null"));
-            if (StringUtils.isBlank(getOrdernumber()))
-                errors.add(new ValidationError("ordernumber", "legalcase.ordernumber.null"));
-            if (getOrderdate() == null)
+            if (getSeniorAdvocate() == null)
+                errors.add(new ValidationError("seniorAdvocate", "legalcase.seniorAdvocate.null"));
+            if (StringUtils.isBlank(getOrderNumber()))
+                errors.add(new ValidationError("orderNumber", "legalcase.ordernumber.null"));
+            if (getOrderNumber() == null)
                 errors.add(new ValidationError("orderDate", "legalcase.orderdate.null"));
-            if (!DateUtils.compareDates(getOrderdate(), legalCase.getCaseReceivingDate()))
+            if (!DateUtils.compareDates(getOrderDate(), legalCase.getCaseReceivingDate()))
                 errors.add(new ValidationError("orderDate", "orderdate.less.casereceivingdate"));
-            if (!DateUtils.compareDates(getOrderdate(), legalCase.getCasedate()))
+            if (!DateUtils.compareDates(getOrderDate(), legalCase.getCaseDate()))
                 errors.add(new ValidationError("orderDate", "orderdate.less.casedate"));
-            if (!DateUtils.compareDates(getAssignedtodateForsenior(), getOrderdate()))
-                errors.add(new ValidationError("assignedtodatesenior", "assignedon.less.orderdate"));
+            if (!DateUtils.compareDates(getAssignedToDateForSenior(), getOrderDate()))
+                errors.add(new ValidationError("assignedToDateSenior", "assignedon.less.orderdate"));
         }
 
-        if (!DateUtils.compareDates(getAssignedtodate(), legalCase.getCaseReceivingDate()))
+        if (!DateUtils.compareDates(getAssignedToDate(), legalCase.getCaseReceivingDate()))
             errors.add(new ValidationError("assignedon", "assignedon.less.casereceivingdate"));
-        if (!DateUtils.compareDates(getAssignedtodate(), legalCase.getCasedate()))
+        if (!DateUtils.compareDates(getAssignedToDate(), legalCase.getCaseDate()))
             errors.add(new ValidationError("assignedon", "assignedon.less.casedate"));
-        if (!DateUtils.compareDates(getVakalatdate(), legalCase.getCasedate()))
-            errors.add(new ValidationError("vakalatdate", "vakalatdate.less.casedate"));
-        if (!DateUtils.compareDates(getVakalatdate(), legalCase.getCaseReceivingDate()))
-            errors.add(new ValidationError("vakalatdate", "vakalatdate.less.caserecdate"));
-        if (!DateUtils.compareDates(getVakalatdate(), getAssignedtodate()))
-            errors.add(new ValidationError("vakalatdate", "vakalatdate.less.assingedon"));
+        if (!DateUtils.compareDates(getVakalatDate(), legalCase.getCaseDate()))
+            errors.add(new ValidationError("vakalatDate", "vakalatdate.less.casedate"));
+        if (!DateUtils.compareDates(getVakalatDate(), legalCase.getCaseReceivingDate()))
+            errors.add(new ValidationError("vakalatDate", "vakalatdate.less.caserecdate"));
+        if (!DateUtils.compareDates(getVakalatDate(), getAssignedToDate()))
+            errors.add(new ValidationError("vakalatDate", "vakalatdate.less.assingedon"));
         return errors;
     }
 
-    public AdvocateMaster getEglcSeniorAdvocateMaster() {
-        return eglcSeniorAdvocateMaster;
+    public AdvocateMaster getSeniorAdvocate() {
+        return seniorAdvocate;
     }
 
-    public void setEglcSeniorAdvocateMaster(final AdvocateMaster eglcSeniorAdvocateMaster) {
-        this.eglcSeniorAdvocateMaster = eglcSeniorAdvocateMaster;
-    }
-
-    public Date getAssignedtodateForsenior() {
-        return assignedtodateForsenior;
-    }
-
-    public void setAssignedtodateForsenior(final Date assignedtodateForsenior) {
-        this.assignedtodateForsenior = assignedtodateForsenior;
-    }
-
-    public String getOrdernumberJunior() {
-        return ordernumberJunior;
-    }
-
-    public void setOrdernumberJunior(final String ordernumberJunior) {
-        this.ordernumberJunior = ordernumberJunior;
-    }
-
-    public Date getOrderdateJunior() {
-        return orderdateJunior;
-    }
-
-    public void setOrderdateJunior(final Date orderdateJunior) {
-        this.orderdateJunior = orderdateJunior;
+    public void setSeniorAdvocate(final AdvocateMaster seniorAdvocate) {
+        this.seniorAdvocate = seniorAdvocate;
     }
 
     public CaseStage getJuniorStage() {
@@ -300,22 +334,6 @@ public class LegalCaseAdvocate extends AbstractPersistable<Long> {
         this.seniorStage = seniorStage;
     }
 
-    public String getReassignmentreasonjunior() {
-        return reassignmentreasonjunior;
-    }
-
-    public void setReassignmentreasonjunior(final String reassignmentreasonjunior) {
-        this.reassignmentreasonjunior = reassignmentreasonjunior;
-    }
-
-    public String getReassignmentreasonsenior() {
-        return reassignmentreasonsenior;
-    }
-
-    public void setReassignmentreasonsenior(final String reassignmentreasonsenior) {
-        this.reassignmentreasonsenior = reassignmentreasonsenior;
-    }
-
     public LegalCase getLegalCase() {
         return legalCase;
     }
@@ -324,13 +342,12 @@ public class LegalCaseAdvocate extends AbstractPersistable<Long> {
         this.legalCase = legalCase;
     }
 
-	public Boolean getIsSeniorAdvocate() {
-		return isSeniorAdvocate;
-	}
+    public Boolean getIsSeniorAdvocate() {
+        return isSeniorAdvocate;
+    }
 
-	public void setIsSeniorAdvocate(Boolean isSeniorAdvocate) {
-		this.isSeniorAdvocate = isSeniorAdvocate;
-	}
-    
+    public void setIsSeniorAdvocate(final Boolean isSeniorAdvocate) {
+        this.isSeniorAdvocate = isSeniorAdvocate;
+    }
 
 }

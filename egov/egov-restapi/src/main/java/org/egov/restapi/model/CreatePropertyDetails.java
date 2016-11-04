@@ -41,6 +41,7 @@
 package org.egov.restapi.model;
 
 import org.egov.ptis.domain.model.FloorDetails;
+import org.egov.ptis.domain.model.OwnerInformation;
 
 import java.io.Serializable;
 import java.util.List;
@@ -60,6 +61,7 @@ public class CreatePropertyDetails implements Serializable {
 	private List<FloorDetails> floorDetails;
 	private VacantLandDetails vacantLandDetails;
 	private SurroundingBoundaryDetails surroundingBoundaryDetails;
+	private String assessmentNo;
 	
 	@Override
 	public String toString() {
@@ -142,6 +144,14 @@ public class CreatePropertyDetails implements Serializable {
 	}
 	public void setUlbCode(String ulbCode) {
 		this.ulbCode = ulbCode;
+	}
+
+	public String getAssessmentNo() {
+		return assessmentNo;
+	}
+
+	public void setAssessmentNo(String assessmentNo) {
+		this.assessmentNo = assessmentNo;
 	}
 
 }

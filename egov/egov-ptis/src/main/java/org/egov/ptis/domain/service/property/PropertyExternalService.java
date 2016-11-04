@@ -40,6 +40,7 @@
 package org.egov.ptis.domain.service.property;
 
 import static java.math.BigDecimal.ZERO;
+import static org.egov.ptis.constants.PropertyTaxConstants.ADDTIONAL_RULE_ALTER_ASSESSMENT;
 import static org.egov.ptis.constants.PropertyTaxConstants.ADMIN_HIERARCHY_TYPE;
 import static org.egov.ptis.constants.PropertyTaxConstants.APPROVAL_COMMENTS_SUCCESS;
 import static org.egov.ptis.constants.PropertyTaxConstants.ARR_COLL_STR;
@@ -48,7 +49,7 @@ import static org.egov.ptis.constants.PropertyTaxConstants.BILLTYPE_AUTO;
 import static org.egov.ptis.constants.PropertyTaxConstants.BLOCK;
 import static org.egov.ptis.constants.PropertyTaxConstants.CATEGORY_TYPE_PROPERTY_TAX;
 import static org.egov.ptis.constants.PropertyTaxConstants.CATEGORY_TYPE_VACANTLAND_TAX;
-import static org.egov.ptis.constants.PropertyTaxConstants.CURRENT_STATE_BILL_COLLECTOR_APPROVED;
+import static org.egov.ptis.constants.PropertyTaxConstants.CREATE_CURRENT_STATE_BILL_COLLECTOR_APPROVED;
 import static org.egov.ptis.constants.PropertyTaxConstants.CURR_FIRSTHALF_COLL_STR;
 import static org.egov.ptis.constants.PropertyTaxConstants.CURR_FIRSTHALF_DMD_STR;
 import static org.egov.ptis.constants.PropertyTaxConstants.DEMANDRSN_CODE_CHQ_BOUNCE_PENALTY;
@@ -57,12 +58,16 @@ import static org.egov.ptis.constants.PropertyTaxConstants.DOCS_CREATE_PROPERTY;
 import static org.egov.ptis.constants.PropertyTaxConstants.ELECTIONWARD_BNDRY_TYPE;
 import static org.egov.ptis.constants.PropertyTaxConstants.ELECTION_HIERARCHY_TYPE;
 import static org.egov.ptis.constants.PropertyTaxConstants.FILESTORE_MODULE_NAME;
+import static org.egov.ptis.constants.PropertyTaxConstants.FLOOR_MAP;
 import static org.egov.ptis.constants.PropertyTaxConstants.LOCALITY_BNDRY_TYPE;
 import static org.egov.ptis.constants.PropertyTaxConstants.LOCATION_HIERARCHY_TYPE;
 import static org.egov.ptis.constants.PropertyTaxConstants.MARK_DEACTIVE;
+import static org.egov.ptis.constants.PropertyTaxConstants.MODIFY_CURRENT_STATE_BILL_COLLECTOR_APPROVED;
+import static org.egov.ptis.constants.PropertyTaxConstants.NATURE_ALTERATION;
 import static org.egov.ptis.constants.PropertyTaxConstants.NATURE_NEW_ASSESSMENT;
 import static org.egov.ptis.constants.PropertyTaxConstants.NEW_ASSESSMENT;
 import static org.egov.ptis.constants.PropertyTaxConstants.NON_VAC_LAND_PROPERTY_TYPE_CATEGORY;
+import static org.egov.ptis.constants.PropertyTaxConstants.NOT_AVAILABLE;
 import static org.egov.ptis.constants.PropertyTaxConstants.OWNERSHIP_TYPE_VAC_LAND;
 import static org.egov.ptis.constants.PropertyTaxConstants.PAID_BY;
 import static org.egov.ptis.constants.PropertyTaxConstants.PROPERTY_ACTIVE_ERR_CODE;
@@ -75,6 +80,9 @@ import static org.egov.ptis.constants.PropertyTaxConstants.PROPERTY_INACTIVE_ERR
 import static org.egov.ptis.constants.PropertyTaxConstants.PROPERTY_INACTIVE_ERR_MSG;
 import static org.egov.ptis.constants.PropertyTaxConstants.PROPERTY_MARK_DEACTIVATE_ERR_CODE;
 import static org.egov.ptis.constants.PropertyTaxConstants.PROPERTY_MARK_DEACTIVATE_ERR_MSG;
+import static org.egov.ptis.constants.PropertyTaxConstants.PROPERTY_MODE_CREATE;
+import static org.egov.ptis.constants.PropertyTaxConstants.PROPERTY_MODE_MODIFY;
+import static org.egov.ptis.constants.PropertyTaxConstants.PROPERTY_MODIFY_REASON_ADD_OR_ALTER;
 import static org.egov.ptis.constants.PropertyTaxConstants.PROPERTY_NOT_EXIST_ERR_CODE;
 import static org.egov.ptis.constants.PropertyTaxConstants.PROPERTY_NOT_EXIST_ERR_MSG_PREFIX;
 import static org.egov.ptis.constants.PropertyTaxConstants.PROPERTY_NOT_EXIST_ERR_MSG_SUFFIX;
@@ -83,15 +91,13 @@ import static org.egov.ptis.constants.PropertyTaxConstants.PROP_CREATE_RSN;
 import static org.egov.ptis.constants.PropertyTaxConstants.PROP_CREATE_RSN_BIFUR;
 import static org.egov.ptis.constants.PropertyTaxConstants.PTIS_COLLECTION_SERVICE_CODE;
 import static org.egov.ptis.constants.PropertyTaxConstants.REVENUE_HIERARCHY_TYPE;
+import static org.egov.ptis.constants.PropertyTaxConstants.SERVICE_CODE_VACANTLANDTAX;
 import static org.egov.ptis.constants.PropertyTaxConstants.SOURCEOFDATA_MOBILE;
 import static org.egov.ptis.constants.PropertyTaxConstants.STATUS_BILL_NOTCREATED;
 import static org.egov.ptis.constants.PropertyTaxConstants.STATUS_DEMAND_INACTIVE;
 import static org.egov.ptis.constants.PropertyTaxConstants.STATUS_ISACTIVE;
+import static org.egov.ptis.constants.PropertyTaxConstants.STATUS_WORKFLOW;
 import static org.egov.ptis.constants.PropertyTaxConstants.STATUS_YES_XML_MIGRATION;
-import static org.egov.ptis.constants.PropertyTaxConstants.THIRD_PARTY_ATTESTED_COPY_PROPERTY_DOCUMENT_CODE;
-import static org.egov.ptis.constants.PropertyTaxConstants.THIRD_PARTY_BUILDING_PERMISSION_COPY_CODE;
-import static org.egov.ptis.constants.PropertyTaxConstants.THIRD_PARTY_CONTENT_TYPE;
-import static org.egov.ptis.constants.PropertyTaxConstants.THIRD_PARTY_DEATH_CERTIFICATE_COPY_CODE;
 import static org.egov.ptis.constants.PropertyTaxConstants.THIRD_PARTY_ERR_CODE_ASSESSMENT_NO_LEN;
 import static org.egov.ptis.constants.PropertyTaxConstants.THIRD_PARTY_ERR_CODE_ASSESSMENT_NO_NOT_FOUND;
 import static org.egov.ptis.constants.PropertyTaxConstants.THIRD_PARTY_ERR_CODE_ASSESSMENT_NO_REQUIRED;
@@ -110,28 +116,25 @@ import static org.egov.ptis.constants.PropertyTaxConstants.THIRD_PARTY_ERR_MSG_P
 import static org.egov.ptis.constants.PropertyTaxConstants.THIRD_PARTY_ERR_MSG_SUCCESS;
 import static org.egov.ptis.constants.PropertyTaxConstants.THIRD_PARTY_ERR_MSG_VACANTLAND_ASSESSMENT_NOT_FOUND;
 import static org.egov.ptis.constants.PropertyTaxConstants.THIRD_PARTY_ERR_MSG_WRONG_CATEGORY;
-import static org.egov.ptis.constants.PropertyTaxConstants.THIRD_PARTY_NON_JUDICIAL_STAMP_PAPERS_CODE;
-import static org.egov.ptis.constants.PropertyTaxConstants.THIRD_PARTY_NOTARIZED_AFFIDAVIT_CUM_IDEMNITY_BOND_CODE;
 import static org.egov.ptis.constants.PropertyTaxConstants.THIRD_PARTY_PAYMENT_MODE_CASH;
 import static org.egov.ptis.constants.PropertyTaxConstants.THIRD_PARTY_PAYMENT_MODE_CHEQUE;
 import static org.egov.ptis.constants.PropertyTaxConstants.THIRD_PARTY_PAYMENT_MODE_DD;
-import static org.egov.ptis.constants.PropertyTaxConstants.THIRD_PARTY_PHOTO_OF_ASSESSMENT_CODE;
 import static org.egov.ptis.constants.PropertyTaxConstants.TOTAL_AMOUNT;
 import static org.egov.ptis.constants.PropertyTaxConstants.UD_REVENUE_INSPECTOR_APPROVAL_PENDING;
 import static org.egov.ptis.constants.PropertyTaxConstants.VAC_LAND_PROPERTY_TYPE_CATEGORY;
 import static org.egov.ptis.constants.PropertyTaxConstants.WARD;
 import static org.egov.ptis.constants.PropertyTaxConstants.ZONE;
+import static org.egov.ptis.constants.PropertyTaxConstants.PAYMENT_TYPE_PARTIALLY;
+import static org.egov.ptis.constants.PropertyTaxConstants.PAYMENT_TYPE_FULLY;
+import static org.egov.ptis.constants.PropertyTaxConstants.PAYMENT_TYPE_ADVANCE;
 
 import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
 import java.math.BigDecimal;
-import java.text.MessageFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -143,21 +146,22 @@ import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
 
-import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.egov.collection.integration.models.BillReceiptInfo;
+import org.egov.collection.integration.models.ReceiptAccountInfo;
 import org.egov.collection.integration.services.CollectionIntegrationService;
 import org.egov.commons.Area;
 import org.egov.commons.Bank;
 import org.egov.commons.Installment;
 import org.egov.commons.dao.BankHibernateDAO;
+import org.egov.commons.dao.InstallmentHibDao;
 import org.egov.dcb.bean.ChequePayment;
 import org.egov.dcb.bean.Payment;
 import org.egov.demand.dao.EgBillDao;
 import org.egov.demand.model.EgBill;
+import org.egov.demand.model.EgBillDetails;
 import org.egov.demand.model.EgDemandDetails;
 import org.egov.eis.entity.Assignment;
-import org.egov.eis.service.AssignmentService;
 import org.egov.infra.admin.master.entity.Boundary;
 import org.egov.infra.admin.master.entity.BoundaryType;
 import org.egov.infra.admin.master.entity.CrossHierarchy;
@@ -165,6 +169,7 @@ import org.egov.infra.admin.master.entity.Department;
 import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.admin.master.service.BoundaryService;
 import org.egov.infra.admin.master.service.BoundaryTypeService;
+import org.egov.infra.admin.master.service.ModuleService;
 import org.egov.infra.admin.master.service.UserService;
 import org.egov.infra.config.core.ApplicationThreadLocals;
 import org.egov.infra.exception.ApplicationRuntimeException;
@@ -173,20 +178,22 @@ import org.egov.infra.filestore.service.FileStoreService;
 import org.egov.infra.persistence.entity.Address;
 import org.egov.infra.persistence.entity.CorrespondenceAddress;
 import org.egov.infra.persistence.entity.enums.Gender;
+import org.egov.infra.utils.DateUtils;
 import org.egov.infra.workflow.matrix.entity.WorkFlowMatrix;
 import org.egov.infra.workflow.service.SimpleWorkflowService;
 import org.egov.pims.commons.Position;
+import org.egov.ptis.bean.SurveyAssessmentDetails;
 import org.egov.ptis.client.bill.PTBillServiceImpl;
 import org.egov.ptis.client.integration.utils.CollectionHelper;
 import org.egov.ptis.client.model.PenaltyAndRebate;
 import org.egov.ptis.client.util.PropertyTaxNumberGenerator;
+import org.egov.ptis.constants.PropertyTaxConstants;
 import org.egov.ptis.domain.bill.PropertyTaxBillable;
 import org.egov.ptis.domain.dao.demand.PtDemandDao;
 import org.egov.ptis.domain.dao.property.BasicPropertyDAO;
 import org.egov.ptis.domain.dao.property.PropertyMutationDAO;
 import org.egov.ptis.domain.dao.property.PropertyTypeMasterDAO;
 import org.egov.ptis.domain.entity.demand.Ptdemand;
-import org.egov.ptis.domain.entity.enums.TransactionType;
 import org.egov.ptis.domain.entity.property.Apartment;
 import org.egov.ptis.domain.entity.property.BasicProperty;
 import org.egov.ptis.domain.entity.property.BasicPropertyImpl;
@@ -223,6 +230,7 @@ import org.egov.ptis.domain.model.LocalityDetails;
 import org.egov.ptis.domain.model.MasterCodeNamePairDetails;
 import org.egov.ptis.domain.model.NewPropertyDetails;
 import org.egov.ptis.domain.model.OwnerDetails;
+import org.egov.ptis.domain.model.OwnerInformation;
 import org.egov.ptis.domain.model.OwnerName;
 import org.egov.ptis.domain.model.PayPropertyTaxDetails;
 import org.egov.ptis.domain.model.PropertyDetails;
@@ -230,6 +238,7 @@ import org.egov.ptis.domain.model.PropertyTaxDetails;
 import org.egov.ptis.domain.model.ReceiptDetails;
 import org.egov.ptis.domain.model.RestAssessmentDetails;
 import org.egov.ptis.domain.model.RestPropertyTaxDetails;
+import org.egov.ptis.domain.model.ViewPropertyDetails;
 import org.egov.ptis.domain.model.enums.BasicPropertyStatus;
 import org.egov.ptis.exceptions.TaxCalculatorExeption;
 import org.egov.ptis.master.service.FloorTypeService;
@@ -241,25 +250,12 @@ import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.ApplicationContext;
-import org.springframework.web.multipart.MultipartFile;
-
-import com.sun.jersey.core.header.FormDataContentDisposition;
 
 public class PropertyExternalService {
     private static final String ASSESSMENT = "Assessment";
     public static final Integer FLAG_MOBILE_EMAIL = 0;
     public static final Integer FLAG_TAX_DETAILS = 1;
     public static final Integer FLAG_FULL_DETAILS = 2;
-    public static final int FLAG_NONE = 0;
-
-    private BasicProperty basicProperty;
-    private PropertyImpl property;
-    private AssessmentDetails assessmentDetail;
-    private RestAssessmentDetails assessmentDetails;
-    
-    private final List<File> uploads = new ArrayList<File>(0);
-    private final List<String> uploadContentTypes = new ArrayList<String>(0);
-    private final List<String> uploadFileNames = new ArrayList<String>(0);
 
     @Autowired
     private BasicPropertyDAO basicPropertyDAO;
@@ -292,8 +288,6 @@ public class PropertyExternalService {
     @Autowired
     private BoundaryTypeService boundaryTypeService;
     @Autowired
-    protected AssignmentService assignmentService;
-    @Autowired
     @Qualifier("workflowService")
     private SimpleWorkflowService<PropertyImpl> propertyWorkflowService;
     @Autowired
@@ -310,31 +304,36 @@ public class PropertyExternalService {
     private WallTypeService wallTypeService;
     @Autowired
     private WoodTypeService woodTypeService;
-
+    @Autowired
+    private InstallmentHibDao installmentDao;
+    @Autowired
+    private ModuleService moduleService;
+    
     public AssessmentDetails loadAssessmentDetails(final String propertyId, final Integer flag,
             final BasicPropertyStatus status) {
-        assessmentDetail = new AssessmentDetails();
+        PropertyImpl property;
+        AssessmentDetails assessmentDetail = new AssessmentDetails();
         assessmentDetail.setPropertyID(propertyId);
         assessmentDetail.setFlag(flag);
-        validate();
-        initiateBasicProperty(status);
+        validate(assessmentDetail);
+        BasicProperty basicProperty = initiateBasicProperty(status, assessmentDetail);
         if (basicProperty != null) {
-            property = (PropertyImpl) basicProperty.getProperty();
+            property = (PropertyImpl)basicProperty.getProperty();
             if (basicProperty.getLatitude() != null && basicProperty.getLongitude() != null) {
                 assessmentDetail.setLatitude(basicProperty.getLatitude());
                 assessmentDetail.setLongitude(basicProperty.getLongitude());
             }
             if (flag.equals(FLAG_MOBILE_EMAIL))
-                loadPrimaryMobileAndEmail();
+                loadPrimaryMobileAndEmail(basicProperty, assessmentDetail);
             if (property != null) {
                 final PropertyDetails propertyDetails = new PropertyDetails();
                 assessmentDetail.setPropertyDetails(propertyDetails);
                 if (flag.equals(FLAG_FULL_DETAILS)) {
-                    getAsssessmentDetails();
-                    loadPropertyDues();
+                    getAsssessmentDetails(basicProperty, assessmentDetail);
+                    loadPropertyDues(property, assessmentDetail);
                 }
                 if (flag.equals(FLAG_TAX_DETAILS))
-                    loadPropertyDues();
+                    loadPropertyDues(property, assessmentDetail);
                 if (assessmentDetail.isExempted()) {
                     assessmentDetail.getPropertyDetails().setTaxDue(ZERO);
                     assessmentDetail.getPropertyDetails().setCurrentTax(ZERO);
@@ -345,15 +344,15 @@ public class PropertyExternalService {
         return assessmentDetail;
     }
 
-    private void validate() {
+    private void validate(AssessmentDetails assessmentDetail) {
         if (assessmentDetail.getPropertyID() == null || assessmentDetail.getPropertyID().trim().equals(""))
             throw new ApplicationRuntimeException("PropertyID is null or empty!");
         if (assessmentDetail.getFlag() == null || assessmentDetail.getFlag() > 3)
             throw new ApplicationRuntimeException("Invalid Flag");
     }
 
-    private void initiateBasicProperty(BasicPropertyStatus status) {
-        basicProperty = basicPropertyDAO.getAllBasicPropertyByPropertyID(assessmentDetail.getPropertyID());
+    private BasicProperty initiateBasicProperty(BasicPropertyStatus status, AssessmentDetails assessmentDetail) {
+        BasicProperty basicProperty = basicPropertyDAO.getAllBasicPropertyByPropertyID(assessmentDetail.getPropertyID());
         final ErrorDetails errorDetails = new ErrorDetails();
         if (null != basicProperty) {
             assessmentDetail.setStatus(basicProperty.isActive());
@@ -382,6 +381,7 @@ public class PropertyExternalService {
                     + assessmentDetail.getPropertyID() + PROPERTY_NOT_EXIST_ERR_MSG_SUFFIX);
         }
         assessmentDetail.setErrorDetails(errorDetails);
+        return basicProperty;
     }
 
     private void checkStatusValues(BasicProperty basicProperty, ErrorDetails errorDetails) {
@@ -394,13 +394,13 @@ public class PropertyExternalService {
                 }
     }
 
-    private void loadPrimaryMobileAndEmail() {
+    private void loadPrimaryMobileAndEmail(BasicProperty basicProperty, AssessmentDetails assessmentDetail) {
         final User primaryOwner = basicProperty.getPrimaryOwner();
         assessmentDetail.setPrimaryEmail(primaryOwner.getEmailId());
         assessmentDetail.setPrimaryMobileNo(primaryOwner.getMobileNumber());
     }
 
-    private void loadPropertyDues() {
+    private void loadPropertyDues(PropertyImpl property, AssessmentDetails assessmentDetail) {
         final Map<String, BigDecimal> resultmap = ptDemandDAO.getDemandCollMap(property);
         if (null != resultmap && !resultmap.isEmpty()) {
             final BigDecimal currDmd = resultmap.get(CURR_FIRSTHALF_DMD_STR);
@@ -415,12 +415,13 @@ public class PropertyExternalService {
         }
     }
 
-    private void getAsssessmentDetails() {
+    private void getAsssessmentDetails(BasicProperty basicProperty, AssessmentDetails assessmentDetail) {
 
         // Owner Details
         assessmentDetail.setBoundaryDetails(prepareBoundaryInfo(basicProperty));
         assessmentDetail.setHouseNo(basicProperty.getAddress().getHouseNoBldgApt());
         assessmentDetail.setPropertyAddress(basicProperty.getAddress().toString());
+        PropertyImpl property = (PropertyImpl)basicProperty.getProperty();
         if (null != property) {
             assessmentDetail.setOwnerNames(prepareOwnerInfo(property));
             assessmentDetail.setExempted(property.getIsExemptedFromTax());
@@ -494,10 +495,10 @@ public class PropertyExternalService {
     }
 
     public PropertyTaxDetails getPropertyTaxDetails(final String assessmentNo, final String category) {
+        PropertyTaxDetails propertyTaxDetails;
         final BasicProperty basicProperty = basicPropertyDAO.getBasicPropertyByPropertyID(assessmentNo);
-        PropertyTaxDetails propertyTaxDetails = null;
         final ErrorDetails errorDetails = new ErrorDetails();
-        if (null != basicProperty) {
+        if (basicProperty != null) {
         	Property property = basicProperty.getProperty();
         	if(property != null && property.getIsExemptedFromTax()){
         		propertyTaxDetails = new PropertyTaxDetails();
@@ -718,21 +719,31 @@ public class PropertyExternalService {
         return propertyTaxDetails;
     }
 
-    public ReceiptDetails payPropertyTax(final PayPropertyTaxDetails payPropertyTaxDetails) {
+    public ReceiptDetails payPropertyTax(final PayPropertyTaxDetails payPropertyTaxDetails, String propertyType) {
         ReceiptDetails receiptDetails = null;
         ErrorDetails errorDetails = null;
+        BigDecimal totalAmountToBePaid = BigDecimal.ZERO;
         final BasicProperty basicProperty = basicPropertyDAO.getBasicPropertyByPropertyID(payPropertyTaxDetails
                 .getAssessmentNo());
+        if(propertyType.equalsIgnoreCase(OWNERSHIP_TYPE_VAC_LAND))
+        	propertyTaxBillable.setVacantLandTaxPayment(true);
+        
         propertyTaxBillable.setBasicProperty(basicProperty);
         propertyTaxBillable.setUserId(2L);
         ApplicationThreadLocals.setUserId(2L);
         propertyTaxBillable.setReferenceNumber(propertyTaxNumberGenerator.generateBillNumber(basicProperty
                 .getPropertyID().getWard().getBoundaryNum().toString()));
-        // propertyTaxBillable.setBillType(propertyTaxUtil.getBillTypeByCode(BILLTYPE_MANUAL));
         propertyTaxBillable.setBillType(egBillDAO.getBillTypeByCode(BILLTYPE_AUTO));
         propertyTaxBillable.setLevyPenalty(Boolean.TRUE);
         propertyTaxBillable.setTransanctionReferenceNumber(payPropertyTaxDetails.getTransactionId());
         final EgBill egBill = ptBillServiceImpl.generateBill(propertyTaxBillable);
+        
+        for(EgBillDetails billDetails : egBill.getEgBillDetails()){
+        	if(!billDetails.getDescription().contains(PropertyTaxConstants.DEMANDRSN_STR_ADVANCE) 
+    				&& billDetails.getCrAmount().compareTo(BigDecimal.ZERO) > 0){
+        		totalAmountToBePaid = totalAmountToBePaid.add(billDetails.getCrAmount());
+    		}
+        }
 
         final CollectionHelper collectionHelper = new CollectionHelper(egBill);
         final Map<String, String> paymentDetailsMap = new HashMap<String, String>();
@@ -766,6 +777,56 @@ public class PropertyExternalService {
             receiptDetails.setPaymentAmount(billReceiptInfo.getTotalAmount());
             receiptDetails.setPaymentMode(payPropertyTaxDetails.getPaymentMode());
             receiptDetails.setTransactionId(billReceiptInfo.getManualReceiptNumber());
+            
+            String[] paidFrom = null;
+            String[] paidTo = null;
+            Installment fromInstallment = null;
+            Installment toInstallment = null;
+	        if(totalAmountToBePaid.compareTo(BigDecimal.ZERO) > 0){
+	            List<ReceiptAccountInfo> receiptAccountsList = new ArrayList<ReceiptAccountInfo>(billReceiptInfo.getAccountDetails());
+	            Collections.sort(receiptAccountsList, new Comparator<ReceiptAccountInfo>() {
+	                @Override
+	                public int compare(ReceiptAccountInfo rcptAcctInfo1, ReceiptAccountInfo rcptAcctInfo2) {
+	                	if(rcptAcctInfo1.getOrderNumber() != null && rcptAcctInfo2.getOrderNumber() != null)
+		                    return rcptAcctInfo1.getOrderNumber()
+		                            .compareTo(rcptAcctInfo2.getOrderNumber());
+						return 0;
+	                }
+	            });
+	            for(ReceiptAccountInfo rcptAcctInfo : receiptAccountsList){
+	            	if(rcptAcctInfo.getCrAmount().compareTo(ZERO)>0 
+	            			&& !rcptAcctInfo.getDescription().contains(PropertyTaxConstants.DEMANDRSN_STR_ADVANCE)){
+	            		if(paidFrom == null)
+	            			paidFrom = rcptAcctInfo.getDescription().split("-",2);
+	            		paidTo = rcptAcctInfo.getDescription().split("-",2);
+	            	}
+	            }
+	            
+	            if(paidFrom != null)
+	            	fromInstallment = installmentDao.getInsatllmentByModuleAndDescription(moduleService.getModuleByName(PropertyTaxConstants.PTMODULENAME), paidFrom[1].toString());
+	            if(paidTo != null)
+	            	toInstallment = installmentDao.getInsatllmentByModuleAndDescription(moduleService.getModuleByName(PropertyTaxConstants.PTMODULENAME), paidTo[1].toString());
+	        }
+	        /**
+	         * If collection is done for complete current financial year only, todate shown is last date of current financial year and payment type is 'Fully'.
+	        	In case, collection is done for complete current financial year with advance, todate shown is last date of current financial year and payment type is 'Advance'.
+	        	In case, collection is only for advance, collection period will be blank and payment type is 'Advance'
+	         */
+            if(totalAmountToBePaid.compareTo(BigDecimal.ZERO)==0){
+            	receiptDetails.setPaymentPeriod(StringUtils.EMPTY);
+            	receiptDetails.setPaymentType(PAYMENT_TYPE_ADVANCE);
+            }
+            else
+            	receiptDetails.setPaymentPeriod(DateUtils.getDefaultFormattedDate(fromInstallment.getFromDate())
+            		.concat(" to ").concat(DateUtils.getDefaultFormattedDate(toInstallment.getToDate())));
+            
+            if(payPropertyTaxDetails.getPaymentAmount().compareTo(totalAmountToBePaid) > 0)
+            	receiptDetails.setPaymentType(PAYMENT_TYPE_ADVANCE);
+            else if(totalAmountToBePaid.compareTo(payPropertyTaxDetails.getPaymentAmount())>0)
+            	receiptDetails.setPaymentType(PAYMENT_TYPE_PARTIALLY);
+            else
+            	receiptDetails.setPaymentType(PAYMENT_TYPE_FULLY);
+            
             errorDetails = new ErrorDetails();
             errorDetails.setErrorCode(THIRD_PARTY_ERR_CODE_SUCCESS);
             errorDetails.setErrorMessage(THIRD_PARTY_ERR_MSG_SUCCESS);
@@ -852,26 +913,6 @@ public class PropertyExternalService {
             mstrCodeNamepairDetails.setCode(code);
             mstrCodeNamepairDetails.setName(nonVacLandMap.get(code));
             mstrCodeNamePairDetailsList.add(mstrCodeNamepairDetails);
-        }
-        return mstrCodeNamePairDetailsList;
-    }
-
-    public List<MasterCodeNamePairDetails> getPropertyTypes(final String categoryCode) {
-        final List<MasterCodeNamePairDetails> mstrCodeNamePairDetailsList = new ArrayList<MasterCodeNamePairDetails>(0);
-        Map<String, String> codeNameMap = null;
-        final PropertyTypeMaster propertyTypeMasters = propertyTypeMasterDAO.getPropertyTypeMasterByCode(categoryCode);
-        if (null != propertyTypeMasters) {
-            if (propertyTypeMasters.getCode().equalsIgnoreCase(OWNERSHIP_TYPE_VAC_LAND))
-                codeNameMap = VAC_LAND_PROPERTY_TYPE_CATEGORY;
-            else
-                codeNameMap = NON_VAC_LAND_PROPERTY_TYPE_CATEGORY;
-            if (null != codeNameMap && !codeNameMap.isEmpty())
-                for (final String code : codeNameMap.keySet()) {
-                    final MasterCodeNamePairDetails mstrCodeNamepairDetails = new MasterCodeNamePairDetails();
-                    mstrCodeNamepairDetails.setCode(code);
-                    mstrCodeNamepairDetails.setName(codeNameMap.get(code));
-                    mstrCodeNamePairDetailsList.add(mstrCodeNamepairDetails);
-                }
         }
         return mstrCodeNamePairDetailsList;
     }
@@ -1138,7 +1179,7 @@ public class PropertyExternalService {
     }
 
     public NewPropertyDetails createNewProperty(final String propertyTypeMasterCode, final String propertyCategoryCode,
-    		final String exemptionCode, final String apartmentCmplxCode, final List<OwnerDetails> ownerDetailsList,
+    		final String exemptionCode, final String apartmentCmplxCode, final List<OwnerInformation> ownerDetailsList,
             final String mutationReasonCode, final String extentOfSite, final Boolean isExtentAppurtenantLand,
             final String occupancyCertificationNo, final String regdDocNo, final String regdDocDate, 
             final String localityCode, final String blockNum, final String zoneNum, final String street, final String electionWardCode,
@@ -1154,6 +1195,7 @@ public class PropertyExternalService {
             final String westBoundary, final String parentPropertyNumber, final List<Document> documents) throws ParseException {
 
         NewPropertyDetails newPropertyDetails = null;
+        final PropertyService propService = beanProvider.getBean("propService", PropertyService.class);
         BasicProperty basicProperty = createBasicProperty(propertyTypeMasterCode, propertyCategoryCode, exemptionCode,
                 apartmentCmplxCode, mutationReasonCode, ownerDetailsList, extentOfSite, isExtentAppurtenantLand,
                 occupancyCertificationNo, regdDocNo, regdDocDate, localityCode, blockNum, zoneNum, street, doorNo,
@@ -1161,12 +1203,16 @@ public class PropertyExternalService {
                 hasWaterTap, hasElectricity, hasAttachedBathroom, hasWaterHarvesting, hasCable, floorTypeCode,
                 roofTypeCode, wallTypeCode, woodTypeCode, floorDetailsList, surveyNumber, pattaNumber, vacantLandArea,
                 marketValue, currentCapitalValue, effectiveDate, northBoundary, southBoundary,
-                eastBoundary, westBoundary, parentPropertyNumber, documents);
+                eastBoundary, westBoundary, parentPropertyNumber, documents, propService);
+        PropertyImpl property = (PropertyImpl)basicProperty.getProperty();
+        List<File> fileAttachments = new ArrayList<File>(0);
+        List<String> uploadContentTypes = new ArrayList<String>(0);
+        List<String> uploadFileNames = new ArrayList<String>(0);
         basicProperty.setIsTaxXMLMigrated(STATUS_YES_XML_MIGRATION);
-        processAndStoreDocumentsWithReason(basicProperty, DOCS_CREATE_PROPERTY);
+        processAndStoreDocumentsWithReason(basicProperty, DOCS_CREATE_PROPERTY, fileAttachments, uploadFileNames, uploadContentTypes);
         basicProperty.setPropertyOwnerInfoProxy(getPropertyOwnerInfoList(ownerDetailsList));
         basicPropertyService.createOwners(property, basicProperty, basicProperty.getAddress());
-        transitionWorkFlow(property);
+        transitionWorkFlow(property, propService, PROPERTY_MODE_CREATE);
         basicPropertyService.applyAuditing(property.getState());
         basicProperty = basicPropertyService.persist(basicProperty);
         if (null != basicProperty) {
@@ -1182,7 +1228,7 @@ public class PropertyExternalService {
 
     private BasicProperty createBasicProperty(final String propertyTypeMasterCode, final String propertyCategoryCode,
     		final String exemptionCode, final String apartmentCmplxCode, final String mutationReasonCode,
-            final List<OwnerDetails> ownerDetailsList, final String extentOfSite,
+            final List<OwnerInformation> ownerDetailsList, final String extentOfSite,
             final Boolean isExtentAppurtenantLand, final String occupancyCertificationNo, final String regdDocNo, final String regdDocDate,
             final String localityNum,final String blockNum, final String zoneNum, final String street,
             final String doorNo, final String electionWardCode, final String pinCode, final Boolean isCorrAddrDiff,
@@ -1193,8 +1239,9 @@ public class PropertyExternalService {
             final String surveyNumber, final String pattaNumber, final Float vacantLandArea, final Double marketValue,
             final Double currentCapitalValue, final String effectiveDate,
             final String northBoundary, final String southBoundary, final String eastBoundary,
-            final String westBoundary, final String parentPropertyNumber, final List<Document> documents) throws ParseException {
+            final String westBoundary, final String parentPropertyNumber, final List<Document> documents, final PropertyService propService) throws ParseException {
         final BasicProperty basicProperty = new BasicPropertyImpl();
+        final PropertyImpl property;
         basicProperty.setRegdDocNo(regdDocNo);
         basicProperty.setRegdDocDate(convertStringToDate(regdDocDate));
         basicProperty.setActive(Boolean.TRUE);
@@ -1218,7 +1265,6 @@ public class PropertyExternalService {
         // Set PropertyMutationMaster object
         final PropertyMutationMaster propertyMutationMaster = getPropertyMutationMaster(mutationReasonCode);
         basicProperty.setPropertyMutationMaster(propertyMutationMaster);
-        final PropertyService propService = beanProvider.getBean("propService", PropertyService.class);
         //need to pass parent property index, in case of bifurcation
         if (propertyMutationMaster.getCode().equals(PROP_CREATE_RSN_BIFUR))
             basicProperty.addPropertyStatusValues(propService.createPropStatVal(basicProperty, PROP_CREATE_RSN, null, null,
@@ -1305,8 +1351,8 @@ public class PropertyExternalService {
         try {
             propService.createDemand(propertyImpl, propCompletionDate);
         } catch (TaxCalculatorExeption e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
+
+
         }
         return basicProperty;
     }
@@ -1452,10 +1498,11 @@ public class PropertyExternalService {
         return stringToDate;
     }
 
-    private void processAndStoreDocumentsWithReason(final BasicProperty basicProperty, final String reason) {
-        if (!uploads.isEmpty()) {
+    private void processAndStoreDocumentsWithReason(final BasicProperty basicProperty, final String reason,
+            final List<File> fileAttachments, final List<String> uploadFileNames, final List<String> uploadContentTypes) {
+        if (!fileAttachments.isEmpty()) {
             int fileCount = 0;
-            for (final File file : uploads) {
+            for (final File file : fileAttachments) {
                 final FileStoreMapper fileStore = fileStoreService.store(file, uploadFileNames.get(fileCount),
                         uploadContentTypes.get(fileCount++), FILESTORE_MODULE_NAME);
                 final PropertyDocs propertyDoc = new PropertyDocs();
@@ -1508,303 +1555,56 @@ public class PropertyExternalService {
         return floorList;
     }
 
-    private List<PropertyOwnerInfo> getPropertyOwnerInfoList(final List<OwnerDetails> ownerDetailsList) {
+    private List<PropertyOwnerInfo> getPropertyOwnerInfoList(final List<OwnerInformation> ownerInfoList) {
         final List<PropertyOwnerInfo> proeprtyOwnerInfoList = new ArrayList<PropertyOwnerInfo>(0);
-        for (final OwnerDetails ownerDetais : ownerDetailsList) {
-            final PropertyOwnerInfo ownerInfo = new PropertyOwnerInfo();
+        for (final OwnerInformation ownerInfo : ownerInfoList) {
+            final PropertyOwnerInfo propOwner = new PropertyOwnerInfo();
             final User owner = new User();
-            owner.setAadhaarNumber(ownerDetais.getAadhaarNo());
-            owner.setSalutation(ownerDetais.getSalutationCode());
-            owner.setName(ownerDetais.getName());
-            owner.setGender(Gender.valueOf(ownerDetais.getGender()));
-            owner.setMobileNumber(ownerDetais.getMobileNumber());
-            owner.setEmailId(ownerDetais.getEmailId());
-            owner.setGuardianRelation(ownerDetais.getGuardianRelation());
-            owner.setGuardian(ownerDetais.getGuardian());
-            ownerInfo.setOwner(owner);
-            proeprtyOwnerInfoList.add(ownerInfo);
+            owner.setAadhaarNumber(ownerInfo.getAadhaarNo());
+            owner.setSalutation(ownerInfo.getSalutationCode());
+            owner.setName(ownerInfo.getName());
+            owner.setGender(Gender.valueOf(ownerInfo.getGender()));
+            owner.setMobileNumber(ownerInfo.getMobileNumber());
+            owner.setEmailId(ownerInfo.getEmailId());
+            owner.setGuardianRelation(ownerInfo.getGuardianRelation());
+            owner.setGuardian(ownerInfo.getGuardian());
+            propOwner.setOwner(owner);
+            proeprtyOwnerInfoList.add(propOwner);
         }
         return proeprtyOwnerInfoList;
     }
 
-    public List<MasterCodeNamePairDetails> getPropertyCreateDocumentTypes() {
-        final List<MasterCodeNamePairDetails> mstrCodeNamePairDetailsList = new ArrayList<MasterCodeNamePairDetails>(0);
-        final PropertyService propService = beanProvider.getBean("propService", PropertyService.class);
-        final List<DocumentType> documentTypes = propService.getDocumentTypesForTransactionType(TransactionType.CREATE);
-        for (final DocumentType documentType : documentTypes) {
-            final MasterCodeNamePairDetails mstrCodeNamePairDetails = new MasterCodeNamePairDetails();
-            mstrCodeNamePairDetails.setCode(documentType.getId().toString());
-            mstrCodeNamePairDetails.setName(documentType.getName());
-            mstrCodeNamePairDetailsList.add(mstrCodeNamePairDetails);
-        }
-        return mstrCodeNamePairDetailsList;
+    public BillReceiptInfo validateTransanctionIdPresent(final String transantion, String propertyType) {
+        if (propertyType.equals(OWNERSHIP_TYPE_VAC_LAND))
+            return collectionService.getReceiptInfo(SERVICE_CODE_VACANTLANDTAX, transantion);
+        else
+            return collectionService.getReceiptInfo(PTIS_COLLECTION_SERVICE_CODE, transantion);
     }
 
-    public DocumentType getDocumentTypeByCode(final String docTypeCode) {
-        final PropertyService propService = beanProvider.getBean("propService", PropertyService.class);
-        final List<DocumentType> documentTypes = propService.getDocumentTypesForTransactionType(TransactionType.CREATE);
-        DocumentType documentType = null;
-        for (final DocumentType docType : documentTypes)
-            if (docType.getId() == Long.valueOf(docTypeCode))
-                documentType = docType;
-        return documentType;
-    }
-
-    // TODO: Need to uncomment when it is required to check whether aadhaar
-    // number or mobile number is exists or not
-    /*
-     * public ErrorDetails isAadhaarNumberExist(List<OwnerDetails>
-     * ownerDetailsList) { ErrorDetails errorDetails = null; for (OwnerDetails
-     * ownerDetails : ownerDetailsList) { Query qry =
-     * entityManager.createQuery("from User u where u.aadhaarNumber =:aadhaarNumber"
-     * ); qry.setParameter("aadhaarNumber", ownerDetails.getAadhaarNo()); List
-     * list = qry.getResultList(); if (null != list && !list.isEmpty()) {
-     * errorDetails = new ErrorDetails();
-     * errorDetails.setErrorCode(PropertyTaxConstants
-     * .THIRD_PARTY_ERR_CODE_AADHAAR_NUMBER_EXISTS);
-     * errorDetails.setErrorMessage(MessageFormat.format(
-     * THIRD_PARTY_ERR_MSG_AADHAAR_NUMBER_EXISTS,
-     * ownerDetails.getAadhaarNo())); } } return errorDetails; } public
-     * ErrorDetails isMobileNumberExist(List<OwnerDetails> ownerDetailsList) {
-     * ErrorDetails errorDetails = null; for (OwnerDetails ownerDetails :
-     * ownerDetailsList) { Query qry =
-     * entityManager.createQuery("from User u where u.mobileNumber =:mobileNumber"
-     * ); qry.setParameter("mobileNumber", ownerDetails.getMobileNumber()); List
-     * list = qry.getResultList(); if (null != list && !list.isEmpty()) {
-     * errorDetails = new ErrorDetails();
-     * errorDetails.setErrorCode(PropertyTaxConstants
-     * .THIRD_PARTY_ERR_CODE_MOBILE_NUMBER_EXISTS);
-     * errorDetails.setErrorMessage(MessageFormat.format(
-     * THIRD_PARTY_ERR_MSG_MOBILE_NUMBER_EXISTS,
-     * ownerDetails.getMobileNumber())); } } return errorDetails; }
-     */
-
-    /**
-     * This method is used to get document's list to upload the documents.
-     *
-     * @param photoAsmntStream
-     *            - photo of assessment input stream object
-     * @param photoAsmntDisp
-     *            - photo of assessment content disposition object
-     * @param bldgPermCopyStream
-     *            - building permission copy input stream object
-     * @param bldgPermCopyDisp
-     *            - building permission copy content disposition object
-     * @param atstdCopyPropDocStream
-     *            - attested copy of property document input stream object
-     * @param atstdCopyPropDocDisp
-     *            - attested copy of property document content disposition
-     *            object
-     * @param nonJudcStampStream
-     *            - non judicial stamp input stream object
-     * @param nonJudcStampDisp
-     *            - non judicial stamp content disposition object
-     * @param afdvtBondStream
-     *            - affidavit bond paper input stream object
-     * @param afdvtBondDisp
-     *            - affidavit bond paper content disposition object
-     * @param deathCertCopyStream
-     *            - death certificate copy input stream object
-     * @param deathCertCopyDisp
-     *            - death certificate copy content disposition object
-     * @return document - list of document
-     */
-    public List<Document> getDocuments(final InputStream photoAsmntStream,
-            final FormDataContentDisposition photoAsmntDisp, final InputStream bldgPermCopyStream,
-            final FormDataContentDisposition bldgPermCopyDisp, final InputStream atstdCopyPropDocStream,
-            final FormDataContentDisposition atstdCopyPropDocDisp, final InputStream nonJudcStampStream,
-            final FormDataContentDisposition nonJudcStampDisp, final InputStream afdvtBondStream,
-            final FormDataContentDisposition afdvtBondDisp, final InputStream deathCertCopyStream,
-            final FormDataContentDisposition deathCertCopyDisp) {
-        final List<Document> documents = new ArrayList<Document>(0);
-        DocumentType documentType = null;
-        Document document = null;
-        if (photoAsmntStream != null && photoAsmntDisp != null) {
-            documentType = getDocumentTypeByCode(THIRD_PARTY_PHOTO_OF_ASSESSMENT_CODE);
-            document = createDocument(photoAsmntStream, photoAsmntDisp);
-            document.setType(documentType);
-            documents.add(document);
-        }
-
-        if (bldgPermCopyStream != null && bldgPermCopyDisp != null) {
-            documentType = getDocumentTypeByCode(THIRD_PARTY_BUILDING_PERMISSION_COPY_CODE);
-            document = createDocument(bldgPermCopyStream, bldgPermCopyDisp);
-            document.setType(documentType);
-            documents.add(document);
-        }
-
-        if (atstdCopyPropDocStream != null && atstdCopyPropDocDisp != null) {
-            documentType = getDocumentTypeByCode(THIRD_PARTY_ATTESTED_COPY_PROPERTY_DOCUMENT_CODE);
-            document = createDocument(atstdCopyPropDocStream, atstdCopyPropDocDisp);
-            document.setType(documentType);
-            documents.add(document);
-        }
-
-        if (nonJudcStampStream != null && nonJudcStampDisp != null) {
-            documentType = getDocumentTypeByCode(THIRD_PARTY_NON_JUDICIAL_STAMP_PAPERS_CODE);
-            document = createDocument(nonJudcStampStream, nonJudcStampDisp);
-            document.setType(documentType);
-            documents.add(document);
-        }
-
-        if (afdvtBondStream != null && afdvtBondDisp != null) {
-            documentType = getDocumentTypeByCode(THIRD_PARTY_NOTARIZED_AFFIDAVIT_CUM_IDEMNITY_BOND_CODE);
-            document = createDocument(afdvtBondStream, afdvtBondDisp);
-            document.setType(documentType);
-            documents.add(document);
-        }
-
-        if (deathCertCopyStream != null && deathCertCopyDisp != null) {
-            documentType = getDocumentTypeByCode(THIRD_PARTY_DEATH_CERTIFICATE_COPY_CODE);
-            document = createDocument(deathCertCopyStream, deathCertCopyDisp);
-            document.setType(documentType);
-            documents.add(document);
-        }
-        return documents;
-    }
-
-    public List<Document> getDocuments(final MultipartFile photoAsmntDisp, final MultipartFile bldgPermCopyDisp,
-            final MultipartFile atstdCopyPropDocDisp, final MultipartFile nonJudcStampDisp,
-            final MultipartFile afdvtBondDisp, final MultipartFile deathCertCopyDisp) throws IOException {
-        final List<Document> documents = new ArrayList<Document>(0);
-        DocumentType documentType = null;
-        Document document = null;
-
-        if (!photoAsmntDisp.isEmpty() && photoAsmntDisp != null) {
-            documentType = getDocumentTypeByCode(THIRD_PARTY_PHOTO_OF_ASSESSMENT_CODE);
-            document = createDocument(photoAsmntDisp.getInputStream(), photoAsmntDisp.getName());
-            document.setType(documentType);
-            documents.add(document);
-        }
-
-        if (!bldgPermCopyDisp.isEmpty() && bldgPermCopyDisp != null) {
-            documentType = getDocumentTypeByCode(THIRD_PARTY_BUILDING_PERMISSION_COPY_CODE);
-            document = createDocument(bldgPermCopyDisp.getInputStream(), bldgPermCopyDisp.getName());
-            document.setType(documentType);
-            documents.add(document);
-        }
-
-        if (!atstdCopyPropDocDisp.isEmpty() && atstdCopyPropDocDisp != null) {
-            documentType = getDocumentTypeByCode(THIRD_PARTY_ATTESTED_COPY_PROPERTY_DOCUMENT_CODE);
-            document = createDocument(atstdCopyPropDocDisp.getInputStream(), atstdCopyPropDocDisp.getName());
-            document.setType(documentType);
-            documents.add(document);
-        }
-
-        if (!nonJudcStampDisp.isEmpty() && nonJudcStampDisp != null) {
-            documentType = getDocumentTypeByCode(THIRD_PARTY_NON_JUDICIAL_STAMP_PAPERS_CODE);
-            document = createDocument(nonJudcStampDisp.getInputStream(), nonJudcStampDisp.getName());
-            document.setType(documentType);
-            documents.add(document);
-        }
-
-        if (!afdvtBondDisp.isEmpty() && afdvtBondDisp != null) {
-            documentType = getDocumentTypeByCode(THIRD_PARTY_NOTARIZED_AFFIDAVIT_CUM_IDEMNITY_BOND_CODE);
-            document = createDocument(afdvtBondDisp.getInputStream(), afdvtBondDisp.getName());
-            document.setType(documentType);
-            documents.add(document);
-        }
-
-        if (!deathCertCopyDisp.isEmpty() && deathCertCopyDisp != null) {
-            documentType = getDocumentTypeByCode(THIRD_PARTY_DEATH_CERTIFICATE_COPY_CODE);
-            document = createDocument(deathCertCopyDisp.getInputStream(), deathCertCopyDisp.getName());
-            document.setType(documentType);
-            documents.add(document);
-        }
-        return documents;
-    }
-
-    /**
-     * This method is used to create Document object to upload the files.
-     *
-     * @param inputStream
-     *            - InputStream object coming as request
-     * @param formDataContentDisposition
-     *            - FormDataContentDisposition object coming as request
-     * @return document - Document object
-     */
-    private Document createDocument(final InputStream inputStream,
-            final FormDataContentDisposition formDataContentDisposition) {
-        final Document document = new Document();
-        final List<File> files = new ArrayList<File>(0);
-        final List<String> contentTypes = new ArrayList<String>(0);
-        final List<String> fileNames = new ArrayList<String>(0);
-        File file = null;
-        if (inputStream != null && formDataContentDisposition != null) {
-            fileNames.add(formDataContentDisposition.getFileName());
-            document.setUploadsFileName(fileNames);
-            file = writeToFile(inputStream, formDataContentDisposition.getFileName());
-            files.add(file);
-            document.setUploads(files);
-            contentTypes.add(MessageFormat.format(THIRD_PARTY_CONTENT_TYPE,
-                    FilenameUtils.getExtension(file.getPath())));
-            document.setUploadsContentType(contentTypes);
-        }
-        return document;
-    }
-
-    public BillReceiptInfo validateTransanctionIdPresent(final String transantion) {
-        return collectionService.getReceiptInfo(PTIS_COLLECTION_SERVICE_CODE, transantion);
-    }
-
-    private Document createDocument(final InputStream inputStream, final String fileName) {
-        final Document document = new Document();
-        final List<File> files = new ArrayList<File>(0);
-        final List<String> contentTypes = new ArrayList<String>(0);
-        final List<String> fileNames = new ArrayList<String>(0);
-        File file = null;
-        if (inputStream != null && fileName != null) {
-            fileNames.add(fileName);
-            document.setUploadsFileName(fileNames);
-            file = writeToFile(inputStream, fileName);
-            files.add(file);
-            document.setUploads(files);
-            contentTypes.add(MessageFormat.format(THIRD_PARTY_CONTENT_TYPE,
-                    FilenameUtils.getExtension(file.getPath())));
-            document.setUploadsContentType(contentTypes);
-        }
-        return document;
-    }
-
-    /**
-     * This method is used to convert incoming InputStream object to File object
-     *
-     * @param uploadedInputStream
-     *            - InputStream object
-     * @param fileName
-     *            - name od the file
-     * @return file - File object
-     */
-    private File writeToFile(final InputStream uploadedInputStream, final String fileName) {
-        final File file = new File(fileName);
-        try {
-            final OutputStream out = new FileOutputStream(new File(fileName));
-            int read = 0;
-            final byte[] bytes = new byte[1024];
-            while ((read = uploadedInputStream.read(bytes)) != -1)
-                out.write(bytes, 0, read);
-            out.flush();
-            out.close();
-        } catch (final IOException e) {
-            e.printStackTrace();
-        }
-        return file;
-    }
-
-    private PropertyImpl transitionWorkFlow(final PropertyImpl property) {
+    private PropertyImpl transitionWorkFlow(PropertyImpl property, PropertyService propService, String mode) {
         final DateTime currentDate = new DateTime();
         final User user = userService.getUserById(ApplicationThreadLocals.getUserId());
         final String approverComments = APPROVAL_COMMENTS_SUCCESS;
-        final String currentState = CURRENT_STATE_BILL_COLLECTOR_APPROVED;
-        final PropertyService propService = beanProvider.getBean("propService", PropertyService.class);
-        final Assignment assignment = propService.getUserPositionByZone(property.getBasicProperty(),property.getBasicProperty().getSource());
+        String currentState = StringUtils.EMPTY; 
+        String additionalRule = StringUtils.EMPTY; 
+        String natureOftask = StringUtils.EMPTY;
+        if(mode.equals(PROPERTY_MODE_CREATE)){
+        	currentState = CREATE_CURRENT_STATE_BILL_COLLECTOR_APPROVED;
+        	additionalRule = NEW_ASSESSMENT;
+        	natureOftask = NATURE_NEW_ASSESSMENT;
+        } else {
+        	currentState = MODIFY_CURRENT_STATE_BILL_COLLECTOR_APPROVED;
+        	additionalRule = ADDTIONAL_RULE_ALTER_ASSESSMENT;
+        	natureOftask = NATURE_ALTERATION;
+        }
+        final Assignment assignment = propService.getUserPositionByZone(property.getBasicProperty(), true);
         final Position pos = assignment.getPosition();
 
         final WorkFlowMatrix wfmatrix = propertyWorkflowService.getWfMatrix(property.getStateType(), null, null,
-        		NEW_ASSESSMENT, currentState, null);
+        		additionalRule, currentState, null);
         property.transition().start().withSenderName(user.getName()).withComments(approverComments)
                 .withStateValue(wfmatrix.getCurrentState()).withDateInfo(currentDate.toDate()).withOwner(pos)
-                .withNextAction(UD_REVENUE_INSPECTOR_APPROVAL_PENDING).withNatureOfTask(NATURE_NEW_ASSESSMENT);
+                .withNextAction(UD_REVENUE_INSPECTOR_APPROVAL_PENDING).withNatureOfTask(natureOftask);
         return property;
     }
 
@@ -1835,12 +1635,13 @@ public class PropertyExternalService {
      * @return
      */
     public RestAssessmentDetails fetchAssessmentDetails(final String assessmentNo) {
-        assessmentDetails = new RestAssessmentDetails();
-        basicProperty = basicPropertyDAO.getAllBasicPropertyByPropertyID(assessmentNo);
+        PropertyImpl property;
+        RestAssessmentDetails assessmentDetails = new RestAssessmentDetails();
+        BasicProperty basicProperty = basicPropertyDAO.getAllBasicPropertyByPropertyID(assessmentNo);
         if(basicProperty != null){
         	assessmentDetails.setAssessmentNo(basicProperty.getUpicNo());
     		assessmentDetails.setPropertyAddress(basicProperty.getAddress().toString());
-            property = (PropertyImpl) basicProperty.getProperty();
+    		property = (PropertyImpl) basicProperty.getProperty();
             assessmentDetails.setLocalityName(basicProperty.getPropertyID().getLocality().getName());
             if (property != null) {
             	assessmentDetails.setOwnerDetails(prepareOwnerInfo(property));
@@ -1882,54 +1683,59 @@ public class PropertyExternalService {
     	}
         return assessmentDetails;
     }
-    
+
     /**
-     * Fetches Assessment Details - owner details, tax dues, plinth area, mutation fee related information - used in MeeSeva 
+     * Fetches Assessment Details - owner details, tax dues, plinth area, mutation fee related information - used in MeeSeva
      * @param applicationNo
      * @return RestAssessmentDetails
      */
     public RestAssessmentDetails loadAssessmentDetails(final String applicationNo) {
-        assessmentDetails = new RestAssessmentDetails();
+        //FIXME move this method to meeseva itself
+        RestAssessmentDetails assessmentDetails = new RestAssessmentDetails();
         PropertyMutation propertyMutation = getPropertyMutationByAssesmentNoAndApplicationNo(null, applicationNo);
-        if(propertyMutation != null){
-        	basicProperty = propertyMutation.getBasicProperty();
-        	if (basicProperty != null) {
-        		assessmentDetails.setAssessmentNo(basicProperty.getUpicNo());
-        		assessmentDetails.setPropertyAddress(basicProperty.getAddress().toString());
+        BasicProperty basicProperty;
+        PropertyImpl property;
+        if (propertyMutation != null) {
+            basicProperty = propertyMutation.getBasicProperty();
+            if (basicProperty != null) {
+                assessmentDetails.setAssessmentNo(basicProperty.getUpicNo());
+                assessmentDetails.setPropertyAddress(basicProperty.getAddress().toString());
                 property = (PropertyImpl) basicProperty.getProperty();
                 assessmentDetails.setLocalityName(basicProperty.getPropertyID().getLocality().getName());
                 if (property != null) {
-                	assessmentDetails.setOwnerDetails(prepareOwnerInfo(property));
-                	if(property.getPropertyDetail().getTotalBuiltupArea() != null && property.getPropertyDetail().getTotalBuiltupArea().getArea() != null)
-                		assessmentDetails.setPlinthArea(property.getPropertyDetail().getTotalBuiltupArea().getArea());
-                	Ptdemand currentPtdemand = ptDemandDAO.getNonHistoryCurrDmdForProperty(property);
-                	BigDecimal totalTaxDue = BigDecimal.ZERO;
-                	if(currentPtdemand != null){
-                		for(EgDemandDetails demandDetails : currentPtdemand.getEgDemandDetails()){
-                			if(demandDetails.getAmount().compareTo(demandDetails.getAmtCollected()) > 0){
-                				totalTaxDue = totalTaxDue.add(demandDetails.getAmount().subtract(demandDetails.getAmtCollected()));
-                			}
-                		}
-                	}
-                	assessmentDetails.setTotalTaxDue(totalTaxDue);
+                    assessmentDetails.setOwnerDetails(prepareOwnerInfo(property));
+                    if (property.getPropertyDetail().getTotalBuiltupArea() != null
+                            && property.getPropertyDetail().getTotalBuiltupArea().getArea() != null)
+                        assessmentDetails.setPlinthArea(property.getPropertyDetail().getTotalBuiltupArea().getArea());
+                    Ptdemand currentPtdemand = ptDemandDAO.getNonHistoryCurrDmdForProperty(property);
+                    BigDecimal totalTaxDue = BigDecimal.ZERO;
+                    if (currentPtdemand != null) {
+                        for (EgDemandDetails demandDetails : currentPtdemand.getEgDemandDetails()) {
+                            if (demandDetails.getAmount().compareTo(demandDetails.getAmtCollected()) > 0) {
+                                totalTaxDue = totalTaxDue
+                                        .add(demandDetails.getAmount().subtract(demandDetails.getAmtCollected()));
+                            }
+                        }
+                    }
+                    assessmentDetails.setTotalTaxDue(totalTaxDue);
                 }
-        	}
-        	if(StringUtils.isNotBlank(propertyMutation.getReceiptNum())){
-	        	assessmentDetails.setFeeReceipt(propertyMutation.getReceiptNum());
-	        	assessmentDetails.setIsMutationFeePaid("Y");
-	        	assessmentDetails.setMutationFee(BigDecimal.ZERO);
-        	}else{
-        		assessmentDetails.setIsMutationFeePaid("N");
-        		assessmentDetails.setMutationFee(propertyMutation.getMutationFee());
-        	}
-        	
-    		assessmentDetails.setApplicationNo(propertyMutation.getApplicationNo());
-        }else{
-    		assessmentDetails.setIsMutationFeePaid("N");
-    	}
+            }
+            if (StringUtils.isNotBlank(propertyMutation.getReceiptNum())) {
+                assessmentDetails.setFeeReceipt(propertyMutation.getReceiptNum());
+                assessmentDetails.setIsMutationFeePaid("Y");
+                assessmentDetails.setMutationFee(BigDecimal.ZERO);
+            } else {
+                assessmentDetails.setIsMutationFeePaid("N");
+                assessmentDetails.setMutationFee(propertyMutation.getMutationFee());
+            }
+
+            assessmentDetails.setApplicationNo(propertyMutation.getApplicationNo());
+        } else {
+            assessmentDetails.setIsMutationFeePaid("N");
+        }
         return assessmentDetails;
     }
-    
+
     /**
      * API for Mutation Fee Payment
      * @param payPropertyTaxDetails
@@ -2001,17 +1807,17 @@ public class PropertyExternalService {
      * @param paymentAmount
      * @return boolean
      */
-    public boolean validateMutationFee(String assessmentNo, BigDecimal paymentAmount){
-    	boolean validFee = true;
-    	PropertyMutation propertyMutation = getLatestPropertyMutationByAssesmentNo(assessmentNo);
-    	if(propertyMutation != null){
-    		if(paymentAmount.compareTo(propertyMutation.getMutationFee()) > 0){
-    			validFee = false;
-    		}
-    	}else{
-    		validFee = false;
-    	}
-    	return validFee;
+    public boolean validateMutationFee(String assessmentNo, BigDecimal paymentAmount) {
+        boolean validFee = true;
+        PropertyMutation propertyMutation = getLatestPropertyMutationByAssesmentNo(assessmentNo);
+        if (propertyMutation != null) {
+            if (paymentAmount.compareTo(propertyMutation.getMutationFee()) > 0) {
+                validFee = false;
+            }
+        } else {
+            validFee = false;
+        }
+        return validFee;
     }
     
     /**
@@ -2020,9 +1826,10 @@ public class PropertyExternalService {
      * @param applicationNo
      * @return PropertyMutation
      */
-    public PropertyMutation getPropertyMutationByAssesmentNoAndApplicationNo(String assessmentNo, String applicationNo){
-    	PropertyMutation propertyMutation = propertyMutationDAO.getPropertyMutationForAssessmentNoAndApplicationNumber(assessmentNo, applicationNo);
-    	return propertyMutation;
+    public PropertyMutation getPropertyMutationByAssesmentNoAndApplicationNo(String assessmentNo, String applicationNo) {
+        PropertyMutation propertyMutation = propertyMutationDAO
+                .getPropertyMutationForAssessmentNoAndApplicationNumber(assessmentNo, applicationNo);
+        return propertyMutation;
     }
     
     /**
@@ -2040,15 +1847,494 @@ public class PropertyExternalService {
      * @return List
      */
     public List<Object[]> getWardBlockLocalityMapping(){
-    	String query = "select parent.parent.boundaryNum as wardnum, parent.parent.name as wardname, parent.boundaryNum as blocknum, parent.name as blockname, child.boundaryNum as localitynum, child.name as localityname"
-    			+ " from CrossHierarchy ch, Boundary parent, Boundary child"
-    			+ " where ch.parent.id = parent.id  and ch.child.id = child.id  and ch.parentType.name=:block and ch.childType.name=:locality "
-    			+ " and parent.parent.boundaryType.hierarchyType.name=:hierarchyType";
-    	List<Object[]> boundaryDetails = entityManager.unwrap(Session.class).createQuery(query)
+    	StringBuilder queryString = new StringBuilder();
+        queryString.append("select parent.parent.boundaryNum as wardnum, parent.parent.name as wardname, parent.boundaryNum as blocknum,");
+        queryString.append(" parent.name as blockname, child.boundaryNum as localitynum, child.name as localityname");
+        queryString.append(" from CrossHierarchy ch, Boundary parent, Boundary child");
+        queryString.append(" where ch.parent.id = parent.id  and ch.child.id = child.id  and ch.parentType.name=:block and");
+        queryString.append(" ch.childType.name=:locality and parent.parent.boundaryType.hierarchyType.name=:hierarchyType");
+    	List<Object[]> boundaryDetails = entityManager.unwrap(Session.class).createQuery(queryString.toString())
     			.setParameter("block", BLOCK)
     			.setParameter("locality", LOCALITY_BNDRY_TYPE)
     			.setParameter("hierarchyType", REVENUE_HIERARCHY_TYPE).list();
     	return boundaryDetails;
     }
     
+    /**
+     * API provides ward-wise property details 
+     * @param ulbCode
+     * @param wardNum
+     * @return List
+     */
+    public List<ViewPropertyDetails> getPropertyDetailsForTheWard(String ulbCode, String wardNum){
+    	Boundary ward = getBoundaryByNumberAndType(wardNum,WARD,REVENUE_HIERARCHY_TYPE);
+    	List<ViewPropertyDetails> propertyDetails = new ArrayList<>(); 
+    	List<BasicProperty> basicProperties = basicPropertyDAO.getActiveBasicPropertiesForWard(ward.getId());
+    	if(!basicProperties.isEmpty()){
+    		ViewPropertyDetails viewPropDetails;
+    		for(BasicProperty basicProperty : basicProperties){
+    			viewPropDetails = new ViewPropertyDetails();
+    			viewPropDetails.setUlbCode(ulbCode);
+    			prepareProperyDetailsInfo(basicProperty,viewPropDetails);
+    			propertyDetails.add(viewPropDetails);
+    		}
+    	}
+    	return propertyDetails;
+    }
+    
+    /**
+     * API to set each property details
+     * @param basicProperty
+     * @param viewPropertyDetails
+     */
+    private void prepareProperyDetailsInfo(BasicProperty basicProperty, ViewPropertyDetails viewPropertyDetails){
+    	String ownerAddress = StringUtils.EMPTY;
+    	Property property = basicProperty.getProperty();
+    	viewPropertyDetails.setOldAssessmentNumber(basicProperty.getOldMuncipalNum());
+    	viewPropertyDetails.setAssessmentNumber(basicProperty.getUpicNo());
+    	viewPropertyDetails.setPropertyTypeMaster(basicProperty.getProperty().getPropertyDetail().getPropertyTypeMaster().getType());
+    	PropertyID propertyID = basicProperty.getPropertyID();
+    	if(property != null){
+    		PropertyDetail propertyDetail = property.getPropertyDetail();
+    		viewPropertyDetails.setExemption(property.getTaxExemptedReason() == null ? NOT_AVAILABLE : property.getTaxExemptedReason().getName());
+    		Ptdemand ptDemand = ptDemandDAO.getNonHistoryCurrDmdForProperty(property);
+    		if(ptDemand != null){
+    			if (ptDemand.getDmdCalculations() != null && ptDemand.getDmdCalculations().getAlv() != null)
+    				viewPropertyDetails.setArv(ptDemand.getDmdCalculations().getAlv());
+                else
+                	viewPropertyDetails.setArv(BigDecimal.ZERO);
+    		}
+    		populatePropertyDetails(basicProperty, viewPropertyDetails, propertyID, propertyDetail);
+    	}
+    	
+    	populateOwnerAndAddressDetails(basicProperty, viewPropertyDetails, ownerAddress, propertyID);
+    }
+
+    /**
+     * API to populate owner and address details
+     * @param basicProperty
+     * @param viewPropertyDetails
+     * @param ownerAddress
+     * @param propertyID
+     */
+	public void populateOwnerAndAddressDetails(BasicProperty basicProperty, ViewPropertyDetails viewPropertyDetails,
+			String ownerAddress, PropertyID propertyID) {
+		if (!basicProperty.getPropertyOwnerInfo().isEmpty()) {
+            for (PropertyOwnerInfo propOwner : basicProperty.getPropertyOwnerInfo()) {
+                List<Address> addrSet = propOwner.getOwner().getAddress();
+                for (final Address address : addrSet) {
+                    ownerAddress = address.toString();
+                    viewPropertyDetails.setDoorNo(address.getHouseNoBldgApt() == null ? NOT_AVAILABLE : address.getHouseNoBldgApt());
+                    break;
+                }
+            }
+            viewPropertyDetails.setPropertyAddress(basicProperty.getAddress().toString());
+            viewPropertyDetails.setCorrAddress(StringUtils.isBlank(ownerAddress)? NOT_AVAILABLE : ownerAddress);
+            viewPropertyDetails.setOwnerDetails(getOwnerDetails(basicProperty));
+        }
+    	viewPropertyDetails.setZoneName(propertyID.getZone().getName());
+    	viewPropertyDetails.setWardName(propertyID.getWard().getName());
+    	viewPropertyDetails.setBlockName(propertyID.getArea().getName());
+    	viewPropertyDetails.setLocalityName(propertyID.getLocality().getName());
+    	viewPropertyDetails.setElectionWardName(propertyID.getElectionBoundary().getName());
+    	viewPropertyDetails.setEnumerationBlockName(NOT_AVAILABLE);
+	}
+
+    /**
+     * API to set property level details
+     * @param basicProperty
+     * @param viewPropertyDetails
+     * @param propertyID
+     * @param propertyDetail
+     */
+	public void populatePropertyDetails(BasicProperty basicProperty, ViewPropertyDetails viewPropertyDetails,
+			PropertyID propertyID, PropertyDetail propertyDetail) {
+		viewPropertyDetails.setEffectiveDate(DateUtils.getDefaultFormattedDate(basicProperty.getPropOccupationDate()));
+		viewPropertyDetails.setCategory(PropertyTaxConstants.PROPERTY_TYPE_CATEGORIES.get(propertyDetail.getCategoryType()));
+		viewPropertyDetails.setApartmentCmplx(propertyDetail.getApartment() == null ? NOT_AVAILABLE : 
+			propertyDetail.getApartment().getName());
+		viewPropertyDetails.setExtentOfSite(propertyDetail.getSitalArea() == null ? NOT_AVAILABLE : 
+			propertyDetail.getSitalArea().getArea().toString());
+		viewPropertyDetails.setExtentAppartenauntLand(propertyDetail.getExtentAppartenauntLand() == null ? NOT_AVAILABLE :
+			propertyDetail.getExtentAppartenauntLand().toString());
+		viewPropertyDetails.setRegdDocNo(basicProperty.getRegdDocNo());
+		viewPropertyDetails.setRegdDocDate(DateUtils.getDefaultFormattedDate(basicProperty.getRegdDocDate()));
+		viewPropertyDetails.setMutationReason(propertyDetail.getPropertyMutationMaster().getMutationName());
+		viewPropertyDetails.setAssessmentDate(DateUtils.getDefaultFormattedDate(basicProperty.getAssessmentdate()));
+		
+		if(!propertyDetail.getPropertyTypeMaster().getCode().equalsIgnoreCase(OWNERSHIP_TYPE_VAC_LAND)){
+			viewPropertyDetails.setHasLift(propertyDetail.isLift());
+			viewPropertyDetails.setHasToilet(propertyDetail.isToilets());
+			viewPropertyDetails.setHasWaterTap(propertyDetail.isWaterTap());
+			viewPropertyDetails.setHasElectricity(propertyDetail.isElectricity());
+			viewPropertyDetails.setHasAttachedBathroom(propertyDetail.isAttachedBathRoom());
+			viewPropertyDetails.setHasWaterHarvesting(propertyDetail.isWaterHarvesting());
+			viewPropertyDetails.setHasCableConnection(propertyDetail.isCable());
+			viewPropertyDetails.setFloorType(propertyDetail.getFloorType().getName());
+			viewPropertyDetails.setRoofType(propertyDetail.getRoofType().getName());
+			viewPropertyDetails.setWallType(propertyDetail.getWallType() == null ? NOT_AVAILABLE : propertyDetail.getWallType().getName());
+			viewPropertyDetails.setWoodType(propertyDetail.getWoodType() == null ? NOT_AVAILABLE : propertyDetail.getWoodType().getName());
+			viewPropertyDetails.setFloorDetails(getFloorDetails(propertyDetail));
+		} else{
+			getVacantLandDetails(viewPropertyDetails, propertyDetail, propertyID);
+		}
+	}
+    
+	/**
+	 * API to set owner details
+	 * @param basicProperty
+	 * @return List
+	 */
+    private List<OwnerInformation> getOwnerDetails(BasicProperty basicProperty){
+    	List<OwnerInformation> ownerDetails = new ArrayList<>();
+    	OwnerInformation ownerInfo;
+    	User owner;
+    	for(PropertyOwnerInfo propOwnerInfo : basicProperty.getPropertyOwnerInfo()){
+    		ownerInfo = new OwnerInformation();
+    		owner = propOwnerInfo.getOwner();
+    		ownerInfo.setAadhaarNo(owner.getAadhaarNumber());
+    		ownerInfo.setMobileNumber(owner.getMobileNumber());
+    		ownerInfo.setName(owner.getName());
+    		ownerInfo.setGender(owner.getGender().name());
+    		ownerInfo.setEmailId(owner.getEmailId());
+    		ownerInfo.setGuardianRelation(owner.getGuardianRelation());
+    		ownerInfo.setGuardian(owner.getGuardian());
+    		
+    		ownerDetails.add(ownerInfo);
+    	}
+    	return ownerDetails;
+    }
+    
+    /**
+     * API to set floor details
+     * @param propertyDetail
+     * @return List
+     */
+    private List<FloorDetails> getFloorDetails(PropertyDetail propertyDetail){
+    	List<FloorDetails> floorDetails = new ArrayList<>();
+    	FloorDetails floorDet;
+    	for(Floor floor : propertyDetail.getFloorDetails()){
+    		floorDet = new FloorDetails();
+    		floorDet.setFloorNoCode(FLOOR_MAP.get(floor.getFloorNo()));
+    		floorDet.setBuildClassificationCode(floor.getStructureClassification().getDescription());
+    		floorDet.setNatureOfUsageCode(floor.getPropertyUsage().getUsageName());
+    		floorDet.setFirmName(StringUtils.isBlank(floor.getFirmName()) ? NOT_AVAILABLE : floor.getFirmName()); 
+    		floorDet.setOccupancyCode(floor.getPropertyOccupation().getOccupation());
+    		floorDet.setOccupantName(StringUtils.isBlank(floor.getOccupantName()) ? NOT_AVAILABLE : floor.getOccupantName());
+    		floorDet.setConstructionDate(floor.getConstructionDate() == null ? NOT_AVAILABLE : DateUtils.getDefaultFormattedDate(floor.getConstructionDate()));
+    		floorDet.setOccupancyDate(DateUtils.getDefaultFormattedDate(floor.getOccupancyDate()));
+    		floorDet.setPlinthLength(floor.getBuiltUpArea().getLength());
+    		floorDet.setPlinthBreadth(floor.getBuiltUpArea().getBreadth());
+    		floorDet.setPlinthArea(floor.getBuiltUpArea().getArea());
+    		floorDet.setBuildingPermissionNo(floor.getBuildingPermissionNo());
+    		floorDet.setBuildingPermissionDate(floor.getBuildingPermissionDate() == null ? NOT_AVAILABLE : DateUtils.getDefaultFormattedDate(floor.getBuildingPermissionDate()));
+    		floorDet.setBuildingPlanPlinthArea(floor.getBuildingPlanPlinthArea() == null ? 0.0F : floor.getBuildingPlanPlinthArea().getArea());
+    		floorDet.setUnitRate(floor.getFloorDmdCalc().getCategoryAmt().doubleValue());
+    		
+    		floorDetails.add(floorDet);
+    	}
+    	return floorDetails;
+    }
+    
+    /**
+     * API to set Vacant land details
+     * @param viewPropertyDetails
+     * @param propertyDetail
+     * @param propertyID
+     */
+    private void getVacantLandDetails(ViewPropertyDetails viewPropertyDetails, PropertyDetail propertyDetail, PropertyID propertyID){
+    	viewPropertyDetails.setSurveyNumber(propertyDetail.getSurveyNumber());
+    	viewPropertyDetails.setPattaNumber(propertyDetail.getPattaNumber());
+    	viewPropertyDetails.setVacantLandArea(propertyDetail.getSitalArea().getArea());
+    	viewPropertyDetails.setMarketValue(propertyDetail.getMarketValue());
+    	viewPropertyDetails.setCurrentCapitalValue(propertyDetail.getCurrentCapitalValue());
+    	viewPropertyDetails.setEffectiveDate(DateUtils.getDefaultFormattedDate(propertyDetail.getDateOfCompletion()));
+    	
+    	viewPropertyDetails.setNorthBoundary(propertyID.getNorthBoundary());
+    	viewPropertyDetails.setEastBoundary(propertyID.getEastBoundary());
+    	viewPropertyDetails.setWestBoundary(propertyID.getWestBoundary());
+    	viewPropertyDetails.setSouthBoundary(propertyID.getSouthBoundary());
+    	
+    }
+    
+    /**
+     * Gives the count of properties for the given input criteria
+     * @param transactionType
+     * @param fromDate
+     * @param toDate
+     * @return
+     * @throws ParseException
+     */
+    public Long getPropertiesCount(String transactionType, String fromDate, String toDate) throws ParseException{
+    	StringBuilder queryString = new StringBuilder();
+        queryString.append("select count(distinct prop.basicProperty.id) from PropertyImpl prop, PropertyMaterlizeView pmv ");
+        queryString.append(" where prop.basicProperty.id = pmv.basicPropertyID and (cast(prop.createdDate as date)) between :fromDate and :toDate ");
+        queryString.append(" and upper(prop.propertyModifyReason) like :modifyReason and prop.status in ('A','I') ");
+        if(transactionType.equalsIgnoreCase(PropertyTaxConstants.TRANSACTION_TYPE_CREATE))
+        	queryString.append(" and prop.demolitionReason is null ");
+        else if(transactionType.equalsIgnoreCase(PropertyTaxConstants.TRANSACTION_TYPE_DEMOLITION))
+        	queryString.append(" and prop.demolitionReason is not null ");
+        final Query qry = entityManager.createQuery(queryString.toString());
+      	qry.setParameter("fromDate", convertStringToDate(fromDate));
+       	qry.setParameter("toDate", convertStringToDate(toDate));
+       	qry.setParameter("modifyReason", "%".concat(transactionType.toUpperCase()).concat("%"));
+    	return (Long) qry.getResultList().get(0);
+    }
+    
+    /**
+     * Gives details of the properties for the selected input criteria
+     * @param transactionType
+     * @param fromDate
+     * @param toDate
+     * @return
+     * @throws ParseException
+     */
+    public List<SurveyAssessmentDetails> getPropertyDetailsForSurvey(String transactionType, String fromDate, String toDate) throws ParseException{
+    	StringBuilder queryString = new StringBuilder();
+    	List<SurveyAssessmentDetails> assessmentDetailsList = new ArrayList<>();
+        queryString.append("select prop, pmv.houseNo, pmv.propertyAddress, pmv.sitalArea, (coalesce(pmv.arrearDemand,0)+coalesce(pmv.aggrArrearPenaly,0)+coalesce(pmv.aggrCurrFirstHalfPenaly,0)+");
+        queryString.append("coalesce(pmv.aggrCurrSecondHalfPenaly,0)+coalesce(pmv.aggrCurrFirstHalfDmd,0)+coalesce(pmv.aggrCurrSecondHalfDmd,0)) from PropertyImpl prop, PropertyMaterlizeView pmv ");
+        queryString.append(" where prop.basicProperty.id = pmv.basicPropertyID and (cast(prop.createdDate as date)) between :fromDate and :toDate ");
+        queryString.append(" and upper(prop.propertyModifyReason) like :modifyReason and prop.status in ('A','I') ");
+        if(transactionType.equalsIgnoreCase(PropertyTaxConstants.TRANSACTION_TYPE_CREATE))
+        	queryString.append(" and prop.demolitionReason is null ");
+        else if(transactionType.equalsIgnoreCase(PropertyTaxConstants.TRANSACTION_TYPE_DEMOLITION))
+        	queryString.append(" and prop.demolitionReason is not null ");
+        final Query qry = entityManager.createQuery(queryString.toString());
+      	qry.setParameter("fromDate", convertStringToDate(fromDate));
+       	qry.setParameter("toDate", convertStringToDate(toDate));
+       	qry.setParameter("modifyReason", "%".concat(transactionType.toUpperCase()).concat("%"));
+       	
+    	List<Object[]> propertyDetails = qry.getResultList();
+    	if(!propertyDetails.isEmpty()){
+    		SurveyAssessmentDetails assessmentDetails;
+    		for(Object[] objArr : propertyDetails){
+    			assessmentDetails = new SurveyAssessmentDetails();
+    			preparePropertyDetails(objArr, assessmentDetails);
+    			assessmentDetailsList.add(assessmentDetails);
+    		}
+    	}
+    	return assessmentDetailsList;
+    }
+    
+    private void preparePropertyDetails(Object[] obj,SurveyAssessmentDetails assessmentDetails){
+    	Property property = (Property) obj[0];
+    	BasicProperty basicProperty = property.getBasicProperty();
+    	assessmentDetails.setAssessmentNo(basicProperty.getUpicNo());
+    	assessmentDetails.setDoorNo(obj[1].toString());
+        assessmentDetails.setPropertyAddress(obj[2].toString());
+        assessmentDetails.setPropertyType(property.getPropertyDetail().getPropertyTypeMaster().getType());
+        assessmentDetails.setPropertyCategory(PropertyTaxConstants.PROPERTY_TYPE_CATEGORIES.get(property.getPropertyDetail().getCategoryType()));
+        assessmentDetails.setAssessmentYear(DateUtils.toYearFormat(basicProperty.getPropOccupationDate()));
+        assessmentDetails.setTotalTax(new BigDecimal(obj[4].toString()));
+        assessmentDetails.setTotalSitalArea(new BigDecimal(obj[3].toString()));
+        assessmentDetails.setOwnerDetails(getOwnerDetails(basicProperty));
+    }
+    
+    /**
+     * API to update property - used in Mobile App
+     * @param viewPropertyDetails
+     * @return NewPropertyDetails
+     * @throws ParseException
+     */
+    public NewPropertyDetails updateProperty(ViewPropertyDetails viewPropertyDetails) throws ParseException{
+    	NewPropertyDetails newPropertyDetails = null;
+    	final PropertyService propService = beanProvider.getBean("propService", PropertyService.class);
+    	BasicProperty basicProperty = updateBasicProperty(viewPropertyDetails, propService);
+    	PropertyImpl property = (PropertyImpl)basicProperty.getWFProperty();
+    	basicProperty.setUnderWorkflow(Boolean.TRUE);
+    	transitionWorkFlow(property, propService,PROPERTY_MODE_MODIFY);
+        basicPropertyService.applyAuditing(property.getState());
+        propService.updateIndexes(property, PropertyTaxConstants.APPLICATION_TYPE_ALTER_ASSESSENT);
+        if (basicProperty.getWFProperty() != null && basicProperty.getWFProperty().getPtDemandSet() != null
+                && !basicProperty.getWFProperty().getPtDemandSet().isEmpty()) {
+            for (Ptdemand ptDemand : basicProperty.getWFProperty().getPtDemandSet()) {
+                basicPropertyService.applyAuditing(ptDemand.getDmdCalculations());
+            }
+        }
+        basicProperty = basicPropertyService.update(basicProperty);
+        if (basicProperty != null) {
+            newPropertyDetails = new NewPropertyDetails();
+            newPropertyDetails.setApplicationNo(basicProperty.getWFProperty().getApplicationNo());
+            final ErrorDetails errorDetails = new ErrorDetails();
+            errorDetails.setErrorCode(THIRD_PARTY_ERR_CODE_SUCCESS);
+            errorDetails.setErrorMessage(THIRD_PARTY_ERR_MSG_SUCCESS);
+            newPropertyDetails.setErrorDetails(errorDetails);
+        }
+    	return newPropertyDetails;
+    }
+    
+    /**
+     * Updates the BasicProperty based on the input
+     * @param viewPropertyDetails
+     * @param propService
+     * @return
+     * @throws ParseException
+     */
+    private BasicProperty updateBasicProperty(ViewPropertyDetails viewPropertyDetails, PropertyService propService) throws ParseException{
+    	BasicProperty basicProperty = basicPropertyDAO.getBasicPropertyByPropertyID(viewPropertyDetails.getAssessmentNumber());
+    	PropertyImpl oldProperty = (PropertyImpl) basicProperty.getProperty();
+    	PropertyImpl propertyImpl = createPropertyWithBasicDetails(viewPropertyDetails.getPropertyTypeMaster());
+    	Date propCompletionDate = null;
+        final PropertyTypeMaster propertyTypeMaster = getPropertyTypeMasterByCode(viewPropertyDetails.getPropertyTypeMaster());
+        propertyImpl.getPropertyDetail().setAppurtenantLandChecked(viewPropertyDetails.getIsExtentAppurtenantLand());
+        propertyImpl.getPropertyDetail().setEffectiveDate(convertStringToDate(viewPropertyDetails.getEffectiveDate()));
+        if(StringUtils.isNotBlank(viewPropertyDetails.getApartmentCmplx())){
+        	final Apartment apartment = getApartmentByCode(viewPropertyDetails.getApartmentCmplx());
+            propertyImpl.getPropertyDetail().setApartment(apartment);
+        }
+        propertyImpl.getPropertyDetail().setOccupancyCertificationNo(viewPropertyDetails.getOccupancyCertificationNo());
+        final PropertyMutationMaster propMutMstr = getPropertyMutationMaster(PROPERTY_MODIFY_REASON_ADD_OR_ALTER);
+        basicProperty.setPropertyMutationMaster(propMutMstr);
+        
+        if(!propertyTypeMaster.getCode().equalsIgnoreCase(OWNERSHIP_TYPE_VAC_LAND)){
+        	final FloorType floorType = floorTypeService.getFloorTypeById(Long.valueOf(viewPropertyDetails.getFloorType()));
+            final RoofType roofType = roofTypeService.getRoofTypeById(Long.valueOf(viewPropertyDetails.getRoofType()));
+            WallType wallType = null;
+            WoodType woodType = null;
+            if(StringUtils.isNotBlank(viewPropertyDetails.getWallType()))
+            	wallType = wallTypeService.getWallTypeById(Long.valueOf(viewPropertyDetails.getWallType()));
+            if(StringUtils.isNotBlank(viewPropertyDetails.getWoodType()))
+            	woodType = woodTypeService.getWoodTypeById(Long.valueOf(viewPropertyDetails.getWoodType()));
+            
+        	propertyImpl.getPropertyDetail().setFloorDetailsProxy(getFloorList(viewPropertyDetails.getFloorDetails()));
+            propertyImpl.getPropertyDetail().setLift(viewPropertyDetails.getHasLift());
+            propertyImpl.getPropertyDetail().setToilets(viewPropertyDetails.getHasToilet());
+            propertyImpl.getPropertyDetail().setWaterTap(viewPropertyDetails.getHasWaterTap());
+            propertyImpl.getPropertyDetail().setElectricity(viewPropertyDetails.getHasElectricity());
+            propertyImpl.getPropertyDetail().setAttachedBathRoom(viewPropertyDetails.getHasAttachedBathroom());
+            propertyImpl.getPropertyDetail().setWaterHarvesting(viewPropertyDetails.getHasWaterHarvesting());
+            propertyImpl.getPropertyDetail().setCable(viewPropertyDetails.getHasCableConnection());
+            
+            propertyImpl.getPropertyDetail().setExtentSite(Double.valueOf(viewPropertyDetails.getExtentOfSite()));
+            propertyImpl = propService.createProperty(propertyImpl, viewPropertyDetails.getExtentOfSite(), 
+            		propMutMstr.getCode(),propertyTypeMaster.getId().toString(),
+                    null, null, STATUS_WORKFLOW, propertyImpl.getDocNumber(), null, floorType != null ? floorType.getId() : null,
+                    roofType != null ? roofType.getId() : null, wallType != null ? wallType.getId() : null,
+                    woodType != null ? woodType.getId() : null, null);
+        }else{
+        	propertyImpl.getPropertyDetail().setDateOfCompletion(convertStringToDate(viewPropertyDetails.getEffectiveDate()));
+        	propertyImpl.getPropertyDetail().setCurrentCapitalValue(viewPropertyDetails.getCurrentCapitalValue());
+            propertyImpl.getPropertyDetail().setSurveyNumber(viewPropertyDetails.getSurveyNumber());
+            propertyImpl.getPropertyDetail().setPattaNumber(viewPropertyDetails.getPattaNumber());
+            final Area area = new Area();
+            area.setArea(viewPropertyDetails.getVacantLandArea());
+            propertyImpl.getPropertyDetail().setSitalArea(area);
+            propertyImpl.getPropertyDetail().setMarketValue(viewPropertyDetails.getMarketValue());
+            
+            propertyImpl = propService.createProperty(propertyImpl, String.valueOf(viewPropertyDetails.getVacantLandArea()), 
+            		propMutMstr.getCode(), propertyTypeMaster.getId().toString(),
+                    null, null, STATUS_WORKFLOW, propertyImpl.getDocNumber(), null, null, null,
+                    null, null, null);
+        }
+        if (!propertyTypeMaster.getCode().equalsIgnoreCase(OWNERSHIP_TYPE_VAC_LAND))
+            propCompletionDate = propService.getLowestDtOfCompFloorWise(propertyImpl.getPropertyDetail()
+                    .getFloorDetailsProxy());
+        else
+            propCompletionDate = propertyImpl.getPropertyDetail().getDateOfCompletion();
+        basicProperty.setPropOccupationDate(propCompletionDate);
+
+        propertyImpl.setPropertyModifyReason(PROPERTY_MODIFY_REASON_ADD_OR_ALTER);
+        propertyImpl.setBasicProperty(basicProperty);
+        propertyImpl.setEffectiveDate(propCompletionDate);
+        final Long oldPropTypeId = oldProperty.getPropertyDetail().getPropertyTypeMaster().getId();
+        final PropertyTypeMaster vacantPropTypeMstr = propertyTypeMasterDAO.getPropertyTypeMasterByCode(OWNERSHIP_TYPE_VAC_LAND); 
+        
+        //if modifying from OPEN_PLOT to OTHERS or from OTHERS to OPEN_PLOT property type
+        if ((oldPropTypeId == vacantPropTypeMstr.getId() && propertyTypeMaster.getId() != vacantPropTypeMstr.getId() || oldPropTypeId != vacantPropTypeMstr
+                .getId() && propertyTypeMaster.getId() == vacantPropTypeMstr.getId())
+                && !propertyImpl.getStatus().equals(STATUS_WORKFLOW))
+            if (vacantPropTypeMstr != null
+                    && vacantPropTypeMstr.getId() == propertyTypeMaster.getId())
+                changePropertyDetail(propertyImpl, new VacantProperty(), 0);
+            else
+                changePropertyDetail(propertyImpl, new BuiltUpProperty(), propertyImpl.getPropertyDetail()
+                        .getNoofFloors());
+
+        Property modProperty = null;
+        try {
+            modProperty = propService.modifyDemand(propertyImpl, oldProperty);
+            
+        } catch (TaxCalculatorExeption e) {
+
+        }
+
+        if (modProperty != null && !modProperty.getDocuments().isEmpty())
+            propService.processAndStoreDocument(modProperty.getDocuments());
+
+        if (modProperty == null)
+        	basicProperty.addProperty(propertyImpl);
+        else
+        	basicProperty.addProperty(modProperty);
+    	
+    	return basicProperty;
+    }
+    
+    /**
+     * Changes the property details to BuiltUpProperty or VacantProperty
+     * @param modProperty - the property which is getting modified
+     * @param propDetail - PropertyDetail type, either BuiltUpProperty or VacantProperty
+     * @param numOfFloors - the no. of floors which is depending on PropertyDetail
+     */
+    private void changePropertyDetail(final Property modProperty, final PropertyDetail propDetail,
+            final Integer numOfFloors) {
+
+        final PropertyDetail propertyDetail = modProperty.getPropertyDetail();
+
+        propDetail.setSitalArea(propertyDetail.getSitalArea());
+        propDetail.setTotalBuiltupArea(propertyDetail.getTotalBuiltupArea());
+        propDetail.setCommBuiltUpArea(propertyDetail.getCommBuiltUpArea());
+        propDetail.setPlinthArea(propertyDetail.getPlinthArea());
+        propDetail.setCommVacantLand(propertyDetail.getCommVacantLand());
+        propDetail.setSurveyNumber(propertyDetail.getSurveyNumber());
+        propDetail.setFieldVerified(propertyDetail.getFieldVerified());
+        propDetail.setFieldVerificationDate(propertyDetail.getFieldVerificationDate());
+        propDetail.setFloorDetails(propertyDetail.getFloorDetails());
+        propDetail.setPropertyDetailsID(propertyDetail.getPropertyDetailsID());
+        propDetail.setWater_Meter_Num(propertyDetail.getWater_Meter_Num());
+        propDetail.setElec_Meter_Num(propertyDetail.getElec_Meter_Num());
+        propDetail.setNoofFloors(numOfFloors);
+        propDetail.setFieldIrregular(propertyDetail.getFieldIrregular());
+        propDetail.setDateOfCompletion(propertyDetail.getDateOfCompletion());
+        propDetail.setProperty(propertyDetail.getProperty());
+        propDetail.setUpdatedTime(propertyDetail.getUpdatedTime());
+        propDetail.setPropertyTypeMaster(propertyDetail.getPropertyTypeMaster());
+        propDetail.setPropertyType(propertyDetail.getPropertyType());
+        propDetail.setInstallment(propertyDetail.getInstallment());
+        propDetail.setPropertyOccupation(propertyDetail.getPropertyOccupation());
+        propDetail.setPropertyMutationMaster(propertyDetail.getPropertyMutationMaster());
+        propDetail.setComZone(propertyDetail.getComZone());
+        propDetail.setCornerPlot(propertyDetail.getCornerPlot());
+        propDetail.setCable(propertyDetail.isCable());
+        propDetail.setAttachedBathRoom(propertyDetail.isAttachedBathRoom());
+        propDetail.setElectricity(propertyDetail.isElectricity());
+        propDetail.setWaterTap(propertyDetail.isWaterTap());
+        propDetail.setWaterHarvesting(propertyDetail.isWaterHarvesting());
+        propDetail.setLift(propertyDetail.isLift());
+        propDetail.setToilets(propertyDetail.isToilets());
+        propDetail.setFloorType(propertyDetail.getFloorType());
+        propDetail.setRoofType(propertyDetail.getRoofType());
+        propDetail.setWallType(propertyDetail.getWallType());
+        propDetail.setWoodType(propertyDetail.getWoodType());
+        propDetail.setExtentSite(propertyDetail.getExtentSite());
+        propDetail.setExtentAppartenauntLand(propertyDetail.getExtentAppartenauntLand());
+        if (numOfFloors == 0)
+            propDetail.setPropertyUsage(propertyDetail.getPropertyUsage());
+        else
+            propDetail.setPropertyUsage(null);
+        propDetail.setManualAlv(propertyDetail.getManualAlv());
+        propDetail.setOccupierName(propertyDetail.getOccupierName());
+
+        modProperty.setPropertyDetail(propDetail);
+
+    }
+
+    public String getPropertyType(String assessmentno) {
+        String pType = "";
+        final BasicProperty basicProperty = basicPropertyDAO.getBasicPropertyByPropertyID(assessmentno);
+        PropertyTypeMaster ptypeMaster = basicProperty.getProperty().getPropertyDetail().getPropertyTypeMaster();
+        if (ptypeMaster != null)
+            pType = ptypeMaster.getCode();
+        return pType;
+    }
 }

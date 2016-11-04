@@ -41,7 +41,9 @@ package org.egov.lcms.transactions.entity;
 
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -55,21 +57,24 @@ import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
 import javax.persistence.Transient;
 import javax.validation.Valid;
 
-import org.egov.commons.EgwStatus;
 import org.egov.infra.persistence.entity.AbstractAuditable;
-import org.egov.infra.persistence.validator.annotation.OptionalPattern;
 import org.egov.infra.utils.DateUtils;
 import org.egov.infra.validation.exception.ValidationError;
-import org.egov.lcms.utils.constants.LcmsConstants;
-import org.egov.pims.commons.Position;
+import org.hibernate.envers.AuditOverride;
+import org.hibernate.envers.AuditOverrides;
+import org.hibernate.envers.Audited;
 import org.hibernate.validator.constraints.Length;
 
 @Entity
 @Table(name = "EGLC_HEARINGS")
 @SequenceGenerator(name = Hearings.SEQ_EGLC_HEARINGS, sequenceName = Hearings.SEQ_EGLC_HEARINGS, allocationSize = 1)
+@AuditOverrides({ @AuditOverride(forClass = AbstractAuditable.class, name = "lastModifiedBy"),
+    @AuditOverride(forClass = AbstractAuditable.class, name = "lastModifiedDate") })
 public class Hearings extends AbstractAuditable {
 
     private static final long serialVersionUID = 1517694643078084884L;
@@ -79,52 +84,47 @@ public class Hearings extends AbstractAuditable {
     @GeneratedValue(generator = SEQ_EGLC_HEARINGS, strategy = GenerationType.SEQUENCE)
     private Long id;
 
+    @Temporal(TemporalType.DATE)
+    @Audited
     private Date hearingDate;
 
     @ManyToOne
     @Valid
     @JoinColumn(name = "legalcase", nullable = false)
+    @Audited
     private LegalCase legalCase;
 
     @Column(name = "isstandingcounselpresent")
+    @Audited
     private boolean isStandingCounselPresent;
 
     @Length(max = 128)
-    @OptionalPattern(regex = LcmsConstants.mixedChar, message = "hearing.additionalLawyerName.text")
+    @Audited
     private String additionalLawyers;
 
-    @OneToMany(mappedBy = "hearing", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
-    List<EmployeeHearing> employeeHearingList = new ArrayList<EmployeeHearing>();
+    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, mappedBy = "hearing", orphanRemoval = true)
+    @Audited
+    Set<EmployeeHearing> employeeHearingList = new HashSet<EmployeeHearing>(0);
+
     @Transient
-    List<Position> positionTemplList = new ArrayList<Position>(0);
-    /*
-     * @OneToMany(mappedBy = "EMPLOYEE", fetch = FetchType.LAZY, cascade =
-     * CascadeType.ALL, orphanRemoval = true) private Set<PersonalInformation>
-     * eglcEmployeehearings = new HashSet<PersonalInformation>(0);* need to
-     * check
-     */
+    @Audited
+    List<EmployeeHearing> positionTemplList = new ArrayList<EmployeeHearing>();
 
     @Length(max = 1024)
+    @Audited
     private String hearingOutcome;
 
+    @Audited
     private boolean isSeniorStandingCounselPresent;
 
     @Length(max = 1024)
     @Column(name = "purposeofhearing")
+    @Audited
     private String purposeofHearings;
 
-    @ManyToOne
-    @Valid
-    @JoinColumn(name = "STATUS", nullable = false)
-    private EgwStatus status;
-
     @Length(max = 50)
+    @Audited
     private String referenceNumber;
-
-    /*
-     * public void addEmployee(final PersonalInformation empObj) {
-     * eglcEmployeehearings.add(empObj); }
-     */
 
     public Date getHearingDate() {
         return hearingDate;
@@ -150,13 +150,6 @@ public class Hearings extends AbstractAuditable {
         this.additionalLawyers = additionalLawyers;
     }
 
-    /*
-     * public Set<PersonalInformation> getEglcEmployeehearings() { return
-     * eglcEmployeehearings; } public void setEglcEmployeehearings(final
-     * Set<PersonalInformation> eglcEmployeehearings) {
-     * this.eglcEmployeehearings = eglcEmployeehearings; }
-     */
-
     public String getHearingOutcome() {
         return hearingOutcome;
     }
@@ -179,37 +172,6 @@ public class Hearings extends AbstractAuditable {
 
     public void setPurposeofHearings(final String purposeofHearings) {
         this.purposeofHearings = purposeofHearings;
-    }
-
-    public Date getCaDueDate() {
-        Date caDueDate = null;
-        for (final Pwr pwr : getLegalCase().getEglcPwrs())
-            caDueDate = pwr.getCaDueDate();
-        return caDueDate;
-    }
-
-    public List<ValidationError> validate() {
-        final List<ValidationError> errors = new ArrayList<ValidationError>();
-        if (getHearingDate() != null) {
-
-            if (getCaDueDate() != null && !DateUtils.compareDates(getHearingDate(), getCaDueDate()))
-                errors.add(new ValidationError("hearingDate", "hearingDate.greaterThan.caDueDate"));
-            if (legalCase.getCaseReceivingDate() != null
-                    && !DateUtils.compareDates(getHearingDate(), legalCase.getCaseReceivingDate()))
-                errors.add(new ValidationError("hearingDate", "hearingDate.greaterThan.caseReceivingDate"));
-            if (!DateUtils.compareDates(getHearingDate(), legalCase.getCasedate()))
-                errors.add(new ValidationError("hearingDate", "hearingDate.greaterThan.caseDate"));
-
-        }
-        return errors;
-    }
-
-    public EgwStatus getStatus() {
-        return status;
-    }
-
-    public void setStatus(final EgwStatus egwStatus) {
-        status = egwStatus;
     }
 
     public String getReferenceNumber() {
@@ -246,20 +208,51 @@ public class Hearings extends AbstractAuditable {
         this.isStandingCounselPresent = isStandingCounselPresent;
     }
 
-    public List<EmployeeHearing> getEmployeeHearingList() {
+    public List<EmployeeHearing> getTempEmplyeeHearing() {
+        final List<EmployeeHearing> tempList = new ArrayList<EmployeeHearing>();
+        for (final EmployeeHearing temp : employeeHearingList)
+            tempList.add(temp);
+        return tempList;
+
+    }
+
+    public Set<EmployeeHearing> getEmployeeHearingList() {
         return employeeHearingList;
     }
 
-    public void setEmployeeHearingList(final List<EmployeeHearing> employeeHearingList) {
+    public void setEmployeeHearingList(final Set<EmployeeHearing> employeeHearingList) {
         this.employeeHearingList = employeeHearingList;
     }
 
-    public List<Position> getPositionTemplList() {
+    public List<EmployeeHearing> getPositionTemplList() {
         return positionTemplList;
     }
 
-    public void setPositionTemplList(final List<Position> positionTemplList) {
+    public void setPositionTemplList(final List<EmployeeHearing> positionTemplList) {
         this.positionTemplList = positionTemplList;
+    }
+
+    public Date getCaDueDate() {
+        Date caDueDate = null;
+        for (final Pwr pwr : getLegalCase().getPwrList())
+            caDueDate = pwr.getCaDueDate();
+        return caDueDate;
+    }
+
+    public List<ValidationError> validate() {
+        final List<ValidationError> errors = new ArrayList<ValidationError>();
+        if (getHearingDate() != null) {
+
+            if (getCaDueDate() != null && !DateUtils.compareDates(getHearingDate(), getCaDueDate()))
+                errors.add(new ValidationError("hearingDate", "hearingDate.greaterThan.caDueDate"));
+            if (legalCase.getCaseReceivingDate() != null
+                    && !DateUtils.compareDates(getHearingDate(), legalCase.getCaseReceivingDate()))
+                errors.add(new ValidationError("hearingDate", "hearingDate.greaterThan.caseReceivingDate"));
+            if (!DateUtils.compareDates(getHearingDate(), legalCase.getCaseDate()))
+                errors.add(new ValidationError("hearingDate", "hearingDate.greaterThan.caseDate"));
+
+        }
+        return errors;
     }
 
 }

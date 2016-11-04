@@ -48,7 +48,7 @@
 
 		http://www.springframework.org/schema/security http://www.springframework.org/schema/security/spring-security.xsd 
 		http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd"
-	   default-lazy-init="false">
+	   default-lazy-init="true">
 
 	<!-- @author Nagesh.Chauhan(neel4soft@gmail.com) -->
 	<!-- This is default url to get a token from OAuth -->
@@ -68,7 +68,7 @@
 
 	<!-- This is where we tells spring security what URL should be protected 
 		and what roles have access to them -->
-	<http pattern="/**" create-session="never" use-expressions="true"
+	<http pattern="/v1.0/**" create-session="never" use-expressions="true"
 		entry-point-ref="oauthAuthenticationEntryPoint"
 		access-decision-manager-ref="accessDecisionManager"
 		xmlns="http://www.springframework.org/schema/security">

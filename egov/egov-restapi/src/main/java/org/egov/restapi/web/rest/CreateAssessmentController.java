@@ -41,18 +41,12 @@ package org.egov.restapi.web.rest;
 
 import java.io.IOException;
 import java.text.ParseException;
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-import javax.ws.rs.core.MediaType;
-
 import org.apache.commons.lang3.StringUtils;
-import org.codehaus.jackson.JsonGenerationException;
-import org.codehaus.jackson.JsonParseException;
 import org.codehaus.jackson.annotate.JsonMethod;
 import org.codehaus.jackson.annotate.JsonAutoDetect.Visibility;
-import org.codehaus.jackson.map.JsonMappingException;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.codehaus.jackson.map.SerializationConfig;
 import org.egov.dcb.bean.ChequePayment;
@@ -61,14 +55,12 @@ import org.egov.ptis.domain.entity.property.Document;
 import org.egov.ptis.domain.model.ErrorDetails;
 import org.egov.ptis.domain.model.FloorDetails;
 import org.egov.ptis.domain.model.NewPropertyDetails;
-import org.egov.ptis.domain.model.OwnerDetails;
 import org.egov.ptis.domain.service.property.PropertyExternalService;
 import org.egov.restapi.model.AmenitiesDetails;
 import org.egov.restapi.model.AssessmentsDetails;
 import org.egov.restapi.model.ConstructionTypeDetails;
 import org.egov.restapi.model.CorrespondenceAddressDetails;
 import org.egov.restapi.model.CreatePropertyDetails;
-import org.egov.restapi.model.OwnerInformation;
 import org.egov.restapi.model.PropertyAddressDetails;
 import org.egov.restapi.model.SurroundingBoundaryDetails;
 import org.egov.restapi.model.VacantLandDetails;
@@ -80,6 +72,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 import org.egov.ptis.constants.PropertyTaxConstants;
+
+import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 
 @RestController
 public class CreateAssessmentController {
@@ -95,25 +89,22 @@ public class CreateAssessmentController {
      * 
      * @param createPropertyDetails - Property details request
      * @return
-     * @throws JsonGenerationException
-     * @throws JsonMappingException
      * @throws IOException
      * @throws ParseException
      */
-	@RequestMapping(value = "/property/createProperty", method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON, produces = MediaType.APPLICATION_JSON)
+	@RequestMapping(value = "/property/createProperty", method = RequestMethod.POST, consumes = APPLICATION_JSON_VALUE, produces = APPLICATION_JSON_VALUE)
 	public String createProperty(@RequestBody String createPropertyDetails)
-			throws JsonGenerationException, JsonMappingException, IOException, ParseException {
-		String responseJson = new String();
+			throws IOException, ParseException {
+		String responseJson;
 		ApplicationThreadLocals.setUserId(2L);
 		CreatePropertyDetails createPropDetails = (CreatePropertyDetails) getObjectFromJSONRequest(
                 createPropertyDetails, CreatePropertyDetails.class);
 		
-		ErrorDetails errorDetails = validationUtil.validateCreateRequest(createPropDetails);
+		ErrorDetails errorDetails = validationUtil.validateCreateRequest(createPropDetails, PropertyTaxConstants.PROPERTY_MODE_CREATE);
 		if (errorDetails != null) {
 			responseJson = JsonConvertor.convert(errorDetails);
         } else {
 		
-        List<OwnerDetails> ownerDetailsList = getOwnerDetails(createPropDetails.getOwnerDetails());
         AssessmentsDetails assessmentsDetails = createPropDetails.getAssessmentDetails();
         PropertyAddressDetails propAddressDetails = createPropDetails.getPropertyAddressDetails();
         Boolean isCorrAddrDiff = propAddressDetails.getIsCorrAddrDiff();
@@ -128,17 +119,17 @@ public class CreateAssessmentController {
         }
 
         List<Document> documents = null;
-        NewPropertyDetails newPropertyDetails = null;
+        NewPropertyDetails newPropertyDetails;
         if(createPropDetails.getPropertyTypeMasterCode().equalsIgnoreCase(PropertyTaxConstants.OWNERSHIP_TYPE_VAC_LAND)){
         	VacantLandDetails vacantLandDetails = createPropDetails.getVacantLandDetails();
             SurroundingBoundaryDetails surroundingBoundaryDetails = createPropDetails.getSurroundingBoundaryDetails();
 
             newPropertyDetails = propertyExternalService.createNewProperty(createPropDetails.getPropertyTypeMasterCode(),
-            		createPropDetails.getCategoryCode(), null, createPropDetails.getApartmentCmplxCode(), ownerDetailsList, assessmentsDetails.getMutationReasonCode(), null,
+            		createPropDetails.getCategoryCode(), null, createPropDetails.getApartmentCmplxCode(), createPropDetails.getOwnerDetails(), assessmentsDetails.getMutationReasonCode(), null,
             		false, null, assessmentsDetails.getRegdDocNo(), assessmentsDetails.getRegdDocDate(), propAddressDetails.getLocalityNum(), propAddressDetails.getBlockNum(),
             		propAddressDetails.getZoneNum(), propAddressDetails.getStreetNum(), propAddressDetails.getElectionWardNum(), propAddressDetails.getDoorNo(), propAddressDetails.getEnumerationBlockCode(),
             		propAddressDetails.getPinCode(), isCorrAddrDiff, corrAddr1, corrAddr2, corrPinCode, false, false, false, false,
-            		false, false, false, null, null, null, null, Collections.EMPTY_LIST,
+            		false, false, false, null, null, null, null, Collections.emptyList(),
             		vacantLandDetails.getSurveyNumber(), vacantLandDetails.getPattaNumber(), vacantLandDetails.getVacantLandArea(), vacantLandDetails.getMarketValue(),
             		vacantLandDetails.getCurrentCapitalValue(), vacantLandDetails.getEffectiveDate(), surroundingBoundaryDetails.getNorthBoundary(), 
             		surroundingBoundaryDetails.getSouthBoundary(), surroundingBoundaryDetails.getEastBoundary(),
@@ -149,7 +140,7 @@ public class CreateAssessmentController {
             List<FloorDetails> floorDetailsList = createPropDetails.getFloorDetails();
             
             newPropertyDetails = propertyExternalService.createNewProperty(createPropDetails.getPropertyTypeMasterCode(),
-            		createPropDetails.getCategoryCode(), null, createPropDetails.getApartmentCmplxCode(), ownerDetailsList, 
+            		createPropDetails.getCategoryCode(), null, createPropDetails.getApartmentCmplxCode(), createPropDetails.getOwnerDetails(), 
             		assessmentsDetails.getMutationReasonCode(), assessmentsDetails.getExtentOfSite(), assessmentsDetails.getIsExtentAppurtenantLand(),
             		assessmentsDetails.getOccupancyCertificationNo(), assessmentsDetails.getRegdDocNo(),assessmentsDetails.getRegdDocDate(), 
             		propAddressDetails.getLocalityNum(), propAddressDetails.getBlockNum(), propAddressDetails.getZoneNum(), 
@@ -167,39 +158,14 @@ public class CreateAssessmentController {
 	}
 	
 	/**
-	 * Prepares list of OwnerDetails from OwnerInformation
-	 * @param ownerInfoList
-	 * @return
-	 */
-	private List<OwnerDetails> getOwnerDetails(List<OwnerInformation> ownerInfoList){
-		List<OwnerDetails> ownerDetailsList = new ArrayList<OwnerDetails>();
-		OwnerDetails ownerDetails ;
-		for(OwnerInformation ownerInfo : ownerInfoList){
-			ownerDetails = new OwnerDetails();
-			ownerDetails.setAadhaarNo(ownerInfo.getAadhaarNo());
-			ownerDetails.setSalutationCode(ownerInfo.getSalutationCode());
-			ownerDetails.setName(ownerInfo.getName());
-			ownerDetails.setGender(ownerInfo.getGender());
-			ownerDetails.setMobileNumber(ownerInfo.getMobileNumber());
-			ownerDetails.setEmailId(ownerInfo.getEmailId());
-			ownerDetails.setGuardianRelation(ownerInfo.getGuardianRelation());
-			ownerDetails.setGuardian(ownerInfo.getGuardian());
-			ownerDetailsList.add(ownerDetails);
-		}
-		return ownerDetailsList;
-	}
-	
-	/**
      * This method is used to get POJO object from JSON request.
      * 
      * @param jsonString - request JSON string
      * @return
-     * @throws JsonParseException
-     * @throws JsonMappingException
      * @throws IOException
      */
     private Object getObjectFromJSONRequest(String jsonString, Class cls)
-            throws JsonParseException, JsonMappingException, IOException {
+            throws IOException {
         ObjectMapper mapper = new ObjectMapper();
         mapper.setVisibility(JsonMethod.FIELD, Visibility.ANY);
         mapper.configure(SerializationConfig.Feature.AUTO_DETECT_FIELDS, true);

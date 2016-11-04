@@ -229,7 +229,7 @@ public class Relation extends AbstractPersistable<Integer> implements java.io.Se
 
     @Override
     public EgwStatus getEgwStatus() {
-        // TODO Auto-generated method stub
+
         return null;
     }
 

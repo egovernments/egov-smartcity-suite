@@ -37,34 +37,56 @@
  *
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
-var tableContainer;
-var reportdatatable;
-jQuery(document).ready(
-		function($) {
 
-			tableContainer = $('#dailyBoardReportsResults');
-			document.onkeydown = function(evt) {
-				var keyCode = evt ? (evt.which ? evt.which : evt.keyCode)
-						: event.keyCode;
-				if (keyCode == 13) {
-					submitForm();
-				}
-			}
-			$('#dailyBoardReportSearch').click(function() {
+jQuery(document).ready(function($) {
+	$('#dailyBoardReportResult-header').hide();
+	$('#reportgeneration-header').hide();
+	
+	jQuery('#dailyBoardReportSearch').click(function(e){
 				submitForm();
-			});
 
 		});
+});
 
 
 		
 function submitForm() {
 	if($('form').valid()){
 		var caseType = $("#caseCategory").val();
-	$('.report-section').removeClass('display-hide');
-	$('#report-footer').show();
-	reportdatatable = tableContainer
-			.dataTable({
+		var today = getdate();
+		
+		oTable= $('#dailyBoardReportResult-table');
+		$('#dailyBoardReportResult-header').show();
+		$('#reportgeneration-header').show();
+		var oDataTable=oTable.dataTable({
+			"sDom": "<'row'<'col-xs-12 hidden col-right'f>r>t<'row'<'col-md-3 col-xs-12'i><'col-md-3 col-xs-6 col-right'l><'col-xs-12 col-md-3 col-right'<'export-data'T>><'col-md-3 col-xs-6 text-right'p>>",
+			"aLengthMenu": [[10, 25, 50, 100], [10, 25, 50, 100]],
+			"autoWidth": false,
+			"bDestroy": true,
+			"processing": true,
+			"oTableTools" : {
+				"sSwfPath" : "../../../../../../egi/resources/global/swf/copy_csv_xls_pdf.swf",
+				"aButtons" : [ 
+					               {
+							             "sExtends": "pdf",
+							             "mColumns": [ 1, 2, 3, 4,5,6,7,8,9,10],
+		                                 "sPdfMessage": "Report generated on "+today+"",
+		                                 "sTitle": "LegalCase Daily Board Report",
+		                                 "sPdfOrientation": "landscape"
+						                },
+						                {
+								             "sExtends": "xls",
+								             "mColumns": [ 1,2,3,4,5,6,7,8,9,10],
+			                                 "sPdfMessage": "Daily Board Report",
+			                                 "sTitle": "LegalCase Daily Board Report"
+							             },
+							             {
+								             "sExtends": "print",
+								             "mColumns": [ 1,2,3,4,5,6,7,8,9,10],
+			                                 "sPdfMessage": "Daily Board Report",
+			                                 "sTitle": "LegalCase Daily Board Report"
+							             }],
+				},
 				ajax : {
 					
 					url : "/lcms/reports/dailyBoardReportresults",
@@ -72,46 +94,23 @@ function submitForm() {
 						'caseType' :caseType,
 						'fromDate' :$("#fromDate").val(),
 						'toDate': $("#toDate").val(),
-						'officerIncharge' : $("#officerIncharge").val(),
-						'standingCouncil': $("#standingCouncil").val()
+						'officerIncharge' : $("#officerIncharge").val()
 					}
-				},
-				"sPaginationType" : "bootstrap",
-				"autoWidth" : false,
-				"bDestroy" : true,
-				"sDom" : "<'row'<'col-xs-12 hidden col-right'f>r>t<'row'<'col-md-3 col-xs-12'i><'col-md-3 col-xs-6 col-right'l><'col-xs-12 col-md-3 col-right'<'export-data'T>><'col-md-3 col-xs-6 text-right'p>>",
-				"aLengthMenu" : [ [ 10, 25, 50, -1 ], [ 10, 25, 50, "All" ] ],
-				"oTableTools" : {
-					"sSwfPath" : "../../../../../../egi/resources/global/swf/copy_csv_xls_pdf.swf",
-					"aButtons" : [ "xls", "pdf", "print" ]
-				},
-				"fnRowCallBack" : function(row,data,index) {
-					$('td:eq(0)',row).html(index+1);
 				},
 				columns :[{"title" : "S.no"},
 				             
 					       { "data" : "caseTitle" , "title": "Case Title"},  
 						  { "data" : "courtName", "title": "Court Name"},
 						  { "data" : "caseNumber", "title": "Case Number"},
-						  { "data" : "petitioners", "title": "Petitioners"},
-						  { "data" : "respondants", "title": "Respondants"},
+						  { "data" : "petitionerName", "title": "Petitioners"},
+						  { "data" : "respondantName", "title": "Respondants"},
 						  { "data" : "petitionType", "title": "Petition Type"},
 						  { "data" : "standingCouncil", "title": "Standing Council"},
 						  { "data" : "officerIncharge", "title": "In Charge Officer"},
 						  { "data" : "caseStatus", "title": "Status"},
 						  { "data" : "nextDate", "title": "Next Imp Date"}
 						  ],
-						  
-			  
-						  "footerCallback" : function(row, data, start, end, display) {
-								var api = this.api(), data;
-								if (data.length == 0) {
-									jQuery('#report-footer').hide();
-								} else {
-									jQuery('#report-footer').show(); 
-								}
-							},
-				            "fnDrawCallback": function ( oSettings ) {
+				           "fnDrawCallback": function ( oSettings ) {
 				                if ( oSettings.bSorted || oSettings.bFiltered )
 				                {
 				                    for ( var i=0, iLen=oSettings.aiDisplay.length ; i<iLen ; i++ )
@@ -119,11 +118,8 @@ function submitForm() {
 				                        $('td:eq(0)', oSettings.aoData[ oSettings.aiDisplay[i] ].nTr ).html( i+1 );
 				                    }
 				                }
-				            },
-				            
-							"aoColumnDefs" : []		
+				            }	
 				});
-		
 	}
 	
 	function updateSerialNo()
@@ -156,6 +152,23 @@ function onchnageofDate() {
 	date = curr_date + "/" + (curr_month) + "/" + curr_year;
 	$("#toDate").val(date);
 
+}
+
+function getdate()
+{
+	var today = new Date();
+    var dd = today.getDate();
+    var mm = today.getMonth()+1; //January is 0!
+
+    var yyyy = today.getFullYear();
+    if(dd<10){
+        dd='0'+dd
+    } 
+    if(mm<10){
+        mm='0'+mm
+    } 
+    var today = dd+'/'+mm+'/'+yyyy;
+    return today;
 }
 
 

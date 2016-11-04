@@ -45,6 +45,7 @@ import static org.egov.ptis.constants.PropertyTaxConstants.APPLICATION_TYPE_ALTE
 import static org.egov.ptis.constants.PropertyTaxConstants.APPLICATION_TYPE_BIFURCATE_ASSESSENT;
 import static org.egov.ptis.constants.PropertyTaxConstants.APPLICATION_TYPE_NEW_ASSESSENT;
 import static org.egov.ptis.constants.PropertyTaxConstants.APPLICATION_TYPE_REVISION_PETITION;
+import static org.egov.ptis.constants.PropertyTaxConstants.APPLICATION_TYPE_GRP;
 import static org.egov.ptis.constants.PropertyTaxConstants.APPLICATION_TYPE_TRANSFER_OF_OWNERSHIP;
 import static org.egov.ptis.constants.PropertyTaxConstants.ARR_COLL_STR;
 import static org.egov.ptis.constants.PropertyTaxConstants.ARR_DMD_STR;
@@ -219,6 +220,7 @@ public class PropertyService {
     private static final String PROPERTY_WORKFLOW_STARTED = "Property Workflow Started";
     final SimpleDateFormat dateFormatter = new SimpleDateFormat("dd/MM/yyyy");
     
+    @SuppressWarnings("rawtypes")
     private PersistenceService propPerServ;
     private Installment currentInstall;
     private BigDecimal totalAlv = BigDecimal.ZERO;
@@ -235,6 +237,7 @@ public class PropertyService {
     protected EisCommonsService eisCommonsService;
     @Autowired
     private ModuleService moduleDao;
+    @SuppressWarnings("rawtypes")
     @Autowired
     private InstallmentHibDao installmentDao;
     @Autowired
@@ -626,6 +629,7 @@ public class PropertyService {
      * @param dateOfCompletion
      * @return newProperty
      */
+    @SuppressWarnings({ "unchecked", "rawtypes" })
     public Property createDemandForModify(final Property oldProperty, final Property newProperty,
             final Date dateOfCompletion) {
         LOGGER.debug("Entered into createDemandForModify");
@@ -897,7 +901,7 @@ public class PropertyService {
      * @param instList
      * @param instTaxMap
      */
-    @SuppressWarnings("unchecked")
+    @SuppressWarnings({ "unchecked", "rawtypes" })
     private void createAllDmdDetails(final Property oldProperty, final Property newProperty,
             final Installment installment, final List<Installment> instList,
             final HashMap<Installment, TaxCalculationInfo> instTaxMap) {
@@ -995,9 +999,6 @@ public class PropertyService {
                     if (edd.getEgDemandReason().getEgInstallmentMaster().equals(inst))
                         newEgDemandDetailsSet.add((EgDemandDetails) edd.clone());
 
-                final PropertyTypeMaster newPropTypeMaster = newProperty.getPropertyDetail()
-                        .getPropertyTypeMaster();
-
                 LOGGER.info("Old Demand Set:" + inst + "=" + oldEgDemandDetailsSet);
                 LOGGER.info("New Demand set:" + inst + "=" + newEgDemandDetailsSet);
 
@@ -1013,15 +1014,7 @@ public class PropertyService {
                         newEgDmndDetails = getEgDemandDetailsForReason(newEgDemandDetailsSet, oldPropRsn);
 
                         if (newEgDmndDetails == null) {
-                            /*
-                             * if (newPropTypeMaster.getCode().equalsIgnoreCase (PROPTYPE_RESD))
-                             */
                             newPropRsn = rsnsForNewResProp.get(i);
-                            /*
-                             * else if (newPropTypeMaster.getCode().equalsIgnoreCase (PROPTYPE_NON_RESD)) newPropRsn =
-                             * rsnsForNewNonResProp.get(i);
-                             */
-
                             oldEgdmndDetails = getEgDemandDetailsForReason(oldEgDemandDetailsSet, oldPropRsn);
                             newEgDmndDetails = getEgDemandDetailsForReason(newEgDemandDetailsSet, newPropRsn);
 
@@ -1040,9 +1033,6 @@ public class PropertyService {
                 // of this method, bcoz it has to be invoked in all usecases
                 // and not only when there is property type change
 
-                /*newEgDemandDetailsSet = carryForwardCollection(newProperty, inst, newEgDemandDetailsSet,
-                        ptDemandOld, oldProperty.getPropertyDetail().getPropertyTypeMaster(), newPropTypeMaster);
-                LOGGER.info("Adjusted set:" + inst + ":" + newEgDemandDetailsSet);*/
                 adjustedDmdDetailsSet.addAll(newEgDemandDetailsSet);
                 demandDetails.put(inst, newEgDemandDetailsSet);
             }
@@ -1478,6 +1468,7 @@ public class PropertyService {
      * @param amalgPropIds
      * @param parentBasicProperty
      */
+    @SuppressWarnings({ "unchecked"})
     public void createAmalgPropStatVal(final String[] amalgPropIds, final BasicProperty parentBasicProperty) {
         LOGGER.debug("Entered into createAmalgPropStatVal, amalgPropIds(length): "
                 + (amalgPropIds != null ? amalgPropIds.length : ZERO) + ", parentBasicProperty: " + parentBasicProperty);
@@ -1585,6 +1576,7 @@ public class PropertyService {
         LOGGER.debug("Exiting from addArrDmdDetToCurrentDmd");
     }
 
+    @SuppressWarnings({ "rawtypes", "unchecked" })
     public PropertyImpl creteNewPropertyForObjectionWorkflow(final BasicProperty basicProperty2,
             final String objectionNum, final Date objectionDate, final User objWfInitiator, final String docNumber,
             final String modifyRsn) {
@@ -2038,71 +2030,100 @@ public class PropertyService {
         else
             user = assignmentService.getAssignmentsForPosition(position.getId(), new Date()).get(0).getEmployee();
         User owner = null;
-        if (applictionType != null
-                && (applictionType.equalsIgnoreCase(APPLICATION_TYPE_NEW_ASSESSENT)
-                        || applictionType.equalsIgnoreCase(APPLICATION_TYPE_ALTER_ASSESSENT) || applictionType
-                            .equalsIgnoreCase(APPLICATION_TYPE_BIFURCATE_ASSESSENT))) {
+        String source;
+		if (!applictionType.isEmpty() && (applictionType.equalsIgnoreCase(APPLICATION_TYPE_NEW_ASSESSENT)
+				|| applictionType.equalsIgnoreCase(APPLICATION_TYPE_ALTER_ASSESSENT)
+				|| applictionType.equalsIgnoreCase(APPLICATION_TYPE_BIFURCATE_ASSESSENT)
+				|| applictionType.equalsIgnoreCase(APPLICATION_TYPE_GRP))) {
             final PropertyImpl property = (PropertyImpl) stateAwareObject;
             final ApplicationIndex applicationIndex = applicationIndexService.findByApplicationNumber(property
                     .getApplicationNo());
             final String url = "/ptis/view/viewProperty-viewForm.action?applicationNo=" + property.getApplicationNo()
                     + "&applicationType=" + applictionType;
             owner = property.getBasicProperty().getPrimaryOwner();
-            if (null == applicationIndex) {
+            if(property.getBasicProperty().getSource().equals(PropertyTaxConstants.SOURCEOFDATA_MEESEWA))
+            	source=Source.MEESEVA.toString();
+            else if(property.getBasicProperty().getSource().equals(PropertyTaxConstants.SOURCEOFDATA_ESEVA))
+            	source=Source.ESEVA.toString();
+            else if (property.getBasicProperty().getSource().equals(PropertyTaxConstants.SOURCEOFDATA_MOBILE))
+            	source=Source.MOBILE.toString();
+            else
+            	source=Source.SYSTEM.toString();
+            if (applicationIndex==null) {
                 final ApplicationIndexBuilder applicationIndexBuilder = new ApplicationIndexBuilder(PTMODULENAME,
                         property.getApplicationNo(), new Date(), applictionType, owner.getName(), property
                                 .getState().getValue(), url, property.getBasicProperty().getAddress().toString(),
-                        user.getUsername() + "::" + user.getName(), Source.SYSTEM.toString());
+                        user.getUsername() + "::" + user.getName(), source);
                 applicationIndexBuilder.consumerCode(property.getBasicProperty().getUpicNo());
                 applicationIndexBuilder.mobileNumber(owner.getMobileNumber());
                 applicationIndexBuilder.aadharNumber(owner.getAadhaarNumber());
                 applicationIndexService.createApplicationIndex(applicationIndexBuilder.build());
             } else {
                 applicationIndex.setStatus(property.getState().getValue());
-                if (applictionType.equalsIgnoreCase(APPLICATION_TYPE_NEW_ASSESSENT)) {
+                if (applictionType.equalsIgnoreCase(APPLICATION_TYPE_NEW_ASSESSENT)
+                        || applictionType.equalsIgnoreCase(APPLICATION_TYPE_ALTER_ASSESSENT) || applictionType
+                        .equalsIgnoreCase(APPLICATION_TYPE_BIFURCATE_ASSESSENT)|| applictionType.equalsIgnoreCase(APPLICATION_TYPE_GRP)) {
                     applicationIndex.setConsumerCode(property.getBasicProperty().getUpicNo());
                     applicationIndex.setApplicantName(owner.getName());
+                    applicationIndex.setOwnername(user.getUsername()+"::"+user.getName());
                     applicationIndex.setMobileNumber(owner.getMobileNumber());
                     applicationIndex.setAadharNumber(owner.getAadhaarNumber());
                 }
                 applicationIndexService.updateApplicationIndex(applicationIndex);
             }
 
-        } else if (applictionType != null && applictionType.equalsIgnoreCase(APPLICATION_TYPE_REVISION_PETITION)) {
+        } else if (!applictionType.isEmpty() && applictionType.equalsIgnoreCase(APPLICATION_TYPE_REVISION_PETITION)) {
             final RevisionPetition property = (RevisionPetition) stateAwareObject;
             final ApplicationIndex applicationIndex = applicationIndexService.findByApplicationNumber(property
                     .getObjectionNumber());
             final String url = "/ptis/view/viewProperty-viewForm.action?applicationNo=" + property.getObjectionNumber()
                     + "&applicationType=" + applictionType;
-            if (null == applicationIndex) {
+            if(property.getBasicProperty().getSource().equals(PropertyTaxConstants.SOURCEOFDATA_MEESEWA))
+             	source=Source.MEESEVA.toString();
+             else if(property.getBasicProperty().getSource().equals(PropertyTaxConstants.SOURCEOFDATA_ESEVA))
+             	source=Source.ESEVA.toString();
+             else if (property.getBasicProperty().getSource().equals(PropertyTaxConstants.SOURCEOFDATA_MOBILE))
+             	source=Source.MOBILE.toString();
+             else
+             	source=Source.SYSTEM.toString();
+            if (applicationIndex == null) {
                 owner = property.getBasicProperty().getPrimaryOwner();
                 final ApplicationIndexBuilder applicationIndexBuilder = new ApplicationIndexBuilder(PTMODULENAME,
                         property.getObjectionNumber(), property.getCreatedDate() != null ? property.getCreatedDate()
                                 : new Date(), applictionType, owner.getName(),
                         property.getState().getValue(), url, property.getBasicProperty().getAddress().toString(),
-                        user.getUsername() + "::" + user.getName(), Source.SYSTEM.toString());
+                        user.getUsername() + "::" + user.getName(), source);
                 applicationIndexBuilder.consumerCode(property.getBasicProperty().getUpicNo());
                 applicationIndexBuilder.mobileNumber(owner.getMobileNumber());
                 applicationIndexBuilder.aadharNumber(owner.getAadhaarNumber());
                 applicationIndexService.createApplicationIndex(applicationIndexBuilder.build());
             } else {
                 applicationIndex.setStatus(property.getState().getValue());
+                applicationIndex.setOwnername(user.getUsername()+"::"+user.getName());
                 applicationIndexService.updateApplicationIndex(applicationIndex);
             }
 
-        } else if (applictionType != null && applictionType.equalsIgnoreCase(APPLICATION_TYPE_TRANSFER_OF_OWNERSHIP)) {
+        } else if (!applictionType.isEmpty() && applictionType.equalsIgnoreCase(APPLICATION_TYPE_TRANSFER_OF_OWNERSHIP)) {
             final PropertyMutation property = (PropertyMutation) stateAwareObject;
             final ApplicationIndex applicationIndex = applicationIndexService.findByApplicationNumber(property
                     .getApplicationNo());
             final String url = "/ptis/view/viewProperty-viewForm.action?applicationNo=" + property.getApplicationNo()
                     + "&applicationType=" + applictionType;
             owner = property.getBasicProperty().getPrimaryOwner();
-            if (null == applicationIndex) {
+            if(property.getBasicProperty().getSource().equals(PropertyTaxConstants.SOURCEOFDATA_MEESEWA))
+             	source=Source.MEESEVA.toString();
+             else if(property.getBasicProperty().getSource().equals(PropertyTaxConstants.SOURCEOFDATA_ESEVA))
+             	source=Source.ESEVA.toString();
+             else if (property.getBasicProperty().getSource().equals(PropertyTaxConstants.SOURCEOFDATA_MOBILE))
+             	source=Source.MOBILE.toString();
+             else
+             	source=Source.SYSTEM.toString();
+            if (applicationIndex == null) {
                 final ApplicationIndexBuilder applicationIndexBuilder = new ApplicationIndexBuilder(PTMODULENAME,
                         property.getApplicationNo(), property.getCreatedDate() != null ? property.getCreatedDate()
                                 : new Date(), applictionType, owner.getName(),
                         property.getState().getValue(), url, property.getBasicProperty().getAddress().toString(),
-                        user.getUsername() + "::" + user.getName(), Source.SYSTEM.toString());
+                        user.getUsername() + "::" + user.getName(), source);
                 applicationIndexBuilder.consumerCode(property.getBasicProperty().getUpicNo());
                 applicationIndexBuilder.mobileNumber(owner.getMobileNumber());
                 applicationIndexBuilder.aadharNumber(owner.getAadhaarNumber());
@@ -2110,6 +2131,7 @@ public class PropertyService {
             } else {
                 applicationIndex.setStatus(property.getState().getValue());
                 applicationIndex.setApplicantName(owner.getName());
+                applicationIndex.setOwnername(user.getUsername()+"::"+user.getName());
                 applicationIndex.setMobileNumber(owner.getMobileNumber());
                 applicationIndex.setAadharNumber(owner.getAadhaarNumber());
                 applicationIndexService.updateApplicationIndex(applicationIndex);
@@ -2307,8 +2329,8 @@ public class PropertyService {
      * @param basicProperty
      * @return
      */
-    public Assignment getUserPositionByZone(final BasicProperty basicProperty, Character source) {
-        final String designationStr = getDesignationForThirdPartyUser(source);
+    public Assignment getUserPositionByZone(final BasicProperty basicProperty, boolean isForMobile) {
+        final String designationStr = getDesignationForThirdPartyUser(isForMobile);
         final String departmentStr = getDepartmentForWorkFlow();
         final String[] department = departmentStr.split(",");
         final String[] designation = designationStr.split(",");
@@ -2346,9 +2368,9 @@ public class PropertyService {
      *
      * @return
      */
-    public String getDesignationForThirdPartyUser(Character source) {
+    public String getDesignationForThirdPartyUser(boolean isForMobile) {
     	String appConfigKey;
-    	if(source.equals(SOURCEOFDATA_MOBILE))
+    	if(isForMobile)
     		appConfigKey = PT_WORKFLOWDESIGNATION_MOBILE;
     	else
     		appConfigKey = PROPERTYTAX_WORKFLOWDESIGNATION;
@@ -2376,6 +2398,7 @@ public class PropertyService {
      * @param toDemand
      * @return List of property having demand between fromDemand and toDemand
      */
+    @SuppressWarnings("unchecked")
     public List<PropertyMaterlizeView> getPropertyByDemand(final String fromDemand, final String toDemand) {
         final StringBuilder queryStr = new StringBuilder();
         queryStr.append(
@@ -2392,7 +2415,8 @@ public class PropertyService {
      * @param assessmentNum,ownerName,doorNo
      * @return List of property matching the input params
     */
-   public List<PropertyMaterlizeView> getPropertyByAssessmentAndOwnerDetails(final String assessmentNum, final String ownerName,final String doorNo) {
+   @SuppressWarnings("unchecked")
+public List<PropertyMaterlizeView> getPropertyByAssessmentAndOwnerDetails(final String assessmentNum, final String ownerName,final String doorNo) {
        final StringBuilder queryStr = new StringBuilder();
        queryStr.append("select distinct pmv from PropertyMaterlizeView pmv ").append(
                " where pmv.isActive = true ");
@@ -2420,6 +2444,7 @@ public class PropertyService {
      * @param ownerName
      * @return List of property matching the input params
      */
+    @SuppressWarnings("unchecked")
     public List<PropertyMaterlizeView> getPropertyByLocation(final Integer locationId, final String houseNo,
             final String ownerName) {
         final StringBuilder queryStr = new StringBuilder();
@@ -2447,6 +2472,7 @@ public class PropertyService {
      * @param houseNum
      * @return List of property matching the input params
      */
+    @SuppressWarnings("unchecked")
     public List<PropertyMaterlizeView> getPropertyByBoundary(final Long zoneId, final Long wardId,
             final String ownerName, final String houseNum) {
         final StringBuilder queryStr = new StringBuilder();
@@ -2477,6 +2503,7 @@ public class PropertyService {
         return propertyList;
     }
 
+    @SuppressWarnings("unchecked")
     public List<PropertyMaterlizeView> getPropertyByDoorNo(final String doorNo) {
         final StringBuilder queryStr = new StringBuilder();
         queryStr.append("select distinct pmv from PropertyMaterlizeView pmv where pmv.isActive = true ");
@@ -2489,6 +2516,7 @@ public class PropertyService {
         return propertyList;
     }
 
+    @SuppressWarnings("unchecked")
     public List<PropertyMaterlizeView> getPropertyByMobileNumber(final String MobileNo) {
         final StringBuilder queryStr = new StringBuilder();
         queryStr.append("select distinct pmv from PropertyMaterlizeView pmv where pmv.isActive = true ");
@@ -2504,19 +2532,26 @@ public class PropertyService {
     public Assignment getWorkflowInitiator(final PropertyImpl property) {
         Assignment wfInitiator = null;
         if(property.getBasicProperty().getSource().equals(PropertyTaxConstants.SOURCEOFDATA_ONLINE) ||
-        	property.getBasicProperty().getSource().equals(PropertyTaxConstants.SOURCEOFDATA_MOBILE)){
-        	if(!property.getStateHistory().isEmpty())
-        		wfInitiator = assignmentService.getPrimaryAssignmentForPositon(property.getStateHistory().get(0)
+                property.getBasicProperty().getSource().equals(PropertyTaxConstants.SOURCEOFDATA_MOBILE)){
+                if(!property.getStateHistory().isEmpty())
+                        wfInitiator = assignmentService.getPrimaryAssignmentForPositon(property.getStateHistory().get(0)
                     .getOwnerPosition().getId());
         } else{
-	        if (isEmployee(property.getCreatedBy()))
-	            wfInitiator = assignmentService.getPrimaryAssignmentForUser(property.getCreatedBy().getId());
-	        else if (!property.getStateHistory().isEmpty())
-	            wfInitiator = assignmentService.getPrimaryAssignmentForPositon(property.getStateHistory().get(0)
-	                    .getOwnerPosition().getId());
-	        else
-	            wfInitiator = assignmentService.getPrimaryAssignmentForPositon(property.getState().getOwnerPosition()
-	                    .getId());
+                if (isEmployee(property.getCreatedBy())){
+                        if(property.getState() != null  && property.getState().getInitiatorPosition() != null)
+                            wfInitiator = propertyTaxCommonUtils.getUserAssignmentByPassingPositionAndUser(property
+                                    .getCreatedBy(),property.getState().getInitiatorPosition());
+                        else 
+                            wfInitiator = assignmentService.getPrimaryAssignmentForUser(property
+                           .getCreatedBy().getId());
+                }
+                else if (!property.getStateHistory().isEmpty())
+                    wfInitiator = assignmentService.getPrimaryAssignmentForPositon(property.getStateHistory().get(0)
+                            .getOwnerPosition().getId());
+                else{
+                    wfInitiator = assignmentService.getPrimaryAssignmentForPositon(property.getState().getOwnerPosition()
+                            .getId());
+                }
         }
         return wfInitiator;
     }
@@ -2554,7 +2589,7 @@ public class PropertyService {
                     ownerPosition = historyState.getOwnerPosition();
                     user = historyState.getOwnerUser();
                     if (null != ownerPosition) {
-                         User approverUser = eisCommonService.getUserForPosition(ownerPosition.getId(), historyState.getCreatedDate());
+                         User approverUser = eisCommonService.getUserForPosition(ownerPosition.getId(), historyState.getLastModifiedDate());
                         HistoryMap.put("user", null != approverUser ? approverUser.getUsername() + "::" + approverUser.getName() : "");
                     } else if (null != user)
                         HistoryMap.put("user", user.getUsername() + "::" + user.getName());

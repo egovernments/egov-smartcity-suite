@@ -39,7 +39,7 @@
  */
 $(document).ready(function(){
 	
-	
+	var modeval=$("#mode").val();
 var department = new Bloodhound({
 							datumTokenizer : function(datum) {
 									return Bloodhound.tokenizers
@@ -69,6 +69,8 @@ var department = new Bloodhound({
 						displayKey : 'name',
 						source : department.ttAdapter()
 					});
+					typeaheadWithEventsHandling(typeaheadobj, '#departmentId'); 
+
 
 					var standingCpuncil = new Bloodhound({
 						datumTokenizer : function(datum) {
@@ -88,11 +90,11 @@ var department = new Bloodhound({
 									return {
 										name : advocate.name,
 										value : advocate.id
-
 									};
 								});
 							}
 						}
+
 					});
 
 					standingCpuncil.initialize();
@@ -104,6 +106,7 @@ var department = new Bloodhound({
 						displayKey : 'name',
 						source : standingCpuncil.ttAdapter()
 					});
+					typeaheadWithEventsHandling(typeaheadobj, '#advocateId'); 
 
 					var senioradvocateName = new Bloodhound({
 						datumTokenizer : function(datum) {
@@ -122,8 +125,7 @@ var department = new Bloodhound({
 								return $.map(data, function(advocate) {
 									return {
 										name : advocate.name,
-										value : advocate.id
-
+										value :advocate.id
 									};
 								});
 							}
@@ -140,6 +142,8 @@ var department = new Bloodhound({
 						source : senioradvocateName.ttAdapter()
 					});
 
+					typeaheadWithEventsHandling(typeaheadobj, '#senioradvocateId'); 
+/*
 					$("#departmentName").blur(function() {
 						var desigId = $("#departmentName").val();
 						if (null != desigId || '' != desigId) {
@@ -164,10 +168,8 @@ var department = new Bloodhound({
 							filter : function(data) {
 								return $.map(data, function(advocate) {
 									return {
-										name : advocate.name,
-										value : advocate.id
-										
-
+										name : advocate,
+										value : advocate
 									};
 								});
 							}
@@ -182,11 +184,5 @@ var department = new Bloodhound({
 						displayKey : 'name',
 						source : assignPosition.ttAdapter()
 					});
-
-					
-					
-					
-					
-					
-					
+					typeaheadWithEventsHandling(typeaheadobj, '#positionId'); */
 				});

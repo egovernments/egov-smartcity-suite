@@ -252,7 +252,7 @@ public class AbstractEstimateService extends PersistenceService<AbstractEstimate
         else
             budgetAppDate = new Date();
         // CFinancialYear
-        // estimateDate_finYear=financialYearHibernateDAO.getFinancialYearByDate(financialDetail.getAbstractEstimate().getEstimateDate());
+        // estimateDate_finYear=financialYearHibernateDAO.getFinYearByDate(financialDetail.getAbstractEstimate().getEstimateDate());
         final CFinancialYear budgetApprDate_finYear = financialYearHibernateDAO.getFinYearByDate(budgetAppDate);
         final List<Long> budgetheadid = new ArrayList<Long>();
         budgetheadid.add(financialDetail.getBudgetGroup().getId());

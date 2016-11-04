@@ -42,11 +42,20 @@
  */
 package org.egov.egf.web.actions.deduction;
 
-import com.exilant.GLEngine.ChartOfAccounts;
-import com.exilant.GLEngine.Transaxtion;
-import com.opensymphony.xwork2.validator.annotations.Validation;
-import org.apache.commons.collections.CollectionUtils;
-import org.apache.commons.collections.Predicate;
+import java.math.BigDecimal;
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
+import java.util.Set;
+
 import org.apache.log4j.Logger;
 import org.apache.struts2.convention.annotation.Action;
 import org.apache.struts2.convention.annotation.ParentPackage;
@@ -56,6 +65,7 @@ import org.apache.struts2.interceptor.validation.SkipValidation;
 import org.egov.billsaccounting.services.CreateVoucher;
 import org.egov.billsaccounting.services.VoucherConstant;
 import org.egov.commons.Bankaccount;
+import org.egov.commons.CFunction;
 import org.egov.commons.CVoucherHeader;
 import org.egov.commons.Functionary;
 import org.egov.commons.Fund;
@@ -65,6 +75,7 @@ import org.egov.commons.SubScheme;
 import org.egov.commons.Vouchermis;
 import org.egov.commons.dao.FinancialYearHibernateDAO;
 import org.egov.commons.service.BankAccountService;
+import org.egov.commons.service.FunctionService;
 import org.egov.commons.utils.EntityType;
 import org.egov.dao.voucher.VoucherHibernateDAO;
 import org.egov.deduction.model.EgRemittance;
@@ -74,6 +85,7 @@ import org.egov.egf.web.actions.payment.BasePaymentAction;
 import org.egov.infra.admin.master.entity.AppConfigValues;
 import org.egov.infra.admin.master.entity.Boundary;
 import org.egov.infra.admin.master.entity.Department;
+import org.egov.infra.admin.master.service.DepartmentService;
 import org.egov.infra.script.entity.Script;
 import org.egov.infra.script.service.ScriptService;
 import org.egov.infra.validation.exception.ValidationError;
@@ -104,19 +116,9 @@ import org.egov.utils.FinancialConstants;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 
-import java.math.BigDecimal;
-import java.text.DateFormat;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Map.Entry;
-import java.util.Set;
+import com.exilant.GLEngine.ChartOfAccounts;
+import com.exilant.GLEngine.Transaxtion;
+import com.opensymphony.xwork2.validator.annotations.Validation;
 
 @ParentPackage("egov")
 @Validation
@@ -142,6 +144,8 @@ public class RemitRecoveryAction extends BasePaymentAction {
     private RemitRecoveryService remitRecoveryService;
     private VoucherService voucherService;
     private List<RemittanceBean> listRemitBean;
+    private String selectedRows;
+    private Long functionId;
     @Autowired
     @Qualifier("remittanceRecoveryService")
     private RecoveryService recoveryService;
@@ -154,6 +158,10 @@ public class RemitRecoveryAction extends BasePaymentAction {
     public boolean showApprove = false;
     private CommonBean commonBean;
     private String modeOfPayment;
+    @Autowired
+    private DepartmentService departmentService;
+    @Autowired
+    private FunctionService functionService;
 
     @Autowired
     @Qualifier("persistenceService")
@@ -263,10 +271,13 @@ public class RemitRecoveryAction extends BasePaymentAction {
         listRemitBean = new ArrayList<RemittanceBean>();
         if (LOGGER.isDebugEnabled())
             LOGGER.debug("RemitRecoveryAction | Search | Start");
-        validateFields();
         listRemitBean = remitRecoveryService.getRecoveryDetails(remittanceBean, voucherHeader);
-        if (listRemitBean == null)
+        if (listRemitBean == null || listRemitBean.isEmpty())
             listRemitBean = new ArrayList<RemittanceBean>();
+        else{
+            departmentId = listRemitBean.get(0).getDepartmentId().intValue();
+            functionId = listRemitBean.get(0).getFunctionId();
+        }
 
         return NEW;
     }
@@ -280,6 +291,8 @@ public class RemitRecoveryAction extends BasePaymentAction {
     @ValidationErrorPage(value = "new")
     @Action(value = "/deduction/remitRecovery-remit")
     public String remit() {
+        
+        prepareListRemitBean(selectedRows);
         List<AppConfigValues> cutOffDateconfigValue = appConfigValuesService.getConfigValuesByModuleAndKey("EGF",
                 "DataEntryCutOffDate");
         if (cutOffDateconfigValue != null && !cutOffDateconfigValue.isEmpty())
@@ -288,10 +301,20 @@ public class RemitRecoveryAction extends BasePaymentAction {
                 date = df.parse(cutOffDateconfigValue.get(0).getValue());
                 setCutOffDate(formatter.format(date));
             } catch (ParseException e) {
-                e.printStackTrace();
+
             }
         }
         voucherHeader.setType(FinancialConstants.STANDARD_VOUCHER_TYPE_PAYMENT);
+        if(voucherHeader.getVouchermis().getDepartmentid()==null )
+        {
+            Department department=departmentService.getDepartmentById(departmentId.longValue());
+            voucherHeader.getVouchermis().setDepartmentid(department);
+        }
+        if(voucherHeader.getVouchermis().getFunction()==null)
+        {
+            CFunction function=functionService.findOne(functionId);
+            voucherHeader.getVouchermis().setFunction(function); 
+        }
         if (LOGGER.isDebugEnabled())
             LOGGER.debug("RemitRecoveryAction | remit | start");
         if (LOGGER.isDebugEnabled())
@@ -299,16 +322,21 @@ public class RemitRecoveryAction extends BasePaymentAction {
         final Recovery recov = (Recovery) persistenceService.find("from Recovery where id=?", remittanceBean.getRecoveryId());
         if (recov != null)
             remittedTo = recov.getRemitted();
-        final Predicate remitPredicate = new RemittanceBean();
         for (final RemittanceBean rbean : listRemitBean)
             rbean.setPartialAmount(rbean.getAmount());
-        CollectionUtils.filter(listRemitBean, remitPredicate);
         if (LOGGER.isDebugEnabled())
             LOGGER.debug("RemitRecoveryAction | remit | size after filter" + listRemitBean.size());
         setModeOfPayment(FinancialConstants.MODEOFPAYMENT_CASH);
         if (LOGGER.isDebugEnabled())
             LOGGER.debug("RemitRecoveryAction | remit | end");
         return "remitDetail";
+    }
+
+    private void prepareListRemitBean(String selectedRows) {
+        listRemitBean = remitRecoveryService.getRecoveryDetails(selectedRows);
+        if (listRemitBean == null)
+            listRemitBean = new ArrayList<RemittanceBean>(); 
+
     }
 
     @ValidationErrorPage(value = "remitDetail")
@@ -320,7 +348,7 @@ public class RemitRecoveryAction extends BasePaymentAction {
             Date date1 = sdf1.parse(vdate);
             String voucherDate = formatter1.format(date1);
             String cutOffDate1 = null;
-            validateFields();
+            validateFields(); 
             voucherHeader.setType(FinancialConstants.STANDARD_VOUCHER_TYPE_PAYMENT);
             voucherHeader.setName(FinancialConstants.PAYMENTVOUCHER_NAME_REMITTANCE);
             final HashMap<String, Object> headerDetails = createHeaderAndMisDetails();
@@ -336,7 +364,7 @@ public class RemitRecoveryAction extends BasePaymentAction {
                     date = sdf1.parse(cutOffDate);
                     cutOffDate1 = formatter1.format(date);
                 } catch (ParseException e) {
-                    // e.printStackTrace();
+                    //
                 }
             }
             if (cutOffDate1 != null && voucherDate.compareTo(cutOffDate1) <= 0
@@ -427,7 +455,6 @@ public class RemitRecoveryAction extends BasePaymentAction {
 
     public Paymentheader getPayment() {
         String paymentid = null;
-        // System.out.println("Payment id is"+parameters.get(PAYMENTID));
         if (parameters.get(PAYMENTID) == null)
         {
             final Object obj = getSession().get(PAYMENTID);
@@ -1095,5 +1122,30 @@ public class RemitRecoveryAction extends BasePaymentAction {
     public void setCutOffDate(String cutOffDate) {
         this.cutOffDate = cutOffDate;
     }
+
+    public String getSelectedRows() {
+        return selectedRows;
+    }
+
+    public Long getFunctionId() {
+        return functionId;
+    }
+
+    public Integer getDepartmentId() {
+        return departmentId;
+    }
+
+    public void setSelectedRows(String selectedRows) {
+        this.selectedRows = selectedRows;
+    }
+
+    public void setFunctionId(Long functionId) {
+        this.functionId = functionId;
+    }
+
+    public void setDepartmentId(Integer departmentId) {
+        this.departmentId = departmentId;
+    }
+
 
 }

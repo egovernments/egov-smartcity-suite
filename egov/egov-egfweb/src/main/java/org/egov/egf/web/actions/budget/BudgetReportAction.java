@@ -1487,8 +1487,8 @@ public class BudgetReportAction extends BaseFormAction {
         final String status = getFinalStatus();
         final List<Object[]> list = getPersistenceService()
                 .findAllBy(
-                        "select sum(br.additionAmount)-sum(br.deductionAmount),br.budgetDetail.id from BudgetReAppropriation br where br.state in (from org.egov.infra.workflow.entity.State where type='BudgetReAppropriation' and value='"
-                                + status + "' ) and br.status.description!='Cancelled' group by br.budgetDetail.id");
+                        "select sum(br.additionAmount)-sum(br.deductionAmount),br.budgetDetail.id from BudgetReAppropriation br where br.status = (select id from EgwStatus where moduletype='BudgetReAppropriation' "
+                                + "and description='Approved') group by br.budgetDetail.id");
         if (!list.isEmpty() && list.size() != 0)
             for (final Object[] obj : list)
                 reAppropriationMap.put(obj[1], (BigDecimal) obj[0]);
@@ -1733,7 +1733,6 @@ public class BudgetReportAction extends BaseFormAction {
         findAllBy = persistenceService.findAllBy(query.toString());
         for (final Object[] o : findAllBy)
         {
-            System.out.println(o.length);
             final String key = (String) o[0] + "-" + (String) o[1];
             BudgetReportView bv = function_deptSumMap.get(key);
 

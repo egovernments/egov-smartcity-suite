@@ -53,7 +53,6 @@ import org.apache.struts2.convention.annotation.Results;
 import org.egov.collection.constants.CollectionConstants;
 import org.egov.collection.service.CollectionReportHeadWiseService;
 import org.egov.collection.utils.CollectionsUtil;
-import org.egov.commons.CChartOfAccountDetail;
 import org.egov.commons.CChartOfAccounts;
 import org.egov.commons.EgwStatus;
 import org.egov.commons.dao.ChartOfAccountsHibernateDAO;
@@ -69,7 +68,7 @@ import org.springframework.beans.factory.annotation.Autowired;
  */
 @ParentPackage("egov")
 @Results({ @Result(name = CollectionSummaryHeadWiseAction.INDEX, location = "collectionSummaryHeadWise-index.jsp"),
-    @Result(name = CollectionSummaryHeadWiseAction.REPORT, location = "collectionSummaryHeadWise-report.jsp") })
+        @Result(name = CollectionSummaryHeadWiseAction.REPORT, location = "collectionSummaryHeadWise-report.jsp") })
 public class CollectionSummaryHeadWiseAction extends ReportFormAction {
 
     private static final long serialVersionUID = 1L;
@@ -79,15 +78,12 @@ public class CollectionSummaryHeadWiseAction extends ReportFormAction {
     private static final String EGOV_PAYMENT_MODE = "EGOV_PAYMENT_MODE";
     private static final String COLLECTION_SUMMARY_TEMPLATE = "collection_summary_headwise";
     private static final String EGOV_SOURCE = "EGOV_SOURCE";
-    private static final String EGOV_SERVICE_ID = "EGOV_SERVICE_ID";
-    private static final String EGOV_SERVICE_NAME = "EGOV_SERVICE_NAME";
-    private static final String EGOV_STATUS="EGOV_STATUS";
-    private static final String EGOV_GLCODE_NAME="EGOV_GLCODE_NAME";
-    private static final String EGOV_GLCODE_ID="EGOV_GLCODE_ID";
-    
+    private static final String EGOV_STATUS = "EGOV_STATUS";
+    private static final String EGOV_GLCODE_NAME = "EGOV_GLCODE_NAME";
+    private static final String EGOV_GLCODE_ID = "EGOV_GLCODE_ID";
+
     private Integer statusId;
     private Long revenueId;
-    private Long glCodeId;
     private String glCode;
     private final Map<String, String> paymentModes = createPaymentModeList();
     private final Map<String, String> sources = createSourceList();
@@ -95,10 +91,10 @@ public class CollectionSummaryHeadWiseAction extends ReportFormAction {
     @Autowired
     private CollectionReportHeadWiseService reportService;
     @PersistenceContext
-    EntityManager entityManager;
+    private EntityManager entityManager;
     @Autowired
     private ChartOfAccountsHibernateDAO chartOfAccountsHibernateDAO;
-    
+
     /**
      * @return the payment mode list to be shown to user in criteria screen
      */
@@ -148,28 +144,32 @@ public class CollectionSummaryHeadWiseAction extends ReportFormAction {
         setReportParam(EGOV_TO_DATE, new Date());
         addDropdownData("receiptStatuses",
                 getPersistenceService().findAllByNamedQuery(CollectionConstants.STATUS_OF_RECEIPTS));
-        addDropdownData("revenueHeads",chartOfAccountsHibernateDAO.getActiveAccountsForTypes(CollectionConstants.REVENUEHEADS));
+        addDropdownData("revenueHeads",
+                chartOfAccountsHibernateDAO.getActiveAccountsForTypes(CollectionConstants.REVENUEHEADS));
         return INDEX;
     }
 
     @Override
     @Action(value = "/reports/collectionSummaryHeadWise-report")
     public String report() {
-        /*if (getServiceId() != null && getServiceId() != -1) {
-            ServiceDetails serviceDets = (ServiceDetails) entityManager.find(ServiceDetails.class, getServiceId());
-            setServiceName(serviceDets.getName());
-        }*/
+        /*
+         * if (getServiceId() != null && getServiceId() != -1) { ServiceDetails
+         * serviceDets = (ServiceDetails)
+         * entityManager.find(ServiceDetails.class, getServiceId());
+         * setServiceName(serviceDets.getName()); }
+         */
         if (getStatusId() != -1) {
-            EgwStatus statusObj = (EgwStatus) entityManager.find(EgwStatus.class, getStatusId());
-            setStatusName(statusObj.getDescription());                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        
+            final EgwStatus statusObj = entityManager.find(EgwStatus.class, getStatusId());
+            setStatusName(statusObj.getDescription());
         }
-        
-        if (getRevenueId() != -1 ) {
-            CChartOfAccounts statusObj = (CChartOfAccounts) entityManager.find(CChartOfAccounts.class, getRevenueId() );
+
+        if (getRevenueId() != -1) {
+            final CChartOfAccounts statusObj = entityManager.find(CChartOfAccounts.class, getRevenueId());
             setGlCodeName(statusObj.getName());
             setGlCode(statusObj.getGlcode());
         }
-        setReportData(reportService.getCollectionSummaryReport(getFromDate(), getToDate(), getPaymentMode(), getSource(), getGlCode(),getStatusId()));
+        setReportData(reportService.getCollectionSummaryReport(getFromDate(), getToDate(), getPaymentMode(),
+                getSource(), getGlCode(), getStatusId()));
         return super.report();
     }
 
@@ -244,20 +244,16 @@ public class CollectionSummaryHeadWiseAction extends ReportFormAction {
         return sources;
     }
 
-
-    
     @Override
     protected String getReportTemplateName() {
         return COLLECTION_SUMMARY_TEMPLATE;
     }
 
-
-    
     public int getStatusId() {
         return statusId;
     }
 
-    public void setStatusId(int statusId) {
+    public void setStatusId(final int statusId) {
         this.statusId = statusId;
     }
 
@@ -268,15 +264,15 @@ public class CollectionSummaryHeadWiseAction extends ReportFormAction {
     public void setStatusName(final String statusName) {
         setReportParam(EGOV_STATUS, statusName);
     }
-   
+
     public Long getGlCodeId() {
         return (Long) getReportParam(EGOV_GLCODE_ID);
     }
 
-    public void setGlCodeId(String glCodeId) {
-        setReportParam(EGOV_GLCODE_ID,glCodeId);
+    public void setGlCodeId(final String glCodeId) {
+        setReportParam(EGOV_GLCODE_ID, glCodeId);
     }
-    
+
     public String getGlCodeName() {
         return (String) getReportParam(EGOV_GLCODE_ID);
     }
@@ -289,7 +285,7 @@ public class CollectionSummaryHeadWiseAction extends ReportFormAction {
         return glCode;
     }
 
-    public void setGlCode(String glCode) {
+    public void setGlCode(final String glCode) {
         this.glCode = glCode;
     }
 
@@ -297,9 +293,8 @@ public class CollectionSummaryHeadWiseAction extends ReportFormAction {
         return revenueId;
     }
 
-    public void setRevenueId(Long revenueId) {
+    public void setRevenueId(final Long revenueId) {
         this.revenueId = revenueId;
     }
 
-    
 }

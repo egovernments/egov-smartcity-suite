@@ -63,7 +63,8 @@ public class ComplaintAdapter extends DataAdapter<Complaint> {
         jo.addProperty("status", complaint.getStatus().getName());
         jo.addProperty("lastModifiedBy", complaint.getLastModifiedBy().getUsername());
         jo.addProperty("lastModifiedDate", complaint.getLastModifiedDate().toString());
-        jo.addProperty("complainantName", complaint.getCreatedBy().getName());
+        jo.addProperty("complainantName", complaint.getComplainant().getName());
+        jo.addProperty("citizenFeedback", complaint.getCitizenFeedback()!=null?complaint.getCitizenFeedback().name():"");
         
         if (complaint.getLat() > 0 && complaint.getLng() > 0) {
             jo.addProperty("lat", complaint.getLat());
@@ -94,7 +95,7 @@ public class ComplaintAdapter extends DataAdapter<Complaint> {
         Collections.sort(supportDocs, new Comparator<FileStoreMapper>() {
 			@Override
 			public int compare(FileStoreMapper f1, FileStoreMapper f2) {
-				// TODO Auto-generated method stub
+
 				return f1.getIndexId().compareTo(f2.getIndexId());
 			}
         });

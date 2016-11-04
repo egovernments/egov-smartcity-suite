@@ -391,23 +391,25 @@ public class VoucherSearchAction extends BaseFormAction
     public void validate() {
         if (LOGGER.isDebugEnabled())
             LOGGER.debug("Inside Validate Method");
-        if (fromDate == null)
-            addFieldError("From Date", getText("Please Enter From Date"));
-        if (toDate == null)
-            addFieldError("To Date", getText("Please Enter To Date"));
-        checkMandatoryField("fundId", "fund", voucherHeader.getFundId(), "voucher.fund.mandatory");
-        checkMandatoryField("vouchermis.departmentid", "department", voucherHeader.getVouchermis().getDepartmentid(),
-                "voucher.department.mandatory");
-        checkMandatoryField("vouchermis.schemeid", "scheme", voucherHeader.getVouchermis().getSchemeid(),
-                "voucher.scheme.mandatory");
-        checkMandatoryField("vouchermis.subschemeid", "subscheme", voucherHeader.getVouchermis().getSubschemeid(),
-                "voucher.subscheme.mandatory");
-        checkMandatoryField("vouchermis.functionary", "functionary", voucherHeader.getVouchermis().getFunctionary(),
-                "voucher.functionary.mandatory");
-        checkMandatoryField("fundsourceId", "fundsource", voucherHeader.getVouchermis().getFundsource(),
-                "voucher.fundsource.mandatory");
-        checkMandatoryField("vouchermis.divisionId", "field", voucherHeader.getVouchermis().getDivisionid(),
-                "voucher.field.mandatory");
+        if (voucherHeader.getVoucherNumber() == null || "".equals(voucherHeader.getVoucherNumber())) {
+            if (fromDate == null)
+                addFieldError("From Date", getText("Please Enter From Date"));
+            if (toDate == null)
+                addFieldError("To Date", getText("Please Enter To Date"));
+            checkMandatoryField("fundId", "fund", voucherHeader.getFundId(), "voucher.fund.mandatory");
+            checkMandatoryField("vouchermis.departmentid", "department", voucherHeader.getVouchermis().getDepartmentid(),
+                    "voucher.department.mandatory");
+            checkMandatoryField("vouchermis.schemeid", "scheme", voucherHeader.getVouchermis().getSchemeid(),
+                    "voucher.scheme.mandatory");
+            checkMandatoryField("vouchermis.subschemeid", "subscheme", voucherHeader.getVouchermis().getSubschemeid(),
+                    "voucher.subscheme.mandatory");
+            checkMandatoryField("vouchermis.functionary", "functionary", voucherHeader.getVouchermis().getFunctionary(),
+                    "voucher.functionary.mandatory");
+            checkMandatoryField("fundsourceId", "fundsource", voucherHeader.getVouchermis().getFundsource(),
+                    "voucher.fundsource.mandatory");
+            checkMandatoryField("vouchermis.divisionId", "field", voucherHeader.getVouchermis().getDivisionid(),
+                    "voucher.field.mandatory");
+        }
     }
 
     protected void checkMandatoryField(final String objectName, final String fieldName, final Object value, final String errorKey)

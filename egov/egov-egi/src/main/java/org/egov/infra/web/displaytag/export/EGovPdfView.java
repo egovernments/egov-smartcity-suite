@@ -147,7 +147,7 @@ public class EGovPdfView implements BinaryExportView {
 
 		this.smallFont = FontFactory.getFont(FontFactory.HELVETICA, 7, Font.NORMAL, new Color(0, 0, 0));
 		/*
-		 * try { BaseFont btKannada = BaseFont.createFont("Tunga", "Identity-H", BaseFont.NOT_EMBEDDED); } catch (DocumentException e) { // TODO Auto-generated catch block e.printStackTrace(); } catch (IOException e) { // TODO Auto-generated catch block e.printStackTrace(); }
+		 * try { BaseFont btKannada = BaseFont.createFont("Tunga", "Identity-H", BaseFont.NOT_EMBEDDED); } catch (DocumentException e) {   } catch (IOException e) {   }
 		 */
 
 	}
@@ -253,7 +253,7 @@ public class EGovPdfView implements BinaryExportView {
 			document.close();
 
 		} catch (final Exception e) {
-			e.printStackTrace();
+
 			throw new PdfGenerationException(e);
 		}
 
@@ -344,10 +344,10 @@ public class EGovPdfView implements BinaryExportView {
 			try {
 				helv = BaseFont.createFont("Helvetica", BaseFont.WINANSI, false);
 			} catch (final DocumentException e) {
-				e.printStackTrace();
+
 				throw new ApplicationRuntimeException("Exception occured -----> " + e.getMessage());
 			} catch (final IOException e) {
-				e.printStackTrace();
+
 				throw new ApplicationRuntimeException("Exception occured -----> " + e.getMessage());
 			}
 			final PdfContentByte cb = writer.getDirectContent();

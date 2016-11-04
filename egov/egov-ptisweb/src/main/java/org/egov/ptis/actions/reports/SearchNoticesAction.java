@@ -40,6 +40,7 @@
 package org.egov.ptis.actions.reports;
 
 import static java.math.BigDecimal.ZERO;
+import static org.codehaus.groovy.tools.shell.util.Logger.io;
 import static org.egov.ptis.constants.PropertyTaxConstants.FILESTORE_MODULE_NAME;
 import static org.egov.ptis.constants.PropertyTaxConstants.NOTICE_TYPE_BILL;
 import static org.egov.ptis.constants.PropertyTaxConstants.REVENUE_HIERARCHY_TYPE;
@@ -383,7 +384,7 @@ public class SearchNoticesAction extends SearchFormAction {
 
         } catch (final IOException e) {
             LOGGER.error("Exception in Zip and Download : ", e);
-            e.printStackTrace();
+
             throw new ValidationException(Arrays.asList(new ValidationError("error", e.getMessage())));
         }
         final long endTime = System.currentTimeMillis();
@@ -774,7 +775,7 @@ public class SearchNoticesAction extends SearchFormAction {
 
         } catch (final Exception e) {
             LOGGER.error("Exception in concat PDFs : ", e);
-            e.printStackTrace();
+
         } finally {
             if (document.isOpen())
                 document.close();
@@ -783,7 +784,6 @@ public class SearchNoticesAction extends SearchFormAction {
                     outputStream.close();
             } catch (final IOException ioe) {
                 LOGGER.error("Exception in concat PDFs : ", ioe);
-                ioe.printStackTrace();
             }
         }
         if (LOGGER.isDebugEnabled())
@@ -816,15 +816,12 @@ public class SearchNoticesAction extends SearchFormAction {
 
         } catch (final IllegalArgumentException iae) {
             LOGGER.error("Exception in addFilesToZip : ", iae);
-            iae.printStackTrace();
             throw new ValidationException(Arrays.asList(new ValidationError("error", iae.getMessage())));
         } catch (final FileNotFoundException fnfe) {
             LOGGER.error("Exception in addFilesToZip : ", fnfe);
-            fnfe.printStackTrace();
             throw new ValidationException(Arrays.asList(new ValidationError("error", fnfe.getMessage())));
         } catch (final IOException ioe) {
             LOGGER.error("Exception in addFilesToZip : ", ioe);
-            ioe.printStackTrace();
             throw new ValidationException(Arrays.asList(new ValidationError("error", ioe.getMessage())));
         }
         if (LOGGER.isDebugEnabled())

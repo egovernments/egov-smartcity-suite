@@ -65,25 +65,25 @@ public class EgReasonCategoryHibernateDao implements EgReasonCategoryDao {
 
 	@Override
 	public EgReasonCategory create(EgReasonCategory egReasonCategory) {
-		// TODO Auto-generated method stub
+
 		return null;
 	}
 
 	@Override
 	public void delete(EgReasonCategory egReasonCategory) {
-		// TODO Auto-generated method stub
+
 
 	}
 
 	@Override
 	public EgReasonCategory update(EgReasonCategory egReasonCategory) {
-		// TODO Auto-generated method stub
+
 		return null;
 	}
 
 	@Override
 	public List<EgReasonCategory> findAll() {
-		// TODO Auto-generated method stub
+
 		return null;
 	}
 

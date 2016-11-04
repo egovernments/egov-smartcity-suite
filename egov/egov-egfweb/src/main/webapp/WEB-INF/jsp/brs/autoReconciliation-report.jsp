@@ -45,7 +45,17 @@
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 <title><s:text name="bankreconciliation" /></title>
 <script type="text/javascript">
-	
+function exportXls()
+{
+	document.forms[0].action='autoReconciliation-generateXLS.action';
+	document.forms[0].submit();
+	}
+
+function exportPdf()
+{
+	document.forms[0].action='autoReconciliation-generatePDF.action';
+	document.forms[0].submit();
+	}
 </script>
 </head>
 <body>
@@ -109,14 +119,14 @@
 		<s:date name="toDate" var="toDateId" format="dd/MM/yyyy" />
 		<s:date name="reconciliationDate" var="reconciliationDateId"
 			format="dd/MM/yyyy" />
-		<h3 class="text-center">
+		<h4 class="text-center">
 			Bank reconciliation statement from
 			<s:property value="%{fromDateId}" />
 			to
 			<s:property value="%{toDateId}" />
 			on
 			<s:property value="%{reconciliationDateId}" />
-		</h3>
+		</h4>
 		<div class="row">
 			<div class="col-md-3 pull-right">
 				<div class="alert alert-success" role="alert">
@@ -253,8 +263,8 @@
 							<td><s:property value="#stat.index+1" /></td>
 							<td><s:property value="txDate" /></td>
 							<td><s:property value="instrumentNo" /></td>
-							<td><s:property value="debit" /></td>
-							<td><s:property value="credit" /></td>
+							<td class="text-right"><s:property value="debit" /></td>
+							<td class="text-right"><s:property value="credit" /></td>
 							<td><s:property value="narration" /></td>
 						</tr>
 					</s:iterator>
@@ -296,11 +306,12 @@
 		<div class="buttonbottom" id="buttondiv" align="center">
 			<table>
 				<tr>
-					<s:submit value="Export EXCEL" method="generateXLS"
-						cssClass="button"
-						onclick="javascript:document.forms[0].action='autoReconciliation-generateXLS.action'" />
-					<s:submit value="Export PDF" method="generatePDF" cssClass="button"
-						onclick="javascript:document.forms[0].action='autoReconciliation-generatePDF.action'" />
+					<input type="submit" value="Export EXCEL" 
+						class="buttonsubmit"
+						onclick="exportXls();" />
+					<input type="submit" value="Export PDF" class="buttonsubmit"
+						onclick="exportPdf();" />
+					<input type="button" value="Close"	onclick="javascript:window.close()" class="button" />
 				</tr>
 			</table>
 		</div>

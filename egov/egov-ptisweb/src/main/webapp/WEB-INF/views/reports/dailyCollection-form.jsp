@@ -158,7 +158,6 @@ body
 				</div>
 			</div>
 		<br>
-		<spring:message code="reports.note.text" />
 		<div id="dailyCollectionReport-header" class="col-md-12 table-header text-left">
 			<fmt:formatDate value="${currDate}" var="currDate"
 				pattern="dd-MM-yyyy" />
@@ -198,6 +197,8 @@ body
 
 <link rel="stylesheet"
 	href="<cdn:url value='/resources/global/js/jquery/plugins/datatables/responsive/css/datatables.responsive.css' context='/egi'/>">
+<link rel="stylesheet" href="<cdn:url value='/resources/global/css/jquery/plugins/datatables/jquery.dataTables.min.css' context='/egi'/>"/>
+<link rel="stylesheet" href="<cdn:url value='/resources/global/css/jquery/plugins/datatables/dataTables.bootstrap.min.css' context='/egi'/>">
 <script
 	src="<cdn:url value='/resources/global/js/jquery/plugins/datatables/jquery.dataTables.min.js' context='/egi'/>"
 	type="text/javascript"></script>

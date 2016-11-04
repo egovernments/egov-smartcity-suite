@@ -115,31 +115,31 @@ public class PropertyOccupationHibernateDAO implements PropertyOccupationDAO {
 
 	@Override
 	public PropertyOccupation findById(Long id, boolean lock) {
-		// TODO Auto-generated method stub
+
 		return null;
 	}
 
 	@Override
 	public List<PropertyOccupation> findAll() {
-		// TODO Auto-generated method stub
+
 		return null;
 	}
 
 	@Override
 	public PropertyOccupation create(PropertyOccupation propertyOccupation) {
-		// TODO Auto-generated method stub
+
 		return null;
 	}
 
 	@Override
 	public void delete(PropertyOccupation propertyOccupation) {
-		// TODO Auto-generated method stub
+
 
 	}
 
 	@Override
 	public PropertyOccupation update(PropertyOccupation propertyOccupation) {
-		// TODO Auto-generated method stub
+
 		return null;
 	}
 }

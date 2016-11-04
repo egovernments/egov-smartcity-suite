@@ -124,7 +124,14 @@
 						<spring:message code="lbl.election.ward" />
 					</div>
 					<div class="col-xs-3 add-margin view-content">
-						<c:out default="N/A" value="${lineEstimate.ward.boundaryNum}" />
+						<c:choose>
+							<c:when test="${lineEstimate.ward.boundaryType.name.toUpperCase() == 'CITY'}">
+								<c:out default="N/A" value="${lineEstimate.ward.name}" />
+							</c:when>
+							<c:otherwise>
+								<c:out default="N/A" value="${lineEstimate.ward.boundaryNum}" />
+							</c:otherwise>
+						</c:choose>
 					</div>
 					<div class="col-xs-3 add-margin">
 						<spring:message code="lbl.location" />

@@ -41,12 +41,19 @@ package org.egov.works.workorderestimate.repository;
 
 import org.egov.works.models.workorder.WorkOrderEstimate;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 @Repository
 public interface WorkOrderEstimateRepository extends JpaRepository<WorkOrderEstimate, Long> {
-
+    
+    WorkOrderEstimate findByWorkOrder_Id(final Long workOrderId);
+    
     WorkOrderEstimate findByWorkOrder_IdAndEstimate_IdAndWorkOrder_EgwStatus_Code(final Long workOrderId, final Long estimateId,
             final String status);
 
+    @Query("select distinct(woe) from WorkOrderEstimate as woe where upper(woe.estimate.estimateNumber) = :estimateNumber and woe.workOrder.egwStatus.code = :workOrderStatus and woe.workOrder.parent is null")
+    WorkOrderEstimate findWorkOrderEstimateByEstimateNumber(@Param("estimateNumber") final String estimateNumber,@Param("workOrderStatus") final String workOrderStatus);
+    
 }

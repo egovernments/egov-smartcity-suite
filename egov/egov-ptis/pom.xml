@@ -320,61 +320,7 @@
 			<groupId>org.codehaus.groovy</groupId>
 			<artifactId>groovy-all</artifactId>
 		</dependency>
-		
-		<!-- RESTFUL WEBSERVICE START -->
-		<dependency>
-			<groupId>com.sun.jersey</groupId>
-			<artifactId>jersey-core</artifactId>
-			<version>1.19</version>
-		</dependency>
-		<dependency>
-			<groupId>com.sun.jersey</groupId>
-			<artifactId>jersey-bundle</artifactId>
-			<version>1.19</version>
-		</dependency>
-        <dependency>
-            <groupId>com.sun.jersey</groupId>
-            <artifactId>jersey-servlet</artifactId>
-            <version>1.19</version>
-        </dependency>
-        <dependency>
-            <groupId>com.sun.jersey</groupId>
-            <artifactId>jersey-json</artifactId>
-            <version>1.19</version>
-            <exclusions>
-            	<exclusion>
-            		<artifactId>jaxb-impl</artifactId>
-            		<groupId>com.sun.xml.bind</groupId>
-            	</exclusion>
-            </exclusions>
-        </dependency>
-        <dependency>
-	        <groupId>com.sun.jersey.contribs</groupId>
-	        <artifactId>jersey-multipart</artifactId>
-	        <version>1.19</version>
-		</dependency>
-        <dependency>
-            <groupId>com.sun.jersey</groupId>
-            <artifactId>jersey-server</artifactId>
-            <version>1.19</version>
-        </dependency>
-        <dependency>
-			<groupId>org.codehaus.jackson</groupId>
-			<artifactId>jackson-core-asl</artifactId>
-			<version>1.8.5</version>
-		</dependency>
-		<dependency>
-			<groupId>javax.ws.rs</groupId>
-			<artifactId>javax.ws.rs-api</artifactId>
-			<version>2.0-m01</version>
-		</dependency>
-		<dependency>
-			<groupId>com.sun.jersey.contribs</groupId>
-			<artifactId>jersey-spring</artifactId>
-			<version>1.9.1</version>
-		</dependency>
-		<!-- RESTFUL WEBSERVICE END -->
-		
+
 	</dependencies>
 	<build>
         <resources>
@@ -399,7 +345,7 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-jar-plugin</artifactId>
-                <version>2.4</version>
+                <version>${mvn.jar.plugin.version}</version>
                 <executions>
                     <execution>
                         <goals>

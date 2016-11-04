@@ -65,4 +65,12 @@ public class WorkOrderEstimateService {
     public WorkOrderEstimate getWorkOrderEstimateById(final Long id) {
         return workOrderEstimateRepository.findOne(id);
     }
+    
+    public WorkOrderEstimate getWorkOrderEstimateByEstimateNumber(final String estimateNumber) {
+        return workOrderEstimateRepository.findWorkOrderEstimateByEstimateNumber(estimateNumber,WorksConstants.APPROVED);
+    }
+    
+    public WorkOrderEstimate getWorkOrderEstimateByWorkOrderId(final Long workOrderId) {
+        return workOrderEstimateRepository.findByWorkOrder_Id(workOrderId);
+    }
 }

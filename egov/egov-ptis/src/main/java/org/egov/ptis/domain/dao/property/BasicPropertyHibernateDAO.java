@@ -208,7 +208,7 @@ public class BasicPropertyHibernateDAO implements BasicPropertyDAO {
             try {
                 resultSet.close();
             } catch (SQLException e) {
-                e.printStackTrace();
+
             }
         }
         return regNum;
@@ -340,7 +340,7 @@ public class BasicPropertyHibernateDAO implements BasicPropertyDAO {
 
     @Override
     public BasicProperty findById(Integer id, boolean lock) {
-        // TODO Auto-generated method stub
+
         return null;
     }
 
@@ -352,19 +352,19 @@ public class BasicPropertyHibernateDAO implements BasicPropertyDAO {
 
     @Override
     public BasicProperty create(BasicProperty entity) {
-        // TODO Auto-generated method stub
+
         return null;
     }
 
     @Override
     public void delete(BasicProperty entity) {
-        // TODO Auto-generated method stub
+
 
     }
 
     @Override
     public BasicProperty update(BasicProperty entity) {
-        // TODO Auto-generated method stub
+
         return null;
     }
 
@@ -517,7 +517,7 @@ public class BasicPropertyHibernateDAO implements BasicPropertyDAO {
         for (String param : params.keySet()) {
             query.setParameter(param, params.get(param));
         }
-        List<String> list = query.list();
+        List<String> list = query.setMaxResults(100).list();
         List<BasicProperty> basicProperties = new ArrayList<BasicProperty>();
         if (null != list && !list.isEmpty()) {
             for (String propertyid : list) {
@@ -525,5 +525,16 @@ public class BasicPropertyHibernateDAO implements BasicPropertyDAO {
             }
         }
         return basicProperties;
+    }
+    
+    /**
+     * API to fetch properties belonging to a particular ward
+     */
+    @Override
+    public List<BasicProperty> getActiveBasicPropertiesForWard(Long wardId){
+    	String queryStr = "select bp from BasicPropertyImpl bp where bp.propertyID.ward.id=:wardId and bp.active = 'Y' and bp.upicNo is not null order by bp.id ";
+    	Query query = getCurrentSession().createQuery(queryStr);
+    	query.setLong("wardId", wardId);
+    	return query.list();
     }
 }

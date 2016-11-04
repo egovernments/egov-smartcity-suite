@@ -65,6 +65,13 @@ $(document).ready(function(){
 			$(this).val(roundTo($(this).val()));
 	});
 	
+	var boundaryType = $('#boundaryType').val();
+	if(boundaryType != undefined && boundaryType.toUpperCase() == 'CITY')  {
+		$('#wardInput').val($("#boundaryName").val());
+	}
+	else
+		$('#wardInput').val($("#boundaryNumber").val());
+	
 	$( "input[name$='actualEstimateAmount']" ).each(function(){
 		var value = parseFloat(roundTo($(this).val()));
 		if(value != 0)
@@ -437,7 +444,7 @@ $(document).ready(function(){
             filter: function (data) {
                 return $.map(data, function (ct) {
                     return {
-                        name: '' + ct.boundaryNum + '',
+                        name: ct.boundaryType.name.toUpperCase() == 'CITY' ? ct.name : ct.boundaryNum + '' ,
                         value: ct.id
                     };
                 });

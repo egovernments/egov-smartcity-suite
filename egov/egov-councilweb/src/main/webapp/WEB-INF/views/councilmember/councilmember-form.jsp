@@ -163,7 +163,7 @@
 				<div class="col-sm-3 add-margin">
 					<form:textarea path="residentialAddress" id="residentialAddress"
 						cols="5" rows="2" class="form-control patternvalidation"
-						data-pattern="alphanumericwithspace" required="required"
+						data-pattern="regexp_alphabetspecialcharacters" required="required"
 						minlength="5" maxlength="256" />
 					<form:errors path="residentialAddress" cssClass="error-msg" />
 				</div>
@@ -223,7 +223,7 @@
 						<c:when test="${councilMember.photo != null}">
 
 							<input type="file" id="attachments" name="attachments"
-								data-id="1" class="filechange inline btn" />
+								data-id="1" class="filechange inline btn upload-file" />
 							<form:errors path="attachments" cssClass="error-msg" />
 
 							<form:hidden path="photo.id" value="${councilMember.photo.id}" />
@@ -236,10 +236,12 @@
 								style="max-width: 25%; max-height: 25%;"
 								src="/council/councilmember/downloadfile/${councilMember.photo.fileStoreId}"
 								alt="${councilMember.photo.fileName}" /></a>
+								<small class="error-msg"><spring:message code="lbl.mesg.upload.size"/></small>
 						</c:when>
 						<c:otherwise>
 							<input type="file" id="attachments" name="attachments"
-								data-id="1" class="filechange inline btn" />
+								data-id="1" class="filechange inline btn upload-file" />
+								<small class="error-msg"><spring:message code="lbl.mesg.upload.size"/></small>
 							<form:errors path="attachments" cssClass="error-msg" />
 						</c:otherwise>
 					</c:choose>

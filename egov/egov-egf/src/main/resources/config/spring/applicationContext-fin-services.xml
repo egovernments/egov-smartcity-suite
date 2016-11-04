@@ -45,7 +45,7 @@
 	   xmlns:context="http://www.springframework.org/schema/context"
 	   xsi:schemaLocation="http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd
 		http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd"
-	   default-lazy-init="false">
+	   default-lazy-init="true">
 
 	<context:component-scan base-package="org.egov.egf, org.egov.dao, org.egov.model, org.egov.billsaccounting, org.egov.deduction, org.egov.masters, org.egov.payment, org.egov.services, org.egov.utils, com.exilant"/>
 
@@ -138,6 +138,17 @@
 			ref="paymentHeaderPersistenceService" />
 	</bean>
 
+    <bean id="budgetDetailHeaderPersistenceService" parent="abstractPersistenceService">
+        <constructor-arg name="type" value="org.egov.model.budget.BudgetDetail" />
+	</bean>
+
+
+	<bean id="BudgetDetailInboxRenderService"
+		class="org.egov.egf.workflow.renderer.BudgetDetailRenderService">
+		<constructor-arg index="0"
+			ref="budgetDetailHeaderPersistenceService" />
+	</bean>
+	
 	<bean id="billRegisterPersistenceService" parent="abstractPersistenceService">
         <constructor-arg name="type" value="org.egov.model.bills.EgBillregister" />
 	</bean>

@@ -167,7 +167,7 @@ public class CreateSpillOverLineEstimateController {
         validateAdminSanctionDetail(lineEstimate, errors);
         validateTechSanctionDetails(lineEstimate, errors);
 
-        if (BudgetControlType.BudgetCheckOption.MANDATORY.toString()
+        if (!BudgetControlType.BudgetCheckOption.NONE.toString()
                 .equalsIgnoreCase(budgetControlTypeService.getConfigValue()))
             validateBudgetAmount(lineEstimate, errors);
         
@@ -220,6 +220,12 @@ public class CreateSpillOverLineEstimateController {
                 errors.rejectValue("lineEstimateDetails[" + index + "].estimateNumber", "error.estimatenumber.unique");
             if (workIdentificationNumber != null)
                 errors.rejectValue("lineEstimateDetails[" + index + "].projectCode.code", "error.win.unique");
+            if(led.getActualEstimateAmount() != null && !(led.getActualEstimateAmount().signum() == 1))
+            	errors.rejectValue("lineEstimateDetails[" + index + "].actualEstimateAmount",  "error.actualestimateamount.required");
+            if(led.getEstimateAmount().compareTo(led.getActualEstimateAmount()) == -1)
+            	errors.rejectValue("lineEstimateDetails[" + index + "].actualEstimateAmount", "error.actualamount");
+            if (led.getQuantity() <= 0)
+                errors.rejectValue("lineEstimateDetails[" + index + "].quantity", "error.quantity.required");
             index++;
         }
     }
@@ -320,8 +326,8 @@ public class CreateSpillOverLineEstimateController {
                             led.getGrossAmountBilled()));
                 else
                     totalAppropriationAmount = totalAppropriationAmount.add(led.getEstimateAmount());
-
-            if (budgetAvailable.compareTo(totalAppropriationAmount) == -1)
+            if (BudgetControlType.BudgetCheckOption.MANDATORY.toString().equalsIgnoreCase(budgetControlTypeService.getConfigValue()) 
+                    && budgetAvailable.compareTo(totalAppropriationAmount) == -1)
                 errors.reject("error.budgetappropriation.amount",
                         new String[] { budgetAvailable.toString(), totalAppropriationAmount.toString() }, null);
         } catch (final ValidationException e) {

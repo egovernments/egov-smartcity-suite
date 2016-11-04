@@ -58,7 +58,7 @@ public class DatasourceConfiguration {
     private Environment env;
 
     @Bean
-    public JndiObjectFactoryBean dataSource() throws IllegalArgumentException {
+    public JndiObjectFactoryBean dataSource() {
         final JndiObjectFactoryBean dataSource = new JndiObjectFactoryBean();
         dataSource.setExpectedType(DataSource.class);
         dataSource.setJndiName(env.getProperty("default.jdbc.jndi.dataSource"));

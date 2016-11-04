@@ -44,6 +44,7 @@ import static org.egov.ptis.constants.PropertyTaxConstants.ADDTIONAL_RULE_ALTER_
 import static org.egov.ptis.constants.PropertyTaxConstants.ADDTIONAL_RULE_BIFURCATE_ASSESSMENT;
 import static org.egov.ptis.constants.PropertyTaxConstants.ALTERATION_OF_ASSESSMENT;
 import static org.egov.ptis.constants.PropertyTaxConstants.AMALGAMATION_OF_ASSESSMENT;
+import static org.egov.ptis.constants.PropertyTaxConstants.APPCONFIG_CLIENT_SPECIFIC_DMD_BILL;
 import static org.egov.ptis.constants.PropertyTaxConstants.APPLICATION_TYPE_ALTER_ASSESSENT;
 import static org.egov.ptis.constants.PropertyTaxConstants.APPLICATION_TYPE_BIFURCATE_ASSESSENT;
 import static org.egov.ptis.constants.PropertyTaxConstants.APPLICATION_TYPE_GRP;
@@ -77,6 +78,7 @@ import static org.egov.ptis.constants.PropertyTaxConstants.PROPERTY_MODIFY_REASO
 import static org.egov.ptis.constants.PropertyTaxConstants.PROPERTY_MODIFY_REASON_DATA_UPDATE;
 import static org.egov.ptis.constants.PropertyTaxConstants.PROPERTY_MODIFY_REASON_GENERAL_REVISION_PETITION;
 import static org.egov.ptis.constants.PropertyTaxConstants.PROP_CREATE_RSN;
+import static org.egov.ptis.constants.PropertyTaxConstants.PTMODULENAME;
 import static org.egov.ptis.constants.PropertyTaxConstants.QUERY_BASICPROPERTY_BY_UPICNO;
 import static org.egov.ptis.constants.PropertyTaxConstants.QUERY_PROPERTYIMPL_BYID;
 import static org.egov.ptis.constants.PropertyTaxConstants.QUERY_WORKFLOW_PROPERTYIMPL_BYID;
@@ -119,9 +121,6 @@ import org.apache.struts2.interceptor.validation.SkipValidation;
 import org.egov.commons.Area;
 import org.egov.eis.entity.Assignment;
 import org.egov.eis.service.AssignmentService;
-import org.egov.eis.service.EisCommonService;
-import org.egov.infra.admin.master.entity.User;
-import org.egov.infra.admin.master.service.UserService;
 import org.egov.infra.persistence.entity.Address;
 import org.egov.infra.reporting.engine.ReportConstants.FileFormat;
 import org.egov.infra.reporting.engine.ReportOutput;
@@ -130,7 +129,6 @@ import org.egov.infra.reporting.engine.ReportService;
 import org.egov.infra.reporting.viewer.ReportViewerUtil;
 import org.egov.infra.security.utils.SecurityUtils;
 import org.egov.infra.utils.DateUtils;
-import org.egov.infra.validation.exception.ValidationError;
 import org.egov.infra.web.struts.annotation.ValidationErrorPage;
 import org.egov.infra.web.utils.WebUtils;
 import org.egov.infra.workflow.entity.StateAware;
@@ -140,9 +138,6 @@ import org.egov.ptis.client.util.FinancialUtil;
 import org.egov.ptis.client.util.PropertyTaxNumberGenerator;
 import org.egov.ptis.client.util.PropertyTaxUtil;
 import org.egov.ptis.constants.PropertyTaxConstants;
-import org.egov.ptis.domain.dao.demand.PtDemandDao;
-import org.egov.ptis.domain.dao.property.BasicPropertyDAO;
-import org.egov.ptis.domain.dao.property.PropertyStatusValuesDAO;
 import org.egov.ptis.domain.dao.property.PropertyTypeMasterDAO;
 import org.egov.ptis.domain.entity.demand.Ptdemand;
 import org.egov.ptis.domain.entity.enums.TransactionType;
@@ -188,10 +183,17 @@ import org.springframework.beans.factory.annotation.Autowired;
         @Result(name = TARGET_WORKFLOW_ERROR, location = "workflow/workflow-error.jsp"),
         @Result(name = ModifyPropertyAction.BALANCE, location = "modify/modifyProperty-balance.jsp"),
         @Result(name = ModifyPropertyAction.PRINT_ACK, location = "modify/modifyProperty-printAck.jsp"),
-        @Result(name = ModifyPropertyAction.COMMON_FORM, location = "search/searchProperty-commonForm.jsp") })
+        @Result(name = ModifyPropertyAction.COMMON_FORM, location = "search/searchProperty-commonForm.jsp"),
+        @Result(name = ModifyPropertyAction.MEESEVA_ERROR, location = "common/meeseva-errorPage.jsp"),
+        @Result(name = ModifyPropertyAction.MEESEVA_RESULT_ACK, location = "common/meesevaAck.jsp")})
 @Namespace("/modify")
 public class ModifyPropertyAction extends PropertyTaxBaseAction {
+    private final Logger LOGGER = Logger.getLogger(getClass());
     protected static final String COMMON_FORM = "commonForm";
+    protected static final String BALANCE = "balance";
+    protected static final String RESULT_ACK = "ack";
+    protected static final String VIEW = "view";
+    
     private static final String PROPERTY_MODIFY_REJECT_SUCCESS = "property.modify.reject.success";
     private static final String PROPERTY_MODIFY_FINAL_REJECT_SUCCESS = "property.modify.final.reject.success";
     private static final String PROPERTY_MODIFY_APPROVE_SUCCESS = "property.modify.approve.success";
@@ -202,15 +204,14 @@ public class ModifyPropertyAction extends PropertyTaxBaseAction {
     private static final String PROPERTY_BIFURCATION = "Property Bifurcation";
     private static final String PROPERTY_GENERAL_REVISION_PETITION = "Property General Revision Petition";
     private static final long serialVersionUID = 1L;
-    private final Logger LOGGER = Logger.getLogger(getClass());
     private static final String BIFURCATION = "Bifurcation";
-    protected static final String BALANCE = "balance";
-    protected static final String RESULT_ACK = "ack";
     private static final String RESULT_ERROR = "error";
-    protected static final String VIEW = "view";
     private static final String MODIFY_ACK_TEMPLATE = "modifyProperty_ack";
     private static final String GRP_ACK_TEMPLATE = "GRP_Property_ack";
     public static final String PRINT_ACK = "printAck";
+    public static final String MEESEVA_RESULT_ACK = "meesevaAck";
+    public static final String MEESEVA_ERROR = "meesevaError";
+    
     private PersistenceService<Property, Long> propertyImplService;
     private PersistenceService<Floor, Long> floorService;
     private BasicProperty basicProp;
@@ -251,9 +252,7 @@ public class ModifyPropertyAction extends PropertyTaxBaseAction {
     private String propOccId;
     private String amenities;
     private String[] floorNoStr = new String[100];
-    List<ValidationError> errors = new ArrayList<ValidationError>();
     final SimpleDateFormat dateFormatter = new SimpleDateFormat("dd/MM/yyyy");
-    int i = 0;
     private PropertyImpl propWF;// would be current property workflow obj
     private Map<String, String> propTypeCategoryMap;
     FinancialUtil financialUtil = new FinancialUtil();
@@ -292,21 +291,17 @@ public class ModifyPropertyAction extends PropertyTaxBaseAction {
     private String taxDueErrorMsg;
     private Long taxExemptedReason;
     private Boolean wfInitiatorRejected;
+    private String houseNo;
+    private String oldPropertyTypeCode;
+    private Boolean isMeesevaUser = Boolean.FALSE;
+    private String meesevaApplicationNumber;
 
     @Autowired
     private PropertyPersistenceService basicPropertyService;
     @Autowired
     private PropertyService propertyService;
     @Autowired
-    private BasicPropertyDAO basicPropertyDAO;
-    @Autowired
-    private UserService userService;
-    @Autowired
     private PropertyTypeMasterDAO propertyTypeMasterDAO;
-    @Autowired
-    private PropertyStatusValuesDAO propertyStatusValuesDAO;
-    @Autowired
-    private PtDemandDao ptDemandDAO;
     @Autowired
     private SecurityUtils securityUtils;
     @Autowired
@@ -343,6 +338,16 @@ public class ModifyPropertyAction extends PropertyTaxBaseAction {
         }
         String target = "";
         target = populateFormData(Boolean.FALSE);
+        isMeesevaUser = propService.isMeesevaUser(securityUtils.getCurrentUser());
+        if (isMeesevaUser) {
+            if (getMeesevaApplicationNumber() == null) {
+                addActionMessage(getText("MEESEVA.005"));
+                return MEESEVA_ERROR;
+            }
+            else{
+                propertyModel.setMeesevaApplicationNumber(getMeesevaApplicationNumber());
+            }
+        }
         LOGGER.debug("modifyForm: IsAuthProp: " + getIsAuthProp() + ", AreaOfPlot: " + getAreaOfPlot()
                 + ", PropTypeId: " + getPropTypeId() + ", PropertyCategory: " + getPropertyCategory()
                 + ", PropUsageId: " + getPropUsageId() + ", PropOccId: " + getPropOccId());
@@ -454,6 +459,8 @@ public class ModifyPropertyAction extends PropertyTaxBaseAction {
             setPropAddress(basicProp.getAddress().toString());
             propertyAddr = basicProp.getAddress();
             corrsAddress = PropertyTaxUtil.getOwnerAddress(basicProp.getPropertyOwnerInfo());
+           if(propertyAddr.getHouseNoBldgApt() !=null)
+                setHouseNo(propertyAddr.getHouseNoBldgApt().toString());
             if (propertyModel.getPropertyDetail().getFloorType() != null)
                 floorTypeId = propertyModel.getPropertyDetail().getFloorType().getId();
             if (propertyModel.getPropertyDetail().getRoofType() != null)
@@ -473,6 +480,7 @@ public class ModifyPropertyAction extends PropertyTaxBaseAction {
             }
             final PropertyTypeMaster propertyType = propertyModel.getPropertyDetail().getPropertyTypeMaster();
             propTypeId = propertyType.getId().toString();
+            setOldPropertyTypeCode(oldProperty.getPropertyDetail().getPropertyTypeMaster().getCode());
             if (propertyModel.getPropertyDetail().getPropertyUsage() != null)
                 propUsageId = propertyModel.getPropertyDetail().getPropertyUsage().getId().toString();
             if (propertyModel.getPropertyDetail().getPropertyOccupation() != null)
@@ -569,8 +577,15 @@ public class ModifyPropertyAction extends PropertyTaxBaseAction {
     @Action(value = "/modifyProperty-forward")
     public String forwardModify() {
         LOGGER.debug("forwardModify: Modify property started " + propertyModel);
+        setOldPropertyTypeCode(basicProp.getProperty().getPropertyDetail().getPropertyTypeMaster().getCode());
         validate();
         final long startTimeMillis = System.currentTimeMillis();
+        isMeesevaUser = propService.isMeesevaUser(securityUtils.getCurrentUser());
+
+        if (isMeesevaUser && getMeesevaApplicationNumber() != null) {
+            propertyModel.setApplicationNo(propertyModel.getMeesevaApplicationNumber());
+            propertyModel.setSource(PropertyTaxConstants.SOURCEOFDATA_MEESEWA);
+        }
         if (getModelId() != null && !getModelId().trim().isEmpty()) {
             propWF = (PropertyImpl) getPersistenceService().findByNamedQuery(QUERY_WORKFLOW_PROPERTYIMPL_BYID,
                     Long.valueOf(getModelId()));
@@ -585,6 +600,9 @@ public class ModifyPropertyAction extends PropertyTaxBaseAction {
             final Area area = new Area();
             area.setArea(new Float(areaOfPlot));
             propertyModel.getPropertyDetail().setSitalArea(area);
+        }
+        if (houseNo != null && !houseNo.isEmpty()) {
+            basicProp.getAddress().setHouseNoBldgApt(houseNo);
         }
         if (propTypeId != null && !propTypeId.trim().isEmpty() && !propTypeId.equals("-1"))
             propTypeMstr = (PropertyTypeMaster) getPersistenceService().find(
@@ -627,7 +645,16 @@ public class ModifyPropertyAction extends PropertyTaxBaseAction {
                 basicPropertyService.applyAuditing(ptDemand.getDmdCalculations());
             }
         }
+        if (!isMeesevaUser)
         basicPropertyService.update(basicProp);
+        else {
+            HashMap<String, String> meesevaParams = new HashMap<String, String>();
+            meesevaParams.put("ADMISSIONFEE", "0");
+            meesevaParams.put("APPLICATIONNUMBER", propertyModel.getMeesevaApplicationNumber());
+            basicProp.setSource(PropertyTaxConstants.SOURCEOFDATA_MEESEWA);
+            basicProp.getProperty().setApplicationNo(propertyModel.getMeesevaApplicationNumber());
+            basicPropertyService.updateBasicProperty(basicProp, meesevaParams);
+        }
         setModifyRsn(propertyModel.getPropertyDetail().getPropertyMutationMaster().getCode());
         prepareAckMsg();
         buildEmailandSms(propertyModel, getApplicationType());
@@ -636,16 +663,16 @@ public class ModifyPropertyAction extends PropertyTaxBaseAction {
         final long elapsedTimeMillis = System.currentTimeMillis() - startTimeMillis;
         LOGGER.info("forwardModify: Modify property forwarded successfully; Time taken(ms) = " + elapsedTimeMillis);
         LOGGER.debug("forwardModify: Modify property forward ended");
-        return RESULT_ACK;
+        return isMeesevaUser ? MEESEVA_RESULT_ACK : RESULT_ACK;
     }
 
-    private String getApplicationType() {
-        final String applicationType = PROPERTY_MODIFY_REASON_ADD_OR_ALTER.equals(modifyRsn) ? ALTERATION_OF_ASSESSMENT
+    public String getApplicationType() {
+        final String applicationType = PROPERTY_MODIFY_REASON_ADD_OR_ALTER.equals(modifyRsn) ? APPLICATION_TYPE_ALTER_ASSESSENT
                 : PROPERTY_MODIFY_REASON_BIFURCATE.equals(modifyRsn) ? APPLICATION_TYPE_BIFURCATE_ASSESSENT
                         : APPLICATION_TYPE_GRP;
         return applicationType;
     }
-
+   
     /**
      * Modifies and Forwards the assessment to next user when form is submitted
      * in read only mode
@@ -715,8 +742,12 @@ public class ModifyPropertyAction extends PropertyTaxBaseAction {
                 || PROPERTY_MODIFY_REASON_GENERAL_REVISION_PETITION.equals(modifyRsn)) {
             propertyModel.setStatus(STATUS_ISACTIVE);
             oldProperty.setStatus(STATUS_ISHISTORY);
-            propertyTaxUtil.makeTheEgBillAsHistory(basicProp);
-            propertyTaxCommonUtils.makeExistingDemandBillInactive(basicProp.getUpicNo());
+            String clientSpecificDmdBill = propertyTaxCommonUtils.getAppConfigValue(APPCONFIG_CLIENT_SPECIFIC_DMD_BILL,PTMODULENAME);
+            if ("Y".equalsIgnoreCase(clientSpecificDmdBill)) {
+                propertyTaxCommonUtils.makeExistingDemandBillInactive(basicProp.getUpicNo());
+            } else
+                propertyTaxUtil.makeTheEgBillAsHistory(basicProp);
+            
         }
         processAndStoreDocumentsWithReason(basicProp, getReason(modifyRsn));
         if (PROPERTY_MODIFY_REASON_ADD_OR_ALTER.equals(modifyRsn) || PROPERTY_MODIFY_REASON_BIFURCATE.equals(modifyRsn)
@@ -1131,6 +1162,11 @@ public class ModifyPropertyAction extends PropertyTaxBaseAction {
         LOGGER.debug("Entered into validate, ModifyRsn: " + modifyRsn);
         propertyModel.setBasicProperty(basicProp);
         Date propCompletionDate = null;
+        if(!propTypeMstr.getType().equals(OWNERSHIP_TYPE_VAC_LAND_STR) && oldPropertyTypeCode.equals(OWNERSHIP_TYPE_VAC_LAND) && modifyRsn.equals(PROPERTY_MODIFY_REASON_ADD_OR_ALTER)){
+            if(houseNo == null || houseNo.isEmpty()){
+                addActionError(getText("mandatory.doorNo"));
+            }
+        }
         if (basicProp.getSource() == SOURCEOFDATA_MIGRATION || basicProp.getSource() == SOURCEOFDATA_DATAENTRY) {
             setOldProperty((PropertyImpl) getBasicProp().getProperty());
             propCompletionDate = propertyTaxUtil.getLowestInstallmentForProperty(oldProperty);
@@ -1141,7 +1177,7 @@ public class ModifyPropertyAction extends PropertyTaxBaseAction {
                 propOccId, floorTypeId, roofTypeId, wallTypeId, woodTypeId, modifyRsn, propCompletionDate);
         validateApproverDetails();
         if (!propertyByEmployee) {
-            if (null != basicProp && null == propService.getUserPositionByZone(basicProp,basicProp.getSource())) {
+            if (null != basicProp && null == propService.getUserPositionByZone(basicProp, false)) {
                 addActionError(getText("notexists.position"));
             }
         }
@@ -1876,20 +1912,8 @@ public class ModifyPropertyAction extends PropertyTaxBaseAction {
         this.woodTypeId = woodTypeId;
     }
 
-    public void setBasicPropertyDAO(final BasicPropertyDAO basicPropertyDAO) {
-        this.basicPropertyDAO = basicPropertyDAO;
-    }
-
     public void setPropertyTypeMasterDAO(final PropertyTypeMasterDAO propertyTypeMasterDAO) {
         this.propertyTypeMasterDAO = propertyTypeMasterDAO;
-    }
-
-    public void setPropertyStatusValuesDAO(final PropertyStatusValuesDAO propertyStatusValuesDAO) {
-        this.propertyStatusValuesDAO = propertyStatusValuesDAO;
-    }
-
-    public void setPtDemandDAO(final PtDemandDao ptDemandDAO) {
-        this.ptDemandDAO = ptDemandDAO;
     }
 
     public void setbasicPropertyService(final PropertyPersistenceService basicPropertyService) {
@@ -2053,4 +2077,26 @@ public class ModifyPropertyAction extends PropertyTaxBaseAction {
         this.propertyTaxDetailsMap = propertyTaxDetailsMap;
     }
 
+    public String getHouseNo() {
+        return houseNo;
+    }
+
+    public void setHouseNo(String houseNo) {
+        this.houseNo = houseNo;
+    }
+
+    public String getOldPropertyTypeCode() {
+        return oldPropertyTypeCode;
+    }
+
+    public void setOldPropertyTypeCode(String oldPropertyTypeCode) {
+        this.oldPropertyTypeCode = oldPropertyTypeCode;
+    }
+    public String getMeesevaApplicationNumber() {
+        return meesevaApplicationNumber;
+    }
+
+    public void setMeesevaApplicationNumber(String meesevaApplicationNumber) {
+        this.meesevaApplicationNumber = meesevaApplicationNumber;
+    }
 }
