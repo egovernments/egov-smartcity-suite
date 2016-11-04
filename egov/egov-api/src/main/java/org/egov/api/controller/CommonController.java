@@ -290,7 +290,7 @@ public class CommonController extends ApiController {
             if (citizen == null) {
                 return res.error(getMessage("user.not.found"));
             }
-            citizenService.sendActivationMessage(citizen);
+           // citizenService.sendActivationMessage(citizen);
             return res.setDataAdapter(new UserAdapter()).success(citizen, this.getMessage("sendOTP.success"));
         } catch (Exception e) {
         	LOGGER.error("EGOV-API ERROR ",e);
