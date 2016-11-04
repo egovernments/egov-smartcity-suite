@@ -61,138 +61,140 @@ import org.hibernate.validator.constraints.Length;
 @SequenceGenerator(name = EgBillPayeedetails.SEQ_EG_BILLPAYEEDETAILS, sequenceName = EgBillPayeedetails.SEQ_EG_BILLPAYEEDETAILS, allocationSize = 1)
 public class EgBillPayeedetails extends AbstractPersistable<Integer> implements java.io.Serializable {
 
-	private static final long serialVersionUID = -6620941691239597456L;
+    private static final long serialVersionUID = -6620941691239597456L;
 
-	public static final String SEQ_EG_BILLPAYEEDETAILS = "SEQ_EG_BILLPAYEEDETAILS";
+    public static final String SEQ_EG_BILLPAYEEDETAILS = "SEQ_EG_BILLPAYEEDETAILS";
 
-	@Id
-	@GeneratedValue(generator = SEQ_EG_BILLPAYEEDETAILS, strategy = GenerationType.SEQUENCE)
-	private Integer id;
+    @Id
+    @GeneratedValue(generator = SEQ_EG_BILLPAYEEDETAILS, strategy = GenerationType.SEQUENCE)
+    private Integer id;
 
-	@ManyToOne
-	@JoinColumn(name = "billdetailid")
-	private EgBilldetails egBilldetailsId;
+    @ManyToOne
+    @JoinColumn(name = "billdetailid")
+    private EgBilldetails egBilldetailsId;
 
-	private Integer accountDetailTypeId;
+    private Integer accountDetailTypeId;
 
-	private Integer accountDetailKeyId;
+    private Integer accountDetailKeyId;
 
-	private BigDecimal debitAmount;
+    private BigDecimal debitAmount;
 
-	private BigDecimal creditAmount;
+    private BigDecimal creditAmount;
 
-	private Date lastUpdatedTime;
+    private Date lastUpdatedTime;
 
-	@Transient
-	private String detailTypeName;
+    @Transient
+    private String detailTypeName;
 
-	@Transient
-	private String detailKeyName;
+    @Transient
+    private String detailKeyName;
 
-	@Transient
-	private Boolean isDebit;
+    @Transient
+    private Boolean isDebit;
 
-	@ManyToOne
-	@JoinColumn(name = "tdsid")
-	private Recovery recovery;
+    @ManyToOne
+    @JoinColumn(name = "tdsid")
+    private Recovery recovery;
 
-	@Length(max = 250)
-	private String narration;
+    @Length(max = 250)
+    private String narration;
 
-	public Integer getAccountDetailKeyId() {
-		return accountDetailKeyId;
-	}
+    public Integer getAccountDetailKeyId() {
+        return accountDetailKeyId;
+    }
 
-	public void setAccountDetailKeyId(final Integer accountDetailKeyId) {
-		this.accountDetailKeyId = accountDetailKeyId;
-	}
+    public void setAccountDetailKeyId(final Integer accountDetailKeyId) {
+        this.accountDetailKeyId = accountDetailKeyId;
+    }
 
-	public EgBilldetails getEgBilldetailsId() {
-		return egBilldetailsId;
-	}
+    public EgBilldetails getEgBilldetailsId() {
+        return egBilldetailsId;
+    }
 
-	public void setEgBilldetailsId(final EgBilldetails egBilldetailsId) {
-		this.egBilldetailsId = egBilldetailsId;
-	}
+    public void setEgBilldetailsId(final EgBilldetails egBilldetailsId) {
+        this.egBilldetailsId = egBilldetailsId;
+    }
 
-	public BigDecimal getCreditAmount() {
-		return creditAmount;
-	}
+    public BigDecimal getCreditAmount() {
+        return creditAmount;
+    }
 
-	public void setCreditAmount(final BigDecimal creditAmount) {
-		this.creditAmount = creditAmount;
-	}
+    public void setCreditAmount(final BigDecimal creditAmount) {
+        this.creditAmount = creditAmount;
+    }
 
-	public BigDecimal getDebitAmount() {
-		return debitAmount;
-	}
+    public BigDecimal getDebitAmount() {
+        return debitAmount;
+    }
 
-	public void setDebitAmount(final BigDecimal debitAmount) {
-		this.debitAmount = debitAmount;
-	}
+    public void setDebitAmount(final BigDecimal debitAmount) {
+        this.debitAmount = debitAmount;
+    }
 
-	public Integer getId() {
-		return id;
-	}
+    @Override
+    public Integer getId() {
+        return id;
+    }
 
-	public void setId(final Integer id) {
-		this.id = id;
-	}
+    @Override
+    public void setId(final Integer id) {
+        this.id = id;
+    }
 
-	public Date getLastUpdatedTime() {
-		return lastUpdatedTime;
-	}
+    public Date getLastUpdatedTime() {
+        return lastUpdatedTime;
+    }
 
-	public void setLastUpdatedTime(final Date lastUpdatedTime) {
-		this.lastUpdatedTime = lastUpdatedTime;
-	}
+    public void setLastUpdatedTime(final Date lastUpdatedTime) {
+        this.lastUpdatedTime = lastUpdatedTime;
+    }
 
-	public Integer getAccountDetailTypeId() {
-		return accountDetailTypeId;
-	}
+    public Integer getAccountDetailTypeId() {
+        return accountDetailTypeId;
+    }
 
-	public void setAccountDetailTypeId(final Integer accountDetailTypeId) {
-		this.accountDetailTypeId = accountDetailTypeId;
-	}
+    public void setAccountDetailTypeId(final Integer accountDetailTypeId) {
+        this.accountDetailTypeId = accountDetailTypeId;
+    }
 
-	public Recovery getRecovery() {
-		return recovery;
-	}
+    public Recovery getRecovery() {
+        return recovery;
+    }
 
-	public void setRecovery(final Recovery recovery) {
-		this.recovery = recovery;
-	}
+    public void setRecovery(final Recovery recovery) {
+        this.recovery = recovery;
+    }
 
-	public String getNarration() {
-		return narration;
-	}
+    public String getNarration() {
+        return narration;
+    }
 
-	public void setNarration(final String narration) {
-		this.narration = narration;
-	}
+    public void setNarration(final String narration) {
+        this.narration = narration;
+    }
 
-	public String getDetailTypeName() {
-		return detailTypeName;
-	}
+    public String getDetailTypeName() {
+        return detailTypeName;
+    }
 
-	public void setDetailTypeName(String detailTypeName) {
-		this.detailTypeName = detailTypeName;
-	}
+    public void setDetailTypeName(final String detailTypeName) {
+        this.detailTypeName = detailTypeName;
+    }
 
-	public String getDetailKeyName() {
-		return detailKeyName;
-	}
+    public String getDetailKeyName() {
+        return detailKeyName;
+    }
 
-	public void setDetailKeyName(String detailKeyName) {
-		this.detailKeyName = detailKeyName;
-	}
+    public void setDetailKeyName(final String detailKeyName) {
+        this.detailKeyName = detailKeyName;
+    }
 
-	public Boolean getIsDebit() {
-		return isDebit;
-	}
+    public Boolean getIsDebit() {
+        return isDebit;
+    }
 
-	public void setIsDebit(Boolean isDebit) {
-		this.isDebit = isDebit;
-	}
+    public void setIsDebit(final Boolean isDebit) {
+        this.isDebit = isDebit;
+    }
 
 }

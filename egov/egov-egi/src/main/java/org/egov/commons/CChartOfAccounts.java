@@ -50,278 +50,262 @@ import org.egov.infstr.models.BaseModel;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
 public class CChartOfAccounts extends BaseModel {
-	private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;
 
-	// private Long id = null;
-	private String glcode;
-	private String name;
-	private Long purposeId;
-	private String desc;
-	private Boolean isActiveForPosting;
-	private Long parentId;
-	private Long schedule;
-	private Character operation;
-	private Character type;
-	private Long classification;
-	private Boolean functionReqd;
-	private Boolean budgetCheckReq;
-	private String majorCode;
-	private Long myClass;
-	@Transient
-	private Boolean isSubLedger;
-	@JsonIgnore
-	private Set<CChartOfAccountDetail> chartOfAccountDetails = new HashSet<CChartOfAccountDetail>();
+    // private Long id = null;
+    private String glcode;
+    private String name;
+    private Long purposeId;
+    private String desc;
+    private Boolean isActiveForPosting;
+    private Long parentId;
+    private Long schedule;
+    private Character operation;
+    private Character type;
+    private Long classification;
+    private Boolean functionReqd;
+    private Boolean budgetCheckReq;
+    private String majorCode;
+    private Long myClass;
+    @Transient
+    private Boolean isSubLedger;
+    @JsonIgnore
+    private Set<CChartOfAccountDetail> chartOfAccountDetails = new HashSet<CChartOfAccountDetail>();
 
-	public Set<CChartOfAccountDetail> getChartOfAccountDetails() {
-		return chartOfAccountDetails;
-	}
+    public Set<CChartOfAccountDetail> getChartOfAccountDetails() {
+        return chartOfAccountDetails;
+    }
 
-	public void setChartOfAccountDetails(Set<CChartOfAccountDetail> chartOfAccountDetail) {
-		this.chartOfAccountDetails = chartOfAccountDetail;
-	}
+    public void setChartOfAccountDetails(final Set<CChartOfAccountDetail> chartOfAccountDetail) {
+        chartOfAccountDetails = chartOfAccountDetail;
+    }
 
-	public String getMajorCode() {
-		return majorCode;
-	}
+    public String getMajorCode() {
+        return majorCode;
+    }
 
-	public void setMajorCode(String majorCode) {
-		this.majorCode = majorCode;
-	}
+    public void setMajorCode(final String majorCode) {
+        this.majorCode = majorCode;
+    }
 
-	/**
-	 * @return Returns the myClass.
-	 */
-	public Long getMyClass() {
-		return myClass;
-	}
+    /**
+     * @return Returns the myClass.
+     */
+    public Long getMyClass() {
+        return myClass;
+    }
 
-	/**
-	 * @param myClass
-	 *            The myClass to set.
-	 */
-	public void setMyClass(Long myClass) {
-		this.myClass = myClass;
-	}
+    /**
+     * @param myClass The myClass to set.
+     */
+    public void setMyClass(final Long myClass) {
+        this.myClass = myClass;
+    }
 
-	/**
-	 * @return Returns the glcode.
-	 */
-	public String getGlcode() {
-		return glcode;
-	}
+    /**
+     * @return Returns the glcode.
+     */
+    public String getGlcode() {
+        return glcode;
+    }
 
-	/**
-	 * @param glcode
-	 *            The glcode to set.
-	 */
-	public void setGlcode(String glcode) {
-		this.glcode = glcode;
-	}
+    /**
+     * @param glcode The glcode to set.
+     */
+    public void setGlcode(final String glcode) {
+        this.glcode = glcode;
+    }
 
-	/**
-	 * @return Returns the id.
-	 * 
-	 *         public Long getId() { return id; }
-	 */
-	/**
-	 * @param id
-	 *            The id to set.
-	 * 
-	 *            public void setId(Long id) { this.id = id; }
-	 */
+    /**
+     * @return Returns the id.
+     * 
+     * public Long getId() { return id; }
+     */
+    /**
+     * @param id The id to set.
+     * 
+     * public void setId(Long id) { this.id = id; }
+     */
 
-	/**
-	 * @return Returns the name.
-	 */
-	public String getName() {
-		return name;
-	}
+    /**
+     * @return Returns the name.
+     */
+    public String getName() {
+        return name;
+    }
 
-	/**
-	 * @param name
-	 *            The name to set.
-	 */
-	public void setName(String name) {
-		this.name = name;
-	}
+    /**
+     * @param name The name to set.
+     */
+    public void setName(final String name) {
+        this.name = name;
+    }
 
-	/**
-	 * @return Returns the purposeId.
-	 */
-	public Long getPurposeId() {
-		return purposeId;
-	}
+    /**
+     * @return Returns the purposeId.
+     */
+    public Long getPurposeId() {
+        return purposeId;
+    }
 
-	/**
-	 * @param purposeId
-	 *            The purposeId to set.
-	 */
-	public void setPurposeId(Long purposeId) {
-		this.purposeId = purposeId;
-	}
+    /**
+     * @param purposeId The purposeId to set.
+     */
+    public void setPurposeId(final Long purposeId) {
+        this.purposeId = purposeId;
+    }
 
-	/**
-	 * @return Returns the classification.
-	 */
-	public Long getClassification() {
-		return classification;
-	}
+    /**
+     * @return Returns the classification.
+     */
+    public Long getClassification() {
+        return classification;
+    }
 
-	/**
-	 * @param classification
-	 *            The classification to set.
-	 */
-	public void setClassification(Long classification) {
-		this.classification = classification;
-	}
+    /**
+     * @param classification The classification to set.
+     */
+    public void setClassification(final Long classification) {
+        this.classification = classification;
+    }
 
-	/**
-	 * @return Returns the desc.
-	 */
-	public String getDesc() {
-		return desc;
-	}
+    /**
+     * @return Returns the desc.
+     */
+    public String getDesc() {
+        return desc;
+    }
 
-	/**
-	 * @param desc
-	 *            The desc to set.
-	 */
-	public void setDesc(String desc) {
-		this.desc = desc;
-	}
+    /**
+     * @param desc The desc to set.
+     */
+    public void setDesc(final String desc) {
+        this.desc = desc;
+    }
 
-	/**
-	 * @return Returns the functionReqd.
-	 */
-	public Boolean getFunctionReqd() {
+    /**
+     * @return Returns the functionReqd.
+     */
+    public Boolean getFunctionReqd() {
 
-		return functionReqd;
+        return functionReqd;
 
-	}
+    }
 
-	/**
-	 * @param functionReqd
-	 *            The functionReqd to set.
-	 */
-	public void setFunctionReqd(Boolean functionReqd) {
-		this.functionReqd = functionReqd;
-	}
+    /**
+     * @param functionReqd The functionReqd to set.
+     */
+    public void setFunctionReqd(final Boolean functionReqd) {
+        this.functionReqd = functionReqd;
+    }
 
-	/**
-	 * public void setFunctionReqd(boolean functionReqd) { if (functionReqd ==
-	 * true) this.functionReqd = Long.valueOf("1"); else this.functionReqd =
-	 * Long.valueOf("0"); }
-	 */
+    /**
+     * public void setFunctionReqd(boolean functionReqd) { if (functionReqd == true) this.functionReqd = Long.valueOf("1"); else
+     * this.functionReqd = Long.valueOf("0"); }
+     */
 
-	/**
-	 * @return Returns the isActiveForPosting.
-	 */
-	public Boolean getIsActiveForPosting() {
-		return isActiveForPosting;
-	}
+    /**
+     * @return Returns the isActiveForPosting.
+     */
+    public Boolean getIsActiveForPosting() {
+        return isActiveForPosting;
+    }
 
-	/**
-	 * @param isActiveForPosting
-	 *            The isActiveForPosting to set.
-	 */
-	public void setIsActiveForPosting(Boolean isActiveForPosting) {
-		this.isActiveForPosting = isActiveForPosting;
-	}
+    /**
+     * @param isActiveForPosting The isActiveForPosting to set.
+     */
+    public void setIsActiveForPosting(final Boolean isActiveForPosting) {
+        this.isActiveForPosting = isActiveForPosting;
+    }
 
-	/*
-	 * public void setIsActiveForPosting(boolean isActiveForPosting) { if
-	 * (isActiveForPosting == true) this.isActiveForPosting = Long.valueOf("1");
-	 * else this.isActiveForPosting = Long.valueOf("0"); }
-	 */
+    /*
+     * public void setIsActiveForPosting(boolean isActiveForPosting) { if (isActiveForPosting == true) this.isActiveForPosting =
+     * Long.valueOf("1"); else this.isActiveForPosting = Long.valueOf("0"); }
+     */
 
-	/**
-	 * @return Returns the operation.
-	 */
-	public Character getOperation() {
-		return operation;
-	}
+    /**
+     * @return Returns the operation.
+     */
+    public Character getOperation() {
+        return operation;
+    }
 
-	/**
-	 * @param operation
-	 *            The operation to set.
-	 */
-	public void setOperation(Character operation) {
-		this.operation = operation;
-	}
+    /**
+     * @param operation The operation to set.
+     */
+    public void setOperation(final Character operation) {
+        this.operation = operation;
+    }
 
-	/**
-	 * @return Returns the parentId.
-	 */
-	public Long getParentId() {
-		return parentId;
-	}
+    /**
+     * @return Returns the parentId.
+     */
+    public Long getParentId() {
+        return parentId;
+    }
 
-	/**
-	 * @param parentId
-	 *            The parentId to set.
-	 */
-	public void setParentId(Long parentId) {
-		this.parentId = parentId;
-	}
+    /**
+     * @param parentId The parentId to set.
+     */
+    public void setParentId(final Long parentId) {
+        this.parentId = parentId;
+    }
 
-	/**
-	 * @return Returns the schedule.
-	 */
-	public Long getSchedule() {
-		return schedule;
-	}
+    /**
+     * @return Returns the schedule.
+     */
+    public Long getSchedule() {
+        return schedule;
+    }
 
-	/**
-	 * @param schedule
-	 *            The schedule to set.
-	 */
-	public void setSchedule(Long schedule) {
-		this.schedule = schedule;
-	}
+    /**
+     * @param schedule The schedule to set.
+     */
+    public void setSchedule(final Long schedule) {
+        this.schedule = schedule;
+    }
 
-	/**
-	 * @return Returns the type.
-	 */
-	public Character getType() {
-		return type;
-	}
+    /**
+     * @return Returns the type.
+     */
+    public Character getType() {
+        return type;
+    }
 
-	/**
-	 * @param type
-	 *            The type to set.
-	 */
-	public void setType(Character type) {
-		this.type = type;
-	}
+    /**
+     * @param type The type to set.
+     */
+    public void setType(final Character type) {
+        this.type = type;
+    }
 
-	@Override
-	public boolean equals(Object o) {
-		if ((o instanceof CChartOfAccounts) && (((CChartOfAccounts) o).getId().equals(this.getId()))) {
-			return true;
-		} else {
-			return false;
-		}
-	}
+    @Override
+    public boolean equals(final Object o) {
+        if (o instanceof CChartOfAccounts && ((CChartOfAccounts) o).getId().equals(getId()))
+            return true;
+        else
+            return false;
+    }
 
-	@Override
-	public int hashCode() {
-		return (Integer.valueOf(glcode != null ? glcode : "0"));
-	}
+    @Override
+    public int hashCode() {
+        return Integer.valueOf(glcode != null ? glcode : "0");
+    }
 
-	public Boolean getBudgetCheckReq() {
-		return budgetCheckReq;
-	}
+    public Boolean getBudgetCheckReq() {
+        return budgetCheckReq;
+    }
 
-	public void setBudgetCheckReq(Boolean budgetCheckReq) {
-		this.budgetCheckReq = budgetCheckReq;
-	}
+    public void setBudgetCheckReq(final Boolean budgetCheckReq) {
+        this.budgetCheckReq = budgetCheckReq;
+    }
 
-	public Boolean getIsSubLedger() {
-		return isSubLedger;
-	}
+    public Boolean getIsSubLedger() {
+        return isSubLedger;
+    }
 
-	public void setIsSubLedger(Boolean isSubLedger) {
-		this.isSubLedger = isSubLedger;
-	}
+    public void setIsSubLedger(final Boolean isSubLedger) {
+        this.isSubLedger = isSubLedger;
+    }
 
 }

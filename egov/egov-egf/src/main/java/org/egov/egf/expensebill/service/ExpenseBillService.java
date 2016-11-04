@@ -60,107 +60,103 @@ import org.springframework.transaction.annotation.Transactional;
 
 /**
  * @author venki
- * 
+ *
  */
 
 @Service
 @Transactional(readOnly = true)
 public class ExpenseBillService {
 
-	@PersistenceContext
-	private EntityManager entityManager;
+    @PersistenceContext
+    private EntityManager entityManager;
 
-	private final ExpenseBillRepository expenseBillRepository;
+    private final ExpenseBillRepository expenseBillRepository;
 
-	@Autowired
-	private EgBillSubTypeService egBillSubTypeService;
+    @Autowired
+    private EgBillSubTypeService egBillSubTypeService;
 
-	@Autowired
-	private SchemeService schemeService;
+    @Autowired
+    private SchemeService schemeService;
 
-	@Autowired
-	private SubSchemeService subSchemeService;
+    @Autowired
+    private SubSchemeService subSchemeService;
 
-	@Autowired
-	private FinancialUtils financialUtils;
+    @Autowired
+    private FinancialUtils financialUtils;
 
-	public Session getCurrentSession() {
-		return entityManager.unwrap(Session.class);
-	}
+    public Session getCurrentSession() {
+        return entityManager.unwrap(Session.class);
+    }
 
-	@Autowired
-	public ExpenseBillService(final ExpenseBillRepository expenseBillRepository) {
-		this.expenseBillRepository = expenseBillRepository;
-	}
+    @Autowired
+    public ExpenseBillService(final ExpenseBillRepository expenseBillRepository) {
+        this.expenseBillRepository = expenseBillRepository;
+    }
 
-	public EgBillregister getById(final Long id) {
-		return expenseBillRepository.findOne(id);
-	}
+    public EgBillregister getById(final Long id) {
+        return expenseBillRepository.findOne(id);
+    }
 
-	@Transactional
-	public EgBillregister create(final EgBillregister egBillregister) {
-		egBillregister.setBilltype(FinancialConstants.BILLTYPE_FINAL_BILL);
-		egBillregister.setExpendituretype(FinancialConstants.STANDARD_EXPENDITURETYPE_CONTINGENT);
-		egBillregister.setPassedamount(egBillregister.getBillamount());
-		egBillregister.setStatus(financialUtils.getStatusByModuleAndCode(FinancialConstants.CONTINGENCYBILL_FIN,
-				FinancialConstants.CONTINGENCYBILL_CREATED_STATUS));
-		egBillregister.getEgBillregistermis().setEgBillregister(egBillregister);
-		egBillregister.getEgBillregistermis().setLastupdatedtime(new Date());
-		if (egBillregister.getEgBillregistermis().getEgBillSubType() != null
-				&& egBillregister.getEgBillregistermis().getEgBillSubType().getId() != null)
-			egBillregister.getEgBillregistermis().setEgBillSubType(
-					egBillSubTypeService.getById(egBillregister.getEgBillregistermis().getEgBillSubType().getId()));
-		if (egBillregister.getEgBillregistermis().getScheme() != null
-				&& egBillregister.getEgBillregistermis().getScheme().getId() != null)
-			egBillregister.getEgBillregistermis().setScheme(
-					schemeService.findById(egBillregister.getEgBillregistermis().getScheme().getId(), false));
-		else {
-			egBillregister.getEgBillregistermis().setScheme(null);
-		}
-		if (egBillregister.getEgBillregistermis().getSubScheme() != null
-				&& egBillregister.getEgBillregistermis().getSubScheme().getId() != null)
-			egBillregister.getEgBillregistermis().setSubScheme(
-					subSchemeService.findById(egBillregister.getEgBillregistermis().getSubScheme().getId(), false));
-		else {
-			egBillregister.getEgBillregistermis().setSubScheme(null);
-		}
-		populateBillDetails(egBillregister);
-		return expenseBillRepository.save(egBillregister);
-	}
+    @Transactional
+    public EgBillregister create(final EgBillregister egBillregister) {
+        egBillregister.setBilltype(FinancialConstants.BILLTYPE_FINAL_BILL);
+        egBillregister.setExpendituretype(FinancialConstants.STANDARD_EXPENDITURETYPE_CONTINGENT);
+        egBillregister.setPassedamount(egBillregister.getBillamount());
+        egBillregister.setStatus(financialUtils.getStatusByModuleAndCode(FinancialConstants.CONTINGENCYBILL_FIN,
+                FinancialConstants.CONTINGENCYBILL_CREATED_STATUS));
+        egBillregister.getEgBillregistermis().setEgBillregister(egBillregister);
+        egBillregister.getEgBillregistermis().setLastupdatedtime(new Date());
+        if (egBillregister.getEgBillregistermis().getEgBillSubType() != null
+                && egBillregister.getEgBillregistermis().getEgBillSubType().getId() != null)
+            egBillregister.getEgBillregistermis().setEgBillSubType(
+                    egBillSubTypeService.getById(egBillregister.getEgBillregistermis().getEgBillSubType().getId()));
+        if (egBillregister.getEgBillregistermis().getScheme() != null
+                && egBillregister.getEgBillregistermis().getScheme().getId() != null)
+            egBillregister.getEgBillregistermis().setScheme(
+                    schemeService.findById(egBillregister.getEgBillregistermis().getScheme().getId(), false));
+        else
+            egBillregister.getEgBillregistermis().setScheme(null);
+        if (egBillregister.getEgBillregistermis().getSubScheme() != null
+                && egBillregister.getEgBillregistermis().getSubScheme().getId() != null)
+            egBillregister.getEgBillregistermis().setSubScheme(
+                    subSchemeService.findById(egBillregister.getEgBillregistermis().getSubScheme().getId(), false));
+        else
+            egBillregister.getEgBillregistermis().setSubScheme(null);
+        populateBillDetails(egBillregister);
+        return expenseBillRepository.save(egBillregister);
+    }
 
-	@SuppressWarnings("unchecked")
-	private void populateBillDetails(EgBillregister egBillregister) {
-		egBillregister.getEgBilldetailes().addAll(egBillregister.getBillDetails());
-		for (EgBilldetails details : egBillregister.getEgBilldetailes()) {
-			details.setEgBillregister(egBillregister);
-			details.setLastupdatedtime(new Date());
-		}
-		if (!egBillregister.getBillPayeedetails().isEmpty())
-			populateBillPayeeDetails(egBillregister);
-	}
+    @SuppressWarnings("unchecked")
+    private void populateBillDetails(final EgBillregister egBillregister) {
+        egBillregister.getEgBilldetailes().addAll(egBillregister.getBillDetails());
+        for (final EgBilldetails details : egBillregister.getEgBilldetailes()) {
+            details.setEgBillregister(egBillregister);
+            details.setLastupdatedtime(new Date());
+        }
+        if (!egBillregister.getBillPayeedetails().isEmpty())
+            populateBillPayeeDetails(egBillregister);
+    }
 
-	private void populateBillPayeeDetails(EgBillregister egBillregister) {
-		EgBillPayeedetails payeeDetail = null;
-		for (EgBilldetails details : egBillregister.getEgBilldetailes()) {
-			for (EgBillPayeedetails payeeDetails : egBillregister.getBillPayeedetails()) {
-				if (details.getGlcodeid().equals(payeeDetails.getEgBilldetailsId().getGlcodeid())) {
-					payeeDetail = new EgBillPayeedetails();
-					payeeDetail.setEgBilldetailsId(details);
-					payeeDetail.setAccountDetailTypeId(payeeDetails.getAccountDetailTypeId());
-					payeeDetail.setAccountDetailKeyId(payeeDetails.getAccountDetailKeyId());
-					payeeDetail.setDebitAmount(payeeDetails.getDebitAmount());
-					payeeDetail.setCreditAmount(payeeDetails.getCreditAmount());
-					payeeDetail.setLastUpdatedTime(new Date());
-					details.getEgBillPaydetailes().add(payeeDetail);
-				}
-			}
-		}
-	}
+    private void populateBillPayeeDetails(final EgBillregister egBillregister) {
+        EgBillPayeedetails payeeDetail = null;
+        for (final EgBilldetails details : egBillregister.getEgBilldetailes())
+            for (final EgBillPayeedetails payeeDetails : egBillregister.getBillPayeedetails())
+                if (details.getGlcodeid().equals(payeeDetails.getEgBilldetailsId().getGlcodeid())) {
+                    payeeDetail = new EgBillPayeedetails();
+                    payeeDetail.setEgBilldetailsId(details);
+                    payeeDetail.setAccountDetailTypeId(payeeDetails.getAccountDetailTypeId());
+                    payeeDetail.setAccountDetailKeyId(payeeDetails.getAccountDetailKeyId());
+                    payeeDetail.setDebitAmount(payeeDetails.getDebitAmount());
+                    payeeDetail.setCreditAmount(payeeDetails.getCreditAmount());
+                    payeeDetail.setLastUpdatedTime(new Date());
+                    details.getEgBillPaydetailes().add(payeeDetail);
+                }
+    }
 
-	@Transactional
-	public EgBillregister update(final EgBillregister egBillregister) {
+    @Transactional
+    public EgBillregister update(final EgBillregister egBillregister) {
 
-		return expenseBillRepository.save(egBillregister);
-	}
+        return expenseBillRepository.save(egBillregister);
+    }
 
 }

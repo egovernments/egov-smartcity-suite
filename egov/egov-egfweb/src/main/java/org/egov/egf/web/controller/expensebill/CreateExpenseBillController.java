@@ -60,14 +60,14 @@ import org.springframework.web.bind.annotation.RequestParam;
 
 /**
  * @author venki
- * 
+ *
  */
 
 @Controller
 @RequestMapping(value = "/expensebill")
 public class CreateExpenseBillController extends BaseBillController {
 
-    public CreateExpenseBillController(AppConfigValueService appConfigValuesService) {
+    public CreateExpenseBillController(final AppConfigValueService appConfigValuesService) {
         super(appConfigValuesService);
     }
 
@@ -79,7 +79,7 @@ public class CreateExpenseBillController extends BaseBillController {
     private ExpenseBillService expenseBillService;
 
     @Override
-    protected void setDropDownValues(Model model) {
+    protected void setDropDownValues(final Model model) {
         super.setDropDownValues(model);
     }
 
@@ -108,29 +108,15 @@ public class CreateExpenseBillController extends BaseBillController {
     public String showContractorBillSuccessPage(@RequestParam("billNumber") final String billNumber, final Model model,
             final HttpServletRequest request) {
 
-      /*  final String[] keyNameArray = request.getParameter("pathVars").split(",");
-        Long id = 0L;
-        String approverName = "";
-        String currentUserDesgn = "";
-        String nextDesign = "";
-        if (keyNameArray.length != 0 && keyNameArray.length > 0)
-            if (keyNameArray.length == 1)
-                id = Long.parseLong(keyNameArray[0]);
-            else if (keyNameArray.length == 3) {
-                id = Long.parseLong(keyNameArray[0]);
-                approverName = keyNameArray[1];
-                currentUserDesgn = keyNameArray[2];
-            } else {
-                id = Long.parseLong(keyNameArray[0]);
-                approverName = keyNameArray[1];
-                currentUserDesgn = keyNameArray[2];
-                nextDesign = keyNameArray[3];
-            }
-
-        if (id != null)
-            model.addAttribute("approverName", approverName);
-        model.addAttribute("currentUserDesgn", currentUserDesgn);
-        model.addAttribute("nextDesign", nextDesign);*/
+        /*
+         * final String[] keyNameArray = request.getParameter("pathVars").split(","); Long id = 0L; String approverName = "";
+         * String currentUserDesgn = ""; String nextDesign = ""; if (keyNameArray.length != 0 && keyNameArray.length > 0) if
+         * (keyNameArray.length == 1) id = Long.parseLong(keyNameArray[0]); else if (keyNameArray.length == 3) { id =
+         * Long.parseLong(keyNameArray[0]); approverName = keyNameArray[1]; currentUserDesgn = keyNameArray[2]; } else { id =
+         * Long.parseLong(keyNameArray[0]); approverName = keyNameArray[1]; currentUserDesgn = keyNameArray[2]; nextDesign =
+         * keyNameArray[3]; } if (id != null) model.addAttribute("approverName", approverName);
+         * model.addAttribute("currentUserDesgn", currentUserDesgn); model.addAttribute("nextDesign", nextDesign);
+         */
         model.addAttribute("message",
                 messageSource.getMessage("msg.expense.bill.create.success", new String[] { billNumber }, null));
 

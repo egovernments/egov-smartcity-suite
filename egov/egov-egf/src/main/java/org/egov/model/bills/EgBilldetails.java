@@ -124,10 +124,12 @@ public class EgBilldetails extends AbstractPersistable<Integer> implements java.
         this.narration = narration;
     }
 
+    @Override
     public Integer getId() {
         return id;
     }
 
+    @Override
     public void setId(final Integer id) {
         this.id = id;
     }
@@ -210,7 +212,7 @@ public class EgBilldetails extends AbstractPersistable<Integer> implements java.
         return chartOfAccounts;
     }
 
-    public void setChartOfAccounts(CChartOfAccounts chartOfAccounts) {
+    public void setChartOfAccounts(final CChartOfAccounts chartOfAccounts) {
         this.chartOfAccounts = chartOfAccounts;
     }
 

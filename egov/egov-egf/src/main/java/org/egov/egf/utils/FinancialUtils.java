@@ -54,36 +54,36 @@ import org.springframework.transaction.annotation.Transactional;
 
 /**
  * @author venki
- * 
+ *
  */
 
 @Service
 @Transactional(readOnly = true)
 public class FinancialUtils {
 
-	@PersistenceContext
-	private EntityManager entityManager;
+    @PersistenceContext
+    private EntityManager entityManager;
 
-	public Session getCurrentSession() {
-		return entityManager.unwrap(Session.class);
-	}
+    public Session getCurrentSession() {
+        return entityManager.unwrap(Session.class);
+    }
 
-	@Autowired
-	private EgwStatusHibernateDAO egwStatusHibernateDAO;
+    @Autowired
+    private EgwStatusHibernateDAO egwStatusHibernateDAO;
 
-	@Transactional(propagation = Propagation.REQUIRES_NEW, readOnly = true)
-	public EgwStatus getStatusByModuleAndCode(final String moduleType, final String code) {
-		return egwStatusHibernateDAO.getStatusByModuleAndCode(moduleType, code);
-	}
+    @Transactional(propagation = Propagation.REQUIRES_NEW, readOnly = true)
+    public EgwStatus getStatusByModuleAndCode(final String moduleType, final String code) {
+        return egwStatusHibernateDAO.getStatusByModuleAndCode(moduleType, code);
+    }
 
-	@Transactional(propagation = Propagation.REQUIRES_NEW, readOnly = true)
-	public List<EgwStatus> getStatusByModule(final String moduleType) {
-		return egwStatusHibernateDAO.getStatusByModule(moduleType);
-	}
+    @Transactional(propagation = Propagation.REQUIRES_NEW, readOnly = true)
+    public List<EgwStatus> getStatusByModule(final String moduleType) {
+        return egwStatusHibernateDAO.getStatusByModule(moduleType);
+    }
 
-	@Transactional(propagation = Propagation.REQUIRES_NEW, readOnly = true)
-	public EgwStatus getStatusById(final Integer id) {
-		return egwStatusHibernateDAO.findById(id, true);
-	}
+    @Transactional(propagation = Propagation.REQUIRES_NEW, readOnly = true)
+    public EgwStatus getStatusById(final Integer id) {
+        return egwStatusHibernateDAO.findById(id, true);
+    }
 
 }

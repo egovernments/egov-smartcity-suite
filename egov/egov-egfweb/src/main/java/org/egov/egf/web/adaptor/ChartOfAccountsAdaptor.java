@@ -50,16 +50,16 @@ import com.google.gson.JsonSerializer;
 
 public class ChartOfAccountsAdaptor implements JsonSerializer<CChartOfAccounts> {
 
-	@Override
-	public JsonElement serialize(final CChartOfAccounts chartOfAccounts, final Type type,
-			final JsonSerializationContext jsc) {
-		final JsonObject jsonObject = new JsonObject();
-		jsonObject.addProperty("id", chartOfAccounts.getId());
-		jsonObject.addProperty("name", chartOfAccounts.getName());
-		jsonObject.addProperty("glcode", chartOfAccounts.getGlcode());
-		jsonObject.addProperty("isSubLedger", chartOfAccounts.getIsSubLedger());
+    @Override
+    public JsonElement serialize(final CChartOfAccounts chartOfAccounts, final Type type,
+            final JsonSerializationContext jsc) {
+        final JsonObject jsonObject = new JsonObject();
+        jsonObject.addProperty("id", chartOfAccounts.getId());
+        jsonObject.addProperty("name", chartOfAccounts.getName());
+        jsonObject.addProperty("glcode", chartOfAccounts.getGlcode());
+        jsonObject.addProperty("isSubLedger", chartOfAccounts.getIsSubLedger());
 
-		return jsonObject;
-	}
+        return jsonObject;
+    }
 
 }

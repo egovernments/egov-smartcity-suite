@@ -39,20 +39,9 @@
  */
 package org.egov.eis.entity;
 
-import org.egov.commons.EgwStatus;
-import org.egov.commons.utils.EntityType;
-import org.egov.eis.entity.enums.EmployeeStatus;
-import org.egov.infra.admin.master.entity.User;
-import org.egov.infra.persistence.entity.enums.UserType;
-import org.egov.infra.persistence.validator.annotation.Unique;
-import org.egov.infra.validation.regex.Constants;
-import org.hibernate.envers.AuditOverride;
-import org.hibernate.envers.AuditOverrides;
-import org.hibernate.envers.Audited;
-import org.hibernate.envers.NotAudited;
-import org.hibernate.envers.RelationTargetAuditMode;
-import org.hibernate.validator.constraints.SafeHtml;
-import org.joda.time.DateTime;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -69,18 +58,30 @@ import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
+
+import org.egov.commons.EgwStatus;
+import org.egov.commons.utils.EntityType;
+import org.egov.eis.entity.enums.EmployeeStatus;
+import org.egov.infra.admin.master.entity.User;
+import org.egov.infra.persistence.entity.enums.UserType;
+import org.egov.infra.persistence.validator.annotation.Unique;
+import org.egov.infra.validation.regex.Constants;
+import org.hibernate.envers.AuditOverride;
+import org.hibernate.envers.AuditOverrides;
+import org.hibernate.envers.Audited;
+import org.hibernate.envers.NotAudited;
+import org.hibernate.envers.RelationTargetAuditMode;
+import org.hibernate.validator.constraints.SafeHtml;
+import org.joda.time.DateTime;
 
 @Entity
 @Table(name = "egeis_employee")
 @Unique(fields = { "code" }, enableDfltMsg = true)
 @Audited(targetAuditMode = RelationTargetAuditMode.NOT_AUDITED)
-@AuditOverrides( {
-        @AuditOverride(forClass=User.class, name="name"),
-        @AuditOverride(forClass=User.class, name="mobileNumber"),
-        @AuditOverride(forClass=User.class, name="emailId")
+@AuditOverrides({
+        @AuditOverride(forClass = User.class, name = "name"),
+        @AuditOverride(forClass = User.class, name = "mobileNumber"),
+        @AuditOverride(forClass = User.class, name = "emailId")
 })
 public class Employee extends User implements EntityType {
 
@@ -104,7 +105,6 @@ public class Employee extends User implements EntityType {
     @NotAudited
     private EmployeeStatus employeeStatus;
 
-    
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "employeetype")
     @NotAudited
@@ -217,12 +217,12 @@ public class Employee extends User implements EntityType {
 
     @Override
     public Integer getEntityId() {
-        return this.getId().intValue();
+        return getId().intValue();
     }
 
     @Override
     public String getEntityDescription() {
-        return this.getName();
+        return getName();
     }
 
     @Override

@@ -39,10 +39,10 @@
  */
 package org.egov.utils;
 
-import org.egov.infstr.utils.EGovConfig;
-
 import java.util.Date;
 import java.util.GregorianCalendar;
+
+import org.egov.infstr.utils.EGovConfig;
 
 /**
  *
@@ -58,7 +58,7 @@ public interface FinancialConstants {
     public static final String CONTINGENCYBILL = "CBILL";
     // this is the one which is used by financials from 13/03/2010
     public static final String CONTINGENCYBILL_FIN = "EXPENSEBILL";
-    public static final String SUPPLIERBILL = "PURCHBILL"; 
+    public static final String SUPPLIERBILL = "PURCHBILL";
     public static final String CONTRACTORBILL = "WORKSBILL";
     public static final String PENSIONBILL = "PENSIONBILL";
 
@@ -69,7 +69,7 @@ public interface FinancialConstants {
     public static final String STANDARD_EXPENDITURETYPE_PURCHASE = "Purchase";
     public static final String STANDARD_EXPENDITURETYPE_SALARY = "Salary";
     public static final String STANDARD_EXPENDITURETYPE_PENSION = "Pension";
-    
+
     public static final String BILLTYPE_FINAL_BILL = "Final Bill";
     public static final String BILLTYPE_PART_BILL = "Part Bill";
 
@@ -136,13 +136,12 @@ public interface FinancialConstants {
 
     public static final String ModulesForBillAcctModify = EGovConfig.getProperty(APPLCONFIGNAME,
             "MODULESFORBILLSACCOUNTINGMODIFY", "", "general");
-	public static final String CATEGORFORGLCODE = "AccountCode";
-    
-    //COA GLCODE Details
-    
+    public static final String CATEGORFORGLCODE = "AccountCode";
+
+    // COA GLCODE Details
+
     public static final String GLCODEMAXLENGTH = EGovConfig.getProperty(APPLCONFIGNAME, "glcodeMaxLength", "", CATEGORFORGLCODE);
-    
-    
+
     // Instrument or Cheque related
     public static final String INSTRUMENT_DEPOSITED_STATUS = "Deposited";
     public static final String INSTRUMENT_CREATED_STATUS = "New";
@@ -154,7 +153,7 @@ public interface FinancialConstants {
     public static final String INSTRUMENT_INWORKFLOW_STATUS = "InWorkflow";// dishonour cheque in workflow
     public static final String INSTRUMENT_APPROVED_STATUS = "Approved";
     public static final String STATUS_MODULE_INSTRUMENT = "Instrument";
-    
+
     public static final String STATUS_MODULE_DISHONORCHEQUE = "DISHONORCHEQUE";
     public static final String DISHONORCHEQUE_CREATED_STATUS = "Created";
     public static final String DISHONORCHEQUE_APPROVED_STATUS = "Approved";
@@ -314,31 +313,29 @@ public interface FinancialConstants {
 
     // after this date or if this date is null will use financial year wise rolling sequence for RTGS numbering
     public static final Date RTGS_FINYEAR_WISE_ROLLING_SEQ_CUTOFF_DATE = new GregorianCalendar(1900 + 115, 2, 31).getTime();
-    
+
     public static final String BUTTONAPPROVE = "Approve";
     public static final String BUTTONFORWARD = "Forward";
     public static final String BUTTONREJECT = "Reject";
     public static final String BUTTONSAVE = "Save";
     public static final String BUTTONCANCEL = "Cancel";
     public static final String BUTTONVERIFY = "Verify";
-    
+
     public static final String WORKFLOW_STATE_NEW = "NEW";
     public static final String WORKFLOW_STATE_APPROVED = "Approved";
     public static final String WORKFLOW_STATE_REJECTED = "Rejected";
     public static final String WORKFLOW_STATE_FORWARDED = "Forwarded";
     public static final String WORKFLOW_STATE_CANCELLED = "Cancelled";
 
-    
     public static final String WF_STATE_EOA_Approval_Pending = "EOA Approval Pending";
     public static final String WF_STATE_COMM_Approval_Pending = "Commissioner Approval Pending";
-    
-    public static final String CREATEANDAPPROVE="Create And Approve";
+
+    public static final String CREATEANDAPPROVE = "Create And Approve";
     public static final String BUDGET_CHECK_ERROR_MESSAGE = "Budgetary check is failed";
-    
-    public static final String BUDGET="BUDGET";
-    public static final String BUDGETDETAIL="BUDGETDETAIL";
-    public static final String BUDGETDETAIL_CREATED_STATUS="CREATED";
-    public static final String BUDGETDETAIL_VERIFIED_STATUS="VERIFIED";
-    
-    
+
+    public static final String BUDGET = "BUDGET";
+    public static final String BUDGETDETAIL = "BUDGETDETAIL";
+    public static final String BUDGETDETAIL_CREATED_STATUS = "CREATED";
+    public static final String BUDGETDETAIL_VERIFIED_STATUS = "VERIFIED";
+
 }

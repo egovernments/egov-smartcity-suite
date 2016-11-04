@@ -54,7 +54,7 @@ import org.springframework.ui.Model;
 
 /**
  * @author venki
- * 
+ *
  */
 
 @Controller
@@ -71,7 +71,7 @@ public abstract class BaseVoucherController extends GenericWorkFlowController {
     private EgovMasterDataCaching masterDataCache;
 
     @Autowired
-    public BaseVoucherController(AppConfigValueService appConfigValuesService) {
+    public BaseVoucherController(final AppConfigValueService appConfigValuesService) {
         this.appConfigValuesService = appConfigValuesService;
         getHeaderMandateFields();
     }

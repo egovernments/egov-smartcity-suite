@@ -56,7 +56,7 @@ import org.springframework.ui.Model;
 
 /**
  * @author venki
- * 
+ *
  */
 
 @Controller
@@ -72,7 +72,7 @@ public abstract class BaseBillController extends BaseVoucherController {
     @Qualifier("chartOfAccountsService")
     private ChartOfAccountsService chartOfAccountsService;
 
-    public BaseBillController(AppConfigValueService appConfigValuesService) {
+    public BaseBillController(final AppConfigValueService appConfigValuesService) {
         super(appConfigValuesService);
     }
 
@@ -80,16 +80,13 @@ public abstract class BaseBillController extends BaseVoucherController {
         final List<AppConfigValues> configValuesByModuleAndKey = appConfigValuesService.getConfigValuesByModuleAndKey(
                 FinancialConstants.MODULE_NAME_APPCONFIG, FinancialConstants.KEY_BILLNUMBER_APPCONFIG);
         if (configValuesByModuleAndKey.size() > 0)
-            if ("Y".equals(configValuesByModuleAndKey.get(0).getValue()))
-                return true;
-            else
-                return false;
+            return "Y".equals(configValuesByModuleAndKey.get(0).getValue());
         else
             return false;
     }
 
     @Override
-    protected void setDropDownValues(Model model) {
+    protected void setDropDownValues(final Model model) {
         super.setDropDownValues(model);
         model.addAttribute("billNumberGenerationAuto", isBillNumberGenerationAuto());
         model.addAttribute("billSubTypes", getBillSubTypes());
