@@ -703,6 +703,7 @@ public class ContractorBillRegisterService {
             contractorBillCertificateInfo.setExecutionAmount(
                     woa.getActivity().getRate() * contractorBillCertificateInfo.getExecutionQuantity());
             contractorBillCertificateInfo.setWorkOrderActivity(woa);
+            contractorBillCertificateInfo.setUom(woa.getActivity().getUom());
             lastExecutionTotal = lastExecutionTotal + contractorBillCertificateInfo.getLastExecutionAmount();
             uptoDateTotal = uptoDateTotal + contractorBillCertificateInfo.getExecutionAmount();
             contractCertificateInfoList.add(contractorBillCertificateInfo);
