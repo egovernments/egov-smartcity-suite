@@ -40,10 +40,10 @@
 
 package org.egov.infra.elasticsearch.entity;
 
-import org.egov.infra.elasticsearch.entity.enums.ApprovalStatus;
-import org.egov.infra.elasticsearch.entity.enums.ClosureStatus;
-import org.egov.infra.persistence.entity.AbstractAuditable;
-import org.hibernate.validator.constraints.Length;
+import static org.egov.infra.elasticsearch.entity.ApplicationIndex.SEQ_APPLICATIONINDEX;
+import static org.egov.infra.validation.ValidatorUtils.assertNotNull;
+
+import java.util.Date;
 
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
@@ -55,10 +55,11 @@ import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 import javax.validation.constraints.NotNull;
-import java.util.Date;
 
-import static org.egov.infra.elasticsearch.entity.ApplicationIndex.SEQ_APPLICATIONINDEX;
-import static org.egov.infra.validation.ValidatorUtils.assertNotNull;
+import org.egov.infra.elasticsearch.entity.enums.ApprovalStatus;
+import org.egov.infra.elasticsearch.entity.enums.ClosureStatus;
+import org.egov.infra.persistence.entity.AbstractAuditable;
+import org.hibernate.validator.constraints.Length;
 
 @Entity
 @Table(name = "EG_APPLICATIONINDEX")
@@ -272,13 +273,11 @@ public class ApplicationIndex extends AbstractAuditable {
         this.mobileNumber = mobileNumber;
     }
 
-   
-
     public String getOwnername() {
         return ownername;
     }
 
-    public void setOwnername(String ownername) {
+    public void setOwnername(final String ownername) {
         this.ownername = ownername;
     }
 
@@ -355,7 +354,6 @@ public class ApplicationIndex extends AbstractAuditable {
         this.cityGrade = cityGrade;
     }
 
-
     public static final class Builder {
         private String moduleName;
         private String applicationNumber;
@@ -383,118 +381,118 @@ public class ApplicationIndex extends AbstractAuditable {
         private Builder() {
         }
 
-        public Builder withModuleName(String moduleName) {
+        public Builder withModuleName(final String moduleName) {
             this.moduleName = moduleName;
             return this;
         }
 
-        public Builder withApplicationNumber(String applicationNumber) {
+        public Builder withApplicationNumber(final String applicationNumber) {
             this.applicationNumber = applicationNumber;
             return this;
         }
 
-        public Builder withApplicationDate(Date applicationDate) {
+        public Builder withApplicationDate(final Date applicationDate) {
             this.applicationDate = applicationDate;
             return this;
         }
 
-        public Builder withApplicationType(String applicationType) {
+        public Builder withApplicationType(final String applicationType) {
             this.applicationType = applicationType;
             return this;
         }
 
-        public Builder withApplicantName(String applicantName) {
+        public Builder withApplicantName(final String applicantName) {
             this.applicantName = applicantName;
             return this;
         }
 
-        public Builder withApplicantAddress(String applicantAddress) {
+        public Builder withApplicantAddress(final String applicantAddress) {
             this.applicantAddress = applicantAddress;
             return this;
         }
 
-        public Builder withDisposalDate(Date disposalDate) {
+        public Builder withDisposalDate(final Date disposalDate) {
             this.disposalDate = disposalDate;
             return this;
         }
 
-        public Builder withStatus(String status) {
+        public Builder withStatus(final String status) {
             this.status = status;
             return this;
         }
 
-        public Builder withUrl(String url) {
+        public Builder withUrl(final String url) {
             this.url = url;
             return this;
         }
 
-        public Builder withConsumerCode(String consumerCode) {
+        public Builder withConsumerCode(final String consumerCode) {
             this.consumerCode = consumerCode;
             return this;
         }
 
-        public Builder withMobileNumber(String mobileNumber) {
+        public Builder withMobileNumber(final String mobileNumber) {
             this.mobileNumber = mobileNumber;
             return this;
         }
 
-        public Builder withOwnername(String ownerName) {
+        public Builder withOwnername(final String ownerName) {
             this.ownerName = ownerName;
             return this;
         }
 
-        public Builder withAadharNumber(String aadharNumber) {
+        public Builder withAadharNumber(final String aadharNumber) {
             this.aadharNumber = aadharNumber;
             return this;
         }
 
-        public Builder withElapsedDays(Integer elapsedDays) {
+        public Builder withElapsedDays(final Integer elapsedDays) {
             this.elapsedDays = elapsedDays;
             return this;
         }
 
-        public Builder withClosed(ClosureStatus closed) {
+        public Builder withClosed(final ClosureStatus closed) {
             this.closed = closed;
             return this;
         }
 
-        public Builder withApproved(ApprovalStatus approved) {
+        public Builder withApproved(final ApprovalStatus approved) {
             this.approved = approved;
             return this;
         }
 
-        public Builder withChannel(String channel) {
+        public Builder withChannel(final String channel) {
             this.channel = channel;
             return this;
         }
 
-        public Builder withCityCode(String cityCode) {
+        public Builder withCityCode(final String cityCode) {
             this.cityCode = cityCode;
             return this;
         }
 
-        public Builder withCityName(String cityName) {
+        public Builder withCityName(final String cityName) {
             this.cityName = cityName;
             return this;
         }
 
-        public Builder withCityGrade(String cityGrade) {
+        public Builder withCityGrade(final String cityGrade) {
             this.cityGrade = cityGrade;
             return this;
         }
 
-        public Builder withDistrictName(String districtName) {
+        public Builder withDistrictName(final String districtName) {
             this.districtName = districtName;
             return this;
         }
 
-        public Builder withRegionName(String regionName) {
+        public Builder withRegionName(final String regionName) {
             this.regionName = regionName;
             return this;
         }
 
         public ApplicationIndex build() {
-            ApplicationIndex applicationIndex = new ApplicationIndex();
+            final ApplicationIndex applicationIndex = new ApplicationIndex();
             applicationIndex.setModuleName(moduleName);
             applicationIndex.setApplicationNumber(applicationNumber);
             applicationIndex.setApplicationDate(applicationDate);

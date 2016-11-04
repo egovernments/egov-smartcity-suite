@@ -40,18 +40,19 @@
 
 package org.egov.infra.elasticsearch.entity.es;
 
-import com.fasterxml.jackson.annotation.JsonFormat;
+import static org.egov.infra.utils.ApplicationConstant.ES_DATE_FORMAT;
+import static org.springframework.data.elasticsearch.annotations.DateFormat.date_optional_time;
+import static org.springframework.data.elasticsearch.annotations.FieldIndex.not_analyzed;
+
+import java.util.Date;
+
 import org.egov.infra.elasticsearch.entity.enums.ClosureStatus;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.elasticsearch.annotations.Document;
 import org.springframework.data.elasticsearch.annotations.Field;
 import org.springframework.data.elasticsearch.annotations.FieldType;
 
-import java.util.Date;
-
-import static org.egov.infra.utils.ApplicationConstant.ES_DATE_FORMAT;
-import static org.springframework.data.elasticsearch.annotations.DateFormat.date_optional_time;
-import static org.springframework.data.elasticsearch.annotations.FieldIndex.not_analyzed;
+import com.fasterxml.jackson.annotation.JsonFormat;
 
 @Document(indexName = "applications", type = "applications")
 public class ApplicationDocument {
@@ -242,17 +243,15 @@ public class ApplicationDocument {
         this.mobileNumber = mobileNumber;
     }
 
-   
-
     public String getOwnerName() {
         return ownerName;
     }
 
-    public void setOwnerName(String ownerName) {
+    public void setOwnerName(final String ownerName) {
         this.ownerName = ownerName;
     }
 
-    public void setIsClosed(Integer isClosed) {
+    public void setIsClosed(final Integer isClosed) {
         this.isClosed = isClosed;
     }
 
