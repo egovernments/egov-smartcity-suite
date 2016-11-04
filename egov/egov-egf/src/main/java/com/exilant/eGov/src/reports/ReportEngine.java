@@ -93,12 +93,12 @@ public class ReportEngine {
              * add the table names if no fields of a perticular table is passed ommit it eg if scheme,subscheme or divisionid is
              * not passed donot include vouchermis or if function is not passed donot include generalledger
              */
-            if (includeVouchermis == true && includeGeneralLedger == true)
+            if ((includeVouchermis) && (includeGeneralLedger))
                 reportEngineQry.append(" ( voucherheader voucher left join vouchermis mis on voucher.id=mis.voucherheaderid)"
                         + "left join generalledger ledger on voucher.id=ledger.voucherheaderid ");
-            else if (includeVouchermis == true)
+            else if (includeVouchermis)
                 reportEngineQry.append(" voucherheader voucher left join vouchermis mis on voucher.id=mis.voucherheaderid ");
-            else if (includeGeneralLedger == true)
+            else if (includeGeneralLedger)
                 reportEngineQry
                 .append(" voucherheader voucher left join generalledger ledger on voucher.id=ledger.voucherheaderid ");
             else

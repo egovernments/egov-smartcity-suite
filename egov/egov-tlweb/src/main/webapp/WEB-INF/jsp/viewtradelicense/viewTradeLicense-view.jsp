@@ -64,6 +64,14 @@
 												<s:hidden name="actionName" value="create" />
 												<s:hidden id="detailChanged" name="detailChanged"></s:hidden>
 												<c:set var="trclass" value="greybox" />
+												<div class="text-right error-msg" style="font-size:14px;">
+													<s:text name="dateofapplication.lbl" /> : <s:date name="applicationDate"  
+													format="dd/MM/yyyy"/></div>
+	                   							<s:if test="%{applicationNumber!=null}">
+	                    	 						<div class="text-right error-msg" style="font-size:14px;">
+	                    	 							<s:text name="application.num" /> : <s:property value="%{applicationNumber}" />
+	                    	 						</div>
+	                 							</s:if>
 												<table width="100%">
 													<%@ include file='../common/view.jsp'%>
 												</table>

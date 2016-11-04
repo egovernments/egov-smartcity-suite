@@ -388,6 +388,7 @@ public abstract class AbstractLicenseService<T extends License> {
 
     @Transactional
     public void renew(final T license, final WorkflowBean workflowBean) {
+        license.setLicenseAppType(getLicenseApplicationTypeForRenew());
         final String natureOfWork = license.getLicenseAppType().getName().equals(Constants.RENEWAL_LIC_APPTYPE)
                 ? Constants.RENEWAL_NATUREOFWORK : Constants.NEW_NATUREOFWORK;
         final Assignment wfInitiator = this.assignmentService
@@ -406,7 +407,7 @@ public abstract class AbstractLicenseService<T extends License> {
         license.reinitiateTransition().start()
                 .withSenderName(currentUser.getUsername() + DELIMITER_COLON + currentUser.getName())
                 .withComments(workflowBean.getApproverComments()).withNatureOfTask(natureOfWork)
-                .withStateValue(wfmatrix.getNextState()).withDateInfo(new DateTime().toDate()).withOwner(pos)
+                .withStateValue(wfmatrix.getNextState()).withDateInfo(new DateTime().toDate()).withOwner(wfInitiator.getPosition())
                 .withNextAction(wfmatrix.getNextAction()).withInitiator(wfInitiator.getPosition());
         this.licenseRepository.save(license);
         sendEmailAndSMS(license, workflowBean.getWorkFlowAction());
@@ -463,7 +464,7 @@ public abstract class AbstractLicenseService<T extends License> {
                         null, workflowBean.getAdditionaRule(), workflowBean.getCurrentState(), null);
                 license.transition().start().withSenderName(user.getUsername() + DELIMITER_COLON + user.getName())
                         .withComments(workflowBean.getApproverComments()).withNatureOfTask(natureOfWork)
-                        .withStateValue(wfmatrix.getNextState()).withDateInfo(currentDate.toDate()).withOwner(pos)
+                        .withStateValue(wfmatrix.getNextState()).withDateInfo(currentDate.toDate()).withOwner(wfInitiator.getPosition())
                         .withNextAction(wfmatrix.getNextAction()).withInitiator(wfInitiator.getPosition());
                 license.setEgwStatus(
                         egwStatusHibernateDAO.getStatusByModuleAndCode(TRADELICENSEMODULE, APPLICATION_STATUS_CREATED_CODE));

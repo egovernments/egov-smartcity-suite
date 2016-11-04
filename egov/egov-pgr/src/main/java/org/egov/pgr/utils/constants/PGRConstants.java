@@ -54,4 +54,15 @@ public class PGRConstants {
     public static final String DASHBOARD_GROUPING_ULBGRADE = "ulbGrade";
     public static final String DASHBOARD_GROUPING_DISTRICT = "district";
     public static final String DASHBOARD_GROUPING_CITY = "ulb";
+    public static final String DELIMITER_COLON = "::";
+    public static final String NOASSIGNMENT = "NO ASSIGNMENT";
+
+    public static final String DATE = "date";
+    public static final String COMMENT = "comments";
+    public static final String UPDATEDBY = "updatedBy";
+    public static final String UPDATEDUSERTYPE = "updatedUserType";
+    public static final String USERTYPE = "usertype";
+    public static final String USER = "user";
+    public static final String STATUS = "status";
+    public static final String DEPT = "department";
 }

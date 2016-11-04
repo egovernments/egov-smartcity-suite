@@ -117,4 +117,10 @@ public class CFinancialYearService {
     public CFinancialYear findByFinYearRange(String finYearRange){
         return cFinancialYearRepository.findByFinYearRange(finYearRange);
     }
+
+    public List<CFinancialYear> getFinancialYears(List<Long> financialYearList)
+    {
+        return cFinancialYearRepository.findByIdIn(financialYearList);
+    }
+
 }

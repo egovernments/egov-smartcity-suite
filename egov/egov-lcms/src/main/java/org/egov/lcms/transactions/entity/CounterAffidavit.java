@@ -89,6 +89,10 @@ public class CounterAffidavit extends AbstractAuditable {
     @Audited
     private Date counterAffidavitApprovalDate;
 
+    @Audited
+    @Column(name = "eofficecomputernumber")
+    private String eOfficeComputerNumber;
+
     @Override
     public Long getId() {
         return id;
@@ -123,4 +127,11 @@ public class CounterAffidavit extends AbstractAuditable {
         this.counterAffidavitApprovalDate = counterAffidavitApprovalDate;
     }
 
+    public String geteOfficeComputerNumber() {
+        return eOfficeComputerNumber;
+    }
+
+    public void seteOfficeComputerNumber(final String eOfficeComputerNumber) {
+        this.eOfficeComputerNumber = eOfficeComputerNumber;
+    }
 }

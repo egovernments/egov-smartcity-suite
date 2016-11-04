@@ -204,7 +204,7 @@
 </definition>
 
 <definition name="legalcasedetails-view" extends="base_layout">
-	<put-attribute name="page-title" value="title.createCaseType" cascade="true"/>
+	<put-attribute name="page-title" value="title.legalcasedetailsview" cascade="true"/>
 	<put-attribute name="body" value="/WEB-INF/views/transactions/legalcasedetails-view.jsp"/>
 </definition>
 
@@ -430,5 +430,10 @@
 	<put-attribute name="page-title" value="title.duereport" cascade="true"/>
 	<put-attribute name="body" value="/WEB-INF/views/reports/judgementImplDueReport-form.jsp"/>
 </definition>
+<definition name="legalcase-ca-success" extends="base_layout">
+	<put-attribute name="page-title" value="title.caaffidavitdetails" cascade="true"/>
+	<put-attribute name="body" value="/WEB-INF/views/transactions/legalcase-ca-success.jsp"/>
+</definition>
+
 
 </tiles-definitions>

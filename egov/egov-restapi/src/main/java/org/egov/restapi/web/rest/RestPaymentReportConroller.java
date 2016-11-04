@@ -98,6 +98,7 @@ public class RestPaymentReportConroller {
 
         LOGGER.info(request.getSession().getAttribute("source"));
         final RestResponse detailsByTransactionId = new RestResponse();
+        final RestErrors err = new RestErrors();
         try {
             final RestReceiptInfo detailsByTransactionId2 = collectionService.getDetailsByTransactionId(paymentInfoSearchRequest);
             detailsByTransactionId.setStatus(RestApiConstants.THIRD_PARTY_ACTION_SUCCESS);
@@ -107,10 +108,12 @@ public class RestPaymentReportConroller {
             detailsByTransactionId.setTransactionId(detailsByTransactionId2.getTransactionId());
             detailsByTransactionId.setPaymentPeriod(detailsByTransactionId2.getPaymentPeriod());
             detailsByTransactionId.setPaymentType(detailsByTransactionId2.getPaymentType());
+            err.setErrorMessage(RestApiConstants.THIRD_PARTY_ACTION_SUCCESS);
+            err.setErrorCode(RestApiConstants.THIRD_PARTY_ACTION_SUCCESS);
+            detailsByTransactionId.getErrorDetails().add(err);
 
         } catch (final Exception e) {
             detailsByTransactionId.setStatus(RestApiConstants.THIRD_PARTY_ACTION_FAILURE);
-            final RestErrors err = new RestErrors();
             err.setErrorMessage(e.getMessage());
             err.setErrorCode(RestApiConstants.THIRD_PARTY_ERR_CODE_NO_DATA_FOUND);
             detailsByTransactionId.getErrorDetails().add(err);

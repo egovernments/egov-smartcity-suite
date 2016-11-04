@@ -79,13 +79,13 @@ import java.util.List;
 public class RptSubLedgerSchedule {
     double totalDr, totalCr, totalOpgBal, totalClosingBal;
     List<Object[]> resultset;
-    NumberFormat formatter;
+    private NumberFormat formatter;
     TaskFailedException taskExc;
-    String glCode, accEntityId, fundId, fyId, deptId;
+    private String glCode, accEntityId, fundId, fyId, deptId;
     private CFinancialYear fyObj;
-    String subLedgerTable;
-    HashMap hm_opBal;
-    LinkedList dataList;
+    private String subLedgerTable;
+    private HashMap hm_opBal;
+    private LinkedList dataList;
     private static final Logger LOGGER = Logger.getLogger(RptSubLedgerSchedule.class);
  
     @Autowired

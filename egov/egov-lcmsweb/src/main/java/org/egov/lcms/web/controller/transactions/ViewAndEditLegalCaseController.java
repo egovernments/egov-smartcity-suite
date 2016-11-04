@@ -105,13 +105,8 @@ public class ViewAndEditLegalCaseController extends GenericLegalCaseController {
     @RequestMapping(value = "/edit/", method = RequestMethod.POST)
     public String update(@ModelAttribute final LegalCase legalCase, @RequestParam("lcNumber") final String lcNumber,
             final BindingResult errors, final Model model, final RedirectAttributes redirectAttrs) {
-        final String caseNumber = legalCase.getCaseNumber() + "/" + legalCase.getWpYear();
-        final LegalCase validateCasenumber = legalCaseService.getLegalCaseByCaseNumber(caseNumber);
-        if (validateCasenumber != null)
-            errors.reject("error.legalCase.caseNumber");
-        if (errors.hasErrors()) {
+        if (errors.hasErrors())
             return "legalcase-edit";
-        }
 
         legalCaseService.persist(legalCase);
         setDropDownValues(model);

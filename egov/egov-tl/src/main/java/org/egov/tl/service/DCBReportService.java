@@ -39,11 +39,16 @@
  */
 package org.egov.tl.service;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 
+import org.egov.tl.entity.dto.DCBReportResult;
 import org.hibernate.SQLQuery;
 import org.hibernate.Session;
+import org.hibernate.transform.AliasToBeanResultTransformer;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -81,5 +86,14 @@ public class DCBReportService {
         query = selectQry1.append(selectQry2).append(fromQry).append(whereQry);
         final SQLQuery finalQuery = entityManager.unwrap(Session.class).createSQLQuery(query.toString());
         return finalQuery;
+    }
+
+    public List<DCBReportResult> generateReportResult(final String licensenumber, final String mode,
+            final String reportType) {
+        List<DCBReportResult> resultList = new ArrayList<DCBReportResult>();
+        final SQLQuery finalQuery = prepareQuery(licensenumber, mode, reportType);
+        finalQuery.setResultTransformer(new AliasToBeanResultTransformer(DCBReportResult.class));
+        resultList = finalQuery.list();
+        return resultList;
     }
 }

@@ -338,13 +338,13 @@ public class GeneralLedgerHibernateDAO  implements GeneralLedgerDAO {
                 funcStr = " and cgeneralledger.functionId =:functionId";
             }
 
-            if ((!(schemeId == null)) && (subSchemeId == null || "".equals(subSchemeId))) {
+            if ((schemeId != null) && (subSchemeId == null || subSchemeId.isEmpty())) {
                 schStr = "  and vouchermis.schemeid =:schemeId";
                 frmTab = " ,Vouchermis vouchermis ";
                 whrCond = " and cvoucherheader.id=vouchermis.voucherheaderid ";
             }
 
-            if ((!(schemeId == null || "".equals(schemeId))) && (!(subSchemeId == null || "".equals(subSchemeId)))) {
+            if ((!(schemeId == null || schemeId.isEmpty())) && (!(subSchemeId == null || (subSchemeId).isEmpty()))) {
                 schStr = "  and vouchermis.schemeid =:schemeId";
                 subSchStr = " and vouchermis.subschemeid =:subSchemeId";
                 frmTab = " ,Vouchermis vouchermis ";
@@ -364,17 +364,17 @@ public class GeneralLedgerHibernateDAO  implements GeneralLedgerDAO {
             qryStr.append(dateCond);
 
             qry = getCurrentSession().createQuery(qryStr.toString());
-            if (!(functionId == "" || functionId == null)) {
+            if (!(functionId.equals("") || functionId == null)) {
                 qry.setString("functionId", functionId);
             }
-            if ((!(schemeId == "" || schemeId == null)) && (subSchemeId == "" || subSchemeId == null)) {
+            if ((!(schemeId .equals("") || schemeId == null)) && (subSchemeId .equals("") || subSchemeId == null)) {
                 qry.setString("schemeId", schemeId);
             }
-            if ((!(schemeId == "" || schemeId == null)) && (!(subSchemeId == "" || subSchemeId == null))) {
+            if ((!(schemeId .equals("") || schemeId == null)) && (!(subSchemeId .equals("") || subSchemeId == null))) {
                 qry.setString("schemeId", schemeId);
                 qry.setString("subSchemeId", subSchemeId);
             }
-            if (!(asOnDate == "" || asOnDate == null)) {
+            if (!(asOnDate .equals("") || asOnDate == null)) {
                 qry.setString("asOnDate", asOnDate);
             }
             qry.setString("finYearID", finYearID);

@@ -397,7 +397,7 @@
 													Date: </label>
 												<div class="col-sm-3 add-margin">
 													<fmt:formatDate pattern="dd/MM/yyyy"
-														value="${legalCase.legalCaseAdvocates[0].assignedtodate}"
+														value="${legalCase.legalCaseAdvocates[0].assignedToDate}"
 														var="assignDate" />
 													<c:out value="${assignDate}" />
 												</div>
@@ -407,9 +407,9 @@
 													on which Vakalaat filed:</label>
 												<div class="col-sm-3 add-margin">
 													<fmt:formatDate pattern="dd/MM/yyyy"
-														value="${legalCase.legalCaseAdvocates[0].vakalatdate}"
-														var="assignDate" />
-													<c:out value="${assignDate}" />
+														value="${legalCase.legalCaseAdvocates[0].vakalatDate}"
+														var="vakaltadate" />
+													<c:out value="${vakaltadate}" />
 												</div>
 											</div>
 											<div class="form-group">
@@ -442,9 +442,9 @@
 														<div class="col-sm-3 add-margin">
 
 															<fmt:formatDate pattern="dd/MM/yyyy"
-																value="${legalCase.legalCaseAdvocates[0].assignedtodateForsenior}"
-																var="assignDate" />
-															<c:out value="${assignDate}" />
+																value="${legalCase.legalCaseAdvocates[0].assignedToDateForSenior}"
+																var="assigntoDate" />
+															<c:out value="${assigntoDate}" />
 														</div>
 													</div>
 												</div>
@@ -454,7 +454,7 @@
 													<div class="col-sm-3 add-margin">
 
 														<fmt:formatDate pattern="dd/MM/yyyy"
-															value="${legalCase.legalCaseAdvocates[0].orderdate}"
+															value="${legalCase.legalCaseAdvocates[0].orderDate}"
 															var="assignDate" />
 														<c:out value="${assignDate}" />
 													</div>
@@ -462,7 +462,7 @@
 														Number: </label>
 													<div class="col-sm-3 add-margin">
 														<c:out
-															value="${legalCase.legalCaseAdvocates[0].ordernumber}" />
+															value="${legalCase.legalCaseAdvocates[0].orderNumber}" />
 													</div>
 											</c:if>
 										</div>

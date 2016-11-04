@@ -50,16 +50,16 @@ import javax.persistence.Id;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
-
-import static org.egov.infra.security.token.entity.Token.SEQ_TOKEN;
+import java.util.Date;
 
 @Entity
 @Table(name = "EG_TOKEN")
-@SequenceGenerator(name = SEQ_TOKEN, sequenceName = SEQ_TOKEN, allocationSize = 1)
+@SequenceGenerator(name = Token.SEQ_TOKEN, sequenceName = Token.SEQ_TOKEN, allocationSize = 1)
 public class Token extends AbstractAuditable {
 
     public static final String SEQ_TOKEN = "SEQ_EG_TOKEN";
-    private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 2506253781972631115L;
+
     @Id
     @GeneratedValue(generator = SEQ_TOKEN, strategy = GenerationType.SEQUENCE)
     private Long id;
@@ -87,61 +87,40 @@ public class Token extends AbstractAuditable {
         this.id = id;
     }
 
-    /**
-     * @return the tokenNumber
-     */
     public String getTokenNumber() {
         return tokenNumber;
     }
 
-    /**
-     * @param tokenNumber the tokenNumber to set
-     */
     public void setTokenNumber(String tokenNumber) {
         this.tokenNumber = tokenNumber;
     }
 
-    /**
-     * @return the tokenIdentity
-     */
     public String getTokenIdentity() {
         return tokenIdentity;
     }
 
-    /**
-     * @param tokenIdentity the tokenIdentity to set
-     */
     public void setTokenIdentity(String tokenIdentity) {
         this.tokenIdentity = tokenIdentity;
     }
 
-    /**
-     * @return the service
-     */
     public String getService() {
         return service;
     }
 
-    /**
-     * @param service the service to set
-     */
     public void setService(String service) {
         this.service = service;
     }
 
-    /**
-     * @return the ttlSecs
-     */
     public Long getTtlSecs() {
         return ttlSecs;
     }
 
-    /**
-     * @param ttlSecs the ttlSecs to set
-     */
     public void setTtlSecs(Long ttlSecs) {
         this.ttlSecs = ttlSecs;
     }
 
+    public boolean isRedeemable() {
+        return (new Date().getTime() - this.getCreatedDate().getTime()) < (this.getTtlSecs() * 1000);
+    }
 
 }
