@@ -79,7 +79,7 @@ public class ApplicationDocument {
     private String applicantAddress;
 
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = ES_DATE_FORMAT)
-    @Field(type = FieldType.Date, index = not_analyzed, format = date_optional_time, pattern = ES_DATE_FORMAT)
+    @Field(type = FieldType.Date, format = date_optional_time, pattern = ES_DATE_FORMAT)
     private Date disposalDate;
 
     @Field(type = FieldType.String, index = not_analyzed)
@@ -100,7 +100,7 @@ public class ApplicationDocument {
     @Field(type = FieldType.String, index = not_analyzed)
     private String aadharNumber;
 
-    @Field(type = FieldType.Integer, index = not_analyzed)
+    @Field(type = FieldType.Integer)
     private Integer elapsedDays;
 
     @Field(type = FieldType.String, index = not_analyzed)
