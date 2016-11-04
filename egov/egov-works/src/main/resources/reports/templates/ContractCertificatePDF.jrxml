@@ -39,7 +39,7 @@
   ~   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
   -->
 <!-- Created with Jaspersoft Studio version 6.3.1.final using JasperReports Library version 6.3.1  -->
-<!-- 2016-11-04T16:36:43 -->
+<!-- 2016-11-04T17:07:11 -->
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="ContractCertificatePDF" pageWidth="842" pageHeight="595" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="c3d70fa3-1a4e-4af9-897a-a9f1c1d03164">
 	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="One Empty Record"/>
 	<parameter name="cityLogo" class="java.lang.String"/>
@@ -59,7 +59,6 @@
 	<field name="workOrderActivity" class="org.egov.works.workorder.entity.WorkOrderActivity"/>
 	<field name="lastExecutionQuantity" class="java.lang.Double"/>
 	<field name="lastExecutionAmount" class="java.lang.Double"/>
-	<field name="uom" class="org.egov.common.entity.UOM"/>
 	<variable name="lastExecustionTotal" class="java.math.BigDecimal"/>
 	<group name="Group1">
 		<groupHeader>
@@ -483,7 +482,7 @@
 				<textElement textAlignment="Center" verticalAlignment="Middle">
 					<font fontName="Times New Roman" isBold="false"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$F{uom}.getUom()]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$F{workOrderActivity}.getActivity().getUom().getUom()]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true">
 				<reportElement stretchType="RelativeToTallestObject" x="50" y="0" width="61" height="30" isPrintWhenDetailOverflows="true" uuid="8b5e9a9b-8512-4081-a9f5-d041d52d7790">

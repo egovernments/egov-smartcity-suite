@@ -39,7 +39,6 @@
  */
 package org.egov.works.models.contractorBill;
 
-import org.egov.common.entity.UOM;
 import org.egov.works.workorder.entity.WorkOrderActivity;
 
 public class ContractorBillCertificateInfo {
@@ -53,7 +52,6 @@ public class ContractorBillCertificateInfo {
     private double tenderQuantity;
     private double tenderAmount;
     private double executionRate;
-    private UOM uom;
 
     public WorkOrderActivity getWorkOrderActivity() {
         return workOrderActivity;
@@ -125,14 +123,6 @@ public class ContractorBillCertificateInfo {
 
     public void setExecutionRate(final double executionRate) {
         this.executionRate = executionRate;
-    }
-
-    public UOM getUom() {
-        return uom;
-    }
-
-    public void setUom(final UOM uom) {
-        this.uom = uom;
     }
 
 }
