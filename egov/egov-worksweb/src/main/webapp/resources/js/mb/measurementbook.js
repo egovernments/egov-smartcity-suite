@@ -115,9 +115,12 @@ $('#ContractorMeasurements').click(function(event) {
 				$('#contractorMbs tbody').empty();
 				var output = '';
 				$.each(response, function(index, value) {
+					var mbDate = new Date(value.mbDate);
+					var date = (mbDate.getDate() > 9) ? mbDate.getDate() : 0 + "" + mbDate.getDate();
+					var month = (mbDate.getMonth() > 8) ? mbDate.getMonth() + 1 : 0 + "" + mbDate.getMonth();
 					output = '<tr>';
 					output = output + '<td class="text-center"> <a href="javascript:void(0);" onclick="viewContractorMB('+value.id+')">' + value.mbRefNo + '</a></td>'
-					output = output + '<td class="text-center">' + value.mbDate + '</td>'
+					output = output + '<td class="text-center">' + date + "/" + month + "/" + mbDate.getFullYear() + '</td>'
 					output = output + '<td class="text-right">' + value.mbAmount + '</td>'
 					output = output + '</tr>';
 					$('#contractorMbs tbody').append(output);

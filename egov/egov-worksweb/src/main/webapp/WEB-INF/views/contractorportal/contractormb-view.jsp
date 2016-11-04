@@ -63,8 +63,8 @@
 		<label class="col-sm-2 control-label text-right">
 		    <spring:message code="lbl.remarks" />
 		</label>
-		<div class="col-sm-3 add-margin">
-			<form:textarea path="remarks" id="remarks" class="form-control patternvalidation" readonly="true" data-pattern="alphanumericwithallspecialcharacters" maxlength="1056"></form:textarea>
+		<div class="col-sm-3 add-margin view-content">
+			<c:out value="${contractorMB.remarks }" default="N/A"></c:out>
 		</div>
 	</div>
 	<div class="buttonbottom" align="center">

@@ -90,10 +90,10 @@
 						<td align="right">
 							<span class="rate_${item.index }"><fmt:formatNumber groupingUsed="false" minFractionDigits="2" maxFractionDigits="4">${details.workOrderActivity.activity.estimateRate }</fmt:formatNumber></span>
 						</td>
-						<td>
+						<td align="right">
 							<span class="workOrderQuantity_${item.index }">${details.workOrderActivity.approvedQuantity }</span>
 						</td>
-						<td>
+						<td align="right">
 							<span class="spansorslno">${details.quantity }</span>
 						</td>
 						<td align="right">

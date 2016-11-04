@@ -154,3 +154,12 @@ $(document).ready(function() {
 		source : workOrderNumber.ttAdapter()
 	});
 });
+
+function viewContractorMB(id) {
+	window.open("/egworks/contractorportal/mb/view/" + id, '', 'height=650,width=980,scrollbars=yes,left=0,top=0,status=yes');
+}
+
+$('#contractormbs').click(function(event) {
+	event.preventDefault();
+	window.open("/egworks/contractorportal/mb/contractormbs/" + $('#workOrderEstimateId').val(), '', 'height=650,width=980,scrollbars=yes,left=0,top=0,status=yes');
+});

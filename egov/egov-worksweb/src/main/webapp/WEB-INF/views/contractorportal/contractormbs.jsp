@@ -42,43 +42,39 @@
 <%@ taglib uri="http://www.springframework.org/tags/form" prefix="form"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt"%>
+<%@ taglib uri="/WEB-INF/taglibs/cdn.tld" prefix="cdn"%>
+<div class="new-page-header"><spring:message code="lbl.old.contractormbs" /></div>
 <div class="panel panel-primary" data-collapsed="0">
-<div class="panel-body">
-<div class="row">
-<div class="col-xs-12 col-md-8 col-md-offset-2">
-<br/>
-	<table class="table table-bordered">
-		<thead>
-			<tr>
-				<th><spring:message code="lbl.nameofwork" /></th>
-				<th><spring:message code="lbl.loanumber" /></th>
-				<th><spring:message code="lbl.loaamount" /></th>
-			</tr>
-		</thead>
-		<tbody>
-			<tr>
-				<td class="text-center"><span id="nameOfWork1">${nameOfWork}</span></td>
-				<td class="text-center"><span id="loaNumber">${loaNumber}</span></td>
-				<td class="text-right"><span id="loaAmount">${loaAmount}</span></td>
-			</tr>
-		</tbody>
-	</table>
-</div>
-
-<div class="col-xs-12 col-md-8 col-md-offset-2 col-md-offset-2">
-	<table class="table table-bordered" id="contractorMbs">
-		<thead>
-			<tr>
-				<th><spring:message code="lbl.contractor.mb.referencenumber" /></th>
-				<th><spring:message code="lbl.contractor.mb.date" /></th>
-				<th><spring:message code="lbl.contractor.mbamount" /></th>
-			</tr>
-		</thead>
-		<tbody>
-		</tbody>
-	</table>
-</div>
-
+	<div class="panel-heading">
 	</div>
+	<div class="panel-body">
+		<div class="row">
+			<div class="col-xs-12 col-md-8 col-md-offset-2 col-md-offset-2">
+				<table class="table table-bordered" id="contractorMbs">
+					<thead>
+						<tr>
+							<th><spring:message code="lbl.contractor.mb.referencenumber" /></th>
+							<th><spring:message code="lbl.contractor.mb.date" /></th>
+							<th><spring:message code="lbl.contractor.mbamount" /></th>
+						</tr>
+						<c:forEach items="${contractorMBHeaders }" var="mbHeader">
+							<tr>
+								<td><a href="javascript:void(0);" onclick="viewContractorMB(${mbHeader.id })">${mbHeader.mbRefNo }</a></td>
+								<td><fmt:formatDate value="${mbHeader.mbDate }" pattern="dd/MM/yyyy" /></td>
+								<td align="right"><fmt:formatNumber value="${mbHeader.mbAmount }" groupingUsed="false" maxFractionDigits="2" minFractionDigits="2"></fmt:formatNumber></td>
+							</tr>
+						</c:forEach>
+					</thead>
+					<tbody>
+					</tbody>
+				</table>
+			</div>
+		</div>
+	</div>
+	<div class="buttonbottom" align="center">
+		<input type="button" name="button2" id="button2" value="Close"
+					class="btn btn-default" onclick="window.close();" /></td>
 	</div>
 </div>
+<script type="text/javascript"
+	src="<cdn:url value='/resources/js/contractorportal/contractormb.js?rnd=${app_release_no}'/>"></script>

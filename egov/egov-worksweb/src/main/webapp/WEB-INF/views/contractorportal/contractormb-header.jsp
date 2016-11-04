@@ -42,13 +42,14 @@
 <%@ taglib uri="http://www.springframework.org/tags/form" prefix="form"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt"%>
+<input type="hidden" id="workOrderEstimateId" value="${contractorMB.workOrderEstimate.id }" />
 <div class="panel panel-primary" data-collapsed="0">
 	<div class="panel-heading">
 		<div class="panel-title" style="text-align: left;">
 			<spring:message code="lbl.workdetails" />
 		</div>
 	</div>
-	<div class="panel-body custom-form">
+	<div class="panel-body">
 		<div class="row add-border">
 			<div class="col-xs-3 add-margin">
 				<spring:message code="lbl.mb.nameofwork" />
@@ -104,7 +105,11 @@
 			<div class="col-xs-3 add-margin view-content">
 				<span name="mileStoneStatus" id="mileStoneStatus">${mileStoneStatus }</span>
 			</div>
+			<c:if test="${mode != 'view' }">
+				<div class="row add-border">
+					<div class="col-md-2 add-margin"><a href="javascript:void(0);" id="contractormbs"><spring:message code="lbl.old.contractormbs" /></a></div> 
+				</div>
+			</c:if>
 		</div>
-
 	</div>
 </div>

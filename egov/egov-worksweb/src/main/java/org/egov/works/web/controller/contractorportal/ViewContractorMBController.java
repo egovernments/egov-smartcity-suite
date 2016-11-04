@@ -131,4 +131,13 @@ public class ViewContractorMBController {
         contractorMBHeader.setDocumentDetails(documentDetailsList);
         return contractorMBHeader;
     }
+    
+    @RequestMapping(value = "/contractormbs/{id}", method = RequestMethod.GET)
+    public String ContractorMBs(final Model model, @PathVariable final Long id,
+            final HttpServletRequest request) {
+        final List<ContractorMBHeader> contractorMBHeaders = contractorMBHeaderService
+                .getContractorMBHeaderByWorkOrderEstimateId(Long.valueOf(id));
+        model.addAttribute("contractorMBHeaders", contractorMBHeaders);
+        return "previous-contractormbs";
+    }
 }
