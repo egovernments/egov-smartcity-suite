@@ -14,7 +14,6 @@ function getFormData($form) {
 	return indexed_array;
 }
 
-
 function callAjaxSearch() {
 	drillDowntableContainer = jQuery("#resultTable");
 	jQuery('.report-section').removeClass('display-hide');
@@ -27,14 +26,17 @@ function callAjaxSearch() {
 					"data" : getFormData(jQuery('form'))
 				},
 				"fnRowCallback" : function(row, data, index) {
-					$(row).on(
-							'click',
-							function() {
-								console.log(data.id);
-								window.open('/EGF/budgetdefinition/'
-										+ $('#mode').val() + '/' + data.id, '',
-										'width=800, height=600,scrollbars=yes');
-							});
+					$(row)
+							.on(
+									'click',
+									function() {
+										console.log(data.id);
+										window
+												.open('/EGF/budgetdefinition/'
+														+ $('#mode').val()
+														+ '/' + data.id, '',
+														'width=800, height=600,scrollbars=yes');
+									});
 				},
 				"bDestroy" : true,
 				"autoWidth" : false,
@@ -72,7 +74,6 @@ function callAjaxSearch() {
 
 var financialYearId = $('#financialYearId').val();
 
-
 function getParentByFinancialYear(financialYearId) {
 	var isBereChecked = $("input[name='isbere']:checked").val();
 	if ($('#financialYearId').val() === '' && financialYearId === '') {
@@ -83,9 +84,8 @@ function getParentByFinancialYear(financialYearId) {
 	} else {
 		$.ajax(
 				{
-					url : "/EGF/budgetdefinition/parents"
-							+ "?financialYearId=" + financialYearId
-							+ "&isBeRe=" + isBereChecked,
+					url : "/EGF/budgetdefinition/parents" + "?financialYearId="
+							+ financialYearId + "&isBeRe=" + isBereChecked,
 					type : "GET",
 					dataType : "json"
 				}).done(
@@ -150,7 +150,6 @@ function getReferenceBudgets(financialYearId) {
 	}
 }
 
-
 function getDropDownsForModify(budgetId) {
 	if ($('#budgetId').val() === '' && budgetId === '') {
 		$('#budgetId').empty();
@@ -175,14 +174,16 @@ function getDropDownsForModify(budgetId) {
 									$('#referenceBudget').append(
 											$('<option ' + selected + '>')
 													.text(val.reference).attr(
-															'value', val.referenceId));
+															'value',
+															val.referenceId));
 								}
 
 								if (val.parent != '') {
 									$('#parent').append(
 											$('<option ' + selected + '>')
 													.text(val.parent).attr(
-															'value', val.parentId));
+															'value',
+															val.parentId));
 								}
 							});
 						});
@@ -198,7 +199,7 @@ $(document).ready(function() {
 				$(this).attr('selected', 'selected');
 		});
 	}
-	if (budgetId != "" &&  budgetId != undefined) {
+	if (budgetId != "" && budgetId != undefined) {
 		getDropDownsForModify(budgetId);
 	}
 
@@ -209,3 +210,9 @@ $(document).ready(function() {
 	}
 
 });
+
+function resetFunction() {
+	$('#financialYear').val('');
+	$('#referenceBudget').val('');
+	$('#parent').val('');
+}
