@@ -173,8 +173,8 @@ public class SearchActivityJsonAdaptor implements JsonSerializer<Activity> {
                 Double length = woms.getLength() == null ? 0 : woms.getLength().doubleValue();
                 Double width = woms.getWidth() == null ? 0 : woms.getWidth().doubleValue();
                 Double depthOrHeight = woms.getDepthOrHeight() == null ? 0 : woms.getDepthOrHeight().doubleValue();
-                for (final WorkOrderMeasurementSheet rems : rewomsList)
-                    if (woms.getMeasurementSheet().getIdentifier() == 'A') {
+                Double quantity = woms.getQuantity() == null ? 0 : woms.getQuantity().doubleValue();
+                for (final WorkOrderMeasurementSheet rems : rewomsList) {
                         if (rems.getNo() != null)
                             no = no + rems.getNo().doubleValue();
                         if (rems.getLength() != null)
@@ -183,16 +183,9 @@ public class SearchActivityJsonAdaptor implements JsonSerializer<Activity> {
                             width = width + rems.getWidth().doubleValue();
                         if (rems.getDepthOrHeight() != null)
                             depthOrHeight = depthOrHeight + rems.getDepthOrHeight().doubleValue();
-                    } else {
-                        if (rems.getNo() != null)
-                            no = no - rems.getNo().doubleValue();
-                        if (rems.getLength() != null)
-                            length = length - rems.getLength().doubleValue();
-                        if (rems.getWidth() != null)
-                            width = width - rems.getWidth().doubleValue();
-                        if (rems.getDepthOrHeight() != null)
-                            depthOrHeight = depthOrHeight - rems.getDepthOrHeight().doubleValue();
-                    }
+                        
+                        quantity = quantity + rems.getQuantity().doubleValue();
+                }
                 if (no != null && no != 0)
                     woms.setNo(new BigDecimal(no));
                 if (length != null && length != 0)
@@ -202,11 +195,7 @@ public class SearchActivityJsonAdaptor implements JsonSerializer<Activity> {
                 if (depthOrHeight != null && depthOrHeight != 0)
                     woms.setDepthOrHeight(new BigDecimal(depthOrHeight));
 
-                woms.setQuantity(new BigDecimal(
-                        (no == null || no == 0 ? 1 : no.doubleValue())
-                                * (length == null || length == 0 ? 1 : length.doubleValue())
-                                * (width == null || width == 0 ? 1 : width.doubleValue())
-                                * (depthOrHeight == null || depthOrHeight == 0 ? 1 : depthOrHeight.doubleValue())));
+                woms.setQuantity(new BigDecimal(quantity.toString()));
             }
         Double qty = 0d;
         for (final WorkOrderMeasurementSheet woms : workOrderActivity.getWorkOrderMeasurementSheets())
@@ -226,9 +215,8 @@ public class SearchActivityJsonAdaptor implements JsonSerializer<Activity> {
         Double width = measurementSheet.getWidth() == null ? 0 : measurementSheet.getWidth().doubleValue();
         Double depthOrHeight = measurementSheet.getDepthOrHeight() == null ? 0
                 : measurementSheet.getDepthOrHeight().doubleValue();
-        for (final MeasurementSheet rems : remsList)
-        // if (measurementSheet.getIdentifier() == 'A')
-        {
+        Double quantity = measurementSheet.getQuantity() == null ? 0 : measurementSheet.getQuantity().doubleValue();
+        for (final MeasurementSheet rems : remsList) {
             if (rems.getNo() != null)
                 no = no + rems.getNo().doubleValue();
             if (rems.getLength() != null)
@@ -237,11 +225,10 @@ public class SearchActivityJsonAdaptor implements JsonSerializer<Activity> {
                 width = width + rems.getWidth().doubleValue();
             if (rems.getDepthOrHeight() != null)
                 depthOrHeight = depthOrHeight + rems.getDepthOrHeight().doubleValue();
-        } /*
-           * else { if (rems.getNo() != null) no = no - rems.getNo().doubleValue(); if (rems.getLength() != null) length = length
-           * - rems.getLength().doubleValue(); if (rems.getWidth() != null) width = width - rems.getWidth().doubleValue(); if
-           * (rems.getDepthOrHeight() != null) depthOrHeight = depthOrHeight - rems.getDepthOrHeight().doubleValue(); }
-           */
+
+            quantity = quantity + rems.getQuantity().doubleValue();
+        }
+        
         if (no != null && no != 0)
             measurementSheet.setNo(new BigDecimal(no));
         if (length != null && length != 0)
@@ -251,9 +238,6 @@ public class SearchActivityJsonAdaptor implements JsonSerializer<Activity> {
         if (depthOrHeight != null && depthOrHeight != 0)
             measurementSheet.setDepthOrHeight(new BigDecimal(depthOrHeight));
 
-        measurementSheet.setQuantity(new BigDecimal(
-                (no == null || no == 0 ? 1 : no.doubleValue()) * (length == null || length == 0 ? 1 : length.doubleValue())
-                        * (width == null || width == 0 ? 1 : width.doubleValue())
-                        * (depthOrHeight == null || depthOrHeight == 0 ? 1 : depthOrHeight.doubleValue())));
+        measurementSheet.setQuantity(new BigDecimal(quantity.toString()));
     }
 }

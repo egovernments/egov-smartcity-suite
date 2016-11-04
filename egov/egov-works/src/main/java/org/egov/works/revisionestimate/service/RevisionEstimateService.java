@@ -1376,7 +1376,7 @@ public class RevisionEstimateService {
         if (depthOrHeight != null && depthOrHeight != 0)
             measurementSheet.setDepthOrHeight(new BigDecimal(depthOrHeight));
         
-        measurementSheet.setQuantity(new BigDecimal(quantity));
+        measurementSheet.setQuantity(new BigDecimal(quantity.toString()));
     }
 
     public List<RevisionAbstractEstimate> findRevisionEstimatesByParentAndStatus(final Long parentId) {
