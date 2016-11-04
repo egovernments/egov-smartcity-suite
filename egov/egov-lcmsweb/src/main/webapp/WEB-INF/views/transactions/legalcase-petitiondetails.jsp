@@ -309,7 +309,7 @@
 </table>
 <div class="form-group">
 	<label class="col-sm-3 control-label text-right" id="persons"><spring:message
-			code="lbl.representedby" /></label>
+			code="lbl.representedby" />:</label>
 	<div class="col-sm-3 add-margin" id="personsdiv">
 		<form:input class="form-control patternvalidation"
 			data-pattern="string" maxlength="50" id="representedby"
@@ -337,7 +337,7 @@
 </div>
 <div class="form-group">
 	<label class="col-sm-3 control-label text-right"><font size="2"><spring:message
-				code="lbl.mesg.document" /></font> </label>
+				code="lbl.mesg.document" /></font>:</label>
 	<div class="col-sm-3 add-margin">
 
 		<input type="file" id="file" name="legalCaseDocuments[0].files"
