@@ -40,6 +40,8 @@
 
 package org.egov.adtax.entity.es;
 
+import static org.egov.infra.utils.ApplicationConstant.ES_DATE_FORMAT;
+
 import java.math.BigDecimal;
 import java.util.Date;
 
@@ -68,9 +70,8 @@ public class AdvertisementIndex {
 	private String electionWard;
 	@Field(type = FieldType.String, index = FieldIndex.not_analyzed)
 	private String street;
-
-	@JsonFormat (shape = JsonFormat.Shape.STRING, pattern ="yyyy-MM-dd HH:mm")
-	@Field(type = FieldType.Date, index = FieldIndex.not_analyzed, format = DateFormat.date_optional_time, pattern = "yyyy-MM-dd HH:mm")
+	@JsonFormat (shape = JsonFormat.Shape.STRING, pattern = ES_DATE_FORMAT)
+	@Field(type = FieldType.Date, index = FieldIndex.not_analyzed, format = DateFormat.date_optional_time, pattern = ES_DATE_FORMAT)
     private Date createdDate;
     @Field(type = FieldType.String, index = FieldIndex.not_analyzed)
 	private String advertisementNumber;
@@ -99,8 +100,8 @@ public class AdvertisementIndex {
     @Field(type = FieldType.String, index = FieldIndex.not_analyzed)
 	private String electricityServiceNumber;
  
-    @JsonFormat (shape = JsonFormat.Shape.STRING, pattern ="yyyy-MM-dd HH:mm")
-	@Field(type = FieldType.Date, index = FieldIndex.not_analyzed, format = DateFormat.date_optional_time, pattern = "yyyy-MM-dd HH:mm")
+    @JsonFormat (shape = JsonFormat.Shape.STRING,  pattern = ES_DATE_FORMAT)
+	@Field(type = FieldType.Date, index = FieldIndex.not_analyzed, format = DateFormat.date_optional_time,  pattern = ES_DATE_FORMAT)
     private Date applicationDate;
     @Field(type = FieldType.String, index = FieldIndex.not_analyzed)
 	private String consumerNumber;
@@ -117,11 +118,11 @@ public class AdvertisementIndex {
     private BigDecimal encroachmentFee;
     
     
-    @JsonFormat (shape = JsonFormat.Shape.STRING, pattern ="yyyy-MM-dd HH:mm")
-  	@Field(type = FieldType.Date, index = FieldIndex.not_analyzed, format = DateFormat.date_optional_time, pattern = "yyyy-MM-dd HH:mm")
+    @JsonFormat (shape = JsonFormat.Shape.STRING,  pattern = ES_DATE_FORMAT)
+  	@Field(type = FieldType.Date, index = FieldIndex.not_analyzed, format = DateFormat.date_optional_time,  pattern = ES_DATE_FORMAT)
     private Date permissionStartDate;
-    @JsonFormat (shape = JsonFormat.Shape.STRING, pattern ="yyyy-MM-dd HH:mm")
-  	@Field(type = FieldType.Date, index = FieldIndex.not_analyzed, format = DateFormat.date_optional_time, pattern = "yyyy-MM-dd HH:mm")
+    @JsonFormat (shape = JsonFormat.Shape.STRING,  pattern = ES_DATE_FORMAT)
+  	@Field(type = FieldType.Date, index = FieldIndex.not_analyzed, format = DateFormat.date_optional_time,  pattern = ES_DATE_FORMAT)
     private Date permissionEndDate;
     @Field(type = FieldType.String, index = FieldIndex.not_analyzed)
     private String mobileNumber;
@@ -148,8 +149,8 @@ public class AdvertisementIndex {
     
     @Field(type = FieldType.String, index = FieldIndex.not_analyzed)
     private String deactivationRemarks;
-    @JsonFormat (shape = JsonFormat.Shape.STRING, pattern ="yyyy-MM-dd HH:mm")
-  	@Field(type = FieldType.Date, index = FieldIndex.not_analyzed, format = DateFormat.date_optional_time, pattern = "yyyy-MM-dd HH:mm")
+    @JsonFormat (shape = JsonFormat.Shape.STRING,  pattern = ES_DATE_FORMAT)
+  	@Field(type = FieldType.Date, index = FieldIndex.not_analyzed, format = DateFormat.date_optional_time,  pattern = ES_DATE_FORMAT)
     private Date deactivationDate;
     @Field(type = FieldType.String, index = FieldIndex.not_analyzed)
     private String ulbName;
