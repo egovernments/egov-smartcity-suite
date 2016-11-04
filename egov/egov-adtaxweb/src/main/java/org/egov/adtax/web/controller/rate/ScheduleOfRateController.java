@@ -252,7 +252,7 @@ public class ScheduleOfRateController {
         return "scheduleOfRate-search";
     }
 
-    @RequestMapping(value = "/search-for-scheduleofrate", method = POST, produces = MediaType.TEXT_PLAIN_VALUE)
+    @RequestMapping(value = "/searchscheduleofrate", method = POST, produces = MediaType.TEXT_PLAIN_VALUE)
     public @ResponseBody String searchScheduleOfRate(final HttpServletRequest request,
             final HttpServletResponse response) {
         
