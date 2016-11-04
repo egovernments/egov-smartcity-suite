@@ -106,9 +106,24 @@ function getFormData($form) {
 $('#btncreatemb').click(function() {
 	var loaNumber = $('#workOrderNumber').val();
 	if (loaNumber != '') {
-		window.location.href = "/egworks/contractorportal/mb/create?loaNumber=" + loaNumber;
+		$.ajax({
+			method : "GET",
+			url : "/egworks/contractorportal/mb/ajaxworkorder-mbheader?workOrderNo=" + loaNumber,
+			async : true
+		}).done(
+				function(loaNumbers) {
+					var flag = false;
+					$.each(loaNumbers, function(index, value) {
+						if (value == loaNumber)
+							flag = true;
+					});
+					if (!flag)
+						bootbox.alert($('#errorLoaNumber').val());
+					else
+						window.location.href = "/egworks/contractorportal/mb/create?loaNumber=" + loaNumber;
+			});
 	} else
-		bootbox.alert('Please enter LOA Number');
+		bootbox.alert($('#errorLoaNumber').val());
 });
 
 $(document).ready(function() {

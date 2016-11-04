@@ -86,7 +86,7 @@ public class ContractorMBDetails extends AbstractAuditable {
 
     private double rate;
 
-    private double amount = 0.0;
+    private double amount;
 
     public List<ValidationError> validate() {
         final List<ValidationError> validationErrors = new ArrayList<ValidationError>();

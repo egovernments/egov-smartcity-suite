@@ -46,5 +46,5 @@ import org.springframework.stereotype.Service;
 @Service
 public interface ContractorMBNumberGenerator {
 
-    public String getNextNumber(final ContractorMBHeader contractorMBHeader, final CFinancialYear financialYear);
+    String getNextNumber(final ContractorMBHeader contractorMBHeader, final CFinancialYear financialYear);
 }

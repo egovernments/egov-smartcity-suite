@@ -111,12 +111,10 @@
 			</tbody>
 			<tfoot>
 				<tr>
-					<c:set var="total" value="${0}" scope="session" />
-					<c:forEach items="${contractorMB.contractorMBDetails}" var="details">
-						<c:set var="total"	value="${total + details.amount }" />  
-					</c:forEach>
-					<td colspan="8" class="text-right"><spring:message code="lbl.mbamount" /></td>
-					<td class="text-right"> <span id="mbTotal">${total }</span> </td>
+					<td colspan="8" class="text-right"><spring:message code="lbl.mbamount" /> (<spring:message code="lbl.mbamount.note" />)</td>
+					<td class="text-right"> <span id="mbTotal">
+						<fmt:formatNumber maxFractionDigits="2" minFractionDigits="2" groupingUsed="false" value="${contractorMB.mbAmount }" />
+					</span> </td>
 				</tr>
 			</tfoot>
 		</table>

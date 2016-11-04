@@ -90,20 +90,14 @@
 				<span name=workOrderAmount id="workOrderAmount">${contractorMB.workOrderEstimate.workOrder.workOrderAmount }</span>
 			</div>
 			<div class="col-xs-3 add-margin">
-				<spring:message code="lbl.total.bill.amount" />
-			</div>
-			<div class="col-xs-3 add-margin view-content">
-				<span name="totalBillAmount" id="totalBillAmount">${totalBillAmount }</span>
-			</div>
-		</div>
-
-		<div class="row add-border">
-			<div class="col-xs-3 add-margin">
 				<spring:message code="lbl.total.bills.paid" />
 			</div>
 			<div class="col-xs-3 add-margin view-content">
 				<span name="totalBillsPaid" id="totalBillsPaid">${totalBillsPaidSoFar }</span>
 			</div>
+		</div>
+
+		<div class="row add-border">
 			<div class="col-xs-3 add-margin">
 				<spring:message code="lbl.status" />
 			</div>

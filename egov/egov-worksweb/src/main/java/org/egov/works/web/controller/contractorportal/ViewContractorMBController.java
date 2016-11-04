@@ -110,8 +110,6 @@ public class ViewContractorMBController {
             e.printStackTrace();
         }
         model.addAttribute("totalBillsPaidSoFar", result.get("amount"));
-        model.addAttribute("totalBillAmount",
-                contractorBillRegisterService.getTotalBillAmountByWorkOrder(contractorMB.getWorkOrderEstimate()));
         final TrackMilestone trackMilestone = trackMilestoneService
                 .getTrackMilestoneTotalPercentage(contractorMB.getWorkOrderEstimate().getId());
         String mileStoneStatus = "";

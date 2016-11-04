@@ -44,6 +44,7 @@
 <%@ taglib uri="http://www.springframework.org/tags/form" prefix="form"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
 <%@ taglib uri="/WEB-INF/taglibs/cdn.tld" prefix="cdn"%>
+<input id="errorLoaNumber" type="hidden" value="<spring:message code="error.contractorportal.valid.loanumber" />" />
 <form:form name="searchForm" role="form" method="post" id="searchForm">
 	<div class="row">
 		<div class="col-md-12">
