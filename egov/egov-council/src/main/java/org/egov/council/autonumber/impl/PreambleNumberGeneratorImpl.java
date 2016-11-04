@@ -53,30 +53,30 @@ import org.springframework.stereotype.Service;
 @Service
 public class PreambleNumberGeneratorImpl implements PreambleNumberGenerator {
 
-	private static final String PREAMBLE_NUMBER_SEQ = "SEQ_EGCNCL_PREAMBLE_NUMBER";
+    private static final String PREAMBLE_NUMBER_SEQ = "SEQ_EGCNCL_PREAMBLE_NUMBER";
 
-	@Autowired
+    @Autowired
 	private ApplicationSequenceNumberGenerator applicationSequenceNumberGenerator;
 
-	@Autowired
+    @Autowired
 	private FinancialYearService financialYearService;
 
-	@Override
+    @Override
 	public String getNextNumber(CouncilPreamble councilpreamble) {
 
-		final SimpleDateFormat sdf = new SimpleDateFormat("MM");
-		final String formattedDate = sdf.format(new Date());
-		final String sequenceName = PREAMBLE_NUMBER_SEQ;
-		final String financialYearRange = financialYearService
+        final SimpleDateFormat sdf = new SimpleDateFormat("MM");
+        final String formattedDate = sdf.format(new Date());
+        final String sequenceName = PREAMBLE_NUMBER_SEQ;
+        final String financialYearRange = financialYearService
 				.getCurrentFinancialYear().getFinYearRange();
 
-		Serializable sequenceNumber = applicationSequenceNumberGenerator
+        Serializable sequenceNumber = applicationSequenceNumberGenerator
 				.getNextSequence(sequenceName);
 
-		final String result = String.format("%d-%s-%s", sequenceNumber,
+        final String result = String.format("%d-%s-%s", sequenceNumber,
 				formattedDate, financialYearRange);
-		return result;
+        return result;
 
-	}
+    }
 
 }
