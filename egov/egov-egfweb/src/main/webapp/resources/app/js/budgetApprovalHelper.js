@@ -1,5 +1,8 @@
 jQuery('#searchApproval').click(function(e) {
-	search();
+	var financialYearId = $('#financialYear').val();
+	if (financialYearId) {
+		search();
+	}
 });
 
 function getFormData($form) {
@@ -20,8 +23,8 @@ jQuery('#approve').click(
 			$("#checkBoxList:checked").each(function() {
 				chkArray.push($(this).val());
 			});
-			var checked=isChecked(chkArray);
-			if (checked!=false) {
+			var checked = isChecked(chkArray);
+			if (checked != false) {
 				var selected;
 				selected = chkArray.join(',');
 				var comments = $('#comments').val();

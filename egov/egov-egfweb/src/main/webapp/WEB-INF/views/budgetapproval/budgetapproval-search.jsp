@@ -87,7 +87,8 @@
 			</div>
 		</div>
 	</div>
-
+ <input type="hidden" id="financialYear"
+						value="${budget.financialYear.id}" />
 
 	<div class="row display-hide report-section">
 		<div class="col-md-12 table-header text-left">List of Budgets
