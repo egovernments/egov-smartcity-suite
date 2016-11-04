@@ -59,7 +59,7 @@ import com.fasterxml.jackson.annotation.JsonFormat;
 public class WaterChargeDocument {
 
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = ES_DATE_FORMAT)
-    @Field(type = FieldType.Date, index = FieldIndex.not_analyzed, format = DateFormat.date_optional_time, pattern = ES_DATE_FORMAT)
+    @Field(type = FieldType.Date, format = DateFormat.date_optional_time, pattern = ES_DATE_FORMAT)
     private Date createdDate;
 
     @Field(index = FieldIndex.not_analyzed)
