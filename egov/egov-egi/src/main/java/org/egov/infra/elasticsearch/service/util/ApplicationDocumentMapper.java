@@ -40,20 +40,20 @@
 
 package org.egov.infra.elasticsearch.service.util;
 
-import ma.glasnost.orika.CustomMapper;
-import ma.glasnost.orika.MappingContext;
 import org.egov.infra.elasticsearch.entity.ApplicationIndex;
 import org.egov.infra.elasticsearch.entity.es.ApplicationDocument;
 import org.springframework.stereotype.Component;
 
-import static org.egov.infra.config.core.ApplicationThreadLocals.getCityCode;
+import ma.glasnost.orika.CustomMapper;
+import ma.glasnost.orika.MappingContext;
 
 @Component
 public class ApplicationDocumentMapper extends CustomMapper<ApplicationIndex, ApplicationDocument> {
 
     @Override
-    public void mapAtoB(ApplicationIndex applicationIndex, ApplicationDocument applicationDocument, MappingContext context) {
-        applicationDocument.setId(getCityCode() + "_" + applicationIndex.getId());
+    public void mapAtoB(final ApplicationIndex applicationIndex, final ApplicationDocument applicationDocument,
+            final MappingContext context) {
+        applicationDocument.setId(applicationIndex.getCityCode() + "_" + applicationIndex.getId());
         applicationDocument.setApproved(applicationIndex.getApproved().toString());
         applicationDocument.setClosed(applicationIndex.getClosed().toString());
     }

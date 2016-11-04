@@ -40,10 +40,10 @@
 
 package org.egov.infra.elasticsearch.entity;
 
-import org.egov.infra.elasticsearch.entity.enums.ApprovalStatus;
-import org.egov.infra.elasticsearch.entity.enums.ClosureStatus;
-import org.egov.infra.persistence.entity.AbstractAuditable;
-import org.hibernate.validator.constraints.Length;
+import static org.egov.infra.elasticsearch.entity.ApplicationIndex.SEQ_APPLICATIONINDEX;
+import static org.egov.infra.validation.ValidatorUtils.assertNotNull;
+
+import java.util.Date;
 
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
@@ -53,12 +53,12 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
-import javax.persistence.Transient;
 import javax.validation.constraints.NotNull;
-import java.util.Date;
 
-import static org.egov.infra.elasticsearch.entity.ApplicationIndex.SEQ_APPLICATIONINDEX;
-import static org.egov.infra.validation.ValidatorUtils.assertNotNull;
+import org.egov.infra.elasticsearch.entity.enums.ApprovalStatus;
+import org.egov.infra.elasticsearch.entity.enums.ClosureStatus;
+import org.egov.infra.persistence.entity.AbstractAuditable;
+import org.hibernate.validator.constraints.Length;
 
 @Entity
 @Table(name = "EG_APPLICATIONINDEX")
@@ -128,23 +128,22 @@ public class ApplicationIndex extends AbstractAuditable {
     @Length(max = 50)
     private String channel;
 
-    @Transient
+    @Length(max = 4)
     private String cityCode;
 
     @NotNull
     @Length(max = 250)
     private String cityName;
 
-    @Transient
+    @Length(max = 50)
     private String cityGrade;
 
     @Length(max = 250)
     private String districtName;
 
-    @Transient
+    @Length(max = 50)
     private String regionName;
 
-    @Transient
     private Integer isClosed;
 
     public static Builder builder() {
@@ -303,9 +302,9 @@ public class ApplicationIndex extends AbstractAuditable {
     public void setClosed(final ClosureStatus closed) {
         this.closed = closed;
         if (this.closed.toString().equals(ClosureStatus.YES.toString()))
-            isClosed = 0;
+            setIsClosed(0);
         else
-            isClosed = 1;
+            setIsClosed(1);
     }
 
     public ApprovalStatus getApproved() {
@@ -343,6 +342,10 @@ public class ApplicationIndex extends AbstractAuditable {
 
     public Integer getIsClosed() {
         return isClosed;
+    }
+
+    public void setIsClosed(final Integer isClosed) {
+        this.isClosed = isClosed;
     }
 
     public String getCityGrade() {
