@@ -217,7 +217,7 @@ public class Employee extends User implements EntityType {
 
     @Override
     public Integer getEntityId() {
-        return null;
+        return this.getId().intValue();
     }
 
     @Override

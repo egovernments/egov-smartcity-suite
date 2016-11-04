@@ -39,8 +39,10 @@
  */
 package org.egov.model.bills;
 
-import org.egov.infra.persistence.entity.AbstractPersistable;
-import org.hibernate.validator.constraints.Length;
+import java.math.BigDecimal;
+import java.util.Date;
+import java.util.HashSet;
+import java.util.Set;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
@@ -54,10 +56,11 @@ import javax.persistence.OneToMany;
 import javax.persistence.OrderBy;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
-import java.math.BigDecimal;
-import java.util.Date;
-import java.util.HashSet;
-import java.util.Set;
+import javax.persistence.Transient;
+
+import org.egov.commons.CChartOfAccounts;
+import org.egov.infra.persistence.entity.AbstractPersistable;
+import org.hibernate.validator.constraints.Length;
 
 @Entity
 @Table(name = "EG_BILLDETAILS")
@@ -87,7 +90,10 @@ public class EgBilldetails extends AbstractPersistable<Integer> implements java.
 
     @Length(max = 250)
     private String narration;
-    
+
+    @Transient
+    private CChartOfAccounts chartOfAccounts;
+
     @OrderBy("id")
     @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL, mappedBy = "egBilldetailsId", targetEntity = EgBillPayeedetails.class)
     private Set<EgBillPayeedetails> egBillPaydetailes = new HashSet<EgBillPayeedetails>(0);
@@ -190,15 +196,22 @@ public class EgBilldetails extends AbstractPersistable<Integer> implements java.
         this.narration = narration;
     }
 
-    public void addEgBillPayeedetail(final EgBillPayeedetails egbillpayee)
-    {
+    public void addEgBillPayeedetail(final EgBillPayeedetails egbillpayee) {
         if (egbillpayee != null)
             getEgBillPaydetailes().add(egbillpayee);
     }
 
-    public void removeEgBillPayeedetail(final EgBillPayeedetails egbillpayee)
-    {
+    public void removeEgBillPayeedetail(final EgBillPayeedetails egbillpayee) {
         if (egbillpayee != null)
             getEgBillPaydetailes().remove(egbillpayee);
     }
+
+    public CChartOfAccounts getChartOfAccounts() {
+        return chartOfAccounts;
+    }
+
+    public void setChartOfAccounts(CChartOfAccounts chartOfAccounts) {
+        this.chartOfAccounts = chartOfAccounts;
+    }
+
 }

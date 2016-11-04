@@ -37,28 +37,20 @@
  *
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
-
-package org.egov.commons.repository;
+package org.egov.egf.billsubtype.repository;
 
 import java.util.List;
 
-import org.egov.commons.CFunction;
+import org.egov.model.bills.EgBillSubType;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
+/**
+ * @author venki
+ * 
+ */
+
 @Repository
-public interface FunctionRepository extends JpaRepository<CFunction, Long> {
-    CFunction findByName(String name);
-
-    CFunction findByCode(String code);
-
-    public List<CFunction> findByNameContainingIgnoreCaseAndCodeContainingIgnoreCase(String name, String code);
-
-    public List<CFunction> findByNameContainingIgnoreCaseOrCodeContainingIgnoreCase(String name, String code);
-
-    public List<CFunction> findByNameContainingIgnoreCase(String name);
-
-    public List<CFunction> findByCodeContainingIgnoreCase(String code);
-
-    public List<CFunction> findByIsNotLeaf(Boolean isNotLeaf);
+public interface EgBillSubTypeRepository extends JpaRepository<EgBillSubType, Integer> {
+    List<EgBillSubType> findByExpenditureType(String expenditureType);
 }

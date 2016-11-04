@@ -39,9 +39,8 @@
  */
 package org.egov.model.bills;
 
-import org.egov.infra.persistence.entity.AbstractPersistable;
-import org.egov.model.recoveries.Recovery;
-import org.hibernate.validator.constraints.Length;
+import java.math.BigDecimal;
+import java.util.Date;
 
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -51,113 +50,149 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
-import java.math.BigDecimal;
-import java.util.Date;
+import javax.persistence.Transient;
+
+import org.egov.infra.persistence.entity.AbstractPersistable;
+import org.egov.model.recoveries.Recovery;
+import org.hibernate.validator.constraints.Length;
 
 @Entity
 @Table(name = "EG_BILLPAYEEDETAILS")
 @SequenceGenerator(name = EgBillPayeedetails.SEQ_EG_BILLPAYEEDETAILS, sequenceName = EgBillPayeedetails.SEQ_EG_BILLPAYEEDETAILS, allocationSize = 1)
 public class EgBillPayeedetails extends AbstractPersistable<Integer> implements java.io.Serializable {
 
-    private static final long serialVersionUID = -6620941691239597456L;
-    
-    public static final String SEQ_EG_BILLPAYEEDETAILS = "SEQ_EG_BILLPAYEEDETAILS";
+	private static final long serialVersionUID = -6620941691239597456L;
 
-    @Id
-    @GeneratedValue(generator = SEQ_EG_BILLPAYEEDETAILS, strategy = GenerationType.SEQUENCE)
-    private Integer id;
+	public static final String SEQ_EG_BILLPAYEEDETAILS = "SEQ_EG_BILLPAYEEDETAILS";
 
-    @ManyToOne
-    @JoinColumn(name = "billdetailid")
-    private EgBilldetails egBilldetailsId;
+	@Id
+	@GeneratedValue(generator = SEQ_EG_BILLPAYEEDETAILS, strategy = GenerationType.SEQUENCE)
+	private Integer id;
 
-    private Integer accountDetailTypeId;
+	@ManyToOne
+	@JoinColumn(name = "billdetailid")
+	private EgBilldetails egBilldetailsId;
 
-    private Integer accountDetailKeyId;
+	private Integer accountDetailTypeId;
 
-    private BigDecimal debitAmount;
+	private Integer accountDetailKeyId;
 
-    private BigDecimal creditAmount;
+	private BigDecimal debitAmount;
 
-    private Date lastUpdatedTime;
+	private BigDecimal creditAmount;
 
-    @ManyToOne
-    @JoinColumn(name = "tdsid")
-    private Recovery recovery;
+	private Date lastUpdatedTime;
 
-    @Length(max = 250)
-    private String narration;
+	@Transient
+	private String detailTypeName;
 
-    public Integer getAccountDetailKeyId() {
-        return accountDetailKeyId;
-    }
+	@Transient
+	private String detailKeyName;
 
-    public void setAccountDetailKeyId(final Integer accountDetailKeyId) {
-        this.accountDetailKeyId = accountDetailKeyId;
-    }
+	@Transient
+	private Boolean isDebit;
 
-    public EgBilldetails getEgBilldetailsId() {
-        return egBilldetailsId;
-    }
+	@ManyToOne
+	@JoinColumn(name = "tdsid")
+	private Recovery recovery;
 
-    public void setEgBilldetailsId(final EgBilldetails egBilldetailsId) {
-        this.egBilldetailsId = egBilldetailsId;
-    }
+	@Length(max = 250)
+	private String narration;
 
-    public BigDecimal getCreditAmount() {
-        return creditAmount;
-    }
+	public Integer getAccountDetailKeyId() {
+		return accountDetailKeyId;
+	}
 
-    public void setCreditAmount(final BigDecimal creditAmount) {
-        this.creditAmount = creditAmount;
-    }
+	public void setAccountDetailKeyId(final Integer accountDetailKeyId) {
+		this.accountDetailKeyId = accountDetailKeyId;
+	}
 
-    public BigDecimal getDebitAmount() {
-        return debitAmount;
-    }
+	public EgBilldetails getEgBilldetailsId() {
+		return egBilldetailsId;
+	}
 
-    public void setDebitAmount(final BigDecimal debitAmount) {
-        this.debitAmount = debitAmount;
-    }
+	public void setEgBilldetailsId(final EgBilldetails egBilldetailsId) {
+		this.egBilldetailsId = egBilldetailsId;
+	}
 
-    public Integer getId() {
-        return id;
-    }
+	public BigDecimal getCreditAmount() {
+		return creditAmount;
+	}
 
-    public void setId(final Integer id) {
-        this.id = id;
-    }
+	public void setCreditAmount(final BigDecimal creditAmount) {
+		this.creditAmount = creditAmount;
+	}
 
-    public Date getLastUpdatedTime() {
-        return lastUpdatedTime;
-    }
+	public BigDecimal getDebitAmount() {
+		return debitAmount;
+	}
 
-    public void setLastUpdatedTime(final Date lastUpdatedTime) {
-        this.lastUpdatedTime = lastUpdatedTime;
-    }
+	public void setDebitAmount(final BigDecimal debitAmount) {
+		this.debitAmount = debitAmount;
+	}
 
-    public Integer getAccountDetailTypeId() {
-        return accountDetailTypeId;
-    }
+	public Integer getId() {
+		return id;
+	}
 
-    public void setAccountDetailTypeId(final Integer accountDetailTypeId) {
-        this.accountDetailTypeId = accountDetailTypeId;
-    }
+	public void setId(final Integer id) {
+		this.id = id;
+	}
 
-    public Recovery getRecovery() {
-        return recovery;
-    }
+	public Date getLastUpdatedTime() {
+		return lastUpdatedTime;
+	}
 
-    public void setRecovery(final Recovery recovery) {
-        this.recovery = recovery;
-    }
+	public void setLastUpdatedTime(final Date lastUpdatedTime) {
+		this.lastUpdatedTime = lastUpdatedTime;
+	}
 
-    public String getNarration() {
-        return narration;
-    }
+	public Integer getAccountDetailTypeId() {
+		return accountDetailTypeId;
+	}
 
-    public void setNarration(final String narration) {
-        this.narration = narration;
-    }
+	public void setAccountDetailTypeId(final Integer accountDetailTypeId) {
+		this.accountDetailTypeId = accountDetailTypeId;
+	}
+
+	public Recovery getRecovery() {
+		return recovery;
+	}
+
+	public void setRecovery(final Recovery recovery) {
+		this.recovery = recovery;
+	}
+
+	public String getNarration() {
+		return narration;
+	}
+
+	public void setNarration(final String narration) {
+		this.narration = narration;
+	}
+
+	public String getDetailTypeName() {
+		return detailTypeName;
+	}
+
+	public void setDetailTypeName(String detailTypeName) {
+		this.detailTypeName = detailTypeName;
+	}
+
+	public String getDetailKeyName() {
+		return detailKeyName;
+	}
+
+	public void setDetailKeyName(String detailKeyName) {
+		this.detailKeyName = detailKeyName;
+	}
+
+	public Boolean getIsDebit() {
+		return isDebit;
+	}
+
+	public void setIsDebit(Boolean isDebit) {
+		this.isDebit = isDebit;
+	}
 
 }

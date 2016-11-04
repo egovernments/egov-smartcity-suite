@@ -69,6 +69,9 @@ public interface FinancialConstants {
     public static final String STANDARD_EXPENDITURETYPE_PURCHASE = "Purchase";
     public static final String STANDARD_EXPENDITURETYPE_SALARY = "Salary";
     public static final String STANDARD_EXPENDITURETYPE_PENSION = "Pension";
+    
+    public static final String BILLTYPE_FINAL_BILL = "Final Bill";
+    public static final String BILLTYPE_PART_BILL = "Part Bill";
 
     public static final String STANDARD_BILLTYPE_FINALBILL = "FinalBill";
     public static final String STANDARD_BILLTYPE_RUNNINGBILL = "RunningBill";
@@ -232,6 +235,9 @@ public interface FinancialConstants {
     public static final String MODULE_NAME_APPCONFIG = "EGF";
     public static final String WORKFLOWENDSTATE = "END";
     public static final String KEY_BILLNUMBER_APPCONFIG = "Bill_Number_Geneartion_Auto";
+    public static final String KEY_DEFAULTTXNMISATTRRIBUTES = "DEFAULTTXNMISATTRRIBUTES";
+    public static final String KEY_CONTINGENCYBILLPURPOSEIDS = "contingencyBillPurposeIds";
+    public static final String KEY_CONTINGENCYBILLDEFAULTPURPOSEID = "contingencyBillDefaultPurposeId";
 
     public static final String TYPEOFACCOUNT_PAYMENTS = "PAYMENTS";
     public static final String TYPEOFACCOUNT_RECEIPTS = "RECEIPTS";

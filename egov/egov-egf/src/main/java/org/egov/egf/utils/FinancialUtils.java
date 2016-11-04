@@ -37,28 +37,53 @@
  *
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
-
-package org.egov.commons.repository;
+package org.egov.egf.utils;
 
 import java.util.List;
 
-import org.egov.commons.CFunction;
-import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.stereotype.Repository;
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
 
-@Repository
-public interface FunctionRepository extends JpaRepository<CFunction, Long> {
-    CFunction findByName(String name);
+import org.egov.commons.EgwStatus;
+import org.egov.commons.dao.EgwStatusHibernateDAO;
+import org.hibernate.Session;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
 
-    CFunction findByCode(String code);
+/**
+ * @author venki
+ * 
+ */
 
-    public List<CFunction> findByNameContainingIgnoreCaseAndCodeContainingIgnoreCase(String name, String code);
+@Service
+@Transactional(readOnly = true)
+public class FinancialUtils {
 
-    public List<CFunction> findByNameContainingIgnoreCaseOrCodeContainingIgnoreCase(String name, String code);
+	@PersistenceContext
+	private EntityManager entityManager;
 
-    public List<CFunction> findByNameContainingIgnoreCase(String name);
+	public Session getCurrentSession() {
+		return entityManager.unwrap(Session.class);
+	}
 
-    public List<CFunction> findByCodeContainingIgnoreCase(String code);
+	@Autowired
+	private EgwStatusHibernateDAO egwStatusHibernateDAO;
 
-    public List<CFunction> findByIsNotLeaf(Boolean isNotLeaf);
+	@Transactional(propagation = Propagation.REQUIRES_NEW, readOnly = true)
+	public EgwStatus getStatusByModuleAndCode(final String moduleType, final String code) {
+		return egwStatusHibernateDAO.getStatusByModuleAndCode(moduleType, code);
+	}
+
+	@Transactional(propagation = Propagation.REQUIRES_NEW, readOnly = true)
+	public List<EgwStatus> getStatusByModule(final String moduleType) {
+		return egwStatusHibernateDAO.getStatusByModule(moduleType);
+	}
+
+	@Transactional(propagation = Propagation.REQUIRES_NEW, readOnly = true)
+	public EgwStatus getStatusById(final Integer id) {
+		return egwStatusHibernateDAO.findById(id, true);
+	}
+
 }

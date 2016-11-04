@@ -54,6 +54,8 @@ import javax.persistence.metamodel.Metamodel;
 
 import org.egov.commons.Fundsource;
 import org.egov.commons.repository.FundsourceRepository;
+import org.hibernate.Query;
+import org.hibernate.Session;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
@@ -96,6 +98,14 @@ public class FundsourceService {
 
     public Fundsource findOne(final Long id) {
         return fundsourceRepository.findOne(id);
+    }
+
+    public List<Fundsource> getBySubSchemeId(final Integer subSchemeId) {
+        Query query = entityManager.unwrap(Session.class)
+                .createQuery(" from Fundsource where isactive = true and subSchemeId.id=:subSchemeId");
+
+        query.setInteger("subSchemeId", subSchemeId);
+        return query.list();
     }
 
     public List<Fundsource> search(final Fundsource fundsource) {

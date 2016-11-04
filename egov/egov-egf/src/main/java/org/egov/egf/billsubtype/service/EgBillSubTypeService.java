@@ -37,28 +37,61 @@
  *
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
-
-package org.egov.commons.repository;
+package org.egov.egf.billsubtype.service;
 
 import java.util.List;
 
-import org.egov.commons.CFunction;
-import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.stereotype.Repository;
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
 
-@Repository
-public interface FunctionRepository extends JpaRepository<CFunction, Long> {
-    CFunction findByName(String name);
+import org.egov.egf.billsubtype.repository.EgBillSubTypeRepository;
+import org.egov.model.bills.EgBillSubType;
+import org.hibernate.Session;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
-    CFunction findByCode(String code);
+/**
+ * @author venki
+ * 
+ */
 
-    public List<CFunction> findByNameContainingIgnoreCaseAndCodeContainingIgnoreCase(String name, String code);
+@Service
+@Transactional(readOnly = true)
+public class EgBillSubTypeService {
 
-    public List<CFunction> findByNameContainingIgnoreCaseOrCodeContainingIgnoreCase(String name, String code);
+    @PersistenceContext
+    private EntityManager entityManager;
 
-    public List<CFunction> findByNameContainingIgnoreCase(String name);
+    private final EgBillSubTypeRepository egBillSubTypeRepository;
 
-    public List<CFunction> findByCodeContainingIgnoreCase(String code);
+    public Session getCurrentSession() {
+        return entityManager.unwrap(Session.class);
+    }
 
-    public List<CFunction> findByIsNotLeaf(Boolean isNotLeaf);
+    @Autowired
+    public EgBillSubTypeService(final EgBillSubTypeRepository egBillSubTypeRepository) {
+        this.egBillSubTypeRepository = egBillSubTypeRepository;
+    }
+
+    public EgBillSubType getById(final Integer id) {
+        return egBillSubTypeRepository.findOne(id);
+    }
+
+    public List<EgBillSubType> getByExpenditureType(final String expenditureType) {
+        return egBillSubTypeRepository.findByExpenditureType(expenditureType);
+    }
+
+    @Transactional
+    public EgBillSubType create(final EgBillSubType egBillSubType) {
+
+        return egBillSubTypeRepository.save(egBillSubType);
+    }
+
+    @Transactional
+    public EgBillSubType update(final EgBillSubType egBillSubType) {
+
+        return egBillSubTypeRepository.save(egBillSubType);
+    }
+
 }

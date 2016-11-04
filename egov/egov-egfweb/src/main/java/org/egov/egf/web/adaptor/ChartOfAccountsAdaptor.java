@@ -37,28 +37,29 @@
  *
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
+package org.egov.egf.web.adaptor;
 
-package org.egov.commons.repository;
+import java.lang.reflect.Type;
 
-import java.util.List;
+import org.egov.commons.CChartOfAccounts;
 
-import org.egov.commons.CFunction;
-import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.stereotype.Repository;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonSerializationContext;
+import com.google.gson.JsonSerializer;
 
-@Repository
-public interface FunctionRepository extends JpaRepository<CFunction, Long> {
-    CFunction findByName(String name);
+public class ChartOfAccountsAdaptor implements JsonSerializer<CChartOfAccounts> {
 
-    CFunction findByCode(String code);
+	@Override
+	public JsonElement serialize(final CChartOfAccounts chartOfAccounts, final Type type,
+			final JsonSerializationContext jsc) {
+		final JsonObject jsonObject = new JsonObject();
+		jsonObject.addProperty("id", chartOfAccounts.getId());
+		jsonObject.addProperty("name", chartOfAccounts.getName());
+		jsonObject.addProperty("glcode", chartOfAccounts.getGlcode());
+		jsonObject.addProperty("isSubLedger", chartOfAccounts.getIsSubLedger());
 
-    public List<CFunction> findByNameContainingIgnoreCaseAndCodeContainingIgnoreCase(String name, String code);
+		return jsonObject;
+	}
 
-    public List<CFunction> findByNameContainingIgnoreCaseOrCodeContainingIgnoreCase(String name, String code);
-
-    public List<CFunction> findByNameContainingIgnoreCase(String name);
-
-    public List<CFunction> findByCodeContainingIgnoreCase(String code);
-
-    public List<CFunction> findByIsNotLeaf(Boolean isNotLeaf);
 }

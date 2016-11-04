@@ -40,15 +40,19 @@
 
 package org.egov.commons;
 
-import org.egov.infstr.models.BaseModel;
-
 import java.util.HashSet;
 import java.util.Set;
+
+import javax.persistence.Transient;
+
+import org.egov.infstr.models.BaseModel;
+
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 public class CChartOfAccounts extends BaseModel {
 	private static final long serialVersionUID = 1L;
 
-	//private Long id = null;
+	// private Long id = null;
 	private String glcode;
 	private String name;
 	private Long purposeId;
@@ -63,6 +67,9 @@ public class CChartOfAccounts extends BaseModel {
 	private Boolean budgetCheckReq;
 	private String majorCode;
 	private Long myClass;
+	@Transient
+	private Boolean isSubLedger;
+	@JsonIgnore
 	private Set<CChartOfAccountDetail> chartOfAccountDetails = new HashSet<CChartOfAccountDetail>();
 
 	public Set<CChartOfAccountDetail> getChartOfAccountDetails() {
@@ -89,7 +96,8 @@ public class CChartOfAccounts extends BaseModel {
 	}
 
 	/**
-	 * @param myClass The myClass to set.
+	 * @param myClass
+	 *            The myClass to set.
 	 */
 	public void setMyClass(Long myClass) {
 		this.myClass = myClass;
@@ -103,7 +111,8 @@ public class CChartOfAccounts extends BaseModel {
 	}
 
 	/**
-	 * @param glcode The glcode to set.
+	 * @param glcode
+	 *            The glcode to set.
 	 */
 	public void setGlcode(String glcode) {
 		this.glcode = glcode;
@@ -111,17 +120,15 @@ public class CChartOfAccounts extends BaseModel {
 
 	/**
 	 * @return Returns the id.
-	 
-	public Long getId() {
-		return id;
-	}
-*/
+	 * 
+	 *         public Long getId() { return id; }
+	 */
 	/**
-	 * @param id The id to set.
-	 
-	public void setId(Long id) {
-		this.id = id;
-	}*/
+	 * @param id
+	 *            The id to set.
+	 * 
+	 *            public void setId(Long id) { this.id = id; }
+	 */
 
 	/**
 	 * @return Returns the name.
@@ -131,7 +138,8 @@ public class CChartOfAccounts extends BaseModel {
 	}
 
 	/**
-	 * @param name The name to set.
+	 * @param name
+	 *            The name to set.
 	 */
 	public void setName(String name) {
 		this.name = name;
@@ -145,7 +153,8 @@ public class CChartOfAccounts extends BaseModel {
 	}
 
 	/**
-	 * @param purposeId The purposeId to set.
+	 * @param purposeId
+	 *            The purposeId to set.
 	 */
 	public void setPurposeId(Long purposeId) {
 		this.purposeId = purposeId;
@@ -159,7 +168,8 @@ public class CChartOfAccounts extends BaseModel {
 	}
 
 	/**
-	 * @param classification The classification to set.
+	 * @param classification
+	 *            The classification to set.
 	 */
 	public void setClassification(Long classification) {
 		this.classification = classification;
@@ -173,7 +183,8 @@ public class CChartOfAccounts extends BaseModel {
 	}
 
 	/**
-	 * @param desc The desc to set.
+	 * @param desc
+	 *            The desc to set.
 	 */
 	public void setDesc(String desc) {
 		this.desc = desc;
@@ -189,18 +200,18 @@ public class CChartOfAccounts extends BaseModel {
 	}
 
 	/**
-	 * @param functionReqd The functionReqd to set.
-	*/
+	 * @param functionReqd
+	 *            The functionReqd to set.
+	 */
 	public void setFunctionReqd(Boolean functionReqd) {
 		this.functionReqd = functionReqd;
 	}
 
-	/**public void setFunctionReqd(boolean functionReqd) {
-		if (functionReqd == true)
-			this.functionReqd = Long.valueOf("1");
-		else
-			this.functionReqd = Long.valueOf("0");
-	} */
+	/**
+	 * public void setFunctionReqd(boolean functionReqd) { if (functionReqd ==
+	 * true) this.functionReqd = Long.valueOf("1"); else this.functionReqd =
+	 * Long.valueOf("0"); }
+	 */
 
 	/**
 	 * @return Returns the isActiveForPosting.
@@ -210,18 +221,18 @@ public class CChartOfAccounts extends BaseModel {
 	}
 
 	/**
-	 * @param isActiveForPosting The isActiveForPosting to set.
+	 * @param isActiveForPosting
+	 *            The isActiveForPosting to set.
 	 */
 	public void setIsActiveForPosting(Boolean isActiveForPosting) {
 		this.isActiveForPosting = isActiveForPosting;
 	}
 
-	/*public void setIsActiveForPosting(boolean isActiveForPosting) {
-		if (isActiveForPosting == true)
-			this.isActiveForPosting = Long.valueOf("1");
-		else
-			this.isActiveForPosting = Long.valueOf("0");
-	}*/
+	/*
+	 * public void setIsActiveForPosting(boolean isActiveForPosting) { if
+	 * (isActiveForPosting == true) this.isActiveForPosting = Long.valueOf("1");
+	 * else this.isActiveForPosting = Long.valueOf("0"); }
+	 */
 
 	/**
 	 * @return Returns the operation.
@@ -231,7 +242,8 @@ public class CChartOfAccounts extends BaseModel {
 	}
 
 	/**
-	 * @param operation The operation to set.
+	 * @param operation
+	 *            The operation to set.
 	 */
 	public void setOperation(Character operation) {
 		this.operation = operation;
@@ -245,7 +257,8 @@ public class CChartOfAccounts extends BaseModel {
 	}
 
 	/**
-	 * @param parentId The parentId to set.
+	 * @param parentId
+	 *            The parentId to set.
 	 */
 	public void setParentId(Long parentId) {
 		this.parentId = parentId;
@@ -259,7 +272,8 @@ public class CChartOfAccounts extends BaseModel {
 	}
 
 	/**
-	 * @param schedule The schedule to set.
+	 * @param schedule
+	 *            The schedule to set.
 	 */
 	public void setSchedule(Long schedule) {
 		this.schedule = schedule;
@@ -273,12 +287,14 @@ public class CChartOfAccounts extends BaseModel {
 	}
 
 	/**
-	 * @param type The type to set.
+	 * @param type
+	 *            The type to set.
 	 */
 	public void setType(Character type) {
 		this.type = type;
 	}
 
+	@Override
 	public boolean equals(Object o) {
 		if ((o instanceof CChartOfAccounts) && (((CChartOfAccounts) o).getId().equals(this.getId()))) {
 			return true;
@@ -287,8 +303,9 @@ public class CChartOfAccounts extends BaseModel {
 		}
 	}
 
+	@Override
 	public int hashCode() {
-		return (Integer.valueOf(glcode!=null?glcode:"0"));
+		return (Integer.valueOf(glcode != null ? glcode : "0"));
 	}
 
 	public Boolean getBudgetCheckReq() {
@@ -299,10 +316,12 @@ public class CChartOfAccounts extends BaseModel {
 		this.budgetCheckReq = budgetCheckReq;
 	}
 
-/*	public void setBudgetCheckReq(boolean budgetCheckReq) {
-		if (budgetCheckReq == true)
-			this.budgetCheckReq = Long.valueOf("1");
-		else
-			this.budgetCheckReq = Long.valueOf("0");
-	}*/
+	public Boolean getIsSubLedger() {
+		return isSubLedger;
+	}
+
+	public void setIsSubLedger(Boolean isSubLedger) {
+		this.isSubLedger = isSubLedger;
+	}
+
 }

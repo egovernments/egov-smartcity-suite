@@ -482,6 +482,17 @@
 		<put-attribute name="body"
 			value="/WEB-INF/views/budgetdefinition/budgetdefinition-search.jsp" />
 	</definition>
+	
+	<definition name="expenseBill-form" extends="base_layout">
+		<put-attribute name="page-title" value="title.expensebill.create" cascade="true"/>
+		<put-attribute name="body" value="/WEB-INF/views/expensebill/expenseBill-form.jsp"/>
+	</definition>
+
+	<definition name="expenseBill-success" extends="base_layout">
+	        <put-attribute name="page-title" value="lbl.expensebill" cascade="true"/>
+	        <put-attribute name="body" value="/WEB-INF/views/expensebill/expenseBill-success.jsp"/>
+	</definition>
+	
 
 	<definition name="budgetapproval-new" extends="base_layout">
 		<put-attribute name="page-title" value="title.budget.new"
