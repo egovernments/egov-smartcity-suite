@@ -40,10 +40,10 @@
 
 package org.egov.infra.elasticsearch.entity;
 
-import static org.egov.infra.elasticsearch.entity.ApplicationIndex.SEQ_APPLICATIONINDEX;
-import static org.egov.infra.validation.ValidatorUtils.assertNotNull;
-
-import java.util.Date;
+import org.egov.infra.elasticsearch.entity.enums.ApprovalStatus;
+import org.egov.infra.elasticsearch.entity.enums.ClosureStatus;
+import org.egov.infra.persistence.entity.AbstractAuditable;
+import org.hibernate.validator.constraints.Length;
 
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
@@ -55,11 +55,10 @@ import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 import javax.validation.constraints.NotNull;
+import java.util.Date;
 
-import org.egov.infra.elasticsearch.entity.enums.ApprovalStatus;
-import org.egov.infra.elasticsearch.entity.enums.ClosureStatus;
-import org.egov.infra.persistence.entity.AbstractAuditable;
-import org.hibernate.validator.constraints.Length;
+import static org.egov.infra.elasticsearch.entity.ApplicationIndex.SEQ_APPLICATIONINDEX;
+import static org.egov.infra.validation.ValidatorUtils.assertNotNull;
 
 @Entity
 @Table(name = "EG_APPLICATIONINDEX")

@@ -46,12 +46,14 @@ import org.egov.infra.elasticsearch.entity.ApplicationIndex;
 import org.egov.infra.elasticsearch.entity.es.ApplicationDocument;
 import org.springframework.stereotype.Component;
 
+import static org.egov.infra.config.core.ApplicationThreadLocals.getCityCode;
+
 @Component
 public class ApplicationDocumentMapper extends CustomMapper<ApplicationIndex, ApplicationDocument> {
 
     @Override
     public void mapAtoB(ApplicationIndex applicationIndex, ApplicationDocument applicationDocument, MappingContext context) {
-        applicationDocument.setId(applicationIndex.getCityCode() + "_" + applicationIndex.getId());
+        applicationDocument.setId(getCityCode() + "_" + applicationIndex.getId());
         applicationDocument.setApproved(applicationIndex.getApproved().toString());
         applicationDocument.setClosed(applicationIndex.getClosed().toString());
     }
