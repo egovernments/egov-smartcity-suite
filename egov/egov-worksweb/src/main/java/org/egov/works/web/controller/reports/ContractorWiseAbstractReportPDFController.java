@@ -254,7 +254,7 @@ public class ContractorWiseAbstractReportPDFController {
                         && searchResult.getWorkCompletedAmount() != null)
                     contractorResult.setLiableAmount(searchResult.getApprovedAmount()
                             .subtract(searchResult.getLiableAmount().add(searchResult.getWorkCompletedAmount()))
-                            .setScale(2, BigDecimal.ROUND_HALF_EVEN));
+                            .divide(new BigDecimal(10000000)).setScale(2, BigDecimal.ROUND_HALF_EVEN));
                 else
                     contractorResult.setLiableAmount(new BigDecimal(0));
 
@@ -299,7 +299,7 @@ public class ContractorWiseAbstractReportPDFController {
 
         String subHeaderStr = StringUtils.EMPTY;
         if (subHeader.toString().endsWith(","))
-            subHeaderStr = subHeader.toString().substring(0, subHeader.toString().length() - 2);
+            subHeaderStr = subHeader.toString().substring(0, subHeader.toString().length() - 1);
         else
             subHeaderStr = subHeader.toString();
 

@@ -58,8 +58,8 @@
 					<form:options items="${financialyears}" itemValue="id"
 						itemLabel="finYearRange" />
 				</form:select>
-				<input type="hidden" name="fromDate" id="fromDate" value="">
-				<input type="hidden" name="toDate" id="toDate" value="">
+				<input type="hidden" class="form-control datepicker" name="fromDate" id="fromDate" data-inputmask="'mask': 'd/m/y'" value="">
+				<input type="hidden" class="form-control datepicker" name="toDate" id="toDate" data-inputmask="'mask': 'd/m/y'" value="">
 				<form:errors path="financialYearId" cssClass="add-margin error-msg" />
 			</div>
 			<label class="col-sm-3 control-label text-right"><spring:message code="lbl.natureofwork" /></label>

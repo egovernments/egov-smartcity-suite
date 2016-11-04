@@ -44,7 +44,7 @@
 <div class="display-hide report-section">
 	<div id="searchCriteria" class="text-center"></div>
 	<div id="dataRun" class="text-center"></div>
-	<div class="report-table-container">
+	<div class="form-group report-table-container">
 		<table class="table table-bordered table-responsive table-hover multiheadertbl"
 			id="resultTable">
 			<thead>

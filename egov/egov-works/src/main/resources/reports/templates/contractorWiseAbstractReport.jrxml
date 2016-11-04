@@ -38,8 +38,8 @@
   ~
   ~   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
   -->
-<!-- Created with Jaspersoft Studio version 6.2.2.final using JasperReports Library version 6.2.2  -->
-<!-- 2016-08-23T18:25:31 -->
+<!-- Created with Jaspersoft Studio version 6.3.1.final using JasperReports Library version 6.3.1  -->
+<!-- 2016-11-04T12:15:27 -->
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="contractorwiseAbstractReport" pageWidth="1080" pageHeight="595" orientation="Landscape" columnWidth="920" leftMargin="20" rightMargin="40" topMargin="40" bottomMargin="40" uuid="59ffa221-2434-4ff3-83b3-9bef4e768390">
 	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="One Empty Record"/>
 	<import value="org.egov.infra.utils.NumberUtil"/>
@@ -78,17 +78,17 @@
 		</band>
 	</background>
 	<title>
-		<band height="75" splitType="Stretch">
+		<band height="60" splitType="Stretch">
 			<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
 			<textField isStretchWithOverflow="true">
-				<reportElement x="70" y="9" width="870" height="22" uuid="3f397c76-f6fc-4f74-beca-1ebbcff4e05c"/>
+				<reportElement x="70" y="15" width="870" height="22" uuid="3f397c76-f6fc-4f74-beca-1ebbcff4e05c"/>
 				<textElement textAlignment="Center">
 					<font fontName="Times New Roman" size="14" isBold="true" pdfFontName="Times-Bold"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$P{reportTitle}]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true">
-				<reportElement positionType="FixRelativeToBottom" x="70" y="34" width="870" height="15" uuid="51a9e41d-9d4e-48b6-acbf-9582f4130497"/>
+				<reportElement positionType="FixRelativeToBottom" x="70" y="45" width="870" height="15" uuid="51a9e41d-9d4e-48b6-acbf-9582f4130497"/>
 				<textElement textAlignment="Center">
 					<font size="10"/>
 				</textElement>
@@ -432,7 +432,7 @@
 				<textElement textAlignment="Center" verticalAlignment="Middle">
 					<font fontName="Times New Roman" size="10" isBold="true" pdfFontName="Times-Bold"/>
 				</textElement>
-				<text><![CDATA[Amount liable to pay(Rs)]]></text>
+				<text><![CDATA[Amount liable to pay (Cr)]]></text>
 			</staticText>
 			<staticText>
 				<reportElement x="38" y="25" width="52" height="85" uuid="f54e9f19-53a7-45fd-9f0d-113fc24673c4"/>

@@ -124,7 +124,8 @@ public class ContractorWiseAbstractJsonAdaptor implements JsonSerializer<Contrac
                                 searchResult.getApprovedAmount()
                                         .subtract(searchResult.getWorkCompletedAmount()
                                                 .add(searchResult.getLiableAmount()))
-                                        .setScale(2, BigDecimal.ROUND_HALF_EVEN).toString());
+                                        .divide(new BigDecimal(10000000)).setScale(2, BigDecimal.ROUND_HALF_EVEN).toString());
+
             else
                 jsonObject.addProperty("liableAmount", new BigDecimal(0).setScale(2, BigDecimal.ROUND_HALF_EVEN).toString());
 
