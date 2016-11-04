@@ -434,11 +434,11 @@ public class PropertyTaxElasticSearchIndexService {
                 boolQuery = boolQuery
                         .filter(QueryBuilders.matchQuery("regionName", propertyTaxDefaultersRequest.getRegionName()));
             else if (propertyTaxDefaultersRequest.getType().equalsIgnoreCase(DASHBOARD_GROUPING_DISTRICTWISE)
-                    && StringUtils.isNotBlank(propertyTaxDefaultersRequest.getRegionName()))
+                    && StringUtils.isNotBlank(propertyTaxDefaultersRequest.getDistrictName()))
                 boolQuery = boolQuery
                         .filter(QueryBuilders.matchQuery("districtName", propertyTaxDefaultersRequest.getDistrictName()));
             else if (propertyTaxDefaultersRequest.getType().equalsIgnoreCase(DASHBOARD_GROUPING_CITYWISE)
-                    && StringUtils.isNotBlank(propertyTaxDefaultersRequest.getRegionName()))
+                    && StringUtils.isNotBlank(propertyTaxDefaultersRequest.getUlbCode()))
                 boolQuery = boolQuery
                         .filter(QueryBuilders.matchQuery("cityCode", propertyTaxDefaultersRequest.getUlbCode()));
             else if (propertyTaxDefaultersRequest.getType().equalsIgnoreCase(DASHBOARD_GROUPING_GRADEWISE)

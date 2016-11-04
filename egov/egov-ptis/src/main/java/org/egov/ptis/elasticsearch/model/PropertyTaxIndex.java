@@ -114,7 +114,7 @@ public class PropertyTaxIndex {
     @Field(type = FieldType.String, index = FieldIndex.not_analyzed)
     private String propertyAddress;
 
-    @Field(type = FieldType.String)
+    @Field(type = FieldType.String, index = FieldIndex.not_analyzed)
     private String billCollector;
 
     @Field(type = FieldType.Double)
