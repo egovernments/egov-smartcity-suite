@@ -44,8 +44,8 @@ import java.util.List;
 import org.egov.commons.service.AccountdetailtypeService;
 import org.egov.commons.service.ChartOfAccountsService;
 import org.egov.egf.billsubtype.service.EgBillSubTypeService;
+import org.egov.egf.expensebill.service.ExpenseBillService;
 import org.egov.egf.web.controller.voucher.BaseVoucherController;
-import org.egov.infra.admin.master.entity.AppConfigValues;
 import org.egov.infra.admin.master.service.AppConfigValueService;
 import org.egov.model.bills.EgBillSubType;
 import org.egov.utils.FinancialConstants;
@@ -72,23 +72,17 @@ public abstract class BaseBillController extends BaseVoucherController {
     @Qualifier("chartOfAccountsService")
     private ChartOfAccountsService chartOfAccountsService;
 
+    @Autowired
+    private ExpenseBillService expenseBillService;
+
     public BaseBillController(final AppConfigValueService appConfigValuesService) {
         super(appConfigValuesService);
-    }
-
-    public boolean isBillNumberGenerationAuto() {
-        final List<AppConfigValues> configValuesByModuleAndKey = appConfigValuesService.getConfigValuesByModuleAndKey(
-                FinancialConstants.MODULE_NAME_APPCONFIG, FinancialConstants.KEY_BILLNUMBER_APPCONFIG);
-        if (configValuesByModuleAndKey.size() > 0)
-            return "Y".equals(configValuesByModuleAndKey.get(0).getValue());
-        else
-            return false;
     }
 
     @Override
     protected void setDropDownValues(final Model model) {
         super.setDropDownValues(model);
-        model.addAttribute("billNumberGenerationAuto", isBillNumberGenerationAuto());
+        model.addAttribute("billNumberGenerationAuto", expenseBillService.isBillNumberGenerationAuto());
         model.addAttribute("billSubTypes", getBillSubTypes());
         model.addAttribute("subLedgerTypes", accountdetailtypeService.findAll());
     }

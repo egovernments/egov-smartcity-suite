@@ -40,12 +40,19 @@
 package org.egov.egf.web.controller.expensebill;
 
 import java.io.IOException;
+import java.math.BigDecimal;
 import java.util.Date;
 
 import javax.servlet.http.HttpServletRequest;
 
+import org.egov.commons.CChartOfAccountDetail;
+import org.egov.commons.service.ChartOfAccountsService;
 import org.egov.egf.expensebill.service.ExpenseBillService;
 import org.egov.infra.admin.master.service.AppConfigValueService;
+import org.egov.infra.exception.ApplicationRuntimeException;
+import org.egov.infra.validation.exception.ValidationException;
+import org.egov.model.bills.EgBillPayeedetails;
+import org.egov.model.bills.EgBilldetails;
 import org.egov.model.bills.EgBillregister;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -78,6 +85,10 @@ public class CreateExpenseBillController extends BaseBillController {
     @Autowired
     private ExpenseBillService expenseBillService;
 
+    @Autowired
+    @Qualifier("chartOfAccountsService")
+    private ChartOfAccountsService chartOfAccountsService;
+
     @Override
     protected void setDropDownValues(final Model model) {
         super.setDropDownValues(model);
@@ -94,13 +105,29 @@ public class CreateExpenseBillController extends BaseBillController {
     public String create(@ModelAttribute("egBillregister") final EgBillregister egBillregister, final Model model,
             final BindingResult resultBinder) throws IOException {
 
+        validateBillNumber(egBillregister, resultBinder);
+        validateLedgerAndSubledger(egBillregister, resultBinder);
+
         if (resultBinder.hasErrors()) {
             setDropDownValues(model);
+            egBillregister.setBilldate(new Date());
 
             return "expenseBill-form";
         } else {
-            expenseBillService.create(egBillregister);
+
+            populateBillDetails(egBillregister);
+            try {
+                expenseBillService.create(egBillregister);
+            } catch (final ValidationException e) {
+                // TODO: Used ApplicationRuntimeException for time being since
+                // there is issue in session after
+                // checkBudgetAndGenerateBANumber API call. Needs to replace
+                // with errors.reject
+                throw new ApplicationRuntimeException("error.expense.bill.budgetcheck.insufficient.amount");
+            }
+
             return "redirect:/expensebill/success?billNumber=" + egBillregister.getBillnumber();
+
         }
     }
 
@@ -108,19 +135,130 @@ public class CreateExpenseBillController extends BaseBillController {
     public String showContractorBillSuccessPage(@RequestParam("billNumber") final String billNumber, final Model model,
             final HttpServletRequest request) {
 
-        /*
-         * final String[] keyNameArray = request.getParameter("pathVars").split(","); Long id = 0L; String approverName = "";
-         * String currentUserDesgn = ""; String nextDesign = ""; if (keyNameArray.length != 0 && keyNameArray.length > 0) if
-         * (keyNameArray.length == 1) id = Long.parseLong(keyNameArray[0]); else if (keyNameArray.length == 3) { id =
-         * Long.parseLong(keyNameArray[0]); approverName = keyNameArray[1]; currentUserDesgn = keyNameArray[2]; } else { id =
-         * Long.parseLong(keyNameArray[0]); approverName = keyNameArray[1]; currentUserDesgn = keyNameArray[2]; nextDesign =
-         * keyNameArray[3]; } if (id != null) model.addAttribute("approverName", approverName);
-         * model.addAttribute("currentUserDesgn", currentUserDesgn); model.addAttribute("nextDesign", nextDesign);
-         */
         model.addAttribute("message",
                 messageSource.getMessage("msg.expense.bill.create.success", new String[] { billNumber }, null));
 
         return "expenseBill-success";
+    }
+
+    @SuppressWarnings("unchecked")
+    private void populateBillDetails(final EgBillregister egBillregister) {
+        egBillregister.getEgBilldetailes().addAll(egBillregister.getBillDetails());
+        for (final EgBilldetails details : egBillregister.getEgBilldetailes()) {
+            if (egBillregister.getEgBillregistermis().getFunction() != null)
+                details.setFunctionid(BigDecimal.valueOf(egBillregister.getEgBillregistermis().getFunction().getId()));
+            details.setEgBillregister(egBillregister);
+            details.setLastupdatedtime(new Date());
+            details.setChartOfAccounts(chartOfAccountsService.findById(details.getGlcodeid().longValue(), false));
+        }
+        if (!egBillregister.getBillPayeedetails().isEmpty())
+            populateBillPayeeDetails(egBillregister);
+    }
+
+    private void populateBillPayeeDetails(final EgBillregister egBillregister) {
+        EgBillPayeedetails payeeDetail = null;
+        for (final EgBilldetails details : egBillregister.getEgBilldetailes())
+            for (final EgBillPayeedetails payeeDetails : egBillregister.getBillPayeedetails())
+                if (details.getGlcodeid().equals(payeeDetails.getEgBilldetailsId().getGlcodeid())) {
+                    payeeDetail = new EgBillPayeedetails();
+                    payeeDetail.setEgBilldetailsId(details);
+                    payeeDetail.setAccountDetailTypeId(payeeDetails.getAccountDetailTypeId());
+                    payeeDetail.setAccountDetailKeyId(payeeDetails.getAccountDetailKeyId());
+                    payeeDetail.setDebitAmount(payeeDetails.getDebitAmount());
+                    payeeDetail.setCreditAmount(payeeDetails.getCreditAmount());
+                    payeeDetail.setLastUpdatedTime(new Date());
+                    details.getEgBillPaydetailes().add(payeeDetail);
+                }
+    }
+
+    private void validateBillNumber(final EgBillregister egBillregister, final BindingResult resultBinder) {
+        if (!expenseBillService.isBillNumberGenerationAuto())
+            if (!isBillNumUnique(egBillregister.getBillnumber()))
+                resultBinder.reject("msg.expense.bill.duplicate.bill.number",
+                        new String[] { egBillregister.getBillnumber() }, null);
+    }
+
+    private boolean isBillNumUnique(final String billnumber) {
+        final EgBillregister bill = expenseBillService.getByBillnumber(billnumber);
+        return bill == null;
+    }
+
+    private void validateLedgerAndSubledger(final EgBillregister egBillregister, final BindingResult resultBinder) {
+        BigDecimal totalDrAmt = BigDecimal.ZERO;
+        BigDecimal totalCrAmt = BigDecimal.ZERO;
+        for (final EgBilldetails details : egBillregister.getEgBilldetailes()) {
+            if (details.getDebitamount() != null)
+                totalDrAmt = totalDrAmt.add(details.getDebitamount());
+            if (details.getCreditamount() != null)
+                totalCrAmt = totalCrAmt.add(details.getCreditamount());
+            if (details.getGlcodeid() == null)
+                resultBinder.rejectValue("msg.expense.bill.accdetail.accmissing", "msg.expense.bill.accdetail.accmissing");
+
+            if (details.getDebitamount() != null && details.getCreditamount() != null
+                    && details.getDebitamount().equals(BigDecimal.ZERO) && details.getCreditamount().equals(BigDecimal.ZERO)
+                    && details.getGlcodeid() != null)
+                resultBinder.reject("msg.expense.bill.accdetail.amountzero",
+                        new String[] { details.getChartOfAccounts().getGlcode() }, null);
+
+            if (details.getDebitamount() != null && details.getCreditamount() != null
+                    && details.getDebitamount().compareTo(BigDecimal.ZERO) == 1
+                    && details.getCreditamount().compareTo(BigDecimal.ZERO) == 1)
+                resultBinder.reject("msg.expense.bill.accdetail.amount",
+                        new String[] { details.getChartOfAccounts().getGlcode() }, null);
+        }
+        if (totalDrAmt.compareTo(totalCrAmt) != 0)
+            resultBinder.rejectValue("msg.expense.bill.accdetail.drcrmatch", "msg.expense.bill.accdetail.drcrmatch");
+        validateSubledgerDetails(egBillregister, resultBinder);
+    }
+
+    private void validateSubledgerDetails(final EgBillregister egBillregister, final BindingResult resultBinder) {
+        Boolean check;
+        BigDecimal detailAmt;
+        BigDecimal payeeDetailAmt;
+        for (final EgBilldetails details : egBillregister.getEgBilldetailes()) {
+
+            detailAmt = BigDecimal.ZERO;
+            payeeDetailAmt = BigDecimal.ZERO;
+
+            if (details.getDebitamount() != null && details.getDebitamount().compareTo(BigDecimal.ZERO) == 1)
+                detailAmt = details.getDebitamount();
+            else if (details.getCreditamount() != null &&
+                    details.getCreditamount().compareTo(BigDecimal.ZERO) == 1)
+                detailAmt = details.getCreditamount();
+
+            for (final EgBillPayeedetails payeeDetails : egBillregister.getBillPayeedetails()) {
+
+                if (payeeDetails.getDebitAmount() != null && payeeDetails.getCreditAmount() != null
+                        && payeeDetails.getDebitAmount().equals(BigDecimal.ZERO)
+                        && payeeDetails.getCreditAmount().equals(BigDecimal.ZERO))
+                    resultBinder.reject("msg.expense.bill.subledger.amountzero",
+                            new String[] { details.getChartOfAccounts().getGlcode() }, null);
+
+                if (payeeDetails.getDebitAmount() != null && payeeDetails.getCreditAmount() != null
+                        && payeeDetails.getDebitAmount().compareTo(BigDecimal.ZERO) == 1
+                        && payeeDetails.getCreditAmount().compareTo(BigDecimal.ZERO) == 1)
+                    resultBinder.reject("msg.expense.bill.subledger.amount",
+                            new String[] { details.getChartOfAccounts().getGlcode() }, null);
+
+                if (payeeDetails.getDebitAmount() != null && payeeDetails.getDebitAmount().compareTo(BigDecimal.ZERO) == 1)
+                    payeeDetailAmt = payeeDetailAmt.add(payeeDetails.getDebitAmount());
+                else if (payeeDetails.getCreditAmount() != null && payeeDetails.getCreditAmount().compareTo(BigDecimal.ZERO) == 1)
+                    payeeDetailAmt = payeeDetailAmt.add(payeeDetails.getCreditAmount());
+
+                check = false;
+                for (final CChartOfAccountDetail coaDetails : details.getChartOfAccounts().getChartOfAccountDetails())
+                    if (payeeDetails.getAccountDetailTypeId() == coaDetails.getDetailTypeId().getId())
+                        check = true;
+                if (!check)
+                    resultBinder.reject("msg.expense.bill.subledger.mismatch",
+                            new String[] { details.getChartOfAccounts().getGlcode() }, null);
+
+            }
+
+            if (detailAmt.compareTo(payeeDetailAmt) != 0)
+                resultBinder.reject("msg.expense.bill.subledger.amtnotmatchinng",
+                        new String[] { details.getChartOfAccounts().getGlcode() }, null);
+        }
     }
 
 }
