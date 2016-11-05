@@ -168,6 +168,9 @@ public class CompletionCertificatePDFController {
             reportParams.put("cityName", ApplicationThreadLocals.getMunicipalityName());
             reportParams.put("reportRunDate", DateUtils.getFormattedDate(new Date(), "dd/MM/yyyy hh:mm a"));
 
+            double totalAsPerTender = 0.0;
+            double totalAsPerExecution = 0.0;
+            double totalDifference = 0.0;
             final List<ContractorBillCertificateInfo> contractorBillCertificateInfoList = new ArrayList<ContractorBillCertificateInfo>();
             for (final WorkOrderActivity woa : contractorBillRegister.getWorkOrderEstimate().getWorkOrderActivities()) {
                 final Activity act = woa.getActivity();
@@ -175,22 +178,27 @@ public class CompletionCertificatePDFController {
                 activities.add(act);
 
                 double quantity = 0.0;
+
                 for (final Activity activity : activities) {
                     final ContractorBillCertificateInfo contractorBillCertificateInfo = new ContractorBillCertificateInfo();
                     final List<MBDetails> detailsList = mbDetailsService.getMBDetailsByWorkOrderActivity(woa.getId());
                     for (final MBDetails mbDetails : detailsList)
                         quantity += mbDetails.getQuantity();
                     contractorBillCertificateInfo.setExecutionQuantity(quantity);
-
                     contractorBillCertificateInfo.setTenderQuantity(activity.getQuantity());
                     contractorBillCertificateInfo.setTenderAmount(activity.getAmount().getValue());
                     contractorBillCertificateInfo.setTenderRate(activity.getEstimateRate());
                     contractorBillCertificateInfo.setExecutionRate(activity.getEstimateRate());
                     contractorBillCertificateInfo.setExecutionAmount(quantity * activity.getRate());
                     contractorBillCertificateInfo.setWorkOrderActivity(woa);
+                    totalAsPerTender += activity.getEstimateRate() * activity.getQuantity();
+                    totalAsPerExecution += activity.getEstimateRate() * quantity;
+                    contractorBillCertificateInfo.setTotalAsPerTender(totalAsPerTender);
+                    contractorBillCertificateInfo.setTotalAsPerExecution(totalAsPerExecution);
+                    totalDifference = totalAsPerTender - totalAsPerExecution;
+                    contractorBillCertificateInfo.setTotalDifference(totalDifference);
                     contractorBillCertificateInfoList.add(contractorBillCertificateInfo);
                 }
-
             }
 
             reportInput = new ReportRequest(CONTRACTORCOMPLETIONBILLPDF, contractorBillCertificateInfoList, reportParams);

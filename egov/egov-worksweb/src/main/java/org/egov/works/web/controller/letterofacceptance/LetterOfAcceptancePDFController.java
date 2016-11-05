@@ -152,15 +152,16 @@ public class LetterOfAcceptancePDFController {
             reportParams.put("tenderFinalizedPercentage", workOrder.getTenderFinalizedPercentage());
             reportParams.put("currDate", sdf.format(new Date()));
             reportParams.put("workValue", estimate.getWorkValue());
-
-            if (!estimate.getEstimateTechnicalSanctions().isEmpty()) {
-                final String technicalSanctionByDesignation = worksUtils
+            String technicalSanctionByDesignation = org.apache.commons.lang.StringUtils.EMPTY;
+            if (!estimate.getEstimateTechnicalSanctions().isEmpty() && estimate.getEstimateTechnicalSanctions()
+                    .get(estimate.getEstimateTechnicalSanctions().size() - 1).getTechnicalSanctionBy() != null)
+                technicalSanctionByDesignation = worksUtils
                         .getUserDesignation(estimate.getEstimateTechnicalSanctions()
                                 .get(estimate.getEstimateTechnicalSanctions().size() - 1).getTechnicalSanctionBy());
-                reportParams.put("technicalSanctionByDesignation", technicalSanctionByDesignation);
-            } else
-                reportParams.put("technicalSanctionByDesignation", "");
-
+            else
+                technicalSanctionByDesignation = worksUtils
+                        .getUserDesignation(estimate.getCreatedBy());
+            reportParams.put("technicalSanctionByDesignation", technicalSanctionByDesignation);
             reportInput = new ReportRequest(LETTEROFACCEPTANCEPDF, workOrder.getContractor(), reportParams);
 
         }

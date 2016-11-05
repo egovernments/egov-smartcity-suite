@@ -52,6 +52,9 @@ public class ContractorBillCertificateInfo {
     private double tenderQuantity;
     private double tenderAmount;
     private double executionRate;
+    private double totalAsPerTender;
+    private double totalAsPerExecution;
+    private double totalDifference;
 
     public WorkOrderActivity getWorkOrderActivity() {
         return workOrderActivity;
@@ -123,6 +126,30 @@ public class ContractorBillCertificateInfo {
 
     public void setExecutionRate(final double executionRate) {
         this.executionRate = executionRate;
+    }
+
+    public double getTotalAsPerTender() {
+        return totalAsPerTender;
+    }
+
+    public void setTotalAsPerTender(final double totalAsPerTender) {
+        this.totalAsPerTender = totalAsPerTender;
+    }
+
+    public double getTotalAsPerExecution() {
+        return totalAsPerExecution;
+    }
+
+    public void setTotalAsPerExecution(final double totalAsPerExecution) {
+        this.totalAsPerExecution = totalAsPerExecution;
+    }
+
+    public double getTotalDifference() {
+        return totalDifference;
+    }
+
+    public void setTotalDifference(final double totalDifference) {
+        this.totalDifference = totalDifference;
     }
 
 }

@@ -38,8 +38,8 @@
   ~
   ~   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
   -->
-<!-- Created with Jaspersoft Studio version 6.3.0.final using JasperReports Library version 6.3.0  -->
-<!-- 2016-08-26T13:50:33 -->
+<!-- Created with Jaspersoft Studio version 6.3.1.final using JasperReports Library version 6.3.1  -->
+<!-- 2016-11-03T17:08:18 -->
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="lineEstimatePDF" pageWidth="595" pageHeight="842" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="e48ceff3-3e96-4152-8bcd-78fa1c9fed2b">
 	<property name="ireport.zoom" value="1.0"/>
 	<property name="ireport.x" value="0"/>
@@ -289,7 +289,7 @@
 				<text><![CDATA[WIN Code]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="190" y="0" width="255" height="40" uuid="4d9a4d6e-fa34-4df3-9496-df90389f22d7"/>
+				<reportElement x="190" y="0" width="250" height="40" uuid="4d9a4d6e-fa34-4df3-9496-df90389f22d7"/>
 				<box topPadding="10" leftPadding="0">
 					<topPen lineWidth="0.5"/>
 					<leftPen lineWidth="0.5"/>
@@ -302,7 +302,7 @@
 				<text><![CDATA[Nature of  the Work]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="445" y="0" width="95" height="40" uuid="c707c44a-680d-4fae-9a79-177fce02447b"/>
+				<reportElement x="440" y="0" width="100" height="40" uuid="c707c44a-680d-4fae-9a79-177fce02447b"/>
 				<box topPadding="10" leftPadding="0">
 					<topPen lineWidth="0.5"/>
 					<leftPen lineWidth="0.5"/>
@@ -341,7 +341,7 @@
 				<textFieldExpression><![CDATA[$V{code}]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true">
-				<reportElement stretchType="RelativeToTallestObject" x="190" y="0" width="255" height="40" uuid="d5c89330-9bc8-4c83-9a5b-03b530f68e75"/>
+				<reportElement stretchType="RelativeToTallestObject" x="190" y="0" width="250" height="40" uuid="d5c89330-9bc8-4c83-9a5b-03b530f68e75"/>
 				<box topPadding="10">
 					<topPen lineWidth="0.5"/>
 					<leftPen lineWidth="0.5"/>
@@ -352,7 +352,7 @@
 				<textFieldExpression><![CDATA[$F{nameOfWork}]]></textFieldExpression>
 			</textField>
 			<textField pattern="###0.00">
-				<reportElement stretchType="RelativeToTallestObject" x="445" y="0" width="95" height="40" uuid="85831488-fb2a-4084-8e31-e84489e14cdc"/>
+				<reportElement stretchType="RelativeToTallestObject" x="440" y="0" width="100" height="40" uuid="85831488-fb2a-4084-8e31-e84489e14cdc"/>
 				<box topPadding="10" leftPadding="0" rightPadding="5">
 					<topPen lineWidth="0.5"/>
 					<leftPen lineWidth="0.5"/>
@@ -368,7 +368,7 @@
 		<band height="170">
 			<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
 			<textField pattern="###0.00">
-				<reportElement stretchType="RelativeToTallestObject" x="445" y="0" width="95" height="18" uuid="f1e8ba12-7874-4c9a-953c-09042fb73bc9"/>
+				<reportElement stretchType="RelativeToTallestObject" x="440" y="0" width="100" height="18" uuid="f1e8ba12-7874-4c9a-953c-09042fb73bc9"/>
 				<box topPadding="2" leftPadding="0" rightPadding="5">
 					<topPen lineWidth="0.5"/>
 					<leftPen lineWidth="0.5"/>
@@ -389,7 +389,7 @@
 				<textFieldExpression><![CDATA[$P{cityName}]]></textFieldExpression>
 			</textField>
 			<staticText>
-				<reportElement stretchType="RelativeToTallestObject" x="20" y="0" width="425" height="18" uuid="a00e7ca6-f70b-4b1b-b487-3cb2b02c1474"/>
+				<reportElement stretchType="RelativeToTallestObject" x="20" y="0" width="420" height="18" uuid="a00e7ca6-f70b-4b1b-b487-3cb2b02c1474"/>
 				<box topPadding="2" leftPadding="0" rightPadding="5">
 					<topPen lineWidth="0.5"/>
 					<leftPen lineWidth="0.5"/>

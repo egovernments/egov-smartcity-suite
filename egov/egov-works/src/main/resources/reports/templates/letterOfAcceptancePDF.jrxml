@@ -39,8 +39,8 @@
   ~   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
   -->
 <!-- Created with Jaspersoft Studio version 6.3.1.final using JasperReports Library version 6.3.1  -->
-<!-- 2016-10-24T15:03:58 -->
-<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="letterOfAcceptance" pageWidth="595" pageHeight="842" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="c1d5c7e8-57e5-4396-98bf-17f9bb000b84">
+<!-- 2016-11-05T08:16:56 -->
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="letterOfAcceptance" pageWidth="595" pageHeight="842" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" isSummaryWithPageHeaderAndFooter="true" uuid="c1d5c7e8-57e5-4396-98bf-17f9bb000b84">
 	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="One Empty Record"/>
 	<property name="com.jaspersoft.studio.unit." value="pixel"/>
 	<import value="org.egov.infra.reporting.util.*"/>
@@ -341,21 +341,25 @@
 		</band>
 	</title>
 	<pageFooter>
-		<band height="15">
-			<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
+		<band height="20">
 			<textField>
-				<reportElement x="228" y="0" width="84" height="14" uuid="676d8aab-407d-4db4-9321-c86216ab0e2b">
-					<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
-				</reportElement>
-				<textElement verticalAlignment="Bottom"/>
-				<textFieldExpression><![CDATA["Page "+$V{PAGE_NUMBER}]]></textFieldExpression>
-			</textField>
-			<textField isStretchWithOverflow="true">
-				<reportElement stretchType="RelativeToTallestObject" x="350" y="0" width="205" height="15" uuid="4ad4368e-8e3f-47f0-8bab-ea7b21dfb89c">
-					<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
-				</reportElement>
-				<textElement verticalAlignment="Bottom"/>
+				<reportElement x="360" y="2" width="186" height="18" uuid="a3ba9993-1581-4932-907d-9a002d557f62"/>
+				<box bottomPadding="1"/>
+				<textElement verticalAlignment="Bottom">
+					<font fontName="Times New Roman"/>
+				</textElement>
 				<textFieldExpression><![CDATA["Report Run Date: " + $P{currDate} + " "]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="240" y="1" width="70" height="18" uuid="34e962d6-e5c0-49ed-8350-2dc9d197092a">
+					<property name="com.jaspersoft.studio.unit.y" value="pixel"/>
+					<property name="com.jaspersoft.studio.unit.width" value="pixel"/>
+				</reportElement>
+				<box bottomPadding="1"/>
+				<textElement verticalAlignment="Bottom">
+					<font fontName="Times New Roman"/>
+				</textElement>
+				<textFieldExpression><![CDATA["Page "+$V{PAGE_NUMBER}]]></textFieldExpression>
 			</textField>
 		</band>
 	</pageFooter>
