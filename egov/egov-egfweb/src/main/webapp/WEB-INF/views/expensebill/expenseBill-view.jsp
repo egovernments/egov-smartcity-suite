@@ -54,7 +54,7 @@
      position:fixed;z-index:9999;top:85px;right:200px;background:#F2DEDE;padding:10px 20px;border-radius: 5px;
    }
 </style>
-<form:form name="expenseBillForm" role="form" action="create" modelAttribute="egBillregister" id="egBillregister" class="form-horizontal form-groups-bordered" enctype="multipart/form-data">
+<form:form name="expenseBillForm" role="form" action="" modelAttribute="egBillregister" id="egBillregister" class="form-horizontal form-groups-bordered" enctype="multipart/form-data">
  	<div class="position_alert">
 		<spring:message	code="lbl.expense.bill.amount" /> : &#8377 <span id="expenseBillAmount"><c:out value="${expenseBillAmount}" default="0.0"></c:out></span>
 	</div>
@@ -72,41 +72,43 @@
 	      	</div>
 	   </spring:hasBindErrors>
    </div>
-	<form:hidden path="billamount" id="billamount" class ="billamount"/>
+   <input type="hidden" id="id" value="${egBillregister.id }" /> 
+   <input type="hidden" name="mode" id="mode" value="${mode }" />
+   <form:hidden path="billamount" id="billamount" class ="billamount" value="${egBillregister.billamount }"/>
 	<div class="panel-title text-center" style="color: green;">
 		<c:out value="${message}" /><br />
 	</div>
 			<ul class="nav nav-tabs" id="settingstab">
 				<li class="active"><a data-toggle="tab" href="#expensebillheader"
 					data-tabidx=0><spring:message code="lbl.header" /></a></li>
-				<%-- <li><a data-toggle="tab" href="#checklist" data-tabidx=1><spring:message
-							code="lbl.checklist" /> </a></li> --%>
 			</ul>
 	
 		<div class="tab-content">
 			<div class="tab-pane fade in active" id="expensebillheader">   
-				<jsp:include page="expenseBill-header.jsp"/>
-				<jsp:include page="expenseBill-subLedgerDetails.jsp"/>
-				<div class="panel panel-primary" data-collapsed="0">
-					<jsp:include page="expenseBill-debitDetails.jsp"/>
-					<jsp:include page="expenseBill-creditDetails.jsp"/>
-					<jsp:include page="expenseBill-netPayable.jsp"/>
+				<jsp:include page="expenseBill-view-header.jsp"/>
+				<jsp:include page="expenseBill-view-subLedgerDetails.jsp"/>
+				<jsp:include page="expenseBill-view-accountDetails.jsp"/>
+				<jsp:include page="expenseBill-view-subLedgerAccountDetails.jsp"/>
+			</div>
+			<c:if test="${!workflowHistory.isEmpty() && mode != 'readOnly'}">
+				<jsp:include page="../common/commonWorkflowhistory-view.jsp"></jsp:include>
+			</c:if>
+			<c:if test="${mode != 'readOnly'}">
+				<jsp:include page="../common/commonWorkflowMatrix.jsp"/>
+				<div class="buttonbottom" align="center">
+					<jsp:include page="../common/commonWorkflowMatrix-button.jsp" />
 				</div>
-				<jsp:include page="expenseBill-accountDetails.jsp"/>
-				<jsp:include page="expenseBill-subLedgerAccountDetails.jsp"/>
-			</div>
-			<%-- <div class="tab-pane fade" id="checklist">
-				<jsp:include page="expenseBill-checkList.jsp"/>
-			</div> --%>
-			<jsp:include page="../common/commonWorkflowMatrix.jsp"/>
-			<div class="buttonbottom" align="center">
-				<jsp:include page="../common/commonWorkflowMatrix-button.jsp" />
-			</div>
+			</c:if>
+			<c:if test="${mode == 'readOnly'}">
+				<div class="row">
+					<div class="col-sm-12 text-center">
+						<input type="submit" name="closeButton"	id="closeButton" value="Close" Class="btn btn-default" onclick="window.close();" />
+					</div>
+				</div>
+			</c:if>
 		</div>
   
 </form:form>  
-<script src="<cdn:url value='/resources/app/js/common/helper.js?rnd=${app_release_no}'/>"></script>
-<script src="<cdn:url value='/resources/app/js/common/voucherBillHelper.js?rnd=${app_release_no}'/>"></script>
-<script src="<cdn:url value='/resources/app/js/expensebill/expensebill.js?rnd=${app_release_no}'/>"></script>
+<script src="<cdn:url value='/resources/app/js/expensebill/viewexpensebill.js?rnd=${app_release_no}'/>"></script>
 <script src="<cdn:url value='/resources/global/js/egov/patternvalidation.js' context='/egi'/>"></script>
 <script src="<cdn:url value='/resources/global/js/egov/inbox.js' context='/egi'/>"></script>

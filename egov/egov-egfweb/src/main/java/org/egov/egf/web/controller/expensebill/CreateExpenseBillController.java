@@ -47,13 +47,18 @@ import javax.servlet.http.HttpServletRequest;
 
 import org.egov.commons.CChartOfAccountDetail;
 import org.egov.commons.service.ChartOfAccountsService;
+import org.egov.egf.budget.model.BudgetControlType;
+import org.egov.egf.budget.service.BudgetControlTypeService;
 import org.egov.egf.expensebill.service.ExpenseBillService;
+import org.egov.egf.utils.FinancialUtils;
+import org.egov.eis.web.contract.WorkflowContainer;
 import org.egov.infra.admin.master.service.AppConfigValueService;
 import org.egov.infra.exception.ApplicationRuntimeException;
 import org.egov.infra.validation.exception.ValidationException;
 import org.egov.model.bills.EgBillPayeedetails;
 import org.egov.model.bills.EgBilldetails;
 import org.egov.model.bills.EgBillregister;
+import org.egov.utils.FinancialConstants;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.MessageSource;
@@ -89,6 +94,12 @@ public class CreateExpenseBillController extends BaseBillController {
     @Qualifier("chartOfAccountsService")
     private ChartOfAccountsService chartOfAccountsService;
 
+    @Autowired
+    private BudgetControlTypeService budgetControlTypeService;
+
+    @Autowired
+    private FinancialUtils financialUtils;
+
     @Override
     protected void setDropDownValues(final Model model) {
         super.setDropDownValues(model);
@@ -97,13 +108,16 @@ public class CreateExpenseBillController extends BaseBillController {
     @RequestMapping(value = "/newform", method = RequestMethod.GET)
     public String showNewForm(@ModelAttribute("egBillregister") final EgBillregister egBillregister, final Model model) {
         setDropDownValues(model);
+        model.addAttribute("stateType", egBillregister.getClass().getSimpleName());
+        prepareWorkflow(model, egBillregister, new WorkflowContainer());
         egBillregister.setBilldate(new Date());
         return "expenseBill-form";
     }
 
     @RequestMapping(value = "/create", method = RequestMethod.POST)
     public String create(@ModelAttribute("egBillregister") final EgBillregister egBillregister, final Model model,
-            final BindingResult resultBinder) throws IOException {
+            final BindingResult resultBinder, final HttpServletRequest request, @RequestParam String workFlowAction)
+            throws IOException {
 
         validateBillNumber(egBillregister, resultBinder);
         validateLedgerAndSubledger(egBillregister, resultBinder);
@@ -111,13 +125,27 @@ public class CreateExpenseBillController extends BaseBillController {
         if (resultBinder.hasErrors()) {
             setDropDownValues(model);
             egBillregister.setBilldate(new Date());
+            model.addAttribute("stateType", egBillregister.getClass().getSimpleName());
+            model.addAttribute("approvalDesignation", request.getParameter("approvalDesignation"));
+            model.addAttribute("approvalPosition", request.getParameter("approvalPosition"));
+            prepareWorkflow(model, egBillregister, new WorkflowContainer());
 
             return "expenseBill-form";
         } else {
-
+            Long approvalPosition = 0l;
+            String approvalComment = "";
+            if (request.getParameter("approvalComment") != null)
+                approvalComment = request.getParameter("approvalComent");
+            if (request.getParameter("workFlowAction") != null)
+                workFlowAction = request.getParameter("workFlowAction");
+            if (request.getParameter("approvalPosition") != null && !request.getParameter("approvalPosition").isEmpty())
+                approvalPosition = Long.valueOf(request.getParameter("approvalPosition"));
+            EgBillregister savedEgBillregister;
             populateBillDetails(egBillregister);
             try {
-                expenseBillService.create(egBillregister);
+                savedEgBillregister = expenseBillService.create(egBillregister, approvalPosition, approvalComment,
+                        null,
+                        workFlowAction);
             } catch (final ValidationException e) {
                 // TODO: Used ApplicationRuntimeException for time being since
                 // there is issue in session after
@@ -126,7 +154,11 @@ public class CreateExpenseBillController extends BaseBillController {
                 throw new ApplicationRuntimeException("error.expense.bill.budgetcheck.insufficient.amount");
             }
 
-            return "redirect:/expensebill/success?billNumber=" + egBillregister.getBillnumber();
+            final String approverDetails = financialUtils.getApproverDetails(savedEgBillregister.getStatus(),
+                    savedEgBillregister.getState(), savedEgBillregister.getId(), approvalPosition);
+
+            return "redirect:/expensebill/success?approverDetails= " + approverDetails + "&billNumber="
+                    + savedEgBillregister.getBillnumber();
 
         }
     }
@@ -134,11 +166,66 @@ public class CreateExpenseBillController extends BaseBillController {
     @RequestMapping(value = "/success", method = RequestMethod.GET)
     public String showContractorBillSuccessPage(@RequestParam("billNumber") final String billNumber, final Model model,
             final HttpServletRequest request) {
+        final String[] keyNameArray = request.getParameter("approverDetails").split(",");
+        Long id = 0L;
+        String approverName = "";
+        String currentUserDesgn = "";
+        String nextDesign = "";
+        if (keyNameArray.length != 0 && keyNameArray.length > 0)
+            if (keyNameArray.length == 1)
+                id = Long.parseLong(keyNameArray[0].trim());
+            else if (keyNameArray.length == 3) {
+                id = Long.parseLong(keyNameArray[0].trim());
+                approverName = keyNameArray[1];
+                currentUserDesgn = keyNameArray[2];
+            } else {
+                id = Long.parseLong(keyNameArray[0].trim());
+                approverName = keyNameArray[1];
+                currentUserDesgn = keyNameArray[2];
+                nextDesign = keyNameArray[3];
+            }
 
-        model.addAttribute("message",
-                messageSource.getMessage("msg.expense.bill.create.success", new String[] { billNumber }, null));
+        if (id != null)
+            model.addAttribute("approverName", approverName);
+        model.addAttribute("currentUserDesgn", currentUserDesgn);
+        model.addAttribute("nextDesign", nextDesign);
+
+        final EgBillregister expenseBill = expenseBillService.getByBillnumber(billNumber);
+
+        final String message = getMessageByStatus(expenseBill, approverName, nextDesign);
+
+        model.addAttribute("message", message);
 
         return "expenseBill-success";
+    }
+
+    private String getMessageByStatus(final EgBillregister expenseBill, final String approverName, final String nextDesign) {
+        String message = "";
+
+        if (FinancialConstants.CONTINGENCYBILL_CREATED_STATUS.equals(expenseBill.getStatus().getCode())) {
+            if (org.apache.commons.lang.StringUtils
+                    .isNotBlank(expenseBill.getEgBillregistermis().getBudgetaryAppnumber())
+                    && !BudgetControlType.BudgetCheckOption.NONE.toString()
+                            .equalsIgnoreCase(budgetControlTypeService.getConfigValue()))
+                message = messageSource.getMessage("msg.expense.bill.create.success.with.budgetappropriation",
+                        new String[] { expenseBill.getBillnumber(), approverName, nextDesign,
+                                expenseBill.getEgBillregistermis().getBudgetaryAppnumber() },
+                        null);
+            else
+                message = messageSource.getMessage("msg.expense.bill.create.success",
+                        new String[] { expenseBill.getBillnumber(), approverName, nextDesign }, null);
+
+        } else if (FinancialConstants.CONTINGENCYBILL_APPROVED_STATUS.equals(expenseBill.getStatus().getCode()))
+            message = messageSource.getMessage("msg.expense.bill.approved.success",
+                    new String[] { expenseBill.getBillnumber() }, null);
+        else if (FinancialConstants.WORKFLOW_STATE_REJECTED.equals(expenseBill.getState().getValue()))
+            message = messageSource.getMessage("msg.expense.bill.reject",
+                    new String[] { expenseBill.getBillnumber(), approverName, nextDesign }, null);
+        else if (FinancialConstants.WORKFLOW_STATE_CANCELLED.equals(expenseBill.getState().getValue()))
+            message = messageSource.getMessage("msg.expense.bill.cancel",
+                    new String[] { expenseBill.getBillnumber() }, null);
+
+        return message;
     }
 
     @SuppressWarnings("unchecked")

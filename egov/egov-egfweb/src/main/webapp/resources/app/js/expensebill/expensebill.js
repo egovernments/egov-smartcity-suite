@@ -7,7 +7,7 @@ var billamount = 0;
 var debitamount = 0;
 var creditamount = 0;
 $(document).ready(function(){
-	
+	calculateBillAmount();
 	$('#subLedgerType').trigger("change");
 	$netPayableAccountCodeId = $('#netPayableAccountCode').val();
 	patternvalidation(); 
@@ -53,6 +53,18 @@ $(document).ready(function(){
 		$("#payTo").val(data.name);
 		$("#detailkeyId").val(data.id);
 	});
+});
+
+$('.btn-primary').click(function(){
+	var button = $(this).attr('id');
+	if (button != null && button == 'Forward') {
+		if(!$("form").valid())
+			return false;
+		if(!validate())
+				return false;
+		return validateWorkFlowApprover(button);
+	}
+	return validateWorkFlowApprover(button);
 });
 
 function debitGlcode_initialize() {
@@ -360,6 +372,15 @@ function deleteCreditDetailsRow(obj) {
 }
 
 function deleteAccountDetails(obj) {
+	var index = obj.id.split('_')[1];
+	var glcodeid = document.getElementById('accountDetailsGlCodeId_'+index).value;
+	if($netPayableAccountCodeId)
+	{
+		if($netPayableAccountCodeId==glcodeid)
+		{
+			$netPayableAccountCodeId=0;
+		}
+	}
 	var rowcount=$("#tblaccountdetails tbody tr").length;
     if(rowcount<=1) {
     	$('#accountdetailsrow').prop("hidden","true");
@@ -375,14 +396,10 @@ function deleteAccountDetails(obj) {
 		$('.accountDetailsDebitDetailKeyId_0').val("");
 		deleteSubLedgerDetails(obj);
 		calculateBillAmount();
-		$("#expenseBillTotalAmount").html(billamount);
-		$("#billamount").val(billamount);
 	} else {
 		deleteSubLedgerDetails(obj);
 		deleteRow(obj,'tblaccountdetails');
 		calculateBillAmount();
-		$("#expenseBillTotalAmount").html(billamount);
-		$("#billamount").val(billamount);
 		return true;
 	}	
 }
@@ -615,18 +632,6 @@ $("#populateAccountDetails").click(function () {
 		clearAllDetails();
 	}
 	calculateBillAmount();
-	$("#expenseBillTotalAmount").html(billamount);
-	$("#billamount").val(billamount);
-});
-
-$('.btn-primary').click(function(){
-	if($("form").valid() ){
-		if(validate()){
-			document.forms[0].action = "/EGF/expensebill/create";
-			document.forms[0].submit();
-		}
-	}
-	return false;
 });
 
 function validate(){
@@ -736,4 +741,42 @@ function calculateBillAmount(){
 		debitamount = parseFloat(Number(debitamount) + Number($(this).find(".accountDetailsDebitAmount").html())).toFixed();
 		creditamount = parseFloat(Number(creditamount) + Number($(this).find(".accountDetailsCreditAmount").html())).toFixed();
 	});
+	$("#expenseBillAmount").html(billamount);
+	$("#expenseBillTotalDebitAmount").html(debitamount);
+	$("#expenseBillTotalCreditAmount").html(creditamount);
+	$("#billamount").val(billamount);
+}
+
+function validateWorkFlowApprover(name) {
+	document.getElementById("workFlowAction").value = name;
+	var approverPosId = document.getElementById("approvalPosition");
+	var button = document.getElementById("workFlowAction").value;
+	if (button != null && button == 'Submit') {
+		$('#approvalDepartment').attr('required', 'required');
+		$('#approvalDesignation').attr('required', 'required');
+		$('#approvalPosition').attr('required', 'required');
+		$('#approvalComent').removeAttr('required');
+	}
+	if (button != null && button == 'Reject') {
+		$('#approvalDepartment').removeAttr('required');
+		$('#approvalDesignation').removeAttr('required');
+		$('#approvalPosition').removeAttr('required');
+		$('#approvalComent').attr('required', 'required');
+	}
+	if (button != null && button == 'Cancel') {
+		$('#approvalDepartment').removeAttr('required');
+		$('#approvalDesignation').removeAttr('required');
+		$('#approvalPosition').removeAttr('required');
+		$('#approvalComent').attr('required', 'required');
+	}
+	if (button != null && button == 'Forward') {
+		$('#approvalDepartment').attr('required', 'required');
+		$('#approvalDesignation').attr('required', 'required');
+		$('#approvalPosition').attr('required', 'required');
+		$('#approvalComent').removeAttr('required');
+	}
+	if (button != null && button == 'Approve') {
+		$('#approvalComent').removeAttr('required');
+	}
+	return true;
 }

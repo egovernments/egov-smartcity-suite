@@ -41,44 +41,56 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 <%@ taglib uri="http://www.springframework.org/tags" prefix="spring"%>
 <%@ taglib uri="http://www.springframework.org/tags/form" prefix="form"%>
-
-<div class="panel-heading custom_form_panel_heading">
-	<div class="panel-title">
-		<spring:message code="lbl.netpayable" />
+<div class="panel panel-primary" data-collapsed="0">
+	<div class="panel-heading custom_form_panel_heading">
+		<div class="panel-title">
+			<spring:message code="lbl.subledger.details" />
+		</div>
 	</div>
-</div>
-
-<div style="padding: 0 15px;">
-	<table class="table table-bordered" id="tblnetpayable">
-		<thead>
-			<tr>
-				<th><spring:message code="lbl.account.code" /></th>
-				<th><spring:message code="lbl.credit.amount" /></th>
-			</tr>
-		</thead>
-		<tbody>
-			<tr id="netpayablerow">
-				<td>
-					<form:hidden path="" name="netPayableAccountId" id="netPayableAccountId" value="${netPayableAccountId}"/>
-					<form:hidden path="" name="netPayableAccountCodeId" id="netPayableAccountCodeId" value="${netPayableAccountCode}"/>
-					<form:hidden path="" name="netPayableGlcode" id="netPayableGlcode" />
-					<form:hidden path="" name="netPayableAccountHead" id="netPayableAccountHead" />
-					<form:hidden path="" name="netPayableIsSubLedger" id="netPayableIsSubLedger" />
-					<form:hidden path="" name="netPayableDetailTypeId" id="netPayableDetailTypeId" />
-					<form:hidden path="" name="netPayableDetailKeyId" id="netPayableDetailKeyId" />
-					<form:hidden path="" name="netPayableDetailTypeName" id="netPayableDetailTypeName" />
-					<form:hidden path="" name="netPayableDetailKeyName" id="netPayableDetailKeyName" />
-					<form:select path="" data-first-option="false" name="netPayableAccountCode" id="netPayableAccountCode" class="form-control">
-						<form:option value=""> <spring:message code="lbl.select" /> </form:option>
-					</form:select>
-				</td>
-				<td><input type="text" id="netPayableAmount" name="netPayableAmount" value="${netPayableAmount}" class="form-control text-right" onkeyup="decimalvalue(this);" data-pattern="decimalvalue"> 
-				</td>
-			</tr>
-		</tbody>
-	</table>
-</div>
-
-<div class="text-center">
-	<button type="button" id="populateAccountDetails" class="btn" align="center"><spring:message code="lbl.done"/></button>
+	
+	<div style="padding: 0 15px;">
+		<table class="table table-bordered" id="tblsubledgerdetails">
+			<thead>
+				<tr>
+					<th><spring:message code="lbl.account.code"/></th>
+					<th><spring:message code="lbl.subledgertype"/></th>
+					<th><spring:message code="lbl.subledger.name"/></th>
+					<th><spring:message code="lbl.amount"/></th>
+				</tr>
+			</thead>
+			<tbody>
+				<c:choose>
+					<c:when test="${egBillregister.billPayeedetails.size() > 0}">
+						<c:forEach items="${egBillregister.billPayeedetails}" var="billPayeeDeatils" varStatus="item">
+							<tr id="subledhgerrow">
+								<td>
+									<span class="subLedgerGlCode_${item.index }">${billPayeeDeatils.egBilldetailsId.chartOfAccounts.glcode }</span>
+								</td>
+								<td>
+									<span class="subLedgerType_${item.index }">${billPayeeDeatils.detailTypeName }</span>
+								</td>
+								<td>
+									<span class="subLedgerName_${item.index }">${billPayeeDeatils.detailKeyName }</span>
+								</td>
+								<c:if test="${billPayeeDeatils.debitAmount > 0 }">
+									<td class="text-right">
+										<span class="subLedgerAmount_${item.index } subLedgerAmount">${billPayeeDeatils.debitAmount}</span>
+									</td>
+								</c:if>
+								
+								<c:if test="${billPayeeDeatils.creditAmount > 0 }">
+									<td class="text-right">
+										<span class="subLedgerAmount_${item.index } subLedgerAmount">${billPayeeDeatils.creditAmount}</span>
+									</td>
+								</c:if>
+								
+							</tr>
+						</c:forEach>
+					</c:when>
+					<c:otherwise>
+					</c:otherwise>
+				</c:choose>
+			</tbody>
+		</table>
+	</div>
 </div>

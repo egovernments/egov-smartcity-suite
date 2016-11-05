@@ -38,47 +38,26 @@
   ~   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
   --%>
 
-<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
+<%@ page contentType="text/html;charset=UTF-8" language="java"%>
 <%@ taglib uri="http://www.springframework.org/tags" prefix="spring"%>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 <%@ taglib uri="http://www.springframework.org/tags/form" prefix="form"%>
-
-<div class="panel-heading custom_form_panel_heading">
-	<div class="panel-title">
-		<spring:message code="lbl.netpayable" />
+<div class="panel panel-primary" data-collapsed="0">
+	<div class="panel-heading custom_form_panel_heading">
+		<div class="panel-title"><spring:message  code="lbl.subledger.details"/></div>
 	</div>
-</div>
-
-<div style="padding: 0 15px;">
-	<table class="table table-bordered" id="tblnetpayable">
-		<thead>
-			<tr>
-				<th><spring:message code="lbl.account.code" /></th>
-				<th><spring:message code="lbl.credit.amount" /></th>
-			</tr>
-		</thead>
-		<tbody>
-			<tr id="netpayablerow">
-				<td>
-					<form:hidden path="" name="netPayableAccountId" id="netPayableAccountId" value="${netPayableAccountId}"/>
-					<form:hidden path="" name="netPayableAccountCodeId" id="netPayableAccountCodeId" value="${netPayableAccountCode}"/>
-					<form:hidden path="" name="netPayableGlcode" id="netPayableGlcode" />
-					<form:hidden path="" name="netPayableAccountHead" id="netPayableAccountHead" />
-					<form:hidden path="" name="netPayableIsSubLedger" id="netPayableIsSubLedger" />
-					<form:hidden path="" name="netPayableDetailTypeId" id="netPayableDetailTypeId" />
-					<form:hidden path="" name="netPayableDetailKeyId" id="netPayableDetailKeyId" />
-					<form:hidden path="" name="netPayableDetailTypeName" id="netPayableDetailTypeName" />
-					<form:hidden path="" name="netPayableDetailKeyName" id="netPayableDetailKeyName" />
-					<form:select path="" data-first-option="false" name="netPayableAccountCode" id="netPayableAccountCode" class="form-control">
-						<form:option value=""> <spring:message code="lbl.select" /> </form:option>
-					</form:select>
-				</td>
-				<td><input type="text" id="netPayableAmount" name="netPayableAmount" value="${netPayableAmount}" class="form-control text-right" onkeyup="decimalvalue(this);" data-pattern="decimalvalue"> 
-				</td>
-			</tr>
-		</tbody>
-	</table>
-</div>
-
-<div class="text-center">
-	<button type="button" id="populateAccountDetails" class="btn" align="center"><spring:message code="lbl.done"/></button>
+	<div  style="padding: 0 15px;">
+		<div class="form-group">
+			<label class="col-sm-3 control-label text-right">
+				<spring:message code="lbl.payto" /> <span class="mandatory"></span>
+			</label>
+			<div class="col-sm-3 add-margin">
+				<c:out default="N/A" value="${egBillregister.egBillregistermis.payto}" />
+			</div>
+			<label class="col-sm-2 control-label text-right">
+			</label>
+			<div class="col-sm-3 add-margin">
+			</div>
+		</div>
+	</div>
 </div>

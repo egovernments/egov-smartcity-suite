@@ -87,6 +87,7 @@ public interface FinancialConstants {
     public static final String CONTINGENCYBILL_APPROVED_STATUS = "Approved";
     public static final String CONTINGENCYBILL_PASSED_STATUS = "Voucher Created";
     public static final String CONTINGENCYBILL_PAID_STATUS = "payment confirmed";
+    public static final String CONTINGENCYBILL_REJECTED_STATUS = "Rejected";
     // Status for Supplier Bills
     public static final String SUPPLIERBILL_CREATED_STATUS = "Pending";
     public static final String SUPPLIERBILL_CANCELLED_STATUS = "Cancelled";
@@ -326,6 +327,7 @@ public interface FinancialConstants {
     public static final String WORKFLOW_STATE_REJECTED = "Rejected";
     public static final String WORKFLOW_STATE_FORWARDED = "Forwarded";
     public static final String WORKFLOW_STATE_CANCELLED = "Cancelled";
+    public static final String WORKFLOW_STATE_CREATED = "Created";
 
     public static final String WF_STATE_EOA_Approval_Pending = "EOA Approval Pending";
     public static final String WF_STATE_COMM_Approval_Pending = "Commissioner Approval Pending";
@@ -337,5 +339,8 @@ public interface FinancialConstants {
     public static final String BUDGETDETAIL = "BUDGETDETAIL";
     public static final String BUDGETDETAIL_CREATED_STATUS = "CREATED";
     public static final String BUDGETDETAIL_VERIFIED_STATUS = "VERIFIED";
+    public static final String WORKFLOWTYPE_EXPENSE_BILL_DISPLAYNAME = "Expense Bill";
+
+    public static final String WORKFLOW_STATUS_CODE_REJECTED = "REJECTED";
 
 }

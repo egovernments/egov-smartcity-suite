@@ -77,6 +77,10 @@ import org.hibernate.validator.constraints.Length;
 @SequenceGenerator(name = EgBillregister.SEQ_EG_BILLREGISTER, sequenceName = EgBillregister.SEQ_EG_BILLREGISTER, allocationSize = 1)
 public class EgBillregister extends StateAware implements java.io.Serializable {
 
+    public enum BillStatus {
+        CREATED, APPROVED, REJECTED, CANCELLED
+    }
+
     private static final long serialVersionUID = -4312140421386028968L;
 
     public static final String SEQ_EG_BILLREGISTER = "SEQ_EG_BILLREGISTER";
@@ -153,6 +157,12 @@ public class EgBillregister extends StateAware implements java.io.Serializable {
 
     @Transient
     private List<CheckListHelper> checkLists = new ArrayList<CheckListHelper>(0);
+
+    @Transient
+    private Long approvalDepartment;
+
+    @Transient
+    private String approvalComent;
 
     /**
      * @return the worksdetail
@@ -393,7 +403,7 @@ public class EgBillregister extends StateAware implements java.io.Serializable {
 
     @Override
     public String getStateDetails() {
-        return getBillnumber() + "-" + getState().getComments();
+        return getBillnumber();
     }
 
     public User getApprover() {
@@ -463,6 +473,22 @@ public class EgBillregister extends StateAware implements java.io.Serializable {
 
     public void setCheckLists(final List<CheckListHelper> checkLists) {
         this.checkLists = checkLists;
+    }
+
+    public Long getApprovalDepartment() {
+        return approvalDepartment;
+    }
+
+    public void setApprovalDepartment(final Long approvalDepartment) {
+        this.approvalDepartment = approvalDepartment;
+    }
+
+    public String getApprovalComent() {
+        return approvalComent;
+    }
+
+    public void setApprovalComent(final String approvalComent) {
+        this.approvalComent = approvalComent;
     }
 
 }
