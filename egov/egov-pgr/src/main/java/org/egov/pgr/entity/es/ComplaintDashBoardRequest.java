@@ -42,102 +42,127 @@ package org.egov.pgr.entity.es;
 
 
 public class ComplaintDashBoardRequest {
-	
-	String regionName;
-	String ulbGrade;
-	String districtName;
-	String ulbCode;
-	String wardNo;
-	String departmentCode;
-	String fromDate;
-	String toDate;
-	String complaintTypeCode;
-	String sortField;
-	String sortDirection;
-	int size;
-	String type;
-	
-	public String getDistrictName() {
-		return districtName;
-	}
-	public void setDistrictName(String districtName) {
-		this.districtName = districtName;
-	}
-	public String getUlbCode() {
-		return ulbCode;
-	}
-	public void setUlbCode(String ulbCode) {
-		this.ulbCode = ulbCode;
-	}
-	public String getWardNo() {
-		return wardNo;
-	}
-	public void setWardNo(String wardNo) {
-		this.wardNo = wardNo;
-	}
-	public String getDepartmentCode() {
-		return departmentCode;
-	}
-	public void setDepartmentCode(String departmentCode) {
-		this.departmentCode = departmentCode;
-	}
-	public String getFromDate() {
-		
+
+    private String regionName;
+    private String ulbGrade;
+    private String districtName;
+    private String ulbCode;
+    private String wardNo;
+    private String departmentCode;
+    private String fromDate;
+    private String toDate;
+    private String complaintTypeCode;
+    private String sortField;
+    private String sortDirection;
+    private int size;
+    private String type;
+
+    public String getDistrictName() {
+        return districtName;
+    }
+
+    public void setDistrictName(String districtName) {
+        this.districtName = districtName;
+    }
+
+    public String getUlbCode() {
+        return ulbCode;
+    }
+
+    public void setUlbCode(String ulbCode) {
+        this.ulbCode = ulbCode;
+    }
+
+    public String getWardNo() {
+        return wardNo;
+    }
+
+    public void setWardNo(String wardNo) {
+        this.wardNo = wardNo;
+    }
+
+    public String getDepartmentCode() {
+        return departmentCode;
+    }
+
+    public void setDepartmentCode(String departmentCode) {
+        this.departmentCode = departmentCode;
+    }
+
+    public String getFromDate() {
+
 //		DateTimeFormatter format = DateTimeFormat.forPattern("yyyy-MM-dd");
 //		return format.parseDateTime(fromDate);
-		return fromDate;
-	}
-	public void setFromDate(String fromDate) {
-		this.fromDate = fromDate;
-	}
-	public String getToDate() {
+        return fromDate;
+    }
+
+    public void setFromDate(String fromDate) {
+        this.fromDate = fromDate;
+    }
+
+    public String getToDate() {
 //		DateTimeFormatter format = DateTimeFormat.forPattern("yyyy-MM-dd");
 //		return format.parseDateTime(toDate);
-		return toDate;
-	}
-	public void setToDate(String toDate) {
-		this.toDate = toDate;
-	}
-	public String getComplaintTypeCode() {
-		return complaintTypeCode;
-	}
-	public void setComplaintTypeCode(String complaintTypeCode) {
-		this.complaintTypeCode = complaintTypeCode;
-	}
-	public String getSortField() {
-		return sortField;
-	}
-	public void setSortField(String sortField) {
-		this.sortField = sortField;
-	}
-	public String getSortDirection() {
-		return sortDirection;
-	}
-	public void setSortDirection(String sortDirection) {
-		this.sortDirection = sortDirection;
-	}
-	public int getSize() {
-		return size;
-	}
-	public void setSize(int size) {
-		this.size = size;
-	}
-	public String getRegionName() {
-		return regionName;
-	}
-	public void setRegionName(String regionName) {
-		this.regionName = regionName;
-	}
-	public String getUlbGrade() {
-		return ulbGrade;
-	}
-	public void setUlbGrade(String ulbGrade) {
-		this.ulbGrade = ulbGrade;
-	}
-	public String getType() {
-		return type;
-	}
-	public void setType(String type) {
-		this.type = type;
-	}
+        return toDate;
+    }
+
+    public void setToDate(String toDate) {
+        this.toDate = toDate;
+    }
+
+    public String getComplaintTypeCode() {
+        return complaintTypeCode;
+    }
+
+    public void setComplaintTypeCode(String complaintTypeCode) {
+        this.complaintTypeCode = complaintTypeCode;
+    }
+
+    public String getSortField() {
+        return sortField;
+    }
+
+    public void setSortField(String sortField) {
+        this.sortField = sortField;
+    }
+
+    public String getSortDirection() {
+        return sortDirection;
+    }
+
+    public void setSortDirection(String sortDirection) {
+        this.sortDirection = sortDirection;
+    }
+
+    public int getSize() {
+        return size;
+    }
+
+    public void setSize(int size) {
+        this.size = size;
+    }
+
+    public String getRegionName() {
+        return regionName;
+    }
+
+    public void setRegionName(String regionName) {
+        this.regionName = regionName;
+    }
+
+    public String getUlbGrade() {
+        return ulbGrade;
+    }
+
+    public void setUlbGrade(String ulbGrade) {
+        this.ulbGrade = ulbGrade;
+    }
+
+    public String getType() {
+        return type;
+    }
+
+    public void setType(String type) {
+        this.type = type;
+    }
 }

@@ -54,8 +54,8 @@ import org.egov.pgr.service.ComplaintTypeService;
 import org.egov.pgr.web.controller.AbstractContextControllerTest;
 import org.junit.Before;
 import org.junit.Test;
+import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.MockitoAnnotations;
 import org.springframework.test.web.servlet.MockMvc;
 
 import java.util.ArrayList;
@@ -63,6 +63,7 @@ import java.util.Arrays;
 import java.util.List;
 
 import static org.mockito.Mockito.when;
+import static org.mockito.MockitoAnnotations.initMocks;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.view;
@@ -89,11 +90,13 @@ public class ComplaintSearchControllerTest extends AbstractContextControllerTest
     @Mock
     private DepartmentService departmentService;
 
+    @InjectMocks
+    private ComplaintSearchController complaintSearchController;
+
     @Override
     protected ComplaintSearchController initController() {
-        MockitoAnnotations.initMocks(this);
-        return new ComplaintSearchController(complaintService, complaintStatusService,
-                complaintTypeService, assignmentService, securityUtils, cityWebsiteService, departmentService);
+        initMocks(this);
+        return complaintSearchController;
     }
 
     @Before

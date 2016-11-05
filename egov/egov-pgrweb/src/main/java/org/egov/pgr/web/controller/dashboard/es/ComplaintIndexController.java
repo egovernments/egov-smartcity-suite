@@ -38,14 +38,10 @@
  *    In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
 
-package org.egov.pgr.web.controller.es;
+package org.egov.pgr.web.controller.dashboard.es;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-
+import com.fasterxml.jackson.core.JsonProcessingException;
 import net.sf.json.JSONObject;
-
 import org.egov.infra.admin.master.entity.Boundary;
 import org.egov.infra.admin.master.entity.Department;
 import org.egov.infra.admin.master.service.BoundaryService;
@@ -61,7 +57,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
 
 @RestController
 @RequestMapping(value = "/complaint/aggregate")
@@ -69,13 +67,13 @@ public class ComplaintIndexController {
 
     @Autowired
     private ComplaintIndexService complaintIndexService;
-    
+
     @Autowired
     private DepartmentService departmentService;
-    
+
     @Autowired
     private ComplaintTypeService complaintTypeService;
-    
+
     @Autowired
     private BoundaryService boundaryService;
 
@@ -83,62 +81,62 @@ public class ComplaintIndexController {
     public HashMap<String, Object> getDashBoardResponse(@RequestBody ComplaintDashBoardRequest complaintRequest) {
         return complaintIndexService.getGrievanceReport(complaintRequest);
     }
-    
+
     @RequestMapping(value = "/grievance/complainttype", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
-    public HashMap<String,Object> getGrievanceComplaintTypeResponse(@RequestBody ComplaintDashBoardRequest complaintRequest){
-    	return complaintIndexService.getComplaintTypeReport(complaintRequest);
+    public HashMap<String, Object> getGrievanceComplaintTypeResponse(@RequestBody ComplaintDashBoardRequest complaintRequest) {
+        return complaintIndexService.getComplaintTypeReport(complaintRequest);
     }
-    
+
     @RequestMapping(value = "/sourcewisegrievance", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
-    public HashMap<String, Object> getSourceWiseGrievanceResponse(@RequestBody ComplaintDashBoardRequest complaintRequest){
-    	return complaintIndexService.getSourceWiseResponse(complaintRequest);
+    public HashMap<String, Object> getSourceWiseGrievanceResponse(@RequestBody ComplaintDashBoardRequest complaintRequest) {
+        return complaintIndexService.getSourceWiseResponse(complaintRequest);
     }
-    
-    @RequestMapping(value = "/departments" , method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
-    public List<JSONObject>  getDepartments(){
-    	List<Department> departments = departmentService.getAllDepartments();
-    	List<JSONObject> jsonList = new ArrayList<>();
-    	for(Department department: departments){
-    		JSONObject jsonObject = new JSONObject();
-    		jsonObject.put("name", department.getName());
-    		jsonObject.put("code", department.getCode());
-    		jsonList.add(jsonObject);
-    	}
-    	return jsonList;
+
+    @RequestMapping(value = "/departments", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
+    public List<JSONObject> getDepartments() {
+        List<Department> departments = departmentService.getAllDepartments();
+        List<JSONObject> jsonList = new ArrayList<>();
+        for (Department department : departments) {
+            JSONObject jsonObject = new JSONObject();
+            jsonObject.put("name", department.getName());
+            jsonObject.put("code", department.getCode());
+            jsonList.add(jsonObject);
+        }
+        return jsonList;
     }
-    
+
     @RequestMapping(value = "/complainttypes", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
-    public List<JSONObject> getComplaintTypes(){
-    	List<ComplaintType> complaintTypeList = complaintTypeService.findAll();
-    	List<JSONObject> jsonList = new ArrayList<>();
-    	for(ComplaintType complaintType: complaintTypeList){
-    		JSONObject jsonObject = new JSONObject();
-    		jsonObject.put("name", complaintType.getName());
-    		jsonObject.put("code", complaintType.getCode());
-    		jsonList.add(jsonObject);
-    	}
-    	return jsonList;
+    public List<JSONObject> getComplaintTypes() {
+        List<ComplaintType> complaintTypeList = complaintTypeService.findAll();
+        List<JSONObject> jsonList = new ArrayList<>();
+        for (ComplaintType complaintType : complaintTypeList) {
+            JSONObject jsonObject = new JSONObject();
+            jsonObject.put("name", complaintType.getName());
+            jsonObject.put("code", complaintType.getCode());
+            jsonList.add(jsonObject);
+        }
+        return jsonList;
     }
-    
+
     @RequestMapping(value = "/wards", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
-    public List<JSONObject> getWards(){
-    	List<Boundary> boundaryList = boundaryService.getActiveBoundariesByBndryTypeNameAndHierarchyTypeName("Ward","ADMINISTRATION");
-    	List<JSONObject> jsonList = new ArrayList<>();
-    	
-    	for(Boundary boundary: boundaryList){
-    		JSONObject jsonObject = new JSONObject();
-    		jsonObject.put("name", boundary.getName());
-    		jsonObject.put("boundaryNumber", boundary.getBoundaryNum());
-    		jsonObject.put("lat", boundary.getLatitude());
-    		jsonObject.put("lon", boundary.getLongitude());
-    		jsonList.add(jsonObject);
-    	}
-    	return jsonList;
+    public List<JSONObject> getWards() {
+        List<Boundary> boundaryList = boundaryService.getActiveBoundariesByBndryTypeNameAndHierarchyTypeName("Ward", "ADMINISTRATION");
+        List<JSONObject> jsonList = new ArrayList<>();
+
+        for (Boundary boundary : boundaryList) {
+            JSONObject jsonObject = new JSONObject();
+            jsonObject.put("name", boundary.getName());
+            jsonObject.put("boundaryNumber", boundary.getBoundaryNum());
+            jsonObject.put("lat", boundary.getLatitude());
+            jsonObject.put("lon", boundary.getLongitude());
+            jsonList.add(jsonObject);
+        }
+        return jsonList;
     }
-    
+
     @RequestMapping(value = "/sourcenames", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
-    public List<String> getSourceNameList() throws JsonProcessingException{
-    	return complaintIndexService.getSourceNameList();
+    public List<String> getSourceNameList() throws JsonProcessingException {
+        return complaintIndexService.getSourceNameList();
     }
-    
+
 }

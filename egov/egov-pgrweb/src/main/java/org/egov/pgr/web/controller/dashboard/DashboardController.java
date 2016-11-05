@@ -45,13 +45,11 @@ import org.egov.pgr.web.contract.DataTable;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-import javax.servlet.http.HttpSession;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -67,12 +65,13 @@ public class DashboardController {
     private DashboardService dashboardService;
 
     @RequestMapping("/home")
-    public String home(final HttpSession session, final Model model) {
+    public String home() {
         return "dashboard/home";
     }
 
     @RequestMapping(value = "/reg-resolution-trend", produces = MediaType.APPLICATION_JSON_VALUE)
-    public @ResponseBody List<Collection<Integer>> registrationResolutionTrend() {
+    @ResponseBody
+    public List<Collection<Integer>> registrationResolutionTrend() {
         final List<Collection<Integer>> regResTrendData = new ArrayList<>();
         regResTrendData.add(dashboardService.getComplaintRegistrationTrend());
         regResTrendData.add(dashboardService.getComplaintResolutionTrend());
@@ -80,22 +79,27 @@ public class DashboardController {
     }
 
     @RequestMapping(value = "/monthly-aggregate", produces = MediaType.APPLICATION_JSON_VALUE)
-    public @ResponseBody List<Map<String, Object>> monthlyAggregate() {
+    @ResponseBody
+    public List<Map<String, Object>> monthlyAggregate() {
         return dashboardService.getMonthlyAggregate();
     }
 
     @RequestMapping(value = "/typewise-aggregate", produces = MediaType.APPLICATION_JSON_VALUE)
-    public @ResponseBody List<Map<String, Object>> complaintTypewiseAggregate() {
+    @ResponseBody
+    public List<Map<String, Object>> complaintTypewiseAggregate() {
         return dashboardService.getCompTypewiseAggregate();
     }
 
     @RequestMapping(value = "/ageing/{ward}", produces = MediaType.APPLICATION_JSON_VALUE)
-    public @ResponseBody List<List<Object>> wardwiseAgeing(@PathVariable final String ward) {
+    public
+    @ResponseBody
+    List<List<Object>> wardwiseAgeing(@PathVariable final String ward) {
         return dashboardService.getAgeingByWard(ward);
     }
 
     @RequestMapping(value = "/wardwise-performance", produces = MediaType.APPLICATION_JSON_VALUE)
-    public @ResponseBody List<Object> wardwisePerformance() {
+    @ResponseBody
+    public List<Object> wardwisePerformance() {
         final List<List<Map<String, Object>>> wardwisePerformance = dashboardService.getWardwisePerformance();
         final List<Object> performanceData = new LinkedList<>();
         performanceData.add(wardwisePerformance.get(0));
@@ -106,7 +110,8 @@ public class DashboardController {
     }
 
     @RequestMapping(value = "/sla/{charttype}", produces = MediaType.APPLICATION_JSON_VALUE)
-    public @ResponseBody List<?> complaintSLA(@PathVariable final String charttype) {
+    @ResponseBody
+    public List<?> complaintSLA(@PathVariable final String charttype) {
         if ("pie".equals(charttype))
             return dashboardService.getComplaintSLA();
         else if ("gis".equals(charttype))
@@ -115,19 +120,22 @@ public class DashboardController {
     }
 
     @RequestMapping(value = "/wardwise-complaint-by-type/{typeid}", produces = MediaType.APPLICATION_JSON_VALUE)
-    public @ResponseBody List<Map<String, Object>> wardwiseComplaintByComplaintType(@PathVariable final Long typeid,
-            @RequestParam final String color) {
+    @ResponseBody
+    public List<Map<String, Object>> wardwiseComplaintByComplaintType(@PathVariable final Long typeid,
+                                                                      @RequestParam final String color) {
         return dashboardService.getWardwiseComplaintByComplaintType(typeid, color);
     }
 
     @RequestMapping(value = "/top-complaints")
-    public @ResponseBody Map<String, Object> topComplaints() {
+    @ResponseBody
+    public Map<String, Object> topComplaints() {
         return dashboardService.topComplaints();
-    } 
-    
+    }
+
     @RequestMapping(value = "/gis-analysis")
-    public @ResponseBody Map<String, List<Map<String, Object>>> gisAnalysis() {
+    @ResponseBody
+    public Map<String, List<Map<String, Object>>> gisAnalysis() {
         return dashboardService.getGISWardWiseAnalysis();
     }
-    
+
 }

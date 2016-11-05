@@ -142,25 +142,4 @@ public class ComplaintSearchRequest {
 
     }
 
-   /* public Filters searchFilters() {
-        final List<Filter> andFilters = new ArrayList<>();
-        andFilters.add(termsStringFilter("clauses.citydetails.name", currentUlb));
-        andFilters.add(termsStringFilter("clauses.crn", complaintNumber));
-        andFilters.add(queryStringFilter("common.citizen.name", complainantName));
-        andFilters.add(queryStringFilter("common.citizen.mobile", complainantPhoneNumber));
-        andFilters.add(queryStringFilter("common.citizen.email", complainantEmail));
-        andFilters.add(queryStringFilter("clauses.status.name", complaintStatus));
-        andFilters.add(queryStringFilter("clauses.receivingMode", receivingCenter));
-        andFilters.add(queryStringFilter("searchable.complaintType.name", complaintType));
-        andFilters.add(rangeFilter("common.createdDate", complaintDateFrom, complaintDateTo));
-        andFilters.add(rangeFilter("common.createdDate", fromDate, toDate));
-        andFilters.add(termsStringFilter("clauses.department.name", complaintDepartment));
-        andFilters.add(queryStringFilter("common.boundary.name", location));
-        return Filters.withAndFilters(andFilters);
-    }*/
-
-    public String searchQuery() {
-        return searchText;
-    }
-
 }

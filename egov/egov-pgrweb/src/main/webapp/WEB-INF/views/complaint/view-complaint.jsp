@@ -141,15 +141,15 @@
 									<c:choose>
 										<c:when test="${(file.contentType == 'image/jpg') || (file.contentType == 'image/jpeg')|| (file.contentType == 'image/gif')|| 
 										(file.contentType == 'image/png')}">
-										<a href="/pgr/complaint/downloadfile/${file.fileStoreId}"
+										<a href="../downloadfile/${file.fileStoreId}"
 												data-gallery> <img class="img-width add-margin"
-												src="/pgr/complaint/downloadfile/${file.fileStoreId}" /></a>
+												src="../downloadfile/${file.fileStoreId}" /></a>
 										</c:when>
 										<c:otherwise>
-											<a href="/pgr/complaint/downloadfile/${file.fileStoreId}"
+											<a href="../downloadfile/${file.fileStoreId}"
 												data-gallery> <video class="img-width add-margin"controls="controls"
-													src="/pgr/complaint/downloadfile/${file.fileStoreId}">
-													<source	src="/pgr/complaint/downloadfile/${file.fileStoreId}"
+													src="../downloadfile/${file.fileStoreId}">
+													<source	src="../downloadfile/${file.fileStoreId}"
 														type="video/mp4" /></video></a>
 										</c:otherwise>
 									</c:choose>
