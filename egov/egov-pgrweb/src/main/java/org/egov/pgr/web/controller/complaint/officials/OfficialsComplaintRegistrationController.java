@@ -117,6 +117,6 @@ public class OfficialsComplaintRegistrationController extends GenericComplaintCo
             return "complaint/officials/registration-form";
         }
         redirectAttributes.addFlashAttribute("complaint", complaint);
-        return "redirect:/complaint/reg-success";
+        return "redirect:/complaint/reg-success/"+complaint.getCrn();
     }
 }
