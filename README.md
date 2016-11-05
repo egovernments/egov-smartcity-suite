@@ -26,7 +26,7 @@ FAQ related to various deployment and development issues are discussed [here][FA
 
 * Install [maven v3.2.x][Maven]
 * Install [PostgreSQL v9.4][PostgreSQL]
-* Install [Elastic Search v2.3.x][Elastic Search]
+* Install [Elastic Search v2.4.x][Elastic Search]
 * Install [Jboss Wildfly v10.0.x][Wildfly Customized]
 * Install [Git 2.8.3][Git]
 * Install [JDK 8 update 92 or higher][JDK8 build]
@@ -57,9 +57,9 @@ $ git checkout develop
 2. Change directory to `<CLONED_REPO_DIR>/egov/egov-config/src/main/resources/config/` and create a file called `egov-erp-<username>.properties` and enter the following values based on your environment config.
 
  ```properties
- search.hosts=localhost
- search.port=9300
- search.clusterName=elasticsearch-<username>
+ elasticsearch.hosts=localhost ##comma separated list of host names 
+ elasticsearch.port=9300
+ elasticsearch.cluster.name=elasticsearch-<username>
 
  mail.enabled=false ##Enables or disabled email sending, this is disabled by default
  mail.port=465
@@ -211,7 +211,7 @@ This section gives more details regarding developing and contributing to eGov su
 * Install your favorite IDE for java project. Recommended Eclipse or IntelliJ IDEA
 * Install [maven >= v3.2.x][Maven]
 * Install [PostgreSQL >= v9.4 ][PostgreSQL]
-* Install [Elastic Search >= v2.1.2][Elastic Search]
+* Install [Elastic Search >= v2.4.x][Elastic Search]
 * Install [Jboss Wildfly v10.0.x][Wildfly Customized]
 * Install [Git 2.8.3][Git]
 * Install [JDK 8 update 92 or later][JDK8 build]
@@ -225,7 +225,7 @@ __Note__: Please check in [eGov Tools Repository] for any of the above software 
 * Import the cloned git repo using maven Import Existing Project.
 * Install Jboss Tools and configure Wildfly Server.
 * Since jasperreport related jar's are not available in maven central, we have to tell eclipse to find jar's in alternative place for that navigate to `Windows -> Preference -> Maven -> User Settings -> Browse Global Settings` and point settings.xml available under egov-erp/
-* Double click on wildfly9.x --> open launch configurations --> edit VM arguments and add string '-Dspring.profiles.active=production' at the end of existing VM arguments.
+* Double click on wildfly10.x --> open launch configurations --> edit VM arguments and add string '-Dspring.profiles.active=production' at the end of existing VM arguments.
 * Now add your EAR project into the configured Wildfly server.
 * Start Wildfly in debug mode, this will enable hot deployment.
 
@@ -272,7 +272,7 @@ Browser:-
 [eGov Opensource JIRA]: http://issues.egovernments.org/browse/PHOENIX
 [Wildfly Customized]: http://downloads.egovernments.org/wildfly-10.0.0.Final.zip
 [Eclipse Mars]: https://eclipse.org/downloads/packages/release/Mars/M1
-[Elastic Search]: https://download.elasticsearch.org/elasticsearch/elasticsearch/elasticsearch-2.1.2.zip
+[Elastic Search]: https://download.elasticsearch.org/elasticsearch/elasticsearch/elasticsearch-2.4.1.zip
 [Spring Profiles]: http://docs.spring.io/spring/docs/current/spring-framework-reference/html/beans.html#beans-environment
 [Flyway]: http://flywaydb.org/documentation/
 [eGov Tools Repository]: http://downloads.egovernments.org/
