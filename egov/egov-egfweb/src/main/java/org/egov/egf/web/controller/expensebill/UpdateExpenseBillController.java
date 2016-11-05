@@ -116,22 +116,20 @@ public class UpdateExpenseBillController extends BaseBillController {
         model.addAttribute("mode", "view");
         prepareBillDetails(egBillregister);
         model.addAttribute("egBillregister", egBillregister);
-        return "expenseBill-view";
+        return "expensebill-view";
     }
 
     @RequestMapping(value = "/update/{billId}", method = RequestMethod.POST)
     public String update(@Valid @ModelAttribute("egBillregister") final EgBillregister egBillregister,
             final BindingResult errors, final RedirectAttributes redirectAttributes, final Model model,
-            final HttpServletRequest request, @RequestParam String workFlowAction) throws ApplicationException, IOException {
+            final HttpServletRequest request, @RequestParam final String workFlowAction)
+            throws ApplicationException, IOException {
 
         String mode = "";
         EgBillregister updatedEgBillregister = null;
 
         if (request.getParameter("mode") != null)
             mode = request.getParameter("mode");
-
-        if (workFlowAction.isEmpty() && request.getParameter("workFlowAction") != null)
-            workFlowAction = request.getParameter("workFlowAction");
 
         Long approvalPosition = 0l;
         String approvalComment = "";
@@ -153,7 +151,7 @@ public class UpdateExpenseBillController extends BaseBillController {
             model.addAttribute("approvalDesignation", request.getParameter("approvalDesignation"));
             model.addAttribute("approvalPosition", request.getParameter("approvalPosition"));
             prepareWorkflow(model, egBillregister, new WorkflowContainer());
-            return "expenseBill-view";
+            return "expensebill-view";
         } else {
             if (null != workFlowAction)
                 updatedEgBillregister = expenseBillService.update(egBillregister, approvalPosition, approvalComment, null,
@@ -164,7 +162,7 @@ public class UpdateExpenseBillController extends BaseBillController {
             // For Get Configured ApprovalPosition from workflow history
             if (approvalPosition == null || approvalPosition.equals(Long.valueOf(0)))
                 approvalPosition = expenseBillService.getApprovalPositionByMatrixDesignation(
-                        egBillregister, approvalPosition, null, mode, workFlowAction);
+                        egBillregister, null, mode, workFlowAction);
 
             final String approverDetails = financialUtils.getApproverDetails(updatedEgBillregister.getStatus(),
                     updatedEgBillregister.getState(), updatedEgBillregister.getId(), approvalPosition);
@@ -172,6 +170,18 @@ public class UpdateExpenseBillController extends BaseBillController {
             return "redirect:/expensebill/success?approverDetails= " + approverDetails + "&billNumber="
                     + updatedEgBillregister.getBillnumber();
         }
+    }
+    
+    @RequestMapping(value = "/view/{billId}", method = RequestMethod.GET)
+    public String view(final Model model, @PathVariable final String billId,
+            final HttpServletRequest request) throws ApplicationException {
+        final EgBillregister egBillregister = expenseBillService.getById(Long.parseLong(billId));
+        setDropDownValues(model);
+        egBillregister.getBillDetails().addAll(egBillregister.getEgBilldetailes());
+        model.addAttribute("mode", "readOnly");
+        prepareBillDetails(egBillregister);
+        model.addAttribute("egBillregister", egBillregister);
+        return "expensebill-view";
     }
 
     private void prepareBillDetails(final EgBillregister egBillregister) {
@@ -192,7 +202,7 @@ public class UpdateExpenseBillController extends BaseBillController {
                 final java.lang.reflect.Method method = service.getMethod("getId");
 
                 dataType = method.getReturnType().getSimpleName();
-                if (dataType.equals("Long"))
+                if ("Long".equals(dataType))
                     entity = (EntityType) persistenceService.find("from " + tableName + " where id=? order by name",
                             payeeDetails.getAccountDetailKeyId()
                                     .longValue());

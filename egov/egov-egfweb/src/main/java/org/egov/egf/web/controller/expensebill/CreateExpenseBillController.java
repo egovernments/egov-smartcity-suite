@@ -41,7 +41,13 @@ package org.egov.egf.web.controller.expensebill;
 
 import java.io.IOException;
 import java.math.BigDecimal;
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.Date;
+import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -52,8 +58,10 @@ import org.egov.egf.budget.service.BudgetControlTypeService;
 import org.egov.egf.expensebill.service.ExpenseBillService;
 import org.egov.egf.utils.FinancialUtils;
 import org.egov.eis.web.contract.WorkflowContainer;
+import org.egov.infra.admin.master.entity.AppConfigValues;
 import org.egov.infra.admin.master.service.AppConfigValueService;
 import org.egov.infra.exception.ApplicationRuntimeException;
+import org.egov.infra.utils.DateUtils;
 import org.egov.infra.validation.exception.ValidationException;
 import org.egov.model.bills.EgBillPayeedetails;
 import org.egov.model.bills.EgBilldetails;
@@ -107,11 +115,28 @@ public class CreateExpenseBillController extends BaseBillController {
 
     @RequestMapping(value = "/newform", method = RequestMethod.GET)
     public String showNewForm(@ModelAttribute("egBillregister") final EgBillregister egBillregister, final Model model) {
+
         setDropDownValues(model);
         model.addAttribute("stateType", egBillregister.getClass().getSimpleName());
         prepareWorkflow(model, egBillregister, new WorkflowContainer());
+        List<AppConfigValues> cutOffDateconfigValue = appConfigValuesService
+                .getConfigValuesByModuleAndKey(FinancialConstants.MODULE_NAME_APPCONFIG,
+                        FinancialConstants.KEY_DATAENTRYCUTOFFDATE);
+
+        if (!cutOffDateconfigValue.isEmpty()) {
+            DateFormat df = new SimpleDateFormat("dd-MMM-yyyy");
+            List<String> validActions = Collections.emptyList();
+            validActions = Arrays.asList(FinancialConstants.BUTTONFORWARD, FinancialConstants.CREATEANDAPPROVE);
+            model.addAttribute("validActionList", validActions);
+            try {
+                model.addAttribute("cutOffDate",
+                        DateUtils.getDefaultFormattedDate(df.parse(cutOffDateconfigValue.get(0).getValue())));
+            } catch (ParseException e) {
+
+            }
+        }
         egBillregister.setBilldate(new Date());
-        return "expenseBill-form";
+        return "expensebill-form";
     }
 
     @RequestMapping(value = "/create", method = RequestMethod.POST)
@@ -130,14 +155,12 @@ public class CreateExpenseBillController extends BaseBillController {
             model.addAttribute("approvalPosition", request.getParameter("approvalPosition"));
             prepareWorkflow(model, egBillregister, new WorkflowContainer());
 
-            return "expenseBill-form";
+            return "expensebill-form";
         } else {
             Long approvalPosition = 0l;
             String approvalComment = "";
             if (request.getParameter("approvalComment") != null)
                 approvalComment = request.getParameter("approvalComent");
-            if (request.getParameter("workFlowAction") != null)
-                workFlowAction = request.getParameter("workFlowAction");
             if (request.getParameter("approvalPosition") != null && !request.getParameter("approvalPosition").isEmpty())
                 approvalPosition = Long.valueOf(request.getParameter("approvalPosition"));
             EgBillregister savedEgBillregister;
@@ -196,7 +219,7 @@ public class CreateExpenseBillController extends BaseBillController {
 
         model.addAttribute("message", message);
 
-        return "expenseBill-success";
+        return "expensebill-success";
     }
 
     private String getMessageByStatus(final EgBillregister expenseBill, final String approverName, final String nextDesign) {

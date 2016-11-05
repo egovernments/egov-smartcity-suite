@@ -43,7 +43,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
-import java.util.Hashtable;
+import java.util.HashMap;
 import java.util.List;
 
 import javax.persistence.EntityManager;
@@ -165,8 +165,6 @@ public class ExpenseBillService {
         egBillregister.setBilltype(FinancialConstants.BILLTYPE_FINAL_BILL);
         egBillregister.setExpendituretype(FinancialConstants.STANDARD_EXPENDITURETYPE_CONTINGENT);
         egBillregister.setPassedamount(egBillregister.getBillamount());
-        egBillregister.setStatus(financialUtils.getStatusByModuleAndCode(FinancialConstants.CONTINGENCYBILL_FIN,
-                FinancialConstants.CONTINGENCYBILL_CREATED_STATUS));
         egBillregister.getEgBillregistermis().setEgBillregister(egBillregister);
         egBillregister.getEgBillregistermis().setLastupdatedtime(new Date());
 
@@ -197,12 +195,17 @@ public class ExpenseBillService {
         }
 
         final EgBillregister savedEgBillregister = expenseBillRepository.save(egBillregister);
-
-        createExpenseBillRegisterWorkflowTransition(savedEgBillregister, approvalPosition, approvalComent, additionalRule,
-                workFlowAction);
-
+        if (workFlowAction.equals(FinancialConstants.CREATEANDAPPROVE)) {
+            egBillregister.setStatus(financialUtils.getStatusByModuleAndCode(FinancialConstants.CONTINGENCYBILL_FIN,
+                    FinancialConstants.CONTINGENCYBILL_APPROVED_STATUS));
+        } else {
+            egBillregister.setStatus(financialUtils.getStatusByModuleAndCode(FinancialConstants.CONTINGENCYBILL_FIN,
+                    FinancialConstants.CONTINGENCYBILL_CREATED_STATUS));
+            createExpenseBillRegisterWorkflowTransition(savedEgBillregister, approvalPosition, approvalComent, additionalRule,
+                    workFlowAction);
+        }
         savedEgBillregister.getEgBillregistermis().setSourcePath(
-                "/EGF/expensebill/update/" + savedEgBillregister.getId().toString());
+                "/EGF/expensebill/view/" + savedEgBillregister.getId().toString());
 
         return expenseBillRepository.save(savedEgBillregister);
     }
@@ -325,7 +328,8 @@ public class ExpenseBillService {
     }
 
     public Long getApprovalPositionByMatrixDesignation(final EgBillregister egBillregister,
-            Long approvalPosition, final String additionalRule, final String mode, final String workFlowAction) {
+            final String additionalRule, final String mode, final String workFlowAction) {
+        Long approvalPosition = null;
         final WorkFlowMatrix wfmatrix = egBillregisterRegisterWorkflowService.getWfMatrix(egBillregister
                 .getStateType(), null, null, additionalRule, egBillregister.getCurrentState().getValue(), null);
         if (egBillregister.getState() != null && !egBillregister.getState().getHistory().isEmpty()
@@ -341,15 +345,15 @@ public class ExpenseBillService {
         return approvalPosition;
     }
 
-    public List<Hashtable<String, Object>> getHistory(final State state, final List<StateHistory> history) {
+    public List<HashMap<String, Object>> getHistory(final State state, final List<StateHistory> history) {
         User user = null;
-        final List<Hashtable<String, Object>> historyTable = new ArrayList<Hashtable<String, Object>>();
-        final Hashtable<String, Object> map = new Hashtable<String, Object>(0);
+        final List<HashMap<String, Object>> historyTable = new ArrayList<HashMap<String, Object>>();
+        final HashMap<String, Object> map = new HashMap<String, Object>(0);
         if (null != state) {
             if (!history.isEmpty() && history != null)
                 Collections.reverse(history);
             for (final StateHistory stateHistory : history) {
-                final Hashtable<String, Object> HistoryMap = new Hashtable<String, Object>(0);
+                final HashMap<String, Object> HistoryMap = new HashMap<String, Object>(0);
                 HistoryMap.put("date", stateHistory.getDateInfo());
                 HistoryMap.put("comments", stateHistory.getComments());
                 HistoryMap.put("updatedBy", stateHistory.getLastModifiedBy().getUsername() + "::"

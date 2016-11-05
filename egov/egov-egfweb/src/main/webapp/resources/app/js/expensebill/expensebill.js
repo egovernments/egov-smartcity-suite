@@ -778,5 +778,28 @@ function validateWorkFlowApprover(name) {
 	if (button != null && button == 'Approve') {
 		$('#approvalComent').removeAttr('required');
 	}
+	if (button != null && button == 'Create And Approve') {
+		return validateCutOff();
+	}
 	return true;
+}
+function validateCutOff()
+{
+	var cutofdate = $("#cutOffDate").val();
+	var billdate = $("#billdate").val();
+	var cutOffDateArray=cutofdate.split("/");
+	var billDateArray=billdate.split("/");
+	var cutOffDate = new Date(cutOffDateArray[1] + "/" + cutOffDateArray[0] + "/"
+			+ cutOffDateArray[2]);
+	var billDate = new Date(billDateArray[1] + "/" + billDateArray[0] + "/"
+			+ billDateArray[2]);
+	if(billDate<=cutOffDate)
+	{
+		return true;
+	}
+	else
+	{
+		bootbox.alert("Bills created after "+cutofdate+" cannot be approved on create. Use the Forward option.");
+		return false;
+	}
 }

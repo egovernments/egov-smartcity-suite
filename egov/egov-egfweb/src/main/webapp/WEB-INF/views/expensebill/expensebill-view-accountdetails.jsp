@@ -48,7 +48,7 @@
 		</div>
 	</div>
 	
-	<div style="padding: 0 15px;">
+	 <div style="padding: 0 15px;">
 		<table class="table table-bordered" id="tblaccountdetails">
 			<thead>
 				<tr>
@@ -60,8 +60,8 @@
 			</thead>
 			<tbody>
 				<c:choose>
-					<c:when test="${egBillregister.billDetails.size() > 0}">
-						<c:forEach items="${egBillregister.billDetails}" var="billDeatils" varStatus="item">
+					<c:when test="${egBillregister.billDetails!=null && egBillregister.billDetails.size() > 0}">
+						 <c:forEach items="${egBillregister.billDetails}" var="billDeatils" varStatus="item">
 							<tr id="accountdetailsrow">
 								<td>
 									<span class="accountDetailsGlCode_${item.index }">${billDeatils.chartOfAccounts.glcode }</span>
@@ -76,7 +76,7 @@
 									<span class="accountDetailsCreditAmount_${item.index } accountDetailsCreditAmount">${billDeatils.creditamount }</span>
 								</td>
 							</tr>
-						</c:forEach>
+						</c:forEach> 
 					</c:when>
 					<c:otherwise>
 					</c:otherwise>

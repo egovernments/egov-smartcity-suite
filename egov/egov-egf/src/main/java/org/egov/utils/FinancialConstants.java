@@ -238,7 +238,7 @@ public interface FinancialConstants {
     public static final String KEY_DEFAULTTXNMISATTRRIBUTES = "DEFAULTTXNMISATTRRIBUTES";
     public static final String KEY_CONTINGENCYBILLPURPOSEIDS = "contingencyBillPurposeIds";
     public static final String KEY_CONTINGENCYBILLDEFAULTPURPOSEID = "contingencyBillDefaultPurposeId";
-
+    
     public static final String TYPEOFACCOUNT_PAYMENTS = "PAYMENTS";
     public static final String TYPEOFACCOUNT_RECEIPTS = "RECEIPTS";
     public static final String TYPEOFACCOUNT_RECEIPTS_PAYMENTS = "RECEIPTS_PAYMENTS";
@@ -342,5 +342,5 @@ public interface FinancialConstants {
     public static final String WORKFLOWTYPE_EXPENSE_BILL_DISPLAYNAME = "Expense Bill";
 
     public static final String WORKFLOW_STATUS_CODE_REJECTED = "REJECTED";
-
+    public static final String KEY_DATAENTRYCUTOFFDATE = "DataEntryCutOffDate";
 }
