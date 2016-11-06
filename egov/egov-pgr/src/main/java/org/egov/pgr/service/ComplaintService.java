@@ -258,18 +258,20 @@ public class ComplaintService {
                         .withOwner(complaint.getState().getOwnerPosition());
         }
 
-        final Complaint savedComplaint = complaintRepository.saveAndFlush(complaint);
-        pushMessage(savedComplaint);
+        complaintRepository.saveAndFlush(complaint);
+        pushMessage(complaint);
 
         if (complaint.getStatus().getName().equalsIgnoreCase(ComplaintStatus.COMPLETED.toString()) ||
                 complaint.getStatus().getName().equalsIgnoreCase(ComplaintStatus.REJECTED.toString()))
-            sendSmsOnCompletion(savedComplaint);
+            sendSmsOnCompletion(complaint);
         if (!complaint.getStatus().getName().equalsIgnoreCase(ComplaintStatus.COMPLETED.toString()) &&
                 !complaint.getStatus().getName().equalsIgnoreCase(ComplaintStatus.REJECTED.toString())
                 && !complaint.getStatus().getName().equalsIgnoreCase(ComplaintStatus.WITHDRAWN.toString()))
-            sendSmsToOfficials(savedComplaint);
+            sendSmsToOfficials(complaint);
+        
+        complaintIndexService.updateComplaintIndex(complaint, approvalPosition, approvalComent);
 
-        return savedComplaint;
+        return complaint;
     }
 
     public Complaint getComplaintById(final Long complaintID) {

@@ -1,6 +1,8 @@
 package org.egov.pgr.entity.es;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+
+import org.egov.infra.config.core.ApplicationThreadLocals;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.elasticsearch.annotations.Document;
 import org.springframework.data.elasticsearch.annotations.Field;
@@ -277,7 +279,7 @@ public class ComplaintIndex {
     }
 
     public void setId(String id) {
-        this.id = id;
+        this.id = ApplicationThreadLocals.getCityCode().concat("-").concat(id);
     }
 
     public String getCrn() {

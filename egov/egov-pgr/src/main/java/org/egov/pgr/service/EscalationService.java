@@ -59,6 +59,8 @@ import org.egov.pgr.entity.ComplaintType;
 import org.egov.pgr.entity.Escalation;
 import org.egov.pgr.repository.ComplaintRepository;
 import org.egov.pgr.repository.EscalationRepository;
+import org.egov.pgr.service.es.ComplaintIndexSearchService;
+import org.egov.pgr.service.es.ComplaintIndexService;
 import org.egov.pgr.utils.constants.PGRConstants;
 import org.egov.pims.commons.Designation;
 import org.egov.pims.commons.Position;
@@ -115,6 +117,9 @@ public class EscalationService {
     private PositionMasterService positionMasterService;
     @Autowired
     private SecurityUtils securityUtils;
+    
+    @Autowired
+    private ComplaintIndexService complaintIndexService;
 
     @Autowired
     public EscalationService(final EscalationRepository escalationRepository) {
@@ -225,11 +230,8 @@ public class EscalationService {
             messagingService.sendEmail(superiorUser.getEmailId(), emailSubject.toString(), emailBody.toString());
             messagingService.sendSMS(superiorUser.getMobileNumber(), smsBody.toString());
         }
-        /*// update complaint index values
-        final Complaint savedComplaintIndex = new ComplaintIndex();
-        BeanUtils.copyProperties(savedComplaint, savedComplaintIndex);
-        final ComplaintIndex complaintIndex = ComplaintIndex.method(savedComplaintIndex);
-        complaintIndexService.updateComplaintEscalationIndexValues(complaintIndex);*/
+        // update complaint index values
+        complaintIndexService.updateComplaintEscalationIndexValues(complaint);
     }
 
     protected DateTime getExpiryDate(final Complaint complaint) {
