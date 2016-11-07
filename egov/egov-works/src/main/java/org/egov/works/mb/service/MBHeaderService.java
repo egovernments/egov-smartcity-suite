@@ -375,13 +375,13 @@ public class MBHeaderService {
 
     private List<MBMeasurementSheet> mergeMBMeasurementSheet(final MBDetails oldMBDetails, final MBDetails mbDetails) {
         for (final MBMeasurementSheet msnew : mbDetails.getMeasurementSheets()) {
-            if (msnew.getId() == null) {
+            if (msnew.getId() == null && msnew.getQuantity() != null) {
                 msnew.setMbDetails(oldMBDetails);
                 oldMBDetails.getMeasurementSheets().add(msnew);
                 continue;
             }
             for (final MBMeasurementSheet msold : oldMBDetails.getMeasurementSheets())
-                if (msold.getId() != null && msnew.getId().longValue() == msold.getId().longValue()) {
+                if (msold.getId() != null && msnew.getId() == msold.getId()) {
                     msold.setLength(msnew.getLength());
                     msold.setWidth(msnew.getWidth());
                     msold.setDepthOrHeight(msnew.getDepthOrHeight());
