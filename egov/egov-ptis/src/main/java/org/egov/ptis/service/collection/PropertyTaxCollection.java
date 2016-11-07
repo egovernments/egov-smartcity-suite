@@ -796,7 +796,7 @@ public class PropertyTaxCollection extends TaxCollection {
         final List<EgBillDetails> billDetails = new ArrayList<EgBillDetails>(egBill.getEgBillDetails());
         final List<ReceiptDetail> reciptDetailList = collectionService.getReceiptDetailListByReceiptNumber(billReceiptInfo
                 .getReceiptNum());
-
+        
         for (final ReceiptAccountInfo rcptAccInfo : billReceiptInfo.getAccountDetails())
             if (rcptAccInfo.getCrAmount() != null && rcptAccInfo.getCrAmount().compareTo(BigDecimal.ZERO) == 1) {
                 final String[] desc = rcptAccInfo.getDescription().split("-", 2);
@@ -832,13 +832,15 @@ public class PropertyTaxCollection extends TaxCollection {
                     receiptAmountInfo.setInstallmentTo(desc[1]);
                 }
         }
-
+        String revenueWard = (String) persistenceService.find("select bp.propertyID.ward.name from BasicPropertyImpl bp where bp.upicNo = ?",
+                reciptDetailList.get(0).getReceiptHeader().getConsumerCode());
         receiptAmountInfo.setCurrentInstallmentAmount(currentInstallmentAmount);
         receiptAmountInfo.setLatePaymentCharges(latePaymentCharges);
         receiptAmountInfo.setArrearsAmount(arrearAmount);
         receiptAmountInfo.setCurrentCess(currLibCess);
         receiptAmountInfo.setArrearCess(arrearLibCess);
         receiptAmountInfo.setReductionAmount(rebateAmount);
+        receiptAmountInfo.setRevenueWard(revenueWard);
         return receiptAmountInfo;
     }
 
