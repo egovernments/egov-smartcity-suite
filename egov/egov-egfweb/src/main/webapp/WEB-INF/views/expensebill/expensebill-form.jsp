@@ -80,8 +80,8 @@
 			<ul class="nav nav-tabs" id="settingstab">
 				<li class="active"><a data-toggle="tab" href="#expensebillheader"
 					data-tabidx=0><spring:message code="lbl.header" /></a></li>
-				<%-- <li><a data-toggle="tab" href="#checklist" data-tabidx=1><spring:message
-							code="lbl.checklist" /> </a></li> --%>
+				<li><a data-toggle="tab" href="#checklist" data-tabidx=1><spring:message
+							code="lbl.checklist" /> </a></li>
 			</ul>
 	
 		<div class="tab-content">
@@ -96,16 +96,16 @@
 				<jsp:include page="expensebill-accountdetails.jsp"/>
 				<jsp:include page="expensebill-subledgeraccountdetails.jsp"/>
 			</div>
-			<%-- <div class="tab-pane fade" id="checklist">
-				<jsp:include page="expenseBill-checklist.jsp"/>
-			</div> --%>
+			<div class="tab-pane fade" id="checklist">
+				<jsp:include page="expensebill-checklist.jsp"/>
+			</div>
 			<jsp:include page="../common/commonworkflowmatrix.jsp"/>
 			<div class="buttonbottom" align="center">
 				<jsp:include page="../common/commonworkflowmatrix-button.jsp" />
 			</div>
 		</div>
   
-</form:form>  
+</form:form>
 <script src="<cdn:url value='/resources/app/js/common/helper.js?rnd=${app_release_no}'/>"></script>
 <script src="<cdn:url value='/resources/app/js/common/voucherBillHelper.js?rnd=${app_release_no}'/>"></script>
 <script src="<cdn:url value='/resources/app/js/expensebill/expensebill.js?rnd=${app_release_no}'/>"></script>

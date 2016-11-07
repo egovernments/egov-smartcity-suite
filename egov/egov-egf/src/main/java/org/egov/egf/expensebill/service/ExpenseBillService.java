@@ -50,6 +50,7 @@ import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.script.ScriptContext;
 
+import org.egov.commons.service.CheckListService;
 import org.egov.egf.autonumber.ExpenseBillNumberGenerator;
 import org.egov.egf.billsubtype.service.EgBillSubTypeService;
 import org.egov.egf.expensebill.repository.ExpenseBillRepository;
@@ -69,11 +70,13 @@ import org.egov.infra.workflow.entity.State;
 import org.egov.infra.workflow.entity.StateHistory;
 import org.egov.infra.workflow.matrix.entity.WorkFlowMatrix;
 import org.egov.infra.workflow.service.SimpleWorkflowService;
+import org.egov.infstr.models.EgChecklists;
 import org.egov.model.bills.EgBillregister;
 import org.egov.pims.commons.Position;
 import org.egov.services.masters.SchemeService;
 import org.egov.services.masters.SubSchemeService;
 import org.egov.services.voucher.VoucherService;
+import org.egov.utils.CheckListHelper;
 import org.egov.utils.FinancialConstants;
 import org.hibernate.Session;
 import org.joda.time.DateTime;
@@ -137,6 +140,9 @@ public class ExpenseBillService {
     private EisCommonService eisCommonService;
 
     @Autowired
+    private CheckListService checkListService;
+
+    @Autowired
     @Qualifier("workflowService")
     private SimpleWorkflowService<EgBillregister> egBillregisterRegisterWorkflowService;
 
@@ -194,11 +200,16 @@ public class ExpenseBillService {
             throw new ValidationException(e.getErrors());
         }
 
+        final List<CheckListHelper> checkLists = egBillregister.getCheckLists();
+
         final EgBillregister savedEgBillregister = expenseBillRepository.save(egBillregister);
-        if (workFlowAction.equals(FinancialConstants.CREATEANDAPPROVE)) {
+
+        createCheckList(egBillregister, checkLists);
+
+        if (workFlowAction.equals(FinancialConstants.CREATEANDAPPROVE))
             egBillregister.setStatus(financialUtils.getStatusByModuleAndCode(FinancialConstants.CONTINGENCYBILL_FIN,
                     FinancialConstants.CONTINGENCYBILL_APPROVED_STATUS));
-        } else {
+        else {
             egBillregister.setStatus(financialUtils.getStatusByModuleAndCode(FinancialConstants.CONTINGENCYBILL_FIN,
                     FinancialConstants.CONTINGENCYBILL_CREATED_STATUS));
             createExpenseBillRegisterWorkflowTransition(savedEgBillregister, approvalPosition, approvalComent, additionalRule,
@@ -208,6 +219,23 @@ public class ExpenseBillService {
                 "/EGF/expensebill/view/" + savedEgBillregister.getId().toString());
 
         return expenseBillRepository.save(savedEgBillregister);
+    }
+
+    @Transactional
+    public void createCheckList(final EgBillregister egBillregister, final List<CheckListHelper> checkLists) {
+        EgChecklists checkList;
+        for (final CheckListHelper helper : checkLists) {
+            checkList = new EgChecklists();
+            final AppConfigValues configValue = appConfigValuesService.getById(helper.getId());
+            checkList.setObjectid(egBillregister.getId());
+            checkList.setAppconfigvalue(configValue);
+            if (helper.getVal() != null)
+                checkList.setChecklistvalue(helper.getVal());
+            else
+                checkList.setChecklistvalue(FinancialConstants.NA);
+            checkListService.create(checkList);
+        }
+
     }
 
     public void checkBudgetAndGenerateBANumber(final EgBillregister egBillregister) {

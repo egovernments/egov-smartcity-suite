@@ -39,7 +39,14 @@ $(document).ready(function(){
 	$subSchemeId = $('#subScheme').val();
 	$fundSourceId = $('#fundSource').val();
 });
-
+$('#function').blur(function () {
+	if($('.cfunction').val()=="")
+	{
+		 bootbox.alert("Please select function from dropdown values",function() {
+			 	$('#function').val("");
+			});
+	}
+});
 $('#fund').change(function () {
 	if ($('#fund').val() === '') {
 		$('#scheme').empty();
