@@ -52,19 +52,19 @@ import java.util.Date;
 import java.util.List;
 
 public class Statement {
-    String period;
-    CFinancialYear financialYear;
-    Date asOndate;
-    Date fromDate;
-    Date toDate;
-    String currency;
-    BigDecimal currencyInAmount;
-    Department department;
-    Functionary functionary;
-    CFunction function;
-    Boundary field;
-    Fund fund;
-    List<Fund> fundList = new ArrayList<Fund>();
+    private String period;
+    private CFinancialYear financialYear;
+    private Date asOndate;
+    private Date fromDate;
+    private Date toDate;
+    private String currency;
+    private BigDecimal currencyInAmount;
+    private Department department;
+    private Functionary functionary;
+    private CFunction function;
+    private Boundary field;
+    private Fund fund;
+    private List<Fund> fundList = new ArrayList<Fund>();
     private List<IEStatementEntry> ieEntries = new ArrayList<IEStatementEntry>();
     private List<StatementEntry> entries = new ArrayList<StatementEntry>();
 

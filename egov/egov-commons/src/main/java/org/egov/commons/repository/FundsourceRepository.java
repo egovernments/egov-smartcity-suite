@@ -39,7 +39,6 @@
  */
 package org.egov.commons.repository;
 
-import org.egov.commons.Fund;
 import org.egov.commons.Fundsource;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;

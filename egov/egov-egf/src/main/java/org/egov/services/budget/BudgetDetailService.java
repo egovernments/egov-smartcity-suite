@@ -98,6 +98,7 @@ import org.egov.model.budget.Budget;
 import org.egov.model.budget.BudgetDetail;
 import org.egov.model.budget.BudgetGroup;
 import org.egov.model.budget.BudgetUpload;
+import org.egov.model.repository.BudgetDetailRepository;
 import org.egov.model.voucher.WorkflowBean;
 import org.egov.pims.commons.Designation;
 import org.egov.pims.commons.Position;
@@ -170,6 +171,9 @@ public class BudgetDetailService extends PersistenceService<BudgetDetail, Long> 
     @PersistenceContext
     private EntityManager entityManager;
 
+    @Autowired 
+    private BudgetDetailRepository budgetDetailRepository;
+    
     private static final String DUPLICATE = "budgetDetail.duplicate";
     private static final String EXISTS = "budgetdetail.exists";
 
@@ -553,8 +557,7 @@ public class BudgetDetailService extends PersistenceService<BudgetDetail, Long> 
 
     public void setRelatedEntitesOn(final BudgetDetail detail, final PersistenceService service) {
 
-        // detail.setStatus(egwStatusDAO.getStatusByModuleAndCode("BUDGETDETAIL",
-        // "Approved"));
+        detail.setStatus(egwStatusDAO.getStatusByModuleAndCode("BUDGETDETAIL", "Approved"));
         if (detail.getBudget() != null) {
             detail.setBudget((Budget) service.find("from Budget where id=?", detail.getBudget().getId()));
             addMaterializedPath(detail);
@@ -2290,4 +2293,27 @@ public class BudgetDetailService extends PersistenceService<BudgetDetail, Long> 
         return budgetDetails;
     }
 
+    public List<BudgetDetail> getBudgetDetailByStatusAndFinancialYearId(Integer statusId, Long financialYearId) {
+        final Query qry = getCurrentSession()
+                .createQuery("from BudgetDetail budgetDetail" + " where budgetDetail.status.id=:statusId and "
+                        + "budgetDetail.budget.id in(select id from Budget where financialYear.id=:financialYearId)");
+        
+        qry.setInteger("statusId", statusId);
+        qry.setLong("financialYearId", financialYearId);
+          List<BudgetDetail> budgetDetails = null;
+          if (qry.list().size() != 0)
+              budgetDetails = qry.list();
+        else
+            budgetDetails = Collections.emptyList();
+
+        return budgetDetails;
+    }
+
+    public List<BudgetDetail> getBudgets(List<Long> budgetDetailId)
+    {
+        return budgetDetailRepository.findBudget(budgetDetailId);
+     
+    }
+    
+    
 }

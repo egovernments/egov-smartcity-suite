@@ -42,9 +42,6 @@ package org.egov.infra.web.filter;
 
 import org.egov.infra.config.core.ApplicationThreadLocals;
 import org.egov.infra.config.properties.ApplicationProperties;
-import org.egov.infra.web.utils.WebUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import javax.servlet.Filter;
@@ -56,28 +53,33 @@ import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
 
+import static org.egov.infra.web.utils.WebUtils.extractRequestDomainURL;
+import static org.egov.infra.web.utils.WebUtils.extractRequestedDomainName;
+
 public class ApplicationTenantResolverFilter implements Filter {
-    private static final Logger LOG = LoggerFactory.getLogger(ApplicationTenantResolverFilter.class);
 
     @Autowired
     private ApplicationProperties applicationProperties;
 
     @Override
-    public void doFilter(final ServletRequest request, final ServletResponse response, final FilterChain chain) throws IOException, ServletException {
-        final String domainURL = WebUtils.extractRequestedDomainName((HttpServletRequest) request);
-        LOG.debug("Resolved domain as  {}", ApplicationThreadLocals.getDomainName());
-        ApplicationThreadLocals.setTenantID(applicationProperties.getProperty("tenant." + domainURL));
-        LOG.debug("Resolved tenant as  {}", ApplicationThreadLocals.getTenantID());
-        ApplicationThreadLocals.setDomainName(domainURL);
+    public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain)
+            throws IOException, ServletException {
+        String domainURL = extractRequestDomainURL((HttpServletRequest) request, false);
+        String domainName = extractRequestedDomainName(domainURL);
+        ApplicationThreadLocals.setTenantID(applicationProperties.getProperty("tenant." + domainName));
+        ApplicationThreadLocals.setDomainName(domainName);
+        ApplicationThreadLocals.setDomainURL(domainURL);
         chain.doFilter(request, response);
     }
 
     @Override
     public void init(final FilterConfig filterConfig) throws ServletException {
+        //Nothing to be initialized
     }
 
     @Override
     public void destroy() {
+        //Nothing to be cleaned up
     }
 
 }

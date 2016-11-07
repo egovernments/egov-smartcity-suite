@@ -65,6 +65,7 @@ public final class ApplicationConstant {
 
     public static final String CITY_LOGO_URL = "/downloadfile/logo?fileStoreId=%s&moduleName=%s";
     public static final String CITY_LOGO_PATH_KEY = "logopath";
+    public static final String CITY_LOGIN_URL = "%s/egi/login/secure";
 
     public static final String CDN_ATTRIB_NAME = "cdn";
     public static final String USERID_KEY = "userid";
@@ -72,5 +73,8 @@ public final class ApplicationConstant {
     public static final Character Y = Character.valueOf('Y');
     public static final Character N = Character.valueOf('N');
 
-    private ApplicationConstant(){}
+    public static final String CITIZEN_ROLE_NAME = "Citizen";
+
+    private ApplicationConstant() {
+    }
 }

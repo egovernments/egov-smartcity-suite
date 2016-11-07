@@ -48,7 +48,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 @Transactional(readOnly = true)
 public class SchemeService extends PersistenceService<Scheme, Integer> {
-   
+
     public SchemeService() {
         super(Scheme.class);
     }
@@ -58,7 +58,7 @@ public class SchemeService extends PersistenceService<Scheme, Integer> {
     }
 
     public List<Scheme> getByFundId(final Integer fundId) {
-        Query query = getSession().createQuery(" from Scheme where isactive = true and fund.id=:fundId");
+        final Query query = getSession().createQuery(" from Scheme where isactive = true and fund.id=:fundId");
 
         query.setInteger("fundId", fundId);
         return query.list();

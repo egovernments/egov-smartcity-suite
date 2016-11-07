@@ -221,6 +221,11 @@
     			return validateLicenseForm(this);
         	}
 
+			function formsubmit(){
+				if(!validateLicenseForm(this)){
+					return false;
+				}
+  			}
     		function onSubmit() {
         		var mode=document.getElementById("mode").value;
         		var workflowaction = document.getElementById("workFlowAction").value;
@@ -339,10 +344,13 @@
 							</div>
                  		</s:if>
                  		
-                 	<s:form name="newTradeLicense" action="newTradeLicense" theme="simple"  enctype="multipart/form-data" 
+                 	<s:form name="newTradeLicense" action="newTradeLicense-create" theme="simple"  enctype="multipart/form-data" 
 					cssClass="form-horizontal form-groups-bordered" validate="true" >    
 					<s:push value="model"> 
 							<s:token/>
+							<s:if test="%{state==null}">
+								<s:hidden id="additionalRule" name="additionalRule" value="%{additionalRule}"/>
+							</s:if>
 							<s:hidden name="actionName" value="create" />
 							<s:hidden id="detailChanged" name="detailChanged" />
 							<s:hidden id="applicationDate" name="applicationDate" />
@@ -387,15 +395,27 @@
 	                    <input type="button" name="closeBtn" id="closeBtn" value="Close" 
 							class="button" onclick="window.close();" style="margin:0 5px"/>
 						</div>
-                        <div class="panel panel-primary" id="workflowDiv" >
-                        	<%@ include file='../common/commonWorkflowMatrix.jsp'%>
-							<%@ include file='../common/commonWorkflowMatrix-button.jsp'%>
-						</div>
+						<s:if test="%{state!=null}">
+	                        <div class="panel panel-primary" id="workflowDiv" >
+	                        	<%@ include file='../common/commonWorkflowMatrix.jsp'%>
+								<%@ include file='../common/commonWorkflowMatrix-button.jsp'%>
+							</div>
+						</s:if>
+						<s:else>
+							<div class="row">
+								<div class="text-center">
+									<button type="submit" id="btnsave" class="btn btn-primary" onclick="return formsubmit();">
+										Save</button>
+									<button type="button" id="btnclose" class="btn btn-default" onclick="window.close();">
+										Close</button>
+								</div>
+							</div>
+						</s:else>
                         </s:push>  
                     </s:form> 
                     <div style="text-align: center;" hidden="true" id="certificateDiv">
 							<input type="button" class="btn btn-primary" id="GenerateProvisionalCertificate"
-							value="GenerateProvisionalCertificate" 
+							value="Generate Provisional Certificate"  
 							onclick="window.open('/tl/viewtradelicense/viewTradeLicense-generateCertificate.action?model.id=<s:property value="%{id}" />', '_blank', 'height=650,width=980,scrollbars=yes,left=0,top=0,status=yes');"/> &nbsp;
 					</div>
                     </div>

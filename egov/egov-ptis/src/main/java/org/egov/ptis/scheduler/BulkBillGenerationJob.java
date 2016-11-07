@@ -42,23 +42,23 @@ package org.egov.ptis.scheduler;
 import org.apache.log4j.Logger;
 import org.egov.infra.scheduler.quartz.AbstractQuartzJob;
 import org.egov.ptis.service.DemandBill.DemandBillService;
+import org.quartz.DisallowConcurrentExecution;
 import org.springframework.beans.factory.NoSuchBeanDefinitionException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
-import org.springframework.transaction.annotation.Transactional;
 
+@DisallowConcurrentExecution
+public class BulkBillGenerationJob extends AbstractQuartzJob {
 
-@Transactional
-public class BulkBillGenerationJob extends AbstractQuartzJob  {
+    private static final long serialVersionUID = 8529011650151018147L;
 
-    private static final Logger LOGGER = Logger
-                    .getLogger(BulkBillGenerationJob.class);
+    private static final Logger LOGGER = Logger.getLogger(BulkBillGenerationJob.class);
 
     private Integer billsCount;
-    private Integer modulo; 
+    private Integer modulo;
 
     @Autowired
-    private transient ApplicationContext beanProvider;
+    private ApplicationContext beanProvider;
 
     @Override
     public void executeJob() {
@@ -72,13 +72,21 @@ public class BulkBillGenerationJob extends AbstractQuartzJob  {
         if (demandBillService != null)
             demandBillService.bulkBillGeneration(modulo, billsCount);
     }
-            
-    public void setBillsCount(Integer billsCount) {
-            this.billsCount = billsCount;
+
+    public Integer getBillsCount() {
+        return billsCount;
     }
 
-    public void setModulo(Integer modulo) {
-            this.modulo = modulo;
+    public void setBillsCount(final Integer billsCount) {
+        this.billsCount = billsCount;
+    }
+
+    public Integer getModulo() {
+        return modulo;
+    }
+
+    public void setModulo(final Integer modulo) {
+        this.modulo = modulo;
     }
 
 }
