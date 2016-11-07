@@ -40,6 +40,13 @@
 
 package org.egov.pgr.web.controller.complaint;
 
+import static org.apache.commons.lang3.StringUtils.EMPTY;
+import static org.egov.pgr.utils.constants.PGRConstants.GO_ROLE_NAME;
+import static org.springframework.web.bind.annotation.RequestMethod.GET;
+import static org.springframework.web.bind.annotation.RequestMethod.POST;
+
+import java.util.List;
+
 import org.egov.eis.service.AssignmentService;
 import org.egov.infra.admin.master.entity.Department;
 import org.egov.infra.admin.master.entity.Role;
@@ -53,20 +60,13 @@ import org.egov.pgr.entity.es.ComplaintIndex;
 import org.egov.pgr.service.ComplaintService;
 import org.egov.pgr.service.ComplaintStatusService;
 import org.egov.pgr.service.ComplaintTypeService;
-import org.egov.pgr.service.es.ComplaintIndexSearchService;
+import org.egov.pgr.service.es.ComplaintIndexService;
 import org.egov.pgr.web.contract.ComplaintSearchRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
-
-import java.util.List;
-
-import static org.apache.commons.lang3.StringUtils.EMPTY;
-import static org.egov.pgr.utils.constants.PGRConstants.GO_ROLE_NAME;
-import static org.springframework.web.bind.annotation.RequestMethod.GET;
-import static org.springframework.web.bind.annotation.RequestMethod.POST;
 
 @Controller
 public class ComplaintSearchController {
@@ -90,7 +90,7 @@ public class ComplaintSearchController {
     private ComplaintTypeService complaintTypeService;
 
     @Autowired
-    private ComplaintIndexSearchService complaintIndexSearchService;
+    private ComplaintIndexService complaintIndexService;
 
     @ModelAttribute("complaintTypedropdown")
     public List<ComplaintType> complaintTypes() {
@@ -154,7 +154,7 @@ public class ComplaintSearchController {
 
     @RequestMapping(method = POST, value = {"/complaint/search", "/complaint/citizen/anonymous/search"})
     @ResponseBody
-    public List<ComplaintIndex> searchComplaints(@ModelAttribute ComplaintSearchRequest searchRequest) {
-        return complaintIndexSearchService.searchComplaintIndex("");
+    public Iterable<ComplaintIndex> searchComplaints(@ModelAttribute ComplaintSearchRequest searchRequest) {
+        return complaintIndexService.searchComplaintIndex(searchRequest.prepareSearchQuery());
     }
 }
