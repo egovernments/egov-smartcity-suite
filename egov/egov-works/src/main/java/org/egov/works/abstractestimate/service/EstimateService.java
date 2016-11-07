@@ -1124,7 +1124,7 @@ public class EstimateService {
     public List<AbstractEstimate> searchEstimatesToCancel(final SearchRequestCancelEstimate searchRequestCancelEstimate) {
         final StringBuilder queryStr = new StringBuilder(500);
         queryStr.append(
-                "select distinct(ae) from AbstractEstimate ae where exists (select distinct(activity.id) from Activity activity where activity.abstractEstimate.id = ae.id) and not exists (select distinct(woe) from WorkOrderEstimate as woe where woe.estimate.id = ae.id and woe.workOrder.egwStatus.code != :workOrderStatus) ");
+                "select distinct(ae) from AbstractEstimate ae where exists (select distinct(activity.id) from Activity activity where activity.abstractEstimate.id = ae.id) and not exists (select distinct(woe) from WorkOrderEstimate as woe where woe.estimate.id = ae.id and woe.workOrder.egwStatus.code = :workOrderStatus) ");
 
         queryStr.append(" and ae.parent.id is null ");
 

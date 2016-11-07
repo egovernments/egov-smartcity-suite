@@ -56,6 +56,7 @@ import javax.persistence.ManyToOne;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.OneToMany;
+import javax.persistence.OrderBy;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
@@ -170,6 +171,7 @@ public class MBDetails extends AbstractAuditable {
 
     @OneToMany(orphanRemoval = true, cascade = CascadeType.ALL, fetch = FetchType.LAZY, mappedBy = "mbDetails", targetEntity = MBMeasurementSheet.class)
     @AuditJoinTable
+    @OrderBy("id")
     private List<MBMeasurementSheet> measurementSheets = new LinkedList<MBMeasurementSheet>();
 
     public List<ValidationError> validate() {
