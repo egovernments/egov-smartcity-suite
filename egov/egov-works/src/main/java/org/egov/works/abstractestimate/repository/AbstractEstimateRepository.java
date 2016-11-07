@@ -81,9 +81,9 @@ public interface AbstractEstimateRepository extends JpaRepository<AbstractEstima
     List<String> findAbstractEstimateNumbersToCancelLineEstimate(@Param("lineEstimateId") final Long lineEstimateId,
             @Param("status") final String status);
 
-    @Query("select distinct(ae.estimateNumber) from AbstractEstimate as ae where upper(ae.estimateNumber) like upper(:code) and ae.egwStatus.code != :status and ae.estimateNumber not in (select distinct(woe.workOrder.estimateNumber) from WorkOrderEstimate as woe where woe.workOrder.egwStatus.code = :status) and ae.parent.id is null")
+    @Query("select distinct(ae.estimateNumber) from AbstractEstimate as ae where upper(ae.estimateNumber) like upper(:code) and ae.egwStatus.code = :aeStatus and exists (select distinct(activity.id) from Activity activity where activity.abstractEstimate.id = ae.id) and not exists (select distinct(woe) from WorkOrderEstimate as woe where woe.estimate.id = ae.id and woe.workOrder.egwStatus.code != :status) and ae.parent.id is null")
     List<String> findAbstractEstimateNumbersToCancelEstimate(@Param("code") final String code,
-            @Param("status") final String status);
+            @Param("status") final String status, @Param("aeStatus") final String aeStatus);
 
     @Query("select distinct(ae.estimateNumber) from AbstractEstimate as ae where ae.parent.id is null and upper(ae.estimateNumber) like upper(:code) and ae.egwStatus.code = :abstractEstimateStatus and not exists (select distinct(woe.estimate) from WorkOrderEstimate as woe where ae.id = woe.workOrder.id and woe.workOrder.egwStatus.code != upper(:workOrderStatus))")
     List<String> findAbstractEstimateNumbersToSetOfflineStatus(@Param("code") final String code,
