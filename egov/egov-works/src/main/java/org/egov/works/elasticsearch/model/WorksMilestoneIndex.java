@@ -108,6 +108,9 @@ public class WorksMilestoneIndex {
     @Field(type = FieldType.Date)
     private Date createddate;
 
+    @Field(type = FieldType.String, index = FieldIndex.not_analyzed)
+    private String milestonestatus;
+
     @Field(type = FieldType.Double)
     private Double jan01to15actual;
 
@@ -778,6 +781,14 @@ public class WorksMilestoneIndex {
 
     public void setLineestimatetypeofworkcode(final String lineestimatetypeofworkcode) {
         this.lineestimatetypeofworkcode = lineestimatetypeofworkcode;
+    }
+
+    public String getMilestonestatus() {
+        return milestonestatus;
+    }
+
+    public void setMilestonestatus(final String milestonestatus) {
+        this.milestonestatus = milestonestatus;
     }
 
 }
