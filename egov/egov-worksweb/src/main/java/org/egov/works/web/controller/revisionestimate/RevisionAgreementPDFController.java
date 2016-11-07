@@ -196,13 +196,16 @@ public class RevisionAgreementPDFController {
             reportParams.put("changeQtyTenderAmount", tenderAmount);
             reportParams.put("changeQtyNonTenderAmount", nonTenderAmount);
 
-            if (!originalEstimate.getEstimateTechnicalSanctions().isEmpty()) {
-                final String technicalSanctionByDesignation = worksUtils.getUserDesignation(originalEstimate
-                        .getEstimateTechnicalSanctions()
-                        .get(originalEstimate.getEstimateTechnicalSanctions().size() - 1).getTechnicalSanctionBy());
-                reportParams.put("technicalSanctionByDesignation", technicalSanctionByDesignation);
-            } else
-                reportParams.put("technicalSanctionByDesignation", "");
+            String technicalSanctionByDesignation = org.apache.commons.lang.StringUtils.EMPTY;
+            if (!originalEstimate.getEstimateTechnicalSanctions().isEmpty() && originalEstimate.getEstimateTechnicalSanctions()
+                    .get(originalEstimate.getEstimateTechnicalSanctions().size() - 1).getTechnicalSanctionBy() != null)
+                technicalSanctionByDesignation = worksUtils
+                        .getUserDesignation(originalEstimate.getEstimateTechnicalSanctions()
+                                .get(originalEstimate.getEstimateTechnicalSanctions().size() - 1).getTechnicalSanctionBy());
+            else
+                technicalSanctionByDesignation = worksUtils
+                        .getUserDesignation(originalEstimate.getCreatedBy());
+            reportParams.put("technicalSanctionByDesignation", technicalSanctionByDesignation);
             reportInput = new ReportRequest(REVISIONAGREEMENTPDF, revisionEstimate, reportParams);
         }
 
