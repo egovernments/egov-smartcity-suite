@@ -13,10 +13,11 @@ import org.springframework.data.elasticsearch.core.geo.GeoPoint;
 import java.util.Date;
 
 import static org.egov.infra.utils.ApplicationConstant.ES_DATE_FORMAT;
+import static org.egov.pgr.utils.constants.PGRConstants.PGR_INDEX_NAME;
 import static org.springframework.data.elasticsearch.annotations.DateFormat.date_optional_time;
 import static org.springframework.data.elasticsearch.annotations.FieldIndex.not_analyzed;
 
-@Document(indexName = "complaint", type = "complaint")
+@Document(indexName = PGR_INDEX_NAME, type = PGR_INDEX_NAME)
 public class ComplaintIndex {
 
     @Id

@@ -40,15 +40,6 @@
 
 package org.egov.pgr.service.es;
 
-import static org.egov.pgr.utils.constants.PGRConstants.DASHBOARD_GROUPING_CITY;
-
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Objects;
-
 import org.apache.commons.lang.time.DateUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.egov.eis.entity.Assignment;
@@ -89,6 +80,21 @@ import org.elasticsearch.search.aggregations.metrics.valuecount.ValueCount;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Service;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+
+import static org.apache.commons.lang3.StringUtils.EMPTY;
+import static org.apache.commons.lang3.StringUtils.isNotBlank;
+import static org.egov.pgr.utils.constants.PGRConstants.DASHBOARD_GROUPING_CITY;
+import static org.elasticsearch.index.query.QueryBuilders.matchQuery;
+import static org.elasticsearch.index.query.QueryBuilders.rangeQuery;
+import static org.elasticsearch.index.query.QueryBuilders.termQuery;
 
 @Service
 public class ComplaintIndexService {
@@ -180,7 +186,7 @@ public class ComplaintIndexService {
         complaintIndex.setCurrentFunctionaryName(assignedUser != null ? assignedUser.getName()
                 : "NO ASSIGNMENT" + ":" + position.getDeptDesig().getDesignation().getName());
         complaintIndex.setCurrentFunctionaryMobileNumber(Objects.nonNull(assignedUser)
-                ? assignedUser.getMobileNumber() : StringUtils.EMPTY);
+                ? assignedUser.getMobileNumber() : EMPTY);
         complaintIndex.setCurrentFunctionaryAssigneddate(new Date());
         complaintIndex.setCurrentFunctionarySLADays(getFunctionarySlaDays(complaint));
         complaintIndex.setCurrentFunctionaryAgeingFromDue(0);
@@ -200,7 +206,7 @@ public class ComplaintIndexService {
     }
 
     public void updateComplaintIndex(final Complaint complaint, final Long approvalPosition,
-            final String approvalComment) {
+                                     final String approvalComment) {
         // fetch the complaint from index and then update the new fields
         ComplaintIndex complaintIndex = complaintIndexRepository.findByCrn(complaint.getCrn());
         final String status = complaintIndex.getComplaintStatusName();
@@ -220,10 +226,10 @@ public class ComplaintIndexService {
         // If complaint is forwarded
         if (approvalPosition != null && !approvalPosition.equals(Long.valueOf(0))) {
             complaintIndex
-            .setCurrentFunctionaryName(assignedUser != null ? assignedUser.getName()
-                    : "NO ASSIGNMENT" + ":" + position.getDeptDesig().getDesignation().getName());
+                    .setCurrentFunctionaryName(assignedUser != null ? assignedUser.getName()
+                            : "NO ASSIGNMENT" + ":" + position.getDeptDesig().getDesignation().getName());
             complaintIndex.setCurrentFunctionaryMobileNumber(Objects.nonNull(assignedUser)
-                    ? assignedUser.getMobileNumber() : StringUtils.EMPTY);
+                    ? assignedUser.getMobileNumber() : EMPTY);
             complaintIndex.setCurrentFunctionaryAssigneddate(new Date());
             complaintIndex.setCurrentFunctionarySLADays(getFunctionarySlaDays(complaint));
         }
@@ -294,10 +300,10 @@ public class ComplaintIndexService {
         complaintIndex.setCityRegionName(city.getRegionName());
         // Update current Functionary Complaint index variables
         complaintIndex
-        .setCurrentFunctionaryName(assignedUser != null ? assignedUser.getName()
-                : "NO ASSIGNMENT" + ":" + position.getDeptDesig().getDesignation().getName());
+                .setCurrentFunctionaryName(assignedUser != null ? assignedUser.getName()
+                        : "NO ASSIGNMENT" + ":" + position.getDeptDesig().getDesignation().getName());
         complaintIndex.setCurrentFunctionaryMobileNumber(Objects.nonNull(assignedUser)
-                ? assignedUser.getMobileNumber() : StringUtils.EMPTY);
+                ? assignedUser.getMobileNumber() : EMPTY);
         complaintIndex.setCurrentFunctionaryAssigneddate(new Date());
         complaintIndex.setCurrentFunctionarySLADays(getFunctionarySlaDays(complaint));
         complaintIndex = updateComplaintLevelIndexFields(complaintIndex);
@@ -519,9 +525,9 @@ public class ComplaintIndexService {
 
     // These are the methods for dashboard api's written
 
-    public HashMap<String, Object> getGrievanceReport(final ComplaintDashBoardRequest complaintDashBoardRequest) {
+    public Map<String, Object> getGrievanceReport(final ComplaintDashBoardRequest complaintDashBoardRequest) {
         final String groupByField = ComplaintElasticsearchUtils.getAggregationGroupingField(complaintDashBoardRequest);
-        final HashMap<String, SearchResponse> response = complaintIndexRepository.findAllGrievanceByFilter(
+        final Map<String, SearchResponse> response = complaintIndexRepository.findAllGrievanceByFilter(
                 complaintDashBoardRequest,
                 getFilterQuery(complaintDashBoardRequest), groupByField);
 
@@ -538,7 +544,7 @@ public class ComplaintIndexService {
         final Avg averageSatisfaction = satisfactionAverage.getBuckets().get(0).getAggregations().get("satisfactionAverage");
         result.put("AvgCustomeSatisfactionIndex", averageSatisfaction.getValue());
 
-        if (StringUtils.isNotBlank(complaintDashBoardRequest.getUlbCode())) {
+        if (isNotBlank(complaintDashBoardRequest.getUlbCode())) {
             final CityIndex city = cityIndexService.findOne(complaintDashBoardRequest.getUlbCode());
             result.put("regionName", city.getRegionname());
             result.put("districtName", city.getDistrictname());
@@ -670,7 +676,7 @@ public class ComplaintIndexService {
         return result;
     }
 
-    public HashMap<String, Object> getComplaintTypeReport(final ComplaintDashBoardRequest complaintDashBoardRequest) {
+    public Map<String, Object> getComplaintTypeReport(final ComplaintDashBoardRequest complaintDashBoardRequest) {
         final String groupByField = ComplaintElasticsearchUtils.getAggregationGroupingField(complaintDashBoardRequest);
         final SearchResponse complaintTypeResponse = complaintIndexRepository.findAllGrievanceByComplaintType(
                 complaintDashBoardRequest,
@@ -678,7 +684,7 @@ public class ComplaintIndexService {
                 groupByField);
 
         final HashMap<String, Object> result = new HashMap<>();
-        if (StringUtils.isNotBlank(complaintDashBoardRequest.getUlbCode())) {
+        if (isNotBlank(complaintDashBoardRequest.getUlbCode())) {
             final CityIndex city = cityIndexService.findOne(complaintDashBoardRequest.getUlbCode());
             result.put("regionName", city.getRegionname());
             result.put("districtName", city.getDistrictname());
@@ -708,7 +714,7 @@ public class ComplaintIndexService {
         return result;
     }
 
-    public HashMap<String, Object> getSourceWiseResponse(final ComplaintDashBoardRequest complaintDashBoardRequest) {
+    public Map<String, Object> getSourceWiseResponse(final ComplaintDashBoardRequest complaintDashBoardRequest) {
         final SearchResponse sourceWiseResponse = complaintIndexRepository.findAllGrievanceBySource(complaintDashBoardRequest,
                 getFilterQuery(complaintDashBoardRequest),
                 ComplaintElasticsearchUtils.getAggregationGroupingField(complaintDashBoardRequest));
@@ -724,7 +730,7 @@ public class ComplaintIndexService {
                 city = cityIndexService.findByDistrictCode(bucket.getKeyAsString());
                 complaintSouce.setDistrictName(city.getDistrictname());
             }
-            if (StringUtils.isNotBlank(complaintDashBoardRequest.getDistrictName())) {
+            if (isNotBlank(complaintDashBoardRequest.getDistrictName())) {
                 if (StringUtils.isBlank(complaintDashBoardRequest.getUlbCode()))
                     city = cityIndexService.findByCitycode(bucket.getKeyAsString());
                 else
@@ -736,14 +742,14 @@ public class ComplaintIndexService {
                 complaintSouce.setDomainURL(city.getDomainurl());
             }
 
-            if (StringUtils.isNotBlank(complaintDashBoardRequest.getUlbCode())) {
+            if (isNotBlank(complaintDashBoardRequest.getUlbCode())) {
                 if (StringUtils.isBlank(complaintDashBoardRequest.getWardNo())
                         && StringUtils.isBlank(complaintDashBoardRequest.getDepartmentCode()))
                     complaintSouce.setWardName(bucket.getKeyAsString());
                 else
                     complaintSouce.setWardName(complaintIndexRepository.getWardName(complaintDashBoardRequest.getWardNo()));
 
-                if (StringUtils.isNotBlank(complaintDashBoardRequest.getDepartmentCode())) {
+                if (isNotBlank(complaintDashBoardRequest.getDepartmentCode())) {
                     final Department department = departmentService.getDepartmentByCode(complaintDashBoardRequest
                             .getDepartmentCode());
                     if (department != null)
@@ -751,8 +757,8 @@ public class ComplaintIndexService {
                 }
             }
 
-            if (StringUtils.isNotBlank(complaintDashBoardRequest.getDepartmentCode())
-                    || StringUtils.isNotBlank(complaintDashBoardRequest.getWardNo()))
+            if (isNotBlank(complaintDashBoardRequest.getDepartmentCode())
+                    || isNotBlank(complaintDashBoardRequest.getWardNo()))
                 complaintSouce.setFunctionaryName(bucket.getKeyAsString());
 
             final List<HashMap<String, Long>> list = new ArrayList<>();
@@ -788,57 +794,57 @@ public class ComplaintIndexService {
     }
 
     private BoolQueryBuilder getFilterQuery(final ComplaintDashBoardRequest complaintDashBoardRequest) {
-        BoolQueryBuilder boolQuery = QueryBuilders.boolQuery().filter(QueryBuilders.termQuery("registered", 1));
-        if (StringUtils.isNotBlank(complaintDashBoardRequest.getRegionName()))
-            boolQuery = boolQuery.filter(QueryBuilders.matchQuery("cityRegionName", complaintDashBoardRequest.getRegionName()));
-        if (StringUtils.isNotBlank(complaintDashBoardRequest.getUlbGrade()))
-            boolQuery = boolQuery.filter(QueryBuilders.matchQuery("cityGrade", complaintDashBoardRequest.getUlbGrade()));
-        if (StringUtils.isNotBlank(complaintDashBoardRequest.getDistrictName()))
+        BoolQueryBuilder boolQuery = QueryBuilders.boolQuery().filter(termQuery("registered", 1));
+        if (isNotBlank(complaintDashBoardRequest.getRegionName()))
+            boolQuery = boolQuery.filter(matchQuery("cityRegionName", complaintDashBoardRequest.getRegionName()));
+        if (isNotBlank(complaintDashBoardRequest.getUlbGrade()))
+            boolQuery = boolQuery.filter(matchQuery("cityGrade", complaintDashBoardRequest.getUlbGrade()));
+        if (isNotBlank(complaintDashBoardRequest.getDistrictName()))
             boolQuery = boolQuery
-                    .filter(QueryBuilders.matchQuery("cityDistrictName", complaintDashBoardRequest.getDistrictName()));
-        if (StringUtils.isNotBlank(complaintDashBoardRequest.getUlbCode()))
-            boolQuery = boolQuery.filter(QueryBuilders.matchQuery("cityCode", complaintDashBoardRequest.getUlbCode()));
-        if (StringUtils.isNotBlank(complaintDashBoardRequest.getWardNo()))
-            boolQuery = boolQuery.filter(QueryBuilders.matchQuery("wardNo", complaintDashBoardRequest.getWardNo()));
-        if (StringUtils.isNotBlank(complaintDashBoardRequest.getDepartmentCode()))
+                    .filter(matchQuery("cityDistrictName", complaintDashBoardRequest.getDistrictName()));
+        if (isNotBlank(complaintDashBoardRequest.getUlbCode()))
+            boolQuery = boolQuery.filter(matchQuery("cityCode", complaintDashBoardRequest.getUlbCode()));
+        if (isNotBlank(complaintDashBoardRequest.getWardNo()))
+            boolQuery = boolQuery.filter(matchQuery("wardNo", complaintDashBoardRequest.getWardNo()));
+        if (isNotBlank(complaintDashBoardRequest.getDepartmentCode()))
             boolQuery = boolQuery
-                    .filter(QueryBuilders.matchQuery("departmentCode", complaintDashBoardRequest.getDepartmentCode()));
-        if (StringUtils.isNotBlank(complaintDashBoardRequest.getFromDate()) &&
-                StringUtils.isNotBlank(complaintDashBoardRequest.getToDate()))
-            boolQuery = boolQuery.must(QueryBuilders.rangeQuery("createdDate")
+                    .filter(matchQuery("departmentCode", complaintDashBoardRequest.getDepartmentCode()));
+        if (isNotBlank(complaintDashBoardRequest.getFromDate()) &&
+                isNotBlank(complaintDashBoardRequest.getToDate()))
+            boolQuery = boolQuery.must(rangeQuery("createdDate")
                     .from(complaintDashBoardRequest.getFromDate())
                     .to(complaintDashBoardRequest.getToDate()));
-        if (StringUtils.isNotBlank(complaintDashBoardRequest.getComplaintTypeCode()))
-            boolQuery = boolQuery.filter(QueryBuilders.matchQuery("complaintTypeCode",
+        if (isNotBlank(complaintDashBoardRequest.getComplaintTypeCode()))
+            boolQuery = boolQuery.filter(matchQuery("complaintTypeCode",
                     complaintDashBoardRequest.getComplaintTypeCode()));
 
         return boolQuery;
     }
 
     private ComplaintDashBoardResponse populateResponse(final ComplaintDashBoardRequest complaintDashBoardRequest,
-            final Bucket bucket,
-            final String groupByField) {
+                                                        final Bucket bucket,
+                                                        final String groupByField) {
         ComplaintDashBoardResponse responseDetail = new ComplaintDashBoardResponse();
 
         responseDetail = setDefaultValues(responseDetail);
 
         CityIndex city;
 
-        if (groupByField.equals("cityRegionName"))
+        if ("cityRegionName".equals(groupByField))
             responseDetail.setRegionName(bucket.getKeyAsString());
-        if (groupByField.equals("cityGrade"))
+        if ("cityGrade".equals(groupByField))
             responseDetail.setUlbGrade(bucket.getKeyAsString());
-        if (groupByField.equals("cityCode") && complaintDashBoardRequest.getType().equalsIgnoreCase(DASHBOARD_GROUPING_CITY)) {
+        if ("cityCode".equals(groupByField) && DASHBOARD_GROUPING_CITY.equalsIgnoreCase(complaintDashBoardRequest.getType())) {
             city = cityIndexService.findOne(bucket.getKeyAsString());
             responseDetail.setUlbName(city.getName());
         }
 
-        if (groupByField.equals("cityDistrictCode")) {
+        if ("cityDistrictCode".equals(groupByField)) {
             city = cityIndexService.findByDistrictCode(bucket.getKeyAsString());
             responseDetail.setDistrictName(city.getDistrictname());
         }
         // When UlbGrade is selected group by Ulb
-        if (groupByField.equals("cityCode") &&
+        if ("cityCode".equals(groupByField) &&
                 !complaintDashBoardRequest.getType().equals(DASHBOARD_GROUPING_CITY)) {
             city = cityIndexService.findOne(bucket.getKeyAsString());
             responseDetail.setDistrictName(city.getDistrictname());
@@ -848,13 +854,13 @@ public class ComplaintIndexService {
             responseDetail.setDomainURL(city.getDomainurl());
         }
         // When UlbCode is passed without type group by department else by type
-        if (groupByField.equals("departmentName"))
+        if ("departmentName".equals(groupByField))
             responseDetail.setDepartmentName(bucket.getKeyAsString());
-        if (groupByField.equals("wardName"))
+        if ("wardName".equals(groupByField))
             responseDetail.setWardName(bucket.getKeyAsString());
-        if (groupByField.equals("localityName"))
+        if ("localityName".equals(groupByField))
             responseDetail.setLocalityName(bucket.getKeyAsString());
-        if (groupByField.equals("currentFunctionaryName")) {
+        if ("currentFunctionaryName".equals(groupByField)) {
             responseDetail.setFunctionaryName(bucket.getKeyAsString());
             final String mobileNumber = complaintIndexRepository.getFunctionryMobileNumber(bucket.getKeyAsString());
             responseDetail.setFunctionaryMobileNumber(mobileNumber);
@@ -863,16 +869,16 @@ public class ComplaintIndexService {
     }
 
     private ComplaintDashBoardResponse setDefaultValues(final ComplaintDashBoardResponse response) {
-        response.setDistrictName(StringUtils.EMPTY);
-        response.setUlbName(StringUtils.EMPTY);
-        response.setWardName(StringUtils.EMPTY);
-        response.setDepartmentName(StringUtils.EMPTY);
-        response.setFunctionaryName(StringUtils.EMPTY);
-        response.setLocalityName(StringUtils.EMPTY);
-        response.setComplaintTypeName(StringUtils.EMPTY);
-        response.setUlbGrade(StringUtils.EMPTY);
-        response.setUlbCode(StringUtils.EMPTY);
-        response.setDomainURL(StringUtils.EMPTY);
+        response.setDistrictName(EMPTY);
+        response.setUlbName(EMPTY);
+        response.setWardName(EMPTY);
+        response.setDepartmentName(EMPTY);
+        response.setFunctionaryName(EMPTY);
+        response.setLocalityName(EMPTY);
+        response.setComplaintTypeName(EMPTY);
+        response.setUlbGrade(EMPTY);
+        response.setUlbCode(EMPTY);
+        response.setDomainURL(EMPTY);
 
         return response;
     }

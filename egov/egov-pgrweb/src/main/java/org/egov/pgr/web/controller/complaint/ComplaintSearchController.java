@@ -148,13 +148,13 @@ public class ComplaintSearchController {
     }
 
     @RequestMapping(method = GET, value = {"/complaint/search", "/complaint/citizen/anonymous/search"})
-    public String showSearchFormOffical() {
+    public String showSearch() {
         return "complaint-search";
     }
 
     @RequestMapping(method = POST, value = {"/complaint/search", "/complaint/citizen/anonymous/search"})
     @ResponseBody
-    public List<ComplaintIndex> searchComplaintsOffical(@ModelAttribute ComplaintSearchRequest searchRequest) {
+    public List<ComplaintIndex> searchComplaints(@ModelAttribute ComplaintSearchRequest searchRequest) {
         return complaintIndexSearchService.searchComplaintIndex("");
     }
 }

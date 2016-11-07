@@ -42,13 +42,12 @@ package org.egov.pgr.web.contract;
 
 import org.joda.time.DateTime;
 
+import static org.egov.infra.utils.ApplicationConstant.ES_DATE_FORMAT;
 import static org.egov.infra.utils.DateUtils.TO_DEFAULT_DATE_FORMAT;
 import static org.egov.infra.utils.DateUtils.endOfGivenDate;
 import static org.egov.infra.utils.DateUtils.startOfGivenDate;
 
 public class ComplaintSearchRequest {
-    public static final String SEARCH_DATE_FORMAT = "yyyy-MM-dd'T'HH:mm";
-
     private String searchText;
     private String complaintNumber;
     private String complainantName;
@@ -107,12 +106,12 @@ public class ComplaintSearchRequest {
 
     public void setFromDate(final String fromDate) {
         if (fromDate != null)
-            this.fromDate = startOfGivenDate(TO_DEFAULT_DATE_FORMAT.parseDateTime(fromDate)).toString(SEARCH_DATE_FORMAT);
+            this.fromDate = startOfGivenDate(TO_DEFAULT_DATE_FORMAT.parseDateTime(fromDate)).toString(ES_DATE_FORMAT);
     }
 
     public void setToDate(final String toDate) {
         if (toDate != null)
-            this.toDate = endOfGivenDate(TO_DEFAULT_DATE_FORMAT.parseDateTime(toDate)).toString(SEARCH_DATE_FORMAT);
+            this.toDate = endOfGivenDate(TO_DEFAULT_DATE_FORMAT.parseDateTime(toDate)).toString(ES_DATE_FORMAT);
     }
 
     public void setComplaintDepartment(final String complaintDepartment) {
@@ -122,18 +121,18 @@ public class ComplaintSearchRequest {
     public void setComplaintDate(final String complaintDate) {
         if (null != complaintDate) {
             DateTime currentDate = new DateTime();
-            complaintDateTo = endOfGivenDate(currentDate).toString(SEARCH_DATE_FORMAT);
-            if (complaintDate.equalsIgnoreCase("today")) {
-                complaintDateFrom = currentDate.withTimeAtStartOfDay().toString(SEARCH_DATE_FORMAT);
-            } else if (complaintDate.equalsIgnoreCase("all")) {
+            complaintDateTo = endOfGivenDate(currentDate).toString(ES_DATE_FORMAT);
+            if ("today".equalsIgnoreCase(complaintDate)) {
+                complaintDateFrom = currentDate.withTimeAtStartOfDay().toString(ES_DATE_FORMAT);
+            } else if ("all".equalsIgnoreCase(complaintDate)) {
                 complaintDateFrom = null;
                 complaintDateTo = null;
-            } else if (complaintDate.equalsIgnoreCase("lastsevendays")) {
-                complaintDateFrom = currentDate.minusDays(7).toString(SEARCH_DATE_FORMAT);
-            } else if (complaintDate.equalsIgnoreCase("lastthirtydays")) {
-                complaintDateFrom = currentDate.minusDays(30).toString(SEARCH_DATE_FORMAT);
-            } else if (complaintDate.equalsIgnoreCase("lastninetydays")) {
-                complaintDateFrom = currentDate.minusDays(90).toString(SEARCH_DATE_FORMAT);
+            } else if ("lastsevendays".equalsIgnoreCase(complaintDate)) {
+                complaintDateFrom = currentDate.minusDays(7).toString(ES_DATE_FORMAT);
+            } else if ("lastthirtydays".equalsIgnoreCase(complaintDate)) {
+                complaintDateFrom = currentDate.minusDays(30).toString(ES_DATE_FORMAT);
+            } else if ("lastninetydays".equalsIgnoreCase(complaintDate)) {
+                complaintDateFrom = currentDate.minusDays(90).toString(ES_DATE_FORMAT);
             } else {
                 complaintDateFrom = null;
                 complaintDateTo = null;

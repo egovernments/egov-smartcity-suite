@@ -191,7 +191,7 @@
 <script src="<cdn:url  value='/resources/js/app/search-complaint.js?rnd=${app_release_no}'/>" type="text/javascript"></script>
 <c:if test="${not empty param.crn}">
 <script>
-jQuery("#ct-ctno").val('${param.crn}');
-jQuery( "#searchComplaints").trigger("click");
+$("#ct-ctno").val('${param.crn}');
+$( "#searchComplaints").trigger("click");
 </script>
 </c:if>

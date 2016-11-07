@@ -58,8 +58,8 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping(value = "/complaint/aggregate")
@@ -78,17 +78,17 @@ public class ComplaintIndexController {
     private BoundaryService boundaryService;
 
     @RequestMapping(value = "/grievance", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
-    public HashMap<String, Object> getDashBoardResponse(@RequestBody ComplaintDashBoardRequest complaintRequest) {
+    public Map<String, Object> getDashBoardResponse(@RequestBody ComplaintDashBoardRequest complaintRequest) {
         return complaintIndexService.getGrievanceReport(complaintRequest);
     }
 
     @RequestMapping(value = "/grievance/complainttype", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
-    public HashMap<String, Object> getGrievanceComplaintTypeResponse(@RequestBody ComplaintDashBoardRequest complaintRequest) {
+    public Map<String, Object> getGrievanceComplaintTypeResponse(@RequestBody ComplaintDashBoardRequest complaintRequest) {
         return complaintIndexService.getComplaintTypeReport(complaintRequest);
     }
 
     @RequestMapping(value = "/sourcewisegrievance", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
-    public HashMap<String, Object> getSourceWiseGrievanceResponse(@RequestBody ComplaintDashBoardRequest complaintRequest) {
+    public Map<String, Object> getSourceWiseGrievanceResponse(@RequestBody ComplaintDashBoardRequest complaintRequest) {
         return complaintIndexService.getSourceWiseResponse(complaintRequest);
     }
 
