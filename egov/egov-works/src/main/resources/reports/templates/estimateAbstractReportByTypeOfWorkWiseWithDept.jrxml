@@ -38,6 +38,8 @@
   ~
   ~   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
   -->
+<!-- Created with Jaspersoft Studio version 6.3.1.final using JasperReports Library version 6.3.1  -->
+<!-- 2016-11-07T11:45:04 -->
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="estimateAbstractReportByTypeOfWorkWithDeptWise" printOrder="Horizontal" pageWidth="1684" pageHeight="595" orientation="Landscape" columnWidth="1644" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="dde57000-7ab1-4a8b-9792-f74605077701">
 	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="One Empty Record"/>
 	<property name="ireport.zoom" value="0.3504938994813943"/>
@@ -77,34 +79,34 @@
 	<queryString>
 		<![CDATA[]]>
 	</queryString>
-	<field name="lineEstimates" class="java.lang.Long">
+	<field name="lineEstimates" class="java.lang.String">
 		<fieldDescription><![CDATA[]]></fieldDescription>
 	</field>
 	<field name="departmentName" class="java.lang.String">
 		<fieldDescription><![CDATA[]]></fieldDescription>
 	</field>
-	<field name="adminSanctionedEstimates" class="java.lang.Long">
+	<field name="adminSanctionedEstimates" class="java.lang.String">
 		<fieldDescription><![CDATA[]]></fieldDescription>
 	</field>
 	<field name="leAdminSanctionedAmountInCrores" class="java.lang.String">
 		<fieldDescription><![CDATA[]]></fieldDescription>
 	</field>
-	<field name="technicalSanctionedEstimates" class="java.lang.Long">
+	<field name="technicalSanctionedEstimates" class="java.lang.String">
 		<fieldDescription><![CDATA[]]></fieldDescription>
 	</field>
-	<field name="loaCreated" class="java.lang.Long">
+	<field name="loaCreated" class="java.lang.String">
 		<fieldDescription><![CDATA[]]></fieldDescription>
 	</field>
 	<field name="agreementValueInCrores" class="java.lang.String">
 		<fieldDescription><![CDATA[]]></fieldDescription>
 	</field>
-	<field name="workInProgress" class="java.lang.Long">
+	<field name="workInProgress" class="java.lang.String">
 		<fieldDescription><![CDATA[]]></fieldDescription>
 	</field>
-	<field name="workCompleted" class="java.lang.Long">
+	<field name="workCompleted" class="java.lang.String">
 		<fieldDescription><![CDATA[]]></fieldDescription>
 	</field>
-	<field name="billsCreated" class="java.lang.Long">
+	<field name="billsCreated" class="java.lang.String">
 		<fieldDescription><![CDATA[]]></fieldDescription>
 	</field>
 	<field name="billValueInCrores" class="java.lang.String">
@@ -119,10 +121,10 @@
 	<field name="aeAdminSanctionedAmountInCrores" class="java.lang.String">
 		<fieldDescription><![CDATA[]]></fieldDescription>
 	</field>
-	<field name="loaNotCreated" class="java.lang.Long">
+	<field name="loaNotCreated" class="java.lang.String">
 		<fieldDescription><![CDATA[]]></fieldDescription>
 	</field>
-	<field name="workNotCommenced" class="java.lang.Long">
+	<field name="workNotCommenced" class="java.lang.String">
 		<fieldDescription><![CDATA[]]></fieldDescription>
 	</field>
 	<field name="workValueOfAdminSanctionedAEInCrores" class="java.lang.String">
@@ -197,7 +199,7 @@
 				<textElement textAlignment="Center" verticalAlignment="Middle">
 					<font size="8" isBold="true"/>
 				</textElement>
-				<text><![CDATA[Line Estimates]]></text>
+				<text><![CDATA[Estimates]]></text>
 			</staticText>
 			<staticText>
 				<reportElement x="690" y="0" width="65" height="47" uuid="74e3ce0c-9b02-457a-a091-0635077f6024"/>
@@ -288,7 +290,7 @@
 				<textElement textAlignment="Center" verticalAlignment="Middle">
 					<font size="8" isBold="true"/>
 				</textElement>
-				<text><![CDATA[Le Admin Sanctioned Amount In Crores]]></text>
+				<text><![CDATA[Estimate Admin Sanctioned Amount In Crores]]></text>
 			</staticText>
 			<staticText>
 				<reportElement x="582" y="0" width="70" height="47" uuid="35eccfcf-da78-4529-9884-7d8a7abf0bc1"/>
