@@ -58,6 +58,8 @@ import org.joda.time.format.DateTimeFormatter;
 import javax.persistence.*;
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
+
+import java.text.SimpleDateFormat;
 import java.util.Collections;
 import java.util.Date;
 import java.util.Set;
@@ -266,12 +268,12 @@ public class Complaint extends StateAware {
         this.lng = lng;
     }
 
-    public DateTime getEscalationDate() {
-        return null == this.escalationDate ? null : new DateTime(this.escalationDate);
+    public Date getEscalationDate() {
+        return null == this.escalationDate ? null : this.escalationDate;
     }
 
-    public void setEscalationDate(DateTime escalationDate) {
-        this.escalationDate = null == escalationDate ? null : escalationDate.toDate();
+    public void setEscalationDate(Date escalationDate) {
+        this.escalationDate = null == escalationDate ? null : escalationDate;
     }
 
     public Department getDepartment() {
@@ -321,10 +323,10 @@ public class Complaint extends StateAware {
 
     @Override
     public String getStateDetails() {
-        DateTimeFormatter formatter = DateTimeFormat.forPattern("dd-MM-yyyy hh:mm a");
+        SimpleDateFormat formatter = new SimpleDateFormat("dd-MM-yyyy hh:mm a");
         return String.format("Complaint Number %s for %s filed on %s. Date of resolution %s", this.getCrn(),
-                this.getComplaintType().getName(), formatter.print(new DateTime(this.getCreatedDate())),
-                formatter.print(this.getEscalationDate()));
+                this.getComplaintType().getName(), formatter.format(this.getCreatedDate()),
+                formatter.format(this.getEscalationDate()));
     }
 
     @Override

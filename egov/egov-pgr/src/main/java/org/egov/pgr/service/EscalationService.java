@@ -40,6 +40,7 @@
 
 package org.egov.pgr.service;
 
+import org.apache.commons.lang.time.DateUtils;
 import org.egov.commons.ObjectType;
 import org.egov.commons.service.ObjectTypeService;
 import org.egov.eis.entity.Assignment;
@@ -206,7 +207,7 @@ public class EscalationService {
                 .getConfigValuesByModuleAndKey(PGRConstants.MODULE_NAME, "SENDEMAILFORESCALATION").get(0);
         if ("YES".equalsIgnoreCase(appConfigValue.getValue())) {
             final String formattedEscalationDate = new SimpleDateFormat("dd/MM/yyyy HH:mm")
-                    .format(complaint.getEscalationDate().toDate());
+                    .format(complaint.getEscalationDate());
             final StringBuffer emailBody = new StringBuffer().append("Dear ").append(superiorUser.getName())
                     .append(",\n \n     The complaint Number (").append(complaint.getCrn())
                     .append(") is escalated.\n").append("\n Complaint Details - \n \n Complaint type - ")
@@ -234,12 +235,12 @@ public class EscalationService {
         complaintIndexService.updateComplaintEscalationIndexValues(complaint);
     }
 
-    protected DateTime getExpiryDate(final Complaint complaint) {
-
-        DateTime expiryDate = complaint.getEscalationDate();
+    protected Date getExpiryDate(final Complaint complaint) {
+        Date expiryDate = complaint.getEscalationDate();
         final Designation designation = complaint.getAssignee().getDeptDesig().getDesignation();
         final Integer noOfhrs = getHrsToResolve(designation.getId(), complaint.getComplaintType().getId());
-        expiryDate = expiryDate.plusHours(noOfhrs);
+        
+        expiryDate = DateUtils.addHours(expiryDate, noOfhrs);
         return expiryDate;
     }
 

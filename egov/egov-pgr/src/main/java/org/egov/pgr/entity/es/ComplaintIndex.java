@@ -169,6 +169,9 @@ public class ComplaintIndex {
 
     @Field(type = FieldType.Integer)
     private int currentFunctionaryIfSLA;
+    
+    @Field(type = FieldType.String, index = not_analyzed)
+    private String currentFunctionaryMobileNumber;
 
     @Field(type = FieldType.String, index = not_analyzed)
     private String closedByFunctionaryName;
@@ -279,7 +282,7 @@ public class ComplaintIndex {
     }
 
     public void setId(String id) {
-        this.id = ApplicationThreadLocals.getCityCode().concat("-").concat(id);
+        this.id = ApplicationThreadLocals.getCityCode().concat("_").concat(id);
     }
 
     public String getCrn() {
@@ -938,5 +941,13 @@ public class ComplaintIndex {
 
     public void setReOpened(int reOpened) {
         this.reOpened = reOpened;
+    }
+
+    public String getCurrentFunctionaryMobileNumber() {
+        return currentFunctionaryMobileNumber;
+    }
+
+    public void setCurrentFunctionaryMobileNumber(String currentFunctionaryMobileNumber) {
+        this.currentFunctionaryMobileNumber = currentFunctionaryMobileNumber;
     }
 }

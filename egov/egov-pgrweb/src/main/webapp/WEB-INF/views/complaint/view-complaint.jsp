@@ -110,7 +110,7 @@
 					</div>
 					<div class="col-md-3 col-xs-6 add-margin"><spring:message code="lbl.nextescalation.date" /></div>
 					<div class="col-md-3 col-xs-6 add-margin view-content" id="ct-nextescalation">
-						<joda:format var="nextEscalationDate" value="${complaint.escalationDate}" pattern="dd-MM-yyyy HH:mm"/>
+						<fmt:formatDate value="${complaint.escalationDate}" var="nextEscalationDate" pattern="dd-MM-yyyy HH:mm"/>
 						<c:out value="${nextEscalationDate}"/>
 					</div> 
 				</div>

@@ -47,6 +47,7 @@ import java.util.Arrays;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Objects;
 
 import org.apache.commons.lang.time.DateUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -89,7 +90,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Service;
 
-
 @Service
 public class ComplaintIndexService {
 
@@ -116,13 +116,12 @@ public class ComplaintIndexService {
 
     @Autowired
     private BeanMapperConfiguration beanMapperConfiguration;
-    
+
     @Autowired
     private ComplaintService complaintService;
 
-
     public void createComplaintIndex(final Complaint complaint) {
-        ComplaintIndex complaintIndex = new ComplaintIndex();
+        final ComplaintIndex complaintIndex = new ComplaintIndex();
         beanMapperConfiguration.map(complaint, complaintIndex);
 
         final City city = cityService.getCityByURL(ApplicationThreadLocals.getDomainName());
@@ -180,6 +179,8 @@ public class ComplaintIndexService {
         complaintIndex.setInitialFunctionaryIfSLA(1);
         complaintIndex.setCurrentFunctionaryName(assignedUser != null ? assignedUser.getName()
                 : "NO ASSIGNMENT" + ":" + position.getDeptDesig().getDesignation().getName());
+        complaintIndex.setCurrentFunctionaryMobileNumber(Objects.nonNull(assignedUser)
+                ? assignedUser.getMobileNumber() : StringUtils.EMPTY);
         complaintIndex.setCurrentFunctionaryAssigneddate(new Date());
         complaintIndex.setCurrentFunctionarySLADays(getFunctionarySlaDays(complaint));
         complaintIndex.setCurrentFunctionaryAgeingFromDue(0);
@@ -192,20 +193,20 @@ public class ComplaintIndexService {
         complaintIndex.setAddressed(0);
         complaintIndex.setRejected(0);
         complaintIndex.setReOpened(0);
-        //New fields included in PGR Index
+        // New fields included in PGR Index
         complaintIndex.setComplaintAgeingdaysFromDue(0);
-        
+
         complaintIndexRepository.save(complaintIndex);
     }
 
-    public void updateComplaintIndex(Complaint complaint, final Long approvalPosition,
+    public void updateComplaintIndex(final Complaint complaint, final Long approvalPosition,
             final String approvalComment) {
-    	//fetch the complaint from index and then update the new fields
-    	ComplaintIndex complaintIndex = complaintIndexRepository.findByCrn(complaint.getCrn());
-    	String status = complaintIndex.getComplaintStatusName();
+        // fetch the complaint from index and then update the new fields
+        ComplaintIndex complaintIndex = complaintIndexRepository.findByCrn(complaint.getCrn());
+        final String status = complaintIndex.getComplaintStatusName();
         beanMapperConfiguration.map(complaint, complaintIndex);
-    	
-    	final City city = cityService.getCityByURL(ApplicationThreadLocals.getDomainName());
+
+        final City city = cityService.getCityByURL(ApplicationThreadLocals.getDomainName());
         complaintIndex.setCityCode(city.getCode());
         complaintIndex.setCityDistrictCode(city.getDistrictCode());
         complaintIndex.setCityDistrictName(city.getDistrictName());
@@ -219,8 +220,10 @@ public class ComplaintIndexService {
         // If complaint is forwarded
         if (approvalPosition != null && !approvalPosition.equals(Long.valueOf(0))) {
             complaintIndex
-                    .setCurrentFunctionaryName(assignedUser != null ? assignedUser.getName()
-                            : "NO ASSIGNMENT" + ":" + position.getDeptDesig().getDesignation().getName());
+            .setCurrentFunctionaryName(assignedUser != null ? assignedUser.getName()
+                    : "NO ASSIGNMENT" + ":" + position.getDeptDesig().getDesignation().getName());
+            complaintIndex.setCurrentFunctionaryMobileNumber(Objects.nonNull(assignedUser)
+                    ? assignedUser.getMobileNumber() : StringUtils.EMPTY);
             complaintIndex.setCurrentFunctionaryAssigneddate(new Date());
             complaintIndex.setCurrentFunctionarySLADays(getFunctionarySlaDays(complaint));
         }
@@ -272,12 +275,12 @@ public class ComplaintIndexService {
     }
 
     // This method is used to populate PGR index during complaint escalation
-    public void updateComplaintEscalationIndexValues(Complaint complaint) {
-    	
-    	//fetch the complaint from index and then update the new fields
-    	ComplaintIndex complaintIndex = complaintIndexRepository.findByCrn(complaint.getCrn());
+    public void updateComplaintEscalationIndexValues(final Complaint complaint) {
+
+        // fetch the complaint from index and then update the new fields
+        ComplaintIndex complaintIndex = complaintIndexRepository.findByCrn(complaint.getCrn());
         beanMapperConfiguration.map(complaint, complaintIndex);
-    	
+
         final Position position = complaint.getAssignee();
         final List<Assignment> assignments = assignmentService.getAssignmentsForPosition(position.getId(), new Date());
         final User assignedUser = !assignments.isEmpty() ? assignments.get(0).getEmployee() : null;
@@ -291,8 +294,10 @@ public class ComplaintIndexService {
         complaintIndex.setCityRegionName(city.getRegionName());
         // Update current Functionary Complaint index variables
         complaintIndex
-                .setCurrentFunctionaryName(assignedUser != null ? assignedUser.getName()
-                        : "NO ASSIGNMENT" + ":" + position.getDeptDesig().getDesignation().getName());
+        .setCurrentFunctionaryName(assignedUser != null ? assignedUser.getName()
+                : "NO ASSIGNMENT" + ":" + position.getDeptDesig().getDesignation().getName());
+        complaintIndex.setCurrentFunctionaryMobileNumber(Objects.nonNull(assignedUser)
+                ? assignedUser.getMobileNumber() : StringUtils.EMPTY);
         complaintIndex.setCurrentFunctionaryAssigneddate(new Date());
         complaintIndex.setCurrentFunctionarySLADays(getFunctionarySlaDays(complaint));
         complaintIndex = updateComplaintLevelIndexFields(complaintIndex);
@@ -344,12 +349,11 @@ public class ComplaintIndexService {
             updateOpenComplaintIndex(complaint);
     }
 
-    
     public ComplaintIndex updateOpenComplaintIndex(final Complaint complaint) {
-    	//fetch the complaint from index and then update the new fields
-    	ComplaintIndex complaintIndex = complaintIndexRepository.findByCrn(complaint.getCrn());
+        // fetch the complaint from index and then update the new fields
+        ComplaintIndex complaintIndex = complaintIndexRepository.findByCrn(complaint.getCrn());
         beanMapperConfiguration.map(complaint, complaintIndex);
-        
+
         complaintIndex = updateComplaintLevelIndexFields(complaintIndex);
         complaintIndex = updateEscalationLevelIndexFields(complaintIndex);
         // update status related fields in index
@@ -367,11 +371,14 @@ public class ComplaintIndexService {
         // If difference is greater than 0 then complaint is within SLA
         if (lastDateToResolve.getTime() - currentDate.getTime() >= 0) {
             complaintIndex.setComplaintAgeingFromDue(0);
+            complaintIndex.setComplaintAgeingdaysFromDue(0);
             complaintIndex.setIsSLA("Y");
             complaintIndex.setIfSLA(1);
         } else {
             final long ageingDuehours = Math.abs(currentDate.getTime() - lastDateToResolve.getTime()) / (60 * 60 * 1000);
+            final long ageingDueDays = Math.abs(currentDate.getTime() - lastDateToResolve.getTime()) / (24 * 60 * 60 * 1000);
             complaintIndex.setComplaintAgeingFromDue(ageingDuehours);
+            complaintIndex.setComplaintAgeingdaysFromDue(ageingDueDays);
             complaintIndex.setIsSLA("N");
             complaintIndex.setIfSLA(0);
         }
@@ -498,42 +505,41 @@ public class ComplaintIndexService {
         }
         return complaintIndex;
     }
-    
-    
+
     private long getFunctionarySlaDays(final Complaint complaint) {
         final Position position = complaint.getAssignee();
         final Designation designation = position.getDeptDesig().getDesignation();
         final Escalation complaintEscalation = escalationService
                 .getEscalationBycomplaintTypeAndDesignation(complaint.getComplaintType().getId(), designation.getId());
-        if (complaintEscalation != null) {
-            final long slaHours = complaintEscalation.getNoOfHrs();
-            return slaHours;
-        } else
+        if (complaintEscalation != null)
+            return complaintEscalation.getNoOfHrs();
+        else
             return 0;
     }
 
-    //These are the methods for dashboard api's written
+    // These are the methods for dashboard api's written
 
-    public HashMap<String, Object> getGrievanceReport(ComplaintDashBoardRequest complaintDashBoardRequest) {
-        String groupByField = ComplaintElasticsearchUtils.getAggregationGroupingField(complaintDashBoardRequest);
-        HashMap<String, SearchResponse> response = complaintIndexRepository.findAllGrievanceByFilter(complaintDashBoardRequest,
+    public HashMap<String, Object> getGrievanceReport(final ComplaintDashBoardRequest complaintDashBoardRequest) {
+        final String groupByField = ComplaintElasticsearchUtils.getAggregationGroupingField(complaintDashBoardRequest);
+        final HashMap<String, SearchResponse> response = complaintIndexRepository.findAllGrievanceByFilter(
+                complaintDashBoardRequest,
                 getFilterQuery(complaintDashBoardRequest), groupByField);
 
-        SearchResponse consolidatedResponse = response.get("consolidatedResponse");
-        SearchResponse tableResponse = response.get("tableResponse");
-        HashMap<String, Object> result = new HashMap<>();
-        List<ComplaintDashBoardResponse> responseDetailsList = new ArrayList<>();
-        ValueCount totalCount = response.get("consolidatedResponse").getAggregations().get("countAggregation");
+        final SearchResponse consolidatedResponse = response.get("consolidatedResponse");
+        final SearchResponse tableResponse = response.get("tableResponse");
+        final HashMap<String, Object> result = new HashMap<>();
+        final List<ComplaintDashBoardResponse> responseDetailsList = new ArrayList<>();
+        final ValueCount totalCount = response.get("consolidatedResponse").getAggregations().get("countAggregation");
         result.put("TotalComplaint", totalCount.getValue());
-        Filter filter = consolidatedResponse.getAggregations().get("agg");
-        Avg averageAgeing = filter.getAggregations().get("AgeingInWeeks");
+        final Filter filter = consolidatedResponse.getAggregations().get("agg");
+        final Avg averageAgeing = filter.getAggregations().get("AgeingInWeeks");
         result.put("AvgAgeingInWeeks", averageAgeing.getValue() / 7);
         Range satisfactionAverage = consolidatedResponse.getAggregations().get("excludeZero");
-        Avg averageSatisfaction = satisfactionAverage.getBuckets().get(0).getAggregations().get("satisfactionAverage");
+        final Avg averageSatisfaction = satisfactionAverage.getBuckets().get(0).getAggregations().get("satisfactionAverage");
         result.put("AvgCustomeSatisfactionIndex", averageSatisfaction.getValue());
 
         if (StringUtils.isNotBlank(complaintDashBoardRequest.getUlbCode())) {
-            CityIndex city = cityIndexService.findOne(complaintDashBoardRequest.getUlbCode());
+            final CityIndex city = cityIndexService.findOne(complaintDashBoardRequest.getUlbCode());
             result.put("regionName", city.getRegionname());
             result.put("districtName", city.getDistrictname());
             result.put("ulbCode", city.getCitycode());
@@ -542,56 +548,53 @@ public class ComplaintIndexService {
             result.put("domainURL", city.getDomainurl());
         }
 
-
-        //To get the count of closed and open complaints
+        // To get the count of closed and open complaints
         Terms terms = consolidatedResponse.getAggregations().get("closedCount");
-        for (Bucket bucket : terms.getBuckets()) {
+        for (final Bucket bucket : terms.getBuckets())
             if (bucket.getKeyAsNumber().intValue() == 1)
                 result.put("ClosedComplaints", bucket.getDocCount());
             else
                 result.put("OpenComplaints", bucket.getDocCount());
-        }
 
-        //To get the count of closed and open complaints
+        // To get the count of closed and open complaints
         terms = consolidatedResponse.getAggregations().get("slaCount");
-        for (Bucket bucket : terms.getBuckets()) {
+        for (final Bucket bucket : terms.getBuckets())
             if (bucket.getKeyAsNumber().intValue() == 1)
                 result.put("WithinSLACount", bucket.getDocCount());
             else
                 result.put("OutSideSLACount", bucket.getDocCount());
-        }
-        Range currentYearCount = consolidatedResponse.getAggregations().get("currentYear");
+        final Range currentYearCount = consolidatedResponse.getAggregations().get("currentYear");
         result.put("CYTDComplaint", currentYearCount.getBuckets().get(0).getDocCount());
 
-        Range todaysCount = consolidatedResponse.getAggregations().get("todaysComplaintCount");
+        final Range todaysCount = consolidatedResponse.getAggregations().get("todaysComplaintCount");
         result.put("todaysComplaintsCount", todaysCount.getBuckets().get(0).getDocCount());
 
-        //For Dynamic results based on grouping fields
+        // For Dynamic results based on grouping fields
         terms = tableResponse.getAggregations().get("groupByField");
-        for (Bucket bucket : terms.getBuckets()) {
-            ComplaintDashBoardResponse responseDetail = populateResponse(complaintDashBoardRequest, bucket, groupByField);
+        for (final Bucket bucket : terms.getBuckets()) {
+            final ComplaintDashBoardResponse responseDetail = populateResponse(complaintDashBoardRequest, bucket, groupByField);
             responseDetail.setTotalComplaintCount(bucket.getDocCount());
 
             satisfactionAverage = bucket.getAggregations().get("excludeZero");
-            Avg groupByFieldAverageSatisfaction = satisfactionAverage.getBuckets().get(0).getAggregations().get("groupByFieldSatisfactionAverage");
+            final Avg groupByFieldAverageSatisfaction = satisfactionAverage.getBuckets().get(0).getAggregations()
+                    .get("groupByFieldSatisfactionAverage");
             if (Double.isNaN(groupByFieldAverageSatisfaction.getValue()))
                 responseDetail.setAvgSatisfactionIndex(0);
             else
                 responseDetail.setAvgSatisfactionIndex(groupByFieldAverageSatisfaction.getValue());
 
-            Terms openAndClosedTerms = bucket.getAggregations().get("groupFieldWiseOpenAndClosedCount");
-            for (Bucket closedCountbucket : openAndClosedTerms.getBuckets()) {
+            final Terms openAndClosedTerms = bucket.getAggregations().get("groupFieldWiseOpenAndClosedCount");
+            for (final Bucket closedCountbucket : openAndClosedTerms.getBuckets())
                 if (closedCountbucket.getKeyAsNumber().intValue() == 1) {
                     responseDetail.setClosedComplaintCount(closedCountbucket.getDocCount());
-                    Terms slaTerms = closedCountbucket.getAggregations().get("groupByFieldSla");
-                    for (Bucket slaBucket : slaTerms.getBuckets()) {
+                    final Terms slaTerms = closedCountbucket.getAggregations().get("groupByFieldSla");
+                    for (final Bucket slaBucket : slaTerms.getBuckets())
                         if (slaBucket.getKeyAsNumber().intValue() == 1)
                             responseDetail.setClosedWithinSLACount(slaBucket.getDocCount());
                         else
                             responseDetail.setClosedOutSideSLACount(slaBucket.getDocCount());
-                    }
-                    //To set Ageing Buckets Result
-                    Range ageingRange = closedCountbucket.getAggregations().get("groupByFieldAgeing");
+                    // To set Ageing Buckets Result
+                    final Range ageingRange = closedCountbucket.getAggregations().get("groupByFieldAgeing");
                     Range.Bucket rangeBucket = ageingRange.getBuckets().get(0);
                     responseDetail.setAgeingGroup1(rangeBucket.getDocCount());
                     rangeBucket = ageingRange.getBuckets().get(1);
@@ -602,50 +605,47 @@ public class ComplaintIndexService {
                     responseDetail.setAgeingGroup4(rangeBucket.getDocCount());
                 } else {
                     responseDetail.setOpenComplaintCount(closedCountbucket.getDocCount());
-                    Terms slaTerms = closedCountbucket.getAggregations().get("groupByFieldSla");
-                    for (Bucket slaBucket : slaTerms.getBuckets()) {
+                    final Terms slaTerms = closedCountbucket.getAggregations().get("groupByFieldSla");
+                    for (final Bucket slaBucket : slaTerms.getBuckets())
                         if (slaBucket.getKeyAsNumber().intValue() == 1)
                             responseDetail.setOpenWithinSLACount(slaBucket.getDocCount());
                         else
                             responseDetail.setOpenOutSideSLACount(slaBucket.getDocCount());
-                    }
                 }
-
-            }
             responseDetailsList.add(responseDetail);
         }
         result.put("responseDetails", responseDetailsList);
 
-        List<ComplaintDashBoardResponse> complaintTypeList = new ArrayList<>();
-        //For complaintTypeWise result
+        final List<ComplaintDashBoardResponse> complaintTypeList = new ArrayList<>();
+        // For complaintTypeWise result
         terms = tableResponse.getAggregations().get("complaintTypeWise");
-        for (Bucket bucket : terms.getBuckets()) {
+        for (final Bucket bucket : terms.getBuckets()) {
             ComplaintDashBoardResponse complaintType = new ComplaintDashBoardResponse();
             complaintType = setDefaultValues(complaintType);
             complaintType.setComplaintTypeName(bucket.getKey().toString());
             complaintType.setTotalComplaintCount(bucket.getDocCount());
 
             satisfactionAverage = bucket.getAggregations().get("excludeZero");
-            Avg complaintTypeAverageSatisfaction = satisfactionAverage.getBuckets().get(0).getAggregations().get("complaintTypeSatisfactionAverage");
+            final Avg complaintTypeAverageSatisfaction = satisfactionAverage.getBuckets().get(0).getAggregations()
+                    .get("complaintTypeSatisfactionAverage");
             if (Double.isNaN(complaintTypeAverageSatisfaction.getValue()))
                 complaintType.setAvgSatisfactionIndex(0);
             else
                 complaintType.setAvgSatisfactionIndex(complaintTypeAverageSatisfaction.getValue());
 
-            Terms openAndClosedTerms = bucket.getAggregations().get("complaintTypeWiseOpenAndClosedCount");
-            for (Bucket closedCountbucket : openAndClosedTerms.getBuckets()) {
+            final Terms openAndClosedTerms = bucket.getAggregations().get("complaintTypeWiseOpenAndClosedCount");
+            for (final Bucket closedCountbucket : openAndClosedTerms.getBuckets())
                 if (closedCountbucket.getKeyAsNumber().intValue() == 1) {
                     complaintType.setClosedComplaintCount(closedCountbucket.getDocCount());
-                    Terms slaTerms = closedCountbucket.getAggregations().get("complaintTypeSla");
-                    for (Bucket slaBucket : slaTerms.getBuckets()) {
+                    final Terms slaTerms = closedCountbucket.getAggregations().get("complaintTypeSla");
+                    for (final Bucket slaBucket : slaTerms.getBuckets())
                         if (slaBucket.getKeyAsNumber().intValue() == 1)
                             complaintType.setClosedWithinSLACount(slaBucket.getDocCount());
                         else
                             complaintType.setClosedOutSideSLACount(slaBucket.getDocCount());
-                    }
 
-                    //To set Ageing Buckets Result
-                    Range ageingRange = closedCountbucket.getAggregations().get("ComplaintTypeAgeing");
+                    // To set Ageing Buckets Result
+                    final Range ageingRange = closedCountbucket.getAggregations().get("ComplaintTypeAgeing");
                     Range.Bucket rangeBucket = ageingRange.getBuckets().get(0);
                     complaintType.setAgeingGroup1(rangeBucket.getDocCount());
                     rangeBucket = ageingRange.getBuckets().get(1);
@@ -656,16 +656,13 @@ public class ComplaintIndexService {
                     complaintType.setAgeingGroup4(rangeBucket.getDocCount());
                 } else {
                     complaintType.setOpenComplaintCount(closedCountbucket.getDocCount());
-                    Terms slaTerms = closedCountbucket.getAggregations().get("complaintTypeSla");
-                    for (Bucket slaBucket : slaTerms.getBuckets()) {
+                    final Terms slaTerms = closedCountbucket.getAggregations().get("complaintTypeSla");
+                    for (final Bucket slaBucket : slaTerms.getBuckets())
                         if (slaBucket.getKeyAsNumber().intValue() == 1)
                             complaintType.setOpenWithinSLACount(slaBucket.getDocCount());
                         else
                             complaintType.setOpenOutSideSLACount(slaBucket.getDocCount());
-                    }
                 }
-
-            }
             complaintTypeList.add(complaintType);
         }
         result.put("complaintTypes", complaintTypeList);
@@ -673,15 +670,16 @@ public class ComplaintIndexService {
         return result;
     }
 
-    public HashMap<String, Object> getComplaintTypeReport(ComplaintDashBoardRequest complaintDashBoardRequest) {
-        String groupByField = ComplaintElasticsearchUtils.getAggregationGroupingField(complaintDashBoardRequest);
-        SearchResponse complaintTypeResponse = complaintIndexRepository.findAllGrievanceByComplaintType(complaintDashBoardRequest,
+    public HashMap<String, Object> getComplaintTypeReport(final ComplaintDashBoardRequest complaintDashBoardRequest) {
+        final String groupByField = ComplaintElasticsearchUtils.getAggregationGroupingField(complaintDashBoardRequest);
+        final SearchResponse complaintTypeResponse = complaintIndexRepository.findAllGrievanceByComplaintType(
+                complaintDashBoardRequest,
                 getFilterQuery(complaintDashBoardRequest),
                 groupByField);
 
-        HashMap<String, Object> result = new HashMap<>();
+        final HashMap<String, Object> result = new HashMap<>();
         if (StringUtils.isNotBlank(complaintDashBoardRequest.getUlbCode())) {
-            CityIndex city = cityIndexService.findOne(complaintDashBoardRequest.getUlbCode());
+            final CityIndex city = cityIndexService.findOne(complaintDashBoardRequest.getUlbCode());
             result.put("regionName", city.getRegionname());
             result.put("districtName", city.getDistrictname());
             result.put("ulbCode", city.getCitycode());
@@ -689,40 +687,38 @@ public class ComplaintIndexService {
             result.put("ulbName", city.getName());
             result.put("domainURL", city.getDomainurl());
         }
-        List<ComplaintDashBoardResponse> responseDetailsList = new ArrayList<>();
+        final List<ComplaintDashBoardResponse> responseDetailsList = new ArrayList<>();
 
-        //For Dynamic results based on grouping fields
-        Terms terms = complaintTypeResponse.getAggregations().get("groupByField");
-        for (Bucket bucket : terms.getBuckets()) {
+        // For Dynamic results based on grouping fields
+        final Terms terms = complaintTypeResponse.getAggregations().get("groupByField");
+        for (final Bucket bucket : terms.getBuckets()) {
 
-            ComplaintDashBoardResponse responseDetail = populateResponse(complaintDashBoardRequest, bucket, groupByField);
+            final ComplaintDashBoardResponse responseDetail = populateResponse(complaintDashBoardRequest, bucket, groupByField);
             responseDetail.setTotalComplaintCount(bucket.getDocCount());
 
-            Terms openAndClosedTerms = bucket.getAggregations().get("closedComplaintCount");
-            for (Bucket closedCountbucket : openAndClosedTerms.getBuckets()) {
+            final Terms openAndClosedTerms = bucket.getAggregations().get("closedComplaintCount");
+            for (final Bucket closedCountbucket : openAndClosedTerms.getBuckets())
                 if (closedCountbucket.getKeyAsNumber().intValue() == 1)
                     responseDetail.setClosedComplaintCount(closedCountbucket.getDocCount());
                 else
                     responseDetail.setOpenComplaintCount(closedCountbucket.getDocCount());
-            }
             responseDetailsList.add(responseDetail);
         }
         result.put("complaints", responseDetailsList);
         return result;
     }
 
-
-    public HashMap<String, Object> getSourceWiseResponse(ComplaintDashBoardRequest complaintDashBoardRequest) {
-        SearchResponse sourceWiseResponse = complaintIndexRepository.findAllGrievanceBySource(complaintDashBoardRequest,
+    public HashMap<String, Object> getSourceWiseResponse(final ComplaintDashBoardRequest complaintDashBoardRequest) {
+        final SearchResponse sourceWiseResponse = complaintIndexRepository.findAllGrievanceBySource(complaintDashBoardRequest,
                 getFilterQuery(complaintDashBoardRequest),
                 ComplaintElasticsearchUtils.getAggregationGroupingField(complaintDashBoardRequest));
 
-        HashMap<String, Object> result = new HashMap<>();
-        List<ComplaintSourceResponse> responseDetailsList = new ArrayList<>();
+        final HashMap<String, Object> result = new HashMap<>();
+        final List<ComplaintSourceResponse> responseDetailsList = new ArrayList<>();
         Terms terms = sourceWiseResponse.getAggregations().get("groupByField");
 
-        for (Bucket bucket : terms.getBuckets()) {
-            ComplaintSourceResponse complaintSouce = new ComplaintSourceResponse();
+        for (final Bucket bucket : terms.getBuckets()) {
+            final ComplaintSourceResponse complaintSouce = new ComplaintSourceResponse();
             CityIndex city;
             if (StringUtils.isBlank(complaintDashBoardRequest.getDistrictName())) {
                 city = cityIndexService.findByDistrictCode(bucket.getKeyAsString());
@@ -748,7 +744,8 @@ public class ComplaintIndexService {
                     complaintSouce.setWardName(complaintIndexRepository.getWardName(complaintDashBoardRequest.getWardNo()));
 
                 if (StringUtils.isNotBlank(complaintDashBoardRequest.getDepartmentCode())) {
-                    Department department = departmentService.getDepartmentByCode(complaintDashBoardRequest.getDepartmentCode());
+                    final Department department = departmentService.getDepartmentByCode(complaintDashBoardRequest
+                            .getDepartmentCode());
                     if (department != null)
                         complaintSouce.setDepartmentName(department.getName());
                 }
@@ -758,10 +755,10 @@ public class ComplaintIndexService {
                     || StringUtils.isNotBlank(complaintDashBoardRequest.getWardNo()))
                 complaintSouce.setFunctionaryName(bucket.getKeyAsString());
 
-            List<HashMap<String, Long>> list = new ArrayList<>();
-            Terms sourceTerms = bucket.getAggregations().get("groupByFieldSource");
-            for (Bucket sourceBucket : sourceTerms.getBuckets()) {
-                HashMap<String, Long> sourceMap = new HashMap<>();
+            final List<HashMap<String, Long>> list = new ArrayList<>();
+            final Terms sourceTerms = bucket.getAggregations().get("groupByFieldSource");
+            for (final Bucket sourceBucket : sourceTerms.getBuckets()) {
+                final HashMap<String, Long> sourceMap = new HashMap<>();
                 sourceMap.put(sourceBucket.getKeyAsString(), sourceBucket.getDocCount());
                 list.add(sourceMap);
             }
@@ -770,15 +767,15 @@ public class ComplaintIndexService {
         }
         result.put("responseDetails", responseDetailsList);
 
-        List<ComplaintSourceResponse> complaintTypeList = new ArrayList<>();
+        final List<ComplaintSourceResponse> complaintTypeList = new ArrayList<>();
         terms = sourceWiseResponse.getAggregations().get("complaintTypeWise");
-        for (Bucket bucket : terms.getBuckets()) {
-            ComplaintSourceResponse complaintSouce = new ComplaintSourceResponse();
+        for (final Bucket bucket : terms.getBuckets()) {
+            final ComplaintSourceResponse complaintSouce = new ComplaintSourceResponse();
             complaintSouce.setComplaintTypeName(bucket.getKey().toString());
-            List<HashMap<String, Long>> list = new ArrayList<>();
-            Terms sourceTerms = bucket.getAggregations().get("complaintTypeWiseSource");
-            for (Bucket sourceBucket : sourceTerms.getBuckets()) {
-                HashMap<String, Long> sourceMap = new HashMap<>();
+            final List<HashMap<String, Long>> list = new ArrayList<>();
+            final Terms sourceTerms = bucket.getAggregations().get("complaintTypeWiseSource");
+            for (final Bucket sourceBucket : sourceTerms.getBuckets()) {
+                final HashMap<String, Long> sourceMap = new HashMap<>();
                 sourceMap.put(sourceBucket.getKeyAsString(), sourceBucket.getDocCount());
                 list.add(sourceMap);
             }
@@ -790,33 +787,37 @@ public class ComplaintIndexService {
 
     }
 
-    private BoolQueryBuilder getFilterQuery(ComplaintDashBoardRequest complaintDashBoardRequest) {
+    private BoolQueryBuilder getFilterQuery(final ComplaintDashBoardRequest complaintDashBoardRequest) {
         BoolQueryBuilder boolQuery = QueryBuilders.boolQuery().filter(QueryBuilders.termQuery("registered", 1));
         if (StringUtils.isNotBlank(complaintDashBoardRequest.getRegionName()))
             boolQuery = boolQuery.filter(QueryBuilders.matchQuery("cityRegionName", complaintDashBoardRequest.getRegionName()));
         if (StringUtils.isNotBlank(complaintDashBoardRequest.getUlbGrade()))
             boolQuery = boolQuery.filter(QueryBuilders.matchQuery("cityGrade", complaintDashBoardRequest.getUlbGrade()));
         if (StringUtils.isNotBlank(complaintDashBoardRequest.getDistrictName()))
-            boolQuery = boolQuery.filter(QueryBuilders.matchQuery("cityDistrictName", complaintDashBoardRequest.getDistrictName()));
+            boolQuery = boolQuery
+                    .filter(QueryBuilders.matchQuery("cityDistrictName", complaintDashBoardRequest.getDistrictName()));
         if (StringUtils.isNotBlank(complaintDashBoardRequest.getUlbCode()))
             boolQuery = boolQuery.filter(QueryBuilders.matchQuery("cityCode", complaintDashBoardRequest.getUlbCode()));
         if (StringUtils.isNotBlank(complaintDashBoardRequest.getWardNo()))
             boolQuery = boolQuery.filter(QueryBuilders.matchQuery("wardNo", complaintDashBoardRequest.getWardNo()));
         if (StringUtils.isNotBlank(complaintDashBoardRequest.getDepartmentCode()))
-            boolQuery = boolQuery.filter(QueryBuilders.matchQuery("departmentCode", complaintDashBoardRequest.getDepartmentCode()));
+            boolQuery = boolQuery
+                    .filter(QueryBuilders.matchQuery("departmentCode", complaintDashBoardRequest.getDepartmentCode()));
         if (StringUtils.isNotBlank(complaintDashBoardRequest.getFromDate()) &&
                 StringUtils.isNotBlank(complaintDashBoardRequest.getToDate()))
             boolQuery = boolQuery.must(QueryBuilders.rangeQuery("createdDate")
                     .from(complaintDashBoardRequest.getFromDate())
                     .to(complaintDashBoardRequest.getToDate()));
         if (StringUtils.isNotBlank(complaintDashBoardRequest.getComplaintTypeCode()))
-            boolQuery = boolQuery.filter(QueryBuilders.matchQuery("complaintTypeCode", complaintDashBoardRequest.getComplaintTypeCode()));
+            boolQuery = boolQuery.filter(QueryBuilders.matchQuery("complaintTypeCode",
+                    complaintDashBoardRequest.getComplaintTypeCode()));
 
         return boolQuery;
     }
 
-    private ComplaintDashBoardResponse populateResponse(ComplaintDashBoardRequest complaintDashBoardRequest, Bucket bucket,
-                                                        String groupByField) {
+    private ComplaintDashBoardResponse populateResponse(final ComplaintDashBoardRequest complaintDashBoardRequest,
+            final Bucket bucket,
+            final String groupByField) {
         ComplaintDashBoardResponse responseDetail = new ComplaintDashBoardResponse();
 
         responseDetail = setDefaultValues(responseDetail);
@@ -832,12 +833,11 @@ public class ComplaintIndexService {
             responseDetail.setUlbName(city.getName());
         }
 
-
         if (groupByField.equals("cityDistrictCode")) {
             city = cityIndexService.findByDistrictCode(bucket.getKeyAsString());
             responseDetail.setDistrictName(city.getDistrictname());
         }
-        //When UlbGrade is selected group by Ulb
+        // When UlbGrade is selected group by Ulb
         if (groupByField.equals("cityCode") &&
                 !complaintDashBoardRequest.getType().equals(DASHBOARD_GROUPING_CITY)) {
             city = cityIndexService.findOne(bucket.getKeyAsString());
@@ -847,7 +847,7 @@ public class ComplaintIndexService {
             responseDetail.setUlbCode(city.getCitycode());
             responseDetail.setDomainURL(city.getDomainurl());
         }
-        //When UlbCode is passed without type group by department else by type
+        // When UlbCode is passed without type group by department else by type
         if (groupByField.equals("departmentName"))
             responseDetail.setDepartmentName(bucket.getKeyAsString());
         if (groupByField.equals("wardName"))
@@ -856,13 +856,13 @@ public class ComplaintIndexService {
             responseDetail.setLocalityName(bucket.getKeyAsString());
         if (groupByField.equals("currentFunctionaryName")) {
             responseDetail.setFunctionaryName(bucket.getKeyAsString());
-            String mobileNumber = complaintIndexRepository.getFunctionryMobileNumber(bucket.getKeyAsString());
+            final String mobileNumber = complaintIndexRepository.getFunctionryMobileNumber(bucket.getKeyAsString());
             responseDetail.setFunctionaryMobileNumber(mobileNumber);
         }
         return responseDetail;
     }
 
-    private ComplaintDashBoardResponse setDefaultValues(ComplaintDashBoardResponse response) {
+    private ComplaintDashBoardResponse setDefaultValues(final ComplaintDashBoardResponse response) {
         response.setDistrictName(StringUtils.EMPTY);
         response.setUlbName(StringUtils.EMPTY);
         response.setWardName(StringUtils.EMPTY);

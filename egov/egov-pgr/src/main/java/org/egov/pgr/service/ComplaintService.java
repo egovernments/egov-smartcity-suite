@@ -188,7 +188,7 @@ public class ComplaintService {
                 .withStateValue(complaint.getStatus().getName()).withOwner(assignee).withDateInfo(new Date());
 
         complaint.setAssignee(assignee);
-        complaint.setEscalationDate(new DateTime());
+        complaint.setEscalationDate(new Date());
         complaint.setEscalationDate(escalationService.getExpiryDate(complaint));
 
         if (null != complaint.getComplaintType() && null != complaint.getComplaintType().getDepartment())
