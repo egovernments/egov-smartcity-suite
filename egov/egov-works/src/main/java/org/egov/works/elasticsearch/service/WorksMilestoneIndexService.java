@@ -44,6 +44,7 @@ import static org.egov.works.utils.WorksConstants.APPROVED;
 import static org.egov.works.utils.WorksConstants.WORKSMILESTONE_DISTNAME_COLUMN_NAME;
 import static org.egov.works.utils.WorksConstants.WORKSMILESTONE_ESTIMATEDETAILID_COLUMN_NAME;
 import static org.egov.works.utils.WorksConstants.WORKSMILESTONE_LOASTATUS_COLUMN_NAME;
+import static org.egov.works.utils.WorksConstants.WORKSMILESTONE_MILESTONESTATUS_COLUMN_NAME;
 import static org.egov.works.utils.WorksConstants.WORKSMILESTONE_TYPEOFWORKNAME_COLUMN_NAME;
 import static org.egov.works.utils.WorksConstants.WORKSMILESTONE_ULBCODE_COLUMN_NAME;
 import static org.egov.works.utils.WorksConstants.WORKSMILESTONE_ULBNAME_COLUMN_NAME;
@@ -608,6 +609,8 @@ public class WorksMilestoneIndexService {
         if (worksIndexsRequest.getLineestimatedetailid() != null)
             boolQuery.filter(QueryBuilders.matchQuery(WORKSMILESTONE_ESTIMATEDETAILID_COLUMN_NAME,
                     worksIndexsRequest.getLineestimatedetailid()));
+
+        boolQuery.filter(QueryBuilders.matchQuery(WORKSMILESTONE_MILESTONESTATUS_COLUMN_NAME, APPROVED));
 
         return boolQuery;
     }

@@ -329,5 +329,7 @@ public class WorksConstants {
 
     public final static String WORKSMILESTONE_LOASTATUS_COLUMN_NAME = "loastatus";
 
+    public final static String WORKSMILESTONE_MILESTONESTATUS_COLUMN_NAME = "milestonestatus";
+
     public final static String WORKSMILESTONE_ESTIMATEDETAILID_COLUMN_NAME = "lineestimatedetailid";
 }
