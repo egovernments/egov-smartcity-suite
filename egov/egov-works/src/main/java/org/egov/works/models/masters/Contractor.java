@@ -57,6 +57,7 @@ import javax.persistence.ManyToOne;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.OneToMany;
+import javax.persistence.OrderBy;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.validation.Valid;
@@ -165,6 +166,7 @@ public class Contractor extends AbstractAuditable implements EntityType {
 
     @Valid
     @JsonIgnore
+    @OrderBy("id")
     @OneToMany(mappedBy = "contractor", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true, targetEntity = ContractorDetail.class)
     private List<ContractorDetail> contractorDetails = new LinkedList<ContractorDetail>();
 
