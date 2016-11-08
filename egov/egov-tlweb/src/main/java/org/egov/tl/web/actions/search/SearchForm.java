@@ -42,7 +42,6 @@ package org.egov.tl.web.actions.search;
 
 import java.util.List;
 
-
 /**
  * @author satyam
  */
@@ -57,72 +56,121 @@ public class SearchForm {
     private String tradeOwnerName;
     private String propertyAssessmentNo;
     private String mobileNo;
+    private String status;
+    private String ownerName;
+    private String expiryYear;
     private List<String> actions;
-    
+
     public String getApplicationNumber() {
         return applicationNumber;
     }
-    public void setApplicationNumber(String applicationNumber) {
+
+    public void setApplicationNumber(final String applicationNumber) {
         this.applicationNumber = applicationNumber;
     }
+
     public String getLicenseNumber() {
         return licenseNumber;
     }
-    public void setLicenseNumber(String licenseNumber) {
+
+    public void setLicenseNumber(final String licenseNumber) {
         this.licenseNumber = licenseNumber;
     }
+
     public String getOldLicenseNumber() {
         return oldLicenseNumber;
     }
-    public void setOldLicenseNumber(String oldLicenseNumber) {
+
+    public void setOldLicenseNumber(final String oldLicenseNumber) {
         this.oldLicenseNumber = oldLicenseNumber;
     }
+
     public String getCategoryName() {
         return categoryName;
     }
-    public void setCategoryName(String categoryName) {
+
+    public void setCategoryName(final String categoryName) {
         this.categoryName = categoryName;
     }
+
     public String getSubCategoryName() {
         return subCategoryName;
     }
-    public void setSubCategoryName(String subCategoryName) {
+
+    public void setSubCategoryName(final String subCategoryName) {
         this.subCategoryName = subCategoryName;
     }
+
     public String getTradeTitle() {
         return tradeTitle;
     }
-    public void setTradeTitle(String tradeTitle) {
+
+    public void setTradeTitle(final String tradeTitle) {
         this.tradeTitle = tradeTitle;
     }
+
     public String getTradeOwnerName() {
         return tradeOwnerName;
     }
-    public void setTradeOwnerName(String tradeOwnerName) {
+
+    public void setTradeOwnerName(final String tradeOwnerName) {
         this.tradeOwnerName = tradeOwnerName;
     }
+
     public String getPropertyAssessmentNo() {
         return propertyAssessmentNo;
     }
-    public void setPropertyAssessmentNo(String propertyAssessmentNo) {
+
+    public void setPropertyAssessmentNo(final String propertyAssessmentNo) {
         this.propertyAssessmentNo = propertyAssessmentNo;
     }
+
     public String getMobileNo() {
         return mobileNo;
     }
-    public void setMobileNo(String mobileNo) {
+
+    public void setMobileNo(final String mobileNo) {
         this.mobileNo = mobileNo;
     }
+
     public Long getLicenseId() {
         return licenseId;
     }
-    public void setLicenseId(Long licenseId) {
+
+    public void setLicenseId(final Long licenseId) {
         this.licenseId = licenseId;
     }
+
     public List<String> getActions() {
         return actions;
     }
-    public void setActions(List<String> actions) {
+
+    public void setActions(final List<String> actions) {
         this.actions = actions;
     }
+
+    public String getStatus() {
+        return status;
+    }
+
+    public void setStatus(final String status) {
+        this.status = status;
+    }
+
+    public String getOwnerName() {
+        return ownerName;
+    }
+
+    public void setOwnerName(final String ownerName) {
+        this.ownerName = ownerName;
+    }
+
+    public String getExpiryYear() {
+        return expiryYear;
+    }
+
+    public void setExpiryYear(final String expiryYear) {
+        this.expiryYear = expiryYear;
+    }
+
 }

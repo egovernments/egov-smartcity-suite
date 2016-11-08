@@ -40,14 +40,14 @@
 
 package org.egov.tl.web.actions.search;
 
+import java.lang.reflect.Type;
+import java.util.ArrayList;
+
 import com.google.gson.Gson;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonSerializationContext;
 import com.google.gson.JsonSerializer;
-
-import java.lang.reflect.Type;
-import java.util.ArrayList;
 
 public class SearchTradeResultHelperAdaptor implements JsonSerializer<SearchForm> {
 
@@ -66,16 +66,19 @@ public class SearchTradeResultHelperAdaptor implements JsonSerializer<SearchForm
             jsonObject.addProperty("tradeOwner", searchFormObj.getTradeOwnerName());
             jsonObject.addProperty("mobileNumber", searchFormObj.getMobileNo());
             jsonObject.addProperty("propertyAssmntNo", searchFormObj.getPropertyAssessmentNo());
-            // To add set of actions for search results 
-            Gson gson = new Gson();
-            ArrayList<JsonObject> list = new ArrayList<>();
+            jsonObject.addProperty("status", searchFormObj.getStatus());
+            jsonObject.addProperty("expiryYear", searchFormObj.getExpiryYear());
+            jsonObject.addProperty("ownerName", searchFormObj.getOwnerName());
+            // To add set of actions for search results
+            final Gson gson = new Gson();
+            final ArrayList<JsonObject> list = new ArrayList<>();
             JsonObject objectInList = new JsonObject();
-            for(int i=0; i<searchFormObj.getActions().size(); i++){
+            for (int i = 0; i < searchFormObj.getActions().size(); i++) {
                 objectInList = new JsonObject();
                 objectInList.addProperty("key", searchFormObj.getActions().get(i));
                 list.add(objectInList);
             }
-            jsonObject.addProperty("actions",gson.toJson(list));
+            jsonObject.addProperty("actions", gson.toJson(list));
         }
         return jsonObject;
     }
