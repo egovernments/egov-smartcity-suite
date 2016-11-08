@@ -39,6 +39,8 @@
  */
 package org.egov.tl.service;
 
+import java.util.List;
+
 import org.egov.tl.entity.LicenseAppType;
 import org.egov.tl.entity.PenaltyRates;
 import org.egov.tl.repository.LicenseAppTypeRepository;
@@ -47,8 +49,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.util.List;
 
 @Service
 @Transactional(readOnly = true)
@@ -82,7 +82,7 @@ public class PenaltyRatesService {
     }
 
     @Transactional
-    public PenaltyRates create(final PenaltyRates penaltyRates) {
+    public List<PenaltyRates> create(final List<PenaltyRates> penaltyRates) {
         return penaltyRatesRepository.save(penaltyRates);
     }
 

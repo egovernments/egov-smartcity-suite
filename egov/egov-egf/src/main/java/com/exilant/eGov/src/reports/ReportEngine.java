@@ -1,41 +1,18 @@
 /*
- * eGov suite of products aim to improve the internal efficiency,transparency,
- *    accountability and the service delivery of the government  organizations.
- *
- *     Copyright (C) <2015>  eGovernments Foundation
- *
- *     The updated version of eGov suite of products as by eGovernments Foundation
- *     is available at http://www.egovernments.org
- *
- *     This program is free software: you can redistribute it and/or modify
- *     it under the terms of the GNU General Public License as published by
- *     the Free Software Foundation, either version 3 of the License, or
- *     any later version.
- *
- *     This program is distributed in the hope that it will be useful,
- *     but WITHOUT ANY WARRANTY; without even the implied warranty of
- *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *     GNU General Public License for more details.
- *
- *     You should have received a copy of the GNU General Public License
- *     along with this program. If not, see http://www.gnu.org/licenses/ or
- *     http://www.gnu.org/licenses/gpl.html .
- *
- *     In addition to the terms of the GPL license to be adhered to in using this
- *     program, the following additional terms are to be complied with:
- *
- *         1) All versions of this program, verbatim or modified must carry this
- *            Legal Notice.
- *
- *         2) Any misrepresentation of the origin of the material is prohibited. It
- *            is required that all modified versions of this material be marked in
- *            reasonable ways as different from the original version.
- *
- *         3) This license does not grant any rights to any user of the program
- *            with regards to rights under trademark law for use of the trade names
- *            or trademarks of eGovernments Foundation.
- *
- *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
+ * eGov suite of products aim to improve the internal efficiency,transparency, accountability and the service delivery of the
+ * government organizations. Copyright (C) <2015> eGovernments Foundation The updated version of eGov suite of products as by
+ * eGovernments Foundation is available at http://www.egovernments.org This program is free software: you can redistribute it
+ * and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, either version
+ * 3 of the License, or any later version. This program is distributed in the hope that it will be useful, but WITHOUT ANY
+ * WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public
+ * License for more details. You should have received a copy of the GNU General Public License along with this program. If not,
+ * see http://www.gnu.org/licenses/ or http://www.gnu.org/licenses/gpl.html . In addition to the terms of the GPL license to be
+ * adhered to in using this program, the following additional terms are to be complied with: 1) All versions of this program,
+ * verbatim or modified must carry this Legal Notice. 2) Any misrepresentation of the origin of the material is prohibited. It is
+ * required that all modified versions of this material be marked in reasonable ways as different from the original version. 3)
+ * This license does not grant any rights to any user of the program with regards to rights under trademark law for use of the
+ * trade names or trademarks of eGovernments Foundation. In case of any queries, you can reach eGovernments Foundation at
+ * contact@egovernments.org.
  */
 package com.exilant.eGov.src.reports;
 
@@ -66,9 +43,7 @@ public class ReportEngine {
     @Autowired
     private AppConfigValueService appConfigValuesService;
 
-   
-	public String getVouchersListQuery(final ReportEngineBean reBean) throws ApplicationRuntimeException
-    {
+    public String getVouchersListQuery(final ReportEngineBean reBean) throws ApplicationRuntimeException {
         boolean includeVouchermis = false;
         boolean includeGeneralLedger = false;
         String firstParam = "";
@@ -93,14 +68,14 @@ public class ReportEngine {
              * add the table names if no fields of a perticular table is passed ommit it eg if scheme,subscheme or divisionid is
              * not passed donot include vouchermis or if function is not passed donot include generalledger
              */
-            if (includeVouchermis == true && includeGeneralLedger == true)
+            if (includeVouchermis && includeGeneralLedger)
                 reportEngineQry.append(" ( voucherheader voucher left join vouchermis mis on voucher.id=mis.voucherheaderid)"
                         + "left join generalledger ledger on voucher.id=ledger.voucherheaderid ");
-            else if (includeVouchermis == true)
+            else if (includeVouchermis)
                 reportEngineQry.append(" voucherheader voucher left join vouchermis mis on voucher.id=mis.voucherheaderid ");
-            else if (includeGeneralLedger == true)
+            else if (includeGeneralLedger)
                 reportEngineQry
-                .append(" voucherheader voucher left join generalledger ledger on voucher.id=ledger.voucherheaderid ");
+                        .append(" voucherheader voucher left join generalledger ledger on voucher.id=ledger.voucherheaderid ");
             else
                 reportEngineQry.append(" voucherheader voucher ");
 
@@ -112,65 +87,53 @@ public class ReportEngine {
              * where conditions add the conditions for the variables in the ReportEngineBean
              *
              */
-            if (checkNullandEmpty(reBean.getFundId()))
-            {
+            if (checkNullandEmpty(reBean.getFundId())) {
                 reportEngineQry.append(firstParam + " voucher.fundId=" + reBean.getFundId());
                 firstParam = andParam;
             }
-            if (checkNullandEmpty(reBean.getFundsourceId()))
-            {
+            if (checkNullandEmpty(reBean.getFundsourceId())) {
                 reportEngineQry.append(firstParam + " mis.fundsourceId=" + reBean.getFundsourceId());
                 firstParam = andParam;
             }
 
-            if (checkNullandEmpty(reBean.getFromDate()))
-            {
+            if (checkNullandEmpty(reBean.getFromDate())) {
                 reportEngineQry.append(firstParam + " voucher.voucherDate>=to_date('" + reBean.getFromDate() + "','dd/MM/yyyy')");
                 firstParam = andParam;
             }
-            if (checkNullandEmpty(reBean.getToDate()))
-            {
+            if (checkNullandEmpty(reBean.getToDate())) {
                 reportEngineQry.append(firstParam + " voucher.voucherDate<=to_date('" + reBean.getToDate() + "','dd/MM/yyyy')");
                 firstParam = andParam;
             }
 
-            if (checkNullandEmpty(reBean.getFromVoucherNumber()))
-            {
+            if (checkNullandEmpty(reBean.getFromVoucherNumber())) {
                 reportEngineQry.append(firstParam + " voucher.fromVouchernumber>=" + reBean.getFromVoucherNumber());
                 firstParam = andParam;
             }
-            if (checkNullandEmpty(reBean.getToVoucherNumber()))
-            {
+            if (checkNullandEmpty(reBean.getToVoucherNumber())) {
                 reportEngineQry.append(firstParam + " voucher.toVouchernumber<=" + reBean.getToVoucherNumber());
                 firstParam = andParam;
             }
-            if (checkNullandEmpty(reBean.getSchemeId()))
-            {
+            if (checkNullandEmpty(reBean.getSchemeId())) {
                 reportEngineQry.append(firstParam + " mis.schemeId=" + reBean.getSchemeId());
                 firstParam = andParam;
             }
-            if (checkNullandEmpty(reBean.getSubSchemeId()))
-            {
+            if (checkNullandEmpty(reBean.getSubSchemeId())) {
                 reportEngineQry.append(firstParam + " mis.subSchemeId=" + reBean.getSubSchemeId());
                 firstParam = andParam;
             }
-            if (checkNullandEmpty(reBean.getDivisionId()))
-            {
+            if (checkNullandEmpty(reBean.getDivisionId())) {
                 reportEngineQry.append(firstParam + " mis.divisionId=" + reBean.getDivisionId());
                 firstParam = andParam;
             }
-            if (checkNullandEmpty(reBean.getDepartmentId()))
-            {
+            if (checkNullandEmpty(reBean.getDepartmentId())) {
                 reportEngineQry.append(firstParam + " mis.departmentId=" + reBean.getDepartmentId());
                 firstParam = andParam;
             }
-            if (checkNullandEmpty(reBean.getFunctionaryId()))
-            {
+            if (checkNullandEmpty(reBean.getFunctionaryId())) {
                 reportEngineQry.append(firstParam + " mis.functionaryId=" + reBean.getFunctionaryId());
                 firstParam = andParam;
             }
-            if (checkNullandEmpty(reBean.getFunctionId()))
-            {
+            if (checkNullandEmpty(reBean.getFunctionId())) {
                 reportEngineQry.append(firstParam + " ledger.functionid=" + reBean.getFunctionId());
                 firstParam = andParam;
             }
@@ -182,26 +145,22 @@ public class ReportEngine {
 
             new ArrayList<String>();
             String defaultStatusExclude = null;
-            final List<AppConfigValues> listAppConfVal = appConfigValuesService.
-                    getConfigValuesByModuleAndKey("EGF", "statusexcludeReport");
+            final List<AppConfigValues> listAppConfVal = appConfigValuesService.getConfigValuesByModuleAndKey("EGF",
+                    "statusexcludeReport");
             if (null != listAppConfVal)
                 defaultStatusExclude = listAppConfVal.get(0).getValue();
             else
                 throw new ApplicationRuntimeException("Exlcude statusses not  are not defined for Reports");
             reportEngineQry.append(firstParam + "voucher.status not in(" + defaultStatusExclude);
-            if (reBean.getExcludeStatuses() != null && reBean.getExcludeStatuses().size() > 0)
-            {
+            if (reBean.getExcludeStatuses() != null && reBean.getExcludeStatuses().size() > 0) {
                 reportEngineQry.append("," + reBean.getCommaSeperatedValues(reBean.getExcludeStatuses()) + " )");
                 firstParam = andParam;
-            }
-            else
-            {
+            } else {
                 reportEngineQry.append(")");
                 firstParam = andParam;
             }
 
-            if (reBean.getIncludeStatuses() != null && reBean.getIncludeStatuses().size() > 0)
-            {
+            if (reBean.getIncludeStatuses() != null && reBean.getIncludeStatuses().size() > 0) {
                 reportEngineQry.append(firstParam + " voucher.status in( "
                         + reBean.getCommaSeperatedValues(reBean.getIncludeStatuses()) + " )");
                 firstParam = andParam;
@@ -219,8 +178,7 @@ public class ReportEngine {
 
     }
 
-    private boolean checkNullandEmpty(final String column)
-    {
+    private boolean checkNullandEmpty(final String column) {
         if (column != null && !column.isEmpty())
             return true;
         else
@@ -228,8 +186,7 @@ public class ReportEngine {
 
     }
 
-    public ReportEngineBean populateReportEngineBean(final GeneralLedgerReportBean reportBean)
-    {
+    public ReportEngineBean populateReportEngineBean(final GeneralLedgerReportBean reportBean) {
         final ReportEngineBean reBean = new ReportEngineBean();
         reBean.setDepartmentId(reportBean.getDepartmentId());
         reBean.setDivisionId(reportBean.getFieldId());
@@ -248,13 +205,13 @@ public class ReportEngine {
         return reBean;
     }
 
-	public AppConfigValueService getAppConfigValuesService() {
-		return appConfigValuesService;
-	}
+    public AppConfigValueService getAppConfigValuesService() {
+        return appConfigValuesService;
+    }
 
-	public void setAppConfigValuesService(
-			AppConfigValueService appConfigValuesService) {
-		this.appConfigValuesService = appConfigValuesService;
-	}
+    public void setAppConfigValuesService(
+            AppConfigValueService appConfigValuesService) {
+        this.appConfigValuesService = appConfigValuesService;
+    }
 
 }

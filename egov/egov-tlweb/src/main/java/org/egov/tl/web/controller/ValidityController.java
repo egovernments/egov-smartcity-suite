@@ -39,37 +39,38 @@
  */
 package org.egov.tl.web.controller;
 
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
 import org.egov.tl.entity.Validity;
 import org.egov.tl.service.NatureOfBusinessService;
 import org.egov.tl.service.ValidityService;
 import org.egov.tl.service.masters.LicenseCategoryService;
-import org.egov.tl.web.adaptor.ValidityJsonAdaptor;
+import org.egov.tl.web.response.adaptor.ValidityResponseAdaptor;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import javax.validation.Valid;
-import java.util.List;
+
+import static org.egov.infra.web.utils.WebUtils.toJSON;
+import static org.springframework.http.MediaType.TEXT_PLAIN_VALUE;
+import static org.springframework.web.bind.annotation.RequestMethod.GET;
+import static org.springframework.web.bind.annotation.RequestMethod.POST;
 
 @Controller
 @RequestMapping("/validity")
 public class ValidityController {
-    private final static String VALIDITY_NEW = "validity-new";
-    private final static String VALIDITY_RESULT = "validity-result";
-    private final static String VALIDITY_EDIT = "validity-edit";
-    private final static String VALIDITY_VIEW = "validity-view";
-    private final static String VALIDITY_SEARCH = "validity-search";
+    private static final String VALIDITY_NEW = "validity-new";
+    private static final String VALIDITY_RESULT = "validity-result";
+    private static final String VALIDITY_EDIT = "validity-edit";
+    private static final String VALIDITY_VIEW = "validity-view";
+    private static final String VALIDITY_SEARCH = "validity-search";
+    private static final String VALIDITY_MODEL_ATTRIB_NAME = "validity";
 
     @Autowired
     private ValidityService validityService;
@@ -80,20 +81,20 @@ public class ValidityController {
     @Autowired
     private LicenseCategoryService licenseCategoryService;
 
-    private void prepareNewForm(final Model model) {
+    private void prepareNewForm(Model model) {
         model.addAttribute("natureOfBusinesss", natureOfBusinessService.findAll());
         model.addAttribute("licenseCategorys", licenseCategoryService.findAll());
     }
 
-    @RequestMapping(value = "/new", method = RequestMethod.GET)
-    public String newForm(@ModelAttribute final Validity validity, final Model model) {
+    @RequestMapping(value = "/new", method = GET)
+    public String newForm(@ModelAttribute Validity validity, Model model) {
         prepareNewForm(model);
         return VALIDITY_NEW;
     }
 
-    @RequestMapping(value = "/create", method = RequestMethod.POST)
-    public String create(@Valid @ModelAttribute final Validity validity, final BindingResult errors,
-            final RedirectAttributes redirectAttrs, final Model model) {
+    @RequestMapping(value = "/create", method = POST)
+    public String create(@Valid @ModelAttribute Validity validity, BindingResult errors,
+                         RedirectAttributes redirectAttrs, Model model) {
         if (!validity.hasValidValues())
             errors.rejectValue("basedOnFinancialYear", "validity.value.notset");
         if (errors.hasErrors()) {
@@ -105,17 +106,17 @@ public class ValidityController {
         return "redirect:/validity/result/" + validity.getId();
     }
 
-    @RequestMapping(value = "/edit/{id}", method = RequestMethod.GET)
-    public String edit(@PathVariable("id") final Long id, final Model model) {
-        final Validity validity = validityService.findOne(id);
+    @RequestMapping(value = "/edit/{id}", method = GET)
+    public String edit(@PathVariable("id") Long id, Model model) {
+        Validity validity = validityService.findOne(id);
         prepareNewForm(model);
-        model.addAttribute("validity", validity);
+        model.addAttribute(VALIDITY_MODEL_ATTRIB_NAME, validity);
         return VALIDITY_EDIT;
     }
 
-    @RequestMapping(value = "/update", method = RequestMethod.POST)
-    public String update(@Valid @ModelAttribute final Validity validity, final BindingResult errors,
-            final RedirectAttributes redirectAttrs, final Model model) {
+    @RequestMapping(value = "/update", method = POST)
+    public String update(@Valid @ModelAttribute Validity validity, BindingResult errors,
+                         RedirectAttributes redirectAttrs, Model model) {
         if (!validity.hasValidValues())
             errors.rejectValue("basedOnFinancialYear", "validity.value.notset");
         if (errors.hasErrors()) {
@@ -127,44 +128,37 @@ public class ValidityController {
         return "redirect:/validity/result/" + validity.getId();
     }
 
-    @RequestMapping(value = "/view/{id}", method = RequestMethod.GET)
-    public String view(@PathVariable("id") final Long id, final Model model) {
-        final Validity validity = validityService.findOne(id);
+    @RequestMapping(value = "/view/{id}", method = GET)
+    public String view(@PathVariable("id") Long id, Model model) {
+        Validity validity = validityService.findOne(id);
         prepareNewForm(model);
-        model.addAttribute("validity", validity);
+        model.addAttribute(VALIDITY_MODEL_ATTRIB_NAME, validity);
         return VALIDITY_VIEW;
     }
 
-    @RequestMapping(value = "/result/{id}", method = RequestMethod.GET)
-    public String result(@PathVariable("id") final Long id, final Model model) {
-        final Validity validity = validityService.findOne(id);
-        model.addAttribute("validity", validity);
+    @RequestMapping(value = "/result/{id}", method = GET)
+    public String result(@PathVariable("id") Long id, Model model) {
+        Validity validity = validityService.findOne(id);
+        model.addAttribute(VALIDITY_MODEL_ATTRIB_NAME, validity);
         return VALIDITY_RESULT;
     }
 
-    @RequestMapping(value = "/search/{mode}", method = RequestMethod.GET)
-    public String search(@PathVariable("mode") final String mode, final Model model) {
-        final Validity validity = new Validity();
+    @RequestMapping(value = "/search/{mode}", method = GET)
+    public String search(@PathVariable("mode") String mode, Model model) {
+        Validity validity = new Validity();
         prepareNewForm(model);
-        model.addAttribute("validity", validity);
+        model.addAttribute(VALIDITY_MODEL_ATTRIB_NAME, validity);
         return VALIDITY_SEARCH;
 
     }
 
-    @RequestMapping(value = "/ajaxsearch/{mode}", method = RequestMethod.POST, produces = MediaType.TEXT_PLAIN_VALUE)
-    public @ResponseBody String ajaxsearch(@PathVariable("mode") final String mode,
-            @RequestParam(required = false) final Long natureOfBusiness,
-            @RequestParam(required = false) final Long licenseCategory) {
-        final List<Validity> searchResultList = validityService.search(natureOfBusiness, licenseCategory);
-        final String result = new StringBuilder("{ \"data\":").append(toSearchResultJson(searchResultList)).append("}")
-                .toString();
-        return result;
-    }
-
-    public Object toSearchResultJson(final Object object) {
-        final GsonBuilder gsonBuilder = new GsonBuilder();
-        final Gson gson = gsonBuilder.registerTypeAdapter(Validity.class, new ValidityJsonAdaptor()).create();
-        final String json = gson.toJson(object);
-        return json;
+    @RequestMapping(value = "/ajaxsearch/{mode}", method = POST, produces = TEXT_PLAIN_VALUE)
+    @ResponseBody
+    public String ajaxsearch(@PathVariable("mode") String mode,
+                             @RequestParam(required = false) Long natureOfBusiness,
+                             @RequestParam(required = false) Long licenseCategory) {
+        return new StringBuilder("{ \"data\":").
+                append(toJSON(validityService.search(natureOfBusiness, licenseCategory), Validity.class,
+                        ValidityResponseAdaptor.class)).append("}").toString();
     }
 }

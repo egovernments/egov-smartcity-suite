@@ -38,9 +38,12 @@
   ~   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
   --%>
 
+<%@ page contentType="text/html;charset=UTF-8" language="java"%>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 <%@ taglib uri="http://www.springframework.org/tags" prefix="spring"%>
 <%@ taglib uri="http://www.springframework.org/tags/form" prefix="form"%>
-<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
+<%@ taglib uri="/WEB-INF/taglib/cdn.tld" prefix="cdn" %>
 <div class="panel-heading">
 	<div class="panel-title">
 		<spring:message code="lbl.bipartisanDetails.details" />
@@ -95,7 +98,7 @@
 				id="bipartisanPetitionerDetailsList[${status.index}].contactNumber"
 				data-pattern="number"
 				value="${bipartisanPetitionerDetailsList.contactNumber}"
-				 maxlength="10"/></td>
+				 maxlength="10" onkeyup="decimalvalue(this);"/></td>
 			<%-- <td class="text-right"><form:select path=""
 					data-first-option="false"
 					name="bipartisanPetitionerDetailsList[${status.index}].governmentDepartment"
@@ -170,7 +173,7 @@
 						id="bipartisanRespondentDetailsList[${status.index}].contactNumber"
 						name="bipartisanRespondentDetailsList[${status.index}].contactNumber" 
 					class="form-control table-input text-left patternvalidation" 
-					data-pattern="number"
+					onkeyup="decimalvalue(this);"
 					value="${bipartisanRespondentDetailsList.contactNumber}" /></td>
 <%-- 
 				<td>
@@ -204,7 +207,7 @@
 </table>
 <div class="form-group">
 	<label class="col-sm-3 control-label text-right" id="persons"><spring:message
-			code="lbl.representedby" /></label>
+			code="lbl.representedby" />:</label>
 	<div class="col-sm-3 add-margin" id="personsdiv">
 		<form:input class="form-control patternvalidation"
 			data-pattern="string" maxlength="50" id="representedby"

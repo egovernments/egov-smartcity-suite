@@ -46,7 +46,7 @@
 	<s:if test="%{shouldShowHeaderField('fund')}">
 		<td class="bluebox"><s:text name="bill.search.fund" /> <s:if
 				test="%{isFieldMandatory('fund')}">
-				<span class="mandatory1">*</span>
+				<span class="mandatory1" id="fundDateMandatory">*</span>
 			</s:if></td>
 		<td class="bluebox"><s:select name="egBillregistermis.fund"
 				id="fundId" list="dropdownData.fundList" listKey="id"
@@ -125,8 +125,7 @@
 		<td class="greybox"><s:text name="bill.search..field" /> <s:if
 				test="%{isFieldMandatory('field')}">
 				<span class="mandatory1">*</span>
-			</s:if><br>
-		<br></td>
+			</s:if><br> <br></td>
 		<td class="greybox"><s:select name="egBillregistermis.fieldid"
 				id="divisionid" list="dropdownData.fieldList" listKey="id"
 				listValue="name" headerKey="-1" headerValue="----Choose----"
@@ -134,14 +133,18 @@
 	</s:if>
 </tr>
 <script>
-function populateSchemes(fund){
-	if(null != document.getElementById("schemeid")){
-		populateschemeid({fundId:fund.options[fund.selectedIndex].value})
+	function populateSchemes(fund) {
+		if (null != document.getElementById("schemeid")) {
+			populateschemeid({
+				fundId : fund.options[fund.selectedIndex].value
+			})
+		}
+
 	}
-		
-	}
-function populatesubSchemes(scheme){
-	
-	populatesubschemeid({schemeId:scheme.options[scheme.selectedIndex].value})	
+	function populatesubSchemes(scheme) {
+
+		populatesubschemeid({
+			schemeId : scheme.options[scheme.selectedIndex].value
+		})
 	}
 </script>

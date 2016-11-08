@@ -141,12 +141,12 @@
 			function onBodyLoad(){
   				var currentState=document.getElementById("currentWfstate").value;
   				showHideAgreement();
-  				if (currentState=='Renewal License:generate Certificate'||currentState=='Create License:generate Certificate') {
+  				if (currentState=='Second level fee collected') {
   			    	jQuery("span").remove(".mandatory");
   			    }
 				if(document.getElementById("mode").value=='disableApprover')	
 					{
-					toggleFields(true,['Submit','Reject','button2','Approve','approverComments','Sign','Preview']); 
+					toggleFields(true,['Submit','Reject','button2','Approve','approverComments','Sign','Preview','Generate Certificate']); 
 					jQuery(".show-row").hide(); 
 					jQuery('#approverComments').removeAttr('<span class="mandatory"></span>');
 					jQuery('#approverDepartment').removeAttr('<span class="mandatory"></span>');
@@ -155,9 +155,10 @@
 					jQuery('#workflowCommentsDiv label').text('<s:text name="newlicense.fieldInspection.label" />');
 					}	
 				
-				if(document.getElementById("mode").value=='view'){
-					  toggleFields(true,['approverDepartment','approverDesignation','approverPositionId','approverComments','Generate Certificate',
-					                     'Forward','Reject','button2','Approve','Sign','Preview']); 
+				if(document.getElementById("mode").value=='ACK' ){
+					 
+					   toggleFields(true,['approverDepartment','approverDesignation','approverPositionId','approverComments','Generate Certificate',
+					                     'Forward','Reject','button2','Approve','Sign','Preview','closeBtn','closeDiv','currentWfstate']);  
 	                  //remove onclick event for propertyno search button
 					  jQuery("#searchImg").removeAttr("onclick");
 					  // remove onclick event for add and delete button having class = add-padding
@@ -167,7 +168,27 @@
 					  	jQuery('#workflowCommentsDiv label').text('<s:text name="newlicense.fieldInspection.label" />');
 					 	 jQuery('#workflowCommentsDiv label').append('<span class="mandatory"></span>');
 					</s:if>
+					document.getElementById('workflowDiv').style.visibility = 'hidden';
+					
 				} 
+				if(document.getElementById("mode").value=='view'|| document.getElementById("mode").value=='editForReject'){
+					 
+					   toggleFields(true,['approverDepartment','approverDesignation','approverPositionId','approverComments','Generate Certificate',
+					                     'Forward','Reject','button2','Approve','Sign','Preview','currentWfstate']);  
+	                  //remove onclick event for propertyno search button
+					  jQuery("#searchImg").removeAttr("onclick");
+					  // remove onclick event for add and delete button having class = add-padding
+					  jQuery('.add-padding').attr('onclick','').unbind('click');
+					  // renaming approver remarks label for second level of workflow
+					  <s:if test="%{getNextAction()!='END'}">
+					  	jQuery('#workflowCommentsDiv label').text('<s:text name="newlicense.fieldInspection.label" />');
+					 	 jQuery('#workflowCommentsDiv label').append('<span class="mandatory"></span>');
+					  </s:if>
+					  if(currentState == 'SI/MHO approved'){
+						  document.getElementById('approverDetailHeading').hidden = true
+					  }
+					
+				}
 				if(document.getElementById("mode").value=='editForApproval'){
 					  toggleFields(true,['approverDepartment','approverDesignation','approverPositionId','approverComments','Generate Certificate',
 					                     'Forward','Reject','button2','Approve']); 
@@ -182,6 +203,10 @@
 					 	 jQuery('#workflowCommentsDiv label').append('<span class="mandatory"></span>');
 					</s:if>
 				} 
+				if(currentState == 'First level fee collected')
+					document.getElementById('certificateDiv').hidden = false;  
+				if(currentState == 'License Created' || currentState=='Commissioner approved')
+					document.getElementById('closeDiv').hidden = false;
 			}
 			
 			function formatCurrency(obj) {
@@ -196,8 +221,17 @@
     			return validateLicenseForm(this);
         	}
 
+			function formsubmit(){
+				if(!validateLicenseForm(this)){
+					return false;
+				}
+  			}
     		function onSubmit() {
         		var mode=document.getElementById("mode").value;
+        		var workflowaction = document.getElementById("workFlowAction").value;
+        		<s:if test="%{workflowaction!=null && workflowaction='Generate Provisional Certificate'}">
+        			window.open("/tl/viewtradelicense/viewTradeLicense-generateCertificate.action?model.id="+jQuery('#id').val(),  'gc'+jQuery('#id').val(), 'scrollbars=yes,width=1000,height=700,status=yes');
+        		</s:if>
     			<s:if test="%{mode!=null && ((mode=='view' || mode=='editForApproval' || mode== 'disableApprover') &&  mode!='editForReject' )}">
 					clearMessage('newLicense_error');
 					toggleFields(false,"");
@@ -310,10 +344,13 @@
 							</div>
                  		</s:if>
                  		
-                 	<s:form name="newTradeLicense" action="newTradeLicense" theme="simple"  enctype="multipart/form-data" 
+                 	<s:form name="newTradeLicense" action="newTradeLicense-create" theme="simple"  enctype="multipart/form-data" 
 					cssClass="form-horizontal form-groups-bordered" validate="true" >    
 					<s:push value="model"> 
 							<s:token/>
+							<s:if test="%{state==null}">
+								<s:hidden id="additionalRule" name="additionalRule" value="%{additionalRule}"/>
+							</s:if>
 							<s:hidden name="actionName" value="create" />
 							<s:hidden id="detailChanged" name="detailChanged" />
 							<s:hidden id="applicationDate" name="applicationDate" />
@@ -354,12 +391,33 @@
                                 </div>
                             </div>
                         </div> 
-                        <div class="panel panel-primary" >
-                        	<%@ include file='../common/commonWorkflowMatrix.jsp'%>
-							<%@ include file='../common/commonWorkflowMatrix-button.jsp'%>
+                        <div style="text-align: center;" hidden="true" id="closeDiv">
+	                    <input type="button" name="closeBtn" id="closeBtn" value="Close" 
+							class="button" onclick="window.close();" style="margin:0 5px"/>
 						</div>
+						<s:if test="%{state!=null}">
+	                        <div class="panel panel-primary" id="workflowDiv" >
+	                        	<%@ include file='../common/commonWorkflowMatrix.jsp'%>
+								<%@ include file='../common/commonWorkflowMatrix-button.jsp'%>
+							</div>
+						</s:if>
+						<s:else>
+							<div class="row">
+								<div class="text-center">
+									<button type="submit" id="btnsave" class="btn btn-primary" onclick="return formsubmit();">
+										Save</button>
+									<button type="button" id="btnclose" class="btn btn-default" onclick="window.close();">
+										Close</button>
+								</div>
+							</div>
+						</s:else>
                         </s:push>  
                     </s:form> 
+                    <div style="text-align: center;" hidden="true" id="certificateDiv">
+							<input type="button" class="btn btn-primary" id="GenerateProvisionalCertificate"
+							value="Generate Provisional Certificate"  
+							onclick="window.open('/tl/viewtradelicense/viewTradeLicense-generateCertificate.action?model.id=<s:property value="%{id}" />', '_blank', 'height=650,width=980,scrollbars=yes,left=0,top=0,status=yes');"/> &nbsp;
+					</div>
                     </div>
                 </div>
         <script	src="<cdn:url  value='/resources/global/js/egov/inbox.js' context='/egi'/>"></script>

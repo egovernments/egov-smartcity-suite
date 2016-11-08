@@ -47,14 +47,14 @@ package com.exilant.eGov.src.reports;
 public class OpeningBalanceBean
 {
 
-    String fund;
-    String accCode;
-    String accName;
-    String debit;
-    String credit;
-    String description;
-    String deptcode;
-    String functioncode;
+    private String fund;
+    private String accCode;
+    private String accName;
+    private String debit;
+    private String credit;
+    private String description;
+    private String deptcode;
+    private String functioncode;
 
     public String getFund() {
         return fund;

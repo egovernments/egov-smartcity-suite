@@ -38,48 +38,181 @@
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
 
-$(document).ready(function()
-{
+$(document)
+		.ready(
+				function() {
 
-$( "#add-row" ).click(function( event ) {
-	var rowCount = $('#result tr').length;
-	if(!checkforNonEmptyPrevRow())      
-		return false;
-	var prevUOMFromVal=getPrevUOMFromData();
-	var content= $('#resultrow0').html();
-	resultContent=   content.replace(/0/g,rowCount-1);   
-	$(resultContent).find("input").val("");
-	$('#result > tbody:last').append("<tr>"+resultContent+"</tr>"); 
-	$('#result tr:last').find("input").val(""); 
-	$('.fromRange').attr("readonly", true); 
-	intiUOMFromData(prevUOMFromVal);  
-	patternvalidation(); 
-});    
+					$("#add-row").click(
+							function(event) {
+								var rowCount = $('#result tr').length;
+								if (!checkforNonEmptyPrevRow())
+									return false;
+								var prevUOMFromVal = getPrevUOMFromData();
+								var content = $('#resultrow0').html();
+								resultContent = content.replace(/0/g,
+										rowCount - 1);
+								$(resultContent).find("input").val("");
+								$('#result > tbody:last').append(
+										"<tr>" + resultContent + "</tr>");
+								$('#result tr:last').find("input").val("");
+								$('.fromRange').attr("readonly", true);
+								intiUOMFromData(prevUOMFromVal);
+								patternvalidation();
+							});
 
-$( "#save" ).click(function( event ) {
-	if(!validateDetailsBeforeSubmit()){
+					$("#search")
+							.click(
+									function(event) {
+										$('#resultdiv').empty();
+										var valid = $('#penaltyform')
+												.validate().form();
+										if (!valid) {
+											bootbox
+													.alert("Please fill mandatory fields");
+											return false;
+										}
+										var param = "licenseAppType=";
+										param = param
+												+ $('#licenseAppType').val();
+										$.ajax({
+													url : "/tl/penaltyRates/search?"
+															+ param,
+													type : "GET",
+													// dataType: "json",
+													success : function(response) {
+														$('#resultdiv').html(
+																response);
+														$("#penalty").hide();
+														if (jQuery('#result tbody tr').length == 1) {
+															jQuery(
+																	'input[name="penaltyRatesList[0].fromRange"]')
+																	.attr(
+																			"readonly",
+																			false);
+														}
+													},
+													error : function(response) {
+														console.log("failed");
+													}
+												});
+
+									});
+				});
+
+function checkforNonEmptyPrevRow() {
+	var tbl = document.getElementById("result");
+	var lastRow = (tbl.rows.length) - 1;
+	var fromRange = getControlInBranch(tbl.rows[lastRow], 'fromRange').value;
+	var toRange = getControlInBranch(tbl.rows[lastRow], 'toRange').value;
+	var rate = getControlInBranch(tbl.rows[lastRow], 'rate').value;
+	if (fromRange == '' || toRange == '' || rate == '') {
+		bootbox.alert("Enter all values for existing rows before adding.");
 		return false;
-	} 
-	var licenseAppTypeDisabled=$('#licenseAppType').is(':disabled');
-		$('#licenseAppType').removeAttr("disabled");
-		var pr=$('#penaltyform').serialize();
-		  $.ajax({
-				url: "/tl/penaltyRates/create",
-				type: "POST",
-				data: pr,
-				success: function (response) {
-					console.log("success"+response );
-					 $('#resultdiv').html(response);
-					 if(licenseAppTypeDisabled)
-						 $('#licenseAppType').attr("disabled", true); 
-					 bootbox.alert("Details saved Successfully");
-				}, 
-				error: function (response) {
-					console.log("failed");
-					if(licenseAppTypeDisabled)
-						$('#licenseAppType').attr("disabled", true);
-					bootbox.alert("Failed to Save Details");
-				}
-			});
-	});
-});
+	}
+	return true;
+}
+function getPrevUOMFromData() {
+	var tbl = document.getElementById("result");
+	var lastRow = (tbl.rows.length) - 1;
+	return getControlInBranch(tbl.rows[lastRow], 'toRange').value;
+}
+
+function intiUOMFromData(obj) {
+	var tbl = document.getElementById("result");
+	var lastRow = (tbl.rows.length) - 1;
+	getControlInBranch(tbl.rows[lastRow], 'fromRange').value = obj;
+}
+
+function checkValue(obj) {
+	var rowobj = getRow(obj);
+	var tbl = document.getElementById('result');
+	var toRange = getControlInBranch(tbl.rows[rowobj.rowIndex], 'toRange').value;
+	var fromRange = getControlInBranch(tbl.rows[rowobj.rowIndex], 'fromRange').value;
+	if (fromRange != '' && toRange != '' && (eval(fromRange) >= eval(toRange))) {
+		bootbox.alert("\"To Range\" should be greater than \"From Range\".");
+		getControlInBranch(tbl.rows[rowobj.rowIndex], 'toRange').value = "";
+		return false;
+	}
+	$(obj).closest('tr').next('tr').find('td:eq(0) input').val(toRange);
+}
+
+function deleteThisRow(obj) {
+	var tbl = document.getElementById("result");
+	var lastRow = (tbl.rows.length) - 1;
+	var curRow = getRow(obj).rowIndex;
+	var counts = lastRow - 1;
+	if (curRow == 1) {
+		bootbox.alert('Cannot delete first row');
+		return false;
+	} else if (curRow != lastRow) {
+		bootbox.alert('Cannot delete in between. Delete from last.');
+		return false;
+	} else {
+		if (getControlInBranch(tbl.rows[lastRow], 'penaltyId').value == '') {
+			tbl.deleteRow(curRow);
+			return true;
+		} else if (getControlInBranch(tbl.rows[lastRow], 'penaltyId').value != '') {
+			bootbox.confirm("This will delete the row permanently. Press OK to Continue. ",
+				function(r) {
+					if (r) {
+						$.ajax({
+							url : "/tl/domain/commonAjax-deleteRow.action?penaltyRateId="
+									+ getControlInBranch(
+											tbl.rows[lastRow],
+											'penaltyId').value
+									+ "",
+							type : "GET",
+							dataType : "json",
+							success : function(response) {
+								tbl.deleteRow(curRow);
+							},
+							error : function(response) {
+								bootbox
+										.alert("Unable to delete this row.");
+								console.log("failed");
+							}
+						});
+					}
+				});
+		}
+	}
+}
+
+function validateDetailsBeforeSubmit() {
+	var tbl = document.getElementById("result");
+	var tabLength = (tbl.rows.length) - 1;
+	var fromRange, toRange, rate;
+	for (var i = 1; i <= tabLength; i++) {
+		fromRange = getControlInBranch(tbl.rows[i], 'fromRange').value;
+		toRange = getControlInBranch(tbl.rows[i], 'toRange').value;
+		rate = getControlInBranch(tbl.rows[i], 'rate').value;
+		if (jQuery.isNumeric(fromRange) && jQuery.isNumeric(toRange)) {
+			if (fromRange != '' && toRange != ''
+					&& (eval(fromRange) >= eval(toRange))) {
+				bootbox
+						.alert("\"To Range\" should be greater than \"From Range\" for row "
+								+ (i) + ".");
+				getControlInBranch(tbl.rows[i], 'toRange').value = "";
+				getControlInBranch(tbl.rows[i], 'toRange').focus();
+				return false;
+			}
+			if (!toRange) {
+				bootbox.alert("Please enter \"To(days)\" for row " + (i) + ".");
+				getControlInBranch(tbl.rows[i], 'toRange').value = "";
+				getControlInBranch(tbl.rows[i], 'toRange').focus();
+				return false;
+			}
+			if (!rate) {
+				bootbox.alert("Please enter \"Penalty Rate(In Perc)\" for row "
+						+ (i) + ".");
+				getControlInBranch(tbl.rows[i], 'rate').value = "";
+				getControlInBranch(tbl.rows[i], 'rate').focus();
+				return false;
+			}
+		} else {
+			bootbox.alert("Not a valid number for row " + (i) + ".");
+			return false;
+		}
+	}
+	return true;
+}

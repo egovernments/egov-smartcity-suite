@@ -39,15 +39,17 @@
  */
 package org.egov.wtms.web.controller.reports;
 
+import static org.egov.wtms.utils.constants.WaterTaxConstants.WATERCHARGES_CONSUMERCODE;
+
+import java.lang.reflect.Type;
+import java.text.SimpleDateFormat;
+
+import org.egov.wtms.application.entity.DailyWTCollectionReport;
+
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonSerializationContext;
 import com.google.gson.JsonSerializer;
-
-import org.egov.wtms.application.entity.DailyWTCollectionReport;
-
-import java.lang.reflect.Type;
-import java.text.SimpleDateFormat;
 
 public class DailyWTCollectionAdaptor implements JsonSerializer<DailyWTCollectionReport> {
 
@@ -58,7 +60,7 @@ public class DailyWTCollectionAdaptor implements JsonSerializer<DailyWTCollectio
         final SimpleDateFormat receiptDateFormatter = new SimpleDateFormat("dd/MM/yyyy hh:mm:ss");
         jsonObject.addProperty("receiptNo", dailyWTCollectionReport.getReceiptNumber());
         jsonObject.addProperty("receiptDate", receiptDateFormatter.format(dailyWTCollectionReport.getReceiptDate()));
-        jsonObject.addProperty("consumerCode", dailyWTCollectionReport.getConsumerCode());
+        jsonObject.addProperty(WATERCHARGES_CONSUMERCODE, dailyWTCollectionReport.getConsumerCode());
         jsonObject.addProperty("consumerName", dailyWTCollectionReport.getConsumerName());
         jsonObject.addProperty("doorNumber", dailyWTCollectionReport.getDoorNumber());
         jsonObject.addProperty("wardName", dailyWTCollectionReport.getWardName());

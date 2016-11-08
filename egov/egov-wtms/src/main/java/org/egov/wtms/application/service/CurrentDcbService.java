@@ -93,7 +93,7 @@ public class CurrentDcbService {
         final StringBuilder queryStr = new StringBuilder();
         queryStr.append(
                 "select distinct(booknumber) as \"bookNumber\", receiptnumber as \"receiptNumber\",receiptdate as \"receiptDate\",fromdate as \"fromDate\",todate as \"toDate\","
-                        +  "cast(amount as numeric(18,2)) as \"receiptAmount\" from egwtr_legacy_receipts where connectiondetails ="
+                        + "cast(amount as numeric(18,2)) as \"receiptAmount\" from egwtr_legacy_receipts where connectiondetails ="
                         + connectiondetails);
         final SQLQuery finalQuery = getCurrentSession().createSQLQuery(queryStr.toString());
         finalQuery.setResultTransformer(new AliasToBeanResultTransformer(WaterChargesReceiptInfo.class));

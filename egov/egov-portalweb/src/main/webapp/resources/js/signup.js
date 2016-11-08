@@ -1,44 +1,47 @@
 /*
  * eGov suite of products aim to improve the internal efficiency,transparency,
- *    accountability and the service delivery of the government  organizations.
+ *     accountability and the service delivery of the government  organizations.
  *
- *     Copyright (C) <2015>  eGovernments Foundation
+ *      Copyright (C) 2016  eGovernments Foundation
  *
- *     The updated version of eGov suite of products as by eGovernments Foundation
- *     is available at http://www.egovernments.org
+ *      The updated version of eGov suite of products as by eGovernments Foundation
+ *      is available at http://www.egovernments.org
  *
- *     This program is free software: you can redistribute it and/or modify
- *     it under the terms of the GNU General Public License as published by
- *     the Free Software Foundation, either version 3 of the License, or
- *     any later version.
+ *      This program is free software: you can redistribute it and/or modify
+ *      it under the terms of the GNU General Public License as published by
+ *      the Free Software Foundation, either version 3 of the License, or
+ *      any later version.
  *
- *     This program is distributed in the hope that it will be useful,
- *     but WITHOUT ANY WARRANTY; without even the implied warranty of
- *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *     GNU General Public License for more details.
+ *      This program is distributed in the hope that it will be useful,
+ *      but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *      MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *      GNU General Public License for more details.
  *
- *     You should have received a copy of the GNU General Public License
- *     along with this program. If not, see http://www.gnu.org/licenses/ or
- *     http://www.gnu.org/licenses/gpl.html .
+ *      You should have received a copy of the GNU General Public License
+ *      along with this program. If not, see http://www.gnu.org/licenses/ or
+ *      http://www.gnu.org/licenses/gpl.html .
  *
- *     In addition to the terms of the GPL license to be adhered to in using this
- *     program, the following additional terms are to be complied with:
+ *      In addition to the terms of the GPL license to be adhered to in using this
+ *      program, the following additional terms are to be complied with:
  *
- *         1) All versions of this program, verbatim or modified must carry this
- *            Legal Notice.
+ *          1) All versions of this program, verbatim or modified must carry this
+ *             Legal Notice.
  *
- *         2) Any misrepresentation of the origin of the material is prohibited. It
- *            is required that all modified versions of this material be marked in
- *            reasonable ways as different from the original version.
+ *          2) Any misrepresentation of the origin of the material is prohibited. It
+ *             is required that all modified versions of this material be marked in
+ *             reasonable ways as different from the original version.
  *
- *         3) This license does not grant any rights to any user of the program
- *            with regards to rights under trademark law for use of the trade names
- *            or trademarks of eGovernments Foundation.
+ *          3) This license does not grant any rights to any user of the program
+ *             with regards to rights under trademark law for use of the trade names
+ *             or trademarks of eGovernments Foundation.
  *
- *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
+ *    In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
 
 $(document).ready(function(){
+	
+	$('#otp-section,#signup-section').hide();
+	
    $('#mobileNumber').blur(function(){
 		if($('#mobileNumber').val().length>0 && $('#mobileNumber').val().length<10){
 			$('#mobnumberValid').show();
@@ -47,14 +50,7 @@ $(document).ready(function(){
 			$('#mobnumberValid').hide();
 		}
 	});
-	$('#password').blur(function(){
-		if($('#password').val().length>0 && $('#password').val().length<8){
-			$('#passwordValid').show();
-			$('#password').val("");
-		}else{
-			$('#passwordValid').hide();
-		}
-	});
+
 	$('#emailId').blur(function(){
 		var pattern = new RegExp("^[\\w!#$%&'*+/=?`{|}~^-]+(?:\\.[\\w!#$%&'*+/=?`{|}~^-]+)*@(?:[a-zA-Z0-9-]+\\.)+[a-zA-Z]{2,6}$");
 		var email = $('#emailId').val();
@@ -81,7 +77,30 @@ $(document).ready(function(){
 			}
 		}
 	});
-	
+
+	$('#password').blur(
+		function () {
+            $('.password-invalid').hide();
+			if($(this).val()) {
+				$.ajax({
+					url: "signup/validate-pwd",
+					dataType: "json",
+					data : {"pswd" : $(this).val()},
+					success: function(data) {
+						if(data){
+							$('.password-invalid').hide();
+						} else {
+                            $('.password-invalid').show();
+                        }
+					},
+					error: function() {
+						console.error('Error while validating password');
+					}
+				});
+			}
+		}
+	);
+
 	$('#name').blur(function(){
 		var arr = $(this).val().split(' ');
 	    var result = "";
@@ -90,31 +109,35 @@ $(document).ready(function(){
 	    $(this).val(result.substring(0, result.length-1));
 	});
 	
-	$('#activationCode').focus(function() {
-		$('#activationCode').val("");
-		return false;
-	});
-	
 	$('#signupbtn').click(function(){
 		$('#username').val($('#mobileNumber').val());
 		$('#signupform').trigger('submit');
 		return true;
 	});
-	
-	$('form#citizenactivationform').submit(function(){
-		if($('#citizenId').val()===""){
-			$('#citizenactivationform').attr('action', '/portal/citizen/activation').trigger('submit');
-		}else{
-			$('#citizenactivationform').attr('action', '/portal/citizen/activation/'+$('#citizenId').val()).trigger('submit');
-		}
-		return false;
-	});
-	
-	$('#resendotpbtn').click(function() {
-		$('#activation_container').hide('slow');
-		$('#otpresend_container').show('slow');
-	});
-	
+
 	$('#password, #username').popover({ trigger: "focus",placement: "bottom"})
+
+	$('#otpbtn').click(function () {
+		if (!$('#mobileNumber').val()) {
+            $(".mobile-error").show();
+            return false;
+        } else {
+            $(".mobile-error").hide();
+        }
+		$.ajax({
+			url: "signup/otp/"+$('#mobileNumber').val(),
+			dataType: "json",
+			success: function(data) {
+				if(data){
+					$('#activationcode').val('');
+					$('#signup-section,#otp-section').show();
+					$('#otpbtn-section').hide();
+				}
+			},
+			error: function() {
+				console.error('Error while sending otp');
+			}
+		});
+	});
 	
 });

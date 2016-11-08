@@ -116,7 +116,7 @@ function populateApprover() {
    <c:set var="approverEvenTextCSS" value="bluebox" scope="request"/>
      <c:set var="approverEvenCSS" value="bluebox" scope="request"/>
 </s:if> --%>
-		
+		<s:if test="%{getNextAction()!='Second level collection pending'}">
 		<div class="panel-heading custom_form_panel_heading">
 		    <div class="panel-title">
 				<s:text name="title.approval.information"/>
@@ -151,15 +151,15 @@ function populateApprover() {
          </div>
          </div>
 </s:if>
-
- <div id="workflowCommentsDiv" align="center">
+</s:if>
+<div id="workflowCommentsDiv" align="center">
          <div class="form-group">
              <label class="col-sm-3 add-margin text-right"><s:text name="wf.approver.remarks"/><span class="mandatory"></span></label>
              <div class="col-sm-8 add-margin">
                  <s:textarea id="approverComments" name="approverComments" class="form-control" ></s:textarea>
              </div>
          </div>
-  </div>
+</div>
 <script>
     var designationId = '${approverDesignation}';
     var positionId = '${approverPositionId}';
