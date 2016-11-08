@@ -1,11 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://maven.apache.org/POM/4.0.0"
-         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>org.egov</groupId>
     <artifactId>egov-erp</artifactId>
-    <version>2.0.0-SNAPSHOT</version>
+    <version>2.1.0-SNAPSHOT</version>
 
     <packaging>pom</packaging>
 
@@ -97,11 +96,11 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <build.number>${timestamp}</build.number>
         <app.version>${project.version}</app.version>
-        <versioneye.key></versioneye.key>
-        <db.driver></db.driver>
-        <db.url></db.url>
-        <db.user></db.user>
-        <db.password></db.password>
+        <versioneye.key />
+        <db.driver />
+        <db.url />
+        <db.user />
+        <db.password />
         <disable.drop.db>true</disable.drop.db>
         <!-- Sonar properties -->
         <sonar.core.codeCoveragePlugin>jacoco</sonar.core.codeCoveragePlugin>
@@ -1233,7 +1232,7 @@
                                         </goals>
                                     </pluginExecutionFilter>
                                     <action>
-                                        <ignore/>
+                                        <ignore />
                                     </action>
                                 </pluginExecution>
                             </pluginExecutions>
@@ -1335,7 +1334,10 @@
                 <version>${mvn.release.plugin.version}</version>
                 <configuration>
                     <goals>deploy</goals>
-                    <arguments>-DskipTests -Dbuild.number=${build.number}</arguments>
+                    <arguments>
+                        -DskipTests -Dbuild.number=${build.number}
+                        -Ddb.url=${db.url} -Ddb.password=${db.password} -Ddb.user=${db.user} -Ddb.driver=${db.driver}
+                    </arguments>
                     <pushChanges>true</pushChanges>
                     <localCheckout>true</localCheckout>
                     <preparationGoals>clean install</preparationGoals>
@@ -1362,25 +1364,24 @@
                     </execution>
                 </executions>
             </plugin>
-
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-surefire-plugin</artifactId>
                 <version>${mvn.surefire.plugin.version}</version>
             </plugin>
             <plugin>
-                <groupId>org.flywaydb</groupId>
-                <artifactId>flyway-maven-plugin</artifactId>
-                <version>${flyway-core-version}</version>
-                <configuration>
-                    <driver>${db.driver}</driver>
-                    <url>${db.url}</url>
-                    <user>${db.user}</user>
-                    <password>${db.password}</password>
-                    <skip>true</skip>
-                </configuration>
-            </plugin>
-            <plugin>
+		 <groupId>org.flywaydb</groupId>
+                 <artifactId>flyway-maven-plugin</artifactId>
+                 <version>${flyway-core-version}</version>
+                 <configuration>
+                     <driver>${db.driver}</driver>
+                     <url>${db.url}</url>
+                     <user>${db.user}</user>
+                     <password>${db.password}</password>
+                     <skip>true</skip>
+                 </configuration>
+             </plugin>
+	     <plugin>
                 <groupId>com.versioneye</groupId>
                 <artifactId>versioneye-maven-plugin</artifactId>
                 <version>${mvn.versioneye.plugin.version}</version>
