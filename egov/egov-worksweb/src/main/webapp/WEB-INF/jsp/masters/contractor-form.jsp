@@ -280,6 +280,13 @@ var makeContractorDataTable = function() {
 				<s:textarea name="narration" cols="35" cssClass="form-control patternvalidation"
 				data-pattern="alphanumericwithallspecialcharacters"	id="narration" value="%{narration}" />
 			</div>
+			<label class="col-sm-2 control-label text-right"> <s:text
+					name="depositworks.applicant.mobile" />
+			</label>
+			<div class="col-sm-3 add-margin">
+				<s:textfield name="mobileNumber" id="mobileNumber" maxlength="15"
+					cssClass="form-control" value="%{mobileNumber}" />
+			</div>
 		</div>
 
 		<div class="form-group">

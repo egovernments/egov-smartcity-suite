@@ -91,8 +91,14 @@
 					<div class="col-xs-3 add-margin">
 						<s:text name="contractor.narration" />
 					</div>
-					<div class="col-xs-9 add-margin view-content">
+					<div class="col-xs-3 add-margin view-content">
 						<s:property value="%{narration}" />
+					</div>
+					<div class="col-xs-3 add-margin">
+						<s:text name="depositworks.applicant.mobile" />
+					</div>
+					<div class="col-xs-3 add-margin view-content">
+						<s:property value="%{mobileNumber}" />
 					</div>
 				</div>
 				<div class="row add-border">

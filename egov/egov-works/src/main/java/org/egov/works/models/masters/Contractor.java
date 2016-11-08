@@ -157,6 +157,11 @@ public class Contractor extends AbstractAuditable implements EntityType {
     @Enumerated(EnumType.STRING)
     @Column(name = "EXEMPTION")
     private ExemptionForm exemptionForm;
+    
+    @OptionalPattern(regex = Constants.MOBILE_NUM, message = "depositworks.roadcut.invalid.mobileno")
+    @Length(max = 15)
+    @Column(name = "MOBILE_NUMBER")
+    private String mobileNumber;
 
     @Valid
     @JsonIgnore
@@ -369,4 +374,11 @@ public class Contractor extends AbstractAuditable implements EntityType {
         this.id = id;
     }
 
+    public String getMobileNumber() {
+        return mobileNumber;
+    }
+
+    public void setMobileNumber(final String mobileNumber) {
+        this.mobileNumber = mobileNumber;
+    }
 }
