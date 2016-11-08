@@ -1,5 +1,4 @@
-<?xml version="1.0"?>
-<!--
+<%--
   ~ eGov suite of products aim to improve the internal efficiency,transparency,
   ~    accountability and the service delivery of the government  organizations.
   ~
@@ -37,41 +36,49 @@
   ~            or trademarks of eGovernments Foundation.
   ~
   ~   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
-  -->
+  --%>
 
-<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
-"http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
-<hibernate-mapping>
-	<class name="org.egov.infstr.models.EgChecklists" table="EG_CHECKLISTS">
-		<id name="id" type="long">
-			<column name="ID" precision="22" scale="0" />
-			<generator class="org.hibernate.id.enhanced.SequenceStyleGenerator">
-				<param name="sequence_name">SEQ_EG_CHECKLISTS</param>
-			</generator>
-		</id>
-
-		<many-to-one name="appconfigvalue" class="org.egov.infra.admin.master.entity.AppConfigValues" fetch="select">
-			<column name="APPCONFIG_VALUES_ID" precision="22" scale="0" not-null="true" />
-		</many-to-one>
-		<property name="checklistvalue" type="string">
-			<column name="CHECKLISTVALUE" length="7" not-null="true" />
-		</property>
-		<property name="objectid" type="long">
-			<column name="OBJECT_ID" length="7" not-null="true" />
-		</property>
-		<property name="lastmodified" type="date">
-			<column name="LASTMODIFIEDDATE" length="7" />
-		</property>
-	</class>
-	<query name="checklist.by.appconfigid.and.objectid">
-	<![CDATA[
-		from org.egov.infstr.models.EgChecklists as checkList where checkList.objectid =? and checkList.appconfigvalue.config.id in(?)
-	]]>
-	</query>
- 
-	<query name="checklist.by.objectid">
-	<![CDATA[
-		from org.egov.infstr.models.EgChecklists as checkList where checkList.objectid =?
-	]]>
-	</query>
-</hibernate-mapping>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
+<%@ taglib uri="http://www.springframework.org/tags" prefix="spring"%>
+<%@ taglib uri="http://www.springframework.org/tags/form" prefix="form"%>
+<div class="panel panel-primary" data-collapsed="0">
+	<div class="panel-heading custom_form_panel_heading">
+		<div class="panel-title">
+			<spring:message code="lbl.checklist" />
+		</div>
+	</div>
+	
+	<div style="padding: 0 15px;">
+		<table class="table table-bordered" id="tblchecklist">
+			<thead>
+				<tr>
+					<th><spring:message code="lbl.checklist.name"/></th>
+					<th><spring:message code="lbl.checklist.value"/></th>
+				</tr>
+			</thead>
+			<tbody>
+				<c:choose>
+						<c:when test="${egBillregister.checkLists!=null && egBillregister.checkLists.size() > 0}">
+							 <c:forEach items="${egBillregister.checkLists}" var="checkLists" varStatus="item">
+								<tr>
+								<td>${checkLists.name }</td>
+								<c:if test="${checkLists.val=='na'}">
+									<td >
+										N/A
+									</td>
+								</c:if>
+								<c:if test="${checkLists.val!='na'}">
+									<td>
+										${checkLists.val}
+									</td>
+								</c:if>
+								</tr>
+							</c:forEach> 
+						</c:when>
+						<c:otherwise>
+						</c:otherwise>
+				</c:choose>
+			</tbody>
+		</table>
+	</div>
+</div>

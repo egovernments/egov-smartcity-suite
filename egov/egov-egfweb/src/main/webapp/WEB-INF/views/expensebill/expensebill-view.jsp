@@ -81,6 +81,8 @@
 			<ul class="nav nav-tabs" id="settingstab">
 				<li class="active"><a data-toggle="tab" href="#expensebillheader"
 					data-tabidx=0><spring:message code="lbl.header" /></a></li>
+				<li><a data-toggle="tab" href="#checklist" data-tabidx=1><spring:message
+							code="lbl.checklist" /> </a></li>
 			</ul>
 	
 		<div class="tab-content">
@@ -89,6 +91,9 @@
 				<jsp:include page="expensebill-view-subledgerdetails.jsp"/>
 				<jsp:include page="expensebill-view-accountdetails.jsp"/>
 				<jsp:include page="expensebill-view-subledgeraccountdetails.jsp"/>
+			</div>
+			<div class="tab-pane fade" id="checklist">
+				<jsp:include page="expensebill-view-checklist.jsp"/>
 			</div>
 			<c:if test="${!workflowHistory.isEmpty() && mode != 'readOnly'}">
 				<jsp:include page="../common/commonworkflowhistory-view.jsp"></jsp:include>

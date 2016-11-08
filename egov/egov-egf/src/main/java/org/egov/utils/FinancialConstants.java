@@ -343,4 +343,5 @@ public interface FinancialConstants {
 
     public static final String WORKFLOW_STATUS_CODE_REJECTED = "REJECTED";
     public static final String KEY_DATAENTRYCUTOFFDATE = "DataEntryCutOffDate";
+    public static final String NA = "na";
 }

@@ -58,14 +58,6 @@
 			</thead>
 			<tbody>
 			<tr>
-			<td></td>
-			<td>
-				<form:select path="checkLists[1].val" data-first-option="false" id="checkLists[1].val" class="form-control">
-					<form:option value="">N/A</form:option>
-					<form:option value="Yes">Yes</form:option>
-					<form:option value="No">No</form:option>
-				</form:select>
-			</td>
 			</tr>
 			</tbody>
 		</table>

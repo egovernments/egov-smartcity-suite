@@ -284,12 +284,12 @@ $('#billSubType').change(function () {
 							output = '<tr>';
 							output = output + '<td class="text-left">' + value.value + '</td>'
 							output = output + '<td class="text-right">'
-							output = output + '<form:select path="checkLists['+index+'].val" data-first-option="false" id="checkLists['+index+'].val" class="form-control">'
-							output = output + '<form:option value="">N/A</form:option>'
-							output = output + '<form:option value="Yes">Yes</form:option>'
-							output = output + '<form:option value="No">No</form:option>'
-							output = output + '</form:select>'
-							output = output + '<form:errors path="egBillregistermis.egBillSubType.id" cssClass="add-margin error-msg" />'
+							output = output + '<input id="checkLists['+index+'].id" name="checkLists['+index+'].id" type="hidden" value="'+ value.id +'"/>'
+							output = output + '<select id="checkLists['+index+'].val" name="checkLists['+index+'].val" data-first-option="false" class="form-control">'
+							output = output + '<option value="">N/A</option>'
+							output = output + '<option value="Yes">Yes</option>'
+							output = output + '<option value="No">No</option>'
+							output = output + '</select>'
 							output = output + '</td>'
 							output = output + '</tr>';
 							$('#tblchecklist tbody').append(output);

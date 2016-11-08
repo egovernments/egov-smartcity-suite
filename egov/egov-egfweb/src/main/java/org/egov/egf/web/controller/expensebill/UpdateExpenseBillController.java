@@ -40,6 +40,7 @@
 package org.egov.egf.web.controller.expensebill;
 
 import java.io.IOException;
+import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
@@ -47,6 +48,7 @@ import javax.validation.Valid;
 import org.egov.commons.Accountdetailtype;
 import org.egov.commons.service.AccountdetailtypeService;
 import org.egov.commons.service.ChartOfAccountsService;
+import org.egov.commons.service.CheckListService;
 import org.egov.commons.utils.EntityType;
 import org.egov.egf.expensebill.service.ExpenseBillService;
 import org.egov.egf.utils.FinancialUtils;
@@ -54,10 +56,12 @@ import org.egov.eis.web.contract.WorkflowContainer;
 import org.egov.infra.admin.master.service.AppConfigValueService;
 import org.egov.infra.exception.ApplicationException;
 import org.egov.infra.exception.ApplicationRuntimeException;
+import org.egov.infstr.models.EgChecklists;
 import org.egov.infstr.services.PersistenceService;
 import org.egov.model.bills.EgBillPayeedetails;
 import org.egov.model.bills.EgBilldetails;
 import org.egov.model.bills.EgBillregister;
+import org.egov.utils.CheckListHelper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Controller;
@@ -91,6 +95,9 @@ public class UpdateExpenseBillController extends BaseBillController {
     @Qualifier("persistenceService")
     private PersistenceService persistenceService;
 
+    @Autowired
+    private CheckListService checkListService;
+
     public UpdateExpenseBillController(final AppConfigValueService appConfigValuesService) {
         super(appConfigValuesService);
     }
@@ -115,6 +122,7 @@ public class UpdateExpenseBillController extends BaseBillController {
         egBillregister.getBillDetails().addAll(egBillregister.getEgBilldetailes());
         model.addAttribute("mode", "view");
         prepareBillDetails(egBillregister);
+        prepareCheckList(egBillregister);
         model.addAttribute("egBillregister", egBillregister);
         return "expensebill-view";
     }
@@ -171,7 +179,7 @@ public class UpdateExpenseBillController extends BaseBillController {
                     + updatedEgBillregister.getBillnumber();
         }
     }
-    
+
     @RequestMapping(value = "/view/{billId}", method = RequestMethod.GET)
     public String view(final Model model, @PathVariable final String billId,
             final HttpServletRequest request) throws ApplicationException {
@@ -215,6 +223,17 @@ public class UpdateExpenseBillController extends BaseBillController {
             payeeDetails.setDetailTypeName(detailType.getName());
             payeeDetails.setDetailKeyName(entity.getName());
 
+        }
+    }
+
+    private void prepareCheckList(final EgBillregister egBillregister) {
+        CheckListHelper helper;
+        final List<EgChecklists> checkLists = checkListService.getByObjectId(egBillregister.getId());
+        for (final EgChecklists checkList : checkLists) {
+            helper = new CheckListHelper();
+            helper.setName(checkList.getAppconfigvalue().getValue());
+            helper.setVal(checkList.getChecklistvalue());
+            egBillregister.getCheckLists().add(helper);
         }
     }
 
