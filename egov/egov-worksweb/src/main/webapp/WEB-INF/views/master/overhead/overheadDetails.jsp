@@ -47,7 +47,7 @@
 			<spring:message code="lbl.overheadrate" />
 		</div>
 	</div>
-	<input type="hidden" value="${overhead.overheadRates.size() }"
+	<input type="hidden" value="${overhead.tempOverheadRateValues.size() }"
 		id="detailsSize" />
 	<div class="panel-body">
 		<div class="col-sm-12 text-right ">
@@ -71,39 +71,39 @@
 			</thead>
 			<tbody id="overheadDetailsTbl">
 				<c:choose>
-					<c:when test="${overhead.overheadRates.size() == 0}">
+					<c:when test="${overhead.tempOverheadRateValues.size() == 0}">
 						<tr id="overheadRow">
 							<td><span class="spansno">1</span> <form:hidden
-									path="overheadRates[0].id" name="overheadRates[0].id"
-									value="${overheadRates[0].id}"
+									path="tempOverheadRateValues[0].id" name="tempOverheadRateValues[0].id"
+									value="${tempOverheadRateValues[0].id}"
 									class="form-control table-input hidden-input" /></td>
-							<td><form:input path="overheadRates[0].lumpsumAmount"
+							<td><form:input path="tempOverheadRateValues[0].lumpsumAmount"
 									id="lumpsumamount"
-									name="overheadRates[0].lumpsumAmount" data-idx="0"
+									name="tempOverheadRateValues[0].lumpsumAmount" data-idx="0"
 									onkeyup="validateLumpsumAmount();" data-optional="1"
 									class="form-control table-input text-right lumpsumAmount removeDefaultValues" />
-								<form:errors path="overheadRates[0].lumpsumAmount"
+								<form:errors path="tempOverheadRateValues[0].lumpsumAmount"
 									cssClass="add-margin error-msg" /></td>
-							<td><form:input path="overheadRates[0].percentage"
-									name="activities[0].percentage"
+							<td><form:input path="tempOverheadRateValues[0].percentage"
+									name="tempOverheadRateValues[0].percentage"
 									id="percentage" data-idx="0" onkeyup="validatePercentage();"
 									data-optional="1"
 									class="form-control table-input text-right percentage removeDefaultValues" />
-								<form:errors path="overheadRates[0].percentage"
+								<form:errors path="tempOverheadRateValues[0].percentage"
 									cssClass="add-margin error-msg" /></td>
-							<td><form:input path="overheadRates[0].validity.startDate"
+							<td><form:input path="tempOverheadRateValues[0].validity.startDate"
 									name="startDate" data-errormsg="Start Date is mandatory!"
 									data-idx="0" data-optional="0"
 									class="form-control datepicker StartDate" maxlength="10"
 									data-date-format="dd/mm/yyyy" data-inputmask="'mask': 'd/m/y'"
 									required="required" /> <form:errors
-									path="overheadRates[0].validity.startDate"
+									path="tempOverheadRateValues[0].validity.startDate"
 									cssClass="add-margin error-msg" /></td>
-							<td><form:input path="overheadRates[0].validity.endDate"
+							<td><form:input path="tempOverheadRateValues[0].validity.endDate"
 									name="endDate" data-date-format="dd/mm/yyyy" data-idx="0"
 									data-optional="1" class="form-control datepicker EndDate"
 									maxlength="10" data-inputmask="'mask': 'd/m/y'" /> <form:errors
-									path="overheadRates[0].validity.endDate"
+									path="tempOverheadRateValues[0].validity.endDate"
 									cssClass="add-margin error-msg" /></td>
 							<td><span class="add-padding"
 								onclick="deleteOverhead(this);"><i class="fa fa-trash"
@@ -112,47 +112,47 @@
 						</tr>
 					</c:when>
 					<c:otherwise>
-						<c:forEach items="${overhead.overheadRates}" var="overheadRates"
+						<c:forEach items="${overhead.tempOverheadRateValues}" var="overheadRates"
 							varStatus="item">
 							<tr id="overheadRow">
 								<td><span class="spansno"><c:out
 											value="${item.index + 1}" /></span> <form:hidden
-										path="overheadRates[${item.index}].id"
-										name="overheadRates[${item.index}].id"
+										path="tempOverheadRateValues[${item.index}].id"
+										name="tempOverheadRateValues[${item.index}].id"
 										value="${overheadRates.id}"
 										class="form-control table-input hidden-input" /></td>
 								<td><form:input
-										path="overheadRates[${item.index}].lumpsumAmount"
+										path="tempOverheadRateValues[${item.index}].lumpsumAmount"
 										id="lumpsumamount"
-										name="overheadRates[${item.index}].lumpsumAmount"
+										name="tempOverheadRateValues[${item.index}].lumpsumAmount"
 										onkeyup="validateLumpsumAmount();" data-idx="0"
 										data-optional="1"
 										class="form-control table-input text-right lumpsumAmount removeDefaultValues"
 										maxlength="1024" /> <form:errors
-										path="overheadRates[${item.index}].lumpsumAmount"
+										path="tempOverheadRateValues[${item.index}].lumpsumAmount"
 										cssClass="add-margin error-msg" /></td>
 								<td><form:input
-										path="overheadRates[${item.index}].percentage"
-										name="activities[${item.index}].percentage" id="percentage"
+										path="tempOverheadRateValues[${item.index}].percentage"
+										name="tempOverheadRateValues[${item.index}].percentage" id="percentage"
 										data-idx="0" onkeyup="validatePercentage();" data-optional="1"
 										class="form-control table-input text-right percentage removeDefaultValues" />
 									<form:errors path="overheadRates[${item.index}].percentage"
 										cssClass="add-margin error-msg" /></td>
 								<td><form:input
-										path="overheadRates[${item.index}].validity.startDate"
+										path="tempOverheadRateValues[${item.index}].validity.startDate"
 										name="startDate" data-errormsg="Start Date is mandatory!"
 										data-idx="0" data-optional="0"
 										class="form-control datepicker StartDate" maxlength="10"
 										data-date-format="dd/mm/yyyy" data-inputmask="'mask': 'd/m/y'"
 										required="required" /> <form:errors
-										path="overheadRates[${item.index}].validity.startDate"
+										path="tempOverheadRateValues[${item.index}].validity.startDate"
 										cssClass="add-margin error-msg" /></td>
 								<td><form:input
-										path="overheadRates[${item.index}].validity.endDate"
+										path="tempOverheadRateValues[${item.index}].validity.endDate"
 										name="endDate" data-date-format="dd/mm/yyyy" data-idx="0"
 										data-optional="1" class="form-control datepicker EndDate"
 										maxlength="10" data-inputmask="'mask': 'd/m/y'" /> <form:errors
-										path="overheadRates[${item.index}].validity.endDate"
+										path="tempOverheadRateValues[${item.index}].validity.endDate"
 										cssClass="add-margin error-msg" /></td>
 								<td><span class="add-padding"
 									onclick="deleteOverhead(this);"><i class="fa fa-trash"

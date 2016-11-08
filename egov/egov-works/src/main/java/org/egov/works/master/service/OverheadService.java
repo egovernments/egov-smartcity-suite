@@ -126,4 +126,18 @@ public class OverheadService {
         criteria.setResultTransformer(CriteriaSpecification.DISTINCT_ROOT_ENTITY);
         return criteria.list();
     }
+
+    public void createOverheadValues(final Overhead overhead) {
+        OverheadRate overheadRates = null;
+        overhead.getOverheadRates().clear();
+        for (final OverheadRate overheadRate : overhead.getTempOverheadRateValues()) {
+            overheadRates = new OverheadRate();
+            overheadRates.setLumpsumAmount(overheadRate.getLumpsumAmount());
+            overheadRates.setPercentage(overheadRate.getPercentage());
+            overheadRates.setValidity(overheadRate.getValidity());
+            overheadRates.setOverhead(overhead);
+            overhead.getOverheadRates().add(overheadRates);
+        }
+    }
+
 }

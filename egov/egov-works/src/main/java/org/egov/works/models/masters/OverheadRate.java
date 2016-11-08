@@ -51,11 +51,9 @@ import javax.persistence.Table;
 
 import org.egov.infra.persistence.entity.AbstractAuditable;
 import org.egov.infra.persistence.entity.component.Period;
-import org.egov.infra.persistence.validator.annotation.Unique;
 
 @Entity
 @Table(name = "EGW_OVERHEAD_RATE")
-@Unique(id = "id", tableName = "EGW_OVERHEAD_RATE", columnName = { "code" }, fields = { "code" }, enableDfltMsg = true)
 @SequenceGenerator(name = OverheadRate.SEQ_EGW_OVERHEAD_RATE, sequenceName = OverheadRate.SEQ_EGW_OVERHEAD_RATE, allocationSize = 1)
 public class OverheadRate extends AbstractAuditable {
 

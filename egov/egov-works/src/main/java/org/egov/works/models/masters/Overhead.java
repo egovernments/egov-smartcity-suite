@@ -56,17 +56,16 @@ import javax.persistence.OneToMany;
 import javax.persistence.OrderBy;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 import javax.validation.constraints.NotNull;
 
 import org.egov.commons.CChartOfAccounts;
 import org.egov.infra.persistence.entity.AbstractAuditable;
-import org.egov.infra.persistence.validator.annotation.Unique;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
 @Entity
 @Table(name = "EGW_OVERHEAD")
-@Unique(id = "id", tableName = "EGW_OVERHEAD", columnName = { "name" }, fields = { "name" }, enableDfltMsg = true)
 @NamedQueries({
         @NamedQuery(name = Overhead.OVERHEADS_BY_DATE, query = "from Overhead o inner join fetch o.overheadRates as rates where ((? between rates.validity.startDate and rates.validity.endDate ) or (rates.validity.startDate<=? and rates.validity.endDate is null))"),
         @NamedQuery(name = Overhead.BY_DATE_AND_TYPE, query = "from Overhead o inner join fetch o.overheadRates as rates where ((? between rates.validity.startDate and rates.validity.endDate ) or (rates.validity.startDate<=? and rates.validity.endDate is null))") })
@@ -97,6 +96,9 @@ public class Overhead extends AbstractAuditable {
     @OrderBy("id")
     @OneToMany(mappedBy = "overhead", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true, targetEntity = OverheadRate.class)
     private final List<OverheadRate> overheadRates = new ArrayList<OverheadRate>(0);
+
+    @Transient
+    private List<OverheadRate> tempOverheadRateValues = new ArrayList<OverheadRate>(0);
 
     @Override
     public Long getId() {
@@ -134,6 +136,14 @@ public class Overhead extends AbstractAuditable {
 
     public List<OverheadRate> getOverheadRates() {
         return overheadRates;
+    }
+
+    public List<OverheadRate> getTempOverheadRateValues() {
+        return tempOverheadRateValues;
+    }
+
+    public void setTempOverheadRateValues(final List<OverheadRate> tempOverheadRateValues) {
+        this.tempOverheadRateValues = tempOverheadRateValues;
     }
 
 }

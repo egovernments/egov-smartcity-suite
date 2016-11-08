@@ -78,9 +78,11 @@ public class CreateOverheadController {
     private MessageSource messageSource;
 
     @RequestMapping(value = "/overhead-newform", method = RequestMethod.GET)
-    public String showNewForm(final Model model, final HttpServletRequest request) {
+    public String showNewForm(final Model model) {
+        final Overhead overhead = new Overhead();
+        overhead.setTempOverheadRateValues(overhead.getOverheadRates());
         setDropDownValues(model);
-        model.addAttribute("overhead", new Overhead());
+        model.addAttribute("overhead", overhead);
         return "overhead-form";
     }
 
@@ -88,7 +90,7 @@ public class CreateOverheadController {
     public String create(@ModelAttribute final Overhead overhead,
             final Model model, final HttpServletRequest request, final BindingResult resultBinder)
             throws ApplicationException, IOException {
-        validateOverhead(overhead, resultBinder, request);
+        validateOverhead(overhead, resultBinder);
         final String mode = request.getParameter("mode");
         if (mode.equalsIgnoreCase("edit") && overhead.getId() != null)
             model.addAttribute("mode", "edit");
@@ -97,6 +99,7 @@ public class CreateOverheadController {
             model.addAttribute("overhead", overhead);
             return "overhead-form";
         }
+        overheadService.createOverheadValues(overhead);
         overheadService.create(overhead);
         final Long overheadId = overhead.getId();
         return "redirect:/masters/overhead-success?overheadId=" + overheadId;
@@ -124,7 +127,7 @@ public class CreateOverheadController {
                             .getAccountCodeByPurpose(Integer.valueOf(worksService.getWorksConfigValue("OVERHEAD_PURPOSE"))));
     }
 
-    private void validateOverhead(final Overhead overhead, final BindingResult resultBinder, final HttpServletRequest request) {
+    private void validateOverhead(final Overhead overhead, final BindingResult resultBinder) {
         final String overheadName = overhead.getName();
         final Overhead existingOverhead = overheadService.getOverheadByName(overheadName);
         final Long overheadId = overhead.getId();
@@ -135,7 +138,7 @@ public class CreateOverheadController {
         if (!overheadName.matches(WorksConstants.alphaNumericwithspecialchar))
             resultBinder.reject("error.overheadname.invalid", "error.overheadname.invalid");
 
-        if (overhead.getOverheadRates() == null)
+        if (overhead.getTempOverheadRateValues() == null)
             resultBinder.reject("error.overhead.altleastone.overheadrate.needed",
                     new String[] { "" },
                     "error.overhead.altleastone.overheadrate.needed");
@@ -151,7 +154,7 @@ public class CreateOverheadController {
             resultBinder.reject("error.overhead.overheadaccountcode",
                     new String[] { "" },
                     "error.overhead.overheadaccountcode");
-        for (final OverheadRate overheadRates : overhead.getOverheadRates()) {
+        for (final OverheadRate overheadRates : overhead.getTempOverheadRateValues()) {
             if (overheadRates.getValidity().getEndDate() != null)
                 if (overheadRates.getValidity().getStartDate().after(overheadRates.getValidity().getEndDate())) {
                     resultBinder.reject("overhead.date.invalid",

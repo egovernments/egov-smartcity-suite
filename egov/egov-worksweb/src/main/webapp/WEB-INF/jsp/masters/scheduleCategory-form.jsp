@@ -42,9 +42,9 @@
 <div class="panel panel-primary" data-collapsed="0" style="text-align: left">
 	<div class="panel-heading">
 		<div class="panel-title">
-			<s:if test="%{id==null}"><s:text name="scheduleCategory.sor.category" />
+			<s:if test="%{id==null}"><s:text name="estimate.scheduleCategory.name" />
 		</s:if>
-		<s:elseif test="%{id!=null && mode=='edit'}"><s:text name="scheduleCategory.modify.sor"/>
+		<s:elseif test="%{id!=null && mode=='edit'}"><s:text name="schedCategory.modify"/>
 		</s:elseif>
 		<s:else><s:text name="scheduleCategory.view.sor"/>
 		</s:else>

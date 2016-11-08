@@ -63,7 +63,7 @@ ul {
 		<div class="add-margin">
 			<s:if test="%{mode != 'edit' && mode == ''}">
 				<input type="submit" name="create" Class="btn btn-primary"
-					value="Add New Milestone Template" id="CREATE" name="button"
+					value="Create New Milestone Template" id="CREATE" name="button"
 					onclick="createNewMilestoneTemplate();" />
 			</s:if>
 			<input type="submit" name="closeButton" id="closeButton"

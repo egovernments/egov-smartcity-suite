@@ -44,10 +44,7 @@ function addOverhead() {
 		if (document.getElementById('overheadRow') != null) {
 			// get Next Row Index to Generate
 			var nextIdx = 0;
-			if($detailsRowCount == 0)
-				nextIdx = $("#tbloverhead tbody tr").length;
-			else
-				nextIdx = $detailsRowCount++;
+			nextIdx = $("#tbloverhead tbody tr").length;
 			
             var estimateNo = (new Date()).valueOf();
 			// validate status variable for exiting function
@@ -199,25 +196,39 @@ function deleteOverhead(obj) {
 	} else {
 		tbl.deleteRow(rIndex);
 		//starting index for table fields
-		var idx=parseInt($detailsRowCount);
+		var idx= 0;
+		var sno = 1;
 		//regenerate index existing inputs in table row
-		$("#tbloverhead tbody tr").each(function() {
-			hiddenElem=$(this).find("input:hidden");
-			if(!$(hiddenElem).val())
-			{
-				$(this).find("input, errors, textarea").each(function() {
-					   $(this).attr({
+		jQuery("#tbloverhead tbody tr").each(function() {
+		
+				jQuery(this).find("input, select, textarea, errors, span, input:hidden").each(function() {
+					var classval = jQuery(this).attr('class');
+					if(classval == 'spansno') {
+						jQuery(this).text(sno);
+						sno++;
+					} else {
+					jQuery(this).attr({
 					      'name': function(_, name) {
-					    	  return name.replace(/\[.\]/g, '['+ idx +']'); 
+					    	  if(!(jQuery(this).attr('name')===undefined))
+					    		  return name.replace(/\[.\]/g, '['+ idx +']'); 
 					      },
+					      'id': function(_, id) {
+					    	  if(!(jQuery(this).attr('id')===undefined))
+					    		  return id.replace(/\[.\]/g, '['+ idx +']'); 
+					      },
+					      'class' : function(_, name) {
+								if(!(jQuery(this).attr('class')===undefined))
+									return name.replace(/\[.\]/g, '['+ idx +']'); 
+							},
 						  'data-idx' : function(_,dataIdx)
 						  {
 							  return idx;
 						  }
 					   });
+					}
 			    });
+				
 				idx++;
-			}
 		});
 		
 		generateSno();

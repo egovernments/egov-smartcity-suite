@@ -39,8 +39,6 @@
  */
 package org.egov.works.web.controller.masters;
 
-import javax.servlet.http.HttpServletRequest;
-
 import org.egov.commons.dao.ChartOfAccountsHibernateDAO;
 import org.egov.infra.exception.ApplicationException;
 import org.egov.works.master.service.OverheadService;
@@ -67,10 +65,10 @@ public class UpdateOverheadController {
     private ChartOfAccountsHibernateDAO chartOfAccountsHibernateDAO;
 
     @RequestMapping(value = "/overhead-update/{overheadId}", method = RequestMethod.GET)
-    public String updateOverhead(final Model model, @PathVariable final String overheadId,
-            final HttpServletRequest request)
+    public String updateOverhead(final Model model, @PathVariable final String overheadId)
             throws ApplicationException {
         final Overhead overhead = overheadService.getOverheadById(Long.parseLong(overheadId));
+        overhead.setTempOverheadRateValues(overhead.getOverheadRates());
         setDropDownValues(model);
         model.addAttribute("overhead", overhead);
         model.addAttribute("mode", "edit");

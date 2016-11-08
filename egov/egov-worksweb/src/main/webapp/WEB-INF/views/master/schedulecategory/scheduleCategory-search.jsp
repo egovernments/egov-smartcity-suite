@@ -64,7 +64,7 @@
 						code="lbl.categoryname" /></label>
 				<div class="col-sm-3 add-margin">
 					<form:input path="categoryName" id="categoryName"
-						class="form-control" />
+						class="form-control" placeholder="Type first 3 letters of Category Name" />
 					<form:errors path="categoryName" cssClass="add-margin error-msg" />
 				</div>
 				<label class="col-sm-2 control-label text-right" for="tags"><spring:message
