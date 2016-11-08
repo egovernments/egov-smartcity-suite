@@ -1,45 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!--
-  ~ eGov suite of products aim to improve the internal efficiency,transparency,
-  ~    accountability and the service delivery of the government  organizations.
-  ~
-  ~     Copyright (C) <2015>  eGovernments Foundation
-  ~
-  ~     The updated version of eGov suite of products as by eGovernments Foundation
-  ~     is available at http://www.egovernments.org
-  ~
-  ~     This program is free software: you can redistribute it and/or modify
-  ~     it under the terms of the GNU General Public License as published by
-  ~     the Free Software Foundation, either version 3 of the License, or
-  ~     any later version.
-  ~
-  ~     This program is distributed in the hope that it will be useful,
-  ~     but WITHOUT ANY WARRANTY; without even the implied warranty of
-  ~     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-  ~     GNU General Public License for more details.
-  ~
-  ~     You should have received a copy of the GNU General Public License
-  ~     along with this program. If not, see http://www.gnu.org/licenses/ or
-  ~     http://www.gnu.org/licenses/gpl.html .
-  ~
-  ~     In addition to the terms of the GPL license to be adhered to in using this
-  ~     program, the following additional terms are to be complied with:
-  ~
-  ~         1) All versions of this program, verbatim or modified must carry this
-  ~            Legal Notice.
-  ~
-  ~         2) Any misrepresentation of the origin of the material is prohibited. It
-  ~            is required that all modified versions of this material be marked in
-  ~            reasonable ways as different from the original version.
-  ~
-  ~         3) This license does not grant any rights to any user of the program
-  ~            with regards to rights under trademark law for use of the trade names
-  ~            or trademarks of eGovernments Foundation.
-  ~
-  ~   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
-  -->
 <!-- Created with Jaspersoft Studio version 6.2.2.final using JasperReports Library version 6.2.2  -->
-<!-- 2016-10-27T11:04:21 -->
+<!-- 2016-11-08T15:48:19 -->
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="RevisionAgreement_ChangeQuantityActivities" pageWidth="900" pageHeight="600" columnWidth="760" leftMargin="0" rightMargin="20" topMargin="20" bottomMargin="20" uuid="752fc37e-2c58-4f0c-8aa6-47c023e301d5">
 	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="One Empty Record"/>
 	<property name="com.jaspersoft.studio.unit." value="pixel"/>
@@ -118,7 +79,7 @@ $F{estimateQuantity} + $F{quantity}) * $F{estimateRate}]]></variableExpression>
 				<textElement textAlignment="Center" verticalAlignment="Middle">
 					<font size="9" isBold="true"/>
 				</textElement>
-				<text><![CDATA[Estimated Quantity(A)]]></text>
+				<text><![CDATA[Estimated Quantity]]></text>
 			</staticText>
 			<staticText>
 				<reportElement x="393" y="0" width="44" height="35" uuid="b98e4367-0405-4195-b7e8-2500fa5430a5"/>
@@ -131,7 +92,7 @@ $F{estimateQuantity} + $F{quantity}) * $F{estimateRate}]]></variableExpression>
 				<textElement textAlignment="Center" verticalAlignment="Middle">
 					<font size="9" isBold="true"/>
 				</textElement>
-				<text><![CDATA[Rate (R)]]></text>
+				<text><![CDATA[Rate]]></text>
 			</staticText>
 			<staticText>
 				<reportElement x="502" y="0" width="80" height="35" uuid="67c321ac-30db-4bfb-ba9f-e6e6d8dc2f99">
@@ -146,7 +107,7 @@ $F{estimateQuantity} + $F{quantity}) * $F{estimateRate}]]></variableExpression>
 				<textElement textAlignment="Center" verticalAlignment="Middle">
 					<font size="9" isBold="true"/>
 				</textElement>
-				<text><![CDATA[Addition /Reduction Qty (B)]]></text>
+				<text><![CDATA[Addition /Reduction Qty]]></text>
 			</staticText>
 			<staticText>
 				<reportElement x="1" y="0" width="27" height="35" uuid="c21ef27b-9056-484b-bfda-efcdaff340a3">
@@ -220,7 +181,7 @@ $F{estimateQuantity} + $F{quantity}) * $F{estimateRate}]]></variableExpression>
 				<textElement textAlignment="Center" verticalAlignment="Middle">
 					<font size="9" isBold="true"/>
 				</textElement>
-				<text><![CDATA[Additon /Reduction Amount (B*R)]]></text>
+				<text><![CDATA[Additon /Reduction Amount ]]></text>
 			</staticText>
 			<staticText>
 				<reportElement x="668" y="0" width="88" height="35" uuid="f8ad196e-e721-4d3d-9c8f-e0efbc2a9feb"/>
@@ -233,7 +194,7 @@ $F{estimateQuantity} + $F{quantity}) * $F{estimateRate}]]></variableExpression>
 				<textElement textAlignment="Center" verticalAlignment="Middle">
 					<font size="9" isBold="true"/>
 				</textElement>
-				<text><![CDATA[Revised estimate Qty Q =(A +/- B)]]></text>
+				<text><![CDATA[Revised estimate Qty]]></text>
 			</staticText>
 			<staticText>
 				<reportElement x="756" y="0" width="84" height="35" uuid="bd34a476-b488-45a0-b173-84a4ce0908b8">
@@ -249,7 +210,7 @@ $F{estimateQuantity} + $F{quantity}) * $F{estimateRate}]]></variableExpression>
 				<textElement textAlignment="Center" verticalAlignment="Middle">
 					<font size="9" isBold="true"/>
 				</textElement>
-				<text><![CDATA[Revised Total Amount (Q*R)]]></text>
+				<text><![CDATA[Revised Total Amount]]></text>
 			</staticText>
 		</band>
 	</columnHeader>
@@ -566,7 +527,7 @@ $F{estimateQuantity} + $F{quantity}) * $F{estimateRate}]]></textFieldExpression>
 				<textElement textAlignment="Center" verticalAlignment="Middle">
 					<font size="9" isBold="true"/>
 				</textElement>
-				<text><![CDATA[Nontendered amount]]></text>
+				<text><![CDATA[Non tendered amount]]></text>
 			</staticText>
 			<staticText>
 				<reportElement x="153" y="20" width="190" height="20" uuid="499b2031-e87f-4390-b4e0-887a3c3008bb"/>

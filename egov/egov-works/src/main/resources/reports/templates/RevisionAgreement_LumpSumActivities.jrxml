@@ -39,7 +39,7 @@
   ~   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
   -->
 <!-- Created with Jaspersoft Studio version 6.2.2.final using JasperReports Library version 6.2.2  -->
-<!-- 2016-10-26T22:08:16 -->
+<!-- 2016-11-08T15:41:33 -->
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="letterOfAcceptance-BOQ" pageWidth="920" pageHeight="600" orientation="Landscape" columnWidth="900" leftMargin="0" rightMargin="20" topMargin="20" bottomMargin="20" uuid="3f4f70f4-bba4-426b-9ecf-74b618ffa71f">
 	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="One Empty Record"/>
 	<property name="com.jaspersoft.studio.unit." value="pixel"/>
@@ -73,7 +73,7 @@
 				<textElement textAlignment="Center" verticalAlignment="Middle">
 					<font size="14" isBold="true" isUnderline="true"/>
 				</textElement>
-				<text><![CDATA[LumpSum Items]]></text>
+				<text><![CDATA[Lump Sum Items]]></text>
 			</staticText>
 		</band>
 	</title>
@@ -110,7 +110,7 @@
 				<text><![CDATA[Description]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="409" y="0" width="60" height="25" uuid="f5c29c2d-8ac9-4b00-be67-2da13dba6e46"/>
+				<reportElement x="417" y="0" width="60" height="25" uuid="f5c29c2d-8ac9-4b00-be67-2da13dba6e46"/>
 				<box>
 					<topPen lineWidth="0.2" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="0.2" lineStyle="Solid" lineColor="#000000"/>
@@ -120,10 +120,10 @@
 				<textElement textAlignment="Center" verticalAlignment="Middle">
 					<font size="9" isBold="true"/>
 				</textElement>
-				<text><![CDATA[UOM]]></text>
+				<text><![CDATA[Rate]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="469" y="0" width="81" height="25" uuid="52b3868c-24fc-4d91-b708-b904ac115422"/>
+				<reportElement x="477" y="0" width="81" height="25" uuid="52b3868c-24fc-4d91-b708-b904ac115422"/>
 				<box>
 					<topPen lineWidth="0.2" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="0.2" lineStyle="Solid" lineColor="#000000"/>
@@ -136,7 +136,7 @@
 				<text><![CDATA[Estimated Quantity]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="550" y="0" width="85" height="25" uuid="febc8ff9-8249-46ce-968e-5ad87d5cb759"/>
+				<reportElement x="558" y="0" width="85" height="25" uuid="febc8ff9-8249-46ce-968e-5ad87d5cb759"/>
 				<box>
 					<topPen lineWidth="0.2" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="0.2" lineStyle="Solid" lineColor="#000000"/>
@@ -149,7 +149,7 @@
 				<text><![CDATA[Estimated Amount(Rs)]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="349" y="0" width="60" height="25" uuid="938d48c7-be7f-490a-af86-affe7c08b750"/>
+				<reportElement x="349" y="0" width="68" height="25" uuid="938d48c7-be7f-490a-af86-affe7c08b750"/>
 				<box>
 					<topPen lineWidth="0.2" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="0.2" lineStyle="Solid" lineColor="#000000"/>
@@ -159,7 +159,7 @@
 				<textElement textAlignment="Center" verticalAlignment="Middle">
 					<font size="9" isBold="true"/>
 				</textElement>
-				<text><![CDATA[Rate]]></text>
+				<text><![CDATA[UOM]]></text>
 			</staticText>
 		</band>
 	</columnHeader>
@@ -170,7 +170,7 @@
 				<reportElement stretchType="RelativeToTallestObject" x="33" y="0" width="316" height="20" uuid="6c8ad43a-a449-476a-98cb-cdcfda034737">
 					<property name="com.jaspersoft.studio.unit.width" value="pixel"/>
 				</reportElement>
-				<box leftPadding="1">
+				<box leftPadding="3">
 					<topPen lineWidth="0.2" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="0.2" lineStyle="Solid" lineColor="#000000"/>
 					<bottomPen lineWidth="0.2" lineStyle="Solid" lineColor="#000000"/>
@@ -183,22 +183,22 @@
 :$F{nonSor}.getDescription()]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true">
-				<reportElement stretchType="RelativeToTallestObject" x="409" y="0" width="60" height="20" uuid="a4ab6f5f-345a-47d1-8bcb-cb879faab97b">
+				<reportElement stretchType="RelativeToTallestObject" x="417" y="0" width="60" height="20" uuid="a4ab6f5f-345a-47d1-8bcb-cb879faab97b">
 					<property name="com.jaspersoft.studio.unit.width" value="pixel"/>
 				</reportElement>
-				<box>
+				<box rightPadding="3">
 					<topPen lineWidth="0.2" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="0.2" lineStyle="Solid" lineColor="#000000"/>
 					<bottomPen lineWidth="0.2" lineStyle="Solid" lineColor="#000000"/>
 					<rightPen lineWidth="0.2" lineStyle="Solid" lineColor="#000000"/>
 				</box>
-				<textElement textAlignment="Center" verticalAlignment="Middle">
+				<textElement textAlignment="Right" verticalAlignment="Middle">
 					<font size="9"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$F{uom}.getUom()]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$F{estimateRate}]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" pattern="#0.00#">
-				<reportElement stretchType="RelativeToTallestObject" x="469" y="0" width="81" height="20" uuid="9cace97b-02a6-4132-8dfe-df5b98647d2c">
+				<reportElement stretchType="RelativeToTallestObject" x="477" y="0" width="81" height="20" uuid="9cace97b-02a6-4132-8dfe-df5b98647d2c">
 					<property name="com.jaspersoft.studio.unit.width" value="pixel"/>
 				</reportElement>
 				<box rightPadding="2">
@@ -213,7 +213,7 @@
 				<textFieldExpression><![CDATA[$F{quantity}]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" pattern="#0.00#">
-				<reportElement stretchType="RelativeToTallestObject" x="550" y="0" width="85" height="20" uuid="38d551eb-6628-4dbb-89cb-20e27a318821">
+				<reportElement stretchType="RelativeToTallestObject" x="558" y="0" width="85" height="20" uuid="38d551eb-6628-4dbb-89cb-20e27a318821">
 					<property name="com.jaspersoft.studio.unit.width" value="pixel"/>
 				</reportElement>
 				<box rightPadding="2">
@@ -241,7 +241,7 @@
 				<textFieldExpression><![CDATA[$V{REPORT_COUNT}]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true">
-				<reportElement stretchType="RelativeToTallestObject" x="349" y="0" width="60" height="20" uuid="f21d1b78-9ee1-4ae3-b3e9-bb154f23461f">
+				<reportElement stretchType="RelativeToTallestObject" x="349" y="0" width="68" height="20" uuid="f21d1b78-9ee1-4ae3-b3e9-bb154f23461f">
 					<property name="com.jaspersoft.studio.unit.width" value="pixel"/>
 				</reportElement>
 				<box rightPadding="2">
@@ -250,17 +250,17 @@
 					<bottomPen lineWidth="0.2" lineStyle="Solid" lineColor="#000000"/>
 					<rightPen lineWidth="0.2" lineStyle="Solid" lineColor="#000000"/>
 				</box>
-				<textElement textAlignment="Right" verticalAlignment="Middle">
+				<textElement textAlignment="Center" verticalAlignment="Middle">
 					<font size="9"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$F{estimateRate}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$F{uom}.getUom()]]></textFieldExpression>
 			</textField>
 		</band>
 	</detail>
 	<summary>
 		<band height="20" splitType="Stretch">
 			<staticText>
-				<reportElement x="409" y="0" width="141" height="20" uuid="fdf80fb5-6cbd-47d1-9835-94f09908b8e0">
+				<reportElement x="417" y="0" width="141" height="20" uuid="fdf80fb5-6cbd-47d1-9835-94f09908b8e0">
 					<property name="com.jaspersoft.studio.unit.width" value="pixel"/>
 				</reportElement>
 				<box>
@@ -303,7 +303,7 @@
 				<text><![CDATA[]]></text>
 			</staticText>
 			<textField pattern="#0.00#">
-				<reportElement x="550" y="0" width="85" height="20" uuid="be58898e-3250-42c8-8870-713b2374420a">
+				<reportElement x="558" y="0" width="85" height="20" uuid="be58898e-3250-42c8-8870-713b2374420a">
 					<property name="com.jaspersoft.studio.unit.width" value="pixel"/>
 				</reportElement>
 				<box rightPadding="2">
@@ -318,7 +318,7 @@
 				<textFieldExpression><![CDATA[$V{sumOfAmount}]]></textFieldExpression>
 			</textField>
 			<staticText>
-				<reportElement x="349" y="0" width="60" height="20" uuid="ae3633ec-38f4-4eeb-b337-765e27bdaccf">
+				<reportElement x="349" y="0" width="68" height="20" uuid="ae3633ec-38f4-4eeb-b337-765e27bdaccf">
 					<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
 				</reportElement>
 				<box>

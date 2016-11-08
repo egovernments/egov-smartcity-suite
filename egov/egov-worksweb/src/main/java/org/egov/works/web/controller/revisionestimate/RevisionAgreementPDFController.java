@@ -121,6 +121,8 @@ public class RevisionAgreementPDFController {
                     .getWorkOrderEstimateByAbstractEstimateId(revisionEstimate.getId());
             final WorkOrder revisionworkOrder = revisionWorkOrderEstimate.getWorkOrder();
             final AbstractEstimate originalEstimate = revisionEstimate.getParent();
+            final WorkOrderEstimate workOrderEstimate = workOrderEstimateService
+                    .getWorkOrderEstimateByAbstractEstimateId(originalEstimate.getId());
             final String url = WebUtils.extractRequestDomainURL(request, false);
             reportParams.put("cityLogo", url.concat(ReportConstants.IMAGE_CONTEXT_PATH)
                     .concat((String) request.getSession().getAttribute("citylogo")));
@@ -131,7 +133,8 @@ public class RevisionAgreementPDFController {
             reportParams.put("suplimentAgreementAmount",
                     BigDecimal.valueOf(revisionworkOrder.getWorkOrderAmount()).setScale(2, BigDecimal.ROUND_UP).toString());
             reportParams.put("workOrderNumber",
-                    revisionworkOrder.getWorkOrderNumber() != null ? revisionworkOrder.getWorkOrderNumber() : "");
+                    workOrderEstimate.getWorkOrder().getWorkOrderNumber() != null
+                            ? workOrderEstimate.getWorkOrder().getWorkOrderNumber() : "");
             reportParams.put("workOrderDate", revisionworkOrder.getWorkOrderDate() != null
                     ? DateUtils.getDefaultFormattedDate(revisionworkOrder.getWorkOrderDate()) : "");
 
