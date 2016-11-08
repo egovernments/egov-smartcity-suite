@@ -52,8 +52,8 @@ public class ComplaintIndex {
     @Field(type = FieldType.String, index = not_analyzed)
     private String complaintTypeCode;
 
-    @Field(type = FieldType.String, index = not_analyzed)
-    private String assigneeId;
+    @Field(type = FieldType.Long)
+    private Long assigneeId;
     
     @Field(type = FieldType.String, index = not_analyzed)
     private String assigneeName;
@@ -955,11 +955,11 @@ public class ComplaintIndex {
         this.currentFunctionaryMobileNumber = currentFunctionaryMobileNumber;
     }
 
-    public String getAssigneeId() {
+    public Long getAssigneeId() {
         return assigneeId;
     }
 
-    public void setAssigneeId(String assigneeId) {
+    public void setAssigneeId(Long assigneeId) {
         this.assigneeId = assigneeId;
     }
 }
