@@ -1,11 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://maven.apache.org/POM/4.0.0"
-         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>org.egov</groupId>
     <artifactId>egov-erp</artifactId>
-    <version>2.0.0-SNAPSHOT</version>
+    <version>2.0.0.RELEASE</version>
 
     <packaging>pom</packaging>
 
@@ -24,7 +23,7 @@
         <connection>scm:git:git://github.com/egovernments/eGov.git</connection>
         <developerConnection>scm:git:git@github.com:egovernments/eGov.git</developerConnection>
         <url>https://github.com/egovernments/eGov</url>
-        <tag>HEAD</tag>
+        <tag>2.0.0.RELEASE</tag>
     </scm>
 
     <organization>
@@ -97,11 +96,11 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <build.number>${timestamp}</build.number>
         <app.version>${project.version}</app.version>
-        <versioneye.key></versioneye.key>
-        <db.driver></db.driver>
-        <db.url></db.url>
-        <db.user></db.user>
-        <db.password></db.password>
+        <versioneye.key />
+        <db.driver />
+        <db.url />
+        <db.user />
+        <db.password />
         <disable.drop.db>true</disable.drop.db>
         <!-- Sonar properties -->
         <sonar.core.codeCoveragePlugin>jacoco</sonar.core.codeCoveragePlugin>
@@ -1207,7 +1206,7 @@
                                         </goals>
                                     </pluginExecutionFilter>
                                     <action>
-                                        <ignore/>
+                                        <ignore />
                                     </action>
                                 </pluginExecution>
                             </pluginExecutions>
