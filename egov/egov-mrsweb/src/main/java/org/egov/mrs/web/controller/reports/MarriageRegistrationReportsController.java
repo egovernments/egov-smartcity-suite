@@ -46,17 +46,23 @@ import static org.egov.mrs.application.MarriageConstants.REVENUE_HIERARCHY_TYPE;
 import java.io.IOException;
 import java.text.ParseException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
 
 import org.egov.infra.admin.master.entity.Boundary;
 import org.egov.infra.admin.master.service.BoundaryService;
 import org.egov.mrs.application.reports.service.MarriageRegistrationReportsService;
+import org.egov.mrs.domain.entity.MaritalStatusReport;
 import org.egov.mrs.domain.entity.MarriageCertificate;
 import org.egov.mrs.domain.entity.MarriageRegistration;
 import org.egov.mrs.domain.entity.MarriageRegistration.RegistrationStatus;
 import org.egov.mrs.domain.entity.RegistrationCertificatesResultForReport;
+import org.egov.mrs.domain.enums.MaritalStatus;
 import org.egov.mrs.domain.service.MarriageRegistrationService;
+import org.egov.mrs.web.adaptor.MaritalStatusReportJsonAdaptor;
 import org.egov.mrs.web.adaptor.MarriageRegistrationCertificateReportJsonAdaptor;
 import org.egov.mrs.web.adaptor.MarriageRegistrationJsonAdaptor;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -136,8 +142,8 @@ public class MarriageRegistrationReportsController {
 	public @ResponseBody String searchAgeWise(@RequestParam("year") int year, Model model, @ModelAttribute final MarriageRegistration registration)
 			throws ParseException {
 
-		HashMap<String, Integer> husbandAgeRangesCount = getCountByRange(marriageRegistrationService.searchRegistrationOfHusbandAgeWise(year));
-		HashMap<String, Integer> wifeAgeRangesCount = getCountByRange(marriageRegistrationService.searchRegistrationOfWifeAgeWise(year));
+		HashMap<String, Integer> husbandAgeRangesCount = getCountByRange(marriageRegistrationReportsService.searchRegistrationOfHusbandAgeWise(year));
+		HashMap<String, Integer> wifeAgeRangesCount = getCountByRange(marriageRegistrationReportsService.searchRegistrationOfWifeAgeWise(year));
 
 		ArrayList<HashMap<String, Object>> result = new ArrayList<>();
 
@@ -184,7 +190,7 @@ public class MarriageRegistrationReportsController {
 	@RequestMapping(value = "/age-wise/view/{year}/{applicantType}/{ageRange}", method = RequestMethod.GET)
 	public String viewAgeWiseDetails(@PathVariable final int year, @PathVariable final String applicantType,
 			@PathVariable final String ageRange, final Model model) throws IOException, ParseException {
-		List<MarriageRegistration> marriageRegistrations = marriageRegistrationService.getAgewiseDetails(ageRange,
+		List<MarriageRegistration> marriageRegistrations = marriageRegistrationReportsService.getAgewiseDetails(ageRange,
 				applicantType, year);
 		model.addAttribute("marriageRegistrations", marriageRegistrations);
 		model.addAttribute("applicantType", applicantType);
@@ -220,5 +226,82 @@ public class MarriageRegistrationReportsController {
                    .toString();
           return result;
     } 
-	
+    
+	@RequestMapping(value = "/status-at-time-marriage", method = RequestMethod.GET)
+	public String getStatusAtTimeOfMarriage(final Model model) {
+		model.addAttribute("registration", new MarriageRegistration());
+		model.addAttribute("maritalStatusList", Arrays.asList(MaritalStatus.values()));
+		return "statustime-ofmarriage-report";
+	}
+
+	@RequestMapping(value = "/status-at-time-marriage", method = RequestMethod.POST, produces = MediaType.TEXT_PLAIN_VALUE)
+	public @ResponseBody String searchStatusAtTimeOfMarriage(@RequestParam("year") int year, Model model,
+			@ModelAttribute final MarriageRegistration registration) throws ParseException {
+		List<MaritalStatusReport> maritalStatusReports = new ArrayList<>();
+		maritalStatusReports.addAll(putRecordsIntoHashMapByMonth(
+				marriageRegistrationReportsService.getHusbandCountByMaritalStatus(year), "husband"));
+		maritalStatusReports.addAll(putRecordsIntoHashMapByMonth(
+				marriageRegistrationReportsService.getWifeCountByMaritalStatus(year), "wife"));
+		String result = new StringBuilder("{ \"data\":")
+				.append(toJSON(maritalStatusReports, MaritalStatusReport.class, MaritalStatusReportJsonAdaptor.class))
+				.append("}").toString();
+		return result;
+	}
+
+	private List<MaritalStatusReport> putRecordsIntoHashMapByMonth(List<String[]> recordList, String applicantType) {
+		Map<String, Map<String, String>> map = new HashMap<String, Map<String, String>>();
+		for (Object[] category : recordList) {
+			if (map.containsKey(category[1])) {
+				if (map.get(category[1]).containsKey(category[0])) {
+					map.get(category[1]).put(String.valueOf(category[0]), String.valueOf(category[2]));
+				} else {
+					Map<String, String> subMap = new HashMap<>();
+					subMap.put(String.valueOf(category[0]), String.valueOf(category[2]));
+					map.get(category[1]).put(String.valueOf(category[0]), String.valueOf(category[2]));
+
+				}
+			} else {
+				Map<String, String> subMap = new HashMap<>();
+				subMap.put(String.valueOf(category[0]), String.valueOf(category[2]));
+				map.put(String.valueOf(category[1]), subMap);
+
+				map.get(category[1]).put("applicantType", applicantType);
+			}
+		}
+		List<MaritalStatusReport> maritalStatusReports = new ArrayList<>();
+		for (Entry<String, Map<String, String>> resMap : map.entrySet()) {
+			MaritalStatusReport report = new MaritalStatusReport();
+			report.setMonth(resMap.getKey());
+			for (Entry<String, String> valuesMap : resMap.getValue().entrySet()) {
+				if (valuesMap.getValue().equalsIgnoreCase("husband") || valuesMap.getValue().equalsIgnoreCase("wife"))
+					report.setApplicantType(applicantType);
+
+				if (valuesMap.getKey().equalsIgnoreCase(MaritalStatus.Married.toString())) {
+					report.setMarried(valuesMap.getValue() != null ? valuesMap.getValue() : "0");
+				} else if (valuesMap.getKey().equalsIgnoreCase(MaritalStatus.Unmarried.toString())) {
+					report.setUnmarried(valuesMap.getValue() != null ? valuesMap.getValue() : "0");
+				} else if (valuesMap.getKey().equalsIgnoreCase(MaritalStatus.Widower.toString())) {
+					report.setWidower(valuesMap.getValue() != null ? valuesMap.getValue() : "0");
+				} else if (valuesMap.getKey().equalsIgnoreCase(MaritalStatus.Divorced.toString())) {
+					report.setDivorced(valuesMap.getValue() != null ? valuesMap.getValue() : "0");
+				}
+
+			}
+			maritalStatusReports.add(report);
+		}
+
+		return maritalStatusReports;
+	}
+
+	@RequestMapping(value = "/status-at-time-marriage/view/{year}/{month}/{applicantType}/{maritalStatus}", method = RequestMethod.GET)
+	public String viewByMaritalStatus(@PathVariable final int year, @PathVariable final String month,
+			@PathVariable final String applicantType, @PathVariable final String maritalStatus, final Model model)
+			throws IOException, ParseException {
+		List<MarriageRegistration> marriageRegistrations = marriageRegistrationReportsService
+				.getByMaritalStatusDetails(year, month, applicantType, maritalStatus);
+		model.addAttribute("marriageRegistrations", marriageRegistrations);
+		model.addAttribute("applicantType", applicantType);
+		return "status-timeofmrg-view";
+	}
+    
 	}
