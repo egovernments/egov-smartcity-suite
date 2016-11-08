@@ -38,20 +38,19 @@
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
 
-package org.egov.pgr.web.contract;
+package org.egov.infra.web.support.ui;
 
 import java.util.List;
-import java.util.Map;
 
-public class DataTable {
+public class DataTable<T> {
 
     private int draw;
     private int recordsTotal;
     private int totalDisplayRecords;
     private int recordsFiltered;
-    private List<Map<String, Object>> data;
+    private List<T> data;
 
-    public DataTable(int draw, int recordsTotal, int totalDisplayRecords, int recordsFiltered, List<Map<String, Object>> data) {
+    public DataTable(int draw, int recordsTotal, int totalDisplayRecords, int recordsFiltered, List<T> data) {
         super();
         this.draw = draw;
         this.recordsTotal = recordsTotal;
@@ -92,11 +91,11 @@ public class DataTable {
         this.recordsFiltered = recordsFiltered;
     }
 
-    public List<Map<String, Object>> getData() {
+    public List<T> getData() {
         return data;
     }
 
-    public void setData(final List<Map<String, Object>> data) {
+    public void setData(final List<T> data) {
         this.data = data;
     }
 }
