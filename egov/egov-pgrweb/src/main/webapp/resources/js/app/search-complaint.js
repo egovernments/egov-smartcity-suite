@@ -112,7 +112,7 @@ var tableContainer;
         						else return "";
         			    	}
         				},
-        				{data:'resource.searchable.owner.id',visible: false}
+        				{data:'assigneeId',visible: false}
         				]
         			});
         		});

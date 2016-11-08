@@ -40,6 +40,10 @@
 
 package org.egov.pgr.web.contract;
 
+import org.elasticsearch.index.query.BoolQueryBuilder;
+import org.elasticsearch.index.query.QueryBuilders;
+import org.joda.time.DateTime;
+
 import static org.apache.commons.lang3.StringUtils.isNotBlank;
 import static org.egov.infra.utils.ApplicationConstant.ES_DATE_FORMAT;
 import static org.egov.infra.utils.DateUtils.TO_DEFAULT_DATE_FORMAT;
@@ -48,65 +52,54 @@ import static org.egov.infra.utils.DateUtils.startOfGivenDate;
 import static org.elasticsearch.index.query.QueryBuilders.matchQuery;
 import static org.elasticsearch.index.query.QueryBuilders.rangeQuery;
 
-import org.elasticsearch.index.query.BoolQueryBuilder;
-import org.elasticsearch.index.query.QueryBuilders;
-import org.joda.time.DateTime;
-
 public class ComplaintSearchRequest {
-    private String searchText;
-    private String complaintNumber;
-    private String complainantName;
-    private String complaintStatus;
-    private String complainantPhoneNumber;
-    private String complainantEmail;
-    private String receivingCenter;
-    private String complaintType;
-    private String complaintDateFrom;
-    private String complaintDateTo;
     private String fromDate;
     private String toDate;
-    private String complaintDepartment;
-    private String location;
-    private String currentUlb;
 
-    public void setSearchText(final String searchText) {
-        this.searchText = searchText;
+    private BoolQueryBuilder searchQueryBuilder;
+
+    public ComplaintSearchRequest() {
+        searchQueryBuilder = QueryBuilders.boolQuery().filter(QueryBuilders.matchAllQuery());
     }
 
-    public void setComplaintNumber(final String complaintNumber) {
-        this.complaintNumber = complaintNumber;
-    }
-
-    public void setCurrentUlb(final String currentUlb) {
-        this.currentUlb = currentUlb;
+    public void setComplaintNumber(String complaintNumber) {
+        if (isNotBlank(complaintNumber))
+            searchQueryBuilder.filter(matchQuery("crn", complaintNumber));
     }
 
     public void setComplaintStatus(final String complaintStatus) {
-        this.complaintStatus = complaintStatus;
+        if (isNotBlank(complaintStatus))
+            searchQueryBuilder.filter(matchQuery("complaintStatusName", complaintStatus));
     }
 
-    public void setComplainantName(final String complainantName) {
-        this.complainantName = complainantName;
+    public void setComplainantName(String complainantName) {
+        if (isNotBlank(complainantName))
+            searchQueryBuilder.filter(matchQuery("complainantName", complainantName));
     }
 
     public void setLocation(final String location) {
-        this.location = location;
+        if (isNotBlank(location))
+            searchQueryBuilder.filter(matchQuery("wardName", location));
     }
 
     public void setComplainantPhoneNumber(final String phoneNumber) {
-        complainantPhoneNumber = phoneNumber;
+        if (isNotBlank(phoneNumber))
+            searchQueryBuilder.filter(matchQuery("complainantMobile", phoneNumber));
     }
 
     public void setComplainantEmail(final String email) {
-        complainantEmail = email;
+        if (isNotBlank(email))
+            searchQueryBuilder.filter(matchQuery("complainantEmail", email));
     }
 
     public void setReceivingCenter(final String receivingCenter) {
-        this.receivingCenter = receivingCenter;
+        if (isNotBlank(receivingCenter))
+            searchQueryBuilder.filter(matchQuery("receivingMode", receivingCenter));
     }
 
     public void setComplaintType(final String complaintType) {
-        this.complaintType = complaintType;
+        if (isNotBlank(complaintType))
+            searchQueryBuilder.filter(matchQuery("complaintTypeName", complaintType));
     }
 
     public void setFromDate(final String fromDate) {
@@ -120,7 +113,8 @@ public class ComplaintSearchRequest {
     }
 
     public void setComplaintDepartment(final String complaintDepartment) {
-        this.complaintDepartment = complaintDepartment;
+        if (isNotBlank(complaintDepartment))
+            searchQueryBuilder.filter(matchQuery("departmentName", complaintDepartment));
     }
 
     public void setComplaintDate(final String complaintDate) {
@@ -129,9 +123,6 @@ public class ComplaintSearchRequest {
             this.toDate = endOfGivenDate(currentDate).toString(ES_DATE_FORMAT);
             if ("today".equalsIgnoreCase(complaintDate)) {
                 this.fromDate = currentDate.withTimeAtStartOfDay().toString(ES_DATE_FORMAT);
-            } else if ("all".equalsIgnoreCase(complaintDate)) {
-                this.fromDate = null;
-                this.toDate = null;
             } else if ("lastsevendays".equalsIgnoreCase(complaintDate)) {
                 this.fromDate = currentDate.minusDays(7).toString(ES_DATE_FORMAT);
             } else if ("lastthirtydays".equalsIgnoreCase(complaintDate)) {
@@ -145,31 +136,12 @@ public class ComplaintSearchRequest {
         }
 
     }
-    
-    public BoolQueryBuilder prepareSearchQuery(){
-        BoolQueryBuilder boolQuery = QueryBuilders.boolQuery().filter(QueryBuilders.matchAllQuery());
-        if (isNotBlank(this.complaintNumber))
-            boolQuery.filter(matchQuery("crn", this.complaintNumber));
-        if (isNotBlank(this.complainantName))
-            boolQuery.filter(matchQuery("complainantName", this.complainantName));
-        if (isNotBlank(this.complainantPhoneNumber))
-            boolQuery.filter(matchQuery("complainantMobile", this.complainantPhoneNumber));
-        if (isNotBlank(this.complainantEmail))
-            boolQuery.filter(matchQuery("complainantEmail", this.complainantEmail));
-        if (isNotBlank(this.complaintType))
-            boolQuery.filter(matchQuery("complaintTypeName", this.complaintType));
-        if (isNotBlank(this.complaintDepartment))
-            boolQuery.filter(matchQuery("departmentName", this.complaintDepartment));
-        if (isNotBlank(this.complaintStatus))
-            boolQuery.filter(matchQuery("complaintStatusName", this.complaintStatus));
-        if (isNotBlank(this.receivingCenter))
-            boolQuery.filter(matchQuery("receivingMode", this.receivingCenter));
-        if (isNotBlank(this.location))
-            boolQuery.filter(matchQuery("wardName", this.location));
+
+    public BoolQueryBuilder query() {
         if (isNotBlank(this.fromDate) || isNotBlank(this.toDate))
-            boolQuery.must(rangeQuery("createdDate")
+            searchQueryBuilder.must(rangeQuery("createdDate")
                     .from(this.fromDate).to(this.toDate));
-        
-        return boolQuery;
+
+        return searchQueryBuilder;
     }
 }

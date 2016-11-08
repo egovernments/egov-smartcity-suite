@@ -155,6 +155,6 @@ public class ComplaintSearchController {
     @RequestMapping(method = POST, value = {"/complaint/search", "/complaint/citizen/anonymous/search"})
     @ResponseBody
     public Iterable<ComplaintIndex> searchComplaints(@ModelAttribute ComplaintSearchRequest searchRequest) {
-        return complaintIndexService.searchComplaintIndex(searchRequest.prepareSearchQuery());
+        return complaintIndexService.searchComplaintIndex(searchRequest.query());
     }
 }

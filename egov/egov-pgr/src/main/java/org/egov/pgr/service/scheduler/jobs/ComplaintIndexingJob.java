@@ -40,6 +40,8 @@
 package org.egov.pgr.service.scheduler.jobs;
 
 import org.egov.infra.scheduler.quartz.AbstractQuartzJob;
+import org.egov.pgr.service.es.ComplaintIndexService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
 
 @Transactional
@@ -47,11 +49,11 @@ public class ComplaintIndexingJob extends AbstractQuartzJob {
 
     private static final long serialVersionUID = 6375563786654750608L;
 
-    //@Autowired
-    //private ComplaintIndexService complaintIndexService;
+    @Autowired
+    private ComplaintIndexService complaintIndexService;
 
     @Override
     public void executeJob() {
-        //complaintIndexService.updateAllOpenComplaintIndex();
+        complaintIndexService.updateAllOpenComplaintIndex();
     }
 }

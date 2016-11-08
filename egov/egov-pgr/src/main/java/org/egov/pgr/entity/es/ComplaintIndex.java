@@ -53,6 +53,9 @@ public class ComplaintIndex {
     private String complaintTypeCode;
 
     @Field(type = FieldType.String, index = not_analyzed)
+    private String assigneeId;
+    
+    @Field(type = FieldType.String, index = not_analyzed)
     private String assigneeName;
 
     @Field(type = FieldType.String, index = not_analyzed)
@@ -950,5 +953,13 @@ public class ComplaintIndex {
 
     public void setCurrentFunctionaryMobileNumber(String currentFunctionaryMobileNumber) {
         this.currentFunctionaryMobileNumber = currentFunctionaryMobileNumber;
+    }
+
+    public String getAssigneeId() {
+        return assigneeId;
+    }
+
+    public void setAssigneeId(String assigneeId) {
+        this.assigneeId = assigneeId;
     }
 }

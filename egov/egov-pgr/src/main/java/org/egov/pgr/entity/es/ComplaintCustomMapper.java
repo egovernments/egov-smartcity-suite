@@ -20,6 +20,7 @@ public class ComplaintCustomMapper extends CustomMapper<Complaint, ComplaintInde
         complaintIndex.setComplaintTypeName(complaint.getComplaintType().getName());
         complaintIndex.setComplaintTypeCode(complaint.getComplaintType().getCode());
         complaintIndex.setComplaintStatusName(complaint.getStatus().getName());
+        complaintIndex.setAssigneeId(complaint.getAssignee().getId().toString());
         complaintIndex.setAssigneeName(complaint.getAssignee().getName());
         complaintIndex.setDepartmentName(complaint.getDepartment().getName());
         complaintIndex.setDepartmentCode(complaint.getDepartment().getCode());
