@@ -40,25 +40,9 @@
 
 package org.egov.tl.web.actions.search;
 
-import com.opensymphony.xwork2.validator.annotations.Validations;
-import org.apache.commons.io.IOUtils;
-import org.apache.struts2.ServletActionContext;
-import org.apache.struts2.convention.annotation.Action;
-import org.apache.struts2.convention.annotation.ParentPackage;
-import org.apache.struts2.convention.annotation.Result;
-import org.apache.struts2.convention.annotation.Results;
-import org.egov.infra.security.utils.SecurityUtils;
-import org.egov.infra.web.struts.actions.BaseFormAction;
-import org.egov.tl.entity.License;
-import org.egov.tl.entity.TradeLicense;
-import org.egov.tl.service.TradeLicenseService;
-import org.egov.tl.service.masters.LicenseCategoryService;
-import org.egov.tl.utils.Constants;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.http.MediaType;
+import static org.egov.infra.web.struts.actions.BaseFormAction.NEW;
+import static org.egov.infra.web.utils.WebUtils.toJSON;
 
-import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -68,8 +52,32 @@ import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
 
-import static org.egov.infra.web.struts.actions.BaseFormAction.NEW;
-import static org.egov.infra.web.utils.WebUtils.toJSON;
+import javax.servlet.http.HttpServletResponse;
+
+import org.apache.commons.io.IOUtils;
+import org.apache.struts2.ServletActionContext;
+import org.apache.struts2.convention.annotation.Action;
+import org.apache.struts2.convention.annotation.ParentPackage;
+import org.apache.struts2.convention.annotation.Result;
+import org.apache.struts2.convention.annotation.Results;
+import org.egov.commons.CFinancialYear;
+import org.egov.commons.service.CFinancialYearService;
+import org.egov.eis.entity.Assignment;
+import org.egov.eis.service.AssignmentService;
+import org.egov.infra.admin.master.entity.User;
+import org.egov.infra.security.utils.SecurityUtils;
+import org.egov.infra.web.struts.actions.BaseFormAction;
+import org.egov.tl.entity.License;
+import org.egov.tl.entity.TradeLicense;
+import org.egov.tl.service.LicenseStatusService;
+import org.egov.tl.service.TradeLicenseService;
+import org.egov.tl.service.masters.LicenseCategoryService;
+import org.egov.tl.utils.Constants;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.http.MediaType;
+
+import com.opensymphony.xwork2.validator.annotations.Validations;
 
 @ParentPackage("egov")
 @Validations
@@ -88,6 +96,7 @@ public class SearchTradeAction extends BaseFormAction {
     private String propertyAssessmentNo;
     private String mobileNo;
     private Boolean isCancelled;
+    private Long statusId;
     @Autowired
     private SecurityUtils securityUtils;
 
@@ -97,6 +106,15 @@ public class SearchTradeAction extends BaseFormAction {
 
     @Autowired
     private TradeLicenseService tradeLicenseService;
+
+    @Autowired
+    private LicenseStatusService licenseStatusService;
+
+    @Autowired
+    private AssignmentService assignmentService;
+
+    @Autowired
+    private CFinancialYearService cFinancialYearService;
 
     @Override
     public Object getModel() {
@@ -108,6 +126,7 @@ public class SearchTradeAction extends BaseFormAction {
         super.prepare();
         addDropdownData("categoryList", licenseCategoryService.findAll());
         addDropdownData("subCategoryList", Collections.emptyList());
+        addDropdownData("statusList", licenseStatusService.findAll());
         setRoleName(securityUtils.getCurrentUser().getRoles().toString());
     }
 
@@ -123,7 +142,7 @@ public class SearchTradeAction extends BaseFormAction {
         String result = null;
         final List<TradeLicense> licenses = tradeLicenseService
                 .searchTradeLicense(applicationNumber, licenseNumber, oldLicenseNumber, categoryId, subCategoryId,
-                        tradeTitle, tradeOwnerName, propertyAssessmentNo, mobileNo, isCancelled);
+                        tradeTitle, tradeOwnerName, propertyAssessmentNo, mobileNo, isCancelled, statusId);
         resultList = prepareOutput(licenses);
         // for converting resultList to JSON objects.
         // Write back the JSON Response.
@@ -154,17 +173,32 @@ public class SearchTradeAction extends BaseFormAction {
             searchFormInfo.setTradeOwnerName(license.getLicensee().getApplicantName());
             searchFormInfo.setMobileNo(license.getLicensee().getMobilePhoneNumber());
             searchFormInfo.setPropertyAssessmentNo(license.getAssessmentNo() != null ? license.getAssessmentNo() : "");
+            if (license.getState() != null) {
+                final List<Assignment> assignmentList = assignmentService.getAssignmentsForPosition(
+                        license.getState().getOwnerPosition().getId(),
+                        new Date());
+                final User user = !assignmentList.isEmpty() ? assignmentList.get(0).getEmployee() : null;
+                searchFormInfo.setOwnerName(user != null ? user.getName() : "");
+            } else
+                searchFormInfo.setOwnerName(license.getLastModifiedBy().getName());
+            searchFormInfo.setStatus(license.getStatus().getName());
+            final CFinancialYear financialYear = cFinancialYearService.getFinancialYearByDate(license.getDateOfExpiry());
+            searchFormInfo.setExpiryYear(financialYear != null ? financialYear.getFinYearRange() : "");
             licenseActions = new ArrayList<String>();
             licenseActions.add("View Trade");
             // FIXME EgwStatus usage should be removed from here
-            if (license.getEgwStatus() != null) {
+            if (license.getStatus() != null) {
                 if (roleName.contains(Constants.ROLE_BILLCOLLECTOR) && !license.isPaid() && !license.isStateRejected()
-                        && license.getEgwStatus().getCode().equalsIgnoreCase(Constants.APPLICATION_STATUS_COLLECTION_CODE))
+                        && (license.getStatus().getStatusCode().equals(Constants.STATUS_ACKNOLEDGED) || license.getState() != null
+                                && license.getState().getValue().equals(Constants.WF_STATE_COMMISSIONER_APPROVED_STR)))
                     licenseActions.add("Collect Fees");
                 else if (license.getStatus() != null
                         && license.getStatus().getStatusCode().equalsIgnoreCase(Constants.STATUS_ACTIVE)
-                        && !roleName.contains(Constants.ROLE_BILLCOLLECTOR))
+                        && (roleName.contains(Constants.TL_CREATOR_ROLENAME)
+                                || roleName.contains(Constants.TL_APPROVER_ROLENAME)))
                     licenseActions.add("Print Certificate");
+                if (license.getStatus().getStatusCode().equals(Constants.STATUS_UNDERWORKFLOW))
+                    licenseActions.add("Print Provisional Certificate");
             } else if (license.isLegacy() && !license.isPaid())
                 licenseActions.add("Modify Legacy License");
             if (roleName.contains(Constants.TL_CREATOR_ROLENAME) || roleName.contains(Constants.TL_APPROVER_ROLENAME))
@@ -284,8 +318,16 @@ public class SearchTradeAction extends BaseFormAction {
         return isCancelled;
     }
 
-    public void setIsCancelled(Boolean isCancelled) {
+    public void setIsCancelled(final Boolean isCancelled) {
         this.isCancelled = isCancelled;
+    }
+
+    public Long getStatusId() {
+        return statusId;
+    }
+
+    public void setStatusId(final Long statusId) {
+        this.statusId = statusId;
     }
 
 }

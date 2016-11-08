@@ -49,6 +49,4 @@ public interface CitizenRepository extends JpaRepository<Citizen, Long> {
     Citizen findByEmailId(String emailId);
 
     Citizen findByUsername(String userName);
-
-    Citizen findByActivationCode(String activationCode);
 }

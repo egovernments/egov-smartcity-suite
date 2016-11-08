@@ -44,7 +44,6 @@ import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 
 import org.egov.lcms.autonumber.LegalCaseNumberGenerator;
-import org.egov.lcms.masters.entity.enums.LCNumberType;
 import org.egov.lcms.transactions.entity.LegalCase;
 import org.egov.lcms.transactions.service.LegalCaseService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -76,25 +75,26 @@ public class CreateLegalCaseController extends GenericLegalCaseController {
 
     @RequestMapping(value = "create/", method = RequestMethod.POST)
     public String create(@Valid @ModelAttribute final LegalCase legalCase, final BindingResult errors,
-            final RedirectAttributes redirectAttrs, final Model model, final HttpServletRequest request) {
+            final Model model, final RedirectAttributes redirectAttrs, final HttpServletRequest request) {
+        final String caseNumber = legalCase.getCaseNumber() + "/" + legalCase.getWpYear();
+        final LegalCase validateCasenumber = legalCaseService.getLegalCaseByCaseNumber(caseNumber);
+        if (validateCasenumber != null)
+            errors.reject("error.legalCase.caseNumber");
         if (errors.hasErrors()) {
-            model.addAttribute("legalcase", legalCase);
             model.addAttribute("mode", "create");
             model.addAttribute("bipartisanRespondentDetailsList", legalCase.getBipartisanRespondentDetailsList());
             model.addAttribute("bipartisanPetitionerDetailsList", legalCase.getBipartisanPetitionerDetailsList());
             return "legalCase-newForm";
         }
-        if (legalCase.getLcNumberType() != null && legalCase.getLcNumberType().equals(LCNumberType.AUTOMATED))
-            legalCase.setLcNumber(legalCaseNumberGenerator.generateLegalCaseNumber());
-        else
-            legalCase.setLcnumber(
-                    legalCase.getLcNumber() + (legalCase.getFinwpYear() != null ? "/" + legalCase.getFinwpYear() : ""));
 
+        legalCase.setLcNumber(legalCaseNumberGenerator.generateLegalCaseNumber());
         legalCaseService.persist(legalCase);
         redirectAttrs.addFlashAttribute("legalCase", legalCase);
         model.addAttribute("message", "Legal Case created successfully.");
         model.addAttribute("mode", "create");
-        model.addAttribute("supportDocs",(!legalCase.getLegalCaseDocuments().isEmpty() && legalCase.getLegalCaseDocuments().get(0)!=null ?legalCase.getLegalCaseDocuments().get(0).getSupportDocs():null));
+        model.addAttribute("supportDocs",
+                !legalCase.getLegalCaseDocuments().isEmpty() && legalCase.getLegalCaseDocuments().get(0) != null
+                        ? legalCase.getLegalCaseDocuments().get(0).getSupportDocs() : null);
         return "legalcase-success";
     }
 

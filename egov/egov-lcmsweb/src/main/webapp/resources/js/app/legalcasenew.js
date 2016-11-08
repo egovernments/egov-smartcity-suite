@@ -38,18 +38,18 @@
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
 $(document).ready(function(){
-	$(".show-ManualLcNumber").hide(); 
-	var lcNumberType=$('#lcNumberType').val();
+	
+	var lcNumber=$('#lcNumber').val();
 	
 	var modeval=$('#mode').val();
 	if(modeval=='edit')
 	{
-		if(lcNumberType !='' && lcNumberType== 'MANUAL')
+		if(lcNumber !='')
 			$("#lcNumber").prop("disabled", true);
 			$("#finwpYear").hide(); 
-			$('#lcNumberType').prop("disabled", true);
+			/*$('#lcNumberType').prop("disabled", true);*/
 	}
-	if(lcNumberType !='' && lcNumberType== 'MANUAL')
+	/*if(lcNumberType !='' && lcNumberType== 'MANUAL')
 		{
 		
 		 $(".show-ManualLcNumber").show(); 
@@ -57,7 +57,7 @@ $(document).ready(function(){
 	else
 		{
 		 $(".show-ManualLcNumber").hide(); 
-		}
+		}*/
 	
     $("#petitionDetails tbody tr").each(function( index ) {
     	var $this = $(this);
@@ -73,7 +73,7 @@ $(document).ready(function(){
 		
 		var caseNumber =$('#caseNumber').val();
 		var lcnumber=$('#lcNumber').val();
-		var lcNumberType=$('#lcNumberType').val();
+		/*var lcNumberType=$('#lcNumberType').val();*/
 		var mode=$('#mode').val();
 		if(mode=='create'){
 		if(caseNumber !="" && caseNumber !=null && ($('#wpYear').val() ==null || $('#wpYear').val() =='') )
@@ -83,7 +83,7 @@ $(document).ready(function(){
 			}
 		}
 		
-		if(lcNumberType =='MANUAL' && mode =='create'){
+		/*if(lcNumberType =='MANUAL' && mode =='create'){
 			if(lcnumber=="" ||  lcnumber ==null )
 			{
 				bootbox.alert("Please enter Legal Case Number");
@@ -94,7 +94,7 @@ $(document).ready(function(){
 				bootbox.alert("Select Legal Case Number Year ");
 				return false;
 			}
-		}
+		}*/
 		if(mode=='create'){
 		  if($('#caseDate').val() != '' && $('#caseReceivingDate').val() != '' ){
 				var start = $('#caseDate').val();
@@ -218,7 +218,7 @@ function addPetRow()
 			var tbody=tableObj.tBodies[0];
 			var lastRow = tableObj.rows.length;
 			var rowObj = tableObj.rows[1].cloneNode(true);
-			
+			 var phoneno = /^\d{10}$/;  
 			nextIdx=(lastRow-1);
 			var currentROwIndex=nextIdx-1;
 			jQuery(rowObj).find("input, select").each(
@@ -339,7 +339,7 @@ function addResEditRow()
 					});  
 		   });
 
-
+			validatePhone(contactNumber);
 		   tbody.appendChild(rowObj);
 		   generateSno(".respondantDetails");
 		
@@ -437,6 +437,17 @@ $(document).on('click',"#res_delete_row",function (){
 		return true;
 	}
 });
+
+$(document).on('keyup','.validateZero', function(){
+	  var valid = /^[1-9],,()OR?$/.test(this.value),
+	  val = this.value;
+	  
+	  if(!valid){
+	    console.log("Invalid input!");
+	    this.value = val.substring(0, val.length - 1);
+	   }
+	});
+
 $('#btnclose').click(function(){
 	bootbox.confirm({
 	    message: 'Information entered in this screen will be lost if you close this page ? Please confirm if you want to close. ',

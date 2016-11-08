@@ -396,7 +396,7 @@ public abstract class BaseLicenseAction<T extends License> extends GenericWorkFl
         getSession().put("model.id", license().getId());
         String result = "approve";
         setRoleName(securityUtils.getCurrentUser().getRoles().toString());
-        if (license().getState().getValue().contains(Constants.WORKFLOW_STATE_TYPE_CREATENEWLICENSE)) {
+        if (license().getLicenseAppType().getName().equals(Constants.NEW_LIC_APPTYPE)) {
             if (license().getState().getValue().contains(Constants.WORKFLOW_STATE_GENERATECERTIFICATE))
                 result = "tl_generateCertificate";
             else if (license().getState().getValue().contains(Constants.WORKFLOW_STATE_REJECTED))

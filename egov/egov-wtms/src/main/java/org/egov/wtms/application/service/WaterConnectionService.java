@@ -39,6 +39,13 @@
  */
 package org.egov.wtms.application.service;
 
+import static org.egov.wtms.utils.constants.WaterTaxConstants.WATERCHARGES_CONSUMERCODE;
+
+import java.util.List;
+
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+
 import org.egov.wtms.application.entity.WaterConnection;
 import org.egov.wtms.application.repository.WaterConnectionRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -48,10 +55,6 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
-import java.util.List;
 
 @Service
 @Transactional(readOnly = true)
@@ -72,7 +75,7 @@ public class WaterConnectionService {
     }
 
     public List<WaterConnection> findAll() {
-        return waterConnectionRepository.findAll(new Sort(Sort.Direction.ASC, "consumerCode"));
+        return waterConnectionRepository.findAll(new Sort(Sort.Direction.ASC, WATERCHARGES_CONSUMERCODE));
     }
 
     public WaterConnection findByConsumerCode(final String consumerCode) {
@@ -84,7 +87,8 @@ public class WaterConnectionService {
     }
 
     public Page<WaterConnection> getListWaterConnections(final Integer pageNumber, final Integer pageSize) {
-        final Pageable pageable = new PageRequest(pageNumber - 1, pageSize, Sort.Direction.ASC, "consumerCode");
+        final Pageable pageable = new PageRequest(pageNumber - 1, pageSize, Sort.Direction.ASC,
+                WATERCHARGES_CONSUMERCODE);
         return waterConnectionRepository.findAll(pageable);
     }
 

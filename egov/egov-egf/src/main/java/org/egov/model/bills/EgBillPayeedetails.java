@@ -39,9 +39,8 @@
  */
 package org.egov.model.bills;
 
-import org.egov.infra.persistence.entity.AbstractPersistable;
-import org.egov.model.recoveries.Recovery;
-import org.hibernate.validator.constraints.Length;
+import java.math.BigDecimal;
+import java.util.Date;
 
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -51,8 +50,11 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
-import java.math.BigDecimal;
-import java.util.Date;
+import javax.persistence.Transient;
+
+import org.egov.infra.persistence.entity.AbstractPersistable;
+import org.egov.model.recoveries.Recovery;
+import org.hibernate.validator.constraints.Length;
 
 @Entity
 @Table(name = "EG_BILLPAYEEDETAILS")
@@ -60,7 +62,7 @@ import java.util.Date;
 public class EgBillPayeedetails extends AbstractPersistable<Integer> implements java.io.Serializable {
 
     private static final long serialVersionUID = -6620941691239597456L;
-    
+
     public static final String SEQ_EG_BILLPAYEEDETAILS = "SEQ_EG_BILLPAYEEDETAILS";
 
     @Id
@@ -80,6 +82,15 @@ public class EgBillPayeedetails extends AbstractPersistable<Integer> implements 
     private BigDecimal creditAmount;
 
     private Date lastUpdatedTime;
+
+    @Transient
+    private String detailTypeName;
+
+    @Transient
+    private String detailKeyName;
+
+    @Transient
+    private Boolean isDebit;
 
     @ManyToOne
     @JoinColumn(name = "tdsid")
@@ -120,10 +131,12 @@ public class EgBillPayeedetails extends AbstractPersistable<Integer> implements 
         this.debitAmount = debitAmount;
     }
 
+    @Override
     public Integer getId() {
         return id;
     }
 
+    @Override
     public void setId(final Integer id) {
         this.id = id;
     }
@@ -158,6 +171,30 @@ public class EgBillPayeedetails extends AbstractPersistable<Integer> implements 
 
     public void setNarration(final String narration) {
         this.narration = narration;
+    }
+
+    public String getDetailTypeName() {
+        return detailTypeName;
+    }
+
+    public void setDetailTypeName(final String detailTypeName) {
+        this.detailTypeName = detailTypeName;
+    }
+
+    public String getDetailKeyName() {
+        return detailKeyName;
+    }
+
+    public void setDetailKeyName(final String detailKeyName) {
+        this.detailKeyName = detailKeyName;
+    }
+
+    public Boolean getIsDebit() {
+        return isDebit;
+    }
+
+    public void setIsDebit(final Boolean isDebit) {
+        this.isDebit = isDebit;
     }
 
 }

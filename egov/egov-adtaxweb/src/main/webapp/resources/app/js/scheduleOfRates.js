@@ -110,7 +110,7 @@ jQuery(document).ready(function ($) {
 		return false;
 			
 		datadcbtbl.dataTable({
-			"ajax": {url:"/adtax/rates/search-for-scheduleofrate",
+			"ajax": {url:"/adtax/rates/searchscheduleofrate",
 				type:"POST",
 				data : {
 					category : $('#category').val(),

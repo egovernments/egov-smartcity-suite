@@ -74,8 +74,8 @@ public class BaseRegisterReportService {
         queryStr.append(
                 "dcbinfo.arr_coll as \"arrearsCollection\" ,  dcbinfo.curr_coll as \"currentCollection\" , dcbinfo.arr_demand+dcbinfo.curr_demand as \"totalDemand\" ,  ");
         queryStr.append(
-                "dcbinfo.usagetype as \"usageType\" ,  dcbinfo.pipesize as \"pipeSize\" , dcbinfo.arr_coll+dcbinfo.curr_coll as \"totalCollection\"   ");
-        queryStr.append("from egwtr_mv_dcb_view dcbinfo");
+                "dcbinfo.usagetype as \"usageType\" ,  dcbinfo.pipesize as \"pipeSize\" , dcbinfo.arr_coll+dcbinfo.curr_coll as \"totalCollection\"  , ");
+        queryStr.append(" (dcbinfo.curr_demand /12) as \"monthlyRate\"  from egwtr_mv_dcb_view dcbinfo");
         queryStr.append(
                 " INNER JOIN eg_boundary wardboundary on dcbinfo.wardid = wardboundary.id INNER JOIN eg_boundary localboundary on dcbinfo.locality = localboundary.id");
         queryStr.append(" where dcbinfo.connectionstatus = '" + ConnectionStatus.ACTIVE.toString() + "'");

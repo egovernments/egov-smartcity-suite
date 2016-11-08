@@ -187,16 +187,12 @@ public class CreateVoucher {
 	// add here for other bills
 
 	// bill related common variables for back end updation
-	SimpleDateFormat sdf = new SimpleDateFormat(DD_MM_YYYY);
-	SimpleDateFormat formatter = new SimpleDateFormat(DD_MMM_YYYY);
-	NumberFormat nf = new DecimalFormat("##############.00");
+	private SimpleDateFormat sdf = new SimpleDateFormat(DD_MM_YYYY);
+	private SimpleDateFormat formatter = new SimpleDateFormat(DD_MMM_YYYY);
 	@Autowired
 	private BillsService billsService;
 	@Autowired
 	private FundHibernateDAO fundDAO;
-
-	@Autowired
-	private BudgetUsageHibernateDAO budgetUsageHibernateDAO;
 
 	@Autowired
 	private ChartOfAccounts chartOfAccounts;
@@ -205,8 +201,6 @@ public class CreateVoucher {
 	private FunctionaryHibernateDAO functionaryDAO;
 	@Autowired
 	private FinancialYearDAO financialYearDAO;
-	@Autowired
-	private EgwStatusHibernateDAO egwStatusDAO;
 	@Autowired
 	private SchemeHibernateDAO schemeDAO;
 	@Autowired
@@ -223,8 +217,7 @@ public class CreateVoucher {
 	private BankaccountHibernateDAO bankAccountDAO;
 	@Autowired
 	private BankHibernateDAO bankDAO;
-	@Autowired
-	private VoucherHelper voucherHelper;
+
 
 	@Autowired
 	private EgBillRegisterHibernateDAO egBillRegisterHibernateDAO;
@@ -259,10 +252,6 @@ public class CreateVoucher {
 
 	@Autowired
 	private HierarchyTypeService hierarchyTypeService;
-	@Autowired
-	private BudgetDetailsHibernateDAO budgetDetailsDAO;
-	@Autowired
-	private CommonMethodsImpl cmImpl;
 	PersistenceService<Bankreconciliation, Integer> bankReconSer;
 	PersistenceService<EgBillregistermis, Integer> billMisSer;
 	PersistenceService<EgBilldetails, Integer> billDetailSer;
@@ -631,12 +620,12 @@ public class CreateVoucher {
 				name = "Contractor Journal";
 			} else if (expType.equalsIgnoreCase(SUPBILL)) {
 				name = "Supplier Journal";
-				if (null != billMis.getEgBillSubType()
+/*				if (null != billMis.getEgBillSubType()
 						&& billMis.getEgBillSubType().getName()
 								.equalsIgnoreCase("Fixed Asset")) {
 				} else {
 				}
-			} else if (expType.equalsIgnoreCase(SALBILL)) {
+*/			} else if (expType.equalsIgnoreCase(SALBILL)) {
 				name = "Salary Journal";
 			}
 			// Pension,Gratuity are saved as contingency Bill
@@ -1427,7 +1416,7 @@ public class CreateVoucher {
 		final String vNumGenMode = voucherTypeForULB
 				.readVoucherTypes(headerdetails
 						.get(VoucherConstant.VOUCHERTYPE).toString());
-		if (vNumGenMode != "Auto"
+		if (!vNumGenMode.equals("Auto")
 				&& headerdetails.get(VoucherConstant.VOUCHERNUMBER) != null) {
 			final int typeLength = Integer
 					.valueOf(FinancialConstants.VOUCHERNO_TYPE_LENGTH);
@@ -1508,8 +1497,8 @@ public class CreateVoucher {
 			LOGGER.debug("End | insertIntoVoucherHeader");
 	}
 
-	protected String getCgnType(String vType) {
-		vType = vType.toUpperCase().replaceAll(" ", "");
+	protected String getCgnType(String vouType) {
+		String vType = vouType.toUpperCase().replaceAll(" ", "");
 		String cgnType = null;
 		String typetoCheck = vType;
 		if (vType.equalsIgnoreCase("JOURNAL VOUCHER"))
@@ -1528,6 +1517,8 @@ public class CreateVoucher {
 		case PAYMENT:
 			cgnType = "DBP";
 			break;
+		default://do nothing
+		        break;
 		}
 		return cgnType;
 	}
@@ -1649,8 +1640,8 @@ public class CreateVoucher {
 
 	}
 
-	private void validateVoucherType(String voucherType) {
-		voucherType = voucherType.toUpperCase().replaceAll(" ", "");
+	private void validateVoucherType(String vouType) {
+		String voucherType = vouType.toUpperCase().replaceAll(" ", "");
 		boolean typeFound = false;
 		final voucherTypeEnum[] allvoucherTypeEnum = voucherTypeEnum.values();
 		for (final voucherTypeEnum voucherTypeEnum : allvoucherTypeEnum)
@@ -1836,12 +1827,12 @@ public class CreateVoucher {
 	// we cannot provide enum for all names so we need to find a way
 	// or code it for all standard type like CJV,SJV,PJV,EJV
 
-	private String getVoucherNumberPrefix(final String type, String subtype) {
+	private String getVoucherNumberPrefix(final String type, String vsubtype) {
 
 		// if sub type is null use type
-		if (subtype == null)
-			subtype = type;
-		subtype = subtype.toUpperCase().trim();
+		if (vsubtype == null)
+			vsubtype = type;
+		String subtype = vsubtype.toUpperCase().trim();
 		String voucherNumberPrefix = null;
 		String typetoCheck = subtype;
 
@@ -1869,8 +1860,10 @@ public class CreateVoucher {
 			break;
 		case WORKS:
 			voucherNumberPrefix = FinancialConstants.WORKSBILL_VOUCHERNO_TYPE;
+			break;
 		case CONTRACTORJOURNAL:
 			voucherNumberPrefix = FinancialConstants.WORKSBILL_VOUCHERNO_TYPE;
+			break;
 		case WORKSJOURNAL:
 			voucherNumberPrefix = FinancialConstants.WORKSBILL_VOUCHERNO_TYPE;
 			break;
@@ -1891,6 +1884,7 @@ public class CreateVoucher {
 			break;
 		case SALARYJOURNAL:
 			voucherNumberPrefix = FinancialConstants.SALBILL_VOUCHERNO_TYPE;
+			break;
 		case SALARY:
 			voucherNumberPrefix = FinancialConstants.SALBILL_VOUCHERNO_TYPE;
 			break;
@@ -1899,13 +1893,14 @@ public class CreateVoucher {
 			break;
 		case PENSIONJOURNAL:
 			voucherNumberPrefix = FinancialConstants.PENBILL_VOUCHERNO_TYPE;
+			break;
 		case PENSION:
 			voucherNumberPrefix = FinancialConstants.PENBILL_VOUCHERNO_TYPE;
 			break;
-		default: {// if subtype is invalid then use type
+		default: // if subtype is invalid then use type
 			if (voucherNumberPrefix == null)
 				voucherNumberPrefix = checkwithvouchertype(type);
-		}
+			break;
 		}
 		return voucherNumberPrefix;
 
@@ -1932,6 +1927,8 @@ public class CreateVoucher {
 		case PAYMENT:
 			voucherNumberPrefix = FinancialConstants.PAYMENT_VOUCHERNO_TYPE;
 			break;
+		default://do nothing
+		        break;
 		}
 		return voucherNumberPrefix;
 

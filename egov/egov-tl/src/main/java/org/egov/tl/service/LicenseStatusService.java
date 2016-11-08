@@ -40,6 +40,8 @@
 
 package org.egov.tl.service;
 
+import java.util.List;
+
 import org.egov.tl.entity.LicenseStatus;
 import org.egov.tl.repository.LicenseStatusRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -53,11 +55,15 @@ public class LicenseStatusService {
     @Autowired
     private LicenseStatusRepository licenseStatusRepository;
 
-    public LicenseStatus getLicenseStatusByName(String name) {
+    public LicenseStatus getLicenseStatusByName(final String name) {
         return licenseStatusRepository.findByName(name);
     }
 
-    public LicenseStatus getLicenseStatusByCode(String code) {
+    public LicenseStatus getLicenseStatusByCode(final String code) {
         return licenseStatusRepository.findByStatusCode(code);
+    }
+
+    public List<LicenseStatus> findAll() {
+        return licenseStatusRepository.findAllByOrderByIdAsc();
     }
 }
