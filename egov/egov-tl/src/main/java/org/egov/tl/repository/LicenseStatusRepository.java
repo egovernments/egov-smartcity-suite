@@ -40,6 +40,8 @@
 
 package org.egov.tl.repository;
 
+import java.util.List;
+
 import org.egov.tl.entity.LicenseStatus;
 import org.springframework.data.jpa.repository.JpaRepository;
 
@@ -48,4 +50,6 @@ public interface LicenseStatusRepository extends JpaRepository<LicenseStatus, Lo
     LicenseStatus findByName(String name);
 
     LicenseStatus findByStatusCode(String code);
+
+    List<LicenseStatus> findAllByOrderByIdAsc();
 }
