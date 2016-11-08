@@ -48,6 +48,7 @@ import java.util.Iterator;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
+import org.egov.collection.entity.es.CollectionDocument;
 import org.egov.infra.admin.master.entity.City;
 import org.egov.infra.admin.master.service.CityService;
 import org.egov.infra.config.core.ApplicationThreadLocals;
@@ -56,7 +57,6 @@ import org.egov.ptis.domain.model.OwnerName;
 import org.egov.stms.elasticSearch.entity.DailySTCollectionReportSearch;
 import org.egov.stms.elasticSearch.entity.SewerageCollectFeeSearchRequest;
 import org.egov.stms.elasticSearch.entity.SewerageConnSearchRequest;
-import org.egov.stms.elasticSearch.entity.SewerageDCRCollectionIndex;
 import org.egov.stms.entity.es.SewerageIndex;
 import org.egov.stms.repository.es.SewerageIndexRepository;
 import org.egov.stms.transactions.entity.SewerageApplicationDetails;
@@ -86,7 +86,8 @@ public class SewerageIndexService {
 
     public SewerageIndex createSewarageIndex(final SewerageApplicationDetails sewerageApplicationDetails,
             final AssessmentDetails assessmentDetails) {
-
+        final SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
+        final SimpleDateFormat myFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm'Z'");
         final City cityWebsite = cityService.getCityByURL(ApplicationThreadLocals.getDomainName());
 
         final SewerageIndex sewarageIndex = new SewerageIndex();
@@ -106,6 +107,8 @@ public class SewerageIndexService {
         sewarageIndex.setShscNumber(sewerageApplicationDetails.getConnection().getShscNumber() != null
                 ? sewerageApplicationDetails.getConnection().getShscNumber() : "");
         sewarageIndex.setDisposalDate(sewerageApplicationDetails.getDisposalDate());
+        
+        
         sewarageIndex
                 .setExecutionDate(sewerageApplicationDetails.getConnection().getExecutionDate());
         sewarageIndex.setIslegacy(sewerageApplicationDetails.getConnection().getLegacy());
@@ -250,16 +253,16 @@ public class SewerageIndexService {
     public List<DailySTCollectionReportSearch> getDCRSewerageReportResult(final DailySTCollectionReportSearch searchRequest,
             final BoolQueryBuilder boolQuery,
             final FieldSortBuilder fieldSortBuilder) throws ParseException {
-        List<SewerageDCRCollectionIndex> collectionResultList = new ArrayList<>();
+        List<CollectionDocument> collectionResultList = new ArrayList<>();
         final List<DailySTCollectionReportSearch> dcrCollectionList = new ArrayList<>();
         final List<DailySTCollectionReportSearch> resultList = new ArrayList<>();
         List<SewerageIndex> sewerageResultList = new ArrayList<>();
         DailySTCollectionReportSearch dcrReportObject;
         final SearchQuery receiptSearchQuery = new NativeSearchQueryBuilder().withIndices("receipts")
                 .withQuery(boolQuery).withSort(new FieldSortBuilder("receiptDate").order(SortOrder.DESC)).build();
-        collectionResultList = elasticsearchTemplate.queryForList(receiptSearchQuery, SewerageDCRCollectionIndex.class);
+        collectionResultList = elasticsearchTemplate.queryForList(receiptSearchQuery, CollectionDocument.class);
 
-        for (final SewerageDCRCollectionIndex collectionObject : collectionResultList) {
+        for (final CollectionDocument collectionObject : collectionResultList) {
             dcrReportObject = new DailySTCollectionReportSearch();
             dcrReportObject.setConsumerNumber(collectionObject.getConsumerCode());
             dcrReportObject.setReceiptNumber(collectionObject.getReceiptNumber());
