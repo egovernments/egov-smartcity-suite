@@ -55,8 +55,22 @@ function checkPanNumber() {
         }
     return true;
 }
+
+function checkMobileNumber() {
+	var mobileNumber = document.getElementById('mobileNumber').value;
+	var re = /^([0|\+[91]{1,3}(\-)?)?([7-9][0-9]{9})$/;
+	
+    if(mobileNumber != '' && !re.test(mobileNumber))
+        {
+    	showMessage('contractor_error', '<s:text name="contractor.mobilenumber.format" />');
+        window.scroll(0,0);
+        return false;
+        }
+    return true;
+}
+
 function validateContractorFormAndSubmit() {
-	if(!checkPanNumber())
+	if(!checkPanNumber() || !checkMobileNumber())
 		return false;
 	clearMessage('contractor_error');
 	links=document.contractor.getElementsByTagName("span");
@@ -281,7 +295,7 @@ var makeContractorDataTable = function() {
 				data-pattern="alphanumericwithallspecialcharacters"	id="narration" value="%{narration}" />
 			</div>
 			<label class="col-sm-2 control-label text-right"> <s:text
-					name="depositworks.applicant.mobile" />
+					name="contractor.mobilenumber" />
 			</label>
 			<div class="col-sm-3 add-margin">
 				<s:textfield name="mobileNumber" id="mobileNumber" maxlength="15"
