@@ -1336,23 +1336,10 @@
                     </execution>
                 </executions>
             </plugin>
-
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-surefire-plugin</artifactId>
                 <version>${mvn.surefire.plugin.version}</version>
-            </plugin>
-            <plugin>
-                <groupId>org.flywaydb</groupId>
-                <artifactId>flyway-maven-plugin</artifactId>
-                <version>${flyway-core-version}</version>
-                <configuration>
-                    <driver>${db.driver}</driver>
-                    <url>${db.url}</url>
-                    <user>${db.user}</user>
-                    <password>${db.password}</password>
-                    <skip>true</skip>
-                </configuration>
             </plugin>
             <plugin>
                 <groupId>com.versioneye</groupId>
