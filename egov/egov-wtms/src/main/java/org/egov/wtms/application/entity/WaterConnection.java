@@ -71,7 +71,6 @@ public class WaterConnection extends AbstractAuditable {
     private Long id;
 
     @SafeHtml
-    // @Column(name = "consumerCode", unique = true)
     @Length(min = 3, max = 50)
     private String consumerCode;
 

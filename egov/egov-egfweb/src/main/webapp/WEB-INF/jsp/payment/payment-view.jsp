@@ -328,7 +328,7 @@ function openVoucher(vid)
 																				</s:iterator>
 																			</s:if>
 																			<tr>
-																				<td style="text-align: right" colspan="5"
+																				<td style="text-align: right" colspan="7"
 																					class="blueborderfortdnew"><strong>Grand
 																						Total</strong></td>
 																				<td style="text-align: right"

@@ -67,6 +67,11 @@ public class GeneralLedgerHibernateDAO  implements GeneralLedgerDAO {
     @Autowired
     private FiscalPeriodHibernateDAO fiscalPeriodHibernateDAO;
     
+    @PersistenceContext
+    private EntityManager entityManager;
+    
+    private static final Logger LOG = LoggerFactory.getLogger(GeneralLedgerHibernateDAO.class);
+    
     @Transactional
     public CGeneralLedger update(final CGeneralLedger entity) {
         getCurrentSession().update(entity);
@@ -92,17 +97,12 @@ public class GeneralLedgerHibernateDAO  implements GeneralLedgerDAO {
         return (List<CGeneralLedger>) getCurrentSession().createCriteria(CGeneralLedger.class).list();
     }
 
-    @PersistenceContext
-    private EntityManager entityManager;
-
-    
+  
     public Session getCurrentSession() {
         return entityManager.unwrap(Session.class);
     }
 
-    private static final Logger LOG = LoggerFactory.getLogger(GeneralLedgerHibernateDAO.class);
-
-
+    
     /**
      * This method will calculate the Actuals for the previous year.
      */
@@ -267,17 +267,17 @@ public class GeneralLedgerHibernateDAO  implements GeneralLedgerDAO {
             final Query query = getCurrentSession().createQuery(hqlQuery);
             list = (ArrayList) query.list();
         } catch (final Exception e) {
-            LOG.error("Error occurred while getting Actuals upto december", e);
+            LOG.error("getActualsDecCurr Exception", e.getMessage());
             throw new ApplicationException("Error occurred while getting Actuals upto december", e);
         }
         if (list.size() > 0) {
             if (list.get(0) == null) {
-                return 0.0 + "";
+                return "0.0";
             } else {
                 result = list.get(0).toString();
             }
         } else {
-            return 0.0 + "";
+            return "0.0";
         }
 
         if (result.startsWith("-")) {
@@ -314,7 +314,7 @@ public class GeneralLedgerHibernateDAO  implements GeneralLedgerDAO {
             throws Exception {
         try {
             Query qry = null;
-            final StringBuffer qryStr = new StringBuffer();
+            final StringBuffer qryStr = new StringBuffer(1000);
             final BigDecimal result = new BigDecimal("0.00");
             if (budType == 1) {
                 qryStr.append("select abs(sum(cgeneralledger.debitAmount)-sum(cgeneralledger.creditAmount)) from CGeneralLedger cgeneralledger,CVoucherHeader cvoucherheader ");
@@ -338,13 +338,13 @@ public class GeneralLedgerHibernateDAO  implements GeneralLedgerDAO {
                 funcStr = " and cgeneralledger.functionId =:functionId";
             }
 
-            if ((!(schemeId == null)) && (subSchemeId == null || "".equals(subSchemeId))) {
+            if ((schemeId != null) && (subSchemeId == null || subSchemeId.isEmpty())) {
                 schStr = "  and vouchermis.schemeid =:schemeId";
                 frmTab = " ,Vouchermis vouchermis ";
                 whrCond = " and cvoucherheader.id=vouchermis.voucherheaderid ";
             }
 
-            if ((!(schemeId == null || "".equals(schemeId))) && (!(subSchemeId == null || "".equals(subSchemeId)))) {
+            if ((!(schemeId == null || schemeId.isEmpty())) && !(subSchemeId == null || (subSchemeId).isEmpty())) {
                 schStr = "  and vouchermis.schemeid =:schemeId";
                 subSchStr = " and vouchermis.subschemeid =:subSchemeId";
                 frmTab = " ,Vouchermis vouchermis ";
@@ -364,17 +364,17 @@ public class GeneralLedgerHibernateDAO  implements GeneralLedgerDAO {
             qryStr.append(dateCond);
 
             qry = getCurrentSession().createQuery(qryStr.toString());
-            if (!(functionId == "" || functionId == null)) {
+            if (!(functionId == null ||functionId.equals(""))) {
                 qry.setString("functionId", functionId);
             }
-            if ((!(schemeId == "" || schemeId == null)) && (subSchemeId == "" || subSchemeId == null)) {
+            if (!(schemeId == null || schemeId .equals("")) && (subSchemeId == null || subSchemeId .equals(""))) {
                 qry.setString("schemeId", schemeId);
             }
-            if ((!(schemeId == "" || schemeId == null)) && (!(subSchemeId == "" || subSchemeId == null))) {
+            if (!(schemeId == null || schemeId .equals("")) && !(subSchemeId == null) || subSchemeId .equals("")) {
                 qry.setString("schemeId", schemeId);
                 qry.setString("subSchemeId", subSchemeId);
             }
-            if (!(asOnDate == "" || asOnDate == null)) {
+            if (!(asOnDate == null || asOnDate .equals(""))) {
                 qry.setString("asOnDate", asOnDate);
             }
             qry.setString("finYearID", finYearID);
@@ -386,7 +386,7 @@ public class GeneralLedgerHibernateDAO  implements GeneralLedgerDAO {
                 return result;
             }
         } catch (final Exception e) {
-            LOG.error("Error occurred while getting Amount for Budgetting Type", e);
+            LOG.error("Error occurred getGlAmountForBudgetingType ", e.getMessage());
             throw new ApplicationException("Error occurred while getting Amount for Budgetting Type", e);
         }
     }
@@ -395,6 +395,7 @@ public class GeneralLedgerHibernateDAO  implements GeneralLedgerDAO {
     public BigDecimal getGlAmountbyGlcodeList(final List glCodeList, final BigDecimal glAmount) throws Exception {
         BigDecimal amount = glAmount;
         Query qry = null;
+      
         try {
             for (final Iterator i = glCodeList.iterator(); i.hasNext();) {
                 final String glCode = (String) i.next();
@@ -407,13 +408,13 @@ public class GeneralLedgerHibernateDAO  implements GeneralLedgerDAO {
                         CGeneralLedger ob;
                         ob = (CGeneralLedger) iterator.next();
 
-                        final Double debitamount = ob.getDebitAmount();
-                        final Double creditamount = ob.getCreditAmount();
-
+                        final BigDecimal debitamount = BigDecimal.valueOf(ob.getDebitAmount());
+                        final BigDecimal creditamount = BigDecimal.valueOf(ob.getCreditAmount());
+                        
                         if (!debitamount.equals(0.0)) {
-                            amount = amount.subtract(new BigDecimal(debitamount.toString()));
+                            amount = amount.subtract(debitamount);
                         } else {
-                            amount = amount.subtract(new BigDecimal(creditamount.toString()));
+                            amount = amount.subtract(creditamount);
                         }
                     }
                 }
@@ -421,7 +422,7 @@ public class GeneralLedgerHibernateDAO  implements GeneralLedgerDAO {
             }
 
         } catch (final Exception e) {
-            LOG.error("Error occurred while getting GL Amount By GLCode", e);
+            LOG.error("Error occurred while getGlAmountbyGlcodeList ", e.getMessage());
             throw new ApplicationException("Error occurred while getting GL Amount By GLCode", e);
         }
         return amount;

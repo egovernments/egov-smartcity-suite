@@ -40,7 +40,6 @@
 package org.egov.portal.web.controller.citizen;
 
 import org.apache.commons.lang3.StringUtils;
-import org.egov.infra.security.utils.RecaptchaUtils;
 import org.egov.infra.validation.ValidatorUtils;
 import org.egov.portal.entity.Citizen;
 import org.egov.portal.service.CitizenService;
@@ -48,16 +47,20 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 
+import static org.springframework.web.bind.annotation.RequestMethod.GET;
+import static org.springframework.web.bind.annotation.RequestMethod.POST;
+
 @Controller
-@RequestMapping(value = "/citizen")
+@RequestMapping(value = "/citizen/signup")
 public class CitizenRegistrationController {
 
     private final CitizenService citizenService;
@@ -66,47 +69,41 @@ public class CitizenRegistrationController {
     private ValidatorUtils validatorUtils;
 
     @Autowired
-    private RecaptchaUtils recaptchaUtils;
-
-    @Autowired
-    public CitizenRegistrationController(final CitizenService citizenService) {
+    public CitizenRegistrationController(CitizenService citizenService) {
         this.citizenService = citizenService;
     }
 
-    @RequestMapping(value = "/register", method = RequestMethod.GET)
-    public String registerCitizen(@ModelAttribute final Citizen citizen) {
+    @RequestMapping(method = GET)
+    public String registerCitizen(@ModelAttribute Citizen citizen) {
         return "signup";
     }
 
-    @RequestMapping(value = "/register", method = RequestMethod.POST)
-    public String registerCitizen(@Valid @ModelAttribute final Citizen citizen, final BindingResult errors,
-                                  final HttpServletRequest request,
-                                  final RedirectAttributes redirectAttrib) {
+    @RequestMapping(method = POST)
+    public String registerCitizen(@Valid @ModelAttribute Citizen citizen, BindingResult errors,
+                                  HttpServletRequest request,
+                                  RedirectAttributes redirectAttrib) {
         if (!validatorUtils.isValidPassword(citizen.getPassword()))
             errors.rejectValue("password", "error.pwd.invalid");
         else if (!StringUtils.equals(citizen.getPassword(), request.getParameter("con-password")))
             errors.rejectValue("password", "error.pwd.mismatch");
-        if (!recaptchaUtils.captchaIsValid(request))
-            errors.rejectValue("active", "error.recaptcha.verification");
+        if (!citizenService.isValidOTP(citizen.getActivationCode(), citizen.getMobileNumber()))
+            errors.rejectValue("activationCode", "error.otp.verification.failed");
         if (errors.hasErrors())
             return "signup";
         citizenService.create(citizen);
-        redirectAttrib.addAttribute("message", "msg.reg.success");
-        return "redirect:register?activation=true";
+        redirectAttrib.addFlashAttribute("message", "msg.reg.success");
+        return "redirect:signup";
     }
 
-    @RequestMapping(value = "/activation", method = RequestMethod.POST)
-    public String citizenOTPActivation(@RequestParam final String activationCode) {
-        return "redirect:register?activation=true&activated=" + (citizenService.activateCitizen(activationCode) != null);
+    @RequestMapping(value = "/otp/{mobileNumber}", method = GET)
+    @ResponseBody
+    public boolean sendOTPMessage(@PathVariable String mobileNumber) {
+        return citizenService.sendOTPMessage(mobileNumber);
     }
 
-    @RequestMapping(value = "/activation/resendotp", method = RequestMethod.POST)
-    public String resendOTP(@RequestParam final String mobile, final RedirectAttributes redirectAttrib) {
-        Citizen citizen = citizenService.getCitizenByUserName(mobile);
-        if (citizen == null)
-            return "redirect:../register?activation=true&otprss=false";
-        citizenService.resendActivationCode(citizen);
-        redirectAttrib.addAttribute("message", "msg.otpresend.success");
-        return "redirect:../register?activation=true";
+    @RequestMapping(value = "/validate-pwd", method = GET)
+    @ResponseBody
+    public boolean validatePassword(@RequestParam String pswd) {
+        return validatorUtils.isValidPassword(pswd);
     }
 }

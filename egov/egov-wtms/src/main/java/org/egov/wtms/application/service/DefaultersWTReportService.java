@@ -82,7 +82,7 @@ public class DefaultersWTReportService {
                     + " and dcbinfo.arr_balance+dcbinfo.curr_balance <" + toAmount);
         queryStr.append(" and dcbinfo.connectionstatus = '" + ConnectionStatus.ACTIVE.toString() + "'");
         if (ward != null && !ward.isEmpty())
-            queryStr.append(" and wardboundary.name = '" + ward + "'");
+            queryStr.append(" and wardboundary.id = '" + ward + "'");
 
         queryStr.append(" and dcbinfo.demand IS NOT NULL");
         if (!topDefaulters.isEmpty())

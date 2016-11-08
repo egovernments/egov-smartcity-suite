@@ -39,6 +39,13 @@
  */
 package org.egov.tl.service;
 
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+
 import org.egov.commons.entity.Source;
 import org.egov.eis.entity.Assignment;
 import org.egov.eis.service.AssignmentService;
@@ -58,12 +65,6 @@ import org.hibernate.Query;
 import org.hibernate.Session;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
 
 @Service
 public class TradeLicenseUpdateIndexService {
@@ -91,14 +92,16 @@ public class TradeLicenseUpdateIndexService {
         User user = null;
 
         if (license.getState() != null && license.getState().getOwnerPosition() != null) {
-            Assignment assignment = assignmentService.getPrimaryAssignmentForPositionAndDate(license.getState().getOwnerPosition()
-                    .getId(), new Date());
+            final Assignment assignment = assignmentService
+                    .getPrimaryAssignmentForPositionAndDate(license.getState().getOwnerPosition()
+                            .getId(), new Date());
             List<Assignment> asignList = null;
             if (assignment != null) {
                 asignList = new ArrayList<>();
                 asignList.add(assignment);
             } else if (assignment == null)
-                asignList = assignmentService.getAssignmentsForPosition(license.getState().getOwnerPosition().getId(), new Date());
+                asignList = assignmentService.getAssignmentsForPosition(license.getState().getOwnerPosition().getId(),
+                        new Date());
             if (!asignList.isEmpty())
                 user = userService.getUserById(asignList.get(0).getEmployee().getId());
         } else
@@ -106,18 +109,18 @@ public class TradeLicenseUpdateIndexService {
         ApplicationIndex applicationIndex = applicationIndexService.findByApplicationNumber(license.getApplicationNumber());
         if (applicationIndex != null) {
             if (applicationIndex != null && null != license.getId() && license.getEgwStatus() != null
-                    && license.getEgwStatus() != null
                     && (license.getEgwStatus().getCode().equals(Constants.APPLICATION_STATUS_INSPE_CODE)
                             || license.getEgwStatus().getCode().equals(Constants.APPLICATION_STATUS_APPROVED_CODE)
-                            || license.getEgwStatus().getCode().equals(Constants.APPLICATION_STATUS_COLLECTION_CODE)
+                            || license.getEgwStatus().getCode().equals(Constants.APPLICATION_STATUS_SECONDCOLLECTION_CODE)
                             || license.getEgwStatus().getCode().equals(Constants.APPLICATION_STATUS_GENECERT_CODE) || license
-                            .getEgwStatus().getCode().equals(Constants.APPLICATION_STATUS_DIGUPDATE_CODE))
+                                    .getEgwStatus().getCode().equals(Constants.APPLICATION_STATUS_DIGUPDATE_CODE))
                     || license.getStatus().getStatusCode().equals(Constants.STATUS_CANCELLED)
+                    || license.getStatus().getStatusCode().equals(Constants.APPLICATION_STATUS_FIRSTCOLLECTIONDONE_CODE)
                     || license.getEgwStatus().getCode().equals(Constants.APPLICATION_STATUS_CREATED_CODE)
-                    && license.getState().getValue().contains(Constants.WORKFLOW_STATE_REJECTED)) {
+                            && license.getState().getValue().contains(Constants.WORKFLOW_STATE_REJECTED)) {
                 applicationIndex.setStatus(license.getEgwStatus().getDescription());
                 applicationIndex.setApplicantAddress(license.getAddress());
-                applicationIndex.setOwnername(user.getUsername() + "::" + user.getName());
+                applicationIndex.setOwnername(user.getUsername() + Constants.DELIMITER_COLON + user.getName());
                 if (license.getLicenseNumber() != null)
                     applicationIndex.setConsumerCode(license.getLicenseNumber());
                 int noofDays = 0;
@@ -158,9 +161,11 @@ public class TradeLicenseUpdateIndexService {
                 final ApplicationIndexBuilder applicationIndexBuilder = new ApplicationIndexBuilder(
                         Constants.TRADELICENSE_MODULENAME, license.getApplicationNumber(),
                         license.getApplicationDate(), license.getLicenseAppType().getName().toString(), license
-                        .getLicensee().getApplicantName(), license.getEgwStatus().getDescription().toString(),
+                                .getLicensee().getApplicantName(),
+                        license.getEgwStatus().getDescription().toString(),
                         url, license.getAddress()
-                        .toString(), user.getUsername() + "::" + user.getName(), Source.SYSTEM.toString());
+                                .toString(),
+                        user.getUsername() + "::" + user.getName(), Source.SYSTEM.toString());
 
                 applicationIndexBuilder.mobileNumber(license.getLicensee().getMobilePhoneNumber().toString());
                 applicationIndexBuilder.aadharNumber(license.getLicensee().getUid());

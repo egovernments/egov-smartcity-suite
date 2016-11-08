@@ -86,6 +86,7 @@ import org.egov.infstr.services.PersistenceService;
 import org.egov.model.instrument.InstrumentHeader;
 import org.hibernate.Query;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationContext;
 import org.springframework.transaction.annotation.Transactional;
 
 /**
@@ -119,6 +120,10 @@ public class CollectionIntegrationServiceImpl extends PersistenceService<Receipt
 
     @Autowired
     private FundHibernateDAO fundDAO;
+
+    @Autowired
+    private ApplicationContext beanProvider;
+
 
     public CollectionIntegrationServiceImpl() {
         super(ReceiptHeader.class);
@@ -230,7 +235,10 @@ public class CollectionIntegrationServiceImpl extends PersistenceService<Receipt
                 paymentInfoSearchRequest.getTransactionId(), paymentInfoSearchRequest.getSource());
         if (header == null)
             throw new RuntimeException("No data found");
-        return new RestReceiptInfo(header);
+        RestReceiptInfo restReceiptInfo = new RestReceiptInfo(header);
+        PaymentInfoService paymentInfoService = (PaymentInfoService) beanProvider.getBean("paymentInfoService");
+        paymentInfoService.setPaymentInfo(restReceiptInfo, header);
+        return restReceiptInfo;
 
     }
 
@@ -557,6 +565,8 @@ public class CollectionIntegrationServiceImpl extends PersistenceService<Receipt
     @Override
     public List<RestReceiptInfo> getReceiptDetailsByDateAndService(final PaymentInfoSearchRequest aggrReq) {
         final ArrayList<RestReceiptInfo> receipts = new ArrayList<RestReceiptInfo>(0);
+        RestReceiptInfo restReceiptInfo;
+        PaymentInfoService paymentInfoService = (PaymentInfoService) beanProvider.getBean("paymentInfoService");
         final List<ReceiptHeader> receiptHeaders = findAllByNamedQuery(
                 CollectionConstants.QUERY_RECEIPTS_BY_DATE_AND_SERVICECODE, aggrReq.getFromdate(), aggrReq.getTodate(),
                 aggrReq.getServicecode(), aggrReq.getSource());
@@ -564,8 +574,11 @@ public class CollectionIntegrationServiceImpl extends PersistenceService<Receipt
             receipts.add(new RestReceiptInfo());
             return receipts;
         } else {
-            for (final ReceiptHeader receiptHeader : receiptHeaders)
-                receipts.add(new RestReceiptInfo(receiptHeader));
+            for (final ReceiptHeader receiptHeader : receiptHeaders) {
+                restReceiptInfo = new RestReceiptInfo(receiptHeader);
+                paymentInfoService.setPaymentInfo(restReceiptInfo, receiptHeader);
+                receipts.add(restReceiptInfo);
+            }
             return receipts;
         }
     }

@@ -40,9 +40,6 @@
 $(document).ready(function(){
 	
 	var modeval=$("#mode").val();
-	if(modeval =='counteredit'){
-	 $("#caffidavitdetails").find("*").attr("disabled", "disabled");
-	}
 var department = new Bloodhound({
 							datumTokenizer : function(datum) {
 									return Bloodhound.tokenizers
@@ -146,7 +143,7 @@ var department = new Bloodhound({
 					});
 
 					typeaheadWithEventsHandling(typeaheadobj, '#senioradvocateId'); 
-
+/*
 					$("#departmentName").blur(function() {
 						var desigId = $("#departmentName").val();
 						if (null != desigId || '' != desigId) {
@@ -187,5 +184,5 @@ var department = new Bloodhound({
 						displayKey : 'name',
 						source : assignPosition.ttAdapter()
 					});
-					typeaheadWithEventsHandling(typeaheadobj, '#positionId'); 
+					typeaheadWithEventsHandling(typeaheadobj, '#positionId'); */
 				});
