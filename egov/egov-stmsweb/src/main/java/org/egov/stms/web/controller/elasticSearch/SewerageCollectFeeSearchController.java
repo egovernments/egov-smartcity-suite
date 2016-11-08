@@ -69,6 +69,8 @@ import org.egov.stms.transactions.service.SewerageThirdPartyServices;
 import org.egov.stms.utils.SewerageActionDropDownUtil;
 import org.egov.stms.utils.SewerageTaxUtils;
 import org.elasticsearch.index.query.BoolQueryBuilder;
+import org.elasticsearch.search.sort.FieldSortBuilder;
+import org.elasticsearch.search.sort.SortOrder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -148,7 +150,8 @@ public class SewerageCollectFeeSearchController {
         if (cityWebsite != null)
             searchRequest.setUlbName(cityWebsite.getName());
         final BoolQueryBuilder boolQuery = sewerageIndexService.getSearchQueryFilter(searchRequest);
-        resultList = sewerageIndexService.getCollectSearchResult(boolQuery);
+        final FieldSortBuilder sort = new FieldSortBuilder("shscNumber").order(SortOrder.DESC);
+        resultList = sewerageIndexService.getCollectSearchResult(boolQuery, sort);
         for (final SewerageIndex sewerageIndex : resultList) {
             final SewerageSearchResult searchResult = new SewerageSearchResult();
             searchResult.setApplicationNumber(sewerageIndex.getApplicationNumber());

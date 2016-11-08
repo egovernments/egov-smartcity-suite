@@ -47,6 +47,7 @@ import org.springframework.data.elasticsearch.annotations.Document;
 import org.springframework.data.elasticsearch.annotations.Field;
 import org.springframework.data.elasticsearch.annotations.FieldIndex;
 import org.springframework.data.elasticsearch.annotations.FieldType;
+import static org.egov.infra.utils.ApplicationConstant.ES_DATE_FORMAT;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 
@@ -65,12 +66,12 @@ public class SewerageIndex {
     @Field(type = FieldType.String, index = FieldIndex.not_analyzed)
     private String applicationType;
 
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm")
-    @Field(type = FieldType.Date, index = FieldIndex.not_analyzed, format = DateFormat.date_optional_time, pattern = "yyyy-MM-dd HH:mm")
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = ES_DATE_FORMAT)
+    @Field(type = FieldType.Date, format = DateFormat.date_optional_time, pattern = ES_DATE_FORMAT)
     private Date applicationDate;
 
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm")
-    @Field(type = FieldType.Date, index = FieldIndex.not_analyzed, format = DateFormat.date_optional_time, pattern = "yyyy-MM-dd HH:mm")
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = ES_DATE_FORMAT)
+    @Field(type = FieldType.Date, format = DateFormat.date_optional_time, pattern = ES_DATE_FORMAT)
     private Date disposalDate;
 
     @Field(type = FieldType.String, index = FieldIndex.not_analyzed)
@@ -79,29 +80,29 @@ public class SewerageIndex {
     @Field(type = FieldType.String, index = FieldIndex.not_analyzed)
     private String estimationNumber;
 
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm")
-    @Field(type = FieldType.Date, index = FieldIndex.not_analyzed, format = DateFormat.date_optional_time, pattern = "yyyy-MM-dd HH:mm")
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = ES_DATE_FORMAT)
+    @Field(type = FieldType.Date, format = DateFormat.date_optional_time, pattern = ES_DATE_FORMAT)
     private Date estimationDate;
 
     @Field(type = FieldType.String, index = FieldIndex.not_analyzed)
     private String workOrderNumber;
 
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm")
-    @Field(type = FieldType.Date, index = FieldIndex.not_analyzed, format = DateFormat.date_optional_time, pattern = "yyyy-MM-dd HH:mm")
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = ES_DATE_FORMAT)
+    @Field(type = FieldType.Date, format = DateFormat.date_optional_time, pattern = ES_DATE_FORMAT)
     private Date workOrderDate;
 
     @Field(type = FieldType.String, index = FieldIndex.not_analyzed)
     private String closureNoticeNumber;
 
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm")
-    @Field(type = FieldType.Date, index = FieldIndex.not_analyzed, format = DateFormat.date_optional_time, pattern = "yyyy-MM-dd HH:mm")
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = ES_DATE_FORMAT)
+    @Field(type = FieldType.Date, format = DateFormat.date_optional_time, pattern = ES_DATE_FORMAT)
     private Date closureNoticeDate;
 
     @Field(type = FieldType.String, index = FieldIndex.not_analyzed)
     private String applicationCreatedBy;
 
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm")
-    @Field(type = FieldType.Date, index = FieldIndex.not_analyzed, format = DateFormat.date_optional_time, pattern = "yyyy-MM-dd HH:mm")
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = ES_DATE_FORMAT)
+    @Field(type = FieldType.Date, format = DateFormat.date_optional_time, pattern = ES_DATE_FORMAT)
     private Date createdDate;
 
     @Field(type = FieldType.String, index = FieldIndex.not_analyzed)
@@ -122,8 +123,8 @@ public class SewerageIndex {
     @Field(type = FieldType.String, index = FieldIndex.not_analyzed)
     private String connectionStatus;
 
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm")
-    @Field(type = FieldType.Date, index = FieldIndex.not_analyzed, format = DateFormat.date_optional_time, pattern = "yyyy-MM-dd HH:mm")
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = ES_DATE_FORMAT)
+    @Field(type = FieldType.Date, format = DateFormat.date_optional_time, pattern = ES_DATE_FORMAT)
     private Date executionDate;
 
     @Field(type = FieldType.Boolean)

@@ -40,7 +40,6 @@
 
 package org.egov.stms.service.es;
 
-import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -48,13 +47,16 @@ import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
 
+import org.apache.commons.lang.StringUtils;
 import org.egov.infra.admin.master.entity.City;
 import org.egov.infra.admin.master.service.CityService;
 import org.egov.infra.config.core.ApplicationThreadLocals;
 import org.egov.ptis.domain.model.AssessmentDetails;
 import org.egov.ptis.domain.model.OwnerName;
+import org.egov.stms.elasticSearch.entity.DailySTCollectionReportSearch;
 import org.egov.stms.elasticSearch.entity.SewerageCollectFeeSearchRequest;
 import org.egov.stms.elasticSearch.entity.SewerageConnSearchRequest;
+import org.egov.stms.elasticSearch.entity.SewerageDCRCollectionIndex;
 import org.egov.stms.entity.es.SewerageIndex;
 import org.egov.stms.repository.es.SewerageIndexRepository;
 import org.egov.stms.transactions.entity.SewerageApplicationDetails;
@@ -63,7 +65,6 @@ import org.elasticsearch.index.query.QueryBuilders;
 import org.elasticsearch.search.sort.FieldSortBuilder;
 import org.elasticsearch.search.sort.SortOrder;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
 import org.springframework.data.elasticsearch.core.ElasticsearchTemplate;
 import org.springframework.data.elasticsearch.core.query.NativeSearchQueryBuilder;
 import org.springframework.data.elasticsearch.core.query.SearchQuery;
@@ -92,8 +93,7 @@ public class SewerageIndexService {
         sewarageIndex.setUlbName(cityWebsite.getName());
         sewarageIndex.setApplicationCreatedBy(sewerageApplicationDetails.getCreatedBy().getName());
         sewarageIndex.setId(cityWebsite.getCode().concat("-").concat(sewerageApplicationDetails.getApplicationNumber()));
-        final SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
-        sewarageIndex.setApplicationDate(formatDate(formatter.format(sewerageApplicationDetails.getApplicationDate())));
+        sewarageIndex.setApplicationDate(sewerageApplicationDetails.getApplicationDate());
         sewarageIndex.setApplicationNumber(sewerageApplicationDetails.getApplicationNumber());
         sewarageIndex.setApplicationStatus(sewerageApplicationDetails.getStatus() != null
                 ? sewerageApplicationDetails.getStatus().getDescription() : "");
@@ -102,12 +102,12 @@ public class SewerageIndexService {
                 ? sewerageApplicationDetails.getApplicationType().getName() : "");
         sewarageIndex.setConnectionStatus(sewerageApplicationDetails.getConnection().getStatus() != null
                 ? sewerageApplicationDetails.getConnection().getStatus().name() : "");
-        sewarageIndex.setCreatedDate(formatDate(formatter.format(sewerageApplicationDetails.getCreatedDate())));
+        sewarageIndex.setCreatedDate(sewerageApplicationDetails.getCreatedDate());
         sewarageIndex.setShscNumber(sewerageApplicationDetails.getConnection().getShscNumber() != null
                 ? sewerageApplicationDetails.getConnection().getShscNumber() : "");
-        sewarageIndex.setDisposalDate(formatDate(formatter.format(sewerageApplicationDetails.getDisposalDate())));
+        sewarageIndex.setDisposalDate(sewerageApplicationDetails.getDisposalDate());
         sewarageIndex
-                .setExecutionDate(formatDate(formatter.format(sewerageApplicationDetails.getConnection().getExecutionDate())));
+                .setExecutionDate(sewerageApplicationDetails.getConnection().getExecutionDate());
         sewarageIndex.setIslegacy(sewerageApplicationDetails.getConnection().getLegacy());
         sewarageIndex.setNoOfClosets_nonResidential(
                 sewerageApplicationDetails.getConnectionDetail().getNoOfClosetsNonResidential());
@@ -118,18 +118,18 @@ public class SewerageIndexService {
         sewarageIndex.setPropertyType(sewerageApplicationDetails.getConnectionDetail().getPropertyType() != null
                 ? sewerageApplicationDetails.getConnectionDetail().getPropertyType().name() : "");
         if (sewerageApplicationDetails.getEstimationDate() != null)
-            sewarageIndex.setEstimationDate(formatDate(formatter.format(sewerageApplicationDetails.getEstimationDate())));
+            sewarageIndex.setEstimationDate(sewerageApplicationDetails.getEstimationDate());
         sewarageIndex
                 .setEstimationNumber(sewerageApplicationDetails.getEstimationNumber() != null ? sewerageApplicationDetails
                         .getEstimationNumber() : "");
         if (sewerageApplicationDetails.getWorkOrderDate() != null)
-            sewarageIndex.setWorkOrderDate(formatDate(formatter.format(sewerageApplicationDetails.getWorkOrderDate())));
+            sewarageIndex.setWorkOrderDate(sewerageApplicationDetails.getWorkOrderDate());
         sewarageIndex
                 .setWorkOrderNumber(sewerageApplicationDetails.getWorkOrderNumber() != null ? sewerageApplicationDetails
                         .getWorkOrderNumber() : "");
         if (sewerageApplicationDetails.getClosureNoticeDate() != null)
             sewarageIndex
-                    .setClosureNoticeDate(formatDate(formatter.format(sewerageApplicationDetails.getClosureNoticeDate())));
+                    .setClosureNoticeDate(sewerageApplicationDetails.getClosureNoticeDate());
         sewarageIndex
                 .setClosureNoticeNumber(
                         sewerageApplicationDetails.getClosureNoticeNumber() != null ? sewerageApplicationDetails
@@ -162,72 +162,138 @@ public class SewerageIndexService {
         sewerageIndexRepository.save(sewarageIndex);
         return sewarageIndex;
     }
-// CHECK ANY EGI API PRESENT TO CONVERT THIS DATE FORMAT.
-    public Date formatDate(final String Date) {
-        final DateFormat formatter = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm'Z'");
-        try {
-            return formatter.parse(Date);
-        } catch (final ParseException e) {
 
-        }
-        return null;
-    }
-//TODO: CHECK LIKE CASES WORKING OR NOT IN CASE OF SEARCH BY CONSUMER NAME
+    // TODO: CHECK LIKE CASES WORKING OR NOT IN CASE OF SEARCH BY CONSUMER NAME
     public BoolQueryBuilder getQueryFilter(final SewerageConnSearchRequest searchRequest) {
         BoolQueryBuilder boolQuery = QueryBuilders.boolQuery().filter(QueryBuilders.matchQuery("active", true));
-        if (org.apache.commons.lang.StringUtils.isNotBlank(searchRequest.getConsumerNumber()))
+        if (StringUtils.isNotBlank(searchRequest.getConsumerNumber()))
             boolQuery = boolQuery.filter(QueryBuilders.matchQuery("consumerNumber", searchRequest.getConsumerNumber()));
-        if (org.apache.commons.lang.StringUtils.isNotBlank(searchRequest.getShscNumber()))
+        if (StringUtils.isNotBlank(searchRequest.getShscNumber()))
             boolQuery = boolQuery.filter(QueryBuilders.matchQuery("shscNumber", searchRequest.getShscNumber()));
-        if (org.apache.commons.lang.StringUtils.isNotBlank(searchRequest.getApplicantName()))
+        if (StringUtils.isNotBlank(searchRequest.getApplicantName()))
             boolQuery = boolQuery.filter(QueryBuilders.matchQuery("consumerName", searchRequest.getApplicantName()));
-        if (org.apache.commons.lang.StringUtils.isNotBlank(searchRequest.getMobileNumber()))
+        if (StringUtils.isNotBlank(searchRequest.getMobileNumber()))
             boolQuery = boolQuery.filter(QueryBuilders.matchQuery("mobileNumber", searchRequest.getMobileNumber()));
-        if (org.apache.commons.lang.StringUtils.isNotBlank(searchRequest.getRevenueWard()))
+        if (StringUtils.isNotBlank(searchRequest.getRevenueWard()))
             boolQuery = boolQuery.filter(QueryBuilders.matchQuery("revenueWard", searchRequest.getRevenueWard()));
-        if (org.apache.commons.lang.StringUtils.isNotBlank(searchRequest.getDoorNumber()))
+        if (StringUtils.isNotBlank(searchRequest.getDoorNumber()))
             boolQuery = boolQuery.filter(QueryBuilders.matchQuery("doorNumber", searchRequest.getDoorNumber()));
         return boolQuery;
     }
-  //TODO: GET SORTING ORDER FIELD NAME AND ORDER TYPE AS NEW PARAMETER. PAGINATION REQUIRED ? Use query for list. No need to iterate again.
 
-    public List<SewerageIndex> getSearchResultByBoolQuery(final BoolQueryBuilder boolQuery) {
-        final List<SewerageIndex> resultList = new ArrayList<>();
+    public List<SewerageIndex> getSearchResultByBoolQuery(final BoolQueryBuilder boolQuery, final FieldSortBuilder sort) {
+        List<SewerageIndex> resultList = new ArrayList<>();
         final SearchQuery searchQuery = new NativeSearchQueryBuilder().withIndices("sewerage").withQuery(boolQuery)
-                .withSort(new FieldSortBuilder("shscNumber").order(SortOrder.DESC))/*.withPageable(new PageRequest(0, 100))*/.build();
-        final Page<SewerageIndex> sewerageIndexRecords = elasticsearchTemplate.queryForPage(searchQuery, SewerageIndex.class);
-
-        for (final SewerageIndex indexRecord : sewerageIndexRecords)
-            resultList.add(indexRecord);
+                .withSort(sort).build();
+        resultList = elasticsearchTemplate.queryForList(searchQuery, SewerageIndex.class);
         return resultList;
     }
 
     public BoolQueryBuilder getSearchQueryFilter(final SewerageCollectFeeSearchRequest searchRequest) {
         BoolQueryBuilder boolQuery = QueryBuilders.boolQuery()
                 .filter(QueryBuilders.matchQuery("ulbName", searchRequest.getUlbName()));
-        if (org.apache.commons.lang.StringUtils.isNotBlank(searchRequest.getConsumerNumber()))
+        if (StringUtils.isNotBlank(searchRequest.getConsumerNumber()))
             boolQuery = boolQuery.filter(QueryBuilders.matchQuery("consumerNumber", searchRequest.getConsumerNumber()));
-        if (org.apache.commons.lang.StringUtils.isNotBlank(searchRequest.getShscNumber()))
+        if (StringUtils.isNotBlank(searchRequest.getShscNumber()))
             boolQuery = boolQuery.filter(QueryBuilders.matchQuery("shscNumber", searchRequest.getShscNumber()));
-        if (org.apache.commons.lang.StringUtils.isNotBlank(searchRequest.getApplicantName()))
+        if (StringUtils.isNotBlank(searchRequest.getApplicantName()))
             boolQuery = boolQuery.filter(QueryBuilders.matchQuery("consumerName", searchRequest.getApplicantName()));
-        if (org.apache.commons.lang.StringUtils.isNotBlank(searchRequest.getMobileNumber()))
+        if (StringUtils.isNotBlank(searchRequest.getMobileNumber()))
             boolQuery = boolQuery.filter(QueryBuilders.matchQuery("mobileNumber", searchRequest.getMobileNumber()));
-        if (org.apache.commons.lang.StringUtils.isNotBlank(searchRequest.getRevenueWard()))
+        if (StringUtils.isNotBlank(searchRequest.getRevenueWard()))
             boolQuery = boolQuery.filter(QueryBuilders.matchQuery("ward", searchRequest.getRevenueWard()));
-        if (org.apache.commons.lang.StringUtils.isNotBlank(searchRequest.getDoorNumber()))
+        if (StringUtils.isNotBlank(searchRequest.getDoorNumber()))
             boolQuery = boolQuery.filter(QueryBuilders.matchQuery("doorNo", searchRequest.getDoorNumber()));
         return boolQuery;
     }
-//TODO: GET SORTING ORDER FIELD NAME AND ORDER TYPE AS NEW PARAMETER. PAGINATION REQUIRED ? Use query for list. No need to iterate again.
-    public List<SewerageIndex> getCollectSearchResult(final BoolQueryBuilder boolQuery) {
-        final List<SewerageIndex> resultList = new ArrayList<>();
+
+    public List<SewerageIndex> getCollectSearchResult(final BoolQueryBuilder boolQuery, final FieldSortBuilder sort) {
+        List<SewerageIndex> resultList = new ArrayList<>();
         final SearchQuery searchQuery = new NativeSearchQueryBuilder().withIndices("sewerage").withQuery(boolQuery)
-                .withSort(new FieldSortBuilder("shscNumber").order(SortOrder.DESC)).build();
-        final Page<SewerageIndex> seweragePage = elasticsearchTemplate.queryForPage(searchQuery, SewerageIndex.class);
-        for (final SewerageIndex index : seweragePage)
-            resultList.add(index);
+                .withSort(sort).build();
+
+        resultList = elasticsearchTemplate.queryForList(searchQuery, SewerageIndex.class);
         return resultList;
     }
 
+    public BoolQueryBuilder getDCRSearchResult(final DailySTCollectionReportSearch searchRequest) throws ParseException {
+        final SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
+        final SimpleDateFormat myFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm'Z'");
+
+        final Date fromDate = formatter.parse(searchRequest.getFromDate());
+        final String formattedFromDate = myFormat.format(fromDate);
+
+        final Date toDate = formatter.parse(searchRequest.getToDate());
+        final String formattedToDate = myFormat.format(toDate);
+
+        BoolQueryBuilder boolQuery = QueryBuilders.boolQuery()
+                .filter(QueryBuilders.matchQuery("cityName", searchRequest.getUlbName()));
+        if (StringUtils.isNotBlank(searchRequest.getFromDate()))
+            boolQuery = boolQuery.filter(QueryBuilders.rangeQuery("receiptDate").gte(formattedFromDate).lte(formattedToDate));
+        if (StringUtils.isNotBlank(searchRequest.getCollectionMode()))
+            boolQuery = boolQuery.filter(QueryBuilders.matchQuery("channel", searchRequest.getCollectionMode()));
+        if (StringUtils.isNotBlank(searchRequest.getCollectionOperator()))
+            boolQuery = boolQuery.filter(QueryBuilders.matchQuery("receiptCreator", searchRequest.getCollectionOperator()));
+        if (StringUtils.isNotBlank(searchRequest.getStatus()))
+            boolQuery = boolQuery.filter(QueryBuilders.matchQuery("status", searchRequest.getStatus()));
+        return boolQuery;
+    }
+
+    public BoolQueryBuilder getDCRSewerageSearchResult(final DailySTCollectionReportSearch searchRequest) {
+        BoolQueryBuilder boolQuery = QueryBuilders.boolQuery()
+                .filter(QueryBuilders.matchQuery("ulbName", searchRequest.getUlbName()));
+        if (StringUtils.isNotBlank(searchRequest.getRevenueWard()))
+            boolQuery = boolQuery.filter(QueryBuilders.matchQuery("ward", searchRequest.getRevenueWard()));
+        return boolQuery;
+    }
+
+    public List<DailySTCollectionReportSearch> getDCRSewerageReportResult(final DailySTCollectionReportSearch searchRequest,
+            final BoolQueryBuilder boolQuery,
+            final FieldSortBuilder fieldSortBuilder) throws ParseException {
+        List<SewerageDCRCollectionIndex> collectionResultList = new ArrayList<>();
+        final List<DailySTCollectionReportSearch> dcrCollectionList = new ArrayList<>();
+        final List<DailySTCollectionReportSearch> resultList = new ArrayList<>();
+        List<SewerageIndex> sewerageResultList = new ArrayList<>();
+        DailySTCollectionReportSearch dcrReportObject;
+        final SearchQuery receiptSearchQuery = new NativeSearchQueryBuilder().withIndices("receipts")
+                .withQuery(boolQuery).withSort(new FieldSortBuilder("receiptDate").order(SortOrder.DESC)).build();
+        collectionResultList = elasticsearchTemplate.queryForList(receiptSearchQuery, SewerageDCRCollectionIndex.class);
+
+        for (final SewerageDCRCollectionIndex collectionObject : collectionResultList) {
+            dcrReportObject = new DailySTCollectionReportSearch();
+            dcrReportObject.setConsumerNumber(collectionObject.getConsumerCode());
+            dcrReportObject.setReceiptNumber(collectionObject.getReceiptNumber());
+
+            final SimpleDateFormat dateFormat = new SimpleDateFormat("E MMM dd HH:mm:ss Z yyyy");
+            final SimpleDateFormat myFormat = new SimpleDateFormat("dd/MM/yyyy");
+            final Date receiptDate = dateFormat.parse(collectionObject.getReceiptDate().toString());
+            dcrReportObject.setReceiptDate(myFormat.format(receiptDate));
+            dcrReportObject.setPaidAt(collectionObject.getChannel());
+            dcrReportObject.setPaymentMode(collectionObject.getPaymentMode());
+            dcrReportObject.setStatus(collectionObject.getStatus());
+            if (StringUtils.isNotBlank(collectionObject.getInstallmentFrom()))
+                dcrReportObject.setFromDate(collectionObject.getInstallmentFrom());
+            if (StringUtils.isNotBlank(collectionObject.getInstallmentTo()))
+                dcrReportObject.setToDate(collectionObject.getInstallmentTo());
+            dcrReportObject.setArrearAmount(collectionObject.getArrearAmount());
+            dcrReportObject.setCurrentAmount(collectionObject.getCurrentAmount());
+            dcrReportObject.setTotalAmount(collectionObject.getTotalAmount());
+            dcrCollectionList.add(dcrReportObject);
+        }
+
+        final BoolQueryBuilder sewerageBoolQuery = getDCRSewerageSearchResult(searchRequest);
+        final SearchQuery searchQuery = new NativeSearchQueryBuilder().withIndices("sewerage")
+                .withQuery(sewerageBoolQuery).withSort(fieldSortBuilder).build();
+        sewerageResultList = elasticsearchTemplate.queryForList(searchQuery, SewerageIndex.class);
+        for (final SewerageIndex sewerageIndex : sewerageResultList)
+            for (final DailySTCollectionReportSearch dcrReportObj : dcrCollectionList)
+                if (dcrReportObj.getConsumerNumber().equals(sewerageIndex.getConsumerNumber())) {
+                    dcrReportObj.setDoorNo(sewerageIndex.getDoorNo());
+                    dcrReportObj.setShscNumber(sewerageIndex.getShscNumber());
+                    dcrReportObj.setOwnerName(sewerageIndex.getConsumerName());
+                    dcrReportObj.setRevenueWard(sewerageIndex.getWard());
+                    resultList.add(dcrReportObj);
+                }
+        return resultList;
+    }
 }

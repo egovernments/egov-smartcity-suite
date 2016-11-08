@@ -170,10 +170,10 @@ function loadPropertyDetails() {
 			type: "GET",
 			dataType: "json",
 			success: function (response) { 
-				/*if(response.ownerNames==null && response.boundaryDetails==null && response.propertyAddress==null){
+				if(response.ownerNames==null && response.boundaryDetails==null && response.propertyAddress==null){
 					bootbox.alert("Property does not exist with property id : "+propertyID);
 					return false;
-				}*/
+				}
 				if(response.boundaryDetails==null || response.boundaryDetails==''){
 					bootbox.alert("Property does not exist with property id : "+propertyID);
 					return false;

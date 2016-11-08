@@ -113,30 +113,21 @@ $('#dailyCollectionReportSearch').click(function(e){
 						             }],
 					
 				},
-				searchable : true,
 				data : searchResult,
 				columns : [
-						{title: 'Receipt Number', data: 'collectionDocument.resource.clauses.receiptnumber'},
-						{title: 'Receipt Date',
-							render: function (data, type, full) {
-								if(full!=null && full.collectionDocument.resource!=undefined &&  full.collectionDocument.resource.searchable.receiptdate != undefined) {
-									var regDateSplit = full.collectionDocument.resource.searchable.receiptdate.split("T")[0].split("-");		
-									return regDateSplit[2] + "/" + regDateSplit[1] + "/" + regDateSplit[0];
-								}
-								else return "";   
-							}
-						},
-						{title: 'S.H.S.C. Number', data: 'sewerageSearchDocument.resource.searchable.shscnumber'},
-						{title: 'Owner Name', data: 'collectionDocument.resource.searchable.consumername'},
-						{title : 'Door No',class : "row-detail" , data : 'sewerageSearchDocument.resource.clauses.doorno'},
-						{title: 'Paid at', data: 'collectionDocument.resource.clauses.channel'},
-						{title: 'Payment mode', data: 'collectionDocument.resource.clauses.paymentmode'},
-						{title: 'Status', data: 'collectionDocument.resource.clauses.status'},
-						{title: 'Paid From date', data: 'collectionDocument.resource.searchable.installmentfrom'},
-						{title: 'Paid To date', data: 'collectionDocument.resource.searchable.installmentto'},
-						{title: 'Arrear Amount', data: 'collectionDocument.resource.searchable.arrearamount',"className": "text-right"},
-						{title: 'Current Amount', data: 'collectionDocument.resource.searchable.currentamount',"className": "text-right"},
-						{title: 'Total Collection', data: 'collectionDocument.resource.searchable.totalamount',"className": "text-right"}
+						{title: 'Receipt Number', data: 'receiptNumber'},
+						{title: 'Receipt Date', data: 'receiptDate'},
+						{title: 'S.H.S.C. Number', data: 'shscNumber'},
+						{title: 'Owner Name', data: 'ownerName'},
+						{title : 'Door No',class : "row-detail" , data : 'doorNo'},
+						{title: 'Paid at', data: 'paidAt'},
+						{title: 'Payment mode', data: 'paymentMode'},
+						{title: 'Status', data: 'status'},
+						{title: 'Paid From date', data: 'fromDate'},
+						{title: 'Paid To date', data: 'toDate'},
+						{title: 'Arrear Amount', data: 'arrearAmount',"className": "text-right"},
+						{title: 'Current Amount', data: 'currentAmount',"className": "text-right"},
+						{title: 'Total Collection', data: 'totalAmount',"className": "text-right"}
 						],
 							  "aaSorting": [[4, 'desc']] ,
 							  "footerCallback" : function(row, data, start, end, display) {
@@ -160,8 +151,6 @@ $('#dailyCollectionReportSearch').click(function(e){
 								} ]		
 					});
 			e.stopPropagation();
-		
-		
 	});
 	}
 });

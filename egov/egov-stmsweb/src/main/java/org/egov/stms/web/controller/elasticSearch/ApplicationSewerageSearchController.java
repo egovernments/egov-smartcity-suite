@@ -69,6 +69,8 @@ import org.egov.stms.transactions.service.SewerageThirdPartyServices;
 import org.egov.stms.utils.SewerageActionDropDownUtil;
 import org.egov.stms.utils.SewerageTaxUtils;
 import org.elasticsearch.index.query.BoolQueryBuilder;
+import org.elasticsearch.search.sort.FieldSortBuilder;
+import org.elasticsearch.search.sort.SortOrder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -150,7 +152,8 @@ public class ApplicationSewerageSearchController {
         final List<String> roleList = new ArrayList<>();
         for (final Role userRole : sewerageTaxUtils.getLoginUserRoles())
             roleList.add(userRole.getName());
-        searchResult = sewerageIndexService.getSearchResultByBoolQuery(boolQuery);
+        final FieldSortBuilder sort = new FieldSortBuilder("shscNumber").order(SortOrder.DESC);
+        searchResult = sewerageIndexService.getSearchResultByBoolQuery(boolQuery, sort);
         for (final SewerageIndex sewerageIndexObject : searchResult) {
             final SewerageSearchResult searchResultObject = new SewerageSearchResult();
             searchResultObject.setApplicationNumber(sewerageIndexObject.getApplicationNumber());
@@ -171,11 +174,9 @@ public class ApplicationSewerageSearchController {
                         sewerageIndexObject.getApplicationStatus(),
                         sewerageApplicationDetails);
             if (searchActions != null && searchActions.getActions() != null)
-                for (final Map.Entry<String, String> entry : searchActions.getActions().entrySet()) {
+                for (final Map.Entry<String, String> entry : searchActions.getActions().entrySet())
                     if (!entry.getValue().equals(COLLECTDONATIONCHARHGES))
-                        ;
-                    actionMap.put(entry.getKey(), entry.getValue());
-                }
+                        actionMap.put(entry.getKey(), entry.getValue());
             searchResultObject.setActions(actionMap);
             searchResultFomatted.add(searchResultObject);
         }

@@ -39,32 +39,41 @@
  */
 package org.egov.stms.web.controller.reports;
 
-import org.egov.collection.constants.CollectionConstants;
-import org.egov.commons.EgwStatus;
-import org.egov.commons.dao.EgwStatusHibernateDAO;
-import org.egov.commons.entity.Source;
-import org.egov.eis.service.AssignmentService;
-import org.egov.infra.admin.master.entity.Boundary;
-import org.egov.infra.admin.master.entity.User;
-import org.egov.infra.admin.master.service.AppConfigValueService;
-import org.egov.infra.admin.master.service.BoundaryService;
-import org.egov.infra.admin.master.service.CityService;
-import org.egov.ptis.constants.PropertyTaxConstants;
-import org.egov.stms.elasticSearch.entity.DailySTCollectionReportSearch;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.RequestMapping;
+import static org.springframework.web.bind.annotation.RequestMethod.GET;
 
+import java.text.ParseException;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import static org.springframework.web.bind.annotation.RequestMethod.GET;
-
+import org.egov.collection.constants.CollectionConstants;
+import org.egov.commons.EgwStatus;
+import org.egov.commons.dao.EgwStatusHibernateDAO;
+import org.egov.commons.entity.Source;
+import org.egov.eis.service.AssignmentService;
+import org.egov.infra.admin.master.entity.Boundary;
+import org.egov.infra.admin.master.entity.City;
+import org.egov.infra.admin.master.entity.User;
+import org.egov.infra.admin.master.service.AppConfigValueService;
+import org.egov.infra.admin.master.service.BoundaryService;
+import org.egov.infra.admin.master.service.CityService;
+import org.egov.infra.config.core.ApplicationThreadLocals;
+import org.egov.ptis.constants.PropertyTaxConstants;
+import org.egov.stms.elasticSearch.entity.DailySTCollectionReportSearch;
+import org.egov.stms.service.es.SewerageIndexService;
+import org.elasticsearch.index.query.BoolQueryBuilder;
+import org.elasticsearch.search.sort.FieldSortBuilder;
+import org.elasticsearch.search.sort.SortOrder;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.ResponseBody;
 
 @Controller
 @RequestMapping("/reports/dailySTCollectionReport/search/")
@@ -83,6 +92,9 @@ public class DailySTCollectionReportController {
     private CityService cityService;
     @Autowired
     private BoundaryService boundaryService;
+
+    @Autowired
+    private SewerageIndexService sewerageIndexService;
 
     @ModelAttribute
     public void reportModel(final Model model) {
@@ -127,60 +139,17 @@ public class DailySTCollectionReportController {
         return "dailySTCollection-search";
     }
 
-    
-    /*@RequestMapping(method = RequestMethod.POST)
+    @RequestMapping(method = RequestMethod.POST)
     @ResponseBody
-    public List<SewerageDailyCollectionReport> searchCollection(@ModelAttribute final DailySTCollectionReportSearch searchRequest) {
-        String consumerNumber = null;
-        SearchResult collectionIndexSearchResult = null;
-        final List<SewerageDailyCollectionReport> searchResultFomatted = new ArrayList<SewerageDailyCollectionReport>(0);
-        final Sort sortByAssessment = Sort.by().field("clauses.revwardname", SortOrder.ASC);
-        final City cityWebsite = cityService.getCityByURL(ApplicationThreadLocals.getDomainName());
+    public List<DailySTCollectionReportSearch> searchCollection(@ModelAttribute final DailySTCollectionReportSearch searchRequest)
+            throws ParseException {
+        List<DailySTCollectionReportSearch> resultList = new ArrayList<>();
+        final City cityWebsite = cityService.getCityByName(ApplicationThreadLocals.getCityName());
         searchRequest.setUlbName(cityWebsite.getName());
+        final FieldSortBuilder fieldSortBuilder = new FieldSortBuilder("applicationDate").order(SortOrder.DESC);
+        final BoolQueryBuilder boolQuery = sewerageIndexService.getDCRSearchResult(searchRequest);
+        resultList = sewerageIndexService.getDCRSewerageReportResult(searchRequest, boolQuery, fieldSortBuilder);
 
-        collectionIndexSearchResult = getCollectionIndex(searchRequest);
-        for (final Document collectionIndexDocument : collectionIndexSearchResult.getDocuments()){
-            final Map<String, String> searchableObjects =(Map<String, String>) collectionIndexDocument.getResource().get("common");
-            if(searchableObjects != null){
-                consumerNumber = searchableObjects.get("consumercode");
-                DailySTCollectionReportSearch searchRequestObj = new DailySTCollectionReportSearch();
-                if(null!=searchRequest.getRevenueWard()){
-                    searchRequestObj.setRevenueWard(searchRequest.getRevenueWard());
-                }
-                searchRequestObj.setConsumerNumber(consumerNumber);
-                final SearchResult searchResult = getSewerageSearchResult (searchRequestObj);
-                 if(searchResult!=null && !searchResult.getDocuments().isEmpty()){
-                     SewerageDailyCollectionReport searchSewerageResult = new SewerageDailyCollectionReport();
-                     
-                    for(Document document : searchResult.getDocuments()){
-                        final Map<String, String> searchableSewerageObjects = (Map<String, String>)document.getResource().get("searchable");
-                          if(searchableSewerageObjects!=null){
-                          if(searchableSewerageObjects.get("consumernumber").equalsIgnoreCase(consumerNumber)){
-                            searchSewerageResult.setCollectionDocument(collectionIndexDocument);
-                            searchSewerageResult.setSewerageSearchDocument(document);
-                            searchResultFomatted.add(searchSewerageResult);
-                            break;
-                            }
-                        }
-                    }
-                }
-            }
-        }
-        return searchResultFomatted;
+        return resultList;
     }
-     
-
-    private SearchResult getCollectionIndex(final DailySTCollectionReportSearch searchRequest) {
-        final Sort sortByReceiptDate = Sort.by().field("searchable.receiptdate", SortOrder.ASC);
-        return searchService.search(asList(Index.COLLECTION.toString()),
-                asList(IndexType.COLLECTION_BIFURCATION.toString()), searchRequest.searchQuery(),
-                searchRequest.searchCollectionFilters(), sortByReceiptDate, Page.NULL);
-    }
-    
-    private SearchResult getSewerageSearchResult(final DailySTCollectionReportSearch searchRequest){
-        final Sort sortByApplicationDate = Sort.by().field("clauses.applicationdate", SortOrder.ASC);
-        return searchService.search(asList(Index.SEWARAGE.toString()), 
-                asList(IndexType.SEWARAGESEARCH.toString()), searchRequest.searchQuery(), 
-                searchRequest.searchFilters(), sortByApplicationDate, Page.NULL);
-    }*/
 }
