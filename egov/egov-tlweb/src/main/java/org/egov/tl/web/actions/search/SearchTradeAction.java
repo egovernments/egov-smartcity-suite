@@ -64,7 +64,6 @@ import org.egov.commons.CFinancialYear;
 import org.egov.commons.service.CFinancialYearService;
 import org.egov.eis.entity.Assignment;
 import org.egov.eis.service.AssignmentService;
-import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.security.utils.SecurityUtils;
 import org.egov.infra.web.struts.actions.BaseFormAction;
 import org.egov.tl.entity.License;
@@ -160,6 +159,7 @@ public class SearchTradeAction extends BaseFormAction {
     private List<SearchForm> prepareOutput(final List<? extends License> licenseList) {
         final List<SearchForm> finalList = new LinkedList<SearchForm>();
         SearchForm searchFormInfo;
+        final Date currentDate = new Date();
         List<String> licenseActions;
         for (final License license : licenseList) {
             searchFormInfo = new SearchForm();
@@ -174,11 +174,10 @@ public class SearchTradeAction extends BaseFormAction {
             searchFormInfo.setMobileNo(license.getLicensee().getMobilePhoneNumber());
             searchFormInfo.setPropertyAssessmentNo(license.getAssessmentNo() != null ? license.getAssessmentNo() : "");
             if (license.getState() != null) {
-                final List<Assignment> assignmentList = assignmentService.getAssignmentsForPosition(
-                        license.getState().getOwnerPosition().getId(),
-                        new Date());
-                final User user = !assignmentList.isEmpty() ? assignmentList.get(0).getEmployee() : null;
-                searchFormInfo.setOwnerName(user != null ? user.getName() : "");
+                final List<Assignment> assignmentList = assignmentService
+                        .getAssignmentsForPosition(license.getState().getOwnerPosition().getId(), currentDate);
+                searchFormInfo.setOwnerName(!assignmentList.isEmpty() ? assignmentList.get(0).getEmployee().getName()
+                        : license.getLastModifiedBy().getName());
             } else
                 searchFormInfo.setOwnerName(license.getLastModifiedBy().getName());
             searchFormInfo.setStatus(license.getStatus().getName());
