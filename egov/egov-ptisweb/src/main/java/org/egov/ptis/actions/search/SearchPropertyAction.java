@@ -299,7 +299,9 @@ public class SearchPropertyAction extends BaseFormAction {
                 addActionError(getText("error.msg.demandInactive"));
                 return COMMON_FORM;
             } else if (basicProperty.getActiveProperty().getPropertyDetail().getPropertyTypeMaster().getCode()
-                    .equalsIgnoreCase(PropertyTaxConstants.OWNERSHIP_TYPE_EWSHS)) {
+                    .equalsIgnoreCase(PropertyTaxConstants.OWNERSHIP_TYPE_EWSHS)
+                    && !applicationType.equalsIgnoreCase(APPLICATION_TYPE_ALTER_ASSESSENT)
+                    && !applicationType.equalsIgnoreCase(APPLICATION_TYPE_TAX_EXEMTION)) {
                 addActionError(getText("EWSHS.transaction.error"));
                 return COMMON_FORM;
             }

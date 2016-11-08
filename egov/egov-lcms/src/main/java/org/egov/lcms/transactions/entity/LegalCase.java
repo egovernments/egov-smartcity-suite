@@ -46,7 +46,6 @@ import org.egov.infra.validation.exception.ValidationError;
 import org.egov.lcms.masters.entity.CaseTypeMaster;
 import org.egov.lcms.masters.entity.CourtMaster;
 import org.egov.lcms.masters.entity.PetitionTypeMaster;
-import org.egov.lcms.masters.entity.enums.LCNumberType;
 import org.egov.lcms.utils.constants.LcmsConstants;
 import org.egov.pims.commons.Position;
 import org.hibernate.envers.AuditOverride;
@@ -166,11 +165,6 @@ public class LegalCase extends AbstractAuditable {
     @Audited
     private String representedby;
 
-    @Column(name = "lcNumberType")
-    @Enumerated(EnumType.STRING)
-    @Audited
-    private LCNumberType lcNumberType;
-
     @Temporal(TemporalType.DATE)
     @Column(name = "previousDate")
     @Audited
@@ -203,6 +197,9 @@ public class LegalCase extends AbstractAuditable {
 
     @Transient
     private String finwpYear;
+
+    @Audited
+    private String oldReferenceNumber;
 
     @OneToMany(mappedBy = "legalCase", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
     @Audited
@@ -635,14 +632,6 @@ public class LegalCase extends AbstractAuditable {
         this.representedby = representedby;
     }
 
-    public LCNumberType getLcNumberType() {
-        return lcNumberType;
-    }
-
-    public void setLcNumberType(final LCNumberType lcNumberType) {
-        this.lcNumberType = lcNumberType;
-    }
-
     public List<LegalCaseDisposal> getLegalcaseDisposal() {
         return legalCaseDisposal;
     }
@@ -930,6 +919,14 @@ public class LegalCase extends AbstractAuditable {
 
     public void setLegalCaseAdvocates(final List<LegalCaseAdvocate> legalCaseAdvocates) {
         this.legalCaseAdvocates = legalCaseAdvocates;
+    }
+
+    public String getOldReferenceNumber() {
+        return oldReferenceNumber;
+    }
+
+    public void setOldReferenceNumber(final String oldReferenceNumber) {
+        this.oldReferenceNumber = oldReferenceNumber;
     }
 
 }

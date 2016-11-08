@@ -41,12 +41,12 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 <%@ taglib uri="http://www.springframework.org/tags" prefix="spring"%>
 <%@ taglib uri="http://www.springframework.org/tags/form" prefix="form"%>
-<%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
-<%@ taglib uri="/WEB-INF/taglib/cdn.tld" prefix="cdn" %>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt"%>
+<%@ taglib uri="/WEB-INF/taglib/cdn.tld" prefix="cdn"%>
 <c:if test="${not empty message}">
 	<div cssClass="add-margin error-msg" role="alert">${message}</div>
 </c:if>
-
+<input type="hidden" name="mode" value="${mode}" />
 <spring:hasBindErrors name="legalCase">
 	<c:forEach var="error" items="${errors.allErrors}">
 		<form:errors path="caseNumber" cssClass="add-margin error-msg" />
@@ -66,8 +66,7 @@
 			<form:option value="">
 				<spring:message code="lbls.select" />
 			</form:option>
-
-			<form:options items="${courtTypeList}" itemValue="id"
+		<form:options items="${courtTypeList}" itemValue="id"
 				id="courtTypeDropdown" itemLabel="courtType" />
 		</form:select>
 		<form:errors path="courtMaster.courtType"
@@ -81,7 +80,6 @@
 			<form:option value="">
 				<spring:message code="lbls.select" />
 			</form:option>
-
 			<form:options items="${petitiontypeList}" itemValue="id"
 				id="courtTypeDropdown" itemLabel="petitionType" />
 		</form:select>
@@ -97,7 +95,6 @@
 			<form:option value="">
 				<spring:message code="lbls.select" />
 			</form:option>
-
 			<form:options items="${courtsList}" itemValue="id" id="courtDropdown"
 				itemLabel="name" />
 		</form:select>
@@ -111,7 +108,6 @@
 			<form:option value="">
 				<spring:message code="lbls.select" />
 			</form:option>
-
 			<form:options items="${caseTypeList}" itemValue="id"
 				id="courtTypeDropdown" itemLabel="caseType" />
 		</form:select>
@@ -124,9 +120,7 @@
 	<div class="col-sm-2 add-margin text-center">
 		<form:input class="form-control patternvalidation"
 			data-pattern="number" maxlength="50" id="caseNumber"
-			required="required" path="caseNumber" />
-
-	</div>
+			required="required" path="caseNumber" /></div>
 	<div class="col-sm-1 add-margin text-center">
 		<form:select path="wpYear" data-first-option="false" id="wpYear"
 			cssClass="form-control">
@@ -135,43 +129,18 @@
 			</form:option>
 			<form:options items="${wPYearList}" />
 		</form:select>
-		<%--  <form:errors path="caseNumber" cssClass="add-margin error-msg" /> --%>
+		<form:errors path="caseNumber" cssClass="add-margin error-msg" />
 	</div>
-
+	<c:if test="${mode == 'edit'}">
+		<label class="col-sm-2 control-label text-right"><spring:message
+				code="lbl.lcnumber" />:</label>
+		<div class="col-sm-3 add-margin text-center">
+			<form:input class="form-control patternvalidation"
+				data-pattern="number" maxlength="50" id="lcNumber"
+				readonly="readonly" path="lcNumber" /></div>
+		<form:errors path="lcNumber" cssClass="add-margin error-msg" />
+	</c:if>
 </div>
-
-<div class="form-group">
-	<label class="col-sm-3 control-label text-right"><spring:message
-			code="lbl.lcnumber" /><span class="mandatory"></span>: </label>
-	<div class="col-sm-2 add-margin text-center">
-		<form:select path="lcNumberType" data-first-option="false"
-			id="lcNumberType" name="lcNumberType" cssClass="form-control"
-			required="required" onChange="checkLCType();">
-			<form:option value="">
-				<spring:message code="lbls.select" />
-			</form:option>
-			<form:options items="${lcNumberTypes}" />
-		</form:select>
-	</div>
-	<div class="show-ManualLcNumber">
-		<div class="col-sm-2 add-margin text-center">
-			<form:input path="lcNumber" class="form-control patternvalidation"
-				data-pattern="string" maxlength="50" id="lcNumber" />
-		</div>
-		<div class="col-sm-1 add-margin text-center">
-			<form:select path="finwpYear" data-first-option="false"
-				id="finwpYear" cssClass="form-control">
-				<form:option value="">
-					<spring:message code="lbls.select" />
-				</form:option>
-				<form:options items="${wPYearList}" />
-			</form:select>
-		</div>
-
-	</div>
-	<form:errors path="lcNumber" cssClass="add-margin error-msg" />
-</div>
-
 <div class="form-group">
 	<label class="col-sm-3 control-label text-left"><spring:message
 			code="lbl.casedate" /><span class="mandatory"></span>:</label>
@@ -186,10 +155,9 @@
 			code="lbl.previouscaseNumber" />:</label>
 	<div class="col-sm-3 add-margin" id="personsdiv">
 		<form:input class="form-control patternvalidation"
-			placeholder="InCase of appeal,review petition" data-pattern="string"
-			maxlength="50" id="appealNum" path="appealNum" />
-		<%-- <div class="add-margin error-msg text-left"><font size="2"><spring:message code="lbl.textmessage.previouscaseno" /></font></div>
-		 --%>
+			placeholder="InCase of appeal,review petition"
+			data-pattern="alphanumericwithspecialcharacters" maxlength="50"
+			id="appealNum" path="appealNum" />
 		<form:errors path="appealNum" cssClass="add-margin error-msg" />
 	</div>
 </div>
@@ -211,7 +179,6 @@
 	</div>
 </div>
 <div class="form-group">
-
 	<label class="col-sm-3 control-label text-right"><spring:message
 			code="lbl.case.receivingdate" />:</label>
 	<div class="col-sm-3 add-margin">
@@ -233,7 +200,6 @@
 	</div>
 </div>
 <div class="form-group">
-
 	<label class="col-sm-3 control-label text-right"><spring:message
 			code="lbl.officerincharge" />:</label>
 	<div class="col-sm-3 add-margin">
@@ -251,8 +217,6 @@
 		<form:errors path="noticeDate" cssClass="add-margin error-msg" />
 	</div>
 </div>
-
-
 <div class="form-group">
 	<label class="col-sm-3 control-label text-right" id="persons"><spring:message
 			code="lbl.fieldbycarp" /> ?:</label>
@@ -260,6 +224,13 @@
 		<form:checkbox id="activeid" path="isfiledbycorporation"
 			value="isfiledbycorporation" />
 		<form:errors path="isfiledbycorporation" />
+	</div>
+	<label class="col-sm-2 control-label text-right"><spring:message
+			code="lbl.oldreferencenumber" />:</label>
+	<div class="col-sm-3 add-margin">
+		<form:input class="form-control text-left patternvalidation" maxlength="4" id="oldReferenceNumber"
+			path="oldReferenceNumber" data-pattern="number" />
+		<form:errors path="oldReferenceNumber" cssClass="add-margin error-msg" />
 	</div>
 </div>
 

@@ -259,8 +259,9 @@ public class TradeLicenseService extends AbstractLicenseService<TradeLicense> {
     }
 
     public List<TradeLicense> searchTradeLicense(final String applicationNumber, final String licenseNumber,
-                                                 final String oldLicenseNumber, final Long categoryId, final Long subCategoryId, final String tradeTitle,
-                                                 final String tradeOwnerName, final String propertyAssessmentNo, final String mobileNo, final Boolean isCancelled) {
+            final String oldLicenseNumber, final Long categoryId, final Long subCategoryId, final String tradeTitle,
+            final String tradeOwnerName, final String propertyAssessmentNo, final String mobileNo, final Boolean isCancelled,
+            final Long statusId) {
         final Criteria searchCriteria = entityQueryService.getSession().createCriteria(TradeLicense.class);
         searchCriteria.createAlias("licensee", "licc").createAlias("category", "cat")
                 .createAlias("tradeName", "subcat").createAlias("status", "licstatus");
@@ -283,6 +284,8 @@ public class TradeLicenseService extends AbstractLicenseService<TradeLicense> {
             searchCriteria.add(Restrictions.eq("assessmentNo", propertyAssessmentNo).ignoreCase());
         if (StringUtils.isNotBlank(mobileNo))
             searchCriteria.add(Restrictions.eq("licc.mobilePhoneNumber", mobileNo));
+        if (statusId != null && statusId != -1)
+            searchCriteria.add(Restrictions.eq("status.id", statusId));
         if (isCancelled != null && isCancelled.equals(Boolean.TRUE))
             searchCriteria.add(Restrictions.eq("licstatus.statusCode", StringUtils.upperCase("CAN")));
         else

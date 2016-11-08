@@ -7,7 +7,7 @@ var billamount = 0;
 var debitamount = 0;
 var creditamount = 0;
 $(document).ready(function(){
-	
+	calculateBillAmount();
 	$('#subLedgerType').trigger("change");
 	$netPayableAccountCodeId = $('#netPayableAccountCode').val();
 	patternvalidation(); 
@@ -53,6 +53,18 @@ $(document).ready(function(){
 		$("#payTo").val(data.name);
 		$("#detailkeyId").val(data.id);
 	});
+});
+
+$('.btn-primary').click(function(){
+	var button = $(this).attr('id');
+	if (button != null && button == 'Forward') {
+		if(!$("form").valid())
+			return false;
+		if(!validate())
+				return false;
+		return validateWorkFlowApprover(button);
+	}
+	return validateWorkFlowApprover(button);
 });
 
 function debitGlcode_initialize() {
@@ -272,12 +284,12 @@ $('#billSubType').change(function () {
 							output = '<tr>';
 							output = output + '<td class="text-left">' + value.value + '</td>'
 							output = output + '<td class="text-right">'
-							output = output + '<form:select path="checkLists['+index+'].val" data-first-option="false" id="checkLists['+index+'].val" class="form-control">'
-							output = output + '<form:option value="">N/A</form:option>'
-							output = output + '<form:option value="Yes">Yes</form:option>'
-							output = output + '<form:option value="No">No</form:option>'
-							output = output + '</form:select>'
-							output = output + '<form:errors path="egBillregistermis.egBillSubType.id" cssClass="add-margin error-msg" />'
+							output = output + '<input id="checkLists['+index+'].id" name="checkLists['+index+'].id" type="hidden" value="'+ value.id +'"/>'
+							output = output + '<select id="checkLists['+index+'].val" name="checkLists['+index+'].val" data-first-option="false" class="form-control">'
+							output = output + '<option value="">N/A</option>'
+							output = output + '<option value="Yes">Yes</option>'
+							output = output + '<option value="No">No</option>'
+							output = output + '</select>'
 							output = output + '</td>'
 							output = output + '</tr>';
 							$('#tblchecklist tbody').append(output);
@@ -360,6 +372,15 @@ function deleteCreditDetailsRow(obj) {
 }
 
 function deleteAccountDetails(obj) {
+	var index = obj.id.split('_')[1];
+	var glcodeid = document.getElementById('accountDetailsGlCodeId_'+index).value;
+	if($netPayableAccountCodeId)
+	{
+		if($netPayableAccountCodeId==glcodeid)
+		{
+			$netPayableAccountCodeId=0;
+		}
+	}
 	var rowcount=$("#tblaccountdetails tbody tr").length;
     if(rowcount<=1) {
     	$('#accountdetailsrow').prop("hidden","true");
@@ -375,14 +396,10 @@ function deleteAccountDetails(obj) {
 		$('.accountDetailsDebitDetailKeyId_0').val("");
 		deleteSubLedgerDetails(obj);
 		calculateBillAmount();
-		$("#expenseBillTotalAmount").html(billamount);
-		$("#billamount").val(billamount);
 	} else {
 		deleteSubLedgerDetails(obj);
 		deleteRow(obj,'tblaccountdetails');
 		calculateBillAmount();
-		$("#expenseBillTotalAmount").html(billamount);
-		$("#billamount").val(billamount);
 		return true;
 	}	
 }
@@ -615,18 +632,6 @@ $("#populateAccountDetails").click(function () {
 		clearAllDetails();
 	}
 	calculateBillAmount();
-	$("#expenseBillTotalAmount").html(billamount);
-	$("#billamount").val(billamount);
-});
-
-$('.btn-primary').click(function(){
-	if($("form").valid() ){
-		if(validate()){
-			document.forms[0].action = "/EGF/expensebill/create";
-			document.forms[0].submit();
-		}
-	}
-	return false;
 });
 
 function validate(){
@@ -736,4 +741,65 @@ function calculateBillAmount(){
 		debitamount = parseFloat(Number(debitamount) + Number($(this).find(".accountDetailsDebitAmount").html())).toFixed();
 		creditamount = parseFloat(Number(creditamount) + Number($(this).find(".accountDetailsCreditAmount").html())).toFixed();
 	});
+	$("#expenseBillAmount").html(billamount);
+	$("#expenseBillTotalDebitAmount").html(debitamount);
+	$("#expenseBillTotalCreditAmount").html(creditamount);
+	$("#billamount").val(billamount);
+}
+
+function validateWorkFlowApprover(name) {
+	document.getElementById("workFlowAction").value = name;
+	var approverPosId = document.getElementById("approvalPosition");
+	var button = document.getElementById("workFlowAction").value;
+	if (button != null && button == 'Submit') {
+		$('#approvalDepartment').attr('required', 'required');
+		$('#approvalDesignation').attr('required', 'required');
+		$('#approvalPosition').attr('required', 'required');
+		$('#approvalComent').removeAttr('required');
+	}
+	if (button != null && button == 'Reject') {
+		$('#approvalDepartment').removeAttr('required');
+		$('#approvalDesignation').removeAttr('required');
+		$('#approvalPosition').removeAttr('required');
+		$('#approvalComent').attr('required', 'required');
+	}
+	if (button != null && button == 'Cancel') {
+		$('#approvalDepartment').removeAttr('required');
+		$('#approvalDesignation').removeAttr('required');
+		$('#approvalPosition').removeAttr('required');
+		$('#approvalComent').attr('required', 'required');
+	}
+	if (button != null && button == 'Forward') {
+		$('#approvalDepartment').attr('required', 'required');
+		$('#approvalDesignation').attr('required', 'required');
+		$('#approvalPosition').attr('required', 'required');
+		$('#approvalComent').removeAttr('required');
+	}
+	if (button != null && button == 'Approve') {
+		$('#approvalComent').removeAttr('required');
+	}
+	if (button != null && button == 'Create And Approve') {
+		return validateCutOff();
+	}
+	return true;
+}
+function validateCutOff()
+{
+	var cutofdate = $("#cutOffDate").val();
+	var billdate = $("#billdate").val();
+	var cutOffDateArray=cutofdate.split("/");
+	var billDateArray=billdate.split("/");
+	var cutOffDate = new Date(cutOffDateArray[1] + "/" + cutOffDateArray[0] + "/"
+			+ cutOffDateArray[2]);
+	var billDate = new Date(billDateArray[1] + "/" + billDateArray[0] + "/"
+			+ billDateArray[2]);
+	if(billDate<=cutOffDate)
+	{
+		return true;
+	}
+	else
+	{
+		bootbox.alert("Bills created after "+cutofdate+" cannot be approved on create. Use the Forward option.");
+		return false;
+	}
 }

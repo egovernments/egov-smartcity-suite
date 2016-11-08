@@ -38,52 +38,47 @@
   ~   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
   --%>
 
-
-<%@ include file="/includes/taglibs.jsp"%>
-<%@ page language="java"%>
-<html>
-<head>
-<title><s:text name="budgetgroup.create" /></title>
-</head>
-<body>
-	<s:form action="budgetGroup" theme="simple">
-		<s:token />
-		<jsp:include page="budgetHeader.jsp" />
-		<span class="mandatory"> <s:actionerror /> <s:fielderror /> <s:actionmessage />
-		</span>
-		<div class="formmainbox">
-			<div class="subheadnew">
-				<s:text name="budgetgroup.create" />
-			</div>
-			<%@ include file='budgetGroup-form.jsp'%>
-			<td><div align="left" class="mandatory">
-					*
-					<s:text name="mandatory.fields" />
-				</div></td>
-			<div class="buttonbottom">
-				<label></label> <label><s:submit method="create"
-						value="Save " cssClass="buttonsubmit" /> </label>
-				<s:reset name="button" type="submit" cssClass="button" id="button"
-					value="Cancel" />
-				<label><input type="submit" value="Close"
-					onclick="javascript:window.close()" class="button" /></label>
-			</div>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
+<%@ taglib uri="http://www.springframework.org/tags" prefix="spring"%>
+<%@ taglib uri="http://www.springframework.org/tags/form" prefix="form"%>
+<div class="panel panel-primary" data-collapsed="0">
+	<div class="panel-heading custom_form_panel_heading">
+		<div class="panel-title">
+			<spring:message code="lbl.checklist" />
 		</div>
-	</s:form>
-	<s:hidden name="targetvalue" value="%{target}" id="targetvalue" />
-	<s:hidden name="mode" value="%{mode}" id="mode" />
-	<script>
-			if(dom.get('targetvalue').value=='SUCCESS')
-			{
-				document.forms[0].name.value="";
-				document.forms[0].description.value="";
-				document.forms[0].accountType.value=-1;
-				document.forms[0].budgetingType.value=-1;
-				document.forms[0].majorCode.value=-1;
-				document.forms[0].minCode.value=-1;
-				document.forms[0].maxCode.value=-1;
-				document.forms[0].isActive.checked=false;
-			}	
-		</script>
-</body>
-</html>
+	</div>
+	
+	<div style="padding: 0 15px;">
+		<table class="table table-bordered" id="tblchecklist">
+			<thead>
+				<tr>
+					<th><spring:message code="lbl.checklist.name"/></th>
+					<th><spring:message code="lbl.checklist.value"/></th>
+				</tr>
+			</thead>
+			<tbody>
+				<c:choose>
+						<c:when test="${egBillregister.checkLists!=null && egBillregister.checkLists.size() > 0}">
+							 <c:forEach items="${egBillregister.checkLists}" var="checkLists" varStatus="item">
+								<tr>
+								<td>${checkLists.name }</td>
+								<c:if test="${checkLists.val=='na'}">
+									<td >
+										N/A
+									</td>
+								</c:if>
+								<c:if test="${checkLists.val!='na'}">
+									<td>
+										${checkLists.val}
+									</td>
+								</c:if>
+								</tr>
+							</c:forEach> 
+						</c:when>
+						<c:otherwise>
+						</c:otherwise>
+				</c:choose>
+			</tbody>
+		</table>
+	</div>
+</div>

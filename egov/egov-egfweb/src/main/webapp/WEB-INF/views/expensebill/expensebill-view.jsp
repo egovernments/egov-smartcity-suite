@@ -47,10 +47,22 @@
    .position_alert{
         position:fixed;z-index:9999;top:85px;right:20px;background:#F2DEDE;padding:10px 20px;border-radius: 5px;
       }
+   .position_alert1{
+        position:fixed;z-index:9999;top:85px;right:440px;background:#F2DEDE;padding:10px 20px;border-radius: 5px;
+      }
+   .position_alert2{
+     position:fixed;z-index:9999;top:85px;right:200px;background:#F2DEDE;padding:10px 20px;border-radius: 5px;
+   }
 </style>
-<form:form name="expenseBillForm" role="form" action="create" modelAttribute="egBillregister" id="egBillregister" class="form-horizontal form-groups-bordered" enctype="multipart/form-data">
+<form:form name="expenseBillForm" role="form" action="" modelAttribute="egBillregister" id="egBillregister" class="form-horizontal form-groups-bordered" enctype="multipart/form-data">
  	<div class="position_alert">
-		<spring:message	code="lbl.expense.bill.amount" /> : &#8377 <span id="expenseBillTotalAmount"><c:out value="${expenseBillAmount}" default="0.0"></c:out></span>
+		<spring:message	code="lbl.expense.bill.amount" /> : &#8377 <span id="expenseBillAmount"><c:out value="${expenseBillAmount}" default="0.0"></c:out></span>
+	</div>
+	<div class="position_alert1">
+		<spring:message code="lbl.expense.bill.total.debit.amount" />  : &#8377 <span id="expenseBillTotalDebitAmount"> <c:out value="${expenseBillTotalDebitAmount}" default="0.0"></c:out></span>
+	</div>
+	<div class="position_alert2">
+		<spring:message code="lbl.expense.bill.total.credit.amount" />  : &#8377 <span id="expenseBillTotalCreditAmount"> <c:out value="${expenseBillTotalCreditAmount}" default="0.0"></c:out></span>
 	</div>
 	
 	<div>
@@ -60,7 +72,9 @@
 	      	</div>
 	   </spring:hasBindErrors>
    </div>
-	<form:hidden path="billamount" id="billamount" class ="billamount"/>
+   <input type="hidden" id="id" value="${egBillregister.id }" /> 
+   <input type="hidden" name="mode" id="mode" value="${mode }" />
+   <form:hidden path="billamount" id="billamount" class ="billamount" value="${egBillregister.billamount }"/>
 	<div class="panel-title text-center" style="color: green;">
 		<c:out value="${message}" /><br />
 	</div>
@@ -73,27 +87,33 @@
 	
 		<div class="tab-content">
 			<div class="tab-pane fade in active" id="expensebillheader">   
-				<jsp:include page="expenseBill-header.jsp"/>
-				<jsp:include page="expenseBill-subLedgerDetails.jsp"/>
-				<div class="panel panel-primary" data-collapsed="0">
-					<jsp:include page="expenseBill-debitDetails.jsp"/>
-					<jsp:include page="expenseBill-creditDetails.jsp"/>
-					<jsp:include page="expenseBill-netPayable.jsp"/>
-				</div>
-				<jsp:include page="expenseBill-accountDetails.jsp"/>
-				<jsp:include page="expenseBill-subLedgerAccountDetails.jsp"/>
+				<jsp:include page="expensebill-view-header.jsp"/>
+				<jsp:include page="expensebill-view-subledgerdetails.jsp"/>
+				<jsp:include page="expensebill-view-accountdetails.jsp"/>
+				<jsp:include page="expensebill-view-subledgeraccountdetails.jsp"/>
 			</div>
 			<div class="tab-pane fade" id="checklist">
-				<jsp:include page="expenseBill-checkList.jsp"/>
+				<jsp:include page="expensebill-view-checklist.jsp"/>
 			</div>
-			<div class="text-center">
-				<input type="submit" id="submit" class="btn btn-primary" value="Submit"/>
-			</div>
+			<c:if test="${!workflowHistory.isEmpty() && mode != 'readOnly'}">
+				<jsp:include page="../common/commonworkflowhistory-view.jsp"></jsp:include>
+			</c:if>
+			<c:if test="${mode != 'readOnly'}">
+				<jsp:include page="../common/commonworkflowmatrix.jsp"/>
+				<div class="buttonbottom" align="center">
+					<jsp:include page="../common/commonworkflowmatrix-button.jsp" />
+				</div>
+			</c:if>
+			<c:if test="${mode == 'readOnly'}">
+				<div class="row">
+					<div class="col-sm-12 text-center">
+						<input type="submit" name="closeButton"	id="closeButton" value="Close" Class="btn btn-default" onclick="window.close();" />
+					</div>
+				</div>
+			</c:if>
 		</div>
   
 </form:form>  
-<script src="<cdn:url value='/resources/app/js/common/helper.js?rnd=${app_release_no}'/>"></script>
-<script src="<cdn:url value='/resources/app/js/common/voucherBillHelper.js?rnd=${app_release_no}'/>"></script>
-<script src="<cdn:url value='/resources/app/js/expensebill/expensebill.js?rnd=${app_release_no}'/>"></script>
+<script src="<cdn:url value='/resources/app/js/expensebill/viewexpensebill.js?rnd=${app_release_no}'/>"></script>
 <script src="<cdn:url value='/resources/global/js/egov/patternvalidation.js' context='/egi'/>"></script>
 <script src="<cdn:url value='/resources/global/js/egov/inbox.js' context='/egi'/>"></script>

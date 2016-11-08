@@ -82,7 +82,6 @@ var wf_certificateGenerate_status='<s:property value="%{@org.egov.tl.utils.Const
 									<s:checkbox id="isCancelled" name="isCancelled" />
 								</div>
 							</div>
-							
 							<div class="form-group">
 							    <label class="col-sm-3 control-label text-right"><s:text name="search.licensee.no" /></label>
 							    <div class="col-sm-3 add-margin">
@@ -93,7 +92,6 @@ var wf_certificateGenerate_status='<s:property value="%{@org.egov.tl.utils.Const
 							      	<s:textfield name="oldLicenseNumber" id="oldLicenseNumber" value="%{oldLicenseNumber}" cssClass="form-control"/>
 							    </div>
 							</div>
-							
 							<div class="form-group">
 							    <label class="col-sm-3 control-label text-right"><s:text name="search.license.category" /></label>
 							    <div class="col-sm-3 add-margin">
@@ -107,7 +105,6 @@ var wf_certificateGenerate_status='<s:property value="%{@org.egov.tl.utils.Const
 										listKey="id" listValue="name" headerKey="-1" headerValue="%{getText('default.select')}" value="%{tradeName.id}" class="form-control"/>
 							    </div>
 							</div>
-							
 							<div class="form-group">
 							    <label class="col-sm-3 control-label text-right"><s:text name="search.license.establishmentname" /></label>
 							    <div class="col-sm-3 add-margin">
@@ -118,8 +115,6 @@ var wf_certificateGenerate_status='<s:property value="%{@org.egov.tl.utils.Const
 							      	<s:textfield name="tradeOwnerName" id="tradeOwnerName"  value="%{tradeOwnerName}"  cssClass="form-control"/>
 							    </div>
 							</div>
-							
-							
 							<div class="form-group">
 							    <label class="col-sm-3 control-label text-right"><s:text name="search.license.propertyNo" /></label>
 							    <div class="col-sm-3 add-margin">
@@ -128,6 +123,13 @@ var wf_certificateGenerate_status='<s:property value="%{@org.egov.tl.utils.Const
 							    <label class="col-sm-2 control-label text-right"><s:text name='search.licensee.mobileNo' /></label>
 							    <div class="col-sm-3 add-margin">
 							      	<s:textfield name="mobileNo" id="mobileNo" value="%{mobileNo}" onKeyPress="return numbersonly(this, event)" onBlur="checkMinLength(this,10)" maxlength="10" cssClass="form-control patternvalidation" data-pattern="number"/>
+							    </div>
+							</div>
+							<div class="form-group">
+							    <label class="col-sm-3 control-label text-right"><s:text name="search.license.status" /></label>
+							    <div class="col-sm-3 add-margin">
+							        <s:select name="status" id="status" list="dropdownData.statusList"
+										listKey="id" listValue="name" headerKey="-1" headerValue="%{getText('default.select')}" value="%{status.id}" class="form-control"/>
 							    </div>
 							</div>
 						</div>
@@ -160,6 +162,9 @@ var wf_certificateGenerate_status='<s:property value="%{@org.egov.tl.utils.Const
 								<th>Trade Owner</th>
 								<th>Mobile Number</th>
 								<th>Property Assessment Number</th>
+								<th>Financial Year</th>
+								<th>Status</th>
+								<th>Owner Name</th>
 								<th>Actions</th>
 							</tr>
 						</thead>

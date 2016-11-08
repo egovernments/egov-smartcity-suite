@@ -38,41 +38,20 @@
   ~   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
   --%>
 
-
-<%@ include file="/includes/taglibs.jsp"%>
-<%@ page language="java"%>
-<html>
-<head>
-<title><s:text name="budgetgroup.modify" /></title>
-
-</head>
-<body>
-	<s:form action="budgetGroup" theme="simple">
-		<s:token />
-		<jsp:include page="budgetHeader.jsp" />
-		<span class="mandatory"> <s:actionerror /> <s:fielderror /> <s:actionmessage />
-		</span>
-		<div class="formmainbox">
-			<div class="subheadnew">
-				<s:text name="budgetgroup.modify" />
-			</div>
-			<%@ include file='budgetGroup-form.jsp'%>
-			<td><div align="left" class="mandatory">
-					*
-					<s:text name="mandatory.fields" />
-				</div></td>
-			<s:hidden name="model.id" />
-		</div>
-		<div class="buttonbottom">
-			<s:submit method="save" value="Save " cssClass="buttonsubmit" />
-			</label>
-			<s:reset name="button" type="submit" cssClass="button" id="button"
-				value="Cancel" />
-			<label><input type="submit" value="Close"
-				onclick="javascript:window.close()" class="button" /></label>
-		</div>
-	</s:form>
-	<s:hidden name="target" id="target" value="%{target}" />
-	<s:hidden name="modevalue" id="modevalue" value="%{mode}" />
-</body>
-</html>
+<%@ taglib uri="http://www.springframework.org/tags" prefix="spring"%>
+<%@ taglib uri="http://www.springframework.org/tags/form" prefix="form"%>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
+<div class="buttonbottom" align="center">
+	<table>
+		<tr>
+			<td id="actionButtons">
+				<c:if test="${mode != 'readOnly' }">
+					<c:forEach items="${validActionList}" var="validButtons">
+						<input type="submit" id="${validButtons}" class="btn btn-primary"  value="${validButtons}"/>
+					</c:forEach>
+				</c:if>
+				<input type="button" name="button2" id="button2" value="Close" class="btn btn-default" onclick="window.close();" />
+			</td>
+		</tr>
+	</table>
+</div>

@@ -1,5 +1,3 @@
-<%@ page contentType="text/json"%>
-<%@ taglib prefix="s" uri="/WEB-INF/tags/struts-tags.tld"%>
 <%--
   ~ eGov suite of products aim to improve the internal efficiency,transparency,
   ~    accountability and the service delivery of the government  organizations.
@@ -40,10 +38,26 @@
   ~   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
   --%>
 
-{ "ResultSet": { "Result":[
-<s:iterator var="s" value="parentBudgets" status="status">
-    {"Text":"<s:property value="%{name}" />",
-    "Value":"<s:property value="%{id}" />"
-    }<s:if test="!#status.last">,</s:if>
-</s:iterator>
-] } }
+<%@ page contentType="text/html;charset=UTF-8" language="java"%>
+<%@ taglib uri="http://www.springframework.org/tags" prefix="spring"%>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
+<%@ taglib uri="http://www.springframework.org/tags/form" prefix="form"%>
+<div class="panel panel-primary" data-collapsed="0">
+	<div class="panel-heading custom_form_panel_heading">
+		<div class="panel-title"><spring:message  code="lbl.subledger.details"/></div>
+	</div>
+	<div  style="padding: 0 15px;">
+		<div class="form-group">
+			<label class="col-sm-3 control-label text-right">
+				<spring:message code="lbl.payto" /> <span class="mandatory"></span>
+			</label>
+			<div class="col-sm-3 add-margin">
+				<c:out default="N/A" value="${egBillregister.egBillregistermis.payto}" />
+			</div>
+			<label class="col-sm-2 control-label text-right">
+			</label>
+			<div class="col-sm-3 add-margin">
+			</div>
+		</div>
+	</div>
+</div>

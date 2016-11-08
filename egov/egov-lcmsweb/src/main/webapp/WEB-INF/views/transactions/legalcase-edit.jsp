@@ -43,17 +43,16 @@
 <%@ taglib uri="http://www.springframework.org/tags" prefix="spring"%>
 <%@ taglib uri="http://www.springframework.org/tags/form" prefix="form"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt"%>
-<%@ taglib uri="/WEB-INF/taglib/cdn.tld" prefix="cdn" %>
-
-<div class="row">
-	<div class="col-md-12">
-		<form:form method="post" action="" modelAttribute="legalCase"
-			id="newlegalcaseForm" class="form-horizontal form-groups-bordered"
-			enctype="multipart/form-data">
+<%@ taglib uri="/WEB-INF/taglib/cdn.tld" prefix="cdn"%>
+<form:form method="post" action="" modelAttribute="legalCase"
+	id="newlegalcaseForm" class="form-horizontal form-groups-bordered"
+	enctype="multipart/form-data">
+	<div class="row">
+		<div class="col-md-12">
 			<form:hidden id="mode" path="" value="${mode}" />
-			<input type="hidden" name="legalCase" value="${legalCase.id}" />
-			<input type="hidden" name="pettempList" value="${pettempList}" />
-			<input type="hidden" name="respoTempList" value="${respoTempList}" />
+			<input type="hidden" name="legalCase" value="${legalCase.id}" /> <input
+				type="hidden" name="pettempList" value="${pettempList}" /> <input
+				type="hidden" name="respoTempList" value="${respoTempList}" />
 			<div class="panel panel-primary" data-collapsed="0">
 				<div class="panel-heading">
 					<div class="panel-title">
@@ -63,7 +62,7 @@
 				<div class="panel-body custom-form ">
 					<%@ include file="legalcasedetails.jsp"%>
 					<%@ include file="legalcase-edit-petitiondetails.jsp"%>
-				<jsp:include page="documentdetails-view.jsp"></jsp:include> 
+					<jsp:include page="documentdetails-view.jsp"></jsp:include>
 
 				</div>
 			</div>
@@ -74,13 +73,14 @@
 						<spring:message code='lbl.update' />
 					</button>
 					<button type="button" class="btn btn-default" id="btnclose">
-				<spring:message code="lbl.close" />
-			</button>
+						<spring:message code="lbl.close" />
+					</button>
 				</div>
 			</div>
-		</form:form>
+
+		</div>
 	</div>
-</div>
+</form:form>
 <link rel="stylesheet"
 	href="<cdn:url value='/resources/global/css/bootstrap/typeahead.css' context='/egi'/>">
 <link rel="stylesheet"
@@ -91,9 +91,7 @@
 	src="<cdn:url value='/resources/global/js/bootstrap/typeahead.bundle.js' context='/egi'/>"></script>
 <script
 	src="<cdn:url value='/resources/js/app/legalcase-ajax.js?rnd=${app_release_no}'/>"></script>
-	<script
+<script
 	src="<cdn:url value='/resources/js/app/populateDropdown.js?rnd=${app_release_no}'/>"></script>
 <script
 	src="<cdn:url value='/resources/js/app/legalcasenew.js?rnd=${app_release_no}'/>"></script>
-
-

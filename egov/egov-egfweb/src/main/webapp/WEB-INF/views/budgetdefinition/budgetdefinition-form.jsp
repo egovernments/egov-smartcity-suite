@@ -29,13 +29,13 @@
 						<div class="col-sm-2 col-xs-12 add-margin">
 							<div class="radio">
 								<label><form:radiobutton path="isbere" id="isBeRe"
-										value="BE" required="required" checked="checked" />BE</label>
+										value="BE" required="required" checked="checked" onchange="resetFunction()"/>BE</label>
 							</div>
 						</div>
 						<div class="col-sm-2 col-xs-12 add-margin">
 							<div class="radio">
 								<label><form:radiobutton path="isbere" id="isBeRe"
-										value="RE" required="required" />RE</label>
+										value="RE" required="required" onchange="resetFunction()"/>RE</label>
 							</div>
 						</div>
 						<form:errors path="isbere" cssClass="error-msg" />

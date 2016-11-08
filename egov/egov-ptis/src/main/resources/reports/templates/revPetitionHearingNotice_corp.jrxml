@@ -1,0 +1,169 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  ~ eGov suite of products aim to improve the internal efficiency,transparency,
+  ~    accountability and the service delivery of the government  organizations.
+  ~
+  ~     Copyright (C) <2015>  eGovernments Foundation
+  ~
+  ~     The updated version of eGov suite of products as by eGovernments Foundation
+  ~     is available at http://www.egovernments.org
+  ~
+  ~     This program is free software: you can redistribute it and/or modify
+  ~     it under the terms of the GNU General Public License as published by
+  ~     the Free Software Foundation, either version 3 of the License, or
+  ~     any later version.
+  ~
+  ~     This program is distributed in the hope that it will be useful,
+  ~     but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  ~     GNU General Public License for more details.
+  ~
+  ~     You should have received a copy of the GNU General Public License
+  ~     along with this program. If not, see http://www.gnu.org/licenses/ or
+  ~     http://www.gnu.org/licenses/gpl.html .
+  ~
+  ~     In addition to the terms of the GPL license to be adhered to in using this
+  ~     program, the following additional terms are to be complied with:
+  ~
+  ~         1) All versions of this program, verbatim or modified must carry this
+  ~            Legal Notice.
+  ~
+  ~         2) Any misrepresentation of the origin of the material is prohibited. It
+  ~            is required that all modified versions of this material be marked in
+  ~            reasonable ways as different from the original version.
+  ~
+  ~         3) This license does not grant any rights to any user of the program
+  ~            with regards to rights under trademark law for use of the trade names
+  ~            or trademarks of eGovernments Foundation.
+  ~
+  ~   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
+  -->
+<!-- Created with Jaspersoft Studio version 6.2.2.final using JasperReports Library version 6.2.2  -->
+<!-- 2016-11-03T17:05:40 -->
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="revPetitionHearingNotice_corp" language="groovy" pageWidth="595" pageHeight="842" whenNoDataType="AllSectionsNoDetail" columnWidth="555" leftMargin="0" rightMargin="0" topMargin="0" bottomMargin="0" uuid="bfa584a8-aba2-402c-aa8b-d9cf2f66bfb3">
+	<property name="ireport.zoom" value="1.0"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="92"/>
+	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="One Empty Record"/>
+	<parameter name="SUBREPORT_DIR" class="java.lang.String" isForPrompting="false"/>
+	<parameter name="logoPath" class="java.lang.String"/>
+	<parameter name="docNumberObjection" class="java.lang.String"/>
+	<parameter name="recievedOn" class="java.lang.String"/>
+	<parameter name="hearingNoticeDate" class="java.lang.String"/>
+	<parameter name="recievedBy" class="java.lang.String"/>
+	<parameter name="cityName" class="java.lang.String"/>
+	<parameter name="currentDate" class="java.lang.String"/>
+	<parameter name="houseNo" class="java.lang.String"/>
+	<parameter name="locality" class="java.lang.String"/>
+	<parameter name="assessmentNo" class="java.lang.String"/>
+	<parameter name="hearingTime" class="java.lang.String"/>
+	<parameter name="hearingVenue" class="java.lang.String"/>
+	<parameter name="copyType" class="java.lang.String"/>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<title>
+		<band height="56" splitType="Stretch">
+			<textField isBlankWhenNull="true">
+				<reportElement x="286" y="26" width="243" height="29" uuid="1971c504-135f-47f9-98fc-7659dc7c9288"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle"/>
+				<textFieldExpression><![CDATA["O/o Municipal Corporation,\n"+$P{cityName}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement positionType="Float" stretchType="RelativeToTallestObject" x="12" y="14" width="88" height="12" isPrintWhenDetailOverflows="true" uuid="4e9bf8c8-dad7-4cd5-b2ce-a453f2d4aa41"/>
+				<textElement textAlignment="Left" markup="styled">
+					<font size="8" isBold="true" isItalic="true" isUnderline="true" isPdfEmbedded="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{copyType}=="citizen"?"Party's Copy:":"Office Copy:"]]></textFieldExpression>
+			</textField>
+		</band>
+	</title>
+	<pageHeader>
+		<band height="500" splitType="Stretch">
+			<staticText>
+				<reportElement x="20" y="22" width="57" height="15" uuid="671442c6-680b-4755-a65a-b797dc290f7f"/>
+				<textElement verticalAlignment="Middle"/>
+				<text><![CDATA[Roc.No:]]></text>
+			</staticText>
+			<textField>
+				<reportElement x="358" y="21" width="173" height="15" uuid="56608ea1-3a46-44c3-a2ef-83648f8de1cc"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle" markup="styled">
+					<font isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA["Date : <style forecolor=\"#000000\" isBold=\"true\" pdfFontName=\"Times-Bold\" pdfEncoding=\"Cp1252\" isPdfEmbedded=\"true\">"+$P{currentDate}+"</style>"]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="76" y="22" width="181" height="15" isPrintWhenDetailOverflows="true" uuid="1b5cdb8f-cd61-48cf-860b-2c98dc373709"/>
+				<textElement verticalAlignment="Middle">
+					<font isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{docNumberObjection}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="102" y="42" width="367" height="32" uuid="49572301-5661-41f6-920c-d67e78e75ddd"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="14" isBold="true" isUnderline="true"/>
+					<paragraph lineSpacing="Single"/>
+				</textElement>
+				<text><![CDATA[HEARING NOTICE]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="90" y="82" width="401" height="30" uuid="57c61db4-3cc4-4ba1-abe9-8b08dbd03f01"/>
+				<textElement textAlignment="Center">
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[(Issued in terms of Sec. 222 of A.P. Municipal Corporations Act, 1994 (formerly known as GHMC Act, 1955))]]></text>
+			</staticText>
+			<textField isStretchWithOverflow="true">
+				<reportElement x="20" y="137" width="510" height="170" uuid="75aa4cf0-93b7-4dd9-a88a-f4467db78343"/>
+				<textElement textAlignment="Justified" verticalAlignment="Middle" markup="styled">
+					<paragraph lineSpacing="1_1_2" lineSpacingSize="1.0"/>
+				</textElement>
+				<textFieldExpression><![CDATA["\n\tWith reference to the Revision Petition submitted by you on <style forecolor=\"#000000\" isBold=\"true\">"+$P{recievedOn}+"</style> , you are hereby requested to appear in person or by an authorized agent on <style forecolor=\"#000000\" isBold=\"true\">"+$P{hearingNoticeDate}+"</style>  at <style forecolor=\"#000000\" isBold=\"true\">"+$P{hearingTime}+"</style>  in Municipal Corporation Office, for hearing your submissions, by the undersigned, for reduction of property tax in respect of building bearing Door.No:<style forecolor=\"#000000\" isBold=\"true\"> "+$P{houseNo}+"</style>, Assessment No :<style forecolor=\"#000000\" isBold=\"true\"> "+$P{assessmentNo}+"</style> at <style forecolor=\"#000000\" isBold=\"true\">"+$P{locality}+"</style> , failing which your revision petition will be disposed off,basing on the available information in this office."]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="363" y="368" width="163" height="20" uuid="1d498d13-1a1e-4870-a73f-7d5708b0617c"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="11" isBold="true"/>
+				</textElement>
+				<text><![CDATA[ COMMISSIONER]]></text>
+			</staticText>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement x="118" y="397" width="186" height="15" uuid="28ef0fc5-4826-47fa-836f-954932026657"/>
+				<textElement verticalAlignment="Middle">
+					<font isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{recievedBy}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="29" y="397" width="88" height="15" uuid="794352a0-17b8-4b80-8ecc-ecd04d58cf05"/>
+				<textElement verticalAlignment="Middle"/>
+				<text><![CDATA[To, Sri/Smt./Kum.]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="30" y="415" width="86" height="15" uuid="d19e969d-8bb8-4a3c-815e-047a691fda4a"/>
+				<textElement verticalAlignment="Middle"/>
+				<text><![CDATA[Door No:]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="30" y="433" width="86" height="15" uuid="c05861ef-96e4-4cbd-aa3b-5effdbe87447"/>
+				<textElement verticalAlignment="Middle"/>
+				<text><![CDATA[Locality :]]></text>
+			</staticText>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement x="119" y="415" width="165" height="15" uuid="3141a75f-05bd-4474-aab6-c29f3a3a5512"/>
+				<textElement verticalAlignment="Middle">
+					<font isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{houseNo}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement x="120" y="433" width="184" height="15" uuid="654f7b8c-be66-4e97-a107-7b1fb86fa269"/>
+				<textElement verticalAlignment="Middle">
+					<font isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{locality}]]></textFieldExpression>
+			</textField>
+		</band>
+	</pageHeader>
+</jasperReport>

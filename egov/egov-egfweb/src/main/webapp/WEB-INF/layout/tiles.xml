@@ -1,27 +1,44 @@
 <?xml version="1.0" encoding="UTF-8"?>
+<!--
+  ~ eGov suite of products aim to improve the internal efficiency,transparency,
+  ~    accountability and the service delivery of the government  organizations.
+  ~
+  ~     Copyright (C) <2015>  eGovernments Foundation
+  ~
+  ~     The updated version of eGov suite of products as by eGovernments Foundation
+  ~     is available at http://www.egovernments.org
+  ~
+  ~     This program is free software: you can redistribute it and/or modify
+  ~     it under the terms of the GNU General Public License as published by
+  ~     the Free Software Foundation, either version 3 of the License, or
+  ~     any later version.
+  ~
+  ~     This program is distributed in the hope that it will be useful,
+  ~     but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  ~     GNU General Public License for more details.
+  ~
+  ~     You should have received a copy of the GNU General Public License
+  ~     along with this program. If not, see http://www.gnu.org/licenses/ or
+  ~     http://www.gnu.org/licenses/gpl.html .
+  ~
+  ~     In addition to the terms of the GPL license to be adhered to in using this
+  ~     program, the following additional terms are to be complied with:
+  ~
+  ~         1) All versions of this program, verbatim or modified must carry this
+  ~            Legal Notice.
+  ~
+  ~         2) Any misrepresentation of the origin of the material is prohibited. It
+  ~            is required that all modified versions of this material be marked in
+  ~            reasonable ways as different from the original version.
+  ~
+  ~         3) This license does not grant any rights to any user of the program
+  ~            with regards to rights under trademark law for use of the trade names
+  ~            or trademarks of eGovernments Foundation.
+  ~
+  ~   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
+  -->
 
-<!-- ~ eGov suite of products aim to improve the internal efficiency,transparency, 
-	~ accountability and the service delivery of the government organizations. 
-	~ ~ Copyright (C) <2015> eGovernments Foundation ~ ~ The updated version 
-	of eGov suite of products as by eGovernments Foundation ~ is available at 
-	http://www.egovernments.org ~ ~ This program is free software: you can redistribute 
-	it and/or modify ~ it under the terms of the GNU General Public License as 
-	published by ~ the Free Software Foundation, either version 3 of the License, 
-	or ~ any later version. ~ ~ This program is distributed in the hope that 
-	it will be useful, ~ but WITHOUT ANY WARRANTY; without even the implied warranty 
-	of ~ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the ~ GNU General 
-	Public License for more details. ~ ~ You should have received a copy of the 
-	GNU General Public License ~ along with this program. If not, see http://www.gnu.org/licenses/ 
-	or ~ http://www.gnu.org/licenses/gpl.html . ~ ~ In addition to the terms 
-	of the GPL license to be adhered to in using this ~ program, the following 
-	additional terms are to be complied with: ~ ~ 1) All versions of this program, 
-	verbatim or modified must carry this ~ Legal Notice. ~ ~ 2) Any misrepresentation 
-	of the origin of the material is prohibited. It ~ is required that all modified 
-	versions of this material be marked in ~ reasonable ways as different from 
-	the original version. ~ ~ 3) This license does not grant any rights to any 
-	user of the program ~ with regards to rights under trademark law for use 
-	of the trade names ~ or trademarks of eGovernments Foundation. ~ ~ In case 
-	of any queries, you can reach eGovernments Foundation at contact@egovernments.org. -->
 <!DOCTYPE tiles-definitions PUBLIC
         "-//Apache Software Foundation//DTD Tiles Configuration 3.0//EN"
         "http://tiles.apache.org/dtds/tiles-config_3_0.dtd">
@@ -278,7 +295,6 @@
 			value="/WEB-INF/views/function/function-search.jsp" />
 	</definition>
 
-
 	<definition name="cfinancialyear-new" extends="base_layout">
 		<put-attribute name="page-title" value="title.cfinancialyear.new"
 			cascade="true" />
@@ -328,7 +344,6 @@
 			value="/WEB-INF/views/fund/fund-search.jsp" />
 	</definition>
 
-
 	<definition name="fundsource-new" extends="base_layout">
 		<put-attribute name="page-title" value="title.fundsource.new"
 			cascade="true" />
@@ -363,9 +378,6 @@
 		<put-attribute name="body"
 			value="/WEB-INF/views/fundsource/fundsource-search.jsp" />
 	</definition>
-
-
-
 
 	<definition name="closedperiod-edit" extends="base_layout">
 		<put-attribute name="page-title" value="title.closedperiod.edit"
@@ -483,17 +495,21 @@
 			value="/WEB-INF/views/budgetdefinition/budgetdefinition-search.jsp" />
 	</definition>
 	
-	<definition name="expenseBill-form" extends="base_layout">
+	<definition name="expensebill-form" extends="base_layout">
 		<put-attribute name="page-title" value="title.expensebill.create" cascade="true"/>
-		<put-attribute name="body" value="/WEB-INF/views/expensebill/expenseBill-form.jsp"/>
+		<put-attribute name="body" value="/WEB-INF/views/expensebill/expensebill-form.jsp"/>
 	</definition>
 
-	<definition name="expenseBill-success" extends="base_layout">
+	<definition name="expensebill-success" extends="base_layout">
 	        <put-attribute name="page-title" value="lbl.expensebill" cascade="true"/>
-	        <put-attribute name="body" value="/WEB-INF/views/expensebill/expenseBill-success.jsp"/>
+	        <put-attribute name="body" value="/WEB-INF/views/expensebill/expensebill-success.jsp"/>
+	</definition>
+
+	<definition name="expensebill-view" extends="base_layout">
+	        <put-attribute name="page-title" value="lbl.expensebill" cascade="true"/>
+	        <put-attribute name="body" value="/WEB-INF/views/expensebill/expensebill-view.jsp"/>
 	</definition>
 	
-
 	<definition name="budgetapproval-new" extends="base_layout">
 		<put-attribute name="page-title" value="title.budget.new"
 			cascade="true" />

@@ -302,12 +302,13 @@ jQuery(document).ready(function() {
     	var propertyAssessmentNo=jQuery('#propertyAssessmentNo').val();
     	var mobileNo=jQuery('#mobileNo').val();
     	var isCancelled	=jQuery('#isCancelled').is(":checked");
+    	var status = jQuery('#status').val();
 		if ((applicationNumber == null || applicationNumber == "")  &&
 				(licenseNumber == null || licenseNumber == "") && (oldLicenseNumber == null || oldLicenseNumber == "") &&
 				(category == '-1') && (subCategory == '-1') &&
 				(tradeTitle == null || tradeTitle == "") && (tradeOwnerName == null || tradeOwnerName == "") &&
 				(propertyAssessmentNo == null || propertyAssessmentNo == "") && (mobileNo == null || mobileNo == "") && 
-				(isCancelled == null || isCancelled == '' || isCancelled == false)) {
+				(isCancelled == null || isCancelled == '' || isCancelled == false ) && status == '-1') {
 			document.getElementById("tradeSearchError").style.display='';
 	        document.getElementById("tradeSearchError").innerHTML='Cannot Search. Atleast One Search Criteria is Mandatory.';
 	        jQuery('.report-section').hide();
@@ -357,6 +358,7 @@ function callAjaxForSearchTrade() {
 	var propertyAssessmentNo=jQuery('#propertyAssessmentNo').val();
 	var mobileNo=jQuery('#mobileNo').val();
 	var isCancelled	= jQuery('#isCancelled').is(":checked");
+	var status=jQuery('#status').val();
 	jQuery('.report-section').removeClass('display-hide');
 	reportdatatable = drillDowntableContainer
 			.dataTable({
@@ -372,7 +374,8 @@ function callAjaxForSearchTrade() {
 						tradeOwnerName : tradeOwnerName ,
 						propertyAssessmentNo : propertyAssessmentNo ,
 						mobileNo : mobileNo ,
-						isCancelled : isCancelled
+						isCancelled : isCancelled,
+						statusId : status
 					}
 				},
 				"bDestroy" : true,
@@ -414,6 +417,15 @@ function callAjaxForSearchTrade() {
 					"data" : "propertyAssmntNo",
 					"sTitle" : "Property Assessment Number"
 				}, {
+					"data" : "expiryYear",
+					"sTitle" : "Financial Year"
+				}, {
+					"data" : "status",
+					"sTitle" : "Status"
+				},{
+					"data" : "ownerName",
+					"sTitle" : "Owner Name"
+				},{
 					"sTitle" : "Actions",
 		        	  "render" : function(data,type,row) {
 		        		  var showActions = row.actions; 

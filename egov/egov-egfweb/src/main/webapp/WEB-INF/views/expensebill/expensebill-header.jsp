@@ -54,7 +54,7 @@
 					<span class="mandatory"></span>
 				</label>
 				<div class="col-sm-3 add-margin">
-					<form:input class="form-control patternvalidation" data-pattern="alphanumerichyphenbackslash" id="billnumber" path="billnumber" maxlength="50" required="required" />
+					<form:input class="form-control patternvalidation" data-pattern="alphanumericwithspecialcharacters" id="billnumber" path="billnumber" maxlength="50" required="required" />
 					<form:errors path="billnumber" cssClass="add-margin error-msg" />
 				</div>
 				

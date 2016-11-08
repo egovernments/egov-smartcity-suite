@@ -40,8 +40,8 @@
 
 package org.egov.pgr.web.controller.dashboard;
 
+import org.egov.infra.web.support.ui.DataTable;
 import org.egov.pgr.service.dashboard.DashboardService;
-import org.egov.pgr.web.contract.DataTable;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
@@ -91,9 +91,8 @@ public class DashboardController {
     }
 
     @RequestMapping(value = "/ageing/{ward}", produces = MediaType.APPLICATION_JSON_VALUE)
-    public
     @ResponseBody
-    List<List<Object>> wardwiseAgeing(@PathVariable final String ward) {
+    public List<List<Object>> wardwiseAgeing(@PathVariable final String ward) {
         return dashboardService.getAgeingByWard(ward);
     }
 
@@ -111,7 +110,7 @@ public class DashboardController {
 
     @RequestMapping(value = "/sla/{charttype}", produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
-    public List<?> complaintSLA(@PathVariable final String charttype) {
+    public List complaintSLA(@PathVariable final String charttype) {
         if ("pie".equals(charttype))
             return dashboardService.getComplaintSLA();
         else if ("gis".equals(charttype))

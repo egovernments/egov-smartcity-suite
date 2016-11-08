@@ -38,36 +38,69 @@
   ~   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
   --%>
 
+<%@ page contentType="text/html;charset=UTF-8" language="java"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 <%@ taglib uri="http://www.springframework.org/tags" prefix="spring"%>
 <%@ taglib uri="http://www.springframework.org/tags/form" prefix="form"%>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
 <div class="panel panel-primary" data-collapsed="0">
-	<div class="panel-heading custom_form_panel_heading">
-		<div class="panel-title">
-			<spring:message code="lbl.checklist" />
+	<div class="panel-heading">
+		
+	</div>
+	<div class="form-group">
+		<label class="col-sm-3 control-label text-right"><spring:message code="lbl.billnumber" />
+			<span class="mandatory"></span>
+		</label>
+		<div class="col-sm-3 add-margin">
+			<c:out default="N/A" value="${egBillregister.billnumber }" />
+		</div>
+		
+		<label class="col-sm-2 control-label text-right"><spring:message code="lbl.billdate" />
+		</label>
+		<div class="col-sm-3 add-margin">
+			<fmt:formatDate value="${egBillregister.billdate}" pattern="dd/MM/yyyy" />
 		</div>
 	</div>
 	
-	<div style="padding: 0 15px;">
-		<table class="table table-bordered" id="tblchecklist">
-			<thead>
-				<tr>
-					<th><spring:message code="lbl.checklist.name"/></th>
-					<th><spring:message code="lbl.checklist.value"/></th>
-				</tr>
-			</thead>
-			<tbody>
-			<tr>
-			<td></td>
-			<td>
-				<form:select path="checkLists[1].val" data-first-option="false" id="checkLists[1].val" class="form-control">
-					<form:option value="">N/A</form:option>
-					<form:option value="Yes">Yes</form:option>
-					<form:option value="No">No</form:option>
-				</form:select>
-			</td>
-			</tr>
-			</tbody>
-		</table>
+	
+	<jsp:include page="expense-view-trans-filter.jsp"/>
+	
+	<div class="form-group">
+		<label class="col-sm-3 control-label text-right">
+			<spring:message code="lbl.function" />	<span class="mandatory"></span>
+		</label>
+		<div class="col-sm-3 add-margin">
+			<c:out default="N/A" value="${egBillregister.egBillregistermis.function.name }" />
+		</div>
+				
+		<label class="col-sm-2 control-label text-right"><spring:message code="lbl.narration" />
+		</label>
+		<div class="col-sm-3 add-margin">
+			<c:out default="N/A" value="${egBillregister.egBillregistermis.narration }" />
+		</div>
+	</div>
+	
+	<div class="form-group">
+		<label class="col-sm-3 control-label text-right">
+			<spring:message code="lbl.party.billnumber" />
+		</label>
+		<div class="col-sm-3 add-margin">
+			<c:out default="N/A" value="${egBillregister.egBillregistermis.partyBillNumber }" />
+		</div>
+		
+		<label class="col-sm-2 control-label text-right">
+			<spring:message code="lbl.party.billdate" />
+		</label>
+		<div class="col-sm-3 add-margin">
+			<fmt:formatDate value="${egBillregister.egBillregistermis.partyBillDate}" pattern="dd/MM/yyyy" />
+		</div>
+	</div>
+	<div class="form-group">
+		<label class="col-sm-3 control-label text-right"><spring:message code="lbl.billsubtype" />
+			<span class="mandatory"></span>
+		</label>
+		<div class="col-sm-3 add-margin">
+			<c:out default="N/A" value="${egBillregister.egBillregistermis.egBillSubType.name }" />
+		</div>
 	</div>
 </div>

@@ -38,65 +38,16 @@
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
 
-package org.egov.pgr.web.contract;
+package org.egov.commons.repository;
 
 import java.util.List;
-import java.util.Map;
 
-public class DataTable {
+import org.egov.infstr.models.EgChecklists;
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.stereotype.Repository;
 
-    private int draw;
-    private int recordsTotal;
-    private int totalDisplayRecords;
-    private int recordsFiltered;
-    private List<Map<String, Object>> data;
+@Repository
+public interface CheckListRepository extends JpaRepository<EgChecklists, Long> {
 
-    public DataTable(int draw, int recordsTotal, int totalDisplayRecords, int recordsFiltered, List<Map<String, Object>> data) {
-        super();
-        this.draw = draw;
-        this.recordsTotal = recordsTotal;
-        this.totalDisplayRecords = totalDisplayRecords;
-        this.recordsFiltered = recordsFiltered;
-        this.data = data;
-    }
-
-    public int getDraw() {
-        return draw;
-    }
-
-    public void setDraw(final int draw) {
-        this.draw = draw;
-    }
-
-    public int getRecordsTotal() {
-        return recordsTotal;
-    }
-
-    public void setRecordsTotal(final int recordsTotal) {
-        this.recordsTotal = recordsTotal;
-    }
-
-    public int getTotalDisplayRecords() {
-        return totalDisplayRecords;
-    }
-
-    public void setTotalDisplayRecords(final int totalDisplayRecords) {
-        this.totalDisplayRecords = totalDisplayRecords;
-    }
-
-    public int getRecordsFiltered() {
-        return recordsFiltered;
-    }
-
-    public void setRecordsFiltered(final int recordsFiltered) {
-        this.recordsFiltered = recordsFiltered;
-    }
-
-    public List<Map<String, Object>> getData() {
-        return data;
-    }
-
-    public void setData(final List<Map<String, Object>> data) {
-        this.data = data;
-    }
+    List<EgChecklists> findByObjectid(Long objectid);
 }

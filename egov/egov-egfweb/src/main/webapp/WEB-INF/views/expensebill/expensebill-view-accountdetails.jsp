@@ -38,35 +38,50 @@
   ~   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
   --%>
 
-
-<%@ include file="/includes/taglibs.jsp"%>
-<%@ page language="java"%>
-<html>
-<head>
-<title><s:text name="budgetgroup.view" /></title>
-
-</head>
-<body>
-	<s:form action="budgetGroup" theme="simple">
-		<jsp:include page="budgetHeader.jsp" />
-		<div class="formmainbox">
-			<div class="subheadnew">
-				<s:text name="budgetgroup.view" />
-			</div>
-			<%@ include file='budgetGroup-form.jsp'%>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
+<%@ taglib uri="http://www.springframework.org/tags" prefix="spring"%>
+<%@ taglib uri="http://www.springframework.org/tags/form" prefix="form"%>
+<div class="panel panel-primary" data-collapsed="0">
+	<div class="panel-heading custom_form_panel_heading">
+		<div class="panel-title">
+			<spring:message code="lbl.accountdetails" />
 		</div>
-		<div class="buttonbottom">
-			<label><input type="submit" id="closeButton" value="Close"
-				onclick="javascript:window.close()" class="button" /></label>
-		</div>
-	</s:form>
-	<script>
-			for(var i=0;i<document.forms[0].elements.length;i++)
-			{
-				document.forms[0].elements(i).disabled=true;
-			}
-			document.forms[0].closeButton.disabled=false;
-		</script>
-
-</body>
-</html>
+	</div>
+	
+	 <div style="padding: 0 15px;">
+		<table class="table table-bordered" id="tblaccountdetails">
+			<thead>
+				<tr>
+					<th><spring:message code="lbl.account.code"/></th>
+					<th><spring:message code="lbl.account.head"/></th>
+					<th><spring:message code="lbl.debit.amount"/></th>
+					<th><spring:message code="lbl.credit.amount"/></th>
+				</tr>
+			</thead>
+			<tbody>
+				<c:choose>
+					<c:when test="${egBillregister.billDetails!=null && egBillregister.billDetails.size() > 0}">
+						 <c:forEach items="${egBillregister.billDetails}" var="billDeatils" varStatus="item">
+							<tr id="accountdetailsrow">
+								<td>
+									<span class="accountDetailsGlCode_${item.index }">${billDeatils.chartOfAccounts.glcode }</span>
+								</td>
+								<td>
+									<span class="accountDetailsAccountHead_${item.index }">${billDeatils.chartOfAccounts.name }</span>
+								</td>
+								<td class="text-right">
+									<span class="accountDetailsDebitAmount_${item.index } accountDetailsDebitAmount">${billDeatils.debitamount }</span>
+								</td>
+								<td class="text-right">
+									<span class="accountDetailsCreditAmount_${item.index } accountDetailsCreditAmount">${billDeatils.creditamount }</span>
+								</td>
+							</tr>
+						</c:forEach> 
+					</c:when>
+					<c:otherwise>
+					</c:otherwise>
+				</c:choose>
+			</tbody>
+		</table>
+	</div>
+</div>
