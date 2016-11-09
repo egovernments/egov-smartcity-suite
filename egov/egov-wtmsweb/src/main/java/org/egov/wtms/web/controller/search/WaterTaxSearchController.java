@@ -40,8 +40,13 @@
 
 package org.egov.wtms.web.controller.search;
 
-import org.egov.config.search.Index;
-import org.egov.config.search.IndexType;
+import static org.egov.ptis.constants.PropertyTaxConstants.REVENUE_HIERARCHY_TYPE;
+import static org.egov.ptis.constants.PropertyTaxConstants.WATER_TAX_INDEX_NAME;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import org.apache.commons.lang3.StringUtils;
 import org.egov.infra.admin.master.entity.Boundary;
 import org.egov.infra.admin.master.entity.City;
 import org.egov.infra.admin.master.entity.Role;
@@ -51,16 +56,16 @@ import org.egov.infra.admin.master.service.CityService;
 import org.egov.infra.admin.master.service.UserService;
 import org.egov.infra.config.core.ApplicationThreadLocals;
 import org.egov.infra.security.utils.SecurityUtils;
-import org.egov.search.domain.Document;
-import org.egov.search.domain.Page;
-import org.egov.search.domain.SearchResult;
-import org.egov.search.domain.Sort;
-import org.egov.search.service.SearchService;
-import org.egov.wtms.elasticSearch.entity.ConnectionSearchRequest;
+import org.egov.wtms.entity.es.ConnectionSearchRequest;
+import org.egov.wtms.entity.es.WaterChargeDocument;
 import org.egov.wtms.utils.WaterTaxUtils;
 import org.egov.wtms.utils.constants.WaterTaxConstants;
-import org.elasticsearch.search.sort.SortOrder;
+import org.elasticsearch.index.query.BoolQueryBuilder;
+import org.elasticsearch.index.query.QueryBuilders;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.elasticsearch.core.ElasticsearchTemplate;
+import org.springframework.data.elasticsearch.core.query.NativeSearchQueryBuilder;
+import org.springframework.data.elasticsearch.core.query.SearchQuery;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.ModelAttribute;
@@ -68,16 +73,10 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-import java.util.List;
-
-import static java.util.Arrays.asList;
-import static org.egov.ptis.constants.PropertyTaxConstants.REVENUE_HIERARCHY_TYPE;
-
 @Controller
 @RequestMapping(value = "/search/waterSearch/")
 public class WaterTaxSearchController {
 
-    private final SearchService searchService;
     private final CityService cityService;
 
     @Autowired
@@ -87,14 +86,16 @@ public class WaterTaxSearchController {
     private SecurityUtils securityUtils;
 
     @Autowired
+    private ElasticsearchTemplate elasticsearchTemplate;
+
+    @Autowired
     private UserService userService;
 
     @Autowired
     private BoundaryService boundaryService;
 
     @Autowired
-    public WaterTaxSearchController(final SearchService searchService, final CityService cityService) {
-        this.searchService = searchService;
+    public WaterTaxSearchController(final CityService cityService) {
         this.cityService = cityService;
     }
 
@@ -280,16 +281,57 @@ public class WaterTaxSearchController {
 
     @RequestMapping(method = RequestMethod.POST)
     @ResponseBody
-    public List<Document> searchConnection(@ModelAttribute final ConnectionSearchRequest searchRequest) {
-        final City cityWebsite = cityService.getCityByURL(ApplicationThreadLocals.getDomainName());
-        searchRequest.setUlbName(cityWebsite.getName());
+    public List<ConnectionSearchRequest> searchConnection(@ModelAttribute final ConnectionSearchRequest searchRequest) {
+        List<WaterChargeDocument> temList = new ArrayList<WaterChargeDocument>();
+        final List<ConnectionSearchRequest> finalResult = new ArrayList<ConnectionSearchRequest>();
+        temList = findAllWaterChargeIndexByFilter(searchRequest);
+        for (final WaterChargeDocument waterChargeIndex : temList) {
+            final ConnectionSearchRequest customerObj = new ConnectionSearchRequest();
+            customerObj.setApplicantName(waterChargeIndex.getConsumerName());
+            customerObj.setConsumerCode(waterChargeIndex.getConsumerCode());
+            customerObj.setAddress(waterChargeIndex.getLocality());
+            customerObj.setApplicationcode(waterChargeIndex.getApplicationCode());
+            customerObj.setUsage(waterChargeIndex.getUsage());
+            customerObj.setIslegacy(waterChargeIndex.isLegacy());
+            customerObj.setPropertyTaxDue(waterChargeIndex.getTotalDue());
+            customerObj.setStatus(waterChargeIndex.getStatus());
+            customerObj.setConnectiontype(waterChargeIndex.getConnectionType());
+            customerObj.setWaterTaxDue(waterChargeIndex.getWaterTaxDue());
+            finalResult.add(customerObj);
+        }
+        return finalResult;
 
-        final Sort sort = Sort.by().field("common.createdDate", SortOrder.DESC);
-        final SearchResult searchResult = searchService.search(asList(Index.WATERCHARGES.toString()),
-                asList(IndexType.CONNECTIONSEARCH.toString()), searchRequest.searchQuery(),
-                searchRequest.searchFilters(), sort, Page.NULL);
-        return searchResult.getDocuments();
+    }
 
+    private BoolQueryBuilder getFilterQuery(final ConnectionSearchRequest searchRequest) {
+        final City cityWebsite = cityService.getCityByCode(ApplicationThreadLocals.getCityCode());
+        BoolQueryBuilder boolQuery = QueryBuilders.boolQuery()
+                .filter(QueryBuilders.termQuery("ulbname", cityWebsite.getName()));
+        if (StringUtils.isNotBlank(searchRequest.getApplicantName()))
+            boolQuery = boolQuery.filter(QueryBuilders.matchQuery("consumername", searchRequest.getApplicantName()));
+        if (StringUtils.isNotBlank(searchRequest.getConsumerCode()))
+            boolQuery = boolQuery.filter(QueryBuilders.matchQuery("consumercode", searchRequest.getConsumerCode()));
+        if (StringUtils.isNotBlank(searchRequest.getRevenueWard()))
+            boolQuery = boolQuery.filter(QueryBuilders.matchQuery("ward", searchRequest.getRevenueWard()));
+        if (StringUtils.isNotBlank(searchRequest.getMobileNumber()))
+            boolQuery = boolQuery.filter(QueryBuilders.matchQuery("mobilenumber", searchRequest.getMobileNumber()));
+        if (StringUtils.isNotBlank(searchRequest.getDoorNumber()))
+            boolQuery = boolQuery.filter(QueryBuilders.matchQuery("doorno", searchRequest.getDoorNumber()));
+        if (StringUtils.isNotBlank(searchRequest.getLocality()))
+            boolQuery = boolQuery.filter(QueryBuilders.matchQuery("locality", searchRequest.getLocality()));
+
+        return boolQuery;
+    }
+
+    public List<WaterChargeDocument> findAllWaterChargeIndexByFilter(final ConnectionSearchRequest searchRequest) {
+
+        final BoolQueryBuilder query = getFilterQuery(searchRequest);
+        final SearchQuery searchQuery = new NativeSearchQueryBuilder().withIndices(WATER_TAX_INDEX_NAME)
+                .withQuery(query).build();
+
+        final List<WaterChargeDocument> sampleEntities = elasticsearchTemplate.queryForList(searchQuery,
+                WaterChargeDocument.class);
+        return sampleEntities;
     }
 
 }

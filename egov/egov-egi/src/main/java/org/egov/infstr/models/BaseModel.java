@@ -42,7 +42,6 @@ package org.egov.infstr.models;
 
 import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.validation.exception.ValidationError;
-import org.hibernate.search.annotations.DocumentId;
 
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -56,7 +55,6 @@ public class BaseModel implements Serializable {
      * Base class cannot be indexed only subclasses can be indexed for Lucene refer:
      * http://opensource.atlassian.com/projects/hibernate/browse/HSEARCH-333
      */
-    @DocumentId
     protected Long id;
     protected User createdBy;
     protected Date createdDate;

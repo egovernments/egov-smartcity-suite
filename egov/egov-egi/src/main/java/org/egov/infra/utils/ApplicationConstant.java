@@ -62,6 +62,7 @@ public final class ApplicationConstant {
     public static final String CITY_CORP_TWITTER_KEY = "corpTwitterLink";
     public static final String CITY_CORP_FB_KEY = "corpFBLink";
     public static final String CITY_CORP_GOOGLE_MAP_KEY = "corpGisLink";
+    public static final String CITY_REGION_NAME_KEY = "cityRegion";
 
     public static final String CITY_LOGO_URL = "/downloadfile/logo?fileStoreId=%s&moduleName=%s";
     public static final String CITY_LOGO_PATH_KEY = "logopath";
@@ -73,6 +74,7 @@ public final class ApplicationConstant {
     public static final Character Y = Character.valueOf('Y');
     public static final Character N = Character.valueOf('N');
 
+    public static final String ES_DATE_FORMAT = "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'";
     public static final String CITIZEN_ROLE_NAME = "Citizen";
 
     private ApplicationConstant() {

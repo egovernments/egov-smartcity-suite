@@ -41,7 +41,6 @@ package org.egov.ptis.domain.entity.property;
 
 import org.egov.infra.filestore.entity.FileStoreMapper;
 import org.egov.infra.persistence.entity.AbstractAuditable;
-import org.hibernate.search.annotations.DocumentId;
 
 import javax.persistence.*;
 import java.io.File;
@@ -56,11 +55,10 @@ import java.util.Set;
 @SequenceGenerator(name = Document.SEQ_DOCUMENT, sequenceName = Document.SEQ_DOCUMENT, allocationSize = 1)
 public class Document extends AbstractAuditable {
 
-    private static final long serialVersionUID = 7655384098687964458L;
     public static final String SEQ_DOCUMENT = "SEQ_EGPT_DOCUMENT";
+    private static final long serialVersionUID = 7655384098687964458L;
     @Id
     @GeneratedValue(generator = SEQ_DOCUMENT, strategy = GenerationType.SEQUENCE)
-    @DocumentId
     private Long id;
     @ManyToOne
     @JoinColumn(name = "type")
@@ -81,13 +79,13 @@ public class Document extends AbstractAuditable {
     private List<String> uploadsContentType = new ArrayList<>();
 
     @Override
-    protected void setId(final Long id) {
-        this.id = id;
+    public Long getId() {
+        return id;
     }
 
     @Override
-    public Long getId() {
-        return id;
+    protected void setId(final Long id) {
+        this.id = id;
     }
 
     public DocumentType getType() {

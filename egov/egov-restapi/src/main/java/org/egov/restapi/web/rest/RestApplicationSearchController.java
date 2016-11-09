@@ -39,31 +39,12 @@
  */
 package org.egov.restapi.web.rest;
 
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
-import org.egov.config.search.Index;
-import org.egov.config.search.IndexType;
-import org.egov.search.domain.Page;
-import org.egov.search.domain.SearchResult;
-import org.egov.search.domain.Sort;
-import org.egov.search.service.SearchService;
-import org.egov.wtms.elasticSearch.entity.ApplicationSearchRequest;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
-
-import static java.util.Arrays.asList;
 
 @RestController
 public class RestApplicationSearchController {
 
-    @Autowired
-    private SearchService searchService;
-
-    @RequestMapping(value = "/common/application/search", method = RequestMethod.POST)
+    /*@RequestMapping(value = "/common/application/search", method = RequestMethod.POST)
     @ResponseBody
     public String searchApplication(@RequestBody final ApplicationSearchRequest searchRequest) {
         final String applicationNumber = searchRequest.getApplicationNumber() != null ? "\""
@@ -80,6 +61,6 @@ public class RestApplicationSearchController {
         final Gson gson = gsonBuilder.registerTypeAdapter(SearchResult.class, new ApplicationSearchAdaptor()).create();
         final String json = gson.toJson(object);
         return json;
-    }
+    }*/
 
 }

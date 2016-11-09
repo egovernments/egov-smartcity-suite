@@ -82,7 +82,7 @@ public class CitizenComplaintRegistrationController extends GenericComplaintCont
 
     @RequestMapping(value = "register", method = POST)
     public String registerComplaint(@Valid @ModelAttribute final Complaint complaint, final BindingResult resultBinder,
-            final RedirectAttributes redirectAttributes, @RequestParam("files") final MultipartFile[] files, final Model model) {
+                                    final RedirectAttributes redirectAttributes, @RequestParam("files") final MultipartFile[] files, final Model model) {
 
         if (null != complaint.getCrossHierarchyId()) {
             final CrossHierarchy crosshierarchy = crossHierarchyService.findById(complaint.getCrossHierarchyId());
@@ -107,13 +107,13 @@ public class CitizenComplaintRegistrationController extends GenericComplaintCont
             return "complaint/citizen/registration-form";
         }
         redirectAttributes.addFlashAttribute("complaint", complaint);
-        return "redirect:/complaint/reg-success?crn=" + complaint.getCrn();
+        return "redirect:/complaint/reg-success/" + complaint.getCrn();
     }
 
     @RequestMapping(value = "anonymous/register", method = POST)
     public String registerComplaintAnonymous(@Valid @ModelAttribute final Complaint complaint, final BindingResult resultBinder,
-            final RedirectAttributes redirectAttributes, final HttpServletRequest request,
-            @RequestParam("files") final MultipartFile[] files, final Model model) {
+                                             final RedirectAttributes redirectAttributes, final HttpServletRequest request,
+                                             @RequestParam("files") final MultipartFile[] files, final Model model) {
 
         if (!recaptchaUtils.captchaIsValid(request))
             resultBinder.reject("captcha.not.valid");
@@ -149,7 +149,7 @@ public class CitizenComplaintRegistrationController extends GenericComplaintCont
             return "complaint/citizen/anonymous-registration-form";
         }
         redirectAttributes.addFlashAttribute("complaint", complaint);
-        return "redirect:/complaint/reg-success?crn=" + complaint.getCrn();
+        return "redirect:/complaint/reg-success/" + complaint.getCrn();
 
     }
 }

@@ -45,7 +45,6 @@ import org.egov.commons.EgwStatus;
 import org.egov.commons.utils.EntityType;
 import org.egov.infra.persistence.entity.AbstractAuditable;
 import org.egov.pims.commons.Position;
-import org.hibernate.search.annotations.DocumentId;
 
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -57,18 +56,19 @@ import javax.persistence.ManyToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 
+import static org.egov.eis.entity.DrawingOfficer.SEQ_DRAWINGOFFICER;
+
 @Entity
 @Table(name = "eg_drawingofficer")
-@SequenceGenerator(name = DrawingOfficer.SEQ_DRAWINGOFFICER, sequenceName = DrawingOfficer.SEQ_DRAWINGOFFICER, allocationSize = 1)
+@SequenceGenerator(name = SEQ_DRAWINGOFFICER, sequenceName = SEQ_DRAWINGOFFICER, allocationSize = 1)
 public class DrawingOfficer extends AbstractAuditable implements EntityType {
-    private static final long serialVersionUID = 1678672850806848215L;
     public static final String SEQ_DRAWINGOFFICER = "SEQ_EG_DRAWINGOFFICER";
-
-    @DocumentId
+    private static final long serialVersionUID = 1678672850806848215L;
+    String accountNumber;
+    String tan;
     @Id
     @GeneratedValue(generator = SEQ_DRAWINGOFFICER, strategy = GenerationType.SEQUENCE)
     private Long id;
-
     private String code;
     private String name;
     @ManyToOne(fetch = FetchType.LAZY)
@@ -80,8 +80,6 @@ public class DrawingOfficer extends AbstractAuditable implements EntityType {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "position")
     private Position position;
-    String accountNumber;
-    String tan;
 
     public Long getId() {
         return id;

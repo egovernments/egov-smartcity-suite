@@ -1487,7 +1487,8 @@ public interface PropertyTaxConstants {
     
     //urls	
     public String WTMS_TAXDUE_RESTURL = "%s/wtms/rest/watertax/due/byptno/%s";
-	
+    public String WTMS_TOTALDEMAND_RESTURL = "%s/wtms/rest/watertax/totaldemandamount/";
+
 	public static final String TRANSACTION_TYPE_CREATE = "Create";
 	public static final String TRANSACTION_TYPE_DEMOLITION = "Demolition";
 	
@@ -1497,4 +1498,21 @@ public interface PropertyTaxConstants {
 	public static final String PAYMENT_TYPE_PARTIALLY = "Partially";
 	public static final String PAYMENT_TYPE_FULLY = "Fully";
 	public static final String PAYMENT_TYPE_ADVANCE = "Advance";
+	
+	public static final String COLLECION_BILLING_SERVICE_PT = "Property Tax";
+	public static final String COLLECION_BILLING_SERVICE_WTMS = "Water Tax";
+	
+	public static final String PROPERTY_TAX_INDEX_NAME = "propertytax";
+	public static final String COLLECTION_INDEX_NAME = "receipts";
+	public static final String WATER_TAX_INDEX_NAME = "waterchargeconsumer";
+	
+	public static final String DATE_FORMAT_YYYYMMDD = "yyyy-MM-dd";
+	public static final SimpleDateFormat DATEFORMATTER_YYYY_MM_DD = new SimpleDateFormat(DATE_FORMAT_YYYYMMDD);
+	
+    public static final String DASHBOARD_GROUPING_DISTRICTWISE = "district";
+    public static final String DASHBOARD_GROUPING_ULBWISE = "ulb";
+    public static final String DASHBOARD_GROUPING_REGIONWISE = "region";
+    public static final String DASHBOARD_GROUPING_GRADEWISE = "grade";
+    public static final String DASHBOARD_GROUPING_WARDWISE = "ward";
+    public static final String DASHBOARD_GROUPING_CITYWISE = "city";
 }

@@ -40,11 +40,9 @@
 
 package org.egov.stms.web.controller.elasticSearch;
 
-import static java.util.Arrays.asList;
 import static org.egov.ptis.constants.PropertyTaxConstants.REVENUE_HIERARCHY_TYPE;
 import static org.egov.stms.utils.constants.SewerageTaxConstants.COLLECTDONATIONCHARHGES;
 import static org.egov.stms.utils.constants.SewerageTaxConstants.REVENUE_WARD;
-import static org.egov.stms.utils.constants.SewerageTaxConstants.SEARCHABLE_SHSCNO;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -53,9 +51,6 @@ import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 
-import org.apache.log4j.Logger;
-import org.egov.config.search.Index;
-import org.egov.config.search.IndexType;
 import org.egov.infra.admin.master.entity.Boundary;
 import org.egov.infra.admin.master.entity.City;
 import org.egov.infra.admin.master.entity.Role;
@@ -63,19 +58,18 @@ import org.egov.infra.admin.master.service.BoundaryService;
 import org.egov.infra.admin.master.service.CityService;
 import org.egov.infra.config.core.ApplicationThreadLocals;
 import org.egov.ptis.domain.model.AssessmentDetails;
-import org.egov.search.domain.Document;
-import org.egov.search.domain.Page;
-import org.egov.search.domain.SearchResult;
-import org.egov.search.domain.Sort;
-import org.egov.search.service.SearchService;
 import org.egov.stms.elasticSearch.entity.SewerageCollectFeeSearchRequest;
 import org.egov.stms.elasticSearch.entity.SewerageSearchResult;
+import org.egov.stms.entity.es.SewerageIndex;
+import org.egov.stms.service.es.SewerageIndexService;
 import org.egov.stms.transactions.entity.SewerageApplicationDetails;
 import org.egov.stms.transactions.service.SewerageApplicationDetailsService;
 import org.egov.stms.transactions.service.SewerageConnectionService;
 import org.egov.stms.transactions.service.SewerageThirdPartyServices;
 import org.egov.stms.utils.SewerageActionDropDownUtil;
 import org.egov.stms.utils.SewerageTaxUtils;
+import org.elasticsearch.index.query.BoolQueryBuilder;
+import org.elasticsearch.search.sort.FieldSortBuilder;
 import org.elasticsearch.search.sort.SortOrder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -93,8 +87,6 @@ import org.springframework.web.servlet.ModelAndView;
 public class SewerageCollectFeeSearchController {
 
     @Autowired
-    private SearchService searchService;
-    @Autowired
     private CityService cityService;
     @Autowired
     private SewerageApplicationDetailsService sewerageApplicationDetailsService;
@@ -109,7 +101,8 @@ public class SewerageCollectFeeSearchController {
     @Autowired
     private SewerageThirdPartyServices sewerageThirdPartyServices;
 
-    private static final Logger LOGGER = Logger.getLogger(SewerageCollectFeeSearchController.class);
+    @Autowired
+    private SewerageIndexService sewerageIndexService;
 
     @ModelAttribute
     public SewerageCollectFeeSearchRequest searchRequest() {
@@ -143,54 +136,50 @@ public class SewerageCollectFeeSearchController {
                 sewerageConnectionService.getSewerageApplicationDoc(sewerageApplicationDetails));
         return new ModelAndView("viewseweragedetails", "sewerageApplicationDetails", sewerageApplicationDetails);
     }
-    
-   
-    @SuppressWarnings("unchecked")
+
     @RequestMapping(method = RequestMethod.POST)
     @ResponseBody
     public List<SewerageSearchResult> searchApplication(@ModelAttribute final SewerageCollectFeeSearchRequest searchRequest) {
+        final List<SewerageSearchResult> searchResultList = new ArrayList<>();
+        List<SewerageIndex> resultList = new ArrayList<>();
+        final List<String> roleList = new ArrayList<>();
+        final Map<String, String> actionMap = new HashMap<>();
+        SewerageApplicationDetails sewerageApplicationDetails = null;
+        SewerageSearchResult searchActions = null;
         final City cityWebsite = cityService.getCityByURL(ApplicationThreadLocals.getDomainName());
-        searchRequest.setUlbName(cityWebsite.getName());
-        final Sort sort = Sort.by().field(SEARCHABLE_SHSCNO, SortOrder.DESC);
-        final SearchResult searchResult = searchService.search(asList(Index.SEWARAGE.toString()),
-                asList(IndexType.SEWARAGESEARCH.toString()), searchRequest.searchQuery(),
-                searchRequest.searchFilters(), sort, Page.NULL);
+        if (cityWebsite != null)
+            searchRequest.setUlbName(cityWebsite.getName());
+        final BoolQueryBuilder boolQuery = sewerageIndexService.getSearchQueryFilter(searchRequest);
+        final FieldSortBuilder sort = new FieldSortBuilder("shscNumber").order(SortOrder.DESC);
+        resultList = sewerageIndexService.getCollectSearchResult(boolQuery, sort);
+        for (final SewerageIndex sewerageIndex : resultList) {
+            final SewerageSearchResult searchResult = new SewerageSearchResult();
+            searchResult.setApplicationNumber(sewerageIndex.getApplicationNumber());
+            searchResult.setAssessmentNumber(sewerageIndex.getPropertyIdentifier());
+            searchResult.setShscNumber(sewerageIndex.getShscNumber());
+            searchResult.setApplicantName(sewerageIndex.getConsumerName());
+            searchResult.setApplicationType(sewerageIndex.getApplicationType());
+            searchResult.setPropertyType(sewerageIndex.getPropertyType());
+            searchResult.setRevenueWard(sewerageIndex.getWard());
+            searchResult.setAddress(sewerageIndex.getAddress());
+            searchResult.setApplicationStatus(sewerageIndex.getApplicationStatus());
 
-        List<String> roleList = new ArrayList<String>();
-        for (final Role userrole : sewerageTaxUtils.getLoginUserRoles()) {
-            roleList.add(userrole.getName());
-        }
+            if (searchRequest.getConsumerNumber() != null)
+                sewerageApplicationDetails = sewerageApplicationDetailsService
+                        .findByApplicationNumber(searchRequest.getConsumerNumber());
 
-        final List<SewerageSearchResult> searchResultFomatted = new ArrayList<SewerageSearchResult>(0);
-        SewerageApplicationDetails  sewerageApplicationDetails = new SewerageApplicationDetails();
-        for (final Document document : searchResult.getDocuments()) {
-            Map<String,String> actionMap = new HashMap<>();
-            final Map<String, String> searchableObjects = (Map<String, String>) document.getResource()
-                    .get("searchable");
-            if (searchableObjects != null) {
-               String consumernumber = searchableObjects.get("consumernumber");
-               String status = searchableObjects.get("status");
-               if(!("Rejected").equals(status) && !("Canceled").equals(status)){
-               if(consumernumber != null){
-                 sewerageApplicationDetails = sewerageApplicationDetailsService.findByApplicationNumber(consumernumber);
-               }
-                SewerageSearchResult searchActions = SewerageActionDropDownUtil.getSearchResultWithActions(
-                        roleList, searchableObjects.get("status"),sewerageApplicationDetails);
-                if (searchActions != null) {
-                    for(Map.Entry<String, String> entry : searchActions.getActions().entrySet()){
-                        if(entry.getValue().equals(COLLECTDONATIONCHARHGES)){
-                            actionMap.put(entry.getKey(), entry.getValue());
-                            break;
-                        }
-                    }
-                    searchActions.setActions(actionMap);
-                    searchActions.setDocument(document);
-                    searchResultFomatted.add(searchActions);
-                }
-            }
-            }
+            for (final Role role : sewerageTaxUtils.getLoginUserRoles())
+                roleList.add(role.getName());
+            if (sewerageApplicationDetails != null)
+                searchActions = SewerageActionDropDownUtil.getSearchResultWithActions(roleList,
+                        sewerageIndex.getApplicationStatus(), sewerageApplicationDetails);
+            if (searchActions != null && searchActions.getActions() != null)
+                for (final Map.Entry<String, String> entry : searchActions.getActions().entrySet())
+                    if (entry.getValue() == COLLECTDONATIONCHARHGES)
+                        actionMap.put(entry.getKey(), entry.getValue());
+            searchResult.setActions(actionMap);
+            searchResultList.add(searchResult);
         }
-        return searchResultFomatted;
+        return searchResultList;
     }
-
 }

@@ -39,33 +39,14 @@
  */
 package org.egov.stms.elasticSearch.entity;
 
-import static org.egov.search.domain.Filter.queryStringFilter;
-import static org.egov.search.domain.Filter.rangeFilter;
-import static org.egov.search.domain.Filter.termsStringFilter;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
-import java.util.List;
-
-import org.egov.search.domain.Filter;
-import org.egov.search.domain.Filters;
-import org.jboss.logging.Logger;
-import static org.egov.stms.utils.constants.SewerageTaxConstants.SEARCHABLE_SHSCNO;
-import static org.egov.stms.utils.constants.SewerageTaxConstants.CLAUSES_CITYNAME;
-import static org.egov.stms.utils.constants.SewerageTaxConstants.SEARCHABLE_CONSUMER_NAME;
-import static org.egov.stms.utils.constants.SewerageTaxConstants.CLAUSES_MOBILENO;
-import static org.egov.stms.utils.constants.SewerageTaxConstants.CLAUSES_DOORNO;
-import static org.egov.stms.utils.constants.SewerageTaxConstants.CLAUSES_REVWARD_NAME;
-import static org.egov.stms.utils.constants.SewerageTaxConstants.CLAUSES_APPLICATION_DATE;
-import static org.egov.stms.utils.constants.SewerageTaxConstants.NOTICE_WORK_ORDER;
-import static org.egov.stms.utils.constants.SewerageTaxConstants.CLAUSES_WO_NOTICE_DATE;
-import static org.egov.stms.utils.constants.SewerageTaxConstants.NOTICE_ESTIMATION;
-import static org.egov.stms.utils.constants.SewerageTaxConstants.CLAUSES_EM_NOTICE_DATE;
-import static org.egov.stms.utils.constants.SewerageTaxConstants.NOTICE_CLOSE_CONNECTION;
-import static org.egov.stms.utils.constants.SewerageTaxConstants.CLAUSES_CC_NOTICE_DATE;
 
 public class SewerageNoticeSearchRequest {
     private String searchText;
@@ -84,7 +65,7 @@ public class SewerageNoticeSearchRequest {
 
     SimpleDateFormat formatterYYYYMMDD = new SimpleDateFormat("yyyy-MM-dd");//todo: Give valid name for this variable.
     SimpleDateFormat dtft = new SimpleDateFormat("dd/MM/yyyy");
-    private static final Logger logger = Logger.getLogger(SewerageNoticeSearchRequest.class);
+    private static final Logger logger = LoggerFactory.getLogger(SewerageNoticeSearchRequest.class);
 
     public String getModuleName() {
         return moduleName;
@@ -142,7 +123,7 @@ public class SewerageNoticeSearchRequest {
         this.searchText = searchText;
     }
 
-    public Filters searchFilters() {
+    /*public Filters searchFilters() {
         final List<Filter> andFilters = new ArrayList<>(0);
         andFilters.add(termsStringFilter(SEARCHABLE_SHSCNO, shscNumber));
         andFilters.add(termsStringFilter(CLAUSES_CITYNAME, ulbName));
@@ -168,7 +149,7 @@ public class SewerageNoticeSearchRequest {
         if (logger.isDebugEnabled())
             logger.debug("finished filters");
         return Filters.withAndFilters(andFilters);
-    }
+    }*/
 
     public String searchQuery() {
         return searchText;

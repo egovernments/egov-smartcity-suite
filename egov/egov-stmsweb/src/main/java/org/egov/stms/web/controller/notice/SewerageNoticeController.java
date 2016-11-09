@@ -39,58 +39,32 @@
  */
 package org.egov.stms.web.controller.notice;
 
-import static java.math.BigDecimal.ZERO;
-import static java.util.Arrays.asList;
-import static org.egov.ptis.constants.PropertyTaxConstants.REVENUE_HIERARCHY_TYPE;
+import org.apache.log4j.Logger;
+import org.egov.infra.admin.master.service.BoundaryService;
+import org.egov.infra.admin.master.service.CityService;
+import org.egov.infra.filestore.entity.FileStoreMapper;
+import org.egov.infra.filestore.service.FileStoreService;
+import org.egov.infra.utils.FileStoreUtils;
+import org.egov.stms.notice.entity.SewerageNotice;
+import org.egov.stms.notice.service.SewerageNoticeService;
+import org.egov.stms.utils.SewerageTaxUtils;
+import org.egov.stms.utils.constants.SewerageTaxConstants;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
 
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
+import javax.servlet.http.HttpServletResponse;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Map;
-import java.util.zip.ZipOutputStream;
 
-import javax.servlet.http.HttpServletResponse;
-
-import org.apache.commons.io.FileUtils;
-import org.apache.log4j.Logger;
-import org.egov.config.search.Index;
-import org.egov.config.search.IndexType;
-import org.egov.infra.admin.master.entity.City;
-import org.egov.infra.admin.master.service.BoundaryService;
-import org.egov.infra.admin.master.service.CityService;
-import org.egov.infra.config.core.ApplicationThreadLocals;
-import org.egov.infra.filestore.entity.FileStoreMapper;
-import org.egov.infra.filestore.service.FileStoreService;
-import org.egov.infra.utils.FileStoreUtils;
-import org.egov.infra.validation.exception.ValidationError;
-import org.egov.infra.validation.exception.ValidationException;
-import org.egov.search.domain.Document;
-import org.egov.search.domain.Page;
-import org.egov.search.domain.SearchResult;
-import org.egov.search.domain.Sort;
-import org.egov.search.service.SearchService;
-import org.egov.stms.elasticSearch.entity.SewerageNoticeSearchRequest;
-import org.egov.stms.notice.entity.SewerageNotice;
-import org.egov.stms.notice.service.SewerageNoticeService;
-import org.egov.stms.utils.SewerageTaxUtils;
-import org.egov.stms.utils.constants.SewerageTaxConstants;
-import org.elasticsearch.search.sort.SortOrder;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.ResponseBody;
+import static org.egov.ptis.constants.PropertyTaxConstants.REVENUE_HIERARCHY_TYPE;
 
 @Controller
 @RequestMapping(value = "/reports")
@@ -103,8 +77,6 @@ public class SewerageNoticeController {
     @Autowired
     private SewerageTaxUtils sewerageTaxUtils;
     
-    @Autowired
-    private SearchService searchService;
     @Autowired
     private CityService cityService;
      @Autowired
@@ -127,7 +99,7 @@ public class SewerageNoticeController {
         return "searchSewerageNotices";
     }
     
-    @RequestMapping(value = "/searchResult",method = RequestMethod.POST)
+    /*@RequestMapping(value = "/searchResult",method = RequestMethod.POST)
     @ResponseBody
     public List<Document> searchApplication(@ModelAttribute final SewerageNoticeSearchRequest searchRequest) {
         final City cityWebsite = cityService.getCityByURL(ApplicationThreadLocals.getDomainName());
@@ -319,7 +291,7 @@ public class SewerageNoticeController {
             LOGGER.debug("Exit from zipAndDownload method");
         }
         return null;
-    }
+    }*/
     
     public void getSewerageNoticeType(final String noticeNo, String noticeTypeInput){
         if(noticeNo != null && noticeTypeInput.equals(SewerageTaxConstants.NOTICE_WORK_ORDER)){

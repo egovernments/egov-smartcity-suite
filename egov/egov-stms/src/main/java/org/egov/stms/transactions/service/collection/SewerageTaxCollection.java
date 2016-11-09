@@ -48,15 +48,12 @@ import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 
 import org.apache.log4j.Logger;
-import org.apache.struts2.ServletActionContext;
 import org.egov.collection.entity.ReceiptDetail;
 import org.egov.collection.integration.models.BillReceiptInfo;
 import org.egov.collection.integration.models.BillReceiptInfoImpl;
 import org.egov.collection.integration.models.ReceiptAccountInfo;
 import org.egov.collection.integration.models.ReceiptAmountInfo;
-import org.egov.collection.integration.services.CollectionIntegrationService;
 import org.egov.commons.Installment;
-import org.egov.commons.dao.FinancialYearDAO;
 import org.egov.demand.dao.EgBillDao;
 import org.egov.demand.integration.TaxCollection;
 import org.egov.demand.model.EgBill;
@@ -68,7 +65,6 @@ import org.egov.stms.masters.entity.enums.SewerageConnectionStatus;
 import org.egov.stms.transactions.entity.SewerageApplicationDetails;
 import org.egov.stms.transactions.entity.SewerageDemandConnection;
 import org.egov.stms.transactions.service.SewerageApplicationDetailsService;
-import org.egov.stms.transactions.service.SewerageConnectionSmsAndEmailService;
 import org.egov.stms.transactions.service.SewerageDemandConnectionService;
 import org.egov.stms.transactions.service.SewerageDemandService;
 import org.egov.stms.utils.SewerageTaxUtils;
@@ -82,37 +78,28 @@ import org.springframework.transaction.annotation.Transactional;
 @Transactional(readOnly = true)
 public class SewerageTaxCollection extends TaxCollection {
     private static final Logger LOGGER = Logger.getLogger(SewerageTaxCollection.class);
-    
+
     @Autowired
     private EgBillDao egBillDAO;
-   
+
     @PersistenceContext
     private EntityManager entityManager;
-    
+
     @Autowired
-    private  SewerageTaxUtils sewerageTaxUtils;
-    
+    private SewerageTaxUtils sewerageTaxUtils;
+
     public Session getCurrentSession() {
         return entityManager.unwrap(Session.class);
     }
+
     @Autowired
     private SewerageDemandService sewerageDemandService;
     @Autowired
     private SewerageApplicationDetailsService sewerageApplicationDetailsService;
-    
+
     @Autowired
     private SewerageDemandConnectionService sewerageDemandConnectionService;
-    
-    @Autowired
-    private SewerageConnectionSmsAndEmailService sewerageConnectionSmsAndEmailService;
-    
-    @Autowired
-    private FinancialYearDAO financialYearDAO;
-    
-    @Autowired
-    private CollectionIntegrationService collectionService;
-    
-    
+
     @Override
     public List<ReceiptDetail> reconstructReceiptDetail(final String billReferenceNumber,
             final BigDecimal actualAmountPaid, final List<ReceiptDetail> receiptDetailList) {
@@ -120,9 +107,8 @@ public class SewerageTaxCollection extends TaxCollection {
         return null;
     }
 
-
     /**
-     * Calling common api to update demand. 
+     * Calling common api to update demand.
      */
     @Override
     @Transactional
@@ -151,7 +137,7 @@ public class SewerageTaxCollection extends TaxCollection {
             LOGGER.debug("updateDemandDetails : Demand updation processed. ");
 
     }
-    
+
     /**
      * @param demand
      * @param billReceiptInfo
@@ -175,17 +161,19 @@ public class SewerageTaxCollection extends TaxCollection {
                                 0,
                                 recAccInfo.getDescription().indexOf(
                                         SewerageTaxConstants.COLL_RECEIPTDETAIL_DESC_PREFIX))
-                                        .trim();
-                financialYearDesc=recAccInfo 
+                        .trim();
+                financialYearDesc = recAccInfo
                         .getDescription()
                         .substring(
                                 recAccInfo.getDescription().indexOf(
-                                        SewerageTaxConstants.COLL_RECEIPTDETAIL_DESC_PREFIX)+SewerageTaxConstants.COLL_RECEIPTDETAIL_DESC_PREFIX.length())
-                                        .trim();
-      
+                                        SewerageTaxConstants.COLL_RECEIPTDETAIL_DESC_PREFIX)
+                                        + SewerageTaxConstants.COLL_RECEIPTDETAIL_DESC_PREFIX.length())
+                        .trim();
+
                 if (eventType.equals(EVENT_RECEIPT_CREATED))
-                    totalAmountCollected = totalAmountCollected.add(createOrUpdateDemandDetails(demandMasterReasonDesc,financialYearDesc,
-                            demand, billReceiptInfo, recAccInfo, totalAmount));
+                    totalAmountCollected = totalAmountCollected
+                            .add(createOrUpdateDemandDetails(demandMasterReasonDesc, financialYearDesc,
+                                    demand, billReceiptInfo, recAccInfo, totalAmount));
             }
         }
         LOGGER.info("Demand before updateDemandDetails() processing: " + demand.getAmtCollected() + demand);
@@ -194,8 +182,7 @@ public class SewerageTaxCollection extends TaxCollection {
             cancelBill(Long.valueOf(billReceiptInfo.getBillReferenceNum()));
             demand.setAmtCollected(demand.getAmtCollected().subtract(totalAmount));
             updateDmdDetForRcptCancel(demand, billReceiptInfo);
-        }
-        else  if (eventType.equals( EVENT_INSTRUMENT_BOUNCED)){//TODO ADD check bounce penalty, if required in future.
+        } else if (eventType.equals(EVENT_INSTRUMENT_BOUNCED)) {// TODO ADD check bounce penalty, if required in future.
             cancelBill(Long.valueOf(billReceiptInfo.getBillReferenceNum()));
             demand.setAmtCollected(demand.getAmtCollected().subtract(totalAmount));
             updateDmdDetForRcptCancel(demand, billReceiptInfo);
@@ -204,7 +191,6 @@ public class SewerageTaxCollection extends TaxCollection {
         return totalAmountCollected;
     }
 
-   
     /**
      * @param demand
      * @param billRcptInfo
@@ -214,40 +200,37 @@ public class SewerageTaxCollection extends TaxCollection {
         LOGGER.debug("Entering method updateDmdDetForRcptCancel");
         String demandMasterReasonDesc = null;
         String financialYearDesc = null;
-        
+
         for (final ReceiptAccountInfo rcptAccInfo : billRcptInfo.getAccountDetails())
             if (rcptAccInfo.getCrAmount() != null && rcptAccInfo.getCrAmount().compareTo(BigDecimal.ZERO) == 1
-            && !rcptAccInfo.getIsRevenueAccount()) {
-               
+                    && !rcptAccInfo.getIsRevenueAccount())
                 if (rcptAccInfo.getDescription() != null) {
                     demandMasterReasonDesc = rcptAccInfo
-                            .getDescription().substring(0,rcptAccInfo.getDescription().indexOf(
-                                            SewerageTaxConstants.COLL_RECEIPTDETAIL_DESC_PREFIX))
-                                            .trim();
-                    financialYearDesc=rcptAccInfo.getDescription().substring(
-                                    rcptAccInfo.getDescription().indexOf(
-                                            SewerageTaxConstants.COLL_RECEIPTDETAIL_DESC_PREFIX)+SewerageTaxConstants.COLL_RECEIPTDETAIL_DESC_PREFIX.length())
-                                            .trim();
-                 for (final EgDemandDetails demandDetail : demand.getEgDemandDetails()){
-                    if (demandMasterReasonDesc.equalsIgnoreCase(demandDetail.getEgDemandReason()
-                            .getEgDemandReasonMaster().getReasonMaster()) && financialYearDesc!=null &&
-                            (demandDetail.getEgDemandReason()
-                            .getEgInstallmentMaster().getDescription()).equalsIgnoreCase(financialYearDesc)
-                            ) {
-                        if (demandDetail.getAmtCollected().compareTo(rcptAccInfo.getCrAmount()) < 0)
-                            throw new ApplicationRuntimeException(
-                                    "updateDmdDetForRcptCancel : Exception while updating cancel receipt, "
-                                            + "to be deducted amount " + rcptAccInfo.getCrAmount()
-                                            + " is greater than the collected amount " + demandDetail.getAmtCollected()
-                                            + " for demandDetail " + demandDetail);
+                            .getDescription().substring(0, rcptAccInfo.getDescription().indexOf(
+                                    SewerageTaxConstants.COLL_RECEIPTDETAIL_DESC_PREFIX))
+                            .trim();
+                    financialYearDesc = rcptAccInfo.getDescription().substring(
+                            rcptAccInfo.getDescription().indexOf(
+                                    SewerageTaxConstants.COLL_RECEIPTDETAIL_DESC_PREFIX)
+                                    + SewerageTaxConstants.COLL_RECEIPTDETAIL_DESC_PREFIX.length())
+                            .trim();
+                    for (final EgDemandDetails demandDetail : demand.getEgDemandDetails())
+                        if (demandMasterReasonDesc.equalsIgnoreCase(demandDetail.getEgDemandReason()
+                                .getEgDemandReasonMaster().getReasonMaster()) && financialYearDesc != null &&
+                                demandDetail.getEgDemandReason()
+                                        .getEgInstallmentMaster().getDescription().equalsIgnoreCase(financialYearDesc)) {
+                            if (demandDetail.getAmtCollected().compareTo(rcptAccInfo.getCrAmount()) < 0)
+                                throw new ApplicationRuntimeException(
+                                        "updateDmdDetForRcptCancel : Exception while updating cancel receipt, "
+                                                + "to be deducted amount " + rcptAccInfo.getCrAmount()
+                                                + " is greater than the collected amount " + demandDetail.getAmtCollected()
+                                                + " for demandDetail " + demandDetail);
 
-                        demandDetail
-                        .setAmtCollected(demandDetail.getAmtCollected().subtract(rcptAccInfo.getCrAmount()));
+                            demandDetail
+                                    .setAmtCollected(demandDetail.getAmtCollected().subtract(rcptAccInfo.getCrAmount()));
 
-                    }
+                        }
                 }
-                }
-            }
         updateReceiptStatusWhenCancelled(billRcptInfo.getReceiptNum());
         LOGGER.debug("Exiting method updateDmdDetForRcptCancel");
     }
@@ -260,10 +243,9 @@ public class SewerageTaxCollection extends TaxCollection {
         }
     }
 
-   
     /**
      * @param demandMasterReasonDesc
-     * @param financialYearDesc 
+     * @param financialYearDesc
      * @param demand
      * @param billReceiptInfo
      * @param recAccInfo
@@ -271,7 +253,8 @@ public class SewerageTaxCollection extends TaxCollection {
      * @return
      */
     @Transactional
-    private BigDecimal createOrUpdateDemandDetails(final String demandMasterReasonDesc, String financialYearDesc, final EgDemand demand,
+    private BigDecimal createOrUpdateDemandDetails(final String demandMasterReasonDesc, final String financialYearDesc,
+            final EgDemand demand,
             final BillReceiptInfo billReceiptInfo, final ReceiptAccountInfo recAccInfo, final BigDecimal totalAmount) {
         BigDecimal totalAmountCollected = BigDecimal.ZERO;
 
@@ -281,13 +264,13 @@ public class SewerageTaxCollection extends TaxCollection {
             // updating the existing demand detail..
             for (final EgDemandDetails demandDetail : demand.getEgDemandDetails())
                 if (demandDetail.getEgDemandReason() != null
-                && demandDetail.getEgDemandReason().getEgDemandReasonMaster() != null
-                && demandDetail.getEgDemandReason().getEgDemandReasonMaster().getReasonMaster().trim()
-                .equalsIgnoreCase(demandMasterReasonDesc)
+                        && demandDetail.getEgDemandReason().getEgDemandReasonMaster() != null
+                        && demandDetail.getEgDemandReason().getEgDemandReasonMaster().getReasonMaster().trim()
+                                .equalsIgnoreCase(demandMasterReasonDesc)
                         && financialYearDesc != null
-                        && financialYearDesc.equalsIgnoreCase(demandDetail.getEgDemandReason().getEgInstallmentMaster().getDescription()
-                                )) {
-               
+                        && financialYearDesc
+                                .equalsIgnoreCase(demandDetail.getEgDemandReason().getEgInstallmentMaster().getDescription())) {
+
                     demandDetail.addCollected(recAccInfo.getCrAmount());
                     /*
                      * Save bill detail and demand deatail relation in the intermediate table.
@@ -305,8 +288,9 @@ public class SewerageTaxCollection extends TaxCollection {
                 // part of collection system.
                 final EgDemandDetails demandDetail = sewerageDemandService.createDemandDetails(recAccInfo
                         .getCrAmount(), sewerageDemandService.getDemandReasonByCodeAndInstallment(
-                        demandMasterReasonDesc, sewerageDemandService.getInstallmentByDescription(financialYearDesc).getId()),
-                                recAccInfo
+                                demandMasterReasonDesc,
+                                sewerageDemandService.getInstallmentByDescription(financialYearDesc).getId()),
+                        recAccInfo
                                 .getCrAmount());
                 demand.addEgDemandDetails(demandDetail);
                 getCurrentSession().flush();
@@ -349,82 +333,83 @@ public class SewerageTaxCollection extends TaxCollection {
     @Transactional
     private void updateWorkflowState(final EgDemand demand) {
         if (demand != null) {
-            final SewerageApplicationDetails sewerageApplicationDetails = sewerageDemandConnectionService.getSewerageDemandConnectionByDemand(demand).getApplicationDetails();
-           
+            final SewerageApplicationDetails sewerageApplicationDetails = sewerageDemandConnectionService
+                    .getSewerageDemandConnectionByDemand(demand).getApplicationDetails();
+
             if (sewerageApplicationDetails != null
                     && sewerageApplicationDetails.getState() != null
-                    && sewerageApplicationDetails.getStatus() != null){ 
-                
-                    if(sewerageApplicationDetails.getStatus().getCode()
-                    .equalsIgnoreCase(SewerageTaxConstants.APPLICATION_STATUS_COLLECTINSPECTIONFEE)) {
-                        sewerageApplicationDetails.setStatus(sewerageTaxUtils.getStatusByCodeAndModuleType(
-                                SewerageTaxConstants.APPLICATION_STATUS_INSPECTIONFEEPAID, SewerageTaxConstants.MODULETYPE));
-                        
-                        sewerageApplicationDetailsService.updateStateTransition(sewerageApplicationDetails, sewerageApplicationDetails.getState().getOwnerPosition().getId() ,SewerageTaxConstants.COLLECTION_REMARKS, 
-                                sewerageApplicationDetails.getApplicationType().getCode(), SewerageTaxConstants.WFLOW_ACTION_STEP_FORWARD);
-                    } else if(sewerageApplicationDetails.getStatus().getCode()
-                            .equalsIgnoreCase(SewerageTaxConstants.APPLICATION_STATUS_ESTIMATENOTICEGEN)){
-                        sewerageApplicationDetails.setStatus(sewerageTaxUtils.getStatusByCodeAndModuleType(
-                                SewerageTaxConstants.APPLICATION_STATUS_FEEPAID, SewerageTaxConstants.MODULETYPE));
-                    } 
-                sewerageApplicationDetailsService.save(sewerageApplicationDetails); 
+                    && sewerageApplicationDetails.getStatus() != null) {
+
+                if (sewerageApplicationDetails.getStatus().getCode()
+                        .equalsIgnoreCase(SewerageTaxConstants.APPLICATION_STATUS_COLLECTINSPECTIONFEE)) {
+                    sewerageApplicationDetails.setStatus(sewerageTaxUtils.getStatusByCodeAndModuleType(
+                            SewerageTaxConstants.APPLICATION_STATUS_INSPECTIONFEEPAID, SewerageTaxConstants.MODULETYPE));
+
+                    sewerageApplicationDetailsService.updateStateTransition(sewerageApplicationDetails,
+                            sewerageApplicationDetails.getState().getOwnerPosition().getId(),
+                            SewerageTaxConstants.COLLECTION_REMARKS,
+                            sewerageApplicationDetails.getApplicationType().getCode(),
+                            SewerageTaxConstants.WFLOW_ACTION_STEP_FORWARD);
+                } else if (sewerageApplicationDetails.getStatus().getCode()
+                        .equalsIgnoreCase(SewerageTaxConstants.APPLICATION_STATUS_ESTIMATENOTICEGEN))
+                    sewerageApplicationDetails.setStatus(sewerageTaxUtils.getStatusByCodeAndModuleType(
+                            SewerageTaxConstants.APPLICATION_STATUS_FEEPAID, SewerageTaxConstants.MODULETYPE));
+                sewerageApplicationDetailsService.save(sewerageApplicationDetails);
                 sewerageApplicationDetailsService.updateIndexes(sewerageApplicationDetails);
-                
-                //TODO: Sms and email not sending after doing demand collection,later must be fix
-                
-               /* if(sewerageApplicationDetails.getStatus().getCode().equals( SewerageTaxConstants.APPLICATION_STATUS_FEEPAID)){
-                    try{
-                        sewerageConnectionSmsAndEmailService.sendSmsAndEmail(sewerageApplicationDetails, ServletActionContext.getRequest());
-                    } catch (final Exception e) {
-                        final String errMsg = "Exception while sending sms and email!";
-                        LOGGER.error(errMsg, e);
-                       //throw new ApplicationRuntimeException(errMsg, e);
-                    }
-                }*/
+
+                // TODO: Sms and email not sending after doing demand collection,later must be fix
+
+                /*
+                 * if(sewerageApplicationDetails.getStatus().getCode().equals( SewerageTaxConstants.APPLICATION_STATUS_FEEPAID)){
+                 * try{ sewerageConnectionSmsAndEmailService.sendSmsAndEmail(sewerageApplicationDetails,
+                 * ServletActionContext.getRequest()); } catch (final Exception e) { final String errMsg =
+                 * "Exception while sending sms and email!"; LOGGER.error(errMsg, e); //throw new
+                 * ApplicationRuntimeException(errMsg, e); } }
+                 */
             }
-        }    
+        }
     }
 
     @Override
     public ReceiptAmountInfo receiptAmountBifurcation(final BillReceiptInfo billReceiptInfo) {
         final ReceiptAmountInfo receiptAmountInfo = new ReceiptAmountInfo();
-       
+
         BigDecimal currentInstallmentAmount = BigDecimal.ZERO;
         BigDecimal advanceInstallmentAmount = BigDecimal.ZERO;
         BigDecimal arrearAmount = BigDecimal.ZERO;
-      
+
         if (billReceiptInfo != null && billReceiptInfo.getBillReferenceNum() != null) {
             final EgBill egBill = egBillDAO.findById(Long.valueOf(billReceiptInfo.getBillReferenceNum()), false);
-           
-            if (egBill != null) {
-                Installment currentInstallment = sewerageDemandService.getCurrentInstallment();
-                Installment nextInstallment = sewerageDemandService.getNextInstallment();
-        
-        SewerageDemandConnection sewerageDemandConnection = sewerageDemandConnectionService.getSewerageDemandConnectionByDemand(egBill.getEgDemand());
-         
-        for (final ReceiptAccountInfo rcptAccInfo : billReceiptInfo.getAccountDetails()){
-            if (rcptAccInfo.getCrAmount() != null && rcptAccInfo.getCrAmount().compareTo(BigDecimal.ZERO) == 1) {
 
-                        String installment = rcptAccInfo
+            if (egBill != null) {
+                final Installment currentInstallment = sewerageDemandService.getCurrentInstallment();
+                final Installment nextInstallment = sewerageDemandService.getNextInstallment();
+
+                final SewerageDemandConnection sewerageDemandConnection = sewerageDemandConnectionService
+                        .getSewerageDemandConnectionByDemand(egBill.getEgDemand());
+
+                for (final ReceiptAccountInfo rcptAccInfo : billReceiptInfo.getAccountDetails())
+                    if (rcptAccInfo.getCrAmount() != null && rcptAccInfo.getCrAmount().compareTo(BigDecimal.ZERO) == 1) {
+
+                        final String installment = rcptAccInfo
                                 .getDescription()
                                 .substring(
                                         rcptAccInfo.getDescription().indexOf(
                                                 SewerageTaxConstants.COLL_RECEIPTDETAIL_DESC_PREFIX)
-                                                + SewerageTaxConstants.COLL_RECEIPTDETAIL_DESC_PREFIX.length()).trim();
+                                                + SewerageTaxConstants.COLL_RECEIPTDETAIL_DESC_PREFIX.length())
+                                .trim();
 
-                if ((sewerageDemandConnection != null && sewerageDemandConnection.getApplicationDetails()
-                        .getConnection().getStatus().equals(SewerageConnectionStatus.INPROGRESS))) {
-                    if (installment.equals(currentInstallment.toString()))
-                        currentInstallmentAmount = currentInstallmentAmount.add(rcptAccInfo.getCrAmount());
-                    else if (nextInstallment != null && installment.equals(nextInstallment.toString()))
-                        advanceInstallmentAmount = advanceInstallmentAmount.add(rcptAccInfo.getCrAmount());
-                    else
-                        arrearAmount = arrearAmount.add(rcptAccInfo.getCrAmount());
-                }
+                        if (sewerageDemandConnection != null && sewerageDemandConnection.getApplicationDetails()
+                                .getConnection().getStatus().equals(SewerageConnectionStatus.INPROGRESS))
+                            if (installment.equals(currentInstallment.toString()))
+                                currentInstallmentAmount = currentInstallmentAmount.add(rcptAccInfo.getCrAmount());
+                            else if (nextInstallment != null && installment.equals(nextInstallment.toString()))
+                                advanceInstallmentAmount = advanceInstallmentAmount.add(rcptAccInfo.getCrAmount());
+                            else
+                                arrearAmount = arrearAmount.add(rcptAccInfo.getCrAmount());
+                    }
             }
-          }
         }
-       }
         receiptAmountInfo.setArrearsAmount(arrearAmount);
         receiptAmountInfo.setAdvanceAmount(advanceInstallmentAmount);
         receiptAmountInfo.setCurrentInstallmentAmount(currentInstallmentAmount);

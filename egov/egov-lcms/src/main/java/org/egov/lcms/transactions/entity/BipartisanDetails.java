@@ -39,8 +39,16 @@
  */
 package org.egov.lcms.transactions.entity;
 
-import java.util.ArrayList;
-import java.util.List;
+import com.google.gson.annotations.Expose;
+import org.apache.commons.lang.StringUtils;
+import org.egov.infra.persistence.entity.AbstractAuditable;
+import org.egov.infra.validation.exception.ValidationError;
+import org.egov.lcms.masters.entity.GovernmentDepartment;
+import org.egov.lcms.utils.constants.LcmsConstants;
+import org.hibernate.envers.AuditOverride;
+import org.hibernate.envers.AuditOverrides;
+import org.hibernate.envers.Audited;
+import org.hibernate.validator.constraints.Length;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -55,34 +63,19 @@ import javax.persistence.Table;
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
-
-import org.apache.commons.lang.StringUtils;
-import org.egov.infra.persistence.entity.AbstractAuditable;
-import org.egov.infra.validation.exception.ValidationError;
-import org.egov.lcms.masters.entity.GovernmentDepartment;
-import org.egov.lcms.utils.constants.LcmsConstants;
-import org.egov.search.domain.Searchable;
-import org.hibernate.envers.AuditOverride;
-import org.hibernate.envers.AuditOverrides;
-import org.hibernate.envers.Audited;
-import org.hibernate.search.annotations.DocumentId;
-import org.hibernate.validator.constraints.Length;
-
-import com.google.gson.annotations.Expose;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Table(name = "EGLC_BIPARTISANDETAILS")
-@Searchable
 @SequenceGenerator(name = BipartisanDetails.SEQ_EGLC_BIPARTISANDETAILS, sequenceName = BipartisanDetails.SEQ_EGLC_BIPARTISANDETAILS, allocationSize = 1)
-@AuditOverrides({ @AuditOverride(forClass = AbstractAuditable.class, name = "lastModifiedBy"),
-        @AuditOverride(forClass = AbstractAuditable.class, name = "lastModifiedDate") })
+@AuditOverrides({@AuditOverride(forClass = AbstractAuditable.class, name = "lastModifiedBy"),
+        @AuditOverride(forClass = AbstractAuditable.class, name = "lastModifiedDate")})
 public class BipartisanDetails extends AbstractAuditable {
 
-    private static final long serialVersionUID = 845357231248646624L;
     public static final String SEQ_EGLC_BIPARTISANDETAILS = "SEQ_EGLC_BIPARTISANDETAILS";
 
     @Expose
-    @DocumentId
     @Id
     @GeneratedValue(generator = SEQ_EGLC_BIPARTISANDETAILS, strategy = GenerationType.SEQUENCE)
     private Long id;
@@ -136,12 +129,12 @@ public class BipartisanDetails extends AbstractAuditable {
         return name;
     }
 
-    public String getAddress() {
-        return address;
-    }
-
     public void setName(final String name) {
         this.name = name;
+    }
+
+    public String getAddress() {
+        return address;
     }
 
     public void setAddress(final String address) {

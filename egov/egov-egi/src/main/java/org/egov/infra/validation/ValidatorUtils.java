@@ -40,13 +40,18 @@
 
 package org.egov.infra.validation;
 
-import org.apache.commons.lang3.StringUtils;
 import org.egov.infra.config.properties.ApplicationProperties;
-import org.egov.infra.validation.regex.Constants;
+import org.egov.infra.exception.ApplicationRuntimeException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.regex.Pattern;
+
+import static org.apache.commons.lang3.StringUtils.isBlank;
+import static org.apache.commons.lang3.StringUtils.isNotBlank;
+import static org.egov.infra.validation.regex.Constants.LOW_PASSWORD;
+import static org.egov.infra.validation.regex.Constants.MEDIUM_PASSWORD;
+import static org.egov.infra.validation.regex.Constants.STRONG_PASSWORD;
 
 @Service("validatorUtils")
 public class ValidatorUtils {
@@ -57,15 +62,25 @@ public class ValidatorUtils {
     public ValidatorUtils(ApplicationProperties applicationProperties) {
         String passwordStrength = applicationProperties.passwordStrength();
         if ("high".equals(passwordStrength)) {
-            PASSWORD_PATTERN = Pattern.compile(Constants.STRONG_PASSWORD);
+            PASSWORD_PATTERN = Pattern.compile(STRONG_PASSWORD);
         } else if ("medium".equals(passwordStrength)) {
-            PASSWORD_PATTERN = Pattern.compile(Constants.MEDIUM_PASSWORD);
+            PASSWORD_PATTERN = Pattern.compile(MEDIUM_PASSWORD);
         } else {
-            PASSWORD_PATTERN = Pattern.compile(Constants.LOW_PASSWORD);
+            PASSWORD_PATTERN = Pattern.compile(LOW_PASSWORD);
         }
     }
 
+    public static void assertNotNull(Object value, String message) {
+        if (value == null)
+            throw new ApplicationRuntimeException(message);
+    }
+
+    public static void assertNotNull(String value, String message) {
+        if (isBlank(value))
+            throw new ApplicationRuntimeException(message);
+    }
+
     public boolean isValidPassword(String pwd) {
-        return StringUtils.isNotBlank(pwd) && PASSWORD_PATTERN.matcher(pwd).find();
+        return isNotBlank(pwd) && PASSWORD_PATTERN.matcher(pwd).find();
     }
 }

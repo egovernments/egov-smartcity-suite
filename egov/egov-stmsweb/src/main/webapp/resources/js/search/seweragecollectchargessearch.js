@@ -38,8 +38,6 @@
 #   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
 #-------------------------------------------------------------------------------*/
 
-
-
 var tableContainer;
 jQuery(document).ready(function($) {
 	tableContainer = $("#aplicationSearchResults");
@@ -62,7 +60,6 @@ jQuery(document).ready(function($) {
 			}
 		}); 
 });
-	
 
 $(".btn-primary").click(function(event){
 	$('#searchSewerageapplication').show();
@@ -85,11 +82,9 @@ $(".btn-primary").click(function(event){
 		event.preventDefault();
 	});
 
-
-
 $(document).on('change', 'select.actiondropdown', function() {
-	var ptassessmentno= tableContainer.fnGetData($(this).parent().parent(), 1);
-	var shscnumber= tableContainer.fnGetData($(this).parent().parent(), 2); 
+	var ptassessmentno= oTable.fnGetData($(this).parent().parent(), 1);
+	var shscnumber= oTable.fnGetData($(this).parent().parent(), 2); 
 	
 	if($(this).find(":selected").text()=="Change number of seats"){
 		var changeincloseturl=$(this).val();
@@ -136,59 +131,51 @@ function openPopup(url){
 	window.open(url,'window','scrollbars=yes,resizable=yes,height=700,width=800,status=yes');
 }
 
+var prevdatatable;
 function submitButton() {
 	
-	tableContainer = $("#aplicationSearchResults");
-	$('#searchResultDiv').show();
+	oTable = $("#aplicationSearchResults");
+	if(prevdatatable){
+		prevdatatable.fnClearTable();
+		$('#aplicationSearchResults thead tr').remove();
+	}
 	$.post("/stms/collectfee/search/",$('#sewerageSearchRequestForm').serialize())
 	.done(function(searchResult) {
-	tableContainer.dataTable({
-	destroy : true,
-	"sDom": "<'row'<'col-xs-12 hidden col-right'f>r>t<'row'<'col-md-6 col-xs-12'i><'col-md-3 col-xs-6'l><'col-md-3 col-xs-6 text-right'p>>",
-	"aLengthMenu" : [[10,25,50,-1 ],[10,25,50,"All" ] ],
-	"autoWidth" : false,
-	searchable : true,   
-	data : searchResult,
-	columns : [{title : 'Application Number', data : "document.resource.searchable.consumernumber", "visible": true},
-	           {title : 'pt assesmentno', data : "document.resource.clauses.ptassesmentno", "visible": false},
-	           {title : 'S.H.S.C Number',class : 'row-detail', data : 'document.resource.searchable.shscnumber',
-	        	   "render": function ( data, type, row, meta ) {
-	        		   
-			            return '<a onclick="openPopup(\'/stms/collectfee/search/view/'+row.document.resource.searchable.consumernumber+'/'+row.document.resource.clauses.ptassesmentno+'\')" href="javascript:void(0);">'+data+'</a>';} },
-			   {title : 'Applicant Name',data : 'document.resource.searchable.consumername'},
-			   {title : 'Application Type',render: function (data, type, full) {
-					if(full.document.resource.clauses.type == 'Change In Closets') {
-						return data = 'Modify Sewerage Connection';
-					} else{
-						return full.document.resource.clauses.type;
-					}
-					}},
-	           {title : 'Property type',data : 'document.resource.clauses.propertytype'},
-	           {title : 'Revenue ward',data : 'document.resource.clauses.revwardname'},
-	           {title : 'Address',data : 'document.resource.searchable.address'},
-	           {title : 'Application Status',data : 'document.resource.searchable.status'},
-	           {"title" : "Actions","sortable":false,
-	           render : function(data, type, row) {
-	        	   var option = "<option>Select from Below</option>";
-	        	   if(row.actions != null){
-	        		   $.each(row.actions, function(key, value){
-		        		   option+= "<option value="+key+">"+value+"</option>";
-		        	   });
-	        	   }
-	        	   
-				   return ('<select class="actiondropdown" data-consumer-no="'+ row.document.resource.searchable.consumernumber +'">'+ option +'</select>');
-	           }}],
-	           "aaSorting": [[9, 'asc']]
+	prevdatatable = oTable.dataTable({
+		"sDom": "<'row'<'col-xs-12 hidden col-right'f>r>t<'row'<'col-md-6 col-xs-12'i><'col-md-3 col-xs-6'l><'col-md-3 col-xs-6 text-right'p>>",
+		"aLengthMenu": [[10, 25, 50, -1], [10, 25, 50, "All"]],
+		"autoWidth": false,
+		"bDestroy": true,
+		"type" : 'POST',
+		data : searchResult,
+		columns : [
+					  { title : "Application Number", data:"applicationNumber"},
+					  { title : "pt assesmentno", data: "assessmentNumber", visible: false},
+					  {title : 'S.H.S.C Number',class : 'row-detail', data : 'shscNumber',
+			        	   "render": function ( data, type, row, meta ) {
+			        		   
+					            return '<a onclick="openPopup(\'/stms/existing/sewerage/view/'+row.applicationNumber+'/'+row.assessmentNumber+'\')" href="javascript:void(0);">'+data+'</a>';} },
+					  { title : "Applicant Name", data: "applicantName"},
+					  { title : "Application Type", data: "applicationType"},
+					  { title : "Property type", data: "propertyType"},
+					  { title : "Revenue ward", data: "revenueWard"},
+					  { title : "Address", data: "address"},
+					  { title : "Application Status", data: "applicationStatus"},
+					  { title : "Actions","sortable":false,
+						  render: function(data, type, row){
+							  var option ="<option>Select from below</option>";
+							  if(row.actions!=null){
+								  $.each(row.actions, function(key,value){
+									  option+= "<option value="+key+">"+value+"</option>";
+								  });
+							  }
+							  return ('<select class="actiondropdown" data-consumer-no="'+row.applicationNumber+'" >'+option+'</select>');
+						  }
+					  }
+					  ],
+					  "aaSorting": [[4, 'asc']] 
+				});
 	});
-	
-	if(tableContainer.fnGetData().length > 1000) {
-		$('#searchResultDiv').hide();
-		$('#search-exceed-msg').show();
-	} else {
-		$('#search-exceed-msg').hide();
-		$('#searchResultDiv').show();
-	}
-	})
 }
 
 $("#viewDCB").click(function(){

@@ -68,7 +68,6 @@ import org.egov.commons.EgwStatus;
 import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.workflow.entity.StateAware;
 import org.egov.utils.CheckListHelper;
-import org.hibernate.search.annotations.DocumentId;
 import org.hibernate.validator.constraints.Length;
 
 @Entity
@@ -84,7 +83,6 @@ public class EgBillregister extends StateAware implements java.io.Serializable {
     private static final long serialVersionUID = -4312140421386028968L;
 
     public static final String SEQ_EG_BILLREGISTER = "SEQ_EG_BILLREGISTER";
-    @DocumentId
     @Id
     @GeneratedValue(generator = SEQ_EG_BILLREGISTER, strategy = GenerationType.SEQUENCE)
     private Long id;

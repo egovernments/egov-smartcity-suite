@@ -40,13 +40,8 @@
 
 package org.egov.infstr.services;
 
-import org.apache.lucene.analysis.standard.StandardAnalyzer;
-import org.apache.lucene.queryparser.classic.ParseException;
-import org.apache.lucene.queryparser.classic.QueryParser;
-import org.apache.lucene.queryparser.classic.QueryParser.Operator;
 import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.config.core.ApplicationThreadLocals;
-import org.egov.infra.exception.ApplicationRuntimeException;
 import org.egov.infra.persistence.entity.AbstractAuditable;
 import org.egov.infra.validation.exception.ValidationError;
 import org.egov.infra.validation.exception.ValidationException;
@@ -58,9 +53,6 @@ import org.hibernate.Session;
 import org.hibernate.criterion.Example;
 import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Restrictions;
-import org.hibernate.search.FullTextQuery;
-import org.hibernate.search.FullTextSession;
-import org.hibernate.search.Search;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -84,15 +76,12 @@ import java.util.Set;
 @Transactional(readOnly = true)
 public class PersistenceService<T, ID extends Serializable> {
     private static final Logger LOG = LoggerFactory.getLogger(PersistenceService.class);
-    private static final String DEFAULT_FIELD = "_hibernate_class";
+    @PersistenceContext
+    EntityManager entityManager;
     private Class<T> type;
-
     @Autowired
     @Qualifier("entityValidator")
     private LocalValidatorFactoryBean entityValidator;
-
-    @PersistenceContext
-    EntityManager entityManager;
 
     public PersistenceService(final Class<T> type) {
         this.type = type;
@@ -155,16 +144,14 @@ public class PersistenceService<T, ID extends Serializable> {
 
     /**
      * @param query
-     * @param pageNumber
-     *            used to determine the offset from which to return the results
-     * @param pageSize
-     *            Number of records to be returned in the page. If null then all
-     *            records that match query are returned
+     * @param pageNumber used to determine the offset from which to return the results
+     * @param pageSize   Number of records to be returned in the page. If null then all
+     *                   records that match query are returned
      * @param params
      * @return
      */
     public Page findPageBy(final String query, final Integer pageNumber, final Integer pageSize,
-            final Object... params) {
+                           final Object... params) {
         final Query q = getQueryWithParams(query, params);
         return new Page(q, pageNumber, pageSize);
     }
@@ -186,16 +173,14 @@ public class PersistenceService<T, ID extends Serializable> {
 
     /**
      * @param namedQuery
-     * @param pageNumber
-     *            used to determine the offset from which to return the results
-     * @param pageSize
-     *            Number of records to be returned in the page. If null then all
-     *            records that match query are returned
+     * @param pageNumber used to determine the offset from which to return the results
+     * @param pageSize   Number of records to be returned in the page. If null then all
+     *                   records that match query are returned
      * @param params
      * @return Page instance that can be used to implement pagination
      */
     public Page findPageByNamedQuery(final String namedQuery, final Integer pageNumber, final Integer pageSize,
-            final Object... params) {
+                                     final Object... params) {
         final Query q = getNamedQueryWithParams(namedQuery, params);
         return new Page(q, pageNumber, pageSize);
     }
@@ -205,7 +190,7 @@ public class PersistenceService<T, ID extends Serializable> {
         int index = 0;
         for (final Object param : params) {
             if (param instanceof Collection)
-            	q.setParameterList(String.valueOf("param_"+index), (Collection)param);
+                q.setParameterList(String.valueOf("param_" + index), (Collection) param);
             else
                 q.setParameter(index, param);
             index++;
@@ -247,18 +232,18 @@ public class PersistenceService<T, ID extends Serializable> {
         getSession().delete(entity);
     }
 
-  
+
     public List<T> findAll() {
         return getSession().createCriteria(this.type).list();
     }
 
-  
+
     public List<T> findByExample(final T exampleT) {
         final Criteria criteria = getSession().createCriteria(this.type);
         return criteria.add(Example.create(exampleT)).list();
     }
 
-  
+
     public T findById(final ID id, final boolean lock) {
         return findById(id);
     }
@@ -282,56 +267,8 @@ public class PersistenceService<T, ID extends Serializable> {
         return c.list();
     }
 
-    public List<T> search(final String queryString, final int pageNumber, final int pageSize) {
-        return search(queryString, pageNumber, pageSize, PagingStrategy.PAGE);
-    }
-
-    public List<T> search(final String queryString) {
-        return search(queryString, 0, 0, PagingStrategy.NONE);
-    }
-
     public String getNamedQuery(final String namedQuery) {
         return getSession().getNamedQuery(namedQuery).getQueryString();
-    }
-
-    private List<T> search(final String queryString, final int pageNumber, final int pageSize,
-            final PagingStrategy paging) {
-        final QueryParser parser = new QueryParser(DEFAULT_FIELD, new StandardAnalyzer());
-        parser.setAllowLeadingWildcard(true);
-        parser.setDefaultOperator(Operator.AND);
-        final FullTextSession searchSession = getSearchSession();
-        try {
-            final FullTextQuery query = searchSession.createFullTextQuery(parser.parse(queryString), this.type);
-            paging.setup(query, pageNumber, pageSize);
-            return query.list();
-        } catch (final ParseException e) {
-            throw new ApplicationRuntimeException("invalid.search.string", e);
-        }
-    }
-
-    protected FullTextSession getSearchSession() {
-        return Search.getFullTextSession(getSession());
-    }
-
-    enum PagingStrategy {
-        PAGE {
-          
-            public void setup(final FullTextQuery query, final int pageNumber, final int pageSize) {
-                query.setFirstResult(pageNumber * pageSize + 1).setMaxResults(pageSize);
-            }
-        },
-        NONE {
-        };
-        public void setup(final FullTextQuery query, final int pageNumber, final int pageSize) {
-        };
-    }
-
-    public void indexEntity() {
-        final List<T> results = getSession().createCriteria(this.type).list();
-        final FullTextSession searchSession = getSearchSession();
-        searchSession.flush();
-        for (final T entity : results)
-            searchSession.index(entity);
     }
 
     public void addIndexparams(final Map<String, List> indexparams, final String key, final Object... values) {
@@ -342,7 +279,7 @@ public class PersistenceService<T, ID extends Serializable> {
     }
 
     public void addFilterCriteriaForObject(final Map<String, List> params, final Criteria c,
-            final String... orderbyFields) {
+                                           final String... orderbyFields) {
         for (final Map.Entry<String, List> entry : params.entrySet())
             if (entry.getKey().contains("date") || entry.getKey().contains("Date"))
                 c.add(Restrictions.between(entry.getKey(), entry.getValue().get(0), entry.getValue().get(1)));
@@ -351,7 +288,7 @@ public class PersistenceService<T, ID extends Serializable> {
         for (final String orderBy : orderbyFields)
             c.addOrder(Order.asc(orderBy).ignoreCase());
     }
-    
+
     /**
      * This method is a workaround to apply auditing field values for JPA entity when JPA mixed with hbm based
      * entities, this will be removed in future once modules are migrated to JPA annotation.
@@ -359,20 +296,20 @@ public class PersistenceService<T, ID extends Serializable> {
     public void applyAuditing(AbstractAuditable auditable) {
         Date currentDate = new Date();
         if (auditable.isNew()) {
-            auditable.setCreatedBy((User)getSession().load(User.class, ApplicationThreadLocals.getUserId()));
+            auditable.setCreatedBy(getSession().load(User.class, ApplicationThreadLocals.getUserId()));
             auditable.setCreatedDate(currentDate);
-        } 
-        auditable.setLastModifiedBy((User)getSession().load(User.class, ApplicationThreadLocals.getUserId()));
+        }
+        auditable.setLastModifiedBy(getSession().load(User.class, ApplicationThreadLocals.getUserId()));
         auditable.setLastModifiedDate(currentDate);
     }
-    
+
     public void applyAuditing(BaseModel baseModel) {
         Date currentDate = new Date();
         if (baseModel.getId() == null) {
-            baseModel.setCreatedBy((User)getSession().load(User.class, ApplicationThreadLocals.getUserId()));
+            baseModel.setCreatedBy(getSession().load(User.class, ApplicationThreadLocals.getUserId()));
             baseModel.setCreatedDate(currentDate);
-        } 
-        baseModel.setModifiedBy((User)getSession().load(User.class, ApplicationThreadLocals.getUserId()));
+        }
+        baseModel.setModifiedBy(getSession().load(User.class, ApplicationThreadLocals.getUserId()));
         baseModel.setModifiedDate(currentDate);
     }
 

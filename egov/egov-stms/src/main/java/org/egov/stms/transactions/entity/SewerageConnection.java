@@ -80,7 +80,7 @@ public class SewerageConnection extends AbstractAuditable {
 
     private boolean legacy = false;
 
-    @Temporal(value = TemporalType.DATE)
+    @Temporal(value = TemporalType.TIMESTAMP)
     private Date executionDate;
 
     @OrderBy("id desc")
