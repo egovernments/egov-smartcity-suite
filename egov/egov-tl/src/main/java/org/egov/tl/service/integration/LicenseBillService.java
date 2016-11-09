@@ -233,7 +233,7 @@ public class LicenseBillService extends BillServiceInterface implements BillingI
             final Installment installment = demandDetail.getEgDemandReason().getEgInstallmentMaster();
             if ("N".equalsIgnoreCase(demandDetail.getEgDemandReason().getEgDemandReasonMaster().getIsDebit())
                     && demandDetail.getAmount().subtract(demandDetail.getAmtRebate())
-                    .compareTo(demandDetail.getAmtCollected()) != 0) {
+                            .compareTo(demandDetail.getAmtCollected()) != 0) {
                 final EgBillDetails billdetail = new EgBillDetails();
                 final EgBillDetails billdetailRebate = new EgBillDetails();
                 if (demandDetail.getAmtRebate() != null && demandDetail.getAmtRebate().compareTo(BigDecimal.ZERO) != 0) {
@@ -325,7 +325,7 @@ public class LicenseBillService extends BillServiceInterface implements BillingI
     }
 
     public EgDemandDetails createDemandDetails(final EgDemandReason egDemandReason, final BigDecimal amtCollected,
-                                               final BigDecimal dmdAmount) {
+            final BigDecimal dmdAmount) {
         return EgDemandDetails.fromReasonAndAmounts(dmdAmount, egDemandReason, amtCollected);
     }
 
@@ -414,8 +414,11 @@ public class LicenseBillService extends BillServiceInterface implements BillingI
      */
     @Transactional
     public void updateWorkflowState(final License licenseObj) {
-        final Assignment wfInitiator = assignmentService.getPrimaryAssignmentForUser(licenseObj.getCreatedBy().getId());
-        Position pos = wfInitiator.getPosition();
+        final List<Assignment> assignments = assignmentService
+                .getAllActiveEmployeeAssignmentsByEmpId(licenseObj.getCreatedBy().getId());
+        Position pos = null;
+        if (!assignments.isEmpty())
+            pos = assignments.get(0).getPosition();
         final DateTime currentDate = new DateTime();
         final User user = securityUtils.getCurrentUser();
         final Boolean digitalSignEnabled = licenseUtils.isDigitalSignEnabled();
@@ -502,7 +505,7 @@ public class LicenseBillService extends BillServiceInterface implements BillingI
                 for (final EgDemandDetails demandDetail : demand.getEgDemandDetails())
                     if (reason.equals(demandDetail.getEgDemandReason().getEgDemandReasonMaster().getReasonMaster())
                             && installment.equals(demandDetail.getEgDemandReason().getEgInstallmentMaster()
-                            .getDescription())) {
+                                    .getDescription())) {
                         demandDetail
                                 .setAmtCollected(demandDetail.getAmtCollected().subtract(rcptAccInfo.getCrAmount()));
                         LOGGER.info("Deducted Collected amount and receipt details for tax : " + reason
@@ -587,7 +590,7 @@ public class LicenseBillService extends BillServiceInterface implements BillingI
     }
 
     private EgDemandDetails getDemandDetail(final EgDemand demand,
-                                            final String demandrsnStrChqBouncePenalty) {
+            final String demandrsnStrChqBouncePenalty) {
         EgDemandDetails chqBounceDemand = null;
         for (final EgDemandDetails dd : demand.getEgDemandDetails())
             if (dd.getEgDemandReason().getEgDemandReasonMaster().getReasonMaster()
@@ -727,7 +730,7 @@ public class LicenseBillService extends BillServiceInterface implements BillingI
     }
 
     private BillReceipt prepareBillReceiptBean(final BillReceiptInfo bri, final EgBill egBill,
-                                               final BigDecimal totalCollectedAmt) {
+            final BigDecimal totalCollectedAmt) {
 
         BillReceipt billRecpt = null;
         if (bri != null && egBill != null && totalCollectedAmt != null) {
@@ -768,7 +771,7 @@ public class LicenseBillService extends BillServiceInterface implements BillingI
     }
 
     private BillReceipt updateBillReceiptForCancellation(final BillReceiptInfo bri, final EgBill egBill,
-                                                         final BigDecimal totalCollectedAmt) {
+            final BigDecimal totalCollectedAmt) {
         BillReceipt billRecpt;
         if (bri == null)
             throw new ApplicationRuntimeException(" BillReceiptInfo Object is null ");
@@ -786,8 +789,8 @@ public class LicenseBillService extends BillServiceInterface implements BillingI
     }
 
     protected EgdmCollectedReceipt persistCollectedReceipts(final EgDemandDetails egDemandDetails,
-                                                            final String receiptNumber, final BigDecimal receiptAmount, final Date receiptDate,
-                                                            final BigDecimal reasonAmount) {
+            final String receiptNumber, final BigDecimal receiptAmount, final Date receiptDate,
+            final BigDecimal reasonAmount) {
         final EgdmCollectedReceipt egDmCollectedReceipt = new EgdmCollectedReceipt();
         egDmCollectedReceipt.setReceiptNumber(receiptNumber);
         egDmCollectedReceipt.setReceiptDate(receiptDate);
@@ -843,7 +846,7 @@ public class LicenseBillService extends BillServiceInterface implements BillingI
 
     @Override
     public List<ReceiptDetail> reconstructReceiptDetail(final String billReferenceNumber,
-                                                        final BigDecimal actualAmountPaid, final List<ReceiptDetail> receiptDetailList) {
+            final BigDecimal actualAmountPaid, final List<ReceiptDetail> receiptDetailList) {
         return Collections.emptyList();
     }
 
