@@ -132,7 +132,7 @@
         <spring-data-jpa-envers-version>1.0.4.RELEASE</spring-data-jpa-envers-version>
         <spring-security-version>4.0.3.RELEASE</spring-security-version>
         <spring-security-oauth2-version>2.0.11.RELEASE</spring-security-oauth2-version>
-        <spring-data-elasticsearch>2.0.3.RELEASE</spring-data-elasticsearch>
+        <spring-data-elasticsearch>2.0.5.RELEASE</spring-data-elasticsearch>
         <elastic-search-version>2.4.1</elastic-search-version>
         <apache-tiles-version>3.0.7</apache-tiles-version>
         <embedded-redis-version>0.6</embedded-redis-version>
@@ -187,12 +187,12 @@
         <mvn.ear.plugin.version>2.10.1</mvn.ear.plugin.version>
         <mvn.war.plugin.version>3.0.0</mvn.war.plugin.version>
         <mvn.jar.plugin.version>3.0.2</mvn.jar.plugin.version>
-        <mvn.compiler.plugin.version>3.5.1</mvn.compiler.plugin.version>
+        <mvn.compiler.plugin.version>3.6.0</mvn.compiler.plugin.version>
         <mvn.dependency.plugin.version>2.10</mvn.dependency.plugin.version>
         <mvn.resource.plugin.version>3.0.1</mvn.resource.plugin.version>
         <mvn.sonar.plugin.version>3.2</mvn.sonar.plugin.version>
         <mvn.wildfly.plugin.version>1.0.2.Final</mvn.wildfly.plugin.version>
-        <mvn.versioneye.plugin.version>3.10.2</mvn.versioneye.plugin.version>
+        <mvn.versioneye.plugin.version>3.11.0</mvn.versioneye.plugin.version>
         <mvn.surefire.plugin.version>2.19.1</mvn.surefire.plugin.version>
         <mvn.eclipse.lifecycle.plugin.version>1.0.0</mvn.eclipse.lifecycle.plugin.version>
     </properties>
