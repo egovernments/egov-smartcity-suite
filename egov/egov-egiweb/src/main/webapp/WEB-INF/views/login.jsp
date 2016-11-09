@@ -181,9 +181,9 @@
 										<input type="password" class="form-control style-form"
 											name="j_password" id="j_password" placeholder="Password"
 											autocomplete="new-password" required="required" />
-										<div class="input-group-addon font-12">
-											<a href="#" data-toggle="modal"
-											data-target="#fpassword" data-backdrop="static" style="color:#fff;">Forgot?</a>
+										<div class="input-group-addon font-12" data-toggle="modal"
+											data-target="#fpassword" data-backdrop="static">
+											Forgot?
 										</div>
 									</div>
 								</div>
