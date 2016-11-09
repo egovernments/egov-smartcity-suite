@@ -107,8 +107,7 @@ public class SewerageIndexService {
         sewarageIndex.setShscNumber(sewerageApplicationDetails.getConnection().getShscNumber() != null
                 ? sewerageApplicationDetails.getConnection().getShscNumber() : "");
         sewarageIndex.setDisposalDate(sewerageApplicationDetails.getDisposalDate());
-        
-        
+
         sewarageIndex
                 .setExecutionDate(sewerageApplicationDetails.getConnection().getExecutionDate());
         sewarageIndex.setIslegacy(sewerageApplicationDetails.getConnection().getLegacy());

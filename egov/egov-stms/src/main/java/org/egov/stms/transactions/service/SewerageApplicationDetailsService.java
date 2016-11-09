@@ -393,33 +393,35 @@ public class SewerageApplicationDetailsService {
         final SimpleDateFormat myFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm'Z'");
 
         try {
-                if(sewerageApplicationDetails.getConnection()!=null && sewerageApplicationDetails.getConnection().getExecutionDate()!=null){
-                    final String executionDate = myFormat.format(sewerageApplicationDetails.getConnection().getExecutionDate());
-                    sewerageApplicationDetails.getConnection().setExecutionDate(myFormat.parse(executionDate));
-                }
-                if(sewerageApplicationDetails.getDisposalDate()!=null){
-                    final String disposalDate = myFormat.format(sewerageApplicationDetails.getDisposalDate());
-                    sewerageApplicationDetails.setDisposalDate(myFormat.parse(disposalDate));
-                }
-                if(sewerageApplicationDetails.getApplicationDate()!=null){
-                    final String applicationDate = myFormat.format(sewerageApplicationDetails.getApplicationDate());
-                    sewerageApplicationDetails.setApplicationDate(myFormat.parse(applicationDate));
-                }
-                if(sewerageApplicationDetails.getEstimationDate()!=null){
-                    final String estimationDate = myFormat.format(sewerageApplicationDetails.getEstimationDate());
-                    sewerageApplicationDetails.setEstimationDate(myFormat.parse(estimationDate));
-                }
-                if(sewerageApplicationDetails.getWorkOrderDate()!=null){
-                    final String workOrderDate = myFormat.format(sewerageApplicationDetails.getWorkOrderDate());
-                    sewerageApplicationDetails.setWorkOrderDate(myFormat.parse(workOrderDate));
-                }
-                if(sewerageApplicationDetails.getClosureNoticeDate()!=null){
-                    final String closureNoticeDate = myFormat.format(sewerageApplicationDetails.getClosureNoticeDate());
-                    sewerageApplicationDetails.setClosureNoticeDate(myFormat.parse(closureNoticeDate));
-                }
-            } catch (final ParseException e) {
+            if (sewerageApplicationDetails.getConnection() != null
+                    && sewerageApplicationDetails.getConnection().getExecutionDate() != null) {
+                final String executionDate = myFormat.format(sewerageApplicationDetails.getConnection().getExecutionDate());
+                sewerageApplicationDetails.getConnection().setExecutionDate(myFormat.parse(executionDate));
             }
-        
+            if (sewerageApplicationDetails.getDisposalDate() != null) {
+                final String disposalDate = myFormat.format(sewerageApplicationDetails.getDisposalDate());
+                sewerageApplicationDetails.setDisposalDate(myFormat.parse(disposalDate));
+            }
+            if (sewerageApplicationDetails.getApplicationDate() != null) {
+                final String applicationDate = myFormat.format(sewerageApplicationDetails.getApplicationDate());
+                sewerageApplicationDetails.setApplicationDate(myFormat.parse(applicationDate));
+            }
+            if (sewerageApplicationDetails.getEstimationDate() != null) {
+                final String estimationDate = myFormat.format(sewerageApplicationDetails.getEstimationDate());
+                sewerageApplicationDetails.setEstimationDate(myFormat.parse(estimationDate));
+            }
+            if (sewerageApplicationDetails.getWorkOrderDate() != null) {
+                final String workOrderDate = myFormat.format(sewerageApplicationDetails.getWorkOrderDate());
+                sewerageApplicationDetails.setWorkOrderDate(myFormat.parse(workOrderDate));
+            }
+            if (sewerageApplicationDetails.getClosureNoticeDate() != null) {
+                final String closureNoticeDate = myFormat.format(sewerageApplicationDetails.getClosureNoticeDate());
+                sewerageApplicationDetails.setClosureNoticeDate(myFormat.parse(closureNoticeDate));
+            }
+        } catch (final ParseException e) {
+            LOG.error("Exception parsing Date " + e.getMessage());
+        }
+
         // TODO : Need to make Rest API call to get assessmentdetails
         final AssessmentDetails assessmentDetails = sewerageTaxUtils.getAssessmentDetailsForFlag(
                 sewerageApplicationDetails.getConnectionDetail().getPropertyIdentifier(),
@@ -527,14 +529,18 @@ public class SewerageApplicationDetailsService {
             if (LOG.isDebugEnabled())
                 LOG.debug("Application Index creation Started... ");
             applicationIndex = ApplicationIndex.builder().withModuleName(APPL_INDEX_MODULE_NAME)
-                    .withApplicationNumber(sewerageApplicationDetails.getApplicationNumber()).withApplicationDate(sewerageApplicationDetails.getApplicationDate())
-                    .withApplicationType(sewerageApplicationDetails.getApplicationType().getName()).withApplicantName(consumerName.toString())
+                    .withApplicationNumber(sewerageApplicationDetails.getApplicationNumber())
+                    .withApplicationDate(sewerageApplicationDetails.getApplicationDate())
+                    .withApplicationType(sewerageApplicationDetails.getApplicationType().getName())
+                    .withApplicantName(consumerName.toString())
                     .withStatus(sewerageApplicationDetails.getStatus().getDescription()).withUrl(
                             String.format(STMS_APPLICATION_VIEW, sewerageApplicationDetails.getApplicationNumber(),
                                     sewerageApplicationDetails.getConnectionDetail().getPropertyIdentifier()))
-                    .withApplicantAddress(assessmentDetails.getPropertyAddress()).withOwnername(user.getUsername() + "::" + user.getName())
+                    .withApplicantAddress(assessmentDetails.getPropertyAddress())
+                    .withOwnername(user.getUsername() + "::" + user.getName())
                     .withChannel(Source.SYSTEM.toString()).withDisposalDate(sewerageApplicationDetails.getDisposalDate())
-                    .withMobileNumber(mobileNumber.toString()).withClosed(ClosureStatus.NO).withAadharNumber(aadharNumber.toString())
+                    .withMobileNumber(mobileNumber.toString()).withClosed(ClosureStatus.NO)
+                    .withAadharNumber(aadharNumber.toString())
                     .withApproved(ApprovalStatus.INPROGRESS).build();
             applicationIndexService.createApplicationIndex(applicationIndex);
             if (LOG.isDebugEnabled())
@@ -563,7 +569,8 @@ public class SewerageApplicationDetailsService {
         return entityManager.unwrap(Session.class);
     }
 
-    public Map<String,String> showApprovalDetailsByApplcationCurState(final SewerageApplicationDetails sewerageApplicationDetails) {
+    public Map<String, String> showApprovalDetailsByApplcationCurState(
+            final SewerageApplicationDetails sewerageApplicationDetails) {
         final Map<String, String> modelParams = new HashMap<String, String>();
         if (sewerageApplicationDetails.getState() != null) {
             final String currentState = sewerageApplicationDetails.getState().getValue();
