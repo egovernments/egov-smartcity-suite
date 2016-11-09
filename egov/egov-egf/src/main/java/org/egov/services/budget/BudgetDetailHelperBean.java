@@ -37,30 +37,38 @@
  *
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
+package org.egov.services.budget;
 
-package org.egov.commons.repository;
-
+import java.math.BigDecimal;
 import java.util.List;
 
-import org.egov.commons.CFunction;
-import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.stereotype.Repository;
+import org.egov.commons.EgwStatus;
+import org.egov.model.budget.BudgetDetail;
+import org.egov.model.voucher.WorkflowBean;
+import org.egov.pims.commons.Position;
 
-@Repository
-public interface FunctionRepository extends JpaRepository<CFunction, Long> {
-	CFunction findByName(String name);
+public class BudgetDetailHelperBean {
+	public Boolean addNewDetails;
+	public List<BigDecimal> beAmounts;
+	public List<BudgetDetail> budgetDetailList;
+	public EgwStatus egwStatus;
+	public BudgetDetail budgetDetail;
+	public Long budgetGroupId;
+	public Long searchFunctionId;
+	public WorkflowBean workflowBean;
+	public Position owner;
 
-	CFunction findByCode(String code);
-
-	List<CFunction> findByNameContainingIgnoreCaseAndCodeContainingIgnoreCase(String name, String code);
-
-	List<CFunction> findByNameContainingIgnoreCaseOrCodeContainingIgnoreCase(String name, String code);
-
-	List<CFunction> findByNameContainingIgnoreCase(String name);
-
-	List<CFunction> findByCodeContainingIgnoreCase(String code);
-
-	List<CFunction> findByIsNotLeaf(Boolean isNotLeaf);
-
-	List<CFunction> findByIsActiveAndIsNotLeaf(Boolean active, Boolean isNotLeaf);
+	public BudgetDetailHelperBean(Boolean addNewDetails, List<BigDecimal> beAmounts,
+			List<BudgetDetail> budgetDetailList, EgwStatus egwStatus, BudgetDetail budgetDetail, Long budgetGroupId,
+			Long searchFunctionId, WorkflowBean workflowBean, Position owner) {
+		this.addNewDetails = addNewDetails;
+		this.beAmounts = beAmounts;
+		this.budgetDetailList = budgetDetailList;
+		this.egwStatus = egwStatus;
+		this.budgetDetail = budgetDetail;
+		this.budgetGroupId = budgetGroupId;
+		this.searchFunctionId = searchFunctionId;
+		this.workflowBean = workflowBean;
+		this.owner = owner;
+	}
 }

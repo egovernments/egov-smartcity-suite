@@ -76,7 +76,7 @@
     		params=params+'&onSaveOrForward=true&type=All';
     		var reportUrl="${pageContext.request.contextPath}/budget/budgetReport-getFunctionwiseReport.action?"+params;
     		window.open(reportUrl,"report",850,600);
-    		document.forms[0].action = "${pageContext.request.contextPath}/budget/budgetDetail-newRe.action?re";
+    		document.forms[0].action = "${pageContext.request.contextPath}/budget/budgetProposalDetail-newRe.action?re";
 			document.forms[0].submit();
 	    	}
     	

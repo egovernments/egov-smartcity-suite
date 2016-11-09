@@ -53,8 +53,8 @@ jQuery.noConflict();
 jQuery(document).ready(function() {
 	    jQuery('#detailsTable').fixheadertable({
          caption: 'Budget Detail', 
-         height: 320,
-         minColWidth: 15,  
+         height: 400,
+         minColWidth: 10,  
          resizeCol: true,
          colratio:<s:property value="colratio"/>
     });
@@ -141,9 +141,9 @@ function alertTimeOut()
 
 </script>
 <s:hidden name="consolidatedScreen" />
-<div id="detail" width="1200px">
+<div id="detail" >
 
-	<table id="detailsTable" class="table-header-fix" width="1200px">
+	<table id="detailsTable" class="table-header-fix"  >
 		<thead>
 			<tr>
 				<th><s:text name="budgetdetail.budget.department" /></th>
@@ -194,10 +194,10 @@ function alertTimeOut()
 				<tr>
 					<s:if test="%{rowType=='heading'}">
 						<td style="text-align: right;"><s:property value="reference" />&nbsp;</td>
-						<td colspan="4"><h4>
+						<td colspan="4"><h6>
 								<s:property value="budgetGroup" />
 								&nbsp;
-							</h4></td>
+							</h6></td>
 						<td />
 						<td />
 						<td />
@@ -214,11 +214,11 @@ function alertTimeOut()
 
 						<td />
 
-						<td colspan="3" class="blueborderfortd"><h4
+						<td colspan="3" class="blueborderfortd"><h6
 								style="font-size: 9.6px;">
 								<s:property value="budgetGroup" />
 								&nbsp;
-							</h4></td>
+							</h6></td>
 						<td style="text-align: right;"><s:property value="reference" />&nbsp;</td>
 						<td style="text-align: right;"><s:property
 								value="twoPreviousYearActuals" />&nbsp;</td>
@@ -236,19 +236,19 @@ function alertTimeOut()
 						<td style="text-align: right;"><s:property value="proposedRE" />&nbsp;</td>
 						<s:if test="%{isConsolidatedScreen()}">
 							<td style="text-align: right;">
-								<h4>
+								<h6>
 									<s:property value="approvedRE" />
 									&nbsp;
-								</h4>
+								</h6>
 							</td>
 						</s:if>
 						<td style="text-align: right;"><s:property value="proposedBE" />&nbsp;</td>
 						<s:if test="%{isConsolidatedScreen()}">
 							<td style="text-align: right;">
-								<h4>
+								<h6>
 									<s:property value="approvedBE" />
 									&nbsp;
-								</h4>
+								</h6>
 							</td>
 						</s:if>
 						<td />
@@ -259,84 +259,84 @@ function alertTimeOut()
 
 						<td />
 
-						<td colspan="3"><h4>
+						<td colspan="3"><h6>
 								<s:property value="budgetGroup" />
 								&nbsp;
-							</h4></td>
+							</h6></td>
 						<td style="text-align: right;">
-							<h4>
+							<h6>
 								<s:property value="reference" />
 								&nbsp;
-							</h4>
+							</h6>
 						</td>
 						<td style="text-align: right;">
-							<h4>
+							<h6>
 								<s:property value="twoPreviousYearActuals" />
 								&nbsp;
-							</h4>
+							</h6>
 						</td>
 						<td style="text-align: right;">
-							<h4>
+							<h6>
 								<s:property value="previousYearActuals" />
 								&nbsp;
-							</h4>
+							</h6>
 						</td>
 						<td style="text-align: right;">
-							<h4>
+							<h6>
 								<s:property value="currentYearBE" />
 								&nbsp;
-							</h4>
+							</h6>
 						</td>
 						<td style="text-align: right;">
-							<h4>
+							<h6>
 								<s:property value="reappropriation" />
 								&nbsp;
-							</h4>
+							</h6>
 						</td>
 						<td style="text-align: right;">
-							<h4>
+							<h6>
 								<s:property value="total" />
 								&nbsp;
-							</h4>
+							</h6>
 						</td>
 						<td style="text-align: right;">
-							<h4>
+							<h6>
 								<s:property value="currentYearActuals" />
 								&nbsp;
-							</h4>
+							</h6>
 						</td>
 						<td style="text-align: right;">
-							<h4>
+							<h6>
 								<s:property value="anticipatory" />
 								&nbsp;
-							</h4>
+							</h6>
 						</td>
 						<td style="text-align: right;">
-							<h4>
+							<h6>
 								<s:property value="proposedRE" />
 								&nbsp;
-							</h4>
+							</h6>
 						</td>
 						<s:if test="%{isConsolidatedScreen()}">
 							<td style="text-align: right;">
-								<h4>
+								<h6>
 									<s:property value="approvedRE" />
 									&nbsp;
-								</h4>
+								</h6>
 							</td>
 						</s:if>
 						<td style="text-align: right;">
-							<h4>
+							<h6>
 								<s:property value="proposedBE" />
 								&nbsp;
-							</h4>
+							</h6>
 						</td>
 						<s:if test="%{isConsolidatedScreen()}">
 							<td style="text-align: right;">
-								<h4>
+								<h6>
 									<s:property value="approvedBE" />
 									&nbsp;
-								</h4>
+								</h6>
 							</td>
 						</s:if>
 						<td />

@@ -90,6 +90,10 @@ public class BudgetDefinitionService {
 
     @Transactional
     public Budget create(final Budget budget) {
+    	if(budget.getParent()==null)
+    	{
+    		
+    	}
         return budgetDefinitionRepository.save(budget);
     }
 

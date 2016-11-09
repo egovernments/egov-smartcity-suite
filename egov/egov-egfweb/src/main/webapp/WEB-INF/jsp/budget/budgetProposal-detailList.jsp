@@ -94,7 +94,7 @@
 		</div>
 		<div align="left">
 			<br />
-			<table border="0" cellspacing="0" cellpadding="0" width="1250px">
+			<table border="0" cellspacing="0" cellpadding="0" >
 				<tr>
 					<td>
 						<div class="tabber">
@@ -155,7 +155,7 @@
 									id="budgetDetail.budget.id" />
 
 								<s:if test="%{!bpBeanList.isEmpty()}">
-									<div id="detail" style="height: 430px; width: 1150px;">
+									<div id="detail">
 										<%@ include file="budgetProposal-modifyList.jsp"%>
 
 									</div>
