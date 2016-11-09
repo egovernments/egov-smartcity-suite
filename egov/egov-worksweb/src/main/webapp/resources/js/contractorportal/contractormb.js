@@ -105,25 +105,42 @@ function getFormData($form) {
 
 $('#btncreatemb').click(function() {
 	var loaNumber = $('#workOrderNumber').val();
-	if (loaNumber != '') {
+	var otp = $('#otp').val();
+	if (loaNumber != '' && otp != '') {
 		$.ajax({
 			method : "GET",
-			url : "/egworks/contractorportal/mb/ajaxworkorder-mbheader?workOrderNo=" + loaNumber,
+			url : "/egworks/contractorportal/mb/ajax-validateotp?workOrderNo=" + loaNumber + "&otp=" + otp,
 			async : true
 		}).done(
-				function(loaNumbers) {
-					var flag = false;
-					$.each(loaNumbers, function(index, value) {
-						if (value == loaNumber)
-							flag = true;
-					});
-					if (!flag)
-						bootbox.alert($('#errorLoaNumber').val());
-					else
-						window.location.href = "/egworks/contractorportal/mb/create?loaNumber=" + loaNumber;
+				function(result) {
+					if (!result)
+						bootbox.alert($('#errorOTP').val());
+					else {
+						$.ajax({
+							method : "GET",
+							url : "/egworks/contractorportal/mb/ajaxworkorder-mbheader?workOrderNo=" + loaNumber,
+							async : true
+						}).done(
+								function(loaNumbers) {
+									var flag = false;
+									$.each(loaNumbers, function(index, value) {
+										if (value == loaNumber)
+											flag = true;
+									});
+									if (!flag)
+										bootbox.alert($('#errorLoaNumber').val());
+									else
+										window.location.href = "/egworks/contractorportal/mb/create?loaNumber=" + loaNumber;
+							});
+					}
 			});
-	} else
-		bootbox.alert($('#errorLoaNumber').val());
+	}
+	else {
+		if (loaNumber == '')
+			bootbox.alert($('#errorLoaNumber').val());
+		else if (otp == '')
+			bootbox.alert($('#errorOTP').val());
+	}
 });
 
 $(document).ready(function() {
@@ -152,7 +169,19 @@ $(document).ready(function() {
 	}, {
 		displayKey : 'name',
 		source : workOrderNumber.ttAdapter()
-	});
+	}).on('typeahead:selected typeahead:autocompleted', function(event, data){            
+		$.ajax({
+			method : "GET",
+			url : "/egworks/contractorportal/mb/ajax-sendotp?workOrderNo=" + data.name,
+			async : true
+		}).done(
+				function(result) {
+					if (result == 'true')
+						$('#otp-section').show();
+					else
+						bootbox.alert(result);
+			});    
+    });
 });
 
 function viewContractorMB(id) {

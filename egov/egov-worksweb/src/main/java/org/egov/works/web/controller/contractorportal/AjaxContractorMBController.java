@@ -41,8 +41,14 @@ package org.egov.works.web.controller.contractorportal;
 
 import java.util.List;
 
+import org.apache.commons.lang3.StringUtils;
+import org.egov.infra.config.core.ApplicationThreadLocals;
+import org.egov.works.contractorportal.service.ContractorMBHeaderService;
+import org.egov.works.letterofacceptance.service.LetterOfAcceptanceService;
+import org.egov.works.workorder.entity.WorkOrder;
 import org.egov.works.workorder.service.WorkOrderEstimateService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.MessageSource;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -57,8 +63,41 @@ public class AjaxContractorMBController {
     @Autowired
     private WorkOrderEstimateService workOrderEstimateService;
 
+    @Autowired
+    private LetterOfAcceptanceService letterOfAcceptanceService;
+
+    @Autowired
+    private ContractorMBHeaderService contractorMBHeaderService;
+
+    @Autowired
+    private MessageSource messageSource;
+
     @RequestMapping(value = "/ajaxworkorder-mbheader", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
     public @ResponseBody List<String> findWorkOrderForMBHeader(@RequestParam final String workOrderNo) {
         return workOrderEstimateService.findWorkOrderForMBHeader(workOrderNo);
+    }
+
+    @RequestMapping(value = "/ajax-sendotp", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+    public @ResponseBody String sendOTPForContractorMB(@RequestParam final String workOrderNo) {
+        final WorkOrder workOrder = letterOfAcceptanceService.getApprovedWorkOrder(workOrderNo);
+        final String mobileNumber = workOrder.getContractor().getMobileNumber();
+        String response = "";
+        if (StringUtils.isNotBlank(mobileNumber))
+            response = contractorMBHeaderService.sendOTPMessage(mobileNumber).toString();
+        else
+            response = messageSource.getMessage("msg.contractor.mobilenumber.not.exist",
+                    new String[] { ApplicationThreadLocals.getMunicipalityName() }, null);
+        return response;
+    }
+
+    @RequestMapping(value = "/ajax-validateotp", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+    public @ResponseBody boolean validateOTPForContractorMB(@RequestParam final String workOrderNo,
+            @RequestParam final String otp) {
+        final WorkOrder workOrder = letterOfAcceptanceService.getApprovedWorkOrder(workOrderNo);
+        final String mobileNumber = workOrder.getContractor().getMobileNumber();
+        boolean success = false;
+        if (StringUtils.isNotBlank(otp))
+            success = contractorMBHeaderService.isValidOTP(otp, mobileNumber);
+        return success;
     }
 }

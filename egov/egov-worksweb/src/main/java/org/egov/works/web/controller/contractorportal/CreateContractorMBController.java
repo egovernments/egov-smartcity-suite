@@ -54,7 +54,6 @@ import org.apache.commons.lang3.StringUtils;
 import org.egov.egf.commons.EgovCommon;
 import org.egov.infra.exception.ApplicationException;
 import org.egov.infra.messaging.MessagingService;
-import org.egov.works.contractorbill.service.ContractorBillRegisterService;
 import org.egov.works.contractorportal.entity.ContractorMBHeader;
 import org.egov.works.contractorportal.service.ContractorMBHeaderService;
 import org.egov.works.letterofacceptance.service.LetterOfAcceptanceService;
@@ -65,7 +64,6 @@ import org.egov.works.workorder.entity.WorkOrder;
 import org.egov.works.workorder.entity.WorkOrderEstimate;
 import org.egov.works.workorder.service.WorkOrderEstimateService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.MessageSource;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -91,7 +89,6 @@ public class CreateContractorMBController {
     private ContractorMBHeaderService contractorMBHeaderService;
 
     @Autowired
-    @Qualifier("messageSource")
     private MessageSource messageSource;
 
     @Autowired
@@ -99,9 +96,6 @@ public class CreateContractorMBController {
 
     @Autowired
     private MessagingService messagingService;
-
-    @Autowired
-    private ContractorBillRegisterService contractorBillRegisterService;
 
     @Autowired
     private EgovCommon egovCommon;

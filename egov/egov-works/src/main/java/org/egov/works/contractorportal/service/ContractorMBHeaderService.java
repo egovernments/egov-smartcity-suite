@@ -39,6 +39,10 @@
  */
 package org.egov.works.contractorportal.service;
 
+import static java.lang.Boolean.TRUE;
+import static org.apache.commons.lang3.RandomStringUtils.randomNumeric;
+import static org.egov.infra.messaging.MessagePriority.HIGH;
+
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Date;
@@ -48,6 +52,8 @@ import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 
 import org.egov.commons.CFinancialYear;
+import org.egov.infra.messaging.MessagingService;
+import org.egov.infra.security.token.service.TokenService;
 import org.egov.infra.utils.autonumber.AutonumberServiceBeanResolver;
 import org.egov.works.autonumber.ContractorMBNumberGenerator;
 import org.egov.works.contractorportal.entity.ContractorMBDetails;
@@ -70,6 +76,8 @@ import org.springframework.web.multipart.MultipartFile;
 @Transactional(readOnly = true)
 public class ContractorMBHeaderService {
 
+    private static final String CONTRACTOR_MB_SERVICE = "Contractor Measurement Book";
+
     @PersistenceContext
     private EntityManager entityManager;
 
@@ -87,6 +95,12 @@ public class ContractorMBHeaderService {
     @Autowired
     @Qualifier("parentMessageSource")
     private MessageSource messageSource;
+
+    @Autowired
+    private TokenService tokenService;
+
+    @Autowired
+    private MessagingService messagingService;
 
     public Session getCurrentSession() {
         return entityManager.unwrap(Session.class);
@@ -174,4 +188,17 @@ public class ContractorMBHeaderService {
         return message;
     }
 
+    @Transactional
+    public Boolean sendOTPMessage(final String mobileNumber) {
+        final String otp = randomNumeric(5);
+        tokenService.generate(otp, mobileNumber, CONTRACTOR_MB_SERVICE);
+        messagingService.sendSMS(mobileNumber, messageSource.getMessage("contractormb.otp.sms", new String[] { otp }, null),
+                HIGH);
+        return TRUE;
+    }
+
+    @Transactional
+    public Boolean isValidOTP(final String otp, final String mobileNumber) {
+        return tokenService.redeemToken(otp, mobileNumber, CONTRACTOR_MB_SERVICE);
+    }
 }

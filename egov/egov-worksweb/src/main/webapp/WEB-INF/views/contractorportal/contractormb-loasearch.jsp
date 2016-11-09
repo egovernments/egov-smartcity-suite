@@ -45,6 +45,7 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
 <%@ taglib uri="/WEB-INF/taglibs/cdn.tld" prefix="cdn"%>
 <input id="errorLoaNumber" type="hidden" value="<spring:message code="error.contractorportal.valid.loanumber" />" />
+<input id="errorOTP" type="hidden" value="<spring:message code="error.contractorportal.valid.otp" />" />
 <form:form name="searchForm" role="form" method="post" id="searchForm">
 	<div class="row">
 		<div class="col-md-12">
@@ -54,12 +55,18 @@
 						<spring:message code="title.search.letterofacceptance.tocreatecontractormb" />
 					</div>
 				</div>
-				<div class="panel-body">
+				<div class="panel-body custom-form">
 					<div class="form-group">
 						<label class="col-sm-3 control-label text-right"><spring:message code="lbl.loanumber" /><span class="mandatory"></label>
 						<div class="col-sm-3 add-margin">
 							<input name="workOrderNumber" id="workOrderNumber" class="form-control" required="required" placeholder="Type first 3 letters of LOA Number" />
 						</div>
+					</div>
+					<div class="form-group" id="otp-section" hidden="true">
+						<label class="col-sm-2 control-label text-right"><spring:message code="lbl.otp" /><span class="mandatory"></label>
+						<div class="col-sm-3 add-margin">
+							<input name="otp" id="otp" class="form-control" placeholder="Enter OTP" minlength="5" maxlength="5" autocomplete="off" required="required"/>
+	                    </div>
 					</div>
 				</div>
 			</div>
