@@ -51,6 +51,7 @@ public class CollTableData {
     private String ulbGrade = StringUtils.EMPTY;
     private String ulbName = StringUtils.EMPTY;
     private String wardName = StringUtils.EMPTY;
+    private String billCollector = StringUtils.EMPTY;
     private BigDecimal todayColl = BigDecimal.ZERO;
     private BigDecimal totalDmd = BigDecimal.ZERO;
     private BigDecimal cytdDmd = BigDecimal.ZERO;
@@ -98,6 +99,14 @@ public class CollTableData {
 
     public void setWardName(String wardName) {
         this.wardName = wardName;
+    }
+
+    public String getBillCollector() {
+        return billCollector;
+    }
+
+    public void setBillCollector(String billCollector) {
+        this.billCollector = billCollector;
     }
 
     public BigDecimal getTotalDmd() {

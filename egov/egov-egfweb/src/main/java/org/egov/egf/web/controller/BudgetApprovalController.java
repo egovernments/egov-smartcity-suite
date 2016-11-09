@@ -52,6 +52,7 @@ import org.egov.model.budget.BudgetDetail;
 import org.egov.model.service.BudgetApprovalService;
 import org.egov.model.service.BudgetDefinitionService;
 import org.egov.services.budget.BudgetDetailService;
+import org.egov.utils.FinancialConstants;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
 import org.springframework.http.MediaType;
@@ -100,7 +101,8 @@ public class BudgetApprovalController {
 
     @RequestMapping(value = "/search", method = RequestMethod.POST, produces = MediaType.TEXT_PLAIN_VALUE)
     public @ResponseBody String search(final Model model, @ModelAttribute final BudgetDetail budgetDetail) {
-        final List<BudgetDetail> searchResultList = budgetApprovalService.search(budgetDetail.getBudget().getFinancialYear().getId());
+        final List<BudgetDetail> searchResultList = budgetApprovalService
+                .search(budgetDetail.getBudget().getFinancialYear().getId());
         prepareNewForm(model);
         final List<BudgetApproval> budgetApprovalList = new ArrayList<BudgetApproval>();
         for (final BudgetDetail ba : searchResultList) {
@@ -133,21 +135,45 @@ public class BudgetApprovalController {
         final List<BudgetDetail> budgetDetailList = budgetDetailService.getBudgets(idList);
         Budget budget = new Budget();
         for (final BudgetDetail budgetDetails : budgetDetailList) {
-            budgetDetails.setStatus(egwStatusHibernate.getStatusByModuleAndCode("BUDGETDETAIL", "Approved"));
+            budgetDetails.setStatus(egwStatusHibernate.getStatusByModuleAndCode(FinancialConstants.BUDGETDETAIL,
+                    FinancialConstants.WORKFLOW_STATE_APPROVED));
             budget = budgetDefinitionService.findOne(budgetDetails.getBudget().getId());
-            budget.getParent().setStatus(egwStatusHibernate.getStatusByModuleAndCode("BUDGET", "Approved"));
-            budget.getReferenceBudget().setStatus(egwStatusHibernate.getStatusByModuleAndCode("BUDGET", "Approved"));
+            budget.getParent().setStatus(egwStatusHibernate.getStatusByModuleAndCode(FinancialConstants.BUDGET,
+                    FinancialConstants.WORKFLOW_STATE_APPROVED));
+            budget.getReferenceBudget().setStatus(egwStatusHibernate.getStatusByModuleAndCode(FinancialConstants.BUDGET,
+                    FinancialConstants.WORKFLOW_STATE_APPROVED));
             budgetDefinitionService.update(budget);
             budgetDetailService.update(budgetDetails);
         }
-        String message=messageSource.getMessage("msg.budgetdetail.approve", new String[]{budget.getReferenceBudget().getName(),budget.getParent().getName()}, Locale.ENGLISH);
+        final String message = messageSource.getMessage("msg.budgetdetail.approve",
+                new String[] { budget.getReferenceBudget().getName(), budget.getParent().getName() }, Locale.ENGLISH);
+        return message;
+    }
+
+    @RequestMapping(value = "/reject", method = RequestMethod.POST)
+    public @ResponseBody String reject(@ModelAttribute final BudgetDetail budgetDetail, final BindingResult errors,
+            final Model model, final RedirectAttributes redirectAttrs,
+            @RequestParam final List<String> checkedArray) {
+        final List<Long> idList = new ArrayList<Long>();
+        for (final String checkedIdList : checkedArray)
+            if (!checkedIdList.isEmpty())
+                idList.add(Long.parseLong(checkedIdList));
+
+        final List<BudgetDetail> budgetDetailList = budgetDetailService.getBudgets(idList);
+        for (BudgetDetail budgetDetails : budgetDetailList) {
+            budgetDetails = budgetDetailService.rejectWorkFlow(budgetDetails);
+            budgetDetails.setStatus(egwStatusHibernate.getStatusByModuleAndCode(FinancialConstants.BUDGETDETAIL,
+                    FinancialConstants.WORKFLOW_STATUS_CODE_REJECTED));
+            budgetDetailService.update(budgetDetails);
+        }
+        final String message = messageSource.getMessage("msg.budgetdetail.reject", null, Locale.ENGLISH);
         return message;
     }
 
     @RequestMapping(value = "/success")
     public String success(@ModelAttribute final Budget budget, final BindingResult errors,
             final Model model, @RequestParam("message") final String message) {
-        model.addAttribute("message",message);
+        model.addAttribute("message", message);
         return BUDGETAPPROVAL_RESULT;
     }
 

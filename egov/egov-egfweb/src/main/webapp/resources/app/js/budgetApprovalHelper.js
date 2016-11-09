@@ -16,10 +16,10 @@ function getFormData($form) {
 	return indexed_array;
 }
 
-jQuery('#approve').click(
+jQuery('#approve,#reject').click(
 		function(e) {
 			var chkArray = [];
-
+			var button = $(this).attr("id");
 			$("#checkBoxList:checked").each(function() {
 				chkArray.push($(this).val());
 			});
@@ -30,7 +30,7 @@ jQuery('#approve').click(
 				var comments = $('#comments').val();
 				$.ajax({
 					type : "POST",
-					url : "/EGF/budgetapproval/approve" + "?checkedArray="
+					url : "/EGF/budgetapproval/"+button+ "?checkedArray="
 							+ selected.toString() + "&comments=" + comments,
 					success : function(response) {
 						console.log("success" + response);
