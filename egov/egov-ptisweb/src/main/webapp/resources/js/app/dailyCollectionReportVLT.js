@@ -80,35 +80,59 @@ $('#dailyCollectionReportSearchVLT').click(function(e){
 			searchable:true,
 			data: searchResult,
 			columns: [
-			{title: 'Receipt Number', data: 'resource.clauses.receiptnumber'},
-			{title: 'Receipt Date',
+			{title: 'Receipt Number', data: 'receiptNumber'},
+			{title: 'Receipt Date', data: 'receiptDate',
 				render: function (data, type, full) {
-					if(full!=null && full.resource!=undefined &&  full.resource.searchable.receiptdate != undefined) {
-						var regDateSplit = full.resource.searchable.receiptdate.split("T")[0].split("-");		
+					if(data!=null && data!=undefined &&  data!= undefined) {
+						var regDateSplit = data.split("T")[0].split("-");		
 						return regDateSplit[2] + "/" + regDateSplit[1] + "/" + regDateSplit[0];
 					}
 					else return "";
 		    	}
 			},
-			{title: 'Assessment Number', data: 'resource.common.consumercode'},
-			{title: 'Owner Name', data: 'resource.searchable.consumername'},
-			{title: 'Paid At', data: 'resource.clauses.channel'},
-			{title: 'Payment mode', data: 'resource.clauses.paymentmode'},
-			{title: 'Status', data: 'resource.clauses.status'},
-			{title: 'Paid From', data: 'resource.searchable.installmentfrom'},
-			{title: 'Paid To', data: 'resource.searchable.installmentto'},
-			{title: 'Arrear Amount', data: 'resource.searchable.arrearamount'},
-			{title: 'Current Amount', data: 'resource.searchable.currentamount'},
-			{title: 'Total Penalty', data: 'resource.searchable.latepaymentcharges'},
-			{title: 'Arrear Library Cess', data: 'resource.searchable.arrearcess'},
-			{title: 'Current Library Cess', data: 'resource.searchable.currentcess'},
-			/*{title: 'Total Library Cess', 
-				"render":function(data, type, full, meta) {
-			       return full.resource.searchable.arrearcess + full.resource.searchable.currentcess ;
-		    }
-			},*/
-			{title: 'Rebate Amount', data: 'resource.searchable.reductionamount'},
-			{title: 'Total Collection', data: 'resource.searchable.totalamount'},
+			{title: 'Assessment Number', data: 'consumerCode'},
+			{title: 'Owner Name', data: 'consumerName'},
+			{title: 'Paid At', data: 'channel'},
+			{title: 'Payment mode', data: 'paymentMode'},
+			{title: 'Status', data: 'status'},
+			{title: 'Paid From', data: 'installmentFrom'},
+			{title: 'Paid To', data: 'installmentTo'},
+			{title: 'Arrear Amount', data: 'arrearAmount',
+				render: function (data, type, full) {
+					return !data?"0":data;
+				}
+			},
+			{title: 'Current Amount', data: 'currentAmount',
+				render: function (data, type, full) {
+					return !data?"0":data;
+				}
+			},
+			{title: 'Total Penalty', data: 'latePaymentCharges',
+				render: function (data, type, full) {
+					return !data?"0":data;
+				}
+			},
+			{title: 'Arrear Library Cess', data: 'arrearCess',
+				render: function (data, type, full) {
+					return !data?"0":data;
+				}
+			},
+			{title: 'Current Library Cess', data: 'currentCess',
+				render: function (data, type, full) {
+					return !data?"0":data;
+				}
+			},
+			{title: 'Total Library Cess', data: 'totalAmount',
+				render: function (data, type, full) {
+					return !data?"0":data;
+				}
+			},
+			{title: 'Rebate Amount', data: 'reductionAmount',
+				render: function (data, type, full) {
+					return !data?"0":data;
+				}
+			},
+			{title: 'Total Collection', data: 'totalAmount'},
 			],
 			"aaSorting": [[3, 'desc']],
 			"footerCallback" : function(row, data, start, end, display) {
