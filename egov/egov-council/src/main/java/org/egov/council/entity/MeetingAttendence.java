@@ -14,11 +14,9 @@ import javax.persistence.Transient;
 import javax.validation.constraints.NotNull;
 
 import org.egov.infra.persistence.entity.AbstractAuditable;
-import org.egov.search.domain.Searchable;
 
 @Entity
 @Table(name = "egcncl_meeting_attendence")
-@Searchable
 @SequenceGenerator(name = MeetingAttendence.SEQ_MEETINGATTENDENCE, sequenceName = MeetingAttendence.SEQ_MEETINGATTENDENCE, allocationSize = 1)
 public class MeetingAttendence extends AbstractAuditable {
 

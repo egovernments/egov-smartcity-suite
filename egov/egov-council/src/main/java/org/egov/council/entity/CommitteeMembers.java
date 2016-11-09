@@ -1,14 +1,11 @@
 package org.egov.council.entity;
 
-import java.util.List;
-
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
-import javax.persistence.OneToMany;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.Transient;
@@ -16,12 +13,10 @@ import javax.validation.constraints.NotNull;
 
 import org.egov.infra.persistence.entity.AbstractAuditable;
 import org.egov.infra.persistence.validator.annotation.Unique;
-import org.egov.search.domain.Searchable;
 
 @Entity
 @Unique(id = "id", tableName = "egcncl_committee_members", enableDfltMsg = true)
 @Table(name = "egcncl_committee_members")
-@Searchable
 @SequenceGenerator(name = CommitteeMembers.SEQ_COMMITTEE_MEMBERS, sequenceName = CommitteeMembers.SEQ_COMMITTEE_MEMBERS, allocationSize = 1)
 public class CommitteeMembers extends AbstractAuditable {
 

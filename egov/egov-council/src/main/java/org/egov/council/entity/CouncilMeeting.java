@@ -24,12 +24,10 @@ import org.egov.commons.EgwStatus;
 import org.egov.infra.filestore.entity.FileStoreMapper;
 import org.egov.infra.persistence.validator.annotation.Unique;
 import org.egov.infra.workflow.entity.StateAware;
-import org.egov.search.domain.Searchable;
 
 @Entity
 @Unique(id = "id", tableName = "egcncl_meeting", fields = "meetingNumber", columnName = "meetingNumber", enableDfltMsg = true)
 @Table(name = "egcncl_meeting")
-@Searchable
 @SequenceGenerator(name = CouncilMeeting.SEQ_MEETING, sequenceName = CouncilMeeting.SEQ_MEETING, allocationSize = 1)
 public class CouncilMeeting  extends StateAware {
 

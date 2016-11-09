@@ -13,12 +13,10 @@ import javax.persistence.Table;
 
 import org.egov.commons.EgwStatus;
 import org.egov.infra.persistence.validator.annotation.Unique;
-import org.egov.search.domain.Searchable;
 
 @Entity
 @Unique(id = "id", tableName = "egcncl_meeting_mom", fields = "", columnName = "", enableDfltMsg = true)
 @Table(name = "egcncl_meeting_mom")
-@Searchable
 @SequenceGenerator(name = MeetingMOM.SEQ_MEETINGMOM, sequenceName = MeetingMOM.SEQ_MEETINGMOM, allocationSize = 1)
 public class MeetingMOM {
 

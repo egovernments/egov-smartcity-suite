@@ -16,13 +16,11 @@ import javax.validation.constraints.NotNull;
 
 import org.egov.infra.persistence.entity.AbstractAuditable;
 import org.egov.infra.persistence.validator.annotation.Unique;
-import org.egov.search.domain.Searchable;
 import org.hibernate.validator.constraints.Length;
 
 @Entity
 @Unique(id = "id", tableName = "egcncl_committeeType", fields = { "code", "name" }, columnName = { "code", "name" }, enableDfltMsg = true)
 @Table(name = "egcncl_committeeType")
-@Searchable
 @SequenceGenerator(name = CommitteeType.SEQ_COMMITTEETYPE, sequenceName = CommitteeType.SEQ_COMMITTEETYPE, allocationSize = 1)
 public class CommitteeType extends AbstractAuditable {
 

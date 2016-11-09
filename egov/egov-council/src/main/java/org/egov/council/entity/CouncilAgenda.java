@@ -60,12 +60,10 @@ import javax.persistence.Transient;
 import org.egov.commons.EgwStatus;
 import org.egov.infra.persistence.validator.annotation.Unique;
 import org.egov.infra.workflow.entity.StateAware;
-import org.egov.search.domain.Searchable;
 
 @Entity
 @Unique(id = "id", tableName = "egcncl_agenda", fields = "agendaNumber", columnName = "agendaNumber", enableDfltMsg = true)
 @Table(name = "egcncl_agenda")
-@Searchable
 @SequenceGenerator(name = CouncilAgenda.SEQ_AGENDA, sequenceName = CouncilAgenda.SEQ_AGENDA, allocationSize = 1)
 public class CouncilAgenda extends StateAware {
 

@@ -50,11 +50,8 @@ import javax.persistence.ManyToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 
-import org.egov.search.domain.Searchable;
-
 @Entity
 @Table(name = "egcncl_agenda_details")
-@Searchable
 @SequenceGenerator(name = CouncilAgendaDetails.SEQ_AGENDADETAILS, sequenceName = CouncilAgendaDetails.SEQ_AGENDADETAILS, allocationSize = 1)
 public class CouncilAgendaDetails  {
 

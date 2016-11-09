@@ -29,13 +29,11 @@ import org.egov.infra.admin.master.entity.Boundary;
 import org.egov.infra.admin.master.entity.Department;
 import org.egov.infra.filestore.entity.FileStoreMapper;
 import org.egov.infra.workflow.entity.StateAware;
-import org.egov.search.domain.Searchable;
 import org.hibernate.validator.constraints.Length;
 import org.springframework.web.multipart.MultipartFile;
 
 @Entity
 @Table(name = "egcncl_preamble")
-@Searchable
 @SequenceGenerator(name = CouncilPreamble.SEQ_COUNCILPREAMBLE, sequenceName = CouncilPreamble.SEQ_COUNCILPREAMBLE, allocationSize = 1)
 public class CouncilPreamble extends StateAware {
 

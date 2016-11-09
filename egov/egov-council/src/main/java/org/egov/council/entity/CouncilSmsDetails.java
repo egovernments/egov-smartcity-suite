@@ -54,12 +54,10 @@ import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
 import org.egov.infra.persistence.entity.AbstractAuditable;
-import org.egov.search.domain.Searchable;
 import org.hibernate.validator.constraints.Length;
 
 @Entity
 @Table(name = "egcncl_smsdetails")
-@Searchable
 @SequenceGenerator(name = CouncilSmsDetails.SEQ_SMSDETAILS, sequenceName = CouncilSmsDetails.SEQ_SMSDETAILS, allocationSize = 1)
 public class CouncilSmsDetails extends AbstractAuditable {
 
