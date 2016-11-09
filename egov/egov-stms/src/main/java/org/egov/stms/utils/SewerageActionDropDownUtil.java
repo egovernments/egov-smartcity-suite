@@ -40,9 +40,29 @@
 
 package org.egov.stms.utils;
 
-import org.apache.log4j.Logger;
-import org.egov.stms.elasticSearch.entity.SewerageSearchResult;
-import org.egov.stms.transactions.entity.SewerageApplicationDetails;
+import static org.egov.stms.utils.constants.SewerageTaxConstants.APPLICATION_STATUS_SANCTIONED;
+import static org.egov.stms.utils.constants.SewerageTaxConstants.APPLICATION_STATUS_SANCTIONED_WITH_DEMAND_NOT_PAID;
+import static org.egov.stms.utils.constants.SewerageTaxConstants.CHANGENOOFCLOSET;
+import static org.egov.stms.utils.constants.SewerageTaxConstants.CHANGENOOFCLOSETURL;
+import static org.egov.stms.utils.constants.SewerageTaxConstants.CLOSECONNECTION_ACTIONDROPDOWN;
+import static org.egov.stms.utils.constants.SewerageTaxConstants.CLOSESEWERAGECONNECTIONURL;
+import static org.egov.stms.utils.constants.SewerageTaxConstants.COLLECTDONATIONCHARHGES;
+import static org.egov.stms.utils.constants.SewerageTaxConstants.COLLECTDONATIONCHARHGESURL;
+import static org.egov.stms.utils.constants.SewerageTaxConstants.GENERATEBEMANDBILL;
+import static org.egov.stms.utils.constants.SewerageTaxConstants.GENERATEBEMANDBILLURL;
+import static org.egov.stms.utils.constants.SewerageTaxConstants.ROLE_COLLECTIONOPERATOR;
+import static org.egov.stms.utils.constants.SewerageTaxConstants.ROLE_CSCOPERTAOR;
+import static org.egov.stms.utils.constants.SewerageTaxConstants.ROLE_SEWERAGETAX_ADMINISTRATOR;
+import static org.egov.stms.utils.constants.SewerageTaxConstants.ROLE_SEWERAGETAX_APPROVER;
+import static org.egov.stms.utils.constants.SewerageTaxConstants.ROLE_SEWERAGETAX_CREATOR;
+import static org.egov.stms.utils.constants.SewerageTaxConstants.ROLE_SEWERAGETAX_REPORTVIEWER;
+import static org.egov.stms.utils.constants.SewerageTaxConstants.ROLE_STMS_VIEW_ACCESS_ROLE;
+import static org.egov.stms.utils.constants.SewerageTaxConstants.ROLE_SUPERUSER;
+import static org.egov.stms.utils.constants.SewerageTaxConstants.ROLE_ULBOPERATOR;
+import static org.egov.stms.utils.constants.SewerageTaxConstants.VIEW;
+import static org.egov.stms.utils.constants.SewerageTaxConstants.VIEWDCB;
+import static org.egov.stms.utils.constants.SewerageTaxConstants.VIEWDCBURL;
+import static org.egov.stms.utils.constants.SewerageTaxConstants.VIEWURL;
 
 import java.util.Arrays;
 import java.util.Collections;
@@ -51,7 +71,9 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
-import static org.egov.stms.utils.constants.SewerageTaxConstants.*;
+import org.apache.log4j.Logger;
+import org.egov.stms.elasticSearch.entity.SewerageSearchResult;
+import org.egov.stms.transactions.entity.SewerageApplicationDetails;
 
 
 public class SewerageActionDropDownUtil {
@@ -87,8 +109,8 @@ public class SewerageActionDropDownUtil {
                 CLOSECONNECTION_ACTIONDROPDOWN, GENERATEBEMANDBILL));
         SEWERAGEROLEACTIONMAP.put(ROLE_COLLECTIONOPERATOR, Arrays.asList(VIEW, COLLECTDONATIONCHARHGES));
         SEWERAGEROLEACTIONMAP.put(ROLE_SUPERUSER, Arrays.asList(VIEW, COLLECTDONATIONCHARHGES));
-        SEWERAGEROLEACTIONMAP.put(ROLE_SEWERAGETAX_REPORTVIEWER, Arrays.asList(VIEW, VIEWDCB));
-
+        SEWERAGEROLEACTIONMAP.put(ROLE_SEWERAGETAX_REPORTVIEWER, Arrays.asList(VIEW, VIEWDCB)); 
+        SEWERAGEROLEACTIONMAP.put(ROLE_STMS_VIEW_ACCESS_ROLE, Arrays.asList(VIEW, VIEWDCB));
         SEWERAGEROLEACTIONMAP.put(DEFAULT, Arrays.asList(VIEW));
 
         // For each action, define url mapping
@@ -170,6 +192,8 @@ public class SewerageActionDropDownUtil {
                 actionList = SEWERAGEROLEACTIONMAP.get(ROLE_SEWERAGETAX_REPORTVIEWER);
             else if (roleName.contains(ROLE_SEWERAGETAX_ADMINISTRATOR))
                 actionList = SEWERAGEROLEACTIONMAP.get(ROLE_SEWERAGETAX_ADMINISTRATOR);
+            else if (roleName.contains(ROLE_STMS_VIEW_ACCESS_ROLE))
+                actionList = SEWERAGEROLEACTIONMAP.get(ROLE_STMS_VIEW_ACCESS_ROLE);
             else
                 actionList = SEWERAGEROLEACTIONMAP.get(DEFAULT);
         return filterActionsByStatus(actionList, collectionStatus, sewerageApplicationDetails);
