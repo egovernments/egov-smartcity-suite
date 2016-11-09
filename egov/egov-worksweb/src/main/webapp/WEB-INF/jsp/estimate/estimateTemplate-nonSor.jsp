@@ -199,11 +199,19 @@ function validateNonSORDescription(recordId){
 	return true;   
 }
 
-function validateNonRate(recordId){
+
+function resetNonSorTable(){
+	nonSorDataTable.deleteRows(0,nonSorDataTable.getRecordSet().getLength());
+	
+}
+
+function validateNonSorUom(recordId){
+	debugger;
 	record=nonSorDataTable.getRecord(recordId);
-	if((dom.get("nonsorrate"+record.getId()).value=='0' || dom.get("nonsorrate"+record.getId()).value=='') && dom.get("nonsorrate"+record.getId()).value!=''){  		
+	if((dom.get("nonSorUom"+record.getId()).value=='0' || dom.get("nonSorUom"+record.getId()).value=='') && dom.get("nonsorrate"+record.getId()).value!=''){  		
   		document.getElementById("nonsor_error").innerHTML='<s:text name="estimate.nonsor.uom.null"/>';
   		document.getElementById("nonsor_error").style.display='';
+  		dom.get("nonsorrate"+record.getId()).value='';
       	return false;
   	}
   	else{
@@ -211,11 +219,6 @@ function validateNonRate(recordId){
        	 document.getElementById("nonsor_error").innerHTML='';	
        	 }
 	return true;   
-}
-
-function resetNonSorTable(){
-	nonSorDataTable.deleteRows(0,nonSorDataTable.getRecordSet().getLength());
-	
 }
 
 </script>		
