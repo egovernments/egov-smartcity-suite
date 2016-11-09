@@ -841,6 +841,7 @@ public class ComplaintIndexService {
         if ("cityCode".equals(groupByField) && DASHBOARD_GROUPING_CITY.equalsIgnoreCase(complaintDashBoardRequest.getType())) {
             city = cityIndexService.findOne(bucket.getKeyAsString());
             responseDetail.setUlbName(city.getName());
+            responseDetail.setUlbCode(city.getCitycode());
         }
 
         if ("cityDistrictCode".equals(groupByField)) {
