@@ -38,7 +38,23 @@
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
 jQuery('#btnsearch').click(function(e) {
-	callAjaxSearch();
+	var fromDate = '';
+	var toDate = '';
+	if($('#fromDate').val() != "") {
+		fromDate = $('#fromDate').data('datepicker').date;
+	}
+	if($('#toDate').val() != "") {
+		toDate = $('#toDate').data('datepicker').date;
+	}
+	var flag = true; 
+	if(toDate != '' && fromDate != '') {
+		if(fromDate > toDate) {
+			flag = false;
+			bootbox.alert($('#errorToDateAndFromDate').val());
+		}
+	}
+	if(flag)
+		callAjaxSearch();
 });
 
 function callAjaxSearch() {

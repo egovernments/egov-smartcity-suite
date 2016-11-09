@@ -46,7 +46,22 @@ $(document).ready(function(){
 });
 
 jQuery('#btnsearch').click(function(e) {
-	if($('#searchRequestLetterOfAcceptance').valid())
+	var adminSanctionFromDate = '';
+	var adminSanctionToDate = '';
+	if($('#adminSanctionFromDate').val() != "") {
+		adminSanctionFromDate = $('#adminSanctionFromDate').data('datepicker').date;
+	}
+	if($('#adminSanctionToDate').val() != "") {
+		adminSanctionToDate = $('#adminSanctionToDate').data('datepicker').date;
+	}
+	var flag = true; 
+	if(adminSanctionToDate != '' && adminSanctionFromDate != '') {
+		if(adminSanctionFromDate > adminSanctionToDate) {
+			flag = false;
+			bootbox.alert($('#errorToDateAndFromDate').val());
+		}
+	}
+	if($('#searchRequestLetterOfAcceptance').valid() && flag)
 		callAjaxSearch();
 });
 

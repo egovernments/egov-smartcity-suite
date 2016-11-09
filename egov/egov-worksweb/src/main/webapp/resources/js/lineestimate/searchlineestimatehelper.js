@@ -50,7 +50,7 @@ jQuery('#btnsearch').click(function(e) {
 	if(adminSanctionToDate != '' && adminSanctionFromDate != '') {
 		if(adminSanctionFromDate > adminSanctionToDate) {
 			flag = false;
-			bootbox.alert('Admin Sanction To Date should be greater than Admin Sanction From Date');
+			bootbox.alert($('#errorToDateAndFromDate').val());
 		}
 	}
 	if(flag)

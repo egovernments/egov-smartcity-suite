@@ -43,6 +43,7 @@
 <%@ taglib uri="http://www.springframework.org/tags" prefix="spring"%>
 <%@ taglib uri="http://www.springframework.org/tags/form" prefix="form"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
+<input type="hidden" value="<spring:message code="error.adminfromdate.admintodate" />" id="errorToDateAndFromDate" />
 		<form:form name="lineEstimateSearchForm" role="form" action="" modelAttribute="lineEstimateSearchRequest" id="lineEstimatesearchform" class="form-horizontal form-groups-bordered">
 			<div class="row">
 				<div class="col-md-12">

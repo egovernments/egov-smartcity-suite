@@ -45,6 +45,7 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
 <%@ taglib uri="/WEB-INF/taglibs/cdn.tld" prefix="cdn"%>
 <input type="hidden" value="<spring:message code='error.estimate.required' />" id='selectEstimate'>
+<input type="hidden" value="<spring:message code="error.date.todate.fromdate" />" id="errorToDateAndFromDate" />
 <form:form name="SearchRequest" role="form" action="" modelAttribute="searchRequestCancelEstimate" id="searchRequestCancelEstimate" class="form-horizontal form-groups-bordered">
 	<div class="row">
 		<div class="col-md-12">
