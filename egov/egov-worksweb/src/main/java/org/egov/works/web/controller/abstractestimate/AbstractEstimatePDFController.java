@@ -65,6 +65,7 @@ import org.egov.works.abstractestimate.entity.MeasurementSheet;
 import org.egov.works.abstractestimate.entity.OverheadValue;
 import org.egov.works.abstractestimate.service.EstimateService;
 import org.egov.works.abstractestimate.service.MeasurementSheetService;
+import org.egov.works.utils.WorksConstants;
 import org.egov.works.utils.WorksUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
@@ -118,6 +119,14 @@ public class AbstractEstimatePDFController {
                 .concat((String) request.getSession().getAttribute("citylogo")));
         if (abstractEstimate != null) {
             reportParams.put("estimateDate", formatter.format(abstractEstimate.getEstimateDate()));
+
+            if (abstractEstimate.getWard() != null)
+                if (abstractEstimate.getWard().getBoundaryType().getName()
+                        .equalsIgnoreCase(WorksConstants.BOUNDARY_TYPE_CITY))
+                    reportParams.put("ward", abstractEstimate.getWard().getName());
+                else
+                    reportParams.put("ward", abstractEstimate.getWard().getBoundaryNum().toString());
+
             reportParams.put("abstractEstimate", abstractEstimate);
             double totalEstimateOverheadAmount = 0;
             for (final OverheadValue overheadValue : abstractEstimate.getOverheadValues())

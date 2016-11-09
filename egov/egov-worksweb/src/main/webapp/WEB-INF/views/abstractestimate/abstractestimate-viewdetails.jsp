@@ -31,7 +31,14 @@
 		</div> 
 	
 		<div class="col-xs-3 add-margin view-content">
-			<c:out value="${abstractEstimate.ward.boundaryNum}"></c:out>
+			<c:choose>
+				<c:when test="${abstractEstimate.ward.boundaryType.name.toUpperCase() == 'CITY'}">
+					<c:out value="${abstractEstimate.ward.name}"></c:out>
+				</c:when>
+				<c:otherwise>
+					<c:out value="${abstractEstimate.ward.boundaryNum}"></c:out>
+				</c:otherwise>
+			</c:choose>
 		</div>
 	</div>	
 	<c:if test="${abstractEstimate.lineEstimateDetails != null}">	

@@ -49,7 +49,14 @@
 			</label>
 			<div class="col-sm-3 add-margin ">
 			<form:hidden path="ward" class="form-control" name="ward" value="${abstractEstimate.lineEstimateDetails.lineEstimate.ward.id}"/>
-			<form:input id="wardInput" path="ward.boundaryNum" class="form-control disablefield" type="text" required="required"/>
+			<c:choose>
+				<c:when test="${abstractEstimate.lineEstimateDetails.lineEstimate.ward.boundaryType.name.toUpperCase() == 'CITY'}">
+					<form:input id="wardInput" path=""  value="${abstractEstimate.lineEstimateDetails.lineEstimate.ward.name}" class="form-control disablefield" type="text" required="required"/>
+				</c:when>
+				<c:otherwise>
+					<form:input id="wardInput" path="" value="${abstractEstimate.lineEstimateDetails.lineEstimate.ward.boundaryNum}" class="form-control disablefield" type="text" required="required"/>
+				</c:otherwise>
+			</c:choose>
 			</div>
 			
 		</div>

@@ -39,7 +39,7 @@
   ~   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
   -->
 <!-- Created with Jaspersoft Studio version 6.3.1.final using JasperReports Library version 6.3.1  -->
-<!-- 2016-10-20T12:41:22 -->
+<!-- 2016-11-09T20:16:17 -->
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="abstractEstimatePDF" pageWidth="595" pageHeight="842" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" isSummaryNewPage="true" isSummaryWithPageHeaderAndFooter="true" isFloatColumnFooter="true" uuid="21febbd0-09ca-473a-b5e5-726fffd82711">
 	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="One Empty Record"/>
 	<property name="com.jaspersoft.studio.unit." value="pixel"/>
@@ -48,6 +48,7 @@
 	<import value="org.egov.infstr.utils.*"/>
 	<parameter name="cityName" class="java.lang.String"/>
 	<parameter name="estimateDate" class="java.lang.String"/>
+	<parameter name="ward" class="java.lang.String"/>
 	<parameter name="activities" class="java.util.List"/>
 	<parameter name="workflowdetails" class="java.util.List"/>
 	<parameter name="currDate" class="java.lang.String"/>
@@ -61,7 +62,6 @@
 	<field name="executingDepartment" class="org.egov.infra.admin.master.entity.Department"/>
 	<field name="estimateNumber" class="java.lang.String"/>
 	<field name="projectCode" class="org.egov.works.abstractestimate.entity.ProjectCode"/>
-	<field name="ward" class="org.egov.infra.admin.master.entity.Boundary"/>
 	<field name="location" class="java.lang.String"/>
 	<field name="natureOfWork" class="org.egov.works.models.masters.NatureOfWork"/>
 	<field name="description" class="java.lang.String"/>
@@ -139,7 +139,7 @@
 					<textElement textAlignment="Left" verticalAlignment="Middle">
 						<font fontName="Times New Roman"/>
 					</textElement>
-					<textFieldExpression><![CDATA["Election Ward : "+$F{ward}.getBoundaryNum()]]></textFieldExpression>
+					<textFieldExpression><![CDATA["Election Ward : "+$P{ward}]]></textFieldExpression>
 				</textField>
 				<textField isStretchWithOverflow="true" isBlankWhenNull="false">
 					<reportElement positionType="Float" stretchType="RelativeToTallestObject" x="380" y="0" width="170" height="20" uuid="bb5ca7a8-c230-45ed-a245-d9fcf97fc71a"/>
