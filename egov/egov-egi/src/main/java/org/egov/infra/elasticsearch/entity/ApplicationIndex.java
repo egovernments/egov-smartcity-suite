@@ -60,9 +60,12 @@ import org.egov.infra.elasticsearch.entity.enums.ClosureStatus;
 import org.egov.infra.persistence.entity.AbstractAuditable;
 import org.hibernate.validator.constraints.Length;
 
+import com.fasterxml.jackson.annotation.JsonTypeInfo;
+
 @Entity
 @Table(name = "EG_APPLICATIONINDEX")
 @SequenceGenerator(name = SEQ_APPLICATIONINDEX, sequenceName = SEQ_APPLICATIONINDEX, allocationSize = 1)
+@JsonTypeInfo(use = JsonTypeInfo.Id.CLASS, include = JsonTypeInfo.As.PROPERTY, property = "version")
 public class ApplicationIndex extends AbstractAuditable {
 
     public static final String SEQ_APPLICATIONINDEX = "SEQ_EG_APPLICATIONINDEX";
