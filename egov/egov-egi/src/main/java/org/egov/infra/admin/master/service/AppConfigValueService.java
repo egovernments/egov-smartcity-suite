@@ -40,16 +40,15 @@
 
 package org.egov.infra.admin.master.service;
 
+import java.util.Date;
+import java.util.List;
+
 import org.egov.infra.admin.master.entity.AppConfigValues;
 import org.egov.infra.admin.master.repository.AppConfigValueRepository;
 import org.egov.infra.utils.DateUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.util.Date;
-import java.util.List;
-
 
 @Service
 @Transactional(readOnly = true)
@@ -59,13 +58,17 @@ public class AppConfigValueService {
 
     @Autowired
     public AppConfigValueService(final AppConfigValueRepository appConfigValueRepos) {
-        this.appConfigValueRepository = appConfigValueRepos;
+        appConfigValueRepository = appConfigValueRepos;
+    }
+
+    public AppConfigValues getById(final Long id) {
+        return appConfigValueRepository.getOne(id);
     }
 
     public List<AppConfigValues> getConfigValuesByModuleAndKey(final String moduleName, final String keyName) {
         return appConfigValueRepository.findByConfig_KeyNameAndConfig_Module_Name(keyName, moduleName);
     }
-    
+
     public List<AppConfigValues> getConfigValuesByModuleAndKeyLike(final String moduleName, final String keyName) {
         return appConfigValueRepository.findByConfig_KeyNameLikeAndConfig_Module_Name(keyName, moduleName);
     }
@@ -76,19 +79,21 @@ public class AppConfigValueService {
 
     public AppConfigValues getAppConfigValueByDate(final String moduleName, final String keyName, final Date effectiveFrom) {
         final Date[] dateRange = DateUtils.constructDateRange(effectiveFrom, effectiveFrom);
-        Date fromDate = dateRange[0];
-        Date toDate = dateRange[1];
+        final Date fromDate = dateRange[0];
+        final Date toDate = dateRange[1];
 
-        final List<AppConfigValues> appConfigValues = appConfigValueRepository.getAppConfigValueByModuleAndKeyAndDate(moduleName, keyName, effectiveFrom, fromDate, toDate);
+        final List<AppConfigValues> appConfigValues = appConfigValueRepository.getAppConfigValueByModuleAndKeyAndDate(moduleName,
+                keyName, effectiveFrom, fromDate, toDate);
         return appConfigValues.isEmpty() ? null : appConfigValues.get(appConfigValues.size() - 1);
     }
 
     public String getAppConfigValue(final String moduleName, final String keyName, final String defaultVal) {
-        Date effectiveFrom = new Date();
+        final Date effectiveFrom = new Date();
         final Date[] dateRange = DateUtils.constructDateRange(effectiveFrom, effectiveFrom);
-        Date fromDate = dateRange[0];
-        Date toDate = dateRange[1];
-        final List<AppConfigValues> appConfigValues = appConfigValueRepository.getAppConfigValueByModuleAndKeyAndDate(moduleName, keyName, effectiveFrom, fromDate, toDate);
+        final Date fromDate = dateRange[0];
+        final Date toDate = dateRange[1];
+        final List<AppConfigValues> appConfigValues = appConfigValueRepository.getAppConfigValueByModuleAndKeyAndDate(moduleName,
+                keyName, effectiveFrom, fromDate, toDate);
         return appConfigValues.isEmpty() ? defaultVal : appConfigValues.get(appConfigValues.size() - 1).toString();
 
     }

@@ -93,8 +93,6 @@
 							<div class="col-xs-3 add-margin view-content">
 								<c:out value="${legalCase.caseNumber}" />
 							</div>
-						</div>
-						<div class="row add-border">
 							<div class="col-xs-3 add-margin">
 								<spring:message code="lbl.lcnumber" />
 							</div>
@@ -173,11 +171,13 @@
 							</div>
 							<div class="col-sm-3 add-margin view-content">
 								${legalCase.isfiledbycorporation}</div>
+							<div class="col-xs-3 add-margin">
+								<spring:message code="lbl.oldreferencenumber" />
+							</div>
+							<div class="col-sm-3 add-margin view-content">
+								${legalCase.oldReferenceNumber}</div>
 						</div>
-
-
 					</div>
-
 				</div>
 			</div>
 		</div>
@@ -397,19 +397,19 @@
 													Date: </label>
 												<div class="col-sm-3 add-margin">
 													<fmt:formatDate pattern="dd/MM/yyyy"
-														value="${legalCase.legalCaseAdvocates[0].assignedtodate}"
+														value="${legalCase.legalCaseAdvocates[0].assignedToDate}"
 														var="assignDate" />
 													<c:out value="${assignDate}" />
 												</div>
 											</div>
 											<div class="form-group">
 												<label class="col-sm-3 control-label text-right">Date
-													on which Vakalaat filed:</label>
+													on which Vakalat filed:</label>
 												<div class="col-sm-3 add-margin">
 													<fmt:formatDate pattern="dd/MM/yyyy"
-														value="${legalCase.legalCaseAdvocates[0].vakalatdate}"
-														var="assignDate" />
-													<c:out value="${assignDate}" />
+														value="${legalCase.legalCaseAdvocates[0].vakalatDate}"
+														var="vakaltadate" />
+													<c:out value="${vakaltadate}" />
 												</div>
 											</div>
 											<div class="form-group">
@@ -442,9 +442,9 @@
 														<div class="col-sm-3 add-margin">
 
 															<fmt:formatDate pattern="dd/MM/yyyy"
-																value="${legalCase.legalCaseAdvocates[0].assignedtodateForsenior}"
-																var="assignDate" />
-															<c:out value="${assignDate}" />
+																value="${legalCase.legalCaseAdvocates[0].assignedToDateForSenior}"
+																var="assigntoDate" />
+															<c:out value="${assigntoDate}" />
 														</div>
 													</div>
 												</div>
@@ -454,7 +454,7 @@
 													<div class="col-sm-3 add-margin">
 
 														<fmt:formatDate pattern="dd/MM/yyyy"
-															value="${legalCase.legalCaseAdvocates[0].orderdate}"
+															value="${legalCase.legalCaseAdvocates[0].orderDate}"
 															var="assignDate" />
 														<c:out value="${assignDate}" />
 													</div>
@@ -462,7 +462,7 @@
 														Number: </label>
 													<div class="col-sm-3 add-margin">
 														<c:out
-															value="${legalCase.legalCaseAdvocates[0].ordernumber}" />
+															value="${legalCase.legalCaseAdvocates[0].orderNumber}" />
 													</div>
 											</c:if>
 										</div>
@@ -476,9 +476,7 @@
 		</div>
 		<jsp:include page="documentdetails-view.jsp"></jsp:include>
 		<c:if test="${not empty pwrDocList}">
-
 			<jsp:include page="pwrDocumentdetails-view.jsp"></jsp:include>
-
 		</c:if>
 		<div class="form-group">
 			<div class="text-center">

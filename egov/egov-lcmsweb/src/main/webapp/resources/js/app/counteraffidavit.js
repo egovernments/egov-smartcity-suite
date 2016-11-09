@@ -37,13 +37,13 @@
  *
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
-jQuery(document).ready(
+/*jQuery(document).ready(
 		function($) {
 			
 			var modeval=$("#mode").val();
-			/*var $tableBody = $('#caffidavitdetails').find("tbody"),
+			var $tableBody = $('#caffidavitdetails').find("tbody"),
 		    $trLast = $tableBody.find("tr:last");
-			*/
+			
 			if(modeval =='counteredit'){
 			 $("#caffidavitdetails").find("*").attr("disabled", "disabled");
 			}
@@ -112,3 +112,4 @@ function addEmployeeRow()
 		 
 		
 }
+*/

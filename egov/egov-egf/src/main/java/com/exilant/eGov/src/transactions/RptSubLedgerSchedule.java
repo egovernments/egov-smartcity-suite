@@ -63,10 +63,8 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 
 import java.text.DecimalFormat;
-import java.text.NumberFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -79,13 +77,11 @@ import java.util.List;
 public class RptSubLedgerSchedule {
     double totalDr, totalCr, totalOpgBal, totalClosingBal;
     List<Object[]> resultset;
-    NumberFormat formatter;
     TaskFailedException taskExc;
-    String glCode, accEntityId, fundId, fyId, deptId;
+    private String glCode, accEntityId, fundId, fyId, deptId;
     private CFinancialYear fyObj;
-    String subLedgerTable;
-    HashMap hm_opBal;
-    LinkedList dataList;
+  
+    private LinkedList dataList;
     private static final Logger LOGGER = Logger.getLogger(RptSubLedgerSchedule.class);
  
     @Autowired
@@ -98,15 +94,11 @@ public class RptSubLedgerSchedule {
     @Autowired
     private AppConfigValueService appConfigValuesService;
 
-    Query pst;
-
-    public RptSubLedgerSchedule() {
-    }
+    private Query pst;
 
     // code for SubLedger type
     public LinkedList getSubLedgerTypeSchedule(final GeneralLedgerBean reportBean) throws TaskFailedException {
-        formatter = new DecimalFormat();
-        formatter = new DecimalFormat("###############.00");
+ 
         glCode = reportBean.getGlcode();
         fundId = reportBean.getFund_id();
         deptId = reportBean.getDeptId();

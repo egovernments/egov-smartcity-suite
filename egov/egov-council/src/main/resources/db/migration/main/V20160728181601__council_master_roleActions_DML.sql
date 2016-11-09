@@ -1,0 +1,3 @@
+INSERT into eg_action(id,name,url,parentmodule,ordernumber,displayname,enabled,contextroot,application) values(nextval('SEQ_EG_ACTION'),'Search and Edit Result-CouncilPreamble','/councilpreamble/ajaxsearch/edit',(select id from eg_module where name='Council Preamble' and parentmodule=(select id from eg_module where name='Council Management Transaction')),1,'Search and Edit Result-CouncilPreamble',false,'council',(select id from eg_module where name='Council Management' and parentmodule is null));
+ 
+INSERT into eg_roleaction values((select id from eg_role where name='Super User'),(select id from eg_action where name='Search and Edit Result-CouncilPreamble'));

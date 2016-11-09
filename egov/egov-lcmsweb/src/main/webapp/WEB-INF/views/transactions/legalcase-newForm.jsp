@@ -46,7 +46,6 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
 <%@ taglib uri="/WEB-INF/taglib/cdn.tld" prefix="cdn" %>
 
-
 <div class="row">
 	<div class="col-md-12">
 		<form:form method="post" action="" modelAttribute="legalCase"
@@ -98,4 +97,3 @@
 	src="<cdn:url value='/resources/js/app/populateDropdown.js?rnd=${app_release_no}'/>"></script>
 <script
 	src="<cdn:url value='/resources/js/app/legalcasenew.js?rnd=${app_release_no}'/>"></script>
-

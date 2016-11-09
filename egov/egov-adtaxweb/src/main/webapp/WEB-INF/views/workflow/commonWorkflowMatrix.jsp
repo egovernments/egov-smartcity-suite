@@ -109,14 +109,14 @@
 				</div>
 				</div>
 			
+			</div>				
+		</div>
+</c:if>	
 				<div class="row">
 					<label class="col-sm-3 control-label text-right"><spring:message code="lbl.comments"/></label>
 					<div class="col-sm-8 add-margin">
 						<form:textarea class="form-control" path="approvalComent"  id="approvalComent" name="approvalComent" />
 					</div>
 				</div>
-				
-			</div>				
-		</div>
-</c:if>
+			
 <script src="<cdn:url value='/resources/app/js/commonworkflow.js?rnd=${app_release_no}'/>"></script>

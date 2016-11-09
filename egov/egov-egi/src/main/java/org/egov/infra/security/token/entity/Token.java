@@ -41,7 +41,6 @@
 package org.egov.infra.security.token.entity;
 
 import org.egov.infra.persistence.entity.AbstractAuditable;
-import org.hibernate.search.annotations.DocumentId;
 import org.hibernate.validator.constraints.Length;
 
 import javax.persistence.Entity;
@@ -51,34 +50,34 @@ import javax.persistence.Id;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
+import java.util.Date;
 
 @Entity
 @Table(name = "EG_TOKEN")
 @SequenceGenerator(name = Token.SEQ_TOKEN, sequenceName = Token.SEQ_TOKEN, allocationSize = 1)
 public class Token extends AbstractAuditable {
 
-	private static final long serialVersionUID = 1L;
     public static final String SEQ_TOKEN = "SEQ_EG_TOKEN";
+    private static final long serialVersionUID = 2506253781972631115L;
 
-    @DocumentId
     @Id
     @GeneratedValue(generator = SEQ_TOKEN, strategy = GenerationType.SEQUENCE)
     private Long id;
-    
+
     @NotNull
     @Length(max = 128)
-	private String tokenNumber;
-	
-	@Length(max = 100)
-	private String tokenIdentity;
-	
-	@Length(max = 100)
-	private String service;
-	
-	@NotNull
-	private Long ttlSecs;
-	
-	@Override
+    private String tokenNumber;
+
+    @Length(max = 100)
+    private String tokenIdentity;
+
+    @Length(max = 100)
+    private String service;
+
+    @NotNull
+    private Long ttlSecs;
+
+    @Override
     public Long getId() {
         return id;
     }
@@ -88,61 +87,40 @@ public class Token extends AbstractAuditable {
         this.id = id;
     }
 
-	/**
-	 * @return the tokenNumber
-	 */
-	public String getTokenNumber() {
-		return tokenNumber;
-	}
+    public String getTokenNumber() {
+        return tokenNumber;
+    }
 
-	/**
-	 * @param tokenNumber the tokenNumber to set
-	 */
-	public void setTokenNumber(String tokenNumber) {
-		this.tokenNumber = tokenNumber;
-	}
+    public void setTokenNumber(String tokenNumber) {
+        this.tokenNumber = tokenNumber;
+    }
 
-	/**
-	 * @return the tokenIdentity
-	 */
-	public String getTokenIdentity() {
-		return tokenIdentity;
-	}
+    public String getTokenIdentity() {
+        return tokenIdentity;
+    }
 
-	/**
-	 * @param tokenIdentity the tokenIdentity to set
-	 */
-	public void setTokenIdentity(String tokenIdentity) {
-		this.tokenIdentity = tokenIdentity;
-	}
+    public void setTokenIdentity(String tokenIdentity) {
+        this.tokenIdentity = tokenIdentity;
+    }
 
-	/**
-	 * @return the service
-	 */
-	public String getService() {
-		return service;
-	}
+    public String getService() {
+        return service;
+    }
 
-	/**
-	 * @param service the service to set
-	 */
-	public void setService(String service) {
-		this.service = service;
-	}
+    public void setService(String service) {
+        this.service = service;
+    }
 
-	/**
-	 * @return the ttlSecs
-	 */
-	public Long getTtlSecs() {
-		return ttlSecs;
-	}
+    public Long getTtlSecs() {
+        return ttlSecs;
+    }
 
-	/**
-	 * @param ttlSecs the ttlSecs to set
-	 */
-	public void setTtlSecs(Long ttlSecs) {
-		this.ttlSecs = ttlSecs;
-	}
-    
+    public void setTtlSecs(Long ttlSecs) {
+        this.ttlSecs = ttlSecs;
+    }
+
+    public boolean isRedeemable() {
+        return (new Date().getTime() - this.getCreatedDate().getTime()) < (this.getTtlSecs() * 1000);
+    }
 
 }

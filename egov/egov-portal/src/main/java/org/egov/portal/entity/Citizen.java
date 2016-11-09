@@ -50,6 +50,7 @@ import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -59,6 +60,7 @@ public class Citizen extends User {
 
     private static final long serialVersionUID = -521416613072970524L;
 
+    @Transient
     private String activationCode;
 
     @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY)

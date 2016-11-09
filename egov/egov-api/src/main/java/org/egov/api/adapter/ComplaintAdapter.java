@@ -92,13 +92,13 @@ public class ComplaintAdapter extends DataAdapter<Complaint> {
         List<FileStoreMapper> supportDocs=new ArrayList<FileStoreMapper>();
         supportDocs.addAll(complaint.getSupportDocs());
         
-        Collections.sort(supportDocs, new Comparator<FileStoreMapper>() {
+       /* Collections.sort(supportDocs, new Comparator<FileStoreMapper>() {
 			@Override
 			public int compare(FileStoreMapper f1, FileStoreMapper f2) {
 
 				return f1.getIndexId().compareTo(f2.getIndexId());
 			}
-        });
+        });*/
         
         JsonArray jsonArry=new JsonArray();
         for(FileStoreMapper file:supportDocs)
@@ -106,7 +106,7 @@ public class ComplaintAdapter extends DataAdapter<Complaint> {
             JsonObject fileobj=new JsonObject();
             fileobj.addProperty("fileId", file.getFileStoreId());
             fileobj.addProperty("fileContentType", file.getContentType());
-            fileobj.addProperty("fileIndexId", file.getIndexId());
+           // fileobj.addProperty("fileIndexId", file.getIndexId());
             jsonArry.add(fileobj);
         }
         

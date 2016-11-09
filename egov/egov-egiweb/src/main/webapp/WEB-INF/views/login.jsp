@@ -110,7 +110,7 @@
 					</div>
 					<div class="col-md-6 side-space">
 						<div class="col-md-12 community-card">
-							<a href="/portal/citizen/register" target="_blank">
+							<a href="/portal/citizen/signup" target="_blank">
 								<div class="rounded-circle"><i class="fa fa-user a"></i></div>&nbsp;
 								<div class="label-font">
 									<spring:message code="lbl.create.ac"/><br>
@@ -181,9 +181,9 @@
 										<input type="password" class="form-control style-form"
 											name="j_password" id="j_password" placeholder="Password"
 											autocomplete="new-password" required="required" />
-										<div class="input-group-addon font-12">
-											<a href="#" data-toggle="modal"
-											data-target="#fpassword" data-backdrop="static" style="color:#fff;">Forgot?</a>
+										<div class="input-group-addon font-12" data-toggle="modal"
+											data-target="#fpassword" data-backdrop="static">
+											Forgot?
 										</div>
 									</div>
 								</div>
@@ -209,13 +209,6 @@
 											<spring:message code="msg.cred.exprd2"/>
 											</a> <spring:message code="msg.cred.exprd3"/>
 										</c:when>
-										<c:when test="${security_message == 'Inactive User'}">
-		     							 	<div class="form-group signin-leftpadding">
-												<a href="/portal/citizen/register?activation=true" class="btn btn-custom btn-block btn-login signin-submit">
-												<spring:message code="msg.acc.not.activated"/>
-												</a> 
-											</div>
-	     								</c:when>
 										<c:when test="${fn:contains(security_message, 'User account is locked')}">
 											<spring:message code="msg.acc.locked"/>
 											<spring:eval expression="@environment.getProperty('captcha.strength')" var="strength"/>

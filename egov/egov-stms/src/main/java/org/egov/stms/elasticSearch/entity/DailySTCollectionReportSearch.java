@@ -39,25 +39,11 @@
  */
 package org.egov.stms.elasticSearch.entity;
 
-import static org.egov.search.domain.Filter.rangeFilter;
-import static org.egov.search.domain.Filter.termsStringFilter;
-import static org.egov.search.domain.Filter.queryStringFilter;
-
-import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.List;
 
-import javax.validation.ValidationException;
-
-import org.egov.search.domain.Filter;
-import org.egov.search.domain.Filters;
-import org.egov.stms.utils.constants.SewerageTaxConstants;
-import org.jboss.logging.Logger;
-
 public class DailySTCollectionReportSearch {
-    private static final Logger logger = Logger.getLogger(DailySTCollectionReportSearch.class);
     private String fromDate;
     private String toDate;
     SimpleDateFormat ft = new SimpleDateFormat("yyyy-MM-dd");
@@ -74,7 +60,15 @@ public class DailySTCollectionReportSearch {
     private String mobileNumber;
     private String doorNumber;
     private String applicationDate;
-
+    private String receiptDate;
+    private String paidAt;
+    private String paymentMode;
+    private Double arrearAmount;
+    private Double currentAmount;
+    private Double totalAmount;
+    private String doorNo;
+    private String ownerName;
+    private String receiptNumber;
 
     private String status;
 
@@ -84,31 +78,6 @@ public class DailySTCollectionReportSearch {
 
     public void setConsumerCode(final List<String> consumerCode) {
         this.consumerCode = consumerCode;
-    }
-
-    public void setFromDate(final String fromDate) {
-        if (null != fromDate)
-            try {
-                if (logger.isDebugEnabled())
-                    logger.debug("Date Range From start.. :" + ft.format(dtft.parse(fromDate)));
-                this.fromDate = ft.format(dtft.parse(fromDate));
-            } catch (final ParseException e) {
-                throw new ValidationException(e.getMessage());
-            }
-    }
-
-    public void setToDate(final String toDate) {
-        final Calendar cal = Calendar.getInstance();
-        if (null != toDate)
-            try {
-                cal.setTime(dtft.parse(toDate));
-                cal.add(Calendar.DAY_OF_YEAR, 1);
-                if (logger.isDebugEnabled())
-                    logger.debug("Date Range Till .. :" + ft.format(cal.getTime()));
-                this.toDate = ft.format(cal.getTime());
-            } catch (final ParseException e) {
-                throw new ValidationException(e.getMessage());
-            }
     }
 
     public String getFromDate() {
@@ -167,43 +136,6 @@ public class DailySTCollectionReportSearch {
         this.ulbName = ulbName;
     }
 
-    public Filters searchCollectionFilters() {
-        final List<Filter> andFilters = new ArrayList<>(0);
-        andFilters.add(termsStringFilter(SewerageTaxConstants.CLAUSES_CITYNAME, ulbName));
-        andFilters.add(termsStringFilter(SewerageTaxConstants.CLAUSES_CHANNEL, collectionMode));
-        andFilters.add(termsStringFilter(SewerageTaxConstants.CLAUSES_RECEIPT, collectionOperator));
-        andFilters.add(termsStringFilter(SewerageTaxConstants.CLAUSES_BILLING_SERVICE,
-                SewerageTaxConstants.APPL_INDEX_MODULE_NAME));
-        andFilters.add(termsStringFilter(SewerageTaxConstants.CLAUSES_STATUS, status));
-        andFilters.add(rangeFilter(SewerageTaxConstants.SEARCHABLE_RECEIPT_DATE, fromDate, toDate));
-        if (logger.isDebugEnabled())
-            logger.debug("finished filters");
-        logger.info("$$$$$$$$$$$$$$$$ Filters : " + andFilters);
-        return Filters.withAndFilters(andFilters);
-    }
-    
-    public Filters searchFilters() { 
-        final List<Filter> andFilters = new ArrayList<>(0);
-        andFilters.add(termsStringFilter(SewerageTaxConstants.SEARCHABLE_SHSCNO, shscNumber));
-        andFilters.add(termsStringFilter(SewerageTaxConstants.CLAUSES_CITYNAME, ulbName));
-        andFilters.add(queryStringFilter(SewerageTaxConstants.SEARCHABLE_CONSUMER_NAME, applicantName));
-        andFilters.add(queryStringFilter(SewerageTaxConstants.CLAUSES_MOBILENO , mobileNumber));
-        andFilters.add(queryStringFilter(SewerageTaxConstants.CLAUSES_DOORNO, doorNumber));
-        andFilters.add(termsStringFilter(SewerageTaxConstants.CLAUSES_REVWARD_NAME, revenueWard));
-        andFilters.add(queryStringFilter(SewerageTaxConstants.CLAUSES_APPLICATION_DATE,applicationDate));
-        andFilters.add(termsStringFilter(SewerageTaxConstants.CLAUSES_APPLICATIONNO,consumerNumber));
-        if (logger.isDebugEnabled())
-            logger.debug("finished filters");
-        return Filters.withAndFilters(andFilters);
-    }
-
-    public Filters searchConnectionForWardFilters() {
-        final List<Filter> andFilters = new ArrayList<>(0);
-        andFilters.add(termsStringFilter(SewerageTaxConstants.CLAUSES_CITYNAME, ulbName));
-        andFilters.add(termsStringFilter(SewerageTaxConstants.CLAUSES_REVWARD_NAME, revenueWard));
-        return Filters.withAndFilters(andFilters);
-    }
-
     public String searchQuery() {
         return searchText;
     }
@@ -212,7 +144,7 @@ public class DailySTCollectionReportSearch {
         return consumerNumber;
     }
 
-    public void setConsumerNumber(String consumerNumber) {
+    public void setConsumerNumber(final String consumerNumber) {
         this.consumerNumber = consumerNumber;
     }
 
@@ -220,7 +152,7 @@ public class DailySTCollectionReportSearch {
         return shscNumber;
     }
 
-    public void setShscNumber(String shscNumber) {
+    public void setShscNumber(final String shscNumber) {
         this.shscNumber = shscNumber;
     }
 
@@ -228,7 +160,7 @@ public class DailySTCollectionReportSearch {
         return applicantName;
     }
 
-    public void setApplicantName(String applicantName) {
+    public void setApplicantName(final String applicantName) {
         this.applicantName = applicantName;
     }
 
@@ -236,7 +168,7 @@ public class DailySTCollectionReportSearch {
         return mobileNumber;
     }
 
-    public void setMobileNumber(String mobileNumber) {
+    public void setMobileNumber(final String mobileNumber) {
         this.mobileNumber = mobileNumber;
     }
 
@@ -244,7 +176,7 @@ public class DailySTCollectionReportSearch {
         return doorNumber;
     }
 
-    public void setDoorNumber(String doorNumber) {
+    public void setDoorNumber(final String doorNumber) {
         this.doorNumber = doorNumber;
     }
 
@@ -252,8 +184,104 @@ public class DailySTCollectionReportSearch {
         return applicationDate;
     }
 
-    public void setApplicationDate(String applicationDate) {
+    public void setApplicationDate(final String applicationDate) {
         this.applicationDate = applicationDate;
+    }
+
+    public SimpleDateFormat getFt() {
+        return ft;
+    }
+
+    public void setFt(final SimpleDateFormat ft) {
+        this.ft = ft;
+    }
+
+    public SimpleDateFormat getDtft() {
+        return dtft;
+    }
+
+    public void setDtft(final SimpleDateFormat dtft) {
+        this.dtft = dtft;
+    }
+
+    public String getReceiptDate() {
+        return receiptDate;
+    }
+
+    public void setReceiptDate(final String receiptDate) {
+        this.receiptDate = receiptDate;
+    }
+
+    public String getPaidAt() {
+        return paidAt;
+    }
+
+    public void setPaidAt(final String paidAt) {
+        this.paidAt = paidAt;
+    }
+
+    public String getPaymentMode() {
+        return paymentMode;
+    }
+
+    public void setPaymentMode(final String paymentMode) {
+        this.paymentMode = paymentMode;
+    }
+
+    public Double getArrearAmount() {
+        return arrearAmount;
+    }
+
+    public void setArrearAmount(final Double arrearAmount) {
+        this.arrearAmount = arrearAmount;
+    }
+
+    public Double getCurrentAmount() {
+        return currentAmount;
+    }
+
+    public void setCurrentAmount(final Double currentAmount) {
+        this.currentAmount = currentAmount;
+    }
+
+    public Double getTotalAmount() {
+        return totalAmount;
+    }
+
+    public void setTotalAmount(final Double totalAmount) {
+        this.totalAmount = totalAmount;
+    }
+
+    public String getDoorNo() {
+        return doorNo;
+    }
+
+    public void setDoorNo(final String doorNo) {
+        this.doorNo = doorNo;
+    }
+
+    public String getOwnerName() {
+        return ownerName;
+    }
+
+    public void setOwnerName(final String ownerName) {
+        this.ownerName = ownerName;
+    }
+
+    public String getReceiptNumber() {
+        return receiptNumber;
+    }
+
+    public void setReceiptNumber(final String receiptNumber) {
+        this.receiptNumber = receiptNumber;
+    }
+
+    public void setFromDate(final String fromDate) {
+        this.fromDate = fromDate;
+    }
+
+    public void setToDate(final String toDate) {
+        this.toDate = toDate;
     }
 
 }

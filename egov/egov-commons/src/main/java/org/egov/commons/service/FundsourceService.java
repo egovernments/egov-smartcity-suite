@@ -52,9 +52,10 @@ import javax.persistence.criteria.Root;
 import javax.persistence.metamodel.EntityType;
 import javax.persistence.metamodel.Metamodel;
 
-import org.egov.commons.Fund;
 import org.egov.commons.Fundsource;
 import org.egov.commons.repository.FundsourceRepository;
+import org.hibernate.Query;
+import org.hibernate.Session;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
@@ -87,11 +88,11 @@ public class FundsourceService {
         return fundsourceRepository.findAll(new Sort(Sort.Direction.ASC, "name"));
     }
 
-    public Fundsource findByName(String name) {
+    public Fundsource findByName(final String name) {
         return fundsourceRepository.findByName(name);
     }
 
-    public Fundsource findByCode(String code) {
+    public Fundsource findByCode(final String code) {
         return fundsourceRepository.findByCode(code);
     }
 
@@ -99,30 +100,38 @@ public class FundsourceService {
         return fundsourceRepository.findOne(id);
     }
 
-    public List<Fundsource> search(final Fundsource fundsource) {
-        CriteriaBuilder cb = entityManager.getCriteriaBuilder();
-        CriteriaQuery<Fundsource> createQuery = cb.createQuery(Fundsource.class);
-        Root<Fundsource> fundsources = createQuery.from(Fundsource.class);
-        createQuery.select(fundsources);
-        Metamodel m = entityManager.getMetamodel();
-        EntityType<Fundsource> Fundsource_ = m.entity(Fundsource.class);
+    public List<Fundsource> getBySubSchemeId(final Integer subSchemeId) {
+        final Query query = entityManager.unwrap(Session.class)
+                .createQuery(" from Fundsource where isactive = true and subSchemeId.id=:subSchemeId");
 
-        List<Predicate> predicates = new ArrayList<Predicate>();
+        query.setInteger("subSchemeId", subSchemeId);
+        return query.list();
+    }
+
+    public List<Fundsource> search(final Fundsource fundsource) {
+        final CriteriaBuilder cb = entityManager.getCriteriaBuilder();
+        final CriteriaQuery<Fundsource> createQuery = cb.createQuery(Fundsource.class);
+        final Root<Fundsource> fundsources = createQuery.from(Fundsource.class);
+        createQuery.select(fundsources);
+        final Metamodel m = entityManager.getMetamodel();
+        final EntityType<Fundsource> Fundsource_ = m.entity(Fundsource.class);
+
+        final List<Predicate> predicates = new ArrayList<Predicate>();
         if (fundsource.getName() != null) {
-            String name = "%" + fundsource.getName().toLowerCase() + "%";
+            final String name = "%" + fundsource.getName().toLowerCase() + "%";
             predicates.add(cb.isNotNull(fundsources.get("name")));
             predicates.add(cb.like(
                     cb.lower(fundsources.get(Fundsource_.getDeclaredSingularAttribute("name", String.class))), name));
         }
         if (fundsource.getCode() != null) {
-            String code = "%" + fundsource.getCode().toLowerCase() + "%";
+            final String code = "%" + fundsource.getCode().toLowerCase() + "%";
             predicates.add(cb.isNotNull(fundsources.get("code")));
             predicates.add(cb.like(
                     cb.lower(fundsources.get(Fundsource_.getDeclaredSingularAttribute("code", String.class))), code));
         }
         createQuery.where(predicates.toArray(new Predicate[] {}));
-        TypedQuery<Fundsource> query = entityManager.createQuery(createQuery);
-        List<Fundsource> resultList = query.getResultList();
+        final TypedQuery<Fundsource> query = entityManager.createQuery(createQuery);
+        final List<Fundsource> resultList = query.getResultList();
         return resultList;
     }
 }

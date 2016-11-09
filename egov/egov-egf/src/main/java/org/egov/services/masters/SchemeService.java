@@ -39,11 +39,14 @@
  */
 package org.egov.services.masters;
 
+import java.util.List;
+
 import org.egov.commons.Scheme;
 import org.egov.infstr.services.PersistenceService;
+import org.hibernate.Query;
 
 public class SchemeService extends PersistenceService<Scheme, Integer> {
-   
+
     public SchemeService() {
         super(Scheme.class);
     }
@@ -51,4 +54,12 @@ public class SchemeService extends PersistenceService<Scheme, Integer> {
     public SchemeService(final Class<Scheme> type) {
         super(type);
     }
+
+    public List<Scheme> getByFundId(final Integer fundId) {
+        final Query query = getSession().createQuery(" from Scheme where isactive = true and fund.id=:fundId");
+
+        query.setInteger("fundId", fundId);
+        return query.list();
+    }
+
 }

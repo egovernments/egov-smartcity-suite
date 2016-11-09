@@ -172,7 +172,7 @@ public class PaymentService extends PersistenceService<Paymentheader, Long> {
 	private int conBillIdlength = 0;
 	public Integer selectedRows = 0;
 	private final Date currentDate = new Date();
-	List<InstrumentVoucher> instVoucherList;
+	private List<InstrumentVoucher> instVoucherList;
 	@Autowired
 	private EisCommonService eisCommonService;
 	private BillsAccountingService billsAccountingService;
@@ -192,7 +192,7 @@ public class PaymentService extends PersistenceService<Paymentheader, Long> {
 	@PersistenceContext
 	private EntityManager entityManager;
 	@Autowired
-	ChartOfAccounts chartOfAccounts;
+	private ChartOfAccounts chartOfAccounts;
 
 	@Autowired
 	private SecurityUtils securityUtils;
@@ -220,6 +220,7 @@ public class PaymentService extends PersistenceService<Paymentheader, Long> {
 	}
 
 	public boolean isChequeNoGenerationAuto() {
+	    boolean retVal=true;
 		if (LOGGER.isDebugEnabled())
 			LOGGER.debug("Starting isChequeNoGenerationAuto...");
 		final List<AppConfigValues> appList = appConfigValuesService
@@ -229,9 +230,10 @@ public class PaymentService extends PersistenceService<Paymentheader, Long> {
 		if (LOGGER.isDebugEnabled())
 			LOGGER.debug("Completed isChequeNoGenerationAuto.");
 		if (chequeNoGeneration.equalsIgnoreCase("Y"))
-			return true;
+		    retVal= true;
 		else
-			return false;
+		    retVal= false;
+		return retVal;
 	}
 
 	public boolean isRtgsNoGenerationAuto() {
@@ -921,12 +923,6 @@ public class PaymentService extends PersistenceService<Paymentheader, Long> {
 			throws Exception {
 		if (LOGGER.isDebugEnabled())
 			LOGGER.debug("Starting updateVoucherHeader...");
-		String vNumGenMode = voucherTypeForULB.readVoucherTypes("Payment");
-		String autoVoucherType = FinancialConstants.PAYMENT_VOUCHERNO_TYPE;
-		String manualVoucherNumber = "";
-		if (parameters.get("voucherNumberSuffix") != null)
-			manualVoucherNumber = (String) parameters
-					.get("voucherNumberSuffix")[0];
 
 		voucherHeader.setFundId(existingVH.getFundId());
 
@@ -1626,6 +1622,7 @@ public class PaymentService extends PersistenceService<Paymentheader, Long> {
 	}
 
 	public boolean isRestrictPaymentToOnlyRtgsForContractor() {
+	        boolean retVal=true;
 		if (LOGGER.isDebugEnabled())
 			LOGGER.debug("Starting isRestrictPaymentToOnlyRtgsForContractor...");
 		final List<AppConfigValues> appList = appConfigValuesService
@@ -1635,9 +1632,10 @@ public class PaymentService extends PersistenceService<Paymentheader, Long> {
 		if (LOGGER.isDebugEnabled())
 			LOGGER.debug("Completed isRestrictPaymentToOnlyRtgsForContractor.");
 		if (restrictingPayment.equalsIgnoreCase("Y"))
-			return true;
+		    retVal= true;
 		else
-			return false;
+		    retVal=false;
+		return retVal;
 	}
 
 	/**
@@ -1653,7 +1651,7 @@ public class PaymentService extends PersistenceService<Paymentheader, Long> {
 	public boolean CheckForContractorSubledgerCodes(
 			final List<PaymentBean> billList, final Date restrictedDate)
 			throws NumberFormatException, ApplicationException {
-
+	        boolean retVal=false;
 		int billDateFlag = 0;
 		final String query = "Select gld.detailkeyid from generalledger gl,voucherheader vh, generalledgerdetail gld "
 				+ "where gl.id= gld.generalledgerid "
@@ -1675,8 +1673,8 @@ public class PaymentService extends PersistenceService<Paymentheader, Long> {
 					}
 				}
 		if (billDateFlag > 0)
-			return true;
-		return false;
+		    retVal= true;
+		return retVal;
 	}
 
 	public void validateRTGSPaymentForModify(final List<PaymentBean> billList)
@@ -2371,7 +2369,7 @@ public class PaymentService extends PersistenceService<Paymentheader, Long> {
 	}
 
 	// this will be used for all paymentVouchers
-	List<ChequeAssignment> chequeList = null;
+	private List<ChequeAssignment> chequeList = null;
 
 	public List<ChequeAssignment> getPaymentVoucherNotInInstrument(
 			final Map<String, String[]> parameters,
@@ -2836,7 +2834,7 @@ public class PaymentService extends PersistenceService<Paymentheader, Long> {
 		return chequeAssignmentList;
 	}
 
-	private Map getSubledgerAmtForDeduction(final Long payVhId) {
+/*	private Map getSubledgerAmtForDeduction(final Long payVhId) {
 		if (LOGGER.isDebugEnabled())
 			LOGGER.debug("Starting getSubledgerAmtForDeduction...");
 		final Map<String, BigDecimal> map = new HashMap<String, BigDecimal>();
@@ -2856,7 +2854,7 @@ public class PaymentService extends PersistenceService<Paymentheader, Long> {
 		if (LOGGER.isDebugEnabled())
 			LOGGER.debug("Completed getSubledgerAmtForDeduction.");
 		return map;
-	}
+	}*/
 
 	@Transactional
 	public List<InstrumentHeader> createInstrument(

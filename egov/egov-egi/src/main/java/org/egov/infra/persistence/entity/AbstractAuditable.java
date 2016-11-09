@@ -41,7 +41,6 @@
 package org.egov.infra.persistence.entity;
 
 import org.egov.infra.admin.master.entity.User;
-import org.egov.search.domain.Searchable;
 import org.hibernate.envers.Audited;
 import org.springframework.data.annotation.CreatedBy;
 import org.springframework.data.annotation.CreatedDate;
@@ -60,7 +59,6 @@ import java.util.Date;
 
 @MappedSuperclass
 @EntityListeners(AuditingEntityListener.class)
-@Searchable
 public abstract class AbstractAuditable extends AbstractPersistable<Long> {
 
     private static final long serialVersionUID = 7138056997693406739L;
@@ -71,8 +69,7 @@ public abstract class AbstractAuditable extends AbstractPersistable<Long> {
     private User createdBy;
 
     @Temporal(TemporalType.TIMESTAMP)
-    @CreatedDate    
-    @Searchable(name = "createdDate", group = Searchable.Group.COMMON)
+    @CreatedDate
     private Date createdDate;
 
     @ManyToOne(fetch = FetchType.LAZY)
@@ -83,7 +80,7 @@ public abstract class AbstractAuditable extends AbstractPersistable<Long> {
     @Temporal(TemporalType.TIMESTAMP)
     @LastModifiedDate
     private Date lastModifiedDate;
-    
+
     public User getCreatedBy() {
         return createdBy;
     }

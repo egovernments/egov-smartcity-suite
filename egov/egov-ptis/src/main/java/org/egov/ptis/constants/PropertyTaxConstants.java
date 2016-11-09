@@ -991,6 +991,7 @@ public interface PropertyTaxConstants {
     public static final String NOTICE_TYPE_SPECIAL_NOTICE = "Special Notice";
     public static final String NOTICE_TYPE_MUTATION_CERTIFICATE = "Mutation Certificate";
     public static final String NOTICE_TYPE_DEMAND_BILL = "Demand Bill";
+    public static final String NOTICE_TYPE_PROCEEDINGS = "Proceedings";
 
     public static final String CREATE_AUDIT_ACTION = "Create Property";
     public static final String MODIFY_AUDIT_ACTION = "Modify Property";
@@ -1091,14 +1092,16 @@ public interface PropertyTaxConstants {
     public static final String IMAGES_BASE_PATH = "/egi/resources/global/images/";
     public static final String IMAGE_CONTEXT_PATH = "/egi";
     public static final String REPORT_TEMPLATENAME_DEMANDNOTICE_GENERATION = "DemandBill";
-    public static final String REPORT_TEMPLATENAME_REVISIONPETITION_HEARINGNOTICE = "revPetitionHearingNotice";
+    public static final String REPORT_TEMPLATENAME_REVISIONPETITION_HEARINGNOTICE = "mainHearingNotice";
     public static final String NOTICE_TYPE_REVISIONPETITION_HEARINGNOTICE = "Revision Petition Hearing Notice";
     public static final String REPORT_TEMPLATENAME_REVISIONPETITION_ENDORSEMENT = "revPetitionEndorsement";
     public static final String NOTICE_TYPE_REVISIONPETITION_ENDORSEMENT = "Revision Petition Endorsement";
     public static final String NOTICE_TYPE_REVISIONPETITION_ENDORSEMENT_PREFIX = "ENDORSEMENT";
     public static final String NOTICE_TYPE_REVISIONPETITION_SPECIALNOTICE = "Revision Petition SpecialNotice";
     public static final String NOTICE_TYPE_REVISIONPETITION_SPECIALNOTICE_PREFIX = "SPECIALNOTICE";
+    public static final String NOTICE_TYPE_REVISIONPETITION_PROCEEDINGS_PREFIX = "PROCEEDINGS";
     public static final String REPORT_TEMPLATENAME_TRANSFER_CERTIFICATE = "mainMutationCertificate";
+    public static final String REPORT_TEMPLATENAME_RP_SPECIAL_NOTICE = "mainRPSpecialNotice";
 
     // Property Transfer related constants
     public static final String TRANSFER_FEE_COLLECTED = "Transfer Fee Collected";
@@ -1484,7 +1487,8 @@ public interface PropertyTaxConstants {
     
     //urls	
     public String WTMS_TAXDUE_RESTURL = "%s/wtms/rest/watertax/due/byptno/%s";
-	
+    public String WTMS_TOTALDEMAND_RESTURL = "%s/wtms/rest/watertax/totaldemandamount/";
+
 	public static final String TRANSACTION_TYPE_CREATE = "Create";
 	public static final String TRANSACTION_TYPE_DEMOLITION = "Demolition";
 	
@@ -1494,4 +1498,23 @@ public interface PropertyTaxConstants {
 	public static final String PAYMENT_TYPE_PARTIALLY = "Partially";
 	public static final String PAYMENT_TYPE_FULLY = "Fully";
 	public static final String PAYMENT_TYPE_ADVANCE = "Advance";
+	
+	public static final String COLLECION_BILLING_SERVICE_PT = "Property Tax";
+	public static final String COLLECION_BILLING_SERVICE_WTMS = "Water Tax";
+	
+	public static final String PROPERTY_TAX_INDEX_NAME = "propertytax";
+	public static final String COLLECTION_INDEX_NAME = "receipts";
+	public static final String WATER_TAX_INDEX_NAME = "waterchargeconsumer";
+	public static final String BILL_COLLECTOR_INDEX_NAME = "billcollector";
+	
+	public static final String DATE_FORMAT_YYYYMMDD = "yyyy-MM-dd";
+	public static final SimpleDateFormat DATEFORMATTER_YYYY_MM_DD = new SimpleDateFormat(DATE_FORMAT_YYYYMMDD);
+	
+    public static final String DASHBOARD_GROUPING_DISTRICTWISE = "district";
+    public static final String DASHBOARD_GROUPING_ULBWISE = "ulb";
+    public static final String DASHBOARD_GROUPING_REGIONWISE = "region";
+    public static final String DASHBOARD_GROUPING_GRADEWISE = "grade";
+    public static final String DASHBOARD_GROUPING_WARDWISE = "ward";
+    public static final String DASHBOARD_GROUPING_CITYWISE = "city";
+    public static final String DASHBOARD_GROUPING_BILLCOLLECTORWISE = "billcollector";
 }

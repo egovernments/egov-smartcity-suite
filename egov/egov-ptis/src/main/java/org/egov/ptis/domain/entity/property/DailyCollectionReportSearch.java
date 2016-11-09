@@ -39,24 +39,18 @@
  */
 package org.egov.ptis.domain.entity.property;
 
-import static org.egov.search.domain.Filter.rangeFilter;
-import static org.egov.search.domain.Filter.termsStringFilter;
-import org.egov.ptis.constants.PropertyTaxConstants;
+import org.jboss.logging.Logger;
 
+import javax.validation.ValidationException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
 
-import javax.validation.ValidationException;
-
-import org.egov.search.domain.Filter;
-import org.egov.search.domain.Filters;
-import org.jboss.logging.Logger;
-
 public class DailyCollectionReportSearch {
 
+    private static final Logger logger = Logger.getLogger(DailyCollectionReportSearch.class);
     private String fromDate;
     private String toDate;
     private SimpleDateFormat ft = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
@@ -69,7 +63,9 @@ public class DailyCollectionReportSearch {
     private String ulbName;
     private List<String> consumerCode = new ArrayList<String>();
 
-    private static final Logger logger = Logger.getLogger(DailyCollectionReportSearch.class);
+    public String getFromDate() {
+        return fromDate;
+    }
 
     public void setFromDate(final String fromDate) {
         if (null != fromDate)
@@ -80,6 +76,10 @@ public class DailyCollectionReportSearch {
             } catch (final ParseException e) {
                 throw new ValidationException(e.getMessage());
             }
+    }
+
+    public String getToDate() {
+        return toDate;
     }
 
     public void setToDate(final String toDate) {
@@ -97,14 +97,6 @@ public class DailyCollectionReportSearch {
             } catch (final ParseException e) {
                 throw new ValidationException(e.getMessage());
             }
-    }
-
-    public String getFromDate() {
-        return fromDate;
-    }
-
-    public String getToDate() {
-        return toDate;
     }
 
     public String getCollectionMode() {
@@ -154,7 +146,7 @@ public class DailyCollectionReportSearch {
     public void setConsumerCode(List<String> consumerCode) {
         this.consumerCode = consumerCode;
     }
-    
+
     public String getUlbName() {
         return ulbName;
     }
@@ -163,7 +155,7 @@ public class DailyCollectionReportSearch {
         this.ulbName = ulbName;
     }
 
-    public Filters searchCollectionFilters() {
+    /*public Filters searchCollectionFilters() {
         final List<Filter> andFilters = new ArrayList<>(0);
         andFilters.add(termsStringFilter("clauses.cityname", ulbName));
         andFilters.add(termsStringFilter("clauses.channel", collectionMode));
@@ -187,7 +179,7 @@ public class DailyCollectionReportSearch {
         if (logger.isDebugEnabled())
             logger.debug("finished property tax filters");
         return Filters.withAndFilters(andFilters);
-    }
+    }*/
 
     public String searchQuery() {
         return searchText;

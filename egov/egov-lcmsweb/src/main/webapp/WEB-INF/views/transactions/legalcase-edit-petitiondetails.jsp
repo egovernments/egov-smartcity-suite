@@ -207,7 +207,7 @@
 </table>
 <div class="form-group">
 	<label class="col-sm-3 control-label text-right" id="persons"><spring:message
-			code="lbl.representedby" /></label>
+			code="lbl.representedby" />:</label>
 	<div class="col-sm-3 add-margin" id="personsdiv">
 		<form:input class="form-control patternvalidation"
 			data-pattern="string" maxlength="50" id="representedby"

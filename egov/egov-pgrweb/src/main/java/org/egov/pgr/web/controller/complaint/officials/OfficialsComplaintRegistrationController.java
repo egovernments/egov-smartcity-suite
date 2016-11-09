@@ -70,14 +70,20 @@ import static org.springframework.web.bind.annotation.RequestMethod.POST;
 @RequestMapping(value = "/complaint/officials/")
 public class OfficialsComplaintRegistrationController extends GenericComplaintController {
 
-    private @Autowired ReceivingCenterService receivingCenterService;
+    private
+    @Autowired
+    ReceivingCenterService receivingCenterService;
 
-    public @ModelAttribute("receivingCenters") List<ReceivingCenter> receivingCenters() {
+    public
+    @ModelAttribute("receivingCenters")
+    List<ReceivingCenter> receivingCenters() {
         return receivingCenterService.findAll();
     }
 
-    public @ModelAttribute("receivingModes") List<ReceivingMode> receivingModes() {
-        return new ArrayList<ReceivingMode>(Arrays.asList(ReceivingMode.MANUAL, ReceivingMode.EMAIL, ReceivingMode.CALL));
+    public
+    @ModelAttribute("receivingModes")
+    List<ReceivingMode> receivingModes() {
+        return new ArrayList<>(Arrays.asList(ReceivingMode.MANUAL, ReceivingMode.EMAIL, ReceivingMode.CALL));
     }
 
     @RequestMapping(value = "show-reg-form", method = GET)
@@ -87,7 +93,7 @@ public class OfficialsComplaintRegistrationController extends GenericComplaintCo
 
     @RequestMapping(value = "register", method = POST)
     public String registerComplaint(@Valid @ModelAttribute final Complaint complaint, final BindingResult resultBinder,
-            final RedirectAttributes redirectAttributes, @RequestParam("files") final MultipartFile[] files, final Model model) {
+                                    final RedirectAttributes redirectAttributes, @RequestParam("files") final MultipartFile[] files, final Model model) {
         if (null != complaint.getCrossHierarchyId()) {
             final CrossHierarchy crosshierarchy = crossHierarchyService.findById(complaint.getCrossHierarchyId());
             complaint.setLocation(crosshierarchy.getParent());
@@ -111,6 +117,6 @@ public class OfficialsComplaintRegistrationController extends GenericComplaintCo
             return "complaint/officials/registration-form";
         }
         redirectAttributes.addFlashAttribute("complaint", complaint);
-        return "redirect:/complaint/reg-success?crn=" + complaint.getCrn();
+        return "redirect:/complaint/reg-success/"+complaint.getCrn();
     }
 }

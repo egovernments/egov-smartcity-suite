@@ -47,7 +47,12 @@ public class ApplicationThreadLocals {
     private static ThreadLocal<String> tenantID = new ThreadLocal<>();
     private static ThreadLocal<String> cityCode = new ThreadLocal<>();
     private static ThreadLocal<String> cityName = new ThreadLocal<>();
-    private static ThreadLocal<String> municipalityName = new ThreadLocal<String>();
+    private static ThreadLocal<String> municipalityName = new ThreadLocal<>();
+    private static ThreadLocal<String> domainURL = new ThreadLocal<>();
+
+    private ApplicationThreadLocals() {
+        //Not to be initialized
+    }
 
     public static String getCityName() {
         return cityName.get();
@@ -97,6 +102,14 @@ public class ApplicationThreadLocals {
         municipalityName.set(cityMunicipalityName);
     }
 
+    public static String getDomainURL() {
+        return domainURL.get();
+    }
+
+    public static void setDomainURL(final String domURL) {
+        domainURL.set(domURL);
+    }
+
     public static void clearValues() {
         domainName.remove();
         userId.remove();
@@ -104,6 +117,7 @@ public class ApplicationThreadLocals {
         cityCode.remove();
         cityName.remove();
         municipalityName.remove();
-    }
+        domainURL.remove();
 
+    }
 }

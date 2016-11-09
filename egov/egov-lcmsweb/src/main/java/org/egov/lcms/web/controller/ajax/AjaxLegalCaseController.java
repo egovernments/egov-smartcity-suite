@@ -42,12 +42,8 @@ package org.egov.lcms.web.controller.ajax;
 import static org.springframework.web.bind.annotation.RequestMethod.GET;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
-import org.egov.eis.entity.Assignment;
-import org.egov.eis.service.AssignmentService;
 import org.egov.infra.admin.master.entity.Department;
 import org.egov.infra.admin.master.service.DepartmentService;
 import org.egov.lcms.masters.entity.AdvocateMaster;
@@ -73,9 +69,6 @@ public class AjaxLegalCaseController {
     private DepartmentService departmentService;
 
     @Autowired
-    private AssignmentService assignmentService;
-
-    @Autowired
     private AdvocateMasterService advocateMasterService;
 
     @Autowired
@@ -99,32 +92,34 @@ public class AjaxLegalCaseController {
             @ModelAttribute("legalcase") @RequestParam final String advocateName,
             @RequestParam final Boolean isSeniorAdvocate) {
 
-        return advocateMasterService.getAllAdvocatesByNameLikeAndIsSeniorAdvocate(advocateName.toUpperCase(), isSeniorAdvocate);
+        return advocateMasterService.getAllAdvocatesByNameLikeAndIsSeniorAdvocate(advocateName.toUpperCase(),
+                isSeniorAdvocate);
     }
 
-    @RequestMapping(value = "ajax/positions", method = GET, produces = MediaType.APPLICATION_JSON_VALUE)
-    public @ResponseBody Map<Long, String> getAllPositionsByDeptAndNameLike(
-            @ModelAttribute("legalcase") @RequestParam final String departmentName,
-			@RequestParam final String positionName) {
-		final Map<Long, String> positionEmployeeMap = new HashMap<Long, String>();
-		String posEmpName;
-		final Department deptObj = departmentService.getDepartmentByName(departmentName);
-		final List<Assignment> assignList = assignmentService
-				.getAllPositionsByDepartmentAndPositionNameForGivenRange(deptObj.getId(), positionName.toUpperCase());
-		if (!assignList.isEmpty()) {
-			for (final Assignment assign : assignList) {
-				posEmpName = assign.getPosition().getName().concat("@").concat(assign.getEmployee().getUsername());
-				positionEmployeeMap.put(assign.getEmployee().getId(), posEmpName);
-			}
-		}
-		return positionEmployeeMap;
-	}
+    /*
+     * @RequestMapping(value = "ajax/positions", method = GET, produces =
+     * MediaType.APPLICATION_JSON_VALUE) public @ResponseBody Map<Long, String>
+     * getAllPositionsByDeptAndNameLike(
+     * @ModelAttribute("legalcase") @RequestParam final String departmentName,
+     * @RequestParam final String positionName) { final Map<Long, String>
+     * positionEmployeeMap = new HashMap<Long, String>(); String posEmpName;
+     * final Department deptObj =
+     * departmentService.getDepartmentByName(departmentName); final
+     * List<Assignment> assignList = assignmentService
+     * .getAllPositionsByDepartmentAndPositionNameForGivenRange(deptObj.getId(),
+     * positionName.toUpperCase()); if (!assignList.isEmpty()) for (final
+     * Assignment assign : assignList) { posEmpName =
+     * assign.getPosition().getName().concat("@").concat(assign.getEmployee().
+     * getUsername()); positionEmployeeMap.put(assign.getEmployee().getId(),
+     * posEmpName); } return positionEmployeeMap; }
+     */
 
     @RequestMapping(value = "/ajax-petitionTypeByCourtType", method = GET, produces = MediaType.APPLICATION_JSON_VALUE)
     public @ResponseBody List<PetitionTypeMaster> getAllPetitionTypesByCountType(@RequestParam final Long courtType) {
         List<PetitionTypeMaster> petitionTypeList = new ArrayList<PetitionTypeMaster>(0);
         if (courtType != null) {
-            petitionTypeList = petitiontypeMasterService.findActivePetitionByCourtType(courtTypeMasterService.findOne(courtType));
+            petitionTypeList = petitiontypeMasterService
+                    .findActivePetitionByCourtType(courtTypeMasterService.findOne(courtType));
             petitionTypeList.forEach(petitionType -> petitionType.toString());
         }
         return petitionTypeList;

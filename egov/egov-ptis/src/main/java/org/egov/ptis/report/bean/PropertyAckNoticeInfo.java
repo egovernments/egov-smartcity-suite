@@ -110,6 +110,8 @@ public class PropertyAckNoticeInfo {
     private String transferpropertyTextEnd;
     private String approverName;
     private String noticeNumber;
+    private String hearingDate;
+    private String hearingTime;
 
     public String getCreationReason() {
         return creationReason;
@@ -637,6 +639,22 @@ public class PropertyAckNoticeInfo {
 
     public void setNoticeNumber(String noticeNumber) {
         this.noticeNumber = noticeNumber;
+    }
+
+    public String getHearingDate() {
+        return hearingDate;
+    }
+
+    public void setHearingDate(String hearingDate) {
+        this.hearingDate = hearingDate;
+    }
+
+    public String getHearingTime() {
+        return hearingTime;
+    }
+
+    public void setHearingTime(String hearingTime) {
+        this.hearingTime = hearingTime;
     }
 
 }

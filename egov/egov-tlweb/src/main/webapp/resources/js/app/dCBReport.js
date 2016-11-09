@@ -48,23 +48,21 @@
 
 var reportdatatable;
 
-$(document).ready(
-		function(e) {
-			drillDowntableContainer = $("#tbldcbdrilldown");
-			$('#report-backbutton').hide();
-			$('form').submit(function(e) {
-				callAjaxByBoundary(e);
-			});
-			
-			$('#backButton').click(
-					function(e) {
-						callAjaxByBoundary(e);
-					});
+$(document).ready(function(e) {
+	drillDowntableContainer = $("#tbldcbdrilldown");
+	$('#report-backbutton').hide();
+	$('form').submit(function(e) {
+		callAjaxByBoundary(e);
+	});
 
-		});
+	$('#backButton').click(function(e) {
+		callAjaxByBoundary(e);
+	});
 
-function openTradeLicense(obj ) {  
-	 window.open("../../viewtradelicense/viewTradeLicense-view.action?id="
+});
+
+function openTradeLicense(obj) {
+	window.open("../../viewtradelicense/viewTradeLicense-view.action?id="
 			+ $(obj).data('eleval'), '',
 			'scrollbars=yes,width=1000,height=700,status=yes');
 }
@@ -75,8 +73,8 @@ function callAjaxByBoundary(event) {
 	var temp = "";
 	modeVal = $('#mode').val();
 	reportType = $('#reportType').val();
-		$('#report-backbutton').show();
-	var licenseNumbertemp=$('#licensenumber').val(); 
+	$('#report-backbutton').show();
+	var licenseNumbertemp = $('#licensenumber').val();
 	$('.report-section').removeClass('display-hide');
 	$('#report-footer').show();
 	event.preventDefault();
@@ -86,11 +84,11 @@ function callAjaxByBoundary(event) {
 				responsive : true,
 				destroy : true,
 				ajax : {
-					url : "../dCBReportList",
+					url : "../dcbreportlist",
 					data : {
 						'mode' : modeVal,
 						'reportType' : 'license',
-						'licensenumber'    : licenseNumbertemp
+						'licensenumber' : licenseNumbertemp
 					}
 				},
 				"autoWidth" : false,
@@ -104,83 +102,81 @@ function callAjaxByBoundary(event) {
 				columns : [
 						{
 							"data" : function(row, type, set, meta) {
-									return {
-										name : row.licensenumber,
-										id : row.licenseid
-									};
+								return {
+									name : row.licensenumber,
+									id : row.licenseid
+								};
 							},
 							"render" : function(data, type, row) {
 								return '<a href="javascript:void(0);" onclick="openTradeLicense(this);" data-hiddenele="id" data-eleval="'
 										+ data.id + '">' + data.name + '</a>';
 							},
-								"sTitle" : "License No."
-							},{
-								"data" : "arr_demand",
-								"sTitle" : "Arrears"
-							},{
-								"data" : "curr_demand",
-								"sTitle" : "Current"
-							},{
-								"data" : "username",
-								"sTitle" : "username",
-								"bVisible" : false
-							},{
-								"data" : "total_demand",
-								"sTitle" : "Total"
-							}, {
-								"data" : "arr_coll",
-								"sTitle" : "Arrears"
-							}, {
-								"data" : "curr_coll",
-								"sTitle" : "Current"
-							}, {
-								"data" : "total_coll",
-								"sTitle" : "Total"
-							}, {
-								"data" : "arr_balance",
-								"sTitle" : "Arrears"
-							}, {
-								"data" : "curr_balance",
-								"sTitle" : "Current"
-							}, {
-								"data" : "total_balance",
-								"sTitle" : "Total"
-							}],
-							"footerCallback" : function(row, data, start, end, display) {
-								var api = this.api(), data;
-								if (data.length == 0) {
-									$('#report-footer').hide();
-								} else {
-									$('#report-footer').show();
-								}
-								if (data.length > 0) {
-									updateTotalFooter(1, api);
-									updateTotalFooter(2, api);
-									updateTotalFooter(4, api);
-									updateTotalFooter(5, api);
-									updateTotalFooter(6, api);
-									updateTotalFooter(7, api);
-									updateTotalFooter(8, api);
-									updateTotalFooter(9, api);
-									updateTotalFooter(10, api);
-								}
-							},
-							"aoColumnDefs" : [ {
-								"aTargets" : [ 2, 3, 4, 5, 6, 7, 8, 9, 10 ],
-								"mRender" : function(data, type, full) {
-									return formatNumberInr(data);
-								}
-							}]
-					});
-	    	jQuery('.loader-class').modal('hide');
-	
-	    	if ($('#mode').val() == 'property') {
-	    		reportdatatable.fnSetColumnVis(1, false);
-	    	}
-	    	else
-	    	{
-		       reportdatatable.fnSetColumnVis(1, true);
-	    	}
+							"sTitle" : "License No."
+						}, {
+							"data" : "arr_demand",
+							"sTitle" : "Arrears"
+						}, {
+							"data" : "curr_demand",
+							"sTitle" : "Current"
+						}, {
+							"data" : "username",
+							"sTitle" : "username",
+							"bVisible" : false
+						}, {
+							"data" : "total_demand",
+							"sTitle" : "Total"
+						}, {
+							"data" : "arr_coll",
+							"sTitle" : "Arrears"
+						}, {
+							"data" : "curr_coll",
+							"sTitle" : "Current"
+						}, {
+							"data" : "total_coll",
+							"sTitle" : "Total"
+						}, {
+							"data" : "arr_balance",
+							"sTitle" : "Arrears"
+						}, {
+							"data" : "curr_balance",
+							"sTitle" : "Current"
+						}, {
+							"data" : "total_balance",
+							"sTitle" : "Total"
+						} ],
+				"footerCallback" : function(row, data, start, end, display) {
+					var api = this.api(), data;
+					if (data.length == 0) {
+						$('#report-footer').hide();
+					} else {
+						$('#report-footer').show();
+					}
+					if (data.length > 0) {
+						updateTotalFooter(1, api);
+						updateTotalFooter(2, api);
+						updateTotalFooter(4, api);
+						updateTotalFooter(5, api);
+						updateTotalFooter(6, api);
+						updateTotalFooter(7, api);
+						updateTotalFooter(8, api);
+						updateTotalFooter(9, api);
+						updateTotalFooter(10, api);
+					}
+				},
+				"aoColumnDefs" : [ {
+					"aTargets" : [ 2, 3, 4, 5, 6, 7, 8, 9, 10 ],
+					"mRender" : function(data, type, full) {
+						return formatNumberInr(data);
+					}
+				} ]
+			});
+	jQuery('.loader-class').modal('hide');
+
+	if ($('#mode').val() == 'property') {
+		reportdatatable.fnSetColumnVis(1, false);
+	} else {
+		reportdatatable.fnSetColumnVis(1, true);
+	}
 }
 function updateTotalFooter(colidx, api) {
 	// Remove the formatting to get integer data for summation

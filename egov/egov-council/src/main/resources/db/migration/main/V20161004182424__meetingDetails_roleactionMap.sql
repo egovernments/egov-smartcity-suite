@@ -1,0 +1,1 @@
+INSERT into EG_ROLEACTION(ROLEID,ACTIONID) values ((select id from eg_role where name='Council Management Creator'),(select id from eg_action where name='View-CouncilMeeting'));

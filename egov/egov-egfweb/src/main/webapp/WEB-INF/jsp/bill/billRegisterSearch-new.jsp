@@ -46,7 +46,7 @@
 <head>
 <title><s:text name="bill.search.heading"></s:text></title>
 </head>
-<body>
+<body onload="changeMandatoryField()">
 	<s:form name="billRegisterForm" action="billRegisterSearch"
 		theme="simple">
 		<jsp:include page="../budget/budgetHeader.jsp">
@@ -55,7 +55,8 @@
 		<font style='color: red; font-weight: bold'>
 			<p class="error-block" id="lblError"></p>
 		</font>
-		<span class="mandatory1"> <s:actionerror /> <s:fielderror /> <s:actionmessage />
+		<span class="mandatory1"> <s:actionerror /> <s:fielderror />
+			<s:actionmessage />
 		</span>
 		<div class="formmainbox">
 			<div class="subheadnew">
@@ -69,11 +70,15 @@
 					<td class="bluebox"><s:select name="expType" id="expType"
 							list="dropdownData.expType" headerKey="-1"
 							headerValue="----Choose----" value="%{expType}" /></td>
+					<td class="greybox"><s:text name="bill.search.billnumber" /></td>
+					<td class="greybox"><s:textfield name="billnumber"
+							id="billnumber" maxlength="25" value="%{billnumber}"
+							onblur="changeMandatoryField()" /></td>
 				</tr>
 				<tr>
 					<td class="bluebox">&nbsp;</td>
 					<td class="greybox"><s:text name="bill.search.dateFrom" /> <span
-						class="mandatory1">*</span></td>
+						class="mandatory1" id="fromDateMandatory">*</span></td>
 
 					<td class="greybox"><s:date name="billDateFrom"
 							var="billDateFrom" format="dd/MM/yyyy" /> <s:textfield
@@ -83,7 +88,7 @@
 							data-inputmask="'mask': 'd/m/y'" /></td>
 
 					<td class="greybox"><s:text name="bill.search.dateTo" /> <span
-						class="mandatory1">*</span></td>
+						class="mandatory1" id="toDateMandatory">*</span></td>
 
 					<td class="greybox"><s:date name="billDateTo" var="billDateTo"
 							format="dd/MM/yyyy" /> <s:textfield id="billDateTo"
@@ -95,14 +100,6 @@
 
 				</tr>
 				<jsp:include page="billSearchCommon-filter.jsp" />
-				<tr>
-					<td class="bluebox">&nbsp;</td>
-					<td class="greybox"><s:text name="bill.search.billnumber" /></td>
-					<td class="greybox"><s:textfield name="billnumber"
-							id="billnumber" maxlength="25" value="%{billnumber}" /></td>
-					<td class="greybox">
-					<td class="greybox">
-				</tr>
 			</table>
 		</div>
 		<div align="center" class="buttonbottom">
@@ -187,13 +184,21 @@
 	</s:form>
 	<script>
 	 function validateFormAndSubmit(){
-	    if (validate())
-		   {
+		 if(jQuery('#billnumber').val()!="")
+			 {
+				 if(jQuery('#expType').val()==-1)
+					 {
+						 jQuery('#lblError').html("Please select expenditure type");
+						 return false
+					 }
+			 }
+		 else {
+				 if(!validate())
+					 return false;
+		 	  }
 	       	document.billRegisterForm.action='${pageContext.request.contextPath}/bill/billRegisterSearch-search.action';
 		 	document.billRegisterForm.submit();
-		   }else{
-		       	return false;
-			}
+		 	return true;
 		 }
 	function validate(){
 	
@@ -295,6 +300,23 @@ String.prototype.trim = function () {
 				document.getElementById('loading').style.display ='none';
 				dom.get('listid').style.display='block';
 	</s:if>	
+	
+function changeMandatoryField()
+	{
+		if(jQuery('#billnumber').val()!="")
+			{
+				jQuery("#fromDateMandatory").html("");
+				jQuery("#toDateMandatory").html("");
+				jQuery("#fundDateMandatory").html("");
+			}
+		else
+			{
+				jQuery("#fromDateMandatory").html("*");
+				jQuery("#toDateMandatory").html("*");
+				jQuery("#fundDateMandatory").html("*");
+			}
+		
+	}
 </script>
 
 </body>

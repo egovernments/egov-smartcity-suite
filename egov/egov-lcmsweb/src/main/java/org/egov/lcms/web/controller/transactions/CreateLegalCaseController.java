@@ -44,7 +44,6 @@ import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 
 import org.egov.lcms.autonumber.LegalCaseNumberGenerator;
-import org.egov.lcms.masters.entity.enums.LCNumberType;
 import org.egov.lcms.transactions.entity.LegalCase;
 import org.egov.lcms.transactions.service.LegalCaseService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -87,12 +86,8 @@ public class CreateLegalCaseController extends GenericLegalCaseController {
             model.addAttribute("bipartisanPetitionerDetailsList", legalCase.getBipartisanPetitionerDetailsList());
             return "legalCase-newForm";
         }
-        if (legalCase.getLcNumberType() != null && legalCase.getLcNumberType().equals(LCNumberType.AUTOMATED))
-            legalCase.setLcNumber(legalCaseNumberGenerator.generateLegalCaseNumber());
-        else
-            legalCase.setLcnumber(
-                    legalCase.getLcNumber() + (legalCase.getFinwpYear() != null ? "/" + legalCase.getFinwpYear() : ""));
 
+        legalCase.setLcNumber(legalCaseNumberGenerator.generateLegalCaseNumber());
         legalCaseService.persist(legalCase);
         redirectAttrs.addFlashAttribute("legalCase", legalCase);
         model.addAttribute("message", "Legal Case created successfully.");

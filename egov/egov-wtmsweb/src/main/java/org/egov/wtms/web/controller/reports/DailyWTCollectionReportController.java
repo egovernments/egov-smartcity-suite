@@ -39,53 +39,35 @@
  */
 package org.egov.wtms.web.controller.reports;
 
-import static java.util.Arrays.asList;
-import static org.springframework.web.bind.annotation.RequestMethod.GET;
+import org.egov.collection.constants.CollectionConstants;
+import org.egov.commons.EgwStatus;
+import org.egov.commons.dao.EgwStatusHibernateDAO;
+import org.egov.commons.entity.Source;
+import org.egov.eis.service.AssignmentService;
+import org.egov.infra.admin.master.entity.Boundary;
+import org.egov.infra.admin.master.entity.User;
+import org.egov.infra.admin.master.service.AppConfigValueService;
+import org.egov.infra.admin.master.service.BoundaryService;
+import org.egov.infra.admin.master.service.CityService;
+import org.egov.ptis.constants.PropertyTaxConstants;
+import org.egov.wtms.application.entity.DailyWTCollectionReportSearch;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.RequestMapping;
 
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import org.apache.commons.lang3.StringUtils;
-import org.egov.collection.constants.CollectionConstants;
-import org.egov.commons.EgwStatus;
-import org.egov.commons.dao.EgwStatusHibernateDAO;
-import org.egov.commons.entity.Source;
-import org.egov.config.search.Index;
-import org.egov.config.search.IndexType;
-import org.egov.eis.service.AssignmentService;
-import org.egov.infra.admin.master.entity.Boundary;
-import org.egov.infra.admin.master.entity.City;
-import org.egov.infra.admin.master.entity.User;
-import org.egov.infra.admin.master.service.AppConfigValueService;
-import org.egov.infra.admin.master.service.BoundaryService;
-import org.egov.infra.admin.master.service.CityService;
-import org.egov.infra.config.core.ApplicationThreadLocals;
-import org.egov.ptis.constants.PropertyTaxConstants;
-import org.egov.search.domain.Document;
-import org.egov.search.domain.Page;
-import org.egov.search.domain.SearchResult;
-import org.egov.search.domain.Sort;
-import org.egov.search.service.SearchService;
-import org.egov.wtms.application.entity.DailyWTCollectionReportSearch;
-import org.elasticsearch.search.sort.SortOrder;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.ResponseBody;
+import static org.springframework.web.bind.annotation.RequestMethod.GET;
 
 @Controller
 @RequestMapping("/report/dailyWTCollectionReport/search/")
 public class DailyWTCollectionReportController {
-
-    @Autowired
-    private SearchService searchService;
 
     @Autowired
     public EgwStatusHibernateDAO egwStatusHibernateDAO;
@@ -144,7 +126,7 @@ public class DailyWTCollectionReportController {
         return "dailyWTCollection-search";
     }
 
-    @RequestMapping(method = RequestMethod.POST)
+    /*@RequestMapping(method = RequestMethod.POST)
     @ResponseBody
     public List<Document> searchCollection(@ModelAttribute final DailyWTCollectionReportSearch searchRequest) {
 
@@ -180,5 +162,5 @@ public class DailyWTCollectionReportController {
         return searchService.search(asList(Index.COLLECTION.toString()),
                 asList(IndexType.COLLECTION_BIFURCATION.toString()), searchRequest.searchQuery(),
                 searchRequest.searchCollectionFilters(), sortByReceiptDate, Page.NULL);
-    }
+    }*/
 }

@@ -45,24 +45,29 @@ import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.security.utils.SecurityUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.FilterType;
 import org.springframework.context.annotation.Profile;
 import org.springframework.data.domain.AuditorAware;
+import org.springframework.data.elasticsearch.repository.ElasticsearchRepository;
 import org.springframework.data.envers.repository.support.EnversRevisionRepositoryFactoryBean;
 import org.springframework.data.jpa.repository.config.EnableJpaAuditing;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 
 @Configuration
-@EnableJpaRepositories(basePackages="org.egov.**.repository",repositoryFactoryBeanClass=EnversRevisionRepositoryFactoryBean.class)
+@EnableJpaRepositories(basePackages = "org.egov.**.repository",
+        excludeFilters = @ComponentScan.Filter(type = FilterType.ASSIGNABLE_TYPE, classes = ElasticsearchRepository.class),
+        repositoryFactoryBeanClass = EnversRevisionRepositoryFactoryBean.class)
 @EnableJpaAuditing
 public class RepositoryConfiguration {
- 
+
     @Autowired
     private SecurityUtils securityUtils;
-    
+
     @Bean
     @Profile("production")
-    public  AuditorAware<User> springSecurityAwareAuditor() {
+    public AuditorAware<User> springSecurityAwareAuditor() {
         return () -> securityUtils.getCurrentUser();
     }
 }

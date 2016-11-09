@@ -40,9 +40,60 @@
 
 package org.egov.api.controller;
 
-import static java.util.Arrays.asList;
-import static org.springframework.web.bind.annotation.RequestMethod.GET;
+import com.google.gson.JsonArray;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
+import net.coobird.thumbnailator.Thumbnails;
+import org.apache.commons.io.FileUtils;
+import org.apache.commons.io.IOUtils;
+import org.apache.commons.lang3.ArrayUtils;
+import org.apache.log4j.Logger;
+import org.egov.api.adapter.ComplaintActionAdapter;
+import org.egov.api.adapter.ComplaintAdapter;
+import org.egov.api.adapter.ComplaintStatusAdapter;
+import org.egov.api.adapter.ComplaintTypeAdapter;
+import org.egov.api.controller.core.ApiController;
+import org.egov.api.controller.core.ApiUrl;
+import org.egov.api.model.ComplaintAction;
+import org.egov.infra.admin.master.entity.CrossHierarchy;
+import org.egov.infra.admin.master.entity.User;
+import org.egov.infra.admin.master.service.BoundaryService;
+import org.egov.infra.admin.master.service.CrossHierarchyService;
+import org.egov.infra.admin.master.service.DepartmentService;
+import org.egov.infra.exception.ApplicationRuntimeException;
+import org.egov.infra.filestore.entity.FileStoreMapper;
+import org.egov.infra.persistence.entity.enums.UserType;
+import org.egov.infra.security.utils.SecurityUtils;
+import org.egov.infra.utils.FileStoreUtils;
+import org.egov.infra.utils.StringUtils;
+import org.egov.pgr.entity.Complaint;
+import org.egov.pgr.entity.ComplaintStatus;
+import org.egov.pgr.entity.ComplaintType;
+import org.egov.pgr.entity.ComplaintTypeCategory;
+import org.egov.pgr.entity.enums.CitizenFeedback;
+import org.egov.pgr.entity.enums.ReceivingMode;
+import org.egov.pgr.service.ComplaintService;
+import org.egov.pgr.service.ComplaintStatusMappingService;
+import org.egov.pgr.service.ComplaintStatusService;
+import org.egov.pgr.service.ComplaintTypeCategoryService;
+import org.egov.pgr.service.ComplaintTypeService;
+import org.egov.pgr.utils.constants.PGRConstants;
+import org.json.simple.JSONObject;
+import org.json.simple.JSONValue;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.multipart.MultipartFile;
 
+import javax.imageio.ImageIO;
+import javax.servlet.http.HttpServletResponse;
+import javax.validation.ValidationException;
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
@@ -58,68 +109,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-import javax.imageio.ImageIO;
-import javax.servlet.http.HttpServletResponse;
-import javax.validation.ValidationException;
-
-import org.apache.commons.io.FileUtils;
-import org.apache.commons.io.IOUtils;
-import org.apache.commons.lang3.ArrayUtils;
-import org.apache.log4j.Logger;
-import org.egov.api.adapter.ComplaintActionAdapter;
-import org.egov.api.adapter.ComplaintAdapter;
-import org.egov.api.adapter.ComplaintStatusAdapter;
-import org.egov.api.adapter.ComplaintTypeAdapter;
-import org.egov.api.controller.core.ApiController;
-import org.egov.api.controller.core.ApiUrl;
-import org.egov.api.model.ComplaintAction;
-import org.egov.api.model.ComplaintSearchRequest;
-import org.egov.config.search.Index;
-import org.egov.config.search.IndexType;
-import org.egov.infra.admin.master.entity.CrossHierarchy;
-import org.egov.infra.admin.master.entity.User;
-import org.egov.infra.admin.master.service.BoundaryService;
-import org.egov.infra.admin.master.service.CrossHierarchyService;
-import org.egov.infra.admin.master.service.DepartmentService;
-import org.egov.infra.exception.ApplicationRuntimeException;
-import org.egov.infra.filestore.entity.FileStoreMapper;
-import org.egov.infra.persistence.entity.enums.UserType;
-import org.egov.infra.security.utils.SecurityUtils;
-import org.egov.infra.utils.FileStoreUtils;
-import org.egov.pgr.entity.Complaint;
-import org.egov.pgr.entity.ComplaintStatus;
-import org.egov.pgr.entity.ComplaintType;
-import org.egov.pgr.entity.ComplaintTypeCategory;
-import org.egov.pgr.entity.enums.CitizenFeedback;
-import org.egov.pgr.entity.enums.ReceivingMode;
-import org.egov.pgr.service.ComplaintService;
-import org.egov.pgr.service.ComplaintStatusMappingService;
-import org.egov.pgr.service.ComplaintStatusService;
-import org.egov.pgr.service.ComplaintTypeCategoryService;
-import org.egov.pgr.service.ComplaintTypeService;
-import org.egov.pgr.utils.constants.PGRConstants;
-import org.egov.search.domain.SearchResult;
-import org.egov.search.domain.Sort;
-import org.egov.search.service.SearchService;
-import org.elasticsearch.search.sort.SortOrder;
-import org.json.simple.JSONObject;
-import org.json.simple.JSONValue;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
-import org.springframework.http.MediaType;
-import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.multipart.MultipartFile;
-
-import com.google.gson.JsonArray;
-import com.google.gson.JsonObject;
-import com.google.gson.JsonParser;
-
-import net.coobird.thumbnailator.Thumbnails;
+import static org.springframework.web.bind.annotation.RequestMethod.GET;
 
 @org.springframework.web.bind.annotation.RestController
 @RequestMapping("/v1.0")
@@ -130,9 +120,6 @@ public class ComplaintController extends ApiController {
     private static final String UNSATISFACTORY = "UNSATISFACTORY";
     @Autowired
     protected ComplaintStatusService complaintStatusService;
-
-    @Autowired
-    private SearchService searchService;
 
     @Autowired
     private BoundaryService boundaryService;
@@ -251,7 +238,7 @@ public class ComplaintController extends ApiController {
      * @param searchRequest
      * @return
      */
-    @RequestMapping(value = { ApiUrl.COMPLAINT_SEARCH }, method = RequestMethod.POST, produces = MediaType.TEXT_PLAIN_VALUE)
+   /* @RequestMapping(value = { ApiUrl.COMPLAINT_SEARCH }, method = RequestMethod.POST, produces = MediaType.TEXT_PLAIN_VALUE)
     public ResponseEntity<String> complaintSearch(@RequestBody final ComplaintSearchRequest searchRequest) {
         try {
             final SearchResult searchResult = searchService.search(
@@ -264,7 +251,7 @@ public class ComplaintController extends ApiController {
             LOGGER.error("EGOV-API ERROR ", e);
             return getResponseHandler().error(getMessage("server.error"));
         }
-    }
+    }*/
 
     // --------------------------------------------------------------------------------//
     /**

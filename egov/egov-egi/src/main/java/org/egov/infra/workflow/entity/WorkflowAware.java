@@ -42,10 +42,7 @@ package org.egov.infra.workflow.entity;
 
 import javax.persistence.MappedSuperclass;
 
-import org.egov.search.domain.Searchable;
-
 @MappedSuperclass
-@Searchable
 public  class WorkflowAware extends StateAware {
     private static final long serialVersionUID = 5776408218810221246L;
 

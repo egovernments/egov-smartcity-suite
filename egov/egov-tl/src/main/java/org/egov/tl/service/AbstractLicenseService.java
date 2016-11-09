@@ -94,6 +94,7 @@ import org.egov.tl.entity.NatureOfBusiness;
 import org.egov.tl.entity.WorkflowBean;
 import org.egov.tl.entity.enums.ApplicationType;
 import org.egov.tl.repository.LicenseRepository;
+import org.egov.tl.service.es.LicenseApplicationIndexService;
 import org.egov.tl.utils.Constants;
 import org.egov.tl.utils.LicenseNumberUtils;
 import org.egov.tl.utils.LicenseUtils;
@@ -136,7 +137,7 @@ public abstract class AbstractLicenseService<T extends License> {
     protected PersistenceService<LicenseDocumentType, Long> licenseDocumentTypeService;
 
     @Autowired
-    protected TradeLicenseUpdateIndexService updateIndexService;
+    protected LicenseApplicationIndexService licenseApplicationIndexService;
 
     @Autowired
     protected SecurityUtils securityUtils;
@@ -154,18 +155,14 @@ public abstract class AbstractLicenseService<T extends License> {
 
     @Autowired
     protected LicenseStatusService licenseStatusService;
-
-    @Autowired
-    private EgwStatusHibernateDAO egwStatusHibernateDAO;
-
     @Autowired
     protected LicenseAppTypeService licenseAppTypeService;
-
     @Autowired
     protected PositionMasterService positionMasterService;
-
     @Autowired
     protected NatureOfBusinessService natureOfBusinessService;
+    @Autowired
+    private EgwStatusHibernateDAO egwStatusHibernateDAO;
 
     @Autowired
     private LicenseUtils licenseUtils;
@@ -198,9 +195,8 @@ public abstract class AbstractLicenseService<T extends License> {
         processAndStoreDocument(license.getDocuments(), license);
         transitionWorkFlow(license, workflowBean);
         licenseRepository.save(license);
+        licenseApplicationIndexService.createOrUpdateLicenseApplicationIndex(license);
         sendEmailAndSMS(license, workflowBean.getWorkFlowAction());
-        updateIndexService.updateTradeLicenseIndexes(license);
-
     }
 
     private BigDecimal raiseNewDemand(final T license) {
@@ -392,6 +388,7 @@ public abstract class AbstractLicenseService<T extends License> {
 
     @Transactional
     public void renew(final T license, final WorkflowBean workflowBean) {
+        license.setLicenseAppType(getLicenseApplicationTypeForRenew());
         final String natureOfWork = license.getLicenseAppType().getName().equals(Constants.RENEWAL_LIC_APPTYPE)
                 ? Constants.RENEWAL_NATUREOFWORK : Constants.NEW_NATUREOFWORK;
         final Assignment wfInitiator = this.assignmentService
@@ -410,11 +407,11 @@ public abstract class AbstractLicenseService<T extends License> {
         license.reinitiateTransition().start()
                 .withSenderName(currentUser.getUsername() + DELIMITER_COLON + currentUser.getName())
                 .withComments(workflowBean.getApproverComments()).withNatureOfTask(natureOfWork)
-                .withStateValue(wfmatrix.getNextState()).withDateInfo(new DateTime().toDate()).withOwner(pos)
+                .withStateValue(wfmatrix.getNextState()).withDateInfo(new DateTime().toDate()).withOwner(wfInitiator.getPosition())
                 .withNextAction(wfmatrix.getNextAction()).withInitiator(wfInitiator.getPosition());
         this.licenseRepository.save(license);
         sendEmailAndSMS(license, workflowBean.getWorkFlowAction());
-        updateIndexService.updateTradeLicenseIndexes(license);
+        licenseApplicationIndexService.createOrUpdateLicenseApplicationIndex(license);
     }
 
     @Transactional
@@ -467,7 +464,7 @@ public abstract class AbstractLicenseService<T extends License> {
                         null, workflowBean.getAdditionaRule(), workflowBean.getCurrentState(), null);
                 license.transition().start().withSenderName(user.getUsername() + DELIMITER_COLON + user.getName())
                         .withComments(workflowBean.getApproverComments()).withNatureOfTask(natureOfWork)
-                        .withStateValue(wfmatrix.getNextState()).withDateInfo(currentDate.toDate()).withOwner(pos)
+                        .withStateValue(wfmatrix.getNextState()).withDateInfo(currentDate.toDate()).withOwner(wfInitiator.getPosition())
                         .withNextAction(wfmatrix.getNextAction()).withInitiator(wfInitiator.getPosition());
                 license.setEgwStatus(
                         egwStatusHibernateDAO.getStatusByModuleAndCode(TRADELICENSEMODULE, APPLICATION_STATUS_CREATED_CODE));

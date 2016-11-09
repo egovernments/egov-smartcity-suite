@@ -159,7 +159,7 @@ public class UpdatePropertyDemolitionController extends GenericWorkFlowControlle
             if (request.getParameter("approvalPosition") != null && !request.getParameter("approvalPosition").isEmpty())
                 approvalPosition = Long.valueOf(request.getParameter("approvalPosition"));
 
-            if (WFLOW_ACTION_STEP_SIGN.equalsIgnoreCase(workFlowAction) && property.getStatus().equals(STATUS_WORKFLOW)) {
+            if (WFLOW_ACTION_STEP_APPROVE.equalsIgnoreCase(workFlowAction) && property.getStatus().equals(STATUS_WORKFLOW)) {
                 if (oldProperty.getStatus().equals(STATUS_ISACTIVE)) {
                     oldProperty.setStatus(STATUS_ISHISTORY);
                     persistenceService.persist(oldProperty);

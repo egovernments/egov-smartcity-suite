@@ -39,21 +39,9 @@
  */
 package org.egov.restapi.web.rest;
 
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
-import com.google.gson.reflect.TypeToken;
 import org.codehaus.jackson.JsonGenerationException;
 import org.codehaus.jackson.map.JsonMappingException;
-import org.egov.infra.web.support.json.adapter.HibernateProxyTypeAdapter;
-import org.egov.search.domain.Document;
 import org.egov.wtms.application.service.ConnectionDemandService;
-import org.egov.wtms.masters.entity.ConnectionCategory;
-import org.egov.wtms.masters.entity.DocumentNames;
-import org.egov.wtms.masters.entity.PipeSize;
-import org.egov.wtms.masters.entity.PropertyType;
-import org.egov.wtms.masters.entity.UsageType;
-import org.egov.wtms.masters.entity.WaterSource;
-import org.egov.wtms.masters.entity.enums.ConnectionType;
 import org.egov.wtms.masters.service.ConnectionCategoryService;
 import org.egov.wtms.masters.service.DocumentNamesService;
 import org.egov.wtms.masters.service.PipeSizeService;
@@ -61,17 +49,9 @@ import org.egov.wtms.masters.service.PropertyTypeService;
 import org.egov.wtms.masters.service.UsageTypeService;
 import org.egov.wtms.masters.service.WaterSourceService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.MediaType;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 
 @RestController
 public class RestWaterChargesMasterController {
@@ -97,7 +77,7 @@ public class RestWaterChargesMasterController {
     @Autowired
     private PropertyTypeService propertyTypeService;
 
-    @RequestMapping(value = "/watercharges/categories", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+    /*@RequestMapping(value = "/watercharges/categories", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
     public String getConnectionCategoryList() throws JsonGenerationException, JsonMappingException, IOException {
         final List<ConnectionCategory> connectionCategoryList = connectionCategoryService.getConnectionCategoryListForRest();
         return getJSONResponse(connectionCategoryList);
@@ -143,7 +123,7 @@ public class RestWaterChargesMasterController {
     public String getPropertyTypes() throws JsonGenerationException, JsonMappingException, IOException {
         final List<PropertyType> propertyTypeList = propertyTypeService.getPropertyTypeListForRest();
         return getJSONResponse(propertyTypeList);
-    }
+    }*/
 
     /**
      * This method is used to prepare jSON response.
@@ -153,12 +133,12 @@ public class RestWaterChargesMasterController {
      * @throws JsonGenerationException
      * @throws JsonMappingException
      * @throws IOException
-     */
+     *//*
     private String getJSONResponse(final Object obj) throws JsonGenerationException, JsonMappingException, IOException {
         final Gson jsonCreator = new GsonBuilder().registerTypeAdapterFactory(HibernateProxyTypeAdapter.FACTORY)
                 .disableHtmlEscaping().create();
         return jsonCreator.toJson(obj, new TypeToken<Collection<Document>>() {
         }.getType());
-    }
+    }*/
 
 }

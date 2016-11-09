@@ -70,9 +70,9 @@ public class DepartmentwiseExpenditureReport {
     private Date previousYearConcurrenceGivenUptoDate;
     private Date currentYearConcurrenceGivenUptoDate;
     private Date previousYearConcurrenceGivenTillDate;
-    Set<String> concurrenceDateSet = new LinkedHashSet<String>();
-    Set<String> previousConcurrenceDateSet = new LinkedHashSet<String>();
-    Map<String, Boolean> rowToBeRemoved = new HashMap<String, Boolean>();
+    private Set<String> concurrenceDateSet = new LinkedHashSet<String>();
+    private Set<String> previousConcurrenceDateSet = new LinkedHashSet<String>();
+    private Map<String, Boolean> rowToBeRemoved = new HashMap<String, Boolean>();
     private String exportType;
     // private Map<String,DepartmentwiseExpenditureResult> currentyearDepartmentMap =new
     // LinkedHashMap<String,DepartmentwiseExpenditureResult>();

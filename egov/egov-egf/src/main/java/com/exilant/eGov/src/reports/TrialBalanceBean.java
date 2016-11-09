@@ -51,35 +51,34 @@ import java.util.Map;
 
 public class TrialBalanceBean {
 
-    String accCode;
-    String accName;
-    String debit;
-    String credit;
-    String fundId;
-    String openingBal;
-    String closingBal;
-    String serialNo;
+    private String accCode;
+    private String accName;
+    private String debit;
+    private String credit;
+    private String fundId;
+    private String openingBal;
+    private String closingBal;
+    private String serialNo;
 
-    Map<String, String> fundWiseMap;
-    String fromAmountMap;
-    BigDecimal closingBalance;
-    BigDecimal creditOPB;
-    BigDecimal debitOPB;
-    BigDecimal tillDateCreditOPB;
-    BigDecimal tillDateDebitOPB;
-    BigDecimal debitAmount;
-    BigDecimal creditAmount;
-    BigDecimal amount;
-    String amount1;
-    String amount2;
-    String amount3;
-    String amount4;
-    String amount5;
-    String amount6;
-    String amount7;
-    String amount8;
-    String amount9;
-    String amount10;
+    private Map<String, String> fundWiseMap;
+    private BigDecimal closingBalance;
+    private BigDecimal creditOPB;
+    private BigDecimal debitOPB;
+    private BigDecimal tillDateCreditOPB;
+    private BigDecimal tillDateDebitOPB;
+    private BigDecimal debitAmount;
+    private BigDecimal creditAmount;
+    private BigDecimal amount;
+    private String amount1;
+    private String amount2;
+    private String amount3;
+    private String amount4;
+    private String amount5;
+    private String amount6;
+    private String amount7;
+    private String amount8;
+    private String amount9;
+    private String amount10;
 
     public String getAmount1() {
         return amount1;

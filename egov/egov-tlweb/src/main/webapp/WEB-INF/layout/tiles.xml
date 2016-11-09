@@ -189,62 +189,62 @@
 	</definition>
 	<definition name="licensecategory-create" extends="base_layout">
 		<put-attribute name="page-title" value="title.document.new" cascade="true" />
-		<put-attribute name="body" value="/WEB-INF/views/master/category/licensecategory-create.jsp" />
+		<put-attribute name="body" value="/WEB-INF/views/category/licensecategory-create.jsp" />
 	</definition>
     <definition name="licensecategory-update" extends="base_layout">
 	     <put-attribute name="page-title" value="title.document.new" cascade="true"/>
-	     <put-attribute name="body" value="/WEB-INF/views/master/category/licensecategory-update.jsp"/>
+	     <put-attribute name="body" value="/WEB-INF/views/category/licensecategory-update.jsp"/>
 	</definition>
     <definition name="licensecategory-view" extends="base_layout">
 	     <put-attribute name="page-title" value="title.document.new" cascade="true"/>
-	     <put-attribute name="body" value="/WEB-INF/views/master/category/licensecategory-view.jsp"/>
+	     <put-attribute name="body" value="/WEB-INF/views/category/licensecategory-view.jsp"/>
 	</definition>
 	<definition name="licensecategory-search-update" extends="base_layout">
 	     <put-attribute name="page-title" value="title.document.new" cascade="true"/>
-	     <put-attribute name="body" value="/WEB-INF/views/master/category/licensecategory-search-update.jsp"/>
+	     <put-attribute name="body" value="/WEB-INF/views/category/licensecategory-search-update.jsp"/>
 	</definition>
 	<definition name="licensecategory-search-view" extends="base_layout">
 	     <put-attribute name="page-title" value="title.document.new" cascade="true"/>
-	     <put-attribute name="body" value="/WEB-INF/views/master/category/licensecategory-search-view.jsp"/>
+	     <put-attribute name="body" value="/WEB-INF/views/category/licensecategory-search-view.jsp"/>
 	</definition>
 	<definition name="subcategory-create" extends="base_layout">
 	     <put-attribute name="page-title" value="title.document.new" cascade="true"/>
-	     <put-attribute name="body" value="/WEB-INF/views/master/subcategory/subcategory-create.jsp"/>
+	     <put-attribute name="body" value="/WEB-INF/views/subcategory/subcategory-create.jsp"/>
 	</definition>
 	<definition name="subcategory-view" extends="base_layout">
 	     <put-attribute name="page-title" value="title.document.new" cascade="true"/>
-	     <put-attribute name="body" value="/WEB-INF/views/master/subcategory/subcategory-view.jsp"/>
+	     <put-attribute name="body" value="/WEB-INF/views/subcategory/subcategory-view.jsp"/>
 	</definition>
 	<definition name="subcategory-search-update" extends="base_layout">
 	     <put-attribute name="page-title" value="title.document.new" cascade="true"/>
-	     <put-attribute name="body" value="/WEB-INF/views/master/subcategory/subcategory-search-update.jsp"/>
+	     <put-attribute name="body" value="/WEB-INF/views/subcategory/subcategory-search-update.jsp"/>
 	</definition>
 	<definition name="subcategory-update" extends="base_layout">
 	     <put-attribute name="page-title" value="title.document.new" cascade="true"/>
-	     <put-attribute name="body" value="/WEB-INF/views/master/subcategory/subcategory-update.jsp"/>
+	     <put-attribute name="body" value="/WEB-INF/views/subcategory/subcategory-update.jsp"/>
 	</definition>
 	<definition name="subcategory-search-view" extends="base_layout">
 	     <put-attribute name="page-title" value="title.document.new" cascade="true"/>
-	     <put-attribute name="body" value="/WEB-INF/views/master/subcategory/subcategory-search-view.jsp"/>
+	     <put-attribute name="body" value="/WEB-INF/views/subcategory/subcategory-search-view.jsp"/>
 	</definition>
 	<definition name="uom-create" extends="base_layout">
 	     <put-attribute name="page-title" value="title.document.new" cascade="true"/>
-	     <put-attribute name="body" value="/WEB-INF/views/master/unitofmeasurement/uom-create.jsp"/>
+	     <put-attribute name="body" value="/WEB-INF/views/uom/uom-create.jsp"/>
 	</definition>
 	<definition name="uom-update" extends="base_layout">
 	     <put-attribute name="page-title" value="title.document.new" cascade="true"/>
-	     <put-attribute name="body" value="/WEB-INF/views/master/unitofmeasurement/uom-update.jsp"/>
+	     <put-attribute name="body" value="/WEB-INF/views/uom/uom-update.jsp"/>
 	</definition>
 	<definition name="uom-search-update" extends="base_layout">
 	     <put-attribute name="page-title" value="title.document.new" cascade="true"/>
-	     <put-attribute name="body" value="/WEB-INF/views/master/unitofmeasurement/uom-search-update.jsp"/>
+	     <put-attribute name="body" value="/WEB-INF/views/uom/uom-search-update.jsp"/>
 	</definition>
 	<definition name="uom-search-view" extends="base_layout">
 	     <put-attribute name="page-title" value="title.document.new" cascade="true"/>
-	     <put-attribute name="body" value="/WEB-INF/views/master/unitofmeasurement/uom-search-view.jsp"/>
+	     <put-attribute name="body" value="/WEB-INF/views/uom/uom-search-view.jsp"/>
 	</definition>
 	<definition name="uom-view" extends="base_layout">
 	     <put-attribute name="page-title" value="title.document.new" cascade="true"/>
-	     <put-attribute name="body" value="/WEB-INF/views/master/unitofmeasurement/uom-view.jsp"/>
+	     <put-attribute name="body" value="/WEB-INF/views/uom/uom-view.jsp"/>
 	</definition>
 </tiles-definitions>

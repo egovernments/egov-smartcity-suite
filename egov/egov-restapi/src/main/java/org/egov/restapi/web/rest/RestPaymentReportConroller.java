@@ -39,26 +39,16 @@
  */
 package org.egov.restapi.web.rest;
 
-import java.io.IOException;
-import java.util.Collection;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
-
-import javax.servlet.http.HttpServletRequest;
-
 import org.apache.log4j.Logger;
 import org.codehaus.jackson.JsonGenerationException;
 import org.codehaus.jackson.map.JsonMappingException;
 import org.egov.collection.constants.CollectionConstants;
 import org.egov.collection.integration.models.PaymentInfoSearchRequest;
-import org.egov.collection.integration.models.RestAggregatePaymentInfo;
 import org.egov.collection.integration.models.RestReceiptInfo;
 import org.egov.collection.integration.services.CollectionIntegrationService;
 import org.egov.commons.Bank;
 import org.egov.commons.dao.BankHibernateDAO;
 import org.egov.infra.config.core.ApplicationThreadLocals;
-import org.egov.infra.web.support.json.adapter.HibernateProxyTypeAdapter;
 import org.egov.infstr.models.ServiceCategory;
 import org.egov.infstr.services.PersistenceService;
 import org.egov.ptis.constants.PropertyTaxConstants;
@@ -67,7 +57,6 @@ import org.egov.restapi.constants.RestApiConstants;
 import org.egov.restapi.model.RestErrors;
 import org.egov.restapi.model.RestResponse;
 import org.egov.restapi.util.JsonConvertor;
-import org.egov.search.domain.Document;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.http.MediaType;
@@ -77,9 +66,11 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
-import com.google.gson.reflect.TypeToken;
+import javax.servlet.http.HttpServletRequest;
+import java.io.IOException;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
 
 @RestController
 public class RestPaymentReportConroller {
@@ -107,6 +98,7 @@ public class RestPaymentReportConroller {
 
         LOGGER.info(request.getSession().getAttribute("source"));
         final RestResponse detailsByTransactionId = new RestResponse();
+        final RestErrors err = new RestErrors();
         try {
             final RestReceiptInfo detailsByTransactionId2 = collectionService.getDetailsByTransactionId(paymentInfoSearchRequest);
             detailsByTransactionId.setStatus(RestApiConstants.THIRD_PARTY_ACTION_SUCCESS);
@@ -116,10 +108,12 @@ public class RestPaymentReportConroller {
             detailsByTransactionId.setTransactionId(detailsByTransactionId2.getTransactionId());
             detailsByTransactionId.setPaymentPeriod(detailsByTransactionId2.getPaymentPeriod());
             detailsByTransactionId.setPaymentType(detailsByTransactionId2.getPaymentType());
+            err.setErrorMessage(RestApiConstants.THIRD_PARTY_ACTION_SUCCESS);
+            err.setErrorCode(RestApiConstants.THIRD_PARTY_ACTION_SUCCESS);
+            detailsByTransactionId.getErrorDetails().add(err);
 
         } catch (final Exception e) {
             detailsByTransactionId.setStatus(RestApiConstants.THIRD_PARTY_ACTION_FAILURE);
-            final RestErrors err = new RestErrors();
             err.setErrorMessage(e.getMessage());
             err.setErrorCode(RestApiConstants.THIRD_PARTY_ERR_CODE_NO_DATA_FOUND);
             detailsByTransactionId.getErrorDetails().add(err);
@@ -128,7 +122,7 @@ public class RestPaymentReportConroller {
 
     }
 
-    @RequestMapping(value = "/reconciliation/paymentaggregate", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
+   /* @RequestMapping(value = "/reconciliation/paymentaggregate", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
     public String searchAggregatePaymentsByDate(@RequestBody final PaymentInfoSearchRequest paymentInfoSearchRequest,
             final HttpServletRequest request)
                     throws JsonGenerationException, JsonMappingException, IOException {
@@ -153,7 +147,7 @@ public class RestPaymentReportConroller {
         final List<RestReceiptInfo> receiptInfoList = collectionService
                 .getReceiptDetailsByDateAndService(paymentInfoSearchRequest);
         return getJSONResponse(receiptInfoList);
-    }
+    }*/
 
     @RequestMapping(value = "/cancelReceipt", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
     public String cancelReceipt(@RequestBody final PaymentInfoSearchRequest paymentInfoSearchRequest, final BindingResult errors) {
@@ -246,11 +240,11 @@ public class RestPaymentReportConroller {
      * @throws JsonGenerationException
      * @throws JsonMappingException
      * @throws IOException
-     */
+     *//*
     private String getJSONResponse(final Object obj) throws JsonGenerationException, JsonMappingException, IOException {
         final Gson jsonCreator = new GsonBuilder().registerTypeAdapterFactory(HibernateProxyTypeAdapter.FACTORY)
                 .disableHtmlEscaping().create();
         return jsonCreator.toJson(obj, new TypeToken<Collection<Document>>() {
         }.getType());
-    }
+    }*/
 }

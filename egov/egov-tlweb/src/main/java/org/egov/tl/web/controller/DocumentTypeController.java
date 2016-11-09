@@ -40,29 +40,27 @@
 
 package org.egov.tl.web.controller;
 
-import java.util.List;
-
-import javax.validation.Valid;
-
 import org.egov.tl.entity.LicenseDocumentType;
 import org.egov.tl.entity.enums.ApplicationType;
 import org.egov.tl.service.DocumentTypeService;
-import org.egov.tl.web.adaptor.LicenseDocumentTypeJsonAdaptor;
+import org.egov.tl.web.response.adaptor.LicenseDocumentTypeResponseAdaptor;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
+import javax.validation.Valid;
+
+import static org.egov.infra.web.utils.WebUtils.toJSON;
+import static org.springframework.http.MediaType.TEXT_PLAIN_VALUE;
+import static org.springframework.web.bind.annotation.RequestMethod.GET;
+import static org.springframework.web.bind.annotation.RequestMethod.POST;
 
 @Controller
 @RequestMapping("/documenttype")
@@ -70,22 +68,20 @@ public class DocumentTypeController {
 
     @Autowired
     private DocumentTypeService documentTypeService;
-    
 
-    @RequestMapping(value = "/create", method = RequestMethod.GET)
-    public String documentTypeForm(@ModelAttribute("documenttype") final LicenseDocumentType documenttype,
-            final BindingResult result) {
+
+    @RequestMapping(value = "/create", method = GET)
+    public String documentTypeForm(@ModelAttribute("documenttype") LicenseDocumentType documenttype) {
         return "document-new";
     }
 
-    @RequestMapping(value = "/create", method = RequestMethod.POST)
-    public String documentTypeCreate(@Valid @ModelAttribute("documenttype") final LicenseDocumentType documenttype,
-            final BindingResult errors, final RedirectAttributes redirectAttrs) {
-        if (errors.hasErrors()){
-            
+    @RequestMapping(value = "/create", method = POST)
+    public String documentTypeCreate(@Valid @ModelAttribute("documenttype") LicenseDocumentType documenttype,
+                                     BindingResult errors, RedirectAttributes redirectAttrs) {
+        if (errors.hasErrors()) {
             return "document-new";
         }
-      
+
         documentTypeService.create(documenttype);
         redirectAttrs.addFlashAttribute("documenttype", documenttype);
         redirectAttrs.addFlashAttribute("message", "msg.document.success");
@@ -93,33 +89,24 @@ public class DocumentTypeController {
         return "redirect:/documenttype/view/" + documenttype.getId();
     }
 
-    @RequestMapping(value = "/view/{id}", method = RequestMethod.GET)
-    public String documentTypeView(@PathVariable("id") final Long id, final Model model) {
-        final LicenseDocumentType documenttype = documentTypeService.getDocumentTypeById(id);
+    @RequestMapping(value = "/view/{id}", method = GET)
+    public String documentTypeView(@PathVariable("id") Long id, Model model) {
+        LicenseDocumentType documenttype = documentTypeService.getDocumentTypeById(id);
         model.addAttribute("documenttype", documenttype);
         return "document-view";
-    }  
-    @RequestMapping(value = "/search", method = RequestMethod.GET)
-    public String documentTypeSearch(@ModelAttribute("documenttype") final LicenseDocumentType documenttype,
-            final BindingResult result) {
+    }
+
+    @RequestMapping(value = "/search", method = GET)
+    public String documentTypeSearch(@ModelAttribute("documenttype") LicenseDocumentType documenttype) {
         return "document-search";
     }
 
-    @RequestMapping(value = "/search", method = RequestMethod.POST, produces = MediaType.TEXT_PLAIN_VALUE)
-    public @ResponseBody String documentTypeSearch(@RequestParam final String name,
-            @RequestParam final ApplicationType applicationType) {
-        final List<LicenseDocumentType> searchResultList = documentTypeService.search(name, applicationType);
-        final String result = new StringBuilder("{ \"data\":").append(toSearchResultJson(searchResultList)).append("}")
-                .toString();
-        return result;
+    @RequestMapping(value = "/search", method = POST, produces = TEXT_PLAIN_VALUE)
+    @ResponseBody
+    public String documentTypeSearch(@RequestParam String name,
+                                     @RequestParam ApplicationType applicationType) {
+        return new StringBuilder("{ \"data\":").append(
+                toJSON(documentTypeService.search(name, applicationType), LicenseDocumentType.class,
+                        LicenseDocumentTypeResponseAdaptor.class)).append("}").toString();
     }
-
-    public Object toSearchResultJson(final Object object) {
-        final GsonBuilder gsonBuilder = new GsonBuilder();
-        final Gson gson = gsonBuilder.registerTypeAdapter(LicenseDocumentType.class, new LicenseDocumentTypeJsonAdaptor())
-                .create();
-        final String json = gson.toJson(object);
-        return json;
-    }
-
 }

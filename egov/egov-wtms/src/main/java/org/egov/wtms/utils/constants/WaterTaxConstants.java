@@ -313,4 +313,6 @@ public class WaterTaxConstants {
     public static final String DOCUMENTNAMEFORBILL = "DemandBill";
     public static final Integer QUARTZ_BULKBILL_JOBS = 3;
     public static final String WATERCHARGES_CONSUMERCODE = "consumerCode";
+    public static final String APPLICATION_TAX_INDEX_NAME = "applications";
+
 }

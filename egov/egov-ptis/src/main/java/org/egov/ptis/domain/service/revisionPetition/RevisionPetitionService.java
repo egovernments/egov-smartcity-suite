@@ -54,9 +54,8 @@ import org.egov.eis.service.DesignationService;
 import org.egov.eis.service.EisCommonService;
 import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.messaging.MessagingService;
-import org.egov.infra.search.elastic.entity.ApplicationIndex;
-import org.egov.infra.search.elastic.entity.ApplicationIndexBuilder;
-import org.egov.infra.search.elastic.service.ApplicationIndexService;
+import org.egov.infra.elasticsearch.entity.ApplicationIndex;
+import org.egov.infra.elasticsearch.service.ApplicationIndexService;
 import org.egov.infra.security.utils.SecurityUtils;
 import org.egov.infra.utils.ApplicationNumberGenerator;
 import org.egov.infra.workflow.matrix.entity.WorkFlowMatrix;
@@ -76,6 +75,11 @@ import org.hibernate.criterion.Restrictions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.transaction.annotation.Transactional;
+
+import static java.lang.String.format;
+import static org.egov.ptis.constants.PropertyTaxConstants.APPLICATION_TYPE_REVISION_PETITION;
+import static org.egov.ptis.constants.PropertyTaxConstants.PTMODULENAME;
+import static org.egov.ptis.domain.service.property.PropertyService.APPLICATION_VIEW_URL;
 
 public class RevisionPetitionService extends PersistenceService<RevisionPetition, Long> {
     @Autowired
@@ -198,18 +202,18 @@ public class RevisionPetitionService extends PersistenceService<RevisionPetition
      * @param objection
      */
     private void updateIndex(final RevisionPetition objection) {
-        final ApplicationIndex applicationIndex = applicationIndexService.findByApplicationNumber(objection
+        ApplicationIndex applicationIndex = applicationIndexService.findByApplicationNumber(objection
                 .getObjectionNumber());
         final User user = securityUtils.getCurrentUser();
-        final String url = "/ptis/view/viewProperty-viewForm.action?applicationNo=" + objection.getObjectionNumber();
         if (null == applicationIndex) {
-            final ApplicationIndexBuilder applicationIndexBuilder = new ApplicationIndexBuilder(
-                    PropertyTaxConstants.PTMODULENAME, objection.getObjectionNumber(),
-                    objection.getCreatedDate() != null ? objection.getCreatedDate() : new Date(),
-                    PropertyTaxConstants.APPLICATION_TYPE_REVISION_PETITION, objection.getBasicProperty()
-                            .getFullOwnerName(), objection.getState().getValue(), url, objection.getBasicProperty()
-                            .getAddress().toString(), user.getUsername() + "::" + user.getName(), Source.SYSTEM.toString());
-            applicationIndexService.createApplicationIndex(applicationIndexBuilder.build());
+            applicationIndex = ApplicationIndex.builder().withModuleName(PTMODULENAME)
+                    .withApplicationNumber(objection.getObjectionNumber()).withApplicationDate(
+                            objection.getCreatedDate() != null ? objection.getCreatedDate() : new Date())
+                    .withApplicationType(APPLICATION_TYPE_REVISION_PETITION).withApplicantName(objection.getBasicProperty().getFullOwnerName())
+                    .withStatus(objection.getState().getValue()).withUrl(format(APPLICATION_VIEW_URL, objection.getObjectionNumber(), ""))
+                    .withApplicantAddress(objection.getBasicProperty().getAddress().toString()).withOwnername(user.getUsername() + "::" + user.getName())
+                    .withChannel(Source.SYSTEM.toString()).build();
+            applicationIndexService.createApplicationIndex(applicationIndex);
         } else {
             applicationIndex.setStatus(objection.getState().getValue());
             applicationIndexService.updateApplicationIndex(applicationIndex);

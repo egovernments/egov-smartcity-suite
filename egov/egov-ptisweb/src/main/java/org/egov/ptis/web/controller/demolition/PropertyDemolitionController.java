@@ -134,23 +134,25 @@ public class PropertyDemolitionController extends GenericWorkFlowController {
         BigDecimal currentPropertyTax = BigDecimal.ZERO;
         BigDecimal currentPropertyTaxDue = BigDecimal.ZERO;
         BigDecimal arrearPropertyTaxDue = BigDecimal.ZERO;
-        if(DateUtils.between(new Date(), installmentFirstHalf.getFromDate(), installmentFirstHalf.getToDate())){
-        	currentPropertyTax = propertyTaxDetails.get(CURR_FIRSTHALF_DMD_STR);
-            currentPropertyTaxDue = propertyTaxDetails.get(CURR_FIRSTHALF_DMD_STR).subtract(
-                    propertyTaxDetails.get(CURR_FIRSTHALF_COLL_STR));
-            arrearPropertyTaxDue = propertyTaxDetails.get(ARR_DMD_STR).subtract(
-                    propertyTaxDetails.get(ARR_COLL_STR));
+        BigDecimal currentFirstHalfTaxDue = BigDecimal.ZERO;
+        if (DateUtils.between(new Date(), installmentFirstHalf.getFromDate(), installmentFirstHalf.getToDate())) {
+            currentPropertyTax = propertyTaxDetails.get(CURR_FIRSTHALF_DMD_STR);
+            currentPropertyTaxDue = propertyTaxDetails.get(CURR_FIRSTHALF_DMD_STR)
+                    .subtract(propertyTaxDetails.get(CURR_FIRSTHALF_COLL_STR));
+            arrearPropertyTaxDue = propertyTaxDetails.get(ARR_DMD_STR).subtract(propertyTaxDetails.get(ARR_COLL_STR));
         } else {
-        	currentPropertyTax = propertyTaxDetails.get(CURR_SECONDHALF_DMD_STR);
-        	currentPropertyTaxDue = propertyTaxDetails.get(CURR_SECONDHALF_DMD_STR).subtract(
-        			propertyTaxDetails.get(CURR_SECONDHALF_COLL_STR));
-        	arrearPropertyTaxDue = propertyTaxDetails.get(ARR_DMD_STR).subtract(
-        			propertyTaxDetails.get(ARR_COLL_STR));
+            currentPropertyTax = propertyTaxDetails.get(CURR_SECONDHALF_DMD_STR);
+            currentPropertyTaxDue = propertyTaxDetails.get(CURR_SECONDHALF_DMD_STR)
+                    .subtract(propertyTaxDetails.get(CURR_SECONDHALF_COLL_STR));
+            currentFirstHalfTaxDue = propertyTaxDetails.get(CURR_FIRSTHALF_DMD_STR)
+                    .subtract(propertyTaxDetails.get(CURR_FIRSTHALF_COLL_STR));
+            arrearPropertyTaxDue = propertyTaxDetails.get(ARR_DMD_STR).subtract(propertyTaxDetails.get(ARR_COLL_STR))
+                    .add(currentFirstHalfTaxDue);
         }
         model.addAttribute("currentPropertyTax", currentPropertyTax);
         model.addAttribute("currentPropertyTaxDue", currentPropertyTaxDue);
         model.addAttribute("arrearPropertyTaxDue", arrearPropertyTaxDue);
-        if (currentPropertyTaxDue.add(arrearPropertyTaxDue).longValue() > 0) {
+        if (arrearPropertyTaxDue.compareTo(BigDecimal.ZERO) > 0) {
             model.addAttribute("taxDuesErrorMsg", "Please clear property tax due for property demolition ");
             return TARGET_TAX_DUES;
         }

@@ -752,11 +752,11 @@ var totaldbamt=0,totalcramt=0;
         <td width="4%" class="bluebox">&nbsp;</td>
          
         <td width="21%" class="bluebox"><s:text name="miscreceipt.service.category" /><span class="mandatory"/> </td>
-        <td width="30%" class="bluebox"><s:select headerKey="-1" headerValue="----Choose----" name="serviceCategory.id" id="serviceCategoryid" cssClass="selectwk" list="dropdownData.serviceCategoryList" listKey="id" listValue="name" value="%{serviceCategory.id}" onChange="populateService(this);" />
+        <td width="30%" class="bluebox"><s:select headerKey="-1" headerValue="----Choose----" name="serviceCategory.id" id="serviceCategoryid" cssClass="selectwk" list="dropdownData.serviceCategoryList" listKey="id" listValue="name" value="%{service.serviceCategory.id}" onChange="populateService(this);" />
        	<egov:ajaxdropdown id="service" fields="['Text','Value']" dropdownId="serviceId" url="receipts/ajaxReceiptCreate-ajaxLoadServiceByCategoryForMisc.action" /></td>
         <td width="21%" class="bluebox"><s:text name="miscreceipt.service" /><span class="mandatory"/> </td>
         <td width="30%" class="bluebox"><s:select headerKey="-1" headerValue="----Choose----" name="serviceId" id="serviceId" cssClass="selectwk"
-	list="dropdownData.serviceList" listKey="id" listValue="code" value="%{serviceId}" onchange="loadFinDetails(this);getBankBranchList();"/>
+	list="dropdownData.serviceList" listKey="id" listValue="name" value="%{serviceId}" onchange="loadFinDetails(this);getBankBranchList();"/>
 	 <egov:ajaxdropdown id="bankBranchMasterDropdown" fields="['Text','Value']" dropdownId='bankBranchMaster'
                 url='receipts/ajaxBankRemittance-bankBranchList.action' selectedValue="%{bankbranch.id}"/> 
         </td>
@@ -797,7 +797,7 @@ var totaldbamt=0,totalcramt=0;
          <s:if test="%{shouldShowHeaderField('function')}">
          <td width="4%" class="bluebox">&nbsp;</td>
            <td width="21%" class="bluebox"><s:text name="miscreceipt.function"/><s:if test="%{isFieldMandatory('function')}"><span class="bluebox"><span class="mandatory"/></s:if></td>
-          <td width="24%" class="bluebox"><s:select headerKey="-1" headerValue="%{getText('miscreceipt.select')}" name="functionId" id="functionId" cssClass="selectwk" list="dropdownData.functionList" listKey="id" listValue="name"  /> </td>
+          <td width="24%" class="bluebox"><s:select headerKey="-1" headerValue="%{getText('miscreceipt.select')}" name="functionId" id="functionId" cssClass="selectwk" list="dropdownData.functionList" listKey="id" listValue="name" value="%{service.function.id}" /> </td>
             </s:if>
            <s:else>
             <td colspan=2 class="bluebox"></td>

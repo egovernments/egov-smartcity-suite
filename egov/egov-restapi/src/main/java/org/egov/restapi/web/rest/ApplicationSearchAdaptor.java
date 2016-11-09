@@ -39,20 +39,9 @@
  */
 package org.egov.restapi.web.rest;
 
-import com.google.gson.JsonArray;
-import com.google.gson.JsonElement;
-import com.google.gson.JsonObject;
-import com.google.gson.JsonSerializationContext;
-import com.google.gson.JsonSerializer;
-import org.egov.search.domain.Document;
-import org.egov.search.domain.SearchResult;
+public class ApplicationSearchAdaptor/* implements JsonSerializer<SearchResult>*/ {
 
-import java.lang.reflect.Type;
-import java.util.HashMap;
-
-public class ApplicationSearchAdaptor implements JsonSerializer<SearchResult> {
-
-    @Override
+   /* @Override
     public JsonElement serialize(final SearchResult searchResult, final Type type, final JsonSerializationContext jsc) {
         final JsonArray jsonArray = new JsonArray();
         HashMap<String, Object> clausesMap = new HashMap<String, Object>(0);
@@ -71,6 +60,6 @@ public class ApplicationSearchAdaptor implements JsonSerializer<SearchResult> {
             jsonArray.add(jsonObject);
         }
         return jsonArray;
-    }
+    }*/
 
 }

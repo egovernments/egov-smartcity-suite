@@ -66,10 +66,10 @@ public class CounterAffidavitController {
             @RequestParam("lcNumber") final String lcNumber, final Model model, final HttpServletRequest request) {
         model.addAttribute("legalCase", legalCase);
         model.addAttribute("pwrDocList", legalCaseService.getPwrDocList(legalCase));
-		if (legalCase.getLegalCaseDepartment().isEmpty())
-			model.addAttribute("mode", "countercreate");
-		else
-			model.addAttribute("mode", "counteredit");
+        if (legalCase.getLegalCaseDepartment().isEmpty())
+            model.addAttribute("mode", "countercreate");
+        else
+            model.addAttribute("mode", "counteredit");
         return "legalcase-caaffidavit";
     }
 
@@ -80,21 +80,18 @@ public class CounterAffidavitController {
     }
 
     @RequestMapping(value = "/create/", method = RequestMethod.POST)
-    public String create(@Valid @ModelAttribute("legalCase") final LegalCase legalCase,
-            final BindingResult errors, final RedirectAttributes redirectAttrs,
-            @RequestParam("lcNumber") final String lcNumber, final HttpServletRequest request, final Model model) {
-        if (errors.hasErrors()) {
-            model.addAttribute("legalcase", legalCase);
+    public String create(@Valid @ModelAttribute("legalCase") final LegalCase legalCase, final BindingResult errors,
+            final RedirectAttributes redirectAttrs, @RequestParam("lcNumber") final String lcNumber,
+            final Model model) {
+        if (errors.hasErrors())
             return "legalcase-caaffidavit";
-        } else
+        else
             legalCaseService.update(legalCase);
         redirectAttrs.addFlashAttribute("legalCase", legalCase);
-        model.addAttribute("message", "Counter Affidavit details Updated successfully.");
+        model.addAttribute("message", "Counter Affidavit Details Saved Successfully.");
         model.addAttribute("legalcase", legalCase);
-        model.addAttribute("supportDocs",(!legalCase.getLegalCaseDocuments().isEmpty() && legalCase.getLegalCaseDocuments().get(0)!=null ?legalCase.getLegalCaseDocuments().get(0).getSupportDocs():null));
         model.addAttribute("pwrDocList", legalCaseService.getPwrDocList(legalCase));
-        model.addAttribute("mode", "view");
-        return "legalcasedetails-view";
+        return "legalcase-ca-success";
 
     }
 

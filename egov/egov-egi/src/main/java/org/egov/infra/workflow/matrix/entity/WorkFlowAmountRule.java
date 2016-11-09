@@ -41,7 +41,6 @@
 package org.egov.infra.workflow.matrix.entity;
 
 import org.egov.infra.persistence.entity.AbstractPersistable;
-import org.hibernate.search.annotations.DocumentId;
 
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -54,17 +53,16 @@ import java.math.BigDecimal;
 import java.util.HashSet;
 import java.util.Set;
 
+import static org.egov.infra.workflow.matrix.entity.WorkFlowAmountRule.SEQ_WF_AMOUNTRULE;
+
 @Entity
 @Table(name = "EG_WF_AMOUNTRULE")
-@SequenceGenerator(name = WorkFlowAmountRule.SEQ_WF_AMOUNTRULE, sequenceName = WorkFlowAmountRule.SEQ_WF_AMOUNTRULE, allocationSize = 1)
+@SequenceGenerator(name = SEQ_WF_AMOUNTRULE, sequenceName = SEQ_WF_AMOUNTRULE, allocationSize = 1)
 public class WorkFlowAmountRule extends AbstractPersistable<Long> {
-    private static final long serialVersionUID = 3337723404458273459L;
-
     public static final String SEQ_WF_AMOUNTRULE = "SEQ_EG_WF_AMOUNTRULE";
-
+    private static final long serialVersionUID = 3337723404458273459L;
     @Id
     @GeneratedValue(generator = SEQ_WF_AMOUNTRULE, strategy = GenerationType.SEQUENCE)
-    @DocumentId
     private Long id;
     private BigDecimal fromQty;
     private BigDecimal toQty;

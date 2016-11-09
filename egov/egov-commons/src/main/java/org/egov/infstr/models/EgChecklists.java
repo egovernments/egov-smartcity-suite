@@ -39,68 +39,92 @@
  */
 package org.egov.infstr.models;
 
-import org.egov.infra.admin.master.entity.AppConfigValues;
-
 import java.io.Serializable;
-import java.util.Date;
 
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.NamedQueries;
+import javax.persistence.NamedQuery;
+import javax.persistence.SequenceGenerator;
+import javax.persistence.Table;
+import javax.persistence.Transient;
 
-public class EgChecklists implements Serializable {
+import org.egov.infra.admin.master.entity.AppConfigValues;
+import org.egov.infra.persistence.entity.AbstractAuditable;
 
-	private static final long serialVersionUID = 1L;
-	private Long id;
-	private Long objectid;
-	private String checklistvalue;
-	private AppConfigValues appconfigvalue;
-	private Date lastmodified;
-	private String remarks;
+@Entity
+@Table(name = "EG_CHECKLISTS")
+@NamedQueries({
+        @NamedQuery(name = "checklist.by.appconfigid.and.objectid", query = "from org.egov.infstr.models.EgChecklists as checkList where checkList.objectid =? and checkList.appconfigvalue.config.id in(?)"),
+        @NamedQuery(name = "checklist.by.objectid", query = "from org.egov.infstr.models.EgChecklists as checkList where checkList.objectid =?") })
+@SequenceGenerator(name = EgChecklists.SEQ_EG_CHECKLISTS, sequenceName = EgChecklists.SEQ_EG_CHECKLISTS, allocationSize = 1)
+public class EgChecklists extends AbstractAuditable implements Serializable {
 
-	public Long getId() {
-		return id;
-	}
+    private static final long serialVersionUID = -3245474955686333063L;
 
-	public void setId(Long id) {
-		this.id = id;
-	}
+    public static final String SEQ_EG_CHECKLISTS = "SEQ_EG_CHECKLISTS";
 
-	public Long getObjectid() {
-		return objectid;
-	}
+    @Id
+    @GeneratedValue(generator = SEQ_EG_CHECKLISTS, strategy = GenerationType.SEQUENCE)
+    private Long id;
 
-	public void setObjectid(Long objectid) {
-		this.objectid = objectid;
-	}
+    @Column(name = "OBJECT_ID")
+    private Long objectid;
 
-	public String getChecklistvalue() {
-		return checklistvalue;
-	}
+    private String checklistvalue;
 
-	public void setChecklistvalue(String checklistvalue) {
-		this.checklistvalue = checklistvalue;
-	}
+    @ManyToOne
+    @JoinColumn(name = "APPCONFIG_VALUES_ID", nullable = false)
+    private AppConfigValues appconfigvalue;
 
-	public Date getLastmodified() {
-		return lastmodified;
-	}
+    @Transient
+    private String remarks;
 
-	public void setLastmodified(Date lastmodified) {
-		this.lastmodified = lastmodified;
-	}
+    @Override
+    public Long getId() {
+        return id;
+    }
 
-	public AppConfigValues getAppconfigvalue() {
-		return appconfigvalue;
-	}
+    @Override
+    public void setId(final Long id) {
+        this.id = id;
+    }
 
-	public void setAppconfigvalue(AppConfigValues appconfigvalue) {
-		this.appconfigvalue = appconfigvalue;
-	}
+    public Long getObjectid() {
+        return objectid;
+    }
 
-	public String getRemarks() {
-		return remarks;
-	}
+    public void setObjectid(final Long objectid) {
+        this.objectid = objectid;
+    }
 
-	public void setRemarks(String remarks) {
-		this.remarks = remarks;
-	}
+    public String getChecklistvalue() {
+        return checklistvalue;
+    }
+
+    public void setChecklistvalue(final String checklistvalue) {
+        this.checklistvalue = checklistvalue;
+    }
+
+    public AppConfigValues getAppconfigvalue() {
+        return appconfigvalue;
+    }
+
+    public void setAppconfigvalue(final AppConfigValues appconfigvalue) {
+        this.appconfigvalue = appconfigvalue;
+    }
+
+    public String getRemarks() {
+        return remarks;
+    }
+
+    public void setRemarks(final String remarks) {
+        this.remarks = remarks;
+    }
 
 }

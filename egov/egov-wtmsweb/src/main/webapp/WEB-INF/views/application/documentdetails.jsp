@@ -51,7 +51,7 @@
 </div>
 
 
-<div class="form-group col-sm-12 view-content header-color hidden-xs">
+<div class="form-group view-content header-color hidden-xs">
 	<div class="col-sm-3 text-center"><spring:message code="lbl.documentname"/></div>											
 	<div class="col-sm-3 text-center"><spring:message code="lbl.documentnumber"/> (<span class="mandatory"></span> )</div>										
 	<div class="col-sm-3 text-center"><spring:message code="lbl.documentdate"/> (<span class="mandatory"></span> )</div>

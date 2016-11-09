@@ -39,15 +39,6 @@
  */
 package org.egov.stms.elasticSearch.entity;
 
-import static org.egov.search.domain.Filter.queryStringFilter;
-import static org.egov.search.domain.Filter.termsStringFilter;
-
-import java.util.ArrayList;
-import java.util.List;
-
-import org.egov.search.domain.Filter;
-import org.egov.search.domain.Filters;
-import org.egov.stms.utils.constants.SewerageTaxConstants;
 import org.jboss.logging.Logger;
 
 public class SewerageCollectFeeSearchRequest {
@@ -122,7 +113,7 @@ public class SewerageCollectFeeSearchRequest {
         this.searchText = searchText;
     }
 
-    public Filters searchFilters() { 
+   /* public Filters searchFilters() {
         final List<Filter> andFilters = new ArrayList<>(0);
         andFilters.add(termsStringFilter(SewerageTaxConstants.SEARCHABLE_SHSCNO, shscNumber));
         andFilters.add(termsStringFilter(SewerageTaxConstants.CLAUSES_CITYNAME, ulbName));
@@ -136,7 +127,7 @@ public class SewerageCollectFeeSearchRequest {
         if (logger.isDebugEnabled())
             logger.debug("finished filters");
         return Filters.withAndFilters(andFilters);
-    }
+    }*/
     
     public String searchQuery() {
         return searchText;

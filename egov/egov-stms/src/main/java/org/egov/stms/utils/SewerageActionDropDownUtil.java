@@ -1,42 +1,43 @@
-/**
+/*
  * eGov suite of products aim to improve the internal efficiency,transparency,
-   accountability and the service delivery of the government  organizations.
-
-    Copyright (C) <2016>  eGovernments Foundation
-
-    The updated version of eGov suite of products as by eGovernments Foundation
-    is available at http://www.egovernments.org
-
-    This program is free software: you can redistribute it and/or modify
-    it under the terms of the GNU General Public License as published by
-    the Free Software Foundation, either version 3 of the License, or
-    any later version.
-
-    This program is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU General Public License for more details.
-
-    You should have received a copy of the GNU General Public License
-    along with this program. If not, see http://www.gnu.org/licenses/ or
-    http://www.gnu.org/licenses/gpl.html .
-
-    In addition to the terms of the GPL license to be adhered to in using this
-    program, the following additional terms are to be complied with:
-
-        1) All versions of this program, verbatim or modified must carry this
-           Legal Notice.
-
-        2) Any misrepresentation of the origin of the material is prohibited. It
-           is required that all modified versions of this material be marked in
-           reasonable ways as different from the original version.
-
-        3) This license does not grant any rights to any user of the program
-           with regards to rights under trademark law for use of the trade names
-           or trademarks of eGovernments Foundation.
-
-  In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
+ *     accountability and the service delivery of the government  organizations.
+ *
+ *      Copyright (C) 2016  eGovernments Foundation
+ *
+ *      The updated version of eGov suite of products as by eGovernments Foundation
+ *      is available at http://www.egovernments.org
+ *
+ *      This program is free software: you can redistribute it and/or modify
+ *      it under the terms of the GNU General Public License as published by
+ *      the Free Software Foundation, either version 3 of the License, or
+ *      any later version.
+ *
+ *      This program is distributed in the hope that it will be useful,
+ *      but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *      MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *      GNU General Public License for more details.
+ *
+ *      You should have received a copy of the GNU General Public License
+ *      along with this program. If not, see http://www.gnu.org/licenses/ or
+ *      http://www.gnu.org/licenses/gpl.html .
+ *
+ *      In addition to the terms of the GPL license to be adhered to in using this
+ *      program, the following additional terms are to be complied with:
+ *
+ *          1) All versions of this program, verbatim or modified must carry this
+ *             Legal Notice.
+ *
+ *          2) Any misrepresentation of the origin of the material is prohibited. It
+ *             is required that all modified versions of this material be marked in
+ *             reasonable ways as different from the original version.
+ *
+ *          3) This license does not grant any rights to any user of the program
+ *             with regards to rights under trademark law for use of the trade names
+ *             or trademarks of eGovernments Foundation.
+ *
+ *    In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
+
 package org.egov.stms.utils;
 
 import static org.egov.stms.utils.constants.SewerageTaxConstants.APPLICATION_STATUS_SANCTIONED;
@@ -55,6 +56,7 @@ import static org.egov.stms.utils.constants.SewerageTaxConstants.ROLE_SEWERAGETA
 import static org.egov.stms.utils.constants.SewerageTaxConstants.ROLE_SEWERAGETAX_APPROVER;
 import static org.egov.stms.utils.constants.SewerageTaxConstants.ROLE_SEWERAGETAX_CREATOR;
 import static org.egov.stms.utils.constants.SewerageTaxConstants.ROLE_SEWERAGETAX_REPORTVIEWER;
+import static org.egov.stms.utils.constants.SewerageTaxConstants.ROLE_STMS_VIEW_ACCESS_ROLE;
 import static org.egov.stms.utils.constants.SewerageTaxConstants.ROLE_SUPERUSER;
 import static org.egov.stms.utils.constants.SewerageTaxConstants.ROLE_ULBOPERATOR;
 import static org.egov.stms.utils.constants.SewerageTaxConstants.VIEW;
@@ -73,14 +75,14 @@ import org.apache.log4j.Logger;
 import org.egov.stms.elasticSearch.entity.SewerageSearchResult;
 import org.egov.stms.transactions.entity.SewerageApplicationDetails;
 
+
 public class SewerageActionDropDownUtil {
 
-    private static Logger LOGGER = Logger.getLogger(SewerageActionDropDownUtil.class);
     public static final String DEFAULT = "DEFAULT";
-
     public static final Map<String, Map<String, String>> actionUrlMap = new HashMap<String, Map<String, String>>();
     public static final Map<String, List<String>> STATUSACTIONMAP = new HashMap<String, List<String>>();
     public static final Map<String, List<String>> SEWERAGEROLEACTIONMAP = new HashMap<String, List<String>>();
+    private static Logger LOGGER = Logger.getLogger(SewerageActionDropDownUtil.class);
 
     static {
         // Status wise define different actions.
@@ -107,8 +109,8 @@ public class SewerageActionDropDownUtil {
                 CLOSECONNECTION_ACTIONDROPDOWN, GENERATEBEMANDBILL));
         SEWERAGEROLEACTIONMAP.put(ROLE_COLLECTIONOPERATOR, Arrays.asList(VIEW, COLLECTDONATIONCHARHGES));
         SEWERAGEROLEACTIONMAP.put(ROLE_SUPERUSER, Arrays.asList(VIEW, COLLECTDONATIONCHARHGES));
-        SEWERAGEROLEACTIONMAP.put(ROLE_SEWERAGETAX_REPORTVIEWER, Arrays.asList(VIEW, VIEWDCB));
-
+        SEWERAGEROLEACTIONMAP.put(ROLE_SEWERAGETAX_REPORTVIEWER, Arrays.asList(VIEW, VIEWDCB)); 
+        SEWERAGEROLEACTIONMAP.put(ROLE_STMS_VIEW_ACCESS_ROLE, Arrays.asList(VIEW, VIEWDCB));
         SEWERAGEROLEACTIONMAP.put(DEFAULT, Arrays.asList(VIEW));
 
         // For each action, define url mapping
@@ -190,16 +192,17 @@ public class SewerageActionDropDownUtil {
                 actionList = SEWERAGEROLEACTIONMAP.get(ROLE_SEWERAGETAX_REPORTVIEWER);
             else if (roleName.contains(ROLE_SEWERAGETAX_ADMINISTRATOR))
                 actionList = SEWERAGEROLEACTIONMAP.get(ROLE_SEWERAGETAX_ADMINISTRATOR);
+            else if (roleName.contains(ROLE_STMS_VIEW_ACCESS_ROLE))
+                actionList = SEWERAGEROLEACTIONMAP.get(ROLE_STMS_VIEW_ACCESS_ROLE);
             else
                 actionList = SEWERAGEROLEACTIONMAP.get(DEFAULT);
         return filterActionsByStatus(actionList, collectionStatus, sewerageApplicationDetails);
     }
 
-    public static final SewerageSearchResult getSearchResultWithActions(final List<String> roleName, final String status,
-            final SewerageApplicationDetails sewerageApplicationDetails) {
-        final SewerageSearchResult searchActions = new SewerageSearchResult();
+    public static final SewerageSearchResult getSearchResultWithActions(List<String> roleName, final String status, final SewerageApplicationDetails sewerageApplicationDetails) {
+        SewerageSearchResult searchActions = new SewerageSearchResult();
         if (status != null && sewerageApplicationDetails != null)
-            searchActions.setActions(getActionsByRoles(roleName, status, sewerageApplicationDetails));
+            searchActions.setActions(getActionsByRoles(roleName, status,sewerageApplicationDetails));
         return searchActions;
     }
 

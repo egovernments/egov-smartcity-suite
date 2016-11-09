@@ -40,7 +40,6 @@
 package org.egov.commons;
 
 import org.egov.infra.workflow.entity.StateAware;
-import org.hibernate.search.annotations.DocumentId;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
@@ -55,20 +54,19 @@ import javax.persistence.OneToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.Transient;
-
 import java.math.BigDecimal;
 import java.util.Date;
 import java.util.Set;
 
+import static org.egov.commons.CVoucherHeader.SEQ_VOUCHERHEADER;
+
 @Entity
 @Table(name = "VOUCHERHEADER")
-@SequenceGenerator(name = CVoucherHeader.SEQ_VOUCHERHEADER, sequenceName = CVoucherHeader.SEQ_VOUCHERHEADER, allocationSize = 1)
+@SequenceGenerator(name = SEQ_VOUCHERHEADER, sequenceName = SEQ_VOUCHERHEADER, allocationSize = 1)
 public class CVoucherHeader extends StateAware {
 
-    private static final long serialVersionUID = -1950866465902911747L;
     public static final String SEQ_VOUCHERHEADER = "SEQ_VOUCHERHEADER";
-
-    @DocumentId
+    private static final long serialVersionUID = -1950866465902911747L;
     @Id
     @GeneratedValue(generator = SEQ_VOUCHERHEADER, strategy = GenerationType.SEQUENCE)
     private Long id;
@@ -79,7 +77,7 @@ public class CVoucherHeader extends StateAware {
     private Date effectiveDate;
     private String voucherNumber;
     private Date voucherDate;
-    @ManyToOne(fetch=FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "fundId")
     private Fund fundId;
     private Integer fiscalPeriodId;
@@ -95,9 +93,9 @@ public class CVoucherHeader extends StateAware {
     private Boolean isRestrictedtoOneFunctionCenter;
     @Transient
     private String voucherNumberPrefix;
-    @OneToMany(orphanRemoval = true, cascade = CascadeType.ALL , fetch=FetchType.LAZY,mappedBy="voucherHeaderId",targetEntity=CGeneralLedger.class )
+    @OneToMany(orphanRemoval = true, cascade = CascadeType.ALL, fetch = FetchType.LAZY, mappedBy = "voucherHeaderId", targetEntity = CGeneralLedger.class)
     private Set<CGeneralLedger> generalLedger;
-    @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL, mappedBy = "voucherheaderid" , targetEntity=Vouchermis.class)
+    @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL, mappedBy = "voucherheaderid", targetEntity = Vouchermis.class)
     private Vouchermis vouchermis;
 
     public Long getId() {
@@ -304,7 +302,7 @@ public class CVoucherHeader extends StateAware {
 
     @Override
     public String getStateDetails() {
-        return voucherNumber+"-"+getState().getComments();
+        return voucherNumber + "-" + getState().getComments();
     }
 
     public Set<CGeneralLedger> getGeneralledger() {
@@ -370,14 +368,13 @@ public class CVoucherHeader extends StateAware {
         this.generalLedger = generalLedger;
     }
 
-	public String getVoucherNumberPrefix() {
-		return voucherNumberPrefix;
-	}
+    public String getVoucherNumberPrefix() {
+        return voucherNumberPrefix;
+    }
 
-	public void setVoucherNumberPrefix(String voucherNumberPrefix) {
-		this.voucherNumberPrefix = voucherNumberPrefix;
-	}
+    public void setVoucherNumberPrefix(String voucherNumberPrefix) {
+        this.voucherNumberPrefix = voucherNumberPrefix;
+    }
 
-	
 
 }

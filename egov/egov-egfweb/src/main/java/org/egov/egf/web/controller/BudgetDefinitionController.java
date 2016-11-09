@@ -107,7 +107,7 @@ public class BudgetDefinitionController {
             model.addAttribute("validationMessage", validationMessage);
             return BUDGET_NEW;
         }
-        budget.setStatus(budgetDefinitionService.getBudgetStatus());
+        budget.setStatus(budgetDefinitionService.getBudgetStatus("Created"));
         budgetDefinitionService.create(budget);
         redirectAttrs.addFlashAttribute("message",
                 messageSource.getMessage("msg.budget.success", null, Locale.ENGLISH));
