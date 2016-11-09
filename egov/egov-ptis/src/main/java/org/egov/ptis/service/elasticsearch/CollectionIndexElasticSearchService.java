@@ -42,6 +42,7 @@ package org.egov.ptis.service.elasticsearch;
 
 import static org.egov.ptis.constants.PropertyTaxConstants.COLLECION_BILLING_SERVICE_PT;
 import static org.egov.ptis.constants.PropertyTaxConstants.COLLECTION_INDEX_NAME;
+import static org.egov.ptis.constants.PropertyTaxConstants.DASHBOARD_GROUPING_BILLCOLLECTORWISE;
 import static org.egov.ptis.constants.PropertyTaxConstants.DASHBOARD_GROUPING_DISTRICTWISE;
 import static org.egov.ptis.constants.PropertyTaxConstants.DASHBOARD_GROUPING_GRADEWISE;
 import static org.egov.ptis.constants.PropertyTaxConstants.DASHBOARD_GROUPING_REGIONWISE;
@@ -58,6 +59,7 @@ import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 
 import org.apache.commons.lang3.StringUtils;
 import org.egov.commons.CFinancialYear;
@@ -71,6 +73,7 @@ import org.egov.ptis.bean.dashboard.CollectionTrend;
 import org.egov.ptis.bean.dashboard.ReceiptTableData;
 import org.egov.ptis.bean.dashboard.ReceiptsTrend;
 import org.egov.ptis.constants.PropertyTaxConstants;
+import org.egov.ptis.elasticsearch.model.BillCollectorIndex;
 import org.elasticsearch.action.search.SearchResponse;
 import org.elasticsearch.index.query.BoolQueryBuilder;
 import org.elasticsearch.index.query.QueryBuilder;
@@ -84,10 +87,13 @@ import org.elasticsearch.search.aggregations.bucket.terms.StringTerms;
 import org.elasticsearch.search.aggregations.bucket.terms.Terms;
 import org.elasticsearch.search.aggregations.metrics.sum.Sum;
 import org.elasticsearch.search.aggregations.metrics.valuecount.ValueCount;
+import org.elasticsearch.search.sort.FieldSortBuilder;
+import org.elasticsearch.search.sort.SortOrder;
 import org.joda.time.DateTime;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.elasticsearch.core.ElasticsearchTemplate;
 import org.springframework.data.elasticsearch.core.ResultsExtractor;
 import org.springframework.data.elasticsearch.core.query.NativeSearchQueryBuilder;
@@ -323,10 +329,10 @@ public class CollectionIndexElasticSearchService {
                 aggregationField = "cityName";
             else if (collectionDetailsRequest.getType().equalsIgnoreCase(DASHBOARD_GROUPING_GRADEWISE))
                 aggregationField = "cityGrade";
-            else if (collectionDetailsRequest.getType().equalsIgnoreCase(DASHBOARD_GROUPING_WARDWISE))
+            else if (collectionDetailsRequest.getType().equalsIgnoreCase(DASHBOARD_GROUPING_WARDWISE) 
+                    || collectionDetailsRequest.getType().equalsIgnoreCase(DASHBOARD_GROUPING_BILLCOLLECTORWISE))
                 aggregationField = "revenueWard";
         }
-        // Wardwise group to be implemented later
 
         /**
          * As per Elastic Search functionality, to get the total collections
@@ -385,7 +391,6 @@ public class CollectionIndexElasticSearchService {
         for (Map.Entry<String, BigDecimal> entry : cytdCollMap.entrySet()) {
             collIndData = new CollTableData();
             name = entry.getKey();
-            System.out.println(name);
             if (aggregationField.equals("regionName"))
                 collIndData.setRegionName(name);
             else if (aggregationField.equals("districtName")) {
@@ -997,5 +1002,108 @@ public class CollectionIndexElasticSearchService {
         }
         return cytdCollMap;
     }
+    
+    /**
+     * Populates Receipt Table Details for type - Bill Collector
+     * @param collectionDetailsRequest
+     * @return list
+     */
+    public List<CollTableData> getResponseTableDataForBillCollector(CollectionDetailsRequest collectionDetailsRequest) {
+        Map<String, CollTableData> wardReceiptDetails = new HashMap<>();
+        Map<String, List<CollTableData>> billCollectorWiseMap = new LinkedHashMap<>(); 
+        List<CollTableData> collDetails = new ArrayList<>();
+        List<CollTableData> billCollectorWiseTableData = new ArrayList<>();
+        BigDecimal currDayColl = BigDecimal.ZERO;
+        BigDecimal cytdColl = BigDecimal.ZERO;
+        BigDecimal lytdColl = BigDecimal.ZERO;
+        BigDecimal cytdDmd = BigDecimal.ZERO;
+        BigDecimal performance = BigDecimal.ZERO;
+        BigDecimal totalDmd = BigDecimal.ZERO;
+        BigDecimal variance = BigDecimal.ZERO;
+        CollTableData collTableData;
+        /**
+         * Fetch the Ward-wise data 
+         */
+        List<CollTableData> wardWiseData = getResponseTableData(collectionDetailsRequest);
+        for(CollTableData tableData : wardWiseData){
+            wardReceiptDetails.put(tableData.getWardName(), tableData);
+        }
+        
+        /**
+         * prepare bill collector wise collection table data
+         */
+        List<BillCollectorIndex> billCollectorsList = getBillCollectorDetails(collectionDetailsRequest);
+        for(BillCollectorIndex billCollIndex : billCollectorsList){
+            if(billCollectorWiseMap.isEmpty()){
+                collDetails.add(wardReceiptDetails.get(billCollIndex.getRevenueWard()));
+                billCollectorWiseMap.put(billCollIndex.getBillCollector(), collDetails);
+            } else {
+                if(!billCollectorWiseMap.containsKey(billCollIndex.getBillCollector())){
+                    collDetails = new ArrayList<>();
+                    collDetails.add(wardReceiptDetails.get(billCollIndex.getRevenueWard()));
+                    billCollectorWiseMap.put(billCollIndex.getBillCollector(), collDetails);
+                } else {
+                    if(wardReceiptDetails.get(billCollIndex.getRevenueWard()) != null)
+                        billCollectorWiseMap.get(billCollIndex.getBillCollector()).add(wardReceiptDetails.get(billCollIndex.getRevenueWard()));
+                }
+            }
+        }
+        
+        for(Entry<String, List<CollTableData>> entry : billCollectorWiseMap.entrySet()){
+            collTableData = new CollTableData();
+            currDayColl = BigDecimal.ZERO;
+            cytdColl = BigDecimal.ZERO;
+            lytdColl = BigDecimal.ZERO;
+            cytdDmd = BigDecimal.ZERO;
+            performance = BigDecimal.ZERO;
+            totalDmd = BigDecimal.ZERO;
+            variance = BigDecimal.ZERO;
+            for(CollTableData tableData : entry.getValue()){
+                currDayColl = currDayColl.add(tableData.getTodayColl() == null ? BigDecimal.ZERO : tableData.getTodayColl());
+                cytdColl = cytdColl.add(tableData.getCytdColl() == null ? BigDecimal.ZERO : tableData.getCytdColl());
+                cytdDmd = cytdDmd.add(tableData.getCytdDmd() == null ? BigDecimal.ZERO : tableData.getCytdDmd());
+                totalDmd = totalDmd.add(tableData.getTotalDmd() == null ? BigDecimal.ZERO : tableData.getTotalDmd());
+                lytdColl = lytdColl.add(tableData.getLytdColl() == null ? BigDecimal.ZERO : tableData.getLytdColl());
+            }
+            collTableData.setBillCollector(entry.getKey());
+            collTableData.setTodayColl(currDayColl);
+            collTableData.setCytdColl(cytdColl);
+            collTableData.setCytdDmd(cytdDmd);
+            collTableData.setCytdBalDmd(cytdDmd.subtract(cytdColl));
+            collTableData.setTotalDmd(totalDmd);
+            collTableData.setLytdColl(lytdColl);
+            if (cytdDmd != BigDecimal.valueOf(0)) {
+                performance = (collTableData.getCytdColl().multiply(PropertyTaxConstants.BIGDECIMAL_100)).divide(cytdDmd,
+                        1, BigDecimal.ROUND_HALF_UP);
+                collTableData.setPerformance(performance);
+            }
+            if (collTableData.getLytdColl().compareTo(BigDecimal.ZERO) == 0)
+                variance = PropertyTaxConstants.BIGDECIMAL_100;
+            else
+                variance = ((collTableData.getCytdColl().subtract(collTableData.getLytdColl()))
+                        .multiply(PropertyTaxConstants.BIGDECIMAL_100)).divide(collTableData.getLytdColl(), 1,
+                                BigDecimal.ROUND_HALF_UP);
+            collTableData.setLyVar(variance);
+            billCollectorWiseTableData.add(collTableData);
+        }
+        return billCollectorWiseTableData;
+    }
 
+    /**
+     * Fetches BillCollector and revenue ward details for thgiven ulbCode
+     * @param collectionDetailsRequest
+     * @return List
+     */
+    private List<BillCollectorIndex> getBillCollectorDetails(CollectionDetailsRequest collectionDetailsRequest) {
+        SearchQuery searchQueryColl = new NativeSearchQueryBuilder().withIndices(PropertyTaxConstants.BILL_COLLECTOR_INDEX_NAME)
+                .withFields("billCollector","revenueWard")
+                .withQuery(QueryBuilders.boolQuery()
+                .filter(QueryBuilders.matchQuery("cityCode", collectionDetailsRequest.getUlbCode())))
+                .withSort(new FieldSortBuilder("billCollector").order(SortOrder.ASC))
+                .withPageable(new PageRequest(0, 200))
+                .build();
+        List<BillCollectorIndex> billCollectorsList = elasticsearchTemplate.queryForList(searchQueryColl,BillCollectorIndex.class);
+        return billCollectorsList;
+    }
+    
 }

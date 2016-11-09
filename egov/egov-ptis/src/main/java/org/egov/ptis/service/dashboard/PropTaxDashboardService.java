@@ -57,6 +57,7 @@ import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.servlet.http.HttpServletRequest;
 
+import org.apache.commons.lang3.StringUtils;
 import org.egov.infra.rest.client.SimpleRestClient;
 import org.egov.infra.utils.DateUtils;
 import org.egov.infra.web.utils.WebUtils;
@@ -213,14 +214,19 @@ public class PropTaxDashboardService {
      */
     public CollectionDetails getCollectionIndexDetails(CollectionDetailsRequest collectionDetailsRequest) {
         CollectionDetails collectionIndexDetails = new CollectionDetails();
+        List<CollTableData> collIndexData;
         collectionIndexElasticSearchService.getCompleteCollectionIndexDetails(collectionDetailsRequest,
                 collectionIndexDetails);
         propertyTaxElasticSearchIndexService.getConsolidatedDemandInfo(collectionDetailsRequest,
                 collectionIndexDetails);
         List<CollectionTrend> collectionTrends = collectionIndexElasticSearchService
                 .getMonthwiseCollectionDetails(collectionDetailsRequest);
-        List<CollTableData> collIndexData = collectionIndexElasticSearchService
-                .getResponseTableData(collectionDetailsRequest);
+        if (StringUtils.isNotBlank(collectionDetailsRequest.getType())
+                && collectionDetailsRequest.getType().equals(PropertyTaxConstants.DASHBOARD_GROUPING_BILLCOLLECTORWISE))
+            collIndexData = collectionIndexElasticSearchService
+                    .getResponseTableDataForBillCollector(collectionDetailsRequest);
+        else
+            collIndexData = collectionIndexElasticSearchService.getResponseTableData(collectionDetailsRequest);
         collectionIndexDetails.setCollTrends(collectionTrends);
         collectionIndexDetails.setResponseDetails(collIndexData);
         ErrorDetails errorDetails = new ErrorDetails();
