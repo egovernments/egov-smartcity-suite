@@ -120,7 +120,7 @@
 								</div>
 							</div>
                             <input style="display:none" type="password">
-							<div class="form-group" id="wrap">
+							<div class="form-group overflow" id="wrap">
 									<div class="input-group">
 										<div class="input-group-addon style-label">
 											<i class="fa fa-key theme-color style-color"></i>
@@ -168,7 +168,7 @@
 									<form:errors path="emailId" cssClass="add-margin error-msg font-12"/>
 								</div>
 							</div>
-							<div class="form-group" id="otp-section">
+							<div class="form-group overflow" id="otp-section">
 								<div class="input-group">
 									<div class="input-group-addon style-label">
 										<i class="fa fa-key theme-color style-color"></i>

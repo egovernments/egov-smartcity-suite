@@ -1646,6 +1646,8 @@ label.error {
 }
 .form-group {
   margin-bottom: 0px;
+}
+.form-group.overflow {
   overflow: auto;
 }
 .form-group div {
