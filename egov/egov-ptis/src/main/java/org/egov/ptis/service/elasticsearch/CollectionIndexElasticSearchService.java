@@ -1100,7 +1100,7 @@ public class CollectionIndexElasticSearchService {
                 .withQuery(QueryBuilders.boolQuery()
                 .filter(QueryBuilders.matchQuery("cityCode", collectionDetailsRequest.getUlbCode())))
                 .withSort(new FieldSortBuilder("billCollector").order(SortOrder.ASC))
-                .withPageable(new PageRequest(0, 200))
+                .withPageable(new PageRequest(0, 250))
                 .build();
         List<BillCollectorIndex> billCollectorsList = elasticsearchTemplate.queryForList(searchQueryColl,BillCollectorIndex.class);
         return billCollectorsList;
