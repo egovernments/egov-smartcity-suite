@@ -93,6 +93,7 @@ import org.egov.infra.filestore.entity.FileStoreMapper;
 import org.egov.infra.filestore.service.FileStoreService;
 import org.egov.infra.rest.client.SimpleRestClient;
 import org.egov.infra.elasticsearch.entity.ApplicationIndex;
+import org.egov.infra.elasticsearch.entity.enums.ApprovalStatus;
 import org.egov.infra.elasticsearch.entity.enums.ClosureStatus;
 import org.egov.infra.elasticsearch.service.ApplicationIndexService;
 import org.egov.infra.utils.ApplicationNumberGenerator;
@@ -1998,6 +1999,7 @@ public class PropertyService {
                         .withChannel(source).withMobileNumber(owner.getMobileNumber())
                         .withAadharNumber(owner.getAadhaarNumber()).withConsumerCode(property.getBasicProperty().getUpicNo())
                         .withClosed(property.getState().getValue().equals(WF_STATE_CLOSED)?ClosureStatus.YES:ClosureStatus.NO)
+                        .withApproved(property.getState().getValue().equals(WF_STATE_COMMISSIONER_APPROVED)?ApprovalStatus.APPROVED:property.getState().getValue().equals(WF_STATE_REJECTED)?ApprovalStatus.REJECTED:ApprovalStatus.INPROGRESS)
                         .build();
 
                 applicationIndexService.createApplicationIndex(applicationIndex);
@@ -2031,6 +2033,7 @@ public class PropertyService {
                         .withChannel(source).withMobileNumber(owner.getMobileNumber())
                         .withAadharNumber(owner.getAadhaarNumber()).withConsumerCode(property.getBasicProperty().getUpicNo())
                         .withClosed(property.getState().getValue().equals(WF_STATE_CLOSED)?ClosureStatus.YES:ClosureStatus.NO)
+                        .withApproved(property.getState().getValue().equals(WF_STATE_COMMISSIONER_APPROVED)?ApprovalStatus.APPROVED:property.getState().getValue().equals(WF_STATE_REJECTED)?ApprovalStatus.REJECTED:ApprovalStatus.INPROGRESS)
                         .build();
                 applicationIndexService.createApplicationIndex(applicationIndex);
             } else {
@@ -2055,6 +2058,7 @@ public class PropertyService {
                         .withChannel(source).withMobileNumber(owner.getMobileNumber())
                         .withAadharNumber(owner.getAadhaarNumber()).withConsumerCode(property.getBasicProperty().getUpicNo())
                         .withClosed(property.getState().getValue().equals(WF_STATE_CLOSED)?ClosureStatus.YES:ClosureStatus.NO)
+                        .withApproved(property.getState().getValue().equals(WF_STATE_COMMISSIONER_APPROVED)?ApprovalStatus.APPROVED:property.getState().getValue().equals(WF_STATE_REJECTED)?ApprovalStatus.REJECTED:ApprovalStatus.INPROGRESS)
                         .build();
                 applicationIndexService.createApplicationIndex(applicationIndex);
             } else {
