@@ -49,7 +49,6 @@
 	<%@ include file="councilmember-form.jsp"%>
 	<%-- <input type="hidden" name="councilMember.id" value="${councilMember.id}" /> --%>
 	
-	<div class="form-group">
 		<div class="text-center">
 			<button type='submit' class='btn btn-primary' id="buttonSubmit">
 				<spring:message code='lbl.update' />
@@ -57,7 +56,7 @@
 			<a href='javascript:void(0)' class='btn btn-default'
 				onclick='self.close()'><spring:message code='lbl.close' /></a>
 		</div>
-	</div>
+		
 </form:form>
 <script src="<cdn:url value='/resources/global/js/bootstrap/bootstrap-datepicker.js' context='/egi'/>"></script>	
 	<script src="<cdn:url value='/resources/app/js/councilMemberHelper.js?rnd=${app_release_no}'/>"></script>	

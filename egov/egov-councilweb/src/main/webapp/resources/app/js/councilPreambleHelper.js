@@ -179,7 +179,7 @@ function callAjaxSearch() {
 						},
 						{
 
-							"data" : "",
+							"data" : null,
 							"width" : "8%",
 							"sClass" : "text-left"
 						},
