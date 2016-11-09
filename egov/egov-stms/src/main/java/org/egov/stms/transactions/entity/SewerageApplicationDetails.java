@@ -105,10 +105,10 @@ public class SewerageApplicationDetails extends StateAware {
     @SafeHtml
     private String applicationNumber;
 
-    @Temporal(value = TemporalType.TIMESTAMP)
+    @Temporal(value = TemporalType.DATE)
     private Date applicationDate;
 
-    @Temporal(value = TemporalType.TIMESTAMP)
+    @Temporal(value = TemporalType.DATE)
     private Date disposalDate;
 
     @ManyToOne

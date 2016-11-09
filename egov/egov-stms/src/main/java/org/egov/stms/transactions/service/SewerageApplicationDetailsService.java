@@ -62,6 +62,8 @@ import static org.egov.stms.utils.constants.SewerageTaxConstants.WF_STATE_PAYMEN
 import static org.egov.stms.utils.constants.SewerageTaxConstants.WF_STATE_REJECTED;
 
 import java.math.BigDecimal;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collections;
@@ -87,12 +89,12 @@ import org.egov.eis.service.AssignmentService;
 import org.egov.eis.service.EisCommonService;
 import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.admin.master.service.UserService;
-import org.egov.infra.filestore.entity.FileStoreMapper;
-import org.egov.infra.reporting.engine.ReportOutput;
 import org.egov.infra.elasticsearch.entity.ApplicationIndex;
 import org.egov.infra.elasticsearch.entity.enums.ApprovalStatus;
 import org.egov.infra.elasticsearch.entity.enums.ClosureStatus;
 import org.egov.infra.elasticsearch.service.ApplicationIndexService;
+import org.egov.infra.filestore.entity.FileStoreMapper;
+import org.egov.infra.reporting.engine.ReportOutput;
 import org.egov.infra.security.utils.SecurityUtils;
 import org.egov.infra.utils.autonumber.AutonumberServiceBeanResolver;
 import org.egov.infra.workflow.entity.State;
@@ -106,11 +108,11 @@ import org.egov.stms.autonumber.SewerageApplicationNumberGenerator;
 import org.egov.stms.autonumber.SewerageCloseConnectionNoticeNumberGenerator;
 import org.egov.stms.autonumber.SewerageEstimationNumberGenerator;
 import org.egov.stms.autonumber.SewerageWorkOrderNumberGenerator;
-import org.egov.stms.service.es.SewerageIndexService;
 import org.egov.stms.masters.entity.enums.SewerageConnectionStatus;
 import org.egov.stms.masters.service.DocumentTypeMasterService;
 import org.egov.stms.notice.entity.SewerageNotice;
 import org.egov.stms.notice.service.SewerageNoticeService;
+import org.egov.stms.service.es.SewerageIndexService;
 import org.egov.stms.transactions.entity.SewerageApplicationDetails;
 import org.egov.stms.transactions.entity.SewerageApplicationDetailsDocument;
 import org.egov.stms.transactions.entity.SewerageDemandConnection;
@@ -388,6 +390,36 @@ public class SewerageApplicationDetailsService {
     }
 
     public void updateIndexes(final SewerageApplicationDetails sewerageApplicationDetails) {
+        final SimpleDateFormat myFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm'Z'");
+
+        try {
+                if(sewerageApplicationDetails.getConnection()!=null && sewerageApplicationDetails.getConnection().getExecutionDate()!=null){
+                    final String executionDate = myFormat.format(sewerageApplicationDetails.getConnection().getExecutionDate());
+                    sewerageApplicationDetails.getConnection().setExecutionDate(myFormat.parse(executionDate));
+                }
+                if(sewerageApplicationDetails.getDisposalDate()!=null){
+                    final String disposalDate = myFormat.format(sewerageApplicationDetails.getDisposalDate());
+                    sewerageApplicationDetails.setDisposalDate(myFormat.parse(disposalDate));
+                }
+                if(sewerageApplicationDetails.getApplicationDate()!=null){
+                    final String applicationDate = myFormat.format(sewerageApplicationDetails.getApplicationDate());
+                    sewerageApplicationDetails.setApplicationDate(myFormat.parse(applicationDate));
+                }
+                if(sewerageApplicationDetails.getEstimationDate()!=null){
+                    final String estimationDate = myFormat.format(sewerageApplicationDetails.getEstimationDate());
+                    sewerageApplicationDetails.setEstimationDate(myFormat.parse(estimationDate));
+                }
+                if(sewerageApplicationDetails.getWorkOrderDate()!=null){
+                    final String workOrderDate = myFormat.format(sewerageApplicationDetails.getWorkOrderDate());
+                    sewerageApplicationDetails.setWorkOrderDate(myFormat.parse(workOrderDate));
+                }
+                if(sewerageApplicationDetails.getClosureNoticeDate()!=null){
+                    final String closureNoticeDate = myFormat.format(sewerageApplicationDetails.getClosureNoticeDate());
+                    sewerageApplicationDetails.setClosureNoticeDate(myFormat.parse(closureNoticeDate));
+                }
+            } catch (final ParseException e) {
+            }
+        
         // TODO : Need to make Rest API call to get assessmentdetails
         final AssessmentDetails assessmentDetails = sewerageTaxUtils.getAssessmentDetailsForFlag(
                 sewerageApplicationDetails.getConnectionDetail().getPropertyIdentifier(),
@@ -531,7 +563,7 @@ public class SewerageApplicationDetailsService {
         return entityManager.unwrap(Session.class);
     }
 
-    public Map showApprovalDetailsByApplcationCurState(final SewerageApplicationDetails sewerageApplicationDetails) {
+    public Map<String,String> showApprovalDetailsByApplcationCurState(final SewerageApplicationDetails sewerageApplicationDetails) {
         final Map<String, String> modelParams = new HashMap<String, String>();
         if (sewerageApplicationDetails.getState() != null) {
             final String currentState = sewerageApplicationDetails.getState().getValue();
