@@ -400,7 +400,8 @@ public class EstimateAbstractReportPDFController {
             queryParameters += messageSource.getMessage("msg.subtypeofwork", null, null)
                     + egwTypeOfWorkHibernateDAO.getTypeOfWorkById(typeOfWork).getDescription() + ", ";
 
-        if (departments != null && !departments.toString().equalsIgnoreCase("[null]")) {
+        if (departments != null && !departments.toString().equalsIgnoreCase("[null]")
+                && !departments.toString().equalsIgnoreCase("[]")) {
             String departmentNames = "";
             for (final Department dept : departments)
                 departmentNames = departmentNames + dept.getName() + ",";
@@ -576,7 +577,8 @@ public class EstimateAbstractReportPDFController {
         reportParams.put("heading", messageSource.getMessage("msg.estimateabstractreport.by.typeofworkwise", null, null));
         reportParams.put("reportRunDate", formatter.format(new Date()));
         reportParams.put("dataRunDate", dataRunDate);
-        if (searchRequest.getDepartments() != null && !searchRequest.getDepartments().toString().equalsIgnoreCase("[null]"))
+        if (searchRequest.getDepartments() != null && !searchRequest.getDepartments().toString().equalsIgnoreCase("[null]")
+                && !searchRequest.getDepartments().toString().equalsIgnoreCase("[]"))
             reportInput = new ReportRequest(messageSource.getMessage("msg.estimateabstractreportbytypeofworkwisewithdeptpdf",
                     null, null), estimateAbstractReportPdfList,
                     reportParams);

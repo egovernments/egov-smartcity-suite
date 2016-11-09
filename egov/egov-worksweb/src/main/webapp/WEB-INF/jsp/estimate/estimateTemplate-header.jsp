@@ -95,9 +95,28 @@ function validateHeaderBeforeSubmit(estimateTemplateForm) {
 		document.getElementById("estimatetemplateerror").innerHTML+='<s:text name="estimatetemplate.sornonsor.not.null" /><br>';
 		err=true;
 	}
-	if(err)
+	if(nonSorDataTable.getRecordSet().getLength() > 0){
+		var nonSorRate = document.getElementsByClassName("nonsorratevalue");
+		var nonSorDescription = document.getElementsByClassName("nonsordesc");
+		for(var i = 0; i < nonSorDescription.length; i++) {
+		       if(nonSorDescription.item(i).value == '') {
+		    	   dom.get("estimatetemplateerror").style.display='';
+		    	   document.getElementById("estimatetemplateerror").innerHTML+='<s:text name="estimate.nonsor.description.null" /><br>';
+		    	   err=true;
+		       } 
+		    }
+		for(var i = 0; i < nonSorRate.length; i++) {
+		       if(nonSorRate.item(i).value == '') {
+		    	   dom.get("estimatetemplateerror").style.display='';
+		    	   document.getElementById("estimatetemplateerror").innerHTML+='<s:text name="estimate.template.nonsor.null" /><br>';
+		    	   err=true;
+		       }
+		    }	
+	}
+	if(err){
+		window.scrollTo(0, 0);
 		return false;
-	else
+	} else
 		return true;
 }
 

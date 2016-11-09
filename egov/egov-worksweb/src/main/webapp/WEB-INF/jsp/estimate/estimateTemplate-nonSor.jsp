@@ -94,7 +94,6 @@ function calculateNonSOR(elem,recordId){
 	dom.get('error'+elem.id).style.display='none';
 	if(!validateNumberInTableCell(nonSorDataTable,elem,recordId)) return;
 	if(elem.value!=''){ 
-		if(!validateNonSORDescription(recordId)) return;
 		if(!validateNonSorUom(recordId)) return;
 	}
 }
@@ -113,7 +112,7 @@ var textboxFormatter = function(el, oRecord, oColumn, oData) {
     var value = (YAHOO.lang.isValue(oData))?oData:"";
     var id="nonsor"+oColumn.getKey()+oRecord.getId();
     var fieldName = "nonSorActivities[" + oRecord.getCount() + "]." + oColumn.getKey();
-    markup="<input type='text' id='"+id+"' name='"+fieldName+"' size='"+size+"' maxlength='"+maxlength+"' class='selectamountwk' onblur='calculateNonSOR(this,\""+oRecord.getId()+"\");' /><span id='error"+id+"' style='display:none;color:red;font-weight:bold'>&nbsp;x</span>";
+    markup="<input type='text' id='"+id+"' name='"+fieldName+"' size='"+size+"' maxlength='"+maxlength+"' class='selectamountwk nonsorratevalue' onblur='calculateNonSOR(this,\""+oRecord.getId()+"\");' /><span id='error"+id+"' style='display:none;color:red;font-weight:bold'>&nbsp;x</span>";
     el.innerHTML = markup;
 }
 return textboxFormatter;
@@ -123,7 +122,7 @@ var stFormatter = createTextBoxFormatter(5,5);
 
 var textboxDescFormatter = function(el, oRecord, oColumn, oData) {
    var fieldName = "nonSorActivities[" + oRecord.getCount() + "]." + "nonSor.description";
-	markup="<input type='text' id='"+oColumn.getKey()+oRecord.getId()+"' class='selectmultilinewk' size='90' maxlength='4000' name='"+fieldName+"' onblur='validateNonSORDescription(\""+oRecord.getId()+"\");'/>"
+	markup="<input type='text' id='"+oColumn.getKey()+oRecord.getId()+"' class='selectmultilinewk nonsordesc' size='90' maxlength='4000' name='"+fieldName+"' onblur='validateNonSORDescription(\""+oRecord.getId()+"\");'/>"
 	el.innerHTML = markup;	 	
 }
 
@@ -191,7 +190,6 @@ function validateNonSORDescription(recordId){
 	if(dom.get("nonSordescription"+record.getId()).value==''){  		
   		document.getElementById("nonsor_error").innerHTML='<s:text name="estimate.nonsor.description.null"/>';
   		document.getElementById("nonsor_error").style.display='';
-  		dom.get("nonsorrate"+record.getId()).value='';
       	return false;
   	}
   	else{
@@ -201,12 +199,11 @@ function validateNonSORDescription(recordId){
 	return true;   
 }
 
-function validateNonSorUom(recordId){
+function validateNonRate(recordId){
 	record=nonSorDataTable.getRecord(recordId);
-	if((dom.get("nonSorUom"+record.getId()).value=='0' || dom.get("nonSorUom"+record.getId()).value=='') && dom.get("nonsorrate"+record.getId()).value!=''){  		
+	if((dom.get("nonsorrate"+record.getId()).value=='0' || dom.get("nonsorrate"+record.getId()).value=='') && dom.get("nonsorrate"+record.getId()).value!=''){  		
   		document.getElementById("nonsor_error").innerHTML='<s:text name="estimate.nonsor.uom.null"/>';
   		document.getElementById("nonsor_error").style.display='';
-  		dom.get("nonsorrate"+record.getId()).value='';
       	return false;
   	}
   	else{

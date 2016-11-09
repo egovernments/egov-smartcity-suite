@@ -39,7 +39,7 @@
   ~   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
   -->
 <!-- Created with Jaspersoft Studio version 6.3.1.final using JasperReports Library version 6.3.1  -->
-<!-- 2016-11-07T18:50:08 -->
+<!-- 2016-11-09T15:33:32 -->
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="completionCertificate" pageWidth="842" pageHeight="595" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" isSummaryWithPageHeaderAndFooter="true" isFloatColumnFooter="true" resourceBundle="custom" uuid="1bd30b92-7e6e-4bbd-aa76-f4a63208a99c">
 	<property name="ireport.zoom" value="1.0"/>
 	<property name="ireport.x" value="0"/>
@@ -669,17 +669,17 @@
 	<summary>
 		<band height="224" splitType="Stretch">
 			<textField>
-				<reportElement x="336" y="178" width="100" height="30" uuid="53f10ef4-59be-4b11-9053-c518bdf43a05">
+				<reportElement x="330" y="175" width="170" height="30" uuid="53f10ef4-59be-4b11-9053-c518bdf43a05">
 					<property name="com.jaspersoft.studio.unit.x" value="pixel"/>
 				</reportElement>
 				<textFieldExpression><![CDATA[$P{crearedBy}]]></textFieldExpression>
 			</textField>
 			<staticText>
-				<reportElement x="336" y="149" width="100" height="30" uuid="dbeb1cd6-900c-4c2e-895b-bbadeb6d6f7a"/>
+				<reportElement x="330" y="146" width="100" height="30" uuid="dbeb1cd6-900c-4c2e-895b-bbadeb6d6f7a"/>
 				<text><![CDATA[Yours Faithfullly]]></text>
 			</staticText>
 			<textField>
-				<reportElement x="337" y="194" width="100" height="30" uuid="55b2c177-5fb7-44c7-9595-10d50ba244bb">
+				<reportElement x="331" y="194" width="100" height="30" uuid="55b2c177-5fb7-44c7-9595-10d50ba244bb">
 					<property name="com.jaspersoft.studio.unit.x" value="pixel"/>
 				</reportElement>
 				<textFieldExpression><![CDATA[$P{ward} +" , "+ $P{cityName}]]></textFieldExpression>
@@ -691,13 +691,13 @@
 				<textFieldExpression><![CDATA[$P{ward} +" , "+ $P{cityName}]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement x="640" y="178" width="100" height="30" uuid="9dbc41be-b80b-45fc-b5d1-73808b2c4c71">
+				<reportElement x="640" y="175" width="100" height="30" uuid="9dbc41be-b80b-45fc-b5d1-73808b2c4c71">
 					<property name="com.jaspersoft.studio.unit.x" value="pixel"/>
 				</reportElement>
 				<textFieldExpression><![CDATA[$P{approvedBy}]]></textFieldExpression>
 			</textField>
 			<staticText>
-				<reportElement x="640" y="149" width="100" height="30" uuid="9e641e95-5bd9-43b6-9c22-022a1a5fbf23"/>
+				<reportElement x="640" y="146" width="100" height="30" uuid="9e641e95-5bd9-43b6-9c22-022a1a5fbf23"/>
 				<text><![CDATA[Yours Faithfullly]]></text>
 			</staticText>
 			<staticText>

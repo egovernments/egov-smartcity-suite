@@ -219,7 +219,8 @@ public class WorkProgressRegisterService {
                 query.setLong("subtypeofwork", estimateAbstractReport.getSubTypeOfWork());
 
             if (estimateAbstractReport.getDepartments() != null
-                    && !estimateAbstractReport.getDepartments().toString().equalsIgnoreCase("[null]")) {
+                    && !estimateAbstractReport.getDepartments().toString().equalsIgnoreCase("[null]")
+                    && !estimateAbstractReport.getDepartments().toString().equalsIgnoreCase("[]")) {
                 final List<Long> departmentIds = new ArrayList<Long>();
                 for (final Department dept : estimateAbstractReport.getDepartments())
                     departmentIds.add(dept.getId());
@@ -258,7 +259,8 @@ public class WorkProgressRegisterService {
 
         Query query = null;
         if (estimateAbstractReport.getDepartments() != null
-                && !estimateAbstractReport.getDepartments().toString().equalsIgnoreCase("[null]")) {
+                && !estimateAbstractReport.getDepartments().toString().equalsIgnoreCase("[null]")
+                && !estimateAbstractReport.getDepartments().toString().equalsIgnoreCase("[]")) {
             query = entityManager.unwrap(Session.class)
                     .createSQLQuery(getQueryForTypeOfWorkWiseReport(estimateAbstractReport))
                     .addScalar("typeOfWorkName", StringType.INSTANCE)
@@ -569,7 +571,8 @@ public class WorkProgressRegisterService {
         final StringBuilder mainSelectQuery = new StringBuilder();
         final StringBuilder mainGroupByQuery = new StringBuilder();
         if (estimateAbstractReport.getDepartments() != null
-                && !estimateAbstractReport.getDepartments().toString().equalsIgnoreCase("[null]")) {
+                && !estimateAbstractReport.getDepartments().toString().equalsIgnoreCase("[null]")
+                && !estimateAbstractReport.getDepartments().toString().equalsIgnoreCase("[]")) {
             filterConditions.append(" AND details.department in ( :departmentIds ) ");
 
             selectQuery.append(" SELECT details.typeOfWorkName       AS typeOfWorkName,  ");
