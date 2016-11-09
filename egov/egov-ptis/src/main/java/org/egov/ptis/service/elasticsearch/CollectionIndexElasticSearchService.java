@@ -187,10 +187,9 @@ public class CollectionIndexElasticSearchService {
                     .filter(QueryBuilders.matchQuery("districtName", collectionDetailsRequest.getDistrictName()));
         if (StringUtils.isNotBlank(collectionDetailsRequest.getUlbGrade()))
             boolQuery = boolQuery.filter(QueryBuilders.matchQuery("cityGrade", collectionDetailsRequest.getUlbGrade()));
-        if(StringUtils.isNotBlank(collectionDetailsRequest.getUlbCode()))
-            boolQuery = boolQuery
-                    .filter(QueryBuilders.matchQuery("cityCode", collectionDetailsRequest.getUlbCode()));
-         
+        if (StringUtils.isNotBlank(collectionDetailsRequest.getUlbCode()))
+            boolQuery = boolQuery.filter(QueryBuilders.matchQuery("cityCode", collectionDetailsRequest.getUlbCode()));
+
         return boolQuery;
     }
 
@@ -329,7 +328,7 @@ public class CollectionIndexElasticSearchService {
                 aggregationField = "cityName";
             else if (collectionDetailsRequest.getType().equalsIgnoreCase(DASHBOARD_GROUPING_GRADEWISE))
                 aggregationField = "cityGrade";
-            else if (collectionDetailsRequest.getType().equalsIgnoreCase(DASHBOARD_GROUPING_WARDWISE) 
+            else if (collectionDetailsRequest.getType().equalsIgnoreCase(DASHBOARD_GROUPING_WARDWISE)
                     || collectionDetailsRequest.getType().equalsIgnoreCase(DASHBOARD_GROUPING_BILLCOLLECTORWISE))
                 aggregationField = "revenueWard";
         }
@@ -402,7 +401,7 @@ public class CollectionIndexElasticSearchService {
                 collIndData.setUlbGrade(collectionDetailsRequest.getUlbGrade());
             } else if (aggregationField.equals("cityGrade"))
                 collIndData.setUlbGrade(name);
-              else if(aggregationField.equals("revenueWard"))
+            else if (aggregationField.equals("revenueWard"))
                 collIndData.setWardName(name);
 
             collIndData.setTodayColl(todayCollMap.get(name) == null ? BigDecimal.ZERO : todayCollMap.get(name));
@@ -948,9 +947,9 @@ public class CollectionIndexElasticSearchService {
                 receiptData.setUlbGrade(collectionDetailsRequest.getUlbGrade());
             } else if (aggregationField.equals("cityGrade"))
                 receiptData.setUlbGrade(name);
-              else if(aggregationField.equals("revenueWard"))
+            else if (aggregationField.equals("revenueWard"))
                 receiptData.setWardName(name);
-            
+
             receiptData.setCytdColl(entry.getValue());
             receiptData.setCurrDayColl(
                     currDayCollMap.get(name) == null ? BigDecimal.valueOf(0) : currDayCollMap.get(name));
@@ -1002,15 +1001,16 @@ public class CollectionIndexElasticSearchService {
         }
         return cytdCollMap;
     }
-    
+
     /**
      * Populates Receipt Table Details for type - Bill Collector
+     * 
      * @param collectionDetailsRequest
      * @return list
      */
     public List<CollTableData> getResponseTableDataForBillCollector(CollectionDetailsRequest collectionDetailsRequest) {
         Map<String, CollTableData> wardReceiptDetails = new HashMap<>();
-        Map<String, List<CollTableData>> billCollectorWiseMap = new LinkedHashMap<>(); 
+        Map<String, List<CollTableData>> billCollectorWiseMap = new LinkedHashMap<>();
         List<CollTableData> collDetails = new ArrayList<>();
         List<CollTableData> billCollectorWiseTableData = new ArrayList<>();
         BigDecimal currDayColl = BigDecimal.ZERO;
@@ -1022,34 +1022,35 @@ public class CollectionIndexElasticSearchService {
         BigDecimal variance = BigDecimal.ZERO;
         CollTableData collTableData;
         /**
-         * Fetch the Ward-wise data 
+         * Fetch the Ward-wise data
          */
         List<CollTableData> wardWiseData = getResponseTableData(collectionDetailsRequest);
-        for(CollTableData tableData : wardWiseData){
+        for (CollTableData tableData : wardWiseData) {
             wardReceiptDetails.put(tableData.getWardName(), tableData);
         }
-        
+
         /**
          * prepare bill collector wise collection table data
          */
         List<BillCollectorIndex> billCollectorsList = getBillCollectorDetails(collectionDetailsRequest);
-        for(BillCollectorIndex billCollIndex : billCollectorsList){
-            if(billCollectorWiseMap.isEmpty()){
+        for (BillCollectorIndex billCollIndex : billCollectorsList) {
+            if (billCollectorWiseMap.isEmpty()) {
                 collDetails.add(wardReceiptDetails.get(billCollIndex.getRevenueWard()));
                 billCollectorWiseMap.put(billCollIndex.getBillCollector(), collDetails);
             } else {
-                if(!billCollectorWiseMap.containsKey(billCollIndex.getBillCollector())){
+                if (!billCollectorWiseMap.containsKey(billCollIndex.getBillCollector())) {
                     collDetails = new ArrayList<>();
                     collDetails.add(wardReceiptDetails.get(billCollIndex.getRevenueWard()));
                     billCollectorWiseMap.put(billCollIndex.getBillCollector(), collDetails);
                 } else {
-                    if(wardReceiptDetails.get(billCollIndex.getRevenueWard()) != null)
-                        billCollectorWiseMap.get(billCollIndex.getBillCollector()).add(wardReceiptDetails.get(billCollIndex.getRevenueWard()));
+                    if (wardReceiptDetails.get(billCollIndex.getRevenueWard()) != null)
+                        billCollectorWiseMap.get(billCollIndex.getBillCollector())
+                                .add(wardReceiptDetails.get(billCollIndex.getRevenueWard()));
                 }
             }
         }
-        
-        for(Entry<String, List<CollTableData>> entry : billCollectorWiseMap.entrySet()){
+
+        for (Entry<String, List<CollTableData>> entry : billCollectorWiseMap.entrySet()) {
             collTableData = new CollTableData();
             currDayColl = BigDecimal.ZERO;
             cytdColl = BigDecimal.ZERO;
@@ -1058,8 +1059,9 @@ public class CollectionIndexElasticSearchService {
             performance = BigDecimal.ZERO;
             totalDmd = BigDecimal.ZERO;
             variance = BigDecimal.ZERO;
-            for(CollTableData tableData : entry.getValue()){
-                currDayColl = currDayColl.add(tableData.getTodayColl() == null ? BigDecimal.ZERO : tableData.getTodayColl());
+            for (CollTableData tableData : entry.getValue()) {
+                currDayColl = currDayColl
+                        .add(tableData.getTodayColl() == null ? BigDecimal.ZERO : tableData.getTodayColl());
                 cytdColl = cytdColl.add(tableData.getCytdColl() == null ? BigDecimal.ZERO : tableData.getCytdColl());
                 cytdDmd = cytdDmd.add(tableData.getCytdDmd() == null ? BigDecimal.ZERO : tableData.getCytdDmd());
                 totalDmd = totalDmd.add(tableData.getTotalDmd() == null ? BigDecimal.ZERO : tableData.getTotalDmd());
@@ -1073,8 +1075,8 @@ public class CollectionIndexElasticSearchService {
             collTableData.setTotalDmd(totalDmd);
             collTableData.setLytdColl(lytdColl);
             if (cytdDmd != BigDecimal.valueOf(0)) {
-                performance = (collTableData.getCytdColl().multiply(PropertyTaxConstants.BIGDECIMAL_100)).divide(cytdDmd,
-                        1, BigDecimal.ROUND_HALF_UP);
+                performance = (collTableData.getCytdColl().multiply(PropertyTaxConstants.BIGDECIMAL_100))
+                        .divide(cytdDmd, 1, BigDecimal.ROUND_HALF_UP);
                 collTableData.setPerformance(performance);
             }
             if (collTableData.getLytdColl().compareTo(BigDecimal.ZERO) == 0)
@@ -1091,19 +1093,20 @@ public class CollectionIndexElasticSearchService {
 
     /**
      * Fetches BillCollector and revenue ward details for thgiven ulbCode
+     * 
      * @param collectionDetailsRequest
      * @return List
      */
-    private List<BillCollectorIndex> getBillCollectorDetails(CollectionDetailsRequest collectionDetailsRequest) {
-        SearchQuery searchQueryColl = new NativeSearchQueryBuilder().withIndices(PropertyTaxConstants.BILL_COLLECTOR_INDEX_NAME)
-                .withFields("billCollector","revenueWard")
+    public List<BillCollectorIndex> getBillCollectorDetails(CollectionDetailsRequest collectionDetailsRequest) {
+        SearchQuery searchQueryColl = new NativeSearchQueryBuilder()
+                .withIndices(PropertyTaxConstants.BILL_COLLECTOR_INDEX_NAME).withFields("billCollector", "revenueWard")
                 .withQuery(QueryBuilders.boolQuery()
-                .filter(QueryBuilders.matchQuery("cityCode", collectionDetailsRequest.getUlbCode())))
+                        .filter(QueryBuilders.matchQuery("cityCode", collectionDetailsRequest.getUlbCode())))
                 .withSort(new FieldSortBuilder("billCollector").order(SortOrder.ASC))
-                .withPageable(new PageRequest(0, 250))
-                .build();
-        List<BillCollectorIndex> billCollectorsList = elasticsearchTemplate.queryForList(searchQueryColl,BillCollectorIndex.class);
+                .withPageable(new PageRequest(0, 250)).build();
+        List<BillCollectorIndex> billCollectorsList = elasticsearchTemplate.queryForList(searchQueryColl,
+                BillCollectorIndex.class);
         return billCollectorsList;
     }
-    
+
 }

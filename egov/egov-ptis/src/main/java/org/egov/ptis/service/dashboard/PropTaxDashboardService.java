@@ -99,7 +99,7 @@ public class PropTaxDashboardService {
 
     @PersistenceContext
     private EntityManager entityManager;
-    
+
     @Autowired
     private CollectionIndexElasticSearchService collectionIndexElasticSearchService;
 
@@ -108,7 +108,7 @@ public class PropTaxDashboardService {
 
     @Autowired
     private SimpleRestClient simpleRestClient;
-    
+
     /**
      * Gives the State-City information across all ULBs
      * 
@@ -196,16 +196,18 @@ public class PropTaxDashboardService {
 
     /**
      * Gives the total demand for Water Charges
+     * 
      * @param request
      * @return BigDecimal
      */
     public BigDecimal getWaterChargeTotalDemand(final HttpServletRequest request) {
-        final String wtmsRestURL = format(PropertyTaxConstants.WTMS_TOTALDEMAND_RESTURL, WebUtils.extractRequestDomainURL(request, false));
+        final String wtmsRestURL = format(PropertyTaxConstants.WTMS_TOTALDEMAND_RESTURL,
+                WebUtils.extractRequestDomainURL(request, false));
         final HashMap<String, Object> waterTaxInfo = simpleRestClient.getRESTResponseAsMap(wtmsRestURL);
-        return waterTaxInfo.get("currentDemand") == null ? BigDecimal.ZERO : new BigDecimal(
-                Double.valueOf((Double) waterTaxInfo.get("currentDemand")));
+        return waterTaxInfo.get("currentDemand") == null ? BigDecimal.ZERO
+                : new BigDecimal(Double.valueOf((Double) waterTaxInfo.get("currentDemand")));
     }
-    
+
     /**
      * Gives the Collection Index details across all ULBs
      * 
@@ -221,8 +223,8 @@ public class PropTaxDashboardService {
                 collectionIndexDetails);
         List<CollectionTrend> collectionTrends = collectionIndexElasticSearchService
                 .getMonthwiseCollectionDetails(collectionDetailsRequest);
-        if (StringUtils.isNotBlank(collectionDetailsRequest.getType())
-                && collectionDetailsRequest.getType().equals(PropertyTaxConstants.DASHBOARD_GROUPING_BILLCOLLECTORWISE))
+        if (StringUtils.isNotBlank(collectionDetailsRequest.getType()) && collectionDetailsRequest.getType()
+                .equalsIgnoreCase(PropertyTaxConstants.DASHBOARD_GROUPING_BILLCOLLECTORWISE))
             collIndexData = collectionIndexElasticSearchService
                     .getResponseTableDataForBillCollector(collectionDetailsRequest);
         else
