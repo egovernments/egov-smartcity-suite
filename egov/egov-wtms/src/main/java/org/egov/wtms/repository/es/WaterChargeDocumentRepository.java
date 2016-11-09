@@ -41,9 +41,12 @@
 package org.egov.wtms.repository.es;
 
 import org.egov.wtms.entity.es.WaterChargeDocument;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.elasticsearch.repository.ElasticsearchRepository;
 
 
 public interface WaterChargeDocumentRepository extends ElasticsearchRepository<WaterChargeDocument, String> {
+    Page<WaterChargeDocument> findByConsumerCode(String consumerCode, Pageable pageable);
 
 }
