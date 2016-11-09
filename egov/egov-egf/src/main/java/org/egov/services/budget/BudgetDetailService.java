@@ -171,9 +171,9 @@ public class BudgetDetailService extends PersistenceService<BudgetDetail, Long> 
     @PersistenceContext
     private EntityManager entityManager;
 
-    @Autowired 
+    @Autowired
     private BudgetDetailRepository budgetDetailRepository;
-    
+
     private static final String DUPLICATE = "budgetDetail.duplicate";
     private static final String EXISTS = "budgetdetail.exists";
 
@@ -240,7 +240,7 @@ public class BudgetDetailService extends PersistenceService<BudgetDetail, Long> 
 
     public List<BudgetDetail> searchByCriteriaWithTypeAndFY(final Long financialYear, final String type,
             final BudgetDetail detail) {
-        if ((detail.getBudget() != null) && (detail.getBudget().getId() != 0l)) {
+        if (detail.getBudget() != null && detail.getBudget().getId() != 0l) {
             final Map<String, Object> map = new HashMap<String, Object>();
             addCriteriaExcludingBudget(detail, map);
             final Criteria criteria = getSession().createCriteria(BudgetDetail.class);
@@ -289,7 +289,7 @@ public class BudgetDetailService extends PersistenceService<BudgetDetail, Long> 
 
     public List<BudgetDetail> findAllBudgetDetailsForParent(Budget budget, final BudgetDetail example,
             final PersistenceService persistenceService) {
-        if ((budget == null) || (budget.getId() == null))
+        if (budget == null || budget.getId() == null)
             return Collections.EMPTY_LIST;
         budget = (Budget) persistenceService.find("from Budget where id=?", budget.getId());
         final BudgetDetail detail = new BudgetDetail();
@@ -374,7 +374,7 @@ public class BudgetDetailService extends PersistenceService<BudgetDetail, Long> 
         final Set<Budget> budgetTree = new LinkedHashSet<Budget>();
         for (Budget leaf : leafBudgets) {
             parents.clear();
-            while ((leaf != null) && (leaf.getId() != budget.getId())) {
+            while (leaf != null && leaf.getId() != budget.getId()) {
                 parents.add(leaf);
                 leaf = leaf.getParent();
             }
@@ -423,7 +423,7 @@ public class BudgetDetailService extends PersistenceService<BudgetDetail, Long> 
     }
 
     protected boolean isIdPresent(final Object value) {
-        return (Long.valueOf(value.toString()) != 0l) && (Long.valueOf(value.toString()) != -1);
+        return Long.valueOf(value.toString()) != 0l && Long.valueOf(value.toString()) != -1;
     }
 
     @Override
@@ -431,7 +431,7 @@ public class BudgetDetailService extends PersistenceService<BudgetDetail, Long> 
         try {
             detail.setUniqueNo(detail.getFund().getId() + "-" + detail.getExecutingDepartment().getId() + "-"
                     + detail.getFunction().getId() + "-" + detail.getBudgetGroup().getId());
-            if (!chequeUnique(detail) && (detail.getId() == null))
+            if (!chequeUnique(detail) && detail.getId() == null)
                 throw new ValidationException(
                         Arrays.asList(new ValidationError(DUPLICATE, EXISTS)));
             checkForDuplicates(detail);
@@ -459,8 +459,8 @@ public class BudgetDetailService extends PersistenceService<BudgetDetail, Long> 
         final Map<String, Object> map = new HashMap<String, Object>();
         addCriteriaExcludingBudget(detail, map);
         addBudgetDetailCriteriaIncudingNullRestrictions(map, criteria);
-        if ((detail.getBudget() == null) || (detail.getBudget().getId() == null) || (detail.getBudget().getId() == 0)
-                || (detail.getBudget().getId() == -1))
+        if (detail.getBudget() == null || detail.getBudget().getId() == null || detail.getBudget().getId() == 0
+                || detail.getBudget().getId() == -1)
             return;
         // add restriction to check if budgetdetail with is combination exists
         // in the current year within a tree
@@ -474,7 +474,7 @@ public class BudgetDetailService extends PersistenceService<BudgetDetail, Long> 
     }
 
     private Budget getRootFor(final Budget budget) {
-        if ((budget == null) || StringUtils.isBlank(budget.getMaterializedPath()))
+        if (budget == null || StringUtils.isBlank(budget.getMaterializedPath()))
             return null;
         if (budget.getMaterializedPath().length() == 1)
             return budget;
@@ -592,7 +592,7 @@ public class BudgetDetailService extends PersistenceService<BudgetDetail, Long> 
                     detail.getBudget());
             if (parallelBudgetDetails != null)
                 count = String.valueOf(parallelBudgetDetails.size() + 1);
-            if ((materializedPath != null) && !materializedPath.isEmpty())
+            if (materializedPath != null && !materializedPath.isEmpty())
                 materializedPath = materializedPath + "." + count;
             detail.setMaterializedPath(materializedPath);
         }
@@ -1698,7 +1698,7 @@ public class BudgetDetailService extends PersistenceService<BudgetDetail, Long> 
         for (final String strObj : functionaryDesignationObj)
             if (strObj.contains(":")) {
                 final String[] functionaryName = strObj.split(":");
-                if ((empfunctionary != null) && empfunctionary.getName().equalsIgnoreCase(functionaryName[0])) {
+                if (empfunctionary != null && empfunctionary.getName().equalsIgnoreCase(functionaryName[0])) {
                     consolidateBudget = Boolean.TRUE;
                     break;
                 }
@@ -1887,15 +1887,15 @@ public class BudgetDetailService extends PersistenceService<BudgetDetail, Long> 
                     budgetGroup.setAccountType(BudgetAccountType.REVENUE_RECEIPTS);
                     budgetGroup.setBudgetingType(BudgetingType.CREDIT);
                 }
-                if ((coa.getClassification().compareTo(1l) == 0) || (coa.getClassification().compareTo(2l) == 0)
-                        || (coa.getClassification().compareTo(4l) == 0)) {
+                if (coa.getClassification().compareTo(1l) == 0 || coa.getClassification().compareTo(2l) == 0
+                        || coa.getClassification().compareTo(4l) == 0) {
                     budgetGroup.setMinCode(coa);
                     budgetGroup.setMaxCode(coa);
                 }
                 budgetGroup.setMajorCode(null);
                 budgetGroupService.applyAuditing(budgetGroup);
                 budgetGroup = budgetGroupService.persist(budgetGroup);
-                if ((coa.getType().compareTo('E') == 0) || (coa.getType().compareTo('A') == 0)) {
+                if (coa.getType().compareTo('E') == 0 || coa.getType().compareTo('A') == 0) {
                     coa.setBudgetCheckReq(true);
                     coa = chartOfAccountsService.update(coa);
                 }
@@ -2193,7 +2193,7 @@ public class BudgetDetailService extends PersistenceService<BudgetDetail, Long> 
         final Assignment userAssignment = assignmentService.findByEmployeeAndGivenDate(user.getId(), new Date()).get(0);
         Position pos = null;
         Assignment wfInitiator = null;
-        if ((budgetDetail.getId() != null) && (budgetDetail.getId() != 0))
+        if (budgetDetail.getId() != null && budgetDetail.getId() != 0)
             wfInitiator = getWorkflowInitiator(budgetDetail);
 
         if (FinancialConstants.BUTTONREJECT.equalsIgnoreCase(workflowBean.getWorkFlowAction())) {
@@ -2236,7 +2236,7 @@ public class BudgetDetailService extends PersistenceService<BudgetDetail, Long> 
                         FinancialConstants.WORKFLOW_STATE_NEW));
             }
         } else {
-            if ((null != workflowBean.getApproverPositionId()) && (workflowBean.getApproverPositionId() != -1))
+            if (null != workflowBean.getApproverPositionId() && workflowBean.getApproverPositionId() != -1)
                 pos = (Position) persistenceService.find("from Position where id=?",
                         workflowBean.getApproverPositionId());
             if (null == budgetDetail.getState()) {
@@ -2247,7 +2247,7 @@ public class BudgetDetailService extends PersistenceService<BudgetDetail, Long> 
                         .withDateInfo(currentDate.toDate()).withOwner(pos).withNextAction(wfmatrix.getNextAction());
                 budgetDetail.setStatus(egwStatusHibernateDAO.getStatusByModuleAndCode(FinancialConstants.BUDGETDETAIL,
                         FinancialConstants.BUDGETDETAIL_CREATED_STATUS));
-            } else if ((budgetDetail.getCurrentState().getNextAction() != null)
+            } else if (budgetDetail.getCurrentState().getNextAction() != null
                     && budgetDetail.getCurrentState().getNextAction().equalsIgnoreCase("END"))
                 budgetDetail.transition(true).end().withSenderName(user.getName())
                         .withComments(workflowBean.getApproverComments()).withDateInfo(currentDate.toDate());
@@ -2260,6 +2260,22 @@ public class BudgetDetailService extends PersistenceService<BudgetDetail, Long> 
 
             }
         }
+        return budgetDetail;
+    }
+
+    @Transactional
+    public BudgetDetail rejectWorkFlow(final BudgetDetail budgetDetail) {
+        final DateTime currentDate = new DateTime();
+        final User user = securityUtils.getCurrentUser();
+        Assignment wfInitiator = null;
+        if (budgetDetail.getId() != null && budgetDetail.getId() != 0)
+            wfInitiator = getWorkflowInitiator(budgetDetail);
+        final String stateValue = FinancialConstants.WORKFLOW_STATE_REJECTED;
+        budgetDetail.transition(true).withSenderName(user.getName())
+                .withStateValue(stateValue)
+                .withDateInfo(currentDate.toDate()).withOwner(wfInitiator.getPosition())
+                .withNextAction(FinancialConstants.WF_STATE_EOA_Approval_Pending);
+        applyAuditing(budgetDetail.getState());
         return budgetDetail;
     }
 
@@ -2293,27 +2309,26 @@ public class BudgetDetailService extends PersistenceService<BudgetDetail, Long> 
         return budgetDetails;
     }
 
-    public List<BudgetDetail> getBudgetDetailByStatusAndFinancialYearId(Integer statusId, Long financialYearId) {
+    public List<BudgetDetail> getBudgetDetailByStatusAndFinancialYearId(final Integer statusId,
+            final Long financialYearId) {
         final Query qry = getCurrentSession()
                 .createQuery("from BudgetDetail budgetDetail" + " where budgetDetail.status.id=:statusId and "
                         + "budgetDetail.budget.id in(select id from Budget where financialYear.id=:financialYearId)");
-        
+
         qry.setInteger("statusId", statusId);
         qry.setLong("financialYearId", financialYearId);
-          List<BudgetDetail> budgetDetails = null;
-          if (qry.list().size() != 0)
-              budgetDetails = qry.list();
+        List<BudgetDetail> budgetDetails = null;
+        if (qry.list().size() != 0)
+            budgetDetails = qry.list();
         else
             budgetDetails = Collections.emptyList();
 
         return budgetDetails;
     }
 
-    public List<BudgetDetail> getBudgets(List<Long> budgetDetailId)
-    {
+    public List<BudgetDetail> getBudgets(final List<Long> budgetDetailId) {
         return budgetDetailRepository.findBudget(budgetDetailId);
-     
+
     }
-    
-    
+
 }

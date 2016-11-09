@@ -113,6 +113,9 @@
 						<a href="javascript:void(0);" id="approve" class="btn btn-primary"><spring:message
 								code='lbl.approve' /></a>
 						</button>
+						<a href="javascript:void(0);" id="reject" class="btn btn-primary"><spring:message
+								code='lbl.reject' /></a>
+						</button>
 					</div>
 				</div>
 			</div>
@@ -129,8 +132,6 @@
 	});
 </script>
 <link rel="stylesheet"
-	href="<c:url value='/resources/global/css/font-icons/entypo/css/entypo.css' context='/egi'/>" />
-<link rel="stylesheet"
 	href="<c:url value='/resources/global/css/bootstrap/bootstrap-datepicker.css' context='/egi'/>" />
 <script type="text/javascript"
 	src="<c:url value='/resources/global/js/jquery/plugins/datatables/jquery.dataTables.min.js' context='/egi'/>"></script>
@@ -140,8 +141,6 @@
 	src="<c:url value='/resources/global/js/jquery/plugins/datatables/dataTables.tableTools.js' context='/egi'/>"></script>
 <script type="text/javascript"
 	src="<c:url value='/resources/global/js/jquery/plugins/datatables/TableTools.min.js' context='/egi'/>"></script>
-<script type="text/javascript"
-	src="<c:url value='/resources/global/js/jquery/plugins/datatables/jquery.dataTables.columnFilter.js' context='/egi'/>"></script>
 <script type="text/javascript"
 	src="<c:url value='/resources/global/js/bootstrap/typeahead.bundle.js' context='/egi'/>"></script>
 <script
