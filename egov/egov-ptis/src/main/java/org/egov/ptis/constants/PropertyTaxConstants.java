@@ -1500,6 +1500,7 @@ public interface PropertyTaxConstants {
 	public static final String PAYMENT_TYPE_ADVANCE = "Advance";
 	
 	public static final String COLLECION_BILLING_SERVICE_PT = "Property Tax";
+	public static final String COLLECION_BILLING_SERVICE_VLT = "Property Tax (On Land)";
 	public static final String COLLECION_BILLING_SERVICE_WTMS = "Water Tax";
 	
 	public static final String PROPERTY_TAX_INDEX_NAME = "propertytax";
