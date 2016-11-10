@@ -1650,6 +1650,10 @@ label.error {
 .form-group.overflow {
   overflow: auto;
 }
+.form-group label.align-top {
+  position: relative;
+  top: -15px;
+}
 .form-group div {
   margin-bottom: 15px;
 }
@@ -1700,7 +1704,7 @@ label.error {
 .set-mandatory {
   position: absolute;
   top: 4px;
-  right: 7px;
+  right: 0px;
   z-index: 10;
 }
 .g-recaptcha div {

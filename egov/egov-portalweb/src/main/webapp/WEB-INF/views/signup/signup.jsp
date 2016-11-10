@@ -107,9 +107,10 @@
 							<div class="form-group">
 								<div class="input-group">
 									<div class="input-group-addon style-label">
-										<i class="fa fa-mobile theme-color style-color"></i>
+										<i class="fa fa-mobile fa-fw theme-color style-color"></i>
 									</div>
 									<form:input path="mobileNumber" cssClass="form-control style-form is_valid_number" id="mobileNumber" placeholder="Mobile number" title="Enter valid mobile number!" minlength="10" maxlength="10" autocomplete="off" required="required"/>
+									<span class="mandatory set-mandatory"></span>
 									<form:hidden path="username" id="username"/>
                                     <div class="text-right error-msg display-hide mobile-error" style="margin:0;">
                                 		<spring:message code="msg.mobileno.missing"/>
@@ -123,26 +124,28 @@
 							<div class="form-group overflow" id="wrap">
 									<div class="input-group">
 										<div class="input-group-addon style-label">
-											<i class="fa fa-key theme-color style-color"></i>
+											<i class="fa fa-key fa-fw theme-color style-color"></i>
 										</div>
 										<form:password path="password" cssClass="form-control style-form check-password" id="password" placeholder="Password" maxlength="32" autocomplete="new-password" required="required" data-container="#wrap" data-toggle="popover" data-content='${pwdmsg}' />
+										<span class="mandatory set-mandatory"></span>
 										<div class="input-group-addon" style="background:#fff;border:none;border-bottom:1px solid #D0D2D7;cursor:default;">
 											<i class="fa fa-eye show password-view" data-view="show" aria-hidden="true"></i>
 										</div>
 									</div>
-									<label id="password-error" class="error pull-right display-hide" for="password">Required</label>
-									<div class="text-right add-margin error-msg display-hide password-invalid" style="margin:0;">
+									<label id="password-error" class="error align-top pull-right display-hide" for="password">Required</label>
+									<label class="text-right align-top add-margin error-msg display-hide password-invalid" style="margin:0;">
 										${pwdmsg}
-									</div>
+									</label>
 									<div class="text-right" style="margin:0;"><form:errors path="password" cssClass="error-check add-margin error-msg font-12"/></div>
 							</div>
 							<div class="form-group">
 								<div class="input-group">
 									<div class="input-group-addon style-label">
-										<i class="fa fa-key theme-color style-color"></i>
+										<i class="fa fa-key fa-fw theme-color style-color"></i>
 									</div>
 									<input type="password" class="form-control style-form check-password" name="con-password" id="con-password" placeholder="Confirm password" 
 									autocomplete="new-password" required="required" maxlength="32"/>
+									<span class="mandatory set-mandatory"></span>
 									<label id="con-password-error" class="error pull-right display-hide" for="con-password">Required</label>
 									<div class="text-right add-margin error-msg display-hide password-error" style="margin:0;">
 	                                   <spring:message code="error.pwd.mismatch"/>
@@ -152,9 +155,10 @@
 							<div class="form-group">
 								<div class="input-group">
 									<div class="input-group-addon style-label">
-										<i class="fa fa-user theme-color style-color"></i>
+										<i class="fa fa-user fa-fw theme-color style-color"></i>
 									</div>
 									<form:input path="name" cssClass="form-control style-form patternvalidation" data-pattern="alphabetwithspace" id="name" placeholder="Full name" minlength="2" maxlength="100" autocomplete="off" required="required"/>
+									<span class="mandatory set-mandatory"></span>
 									<label id="name-error" class="error pull-right display-hide" for="name">Required</label>
 									<div class="text-right" style="margin:0;"><form:errors path="name" cssClass="add-margin error-msg font-12"/></div>
 								</div>
@@ -162,7 +166,7 @@
 							<div class="form-group">
 								<div class="input-group">
 									<div class="input-group-addon style-label">
-										<i class="fa fa-envelope theme-color style-color"></i>
+										<i class="fa fa-envelope fa-fw theme-color style-color"></i>
 									</div>
 									<form:input path="emailId" cssClass="form-control style-form" pattern="[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,3}$" title="Enter vaild Email ID!" id="emailId" placeholder="Email (Optional)" minlength="5" maxlength="128" autocomplete="off"/>
 									<form:errors path="emailId" cssClass="add-margin error-msg font-12"/>
@@ -171,14 +175,15 @@
 							<div class="form-group overflow" id="otp-section">
 								<div class="input-group">
 									<div class="input-group-addon style-label">
-										<i class="fa fa-key theme-color style-color"></i>
+										<i class="fa fa-key fa-fw theme-color style-color"></i>
 									</div>
 									<form:password path="activationCode" id="activationcode" cssClass="form-control style-form" placeholder="OTP" minlength="5" maxlength="5" autocomplete="off" required="required"/>
+									<span class="mandatory set-mandatory"></span>
 									<div class="input-group-addon" style="background:#fff;border:none;border-bottom:1px solid #D0D2D7;cursor:default;">
 										<i class="fa fa-eye show otp-view" data-view="show" aria-hidden="true"></i>
 									</div>
 								</div>
-								<label id="activationcode-error" class="error pull-right display-hide" for="activationcode">Required</label>
+								<label id="activationcode-error" class="error align-top pull-right display-hide" for="activationcode">Required</label>
 							</div>
                             <div class="form-group signup-leftpadding text-center" id="otpbtn-section">
                                 <form:errors path="activationCode" cssClass="add-margin error-msg"/>
