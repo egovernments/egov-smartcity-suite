@@ -44,8 +44,7 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
 
 <div class="row" id="page-content">
-        
-		
+
 			<div class="panel panel-primary" data-collapsed="0">
 				<div class="panel-heading">
 					<div class="panel-title">
@@ -54,7 +53,6 @@
 				</div>
 				
 				<div class="panel-body custom-form">
-					<div class="row">
 					<div class="form-group">
 						<label for="registrationNo" class="col-sm-2 control-label"><spring:message
 								code="lbl.registration.number" /></label>
@@ -70,8 +68,7 @@
 							<form:errors path="dateOfMarriage" cssClass="error-msg"/>
 						</div>
 					</div>
-					</div>
-					<div class="row">
+					
 						<div class="form-group">
 							<label for="field1" class="col-sm-2 control-label"><spring:message
 									code="lbl.husband.name" /></label>
@@ -88,8 +85,7 @@
 								<form:errors path="wife.name.firstName" cssClass="error-msg"/>
 							</div>
 						</div>
-					</div>
-					<div class="row">
+					
 						<div class="form-group">
 							<label for="dateOfMarriage" class="col-sm-2 control-label"><spring:message code="lbl.application.date" /></label>
 	
@@ -110,10 +106,8 @@
 				            <form:errors path="marriageRegistrationUnit.id" cssClass="add-margin error-msg"/>
 						</div>
 					</div>
-				</div>
 				
 				<c:if test="${mode=='collectmrfee'}">
-				<div class="row">
 					<div class="form-group">
 						<label for="mrType" class="col-sm-2 control-label"><spring:message code="lbl.marriageRegistration.type" /></label>
 						<div class="col-sm-3 add-margin">
@@ -125,11 +119,10 @@
 							<%-- <form:errors path="marriageRegistrationType" cssClass="error-msg"/> --%>
 						</div>
 					</div>
-				</div>
 				</c:if>
 				
 			</div>
-			<div class="row">
+			<div class="form-group">
 				<div class="text-center">						
 					<button type="button" id="btnregistrationsearch"
 						class="btn btn-primary add-margin">
@@ -140,5 +133,5 @@
 						onclick="self.close()"><spring:message code="lbl.close" /></a>
 				</div>
 			</div>
-		
+		</div>
 </div>

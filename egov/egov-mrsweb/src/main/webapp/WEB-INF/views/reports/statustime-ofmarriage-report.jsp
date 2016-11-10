@@ -43,13 +43,12 @@
 <%@ taglib uri="http://www.springframework.org/tags" prefix="spring"%>
 <%@ taglib uri="http://www.springframework.org/tags/form" prefix="form"%>
 <%@ taglib uri="/WEB-INF/taglib/cdn.tld" prefix="cdn"%>
+
 <div class="row" id="page-content">
-	<div class="col-md-12">
-		<div class="panel" data-collapsed="0">
-			<div class="panel-body">
-				<form:form method="post" action=""
+	<form:form method="post" action=""
 					class="form-horizontal form-groups-bordered"
 					id="form-statustimeogmrg" modelAttribute="registration">
+					
 					<div class="panel panel-primary" data-collapsed="0">
 						<div class="panel-heading">
 							<div class="panel-title">
@@ -59,10 +58,10 @@
 
 						<div class="panel-body custom-form">
 							<div class="form-group">
-								<div class="col-sm-3 control-label">
+								<div class="col-sm-4 control-label">
 									<label>Year</label><span class="mandatory"></span>
 								</div>
-								<div class="col-md-3 add-margin">
+								<div class="col-sm-4 add-margin">
 									<select name="year" id="year" class="form-control" required>
 										<option value="">Select</option>
 										<option value="2015">2015</option>
@@ -73,34 +72,30 @@
 							</div>
 						</div>
 					</div>
-					<div class="row">
-						<div class="text-center">
-							<button type="button" class="btn btn-primary"
-								id="btn_registrationmrgstatus_search">
-								<spring:message code="lbl.search" />
-							</button>
-							<button type="reset" class="btn btn-default">
-								<spring:message code="lbl.reset" />
-							</button>
-							<a href="javascript:void(0)" class="btn btn-default"
-								onclick="self.close()"><spring:message code="lbl.close" /></a>
-						</div>
+				<div class="form-group">
+					<div class="text-center">
+						<button type="button" class="btn btn-primary"
+							id="btn_registrationmrgstatus_search">
+							<spring:message code="lbl.search" />
+						</button>
+						<button type="reset" class="btn btn-default">
+							<spring:message code="lbl.reset" />
+						</button>
+						<a href="javascript:void(0)" class="btn btn-default"
+							onclick="self.close()"><spring:message code="lbl.close" /></a>
 					</div>
-				</form:form>
-			</div>
+				</div>
+	</form:form>
+</div>
+	<div class="row display-hide report-section">
+		<div class="col-md-12 table-header text-left">The applicant
+			Status at the time of marriage result is</div>
+		<div class="col-md-12 form-group">
+			<table class="table table-bordered table-hover multiheadertbl"
+				id="marriage_table">
+			</table>
 		</div>
 	</div>
-</div>
-
-<div class="row display-hide report-section">
-	<div class="col-md-12 table-header text-left">The applicant
-		Status at the time of marriage result is</div>
-	<div class="col-md-12 form-group">
-		<table class="table table-bordered table-hover multiheadertbl"
-			id="marriage_table">
-		</table>
-	</div>
-</div>
 
 
 <script

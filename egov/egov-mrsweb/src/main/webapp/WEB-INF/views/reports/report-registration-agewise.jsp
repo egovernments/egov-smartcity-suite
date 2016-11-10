@@ -43,24 +43,23 @@
 <%@ taglib uri="http://www.springframework.org/tags" prefix="spring" %>
 <%@ taglib uri="http://www.springframework.org/tags/form" prefix="form" %>
 <%@ taglib uri="/WEB-INF/taglib/cdn.tld" prefix="cdn" %>
+
 <div class="row" id="page-content">
-	<div class="col-md-12">
-		<div class="panel" data-collapsed="0"> 
-			<div class="panel-body">
-			<form:form role="form" method="post" action="" class="form-horizontal form-groups-bordered" id="form-registration-agewise" modelAttribute="registration">
+		<form:form role="form" method="post" action="" class="form-horizontal form-groups-bordered" id="form-registration-agewise" modelAttribute="registration">
+			
 			<div class="panel panel-primary" data-collapsed="0">
 				<div class="panel-heading">
 					<div class="panel-title">
 							<strong><spring:message code="lbl.reg.age.search"/></strong>
 					</div>
-				</div> 
-				 
+				</div>
+				
 				<div class="panel-body custom-form">				
 					<div class="form-group">
-						<div class="col-sm-3 control-label">
+						<div class="col-sm-4 control-label">
 							<label>Year</label><span class="mandatory"></span>
 						</div>
-						<div class="col-md-3 add-margin">
+						<div class="col-sm-4 add-margin">
 						<select name="year" id="year" class="form-control" required>
 										<option value="">Select</option>
 										<option value="2015">2015</option>
@@ -70,8 +69,8 @@
 					</div>
 					</div>
 				</div>
-			</div> 
-			<div class="row">
+		  	</div> 
+		  	<div class="form-group">
 				<div class="text-center">					
 					<button type="button" class="btn btn-primary" id="btn_registrationagewise_search"><spring:message code="lbl.search"/></button>
 					<button type="reset" class="btn btn-default"><spring:message code="lbl.reset"/></button>
@@ -79,11 +78,7 @@
 				</div>
 			</div>
 		</form:form>
-		</div>
-        </div>
-    </div>
 </div>
-
 <br /><br />
 <div class="row display-hide report-section" id="regagewisetable_container">   
 	<div class="col-md-12 table-header text-left">The Registration Age Wise Search result is</div>             
