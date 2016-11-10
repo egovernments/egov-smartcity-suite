@@ -39,6 +39,7 @@
  */
 package org.egov.wtms.entity.es;
 
+import static org.egov.infra.utils.ApplicationConstant.DEFAULT_TIMEZONE;
 import static org.egov.infra.utils.ApplicationConstant.ES_DATE_FORMAT;
 
 import java.util.Date;
@@ -58,7 +59,7 @@ import com.fasterxml.jackson.annotation.JsonFormat;
 @Document(indexName = "waterchargeconsumer", type = "waterchargeconsumer")
 public class WaterChargeDocument {
 
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = ES_DATE_FORMAT)
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = ES_DATE_FORMAT, timezone = DEFAULT_TIMEZONE)
     @Field(type = FieldType.Date, format = DateFormat.date_optional_time, pattern = ES_DATE_FORMAT)
     private Date createdDate;
 

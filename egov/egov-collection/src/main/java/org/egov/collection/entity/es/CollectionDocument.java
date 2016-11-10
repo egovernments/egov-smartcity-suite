@@ -40,6 +40,7 @@
 
 package org.egov.collection.entity.es;
 
+import static org.egov.infra.utils.ApplicationConstant.DEFAULT_TIMEZONE;
 import static org.egov.infra.utils.ApplicationConstant.ES_DATE_FORMAT;
 
 import java.util.Date;
@@ -98,7 +99,7 @@ public class CollectionDocument {
     @Field(type = FieldType.String, index = FieldIndex.not_analyzed)
     private String receiptCreator;
 
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = ES_DATE_FORMAT)
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = ES_DATE_FORMAT, timezone = DEFAULT_TIMEZONE)
     @Field(type = FieldType.Date, format = DateFormat.date_optional_time, pattern = ES_DATE_FORMAT)
     private Date receiptDate;
 
@@ -144,7 +145,7 @@ public class CollectionDocument {
     @Field(type = FieldType.String, index = FieldIndex.not_analyzed)
     private String revenueWard;
 
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = ES_DATE_FORMAT)
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = ES_DATE_FORMAT, timezone = DEFAULT_TIMEZONE)
     @Field(type = FieldType.Date, format = DateFormat.date_optional_time, pattern = ES_DATE_FORMAT)
     private Date createdDate;
 

@@ -40,6 +40,7 @@
 
 package org.egov.infra.elasticsearch.entity.es;
 
+import static org.egov.infra.utils.ApplicationConstant.DEFAULT_TIMEZONE;
 import static org.egov.infra.utils.ApplicationConstant.ES_DATE_FORMAT;
 import static org.springframework.data.elasticsearch.annotations.DateFormat.date_optional_time;
 import static org.springframework.data.elasticsearch.annotations.FieldIndex.not_analyzed;
@@ -67,7 +68,7 @@ public class ApplicationDocument {
     @Field(type = FieldType.String, index = not_analyzed)
     private String applicationNumber;
 
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = ES_DATE_FORMAT)
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = ES_DATE_FORMAT, timezone = DEFAULT_TIMEZONE)
     @Field(type = FieldType.Date, format = date_optional_time, pattern = ES_DATE_FORMAT)
     private Date applicationDate;
 
@@ -80,7 +81,7 @@ public class ApplicationDocument {
     @Field(type = FieldType.String)
     private String applicantAddress;
 
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = ES_DATE_FORMAT)
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = ES_DATE_FORMAT, timezone = DEFAULT_TIMEZONE)
     @Field(type = FieldType.Date, format = date_optional_time, pattern = ES_DATE_FORMAT)
     private Date disposalDate;
 
@@ -132,7 +133,7 @@ public class ApplicationDocument {
     @Field(type = FieldType.Integer)
     private Integer isClosed;
 
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = ES_DATE_FORMAT)
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = ES_DATE_FORMAT, timezone = DEFAULT_TIMEZONE)
     @Field(type = FieldType.Date, format = DateFormat.date_optional_time, pattern = ES_DATE_FORMAT)
     private Date createdDate;
 
