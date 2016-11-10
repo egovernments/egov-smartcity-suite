@@ -40,6 +40,7 @@
 
 package org.egov.pgr.web.contract;
 
+import org.egov.infra.config.core.ApplicationThreadLocals;
 import org.elasticsearch.index.query.BoolQueryBuilder;
 import org.elasticsearch.index.query.QueryBuilders;
 import org.joda.time.DateTime;
@@ -138,6 +139,7 @@ public class ComplaintSearchRequest {
     }
 
     public BoolQueryBuilder query() {
+        searchQueryBuilder.filter(matchQuery("cityCode", ApplicationThreadLocals.getCityCode()));
         if (isNotBlank(this.fromDate) || isNotBlank(this.toDate))
             searchQueryBuilder.must(rangeQuery("createdDate")
                     .from(this.fromDate).to(this.toDate));

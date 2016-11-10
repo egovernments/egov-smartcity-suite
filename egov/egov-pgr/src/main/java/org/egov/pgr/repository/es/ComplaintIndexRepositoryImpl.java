@@ -95,7 +95,7 @@ public class ComplaintIndexRepositoryImpl implements ComplaintIndexCustomReposit
             size = complaintDashBoardRequest.getSize();
 
         SearchResponse consolidatedResponse = elasticsearchTemplate.getClient().prepareSearch(PGR_INDEX_NAME)
-                .setQuery(QueryBuilders.matchAllQuery()).setSize(0)
+                .setQuery(query).setSize(0)
                 .addAggregation(getCount("countAggregation", "crn"))
                 .addAggregation(getCountWithGrouping("closedCount", "ifClosed", 2))
                 .addAggregation(getCountWithGrouping("slaCount", "ifSLA", 2))
