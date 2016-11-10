@@ -313,7 +313,7 @@ public class ComplaintController extends ApiController {
                         !complaintRequest.containsKey("complainantMobileNo") &&
                         !complaintRequest.containsKey("complainantEmail")) {
                     final User currentUser = securityUtils.getCurrentUser();
-                    complaint.getComplainant().setName(currentUser.getUsername());
+                    complaint.getComplainant().setName(currentUser.getName());
                     complaint.getComplainant().setMobile(currentUser.getMobileNumber());
                     if (!org.apache.commons.lang.StringUtils.isEmpty(currentUser.getEmailId()))
                         complaint.getComplainant().setEmail(currentUser.getEmailId());

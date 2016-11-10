@@ -44,7 +44,9 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonSerializationContext;
+
 import org.egov.infra.filestore.entity.FileStoreMapper;
+import org.egov.infra.utils.StringUtils;
 import org.egov.pgr.entity.Complaint;
 
 import java.lang.reflect.Type;
@@ -64,6 +66,8 @@ public class ComplaintAdapter extends DataAdapter<Complaint> {
         jo.addProperty("lastModifiedBy", complaint.getLastModifiedBy().getUsername());
         jo.addProperty("lastModifiedDate", complaint.getLastModifiedDate().toString());
         jo.addProperty("complainantName", complaint.getComplainant().getName());
+        jo.addProperty("complainantMobileNo", complaint.getComplainant().getMobile());
+        jo.addProperty("complainantEmail", StringUtils.isNotBlank(complaint.getComplainant().getMobile())?complaint.getComplainant().getMobile():"");
         jo.addProperty("citizenFeedback", complaint.getCitizenFeedback()!=null?complaint.getCitizenFeedback().name():"");
         
         if (complaint.getLat() > 0 && complaint.getLng() > 0) {
