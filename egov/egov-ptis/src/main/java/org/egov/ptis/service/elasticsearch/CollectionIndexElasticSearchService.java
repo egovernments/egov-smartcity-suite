@@ -48,6 +48,8 @@ import static org.egov.ptis.constants.PropertyTaxConstants.DASHBOARD_GROUPING_GR
 import static org.egov.ptis.constants.PropertyTaxConstants.DASHBOARD_GROUPING_REGIONWISE;
 import static org.egov.ptis.constants.PropertyTaxConstants.DASHBOARD_GROUPING_ULBWISE;
 import static org.egov.ptis.constants.PropertyTaxConstants.DASHBOARD_GROUPING_WARDWISE;
+import static org.egov.ptis.constants.PropertyTaxConstants.DASHBOARD_PROPERTY_TYPE_CENTRAL_GOVT;
+import static org.egov.ptis.constants.PropertyTaxConstants.DASHBOARD_PROPERTY_TYPE_CENTRAL_GOVT_LIST;
 import static org.egov.ptis.constants.PropertyTaxConstants.DATEFORMATTER_YYYY_MM_DD;
 import static org.egov.ptis.constants.PropertyTaxConstants.DATE_FORMAT_YYYYMMDD;
 import static org.egov.ptis.constants.PropertyTaxConstants.PROPERTY_TAX_INDEX_NAME;
@@ -350,7 +352,7 @@ public class CollectionIndexElasticSearchService {
         }
 
         Long startTime = System.currentTimeMillis();
-        // For today collection
+        // For today's collection
         Map<String, BigDecimal> todayCollMap = getCollectionAndDemandValues(collectionDetailsRequest, fromDate, toDate,
                 COLLECTION_INDEX_NAME, "totalAmount", aggregationField);
 
@@ -369,10 +371,18 @@ public class CollectionIndexElasticSearchService {
             toDate = DateUtils.addDays(new Date(), 1);
         }
         int noOfMonths = DateUtils.noOfMonths(fromDate, toDate) + 1;
-
-        // For current year's till date collection
-        Map<String, BigDecimal> cytdCollMap = getCollectionAndDemandValues(collectionDetailsRequest, fromDate, toDate,
-                COLLECTION_INDEX_NAME, "totalAmount", aggregationField);
+        Map<String, BigDecimal> cytdCollMap;
+        /**
+         * For current year's till date collection, if property type is given,
+         * fetch the sum of totalCollection from the Property Tax index, else
+         * sum of totalAmount from Collection index
+         */
+        if (StringUtils.isNotBlank(collectionDetailsRequest.getPropertyType()))
+            cytdCollMap = getCollectionAndDemandValues(collectionDetailsRequest, fromDate, toDate,
+                    PROPERTY_TAX_INDEX_NAME, "totalCollection", aggregationField);
+        else
+            cytdCollMap = getCollectionAndDemandValues(collectionDetailsRequest, fromDate, toDate,
+                    COLLECTION_INDEX_NAME, "totalAmount", aggregationField);
         // For total demand
         Map<String, BigDecimal> totalDemandMap = getCollectionAndDemandValues(collectionDetailsRequest, fromDate,
                 toDate, PROPERTY_TAX_INDEX_NAME, "totalDemand", aggregationField);
@@ -457,6 +467,17 @@ public class CollectionIndexElasticSearchService {
                     .filter(QueryBuilders.rangeQuery("receiptDate").gte(DATEFORMATTER_YYYY_MM_DD.format(fromDate))
                             .lte(DATEFORMATTER_YYYY_MM_DD.format(toDate)).includeUpper(false))
                     .mustNot(QueryBuilders.matchQuery("status", "Cancelled"));
+
+        // If property type is given, then apply the property type condition only to Property Tax index
+        if (indexName.equals(PROPERTY_TAX_INDEX_NAME)
+                && StringUtils.isNotBlank(collectionDetailsRequest.getPropertyType())) {
+            if (collectionDetailsRequest.getPropertyType().equalsIgnoreCase(DASHBOARD_PROPERTY_TYPE_CENTRAL_GOVT))
+                boolQuery = boolQuery
+                        .filter(QueryBuilders.termsQuery("propertyType", DASHBOARD_PROPERTY_TYPE_CENTRAL_GOVT_LIST));
+            else
+                boolQuery = boolQuery
+                        .filter(QueryBuilders.matchQuery("propertyType", collectionDetailsRequest.getPropertyType()));
+        }
 
         AggregationBuilder aggregation = AggregationBuilders.terms("by_city").field(aggregationField).size(120)
                 .subAggregation(AggregationBuilders.sum("total").field(fieldName));
@@ -1034,18 +1055,19 @@ public class CollectionIndexElasticSearchService {
          */
         List<BillCollectorIndex> billCollectorsList = getBillCollectorDetails(collectionDetailsRequest);
         for (BillCollectorIndex billCollIndex : billCollectorsList) {
-            if (billCollectorWiseMap.isEmpty()) {
-                collDetails.add(wardReceiptDetails.get(billCollIndex.getRevenueWard()));
-                billCollectorWiseMap.put(billCollIndex.getBillCollector(), collDetails);
-            } else {
-                if (!billCollectorWiseMap.containsKey(billCollIndex.getBillCollector())) {
-                    collDetails = new ArrayList<>();
+            if (wardReceiptDetails.get(billCollIndex.getRevenueWard()) != null) {
+                if (billCollectorWiseMap.isEmpty()) {
                     collDetails.add(wardReceiptDetails.get(billCollIndex.getRevenueWard()));
                     billCollectorWiseMap.put(billCollIndex.getBillCollector(), collDetails);
                 } else {
-                    if (wardReceiptDetails.get(billCollIndex.getRevenueWard()) != null)
+                    if (!billCollectorWiseMap.containsKey(billCollIndex.getBillCollector())) {
+                        collDetails = new ArrayList<>();
+                        collDetails.add(wardReceiptDetails.get(billCollIndex.getRevenueWard()));
+                        billCollectorWiseMap.put(billCollIndex.getBillCollector(), collDetails);
+                    } else {
                         billCollectorWiseMap.get(billCollIndex.getBillCollector())
                                 .add(wardReceiptDetails.get(billCollIndex.getRevenueWard()));
+                    }
                 }
             }
         }

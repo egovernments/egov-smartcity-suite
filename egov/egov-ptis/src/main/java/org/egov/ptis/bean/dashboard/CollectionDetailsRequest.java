@@ -49,6 +49,7 @@ public class CollectionDetailsRequest {
     private String fromDate;
     private String toDate;
     private String type;
+    private String propertyType;
 
     public String getRegionName() {
         return regionName;
@@ -104,6 +105,14 @@ public class CollectionDetailsRequest {
 
     public void setType(String type) {
         this.type = type;
+    }
+
+    public String getPropertyType() {
+        return propertyType;
+    }
+
+    public void setPropertyType(String propertyType) {
+        this.propertyType = propertyType;
     }
 
 }

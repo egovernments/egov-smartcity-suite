@@ -1518,4 +1518,17 @@ public interface PropertyTaxConstants {
     public static final String DASHBOARD_GROUPING_WARDWISE = "ward";
     public static final String DASHBOARD_GROUPING_CITYWISE = "city";
     public static final String DASHBOARD_GROUPING_BILLCOLLECTORWISE = "billcollector";
+    
+    public static final String DASHBOARD_PROPERTY_TYPE_PRIVATE = "Private";
+    public static final String DASHBOARD_PROPERTY_TYPE_VACANT_LAND = "Vacant Land";
+    public static final String DASHBOARD_PROPERTY_TYPE_STATE_GOVT = "State Government";
+    public static final String DASHBOARD_PROPERTY_TYPE_CENTRAL_GOVT = "CENTRAL_GOVT";
+    
+    public static final List<String> DASHBOARD_PROPERTY_TYPE_CENTRAL_GOVT_LIST = new ArrayList<String>() {
+        {
+            add("Central Government 33.5%");
+            add("Central Government 50%");
+            add("Central Government 75%");
+        }
+    };
 }
