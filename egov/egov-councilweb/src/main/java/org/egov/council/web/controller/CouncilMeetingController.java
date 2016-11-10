@@ -379,7 +379,7 @@ public class CouncilMeetingController {
     }
     
     
-    @RequestMapping(value = "/attendance/search/edit/{id}", method = RequestMethod.GET)
+    @RequestMapping(value = "/attend/search/edit/{id}", method = RequestMethod.GET)
     public String editAttendance(@PathVariable("id") final CouncilMeeting councilMeeting1, Model model) {
     	 CouncilMeeting councilMeeting = councilMeetingService.findOne(councilMeeting1.getId());
     	 

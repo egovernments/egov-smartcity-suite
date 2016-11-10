@@ -67,12 +67,10 @@
 			<tbody></tbody>
 		</table>
 	</div>
-	<div class="form-group">
 			<div class="text-center">
 				<a href='javascript:void(0)' class='btn btn-default'
 					onclick='self.close()'><spring:message code='lbl.close' /></a>
 			</div>
-	</div>
 </div>	
 <link rel="stylesheet" href="<cdn:url value='/resources/global/css/jquery/plugins/datatables/jquery.dataTables.min.css' context='/egi'/>"/>
 <link rel="stylesheet" href="<cdn:url value='/resources/global/css/jquery/plugins/datatables/dataTables.bootstrap.min.css' context='/egi'/>">

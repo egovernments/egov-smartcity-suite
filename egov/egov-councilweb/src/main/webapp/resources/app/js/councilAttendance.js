@@ -113,7 +113,7 @@ function getFormData($form){
 }
 
 var viewurl='/council/councilmeeting/attendance/search/view/';
-var editurl='/council/councilmeeting/attendance/search/edit/';
+var editurl='/council/councilmeeting/attend/search/edit/';
 function callAjaxSearch() {
 	
 	drillDowntableContainer = jQuery("#resultTable");	
