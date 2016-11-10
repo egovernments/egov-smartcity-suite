@@ -114,7 +114,8 @@ public class CollectionReportService {
     }
 
     public List<Object[]> getUlbNames(final String districtName) {
-        final StringBuilder queryStr = new StringBuilder("select distinct ulbname from public.onlinepayment_view opv where 1=1");
+        final StringBuilder queryStr = new StringBuilder(
+                "select distinct ulbname from public.onlinepayment_view opv where 1=1");
         if (StringUtils.isNotBlank(districtName))
             queryStr.append(" and opv.districtName=:districtName ");
         final SQLQuery query = getCurrentSession().createSQLQuery(queryStr.toString());
@@ -130,50 +131,55 @@ public class CollectionReportService {
     }
 
     public CollectionSummaryReportResult getCollectionSummaryReport(final Date fromDate, final Date toDate,
-            final String paymentMode, final String source, final Long serviceId, final int status,final String serviceType) {
+            final String paymentMode, final String source, final Long serviceId, final int status,
+            final String serviceType) {
         final SimpleDateFormat fromDateFormatter = new SimpleDateFormat("yyyy-MM-dd 00:00:00");
         final SimpleDateFormat toDateFormatter = new SimpleDateFormat("yyyy-MM-dd 23:59:59");
         final StringBuilder defaultQueryStr = new StringBuilder(500);
         final StringBuilder queryStr = new StringBuilder(500);
         queryStr.append("SELECT  (CASE WHEN EGF_INSTRUMENTTYPE.TYPE='cash' THEN count(*) END) AS CASH_COUNT,  ")
-        .append("(CASE WHEN EGF_INSTRUMENTTYPE.TYPE='cheque' THEN count(*) WHEN EGF_INSTRUMENTTYPE.TYPE='dd' THEN count(*) END) AS CHEQUEDD_COUNT, ")
-        .append(" (CASE WHEN EGF_INSTRUMENTTYPE.TYPE= 'online' THEN count(*) END) AS ONLINE_COUNT, ")
-        .append(" EGCL_COLLECTIONHEADER.SOURCE AS SOURCE, EG_LOCATION.NAME AS COUNTER_NAME, EG_USER.NAME AS EMPLOYEE_NAME,SER.NAME AS SERVICE_NAME,")
-        .append(" (CASE WHEN EGF_INSTRUMENTTYPE.TYPE='cash' THEN SUM(EGF_INSTRUMENTHEADER.INSTRUMENTAMOUNT) END) AS CASH_AMOUNT, ")
-        .append(" (CASE WHEN EGF_INSTRUMENTTYPE.TYPE='cheque' THEN SUM(EGF_INSTRUMENTHEADER.INSTRUMENTAMOUNT) WHEN EGF_INSTRUMENTTYPE.TYPE='dd' THEN SUM(EGF_INSTRUMENTHEADER.INSTRUMENTAMOUNT) END) AS CHEQUEDD_AMOUNT,")
-        .append(" (CASE WHEN EGF_INSTRUMENTTYPE.TYPE= 'online' THEN SUM(EGF_INSTRUMENTHEADER.INSTRUMENTAMOUNT) END) AS ONLINE_AMOUNT, EG_USER.ID AS USERID FROM")
-        .append(" EGCL_COLLECTIONHEADER EGCL_COLLECTIONHEADER INNER JOIN EGCL_COLLECTIONINSTRUMENT EGCL_COLLECTIONINSTRUMENT ON EGCL_COLLECTIONHEADER.ID = EGCL_COLLECTIONINSTRUMENT.COLLECTIONHEADER")
-        .append(" INNER JOIN EGF_INSTRUMENTHEADER EGF_INSTRUMENTHEADER ON EGCL_COLLECTIONINSTRUMENT.INSTRUMENTHEADER = EGF_INSTRUMENTHEADER.ID")
-        .append(" INNER JOIN EGW_STATUS EGW_STATUS ON EGCL_COLLECTIONHEADER.STATUS = EGW_STATUS.ID")
-        .append(" INNER JOIN EG_LOCATION EG_LOCATION ON EGCL_COLLECTIONHEADER.LOCATION = EG_LOCATION.ID")
-        .append(" INNER JOIN EGF_INSTRUMENTTYPE EGF_INSTRUMENTTYPE ON EGF_INSTRUMENTHEADER.INSTRUMENTTYPE = EGF_INSTRUMENTTYPE.ID")
-        .append(" INNER JOIN EGCL_COLLECTIONMIS EGCL_COLLECTIONMIS ON EGCL_COLLECTIONHEADER.ID = EGCL_COLLECTIONMIS.COLLECTIONHEADER")
-        .append(" INNER JOIN EG_USER EG_USER ON EGCL_COLLECTIONHEADER.CREATEDBY = EG_USER.ID")
-        .append(" INNER JOIN EGEIS_EMPLOYEE EG_EMPLOYEE ON EG_USER.ID = EG_EMPLOYEE.ID")
-        .append(" INNER JOIN EGEIS_ASSIGNMENT EGEIS_ASSIGNMENT ON EGEIS_ASSIGNMENT.EMPLOYEE = EG_EMPLOYEE.ID")
-        .append(" INNER JOIN  EGCL_SERVICEDETAILS SER ON SER.ID = EGCL_COLLECTIONHEADER.SERVICEDETAILS WHERE")
-        .append(" EGW_STATUS.DESCRIPTION != 'Cancelled' ");
+                .append("(CASE WHEN EGF_INSTRUMENTTYPE.TYPE='cheque' THEN count(*) WHEN EGF_INSTRUMENTTYPE.TYPE='dd' THEN count(*) END) AS CHEQUEDD_COUNT, ")
+                .append(" (CASE WHEN EGF_INSTRUMENTTYPE.TYPE= 'online' THEN count(*) END) AS ONLINE_COUNT, ")
+                .append(" EGCL_COLLECTIONHEADER.SOURCE AS SOURCE, EG_LOCATION.NAME AS COUNTER_NAME, EG_USER.NAME AS EMPLOYEE_NAME,SER.NAME AS SERVICE_NAME,")
+                .append(" (CASE WHEN EGF_INSTRUMENTTYPE.TYPE='cash' THEN SUM(EGF_INSTRUMENTHEADER.INSTRUMENTAMOUNT) END) AS CASH_AMOUNT, ")
+                .append(" (CASE WHEN EGF_INSTRUMENTTYPE.TYPE='cheque' THEN SUM(EGF_INSTRUMENTHEADER.INSTRUMENTAMOUNT) WHEN EGF_INSTRUMENTTYPE.TYPE='dd' THEN SUM(EGF_INSTRUMENTHEADER.INSTRUMENTAMOUNT) END) AS CHEQUEDD_AMOUNT,")
+                .append(" (CASE WHEN EGF_INSTRUMENTTYPE.TYPE= 'online' THEN SUM(EGF_INSTRUMENTHEADER.INSTRUMENTAMOUNT) END) AS ONLINE_AMOUNT, EG_USER.ID AS USERID, ")
+                .append(" (CASE WHEN EGF_INSTRUMENTTYPE.TYPE='bankchallan' THEN count(*) END) AS BANK_COUNT, ")
+                .append(" (CASE WHEN EGF_INSTRUMENTTYPE.TYPE='bankchallan' THEN SUM(EGF_INSTRUMENTHEADER.INSTRUMENTAMOUNT) END) AS BANK_AMOUNT ")
+                .append(" FROM EGCL_COLLECTIONHEADER EGCL_COLLECTIONHEADER INNER JOIN EGCL_COLLECTIONINSTRUMENT EGCL_COLLECTIONINSTRUMENT ON EGCL_COLLECTIONHEADER.ID = EGCL_COLLECTIONINSTRUMENT.COLLECTIONHEADER")
+                .append(" INNER JOIN EGF_INSTRUMENTHEADER EGF_INSTRUMENTHEADER ON EGCL_COLLECTIONINSTRUMENT.INSTRUMENTHEADER = EGF_INSTRUMENTHEADER.ID")
+                .append(" INNER JOIN EGW_STATUS EGW_STATUS ON EGCL_COLLECTIONHEADER.STATUS = EGW_STATUS.ID")
+                .append(" INNER JOIN EG_LOCATION EG_LOCATION ON EGCL_COLLECTIONHEADER.LOCATION = EG_LOCATION.ID")
+                .append(" INNER JOIN EGF_INSTRUMENTTYPE EGF_INSTRUMENTTYPE ON EGF_INSTRUMENTHEADER.INSTRUMENTTYPE = EGF_INSTRUMENTTYPE.ID")
+                .append(" INNER JOIN EGCL_COLLECTIONMIS EGCL_COLLECTIONMIS ON EGCL_COLLECTIONHEADER.ID = EGCL_COLLECTIONMIS.COLLECTIONHEADER")
+                .append(" INNER JOIN EG_USER EG_USER ON EGCL_COLLECTIONHEADER.CREATEDBY = EG_USER.ID")
+                .append(" INNER JOIN EGEIS_EMPLOYEE EG_EMPLOYEE ON EG_USER.ID = EG_EMPLOYEE.ID")
+                .append(" INNER JOIN EGEIS_ASSIGNMENT EGEIS_ASSIGNMENT ON EGEIS_ASSIGNMENT.EMPLOYEE = EG_EMPLOYEE.ID")
+                .append(" INNER JOIN  EGCL_SERVICEDETAILS SER ON SER.ID = EGCL_COLLECTIONHEADER.SERVICEDETAILS WHERE")
+                .append(" EGW_STATUS.DESCRIPTION != 'Cancelled' AND EGEIS_ASSIGNMENT.ISPRIMARY=true");
 
         final StringBuilder onlineQueryStr = new StringBuilder();
         onlineQueryStr
-        .append("SELECT  (CASE WHEN EGF_INSTRUMENTTYPE.TYPE='cash' THEN count(*) END) AS CASH_COUNT,  ")
-        .append("(CASE WHEN EGF_INSTRUMENTTYPE.TYPE='cheque' THEN count(*) WHEN EGF_INSTRUMENTTYPE.TYPE='dd' THEN count(*) END) AS CHEQUEDD_COUNT, ")
-        .append(" (CASE WHEN EGF_INSTRUMENTTYPE.TYPE= 'online' THEN count(*) END) AS ONLINE_COUNT, ")
-        .append(" EGCL_COLLECTIONHEADER.SOURCE AS SOURCE, '' AS COUNTER_NAME, '' AS EMPLOYEE_NAME,SER.NAME AS SERVICE_NAME,")
-        .append(" (CASE WHEN EGF_INSTRUMENTTYPE.TYPE='cash' THEN SUM(EGF_INSTRUMENTHEADER.INSTRUMENTAMOUNT) END) AS CASH_AMOUNT, ")
-        .append(" (CASE WHEN EGF_INSTRUMENTTYPE.TYPE='cheque' THEN SUM(EGF_INSTRUMENTHEADER.INSTRUMENTAMOUNT) WHEN EGF_INSTRUMENTTYPE.TYPE='dd' THEN SUM(EGF_INSTRUMENTHEADER.INSTRUMENTAMOUNT) END) AS CHEQUEDD_AMOUNT,")
-        .append(" (CASE WHEN EGF_INSTRUMENTTYPE.TYPE= 'online' THEN SUM(EGF_INSTRUMENTHEADER.INSTRUMENTAMOUNT) END) AS ONLINE_AMOUNT, 0 AS USERID FROM")
-        .append(" EGCL_COLLECTIONHEADER EGCL_COLLECTIONHEADER INNER JOIN EGCL_COLLECTIONINSTRUMENT EGCL_COLLECTIONINSTRUMENT ON EGCL_COLLECTIONHEADER.ID = EGCL_COLLECTIONINSTRUMENT.COLLECTIONHEADER")
-        .append(" INNER JOIN EGF_INSTRUMENTHEADER EGF_INSTRUMENTHEADER ON EGCL_COLLECTIONINSTRUMENT.INSTRUMENTHEADER = EGF_INSTRUMENTHEADER.ID")
-        .append(" INNER JOIN EGW_STATUS EGW_STATUS ON EGCL_COLLECTIONHEADER.STATUS = EGW_STATUS.ID")
-        .append(" INNER JOIN EGF_INSTRUMENTTYPE EGF_INSTRUMENTTYPE ON EGF_INSTRUMENTHEADER.INSTRUMENTTYPE = EGF_INSTRUMENTTYPE.ID")
-        .append(" INNER JOIN EGCL_COLLECTIONMIS EGCL_COLLECTIONMIS ON EGCL_COLLECTIONHEADER.ID = EGCL_COLLECTIONMIS.COLLECTIONHEADER")
-        // .append(" INNER JOIN EG_USER EG_USER ON EGCL_COLLECTIONHEADER.CREATEDBY = EG_USER.ID")
-        .append(" INNER JOIN  EGCL_SERVICEDETAILS SER ON SER.ID = EGCL_COLLECTIONHEADER.SERVICEDETAILS WHERE")
-        .append(" EGW_STATUS.DESCRIPTION != 'Cancelled' ");
+                .append("SELECT  (CASE WHEN EGF_INSTRUMENTTYPE.TYPE='cash' THEN count(*) END) AS CASH_COUNT,  ")
+                .append("(CASE WHEN EGF_INSTRUMENTTYPE.TYPE='cheque' THEN count(distinct(EGCL_COLLECTIONHEADER.RECEIPTNUMBER)) WHEN EGF_INSTRUMENTTYPE.TYPE='dd' THEN count(distinct(EGCL_COLLECTIONHEADER.RECEIPTNUMBER)) END) AS CHEQUEDD_COUNT, ")
+                .append(" (CASE WHEN EGF_INSTRUMENTTYPE.TYPE= 'online' THEN count(*) END) AS ONLINE_COUNT, ")
+                .append(" EGCL_COLLECTIONHEADER.SOURCE AS SOURCE, '' AS COUNTER_NAME, '' AS EMPLOYEE_NAME,SER.NAME AS SERVICE_NAME,")
+                .append(" (CASE WHEN EGF_INSTRUMENTTYPE.TYPE='cash' THEN SUM(EGF_INSTRUMENTHEADER.INSTRUMENTAMOUNT) END) AS CASH_AMOUNT, ")
+                .append(" (CASE WHEN EGF_INSTRUMENTTYPE.TYPE='cheque' THEN SUM(EGF_INSTRUMENTHEADER.INSTRUMENTAMOUNT) WHEN EGF_INSTRUMENTTYPE.TYPE='dd' THEN SUM(EGF_INSTRUMENTHEADER.INSTRUMENTAMOUNT) END) AS CHEQUEDD_AMOUNT,")
+                .append(" (CASE WHEN EGF_INSTRUMENTTYPE.TYPE= 'online' THEN SUM(EGF_INSTRUMENTHEADER.INSTRUMENTAMOUNT) END) AS ONLINE_AMOUNT, 0 AS USERID, ")
+                .append(" (CASE WHEN EGF_INSTRUMENTTYPE.TYPE='bankchallan' THEN count(*) END) AS BANK_COUNT, ")
+                .append(" (CASE WHEN EGF_INSTRUMENTTYPE.TYPE='bankchallan' THEN SUM(EGF_INSTRUMENTHEADER.INSTRUMENTAMOUNT) END) AS BANK_AMOUNT ")
+                .append(" FROM EGCL_COLLECTIONHEADER EGCL_COLLECTIONHEADER INNER JOIN EGCL_COLLECTIONINSTRUMENT EGCL_COLLECTIONINSTRUMENT ON EGCL_COLLECTIONHEADER.ID = EGCL_COLLECTIONINSTRUMENT.COLLECTIONHEADER")
+                .append(" INNER JOIN EGF_INSTRUMENTHEADER EGF_INSTRUMENTHEADER ON EGCL_COLLECTIONINSTRUMENT.INSTRUMENTHEADER = EGF_INSTRUMENTHEADER.ID")
+                .append(" INNER JOIN EGW_STATUS EGW_STATUS ON EGCL_COLLECTIONHEADER.STATUS = EGW_STATUS.ID")
+                .append(" INNER JOIN EGF_INSTRUMENTTYPE EGF_INSTRUMENTTYPE ON EGF_INSTRUMENTHEADER.INSTRUMENTTYPE = EGF_INSTRUMENTTYPE.ID")
+                .append(" INNER JOIN EGCL_COLLECTIONMIS EGCL_COLLECTIONMIS ON EGCL_COLLECTIONHEADER.ID = EGCL_COLLECTIONMIS.COLLECTIONHEADER")
+                // .append(" INNER JOIN EG_USER EG_USER ON EGCL_COLLECTIONHEADER.CREATEDBY = EG_USER.ID")
+                .append(" INNER JOIN  EGCL_SERVICEDETAILS SER ON SER.ID = EGCL_COLLECTIONHEADER.SERVICEDETAILS WHERE")
+                .append(" EGW_STATUS.DESCRIPTION != 'Cancelled' ");
         final StringBuilder queryStrGroup = new StringBuilder();
         queryStrGroup
-        .append(" GROUP BY  SOURCE, COUNTER_NAME, EMPLOYEE_NAME, USERID,SERVICE_NAME, EGF_INSTRUMENTTYPE.TYPE");
+                .append(" GROUP BY  SOURCE, COUNTER_NAME, EMPLOYEE_NAME, USERID,SERVICE_NAME, EGF_INSTRUMENTTYPE.TYPE");
 
         if (fromDate != null && toDate != null) {
             queryStr.append(" AND EGCL_COLLECTIONHEADER.RECEIPTDATE between to_timestamp('"
@@ -196,18 +202,17 @@ public class CollectionReportService {
             queryStr.append(" AND EGCL_COLLECTIONHEADER.SERVICEDETAILS =:serviceId");
             onlineQueryStr.append(" AND EGCL_COLLECTIONHEADER.SERVICEDETAILS =:serviceId");
         }
-        
-        if (status != -1 ) {
+
+        if (status != -1) {
             queryStr.append(" AND EGCL_COLLECTIONHEADER.STATUS =:searchStatus");
             onlineQueryStr.append(" AND EGCL_COLLECTIONHEADER.STATUS =:searchStatus");
         }
 
-        if(!serviceType.equals(CollectionConstants.ALL))
-        {
+        if (!serviceType.equals(CollectionConstants.ALL)) {
             queryStr.append(" AND SER.SERVICETYPE =:serviceType");
             onlineQueryStr.append(" AND SER.SERVICETYPE =:serviceType");
         }
-        
+
         if (StringUtils.isNotBlank(paymentMode) && !paymentMode.equals(CollectionConstants.ALL)) {
             if (paymentMode.equals(CollectionConstants.INSTRUMENTTYPE_ONLINE)) {
                 queryStr.setLength(0);
@@ -222,6 +227,10 @@ public class CollectionReportService {
         } else {
             defaultQueryStr.append(queryStr);
             defaultQueryStr.append(" AND EGF_INSTRUMENTTYPE.TYPE = 'cash'");
+            defaultQueryStr.append(queryStrGroup);
+            defaultQueryStr.append(" union ");
+            defaultQueryStr.append(queryStr);
+            defaultQueryStr.append(" AND EGF_INSTRUMENTTYPE.TYPE = 'bankchallan'");
             defaultQueryStr.append(queryStrGroup);
             defaultQueryStr.append(" union ");
             defaultQueryStr.append(queryStr);
@@ -240,6 +249,10 @@ public class CollectionReportService {
         aggregateQueryStr.append(queryStrGroup);
         aggregateQueryStr.append(" union ");
         aggregateQueryStr.append(onlineQueryStr);
+        aggregateQueryStr.append(" AND EGF_INSTRUMENTTYPE.TYPE = 'bankchallan'");
+        aggregateQueryStr.append(queryStrGroup);
+        aggregateQueryStr.append(" union ");
+        aggregateQueryStr.append(onlineQueryStr);
         aggregateQueryStr.append(" AND EGF_INSTRUMENTTYPE.TYPE in( 'cheque','dd')");
         aggregateQueryStr.append(queryStrGroup);
         aggregateQueryStr.append(" union ");
@@ -249,17 +262,17 @@ public class CollectionReportService {
 
         final StringBuilder finalQueryStr = new StringBuilder();
         finalQueryStr
-        .append("SELECT cast(sum(CASH_COUNT) AS NUMERIC) AS CASH_COUNT,cast(sum(CHEQUEDD_COUNT) AS NUMERIC) AS CHEQUEDD_COUNT,cast(sum(ONLINE_COUNT) AS NUMERIC) AS ONLINE_COUNT,SOURCE,COUNTER_NAME,EMPLOYEE_NAME,SERVICE_NAME,cast(sum(CASH_AMOUNT) AS NUMERIC) AS CASH_AMOUNT, cast(sum(CHEQUEDD_AMOUNT) AS NUMERIC) AS CHEQUEDD_AMOUNT, cast(sum(ONLINE_AMOUNT) AS NUMERIC) AS ONLINE_AMOUNT ,USERID FROM (");
+                .append("SELECT cast(sum(CASH_COUNT) AS NUMERIC) AS CASH_COUNT,cast(sum(CHEQUEDD_COUNT) AS NUMERIC) AS CHEQUEDD_COUNT,cast(sum(ONLINE_COUNT) AS NUMERIC) AS ONLINE_COUNT,SOURCE,COUNTER_NAME,EMPLOYEE_NAME,SERVICE_NAME,cast(sum(CASH_AMOUNT) AS NUMERIC) AS CASH_AMOUNT, cast(sum(CHEQUEDD_AMOUNT) AS NUMERIC) AS CHEQUEDD_AMOUNT, cast(sum(ONLINE_AMOUNT) AS NUMERIC) AS ONLINE_AMOUNT ,USERID,cast(sum(BANK_COUNT) AS NUMERIC) AS BANK_COUNT, cast(sum(BANK_AMOUNT) AS NUMERIC) AS BANK_AMOUNT FROM (");
         finalQueryStr
-        .append(queryStr)
-        .append(" ) AS RESULT GROUP BY RESULT.SOURCE,RESULT.COUNTER_NAME,RESULT.EMPLOYEE_NAME,RESULT.USERID,RESULT.SERVICE_NAME order by SOURCE,EMPLOYEE_NAME, SERVICE_NAME ");
+                .append(queryStr)
+                .append(" ) AS RESULT GROUP BY RESULT.SOURCE,RESULT.COUNTER_NAME,RESULT.EMPLOYEE_NAME,RESULT.USERID,RESULT.SERVICE_NAME order by SOURCE,EMPLOYEE_NAME, SERVICE_NAME ");
 
         final StringBuilder finalAggregateQryStr = new StringBuilder();
         finalAggregateQryStr
-        .append("SELECT sum(CASH_COUNT) AS CASH_COUNT,sum(CHEQUEDD_COUNT) AS CHEQUEDD_COUNT,sum(ONLINE_COUNT) AS ONLINE_COUNT,SOURCE,COUNTER_NAME,EMPLOYEE_NAME,SERVICE_NAME,sum(CASH_AMOUNT) AS CASH_AMOUNT, sum(CHEQUEDD_AMOUNT) AS CHEQUEDD_AMOUNT, sum(ONLINE_AMOUNT) AS ONLINE_AMOUNT ,USERID FROM (");
+                .append("SELECT sum(CASH_COUNT) AS CASH_COUNT,sum(CHEQUEDD_COUNT) AS CHEQUEDD_COUNT,sum(ONLINE_COUNT) AS ONLINE_COUNT,SOURCE,COUNTER_NAME,EMPLOYEE_NAME,SERVICE_NAME,sum(CASH_AMOUNT) AS CASH_AMOUNT, sum(CHEQUEDD_AMOUNT) AS CHEQUEDD_AMOUNT, sum(ONLINE_AMOUNT) AS ONLINE_AMOUNT ,USERID, sum(BANK_COUNT) AS BANK_COUNT, sum(BANK_AMOUNT) AS BANK_AMOUNT FROM (");
         finalAggregateQryStr
-        .append(aggregateQueryStr)
-        .append(" ) AS RESULT GROUP BY RESULT.SOURCE,RESULT.COUNTER_NAME,RESULT.EMPLOYEE_NAME,RESULT.USERID,RESULT.SERVICE_NAME order by SOURCE,EMPLOYEE_NAME, SERVICE_NAME ");
+                .append(aggregateQueryStr)
+                .append(" ) AS RESULT GROUP BY RESULT.SOURCE,RESULT.COUNTER_NAME,RESULT.EMPLOYEE_NAME,RESULT.USERID,RESULT.SERVICE_NAME order by SOURCE,EMPLOYEE_NAME, SERVICE_NAME ");
 
         final SQLQuery query = getCurrentSession().createSQLQuery(finalQueryStr.toString());
 
@@ -273,23 +286,21 @@ public class CollectionReportService {
             query.setLong("serviceId", serviceId);
             aggrQuery.setLong("serviceId", serviceId);
         }
-        if (status != -1 ) {
+        if (status != -1) {
             query.setLong("searchStatus", status);
             aggrQuery.setLong("searchStatus", status);
         }
-      
-        if(!serviceType.equals(CollectionConstants.ALL))
-        {
+
+        if (!serviceType.equals(CollectionConstants.ALL)) {
             query.setString("serviceType", serviceType);
             aggrQuery.setString("serviceType", serviceType);
         }
-        
+
         if (StringUtils.isNotBlank(paymentMode) && !paymentMode.equals(CollectionConstants.ALL))
             if (paymentMode.equals(CollectionConstants.INSTRUMENTTYPE_CHEQUEORDD)) {
                 query.setParameterList("paymentMode", new ArrayList<>(Arrays.asList("cheque", "dd")));
                 aggrQuery.setParameterList("paymentMode", new ArrayList<>(Arrays.asList("cheque", "dd")));
-            } else
-            {
+            } else {
                 query.setString("paymentMode", paymentMode);
                 aggrQuery.setString("paymentMode", paymentMode);
             }
@@ -306,7 +317,7 @@ public class CollectionReportService {
         for (int i = 0; i < queryResults.size(); i++) {
             final Object[] arrayObjectInitialIndex = queryResults.get(i);
             final CollectionSummaryReport collSummaryReportResult = new CollectionSummaryReport();
-            BigDecimal cashCnt = BigDecimal.ZERO, chequeddCnt = BigDecimal.ZERO, onlineCnt = BigDecimal.ZERO;
+            BigDecimal cashCnt = BigDecimal.ZERO, chequeddCnt = BigDecimal.ZERO, onlineCnt = BigDecimal.ZERO, bankCnt = BigDecimal.ZERO;
             cashCnt = (BigDecimal) arrayObjectInitialIndex[0] == null ? BigDecimal.ZERO
                     : (BigDecimal) arrayObjectInitialIndex[0];
             chequeddCnt = (BigDecimal) arrayObjectInitialIndex[1] == null ? BigDecimal.ZERO
@@ -323,16 +334,22 @@ public class CollectionReportService {
             collSummaryReportResult.setCashAmount((BigDecimal) arrayObjectInitialIndex[7]);
             collSummaryReportResult.setChequeddAmount((BigDecimal) arrayObjectInitialIndex[8]);
             collSummaryReportResult.setOnlineAmount((BigDecimal) arrayObjectInitialIndex[9]);
-            final BigDecimal receiptCount = cashCnt.add(chequeddCnt).add(onlineCnt);
+            bankCnt = (BigDecimal) arrayObjectInitialIndex[11] == null ? BigDecimal.ZERO
+                    : (BigDecimal) arrayObjectInitialIndex[11];
+            collSummaryReportResult.setBankCount(bankCnt.equals(BigDecimal.ZERO) ? "" : bankCnt.toString());
+            collSummaryReportResult.setBankAmount((BigDecimal) arrayObjectInitialIndex[12]);
+            final BigDecimal receiptCount = cashCnt.add(chequeddCnt).add(onlineCnt).add(bankCnt);
+            collSummaryReportResult.setTotalReceiptCount(receiptCount.equals(BigDecimal.ZERO) ? "" : receiptCount
+                    .toString());
             collSummaryReportResult
-            .setTotalReceiptCount(receiptCount.equals(BigDecimal.ZERO) ? "" : receiptCount.toString());
-            collSummaryReportResult
-            .setTotalAmount(((BigDecimal) arrayObjectInitialIndex[7] != null ? (BigDecimal) arrayObjectInitialIndex[7]
-                    : BigDecimal.ZERO).add(
-                            (BigDecimal) arrayObjectInitialIndex[8] != null ? (BigDecimal) arrayObjectInitialIndex[8]
-                                    : BigDecimal.ZERO).add(
-                                            (BigDecimal) arrayObjectInitialIndex[9] != null ? (BigDecimal) arrayObjectInitialIndex[9]
-                                                    : BigDecimal.ZERO));
+                    .setTotalAmount(((BigDecimal) arrayObjectInitialIndex[7] != null ? (BigDecimal) arrayObjectInitialIndex[7]
+                            : BigDecimal.ZERO)
+                            .add((BigDecimal) arrayObjectInitialIndex[8] != null ? (BigDecimal) arrayObjectInitialIndex[8]
+                                    : BigDecimal.ZERO)
+                            .add((BigDecimal) arrayObjectInitialIndex[9] != null ? (BigDecimal) arrayObjectInitialIndex[9]
+                                    : BigDecimal.ZERO)
+                            .add((BigDecimal) arrayObjectInitialIndex[12] != null ? (BigDecimal) arrayObjectInitialIndex[12]
+                                    : BigDecimal.ZERO));
             reportResults.add(collSummaryReportResult);
         }
         return reportResults;

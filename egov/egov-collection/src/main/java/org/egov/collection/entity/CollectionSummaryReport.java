@@ -51,7 +51,9 @@ public class CollectionSummaryReport {
     private String chequeddCount;
     private BigDecimal chequeddAmount;
     private String onlineCount;
+    private String bankCount;
     private BigDecimal onlineAmount;
+    private BigDecimal bankAmount;
     private String totalReceiptCount;
     private BigDecimal totalAmount;
     private String employeeName;
@@ -113,12 +115,28 @@ public class CollectionSummaryReport {
         this.onlineCount = onlineCount;
     }
 
+    public String getBankCount() {
+        return bankCount;
+    }
+
+    public void setBankCount(String bankCount) {
+        this.bankCount = bankCount;
+    }
+
     public BigDecimal getOnlineAmount() {
         return onlineAmount;
     }
 
     public void setOnlineAmount(final BigDecimal onlineAmount) {
         this.onlineAmount = onlineAmount;
+    }
+
+    public BigDecimal getBankAmount() {
+        return bankAmount;
+    }
+
+    public void setBankAmount(BigDecimal bankAmount) {
+        this.bankAmount = bankAmount;
     }
 
     public String getTotalReceiptCount() {
