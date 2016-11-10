@@ -46,9 +46,7 @@ import org.egov.eis.entity.Assignment;
 import org.egov.eis.entity.AssignmentAdaptor;
 import org.egov.eis.service.AssignmentService;
 import org.egov.eis.service.DesignationService;
-import org.egov.infra.workflow.entity.WorkflowTypes;
 import org.egov.infra.workflow.matrix.service.CustomizedWorkFlowService;
-import org.egov.infra.workflow.service.WorkflowTypeService;
 import org.egov.pims.commons.Designation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
@@ -62,81 +60,66 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import javax.servlet.http.HttpServletResponse;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 
 @Controller
 public class AjaxWorkFlowController {
 
-	@Autowired
-	private CustomizedWorkFlowService customizedWorkFlowService;
+    @Autowired
+    private CustomizedWorkFlowService customizedWorkFlowService;
 
-	@Autowired
-	private DesignationService designationService;
+    @Autowired
+    private DesignationService designationService;
 
-	@Autowired
-	private AssignmentService assignmentService;
+    @Autowired
+    private AssignmentService assignmentService;
+/**
+ *
+ * @param departmentRule
+ * @param currentState
+ * @param type
+ * @param amountRule
+ * @param additionalRule
+ * @param pendingAction
+ * @param approvalDepartment
+ * @return List of Designation
+ */
+    @RequestMapping(value = "/ajaxWorkFlow-getDesignationsByObjectType", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+    public @ResponseBody List<Designation> getDesignationsByObjectType(
+            @ModelAttribute("designations") @RequestParam final String departmentRule, @RequestParam final String currentState,
+            @RequestParam final String type,
+            @RequestParam final String amountRule, @RequestParam final String additionalRule,
+            @RequestParam final String pendingAction, @RequestParam final Long approvalDepartment) {
 
-	@Autowired
-	private WorkflowTypeService workflowTypeService;
-	/**
-	 *  This api will return the designation list
-	 *  
-	 * @param departmentRule
-	 * @param currentState
-	 * @param type
-	 * @param amountRule
-	 * @param additionalRule
-	 * @param pendingAction
-	 * @param approvalDepartment
-	 * @return List of Designation 
-	 */
-	@RequestMapping(value = "/ajaxWorkFlow-getDesignationsByObjectType", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
-	public @ResponseBody List<Designation> getDesignationsByObjectType(
-			@ModelAttribute("designations") @RequestParam final String departmentRule, @RequestParam final String currentState,
-			@RequestParam final String type,
-			@RequestParam final String amountRule, @RequestParam final String additionalRule,
-			@RequestParam final String pendingAction, @RequestParam final Long approvalDepartment) {
-		List<Designation> designationList=Collections.EMPTY_LIST;
+        List<Designation> designationList = customizedWorkFlowService.getNextDesignations(type,
+                departmentRule, null, additionalRule, currentState,
+                pendingAction, new Date());
+        if (designationList.isEmpty())
+            designationList = designationService.getAllDesignationByDepartment(approvalDepartment, new Date());
+       return designationList;
 
-		WorkflowTypes workflowTypeByType = workflowTypeService.getWorkflowTypeByType(type);
-		if(workflowTypeByType.getBusinessKey()!=null)
-		{
-			designationList    = customizedWorkFlowService.getNextDesignationsFromActiviti(workflowTypeByType.getBusinessKey(),
-					departmentRule, null, additionalRule, currentState,
-					pendingAction, new Date());
-		}else
-		{
-			designationList = customizedWorkFlowService.getNextDesignations(type,
-					departmentRule, null, additionalRule, currentState,
-					pendingAction, new Date());
-		}
-		if (designationList.isEmpty())
-			designationList = designationService.getAllDesignationByDepartment(approvalDepartment, new Date());
-		return designationList;
-
-	}
-	/**
-	 * 
-	 * @param approvalDepartment
-	 * @param approvalDesignation
-	 * @return Approver For workflow
-	 */
-	@RequestMapping(value = "/ajaxWorkFlow-positionsByDepartmentAndDesignation", method = RequestMethod.GET, produces = MediaType.TEXT_PLAIN_VALUE)
-	public @ResponseBody String getWorkFlowPositionByDepartmentAndDesignation(@RequestParam final Long approvalDepartment,
-			@RequestParam final Long approvalDesignation, final HttpServletResponse response) {
-		List<Assignment> assignmentList = new ArrayList<Assignment>();
-		if (approvalDepartment != null && approvalDepartment != 0 && approvalDepartment != -1
-				&& approvalDesignation != null && approvalDesignation != 0 && approvalDesignation != -1) {
-			assignmentList = assignmentService.findAllAssignmentsByDeptDesigAndDates(approvalDepartment,
-					approvalDesignation, new Date());
-			final Gson jsonCreator = new GsonBuilder().registerTypeAdapter(Assignment.class, new AssignmentAdaptor())
-					.create();
-			return jsonCreator.toJson(assignmentList, new TypeToken<Collection<Assignment>>() {
-			}.getType());
-		}
-		return "[]";
-	}
+    }
+/**
+ *
+ * @param approvalDepartment
+ * @param approvalDesignation
+ * @return Approver For workflow
+ */
+    @RequestMapping(value = "/ajaxWorkFlow-positionsByDepartmentAndDesignation", method = RequestMethod.GET, produces = MediaType.TEXT_PLAIN_VALUE)
+    public @ResponseBody String getWorkFlowPositionByDepartmentAndDesignation(@RequestParam final Long approvalDepartment,
+            @RequestParam final Long approvalDesignation, final HttpServletResponse response) {
+        List<Assignment> assignmentList = new ArrayList<Assignment>();
+        if (approvalDepartment != null && approvalDepartment != 0 && approvalDepartment != -1
+                && approvalDesignation != null && approvalDesignation != 0 && approvalDesignation != -1) {
+            assignmentList = assignmentService.findAllAssignmentsByDeptDesigAndDates(approvalDepartment,
+                    approvalDesignation, new Date());
+            final Gson jsonCreator = new GsonBuilder().registerTypeAdapter(Assignment.class, new AssignmentAdaptor())
+                    .create();
+            return jsonCreator.toJson(assignmentList, new TypeToken<Collection<Assignment>>() {
+            }.getType());
+        }
+        return "[]";
+    }
 
 }

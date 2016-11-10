@@ -41,7 +41,6 @@
 package org.egov.infra.web.filter;
 
 import org.egov.infra.config.core.ApplicationThreadLocals;
-import org.egov.infra.config.process.multitenant.ProcessEngineThreadLocal;
 import org.egov.infra.config.properties.ApplicationProperties;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -70,9 +69,7 @@ public class ApplicationTenantResolverFilter implements Filter {
         ApplicationThreadLocals.setTenantID(applicationProperties.getProperty("tenant." + domainName));
         ApplicationThreadLocals.setDomainName(domainName);
         ApplicationThreadLocals.setDomainURL(domainURL);
-        ProcessEngineThreadLocal.setTenant(ApplicationThreadLocals.getTenantID());
         chain.doFilter(request, response);
-        ProcessEngineThreadLocal.clearTenant();
     }
 
     @Override

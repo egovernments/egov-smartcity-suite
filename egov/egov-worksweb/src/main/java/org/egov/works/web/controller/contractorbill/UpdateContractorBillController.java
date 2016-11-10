@@ -49,10 +49,9 @@ import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 
 import org.apache.commons.lang3.StringUtils;
+import org.egov.bpms.scraps.controller.workflow.GenericWorkFlowScrapController;
 import org.egov.commons.CChartOfAccounts;
 import org.egov.commons.dao.ChartOfAccountsHibernateDAO;
-import org.egov.eis.web.contract.WorkflowContainer;
-import org.egov.eis.web.controller.workflow.GenericWorkFlowController;
 import org.egov.infra.admin.master.service.DepartmentService;
 import org.egov.infra.exception.ApplicationException;
 import org.egov.infra.exception.ApplicationRuntimeException;
@@ -83,7 +82,7 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 @Controller
 @RequestMapping(value = "/contractorbill")
-public class UpdateContractorBillController extends GenericWorkFlowController {
+public class UpdateContractorBillController extends GenericWorkFlowScrapController {
     @Autowired
     private LineEstimateService lineEstimateService;
 

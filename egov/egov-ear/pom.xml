@@ -235,6 +235,11 @@
 			<artifactId>egov-stms</artifactId>
 			<version>${project.parent.version}</version>
 		</dependency>
+		<dependency>
+			<groupId>org.egov</groupId>
+			<artifactId>egov-bpms</artifactId>
+			<version>${project.parent.version}</version>
+		</dependency>
 		<!-- Following dependencies are included in ear as these are used only 
 			in war modules and we have configured war modules to be archived as skinny 
 			wars (no libraries will be packaged in WEB-INF/lib in wars). Hence we have 

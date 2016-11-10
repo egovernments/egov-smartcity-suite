@@ -179,8 +179,6 @@
         <log4j-version>1.2.17</log4j-version>
         <google-guava-version>19.0</google-guava-version>
         <recaptcha.version>0.0.8</recaptcha.version>
-        <activiti.verion>6.0.0.Beta4</activiti.verion>
-        <java.uuid.generator.version>3.1.4</java.uuid.generator.version>
 
         <!-- Plugin dependency versions-->
         <mvn.javadoc.plugin.version>2.10.4</mvn.javadoc.plugin.version>
@@ -241,6 +239,7 @@
              <module>egov-inventoryweb</module> -->
         <module>egov-stms</module>
         <module>egov-stmsweb</module>
+        <module>egov-bpms</module>
     </modules>
 
     <dependencyManagement>
@@ -410,34 +409,6 @@
                 <version>${xpp3-version}</version>
             </dependency>
             <!-- STRUTS2 DEPENDENCIES END -->
-
-            <!-- ACTIVITI DEPENDENCIES START -->
-            <dependency>
-                <groupId>org.activiti</groupId>
-                <artifactId>activiti-engine</artifactId>
-                <version>${activiti.verion}</version>
-                <exclusions>
-                    <exclusion>
-                        <groupId>de.odysseus.juel</groupId>
-                        <artifactId>juel-api</artifactId>
-                    </exclusion>
-                    <exclusion>
-                        <groupId>de.odysseus.juel</groupId>
-                        <artifactId>juel-spi</artifactId>
-                    </exclusion>
-                </exclusions>
-            </dependency>
-            <dependency>
-                <groupId>org.activiti</groupId>
-                <artifactId>activiti-spring</artifactId>
-                <version>${activiti.verion}</version>
-            </dependency>
-            <dependency>
-                <groupId>com.fasterxml.uuid</groupId>
-                <artifactId>java-uuid-generator</artifactId>
-                <version>${java.uuid.generator.version}</version>
-            </dependency>
-            <!-- ACTIVITI DEPENDENCIES  END -->
 
             <!-- JSON START -->
             <dependency>
@@ -1102,21 +1073,6 @@
             <artifactId>embedded-redis</artifactId>
         </dependency>
         <!-- EMBEDDED REDIS SERVER END -->
-
-        <!-- ACTIVITI DEPENDENCIES START -->
-        <dependency>
-            <groupId>org.activiti</groupId>
-            <artifactId>activiti-engine</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.activiti</groupId>
-            <artifactId>activiti-spring</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>com.fasterxml.uuid</groupId>
-            <artifactId>java-uuid-generator</artifactId>
-        </dependency>
-        <!-- ACTIVITI DEPENDENCIES END -->
 
         <!-- MISC STARTS -->
         <dependency>

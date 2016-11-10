@@ -39,28 +39,7 @@
  */
 package org.egov.works.contractorbill.service;
 
-import java.io.IOException;
-import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
-import javax.script.ScriptContext;
-import javax.servlet.http.HttpServletRequest;
-
-import org.activiti.engine.IdentityService;
-import org.activiti.engine.ProcessEngine;
-import org.activiti.engine.ProcessEngines;
-import org.activiti.engine.RuntimeService;
-import org.activiti.engine.TaskService;
-import org.activiti.engine.runtime.ProcessInstance;
-import org.activiti.engine.task.Task;
+import org.egov.bpms.service.workflow.ActivitiWorkflowService;
 import org.egov.commons.Accountdetailtype;
 import org.egov.commons.CChartOfAccounts;
 import org.egov.commons.CFinancialYear;
@@ -75,7 +54,6 @@ import org.egov.infra.script.service.ScriptService;
 import org.egov.infra.security.utils.SecurityUtils;
 import org.egov.infra.validation.exception.ValidationException;
 import org.egov.infra.workflow.matrix.entity.WorkFlowMatrix;
-import org.egov.infra.workflow.service.ActivitiWorkflowService;
 import org.egov.infra.workflow.service.SimpleWorkflowService;
 import org.egov.model.bills.EgBillPayeedetails;
 import org.egov.model.bills.EgBilldetails;
@@ -113,44 +91,46 @@ import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.multipart.MultipartFile;
 
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+import javax.script.ScriptContext;
+import javax.servlet.http.HttpServletRequest;
+import java.io.IOException;
+import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+
 @Service
 @Transactional(readOnly = true)
 public class ContractorBillRegisterService {
 
     private static final Logger LOG = LoggerFactory.getLogger(ContractorBillRegisterService.class);
-
+    private final ContractorBillRegisterRepository contractorBillRegisterRepository;
+    private final ScriptService scriptExecutionService;
     @PersistenceContext
     private EntityManager entityManager;
-
-    private final ContractorBillRegisterRepository contractorBillRegisterRepository;
-
     @Autowired
     private EgwStatusHibernateDAO egwStatusHibernateDAO;
-
     @Autowired
     private WorksUtils worksUtils;
-
     @Autowired
     private FinancialYearHibernateDAO financialYearHibernateDAO;
-
     @Autowired
     @Qualifier("workflowService")
     private SimpleWorkflowService<ContractorBillRegister> contractorBillRegisterWorkflowService;
-
     @Autowired
     private AssignmentService assignmentService;
-
     @Autowired
     private SecurityUtils securityUtils;
-
     @Autowired
     private PositionMasterService positionMasterService;
-
     @Autowired
     private LineEstimateService lineEstimateService;
-
-    private final ScriptService scriptExecutionService;
-
     @Autowired
     private VoucherService voucherService;
 
@@ -161,26 +141,20 @@ public class ContractorBillRegisterService {
     private ChartOfAccountsHibernateDAO chartOfAccountsHibernateDAO;
 
     @Autowired
-	private RuntimeService runtimeService;
-
-	@Autowired
-	private IdentityService identityService;
-
-	@Autowired
-	private ActivitiWorkflowService activitiWorkflowService;
+    private ActivitiWorkflowService activitiWorkflowService;
 
     @Autowired
     private TrackMilestoneService trackMilestoneService;
 
-    public Session getCurrentSession() {
-        return entityManager.unwrap(Session.class);
-    }
-
     @Autowired
     public ContractorBillRegisterService(final ContractorBillRegisterRepository contractorBillRegisterRepository,
-            final ScriptService scriptExecutionService) {
+                                         final ScriptService scriptExecutionService) {
         this.contractorBillRegisterRepository = contractorBillRegisterRepository;
         this.scriptExecutionService = scriptExecutionService;
+    }
+
+    public Session getCurrentSession() {
+        return entityManager.unwrap(Session.class);
     }
 
     public ContractorBillRegister getContractorBillById(final Long id) {
@@ -198,9 +172,9 @@ public class ContractorBillRegisterService {
 
     @Transactional
     public ContractorBillRegister create(final ContractorBillRegister contractorBillRegister,
-            final LineEstimateDetails lineEstimateDetails, final MultipartFile[] files,
-            final Long approvalPosition, final String approvalComent, final String additionalRule,
-            final String workFlowAction)
+                                         final LineEstimateDetails lineEstimateDetails, final MultipartFile[] files,
+                                         final Long approvalPosition, final String approvalComent, final String additionalRule,
+                                         final String workFlowAction)
             throws IOException {
 
         contractorBillRegister.setStatus(egwStatusHibernateDAO.getStatusByModuleAndCode(WorksConstants.CONTRACTORBILL,
@@ -216,25 +190,24 @@ public class ContractorBillRegisterService {
             throw new ValidationException(e.getErrors());
         }
         ContractorBillRegister savedContractorBillRegister = contractorBillRegisterRepository.save(contractorBillRegister);
-        if(!"Save".equals(workFlowAction))
-        {
+        if (!"Save".equals(workFlowAction)) {
 
-        	  Map<String, Object> toBeSavedVariables = new HashMap<String, Object>();
+            Map<String, Object> toBeSavedVariables = new HashMap<String, Object>();
 
-              toBeSavedVariables.put("workflowObject", contractorBillRegister);
-              toBeSavedVariables.put("action", workFlowAction);
-              toBeSavedVariables.put("objectId", contractorBillRegister.getId());
+            toBeSavedVariables.put("workflowObject", contractorBillRegister);
+            toBeSavedVariables.put("action", workFlowAction);
+            toBeSavedVariables.put("objectId", contractorBillRegister.getId());
 
-              Map<String, String> workflowVariables = new HashMap<String, String>();
-              workflowVariables.put("type", contractorBillRegister.getClass().getSimpleName());
-              workflowVariables.put("description", approvalComent);
-              workflowVariables.put("assignee", approvalPosition.toString());
-              workflowVariables.put("fullyQualifiedName", contractorBillRegister.getClass().getCanonicalName());
+            Map<String, String> workflowVariables = new HashMap<String, String>();
+            workflowVariables.put("type", contractorBillRegister.getClass().getSimpleName());
+            workflowVariables.put("description", approvalComent);
+            workflowVariables.put("assignee", approvalPosition.toString());
+            workflowVariables.put("fullyQualifiedName", contractorBillRegister.getClass().getCanonicalName());
 
 
-        activitiWorkflowService.initiate(toBeSavedVariables,workflowVariables);
+            activitiWorkflowService.initiate(toBeSavedVariables, workflowVariables);
         }
-       
+
         savedContractorBillRegister = contractorBillRegisterRepository.save(contractorBillRegister);
 
         populateAndSaveMBHeader(savedContractorBillRegister);
@@ -264,7 +237,7 @@ public class ContractorBillRegisterService {
             updatedContractorBillRegister = update(contractorBillRegister, files);
             contractorBillRegisterStatusChange(updatedContractorBillRegister, workFlowAction, mode);
         } else {
-           // contractorBillRegisterStatusChange(contractorBillRegister, workFlowAction, mode);
+            // contractorBillRegisterStatusChange(contractorBillRegister, workFlowAction, mode);
 
             if (workFlowAction.equalsIgnoreCase(WorksConstants.ACTION_APPROVE)) {
                 contractorBillRegister.setApprovedDate(new Date());
@@ -290,19 +263,19 @@ public class ContractorBillRegisterService {
         workflowVariables.put("assignee", approvalPosition.toString());
         workflowVariables.put("fullyQualifiedName", contractorBillRegister.getClass().getCanonicalName());
 
-        activitiWorkflowService.update(toBeSavedVariables,workflowVariables);
+        activitiWorkflowService.update(toBeSavedVariables, workflowVariables);
 
 
        /* createContractorBillRegisterWorkflowTransition(updatedContractorBillRegister,
                 approvalPosition, approvalComent, additionalRule, workFlowAction);*/
-        
+
         updatedContractorBillRegister = contractorBillRegisterRepository.save(contractorBillRegister);
 
         return updatedContractorBillRegister;
     }
 
     private ContractorBillRegister update(final ContractorBillRegister contractorBillRegister,
-            final MultipartFile[] files) throws IOException {
+                                          final MultipartFile[] files) throws IOException {
         final List<DocumentDetails> documentDetails = worksUtils.getDocumentDetails(files, contractorBillRegister,
                 WorksConstants.CONTRACTORBILL);
         if (!documentDetails.isEmpty()) {
@@ -313,7 +286,7 @@ public class ContractorBillRegisterService {
     }
 
     public Set<EgBilldetails> removeDeletedBillDetails(final Set<EgBilldetails> set,
-            final String removedBillDetailsIds) {
+                                                       final String removedBillDetailsIds) {
         final Set<EgBilldetails> details = new HashSet<EgBilldetails>();
         if (null != removedBillDetailsIds) {
             final String[] ids = removedBillDetailsIds.split(",");
@@ -332,7 +305,7 @@ public class ContractorBillRegisterService {
     }
 
     private EgBillregistermis setEgBillRegisterMis(final ContractorBillRegister contractorBillRegister,
-            final LineEstimateDetails lineEstimateDetails) {
+                                                   final LineEstimateDetails lineEstimateDetails) {
         final EgBillregistermis egBillRegisterMis = contractorBillRegister.getEgBillregistermis();
         egBillRegisterMis.setEgBillregister(contractorBillRegister);
         egBillRegisterMis.setPayto(contractorBillRegister.getWorkOrder().getContractor().getName());
@@ -356,7 +329,7 @@ public class ContractorBillRegisterService {
     }
 
     public Long getApprovalPositionByMatrixDesignation(final ContractorBillRegister contractorBillRegister,
-            Long approvalPosition, final String additionalRule, final String mode, final String workFlowAction) {
+                                                       Long approvalPosition, final String additionalRule, final String mode, final String workFlowAction) {
         final WorkFlowMatrix wfmatrix = contractorBillRegisterWorkflowService.getWfMatrix(contractorBillRegister
                 .getStateType(), null, null, additionalRule, contractorBillRegister.getCurrentState().getValue(), null);
         if (contractorBillRegister.getStatus() != null && contractorBillRegister.getStatus().getCode() != null)
@@ -375,8 +348,8 @@ public class ContractorBillRegisterService {
     }
 
     public void createContractorBillRegisterWorkflowTransition(final ContractorBillRegister contractorBillRegister,
-            final Long approvalPosition, final String approvalComent, final String additionalRule,
-            final String workFlowAction) {
+                                                               final Long approvalPosition, final String approvalComent, final String additionalRule,
+                                                               final String workFlowAction) {
         if (LOG.isDebugEnabled())
             LOG.debug(" Create WorkFlow Transition Started  ...");
         final User user = securityUtils.getCurrentUser();
@@ -432,8 +405,8 @@ public class ContractorBillRegisterService {
     }
 
     public void contractorBillRegisterStatusChange(final ContractorBillRegister contractorBillRegister,
-            final String workFlowAction,
-            final String mode) throws ValidationException {
+                                                   final String workFlowAction,
+                                                   final String mode) throws ValidationException {
         if (null != contractorBillRegister && null != contractorBillRegister.getStatus()
                 && null != contractorBillRegister.getStatus().getCode())
             if (contractorBillRegister.getStatus().getCode().equals(ContractorBillRegister.BillStatus.CREATED.toString())
@@ -623,7 +596,7 @@ public class ContractorBillRegisterService {
     }
 
     public EgBillPayeedetails getEgPayeeDetails(final EgBilldetails billDetails, final Integer accountsDetailTypeId,
-            final BigDecimal amount, final boolean isDebit, final Integer accountsDetailKeyId) {
+                                                final BigDecimal amount, final boolean isDebit, final Integer accountsDetailKeyId) {
         final EgBillPayeedetails egBillPaydetail = new EgBillPayeedetails();
         egBillPaydetail.setAccountDetailKeyId(accountsDetailKeyId);
         egBillPaydetail.setAccountDetailTypeId(accountsDetailTypeId);
@@ -637,7 +610,7 @@ public class ContractorBillRegisterService {
     }
 
     public List<Map<String, Object>> getBillDetailsMap(final ContractorBillRegister contractorBillRegister,
-            final Model model) {
+                                                       final Model model) {
         final List<Map<String, Object>> billDetailsList = new ArrayList<Map<String, Object>>();
         Map<String, Object> billDetails = new HashMap<String, Object>();
 
@@ -714,7 +687,7 @@ public class ContractorBillRegisterService {
     }
 
     public void validateTotalDebitAndCreditAmount(final ContractorBillRegister contractorBillRegister,
-            final BindingResult resultBinder) {
+                                                  final BindingResult resultBinder) {
         BigDecimal totalDebitAmount = BigDecimal.ZERO;
         BigDecimal totalCreditAmount = BigDecimal.ZERO;
         for (final EgBilldetails egBilldetails : contractorBillRegister.getEgBilldetailes()) {
@@ -754,16 +727,16 @@ public class ContractorBillRegisterService {
 
                     if (withheldAmount.equals("0"))
                         resultBinder.reject("error.contractorBill.nowithheldtorefund",
-                                new String[] { coa.getGlcode() }, null);
+                                new String[]{coa.getGlcode()}, null);
                     else {
 
                         final BigDecimal validRefundAmount = egBillDetail.getDebitamount().add(refundedAmount);
                         final BigDecimal diffAmount = validRefundAmount.subtract(withheldAmount);
                         if (validRefundAmount.compareTo(new BigDecimal(creditDebitAmounts[0])) == 1
                                 && !contractorBillRegister.getWorkOrderEstimate().getEstimate().getLineEstimateDetails()
-                                        .getLineEstimate().isSpillOverFlag())
+                                .getLineEstimate().isSpillOverFlag())
                             resultBinder.reject("error.contractorBill.validate.refundAmount",
-                                    new String[] { coa.getGlcode(), diffAmount.toString() }, null);
+                                    new String[]{coa.getGlcode(), diffAmount.toString()}, null);
                     }
                 }
             }
@@ -773,8 +746,8 @@ public class ContractorBillRegisterService {
     }
 
     public EgBilldetails getBillDetails(final ContractorBillRegister billregister, final EgBilldetails egBilldetails,
-            final LineEstimateDetails lineEstimateDetails, final BindingResult resultBinder,
-            final HttpServletRequest request) {
+                                        final LineEstimateDetails lineEstimateDetails, final BindingResult resultBinder,
+                                        final HttpServletRequest request) {
         egBilldetails.setFunctionid(new BigDecimal(lineEstimateDetails.getLineEstimate().getFunction().getId()));
         boolean isDebit = false;
         CChartOfAccounts coa = null;
@@ -805,7 +778,7 @@ public class ContractorBillRegisterService {
                         WorksConstants.PROJECTCODE);
                 if (projectCodeAccountDetailType == null)
                     resultBinder.reject("error.contractorBill.validate.glcode.for.projectcode.subledger",
-                            new String[] { coa.getGlcode() }, null);
+                            new String[]{coa.getGlcode()}, null);
             }
             final List<Accountdetailtype> detailCode = chartOfAccountsHibernateDAO
                     .getAccountdetailtypeListByGLCode(coa.getGlcode());
@@ -828,7 +801,7 @@ public class ContractorBillRegisterService {
 
                 if (projectCodeAccountDetailType == null && contractorAccountDetailType == null)
                     resultBinder.reject("error.contractorbill.validate.glcode.for.subledger",
-                            new String[] { coa.getGlcode() }, null);
+                            new String[]{coa.getGlcode()}, null);
             }
         }
         egBilldetails.setLastupdatedtime(new Date());
@@ -836,13 +809,13 @@ public class ContractorBillRegisterService {
     }
 
     public String getTotalDebitAndCreditAmountByAccountCode(final Long workOrderEstimateId, final BigDecimal glCodeId,
-            final Long contractorBillId) {
+                                                            final Long contractorBillId) {
         return contractorBillRegisterRepository.findSumOfDebitByAccountCodeForWorkOrder(workOrderEstimateId, glCodeId,
                 ContractorBillRegister.BillStatus.APPROVED.toString(), contractorBillId);
     }
 
     public void validateMileStonePercentage(final ContractorBillRegister contractorBillRegister,
-            final BindingResult resultBinder) {
+                                            final BindingResult resultBinder) {
         TrackMilestone trackMileStone = null;
         if (contractorBillRegister.getBilltype().equalsIgnoreCase(BillTypes.Final_Bill.toString())) {
             trackMileStone = trackMilestoneService
@@ -860,7 +833,7 @@ public class ContractorBillRegisterService {
     }
 
     public void validateZeroCreditAndDebitAmount(final ContractorBillRegister contractorBillRegister,
-            final BindingResult resultBinder) {
+                                                 final BindingResult resultBinder) {
         for (final EgBilldetails egBillDetail : contractorBillRegister.getEgBilldetailes())
             if (egBillDetail.getCreditamount() != null && BigDecimal.ZERO.compareTo(egBillDetail.getCreditamount()) == 0 ||
                     egBillDetail.getDebitamount() != null && BigDecimal.ZERO.compareTo(egBillDetail.getDebitamount()) == 0) {
