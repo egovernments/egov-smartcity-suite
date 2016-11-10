@@ -181,8 +181,11 @@ public class WaterChargeDocumentService {
 
     public WaterChargeDocument createWaterChargeIndex(final WaterConnectionDetails waterConnectionDetails,
             final AssessmentDetails assessmentDetails, final BigDecimal amountTodisplayInIndex) {
-        WaterChargeDocument waterChargeDocument = waterChargeIndexRepository
-                .findByConsumerCode(waterConnectionDetails.getApplicationNumber());
+        WaterChargeDocument waterChargeDocument=null;
+        if(waterConnectionDetails.getConnection()!=null && waterConnectionDetails.getConnection().getConsumerCode()!=null){
+         waterChargeDocument = waterChargeIndexRepository
+                .findByConsumerCode(waterConnectionDetails.getConnection().getConsumerCode());
+        }
         if (waterChargeDocument == null) {
             Iterator<OwnerName> ownerNameItr = assessmentDetails.getOwnerNames().iterator();
             Long monthlyRate = null;
