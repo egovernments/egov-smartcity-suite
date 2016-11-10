@@ -121,11 +121,9 @@ public class AbstractEstimatePDFController {
             reportParams.put("estimateDate", formatter.format(abstractEstimate.getEstimateDate()));
 
             if (abstractEstimate.getWard() != null)
-                if (abstractEstimate.getWard().getBoundaryType().getName()
-                        .equalsIgnoreCase(WorksConstants.BOUNDARY_TYPE_CITY))
-                    reportParams.put("ward", abstractEstimate.getWard().getName());
-                else
-                    reportParams.put("ward", abstractEstimate.getWard().getBoundaryNum().toString());
+                reportParams.put("ward", abstractEstimate.getWard().getBoundaryType().getName()
+                        .equalsIgnoreCase(WorksConstants.BOUNDARY_TYPE_CITY) ? abstractEstimate.getWard().getName()
+                                : abstractEstimate.getWard().getBoundaryNum().toString());
 
             reportParams.put("abstractEstimate", abstractEstimate);
             double totalEstimateOverheadAmount = 0;
