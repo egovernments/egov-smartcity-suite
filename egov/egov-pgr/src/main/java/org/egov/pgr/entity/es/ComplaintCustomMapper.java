@@ -24,18 +24,22 @@ public class ComplaintCustomMapper extends CustomMapper<Complaint, ComplaintInde
         complaintIndex.setAssigneeName(complaint.getAssignee().getName());
         complaintIndex.setDepartmentName(complaint.getDepartment().getName());
         complaintIndex.setDepartmentCode(complaint.getDepartment().getCode());
-        complaintIndex.setLocalityName(complaint.getChildLocation().getName());
-        complaintIndex.setLocalityNo(complaint.getChildLocation().getBoundaryNum().toString());
-        if (Objects.nonNull(complaint.getChildLocation().getLongitude()) &&
-                Objects.nonNull(complaint.getChildLocation().getLatitude()))
-            complaintIndex.setLocalityGeo(new GeoPoint(complaint.getChildLocation().getLatitude(),
-                    complaint.getChildLocation().getLongitude()));
-        complaintIndex.setWardName(complaint.getLocation().getName());
-        complaintIndex.setWardNo(complaint.getLocation().getBoundaryNum().toString());
-        if (Objects.nonNull(complaint.getLocation().getLongitude()) &&
-                Objects.nonNull(complaint.getLocation().getLatitude()))
-            complaintIndex.setWardGeo(new GeoPoint(complaint.getLocation().getLatitude(),
-                    complaint.getLocation().getLongitude()));
+        if (Objects.nonNull(complaint.getChildLocation())) {
+            complaintIndex.setLocalityName(complaint.getChildLocation().getName());
+            complaintIndex.setLocalityNo(complaint.getChildLocation().getBoundaryNum().toString());
+            if (Objects.nonNull(complaint.getChildLocation().getLongitude()) &&
+                    Objects.nonNull(complaint.getChildLocation().getLatitude()))
+                complaintIndex.setLocalityGeo(new GeoPoint(complaint.getChildLocation().getLatitude(),
+                        complaint.getChildLocation().getLongitude()));
+        }
+        if (Objects.nonNull(complaint.getLocation())) {
+            complaintIndex.setWardName(complaint.getLocation().getName());
+            complaintIndex.setWardNo(complaint.getLocation().getBoundaryNum().toString());
+            if (Objects.nonNull(complaint.getLocation().getLongitude()) &&
+                    Objects.nonNull(complaint.getLocation().getLatitude()))
+                complaintIndex.setWardGeo(new GeoPoint(complaint.getLocation().getLatitude(),
+                        complaint.getLocation().getLongitude()));
+        }
         if (Objects.nonNull(complaint.getCitizenFeedback()))
             complaintIndex.setSatisfactionIndex(complaint.getCitizenFeedback().ordinal());
         if (Objects.nonNull(complaint.getLat()) && Objects.nonNull(complaint.getLng()))
