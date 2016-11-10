@@ -293,11 +293,11 @@ public class WaterChargeDocument {
     }
 
     public String getId() {
-        return ApplicationThreadLocals.getCityCode() + "-" + consumerCode;
+        return id=ApplicationThreadLocals.getCityCode().concat("-").concat(consumerCode);
     }
 
-    public String setId() {
-        return id;
+    public void setId() {
+        this.id = ApplicationThreadLocals.getCityCode().concat("-").concat(consumerCode);
     }
 
     public String getClosureType() {
