@@ -113,7 +113,7 @@ public class ApplicationIndex extends AbstractAuditable {
     @Length(min = 10, max = 50)
     private String mobileNumber;
 
-    private String ownername;
+    private String ownerName;
 
     @Length(min = 10, max = 50)
     private String aadharNumber;
@@ -274,12 +274,13 @@ public class ApplicationIndex extends AbstractAuditable {
         this.mobileNumber = mobileNumber;
     }
 
-    public String getOwnername() {
-        return ownername;
+
+    public String getOwnerName() {
+        return ownerName;
     }
 
-    public void setOwnername(final String ownername) {
-        this.ownername = ownername;
+    public void setOwnerName(String ownerName) {
+        this.ownerName = ownerName;
     }
 
     public String getAadharNumber() {
@@ -509,7 +510,7 @@ public class ApplicationIndex extends AbstractAuditable {
             applicationIndex.setUrl(url);
             applicationIndex.setConsumerCode(consumerCode);
             applicationIndex.setMobileNumber(mobileNumber);
-            applicationIndex.setOwnername(ownerName);
+            applicationIndex.setOwnerName(ownerName);
             applicationIndex.setAadharNumber(aadharNumber);
             applicationIndex.setElapsedDays(elapsedDays);
             applicationIndex.setClosed(closed);

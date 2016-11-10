@@ -2010,7 +2010,7 @@ public class PropertyService {
                         .equalsIgnoreCase(APPLICATION_TYPE_BIFURCATE_ASSESSENT)|| applictionType.equalsIgnoreCase(APPLICATION_TYPE_GRP)) {
                     applicationIndex.setConsumerCode(property.getBasicProperty().getUpicNo());
                     applicationIndex.setApplicantName(owner.getName());
-                    applicationIndex.setOwnername(user.getUsername()+"::"+user.getName());
+                    applicationIndex.setOwnerName(user.getUsername()+"::"+user.getName());
                     applicationIndex.setMobileNumber(owner.getMobileNumber());
                     applicationIndex.setAadharNumber(owner.getAadhaarNumber());
                 }
@@ -2037,7 +2037,7 @@ public class PropertyService {
                 applicationIndexService.createApplicationIndex(applicationIndex);
             } else {
                 applicationIndex.setStatus(property.getState().getValue());
-                applicationIndex.setOwnername(user.getUsername()+"::"+user.getName());
+                applicationIndex.setOwnerName(user.getUsername()+"::"+user.getName());
                 applicationIndexService.updateApplicationIndex(applicationIndex);
             }
 
@@ -2062,7 +2062,7 @@ public class PropertyService {
             } else {
                 applicationIndex.setStatus(property.getState().getValue());
                 applicationIndex.setApplicantName(owner.getName());
-                applicationIndex.setOwnername(user.getUsername()+"::"+user.getName());
+                applicationIndex.setOwnerName(user.getUsername()+"::"+user.getName());
                 applicationIndex.setMobileNumber(owner.getMobileNumber());
                 applicationIndex.setAadharNumber(owner.getAadhaarNumber());
                 applicationIndexService.updateApplicationIndex(applicationIndex);

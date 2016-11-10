@@ -808,10 +808,10 @@ public class WaterConnectionDetailsService {
                     || waterConnectionDetails.getStatus().getCode()
                             .equals(WaterTaxConstants.APPLICATION_STATUS_CLOSERSANCTIONED))) {
                 applicationIndex.setApplicantAddress(assessmentDetails.getPropertyAddress());
-                applicationIndex.setOwnername(user.getUsername() + "::" + user.getName());
+                applicationIndex.setOwnerName(user.getUsername() + "::" + user.getName());
                 applicationIndex.setApproved(ApprovalStatus.INPROGRESS);
                 applicationIndex.setClosed(ClosureStatus.NO);
-                applicationIndex.setStatus(waterConnectionDetails.getStatus().getDescription());
+                applicationIndex.setStatus(waterConnectionDetails.getStatus().getDescription()); 
                 if (sourceChannel == null)
                     applicationIndex.setChannel(WaterTaxConstants.SYSTEM);
                 else

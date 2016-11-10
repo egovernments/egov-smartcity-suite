@@ -130,7 +130,7 @@ public class AdvertisementPermitDetailUpdateIndexService {
                             || advertisementPermitDetail.getStatus().getCode().equalsIgnoreCase(AdvertisementTaxConstants.APPLICATION_STATUS_CANCELLED))
                     ) {
                 applicationIndex.setStatus(advertisementPermitDetail.getStatus().getDescription());
-                applicationIndex.setOwnername(user != null ? user.getUsername() + "::" + user.getName() : "");
+                applicationIndex.setOwnerName(user != null ? user.getUsername() + "::" + user.getName() : "");
 
                 // Set application index status to approved on advertisement approval
                 if (advertisementPermitDetail.getStatus().getCode().equalsIgnoreCase(AdvertisementTaxConstants.APPLICATION_STATUS_APPROVED)) {

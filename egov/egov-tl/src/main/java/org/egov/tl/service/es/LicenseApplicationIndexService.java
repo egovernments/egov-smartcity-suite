@@ -127,7 +127,7 @@ public class LicenseApplicationIndexService {
             User user = getApplicationCurrentOwner(license);
             applicationIndex.setStatus(license.getEgwStatus().getDescription());
             applicationIndex.setApplicantAddress(license.getAddress());
-            applicationIndex.setOwnername(user.getUsername() + DELIMITER_COLON + user.getName());
+            applicationIndex.setOwnerName(user.getUsername() + DELIMITER_COLON + user.getName());
             applicationIndex.setConsumerCode(license.getLicenseNumber());
             applicationIndex.setClosed(NO);
             applicationIndex.setApproved(INPROGRESS);

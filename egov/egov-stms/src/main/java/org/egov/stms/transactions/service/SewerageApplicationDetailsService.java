@@ -483,7 +483,7 @@ public class SewerageApplicationDetailsService {
         // update existing application index
         if (applicationIndex != null && null != sewerageApplicationDetails.getId()) {
             applicationIndex.setStatus(sewerageApplicationDetails.getStatus().getDescription());
-            applicationIndex.setOwnername(user != null ? user.getUsername() + "::" + user.getName() : "");
+            applicationIndex.setOwnerName(user != null ? user.getUsername() + "::" + user.getName() : "");
             // applicationIndex.setApplicantAddress(assessmentDetails.getPropertyAddress());
 
             /*
