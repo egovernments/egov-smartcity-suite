@@ -57,11 +57,11 @@
 					cssClass="form-horizontal form-groups-bordered">
 					<div class="panel panel-primary" data-collapsed="0">
 						<div class="panel-heading">
-							<div class="panel-title text-left">DCB Drill Down Report</div>
+							<div class="panel-title text-left"><s:text name="lbl.title.dcbReportPT.report"/></div> 
 						</div>
 						<div class="panel-body custom-form">
 						<s:hidden id="mode" name="mode" value="%{mode}"/> 
-						<s:hidden id="boundaryId" name="boundaryId" value="%{boundaryId}"/> 
+						<s:hidden id="boundaryId" name="boundaryId" value=""/> 
 						<s:hidden id="selectedModeBndry" name="selectedModeBndry" value="%{selectedModeBndry}"/> 
 							<div class="form-group">
 								<label class="col-sm-3 control-label text-right"><s:text
@@ -108,7 +108,7 @@
 				<s:text name="reports.note.text" />
 				<br />
 				<input type="hidden" value="${sessionScope.citymunicipalityname}, ${sessionScope.districtName} District" id="pdfTitle"/>
-				<div class="col-md-12 table-header text-left">DCB Drill Down Report Details</div>
+				<div class="col-md-12 table-header text-left"><s:text name="lbl.hdr.dcbReportPT.details"/></div> 
 				<div class="col-md-12 form-group report-table-container">
 					<table class="table table-bordered table-hover multiheadertbl" id="tbldcbdrilldown">
 						<thead>

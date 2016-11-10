@@ -47,18 +47,15 @@
  */
 
 var reportdatatable;
-jQuery.noConflict();
-
 jQuery(document).ready(function() { 
 	drillDowntableContainer = jQuery("#tbldcbdrilldown");
 	jQuery('#report-backbutton').hide();
+	setDefaultCourtCaseValue();
 	jQuery('#btnsearch').click(function(e) {
-		dom.get("dcbError").style.display='none';
-        dom.get("dcbError").innerHTML='';
-		if(jQuery('#wardId').val()=="-1"){
-			dom.get("dcbError").style.display='';
-	        dom.get("dcbError").innerHTML='Please select ward'; 
-	        dom.get('wardId').focus(); 
+		$("#dcbError").hide();
+		if(jQuery('#wardId').val()==""){
+			$("#dcbError").html('Please select ward');
+			$("#dcbError").show();
 			return false;
 		}
 		callAjaxByBoundary();
@@ -86,17 +83,6 @@ jQuery(document).ready(function() {
 				jQuery('#selectedModeBndry').val('');
 			}
 		} 
-		//Commented as part of PHOENIX-2373 fix and for WardWise DCB
-		/*else if(jQuery('#mode').val()=='ward'){
-			if(valArray.length>0){
-				var wardVal=valArray[0].split('~');
-				if(wardVal.length>0){
-					jQuery('#mode').val(wardVal[0]);
-					jQuery('#boundaryId').val(wardVal[1]); 
-				}
-				jQuery('#selectedModeBndry').val('');
-			}
-		} */
 		callAjaxByBoundary(); 
 	});
 
@@ -157,12 +143,11 @@ function callAjaxByBoundary() {
 	reportdatatable = drillDowntableContainer
 			.dataTable({
 				ajax : {
-					url : "/ptis/reports/ajaxDCBReport-getBoundaryWiseDCBList.action",      
+					url : "/ptis/report/dcbReportVLT/result",      
 					data : {
 						mode : modeVal,
 						boundaryId : boundary_Id, 
-						propTypes : JSON.stringify(propTypes!='-1'?propTypes:null),
-						courtCase : courtCase
+						courtCase : courtCase,
 					}
 				},
 				"bDestroy" : true,
@@ -189,6 +174,7 @@ function callAjaxByBoundary() {
 		                                 "sPdfMessage": "DCB Report",
 		                                 "sTitle": jQuery('#pdfTitle').html(),
 						               }],
+				},"fnRowCallback" : function(row, data, index) {
 				},
 				columns : [{
 							"data" : function(row, type, set, meta){

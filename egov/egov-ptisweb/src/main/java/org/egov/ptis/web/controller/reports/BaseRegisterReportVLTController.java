@@ -40,6 +40,15 @@
 
 package org.egov.ptis.web.controller.reports;
 
+import static org.egov.infra.web.utils.WebUtils.toJSON;
+
+import java.io.IOException;
+import java.util.Date;
+import java.util.List;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
 import org.apache.commons.io.IOUtils;
 import org.egov.infra.admin.master.entity.Boundary;
 import org.egov.infra.admin.master.service.BoundaryService;
@@ -56,50 +65,43 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import java.io.IOException;
-import java.util.Date;
-import java.util.List;
-
-import static org.egov.infra.web.utils.WebUtils.toJSON;
-
-
 @Controller
 @RequestMapping(value = "report/baseRegisterVlt")
 public class BaseRegisterReportVLTController {
 
-	 @Autowired
-	    private BoundaryService boundaryService;
+    @Autowired
+    private BoundaryService boundaryService;
 
-	    @Autowired
-	    private ReportService reportService;
+    @Autowired
+    private ReportService reportService;
 
-	    @ModelAttribute
-	    public void getPropertyModel(final Model model) {
-	        final BaseRegisterVLTResult baseRegisterVLTResult = new BaseRegisterVLTResult();
-	        model.addAttribute("baseRegisterVLTResult", baseRegisterVLTResult);
-	    }
+    @ModelAttribute
+    public void getPropertyModel(final Model model) {
+        final BaseRegisterVLTResult baseRegisterVLTResult = new BaseRegisterVLTResult();
+        model.addAttribute("baseRegisterVLTResult", baseRegisterVLTResult);
+    }
 
-	    @ModelAttribute("wards")
-	    public List<Boundary> wardBoundaries() {
-	        return boundaryService.getActiveBoundariesByBndryTypeNameAndHierarchyTypeName(PropertyTaxConstants.WARD,
-	                PropertyTaxConstants.REVENUE_HIERARCHY_TYPE);
-	    }
+    @ModelAttribute("wards")
+    public List<Boundary> wardBoundaries() {
+        return boundaryService.getActiveBoundariesByBndryTypeNameAndHierarchyTypeName(PropertyTaxConstants.WARD,
+                PropertyTaxConstants.REVENUE_HIERARCHY_TYPE);
+    }
 
-	    @RequestMapping(method = RequestMethod.GET)
-	    public String searchForm(final Model model) {
-	        model.addAttribute("currDate", new Date());
-	        return "baseRegisterVLT-form";
-	    }
+    @RequestMapping(method = RequestMethod.GET)
+    public String searchForm(final Model model) {
+        model.addAttribute("currDate", new Date());
+        return "baseRegisterVLT-form";
+    }
 
-	    @RequestMapping(value = "/result", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
-	    public @ResponseBody void springPaginationDataTablesUpdate(@RequestParam final String ward,
-	            @RequestParam final String block, final HttpServletRequest request, final HttpServletResponse response)
-	            throws IOException {
+    @RequestMapping(value = "/result", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+    public @ResponseBody void springPaginationDataTablesUpdate(@RequestParam final String ward,
+            @RequestParam final String block, final HttpServletRequest request, final HttpServletResponse response)
+            throws IOException {
 
-	        final List<BaseRegisterVLTResult> propertyList = reportService.getVLTPropertyByWardAndBlock(ward, block);
-	        final String result = new StringBuilder("{ \"data\":").append(toJSON(propertyList, BaseRegisterVLTResult.class, BaseRegisterVLTResultAdaptor.class)).append("}").toString();
-	        IOUtils.write(result, response.getWriter());
-	    }
+        final List<BaseRegisterVLTResult> propertyList = reportService.getVLTPropertyByWardAndBlock(ward, block);
+        final String result = new StringBuilder("{ \"data\":")
+                .append(toJSON(propertyList, BaseRegisterVLTResult.class, BaseRegisterVLTResultAdaptor.class)).append("}")
+                .toString();
+        IOUtils.write(result, response.getWriter());
+    }
 }
