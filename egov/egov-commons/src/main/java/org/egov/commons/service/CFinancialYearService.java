@@ -122,5 +122,13 @@ public class CFinancialYearService {
     {
         return cFinancialYearRepository.findByIdIn(financialYearList);
     }
+    
+    public CFinancialYear getPreviousFinancialYearForDate(Date date) {
+        Calendar cal = Calendar.getInstance();
+        cal.setTime(date);
+        cal.add(Calendar.YEAR, -1);
+        return cFinancialYearRepository.getFinancialYearByDate(cal.getTime());
+    }
+
 
 }
