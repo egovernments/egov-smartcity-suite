@@ -48,19 +48,19 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface FunctionRepository extends JpaRepository<CFunction, Long> {
-	CFunction findByName(String name);
+    CFunction findByName(String name);
 
-	CFunction findByCode(String code);
+    CFunction findByCode(String code);
 
-	List<CFunction> findByNameContainingIgnoreCaseAndCodeContainingIgnoreCase(String name, String code);
+    List<CFunction> findByNameContainingIgnoreCaseAndCodeContainingIgnoreCase(String name, String code);
 
-	List<CFunction> findByNameContainingIgnoreCaseOrCodeContainingIgnoreCase(String name, String code);
+    List<CFunction> findByNameContainingIgnoreCaseOrCodeContainingIgnoreCase(String name, String code);
 
-	List<CFunction> findByNameContainingIgnoreCase(String name);
+    List<CFunction> findByNameContainingIgnoreCase(String name);
 
-	List<CFunction> findByCodeContainingIgnoreCase(String code);
+    List<CFunction> findByCodeContainingIgnoreCase(String code);
 
-	List<CFunction> findByIsNotLeaf(Boolean isNotLeaf);
+    List<CFunction> findByIsNotLeaf(Boolean isNotLeaf);
 
-	List<CFunction> findByIsActiveAndIsNotLeaf(Boolean active, Boolean isNotLeaf);
+    List<CFunction> findByIsActiveAndIsNotLeaf(Boolean active, Boolean isNotLeaf);
 }

@@ -1,40 +1,40 @@
 /*
 *eGov suite of products aim to improve the internal efficiency,transparency,
 *     accountability and the service delivery of the government  organizations.
-* 
+*
 *      Copyright (C) <2015>  eGovernments Foundation
-* 
+*
 *      The updated version of eGov suite of products as by eGovernments Foundation
 *      is available at http://www.egovernments.org
-* 
+*
 *      This program is free software: you can redistribute it and/or modify
 *      it under the terms of the GNU General Public License as published by
 *      the Free Software Foundation, either version 3 of the License, or
 *      any later version.
-* 
+*
 *      This program is distributed in the hope that it will be useful,
 *      but WITHOUT ANY WARRANTY; without even the implied warranty of
 *      MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 *      GNU General Public License for more details.
-* 
+*
 *      You should have received a copy of the GNU General Public License
 *      along with this program. If not, see http://www.gnu.org/licenses/ or
 *      http://www.gnu.org/licenses/gpl.html .
-* 
+*
 *      In addition to the terms of the GPL license to be adhered to in using this
 *      program, the following additional terms are to be complied with:
-* 
+*
 *          1) All versions of this program, verbatim or modified must carry this
 *             Legal Notice.
-* 
+*
 *          2) Any misrepresentation of the origin of the material is prohibited. It
 *             is required that all modified versions of this material be marked in
 *             reasonable ways as different from the original version.
-* 
+*
 *          3) This license does not grant any rights to any user of the program
 *             with regards to rights under trademark law for use of the trade names
 *             or trademarks of eGovernments Foundation.
-* 
+*
 *    In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
 */
 package org.egov.model.service;
@@ -90,10 +90,6 @@ public class BudgetDefinitionService {
 
     @Transactional
     public Budget create(final Budget budget) {
-    	if(budget.getParent()==null)
-    	{
-    		
-    	}
         return budgetDefinitionRepository.save(budget);
     }
 
@@ -106,49 +102,49 @@ public class BudgetDefinitionService {
         return budgetDefinitionRepository.findAll(new Sort(Sort.Direction.ASC, "name"));
     }
 
-    public Budget findOne(Long id) {
+    public Budget findOne(final Long id) {
         return budgetDefinitionRepository.findOne(id);
     }
 
-    public List<Budget> search(Budget budget) {
-        if (budget.getFinancialYear() != null && budget.getSearchBere()!=null) {
-            return budgetDefinitionRepository.findByIsbereIsAndFinancialYearIdIsOrderByFinancialYearIdAscNameAsc(budget.getSearchBere(),
+    public List<Budget> search(final Budget budget) {
+        if (budget.getFinancialYear() != null && budget.getSearchBere() != null)
+            return budgetDefinitionRepository.findByIsbereIsAndFinancialYearIdIsOrderByFinancialYearIdAscNameAsc(
+                    budget.getSearchBere(),
                     budget.getFinancialYear().getId());
-        }
-        if (budget.getFinancialYear() != null && budget.getSearchBere()==null) {
-            return budgetDefinitionRepository.findByFinancialYearIdIsOrderByFinancialYearIdAscNameAsc(budget.getFinancialYear().getId());
-        }
-        if (budget.getFinancialYear() == null && budget.getSearchBere()!=null) {
+        if (budget.getFinancialYear() != null && budget.getSearchBere() == null)
+            return budgetDefinitionRepository
+                    .findByFinancialYearIdIsOrderByFinancialYearIdAscNameAsc(budget.getFinancialYear().getId());
+        if (budget.getFinancialYear() == null && budget.getSearchBere() != null)
             return budgetDefinitionRepository.findByIsbereIsOrderByFinancialYearIdAscNameAsc(budget.getSearchBere());
-        }
         else
             return budgetDefinitionRepository.findAll();
     }
 
-    public List<Budget> getParentByFinancialYearId(Long financialYearId) {
+    public List<Budget> getParentByFinancialYearId(final Long financialYearId) {
         return budgetDefinitionRepository.findByFinancialYearIdOrderByFinancialYearIdAscNameAsc(financialYearId);
     }
 
     /**
      * Referenece Budget is Always RE
-     * 
+     *
      * @return
      */
     public List<Budget> getReferenceBudgetByFinancialYear() {
-        Long financialYearId = null;
-        return budgetDefinitionRepository.findByIsbereIsAndFinancialYearIdIsOrderByFinancialYearIdAscNameAsc("RE", financialYearId);
+        final Long financialYearId = null;
+        return budgetDefinitionRepository.findByIsbereIsAndFinancialYearIdIsOrderByFinancialYearIdAscNameAsc("RE",
+                financialYearId);
     }
 
-    public List<Budget> getReferenceBudgetList(Long financialYearId, List<Long> referenceBudgetIdList) {
+    public List<Budget> getReferenceBudgetList(final Long financialYearId, final List<Long> referenceBudgetIdList) {
         return budgetDefinitionRepository.findReferenceBudget("RE", financialYearId, referenceBudgetIdList);
     }
 
-    public List<Budget> getReferenceBudgetEmpty(Long financialYearId) {
+    public List<Budget> getReferenceBudgetEmpty(final Long financialYearId) {
         return budgetDefinitionRepository.findByIsActiveBudgetTrueAndIsbereIsAndFinancialYearIdIs("RE",
                 financialYearId);
     }
 
-    public List<Budget> getParentList(String isbere, Long financialYearId, List<Long> budgetIdList) {
+    public List<Budget> getParentList(final String isbere, final Long financialYearId, final List<Long> budgetIdList) {
         return budgetDefinitionRepository.findByIsbereIsAndFinancialYearIdIsAndIdNotIn(isbere, financialYearId,
                 budgetIdList);
     }
@@ -167,7 +163,7 @@ public class BudgetDefinitionService {
                 validationMessage = messageSource.getMessage("budget.invalid.parent", new String[] { b.getName() },
                         null);
         }
-        if (budget.getIsPrimaryBudget() && budget.getFinancialYear() != null && (budget.getParent() == null)) {
+        if (budget.getIsPrimaryBudget() && budget.getFinancialYear() != null && budget.getParent() == null) {
             final List<Budget> budgetList = budgetDefinitionRepository
                     .findByIsbereIsAndFinancialYearIdIsAndIsPrimaryBudgetTrueAndParentIsNull(budget.getIsbere(),
                             budget.getFinancialYear().getId());
@@ -193,15 +189,15 @@ public class BudgetDefinitionService {
         return "";
     }
 
-    public EgwStatus getBudgetStatus(String code) {
-        return egwStatusHibernate.getStatusByModuleAndCode(FinancialConstants.BUDGET,code);
+    public EgwStatus getBudgetStatus(final String code) {
+        return egwStatusHibernate.getStatusByModuleAndCode(FinancialConstants.BUDGET, code);
     }
 
-    public List<BudgetDetail> getBudgetDetailList(Long budgetId) {
+    public List<BudgetDetail> getBudgetDetailList(final Long budgetId) {
         return budgetDetailService.getBudgetDetailsByBudgetId(budgetId);
     }
 
-    public List<Budget> referenceBudgetList(Long financialYearId) {
+    public List<Budget> referenceBudgetList(final Long financialYearId) {
         CFinancialYear financialYear;
         final List<Long> referenceBudgetIdList = getReferenceBudgetList(financialYearId);
         financialYear = cFinancialYearService.findOne(financialYearId);
@@ -213,32 +209,31 @@ public class BudgetDefinitionService {
             return getReferenceBudgetEmpty(previousYear.getId());
     }
 
-    public List<Budget> parentList(String isBere, Long financialYearId) {
+    public List<Budget> parentList(final String isBere, final Long financialYearId) {
         final List<Long> budgetIdList = budgetDetailService.getBudgetIdList();
         return getParentList(isBere, financialYearId, budgetIdList);
     }
 
-    public List<Long> getReferenceBudgetList(Long financialYearId) {
+    public List<Long> getReferenceBudgetList(final Long financialYearId) {
         final String query = "select bd.referenceBudget.id from Budget bd where bd.referenceBudget.id is not null and "
                 + "bd.financialYear.id=:financialYearId";
-        List<Long> budgetDetailsList = persistenceService.getSession().createQuery(query)
+        final List<Long> budgetDetailsList = persistenceService.getSession().createQuery(query)
                 .setParameter("financialYearId", financialYearId).list();
         return budgetDetailsList;
     }
 
-    public Long getApproved(Long financialYearId)
-    {
-        return budgetDefinitionRepository.countByStatusIdInAndFinancialYearIdIs(getBudgetStatus("Approved").getId(),financialYearId);
+    public Long getApproved(final Long financialYearId) {
+        return budgetDefinitionRepository.countByStatusIdInAndFinancialYearIdIs(getBudgetStatus("Approved").getId(),
+                financialYearId);
     }
-    
-    public Long getVerified(Long financialYearId)
-    {
-        return budgetDefinitionRepository.countByStatusIdInAndFinancialYearIdIs(getBudgetStatus("Created").getId(),financialYearId);
+
+    public Long getVerified(final Long financialYearId) {
+        return budgetDefinitionRepository.countByStatusIdInAndFinancialYearIdIs(getBudgetStatus("Created").getId(),
+                financialYearId);
     }
-    
-    
-    public Long getNotInitalized(Long financialYearId) {
-        List<Long> bb=budgetDetailService.getBudgetIdList();
+
+    public Long getNotInitalized(final Long financialYearId) {
+        final List<Long> bb = budgetDetailService.getBudgetIdList();
         return budgetDefinitionRepository.countByIdNotInAndFinancialYearIdIs(bb, financialYearId);
     }
 }

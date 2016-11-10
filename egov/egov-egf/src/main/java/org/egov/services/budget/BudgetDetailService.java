@@ -125,7 +125,7 @@ import org.springframework.transaction.annotation.Transactional;
 @Service
 @Transactional(readOnly = true)
 public class BudgetDetailService extends PersistenceService<BudgetDetail, Long> {
-	@Autowired
+    @Autowired
     protected EisCommonService eisCommonService;
     protected WorkflowService<BudgetDetail> budgetDetailWorkflowService;
     private ScriptService scriptExecutionService;
@@ -568,16 +568,16 @@ public class BudgetDetailService extends PersistenceService<BudgetDetail, Long> 
             detail.setFunction((CFunction) persistenceService.getSession().load(CFunction.class, detail.getFunction().getId()));
         if (detail.getFunctionary() != null)
             detail.setFunctionary(
-                    (Functionary)  persistenceService.getSession().load( Functionary.class, detail.getFunctionary().getId()));
+                    (Functionary) persistenceService.getSession().load(Functionary.class, detail.getFunctionary().getId()));
         if (detail.getExecutingDepartment() != null)
             detail.setExecutingDepartment(
-                    (Department)  persistenceService.getSession().load(Department.class, detail.getExecutingDepartment().getId()));
+                    (Department) persistenceService.getSession().load(Department.class, detail.getExecutingDepartment().getId()));
         if (detail.getScheme() != null)
             detail.setScheme((Scheme) persistenceService.getSession().load(Scheme.class, detail.getScheme().getId()));
         if (detail.getSubScheme() != null)
             detail.setSubScheme((SubScheme) persistenceService.getSession().load(SubScheme.class, detail.getSubScheme().getId()));
         if (detail.getFund() != null)
-            detail.setFund((Fund)persistenceService.getSession().load(Fund.class, detail.getFund().getId()));
+            detail.setFund((Fund) persistenceService.getSession().load(Fund.class, detail.getFund().getId()));
         if (detail.getBudgetGroup() != null)
             detail.setBudgetGroup(
                     (BudgetGroup) persistenceService.getSession().load(BudgetGroup.class, detail.getBudgetGroup().getId()));
@@ -585,7 +585,6 @@ public class BudgetDetailService extends PersistenceService<BudgetDetail, Long> 
             detail.setBoundary((Boundary) persistenceService.getSession().load(Boundary.class, detail.getBoundary().getId()));
         return detail;
     }
-    
 
     private void addMaterializedPath(final BudgetDetail detail) {
         String materializedPath = "";
@@ -643,20 +642,19 @@ public class BudgetDetailService extends PersistenceService<BudgetDetail, Long> 
             LOGGER.debug("Finished fetchActualsForFY" + fromDate);
         return result;
     }
-    
+
     /**
      * 
      * @param detail
      * @return
      */
     public String generateUniqueNo(final BudgetDetail detail) {
-		return  detail.getFund().getId() + "-"
-				+ detail.getExecutingDepartment().getId() + "-"
-				+ detail.getFunction().getId() + "-"
-				+ detail.getBudgetGroup().getId();
-		 
-	}
+        return detail.getFund().getId() + "-"
+                + detail.getExecutingDepartment().getId() + "-"
+                + detail.getFunction().getId() + "-"
+                + detail.getBudgetGroup().getId();
 
+    }
 
     /**
      * vouchers are of the passed finaicial year budget is of passed topBudgets financialyear
@@ -1990,14 +1988,14 @@ public class BudgetDetailService extends PersistenceService<BudgetDetail, Long> 
         }
     }
 
-	private String getNewRootMaterializedPath() {
-		String rootmaterial;
-		final Query query = persistenceService.getSession()
-		        .createSQLQuery("select count(*)+1 from egf_budget where parent is null");
+    private String getNewRootMaterializedPath() {
+        String rootmaterial;
+        final Query query = persistenceService.getSession()
+                .createSQLQuery("select count(*)+1 from egf_budget where parent is null");
 
-		rootmaterial = query.uniqueResult().toString();
-		return rootmaterial;
-	}
+        rootmaterial = query.uniqueResult().toString();
+        return rootmaterial;
+    }
 
     @Transactional
     public Budget setBudgetState(final Budget budget) {
@@ -2355,5 +2353,4 @@ public class BudgetDetailService extends PersistenceService<BudgetDetail, Long> 
 
     }
 
- 
 }

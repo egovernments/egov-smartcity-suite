@@ -48,27 +48,28 @@ import org.egov.model.voucher.WorkflowBean;
 import org.egov.pims.commons.Position;
 
 public class BudgetDetailHelperBean {
-	public Boolean addNewDetails;
-	public List<BigDecimal> beAmounts;
-	public List<BudgetDetail> budgetDetailList;
-	public EgwStatus egwStatus;
-	public BudgetDetail budgetDetail;
-	public Long budgetGroupId;
-	public Long searchFunctionId;
-	public WorkflowBean workflowBean;
-	public Position owner;
+    public Boolean addNewDetails;
+    public List<BigDecimal> beAmounts;
+    public List<BudgetDetail> budgetDetailList;
+    public EgwStatus egwStatus;
+    public BudgetDetail budgetDetail;
+    public Long budgetGroupId;
+    public Long searchFunctionId;
+    public WorkflowBean workflowBean;
+    public Position owner;
 
-	public BudgetDetailHelperBean(Boolean addNewDetails, List<BigDecimal> beAmounts,
-			List<BudgetDetail> budgetDetailList, EgwStatus egwStatus, BudgetDetail budgetDetail, Long budgetGroupId,
-			Long searchFunctionId, WorkflowBean workflowBean, Position owner) {
-		this.addNewDetails = addNewDetails;
-		this.beAmounts = beAmounts;
-		this.budgetDetailList = budgetDetailList;
-		this.egwStatus = egwStatus;
-		this.budgetDetail = budgetDetail;
-		this.budgetGroupId = budgetGroupId;
-		this.searchFunctionId = searchFunctionId;
-		this.workflowBean = workflowBean;
-		this.owner = owner;
-	}
+    public BudgetDetailHelperBean(final Boolean addNewDetails, final List<BigDecimal> beAmounts,
+            final List<BudgetDetail> budgetDetailList, final EgwStatus egwStatus, final BudgetDetail budgetDetail,
+            final Long budgetGroupId,
+            final Long searchFunctionId, final WorkflowBean workflowBean, final Position owner) {
+        this.addNewDetails = addNewDetails;
+        this.beAmounts = beAmounts;
+        this.budgetDetailList = budgetDetailList;
+        this.egwStatus = egwStatus;
+        this.budgetDetail = budgetDetail;
+        this.budgetGroupId = budgetGroupId;
+        this.searchFunctionId = searchFunctionId;
+        this.workflowBean = workflowBean;
+        this.owner = owner;
+    }
 }

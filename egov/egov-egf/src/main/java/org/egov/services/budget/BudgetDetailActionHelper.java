@@ -67,164 +67,178 @@ import org.springframework.transaction.annotation.Transactional;
 
 @Component
 public class BudgetDetailActionHelper {
-	@Autowired
-	private BudgetDefinitionService budgetDefinitionService;
-	@Autowired
-	@Qualifier("budgetService")
-	private BudgetService budgetService;
-	@Autowired
-	@Qualifier("persistenceService")
-	private PersistenceService persistenceService;
-	@Autowired
-	@Qualifier("budgetDetailService")
-	private BudgetDetailService budgetDetailService;
+    @Autowired
+    private BudgetDefinitionService budgetDefinitionService;
+    @Autowired
+    @Qualifier("budgetService")
+    private BudgetService budgetService;
+    @Autowired
+    @Qualifier("persistenceService")
+    private PersistenceService persistenceService;
+    @Autowired
+    @Qualifier("budgetDetailService")
+    private BudgetDetailService budgetDetailService;
 
-	@Autowired
-	private SecurityUtils securityUtils;
-	@Autowired
-	private EgwStatusHibernateDAO egwStatusHibernateDAO;
+    @Autowired
+    private SecurityUtils securityUtils;
+    @Autowired
+    private EgwStatusHibernateDAO egwStatusHibernateDAO;
 
-	private static Logger LOGGER = Logger.getLogger(BudgetDetailActionHelper.class);
-	private static final String REFERENCEBUDGET = "no.reference.budget";
+    private static Logger LOGGER = Logger.getLogger(BudgetDetailActionHelper.class);
+    private static final String REFERENCEBUDGET = "no.reference.budget";
 
-	@Transactional
-	public void create(final BudgetDetailHelperBean parameterObject) {
+    @Transactional
+    public void create(final BudgetDetailHelperBean parameterObject) {
 
-		if (!parameterObject.addNewDetails)
-			deleteExisting(parameterObject.budgetDetail.getBudget(), parameterObject.searchFunctionId,
-					parameterObject.budgetGroupId);
+        if (!parameterObject.addNewDetails) {
+            deleteExisting(parameterObject.budgetDetail.getBudget(), parameterObject.searchFunctionId,
+                    parameterObject.budgetGroupId);
+        }
 
-		saveBudgetDetails(true, parameterObject.budgetDetail.getBudget(), parameterObject.budgetDetailList,
-				parameterObject.beAmounts, parameterObject.egwStatus, parameterObject.workflowBean,
-				parameterObject.owner);
-		if (parameterObject.budgetDetail.getBudget().getState() == null)
-			parameterObject.budgetDetail.getBudget().transition().start()
-					.withSenderName(securityUtils.getCurrentUser().getName())
-					.withComments(parameterObject.workflowBean.getApproverComments()).withStateValue("Created")
-					.withDateInfo(new Date()).withOwner(parameterObject.owner);
-		else
-			parameterObject.budgetDetail.getBudget().transition()
-					.withSenderName(securityUtils.getCurrentUser().getName())
-					.withComments(parameterObject.workflowBean.getApproverComments()).withStateValue("Created")
-					.withDateInfo(new Date()).withOwner(parameterObject.owner);
+        saveBudgetDetails(true, parameterObject.budgetDetail.getBudget(), parameterObject.budgetDetailList,
+                parameterObject.beAmounts, parameterObject.egwStatus, parameterObject.workflowBean,
+                parameterObject.owner);
+        if (parameterObject.budgetDetail.getBudget().getState() == null) {
+            parameterObject.budgetDetail.getBudget().transition().start()
+                    .withSenderName(securityUtils.getCurrentUser().getName())
+                    .withComments(parameterObject.workflowBean.getApproverComments()).withStateValue("Created")
+                    .withDateInfo(new Date()).withOwner(parameterObject.owner);
+        } else {
+            parameterObject.budgetDetail.getBudget().transition()
+                    .withSenderName(securityUtils.getCurrentUser().getName())
+                    .withComments(parameterObject.workflowBean.getApproverComments()).withStateValue("Created")
+                    .withDateInfo(new Date()).withOwner(parameterObject.owner);
+        }
 
-		budgetDefinitionService.update(parameterObject.budgetDetail.getBudget());
+        budgetDefinitionService.update(parameterObject.budgetDetail.getBudget());
 
-	}
+    }
 
-	public void saveBudgetDetails(final Boolean addNewDetails, final Budget budget,
-			final List<BudgetDetail> budgetDetailList, final List<BigDecimal> beAmounts, final EgwStatus egwStatus,
-			final WorkflowBean workflowBean, final Position owner) {
+    public void saveBudgetDetails(final Boolean addNewDetails, final Budget budget,
+            final List<BudgetDetail> budgetDetailList, final List<BigDecimal> beAmounts, final EgwStatus egwStatus,
+            final WorkflowBean workflowBean, final Position owner) {
 
-		int index = 0;
-		Budget refBudget = null;
-		final String sender = securityUtils.getCurrentUser().getName();
+        int index = 0;
+        Budget refBudget = null;
+        final String sender = securityUtils.getCurrentUser().getName();
 
-		refBudget = budgetService.getReferenceBudgetFor(budget);
-		if (refBudget == null)
-			throw new ValidationException(Arrays.asList(new ValidationError(REFERENCEBUDGET, REFERENCEBUDGET)));
+        refBudget = budgetService.getReferenceBudgetFor(budget);
+        if (refBudget == null) {
+            throw new ValidationException(Arrays.asList(new ValidationError(REFERENCEBUDGET, REFERENCEBUDGET)));
+        }
 
-		int i = 0;
-		for (final BudgetDetail detail : budgetDetailList) {
-			if (detail != null)
-				detail.setId(null);
-			final BudgetDetail reCurrentYear = budgetDetailService.setRelatedEntitesOn(detail);
-			reCurrentYear.setUniqueNo(budgetDetailService.generateUniqueNo(reCurrentYear));
-			reCurrentYear.setStatus(egwStatus);
-			budgetDetailService.applyAuditing(reCurrentYear);
-			budgetDetailService.persist(reCurrentYear);
-			transit(reCurrentYear, sender, workflowBean, owner);
+        int i = 0;
+        BudgetDetail beNextYear;  
+        for (final BudgetDetail detail : budgetDetailList) {
+            if (detail != null) {
+                detail.setId(null);
+            }
+            final BudgetDetail reCurrentYear = budgetDetailService.setRelatedEntitesOn(detail);
+            reCurrentYear.setUniqueNo(budgetDetailService.generateUniqueNo(reCurrentYear));
+            reCurrentYear.setStatus(egwStatus);
+            budgetDetailService.applyAuditing(reCurrentYear);
+            budgetDetailService.persist(reCurrentYear);
+            transit(reCurrentYear, sender, workflowBean, owner);
 
-			BudgetDetail beNextYear = new BudgetDetail();
-			beNextYear.copyFrom(detail);
-			beNextYear.setBudget(refBudget);
-			beNextYear.setOriginalAmount(beAmounts.get(index));
-			beNextYear.setDocumentNumber(detail.getDocumentNumber());
-			beNextYear.setAnticipatoryAmount(reCurrentYear.getAnticipatoryAmount());
-			beNextYear = budgetDetailService.setRelatedEntitesOn(beNextYear);
-			beNextYear.setUniqueNo(budgetDetailService.generateUniqueNo(beNextYear));
-			beNextYear.setStatus(egwStatus);
-			budgetDetailService.applyAuditing(beNextYear);
-			budgetDetailService.persist(beNextYear);
-			// transit(beNextYear,sender,workflowBean, owner);
+            beNextYear = new BudgetDetail();
+            beNextYear.copyFrom(detail);
+            beNextYear.setBudget(refBudget);
+            beNextYear.setOriginalAmount(beAmounts.get(index));
+            beNextYear.setDocumentNumber(detail.getDocumentNumber());
+            beNextYear.setAnticipatoryAmount(reCurrentYear.getAnticipatoryAmount());
+            beNextYear = budgetDetailService.setRelatedEntitesOn(beNextYear);
+            beNextYear.setUniqueNo(budgetDetailService.generateUniqueNo(beNextYear));
+            beNextYear.setStatus(egwStatus);
+            budgetDetailService.applyAuditing(beNextYear);
+            budgetDetailService.persist(beNextYear);
 
-			index++;
+            index++;
 
-			if (++i % 15 == 0) {
-				persistenceService.getSession().flush();
-				persistenceService.getSession().clear();
-			}
-			LOGGER.error("saved" + i + "Item");
-		}
-	}
+            if (++i % 15 == 0) {
+                persistenceService.getSession().flush();
+                persistenceService.getSession().clear();
+            }
+            LOGGER.error("saved" + i + "Item");
+        }
+    }
 
-	public String generateUniqueNo(final BudgetDetail detail) {
-		return detail.getFund().getId() + "-" + detail.getExecutingDepartment().getId() + "-"
-				+ detail.getFunction().getId() + "-" + detail.getBudgetGroup().getId();
+    public String generateUniqueNo(final BudgetDetail detail) {
+        return detail.getFund().getId() + "-" + detail.getExecutingDepartment().getId() + "-"
+                + detail.getFunction().getId() + "-" + detail.getBudgetGroup().getId();
 
-	}
+    }
 
-	private void deleteExisting(final Budget budget, final Long searchfunctionid, final Long searchbudgetGroupid) {
+    private void deleteExisting(final Budget budget, final Long searchfunctionid, final Long searchbudgetGroupid) {
 
-		if (LOGGER.isInfoEnabled())
-			LOGGER.info("Initiating deletion ..........");
-		final Budget referenceBudgetFor = budgetService.getReferenceBudgetFor(budget);
-		final StringBuffer addlCondtion = new StringBuffer(50);
+        if (LOGGER.isInfoEnabled()) {
+            LOGGER.info("Initiating deletion ..........");
+        }
+        final Budget referenceBudgetFor = budgetService.getReferenceBudgetFor(budget);
+        final StringBuffer addlCondtion = new StringBuffer(150);
 
-		addlCondtion.append("delete from egf_budgetdetail where budget=:budgetid ");
-		if (referenceBudgetFor != null)
-			addlCondtion.append(" or budget=:referenceBudget ");
-		if (searchfunctionid != null && searchfunctionid != 0)
-			addlCondtion.append("and function.id=:functionid");
-		if (searchbudgetGroupid != null && searchbudgetGroupid != 0)
-			addlCondtion.append("and budgetGroup.id=:budgetGroupid");
-		new ArrayList<BudgetDetail>();
-		final Query qry = persistenceService.getSession().createSQLQuery(addlCondtion.toString());
-		qry.setLong("budgetid", budget.getId());
-		if (referenceBudgetFor != null)
-			qry.setLong("referenceBudget", referenceBudgetFor.getId());
-		if (searchfunctionid != null && searchfunctionid != 0)
-			qry.setLong("functionid", searchfunctionid);
-		if (searchbudgetGroupid != null && searchbudgetGroupid != 0)
-			qry.setLong("budgetGroupid", searchbudgetGroupid);
-		// budgetDetailService.delete(qry);
-		qry.executeUpdate();
-		// persistenceService.getSession().createSQLQuery(qry.getQueryString()).executeUpdate();
+        addlCondtion.append("delete from egf_budgetdetail where budget=:budgetid ");
+        if (referenceBudgetFor != null) {
+            addlCondtion.append(" or budget=:referenceBudget ");
+        }
+        if (searchfunctionid != null && searchfunctionid != 0) {
+            addlCondtion.append("and function.id=:functionid");
+        }
+        if (searchbudgetGroupid != null && searchbudgetGroupid != 0) {
+            addlCondtion.append("and budgetGroup.id=:budgetGroupid");
+        }
+        new ArrayList<BudgetDetail>();
+        final Query qry = persistenceService.getSession().createSQLQuery(addlCondtion.toString());
+        qry.setLong("budgetid", budget.getId());
+        if (referenceBudgetFor != null) {
+            qry.setLong("referenceBudget", referenceBudgetFor.getId());
+        }
+        if (searchfunctionid != null && searchfunctionid != 0) {
+            qry.setLong("functionid", searchfunctionid);
+        }
+        if (searchbudgetGroupid != null && searchbudgetGroupid != 0) {
+            qry.setLong("budgetGroupid", searchbudgetGroupid);
+        }
+        // budgetDetailService.delete(qry);
+        qry.executeUpdate();
+        // persistenceService.getSession().createSQLQuery(qry.getQueryString()).executeUpdate();
 
-	}
+    }
 
-	public void transit(final BudgetDetail detail, final String sender, final WorkflowBean workflowBean,
-			final Position owner) {
-		detail.transition().start().withSenderName(sender).withComments(workflowBean.getApproverComments())
-				.withStateValue("Created").withDateInfo(new Date()).withOwner(owner);
+    public void transit(final BudgetDetail detail, final String sender, final WorkflowBean workflowBean,
+            final Position owner) {
+        detail.transition().start().withSenderName(sender).withComments(workflowBean.getApproverComments())
+                .withStateValue("Created").withDateInfo(new Date()).withOwner(owner);
 
-	}
+    }
 
-	@Transactional
-	public void update(final List<BudgetProposalBean> bpBeanList, final WorkflowBean workflowBean) {
-		BudgetDetail bd;
-		BudgetDetail be;
+    @Transactional
+    public void update(final List<BudgetProposalBean> bpBeanList, final WorkflowBean workflowBean) {
+        BudgetDetail bd;
+        BudgetDetail be;
+        Date currDate=new Date();
 
-		for (final BudgetProposalBean bpBean : bpBeanList) {
-			if (bpBean == null || bpBean.getId() == null)
-				continue;
-			bd = budgetDetailService.find("from BudgetDetail where id=?", bpBean.getId());
-			bd.setOriginalAmount(bpBean.getProposedRE());
-			be = budgetDetailService.find("from BudgetDetail where id=?", bpBean.getNextYrId());
-			be.setOriginalAmount(bpBean.getProposedBE());
-			if (bpBean.getDocumentNumber() != null)
-				bd.setDocumentNumber(bpBean.getDocumentNumber());
-			bd.setStatus(egwStatusHibernateDAO.getStatusByModuleAndCode(FinancialConstants.BUDGETDETAIL,
-					FinancialConstants.BUDGETDETAIL_VERIFIED_STATUS));
-			bd.transition(true).withSenderName(securityUtils.getCurrentUser().getName())
-					.withComments(workflowBean.getApproverComments()).withStateValue("Verified")
-					.withDateInfo(new Date());
+        for (final BudgetProposalBean bpBean : bpBeanList) {
+            if (bpBean == null || bpBean.getId() == null) {
+                continue;
+            }
+            bd = budgetDetailService.find("from BudgetDetail where id=?", bpBean.getId());
+            bd.setOriginalAmount(bpBean.getProposedRE());
+            be = budgetDetailService.find("from BudgetDetail where id=?", bpBean.getNextYrId());
+            be.setOriginalAmount(bpBean.getProposedBE());
+            if (bpBean.getDocumentNumber() != null) {
+                bd.setDocumentNumber(bpBean.getDocumentNumber());
+            }
+            bd.setStatus(egwStatusHibernateDAO.getStatusByModuleAndCode(FinancialConstants.BUDGETDETAIL,
+                    FinancialConstants.BUDGETDETAIL_VERIFIED_STATUS));
+            bd.transition(true).withSenderName(securityUtils.getCurrentUser().getName())
+                    .withComments(workflowBean.getApproverComments()).withStateValue("Verified")
+                    .withDateInfo(currDate);
 
-			budgetDetailService.applyAuditing(bd.getState());
-			budgetDetailService.update(bd);
-			budgetDetailService.update(be);
-		}
+            budgetDetailService.applyAuditing(bd.getState());
+            budgetDetailService.update(bd);
+            budgetDetailService.update(be);
+        }
 
-	}
+    }
 
 }
