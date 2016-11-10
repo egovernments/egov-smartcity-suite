@@ -58,9 +58,11 @@ import org.egov.ptis.domain.model.OwnerName;
 import org.egov.stms.elasticSearch.entity.DailySTCollectionReportSearch;
 import org.egov.stms.elasticSearch.entity.SewerageCollectFeeSearchRequest;
 import org.egov.stms.elasticSearch.entity.SewerageConnSearchRequest;
+import org.egov.stms.elasticSearch.entity.SewerageNoticeSearchRequest;
 import org.egov.stms.entity.es.SewerageIndex;
 import org.egov.stms.repository.es.SewerageIndexRepository;
 import org.egov.stms.transactions.entity.SewerageApplicationDetails;
+import org.egov.stms.utils.constants.SewerageTaxConstants;
 import org.elasticsearch.index.query.BoolQueryBuilder;
 import org.elasticsearch.index.query.QueryBuilders;
 import org.elasticsearch.search.sort.FieldSortBuilder;
@@ -300,6 +302,49 @@ public class SewerageIndexService {
                     dcrReportObj.setRevenueWard(sewerageIndex.getWard());
                     resultList.add(dcrReportObj);
                 }
+        return resultList;
+    }
+    
+    
+    public BoolQueryBuilder getQueryFilterForNotice(final SewerageNoticeSearchRequest searchRequest) {
+        BoolQueryBuilder boolQuery = null; 
+        if (searchRequest.getNoticeType() != null) {
+            if (searchRequest.getNoticeType().equals(SewerageTaxConstants.NOTICE_WORK_ORDER)) {
+                boolQuery = QueryBuilders.boolQuery().filter(QueryBuilders.rangeQuery("workOrderDate")
+                        .from(searchRequest.getNoticeGeneratedFrom())
+                        .to(searchRequest.getNoticeGeneratedTo()));
+            }else if (searchRequest.getNoticeType().equals(SewerageTaxConstants.NOTICE_ESTIMATION)) {  
+                boolQuery = QueryBuilders.boolQuery().filter(QueryBuilders.rangeQuery("estimationDate")
+                        .from(searchRequest.getNoticeGeneratedFrom())
+                        .to(searchRequest.getNoticeGeneratedTo()));
+            }
+            else if(searchRequest.getNoticeType().equals(SewerageTaxConstants.NOTICE_CLOSE_CONNECTION)){
+                boolQuery = QueryBuilders.boolQuery().filter(QueryBuilders.rangeQuery("closureNoticeDate")
+                        .from(searchRequest.getNoticeGeneratedFrom())
+                        .to(searchRequest.getNoticeGeneratedTo()));
+            }
+        }
+        if (StringUtils.isNotBlank(searchRequest.getUlbName()))
+            boolQuery = boolQuery.filter(QueryBuilders.matchQuery("ulbName", searchRequest.getUlbName()));
+        if (StringUtils.isNotBlank(searchRequest.getShscNumber()))
+            boolQuery = boolQuery.filter(QueryBuilders.matchQuery("shscNumber", searchRequest.getShscNumber()));
+        if (StringUtils.isNotBlank(searchRequest.getApplicantName()))
+            boolQuery = boolQuery.filter(QueryBuilders.matchQuery("consumerName", searchRequest.getApplicantName()));
+        if (StringUtils.isNotBlank(searchRequest.getMobileNumber()))
+            boolQuery = boolQuery.filter(QueryBuilders.matchQuery("mobileNumber", searchRequest.getMobileNumber()));
+        if (StringUtils.isNotBlank(searchRequest.getRevenueWard()))
+            boolQuery = boolQuery.filter(QueryBuilders.matchQuery("revenueWard", searchRequest.getRevenueWard()));
+        if (StringUtils.isNotBlank(searchRequest.getDoorNumber()))
+            boolQuery = boolQuery.filter(QueryBuilders.matchQuery("doorNumber", searchRequest.getDoorNumber()));
+        return boolQuery;
+    }
+    
+    
+    public List<SewerageIndex> getNoticeSearchResultByBoolQuery(final BoolQueryBuilder boolQuery) {
+        List<SewerageIndex> resultList = new ArrayList<>();
+        final SearchQuery searchQuery = new NativeSearchQueryBuilder().withIndices("sewerage").withQuery(boolQuery)
+                .withSort(new FieldSortBuilder("consumerName").order(SortOrder.DESC)).build();
+        resultList = elasticsearchTemplate.queryForList(searchQuery, SewerageIndex.class);
         return resultList;
     }
 }
