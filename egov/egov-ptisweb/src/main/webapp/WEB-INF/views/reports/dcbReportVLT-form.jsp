@@ -56,6 +56,7 @@
 				</div>
 				<input type="hidden" name="mode" id="mode" value="${mode}" />
 			    <input type="hidden" name="boundaryId" id="boundaryId" value="" />
+			    <input type="hidden" name="selectedModeBndry" id="selectedModeBndry" value="" />
 				<div class="panel-body">
 					<div class="form-group">
 						<label class="col-sm-3 control-label text-right">
