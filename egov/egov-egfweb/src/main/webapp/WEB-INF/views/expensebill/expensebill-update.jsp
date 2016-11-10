@@ -54,7 +54,7 @@
      position:fixed;z-index:9999;top:85px;right:200px;background:#F2DEDE;padding:10px 20px;border-radius: 5px;
    }
 </style>
-<form:form name="expenseBillForm" role="form" action="create" modelAttribute="egBillregister" id="egBillregister" class="form-horizontal form-groups-bordered" enctype="multipart/form-data">
+<form:form name="expenseBillForm" role="form" modelAttribute="egBillregister" id="egBillregister" class="form-horizontal form-groups-bordered" enctype="multipart/form-data">
  	<div class="position_alert">
 		<spring:message	code="lbl.expense.bill.amount" /> : &#8377 <span id="expenseBillAmount"><c:out value="${expenseBillAmount}" default="0.0"></c:out></span>
 	</div>

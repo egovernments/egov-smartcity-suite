@@ -56,7 +56,7 @@
 	<div class="row add-margin hidden-xs visible-sm visible-md visible-lg header-color">
 		<div class="col-sm-2 col-xs-6 add-margin"><spring:message code="lbl.date"/></div>
 		<div class="col-sm-2 col-xs-6 add-margin"><spring:message code="lbl.updatedby"/></div>
-		<div class="col-sm-2 col-xs-6 add-margin"><spring:message code="lbl.status" /></div>
+		<div class="col-sm-2 col-xs-6 add-margin"><spring:message code="lbl.view.status" /></div>
 		<div class="col-sm-2 col-xs-6 add-margin"><spring:message code="lbl.currentowner"/></div>
 		<div class="col-sm-2 col-xs-6 add-margin"><spring:message code="lbl.department" /></div>
 		<div class="col-sm-2 col-xs-6 add-margin"><spring:message code="lbl.comments" /></div>

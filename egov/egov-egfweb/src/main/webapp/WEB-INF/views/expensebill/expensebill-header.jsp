@@ -88,7 +88,12 @@
 			<spring:message code="lbl.function" />	<span class="mandatory"></span>
 		</label>
 		<div class="col-sm-3 add-margin">
-			<form:input path="" name ="function" id="function" class="form-control" placeholder="Type first 3 letters of Function name" required="required" />
+			<c:if test="${egBillregister.id != null}">
+				<form:input path="" name ="function" id="function" class="form-control" placeholder="Type first 3 letters of Function name" required="required" value="${egBillregister.egBillregistermis.function.code} - ${egBillregister.egBillregistermis.function.name}"/>
+			</c:if>
+			<c:if test="${egBillregister.id == null}">
+				<form:input path="" name ="function" id="function" class="form-control" placeholder="Type first 3 letters of Function name" required="required"/>
+			</c:if>
 			<form:hidden path="egBillregistermis.function" name="egBillregistermis.function" id="egBillregistermis.function" class="form-control table-input hidden-input cfunction"/>
 			<form:errors path="egBillregistermis.function" cssClass="add-margin error-msg" />
 		</div>

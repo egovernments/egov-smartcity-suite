@@ -510,6 +510,11 @@
 	        <put-attribute name="body" value="/WEB-INF/views/expensebill/expensebill-view.jsp"/>
 	</definition>
 	
+	<definition name="expensebill-update" extends="base_layout">
+		<put-attribute name="page-title" value="title.expensebill.create" cascade="true"/>
+		<put-attribute name="body" value="/WEB-INF/views/expensebill/expensebill-update.jsp"/>
+	</definition>
+	
 	<definition name="budgetapproval-new" extends="base_layout">
 		<put-attribute name="page-title" value="title.budget.new"
 			cascade="true" />

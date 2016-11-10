@@ -61,15 +61,15 @@
 						<c:when test="${egBillregister.checkLists!=null && egBillregister.checkLists.size() > 0}">
 							 <c:forEach items="${egBillregister.checkLists}" var="checkLists" varStatus="item">
 								<tr>
-								<td>${checkLists.name }</td>
-								<c:if test="${checkLists.val=='na'}">
+								<td>${checkLists.appconfigvalue.value }</td>
+								<c:if test="${checkLists.checklistvalue=='na'}">
 									<td >
 										N/A
 									</td>
 								</c:if>
-								<c:if test="${checkLists.val!='na'}">
+								<c:if test="${checkLists.checklistvalue!='na'}">
 									<td>
-										${checkLists.val}
+										${checkLists.checklistvalue}
 									</td>
 								</c:if>
 								</tr>

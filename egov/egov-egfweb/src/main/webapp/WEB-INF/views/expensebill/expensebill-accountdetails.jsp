@@ -64,7 +64,6 @@
 					<c:when test="${egBillregister.billDetails.size() == 0}">
 						<tr id="accountdetailsrow" accountdetailsinvisible="true" hidden="true">
 							<td>
-								<form:hidden path="billDetails[0].id" id="accountDetailsId_0" class ="accountDetailsId"/>
 								<form:hidden path="billDetails[0].glcodeid" id="accountDetailsGlCodeId_0" class="accountDetailsGlCodeId"/>
 								<form:hidden path="billDetails[0].debitamount" id="accountDetailsDebitAmount_0" class ="debitamount"/>
 								<form:hidden path="billDetails[0].creditamount" id="accountDetailsCreditAmount_0" class ="creditamount"/>
@@ -88,12 +87,11 @@
 					</c:when>
 					<c:otherwise>
 						<c:forEach items="${egBillregister.billDetails}" var="billDeatils" varStatus="item">
-							<tr id="accountdetailsrow" accountdetailsinvisible="true">
+							<tr id="accountdetailsrow">
 								<td>
-									<form:hidden path="billDetails[${item.index }].id" id="accountDetailsId_${item.index }" class ="accountDetailsId" value="${billDeatils.id }"/>
 									<form:hidden path="billDetails[${item.index }].glcodeid" id="accountDetailsGlCodeId_${item.index }" class="accountDetailsGlCodeId" value="${billDeatils.glcodeid }"/>
-									<form:hidden path="billDetails[${item.index }].debitamount" id="debitAmount_${item.index }" class ="accountDetailsDebitAmount" value="${billDeatils.debitamount }"/>
-									<form:hidden path="billDetails[${item.index }].creditamount" id="creditAmount_${item.index }" class ="accountDetailsCreditAmount" value="${billDeatils.creditamount }"/>
+									<form:hidden path="billDetails[${item.index }].debitamount" id="accountDetailsDebitAmount_${item.index }" class ="debitamount" value="${billDeatils.debitamount }"/>
+									<form:hidden path="billDetails[${item.index }].creditamount" id="accountDetailsCreditAmount_${item.index }" class ="creditamount" value="${billDeatils.creditamount }"/>
 									<form:hidden path="" name="billDetails[${item.index }].detailTypeId" id="billDetails[${item.index }].detailTypeId" class="form-control table-input hidden-input accountDetailsDetailTypeId_${item.index }"/>
 									<form:hidden path="" name="billDetails[${item.index }].detailKeyId" id="billDetails[${item.index }].detailKeyId" class="form-control table-input hidden-input accountDetailsDetailKeyId_${item.index }"/>
 									<span class="accountDetailsGlCode_${item.index }">${billDeatils.chartOfAccounts.glcode }</span>
@@ -108,7 +106,7 @@
 									<span class="accountDetailsCreditAmount_${item.index } accountDetailsCreditAmount">${billDeatils.creditamount }</span>
 								</td>
 								<td>
-									<span class="add-padding delete_${item.index }" onclick="deleteAccountDetails(this);"><i class="fa fa-trash" data-toggle="tooltip" title="" data-original-title="Delete!"></i></span>
+									<span class="add-padding delete_${item.index }"  id="accountDetailDelete_${item.index }" onclick="deleteAccountDetails(this);"><i class="fa fa-trash" data-toggle="tooltip" title="" data-original-title="Delete!"></i></span>
 								</td>
 							</tr>
 						</c:forEach>

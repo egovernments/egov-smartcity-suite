@@ -78,4 +78,9 @@ public class CheckListService {
         return checkListRepository.save(checklists);
     }
 
+    @Transactional
+    public void delete(final EgChecklists checklists) {
+        checkListRepository.delete(checklists);
+    }
+
 }

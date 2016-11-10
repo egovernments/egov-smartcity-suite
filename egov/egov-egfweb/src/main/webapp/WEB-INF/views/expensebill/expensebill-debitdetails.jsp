@@ -42,10 +42,12 @@
 <%@ taglib uri="http://www.springframework.org/tags" prefix="spring"%>
 <%@ taglib uri="http://www.springframework.org/tags/form" prefix="form"%>
 
-<div class="panel-heading custom_form_panel_heading">
+<div class="panel-heading">
 	<div class="panel-title">
 		<spring:message code="lbl.debit.details" />
 	</div>
+</div>
+<div class="panel-body">
 	<table class="table table-bordered" id="tbldebitdetails">
 		<thead>
 			<tr>
@@ -72,10 +74,9 @@
 				</td>
 				<td>
 					<form:input path="" name="tempDebitDetails[0].debitamount" id="tempDebitDetails[0].debitamount"  data-errormsg="Debit Amount is mandatory!" onkeyup="decimalvalue(this);" data-pattern="decimalvalue" data-idx="0" data-optional="0" class="form-control table-input text-right debitAmount"   maxlength="12"  />
-					<form:errors path="" name="tempDebitDetails[0].debitamount" cssClass="add-margin error-msg" /> 
 				</td> 
-				<td class="text-center"><span style="cursor:pointer;" onclick="addDebitDetailsRow();"><i class="fa fa-plus"></i></span>
-				 <span class="add-padding debit-delete-row" onclick="deleteDebitDetailsRow(this);"><i class="fa fa-trash" data-toggle="tooltip" title="" data-original-title="Delete!"></i></span> </td>
+				<td class="text-center"><span style="cursor:pointer;" onclick="addDebitDetailsRow();"><i class="fa fa-plus" aria-hidden="true"></i></span>
+				 <span class="add-padding debit-delete-row" onclick="deleteDebitDetailsRow(this);"><i class="fa fa-trash"  aria-hidden="true" data-toggle="tooltip" title="" data-original-title="Delete!"></i></span> </td>
 			</tr>
 		</tbody>
 	</table>
