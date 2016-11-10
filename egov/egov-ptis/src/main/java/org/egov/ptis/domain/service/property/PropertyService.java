@@ -2025,8 +2025,7 @@ public class PropertyService {
             if (applicationIndex == null) {
                 User owner = property.getBasicProperty().getPrimaryOwner();
                 applicationIndex = ApplicationIndex.builder().withModuleName(PTMODULENAME)
-                        .withApplicationNumber(property.getObjectionNumber()).withApplicationDate(
-                                property.getCreatedDate() != null ? property.getCreatedDate() : new Date())
+                        .withApplicationNumber(property.getObjectionNumber()).withApplicationDate(new Date())
                         .withApplicationType(applictionType).withApplicantName(owner.getName())
                         .withStatus(property.getState().getValue()).withUrl(format(APPLICATION_VIEW_URL, property.getObjectionNumber(), applictionType))
                         .withApplicantAddress(property.getBasicProperty().getAddress().toString()).withOwnername(user.getUsername() + "::" + user.getName())
@@ -2050,8 +2049,7 @@ public class PropertyService {
             String source = getApplicationSource(property.getBasicProperty());
             if (applicationIndex == null) {
                 applicationIndex = ApplicationIndex.builder().withModuleName(PTMODULENAME)
-                        .withApplicationNumber(property.getApplicationNo()).withApplicationDate(
-                                property.getCreatedDate() != null ? property.getCreatedDate() : new Date())
+                        .withApplicationNumber(property.getApplicationNo()).withApplicationDate(new Date())
                         .withApplicationType(applictionType).withApplicantName(owner.getName())
                         .withStatus(property.getState().getValue()).withUrl(format(APPLICATION_VIEW_URL, property.getApplicationNo(), applictionType))
                         .withApplicantAddress(property.getBasicProperty().getAddress().toString()).withOwnername(user.getUsername() + "::" + user.getName())
