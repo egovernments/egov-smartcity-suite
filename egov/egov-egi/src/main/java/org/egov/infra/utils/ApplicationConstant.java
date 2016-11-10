@@ -75,6 +75,7 @@ public final class ApplicationConstant {
     public static final Character N = Character.valueOf('N');
 
     public static final String ES_DATE_FORMAT = "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'";
+    public static final String DEFAULT_TIMEZONE = "IST";
     public static final String CITIZEN_ROLE_NAME = "Citizen";
 
     private ApplicationConstant() {

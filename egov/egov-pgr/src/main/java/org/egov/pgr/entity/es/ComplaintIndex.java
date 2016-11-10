@@ -1,6 +1,12 @@
 package org.egov.pgr.entity.es;
 
-import com.fasterxml.jackson.annotation.JsonFormat;
+import static org.egov.infra.utils.ApplicationConstant.ES_DATE_FORMAT;
+import static org.egov.infra.utils.ApplicationConstant.DEFAULT_TIMEZONE;
+import static org.egov.pgr.utils.constants.PGRConstants.PGR_INDEX_NAME;
+import static org.springframework.data.elasticsearch.annotations.DateFormat.date_optional_time;
+import static org.springframework.data.elasticsearch.annotations.FieldIndex.not_analyzed;
+
+import java.util.Date;
 
 import org.egov.infra.config.core.ApplicationThreadLocals;
 import org.springframework.data.annotation.Id;
@@ -10,12 +16,7 @@ import org.springframework.data.elasticsearch.annotations.FieldType;
 import org.springframework.data.elasticsearch.annotations.GeoPointField;
 import org.springframework.data.elasticsearch.core.geo.GeoPoint;
 
-import java.util.Date;
-
-import static org.egov.infra.utils.ApplicationConstant.ES_DATE_FORMAT;
-import static org.egov.pgr.utils.constants.PGRConstants.PGR_INDEX_NAME;
-import static org.springframework.data.elasticsearch.annotations.DateFormat.date_optional_time;
-import static org.springframework.data.elasticsearch.annotations.FieldIndex.not_analyzed;
+import com.fasterxml.jackson.annotation.JsonFormat;
 
 @Document(indexName = PGR_INDEX_NAME, type = PGR_INDEX_NAME)
 public class ComplaintIndex {
@@ -26,11 +27,11 @@ public class ComplaintIndex {
     @Field(type = FieldType.String, index = not_analyzed)
     private String crn;
 
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = ES_DATE_FORMAT)
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = ES_DATE_FORMAT, timezone = DEFAULT_TIMEZONE)
     @Field(type = FieldType.Date, index = not_analyzed, format = date_optional_time, pattern = ES_DATE_FORMAT)
     private Date createdDate;
 
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = ES_DATE_FORMAT)
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = ES_DATE_FORMAT, timezone = DEFAULT_TIMEZONE)
     @Field(type = FieldType.Date, index = not_analyzed, format = date_optional_time, pattern = ES_DATE_FORMAT)
     private Date escalationDate;
 
@@ -158,7 +159,7 @@ public class ComplaintIndex {
     @Field(type = FieldType.String, index = not_analyzed)
     private String currentFunctionaryName;
 
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = ES_DATE_FORMAT)
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = ES_DATE_FORMAT, timezone = DEFAULT_TIMEZONE)
     @Field(type = FieldType.Date, index = not_analyzed, format = date_optional_time, pattern = ES_DATE_FORMAT)
     private Date currentFunctionaryAssigneddate;
 
@@ -183,7 +184,7 @@ public class ComplaintIndex {
     @Field(type = FieldType.String, index = not_analyzed)
     private String initialFunctionaryName;
 
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = ES_DATE_FORMAT)
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = ES_DATE_FORMAT, timezone = DEFAULT_TIMEZONE)
     @Field(type = FieldType.Date, index = not_analyzed, format = date_optional_time, pattern = ES_DATE_FORMAT)
     private Date initialFunctionaryAssigneddate;
 
@@ -202,7 +203,7 @@ public class ComplaintIndex {
     @Field(type = FieldType.String, index = not_analyzed)
     private String escalation1FunctionaryName;
 
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = ES_DATE_FORMAT)
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = ES_DATE_FORMAT, timezone = DEFAULT_TIMEZONE)
     @Field(type = FieldType.Date, index = not_analyzed, format = date_optional_time, pattern = ES_DATE_FORMAT)
     private Date escalation1FunctionaryAssigneddate;
 
@@ -221,7 +222,7 @@ public class ComplaintIndex {
     @Field(type = FieldType.String, index = not_analyzed)
     private String escalation2FunctionaryName;
 
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = ES_DATE_FORMAT)
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = ES_DATE_FORMAT, timezone = DEFAULT_TIMEZONE)
     @Field(type = FieldType.Date, index = not_analyzed, format = date_optional_time, pattern = ES_DATE_FORMAT)
     private Date escalation2FunctionaryAssigneddate;
 
@@ -240,7 +241,7 @@ public class ComplaintIndex {
     @Field(type = FieldType.String, index = not_analyzed)
     private String escalation3FunctionaryName;
 
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = ES_DATE_FORMAT)
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = ES_DATE_FORMAT, timezone = DEFAULT_TIMEZONE)
     @Field(type = FieldType.Date, index = not_analyzed, format = date_optional_time, pattern = ES_DATE_FORMAT)
     private Date escalation3FunctionaryAssigneddate;
 
@@ -259,7 +260,7 @@ public class ComplaintIndex {
     @Field(type = FieldType.Integer)
     private int escalationLevel;
 
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = ES_DATE_FORMAT)
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = ES_DATE_FORMAT, timezone = DEFAULT_TIMEZONE)
     @Field(type = FieldType.Date, index = not_analyzed, format = date_optional_time, pattern = ES_DATE_FORMAT)
     private Date complaintReOpenedDate;
 
