@@ -179,9 +179,9 @@ public class SewerageIndexService {
         if (StringUtils.isNotBlank(searchRequest.getMobileNumber()))
             boolQuery = boolQuery.filter(QueryBuilders.matchQuery("mobileNumber", searchRequest.getMobileNumber()));
         if (StringUtils.isNotBlank(searchRequest.getRevenueWard()))
-            boolQuery = boolQuery.filter(QueryBuilders.matchQuery("revenueWard", searchRequest.getRevenueWard()));
+            boolQuery = boolQuery.filter(QueryBuilders.matchQuery("ward", searchRequest.getRevenueWard()));
         if (StringUtils.isNotBlank(searchRequest.getDoorNumber()))
-            boolQuery = boolQuery.filter(QueryBuilders.matchQuery("doorNumber", searchRequest.getDoorNumber()));
+            boolQuery = boolQuery.filter(QueryBuilders.matchQuery("doorNo", searchRequest.getDoorNumber()));
         return boolQuery;
     }
 
@@ -304,26 +304,22 @@ public class SewerageIndexService {
                 }
         return resultList;
     }
-    
-    
+
     public BoolQueryBuilder getQueryFilterForNotice(final SewerageNoticeSearchRequest searchRequest) {
-        BoolQueryBuilder boolQuery = null; 
-        if (searchRequest.getNoticeType() != null) {
-            if (searchRequest.getNoticeType().equals(SewerageTaxConstants.NOTICE_WORK_ORDER)) {
+        BoolQueryBuilder boolQuery = null;
+        if (searchRequest.getNoticeType() != null)
+            if (searchRequest.getNoticeType().equals(SewerageTaxConstants.NOTICE_WORK_ORDER))
                 boolQuery = QueryBuilders.boolQuery().filter(QueryBuilders.rangeQuery("workOrderDate")
                         .from(searchRequest.getNoticeGeneratedFrom())
                         .to(searchRequest.getNoticeGeneratedTo()));
-            }else if (searchRequest.getNoticeType().equals(SewerageTaxConstants.NOTICE_ESTIMATION)) {  
+            else if (searchRequest.getNoticeType().equals(SewerageTaxConstants.NOTICE_ESTIMATION))
                 boolQuery = QueryBuilders.boolQuery().filter(QueryBuilders.rangeQuery("estimationDate")
                         .from(searchRequest.getNoticeGeneratedFrom())
                         .to(searchRequest.getNoticeGeneratedTo()));
-            }
-            else if(searchRequest.getNoticeType().equals(SewerageTaxConstants.NOTICE_CLOSE_CONNECTION)){
+            else if (searchRequest.getNoticeType().equals(SewerageTaxConstants.NOTICE_CLOSE_CONNECTION))
                 boolQuery = QueryBuilders.boolQuery().filter(QueryBuilders.rangeQuery("closureNoticeDate")
                         .from(searchRequest.getNoticeGeneratedFrom())
                         .to(searchRequest.getNoticeGeneratedTo()));
-            }
-        }
         if (StringUtils.isNotBlank(searchRequest.getUlbName()))
             boolQuery = boolQuery.filter(QueryBuilders.matchQuery("ulbName", searchRequest.getUlbName()));
         if (StringUtils.isNotBlank(searchRequest.getShscNumber()))
@@ -338,8 +334,7 @@ public class SewerageIndexService {
             boolQuery = boolQuery.filter(QueryBuilders.matchQuery("doorNumber", searchRequest.getDoorNumber()));
         return boolQuery;
     }
-    
-    
+
     public List<SewerageIndex> getNoticeSearchResultByBoolQuery(final BoolQueryBuilder boolQuery) {
         List<SewerageIndex> resultList = new ArrayList<>();
         final SearchQuery searchQuery = new NativeSearchQueryBuilder().withIndices("sewerage").withQuery(boolQuery)

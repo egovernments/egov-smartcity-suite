@@ -390,7 +390,7 @@ public class SewerageApplicationDetailsService {
     }
 
     public void updateIndexes(final SewerageApplicationDetails sewerageApplicationDetails) {
-        final SimpleDateFormat myFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm'Z'");
+        final SimpleDateFormat myFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
 
         try {
             if (sewerageApplicationDetails.getConnection() != null
