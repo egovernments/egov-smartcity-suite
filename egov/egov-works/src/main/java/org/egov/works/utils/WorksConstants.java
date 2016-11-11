@@ -45,7 +45,7 @@ public class WorksConstants {
     public static final String WORKS_MODULE_NAME = "Works Management";
     public static final String EGF_MODULE_NAME = "EGF";
     public static final String alphaNumericwithspecialchar = "[0-9a-zA-Z-& :,/.()@]+";
-    public static final String ALPHANUMERICWITHALLSPECIALCHAR = "[0-9a-zA-Z_@./#&+/-/!(){}\",^$%*|=;:<>?`~ ]+";
+    public static final String ALPHANUMERICWITHALLSPECIALCHAR = "[0-9a-zA-Z_@./#&+-/!(){}\",^$%*|=;:<>?`~ ]+"; 
     public static final String ALPHANUMERICWITHALLSPECIALCHARWITHOUTSPACE = "[0-9a-zA-Z_@./#&+/-/!(){}\",^$%*|=;:<>?`~]+";
     public static final String TEMPLATENAME_COMPLETIONCERTIFICATE = "completionCertificate";
     public static final String PARAMETERNAME_WORKCOMPLETIONINFO = "workCompletionInfo";
