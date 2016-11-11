@@ -218,5 +218,6 @@ public class Constants {
         public static final String WF_ACTION_DIGI_PENDING ="Digital Signature Pending";
         public static final String WF_ACTION_DIGI_SIGN_COMMISSION_NO_COLLECTION ="Digital sign-Commissioner Approved no collection";
         public static final String WF_DIGI_SIGNED ="Digital signed";
+        public static final String DELIMITER_HYPEN ="-";
 }
 

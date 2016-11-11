@@ -40,6 +40,8 @@
 
 package org.egov.tl.service;
 
+import static org.egov.tl.utils.Constants.DELIMITER_HYPEN;
+
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -142,11 +144,9 @@ public class FeeMatrixService<T extends License> {
         String uniqueNo;
         UnitOfMeasurement uom = null;
         final FeeType feeType = feeTypeService.findByName(Constants.LICENSE_FEE_TYPE);
-        for (final LicenseSubCategoryDetails scd : license.getTradeName().getLicenseSubCategoryDetails()) {
+        for (final LicenseSubCategoryDetails scd : license.getTradeName().getLicenseSubCategoryDetails())
             if (scd.getFeeType().equals(feeType))
                 uom = scd.getUom();
-            break;
-        }
         if (isnew_renewfee_same && ispermanent_temporaryfee_same)
             uniqueNo = generateFeeMatirixUniqueNo(license, newapp, permanent);
         else if (isnew_renewfee_same)
@@ -166,7 +166,8 @@ public class FeeMatrixService<T extends License> {
                 // First find License Fee with UOM
                 case "LF":
                     final FeeMatrix feeMatrix = feeMatrixRepository
-                            .findByUniqueNo(uniqueNo + "-" + fee.getId() + "-" + uom.getId() + "-" + financialYearByDate.getId());
+                            .findByUniqueNo(uniqueNo + DELIMITER_HYPEN + fee.getId() + DELIMITER_HYPEN + uom.getId()
+                                    + DELIMITER_HYPEN + financialYearByDate.getId());
                     if (feeMatrix == null)
                         throw new ValidationException("TL-002", "TL-002");
                     final FeeMatrixDetail feeMatrixDetail = feeMatrixDetailService.findByLicenseFeeByRange(feeMatrix,
@@ -187,24 +188,27 @@ public class FeeMatrixService<T extends License> {
     }
 
     private String generateFeeMatirixUniqueNo(final T license, final NatureOfBusiness permanent) {
-        return new StringBuilder().append(permanent.getId()).append("-").append(license.getLicenseAppType().getId())
-                .append("-").append(license.getCategory().getId()).append("-").append(license.getTradeName().getId()).toString();
+        return new StringBuilder().append(permanent.getId()).append(DELIMITER_HYPEN).append(license.getLicenseAppType().getId())
+                .append(DELIMITER_HYPEN).append(license.getCategory().getId()).append(DELIMITER_HYPEN)
+                .append(license.getTradeName().getId()).toString();
     }
 
     private String generateFeeMatirixUniqueNo(final T license) {
-        return new StringBuilder().append(license.getNatureOfBusiness().getId()).append("-")
-                .append(license.getLicenseAppType().getId()).append("-").append(license.getCategory().getId())
-                .append("-").append(license.getTradeName().getId()).toString();
+        return new StringBuilder().append(license.getNatureOfBusiness().getId()).append(DELIMITER_HYPEN)
+                .append(license.getLicenseAppType().getId()).append(DELIMITER_HYPEN).append(license.getCategory().getId())
+                .append(DELIMITER_HYPEN).append(license.getTradeName().getId()).toString();
     }
 
     private String generateFeeMatirixUniqueNo(final T license, final LicenseAppType apptype) {
-        return new StringBuilder().append(license.getNatureOfBusiness().getId()).append("-").append(apptype.getId())
-                .append("-").append(license.getCategory().getId()).append("-").append(license.getTradeName().getId()).toString();
+        return new StringBuilder().append(license.getNatureOfBusiness().getId()).append(DELIMITER_HYPEN).append(apptype.getId())
+                .append(DELIMITER_HYPEN).append(license.getCategory().getId()).append(DELIMITER_HYPEN)
+                .append(license.getTradeName().getId()).toString();
     }
 
     private String generateFeeMatirixUniqueNo(final T license, final LicenseAppType apptype,
             final NatureOfBusiness natureOfBusiness) {
-        return new StringBuilder().append(natureOfBusiness.getId()).append("-").append(apptype.getId())
-                .append("-").append(license.getCategory().getId()).append("-").append(license.getTradeName().getId()).toString();
+        return new StringBuilder().append(natureOfBusiness.getId()).append(DELIMITER_HYPEN).append(apptype.getId())
+                .append(DELIMITER_HYPEN).append(license.getCategory().getId()).append(DELIMITER_HYPEN)
+                .append(license.getTradeName().getId()).toString();
     }
 }
