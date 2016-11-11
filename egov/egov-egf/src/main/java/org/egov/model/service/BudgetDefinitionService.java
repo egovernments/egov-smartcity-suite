@@ -59,12 +59,11 @@ import org.springframework.context.MessageSource;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.validation.BindingResult;
 
 @Service
 @Transactional(readOnly = true)
 public class BudgetDefinitionService {
-
+    private static final String RE = "RE";
     private final BudgetDefinitionRepository budgetDefinitionRepository;
     @PersistenceContext
     private EntityManager entityManager;
@@ -92,18 +91,17 @@ public class BudgetDefinitionService {
     private String generateMaterializedPath(final Budget budget) {
 
         if (budget.getParent() == null) {
-            Long rootBudgetsCount = budgetDefinitionRepository.getRootBudgetsCount();
-            return  String.valueOf (rootBudgetsCount==null?1:rootBudgetsCount+1); 
+            final Long rootBudgetsCount = budgetDefinitionRepository.getRootBudgetsCount();
+            return String.valueOf(rootBudgetsCount == null ? 1 : rootBudgetsCount + 1);
 
-        } else {
+        } else
             return budget.getParent().getMaterializedPath() + "."
                     + budgetDefinitionRepository.getChildBudgetsCount(budget.getParent()) + 1;
-        }
     }
 
     @Transactional
     public Budget update(final Budget budget) {
-        
+
         return budgetDefinitionRepository.save(budget);
     }
 
@@ -116,23 +114,20 @@ public class BudgetDefinitionService {
     }
 
     public List<Budget> search(final Budget budget) {
-        if (budget.getFinancialYear() != null && budget.getSearchBere() != null) {
+        if (budget.getFinancialYear() != null && budget.getSearchBere() != null)
             return budgetDefinitionRepository.findByIsbereIsAndFinancialYearIdIsOrderByFinancialYearIdAscNameAsc(
                     budget.getSearchBere(),
                     budget.getFinancialYear().getId());
-        }
-        if (budget.getFinancialYear() != null && budget.getSearchBere() == null) {
+        if (budget.getFinancialYear() != null && budget.getSearchBere() == null)
             return budgetDefinitionRepository
                     .findByFinancialYearIdIsOrderByFinancialYearIdAscNameAsc(budget.getFinancialYear().getId());
-        }
-        if (budget.getFinancialYear() == null && budget.getSearchBere() != null) {
+        if (budget.getFinancialYear() == null && budget.getSearchBere() != null)
             return budgetDefinitionRepository.findByIsbereIsOrderByFinancialYearIdAscNameAsc(budget.getSearchBere());
-        } else {
+        else
             return budgetDefinitionRepository.findAll();
-        }
     }
 
-    public List<Budget> getParentByFinancialYearId(final Long financialYearId) {
+    public List<Budget> getBudgetByFinancialYearId(final Long financialYearId) {
         return budgetDefinitionRepository.findByFinancialYearIdOrderByFinancialYearIdAscNameAsc(financialYearId);
     }
 
@@ -166,24 +161,22 @@ public class BudgetDefinitionService {
      * @param errors
      * @return
      */
-    public String validate(final Budget budget, final BindingResult errors) {
+    public String validate(final Budget budget) {
         String validationMessage = "";
 
         if (budget.getParent() != null && budget.getParent().getId() != null && budget.getParent().getId() > 0) {
             final Budget b = budgetDefinitionRepository.findOne(Long.valueOf(budget.getParent().getId()));
-            if (!b.getIsbere().equals(budget.getIsbere())) {
+            if (!b.getIsbere().equals(budget.getIsbere()))
                 validationMessage = messageSource.getMessage("budget.invalid.parent", new String[] { b.getName() },
                         null);
-            }
         }
         if (budget.getIsPrimaryBudget() && budget.getFinancialYear() != null && budget.getParent() == null) {
             final List<Budget> budgetList = budgetDefinitionRepository
                     .findByIsbereIsAndFinancialYearIdIsAndIsPrimaryBudgetTrueAndParentIsNull(budget.getIsbere(),
                             budget.getFinancialYear().getId());
-            if (!budgetList.isEmpty()) {
+            if (!budgetList.isEmpty())
                 validationMessage = messageSource.getMessage("budget.primary.invalid", new String[] {
                         budgetList.get(0).getName(), budgetList.get(0).getFinancialYear().getFinYearRange() }, null);
-            }
         }
         return validationMessage;
     }
@@ -203,11 +196,10 @@ public class BudgetDefinitionService {
         final CFinancialYear previousYear = cFinancialYearService
                 .getPreviousFinancialYearForDate(financialYear.getStartingDate());
 
-        if (!referenceBudgetIdList.isEmpty()) {
+        if (!referenceBudgetIdList.isEmpty())
             return getReferenceBudgetList(previousYear.getId(), referenceBudgetIdList);
-        } else {
+        else
             return getReferenceBudgetEmpty(previousYear.getId());
-        }
     }
 
     public List<Budget> parentList(final String isBere, final Long financialYearId) {
@@ -220,17 +212,35 @@ public class BudgetDefinitionService {
     }
 
     public Long getApproved(final Long financialYearId) {
-        return budgetDefinitionRepository.countByStatusIdInAndFinancialYearIdIs(getBudgetStatus("Approved").getId(),
-                financialYearId);
+        return budgetDefinitionRepository.countByStatusIdInAndFinancialYearIdIsAndIsbereIs(getBudgetApprovedStatus().getId(),
+                financialYearId, RE);
+
     }
 
     public Long getVerified(final Long financialYearId) {
-        return budgetDefinitionRepository.countByStatusIdInAndFinancialYearIdIs(getBudgetStatus("Created").getId(),
-                financialYearId);
+        final List<Long> bb = budgetDetailService.getBudgetIdList();
+        return budgetDefinitionRepository.countByStatusIdInAndFinancialYearIdIsAndIsbereIsAndIdIn(
+                getBudgetStatus("Created").getId(), financialYearId, RE, bb);
+
     }
 
     public Long getNotInitalized(final Long financialYearId) {
         final List<Long> bb = budgetDetailService.getBudgetIdList();
-        return budgetDefinitionRepository.countByIdNotInAndFinancialYearIdIs(bb, financialYearId);
+        bb.addAll(budgetDefinitionRepository.findParentBudget());
+        return budgetDefinitionRepository.countByIdNotInAndFinancialYearIdIsAndIsbereIs(bb, financialYearId, RE);
+    }
+
+    public Long getFinancialYearForBudget(final Long budgetId) {
+        return findOne(budgetId).getFinancialYear().getId();
+    }
+
+    public Long getNotApprovedBudgetCount(final Long financialYearId) {
+        final List<Long> bb = budgetDefinitionRepository.findParentBudget();
+        return budgetDefinitionRepository.countByStatusIdNotInAndFinancialYearIdIsAndIsbereIsAndIdNotIn(
+                getBudgetStatus("Approved").getId(), financialYearId, RE, bb);
+    }
+
+    public EgwStatus getBudgetApprovedStatus() {
+        return egwStatusHibernate.getStatusByModuleAndCode(FinancialConstants.BUDGET, FinancialConstants.WORKFLOW_STATE_APPROVED);
     }
 }

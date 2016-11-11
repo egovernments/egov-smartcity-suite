@@ -73,11 +73,13 @@ import com.google.gson.GsonBuilder;
 @Controller
 @RequestMapping("/budgetdefinition")
 public class BudgetDefinitionController {
-    private final static String BUDGET_NEW = "budgetdefinition-new";
-    private final static String BUDGET_RESULT = "budgetdefinition-result";
-    private final static String BUDGET_EDIT = "budgetdefinition-edit";
-    private final static String BUDGET_VIEW = "budgetdefinition-view";
-    private final static String BUDGET_SEARCH = "budgetdefinition-search";
+    private static final String MODIFY = "modify";
+    private static final String BUDGET = "budget";
+    private static final String BUDGET_NEW = "budgetdefinition-new";
+    private static final String BUDGET_RESULT = "budgetdefinition-result";
+    private static final String BUDGET_EDIT = "budgetdefinition-edit";
+    private static final String BUDGET_VIEW = "budgetdefinition-view";
+    private static final String BUDGET_SEARCH = "budgetdefinition-search";
     @Autowired
     private BudgetDefinitionService budgetDefinitionService;
     @Autowired
@@ -85,14 +87,14 @@ public class BudgetDefinitionController {
     @Autowired
     private CFinancialYearService cFinancialYearService;
 
-    private void prepareNewForm(Model model) {
+    private void prepareNewForm(final Model model) {
         model.addAttribute("financialYearList", cFinancialYearService.getFinancialYearNotClosed());
         model.addAttribute("isBereList", Arrays.asList(BeReType.values()));
-    };
+    }
 
     @RequestMapping(value = "/new", method = RequestMethod.GET)
     public String newForm(final Model model) {
-        model.addAttribute("budget", new Budget());
+        model.addAttribute(BUDGET, new Budget());
         prepareNewForm(model);
         return BUDGET_NEW;
     }
@@ -100,10 +102,10 @@ public class BudgetDefinitionController {
     @RequestMapping(value = "/create", method = RequestMethod.POST)
     public String create(@Valid @ModelAttribute final Budget budget, final BindingResult errors, final Model model,
             final RedirectAttributes redirectAttrs) {
-        String validationMessage = budgetDefinitionService.validate(budget, errors);
+        final String validationMessage = budgetDefinitionService.validate(budget);
         if (errors.hasErrors() || !StringUtils.isEmpty(validationMessage)) {
             prepareNewForm(model);
-            model.addAttribute("budget", new Budget());
+            model.addAttribute(BUDGET, new Budget());
             model.addAttribute("validationMessage", validationMessage);
             return BUDGET_NEW;
         }
@@ -115,26 +117,25 @@ public class BudgetDefinitionController {
     }
 
     @RequestMapping(value = "/edit/{id}", method = RequestMethod.GET)
-    public String edit(@PathVariable("id") final Long id, Model model) {
-        Budget budget = budgetDefinitionService.findOne(id);
+    public String edit(@PathVariable("id") final Long id, final Model model) {
+        final Budget budget = budgetDefinitionService.findOne(id);
         prepareNewForm(model);
-        model.addAttribute("budget", budget);
-        model.addAttribute("modify", "modify");
-        List<BudgetDetail> bd = budgetDefinitionService.getBudgetDetailList(budget.getId());
-        if (!bd.isEmpty()) {
+        model.addAttribute(BUDGET, budget);
+        model.addAttribute(MODIFY, MODIFY);
+        final List<BudgetDetail> bd = budgetDefinitionService.getBudgetDetailList(budget.getId());
+        if (!bd.isEmpty())
             model.addAttribute("mode", "edit");
-        }
         return BUDGET_EDIT;
     }
 
     @RequestMapping(value = "/update", method = RequestMethod.POST)
     public String update(@Valid @ModelAttribute final Budget budget, final BindingResult errors, final Model model,
             final RedirectAttributes redirectAttrs) {
-        String validationMessage = budgetDefinitionService.validate(budget, errors);
+        final String validationMessage = budgetDefinitionService.validate(budget);
         if (errors.hasErrors() || !StringUtils.isEmpty(validationMessage)) {
             prepareNewForm(model);
             model.addAttribute("validationMessage", validationMessage);
-            model.addAttribute("modify", "modify");
+            model.addAttribute(MODIFY, MODIFY);
             return BUDGET_EDIT;
         }
         budgetDefinitionService.update(budget);
@@ -143,67 +144,62 @@ public class BudgetDefinitionController {
     }
 
     @RequestMapping(value = "/view/{id}", method = RequestMethod.GET)
-    public String view(@PathVariable("id") final Long id, Model model) {
-        Budget budget = budgetDefinitionService.findOne(id);
+    public String view(@PathVariable("id") final Long id, final Model model) {
+        final Budget budget = budgetDefinitionService.findOne(id);
         prepareNewForm(model);
-        model.addAttribute("budget", budget);
+        model.addAttribute(BUDGET, budget);
         return BUDGET_VIEW;
     }
 
     @RequestMapping(value = "/result/{id}", method = RequestMethod.GET)
-    public String result(@PathVariable("id") final Long id, Model model) {
-        Budget budget = budgetDefinitionService.findOne(id);
-        model.addAttribute("budget", budget);
+    public String result(@PathVariable("id") final Long id, final Model model) {
+        final Budget budget = budgetDefinitionService.findOne(id);
+        model.addAttribute(BUDGET, budget);
         return BUDGET_RESULT;
     }
 
     @RequestMapping(value = "/search/{mode}", method = RequestMethod.GET)
-    public String search(@PathVariable("mode") final String mode, Model model) {
-        Budget budget = new Budget();
+    public String search(@PathVariable("mode") final String mode, final Model model) {
+        final Budget budget = new Budget();
         prepareNewForm(model);
-        model.addAttribute("budget", budget);
+        model.addAttribute(BUDGET, budget);
         return BUDGET_SEARCH;
 
     }
 
     @RequestMapping(value = "/ajaxsearch/{mode}", method = RequestMethod.POST, produces = MediaType.TEXT_PLAIN_VALUE)
-    public @ResponseBody String ajaxsearch(@PathVariable("mode") final String mode, Model model,
+    public @ResponseBody String ajaxsearch(@PathVariable("mode") final String mode, final Model model,
             @ModelAttribute final Budget budget) {
-        List<Budget> searchResultList = budgetDefinitionService.search(budget);
-        String result = new StringBuilder("{ \"data\":").append(toSearchResultJson(searchResultList)).append("}")
+        final List<Budget> searchResultList = budgetDefinitionService.search(budget);
+        return new StringBuilder("{ \"data\":").append(toSearchResultJson(searchResultList)).append("}")
                 .toString();
-        return result;
     }
 
     public Object toSearchResultJson(final Object object) {
         final GsonBuilder gsonBuilder = new GsonBuilder();
         final Gson gson = gsonBuilder.registerTypeAdapter(Budget.class, new BudgetJsonAdaptor()).create();
-        final String json = gson.toJson(object);
-        return json;
+        return gson.toJson(object);
     }
-//rename String financialYearId to long
+
     @RequestMapping(value = "/parents", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
     public @ResponseBody String getParents(@RequestParam("financialYearId") final String financialYearId,
-            @RequestParam("isBeRe") String isBere) {
+            @RequestParam("isBeRe") final String isBere) {
         final List<Budget> budgetList = budgetDefinitionService.parentList(isBere, Long.parseLong(financialYearId));
-        String jsonResponse = toSearchResultJson(budgetList).toString();
-        return jsonResponse;
+        return toSearchResultJson(budgetList).toString();
     }
 
     @RequestMapping(value = "/referencebudget", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
     public @ResponseBody String getRefencebudget(@RequestParam("financialYearId") final String financialYearId) {
         final List<Budget> referenceBudgetList = budgetDefinitionService
                 .referenceBudgetList(Long.parseLong(financialYearId));
-        final String jsonResponse = toSearchResultJson(referenceBudgetList).toString();
-        return jsonResponse;
+        return toSearchResultJson(referenceBudgetList).toString();
     }
 
     @RequestMapping(value = "/ajaxgetdropdownsformodify", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
     public @ResponseBody String getReferenceBudgetForModify(@RequestParam("budgetId") final String budgetId) {
-        final Budget budget = budgetDefinitionService.findOne((Long.parseLong(budgetId)));
-        String jsonResponse = new StringBuilder("{ \"data\":").append(toSearchResultJson(budget)).append("}")
+        final Budget budget = budgetDefinitionService.findOne(Long.parseLong(budgetId));
+        return new StringBuilder("{ \"data\":").append(toSearchResultJson(budget)).append("}")
                 .toString();
-        return jsonResponse;
     }
 
 }

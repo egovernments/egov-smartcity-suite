@@ -125,6 +125,8 @@ import org.springframework.transaction.annotation.Transactional;
 @Service
 @Transactional(readOnly = true)
 public class BudgetDetailService extends PersistenceService<BudgetDetail, Long> {
+    private static final String BE = "BE";
+    private static final String RE = "RE";
     @Autowired
     protected EisCommonService eisCommonService;
     protected WorkflowService<BudgetDetail> budgetDetailWorkflowService;
@@ -348,13 +350,13 @@ public class BudgetDetailService extends PersistenceService<BudgetDetail, Long> 
     public Budget findApprovedPrimaryParentBudgetForFY(final Long financialYear) {
         final Criteria criteria = getSession().createCriteria(Budget.class);
         List<Budget> budgetList = criteria.add(Restrictions.eq("financialYear.id", financialYear))
-                .add(Restrictions.eq("isbere", "RE")).add(Restrictions.eq("isActiveBudget", true))
+                .add(Restrictions.eq("isbere", RE)).add(Restrictions.eq("isActiveBudget", true))
                 .add(Restrictions.eq("isPrimaryBudget", true)).add(Restrictions.isNull("parent"))
                 .addOrder(Property.forName("name").asc()).createCriteria("status", "status")
                 .add(Restrictions.eq("status.code", "Approved")).list();
         if (budgetList.isEmpty()) {
             final Criteria c = getSession().createCriteria(Budget.class);
-            budgetList = c.add(Restrictions.eq("financialYear.id", financialYear)).add(Restrictions.eq("isbere", "BE"))
+            budgetList = c.add(Restrictions.eq("financialYear.id", financialYear)).add(Restrictions.eq("isbere", BE))
                     .add(Restrictions.eq("isActiveBudget", true)).add(Restrictions.eq("isPrimaryBudget", true))
                     .add(Restrictions.isNull("parent")).addOrder(Property.forName("name").asc())
                     .createCriteria("status", "status").add(Restrictions.eq("status.code", "Approved")).list();
@@ -561,28 +563,28 @@ public class BudgetDetailService extends PersistenceService<BudgetDetail, Long> 
 
         detail.setStatus(egwStatusDAO.getStatusByModuleAndCode("BUDGETDETAIL", "Approved"));
         if (detail.getBudget() != null) {
-            detail.setBudget((Budget) persistenceService.getSession().load(Budget.class, detail.getBudget().getId()));
+            detail.setBudget(persistenceService.getSession().load(Budget.class, detail.getBudget().getId()));
             addMaterializedPath(detail);
         }
         if (detail.getFunction() != null)
-            detail.setFunction((CFunction) persistenceService.getSession().load(CFunction.class, detail.getFunction().getId()));
+            detail.setFunction(persistenceService.getSession().load(CFunction.class, detail.getFunction().getId()));
         if (detail.getFunctionary() != null)
             detail.setFunctionary(
-                    (Functionary) persistenceService.getSession().load(Functionary.class, detail.getFunctionary().getId()));
+                    persistenceService.getSession().load(Functionary.class, detail.getFunctionary().getId()));
         if (detail.getExecutingDepartment() != null)
             detail.setExecutingDepartment(
-                    (Department) persistenceService.getSession().load(Department.class, detail.getExecutingDepartment().getId()));
+                    persistenceService.getSession().load(Department.class, detail.getExecutingDepartment().getId()));
         if (detail.getScheme() != null)
-            detail.setScheme((Scheme) persistenceService.getSession().load(Scheme.class, detail.getScheme().getId()));
+            detail.setScheme(persistenceService.getSession().load(Scheme.class, detail.getScheme().getId()));
         if (detail.getSubScheme() != null)
-            detail.setSubScheme((SubScheme) persistenceService.getSession().load(SubScheme.class, detail.getSubScheme().getId()));
+            detail.setSubScheme(persistenceService.getSession().load(SubScheme.class, detail.getSubScheme().getId()));
         if (detail.getFund() != null)
-            detail.setFund((Fund) persistenceService.getSession().load(Fund.class, detail.getFund().getId()));
+            detail.setFund(persistenceService.getSession().load(Fund.class, detail.getFund().getId()));
         if (detail.getBudgetGroup() != null)
             detail.setBudgetGroup(
-                    (BudgetGroup) persistenceService.getSession().load(BudgetGroup.class, detail.getBudgetGroup().getId()));
+                    persistenceService.getSession().load(BudgetGroup.class, detail.getBudgetGroup().getId()));
         if (detail.getBoundary() != null)
-            detail.setBoundary((Boundary) persistenceService.getSession().load(Boundary.class, detail.getBoundary().getId()));
+            detail.setBoundary(persistenceService.getSession().load(Boundary.class, detail.getBoundary().getId()));
         return detail;
     }
 
@@ -644,7 +646,7 @@ public class BudgetDetailService extends PersistenceService<BudgetDetail, Long> 
     }
 
     /**
-     * 
+     *
      * @param detail
      * @return
      */
@@ -1744,16 +1746,16 @@ public class BudgetDetailService extends PersistenceService<BudgetDetail, Long> 
 
                 deptList.addAll(deptSet);
                 final EgwStatus budgetStatus = egwStatusDAO.getStatusByModuleAndCode("BUDGET", "Created");
-                createRootBudget("RE", beFYear, reFYear, deptList, budgetStatus);
+                createRootBudget(RE, beFYear, reFYear, deptList, budgetStatus);
 
-                createRootBudget("BE", beFYear, reFYear, deptList, budgetStatus);
+                createRootBudget(BE, beFYear, reFYear, deptList, budgetStatus);
 
             }
             final EgwStatus budgetDetailStatus = egwStatusDAO.getStatusByModuleAndCode("BUDGETDETAIL", "Created");
 
-            budgetUploadList = createBudgetDetails("RE", budgetUploadList, reFYear, budgetDetailStatus);
+            budgetUploadList = createBudgetDetails(RE, budgetUploadList, reFYear, budgetDetailStatus);
 
-            budgetUploadList = createBudgetDetails("BE", budgetUploadList, beFYear, budgetDetailStatus);
+            budgetUploadList = createBudgetDetails(BE, budgetUploadList, beFYear, budgetDetailStatus);
 
         } catch (final SQLException e) {
             throw new ValidationException(Arrays.asList(new ValidationError(e.getMessage(), e.getMessage())));
@@ -1783,7 +1785,7 @@ public class BudgetDetailService extends PersistenceService<BudgetDetail, Long> 
                 if (temp != null) {
                     if (temp.getStatus().getCode().equalsIgnoreCase("Created")) {
                         BigDecimal amount;
-                        if (budgetType.equalsIgnoreCase("RE"))
+                        if (budgetType.equalsIgnoreCase(RE))
                             amount = budgetUpload.getReAmount();
                         else
                             amount = budgetUpload.getBeAmount();
@@ -1814,7 +1816,7 @@ public class BudgetDetailService extends PersistenceService<BudgetDetail, Long> 
                     budgetDetail.setExecutingDepartment(budgetUpload.getDept());
                     budgetDetail.setAnticipatoryAmount(BigDecimal.ZERO);
                     budgetDetail.setPlanningPercent(BigDecimal.valueOf(budgetUpload.getPlanningPercentage()));
-                    if (budgetType.equalsIgnoreCase("RE")) {
+                    if (budgetType.equalsIgnoreCase(RE)) {
                         budgetDetail.setOriginalAmount(budgetUpload.getReAmount());
                         budgetDetail.setApprovedAmount(budgetUpload.getReAmount());
                         budgetDetail.setBudgetAvailable(
@@ -1935,7 +1937,7 @@ public class BudgetDetailService extends PersistenceService<BudgetDetail, Long> 
         Budget budget = new Budget();
 
         try {
-            if (budgetType.equalsIgnoreCase("BE")) {
+            if (budgetType.equalsIgnoreCase(BE)) {
                 budgetName = budgetType + "-" + beFYear.getFinYearRange();
                 budgetDes = "Budget - " + budgetType + " for the year " + beFYear.getFinYearRange();
                 budgetFinancialYear = beFYear;
@@ -1946,7 +1948,7 @@ public class BudgetDetailService extends PersistenceService<BudgetDetail, Long> 
             }
             rootmaterial = getNewRootMaterializedPath();
 
-            if (budgetType.equalsIgnoreCase("BE")) {
+            if (budgetType.equalsIgnoreCase(BE)) {
                 final Budget refBudget = budgetService.getByName("RE-" + reFYear.getFinYearRange());
                 budget.setName(budgetName);
                 budget.setIsActiveBudget(true);
@@ -2023,7 +2025,7 @@ public class BudgetDetailService extends PersistenceService<BudgetDetail, Long> 
         CFinancialYear budgetFinancialYear;
         Budget budget = new Budget();
         try {
-            if (budgetType.equalsIgnoreCase("BE")) {
+            if (budgetType.equalsIgnoreCase(BE)) {
                 budgetName = capitalOrRevenue + "-" + budgetType + "-" + beFYear.getFinYearRange();
                 budgetDes = capitalOrRevenue + " Budget - " + budgetType + " for the year " + beFYear.getFinYearRange();
                 budgetFinancialYear = beFYear;
@@ -2033,7 +2035,7 @@ public class BudgetDetailService extends PersistenceService<BudgetDetail, Long> 
                 budgetFinancialYear = reFYear;
             }
 
-            if (budgetType.equalsIgnoreCase("BE")) {
+            if (budgetType.equalsIgnoreCase(BE)) {
                 final Budget refBudget = budgetService.getByName(capitalOrRevenue + "-RE-" + reFYear.getFinYearRange());
                 budget.setName(budgetName);
                 budget.setDescription(budgetDes);
@@ -2092,7 +2094,7 @@ public class BudgetDetailService extends PersistenceService<BudgetDetail, Long> 
             for (final String deptCode : deptList) {
                 Budget budget = new Budget();
 
-                if (budgetType.equalsIgnoreCase("BE")) {
+                if (budgetType.equalsIgnoreCase(BE)) {
                     budgetName = deptCode + "-" + budgetType + "-" + revOrCap + "-" + beFYear.getFinYearRange();
                     budgetDes = departmentService.getDepartmentByCode(deptCode).getName() + " " + budgetType + " "
                             + capitalOrRevenue + "Budget for the year " + beFYear.getFinYearRange();
@@ -2106,7 +2108,7 @@ public class BudgetDetailService extends PersistenceService<BudgetDetail, Long> 
                 if (budgetService.getByName(budgetName) == null) {
                     materialPath = rootmaterial + capOrRevCount++;
 
-                    if (budgetType.equalsIgnoreCase("BE")) {
+                    if (budgetType.equalsIgnoreCase(BE)) {
                         final Budget refBudget = budgetService
                                 .getByName(deptCode + "-RE-" + revOrCap + "-" + reFYear.getFinYearRange());
                         budget.setName(budgetName);
@@ -2203,9 +2205,8 @@ public class BudgetDetailService extends PersistenceService<BudgetDetail, Long> 
     }
 
     public Assignment getWorkflowInitiator(final BudgetDetail budgetDetail) {
-        final Assignment wfInitiator = assignmentService
+        return assignmentService
                 .findByEmployeeAndGivenDate(budgetDetail.getCreatedBy().getId(), new Date()).get(0);
-        return wfInitiator;
     }
 
     @Transactional
@@ -2286,15 +2287,15 @@ public class BudgetDetailService extends PersistenceService<BudgetDetail, Long> 
     }
 
     @Transactional
-    public BudgetDetail rejectWorkFlow(final BudgetDetail budgetDetail) {
+    public BudgetDetail rejectWorkFlow(final BudgetDetail budgetDetail, final String comment) {
         final DateTime currentDate = new DateTime();
         final User user = securityUtils.getCurrentUser();
-        Assignment wfInitiator = null;
+        Assignment wfInitiator = new Assignment();
         if (budgetDetail.getId() != null && budgetDetail.getId() != 0)
             wfInitiator = getWorkflowInitiator(budgetDetail);
         final String stateValue = FinancialConstants.WORKFLOW_STATE_REJECTED;
         budgetDetail.transition(true).withSenderName(user.getName())
-                .withStateValue(stateValue)
+                .withStateValue(stateValue).withComments(comment)
                 .withDateInfo(currentDate.toDate()).withOwner(wfInitiator.getPosition())
                 .withNextAction(FinancialConstants.WF_STATE_EOA_Approval_Pending);
         applyAuditing(budgetDetail.getState());
@@ -2302,7 +2303,7 @@ public class BudgetDetailService extends PersistenceService<BudgetDetail, Long> 
     }
 
     public List<Long> getBudgetIdList() {
-        final String query = "select bd.budget.id from BudgetDetail bd ";
+        final String query = "select distinct bd.budget.id from BudgetDetail bd ";
         final List<Long> budgetDetailsList = persistenceService.getSession().createQuery(query).list();
         return budgetDetailsList;
     }
@@ -2311,7 +2312,7 @@ public class BudgetDetailService extends PersistenceService<BudgetDetail, Long> 
         final Query qry = getCurrentSession().createQuery("from BudgetDetail where budgetGroup.id=:budgetGroupId");
         qry.setLong("budgetGroupId", budgetGroupId);
         List<BudgetDetail> budgetDetails = null;
-        if (qry.list().size() != 0)
+        if (!qry.list().isEmpty())
             budgetDetails = qry.list();
         else
             budgetDetails = Collections.emptyList();
@@ -2323,7 +2324,7 @@ public class BudgetDetailService extends PersistenceService<BudgetDetail, Long> 
         final Query qry = getCurrentSession().createQuery("from BudgetDetail where budget.id=:budgetId");
         qry.setLong("budgetId", budgetId);
         List<BudgetDetail> budgetDetails = null;
-        if (qry.list().size() != 0)
+        if (!qry.list().isEmpty())
             budgetDetails = qry.list();
         else
             budgetDetails = Collections.emptyList();
@@ -2331,26 +2332,73 @@ public class BudgetDetailService extends PersistenceService<BudgetDetail, Long> 
         return budgetDetails;
     }
 
-    public List<BudgetDetail> getBudgetDetailByStatusAndFinancialYearId(final Integer statusId,
+    public List<Budget> getBudgetByStatusAndFinancialYearId(final Integer statusId,
             final Long financialYearId) {
         final Query qry = getCurrentSession()
-                .createQuery("from BudgetDetail budgetDetail" + " where budgetDetail.status.id=:statusId and "
+                .createQuery("select distinct budgetDetail.budget from BudgetDetail budgetDetail"
+                        + " where budgetDetail.status.id=:statusId and "
                         + "budgetDetail.budget.id in(select id from Budget where financialYear.id=:financialYearId)");
 
         qry.setInteger("statusId", statusId);
         qry.setLong("financialYearId", financialYearId);
-        List<BudgetDetail> budgetDetails = null;
-        if (qry.list().size() != 0)
-            budgetDetails = qry.list();
+        List<Budget> budget;
+        if (!qry.list().isEmpty())
+            budget = qry.list();
         else
-            budgetDetails = Collections.emptyList();
+            budget = Collections.emptyList();
 
-        return budgetDetails;
+        return budget;
     }
 
-    public List<BudgetDetail> getBudgets(final List<Long> budgetDetailId) {
-        return budgetDetailRepository.findBudget(budgetDetailId);
+    public List<BudgetDetail> getBudgetDetails(final List<Long> budgetId) {
+        return budgetDetailRepository.findByBudgetIdInAndStatusId(budgetId,
+                getBudgetDetailStatus(FinancialConstants.BUDGETDETAIL_VERIFIED_STATUS).getId());
+    }
 
+    public EgwStatus getBudgetDetailStatus(final String code) {
+        return egwStatusHibernateDAO.getStatusByModuleAndCode(FinancialConstants.BUDGETDETAIL, code);
+    }
+
+    public String getDeptNameForBudgetId(final Long budgetId) {
+        final BudgetDetail bg = budgetDetailRepository.findByBudgetIdAndStatusId(budgetId,
+                getBudgetDetailStatus(FinancialConstants.BUDGETDETAIL_VERIFIED_STATUS).getId()).get(0);
+        return bg == null ? StringUtils.EMPTY : bg.getExecutingDepartment().getName();
+    }
+
+    public String getNextYrBEName(final Budget budget) {
+        final BudgetDetail bg = budgetDetailRepository.findByBudgetReferenceBudgetId(budget.getId()).get(0);
+        return bg == null ? StringUtils.EMPTY : bg.getBudget().getName();
+    }
+
+    public BigDecimal getREAmount(final Budget budget) {
+        return budgetDetailRepository.findBudgetAmount(budget.getId(),
+                getBudgetDetailStatus(FinancialConstants.BUDGETDETAIL_VERIFIED_STATUS).getId());
+    }
+
+    public BigDecimal getBEAmount(final Budget budget) {
+        final BudgetDetail bg = budgetDetailRepository.findByBudgetReferenceBudgetId(budget.getId()).get(0);
+        return budgetDetailRepository.findBudgetAmount(bg.getBudget().getId(),
+                getBudgetDetailStatus(FinancialConstants.BUDGETDETAIL_VERIFIED_STATUS).getId());
+    }
+
+    public List<BudgetDetail> getNotApprovedBudgetDetails(final Long budgetId) {
+        return budgetDetailRepository.findByBudgetIdInAndStatusIdNotIn(budgetId,
+                getBudgetDetailStatus(FinancialConstants.WORKFLOW_STATE_APPROVED).getId());
+
+    }
+
+    public Long getBudgetDetailCount(final Budget budget) {
+        return budgetDetailRepository.countByBudgetIdAndStatusId(budget.getId(),
+                getBudgetDetailStatus(FinancialConstants.BUDGETDETAIL_VERIFIED_STATUS).getId());
+    }
+
+    public List<BudgetDetail> getNotApprovedBudgetDetailsForBudget(final List<Long> budgetId) {
+        return budgetDetailRepository.findByBudgetIdInAndStatusId(budgetId,
+                getBudgetDetailStatus(FinancialConstants.BUDGETDETAIL_VERIFIED_STATUS).getId());
+    }
+
+    public BudgetDetail getBudgetDetailByReferencceBudget(final String uniqueNo, final Long budgetId) {
+        return budgetDetailRepository.findByReferenceBudget(uniqueNo, budgetId);
     }
 
 }

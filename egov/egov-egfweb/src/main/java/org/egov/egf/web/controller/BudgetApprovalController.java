@@ -44,11 +44,11 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 
-import org.egov.commons.dao.EgwStatusHibernateDAO;
 import org.egov.egf.web.adaptor.BudgetApprovalAdaptor;
 import org.egov.model.budget.Budget;
 import org.egov.model.budget.BudgetApproval;
 import org.egov.model.budget.BudgetDetail;
+import org.egov.model.repository.BudgetDefinitionRepository;
 import org.egov.model.service.BudgetApprovalService;
 import org.egov.model.service.BudgetDefinitionService;
 import org.egov.services.budget.BudgetDetailService;
@@ -72,16 +72,17 @@ import com.google.gson.GsonBuilder;
 @Controller
 @RequestMapping("/budgetapproval")
 public class BudgetApprovalController {
-    private final static String BUDGETAPPROVAL_SEARCH = "budgetapproval-search";
-    private final static String BUDGETAPPROVAL_RESULT = "budgetapproval-result";
+    private static final String RE = "RE";
+    private static final String BUDGETAPPROVAL_SEARCH = "budgetapproval-search";
+    private static final String BUDGETAPPROVAL_RESULT = "budgetapproval-result";
     @Autowired
     private BudgetApprovalService budgetApprovalService;
     @Autowired
     private BudgetDefinitionService budgetDefinitionService;
     @Autowired
-    private BudgetApprovalAdaptor budgetApprovalAdaptor;
+    private BudgetDefinitionRepository budgetDefinitionRepository;
     @Autowired
-    private EgwStatusHibernateDAO egwStatusHibernate;
+    private BudgetApprovalAdaptor budgetApprovalAdaptor;
     @Autowired
     private BudgetDetailService budgetDetailService;
     @Autowired
@@ -89,7 +90,7 @@ public class BudgetApprovalController {
 
     private void prepareNewForm(final Model model) {
         model.addAttribute("financialYearList", budgetApprovalService.financialYearList());
-    };
+    }
 
     @RequestMapping(value = "/new", method = RequestMethod.GET)
     public String newForm(final Model model) {
@@ -101,73 +102,94 @@ public class BudgetApprovalController {
 
     @RequestMapping(value = "/search", method = RequestMethod.POST, produces = MediaType.TEXT_PLAIN_VALUE)
     public @ResponseBody String search(final Model model, @ModelAttribute final BudgetDetail budgetDetail) {
-        final List<BudgetDetail> searchResultList = budgetApprovalService
-                .search(budgetDetail.getBudget().getFinancialYear().getId());
+        final Long finYearId = budgetDetail.getBudget().getFinancialYear().getId();
+        final List<Budget> searchResultList = budgetApprovalService
+                .search(finYearId);
         prepareNewForm(model);
-        final List<BudgetApproval> budgetApprovalList = new ArrayList<BudgetApproval>();
-        for (final BudgetDetail ba : searchResultList) {
+        final List<BudgetApproval> budgetApprovalList = new ArrayList<>();
+        for (final Budget ba : searchResultList) {
             final BudgetApproval budgetApproval = new BudgetApproval();
             budgetApproval.setId(ba.getId());
-            budgetApproval.setDepartment(ba.getExecutingDepartment().getName());
-            budgetApproval.setParent(ba.getBudget().getParent().getName());
-            budgetApproval.setReferenceBudget(ba.getBudget().getReferenceBudget().getName());
-            budgetApproval.setBeAmount(ba.getOriginalAmount());
-            budgetApproval.setReAmount(ba.getApprovedAmount());
+            budgetApproval.setDepartment(budgetDetailService.getDeptNameForBudgetId(ba.getId()));
+            budgetApproval.setParent(ba.getParent().getName());
+            budgetApproval.setReferenceBudget(budgetDetailService.getNextYrBEName(ba));
+            budgetApproval.setBeAmount(budgetDetailService.getBEAmount(ba));
+            budgetApproval.setReAmount(budgetDetailService.getREAmount(ba));
+            budgetApproval.setCount(budgetDetailService.getBudgetDetailCount(ba));
 
             budgetApprovalList.add(budgetApproval);
         }
-
-        final String result = new StringBuilder("{ \"data\":").append(toSearchResultJson(budgetApprovalList))
+        return new StringBuilder("{ \"data\":").append(toSearchResultJson(budgetApprovalList))
                 .append("}").toString();
-        return result;
+
     }
 
     @RequestMapping(value = "/approve", method = RequestMethod.POST, produces = MediaType.TEXT_PLAIN_VALUE)
     public @ResponseBody String approve(@ModelAttribute final BudgetDetail budgetDetail, final BindingResult errors,
             final Model model, final RedirectAttributes redirectAttrs,
-            @RequestParam(value = "checkedArray") final List<String> checkedArray,
-            @RequestParam("comments") final String comments) {
-        final List<Long> idList = new ArrayList<Long>();
-        for (final String checkListId : checkedArray)
+            @RequestParam final List<String> checkedArray) {
+        final List<Long> idList = new ArrayList<>();
+        for (final String checkListId : checkedArray) {
             if (!checkListId.isEmpty())
                 idList.add(Long.parseLong(checkListId));
+            final Budget budget = budgetDefinitionService.findOne(Long.valueOf(checkListId));
 
-        final List<BudgetDetail> budgetDetailList = budgetDetailService.getBudgets(idList);
-        Budget budget = new Budget();
-        for (final BudgetDetail budgetDetails : budgetDetailList) {
-            budgetDetails.setStatus(egwStatusHibernate.getStatusByModuleAndCode(FinancialConstants.BUDGETDETAIL,
-                    FinancialConstants.WORKFLOW_STATE_APPROVED));
-            budget = budgetDefinitionService.findOne(budgetDetails.getBudget().getId());
-            budget.getParent().setStatus(egwStatusHibernate.getStatusByModuleAndCode(FinancialConstants.BUDGET,
-                    FinancialConstants.WORKFLOW_STATE_APPROVED));
-            budget.getReferenceBudget().setStatus(egwStatusHibernate.getStatusByModuleAndCode(FinancialConstants.BUDGET,
-                    FinancialConstants.WORKFLOW_STATE_APPROVED));
+            budget.setStatus(budgetDefinitionService.getBudgetApprovedStatus());
             budgetDefinitionService.update(budget);
-            budgetDetailService.update(budgetDetails);
+            final Budget bg = budgetDefinitionRepository.findByReferenceBudgetId(Long.valueOf(checkListId));
+            bg.setStatus(budgetDefinitionService.getBudgetApprovedStatus());
+            budgetDefinitionService.update(bg);
+            if (budgetDefinitionService.getNotApprovedBudgetCount(budget.getFinancialYear().getId()) == 0) {
+                final Budget mainREBudget = budgetDefinitionRepository
+                        .findByIsbereIsAndFinancialYearIdIsAndIsPrimaryBudgetTrueAndParentIsNull(RE,
+                                budget.getFinancialYear().getId())
+                        .get(0);
+                mainREBudget.setStatus(budgetDefinitionService.getBudgetApprovedStatus());
+                budgetDefinitionService.update(mainREBudget);
+                final Budget mainBEBudget = budgetDefinitionRepository.findByReferenceBudgetId(mainREBudget.getId());
+                mainBEBudget.setStatus(budgetDefinitionService.getBudgetApprovedStatus());
+                budgetDefinitionService.update(mainBEBudget);
+            }
         }
-        final String message = messageSource.getMessage("msg.budgetdetail.approve",
-                new String[] { budget.getReferenceBudget().getName(), budget.getParent().getName() }, Locale.ENGLISH);
-        return message;
+
+        final List<BudgetDetail> budgetDetailList = budgetDetailService.getBudgetDetails(idList);
+
+        for (final BudgetDetail budgetDetails : budgetDetailList) {
+            budgetDetails.setStatus(budgetDetailService.getBudgetDetailStatus(FinancialConstants.WORKFLOW_STATE_APPROVED));
+            budgetDetailService.update(budgetDetails);
+            final BudgetDetail bg = budgetDetailService.getBudgetDetailByReferencceBudget(budgetDetails.getUniqueNo(),
+                    budgetDetails.getBudget().getId());
+            bg.setStatus(budgetDetailService.getBudgetDetailStatus(FinancialConstants.WORKFLOW_STATE_APPROVED));
+            budgetDetailService.update(bg);
+        }
+
+        return messageSource.getMessage("msg.budgetdetail.approve",
+                null, Locale.ENGLISH);
     }
 
     @RequestMapping(value = "/reject", method = RequestMethod.POST)
     public @ResponseBody String reject(@ModelAttribute final BudgetDetail budgetDetail, final BindingResult errors,
             final Model model, final RedirectAttributes redirectAttrs,
-            @RequestParam final List<String> checkedArray) {
-        final List<Long> idList = new ArrayList<Long>();
+            @RequestParam final List<String> checkedArray, @RequestParam final String comments) {
+        final List<Long> idList = new ArrayList<>();
         for (final String checkedIdList : checkedArray)
             if (!checkedIdList.isEmpty())
                 idList.add(Long.parseLong(checkedIdList));
 
-        final List<BudgetDetail> budgetDetailList = budgetDetailService.getBudgets(idList);
+        final List<BudgetDetail> budgetDetailList = budgetDetailService.getBudgetDetails(idList);
         for (BudgetDetail budgetDetails : budgetDetailList) {
-            budgetDetails = budgetDetailService.rejectWorkFlow(budgetDetails);
-            budgetDetails.setStatus(egwStatusHibernate.getStatusByModuleAndCode(FinancialConstants.BUDGETDETAIL,
-                    FinancialConstants.WORKFLOW_STATUS_CODE_REJECTED));
+            budgetDetails = budgetDetailService.rejectWorkFlow(budgetDetails, comments);
+
+            budgetDetails.setStatus(budgetDetailService.getBudgetDetailStatus(FinancialConstants.WORKFLOW_STATUS_CODE_REJECTED));
             budgetDetailService.update(budgetDetails);
+            final BudgetDetail bg = budgetDetailService.getBudgetDetailByReferencceBudget(budgetDetails.getUniqueNo(),
+                    budgetDetails.getBudget().getId());
+            bg.setStatus(budgetDetailService.getBudgetDetailStatus(FinancialConstants.WORKFLOW_STATUS_CODE_REJECTED));
+
+            budgetDetailService.update(bg);
+
         }
-        final String message = messageSource.getMessage("msg.budgetdetail.reject", null, Locale.ENGLISH);
-        return message;
+        return messageSource.getMessage("msg.budgetdetail.reject", null, Locale.ENGLISH);
     }
 
     @RequestMapping(value = "/success")
@@ -180,8 +202,7 @@ public class BudgetApprovalController {
     public Object toSearchResultJson(final Object object) {
         final GsonBuilder gsonBuilder = new GsonBuilder();
         final Gson gson = gsonBuilder.registerTypeAdapter(BudgetApproval.class, budgetApprovalAdaptor).create();
-        final String json = gson.toJson(object);
-        return json;
+        return gson.toJson(object);
     }
 
 }
