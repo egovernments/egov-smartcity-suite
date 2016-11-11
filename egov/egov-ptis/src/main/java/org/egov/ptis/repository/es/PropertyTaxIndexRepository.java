@@ -38,9 +38,9 @@
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
 
-package org.egov.ptis.repository.elasticsearch;
+package org.egov.ptis.repository.es;
 
-import org.egov.ptis.elasticsearch.model.PropertyTaxIndex;
+import org.egov.ptis.domain.entity.es.PropertyTaxIndex;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.elasticsearch.repository.ElasticsearchRepository;

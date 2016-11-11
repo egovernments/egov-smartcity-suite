@@ -38,7 +38,7 @@
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
 
-package org.egov.ptis.service.elasticsearch;
+package org.egov.ptis.service.es;
 
 import static org.egov.ptis.constants.PropertyTaxConstants.BIGDECIMAL_100;
 import static org.egov.ptis.constants.PropertyTaxConstants.DASHBOARD_GROUPING_BILLCOLLECTORWISE;
@@ -68,9 +68,9 @@ import org.egov.ptis.bean.dashboard.TaxDefaulters;
 import org.egov.ptis.bean.dashboard.TaxPayerDetails;
 import org.egov.ptis.bean.dashboard.TaxPayerResponseDetails;
 import org.egov.ptis.constants.PropertyTaxConstants;
-import org.egov.ptis.elasticsearch.model.BillCollectorIndex;
-import org.egov.ptis.elasticsearch.model.PropertyTaxIndex;
-import org.egov.ptis.repository.elasticsearch.PropertyTaxIndexRepository;
+import org.egov.ptis.domain.entity.es.BillCollectorIndex;
+import org.egov.ptis.domain.entity.es.PropertyTaxIndex;
+import org.egov.ptis.repository.es.PropertyTaxIndexRepository;
 import org.elasticsearch.action.search.SearchResponse;
 import org.elasticsearch.index.query.BoolQueryBuilder;
 import org.elasticsearch.index.query.QueryBuilders;
@@ -147,9 +147,8 @@ public class PropertyTaxElasticSearchIndexService {
         Date fromDate;
         Date toDate;
         /**
-         * For fetching total demand between the date ranges if dates are sent
-         * in the request, consider fromDate and toDate+1 , else calculate from
-         * current year start date till current date+1 day
+         * For fetching total demand between the date ranges if dates are sent in the request, consider fromDate and toDate+1 ,
+         * else calculate from current year start date till current date+1 day
          */
         if (StringUtils.isNotBlank(collectionDetailsRequest.getFromDate())
                 && StringUtils.isNotBlank(collectionDetailsRequest.getToDate())) {
@@ -184,7 +183,7 @@ public class PropertyTaxElasticSearchIndexService {
         if (collectionIndexDetails.getLytdColl().compareTo(BigDecimal.ZERO) == 0)
             variation = PropertyTaxConstants.BIGDECIMAL_100;
         else
-            variation = ((collectionIndexDetails.getCytdColl().subtract(collectionIndexDetails.getLytdColl()))
+            variation = (collectionIndexDetails.getCytdColl().subtract(collectionIndexDetails.getLytdColl())
                     .multiply(PropertyTaxConstants.BIGDECIMAL_100)).divide(collectionIndexDetails.getLytdColl(), 1,
                             BigDecimal.ROUND_HALF_UP);
         collectionIndexDetails.setLyVar(variation);
@@ -473,8 +472,8 @@ public class PropertyTaxElasticSearchIndexService {
     }
 
     /**
-     * This is used for top 100 defaulter's since ward level filtering is also
-     * present Query which filters documents from index based on request
+     * This is used for top 100 defaulter's since ward level filtering is also present Query which filters documents from index
+     * based on request
      * 
      * @param propertyTaxDefaultersRequest
      * @return
@@ -544,8 +543,7 @@ public class PropertyTaxElasticSearchIndexService {
     }
 
     /**
-     * Prepare ward wise tax payers details - Map of ward name and tax paers
-     * bean
+     * Prepare ward wise tax payers details - Map of ward name and tax paers bean
      * 
      * @param wardWiseTaxProducers
      * @param wardWiseTaxPayersDetails
@@ -558,8 +556,7 @@ public class PropertyTaxElasticSearchIndexService {
     }
 
     /**
-     * Prepare a Map of Bill Collector names and the tax payers list for their
-     * respective wards
+     * Prepare a Map of Bill Collector names and the tax payers list for their respective wards
      * 
      * @param collectionDetailsRequest
      * @param wardWiseTaxPayersDetails
@@ -633,8 +630,8 @@ public class PropertyTaxElasticSearchIndexService {
     }
 
     /**
-     * Prepare list of TaxPayerDetails for each bill collector by summing up the
-     * values in each ward for the respective bil collector
+     * Prepare list of TaxPayerDetails for each bill collector by summing up the values in each ward for the respective bil
+     * collector
      * 
      * @param collectionDetailsRequest
      * @param billCollectorWiseMap

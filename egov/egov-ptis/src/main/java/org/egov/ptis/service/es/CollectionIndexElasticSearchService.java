@@ -38,7 +38,7 @@
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
 
-package org.egov.ptis.service.elasticsearch;
+package org.egov.ptis.service.es;
 
 import static org.egov.ptis.constants.PropertyTaxConstants.COLLECION_BILLING_SERVICE_PT;
 import static org.egov.ptis.constants.PropertyTaxConstants.COLLECTION_INDEX_NAME;
@@ -75,7 +75,7 @@ import org.egov.ptis.bean.dashboard.CollectionTrend;
 import org.egov.ptis.bean.dashboard.ReceiptTableData;
 import org.egov.ptis.bean.dashboard.ReceiptsTrend;
 import org.egov.ptis.constants.PropertyTaxConstants;
-import org.egov.ptis.elasticsearch.model.BillCollectorIndex;
+import org.egov.ptis.domain.entity.es.BillCollectorIndex;
 import org.elasticsearch.action.search.SearchResponse;
 import org.elasticsearch.index.query.BoolQueryBuilder;
 import org.elasticsearch.index.query.QueryBuilder;
@@ -123,9 +123,9 @@ public class CollectionIndexElasticSearchService {
      */
     public BigDecimal getConsolidatedCollForYears(Date fromDate, Date toDate, String billingService) {
         QueryBuilder queryBuilder = QueryBuilders.boolQuery()
+                .must(QueryBuilders.matchQuery("billingService", billingService))
                 .must(QueryBuilders.rangeQuery("receiptDate").gte(DATEFORMATTER_YYYY_MM_DD.format(fromDate))
                         .lte(DATEFORMATTER_YYYY_MM_DD.format(toDate)).includeUpper(false))
-                .must(QueryBuilders.matchQuery("billingService", billingService))
                 .mustNot(QueryBuilders.matchQuery("status", "Cancelled"));
         SearchQuery searchQueryColl = new NativeSearchQueryBuilder().withIndices(COLLECTION_INDEX_NAME)
                 .withQuery(queryBuilder).addAggregation(AggregationBuilders.sum("collectiontotal").field("totalAmount"))
@@ -143,16 +143,15 @@ public class CollectionIndexElasticSearchService {
     }
 
     /**
-     * Gives the consolidated collection for the current Fin year and last fin
-     * year
+     * Gives the consolidated collection for the current Fin year and last fin year
      * 
      * @param billingService
      * @return Map
      */
     public Map<String, BigDecimal> getFinYearsCollByService(String billingService) {
         /**
-         * As per Elastic Search functionality, to get the total collections
-         * between 2 dates, add a day to the endDate and fetch the results
+         * As per Elastic Search functionality, to get the total collections between 2 dates, add a day to the endDate and fetch
+         * the results
          */
         Map<String, BigDecimal> consolidatedCollValues = new HashMap<>();
         CFinancialYear currFinYear = cFinancialYearService.getFinancialYearByDate(new Date());
@@ -196,8 +195,7 @@ public class CollectionIndexElasticSearchService {
     }
 
     /**
-     * API sets the consolidated collections for single day and between the 2
-     * dates
+     * API sets the consolidated collections for single day and between the 2 dates
      * 
      * @param collectionDetailsRequest
      * @param collectionIndexDetails
@@ -210,10 +208,9 @@ public class CollectionIndexElasticSearchService {
         BigDecimal tillDateColl = BigDecimal.ZERO;
         Long startTime = System.currentTimeMillis();
         /**
-         * As per Elastic Search functionality, to get the total collections
-         * between 2 dates, add a day to the endDate and fetch the results For
-         * Current day's collection if dates are sent in the request, consider
-         * the toDate, else take date range between current date +1 day
+         * As per Elastic Search functionality, to get the total collections between 2 dates, add a day to the endDate and fetch
+         * the results For Current day's collection if dates are sent in the request, consider the toDate, else take date range
+         * between current date +1 day
          */
         if (StringUtils.isNotBlank(collectionDetailsRequest.getFromDate())
                 && StringUtils.isNotBlank(collectionDetailsRequest.getToDate())) {
@@ -234,9 +231,8 @@ public class CollectionIndexElasticSearchService {
         collectionIndexDetails.setLyTodayColl(todayColl);
 
         /**
-         * For collections between the date ranges if dates are sent in the
-         * request, consider the same, else calculate from current year start
-         * date till current date+1 day
+         * For collections between the date ranges if dates are sent in the request, consider the same, else calculate from
+         * current year start date till current date+1 day
          */
         if (StringUtils.isNotBlank(collectionDetailsRequest.getFromDate())
                 && StringUtils.isNotBlank(collectionDetailsRequest.getToDate())) {
@@ -260,8 +256,7 @@ public class CollectionIndexElasticSearchService {
     }
 
     /**
-     * Returns the consolidated collections for single day and between the 2
-     * dates
+     * Returns the consolidated collections for single day and between the 2 dates
      * 
      * @param collectionDetailsRequest
      * @param fromDate
@@ -316,10 +311,8 @@ public class CollectionIndexElasticSearchService {
         String aggregationField = "regionName";
 
         /**
-         * Select the grouping based on the type parameter, by default the
-         * grouping is done based on Regions. If type is region, group by
-         * Region, if type is district, group by District, if type is ulb, group
-         * by ULB
+         * Select the grouping based on the type parameter, by default the grouping is done based on Regions. If type is region,
+         * group by Region, if type is district, group by District, if type is ulb, group by ULB
          */
         if (StringUtils.isNotBlank(collectionDetailsRequest.getType())) {
             if (collectionDetailsRequest.getType().equalsIgnoreCase(DASHBOARD_GROUPING_REGIONWISE))
@@ -336,10 +329,9 @@ public class CollectionIndexElasticSearchService {
         }
 
         /**
-         * As per Elastic Search functionality, to get the total collections
-         * between 2 dates, add a day to the endDate and fetch the results For
-         * Current day's collection if dates are sent in the request, consider
-         * the toDate, else take date range between current date +1 day
+         * As per Elastic Search functionality, to get the total collections between 2 dates, add a day to the endDate and fetch
+         * the results For Current day's collection if dates are sent in the request, consider the toDate, else take date range
+         * between current date +1 day
          */
         if (StringUtils.isNotBlank(collectionDetailsRequest.getFromDate())
                 && StringUtils.isNotBlank(collectionDetailsRequest.getToDate())) {
@@ -357,9 +349,8 @@ public class CollectionIndexElasticSearchService {
                 COLLECTION_INDEX_NAME, "totalAmount", aggregationField);
 
         /**
-         * For collection and demand between the date ranges if dates are sent
-         * in the request, consider fromDate and toDate+1 , else calculate from
-         * current year start date till current date+1 day
+         * For collection and demand between the date ranges if dates are sent in the request, consider fromDate and toDate+1 ,
+         * else calculate from current year start date till current date+1 day
          */
         if (StringUtils.isNotBlank(collectionDetailsRequest.getFromDate())
                 && StringUtils.isNotBlank(collectionDetailsRequest.getToDate())) {
@@ -373,9 +364,8 @@ public class CollectionIndexElasticSearchService {
         int noOfMonths = DateUtils.noOfMonths(fromDate, toDate) + 1;
         Map<String, BigDecimal> cytdCollMap;
         /**
-         * For current year's till date collection, if property type is given,
-         * fetch the sum of totalCollection from the Property Tax index, else
-         * sum of totalAmount from Collection index
+         * For current year's till date collection, if property type is given, fetch the sum of totalCollection from the Property
+         * Tax index, else sum of totalAmount from Collection index
          */
         if (StringUtils.isNotBlank(collectionDetailsRequest.getPropertyType()))
             cytdCollMap = getCollectionAndDemandValues(collectionDetailsRequest, fromDate, toDate,
@@ -503,8 +493,7 @@ public class CollectionIndexElasticSearchService {
     }
 
     /**
-     * Prepares month-wise collections for 3 consecutive years - from current
-     * year
+     * Prepares month-wise collections for 3 consecutive years - from current year
      * 
      * @param collectionDetailsRequest
      * @return List
@@ -526,9 +515,8 @@ public class CollectionIndexElasticSearchService {
         List<Map<String, BigDecimal>> yearwiseMonthlyCollList = new ArrayList<>();
         Map<String, BigDecimal> monthwiseColl;
         /**
-         * For month-wise collections between the date ranges if dates are sent
-         * in the request, consider fromDate and toDate+1 , else calculate from
-         * current year start date till current date+1 day
+         * For month-wise collections between the date ranges if dates are sent in the request, consider fromDate and toDate+1 ,
+         * else calculate from current year start date till current date+1 day
          */
         if (StringUtils.isNotBlank(collectionDetailsRequest.getFromDate())
                 && StringUtils.isNotBlank(collectionDetailsRequest.getToDate())) {
@@ -563,8 +551,7 @@ public class CollectionIndexElasticSearchService {
             yearwiseMonthlyCollList.add(monthwiseColl);
 
             /**
-             * If dates are passed in request, get result for the date range,
-             * else get results for entire financial year
+             * If dates are passed in request, get result for the date range, else get results for entire financial year
              */
             if (StringUtils.isNotBlank(collectionDetailsRequest.getFromDate())
                     && StringUtils.isNotBlank(collectionDetailsRequest.getToDate())) {
@@ -583,8 +570,7 @@ public class CollectionIndexElasticSearchService {
 
         startTime = System.currentTimeMillis();
         /**
-         * If dates are passed in request, get result for the date range, else
-         * get results for all 12 months
+         * If dates are passed in request, get result for the date range, else get results for all 12 months
          */
         if (StringUtils.isBlank(collectionDetailsRequest.getFromDate())
                 && StringUtils.isBlank(collectionDetailsRequest.getToDate())) {
@@ -659,11 +645,9 @@ public class CollectionIndexElasticSearchService {
         Date fromDate;
         Date toDate;
         /**
-         * As per Elastic Search functionality, to get the total collections
-         * between 2 dates, add a day to the endDate and fetch the results For
-         * Current day's collection if dates are sent in the request, consider
-         * the dates as toDate and toDate+1, else take date range between
-         * current date +1 day
+         * As per Elastic Search functionality, to get the total collections between 2 dates, add a day to the endDate and fetch
+         * the results For Current day's collection if dates are sent in the request, consider the dates as toDate and toDate+1,
+         * else take date range between current date +1 day
          */
         if (StringUtils.isNotBlank(collectionDetailsRequest.getFromDate())
                 && StringUtils.isNotBlank(collectionDetailsRequest.getToDate())) {
@@ -680,9 +664,8 @@ public class CollectionIndexElasticSearchService {
         receiptDetails.setTodayRcptsCount(receiptsCount);
 
         /**
-         * For collections between the date ranges if dates are sent in the
-         * request, consider the same, else calculate from current year start
-         * date till current date+1 day
+         * For collections between the date ranges if dates are sent in the request, consider the same, else calculate from
+         * current year start date till current date+1 day
          */
         if (StringUtils.isNotBlank(collectionDetailsRequest.getFromDate())
                 && StringUtils.isNotBlank(collectionDetailsRequest.getToDate())) {
@@ -759,9 +742,8 @@ public class CollectionIndexElasticSearchService {
         Map<Integer, String> monthValuesMap = DateUtils.getAllMonthsWithFullNames();
         List<Map<String, Long>> yearwiseMonthlyCountList = new ArrayList<>();
         /**
-         * For month-wise collections between the date ranges if dates are sent
-         * in the request, consider fromDate and toDate+1 , else calculate from
-         * current year start date till current date+1 day
+         * For month-wise collections between the date ranges if dates are sent in the request, consider fromDate and toDate+1 ,
+         * else calculate from current year start date till current date+1 day
          */
         if (StringUtils.isNotBlank(collectionDetailsRequest.getFromDate())
                 && StringUtils.isNotBlank(collectionDetailsRequest.getToDate())) {
@@ -794,8 +776,7 @@ public class CollectionIndexElasticSearchService {
             yearwiseMonthlyCountList.add(monthwiseCount);
 
             /**
-             * If dates are passed in request, get result for the date range,
-             * else get results for entire financial year
+             * If dates are passed in request, get result for the date range, else get results for entire financial year
              */
             if (StringUtils.isNotBlank(collectionDetailsRequest.getFromDate())
                     && StringUtils.isNotBlank(collectionDetailsRequest.getToDate())) {
@@ -815,8 +796,7 @@ public class CollectionIndexElasticSearchService {
 
         startTime = System.currentTimeMillis();
         /**
-         * If dates are passed in request, get result for the date range, else
-         * get results for all 12 months
+         * If dates are passed in request, get result for the date range, else get results for all 12 months
          */
         if (StringUtils.isBlank(collectionDetailsRequest.getFromDate())
                 && StringUtils.isBlank(collectionDetailsRequest.getToDate())) {
@@ -896,10 +876,8 @@ public class CollectionIndexElasticSearchService {
         BigDecimal variance = BigDecimal.ZERO;
         String aggregationField = "regionName";
         /**
-         * Select the grouping based on the type parameter, by default the
-         * grouping is done based on Regions. If type is region, group by
-         * Region, if type is district, group by District, if type is ulb, group
-         * by ULB
+         * Select the grouping based on the type parameter, by default the grouping is done based on Regions. If type is region,
+         * group by Region, if type is district, group by District, if type is ulb, group by ULB
          */
         if (StringUtils.isNotBlank(collectionDetailsRequest.getType())) {
             if (collectionDetailsRequest.getType().equalsIgnoreCase(DASHBOARD_GROUPING_REGIONWISE))
@@ -914,8 +892,8 @@ public class CollectionIndexElasticSearchService {
                 aggregationField = "revenueWard";
         }
         /**
-         * For Current day's collection if dates are sent in the request,
-         * consider the toDate, else take date range between current date +1 day
+         * For Current day's collection if dates are sent in the request, consider the toDate, else take date range between
+         * current date +1 day
          */
         if (StringUtils.isNotBlank(collectionDetailsRequest.getFromDate())
                 && StringUtils.isNotBlank(collectionDetailsRequest.getToDate())) {
@@ -930,9 +908,8 @@ public class CollectionIndexElasticSearchService {
         Map<String, BigDecimal> currDayCollMap = getCollectionAndDemandCountResults(collectionDetailsRequest, fromDate,
                 toDate, COLLECTION_INDEX_NAME, "consumerCode", aggregationField);
         /**
-         * For collections between the date ranges if dates are sent in the
-         * request, consider the same, else calculate from current year start
-         * date till current date+1 day
+         * For collections between the date ranges if dates are sent in the request, consider the same, else calculate from
+         * current year start date till current date+1 day
          */
         if (StringUtils.isNotBlank(collectionDetailsRequest.getFromDate())
                 && StringUtils.isNotBlank(collectionDetailsRequest.getToDate())) {

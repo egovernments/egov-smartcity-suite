@@ -38,9 +38,9 @@
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
 
-package org.egov.ptis.repository.elasticsearch;
+package org.egov.ptis.repository.es;
 
-import org.egov.ptis.elasticsearch.model.BillCollectorIndex;
+import org.egov.ptis.domain.entity.es.BillCollectorIndex;
 import org.springframework.data.elasticsearch.repository.ElasticsearchRepository;
 import org.springframework.stereotype.Repository;
 
