@@ -50,10 +50,10 @@ import org.egov.eis.web.contract.WorkflowContainer;
 import org.egov.infra.filestore.service.FileStoreService;
 import org.egov.mrs.application.MarriageConstants;
 import org.egov.mrs.domain.entity.MarriageRegistration;
-import org.springframework.util.FileCopyUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.util.FileCopyUtils;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -71,54 +71,56 @@ import org.springframework.web.bind.annotation.RequestParam;
 @Controller
 @RequestMapping(value = "/registration")
 public class UpdateMarriageRegistrationController extends MarriageRegistrationController {
-        
-        private static final Logger LOG = Logger.getLogger(UpdateMarriageRegistrationController.class);
-        private static final String MRG_REGISTRATION_EDIT = "registration-correction";
-    	private static final String MRG_REGISTRATION_EDIT_APPROVED = "registration-update-approved";
-    	private static final String MRG_REGISTRATION_SUCCESS = "registration-ack";
-        
-        @Autowired
+
+    private static final Logger LOG = Logger.getLogger(UpdateMarriageRegistrationController.class);
+    private static final String MRG_REGISTRATION_EDIT = "registration-correction";
+    private static final String MRG_REGISTRATION_EDIT_APPROVED = "registration-update-approved";
+    private static final String MRG_REGISTRATION_SUCCESS = "registration-ack";
+
+    @Autowired
     private FileStoreService fileStoreService;
-        
+
     @RequestMapping(value = "/update/{id}", method = RequestMethod.GET)
     public String showRegistration(@PathVariable final Long id, final Model model) {
-    	buildMrgRegistrationUpdateResult(id, model);
+        buildMrgRegistrationUpdateResult(id, model);
         return MRG_REGISTRATION_EDIT;
     }
-    
+
     @RequestMapping(value = "/update-approved/{id}", method = RequestMethod.GET)
     public String editApprovedRegistration(@PathVariable final Long id, final Model model) {
         buildMrgRegistrationUpdateResult(id, model);
         return MRG_REGISTRATION_EDIT_APPROVED;
     }
-    
+
     private void buildMrgRegistrationUpdateResult(final Long id, final Model model) {
-		MarriageRegistration registration = marriageRegistrationService.get(id);
+        final MarriageRegistration registration = marriageRegistrationService.get(id);
         marriageRegistrationService.prepareDocumentsForView(registration);
-        marriageApplicantService.prepareDocumentsForView(registration.getHusband()); 
+        marriageApplicantService.prepareDocumentsForView(registration.getHusband());
         marriageApplicantService.prepareDocumentsForView(registration.getWife());
         model.addAttribute("applicationHistory",
                 marriageRegistrationService.getHistory(registration));
-        prepareWorkFlowForNewMarriageRegistration(registration, model);  
-        registration.getWitnesses().forEach(witness -> {
-            try {
-            	if(witness.getPhotoFileStore() != null){
-            		final File file = fileStoreService.fetch(witness.getPhotoFileStore().getFileStoreId(), MarriageConstants.FILESTORE_MODULECODE);
-                	witness.setEncodedPhoto(Base64.getEncoder().encodeToString(FileCopyUtils.copyToByteArray(file)));
-            	}
-            } catch (final Exception e) {
-                LOG.error("Error while preparing the document for view", e);
-            }
-        });
+        prepareWorkFlowForNewMarriageRegistration(registration, model);
+        registration.getWitnesses().forEach(
+                witness -> {
+                    try {
+                        if (witness.getPhotoFileStore() != null) {
+                            final File file = fileStoreService.fetch(witness.getPhotoFileStore().getFileStoreId(),
+                                    MarriageConstants.FILESTORE_MODULECODE);
+                            witness.setEncodedPhoto(Base64.getEncoder().encodeToString(FileCopyUtils.copyToByteArray(file)));
+                        }
+                    } catch (final Exception e) {
+                        LOG.error("Error while preparing the document for view", e);
+                    }
+                });
         model.addAttribute("registration", registration);
-	}
-    
+    }
+
     private void prepareWorkFlowForNewMarriageRegistration(final MarriageRegistration registration, final Model model) {
-        WorkflowContainer workFlowContainer = new WorkflowContainer();
+        final WorkflowContainer workFlowContainer = new WorkflowContainer();
         workFlowContainer.setAdditionalRule(MarriageConstants.ADDITIONAL_RULE_REGISTRATION);
         prepareWorkflow(model, registration, workFlowContainer);
         model.addAttribute("additionalRule", MarriageConstants.ADDITIONAL_RULE_REGISTRATION);
-        model.addAttribute("stateType", registration.getClass().getSimpleName());  
+        model.addAttribute("stateType", registration.getClass().getSimpleName());
     }
 
     @RequestMapping(value = "/update", method = RequestMethod.POST)
@@ -127,48 +129,57 @@ public class UpdateMarriageRegistrationController extends MarriageRegistrationCo
             final Model model,
             final HttpServletRequest request,
             final BindingResult errors) throws IOException {
-        
+
         String workFlowAction = "";
         if (request.getParameter("workFlowAction") != null)
             workFlowAction = request.getParameter("workFlowAction");
-        
+
         if (errors.hasErrors())
-            return MRG_REGISTRATION_EDIT; 
-         
+            return MRG_REGISTRATION_EDIT;
+        String message = org.apache.commons.lang.StringUtils.EMPTY;
         registration = marriageRegistrationService.get(id);
-        if(workFlowAction != null && !workFlowAction.isEmpty()){
+        if (workFlowAction != null && !workFlowAction.isEmpty()) {
             workflowContainer.setWorkFlowAction(workFlowAction);
             workflowContainer.setApproverComments(request.getParameter("approvalComent"));
-                if (workFlowAction.equalsIgnoreCase(MarriageConstants.WFLOW_ACTION_STEP_REJECT) || 
-                    workFlowAction.equalsIgnoreCase(MarriageConstants.WFLOW_ACTION_STEP_CANCEL))
-                    marriageRegistrationService.rejectRegistration(registration, workflowContainer);   
-               else if (workFlowAction.equalsIgnoreCase(MarriageConstants.WFLOW_ACTION_STEP_APPROVE)) 
-                    marriageRegistrationService.approveRegistration(registration, workflowContainer);   
-               else if (workFlowAction.equalsIgnoreCase(MarriageConstants.WFLOW_ACTION_STEP_PRINTCERTIFICATE)) 
-                   marriageRegistrationService.printCertificate(registration, workflowContainer, request);
-               else{
-                   workflowContainer.setApproverPositionId(Long.valueOf(request.getParameter("approvalPosition")));
-                   marriageRegistrationService.forwardRegistration(id, registration,workflowContainer);
-               }
+            if (workFlowAction.equalsIgnoreCase(MarriageConstants.WFLOW_ACTION_STEP_REJECT) ||
+                    workFlowAction.equalsIgnoreCase(MarriageConstants.WFLOW_ACTION_STEP_CANCEL)) {
+                marriageRegistrationService.rejectRegistration(registration, workflowContainer);
+                message = messageSource.getMessage("msg.rejected.registration", null, null);
+            }
+            else if (workFlowAction.equalsIgnoreCase(MarriageConstants.WFLOW_ACTION_STEP_APPROVE)) {
+                marriageRegistrationService.approveRegistration(registration, workflowContainer);
+                message = messageSource.getMessage("msg.approved.registration", null, null);
+            }
+            else if (workFlowAction.equalsIgnoreCase(MarriageConstants.WFLOW_ACTION_STEP_PRINTCERTIFICATE)) {
+                marriageRegistrationService.printCertificate(registration, workflowContainer, request);
+                message = messageSource.getMessage("msg.printcertificate.registration", null, null);
+            }
+            else {
+                workflowContainer.setApproverPositionId(Long.valueOf(request.getParameter("approvalPosition")));
+                marriageRegistrationService.forwardRegistration(id, registration, workflowContainer);
+                message = messageSource.getMessage("msg.forward.registration", null, null);
+            }
         }
-        // On print certificate, output registration certificate 
+        // On print certificate, output registration certificate
         if (workFlowAction != null && !workFlowAction.isEmpty()
                 && workFlowAction.equalsIgnoreCase(MarriageConstants.WFLOW_ACTION_STEP_PRINTCERTIFICATE))
             return "redirect:/certificate/registration?id="
-                    + registration.getId();
-                    //+ registration.getMarriageCertificate().get(0).getFileStore().getId();
-        model.addAttribute("message", messageSource.getMessage("msg.update.registration", null, null)); 
+            + registration.getId();
+        // + registration.getMarriageCertificate().get(0).getFileStore().getId();
+
+        model.addAttribute("message", message);
         return MRG_REGISTRATION_SUCCESS;
     }
-    
+
     @RequestMapping(value = "/update-approved", method = RequestMethod.POST)
-    public String updateApprovedRegistration(@RequestParam final Long id,@ModelAttribute MarriageRegistration registration,
-            final Model model,final HttpServletRequest request,final BindingResult errors) {
-    	if (errors.hasErrors())
-    		return MRG_REGISTRATION_EDIT_APPROVED;
-    	
-    	 marriageRegistrationService.updateRegistration(id, registration);
-    	 model.addAttribute("message", messageSource.getMessage("msg.update.registration", null, null));
-    	return MRG_REGISTRATION_SUCCESS;
+    public String updateApprovedRegistration(@RequestParam final Long id,
+            @ModelAttribute final MarriageRegistration registration,
+            final Model model, final HttpServletRequest request, final BindingResult errors) {
+        if (errors.hasErrors())
+            return MRG_REGISTRATION_EDIT_APPROVED;
+
+        marriageRegistrationService.updateRegistration(id, registration);
+        model.addAttribute("message", messageSource.getMessage("msg.update.registration", null, null));
+        return MRG_REGISTRATION_SUCCESS;
     }
 }
