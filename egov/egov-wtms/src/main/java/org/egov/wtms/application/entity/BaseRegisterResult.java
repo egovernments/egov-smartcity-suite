@@ -56,6 +56,7 @@ public class BaseRegisterResult {
     private Double totalCollection;
     private String usageType;
     private String pipeSize;
+    private String waterSource;
     private Double monthlyRate;
 
     public String getConsumerNo() {
@@ -184,6 +185,14 @@ public class BaseRegisterResult {
 
     public void setMonthlyRate(final Double monthlyRate) {
         this.monthlyRate = monthlyRate;
+    }
+
+    public String getWaterSource() {
+        return waterSource;
+    }
+
+    public void setWaterSource(final String waterSource) {
+        this.waterSource = waterSource;
     }
 
 }
