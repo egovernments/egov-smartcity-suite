@@ -324,6 +324,6 @@
     
     <definition name="dcbVLT-form" extends="base_layout">
     	<put-attribute name="page-title" value="lbl.title.dcbReportVLT.report" cascade="true"/>
-    	<put-attribute name="body" value="/WEB-INF/views/reports/dcbReportVLT-form.jsp"/>
+    	<put-attribute name="body" value="/WEB-INF/views/reports/dcbreportvlt-form.jsp"/>
     </definition>    
 </tiles-definitions> 

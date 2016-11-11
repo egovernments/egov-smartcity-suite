@@ -82,6 +82,6 @@
 		</div>
 	</div>
 </form:form>
-<jsp:include page="dcbReportVLT-searchResult.jsp" />
+<jsp:include page="dcbreportvlt-searchresult.jsp" />
 <script type="text/javascript"
-	src="<cdn:url value='/resources/js/app/dCBReportVLT.js?rnd=${app_release_no}'/>"></script>
+	src="<cdn:url value='/resources/js/app/dcbreportvlt.js?rnd=${app_release_no}'/>"></script>
