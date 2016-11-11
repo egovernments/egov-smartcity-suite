@@ -65,7 +65,6 @@ import org.egov.commons.EgwStatus;
 import org.egov.demand.model.EgDemand;
 import org.egov.infra.admin.master.entity.Boundary;
 import org.egov.infra.workflow.entity.StateAware;
-import org.egov.mrs.domain.enums.MarriageCertificateType;
 import org.egov.mrs.masters.entity.MarriageAct;
 import org.egov.mrs.masters.entity.MarriageFee;
 import org.egov.mrs.masters.entity.MarriageRegistrationUnit;
@@ -190,6 +189,12 @@ public class MarriageRegistration extends StateAware {
     private Date fromDate;
     @Transient
     private Date toDate;
+    
+    @Transient
+    private String month_year;
+    
+    @Transient
+    private int year;
     
     private boolean isLegacy;
     private boolean isActive;
@@ -506,13 +511,28 @@ public class MarriageRegistration extends StateAware {
 		this.marriageRegistrationUnit = marriageRegistrationUnit;
 	}
     
-	 public boolean isLegacy() {
-	        return isLegacy;
-	    }
+	public boolean isLegacy() {
+		return isLegacy;
+	}
 
-	    public void setLegacy(boolean isLegacy) {
-	        this.isLegacy = isLegacy;
-	    }
+	public void setLegacy(boolean isLegacy) {
+		this.isLegacy = isLegacy;
+	}
 
+	public String getMonth_year() {
+		return month_year;
+	}
+
+	public void setMonth_year(String month_year) {
+		this.month_year = month_year;
+	}
+
+	public int getYear() {
+		return year;
+	}
+
+	public void setYear(int year) {
+		this.year = year;
+	}
 
 }

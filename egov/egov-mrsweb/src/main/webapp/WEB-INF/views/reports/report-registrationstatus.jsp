@@ -55,29 +55,32 @@
 					</div>
 				</div> 
 				
-				<div class="panel-body custom-form">				
+				<div class="panel-body custom-form">
+				<div class="row">					
 					<div class="form-group">
-						<label class="col-sm-3 control-label">
+						<label class="col-sm-2 control-label">
 							<spring:message code="lbl.fromDate"/>
 						</label>
-						<div class="col-sm-6">
+						<div class="col-sm-3 add-margin">
 							<form:input path="fromDate" id="txt-fromdate" type="text" class="form-control low-width datepicker " data-date-end-date="0d" data-date-today-highlight="true" placeholder="" autocomplete="off" />
             				<form:errors path="fromDate" cssClass="add-margin error-msg"/>
 						</div>
 					</div>
 					<div class="form-group">
-						<label class="col-sm-3 control-label">
+						<label class="col-sm-2 control-label">
 							<spring:message code="lbl.toDate"/>
 						</label>
-						<div class="col-sm-6">
+						<div class="col-sm-3 add-margin">
 							<form:input path="toDate" id="txt-todate" type="text" class="form-control low-width datepicker" data-date-end-date="0d" data-date-today-highlight="true" placeholder="" autocomplete="off" />
             				<form:errors path="toDate" cssClass="add-margin error-msg"/>
 						</div>
 					</div>
+					</div>
+					<div class="row">	
 					<div class="form-group">
-						<label for="field-1" class="col-sm-3 control-label"><spring:message code="lbl.registration.status" /><span class="mandatory"></span>
+						<label for="field-1" class="col-sm-2 control-label"><spring:message code="lbl.registration.status" /><span class="mandatory"></span>
 						</label>
-						<div class="col-sm-6 add-margin">							
+						<div class="col-sm-3 add-margin">							
 							<form:select path="status.code" id="status" cssClass="form-control" cssErrorClass="form-control error" required="required" >
 										<form:option value=""><spring:message code="lbl.select"></spring:message></form:option>
 										<c:forEach items="${status}" var="status">
@@ -86,6 +89,7 @@
 							</form:select>
 							<form:errors path="status.code" cssClass="error-msg"/>
 						</div>
+					</div>
 					</div>
 				</div>
 			</div>
