@@ -329,9 +329,9 @@ public class SewerageIndexService {
         if (StringUtils.isNotBlank(searchRequest.getMobileNumber()))
             boolQuery = boolQuery.filter(QueryBuilders.matchQuery("mobileNumber", searchRequest.getMobileNumber()));
         if (StringUtils.isNotBlank(searchRequest.getRevenueWard()))
-            boolQuery = boolQuery.filter(QueryBuilders.matchQuery("revenueWard", searchRequest.getRevenueWard()));
+            boolQuery = boolQuery.filter(QueryBuilders.matchQuery("ward", searchRequest.getRevenueWard()));
         if (StringUtils.isNotBlank(searchRequest.getDoorNumber()))
-            boolQuery = boolQuery.filter(QueryBuilders.matchQuery("doorNumber", searchRequest.getDoorNumber()));
+            boolQuery = boolQuery.filter(QueryBuilders.matchQuery("doorNo", searchRequest.getDoorNumber()));
         return boolQuery;
     }
 
