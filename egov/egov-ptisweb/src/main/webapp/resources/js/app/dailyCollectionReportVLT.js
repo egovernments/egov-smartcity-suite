@@ -92,6 +92,7 @@ $('#dailyCollectionReportSearchVLT').click(function(e){
 			},
 			{title: 'Assessment Number', data: 'consumerCode'},
 			{title: 'Owner Name', data: 'consumerName'},
+			{title: 'Ward', data: 'revenueWard'}, 
 			{title: 'Paid At', data: 'channel'},
 			{title: 'Payment mode', data: 'paymentMode'},
 			{title: 'Status', data: 'status'},
@@ -150,10 +151,12 @@ $('#dailyCollectionReportSearchVLT').click(function(e){
 					updateTotalFooter(13, api);
 					updateTotalFooter(14, api);
 					updateTotalFooter(15, api);
+					updateTotalFooter(16, api);
+					updateTotalFooter(17, api);
 				}
 			},
 			"aoColumnDefs" : [ {
-				"aTargets" : [9,10,11,12,13,14,15],
+				"aTargets" : [9,10,11,12,13,14,15,16,17], 
 				"mRender" : function(data, type, full) {
 					return formatNumberInr(data);    
 				}

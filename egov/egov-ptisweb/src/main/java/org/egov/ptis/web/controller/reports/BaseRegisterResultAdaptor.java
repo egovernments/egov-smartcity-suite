@@ -39,20 +39,23 @@
  */
 package org.egov.ptis.web.controller.reports;
 
+import java.lang.reflect.Type;
+import java.math.BigDecimal;
+
+import org.egov.ptis.domain.entity.property.BaseRegisterResult;
+
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonSerializationContext;
 import com.google.gson.JsonSerializer;
-import org.egov.ptis.domain.entity.property.BaseRegisterResult;
-
-import java.lang.reflect.Type;
-import java.math.BigDecimal;
 
 public class BaseRegisterResultAdaptor implements JsonSerializer<BaseRegisterResult> {
 
     @Override
-    public JsonElement serialize(BaseRegisterResult baseRegisterResultObj, Type type, JsonSerializationContext jsc) {
-        JsonObject jsonObject = new JsonObject();
+    public JsonElement serialize(final BaseRegisterResult baseRegisterResultObj, final Type type,
+            final JsonSerializationContext jsc) {
+
+        final JsonObject jsonObject = new JsonObject();
         jsonObject.addProperty("assessmentNo", baseRegisterResultObj.getAssessmentNo());
         jsonObject.addProperty("ownerName", baseRegisterResultObj.getOwnerName());
         jsonObject.addProperty("doorNo", baseRegisterResultObj.getDoorNO());
@@ -62,23 +65,37 @@ public class BaseRegisterResultAdaptor implements JsonSerializer<BaseRegisterRes
         jsonObject.addProperty("exemption", baseRegisterResultObj.getIsExempted());
         jsonObject.addProperty("courtCase", baseRegisterResultObj.getCourtCase());
         jsonObject.addProperty("arrearPeriod", baseRegisterResultObj.getArrearPeriod());
-        jsonObject.addProperty("generalTax", (baseRegisterResultObj.getPropertyTax() !=null ? baseRegisterResultObj
-                .getPropertyTax().toString() : ""));
-        jsonObject.addProperty("libraryCessTax",(baseRegisterResultObj.getLibraryCessTax() !=null ? baseRegisterResultObj.getLibraryCessTax().toString() : ""));
-        jsonObject.addProperty("eduCessTax", (baseRegisterResultObj.getEduCessTax() != null ? baseRegisterResultObj.getEduCessTax().toString() : ""));
-        jsonObject.addProperty("penaltyFinesTax",(baseRegisterResultObj.getPenaltyFines() != null ? baseRegisterResultObj.getPenaltyFines().toString() : ""));
-        jsonObject.addProperty("currTotal", (baseRegisterResultObj.getCurrTotal() != null ? baseRegisterResultObj.getCurrTotal().toString() : ""));
-        jsonObject.addProperty("arrearPropertyTax",(baseRegisterResultObj.getArrearPropertyTax() != null ? baseRegisterResultObj.getArrearPropertyTax().toString() : ""));
-        jsonObject.addProperty("arrearlibCess",(baseRegisterResultObj.getArrearLibraryTax() != null ? baseRegisterResultObj.getArrearLibraryTax().toString() : ""));
-        jsonObject.addProperty("arrearEduCess", (baseRegisterResultObj.getArrearEduCess() != null ? baseRegisterResultObj.getArrearEduCess().toString() : ""));
-        jsonObject.addProperty("arrearTotal", (baseRegisterResultObj.getArrearTotal() != null ? baseRegisterResultObj.getArrearTotal().toString() : ""));
-        jsonObject.addProperty("arrearPenaltyFines",(baseRegisterResultObj.getArrearPenaltyFines() != null ? baseRegisterResultObj.getArrearPenaltyFines().toString() : ""));
-        jsonObject.addProperty("arrearColl", (baseRegisterResultObj.getArrearColl() != null ? baseRegisterResultObj.getArrearColl().toString() : ""));
-        jsonObject.addProperty("currentColl", (baseRegisterResultObj.getCurrentColl() != null ? baseRegisterResultObj.getCurrentColl().toString() : ""));
-        jsonObject.addProperty("totalColl", (baseRegisterResultObj.getTotalColl() != null ? baseRegisterResultObj.getTotalColl().toString() : ""));
-        jsonObject.addProperty("propertyUsage",(baseRegisterResultObj.getPropertyUsage() != null) ? baseRegisterResultObj.getPropertyUsage().toString() : "");
-        jsonObject.addProperty("classification",(baseRegisterResultObj.getClassificationOfBuilding() != null) ? baseRegisterResultObj.getClassificationOfBuilding().toString() : "");
-        jsonObject.addProperty("area", (baseRegisterResultObj.getPlinthArea() != null) ? baseRegisterResultObj
+        jsonObject.addProperty("generalTax", baseRegisterResultObj.getPropertyTax() != null ? baseRegisterResultObj
+                .getPropertyTax().toString() : "");
+        jsonObject.addProperty("libraryCessTax",
+                baseRegisterResultObj.getLibraryCessTax() != null ? baseRegisterResultObj.getLibraryCessTax().toString() : "");
+        jsonObject.addProperty("eduCessTax",
+                baseRegisterResultObj.getEduCessTax() != null ? baseRegisterResultObj.getEduCessTax().toString() : "");
+        jsonObject.addProperty("penaltyFinesTax",
+                baseRegisterResultObj.getPenaltyFines() != null ? baseRegisterResultObj.getPenaltyFines().toString() : "");
+        jsonObject.addProperty("currTotal",
+                baseRegisterResultObj.getCurrTotal() != null ? baseRegisterResultObj.getCurrTotal().toString() : "");
+        jsonObject.addProperty("arrearPropertyTax", baseRegisterResultObj.getArrearPropertyTax() != null
+                ? baseRegisterResultObj.getArrearPropertyTax().toString() : "");
+        jsonObject.addProperty("arrearlibCess", baseRegisterResultObj.getArrearLibraryTax() != null
+                ? baseRegisterResultObj.getArrearLibraryTax().toString() : "");
+        jsonObject.addProperty("arrearEduCess",
+                baseRegisterResultObj.getArrearEduCess() != null ? baseRegisterResultObj.getArrearEduCess().toString() : "");
+        jsonObject.addProperty("arrearTotal",
+                baseRegisterResultObj.getArrearTotal() != null ? baseRegisterResultObj.getArrearTotal().toString() : "");
+        jsonObject.addProperty("arrearPenaltyFines", baseRegisterResultObj.getArrearPenaltyFines() != null
+                ? baseRegisterResultObj.getArrearPenaltyFines().toString() : "");
+        jsonObject.addProperty("arrearColl",
+                baseRegisterResultObj.getArrearColl() != null ? baseRegisterResultObj.getArrearColl().toString() : "");
+        jsonObject.addProperty("currentColl",
+                baseRegisterResultObj.getCurrentColl() != null ? baseRegisterResultObj.getCurrentColl().toString() : "");
+        jsonObject.addProperty("totalColl",
+                baseRegisterResultObj.getTotalColl() != null ? baseRegisterResultObj.getTotalColl().toString() : "");
+        jsonObject.addProperty("propertyUsage",
+                baseRegisterResultObj.getPropertyUsage() != null ? baseRegisterResultObj.getPropertyUsage().toString() : "");
+        jsonObject.addProperty("classification", baseRegisterResultObj.getClassificationOfBuilding() != null
+                ? baseRegisterResultObj.getClassificationOfBuilding().toString() : "");
+        jsonObject.addProperty("area", baseRegisterResultObj.getPlinthArea() != null ? baseRegisterResultObj
                 .getPlinthArea().setScale(2, BigDecimal.ROUND_HALF_UP).toString() : "");
         return jsonObject;
     }

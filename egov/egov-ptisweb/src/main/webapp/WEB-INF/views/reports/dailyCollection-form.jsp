@@ -180,7 +180,9 @@ body
 								<td></td>
 								<td></td>
 								<td></td>
+								<td></td>
 								<td>Total</td>  
+								<td></td>
 								<td></td>
 								<td></td>
 								<td></td>
