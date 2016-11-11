@@ -60,6 +60,7 @@ public class ApplicationSearchRequest {
     private String cityName;
     private String applicationStatus;
     private Date applicationdate;
+    private String applicationCreatedDate;
     private String source;
 
     public String getModuleName() {
@@ -233,6 +234,14 @@ public class ApplicationSearchRequest {
 
     public void setOwnername(String ownername) {
         this.ownername = ownername;
+    }
+
+    public String getApplicationCreatedDate() {
+        return applicationCreatedDate;
+    }
+
+    public void setApplicationCreatedDate(String applicationCreatedDate) {
+        this.applicationCreatedDate = applicationCreatedDate;
     }
 
     

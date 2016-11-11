@@ -40,6 +40,7 @@
 
 package org.egov.wtms.web.controller.elasticSearch;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -127,6 +128,7 @@ public class ApplicationSearchController {
     @ResponseBody
     public List<ApplicationSearchRequest> searchApplication(
             @ModelAttribute final ApplicationSearchRequest searchRequest) {
+        final SimpleDateFormat ft = new SimpleDateFormat("dd/MM/yyyy");
         List<ApplicationDocument> applicationDocumentList = new ArrayList<ApplicationDocument>();
         final List<ApplicationSearchRequest> finalResult = new ArrayList<ApplicationSearchRequest>();
         applicationDocumentList = findAllAppicationIndexByFilter(searchRequest);
@@ -139,7 +141,8 @@ public class ApplicationSearchController {
             customerObj.setOwnername(applicationIndex.getOwnerName());
             customerObj.setSource(applicationIndex.getChannel());
             customerObj.setApplicationType(applicationIndex.getApplicationType());
-            customerObj.setApplicationdate(applicationIndex.getApplicationDate());
+            if (applicationIndex.getApplicationDate() != null)
+                customerObj.setApplicationCreatedDate(ft.format(applicationIndex.getApplicationDate()));
             customerObj.setUrl(applicationIndex.getUrl());
             customerObj.setApplicationStatus(applicationIndex.getStatus());
             finalResult.add(customerObj);
@@ -150,17 +153,22 @@ public class ApplicationSearchController {
 
     private BoolQueryBuilder getFilterQuery(final ApplicationSearchRequest searchRequest) {
         final City cityWebsite = cityService.getCityByCode(ApplicationThreadLocals.getCityCode());
-        BoolQueryBuilder boolQuery = QueryBuilders.boolQuery()
-                .filter(QueryBuilders.termQuery("cityName", cityWebsite.getName()));
+        BoolQueryBuilder boolQuery = new BoolQueryBuilder();
+        QueryBuilders.boolQuery().filter(QueryBuilders.termQuery("cityName", cityWebsite.getName()));
         if (StringUtils.isNotBlank(searchRequest.getApplicantName()))
             boolQuery = boolQuery.filter(QueryBuilders.matchQuery("applicantName", searchRequest.getApplicantName()));
-
         if (StringUtils.isNotBlank(searchRequest.getConsumerCode()))
             boolQuery = boolQuery.filter(QueryBuilders.matchQuery("consumerCode", searchRequest.getConsumerCode()));
-
         if (StringUtils.isNotBlank(searchRequest.getApplicationStatus()))
-            boolQuery = boolQuery.filter(QueryBuilders.matchQuery("status", searchRequest.getApplicationStatus()));
-
+            if (searchRequest.equals(WaterTaxConstants.APPLICATIONSTATUSOPEN))
+                boolQuery = boolQuery.filter(QueryBuilders.matchQuery("isClosed", Integer.toString(1)));
+            else if (searchRequest.getApplicationStatus().equals(WaterTaxConstants.APPLICATIONSTATUSCLOSED))
+                boolQuery = boolQuery.filter(QueryBuilders.matchQuery("isClosed", Integer.toString(0)));
+            else {
+                // boolQuery =
+                // boolQuery.filter(QueryBuilders.matchQuery("isClosed",
+                // searchRequest.getApplicationStatus()));
+            }
         if (StringUtils.isNotBlank(searchRequest.getMobileNumber()))
             boolQuery = boolQuery.filter(QueryBuilders.matchQuery("mobileNumber", searchRequest.getMobileNumber()));
 
@@ -188,6 +196,7 @@ public class ApplicationSearchController {
     public List<ApplicationDocument> findAllAppicationIndexByFilter(final ApplicationSearchRequest searchRequest) {
 
         final BoolQueryBuilder query = getFilterQuery(searchRequest);
+
         final SearchQuery searchQuery = new NativeSearchQueryBuilder()
                 .withIndices(WaterTaxConstants.APPLICATION_TAX_INDEX_NAME).withQuery(query).build();
 
