@@ -756,15 +756,16 @@ public class ComplaintController extends ApiController {
         try {
 
             final JsonObject complaintJson = new JsonParser().parse(complaintJsonStr).getAsJsonObject();
-
             final Complaint complaint = complaintService.getComplaintByCRN(complaintNo);
             final ComplaintStatus cmpStatus = complaintStatusService.getByName(complaintJson.get("action").getAsString());
-            complaint.setStatus(cmpStatus);
+            final String keyApprovalPosition="approvalposition";
 
+            complaint.setStatus(cmpStatus);
+            
             Long approvalPosition=0l;
 
-            if (complaintJson.has("approvalposition"))
-              approvalPosition = Long.valueOf(complaintJson.get("approvalposition").getAsString());
+            if (complaintJson.has(keyApprovalPosition))
+              approvalPosition = Long.valueOf(complaintJson.get(keyApprovalPosition).getAsString());
 
             if (files.length > 0)
                 complaint.getSupportDocs().addAll(addToFileStore(files));
