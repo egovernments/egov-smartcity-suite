@@ -326,4 +326,24 @@
     	<put-attribute name="page-title" value="lbl.title.dcbReportVLT.report" cascade="true"/>
     	<put-attribute name="body" value="/WEB-INF/views/reports/dcbreportvlt-form.jsp"/>
     </definition>    
+    <definition name="deactivation-form" extends="base_layout">
+	<put-attribute name="page-title" value="lbl.deactivation.title"
+		cascade="true" />
+	<put-attribute name="body"
+		value="/WEB-INF/views/transactions/deactivation/deactivation-form.jsp" />
+</definition>
+
+	<definition name="deactivation-success" extends="base_layout">
+		<put-attribute name="page-title" value="lbl.deactivation.title"
+			cascade="true" />
+		<put-attribute name="body"
+			value="/WEB-INF/views/transactions/deactivation/deactivation-success.jsp" />
+	</definition>
+
+	<definition name="deactivation-docupload" extends="base_layout">
+		<put-attribute name="page-title" value="lbl.deactivation.title"
+			cascade="true" />
+		<put-attribute name="body"
+			value="/WEB-INF/jsp/common/documents-upload.jsp" />
+	</definition>
 </tiles-definitions> 
