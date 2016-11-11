@@ -87,29 +87,41 @@ function deleteRow(obj,tableName) {
 		var idx=0;
 		//regenerate index existing inputs in table row
 		$("#"+tableName+" tbody tr").each(function() {
+			console.log('Index:'+idx)
+			$(this).find("input,select,errors,span").each(function() {
+				   $(this).attr({
+				      'name': function(_, name) {
+				    	  if(!($(this).attr('name')===undefined)){
+				    		  name= name.replace(/\_./g, '_'+ idx )
+				    		  return name.replace(/\[.\]/g, '['+ idx +']'); 
+				    	  }
+				      },
+				      'id': function(_, id) {
+				    	  if(!($(this).attr('id')===undefined)){
+				    		  id= id.replace(/\_./g, '_'+ idx )
+				    		  return id.replace(/\[.\]/g, '['+ idx +']'); 
+				    	  }
+				      },
+				      'class': function(_, id) {
+				    	  if(!($(this).attr('class')===undefined)){
+				    		  id= id.replace(/\_./g, '_'+ idx )
+				    		  return id.replace(/\[.\]/g, '['+ idx +']'); 
+				    	  }
+				      },
+					  'data-idx' : function(_,dataIdx)
+					  {
+						  return idx;
+					  }
+				   });
+		    });
+			idx++;
 		
-			hiddenElem=$(this).find("input:hidden");
+			//hiddenElem=$(this).find("input:hidden");
 			
-			if(!$(hiddenElem).val())
-			{
-				$(this).find("input,select,errors,span").each(function() {
-					   $(this).attr({
-					      'name': function(_, name) {
-					    	  if(!($(this).attr('name')===undefined))
-					    		  return name.replace(/\[.\]/g, '['+ idx +']'); 
-					      },
-					      'id': function(_, id) {
-					    	  if(!($(this).attr('id')===undefined))
-					    		  return id.replace(/\[.\]/g, '['+ idx +']'); 
-					      },
-						  'data-idx' : function(_,dataIdx)
-						  {
-							  return idx;
-						  }
-					   });
-			    });
-				idx++;
-			}
+			/*if(!$(hiddenElem).val())
+			{*/
+				
+			//}
 		});
 		return true;
 	}	

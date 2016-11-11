@@ -45,7 +45,6 @@ import org.egov.infra.persistence.entity.AbstractAuditable;
 import org.egov.infra.workflow.entity.State;
 import org.egov.portal.entity.enums.MessageType;
 import org.egov.portal.entity.enums.Priority;
-import org.hibernate.search.annotations.DocumentId;
 import org.hibernate.validator.constraints.Length;
 
 import javax.persistence.Column;
@@ -65,6 +64,8 @@ import javax.persistence.TemporalType;
 import javax.validation.constraints.NotNull;
 import java.util.Date;
 
+import static org.egov.portal.entity.CitizenInbox.SEQ_CITIZENINBOX;
+
 /**
  * CitizenInbox class
  *
@@ -72,13 +73,11 @@ import java.util.Date;
  */
 @Entity
 @Table(name = "egp_citizeninbox")
-@SequenceGenerator(name = CitizenInbox.SEQ_CITIZENINBOX, sequenceName = CitizenInbox.SEQ_CITIZENINBOX, allocationSize = 1)
+@SequenceGenerator(name = SEQ_CITIZENINBOX, sequenceName = SEQ_CITIZENINBOX, allocationSize = 1)
 public class CitizenInbox extends AbstractAuditable {
 
-    private static final long serialVersionUID = -2303996521024126504L;
     public static final String SEQ_CITIZENINBOX = "seq_egp_citizeninbox";
-
-    @DocumentId
+    private static final long serialVersionUID = -2303996521024126504L;
     @Id
     @GeneratedValue(generator = SEQ_CITIZENINBOX, strategy = GenerationType.SEQUENCE)
     private Long id;

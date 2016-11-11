@@ -40,19 +40,11 @@
 
 package org.egov.api.model;
 
-import org.egov.search.domain.Filter;
-import org.egov.search.domain.Filters;
 import org.jboss.logging.Logger;
 import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
 
-import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.List;
-
-import static org.egov.search.domain.Filter.queryStringFilter;
-import static org.egov.search.domain.Filter.rangeFilter;
-import static org.egov.search.domain.Filter.termsStringFilter;
 
 public class ComplaintSearchRequest {
     private String searchText;
@@ -174,25 +166,25 @@ public class ComplaintSearchRequest {
 
     }
 
-    public Filters searchFilters() {
-        final List<Filter> andFilters = new ArrayList<>();
-        andFilters.add(termsStringFilter("clauses.ulb", currentUlb));
-        andFilters.add(termsStringFilter("clauses.crn", complaintNumber));
-        andFilters.add(queryStringFilter("common.citizen.name", complainantName));
-        andFilters.add(queryStringFilter("common.citizen.mobile", complainantPhoneNumber));
-        andFilters.add(queryStringFilter("common.citizen.email", complainantEmail));
-        andFilters.add(queryStringFilter("clauses.status.name", complaintStatus));
-        andFilters.add(queryStringFilter("clauses.receivingMode", receivingCenter));
-        andFilters.add(queryStringFilter("searchable.complaintType.name", complaintType));
-        andFilters.add(rangeFilter("common.createdDate", complaintDateFrom, complaintDateTo));
-        andFilters.add(rangeFilter("common.createdDate", fromDate, toDate));
-        andFilters.add(queryStringFilter("searchable.complaintType.department.name", complaintDepartment));
-        andFilters.add(queryStringFilter("common.boundary.name", location));
-        if (logger.isDebugEnabled())
-            logger.debug("finished filters");
-        return Filters.withAndFilters(andFilters);
-    }
-
+    /* public Filters searchFilters() {
+         final List<Filter> andFilters = new ArrayList<>();
+         andFilters.add(termsStringFilter("clauses.ulb", currentUlb));
+         andFilters.add(termsStringFilter("clauses.crn", complaintNumber));
+         andFilters.add(queryStringFilter("common.citizen.name", complainantName));
+         andFilters.add(queryStringFilter("common.citizen.mobile", complainantPhoneNumber));
+         andFilters.add(queryStringFilter("common.citizen.email", complainantEmail));
+         andFilters.add(queryStringFilter("clauses.status.name", complaintStatus));
+         andFilters.add(queryStringFilter("clauses.receivingMode", receivingCenter));
+         andFilters.add(queryStringFilter("searchable.complaintType.name", complaintType));
+         andFilters.add(rangeFilter("common.createdDate", complaintDateFrom, complaintDateTo));
+         andFilters.add(rangeFilter("common.createdDate", fromDate, toDate));
+         andFilters.add(queryStringFilter("searchable.complaintType.department.name", complaintDepartment));
+         andFilters.add(queryStringFilter("common.boundary.name", location));
+         if (logger.isDebugEnabled())
+             logger.debug("finished filters");
+         return Filters.withAndFilters(andFilters);
+     }
+ */
     public String searchQuery() {
         return searchText;
     }

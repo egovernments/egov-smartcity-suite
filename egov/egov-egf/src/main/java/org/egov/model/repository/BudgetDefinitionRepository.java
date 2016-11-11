@@ -75,4 +75,14 @@ public interface BudgetDefinitionRepository extends JpaRepository<Budget, java.l
     Long countByStatusIdInAndFinancialYearIdIs(Integer statusId, Long financialYearId);
 
     Long countByIdNotInAndFinancialYearIdIs(List<Long> budgetId, Long financialYearId);
+    
+    @Query("select count(b) from Budget b where parent is null")
+    Long getRootBudgetsCount();
+    
+    @Query("select count(b) from Budget b where parent=:parent")
+    Long getChildBudgetsCount(@Param("parent") Budget parent);
+    
+    @Query("select bd.referenceBudget.id from Budget bd where bd.referenceBudget.id is not null and "
+            + "bd.financialYear.id=:financialYearId")
+    List<Long>  getReferenceBudgetIds(@Param("financialYearId") Long financialYearId );
 }

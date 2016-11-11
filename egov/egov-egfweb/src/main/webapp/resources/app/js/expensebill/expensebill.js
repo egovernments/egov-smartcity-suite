@@ -7,12 +7,26 @@ var billamount = 0;
 var debitamount = 0;
 var creditamount = 0;
 $(document).ready(function(){
-	calculateBillAmount();
+	
+	if($("#mode").val() == 'edit'){
+		billamount = $("#billamount").val();
+		creditamount = $("#billamount").val();
+		debitamount = $("#billamount").val();
+		$("#expenseBillAmount").html(billamount);
+		$("#expenseBillTotalDebitAmount").html(debitamount);
+		$("#expenseBillTotalCreditAmount").html(creditamount);
+		$("#billamount").val(billamount);
+	}
+	else{
+		calculateBillAmount();
+	}
 	$('#subLedgerType').trigger("change");
+	$('#billSubType').trigger("change");
 	$netPayableAccountCodeId = $('#netPayableAccountCode').val();
 	patternvalidation(); 
 	debitGlcode_initialize();
 	creditGlcode_initialize();
+	$('#fund').val($('#fund').val());
 	var entityName = new Bloodhound({
 		datumTokenizer : function(datum) {
 			return Bloodhound.tokenizers.whitespace(datum.value);
@@ -62,11 +76,22 @@ $('.btn-primary').click(function(){
 			return false;
 		if(!validate())
 				return false;
-		return validateWorkFlowApprover(button);
+		if(validateWorkFlowApprover(button)){
+			deleteHiddenSubledgerRow();
+			return true;
+		}
 	}
-	return validateWorkFlowApprover(button);
+	if(validateWorkFlowApprover(button)){
+		deleteHiddenSubledgerRow();
+		return true;
+	}
 });
-
+function deleteHiddenSubledgerRow(){
+	var subLedgerCount = $("#tblsubledgerdetails > tbody > tr:visible[id='subledhgerrow']").length;
+	if(subLedgerCount==0){
+		deleteRow($(".subLedgerAmount_0")[0],'tblsubledgerdetails');
+	}
+}
 function debitGlcode_initialize() {
 	 var custom = new Bloodhound({
 	    datumTokenizer: function(d) { return d.tokens; },
@@ -98,7 +123,7 @@ function debitGlcode_initialize() {
 
    custom.initialize();
 
-   $('.debitGlcode').typeahead({
+   var dt = $('.debitGlcode').typeahead({
    	hint : true,
 		highlight : true,
 		minLength : 3
@@ -123,11 +148,13 @@ function debitGlcode_initialize() {
 	    if(data.issubledger && originaldetailtypeid!='' && originaldetailkeyid=='')
 	    {
 		   bootbox.alert("Please Enter "+subLedgerDisplayName,function() {
-				$(this).parents("tr:first").find('.debitGlcode').val('');
+			    var index= dt.length - 1;
+				document.getElementById('tempDebitDetails['+index+'].debitGlcode').value = "";
 			});
 	    }else if(flag){
 			bootbox.alert("Debit code already added", function() {
-				$(this).parents("tr:first").find('.debitGlcode').val('');
+				var index= dt.length - 1;
+				document.getElementById('tempDebitDetails['+index+'].debitGlcode').value = "";
 			});
 		}else{
 			$(this).parents("tr:first").find('.debitdetailname').val(data.name);
@@ -197,11 +224,13 @@ function creditGlcode_initialize() {
 	   if(data.issubledger && originaldetailtypeid!='' && originaldetailkeyid=='')
 	    {
 		   bootbox.alert("Please Enter "+subLedgerDisplayName,function() {
-				$(this).parents("tr:first").find('.debitGlcode').val('');
+			   var index= dt.length - 1;
+				document.getElementById('tempCreditDetails['+index+'].creditGlcode').value = "";
 			});
 	    }else if(flag){
 			bootbox.alert("Credit code already added", function() {
-				$(this).parents("tr:first").find('.creditGlcode').val('');
+				var index= dt.length - 1;
+				document.getElementById('tempCreditDetails['+index+'].creditGlcode').value = "";
 			});
 		}else{
 			$(this).parents("tr:first").find('.creditdetailname').val(data.name);
@@ -253,13 +282,6 @@ $('#subLedgerType').change(function () {
 					var responseObj = JSON.parse(response);
 					$.each(responseObj, function(index, value) {
 						var selected="";
-						if($netPayableAccountCodeId)
-						{
-							if($netPayableAccountCodeId==value.id)
-							{
-								selected="selected";
-							}
-						}
 						$('#netPayableAccountCode').append($('<option '+ selected +'>').text(value.glcode + '-' +value.name + '~' + value.isSubLedger).attr('value', value.id));
 					});
 				});
@@ -284,9 +306,9 @@ $('#billSubType').change(function () {
 							output = '<tr>';
 							output = output + '<td class="text-left">' + value.value + '</td>'
 							output = output + '<td class="text-right">'
-							output = output + '<input id="checkLists['+index+'].id" name="checkLists['+index+'].id" type="hidden" value="'+ value.id +'"/>'
-							output = output + '<select id="checkLists['+index+'].val" name="checkLists['+index+'].val" data-first-option="false" class="form-control">'
-							output = output + '<option value="">N/A</option>'
+							output = output + '<input id="checkLists['+index+'].appconfigvalue.id" name="checkLists['+index+'].appconfigvalue.id" type="hidden" value="'+ value.id +'"/>'
+							output = output + '<select id="checkLists['+index+'].checklistvalue" name="checkLists['+index+'].checklistvalue" data-first-option="false" class="form-control">'
+							output = output + '<option value="na">N/A</option>'
 							output = output + '<option value="Yes">Yes</option>'
 							output = output + '<option value="No">No</option>'
 							output = output + '</select>'
@@ -612,7 +634,7 @@ $("#populateAccountDetails").click(function () {
 				$('#accountdetailsrow').removeAttr('accountdetailsinvisible');
 				$('#accountDetailsGlCodeId_' + accountDetailsCount).val($(this).find("#netPayableAccountCode").val());    
 			    $('.accountDetailsGlCode_' + accountDetailsCount).html($(this).find("#netPayableGlcode").val());
-				$('.accountDetailsAccountHead_' + accountDetailsCount).html($(this).find("#netPayableAccountHead").val());
+				$('.accountDetailsAccountHead_' + accountDetailsCount).html($(this).find("#netPayableAccountHead").val().split("~")[0]);
 				$('.accountDetailsDebitAmount_' + accountDetailsCount).html('0.00');
 				$('.accountDetailsCreditAmount_' + accountDetailsCount).html($(this).find("#netPayableAmount").val());
 				$('#accountDetailsDebitAmount_' + accountDetailsCount).val('0.00');
@@ -655,7 +677,7 @@ function validate(){
 		return false;
 	}
 	
-	if(!$netPayableAccountCodeId)
+	if(!$netPayableAccountCodeId && $("#mode").val() != 'edit')
 	{
 		bootbox.alert("Please select one Net payable account detail");
 		return false;
@@ -665,8 +687,8 @@ function validate(){
 
 function clearAllDetails() {
 	var debitDetailsCount = $("#tbldebitdetails > tbody > tr:visible[id='debitdetailsrow']").length;
-	for (var i = 1; i <= debitDetailsCount; i++) {
-		if(debitDetailsCount == i){
+	for (var i = debitDetailsCount; i >= 1; i--) {
+		if(1 == i){
 			document.getElementById('tempDebitDetails[0].debitGlcode').value = "";
 			document.getElementById('tempDebitDetails[0].glcode').value = "";
 			document.getElementById('tempDebitDetails[0].glcodeid').value = "";
@@ -676,13 +698,13 @@ function clearAllDetails() {
 			document.getElementById('tempDebitDetails[0].debitamount').value = "";
 		}else{
 			var objects = $('.debit-delete-row');
-			deleteRow(objects[i],'tbldebitdetails');
+			deleteRow(objects[i-1],'tbldebitdetails');
 		}
 	}
 	
 	var creditDetailsCount = $("#tblcreditdetails > tbody > tr:visible[id='creditdetailsrow']").length;
-	for (var i = 1; i <= creditDetailsCount; i++) {
-		if(creditDetailsCount == i){
+	for (var i = creditDetailsCount; i >= 1; i--) {
+		if(1 == i){
 			document.getElementById('tempCreditDetails[0].creditGlcode').value = "";
 			document.getElementById('tempCreditDetails[0].glcode').value = "";
 			document.getElementById('tempCreditDetails[0].glcodeid').value = "";
@@ -692,7 +714,7 @@ function clearAllDetails() {
 			document.getElementById('tempCreditDetails[0].creditamount').value = "";
 		}else{
 			var objects = $('.credit-delete-row');
-			deleteRow(objects[i],'tblcreditdetails');
+			deleteRow(objects[i-1],'tblcreditdetails');
 		}
 	}
 	

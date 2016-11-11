@@ -58,6 +58,7 @@ import org.egov.adtax.entity.enums.AdvertisementStatus;
 import org.egov.adtax.exception.HoardingValidationError;
 import org.egov.adtax.repository.AdvertisementPermitDetailRepository;
 import org.egov.adtax.search.contract.HoardingSearch;
+import org.egov.adtax.service.es.AdvertisementPermitDetailUpdateIndexService;
 import org.egov.adtax.utils.constants.AdvertisementTaxConstants;
 import org.egov.adtax.workflow.AdtaxWorkflowCustomDefaultImpl;
 import org.egov.collection.integration.services.CollectionIntegrationService;

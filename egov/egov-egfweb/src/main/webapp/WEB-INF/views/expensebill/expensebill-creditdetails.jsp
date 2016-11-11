@@ -46,6 +46,8 @@
 	<div class="panel-title">
 		<spring:message code="lbl.credit.details" />
 	</div>
+</div>
+<div class="panel-body">
 	<table class="table table-bordered" id="tblcreditdetails">
 		<thead>
 			<tr>
@@ -66,14 +68,12 @@
 					<form:hidden path="" name="tempCreditDetails[0].detailKeyId" id="tempCreditDetails[0].detailKeyId" class="form-control table-input hidden-input creditDetailKeyId"/> 
 					<form:hidden path="" name="tempCreditDetails[0].detailTypeName" id="tempCreditDetails[0].detailTypeName" class="form-control table-input hidden-input creditDetailTypeName"/>
 					<form:hidden path="" name="tempCreditDetails[0].detailKeyName" id="tempCreditDetails[0].detailKeyName" class="form-control table-input hidden-input creditDetailKeyName"/> 
-					<form:errors path="" name="tempCreditDetails[0].glcodeid" cssClass="add-margin error-msg" /> 
 				</td>
 				<td>
 					<input type="text" id="tempCreditDetails[0].creditAccountHead" name="tempCreditDetails[0].creditAccountHead"  class="form-control creditdetailname" disabled>  
 				</td>
 				<td>
 					<form:input path="" name="tempCreditDetails[0].creditamount" id="tempCreditDetails[0].creditamount" data-errormsg="Credit Amount is mandatory!" onkeyup="decimalvalue(this);" data-pattern="decimalvalue" data-idx="0" data-optional="0" class="form-control table-input text-right creditAmount"   maxlength="12"  />
-					<form:errors path="" name="tempCreditDetails[0].creditamount" cssClass="add-margin error-msg" /> 
 				</td> 
 				<td class="text-center"><span style="cursor:pointer;" onclick="addCreditDetailsRow();"><i class="fa fa-plus"></i></span>
 				 <span class="add-padding credit-delete-row" onclick="deleteCreditDetailsRow(this);"><i class="fa fa-trash" data-toggle="tooltip" title="" data-original-title="Delete!"></i></span> </td>

@@ -1,0 +1,1 @@
+alter table egcncl_meeting_mom add column itemnumber varchar(25) not null default 1;

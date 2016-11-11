@@ -122,7 +122,7 @@ public class TradeLicenseService extends AbstractLicenseService<TradeLicense> {
     public void updateTradeLicense(final TradeLicense license, final WorkflowBean workflowBean) {
         licenseRepository.save(license);
         tradeLicenseSmsAndEmailService.sendSmsAndEmail(license, workflowBean.getWorkFlowAction());
-        updateIndexService.updateTradeLicenseIndexes(license);
+        licenseApplicationIndexService.createOrUpdateLicenseApplicationIndex(license);
     }
 
     @Transactional
@@ -192,14 +192,14 @@ public class TradeLicenseService extends AbstractLicenseService<TradeLicense> {
     }
 
     public ReportOutput prepareReportInputDataForDig(final License license, final String districtName,
-            final String cityMunicipalityName) {
+                                                     final String cityMunicipalityName) {
         return reportService.createReport(
                 new ReportRequest("licenseCertificate", license, getReportParamsForCertificate(license, districtName,
                         cityMunicipalityName)));
     }
 
     private Map<String, Object> getReportParamsForCertificate(final License license, final String districtName,
-            final String cityMunicipalityName) {
+                                                              final String cityMunicipalityName) {
         final Map<String, Object> reportParams = new HashMap<>();
         final SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
         final Format formatterYear = new SimpleDateFormat("YYYY");
@@ -216,7 +216,7 @@ public class TradeLicenseService extends AbstractLicenseService<TradeLicense> {
         reportParams
                 .put("appType", license.getLicenseAppType() != null
                         ? "New".equals(license.getLicenseAppType().getName())
-                                ? "New Trade" : "Renewal"
+                        ? "New Trade" : "Renewal"
                         : "New");
         if (ApplicationThreadLocals.getMunicipalityName().contains("Corporation"))
             reportParams.put("carporationulbType", Boolean.TRUE);

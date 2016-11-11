@@ -828,7 +828,6 @@ label.error {
   position: relative;
   max-width: 450px;
   margin: 5px auto;
-  text-align: center;
   border: 1px solid #f2f2f2;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
@@ -837,7 +836,7 @@ label.error {
   padding: 20px;
 }
 .page-container .main-content .login-content-margin {
-  margin: 1% auto 0% auto;
+  margin: 4% auto 0% auto;
 }
 .page-container .main-content .citizen-screens .padding-tb {
   padding: 10px 0px;
@@ -1562,9 +1561,6 @@ label.error {
   outline: 0;
 }
 /*Custom form css overrided*/
-.btn {
-  margin: 0 2px;
-}
 .btn:hover,
 .btn:focus,
 .btn.focus {
@@ -1651,6 +1647,13 @@ label.error {
 .form-group {
   margin-bottom: 0px;
 }
+.form-group.overflow {
+  overflow: auto;
+}
+.form-group label.align-top {
+  position: relative;
+  top: -15px;
+}
 .form-group div {
   margin-bottom: 15px;
 }
@@ -1672,6 +1675,7 @@ label.error {
 }
 .form-group .input-group .input-group-addon i {
   color: #6b4f2c;
+  cursor: pointer;
 }
 .form-group .input-group .input-group-addon i.specific {
   color: #fff;
@@ -1700,7 +1704,7 @@ label.error {
 .set-mandatory {
   position: absolute;
   top: 4px;
-  right: 7px;
+  right: 0px;
   z-index: 10;
 }
 .g-recaptcha div {

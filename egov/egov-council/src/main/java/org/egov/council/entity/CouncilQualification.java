@@ -1,5 +1,9 @@
 package org.egov.council.entity;
 
+import org.egov.infra.persistence.entity.AbstractAuditable;
+import org.egov.infra.persistence.validator.annotation.Unique;
+import org.hibernate.validator.constraints.Length;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -9,23 +13,16 @@ import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
 
-import org.egov.infra.persistence.entity.AbstractAuditable;
-import org.egov.infra.persistence.validator.annotation.Unique;
-import org.egov.search.domain.Searchable;
-import org.hibernate.validator.constraints.Length;
-import org.hibernate.validator.constraints.NotBlank;
+import static org.egov.council.entity.CouncilQualification.SEQ_COUNCILQUALIFICATION;
 
 @Entity
-@Unique(id = "id", tableName = "egcncl_qualification", fields = { "name" }, columnName = { "name" }, enableDfltMsg = true)
+@Unique(fields = {"name"}, enableDfltMsg = true)
 @Table(name = "egcncl_qualification")
-@Searchable
-@SequenceGenerator(name = CouncilQualification.SEQ_COUNCILQUALIFICATION, sequenceName = CouncilQualification.SEQ_COUNCILQUALIFICATION, allocationSize = 1)
+@SequenceGenerator(name = SEQ_COUNCILQUALIFICATION, sequenceName = SEQ_COUNCILQUALIFICATION, allocationSize = 1)
 public class CouncilQualification extends AbstractAuditable {
 
-    private static final long serialVersionUID = -8211020959691716235L;
-
     public static final String SEQ_COUNCILQUALIFICATION = "seq_egcncl_qualification";
-
+    private static final long serialVersionUID = -8211020959691716235L;
     @Id
     @GeneratedValue(generator = SEQ_COUNCILQUALIFICATION, strategy = GenerationType.SEQUENCE)
     private Long id;
@@ -38,15 +35,15 @@ public class CouncilQualification extends AbstractAuditable {
     @Length(max = 20)
     @Column(name = "code", updatable = false)
     private String code;
-        
+
     @NotNull
     private Boolean isActive;
-    
-    
+
+
     @Length(min = 2, max = 100)
     private String description;
 
-    
+
     public String getDescription() {
         return description;
     }

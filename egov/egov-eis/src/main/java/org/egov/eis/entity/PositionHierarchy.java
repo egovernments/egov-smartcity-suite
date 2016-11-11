@@ -42,8 +42,6 @@ package org.egov.eis.entity;
 import org.egov.commons.ObjectType;
 import org.egov.infra.persistence.entity.AbstractAuditable;
 import org.egov.pims.commons.Position;
-import org.egov.search.domain.Searchable;
-import org.hibernate.search.annotations.DocumentId;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -57,41 +55,36 @@ import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
 
-/**
- * @author Vaibhav.K
- *
- */
+import static org.egov.eis.entity.PositionHierarchy.SEQ_POSITIONHIERARCHY;
+
 @Entity
 @Table(name = "egeis_position_hierarchy")
-@Searchable
-@SequenceGenerator(name = PositionHierarchy.SEQ_POSITIONHIERARCHY, sequenceName = PositionHierarchy.SEQ_POSITIONHIERARCHY, allocationSize = 1)
-public class PositionHierarchy extends AbstractAuditable{
+@SequenceGenerator(name = SEQ_POSITIONHIERARCHY, sequenceName = SEQ_POSITIONHIERARCHY, allocationSize = 1)
+public class PositionHierarchy extends AbstractAuditable {
 
-    private static final long serialVersionUID = 8666462146278384384L;
     public static final String SEQ_POSITIONHIERARCHY = "SEQ_EGEIS_POSITION_HIERARCHY";
-
-    @DocumentId
+    private static final long serialVersionUID = 8666462146278384384L;
     @Id
     @GeneratedValue(generator = SEQ_POSITIONHIERARCHY, strategy = GenerationType.SEQUENCE)
     private Long id;
 
-    
+
     @NotNull
-    @ManyToOne(fetch=FetchType.LAZY)
-    @JoinColumn(name="position_from")
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "position_from")
     private Position fromPosition;
-    
+
     @NotNull
-    @ManyToOne(fetch=FetchType.LAZY)
-    @JoinColumn(name="position_to")
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "position_to")
     private Position toPosition;
-    
+
     @NotNull
-    @ManyToOne(fetch=FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "object_type_id")
     private ObjectType objectType;
-    
-    @Column(name= "object_sub_type")
+
+    @Column(name = "object_sub_type")
     private String objectSubType;
 
     public Position getFromPosition() {
@@ -135,5 +128,5 @@ public class PositionHierarchy extends AbstractAuditable{
     public void setId(Long id) {
         this.id = id;
     }
-    
+
 }

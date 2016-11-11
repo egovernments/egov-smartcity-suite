@@ -67,7 +67,7 @@ public class PendingGrievanceAdaptor implements JsonSerializer<Complaint> {
             jsonObject.addProperty("location", null != complaint.getLocation() ? complaint.getLocation().getName() : "N/A");
         jsonObject.addProperty("status", null != complaint.getStatus() ? complaint.getStatus().getName() : "N/A");
         jsonObject.addProperty("regDate", sdf.format(complaint.getCreatedDate()));
-        jsonObject.addProperty("dueDate", complaint.getEscalationDate().toString("dd/MM/yyyy"));
+        jsonObject.addProperty("dueDate", sdf.format(complaint.getEscalationDate()));
 
         return jsonObject;
     }

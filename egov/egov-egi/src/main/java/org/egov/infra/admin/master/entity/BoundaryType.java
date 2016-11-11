@@ -42,8 +42,6 @@ package org.egov.infra.admin.master.entity;
 
 import com.google.gson.annotations.Expose;
 import org.egov.infra.persistence.entity.AbstractAuditable;
-import org.egov.search.domain.Searchable;
-import org.hibernate.search.annotations.DocumentId;
 import org.hibernate.validator.constraints.NotBlank;
 import org.hibernate.validator.constraints.SafeHtml;
 
@@ -59,23 +57,21 @@ import javax.persistence.Transient;
 import javax.validation.constraints.NotNull;
 import java.util.Set;
 
+import static org.egov.infra.admin.master.entity.BoundaryType.SEQ_BOUNDARY_TYPE;
+
 @Entity
 @Table(name = "EG_BOUNDARY_TYPE")
-@Searchable
-@SequenceGenerator(name = BoundaryType.SEQ_BOUNDARY_TYPE, sequenceName = BoundaryType.SEQ_BOUNDARY_TYPE, allocationSize = 1)
+@SequenceGenerator(name = SEQ_BOUNDARY_TYPE, sequenceName = SEQ_BOUNDARY_TYPE, allocationSize = 1)
 public class BoundaryType extends AbstractAuditable {
 
-    private static final long serialVersionUID = 859229842367886336L;
     public static final String SEQ_BOUNDARY_TYPE = "SEQ_EG_BOUNDARY_TYPE";
-
+    private static final long serialVersionUID = 859229842367886336L;
     @Expose
-    @DocumentId
     @Id
     @GeneratedValue(generator = SEQ_BOUNDARY_TYPE, strategy = GenerationType.SEQUENCE)
     private Long id;
 
     @NotBlank
-    @Searchable(name = "name")
     @SafeHtml
     private String name;
 

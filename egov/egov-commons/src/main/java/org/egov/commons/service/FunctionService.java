@@ -82,6 +82,10 @@ public class FunctionService {
         return functionRepository.save(function);
     }
 
+    public List<CFunction> findAllActive() {
+        return functionRepository.findByIsActiveAndIsNotLeaf(true, false);
+    }
+
     public List<CFunction> findAll() {
         return functionRepository.findAll(new Sort(Sort.Direction.ASC, "name"));
     }
@@ -132,10 +136,7 @@ public class FunctionService {
             predicates.add(
                     cb.equal(functions.get(CFunction_.getDeclaredSingularAttribute("isActive", Boolean.class)), true));
         if (function.getParentId() != null)
-            /*
-             * predicates.add(cb.isNotNull(functions.get("id"))); predicates.add(cb.equal(functions.get(CFunction_.
-             * getDeclaredSingularAttribute("id", Long.class)),function.getParentId().getId()));
-             */
+
             predicates.add(cb.equal(functions.get("parentId"), function.getParentId()));
 
         createQuery.where(predicates.toArray(new Predicate[] {}));

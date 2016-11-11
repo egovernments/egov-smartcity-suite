@@ -41,8 +41,6 @@
 package org.egov.pims.commons;
 
 import org.egov.infra.persistence.entity.AbstractAuditable;
-import org.egov.search.domain.Searchable;
-import org.hibernate.search.annotations.DocumentId;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -56,23 +54,19 @@ import javax.persistence.ManyToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 
+import static org.egov.pims.commons.Position.SEQ_POSITION;
+
 @Entity
 @Table(name = "eg_position")
-@Searchable
-@SequenceGenerator(name = Position.SEQ_POSITION, sequenceName = Position.SEQ_POSITION, allocationSize = 1)
+@SequenceGenerator(name = SEQ_POSITION, sequenceName = SEQ_POSITION, allocationSize = 1)
 public class Position extends AbstractAuditable {
-    private static final long serialVersionUID = -7237503685614187960L;
-
     public static final String SEQ_POSITION = "SEQ_EG_POSITION";
-
-    @DocumentId
+    private static final long serialVersionUID = -7237503685614187960L;
     @Id
     @GeneratedValue(generator = SEQ_POSITION, strategy = GenerationType.SEQUENCE)
-    @Searchable
     private Long id;
 
     @Column(name = "name", unique = true)
-    @Searchable
     private String name;
     @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     @JoinColumn(name = "deptDesig")

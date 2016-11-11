@@ -51,7 +51,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
 
-import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.apache.struts2.convention.annotation.Action;
 import org.apache.struts2.convention.annotation.ParentPackage;
@@ -61,13 +60,9 @@ import org.apache.struts2.interceptor.validation.SkipValidation;
 import org.egov.commons.CFinancialYear;
 import org.egov.commons.CFunction;
 import org.egov.commons.Fund;
-import org.egov.commons.dao.EgwStatusHibernateDAO;
 import org.egov.commons.dao.FinancialYearHibernateDAO;
 import org.egov.eis.entity.Assignment;
-import org.egov.eis.entity.Employee;
-import org.egov.eis.service.AssignmentService;
 import org.egov.eis.service.EisCommonService;
-import org.egov.eis.service.EmployeeService;
 import org.egov.eis.web.actions.workflow.GenericWorkFlowAction;
 import org.egov.infra.admin.master.entity.AppConfigValues;
 import org.egov.infra.admin.master.entity.Department;
@@ -89,6 +84,7 @@ import org.egov.model.voucher.WorkflowBean;
 import org.egov.pims.commons.Designation;
 import org.egov.pims.commons.Position;
 import org.egov.pims.service.EisUtilService;
+import org.egov.services.budget.BudgetDetailActionHelper;
 import org.egov.services.budget.BudgetDetailService;
 import org.egov.services.budget.BudgetService;
 import org.egov.services.voucher.VoucherService;
@@ -108,9 +104,13 @@ import org.springframework.beans.factory.annotation.Qualifier;
         @Result(name = Constants.DETAILLIST, location = "budgetProposal-" + Constants.DETAILLIST + ".jsp"),
         @Result(name = BudgetProposalAction.FAILURE, location = "budgetProposal-failure.jsp"),
         @Result(name = BudgetProposalAction.REPORTVIEW, type = "stream", location = "inputStream", params = {
-                "contentType",
-                "${contentType}", "contentDisposition", "attachment; filename=${fileName}" }) })
+                "contentType", "${contentType}", "contentDisposition", "attachment; filename=${fileName}" }) })
 public class BudgetProposalAction extends GenericWorkFlowAction {
+    private static final String BUDGET_DETAIL_BUDGET_ID = "budgetDetail.budget.id";
+    private static final String WFITEMSTATE2 = "wfitemstate";
+    private static final String DESIGNATION_LIST = "designationList";
+    private static final String DESIGNATION_ID = "designationId";
+    private static final String DESIGNATION_NAME = "designationName";
     private static final long serialVersionUID = 1L;
     private static final String ACTIONNAME = "actionName";
     public static final String REPORTVIEW = "reportview";
@@ -153,6 +153,8 @@ public class BudgetProposalAction extends GenericWorkFlowAction {
     public static final String FAILURE = "failure";
     private static final String SUCCESSFUL = "successful";
     private Date asOndate;
+    @Autowired
+    private BudgetDetailActionHelper budgetDetailActionHelper;
 
     @Autowired
     @Qualifier("persistenceService")
@@ -161,14 +163,6 @@ public class BudgetProposalAction extends GenericWorkFlowAction {
     @Autowired
     private AppConfigValueService appConfigValuesService;
 
-    @Autowired
-    private AssignmentService assignmentService;
-
-    @Autowired
-    private EmployeeService employeeService;
-
-    @Autowired
-    private EgwStatusHibernateDAO egwStatusHibernateDAO;
     private InputStream inputStream;
     private ReportHelper reportHelper;
     private Long docNo;
@@ -178,7 +172,6 @@ public class BudgetProposalAction extends GenericWorkFlowAction {
     private boolean consolidatedScreen;
     private boolean allfunctionsArrived;
     private Integer approverUserId;
-    private Integer userId;
     private String comment;
     private String actionName = "";
 
@@ -229,6 +222,7 @@ public class BudgetProposalAction extends GenericWorkFlowAction {
         return budgetDetail;
     }
 
+    @Override
     public void prepare() {
         super.prepare();
     }
@@ -236,11 +230,12 @@ public class BudgetProposalAction extends GenericWorkFlowAction {
     @Action(value = "/budget/budgetProposal-modifyDetailList")
     public String modifyDetailList() {
         loadToMasterDataMap();
-        if (LOGGER.isInfoEnabled())
+        if (LOGGER.isInfoEnabled()) {
             LOGGER.info("starting modifyDetailList...");
-        if (parameters.get("budgetDetail.budget.id")[0] != null) {
+        }
+        if (parameters.get(BUDGET_DETAIL_BUDGET_ID)[0] != null) {
             budgetDetail = (BudgetDetail) persistenceService.find("from BudgetDetail where budget.id=?",
-                    Long.valueOf(parameters.get("budgetDetail.budget.id")[0]));
+                    Long.valueOf(parameters.get(BUDGET_DETAIL_BUDGET_ID)[0]));
             setTopBudget(budgetDetail.getBudget());
         }
         /*
@@ -259,9 +254,10 @@ public class BudgetProposalAction extends GenericWorkFlowAction {
         twopreviousfinYearRange = beforeLastFinancialYear.getFinYearRange();
 
         budgetDetailApprove();
-        // loadApproverUser(savedbudgetDetailList);
-        if (LOGGER.isInfoEnabled())
+       // loadApproverUser(savedbudgetDetailList);
+        if (LOGGER.isInfoEnabled()) {
             LOGGER.info("completed modifyDetailList");
+        }
         /* return Constants.DETAILLIST; */
         setDocNo(budgetDetail.getDocumentNumber());
         return Constants.DETAILLIST;
@@ -269,24 +265,34 @@ public class BudgetProposalAction extends GenericWorkFlowAction {
 
     @Action(value = "/budget/budgetProposal-modifyBudgetDetailList")
     public String modifyBudgetDetailList() {
-        if (LOGGER.isInfoEnabled())
+        if (LOGGER.isInfoEnabled()) {
             LOGGER.info("Starting modifyBudgetDetailList..............");
+        }
+        if (parameters.get(BUDGET_DETAIL_BUDGET_ID)[0] != null) {
+            budgetDetail = (BudgetDetail) persistenceService.find("from BudgetDetail where budget.id=?",
+                    Long.valueOf(parameters.get(BUDGET_DETAIL_BUDGET_ID)[0]));
+            setTopBudget(budgetDetail.getBudget());
+        }
 
         populateBudgetDetailReport();
-        loadApproverUser(budgetDetailList);
+        // loadApproverUser(budgetDetailList);
         return Constants.DETAILLIST;
     }
 
     private void populateBudgetDetailReport() {
         loadToMasterDataMap();
-        if (budgetDetail.getBudget().getId() != null)
-            /* topBudget = budgetService.find("from Budget where id=?", budgetDetail.getBudget().getId()); */
+        if (budgetDetail.getBudget().getId() != null) {
+            /*
+             * topBudget = budgetService.find("from Budget where id=?", budgetDetail.getBudget().getId());
+             */
             budgetDetail = (BudgetDetail) persistenceService.find("from BudgetDetail where budget.id=?",
-                    Long.valueOf(parameters.get("budgetDetail.budget.id")[0]));
+                    Long.valueOf(parameters.get(BUDGET_DETAIL_BUDGET_ID)[0]));
+        }
         consolidatedScreen = budgetDetailService.toBeConsolidated();
         hod = isHOD();
-        if (hod)
+        if (hod) {
             allfunctionsArrived = validateForAllFunctionsMappedForDept(topBudget, getPosition());
+        }
 
         financialYear = topBudget.getFinancialYear();
         currentfinYearRange = financialYear.getFinYearRange();
@@ -302,7 +308,7 @@ public class BudgetProposalAction extends GenericWorkFlowAction {
 
         budgetApprove();
 
-        loadApproverUser(budgetDetailList);
+        // loadApproverUser(budgetDetailList);
 
     }
 
@@ -311,86 +317,99 @@ public class BudgetProposalAction extends GenericWorkFlowAction {
 
         List<String> validActions = Collections.emptyList();
 
-        if ((budgetDetail.getId() == null) || (budgetDetail.getId() == 0))
+        if (budgetDetail.getId() == null || budgetDetail.getId() == 0) {
             validActions = Arrays.asList(FinancialConstants.BUTTONSAVE, FinancialConstants.BUTTONFORWARD);
-        else if (budgetDetail.getCurrentState() != null)
+        } else if (budgetDetail.getCurrentState() != null) {
             validActions = customizedWorkFlowService.getNextValidActions(budgetDetail.getStateType(),
                     getWorkFlowDepartment(), getAmountRule(), getAdditionalRule(),
                     budgetDetail.getCurrentState().getValue(), getPendingActions(), budgetDetail.getCreatedDate());
-        else if ((budgetDetail.getId() == null) || (budgetDetail.getId() == 0)
-                || budgetDetail.getCurrentState().getValue().endsWith("NEW"))
+        } else if (budgetDetail.getId() == null || budgetDetail.getId() == 0
+                || budgetDetail.getCurrentState().getValue().endsWith("NEW")) {
             // read from constant
             validActions = Arrays.asList(FinancialConstants.BUTTONFORWARD);
+        }
 
         return validActions;
     }
 
     private void loadToMasterDataMap() {
-        if (LOGGER.isInfoEnabled())
+        if (LOGGER.isInfoEnabled()) {
             LOGGER.info("Starting loadToMasterDataMap...... ");
+        }
         final List<BudgetGroup> bgList = masterDataCache.get("egf-budgetGroup");
         budgetGroupMap = new HashMap<Long, BudgetGroup>();
-        for (final BudgetGroup bg : bgList)
+        for (final BudgetGroup bg : bgList) {
             budgetGroupMap.put(bg.getId(), bg);
+        }
         final List<CFunction> fnList = masterDataCache.get("egi-function");
         functionMap = new HashMap<Long, CFunction>();
-        for (final CFunction fn : fnList)
+        for (final CFunction fn : fnList) {
             functionMap.put(fn.getId(), fn);
+        }
 
         final List<Fund> fundList = masterDataCache.get("egi-fund");
         fundMap = new HashMap<Integer, Fund>();
-        for (final Fund f : fundList)
+        for (final Fund f : fundList) {
             fundMap.put(f.getId(), f);
+        }
         final List<Department> deptList = masterDataCache.get("egi-department");
         deptMap = new HashMap<Long, Department>();
-        for (final Department d : deptList)
+        for (final Department d : deptList) {
             deptMap.put(d.getId().longValue(), d);
+        }
         excludelist = appConfigValuesService.getConfigValuesByModuleAndKey(Constants.EGF,
                 "exclude_status_forbudget_actual");
-        if (excludelist.isEmpty())
+        if (excludelist.isEmpty()) {
             throw new ValidationException("", "exclude_status_forbudget_actual is not defined in AppConfig");
-        if (LOGGER.isInfoEnabled())
+        }
+        if (LOGGER.isInfoEnabled()) {
             LOGGER.info("Finished loadToMasterDataMap...... ");
+        }
     }
 
     @SkipValidation
     public String ajaxUpdateBudgetDetail() {
 
         if (validateOwner()) {
-            if (factor.equalsIgnoreCase(bigThousand.toString()))
+            if (factor.equalsIgnoreCase(bigThousand.toString())) {
                 amount = amount.multiply(bigThousand);
+            }
 
             final String query = "update egf_budgetdetail set  " + amountField
                     + "=:amount,Modifiedby=:modifiedby,modifieddate=:modifiedate  where id=:detailId";
-            if (LOGGER.isInfoEnabled())
+            if (LOGGER.isInfoEnabled()) {
                 LOGGER.info(query);
+            }
 
             final Query updateQuery = persistenceService.getSession().createSQLQuery(query)
                     .setBigDecimal("amount", amount).setLong("detailId", detailId)
                     .setDate("modifiedate", new java.sql.Date(new Date().getTime()))
                     .setInteger("modifiedby", ApplicationThreadLocals.getUserId().intValue());
             final int executeUpdate = updateQuery.executeUpdate();
-            if (executeUpdate == 1)
+            if (executeUpdate == 1) {
                 return SUCCESSFUL;
-            else
+            } else {
                 return FAILURE;
+            }
 
-        } else
+        } else {
             return FAILURE;
+        }
 
     }
 
     @Action(value = "/budget/budgetProposal-ajaxDeleteBudgetDetail")
     public String ajaxDeleteBudgetDetail() {
         try {
-            if ((bpBean.getId() != null) && (bpBean.getNextYrId() != null)) {
+            if (bpBean.getId() != null && bpBean.getNextYrId() != null) {
                 persistenceService.getSession().createSQLQuery("delete from egf_budgetdetail where id in ("
                         + bpBean.getId() + "," + bpBean.getNextYrId() + ")").executeUpdate();
                 persistenceService.getSession().flush();
             }
         } catch (final HibernateException e) {
-            if (LOGGER.isDebugEnabled())
+            if (LOGGER.isDebugEnabled()) {
                 LOGGER.debug("error while deleting");
+            }
             return FAILURE;
         }
         return SUCCESSFUL;
@@ -405,8 +424,9 @@ public class BudgetProposalAction extends GenericWorkFlowAction {
     }
 
     public void budgetDetailApprove() {
-        if (LOGGER.isInfoEnabled())
+        if (LOGGER.isInfoEnabled()) {
             LOGGER.info("Starting budgetDetailApprove()..............");
+        }
 
         // if u want only selected function centre filter here by owner fecthing
         // logic to be changed only
@@ -424,13 +444,15 @@ public class BudgetProposalAction extends GenericWorkFlowAction {
             populateNextYrBEinBudgetDetailList();
             populateMajorCodewiseDetailData();
         }
-        if (LOGGER.isInfoEnabled())
+        if (LOGGER.isInfoEnabled()) {
             LOGGER.info("finished loading detail List--------------------------------------------------------------");
+        }
     }
 
     public void budgetApprove() {
-        if (LOGGER.isInfoEnabled())
+        if (LOGGER.isInfoEnabled()) {
             LOGGER.info("Starting budgetApprove..............");
+        }
         final List<CFunction> functionList = persistenceService.findAllBy(
                 "select distinct f from BudgetDetail bd inner join bd.function as f  where budget=? order by f.name ",
                 topBudget);
@@ -438,22 +460,26 @@ public class BudgetProposalAction extends GenericWorkFlowAction {
         int i = 0;
 
         for (final CFunction function : functionList) {
-            if (LOGGER.isInfoEnabled())
+            if (LOGGER.isInfoEnabled()) {
                 LOGGER.info("Starting budgetDetailApprove...for functin ....centre......." + function.getName()
                         + "     count " + ++i);
+            }
             budgetDetail = (BudgetDetail) persistenceService.find(
                     "from BudgetDetail where budget=? and function=? order by budgetGroup.name", topBudget, function);
             budgetDetailApprove();
-            if (LOGGER.isInfoEnabled())
+            if (LOGGER.isInfoEnabled()) {
                 LOGGER.info("Finished budgetDetailApprove...for functin ....centre......." + function.getName());
+            }
         }
-        if (LOGGER.isInfoEnabled())
+        if (LOGGER.isInfoEnabled()) {
             LOGGER.info("Finished budgetApprove");
+        }
     }
 
     private void populateMajorCodewiseData() {
-        if (LOGGER.isInfoEnabled())
+        if (LOGGER.isInfoEnabled()) {
             LOGGER.info("Starting populateMajorCodewiseData()...........");
+        }
         final Map<String, BigDecimal> majorCodeAndCurrentActuals = new HashMap<String, BigDecimal>();
         final Map<String, BigDecimal> majorCodeAndPreviousActuals = new HashMap<String, BigDecimal>();
         final Map<String, BigDecimal> majorCodeAndBeforePreviousActuals = new HashMap<String, BigDecimal>();
@@ -581,13 +607,15 @@ public class BudgetProposalAction extends GenericWorkFlowAction {
             computeTotal(bpbeanTotal, bpbean);
         }
         bpBeanList.add(bpbeanTotal);
-        if (LOGGER.isInfoEnabled())
+        if (LOGGER.isInfoEnabled()) {
             LOGGER.info("Finished populateMajorCodewiseData()");
+        }
     }
 
     void populateMajorCodewiseDataAcrossFunction() {
-        if (LOGGER.isInfoEnabled())
+        if (LOGGER.isInfoEnabled()) {
             LOGGER.info("Starting populateMajorCodewiseDataAcrossFunction..............");
+        }
         final Map<String, BigDecimal> majorCodeAndCurrentActuals = new HashMap<String, BigDecimal>();
         final Map<String, BigDecimal> majorCodeAndPreviousActuals = new HashMap<String, BigDecimal>();
         final Map<String, BigDecimal> majorCodeAndBeforePreviousActuals = new HashMap<String, BigDecimal>();
@@ -693,13 +721,15 @@ public class BudgetProposalAction extends GenericWorkFlowAction {
             computeTotal(bpbeanTotal, bpbean);
         }
         bpBeanList.add(bpbeanTotal);
-        if (LOGGER.isInfoEnabled())
+        if (LOGGER.isInfoEnabled()) {
             LOGGER.info("Finished populateMajorCodewiseDataAcrossFunction");
+        }
     }
 
     void populateMajorCodewiseDetailData() {
-        if (LOGGER.isInfoEnabled())
+        if (LOGGER.isInfoEnabled()) {
             LOGGER.info("Starting populateMajorCodewiseDetailData()................");
+        }
         final List<String> mandatoryFields = new ArrayList<String>();
         mandatoryFields.add("fund");
         mandatoryFields.add("function");
@@ -743,7 +773,7 @@ public class BudgetProposalAction extends GenericWorkFlowAction {
             boolean headerAdded = false;
 
             final BudgetProposalBean bpbeanTotal = new BudgetProposalBean();
-            for (final BudgetDetail bd : savedbudgetDetailList)
+            for (final BudgetDetail bd : savedbudgetDetailList) {
                 if (entry.getKey().equals(bd.getBudgetGroup().getMinCode().getMajorCode())) {
                     detailExist = true;
                     if (!headerAdded) {
@@ -753,23 +783,28 @@ public class BudgetProposalAction extends GenericWorkFlowAction {
                     final BudgetProposalBean bpbean = new BudgetProposalBean();
 
                     populateBudgetProposalBean(bpbean, bd);
-                    if (LOGGER.isDebugEnabled())
+                    if (LOGGER.isDebugEnabled()) {
                         LOGGER.debug(bd.getUniqueNo() + "---" + budgetDetailIdsAndAmount.get(bd.getUniqueNo()));
+                    }
 
                     bpBeanList.add(bpbean);
 
                     computeTotal(bpbeanTotal, bpbean);
                 }
-            if (detailExist)
+            }
+            if (detailExist) {
                 bpBeanList.add(bpbeanTotal);
+            }
         }
-        if (LOGGER.isInfoEnabled())
+        if (LOGGER.isInfoEnabled()) {
             LOGGER.info("Finished populateMajorCodewiseDetailData()");
+        }
     }
 
     private void populateBudgetProposalBean(final BudgetProposalBean bpbean, final BudgetDetail bd) {
-        if (LOGGER.isInfoEnabled())
+        if (LOGGER.isInfoEnabled()) {
             LOGGER.info("Starting populateBudgetProposalBean..... ");
+        }
         bpbean.setRowType(DETAIL);
         bpbean.setId(bd.getId());
         bpbean.setNextYrId(bd.getNextYrId());
@@ -798,30 +833,35 @@ public class BudgetProposalAction extends GenericWorkFlowAction {
         bpbean.setProposedBE(bd.getNextYroriginalAmount().setScale(2));
         bpbean.setApprovedRE(bd.getApprovedAmount().setScale(2));
         bpbean.setApprovedBE(bd.getNextYrapprovedAmount().setScale(2));
-        if (LOGGER.isInfoEnabled())
+        if (LOGGER.isInfoEnabled()) {
             LOGGER.info("before bd.getstate().getExtraInfo1()");
+        }
         // bpbean.setRemarks(bd.getstate().getExtraInfo1());
-        if (LOGGER.isInfoEnabled())
+        if (LOGGER.isInfoEnabled()) {
             LOGGER.info("Finished populateBudgetProposalBean..... ");
+        }
     }
 
     private Map<String, String> addToMap(final List<Object[]> tempList, final Map<String, String> resultMap) {
-        for (final Object[] row : tempList)
+        for (final Object[] row : tempList) {
             resultMap.put(row[0].toString(), row[1].toString());
+        }
         return resultMap;
     }
 
     private Map<String, BigDecimal> addToMapStringBigDecimal(final List<Object[]> tempList,
             final Map<String, BigDecimal> resultMap) {
-        for (final Object[] row : tempList)
+        for (final Object[] row : tempList) {
             resultMap.put(row[0].toString(), ((BigDecimal) row[1]).setScale(2));
+        }
         return resultMap;
     }
 
     public void populateNextYrBEinBudgetDetailList() {
-        if (LOGGER.isInfoEnabled())
+        if (LOGGER.isInfoEnabled()) {
             LOGGER.info("starting populateNextYrBEinBudgetDetailList..................");
-        if (!savedbudgetDetailList.isEmpty())
+        }
+        if (!savedbudgetDetailList.isEmpty()) {
             for (final BudgetDetail budgetDetail : savedbudgetDetailList) {
                 final BudgetDetail nextYrbudgetDetail = (BudgetDetail) persistenceService.find(
                         "from BudgetDetail where uniqueNo=? and budget.referenceBudget=?", budgetDetail.getUniqueNo(),
@@ -831,55 +871,13 @@ public class BudgetProposalAction extends GenericWorkFlowAction {
                 budgetDetail.setNextYrapprovedAmount(nextYrbudgetDetail.getApprovedAmount());
                 budgetDetail.setNextYrId(nextYrbudgetDetail.getId());
             }
-        if (LOGGER.isInfoEnabled())
+        }
+        if (LOGGER.isInfoEnabled()) {
             LOGGER.info("Completed populateNextYrBEinBudgetDetailList");
+        }
     }
 
-    @SkipValidation
-    private void loadApproverUser(final List<BudgetDetail> budgetDetailList) {
-        if (LOGGER.isInfoEnabled())
-            LOGGER.info("Starting loadApproverUser.....");
-        final Map<String, Object> map = voucherService.getDesgBYPassingWfItem("BudgetDetail.nextDesg", null,
-                budgetDetail.getExecutingDepartment().getId().intValue());
-        addDropdownData("departmentList", masterDataCache.get("egi-department"));
-        addDropdownData("designationList", Collections.EMPTY_LIST);
-        addDropdownData("userList", Collections.EMPTY_LIST);
-
-        final List<Map<String, Object>> desgList = (List<Map<String, Object>>) map.get("designationList");
-        String strDesgId = "", dName = "";
-        boolean bDefaultDeptId = false;
-        final List<Map<String, Object>> designationList = new ArrayList<Map<String, Object>>();
-        Map<String, Object> desgFuncryMap;
-        for (final Map<String, Object> desgIdAndName : desgList) {
-            desgFuncryMap = new HashMap<String, Object>();
-
-            if (desgIdAndName.get("designationName") != null)
-                desgFuncryMap.put("designationName", desgIdAndName.get("designationName"));
-
-            if (desgIdAndName.get("designationId") != null) {
-                strDesgId = (String) desgIdAndName.get("designationId");
-                if (strDesgId.indexOf("~") != -1) {
-                    strDesgId = strDesgId.substring(0, strDesgId.indexOf('~'));
-                    dName = (String) desgIdAndName.get("designationId");
-                    dName = dName.substring(dName.indexOf('~') + 1);
-                    bDefaultDeptId = true;
-                }
-                desgFuncryMap.put("designationId", strDesgId);
-            }
-            designationList.add(desgFuncryMap);
-        }
-        map.put("designationList", designationList);
-
-        addDropdownData("designationList", (List<Designation>) map.get("designationList"));
-        if (bDefaultDeptId && !dName.equals("")) {
-            final Department dept = (Department) persistenceService
-                    .find("from Department where deptName like '%" + dName + "' ");
-            defaultDept = dept.getId().intValue();
-        }
-        wfitemstate = map.get("wfitemstate") != null ? map.get("wfitemstate").toString() : "";
-        if (LOGGER.isInfoEnabled())
-            LOGGER.info("finished loadApproverUser.....");
-    }
+    
 
     public boolean isConsolidatedScreen() {
         return consolidatedScreen;
@@ -939,16 +937,18 @@ public class BudgetProposalAction extends GenericWorkFlowAction {
     private String getAppConfigValueByKey(final String key) {
         final List<AppConfigValues> appList = appConfigValuesService.getConfigValuesByModuleAndKey("EGF", key);
         String appValue = "-1";
-        if (appList.isEmpty())
+        if (appList.isEmpty()) {
             appValue = " ";
-        else
+        } else {
             appValue = appList.get(0).getValue();
+        }
         return appValue;
     }
 
     void computeTotal(final BudgetProposalBean bpbeanTotal, final BudgetProposalBean bpbean) {
-        if (LOGGER.isInfoEnabled())
+        if (LOGGER.isInfoEnabled()) {
             LOGGER.info("Starting computeTotal................");
+        }
         bpbeanTotal
                 .setPreviousYearActuals(bpbeanTotal.getPreviousYearActuals() == null ? bpbean.getPreviousYearActuals()
                         : new BigDecimal(bpbeanTotal.getPreviousYearActuals())
@@ -981,99 +981,26 @@ public class BudgetProposalAction extends GenericWorkFlowAction {
                 : bpbeanTotal.getApprovedBE().add(bpbean.getApprovedBE()).setScale(2));
         bpbeanTotal.setRowType(TOTAL);
         bpbeanTotal.setBudgetGroup("TOTAL");
-        if (LOGGER.isInfoEnabled())
+        if (LOGGER.isInfoEnabled()) {
             LOGGER.info("Finished computeTotal");
+        }
     }
 
     @SkipValidation
     @Action(value = "/budget/budgetProposal-update")
     public String update() {
         // Only save the items
-        if (LOGGER.isDebugEnabled())
+        if (LOGGER.isDebugEnabled()) {
             LOGGER.debug("Stating updation .....");
-        if ((approverUserId != null) && (approverUserId != -1))
-            userId = approverUserId;
-        else
-            userId = ApplicationThreadLocals.getUserId().intValue();
-        for (final BudgetProposalBean bpBean : bpBeanList) {
-            if ((bpBean == null) || (bpBean.getId() == null))
-                continue;
-            budgetDetail = budgetDetailService.find("from BudgetDetail where id=?", bpBean.getId());
-            break;
         }
-        final List<Assignment> assignment = assignmentService.findAllAssignmentsByHODDeptAndDates(
-                budgetDetail.getExecutingDepartment().getId(), budgetDetail.getBudget().getAsOnDate());
-        if (!assignment.isEmpty())
-            approverPositionId = assignment.get(0).getPosition().getId();
+
         populateWorkflowBean();
+        budgetDetailActionHelper.update(bpBeanList, workflowBean);
 
-        eisCommonService.getPositionByUserId(userId.longValue());
-        final Employee empForCurrentUser = employeeService.getEmployeeById(userId.longValue());
-        if (empForCurrentUser != null)
-            empForCurrentUser.getName();
-
-        saveWithForward(actionName, assignment);
-
-        if (LOGGER.isDebugEnabled())
+        if (LOGGER.isDebugEnabled()) {
             LOGGER.debug("Completed updation .....");
+        }
         return "message";
-    }
-
-    private void saveWithForward(final String actionName, final List<Assignment> assignment) {
-
-        BudgetDetail bd = null;
-
-        int i = 0;
-
-        for (final BudgetProposalBean bpBean : bpBeanList) {
-            if ((bpBean == null) || (bpBean.getId() == null))
-                continue;
-            bd = budgetDetailService.find("from BudgetDetail where id=?", bpBean.getId());
-            bd.setOriginalAmount(bpBean.getProposedRE());
-            if (bpBean.getDocumentNumber() != null)
-                bd.setDocumentNumber(bpBean.getDocumentNumber());
-
-            bd = budgetDetailService.transitionWorkFlow(bd, workflowBean);
-            budgetDetailService.applyAuditing(bd.getState());
-            budgetDetailService.persist(bd);
-        }
-        // Save and Push the items
-        if (actionName.contains("Forward")) {
-            if (!assignment.isEmpty())
-                addActionMessage(getText("budgetdetail.forward",
-                        new String[] { assignment.get(0).getEmployee().getName() }));
-            else
-                throw new ValidationException(StringUtils.EMPTY, "Approver doesn't exists for the selected department");
-        }
-        // Final approval
-        else if (actionName.contains("Verify")) {
-            for (final BudgetProposalBean bp : bpBeanList) {
-                if ((bp == null) || (bp.getId() == null))
-                    continue;
-                budgetDetail = budgetDetailService.find("from BudgetDetail where id=?", bp.getNextYrId());
-                budgetDetail.setStatus(egwStatusHibernateDAO.getStatusByModuleAndCode(FinancialConstants.BUDGETDETAIL,
-                        FinancialConstants.WORKFLOW_STATE_APPROVED));
-                budgetDetailService.persist(budgetDetail);
-            }
-            addActionMessage(getText("budgetdetail.approve"));
-        } else if (actionName.contains("Cancel"))
-            addActionMessage(getText("budgetdetail.cancel"));
-        else {
-            final Assignment initiator = budgetDetailService.getWorkflowInitiator(budgetDetail);
-            workflowBean.setApproverPositionId(initiator.getPosition().getId());
-            addActionMessage(getText("budgetdetail.reject",
-                    new String[] { initiator.getEmployee().getName() }));
-        }
-
-        if (LOGGER.isDebugEnabled())
-            LOGGER.debug("Updated  " + i + "record.....");
-        i++;
-        if ((i % 10) == 0) {
-            persistenceService.getSession().flush();
-            if (LOGGER.isDebugEnabled())
-                LOGGER.debug("flushed for " + i + "record.....");
-        }
-
     }
 
     protected void populateWorkflowBean() {
@@ -1084,11 +1011,13 @@ public class BudgetProposalAction extends GenericWorkFlowAction {
     }
 
     public String modifyList() {
-        if (budgetDetail.getBudget().getId() != null)
+        if (budgetDetail.getBudget().getId() != null) {
             topBudget = budgetService.find("from Budget where id=?", budgetDetail.getBudget().getId());
+        }
         consolidatedScreen = budgetDetailService.toBeConsolidated();
-        if (isHOD())
+        if (isHOD()) {
             allfunctionsArrived = validateForAllFunctionsMappedForDept(topBudget, getPosition());
+        }
 
         return Constants.DETAILLIST;
 
@@ -1104,8 +1033,9 @@ public class BudgetProposalAction extends GenericWorkFlowAction {
             if (approvedBd != null) {
             } else {
             }
-        } else if (empAssignment.getDesignation().getName().equalsIgnoreCase("CHIEF ACCOUNTS OFFICER"))
+        } else if (empAssignment.getDesignation().getName().equalsIgnoreCase("CHIEF ACCOUNTS OFFICER")) {
             asstFMU = true;
+        }
 
         return eisCommonService.isHod(empAssignment.getId());
     }
@@ -1120,26 +1050,29 @@ public class BudgetProposalAction extends GenericWorkFlowAction {
         final BudgetDetail bd = budgetDetailService.find("from BudgetDetail  where budget.id=?", topBudget.getId());
         final String Query = "select distinct(f.name) as functionid from eg_dept_functionmap m,function f where departmentid="
                 + bd.getExecutingDepartment().getId() + " and f.id= m.functionid and m.budgetaccount_Type='"
-                + budgetDetailHelper.accountTypeForFunctionDeptMap(topBudget.getName()) + "'" + " minus "
+                + budgetDetailHelper.accountTypeForFunctionDeptMap(topBudget.getName()) + "'" + " EXCEPT "
                 + " select distinct(f.name) as functionid from egf_budgetdetail bd,eg_wf_states s,function f where bd.budget="
-                + topBudget.getId() + " and bd.state_id=s.id and s.owner=" + position.getId()
+                + topBudget.getId() + " and bd.state_id=s.id and s.owner_pos=" + position.getId()
                 + " and bd.function=f.id order by functionid";
         final Query functionsNotUsed = persistenceService.getSession().createSQLQuery(Query);
         final List<String> notUsedList = functionsNotUsed.list();
 
         if (notUsedList.size() > 0) {
             functionsNotYetReceiced = "";
-            for (final String s : notUsedList)
+            for (final String s : notUsedList) {
                 functionsNotYetReceiced = functionsNotYetReceiced + s + " ,";
+            }
             return false;
 
-        } else
+        } else {
             return true;
+        }
     }
 
     public String capitalize(final String value) {
-        if ((value == null) || (value.length() == 0))
+        if (value == null || value.length() == 0) {
             return value;
+        }
         return value.substring(0, 1).toUpperCase() + value.substring(1).toLowerCase();
     }
 
@@ -1147,31 +1080,36 @@ public class BudgetProposalAction extends GenericWorkFlowAction {
     public String getUlbName() {
         final Query query = persistenceService.getSession().createSQLQuery("select name from companydetail");
         final List<String> result = query.list();
-        if (result != null)
+        if (result != null) {
             return result.get(0);
+        }
         return "";
     }
 
     protected Boolean validateOwner() {
-        if (LOGGER.isDebugEnabled())
+        if (LOGGER.isDebugEnabled()) {
             LOGGER.debug("validating owner for user " + ApplicationThreadLocals.getUserId());
+        }
         List<Position> positionsForUser = null;
         positionsForUser = eisService.getPositionsForUser(Long.valueOf(ApplicationThreadLocals.getUserId()),
                 new Date());
         State state = null;
-        if (factor.equalsIgnoreCase(bigThousand.toString()))
+        if (factor.equalsIgnoreCase(bigThousand.toString())) {
             state = (State) persistenceService.find(
                     "select b.state from Budget b where b.id =(select bd.budget.id from BudgetDetail bd where bd.id=?) ",
                     validId);
-        else
+        } else {
             state = (State) persistenceService.find("select bd.state from BudgetDetail bd where bd.id=? ", validId);
-        if ((state != null) && positionsForUser.contains(state.getOwnerPosition())) {
-            if (LOGGER.isDebugEnabled())
+        }
+        if (state != null && positionsForUser.contains(state.getOwnerPosition())) {
+            if (LOGGER.isDebugEnabled()) {
                 LOGGER.debug("Valid Owner :return true");
+            }
             return true;
         } else {
-            if (LOGGER.isDebugEnabled())
+            if (LOGGER.isDebugEnabled()) {
                 LOGGER.debug("Invalid  Owner :return false");
+            }
             return false;
         }
     }

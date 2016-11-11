@@ -53,43 +53,58 @@ import org.egov.pgr.service.ReceivingCenterService;
 import org.egov.pgr.utils.constants.PGRConstants;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.ModelAndView;
 
-import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.List;
 
-public abstract class GenericComplaintController {
+import static org.apache.commons.lang3.StringUtils.isNotBlank;
 
-    public static final String ERROR = "error";
-    public static final String MESSAGE = "message";
+@Controller
+public class GenericComplaintController {
 
-    protected @Autowired ComplaintTypeService complaintTypeService;
-    protected @Autowired(required = true) ComplaintService complaintService;
-    protected @Autowired CrossHierarchyService crossHierarchyService;
-    protected @Autowired ReceivingCenterService receivingCenterService;
-    protected @Autowired ComplaintTypeCategoryService complaintTypeCategoryService;
+    @Autowired
+    protected ComplaintTypeService complaintTypeService;
+
+    @Autowired
+    protected ComplaintService complaintService;
+
+    @Autowired
+    protected CrossHierarchyService crossHierarchyService;
+
+    @Autowired
+    protected ReceivingCenterService receivingCenterService;
+
+    @Autowired
+    protected ComplaintTypeCategoryService complaintTypeCategoryService;
+
+    @Autowired
     @Qualifier("fileStoreService")
-    protected @Autowired FileStoreService fileStoreService;
-    protected @Autowired FileStoreUtils fileStoreUtils;
+    protected FileStoreService fileStoreService;
 
-    public @ModelAttribute("categories") List<ComplaintTypeCategory> complaintTypeCategories() {
+    @Autowired
+    protected FileStoreUtils fileStoreUtils;
+
+    @ModelAttribute("categories")
+    public List<ComplaintTypeCategory> complaintTypeCategories() {
         return complaintTypeCategoryService.findAll();
     }
 
-    public @ModelAttribute("complaintTypes") List<ComplaintType> frequentlyFiledComplaintTypes() {
+    @ModelAttribute("complaintTypes")
+    public List<ComplaintType> frequentlyFiledComplaintTypes() {
         return complaintTypeService.getFrequentlyFiledComplaints();
     }
 
-    @RequestMapping(value = "/complaint/reg-success", method = RequestMethod.GET)
-    public ModelAndView successView(@ModelAttribute Complaint complaint, final HttpServletRequest request) {
-        if (request.getParameter("crn") != null && complaint.isNew())
-            complaint = complaintService.getComplaintByCRN(request.getParameter("crn"));
+    @RequestMapping(value = "/complaint/reg-success/{crn}", method = RequestMethod.GET)
+    public ModelAndView successView(@ModelAttribute Complaint complaint, @PathVariable String crn) {
+        if (isNotBlank(crn) && complaint.isNew())
+            complaint = complaintService.getComplaintByCRN(crn);
         return new ModelAndView("complaint/reg-success", "complaint", complaint);
 
     }

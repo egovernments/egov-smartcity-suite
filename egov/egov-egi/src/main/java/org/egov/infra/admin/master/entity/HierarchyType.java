@@ -43,7 +43,6 @@ package org.egov.infra.admin.master.entity;
 import com.google.gson.annotations.Expose;
 import org.egov.infra.persistence.entity.AbstractAuditable;
 import org.egov.infra.persistence.validator.annotation.Unique;
-import org.hibernate.search.annotations.DocumentId;
 import org.hibernate.validator.constraints.Length;
 import org.hibernate.validator.constraints.NotBlank;
 import org.hibernate.validator.constraints.SafeHtml;
@@ -55,25 +54,17 @@ import javax.persistence.Id;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 
-/**
- * Represents the top classification for Boundary
- *
- * @author nayeem
- * @see Boundary
- * @see BoundaryType
- */
+import static org.egov.infra.admin.master.entity.HierarchyType.SEQ_HIERARCHY_TYPE;
 
 @Entity
-@Unique(fields = { "name", "code" }, enableDfltMsg = true)
+@Unique(fields = {"name", "code"}, enableDfltMsg = true)
 @Table(name = "eg_hierarchy_type")
-@SequenceGenerator(name = HierarchyType.SEQ_HIERARCHY_TYPE, sequenceName = HierarchyType.SEQ_HIERARCHY_TYPE, allocationSize = 1)
+@SequenceGenerator(name = SEQ_HIERARCHY_TYPE, sequenceName = SEQ_HIERARCHY_TYPE, allocationSize = 1)
 public class HierarchyType extends AbstractAuditable {
 
-    private static final long serialVersionUID = -7131667806935923935L;
     public static final String SEQ_HIERARCHY_TYPE = "SEQ_EG_HIERARCHY_TYPE";
-
+    private static final long serialVersionUID = -7131667806935923935L;
     @Expose
-    @DocumentId
     @Id
     @GeneratedValue(generator = SEQ_HIERARCHY_TYPE, strategy = GenerationType.SEQUENCE)
     private Long id;

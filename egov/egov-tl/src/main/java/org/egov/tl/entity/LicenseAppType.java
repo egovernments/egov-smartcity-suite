@@ -42,7 +42,6 @@ package org.egov.tl.entity;
 
 import org.egov.infra.persistence.entity.AbstractAuditable;
 import org.egov.infra.persistence.validator.annotation.Unique;
-import org.hibernate.search.annotations.DocumentId;
 import org.hibernate.validator.constraints.Length;
 import org.hibernate.validator.constraints.NotBlank;
 
@@ -60,14 +59,11 @@ import javax.persistence.Table;
 @SequenceGenerator(name = LicenseAppType.SEQUENCE, sequenceName = LicenseAppType.SEQUENCE, allocationSize = 1)
 @NamedQuery(name = "APPTYPE_BY_NAME", query = "select la FROM LicenseAppType la where name =:name")
 public class LicenseAppType extends AbstractAuditable {
-    private static final long serialVersionUID = 6937736396204496999L;
-
     public static final String BY_NAME = "APPTYPE_BY_NAME";
     public static final String SEQUENCE = "SEQ_EGTL_MSTR_APP_TYPE";
-
+    private static final long serialVersionUID = 6937736396204496999L;
     @Id
     @GeneratedValue(generator = SEQUENCE, strategy = GenerationType.SEQUENCE)
-    @DocumentId
     private Long id;
 
     @NotBlank(message = "masters.licenseApplicationType.name.null")
@@ -75,13 +71,13 @@ public class LicenseAppType extends AbstractAuditable {
     private String name;
 
     @Override
-    public void setId(final Long id) {
-        this.id = id;
+    public Long getId() {
+        return this.id;
     }
 
     @Override
-    public Long getId() {
-        return this.id;
+    public void setId(final Long id) {
+        this.id = id;
     }
 
     public String getName() {

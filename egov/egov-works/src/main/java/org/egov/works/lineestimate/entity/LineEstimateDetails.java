@@ -39,9 +39,12 @@
  */
 package org.egov.works.lineestimate.entity;
 
-import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.List;
+import org.egov.infra.persistence.entity.AbstractAuditable;
+import org.egov.infra.persistence.validator.annotation.Unique;
+import org.egov.works.abstractestimate.entity.EstimatePhotographs;
+import org.egov.works.models.estimate.ProjectCode;
+import org.hibernate.validator.constraints.Length;
+import org.hibernate.validator.constraints.SafeHtml;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
@@ -56,27 +59,19 @@ import javax.persistence.OrderBy;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
-
-import org.egov.infra.persistence.entity.AbstractAuditable;
-import org.egov.infra.persistence.validator.annotation.Unique;
-import org.egov.works.abstractestimate.entity.EstimatePhotographs;
-import org.egov.works.models.estimate.ProjectCode;
-import org.hibernate.search.annotations.DocumentId;
-import org.hibernate.validator.constraints.Length;
-import org.hibernate.validator.constraints.SafeHtml;
+import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Table(name = "EGW_LINEESTIMATE_DETAILS")
-@Unique(id = "id", tableName = "EGW_LINEESTIMATE_DETAILS", columnName = { "estimatenumber" }, fields = {
-        "estimateNumber" }, enableDfltMsg = true)
+@Unique(id = "id", tableName = "EGW_LINEESTIMATE_DETAILS", columnName = {"estimatenumber"}, fields = {
+        "estimateNumber"}, enableDfltMsg = true)
 @SequenceGenerator(name = LineEstimateDetails.SEQ_EGW_LINEESTIMATE_DETAILS, sequenceName = LineEstimateDetails.SEQ_EGW_LINEESTIMATE_DETAILS, allocationSize = 1)
 public class LineEstimateDetails extends AbstractAuditable {
 
-    private static final long serialVersionUID = -788818018131193299L;
-
     public static final String SEQ_EGW_LINEESTIMATE_DETAILS = "SEQ_EGW_LINEESTIMATE_DETAILS";
-
-    @DocumentId
+    private static final long serialVersionUID = -788818018131193299L;
     @Id
     @GeneratedValue(generator = SEQ_EGW_LINEESTIMATE_DETAILS, strategy = GenerationType.SEQUENCE)
     private Long id;
@@ -120,7 +115,7 @@ public class LineEstimateDetails extends AbstractAuditable {
 
     @OneToMany(mappedBy = "lineEstimateDetails", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true, targetEntity = LineEstimateAppropriation.class)
     private List<LineEstimateAppropriation> lineEstimateAppropriations = new ArrayList<LineEstimateAppropriation>(0);
-    
+
     @OrderBy("id")
     @OneToMany(mappedBy = "lineEstimateDetails", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true, targetEntity = EstimatePhotographs.class)
     private List<EstimatePhotographs> estimatePhotographsList = new ArrayList<EstimatePhotographs>(0);

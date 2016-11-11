@@ -42,7 +42,6 @@ package org.egov.infra.security.audit.entity;
 
 import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.persistence.entity.AbstractPersistable;
-import org.hibernate.search.annotations.DocumentId;
 
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -57,13 +56,14 @@ import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import java.util.Date;
 
+import static org.egov.infra.security.audit.entity.SystemAudit.SEQ_SYSTEMAUDIT;
+
 @Entity
 @Table(name = "eg_systemaudit")
-@SequenceGenerator(name = SystemAudit.SEQ_SYSTEMAUDIT, sequenceName = SystemAudit.SEQ_SYSTEMAUDIT, allocationSize = 1)
+@SequenceGenerator(name = SEQ_SYSTEMAUDIT, sequenceName = SEQ_SYSTEMAUDIT, allocationSize = 1)
 public class SystemAudit extends AbstractPersistable<Long> {
-    private static final long serialVersionUID = 3860739186574812587L;
     public static final String SEQ_SYSTEMAUDIT = "SEQ_EG_SYSTEMAUDIT";
-    @DocumentId
+    private static final long serialVersionUID = 3860739186574812587L;
     @Id
     @GeneratedValue(generator = SEQ_SYSTEMAUDIT, strategy = GenerationType.SEQUENCE)
     private Long id;
@@ -83,13 +83,13 @@ public class SystemAudit extends AbstractPersistable<Long> {
     private Date logoutTime;
 
     @Override
-    protected void setId(final Long id) {
-        this.id = id;
+    public Long getId() {
+        return id;
     }
 
     @Override
-    public Long getId() {
-        return id;
+    protected void setId(final Long id) {
+        this.id = id;
     }
 
     public User getUser() {

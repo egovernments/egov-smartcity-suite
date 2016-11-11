@@ -14,7 +14,7 @@ apportionLoadFailureHandler= function(){
 	function populateapportioningamount()
 	{
 	    // total of actual amt to be credited - can be removed
-		var billingtotal=document.forms[0].totalAmountToBeCollected.value;
+		var billingtotal=document.forms[0].totalAmntToBeCollected.value;
 		var checkpartpaymentvalue=document.getElementById("partPaymentAllowed").value;
 		var checkoverridevalue=document.getElementById("overrideAccountHeads").value;
 		var collectiontotal=0,cashamount=0,chequeamount=0,cardamount=0,bankamount=0;

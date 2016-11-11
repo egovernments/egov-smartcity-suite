@@ -44,7 +44,9 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonSerializationContext;
+
 import org.egov.infra.filestore.entity.FileStoreMapper;
+import org.egov.infra.utils.StringUtils;
 import org.egov.pgr.entity.Complaint;
 
 import java.lang.reflect.Type;
@@ -64,6 +66,8 @@ public class ComplaintAdapter extends DataAdapter<Complaint> {
         jo.addProperty("lastModifiedBy", complaint.getLastModifiedBy().getUsername());
         jo.addProperty("lastModifiedDate", complaint.getLastModifiedDate().toString());
         jo.addProperty("complainantName", complaint.getComplainant().getName());
+        jo.addProperty("complainantMobileNo", complaint.getComplainant().getMobile());
+        jo.addProperty("complainantEmail", StringUtils.isNotBlank(complaint.getComplainant().getEmail())?complaint.getComplainant().getEmail():"");
         jo.addProperty("citizenFeedback", complaint.getCitizenFeedback()!=null?complaint.getCitizenFeedback().name():"");
         
         if (complaint.getLat() > 0 && complaint.getLng() > 0) {
@@ -92,13 +96,13 @@ public class ComplaintAdapter extends DataAdapter<Complaint> {
         List<FileStoreMapper> supportDocs=new ArrayList<FileStoreMapper>();
         supportDocs.addAll(complaint.getSupportDocs());
         
-        Collections.sort(supportDocs, new Comparator<FileStoreMapper>() {
+       /* Collections.sort(supportDocs, new Comparator<FileStoreMapper>() {
 			@Override
 			public int compare(FileStoreMapper f1, FileStoreMapper f2) {
 
 				return f1.getIndexId().compareTo(f2.getIndexId());
 			}
-        });
+        });*/
         
         JsonArray jsonArry=new JsonArray();
         for(FileStoreMapper file:supportDocs)
@@ -106,7 +110,7 @@ public class ComplaintAdapter extends DataAdapter<Complaint> {
             JsonObject fileobj=new JsonObject();
             fileobj.addProperty("fileId", file.getFileStoreId());
             fileobj.addProperty("fileContentType", file.getContentType());
-            fileobj.addProperty("fileIndexId", file.getIndexId());
+           // fileobj.addProperty("fileIndexId", file.getIndexId());
             jsonArry.add(fileobj);
         }
         

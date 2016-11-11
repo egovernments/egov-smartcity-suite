@@ -111,7 +111,7 @@
 										code="lbl.applicant.name" />
 								</label>
 						<div class="col-sm-3 add-margin">
-							<input type="text" name="applicantName" class="form-control patternvalidation" data-pattern="alphabetwithspace" maxlength="15" id="app-appconsumercodo"
+							<input type="text" name="applicantName" class="form-control patternvalidation" data-pattern="alphabetwithspace" maxlength="100" id="app-appconsumercodo"
 								 />
 						</div>
 								<label for="field-1" class="col-sm-2 control-label"> <spring:message

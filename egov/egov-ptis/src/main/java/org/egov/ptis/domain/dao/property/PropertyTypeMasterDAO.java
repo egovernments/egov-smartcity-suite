@@ -61,4 +61,6 @@ public interface PropertyTypeMasterDAO {
 
 	public List<PropertyTypeMaster> findAllExcludeEWSHS();
 	
+	public List<PropertyTypeMaster> findBuiltUpOwnerShipTypes();
+	
 }

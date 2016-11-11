@@ -64,9 +64,7 @@ public class BudgetDetailRenderService extends DefaultInboxRenderServiceImpl<Bud
         for (final StateAware nextItem : allItems)
             if (nextItem instanceof BudgetDetail) {
                 final BudgetDetail nextDetail = (BudgetDetail) nextItem;
-                String groupingCriteria = "";
-
-                groupingCriteria = nextDetail.myLinkId();
+                final String groupingCriteria = "";
 
                 if (assignedItems.get(groupingCriteria) == null) {
                     budgetDetailGroup.add(nextDetail);

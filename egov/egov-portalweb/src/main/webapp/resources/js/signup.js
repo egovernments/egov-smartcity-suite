@@ -101,7 +101,7 @@ $(document).ready(function(){
 		}
 	);
 
-	$('#name').blur(function(){
+	$('#name').keyup(function(){
 		var arr = $(this).val().split(' ');
 	    var result = "";
 	    for (var x=0; x<arr.length; x++)
@@ -109,26 +109,32 @@ $(document).ready(function(){
 	    $(this).val(result.substring(0, result.length-1));
 	});
 	
-	$('#signupbtn').click(function(){
-		$('#username').val($('#mobileNumber').val());
-		$('#signupform').trigger('submit');
-		return true;
+	$('#signupbtn').click(function(e){
+		if($('form').valid()){
+			$('#username').val($('#mobileNumber').val());
+			$('#signupform').trigger('submit');
+		}else{
+			e.preventDefault();
+		}
 	});
 
 	$('#password, #username').popover({ trigger: "focus",placement: "bottom"})
 
 	$('#otpbtn').click(function () {
+		console.log('came!!!')
 		if (!$('#mobileNumber').val()) {
             $(".mobile-error").show();
             return false;
         } else {
             $(".mobile-error").hide();
+            $(this).hide();
         }
 		$.ajax({
 			url: "signup/otp/"+$('#mobileNumber').val(),
 			dataType: "json",
 			success: function(data) {
 				if(data){
+					console.log('OTP sent');
 					$('#activationcode').val('');
 					$('#signup-section,#otp-section').show();
 					$('#otpbtn-section').hide();
@@ -136,8 +142,30 @@ $(document).ready(function(){
 			},
 			error: function() {
 				console.error('Error while sending otp');
+				$(this).show();
 			}
 		});
+	});
+	
+	$(document).on('click','.password-view,.otp-view',function(){
+		//console.log($(this).data('view'));
+		if($(this).hasClass('password-view')){
+			if($(this).data('view') == 'show'){
+				$('.check-password').attr({type : 'text', autocomplete : 'off'});
+				$(this).parent().empty().html('<i class="fa fa-eye-slash password-view" data-view="hide" aria-hidden="true"></i>');
+			}else{
+				$('.check-password').attr({type : 'password', autocomplete : 'new-password'});
+				$(this).parent().empty().html('<i class="fa fa-eye password-view" data-view="show" aria-hidden="true"></i>');
+			}
+		}else if($(this).hasClass('otp-view')){
+			if($(this).data('view') == 'show'){
+				$(this).closest('.form-group').find('input').attr({type : 'text', autocomplete : 'off'});
+				$(this).parent().empty().html('<i class="fa fa-eye-slash otp-view" data-view="hide" aria-hidden="true"></i>');
+			}else{
+				$(this).closest('.form-group').find('input').attr({type : 'password', autocomplete : 'new-password'});
+				$(this).parent().empty().html('<i class="fa fa-eye otp-view" data-view="show" aria-hidden="true"></i>');
+			}
+		} 
 	});
 	
 });

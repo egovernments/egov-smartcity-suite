@@ -95,24 +95,24 @@ var tableContainer;
         					             ]
         				},
         				searchable:true,
-        				data: searchResult,
+        				data: searchResult.content,
         				columns: [
-        				{title: 'Complaint Number', data: 'resource.clauses.crn'},
-        				{title: 'Grievance Type', data: 'resource.searchable.complaintType.name'},
-        				{title: 'Name', data: 'resource.common.citizen.name'},
-        				{title: 'Location', data: 'resource.common.boundary.name'},
-        				{title: 'Status', data: 'resource.clauses.status.name'},
-        				{title: 'Department', data: 'resource.clauses.department.name'},
+        				{title: 'Complaint Number', data: 'crn'},
+        				{title: 'Grievance Type', data: 'complaintTypeName'},
+        				{title: 'Name', data: 'complainantName'},
+        				{title: 'Location', data: 'wardName'},
+        				{title: 'Status', data: 'complaintStatusName'},
+        				{title: 'Department', data: 'departmentName'},
         				{title: 'Registration Date',
         					render: function (data, type, full) {
-        						if(full!=null && full.resource!= undefined && full.resource.common.createdDate != undefined) {
-        							var regDateSplit = full.resource.common.createdDate.split("T")[0].split("-");		
+        						if(full!=null && full!= undefined && full.createdDate != undefined) {
+        							var regDateSplit = full.createdDate.split("T")[0].split("-");		
         							return regDateSplit[2] + "/" + regDateSplit[1] + "/" + regDateSplit[0];
         						}
         						else return "";
         			    	}
         				},
-        				{data:'resource.searchable.owner.id',visible: false}
+        				{data:'assigneeId',visible: false}
         				]
         			});
         		});

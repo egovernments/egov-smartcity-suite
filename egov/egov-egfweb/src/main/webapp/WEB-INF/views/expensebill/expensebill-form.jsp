@@ -73,6 +73,7 @@
 	   </spring:hasBindErrors>
    </div>
     <form:hidden path="" id="cutOffDate" value="${cutOffDate}"/>
+    <form:hidden path="" id="mode" value="${mode}"/>
 	<form:hidden path="billamount" id="billamount" class ="billamount"/>
 	<div class="panel-title text-center" style="color: green;">
 		<c:out value="${message}" /><br />

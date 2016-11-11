@@ -59,22 +59,7 @@ jQuery(document).ready(function() {
 	}
 	
 	
-$('#dailyCollectionReportSearch').click(function(e){
-	if($('form').valid()){
-			if($('#fromDate').val() != '' && $('#toDate').val() != ''){
-				var start = $('#fromDate').val();
-				var end = $('#toDate').val();
-				var stsplit = start.split("/");
-					var ensplit = end.split("/");
-					
-					start = stsplit[1] + "/" + stsplit[0] + "/" + stsplit[2];
-					end = ensplit[1] + "/" + ensplit[0] + "/" + ensplit[2];
-					if(!validRange(start,end))
-					{
-						
-					return false;
-					}
-			}
+		$('#dailyCollectionReportSearch').click(function(e){
 			var fromDate = $("#fromDate").val();
 			var toDate = $("#toDate").val(); 
 			var mode = $("#mode").val();
@@ -115,27 +100,19 @@ $('#dailyCollectionReportSearch').click(function(e){
 				searchable : true,
 				data : searchResult,
 				columns : [
-						{title: 'Receipt Number', data: 'resource.clauses.receiptnumber'},
-						{title: 'Receipt Date',
-							render: function (data, type, full) {
-								if(full!=null && full.resource!=undefined &&  full.resource.searchable.receiptdate != undefined) {
-									var regDateSplit = full.resource.searchable.receiptdate.split("T")[0].split("-");		
-									return regDateSplit[2] + "/" + regDateSplit[1] + "/" + regDateSplit[0];
-								}
-								else return "";
-							}
-						},
-						{title: 'Consumer Number', data: 'resource.common.consumercode'},
-						{title: 'Consumer Name', data: 'resource.searchable.consumername'},
-						{title: 'Paid At', data: 'resource.clauses.channel'},
-						{title: 'Payment mode', data: 'resource.clauses.paymentmode'},
-						{title: 'Status', data: 'resource.clauses.status'},
-						{title: 'Paid From', data: 'resource.searchable.installmentfrom'},
-						{title: 'Paid To', data: 'resource.searchable.installmentto'},
-						{title: 'Arrear Total', data: 'resource.searchable.arrearamount',"className": "text-right"},
-						{title: 'Current Total', data: 'resource.searchable.currentamount',"className": "text-right"},
-						{title: 'Advance Total', data: 'resource.searchable.advanceamount',"className": "text-right"},
-						{title: 'Total Collection', data: 'resource.searchable.totalamount',"className": "text-right"}
+						{title: 'Receipt Number', data: 'receiptnumber'},
+						{title: 'Receipt Date',data :''	},
+						{title: 'Consumer Number', data: 'consumercode'},
+						{title: 'Consumer Name', data: 'consumername'},
+						{title: 'Paid At', data: 'channel'},
+						{title: 'Payment mode', data: 'paymentmode'},
+						{title: 'Status', data: 'status'},
+						{title: 'Paid From', data: 'installmentfrom'},
+						{title: 'Paid To', data: 'installmentto'},
+						{title: 'Arrear Total', data: 'arrearamount',"className": "text-right"},
+						{title: 'Current Total', data: 'currentamount',"className": "text-right"},
+						{title: 'Advance Total', data: 'advanceamount',"className": "text-right"},
+						{title: 'Total Collection', data: 'totalamount',"className": "text-right"}
 						],
 							  "aaSorting": [[4, 'desc']] ,
 							  "footerCallback" : function(row, data, start, end, display) {
@@ -163,7 +140,7 @@ $('#dailyCollectionReportSearch').click(function(e){
 		
 		
 	});
-	}
+	
 });
 });
 

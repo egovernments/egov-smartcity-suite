@@ -47,60 +47,63 @@
 	<div class="panel-heading">
 		
 	</div>
-	<div class="form-group">
-		<label class="col-sm-3 control-label text-right"><spring:message code="lbl.billnumber" />
-			<span class="mandatory"></span>
-		</label>
-		<div class="col-sm-3 add-margin">
-			<c:out default="N/A" value="${egBillregister.billnumber }" />
+	<div class="panel-body">
+		<div class="row add-border">
+			<div class="col-md-3 col-xs-6 add-margin">
+				<spring:message code="lbl.billnumber" />
+			</div>
+			<div class="col-md-3 col-xs-6 add-margin view-content" id="ct-mobno">
+				<c:out default="N/A" value="${egBillregister.billnumber }" />
+			</div>
+			<div class="col-md-3 col-xs-6 add-margin">
+				<spring:message code="lbl.billdate" />
+			</div>
+			<div class="col-md-3 col-xs-6 add-margin view-content" id="ct-email">
+				<fmt:formatDate value="${egBillregister.billdate}" pattern="dd/MM/yyyy" />
+			</div>
+		</div>
+		<jsp:include page="expense-view-trans-filter.jsp"/>
+		
+		<div class="row add-border">
+			<div class="col-md-3 col-xs-6 add-margin">
+				<spring:message code="lbl.function" />
+			</div>
+			<div class="col-md-3 col-xs-6 add-margin view-content" id="ct-mobno">
+				<c:out default="N/A" value="${egBillregister.egBillregistermis.function.name }" />
+			</div>
+			<div class="col-md-3 col-xs-6 add-margin">
+				<spring:message code="lbl.narration" />
+			</div>
+			<div class="col-md-3 col-xs-6 add-margin view-content" id="ct-email">
+				<c:out default="N/A" value="${egBillregister.egBillregistermis.narration }" />
+			</div>
 		</div>
 		
-		<label class="col-sm-2 control-label text-right"><spring:message code="lbl.billdate" />
-		</label>
-		<div class="col-sm-3 add-margin">
-			<fmt:formatDate value="${egBillregister.billdate}" pattern="dd/MM/yyyy" />
-		</div>
-	</div>
-	
-	
-	<jsp:include page="expense-view-trans-filter.jsp"/>
-	
-	<div class="form-group">
-		<label class="col-sm-3 control-label text-right">
-			<spring:message code="lbl.function" />	<span class="mandatory"></span>
-		</label>
-		<div class="col-sm-3 add-margin">
-			<c:out default="N/A" value="${egBillregister.egBillregistermis.function.name }" />
-		</div>
-				
-		<label class="col-sm-2 control-label text-right"><spring:message code="lbl.narration" />
-		</label>
-		<div class="col-sm-3 add-margin">
-			<c:out default="N/A" value="${egBillregister.egBillregistermis.narration }" />
-		</div>
-	</div>
-	
-	<div class="form-group">
-		<label class="col-sm-3 control-label text-right">
-			<spring:message code="lbl.party.billnumber" />
-		</label>
-		<div class="col-sm-3 add-margin">
-			<c:out default="N/A" value="${egBillregister.egBillregistermis.partyBillNumber }" />
+		<div class="row add-border">
+			<div class="col-md-3 col-xs-6 add-margin">
+				<spring:message code="lbl.party.billnumber" />
+			</div>
+			<div class="col-md-3 col-xs-6 add-margin view-content" id="ct-mobno">
+				<c:out default="N/A" value="${egBillregister.egBillregistermis.partyBillNumber }" />
+			</div>
+			<div class="col-md-3 col-xs-6 add-margin">
+				<spring:message code="lbl.party.billdate" />
+			</div>
+			<div class="col-md-3 col-xs-6 add-margin view-content" id="ct-email">
+				<fmt:formatDate value="${egBillregister.egBillregistermis.partyBillDate}" pattern="dd/MM/yyyy" />
+			</div>
 		</div>
 		
-		<label class="col-sm-2 control-label text-right">
-			<spring:message code="lbl.party.billdate" />
-		</label>
-		<div class="col-sm-3 add-margin">
-			<fmt:formatDate value="${egBillregister.egBillregistermis.partyBillDate}" pattern="dd/MM/yyyy" />
+		
+		<div class="row add-border">
+			<div class="col-md-3 col-xs-6 add-margin">
+				<spring:message code="lbl.billsubtype" />
+			</div>
+			<div class="col-md-3 col-xs-6 add-margin view-content" id="ct-mobno">
+				<c:out default="N/A" value="${egBillregister.egBillregistermis.egBillSubType.name }" />
+			</div>
 		</div>
+		
 	</div>
-	<div class="form-group">
-		<label class="col-sm-3 control-label text-right"><spring:message code="lbl.billsubtype" />
-			<span class="mandatory"></span>
-		</label>
-		<div class="col-sm-3 add-margin">
-			<c:out default="N/A" value="${egBillregister.egBillregistermis.egBillSubType.name }" />
-		</div>
-	</div>
+	
 </div>

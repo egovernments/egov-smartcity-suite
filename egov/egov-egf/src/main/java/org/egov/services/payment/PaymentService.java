@@ -3091,7 +3091,7 @@ public class PaymentService extends PersistenceService<Paymentheader, Long> {
 		if (LOGGER.isDebugEnabled())
 			LOGGER.debug("selectedPaymentList===" + selectedPaymentVHList);
 		final Bankaccount account = (Bankaccount) persistenceService.find(
-				" from Bankaccount where  id=?", bankaccount);
+				" from Bankaccount where  id=?", bankaccount.longValue());
 		// get voucherList
 		final List<CVoucherHeader> voucherList = persistenceService
 				.findAllByNamedQuery("getVoucherList", selectedPaymentVHList);

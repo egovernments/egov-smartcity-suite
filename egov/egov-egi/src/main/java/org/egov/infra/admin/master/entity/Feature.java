@@ -44,7 +44,6 @@ import org.egov.infra.persistence.entity.AbstractPersistable;
 import org.egov.infra.persistence.validator.annotation.Unique;
 import org.hibernate.annotations.Fetch;
 import org.hibernate.annotations.FetchMode;
-import org.hibernate.search.annotations.DocumentId;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
@@ -60,18 +59,18 @@ import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import java.util.Set;
 
+import static org.egov.infra.admin.master.entity.Feature.SEQ_FEATURE;
+
 @Entity
 @Table(name = "eg_feature")
-@SequenceGenerator(name = Feature.SEQ_FEATURE, sequenceName = Feature.SEQ_FEATURE, allocationSize = 1)
+@SequenceGenerator(name = SEQ_FEATURE, sequenceName = SEQ_FEATURE, allocationSize = 1)
 @Unique(fields = "name", enableDfltMsg = true)
 public class Feature extends AbstractPersistable<Long> {
 
-    private static final long serialVersionUID = -5308237250026445794L;
     public static final String SEQ_FEATURE = "SEQ_EG_FEATURE";
-
+    private static final long serialVersionUID = -5308237250026445794L;
     @Id
     @GeneratedValue(generator = SEQ_FEATURE, strategy = GenerationType.SEQUENCE)
-    @DocumentId
     private Long id;
 
     private String name;
@@ -83,23 +82,23 @@ public class Feature extends AbstractPersistable<Long> {
     private Module module;
 
     @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
-    @JoinTable(name = "eg_feature_action", joinColumns = @JoinColumn(name = "feature") , inverseJoinColumns = @JoinColumn(name = "action") )
+    @JoinTable(name = "eg_feature_action", joinColumns = @JoinColumn(name = "feature"), inverseJoinColumns = @JoinColumn(name = "action"))
     @Fetch(FetchMode.JOIN)
     private Set<Action> actions;
 
     @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
-    @JoinTable(name = "eg_feature_role", joinColumns = @JoinColumn(name = "feature") , inverseJoinColumns = @JoinColumn(name = "role") )
+    @JoinTable(name = "eg_feature_role", joinColumns = @JoinColumn(name = "feature"), inverseJoinColumns = @JoinColumn(name = "role"))
     @Fetch(FetchMode.JOIN)
     private Set<Role> roles;
 
     @Override
-    protected void setId(final Long id) {
-        this.id = id;
+    public Long getId() {
+        return id;
     }
 
     @Override
-    public Long getId() {
-        return id;
+    protected void setId(final Long id) {
+        this.id = id;
     }
 
     public String getName() {
@@ -147,7 +146,7 @@ public class Feature extends AbstractPersistable<Long> {
     }
 
     public void addRole(Role role) {
-        if(!hasRole(role))
+        if (!hasRole(role))
             this.getRoles().add(role);
     }
 

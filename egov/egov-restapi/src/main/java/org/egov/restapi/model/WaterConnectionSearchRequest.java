@@ -39,14 +39,7 @@
  */
 package org.egov.restapi.model;
 
-import org.egov.search.domain.Filter;
-import org.egov.search.domain.Filters;
 import org.jboss.logging.Logger;
-
-import java.util.ArrayList;
-import java.util.List;
-
-import static org.egov.search.domain.Filter.queryStringFilter;
 
 public class WaterConnectionSearchRequest {
 
@@ -98,7 +91,7 @@ public class WaterConnectionSearchRequest {
         this.searchText = searchText;
     }
 
-    public Filters searchFilters() {
+    /*public Filters searchFilters() {
         final List<Filter> andFilters = new ArrayList<>();
         andFilters.add(queryStringFilter("searchable.consumername", applicantname));
         andFilters.add(queryStringFilter("clauses.consumercode", hscnumber));
@@ -107,7 +100,7 @@ public class WaterConnectionSearchRequest {
         if (logger.isDebugEnabled())
             logger.debug("finished filters");
         return Filters.withAndFilters(andFilters);
-    }
+    }*/
 
     public String searchQuery() {
         return searchText;
