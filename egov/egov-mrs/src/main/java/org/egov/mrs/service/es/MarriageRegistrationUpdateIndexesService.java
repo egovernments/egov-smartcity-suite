@@ -37,8 +37,8 @@
   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
 
-package org.egov.mrs.domain.elasticsearch.service;
-
+package org.egov.mrs.service.es;
+ 
 import static org.egov.mrs.application.MarriageConstants.APPL_INDEX_MODULE_NAME;
 import static org.egov.mrs.application.MarriageConstants.APPROVED;
 
@@ -53,11 +53,10 @@ import org.egov.eis.entity.Assignment;
 import org.egov.eis.service.AssignmentService;
 import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.admin.master.service.UserService;
-import org.egov.infra.search.elastic.entity.ApplicationIndex;
-import org.egov.infra.search.elastic.entity.ApplicationIndexBuilder;
-import org.egov.infra.search.elastic.entity.enums.ApprovalStatus;
-import org.egov.infra.search.elastic.entity.enums.ClosureStatus;
-import org.egov.infra.search.elastic.service.ApplicationIndexService;
+import org.egov.infra.elasticsearch.entity.ApplicationIndex;
+import org.egov.infra.elasticsearch.entity.enums.ApprovalStatus;
+import org.egov.infra.elasticsearch.entity.enums.ClosureStatus;
+import org.egov.infra.elasticsearch.service.ApplicationIndexService;
 import org.egov.infra.security.utils.SecurityUtils;
 import org.egov.mrs.domain.entity.MarriageRegistration;
 import org.egov.mrs.domain.enums.MarriageCertificateType;
@@ -75,7 +74,7 @@ public class MarriageRegistrationUpdateIndexesService {
 	private SecurityUtils securityUtils;
 
 	@Autowired
-	private ApplicationIndexService applicationIndexService;
+    private ApplicationIndexService applicationIndexService;
 
 	@Autowired
 	private MarriageRegistrationIndexService marriageRegistrationIndexService;
@@ -111,7 +110,7 @@ public class MarriageRegistrationUpdateIndexesService {
 		ApplicationIndex applicationIndex = applicationIndexService
 				.findByApplicationNumber(marriageRegistration.getApplicationNo());
 		// update existing application index
-		if (applicationIndex != null && null != marriageRegistration.getId()) {
+		if (applicationIndex != null && null != marriageRegistration.getId()) {/*
 			applicationIndex.setStatus(marriageRegistration.getStatus().getDescription());
 			applicationIndex.setOwnername(user != null ? user.getUsername() + "::" + user.getName() : "");
 
@@ -143,12 +142,12 @@ public class MarriageRegistrationUpdateIndexesService {
 			applicationIndexService.updateApplicationIndex(applicationIndex);
 
 			marriageRegistrationIndexService.createMarriageIndex(marriageRegistration,
-					MarriageCertificateType.REGISTRATION.toString());
+					MarriageCertificateType.REGISTRATION.toString());*/
 		} else {
 			// create new application index
 			if (LOG.isDebugEnabled())
 				LOG.debug("Application Index creation Started... ");
-			final ApplicationIndexBuilder applicationIndexBuilder = new ApplicationIndexBuilder(APPL_INDEX_MODULE_NAME,
+			/*final ApplicationIndexBuilder applicationIndexBuilder = new ApplicationIndexBuilder(APPL_INDEX_MODULE_NAME,
 					marriageRegistration.getApplicationNo(), marriageRegistration.getApplicationDate(),
 					MarriageCertificateType.REGISTRATION.toString(),
 					marriageRegistration.getHusband().getFullName() + "::"
@@ -164,7 +163,7 @@ public class MarriageRegistrationUpdateIndexesService {
 			applicationIndex = applicationIndexBuilder.build();
 			applicationIndexService.createApplicationIndex(applicationIndex);
 			if (LOG.isDebugEnabled())
-				LOG.debug("Application Index creation completed...");
+				LOG.debug("Application Index creation completed...");*/
 
 			marriageRegistrationIndexService.createMarriageIndex(marriageRegistration,
 					MarriageCertificateType.REGISTRATION.toString());

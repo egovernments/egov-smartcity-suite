@@ -58,11 +58,10 @@ import org.apache.commons.lang3.StringUtils;
 import org.egov.eis.service.EisCommonService;
 import org.egov.eis.web.contract.WorkflowContainer;
 import org.egov.infra.admin.master.entity.User;
-import org.egov.infra.search.elastic.entity.ApplicationIndex;
-import org.egov.infra.search.elastic.entity.ApplicationIndexBuilder;
-import org.egov.infra.search.elastic.entity.enums.ApprovalStatus;
-import org.egov.infra.search.elastic.entity.enums.ClosureStatus;
-import org.egov.infra.search.elastic.service.ApplicationIndexService;
+import org.egov.infra.elasticsearch.entity.ApplicationIndex;
+import org.egov.infra.elasticsearch.entity.enums.ApprovalStatus;
+import org.egov.infra.elasticsearch.entity.enums.ClosureStatus;
+import org.egov.infra.elasticsearch.service.ApplicationIndexService;
 import org.egov.infra.security.utils.SecurityUtils;
 import org.egov.infra.workflow.entity.State;
 import org.egov.infra.workflow.entity.StateHistory;
@@ -229,7 +228,7 @@ public class ReIssueService {
         return reissue;
     }
 
-    private void createReIssueAppIndex(final ReIssue reIssue) {
+    private void createReIssueAppIndex(final ReIssue reIssue) {/*
         final User user = securityUtils.getCurrentUser();
         final ApplicationIndexBuilder applicationIndexBuilder = new ApplicationIndexBuilder(MarriageConstants.MODULE_NAME,
                 reIssue.getApplicationNo(),
@@ -241,7 +240,7 @@ public class ReIssueService {
                         .mobileNumber(reIssue.getApplicant().getContactInfo().getMobileNo());
 
         applicationIndexService.createApplicationIndex(applicationIndexBuilder.build());
-    }
+    */}
 
 	private void updateReIssueAppIndex(final ReIssue reissue) {
 		ApplicationIndex applicationIndex = applicationIndexService.findByApplicationNumber(reissue.getApplicationNo());

@@ -52,7 +52,6 @@ import javax.validation.constraints.NotNull;
 import org.egov.infra.persistence.entity.AbstractAuditable;
 import org.egov.infra.persistence.validator.annotation.Unique;
 import org.egov.mrs.domain.enums.MarriageFeeCriteriaType;
-import org.egov.search.domain.Searchable;
 import org.hibernate.envers.AuditOverride;
 import org.hibernate.envers.AuditOverrides;
 import org.hibernate.envers.Audited;
@@ -70,7 +69,7 @@ import org.hibernate.validator.constraints.SafeHtml;
 @Table(name = "egmrs_fee")
 @Unique(id = "id", tableName = "egmrs_fee", columnName = { "criteria" }, fields = {
 "criteria" }, enableDfltMsg = true, message = "Already Exist.name should be unique.")
-@Searchable
+
 @SequenceGenerator(name = MarriageFee.SEQ_FEE, sequenceName = MarriageFee.SEQ_FEE, allocationSize = 1)
 @AuditOverrides({ @AuditOverride(forClass = AbstractAuditable.class, name = "lastModifiedBy"),
     @AuditOverride(forClass = AbstractAuditable.class, name = "lastModifiedDate") })

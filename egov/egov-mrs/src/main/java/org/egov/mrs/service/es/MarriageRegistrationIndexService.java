@@ -37,21 +37,19 @@
 
   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
-package org.egov.mrs.domain.elasticsearch.service;
+package org.egov.mrs.service.es;
 
 import java.math.BigDecimal;
 import java.util.Date;
 
-import org.egov.config.search.Index;
-import org.egov.config.search.IndexType;
 import org.egov.infra.admin.master.entity.City;
 import org.egov.infra.admin.master.service.CityService;
 import org.egov.infra.config.core.ApplicationThreadLocals;
-import org.egov.infra.search.elastic.annotation.Indexing;
-import org.egov.mrs.domain.elasticsearch.entity.MarriageRegistrationSearch;
 import org.egov.mrs.domain.entity.MarriageCertificate;
 import org.egov.mrs.domain.entity.MarriageRegistration;
 import org.egov.mrs.domain.entity.MarriageWitness;
+import org.egov.mrs.entity.es.MarriageRegistrationIndex;
+import org.egov.mrs.repository.es.MarriageRegistrationIndexRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -59,17 +57,16 @@ import org.springframework.transaction.annotation.Transactional;
 @Service
 @Transactional(readOnly = true)
 public class MarriageRegistrationIndexService {
-
+    @Autowired
+    private MarriageRegistrationIndexRepository marriageRegistrationIndexRepository;
 	@Autowired
 	private CityService cityService;
-
-	@Indexing(name = Index.MARRIAGEREGISTRATION, type = IndexType.MARRIAGEREGISTRATIONSEARCH)
-	public MarriageRegistrationSearch createMarriageIndex(final MarriageRegistration registration,
+	public MarriageRegistrationIndex createMarriageIndex(final MarriageRegistration registration,
 			final String applicationType) {
 
 		final City cityWebsite = cityService.getCityByURL(ApplicationThreadLocals.getDomainName());
 
-		MarriageRegistrationSearch registrationSearch = new MarriageRegistrationSearch(registration.getApplicationNo(),
+		MarriageRegistrationIndex registrationSearch = new MarriageRegistrationIndex(registration.getApplicationNo(),
 				cityWebsite.getName(), cityWebsite.getCode(), registration.getCreatedDate(),
 				cityWebsite.getDistrictName(), cityWebsite.getRegionName(), cityWebsite.getGrade());
 		if (registration != null) {
@@ -225,6 +222,7 @@ public class MarriageRegistrationIndexService {
 					registration.getRejectionReason() != null ? registration.getRejectionReason() : "");
 			registrationSearch.setRemarks(registration.getRemarks() != null ? registration.getRemarks() : "");
 		}
+		marriageRegistrationIndexRepository.save(registrationSearch);
 		return registrationSearch;
 	}
 
