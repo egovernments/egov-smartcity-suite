@@ -195,6 +195,7 @@
         <mvn.versioneye.plugin.version>3.11.0</mvn.versioneye.plugin.version>
         <mvn.surefire.plugin.version>2.19.1</mvn.surefire.plugin.version>
         <mvn.eclipse.lifecycle.plugin.version>1.0.0</mvn.eclipse.lifecycle.plugin.version>
+        <mvn.clean.plugin.version>3.0.0</mvn.clean.plugin.version>
     </properties>
 
     <modules>
