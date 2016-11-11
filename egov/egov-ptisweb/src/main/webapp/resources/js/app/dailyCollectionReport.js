@@ -144,7 +144,6 @@ $('#dailyCollectionReportSearch').click(function(e){
 					jQuery('#report-footer').show(); 
 				}
 				if (data.length > 0) {
-					updateTotalFooter(9, api);
 					updateTotalFooter(10, api);
 					updateTotalFooter(11, api);
 					updateTotalFooter(12, api);
@@ -156,7 +155,7 @@ $('#dailyCollectionReportSearch').click(function(e){
 				}
 			},
 			"aoColumnDefs" : [ {
-				"aTargets" : [9,10,11,12,13,14,15,16,17],
+				"aTargets" : [10,11,12,13,14,15,16,17],
 				"mRender" : function(data, type, full) {
 					return formatNumberInr(data);    
 				}
