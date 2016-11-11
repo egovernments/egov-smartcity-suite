@@ -164,13 +164,15 @@ public class DailyCollectionReportController {
                 .filter(QueryBuilders.rangeQuery("receiptDate").gte(DATEFORMATTER_YYYY_MM_DD.format(fromDate))
                         .lte(DATEFORMATTER_YYYY_MM_DD.format(toDate)).includeUpper(false));
         if (StringUtils.isNotBlank(searchRequest.getCollectionMode()))
-            boolQuery = boolQuery.filter(QueryBuilders.matchQuery("paymentMode", searchRequest.getCollectionMode()));
+            boolQuery = boolQuery.filter(QueryBuilders.matchQuery("channel", searchRequest.getCollectionMode()));
         if (StringUtils.isNotBlank(searchRequest.getCollectionOperator()))
             boolQuery = boolQuery.filter(QueryBuilders.matchQuery("receiptCreator", searchRequest.getCollectionOperator()));
         if (StringUtils.isNotBlank(searchRequest.getStatus()))
             boolQuery = boolQuery.filter(QueryBuilders.matchQuery("status", searchRequest.getStatus()));
         if (StringUtils.isNotBlank(searchRequest.getUlbName()))
             boolQuery = boolQuery.filter(QueryBuilders.matchQuery("cityName", searchRequest.getUlbName()));
+        if (StringUtils.isNotBlank(searchRequest.getRevenueWard()))
+            boolQuery = boolQuery.filter(QueryBuilders.matchQuery("revenueWard", searchRequest.getRevenueWard()));
 
         return boolQuery;
     }
