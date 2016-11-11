@@ -761,12 +761,10 @@ public class ComplaintController extends ApiController {
             final ComplaintStatus cmpStatus = complaintStatusService.getByName(complaintJson.get("action").getAsString());
             complaint.setStatus(cmpStatus);
 
-            Long approvalPosition;
+            Long approvalPosition=0l;
 
-            if (!complaintJson.has("approvalposition"))
-                approvalPosition = securityUtils.getCurrentUser().getId();
-            else
-                approvalPosition = Long.valueOf(complaintJson.get("approvalposition").getAsString());
+            if (complaintJson.has("approvalposition"))
+              approvalPosition = Long.valueOf(complaintJson.get("approvalposition").getAsString());
 
             if (files.length > 0)
                 complaint.getSupportDocs().addAll(addToFileStore(files));
