@@ -43,7 +43,7 @@
 <%@ taglib uri="http://www.springframework.org/tags" prefix="spring" %>
 <%@ taglib uri="http://www.springframework.org/tags/form" prefix="form" %>
 <%@ taglib uri="/WEB-INF/taglib/cdn.tld" prefix="cdn" %>	
-<form:form role="form"  modelAttribute="religion" id="religionSearchform" name="religionSearchform"
+<form:form role="form"  modelAttribute="marriageReligion" id="religionSearchform" name="religionSearchform"
 	cssClass="form-horizontal form-groups-bordered"
 	enctype="multipart/form-data">
 	<div class="row">

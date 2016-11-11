@@ -48,11 +48,14 @@ import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
 
 import org.egov.infra.persistence.entity.AbstractAuditable;
+import org.egov.infra.persistence.validator.annotation.Unique;
 import org.hibernate.validator.constraints.Length;
 import org.hibernate.validator.constraints.SafeHtml;
 
 @Entity
 @Table(name = "egmrs_religion")
+@Unique(id = "id", tableName = "egmrs_religion", columnName = { "name" }, fields = {
+        "name" }, enableDfltMsg = true, message = "Already Exist.name should be unique.")
 @SequenceGenerator(name = MarriageReligion.SEQ_RELIGION, sequenceName = MarriageReligion.SEQ_RELIGION, allocationSize = 1)
 public class MarriageReligion extends AbstractAuditable {
 
@@ -111,27 +114,27 @@ public class MarriageReligion extends AbstractAuditable {
     public boolean equals(final Object obj) {
         if (this == obj)
             return true;
-        
+
         if (!super.equals(obj))
             return false;
-        
+
         if (getClass() != obj.getClass())
             return false;
-        
+
         final MarriageReligion other = (MarriageReligion) obj;
-        
+
         if (id == null) {
             if (other.id != null)
                 return false;
         } else if (!id.equals(other.id))
             return false;
-        
+
         if (name == null) {
             if (other.name != null)
                 return false;
         } else if (!name.equals(other.name))
             return false;
-        
+
         return true;
     }
 
