@@ -37,159 +37,222 @@
  *
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
-jQuery(document).ready(function() {
-	$('#defaultersReport-header').hide();
-	$('#reportgeneration-header').hide();
-	$('#report-footer').hide();
-	
-	
-	jQuery('#defaultersReportSearch').click(function(e) {
-		var fromDemand = $("#fromAmount").val();
-		var toDemand = $("#toAmount").val(); 
+jQuery(document)
+		.ready(
+				function() {
+					$('#defaultersReport-header').hide();
+					$('#reportgeneration-header').hide();
+					$('#report-footer').hide();
+
+					jQuery('#defaultersReportSearch')
+							.click(
+									function(e) {
+										var fromDemand = $("#fromAmount").val();
+										var toDemand = $("#toAmount").val();
+										var ward = $("#ward").val();
+										var topDefaulters = $("#topDefaulters")
+												.val();
+										console.log(parseInt(fromAmount) + '-'
+												+ parseInt(toAmount) + '-'
+												+ topDefaulters);
+
+										if (((fromDemand == null || fromDemand == "") && (toDemand == null || toDemand == ""))) {
+											bootbox
+													.alert('From and To Amounts is mandatory');
+											return false;
+										}
+
+										if ((fromDemand == null || fromDemand == "")
+												&& (toDemand != null && toDemand != "")) {
+											bootbox
+													.alert('Please Enter From Amount');
+											return false;
+										}
+										if ((fromDemand != null || fromDemand != "")
+												&& (toDemand == null || toDemand == "")) {
+											bootbox
+													.alert('Please Enter To Amount');
+											return false;
+										}
+										if (parseInt($("#fromAmount").val()) > parseInt($(
+												"#toAmount").val())) {
+											bootbox
+													.alert('To Amount should be greather than From Amount');
+											return false;
+										}
+										loadingReport();
+									});
+
+				});
+
+function loadingReport() {
+	if ($('form').valid()) {
+		var fromAmount = $("#fromAmount").val();
+		var toAmount = $("#toAmount").val();
 		var ward = $("#ward").val();
 		var topDefaulters = $("#topDefaulters").val();
-		console.log(parseInt(fromAmount)+'-'+parseInt(toAmount)+'-'+topDefaulters);
-		
-		if (((fromDemand == null || fromDemand == "") &&
-				(toDemand == null || toDemand == ""))  ) {
-			bootbox.alert('From and To Amounts is mandatory');
-			return false;
-		}
-		
-		if ((fromDemand == null || fromDemand == "") && (toDemand != null && toDemand != "")) {
-			bootbox.alert('Please Enter From Amount');
-			return false;
-		}
-		if ((fromDemand != null || fromDemand != "") &&
-				(toDemand == null || toDemand == "")) {
-			bootbox.alert('Please Enter To Amount');
-	      return false;
-		}
-		if(parseInt($("#fromAmount").val()) > parseInt($("#toAmount").val())){
-			bootbox.alert('To Amount should be greather than From Amount');
-			return false;
-		}
-		loadingReport();
-	});
-	
+		var today = getdate();
 
-});
-
-function loadingReport()
-{
-		if($('form').valid()){
-			var fromAmount = $("#fromAmount").val();
-			var toAmount = $("#toAmount").val(); 
-			var ward = $("#ward").val();
-			var topDefaulters = $("#topDefaulters").val();
-			var today = getdate();
-
-			oTable= $('#defaultersReport-table');
-			$('#defaultersReport-header').show();
-			$('#reportgeneration-header').show();
-	        $("#resultDateLabel").html(fromAmount+" - "+toAmount);	
-			var oDataTable=oTable.dataTable({
-				"sDom": "<'row'<'col-xs-12 hidden col-right'f>r>t<'row'<'col-md-3 col-xs-12'i><'col-md-3 col-xs-6 col-right'l><'col-xs-12 col-md-3 col-right'<'export-data'T>><'col-md-3 col-xs-6 text-right'p>>",
-				"aLengthMenu": [[10, 25, 50, 100,-1], [10, 25, 50, 100,"All"]],
-				"autoWidth": false,
-				"bDestroy": true,
-				"processing": true,
-		        "serverSide": true,
-				"oTableTools" : {
-					"sSwfPath" : "../../../../../../egi/resources/global/swf/copy_csv_xls_pdf.swf",
-					"aButtons" : [ 
-					               {
-						             "sExtends": "pdf",
-						             "mColumns": [ 1, 2, 3, 4,5,6,7,8,9,10],
-	                                 "sPdfMessage": "Defaulters Report as on "+today+"",
-	                                 "sTitle": "Water Tax Defaulters Report",
-	                                 "sPdfOrientation": "landscape"
-					                },
-					                {
-							             "sExtends": "xls",
-							             "mColumns": [ 1,2,3,4,5,6,7,8,9,10],
-		                                 "sPdfMessage": "Defaulters Report",
-		                                 "sTitle": "Water Tax Defaulters Report"
-						             },
-						             {
-							             "sExtends": "print",
-							             "mColumns": [ 1,2,3,4,5,6,7,8,9,10],
-		                                 "sPdfMessage": "Defaulters Report",
-		                                 "sTitle": "Water Tax Defaulters Report"
-						             }],
-					
-				},
-				ajax : {
-					url : "/wtms/report/defaultersWTReport/search/result",
-					data : {
-						'ward': ward,
-						'topDefaulters':topDefaulters,
-						'fromAmount' :fromAmount,
-						'toAmount': toAmount
-					}
-				},
-				aaSorting: [],	
-				"columns" : [{"sTitle" : "S.no","sortable": false,
-							  "render": function ( data, type, full, meta ) {
-						      return oTable.fnPagingInfo().iStart+meta.row+1;
-						    }
+		oTable = $('#defaultersReport-table');
+		$('#defaultersReport-header').show();
+		$('#reportgeneration-header').show();
+		$("#resultDateLabel").html(fromAmount + " - " + toAmount);
+		var oDataTable = oTable
+				.DataTable({
+					dom : "<'row'<'col-xs-4 pull-right'f>r>t<'row add-margin'<'col-md-3 col-xs-6'i><'col-md-2 col-xs-6'l><'col-md-3 col-xs-6 text-right'B><'col-md-4 col-xs-6 text-right'p>>",
+					"aLengthMenu" : [ [ 10, 25, 50, 100, -1 ],
+							[ 10, 25, 50, 100, "All" ] ],
+					"autoWidth" : false,
+					"bDestroy" : true,
+					"processing" : true,
+					"serverSide" : true,
+					buttons : [ {
+						extend : 'pdf',
+						title : 'Water Tax Defaulters Report',
+						filename : 'Water Tax Defaulters Report',
+						orientation : 'landscape',
+						message : "Defaulters Report as on " + today + "",
+						exportOptions : {
+							columns : ':visible',
+							columns : [ 1, 2, 3, 4, 5, 6, 7, 8, 9, 10 ]
+						}
+					}, {
+						extend : 'excel',
+						filename : 'Water Tax Defaulters Report',
+						message : "Defaulters Report",
+						exportOptions : {
+							columns : ':visible',
+							columns : [ 1, 2, 3, 4, 5, 6, 7, 8, 9, 10 ]
+						}
+					}, {
+						extend : 'print',
+						header : true,
+						title : 'Water Tax Defaulters Report',
+						filename : 'Water Tax Defaulters Report',
+						message : "Defaulters Report",
+						exportOptions : {
+							columns : ':visible',
+							columns : [ 1, 2, 3, 4, 5, 6, 7, 8, 9, 10 ]
+						}
+					} ],
+					ajax : {
+						url : "/wtms/report/defaultersWTReport/search/result",
+						data : {
+							'ward' : ward,
+							'topDefaulters' : topDefaulters,
+							'fromAmount' : fromAmount,
+							'toAmount' : toAmount
+						}
+					},
+					aaSorting : [],
+					"columns" : [
+							{
+								"sTitle" : "S.no",
+								"sortable" : false,
+							/*
+							 * "render": function ( data, type, full, meta ) {
+							 * return
+							 * oDataTable.fnPagingInfo().iStart+meta.row+1; }
+							 */
 							},
-							  { "data" : "hscNo" , "title": "H.S.C NO", "sortable": false},  
-							  { "data" : "ownerName", "title": "Owner Name","sortable": false},
-							  { "data" : "wardName", "title": "Revenue Ward","sortable": false},
-							  { "data" : "houseNo", "title": "Door No","sortable": false},
-							  { "data" : "locality", "title": "Locality","sortable": false},
-							  { 
-								  "data" : "mobileNumber", "title": "Mobile Number","sortable": false,
-								  "render" : function(data, type, row) {
-									  return (!data || parseInt(data)==0? "NA" : data);
-								  }
-							  },
-							  { "data" : "duePeriodFrom", "title": "Due Period From","sortable": false},
-							  { "data" : "arrearsDue", "title": "Arears Amount","className": "text-right","sortable": false},
-							  { "data" : "currentDue", "title": "Current Amount","className": "text-right","sortable": false},
-							  { "data" : "totalDue", "title": "Total","className": "text-right","sortable": false}
-							],
-							 /* "aaSorting": [[3, 'asc'] , [8,'desc']] ,*/
-							  "footerCallback" : function(row, data, start, end, display) {
-									var api = this.api(), data;
-									if (data.length == 0) {
-										jQuery('#report-footer').hide();
-									} else {
-										jQuery('#report-footer').show(); 
-									}
-									if (data.length > 0) {
-										updateTotalFooter(8, api);
-										updateTotalFooter(9, api);
-										updateTotalFooter(10, api);
-									}
-								},
-					           /* "fnInitComplete": function() {
-					            	if(oDataTable){ oDataTable.fnSort( [ [0,'asc'] ] ); }
-					            },*/
-					            
-								"aoColumnDefs" : [ {
-									"aTargets" : [8,9,10],
-									"mRender" : function(data, type, full) {
-										return formatNumberInr(data);    
-									}
-								} ]		
-					});
-			
-		}
-		
-		/*function updateSerialNo()
-		{
-			$( "#defaultersReport-table tbody tr" ).each(function(index) {
-				if($(this).find('td').length>1)
-				{
-					oDataTable.fnUpdate(''+(index+1), index, 0);
-				}
+							{
+								"data" : "hscNo",
+								"title" : "H.S.C NO",
+								"sortable" : false
+							},
+							{
+								"data" : "ownerName",
+								"title" : "Owner Name",
+								"sortable" : false
+							},
+							{
+								"data" : "wardName",
+								"title" : "Revenue Ward",
+								"sortable" : false
+							},
+							{
+								"data" : "houseNo",
+								"title" : "Door No",
+								"sortable" : false
+							},
+							{
+								"data" : "locality",
+								"title" : "Locality",
+								"sortable" : false
+							},
+							{
+								"data" : "mobileNumber",
+								"title" : "Mobile Number",
+								"sortable" : false,
+								"render" : function(data, type, row) {
+									return (!data || parseInt(data) == 0 ? "NA"
+											: data);
+								}
+							}, {
+								"data" : "duePeriodFrom",
+								"title" : "Due Period From",
+								"sortable" : false
+							}, {
+								"data" : "arrearsDue",
+								"title" : "Arears Amount",
+								"className" : "text-right",
+								"sortable" : false
+							}, {
+								"data" : "currentDue",
+								"title" : "Current Amount",
+								"className" : "text-right",
+								"sortable" : false
+							}, {
+								"data" : "totalDue",
+								"title" : "Total",
+								"className" : "text-right",
+								"sortable" : false
+							} ],
+					/* "aaSorting": [[3, 'asc'] , [8,'desc']] , */
+					"footerCallback" : function(row, data, start, end, display) {
+						var api = this.api(), data;
+						if (data.length == 0) {
+							jQuery('#report-footer').hide();
+						} else {
+							jQuery('#report-footer').show();
+						}
+						if (data.length > 0) {
+							updateTotalFooter(8, api);
+							updateTotalFooter(9, api);
+							updateTotalFooter(10, api);
+						}
+					},
+					/*
+					 * "fnInitComplete": function() { if(oDataTable){
+					 * oDataTable.fnSort( [ [0,'asc'] ] ); } },
+					 */
+
+					"aoColumnDefs" : [ {
+						"aTargets" : [ 8, 9, 10 ],
+						"mRender" : function(data, type, full) {
+							return formatNumberInr(data);
+						}
+					} ]
+				});
+
+		oDataTable.on('order.dt search.dt', function() {
+			oDataTable.column(0, {
+				search : 'applied',
+				order : 'applied'
+			}).nodes().each(function(cell, i) {
+				cell.innerHTML = i + 1;
+				oDataTable.cell(cell).invalidate('dom');
 			});
-			
-		}*/
-		
-	
+		}).draw();
+
+	}
+
+	/*
+	 * function updateSerialNo() { $( "#defaultersReport-table tbody tr"
+	 * ).each(function(index) { if($(this).find('td').length>1) {
+	 * oDataTable.fnUpdate(''+(index+1), index, 0); } }); }
+	 */
+
 }
 
 function formatNumberInr(x) {
@@ -210,21 +273,20 @@ function formatNumberInr(x) {
 	}
 	return x;
 }
-function getdate()
-{
+function getdate() {
 	var today = new Date();
-    var dd = today.getDate();
-    var mm = today.getMonth()+1; //January is 0!
+	var dd = today.getDate();
+	var mm = today.getMonth() + 1; // January is 0!
 
-    var yyyy = today.getFullYear();
-    if(dd<10){
-        dd='0'+dd
-    } 
-    if(mm<10){
-        mm='0'+mm
-    } 
-    var today = dd+'/'+mm+'/'+yyyy;
-    return today;
+	var yyyy = today.getFullYear();
+	if (dd < 10) {
+		dd = '0' + dd
+	}
+	if (mm < 10) {
+		mm = '0' + mm
+	}
+	var today = dd + '/' + mm + '/' + yyyy;
+	return today;
 }
 function updateTotalFooter(colidx, api) {
 	// Remove the formatting to get integer data for summation
@@ -247,6 +309,5 @@ function updateTotalFooter(colidx, api) {
 
 	// Update footer
 	jQuery(api.column(colidx).footer()).html(
-			formatNumberInr(pageTotal) + ' (' + formatNumberInr(total)
-					+ ')');
+			formatNumberInr(pageTotal) + ' (' + formatNumberInr(total) + ')');
 }
