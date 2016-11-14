@@ -72,6 +72,7 @@
 	      	</div>
 	   </spring:hasBindErrors>
    </div>
+    <form:hidden path="" id="selectedCheckList" value="${selectedCheckList}"/>
     <form:hidden path="" id="cutOffDate" value="${cutOffDate}"/>
     <form:hidden path="" id="mode" value="${mode}"/>
 	<form:hidden path="billamount" id="billamount" class ="billamount"/>

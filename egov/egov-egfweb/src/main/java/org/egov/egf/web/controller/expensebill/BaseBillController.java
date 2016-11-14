@@ -212,7 +212,7 @@ public abstract class BaseBillController extends BaseVoucherController {
     }
 
     protected void populateBillPayeeDetails(final EgBillregister egBillregister) {
-        EgBillPayeedetails payeeDetail = null;
+        EgBillPayeedetails payeeDetail ;
         for (final EgBilldetails details : egBillregister.getEgBilldetailes())
             for (final EgBillPayeedetails payeeDetails : egBillregister.getBillPayeedetails())
                 if (details.getGlcodeid().equals(payeeDetails.getEgBilldetailsId().getGlcodeid())) {

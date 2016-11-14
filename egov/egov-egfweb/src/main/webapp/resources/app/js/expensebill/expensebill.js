@@ -8,6 +8,13 @@ var debitamount = 0;
 var creditamount = 0;
 $(document).ready(function(){
 	
+	$('#subLedgerType').trigger("change");
+	$netPayableAccountCodeId = $('#netPayableAccountCode').val();
+	patternvalidation(); 
+	debitGlcode_initialize();
+	creditGlcode_initialize();
+	$('#fund').val($('#fund').val());
+	loadCheckListTable();
 	if($("#mode").val() == 'edit'){
 		billamount = $("#billamount").val();
 		creditamount = $("#billamount").val();
@@ -20,13 +27,7 @@ $(document).ready(function(){
 	else{
 		calculateBillAmount();
 	}
-	$('#subLedgerType').trigger("change");
-	$('#billSubType').trigger("change");
-	$netPayableAccountCodeId = $('#netPayableAccountCode').val();
-	patternvalidation(); 
-	debitGlcode_initialize();
-	creditGlcode_initialize();
-	$('#fund').val($('#fund').val());
+	
 	var entityName = new Bloodhound({
 		datumTokenizer : function(datum) {
 			return Bloodhound.tokenizers.whitespace(datum.value);
@@ -289,6 +290,11 @@ $('#subLedgerType').change(function () {
 });
 
 $('#billSubType').change(function () {
+	$("#selectedCheckList").val("");
+	loadCheckListTable();
+});
+
+function loadCheckListTable(){
 	if($('#billSubType').val()!=""){
 		$.ajax({
 			method : "GET",
@@ -303,14 +309,36 @@ $('#billSubType').change(function () {
 						$('#tblchecklist tbody').empty();
 						var output = '';
 						$.each(response, function(index, value) {
-							output = '<tr>';
+							var selected = "";
+							var selectedCheckValue = "";
+							if($("#selectedCheckList").val()){
+							var selectedCheckList = $("#selectedCheckList").val();
+							var selectedCheckListArray= selectedCheckList.split(',');
+								for (var i in selectedCheckListArray) {
+									if(value.id == selectedCheckListArray[i].split('-')[0]){
+										selected = "selected";
+										selectedCheckValue = selectedCheckListArray[i].split('-')[1];
+									}
+								}
+							}
+							output = '<tr id="tblchecklistrow">';
 							output = output + '<td class="text-left">' + value.value + '</td>'
 							output = output + '<td class="text-right">'
 							output = output + '<input id="checkLists['+index+'].appconfigvalue.id" name="checkLists['+index+'].appconfigvalue.id" type="hidden" value="'+ value.id +'"/>'
 							output = output + '<select id="checkLists['+index+'].checklistvalue" name="checkLists['+index+'].checklistvalue" data-first-option="false" class="form-control">'
-							output = output + '<option value="na">N/A</option>'
-							output = output + '<option value="Yes">Yes</option>'
-							output = output + '<option value="No">No</option>'
+							if(selected!="" && selectedCheckValue == "na")
+								output = output + '<option value="na" selected = "selected">N/A</option>'
+							else
+								output = output + '<option value="na">N/A</option>'
+							if(selected!="" && selectedCheckValue == "Yes")
+								output = output + '<option value="Yes" selected = "selected">Yes</option>'
+							else
+								output = output + '<option value="Yes">Yes</option>'
+							if(selected!="" && selectedCheckValue == "No")
+								output = output + '<option value="No" selected = "selected">No</option>'
+							else
+								output = output + '<option value="No">No</option>'
+							
 							output = output + '</select>'
 							output = output + '</td>'
 							output = output + '</tr>';
@@ -320,7 +348,7 @@ $('#billSubType').change(function () {
 			
 		});
 	}
-});
+}
 
 $('#netPayableAccountCode').change(function () {
 	if ($('#netPayableAccountCode').val() != '') {
