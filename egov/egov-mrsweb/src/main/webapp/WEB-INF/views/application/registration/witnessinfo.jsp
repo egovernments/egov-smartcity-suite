@@ -81,7 +81,7 @@
 			<spring:message code="lbl.age"/><span class="mandatory"></span>
 		</label>
 		<div class="col-sm-6">
-			<form:input path="${witness}.age" id="${witness}.age" type="text" class="form-control low-width patternvalidation" maxlength="2" data-pattern="number" placeholder="" autocomplete="off"  required="required"/>
+			<form:input path="${witness}.age" id="${witness}.age" type="text" class="form-control low-width patternvalidation witnessage" maxlength="2" data-pattern="number" placeholder="" autocomplete="off"  required="required"/>
 	           <form:errors path="${witness}.age" cssClass="add-margin error-msg"/>
 		</div>
 		

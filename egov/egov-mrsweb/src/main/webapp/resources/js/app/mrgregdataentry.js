@@ -121,6 +121,30 @@ $(document).ready( function () {
 		}
 	})
 	
+	$('input[id$="husband.ageInYearsAsOnMarriage"]').blur( function () {
+		var age = parseInt( $(this).val() );
+		if (age != null && age != undefined && (age < 21)) {
+			bootbox.alert("Husband's age should be atlest 21 years");
+			$(this).val('');
+		}
+	})
+	
+	$('input[id$="wife.ageInYearsAsOnMarriage"]').blur( function () {
+		var age = parseInt( $(this).val() );
+		if (age != null && age != undefined && (age < 18)) {
+			bootbox.alert("wife's age should be atlest 18 years");
+			$(this).val('');
+		}
+	})
+	
+	$('.witnessage').blur( function () {
+		var age = parseInt( $(this).val() );
+		if (age != null && age != undefined && (age < 18)) {
+			bootbox.alert("witness age should be atleast 18 years");
+			$(this).val('');
+		}
+	})
+	
 	$('a[id^="signature"]').click( function () {
 		var content = $( $(this).siblings('input[type="hidden"]') ).val();
 		var value = "data:image/jpeg;base64," + content ;
