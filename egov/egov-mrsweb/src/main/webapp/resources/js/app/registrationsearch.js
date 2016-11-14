@@ -123,18 +123,6 @@ $(document)
 														"sClass" : "text-left"
 													},
 													{
-														"data" : null,
-														render : function(data,
-																type, row, meta) {
-															if (row.feeCollectionPending) {
-																return 'Yes';
-															} else {
-																return 'No';
-															}
-														},
-														"sClass" : "text-left"
-													},
-													{
 														"data" : "status",
 														"sClass" : "text-left"
 													},

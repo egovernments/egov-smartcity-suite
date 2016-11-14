@@ -56,20 +56,8 @@
 	<div class="row add-border">
 		<div class="col-sm-3 add-margin"><spring:message code="lbl.application.no"/></div>
 		<div class="col-sm-3 add-margin view-content"><c:out value="${registration.applicationNo}"></c:out></div>
-		<div class="col-sm-3 add-margin"><spring:message code="lbl.application.date"/></div>
-		<div class="col-sm-3 add-margin view-content">
-			<fmt:formatDate value="${registration.applicationDate}" pattern="dd-MM-yyyy" var="applicationDate"/>
-			<c:out value="${applicationDate}">
-		</c:out></div>
-	</div>
-	<div class="row add-border">
-		<div class="col-sm-3 add-margin"><spring:message code="lbl.application.no"/></div>
-		<div class="col-sm-3 add-margin view-content"><c:out value="${registration.applicationNo}"></c:out></div>
-		<div class="col-sm-3 add-margin"><spring:message code="lbl.application.date"/></div>
-		<div class="col-sm-3 add-margin view-content">
-			<fmt:formatDate value="${registration.applicationDate}" pattern="dd-MM-yyyy" var="applicationDate"/>
-			<c:out value="${applicationDate}">
-		</c:out></div>
+		<div class="col-sm-3 add-margin"><spring:message code="lbl.registration.no"/></div>
+		<div class="col-sm-3 add-margin view-content"><c:out value="${registration.registrationNo!=null?registration.registrationNo:'N/A'}"></c:out></div>
 	</div>
 	
 	<div class="row add-border">
@@ -78,8 +66,11 @@
 			<fmt:formatDate value="${registration.dateOfMarriage}" pattern="dd-MM-yyyy" var="dateOfMarriage"/>
 			<c:out value="${dateOfMarriage}"></c:out>
 			</div>
-		<div class="col-sm-3 add-margin"><spring:message code="lbl.zone"/></div>
-		<div class="col-sm-3 add-margin view-content"><c:out value="${registration.zone.name}"></c:out></div>
+		<div class="col-sm-3 add-margin"><spring:message code="lbl.application.date"/></div>
+		<div class="col-sm-3 add-margin view-content">
+			<fmt:formatDate value="${registration.applicationDate}" pattern="dd-MM-yyyy" var="applicationDate"/>
+			<c:out value="${applicationDate}">
+		</c:out></div>
 	</div>
 	
 	<div class="row add-border">
@@ -91,6 +82,8 @@
 	<div class="row add-border">
 	    <div class="col-sm-3 add-margin"><spring:message code="lbl.registrationunit"/></div>
 		<div class="col-sm-3 add-margin view-content"><c:out value="${registration.marriageRegistrationUnit.name}"></c:out></div>
+		<div class="col-sm-3 add-margin"><spring:message code="lbl.zone"/></div>
+		<div class="col-sm-3 add-margin view-content"><c:out value="${registration.zone.name}"></c:out></div>
 	</div>
 </div>
 

@@ -61,7 +61,6 @@
 	    			<th>Wife Name</th>
 	    			<th>Is Certificate issued?</th>
 	    			<th>Marriage Fee</th>
-	    			<th>Is fee collected?</th>
 	    			<th>Status</th>
 	    			<th>Registration Unit</th>
 	    			<th>Action</th>

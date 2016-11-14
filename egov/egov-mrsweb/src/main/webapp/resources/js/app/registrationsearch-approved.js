@@ -104,17 +104,6 @@ $(document).ready( function () {
 							}, {
 								"data" : "feePaid",
 								"sClass" : "text-left"
-							}, {
-								"data" : null,
-								render: function(data, type, row, meta){
-									 if(row.feeCollectionPending)
-										 {
-										 return 'Yes';
-										 } else{
-											 return 'No';
-										 }
-								},
-								"sClass" : "text-left"
 							},{
 								"data" : "status",
 								"sClass" : "text-left"
@@ -125,7 +114,6 @@ $(document).ready( function () {
 								"data" : null,
 							    sortable: false,
 							    "render": function ( data, type, row, meta ) {
-								        //return ('<select class="dropchange"><option value="">Select from Below</option><option  value='+viewurl+row.id +'>View</option></select>');
 								        return '<button type="button" class="btn btn-xs btn-secondary edit" value='+updateurl+row.id +'><span class="glyphicon glyphicon-edit"></span>&nbsp;Edit</button>';
 								        
 							    }

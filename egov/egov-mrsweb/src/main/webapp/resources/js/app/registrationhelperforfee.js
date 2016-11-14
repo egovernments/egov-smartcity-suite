@@ -84,7 +84,7 @@ $(document)
 											aaSorting : [],
 											columns : [
 													{
-														"data" : "registrationNo",
+														"data" : null,
 														render : function(data,
 																type, row, meta) {
 															if (row.registrationNo == 'undefined'
@@ -118,10 +118,6 @@ $(document)
 													},
 													{
 														"data" : "feePaid",
-														"sClass" : "text-left"
-													},
-													{
-														"data" : "feeCollected",
 														"sClass" : "text-left"
 													},
 													{
@@ -182,7 +178,7 @@ $(document)
 											aaSorting : [],
 											columns : [
 													{
-														"data" : "registrationNo",
+														"data" : null,
 														render : function(data,
 																type, row, meta) {
 															if (row.registrationNo == 'undefined'
@@ -216,10 +212,6 @@ $(document)
 													},
 													{
 														"data" : "feePaid",
-														"sClass" : "text-left"
-													},
-													{
-														"data" : "feeCollected",
 														"sClass" : "text-left"
 													},
 													{

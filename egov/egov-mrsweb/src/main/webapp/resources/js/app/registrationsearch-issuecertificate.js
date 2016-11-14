@@ -42,7 +42,6 @@
 $(document).ready( function () {
 	
 	var updateurl='/mrs/reissue/create/';
-
 	
 	$('#btnregistrationsearch').click( function () {
 		callAjaxSearch();
@@ -104,17 +103,6 @@ $(document).ready( function () {
 							}, {
 								"data" : "feePaid",
 								"sClass" : "text-left"
-							}, {
-								"data" : null,
-								render: function(data, type, row, meta){
-									 if(row.feeCollectionPending)
-										 {
-										 return 'Yes';
-										 } else{
-											 return 'No';
-										 }
-								},
-								"sClass" : "text-left"
 							},{
 								"data" : "status",
 								"sClass" : "text-left"
@@ -133,7 +121,6 @@ $(document).ready( function () {
 							}]
 							
 						});
-				
 	}
 
 	$(document).on('click','.reissue',function(){
