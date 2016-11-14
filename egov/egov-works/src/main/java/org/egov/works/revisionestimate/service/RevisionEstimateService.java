@@ -157,7 +157,7 @@ public class RevisionEstimateService {
     private ActivityRepository activityRepository;
 
     @Autowired
-    WorkOrderActivityService workOrderActivityService;
+    private WorkOrderActivityService workOrderActivityService;
 
     @Autowired
     private MBHeaderService mbHeaderService;

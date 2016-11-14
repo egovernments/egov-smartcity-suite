@@ -110,7 +110,7 @@ public class UpdateRevisionEstimateController extends GenericWorkFlowController 
     private ActivityService activityService;
 
     @Autowired
-    WorkOrderActivityService workOrderActivityService;
+    private WorkOrderActivityService workOrderActivityService;
 
     @Autowired
     private MBHeaderService mbHeaderService;
