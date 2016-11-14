@@ -2084,10 +2084,44 @@ function validateRevisionEstimate() {
 			message = message + index + ", ";
 		}
 	});
+
+	if (!flag) {
+		message = message.slice(0, -2);
+		bootbox.alert($('#errorchangequantitieszero').val() + message);
+		return false;
+	}
+	
+	index = 0;
+	flag = true;
+	
+	$("#tblNonTendered > tbody > tr[nontenderedinvisible!='true'] .quantity").each(function() {
+		index++;
+		if ($(this).val() == "" || parseFloat($(this).val()) <= 0) {
+			flag = false;
+			message = message + index + ", ";
+		}
+	});
 	
 	if (!flag) {
 		message = message.slice(0, -2);
-		bootbox.alert($('#errorquantitieszero').val() + message);
+		bootbox.alert($('#errornontenderedquantitieszero').val() + message);
+		return false;
+	}
+	
+	index = 0;
+	flag = true;
+	$("#tblLumpSum > tbody > tr[lumpsuminvisible!='true'] .lumpSumQuantity").each(function() {
+		index++;
+		if ($(this).val() == "" || parseFloat($(this).val()) <= 0) {
+			flag = false;
+			message = message + index + ", ";
+		}
+		
+	});
+
+	if (!flag) {
+		message = message.slice(0, -2);
+		bootbox.alert($('#errorlumpsumquantitieszero').val() + message);
 		return false;
 	}
 	

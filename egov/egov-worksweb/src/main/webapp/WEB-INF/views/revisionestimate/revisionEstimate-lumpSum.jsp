@@ -54,6 +54,7 @@
 			</div>
 		</div>
 	</div>
+	<input type="hidden" id="errorlumpsumquantitieszero" value="<spring:message code='error.lumpsum.quantity.zero' />">
 	<input type="hidden" id="errordescription" value="<spring:message code='error.nonsor.description' />">
 	<input type="hidden" id="erroruom" value="<spring:message code='error.nonsor.uom' />">
 	<input type="hidden" value="${revisionEstimate.lumpSumActivities.size() }" id="lumpSumActivitiesSize" />

@@ -39,9 +39,11 @@
   --%>
 <div id="baseSORTable" class="panel panel-primary" data-collapsed="0">
 	<input type="hidden" id="errorquantitieszero" value="<spring:message code='error.quantity.zero' />">
+	<input type="hidden" id="errorchangequantitieszero" value="<spring:message code='error.change.quantity.zero' />">
 	<input type="hidden" id="errorcumulativequantity" value="<spring:message code='error.approved.quantity.cumulative' />">
 	<input type="hidden" id="errorchangequantity" value="<spring:message code='error.change.quantity' />">
 	<input type="hidden" id="isMeasurementsExist" value="${isMeasurementsExist }">
+	
 	<div class="panel-heading">
 		<div class="position_alert3"><spring:message code="lbl.pagetotal" /> : &#8377 <span id="pageTotal"></span></div>
 		<div class="panel-title">
@@ -163,26 +165,26 @@
 									<form:input type="hidden" path="changeQuantityActivities[${item.index }].parent.id" id="changeQuantityActivitiesParent_${item.index }" class="parent" value="${activity.parent.id }" />
 								</td>
 								<td>
-									<span class="activityCategory_${item.index }">${activity.schedule.scheduleCategory.code }</span>
+									<span class="activityCategory_${item.index }">${activity.parent.schedule.scheduleCategory.code }</span>
 								</td>
 								<td>
-									<span class="activityCode_${item.index }">${activity.schedule.code }</span>
+									<span class="activityCode_${item.index }">${activity.parent.schedule.code }</span>
 								</td>
 								<td align="left">
-									<c:if test="${activity.schedule != null }">
-										<span class="activitySummary_${item.index }">${activity.schedule.getSummary() }</span>&nbsp
-										<span class="hintanchor activityDescription_${item.index }"/><a href="#" class="hintanchor" title="${activity.schedule.description }"><i class="fa fa-question-circle" aria-hidden="true"></i></a></span>
+									<c:if test="${activity.parent.schedule != null }">
+										<span class="activitySummary_${item.index }">${activity.parent.schedule.getSummary() }</span>&nbsp
+										<span class="hintanchor activityDescription_${item.index }"/><a href="#" class="hintanchor" title="${activity.parent.schedule.description }"><i class="fa fa-question-circle" aria-hidden="true"></i></a></span>
 									</c:if>
-									<c:if test="${activity.schedule == null }">
-										<span class="activitySummary_${item.index }">${activity.nonSor.description }</span>&nbsp
-										<span class="hintanchor activityDescription_${item.index }"/><a href="#" class="hintanchor" title="${activity.nonSor.description }"><i class="fa fa-question-circle" aria-hidden="true"></i></a></span>
+									<c:if test="${activity.parent.schedule == null }">
+										<span class="activitySummary_${item.index }">${activity.parent.nonSor.description }</span>&nbsp
+										<span class="hintanchor activityDescription_${item.index }"/><a href="#" class="hintanchor" title="${activity.parent.nonSor.description }"><i class="fa fa-question-circle" aria-hidden="true"></i></a></span>
 									</c:if>
 								</td>
 								<td>
-									<span class="activityUom_${item.index }">${activity.uom.uom }</span>
+									<span class="activityUom_${item.index }">${activity.parent.uom.uom }</span>
 								</td>
 								<td class="text-right">
-									<span class="activityEstimateRate_${item.index }"><fmt:formatNumber groupingUsed="false" minFractionDigits="2" maxFractionDigits="4">${activity.estimateRate }</fmt:formatNumber></span>
+									<span class="activityEstimateRate_${item.index }"><fmt:formatNumber groupingUsed="false" minFractionDigits="2" maxFractionDigits="4">${activity.parent.estimateRate }</fmt:formatNumber></span>
 								</td>
 								<td class="text-right">
 									<span class="activityEstimateQuantity_${item.index }"><fmt:formatNumber groupingUsed="false" minFractionDigits="2" maxFractionDigits="4">${activity.estimateQuantity }</fmt:formatNumber></span>
@@ -191,7 +193,7 @@
 									<span class="activityConsumedQuantity_${item.index }"><fmt:formatNumber groupingUsed="false" minFractionDigits="2" maxFractionDigits="4">${activity.consumedQuantity }</fmt:formatNumber></span>
 								</td>
 								<td>
-									<form:input type="hidden" path="changeQuantityActivities[${item.index }].rate" value="${activity.rate }" id="activityUnitRate_${item.index }" class="form-control table-input text-right"/>
+									<form:input type="hidden" path="changeQuantityActivities[${item.index }].rate" value="${activity.parent.rate }" id="activityUnitRate_${item.index }" class="form-control table-input text-right"/>
 									<div class="input-group" style="width:150px">
 										<span class="input-group-btn number-sign">
 							               <button type="button" class="btn btn-default input-sm dropdown-toggle" data-toggle="dropdown" aria-expanded="false">
@@ -245,10 +247,11 @@
 									</span>
 								</td>
 								<td class="text-right">
-									<span class="reActivityTotal activityEstimatedAmount_${item.index }" id = "activityEstimatedAmount_${item.index }"><fmt:formatNumber groupingUsed="false" minFractionDigits="2" maxFractionDigits="4">${activity.rate * activity.quantity }</fmt:formatNumber></span>
+									<span class="reActivityTotal activityEstimatedAmount_${item.index }" id = "activityEstimatedAmount_${item.index }"><fmt:formatNumber groupingUsed="false" minFractionDigits="2" maxFractionDigits="4">${activity.parent.rate * activity.quantity }</fmt:formatNumber></span>
 								</td>
 								<td class="text-right">
 									<c:if test="${activity.revisionType == 'ADDITIONAL_QUANTITY' }">
+
 										<span class="revisedEstimateQty revisedEstimateQty_${item.index }" id="revisedEstimateQty_${item.index }"><fmt:formatNumber groupingUsed="false" minFractionDigits="2" maxFractionDigits="4">${(activity.quantity + activity.estimateQuantity) }</fmt:formatNumber></span>
 									</c:if>
 									<c:if test="${activity.revisionType == 'REDUCED_QUANTITY' }">
@@ -257,10 +260,10 @@
 								</td>
 								<td class="text-right">
 									<c:if test="${activity.revisionType == 'ADDITIONAL_QUANTITY' }">
-										<span class="activityTotal activityTotal_${item.index }" id="activityTotal_${item.index }"><fmt:formatNumber groupingUsed="false" minFractionDigits="2" maxFractionDigits="4">${activity.rate * (activity.quantity + activity.estimateQuantity) }</fmt:formatNumber></span>
+										<span class="activityTotal activityTotal_${item.index }" id="activityTotal_${item.index }"><fmt:formatNumber groupingUsed="false" minFractionDigits="2" maxFractionDigits="4">${activity.parent.rate * (activity.quantity + activity.estimateQuantity) }</fmt:formatNumber></span>
 									</c:if>
 									<c:if test="${activity.revisionType == 'REDUCED_QUANTITY' }">
-										<span class="activityTotal activityTotal_${item.index }" id="activityTotal_${item.index }"><fmt:formatNumber groupingUsed="false" minFractionDigits="2" maxFractionDigits="4">${activity.rate * (activity.estimateQuantity - activity.quantity) }</fmt:formatNumber></span>
+										<span class="activityTotal activityTotal_${item.index }" id="activityTotal_${item.index }"><fmt:formatNumber groupingUsed="false" minFractionDigits="2" maxFractionDigits="4">${activity.parent.rate * (activity.estimateQuantity - activity.quantity) }</fmt:formatNumber></span>
 									</c:if>
 								</td>
 								<td>
@@ -275,11 +278,11 @@
 				<c:set var="recqsortotal" value="${0}" scope="session" />
 				<c:if test="${revisionEstimate.changeQuantityActivities != null}">
 					<c:forEach items="${revisionEstimate.changeQuantityActivities}" var="sorDtls">
-						<c:if test="${sorDtls.revisionType == 'ADDITIONAL_QUANTITY' }">
-							<c:set var="recqsortotal" value="${recqsortotal + (sorDtls.rate * (sorDtls.quantity)) }" />
+						<c:if test="${sorDtls.parent.revisionType == 'ADDITIONAL_QUANTITY' }">
+							<c:set var="recqsortotal" value="${recqsortotal + (sorDtls.parent.rate * (sorDtls.quantity)) }" />
 						</c:if>
-						<c:if test="${sorDtls.revisionType == 'REDUCED_QUANTITY' }">
-							<c:set var="recqsortotal" value="${recqsortotal - (sorDtls.rate * (sorDtls.quantity)) }" />
+						<c:if test="${sorDtls.parent.revisionType == 'REDUCED_QUANTITY' }">
+							<c:set var="recqsortotal" value="${recqsortotal - (sorDtls.parent.rate * (sorDtls.quantity)) }" />
 						</c:if>
 						
 					</c:forEach>
@@ -287,11 +290,11 @@
 				<c:set var="cqsortotal" value="${0}" scope="session" />
 				<c:if test="${revisionEstimate.changeQuantityActivities != null}">
 					<c:forEach items="${revisionEstimate.changeQuantityActivities}" var="sorDtls">
-						<c:if test="${sorDtls.revisionType == 'ADDITIONAL_QUANTITY' }">
-							<c:set var="cqsortotal"	value="${cqsortotal + (sorDtls.rate * (sorDtls.quantity + sorDtls.estimateQuantity)) }" />
+						<c:if test="${sorDtls.parent.revisionType == 'ADDITIONAL_QUANTITY' }">
+							<c:set var="cqsortotal"	value="${cqsortotal + (sorDtls.parent.rate * (sorDtls.quantity + sorDtls.estimateQuantity)) }" />
 						</c:if>
-						<c:if test="${sorDtls.revisionType == 'REDUCED_QUANTITY' }">
-							<c:set var="cqsortotal"	value="${cqsortotal + (sorDtls.rate * (sorDtls.estimateQuantity - sorDtls.quantity)) }" />
+						<c:if test="${sorDtls.parent.revisionType == 'REDUCED_QUANTITY' }">
+							<c:set var="cqsortotal"	value="${cqsortotal + (sorDtls.parent.rate * (sorDtls.estimateQuantity - sorDtls.quantity)) }" />
 						</c:if>
 					</c:forEach>
 				</c:if>

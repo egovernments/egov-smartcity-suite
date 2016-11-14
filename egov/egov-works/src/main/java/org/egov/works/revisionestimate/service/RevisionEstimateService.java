@@ -714,7 +714,7 @@ public class RevisionEstimateService {
                     msold.setActivity(oldActivity);
                 }
         }
-        
+
         removeEmptyMS(oldActivity);
         return oldActivity.getMeasurementSheetList();
     }
@@ -1042,7 +1042,7 @@ public class RevisionEstimateService {
             final BindingResult bindErrors) {
         for (final Activity activity : revisionEstimate.getChangeQuantityActivities()) {
             if (activity.getQuantity() <= 0)
-                bindErrors.reject("error.quantity.zero", "error.quantity.zero");
+                bindErrors.reject("error.change.quantity.zero", "error.change.quantity.zero");
             if (activity.getRate() <= 0)
                 bindErrors.reject("error.rates.zero", "error.rates.zero");
 
@@ -1375,7 +1375,7 @@ public class RevisionEstimateService {
             measurementSheet.setWidth(new BigDecimal(width));
         if (depthOrHeight != null && depthOrHeight != 0)
             measurementSheet.setDepthOrHeight(new BigDecimal(depthOrHeight));
-        
+
         measurementSheet.setQuantity(new BigDecimal(quantity.toString()));
     }
 
@@ -1406,5 +1406,25 @@ public class RevisionEstimateService {
                 }
                 revisionEstimate.getChangeQuantityActivities().add(activity);
             }
+    }
+
+    public void validateNontenderedActivities(final RevisionAbstractEstimate revisionEstimate,
+            final BindingResult bindErrors) {
+        for (final Activity activity : revisionEstimate.getNonTenderedActivities()) {
+            if (activity.getQuantity() <= 0)
+                bindErrors.reject("error.notendered.quantity.zero", "error.notendered.quantity.zero");
+            if (activity.getRate() <= 0)
+                bindErrors.reject("error.rates.zero", "error.rates.zero");
+        }
+    }
+
+    public void validateLumpsumActivities(final RevisionAbstractEstimate revisionEstimate,
+            final BindingResult bindErrors) {
+        for (final Activity activity : revisionEstimate.getLumpSumActivities()) {
+            if (activity.getQuantity() <= 0)
+                bindErrors.reject("error.lumpsum.quantity.zero", "error.lumpsum.quantity.zero");
+            if (activity.getRate() <= 0)
+                bindErrors.reject("error.rates.zero", "error.rates.zero");
+        }
     }
 }

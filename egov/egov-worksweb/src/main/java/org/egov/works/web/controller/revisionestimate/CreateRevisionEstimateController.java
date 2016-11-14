@@ -55,15 +55,22 @@ import org.egov.infra.exception.ApplicationRuntimeException;
 import org.egov.infra.validation.exception.ValidationError;
 import org.egov.infra.validation.exception.ValidationException;
 import org.egov.works.abstractestimate.entity.AbstractEstimate.EstimateStatus;
+import org.egov.works.abstractestimate.entity.Activity;
+import org.egov.works.abstractestimate.service.ActivityService;
+import org.egov.works.letterofacceptance.service.WorkOrderActivityService;
 import org.egov.works.lineestimate.entity.LineEstimate;
 import org.egov.works.lineestimate.entity.LineEstimateAppropriation;
 import org.egov.works.lineestimate.entity.LineEstimateDetails;
 import org.egov.works.lineestimate.service.LineEstimateAppropriationService;
+import org.egov.works.master.service.ScheduleOfRateService;
+import org.egov.works.mb.service.MBHeaderService;
 import org.egov.works.revisionestimate.entity.RevisionAbstractEstimate;
 import org.egov.works.revisionestimate.entity.RevisionAbstractEstimate.RevisionEstimateStatus;
+import org.egov.works.revisionestimate.entity.enums.RevisionType;
 import org.egov.works.revisionestimate.service.RevisionEstimateService;
 import org.egov.works.utils.WorksConstants;
 import org.egov.works.utils.WorksUtils;
+import org.egov.works.workorder.entity.WorkOrderActivity;
 import org.egov.works.workorder.entity.WorkOrderEstimate;
 import org.egov.works.workorder.service.WorkOrderEstimateService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -107,6 +114,18 @@ public class CreateRevisionEstimateController extends GenericWorkFlowController 
     @Autowired
     private BudgetControlTypeService budgetControlTypeService;
 
+    @Autowired
+    private ScheduleOfRateService scheduleOfRateService;
+
+    @Autowired
+    private ActivityService activityService;
+
+    @Autowired
+    WorkOrderActivityService workOrderActivityService;
+
+    @Autowired
+    private MBHeaderService mbHeaderService;
+
     @RequestMapping(value = "/create", method = RequestMethod.GET)
     public String showForm(@ModelAttribute("revisionEstimate") final RevisionAbstractEstimate revisionEstimate,
             @RequestParam final Long workOrderEstimateId, final Model model) {
@@ -128,7 +147,7 @@ public class CreateRevisionEstimateController extends GenericWorkFlowController 
     }
 
     @RequestMapping(value = "/create", method = RequestMethod.POST)
-    public String save(@ModelAttribute final RevisionAbstractEstimate revisionEstimate,
+    public String save(@ModelAttribute("revisionEstimate") final RevisionAbstractEstimate revisionEstimate,
             final RedirectAttributes redirectAttributes, final Model model, final BindingResult bindErrors,
             final HttpServletRequest request, @RequestParam String workFlowAction) {
         RevisionAbstractEstimate savedRevisionEstimate;
@@ -147,8 +166,27 @@ public class CreateRevisionEstimateController extends GenericWorkFlowController 
         revisionEstimateService.validateREInDrafts(workOrderEstimate.getEstimate().getId(), jsonObject, bindErrors);
         revisionEstimateService.validateREInWorkFlow(workOrderEstimate.getEstimate().getId(), jsonObject, bindErrors);
         revisionEstimateService.validateChangeQuantityActivities(revisionEstimate, bindErrors);
+        revisionEstimateService.validateNontenderedActivities(revisionEstimate, bindErrors);
+        revisionEstimateService.validateLumpsumActivities(revisionEstimate, bindErrors);
         if (bindErrors.hasErrors()) {
             revisionEstimateService.loadViewData(revisionEstimate, workOrderEstimate, model);
+
+            for (final Activity activity : revisionEstimate.getNonTenderedActivities())
+                activity.setSchedule(scheduleOfRateService.getScheduleOfRateById(activity.getSchedule().getId()));
+            for (final Activity activity : revisionEstimate.getChangeQuantityActivities()) {
+                activity.setParent(activityService.findOne(activity.getParent().getId()));
+                final WorkOrderActivity workOrderActivity = workOrderActivityService
+                        .getWorkOrderActivityByActivity(activity.getParent().getId());
+                if (workOrderActivity != null) {
+                    final Double consumedQuantity = mbHeaderService.getPreviousCumulativeQuantity(-1L, workOrderActivity.getId());
+                    activity.setConsumedQuantity(consumedQuantity == null ? 0 : consumedQuantity);
+                    activity.setEstimateQuantity(workOrderActivity.getApprovedQuantity());
+                    if ("-".equalsIgnoreCase(activity.getSignValue()))
+                        activity.setRevisionType(RevisionType.REDUCED_QUANTITY);
+                    else
+                        activity.setRevisionType(RevisionType.ADDITIONAL_QUANTITY);
+                }
+            }
 
             final WorkflowContainer workflowContainer = new WorkflowContainer();
             prepareWorkflow(model, revisionEstimate, workflowContainer);

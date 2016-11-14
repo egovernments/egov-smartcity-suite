@@ -45,6 +45,7 @@
 			<input type="hidden" id="errorquantityzero" value="<spring:message code='error.quantity.zero' />">
 			<input type="hidden" id="errorsornonsor" value="<spring:message code='error.sor.nonsor.required' />">
 			<input type="hidden" value="${revisionEstimate.nonTenderedActivities.size() }" id="nonTenderedActivitiesSize" />
+			<input type="hidden" id="errornontenderedquantitieszero" value="<spring:message code='error.notendered.quantity.zero' />">
 <div id="baseNonTenderedTable" class="panel panel-primary" data-collapsed="0">
 	<input type="hidden" id="isServiceVATRequired" value="${isServiceVATRequired }">
 	<div class="panel-heading">
