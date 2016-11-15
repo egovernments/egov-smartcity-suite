@@ -69,6 +69,7 @@ public interface FinancialConstants {
     public static final String STANDARD_EXPENDITURETYPE_PURCHASE = "Purchase";
     public static final String STANDARD_EXPENDITURETYPE_SALARY = "Salary";
     public static final String STANDARD_EXPENDITURETYPE_PENSION = "Pension";
+    
 
     public static final String BILLTYPE_FINAL_BILL = "Final Bill";
     public static final String BILLTYPE_PART_BILL = "Part Bill";
@@ -344,4 +345,9 @@ public interface FinancialConstants {
     public static final String WORKFLOW_STATUS_CODE_REJECTED = "REJECTED";
     public static final String KEY_DATAENTRYCUTOFFDATE = "DataEntryCutOffDate";
     public static final String NA = "na";
+    public static final String MANUAL = "Manual";
+    public static final String AUTO = "Auto";
+    public static final String JOURNAL = "Journal";
+    public static final String GENERAL = "General";
+    public static final String STANDARD_SUBTYPE_FIXED_ASSET = "Fixed Asset";
 }

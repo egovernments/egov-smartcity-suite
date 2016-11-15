@@ -48,68 +48,46 @@
         position:fixed;z-index:9999;top:85px;right:20px;background:#F2DEDE;padding:10px 20px;border-radius: 5px;
       }
    .position_alert1{
-        position:fixed;z-index:9999;top:85px;right:440px;background:#F2DEDE;padding:10px 20px;border-radius: 5px;
+        position:fixed;z-index:9999;top:85px;right:470px;background:#F2DEDE;padding:10px 20px;border-radius: 5px;
       }
    .position_alert2{
-     position:fixed;z-index:9999;top:85px;right:200px;background:#F2DEDE;padding:10px 20px;border-radius: 5px;
+     position:fixed;z-index:9999;top:85px;right:235px;background:#F2DEDE;padding:10px 20px;border-radius: 5px;
    }
 </style>
-<form:form name="expenseBillForm" role="form" modelAttribute="egBillregister" id="egBillregister" class="form-horizontal form-groups-bordered" enctype="multipart/form-data">
+<form:form name="journalVoucherForm" role="form" action="create" modelAttribute="voucherHeader" id="voucherHeader" class="form-horizontal form-groups-bordered" enctype="multipart/form-data">
  	<div class="position_alert">
-		<spring:message	code="lbl.expense.bill.amount" /> : &#8377 <span id="expenseBillAmount"><c:out value="${expenseBillAmount}" default="0.0"></c:out></span>
+		<spring:message	code="lbl.voucher.amount" /> : &#8377 <span id="journalVoucherAmount"><c:out value="${journalVoucherAmount}" default="0.0"></c:out></span>
 	</div>
 	<div class="position_alert1">
-		<spring:message code="lbl.total.debit.amount" />  : &#8377 <span id="expenseBillTotalDebitAmount"> <c:out value="${expenseBillTotalDebitAmount}" default="0.0"></c:out></span>
+		<spring:message code="lbl.total.debit.amount" />  : &#8377 <span id="journalVoucherTotalDebitAmount"> <c:out value="${journalVoucherTotalDebitAmount}" default="0.0"></c:out></span>
 	</div>
 	<div class="position_alert2">
-		<spring:message code="lbl.total.credit.amount" />  : &#8377 <span id="expenseBillTotalCreditAmount"> <c:out value="${expenseBillTotalCreditAmount}" default="0.0"></c:out></span>
+		<spring:message code="lbl.total.credit.amount" />  : &#8377 <span id="journalVoucherTotalCreditAmount"> <c:out value="${journalVoucherTotalCreditAmount}" default="0.0"></c:out></span>
 	</div>
 	
 	<div>
-		<spring:hasBindErrors name="egBillregister">
+		<spring:hasBindErrors name="voucherHeader">
 			<div class="alert alert-danger col-md-10 col-md-offset-1">
 	      			<form:errors path="*" /><br/>
 	      	</div>
 	   </spring:hasBindErrors>
    </div>
-    <form:hidden path="" id="selectedCheckList" value="${selectedCheckList}"/>
     <form:hidden path="" id="cutOffDate" value="${cutOffDate}"/>
     <form:hidden path="" id="mode" value="${mode}"/>
-	<form:hidden path="billamount" id="billamount" class ="billamount"/>
+	<form:hidden path="" id="voucheramount" class ="voucheramount"/>
 	<div class="panel-title text-center" style="color: green;">
 		<c:out value="${message}" /><br />
 	</div>
-			<ul class="nav nav-tabs" id="settingstab">
-				<li class="active"><a data-toggle="tab" href="#expensebillheader"
-					data-tabidx=0><spring:message code="lbl.header" /></a></li>
-				<li><a data-toggle="tab" href="#checklist" data-tabidx=1><spring:message
-							code="lbl.checklist" /> </a></li>
-			</ul>
+	<jsp:include page="journalvoucher-header.jsp"/>
 	
-		<div class="tab-content">
-			<div class="tab-pane fade in active" id="expensebillheader">   
-				<jsp:include page="expensebill-header.jsp"/>
-				<jsp:include page="expensebill-subledgerdetails.jsp"/>
-				<div class="panel panel-primary" data-collapsed="0">
-					<jsp:include page="expensebill-debitdetails.jsp"/>
-					<jsp:include page="expensebill-creditdetails.jsp"/>
-					<jsp:include page="expensebill-netpayable.jsp"/>
-				</div>
-				<jsp:include page="expensebill-accountdetails.jsp"/>
-				<jsp:include page="expensebill-subledgeraccountdetails.jsp"/>
-			</div>
-			<div class="tab-pane fade" id="checklist">
-				<jsp:include page="expensebill-checklist.jsp"/>
-			</div>
-			<jsp:include page="../common/commonworkflowmatrix.jsp"/>
-			<div class="buttonbottom" align="center">
-				<jsp:include page="../common/commonworkflowmatrix-button.jsp" />
-			</div>
-		</div>
+	<jsp:include page="../common/commonworkflowmatrix.jsp"/>
+	<div class="buttonbottom" align="center">
+		<jsp:include page="../common/commonworkflowmatrix-button.jsp" />
+	</div>
   
 </form:form>
 <script src="<cdn:url value='/resources/app/js/common/helper.js?rnd=${app_release_no}'/>"></script>
 <script src="<cdn:url value='/resources/app/js/common/voucherBillHelper.js?rnd=${app_release_no}'/>"></script>
-<script src="<cdn:url value='/resources/app/js/expensebill/expensebill.js?rnd=${app_release_no}'/>"></script>
+<script src="<cdn:url value='/resources/app/js/journalvoucher/journalvoucher.js?rnd=${app_release_no}'/>"></script>
 <script src="<cdn:url value='/resources/global/js/egov/patternvalidation.js' context='/egi'/>"></script>
 <script src="<cdn:url value='/resources/global/js/egov/inbox.js' context='/egi'/>"></script>

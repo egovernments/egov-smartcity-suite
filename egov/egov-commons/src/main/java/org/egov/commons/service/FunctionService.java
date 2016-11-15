@@ -107,7 +107,7 @@ public class FunctionService {
     }
 
     public List<CFunction> findByNameLikeOrCodeLike(final String name) {
-        return functionRepository.findByNameContainingIgnoreCaseOrCodeContainingIgnoreCase(name, name);
+        return functionRepository.findByIsNotLeafAndNameContainingIgnoreCaseOrCodeContainingIgnoreCase(true,name, name);
     }
 
     public List<CFunction> search(final CFunction function) {

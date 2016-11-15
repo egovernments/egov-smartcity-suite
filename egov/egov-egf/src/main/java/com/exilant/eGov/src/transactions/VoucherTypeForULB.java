@@ -39,6 +39,8 @@
  */
 package com.exilant.eGov.src.transactions;
 
+import java.util.List;
+
 import org.apache.log4j.Logger;
 import org.egov.infra.admin.master.entity.AppConfigValues;
 import org.egov.infra.admin.master.service.AppConfigValueService;
@@ -47,35 +49,30 @@ import org.egov.utils.FinancialConstants;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
-
 @Service
 public class VoucherTypeForULB {
 
     private static final Logger LOGGER = Logger.getLogger(VoucherTypeForULB.class);
     @Autowired
     private AppConfigValueService appConfigValuesService;
-    
-    public String readVoucherTypes(final String vType)
-    {
+
+    public String readVoucherTypes(final String vType) {
         String voucherType = "N";
-        String keyName = "Autogenerate_"+vType.toLowerCase()+"_vouchernumber";
-        final List<AppConfigValues> configValues = appConfigValuesService.
-                getConfigValuesByModuleAndKey(FinancialConstants.MODULE_NAME_APPCONFIG, keyName);
+        final String keyName = "Autogenerate_" + vType.toLowerCase() + "_vouchernumber";
+        final List<AppConfigValues> configValues = appConfigValuesService
+                .getConfigValuesByModuleAndKey(FinancialConstants.MODULE_NAME_APPCONFIG, keyName);
 
         for (final AppConfigValues appConfigVal : configValues)
             voucherType = appConfigVal.getValue();
-        
+
         if (LOGGER.isInfoEnabled())
             LOGGER.info("VoucherType is-->" + voucherType);
-        return voucherType.equalsIgnoreCase("Y")?"Auto":"Manual";
+        return "Y".equalsIgnoreCase(voucherType) ? FinancialConstants.AUTO : FinancialConstants.MANUAL;
     }
 
-    public String readIsDepartmentMandtory()
-    {
+    public String readIsDepartmentMandtory() {
         final String deptMandatory = EGovConfig.getProperty("egf_config.xml", "deptRequired", "", "general");
         return deptMandatory;
     }
-
 
 }

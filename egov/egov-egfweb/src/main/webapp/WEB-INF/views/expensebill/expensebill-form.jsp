@@ -59,10 +59,10 @@
 		<spring:message	code="lbl.expense.bill.amount" /> : &#8377 <span id="expenseBillAmount"><c:out value="${expenseBillAmount}" default="0.0"></c:out></span>
 	</div>
 	<div class="position_alert1">
-		<spring:message code="lbl.expense.bill.total.debit.amount" />  : &#8377 <span id="expenseBillTotalDebitAmount"> <c:out value="${expenseBillTotalDebitAmount}" default="0.0"></c:out></span>
+		<spring:message code="lbl.total.debit.amount" />  : &#8377 <span id="expenseBillTotalDebitAmount"> <c:out value="${expenseBillTotalDebitAmount}" default="0.0"></c:out></span>
 	</div>
 	<div class="position_alert2">
-		<spring:message code="lbl.expense.bill.total.credit.amount" />  : &#8377 <span id="expenseBillTotalCreditAmount"> <c:out value="${expenseBillTotalCreditAmount}" default="0.0"></c:out></span>
+		<spring:message code="lbl.total.credit.amount" />  : &#8377 <span id="expenseBillTotalCreditAmount"> <c:out value="${expenseBillTotalCreditAmount}" default="0.0"></c:out></span>
 	</div>
 	
 	<div>

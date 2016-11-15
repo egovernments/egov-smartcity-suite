@@ -125,22 +125,7 @@ public class UpdateExpenseBillController extends BaseBillController {
         model.addAttribute(EG_BILLREGISTER, egBillregister);
         if (egBillregister.getState() != null
                 && FinancialConstants.WORKFLOW_STATE_REJECTED.equals(egBillregister.getState().getValue())) {
-            final List<AppConfigValues> cutOffDateconfigValue = appConfigValuesService
-                    .getConfigValuesByModuleAndKey(FinancialConstants.MODULE_NAME_APPCONFIG,
-                            FinancialConstants.KEY_DATAENTRYCUTOFFDATE);
-
-            if (!cutOffDateconfigValue.isEmpty()) {
-                final DateFormat df = new SimpleDateFormat("dd-MMM-yyyy");
-                List<String> validActions = Collections.emptyList();
-                validActions = Arrays.asList(FinancialConstants.BUTTONFORWARD, FinancialConstants.CREATEANDAPPROVE);
-                model.addAttribute("validActionList", validActions);
-                try {
-                    model.addAttribute("cutOffDate",
-                            DateUtils.getDefaultFormattedDate(df.parse(cutOffDateconfigValue.get(0).getValue())));
-                } catch (final ParseException e) {
-
-                }
-            }
+            prepareValidActionListByCutOffDate(model);
             model.addAttribute("mode", "edit");
             return "expensebill-update";
         } else {
@@ -192,22 +177,7 @@ public class UpdateExpenseBillController extends BaseBillController {
             model.addAttribute("designation", request.getParameter("designation"));
             if (egBillregister.getState() != null
                     && FinancialConstants.WORKFLOW_STATE_REJECTED.equals(egBillregister.getState().getValue())) {
-                final List<AppConfigValues> cutOffDateconfigValue = appConfigValuesService
-                        .getConfigValuesByModuleAndKey(FinancialConstants.MODULE_NAME_APPCONFIG,
-                                FinancialConstants.KEY_DATAENTRYCUTOFFDATE);
-
-                if (!cutOffDateconfigValue.isEmpty()) {
-                    final DateFormat df = new SimpleDateFormat("dd-MMM-yyyy");
-                    List<String> validActions = Collections.emptyList();
-                    validActions = Arrays.asList(FinancialConstants.BUTTONFORWARD, FinancialConstants.CREATEANDAPPROVE);
-                    model.addAttribute("validActionList", validActions);
-                    try {
-                        model.addAttribute("cutOffDate",
-                                DateUtils.getDefaultFormattedDate(df.parse(cutOffDateconfigValue.get(0).getValue())));
-                    } catch (final ParseException e) {
-
-                    }
-                }
+                prepareValidActionListByCutOffDate(model);
                 model.addAttribute("mode", "edit");
                 return "expensebill-update";
             } else {
