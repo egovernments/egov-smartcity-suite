@@ -1,0 +1,2 @@
+insert into eg_user_aud (id,rev,name,mobilenumber,emailid,revtype) 
+select egu.id,nextval('hibernate_sequence'),egu.name,egu.mobilenumber,egu.emailid,0 from eg_user egu where egu.id not in(select id from eg_user_aud);
