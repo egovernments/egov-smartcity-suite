@@ -194,9 +194,9 @@
 									</a>
 								</li>
 								<li>
-									<a href="/egi/logout">
+									<a href="/egi/logout" class="signout">
 										<i class="fa fa-sign-out"></i>
-										<span class="title signout">Sign Out</span>
+										<span class="title">Sign Out</span>
 									</a>
 								</li>
 							</ul>
@@ -496,13 +496,13 @@
 		var focussedmenu = "worklist";
 		var now;
 		</script>
-		<script src="<cdn:url value='/resources/js/app/custom-menu.js?rnd=${app_release_no}'/>"></script>
 		<script src="<cdn:url value='/resources/global/js/jquery/plugins/datatables/jquery.dataTables.min.js'/>"></script>
 		<script src="<cdn:url value='/resources/global/js/jquery/plugins/datatables/dataTables.bootstrap.js'/>"></script>
 		<script src="<cdn:url value='/resources/global/js/jquery/plugins/datatables/responsive/js/datatables.responsive.js'/>"></script>
 		<script src="<cdn:url value='/resources/global/js/jquery/plugins/datatables/moment.min.js'/>"></script>
 		<script src="<cdn:url value='/resources/global/js/jquery/plugins/datatables/datetime-moment.js'/>"></script>
 		<script src="<cdn:url value='/resources/global/js/egov/custom.js?rnd=${app_release_no}'/>"></script>
+		<script src="<cdn:url value='/resources/js/app/custom-menu.js?rnd=${app_release_no}'/>"></script>
 		<script src="<cdn:url value='/resources/js/app/homepageofficial.js?rnd=${app_release_no}'/>"></script>
 		<script type="text/javascript">
 			$(window).load(function(){

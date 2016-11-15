@@ -37,6 +37,7 @@
  *
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
+var openedWindows = [];
 $(document).ready(function()
 {
 	// jQuery plugin to prevent double submission of forms
@@ -212,6 +213,13 @@ $(document).ready(function()
 
 	    return false;
 		
+	});
+	
+	$('.signout').click(function(){
+		$.each( openedWindows, function( i, val ) {
+			var window = val;
+			window.close();
+		});
 	});
 	
 });
