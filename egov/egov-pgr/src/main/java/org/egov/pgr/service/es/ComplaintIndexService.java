@@ -355,7 +355,7 @@ public class ComplaintIndexService {
             updateOpenComplaintIndex(complaint);
     }
 
-    public ComplaintIndex updateOpenComplaintIndex(final Complaint complaint) {
+    public void updateOpenComplaintIndex(final Complaint complaint) {
         // fetch the complaint from index and then update the new fields
         ComplaintIndex complaintIndex = complaintIndexRepository.findByCrn(complaint.getCrn());
         beanMapperConfiguration.map(complaint, complaintIndex);
@@ -365,7 +365,7 @@ public class ComplaintIndexService {
         // update status related fields in index
         complaintIndex = updateComplaintIndexStatusRelatedFields(complaintIndex);
 
-        return complaintIndex;
+        complaintIndexRepository.save(complaintIndex);
     }
 
     public ComplaintIndex updateComplaintLevelIndexFields(final ComplaintIndex complaintIndex) {
@@ -755,6 +755,8 @@ public class ComplaintIndexService {
                 complaintSouce.setDepartmentName(bucket.getKeyAsString());
             if ("wardName".equals(groupByField))
                 complaintSouce.setWardName(bucket.getKeyAsString());
+            if ("localityName".equals(groupByField))
+                complaintSouce.setLocalityName(bucket.getKeyAsString());
             if ("currentFunctionaryName".equals(groupByField)) {
                 complaintSouce.setFunctionaryName(bucket.getKeyAsString());
                 final String mobileNumber = complaintIndexRepository.getFunctionryMobileNumber(bucket.getKeyAsString());

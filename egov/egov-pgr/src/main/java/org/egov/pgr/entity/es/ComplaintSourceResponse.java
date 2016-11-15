@@ -18,6 +18,7 @@ public class ComplaintSourceResponse {
     private String domainURL;
     private String functionaryName;
     private String functionaryMobileNumber;
+    private String localityName;
     private String departmentName;
     private String complaintTypeName;
     private List<HashMap<String, Long>> sourceList;
@@ -91,6 +92,14 @@ public class ComplaintSourceResponse {
 
     public void setFunctionaryMobileNumber(String functionaryMobileNumber) {
         this.functionaryMobileNumber = functionaryMobileNumber;
+    }
+    
+    public String getLocalityName() {
+        return localityName;
+    }
+
+    public void setLocalityName(String localityName) {
+        this.localityName = localityName;
     }
 
     public String getDepartmentName() {
