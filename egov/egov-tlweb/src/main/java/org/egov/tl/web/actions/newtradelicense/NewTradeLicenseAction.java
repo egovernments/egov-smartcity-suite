@@ -52,7 +52,11 @@ import org.egov.infra.validation.exception.ValidationException;
 import org.egov.infra.web.struts.annotation.ValidationErrorPage;
 import org.egov.infra.web.struts.annotation.ValidationErrorPageExt;
 import org.egov.pims.commons.Position;
-import org.egov.tl.entity.*;
+import org.egov.tl.entity.License;
+import org.egov.tl.entity.LicenseDocumentType;
+import org.egov.tl.entity.Licensee;
+import org.egov.tl.entity.TradeLicense;
+import org.egov.tl.entity.WorkflowBean;
 import org.egov.tl.entity.enums.ApplicationType;
 import org.egov.tl.service.AbstractLicenseService;
 import org.egov.tl.service.TradeLicenseService;
@@ -63,7 +67,12 @@ import org.springframework.beans.factory.annotation.Qualifier;
 
 import java.io.IOException;
 import java.math.BigDecimal;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.Date;
+import java.util.List;
+import java.util.Map;
 
 import static org.egov.tl.utils.Constants.LOCALITY;
 import static org.egov.tl.utils.Constants.LOCATION_HIERARCHY_TYPE;
