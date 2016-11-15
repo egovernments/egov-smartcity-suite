@@ -73,7 +73,7 @@
 					<label  class="col-md-4 control-label"> 
 					<spring:message code="lbl.applicantname" /></label>
 						<div class="col-md-4 add-margin">
-							<input type="text" name="applicantName" id="applicantName" class="form-control patternvalidation" data-pattern="alphabetwithspace" maxlength="24" id="app-mobno" />
+							<input type="text" name="applicantName" id="applicantName" class="form-control patternvalidationclass" maxlength="100" id="app-mobno" />
 						</div>
 				</div>
 				<div class="form-group">
@@ -151,4 +151,6 @@
 
 
 <script src="<cdn:url  value='/resources/js/search/seweragecollectchargessearch.js?rnd=${app_release_no}'/>"
+	type="text/javascript"></script>
+<script src="<cdn:url  value='/resources/javascript/helper.js?rnd=${app_release_no}'/>"
 	type="text/javascript"></script>

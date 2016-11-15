@@ -41,6 +41,8 @@
 package org.egov.stms.web.controller.elasticSearch;
 
 import static org.egov.ptis.constants.PropertyTaxConstants.REVENUE_HIERARCHY_TYPE;
+import static org.egov.stms.utils.constants.SewerageTaxConstants.APPLICATION_STATUS_COLLECTINSPECTIONFEE;
+import static org.egov.stms.utils.constants.SewerageTaxConstants.APPLICATION_STATUS_ESTIMATENOTICEGEN;
 import static org.egov.stms.utils.constants.SewerageTaxConstants.COLLECTDONATIONCHARHGES;
 import static org.egov.stms.utils.constants.SewerageTaxConstants.REVENUE_WARD;
 
@@ -164,20 +166,23 @@ public class SewerageCollectFeeSearchController {
             searchResult.setAddress(sewerageIndex.getAddress());
             searchResult.setApplicationStatus(sewerageIndex.getApplicationStatus());
 
-            if (searchRequest.getConsumerNumber() != null)
+            if (sewerageIndex.getApplicationNumber() != null)
                 sewerageApplicationDetails = sewerageApplicationDetailsService
-                        .findByApplicationNumber(searchRequest.getConsumerNumber());
+                        .findByApplicationNumber(sewerageIndex.getApplicationNumber());
 
             for (final Role role : sewerageTaxUtils.getLoginUserRoles())
                 roleList.add(role.getName());
-            if (sewerageApplicationDetails != null)
+            if (sewerageApplicationDetails != null
+                    && (sewerageApplicationDetails.getStatus().getCode().equals(APPLICATION_STATUS_COLLECTINSPECTIONFEE) ||
+                            sewerageApplicationDetails.getStatus().getCode().equals(APPLICATION_STATUS_ESTIMATENOTICEGEN))) {
                 searchActions = SewerageActionDropDownUtil.getSearchResultWithActions(roleList,
                         sewerageIndex.getApplicationStatus(), sewerageApplicationDetails);
-            if (searchActions != null && searchActions.getActions() != null)
-                for (final Map.Entry<String, String> entry : searchActions.getActions().entrySet())
-                    if (entry.getValue() == COLLECTDONATIONCHARHGES)
-                        actionMap.put(entry.getKey(), entry.getValue());
-            searchResult.setActions(actionMap);
+                if (searchActions != null && searchActions.getActions() != null)
+                    for (final Map.Entry<String, String> entry : searchActions.getActions().entrySet())
+                        if (entry.getValue() == COLLECTDONATIONCHARHGES)
+                            actionMap.put(entry.getKey(), entry.getValue());
+                searchResult.setActions(actionMap);
+            }
             searchResultList.add(searchResult);
         }
         return searchResultList;
