@@ -1807,12 +1807,12 @@ label.error {
   background: #f7f7f7;
 }
 /*datatable overrided properties*/
-@media (max-width: 768px) {
+@media screen and (max-width: 768px) {
   table.dataTable {
     display: block;
   }
 }
-@media (max-width: 768px) {
+@media screen and (max-width: 768px) {
   table.dataTable thead {
     display: none;
   }
@@ -1829,7 +1829,7 @@ table.dataTable thead tr > th:hover {
 table.dataTable tbody {
   font-size: 13px;
 }
-@media (max-width: 768px) {
+@media screen and (max-width: 768px) {
   table.dataTable tbody {
     display: block;
   }

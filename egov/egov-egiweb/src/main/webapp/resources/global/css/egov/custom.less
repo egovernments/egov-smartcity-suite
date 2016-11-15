@@ -2001,12 +2001,12 @@ b, label, strong{
 /*datatable overrided properties*/
 table.dataTable{
 
-    @media (max-width: 768px){
+    @media screen and (max-width: 768px){
         display:block;
     }
     
     thead{
-        @media (max-width: 768px){
+        @media  screen and (max-width: 768px){
             display: none;
             th{
                 position:absolute;
@@ -2024,7 +2024,7 @@ table.dataTable{
     
     tbody{
     	.font-size(13px);
-        @media (max-width: 768px){
+        @media screen and (max-width: 768px){
             display: block;
             tr{
                 display: block;
