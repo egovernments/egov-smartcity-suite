@@ -240,7 +240,6 @@ public class TradeLicenseService extends AbstractLicenseService<TradeLicense> {
         return reportParams;
     }
 
-    @SuppressWarnings("unchecked")
     public List<TradeLicense> getTradeLicenseForGivenParam(final String paramValue, final String paramType) {
         List<TradeLicense> licenseList = new ArrayList<>();
         if (paramType.equals(Constants.SEARCH_BY_APPNO))
@@ -267,7 +266,6 @@ public class TradeLicenseService extends AbstractLicenseService<TradeLicense> {
         return licenseList;
     }
 
-    @SuppressWarnings("unchecked")
     public List<SearchForm> searchTradeLicense(final SearchForm searchForm) {
         final Criteria searchCriteria = entityQueryService.getSession().createCriteria(TradeLicense.class);
         searchCriteria.createAlias("licensee", "licc").createAlias("category", "cat")

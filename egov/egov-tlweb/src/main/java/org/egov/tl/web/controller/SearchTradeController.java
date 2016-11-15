@@ -45,9 +45,6 @@ import static org.egov.infra.web.utils.WebUtils.toJSON;
 import java.io.IOException;
 import java.util.Collections;
 
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
-
 import org.egov.tl.entity.dto.SearchForm;
 import org.egov.tl.service.LicenseStatusService;
 import org.egov.tl.service.TradeLicenseService;
@@ -74,23 +71,16 @@ public class SearchTradeController {
     @Autowired
     private LicenseStatusService licenseStatusService;
 
-    @PersistenceContext
-    EntityManager entityManager;
-
     @ModelAttribute("searchForm")
     public SearchForm searchForm() {
         return new SearchForm();
     }
 
-    private void populateDropdownData(final Model model) {
+    @RequestMapping(value = "/search/searchtrade-form", method = RequestMethod.GET)
+    public String searchForm(final Model model) {
         model.addAttribute("categoryList", licenseCategoryService.findAll());
         model.addAttribute("subCategoryList", Collections.emptyList());
         model.addAttribute("statusList", licenseStatusService.findAll());
-    }
-
-    @RequestMapping(value = "/search/searchtrade-form", method = RequestMethod.GET)
-    public String searchForm(final Model model) {
-        populateDropdownData(model);
         return "searchtrade-license";
     }
 

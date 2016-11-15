@@ -48,9 +48,6 @@ import java.util.List;
 import org.egov.tl.entity.License;
 import org.egov.tl.utils.Constants;
 
-/**
- * @author satyam
- */
 public class SearchForm {
     private Long licenseId;
     private String applicationNumber;

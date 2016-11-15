@@ -191,15 +191,7 @@
 	src="<cdn:url  value='/resources/global/js/jquery/plugins/jquery.validate.min.js' context='/egi'/>"></script>
 <script type="text/javascript"
 	src="<cdn:url  value='/resources/js/app/searchtrade-license.js?rnd=${app_release_no}'/>"></script>
-<style>
-.ui-autocomplete {
-	/* these sets the height and width */
-	max-height: 200px;
-	max-width: 236px;
-	/* these make it scroll for anything outside */
-	overflow-y: scroll;
-}
-</style>
+
 
 
 
