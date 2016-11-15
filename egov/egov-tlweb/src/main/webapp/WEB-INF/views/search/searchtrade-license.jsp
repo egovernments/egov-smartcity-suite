@@ -120,7 +120,7 @@
 			    	</div>
 					<label class="col-sm-2 control-label text-right"> <spring:message code='search.licensee.mobileNo' /></label>
 					<div class="col-sm-3 add-margin">
-						<input type="text" id="mobileNo" class="form-control typeahead" placeholder="" autocomplete="off" maxlength="10" data-pattern="number" />
+						<input type="text" id="mobileNo" class="form-control patternvalidation typeahead" placeholder="" autocomplete="off" maxlength="10" data-pattern="number" />
 						<form:hidden path="mobileNo" id="mobileNo"/>				
 			       </div>
 				</div>
