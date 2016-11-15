@@ -137,21 +137,20 @@ public class UpdateMarriageRegistrationController extends MarriageRegistrationCo
         if (errors.hasErrors())
             return MRG_REGISTRATION_EDIT;
         String message = org.apache.commons.lang.StringUtils.EMPTY;
-        registration = marriageRegistrationService.get(id);
         if (workFlowAction != null && !workFlowAction.isEmpty()) {
             workflowContainer.setWorkFlowAction(workFlowAction);
             workflowContainer.setApproverComments(request.getParameter("approvalComent"));
             if (workFlowAction.equalsIgnoreCase(MarriageConstants.WFLOW_ACTION_STEP_REJECT) ||
                     workFlowAction.equalsIgnoreCase(MarriageConstants.WFLOW_ACTION_STEP_CANCEL)) {
-                marriageRegistrationService.rejectRegistration(registration, workflowContainer);
+                marriageRegistrationService.rejectRegistration(id,registration, workflowContainer);
                 message = messageSource.getMessage("msg.rejected.registration", null, null);
             }
             else if (workFlowAction.equalsIgnoreCase(MarriageConstants.WFLOW_ACTION_STEP_APPROVE)) {
-                marriageRegistrationService.approveRegistration(registration, workflowContainer);
+                marriageRegistrationService.approveRegistration(id,registration, workflowContainer);
                 message = messageSource.getMessage("msg.approved.registration", null, null);
             }
             else if (workFlowAction.equalsIgnoreCase(MarriageConstants.WFLOW_ACTION_STEP_PRINTCERTIFICATE)) {
-                marriageRegistrationService.printCertificate(registration, workflowContainer, request);
+                marriageRegistrationService.printCertificate(id,registration, workflowContainer, request);
                 message = messageSource.getMessage("msg.printcertificate.registration", null, null);
             }
             else {
@@ -164,7 +163,7 @@ public class UpdateMarriageRegistrationController extends MarriageRegistrationCo
         if (workFlowAction != null && !workFlowAction.isEmpty()
                 && workFlowAction.equalsIgnoreCase(MarriageConstants.WFLOW_ACTION_STEP_PRINTCERTIFICATE))
             return "redirect:/certificate/registration?id="
-            + registration.getId();
+            + id;
         // + registration.getMarriageCertificate().get(0).getFileStore().getId();
 
         model.addAttribute("message", message);

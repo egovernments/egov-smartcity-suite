@@ -38,7 +38,7 @@
  */
 
 package org.egov.mrs.service.es;
- 
+
 import static org.egov.mrs.application.MarriageConstants.APPL_INDEX_MODULE_NAME;
 import static org.egov.mrs.application.MarriageConstants.APPROVED;
 
@@ -68,106 +68,107 @@ import org.springframework.transaction.annotation.Transactional;
 @Transactional(readOnly = true)
 public class MarriageRegistrationUpdateIndexesService {
 
-	private static final Logger LOG = Logger.getLogger(MarriageRegistrationUpdateIndexesService.class);
+    private static final Logger LOG = Logger.getLogger(MarriageRegistrationUpdateIndexesService.class);
 
-	@Autowired
-	private SecurityUtils securityUtils;
+    @Autowired
+    private SecurityUtils securityUtils;
 
-	@Autowired
+    @Autowired
     private ApplicationIndexService applicationIndexService;
 
-	@Autowired
-	private MarriageRegistrationIndexService marriageRegistrationIndexService;
+    @Autowired
+    private MarriageRegistrationIndexService marriageRegistrationIndexService;
 
-	@Autowired
-	private AssignmentService assignmentService;
+    @Autowired
+    private AssignmentService assignmentService;
 
-	@Autowired
-	private UserService userService;
+    @Autowired
+    private UserService userService;
 
-	public void updateIndexes(final MarriageRegistration marriageRegistration) {
-		Assignment assignment = null;
-		User user = null;
-		Integer elapsedDays = 0;
-		List<Assignment> asignList = null;
+    public void updateIndexes(final MarriageRegistration marriageRegistration) {
+        Assignment assignment = null;
+        User user = null;
+        Integer elapsedDays = 0;
+        List<Assignment> asignList = null;
 
-		if (marriageRegistration.getState() != null && marriageRegistration.getState().getOwnerPosition() != null) {
-			assignment = assignmentService.getPrimaryAssignmentForPositionAndDate(
-					marriageRegistration.getState().getOwnerPosition().getId(), new Date());
-			if (assignment != null) {
-				asignList = new ArrayList<Assignment>();
-				asignList.add(assignment);
-			} else if (assignment == null)
-				asignList = assignmentService.getAssignmentsForPosition(
-						marriageRegistration.getState().getOwnerPosition().getId(), new Date());
-			if (!asignList.isEmpty())
-				user = userService.getUserById(asignList.get(0).getEmployee().getId());
-		} else
-			user = securityUtils.getCurrentUser();
+        if (marriageRegistration.getState() != null && marriageRegistration.getState().getOwnerPosition() != null) {
+            assignment = assignmentService.getPrimaryAssignmentForPositionAndDate(
+                    marriageRegistration.getState().getOwnerPosition().getId(), new Date());
+            if (assignment != null) {
+                asignList = new ArrayList<Assignment>();
+                asignList.add(assignment);
+            } else if (assignment == null)
+                asignList = assignmentService.getAssignmentsForPosition(
+                        marriageRegistration.getState().getOwnerPosition().getId(), new Date());
+            if (!asignList.isEmpty())
+                user = userService.getUserById(asignList.get(0).getEmployee().getId());
+        } else
+            user = securityUtils.getCurrentUser();
 
-		final String url = "/mrs/registration/" + marriageRegistration.getApplicationNo();
+        final String url = "/mrs/registration/" + marriageRegistration.getApplicationNo();
 
-		ApplicationIndex applicationIndex = applicationIndexService
-				.findByApplicationNumber(marriageRegistration.getApplicationNo());
-		// update existing application index
-		if (applicationIndex != null && null != marriageRegistration.getId()) {/*
-			applicationIndex.setStatus(marriageRegistration.getStatus().getDescription());
-			applicationIndex.setOwnername(user != null ? user.getUsername() + "::" + user.getName() : "");
+        ApplicationIndex applicationIndex = applicationIndexService
+                .findByApplicationNumber(marriageRegistration.getApplicationNo());
+        // update existing application index
+        if (applicationIndex != null && null != marriageRegistration.getId()) {
+            applicationIndex.setStatus(marriageRegistration.getStatus().getDescription());
+            applicationIndex.setOwnerName(user != null ? user.getUsername() + "::" + user.getName() : "");
 
-			// mark application index as closed on Application Approved
-			if (marriageRegistration.getStatus().getCode().equals(APPROVED)) {
-				elapsedDays = (int) TimeUnit.DAYS.convert(
-						new Date().getTime() - marriageRegistration.getApplicationDate().getTime(),
-						TimeUnit.MILLISECONDS);
-				applicationIndex.setElapsedDays(elapsedDays);
-				applicationIndex.setApproved(ApprovalStatus.APPROVED);
-				applicationIndex.setClosed(ClosureStatus.YES);
-			}
-			// mark application index as rejected and closed on Application
-			// cancellation
-			else if (marriageRegistration.getStatus().getCode()
-					.equals(MarriageRegistration.RegistrationStatus.REJECTED.toString())
-					|| marriageRegistration.getStatus().getCode()
-							.equals(MarriageRegistration.RegistrationStatus.CANCELLED.toString())) {
-				elapsedDays = (int) TimeUnit.DAYS.convert(
-						new Date().getTime() - marriageRegistration.getApplicationDate().getTime(),
-						TimeUnit.MILLISECONDS);
-				applicationIndex.setElapsedDays(elapsedDays);
-				applicationIndex.setApproved(ApprovalStatus.REJECTED);
-				applicationIndex.setClosed(ClosureStatus.YES);
-			}
+            // mark application index as closed on Application Approved
+            if (APPROVED.equals(marriageRegistration.getStatus().getCode())) {
+                elapsedDays = (int) TimeUnit.DAYS.convert(
+                        new Date().getTime() - marriageRegistration.getApplicationDate().getTime(),
+                        TimeUnit.MILLISECONDS);
+                applicationIndex.setElapsedDays(elapsedDays);
+                applicationIndex.setApproved(ApprovalStatus.APPROVED);
+                applicationIndex.setClosed(ClosureStatus.YES);
+            }
+            // mark application index as rejected and closed on Application
+            // cancellation
+            else if (MarriageRegistration.RegistrationStatus.REJECTED.toString()
+                    .equals(marriageRegistration.getStatus().getCode())
+                    || MarriageRegistration.RegistrationStatus.CANCELLED.toString()
+                            .equals(marriageRegistration.getStatus().getCode())) {
+                elapsedDays = (int) TimeUnit.DAYS.convert(
+                        new Date().getTime() - marriageRegistration.getApplicationDate().getTime(),
+                        TimeUnit.MILLISECONDS);
+                applicationIndex.setElapsedDays(elapsedDays);
+                applicationIndex.setApproved(ApprovalStatus.REJECTED);
+                applicationIndex.setClosed(ClosureStatus.YES);
+            }
 
-			if (marriageRegistration.getApplicationNo() != null)
-				applicationIndex.setConsumerCode(marriageRegistration.getApplicationNo());
-			applicationIndexService.updateApplicationIndex(applicationIndex);
+            if (marriageRegistration.getApplicationNo() != null)
+                applicationIndex.setConsumerCode(marriageRegistration.getApplicationNo());
+            applicationIndexService.updateApplicationIndex(applicationIndex);
 
-			marriageRegistrationIndexService.createMarriageIndex(marriageRegistration,
-					MarriageCertificateType.REGISTRATION.toString());*/
-		} else {
-			// create new application index
-			if (LOG.isDebugEnabled())
-				LOG.debug("Application Index creation Started... ");
-			/*final ApplicationIndexBuilder applicationIndexBuilder = new ApplicationIndexBuilder(APPL_INDEX_MODULE_NAME,
-					marriageRegistration.getApplicationNo(), marriageRegistration.getApplicationDate(),
-					MarriageCertificateType.REGISTRATION.toString(),
-					marriageRegistration.getHusband().getFullName() + "::"
-							+ marriageRegistration.getWife().getFullName(),
-					marriageRegistration.getStatus().getDescription().toString(), url,
-					marriageRegistration.getHusband().getContactInfo().getResidenceAddress(),
-					user.getUsername() + "::" + user.getName(), Source.SYSTEM.toString());
+            marriageRegistrationIndexService.createMarriageIndex(marriageRegistration,
+                    MarriageCertificateType.REGISTRATION.toString());
+        } else {
+            // create new application index
+            if (LOG.isDebugEnabled())
+                LOG.debug("Application Index creation Started... ");
 
-			applicationIndexBuilder.mobileNumber(marriageRegistration.getHusband().getContactInfo().getMobileNo());
-			applicationIndexBuilder.aadharNumber(marriageRegistration.getHusband().getAadhaarNo());
-			applicationIndexBuilder.approved(ApprovalStatus.INPROGRESS);
-			applicationIndexBuilder.closed(ClosureStatus.NO);
-			applicationIndex = applicationIndexBuilder.build();
-			applicationIndexService.createApplicationIndex(applicationIndex);
-			if (LOG.isDebugEnabled())
-				LOG.debug("Application Index creation completed...");*/
+            applicationIndex = ApplicationIndex.builder().withModuleName(APPL_INDEX_MODULE_NAME)
+                    .withApplicationNumber(marriageRegistration.getApplicationNo())
+                    .withApplicationDate(marriageRegistration.getApplicationDate())
+                    .withApplicationType(MarriageCertificateType.REGISTRATION.toString())
+                    .withApplicantName(marriageRegistration.getHusband().getFullName() + "::"
+                            + marriageRegistration.getWife().getFullName())
+                    .withStatus(marriageRegistration.getStatus().getDescription()).withUrl(
+                            String.format(url))
+                    .withApplicantAddress(marriageRegistration.getHusband().getContactInfo().getResidenceAddress())
+                    .withOwnername(user != null ?user.getUsername() + "::" + user.getName():"")
+                    .withChannel(Source.SYSTEM.toString())
+                    .withMobileNumber(marriageRegistration.getHusband().getContactInfo().getMobileNo())
+                    .withClosed(ClosureStatus.NO)
+                    .withApproved(ApprovalStatus.INPROGRESS).build();
+            applicationIndexService.createApplicationIndex(applicationIndex);
+            if (LOG.isDebugEnabled())
+                LOG.debug("Application Index creation completed...");
 
-			marriageRegistrationIndexService.createMarriageIndex(marriageRegistration,
-					MarriageCertificateType.REGISTRATION.toString());
-		}
-	}
+            marriageRegistrationIndexService.createMarriageIndex(marriageRegistration,
+                    MarriageCertificateType.REGISTRATION.toString());
+        }
+    }
 
 }

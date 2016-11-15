@@ -319,11 +319,8 @@ public class MarriageRegistrationService {
        
         final MarriageRegistration registration = get(id);
 
-        //Commented for time being as its throwing null pointer in edit mode
-        //Need to fix
-        //updateRegistrationData(regModel, registration);
+        updateRegistrationData(regModel, registration);
         
-        // Remove this loc once above issue fixed
         registration.setStatus(
                 marriageUtils.getStatusByCodeAndModuleType(MarriageRegistration.RegistrationStatus.CREATED.toString(), MarriageConstants.MODULE_NAME));
 
@@ -439,6 +436,7 @@ public class MarriageRegistrationService {
         dbApplicant.getContactInfo().setOfficeAddress(modelApplicant.getContactInfo().getOfficeAddress());
         dbApplicant.getContactInfo().setMobileNo(modelApplicant.getContactInfo().getMobileNo());
         dbApplicant.getContactInfo().setEmail(modelApplicant.getContactInfo().getEmail());
+        dbApplicant.setAadhaarNo(modelApplicant.getAadhaarNo());
     }
 
     private void updateProofInfo(final IdentityProof fromModel, final IdentityProof fromDb) {
@@ -454,11 +452,13 @@ public class MarriageRegistrationService {
     }
 
     @Transactional
-    public MarriageRegistration approveRegistration( MarriageRegistration registration, final WorkflowContainer workflowContainer) {
+    public MarriageRegistration approveRegistration(final Long id, MarriageRegistration regModel, final WorkflowContainer workflowContainer) {
+        final MarriageRegistration registration = get(id);
         registration.setStatus(
                 marriageUtils.getStatusByCodeAndModuleType(MarriageRegistration.RegistrationStatus.APPROVED.toString(), MarriageConstants.MODULE_NAME));
         registration.setRegistrationNo(marriageRegistrationNumberGenerator.generateMarriageRegistrationNumber(registration));
-        registration = update(registration);
+        updateRegistrationData(regModel, registration);
+        update(registration);
         workflowService.transition(registration, workflowContainer, workflowContainer.getApproverComments());
         marriageRegistrationUpdateIndexesService.updateIndexes(registration);
         marriageSmsAndEmailService.sendSMS(registration,MarriageRegistration.RegistrationStatus.APPROVED.toString());
@@ -468,8 +468,8 @@ public class MarriageRegistrationService {
     }
     
     @Transactional
-    public MarriageRegistration printCertificate(MarriageRegistration registration, final WorkflowContainer workflowContainer,final HttpServletRequest request) throws IOException {
-     
+    public MarriageRegistration printCertificate(final Long id, MarriageRegistration regModel, final WorkflowContainer workflowContainer,final HttpServletRequest request) throws IOException {
+        MarriageRegistration registration = get(id);
         MarriageCertificate marriageCertificate = marriageCertificateService.generateMarriageCertificate(registration,request);
         registration.setStatus(
                 marriageUtils.getStatusByCodeAndModuleType(MarriageRegistration.RegistrationStatus.REGISTERED.toString(), MarriageConstants.MODULE_NAME));
@@ -482,7 +482,8 @@ public class MarriageRegistrationService {
     
 
     @Transactional
-    public MarriageRegistration rejectRegistration(MarriageRegistration registration, final WorkflowContainer workflowContainer) {
+    public MarriageRegistration rejectRegistration(final Long id, MarriageRegistration regModel, final WorkflowContainer workflowContainer) {
+        MarriageRegistration registration = get(id);
         registration.setStatus(workflowContainer.getWorkFlowAction().equalsIgnoreCase(MarriageConstants.WFLOW_ACTION_STEP_REJECT)?
                 marriageUtils.getStatusByCodeAndModuleType(MarriageRegistration.RegistrationStatus.REJECTED.toString(), MarriageConstants.MODULE_NAME)
                 :marriageUtils.getStatusByCodeAndModuleType(MarriageRegistration.RegistrationStatus.CANCELLED.toString(), MarriageConstants.MODULE_NAME));

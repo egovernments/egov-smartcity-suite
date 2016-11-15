@@ -126,13 +126,13 @@ public class NewRegistrationController extends MarriageRegistrationController {
             result = marriageRegistrationService.forwardRegistration(id, registration, workflowContainer);
             break;
         case "Approve":
-            result = marriageRegistrationService.approveRegistration(registration, workflowContainer);
+            result = marriageRegistrationService.approveRegistration(id,registration, workflowContainer);
             break;
         case "Reject":
-            result = marriageRegistrationService.rejectRegistration(registration, workflowContainer); 
+            result = marriageRegistrationService.rejectRegistration(id,registration, workflowContainer); 
             break;
         case "Cancel Registration":
-            result = marriageRegistrationService.rejectRegistration(registration, workflowContainer);
+            result = marriageRegistrationService.rejectRegistration(id,registration, workflowContainer);
             break;
         }
 
@@ -160,7 +160,7 @@ public class NewRegistrationController extends MarriageRegistrationController {
      * @return
      */
     @RequestMapping(value = "/calculatemarriagefee", method = GET, produces = APPLICATION_JSON_VALUE)
-	public @ResponseBody Double calculateMarriageFee(@RequestParam final Long feeId) {
+    @ResponseBody public  Double calculateMarriageFee(@RequestParam final Long feeId) {
 		MarriageFee marriageFee = marriageFeeService.getFee(feeId);
 		if (marriageFee != null)
 			return marriageFee.getFees();
@@ -168,7 +168,7 @@ public class NewRegistrationController extends MarriageRegistrationController {
 	}
     
     @RequestMapping(value = "/getmrregistrationunitzone", method = GET, produces = APPLICATION_JSON_VALUE)
-   	public @ResponseBody Boundary getregistrationunitzone(@RequestParam final Long registrationUnitId) {
+    @ResponseBody public Boundary getregistrationunitzone(@RequestParam final Long registrationUnitId) {
    		MarriageRegistrationUnit marriageRegistrationUnit = marriageRegistrationUnitService.findById(registrationUnitId);
    		if (marriageRegistrationUnit != null)
    			return marriageRegistrationUnit.getZone();

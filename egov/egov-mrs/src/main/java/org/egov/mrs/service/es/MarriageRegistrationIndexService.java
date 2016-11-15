@@ -59,171 +59,175 @@ import org.springframework.transaction.annotation.Transactional;
 public class MarriageRegistrationIndexService {
     @Autowired
     private MarriageRegistrationIndexRepository marriageRegistrationIndexRepository;
-	@Autowired
-	private CityService cityService;
-	public MarriageRegistrationIndex createMarriageIndex(final MarriageRegistration registration,
-			final String applicationType) {
+    @Autowired
+    private CityService cityService;
 
-		final City cityWebsite = cityService.getCityByURL(ApplicationThreadLocals.getDomainName());
+    public MarriageRegistrationIndex createMarriageIndex(final MarriageRegistration registration,
+            final String applicationType) {
 
-		MarriageRegistrationIndex registrationSearch = new MarriageRegistrationIndex(registration.getApplicationNo(),
-				cityWebsite.getName(), cityWebsite.getCode(), registration.getCreatedDate(),
-				cityWebsite.getDistrictName(), cityWebsite.getRegionName(), cityWebsite.getGrade());
-		if (registration != null) {
-			registrationSearch
-					.setApplicationNo(registration.getApplicationNo() != null ? registration.getApplicationNo() : "");
-			registrationSearch.setApplicationType(applicationType);
-			registrationSearch.setDateOfMarriage(
-					registration.getDateOfMarriage() != null ? registration.getDateOfMarriage() : new Date());
-			registrationSearch.setApplicationCreatedBy(
-					registration.getCreatedBy().getName() != null ? registration.getCreatedBy().getName() : "");
-			registrationSearch
-					.setZone(registration.getZone().getName() != null ? registration.getZone().getName() : "");
-			registrationSearch.setMarriageAct(registration.getMarriageAct().getDescription() != null
-					? registration.getMarriageAct().getDescription() : "");
-			registrationSearch.setPlaceOfMarriage(
-					registration.getPlaceOfMarriage() != null ? registration.getPlaceOfMarriage() : "");
-			registrationSearch.setMarriageFeeCriteria(registration.getFeeCriteria().getCriteria() != null
-					? registration.getFeeCriteria().getCriteria() : "");
-			registrationSearch.setMarriageFeeAmount(registration.getFeeCriteria().getFees() != null
-					? BigDecimal.valueOf(registration.getFeeCriteria().getFees()) : BigDecimal.ZERO);
+        final City cityWebsite = cityService.getCityByURL(ApplicationThreadLocals.getDomainName());
 
-			if (registration.getHusband() != null) {
-				registrationSearch.setHusbandName(registration.getHusband().getFullName());
-				registrationSearch.setHusbandReligion(registration.getHusband().getReligion() != null
-						? registration.getHusband().getReligion().getDescription() : "");
-				registrationSearch
-						.setHusbandAgeInYearsAsOnMarriage(registration.getHusband().getAgeInYearsAsOnMarriage() != null
-								? Double.valueOf(registration.getHusband().getAgeInYearsAsOnMarriage()) : 0.0d);
-				registrationSearch.setHusbandAgeInMonthsAsOnMarriage(
-						registration.getHusband().getAgeInMonthsAsOnMarriage() != null
-								? Double.valueOf(registration.getHusband().getAgeInMonthsAsOnMarriage()) : 0.0d);
-				registrationSearch.setHusbandMaritalStatus(registration.getHusband().getMaritalStatus().name() != null
-						? registration.getHusband().getMaritalStatus().name() : "");
-				registrationSearch
-						.setHusbandReligionPractice(registration.getHusband().getReligionPractice().name() != null
-								? registration.getHusband().getReligionPractice().name() : "");
-				registrationSearch.setHusbandOccupation(registration.getHusband().getOccupation() != null
-						? registration.getHusband().getOccupation() : "");
-				registrationSearch.setHusbandPhoneNo(registration.getHusband().getContactInfo() != null
-						? registration.getHusband().getContactInfo().getMobileNo() : "");
-				registrationSearch.setHusbandAadhaarNo(registration.getHusband().getAadhaarNo() != null
-						? registration.getHusband().getAadhaarNo() : "");
-				registrationSearch.setHusbandResidencyAddress(
-						registration.getHusband().getContactInfo().getResidenceAddress() != null
-								? registration.getHusband().getContactInfo().getResidenceAddress() : "");
-				registrationSearch
-						.setHusbandOfficeAddress(registration.getHusband().getContactInfo().getOfficeAddress() != null
-								? registration.getHusband().getContactInfo().getOfficeAddress() : "");
-				registrationSearch.setHusbandEmail(registration.getHusband().getContactInfo().getEmail() != null
-						? registration.getHusband().getContactInfo().getEmail() : "");
-			}
+        final MarriageRegistrationIndex registrationSearch = new MarriageRegistrationIndex(registration.getApplicationNo(),
+                cityWebsite.getName(), cityWebsite.getCode(), registration.getCreatedDate(),
+                cityWebsite.getDistrictName(), cityWebsite.getRegionName(), cityWebsite.getGrade());
+        if (registration != null) {
+            registrationSearch.setId(cityWebsite.getCode().concat("-").concat(registrationSearch.getApplicationNo()));
+            registrationSearch
+                    .setApplicationNo(registration.getApplicationNo() != null ? registration.getApplicationNo() : "");
+            registrationSearch.setConsumerNumber(registration.getApplicationNo() != null ? registration.getApplicationNo() : "");
+            registrationSearch.setRegistrationNo(registration.getRegistrationNo() != null ? registration.getRegistrationNo() : "");
+            registrationSearch.setApplicationType(applicationType);
+            registrationSearch.setDateOfMarriage(
+                    registration.getDateOfMarriage() != null ? registration.getDateOfMarriage() : new Date());
+            registrationSearch.setFeePaid(registration.getFeePaid() != null ?BigDecimal.valueOf(registration.getFeePaid()):BigDecimal.ZERO);
+            registrationSearch.setRegistrationDate(registration.getApplicationDate()!= null ? registration.getApplicationDate() : new Date());
+            registrationSearch.setApplicationCreatedBy(
+                    registration.getCreatedBy().getName() != null ? registration.getCreatedBy().getName() : "");
+            registrationSearch
+                    .setZone(registration.getZone().getName() != null ? registration.getZone().getName() : "");
+            registrationSearch.setMarriageAct(registration.getMarriageAct().getDescription() != null
+                    ? registration.getMarriageAct().getDescription() : "");
+            registrationSearch.setPlaceOfMarriage(
+                    registration.getPlaceOfMarriage() != null ? registration.getPlaceOfMarriage() : "");
+            registrationSearch.setMarriageFeeCriteria(registration.getFeeCriteria().getCriteria() != null
+                    ? registration.getFeeCriteria().getCriteria() : "");
+            registrationSearch.setMarriageFeeAmount(registration.getFeeCriteria().getFees() != null
+                    ? BigDecimal.valueOf(registration.getFeeCriteria().getFees()) : BigDecimal.ZERO);
 
-			if (registration.getWife() != null) {
-				registrationSearch.setWifeName(registration.getWife().getFullName());
-				registrationSearch.setWifeReligion(registration.getWife().getReligion() != null
-						? registration.getWife().getReligion().getDescription() : "");
-				registrationSearch
-						.setWifeAgeInYearsAsOnMarriage(registration.getWife().getAgeInYearsAsOnMarriage() != null
-								? Double.valueOf(registration.getWife().getAgeInYearsAsOnMarriage()) : 0.0d);
-				registrationSearch
-						.setWifeAgeInMonthsAsOnMarriage(registration.getWife().getAgeInMonthsAsOnMarriage() != null
-								? Double.valueOf(registration.getWife().getAgeInMonthsAsOnMarriage()) : 0.0d);
+            if (registration.getHusband() != null) {
+                registrationSearch.setHusbandName(registration.getHusband().getFullName());
+                registrationSearch.setHusbandReligion(registration.getHusband().getReligion() != null
+                        ? registration.getHusband().getReligion().getDescription() : "");
+                registrationSearch
+                        .setHusbandAgeInYearsAsOnMarriage(registration.getHusband().getAgeInYearsAsOnMarriage() != null
+                                ? Double.valueOf(registration.getHusband().getAgeInYearsAsOnMarriage()) : 0.0d);
+                registrationSearch.setHusbandAgeInMonthsAsOnMarriage(
+                        registration.getHusband().getAgeInMonthsAsOnMarriage() != null
+                                ? Double.valueOf(registration.getHusband().getAgeInMonthsAsOnMarriage()) : 0.0d);
+                registrationSearch.setHusbandMaritalStatus(registration.getHusband().getMaritalStatus().name() != null
+                        ? registration.getHusband().getMaritalStatus().name() : "");
+                registrationSearch
+                        .setHusbandReligionPractice(registration.getHusband().getReligionPractice().name() != null
+                                ? registration.getHusband().getReligionPractice().name() : "");
+                registrationSearch.setHusbandOccupation(registration.getHusband().getOccupation() != null
+                        ? registration.getHusband().getOccupation() : "");
+                registrationSearch.setHusbandPhoneNo(registration.getHusband().getContactInfo() != null
+                        ? registration.getHusband().getContactInfo().getMobileNo() : "");
+                registrationSearch.setHusbandAadhaarNo(registration.getHusband().getAadhaarNo() != null
+                        ? registration.getHusband().getAadhaarNo() : "");
+                registrationSearch.setHusbandResidencyAddress(
+                        registration.getHusband().getContactInfo().getResidenceAddress() != null
+                                ? registration.getHusband().getContactInfo().getResidenceAddress() : "");
+                registrationSearch
+                        .setHusbandOfficeAddress(registration.getHusband().getContactInfo().getOfficeAddress() != null
+                                ? registration.getHusband().getContactInfo().getOfficeAddress() : "");
+                registrationSearch.setHusbandEmail(registration.getHusband().getContactInfo().getEmail() != null
+                        ? registration.getHusband().getContactInfo().getEmail() : "");
+            }
 
-				registrationSearch.setWifeMaritalStatus(registration.getWife().getMaritalStatus() != null
-						? registration.getWife().getMaritalStatus().name() : "");
-				registrationSearch.setWifeReligionPractice(registration.getWife().getReligionPractice().name() != null
-						? registration.getWife().getReligionPractice().name() : "");
-				registrationSearch.setWifeOccupation(
-						registration.getWife().getOccupation() != null ? registration.getWife().getOccupation() : "");
-				registrationSearch.setWifePhoneNo(registration.getWife().getContactInfo().getMobileNo() != null
-						? registration.getWife().getContactInfo().getMobileNo() : "");
-				registrationSearch.setWifeAadhaarNo(
-						registration.getWife().getAadhaarNo() != null ? registration.getWife().getAadhaarNo() : "");
-				registrationSearch
-						.setWifeResidencyAddress(registration.getWife().getContactInfo().getResidenceAddress() != null
-								? registration.getWife().getContactInfo().getResidenceAddress() : "");
-				registrationSearch
-						.setWifeOfficeAddress(registration.getWife().getContactInfo().getOfficeAddress() != null
-								? registration.getWife().getContactInfo().getOfficeAddress() : "");
-				registrationSearch.setWifeEmail(registration.getWife().getContactInfo().getEmail() != null
-						? registration.getWife().getContactInfo().getEmail() : "");
-			}
+            if (registration.getWife() != null) {
+                registrationSearch.setWifeName(registration.getWife().getFullName());
+                registrationSearch.setWifeReligion(registration.getWife().getReligion() != null
+                        ? registration.getWife().getReligion().getDescription() : "");
+                registrationSearch
+                        .setWifeAgeInYearsAsOnMarriage(registration.getWife().getAgeInYearsAsOnMarriage() != null
+                                ? Double.valueOf(registration.getWife().getAgeInYearsAsOnMarriage()) : 0.0d);
+                registrationSearch
+                        .setWifeAgeInMonthsAsOnMarriage(registration.getWife().getAgeInMonthsAsOnMarriage() != null
+                                ? Double.valueOf(registration.getWife().getAgeInMonthsAsOnMarriage()) : 0.0d);
 
-			if (!registration.getWitnesses().isEmpty()) {
-				MarriageWitness witness1 = registration.getWitnesses().get(0);
-				if (witness1 != null) {
-					registrationSearch.setWitness1Name(witness1.getFullName());
-					registrationSearch
-							.setWitness1AadhaarNo(witness1.getAadhaarNo() != null ? witness1.getAadhaarNo() : "");
-					registrationSearch
-							.setWitness1Occupation(witness1.getOccupation() != null ? witness1.getOccupation() : "");
-					registrationSearch.setWitness1Address(witness1.getContactInfo().getResidenceAddress() != null
-							? witness1.getContactInfo().getResidenceAddress() : "");
-					registrationSearch
-							.setWitness1RelationshipWithApplicant(witness1.getRelationshipWithApplicant() != null
-									? witness1.getRelationshipWithApplicant() : "");
-				}
+                registrationSearch.setWifeMaritalStatus(registration.getWife().getMaritalStatus() != null
+                        ? registration.getWife().getMaritalStatus().name() : "");
+                registrationSearch.setWifeReligionPractice(registration.getWife().getReligionPractice().name() != null
+                        ? registration.getWife().getReligionPractice().name() : "");
+                registrationSearch.setWifeOccupation(
+                        registration.getWife().getOccupation() != null ? registration.getWife().getOccupation() : "");
+                registrationSearch.setWifePhoneNo(registration.getWife().getContactInfo().getMobileNo() != null
+                        ? registration.getWife().getContactInfo().getMobileNo() : "");
+                registrationSearch.setWifeAadhaarNo(
+                        registration.getWife().getAadhaarNo() != null ? registration.getWife().getAadhaarNo() : "");
+                registrationSearch
+                        .setWifeResidencyAddress(registration.getWife().getContactInfo().getResidenceAddress() != null
+                                ? registration.getWife().getContactInfo().getResidenceAddress() : "");
+                registrationSearch
+                        .setWifeOfficeAddress(registration.getWife().getContactInfo().getOfficeAddress() != null
+                                ? registration.getWife().getContactInfo().getOfficeAddress() : "");
+                registrationSearch.setWifeEmail(registration.getWife().getContactInfo().getEmail() != null
+                        ? registration.getWife().getContactInfo().getEmail() : "");
+            }
 
-				MarriageWitness witness2 = registration.getWitnesses().get(1);
-				if (witness2 != null) {
-					registrationSearch.setWitness2Name(witness2.getFullName());
-					registrationSearch
-							.setWitness2AadhaarNo(witness2.getAadhaarNo() != null ? witness2.getAadhaarNo() : "");
-					registrationSearch
-							.setWitness2Occupation(witness2.getOccupation() != null ? witness2.getOccupation() : "");
-					registrationSearch.setWitness2Address(witness2.getContactInfo().getResidenceAddress() != null
-							? witness2.getContactInfo().getResidenceAddress() : "");
-					registrationSearch
-							.setWitness2RelationshipWithApplicant(witness2.getRelationshipWithApplicant() != null
-									? witness2.getRelationshipWithApplicant() : "");
-				}
+            if (!registration.getWitnesses().isEmpty()) {
+                final MarriageWitness witness1 = registration.getWitnesses().get(0);
+                if (witness1 != null) {
+                    registrationSearch.setWitness1Name(witness1.getFullName());
+                    registrationSearch
+                            .setWitness1AadhaarNo(witness1.getAadhaarNo() != null ? witness1.getAadhaarNo() : "");
+                    registrationSearch
+                            .setWitness1Occupation(witness1.getOccupation() != null ? witness1.getOccupation() : "");
+                    registrationSearch.setWitness1Address(witness1.getContactInfo().getResidenceAddress() != null
+                            ? witness1.getContactInfo().getResidenceAddress() : "");
+                    registrationSearch
+                            .setWitness1RelationshipWithApplicant(witness1.getRelationshipWithApplicant() != null
+                                    ? witness1.getRelationshipWithApplicant() : "");
+                }
 
-				MarriageWitness witness3 = registration.getWitnesses().get(2);
-				if (witness3 != null) {
-					registrationSearch.setWitness3Name(witness3.getFullName());
-					registrationSearch
-							.setWitness3AadhaarNo(witness3.getAadhaarNo() != null ? witness3.getAadhaarNo() : "");
-					registrationSearch
-							.setWitness3Occupation(witness3.getOccupation() != null ? witness3.getOccupation() : "");
-					registrationSearch.setWitness3Address(witness3.getContactInfo().getResidenceAddress() != null
-							? witness3.getContactInfo().getResidenceAddress() : "");
-					registrationSearch
-							.setWitness3RelationshipWithApplicant(witness3.getRelationshipWithApplicant() != null
-									? witness3.getRelationshipWithApplicant() : "");
-				}
-			}
+                final MarriageWitness witness2 = registration.getWitnesses().get(1);
+                if (witness2 != null) {
+                    registrationSearch.setWitness2Name(witness2.getFullName());
+                    registrationSearch
+                            .setWitness2AadhaarNo(witness2.getAadhaarNo() != null ? witness2.getAadhaarNo() : "");
+                    registrationSearch
+                            .setWitness2Occupation(witness2.getOccupation() != null ? witness2.getOccupation() : "");
+                    registrationSearch.setWitness2Address(witness2.getContactInfo().getResidenceAddress() != null
+                            ? witness2.getContactInfo().getResidenceAddress() : "");
+                    registrationSearch
+                            .setWitness2RelationshipWithApplicant(witness2.getRelationshipWithApplicant() != null
+                                    ? witness2.getRelationshipWithApplicant() : "");
+                }
 
-			if (registration.getPriest() != null && registration.getPriest().getName() != null) {
-				registrationSearch.setPriestName(registration.getPriest().getName().getFirstName() != null
-						? registration.getPriest().getName().getFirstName() : "");
-				// registrationSearch.setPriestAge(registration.getPriest().getAge().toString()!=
-				// null ?registration.getPriest().getAge().toString():"");
-				registrationSearch
-						.setPriestAddress(registration.getPriest().getContactInfo().getResidenceAddress() != null
-								? registration.getPriest().getContactInfo().getResidenceAddress() : "");
-				registrationSearch.setPriestReligion(registration.getPriest().getReligion().getDescription() != null
-						? registration.getPriest().getReligion().getDescription() : "");
-			}
-			for (MarriageCertificate certificate : registration.getMarriageCertificate()) {
-				if (certificate != null) {
-					registrationSearch.setCertificateNo(
-							certificate.getCertificateNo() != null ? certificate.getCertificateNo() : "");
-					registrationSearch.setCertificateType(
-							certificate.getCertificateType() != null ? certificate.getCertificateType() : "");
-					registrationSearch.setCertificateDate(certificate.getCertificateDate());
-					registrationSearch.setCertificateIssued(certificate.isCertificateIssued());
-				}
-			}
-			registrationSearch.setActive(registration.isActive());
-			registrationSearch.setApplicationStatus(
-					registration.getStatus().getDescription() != null ? registration.getStatus().getDescription() : "");
-			registrationSearch.setRejectionReason(
-					registration.getRejectionReason() != null ? registration.getRejectionReason() : "");
-			registrationSearch.setRemarks(registration.getRemarks() != null ? registration.getRemarks() : "");
-		}
-		marriageRegistrationIndexRepository.save(registrationSearch);
-		return registrationSearch;
-	}
+                final MarriageWitness witness3 = registration.getWitnesses().get(2);
+                if (witness3 != null) {
+                    registrationSearch.setWitness3Name(witness3.getFullName());
+                    registrationSearch
+                            .setWitness3AadhaarNo(witness3.getAadhaarNo() != null ? witness3.getAadhaarNo() : "");
+                    registrationSearch
+                            .setWitness3Occupation(witness3.getOccupation() != null ? witness3.getOccupation() : "");
+                    registrationSearch.setWitness3Address(witness3.getContactInfo().getResidenceAddress() != null
+                            ? witness3.getContactInfo().getResidenceAddress() : "");
+                    registrationSearch
+                            .setWitness3RelationshipWithApplicant(witness3.getRelationshipWithApplicant() != null
+                                    ? witness3.getRelationshipWithApplicant() : "");
+                }
+            }
+
+            if (registration.getPriest() != null && registration.getPriest().getName() != null) {
+                registrationSearch.setPriestName(registration.getPriest().getName().getFirstName() != null
+                        ? registration.getPriest().getName().getFirstName() : "");
+                registrationSearch
+                        .setPriestAddress(registration.getPriest().getContactInfo().getResidenceAddress() != null
+                                ? registration.getPriest().getContactInfo().getResidenceAddress() : "");
+                registrationSearch.setPriestReligion(registration.getPriest().getReligion().getDescription() != null
+                        ? registration.getPriest().getReligion().getDescription() : "");
+            }
+            for (final MarriageCertificate certificate : registration.getMarriageCertificate()){
+                if (certificate != null) {
+                    registrationSearch.setCertificateNo(
+                            certificate.getCertificateNo() != null ? certificate.getCertificateNo() : "");
+                    registrationSearch.setCertificateType(
+                            certificate.getCertificateType() != null ? certificate.getCertificateType() : "");
+                    registrationSearch.setCertificateDate(certificate.getCertificateDate());
+                    registrationSearch.setCertificateIssued(certificate.isCertificateIssued());
+                }
+            }
+            registrationSearch.setActive(registration.isActive());
+            registrationSearch.setApplicationStatus(
+                    registration.getStatus().getDescription() != null ? registration.getStatus().getDescription() : "");
+            registrationSearch.setRejectionReason(
+                    registration.getRejectionReason() != null ? registration.getRejectionReason() : "");
+            registrationSearch.setRemarks(registration.getRemarks() != null ? registration.getRemarks() : "");
+        }
+        marriageRegistrationIndexRepository.save(registrationSearch);
+        return registrationSearch;
+    }
 
 }

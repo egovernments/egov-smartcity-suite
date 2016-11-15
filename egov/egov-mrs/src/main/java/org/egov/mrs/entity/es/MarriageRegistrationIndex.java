@@ -144,7 +144,7 @@ public class MarriageRegistrationIndex {
     @Field(type = FieldType.String, index = FieldIndex.not_analyzed)
     private String husbandReligionPractice;
 
-    @Field(type = FieldType.String, index = FieldIndex.not_analyzed)
+    @Field(type = FieldType.Double)
     private Double husbandAgeInYearsAsOnMarriage;
 
     @Field(type = FieldType.Double)
@@ -179,9 +179,11 @@ public class MarriageRegistrationIndex {
 
     @Field(type = FieldType.String, index = FieldIndex.not_analyzed)
     private String wifeReligionPractice;
-
+    
+    @Field(type = FieldType.Double)
     private Double wifeAgeInYearsAsOnMarriage;
-
+    
+    @Field(type = FieldType.Double)
     private Double wifeAgeInMonthsAsOnMarriage;
 
     @Field(type = FieldType.String, index = FieldIndex.not_analyzed)
@@ -303,7 +305,15 @@ public class MarriageRegistrationIndex {
         this.ulbGrade = ulbGrade;
         this.ulbCode = ulbCode;
     }
-
+    
+    public void setId(String id) {
+        this.id = id;
+    }
+    
+    public String getId() {
+        return id;
+    }
+    
     public String getConsumerNumber() {
         return consumerNumber;
     }
