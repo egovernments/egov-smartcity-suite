@@ -38,9 +38,15 @@
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
 
-package org.egov.tl.web.actions.search;
+package org.egov.tl.entity.dto;
 
+import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
+
+import org.egov.tl.entity.License;
+import org.egov.tl.utils.Constants;
 
 /**
  * @author satyam
@@ -59,7 +65,70 @@ public class SearchForm {
     private String status;
     private String ownerName;
     private String expiryYear;
+    private Long categoryId;
+    private Long subCategoryId;
+    private Long statusId;
+    private Boolean isCancelled;
+    private Date dateOfExpiry;
     private List<String> actions;
+
+    public SearchForm() {
+        // For form binding
+    }
+
+    public SearchForm(final License license, final String userRoles, final String ownerName, final String expiryYear) {
+        setLicenseId(license.getId());
+        setApplicationNumber(license.getApplicationNumber());
+        setLicenseNumber(license.getLicenseNumber());
+        setOldLicenseNumber(license.getOldLicenseNumber());
+        setCategoryName(license.getCategory().getName());
+        setSubCategoryName(license.getTradeName().getName());
+        setTradeTitle(license.getNameOfEstablishment());
+        setTradeOwnerName(license.getLicensee().getApplicantName());
+        setMobileNo(license.getLicensee().getMobilePhoneNumber());
+        setPropertyAssessmentNo(license.getAssessmentNo() != null ? license.getAssessmentNo() : "");
+        setStatus(license.getStatus().getName());
+        setOwnerName(ownerName);
+        setExpiryYear(expiryYear);
+        setDateOfExpiry(license.getDateOfExpiry());
+        addActions(license, userRoles);
+    }
+
+    private void addActions(final License license, final String userRoles) {
+        final List<String> licenseActions = new ArrayList<>();
+        licenseActions.add("View Trade");
+        if (license.getStatus() != null) {
+            if (userRoles.contains(Constants.ROLE_BILLCOLLECTOR) && license.canCollectFee())
+                licenseActions.add("Collect Fees");
+            else if (userRoles.contains(Constants.TL_CREATOR_ROLENAME) || userRoles.contains(Constants.TL_APPROVER_ROLENAME)) {
+                if (license.isStatusActive())
+                    licenseActions.add("Print Certificate");
+                if (license.getStatus().getStatusCode().equals(Constants.STATUS_UNDERWORKFLOW))
+                    licenseActions.add("Print Provisional Certificate");
+                if (!license.isPaid() && !license.getLicenseAppType().getName().equals(Constants.RENEWAL_LIC_APPTYPE)
+                        && license.isStatusActive())
+                    licenseActions.add("Renew License");
+            }
+        } else if (license.isLegacy() && !license.isPaid())
+            licenseActions.add("Modify Legacy License");
+
+        if (userRoles.contains(Constants.TL_APPROVER_ROLENAME) && license.getDateOfExpiry() != null
+                && checkForRenewalNotice(license.getDateOfExpiry()))
+            licenseActions.add("Renewal Notice");
+        setActions(licenseActions);
+    }
+
+    public boolean checkForRenewalNotice(final Date dateOfExpiry) {
+        boolean readyForRenewal = false;
+        final Calendar currentDate = Calendar.getInstance();
+        final Calendar renewalDate = Calendar.getInstance();
+        renewalDate.setTime(dateOfExpiry);
+        renewalDate.add(Calendar.DATE, Constants.RENEWALTIMEPERIOD);
+
+        if (renewalDate.before(currentDate) || renewalDate.equals(currentDate))
+            readyForRenewal = true;
+        return readyForRenewal;
+    }
 
     public String getApplicationNumber() {
         return applicationNumber;
@@ -173,4 +242,43 @@ public class SearchForm {
         this.expiryYear = expiryYear;
     }
 
+    public Long getStatusId() {
+        return statusId;
+    }
+
+    public void setStatusId(final Long statusId) {
+        this.statusId = statusId;
+    }
+
+    public Long getCategoryId() {
+        return categoryId;
+    }
+
+    public void setCategoryId(final Long categoryId) {
+        this.categoryId = categoryId;
+    }
+
+    public Long getSubCategoryId() {
+        return subCategoryId;
+    }
+
+    public void setSubCategoryId(final Long subCategoryId) {
+        this.subCategoryId = subCategoryId;
+    }
+
+    public Boolean getIsCancelled() {
+        return isCancelled;
+    }
+
+    public void setIsCancelled(final Boolean isCancelled) {
+        this.isCancelled = isCancelled;
+    }
+
+    public Date getDateOfExpiry() {
+        return dateOfExpiry;
+    }
+
+    public void setDateOfExpiry(final Date dateOfExpiry) {
+        this.dateOfExpiry = dateOfExpiry;
+    }
 }

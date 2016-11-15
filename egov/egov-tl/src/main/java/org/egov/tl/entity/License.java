@@ -40,7 +40,32 @@
 
 package org.egov.tl.entity;
 
-import com.google.gson.annotations.Expose;
+import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+
+import javax.persistence.CascadeType;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.Inheritance;
+import javax.persistence.InheritanceType;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.NamedQuery;
+import javax.persistence.OneToMany;
+import javax.persistence.OneToOne;
+import javax.persistence.SequenceGenerator;
+import javax.persistence.Table;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
+import javax.validation.Valid;
+import javax.validation.constraints.NotNull;
+
 import org.egov.commons.EgwStatus;
 import org.egov.infra.admin.master.entity.Boundary;
 import org.egov.infra.persistence.validator.annotation.Unique;
@@ -52,21 +77,14 @@ import org.hibernate.validator.constraints.Length;
 import org.hibernate.validator.constraints.NotBlank;
 import org.hibernate.validator.constraints.SafeHtml;
 
-import javax.persistence.*;
-import javax.validation.Valid;
-import javax.validation.constraints.NotNull;
-import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
+import com.google.gson.annotations.Expose;
 
 @Entity
 @Table(name = "EGTL_LICENSE")
 @Inheritance(strategy = InheritanceType.JOINED)
 @SequenceGenerator(name = License.SEQUENCE, sequenceName = License.SEQUENCE, allocationSize = 1)
-@Unique(fields = {"licenseNumber", "applicationNumber"}, enableDfltMsg = true, isSuperclass = true)
-@NamedQuery(name = "LICENSE_BY_APPLICATION_NO",
-        query = "select license FROM License license WHERE applicationNumber=:applicationNumber")
+@Unique(fields = { "licenseNumber", "applicationNumber" }, enableDfltMsg = true, isSuperclass = true)
+@NamedQuery(name = "LICENSE_BY_APPLICATION_NO", query = "select license FROM License license WHERE applicationNumber=:applicationNumber")
 public class License extends StateAware {
 
     public static final String SEQUENCE = "SEQ_EGTL_LICENSE";
@@ -221,11 +239,11 @@ public class License extends StateAware {
 
     @Override
     public Long getId() {
-        return this.id;
+        return id;
     }
 
     @Override
-    public void setId(Long id) {
+    public void setId(final Long id) {
         this.id = id;
     }
 
@@ -373,15 +391,15 @@ public class License extends StateAware {
         return tradeArea_weight;
     }
 
-    public void setTradeArea_weight(final BigDecimal tradeArea_weight) {
-        this.tradeArea_weight = tradeArea_weight;
+    public void setTradeArea_weight(final BigDecimal tradeAreaweight) {
+        tradeArea_weight = tradeAreaweight;
     }
 
     public NatureOfBusiness getNatureOfBusiness() {
         return natureOfBusiness;
     }
 
-    public void setNatureOfBusiness(NatureOfBusiness natureOfBusiness) {
+    public void setNatureOfBusiness(final NatureOfBusiness natureOfBusiness) {
         this.natureOfBusiness = natureOfBusiness;
     }
 
@@ -442,10 +460,10 @@ public class License extends StateAware {
     }
 
     public String getDigiSignedCertFileStoreId() {
-        return this.digiSignedCertFileStoreId;
+        return digiSignedCertFileStoreId;
     }
 
-    public void setDigiSignedCertFileStoreId(String digiSignedCertFileStoreId) {
+    public void setDigiSignedCertFileStoreId(final String digiSignedCertFileStoreId) {
         this.digiSignedCertFileStoreId = digiSignedCertFileStoreId;
     }
 
@@ -467,15 +485,15 @@ public class License extends StateAware {
         return licenseDemand.getBaseDemand().subtract(licenseDemand.getAmtCollected());
     }
 
-    public boolean isStateRejected() {
-        return getState() != null && getState().getValue().contains(Constants.WORKFLOW_STATE_REJECTED);
+    public boolean isRejected() {
+        return hasState() && getState().getValue().contains(Constants.WORKFLOW_STATE_REJECTED);
     }
 
     public String getAssessmentNo() {
         return assessmentNo;
     }
 
-    public void setAssessmentNo(String assessmentNo) {
+    public void setAssessmentNo(final String assessmentNo) {
         this.assessmentNo = assessmentNo;
     }
 
@@ -490,5 +508,21 @@ public class License extends StateAware {
     @Override
     public String getStateDetails() {
         return "";
+    }
+
+    public boolean isApproved() {
+        return hasState() && getState().getValue().equals(Constants.WF_STATE_COMMISSIONER_APPROVED_STR);
+    }
+
+    public boolean isAcknowledged() {
+        return getStatus().getStatusCode().equals(Constants.STATUS_ACKNOLEDGED);
+    }
+
+    public boolean canCollectFee() {
+        return !isPaid() && !isRejected() && isAcknowledged() || isApproved();
+    }
+
+    public boolean isStatusActive() {
+        return getStatus().getStatusCode().equalsIgnoreCase(Constants.STATUS_ACTIVE);
     }
 }
