@@ -46,7 +46,6 @@ import java.util.Iterator;
 import java.util.List;
 
 import org.egov.commons.EgwStatus;
-import org.egov.eis.service.EmployeeService;
 import org.egov.infra.utils.DateUtils;
 import org.egov.lcms.transactions.entity.LcInterimOrderDocuments;
 import org.egov.lcms.transactions.entity.LegalCase;
@@ -69,9 +68,6 @@ public class LegalCaseInterimOrderService {
     private LegalCaseUtil legalCaseUtil;
 
     @Autowired
-    private EmployeeService employeeService;
-
-    @Autowired
     public LegalCaseInterimOrderService(final LegalCaseInterimOrderRepository legalCaseInterimOrderRepository) {
         this.legalCaseInterimOrderRepository = legalCaseInterimOrderRepository;
     }
@@ -85,7 +81,6 @@ public class LegalCaseInterimOrderService {
         final List<LcInterimOrderDocuments> interiomOrderDoc = legalCaseUtil
                 .getLcInterimOrderDocumentList(legalCaseInterimOrder);
         processAndStoreApplicationDocuments(legalCaseInterimOrder, interiomOrderDoc);
-        legalCaseInterimOrder.setEmployee(employeeService.getEmployeeById(legalCaseInterimOrder.getEmployee().getId()));
         /* legalCaseRepository.save(legalCaseInterimOrder.getLegalCase()); */
         return legalCaseInterimOrderRepository.save(legalCaseInterimOrder);
     }
