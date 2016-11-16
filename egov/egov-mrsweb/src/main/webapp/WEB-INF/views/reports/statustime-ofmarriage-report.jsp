@@ -58,17 +58,15 @@
 
 						<div class="panel-body custom-form">
 							<div class="form-group">
-								<div class="col-sm-4 control-label">
-									<label>Year</label><span class="mandatory"></span>
-								</div>
-								<div class="col-sm-4 add-margin">
-									<select name="year" id="year" class="form-control" required>
-										<option value="">Select</option>
-										<option value="2015">2015</option>
-										<option value="2016">2016</option>
-
-									</select>
-								</div>
+								<div class="col-sm-3 control-label">
+							<label>Year</label><span class="mandatory"></span>
+						</div>
+						<div class="col-sm-3">
+								<form:select path="year" cssClass="form-control">
+   
+   								<form:options items="${yearlist}" />
+								</form:select>
+						</div>
 							</div>
 						</div>
 					</div>

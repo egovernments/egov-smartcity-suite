@@ -105,6 +105,7 @@ $(document)
 														"data" : null,
 														render : function(data,
 																type, row, meta) {
+															if(data.husbandcount!=0){
 															var applicant = 'husband';
 															return '<a onclick="openPopup(\'/mrs/report/age-wise/view/'
 																	+ year
@@ -115,6 +116,9 @@ $(document)
 																	+ '\')" href="javascript:void(0);">'
 																	+ data.husbandcount
 																	+ '</a>';
+															}
+															else
+																return data.husbandcount
 														},
 														"sClass" : "text-center"
 													},
@@ -122,6 +126,7 @@ $(document)
 														"data" : null,
 														render : function(data,
 																type, row, meta) {
+															if(data.wifecount!=0){
 															var applicant = 'wife';
 															return '<a onclick="openPopup(\'/mrs/report/age-wise/view/'
 																	+ year
@@ -132,6 +137,9 @@ $(document)
 																	+ '\')" href="javascript:void(0);">'
 																	+ data.wifecount
 																	+ '</a>';
+															}
+															else
+																return data.wifecount;
 														},
 														"sClass" : "text-center"
 													} ]

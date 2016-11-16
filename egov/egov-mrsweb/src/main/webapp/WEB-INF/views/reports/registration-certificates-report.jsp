@@ -45,7 +45,7 @@
 <%@ taglib uri="/WEB-INF/taglib/cdn.tld" prefix="cdn" %>
 
 <form:form role="form" method="post" cssClass="form-horizontal form-groups-bordered" id="usageform" modelAttribute="certificate">
- 	<div class="row" id="page-content">
+ 	<div>
         
 		
 			<div class="panel panel-primary" data-collapsed="0">
@@ -65,8 +65,8 @@
 							<form:input id="registrationNo" path="registration.registrationNo" type="text" cssClass="form-control low-width is_valid_alphnumeric"  />
 							<form:errors path="registration.registrationNo" cssClass="error-msg"/>
 						</div>
-						</div>
-						<div class="form-group">
+						
+						
 								<label class="col-sm-2 control-label">
 								<spring:message code="lbl.zone"/></span>
 							</label>
@@ -78,6 +78,10 @@
 				             </form:select>
 				            <form:errors path="registration.zone" cssClass="add-margin error-msg"/>
 						</div>
+						</div>
+						</div>
+						<div class="row">
+						<div class="form-group">
 						<label for="certificateNo" class="col-sm-2 control-label"><spring:message
 								code="lbl.certificate.type" /></label>
     
@@ -94,16 +98,17 @@
 								</form:select>
 								<form:errors path="certificateType" cssClass="error-msg" />
 						</div>
-						</div>
-					</div>
-					<div class="form-group">
-						<label class="col-sm-2 control-label">
+												<label class="col-sm-2 control-label">
 							<spring:message code="lbl.fromDate"/>
 						</label>
 						<div class="col-sm-3">
 							<form:input path="fromDate" id="txt-fromdate" type="text" class="form-control low-width datepicker" data-date-end-date="0d" data-date-today-highlight="true" placeholder="" autocomplete="off"/>
             				<form:errors path="fromDate" cssClass="add-margin error-msg"/>
 						</div>
+						</div>
+						</div>
+						<div class="row">
+						<div class="form-group">
 						<label class="col-sm-2 control-label">
 							<spring:message code="lbl.toDate"/>
 						</label>
@@ -112,8 +117,10 @@
             				<form:errors path="toDate" cssClass="add-margin error-msg"/>
 						</div>
 					</div>
+					</div>
 				</div>
 			</div>
+		
 			<div class="row">
 				<div class="text-center">						
 					<button type="button" id="btnregcertificatesearch"

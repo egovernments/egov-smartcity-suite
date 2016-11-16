@@ -43,8 +43,7 @@
 <%@ taglib uri="http://www.springframework.org/tags" prefix="spring"%>
 <%@ taglib uri="http://www.springframework.org/tags/form" prefix="form"%>
 <%@ taglib uri="/WEB-INF/taglib/cdn.tld" prefix="cdn"%>
-<div class="row" id="page-content">
-	<div class="col-md-12">
+<div>
 		<div class="panel" data-collapsed="0">
 			<div class="panel-body">
 				<form:form method="post" action=""
@@ -77,9 +76,7 @@
 										<form:errors path="husband.religion.id"
 											cssClass="add-margin error-msg" />
 									</div>
-								</div>
 								
-								<div class="form-group">
 
 									<label class="col-sm-2 control-label"> <spring:message
 											code="lbl.wife.religion" />
@@ -117,7 +114,7 @@
 								</div>
 						</div>
 					</div>
-			</div>
+			
 			
 			<div class="row">
 				<div class="text-center">
@@ -135,8 +132,8 @@
 			</form:form>
 		</div>
 	</div>
-</div>
 
+</div>
 <br />
 <br />
 <div class="row display-hide report-section" id="regs_container">

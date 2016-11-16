@@ -48,24 +48,26 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 @Repository
-public interface MarriageRegistrationReportsRepository extends JpaRepository<MarriageRegistration, Long> {//, QueryDslPredicateExecutor<Registration> {
-    
-    @Query(value="select ap.ageInYearsAsOnMarriage , count(*) from MarriageRegistration rg, MrApplicant ap where rg.husband=ap.id and rg.status.code='REGISTERED' and YEAR(rg.dateOfMarriage)=:year group by ap.ageInYearsAsOnMarriage order by ap.ageInYearsAsOnMarriage")
-    String[] getHusbandCountAgeWise( @Param("year") int year);
-    
-    @Query(value="select ap.ageInYearsAsOnMarriage, count(*) from MarriageRegistration rg, MrApplicant ap where rg.wife=ap.id and rg.status.code='REGISTERED' and YEAR(rg.dateOfMarriage)=:year group by ap.ageInYearsAsOnMarriage order by ap.ageInYearsAsOnMarriage")
-    String[] getWifeCountAgeWise( @Param("year") int year);
-    
-    @Query(value="select app.maritalStatus,to_char(app.createdDate,'Mon'),count(*) from MrApplicant as app ,MarriageRegistration as reg where YEAR(app.createdDate)=:year and reg.husband = app.id  group by app.maritalStatus, to_char(app.createdDate,'Mon') order by to_char(app.createdDate,'Mon') desc")
-    List<String[]> getHusbandCountByMaritalStatus( @Param("year") int year);
-    
-    @Query(value="select app.maritalStatus,to_char(app.createdDate,'Mon'),count(*) from MrApplicant as app ,MarriageRegistration as reg where YEAR(app.createdDate)=:year and reg.wife = app.id  group by app.maritalStatus, to_char(app.createdDate,'Mon') order by to_char(app.createdDate,'Mon') desc")
-    List<String[]> getWifeCountByMaritalStatus( @Param("year") int year);
-    
-    @Query(value="select MONTH(marriageRegn.dateOfMarriage), count(*) from MarriageRegistration as marriageRegn, MarriageAct as act, EgwStatus as status where act.id = marriageRegn.marriageAct and act.id=:act and YEAR(marriageRegn.dateOfMarriage)=:year and marriageRegn.status = status.id and status.code in('APPROVED') group by MONTH(marriageRegn.dateOfMarriage)")
-    String[] searchMarriageRegistrationsByYearAndAct(@Param("year") int year,@Param("act") Long act);
-    
-    @Query(value="select act.name, count(*) from MarriageRegistration as marriageRegn, MarriageAct as act, EgwStatus as status where act.id = marriageRegn.marriageAct and marriageRegn.status = status.id and status.code in('APPROVED') and YEAR(marriageRegn.dateOfMarriage)=:year group by act.name")
+public interface MarriageRegistrationReportsRepository extends JpaRepository<MarriageRegistration, Long> {// ,
+                                                                                                          // QueryDslPredicateExecutor<Registration>
+                                                                                                          // {
+
+    @Query(value = "select ap.ageInYearsAsOnMarriage , count(*) from MarriageRegistration rg, MrApplicant ap where rg.husband=ap.id and rg.status.code='APPROVED' and YEAR(rg.applicationDate)=:year group by ap.ageInYearsAsOnMarriage order by ap.ageInYearsAsOnMarriage")
+    String[] getHusbandCountAgeWise(@Param("year") int year);
+
+    @Query(value = "select ap.ageInYearsAsOnMarriage, count(*) from MarriageRegistration rg, MrApplicant ap where rg.wife=ap.id and rg.status.code='APPROVED' and YEAR(rg.applicationDate)=:year group by ap.ageInYearsAsOnMarriage order by ap.ageInYearsAsOnMarriage")
+    String[] getWifeCountAgeWise(@Param("year") int year);
+
+    @Query(value = "select app.maritalStatus,to_char(app.createdDate,'Mon'),count(*) from MrApplicant as app ,MarriageRegistration as reg where YEAR(app.createdDate)=:year and reg.husband = app.id  group by app.maritalStatus, to_char(app.createdDate,'Mon') order by to_char(app.createdDate,'Mon') desc")
+    List<String[]> getHusbandCountByMaritalStatus(@Param("year") int year);
+
+    @Query(value = "select app.maritalStatus,to_char(app.createdDate,'Mon'),count(*) from MrApplicant as app ,MarriageRegistration as reg where YEAR(app.createdDate)=:year and reg.wife = app.id  group by app.maritalStatus, to_char(app.createdDate,'Mon') order by to_char(app.createdDate,'Mon') desc")
+    List<String[]> getWifeCountByMaritalStatus(@Param("year") int year);
+
+    @Query(value = "select MONTH(marriageRegn.applicationDate), count(*) from MarriageRegistration as marriageRegn, MarriageAct as act, EgwStatus as status where act.id = marriageRegn.marriageAct and act.id=:act and YEAR(marriageRegn.applicationDate)=:year and marriageRegn.status = status.id and status.code in('APPROVED') group by MONTH(marriageRegn.applicationDate)")
+    String[] searchMarriageRegistrationsByYearAndAct(@Param("year") int year, @Param("act") Long act);
+
+    @Query(value = "select act.name, count(*) from MarriageRegistration as marriageRegn, MarriageAct as act, EgwStatus as status where act.id = marriageRegn.marriageAct and marriageRegn.status = status.id and status.code in('APPROVED') and YEAR(marriageRegn.applicationDate)=:year group by act.name")
     String[] searchMarriageRegistrationsByYear(@Param("year") int year);
-      
+
 }

@@ -72,7 +72,7 @@
 							<tr>
 								<td>${counter.index+1}</td>
 								<td><c:out value="${reg.applicationNo}" /></td>
-								<td><c:out value="${reg.registrationNo}" /></td>
+								<td><c:out value="${reg.registrationNo!=null?reg.registrationNo:'N/A'}"></c:out></td>
 								<td><c:out value="${reg.husband.name.firstName}" />
 								<td><c:out value="${reg.wife.name.firstName}" /></td>
 								<td><c:out value="${reg.dateOfMarriage}" /></td>

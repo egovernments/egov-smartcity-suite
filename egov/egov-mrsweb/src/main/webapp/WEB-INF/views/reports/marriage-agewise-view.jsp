@@ -74,7 +74,7 @@
 								<td>${counter.index+1}<input type="hidden" name="applicant"
 									id="applicant" value="" /></td>
 								<td><c:out value="${reg.applicationNo}" /></td>
-								<td><c:out value="${reg.registrationNo}" /></td>
+								<td><c:out value="${reg.registrationNo!=null?reg.registrationNo:'N/A'}"></c:out></td>
 								<td><c:choose>
 										<c:when test="${applicantType == 'husband'}">
 											<c:out value="${reg.husband.name.firstName}" />

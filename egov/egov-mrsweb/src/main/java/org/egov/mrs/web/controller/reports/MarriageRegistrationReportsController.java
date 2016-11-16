@@ -126,7 +126,8 @@ public class MarriageRegistrationReportsController {
     @Autowired
     private ReligionService religionService;
 
-    @ModelAttribute("zones") public List<Boundary> getZonesList() {
+    @ModelAttribute("zones")
+    public List<Boundary> getZonesList() {
         return boundaryService
                 .getActiveBoundariesByBndryTypeNameAndHierarchyTypeName(
                         BOUNDARY_TYPE, REVENUE_HIERARCHY_TYPE);
@@ -143,16 +144,17 @@ public class MarriageRegistrationReportsController {
     }
 
     @RequestMapping(value = "/registrationstatus", method = RequestMethod.POST, produces = MediaType.TEXT_PLAIN_VALUE)
-    @ResponseBody public String search(final Model model,
+    @ResponseBody
+    public String search(final Model model,
             @ModelAttribute final MarriageRegistration registration)
             throws ParseException {
         final List<MarriageRegistration> searchResultList = marriageRegistrationService
                 .searchRegistrationByStatus(registration, registration
                         .getStatus().getCode());
-        return  new StringBuilder("{ \"data\":")
-        .append(toJSON(searchResultList, MarriageRegistration.class,
-                MarriageRegistrationJsonAdaptor.class)).append("}")
-        .toString();
+        return new StringBuilder("{ \"data\":")
+                .append(toJSON(searchResultList, MarriageRegistration.class,
+                        MarriageRegistrationJsonAdaptor.class)).append("}")
+                .toString();
     }
 
     @RequestMapping(value = "/age-wise", method = RequestMethod.GET)
@@ -163,7 +165,8 @@ public class MarriageRegistrationReportsController {
     }
 
     @RequestMapping(value = "/age-wise", method = RequestMethod.POST, produces = MediaType.TEXT_PLAIN_VALUE)
-    @ResponseBody public String searchAgeWise(@RequestParam("year") final int year,
+    @ResponseBody
+    public String searchAgeWise(@RequestParam("year") final int year,
             final Model model, @ModelAttribute final MarriageRegistration registration)
             throws ParseException {
 
@@ -248,7 +251,8 @@ public class MarriageRegistrationReportsController {
     }
 
     @RequestMapping(value = "/certificatedetails", method = RequestMethod.POST, produces = MediaType.TEXT_PLAIN_VALUE)
-    @ResponseBody public String searchApprovedMarriageRecords(final Model model,
+    @ResponseBody
+    public String searchApprovedMarriageRecords(final Model model,
             @ModelAttribute final MarriageCertificate certificate)
             throws ParseException {
         final List<RegistrationCertificatesResultForReport> regCertificateResult = new ArrayList<RegistrationCertificatesResultForReport>();
@@ -257,12 +261,12 @@ public class MarriageRegistrationReportsController {
         for (final Object[] objects : searchResultList) {
             final RegistrationCertificatesResultForReport certificatesResultForReport = new RegistrationCertificatesResultForReport();
             certificatesResultForReport
-                    .setRegistrationNo(objects[0]!= null ?objects[0].toString():"");
+                    .setRegistrationNo(objects[0] != null ? objects[0].toString() : "");
             certificatesResultForReport
                     .setDateOfMarriage(objects[1].toString());
             certificatesResultForReport.setRegistrationDate(objects[2]
                     .toString());
-            certificatesResultForReport.setRejectReason(objects[3]!=null?objects[3].toString():"");
+            certificatesResultForReport.setRejectReason(objects[3] != null ? objects[3].toString() : "");
             certificatesResultForReport
                     .setCertificateNo(objects[4] != null ? objects[4]
                             .toString() : "");
@@ -277,7 +281,7 @@ public class MarriageRegistrationReportsController {
                     .toString()));
             regCertificateResult.add(certificatesResultForReport);
         }
-        return  new StringBuilder("{ \"data\":")
+        return new StringBuilder("{ \"data\":")
                 .append(toJSON(regCertificateResult,
                         RegistrationCertificatesResultForReport.class,
                         MarriageRegistrationCertificateReportJsonAdaptor.class))
@@ -289,11 +293,13 @@ public class MarriageRegistrationReportsController {
         model.addAttribute("registration", new MarriageRegistration());
         model.addAttribute("maritalStatusList",
                 Arrays.asList(MaritalStatus.values()));
+        model.addAttribute("yearlist", getPreviousyears());
         return "statustime-ofmarriage-report";
     }
 
     @RequestMapping(value = "/status-at-time-marriage", method = RequestMethod.POST, produces = MediaType.TEXT_PLAIN_VALUE)
-    @ResponseBody public String searchStatusAtTimeOfMarriage(
+    @ResponseBody
+    public String searchStatusAtTimeOfMarriage(
             @RequestParam("year") final int year, final Model model,
             @ModelAttribute final MarriageRegistration registration)
             throws ParseException {
@@ -391,7 +397,8 @@ public class MarriageRegistrationReportsController {
     }
 
     @RequestMapping(value = "/datewiseregistration", method = RequestMethod.POST, produces = MediaType.TEXT_PLAIN_VALUE)
-    @ResponseBody public String showDatewiseReportresult(final Model model,
+    @ResponseBody
+    public String showDatewiseReportresult(final Model model,
             @ModelAttribute final MarriageRegistration registration)
             throws ParseException {
         final List<MarriageRegistration> searchResultList = marriageRegistrationReportsService
@@ -413,7 +420,8 @@ public class MarriageRegistrationReportsController {
     }
 
     @RequestMapping(value = "/monthwiseregistration", method = RequestMethod.POST, produces = MediaType.TEXT_PLAIN_VALUE)
-    @ResponseBody public String showMonthwiseReportresult(final Model model,
+    @ResponseBody
+    public String showMonthwiseReportresult(final Model model,
             @ModelAttribute final MarriageRegistration registration)
             throws ParseException {
         final List<MarriageRegistration> searchResultList = marriageRegistrationReportsService
@@ -433,7 +441,8 @@ public class MarriageRegistrationReportsController {
     }
 
     @RequestMapping(value = "/actwiseregistration", method = RequestMethod.POST, produces = MediaType.TEXT_PLAIN_VALUE)
-    @ResponseBody public String showActwiseReportresult(
+    @ResponseBody
+    public String showActwiseReportresult(
             @RequestParam("year") final int year, final Model model,
             @ModelAttribute final MarriageRegistration registration)
             throws ParseException {
@@ -568,7 +577,8 @@ public class MarriageRegistrationReportsController {
     }
 
     @RequestMapping(value = "/religionwiseregistration", method = RequestMethod.POST, produces = MediaType.TEXT_PLAIN_VALUE)
-    @ResponseBody public String showRegionwiseReportresult(
+    @ResponseBody
+    public String showRegionwiseReportresult(
             @RequestParam("year") final int year, final Model model,
             @ModelAttribute final MarriageRegistration registration)
             throws ParseException {

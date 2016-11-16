@@ -11,7 +11,6 @@ import java.util.Map;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 
-import org.egov.infra.utils.DateUtils;
 import org.egov.mrs.application.reports.repository.MarriageRegistrationReportsRepository;
 import org.egov.mrs.domain.entity.MarriageCertificate;
 import org.egov.mrs.domain.entity.MarriageRegistration;
@@ -39,11 +38,11 @@ public class MarriageRegistrationReportsService {
     private MarriageRegistrationReportsRepository registrationReportsRepository;
 
     @SuppressWarnings("unchecked")
-    public List<Object[]> searchMarriageRegistrationsForCertificateReport(MarriageCertificate certificate)
+    public List<Object[]> searchMarriageRegistrationsForCertificateReport(final MarriageCertificate certificate)
             throws ParseException {
 
-        Map<String, String> params = new HashMap<String, String>();
-        SimpleDateFormat sf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        final Map<String, String> params = new HashMap<String, String>();
+        final SimpleDateFormat sf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 
         final StringBuilder queryStrForRegistration = new StringBuilder(500);
         queryStrForRegistration
@@ -62,10 +61,8 @@ public class MarriageRegistrationReportsService {
         if (certificate.getCertificateType() != null && !certificate.getCertificateType().equals("ALL")) {
             queryStrForRegistration.append(" and cert.certificatetype=:certificatetype");
             params.put("certificatetype", certificate.getCertificateType());
-        } else if (certificate.getCertificateType() != null && certificate.getCertificateType().equals("ALL")) {
+        } else if (certificate.getCertificateType() != null && certificate.getCertificateType().equals("ALL"))
             queryStrForRegistration.append(" and cert.certificatetype in('REGISTRATION','REISSUE','REJECTION')");
-
-        }
 
         if (certificate.getFromDate() != null && certificate.getToDate() != null) {
             queryStrForRegistration
@@ -98,9 +95,8 @@ public class MarriageRegistrationReportsService {
         if (certificate.getCertificateType() != null && !certificate.getCertificateType().equals("ALL")) {
             queryStrForReissue.append(" and cert.certificatetype=:certificatetype");
             params.put("certificatetype", certificate.getCertificateType());
-        } else if (certificate.getCertificateType() != null && certificate.getCertificateType().equals("ALL")) {
+        } else if (certificate.getCertificateType() != null && certificate.getCertificateType().equals("ALL"))
             queryStrForReissue.append(" and cert.certificatetype in('REGISTRATION','REISSUE','REJECTION')");
-        }
 
         if (certificate.getFromDate() != null && certificate.getToDate() != null) {
             queryStrForReissue
@@ -122,38 +118,38 @@ public class MarriageRegistrationReportsService {
         aggregateQueryStr.append(" union ");
         aggregateQueryStr.append(queryStrForReissue.toString());
 
-        org.hibernate.Query query = getCurrentSession().createSQLQuery(aggregateQueryStr.toString());
-        for (String param : params.keySet()) {
+        final org.hibernate.Query query = getCurrentSession().createSQLQuery(aggregateQueryStr.toString());
+        for (final String param : params.keySet())
             query.setParameter(param, params.get(param));
-        }
         return query.list();
 
     }
 
-    public String[] searchRegistrationOfHusbandAgeWise(int year) throws ParseException {
+    public String[] searchRegistrationOfHusbandAgeWise(final int year) throws ParseException {
 
         return registrationReportsRepository.getHusbandCountAgeWise(year);
     }
 
-    public String[] searchRegistrationOfWifeAgeWise(int year) throws ParseException {
+    public String[] searchRegistrationOfWifeAgeWise(final int year) throws ParseException {
 
         return registrationReportsRepository.getWifeCountAgeWise(year);
     }
 
-    public String[] searchRegistrationActWise(MarriageRegistration registration, int year) throws ParseException {
+    public String[] searchRegistrationActWise(final MarriageRegistration registration, final int year) throws ParseException {
 
         return registrationReportsRepository.searchMarriageRegistrationsByYearAndAct(year, registration.getMarriageAct().getId());
     }
 
     @SuppressWarnings("unchecked")
-    public List<MarriageRegistration> getAgewiseDetails(String age, String applicant, int year) throws ParseException {
+    public List<MarriageRegistration> getAgewiseDetails(final String age, final String applicant, final int year)
+            throws ParseException {
         final Criteria criteria = getCurrentSession().createCriteria(MarriageRegistration.class,
                 "marriageRegistration");
-        String[] values = age.split("-");
+        final String[] values = age.split("-");
 
-        SimpleDateFormat formatter = new SimpleDateFormat("yyyy/MM/dd");
-        Date fromDate = formatter.parse(year + "/" + 1 + "/" + 1);
-        Date toDate = formatter.parse(year + "/" + 12 + "/" + 31);
+        final SimpleDateFormat formatter = new SimpleDateFormat("yyyy/MM/dd");
+        final Date fromDate = formatter.parse(year + "/" + 1 + "/" + 1);
+        final Date toDate = formatter.parse(year + "/" + 12 + "/" + 31);
         if (age != null && applicant.equals("husband")) {
             criteria.createAlias("marriageRegistration.husband", "husband").add(Restrictions
                     .between("husband.ageInYearsAsOnMarriage", Integer.valueOf(values[0]), Integer.valueOf(values[1])));
@@ -164,12 +160,12 @@ public class MarriageRegistrationReportsService {
             criteria.add(Restrictions.between("marriageRegistration.applicationDate", fromDate, toDate));
         }
         criteria.createAlias("marriageRegistration.status", "status").add(Restrictions.in("status.code",
-                new String[] { MarriageRegistration.RegistrationStatus.REGISTERED.toString() }));
+                new String[] { MarriageRegistration.RegistrationStatus.APPROVED.toString() }));
         return criteria.list();
     }
 
     @SuppressWarnings("unchecked")
-    public List<MarriageRegistration> searchStatusAtTimeOfMarriage(MarriageRegistration registration)
+    public List<MarriageRegistration> searchStatusAtTimeOfMarriage(final MarriageRegistration registration)
             throws ParseException {
         final Criteria criteria = getCurrentSession().createCriteria(MarriageRegistration.class, "marriageRegistration")
                 .createAlias("marriageRegistration.status", "status");
@@ -184,27 +180,27 @@ public class MarriageRegistrationReportsService {
         return criteria.list();
     }
 
-    public List<String[]> getHusbandCountByMaritalStatus(int year) {
+    public List<String[]> getHusbandCountByMaritalStatus(final int year) {
         return registrationReportsRepository.getHusbandCountByMaritalStatus(year);
     }
 
-    public List<String[]> getWifeCountByMaritalStatus(int year) {
+    public List<String[]> getWifeCountByMaritalStatus(final int year) {
         return registrationReportsRepository.getWifeCountByMaritalStatus(year);
     }
 
     @SuppressWarnings("unchecked")
-    public List<MarriageRegistration> getByMaritalStatusDetails(int year, String month, String applicant,
-            String maritalStatus) throws ParseException {
+    public List<MarriageRegistration> getByMaritalStatusDetails(final int year, final String month, final String applicant,
+            final String maritalStatus) throws ParseException {
         final Criteria criteria = getCurrentSession().createCriteria(MarriageRegistration.class,
                 "marriageRegistration");
 
-        Date date = new SimpleDateFormat("MMM").parse(month);
-        Calendar cal = Calendar.getInstance();
+        final Date date = new SimpleDateFormat("MMM").parse(month);
+        final Calendar cal = Calendar.getInstance();
         cal.setTime(date);
 
-        SimpleDateFormat formatter = new SimpleDateFormat("yyyy/MM/dd");
-        Date fromDate = formatter.parse(year + "/" + (cal.get(Calendar.MONTH) + 1) + "/" + 1);
-        Date toDate = formatter.parse(year + "/" + (cal.get(Calendar.MONTH) + 1) + "/" + 31);
+        final SimpleDateFormat formatter = new SimpleDateFormat("yyyy/MM/dd");
+        final Date fromDate = formatter.parse(year + "/" + (cal.get(Calendar.MONTH) + 1) + "/" + 1);
+        final Date toDate = formatter.parse(year + "/" + (cal.get(Calendar.MONTH) + 1) + "/" + 31);
         if (maritalStatus != null && applicant.equals("husband")) {
             criteria.createAlias("marriageRegistration.husband", "husband")
                     .add(Restrictions.between("husband.createdDate", fromDate, toDate));
@@ -220,7 +216,7 @@ public class MarriageRegistrationReportsService {
 
     @SuppressWarnings("unchecked")
     public List<MarriageRegistration> searchRegistrationBydate(
-            MarriageRegistration registration) throws ParseException {
+            final MarriageRegistration registration) throws ParseException {
         final Criteria criteria = getCurrentSession().createCriteria(
                 MarriageRegistration.class, "marriageRegistration");
 
@@ -241,36 +237,36 @@ public class MarriageRegistrationReportsService {
                 && registration.getToDate() != null)
             criteria.add(Restrictions.between(
                     "marriageRegistration.applicationDate",
-                    registration.getFromDate(), DateUtils.addDays(registration.getToDate(), 1)));
+                    registration.getFromDate(), org.apache.commons.lang3.time.DateUtils.addDays(registration.getToDate(), 1)));
         criteria.addOrder(Order.desc("marriageRegistration.applicationDate"));
         if (registration.getFromDate() != null && registration.getToDate() == null)
         {
 
-            Calendar cal = Calendar.getInstance();
-            Date todate = cal.getTime();
+            final Calendar cal = Calendar.getInstance();
+            final Date todate = cal.getTime();
             criteria.add(Restrictions.between(
                     "marriageRegistration.applicationDate",
                     registration.getFromDate(), todate));
         }
         if (registration.getFromDate() == null && registration.getToDate() != null)
         {
-            Calendar cal = Calendar.getInstance();
+            final Calendar cal = Calendar.getInstance();
             cal.set(Calendar.YEAR, 2009);
-            Date fromdate = cal.getTime();
+            final Date fromdate = cal.getTime();
 
             criteria.add(Restrictions.between(
                     "marriageRegistration.applicationDate",
-                    fromdate, DateUtils.addDays(registration.getToDate(), 1)));
+                    fromdate, org.apache.commons.lang3.time.DateUtils.addDays(registration.getToDate(), 1)));
         }
 
         return criteria.list();
     }
 
-    public Date getMonthStartday(String monthyear) {
+    public Date getMonthStartday(final String monthyear) {
         Date monthStartDate = new Date();
         if (monthyear != null) {
-            String[] month_year = monthyear.split("/");
-            Calendar calnew = Calendar.getInstance();
+            final String[] month_year = monthyear.split("/");
+            final Calendar calnew = Calendar.getInstance();
             calnew.set(Calendar.MONTH, Integer.parseInt(month_year[0]) - 1);
             calnew.set(Calendar.YEAR, Integer.parseInt(month_year[1]));
             calnew.set(Calendar.DAY_OF_MONTH,
@@ -281,11 +277,11 @@ public class MarriageRegistrationReportsService {
         return monthStartDate;
     }
 
-    public Date getMonthEndday(String monthyear) {
+    public Date getMonthEndday(final String monthyear) {
         Date monthEndDate = new Date();
         if (monthyear != null) {
-            String[] month_year = monthyear.split("/");
-            Calendar calnew = Calendar.getInstance();
+            final String[] month_year = monthyear.split("/");
+            final Calendar calnew = Calendar.getInstance();
             calnew.set(Calendar.MONTH, Integer.parseInt(month_year[0]) - 1);
             calnew.set(Calendar.YEAR, Integer.parseInt(month_year[1]));
             calnew.set(Calendar.DAY_OF_MONTH,
@@ -298,16 +294,14 @@ public class MarriageRegistrationReportsService {
 
     @SuppressWarnings("unchecked")
     public List<MarriageRegistration> searchRegistrationBymonth(
-            MarriageRegistration registration) throws ParseException {
+            final MarriageRegistration registration) throws ParseException {
         final Criteria criteria = getCurrentSession().createCriteria(
                 MarriageRegistration.class, "marriageRegistration").createAlias("marriageRegistration.status", "status");
-        if (registration.getMonth_year() != null) {
-
+        if (registration.getMonth_year() != null)
             criteria.add(Restrictions.between(
                     "marriageRegistration.applicationDate",
                     getMonthStartday(registration.getMonth_year()),
                     getMonthEndday(registration.getMonth_year())));
-        }
 
         if (null != registration.getMarriageRegistrationUnit()
                 && registration.getMarriageRegistrationUnit().getId() != null)
@@ -326,13 +320,13 @@ public class MarriageRegistrationReportsService {
 
     @SuppressWarnings("unchecked")
     public List<MarriageRegistration> searchRegistrationByreligion(
-            MarriageRegistration registration, int year) throws ParseException {
+            final MarriageRegistration registration, final int year) throws ParseException {
         final Criteria criteria = getCurrentSession().createCriteria(
                 MarriageRegistration.class, "marriageRegistration")
                 .createAlias("marriageRegistration.status", "status");
-        SimpleDateFormat formatter = new SimpleDateFormat("yyyy/MM/dd");
-        Date fromDate = formatter.parse(year + "/" + 1 + "/" + 1);
-        Date toDate = formatter.parse(year + "/" + 12 + "/" + 31);
+        final SimpleDateFormat formatter = new SimpleDateFormat("yyyy/MM/dd");
+        final Date fromDate = formatter.parse(year + "/" + 1 + "/" + 1);
+        final Date toDate = formatter.parse(year + "/" + 12 + "/" + 31);
         if (null != registration.getHusband().getReligion()
                 && registration.getHusband().getReligion().getId() != null)
             criteria.createAlias("marriageRegistration.husband", "husband")
@@ -353,29 +347,27 @@ public class MarriageRegistrationReportsService {
         return criteria.list();
     }
 
-    public String[] searchRegistrationMrActWise(int year) {
+    public String[] searchRegistrationMrActWise(final int year) {
         return registrationReportsRepository.searchMarriageRegistrationsByYear(year);
 
     }
 
     @SuppressWarnings("unchecked")
-    public List<MarriageRegistration> getActwiseDetails(int year, String act)
+    public List<MarriageRegistration> getActwiseDetails(final int year, final String act)
             throws ParseException {
         final Criteria criteria = getCurrentSession().createCriteria(
                 MarriageRegistration.class, "marriageRegistration").createAlias("marriageRegistration.status", "status");
 
-        SimpleDateFormat formatter = new SimpleDateFormat("yyyy/MM/dd");
-        Date fromDate = formatter.parse(year + "/" + 1 + "/" + 1);
-        Date toDate = formatter.parse(year + "/" + 12 + "/" + 31);
-        if (act != null) {
+        final SimpleDateFormat formatter = new SimpleDateFormat("yyyy/MM/dd");
+        final Date fromDate = formatter.parse(year + "/" + 1 + "/" + 1);
+        final Date toDate = formatter.parse(year + "/" + 12 + "/" + 31);
+        if (act != null)
             criteria.createAlias("marriageRegistration.marriageAct",
                     "marriageAct")
                     .add(Restrictions.eq("marriageAct.name", act));
-        }
-        if (fromDate != null && toDate != null) {
+        if (fromDate != null && toDate != null)
             criteria.add(Restrictions.between(
                     "marriageRegistration.applicationDate", fromDate, toDate));
-        }
 
         criteria.add(Restrictions.in("status.code",
                 new String[] { MarriageRegistration.RegistrationStatus.APPROVED.toString() }));
@@ -384,21 +376,18 @@ public class MarriageRegistrationReportsService {
     }
 
     @SuppressWarnings("unchecked")
-    public List<MarriageRegistration> getmonthWiseActDetails(int year,
-            int month, Long actid) throws ParseException {
+    public List<MarriageRegistration> getmonthWiseActDetails(final int year,
+            final int month, final Long actid) throws ParseException {
         final Criteria criteria = getCurrentSession().createCriteria(
                 MarriageRegistration.class, "marriageRegistration").createAlias("marriageRegistration.status", "status");
-        String month_year = month + "/" + year;
-        if (actid != null) {
+        final String month_year = month + "/" + year;
+        if (actid != null)
             criteria.createAlias("marriageRegistration.marriageAct",
                     "marriageAct")
                     .add(Restrictions.eq("marriageAct.id", actid));
-        }
-        if (month_year != null) {
+        if (month_year != null)
             criteria.add(Restrictions.between("marriageRegistration.applicationDate", getMonthStartday(month_year),
                     getMonthEndday(month_year)));
-
-        }
         criteria.add(Restrictions.in("status.code",
                 new String[] { MarriageRegistration.RegistrationStatus.APPROVED.toString() }));
         return criteria.list();
