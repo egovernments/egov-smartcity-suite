@@ -337,12 +337,14 @@ public class SearchPropertyAction extends BaseFormAction {
         	}
         	activePropertyId = basicProperty.getActiveProperty().getId().toString();
         }
-        
-        boolean hasChildPropertyUnderWorkflow = propertyTaxUtil.checkForParentUsedInBifurcation(assessmentNum);
-        if (hasChildPropertyUnderWorkflow) {
-            addActionError(getText("error.msg.child.underworkflow"));
-            return COMMON_FORM;
+        if (APPLICATION_TYPE_BIFURCATE_ASSESSENT.equals(applicationType)) {
+            List<PropertyStatusValues> propertyStatusValues = propertyService.findChildrenForProperty(basicProperty);
+            if (propertyStatusValues.isEmpty()) {
+                addActionError(getText("error.nochild.exists.bifurcation"));
+                return COMMON_FORM;
+            }
         }
+    
 
         if (APPLICATION_TYPE_REVISION_PETITION.equals(applicationType)) {
             if (isDemandActive) {

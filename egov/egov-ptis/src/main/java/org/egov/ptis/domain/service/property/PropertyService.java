@@ -2144,7 +2144,7 @@ public class PropertyService {
      */
     public String validationForBifurcation(final PropertyImpl propertyModel, final BasicProperty basicProperty,
             final String reason) {
-        final List<PropertyStatusValues> children = propertyStatusValuesDAO
+        final List<PropertyStatusValues> children = propertyStatusValuesDAO    
                 .getPropertyStatusValuesByReferenceBasicProperty(basicProperty);
         final Boolean parentBifurcated = isPropertyBifurcated(basicProperty);
         final Boolean childrenCreated = !children.isEmpty();
@@ -3136,6 +3136,16 @@ public List<PropertyMaterlizeView> getPropertyByAssessmentAndOwnerDetails(final 
         }
         return waterConnDtls;
     }
+    
+    /**
+     * Method to get children created for property
+     * @param basicProperty
+     * @return List<PropertyStatusValues>
+     */
+    public List<PropertyStatusValues> findChildrenForProperty(final BasicProperty basicProperty) {
+        return propertyStatusValuesDAO.getPropertyStatusValuesByReferenceBasicProperty(basicProperty);
+    }
+    
     public Map<Installment, Map<String, BigDecimal>> getExcessCollAmtMap() {
         return excessCollAmtMap;
     }
