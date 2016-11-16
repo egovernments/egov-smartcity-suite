@@ -182,6 +182,9 @@ public class PropertyTaxIndex {
 
     @Field(type = FieldType.Double)
     private Double totalCollection;
+    
+    @Field(type = FieldType.Boolean)
+    private Boolean isExempted;
 
     public String getConsumerCode() {
         return consumerCode;
@@ -525,5 +528,13 @@ public class PropertyTaxIndex {
 
     public void setTotalCollection(Double totalCollection) {
         this.totalCollection = totalCollection;
+    }
+
+    public Boolean getIsExempted() {
+        return isExempted;
+    }
+
+    public void setIsExempted(Boolean isExempted) {
+        this.isExempted = isExempted;
     }
 }
