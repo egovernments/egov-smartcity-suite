@@ -68,7 +68,14 @@
 								<input type="text" id="debitAccountHead" value="${workOrderEstimate.estimate.financialDetails[0].budgetGroup.minCode.name}" class="form-control" readonly="readonly" > 
 							</td>
 							<td>
-								<form:input path="billDetailes[0].debitamount"  id="debitamount" name="billDetailes[0].debitamount" data-errormsg="Debit Amount is mandatory!" onkeyup="decimalvalue(this);" data-pattern="decimalvalue" data-idx="0" data-optional="1" class="form-control table-input text-right debitamount validateZero" onblur="calculateRetentionMoneyDeductionAmounts();calculateNetPayableAmount();" maxlength="12" required="required" />
+								<c:choose>
+									<c:when test="${isBillEditable == true }">
+										<form:input path="billDetailes[0].debitamount" id="debitamount" name="billDetailes[0].debitamount" value="${debitBillDetails.amount }" data-errormsg="Debit Amount is mandatory!" onkeyup="decimalvalue(this);" data-pattern="decimalvalue" data-idx="0" data-optional="1" class="form-control table-input text-right debitamount validateZero" onblur="calculateNetPayableAmount();calculateRetentionMoneyDeductionAmounts();" maxlength="12" required="required" readonly="true" />
+									</c:when>
+									<c:otherwise>
+										<form:input path="billDetailes[0].debitamount" id="debitamount" name="billDetailes[0].debitamount" value="${debitBillDetails.amount }" data-errormsg="Debit Amount is mandatory!" onkeyup="decimalvalue(this);" data-pattern="decimalvalue" data-idx="0" data-optional="1" class="form-control table-input text-right debitamount validateZero" onblur="calculateNetPayableAmount();calculateRetentionMoneyDeductionAmounts();" maxlength="12" required="required" />
+									</c:otherwise>
+								</c:choose>
 								<form:errors path="billDetailes[0].debitamount" cssClass="add-margin error-msg" /> 
 							</td>
 						</tr>
@@ -87,7 +94,14 @@
 										<input type="text" id="debitAccountHead" value="${debitBillDetails.accountHead}" class="form-control" readonly="readonly" > 
 									</td>
 									<td>
-										<form:input path="billDetailes[0].debitamount" id="debitamount" name="billDetailes[0].debitamount" value="${debitBillDetails.amount }" data-errormsg="Debit Amount is mandatory!" onkeyup="decimalvalue(this);" data-pattern="decimalvalue" data-idx="0" data-optional="1" class="form-control table-input text-right debitamount validateZero" onblur="calculateNetPayableAmount();calculateRetentionMoneyDeductionAmounts();" maxlength="12" required="required" />
+										<c:choose>
+											<c:when test="${isBillEditable == true }">
+												<form:input path="billDetailes[0].debitamount" id="debitamount" name="billDetailes[0].debitamount" value="${debitBillDetails.amount }" data-errormsg="Debit Amount is mandatory!" onkeyup="decimalvalue(this);" data-pattern="decimalvalue" data-idx="0" data-optional="1" class="form-control table-input text-right debitamount validateZero" onblur="calculateNetPayableAmount();calculateRetentionMoneyDeductionAmounts();" maxlength="12" required="required" readonly="true" />
+											</c:when>
+											<c:otherwise>
+												<form:input path="billDetailes[0].debitamount" id="debitamount" name="billDetailes[0].debitamount" value="${debitBillDetails.amount }" data-errormsg="Debit Amount is mandatory!" onkeyup="decimalvalue(this);" data-pattern="decimalvalue" data-idx="0" data-optional="1" class="form-control table-input text-right debitamount validateZero" onblur="calculateNetPayableAmount();calculateRetentionMoneyDeductionAmounts();" maxlength="12" required="required" />
+											</c:otherwise>
+										</c:choose>
 										<form:errors path="billDetailes[0].debitamount" cssClass="add-margin error-msg" /> 
 									</td>
 								</tr>

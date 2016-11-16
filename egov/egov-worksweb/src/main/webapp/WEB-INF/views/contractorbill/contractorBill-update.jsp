@@ -53,7 +53,8 @@
 			<input type="hidden" name="mode" id="mode" value="${mode }" />
 			<input type="hidden" name="isSpillover" id="isSpillOver" value="${contractorBillRegister.workOrderEstimate.estimate.lineEstimateDetails.lineEstimate.spillOverFlag}"/>
 			<input type="hidden" name="contractorBillId" id="contractorBillId" value="${contractorBillRegister.id}" /> 
-			<input type="hidden"  name="workOrderEstimateId" id="workOrderEstimateId" value="${contractorBillRegister.workOrderEstimate.id}" /> 
+			<input type="hidden"  name="workOrderEstimateId" id="workOrderEstimateId" value="${contractorBillRegister.workOrderEstimate.id}" />
+			<input type="hidden" name="isBillEditable" id="isBillEditable" value="${isBillEditable }" /> 
 					<div class="panel panel-primary" data-collapsed="0">
 						
 						<div class="panel-heading">
@@ -73,8 +74,15 @@
 				        </div>
 						<div class="panel-body">
 							<c:if test="${mode == 'edit'}">
-								<jsp:include page="contractorBill-header.jsp"/>
-								<jsp:include page="contractorBill-mbdetails.jsp"/>
+								<c:choose>
+									<c:when test="${isBillEditable == true }">
+										<jsp:include page="contractorBill-header-view.jsp"/>
+									</c:when>
+									<c:otherwise>
+										<jsp:include page="contractorBill-header.jsp"/>
+										<jsp:include page="contractorBill-mbdetails.jsp"/>
+									</c:otherwise>
+								</c:choose>
 								<jsp:include page="contractorBill-debitaccountdetails.jsp"/>
 								<jsp:include page="contractorBill-refund.jsp"/>
 								<jsp:include page="contractorBill-creditaccountdetails.jsp"/>

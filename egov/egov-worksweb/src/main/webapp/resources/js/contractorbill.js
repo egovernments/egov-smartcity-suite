@@ -49,6 +49,9 @@ $(document).ready(function(){
 		$("#debitamount").prop("readonly",true);
 	}
 	
+	if($('#isBillEditable').val() == 'true')
+		$("#approvalComent").prop("required", "required");
+	
 	var billStatus = $('#billStatus').val();
 	var spillOverFlag = $('#spillOverFlag').val();
 	
@@ -226,7 +229,8 @@ $(document).ready(function(){
 			$('#approvalDepartment').attr('required', 'required');
 			$('#approvalDesignation').attr('required', 'required');
 			$('#approvalPosition').attr('required', 'required');
-			$('#approvalComent').removeAttr('required');
+			if($('#isBillEditable').val() != 'true')
+				$('#approvalComent').removeAttr('required');
 		}
 		if (button != null && button == 'Reject') {
 			$('#approvalDepartment').removeAttr('required');
@@ -249,6 +253,7 @@ $(document).ready(function(){
 							bootbox.hideAll();
 							return false;
 						} else {
+							$("#netPayableAccountCode").removeAttr("disabled");
 							document.forms[0].submit();
 						}
 					});
@@ -270,9 +275,10 @@ $(document).ready(function(){
 			$('#approvalComent').removeAttr('required');
 		}
 		if(validateDeductionGrids()) {
-				$('#billdate').removeAttr('disabled');
-				document.forms[0].submit;
-				return true;
+			$("#netPayableAccountCode").removeAttr("disabled");
+			$('#billdate').removeAttr('disabled');
+			document.forms[0].submit;
+			return true;
 		}
 			return false;
 		

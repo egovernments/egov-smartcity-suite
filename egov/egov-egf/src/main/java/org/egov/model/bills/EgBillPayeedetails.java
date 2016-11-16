@@ -54,11 +54,15 @@ import javax.persistence.Transient;
 
 import org.egov.infra.persistence.entity.AbstractPersistable;
 import org.egov.model.recoveries.Recovery;
+import org.hibernate.envers.AuditJoinTable;
+import org.hibernate.envers.Audited;
+import org.hibernate.envers.NotAudited;
 import org.hibernate.validator.constraints.Length;
 
 @Entity
 @Table(name = "EG_BILLPAYEEDETAILS")
 @SequenceGenerator(name = EgBillPayeedetails.SEQ_EG_BILLPAYEEDETAILS, sequenceName = EgBillPayeedetails.SEQ_EG_BILLPAYEEDETAILS, allocationSize = 1)
+@Audited
 public class EgBillPayeedetails extends AbstractPersistable<Integer> implements java.io.Serializable {
 
     private static final long serialVersionUID = -6620941691239597456L;
@@ -71,6 +75,7 @@ public class EgBillPayeedetails extends AbstractPersistable<Integer> implements 
 
     @ManyToOne
     @JoinColumn(name = "billdetailid")
+    @AuditJoinTable
     private EgBilldetails egBilldetailsId;
 
     private Integer accountDetailTypeId;
@@ -94,6 +99,7 @@ public class EgBillPayeedetails extends AbstractPersistable<Integer> implements 
 
     @ManyToOne
     @JoinColumn(name = "tdsid")
+    @NotAudited
     private Recovery recovery;
 
     @Length(max = 250)

@@ -249,9 +249,19 @@ public class ContractorBillRegisterService {
             final String workFlowAction, final String mode, final MultipartFile[] files)
             throws ValidationException, IOException {
         ContractorBillRegister updatedContractorBillRegister = null;
+        Boolean isEditable = false;
+        
+        if (contractorBillRegister.getState() != null) {
+            final Position position = contractorBillRegister.getState().getOwnerPosition();
+            if (position != null && (WorksConstants.BILL_MODIFIER_EXAMINER_OF_ACCOUNTS
+                    .equalsIgnoreCase(position.getDeptDesig().getDesignation().getName())
+                    || WorksConstants.BILL_MODIFIER_ASSISTANT_EXAMINER_OF_ACCOUNTS
+                            .equalsIgnoreCase(position.getDeptDesig().getDesignation().getCode())))
+                isEditable = true;
+        }
 
-        if (contractorBillRegister.getStatus().getCode()
-                .equals(ContractorBillRegister.BillStatus.REJECTED.toString())) {
+        if ((contractorBillRegister.getStatus().getCode()
+                .equals(ContractorBillRegister.BillStatus.REJECTED.toString())) || isEditable) {
 
             if (workFlowAction.equalsIgnoreCase(WorksConstants.FORWARD_ACTION.toString()))
                 populateAndSaveMBHeader(contractorBillRegister);

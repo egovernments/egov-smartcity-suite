@@ -64,9 +64,12 @@ import org.egov.works.models.contractorBill.AssetForBill;
 import org.egov.works.models.contractorBill.DeductionTypeForBill;
 import org.egov.works.models.contractorBill.StatutoryDeductionsForBill;
 import org.egov.works.workorder.entity.WorkOrderEstimate;
+import org.hibernate.envers.Audited;
+import org.hibernate.envers.NotAudited;
 
 @Entity
 @Table(name = "EGW_CONTRACTORBILL")
+@Audited
 public class ContractorBillRegister extends EgBillregister {
 
     private static final long serialVersionUID = -6056638534067396998L;
@@ -80,12 +83,15 @@ public class ContractorBillRegister extends EgBillregister {
     @Temporal(TemporalType.DATE)
     private Date approvedDate;
 
+    @NotAudited
     @OneToMany(orphanRemoval = true, cascade = CascadeType.ALL, fetch = FetchType.LAZY, mappedBy = "egbill", targetEntity = AssetForBill.class)
     private List<AssetForBill> assetDetailsList = new LinkedList<AssetForBill>();
 
+    @NotAudited
     @OneToMany(orphanRemoval = true, cascade = CascadeType.ALL, fetch = FetchType.LAZY, mappedBy = "egbill", targetEntity = DeductionTypeForBill.class)
     private List<DeductionTypeForBill> deductionTypeList = new LinkedList<DeductionTypeForBill>();
 
+    @NotAudited
     @OneToMany(orphanRemoval = true, cascade = CascadeType.ALL, fetch = FetchType.LAZY, mappedBy = "egBillReg", targetEntity = StatutoryDeductionsForBill.class)
     private List<StatutoryDeductionsForBill> statutoryDeductionsList = new LinkedList<StatutoryDeductionsForBill>();
 
@@ -128,12 +134,15 @@ public class ContractorBillRegister extends EgBillregister {
     @Transient
     private Long[] mbHeaderIds;
 
+    @NotAudited
     private String cancellationReason;
 
+    @NotAudited
     private String cancellationRemarks;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "workOrderEstimate", nullable = false)
+    @NotAudited
     private WorkOrderEstimate workOrderEstimate;
 
     @Override

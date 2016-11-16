@@ -311,26 +311,54 @@
 				<td>
 					<form:hidden path="" name="netPayableAccountId" id="netPayableAccountId" value="${netPayableAccountId}"/>
 					<form:hidden path="" name="netPayableAccountCodeId" id="netPayableAccountCodeId" value="${netPayableAccountCode}"/>
-					<form:select path="" data-first-option="false"
-						name="netPayableAccountCode" id="netPayableAccountCode"
-						class="form-control" required="required">
-						<form:option value="">
-							<spring:message code="lbl.select" />
-						</form:option>
-						<c:forEach var="coa" items="${netPayableAccounCodes}">
-							<form:option value="${coa.id}">
-								<c:out value="${coa.glcode} - ${coa.name}" />
-							</form:option>
-						</c:forEach>
-						<%-- <form:options items="${netPayableAccounCodes}" itemLabel="glcode" itemValue="id" />  --%>
-					</form:select> <%-- <form:errors path="netPayableAccountCode" cssClass="add-margin error-msg" /> --%>
+					<c:choose>
+						<c:when test="${isBillEditable == true }">
+							<form:select path="" data-first-option="false"
+								name="netPayableAccountCode" id="netPayableAccountCode"
+								class="form-control" required="required" disabled="true">
+								<form:option value="">
+									<spring:message code="lbl.select" />
+								</form:option>
+								<c:forEach var="coa" items="${netPayableAccounCodes}">
+									<form:option value="${coa.id}">
+										<c:out value="${coa.glcode} - ${coa.name}" />
+									</form:option>
+								</c:forEach>
+							</form:select>
+						</c:when>
+						<c:otherwise>
+							<form:select path="" data-first-option="false"
+								name="netPayableAccountCode" id="netPayableAccountCode"
+								class="form-control" required="required">
+								<form:option value="">
+									<spring:message code="lbl.select" />
+								</form:option>
+								<c:forEach var="coa" items="${netPayableAccounCodes}">
+									<form:option value="${coa.id}">
+										<c:out value="${coa.glcode} - ${coa.name}" />
+									</form:option>
+								</c:forEach>
+								<%-- <form:options items="${netPayableAccounCodes}" itemLabel="glcode" itemValue="id" />  --%>
+							</form:select> <%-- <form:errors path="netPayableAccountCode" cssClass="add-margin error-msg" /> --%>
+						</c:otherwise>
+					</c:choose>
 				</td>
 				<!-- <td> 
 						<input type="text" id="creditAccountHead" class="form-control" disabled> 
 					</td> -->
-				<td><input type="text" id="netPayableAmount"
-					name="netPayableAmount" value="${netPayableAmount}"
-					class="form-control text-right" readonly="true"> <%-- <form:errors path="netPayableAmount" cssClass="add-margin error-msg" /> --%>
+				<td>
+					<c:choose>
+						<c:when test="${isBillEditable == true }">
+							<input type="text" id="netPayableAmount"
+								name="netPayableAmount" value="${netPayableAmount}"
+								class="form-control text-right">
+						</c:when>
+						<c:otherwise>
+							<input type="text" id="netPayableAmount"
+								name="netPayableAmount" value="${netPayableAmount}"
+								class="form-control text-right" readonly="true"> <%-- <form:errors path="netPayableAmount" cssClass="add-margin error-msg" /> --%>
+						</c:otherwise>
+					</c:choose>
 				</td>
 			</tr>
 		</tbody>

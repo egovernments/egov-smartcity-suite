@@ -60,6 +60,7 @@ import org.egov.infra.exception.ApplicationException;
 import org.egov.infra.exception.ApplicationRuntimeException;
 import org.egov.infra.validation.exception.ValidationException;
 import org.egov.model.bills.EgBilldetails;
+import org.egov.pims.commons.Position;
 import org.egov.works.contractorbill.entity.ContractorBillRegister;
 import org.egov.works.contractorbill.entity.enums.BillTypes;
 import org.egov.works.contractorbill.service.ContractorBillRegisterService;
@@ -152,6 +153,7 @@ public class UpdateContractorBillController extends GenericWorkFlowController {
         String mode = "";
         String workFlowAction = "";
         ContractorBillRegister updatedContractorBillRegister = null;
+        Boolean isEditable = false;
 
         if (request.getParameter("mode") != null)
             mode = request.getParameter("mode");
@@ -177,11 +179,20 @@ public class UpdateContractorBillController extends GenericWorkFlowController {
                 && request.getParameter("approvalPosition") != null
                 && !request.getParameter("approvalPosition").isEmpty())
             approvalPosition = Long.valueOf(request.getParameter("approvalPosition"));
+        
+        if (contractorBillRegister.getState() != null) {
+            final Position position = contractorBillRegister.getState().getOwnerPosition();
+            if (position != null && (WorksConstants.BILL_MODIFIER_EXAMINER_OF_ACCOUNTS
+                    .equalsIgnoreCase(position.getDeptDesig().getDesignation().getName())
+                    || WorksConstants.BILL_MODIFIER_ASSISTANT_EXAMINER_OF_ACCOUNTS
+                            .equalsIgnoreCase(position.getDeptDesig().getDesignation().getCode())))
+                isEditable = true;
+        }
 
         try {
-            if (contractorBillRegister.getStatus().getCode()
+            if ((contractorBillRegister.getStatus().getCode()
                     .equals(ContractorBillRegister.BillStatus.REJECTED.toString())
-                    && workFlowAction.equals(WorksConstants.FORWARD_ACTION))
+                    && workFlowAction.equals(WorksConstants.FORWARD_ACTION)) || isEditable)
                 contractorBillRegisterService.checkBudgetAndGenerateBANumber(contractorBillRegister);
         } catch (final ValidationException e) {
             // TODO: Used ApplicationRuntimeException for time being since there
@@ -196,8 +207,8 @@ public class UpdateContractorBillController extends GenericWorkFlowController {
              */
         }
 
-        if (contractorBillRegister.getStatus().getCode().equals(ContractorBillRegister.BillStatus.REJECTED.toString())
-                && workFlowAction.equals(WorksConstants.FORWARD_ACTION) && mode.equals("edit")) {
+        if ((contractorBillRegister.getStatus().getCode().equals(ContractorBillRegister.BillStatus.REJECTED.toString())
+                && workFlowAction.equals(WorksConstants.FORWARD_ACTION) && mode.equals("edit")) || isEditable) {
 
             validateInput(contractorBillRegister, contractorBillRegister.getWorkOrderEstimate(), errors, request);
             contractorBillRegister.getEgBilldetailes().clear();
@@ -358,7 +369,8 @@ public class UpdateContractorBillController extends GenericWorkFlowController {
 
     private String loadViewData(final Model model, final HttpServletRequest request,
             final ContractorBillRegister contractorBillRegister) {
-
+        Boolean isEditable = false;
+        
         model.addAttribute("stateType", contractorBillRegister.getClass().getSimpleName());
         final WorkflowContainer workflowContainer = new WorkflowContainer();
         if (contractorBillRegister.getState() != null) {
@@ -367,14 +379,25 @@ public class UpdateContractorBillController extends GenericWorkFlowController {
             model.addAttribute("pendingActions", contractorBillRegister.getState().getNextAction());
             model.addAttribute("amountRule", contractorBillRegister.getBillamount());
         }
+        
+        if (contractorBillRegister.getState() != null) {
+            final Position position = contractorBillRegister.getState().getOwnerPosition();
+            if (position != null && (WorksConstants.BILL_MODIFIER_EXAMINER_OF_ACCOUNTS
+                    .equalsIgnoreCase(position.getDeptDesig().getDesignation().getName())
+                    || WorksConstants.BILL_MODIFIER_ASSISTANT_EXAMINER_OF_ACCOUNTS
+                            .equalsIgnoreCase(position.getDeptDesig().getDesignation().getCode())))
+                isEditable = true;
+        }
 
         workflowContainer.setAmountRule(contractorBillRegister.getBillamount());
         prepareWorkflow(model, contractorBillRegister, workflowContainer);
-        if (contractorBillRegister.getState() != null
-                && contractorBillRegister.getState().getValue().equals(WorksConstants.WF_STATE_REJECTED))
+        if ((contractorBillRegister.getState() != null
+                && contractorBillRegister.getState().getValue().equals(WorksConstants.WF_STATE_REJECTED)) || isEditable)
             model.addAttribute("mode", "edit");
         else
             model.addAttribute("mode", "view");
+        
+        model.addAttribute("isBillEditable", isEditable);
 
         model.addAttribute("billDetailsMap", contractorBillRegisterService.getBillDetailsMap(contractorBillRegister, model));
 

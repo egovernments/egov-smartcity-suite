@@ -60,11 +60,14 @@ import javax.persistence.Transient;
 
 import org.egov.commons.CChartOfAccounts;
 import org.egov.infra.persistence.entity.AbstractPersistable;
+import org.hibernate.envers.AuditJoinTable;
+import org.hibernate.envers.Audited;
 import org.hibernate.validator.constraints.Length;
 
 @Entity
 @Table(name = "EG_BILLDETAILS")
 @SequenceGenerator(name = EgBilldetails.SEQ_EG_BILLDETAILS, sequenceName = EgBilldetails.SEQ_EG_BILLDETAILS, allocationSize = 1)
+@Audited
 public class EgBilldetails extends AbstractPersistable<Integer> implements java.io.Serializable {
 
     private static final long serialVersionUID = -6045669915919744421L;
@@ -76,6 +79,7 @@ public class EgBilldetails extends AbstractPersistable<Integer> implements java.
 
     @ManyToOne
     @JoinColumn(name = "billid")
+    @AuditJoinTable
     private EgBillregister egBillregister;
 
     private BigDecimal functionid;
@@ -94,6 +98,7 @@ public class EgBilldetails extends AbstractPersistable<Integer> implements java.
     @Transient
     private CChartOfAccounts chartOfAccounts;
 
+    @AuditJoinTable
     @OrderBy("id")
     @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL, mappedBy = "egBilldetailsId", targetEntity = EgBillPayeedetails.class)
     private Set<EgBillPayeedetails> egBillPaydetailes = new HashSet<EgBillPayeedetails>(0);

@@ -66,14 +66,25 @@ import javax.validation.constraints.NotNull;
 
 import org.egov.commons.EgwStatus;
 import org.egov.infra.admin.master.entity.User;
+import org.egov.infra.persistence.entity.AbstractAuditable;
 import org.egov.infra.workflow.entity.StateAware;
 import org.egov.infstr.models.EgChecklists;
+import org.hibernate.envers.AuditOverride;
+import org.hibernate.envers.AuditOverrides;
+import org.hibernate.envers.Audited;
+import org.hibernate.envers.NotAudited;
+import org.hibernate.envers.RelationTargetAuditMode;
 import org.hibernate.validator.constraints.Length;
 
 @Entity
 @Table(name = "EG_BILLREGISTER")
 @Inheritance(strategy = InheritanceType.JOINED)
 @SequenceGenerator(name = EgBillregister.SEQ_EG_BILLREGISTER, sequenceName = EgBillregister.SEQ_EG_BILLREGISTER, allocationSize = 1)
+@AuditOverrides({
+    @AuditOverride(forClass = AbstractAuditable.class, name = "lastModifiedBy"),
+    @AuditOverride(forClass = AbstractAuditable.class, name = "lastModifiedDate")
+})
+@Audited
 public class EgBillregister extends StateAware implements java.io.Serializable {
 
     public enum BillStatus {
@@ -83,54 +94,79 @@ public class EgBillregister extends StateAware implements java.io.Serializable {
     private static final long serialVersionUID = -4312140421386028968L;
 
     public static final String SEQ_EG_BILLREGISTER = "SEQ_EG_BILLREGISTER";
+    
     @Id
     @GeneratedValue(generator = SEQ_EG_BILLREGISTER, strategy = GenerationType.SEQUENCE)
     private Long id;
+    
     @NotNull
     @Length(min = 1)
     private String billnumber;
+    
     @NotNull
     private Date billdate;
+    
     @NotNull
     private BigDecimal billamount;
 
+    @NotAudited
     private BigDecimal fieldid;
 
+    @NotAudited
     private String billstatus;
 
+    @NotAudited
     private String narration;
 
+    @NotAudited
     private BigDecimal passedamount;
 
+    @NotAudited
     private String billtype;
+    
     @NotNull
+    @NotAudited
     private String expendituretype;
 
+    @NotAudited
     private BigDecimal advanceadjusted;
 
+    @NotAudited
     private String zone;
 
+    @NotAudited
     private String division;
 
+    @NotAudited
     private String workordernumber;
 
+    @NotAudited
     private String billapprovalstatus;
 
+    @NotAudited
     private Boolean isactive;
 
+    @NotAudited
     private Date billpasseddate;
 
+    @NotAudited
     private Date workorderdate;
 
     @ManyToOne
     @JoinColumn(name = "statusid", nullable = true)
+    @Audited(targetAuditMode = RelationTargetAuditMode.NOT_AUDITED)
     private EgwStatus status;
+    
     @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL, mappedBy = "egBillregister", targetEntity = EgBillregistermis.class)
+    @NotAudited
     private EgBillregistermis egBillregistermis;
 
+    @NotAudited
     private String worksdetailId;
+    
     @Transient
     private User approver;
+    
     @Transient
     private Date approvedOn;
 
@@ -379,6 +415,7 @@ public class EgBillregister extends StateAware implements java.io.Serializable {
         this.egBillregistermis = egBillregistermis;
     }
 
+    @Audited
     public Set<EgBilldetails> getEgBilldetailes() {
         return egBilldetailes;
     }
